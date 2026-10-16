@@ -95,7 +95,7 @@ export function wagonTeamShort(items) {
 
 /** A new wagon of a kind, as a counter mints it (systems/merchantYards.js yardStock): the Small Cart DFU's own template item, the
  *  others that item marked and valued - its name stays the template's (every minted row carries the template's
- *  ItemName - test/audit18_systems_items.test.js), and the kind's is what the item SAYS (systems/item/itemInfo.js
+ *  ItemName - test/systems/audit18_systems_items.test.js), and the kind's is what the item SAYS (systems/item/itemInfo.js
  *  resolveItemName, `wagonItemName`). */
 export function newWagonItem(kind) {
   const k = validWagonKind(kind) ?? 'cart';

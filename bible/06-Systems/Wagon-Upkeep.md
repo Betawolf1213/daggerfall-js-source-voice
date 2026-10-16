@@ -73,7 +73,7 @@ switch's `false`) is Off with nothing converted; the old default, On, was never 
 touched the switch plays the new default, Boons; an On written to the shelf lands on Hard, written so at the next save;
 any other value is dropped at the load. No save holds the switch.
 
-Pinned: `test/wagontiers.test.js` (7 - the one key, the switch online, Boons never worse than DFU's plain wagon, the
+Pinned: `test/systems/wagontiers.test.js` (7 - the one key, the switch online, Boons never worse than DFU's plain wagon, the
 shelf, no red and each tier's words, the one accessor, a Sound wagon's boon); mutants `tools/mutants/wagontiers.json`
 (26, all dead). The pins
 written before the tiers pin Hard, PIN MOVED where their vocabulary did: the upkeep is handed Hard's rules where it was
@@ -167,7 +167,7 @@ dismount); world.js wears it by a journey's days, by the watch's throw, and stan
 (a building or a dungeon puts the driver on foot) and are named, not wired; worldModes.js refuses a wagon at a smith's
 counter (its own repair list).
 
-Pinned: `test/wagons4_upkeep.test.js`; mutants `tools/mutants/wagons4.json`, and WAGON-MEND's and UPKEEP-ONLINE's
+Pinned: `test/systems/wagons4_upkeep.test.js`; mutants `tools/mutants/wagons4.json`, and WAGON-MEND's and UPKEEP-ONLINE's
 `tools/mutants/wagonmend.json`. The saddle panel and the page's polish:
-`test/steedui_saddle.test.js`; mutants `tools/mutants/steedui.json`. THE TIERS: `test/wagontiers.test.js`; mutants
+`test/systems/steedui_saddle.test.js`; mutants `tools/mutants/steedui.json`. THE TIERS: `test/systems/wagontiers.test.js`; mutants
 `tools/mutants/wagontiers.json`.

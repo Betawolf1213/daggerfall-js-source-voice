@@ -11,7 +11,7 @@
 //   node tools/readiedHandsAssets.mjs <path-to>/"readied spellcasting hands.dfmod" [outDir]
 //
 // Default outDir is vendor/readied-spellcasting-hands. It prints each asset's size and sha256, which is what
-// test/rsh1_readiedhands.test.js pins.
+// test/systems/rsh1_readiedhands.test.js pins.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';

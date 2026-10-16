@@ -5,7 +5,7 @@
     "old": "    if (C.stage?.kind !== 'city') return [x, z];",
     "new": "    if (true) return [x, z];",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "bout: tag, mirror: true }))",
     "new": "bout: tag }))",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "hooks: C.ex ? { intrude: (foe) => intrude(a.id, foe) } : {} };",
     "new": "hooks: {} };",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "if (C.relay && !C.next && !C.ex) { say(C.relay.casual ? ARENA_TEXT.call.casual : ARENA_TEXT.call.players); break; }",
     "new": "if (C.relay && !C.next) { say(C.relay.casual ? ARENA_TEXT.call.casual : ARENA_TEXT.call.players); break; }",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "    C.teams = { a0: 'red', a1: 'blue' };",
     "new": "    C.teams = {};",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -51,7 +51,7 @@
     "new": "deps.drawHud?.(true ? arenaHudModel(C.b, C.crowd, t, { you: C.you, stamina: o.stamina ?? null, bark, quiet: false, teams: C.teams, stands }) : null,",
     "note": "The merge of ARENA4b's streams (re-aimed by content): the client stream's stands ride the model.",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -60,7 +60,7 @@
     "old": "if (!ai.walkGoal || Math.hypot(ai.walkGoal[0] - gx, ai.walkGoal[2] - gz) > MARK_ARRIVE_M) ai.walkTo?.([gx, f[1], gz], { pace: 1 });",
     "new": "if (!ai.walkGoal || Math.hypot(ai.walkGoal[0] - gx, ai.walkGoal[2] - gz) > MARK_ARRIVE_M) void 0;",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -69,7 +69,7 @@
     "old": "if (Math.hypot(px - f[0], pz - f[2]) > CITY_SNAP_M) { f[0] = px; f[2] = pz; ai.walkGoal = null; continue; }",
     "new": "if (false) { f[0] = px; f[2] = pz; ai.walkGoal = null; continue; }",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -78,7 +78,7 @@
     "old": "        else { foe.attack.firedRanged = false; foe.attack.swingSeq = (foe.attack.swingSeq | 0) + 1; }\n",
     "new": "        else { foe.attack.firedRanged = false; }\n",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -87,7 +87,7 @@
     "old": "        deps.exhibitionVerdict?.(ex.hour, r.side);   // the bookmaker settles by the relay's verdict\n",
     "new": "",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -96,7 +96,7 @@
     "old": "if (cur === C && r.side !== null) { C.bark = ARENA_TEXT.purse.won(EXHIBITION_PURSE); C.barkAt = now(); }",
     "new": "if (false) { C.bark = ARENA_TEXT.purse.won(EXHIBITION_PURSE); C.barkAt = now(); }",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -105,7 +105,7 @@
     "old": "if (Number.isFinite(C.doneAt) && t - C.doneAt >= CROWD_STAYS_MS && C.stage?.kind === 'city') { dismiss(); return; }   // ARENA4b",
     "new": "if (false) { dismiss(); return; }   // ARENA4b",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -114,7 +114,7 @@
     "old": "const begin = (p) => (p.relayEx ? startExhibitionRelay(p.relayEx) :",
     "new": "const begin = (p) => (p.relayEx ? startRelay(p.relayEx) :",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -123,7 +123,7 @@
     "old": "st.kind === 'ex' ? 'exhibition' : 'ladder', fighters, ring:",
     "new": "st.kind === 'ex' ? 'ladder' : 'ladder', fighters, ring:",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -132,7 +132,7 @@
     "old": "const e = (w.e ?? []).find((x) => x.k === 'end' || x.k === 'verdict');",
     "new": "const e = (w.e ?? []).find((x) => x.k === 'end');",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -141,7 +141,7 @@
     "old": "if (!L.sent) L.sent = l.sendArena?.({ k: 'in', r: 's' }) === true;",
     "new": "if (!L.sent) L.sent = l.sendArena?.({ k: 'in', r: 'f' }) === true;",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -150,7 +150,7 @@
     "old": "if (!live() || !ex || exSeen.has(ex.hour)) return false;",
     "new": "if (!live() || !ex) return false;",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -159,7 +159,7 @@
     "old": "      else if (city.started) closeCity();",
     "new": "      else if (false) closeCity();",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -168,7 +168,7 @@
     "old": "if (!exSeen.has(hour)) exSeen.set(hour, { none: true }); return; }",
     "new": "return; }",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -177,7 +177,7 @@
     "old": "    askVerdict(hour);\n    return null;",
     "new": "    return null;",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -186,7 +186,7 @@
     "old": "    if (Number(gameMinutes) >= (hour + EXHIBITION_KEPT_HOURS) * 60) return { house: true };\n",
     "new": "",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -195,7 +195,7 @@
     "old": "if (asking === A && r === room) { heardEx(hour, w);",
     "new": "if (asking === A && r === room) { void heardEx;",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -204,7 +204,7 @@
     "old": " if (exSeen.has(hour)) deps.verdictHeard?.();",
     "new": "",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -213,7 +213,7 @@
     "old": "      if (asking?.hour === b.ex.hour) closeAsk();\n",
     "new": "",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -222,7 +222,7 @@
     "old": "const ok = await deps.enterFloor('watch', `x${b.ex.hour}`, 0);",
     "new": "const ok = await deps.enterFloor('watch', b.o, 0);",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -231,7 +231,7 @@
     "old": "    if (w.k === 'live') w = { ...w, l: w.l.map(billExhibition) };",
     "new": "    if (false) w = { ...w, l: w.l.map(billExhibition) };",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -240,7 +240,7 @@
     "old": "if (entry?.kind === 'ex') { const ex = exhibitionFor(entry.h * 60);",
     "new": "if (false) { const ex = exhibitionFor(entry.h * 60);",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -249,7 +249,7 @@
     "old": "title: b.kind === 'ex' ? O().liveExhibition(",
     "new": "title: false ? O().liveExhibition(",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -258,7 +258,7 @@
     "old": "      heardEx(bout.ex.hour, w);\n",
     "new": "",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -267,7 +267,7 @@
     "old": "    if (!on?.exhibitions?.()) { setBook(",
     "new": "    if (true) { setBook(",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -276,7 +276,7 @@
     "old": "      else if (v) book = bookVerdict(book, w.hour, v.side);\n",
     "new": "",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -285,7 +285,7 @@
     "old": "      if (v?.house) { const ex = exhibitionFor(w.hour * 60);",
     "new": "      if (false) { const ex = exhibitionFor(w.hour * 60);",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -294,7 +294,7 @@
     "old": "|| g < (w.hour + 1) * 60 ||",
     "new": "|| g < w.hour * 60 ||",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -303,7 +303,7 @@
     "old": "      if (arenaOnline?.exhibitions?.()) arenaOnline.watchCity(ex);\n      else if (ex?.open",
     "new": "      if (ex?.open",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -312,7 +312,7 @@
     "old": "      if (arenaOnline?.exhibitions?.()) { arenaBouts.dismiss(); arenaOnline.watchExhibition(ex); return; }",
     "new": "      void 0;",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -321,7 +321,7 @@
     "old": "champion: null, ...(o.mirror ? { placed: true } : {}) })",
     "new": "champion: null })",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -330,7 +330,7 @@
     "old": "    verdictHeard: () => arenaGate.settle(),",
     "new": "",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ]
   },
   {
@@ -339,7 +339,7 @@
     "old": "    if (C.ex) return;\n    const R = realmNow();\n",
     "new": "    const R = realmNow();\n",
     "tests": [
-      "test/arena4b_mirror.test.js"
+      "test/scenes/arena4b_mirror.test.js"
     ],
     "note": "The merge of ARENA4b's streams: the client stream's relayBanners, run on every relay bout's first st, wiped the relay stream's exhibition sides (and with them its laurel's favour)."
   }

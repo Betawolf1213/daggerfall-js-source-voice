@@ -5,7 +5,7 @@
     "old": "  const r = P.atk[A.key].r;",
     "new": "  const r = A.r;",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "    case 'cone': return d <= r && (d <= P.bossR ||",
     "new": "    case 'cone': return d <= r && (d <= 1.8 ||",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "segmentDistance(px, pz, atk.x, atk.z, e[0], e[1]) <= Math.max(A.width / 2, P.bossR); }",
     "new": "segmentDistance(px, pz, atk.x, atk.z, e[0], e[1]) <= Math.max(A.width / 2, 1.8); }",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "  return segmentDistance(px, pz, a[0], a[1], b[0], b[1]) <= Math.max(A.width / 2, P.bossR);",
     "new": "  return segmentDistance(px, pz, a[0], a[1], b[0], b[1]) <= Math.max(A.width / 2, 1.8);",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "pct: G.pct, base: G.base, el: P.el }));",
     "new": "pct: G.pct, base: G.base, el: 'fire' }));",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "  const A = ATTACK_BY_ID[atk?.a], G = A ? P.atk[A.key].pool : null;",
     "new": "  const A = ATTACK_BY_ID[atk?.a], G = A && 'pool' in A ? A.pool : null;",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "saved: L.el != null && !isDagons(A) };",
     "new": "saved: L.el === 'fire' && !isDagons(A) };",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "  return { pct: L.pct, base: L.base, el: L.el, name: L.name,",
     "new": "  return { pct: L.pct, base: L.base, el: L.el, name: A.name,",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "    if (so.saved) dmg = savedShare(dmg, save(e, so.el));",
     "new": "    if (so.saved) dmg = savedShare(dmg, save(e));",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "    if (dmg <= 0) { say(COURT_STRIKE_TEXT.resisted(so.name)); return; }",
     "new": "    if (dmg <= 0) { say(COURT_STRIKE_TEXT.resisted('Hellfire')); return; }",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "    if (A && P.atk[A.key].pool && !marked(pooled, atk) && t >= atk.at) {",
     "new": "    if (A && 'pool' in A && !marked(pooled, atk) && t >= atk.at) {",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "    const el = p.el ?? 'fire';   // WB8b",
     "new": "    const el = 'fire';   // WB8b",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "    if (!marksSaid) { marksSaid = true; if (P.md",
     "new": "    if (!marksSaid) { if (P.md",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -122,8 +122,8 @@
     "old": "if (P.md && !s.fell && s.wrath == null) marksAt = t; }",
     "new": "if (!s.fell && s.wrath == null) marksAt = t; }",
     "tests": [
-      "test/wb8c_gate_detail.test.js",
-      "test/wbx_gate_fixes.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js",
+      "test/world/gate/wbx_gate_fixes.test.js"
     ],
     "equivalent": true,
     "why": "WB13b: nothing is said on stepping in any more, and an unmarked Warden's card is no card (marksViewOf(null) is null) - the P.md check is belt and braces, kept"
@@ -134,7 +134,7 @@
     "old": "if (t - s.fed.at <= FED_LATE_MS) { say(COURT_MARKS_TEXT.fed(bossOf(s).name, s.fed.ns));",
     "new": "if (true) { say(COURT_MARKS_TEXT.fed(bossOf(s).name, s.fed.ns));",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -143,7 +143,7 @@
     "old": "{ fedHeard = s.fed.at; if (t - s.fed.at <= FED_LATE_MS)",
     "new": "{ if (t - s.fed.at <= FED_LATE_MS)",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -152,8 +152,8 @@
     "old": "const c = courtPhaseCard(s.phase); if (c) beat = { kind: 'phase'",
     "new": "const c = courtPhaseCard(2); if (c) beat = { kind: 'phase'",
     "tests": [
-      "test/wb8c_gate_detail.test.js",
-      "test/wb13e_beats.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js",
+      "test/net/gate/wb13e_beats.test.js"
     ],
     "note": "WB13e: the turn's words became its card (its numeral, its name, its one order) - the aspect's words went with the second order"
   },
@@ -163,7 +163,7 @@
     "old": "height: P.bossH, radius: P.bossR, warded:",
     "new": "height: P.bossH, radius: 1.8, warded:",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -172,7 +172,7 @@
     "old": "    const w = sz.w * body.scale * P.size, h = sz.h * body.scale * P.size;",
     "new": "    const w = sz.w * body.scale, h = sz.h * body.scale;",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -181,7 +181,7 @@
     "old": "markEmber = ember === EMBER_COLOR ? MARK_COLOR : markColorOf(ember);",
     "new": "markEmber = MARK_COLOR;",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -190,7 +190,7 @@
     "old": "_mark = markShape([0, 0], 0, markEmber, P.bossR); }",
     "new": "_mark = markShape([0, 0], 0, markEmber); }",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -199,7 +199,7 @@
     "old": "  const [x, y, z] = courtToDungeon(cx, P.bossH * 0.55, cz);",
     "new": "  const [x, y, z] = courtToDungeon(cx, BOSS_H * 0.55, cz);",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -208,7 +208,7 @@
     "old": "    const color = attackColor(A, P) ?? ember;",
     "new": "    const color = ATTACK_COLORS[A.key] ?? ember;",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -217,7 +217,7 @@
     "old": "export const emberColor = (P) => ASPECT_COLORS[P?.aspect?.id]?.ember ?? EMBER_COLOR;",
     "new": "export const emberColor = (P) => EMBER_COLOR;",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -226,7 +226,7 @@
     "old": "export const attackColor = (A, P) => ASPECT_COLORS[P?.aspect?.id]?.[A.key] ?? ATTACK_COLORS[A.key];",
     "new": "export const attackColor = (A, P) => ATTACK_COLORS[A.key];",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -235,7 +235,7 @@
     "old": "  if (!cue || isDagons(A) || !P?.atk?.[A.key]?.el",
     "new": "  if (!cue || !P?.atk?.[A.key]?.el",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -244,7 +244,7 @@
     "old": "  if (kind === 'windup' || kind === 'release') return { id: ASPECT_CUE_IDS[aspect],",
     "new": "  if (kind === 'windup' || kind === 'release') return { ...cue, id: cue.id,",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -253,7 +253,7 @@
     "old": "r: A.shape === 'spokes' ? A.len : P.atk[A.key].r ?? 0,",
     "new": "r: A.shape === 'spokes' ? A.len : A.r ?? 0,",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -262,7 +262,7 @@
     "old": "halfArc: ((A.arc ?? 0) / 2) * DEG, body: P.bossR,",
     "new": "halfArc: ((A.arc ?? 0) / 2) * DEG, body: BOSS_R,",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -271,7 +271,7 @@
     "old": "alpha: Math.max(0, fadeOut), color: attackColor(A, P),",
     "new": "alpha: Math.max(0, fadeOut), color: attackColor(A, BASE_PROFILE),",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -280,7 +280,7 @@
     "old": "    epithet: P.md ? P.aspect.epithet : '',",
     "new": "    epithet: P.aspect.epithet,",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -289,7 +289,7 @@
     "old": "{ text: P.atk[A.key].name, color: css(attackColor(A, P)), t:",
     "new": "{ text: A.name, color: css(attackColor(A, P)), t:",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -298,7 +298,7 @@
     "old": "parts.marks.style.display = view ? '' : 'none';",
     "new": "parts.marks.style.display = '';",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -307,7 +307,7 @@
     "old": ": [`${boss.name}, ${boss.title}`, marksLineOf(c.t.day)])] };",
     "new": ": [`${boss.name}, ${boss.title}`])] };",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -316,7 +316,7 @@
     "old": "&& marksDay !== t.day) { marksDay = t.day;",
     "new": "&& true) { marksDay = t.day;",
     "tests": [
-      "test/wb1_gate_omen.test.js"
+      "test/ui/wb1_gate_omen.test.js"
     ]
   },
   {
@@ -325,8 +325,8 @@
     "old": ".${map} ${RITE_OMEN_LINE}${marks}`,",
     "new": ".${map} ${RITE_OMEN_LINE}`,",
     "tests": [
-      "test/wb8c_gate_detail.test.js",
-      "test/discordgates.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js",
+      "test/net/gate/discordgates.test.js"
     ]
   },
   {
@@ -335,7 +335,7 @@
     "old": "md: g.md ?? null, fed: same ? s.fed ?? null : null,",
     "new": "md: g.md ?? null, fed: null,",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -344,7 +344,7 @@
     "old": "md: g.md ?? null, fed: same ? s.fed ?? null : null,",
     "new": "md: null, fed: same ? s.fed ?? null : null,",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -353,7 +353,7 @@
     "old": "    case 'fed': return { ...s, hp: g.h, max: g.m, fed: { ns: g.ns, at: g.at }, heardAt: now };",
     "new": "    case 'fed': return s;",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -362,7 +362,7 @@
     "old": "      if (!el) flashPlayerDamage(dmg);",
     "new": "      if (!fire) flashPlayerDamage(dmg);",
     "tests": [
-      "test/wb4_gate_boss.test.js"
+      "test/net/gate/wb4_gate_boss.test.js"
     ]
   },
   {
@@ -371,7 +371,7 @@
     "old": "  poison: Object.freeze([ELEMENTS.DiseaseOrPoison, EFFECT_FLAGS.Poison]),",
     "new": "  poison: Object.freeze([ELEMENTS.Fire, EFFECT_FLAGS.Fire]),",
     "tests": [
-      "test/wb4_gate_boss.test.js"
+      "test/net/gate/wb4_gate_boss.test.js"
     ]
   }
 ]

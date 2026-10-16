@@ -54,7 +54,7 @@ export const WAGON_MODEL_URLS = Object.freeze({
 export const LIFT = NORMAL_GROUND_OFFSET;
 
 /** Each wagon's measurements in its frame (metres over the ground, before the lift): read off the bake and pinned
- *  there (test/wagons1.test.js). `floorY` the bed's (or the caravan's) floor, `sideX` the body's half width outside,
+ *  there (test/systems/item/wagons1.test.js). `floorY` the bed's (or the caravan's) floor, `sideX` the body's half width outside,
  *  `innerX` inside, `bedZ` the bed's run (back to front), `frontZ` the wagon's foremost point. */
 export const MEASURED = Object.freeze({
   cart: Object.freeze({ axleY: 0.5445, floorY: 0.69, innerX: 1.0543, sideX: 1.1589, bedZ: Object.freeze([-0.37, 2.2]), frontZ: 3.14, bottomFront: Object.freeze([0.1452, 2.1778]), bottomBack: Object.freeze([0.6201, -0.4852]) }),
@@ -63,7 +63,7 @@ export const MEASURED = Object.freeze({
 });
 /** WAGONS3: `bench` above - where the driver's hips sit on a front bench (metres, the bake's frame): `y` the bench's top
  *  under them, `z` their run - a thigh's length or less behind the bench's front edge, so the knees stand at its lip,
- *  and clear of the body's front wall behind them. Read off the bake (test/wagons3.test.js): the open wagon's bench is
+ *  and clear of the body's front wall behind them. Read off the bake (test/player/wagons3.test.js): the open wagon's bench is
  *  level at 1.525-1.556 m over 4.90-5.65 m, its back half under the body's front wall (5.12 m) - the hips 0.37 m before
  *  its edge, 0.16 m before the wall; the caravan's falls from 2.564 m at its back (4.81 m) to 2.417 m at its front
  *  (5.94 m), the hips a thigh (0.45 m) before its edge, and its step - the footboard before it, 1.88-1.92 m high - is

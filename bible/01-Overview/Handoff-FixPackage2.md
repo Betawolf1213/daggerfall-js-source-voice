@@ -142,12 +142,12 @@ shipped hours earlier.
 | `systems/loot/loot.js` | 33 | 31 | `efaf21c4` | 2 |
 | `systems/survival/loot.js` | 7 | 7 | `efaf21c4` | 0 |
 | `scenes/hostCombat.js` | 2 | 2 | `efaf21c4` | 0 |
-| `test/audit18_hosts_dungeon.test.js` | 2 | 2 | `efaf21c4` | 0 |
-| `test/rf2_spawnloot.test.js` | 6 | 2 | `8d14f507` | 1 |
+| `test/scenes/audit18_hosts_dungeon.test.js` | 2 | 2 | `efaf21c4` | 0 |
+| `test/systems/rf2_spawnloot.test.js` | 6 | 2 | `8d14f507` | 1 |
 | **`systems/survival/hunting.js`** (DELETED by HUNT-OUT, 2026-10-04) | 23 | **0** | `1723fd61` | 1 |
 | **`test/surv6_hunting.test.js`** (DELETED by HUNT-OUT, 2026-10-04) | 27 | **0** | `8564f100` | 3 |
-| `test/audit24_wave43.test.js` | 0 | 0 | `efaf21c4` | 0 |
-| `test/surv2_items.test.js` | 0 | 0 | `efaf21c4` | 0 |
+| `test/systems/loot/audit24_wave43.test.js` | 0 | 0 | `efaf21c4` | 0 |
+| `test/systems/surv2_items.test.js` | 0 | 0 | `efaf21c4` | 0 |
 
 The last four are the interesting rows. `audit24_wave43` and `surv2_items`
 are byte-identical to HEAD - no-ops, dropped. But `hunting.js` and

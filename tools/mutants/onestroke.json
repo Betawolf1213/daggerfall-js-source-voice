@@ -5,9 +5,9 @@
     "old": "  const from = (((blow | 0) % 2) + 2) % 2 ? half : 0;",
     "new": "  const from = 0;",
     "tests": [
-      "test/eotb_billboard.test.js",
-      "test/eotb_audit2.test.js",
-      "test/disc23b_eotb_sprites.test.js"
+      "test/player/eyeOfTheBeholder/eotb_billboard.test.js",
+      "test/player/eyeOfTheBeholder/eotb_audit2.test.js",
+      "test/net/disc23b_eotb_sprites.test.js"
     ]
   },
   {
@@ -16,7 +16,7 @@
     "old": "  return Array.from({ length: from ? len - half : half }, (_, i) => from + i);",
     "new": "  return Array.from({ length: half }, (_, i) => from + i);",
     "tests": [
-      "test/eotb_billboard.test.js"
+      "test/player/eyeOfTheBeholder/eotb_billboard.test.js"
     ]
   },
   {
@@ -25,7 +25,7 @@
     "old": "    const frames = meleeStrokeFrames(n, Number.isInteger(last.swingN) ? last.swingN : strokeCount++);",
     "new": "    const frames = forwardFrames(n);",
     "tests": [
-      "test/eotb_audit2.test.js"
+      "test/player/eyeOfTheBeholder/eotb_audit2.test.js"
     ]
   },
   {
@@ -34,7 +34,7 @@
     "old": "    const frames = meleeStrokeFrames(n, Number.isInteger(last.swingN) ? last.swingN : strokeCount++);",
     "new": "    const frames = meleeStrokeFrames(n, strokeCount++);",
     "tests": [
-      "test/eotb_audit2.test.js"
+      "test/player/eyeOfTheBeholder/eotb_audit2.test.js"
     ]
   },
   {
@@ -43,7 +43,7 @@
     "old": "    return startClip('AttackMelee', frames, meleeAnimTickTime(animTime, frames.length));",
     "new": "    return startClip('AttackMelee', frames, meleeAnimTickTime(animTime, n));",
     "tests": [
-      "test/eotb_audit2.test.js"
+      "test/player/eyeOfTheBeholder/eotb_audit2.test.js"
     ]
   },
   {
@@ -52,7 +52,7 @@
     "old": "frames: (n) => meleeStrokeFrames(frameCount('AttackMelee'), n),",
     "new": "frames: (n) => meleeStrokeFrames(frameCount('AttackMelee'), 0),",
     "tests": [
-      "test/disc23b_eotb_sprites.test.js"
+      "test/net/disc23b_eotb_sprites.test.js"
     ]
   },
   {
@@ -61,7 +61,7 @@
     "old": "frames: (n) => meleeStrokeFrames(frameCount('AttackMelee'), n),",
     "new": "frames: () => forwardFrames(frameCount('AttackMelee')),",
     "tests": [
-      "test/disc23b_eotb_sprites.test.js"
+      "test/net/disc23b_eotb_sprites.test.js"
     ]
   }
 ]

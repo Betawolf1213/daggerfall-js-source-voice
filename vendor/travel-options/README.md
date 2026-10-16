@@ -61,7 +61,7 @@ roads-hazelnut/README.md`) records a permission from the same author.]**
   read the bundle and the three were written back out as PNG, pixel for
   pixel (`tools/travelOptionsAssets.mjs` reproduces them from a copy of
   the zip). The PIXELS are the author's; the file bytes are the port's
-  encoder, which is why the hashes in `test/vendorIntegrity.test.js`
+  encoder, which is why the hashes in `test/tooling/vendorIntegrity.test.js`
   are of the re-encodes and this note says so rather than claiming a
   byte-for-byte carry.
 

@@ -29,7 +29,7 @@
 // classic key (19,255) is now a BUFF_KIND and isSilenced folds over the
 // active effects, so the gates below have something to gate on.
 //
-// The pin that let this through is worth naming: test/mysticism.test.js read
+// The pin that let this through is worth naming: test/scenes/mysticism.test.js read
 // dungeonContext.js with readFileSync and matched /silenceBlocksCast\(...\)/.
 // A source regex cannot see that the value the gate reads is never produced.
 //

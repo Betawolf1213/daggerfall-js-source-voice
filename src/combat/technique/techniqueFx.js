@@ -39,7 +39,7 @@ const REST_X = 1e-5, REST_V = 1e-4;
  *  field of view's kick in degrees; the hands' dip in screen heights (`y`, down). A class each, never a literal: a
  *  literal's shape is shared with every `{ x, y }` and `{ pitch, roll, ... }` the game makes, and one of those holding
  *  anything but a number turns the field general - then each write here boxed its number (32 bytes a frame in flight,
- *  test/techfx1.test.js). A class's shape is its own, its number fields only ever numbers, written in place. */
+ *  test/systems/techfx1.test.js). A class's shape is its own, its number fields only ever numbers, written in place. */
 class TechView { constructor() { this.pitch = 0; this.roll = 0; this.eye = [0, 0, 0]; this.fov = 0; } }
 class TechHands { constructor() { this.y = 0; } }
 const VIEW = new TechView();
@@ -148,7 +148,7 @@ export function kickFx(c, hands, m = 1) {
  * (`{ at, ground, yaw, dir, to, len, r, spin, half }`; null: no burst). Answers whether the technique has the moment.
  * AUDIT TECH-FX: the roll is kicked NEGATED - the table speaks the screen, and every host's lens mirrors the camera's x
  * (world/mat4.js mirrorProjectionX, HANDEDNESS), so the camera's own roll, positive, leans the view LEFT on screen
- * (test/techfx1_audit.test.js projects it through the hosts' own lens).
+ * (test/systems/techfx1_audit.test.js projects it through the hosts' own lens).
  */
 export function techniqueCue(id, moment, door = null, place = null) {
   const row = TECH_FX[id]?.[moment];

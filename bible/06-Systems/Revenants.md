@@ -1,6 +1,6 @@
 # Revenants
 
-**Status:** shipped 2026-10-02 (`src/systems/revenant/revenant.js`, `test/revenant.test.js`).
+**Status:** shipped 2026-10-02 (`src/systems/revenant/revenant.js`, `test/systems/revenant.test.js`).
 **Next:** `12-Enhanced-AI/Feud-Arc.md` (FEUD, proposed 2026-10-04) - memory, a weakness, the will, a last stand, a
 signature, a band, a lair, theft, festering, new deeds and loyalty. Nothing below changes until a FEUD slice ships.
 Mac: "the ability for these enemies that kill you, or a very small chance to flee at low health. These enemies can
@@ -331,12 +331,12 @@ underground, a joiner's own frame) name an heir for every other live foe and non
 (`exteriorFoes.js foesFrame`, `dungeonContext.js ownFrame`). Its record lives in its owner's save alone
 (`revenantById`), so an heir's copy read a plain foe: no last stand, no will, no kneel, a corpse, and the owner's record
 never told. It goes with its owner, as a watchman goes with his own. A party member's killing blow lands at the owner,
-where the record is, and brings its last stand and then its fate there (`test/revenant_fate.test.js`).
+where the record is, and brings its last stand and then its fate there (`test/systems/revenant/revenant_fate.test.js`).
 
 ## 16. The audit (2026-10-02, Mac: "Audit everything and ensure perfection")
 
 Five audits - the records and their words, the kill-or-spare flow, the sworn, the UI, the burn and the portals - and
-every finding fixed (`test/revenant_audit.test.js`, `tools/mutants/revenantaudit.json`):
+every finding fixed (`test/systems/revenant/revenant_audit.test.js`, `tools/mutants/revenantaudit.json`):
 
 - **Records.** A judged revenant (executed, released, sworn) does no deed - its poison finishing the player after it
   knelt raised it again under its own id, or ranked up a sworn companion. A kneeling one claims no kill and clears its
@@ -625,10 +625,10 @@ ranks 1 and 5 fought never running (a young revenant's flight ends most of its f
 measure of how hard it is to bring down): the will by its weakness 100%, by dodging 93.1%, by trading 11.5%; rank 5
 over rank 1, 2.67 trading and 2.64 dodging.
 
-Killing the player still ranks a revenant up; it is no longer nearly the only way. Pinned: `test/flightfirst.test.js`
-(6), `tools/mutants/flightfirst.json` (15 dead). PIN MOVED: `test/feudharness.test.js` - its flight and rank 5's
+Killing the player still ranks a revenant up; it is no longer nearly the only way. Pinned: `test/systems/revenant/flightfirst.test.js`
+(6), `tools/mutants/flightfirst.json` (15 dead). PIN MOVED: `test/systems/revenant/feudharness.test.js` - its flight and rank 5's
 rally chase as a fast runner, and a rank 3 run down is cornered (its last stand comes before a kneel mid-run);
-`test/audittell.test.js` - the flee's signature.
+`test/scenes/audittell.test.js` - the flee's signature.
 
 ## 39. The Renown gate (RENOWN-GATE, 2026-10-12)
 
@@ -691,6 +691,6 @@ new rate.
 - `scenes/exterior.js` WIRED through `revenantToReturn`; its pool rolls no elite (a town's ground, as a building's),
   and the bench never goes online, so nothing is held there.
 
-Pinned: `test/renowngate.test.js` (14); `tools/mutants/renowngate.json` (30, all dead). No pin moved; two AUDIT BAL
+Pinned: `test/systems/renowngate.test.js` (14); `tools/mutants/renowngate.json` (30, all dead). No pin moved; two AUDIT BAL
 records (`tools/mutants/bal.json` AUDIT-BAL-a-search-elite-anywhere and AUDIT-BAL-the-search-roll-skipped) were re-aimed
 by content at the search's roll as it now reads, and both still die.

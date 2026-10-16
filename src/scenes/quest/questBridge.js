@@ -202,7 +202,7 @@ export function retireDfuTutorial(machine) {
  *   quest. Nothing said so.
  *
  *   F3 - the gate that exists to catch exactly that,
- *   `test/audit24_questseams.test.js`'s "every bridge ctx seam is
+ *   `test/systems/quest/audit24_questseams.test.js`'s "every bridge ctx seam is
  *   SUPPLIED or declared PENDING", opened `src/scenes/world.js` BY NAME
  *   and never looked at any other host.
  *
@@ -210,11 +210,11 @@ export function retireDfuTutorial(machine) {
  * absent - which is what "loudly" was always supposed to mean.
  *
  * THE LIST IS GATED AGAINST THE BRIDGE'S OWN USAGE, both ways
- * (`test/auditquest_seams.test.js`), because a hand-kept contract list
+ * (`test/scenes/auditquest_seams.test.js`), because a hand-kept contract list
  * would be F3 again in a new place.
  */
 /** Every ctx member this bridge reads. DERIVED once and written down,
- *  and `test/auditquest_seams.test.js` re-derives it from this file's
+ *  and `test/scenes/auditquest_seams.test.js` re-derives it from this file's
  *  own source on every run and fails if the two disagree in EITHER
  *  direction - a member added to the code and not to this list, or a
  *  name here the bridge stopped reading. */

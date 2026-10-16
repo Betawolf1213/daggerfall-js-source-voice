@@ -100,7 +100,7 @@
 //
 // PURE, like the autopilot: it takes numbers and a probe function and
 // answers numbers. No collider, no DOM, no world reads - which is what lets
-// test/travelnav.test.js fly it over buildings, walls, pockets, rows of
+// test/systems/travel/travelnav.test.js fly it over buildings, walls, pockets, rows of
 // trees and gaps on a table. EVERY ALLOCATION HAS AN OWNER: the input,
 // the output, the frame's scratch and the probe's own are made once, with
 // the steer, and reused every frame.

@@ -5,7 +5,7 @@
     "old": "if (skip?.has(bkey)) continue;",
     "new": "if (skip?.has(bkey)) break;",
     "tests": [
-      "test/decorshell.test.js"
+      "test/scenes/decor/decorshell.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "if (i >= DECOR_FLY_PUSHES) return from;",
     "new": "if (i > DECOR_FLY_PUSHES) return from;",
     "tests": [
-      "test/decorshell.test.js"
+      "test/scenes/decor/decorshell.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "    models.set(id, null);\n",
     "new": "",
     "tests": [
-      "test/decorshell.test.js"
+      "test/scenes/decor/decorshell.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "      if (hang && s.raise > 0) s.raise = 0;\n",
     "new": "",
     "tests": [
-      "test/decorshell.test.js"
+      "test/scenes/decor/decorshell.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "if (hang && s.raise > 0) s.raise = 0;",
     "new": "if (hang && s.raise < 0) s.raise = 0;",
     "tests": [
-      "test/decorshell.test.js"
+      "test/scenes/decor/decorshell.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "stand(Math.min(2 * wait, DECOR_LIST_RETRY_MAX_MS))",
     "new": "stand(wait)",
     "tests": [
-      "test/decorshell.test.js"
+      "test/scenes/decor/decorshell.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "stand(Math.min(2 * wait, DECOR_LIST_RETRY_MAX_MS))",
     "new": "stand(2 * wait)",
     "tests": [
-      "test/decorshell.test.js"
+      "test/scenes/decor/decorshell.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "    if (inSkin(p.fly, b)) p.inside.push({ key: decorKeyOf(piece.id), box: b });",
     "new": "    if (inSkin(p.fly, b)) void b;",
     "tests": [
-      "test/decorshell.test.js"
+      "test/scenes/decor/decorshell.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "    const hit = eyeHit(deps.collider?.(), p.fly, lookDir(cam.yaw, cam.pitch), through);",
     "new": "    const hit = eyeHit(deps.collider?.(), p.fly, lookDir(cam.yaw, cam.pitch), p.editing ? [decorKeyOf(p.editing.id)] : null);",
     "tests": [
-      "test/decorshell.test.js"
+      "test/scenes/decor/decorshell.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "    p.inside = p.inside.filter((c) => inSkin(p.fly, c.box));",
     "new": "    p.inside = p.inside.filter(() => true);",
     "tests": [
-      "test/decorshell.test.js"
+      "test/scenes/decor/decorshell.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "const inSkin = (q, b) => [0, 1, 2].every((i) => q[i] >= b[i] - DECOR_FLY_SKIN && q[i] <= b[i + 3] + DECOR_FLY_SKIN);",
     "new": "const inSkin = (q, b) => [0, 1, 2].every((i) => q[i] >= b[i] && q[i] <= b[i + 3]);",
     "tests": [
-      "test/decorshell.test.js"
+      "test/scenes/decor/decorshell.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "        wallet.pay(price);\n        if (deps.visit?.() === visit) standRound(p, decorPieceOf(res.data?.piece) ?? piece);",
     "new": "        wallet.pay(price);\n        if (deps.visit?.() === visit) pool.put(decorPieceOf(res.data?.piece) ?? piece);",
     "tests": [
-      "test/decorshell.test.js"
+      "test/scenes/decor/decorshell.test.js"
     ]
   }
 ]

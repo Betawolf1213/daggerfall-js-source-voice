@@ -89,7 +89,7 @@ that changes its convention fails here rather than in the field.
 ## F4 (FIXED) - the law's own collection was exported for its own test
 
 `collectHearths` shipped exported and called by nothing but
-`test/hearth1_worldfires.test.js`, while three hosts hand-wrote the test
+`test/systems/survival/hearth1_worldfires.test.js`, while three hosts hand-wrote the test
 it performs. The interior takes it now (it is the one host with a
 ready-made list to filter), and a mutant that hand-writes the filter
 again dies. The other three call `isHearthFlat` from inside a loop they

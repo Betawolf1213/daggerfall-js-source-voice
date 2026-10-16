@@ -5,7 +5,7 @@
     "old": "    const g = groups.find((c) => c.held === held && Math.hypot(c.x - q.x, c.y - q.y) <= r);   // held to its first member",
     "new": "    const g = null;   // held to its first member",
     "tests": [
-      "test/owcrowd.test.js"
+      "test/ui/travel/owcrowd.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "Math.hypot(c.x - q.x, c.y - q.y) <= r);   // held to its first member",
     "new": "Math.hypot(c.x - q.x, c.y - q.y) <= Infinity);   // held to its first member",
     "tests": [
-      "test/owcrowd.test.js"
+      "test/ui/travel/owcrowd.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "groups.find((c) => c.held === held && Math.hypot(",
     "new": "groups.find((c) => Math.hypot(",
     "tests": [
-      "test/owcrowd.test.js"
+      "test/ui/travel/owcrowd.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "const held = !!q.held, r = held ? TV_CROWD_EDGE_PX : TV_CROWD_PX;",
     "new": "const held = !!q.held, r = TV_CROWD_PX;",
     "tests": [
-      "test/owcrowd.test.js"
+      "test/ui/travel/owcrowd.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "    const x = g.held ? lead.x : Math.round(g.members.reduce((a, q) => a + q.x, 0) / n);",
     "new": "    const x = lead.x;",
     "tests": [
-      "test/owcrowd.test.js"
+      "test/ui/travel/owcrowd.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "  const isTraveller = (q) => (q.m.kind ?? '').split(' ')[0] === 'traveller';",
     "new": "  const isTraveller = (q) => ['traveller', 'party'].includes((q.m.kind ?? '').split(' ')[0]);",
     "tests": [
-      "test/owcrowd.test.js"
+      "test/ui/travel/owcrowd.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "if (!lead.held && badges < TV_BADGES_MAX) badges++;",
     "new": "if (!lead.held) badges++;",
     "tests": [
-      "test/owcrowd.test.js"
+      "test/ui/travel/owcrowd.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "  trav.sort((a, b) => near(a) - near(b) ||",
     "new": "  trav.sort((a, b) => near(b) - near(a) ||",
     "tests": [
-      "test/owcrowd.test.js"
+      "test/ui/travel/owcrowd.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "lead.m = { ...lead.m, badge: undefined };",
     "new": "lead.m.badge = undefined;",
     "tests": [
-      "test/owcrowd.test.js"
+      "test/ui/travel/owcrowd.test.js"
     ]
   },
   {
@@ -86,8 +86,8 @@
     "old": "  const kept = declutterTravellers(placed, feet ?? { x: vw / 2, y: vh / 2 });",
     "new": "  const kept = placed.slice();",
     "tests": [
-      "test/owcrowd.test.js",
-      "test/tv5_far_places.test.js"
+      "test/ui/travel/owcrowd.test.js",
+      "test/ui/travel/tv5_far_places.test.js"
     ]
   },
   {
@@ -96,7 +96,7 @@
     "old": "look === 'dest' || /\\bcrowd\\b/.test(m.kind ?? '') ? 7",
     "new": "look === 'dest' ? 7",
     "tests": [
-      "test/owcrowd.test.js"
+      "test/ui/travel/owcrowd.test.js"
     ]
   },
   {
@@ -105,7 +105,7 @@
     "old": "kind: `traveller crowd${ship ? ' ship' : ''}`",
     "new": "kind: 'traveller crowd'",
     "tests": [
-      "test/owcrowd.test.js"
+      "test/ui/travel/owcrowd.test.js"
     ]
   },
   {
@@ -114,7 +114,7 @@
     "old": "if (!lead.held && badges < TV_BADGES_MAX) badges++;",
     "new": "if (lead.held) { /* the edge's own */ } else if (badges < TV_BADGES_MAX) badges++;",
     "tests": [
-      "test/owcrowd.test.js"
+      "test/ui/travel/owcrowd.test.js"
     ]
   },
   {
@@ -123,7 +123,7 @@
     "old": "  return out.sort((a, b) => order.get(a) - order.get(b));",
     "new": "  return out;",
     "tests": [
-      "test/owcrowd.test.js"
+      "test/ui/travel/owcrowd.test.js"
     ]
   }
 ]

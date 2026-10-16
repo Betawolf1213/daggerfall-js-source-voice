@@ -176,7 +176,7 @@ per arc:
   this is now a REAL undocumented gap, the one place the rot points
   the other way). `:220-240` still presents the mirror un-mirroring as
   "a candidate slice, Mac's call" - it SHIPPED 08-23 as the handedness
-  law (`mat4.js:"THE HANDEDNESS LAW"`, `test/handedness.test.js`), and the
+  law (`mat4.js:"THE HANDEDNESS LAW"`, `test/scenes/handedness.test.js`), and the
   paragraph's mechanism account says the opposite of `mat4.js`'s.
 
 **6. Status headers that contradict Home.** `Player-Arc.md:1`
@@ -253,7 +253,7 @@ Systems-Arc slice histories from S40 onward, Talk-Arc (two low count
 drifts and one half-closed pending), the World/Player milestone
 bodies M1-M9/P1-P18, the Characters data tables (42 monster attack
 sequences, 13 casters, band constants - exact), and the ledger's
-Derived-figures gate (`test/ledger.test.js`, 4/4, doing precisely
+Derived-figures gate (`test/systems/ledger.test.js`, 4/4, doing precisely
 what it advertises).
 
 ## The recommendation

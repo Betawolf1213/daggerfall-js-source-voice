@@ -5,7 +5,7 @@
     "old": "    if (inp.manual) {\n      s.ox = inp.x; s.oz = inp.z;\n",
     "new": "    if (inp.manual) {\n",
     "tests": [
-      "test/travelnav.test.js"
+      "test/systems/travel/travelnav.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "      if (s.episode) endEpisode();\n      s.bestDist = Infinity; s.noGain = 0;\n    }\n",
     "new": "      if (s.episode) endEpisode();\n    }\n",
     "tests": [
-      "test/travelnav.test.js"
+      "test/systems/travel/travelnav.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "      s.ox = inp.x; s.oz = inp.z;\n      if (s.episode) endEpisode();\n",
     "new": "      s.ox = inp.x; s.oz = inp.z;\n",
     "tests": [
-      "test/travelnav.test.js"
+      "test/systems/travel/travelnav.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "      if (inp.manual) return go(out, inp, f.want, cw, reach);",
     "new": "      if (false) return go(out, inp, f.want, cw, reach);",
     "tests": [
-      "test/travelnav.test.js"
+      "test/systems/travel/travelnav.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "if (cw >= openWant && (!s.episode || f.along >= s.sStart || toGo <= s.goStart)) {",
     "new": "if (cw >= openWant) {",
     "tests": [
-      "test/travelnav.test.js"
+      "test/systems/travel/travelnav.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "inp.manual = !!frame.strafe;",
     "new": "inp.manual = false;",
     "tests": [
-      "test/travelnav.test.js"
+      "test/systems/travel/travelnav.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "travelNavFrame.strafe = _travelDrive && !_overlayHeld && !_seasonHeld && !paralyzed ? axes.strafe : 0;",
     "new": "travelNavFrame.strafe = 0;",
     "tests": [
-      "test/travelnav.test.js"
+      "test/systems/travel/travelnav.test.js"
     ]
   }
 ]

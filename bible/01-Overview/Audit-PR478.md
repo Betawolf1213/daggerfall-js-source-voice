@@ -7,7 +7,7 @@ naval host's harbours online, the boat menu, the plunder and the kept boats as e
 merge's integrity with the tests' honesty and the docs' truth.
 
 Every finding was re-run on its probe before it was fixed and is pinned by a test that fails on the code as the PR
-stood: `test/auditshiplife.test.js` (5), `test/auditshiplife_host.test.js` (5), and new pins in `keepplunder` (2),
+stood: `test/systems/naval/auditshiplife.test.js` (5), `test/scenes/naval/auditshiplife_host.test.js` (5), and new pins in `keepplunder` (2),
 `boatmenu` (1), `fbsea_zoom` (1) and `seatraffic_online` (its second half, made honest). Mutation-proven:
 `tools/mutants/auditshiplife.json` (11) and `tools/mutants/auditpr478.json` (21, one recorded equivalent), all dead,
 and every older record the fixes moved re-aimed and killed again. Each fix carries an `AUDIT SHIP-LIFE`,

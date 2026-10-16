@@ -10,7 +10,7 @@ from the author's own Lua, vendored whole in
 `vendor/oblivion-remaster-leveling/`. The port is
 `src/systems/oblivionLeveling.js` (the law), `src/ui/virtueLevelUp.js`
 (the level-up window) and `src/ui/levelingChoice.js` (the question a new
-character answers). Pinned by `test/orl1_leveling.test.js` (44); mutants in
+character answers). Pinned by `test/systems/orl1_leveling.test.js` (44); mutants in
 `tools/mutants/orl1.json` (72: 67 dead, 5 equivalent as recorded). Registry row: `01-Overview/Mod-Registry.md`.
 
 ---
@@ -30,7 +30,7 @@ Morrowind** - the first vendored MOD that is not a Daggerfall Unity one
    Lua member and line it restates, and a reader can check any of them
    against a file in this tree.
 2. **The registry's manifest gate does not cover this row.**
-   `test/hard4_registry.test.js` reads `*.dfmod.json` for the version
+   `test/systems/hard4_registry.test.js` reads `*.dfmod.json` for the version
    and author cells and skips a directory that has none. So the version
    cell (`0.5.3`) is an unchecked assertion in that gate - and is
    checked instead by this mod's own suite, against the author's

@@ -97,10 +97,10 @@ Three defects, not one:
 
 ## The campaign
 
-`test/nativetalk.test.js` (the portrait law over a real in-memory
+`test/systems/nativetalk.test.js` (the portrait law over a real in-memory
 FLATS.CFG, and that an unwired host silently yields the debug face),
-`test/hostdeps.test.js` (the bag contract, now member reads and the
-spread), `test/macrocoverage.test.js` (the box driven through the real
+`test/scenes/hostdeps.test.js` (the bag contract, now member reads and the
+spread), `test/systems/quest/macrocoverage.test.js` (the box driven through the real
 character sheet; the rating word per attribute; the thresholds by
 behaviour). `tools/mutants/portrait1.json` 6 dead,
 `tools/mutants/attrmacro1.json` 9 dead.

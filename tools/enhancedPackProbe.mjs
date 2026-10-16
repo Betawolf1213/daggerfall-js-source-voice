@@ -1,7 +1,7 @@
 // U53 - THE ENHANCED PACK AND ITS SLOT MAP, in a real browser.
 //
 // Most of this screen's law runs headless and is pinned there
-// (test/enhancedInventory.test.js actually wears things and reads the
+// (test/ui/enhanced/enhancedInventory.test.js actually wears things and reads the
 // map). What only a browser can answer is whether the SCHEMATIC works
 // as an interface: are twenty-five nodes laid out without collisions
 // at a real size, does a filled node read differently from an empty

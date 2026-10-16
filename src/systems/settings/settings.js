@@ -343,7 +343,7 @@ export function tierOf(key) {
 // invisible on stock settings: "all mods should be on by default".
 //
 // `DEFAULTS` is GENERATED from DFU's shipped defaults.ini and is pinned
-// against it (test/settings.test.js), so a departure cannot be spelled
+// against it (test/systems/settings.test.js), so a departure cannot be spelled
 // there - editing the generated table would make the port lie about
 // what DFU ships. It is laid OVER it instead, here, where the list of
 // departures is short enough to read and each one carries its reason.

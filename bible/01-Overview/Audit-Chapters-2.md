@@ -20,7 +20,7 @@ none edited the tree while any of them was reading (Home.md, DO NOT FIX WHILE TH
   and the fakes against the service's real answers.
 
 Every finding was re-read here before a line moved; where lenses found one fault the IDs are joined (C2 = D1). Each fix
-carries an `AUDIT CHAP2 <ID>` comment and a pin in `test/audit_chap2.test.js` (34), and is mutated in
+carries an `AUDIT CHAP2 <ID>` comment and a pin in `test/net/audit_chap2.test.js` (34), and is mutated in
 `tools/mutants/audit_chap2.json` - the fixes' own mutants and the pins lens's 122, re-aimed by content where the fixes
 moved their lines, and one for Mac's decision: **166 records, 157 dead, 9 equivalent as recorded** (each with its
 reason; 158 and 8 since AUDIT CHAP4, which killed one). The first run judged a few records dead that a flaky pin had failed - the audit's own end-to-end pin waited two
@@ -93,7 +93,7 @@ shipped, so migration `0089` (today's `0099_npc_halls` - AUDIT CHAP5 R8) grew in
 | R24 | note | Section 3.3 credited a serpent's receipt; law 8 said every table is `npc_*`. | Said. |
 | D5 | note | A probation and an expulsion listed as reputation losses (they move none); 3.4 said the Roll records the rank as reported (it bounds it); "Temple of Zenithar" called DFU's caption. | Said truly; the temple's name is the port's label. |
 
-**The pins** - `test/audit_chap2.test.js`, and the arc's own files where a pin was weak
+**The pins** - `test/net/audit_chap2.test.js`, and the arc's own files where a pin was weak
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
@@ -101,14 +101,14 @@ shipped, so migration `0089` (today's `0099_npc_halls` - AUDIT CHAP5 R8) grew in
 | T2 | high | No test had a rank-0 member - every fresh join. | Pinned. |
 | T3 | high | No test read a claim answer's `seq` - one behind, the kept adoption dropped everything. | Pinned against the head (now `kseq`). |
 | T4 | med-high | The seeded base passed either way: `values0` was the same object. And the chap1 fake door answered no `seq`, `from` or `seeded`, and wrote a null book over the Roll's. | The case pinned; the fake shaped as the service answers (PIN MOVED). |
-| T5-T25 | med to low | The Thieves Guild's half of the hidden rule; a seed with no book; the host's wiring (the kept record, the character, the doors' storage); the witness door end to end; the region subquery; the board's posting against the law's draw and its count at 201 active; the read's edges; the stop list (8 of 10 unpinned); the head's guards on a delivery; the heads' key; the fallback's count; the halls' hour; the sort; the filled arm; the shapes' edges; the order names; the dice; the book's key, bound, order and shape; the hall card in a DOM; refresh before the first read. | Each pinned in `test/audit_chap2.test.js`; the wiring and hall-book pins of `test/chap2_halls.test.js` tightened (PIN MOVED). |
+| T5-T25 | med to low | The Thieves Guild's half of the hidden rule; a seed with no book; the host's wiring (the kept record, the character, the doors' storage); the witness door end to end; the region subquery; the board's posting against the law's draw and its count at 201 active; the read's edges; the stop list (8 of 10 unpinned); the head's guards on a delivery; the heads' key; the fallback's count; the halls' hour; the sort; the filled arm; the shapes' edges; the order names; the dice; the book's key, bound, order and shape; the hall card in a DOM; refresh before the first read. | Each pinned in `test/net/audit_chap2.test.js`; the wiring and hall-book pins of `test/net/chap2_halls.test.js` tightened (PIN MOVED). |
 
 ## Recorded
 
 - **E6 - DECIDED (Mac: "You can decide whatever is best", 2026-10-08).** A rank-8 or rank-9 member crossing through
   customs kept its 80 or 90 (AUDIT CHAP D1) - the reputation half of CHAP4's Eligible, which CALL 3 says an offline
   grind cannot buy. Built as the record recommended: such a crossing keeps 79 (`rollRankKeepOf`), recorded at rank 7 and
-  reviewed to it, as 3.5 does to everyone at CHAP4 (pins moved in `test/audit_chap1.test.js`;
+  reviewed to it, as 3.5 does to everyone at CHAP4 (pins moved in `test/net/audit_chap1.test.js`;
   `AUDIT-CHAP2-E6-HELD-AT-79`).
 - **E4 - DECIDED for CHAP3 (Mac: "You can decide whatever is best").** Hall writs are first come, first served,
   deliverable from anywhere: once they are Merit, the seats would be a race at 00:00 UTC. CHAP3's Merit writs are each

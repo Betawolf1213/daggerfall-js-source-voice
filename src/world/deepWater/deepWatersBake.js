@@ -259,7 +259,7 @@ export function settleRange(lo, hi) {
 // term is paid only by a sample the first two terms cannot settle,
 // added in the kernel's own order - so a sample that decides anything
 // is the streamed terrain's sample, bit for bit (pinned against
-// generateSamples in test/dwa_bake.test.js).
+// generateSamples in test/world/deepWater/dwa_bake.test.js).
 // ---------------------------------------------------------------------
 
 /**

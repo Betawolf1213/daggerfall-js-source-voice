@@ -266,7 +266,7 @@ Slices, each behind its own `features.js` row:
 
 1. **BLOOD1a - the decal pool.** SHIPPED (`src/combat/blood/bloodDecals.js`,
    `src/combat/blood/bloodMarks.js`, `src/combat/blood/bloodSwitch.js`,
-   `test/blood1_decals.test.js`, `tools/mutants/blood1.json` 32/32 dead).
+   `test/combat/blood1_decals.test.js`, `tools/mutants/blood1.json` 32/32 dead).
    A fixed ring of oriented quads laid on the surface a hit or a
    particle met, recycled oldest-first, offset with the floating
    origin, cleared on a mode change; the rate ladder drives the count.
@@ -808,7 +808,7 @@ Slices, each behind its own `features.js` row:
      It decoded the PRODUCT of texel and tint; each on its own now.
      `drawDecals` reaches `.subarray` with drawTerrain's own guard.
 
-   Pins: 48 in test/blood1_decals.test.js (eight new, the rest re-aimed
+   Pins: 48 in test/combat/blood1_decals.test.js (eight new, the rest re-aimed
    where a law changed), the lane's set in test/el1_enhancedlighting
    .test.js. Mutants: tools/mutants/blood1.json is 161 now - 160 dead, 1 equivalent as recorded (twenty-nine of them this audit's, each one a finding above put back); the W4, W5 and W6 campaigns re-run beside it, 27 dead, 1 equivalent, with the four whose anchors this audit moved re-spelled.
 

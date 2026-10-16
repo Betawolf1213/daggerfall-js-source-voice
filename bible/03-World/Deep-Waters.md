@@ -34,7 +34,7 @@ builds the same planes on the player's machine from the player's own files,
 by the rules the file proves (the threshold, the fine any-of-3x3 mask with
 rows from the north, the coarse strict majority, the flood from the map's
 border, octile distances capped at 255), and caches them in IndexedDB. With
-the mod's own `DistanceBakeVanilla` at hand, `test/dwa_bake.test.js`
+the mod's own `DistanceBakeVanilla` at hand, `test/world/deepWater/dwa_bake.test.js`
 compares the two cell for cell; they agree to within the Perlin departure
 (Port-Ledger A: Ken Perlin's reference noise where Unity's Mathf.PerlinNoise
 stood - the author's bake is a little wetter at the coast).
@@ -551,7 +551,7 @@ ground was right.
   archive's last record (55, the road's grass edge), and the far ground
   drew the carved sea's tiles as road art on the quad's chord, over the sea
   where the chord climbs the shore. Measured on a straight coast the port's
-  own pipeline builds (`test/farclip1.test.js`'s): 10,117 tiles clipped,
+  own pipeline builds (`test/world/terrain/farclip1.test.js`'s): 10,117 tiles clipped,
   615 stride-4 quads culled, 34 part-clipped quads standing with 277
   clipped tiles in them - 167 on the chord over the sea's top, by up to
   0.71 m - and three more under standing skirt segments.
@@ -592,7 +592,7 @@ ground was right.
   no Deep Waters host and draws its ground with the plain program;
   `scenes/worldModes.js` and `scenes/dungeonContext.js` draw no terrain.
 
-Pinned in `test/farclip1.test.js` - each pin failed on the tree before the
+Pinned in `test/world/terrain/farclip1.test.js` - each pin failed on the tree before the
 fix, for its own reason - with `tools/mutants/farclip1.json` 27, 27 dead.
 Not seen on a GPU.
 
@@ -676,37 +676,37 @@ the fish and the weed - are each player's own.
 
 ## Tests
 
-`test/dwa_bake.test.js` (the coastline), `test/dwb_world.test.js` (the
-floor, the cap, the surfaces, the host), `test/dwc_fog.test.js` (the look:
-the shaders transcribed u_xlat for u_xlat as oracles), `test/dwd_swim.test.js`
+`test/world/deepWater/dwa_bake.test.js` (the coastline), `test/world/deepWater/dwb_world.test.js` (the
+floor, the cap, the surfaces, the host), `test/render/dwc_fog.test.js` (the look:
+the shaders transcribed u_xlat for u_xlat as oracles), `test/scenes/dwd_swim.test.js`
 (the swimmer, through a real PlayerMotor over a real Collider: the forge,
 the one edge, the surfacing, the dive, the shore exit and the post phase's
 own, the grace, the suppression, the stroke, the API, the ear, the breath,
-the afloat line, the frame-spike guard), `test/dwe_runtime.test.js` (the
+the afloat line, the frame-spike guard), `test/world/deepWater/dwe_runtime.test.js` (the
 transient reset, the post-transition refresh, the gates, the tracker),
-`test/dwe_decorations.test.js` (the catalog, the seeded placement against
+`test/world/deepWater/dwe_decorations.test.js` (the catalog, the seeded placement against
 its C# line for line, the pacing through the real host, the three spawn
 paths, the edge clean, the program and the column's share),
-`test/dwe_fish.test.js` (the species and the depth weight, Unity's Slerp,
+`test/systems/item/dwe_fish.test.js` (the species and the depth weight, Unity's Slerp,
 the school, the fish's flee, cruise, clamp, distant step and probe, the
 placement, the icon's aspect, the spawner and the pulse in the mod's order,
 the items and their icons, the host, the pictures, the capsule, the world's
-wiring), `test/dwe_enemies.test.js` (the table and the rosters, the weights
+wiring), `test/scenes/dwe_enemies.test.js` (the table and the rosters, the weights
 and the boss, the column and the place, the attempts and the counts, the
 view test, the spawner, the pulse's two lanes, the treasure guards, a foe
-stood by the real exterior pool, the world's wiring), `test/dwe_loot.test.js`
+stood by the real exterior pool, the world's wiring), `test/scenes/dwe_loot.test.js`
 (the constants and the two tables against the assembly, the pulse's rolls, the
 spot, the seafloor, the wreck's depth, the cluster's spots, the rubble, the
 item kinds, ItemBuilder's three group draws as one export, the undrawn
 container, the spawner through fakes - the gate, the anchor and the clocks,
 the cap, the cells, the shore, a stray pile, a wreck, the reset - and the
-world's wiring), `test/dwf_farsea.test.js` (the far ground's skirt against
+world's wiring), `test/world/deepWater/dwf_farsea.test.js` (the far ground's skirt against
 the edge tiles under it, the clip's ends, the top's and the far arm's fog
 and the column's share run in the shaders' own GLSL, the decorations' own
 colour unfogged, the fog handed to every program that reads it; WATER1 off
-the clipped and repainted tiles), `test/dwf_audit.test.js` (the close: each
+the clipped and repainted tiles), `test/scenes/dwf_audit.test.js` (the close: each
 reader's finding against the port, behaviour where the port can run it and
-the world's wiring where it cannot), `test/farclip1.test.js` (FAR-CLIP1:
+the world's wiring where it cannot), `test/world/terrain/farclip1.test.js` (FAR-CLIP1:
 the program the renderer binds for a patched pixel, both lanes', against
 the plain one at every byte and in the GLSL evaluator; its uniforms at its
 own locations; the far ground's index set over a coast the port's own

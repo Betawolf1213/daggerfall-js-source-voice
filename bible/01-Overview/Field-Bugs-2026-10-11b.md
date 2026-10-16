@@ -36,7 +36,7 @@ fire did not. The two slices were each right alone and met when #749 merged.
 Now the fire says it is nobody (`body: false`), the sprite keeps the word (`b.body`), and drawBodies stands no body for
 it: the flame draws as it does with the Morrowind bodies off. The fallen beside it still lie dead. THE FOUR HOSTS: the
 roads' layer is world.js's alone (the streaming host); exterior.js, worldModes.js and dungeonContext.js stand no road.
-Pinned by `test/fb1011b_campfire.test.js` (2, on the real roads' layer's own fire through the real sprites over a
+Pinned by `test/systems/livingWorld/fb1011b_campfire.test.js` (2, on the real roads' layer's own fire through the real sprites over a
 recording lane); `tools/mutants/fb1011b.json`.
 
 ## CART-SLOT: the Cart cell is the wagon driven (2)
@@ -51,7 +51,7 @@ asks. The Mount cell is unmoved.
 Two other readings were checked and are not this. The living world's merchant parties draw the Small Cart by design
 (`world/road/roadTeams.js` ROAD_WAGON_KIND, Living-World-II.md section 3.3). A peer's parked Caravan comes back as the Small
 Cart from a relay older than world187 (Wagons.md). The reporter can be asked which wagon it was, but the cell was wrong
-either way. Pinned by `test/fb1011b_cartslot.test.js` (3); `tools/mutants/fb1011b.json`.
+either way. Pinned by `test/systems/fb1011b_cartslot.test.js` (3); `tools/mutants/fb1011b.json`.
 
 ## OFFER-ID: an offered piece carries its id from the offer (3)
 
@@ -64,14 +64,14 @@ traded." It was reproduced on the real account Worker. Now the offer stamps the 
 checkpoint would give them, and a piece that already has one keeps it. The stamp is handed to the pack by the host
 (world.js passes `stampItemIds`) rather than imported: itemIds.js reads the item law, and importing the law installs it
 into the wire's clamp for every reader of tradePack.js - CI's first run of this branch found it, when a Soulbound pin's
-own fixture stopped passing the clamp (`test/soulbound_break_once.test.js`).
+own fixture stopped passing the clamp (`test/systems/soulbound_break_once.test.js`).
 
 The report itself - a piece identified by its new holder coming back unknown - still does not reproduce. TRADE-KNOWN
 (`01-Overview/Field-Bugs-2026-10-01.md`) pinned the round trip hand to hand and through the realm, and both pins pass
 here with the mods on and with ids stamped. The one way left is the one TRADE-KNOWN named: identifying a piece is not a
 realm act. It rides the identifier's next checkpoint, so a tab that joins again before one lands plays the older record.
 The reporter is owed the same two questions: did the trade window show the known name, and is the piece known after a
-relog? Pinned by `test/fb1011b_offerid.test.js` (3, the realm round through the real Worker, and the host's hand-off by
+relog? Pinned by `test/systems/fb1011b_offerid.test.js` (3, the realm round through the real Worker, and the host's hand-off by
 source); realm0's pin on the host's pack line moved (PIN MOVED) and its record re-aimed by content;
 `tools/mutants/fb1011b.json`.
 
@@ -91,7 +91,7 @@ with is replayed through the fall, and the spell makes every drop of more than a
 at a walk, the body glides to the far wall and SLOW-PRESS (FIELD BUGS 2026-10-01) holds it there. Giving the glide air
 control is a larger departure, and it rewrites four of fb1001_slowaudit's pins. It was offered to the owner, who chose
 the jump alone. THE FOUR HOSTS: the motor is every host's. A departure, Port-Ledger A. Pinned by
-`test/fb1011b_jumpslow.test.js` (3); `tools/mutants/fb1011b.json` (and AUDITCLIMB1-F7's record re-aimed by content: the
+`test/player/fb1011b_jumpslow.test.js` (3); `tools/mutants/fb1011b.json` (and AUDITCLIMB1-F7's record re-aimed by content: the
 gate's line lost its slowfall clause).
 
 ## LEGEND-HELD: a Legendary goes on at the condition it had (7)
@@ -104,7 +104,7 @@ leather Buckler (512 condition, 1.00 kg, the card's "+1") its bill was about a t
 Legendary's equip bills nothing. That holds for every piece already minted, because the law reads the piece's tier, not
 its record. Its wear while worn (DFU's MagicRound arm) is unmoved, and every other held piece keeps the bill. THE FOUR
 HOSTS: the equip table's door. A departure, Port-Ledger A (HELD-REWEAR's row narrowed beside it). Pinned by
-`test/fb1011b_legendheld.test.js` (2, the ladder's own Aegis on a Buckler); `tools/mutants/fb1011b.json`.
+`test/systems/fb1011b_legendheld.test.js` (2, the ladder's own Aegis on a Buckler); `tools/mutants/fb1011b.json`.
 
 ## HOME-LINE: the ground between two houses split down its middle (10)
 
@@ -118,7 +118,7 @@ ground than the house's own. A tie goes to the house. A piece that meets another
 wherever its points stand. The marked edge is still the lot's rectangle: the bar's word ("That is another building's
 ground.") is where the line shows. THE FOUR HOSTS: the yards' law is world.js's (the streaming host, yardHost);
 exterior.js stands no yard (FB1001), and worldModes.js and dungeonContext.js have none outdoors. Not a departure from DFU
-(the yards are the port's, HOME-YARD). Pinned by `test/fb1011b_homeline.test.js` (3); three pins moved by intent
+(the yards are the port's, HOME-YARD). Pinned by `test/scenes/fb1011b_homeline.test.js` (3); three pins moved by intent
 (`fb1009_yardfoot` twice, `fb1001_yard` once, each a PIN MOVED note); `tools/mutants/fb1011b.json`, and the two neighbour
 records (YARD-CORNER's and HOME-YARD's) now name this file too.
 
@@ -140,7 +140,7 @@ it). So a fall, a spell, a poison's round, a trap and a world boss's strike are 
 a duel's blow (`spare`) or on a SetHealth(0) door, as for every set power. BAL2 and BAL4 are unmoved: the owner chose
 the guard over reverting BAL2's crit. THE FOUR HOSTS: the one damage door every host's foes reach (world.js's foes,
 guards and arrows; exterior.js's the same; worldModes.js's interior foes, guards and arrows; dungeonContext.js's melee
-and arrows) - no host seam. A departure, Port-Ledger A. Pinned by `test/fb1011b_fullguard.test.js` (3, on the real
+and arrows) - no host seam. A departure, Port-Ledger A. Pinned by `test/systems/sigil/fb1011b_fullguard.test.js` (3, on the real
 attack formula's tail, the real door and Malacath's real Unbroken); six pins moved by intent, each a PIN MOVED note: a
 killing blow that was dealt from full now starts a point short of it (`revenant`, `revenant_card`, `sd9d_numidium`
 four times); `tools/mutants/fb1011b.json`.
@@ -163,7 +163,7 @@ not reputation - Blunt with commoners, Polite with nobles and scholars.
 **The crafting count (8).** The screenshot's numbers are the old station count's exactly. `book.held` read the Stores
 and only the units the account service counted out, so looted, bought or traded Copper read 0 and Silver read the
 service's 47. BAG-CRAFT (FIELD BUGS 2026-10-09d, merged 2026-10-09) made every station read `book.workable` - the Stores
-and everything the bag, the pack and the wagon hold - and `test/fb1009d_bagcraft.test.js` pins it. The likeliest reading
+and everything the bag, the pack and the wagon hold - and `test/systems/fb1009d_bagcraft.test.js` pins it. The likeliest reading
 is a client from before it, so the reporter can be asked for their update number. What main still does not count is a
 house chest: `materialsBag.js` heldOf reads the pack, the bag and the wagon. Counting the house's storage at a home
 station is a feature for the owner to ask for.

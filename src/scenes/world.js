@@ -2412,7 +2412,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // build asks spawnedDungeonAt of the player's own pixel, and in the zone that is a hall's stand - its day, its free
   // ground, its picks, its templates. Declared with the rest of PVPDUNGEONS, fifteen thousand lines below the build,
   // every one was in its dead zone on an online boot in the zone, and the builder's try swallowed the ReferenceError: no
-  // hall on a first pixel that has one (test/bootorder.test.js). The picks and the stand take the zone's mask from their
+  // hall on a first pixel that has one (test/scenes/bootorder.test.js). The picks and the stand take the zone's mask from their
   // caller - the builder hands them the one it just read off the maps (online off `params`, its own gate: the session's
   // handles are declared far below too), play's callers the session's (wildActiveNow and wildHallStand, PVPDUNGEONS).
   let _wdunSkew = 0;   // the hub's clock less mine, off its `st` (wdunWord)
@@ -13967,7 +13967,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   /** U53's ONE-BUILDER LAW, held: the three host-owned use hooks live
    *  HERE, once, and both readers take them - the inventory builder
    *  below and UI1's use-magic-item pick. UI1's first cut copied the
-   *  bag and test/potions.test.js caught it (two drink hooks where the
+   *  bag and test/systems/potions.test.js caught it (two drink hooks where the
    *  law says one). */
   const useHooks = {
     // U44: RecordLocationFromMap's reveal. DFU's own note key for the
@@ -18660,7 +18660,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // FS1: the arc this used to defer to is U43, and U43 shipped -
     // worldModes' interior arm routes the whole ui/input.js table over
     // interiorKeyCtx, so F5/F6/L/N/R open the same windows through a
-    // shop door as outside it (test/modalkeys.test.js red-proofs the
+    // shop door as outside it (test/systems/modalkeys.test.js red-proofs the
     // one gate that still stands, a typed name over the bindings).
     swallowBrowserKey(e);   // U47: F5/F6/F11 - one list, in ui/input.js
     // DISC25-E: A TYPED FIELD'S KEY JOINS NO RING AND TAKES NO RUNG - dungeon.js's KB1 gate, which this host never
@@ -18968,7 +18968,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // (`await loadQuestPack()`) threw
   //     TypeError: can't access property "pointerdown", it is undefined
   // and took the whole scene down. Reported from the deployed build.
-  // test/audit24_wave37.test.js holds both halves of the cure: `modes?.`
+  // test/scenes/audit24_wave37.test.js holds both halves of the cure: `modes?.`
   // on every reference above the declaration, and `var` at it.
   canvas.addEventListener('pointerdown', (e) => {
     if (townTalk.pointerdown(e)) return;
@@ -23737,7 +23737,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // checkpoint, which read the online half: `online`, `seatOut`, the duel manager, all declared above this line. They
   // were registered some 3,400 lines higher, and between the two the boot awaits the quest pack and the first pixel's
   // people - a window put away while it waited read `online` in its dead zone. Here every binding they reach exists
-  // before any of them can run (test/fb0929h_boothide.test.js walks it).
+  // before any of them can run (test/scenes/fb0929h_boothide.test.js walks it).
   addEventListener('beforeunload', exitAutosave);
   saveSoon.ready(() => onlineCheckpoint());   // PROF-SAVE: the professions' changes saved by the same checkpoint, from here on
   if (realmSession) {
@@ -24647,7 +24647,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const until = Date.now() + UNSTUCK_WAIT_MS;
     let el = null;
     if (typeof document !== 'undefined') {
-      el = document.createElement('div');   // z 30: the HUD's own tier (the gate banner's, the pace box's) - under every window, and under the asset picker (test/mwattach.test.js), never 9999
+      el = document.createElement('div');   // z 30: the HUD's own tier (the gate banner's, the pace box's) - under every window, and under the asset picker (test/scenes/mwattach.test.js), never 9999
       el.style.cssText = 'position:fixed;left:50%;top:84px;transform:translateX(-50%);z-index:30;min-width:260px;padding:8px 12px;background:rgba(10,13,17,0.92);border:1px solid #8f2216;color:#e9e4d9;font:600 13px Georgia,serif;text-align:center;pointer-events:auto';
       const label = document.createElement('div'); label.className = 'unstuck-label';
       const track = document.createElement('div'); track.style.cssText = 'height:6px;margin:6px 0;background:#2a1c12';
@@ -26700,7 +26700,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     return true;
   }
   // SHIPYARDS x PERF-V8: THE PORT'S PER-FRAME WORK, AS THE HOST'S OWN FUNCTIONS - never inline in `frame` and never a
-  // closure made each frame: the frame's bytecode stays under three quarters of V8's ceiling (test/perfv8.test.js; a
+  // closure made each frame: the frame's bytecode stays under three quarters of V8's ceiling (test/scenes/perfv8.test.js; a
   // loop, a try or a spread inline added registers past r123, where every operand goes wide). Each is called once a frame
   // where its statement stood.
   /** The pool stood where its towns are built (the frame's, and a load's at once). */
@@ -30283,7 +30283,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // this binding and are live before it is assigned, so it must exist
   // and read undefined rather than throw a TDZ ReferenceError. Every
   // reference BEFORE this line must therefore be `modes?.` - which is
-  // what test/audit24_wave37.test.js asserts, both ways.
+  // what test/scenes/audit24_wave37.test.js asserts, both ways.
   var modes = createWorldModes({
     climbFeel,   // CLIMB4: the one body's climb camera - the modal frames take it after their own motor step
     outsideView,   // RW1: the street through a building's glass (render/realWindows.js)
@@ -30944,7 +30944,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // separators and timers as one on the road.
     pauseQuestMessages: () => questBridge?.machine.getAllQuestLogMessages() ?? [],
     // MAC-K2: the FOURTH copy of the walk, and the one the derived pin
-    // in test/questbridge.test.js caught - exterior.js's comment had
+    // in test/systems/quest/questbridge.test.js caught - exterior.js's comment had
     // said "world.js keeps two copies of this walk" and it was right.
     pauseQuestLog: () => questBridge?.questLog() ?? { active: [], finished: [] },
     repairQuests: () => questBridge?.repair?.() ?? null,   // QREPAIR: the interior pause's Settings row, off this host's bridge
@@ -34490,7 +34490,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
               // QL-FRAME1 (the soft-lock report): the quick-loot take below ended in `return`, and this arm runs INSIDE
               // frame() - the return left before requestAnimationFrame(frame) at its foot, so a take or its refusal ("You
               // cannot carry any more stuff.") stopped the game loop: no look, no walk, no foes. A handled press opens no
-              // window and the frame runs on (worldModes' own negated take). test/ql_frame.test.js holds every return.
+              // window and the frame runs on (worldModes' own negated take). test/scenes/ql_frame.test.js holds every return.
               if (pile?.wildBody) openWildBody(pile);   // WILD1: a body I felled in the open zone - choose one of its worn pieces
               else if (pile || _fish) {
                 const _hooks = _fish ? dwFishLootHooks(_fish) : droppedLootHooks(pile);

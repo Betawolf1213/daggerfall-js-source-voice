@@ -13,7 +13,7 @@ own history produced. So this audit does the thing neither the suites
 nor AUDIT 55 could: it reads the arc against the PRODUCTION BUILD and
 against today's host lifecycle, and it measures the costs the arc's
 notes describe in words. Nine sweeps. Four findings, all fixed here,
-each pinned in `test/audit59_enhancedai.test.js`. Two flags recorded
+each pinned in `test/ai/audit59_enhancedai.test.js`. Two flags recorded
 with numbers, not fixed. Nothing here ran in a real dungeon: the
 container has no ARENA2, so the sweeps are reads, node runs on
 synthetic levels, and one look at `dist/` after `vite build`.

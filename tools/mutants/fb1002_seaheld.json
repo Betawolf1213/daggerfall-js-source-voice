@@ -5,7 +5,7 @@
     "old": "    } else if (IsBeached(boat) && deps.playerTerrain() != null) {",
     "new": "    } else if (false) {",
     "tests": [
-      "test/fb1002_seaheld.test.js"
+      "test/world/terrain/fb1002_seaheld.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "    } else if (IsBeached(boat) && deps.playerTerrain() != null) {",
     "new": "    } else if (IsBeached(boat)) {",
     "tests": [
-      "test/fb1002_seaheld.test.js"
+      "test/world/terrain/fb1002_seaheld.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "      if (!IsBeached(boat)) CheckCollision(boat);",
     "new": "      void CheckCollision;",
     "tests": [
-      "test/fb1002_seaheld.test.js"
+      "test/world/terrain/fb1002_seaheld.test.js"
     ]
   }
 ]

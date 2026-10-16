@@ -18,7 +18,7 @@ repo) and every string literal in `src/` through the reader, and named each list
 Twenty-five distinct findings: twelve on the board (B), nine on the docs and pins (D), four more on the filter (T2-T5;
 T1 is D1); the profile's lens found nothing beyond D8. Every one was read again here before any line changed. Twenty-
 three are fixed, one is decided and left (B8), and two were design calls, which Mac made (below). Each fix carries an `AUDIT
-657 <ID>` comment. They are pinned in `test/audit657_board.test.js` (10) and `test/audit657_filter.test.js` (7), and
+657 <ID>` comment. They are pinned in `test/ui/audit657_board.test.js` (10) and `test/net/audit657_filter.test.js` (7), and
 mutated in `tools/mutants/audit657.json`: **24 mutants, 24 dead.** A pin a fix moved says `PIN MOVED` where it stands.
 
 ## Mac's calls
@@ -106,7 +106,7 @@ Each was put to Mac with its options and the trade-off. Mac's answer is the law:
 ## The versions
 
 The relay's `world175` and the account service's `acct90` are TEXT-F1's and are not deployed, so the filter's fixes
-ship under them: `world175` is re-hashed in place (`test/relayversion.test.js` - bytes `008c8756...` before it, the
+ship under them: `world175` is re-hashed in place (`test/net/relayversion.test.js` - bytes `008c8756...` before it, the
 LAW's own precedent for an undeployed row), and `acct90`'s comment names them. No pin moved for a version.
 
 ## The mutation sweep

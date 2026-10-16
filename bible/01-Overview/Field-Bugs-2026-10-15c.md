@@ -38,7 +38,7 @@ else), and nothing took them out before the pick: two Slaughterfish on the dry f
 ENCOUNTER_TABLES 0-18 (table 19 holds the swimmers) and the outdoor hosts roll nothing while swimming.
 
 CHANGED. The pick leaves out WATER_SPECIES; a roster of swimmers alone wakes the grave's undead, as an empty one did.
-Pinned in `test/search1_searchables.test.js` (the Aquatic species of EnemyBasics are the layout's three, one home);
+Pinned in `test/systems/search1_searchables.test.js` (the Aquatic species of EnemyBasics are the layout's three, one home);
 `tools/mutants/fb1015c_slaughterbox.json` 3, all dead. Online: the search is rolled on the searcher's page and its foes
 are loose stands, so the fix holds for the room; no relay change. `06-Systems/Searchables.md`.
 
@@ -58,8 +58,8 @@ and a socket still heartbeating stands for good. AUDIT ONESEAT R3 had recorded t
 CHANGED (Mac, asked: "One body per account"). A cell's room and a world room close an account's older socket when it
 says hello again under another id (CLOSE_REPLACED, its leave sent to the room), as the gate's, the siege's and the Super
 dungeon's rooms already did. Two tabs of one account in a place are one player now - the older rule ("two players")
-reversed. Relay `world207`, its law row in `test/relayversion.test.js`; the deploy drops every player once. Pinned in
-`test/fb1015c_onebody.test.js`; five relay pins that modelled two tabs of one account in a place moved (PIN MOVED in
+reversed. Relay `world207`, its law row in `test/net/relayversion.test.js`; the deploy drops every player once. Pinned in
+`test/net/fb1015c_onebody.test.js`; five relay pins that modelled two tabs of one account in a place moved (PIN MOVED in
 each); `tools/mutants/fb1015c_onebody.json`.
 
 ## STALL-FLATS: a body stands only for a person's picture (3, 4)
@@ -76,7 +76,7 @@ heads (re-baked by MW-HEADS2) - not proven.
 
 CHANGED. `personLook` stands no body for a flat outside NPC_FLAT_ARCHIVES (`world/npcFlatArchives.js` isNpcFlat) - the
 editor's 199 with the rest, so MWNPC8b's own marker check folds into it. A quest's person keeps a body whatever FLATS.CFG
-pictures them with (`questPerson`). The StaticNPC list is DFU's still. Pinned in `test/mwnpc8b_streetdungeon.test.js` on
+pictures them with (`questPerson`). The StaticNPC list is DFU's still. Pinned in `test/scenes/mwnpc8b_streetdungeon.test.js` on
 the vendored pack's TVRNAS02 (113 StaticNPCs, 11 bodies, none for scenery); `fb1015c_stallflats.json` 2, dead;
 `mwnpc8b.json`'s MWNPC8b-marker-bodied re-aimed by content. `04-Characters/Morrowind-NPCs.md` 13b.
 
@@ -92,7 +92,7 @@ by material, not by piece: Tribunal attached, Adamantium boots stopped at adaman
 
 CHANGED. Chain's second token is iron (the NPCs' wardrobe's own stand-in, `wardrobe.js` CHAIN_PIECES), and the chain
 is walked by piece. A departure from MW-D28's recorded judgement ("instead of a wrong metal standing in"), named in
-`mwItemMap.js` and `04-Characters/Morrowind-NPCs.md`. Pinned in `test/fb1015c_bareboots.test.js` (every armour Legendary
+`mwItemMap.js` and `04-Characters/Morrowind-NPCs.md`. Pinned in `test/systems/fb1015c_bareboots.test.js` (every armour Legendary
 on every base and material, through `applyRarity` and the equip door); `fb1015c_bareboots.json` 2, dead.
 
 ## LOOT-LOOSE: a looted material goes into the Stores as loose (6)
@@ -106,7 +106,7 @@ The third report of it (FIELD BUGS 2026-10-09c, 2026-10-09f, 2026-10-13e), each 
 CHANGED (Mac, asked: "Store as loose"). Put in and Put everything in take what is held past the count as loose - BAG-
 CRAFT's origin, by its `work` order: the counted first by `all`, then the rest by `work`. Loose units serve every
 crafting station and never a writ, the guild Stores or a Drakes sale, so nothing past the count reaches the economy. The
-card says "N loose". No service change. Pinned in `test/fb1009c_uncounted.test.js` (PIN MOVED: Put in had been shut);
+card says "N loose". No service change. Pinned in `test/systems/professions/fb1009c_uncounted.test.js` (PIN MOVED: Put in had been shut);
 `fb1009c_uncounted.json` 11, dead. `06-Systems/Materials-Bag.md` 4.
 
 ## QUEST-FOE-WALL: a body inside a pillar to the ceiling is freed (7)
@@ -123,7 +123,7 @@ reading (Meaner Monsters' 2.5x Dragonling sprite over a 0.35 m capsule, half the
 is DFU's too and is not changed.
 
 CHANGED. With no lid in reach, a body is lodged when every bearing meets a face's back - inside a column. Pinned in
-`test/fb1004d_cratefree.test.js` (the column, the capped pillar, beside it, a sleeve open at both ends, the free, and a
+`test/systems/quest/fb1004d_cratefree.test.js` (the column, the capped pillar, beside it, a sleeve open at both ends, the free, and a
 tall crate in a corner); `fb1004d_cratefree.json` 24, dead (two re-aimed by content, two new).
 
 ## BENCH-ARROWS: a Twig fletches two arrows, as written (8)
@@ -136,7 +136,7 @@ first, and Roleplay & Realism: Items (on by default, forced online) makes the Ar
 the bench's twenty without its plank and its ingot. The suite never registered the mod's patches.
 
 CHANGED. The Arrow's weight is the classic Arrow's (`ITEM_TEMPLATES`). The bench is untouched. Pinned in
-`test/arrowsupply.test.js` with the mod's patches registered; `arrowsupply.json` 52, dead.
+`test/systems/arrowsupply.test.js` with the mod's patches registered; `arrowsupply.json` 52, dead.
 
 ## QUEST-RESIDENCE: a home a quest names says the quest's name (9)
 
@@ -150,7 +150,7 @@ boot (the residence takes a new name - the journal says it); it cannot move one 
 the player has stood in. Not reproduced on the reporter's save.
 
 CHANGED. A home a quest still names says the quest's name first: "The Hawkley Residence (Aldric's home)". Pinned in
-`test/fb1015c_questresidence.test.js`; `fb1015c_questresidence.json` 3, dead; `home1.test.js`'s hover pin moved.
+`test/systems/online/fb1015c_questresidence.test.js`; `fb1015c_questresidence.json` 3, dead; `home1.test.js`'s hover pin moved.
 
 ## MW-AXES: the Morrowind axes cross Daggerfall's names (10)
 
@@ -165,7 +165,7 @@ CHANGED. Battle_Axe -> AxeOneHand (Morrowind's war axes), War_Axe -> AxeTwoHand 
 crosses the two names. Every row now holds the hands its weapon has, the Flail the one declared fudge. A material
 Morrowind has no two-handed axe in falls back to the type's first record (off-metal) - not measured without the
 retail data; the Wood-Axe (128) now swings two-handed on the Morrowind body, as its rule says. Pinned in
-`test/fb1015c_mwaxes.test.js`; `fb1015c_mwaxes.json` 3, dead; `fparm`, `daedric_model_shape` and `mwattackclip` pins
+`test/characters/fb1015c_mwaxes.test.js`; `fb1015c_mwaxes.json` 3, dead; `fparm`, `daedric_model_shape` and `mwattackclip` pins
 moved. `Port-Ledger.md` MW-D9's row corrected.
 
 ## BOULDER-GLINT: a boulder's glint stands on its stones (11)
@@ -178,5 +178,5 @@ the face stood 30 degrees over the stones at a metre and a half, against 8.7 for
 boulder's stones stand off the rock's box (`rockFoot`), which for a turned rock can be far from the rock as it shows.
 
 CHANGED. A boulder's lift is BOULDER_LIFT, 0.4 m - the stones' scale against a vein's 0.5 over its ore. The look still
-meets the node up to its glow's top. Pinned in `test/fb1001_mining.test.js` (NODE-AIM's lift pin moved);
+meets the node up to its glow's top. Pinned in `test/scenes/fb1001_mining.test.js` (NODE-AIM's lift pin moved);
 `fb1015c_boulderglint.json` 1, dead.

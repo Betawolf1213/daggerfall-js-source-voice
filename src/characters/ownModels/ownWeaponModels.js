@@ -81,7 +81,7 @@ export const OWN_MW_MODELS = Object.freeze({
     // purpose (see the header) and `MW_WEAPON_TYPE` lives in
     // mwFirstPerson.js, which would drag the whole Morrowind
     // first-person module into `mwItemMap.js`'s graph for one integer.
-    // test/fieldgunmw.test.js asserts it IS
+    // test/formats/morrowind/fieldgunmw.test.js asserts it IS
     // MW_WEAPON_TYPE.MarksmanCrossbow, so the number cannot drift from
     // the name it stands for.
     animateAs: 10,

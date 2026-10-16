@@ -5,7 +5,7 @@
     "old": "      if (!beast && !riding) continue;\n",
     "new": "      if (!riding) continue;\n",
     "tests": [
-      "test/prww1_werewolf.test.js"
+      "test/net/prww1_werewolf.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "{ onHorse: pose.rv | 0, lycanthropyType: beast, horse: pose.rc | 0 }",
     "new": "{ onHorse: pose.rv | 0, horse: pose.rc | 0 }",
     "tests": [
-      "test/prww1_werewolf.test.js"
+      "test/net/prww1_werewolf.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "const table = r.claw ? CLAW_TABLE : beast ? beastTable(pose) : rideTable(pose.mv | 0);",
     "new": "const table = r.claw ? CLAW_TABLE : beast && !riding ? beastTable(pose) : rideTable(pose.mv | 0);",
     "tests": [
-      "test/prww1_werewolf.test.js"
+      "test/net/prww1_werewolf.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "export const beastTable = (pose) => chooseTable({ transformed: true, riding: !!pose?.rd, stopped: !peerMoving(pose), sheathed: !pose?.wd });",
     "new": "export const beastTable = (pose) => (pose?.mv ? 'MoveLycan' : 'IdleLycan');",
     "tests": [
-      "test/prww1_werewolf.test.js"
+      "test/net/prww1_werewolf.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "    else if (r.an != null && an !== r.an && !riding && !r.claw) r.claw = { i: 0, t: 0 };\n",
     "new": "    else if (false) r.claw = { i: 0, t: 0 };\n",
     "tests": [
-      "test/prww1_werewolf.test.js"
+      "test/net/prww1_werewolf.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "    else if (r.an != null && an !== r.an && !riding && !r.claw) r.claw = { i: 0, t: 0 };\n",
     "new": "    else if (an !== r.an && !riding && !r.claw) r.claw = { i: 0, t: 0 };\n",
     "tests": [
-      "test/prww1_werewolf.test.js"
+      "test/net/prww1_werewolf.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "while (r.claw && r.claw.t >= LYCAN_TICK) { r.claw.t -= LYCAN_TICK;",
     "new": "while (r.claw && r.claw.t >= LYCAN_TICK * 2) { r.claw.t -= LYCAN_TICK * 2;",
     "tests": [
-      "test/prww1_werewolf.test.js"
+      "test/net/prww1_werewolf.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "(beast && !riding ? speedMod({ running: pose.mv === 2 && peerMoving(pose) }) : 1)",
     "new": "1",
     "tests": [
-      "test/prww1_werewolf.test.js"
+      "test/net/prww1_werewolf.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "const ft = frameTime(riding) *",
     "new": "const ft = frameTime(!beast && riding) *",
     "tests": [
-      "test/prww1_werewolf.test.js"
+      "test/net/prww1_werewolf.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "    isDrawn: (id) => !!figs.get(id)?.batch,\n",
     "new": "    isDrawn: (id) => figs.has(id),\n",
     "tests": [
-      "test/prww1_werewolf.test.js"
+      "test/net/prww1_werewolf.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "    extraBillboards: () => [...(remotePlayers?.batches() ?? []), ...(peerRiders?.batches() ?? []), ...(peerWalkers?.batches() ?? []), ...(gateCourt?.batches() ?? []), ...(sdSpoilsPool?.batches() ?? []), ...(csaOn() && !modes?.sailingCabin ? csa.batches() : []), ...((modes?.mode ?? 'exterior') === 'dungeon' ? arenaBouts.batches() : [])],",
     "new": "    extraBillboards: () => [...(remotePlayers?.batches() ?? []), ...(gateCourt?.batches() ?? []), ...(sdSpoilsPool?.batches() ?? []), ...(csaOn() && !modes?.sailingCabin ? csa.batches() : []), ...((modes?.mode ?? 'exterior') === 'dungeon' ? arenaBouts.batches() : [])],",
     "tests": [
-      "test/prww1_werewolf.test.js"
+      "test/net/prww1_werewolf.test.js"
     ],
     "note": "SD9e (PIN MOVED): the Brass Remnant's spoils stand among the billboards - re-aimed by content."
   },
@@ -105,7 +105,7 @@
     "old": "  const lookNow = () => ({ ...cfg, lycanthropyType: last.lycanthropyType, horse: last.horseLook ?? 0 });",
     "new": "  const lookNow = () => ({ ...cfg, horse: last.horseLook ?? 0 });",
     "tests": [
-      "test/prww1_werewolf.test.js"
+      "test/net/prww1_werewolf.test.js"
     ]
   },
   {
@@ -114,7 +114,7 @@
     "old": "      if (renderer && last.lycanthropyType !== preloadedForm) preload(true);",
     "new": "      if (false) preload(true);",
     "tests": [
-      "test/prww1_werewolf.test.js"
+      "test/net/prww1_werewolf.test.js"
     ]
   },
   {
@@ -123,7 +123,7 @@
     "old": "    else if (r.an != null && an !== r.an && !riding && !r.claw) r.claw = { i: 0, t: 0 };",
     "new": "    else if (r.an != null && an !== r.an && !r.claw) r.claw = { i: 0, t: 0 };",
     "tests": [
-      "test/prww1_werewolf.test.js"
+      "test/net/prww1_werewolf.test.js"
     ]
   },
   {
@@ -132,7 +132,7 @@
     "old": "    else if (r.an != null && an !== r.an && !riding && !r.claw) r.claw = { i: 0, t: 0 };",
     "new": "    else if (r.an != null && an !== r.an && !riding) r.claw = { i: 0, t: 0 };",
     "tests": [
-      "test/prww1_werewolf.test.js"
+      "test/net/prww1_werewolf.test.js"
     ]
   }
 ]

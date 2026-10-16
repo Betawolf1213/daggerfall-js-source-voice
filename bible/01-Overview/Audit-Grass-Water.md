@@ -154,6 +154,6 @@ sitting as the code it guards, by someone who knew which line was meant
 — which is exactly the reader a pin is not written for. The behavioural
 replacements are longer and duller and would have caught all three.
 
-**Pinned** in `test/grasspath.test.js` (13). Mutants
+**Pinned** in `test/world/terrain/grasspath.test.js` (13). Mutants
 `tools/mutants/grasspath.json`: 21 — 20 dead, 1 recorded equivalent, 0
 survived.

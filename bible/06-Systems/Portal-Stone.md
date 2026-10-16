@@ -165,16 +165,16 @@ the first time it is loaded.
 
 ## Pinned
 
-`test/portal1_stone.test.js` (12): the row, the counter (the boundary, the locked and the worn, the words), the use on
+`test/systems/portal1_stone.test.js` (12): the row, the counter (the boundary, the locked and the worn, the words), the use on
 every reader, the numbers and the holds and the place, the step, the wire (the producer's own record in the host's
 units), the vortex held, the pool (mine through the host's own x40 frame and a moving origin, the step forgotten, the
 holds; a peer's believed near its opener, one an opener, never longer, on my ground), the door, the pick and the
 arrival run from world.js's own source, the classic popups' row and the panels' button, and the hosts.
-`test/portal1_gift.test.js` (3): the gift's law, its mark through the save, and the hosts. `tools/mutants/portal1.json`
+`test/systems/portal1_gift.test.js` (3): the gift's law, its mark through the save, and the hosts. `tools/mutants/portal1.json`
 (92, all dead). Along the way (PORTAL1 and its audit), pins moved by content: the two mounted foes streams
-(`test/csa_together.test.js`, `test/audit0928_online.test.js`) stub `portalWord` as they stub every word on the line;
-U61's count of openers gated on the travel map's door is four (`test/heldmap.test.js`); AUDIT REALM F1's bound list
-reads the row (`test/auditrealm.test.js`); and mutant records re-aimed - `auditrealm.json`'s and `loot9.json`'s bound
+(`test/systems/csa_together.test.js`, `test/scenes/audit0928_online.test.js`) stub `portalWord` as they stub every word on the line;
+U61's count of openers gated on the travel map's door is four (`test/ui/heldmap.test.js`); AUDIT REALM F1's bound list
+reads the row (`test/systems/auditrealm.test.js`); and mutant records re-aimed - `auditrealm.json`'s and `loot9.json`'s bound
 lists, `loot9.json`'s purse and spend at the one `spendable` law, `survtiers.json`'s potion cite and
 `survtiers3.json`'s two world-seed cites and its rest-window cite (each a cite the shift moved).
 

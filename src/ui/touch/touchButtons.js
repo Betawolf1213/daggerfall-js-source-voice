@@ -113,7 +113,7 @@ export function layoutTouchCorner(actions, { mode = false, social = false, start
   return { slots, mode: modeAt, social: socialAt, extent: right - gap };
 }
 /** The widest the corner can grow - the widest choice in all three slots, the mode cycle and F: what the HUD's
- *  layout model keeps its rows clear of (test/renown4b.test.js). */
+ *  layout model keeps its rows clear of (test/ui/touch/renown4b.test.js). */
 export const TOUCH_CORNER_MAX = (() => {
   const widest = TOUCH_BUTTON_ACTIONS.reduce((a, b) => ((b.w ?? 0) > (a.w ?? 0) ? b : a));
   return layoutTouchCorner([widest, widest, widest], { mode: true, social: true }).extent;

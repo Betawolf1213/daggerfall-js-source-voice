@@ -76,11 +76,11 @@ from me, not from them: a defender leaves my world when I can no longer see him,
 record wherever that peer is looking. The crime watch's despawn has the same shape. Hiding it from every player in the
 room would need the watch's frame to carry each reader's view, which it does not.
 
-Pinned by `test/fb1012e_watchleaves.test.js` (11) - the stand-down, the walk, the held swing, out of sight, set upon,
+Pinned by `test/systems/fb1012e_watchleaves.test.js` (11) - the stand-down, the walk, the held swing, out of sight, set upon,
 the call backs, a crime, the living resident, the town watch's frame end to end, the raid's list, the one law, the host -
 and `tools/mutants/fb1012e_watchleaves.json` (25, all dead). Four older records named text this moved and were re-aimed
 by content and run again, all dead: `disc19.json` DISC19-F-dismiss-leaves-a-body (the walk-off's removal),
 `lwtalk.json` LW-TALK-hidden-no-range and -no-view (popAllowChange), `werefright.json` WERE-FRIGHT-fleers-still-target. Two older pins asserted the vanish (`dismissDefenders()` then
-`dead`) and were re-aimed to the walk-off: DISC19-F's in `test/disc19.test.js` and FB0929's in
-`test/fb0929_raidguards.test.js`. AUDIT 24's lifetime pin (`test/audit24_lifetimes.test.js`), which read the defenders'
+`dead`) and were re-aimed to the walk-off: DISC19-F's in `test/systems/disc19.test.js` and FB0929's in
+`test/scenes/fb0929_raidguards.test.js`. AUDIT 24's lifetime pin (`test/scenes/audit24_lifetimes.test.js`), which read the defenders'
 walk-away freeing its batch, now reads the walk-off's end doing so. Not seen in a browser.

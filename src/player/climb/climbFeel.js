@@ -266,7 +266,7 @@ const S = new Float32Array(16);
 export function applyClimbView(view, fx) {
   if (!fx || (!fx.pitch && !fx.roll && !fx.eye[0] && !fx.eye[1] && !fx.eye[2])) return view;
   // view * T(-eye): the translation column moves by -(R e)
-  const e = fx.eye, ex = e[0], ey = e[1], ez = e[2];   // TECH-FX: read by index - a destructure made an iterator a frame (16 B, test/techfx1.test.js)
+  const e = fx.eye, ex = e[0], ey = e[1], ez = e[2];   // TECH-FX: read by index - a destructure made an iterator a frame (16 B, test/systems/techfx1.test.js)
   view[12] -= view[0] * ex + view[4] * ey + view[8] * ez;
   view[13] -= view[1] * ex + view[5] * ey + view[9] * ez;
   view[14] -= view[2] * ex + view[6] * ey + view[10] * ez;

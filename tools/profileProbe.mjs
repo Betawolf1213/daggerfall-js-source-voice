@@ -1,7 +1,7 @@
 // INSPECT1, MEASURED (2026-09-23, kurkku: "a profile page that you can bring up when you're near them"; Mac: "a new
 // enhanced UI element for the player inspect interaction. Showing their glyph, name, title, stats and worn gear").
 //
-// test/inspect1.test.js holds the law on a fake document; this stands the REAL card (ui/profileWindow.js) over the real
+// test/ui/inspect1.test.js holds the law on a fake document; this stands the REAL card (ui/profileWindow.js) over the real
 // sheet in Chromium and reads back what a fake cannot. At a desktop's width, a narrow window's and a phone's, the WIDEST
 // card a player can be shown - a name at NAME_MAX, the longest title, every glyph, the widest numbers the wire admits,
 // and every slot the look can carry filled with the longest names the pack gives an item - must stand inside the

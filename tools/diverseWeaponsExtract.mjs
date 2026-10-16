@@ -17,7 +17,7 @@
 // duplicated name wins, as the reader's index (and DFU's importer,
 // which keys by name) has it. What the folder may hold is the mod's own
 // manifest (tools/diverseWeaponsIndex.mjs derives the door's index from
-// it; test/doctrine.test.js derives the folder's membership from it),
+// it; test/tooling/doctrine.test.js derives the folder's membership from it),
 // so a texture the manifest does not name is reported and not written.
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, unlinkSync } from 'node:fs';
 import { join, dirname } from 'node:path';

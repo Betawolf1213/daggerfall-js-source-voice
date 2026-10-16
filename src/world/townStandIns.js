@@ -403,7 +403,7 @@ export function seatNatureFlat(seat, x, z, groundY) {
 // it must, to pass HILL_PATCH_SINK under every one - still facing up, its edge still under the ground.
 
 /** HILL-SEAT: how far a model the author stood on a hill may hang over what is drawn under any point of its footprint,
- *  in metres - the bar HILL-SHAPES held a prop's foot to at its origin (test/fb1005_hills.test.js), held now under the
+ *  in metres - the bar HILL-SHAPES held a prop's foot to at its origin (test/formats/worldData/fb1005_hills.test.js), held now under the
  *  whole footprint: three times the 2 classic units (0.05 m) a town's own models stand over their ground (GroundOffset,
  *  the block's frame over the levelled terrain), the hair the pad's own top keeps under a base (HILL_PATCH_SINK). */
 export const HILL_SEAT_TOLERANCE = 0.15;

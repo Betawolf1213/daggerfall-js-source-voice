@@ -219,7 +219,7 @@ receipt - one a raid, to each account that struck a raider and stood in the town
 
 Mac: *"1. Audit this properly 2. Ensure online functionality is perfect"*. A read-only lens drove the real relay object
 (`test/fakeRoom.mjs`), the real account service over node:sqlite and the real device queue against RAID3-RAID4b's
-tree, and reproduced what it reported. Everything below is fixed and pinned (`test/auditraid.test.js`, 13 tests; 36
+tree, and reproduced what it reported. Everything below is fixed and pinned (`test/net/auditraid.test.js`, 13 tests; 36
 mutants, all dead), one relay deploy (**world123**) and one account deploy (**acct18**, migration 0017):
 
 - **R1 (high): a socket's first word decided an honest raid.** The first word to reach the town's cell made the ledger
@@ -296,7 +296,7 @@ reads every raid word against:
   places with invented ones (the account service's six a game day and the hour's bound stay beside it). An empty pin
   is a legal state: the slots alone are read.
 
-Pinned in `test/raidroll.test.js` (9 tests; `tools/mutants/raidroll.json`, 25 mutants, all dead).
+Pinned in `test/systems/raidroll.test.js` (9 tests; `tools/mutants/raidroll.json`, 25 mutants, all dead).
 
 ## AUDIT ONLINE 2 - what AUDIT ONLINE left, fixed (2026-09-28)
 
@@ -317,7 +317,7 @@ Pinned in `test/raidroll.test.js` (9 tests; `tools/mutants/raidroll.json`, 25 mu
   valid*" - blaming the reader. The maker now reads "*X's game refused the trade - nothing was traded*", and the reader
   that its game does not know something in the offer, and to reload (`net/tradeSession.js`).
 
-Pinned in `test/auditonline2.test.js` (F2, F3, F5) and `test/world6biiic.test.js` (F4); `tools/mutants/auditonline2.json`,
+Pinned in `test/net/auditonline2.test.js` (F2, F3, F5) and `test/net/world6biiic.test.js` (F4); `tools/mutants/auditonline2.json`,
 18 mutants, all dead.
 
 ## Open
@@ -351,7 +351,7 @@ Discord (lumin): "Fast traveled to a raid and got a crash" - `TypeError: Cannot 
 host's `peersNear()` answers null while no room is open (every other reader guards it); RAID2's `peersInTown` seam
 walked it, and the raid's Update asks it the first frame the player stands in a raided town - which a fast travel's
 arrival reaches while the rooms change over. Walking in never met the gap. The seam now reads no room as nobody in
-town. Pinned by `test/field_raid_ft.test.js` (red before), one mutant dead.
+town. Pinned by `test/scenes/field_raid_ft.test.js` (red before), one mutant dead.
 
 ## FB0929 - the swing no longer finds the town's defenders (2026-09-29)
 
@@ -366,7 +366,7 @@ and a defender on the look ray stops the swing short of the townsperson behind h
 wired; `scenes/exterior.js` and `scenes/worldModes.js` stand no defender and take the pool's law as it is, and
 `scenes/dungeonContext.js` has no watch. Online nothing changes on the wire: a peer's blow on my defender was already
 refused by its owner (AUDIT FINAL F12). Port-Ledger A carries the departure (DFU's ray still strikes an ally alone in
-front). Pinned by `test/fb0929_raidguards.test.js` (red before), five mutants dead.
+front). Pinned by `test/scenes/fb0929_raidguards.test.js` (red before), five mutants dead.
 
 **RAID-GUARDS (the same day, Mac: "Raids shouldnt let you damage the guards").** While a raid is on in the town, its
 defenders take none of the player's blows WHATEVER the setting. `cityGuards.playerSpares` is the one question - a
@@ -376,7 +376,7 @@ met) ask it, while the guards' damage door refuses any blow of the player's on a
 came: it lands nothing and raises no Assault. The crime watch is never spared, and with no raid on and the protection
 off the watch's pass strikes a defender as DFU's does (the DISC19-F watch against a monster). Kamer's defenders were
 passive watch-skinned Knights, re-pacified every three seconds and never a crime to strike; this is that, for the
-player's own hand. `test/fb0929_raidguards.test.js`, `tools/mutants/raidguards.json` (8, 8 dead).
+player's own hand. `test/scenes/fb0929_raidguards.test.js`, `tools/mutants/raidguards.json` (8, 8 dead).
 
 **RAID-REP (the same day, Mac: "I think it improves rep in all regions").** Checked, and it does not: GrantReputation
 raises the raided region's legal reputation, that region's People and its first knightly order, for a player who

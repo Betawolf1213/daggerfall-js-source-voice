@@ -12,7 +12,7 @@
 // textRsc.js, rscTable.js), and a change to any of them deployed nothing. Each file's relative specifiers - an import,
 // a re-export, a literal dynamic import() - in the order they are written; a file that is not JavaScript (a JSON table)
 // is a leaf, as it was. The relay's graph is the same sixty files in the same order (its hash unmoved), and both
-// Workers' graphs are what esbuild bundles from them (test/accountdeploy.test.js IMPORT-GRAPH1).
+// Workers' graphs are what esbuild bundles from them (test/server/accountdeploy.test.js IMPORT-GRAPH1).
 import { readFileSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { parse } from 'acorn';

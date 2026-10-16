@@ -81,7 +81,7 @@ NOT TOUCHED - the same table and byte read by other laws, each that law's own:
   taking a cargo.
 - CAPT-WATERS' distance from the nearest port (`navalPortPx`) reads the table's pixels.
 
-`test/fb1013c_porttowns.test.js` (6): the host's port list and port-here lifted off world.js over eight of the table's
+`test/systems/naval/fb1013c_porttowns.test.js` (6): the host's port list and port-here lifted off world.js over eight of the table's
 harbours - three towns its ports, no tomb, farm, inn, temple or graveyard; the delivery law and 300 days of a board; a
 held cargo's void, said once and in French; the world's wiring; and on the real map (ARENA2_PATH) the counts above and
 the byte's two readings. `tools/mutants/fb1013c_porttowns.json` 13/13 dead. Re-aimed by content, all dead: auditcaptsea

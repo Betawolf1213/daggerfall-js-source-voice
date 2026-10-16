@@ -55,8 +55,8 @@ fix stands M0B00Y06's and Q0C0XY02's harpies (a house, a tavern).
 A save made inside the palace before this keeps the sunk imp (the save holds
 its feet); leaving and entering again stands it anew at the marker.
 
-`test/rogueimp.test.js` (2); `tools/mutants/rogueimp.json` 4, 4 dead.
-`test/interiorfoes.test.js`'s stand pin re-aimed.
+`test/characters/enemy/rogueimp.test.js` (2); `tools/mutants/rogueimp.json` 4, 4 dead.
+`test/scenes/interiorfoes.test.js`'s stand pin re-aimed.
 
 ## DEAD-CLOCK: the journal counts down a deadline, not a leftover clock (report 2, the time)
 
@@ -76,7 +76,7 @@ The line now counts only a clock whose end can change something (`systems/quest/
 
 Open: online, the punishment's seven days are game days PLAYED. The shared clock lets no rest and no travel skip them, so it is about fourteen real hours, with the waves themselves spent after about four. Whether to shorten it online, as Guard the Guild's watch was, is Mac's call. [ANSWERED by REST8 (2026-10-03, `06-Systems/Online-Time-Arc.md` 6.3d): `_S.09_` reads as a delay, and online a delay takes the short wait - about two real minutes of play. Found still marked open by WAITS (2026-10-07, `06-Systems/Online-Waits.md`) and checked against the parsed script.]
 
-`test/deadclock.test.js` (3, the real script parsed); `tools/mutants/deadclock.json` 8, 8 dead. Re-aimed: `test/questbridge.test.js` (MAC-K2's mount takes `clockCounts`, and pins a dead clock skipped) and `test/enhancedPause.test.js` (PX22).
+`test/systems/quest/deadclock.test.js` (3, the real script parsed); `tools/mutants/deadclock.json` 8, 8 dead. Re-aimed: `test/systems/quest/questbridge.test.js` (MAC-K2's mount takes `clockCounts`, and pins a dead clock skipped) and `test/ui/enhanced/enhancedPause.test.js` (PX22).
 
 ## ENCHANT-LOAD: a load keeps what a worn item's enchantments give (report 4)
 
@@ -90,7 +90,7 @@ Two more of the load's losses, found on the way and fixed with it:
 - **Only an item's last Cast-When-Held power stood.** `assignHeldSpell` stripped every pin of the item before casting, once per ROW, so each power took the one before it off, on equip, reroll and load alike. DFU's AssignBundle strips nothing, and RerollItemEffects strips once per item before every row recasts. The port does the same now: the strip is the reroll's and the restore's, once per item.
 - **The reroll clock.** `timeEffectsLastRerolled` is saved with the item, and DFU's load keeps it. The restore's recast stamped the host clock instead, read before the load sets the world's, so loading an earlier save held the six-hour reroll back by however long had been played since.
 
-`test/enchantload.test.js` (5); `tools/mutants/enchantload.json` 10, 10 dead. Two SURVTIERS3 cite mutants re-aimed at the lines the cites moved to.
+`test/systems/enchantload.test.js` (5); `tools/mutants/enchantload.json` 10, 10 dead. Two SURVTIERS3 cite mutants re-aimed at the lines the cites moved to.
 
 ## NATURE-GROUND: a location's trees and bushes stand on the ground (report 1)
 
@@ -100,7 +100,7 @@ A nature flat of the block now stands on the DRAWN ground: the same surface the 
 
 Not this: World of Daggerfall's ruins place some flats above the ground by the mod's own data (124 of 203 visible flats are authored with a height). Those stand where the mod puts them.
 
-`test/natureground.test.js` (2); `tools/mutants/natureground.json` 6, 6 dead. Two SURVTIERS3 cite mutants re-aimed at the lines the cites moved to.
+`test/world/terrain/natureground.test.js` (2); `tools/mutants/natureground.json` 6, 6 dead. Two SURVTIERS3 cite mutants re-aimed at the lines the cites moved to.
 
 ## SQUEEZE1: a giant taller than its room stands on its floor (report 6)
 
@@ -110,7 +110,7 @@ A body taller than any stance the player takes (`RIDE_HEIGHT`, 2.6) now keeps th
 
 What this does not settle: GiantStronghold (dungeon13, B0B40Y09's "Killing a Giant") fills its level with layout giants, and only the quest's one counts ("get the one with the bear claw" - message 1011 shows on the right kill). Online, a joiner's layout foes are the host's, rebuilt when the host's record arrives. B0B40Y09 also ends silently when its clock (2.5x the travel time) runs out. Whether Ashley played online, in a party or offline, and whether the bear-claw message ever showed, is asked.
 
-`test/squeeze1.test.js` (2); `tools/mutants/squeeze1.json` 7, 7 dead.
+`test/player/squeeze1.test.js` (2); `tools/mutants/squeeze1.json` 7, 7 dead.
 
 ## GATE-KEYS: the gate's receipt pair is minted by the deploy (report 3, the gate)
 
@@ -124,7 +124,7 @@ Open: the Founder title. Its rule is a REGISTERED account (not a guest) with `re
 
 Answered (FOUNDER3, 2026-09-27, Mac: "we still need to grant everyone the founder title befire the original cut off date"): a guest created before the cutoff and registered after it counts. Founder is read off when the account first played (`created_at`), so every registered account first seen by 2026-09-25T00:00Z holds it. The instant did not move, so an account first seen on the evening of 24 September in the Americas (after 00:00Z) still does not. `06-Systems/Accounts-And-Cloud-Saves-Arc.md` FOUNDER3.
 
-`test/accountdeploy.test.js` (+1: GATE-KEYS), `test/wb5b_gate_claim.test.js` (the toml pin re-aimed: no var of the public half); `tools/mutants/gatekeys.json` 8, 8 dead.
+`test/server/accountdeploy.test.js` (+1: GATE-KEYS), `test/net/gate/wb5b_gate_claim.test.js` (the toml pin re-aimed: no var of the public half); `tools/mutants/gatekeys.json` 8, 8 dead.
 
 ## NUDE-FLATS: Show Nudity reaches the world's people (report 7)
 
@@ -136,4 +136,4 @@ The Morrowind body had the same hole. Morrowind's own female chest is bare, so a
 
 The setting is read when a scene is built: flipping it redraws the next room or area, not the one standing.
 
-`test/nudeflats.test.js` (6; the FLATS.CFG half under ARENA2_PATH); `tools/mutants/nudeflats.json` 19, 19 dead. Re-aimed: `test/rr2_realism.test.js` (the interior person's draw) and `test/fparm.test.js` (MW-D29's composition call).
+`test/formats/nudeflats.test.js` (6; the FLATS.CFG half under ARENA2_PATH); `tools/mutants/nudeflats.json` 19, 19 dead. Re-aimed: `test/systems/rr2_realism.test.js` (the interior person's draw) and `test/formats/morrowind/fparm.test.js` (MW-D29's composition call).

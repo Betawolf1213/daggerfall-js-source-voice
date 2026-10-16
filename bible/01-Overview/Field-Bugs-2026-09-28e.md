@@ -61,7 +61,7 @@ boat a deed put in the water beside a port read land, would not row, and refused
 `01-Overview/Field-Bugs-2026-09-29c.md`. CORRECTED: this page first said the classic window and a
 party's fare run the mod's guard before pricing the trip, so a fresh popup read the ocean as none. They do not - the
 popup prices itself as it is built (`TravelPopUpWindow`'s constructor ends in `refresh()`), so its guard sees the
-water; `test/disc28e_shipport.test.js` pins it through the real popup. `test/disc28e_shipport.test.js` (5).
+water; `test/systems/travel/disc28e_shipport.test.js` pins it through the real popup. `test/systems/travel/disc28e_shipport.test.js` (5).
 
 ## LEVEL-PCT: the classic Level box reads the law that levels the character (2)
 
@@ -78,7 +78,7 @@ Found beside it: the box's DFU arithmetic was a double's. DFU holds the level in
 (DaggerfallCharacterSheetWindow.cs:782), so the quotient is a single before its fraction is taken; in a double 36/15's
 fraction is 0.3999... and 39/15's 0.6000..., and the box read 39% and 60% where DFU's reads 40% and 59% - two of
 the fifteen spans a level has (the sum never falls below its start, so 28 to 42). It is a single now (`Math.fround`),
-pinned against DFU's own values for those fifteen. `test/disc28e_levelpct.test.js` (4), seven mutants.
+pinned against DFU's own values for those fifteen. `test/systems/disc28e_levelpct.test.js` (4), seven mutants.
 
 ## ASCEND-LIVE: the Ascension's stars wear what the character has (4)
 
@@ -91,7 +91,7 @@ press the law allows would show; the star wears the live value, tinted as the cl
 or below its permanent one, and the chosen star's line says it in words: "100 with its bonus - a point here shows only
 once that ends". The presses, the caps and the exit gate are unchanged. The classic skin's level-up is DFU's own
 window (DFU draws the permanent values there too) and is untouched. `10-UI/UI-Arc.md` ASCEND-LIVE;
-`test/disc28e_ascendlive.test.js` (7), twenty-eight mutants.
+`test/systems/disc28e_ascendlive.test.js` (7), twenty-eight mutants.
 
 ## THE READING: the phone's attribute rows (1)
 
@@ -135,7 +135,7 @@ takes it: a party gathered is asked first, then the fade and `fastTravelTo`. A p
 cannot afford the journey (150 gold).") and not asked; where the passage's own law refuses the place - no port here -
 the boat's line stands (with Come Sail Away off, the plain refusal). The passage is Daggerfall's, so it is offered
 whatever that mod says (AUDIT 28e: it was offered only with the mod on). The same offer answers both doors to it: a
-town clicked in the Overworld, and a place picked on the map with By land chosen. `test/disc28e_shipport.test.js` (the
+town clicked in the Overworld, and a place picked on the map with By land chosen. `test/systems/travel/disc28e_shipport.test.js` (the
 offer and the popup's pricing), twenty-three mutants.
 
 ## FPS-VSYNC: the desktop app runs past the screen, as DFU does (Mac's answer)
@@ -151,7 +151,7 @@ and, with it off, lifts both of Chromium's waits (`disable-gpu-vsync`, `disable-
 runs uncapped unless its player turns VSync off. In the app the VSync row is a real switch now, said to take effect
 the next time the app starts (the settings screen's `restart` tier); in a browser it stays unavailable. The report's
 "300 FPS but limited to 60 (possibly by vsync)" is answered in the app: turn Wait For Screen Refresh off, restart.
-`test/disc28e_vsync.test.js` (7), twenty-seven mutants. Measured in Electron under Xvfb (AUDIT 28e, below); not on a
+`test/ui/settings/disc28e_vsync.test.js` (7), twenty-seven mutants. Measured in Electron under Xvfb (AUDIT 28e, below); not on a
 real desktop GPU.
 
 ## AUDIT 28e (2026-09-29, Mac: "Please audit this")
@@ -218,7 +218,7 @@ dot of its own and no line in the tier lists; departure 20 was missing from the 
 still named the retired hint line. The pins: five source pins a comment could satisfy read CODE now
 (`test/codeOnly.mjs`); the stars' lowered tint, their screen-reader words, the colours and the folds' channel were
 unpinned (`liveTint`, `starLabel`); the ship tests' places are the retail MAPS.BSA's own. Left as practice:
-citeShift has moved the historical quotes in `test/citedrift.test.js` at every batch since at least 698c040b.
+citeShift has moved the historical quotes in `test/scenes/citedrift.test.js` at every batch since at least 698c040b.
 
 ## For Mac
 
@@ -233,8 +233,8 @@ citeShift has moved the historical quotes in `test/citedrift.test.js` at every b
 
 ## Records
 
-- Tests: `test/disc28e_levelpct.test.js` (4), `test/disc28e_ascendlive.test.js` (7), `test/disc28e_shipport.test.js`
-  (5), `test/disc28e_vsync.test.js` (7) - each red before its fix, but for pins that hold a correction or a mutant
+- Tests: `test/systems/disc28e_levelpct.test.js` (4), `test/systems/disc28e_ascendlive.test.js` (7), `test/systems/travel/disc28e_shipport.test.js`
+  (5), `test/ui/settings/disc28e_vsync.test.js` (7) - each red before its fix, but for pins that hold a correction or a mutant
   rather than a fix: the shipport popup's pricing (it held before the batch too), and ascendlive's fold and colours.
   The layout's proof is the level lane's browser probes (aimed taps, band heights, the exit), re-run after the fix;
   the pacer's, the frame lane's Electron harness.
@@ -245,4 +245,4 @@ citeShift has moved the historical quotes in `test/citedrift.test.js` at every b
 - Citations: `tools/citeShift.mjs --apply` (93 moved) and the four struck `world.js` cites CD4 reads moved by hand;
   then, over the Overworld's ship question, `--apply --struck` against that state (20 moved); the second commit
   (SHIP-SAIL, FPS-VSYNC), `--apply --struck` (24 moved); the audit's, `--apply --struck` against 71354d35.
-- Re-aimed: `test/to1_travelOptions.test.js`'s D1 pin reads the location through `travelOriginMapId`.
+- Re-aimed: `test/systems/travel/to1_travelOptions.test.js`'s D1 pin reads the location through `travelOriginMapId`.

@@ -5,7 +5,7 @@
 // with it (server-account/src/realm.js prepareRealmRecord, for a guild's
 // treasury, a founding, a home, a piece of decor); the client's wallet
 // pays the same way (systems/court.js deductGold, and the region's bank
-// account for what that leaves), pinned equal by test/realm5.test.js.
+// account for what that leaves), pinned equal by test/net/realm5.test.js.
 //
 // Mac: "eliminate duping". The plan is bible/06-Systems/Realm-Arc.md
 // section 3: "One D1 transaction debits the character and credits the
@@ -129,7 +129,7 @@ export const REALM_BIRTH_LEVEL = 1;
 export const REALM_BIRTH_WEALTH_MAX = 10_000;
 
 /** The gold-piece template (systems/inventory.js GOLD_TEMPLATE; isGoldPieces reads the group with it). Pinned equal
- *  (test/auditrealm2_service.test.js): the Worker bundles no systems/. */
+ *  (test/systems/auditrealm2_service.test.js): the Worker bundles no systems/. */
 const COINS_TEMPLATE = 276;
 const isCoins = (/** @type {any} */ it) => it?.group === 'Currency' && it?.templateIndex === COINS_TEMPLATE;
 const isLetter = (/** @type {any} */ it) => it?.templateIndex === REALM_LETTER_TEMPLATE;
@@ -205,7 +205,7 @@ export const CUSTOMS_HOUSE_PRICE = 100_000;
 /** The realm's bank's buy-back and where it files a ship's room, as the game has them - systems/banking.js DEED_SELL_MULT,
  *  SHIP_PRICES, shipSellPrice, ownedShipType, ownsShip and SHIP_INTERIOR_MAP_IDS, talkTopics.js BUILDING_KEY_0 (the
  *  no-key key both ship interiors are filed under) and sceneCache.js interiorSceneName. Pinned equal
- *  (test/auditrealm2_service.test.js): the Worker bundles no systems/. */
+ *  (test/systems/auditrealm2_service.test.js): the Worker bundles no systems/. */
 const DEED_SELL_MULT = 0.85;
 const SHIP_PRICES = Object.freeze([100000, 200000]);
 const shipSellPrice = (/** @type {number} */ ship) => Math.trunc((ship >= 0 ? SHIP_PRICES[ship] : 0) * DEED_SELL_MULT);

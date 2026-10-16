@@ -131,7 +131,7 @@ throw with no guard.
 ## Beside MW-NPC (the merge of #750, 2026-10-10)
 
 MW-NPC stands the city watch's guards in Morrowind bodies (`scenes/cityGuards.js`, MWNPC6), and its census
-(`test/mwnpc_census.test.js`) holds every source that draws a living actor's sprite to a body lane or a declared reason.
+(`test/scenes/mwnpc_census.test.js`) holds every source that draws a living actor's sprite to a body lane or a declared reason.
 The thrower keeps its sprite, DECLARED there: the ask was the wagon "on top of their sprite", the gag is the sprite
 under the wagon, and a body has no lift to stand it in - with the bodies on, the watch that patrols is in bodies and the
 one that throws is the guards' picture. Standing the thrower in a body (a carry and a throw clip) is its own work.
@@ -169,7 +169,7 @@ summon fetches it.
 
 Five cold lanes over the PR (the relay and the wire's law with its abuse; the client's law, host and save; the show, the
 pool's hold and the rendering; the records; the whole play, end to end), every finding reproduced from a real caller
-before it was fixed, each fixed in its slice, pinned (`test/warden1_audit.test.js`) and mutated
+before it was fixed, each fixed in its slice, pinned (`test/systems/wagon/warden1_audit.test.js`) and mutated
 (`tools/mutants/warden1_audit.json`, 71, all dead).
 
 **The relay and the wire.** R1 one account one team a town (above - MAJOR, one socket cleared a town). R2 the spot by
@@ -205,12 +205,12 @@ for the team either way, and the riders' stand-down is pinned where it acts.
 
 ## Tests
 
-`test/warden1.test.js` - the wire's law (the park word's landing, town and road; the verdicts; the round's due; the
+`test/systems/horse/warden1.test.js` - the wire's law (the park word's landing, town and road; the verdicts; the round's due; the
 owner's word); the relay on a fake clock (a road team thrown at the first frame past its ten minutes and told its owner,
 re-said and told again, moved and cleared; an owner away - the joiner's list, the owner told on return, the alarm left
 alone; a woken cell; no landing never thrown; the crowd at the store); the client's law (the towns, the road share, the
 landing, the stamp, its word, the offline clock, the thrown record and the save's move); the pool (a thrown kept word
 where it landed, a held team drawn nowhere, my word's fields); the runtime's adoption; the show's clock and a whole
 throw over a fake renderer; the host's stamp, offline throw, owner's throw and reader's throw; the hosts. Its mutants:
-`tools/mutants/warden1.json`. `test/warden1_audit.test.js` - AUDIT WARDEN1's pins (above); its mutants
+`tools/mutants/warden1.json`. `test/systems/wagon/warden1_audit.test.js` - AUDIT WARDEN1's pins (above); its mutants
 `tools/mutants/warden1_audit.json`.

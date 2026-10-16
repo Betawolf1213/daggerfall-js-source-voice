@@ -108,7 +108,7 @@ export const insideRocks = (rocks, x, z) => (rocks ?? []).some((b) => x > b[0] &
  * under the ground. World of Daggerfall's rock fields are hills of a few models scaled by hundreds, turned and sunk:
  * the whole mesh's box ran 90 m to over a kilometre where the rock showed a few metres, so a boulder's foot stood on its
  * edge far from any rock, or inside a neighbour's box and stood nowhere - under one boulder in ten stood on the shipped
- * layouts (a stand-in mesh: test/fb1001_rockfoot.test.js).
+ * layouts (a stand-in mesh: test/world/worldOfDaggerfall/fb1001_rockfoot.test.js).
  * @param {ArrayLike<number>} positions model-local xyz @param {ArrayLike<number>} indices triangles
  * @param {ArrayLike<number>} m the piece's column-major 4x4 @param {Float32Array} heightmapData the pixel's samples
  */

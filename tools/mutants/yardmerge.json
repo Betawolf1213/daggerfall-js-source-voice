@@ -5,7 +5,7 @@
     "old": "    local[12] -= o[0]; local[13] -= o[1]; local[14] -= o[2];\n",
     "new": "",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "    const local = Float32Array.from(e.matrix);",
     "new": "    const local = Float32Array.from(decorMergeMatrix([0, 0, 0]));",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "const RAW_KEY = keyResolver(null);",
     "new": "const RAW_KEY = (a) => `${a}_0`;",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "return !!(e.gpu && !e.door && cpu?.positions",
     "new": "return !!(!e.door && cpu?.positions",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "return !!(e.gpu && !e.door && cpu?.positions",
     "new": "return !!(e.gpu && cpu?.positions",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "&& cpu?.positions && cpu.indices && cpu.normals",
     "new": "&& cpu?.normals",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": " && cpu.normals && cpu.uvs && ",
     "new": " && cpu.uvs && ",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": " && cpu.uvs && cpu.subMeshes?.length",
     "new": " && cpu.subMeshes?.length",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": " && cpu.subMeshes?.length\n",
     "new": "\n",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "\n    && e.o[0] === o[0] && e.o[1] === o[1] && e.o[2] === o[2]);",
     "new": ");",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "    if (mergeDue && merge && merge.now() - changedAt >= DECOR_MERGE_SETTLE_MS && merge.take()) remerge();",
     "new": "    if (mergeDue && merge && merge.take()) remerge();",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": " >= DECOR_MERGE_SETTLE_MS && merge.take()) remerge();",
     "new": " >= DECOR_MERGE_SETTLE_MS) remerge();",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "      if (!e.gpu || e.merged) continue;",
     "new": "      if (!e.gpu) continue;",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "r?.drawMesh?.(merged.gpu, merged.matrix, texRemap);",
     "new": "r?.drawMesh?.(merged.gpu, merged.matrix, null);",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "n += merged.n; }",
     "new": "n += 1; }",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "const seen = cull ? cull(merged.wbox ??= transformedAabb(merged.box, merged.matrix)) : DECOR_DRAW;",
     "new": "const seen = DECOR_DRAW;",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "      else if (seen === DECOR_DRAW) { r?.drawMesh?.(merged.gpu",
     "new": "      if (seen !== DECOR_SKIP) { r?.drawMesh?.(merged.gpu",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "    if (merged) { merged.matrix = decorMergeMatrix(o); merged.wbox = null; }\n",
     "new": "",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "    if (merged) { merged.matrix = decorMergeMatrix(o); merged.wbox = null; }",
     "new": "    if (merged) { merged.matrix = decorMergeMatrix(o); }",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "old": "    if (entry.merged) unmerge();   // YARD-MERGE: a merged piece going takes the merges with it\n",
     "new": "",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -185,7 +185,7 @@
     "old": "    for (const e of standing.values()) e.merged = false;\n",
     "new": "",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -194,7 +194,7 @@
     "old": "    if (entry.gpu || entry.batch) changed();\n",
     "new": "",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -203,7 +203,7 @@
     "old": "          entry.mesh = m.cpu;   // YARD-MERGE: its triangles, for the pool's merge\n",
     "new": "",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -212,7 +212,7 @@
     "old": "          entry.mesh = m.cpu;   // YARD-MERGE: its triangles, for the pool's merge\n          changed();\n",
     "new": "          entry.mesh = m.cpu;   // YARD-MERGE: its triangles, for the pool's merge\n",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -221,7 +221,7 @@
     "old": "    if (into.length >= DECOR_MERGE_MIN && renderer?.createMesh) {",
     "new": "    if (into.length && renderer?.createMesh) {",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -230,7 +230,7 @@
     "old": "    mergeDue = false;\n    unmerge();\n",
     "new": "    mergeDue = false;\n",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -239,7 +239,7 @@
     "old": "|${b.size.w}|${b.size.h}|",
     "new": "|",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -248,7 +248,7 @@
     "old": "|${b.sway ?? 0}|${b.windfall ?? 0}`",
     "new": "`",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -257,7 +257,7 @@
     "old": "  if (!b || e.anims || e.mount || decorIsFigure(e.piece)) return null;",
     "new": "  if (!b || e.mount || decorIsFigure(e.piece)) return null;",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -266,7 +266,7 @@
     "old": "  if (!b || e.anims || e.mount || decorIsFigure(e.piece)) return null;",
     "new": "  if (!b || e.anims || decorIsFigure(e.piece)) return null;",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -275,7 +275,7 @@
     "old": "  if (!b || e.anims || e.mount || decorIsFigure(e.piece)) return null;",
     "new": "  if (!b || e.anims || e.mount) return null;",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -284,7 +284,7 @@
     "old": "  if (b._quads !== 1 || b._dyn || b._scales) return null;",
     "new": "  if (b._dyn || b._scales) return null;",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -293,7 +293,7 @@
     "old": "  if (b._quads !== 1 || b._dyn || b._scales) return null;",
     "new": "  if (b._quads !== 1 || b._scales) return null;",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -302,7 +302,7 @@
     "old": "  if (b._quads !== 1 || b._dyn || b._scales) return null;",
     "new": "  if (b._quads !== 1 || b._dyn) return null;",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -311,7 +311,7 @@
     "old": "  for (const k of FLAT_ALONE) if (b[k] != null) return null;\n",
     "new": "",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -320,7 +320,7 @@
     "old": "  if (e.o[0] !== o[0] || e.o[1] !== o[1] || e.o[2] !== o[2]) return null;\n",
     "new": "",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -329,7 +329,7 @@
     "old": "      if (members.length < 2) continue;\n",
     "new": "",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -338,7 +338,7 @@
     "old": "members.map((e) => [o[0] + e.piece.pos[0], o[1] + e.piece.pos[1], o[2] + e.piece.pos[2]])",
     "new": "members.map((e) => [e.piece.pos[0], e.piece.pos[1], e.piece.pos[2]])",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -347,7 +347,7 @@
     "old": "      if (b0.sway != null) batch.sway = b0.sway;\n",
     "new": "",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -356,7 +356,7 @@
     "old": "      if (b0.windfall != null) batch.windfall = b0.windfall;\n",
     "new": "",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -365,7 +365,7 @@
     "old": "    for (const g of flatGroups) if (g.members.some(seen)) out.push(g.batch);\n",
     "new": "",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -374,7 +374,7 @@
     "old": "      if (!e.batch || e.merged || !seen(e)) continue;",
     "new": "      if (!e.batch || !seen(e)) continue;",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -383,7 +383,7 @@
     "old": "if (g.members.some(seen)) out.push(g.batch);",
     "new": "out.push(g.batch);",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -392,7 +392,7 @@
     "old": "    if (d[0] || d[1] || d[2]) for (const g of flatGroups) {",
     "new": "    if (false) for (const g of flatGroups) {",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -401,7 +401,7 @@
     "old": "    if (d[0] || d[1] || d[2]) for (const g of flatGroups) { const b = g.batch.origin ?? [0, 0, 0]; g.batch.origin = [b[0] + d[0], b[1] + d[1], b[2] + d[2]]; }\n    mergedAt = [o[0], o[1], o[2]];\n",
     "new": "    if (d[0] || d[1] || d[2]) for (const g of flatGroups) { const b = g.batch.origin ?? [0, 0, 0]; g.batch.origin = [b[0] + d[0], b[1] + d[1], b[2] + d[2]]; }\n",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -410,7 +410,7 @@
     "old": "    for (const g of flatGroups) renderer?.destroyBillboardBatch?.(g.batch);\n",
     "new": "",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -419,7 +419,7 @@
     "old": "    if (!merged && !flatGroups.length) return;",
     "new": "    if (!merged) return;",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -428,7 +428,7 @@
     "old": "      entry.release = got.release ?? null;\n      changed();",
     "new": "      entry.release = got.release ?? null;",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -437,7 +437,7 @@
     "old": "entry.anims = anims;   // FA1: a lamp's flame moves as the room's own do\n        changed();",
     "new": "entry.anims = anims;   // FA1: a lamp's flame moves as the room's own do",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -446,7 +446,7 @@
     "old": "  const batches = () => batchesSeen([]);",
     "new": "  const batches = () => [...standing.values()].map((e) => e.batch).filter(Boolean);",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -455,7 +455,7 @@
     "old": "      mergesLeft = YARD_MERGES_A_FRAME;   // YARD-MERGE: the frame's budget\n",
     "new": "",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -464,7 +464,7 @@
     "old": "take: () => (mergesLeft > 0 ? (mergesLeft--, true) : false)",
     "new": "take: () => true",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   },
   {
@@ -473,7 +473,7 @@
     "old": "      merge,   // YARD-MERGE: a yard's models one mesh once it settles, a frame's budget at a time\n",
     "new": "",
     "tests": [
-      "test/yardmerge.test.js"
+      "test/scenes/yardmerge.test.js"
     ]
   }
 ]

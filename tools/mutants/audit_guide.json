@@ -5,8 +5,8 @@
     "old": "        if (named.has(c.name) && Number.isFinite(c.seconds)) clockSeconds",
     "new": "        if (Number.isFinite(c.seconds)) clockSeconds",
     "tests": [
-      "test/audit_guide.test.js",
-      "test/guide1_questLens.test.js"
+      "test/ui/quest/audit_guide.test.js",
+      "test/ui/quest/guide1_questLens.test.js"
     ]
   },
   {
@@ -15,7 +15,7 @@
     "old": "      const named = this._namedBy.get(r.id) ?? new Set();",
     "new": "      const named = new Set();",
     "tests": [
-      "test/guide1_questLens.test.js"
+      "test/ui/quest/guide1_questLens.test.js"
     ]
   },
   {
@@ -24,8 +24,8 @@
     "old": "            clocks.push({ name: r.symbol?.name ?? '', seconds: left });",
     "new": "            /* no clocks */",
     "tests": [
-      "test/audit_guide.test.js",
-      "test/guide1_questLens.test.js"
+      "test/ui/quest/audit_guide.test.js",
+      "test/ui/quest/guide1_questLens.test.js"
     ]
   },
   {
@@ -34,7 +34,7 @@
     "old": "      questHerald.clear();   // AUDIT GUIDE O2",
     "new": "      /* kept */   // AUDIT GUIDE O2",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -43,7 +43,7 @@
     "old": "    try {\n      const seen = lens.look(ctx.questWhere ?? {});\n      if (follow) questTracker.hear(seen);\n      if (herald) questHerald.hear(seen);\n    } catch (err) { warnNewsOnce(err); }",
     "new": "    let seen;\n    try { seen = lens.look(ctx.questWhere ?? {}); } catch (err) { warnNewsOnce(err); return; }\n    if (follow) questTracker.hear(seen);\n    if (herald) questHerald.hear(seen);",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -52,7 +52,7 @@
     "old": "  drawQuestHerald({ hidden: true });\n  drawQuestTracker({ hidden: true });",
     "new": "  drawQuestTracker({ hidden: true });",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -61,7 +61,7 @@
     "old": "  drawQuestHerald({ hidden: true });\n  drawQuestTracker({ hidden: true });",
     "new": "  drawQuestHerald({ hidden: true });",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -70,7 +70,7 @@
     "old": "const newsKey = (id, e) => (e.stepID != null ? `${id}|${e.stepID}|${e.messageID}` :",
     "new": "const newsKey = (id, e) => (e.stepID != null ? `${id}|${e.stepID}|${e.messageID}|${e.time}` :",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -79,7 +79,7 @@
     "old": "    if (!lookedLast) lens.reset();",
     "new": "    /* no baseline */",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -88,7 +88,7 @@
     "old": "      if (herald) questHerald.hear(seen);",
     "new": "      if (herald && news.heard) questHerald.hear(seen);\n      news.heard = herald;",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -97,7 +97,7 @@
     "old": "    if (questTracker.pinned != null) {",
     "new": "    if (false) {",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -106,7 +106,7 @@
     "old": "      if (!q || q.questComplete || isShelved(q)) questTracker.pinned = null;",
     "new": "      if (!q || isShelved(q)) questTracker.pinned = null;",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -115,7 +115,7 @@
     "old": "      if (followOn() && sel.id != null) meta.append(trackButton(",
     "new": "      if (followOn() && !!getPref('questTracker') && sel.id != null) meta.append(trackButton(",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -124,7 +124,7 @@
     "old": "export const followOn = () => trackerOn() || marksOn() || guidanceTier() !== 'journal';",
     "new": "export const followOn = () => trackerOn() || (marksOn() && false) || guidanceTier() !== 'journal';",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -133,8 +133,8 @@
     "old": "      if (was) this.rows.splice(at, 1);\n      this.rows.push(row);",
     "new": "      if (was) this.rows[at] = row; else this.rows.push(row);",
     "tests": [
-      "test/audit_guide.test.js",
-      "test/guide3_herald.test.js"
+      "test/ui/quest/audit_guide.test.js",
+      "test/ui/quest/guide3_herald.test.js"
     ]
   },
   {
@@ -143,7 +143,7 @@
     "old": "      for (let i = 1; i < this.rows.length; i++) if (RANK[this.rows[i].type] < RANK[this.rows[out].type]) out = i;",
     "new": "      /* the oldest */",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -152,7 +152,7 @@
     "old": "      if (Number.isFinite(s)) r.line = heraldTimeLeft(s);",
     "new": "      /* kept */",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -161,7 +161,7 @@
     "old": "    if (wasHidden) questHerald.refresh();",
     "new": "    /* not called */",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -170,7 +170,7 @@
     "old": " && !(was.type === 'urgent' && view && !underADay(view));",
     "new": ";",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -179,7 +179,7 @@
     "old": "        target: i === r.written.length - 1 ? entryTarget(e.message, where) : null,",
     "new": "        target: entryTarget(e.message, where),",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -188,7 +188,7 @@
     "old": "    const rail = questRail({ active: log.active ?? [], finished: [] },",
     "new": "    const rail = questRail({ active: log.active ?? [], finished: log.finished ?? [] },",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -197,7 +197,7 @@
     "old": "    if (!memo.has(key)) memo.set(key, placePixelOf(maps, regionName, name));\n    return memo.get(key);",
     "new": "    return placePixelOf(maps, regionName, name);",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -206,8 +206,8 @@
     "old": "canFindPlace(maps, mapDict, regionName, name, questPlacePixel), currentLocationName:",
     "new": "canFindPlace(maps, mapDict, regionName, name), currentLocationName:",
     "tests": [
-      "test/audit_guide.test.js",
-      "test/guide4_tracker.test.js"
+      "test/ui/quest/audit_guide.test.js",
+      "test/ui/quest/guide4_tracker.test.js"
     ]
   },
   {
@@ -216,7 +216,7 @@
     "old": "    if (quest.hooks) quest.hooks = Object.create(quest.hooks, { addDialog: { value: () => {} }, dialogLink: { value: () => {} } });",
     "new": "    /* loud */",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -225,7 +225,7 @@
     "old": "  Math.random = QUIET_ROLL;\n  try {",
     "new": "  try {",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -234,7 +234,7 @@
     "old": "    if (textHour !== hour) { if (textHour != null) lens.rereadText(); textHour = hour; }",
     "new": "    if (textHour !== hour) { textHour = hour; }",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -243,7 +243,7 @@
     "old": "  if (track) box.append(trackButton(document, e.uid, e.head));",
     "new": "  if (track) { const t = trackButton(document, e.uid, e.head); t.querySelector('.qtrack-pin')?.addEventListener('click', () => render()); box.append(t); }",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -252,7 +252,7 @@
     "old": "    syncTrackButtons(doc);\n",
     "new": "    void syncTrackButtons;\n",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -261,7 +261,7 @@
     "old": "  const cls = on ? 'act qtrack-pin on' : 'act qtrack-pin';",
     "new": "  if (b && on) b.setAttribute('aria-label', 'Stop tracking');\n  const cls = on ? 'act qtrack-pin on' : 'act qtrack-pin';",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -270,7 +270,7 @@
     "old": "  const words = hud != null && String(hud) === id ? (trackerOn() ? TRACKER_WORDS.onHud : TRACKER_WORDS.onCompass) : '';",
     "new": "  const words = '';",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -279,8 +279,8 @@
     "old": "const kindOf = (r) => (r.main ? `${HERALD_WORDS[r.type]} - ${MAIN_QUEST_WORD}` : HERALD_WORDS[r.type]);",
     "new": "const kindOf = (r) => HERALD_WORDS[r.type];",
     "tests": [
-      "test/audit_guide.test.js",
-      "test/guide3_herald.test.js"
+      "test/ui/quest/audit_guide.test.js",
+      "test/ui/quest/guide3_herald.test.js"
     ]
   },
   {
@@ -289,8 +289,8 @@
     "old": "      time: [v.main ? TRACKER_WORDS.main : '', ",
     "new": "      time: ['', ",
     "tests": [
-      "test/audit_guide.test.js",
-      "test/guide4_tracker.test.js"
+      "test/ui/quest/audit_guide.test.js",
+      "test/ui/quest/guide4_tracker.test.js"
     ]
   },
   {
@@ -299,7 +299,7 @@
     "old": "    if (words && voice) voice.textContent = words;",
     "new": "    /* unsaid */",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -308,8 +308,8 @@
     "old": "    if (host && frame?.silent && host.getAttribute?.('aria-hidden') !== 'true') host.setAttribute?.('aria-hidden', 'true');",
     "new": "    /* heard twice */",
     "tests": [
-      "test/audit_guide.test.js",
-      "test/guide3_herald.test.js"
+      "test/ui/quest/audit_guide.test.js",
+      "test/ui/quest/guide3_herald.test.js"
     ]
   },
   {
@@ -318,7 +318,7 @@
     "old": "        said: false,   // AUDIT GUIDE H3",
     "new": "        said: !!was,   // AUDIT GUIDE H3",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -327,7 +327,7 @@
     "old": "  const voice = liveRegion(doc);",
     "new": "  const voice = questHerald.rows.length ? liveRegion(doc) : null;",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -336,7 +336,7 @@
     "old": "  if (typeof RO === 'function') {",
     "new": "  if (false) {",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -345,7 +345,7 @@
     "old": "  if (c.last.sig !== sig) { c.last.sig = sig; c.node.style.setProperty?.('--hud-scale', scale); moved = true; }",
     "new": "  if (c.last.sig !== sig) { c.last.sig = sig; moved = true; }",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -354,7 +354,7 @@
     "old": ".qtrack.touch { top: calc(max(76px, var(--qt-clear)) + env(safe-area-inset-top, 0px)); }",
     "new": ".qtrack.touch { top: calc(76px + env(safe-area-inset-top, 0px)); }",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -363,7 +363,7 @@
     "old": ":root[data-tview-block=\"top\"] .qtrack,\nbody:has(.travelpanel-junction.show) .qtrack { visibility: hidden; }",
     "new": "body:has(.travelpanel-junction.show) .qtrack { visibility: hidden; }",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -372,7 +372,7 @@
     "old": ":root[data-tview-block=\"top\"] .qtrack,\nbody:has(.travelpanel-junction.show) .qtrack { visibility: hidden; }",
     "new": ":root[data-tview-block=\"top\"] .qtrack { visibility: hidden; }",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -381,7 +381,7 @@
     "old": "@media (max-width: 720px) { body:has(.dfchat-peek:not(:empty)) .qtrack { visibility: hidden; } }",
     "new": "",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -390,7 +390,7 @@
     "old": "  background: linear-gradient(90deg, rgba(10,12,17,0) 0%, rgba(10,12,17,0.82) 32%);\n  border-right: 3px solid",
     "new": "  background: linear-gradient(90deg, rgba(10,12,17,0) 0%, rgba(10,12,17,0.6) 32%);\n  border-right: 3px solid",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -399,7 +399,7 @@
     "old": "@media (forced-colors: active) { .qtrack { background-color: Canvas; } }",
     "new": "",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -408,7 +408,7 @@
     "old": "  max-height: calc(100dvh - 100px - var(--dfquest-h, 0px) - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); overflow: hidden;",
     "new": "  /* uncapped */",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -417,7 +417,7 @@
     "old": ".qtrack-where::before { content: '\\\\25c8'; content: '\\\\25c8' / ''; margin-right: 5px; }",
     "new": ".qtrack-where::before { content: '\\\\25c8'; margin-right: 5px; }",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -426,7 +426,7 @@
     "old": "@media (max-height: 520px) {\n  .notice.notice-toast .notice-row.herald-line { display: none; }\n}",
     "new": "",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -435,7 +435,7 @@
     "old": ", .dftouch-btn, .qtrack';",
     "new": ", .dftouch-btn';",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -444,9 +444,9 @@
     "old": "    regionName: onMap === true || here || moved || said.has(MACRO_TYPES.NameMacro4) ? (",
     "new": "    regionName: named || said.has(MACRO_TYPES.NameMacro4) ? (",
     "tests": [
-      "test/audit_guide.test.js",
-      "test/guide1_questLens.test.js",
-      "test/guide2_wayThere.test.js"
+      "test/ui/quest/audit_guide.test.js",
+      "test/ui/quest/guide1_questLens.test.js",
+      "test/ui/enhanced/guide2_wayThere.test.js"
     ]
   },
   {
@@ -455,9 +455,9 @@
     "old": "  const here = hereByName && onMap !== false;",
     "new": "  const here = hereByName;",
     "tests": [
-      "test/audit_guide.test.js",
-      "test/guide1_questLens.test.js",
-      "test/guide2_wayThere.test.js"
+      "test/ui/quest/audit_guide.test.js",
+      "test/ui/quest/guide1_questLens.test.js",
+      "test/ui/enhanced/guide2_wayThere.test.js"
     ]
   },
   {
@@ -466,7 +466,7 @@
     "old": "  if (!isEnhanced()) return null;   // AUDIT GUIDE W3",
     "new": "  /* any skin */   // AUDIT GUIDE W3",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -475,7 +475,7 @@
     "old": "    if (/^\\.[\"'\\u201d\\u2019)\\]]*$/.test(m[0]) && NOT_AN_END.test(through)) continue;",
     "new": "    /* every stop */",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -484,8 +484,8 @@
     "old": "const SENTENCE_END = /[.!?]+[\"'\\u201d\\u2019)\\]]*(?=",
     "new": "const SENTENCE_END = /[.!?]+(?=",
     "tests": [
-      "test/audit_guide.test.js",
-      "test/guide3_herald.test.js"
+      "test/ui/quest/audit_guide.test.js",
+      "test/ui/quest/guide3_herald.test.js"
     ]
   },
   {
@@ -494,7 +494,7 @@
     "old": "\\p{Lu}|$)/gu;",
     "new": "[A-Z]|$)/gu;",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -503,7 +503,7 @@
     "old": "  const head = all.findIndex((l) => l.trim());",
     "new": "  const head = 0;",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -512,7 +512,7 @@
     "old": " && said.find?.regionName === skip.regionName)) return null;",
     "new": ")) return null;",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -521,7 +521,7 @@
     "old": "    questLocationName: () => dfLocation.name ?? locationName,   // AUDIT GUIDE W6",
     "new": "    /* nothing asked */   // AUDIT GUIDE W6",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -530,8 +530,8 @@
     "old": "  showLabel: (place) => `Show on map: ${place}`,",
     "new": "  showLabel: (place) => `Show ${place} on the travel map`,",
     "tests": [
-      "test/audit_guide.test.js",
-      "test/guide2_wayThere.test.js"
+      "test/ui/quest/audit_guide.test.js",
+      "test/ui/enhanced/guide2_wayThere.test.js"
     ]
   },
   {
@@ -540,7 +540,7 @@
     "old": "    const quest = this._questAt(sx, sy);\n    const place = quest ? this._questPlace(quest) : null;\n    if (place) { this._select(place); return; }\n",
     "new": "",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -549,7 +549,7 @@
     "old": "    const summary = locationSummaryAt(this.deps.mapDict, q.px, q.py);\n    if (!summary || !this._discovered(summary)) return null;\n    return { x: q.px + 0.5, y: q.py + 0.5, colorIndex: 11, kind: 'city', name: '', summary };",
     "new": "    return null;",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -558,7 +558,7 @@
     "old": "    const place = one ? quests[0].where : m.town;",
     "new": "    const place = quests[0].where;",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -567,7 +567,7 @@
     "old": "    const quests = [...m.quests].sort((a, b) => Number(b.tracked) - Number(a.tracked));",
     "new": "    const quests = [...m.quests];",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -576,7 +576,7 @@
     "old": "    const listed = quests.length <= room ? quests : quests.slice(0, room - 1);",
     "new": "    const listed = quests;",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -585,7 +585,7 @@
     "old": "    const lineOf = (q) => fitHead(q.building ? `${q.title} (${q.building})` : q.title, left(q), QUEST_TIP_TEXT);",
     "new": "    const lineOf = (q) => (left(q) ? `${q.building ? `${q.title} (${q.building})` : q.title} - ${left(q)}` : q.title).slice(0, QUEST_TIP_TEXT);",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -594,7 +594,7 @@
     "old": "      label: titles.length ? fitHead(titles.join(' / '), place, QUEST_LABEL_MAX) : place,",
     "new": "      label: titles.length ? `${titles.join(' / ')} - ${place}`.slice(0, QUEST_LABEL_MAX) : place,",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -603,7 +603,7 @@
     "old": "      lift: this._raids.some((r) => r.px === m.px && r.py === m.py) ? QUEST_RAID_LIFT : QUEST_MARK_LIFT }));",
     "new": "      lift: QUEST_MARK_LIFT }));",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -612,7 +612,7 @@
     "old": "    const onDiamond = this._questAt(sx, sy, { diamondOnly: true });",
     "new": "    const onDiamond = this._raidAt(sx, sy) ? null : this._questAt(sx, sy, { diamondOnly: true });",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -621,7 +621,7 @@
     "old": "      for (const q of at.flatMap((x) => x.quests ?? [])) card.append(el('p', 'hmquest', q.left ? `${q.title} - ${q.left}` : q.title));",
     "new": "      /* unnamed */",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -630,8 +630,8 @@
     "old": "paintQuestDiamond(ctx, x, cy, r, 1, m.tracked ? PEN.line : null);",
     "new": "paintQuestDiamond(ctx, x, cy, r, 1, m.tracked ? QUEST_MARK_CSS : null);",
     "tests": [
-      "test/audit_guide.test.js",
-      "test/guide5_marks.test.js"
+      "test/ui/quest/audit_guide.test.js",
+      "test/ui/quest/guide5_marks.test.js"
     ]
   },
   {
@@ -640,8 +640,8 @@
     "old": "    if (this._quests.some((q) => q.tracked)) diamond(true, QUEST_FOLLOWED_TEXT);\n",
     "new": "",
     "tests": [
-      "test/audit_guide.test.js",
-      "test/guide5_marks.test.js"
+      "test/ui/quest/audit_guide.test.js",
+      "test/ui/quest/guide5_marks.test.js"
     ]
   },
   {
@@ -650,7 +650,7 @@
     "old": ".hmroot.hmcardup .hmcard { z-index: 1; }",
     "new": "",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -659,7 +659,7 @@
     "old": "  .hmlegend { flex: 1 1 auto; flex-wrap: wrap; min-width: 0; }\n",
     "new": "",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   },
   {
@@ -668,7 +668,7 @@
     "old": "import { isEnhanced } from '../../systems/uiSkin.js';",
     "new": "import './questLens.js';\nimport { isEnhanced } from '../../systems/uiSkin.js';",
     "tests": [
-      "test/audit_guide.test.js"
+      "test/ui/quest/audit_guide.test.js"
     ]
   }
 ]

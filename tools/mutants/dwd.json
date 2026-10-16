@@ -5,7 +5,7 @@
     "old": "export const worldYToBlockWaterLevel = (y) => clamp(roundHalfEven(-y / 0.025), -32768, 32767);",
     "new": "export const worldYToBlockWaterLevel = (y) => clamp(Math.round(-y / 0.025), -32768, 32767);",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "    return { swimming, waterSurfaceY: blockWaterLevelToWorldY(audio.waterLevel) };",
     "new": "    return { swimming, waterSurfaceY: forgedSwimWaterLineY(oceanY, swimming, centreOf(p)) };",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "    audio.submerged = headUnderwater(centreOf(p), oceanY);   // IsPlayerHeadUnderwater",
     "new": "    audio.submerged = false;",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "  function restore(p, now) {\n    clearAudio();",
     "new": "  function restore(p, now) {",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "    p.isPlayerSwimming = false;\n    p.swimming = false;\n    swim.forged = false;",
     "new": "    p.isPlayerSwimming = false;\n    swim.forged = false;",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "      if (!f.descend && onShoreGround(p, oceanY)) {",
     "new": "      if (false) {",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "        if (centreOf(p) > ceiling) p.pos[1] = ceiling - p.height / 2;",
     "new": "        if (centreOf(p) > ceiling + 0.2) p.pos[1] = ceiling + 0.2 - p.height / 2;",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "    if (!headClearOfSurface(centreOf(p), oceanY) || descend) return;\n    p.forcedSwimCrouch = false;",
     "new": "    if (!headClearOfSurface(centreOf(p), oceanY) || descend) return;",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "        const dy = hit.y + 1.5 - centreOf(p);",
     "new": "        const dy = hit.y + 0.5 - centreOf(p);",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "    if (!(f.input.forward > SHORE_EXIT.minForwardInput)) return false;",
     "new": "    if (false) return false;",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "|| heldUnder(p)) && !f.loadGrace && d.swimming",
     "new": "|| heldUnder(p)) && d.swimming",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "      suppressed = !!f.onBoat || evaluateSwimmingSuppression();",
     "new": "      suppressed = evaluateSwimmingSuppression();",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "      if (s.enableSwimStroke && consumeEdge(f.input.run) && f.now >= stroke.next) {",
     "new": "      if (consumeEdge(f.input.run) && s.enableSwimStroke && f.now >= stroke.next) {",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "        const cost = f.entity ? strokeFatigueCost(maxFatigue(f.entity)) : 0;",
     "new": "        const cost = strokeFatigueCost(f.entity?.maxFatigue ?? 0);",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "      if (!f.anySwimming || f.loadGrace) { p.swimSpeedScale = 1; reset(); return; }",
     "new": "      if (!f.anySwimming) { p.swimSpeedScale = 1; reset(); return; }",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "        : (this.crouching ? crouchSpeed(this.stats.speed) : this._refreshWalkSpeed());",
     "new": "        : (this.crouching ? crouchSpeed(this.stats.speed) : walkSpeed(this.stats.speed));",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "    return isRiding(this.transportMode) ? rideSpeed(this.stats.speed, this._rideBaseNow()) * this._rideScale() : this._refreshWalkSpeed();",
     "new": "    return isRiding(this.transportMode) ? rideSpeed(this.stats.speed, this._rideBaseNow()) * this._rideScale() : walkSpeed(this.stats.speed);",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "      const r = this.collider.move(this.pos, mx * speed * dt, my * speed * dt, mz * speed * dt, this.height, false);",
     "new": "      const r = this.collider.move(this.pos, mx * speed * dt, my * speed * dt, mz * speed * dt, this.height);",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "    const gx = minmod((hx1 - h) / r, (h - hx0) / r), gz = minmod((hz1 - h) / r, (h - hz0) / r);",
     "new": "    const gx = (hx1 - hx0) / (2 * r), gz = (hz1 - hz0) / (2 * r);",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "old": "    const nx = (-minmod((xp - c) / h, (c - xm) / h)) || 0, nz = (-minmod((zp - c) / h, (c - zm) / h)) || 0;",
     "new": "    const nx = (-(xp - xm) / (2 * h)) || 0, nz = (-(zp - zm) / (2 * h)) || 0;",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -185,7 +185,7 @@
     "old": "export const isWaterBreathing = (entity) => hasActiveEffect(entity, 'waterBreathing') || !!_waterBreathingRule?.(entity);",
     "new": "export const isWaterBreathing = (entity) => hasActiveEffect(entity, 'waterBreathing');",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -194,7 +194,7 @@
     "old": "    f.Q.value = 0;",
     "new": "    f.Q.value = 1;",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -203,7 +203,7 @@
     "old": "  if (realSeconds - lastLocationLoadAt > LOCATION_LOAD_STUCK_SECONDS) { locationLoads = 0; return false; }",
     "new": "",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -212,7 +212,7 @@
     "old": "  if (!pending) return;\n  pending = false;",
     "new": "  pending = false;",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -221,7 +221,7 @@
     "old": "  const overEncumbered = (player.carriedWeight?.() ?? 0) * 4 > OVER_ENCUMBERED_LIMIT;",
     "new": "  const overEncumbered = (player.carriedWeight?.() ?? 0) * 4 >= OVER_ENCUMBERED_LIMIT;",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -230,7 +230,7 @@
     "old": "    player.displayAfloatMessage = true;\n    return localizedText('cannotFloat', CANNOT_FLOAT_TEXT);   // PlayerEnterExit.cs:398",
     "new": "    return localizedText('cannotFloat', CANNOT_FLOAT_TEXT);   // PlayerEnterExit.cs:398",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -239,7 +239,7 @@
     "old": "  if ((!overEncumbered || !player.swimming) && player.displayAfloatMessage) player.displayAfloatMessage = false;",
     "new": "",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -248,7 +248,7 @@
     "old": "&& !player.displayAfloatMessage && !waterWalking) {",
     "new": "&& !player.displayAfloatMessage) {",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -257,7 +257,7 @@
     "old": "        if (_dwForge) { const afloat = afloatMessageStep(player, player.waterWalking);",
     "new": "        if (true) { const afloat = afloatMessageStep(player, player.waterWalking);",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -266,7 +266,7 @@
     "old": "    if (swimming && !p.levitating && frameDelta > FRAME_SPIKE_SECONDS) {",
     "new": "    if (swimming && !p.levitating && frameDelta >= FRAME_SPIKE_SECONDS) {",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -275,7 +275,7 @@
     "old": "    if (swimming && !p.levitating && frameDelta > FRAME_SPIKE_SECONDS) {",
     "new": "    if (swimming && frameDelta > FRAME_SPIKE_SECONDS) {",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -284,7 +284,7 @@
     "old": "      lastDecision = null;\n      releaseSpikeGuard(p);\n      if (swim.forged) restore(p, now);",
     "new": "      lastDecision = null;\n      if (swim.forged) restore(p, now);",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   },
   {
@@ -293,7 +293,7 @@
     "old": "      if (!this.levitateMotorEnabled) return;\n",
     "new": "",
     "tests": [
-      "test/dwd_swim.test.js"
+      "test/scenes/dwd_swim.test.js"
     ]
   }
 ]

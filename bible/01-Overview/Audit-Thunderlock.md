@@ -61,7 +61,7 @@ re-found.
 
 ## The pins
 
-`test/thunderlock.test.js` is 17 tests now, seven of them the audit's
+`test/systems/thunderlock.test.js` is 17 tests now, seven of them the audit's
 own. The rule they follow: **pin the question the way the game asks
 it**. F1 imports a host. F3/F5 read the four hosts' source. F7 drives
 the root resolver with the URLs both lanes actually produce.

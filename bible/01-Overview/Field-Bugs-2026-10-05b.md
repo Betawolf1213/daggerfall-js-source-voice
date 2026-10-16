@@ -47,7 +47,7 @@ after and never learned the rule:
   showing it in "In this room". The piece itself is unchanged - its key, name, price and station: a trader is still a
   trader, as NUDE-FLATS keeps a person's identity.
 - **The crowd** (`scenes/arena/arenaBouts.js` buildCrowd): a seat draws its picture through `drawnFlat`.
-- **The sweep** (`test/nudedecor.test.js`). A rule each new host must remember is the rule the next one forgets (THE ONE
+- **The sweep** (`test/scenes/nudedecor.test.js`). A rule each new host must remember is the rule the next one forgets (THE ONE
   CONSTRUCTION SEAM's lesson), so every file of `src/` that batches a billboard is NAMED in the test: a person host
   imports `nudeFlats.js` and asks `drawnFlat`; any other says what it draws instead (blood, loot, torches, foes and
   peers as mobile units, ...). A new file that batches a billboard fails there the day it lands until someone answers
@@ -57,7 +57,7 @@ after and never learned the rule:
 Read when a scene is built, as NUDE-FLATS reads it: a room, a yard or a crowd stood before the setting turned is
 redrawn by the next one; the decorator's own lists follow the setting at once.
 
-`test/nudedecor.test.js` (5); `tools/mutants/nudedecor.json` 10, 10 dead (the tenth DECOR-OUTDOOR's: the decorator's one picture door, `drawnHere`). The decor pins' fakes (`test/decorFakes.mjs`)
+`test/scenes/nudedecor.test.js` (5); `tools/mutants/nudedecor.json` 10, 10 dead (the tenth DECOR-OUTDOOR's: the decorator's one picture door, `drawnHere`). The decor pins' fakes (`test/decorFakes.mjs`)
 take a room's people and per-record sizes.
 
 ## DECOR-DUNGEON (1)
@@ -94,7 +94,7 @@ seated, small and large, in pale stone and in dark), the marble columns (74009, 
 marble coffins and their lid (74071-74073), the pedestals (74082, 74086, 74091, 74237), the domed pavilion (74094), the
 arms and armour (74221 the great crossbow, 74224-74228), the arcane cage (74229), the hangings (74800, 74804, 74806,
 75800) and an arrow (99800). Each is named in the source by the tag Daggerfall's own dungeon editor gave its reference
-(BLOCKS.BSA's model list: ST0-ST3, SWD, PED, LRG...) and how many times it stands still; `test/decordungeon.test.js`
+(BLOCKS.BSA's model list: ST0-ST3, SWD, PED, LRG...) and how many times it stands still; `test/systems/decor/decordungeon.test.js`
 measures both again over the player's own blocks where ARENA2 is at hand.
 
 A piece found only in a dungeon is **Dungeon furniture** - unless the game files it already (a bed, a chest, a shelf, a
@@ -113,9 +113,9 @@ constructor; `exterior.js` stands no decorator; `dungeonContext.js` stands no de
 A dungeon's piece draws in a house as its own model, in its base textures: the room's climate table carries only the
 room's own models' swaps, and a dungeon's texture table is its dungeon's.
 
-`test/decordungeon.test.js` (5, one over the player's own ARENA2); `tools/mutants/decordungeon.json` 14, 14 dead (one
-puts back the palette's four statues). Moved: `test/decor1d.test.js`'s host pin
-(the measures are the constructor's), `decor1d.json`'s dungeon-block record re-aimed (still dead), `test/decor1.test.js`'s
+`test/systems/decor/decordungeon.test.js` (5, one over the player's own ARENA2); `tools/mutants/decordungeon.json` 14, 14 dead (one
+puts back the palette's four statues). Moved: `test/scenes/decor/decor1d.test.js`'s host pin
+(the measures are the constructor's), `decor1d.json`'s dungeon-block record re-aimed (still dead), `test/server/decor1.test.js`'s
 kinds (15). `world/rdbLayout.js` exports its walk (`rdbObjects`), its action test (`rdbModelActs` - renamed: an input
 binding's `hasAction` already held the name) and `EXIT_DOOR_MODEL_ID` (the census's - the catalogue's own test of it was
 dead, AUDIT 05b A10).
@@ -162,10 +162,10 @@ cart or lamp post, and none of the trees, bushes, flowers and rocks of the clima
 THE FOUR HOSTS: `world.js` WIRED (the yards, and the pixel's `townClimate`, the seasons' helper); `worldModes.js`'s rooms
 offer neither (the catalogue's offer, `decorRoomEntries`); `exterior.js` and `dungeonContext.js` stand no yard.
 
-`test/decoroutdoor.test.js` (8); `tools/mutants/decoroutdoor.json` 21, 21 dead. Re-aimed by content: `guild1e.json`'s
+`test/systems/decor/decoroutdoor.test.js` (8); `tools/mutants/decoroutdoor.json` 21, 21 dead. Re-aimed by content: `guild1e.json`'s
 scan record, `survtiers3.json`'s two world.js cites (moved by the cite shift), and `fb1001_yard.json`'s YARD-RECENTRE
-record now names one site (the room's solid model, `solid`, stands once for both paths); `test/decor1.test.js`'s kinds
-(17) and `test/decordungeon.test.js`'s DECOR_FROM moved with the table; `test/nudedecor.test.js` names `yardNature.js`.
+record now names one site (the room's solid model, `solid`, stands once for both paths); `test/server/decor1.test.js`'s kinds
+(17) and `test/systems/decor/decordungeon.test.js`'s DECOR_FROM moved with the table; `test/scenes/nudedecor.test.js` names `yardNature.js`.
 
 ## DECOR-LPT (1)
 
@@ -200,8 +200,8 @@ piece stands as the mod's picture. The panel's list keeps the record's own icon 
 THE FOUR HOSTS: `world.js` WIRED (its Low Poly Trees handed to the yards, their near sets gathered with its pixels');
 `exterior.js`, `worldModes.js` and `dungeonContext.js` stand no yard.
 
-`test/decorlpt.test.js` (8); `tools/mutants/decorlpt.json` 14, 14 dead. The yard rig moved to `test/decorFakes.mjs`
-(`yardWorld`, shared with `test/decoroutdoor.test.js`, which pins the lean by record now). Re-aimed by content:
+`test/scenes/decorlpt.test.js` (8); `tools/mutants/decorlpt.json` 14, 14 dead. The yard rig moved to `test/decorFakes.mjs`
+(`yardWorld`, shared with `test/systems/decor/decoroutdoor.test.js`, which pins the lean by record now). Re-aimed by content:
 `decoroutdoor.json`'s three tree records and `fieldbugs27g.json`'s DECOR-FLIP ghost record (both still dead).
 
 ## DECOR-MODS (1)
@@ -246,9 +246,9 @@ bed off its classic bed (`classicModelIdOf`).
 THE FOUR HOSTS: the catalogue is the decorator's (`worldModes.js`'s rooms and ships, `world.js`'s yards - both through
 the one constructor, `decorScanDeps`); `exterior.js` and `dungeonContext.js` stand no decorator.
 
-`test/decormods.test.js` (5, one over the player's own ARENA2 - every stand-in the mods place offered with the count and
-the place measured, or left out by why); `tools/mutants/decormods.json` 12, 12 dead. Moved: `test/decor1.test.js`'s
-kinds (18), `test/decordungeon.test.js`'s DECOR_FROM; re-aimed by content: `decoroutdoor.json`'s tree-name record,
+`test/systems/decor/decormods.test.js` (5, one over the player's own ARENA2 - every stand-in the mods place offered with the count and
+the place measured, or left out by why); `tools/mutants/decormods.json` 12, 12 dead. Moved: `test/server/decor1.test.js`'s
+kinds (18), `test/systems/decor/decordungeon.test.js`'s DECOR_FROM; re-aimed by content: `decoroutdoor.json`'s tree-name record,
 `guild1e.json`'s board record and `homevendor.json`'s people record (all still dead). `03-World/Beautiful-Towns.md`'s two
 notes that kept the stand-ins out are amended.
 
@@ -264,21 +264,21 @@ Severity: **Medium** a wrong outcome a player meets; **Low** a cost, a leak on a
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
-| A1 | Medium | **A tree landed a recentre off its yard.** The room hands a host-stood flat the origin it stands from (`decorRoom.js` standOwn), and `restand()` moves only a batch already standing: a tree whose picture was still loading when the world recentred stood at the old origin - 100 m from its own 3D tree - until the yard was set again. | An answer landing after a `restand()` is moved by the recentre it missed (`standOwn`). Pinned: `test/decorlpt.test.js`; `DECORLPT-late-unshifted`. |
-| A2 | Low | **A placed tree's row showed "De".** The placed list read an entry's `count` as "found in the catalogue"; a tree, a plant and a hall's board are the catalogue's own at a count of 0. | `decorTool.js` asks the catalogue for itself (`catalogued`); the fallback stays the fallback. Pinned: `test/decoroutdoor.test.js`; `DECOROUTDOOR-placed-uncatalogued`. |
-| A3 | Medium | **The mods' pieces were fixed once a session.** The switch was asked when the scan finished and the scan is built once: a mod turned off left its pieces for sale (bought, never drawn); one turned on, or a pack landing later, was never offered or priced until a reload. | Every piece catalogued whatever is on (no name moves with a switch); `decorRoomEntries` offers a mod's piece by the keys standing now (`decorModsLive`), asked as the panel opens and every `DECOR_MODS_LIVE_S`; a piece standing only later is measured then (`decorScan.js` remeasure) and the list redraws as it lands (`lateSized`). Pinned: `test/decormods.test.js` (the scan, the real decorator); four new records in `decormods.json`, three re-aimed. |
-| A4 | Medium | **A yard rebuilt under the open decorator stood the town's answer.** DECOR-OUTDOOR's rebuild skipped HOME-YARD's hold: a hall's other keeper's write the panel held back stood under the decorator mid-edit. | While the owner writes the yard, a move or a rebuild stands it again as it stands, and the town's answer waits (`homeYards.js` sync, `holding`). Pinned: `test/decoroutdoor.test.js`; `DECOROUTDOOR-rebuild-unheld`, `DECOROUTDOOR-rebuild-sig-taken`. |
-| A5 | Low | **A model's ghost flew in the base climate.** A model's swaps reach the yard's table only when a piece of it stands (`prepareModel`); the ghost was drawn with the table before, and the panel's preview with none. | The decorator asks the host's law once for each table it draws a model with (`decorTool.js` inLaw, `prepareModel`); the yard hands its `climateOf` and its table to the preview too. Pinned: `test/decoroutdoor.test.js` (the yard's ghost, the preview's law); four records. |
-| A6 | Low | A tree's ghost held its far picture for the session when the classic texture would not load: one failed ask threw the three answers away together. | Each ask fails on its own (`decorTool.js`). Pinned: `test/decorlpt.test.js`; `DECORLPT-ghost-leaks`. |
+| A1 | Medium | **A tree landed a recentre off its yard.** The room hands a host-stood flat the origin it stands from (`decorRoom.js` standOwn), and `restand()` moves only a batch already standing: a tree whose picture was still loading when the world recentred stood at the old origin - 100 m from its own 3D tree - until the yard was set again. | An answer landing after a `restand()` is moved by the recentre it missed (`standOwn`). Pinned: `test/scenes/decorlpt.test.js`; `DECORLPT-late-unshifted`. |
+| A2 | Low | **A placed tree's row showed "De".** The placed list read an entry's `count` as "found in the catalogue"; a tree, a plant and a hall's board are the catalogue's own at a count of 0. | `decorTool.js` asks the catalogue for itself (`catalogued`); the fallback stays the fallback. Pinned: `test/systems/decor/decoroutdoor.test.js`; `DECOROUTDOOR-placed-uncatalogued`. |
+| A3 | Medium | **The mods' pieces were fixed once a session.** The switch was asked when the scan finished and the scan is built once: a mod turned off left its pieces for sale (bought, never drawn); one turned on, or a pack landing later, was never offered or priced until a reload. | Every piece catalogued whatever is on (no name moves with a switch); `decorRoomEntries` offers a mod's piece by the keys standing now (`decorModsLive`), asked as the panel opens and every `DECOR_MODS_LIVE_S`; a piece standing only later is measured then (`decorScan.js` remeasure) and the list redraws as it lands (`lateSized`). Pinned: `test/systems/decor/decormods.test.js` (the scan, the real decorator); four new records in `decormods.json`, three re-aimed. |
+| A4 | Medium | **A yard rebuilt under the open decorator stood the town's answer.** DECOR-OUTDOOR's rebuild skipped HOME-YARD's hold: a hall's other keeper's write the panel held back stood under the decorator mid-edit. | While the owner writes the yard, a move or a rebuild stands it again as it stands, and the town's answer waits (`homeYards.js` sync, `holding`). Pinned: `test/systems/decor/decoroutdoor.test.js`; `DECOROUTDOOR-rebuild-unheld`, `DECOROUTDOOR-rebuild-sig-taken`. |
+| A5 | Low | **A model's ghost flew in the base climate.** A model's swaps reach the yard's table only when a piece of it stands (`prepareModel`); the ghost was drawn with the table before, and the panel's preview with none. | The decorator asks the host's law once for each table it draws a model with (`decorTool.js` inLaw, `prepareModel`); the yard hands its `climateOf` and its table to the preview too. Pinned: `test/systems/decor/decoroutdoor.test.js` (the yard's ghost, the preview's law); four records. |
+| A6 | Low | A tree's ghost held its far picture for the session when the classic texture would not load: one failed ask threw the three answers away together. | Each ask fails on its own (`decorTool.js`). Pinned: `test/scenes/decorlpt.test.js`; `DECORLPT-ghost-leaks`. |
 | A7 | Low | The offer, read every frame the panel is up, built a key for every flat to ask NUDE-FLATS' table. | Each entry says once whether it is nude (`decorCatalogue.js` `nude`). `NUDEDECOR-flag-unset`; `NUDEDECOR-offer-ungated` re-aimed. |
-| A8 | Low | A hanging was named off its built model - every stand-in's geometry built in the scan's last step (36 ms cold), and none named while its switch was off. | One table of the pictures, read by the builder and the name alike (`detStandIns.js` DET_PICTURES, `townStandIns.js` ROSYS_PICTURES); a coloured bed filed by its table (`townBedOf`). All 297 names and kinds are the slice's, on, off or uninstalled. Pinned: `test/decormods.test.js`; three records. |
+| A8 | Low | A hanging was named off its built model - every stand-in's geometry built in the scan's last step (36 ms cold), and none named while its switch was off. | One table of the pictures, read by the builder and the name alike (`detStandIns.js` DET_PICTURES, `townStandIns.js` ROSYS_PICTURES); a coloured bed filed by its table (`townBedOf`). All 297 names and kinds are the slice's, on, off or uninstalled. Pinned: `test/systems/decor/decormods.test.js`; three records. |
 | A9 | Low | The yard's tree set `farH`, which nothing reads (a yard's batches never meet the far rings), and a pin asserted it. | Struck; the pin says it is none; `DECORLPT-far-rings-unread` retired. |
 | A10 | Low | The dungeon walk's test of the exit door was dead (70300 is no furnishing). | Struck from the catalogue; the census keeps the export (`rdbLayout.js`). Two `decordungeon.json` records re-aimed. |
 | A11 | Low | `addDecorMods` wrote the key's format out again. | `decorKey`. `DECORMODS-key-own-format`. |
-| A12 | Low | **Three copies of one choice** (THE ONE CONSTRUCTION SEAM): the town's pixels, a location's flats and DECOR-LPT's yard each chose a nature flat's picture - Low Poly Trees', the season's (its key, its upload), the record - the yard's copy already short of the town's. | `world/naturePicture.js`, every host's one choice; `test/naturepicture.test.js` sweeps `src/` (no other file writes the season's key or asks the door for a far picture); SIB1's and TEX1's host pins moved to it; `tools/mutants/naturepicture.json` 7. |
+| A12 | Low | **Three copies of one choice** (THE ONE CONSTRUCTION SEAM): the town's pixels, a location's flats and DECOR-LPT's yard each chose a nature flat's picture - Low Poly Trees', the season's (its key, its upload), the record - the yard's copy already short of the town's. | `world/naturePicture.js`, every host's one choice; `test/world/naturepicture.test.js` sweeps `src/` (no other file writes the season's key or asks the door for a far picture); SIB1's and TEX1's host pins moved to it; `tools/mutants/naturepicture.json` 7. |
 | A13 | Process | The pull request conflicted with main (#629): no workflow runs on a conflicted head. | Main merged in (`2990a2de`), every cite moved by `citeMerge`; and again with this audit, main's #621 and #628 (the cite-only conflicts taken from main, every cite moved by `citeMerge`, the Suite line recounted, survtiers3's two seed records re-aimed by content). |
 
-`test/decorlpt.test.js` 10, `test/decoroutdoor.test.js` 12, `test/decormods.test.js` 8, `test/naturepicture.test.js` 3
+`test/scenes/decorlpt.test.js` 10, `test/systems/decor/decoroutdoor.test.js` 12, `test/systems/decor/decormods.test.js` 8, `test/world/naturepicture.test.js` 3
 (new). `tools/mutants/`: `decorlpt.json` 15, `decoroutdoor.json` 28, `decormods.json` 20, `nudedecor.json` 11,
 `naturepicture.json` 7 - every one dead; re-aimed by content and still dead: `decor1d.json` 1, `decordungeon.json` 2,
 `guild1e.json` 1. The rigs: `decorFakes.mjs` `toolRig` takes a pin's scan deps, host law, texture door and picture door;

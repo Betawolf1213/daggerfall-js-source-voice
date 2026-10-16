@@ -10,9 +10,9 @@ was re-run before it was fixed. Three were Mac's to decide, and Mac chose:
 - **Earning: "Must be in the fight"** (E1/E2) - a tenth of one's own share dealt, or half the fight stood near it.
 - **Schedule: every four hours**, as it stood (T10).
 
-Each fix is pinned in one of four new files - `test/serpent1_audit.test.js` (12, the brain),
-`test/serpent1_auditrelay.test.js` (6, the relay and the hub), `test/serpent1_auditclient.test.js` (7, the client,
-the books on the device, the words and the wiring), `test/serpent1_auditbooks.test.js` (6, the books lens's own) - or
+Each fix is pinned in one of four new files - `test/net/serpent/serpent1_audit.test.js` (12, the brain),
+`test/net/serpent/serpent1_auditrelay.test.js` (6, the relay and the hub), `test/net/serpent/serpent1_auditclient.test.js` (7, the client,
+the books on the device, the words and the wiring), `test/net/serpent1_auditbooks.test.js` (6, the books lens's own) - or
 in the SERPENT1 pin it moved. Mutation-proven: `tools/mutants/serpent1_audit.json`, 155 records (117 of the fixes, 38
 of the books lens's), and SERPENT1's own 43 run again over the fixed tree, five re-aimed where the audit moved their
 code - 198, every one dead. One record of another list (`auditonline2.json` F3) re-aimed at the line it moved.
@@ -100,7 +100,7 @@ feel each blow alike"; "the ship it hates most" (60% of the time); the Large Boa
 | D4 | Low | The serpents slain were in the service's answers and never in the game. | The account card's *Serpents slain* row and the inspect card's line. |
 | D5 | Medium | **A slot loaded never let the hoard's crash records go** - the gate's and the raid's pools were told, the serpent's not. | `serpentSpoils.loaded` in `onSlotLoaded`. |
 | D6 | Medium | **A receipt was settled before its hoard was given**: a grant that failed (the lock, the pack) lost the hoard for good. | The grant is awaited; a receipt is settled only once it resolved, so the next offer gives it (the pool's spent mark keeps it once). |
-| D7/D8 | Medium | **The pins' own gaps**: 37 of 38 further mutants of the books, the rewards and the relay paths lived. | `test/serpent1_auditbooks.test.js` - all 38 dead (re-aimed where the audit moved the code). |
+| D7/D8 | Medium | **The pins' own gaps**: 37 of 38 further mutants of the books, the rewards and the relay paths lived. | `test/net/serpent1_auditbooks.test.js` - all 38 dead (re-aimed where the audit moved the code). |
 | D9 | Low | Stale comments in the books' files. | Corrected (B12 among them). |
 
 ## Recorded, not fixed
@@ -137,7 +137,7 @@ relay `world165`, account `acct78`, migration `0081_serpent_kills.sql` - and the
 | F13 | Low | Two relay pins patched `Date.now` before their `try`: a setup that threw left every later pin on the fake clock. | Patched inside it. |
 | F14 | High | **The branch could not merge or run CI**: 119 files conflicted with main, and its relay, account and migration numbers had been taken by main. `SERPENT_RELAY_MIN` 164 would have sent `serpent` frames to PARTY-LEAD's relay, which closes the socket on them. | Merged (cites by `tools/citeMerge.mjs`, 175 moved); renumbered `world165`, `acct78`, `0081`; every live-version pin moved and composed. |
 
-Pinned in `test/serpent1_audit2.test.js` (9) - each run against the pre-fix tree first, and each failed there at its own
+Pinned in `test/net/serpent/serpent1_audit2.test.js` (9) - each run against the pre-fix tree first, and each failed there at its own
 assertion - and in the earlier suites the laws moved (S1's hearing and eviction pins in
 `serpent1_auditrelay.test.js`, the link and host rigs fed the relay's stamped words). Mutation-proven:
 `tools/mutants/serpent1_audit2.json` (14); `serpent1_audit.json` re-aimed by content where the code moved (eleven

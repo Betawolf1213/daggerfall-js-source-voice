@@ -16,9 +16,9 @@ commit, and each one checked its own findings with a node probe before reporting
 
 Thirty-two findings. Two of them are the same finding (D1 = L6), so 31 are distinct. Every one was read again here before
 any line changed. Three were design calls, and Mac made them (below). Each fix carries an `AUDIT 625 <ID>` comment. They
-are pinned in `test/audit625_loot.test.js` (6), `test/audit625_wallet.test.js` (4), `test/audit625_silver.test.js` (7)
-and `test/audit625_serpent.test.js` (6), plus the AUDIT 625 pins added to `test/silverfinds_service.test.js` (S1, S6),
-`test/serpentset_service.test.js` (P4, P5) and `test/citedrift.test.js` (CD7b). They are mutated in
+are pinned in `test/systems/audit625_loot.test.js` (6), `test/systems/audit625_wallet.test.js` (4), `test/net/audit625_silver.test.js` (7)
+and `test/systems/audit625_serpent.test.js` (6), plus the AUDIT 625 pins added to `test/net/silverfinds_service.test.js` (S1, S6),
+`test/net/serpent/serpentset_service.test.js` (P4, P5) and `test/scenes/citedrift.test.js` (CD7b). They are mutated in
 `tools/mutants/audit625.json`: **71 mutants, 71 dead.** A pin a fix moved says `PIN MOVED` where it stands.
 
 ## Mac's calls
@@ -92,7 +92,7 @@ Each was put to Mac with its options and the trade-off. Mac's answer is the law:
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
-| D3 | low | This PR's cite shift turned the settings pin's range in Settings-Screen-Spec.md from 35 to 35 into 36 to 35, which runs backwards. The root cause is that the page wrote all sixteen of its ranges with U+2011, a non-breaking hyphen. citeShift, citeMerge and citedrift's CD7 read only an ASCII hyphen, so to all three each range was a cite of its first number alone. Every shift moved the head and left the tail, and CD7 never saw a range run backwards. Eight already had. | The sixteen ranges are re-resolved against the code and written in ASCII. CD7b (`test/citedrift.test.js`) refuses a range written with any typographic dash. |
+| D3 | low | This PR's cite shift turned the settings pin's range in Settings-Screen-Spec.md from 35 to 35 into 36 to 35, which runs backwards. The root cause is that the page wrote all sixteen of its ranges with U+2011, a non-breaking hyphen. citeShift, citeMerge and citedrift's CD7 read only an ASCII hyphen, so to all three each range was a cite of its first number alone. Every shift moved the head and left the tail, and CD7 never saw a range run backwards. Eight already had. | The sixteen ranges are re-resolved against the code and written in ASCII. CD7b (`test/scenes/citedrift.test.js`) refuses a range written with any typographic dash. |
 | D4 | low | LOOT-EASE's rewrite of Testing.md's `search1_searchables` row dropped the descriptions of pins that are still live. | The descriptions are restored, and the row gives KIT-ROLL's scope as AUDIT 625 left it. |
 | D5 | low | Testing.md's `auditrealm` row said five registrars and that "a sixth fails the pin". The pin lists twelve, and its own title said eight. | Both now say twelve. |
 | D7 | low | HARD5's split of Home.md was half done. It moved the 53 page lines that stood together and left eight that stood among the folder lines. The stub said the page index had gone, and the stub and the page's header dated the move to the merge commit instead of its own. | The eight lines moved too, byte for byte, so every page's line is in one place. The stub, the header and Hardening.md's HARD5 record now say what happened and when. |

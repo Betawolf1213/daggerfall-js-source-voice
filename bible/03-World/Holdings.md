@@ -322,7 +322,7 @@ berth, and she stood again inside it as the player came within a pixel. A berth 
 outdoors, shown or not (`berthBoats` - a dungeon's, `inside`, lies in its own place), and of another player's boat
 hidden under its owner at its helm (`comeSailAwayPeers.js` O4: it stands nowhere and is posed all along) - the roll, the
 sea's errands, Summon (`freeBerth`) and the warp (`dockFree`) through `boatAtBerth`. The shots, the fires and the crew
-still read the shown ones. `test/berthhidden.test.js`, `tools/mutants/berthhidden.json`.
+still read the shown ones. `test/systems/naval/berthhidden.test.js`, `tools/mutants/berthhidden.json`.
 
 **THE DOCKS WERE MISSING** (HARBOUR-BOOK, 2026-10-04 - from the field: players reporting the port towns' new docks
 missing). Two causes, both fixed at the root. (1) THE HARBOURS WERE THE SEA FIGHT'S: the naval host kept them and sounded
@@ -342,7 +342,7 @@ and the 40 m walk found no shore - every quay a stage alone out on the water, no
 is carved no shallower than min(11.2 m, Water Depth) (`deepBathymetry.js`), so the deepest keel's berth lies within it at
 any Water Depth over her draft. Measured off the real bathymetry and the floor's fit on a straight coast at Water Depth
 5-250 m and four bearings: every port a harbour, every quay a pier to the land, the longest 166 m; Deep Waters off, a
-9 m jetty as before. `test/harbourbook.test.js`, `tools/mutants/harbourbook.json`.
+9 m jetty as before. `test/systems/naval/harbourbook.test.js`, `tools/mutants/harbourbook.json`.
 
 THE FOUR HOSTS: `scenes/world.js` keeps the harbours, stands the quays and hands the warp; a building's frame
 (`worldModes.js`) and a dungeon's (`dungeonContext.js`) have no sea, and the standalone street (`exterior.js`) no harbour.
@@ -393,14 +393,14 @@ in `systems/naval/shipLife.js` (`alongside`), `systems/comeSailAway/comeSailAway
 (`SHORE_TERRAIN_FIT_METERS`, exported for JETTY_MAX) and `scenes/naval/navalHost.js` (the book read, the docking, the
 gangways).
 
-`test/holdings.test.js` (the tab, the Stable, the runtime's summon and send away), `test/fb1015_wagonstabled.test.js`
-(WAGON-STABLED: a stabled pair through the real runtime's doors, mounts, summons, sales and saves), `test/fleet.test.js` (the ledger, the
+`test/systems/horse/holdings.test.js` (the tab, the Stable, the runtime's summon and send away), `test/systems/horse/fb1015_wagonstabled.test.js`
+(WAGON-STABLED: a stabled pair through the real runtime's doors, mounts, summons, sales and saves), `test/systems/naval/fleet.test.js` (the ledger, the
 book under Come Sail Away's real runtime, the refits on the helm and the sea, the away repairs, the host half's every act
-and refusal, the word's names, the page), `test/crewroles.test.js` (the posts given, their places on the deck and the
-crew keeping them against a no-roles control, the First Mate's voice, the Crew panel), `test/quays.test.js` (the quay off a
+and refusal, the word's names, the page), `test/systems/naval/crewroles.test.js` (the posts given, their places on the deck and the
+crew keeping them against a no-roles control, the First Mate's voice, the Crew panel), `test/systems/naval/quays.test.js` (the quay off a
 berth, the shore walked, what stands on it, its model, alongside, docking's law, the pool, the real host's docking and
-gangway, Come Sail Away's seam, the Fleet's word, the world's wiring), `test/auditholdings.test.js` (AUDIT HOLDINGS,
-`01-Overview/Audit-Holdings.md`: a pin a finding), `test/berthhidden.test.js` (BERTH-HIDDEN: a ship out of sight keeps
-her berth), `test/harbourbook.test.js` (HARBOUR-BOOK: the book, the sea reading the world's, the pier across the shelf,
+gangway, Come Sail Away's seam, the Fleet's word, the world's wiring), `test/systems/naval/auditholdings.test.js` (AUDIT HOLDINGS,
+`01-Overview/Audit-Holdings.md`: a pin a finding), `test/systems/naval/berthhidden.test.js` (BERTH-HIDDEN: a ship out of sight keeps
+her berth), `test/systems/naval/harbourbook.test.js` (HARBOUR-BOOK: the book, the sea reading the world's, the pier across the shelf,
 the world's wiring); `tools/mutants/holdings.json`, `tools/mutants/fb1015_wagonstabled.json`, `tools/mutants/quays.json`, `tools/mutants/auditholdings.json`,
 `tools/mutants/berthhidden.json`, `tools/mutants/harbourbook.json`.

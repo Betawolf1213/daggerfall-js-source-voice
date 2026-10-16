@@ -96,7 +96,7 @@ of a step - 2.9 cm of the coast's first rise.
 
 ## Records
 
-- Tests: `test/field_csa2.test.js` (6) - the sampler's sea at the drawn ground's 34.000001; the law (the flat sea at
+- Tests: `test/systems/comeSailAway/field_csa2.test.js` (6) - the sampler's sea at the drawn ground's 34.000001; the law (the flat sea at
   step 579 under the line, a step up land, the port's rounding, any ground within a step of the drawn one, the far
   ring's stride); the host's own `csaTerrainOf`, mounted from its source over a real StreamingWorldState and a vertical
   recentre; the real runtime over the vendored hulls, the mod on: all four hulls a shelf or parts give read the sea,
@@ -107,7 +107,7 @@ of a step - 2.9 cm of the coast's first rise.
 - Mutants: `tools/mutants/field_csa2.json` (11: the host back on the drawn ground, the step unheld, truncated, or of
   65535, the prefab's terrain scale, the height unrounded to a float, the other triangle, each half's axes swapped,
   the corners one apart, the stride dropped) - all dead.
-- Re-aimed by content, never loosened: `test/csa_close.test.js`'s CSA-J pin (the terrain's clamp to its edge, on the call
+- Re-aimed by content, never loosened: `test/systems/comeSailAway/csa_close.test.js`'s CSA-J pin (the terrain's clamp to its edge, on the call
   the stand-in makes now) and its record `csa_close.json::CSA-J-host-terrain-unclamped`; `grass3.json`'s two
   `surfaceHeightAt` records, each given a line beside it only the drawn ground's sampler has (the new sampler repeats
   their one) - all three dead.

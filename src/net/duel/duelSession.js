@@ -4,7 +4,7 @@
 // asked: weapons, bows and spells all count; "Loser drops to 1HP and both are fully healed on duel end. Add a dueling
 // K/D to the profile menu and player inspect profile"; outdoors only; the record per account): THE DUEL, AS A STATE
 // MACHINE. Pure - no DOM, no game import: everything the game owns (the socket, the bodies, the ring's place, the
-// blow's resolution) is handed in, so test/duel_session.test.js drives two of these against each other over a fake
+// blow's resolution) is handed in, so test/net/duel/duel_session.test.js drives two of these against each other over a fake
 // wire and pins the law without a browser.
 //
 // THE HANDSHAKE, THREE STEPS (net/wire.js's DUEL1 header names the frames). The challenger ASKS (the Inspect card's

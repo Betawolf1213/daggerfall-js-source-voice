@@ -55,7 +55,7 @@ import { SHEET_GRID, FIRE_FRAMES, cellRect, keyBackground, contentBox, unionBox,
 // three integers are not worth this lab's build pulling the CIF
 // reader, the inventory and a mod's mesh folder in behind them. The
 // arrow points ONE WAY - the lab reads the port's law and the port
-// does not know the lab exists (test/gunLab.test.js fails if that
+// does not know the lab exists (test/combat/weapon/gunLab.test.js fails if that
 // ever stops being true).
 // FIELD-GUN12: THE LAB NOW RUNS THE GAME'S MODULE.
 // `createWidgetRig`, `widgetRigStep`, `labMotion` and the settings
@@ -208,7 +208,7 @@ export function muzzleLight(state, frame) {
  * sounds" over a screenshot of the three dropdowns). The heads moved,
  * and THAT SENTENCE ABOVE IS NOW ENFORCED rather than merely written:
  * `SFX_FILES` in the weapon's home has to name the head of each list
- * (test/thunderlock.test.js). It was true by nobody's doing before -
+ * (test/systems/thunderlock.test.js). It was true by nobody's doing before -
  * two places holding one decision, agreeing because the same person
  * typed both - which is the drift class this weapon has paid for at
  * every round since FIELD-GUN6.

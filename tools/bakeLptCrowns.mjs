@@ -11,7 +11,7 @@
 //
 // A crown is the farthest any vertex of the prototype's mesh reaches from its root across the ground (x and z, under
 // the prefab's own scale) - a disc, because DFU turns each tree at random (world/lowPolyTrees.js lptVariety). Rounded
-// UP to the centimetre, so the table is never short of the mesh. test/verge1.test.js re-runs the bake and holds the
+// UP to the centimetre, so the table is never short of the mesh. test/world/road/verge1.test.js re-runs the bake and holds the
 // module to it byte for byte.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { isMain } from './lib/isMain.mjs';

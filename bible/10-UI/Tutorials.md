@@ -18,7 +18,7 @@ WORLD_QUESTS). So GAME_START_QUESTS is now `['S0000977', '_BRISIEN']`: the curse
 did for a player who said No to its first page. A save from before TUT1 still inside `_TUTOR__` leaves it at the load
 (`retireDfuTutorial`, called after the machine is restored): the quest is removed - no notebook entry, it had nothing to
 file - and the curse starts unless the save already holds it. The vendored file stays: it is DFU's data, and the
-curse's pins (`test/cursesync.test.js`) read its `_no_` task. Port-Ledger section A carries the departure.
+curse's pins (`test/systems/quest/cursesync.test.js`) read its `_no_` task. Port-Ledger section A carries the departure.
 
 ## The three parts
 
@@ -36,7 +36,7 @@ curse's pins (`test/cursesync.test.js`) read its `_no_` task. Port-Ledger sectio
   at most two paragraphs, three points and sixty words (the first cut averaged 49 words and ran to 113; now 33 and
   60), no asides, no flourish, the words a player uses. The popup lost its foot (the welcome page says where every
   page is read again), a last line is never one word, and a key is named as the keyboard prints it (`keyWord`: `1`,
-  `BACKSPACE`, `NUMPAD /` - never the Controls page's `A1`, `BCKSPC`, `KPADDIVIDE`). `test/tut1_tutorials.test.js`
+  `BACKSPACE`, `NUMPAD /` - never the Controls page's `A1`, `BCKSPC`, `KPADDIVIDE`). `test/ui/tut1_tutorials.test.js`
   holds every page to the limits.
 - **The law** - `src/systems/tutorials.js`. The read list and the popups' switch live on the port's prefs shelf
   (`tutorialsSeen`, `tutorialPopups` in `systems/uiPrefs.js` PREF_DEFAULTS) - the PLAYER's, not the character's: a
@@ -97,10 +97,10 @@ One shared door is one seam for every host. The trigger stands in:
 
 A trigger is never put inside a host closure a test lifts and `eval`s (the card table's, the succession's - the first
 cut did, and those pins named `noteFirstUse` undefined): it goes in the module that closure calls. And no module the
-account Worker bundles imports `systems/tutorials.js` (`test/accountdeploy.test.js` walks that graph - the wallet's
+account Worker bundles imports `systems/tutorials.js` (`test/server/accountdeploy.test.js` walks that graph - the wallet's
 ledger is in it, so its page pops from the two views that show the ledger instead).
 
-`test/tut1_tutorials.test.js` sweeps src/ both ways: every page that says it pops has a seam, every seam names a page,
+`test/ui/tut1_tutorials.test.js` sweeps src/ both ways: every page that says it pops has a seam, every seam names a page,
 and a MENU_ONLY page has none.
 
 ## AUDIT TUT1 (2026-10-11, Mac: "Audit and ensure perfection")

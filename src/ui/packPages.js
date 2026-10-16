@@ -39,7 +39,7 @@
 //
 // A PARTITION. Every unequipped item lands on exactly one page, and
 // the nine pages together hold exactly what DFU's four hold - pinned
-// in test/packPages.test.js over a bag with one of everything. Worn
+// in test/systems/item/packPages.test.js over a bag with one of everything. Worn
 // items leave the list, as FilterLocalItems drops them (U53).
 
 import { isEquipped } from '../systems/equip.js';

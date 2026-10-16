@@ -35,7 +35,7 @@ subrecord) holds no lot. Unpassed, `lines` is `others`, as HOME-LINE had it. THE
 NOT SEEN. Which building stands beside Trey's house - the town and the house are not in the thread. A neighbour that is
 itself a house still splits the ground, by Mac's rule; if the refused half faces a house, this is the rule, and the
 reporter is asked for the town and the house (the thread's own reply asks the same). Drawing the line on the lot's
-marked edge is not done here. test/fb1012b_yardline.test.js (3); one pin moved (fb1009_yardfoot's source pin of the
+marked edge is not done here. test/scenes/fb1012b_yardline.test.js (3); one pin moved (fb1009_yardfoot's source pin of the
 frame, PIN MOVED).
 
 ## VEIN-HUE: a vein's wash is its colour, at full spread (2)
@@ -62,7 +62,7 @@ lane's text). ARENA5's banners are washed and never dyed - a multiply as ever.
 NOT CHANGED. The glow over every vein and the compass keep mining's one copper, VEIN-WASH's recorded choice ("they say
 which profession, not which ore"). The glow lies additively over the node's own picture, so near a vein it pulls every
 ore toward copper; tinting it per ore is Mac's call. NOT SEEN: record 66's own pixels (no ARENA2 here) - the dye is
-chosen so the answer does not depend on them. test/fb1012b_veinhue.test.js (4); fb1011_veinwash's DFU-owner pin moved
+chosen so the answer does not depend on them. test/render/fb1012b_veinhue.test.js (4); fb1011_veinwash's DFU-owner pin moved
 (Lodestone washed, PIN MOVED).
 
 ## GRASS-PORTAL: the street's blended flats are drawn after the grass (3)
@@ -83,7 +83,7 @@ what falls (`renderer.drawHeld`). Their shadows are recorded by that call - the 
 The held list is the renderer's, emptied by each hold and each draw (PERF-V8: the frame stood 249 bytes under its
 budget - a frame local and two closures cost more than they saved; two calls fit). THE FOUR HOSTS: world.js alone draws grass;
 exterior.js stands no portal and no grass, worldModes.js neither, and dungeonContext.js stands portals and no grass.
-Not done: the static flats' spectral archives (`allBatches`), which a town does not stand. test/fb1012b_grassportal.test.js (3).
+Not done: the static flats' spectral archives (`allBatches`), which a town does not stand. test/render/fb1012b_grassportal.test.js (3).
 
 ## WALL-CLEAR: a piece set on a wall stands in front of it (4)
 
@@ -99,7 +99,7 @@ from it by how far it reaches into it (a model by its box turned and scaled, a f
 tool hands its three flat ghosts' sizes to the placer) and DECOR_WALL_GAP (2 cm). Floors and ceilings are as DECOR1d
 and DECOR-SHELL had them. A flat stood off by half its width floats that far off the wall seen square on - a flat turns
 to the eye, as Daggerfall's own do. Not done: a piece set on a floor against a wall is still not pushed out. Pieces
-already placed keep their `pos`. test/fb1012b_wallclear.test.js (3); decor2c's "a thing that stands" pin moved (it
+already placed keep their `pos`. test/systems/decor/fb1012b_wallclear.test.js (3); decor2c's "a thing that stands" pin moved (it
 stands clear of the wall, PIN MOVED).
 
 ## HEAD-HELD: a helm that bound nothing gives back the head (5)
@@ -118,7 +118,7 @@ none ("every miss is a note and the skin stands"). Never the werewolf's. The pla
 
 NOT SEEN. Which of the helm's misses this is (the BODY record's mesh, its shapes' names, the archive lookup) needs the
 retail data. With the Morrowind body on, the player equipping an Iron Helm and opening the body card would name it;
-the reporter is asked. test/fb1012b_headheld.test.js (3).
+the reporter is asked. test/combat/fb1012b_headheld.test.js (3).
 
 ## WALL-WAY: a road party is set down past its town's walls (6)
 
@@ -136,5 +136,5 @@ FIXED. Each end is trimmed where the way leaves its town's grid grown by half a 
 and `h`, which world.js now writes beside `blocks`); along an axis a square town's is townTrim's own. The two are held to
 0.4 of the way each only where they would meet. Every trip kind (the market, the hunt, the trip, the pilgrimage, the
 dive) trims by `wayTrims`. A party now appears outside the walls, near a corner on a diagonal way, not at the gate:
-meeting the in-town exit walk at the gate is a larger change, not done. test/fb1012b_wallway.test.js (4);
+meeting the in-town exit walk at the gate is a larger change, not done. test/systems/livingWorld/fb1012b_wallway.test.js (4);
 test/lwRealTown.mjs's replay and lwwalls_city's pin of the town row moved (PIN MOVED).

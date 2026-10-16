@@ -11,8 +11,8 @@ independently, and each verified its own findings (a node probe, the IL, or the 
 - **the record** (D): the page, the README, the settings' words, the tests' and the comments' claims.
 
 43 findings were fixed and 13 recorded as departures or notes. Every finding was re-read here before a line moved; where two lenses found the same fault the IDs are joined (R1 = H1
-= L1). Each fix carries an `AUDIT PI1 <ID>` comment and is pinned in `test/audit_pi1.test.js` (20) - the shoulder's in
-`test/pi1_physicalitems.test.js`, whose three pins the fixes moved say so where they stand - and is mutated in
+= L1). Each fix carries an `AUDIT PI1 <ID>` comment and is pinned in `test/systems/audit_pi1.test.js` (20) - the shoulder's in
+`test/systems/pi1_physicalitems.test.js`, whose three pins the fixes moved say so where they stand - and is mutated in
 `tools/mutants/audit_pi1.json`: **52 mutants, 52 dead**; PI1's own `tools/mutants/pi1.json` (47, five re-aimed at the
 code the fixes rewrote) **all dead**.
 

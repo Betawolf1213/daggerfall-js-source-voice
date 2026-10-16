@@ -5,7 +5,7 @@
     "old": "  if (A === SD_BLOWS.stomp) { const dx = x - atk.x, dz = z - atk.z; return dx * dx + dz * dz <= S.r * S.r; }\n",
     "new": "",
     "tests": [
-      "test/sd15_read.test.js"
+      "test/net/superDungeon/sd15_read.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "way = Number.isFinite(yaw) ? wayOutOf(bestA, bestAtk, S, t, over, fx, fz) : null;",
     "new": "way = null;",
     "tests": [
-      "test/sd15_read.test.js"
+      "test/net/superDungeon/sd15_read.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "      if (d > front && d - front <= SD_JUMP_CALL_M && (!jumpAtk || atk.at < jumpAtk.at)) jumpAtk = atk;\n",
     "new": "",
     "tests": [
-      "test/sd15_read.test.js"
+      "test/net/superDungeon/sd15_read.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "      if (d > front && d - front <= SD_JUMP_CALL_M",
     "new": "      if (Math.abs(d - front) <= SD_JUMP_CALL_M",
     "tests": [
-      "test/sd15_read.test.js"
+      "test/net/superDungeon/sd15_read.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "    if (t0 < 1) return false;\n  }\n  return true;\n}",
     "new": "    if (t0 < 1) void 0;\n  }\n  return true;\n}",
     "tests": [
-      "test/sd15_read.test.js"
+      "test/net/superDungeon/sd15_read.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "  const t0 = Math.max(t, atk.at), t1 = atk.at + S.active;",
     "new": "  const t0 = atk.at, t1 = atk.at + S.active;",
     "tests": [
-      "test/sd15_read.test.js"
+      "test/net/superDungeon/sd15_read.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "const atk = i < 0 ? s.rem?.atk : ec[i].h > 0 ? ec[i].atk : null;",
     "new": "const atk = i < 0 ? s.rem?.atk : null;",
     "tests": [
-      "test/sd15_read.test.js"
+      "test/net/superDungeon/sd15_read.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "(bestAtk && bestAtk.at <= atk.at)",
     "new": "(bestAtk && bestAtk.at >= atk.at)",
     "tests": [
-      "test/sd15_read.test.js"
+      "test/net/superDungeon/sd15_read.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "|| !isPlace(A) || !insideAt(A, atk, S, t, over, fx, fz)) continue;",
     "new": "|| (isPlace(A) && !insideAt(A, atk, S, t, over, fx, fz))) continue;",
     "tests": [
-      "test/sd15_read.test.js"
+      "test/net/superDungeon/sd15_read.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "      if (Math.hypot(x, z) > R) break;\n",
     "new": "",
     "tests": [
-      "test/sd15_read.test.js"
+      "test/net/superDungeon/sd15_read.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "  const m = groundViewModel({ inside: !!burning,",
     "new": "  const m = groundViewModel({ inside: false,",
     "tests": [
-      "test/sd15_read.test.js"
+      "test/net/superDungeon/sd15_read.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "        k = { fi: s.fi, awake: t >= s.op, ph: s.ph, last: Number.isFinite(s.ends) && s.ends - t <= SD_BEAT_LAST_MS, fell: !!s.fell };",
     "new": "        k = { fi: s.fi, awake: false, ph: 1, last: false, fell: false };",
     "tests": [
-      "test/sd15_read.test.js"
+      "test/net/superDungeon/sd15_read.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "if (awake && !k.awake && t - s.op < SD_BEAT_LATE_MS) show(",
     "new": "if (awake && !k.awake) show(",
     "tests": [
-      "test/sd15_read.test.js"
+      "test/net/superDungeon/sd15_read.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "      k.last = k.last || last;",
     "new": "      k.last = last;",
     "tests": [
-      "test/sd15_read.test.js"
+      "test/net/superDungeon/sd15_read.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "      if (last && !k.last) show('last', t, SD_BEAT_TEXT.last, '#ff6a5a');\n",
     "new": "",
     "tests": [
-      "test/sd15_read.test.js"
+      "test/net/superDungeon/sd15_read.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "if (s.fell && !k.fell) { k.fell = true; if (t - s.fell.at < SD_BEAT_LATE_MS) show(",
     "new": "if (s.fell && !k.fell) { k.fell = true; if (true) show(",
     "tests": [
-      "test/sd15_read.test.js"
+      "test/net/superDungeon/sd15_read.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "export const SD_TITLE_BRASS = '#e8c060';",
     "new": "export const SD_TITLE_BRASS = 'rgba(255,70,30,1)';",
     "tests": [
-      "test/sd15_read.test.js"
+      "test/net/superDungeon/sd15_read.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "  if (!root) {\n    if (!want || !doc?.createElement) return;\n    build(doc);\n  }",
     "new": "  if (!want || !doc?.createElement) return;\n  build(doc);",
     "tests": [
-      "test/sd15_read.test.js"
+      "test/net/superDungeon/sd15_read.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "    if (ground || _sdGroundUp) { drawGateGround(ground, { hidden }); _sdGroundUp = !!ground; }\n",
     "new": "",
     "tests": [
-      "test/sd15_read.test.js"
+      "test/net/superDungeon/sd15_read.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "old": "    if (_sdCardUp) { drawSdTitleCard(null); _sdCardUp = false; }\n",
     "new": "",
     "tests": [
-      "test/sd15_read.test.js"
+      "test/net/superDungeon/sd15_read.test.js"
     ]
   },
   {
@@ -185,7 +185,7 @@
     "old": "    burning: () => inFire,",
     "new": "    burning: () => false,",
     "tests": [
-      "test/sd15_read.test.js"
+      "test/net/superDungeon/sd15_read.test.js"
     ]
   }
 ]

@@ -22,7 +22,7 @@
 //
 // Nothing here decides anything about keys. If the classic grid and
 // this pane ever disagree it is because one of them stopped calling
-// these functions, which is what test/enhancedControls.test.js holds.
+// these functions, which is what test/ui/enhanced/enhancedControls.test.js holds.
 //
 // THE GESTURES, mirrored from ui/controlsWindow.js:
 //  - LEFT CLICK a binding arms capture; the NEXT keydown OR MOUSE

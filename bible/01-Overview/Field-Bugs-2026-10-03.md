@@ -44,19 +44,19 @@ RETRO1 row narrowed. All four hosts take it through the shared modules; no host 
 320x200 letterbox on the whole canvas - integer-scaled and centred, never DFU's free scale into CustomScreenRect - and
 at 1920x1080 their box reaches 80 px into each bar; the video and the Morrowind arm's lane (AUDIT RETRO1 C2) keep the
 canvas too - so with the arms and the Weapon Widget both on, the widget's Position and Scale for the arm are reckoned on
-the picture's width while the arm is drawn over the canvas's. `test/fb1003_retroui.test.js`; `test/hudlarge.test.js` and `test/thunderlock.test.js` read the new shapes.
+the picture's width while the arm is drawn over the canvas's. `test/systems/fb1003_retroui.test.js`; `test/systems/hudlarge.test.js` and `test/systems/thunderlock.test.js` read the new shapes.
 
 ## MOVED-NOTICE (2)
 
 `ui/enhanced/enhancedNotice.js` buildStack; `ui/hud/hudPlacer.js` (new); `ui/hud/hudLayout.js` paint, its sheet. The stack is placed as
 it is built - before its first panel's resting style is flushed - as revenantCard's `ensure()` places its own; through
 a leaf seat (`placeHudPieces`, which hudLayout fills with its sweep) because the notice module is on the quest
-herald's light path, which must not reach the quest machine through hudLayout's previews (`test/guide3_herald.test.js`
+herald's light path, which must not reach the quest machine through hudLayout's previews (`test/ui/quest/guide3_herald.test.js`
 THE HUD STAYS LIGHT went red on a direct import). A piece the player MOVED wears `data-hm-moved`, and a moved notice
 stack's panels - and a moved revenant stack's cards - take no transform: they fade in and out where they stand on the
 sheets' own opacity transitions, which end inside the time the node stands (NOTICE_SLIDE_MS, REVENANT_SLIDE_MS). A
 stack left where its sheet stands it still slides from its edge (ENH-NOTICE1, Mac's), and one only scaled is not
-moved. `test/fb1003_movednotice.test.js`.
+moved. `test/ui/enhanced/fb1003_movednotice.test.js`.
 
 **Said, not fixed.** Under the Overworld the notice stack's base place moves (OW-NOTICES: over the block), so a saved
 offset lands on a different base there; and a moved stack keeps its right edge (shrink-to-fit, `align-items:
@@ -65,7 +65,7 @@ flex-end`), so a wider notice grows leftward rather than about its centre.
 ## CLASSIC-CURSOR (3)
 
 `ui/cursor.js` (rewritten); `public/art/dfu-cursor/Cursor2.png`, `vendor/dfu-cursor/`; `main.js`; `ui/gamepadInput.js`;
-`ui/credits.js`; `test/doctrine.test.js`'s row. DFU reads no cursor out of ARENA2: SetCursor
+`ui/credits.js`; `test/tooling/doctrine.test.js`'s row. DFU reads no cursor out of ARENA2: SetCursor
 (DaggerfallUnitySetupGameWizard.cs :743-771) takes a mod's "Cursor" replacement, else `Cursor.SetCursor(null, ...)` -
 Unity's default, ProjectSettings' `defaultCursor` (guid 887ec86c..., hotspot 0,0): Assets/Resources/Cursor2.png, the
 32x32 three-blue arrow of the report's picture. It is DFU-authored art (MIT), vendored byte for byte at the commit
@@ -75,7 +75,7 @@ every element, `!important` as Plus's gauntlet is: the inline cursor on `<html>`
 pointer`. A text field keeps its caret, a canvas a controller hid the pointer on stays hidden; the scrollbar dress
 (CURSOR-EDGE UI1) comes with it. The pad's arrow is the same art - DFU's `controllerCursorImage` (InputManager :40,
 :569) is that texture - in place of a white SVG arrow of the port's own. CURSOR.IMG is no longer read.
-`test/fb1003_classiccursor.test.js`; `test/fb1001_uiaudit.test.js` UI1/UI3 and `test/fb1001_cursoredge.test.js` read
+`test/ui/fb1003_classiccursor.test.js`; `test/ui/fb1001_uiaudit.test.js` UI1/UI3 and `test/ui/enhanced/fb1001_cursoredge.test.js` read
 the rule now.
 
 ## GL-LEAK (4)
@@ -92,7 +92,7 @@ linked; a context whose programs would not link is lost before the null. And as 
 browser keeps for back-forward), every context is let go at once through `render/glRelease.js` - a leaf, so the entry's
 reach is unchanged (BOOT2) - the game's own (the context-lost banner stays down for it), the ink's, the gate veil's
 (whose `destroy` now loses it too) and the intro's (likewise its `dispose`). On Firefox a context lives in the GPU
-process; `WEBGL_lose_context` frees it there now, not when the tab's collector reaches it. `test/fb1003_glleak.test.js`.
+process; `WEBGL_lose_context` frees it there now, not when the tab's collector reaches it. `test/ui/ink/fb1003_glleak.test.js`.
 
 **Said, not fixed.** The world's GPU caches never evict: `renderer.textures`, `emissionTextures`, `tileArrays` and the
 pipeline's `gpuMeshes` keep every archive record, climate set and model a session has met - bounded by the game's own
@@ -111,8 +111,8 @@ point-in-solid, ROCK-FREE's `partsHolding` (an odd count of crossings of one par
 the ground), exact where the nodes' `insideRocks` is a footprint's box (a mountain's box would refuse whole valleys and
 a pack would never stand): the anchor rolls again, a member takes the next spot, the split hunt's trail spot takes the
 next of its eight (a spot in rock stood nobody, on every retry), and no bounty farmstead is raised in one. The deep-water
-guards' lines are unchanged (tools/mutants/auditpace.json quotes them). `test/fb1003_bountyrock.test.js`;
-`test/auditbounty1.test.js` and `test/auditpscale1.test.js` mount the stand with `_inRock` in its scope.
+guards' lines are unchanged (tools/mutants/auditpace.json quotes them). `test/systems/party/fb1003_bountyrock.test.js`;
+`test/systems/auditbounty1.test.js` and `test/systems/auditpscale1.test.js` mount the stand with `_inRock` in its scope.
 
 ## BODYGUARD-CLOSE (6)
 
@@ -128,7 +128,7 @@ R0C10Y01's `_queston_` (-20 with the questgiver, beside its own `_delay_` close)
 late" line) stayed frozen after a success under TIMEFREE (a deadline runs on played time since REST8); A0C41Y18 keeps its lifetime. Read over the whole corpus: of the start-up
 deadlines it turns, every other quest closes in the reward's own reach or by another close first, but A0C00Y10, which
 closed when the player left the inn and now closes on the short wait if they stay. A stuck save closes on its next tick
-(`questSuccess` is saved). `test/fb1003_bodyguard.test.js` runs the real machine: online, a hundred unpaid hours leave it
+(`questSuccess` is saved). `test/systems/quest/fb1003_bodyguard.test.js` runs the real machine: online, a hundred unpaid hours leave it
 running and the pay closes it within the short wait; offline, DFU's day and three hours.
 
 ## WIDGET-LOOK, WIDGET-RECOIL (7)
@@ -144,8 +144,8 @@ radians its lab (gun-proto.html) is tuned on, FIELD-GUN8's "1:1". RECOIL: Weapon
 -> onAttackResult) and needs its module on; the Shield Widget's default condition, "Attack On Shield", asks whether the
 shield covers the struck part, and PCAAO's core (`armorHitFormulaRedone`, on by default) rolls its own part, which the
 tail's struck hook never saw - -1 on every blow, so the kick never came. The core hands its part back (`onStruck`).
-`test/fb1003_widgetlook.test.js`; the rig's pins in `test/ww1_weaponwidget.test.js`, `test/sw1_shield_widget.test.js`
-and `test/ht1_handheldtorches.test.js` read the new feed.
+`test/combat/weapon/fb1003_widgetlook.test.js`; the rig's pins in `test/combat/weapon/ww1_weaponwidget.test.js`, `test/combat/sw1_shield_widget.test.js`
+and `test/systems/ht1_handheldtorches.test.js` read the new feed.
 
 **Said, not fixed.** `Step.Condition` (the mods' "Sheathe/Attack Only" against "All Transforms") is read and never used:
 with Step on (off by default; on in the Diverse Weapons preset) every transform snaps, Inertia and Recoil included, as
@@ -166,7 +166,7 @@ the price says to put it in at the Guild tab's Treasury, at most 1,000,000 a mov
 short of counted gold says which gold counts. The Guild tab's Hall section, with no hall, says how much of the treasury
 can buy one (`hallGold`, a field the service now sends; an older service's answer says nothing). And Deposit and
 Withdraw are held at the button past GUILD_MOVE_MAX with the cap said, where the service refused it after the press (a
-1,274,880 hall takes two deposits). `test/fb1003_hallgold.test.js` (the view through the real service).
+1,274,880 hall takes two deposits). `test/ui/fb1003_hallgold.test.js` (the view through the real service).
 
 **Said, not fixed.** A refused buy still spends one of the hour's twenty home claims (`overRate` before the treasury's
 guard); a treasury from before the realm (`realm_gold` 0 since 0020) stays uncountable - OPEN, Mac's call, as

@@ -1,6 +1,6 @@
 // AUDIT WB12d - THE FAITHFUL'S CIRCLE, COMPILED, LINKED AND DRAWN IN A REAL BROWSER.
 //
-// node holds the circle's law (test/wb12d_rite_world.test.js drives the smoke's shaders through test/glsl.mjs and the
+// node holds the circle's law (test/net/gate/wb12d_rite_world.test.js drives the smoke's shaders through test/glsl.mjs and the
 // stone over fakes); what node cannot answer is whether the smoke's GLSL COMPILES and LINKS in a real WebGL2 context,
 // whether the frame's light survives as a uniform the optimiser did not drop, and what lands on the pixels: the
 // fire's glow over the altar, the plume dark on a clear sky a kilometre and a half off and on the night's, gone in

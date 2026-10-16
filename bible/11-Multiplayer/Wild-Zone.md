@@ -257,7 +257,7 @@ with the minutes left.
   forgotten at its end or at the room's "gone". CLIENT-ONLY; NOT DONE, and the owner's: a record the account keeps (a
   second device, a cleared storage), a clock that waits for a disconnected owner, and a relay log of a fall's records
   that a lost pile could be granted back from - today nothing keeps them past the twelve minutes. Pinned by
-  `test/fb1009c_wildkeep.test.js`; `tools/mutants/fb1009c_wildkeep.json` (7, all dead).
+  `test/systems/wild/fb1009c_wildkeep.test.js`; `tools/mutants/fb1009c_wildkeep.json` (7, all dead).
 
 ## 6. The maps
 
@@ -286,7 +286,7 @@ with the minutes left.
   red rim, over the province map and over the Wrothgarian Mountains' own page, under the dots. CLASSIC-CUT
   (2026-10-08): on the province map too it is the cut alone, never the whole region - the picker bitmap's region laid
   over the map's by their two boxes (`wildPictureZone`, `wildZone.js:"export function wildPictureZone"`, over the
-  mask's `regionBox`; `travelMapWindow.js:"const isZone = wildPictureZone("`); pinned in `test/wild1_zone.test.js`.
+  mask's `regionBox`; `travelMapWindow.js:"const isZone = wildPictureZone("`); pinned in `test/systems/wild1_zone.test.js`.
 - WHO IS SEEN: in or near the zone only my party and my guild (`wildHidesPlayer`) - on the world map and the
   Overworld alike; and a player with no guild sends no region mark there at all.
 
@@ -698,7 +698,7 @@ each is a line here, findable by its tag.
   the rest window opening on its Yes once the box has left the slot (`world.js:"const restNow = ()"`). Wired in all
   four hosts' rests - the street's, the interior's, the dungeon's and the fixed city's (world.js, worldModes.js,
   dungeonContext.js, exterior.js; the last left out by the patch and wired after it, 2026-10-08, THE FOUR HOSTS RULE -
-  `test/pvpdungeons_game.test.js` sweeps all four). REST-WARN2 (the owner: "those are not enhanced
+  `test/systems/pvpdungeons_game.test.js` sweeps all four). REST-WARN2 (the owner: "those are not enhanced
   plus ui button and window"): THE DECISION BOX (`DecisionBoxWindow`,
   `decisionBox.js:"export class DecisionBoxWindow"`; `src/ui/decisionBox.js`) - DFU's message box with its YesNo
   buttons, drawn as the Plus decision dialog under the enhanced skin and DFU's parchment on the classic; Y / N, Return
@@ -771,7 +771,7 @@ the instant, and the walk in (the one door into the zone no journey's gate asks,
 - Not done, and the owner's to decide: a floor for new players (a level, a Renown, a first entry acknowledged). A
   guild's members fight nobody of their own guild here (Mac, 2026-10-14, "Guildmates are friends" - section 3).
 
-Pinned by `test/fb1009b_partytruce.test.js` and `test/tv8_party_walk.test.js`; `tools/mutants/fb1009b_partytruce.json`.
+Pinned by `test/systems/wild/fb1009b_partytruce.test.js` and `test/systems/travel/tv8_party_walk.test.js`; `tools/mutants/fb1009b_partytruce.json`.
 
 ## 22. Known limits
 
@@ -817,19 +817,19 @@ The zone landed without a run of the suite. Four of what it caught were the sour
 
 ## Pins
 
-`test/wild1_zone.test.js`, `test/wild1_wire.test.js`, `test/wild1_fight.test.js`, `test/wild2_rings.test.js`,
-`test/pvpdungeons_game.test.js` (the halls' placement and foes, HEAL-CURSE, REST-WARN, SWAP-HANDS, GOTHWAY-BOARDS,
+`test/systems/wild1_zone.test.js`, `test/net/wild1_wire.test.js`, `test/net/wild1_fight.test.js`, `test/systems/wild2_rings.test.js`,
+`test/systems/pvpdungeons_game.test.js` (the halls' placement and foes, HEAL-CURSE, REST-WARN, SWAP-HANDS, GOTHWAY-BOARDS,
 ZONE-GIANTS' walks and the hub's giants, GIANT-FIELDS, GIANT-LEASH, CROW-NEWS, DUNGEON-RESPAWN, GREATER-GIANT,
-WILD-KEEPOUT, KEEP-SPELLBOOK - `tools/mutants/keepspellbook.json`, 9, all dead), `test/pvpdungeons_hub.test.js` (the `wdun` wire, the lock, the way back, the reset, the crows, the
-relay's hub and no friend's take); the host seams of section 23 in `test/bootorder.test.js`,
-`test/audit68_worldmodes.test.js`, `test/mapkeep.test.js`, `test/mwattach.test.js`, `test/audit26_uiwindows.test.js`
-and `test/audit24_onehome.test.js`; `tools/mutants/wildsuite.json`; LETTERS-DROP and KEEP-WALLET in
-`test/wild1_zone.test.js`, `tools/mutants/keepwallet.json`. INT9 (the zone refereed, a death's drop taken off the record):
-`test/int9_wild_ref.test.js`, `tools/mutants/int_lane2.json` (`06-Systems/Integrity-Arc.md` section 5). PVP-LOOT (the
+WILD-KEEPOUT, KEEP-SPELLBOOK - `tools/mutants/keepspellbook.json`, 9, all dead), `test/net/pvpdungeons_hub.test.js` (the `wdun` wire, the lock, the way back, the reset, the crows, the
+relay's hub and no friend's take); the host seams of section 23 in `test/scenes/bootorder.test.js`,
+`test/scenes/audit68_worldmodes.test.js`, `test/systems/automap/mapkeep.test.js`, `test/scenes/mwattach.test.js`, `test/ui/audit26_uiwindows.test.js`
+and `test/systems/talk/audit24_onehome.test.js`; `tools/mutants/wildsuite.json`; LETTERS-DROP and KEEP-WALLET in
+`test/systems/wild1_zone.test.js`, `tools/mutants/keepwallet.json`. INT9 (the zone refereed, a death's drop taken off the record):
+`test/net/int9_wild_ref.test.js`, `tools/mutants/int_lane2.json` (`06-Systems/Integrity-Arc.md` section 5). PVP-LOOT (the
 killer's worn piece theirs whoever the fallen's guild or party counts them, end to end over the game's own pieces):
-`test/fb1014_pvploot.test.js`, `tools/mutants/fb1014_pvploot.json`. Mac's two decisions of 2026-10-14 - guildmates kin,
+`test/systems/fb1014_pvploot.test.js`, `tools/mutants/fb1014_pvploot.json`. Mac's two decisions of 2026-10-14 - guildmates kin,
 the two-phase handoff - end to end through the real relay room, account service and clients:
-`test/fb1014_pvpescrow.test.js`, `tools/mutants/fb1014_pvpescrow.json`. CART-AWAY (Mac, 2026-10-15 - the cart's share
+`test/systems/fb1014_pvpescrow.test.js`, `tools/mutants/fb1014_pvpescrow.json`. CART-AWAY (Mac, 2026-10-15 - the cart's share
 only while the wagon is with them; through the real drop law, the real Horse Cart and Cargo runtime's records, the zone's
-own mask and the real account service): `test/fb1015_cartaway.test.js`, `tools/mutants/fb1015_cartaway.json` (20, all
+own mask and the real account service): `test/systems/fb1015_cartaway.test.js`, `tools/mutants/fb1015_cartaway.json` (20, all
 dead).

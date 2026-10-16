@@ -177,7 +177,7 @@ no stat goes under five.
 > dead. The reader is deleted, because a seam that looks wired is worse
 > than one plainly absent, and every pool hands its own stream and its
 > own player's luck. Pinned on all three call sites and driven through
-> the live handler (`test/surv2_items.test.js`), 6 mutants.
+> the live handler (`test/systems/surv2_items.test.js`), 6 mutants.
 
 
 The mod's templates as the port's custom rows above DFU's 288
@@ -510,7 +510,7 @@ is on a coast. So a helm, a deck and a sea ship's boarding all rolled the hunt, 
 SEA-HUNT row). The host has one predicate for it, `world.js playerAfloat`: at a helm, on a boat's deck (its "I'm On A
 Boat"), aboard another player's boat, on a sea ship's deck (`naval.aboard()`), or swimming. The same predicate now
 gates a bounty's trail lines and pack (`canStand`) and ends a wilderness band's chase (which had missed a sea ship's
-deck). Pins: `test/deckfield.test.js` (SEA-HUNT).
+deck). Pins: `test/systems/deckfield.test.js` (SEA-HUNT).
 
 ### The feed (SURV7)
 
@@ -553,7 +553,7 @@ and records, and a runtime probe in Chromium (the game data is not in
 the container, so the probe drove the arc's modules, the real ticker,
 the rest deps, the tavern and hunt windows and the enhanced HUD on the
 front door, not the 3D scene). What they found, all fixed and pinned
-(`test/auditsurv.test.js`, `tools/mutants/auditsurv.json`):
+(`test/systems/survival/auditsurv.test.js`, `tools/mutants/auditsurv.json`):
 
 - THE HARMS KILLED A STARTING CHARACTER (E, blocker). The bare-feet
   arm took a point of health every game minute past |felt| 25 with no
@@ -629,7 +629,7 @@ row (a food's keeping and the gear's uses are their own tokens); and
 asks the equip table for a slot and offers no Wear where none would
 take the item, and `useItem.js` `usableItem` (the ladder's arms
 restated as a predicate) decides the Use button on both sides of the
-pack. Both pinned in `test/auditsurv.test.js`.
+pack. Both pinned in `test/systems/survival/auditsurv.test.js`.
 
 Not driven (no ARENA2 in the container): the 3D fire and tent, the
 activation ray, the inventory windows in situ, dungeon-floor camps,
@@ -661,7 +661,7 @@ spawn band a drain to nothing costs the same tenth, with its own HUD line
 all four hosts (`exhaustionOutcome`'s `spent`). No outcome is a death
 now: the collapse kills only through the tenths it takes, so the lethal
 branch this section pinned, and its raw zero, are gone from every host -
-`test/playerdeath.test.js` holds the share's arm to the damage door
+`test/systems/playerdeath.test.js` holds the share's arm to the damage door
 instead, and `audit_air1.json`'s two DEATH1 collapse records were
 re-aimed at it.]
 
@@ -865,7 +865,7 @@ stores every texture in color32 order (row 0 the picture's bottom,
 every mod icon in the DOM would have drawn upside down - SW4's fault
 one door along, and pinned here so it cannot arrive.
 
-**The pins** (`test/survart_icons.test.js`, 3) drive the real modules,
+**The pins** (`test/systems/survart_icons.test.js`, 3) drive the real modules,
 because a source-text pin would have matched the broken code too: the
 first walks all sixteen through the GL door's own expression, the
 second runs `requestIcon` against a canvas stub and reads the pixels
@@ -909,7 +909,7 @@ file is, so the registration says: `addVendorTextures` takes a
 `standIn` flag, the icons pass it, the tent's two do not, and
 `isVendorArchive` and `vendorRecordCount` both read it.
 
-Pinned in `test/survart_icons.test.js` (the files, their sizes, that
+Pinned in `test/systems/survart_icons.test.js` (the files, their sizes, that
 the swap arm finds both, and that 50 and 67 are still fetched while 532
 and 539 are not) and in the SURV2 icon pin. Mutants:
 `tools/mutants/survart.json` grew three - the flag ignored, the tent
@@ -1215,7 +1215,7 @@ world and fights whoever is near it.
 
 ### The pins
 
-`test/survtiers.test.js`, 30 tests (29 since HUNT-OUT took the hunt's): the row, the table and the shelf agree
+`test/systems/survival/survtiers.test.js`, 30 tests (29 since HUNT-OUT took the hunt's): the row, the table and the shelf agree
 (the segments write the table's stored values); the switch's reads; the
 shelf, through a real one (an old Off kept as `false`, the default stored
 as nothing, five junk values dropped at the load); Hard's table is the arc
@@ -1306,7 +1306,7 @@ second, #32).
 | 14 | "will not pour you another" on a first spirit | Casual | "The barkeep shakes their head: that one would put you on the floor." |
 | 15 | A NaN count asked no encounter at all, an Infinity count never stopped asking | latent | a count that is no finite number is one |
 | 16 | The Features note was three sentences (FT15's title asks for one or two) | - | two, and pinned by survtiers in the second pass (#32) |
-| 17 | `test/partyrest1.test.js` sliced from a declaration that had grown a parameter - the slice was empty and four assertions passed against nothing | - | the marker is the declaration as it stands, and the slice is held non-empty (and a mutant proves it) |
+| 17 | `test/scenes/partyrest1.test.js` sliced from a declaration that had grown a parameter - the slice was empty and four assertions passed against nothing | - | the marker is the declaration as it stands, and the slice is held non-empty (and a mutant proves it) |
 | 18 | The record said the sweep ran "every climate, month, hour and weather" - it ran two months, two hours and two weathers; "over twelve thousand" searches were exactly twelve thousand; the refund-first budget was claimed and unpinned | - | the sweep runs all of them (92,160 minutes); the count is exact; the refund is pinned |
 | 19 | A mutant (the switch reading the old boolean) became EQUIVALENT once Off was `false` again; one named `row-default-true` made the default `'hard'`; one duplicated `modsonline1.json`'s | - | replaced, renamed, removed |
 | 20 | Stale words: `shared.js`'s rest and gate comments, `world.js`'s mirror fallback, `onlineLane.js`'s "boolean switches", `status.js`'s severity note, `credits.js`'s "a costed rest", the Port Ledger's and Home's "one switch", this page's intro | - | each said now as it is |
@@ -1328,7 +1328,7 @@ second, #32).
 - **The classic skin has no needs strip** - older than the tiers; the
   status page carries the needs there.
 - **`wire.js` keeps "survival mode off" in two comments** about a null
-  rest kind. `test/relayversion.test.js` (SLAM8) hashes the relay's
+  rest kind. `test/net/relayversion.test.js` (SLAM8) hashes the relay's
   bundle, comments included, and a comment edit there is a relay version
   and a deploy; the words ride the next wire change.
 
@@ -1389,7 +1389,7 @@ three places, and says so.
 | 28 | A party rest mirrored in a DUNGEON paid no sleep: the mirror runs on the outer host's ticker, which read no needs underground, while its window holds the dungeon's frame - the follower woke Exhausted | both (older) | underground, a resting player's ticker reads the dungeon's own reader (`world.js`/`exterior.js` `survivalEnv`, `dungeonContext.js` `survivalEnvNow`) |
 | 29 | A tent used from the WAGON never left it - both windows handed the item, every host placed it off the pack - so one tent pitched and packed into a new one each time (HCC made the wagon the gear's home) | both (older) | both windows hand the list the item was used from; the hosts place off it |
 | 30 | Before six the enhanced tavern said the kitchen was shut and served nothing; the classic window's drinks still pour | both (older) | the kitchen's words, then the drinks |
-| 31 | `test/partyrest1.test.js` still could not fail for `dead` or `vitals` - the first pass's fix built `dead\s*:\s*:`, two colons | - | one key, one colon, on a word boundary; mutants prove all four |
+| 31 | `test/scenes/partyrest1.test.js` still could not fail for `dead` or `vitals` - the first pass's fix built `dead\s*:\s*:`, two colons | - | one key, one colon, on a word boundary; mutants prove all four |
 | 32 | Pins the first pass claimed and did not have: the note's two sentences (FT15 counts only characters, and a dozen other rows run longer - this row is pinned at two by survtiers), the Infinity ask (its pin could only fail by hanging - the rolls now stop answering after a thousand), the kitchen's null rules; and mutants for the exterior's and the dungeon's `fireNear`, the enhanced window's gold-first order, the barkeep's words, the refund-first budget, the potion cite | - | each added |
 | 33 | The Features note said Casual "lends" stamina "never below half": the loan runs the other way (the needs borrow), and the half is the needs' share - DFU's own walking and running drain runs below it | - | "Casual's needs only borrow stamina, never past half the bar, and repay it when met" |
 | 34 | Records: the first pass named three different "four laws Hard shares"; null rules were latent, not wrong since SURV1-7; rule 1 claimed every word is the same (the refusals, the repaid line, a twin's line and the Stiff chip are the tier's); rule 3 read as if Drenched cost; a camps comment blamed the save where it was the load; a probe check read back its own seed; tests left the tier and the clock set when an assert failed; stale cites beside re-aimed ones (Travel-Options' `:369`, `tavern.js`'s popup Talk, `tavernWindow.js`'s sceneCache, Port-Status item 9's four `useItem` numbers, `enhancedInventory.js`'s `nativeInventory` cite) | - | each said as it is; an `afterEach` resets the tier, the clock and the gate after every tier test |
@@ -1468,7 +1468,7 @@ what it is, and the click opens nothing. And "this player's" is the
 pool's own word (a camp it stood, or restored as its own), not the
 record's owner id, which is minted per tab (#35).
 
-**The pins.** `test/survtiers.test.js` 29 -> 30: one pool holding this
+**The pins.** `test/systems/survival/survtiers.test.js` 29 -> 30: one pool holding this
 player's own tent camp and a peer's, each SEEN (the flame, its light, the
 tent) and USED (the ray, the name, the warmth, the camp's rest) in Casual
 and in Hard; Off sees the peer's alone and uses neither, with no word and no
@@ -1512,7 +1512,7 @@ pins** (every claim, count and cite, and whether each pin bites) and
 **online and saves** (the wire, the relay's clock, the load, the teleport,
 the hosts). Every finding was reproduced on the working tree before it
 was fixed and re-run after; each fix is pinned in
-`test/survtiers3.test.js` and recorded in `tools/mutants/survtiers3.json`.
+`test/systems/survival/survtiers3.test.js` and recorded in `tools/mutants/survtiers3.json`.
 
 Most of what this pass found is older than the tiers - the camp pool's
 ownership, its loads and its teleports go back to SURV3 and AUDIT SURV B -
@@ -1577,7 +1577,7 @@ said was not there. No number of Hard's own charges moved.
    the same day* - Mac: "It needs to be accessible with people with it on"
    (CORPSE-FOOD, below).
 
-**The pins.** `test/survtiers3.test.js`, 19 tests, one per finding or
+**The pins.** `test/systems/survival/survtiers3.test.js`, 19 tests, one per finding or
 group; older pins moved where a law did - survtiers (the composed ticker's
 attributes, the pause's decays, the loan's pool kept beside the world's
 keys, SURV-OFFSIGHT's sight), auditsurv (Off's ray and look), hearth1 (the
@@ -1650,7 +1650,7 @@ any, since the death is raised where it happens.
   carries its own list, and a list the room sends is the room's.
   Whoever opens first, the room's list has food in it.
 
-**The pins.** `test/survtiers3.test.js` 19 -> 21: the switch at every tier
+**The pins.** `test/systems/survival/survtiers3.test.js` 19 -> 21: the switch at every tier
 offline and online; a bear killed on an Off machine online carries meat,
 offline none, through either door; and the stream's arm MOUNTED - the
 dungeon's own `applyFoeRecord`, sliced out of the source as SEAT-HEAL
@@ -1763,7 +1763,7 @@ never for a vampire, nothing with a host's `autoEat` off; Peckish is not a stage
 full meal. The Hungry line is not said over food: the sack is eaten before the stage is noted. Not a 1:1 port - the
 mod's DLL is not in the tree, and the starving auto-eat was already written up as the port's own; both tiers alike.
 
-`test/rationshungry.test.js` (2); `test/surv1_model.test.js`'s sleep test eats a sack twelve hours into its rest;
+`test/systems/survival/rationshungry.test.js` (2); `test/systems/survival/surv1_model.test.js`'s sleep test eats a sack twelve hours into its rest;
 `tools/mutants/rationshungry.json` (4, all dead).
 
 AUDIT RATIONS-HUNGRY (2026-10-04): nothing assumed a sack vanished only at Starving (the comment on `eatRations` did,
@@ -1884,7 +1884,7 @@ the classic game's body, never less.
 
 ### The pins
 
-`test/survboons.test.js`, 14 tests, every number a literal (A PIN MUST
+`test/systems/survival/survboons.test.js`, 14 tests, every number a literal (A PIN MUST
 FAIL - a pin that read `BOON` or `HEARTH_FATIGUE` back survived their
 mutation): the fourth tier on the one key and the table to the value;
 NOTHING IS EVER TAKEN (the worst day in wet plate on 1% rust rolls, every
@@ -1902,8 +1902,8 @@ replay, or in Casual or Hard); the vampire; only Boons rewards (a turn,
 a bank with no grant, Off; a lapse and a return said again); Casual's loan
 repaid; a jump says what it lands with; a load says nothing new (a real
 save round trip); and the strip and the page in words. The pre-tier pins
-moved where the vocabulary did: `test/survtiers.test.js` reads four
-segments and holds Boons to the same shape; `test/ui3_status.test.js`
+moved where the vocabulary did: `test/systems/survival/survtiers.test.js` reads four
+segments and holds Boons to the same shape; `test/ui/enhanced/ui3_status.test.js`
 counts the glyphs; FT15's ceiling rose by each growth of the row.
 
 Mutants: `tools/mutants/survboons.json`, 75 records - every field of the
@@ -1925,7 +1925,7 @@ trigger and words, and the sheet's rows in another tier - all 75 dead.
 Boons; the boon tiles were driven through the real `drawEnhancedHud` on a
 fake document, not photographed (the temperature plate beside them was -
 TEMP-UI). That drive was this session's own, not a suite's; since AUDIT C&C
-(R-S2) `test/auditcc_ui.test.js` drives them so.
+(R-S2) `test/systems/auditcc_ui.test.js` drives them so.
 
 ## AUDIT SURV-BOONS (2026-10-12)
 
@@ -2086,7 +2086,7 @@ points already used.
 
 ### The pins
 
-`test/tempui.test.js`, 16 tests: the natural parts sum to the law (over
+`test/systems/survival/tempui.test.js`, 16 tests: the natural parts sum to the law (over
 twenty thousand environments) and the hour's band is the law's; the
 breakdown sums to `felt` (over ten thousand readings) and its rows are
 named; `signedDegrees`; the plate's level is the chip's for every reading
@@ -2314,7 +2314,7 @@ fixed; four lenses found the jump's sky independently.
   boot whatever it looks like (THE BOOTS). Both declared now (Port-Ledger
   A); the code says them where the law is.
 
-Pinned by `test/auditcc.test.js`, with the moved pins in
+Pinned by `test/systems/auditcc.test.js`, with the moved pins in
 `surv1_model`, `fb0930_cc_roof` and `fb0930_cc_said` re-aimed to the law
 by content.
 
@@ -2398,7 +2398,7 @@ by content.
   under a pin that still passed. Each names its own line now, and each
   copy is pinned and has its mutant.
 
-Pinned by `test/auditcc.test.js` - the jump through the real ticker, the
+Pinned by `test/systems/auditcc.test.js` - the jump through the real ticker, the
 collapse fired from inside a live minute in both lanes, the prison
 through the real arrest flow - with the moved pins in `tempui` (E2),
 `surv7_feed`, `surv1_model`, `audit68_dungeonctx`, `auditlived1b`,
@@ -2463,7 +2463,7 @@ through the real arrest flow - with the moved pins in `tempui` (E2),
   And rust is rolled where the mod rolls it: never at rest, never under a
   roof - a reading corrected.
 
-Pinned by `test/auditcc_items.test.js` (the real producers, the real camp
+Pinned by `test/systems/survival/auditcc_items.test.js` (the real producers, the real camp
 pool), with the camp lists in `auditrest2_camps`, `auditrest3`,
 `rest2_campfire`, `rest6_consumables` and `surv3_camps` and the kit in
 `surv2_items` re-aimed by content.
@@ -2508,7 +2508,7 @@ pool), with the camp lists in `auditrest2_camps`, `auditrest3`,
   written 10 and charged 20; the Orcs' mid Mulled Wine, written 18 and
   charged 8) - the port charges what the menu says.
 
-Pinned by `test/auditcc_tavern.test.js` (both windows, the real clocks),
+Pinned by `test/systems/survival/auditcc_tavern.test.js` (both windows, the real clocks),
 with `surv5_ui`, `survtiers`, `survtiers3`, `survboons`,
 `fb0930_cc_drink`, `fb0930_cc_innwater` and `fb0930_cc_menuclimate`
 re-aimed by content.
@@ -2567,7 +2567,7 @@ re-aimed by content.
   builders, a lined cloak's card (+16 - the wear's own wardrobe), and the
   plate on a tier turned before a minute ran.
 
-Pinned by `test/auditcc_ui.test.js`, with `auditsurv`,
+Pinned by `test/systems/auditcc_ui.test.js`, with `auditsurv`,
 `fb0929d_accompare`, `surv5_ui`, `survboons`, `survtiers`, `survtiers3`,
 `tempui` and `ui3_status` re-aimed by content.
 
@@ -2666,7 +2666,7 @@ referee's vitality and clips. Reading them would make a defender's
 unsigned word (the INSPECT1 card) its defence - BAL8 records that as a
 design of its own, a signed defence.
 
-Pinned by `test/auditcc_pvp.test.js`, with `duel_combat`'s source pin and
+Pinned by `test/systems/auditcc_pvp.test.js`, with `duel_combat`'s source pin and
 `audit_seats_client`'s G5 fixture re-aimed to the stand-in the hosts
 hand.
 
@@ -2897,7 +2897,7 @@ passed lights it for a minute at most, never frame by frame.
   (`tools/ilDump.py` is its reader). T2, T9 and T11, and T1's cover, follow
   the newest source there is.
 
-Pinned by `test/auditcc.test.js` (the castle, the coast, the journey's
+Pinned by `test/systems/auditcc.test.js` (the castle, the coast, the journey's
 save), `auditcc_items` (the world fire's reach), `auditcc_ui` (the boon
 tiles, the line's width, the plate and the top right's two pieces),
 `deckcamp` (the hidden camp) and `rest1_act` (the tile's name), with

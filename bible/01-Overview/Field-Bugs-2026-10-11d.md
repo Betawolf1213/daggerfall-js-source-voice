@@ -39,10 +39,10 @@ begins "Deep snow on the winter ground". The patch notes say where it is. A seco
 the winter ground's TEXTURE pack (SNOWFALL1's sibling, ENVIRONMENT_PACK_MODS) and changes no depth - the likelier source
 of "nobody could tell me". Renaming either is the owner's call (Mac named the mods' rows by their authors, FT9).
 
-Pinned by `test/fb1011_snowtell.test.js` (4: the rise law over the runtime's own uniforms at the mod's defaults and its
+Pinned by `test/render/fb1011_snowtell.test.js` (4: the rise law over the runtime's own uniforms at the mod's defaults and its
 deepest dial; the pass's uLift with and without snow through a fake GL; the renderer's clear, record and hand-off; both
 snowy hosts' order and the other two hosts' absence of snow); `tools/mutants/fb1011_snowtell.json`.
-`test/audittact.test.js`'s AUDIT TACT D9 pin moved (PIN MOVED: the snow's height handed beside the fog).
+`test/scenes/audittact.test.js`'s AUDIT TACT D9 pin moved (PIN MOVED: the snow's height handed beside the fog).
 
 ## TRADE-LOC II: a letter of credit says its worth on its row (2)
 
@@ -56,7 +56,7 @@ Worth, under the damage and the armour a letter never has: `systems/walletItem.j
 letterWorthLine now says after its word (one law, one home). DFU's classic Info box already said it (TEXT.RSC 1007's
 `%wth`). The wire was never the fault: the letter's `value` survives the trade's clamp, pinned by TRADE-LOC.
 
-Pinned by `test/fb1011_tradeloc.test.js` (2); `tools/mutants/fb1011_tradeloc.json`; `tools/mutants/trade_info.json`'s
+Pinned by `test/systems/fb1011_tradeloc.test.js` (2); `tools/mutants/fb1011_tradeloc.json`; `tools/mutants/trade_info.json`'s
 TRADE-LOC-read-off-template re-aimed by content (PIN MOVED: the figure is letterWorthGold's).
 
 ## VEIN-WASH: every ore on a shared picture wears its own wash (3)
@@ -75,7 +75,7 @@ are no DFU member). `mineWash` hands the flats their wash (a Motherlode its ore'
 wash as its own batch (the group's key is record, scale and wash) on the open ground, and sets it on the dungeon's own
 batch underground. The glow and the compass keep mining's one colour - they say which profession, not which ore.
 
-Pinned by `test/fb1011_veinwash.test.js` (3: no two mined ores look alike over every picture; a confirmed Daggerfall
+Pinned by `test/scenes/fb1011_veinwash.test.js` (3: no two mined ores look alike over every picture; a confirmed Daggerfall
 woodland's Moonstone and Lodestone, one picture, stood as two batches each in its own colours; an unwitnessed
 dungeon's Silver in Silver's wash); `tools/mutants/fb1011_veinwash.json`.
 
@@ -103,7 +103,7 @@ pixel first for the map and the ground's ask never want it: it would stand on th
 card is asked again when the word comes. The Mining page's ground line ends by pointing at the map. The classic DFU
 travel window is untouched (THE NATIVE-WINDOW RULE: DFU has no such card).
 
-Pinned by `test/fb1011_oremap.test.js` (3: the report's case and its kin card for card; over every vein climate and
+Pinned by `test/ui/fb1011_oremap.test.js` (3: the report's case and its kin card for card; over every vein climate and
 every region the card is the law's own - its veins, its kingdom's ore, every card whole on the map, and an ore it holds
 back never standing on thirty unwitnessed days; the world host's wiring and the gathering host's ask standing a
-witnessed pixel's Moonstone at once); `test/heldmap.test.js`'s ORE-MAP window test (1); `tools/mutants/fb1011_oremap.json`.
+witnessed pixel's Moonstone at once); `test/ui/heldmap.test.js`'s ORE-MAP window test (1); `tools/mutants/fb1011_oremap.json`.

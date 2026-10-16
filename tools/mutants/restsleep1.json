@@ -5,7 +5,7 @@
     "old": "    sleepShortRest(entity, _kind, _rules, Math.floor(ownMinutes()));",
     "new": "    void sleepShortRest;",
     "tests": [
-      "test/restsleep1_shortrest.test.js"
+      "test/systems/survival/restsleep1_shortrest.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "    sleepShortRest(entity, _kind, _rules, Math.floor(ownMinutes()));",
     "new": "    sleepShortRest(entity, REST_KIND.Bed, _rules, Math.floor(ownMinutes()));",
     "tests": [
-      "test/restsleep1_shortrest.test.js"
+      "test/systems/survival/restsleep1_shortrest.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "    sleepShortRest(entity, _kind, _rules, Math.floor(ownMinutes()));",
     "new": "    sleepShortRest(entity, _kind, _rules, 0);",
     "tests": [
-      "test/restsleep1_shortrest.test.js"
+      "test/systems/survival/restsleep1_shortrest.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "  paySleep(s, kind, NIGHT_MINUTES, now, rules);",
     "new": "  paySleep(s, kind, 1, now, rules);",
     "tests": [
-      "test/restsleep1_shortrest.test.js"
+      "test/systems/survival/restsleep1_shortrest.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "  if (!rules || !s || typeof s !== 'object' || liveVampirism(entity)) return false;",
     "new": "  if (!s || typeof s !== 'object' || liveVampirism(entity)) return false;",
     "tests": [
-      "test/restsleep1_shortrest.test.js"
+      "test/systems/survival/restsleep1_shortrest.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "  if (!rules || !s || typeof s !== 'object' || liveVampirism(entity)) return false;",
     "new": "  if (!rules || !s || typeof s !== 'object') return false;",
     "tests": [
-      "test/restsleep1_shortrest.test.js"
+      "test/systems/survival/restsleep1_shortrest.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "  const s = entity?.survival;",
     "new": "  const s = entity ? (entity.survival ??= { sleepDebt: 0, notes: {} }) : null;",
     "tests": [
-      "test/restsleep1_shortrest.test.js"
+      "test/systems/survival/restsleep1_shortrest.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "  const next = s.sleepDebt - rate * minutes / 60;",
     "new": "  const next = s.sleepDebt - rate / 60;",
     "tests": [
-      "test/restsleep1_shortrest.test.js"
+      "test/systems/survival/restsleep1_shortrest.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "      paySleep(s, sleeping, 1, now, rules);",
     "new": "      paySleep(s, sleeping, 60, now, rules);",
     "tests": [
-      "test/surv1_model.test.js"
+      "test/systems/survival/surv1_model.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "      paySleep(s, sleeping, 1, now, rules);",
     "new": "      paySleep(s, sleeping, 1, now);",
     "tests": [
-      "test/survtiers.test.js"
+      "test/systems/survival/survtiers.test.js"
     ]
   },
   {
@@ -95,8 +95,8 @@
     "old": "  s.awakeSince = now;\n  // SURV-BOONS: a night in a bed",
     "new": "  s.awakeSince = s.awakeSince ?? now;\n  // SURV-BOONS: a night in a bed",
     "tests": [
-      "test/restsleep1_shortrest.test.js",
-      "test/surv1_model.test.js"
+      "test/systems/survival/restsleep1_shortrest.test.js",
+      "test/systems/survival/surv1_model.test.js"
     ]
   }
 ]

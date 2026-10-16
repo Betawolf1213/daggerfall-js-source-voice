@@ -28,7 +28,7 @@ reproduce every finding - a probe script and its saved output - before reporting
 **THE TREE MOVED UNDER THREE LANES** - Home.md's DO NOT FIX WHILE THE VERIFIER IS READING was broken. The crew's
 fixes (C1-C8) and the first strand fix (D1) were made in the working tree while the S, P and B lanes were still reading
 it, and each of the three said so in its report. None of their findings rests on it: S's probes sail uncrewed boats
-and read nothing the crew's edits touched (`test/spyglass.test.js` passed 16 of 16 beside them); B ran every probe
+and read nothing the crew's edits touched (`test/systems/naval/spyglass.test.js` passed 16 of 16 beside them); B ran every probe
 again against the clean archive of 4aec81c85, with identical output; P's findings are in places no crew or strand edit
 reached. Every finding was then re-verified against the fixed tree by its own pin, below - but the next audit of a
 working tree hands its lanes a snapshot.
@@ -47,7 +47,7 @@ record.
 ## Findings
 
 Severity: HIGH a crash, a lost save or a hole without end; MED a wrong result a player meets; LOW an edge, a risk, a
-cost; NOTE a word or a nit; DOC the record alone. Every FIXED is pinned in `test/auditcaptsea.test.js` (the finding's
+cost; NOTE a word or a nit; DOC the record alone. Every FIXED is pinned in `test/systems/naval/auditcaptsea.test.js` (the finding's
 own id in its test's title) or in the suite its verdict names, and where it changed code it has a mutant in
 `tools/mutants/auditcaptsea.json` (ACS-<id>-...); a word in the record, and D18's dead reckoning taken out, have none.
 
@@ -62,7 +62,7 @@ own id in its test's title) or in the suite its verdict names, and where it chan
 | C5 | MED | The First Mate's hands over the rail were drawn past the men she had: a Small Ship of six men stood three or four allies, and the phantoms' falls took her real crew, her First Mate with them | FIXED: capped at her crew's hands (CREW_PER_HAND) and the spirits' one - executed over six, twenty-four and sixty men |
 | C6 | DOC | The page let the Lookout's worth carry the glass's far reach past DESPAWN_BEYOND | FIXED in the record: only a ship a fight keeps in the sea stands out there |
 | C7 | LOW | A hand who joined was dealt a post by count: a third Bosun while her Cook's post stood empty | FIXED: the post held by the fewest, a whole roster dealt as it always was - executed |
-| C8 | NOTE | A Seasoned hire was told as four fights won with her | FIXED: his service brought aboard kept apart (`prior`), never told as her fights (`test/captcrew.test.js`) |
+| C8 | NOTE | A Seasoned hire was told as four fights won with her | FIXED: his service brought aboard kept apart (`prior`), never told as her fights (`test/systems/naval/captcrew.test.js`) |
 | C9 | DOC | The page said the Fleet's crew panel shows a rank only from Seasoned | FIXED in the record: Green too |
 | C10 | NOTE | A wear that was no number (NaN) stopped the sea's clock on her spirits for good | FIXED: a NaN wear reads none |
 | C11 | LOW | The posts' worth was pinned by its text alone | FIXED: the Gunner's reload, the Carpenter's mending and the Cook's wear executed at sea against the same crew with the post struck off |
@@ -167,8 +167,8 @@ own id in its test's title) or in the suite its verdict names, and where it chan
 | H4 | DOC | = D16 | |
 | H5 | LOW | An unknown hull's card showed her hull and sail bars (= S24) | FIXED: no bars till she is made out - since GLASS-SPOT (`03-World/Captains-Sea.md`), no card at all |
 | H6 | DOC | = L15 | |
-| H7 | LOW | `test/ethership.test.js` held a tautology, and the nearest-haunt rule went unpinned (its mutant survived) | FIXED: both pinned |
-| H8 | LOW | `test/capttrade.test.js`: `assert.ok(priceOf)` always true; the 'wants' margin's check never ran (= B12) | FIXED |
+| H7 | LOW | `test/systems/naval/ethership.test.js` held a tautology, and the nearest-haunt rule went unpinned (its mutant survived) | FIXED: both pinned |
+| H8 | LOW | `test/systems/naval/capttrade.test.js`: `assert.ok(priceOf)` always true; the 'wants' margin's check never ran (= B12) | FIXED |
 | H9 | LOW | The seams the pages promise unpinned: the office's clock, the yard's discount, sure relief, the sites' water, the isles charted as sighted, the richest prize, the plunder of a cask and a cache | FIXED: each held - executed where it stands up, by source in the world |
 | H10 | MED | = D11 | |
 | H11 | MED | = X1 | |
@@ -182,9 +182,9 @@ own id in its test's title) or in the suite its verdict names, and where it chan
 | H19 | DOC | Veilhaven's "Land ho!" example cannot appear (it is charted at the crossing) | FIXED in the record |
 | H20 | DOC | The board turns at midnight, not dawn; a bounty's quarry is one of the two strongest | FIXED in the record |
 | H21 | LOW | The keyboard's look was not slowed by the glass (= S13) | FIXED: as the mouse's is |
-| H22 | NOTE | `test/dwf_audit.test.js`'s message and comment false while the glass is up | FIXED |
+| H22 | NOTE | `test/scenes/dwf_audit.test.js`'s message and comment false while the glass is up | FIXED |
 | H23 | DOC | = C6 | |
-| H24 | LOW | `test/captboard.test.js` compared `hashKey` with itself; CONTRACT_NEED's draws only range-checked | FIXED: the board's hash against the wire's one home; the needs drawn |
+| H24 | LOW | `test/systems/naval/captboard.test.js` compared `hashKey` with itself; CONTRACT_NEED's draws only range-checked | FIXED: the board's hash against the wire's one home; the needs drawn |
 
 ### S - the spyglass
 
@@ -248,7 +248,7 @@ own id in its test's title) or in the suite its verdict names, and where it chan
 | B9 | LOW | A cache's or a chart's things the pack could not carry went down unsaid | FIXED: kept in an overladen pack, said |
 | B10 | LOW | Sites and caches drawn past the map's edge, where nothing streams with the land beyond the Bay off | FIXED: only where the land past the Bay stands |
 | B11 | LOW | The exchange sold a hold to a standstill unsaid | FIXED: a purchase capped at her room before she would lie dead in the water, the room said - off Come Sail Away's own reckoning (`cargoRoom`) |
-| B12 | LOW | = H8 (and the item sweep never minted goods or charts) | FIXED: the sweep mints both (`test/int1_itemlaw.test.js`, `test/honestItems.mjs`) |
+| B12 | LOW | = H8 (and the item sweep never minted goods or charts) | FIXED: the sweep mints both (`test/systems/item/int1_itemlaw.test.js`, `test/honestItems.mjs`) |
 | B13 | NOTE | "1 hours left" | FIXED |
 | B14 | NOTE | "a Admiral" | FIXED |
 | B15 | NOTE | The discount's words; a purse of the bill could not pay for her whole | FIXED: named for what it covers; each row in whole gold |
@@ -266,11 +266,11 @@ lists (What stands). Only V8 reaches a player; the rest are each a pin or the re
 | V1 | LOW | G2's word, said once the player stands, stood inside the arrival's statements that `partyBoatTeleportFix` runs over stand-ins of its own: nine of its tests threw on `_unstreamedLanding` | FIXED: the word below them, after `questBridge?.onInitWorld()` - the arrival's statements main's again, line for line (ACS-V1-word-in-the-arrival) |
 | V2 | LOW | At the merge: main's SEA-TOWN HUDS pin (`fb1011c_seatown`) runs world.js's `navalHud` over stand-ins, and the plate is handed the glass's state - no glass stood in its scope | FIXED: PIN MOVED, the glass in its scope, asked down and up (ACS-MERGE-plate-glass-unhanded) |
 | V3 | LOW | CW-host-temper (`captwaters`) gave no verdict: ETHER-SEA put an `else if` after the line it deletes, so the mutant has not parsed since - at 4aec81c85 too, where the slice's list was taken for all dead | FIXED: re-aimed by content - the deep arm `if (false)`, the chain kept - dead |
-| V4 | LOW | SEA-rim-unkept (`ethersea`) died at 4aec81c85 and survived the fixes: H1 gave a port a fall of 1 (0.8 before), whose land's tail past its rim is below nothing and clamps to 0 without the rim, and every "past the rim" pin read Veilhaven | FIXED: the rim asked of a wild isle too, whose fall of 1.5 leaves NaN there without it (`test/ethersea.test.js`); the record dead |
+| V4 | LOW | SEA-rim-unkept (`ethersea`) died at 4aec81c85 and survived the fixes: H1 gave a port a fall of 1 (0.8 before), whose land's tail past its rim is below nothing and clamps to 0 without the rim, and every "past the rim" pin read Veilhaven | FIXED: the rim asked of a wild isle too, whose fall of 1.5 leaves NaN there without it (`test/world/ethersea.test.js`); the record dead |
 | V5 | LOW | FIELD-CSA2's retail-data test threw "etherSea is not defined" from ETHER-PORTS on: it mounts world.js's `csaIsPortTown`, which asks an isle's port first - and it runs only with the player's data, so CI skips it | FIXED: PIN MOVED, the mount handed the sea, its law and an isle's port that answers every pixel, and the open Bay asked - a Bay pixel that asked the sea's ports would read a port; 6 of 6 with the data (ACS-V5-bay-asks-the-sea) |
 | V6 | NOTE | At the merge: F212 (`audit26_dungeonfoes`) reads the teleport's first 7,800 characters for its teardown - the needle stood at 7,664 on main and 7,756 on this branch, 7,939 merged | FIXED: PIN MOVED, 8,100 |
 | V7 | DOC | Port-Status counted this branch's two Ledger rows in section A's tally (302) and never named them | FIXED at the third merge: 303 rows, 288 standing - BR5's the 301st, this branch's the 302nd and 303rd |
-| V8 | LOW | The chart of the Eltheric Ocean popped the sea fight's tutorial page the first time it opened - the windows' door read every window but the yard's as the sea fight's; at the merge of SHIPYARDS, main's door would have read it as the yard's | FIXED: the chart pops no page (`test/shipyards1_found.test.js`, ACS-V8-the-chart-pops-a-page); main's record of the door re-aimed by content, dead |
+| V8 | LOW | The chart of the Eltheric Ocean popped the sea fight's tutorial page the first time it opened - the windows' door read every window but the yard's as the sea fight's; at the merge of SHIPYARDS, main's door would have read it as the yard's | FIXED: the chart pops no page (`test/systems/shipyards1_found.test.js`, ACS-V8-the-chart-pops-a-page); main's record of the door re-aimed by content, dead |
 
 ## Pins moved
 
@@ -307,7 +307,7 @@ U41's window in `travelmap` (both sides' 12,800 and 13,000, the last needle at 1
   its first cask (D1); and S18's floor of five, and the swimmer's give line's `swim ? null :`, were arms no input
   reaches - dropped. ACS-P1-types is killed against the player's own data (ARENA2_PATH), the havens' filter run over
   MAPS.BSA's rows.
-- 93 records in 35 lists named source the fixes rewrote (`test/mutantdrift.test.js` holds every record to its text):
+- 93 records in 35 lists named source the fixes rewrote (`test/tooling/mutantdrift.test.js` holds every record to its text):
   each re-aimed BY CONTENT to the code as it stands, the same law mutated - all dead but one, which survives on the base
   as well (What stands).
 - CW-host-temper (`captwaters`) had given no verdict since ETHER-SEA: re-aimed BY CONTENT, dead (V3). SEA-rim-unkept

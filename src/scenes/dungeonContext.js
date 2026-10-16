@@ -5099,7 +5099,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     if (full) frame.lc = _layoutFoes;   // DESYNC-ZERO: the host's layout count - a joiner whose layout ran longer hides the rest
     // REST-SYNC: the encounters ride the room the layout's run leaves under the wire's one cap - a frame over
     // FOES_FRAME_MAX is refused WHOLE (net/online.js sendFoes), and the largest elite layout's worst case all but fills
-    // it (test/elitepscale.test.js). What does not fit waits for a later frame (its key forgotten, so it goes again),
+    // it (test/scenes/elitepscale.test.js). What does not fit waits for a later frame (its key forgotten, so it goes again),
     // and a frame that could not carry them all does not say it lists them whole.
     let n = 0;
     if (shared.length) {
@@ -5115,7 +5115,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   /** AUDIT SETS M1: a foe's MAXIMUM health (`k`) rides its record while it is owed - a guest's copy is rolled at the
    *  guest's own level, so "under half its health" read the host's health against the guest's roll (Run Them Down).
    *  Every record carrying it does not fit the largest elite layout's worst case under the wire's one cap
-   *  (test/restsync.test.js), so a full frame owes every foe's again and pays what the room its records leave holds (a
+   *  (test/net/restsync.test.js), so a full frame owes every foe's again and pays what the room its records leave holds (a
    *  joiner it greets learns them at once), and a delta pays at most FOE_MAX_PER_FRAME owed ones - a foe that changed
    *  nothing going for its maximum alone. */
   const FOE_MAX_PER_FRAME = 12;
@@ -7192,7 +7192,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
    *  was READ by ambientEffects and WRITTEN by nobody, so the one-shot
    *  suppression was inert too. The flag blamed "no castle-block detection
    *  yet", and rdbLayout has computed castleBlock verbatim
-   *  (DaggerfallBillboard.cs:227) on every block all along - test/dungeon.test.js
+   *  (DaggerfallBillboard.cs:227) on every block all along - test/world/dungeon.test.js
    *  already pins that five real castle blocks exist in the archive.
    *
    *  Same block lookup as the water surface above, because it is the same
@@ -8271,7 +8271,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   // WORLD-HOVER hoisted this OUT of the api literal: the construction
   // seam below composes it, and a method reaching back through `api`
   // inside `api`'s own initialiser is the TDZ shape the boot gate
-  // refuses (test/tdz_selfreference.test.js). A named function is what
+  // refuses (test/tree/tdz_selfreference.test.js). A named function is what
   // both of them call, and `api.lootTargets` below is the same one.
   // S2 pickup: piles + dead foes' corpses as activation targets;
   // U26: activating one now OPENS THE INVENTORY with the pile as the
@@ -9833,7 +9833,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
      *  the hosts to derive from `overlayWindow()`, because ROAD-tail's
      *  law is that a host asks the owning context for its pause and
      *  never reaches past it for the slot - and a probe surface is not
-     *  a pause gate (test/roadb_host_pause.test.js sweeps for exactly
+     *  a pause gate (test/scenes/roadb_host_pause.test.js sweeps for exactly
      *  that, and caught this line written the wrong way round). */
     get unpausedOverlay() { return !!activeOverlay && !dungeonPaused(); },
     /** AUDIT 64 F35 (review round): the HUD's own question, asked of
@@ -9983,7 +9983,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
      * does not deliver it: a host that routes `down` but not `up`
      * latches a drag that spins the map forever, and nothing errors.
      * So the contract is all three phases or none, and the source
-     * pins in test/roadc_automap_chrome.test.js COUNT the routes in
+     * pins in test/ui/automap/roadc_automap_chrome.test.js COUNT the routes in
      * every host rather than trusting four edits.
      *
      * Hovering and dragging never close a window, so there is no
@@ -10616,7 +10616,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       // player outside and, at AutomapNumberOfDungeons = 0, forgets
       // the map the moment you leave (Automap.cs:2530-2534).
       exitDungeonAutomap(classicMinutesRef.value);   // AUDIT-AMAP F11: stamped with the EXIT time (:2155)
-      _unregisterHolds();   // TUT1 audit: the holds-only presenter leaves with the context too (below the exit law: test/automap.test.js measures the walk to it)
+      _unregisterHolds();   // TUT1 audit: the holds-only presenter leaves with the context too (below the exit law: test/systems/save/automap.test.js measures the walk to it)
       senseGlow.dispose(); sensePulse.clear(); echoPulse.clear(); echoBook.clear(); wayOut.reset(); actions.onPlayed = null;   // SENSE1/ECHO1: the look round's glow is OURS - its program ends with the context
       bloodMarks.dispose();   // BLOOD1a (HARD1): the ring is OURS - a vertex buffer and a VAO handed to nobody - so it ends here, by its own name and not through the hand-off pool
       // ROAD-B B1: RemoveWindow runs OnPop on every window it removes

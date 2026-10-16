@@ -1,7 +1,7 @@
 // SD13 - THE SCORE OF THE HOUR, PLAYED BY THE GAME'S OWN PLAYER IN A REAL BROWSER, RENDERED AND MEASURED (the Warden's
 // own probe's method, tools/gateScoreProbe.mjs).
 //
-// node holds the score's shape and its law (test/sd13_score.test.js); what node cannot answer is what the songs SOUND
+// node holds the score's shape and its law (test/systems/superDungeon/sd13_score.test.js); what node cannot answer is what the songs SOUND
 // like through the game's own song player and FM bank: whether every voice the score asks for makes a sound, whether
 // the mix clips, whether the war grows as the Remnant's phases do and its last minute over them, whether the places'
 // songs sit under the fight's, and whether the fall rings out inside the time the law gives it. So: the repo's own

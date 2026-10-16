@@ -56,7 +56,7 @@ FIXED:
   this: their restore drops a lock past both the door's ceiling and the player's level - no Lock of theirs could have
   cast it (a level never drops). Their own Lock, at or under their level, stays theirs.
 
-`test/fb1013e_spelllock.test.js` (4); `tools/mutants/fb1013e_spelllock.json` (14, all dead).
+`test/world/fb1013e_spelllock.test.js` (4); `tools/mutants/fb1013e_spelllock.json` (14, all dead).
 
 ## DOOR-NAME: a door's plaque names its own building (9)
 
@@ -79,7 +79,7 @@ mod's box test (Ledger A). The press keeps the box for ActivateBuilding's discov
 NOT SEEN. Issaqumbaa's own blocks (no ARENA2 here): which house's box covers the tavern's step. Asked of the reporter:
 whether "Buy it" walks into the tavern - if it does, this was it.
 
-`test/fb1013e_doorname.test.js` (1); `tools/mutants/fb1013e_doorname.json` (2, both dead).
+`test/systems/fb1013e_doorname.test.js` (1); `tools/mutants/fb1013e_doorname.json` (2, both dead).
 
 ## SHARE-REVEAL: a shared quest's `reveal` marks the receiver's map too (3)
 
@@ -101,7 +101,7 @@ each new one, once. A `readmap` reveal files its note once on the receiver.
 FOR THE REPORTER, NOW: a copy that took the reveal complete before this keeps it complete; Settings, Repair active
 quests (QREPAIR) files every reveal that has run again, and marks the dungeon.
 
-`test/fb1013e_sharereveal.test.js` (2); `tools/mutants/fb1013e_sharereveal.json` (1, dead); `disc28.json`'s
+`test/systems/quest/fb1013e_sharereveal.test.js` (2); `tools/mutants/fb1013e_sharereveal.json` (1, dead); `disc28.json`'s
 DISC28-I-getitem-not-replayed re-aimed by content (the set's text grew), dead.
 
 ## HILL-SEAT: a hill holds what the author stood on it (5)
@@ -134,7 +134,7 @@ a loaded machine). The real meshes, the gated sweep and what a bank buries were 
 2026-10-15f TEMPLE-STEPS: the banks buried no door, but they buried Merdale's temple flight (by up to 1.25 m) and
 TEMPASF1's and TEMPASH4's stairs - a pad buries nothing the author left in the open now.
 
-`test/fb1013e_hillseat.test.js` (8, one on ARENA2_PATH); `tools/mutants/fb1013e_hillseat.json` (18, all dead). No pin
+`test/world/fb1013e_hillseat.test.js` (8, one on ARENA2_PATH); `tools/mutants/fb1013e_hillseat.json` (18, all dead). No pin
 moved.
 
 ## WRIT-WALL: a writ's card names what it will not take (2)
@@ -166,7 +166,7 @@ writ silver): not done, the owner's call, as FIELD BUGS 2026-10-09f left it.
 
 NOT SEEN. Where the reporter's Iron came from; the card names it whichever way it came.
 
-`test/fb1013e_writwall.test.js` (3); `tools/mutants/fb1013e_writwall.json` (13, all dead). No pin moved.
+`test/systems/professions/fb1013e_writwall.test.js` (3); `tools/mutants/fb1013e_writwall.json` (13, all dead). No pin moved.
 
 ## MACE-MAX: the Mace lifts its wielder past what they hold rested (8)
 
@@ -202,7 +202,7 @@ x1.25, an overreach's x1.3, a revenant's), as the drain does - the owner's call.
 NOT SEEN. Whether the reporter stood at 100 Strength. The inspect card shows 100 while the bonus lasts: its bound is the
 relay's (`CARD_STAT_MAX`, a relay deploy to move).
 
-`test/fb1013e_macemax.test.js` (4); `tools/mutants/fb1013e_macemax.json` (8, all dead). No pin moved.
+`test/systems/fb1013e_macemax.test.js` (4); `tools/mutants/fb1013e_macemax.json` (8, all dead). No pin moved.
 
 ## CRAFT-PROCS: a crafted piece never rolled a line that does something (1)
 
@@ -232,7 +232,7 @@ NOT SEEN. Pieces made before keep no line, by the version's design. A client not
 without its line until it updates. Crafts still take no technique, curse or socket pass (not reported). A record grows
 eight characters (the worst case 457 of 512).
 
-`test/fb1013e_craftprocs.test.js` (5); `tools/mutants/fb1013e_craftprocs.json` (26, all dead). Re-aimed by content, dead:
+`test/systems/fb1013e_craftprocs.test.js` (5); `tools/mutants/fb1013e_craftprocs.json` (26, all dead). Re-aimed by content, dead:
 loot2, loot4 x3, prof3, prof10, prof7 x2, prof9 x2, audit30, and the account version's line in ten records. PIN MOVED:
 the account version's pin in 19 suites (acct129).
 
@@ -262,7 +262,7 @@ the rest hour it always was; in the water, SWIM-SPENT's drown.
 
 NOT SEEN. Which foe stood in the band at Knightshead; reproduced on the real ticker, not on the reporter's save.
 
-`test/fb1013e_spentashore.test.js` (4, red on the code before); `tools/mutants/fb1013e_spentashore.json` (14, all dead).
+`test/systems/fb1013e_spentashore.test.js` (4, red on the code before); `tools/mutants/fb1013e_spentashore.json` (14, all dead).
 PIN MOVED, by intent: rest, audit26_streaming2, fb0930b_swimspent, auditworld5, disc28_fatigue, macro7_gate, csa_close
 (two), effectarms (X1), playerdeath (AUDIT-DEATH1); and, at the merge with main's FIELD BUGS 2026-10-13d (REMAINS, which
 kept DFU's collapse and stood its elder's death on it), `fb1013d_remains`'s fall - she dies of the collapses as they come,
@@ -301,7 +301,7 @@ law leaves it DFU's: the owner's call.
 NOT SEEN. Whether a quest's Yes/No box can be closed with neither answer (neither variable set) - this law does not
 cover that.
 
-`test/fb1013e_noasks.test.js` (5); `tools/mutants/fb1013e_noasks.json` (12, all dead; one killed by questsave.test.js's
+`test/systems/quest/fb1013e_noasks.test.js` (5); `tools/mutants/fb1013e_noasks.json` (12, all dead; one killed by questsave.test.js's
 restore-order pin). No pin moved.
 
 ## AOE-PERF: the boss's circles shaded ground they never draw on (7)
@@ -348,7 +348,7 @@ light by its producer's record, so his glow moving draws its cube whole - 6 face
 holding a 512 map draws no lo map (the landing's worst lo frame 126 faces to 54). The look is the same byte for byte
 (`tools/lightIdLookProbe.mjs`). `07-Rendering/Performance-Rig.md` AOE-PERF has the table.
 
-`test/fb1013e_aoeperf.test.js` (4); `tools/mutants/fb1013e_aoeperf.json` (11, all dead; wb4's and wb13a's campaigns re-run,
+`test/net/gate/fb1013e_aoeperf.test.js` (4); `tools/mutants/fb1013e_aoeperf.json` (11, all dead; wb4's and wb13a's campaigns re-run,
 62 of 62 dead). No pin moved. `07-Rendering/Performance-Rig.md` AOE-PERF, `11-Multiplayer/World-Bosses.md` WB13a.
 
 ## For Mac
@@ -405,15 +405,15 @@ holding a 512 map draws no lo map (the landing's worst lo frame 126 faces to 54)
 
 ## Pins
 
-`test/fb1013e_spelllock.test.js` (4), `test/fb1013e_doorname.test.js` (1), `test/fb1013e_sharereveal.test.js` (2).
+`test/world/fb1013e_spelllock.test.js` (4), `test/systems/fb1013e_doorname.test.js` (1), `test/systems/quest/fb1013e_sharereveal.test.js` (2).
 `tools/mutants/fb1013e_spelllock.json` 14, `fb1013e_doorname.json` 2, `fb1013e_sharereveal.json` 1: all dead. Re-aimed
 by content, dead: `disc28.json`'s DISC28-I-getitem-not-replayed (the re-armed set grew) and `housing.json`'s
-HOME-DOORS-the-early-record-dropped (the early record now drops a peer's lock). `test/citedrift.test.js`'s vendor table
+HOME-DOORS-the-early-record-dropped (the early record now drops a peer's lock). `test/scenes/citedrift.test.js`'s vendor table
 carries the mod's `.cs:701-702` that DOOR-NAME's comment cites.
-`test/fb1013e_hillseat.test.js` (8, one on ARENA2_PATH); `tools/mutants/fb1013e_hillseat.json` 18, all dead.
-`test/fb1013e_writwall.test.js` (3); `tools/mutants/fb1013e_writwall.json` 13, all dead.
-`test/fb1013e_macemax.test.js` (4); `tools/mutants/fb1013e_macemax.json` 8, all dead.
-`test/fb1013e_craftprocs.test.js` (5); `tools/mutants/fb1013e_craftprocs.json` 26, all dead.
-`test/fb1013e_spentashore.test.js` (4); `tools/mutants/fb1013e_spentashore.json` 14, all dead.
-`test/fb1013e_noasks.test.js` (5); `tools/mutants/fb1013e_noasks.json` 12, all dead.
-`test/fb1013e_aoeperf.test.js` (4); `tools/mutants/fb1013e_aoeperf.json` 11, all dead.
+`test/world/fb1013e_hillseat.test.js` (8, one on ARENA2_PATH); `tools/mutants/fb1013e_hillseat.json` 18, all dead.
+`test/systems/professions/fb1013e_writwall.test.js` (3); `tools/mutants/fb1013e_writwall.json` 13, all dead.
+`test/systems/fb1013e_macemax.test.js` (4); `tools/mutants/fb1013e_macemax.json` 8, all dead.
+`test/systems/fb1013e_craftprocs.test.js` (5); `tools/mutants/fb1013e_craftprocs.json` 26, all dead.
+`test/systems/fb1013e_spentashore.test.js` (4); `tools/mutants/fb1013e_spentashore.json` 14, all dead.
+`test/systems/quest/fb1013e_noasks.test.js` (5); `tools/mutants/fb1013e_noasks.json` 12, all dead.
+`test/net/gate/fb1013e_aoeperf.test.js` (4); `tools/mutants/fb1013e_aoeperf.json` 11, all dead.

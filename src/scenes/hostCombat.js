@@ -62,7 +62,7 @@ import { comprehendLanguagesChance } from '../systems/effects.js';   // X11: the
  *  rest of the game. DaggerfallUnityItem.cs:910-941 + :943-962,
  *  keyed on Weapons (ItemEnums.cs:113..130). */
 // AUDIT-THUNDERLOCK: this was a SECOND COPY of the table - the very
-// duplicate test/audit24_onehome.test.js's ratchet has been naming
+// duplicate test/systems/talk/audit24_onehome.test.js's ratchet has been naming
 // (`weaponSkillUsed  src/characters/weapons.js src/scenes/hostCombat.js`)
 // - and the port's own weapon is what made it cost something: adding
 // the Dwarven Thunderlock to characters/weapons.js left THIS copy

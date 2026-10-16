@@ -5,7 +5,7 @@
     "old": "export const COURTS = Object.freeze([Object.freeze([0, 0]), Object.freeze([-68, -22]), Object.freeze([-74, -94])]);",
     "new": "export const COURTS = Object.freeze([Object.freeze([0, 0]), Object.freeze([-30, -10]), Object.freeze([-74, -94])]);",
     "tests": [
-      "test/wb9b_gate_courts.test.js"
+      "test/net/gate/wb9b_gate_courts.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "Math.max(0, Math.min(1, (now - at - WALK_LEAD_MS) / WALK_FORM_MS))",
     "new": "Math.max(0, Math.min(1, (now - at) / WALK_FORM_MS))",
     "tests": [
-      "test/wb9b_gate_courts.test.js"
+      "test/net/gate/wb9b_gate_courts.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "Math.max(0, Math.min(1, (now - at - WALK_LEAD_MS) / WALK_FORM_MS))",
     "new": "Math.max(0, (now - at - WALK_LEAD_MS) / WALK_FORM_MS)",
     "tests": [
-      "test/wb9b_gate_courts.test.js"
+      "test/net/gate/wb9b_gate_courts.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "    if (k > 0 && walkFormed(xa, k - 1, now) < 1) break;\n    if (inCourt(x, z, k, pad)) return true;",
     "new": "    if (k > 0 && walkFormed(xa, k - 1, now) <= 0) break;\n    if (inCourt(x, z, k, pad)) return true;",
     "tests": [
-      "test/wb9b_gate_courts.test.js"
+      "test/net/gate/wb9b_gate_courts.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "if (t >= -pad && t <= w.len * f + pad && side <= WALK_HALF_W + pad) return true;",
     "new": "if (t >= -pad && t <= w.len + pad && side <= WALK_HALF_W + pad) return true;",
     "tests": [
-      "test/wb9b_gate_courts.test.js"
+      "test/net/gate/wb9b_gate_courts.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "    for (let k = 0; k < entry.court; k++) if (!Number.isFinite(f.xa[k])) f.xa[k] = now;",
     "new": "",
     "tests": [
-      "test/wb9b_gate_courts.test.js"
+      "test/net/gate/wb9b_gate_courts.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "      f.court = f.atk.to;",
     "new": "      f.court = f.court | 0;",
     "tests": [
-      "test/wb9b_gate_courts.test.js"
+      "test/net/gate/wb9b_gate_courts.test.js"
     ]
   },
   {
@@ -68,8 +68,8 @@
     "old": "    if (!here.length && now < (f.waitUntil ?? 0)) { hpFrame(f, now, out); stateFrame(f, now, out); return out; }",
     "new": "    if (false) { hpFrame(f, now, out); stateFrame(f, now, out); return out; }",
     "tests": [
-      "test/wb9b_gate_courts.test.js",
-      "test/wb3_gate_room.test.js"
+      "test/net/gate/wb9b_gate_courts.test.js",
+      "test/net/gate/wb3_gate_room.test.js"
     ]
   },
   {
@@ -78,7 +78,7 @@
     "old": "if (next.wait) f.waitUntil = now + CROSS_WAIT_MAX_MS;",
     "new": "if (next.wait) f.waitUntil = Infinity;",
     "tests": [
-      "test/wb9b_gate_courts.test.js"
+      "test/net/gate/wb9b_gate_courts.test.js"
     ]
   },
   {
@@ -87,7 +87,7 @@
     "old": "  const here = bodies.filter((b) => !b.dead && f.players[b.sub] && inCourt(b.x, b.z, f.court, POSE_SLACK));",
     "new": "  const here = bodies.filter((b) => !b.dead && f.players[b.sub]);",
     "tests": [
-      "test/wb9b_gate_courts.test.js"
+      "test/net/gate/wb9b_gate_courts.test.js"
     ]
   },
   {
@@ -96,7 +96,7 @@
     "old": "  if (!onFloor(pose.x, pose.z, f.xa, now, POSE_SLACK)) return 0;",
     "new": "  if (Math.hypot(pose.x, pose.z) > COURT_R + POSE_SLACK) return 0;",
     "tests": [
-      "test/wb9b_gate_courts.test.js"
+      "test/net/gate/wb9b_gate_courts.test.js"
     ]
   },
   {
@@ -105,7 +105,7 @@
     "old": "(m.ct != null && !intIn(m.ct, 0, 2))",
     "new": "(m.ct != null && !Number.isInteger(m.ct))",
     "tests": [
-      "test/wb9b_gate_courts.test.js"
+      "test/net/gate/wb9b_gate_courts.test.js"
     ]
   },
   {
@@ -114,7 +114,7 @@
     "old": "...(g.a === ATTACKS.wrath.id ? { stunUntil: 0 } : {}), ...crossLaid(s, g) };",
     "new": "...(g.a === ATTACKS.wrath.id ? { stunUntil: 0 } : {}) };",
     "tests": [
-      "test/wb9b_gate_courts.test.js"
+      "test/net/gate/wb9b_gate_courts.test.js"
     ]
   },
   {
@@ -123,7 +123,7 @@
     "old": "    if (typeof a.clamp === 'function') { this._putBack(a.clamp(this.pos, CAPSULE_RADIUS)); return; }",
     "new": "    if (false) { this._putBack(a.clamp(this.pos, CAPSULE_RADIUS)); return; }",
     "tests": [
-      "test/wb9b_gate_courts.test.js"
+      "test/net/gate/wb9b_gate_courts.test.js"
     ]
   },
   {
@@ -132,7 +132,7 @@
     "old": "const done = at + WALK_LEAD_MS + (slab.j / slab.n) * WALK_FORM_MS",
     "new": "const done = at + WALK_LEAD_MS + ((slab.j + 1) / slab.n) * WALK_FORM_MS",
     "tests": [
-      "test/wb9b_gate_courts.test.js"
+      "test/net/gate/wb9b_gate_courts.test.js"
     ]
   },
   {
@@ -141,7 +141,7 @@
     "old": "from = Math.max(at, done - SLAB_RISE_MS);",
     "new": "from = done - SLAB_RISE_MS;",
     "tests": [
-      "test/wb9b_gate_courts.test.js"
+      "test/net/gate/wb9b_gate_courts.test.js"
     ]
   },
   {
@@ -150,7 +150,7 @@
     "old": "  if (A !== ATTACKS.leap && A !== ATTACKS.cross) return 0;",
     "new": "  if (A !== ATTACKS.leap) return 0;",
     "tests": [
-      "test/wb9b_gate_courts.test.js"
+      "test/net/gate/wb9b_gate_courts.test.js"
     ]
   },
   {
@@ -159,7 +159,7 @@
     "old": "  const at = A.aim === 'point' && marks.length ? marks[0] : [atk.x, atk.z];",
     "new": "  const at = [atk.x, atk.z];",
     "tests": [
-      "test/wb9b_gate_courts.test.js"
+      "test/net/gate/wb9b_gate_courts.test.js"
     ]
   },
   {
@@ -168,7 +168,7 @@
     "old": "    while (floorGap(Math.sin(az) * d, -Math.cos(az) * d) < rMax + LAND_CLEAR_M && d < ISLAND_FAR + 120) d += 8;",
     "new": "",
     "tests": [
-      "test/wb9b_gate_courts.test.js"
+      "test/net/gate/wb9b_gate_courts.test.js"
     ]
   }
 ]

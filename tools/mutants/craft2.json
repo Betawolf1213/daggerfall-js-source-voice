@@ -5,7 +5,7 @@
     "old": "export const firstCraftKey = (r) => (!r ? null : `${r.product}@${r.tier}`);",
     "new": "export const firstCraftKey = (r) => (!r ? null : r.id);",
     "tests": [
-      "test/craft2_patterns.test.js"
+      "test/net/craft2_patterns.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "export const firstCraftKey = (r) => (!r ? null : `${r.product}@${r.tier}`);",
     "new": "export const firstCraftKey = (r) => (!r ? null : `${r.product}`);",
     "tests": [
-      "test/craft2_patterns.test.js"
+      "test/net/craft2_patterns.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "export const firstCraftKin = (r) => (!r ? [] : Object.freeze([...(KIN.get(firstCraftKey(r)) ?? [r.id])]));",
     "new": "export const firstCraftKin = (r) => (!r ? [] : Object.freeze([r.id]));",
     "tests": [
-      "test/craft2_patterns.test.js"
+      "test/net/craft2_patterns.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "  const madeBefore = `recipe IN (${kin.map((_, i) => `?${binds.length + 1 + i}`).join(', ')})`;",
     "new": "  const madeBefore = 'recipe = ?4';",
     "tests": [
-      "test/craft2_patterns.test.js"
+      "test/net/craft2_patterns.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "    if (!by.has(r.product)) by.set(r.product, { id: r.product, name: r.pattern, recipes: [] });\n    by.get(r.product)?.recipes.push(r);",
     "new": "    if (!by.has(r.id)) by.set(r.id, { id: r.product, name: r.pattern, recipes: [] });\n    by.get(r.id)?.recipes.push(r);",
     "tests": [
-      "test/craft2_patterns.test.js"
+      "test/net/craft2_patterns.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "  if (same && reach(stand(same)) >= 2) return same;",
     "new": "  if (false) return same;",
     "tests": [
-      "test/craft2_patterns.test.js"
+      "test/net/craft2_patterns.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "  if (same && reach(stand(same)) >= 2) return same;",
     "new": "  if (same) return same;",
     "tests": [
-      "test/craft2_patterns.test.js"
+      "test/net/craft2_patterns.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "const byTier = (/** @type {readonly any[]} */ rs) => [...rs].sort((a, b) => b.tier - a.tier);",
     "new": "const byTier = (/** @type {readonly any[]} */ rs) => [...rs].sort((a, b) => a.tier - b.tier);",
     "tests": [
-      "test/craft2_patterns.test.js"
+      "test/net/craft2_patterns.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "const byTier = (/** @type {readonly any[]} */ rs) => [...rs].sort((a, b) => b.tier - a.tier);",
     "new": "const byTier = (/** @type {readonly any[]} */ rs) => [...rs].reverse();",
     "tests": [
-      "test/craft2_patterns.test.js"
+      "test/net/craft2_patterns.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "  const best = top.find((r) => reach(stand(r)) === 3) ?? top.find((r) => reach(stand(r)) === 2);",
     "new": "  const best = top.find((r) => reach(stand(r)) === 3);",
     "tests": [
-      "test/craft2_patterns.test.js"
+      "test/net/craft2_patterns.test.js"
     ]
   },
   {
@@ -95,8 +95,8 @@
     "old": "  for (const r of top) if (stand(r).open && stand(r).share > 0 && (!most || stand(r).share > stand(most).share)) most = r;",
     "new": "  for (const r of top) if (false) most = r;",
     "tests": [
-      "test/craft2_patterns.test.js",
-      "test/prof3_client.test.js"
+      "test/net/craft2_patterns.test.js",
+      "test/systems/prof3_client.test.js"
     ]
   },
   {
@@ -105,7 +105,7 @@
     "old": "  for (const r of top) if (stand(r).open && stand(r).share > 0 && (!most || stand(r).share > stand(most).share)) most = r;",
     "new": "  for (const r of top) if (stand(r).share > 0 && (!most || stand(r).share > stand(most).share)) most = r;",
     "tests": [
-      "test/craft2_patterns.test.js"
+      "test/net/craft2_patterns.test.js"
     ]
   },
   {
@@ -114,7 +114,7 @@
     "old": "  return all > 0 ? inputs.reduce((n, i) => n + Math.min(i.n, Math.max(0, held(i.key))), 0) / all : 0;",
     "new": "  return all > 0 ? inputs.reduce((n, i) => n + Math.max(0, held(i.key)), 0) / all : 0;",
     "tests": [
-      "test/craft2_patterns.test.js"
+      "test/net/craft2_patterns.test.js"
     ]
   },
   {
@@ -123,7 +123,7 @@
     "old": "    if (a > b || (a === 0 && b === 0 && r.rank < lead.rank)) lead = r;",
     "new": "    if (a < b || (a === 0 && b === 0 && r.rank < lead.rank)) lead = r;",
     "tests": [
-      "test/craft2_patterns.test.js"
+      "test/net/craft2_patterns.test.js"
     ]
   },
   {
@@ -132,7 +132,7 @@
     "old": "  return (/** @type {any} */ r) => { if (!seen.has(r.id)) seen.set(r.id, of(r)); return /** @type {Standing} */ (seen.get(r.id)); };",
     "new": "  return (/** @type {any} */ r) => of(r);",
     "tests": [
-      "test/craft2_patterns.test.js"
+      "test/net/craft2_patterns.test.js"
     ]
   },
   {
@@ -141,7 +141,7 @@
     "old": "    row.disabled = locked;\n    row.append(el('b', null, pt.name), el('span', 'prof-split', word(lead, s)));",
     "new": "    row.disabled = false;\n    row.append(el('b', null, pt.name), el('span', 'prof-split', word(lead, s)));",
     "tests": [
-      "test/audit30_client.test.js"
+      "test/net/audit30_client.test.js"
     ]
   },
   {
@@ -150,7 +150,7 @@
     "old": "    b.disabled = locked;\n    b.onclick = () => { state.picked = x.id; state.madeOf = x.madeOf; rerender(); };",
     "new": "    b.disabled = false;\n    b.onclick = () => { state.picked = x.id; state.madeOf = x.madeOf; rerender(); };",
     "tests": [
-      "test/audit30_client.test.js"
+      "test/net/audit30_client.test.js"
     ]
   },
   {
@@ -159,7 +159,7 @@
     "old": "  if (made.length < 2) return;",
     "new": "  if (made.length < 99) return;",
     "tests": [
-      "test/craft2_patterns.test.js"
+      "test/net/craft2_patterns.test.js"
     ]
   },
   {
@@ -168,7 +168,7 @@
     "old": "    b.onclick = () => { state.picked = x.id; state.madeOf = x.madeOf; rerender(); };",
     "new": "    b.onclick = () => { rerender(); };",
     "tests": [
-      "test/craft2_patterns.test.js"
+      "test/net/craft2_patterns.test.js"
     ]
   },
   {
@@ -177,7 +177,7 @@
     "old": "    b.onclick = () => { state.picked = x.id; state.madeOf = x.madeOf; rerender(); };",
     "new": "    b.onclick = () => { state.picked = x.id; rerender(); };",
     "tests": [
-      "test/craft2_patterns.test.js"
+      "test/net/craft2_patterns.test.js"
     ]
   },
   {
@@ -186,8 +186,8 @@
     "old": "s.open ? x.madeOf : `${x.madeOf} - rank ${x.rank}`);",
     "new": "x.madeOf);",
     "tests": [
-      "test/craft2_patterns.test.js",
-      "test/prof7_client.test.js"
+      "test/net/craft2_patterns.test.js",
+      "test/systems/prof7_client.test.js"
     ]
   },
   {
@@ -196,7 +196,7 @@
     "old": "    row.onclick = () => { const r = pickedOf(pt, stand, state.madeOf); state.pattern = pt.id; state.picked = r.id; state.madeOf = r.madeOf; rerender(); };",
     "new": "    row.onclick = () => { const r = pickedOf(pt, stand, null); state.pattern = pt.id; state.picked = r.id; state.madeOf = r.madeOf; rerender(); };",
     "tests": [
-      "test/craft2_patterns.test.js"
+      "test/net/craft2_patterns.test.js"
     ]
   },
   {
@@ -205,7 +205,7 @@
     "old": "    b.onclick = () => { _anvil.family = id; _anvil.picked = null; _anvil.pattern = null; rerender(); };",
     "new": "    b.onclick = () => { _anvil.family = id; rerender(); };",
     "tests": [
-      "test/craft2_patterns.test.js"
+      "test/net/craft2_patterns.test.js"
     ]
   },
   {
@@ -214,8 +214,8 @@
     "old": "    if (r.cloth === STANDARD_SILK.key) box.append(",
     "new": "    if (true) box.append(",
     "tests": [
-      "test/craft2_patterns.test.js",
-      "test/audit32_pages.test.js"
+      "test/net/craft2_patterns.test.js",
+      "test/ui/audit32_pages.test.js"
     ]
   }
 ]

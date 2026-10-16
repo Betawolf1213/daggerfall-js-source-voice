@@ -5,7 +5,7 @@
     "old": "have: morale, drunk: morale < 100 && !!grogToday });",
     "new": "have: morale, drunk: false });",
     "tests": [
-      "test/fb1014_grogword.test.js"
+      "test/systems/naval/fb1014_grogword.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "      : r.drunk ? t('naval.yard.grogDrunk',",
     "new": "      : false ? t('naval.yard.grogDrunk',",
     "tests": [
-      "test/fb1014_grogword.test.js"
+      "test/systems/naval/fb1014_grogword.test.js"
     ]
   }
 ]

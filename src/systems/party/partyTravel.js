@@ -6,7 +6,7 @@
 // fare (the travel map's own popup, headless), the refusals (the map door's rungs), the prompt (ui/yesNoBox.js, either
 // skin), the journey (fastTravelTo, landing beside the leader) - and this owns the order they are asked in, so a pin
 // RUNS a leader and a member against each other through the wire's own law, with fakes for everything that draws or
-// moves (test/partytravel.test.js). AUDIT PARTY-REST's lesson, taken before the fact: the rest mechanic's session lived
+// moves (test/systems/party/partytravel.test.js). AUDIT PARTY-REST's lesson, taken before the fact: the rest mechanic's session lived
 // as closures in world.js and its pins were regexes that passed with the feature broken.
 //
 // ONE SESSION PER CLIENT, both roles in it: the leader's arm reads its own round (`trip`), the member's arm reads the

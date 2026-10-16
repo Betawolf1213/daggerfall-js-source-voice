@@ -110,7 +110,7 @@ export const SURVIVAL_DEFAULT = 'boons';   // BOONS-DEFAULT (2026-10-13, Mac: "m
 
 /** AUDIT SURV-TIERS: what each tier is STORED as on the prefs shelf -
  *  the values the Features row's segments write (systems/features.js
- *  `mod-climates-calories`; test/survtiers.test.js holds the row to
+ *  `mod-climates-calories`; test/systems/survival/survtiers.test.js holds the row to
  *  this). OFF KEEPS THE OLD SWITCH'S OWN `false`: a shelf written before
  *  the tiers needs no conversion for it, and a build from before the
  *  tiers - an older desktop install reading the same file - still reads

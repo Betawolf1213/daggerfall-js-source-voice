@@ -5,7 +5,7 @@
     "old": "      \"feat:grass\", \"feat:wind\", ",
     "new": "      \"feat:wind\", ",
     "tests": [
-      "test/org2_options.test.js"
+      "test/systems/org2_options.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "      \"feat:enhanced-climbing\", \"Enhancements/AdvancedClimbing\", \"feat:mod-foraging\"]),",
     "new": "      \"feat:enhanced-climbing\", \"Enhancements/AdvancedClimbing\", \"feat:mod-foraging\", \"feat:grass\"]),",
     "tests": [
-      "test/org2_options.test.js"
+      "test/systems/org2_options.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "      \"feat:land-view-distance\", \"Experimental/TerrainDistance\", ",
     "new": "      \"feat:land-view-distance\", ",
     "tests": [
-      "test/org2_options.test.js"
+      "test/systems/org2_options.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "...(section && w.tab.sections.length > 1 ? [w.section.title] : [])",
     "new": "...[]",
     "tests": [
-      "test/org2_options.test.js"
+      "test/systems/org2_options.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "values: Object.freeze({ 'land-view-distance': 5, grass: 1, 'cloud-quality': 'default'",
     "new": "values: Object.freeze({ 'land-view-distance': 5, grass: 0.5, 'cloud-quality': 'default'",
     "tests": [
-      "test/org2_options.test.js"
+      "test/systems/org2_options.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "'cloud-quality': 'hi', 'ground-sharpness': 'max'",
     "new": "'cloud-quality': 'ultra', 'ground-sharpness': 'max'",
     "tests": [
-      "test/org2_options.test.js"
+      "test/systems/org2_options.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "PRESET_ROWS.every((id) =>",
     "new": "PRESET_ROWS.some((id) =>",
     "tests": [
-      "test/org2_options.test.js"
+      "test/systems/org2_options.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "    if (i >= 0 && i !== st.at) st.set(i);",
     "new": "    if (i >= 0 && i !== st.at) setPref(c.key, p.values[id]);",
     "tests": [
-      "test/org2_options.test.js"
+      "test/systems/org2_options.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "    if (!st || st.locked || !c?.tiers) continue;",
     "new": "    if (!st || !c?.tiers) continue;",
     "tests": [
-      "test/org2_options.test.js"
+      "test/systems/org2_options.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "  const items = tab.sections.flatMap((s) => s.items);\n  for (const item of items) {\n    if (!isSettingItem(item)",
     "new": "  const items = CATEGORIES.flatMap((t) => t.sections).flatMap((s) => s.items);\n  for (const item of items) {\n    if (!isSettingItem(item)",
     "tests": [
-      "test/org2_options.test.js"
+      "test/systems/org2_options.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "  featuresDefaults(items.filter((i) => i.startsWith('feat:'))",
     "new": "  void (items.filter((i) => i.startsWith('feat:'))",
     "tests": [
-      "test/org2_options.test.js"
+      "test/systems/org2_options.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "    else if (pref && Object.hasOwn(PREF_DEFAULTS, pref) && onlineForcedPref(pref) === undefined) setPref(pref, PREF_DEFAULTS[pref]);",
     "new": "    else void pref;",
     "tests": [
-      "test/org2_options.test.js"
+      "test/systems/org2_options.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "{ spendKeep: false });",
     "new": "{ spendKeep: true });",
     "tests": [
-      "test/org2_options.test.js"
+      "test/systems/org2_options.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "    let found = 0;\n    for (const tab of CATEGORIES) {",
     "new": "    let found = 0;\n    for (const tab of [CATEGORIES.find((c) => c.id === category) ?? CATEGORIES[0]]) {",
     "tests": [
-      "test/org2_options.test.js"
+      "test/systems/org2_options.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "    discardControlsStaging();   // FIX-F: a search repaints the page",
     "new": "    // FIX-F: a search repaints the page",
     "tests": [
-      "test/enhancedControls.test.js"
+      "test/ui/enhanced/enhancedControls.test.js"
     ]
   },
   {
@@ -140,8 +140,8 @@
     "old": "  if (id === 'features') id = 'settings';",
     "new": "",
     "tests": [
-      "test/org2_options.test.js",
-      "test/features.test.js"
+      "test/systems/org2_options.test.js",
+      "test/systems/features.test.js"
     ]
   },
   {
@@ -150,8 +150,8 @@
     "old": "export const CATEGORIES = Object.freeze([\n  tab(\"graphics\"",
     "new": "export const CATEGORIES = Object.freeze([\n  tab(\"graphics2\"",
     "tests": [
-      "test/org2_options.test.js",
-      "test/settingsUI.test.js"
+      "test/systems/org2_options.test.js",
+      "test/ui/settings/settingsUI.test.js"
     ]
   },
   {
@@ -160,7 +160,7 @@
     "old": "  .shell .detail { background: rgb(10,12,17); border-left: 0; }\n",
     "new": "",
     "tests": [
-      "test/features.test.js"
+      "test/systems/features.test.js"
     ]
   }
 ]

@@ -87,13 +87,13 @@ projectile still leaves from DFU's GetAimPosition (`playerArrowOrigin`), not the
 releaseArrow does, so the shaft in flight starts a little off the drawn arrow. If the drawn arrow still looks wrong, a
 screenshot of the bow mid-draw is the next report.
 
-Pinned by `test/fb1009g_bowclock.test.js` (5: the spam clicks at two Speeds and three draws, the touch button's taps, the ceiling held for a
+Pinned by `test/systems/fb1009g_bowclock.test.js` (5: the spam clicks at two Speeds and three draws, the touch button's taps, the ceiling held for a
 drawing arm and its cap, a silent arm's shots each with its arrow, the held instant shot on the sprite and under the
 arm with the drawn bow's edge and release, and the real arm's shotBusy and leftover release on the fixtures);
-`tools/mutants/fb1009g_bowclock.json` (10, all dead). MW-BOW1 by `test/mwbow1.test.js` (6: the clock's keys, morph and
+`tools/mutants/fb1009g_bowclock.json` (10, all dead). MW-BOW1 by `test/formats/morrowind/mwbow1.test.js` (6: the clock's keys, morph and
 composition on the fixture bow, the controller's function, AutoPlay and the morph's refusals, a still bow left alone,
 a real arm's shot drawing the arrow to the string and back with the limb bent and the clock held and dropped, and
-both views posing before the pose); `tools/mutants/mwbow1.json` (17, all dead). PIN MOVED: `test/audit24_combat.test.js`'s bow edge onto the
-drawn bow, which keeps it; `test/mwattackclip.test.js`'s MW-D12 source pin reads the gate; `test/peercadence.test.js`'s pose gate
-and `test/mwcloak1.test.js`'s seated cloak read the weapon clock's pose. `tools/mutants/peercadence.json` and `ws1.json` re-aimed by content (the lines they quote
+both views posing before the pose); `tools/mutants/mwbow1.json` (17, all dead). PIN MOVED: `test/systems/settings/audit24_combat.test.js`'s bow edge onto the
+drawn bow, which keeps it; `test/formats/morrowind/mwattackclip.test.js`'s MW-D12 source pin reads the gate; `test/net/peer/peercadence.test.js`'s pose gate
+and `test/tooling/mwcloak1.test.js`'s seated cloak read the weapon clock's pose. `tools/mutants/peercadence.json` and `ws1.json` re-aimed by content (the lines they quote
 moved).

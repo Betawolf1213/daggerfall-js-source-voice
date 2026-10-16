@@ -23,9 +23,9 @@ guard interaction"*.
    invaders who wanna beat me to death in town?"
 
 Every report was reproduced in node before it was touched, except where a
-section says it could not be. The pins are `test/disc19.test.js`, and the
+section says it could not be. The pins are `test/systems/disc19.test.js`, and the
 mutant set is `tools/mutants/disc19.json`. The batch's audit (AUDIT DISC19,
-the last section) has its own: `test/auditdisc19.test.js` and
+the last section) has its own: `test/systems/auditdisc19.test.js` and
 `tools/mutants/auditdisc19.json`.
 
 ---
@@ -235,7 +235,7 @@ own FormulaHelper clamp, which the stock core already applies - in both
 directions. The same character now lands 55 of 2000 on a Vampire and 51 on
 a Lich; a monster's certain blow on the player misses 3 in 100. The other
 three clamps the mod discards stay discarded. Recorded on Ledger A's PCO1
-row; pinned in `test/pcaao.test.js`.
+row; pinned in `test/systems/pcaao.test.js`.
 
 ## DISC19-E: the King of Worms' door (report 6)
 
@@ -400,7 +400,7 @@ Not seen in a browser.
 Mac: *"Do an audit on this"*. Four lenses read the batch: the watch, the
 saves, the Light / chunk / door fixes, and the pins themselves. Each
 confirmed finding was reproduced in node, fixed at its root and pinned in
-`test/auditdisc19.test.js`; the mutants are `tools/mutants/auditdisc19.json`.
+`test/systems/auditdisc19.test.js`; the mutants are `tools/mutants/auditdisc19.json`.
 
 **The watch (F).**
 - **W1, HIGH: the squad walked away mid-melee.** `isTownThreat` counted a
@@ -649,7 +649,7 @@ bar is drawn before it. The panel now asks `hudReticle` where the
 crosshair is, as the enhanced plaque does, and stands clear of the large
 HUD's bar, docked or not: an undocked bar at LargeHUDUndockedScale 1
 still overlapped the tallest list by 25 px (`lootPanelBounds`; the plain
-HUD's layout is unchanged). Pinned in `test/auditretro2.test.js` through
+HUD's layout is unchanged). Pinned in `test/ui/auditretro2.test.js` through
 `drawHud` itself, both faces.
 
 ## DISC22-G: the enhanced dungeon map, mended and made the better map
@@ -848,29 +848,29 @@ off, and at Off it read on.
 
 ## Pins
 
-- `test/disc22a_magic_repairs.test.js` (4), through the real store and the
+- `test/systems/settings/disc22a_magic_repairs.test.js` (4), through the real store and the
   real repair law:
   - the port's default, with DFU's table untouched;
   - a stored Off standing offline;
   - online, forced over a stored Off, with the screen's value and the
     store untouched;
   - the locked row.
-- `test/disc22b_pause_settings.test.js` (3):
+- `test/systems/disc22b_pause_settings.test.js` (3):
   - the classic window's CONTROLS opens the enhanced screen;
   - the grid stands with no document;
   - the landing and the Resume back, by source.
-- `test/disc22d_flail_icon.test.js` (3), over the real pipeline, the real
+- `test/ui/enhanced/disc22d_flail_icon.test.js` (3), over the real pipeline, the real
   drawer with the icons object exactly as the scenes build it, the
   renderer's real colour gate and the mod's real PNGs:
   - the Steel file fetched, uploaded as `514_0#ui_Steel` at 48x76, and
     drawn;
   - the enhanced door drawing a Daedric one from its own file;
   - the trade screens' dye.
-- `test/disc22e_travel_click.test.js` (4):
+- `test/ui/travel/disc22e_travel_click.test.js` (4):
   - the predicate's arms;
   - the real strip stepping 10 to 25 and back;
   - the host asking the lock.
-- `test/disc22f_share_copy.test.js` (4), through the real machine and share
+- `test/systems/quest/disc22f_share_copy.test.js` (4), through the real machine and share
   path:
   - the finished copy refused;
   - the next copy and a third player's received;
@@ -878,9 +878,9 @@ off, and at Off it read on.
   - an id-less envelope answered by name;
   - a load forgetting the memory;
   - the second-person refusal.
-- `test/auditdw.test.js` and `test/to1_travelOptions.test.js` follow the
+- `test/combat/weapon/auditdw.test.js` and `test/systems/travel/to1_travelOptions.test.js` follow the
   new shapes.
-- `test/disc22g_automap.test.js` (8):
+- `test/ui/disc22g_automap.test.js` (8):
   - D1 to D6, each on closed rooms: a ceilinged room is one storey, and
     stacked rooms are two; a placement turns the normal; a flight of
     stairs leaves two storeys, a landing is a third, and a dais is none;
@@ -890,11 +890,11 @@ off, and at Off it read on.
   - notes written, edited, removed, cancelled and refused off revealed
     floor;
   - teleporter links and names, the breathing beacon and Home.
-- `test/automapsheet.test.js`'s rest-view and mark pins follow the new
+- `test/ui/automap/automapsheet.test.js`'s rest-view and mark pins follow the new
   laws (they held the whole-level fit and a teleporter end with no name).
 
 
-- `test/disc22c_classic_loot.test.js` (5), through the real hover seam,
+- `test/systems/disc22c_classic_loot.test.js` (5), through the real hover seam,
   selection and panel, with Mac's PNG decoded off disk:
   - the classic skin resolves a loot frame with no DOM, lights a row,
     and the wheel moves it;
@@ -907,7 +907,7 @@ off, and at Off it read on.
     nothing for a name frame;
   - drawHud draws it on both classic branches.
 
-- `test/disc23a_party_plans.test.js` (6), through the real sheets and ink:
+- `test/ui/ink/disc23a_party_plans.test.js` (6), through the real sheets and ink:
   - a member where the player stands drawn on the player, three metres east
     twelve pixels east and facing east, named, hovered, under the player's
     caret;
@@ -918,7 +918,7 @@ off, and at Off it read on.
   - the street plan through the host's conversion;
   - the reader's drops;
   - the hosts and both doors, by source.
-- `test/disc23b_eotb_sprites.test.js` (7):
+- `test/net/disc23b_eotb_sprites.test.js` (7):
   - the names against the mod's presets and the art's rule, and not on the
     Features tile;
   - the real Skin card: 21 pictures, each key a file in the bundle, the
@@ -931,7 +931,7 @@ off, and at Off it read on.
   - each one-shot played once, with first sight no swing;
   - who is not a walker;
   - the host's order, by source.
-- `test/disc23c_features_colour.test.js` (5), through the real tile builder
+- `test/systems/disc23c_features_colour.test.js` (5), through the real tile builder
   and the real ENHANCED_CSS cascade:
   - an Off / On switch;
   - Grass Density's last-segment Off;
@@ -1021,7 +1021,7 @@ changes (`:270`, `:713`).
 only through the hook above. So the fix has one host. No relay change:
 `wb`, `mv`, `wd`, `an`, `yaw` and `rv` were already on the wire.
 
-The pins are `test/prww1_werewolf.test.js`: six tests, all failing on the
+The pins are `test/net/prww1_werewolf.test.js`: six tests, all failing on the
 unfixed code. The mutants are `tools/mutants/prww1.json`.
 
 ---
@@ -1080,7 +1080,7 @@ calls it at `world.js:"drawPeerBodies(proj, view, mwv.eye, tvf ? tvFace : null)"
 `host.drawPeerBodies` (`worldModes.js:"renderer.everyLightCasts();   // LA-SHADOW3".."host.drawPeerBodies?.({ proj, view, eye: mwv.eye });   // MWBODY1: the others' bodies, after the player's own"`, `worldModes.js:"if (!overlayHeld) interiorCtx.automapTick?.(dt, cam.pos, fwd)".."host.drawPeerBodies?.({ proj, view, eye: mwv.eye });   // MWBODY1: the others' bodies, after the player's own"`). The fix therefore
 sits in one place and reaches every host.
 
-The pins are `test/prbow1_bow.test.js`: seven tests, all failing on the
+The pins are `test/render/prbow1_bow.test.js`: seven tests, all failing on the
 unfixed code. The mutants are `tools/mutants/prbow1.json`.
 
 ### PR-BOW1b: the review's three follow-ups
@@ -1139,7 +1139,7 @@ inside the picture.
   wider than 1024:384 is squashed rather than letterboxed. No human-sized
   body reaches that.
 
-The pins are `test/prbow1b_followups.test.js`: eight tests, all failing on
+The pins are `test/formats/morrowind/prbow1b_followups.test.js`: eight tests, all failing on
 the unfixed code, each on its own assertion. The mutants are
 `tools/mutants/prbow1b.json`.
 
@@ -1284,11 +1284,11 @@ from live STR and END.
 
 ## Pins
 
-- `test/disc24a_class_describe.test.js` (3):
+- `test/ui/disc24a_class_describe.test.js` (3):
   - a single click on ANOTHER row closes the open description;
   - Yes gives the class that was read;
   - both paths through the one door.
-- `test/disc24b_transport_pictures.test.js` (6):
+- `test/ui/enhanced/disc24b_transport_pictures.test.js` (6):
   - the Horse's 201/0 back, and the cart and the boats still borrowing
     nothing;
   - the bake the right way up in color32 order and cropped;
@@ -1297,7 +1297,7 @@ from live STR and END.
   - the real classic drawer drawing the cart's upload through the
     V-flipped quad, and the Horse from 201/0;
   - the real enhanced line and door at the list's scale, the right way up.
-- `test/disc24c_self_shadow.test.js` (6), through the real Renderer and
+- `test/render/disc24c_self_shadow.test.js` (6), through the real Renderer and
   shadow pass on the fake GL:
   - never still;
   - never in a third-frame map;
@@ -1305,7 +1305,7 @@ from live STR and END.
   - a rank change on that frame;
   - a fall with a walker at every cadence phase;
   - the drawn basis, with a townsman still facing the lamp.
-- `test/disc24d_stat_zero_loop.test.js` (4), through the real disease
+- `test/systems/disc24d_stat_zero_loop.test.js` (4), through the real disease
   course, the real kill and the real revival:
   - Lynk's loop end to end;
   - the respawn fraction and the fatigue after the lift;
@@ -1357,9 +1357,9 @@ plaque; with nothing else on the ray their team is still named and pressed.
 Horse-Cart-And-Cargo.md PR-WAGON1 has the law; Online-Arc.md's O3 bullet says
 it is reversed.
 
-**Pins.** `test/prwagon1.test.js` (6), every one failing on the base;
-`test/hcc_pool.test.js` (O3 reversed), `test/disc20.test.js`,
-`test/lootstack.test.js` (the source pin). Mutants `tools/mutants/prwagon1.json`
+**Pins.** `test/player/prwagon1.test.js` (6), every one failing on the base;
+`test/systems/horse/hcc_pool.test.js` (O3 reversed), `test/systems/disc20.test.js`,
+`test/ui/lootstack.test.js` (the source pin). Mutants `tools/mutants/prwagon1.json`
 (7 dead); `hcc.json` and `disc20.json` re-aimed.
 
 ---
@@ -1378,8 +1378,8 @@ dark, not about the shape. A streak at its darkest is 0.44 in a gale and
 0.20 in a calm. The sandstorm is unchanged. The record, and why, is
 `07-Rendering/Rendering.md` WISPS-RETURN.
 
-**Pins.** `test/wispsreturn.test.js` (3), every one failing on the base;
-`test/disc17.test.js`, `test/wind3_windworld.test.js` and
-`test/weather2d_sandstorm.test.js` follow;
+**Pins.** `test/render/wispsreturn.test.js` (3), every one failing on the base;
+`test/ui/disc17.test.js`, `test/systems/wind3_windworld.test.js` and
+`test/systems/weather/weather2d_sandstorm.test.js` follow;
 `test/wind5_swirls.test.js` RETIRED. Mutants `tools/mutants/wispsreturn.json`
 (13 dead); `wind5.json` retired; `auditvc7.json` re-aimed.

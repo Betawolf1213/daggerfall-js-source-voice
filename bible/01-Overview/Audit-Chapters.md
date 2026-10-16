@@ -13,7 +13,7 @@ them was reading (Home.md, DO NOT FIX WHILE THE VERIFIER IS READING):
 - **the pins** (T): 43 extra mutants over the slice (2 dead, 41 survived), and the fake door's shape.
 
 Every finding was re-read here before a line moved; where two lenses found one fault the IDs are joined (C1 = T1). Each
-fix carries an `AUDIT CHAP <ID>` comment and a pin in `test/audit_chap1.test.js` (22), and is mutated in
+fix carries an `AUDIT CHAP <ID>` comment and a pin in `test/net/audit_chap1.test.js` (22), and is mutated in
 `tools/mutants/audit_chap1.json`: **49 mutants, 49 dead**. CHAP1's `tools/mutants/chap1.json` holds **25, all dead** -
 eleven re-aimed by content at the code the fixes rewrote, one (CHAP1-TAB-LEAVE-HURRY) retired with the code it held, and
 CHAP1-LOSS-WHOLE now naming the audit's pins too (with the net day a loss down the gain path moves the same reputation,
@@ -52,7 +52,7 @@ and differs only where something is owed).
 | C5 | low | A faction this client's FACTION.TXT has no row for was claimed as a loss of the Roll's whole number. | `rollDeltasOf` and `rollAdopt` touch only factions both sides hold. |
 | T5 | low | The host's glue (the store read, the write through SetReputation, the memberships, the line) was held only as text. | `rollEntityDoors` and `rollCeilingLine` - the tracker's and the law's own, pinned there; world.js spreads them. |
 
-**The pins** (`test/audit_chap1.test.js`, `test/chap1_roll.test.js`)
+**The pins** (`test/net/audit_chap1.test.js`, `test/systems/guild/chap1_roll.test.js`)
 
 | ID | Finding | Fix |
 |---|---|---|
@@ -65,7 +65,7 @@ and differs only where something is owed).
 | T11, T13 | The service's shape refusals, the seed race's INSERT OR IGNORE, the route's 405, its 409 and the order of its checks were unpinned. | Each pinned. |
 | T1 (getter) | `realmSaves.js`'s lease getter was held only by a source regex. | Run: the lease while it plays, null once lost. |
 | - | `assert.deepEqual(ROLL_STOPS.includes('chapters-closed'), true)` restated a constant; the memberships fixture held a rank -1 nothing produces. | Removed. |
-| X1 | CHAP1 shipped two source pins RED: `test/chat1.test.js` and `test/auditdrops.test.js` each list the lines `onlineFrame` may hold before the dead return, and `rollTracker?.tick()` was not among them. CHAP1's run took the 312 files its change named; the audit's took 665, every test that reads `world.js`. | Both pins admit the Roll's tick beside Renown's (PIN MOVED). |
+| X1 | CHAP1 shipped two source pins RED: `test/net/chat1.test.js` and `test/systems/quest/auditdrops.test.js` each list the lines `onlineFrame` may hold before the dead return, and `rollTracker?.tick()` was not among them. CHAP1's run took the 312 files its change named; the audit's took 665, every test that reads `world.js`. | Both pins admit the Roll's tick beside Renown's (PIN MOVED). |
 
 **The record** (`11-Multiplayer/Chapters-Arc.md`, `01-Overview/Port-Ledger.md`, `01-Overview/Port-Status-2026-09-02.md`,
 `09-Testing/Testing.md`, the indexes, `server-account/src/index.js`)

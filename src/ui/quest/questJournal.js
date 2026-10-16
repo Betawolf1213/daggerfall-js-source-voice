@@ -298,7 +298,7 @@ export class QuestJournalWindow {
     // CODE and the event (ui/input.js "a NATIVE window keys off raw codes") - `KeyA`, never `char:a` - and the field
     // typed into the journal's own art read only the action map's spelling: Enter, Backspace and Escape worked, and
     // not one letter landed. It is now the one InputMessageBoxWindow (ui/inputMessageBox.js, CM3), which reads both
-    // hosts' alphabets, as CM3-CM11 made every other raiser's field (test/classicinputbox.test.js THE ROSTER).
+    // hosts' alphabets, as CM3-CM11 made every other raiser's field (test/ui/classicinputbox.test.js THE ROSTER).
     if (this.noteBox) {
       this.noteBox.input(action, e);
       if (this.noteBox?.done) this.noteBox = null;
@@ -613,7 +613,7 @@ export class QuestJournalWindow {
   // playerHistory) - this window scales through nativeMetrics(canvas)
   // and never needed a fourth. A parameter it does not declare is a
   // parameter nothing can fill by mistake. The large font is a module
-  // warm instead; test/audit24_wave40.test.js holds the whole family
+  // warm instead; test/ui/audit24_wave40.test.js holds the whole family
   // to the one shape.
   draw(renderer, canvas, font) {
     const m = nativeMetrics(canvas);

@@ -27,8 +27,8 @@ ground moves; Gold, Platinum, Mithril and a region's own ore still wait on the w
 keep tier 2. The Mining page says so in a line (`ui/professions/profPages.js` `MINING_GROUND_LINE`). The service's law moved with
 it: acct102. THE OWNER'S CALL: this widens what an unvouched pixel yields by one tier, for veins alone; the witnessed
 world's threat (a lie about a pixel nobody walks) now buys Silver. Reverting is the constant and the service's version.
-Pinned by `test/fb1009e_unwitnessedore.test.js` (4, a Silver vein mined through the service at tier 3's XP);
-`test/prof2_law.test.js`'s unconfirmed pins and sixteen acct pins moved (PIN MOVED);
+Pinned by `test/net/fb1009e_unwitnessedore.test.js` (4, a Silver vein mined through the service at tier 3's XP);
+`test/net/prof2_law.test.js`'s unconfirmed pins and sixteen acct pins moved (PIN MOVED);
 `tools/mutants/fb1009e_unwitnessedore.json` (4, all dead); `tools/mutants/prof2.json`'s PROF2-6 and PROF2-10 re-aimed by
 content.
 
@@ -54,8 +54,8 @@ applies only to a record that stands where the row found it. Port-Ledger A, HILL
 
 NOT SEEN IN THE GAME: the row is measured on the player's data here (the ARENA2-gated pin) and the block is pinned as
 the door mints it, but nobody has walked to the house in a running game. A peer on an older build sees the house in the
-hill. Pinned by `test/fb1009e_hillhouse.test.js` (5, one gated on ARENA2); `tools/mutants/fb1009e_hillhouse.json` (7,
-all dead); `test/wd3_standins.test.js` says the raw pack still walls it; `tools/mutants/qa2_audit.json`'s
+hill. Pinned by `test/tooling/fb1009e_hillhouse.test.js` (5, one gated on ARENA2); `tools/mutants/fb1009e_hillhouse.json` (7,
+all dead); `test/world/wd3_standins.test.js` says the raw pack still walls it; `tools/mutants/qa2_audit.json`'s
 QA2A-pinned-curation and `qa2_summoners.json`'s QA2-summoner-door-unasked re-aimed by content.
 
 ## MAP-SCALE: the held map's text and icons grow with the screen (3)
@@ -72,8 +72,8 @@ a zoomed card never runs off the screen. Read at every layout, so a change takes
 
 NOT PROVEN ON THE REPORTER'S MONITOR: rendered here at 2560 x 1440 and 1920 x 1080 in Chromium (the 1440p frame the
 1080p one, larger), not on a 2k desktop in the desktop client. The dungeon's 3D map and the classic skin's map are
-untouched. Pinned by `test/fb1009e_mapscale.test.js` (3, every held-map rule's viewport bound swept) and
-`test/heldmap.test.js` MAP-SCALE (the window at 1440p and at a fixed choice); `test/fb0929d_mapkey.test.js`'s bound
+untouched. Pinned by `test/ui/enhanced/fb1009e_mapscale.test.js` (3, every held-map rule's viewport bound swept) and
+`test/ui/heldmap.test.js` MAP-SCALE (the window at 1440p and at a fixed choice); `test/ui/fb0929d_mapkey.test.js`'s bound
 moved (PIN MOVED); `tools/mutants/fb1009e_mapscale.json` (10, all dead).
 
 ## EVERY-STANDING: every organization's standing, a setting (4)
@@ -89,7 +89,7 @@ standingGroups): the four guilds, the eight temples by the god their membership 
 kingdoms (FACTION.TXT's Province type - every region's ruler and the Empire, 45; no Random Ruler), the fourteen covens,
 the nine vampire clans and the sixteen Daedric Princes. A membership is under Guilds already, with its rank, and is not
 listed twice. Nothing here changes a reputation. The classic skin's character sheet is untouched. Port-Ledger A,
-EVERY-STANDING. Pinned by `test/fb1009e_everystanding.test.js` (3, one gated on ARENA2's FACTION.TXT);
+EVERY-STANDING. Pinned by `test/systems/fb1009e_everystanding.test.js` (3, one gated on ARENA2's FACTION.TXT);
 `tools/mutants/fb1009e_everystanding.json` (7, all dead); `tools/mutants/guildrep.json`'s
 GUILD-REP-the-page-draws-no-guilds re-aimed by content.
 
@@ -102,4 +102,4 @@ where the picture is never drawn (the seam first now: 190 of the Bay's 192 edge 
 231 where they were 516); and the coast inked as the pixels' staircase, the lore map's rivers running out to sea (the
 land's contour smoothed within half a picture pixel, the borders' ends on the coast, no lore river on the trace). The
 picture is 320 x 200: the continent's coast is the picture's to 15 km however it is drawn. Pinned by
-`test/tamriel4.test.js` (9, one gated on ARENA2); `tools/mutants/tamriel4.json` (14, all dead).
+`test/ui/tamriel4.test.js` (9, one gated on ARENA2); `tools/mutants/tamriel4.json` (14, all dead).

@@ -70,7 +70,7 @@ halo poses; the new arms answer the windows lane B found.
 
 ## Pins
 
-`test/peerrange.test.js` 8 -> 10, `tools/mutants/peerrange.json` 29 -> 42 dead; `test/halothin.test.js` 6 -> 11,
+`test/systems/peerrange.test.js` 8 -> 10, `tools/mutants/peerrange.json` 29 -> 42 dead; `test/net/halothin.test.js` 6 -> 11,
 `tools/mutants/halothin.json` 21 -> 32 dead (the fall's record retired with its arm; the zone's with its term). Moved: the
 INVIS-NET, MWBODY1, OW-PEERS (`fb1001_overworld`) and INVIS-LOOK sync pins (the room's list beside the cut list) -
 their own lists run again, OW-PEERS' and INVIS-LOOK's 43 dead. The whole suite on the fixed tree: 25,666 tests, its two

@@ -5,7 +5,7 @@
     "old": "      posePartClocks(built.arm, weaponClockValue(), { frameTime: partClock });   // MW-BOW1: the bow draws, the arrow with it\n",
     "new": "",
     "tests": [
-      "test/mwbow1.test.js"
+      "test/formats/morrowind/mwbow1.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "          posePartClocks(t.arm, weaponClockValue(), { frameTime: partClock });   // MW-BOW1: the bow draws, the arrow with it\n",
     "new": "",
     "tests": [
-      "test/mwbow1.test.js"
+      "test/formats/morrowind/mwbow1.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "        noteWeaponClock();   // MW-BOW1: before stepUpper ends the section - the group's state keeps its last time\n",
     "new": "",
     "tests": [
-      "test/mwbow1.test.js"
+      "test/formats/morrowind/mwbow1.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "    const start = ranged ? getStartTime((actionSource || rig()).keys, weaponGroup) : 0;\n",
     "new": "    const start = 0;\n",
     "tests": [
-      "test/mwbow1.test.js"
+      "test/formats/morrowind/mwbow1.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "  const weaponClockValue = () => (weaponClock.group && weaponClock.group === weaponGroup ? weaponClock.value : 0);\n",
     "new": "  const weaponClockValue = () => weaponClock.value;\n",
     "tests": [
-      "test/mwbow1.test.js"
+      "test/formats/morrowind/mwbow1.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "                if (pre) preClip = { nif: weaponNif, node: ARROW_FALLBACK_NODE };\n",
     "new": "",
     "tests": [
-      "test/mwbow1.test.js"
+      "test/formats/morrowind/mwbow1.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "            preClip: part.preClip ? { ...part.preClip, local: batch.positions, localNormals: batch.normals ?? null } : null,\n",
     "new": "            preClip: null,\n",
     "tests": [
-      "test/mwbow1.test.js"
+      "test/formats/morrowind/mwbow1.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "    if (p.kind !== 'rigid' || !slots.has(p.slot)) continue;\n",
     "new": "    if (p.kind !== 'rigid') continue;\n",
     "tests": [
-      "test/mwbow1.test.js"
+      "test/formats/morrowind/mwbow1.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "  const track = pc.tracks.get(rec);\n  if (!track) return rest;\n",
     "new": "  const track = null;\n  if (!track) return rest;\n",
     "tests": [
-      "test/mwbow1.test.js"
+      "test/formats/morrowind/mwbow1.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "  const s = sampleTrack(track, controllerTime(track.timing, value));\n",
     "new": "  const s = sampleTrack(track, value);\n",
     "tests": [
-      "test/mwbow1.test.js"
+      "test/formats/morrowind/mwbow1.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "    if (!w) continue;\n",
     "new": "    if (w !== 12345) continue;\n",
     "tests": [
-      "test/mwbow1.test.js"
+      "test/formats/morrowind/mwbow1.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "export const clockFor = (animFlags, value, frameTime) => ((animFlags & ANIM_FLAG_AUTOPLAY) !== 0 ? frameTime : value);\n",
     "new": "export const clockFor = (animFlags, value) => value;\n",
     "tests": [
-      "test/mwbow1.test.js"
+      "test/formats/morrowind/mwbow1.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "  for (const r of chain) if (r.type === 'NiBSAnimationNode' || r.type === 'NiBSParticleNode') flags = r.flags | 0;\n",
     "new": "",
     "tests": [
-      "test/mwbow1.test.js"
+      "test/formats/morrowind/mwbow1.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "        if (list.length > 1 && shapeData?.vertices && list[0].vectors.length === shapeData.vertices.length) {\n",
     "new": "        if (list.length > 1 && shapeData?.vertices) {\n",
     "tests": [
-      "test/mwbow1.test.js"
+      "test/formats/morrowind/mwbow1.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "        if (list.length > 1 && shapeData?.vertices && list[0].vectors.length === shapeData.vertices.length) {\n",
     "new": "        if (list.length > 0 && shapeData?.vertices && list[0].vectors.length === shapeData.vertices.length) {\n",
     "tests": [
-      "test/mwbow1.test.js"
+      "test/formats/morrowind/mwbow1.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "GEOMETRY_TYPES.has(rec.type) && !(rec.skin >= 0)) {\n",
     "new": "GEOMETRY_TYPES.has(rec.type)) {\n",
     "tests": [
-      "test/mwbow1.test.js"
+      "test/formats/morrowind/mwbow1.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "      if (inside && !skipGeometryName(rec.name, hasMarkers)) emit(rec, nextWorld, nextProps, nextChain, animFlags, parentRef);\n",
     "new": "      if (inside && !skipGeometryName(rec.name, hasMarkers)) emit(rec, nextWorld, nextProps, [rec], animFlags, parentRef);\n",
     "tests": [
-      "test/mwbow1.test.js"
+      "test/formats/morrowind/mwbow1.test.js"
     ]
   }
 ]

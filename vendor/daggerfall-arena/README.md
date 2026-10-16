@@ -53,7 +53,7 @@ most with its own pictures first, so 18 carry all 365): the model id, the turn (
 where he gave a copied triangle another of Daggerfall's pictures (39 of them), which picture. The runtime rebuilds
 each from the player's own ARCH3D. Rebuilt and merged, the model is the bundle's mesh again: every one of the 5,138
 triangles, its corners, its uvs, its winding and its picture (verified 2026-10-02 against ARENA2; the test that
-re-runs it is `test/arena1_extract.test.js`). Four triangles at a copy's corners whose uvs Kamer moved are his, and
+re-runs it is `test/tooling/arena1_extract.test.js`). Four triangles at a copy's corners whose uvs Kamer moved are his, and
 stay in the mesh.
 
 ## What is NOT here, and why

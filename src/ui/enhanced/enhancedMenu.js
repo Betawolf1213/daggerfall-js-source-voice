@@ -432,7 +432,7 @@ let _saveNameDraft = '';
  *  dusks (18:00, forty-five real minutes after a midnight) are said in this machine's own minutes - on the hour for most
  *  of the world, at the half hour or a quarter past where a clock is set off the hour.
  *  Before the switch the sky is still the event clock's, a day every two hours, and the sentence says when it turns.
- *  test/time4_words.test.js holds the numbers to the law. */
+ *  test/systems/quest/time4_words.test.js holds the numbers to the law. */
 export function skyDayWords(nowMs = Date.now(), localTime = (ms) => new Date(ms).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }),
   localMinute = (ms) => { const d = new Date(ms); return d.getMinutes() + d.getSeconds() / 60; }) {
   const turn = SKY_SEGMENTS[SKY_SEGMENTS.length - 1].fromMs;
@@ -1705,7 +1705,7 @@ const OPT_FILTERS = Object.freeze([['all', 'All'], ['changed', 'Changed'], ['enh
 
 /** ORG2: the port's own rows, built once a paint and found by the id each carries (`dataset.opt`). A row its builder
  *  does not draw here - the touch knobs off a touch device, the HUD's layout on the classic skin, the start video at
- *  pause - is simply absent, and its item draws nothing. (Exported for test/org2_options.test.js, which holds the map
+ *  pause - is simply absent, and its item draws nothing. (Exported for test/systems/org2_options.test.js, which holds the map
  *  total over it.) */
 export function portPool({ pause = false } = {}) {
   const pool = new Map();
@@ -1968,7 +1968,7 @@ function resetEverything() {
 
 /** ORG2: one tab back to how the game ships it - its DFU keys, its Features rows (with their parts and a mod's modules
  *  and dials) and its port rows' prefs. The All off keep is left for Restore: this is one tab, not everything.
- *  (Exported for test/org2_options.test.js.) */
+ *  (Exported for test/systems/org2_options.test.js.) */
 export function restoreTabDefaults(tab) {
   const items = tab.sections.flatMap((s) => s.items);
   for (const item of items) {

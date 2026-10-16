@@ -238,7 +238,7 @@ TREES=off npm run perf` and again without `TREES=off`
 
 ## Verification
 
-`test/lpt1_lowpolytrees.test.js` (the pure module, the vendored data,
+`test/systems/lpt1_lowpolytrees.test.js` (the pure module, the vendored data,
 the far picture texel for texel, the shader's mesh mode, light, sway and
 handover run in the GLSL evaluator, the draw on a recording GL, the door
 with its ownership and its seasons, the hosts' wiring); TACT1's cover

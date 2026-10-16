@@ -2,11 +2,11 @@
 // and the Herald's choice (ui/enhanced/enhancedDialog.js drawEnhancedChoice, systems/arena/arenaHerald.js) drawn over the real sheets in
 // Chromium - the Enhanced Plus sheet and the classic skin's bare page - at a desktop's width, a narrow window's and a
 // phone's, with the widest names a bout can carry, a two-against-one, a Grand Melee's three and the yield hint up. Each
-// must stand inside the viewport, its words in the pixel face, nothing spilling sideways. test/arena2_hud.test.js holds
+// must stand inside the viewport, its words in the pixel face, nothing spilling sideways. test/systems/arena/arena2_hud.test.js holds
 // the law on a fake document; this photographs what a fake cannot. Photographs to SHOT_DIR (default tools/shots/).
 // ARENA4b: and THE STANDS - a watcher of a relay's bout with the two presses under the plate (Cheer, Boo): inside the
 // viewport, a finger's size on the phone (the touch sheet), the kit's stone button on Plus, a real click on each and the
-// + and - keys reaching the door (test/arena4b_stands.test.js holds the law).
+// + and - keys reaching the door (test/systems/arena/arena4b_stands.test.js holds the law).
 //
 //     node tools/arenaHudProbe.mjs
 import { createServer } from 'vite';

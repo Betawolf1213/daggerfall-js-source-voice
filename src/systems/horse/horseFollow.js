@@ -467,7 +467,7 @@ export function groundedPoseStep(phys, w, pathPosition, pathForward, dt) {
  *
  *  `length` is HITCHED_HORSE_LOCAL_Z (3.1 m), the mod's own distance from a parked wagon to its hitched horse, so the
  *  team stands alike parked, ridden and following: a dismount parks the wagon where it hung and the horse comes to
- *  stand where the rider sat. The IL's trail and ease above stay as the record (test/hcc_follow.test.js pins them);
+ *  stand where the rider sat. The IL's trail and ease above stay as the record (test/systems/horse/hcc_follow.test.js pins them);
  *  they no longer place the drawn wagon. Ledger A, WAGON-HITCH. */
 /** AUDIT WAGON-HITCH A3: the fastest a hitch may honestly move, metres a second of GAME time - past a cart or a horse
  *  at their quickest (the ride base at speed 100 is 11.8 m/s, a canter under Enhanced Riding x1.85 about 22 m/s;

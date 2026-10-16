@@ -41,7 +41,7 @@ Snowfall treats a climate the add-on decides as it treats the desert (no tier st
 its tiles - and every desert tile - are bare from a neighbour. A switch made mid-session reaches the weather and
 Snowfall at once; the drawn ground, as the card says, at the world's next load.
 
-`test/fb1009_snowless.test.js` (5); `tools/mutants/fb1009_snowless.json` (10, all dead; `weather3f.json`'s `WEATHER3f-ground-skips-thunder` re-aimed at the widened guard). Recorded on
+`test/systems/fb1009_snowless.test.js` (5); `tools/mutants/fb1009_snowless.json` (10, all dead; `weather3f.json`'s `WEATHER3f-ground-skips-thunder` re-aimed at the widened guard). Recorded on
 `07-Rendering/Weather-Arc.md`, `03-World/Snowfall.md`, `07-Rendering/Vanilla-Enhanced.md` and the Ledger.
 
 ## HOME-FOOT: the step before my own door is my yard (6)
@@ -64,7 +64,7 @@ under their own roof or eaves - whether a porch is a yard is a design question, 
 let through (11,701 of 11,701). A stranger's door within the owner's lot is the stranger's: the ground between two
 houses is split down its middle (HOME-LINE, `01-Overview/Field-Bugs-2026-10-11b.md`).
 
-`test/fb1009_yardfoot.test.js` (5, one over ARENA2, skipped without it); `tools/mutants/fb1009_yardfoot.json` (14, all
+`test/world/fb1009_yardfoot.test.js` (5, one over ARENA2, skipped without it); `tools/mutants/fb1009_yardfoot.json` (14, all
 dead), and FB1001's three YARD-CORNER and HOUSING's two HOME-YARD records re-aimed.
 
 ## TV-BURST, TV-PIN, TV-SNOW, TV-SAVE, TV-REFILL: the Overworld's freeze, its falling frames, the saves' hitch (3, 4)
@@ -95,7 +95,7 @@ streamed world.
 Not fixed, leads only: the pad cursor's per-frame hit tests while a window is up (controller players), the Overworld's
 town rects never pruned (memory), TAMRIEL3's fit at boot (one-off). If EvoAva's freezes outlast this, the next step is a
 profile from their machine - whether they play with a controller, and whether it is every open or now and then.
-`test/fb1009_travelperf.test.js` (8); `tools/mutants/fb1009_travelperf.json` (32, all dead). Recorded on
+`test/scenes/fb1009_travelperf.test.js` (8); `tools/mutants/fb1009_travelperf.json` (32, all dead). Recorded on
 `06-Systems/Travel-View.md` and `03-World/Snowfall.md`.
 
 ## STACK: a re-cast stacks its rounds (2)
@@ -133,7 +133,7 @@ PRE-MERGE 0928 O1; the peek had no such guard). Uncaught, it was the red console
 `poseAhead` now reads the word's place first and answers null when the word names no boat there, or a boat of another
 hull (a word that reordered her boats) - the host's own fallback, the boat's pose as it stands, carries the passenger
 for that one frame, and the frame's realign matches the word as before (`scenes/comeSailAway/comeSailAwayPeers.js`
-`poseAhead`). `test/csa_together.test.js` (+1) drops a boat and changes a hull between frames and fails, with the
+`poseAhead`). `test/systems/csa_together.test.js` (+1) drops a boat and changes a hull between frames and fails, with the
 reported error, without the guard; `tools/mutants/csa_together.json` +2 (the missing place, the other hull), and the
 `CSAK-peers-peek-late` record re-aimed at the guarded line.
 
@@ -172,10 +172,10 @@ bound, because the relay knows no picture), `POSE_BOUND` from it, `worldPixelOk`
 the halo crosses the edge both ways; the traveller's mark is floored past the corner and its 256ths stay 0..255; a
 party pose's pixel, its trip (`tv`), its walk (`tw`) and its feet (`wx`/`wz`), a duel's ring and a park's anchor are
 taken either side of the corner. The widest hub attachment, the world's widest party pose, still fits its 2048 bytes.
-RELAY_VERSION world181 (`test/relayversion.test.js` row; world180 on the branch, renumbered past main's TAVERN-TABLES world180 at its merge): **deploy the relay before the clients** - a new client
+RELAY_VERSION world181 (`test/net/relayversion.test.js` row; world180 on the branch, renumbered past main's TAVERN-TABLES world180 at its merge): **deploy the relay before the clients** - a new client
 against the old relay is no worse than today (refused as before).
 
-Pins: `test/fb1009_beyond.test.js` (8) - the field's crash on four edges and the half-off route, the ground past the
+Pins: `test/systems/travel/fb1009_beyond.test.js` (8) - the field's crash on four edges and the half-off route, the ground past the
 table and its keep, the land's pieces, the road byte across the west edge, the host's own water line lifted and run
 both ways, the frame's corners at three fits as poses the relay takes, the cells and the halo across the edge, the
 marks and the party past the Bay; `tools/mutants/fb1009_beyond.json` (28, all dead). PIN MOVED (TV-BEYOND), each to

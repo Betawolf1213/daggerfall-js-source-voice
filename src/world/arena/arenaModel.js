@@ -187,7 +187,7 @@ export function buildArenaModel(index, bin, classicOf) {
 // least RUN_MIN of them. The ramp is the upper hull of the run's nosings (no nosing stands above it, none is cut
 // short), a hair over them (RAMP_LIFT), the width the run's risers share; at its foot it runs on down its first slope
 // RAMP_BELOW under the first riser's foot, so a stair whose foot floats over the ground (the gate's) is met by its
-// ramp under the ground. Surveyed (test/arena_fix.test.js): five runs - the gate's two flights to the ring (19 and 14
+// ramp under the ground. Surveyed (test/systems/arena/arena_fix.test.js): five runs - the gate's two flights to the ring (19 and 14
 // risers, 7.35 m wide), its twin on the east (14), and the two flights to the upper terrace on the south side (10
 // each). The parapets' 0.58/0.72 m steps on the wall walk are not stairs (over STAIR_RISER_MAX) and stay as they are.
 

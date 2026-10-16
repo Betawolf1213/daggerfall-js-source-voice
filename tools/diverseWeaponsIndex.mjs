@@ -2,7 +2,7 @@
 //
 // Which names public/art/diverse-weapons/ carries is the bundle's own
 // file list (vendor/diverse-weapons/diverse-weapons.dfmod.json, verbatim
-// - the same authority test/doctrine.test.js derives the folder's
+// - the same authority test/tooling/doctrine.test.js derives the folder's
 // membership from), not a listing of the folder: the door must answer a
 // miss WITHOUT a fetch (a weapon's every frame is asked, and a name the
 // set lacks - a `w_` for record 3, an icon in a metal nobody painted -

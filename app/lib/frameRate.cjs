@@ -15,7 +15,7 @@
 
 const { readPref } = require('./fileStorage.cjs');
 
-/** src/systems/settings/settings.js STORAGE_KEY - the page's settings blob (test/disc28e_vsync.test.js holds the two equal). */
+/** src/systems/settings/settings.js STORAGE_KEY - the page's settings blob (test/ui/settings/disc28e_vsync.test.js holds the two equal). */
 const SETTINGS_PREF = 'dagger.settings.v1';
 
 /** Chromium's two waits: the compositor's frame-rate limit, which paces requestAnimationFrame (the one that matters -

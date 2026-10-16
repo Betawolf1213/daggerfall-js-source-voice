@@ -955,7 +955,7 @@ galley that came for them; on foot beside the same waters nobody engaged or hail
 ## DECK-FIELD (2026-09-29) - the deck's own sounds, no hunt at sea, and HOLD FIRE
 
 Mac, from one sailing session: "Walking on the deck gives water sounds, hunting notifications appear when sailing,
-shooting cannons should have attack canceling." Each one root-caused (`test/deckfield.test.js`):
+shooting cannons should have attack canceling." Each one root-caused (`test/systems/deckfield.test.js`):
 
 - **SHIP-DECK** (DECLARED): Immersive Footsteps read the terrain tile under the feet and nothing else - its own noted
   IsOnShip bug - so a deck over the sea (tile 0) stepped in deep water all voyage. The host's down probe now keeps the
@@ -1008,7 +1008,7 @@ helm (`systems/helmWay.js`, one law):
   handling moves - AUDIT SHIPS A3 (2026-10-06): at the least; at a way past HELM-WAY's, the brake that brings her under
   BOARD_SPEED within HEAVE_TO_M (`heaveToDecel` - SAIL-FREE's full way had run a Carrack 93 m on at the fixed brake).
 
-Pins: `test/helmway.test.js` (8); the captains' turn (M5), the lookout, the land, the broadside onto the land, the
+Pins: `test/systems/naval/helmway.test.js` (8); the captains' turn (M5), the lookout, the land, the broadside onto the land, the
 sweeps' pace, the raider's day sight, the chasers' stern chase, the fire's long guns and the navy's hearing re-aimed
 with their laws intact (each fixture's reason in its own line). Mutants: `tools/mutants/helmway.json` (19), all dead;
 eight records re-aimed onto the new text (the coast, the rudder's two, the radius, the brake's four), all dead.
@@ -1103,7 +1103,7 @@ Carrack's hold).
   was true of no body on a deck: her men stand in the room as foes and my hands as the reader's shipmates, never saved
   (`transient`, F13: a won prize's men stood over open water on a load).
 
-Pins: `test/deckwalk.test.js` (17): the deck on a little ship made of her faces (the ramp, the rail, a crate, a boom's
+Pins: `test/systems/naval/deckwalk.test.js` (17): the deck on a little ship made of her faces (the ramp, the rail, a crate, a boom's
 shadow, a thin mast, a walled cabin, the stairs to a forecastle), the clamp and the ring search against every cell, the
 spots and the walk, the corner and the ledge, her frame, the real hulls (every cell under a ray from a head's height, the
 Large Boat's node 0.1 m up her root, the Carrack's rail), the leash and the carry lifted from the world host, the five
@@ -1200,7 +1200,7 @@ Found on the way and fixed: a room's boats carried no owner or uid, so every one
 is stamped with whose and which at its build (`comeSailAwayPeers.js peerKey`); the rail point clamped from far abeam was
 her widest cell whatever `z` was asked (the new `deck.rail`).
 
-Pins: `test/livingcrew.test.js` (13); AUDIT NAV2's `test/auditnav2_crew.test.js` (26, `tools/mutants/auditnav2_crew.json`
+Pins: `test/systems/naval/livingcrew.test.js` (13); AUDIT NAV2's `test/systems/naval/auditnav2_crew.test.js` (26, `tools/mutants/auditnav2_crew.json`
 64, all dead - `01-Overview/Audit-NAV2.md`). Mutants: `tools/mutants/livingcrew.json` (54), all dead; twelve records re-aimed
 onto the new text (the spawn's crew and deck, the muster's, the hands', the repel's, the tags' and bars' clears, B2's
 hands, B9's captain, B10's stack), all dead.
@@ -1263,7 +1263,7 @@ a quay at every berth with its jetty, piles, bollards, cargo and lanterns lit in
 moored alongside it; the player's ship warped in, made fast and a gangway run out), ~~ships at anchor off a harbour
 with no berth, and a voyage's port-to-port route beyond the loaded terrain~~ (SEA-LANES, below: the Bay's packets sail
 the map's water between its ports, and lie off a port whose harbour no one has sounded).
-Pins: `test/shiplife.test.js` (11). Mutants: `tools/mutants/shiplife.json` (32).
+Pins: `test/systems/naval/shiplife.test.js` (11). Mutants: `tools/mutants/shiplife.json` (32).
 
 ## KEEP-PLUNDER and KEEP-BOATS (2026-09-30) - nothing of the player's goes with the sea
 
@@ -1284,14 +1284,14 @@ won went with it: a prize's hold not yet emptied, and the casks of the ships the
 - **A boat left in a dungeon is kept** (`systems/modSettings.js`, DECLARED). The mod's
   `Compatibility.PersistentDungeonBoats` ships off: a boat placed indoors or underground was destroyed once the player
   was back outside, a packable one and its hold for good, and a crewed one's hold with it. The port ships the key ON; it
-  stays the player's switch. `test/csa_registration.test.js` names it among the DEPARTED defaults.
+  stays the player's switch. `test/systems/csa_registration.test.js` names it among the DEPARTED defaults.
 
 AUDIT PR478 (`01-Overview/Audit-PR478.md`): off the helm the stow goes into the player's boat nearest them before the
 pack, and what will not fit is said (D1); naval combat switched off stows before it takes the sea (D3); a boat kept in a
 dungeon stands in that dungeon alone, never a building on its pixel (D2). SHIP-LIFE's own findings (A1-A5, B1-B7) are
 recorded there too.
 
-Pins: `test/keepplunder.test.js` (the real host's prize and sinkings, the world's wiring, the default).
+Pins: `test/systems/naval/keepplunder.test.js` (the real host's prize and sinkings, the world's wiring, the default).
 `tools/mutants/keepplunder.json`: 12 mutants, all dead.
 
 ## SHIP-CREW and SEA-REPAIR (2026-09-30) - named crew with spirits, deck orders, and repairs on the high seas - DECLARED
@@ -1340,7 +1340,7 @@ immersion list's first; and of the choices put to him, morale *"Gentle"* (no wag
   losses count as one while each comes within `LOSSES_WINDOW_S` of the last. Her deck stands each hand as he was named
   (his class and sex off `mates`, not the session's crew seed).
 
-Pins: `test/shipcrew.test.js` (the laws, the living crew's answer on her real deck, the real host's repairs, falls,
+Pins: `test/systems/naval/shipcrew.test.js` (the laws, the living crew's answer on her real deck, the real host's repairs, falls,
 spirits, orders, yard and save). `tools/mutants/shipcrew.json`: 40 mutants, all dead.
 
 ## CREW-COMPANIONS (2026-09-30) - the crew ashore, following and fighting through every door - DECLARED
@@ -1409,7 +1409,7 @@ followers and Come Sail Away's crew never leaves the boat; all of this is the po
   the hit and the frame carry what they always passed through. Said: another's foe fighting my companion swings at him
   only on its owner's screen (a record names no companion as its target).
 
-Pins: `test/crewcompanions.test.js` and `test/auditcrew.test.js` (AUDIT CREW, `01-Overview/Audit-Crew.md`) (the party's laws, the follow brain on a flat and round a wall on a real navmesh,
+Pins: `test/systems/naval/crewcompanions.test.js` and `test/systems/naval/auditcrew.test.js` (AUDIT CREW, `01-Overview/Audit-Crew.md`) (the party's laws, the follow brain on a flat and round a wall on a real navmesh,
 the targets, the layer through doors, sweeps, knocks and catch-ups, the deck, the menu, the wiring by source).
 `tools/mutants/crewcompanions.json`: 47 mutants, all dead.
 
@@ -1451,7 +1451,7 @@ followers; all of this is the port's own, over CREW-COMPANIONS.
   "You are healed" (alone, it merges at the back) and every other line are untouched. THE FOUR HOSTS: one route for
   all of them, `say` -> `hudText.add` -> the Enhanced notice panel - `world.js`'s engine on the street and, through
   `worldModes.js`, in a building; `dungeonContext.js`'s own underground; `exterior.js`'s hands no companion or mate
-  seam, so no gift line is said there. `test/giftquiet.test.js`; `tools/mutants/giftquiet.json`: 17 mutants, all dead.
+  seam, so no gift line is said there. `test/systems/giftquiet.test.js`; `tools/mutants/giftquiet.json`: 17 mutants, all dead.
 - **The pack** (`crewCompanions.js` - each companion's live `items`, saved with the party through the host's item
   codec, `packedItemsCodec`, the cargo's own). Activating my companion in Info, Grab or Talk within
   `TREASURE_ACTIVATION_DISTANCE` (else "You are too far away", as any storage) opens it (`player/
@@ -1476,7 +1476,7 @@ followers; all of this is the port's own, over CREW-COMPANIONS.
   activation (`world.js`), a building's and the dungeon's (`scenes/worldModes.js`, through `host.openCompanionPack`;
   the dungeon's companion bodies are `scenes/dungeonContext.js`'s own records, found by that activation);
   `scenes/exterior.js` stands no crew companion and has no pack door - FLAGGED, CREW-COMPANIONS' own.
-  `test/companion_weight.test.js`.
+  `test/systems/companion_weight.test.js`.
 - **The bar** (`ui/naval/navalHud.js drawCrewBars`): a companion's is wider (`MATE_BAR_W`), his name and health in digits
   over it and his live effects' icons under it (`MATE_FX_MAX`, the party card's own row: `composePartyFx`; fitted by
   `iconFit.js`'s law, a harmful one ringed as the card rings it); a deck hand's stays bare. Another player's companion:
@@ -1490,7 +1490,7 @@ followers; all of this is the port's own, over CREW-COMPANIONS.
   once as a window lifts. None while I sail: the party is aboard. Offline, the panel stands for my companions alone;
   online it stands down only for the social one (`world.js makePartyPanel`, the one place a panel is made).
 
-Pins: `test/companionkit.test.js`; AUDIT WATCH-KIT's `test/auditwatchkit_magic.test.js`, `auditwatchkit_ui.test.js`,
+Pins: `test/systems/companionkit.test.js`; AUDIT WATCH-KIT's `test/systems/auditwatchkit_magic.test.js`, `auditwatchkit_ui.test.js`,
 `auditwatchkit_world.test.js`. `tools/mutants/companionkit.json`: 43 mutants, all dead.
 
 ## SHIP-WATCH (2026-10-01) - life aboard between fights, and the sea by night - DECLARED
@@ -1552,9 +1552,9 @@ arms below).
 Said: a player's boat stands dark until its lanterns are lit (Come Sail Away's own switch, off when she is built), so
 by night a pirate sees her only close aboard unless they are.
 
-Pins: `test/shipwatch.test.js` (the laws, the watch below and every hand up, the lookout, the work and its swing, the
+Pins: `test/systems/naval/shipwatch.test.js` (the laws, the watch below and every hand up, the lookout, the work and its swing, the
 host drawing none below, the captains and the errands by night, the lanterns, the cry and the lamps on the real host,
-the world's wiring); AUDIT WATCH-KIT's `test/auditwatchkit_crew.test.js` and `auditwatchkit_sea.test.js`.
+the world's wiring); AUDIT WATCH-KIT's `test/systems/naval/auditwatchkit_crew.test.js` and `auditwatchkit_sea.test.js`.
 `tools/mutants/shipwatch.json`: 54 mutants, all dead.
 
 ## SEA-EASE (2026-10-01) - a quieter, safer bay, and the crown's ships at the player's side - DECLARED
@@ -1566,7 +1566,7 @@ now"*. All of it the port's own, over NAV-C's traffic and SEA-PEACE's tempers (`
 - **Fewer ships.** The densities keep one, two or four ships near a player (`DENSITY` few, some, many - they kept two,
   three and five), rolled for every `SPAWN_EVERY` (60-140 s, was 30-65) and the first `FIRST_ROLL_S` (30 s, was 12)
   after the water is reached; one raider of Warm Ashes' at a time (`RAIDER_SHIPS_MAX`, was two). Measured by the
-  director's own law (a straight course at 6 m/s for twenty hours, `test/seaease.test.js`): at the default "Some" 18
+  director's own law (a straight course at 6 m/s for twenty hours, `test/systems/naval/seaease.test.js`): at the default "Some" 18
   ships an hour where it launched 31, and 6 pirates where it launched 15.
 - **A safer sea.** The open bay's weights 30 pirates, 45 merchantmen, 25 crown's ships (`FACTION_WEIGHTS`, were 45, 38
   and 17), and within `PORT_PIXELS` of a port the pirates' weight cut to `PORT_PIRATE_K` (a half) - the crown's own
@@ -1594,7 +1594,7 @@ Said: the Ships at sea setting keeps its three tiers - their numbers moved; a pl
 "Many" (four). Not done: merchantmen do not come to anyone's aid (a merchant fights no one - SEA-PEACE); a relief is
 sent only by the player who stands the sea (SEA-TRAFFIC's election).
 
-Pins: `test/seaease.test.js` (the numbers, the measured hour, the relief's law, standing by, the host's relief and its
+Pins: `test/systems/naval/seaease.test.js` (the numbers, the measured hour, the relief's law, standing by, the host's relief and its
 cry, no relief, the stray and the peer's stray). `tools/mutants/seaease.json`: 37 mutants, all dead.
 
 ## SHIP-PRICE (2026-10-01) - a boat about a quarter of the price - WITHDRAWN before the merge
@@ -1603,7 +1603,7 @@ Built on the branch for Mac's *"make ship prices more reasonable"* ("About a qua
 withdrawn at the review before the merge, never shipped: *"Remove the changes to ship reduction cost."* Come Sail
 Away's own prices stand - 4,000 (Rowboat), 8,000 (Large Boat), 100,000 (Small Ship), 200,000 (Large Galley) and
 150,000 (Carrack) (`systems/comeSailAway/comeSailAwayBoat.js HULL_PRICES`). Its pin and its two mutants went with it;
-`test/csa_items.test.js` reads the shelf's literal prices again. SHIP-CLAIM stands on the mod's prices (SHIP-CREDIT
+`test/systems/csa_items.test.js` reads the shelf's literal prices again. SHIP-CLAIM stands on the mod's prices (SHIP-CREDIT
 did, until it was withdrawn).
 
 ## SHIP-CREDIT (2026-10-01) - a boat bought on the bank's credit - WITHDRAWN 2026-10-08
@@ -1627,7 +1627,7 @@ at least and the shop region's bank the rest under BorrowLoan's law. Withdrawn w
 - **THE FOUR HOSTS RULE**: the offer stood in `scenes/worldModes.js` alone. `scenes/dungeonContext.js` opens a trade
   window and never handed it a credit hook; `scenes/exterior.js` and `scenes/world.js` open no counter.
 
-Pins: `test/shipcredit.test.js` (3) pins the withdrawal - the bank never asked whatever hook a host hands, the commit
+Pins: `test/systems/shipcredit.test.js` (3) pins the withdrawal - the bank never asked whatever hook a host hands, the commit
 given no credit, the laws' exports gone, the bank's own loan standing. `tools/mutants/shipcredit.json`: 7 mutants, all
 dead (the feature's 33 went with it; `tools/mutants/auditholdings.json`'s two F5 records too).
 
@@ -1682,7 +1682,7 @@ her into Parts at PackBoat's full price, not her papers' quarter.~~ CLOSED by SH
 a boat's parts carry the worth of what placed her (`itemValue`), so a claimed prize of any hull packs at her papers'
 quarter - a pirate sloop's 2,000, never the shelf's 8,000 - and a taken ship is no fortune in parts.
 
-Pins: `test/shipclaim.test.js` (14 - the two SHIP-PACK ones: a claimed ship picked up and placed again is the same
+Pins: `test/systems/naval/shipclaim.test.js` (14 - the two SHIP-PACK ones: a claimed ship picked up and placed again is the same
 ship, her hurts and her empty crew kept by her number; a claimed Large Boat packs at her papers' worth).
 `tools/mutants/shipclaim.json`: 58 mutants, all dead; `tools/mutants/shippack.json` holds the pick-up's.
 
@@ -1732,7 +1732,7 @@ tags and card, SHIP-LIFE's harbours and NAV-R's shared clock.
   (with no `focus` handed in, the nearest ship's); and NO TAG OVER ANOTHER - laid the line's ship first, then the
   hostile, then the nearest, a tag whose box (read off its words, the 11px face's advances measured in Chromium) would
   come within TAG_CLEAR (3 px) of one laid is not drawn that frame, and one left out needs TAG_HOLD (8 px) more to come
-  back. `test/shipclutter.test.js`.
+  back. `test/ui/naval/shipclutter.test.js`.
 - **SHIP-FADE** (`navalHost.js retire`, `fadeStep`; `scenes/comeSailAway/comeSailAwayPool.js`; `render/orderedDither.js
   DISSOLVE_GLSL`, `render/renderer.js setDissolve`, `render/enhancedLighting.js EL_MESH_FS`). A
   ship let go by her range was dropped where she sailed - the director's past DESPAWN_BEYOND, a raider past
@@ -1820,8 +1820,8 @@ place being the clock's, a new stander stands the same ship where she sails. Not
 THE FOUR HOSTS RULE: the feed is world.js's alone (`navalFrame`); the other hosts stand no sea (NAV-H).
 Not seen in a browser.
 
-Pins, each red on 168bf2587: `test/shipnames.test.js` (5), `test/shipstance.test.js` (4), `test/shipfade.test.js` (8),
-`test/sealanes.test.js` (9). Mutants: `tools/mutants/shipnames.json` (36), `shipstance.json` (39), `shipfade.json` (34), `sealanes.json` (71) - 178
+Pins, each red on 168bf2587: `test/systems/naval/shipnames.test.js` (5), `test/systems/naval/shipstance.test.js` (4), `test/render/shipfade.test.js` (8),
+`test/systems/naval/sealanes.test.js` (9). Mutants: `tools/mutants/shipnames.json` (36), `shipstance.json` (39), `shipfade.json` (34), `sealanes.json` (71) - 178
 dead, two equivalent as recorded (a roadstead ring's inner pixels asked again, found closed before; a tie of distances,
 which a stable sort over ports walked in id order keeps the lower id's). PINS MOVED, each by content: `nav_c_ships` (a navy ship's name is
 her crown's forms, never another crown's words; a pirate's possessive takes no article), `nav_f_ui` (the card's
@@ -1900,7 +1900,7 @@ law as the audit left it.
   BARREL.stock. KEEP-PLUNDER stows the player's own before the sea goes. Online, the wreckage rides the word on a key
   of its own (`w`: an older build reads none of it, where a lot past its LOT_KEYS would fail its door and the word with
   it), and is claimed as a cask is; a ship an older build stands leaves none (AUDIT O2).
-- **The bar** (`test/auditnav2_captains.test.js` F25). Its eight duels re-rolled with the toughness. Over 32 duels each,
+- **The bar** (`test/systems/naval/auditnav2_captains.test.js` F25). Its eight duels re-rolled with the toughness. Over 32 duels each,
   the cutter on the sloop went 20-12 before and 16-16 after (the model 0.95), the war galley on the corsair galley 26-6
   and 30-2 (1.18), the war galley on the brig 21-11 and 20-12 (0.89). The time the duels are given goes up by the
   toughness, and a pairing within COIN_TOSS (1.1) of even is a coin toss - it fails at seven of eight, not six (AUDIT
@@ -1910,7 +1910,7 @@ law as the audit left it.
 ## CREW-HOLD and GALLEON-WEIGHT (2026-10-06) - a player's crew that lasts, a galleon's broadside of six - DECLARED
 
 Mac: *"Crew depletes too fast"* and *"The galleon has less cannons, so it needs a buff to account for that"*. Daggerfall
-has no ships; both are the port's own. Pinned in `test/crewhold.test.js` (seven pins), its sixteen mutants all dead
+has no ships; both are the port's own. Pinned in `test/systems/naval/crewhold.test.js` (seven pins), its sixteen mutants all dead
 (`tools/mutants/crewhold.json`).
 
 - **Why the crew went first.** A ball takes its gun's men (`GUNS`: a long gun one, a swivel two, a great gun two) over
@@ -1942,7 +1942,7 @@ has no ships; both are the port's own. Pinned in `test/crewhold.test.js` (seven 
 
 ## The tests
 
-One suite a slice - `test/nav_a_guns.test.js` (the flight, the aim, the volley, the reload, a ball's hurt, a ship's
+One suite a slice - `test/systems/naval/nav_a_guns.test.js` (the flight, the aim, the volley, the reload, a ball's hurt, a ship's
 life, the shot field), `nav_b_picture` (the effects, the pass on a recording GL, the deck fires, the colours),
 `nav_c_ships` (the classes, names and crowns, the captains, the traffic), `nav_d_boarding` (the muster, the berth, the
 reckoning, the raids' win, the hold, the choice, the law, notoriety, THE GATE, one raid at a time), `nav_e_sounds` (the nine files, the
@@ -2016,12 +2016,12 @@ budget's cut, the quad's cap and its v, the aim's post, the arcs' run) with thir
 content at the lines it rewrote);
 the first run's four survivors each named a test that was not checking its law (two hulls in one sweep, a moored boat
 once built, a stale owner masking the sink window, the sea off the player's shore), and each test was mended.
-AUDIT NAV2's own suites - `test/auditnav2_online.test.js`, `auditnav2_boarding`, `auditnav2_captains`,
+AUDIT NAV2's own suites - `test/systems/naval/auditnav2_online.test.js`, `auditnav2_boarding`, `auditnav2_captains`,
 `auditnav2_helm`, `auditnav2_combat`, `auditnav2_deck` and `auditnav2_crew` - and their mutant lists
 (`tools/mutants/auditnav2_*.json`) are the audit's record's (`01-Overview/Audit-NAV2.md`).
-SHIPS OF THE BAY's (2026-10-02) - `test/shipnames.test.js`, `shipstance`, `shipfade`, `sealanes` - and their lists
+SHIPS OF THE BAY's (2026-10-02) - `test/systems/naval/shipnames.test.js`, `shipstance`, `shipfade`, `sealanes` - and their lists
 (`tools/mutants/shipnames.json`, `shipstance.json`, `shipfade.json`, `sealanes.json`) are recorded in its section above;
-AUDIT BAY's - `test/auditbay_lanes.test.js`, `auditbay_render` and `tools/mutants/auditbay.json` - are the audit's
+AUDIT BAY's - `test/systems/naval/auditbay_lanes.test.js`, `auditbay_render` and `tools/mutants/auditbay.json` - are the audit's
 record's (`01-Overview/Audit-Ships-of-the-Bay.md`).
 
 ## GALLEON (2026-10-01) - Mac's galleon, her guns out of her ports - OURS
@@ -2065,7 +2065,7 @@ seven to one for the galley (five to three with six); a crewed Large Galley of t
 the sea: a metre's reach of it read a swimmer against her side aboard); a boarding comes in on a sounded berth unswung
 by the lookout (`boardCourse` `berthing`: LOOKAHEAD_MIN held her 60 m off a prize lying 31 m from a spit, her narrower
 hull needing to close 5 m nearer than the mod's to grapple) and sounds a berth as wide as the legs that reach it
-(`berthOpen`). Pins: `test/galleon_model.test.js`; the moved pins in `nav_a_guns`, `nav_h_host`, `navaudit_*`,
+(`berthOpen`). Pins: `test/world/ships/galleon_model.test.js`; the moved pins in `nav_a_guns`, `nav_h_host`, `navaudit_*`,
 `auditnav2_*`, `seapeace`, `deckwalk`, `livingcrew`, `fb1001b_peerboats`.
 
 ## THE MERGE with main (2026-09-28)

@@ -39,7 +39,7 @@ time the pointer meets a new person and is observable as nothing but a different
 The four hosts: every host's plaque is this one function (world.js, exterior.js, worldModes.js and dungeonContext.js
 all call worldHoverFrame), so all four are covered by the one door; none was edited.
 
-`test/fb1006c_catmeow.test.js` (3, new) drives the real hover door with the real DisplayName and the real animal pass:
+`test/systems/fb1006c_catmeow.test.js` (3, new) drives the real hover door with the real DisplayName and the real animal pass:
 the plaque names the person and leaves the seed where it was; ten seconds of looking at Tristastyr beside a cat meows on
 exactly the ticks it meows on without looking (none); a namer that seeds and then throws leaves the seed too.
 `tools/mutants/fb1006c.json` (CAT-MEOW-the-plaque-keeps-the-seed, CAT-MEOW-the-seed-taken-after-the-namers).
@@ -77,11 +77,11 @@ read by nothing), so the entry stays in the journal. The fix is for every guard 
 
 The four hosts: the quest clock is the machine's (`systems/quest/clock.js`), read by every host alike; none was edited.
 
-`test/fb1006c_guardwindow.test.js` (2, new) runs the real script: the guard reads as a deadline online, with no short
+`test/systems/quest/fb1006c_guardwindow.test.js` (2, new) runs the real script: the guard reads as a deadline online, with no short
 wait and its three hours; ticked on the played clock with the latest the attack can come, the three Nightblades are made
 before the mage is hidden, online and off (red before the fix: online, no wave at all before the guard ended).
-`test/rest8_questwaits.test.js` (the table's keys, the split 272/127, the guard's kind), `test/auditrest2_quests.test.js`
-(the sweep's verdict, overturned with the reason) and `test/auditrestparty_quests.test.js` (D4: every hand-table entry a
+`test/systems/quest/rest8_questwaits.test.js` (the table's keys, the split 272/127, the guard's kind), `test/systems/quest/auditrest2_quests.test.js`
+(the sweep's verdict, overturned with the reason) and `test/systems/quest/auditrestparty_quests.test.js` (D4: every hand-table entry a
 deadline through the quest's success, the guard among them) moved with it. `tools/mutants/fb1006c.json`
 (GUARD-WINDOW-the-guard-a-wait).
 

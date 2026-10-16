@@ -650,7 +650,7 @@ export function resolvePendingSpells(entity, spellsByIndex) {
 }
 
 /** The feud's and Project Legacy's records in a save's per-mod slot (systems/revenant/revenant.js REVENANT_SAVE and
- *  systems/legacy/family.js LEGACY_VENDOR, pinned equal by test/itemwalk.test.js through the real records - both
+ *  systems/legacy/family.js LEGACY_VENDOR, pinned equal by test/systems/itemwalk.test.js through the real records - both
  *  modules reach this one through their imports, so this one names their keys). */
 const REVENANT_VENDOR = 'Revenant';
 const LEGACY_VENDOR = 'ProjectLegacy';

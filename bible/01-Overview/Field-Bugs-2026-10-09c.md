@@ -26,9 +26,9 @@ Gold Dungeon's only floor for the ring is the corridor its two halves meet by, e
 room with no such spot stood the table where it stood - the fallback, "so no tavern loses its table", RETIRED there:
 the Gold Dungeon stood its table in that corridor before WALK-WHOLE and after, to the millimetre. WAY-ROUND passes a
 spot over when the cells round it fall apart, and a room with no spot left whole stands none. A peer on an older
-build sees a moved table where it stood. Pinned by `test/fb1009c_walkwhole.test.js` (the real prop, the player's
+build sees a moved table where it stood. Pinned by `test/world/fb1009c_walkwhole.test.js` (the real prop, the player's
 capsule flooded round it to the hall's far end; its second test, which held the fallback, moved at WAY-ROUND) and four
-spots moved in `test/taverntable.test.js`; `tools/mutants/fb1009c_walkwhole.json` (5, all dead; 4 since WAY-ROUND).
+spots moved in `test/world/card/taverntable.test.js`; `tools/mutants/fb1009c_walkwhole.json` (5, all dead; 4 since WAY-ROUND).
 
 ## UNCOUNTED: the Stores name what they will not take (2)
 
@@ -44,7 +44,7 @@ The fault was the page: it built its rows from the counted materials alone, so a
 nothing and nothing said why. Every material held has its card now (`systems/materialsBag.js` heldKeysOf), its units
 past the count "N unstorable", and the picked bar says why in the player's words (`BAG_PAGE_WORDS.uncounted`). Put in
 and Put everything in move only the count, as before. NOT DONE, and the owner's: letting the count travel with a realm
-trade (it changes law 3). Pinned by `test/fb1009c_uncounted.test.js` (Troll's Blood from DFU's own loot roll);
+trade (it changes law 3). Pinned by `test/systems/professions/fb1009c_uncounted.test.js` (Troll's Blood from DFU's own loot roll);
 `tools/mutants/fb1009c_uncounted.json` (7, all dead).
 
 ## CEIL-GHOST: a following flyer keeps the leader's level, and its bar the room (3)
@@ -58,7 +58,7 @@ test (the place's collider) hid it. The lift is combat's now and never runs whil
 the ceiling over the body (`ui/naval/navalHud.js` crewBarPoint). THE FOUR HOSTS: world.js owns the one bar drawer and both
 companion layers; worldModes.js and dungeonContext.js call it and step the companion on the shared motor; exterior.js
 stands no companion. A ghost may still sit up to a jump's height above the floor at heel after the player jumps while
-it walks; its next walk brings it down. Pinned by `test/fb1009c_ceilghost.test.js` (a Spectral EnemyAI over a real
+it walks; its next walk brings it down. Pinned by `test/characters/enemy/fb1009c_ceilghost.test.js` (a Spectral EnemyAI over a real
 Collider); `tools/mutants/fb1009c_ceilghost.json` (4, all dead).
 
 ## WILD-KEEP: my remains' record survives a crash (4)
@@ -69,7 +69,7 @@ lies, the room, its end, the hall (`world.js` `_wildMine`) - lived in memory alo
 pulsing mark was gone, the pile was known for mine only by the account, and a hall's lock refused the hall my pile is
 my way back into. WILD-WAYPOINT's flag is kept on the device, but the flag is not the record. The record is kept on the
 device now too, for the character that fell, read back once by the zone's frame, forgotten at its end and at the room's
-"gone" (`systems/wild/wildRemainsWaypoint.js` keepMine / keptMine / forgetMine). Pinned by `test/fb1009c_wildkeep.test.js`;
+"gone" (`systems/wild/wildRemainsWaypoint.js` keepMine / keptMine / forgetMine). Pinned by `test/systems/wild/fb1009c_wildkeep.test.js`;
 `tools/mutants/fb1009c_wildkeep.json` (7, all dead).
 
 THE REPORTER'S GEAR: not recoverable from anything this tree keeps. The relay logs no fall's records and deletes the
@@ -88,7 +88,7 @@ posting the change after that touch's dispatch. ESC-LOCK reads a lock lost with 
 as the Escape the browser swallowed and delivers it - so every tap opened the pause, and the pause relocked on its
 close for the next tap to end. `player/pointerLock.js` bindCursorToggle hears the four touch events on the document's
 capture phase, and a loss within `TOUCH_UNLOCK_MS` (500 ms) of one is the finger's: nothing is delivered. A mouse and a
-keyboard fire no touch events, so the desktop is untouched. Pinned by `test/fb1009c_touchunlock.test.js`;
+keyboard fire no touch events, so the desktop is untouched. Pinned by `test/player/fb1009c_touchunlock.test.js`;
 `tools/mutants/fb1009c_touchunlock.json` (4, all dead).
 
 NOT PROVEN ON A DEVICE: no Android browser here; the mechanism is read from Gecko's source and MDN's data. The second

@@ -14,7 +14,7 @@ claim it could run):
 
 Nothing was fixed while a lens was reading (Home.md, 17l). 33 findings; three lenses found the step-out-of-a-door bug
 (U1 = T2) and two the units bug (O3 = T1), so 30 are distinct. Each fix carries an `AUDIT PORTAL1 <ID>` comment and is
-pinned in `test/portal1_stone.test.js` (12, three of them new); `tools/mutants/portal1.json` now holds **92 mutants, all
+pinned in `test/systems/portal1_stone.test.js` (12, three of them new); `tools/mutants/portal1.json` now holds **92 mutants, all
 dead** - the record's first 40 re-aimed at the reworked code or retired with the code they mutated (the carry gate, the
 straight-down spot), and one for every fix and every survivor the tests lens found.
 
@@ -85,5 +85,5 @@ straight-down spot), and one for every fix and every survivor the tests lens fou
 ## The gift (the owner's second ask)
 
 PORTAL-GIFT: every character that already exists is given ten Portal Stones, once, onto its own unlocked stack - the
-LOAN-AMNESTY shape (`06-Systems/Portal-Stone.md` "The gift"). `test/portal1_gift.test.js` (3); its eight mutants in
+LOAN-AMNESTY shape (`06-Systems/Portal-Stone.md` "The gift"). `test/systems/portal1_gift.test.js` (3); its eight mutants in
 `tools/mutants/portal1.json`.

@@ -46,7 +46,7 @@ waterline's upright faces are those neither floor nor ceiling. The storey vote (
 level area lies) keeps its own 0.6: a steep ramp is walked and drawn, but is no evidence of a storey (automapFloors'
 own ramp note, `LEVEL_NY`).
 
-`test/em3_3d_dungeon.test.js` (+1): ramps of 30, 53, 55 and 65 degrees from the real `rowMesh` are floor, 75 a wall, and
+`test/ui/ink/em3_3d_dungeon.test.js` (+1): ramps of 30, 53, 55 and 65 degrees from the real `rowMesh` are floor, 75 a wall, and
 the shader carries the constant, not a literal.
 
 ## HOLD-WEIGHT (2)
@@ -71,7 +71,7 @@ pack place from it, wherever they weigh. A host that reads no MaxEncumbrance pac
 Parts already set down in an indoor chest stay there: placing them from the chest needs water. In the wagon, the
 remote list's Use places them outdoors (ItemBoatParts.UseItem from `remoteItems`, as DFU's window calls it).
 
-`test/fb1005c_holdweight.test.js` (4); `test/shippack.test.js`'s landfall pin moved.
+`test/systems/comeSailAway/fb1005c_holdweight.test.js` (4); `test/systems/comeSailAway/shippack.test.js`'s landfall pin moved.
 
 ## Windmills (3)
 
@@ -104,7 +104,7 @@ by `COMPANION_ASSIST_PRIORITY` (20): a foe in the fight is taken unless an idle 
 host shares the machine (the dungeon's, the street's and the buildings' through `exteriorFoes.js`, `world.js`'s),
 so the four hosts carry it at once.
 
-`test/crewcompanions.test.js` (+1): facing the player, away from him and aside, the companion takes the orc, is not
+`test/systems/naval/crewcompanions.test.js` (+1): facing the player, away from him and aside, the companion takes the orc, is not
 pressed to the wall, and the idle foe is not drawn onto him.
 
 ## FLAT-RELAY (5)
@@ -119,7 +119,7 @@ one fired only when clicked, a model's always - "not always working". It carries
 reads a relay's `isFlat`. A corpse on the floor before the wall cannot stop a walk-in (corpses carry no collider) and
 takes a click only aimed under 0.6 m inside its box.
 
-`test/audit0929_actions.test.js` (+1): an editor flat's Collision03 Teleport, laid out by the real `layoutRdbBlock`
+`test/player/audit0929_actions.test.js` (+1): an editor flat's Collision03 Teleport, laid out by the real `layoutRdbBlock`
 and registered as `registerFlatAction` registers it, is heard when walked into and sends the body to its next object.
 
 ## SEALED-SAVE (6)
@@ -139,7 +139,7 @@ house holds, which SerializableEnemy's position stands back in the cellar. The m
 within a cellar's breadth - stands at the marker's new spot, as `standFoe` stands it. Anywhere else it stands where it
 was.
 
-`test/fb1004d_questmarkers.test.js` (+1).
+`test/systems/quest/fb1004d_questmarkers.test.js` (+1).
 
 ## Records
 

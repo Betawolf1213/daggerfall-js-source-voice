@@ -79,11 +79,11 @@ the helm and the card; `scenes/exterior.js`, `scenes/worldModes.js` and `scenes/
 was edited. The panel reads its keys' names from a leaf, `systems/comeSailAway/comeSailAwayActions.js` (the sea's module re-exports
 it), and its hulls' from INT1's, `systems/comeSailAway/comeSailAwayHulls.js`: the editor's preview reaches the panel's module, and
 the names read from `systems/comeSailAway/comeSailAway.js` carried the sea's whole law onto the HUD's graph, as far as the quest
-machine's `place.js` that AUDIT GUIDE O6 keeps off it. Pinned by `test/hudhelm.test.js` (5); mutants
+machine's `place.js` that AUDIT GUIDE O6 keeps off it. Pinned by `test/ui/enhanced/hudhelm.test.js` (5); mutants
 `tools/mutants/hudhelm.json` (10, all dead). The fake page the
 two suites share is `test/hudPage.mjs` (one home: it was this file's own).
 
-Pinned by `test/fb1014_ridingpanel.test.js` over a page that answers the selectors HUD-MOVE asks, descendants among them,
+Pinned by `test/ui/enhanced/fb1014_ridingpanel.test.js` over a page that answers the selectors HUD-MOVE asks, descendants among them,
 with the real sweep, the real panel and the real editor's key and X: a panel built at a mount stands at its saved
 place and size, or off, with no sweep between; Alt+U frames it with its name and its X saves it off and on; the preview
 stands while nobody rides, leaves whole for the real one and at the lock, and stands at a finger's place on a phone;
@@ -112,4 +112,4 @@ horse), Boons - the default - (care earns, neglect costs nothing, never below DF
 stood), each player's own online as every Climates & Calories tier is. A stored Off stays Off, a stored On lands on
 Hard, and a player who never touched it plays Boons. Every door asks the tier through one accessor
 (`upkeepSwitch.js:"export const horseCareRules = () =>"`). `06-Systems/Horse-Care.md`, The tiers; pinned by
-`test/horsetiers.test.js` (7) and `tools/mutants/horsetiers.json` (20, all dead).
+`test/systems/horsetiers.test.js` (7) and `tools/mutants/horsetiers.json` (20, all dead).

@@ -45,7 +45,7 @@ is walked, travelled, streamed or picked.
 `bayToTamriel` / `tamrielToBay` are the one offset; `pictureToBay` / `bayToPicture` take the authoring grid to the
 sheet's coordinates (the Bay at 0..1000, 0..500, the continent negative west and north of it); `tamrielFrameInBay` is
 the box the sheet pans over; `inBay` is the data's ground. The two AUTHORED numbers are named in this file and nowhere
-else (`test/tamriel.test.js` sweeps for a second copy), so the probe's correction is one edit.
+else (`test/ui/tamriel.test.js` sweeps for a second copy), so the probe's correction is one edit.
 
 ## The geography (`world/tamriel/tamrielGeography.js`)
 
@@ -137,14 +137,14 @@ files - the fit's numbers printed beside the authored defaults, the seam measure
 
 ## Pins
 
-`test/tamriel.test.js` (18): the frame's scale against the wire's own units and its inverses; the topology whole
+`test/ui/tamriel.test.js` (18): the frame's scale against the wire's own units and its inverses; the topology whole
 (every edge coast or border, the tables equal to the rings, a dropped vertex caught), every city in its province and
 beyond the Bay, one capital a province; the clip's four cases, the fret's kept vertices and calm, the stitch's edge,
 reach and once-each, the model's budget and cut ends ON the Bay's ends, one model a coast array; not one canvas call on
 the Bay, the paint's order and faces off it, the hover's three answers; the raster's planes, the peak over the snowline,
 determinism, the compose on and not beside the Bay; the clamp's origin, the continent flag's thinnings, the switch
 and its kill door; the source sweeps (the paint after the Bay's ink and under the zone map's, the switch read once, the
-layer reading no game data, BAY_ORIGIN named once). `test/heldmap.test.js` TAMRIEL1 window (+1): the limits carry the
+layer reading no game data, BAY_ORIGIN named once). `test/ui/heldmap.test.js` TAMRIEL1 window (+1): the limits carry the
 frame, the rest is the Bay's fit, the pan out to the frame's edge, the continent inked only past the Bay, the hover
 beyond it and nothing picked there, Off as it was. Mutants `tools/mutants/tamriel.json` (37: 34 dead, 3 equivalent as recorded), and map1's four clamp and
 band records re-aimed by content.
@@ -168,7 +168,7 @@ towns, roads, dungeons or regions - the later use.
   CLAMPS them to the edge's own pixel. `groundWoods(woods)` - a prototype child of the reader, so the two range reads
   built on the two it overrides answer the continent too and nothing else about the reader changes - keeps the SEAM
   band (SEAM_PX, 2) at exactly the clamped read, and blends the authored ground in from the edge's byte over BLEND_PX
-  (12) after it. `test/tamriel2.test.js` holds every Bay pixel's samples, edge and corner included, byte-identical
+  (12) after it. `test/world/tamriel2.test.js` holds every Bay pixel's samples, edge and corner included, byte-identical
   with the ground composed and without.
 - **The host** (`scenes/world.js`): `woods` is rebound to the composed reader at the mount, after the boot repairs
   (the coastal dilation, the location smoothing, the sync of the worker's bytes) and before the terrain client copies
@@ -190,7 +190,7 @@ towns, roads, dungeons or regions - the later use.
 - **Performance.** A pixel's ground past the Bay costs a point-in-province test, a coast distance over ~100 edges and a
   range distance over 12 spines, once a pixel, cached (GROUND_CACHE_MAX, dropped whole); the kernel's cost is the
   kernel's. On the Bay the composition is one subtraction and a compare a read.
-- **Pins.** `test/tamriel2.test.js` (10): the law (sea, shore, plain, Red Mountain over the snowline, the noise
+- **Pins.** `test/world/tamriel2.test.js` (10): the law (sea, shore, plain, Red Mountain over the snowline, the noise
   floored), the cache and the climate, the composition to the byte on nine Bay pixels, the seam and the blend, the
   range reads through the overrides, a whole pixel beyond the Bay through the kernel (Skyrim's trees; the Eltheric
   under it), the raster as the same law, the stream's frame and load list, the ring's bytes past the map, the worker's
@@ -205,7 +205,7 @@ net/ - the gate's PIXEL_M (`net/gate/gateLaw.js`, which imports `net/wire.js`) a
 froze on its first exterior build. The helpers live in pure homes now: `world/segment.js` (the one segment distance,
 which the gate's strike imports too) and the frame's own kilometres a pixel, held to the wire's units by its pin. The
 pin that would have caught it walks the worker's whole graph at any depth and holds every module to world/ and
-formats/ (`test/tamriel2.test.js`); the frame, the geography and the ground are swept for any import of net/.
+formats/ (`test/world/tamriel2.test.js`); the frame, the geography and the ground are swept for any import of net/.
 
 ## TAMRIEL3 - the map from the player's own picture (2026-10-08)
 
@@ -240,7 +240,7 @@ the authored shape (no Features row: a door for a day the trace reads a picture 
   `overworldModel.js isWaterPixel`) is laid on the picture's grid at each candidate scale (16..21 Bay pixels a picture
   pixel, the authored 18.75 among them) and offset (24 picture pixels each way round the authored place), four samples
   a cell and the majority, and the pair with the greatest FRACTION of cells agreeing wins - a count would favour the
-  smallest scale, which lays the most cells (the pin that found it: `test/tamriel3.test.js`). Deterministic; ~40M
+  smallest scale, which lays the most cells (the pin that found it: `test/world/tamriel3.test.js`). Deterministic; ~40M
   compares, once, after the travel art, off the boot's critical path. TAMRIEL4 scores the Bay's EDGE first and the
   inside beside it, at every quarter scale from 15 to 21 (below).
 - **The live frame** (`world/tamriel/tamrielFrame.js`): BAY_ORIGIN and PIXELS_PER_PICTURE_UNIT are the DEFAULTS now; every
@@ -288,7 +288,7 @@ repaints it the moment the trace is in.
 
 ### Pins
 
-`test/tamriel3.test.js` (14): the pieces' connectivity and edge, the race ids; the trace over a synthetic picture
+`test/world/tamriel3.test.js` (14): the pieces' connectivity and edge, the race ids; the trace over a synthetic picture
 and picker drawn by the picture's own law (parchment sea, a blue line round the land, exact masks): the enclosed
 remainder touching two masks, a one-pixel gap in the line closed, the line sea, a pocket in a mask sea, a ring in the
 sea that encloses more than the Imperial Province sea, a mask over the edge cut, a speck dropped and SPECK_PX kept,
@@ -319,7 +319,7 @@ four faults, each a reading of the picture rather than the picture:
    its arms). A channel inside one province (the Inner Sea's narrows) has the same province on both sides and stays
    sea; a diagonal is never asked, so a coast's inner corner where two provinces meet stays sea. Its one reading of a
    strait one pixel wide between two provinces is their border; the picture has none past the Bay. 209 pixels on the
-   freeware data, and no strait left (`test/tamriel4.test.js` sweeps every pair).
+   freeware data, and no strait left (`test/ui/tamriel4.test.js` sweeps every pair).
 2. **The painting's dabs were lakes.** Its blue in the land - a river's dot, a road, a letter's fill - left 90-odd holes
    of one to five pixels, each inked as a tiny lake. `fillSpecks`: a hole under HOLE_PX (6) is land, of its rim's
    province; the painting's smallest lake is ten pixels. Six waters stand: Lake Rumare's two pieces (11, 49),
@@ -359,7 +359,7 @@ frame), which the frame's dotted line carries alone now.
 
 ### Pins
 
-`test/tamriel4.test.js` (9): the border lines (a line between two provinces land, a tie to the lower id, a channel in
+`test/ui/tamriel4.test.js` (9): the border lines (a line between two provinces land, a tie to the lower id, a channel in
 one province and a strait of two pixels sea, a strait of one the rule's reading, a T closed on the second pass, a
 diagonal step); the dabs (under HOLE_PX filled with the rim's province, HOLE_PX a lake, the edge's sea never); the trace
 running both after the remainder; THE SEAM FIRST (a Bay whose inside is a sea the picture has not is found where its
@@ -368,7 +368,7 @@ middles, a saddle two closed coasts, the picture's edge closed); Chaikin (the en
 closed); the ink on the trace (every coast point within half a pixel of the land, a corner a curve, a border's end on
 the coast's line - a stepped shore's too - the frame's runs dropped, no lore river on the trace and the authored
 shape's kept, the reach); by source; and on the player's own files where ARENA2_PATH names them (26,636 land pixels,
-the six waters, no strait anywhere, the fit to the cell). `test/tamriel3.test.js`: PIN MOVED, the fit's defaults
-(FIT_PPUS); `test/tamriel.test.js`: PIN MOVED, STITCH_REACH 64. Mutants `tools/mutants/tamriel4.json` (14, all dead);
+the six waters, no strait anywhere, the fit to the cell). `test/world/tamriel3.test.js`: PIN MOVED, the fit's defaults
+(FIT_PPUS); `test/ui/tamriel.test.js`: PIN MOVED, STITCH_REACH 64. Mutants `tools/mutants/tamriel4.json` (14, all dead);
 `tools/mutants/tamriel3.json`'s fit-on-count, off-the-picture and coast records re-aimed by content (the coast's now
 the smoothing's, with this file's pins beside it).

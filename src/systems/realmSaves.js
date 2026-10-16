@@ -790,7 +790,7 @@ export function takeRealmNotice(/** @type {any} */ storage) {
  * beside these three (main.js's front door). A born character reaches that host by a reload (scenes/world.js
  * realmBirth), and main.js boots a game only on a scene door: this address had none, so it was the front door's, which
  * clears every door key, the realm id with them, and shows the menu. The make and the save had landed, so the Online
- * door played the character fine. test/fb0930_realmbirth.test.js holds the two boots to each other.
+ * door played the character fine. test/systems/fb0930_realmbirth.test.js holds the two boots to each other.
  * @param {string} search @param {string} id @param {readonly string[]} doorKeys
  */
 export function realmBootSearch(search, id, doorKeys) {

@@ -17,11 +17,11 @@
 //                       gap is 0.003 to 0.08 world units and no blade
 //                       is off by a sixth of its height. The fix is
 //                       correctness, not a rescue - see
-//                       test/grass3_surface.test.js, which pins both.
+//                       test/world/terrain/grass3_surface.test.js, which pins both.
 //   shaderVsCpu         whether GLSL can match `surfaceHeightAt` - the
 //                       law the mesh is actually built from, pinned
 //                       against the real index buffer in
-//                       test/grass3_surface.test.js.
+//                       test/world/terrain/grass3_surface.test.js.
 //
 //     node tools/grassHeightProbe.mjs
 //

@@ -4,7 +4,7 @@
 // lintel, the knuckle her side breaks at, the port's sill, the shutter's foot) and LID_COLS' stations across it, the
 // board bent between them (world/ships/galleonModel.js lidGeometry). The numbers it is built from - her side's half-breadth at
 // each station, the OUTER of her two sides' (a shutter and its mirror are one shape) - are LID_FIT in
-// world/ships/galleonModel.js, pinned against this measure by test/auditgalleon_prefab.test.js. When the bake changes her hull
+// world/ships/galleonModel.js, pinned against this measure by test/world/ships/auditgalleon_prefab.test.js. When the bake changes her hull
 // (tools/bakeGalleon.mjs, galleon.json) the pin fails with the new numbers; re-measure and paste:
 //
 //   node tools/galleonLidFit.mjs          prints LID_FIT for galleonModel.js, and each side's own fit beside it

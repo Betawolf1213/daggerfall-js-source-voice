@@ -233,13 +233,13 @@ pitch low (the corner sweep caught it).
 
 The voxel foes' pictures ride the same law and are held whole too.
 
-Pins: `test/mwhead1_window.test.js` (3):
+Pins: `test/world/mwhead1_window.test.js` (3):
 - the crown at the Morrowind camera's own framing;
 - every corner of the box inside its picture at every zoom (MIN..MAX
   distance), every look (-80..80 degrees) and every side;
 - the level look unchanged, the quad the window, texels square.
 
-`test/prbow1_bow.test.js`'s ortho and resolution pins are re-aimed at the
+`test/render/prbow1_bow.test.js`'s ortho and resolution pins are re-aimed at the
 law (each ray's own window; a texel is `pixel` screen pixels where the quad
 stands). Mutants: `tools/mutants/mwhead1.json` (5, all dead). Not verified
 in a browser (no probes).
@@ -286,10 +286,10 @@ card, and the size line says how many pixels the world costs. If the
 world is large, Features > Sight > Render scale at 75% is roughly half the
 per-pixel work; 50% a quarter.
 
-**Pins.** `test/perfscale.test.js` (8), every one failing on the base;
-`test/features.test.js` (the row list and the notes' budget),
-`test/ft8_combatvisuals.test.js` (the Enhanced count),
-`test/mwarms_fps.test.js` (main.js's mount). Mutants
+**Pins.** `test/systems/perfscale.test.js` (8), every one failing on the base;
+`test/systems/features.test.js` (the row list and the notes' budget),
+`test/systems/ft8_combatvisuals.test.js` (the Enhanced count),
+`test/ui/enhanced/mwarms_fps.test.js` (main.js's mount). Mutants
 `tools/mutants/perfscale.json` (29 dead); `retro1.json` and
 `auditretro1.json` re-aimed.
 
@@ -326,7 +326,7 @@ the real Renderer and the fake GL before it was changed.
 - **R7: a paraphrase in quotation marks.** The comment and the bible quote
   the report as written.
 
-Pins: `test/perfscale.test.js` 10 (S5's string rule and both S7 pins fail
+Pins: `test/systems/perfscale.test.js` 10 (S5's string rule and both S7 pins fail
 with `src/` at the slice's commit; the counter and frameInfo pins guard
 code that commit already had). Mutants: `perfscale.json` 43 dead;
 `auditretro1.json`'s D5 re-aimed.
@@ -387,7 +387,7 @@ changed.
   3,000 frames (two runs' mean), the first cut -> now: 1,298 -> 1,210 by
   day, 1,244 -> 1,172 at night (the base's 1,297 and 1,304).
 
-Pins: `test/perfextb.test.js` 11 (the new one weighs the record against
+Pins: `test/render/perfextb.test.js` 11 (the new one weighs the record against
 a control and fails with `src/` at `1d05f5374`). Mutants:
 `perfextb.json` 36 - 35 dead, 1 recorded equivalent; its 5 re-aimed.
 
@@ -461,7 +461,7 @@ SHADOWS).
 - **R3: the flat's lift and half-diagonal had grown copies** - one home
   each now (`batchLift`, `quadHalfDiagonal`), the same bits.
 
-Pins: `test/perfexta.test.js` 20 (four new; the room's, the
+Pins: `test/render/perfexta.test.js` 20 (four new; the room's, the
 half-diagonal's and the one home's fail on the first cut `dfe366f2c`,
 all four on the base `1d05f5374`). Mutants: `perfexta.json` 54 - 13 new,
 all dead; 13 records re-aimed across perfexta, ghost1, blood1 and el5.
@@ -529,9 +529,9 @@ cluster C has the numbers and the laws):
   fallback when no worker runs.
 
 **Records.** `07-Rendering/Performance-Exterior.md` cluster C. Pins:
-`test/grassshift.test.js`, `test/publishtail.test.js`,
-`test/buildslice.test.js`, `test/colliderkeys.test.js`,
-`test/restrideworker.test.js`, every new pin failing on the tree before
+`test/world/terrain/grassshift.test.js`, `test/render/publishtail.test.js`,
+`test/systems/buildslice.test.js`, `test/player/colliderkeys.test.js`,
+`test/world/terrain/restrideworker.test.js`, every new pin failing on the tree before
 its slice (one test in `colliderkeys` is a guard that holds on both by
 design, and says so). Mutants: `tools/mutants/perfextc.json`, 103, all
 dead.

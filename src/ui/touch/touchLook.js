@@ -1,7 +1,7 @@
 // TI2 - THE PHONE IN HAND, TUNED (2026-09-11, Mac: "enhance the mobile
 // element of DFJS in terms of camera movement, character movement and
 // a more phone built feel"). The PURE halves of the second touch slice,
-// with no DOM and no clock of their own, so test/touchinput2.test.js
+// with no DOM and no clock of their own, so test/ui/touch/touchinput2.test.js
 // can execute each against its mutant:
 //
 //   - the LOOK NORMALISATION. TI1 fed the finger's raw CSS pixels to

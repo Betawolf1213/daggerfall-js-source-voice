@@ -339,7 +339,7 @@ export function buildPaperdollPayload(pal, img, cif) {
   // ── the ORC LINE (editor only - nothing here touches a game host).
   // Same DELTA mechanism as the villagers, and for the same reason: a
   // build spec scales the rig's loft rows but adds and drops NO faces
-  // (asserted in test/orcbody.test.js), so all four orcs ride the base
+  // (asserted in test/characters/orcbody.test.js), so all four orcs ride the base
   // face list and ship only what moved. The tusks and the brow ARE new
   // geometry, so those go as their own packs - one pair per design,
   // because a warlord's tusk is not a baseline orc's scaled up in the

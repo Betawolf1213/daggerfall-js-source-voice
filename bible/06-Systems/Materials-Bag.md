@@ -103,7 +103,7 @@ given by another player, a material stays an item in the pack; only what was gat
 back in; a Mages Guild's potion maker uses it as it is. Law 3 is unchanged (section 5): Put in and Put everything in
 move only the count. A realm trade moves save records and no count - so the receiver's units are held and never
 counted, by the same law; letting the count travel with a trade is the owner's call. Pinned by
-`test/fb1009c_uncounted.test.js`; `tools/mutants/fb1009c_uncounted.json` (7, all dead; `bag1.json`'s B6 and
+`test/systems/professions/fb1009c_uncounted.test.js`; `tools/mutants/fb1009c_uncounted.json` (7, all dead; `bag1.json`'s B6 and
 `goldmarket.json`'s stores-total records re-aimed by content).
 **LOOT-LOOSE (FIELD BUGS 2026-10-15c, "a lot of alchemy and some other ingredients when looted from a dungeon are
 unstorable", a second player confirming; Mac, asked: "Store as loose").** The page's Put in and Put everything in take
@@ -114,7 +114,7 @@ Drakes listing (`WRIT_ORIGINS`), so law 3's wall stands: nothing past the count 
 "N loose" and the picked bar says what loose means. No service change - a `work` put-in was already a request any
 client may send (AUDIT BAG-CRAFT A1). `bagLaw.js`'s note that the Stores page's Put in moves only what the service
 handed out is superseded by this paragraph (left as written: an edit there redeploys the account service). Pinned in
-`test/fb1009c_uncounted.test.js` (PIN MOVED: Put in had been shut); `fb1009c_uncounted.json` 11, all dead.
+`test/systems/professions/fb1009c_uncounted.test.js` (PIN MOVED: Put in had been shut); `fb1009c_uncounted.json` 11, all dead.
 **And a writ's card names them too** (WRIT-WALL, FIELD BUGS 2026-10-13e, 2026-10-13, "Cant turn in writs": 100 Iron
 in the pack, a chapter writ for 40 of it reading "0 held", Take shut, and a hover that said "Not enough - your Stores,
 Materials Bag and pack together"). UNCOUNTED fixed the silence on the Stores page alone; a writ counts what law 3 and
@@ -127,7 +127,7 @@ only what you gathered, or bought with silver, counts - not what was looted, bou
 another player." (`ui/workTab.js` writWalledText, the one sentence; a guild writ's card the same, never "You have none"
 beside it). The service's gold refusal (`stores-gold`) no longer says "Withdraw it to your pack": withdrawn, gold's
 units fill no writ, station or guild Stores either. NOT DONE, and the owner's: counting looted or bought units toward a
-writ (it changes law 3). Pinned by `test/fb1013e_writwall.test.js`; `tools/mutants/fb1013e_writwall.json` (13, all
+writ (it changes law 3). Pinned by `test/systems/professions/fb1013e_writwall.test.js`; `tools/mutants/fb1013e_writwall.json` (13, all
 dead).
 **Empty your bag into your pack** stands on the page, in a town or out of one, whenever the bag's list holds anything:
 every piece, as much of each as the pack's weight takes, what no Put in takes first (a full pack never leaves the jam
@@ -227,9 +227,9 @@ Stores"); a gold listing takes its Stores' own and gold's units alone.
 
 ## 9. Pins
 
-`test/bag1_service.test.js` (the service, through the real Worker) and `test/bag1_client.test.js` (the law, the
+`test/net/bag1_service.test.js` (the service, through the real Worker) and `test/systems/bag1_client.test.js` (the law, the
 save's hands, the window, the shop, the save, the book, a done-when through the real Worker); `tools/mutants/bag1.json`.
-PACK-OVER's: `test/fb1004_packover.test.js`, `tools/mutants/fb1004_packover.json`.
+PACK-OVER's: `test/net/fb1004_packover.test.js`, `tools/mutants/fb1004_packover.json`.
 
 ## 10. The audit (2026-10-03, Mac: "Audit this")
 
@@ -315,13 +315,13 @@ building, online. A Materials Bag or a Campfire bought is put back on its shelf 
 (`systems/shopStock.js` restockEndless, called by the two purchases in `scenes/worldModes.js` - commitTrade's Buy arm
 and the keyed list's doBuy - and nothing else: one stolen from a closed shop's shelf stays gone). Online alone; and online
 no shop buys a bag or a Campfire back (`shopBuysItem`) - bought cheap and sold dear they were gold for nothing, and one
-sold made any shelf endless. Pinned by `test/fb1004_endless.test.js`; `tools/mutants/fb1004_endless.json`.
+sold made any shelf endless. Pinned by `test/systems/fb1004_endless.test.js`; `tools/mutants/fb1004_endless.json`.
 
 **ONE-BAG** (the same day, Mac: "Right, you shouldnt be able to hold multiple gathering bags"). A second Materials Bag is
 refused by the take ladder (`systems/item/itemTransfer.js` planTake: a pickup, quick loot, a container, the wagon, both trade
 windows' Buy basket) and the keyed shelf (`scenes/worldModes.js` doBuy) while another is held in the pack, a trade's
 basket or the wagon: "You already have a Materials Bag." One out of the character's own wagon is never refused, and the
-bag is no decor piece. Pinned by `test/fb1004_onebag.test.js`; the audit's findings in the field-bug record.
+bag is no decor piece. Pinned by `test/systems/professions/fb1004_onebag.test.js`; the audit's findings in the field-bug record.
 
 ## 14. From play - BAG-CRAFT (FIELD BUGS 2026-10-09d)
 
@@ -358,7 +358,7 @@ station makes of them, reaches a writ, the guild Stores, a Drakes listing or fil
 them lists for gold alone, as any pack's piece does (MARKET-ANY). Law 3's guarantee stands for the economy, and
 `Professions-Arc.md` law 3 says where the door is.
 
-Pinned by `test/fb1009d_bagcraft.test.js` (the done-when: a Steel Longsword from raw goods the service never counted,
+Pinned by `test/systems/fb1009d_bagcraft.test.js` (the done-when: a Steel Longsword from raw goods the service never counted,
 in one press through the real Worker; the law; the service's `work`, `spend` and `all` and a full Store; the book's
 doors; the anvil and the forge over a real carrying book); `tools/mutants/fb1009d_bagcraft.json`. The record:
 `01-Overview/Field-Bugs-2026-10-09d.md`. ACCOUNT_VERSION `acct101`.
@@ -377,6 +377,6 @@ the real Worker or the real modules before it was fixed, pinned and mutated (`to
 | B1 (LOW, kept) | A craft refused by the service after its put-in (a rank, a fee) leaves the moved goods in the Stores | Not changed: they are loose there, the next station's, and Take out gives them back to the pack uncounted |
 
 What the wall costs an honest player: a piece made of looted goods lists for gold alone, as the looted goods
-themselves would from the pack; and a Ram Kit of them stays a station's. Pinned by `test/auditbagcraft.test.js` (the
+themselves would from the pack; and a Ram Kit of them stays a station's. Pinned by `test/net/auditbagcraft.test.js` (the
 wall at every door, through the real Worker - the gold wall's own test the pattern; the stations' spends and products;
-the brew's unbruised count; the Stores page over a real carrying book) and `test/fb1009d_bagcraft.test.js`.
+the brew's unbruised count; the Stores page over a real carrying book) and `test/systems/fb1009d_bagcraft.test.js`.

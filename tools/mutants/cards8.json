@@ -5,12 +5,12 @@
     "old": "    (a.locked === true) === (b.locked === true) &&\n    // CARDS8 (the port's own field, Ledger A): a card stacks only with its own card - two Rats, never a Rat and a Lich\n    (a.card ?? null) === (b.card ?? null);",
     "new": "    (a.locked === true) === (b.locked === true);",
     "tests": [
-      "test/auditrealm.test.js",
-      "test/cards7_rules.test.js",
-      "test/cards8_binder.test.js",
-      "test/cards8_catalog.test.js",
-      "test/cards8_faces.test.js",
-      "test/holdings.test.js"
+      "test/systems/auditrealm.test.js",
+      "test/net/iliac/cards7_rules.test.js",
+      "test/systems/item/cards8_binder.test.js",
+      "test/systems/loot/cards8_catalog.test.js",
+      "test/net/iliac/cards8_faces.test.js",
+      "test/systems/horse/holdings.test.js"
     ]
   },
   {
@@ -19,12 +19,12 @@
     "old": "    picked.card = stack.card;\n",
     "new": "",
     "tests": [
-      "test/auditrealm.test.js",
-      "test/cards7_rules.test.js",
-      "test/cards8_binder.test.js",
-      "test/cards8_catalog.test.js",
-      "test/cards8_faces.test.js",
-      "test/holdings.test.js"
+      "test/systems/auditrealm.test.js",
+      "test/net/iliac/cards7_rules.test.js",
+      "test/systems/item/cards8_binder.test.js",
+      "test/systems/loot/cards8_catalog.test.js",
+      "test/net/iliac/cards8_faces.test.js",
+      "test/systems/horse/holdings.test.js"
     ]
   },
   {
@@ -33,12 +33,12 @@
     "old": "Object.freeze([570, 571, 572, 580, 582]);",
     "new": "Object.freeze([570, 571, 572, 580]);",
     "tests": [
-      "test/auditrealm.test.js",
-      "test/cards7_rules.test.js",
-      "test/cards8_binder.test.js",
-      "test/cards8_catalog.test.js",
-      "test/cards8_faces.test.js",
-      "test/holdings.test.js"
+      "test/systems/auditrealm.test.js",
+      "test/net/iliac/cards7_rules.test.js",
+      "test/systems/item/cards8_binder.test.js",
+      "test/systems/loot/cards8_catalog.test.js",
+      "test/net/iliac/cards8_faces.test.js",
+      "test/systems/horse/holdings.test.js"
     ]
   },
   {
@@ -47,12 +47,12 @@
     "old": "  if (isIliacCard(item)) return iliacCardName(item);   // CARDS8",
     "new": "  if (false) return iliacCardName(item);   // CARDS8",
     "tests": [
-      "test/auditrealm.test.js",
-      "test/cards7_rules.test.js",
-      "test/cards8_binder.test.js",
-      "test/cards8_catalog.test.js",
-      "test/cards8_faces.test.js",
-      "test/holdings.test.js"
+      "test/systems/auditrealm.test.js",
+      "test/net/iliac/cards7_rules.test.js",
+      "test/systems/item/cards8_binder.test.js",
+      "test/systems/loot/cards8_catalog.test.js",
+      "test/net/iliac/cards8_faces.test.js",
+      "test/systems/horse/holdings.test.js"
     ]
   },
   {
@@ -61,12 +61,12 @@
     "old": "  else if (isIliacCard(item)) for (const text of iliacCardLines(item)) out.push({ text, center: true });   // CARDS8\n",
     "new": "",
     "tests": [
-      "test/auditrealm.test.js",
-      "test/cards7_rules.test.js",
-      "test/cards8_binder.test.js",
-      "test/cards8_catalog.test.js",
-      "test/cards8_faces.test.js",
-      "test/holdings.test.js"
+      "test/systems/auditrealm.test.js",
+      "test/net/iliac/cards7_rules.test.js",
+      "test/systems/item/cards8_binder.test.js",
+      "test/systems/loot/cards8_catalog.test.js",
+      "test/net/iliac/cards8_faces.test.js",
+      "test/systems/horse/holdings.test.js"
     ]
   },
   {
@@ -75,12 +75,12 @@
     "old": "  playerTextureArchive: 0, playerTextureRecord: 0, stackable: false, hasNoEncumbrance: true,\n  bound: true, packOnly: true,",
     "new": "  playerTextureArchive: 0, playerTextureRecord: 0, stackable: false, hasNoEncumbrance: true,",
     "tests": [
-      "test/auditrealm.test.js",
-      "test/cards7_rules.test.js",
-      "test/cards8_binder.test.js",
-      "test/cards8_catalog.test.js",
-      "test/cards8_faces.test.js",
-      "test/holdings.test.js"
+      "test/systems/auditrealm.test.js",
+      "test/net/iliac/cards7_rules.test.js",
+      "test/systems/item/cards8_binder.test.js",
+      "test/systems/loot/cards8_catalog.test.js",
+      "test/net/iliac/cards8_faces.test.js",
+      "test/systems/horse/holdings.test.js"
     ]
   },
   {
@@ -89,12 +89,12 @@
     "old": "  if (!cardById(id) || !(Number.isInteger(count) && count >= 1)) return null;",
     "new": "  if (!(Number.isInteger(count) && count >= 1)) return null;",
     "tests": [
-      "test/auditrealm.test.js",
-      "test/cards7_rules.test.js",
-      "test/cards8_binder.test.js",
-      "test/cards8_catalog.test.js",
-      "test/cards8_faces.test.js",
-      "test/holdings.test.js"
+      "test/systems/auditrealm.test.js",
+      "test/net/iliac/cards7_rules.test.js",
+      "test/systems/item/cards8_binder.test.js",
+      "test/systems/loot/cards8_catalog.test.js",
+      "test/net/iliac/cards8_faces.test.js",
+      "test/systems/horse/holdings.test.js"
     ]
   },
   {
@@ -103,12 +103,12 @@
     "old": "  if (binderOf(entity.items)) return 0;\n",
     "new": "",
     "tests": [
-      "test/auditrealm.test.js",
-      "test/cards7_rules.test.js",
-      "test/cards8_binder.test.js",
-      "test/cards8_catalog.test.js",
-      "test/cards8_faces.test.js",
-      "test/holdings.test.js"
+      "test/systems/auditrealm.test.js",
+      "test/net/iliac/cards7_rules.test.js",
+      "test/systems/item/cards8_binder.test.js",
+      "test/systems/loot/cards8_catalog.test.js",
+      "test/net/iliac/cards8_faces.test.js",
+      "test/systems/horse/holdings.test.js"
     ]
   },
   {
@@ -117,12 +117,12 @@
     "old": "  if ((Number.isSafeInteger(entity.binderGift) ? entity.binderGift : 0) >= BINDER_GIFT) return 0;\n",
     "new": "",
     "tests": [
-      "test/auditrealm.test.js",
-      "test/cards7_rules.test.js",
-      "test/cards8_binder.test.js",
-      "test/cards8_catalog.test.js",
-      "test/cards8_faces.test.js",
-      "test/holdings.test.js"
+      "test/systems/auditrealm.test.js",
+      "test/net/iliac/cards7_rules.test.js",
+      "test/systems/item/cards8_binder.test.js",
+      "test/systems/loot/cards8_catalog.test.js",
+      "test/net/iliac/cards8_faces.test.js",
+      "test/systems/horse/holdings.test.js"
     ]
   },
   {
@@ -131,12 +131,12 @@
     "old": "mintBinder([{ name: 'Starter Deck', cards: [...STARTER_DECK] }])",
     "new": "mintBinder([])",
     "tests": [
-      "test/auditrealm.test.js",
-      "test/cards7_rules.test.js",
-      "test/cards8_binder.test.js",
-      "test/cards8_catalog.test.js",
-      "test/cards8_faces.test.js",
-      "test/holdings.test.js"
+      "test/systems/auditrealm.test.js",
+      "test/net/iliac/cards7_rules.test.js",
+      "test/systems/item/cards8_binder.test.js",
+      "test/systems/loot/cards8_catalog.test.js",
+      "test/net/iliac/cards8_faces.test.js",
+      "test/systems/horse/holdings.test.js"
     ]
   },
   {
@@ -145,12 +145,12 @@
     "old": "  for (const [id, n] of need) if ((have.get(id) ?? 0) < n) return 'not held';",
     "new": "  void need;",
     "tests": [
-      "test/auditrealm.test.js",
-      "test/cards7_rules.test.js",
-      "test/cards8_binder.test.js",
-      "test/cards8_catalog.test.js",
-      "test/cards8_faces.test.js",
-      "test/holdings.test.js"
+      "test/systems/auditrealm.test.js",
+      "test/net/iliac/cards7_rules.test.js",
+      "test/systems/item/cards8_binder.test.js",
+      "test/systems/loot/cards8_catalog.test.js",
+      "test/net/iliac/cards8_faces.test.js",
+      "test/systems/horse/holdings.test.js"
     ]
   },
   {
@@ -159,13 +159,13 @@
     "old": "  decks[i] = { name: String(deck.name || 'Deck').slice(0, DECK_NAME_MAX), cards: deck.cards.slice() };\n  binder.decks = decks;",
     "new": "  decks[i] = { name: String(deck.name || 'Deck').slice(0, DECK_NAME_MAX), cards: deck.cards.slice() };\n  if (Array.isArray(binder.decks)) binder.decks.splice(0, binder.decks.length, ...decks); else binder.decks = decks;",
     "tests": [
-      "test/auditrealm.test.js",
-      "test/cards7_rules.test.js",
-      "test/cards8_binder.test.js",
-      "test/cards8_catalog.test.js",
-      "test/cards8_faces.test.js",
-      "test/holdings.test.js",
-      "test/auditcards5_items.test.js"
+      "test/systems/auditrealm.test.js",
+      "test/net/iliac/cards7_rules.test.js",
+      "test/systems/item/cards8_binder.test.js",
+      "test/systems/loot/cards8_catalog.test.js",
+      "test/net/iliac/cards8_faces.test.js",
+      "test/systems/horse/holdings.test.js",
+      "test/systems/item/auditcards5_items.test.js"
     ]
   },
   {
@@ -174,12 +174,12 @@
     "old": " || (i === decks.length && decks.length >= BINDER_DECKS_MAX)) return false;",
     "new": ") return false;",
     "tests": [
-      "test/auditrealm.test.js",
-      "test/cards7_rules.test.js",
-      "test/cards8_binder.test.js",
-      "test/cards8_catalog.test.js",
-      "test/cards8_faces.test.js",
-      "test/holdings.test.js"
+      "test/systems/auditrealm.test.js",
+      "test/net/iliac/cards7_rules.test.js",
+      "test/systems/item/cards8_binder.test.js",
+      "test/systems/loot/cards8_catalog.test.js",
+      "test/net/iliac/cards8_faces.test.js",
+      "test/systems/horse/holdings.test.js"
     ]
   },
   {
@@ -188,12 +188,12 @@
     "old": "  const held = new Set([...(wallet?.held ?? []), ...(binder?.held ?? [])]);",
     "new": "  const held = new Set([...(wallet?.held ?? [])]);",
     "tests": [
-      "test/auditrealm.test.js",
-      "test/cards7_rules.test.js",
-      "test/cards8_binder.test.js",
-      "test/cards8_catalog.test.js",
-      "test/cards8_faces.test.js",
-      "test/holdings.test.js"
+      "test/systems/auditrealm.test.js",
+      "test/net/iliac/cards7_rules.test.js",
+      "test/systems/item/cards8_binder.test.js",
+      "test/systems/loot/cards8_catalog.test.js",
+      "test/net/iliac/cards8_faces.test.js",
+      "test/systems/horse/holdings.test.js"
     ]
   },
   {
@@ -202,13 +202,13 @@
     "old": "    else if (inDeck >= held) _said =",
     "new": "    else if (false) _said =",
     "tests": [
-      "test/auditcards5_ui.test.js",
-      "test/auditrealm.test.js",
-      "test/cards7_rules.test.js",
-      "test/cards8_binder.test.js",
-      "test/cards8_catalog.test.js",
-      "test/cards8_faces.test.js",
-      "test/holdings.test.js"
+      "test/systems/auditcards5_ui.test.js",
+      "test/systems/auditrealm.test.js",
+      "test/net/iliac/cards7_rules.test.js",
+      "test/systems/item/cards8_binder.test.js",
+      "test/systems/loot/cards8_catalog.test.js",
+      "test/net/iliac/cards8_faces.test.js",
+      "test/systems/horse/holdings.test.js"
     ]
   },
   {
@@ -217,12 +217,12 @@
     "old": "  keep.disabled = !!why;",
     "new": "  keep.disabled = false;",
     "tests": [
-      "test/auditrealm.test.js",
-      "test/cards7_rules.test.js",
-      "test/cards8_binder.test.js",
-      "test/cards8_catalog.test.js",
-      "test/cards8_faces.test.js",
-      "test/holdings.test.js"
+      "test/systems/auditrealm.test.js",
+      "test/net/iliac/cards7_rules.test.js",
+      "test/systems/item/cards8_binder.test.js",
+      "test/systems/loot/cards8_catalog.test.js",
+      "test/net/iliac/cards8_faces.test.js",
+      "test/systems/horse/holdings.test.js"
     ]
   },
   {
@@ -231,12 +231,12 @@
     "old": "      if (_dropArmed !== i) { _dropArmed = i; rerender(); return; }\n",
     "new": "",
     "tests": [
-      "test/auditrealm.test.js",
-      "test/cards7_rules.test.js",
-      "test/cards8_binder.test.js",
-      "test/cards8_catalog.test.js",
-      "test/cards8_faces.test.js",
-      "test/holdings.test.js"
+      "test/systems/auditrealm.test.js",
+      "test/net/iliac/cards7_rules.test.js",
+      "test/systems/item/cards8_binder.test.js",
+      "test/systems/loot/cards8_catalog.test.js",
+      "test/net/iliac/cards8_faces.test.js",
+      "test/systems/horse/holdings.test.js"
     ]
   },
   {
@@ -245,12 +245,12 @@
     "old": "  snap.binderGift = Number.isSafeInteger(entity.binderGift) ? entity.binderGift : BINDER_GIFT;",
     "new": "  snap.binderGift = 0;",
     "tests": [
-      "test/auditrealm.test.js",
-      "test/cards7_rules.test.js",
-      "test/cards8_binder.test.js",
-      "test/cards8_catalog.test.js",
-      "test/cards8_faces.test.js",
-      "test/holdings.test.js"
+      "test/systems/auditrealm.test.js",
+      "test/net/iliac/cards7_rules.test.js",
+      "test/systems/item/cards8_binder.test.js",
+      "test/systems/loot/cards8_catalog.test.js",
+      "test/net/iliac/cards8_faces.test.js",
+      "test/systems/horse/holdings.test.js"
     ]
   },
   {
@@ -259,13 +259,13 @@
     "old": "  assignStartingEquipment(playerEntity, { classIndex });\n  giveBinderAtChargen(playerEntity);",
     "new": "  assignStartingEquipment(playerEntity, { classIndex });\n  void giveBinderAtChargen;",
     "tests": [
-      "test/auditrealm.test.js",
-      "test/cards7_rules.test.js",
-      "test/cards8_binder.test.js",
-      "test/cards8_catalog.test.js",
-      "test/cards8_faces.test.js",
-      "test/holdings.test.js",
-      "test/auditcards5_items.test.js"
+      "test/systems/auditrealm.test.js",
+      "test/net/iliac/cards7_rules.test.js",
+      "test/systems/item/cards8_binder.test.js",
+      "test/systems/loot/cards8_catalog.test.js",
+      "test/net/iliac/cards8_faces.test.js",
+      "test/systems/horse/holdings.test.js",
+      "test/systems/item/auditcards5_items.test.js"
     ]
   },
   {
@@ -274,12 +274,12 @@
     "old": "...(collectionsPageShown(playerEntity) ? COLLECTION_PAGE_SECTIONS : [])];",
     "new": "];",
     "tests": [
-      "test/auditrealm.test.js",
-      "test/cards7_rules.test.js",
-      "test/cards8_binder.test.js",
-      "test/cards8_catalog.test.js",
-      "test/cards8_faces.test.js",
-      "test/holdings.test.js"
+      "test/systems/auditrealm.test.js",
+      "test/net/iliac/cards7_rules.test.js",
+      "test/systems/item/cards8_binder.test.js",
+      "test/systems/loot/cards8_catalog.test.js",
+      "test/net/iliac/cards8_faces.test.js",
+      "test/systems/horse/holdings.test.js"
     ]
   },
   {
@@ -288,12 +288,12 @@
     "old": "  decks: list(validBinderDeck),",
     "new": "  decks: list(() => false),",
     "tests": [
-      "test/auditrealm.test.js",
-      "test/cards7_rules.test.js",
-      "test/cards8_binder.test.js",
-      "test/cards8_catalog.test.js",
-      "test/cards8_faces.test.js",
-      "test/holdings.test.js"
+      "test/systems/auditrealm.test.js",
+      "test/net/iliac/cards7_rules.test.js",
+      "test/systems/item/cards8_binder.test.js",
+      "test/systems/loot/cards8_catalog.test.js",
+      "test/net/iliac/cards8_faces.test.js",
+      "test/systems/horse/holdings.test.js"
     ]
   }
 ]

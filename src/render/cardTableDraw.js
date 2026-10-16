@@ -9,7 +9,7 @@
 // crowns' charges, their royals, their seals), the back the Bay's medallion, the edge plain card stock, each chip value
 // its own colour with a stock-white edge band.
 //
-// THE LAYOUT AND THE MESHES ARE PURE (atlasCell, cardModel, chipModel, cardMatrix): pinned by test/cards3_draw.test.js;
+// THE LAYOUT AND THE MESHES ARE PURE (atlasCell, cardModel, chipModel, cardMatrix): pinned by test/net/card/cards3_draw.test.js;
 // only the painting needs a page.
 //
 // Not a DFU member: Daggerfall Unity has no card games. Ledger A row (TAVERN CARDS).

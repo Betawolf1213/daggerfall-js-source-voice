@@ -24,7 +24,7 @@ swapping, and one with less left than the bill broke the moment it went on. Two 
 a piece re-worn within REROLL_MINIMUM_HOURS (6) of `timeEffectsLastRerolled` - the stamp every equip and reroll writes,
 DFU's own recast clock - pays nothing, decided once per piece before its first power restamps; and the bill stops at 1
 condition (`heldEquipBill`, after the weapon pool's repool). The wear while worn (1 every 4 magic rounds) is DFU's and
-still breaks a piece in the end. Port-Ledger A, HELD-REWEAR. Pinned by `test/fb1009f.test.js`.
+still breaks a piece in the end. Port-Ledger A, HELD-REWEAR. Pinned by `test/systems/fb1009f.test.js`.
 
 ## HOUSE-WAITS: the Online page answers a waiting Succession (7)
 
@@ -38,4 +38,4 @@ from the menu (`takeUpLine`: the heir current and of age, the record stored and 
 the tab) and boots `?online&realmnew&legacyborn=` through `main.js` - the world host's own online birth, which settles
 the fall when the heir lands. The failed birth's words online now point at the Online page. NOT PROVEN on the
 reporter's account: why their first birth failed is not known (a refusal is said on the card now). Port-Ledger A,
-HOUSE-WAITS. Pinned by `test/fb1009f.test.js`.
+HOUSE-WAITS. Pinned by `test/systems/fb1009f.test.js`.

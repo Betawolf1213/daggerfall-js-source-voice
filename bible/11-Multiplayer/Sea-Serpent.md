@@ -364,7 +364,7 @@ under the pins. Its job:
 - `scenes/dungeonContext.js` (a dungeon's water is no ocean, and no ship sails it) carries none of it, by design.
 
 A player who steps into a building mid-fight keeps their ship's hold; the bar and the blows wait for the street. The
-pin `test/serpent1_client.test.js` reads the three and finds no serpent in them.
+pin `test/systems/serpent1_client.test.js` reads the three and finds no serpent in them.
 
 ## 8. The kill - receipts, the books, the hoard
 
@@ -533,34 +533,34 @@ After the kill the bar holds a moment and fades.
 
 ## 13. Records
 
-- `test/serpent1_law.test.js` (22): the schedule and its words, the body, the brain - every refusal, the bucket and the
+- `test/net/serpent/serpent1_law.test.js` (22): the schedule and its words, the body, the brain - every refusal, the bucket and the
   one-blow cap, the phases, the coil, the end, the checkpoint, the swim.
-- `test/serpent1_relay.test.js` (10): the receipt, the wire, the relay's join, refusals, blows and kill, the hub's word
+- `test/net/serpent/serpent1_relay.test.js` (10): the receipt, the wire, the relay's join, refusals, blows and kill, the hub's word
   at a hello, the cell's other duties under its beat, the books and the Worker.
-- `test/serpent1_client.test.js` (16): the site, the link, the strike, the sighting, a kill its site's, the host end to
+- `test/systems/serpent1_client.test.js` (16): the site, the link, the strike, the sighting, a kill its site's, the host end to
   end against the relay's own brain (the `in`, the volleys, a blow, the coil held, broken, lost and slipped, the whirl,
   the venom, the bar and the draw), the renderer's builders, the bar, the voice, the hoard, the map's ring, and the
   four hosts' wiring.
-- The audit's pins: `test/serpent1_audit.test.js` (12, the brain), `test/serpent1_auditrelay.test.js` (6, the relay and
-  the hub), `test/serpent1_auditclient.test.js` (7, the host, the omen, the render, the claims, the cards, the words and
-  the wiring) and `test/serpent1_auditbooks.test.js` (6, the books lens's own); AUDIT SERPENT 2's
-  `test/serpent1_audit2.test.js` (9 - the site on every word, one timeline, no bar, a landing on its moment, a far
+- The audit's pins: `test/net/serpent/serpent1_audit.test.js` (12, the brain), `test/net/serpent/serpent1_auditrelay.test.js` (6, the relay and
+  the hub), `test/net/serpent/serpent1_auditclient.test.js` (7, the host, the omen, the render, the claims, the cards, the words and
+  the wiring) and `test/net/serpent1_auditbooks.test.js` (6, the books lens's own); AUDIT SERPENT 2's
+  `test/net/serpent/serpent1_audit2.test.js` (9 - the site on every word, one timeline, no bar, a landing on its moment, a far
   newcomer, the slain and the lone ship kept, the ram's reach, the still fight unwritten, the targets once a frame).
 - Mutants: `tools/mutants/serpent1.json` (43), `tools/mutants/serpent1_audit.json` (149 - eleven re-aimed by AUDIT
   SERPENT 2, six retired with the code or law it changed) and `tools/mutants/serpent1_audit2.json` (14), all dead.
-- SERPENT2's: `test/serpent2_herald.test.js` (13 - the herald's law, the `site` word, the hub with Discord stubbed, the
+- SERPENT2's: `test/net/serpent/serpent2_herald.test.js` (13 - the herald's law, the `site` word, the hub with Discord stubbed, the
   client's word, the Timers rows) and `tools/mutants/serpent2.json` (49), all dead.
-- SERPENT-SET's: `test/serpentset.test.js` (12 - the Coilscale's law, records, drop and powers, the hoard's embers and
-  piece, the one heal, the host's doors and the claim's silver lines) and `test/serpentset_service.test.js` (8 - the
+- SERPENT-SET's: `test/systems/serpentset.test.js` (12 - the Coilscale's law, records, drop and powers, the hoard's embers and
+  piece, the one heal, the host's doors and the claim's silver lines) and `test/net/serpent/serpentset_service.test.js` (8 - the
   row's embers, the insignia's purse and sale, the serpent's silver under the combat cap, the switch and the guest, the
   deploy; AUDIT 625 P4, the embers the claim says, and P5, the claim in production's shape);
   `tools/mutants/serpentset.json` (48), all dead.
-- AUDIT 625's (`01-Overview/Audit-625.md`): `test/audit625_serpent.test.js` (6 - Shed Skin and a saved death, the duel's
+- AUDIT 625's (`01-Overview/Audit-625.md`): `test/systems/audit625_serpent.test.js` (6 - Shed Skin and a saved death, the duel's
   one word and an arena bout between players, a coil per foe, the claim's embers, the powers on minted pieces, the
   card's source and the embers' tier) and the AUDIT 625 records of `tools/mutants/audit625.json`, all dead.
-- SERPENT3's: `test/serpent3.test.js` (12 - section 15) and `tools/mutants/serpent3.json` (46), all dead; five records of
+- SERPENT3's: `test/net/serpent/serpent3.test.js` (12 - section 15) and `tools/mutants/serpent3.json` (46), all dead; five records of
   `serpent1.json` and `serpent1_audit.json` re-aimed by content (the stray's once is the resume's now).
-- SERPENT4's: `test/serpent4.test.js` (9 - section 16) and `tools/mutants/serpent4.json` (36), all dead; seventeen records
+- SERPENT4's: `test/net/serpent/serpent4.test.js` (9 - section 16) and `tools/mutants/serpent4.json` (36), all dead; seventeen records
   of `sailfree.json`, `serpent1.json`, `serpent1_audit.json`, `serpent2.json`, `serpent3.json` and `soc1.json` re-aimed by
   content (the storm's three records the dive's and the hunt's now, and the relay's version world193).
 
@@ -726,7 +726,7 @@ at its word's arrival - a gathering and a wire after the ball struck.
   (AUDIT SHIPS C2: told, it fought on).
 
 **Measured after** (AUDIT SHIPS: the balance by `node tools/serpentFleetSim.mjs --grid`, twelve seeded fights a cell;
-the rest held by `test/serpent3.test.js` and `test/auditships.test.js`): no leap in any fight; every Maw and coil cast at
+the rest held by `test/net/serpent/serpent3.test.js` and `test/net/serpent/auditships.test.js`): no leap in any fight; every Maw and coil cast at
 its own wind-up, bursting on its mark and closing on its round. SAIL-FREE's ships circle at 0.819 of their best: a
 galleon at 13.3 m/s in the rated wind and 17.7 in a 2 m/s one, a Carrack at 15.9 and 21.2, and in the sea's strongest
 wind a galleon at 26.5 and a Carrack at 31.8. At 38% of balls striking (AUDIT SERPENT's measured gunnery) a lone galleon
@@ -736,10 +736,10 @@ win every time, in ten to eleven and a half minutes. At 50% a lone ship wins fro
 26.5, nine at 31.8 (Mac's call, open - `01-Overview/Audit-Ships.md`). At 25% a lone ship never wins, a pair at most
 three in twelve, three up to six and five six to eleven.
 
-**The relay:** `world173` (section 11). **Pins:** `test/serpent3.test.js` (12) and the SERPENT1 and AUDIT SERPENT pins it
+**The relay:** `world173` (section 11). **Pins:** `test/net/serpent/serpent3.test.js` (12) and the SERPENT1 and AUDIT SERPENT pins it
 moved - the stray's surfacing for the resume's, the Maelstrom at the heart, a late ship's words, the first strike's
 time; `tools/mutants/serpent3.json` (45, all dead - its ram's-doubled-wake record went with the ram's own wake, AUDIT
-SHIPS C4). AUDIT SHIPS (`01-Overview/Audit-Ships.md`): `test/auditships.test.js` (20) and
+SHIPS C4). AUDIT SHIPS (`01-Overview/Audit-Ships.md`): `test/net/serpent/auditships.test.js` (20) and
 `tools/mutants/auditships.json` (73, all dead).
 
 ## 16. The players' fight (SERPENT4, 2026-10-11)
@@ -792,7 +792,7 @@ What each came to, in the code:
 
   A third off (TTK 120) was simulated first: a pair won in 6.6 minutes, but a lone galleon at a storm's way (26.5 m/s)
   won eight fights in twelve at the measured gunnery, which Mac's call - one ship alone can't - rules out; at 150 it wins
-  one at 26.5, none at 17.7 and 21.2 (`test/auditships.test.js` A1 holds it). At 50% - gunnery well past the measured -
+  one at 26.5, none at 17.7 and 21.2 (`test/net/serpent/auditships.test.js` A1 holds it). At 50% - gunnery well past the measured -
   a lone galleon in the gale wins five in twelve: Mac's call, open (it won two in twelve at 21.2 m/s before, AUDIT SHIPS).
 - **"Make it huge", "hitting with slow projectiles + lag is a challenge."** **Its girth is `SERPENT_GIRTH` (1.6) times
   its first build's** (`serpentBody.js` `RADII`): the great coils 12.5 m through where they were under 8, the skull a
@@ -840,7 +840,7 @@ THE FOUR HOSTS RULE: `scenes/world.js` wires the gale (Come Sail Away's `gale` b
 `scenes/worldModes.js` and `scenes/dungeonContext.js` carry no serpent (section 7) - their Come Sail Away and their
 missiles ask seams they are not handed, and answer as before.
 
-**The relay:** `world193` (section 11). **Pins:** `test/serpent4.test.js` (9) and the SERPENT1, AUDIT SERPENT, SERPENT2,
+**The relay:** `world193` (section 11). **Pins:** `test/net/serpent/serpent4.test.js` (9) and the SERPENT1, AUDIT SERPENT, SERPENT2,
 SERPENT3 and AUDIT SHIPS pins its laws moved; `tools/mutants/serpent4.json` (36, all dead).
 
 ## 17. The Old Coil's rewards - the Sunken Sovereign, Coilbreaker and The Maelstrom (SERPENT5, 2026-10-15)
@@ -915,13 +915,13 @@ symbols): the whirlpool Sethrakul raises about a ship, at the wearer's feet.
 unchanged, only identityToken.js's bytes), then the account service (acct137, with migration 0119 - 0116 on its branch, renumbered past main's 0116-0118). An account service
 ahead of its relay would sign a word the relay refuses, and the token would be refused whole.
 
-**The pins.** `test/serpent5_honours.test.js` (9) - the roll, the claim (through the real migrations, node:sqlite; an aura
+**The pins.** `test/net/serpent/serpent5_honours.test.js` (9) - the roll, the claim (through the real migrations, node:sqlite; an aura
 held is never new, the kill's row each its own column), the ROUTE (AUDIT E9: the real Worker, the session's own row, a
 forced draw), held, the vocabulary and the badge, the carrier (an aura held, said and never popped; a service from
 before acct137 saying neither line), the look's law and the shader RUN (`test/glsl.mjs`: the arms at the clock's own
 turn, the eye, the lip and the surf running round it, the curl, every drop where `maelstromDropAt` says, the pow's
 guard by source). `tools/mutants/serpent5.json`: 30, all dead (the audit's nine among them). AUDIT C1: the Hour's own
-popup pin (`test/lootbanner.test.js`) is anchored to the Hour's carrier now - the Old Coil's door is the same text, and
+popup pin (`test/systems/lootbanner.test.js`) is anchored to the Hour's carrier now - the Old Coil's door is the same text, and
 the bare line matched it with the Hour's gone. The vocabulary's
 enumerations moved with it, each saying so (ACC3, AEGIS, PRIMARCH, CRYSTAL-FIST, SERAPH-WINGS, SHADOW-CLOAK, SD9c,
 HOURS-FIRST, CHAP4c, CHAP6e, LAMP-KEEPER II), and every record that named the lists' old tails was re-aimed by content.

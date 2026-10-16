@@ -30,7 +30,7 @@
 //   the surface moves and fade with the eye's depth, with night, and
 //   with a cloud over the sun (the frame's own sun scale).
 //
-// Pure: the pass reads these; test/fb1001_underwater.test.js pins them.
+// Pure: the pass reads these; test/world/fb1001_underwater.test.js pins them.
 // ═══════════════════════════════════════════════════════════════════
 
 const clamp01 = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);

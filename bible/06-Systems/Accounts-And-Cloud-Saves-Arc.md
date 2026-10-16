@@ -574,7 +574,7 @@ fails if it does not get one.
 
 ### What the gate's own mutants found
 
-`test/accountdeploy.test.js`, 6 pins; `tools/mutants/acc1ci.json`, 18
+`test/server/accountdeploy.test.js`, 6 pins; `tools/mutants/acc1ci.json`, 18
 mutants, 17 dead and 1 recorded equivalent. **Four survived the first
 run and every one was a hole in the pins rather than a mutant worth
 keeping:**
@@ -632,7 +632,7 @@ plain string is not one, so it is a hard startup failure.
 after merge would have produced a dead service.
 
 **AND THE SUITE WAS GREEN BECAUSE OF THE BUG, NOT DESPITE IT.**
-`test/accountworker.test.js` imported `ACCOUNT_VERSION`,
+`test/server/accountworker.test.js` imported `ACCOUNT_VERSION`,
 `MAX_BODY_BYTES` and `_resetKeyForTests` — so it proved those exports
 existed, which was precisely what the runtime was refusing to start
 over. **Importability is not deployability**, and nothing here had ever
@@ -790,7 +790,7 @@ on.
 in the relay, which does not import the token module. What exists today
 is the decision, written into `src/net/identityToken.js` while that file
 is still outside the relay bundle and editing its comments is free — and
-a gate in `test/identitytoken.test.js` that holds it against
+a gate in `test/net/identitytoken.test.js` that holds it against
 `RELAY_GRAPH` and **fails the day ACC1d puts the module in the bundle**.
 
 That gate's second arm is a **tripwire on purpose**, and two wrong cuts
@@ -873,7 +873,7 @@ The window only moves forward (AUDIT RENOWN1, as `overRate`); past
 open all of them do - a count forgotten frees a caller early and never
 refuses one. The open doors' `login:` and `ip:` keys stay in D1: they
 are few, and must hold across isolates. Pinned by
-`test/acctratemem.test.js`.
+`test/server/acctratemem.test.js`.
 
 ### F13 — the session secret rode in a URL
 
@@ -1005,14 +1005,14 @@ blast radius of this arc is therefore the whole of it rather than the
 relay alone. The mitigations that do not need the token rotated are
 still worth taking and are the ordinary ones — the token stays in the
 repo's secrets and never in a file or on a command line (pinned by
-`test/relaydeploy.test.js`), and the save blobs are a BACKUP, so the
+`test/server/relaydeploy.test.js`), and the save blobs are a BACKUP, so the
 worst case takes a copy rather than the original.
 
 ---
 
 ## ACC1a — SHIPPED 2026-09-21: the token
 
-`src/net/identityToken.js` and `test/identitytoken.test.js`. The pure
+`src/net/identityToken.js` and `test/net/identitytoken.test.js`. The pure
 law only: no Worker, no D1, nothing wired. Nothing imports it yet, so
 the relay's bundle is unchanged and no deploy was forced.
 
@@ -1088,7 +1088,7 @@ ACC0's wall is at cloud saves and nowhere else.
 `ui/accountFlow.js` holds every stage, every field, every refusal and
 every rule about what may be pressed. `ui/enhanced/enhancedAccount.js` walks what
 the flow says and makes DOM. That is `ChargenFlow` / `enhancedChargen.js`
-again, and `test/enhancedChargen.test.js` says why: *"node cannot draw
+again, and `test/ui/enhanced/enhancedChargen.test.js` says why: *"node cannot draw
 them; what IS testable is the part that does arithmetic."* Everything a
 player can get **wrong** about an account is arithmetic.
 
@@ -1177,7 +1177,7 @@ so neither can drift from the other."* Taking `HANDLE_RE` alone would
 have broken the property that sentence exists to hold. `guestName.js`
 imports and re-exports them, so every existing reader is unchanged.
 
-`test/mutantdrift.test.js` caught the move and demanded the two `acc1b`
+`test/tooling/mutantdrift.test.js` caught the move and demanded the two `acc1b`
 mutants be re-aimed by content, which they were.
 
 ### What is pinned
@@ -1252,7 +1252,7 @@ question *"are the screenshots of each popup"* was worth asking.
 
 ### And a pin that had become false
 
-`test/outsideTap.test.js` asserted `closeOnOutsideTap` appears in the
+`test/ui/enhanced/outsideTap.test.js` asserted `closeOnOutsideTap` appears in the
 menu exactly **once**, with the reason *"the pause face only - the
 front door has no scrim"*. True until this slice; the door has a scrim
 now, exactly when the account window is open. The pin names **both**
@@ -1365,7 +1365,7 @@ and the deploy drops every connected player.** That is the price this
 arc has been saving up for since ACC0 chose two Workers, and it buys
 the whole token seam in one drop rather than several.
 
-`test/identitytoken.test.js`'s F8 gate fires the moment the module joins
+`test/net/identitytoken.test.js`'s F8 gate fires the moment the module joins
 the bundle and must be replaced by a pin that presents the same token
 twice and proves the second is refused. That is the point of it.
 
@@ -1429,9 +1429,9 @@ is why the pins walk both doors.
   peer and on the chat line.
 - `src/scenes/world.js` — ONE minter, handed to the presence session and
   to every channel link.
-- Pins: `test/acc1dclient.test.js` (15), four new arms in
-  `test/identitytoken.test.js`, one each in `test/relaydeploy.test.js`
-  and `test/accountdeploy.test.js`. Mutants:
+- Pins: `test/net/acc1dclient.test.js` (15), four new arms in
+  `test/net/identitytoken.test.js`, one each in `test/server/relaydeploy.test.js`
+  and `test/server/accountdeploy.test.js`. Mutants:
   `tools/mutants/acc1d.json`, 22, **22 dead and 0 survived**.
 
 **NOT DEPLOYED.** The relay deploy fires on merge to main and drops
@@ -1567,8 +1567,8 @@ PC's OLDER save over the Mac's newer one.
   character's own copy of the backup's save is here; the two-press arming is the LOCAL copy's and never outlives its
   pane; and `newer` is later by either clock - the devices' or the game's.
 
-Pins: `test/cloudsaves.test.js` (his round trip through the real service, what a restore never removes, the menu's
-wiring) and `test/savetile.test.js`; mutants `tools/mutants/backupnewer.json` (32).
+Pins: `test/server/cloudsaves.test.js` (his round trip through the real service, what a restore never removes, the menu's
+wiring) and `test/ui/savetile.test.js`; mutants `tools/mutants/backupnewer.json` (32).
 
 ### D6 — NOT automatic, and this is a narrowing of ACC0's step 4 with a reason
 
@@ -2065,15 +2065,15 @@ this container has no ARENA2, so the real FONT0003 is not read here.**
   span and a `.dfname-who` span; an empty badge takes no room
   (`:empty` drops its margin), so an unbadged label is exactly the
   element it was before this existed.
-- Pins: `test/name1_bubbles.test.js` 20 → **21**. The fixture sets `v`
+- Pins: `test/net/name1_bubbles.test.js` 20 → **21**. The fixture sets `v`
   EXPLICITLY and its default is **not vouched** — the plain label, which
   is what those pins are about and what an ordinary peer is today.
 - Two neighbouring pins were re-aimed rather than worked around, and
-  both got stronger for it. `test/soc4_partyhud.test.js` read the white
+  both got stronger for it. `test/net/soc4_partyhud.test.js` read the white
   fallback off the draw call; it reads it off the `tint` both draws take,
   so SOC4's law now covers the badge as well as the name — *SOC4 owns
   that colour and ACC1d-MARK does not get a second opinion on it.*
-  `test/perfon_text_run.test.js` measured one draw per peer; it measures
+  `test/ui/perfon_text_run.test.js` measured one draw per peer; it measures
   both cases, and a badged room is **2n draws and still nothing that
   scales with how long anybody's name is**, which is the whole of what
   PERF-ON was ever about.
@@ -2198,7 +2198,7 @@ that could ever release it. Same word, same arm.
   had, through `runCloud`), `cloudForCard`, `cloudOnlyGrid`, and the
   narrowed empty case.
 - `src/ui/enhanced/enhancedStyle.js` — `.svcloudonly` and `.svcloud.is-only`.
-- Pins: `test/cloudsaves.test.js` 19 → **21**, `test/savetile.test.js`
+- Pins: `test/server/cloudsaves.test.js` 19 → **21**, `test/ui/savetile.test.js`
   11 → **13**. Probe: `npm run savetile` 18 → **29 checks**, which is
   where the heading's face, the brass, and a tile that could have
   collapsed to a strip were actually measured.
@@ -2329,8 +2329,8 @@ wins"*.
   button gated on a session. `src/scenes/world.js` — the two typed name
   sources gone. `src/systems/uiPrefs.js` — `onlineName` gone.
 - `test/fakeRoom.mjs` — `roomSigner`, shared with slam5's own harness.
-- Pins: `test/identitytoken.test.js`'s two admit-arms rewritten as
-  refusals; `test/acc1dclient.test.js`'s three verdict pins replaced by
+- Pins: `test/net/identitytoken.test.js`'s two admit-arms rewritten as
+  refusals; `test/net/acc1dclient.test.js`'s three verdict pins replaced by
   their inverse (no door may carry one, and a peer must not keep one a
   stale relay sends); NAME-F2, AUDIT-CHATR F2/F6 and SLOTS1 re-aimed to
   where the name is now judged.
@@ -2530,7 +2530,7 @@ each would cost its own.
 - `server/src/index.js` — `_named` returns the badge off the claims; the
   attachment holds it; the welcome, the join, the channel roster and the
   `who` answer carry it.
-- `test/acc3titles.test.js` — 13 pins. `test/fakeRoom.mjs` mints a
+- `test/server/acc3titles.test.js` — 13 pins. `test/fakeRoom.mjs` mints a
   badged token, and a `title` on a hello frame is **deleted** rather
   than sent: the relay ignores it, and a harness that could set one
   would be testing the wrong half forever.
@@ -2589,7 +2589,7 @@ that is older, newer, or not ours.
   own line above and the glyphs inside the centred run.
 - `src/ui/nameLayer.js` — `.dfname-title` above the row, `.dfname-glyphs`
   after the name, the run rebuilt only when the badge changes.
-- `test/acc3badge.test.js` — 8 pins. `tools/mutants/acc3b.json` — 12,
+- `test/net/acc3badge.test.js` — 8 pins. `tools/mutants/acc3b.json` — 12,
   11 dead and 1 recorded equivalent.
 
 **THE CAMPAIGN CAUGHT THE PIN THAT WAS SUPPOSED TO HOLD THE DRIFT.** A
@@ -2678,7 +2678,7 @@ model and wrong on screen until somebody else joined the room.
 - `src/ui/enhanced/enhancedStyle.js` — the wardrobe's rules, plus `badgeCss()`.
 - `src/ui/playerBadge.js` — `cssRgba`, `badgeClass`, `badgeCss`.
 - `src/net/roster.js`, `src/ui/chatPanel.js` — the badge on a row.
-- `test/acc3wear.test.js` — 10 pins. `tools/mutants/acc3c.json` — 12,
+- `test/ui/enhanced/acc3wear.test.js` — 10 pins. `tools/mutants/acc3c.json` — 12,
   all dead.
 
 **THE CAMPAIGN CAUGHT A FIXTURE THAT PROVED NOTHING.** The pin for *"the
@@ -2790,7 +2790,7 @@ fraction.
 - `src/scenes/world.js` — `/red <text>`, parsed and never guarded.
 - `src/ui/chatPanel.js` — `.dfchat-line.red`, not an italic aside: the
   system's notices are asides and this is an announcement.
-- `test/red1_server_say.test.js` — 9 pins. `tools/mutants/red1.json` —
+- `test/net/red1_server_say.test.js` — 9 pins. `tools/mutants/red1.json` —
   12, all dead.
 
 **It rides the ordinary log**, so `ChatLog.peek` draws it over the world
@@ -2836,7 +2836,7 @@ guests are hashed with **SHA-256** and never touch PBKDF2.
 
 | | sees the cap? |
 |---|---|
-| `test/accountworker.test.js` (node) | no — node has no cap |
+| `test/server/accountworker.test.js` (node) | no — node has no cap |
 | `tools/accountProbe.mjs` (**real workerd**) | **no — workerd has no cap either** |
 | `/v1/health` after deploy | no — it hashes nothing |
 | a human registering | **yes, immediately** |
@@ -2886,7 +2886,7 @@ player.
 
 - `server-account/src/password.js` — `PBKDF2_CAP`, and `PBKDF2_ITERS`
   set to it, with the whole story at the constant.
-- `test/accountworker.test.js` — the pin re-aimed at the platform bound.
+- `test/server/accountworker.test.js` — the pin re-aimed at the platform bound.
 - `tools/accountProbe.mjs` — asserts the cap as well as the cost, and
   says out loud that it cannot see the ceiling.
 - `.github/workflows/account-deploy.yml` — the registration smoke test.
@@ -2963,7 +2963,7 @@ believe.
   `sanitizeName` and `readBadge`.
 - `src/scenes/world.js` — the session starts from the stored issued
   name; every mint corrects the presence session and every chat link.
-- `test/nameadopt.test.js` — 7 pins, **each bug reproduced before it is
+- `test/net/nameadopt.test.js` — 7 pins, **each bug reproduced before it is
   shown fixed**. `tools/mutants/nameadopt.json` — 11, all dead.
 
 **Client-only — no relay change, no account-service change.** It ships
@@ -3026,7 +3026,7 @@ which can say so on screen.
 Worker bundles. It bundles **six**: the handle shape, the name filter,
 the wire, mat4 and the name tables as well. A change to any of those five
 shipped nowhere. The filter now lists all of them plus `playClock.js`,
-and `test/accountdeploy.test.js` **walks the Worker's import graph** and
+and `test/server/accountdeploy.test.js` **walks the Worker's import graph** and
 holds the filter to it, instead of naming one file. The walk moved from
 `relayversion.test.js` into `test/importGraph.mjs` so both Workers are
 read by the same law; the relay's hash is unchanged.
@@ -3042,7 +3042,7 @@ The account Worker bundled nine files the walk never saw -
 now parses each file (acorn, a devDependency) and reads its imports,
 re-exports and literal `import()`s in the order they are written; a JSON
 table is a leaf, as before. The nine are in the filter, and
-`test/accountdeploy.test.js` IMPORT-GRAPH1 holds each Worker's graph to
+`test/server/accountdeploy.test.js` IMPORT-GRAPH1 holds each Worker's graph to
 the files esbuild itself bundles from its entry - wrangler's bundler - so
 the walk cannot drift from the Worker again. The relay's graph is the
 same sixty files in the same order, so its hash did not move.
@@ -3062,7 +3062,7 @@ same sixty files in the same order, so its hash did not move.
   now beats a throwaway guest on real D1 and requires `playedS: 0`,
   because `RETURNING` and numbered parameters are exactly the class of
   thing node runs and a platform might not.
-- `test/acc4played.test.js` — 13 pins. `tools/mutants/acc4.json` — 15,
+- `test/server/acc4played.test.js` — 13 pins. `tools/mutants/acc4.json` — 15,
   all dead.
 
 **Account service + site only.** The relay's bundle is untouched, so the
@@ -3143,7 +3143,7 @@ room change is one), not instantly; the world channel — where everyone is
   `onMuted`, `sendMuteOrder`.
 - `src/net/moderation.js` — the commands, the lookup, the words.
 - `src/ui/playerBadge.js`, `enhancedAccount.js` — the blue shield.
-- `test/mod1.test.js` — 15 pins. `tools/mutants/mod1.json` — 20, all dead.
+- `test/net/mod1.test.js` — 15 pins. `tools/mutants/mod1.json` — 20, all dead.
 
 ## MAIL1 — letters, kept for a player who is away (2026-09-23)
 
@@ -3195,9 +3195,9 @@ patreon titles. These also recieve their own unique glyphs. The account Dutchess
   already").** The same derived grant, asked again at a later moment: `FOUNDER_UNTIL` moves to the end of the day it
   was asked, 2026-09-25T00:00Z, so every account registered since TITLE-R closed it holds Founder too - no row is
   written, as ACC3 designed - and past the new cutoff the title is closed again. Guests still hold none. The account
-  service is `acct9` (acct8 on its branch; DUEL1 took acct8 first), and it takes effect on that deploy. `test/founder2.test.js`, `tools/mutants/founder2.json`
+  service is `acct9` (acct8 on its branch; DUEL1 took acct8 first), and it takes effect on that deploy. `test/server/founder2.test.js`, `tools/mutants/founder2.json`
   (2 dead); TITLE-R's and ACC3's pins read the new date.
-- `test/titlen.test.js` has 8 pins. `tools/mutants/titlen.json` has 17 mutants, all dead. The relay is world104.
+- `test/net/titlen.test.js` has 8 pins. `tools/mutants/titlen.json` has 17 mutants, all dead. The relay is world104.
 
 ## DUEL1 — the duelling record (2026-09-24)
 
@@ -3235,7 +3235,7 @@ Mac: "Give trashBattery, LostMyLeg the developer title/glyph".
   moderator OR a developer), and protection from being muted.
 - It reaches each player on their next token, after the account worker deploys. Nothing else changes, and no
   migration runs.
-- Pinned in `test/titlen.test.js`: the list's value, and that both handles hold the title and the glyph in any case.
+- Pinned in `test/net/titlen.test.js`: the list's value, and that both handles hold the title and the glyph in any case.
 
 ## AUDIT DUEL1 — the record, between registered accounts (2026-09-24)
 
@@ -3251,7 +3251,7 @@ five guests gave one account fifty wins in a quarter of an hour, with no duel.
   only ever remove a win of its own.
 - A refused report says which bound: `why` is 'guest', 'draw', 'gap', 'pair' or 'winner', and the client's line says
   it (`net/duel/duelRecord.js duelUncountedText`; a draw says nothing more, the duel said it).
-- Pinned in `test/duel_record.test.js` over the real migrations; `tools/mutants/auditduel1.json` A1 (B5 retired with the
+- Pinned in `test/server/duel_record.test.js` over the real migrations; `tools/mutants/auditduel1.json` A1 (B5 retired with the
   report itself at INT8: a duel's result is the relay's receipt, `06-Systems/Integrity-Arc.md` section 5).
 
 ## PROFILE1 — the profile mark is a portrait (2026-09-25)
@@ -3290,13 +3290,13 @@ a word. In the corner of a menu of buttons it read as one more button.
   - On a phone the caption goes and the portrait (48px) keeps the target.
 - The window it opens is unchanged.
 
-Pinned in `test/profile1_badge.test.js` (4):
+Pinned in `test/ui/enhanced/profile1_badge.test.js` (4):
 - the pick;
 - the face replacing the silhouette;
 - the signed-out, null-face and refused-face arms;
 - the frame's cascade and the door's read.
 
-`test/nameadopt.test.js`'s pin on the mark reading the store is re-aimed
+`test/net/nameadopt.test.js`'s pin on the mark reading the store is re-aimed
 at the session the door hands the badge. Mutants:
 `tools/mutants/profile1.json`, 13, all dead.
 
@@ -3369,7 +3369,7 @@ mid-session stayed on this screen and nobody else's until the next room.
 - RELAY_VERSION stays world109 (SKIN2's deploy, not yet shipped); its law
   row is re-hashed.
 
-Pinned in `test/profile2_pause_profile.test.js` (9):
+Pinned in `test/net/profile2_pause_profile.test.js` (9):
 - the live character;
 - the pause face's wiring and cascade;
 - the wire door;
@@ -3378,8 +3378,8 @@ Pinned in `test/profile2_pause_profile.test.js` (9):
 - a session drawing the new look through the real relay;
 - the hosts.
 
-`test/outsideTap.test.js` names the third scrim;
-`test/profile1_badge.test.js` reads the door's paused arm. Mutants:
+`test/ui/enhanced/outsideTap.test.js` names the third scrim;
+`test/ui/enhanced/profile1_badge.test.js` reads the door's paused arm. Mutants:
 `tools/mutants/profile2.json`, 22, all dead. Not verified in a browser
 (no probes).
 
@@ -3497,7 +3497,7 @@ read 12 inside a box").
   (`RENOWN_MAX`, `lv`, the renown order, `verifyOrder`'s kind), `net/wire.js` (`badged`'s `lv`, `readRenown`, the
   renown frame, world108), `server/src/index.js` (the stamp and the renown arm), `net/online.js` (`renownOf`,
   `sendRenownOrder`), `net/accountClient.js` (the minter names the character; `accountRenown`), `scenes/world.js` (the
-  tracker, the layer, the plaque). Pinned: `test/renown1.test.js` (18). `tools/mutants/renown1.json` (40, all dead;
+  tracker, the layer, the plaque). Pinned: `test/net/renown1.test.js` (18). `tools/mutants/renown1.json` (40, all dead;
   47 since AUDIT RENOWN1 - the seven its test titles named and the file never had).
 
 ## AUDIT RENOWN1 — before anything is built on it (2026-09-25)
@@ -3622,7 +3622,7 @@ renown's meters.
 deploy is `acct10` and `world109` - the RELAY_VERSION row rewritten with the merged bundle's hash, `RENOWN_RELAY_MIN`
 109 - or the deploy's "names this deploy" check would pass on the old Worker.
 
-Pinned: `test/auditrenown1.test.js` (19), and the RENOWN1 pins the fixes moved. `tools/mutants/auditrenown1.json`
+Pinned: `test/net/auditrenown1.test.js` (19), and the RENOWN1 pins the fixes moved. `tools/mutants/auditrenown1.json`
 (60, all dead - the one survivor of the first run, the tracker's early report after a refusal, killed by a pin added
 with RENOWN3); thirteen older records re-aimed by content (twelve in `renown1.json`, one in `disc10.json`).
 
@@ -3645,7 +3645,7 @@ read at most three levels above the character's Renown, Mac said "Yes".
 - **Where it is read.** On the client, at the kill and at the quest's end, against the page's own Renown
   (`scenes/world.js renownNow` - the token's word and the service's since). XP is the client's word in any case (the
   service bounds it by the report and the hour); the ceiling is the pace an honest client keeps.
-- Pinned: `test/renown3.test.js` (2), the RENOWN1 rules and wiring pins it moved. `tools/mutants/renown3.json`.
+- Pinned: `test/net/renown3.test.js` (2), the RENOWN1 rules and wiring pins it moved. `tools/mutants/renown3.json`.
 
 ## RENOWN4 — your Renown on your own HUD, with its bar (2026-09-25)
 
@@ -3669,13 +3669,13 @@ come; the one face that never showed it was the player's own while playing.
   only online, and from a mint before the level, so no frame draws the new level over the old total.
 - **The service is acct13** (the mint's answer; acct11, then acct12, on its branch - main's WB5b took acct11 first and BASE-HIDE acct12, so the merges renumbered it; AUDIT MERGE-PLUS E2). A service before it answers no total: the box alone until the page's
   first report is answered.
-- Pinned: `test/renown4.test.js` (7). `tools/mutants/renown4.json` (28, all dead; a total signed into the token was
+- Pinned: `test/server/renown4.test.js` (7). `tools/mutants/renown4.json` (28, all dead; a total signed into the token was
   dropped as equivalent - `mintToken` signs a fixed claim list).
 
 ## RENOWN4b — the XP bar overlaps nothing (2026-09-25)
 
 Mac: "ensure the new xp bar doesnt overlap anything"; asked whether to measure the page in a headless browser, "No,
-CSS math only". So the check is arithmetic over the sheet's own numbers (`test/renown4b.test.js` - the model, and pins
+CSS math only". So the check is arithmetic over the sheet's own numbers (`test/ui/touch/renown4b.test.js` - the model, and pins
 holding the sheet to every number it reads), and it found two things:
 
 - **The quickslot block stood in the vitals.** Its bottom is fixed at the vitals' top line (22 + 32 x scale, QS3) -
@@ -3690,12 +3690,12 @@ holding the sheet to every number it reads), and it found two things:
 
 The model covers 13 widths from 360 to 2560px, HUD scales 0.5 to 2, both dresses, mouse and touch, a phone's safe area,
 the touch stick's corner, and a row of chips - 1,820 cases (910 since UI3, which took the chip row off the HUD's foot
-for the status widget - test/renown4b.test.js): the row never meets the block or the buttons, never runs
+for the status widget - test/ui/touch/renown4b.test.js): the row never meets the block or the buttons, never runs
 past the vitals' own span, and never pushes the vitals into the block where they stood clear without it. **Found
 while doing it and not the row's doing:** on a touch screen the vitals' own strip already reaches into the
 touch buttons' rows (the column stands 12px up, the buttons from 16), and chips under the vitals already lift them
 into the block wherever the two stand side by side (at scale 1 on a 1024px screen); both stand as they were. Not measured in a browser, by Mac's call.
-Pinned: `test/renown4b.test.js` (2); `tools/mutants/renown4b.json` (9, all dead, PLUS-DEFAULT's among them).
+Pinned: `test/ui/touch/renown4b.test.js` (2); `tools/mutants/renown4b.json` (9, all dead, PLUS-DEFAULT's among them).
 
 ## RENOWN-BAR — no numbers on the HUD, the bar on the middle (2026-09-26)
 
@@ -3711,7 +3711,7 @@ the box on one side, the wider readout on the other. The first cut drew the numb
 - **The numbers are the profile menu's** - the account card the pause screen's portrait opens, where the duels and the
   gates closed are (`src/ui/enhanced/enhancedAccount.js`): its Renown row already said them for each of the five characters most
   recently played ("Mara Venn - Renown 10, 490 / 2,150 XP to Renown 11", `net/renown.js renownProgressText`; RENOWN1),
-  so nothing there changed; `test/renownbar.test.js` now holds the row to its numbers.
+  so nothing there changed; `test/ui/enhanced/renownbar.test.js` now holds the row to its numbers.
 - **The bar is on the middle** (`src/ui/enhanced/enhancedStyle.js`): the row lit is a grid of three columns - the box (36px, its
   own width: 1.6em of 13px, 5px of padding and a 2px frame a side), the bar, and an empty column as wide as the box - so
   the bar's middle is the row's, and the row is as wide as the vitals' and centred under them. Its 22px height is
@@ -3719,7 +3719,7 @@ the box on one side, the wider readout on the other. The first cut drew the numb
 - **Measured after**, over the real faces: the bar's middle 0.0px off the vitals' at 1440 and 1024px, on a 390px phone
   and a phone on its side; no words in the row; the bar 8px. 128 checks, 20 shots. **Seen while doing it and not this
   row's:** on a 390px phone the vitals' own labels already run into their percentages ("MAGICKA" into "70%").
-- Pinned: `test/renownbar.test.js` (3); `tools/mutants/renownbar.json` (6, all dead). RENOWN4's pins re-aimed at a row
+- Pinned: `test/ui/enhanced/renownbar.test.js` (3); `tools/mutants/renownbar.json` (6, all dead). RENOWN4's pins re-aimed at a row
   with no words (and the cap held with nothing pending, where the words had been the only thing telling a 0 / 0 ghost);
   its words' mutant retired with the words, the cap's and the row's re-aimed (renown4 + renown4b: 37, all dead).
 - **UI3 (2026-09-27) put the numbers back IN the bar** (Mac, the Plus UI pass: the effects to a widget of their own,
@@ -3741,7 +3741,7 @@ carry none. Two ORDER
 kinds join `mute` and `renown`, each carrying its own fields and no other's: `guild` (the carrier's character's guild now,
 or none) and `guildout` (a member row, or a guild whole, gone). Every guild act that moves a membership answers the order
 that says so, signed in place of what it says (`guildOrdersOf`); a service with no key still acts and answers null.
-Pinned: `test/guild1c.test.js`; `tools/mutants/guild1c.json`.
+Pinned: `test/net/guild1c.test.js`; `tools/mutants/guild1c.json`.
 
 ## BASE-HIDE — what an online home's owner took out of the room (2026-09-26)
 
@@ -3760,7 +3760,7 @@ visitor walks into the room its owner cleared.
   as a placement is), on the decor writes' own hour; a list the law refuses is `bad-decor` (400), no such home of the
   caller's `no-home` (404).
 - **The version.** `acct12`.
-- Pinned: `test/basehide.test.js` (the service over the real Worker and node:sqlite). `tools/mutants/basehide.json`.
+- Pinned: `test/server/basehide.test.js` (the service over the real Worker and node:sqlite). `tools/mutants/basehide.json`.
 
 ## DEV3, a fourth Disciple, and SHADOW-FANG — SirMcMobdon's own (2026-09-26)
 
@@ -3802,12 +3802,12 @@ Fang", and a Morrowind werewolf skin of their own (with the werewolf body it nee
   `adoptIdentity` now keeps a token's or a wardrobe's `glyphs` there (strings, bounded; an unchanged list is not
   written; only into the session that asked - AUDIT B4), read by `systems/ownGlyphs.js`, so it is theirs offline too
   once the service has stated them to this device (a mint or the account card since this update).
-- Pinned: `test/shadowfang.test.js` (9); DEV3 and Flylighter in `test/titlen.test.js`.
+- Pinned: `test/ui/shadowfang.test.js` (9); DEV3 and Flylighter in `test/net/titlen.test.js`.
   `tools/mutants/shadowfang.json` (20, all dead) and two grant mutants in `titlen.json`; four older records re-aimed
   by content (acc3b 2, acc3c 1, inspect1 1).
 - **AUDIT (2026-09-26, before the merge; `04-Characters/Werewolf-Body.md` has the werewolf's and the skin's).** Fixed:
   **B1** the deploy race above - the last three paired deploys landed either way round, and SirMcMobdon's hello at a
-  world113 relay was refused whole; the step is pinned in `test/accountdeploy.test.js`. The relay's verifier stays
+  world113 relay was refused whole; the step is pinned in `test/server/accountdeploy.test.js`. The relay's verifier stays
   strict (its own law: it never repairs a claim set) - the race is fixed where it is, in the order. **B4** a late
   identity answer was adopted into whichever session signed in after it asked (a name and glyphs - and a werewolf's
   skin - on another account's device). **B7** a letter's glyphs were cut at a typed 8 (SHADOW-FANG made it eight of
@@ -3848,7 +3848,7 @@ it".
   linking them. The account's row was first seen when it registered. FOUNDER4 (2026-10-04) reaches it where the two
   rows share a character; two rows that share none are still not linked.
 - The account service is `acct15`, and the rule takes effect on that deploy.
-- Pins: `test/founder3.test.js` (4), including the service end to end (a guest first seen before the cutoff, registered
+- Pins: `test/server/founder3.test.js` (4), including the service end to end (a guest first seen before the cutoff, registered
   through the Worker after it, wears Founder on its signed token). ACC3's, TITLE-N's and SHADOW-FANG's non-founder
   fixtures now first played after the cutoff too. `tools/mutants/founder3.json` has 6 mutants, all dead, and
   ACC3a's founder mutants were re-aimed at the new line (all dead).
@@ -3880,7 +3880,7 @@ owner out. So the way back is the operator's, and it is the player's own recover
 - The inputs reach the scripts as environment, never pasted into a `run:` line. The statement is the tool's own, and
   the tool refuses anything that is not a username or not a hash exactly as it wrote one. A quote in a username is
   doubled, and the account is found by `handle_lc`.
-- Pins: `test/recoverop.test.js` (4). One drives the service end to end: the operator's statement, the game's own
+- Pins: `test/server/recoverop.test.js` (4). One drives the service end to end: the operator's statement, the game's own
   recovery with the code typed without dashes, a new code, the operator's copy dead, every earlier device signed out,
   and the same account with its Founder. `tools/mutants/recoverop.json` has 7 mutants, all dead.
 
@@ -3905,7 +3905,7 @@ REALM L1-F3) buys a hall or comes back out (HALL-GOLD). So an award is the opera
   would take the treasury past its cap, or a name that finds no guild, fails the run and writes nothing.
 - The inputs reach the scripts as environment, never pasted into a `run:` line, and the run shares the deploy's queue,
   so it never runs beside a migration. It creates, migrates and deploys nothing.
-- Pins: `test/guildgrant.test.js` (4). One drives the service end to end: the dry run, the award, the ledger's line, a
+- Pins: `test/tooling/guildgrant.test.js` (4). One drives the service end to end: the dry run, the award, the ledger's line, a
   realm character's withdrawal of it. Another runs the workflow's own steps in bash over D1's answer.
   `tools/mutants/guildgrant.json` has 11 mutants, all dead.
 
@@ -3927,7 +3927,7 @@ names are this service's: one `sd_kills` row a (slot, account) the kill's receip
   grow as late claims land. A name is the account's handle as it stands now.
 - The slot is digits only (`tools/sdClears.mjs` `sdSlot`), the input reaches the scripts as environment, and the run
   shares the deploy's queue. It creates, migrates and deploys nothing, and a run that finds nothing fails.
-- Pins: `test/sdclears.test.js` (3). One drives the service's own claim end to end and reads the names back; another
+- Pins: `test/net/superDungeon/sdclears.test.js` (3). One drives the service's own claim end to end and reads the names back; another
   runs the workflow's own steps in bash over D1's answer. `tools/mutants/sdclears.json` has 9 mutants, all dead.
 
 ## SERVER-POST — the server's post, a mailbox beside the hourglass (2026-10-08, acct97)
@@ -3986,7 +3986,7 @@ the operator's workflow is its only sender.
   escaped). The inputs reach the scripts as environment; the run has its OWN queue (`server-post` - a concurrency group
   keeps one pending run, so a send sharing the deploy's would cancel a deploy waiting behind another); it creates,
   migrates and deploys nothing.
-- Pins: `test/serverpost_service.test.js` (5), `test/serverpost_client.test.js` (8), `test/serverpost_send.test.js`
+- Pins: `test/server/serverpost_service.test.js` (5), `test/net/serverpost_client.test.js` (8), `test/tooling/serverpost_send.test.js`
   (4). `tools/mutants/serverpost.json` has 33 mutants, all dead.
 
 ## HOURS-FIRST — the first clear's title, aura and gun (2026-10-08, acct97, world179)
@@ -4016,7 +4016,7 @@ unique different version of the aura, a title named Hour's First, and each the g
   over the thirteen should read "already sent: yes" for each.
 - **The relay first**: the token's vocabulary (`identityToken.js` TITLES, AURAS) is in the relay's bundle, so world179
   deploys before acct97 mints either (a relay without them refuses the token).
-- Pins: `test/hoursfirst.test.js` (4), and the first send in `test/serverpost_send.test.js`. `tools/mutants/hoursfirst.json`
+- Pins: `test/net/hoursfirst.test.js` (4), and the first send in `test/tooling/serverpost_send.test.js`. `tools/mutants/hoursfirst.json`
   has 11 mutants, all dead.
 
 
@@ -4045,7 +4045,7 @@ service honours it:
   it until the service settles it, offering the signed-in account's alone; a counted raid's Renown is the page's at once
   when that character is the one playing.
 - `ACCOUNT_VERSION` acct17; the account deploy's path filter carries `src/net/raid/raidReceipt.js` (and RAID3's
-  `src/net/raid/raidLaw.js`). No relay change. Pins: `test/raid4_rewards.test.js`; `tools/mutants/raid4.json`.
+  `src/net/raid/raidLaw.js`). No relay change. Pins: `test/net/raid4_rewards.test.js`; `tools/mutants/raid4.json`.
 
 ## AUDIT RAID — a town's thanks once, a raid's Renown the hour's (2026-09-28, acct18)
 
@@ -4061,7 +4061,7 @@ service's (`03-World/Raiding-Parties.md` "AUDIT RAID"):
   3,900 each was 11,700 an hour more for a modified client naming raids the day never rolled. The claim is charged to
   the hour as a report is (renownTracks.js's window, in the same batch): counted whatever the hour has left, paid what
   it has left, the row saying what it paid; a new character past the tracks' bound spends nothing of it.
-- `ACCOUNT_VERSION` acct18. Pins: `test/auditraid.test.js`; `tools/mutants/auditraid.json`.
+- `ACCOUNT_VERSION` acct18. Pins: `test/net/auditraid.test.js`; `tools/mutants/auditraid.json`.
 
 ## REALM P1.1 — 2026-09-28: the realm's characters, service side
 
@@ -4092,7 +4092,7 @@ from ACC2: there the local save is the truth and the cloud a backup, here the se
   and guild membership stay behind (AUDIT REALM2 S2). A second try is asked first, since the track has moved.
 - **A `seq` refusal says the service's own sequence** (REALM P1.2), so a tab whose last checkpoint landed with its
   answer lost resyncs. It is never a way in: the write still needs the lease.
-- Pins: `test/realm1.test.js` (8), driving the Worker over the real migrations. `tools/mutants/realm1.json` has 21
+- Pins: `test/server/realm1.test.js` (8), driving the Worker over the real migrations. `tools/mutants/realm1.json` has 21
   mutants, all dead (REALM P2.1 re-aimed three to the new objects and added the delete's prefix walk).
 
 ## REALM P2.1 — 2026-09-28: a trade between realm characters, settled here
@@ -4116,8 +4116,8 @@ handing its commit to the realm (`net/tradeSession.js` `escrow`, `systems/realmS
   losing write on the current object.
 - **The Worker bundles the law.** `src/net/realm/realmTradeLaw.js` and `src/net/canon.js` (TRADE1's comparison, lifted out
   of `net/tradeSession.js` into a leaf so the Worker does not bundle the client's trade machine) join the deploy's
-  path filter (`.github/workflows/account-deploy.yml`, held to the import graph by `test/accountdeploy.test.js`).
-- `acct17` still (it has not shipped). Pins: `test/realm4.test.js` (14) and `test/realm1.test.js`;
+  path filter (`.github/workflows/account-deploy.yml`, held to the import graph by `test/server/accountdeploy.test.js`).
+- `acct17` still (it has not shipped). Pins: `test/net/realm4.test.js` (14) and `test/server/realm1.test.js`;
   `tools/mutants/realm4.json` has 31 mutants, all dead.
 
 ## REALM P2.2a — 2026-09-28: a guild's gold moves on the realm character's record
@@ -4132,7 +4132,7 @@ handing its commit to the realm (`net/tradeSession.js` `escrow`, `systems/realmS
   pays). A realm character (its id the service's shape) must name its record, or `realm-needed`; no other character
   may. New refusals: `realm-needed`, `realm-gold` (the record cannot pay), and the checkpoint's own `lease` and `seq`
   (with the service's sequence). The guild routes now get the bucket.
-- The Worker bundles `src/net/realm/realmGoldLaw.js`, listed in the deploy's path filter. Pins: `test/realm5.test.js` (7);
+- The Worker bundles `src/net/realm/realmGoldLaw.js`, listed in the deploy's path filter. Pins: `test/net/realm5.test.js` (7);
   `tools/mutants/realm5.json`.
 
 ## REALM P2.2b — 2026-09-28: a home's and its decor's gold moves on the realm character's record
@@ -4146,7 +4146,7 @@ handing its commit to the realm (`net/tradeSession.js` `escrow`, `systems/realmS
   piece's own write, guarded (`realmDecorWrite`). A write that moves no gold names no record.
 - Each act asks where the record stands first (`recordMovedOf`), so one sent again after it landed is told `seq`.
   The homes and decor routes get the bucket and answer `seq` with the service's sequence, and `lease` and `realm-gold`
-  as 409s. Pins: `test/realm6.test.js` (7); `tools/mutants/realm6.json`.
+  as 409s. Pins: `test/server/realm6.test.js` (7); `tools/mutants/realm6.json`.
 
 ## RENOWN-ACCOUNT — one Renown an account, every source at three quarters (2026-09-28, acct19)
 
@@ -4182,7 +4182,7 @@ renown from resources a bit. Want some more oomph to the grind".
 
   Gates pay no Renown of their own (the gate's claim records the kill), so theirs follows the kill's rate. The weapon
   and armour sigils feed on Renown XP, so they grow a quarter slower too.
-- Rides REALM's undeployed `acct19`. Pinned: `test/renown_account.test.js` (8); `tools/mutants/renown_account.json`
+- Rides REALM's undeployed `acct19`. Pinned: `test/server/renown_account.test.js` (8); `tools/mutants/renown_account.json`
   (23, all dead). The pins of RENOWN1, RENOWN3, RENOWN4, RENOWN-BAR, AUDIT RENOWN1, RAID4, AUDIT RAID, the guild pins and
   realm5 were rewritten to the account's Renown.
 
@@ -4203,7 +4203,7 @@ The service lane of `06-Systems/Realm-Arc.md` AUDIT REALM2 (S1-S8):
 - **A checkpoint that moved nothing reads the row again**, and answers `seq` or `lease`.
 - **A lone guildmaster is deleted only once the treasury is empty** (`guild-treasury`, 409).
 
-`ACCOUNT_VERSION` stays `acct19`. Pinned: `test/auditrealm2_service.test.js` (11), over `test/realmSeat.mjs`, which
+`ACCOUNT_VERSION` stays `acct19`. Pinned: `test/systems/auditrealm2_service.test.js` (11), over `test/realmSeat.mjs`, which
 seats a realm character the realm's way for every realm pin; `tools/mutants/auditrealm2_service.json` (16, all dead).
 
 ## TERMS1 — the Terms of Service and the Privacy Policy, ticked before an account exists (2026-09-28)
@@ -4260,7 +4260,7 @@ version is what a later revision would ask again against; asking again is not bu
   boxes as drawn: two, unticked, rows at a thumb's 44px, the box and the link in brass, each link opening outside the
   game at the site, and none on any other stage (17/17). The unticked box is told the page is dark (`color-scheme`), or
   it is the browser's white square.
-- Pins: `test/terms1.test.js` (19) - the documents, the build seam, the form, the card, and the Worker end to end on
+- Pins: `test/ui/enhanced/terms1.test.js` (19) - the documents, the build seam, the form, the card, and the Worker end to end on
   node:sqlite. The 19 account suites that make accounts through a route now send the versions, and `accountflow`'s and
   `nameadopt`'s registering flows tick both boxes. `tools/mutants/terms1.json`: 28 mutants, all dead. The three records
   the change moved (ACC1c-16, ACC1e-7, GATEKEYS-the-empty-var-back) are re-aimed by content, and dead. Every other
@@ -4292,7 +4292,7 @@ also stores an optional email (ACC1c), cloud save backups with a screenshot each
   (`src/ui/enhanced/enhancedAccount.js`); pre-existing since ACC1e for the fields, every tick since TERMS1.
 - **T4** - the route table's `{ label? }` body and legalLaw.js's "a relative link would open nothing" said what the
   code does not; corrected.
-Pinned: `test/audit0929_terms.test.js` (6), `test/terms1.test.js`'s refusals; `tools/mutants/audit0929_terms.json` (14,
+Pinned: `test/server/audit0929_terms.test.js` (6), `test/ui/enhanced/terms1.test.js`'s refusals; `tools/mutants/audit0929_terms.json` (14,
 all dead).
 
 ## PENITENT, and a fifth Disciple — Diggleborf's own (2026-09-29, acct21)
@@ -4331,7 +4331,7 @@ lozenge with a sword inside it, the sword's point at the lozenge's lowest corner
 - **Seen**: rendered in the name layer's own sheet (Playwright) over a night sky, a day sky, stone, grass and snow, at
   15 and 24 px, before the colours and the shapes were chosen; then the shipped code - the real name layer, and the
   glyph at the chat's 11, the card's 15 and the profile's 16 px beside the Disciple's and Shadow Fang's.
-- Pinned: `test/penitent.test.js` (8); valenvalarys in `test/titlen.test.js`. `tools/mutants/penitent.json` (24, all
+- Pinned: `test/net/penitent.test.js` (8); valenvalarys in `test/net/titlen.test.js`. `tools/mutants/penitent.json` (24, all
   dead), and two grant mutants in `titlen.json` (21, all dead). Three older records in `shadowfang.json` were re-aimed
   by content, and the version mutants in `soc1.json` and `gatekeys.json` moved with the versions (all dead).
 
@@ -4353,7 +4353,7 @@ before the realm, after the census froze - the relay still admitted such a build
   character's id and the moment (`origin_id`, `spent_at`). Never spent on a character the census admits anyway; never
   lets in one already brought in from any account. A revoke takes back an open pass only. `tools/customsPass.mjs` is the
   developer's end of it.
-- `acct22`. Pins: `test/realmdoor.test.js` (6), `test/customspass.test.js` (6); `test/accountworker.test.js` names the
+- `acct22`. Pins: `test/net/realmdoor.test.js` (6), `test/server/customspass.test.js` (6); `test/server/accountworker.test.js` names the
   new table.
 
 ## RENOWN-CHAR — Renown a character's again (2026-09-29, acct31)
@@ -4390,8 +4390,8 @@ Renown was the account's.
 - **The client:** the account card's chip is the level of the character played last, named in its title, with a row a
   character. The page takes a raid's credit only for the character that fought it. The realm delete dialog says the
   Renown goes with the character again.
-- `acct31`. Pins: `test/renown_char.test.js` (7); `test/renown_account.test.js` now holds only what stands of
-  RENOWN-ACCOUNT (3: the rate, 0021 as it ran, the relay untouched); `test/prof1_service.test.js` a writ's Renown per
+- `acct31`. Pins: `test/server/renown_char.test.js` (7); `test/server/renown_account.test.js` now holds only what stands of
+  RENOWN-ACCOUNT (3: the rate, 0021 as it ran, the relay untouched); `test/net/prof1_service.test.js` a writ's Renown per
   character. The pins RENOWN-ACCOUNT had rewritten were put back to the character's: RENOWN1, RENOWN4, RENOWN-BAR,
   AUDIT RENOWN1, RAID4, AUDIT RAID, the guild pins, realm5 and auditrealm. Mutants: `tools/mutants/renown_char.json`
   (18: 17 dead, 1 recorded equivalent - the migration's cap, which no row can reach); `renown_account.json` keeps its
@@ -4477,9 +4477,9 @@ title they hold: upgraded, downgraded and lapsed by Patreon's own webhook, with 
 
 - The account service is `acct45`, and none of it touches the relay: no claim is new (the tiers' titles and glyphs are
   TITLE-N's), so no relay deploy.
-- Pins: `test/patreon_link.test.js` (17) - the law, the MD5 and the signature, the sealed state and ticket, Patreon's
+- Pins: `test/server/patreon_link.test.js` (17) - the law, the MD5 and the signature, the sealed state and ticket, Patreon's
   shapes, the Worker end to end with Patreon's two OAuth endpoints stood in for (the yes's own read among them), the
-  card and its flow, the config and the deploy. `tools/mutants/patreonlink.json` (47, all dead). `test/accountworker.test.js` holds the four columns; the
+  card and its flow, the config and the deploy. `tools/mutants/patreonlink.json` (47, all dead). `test/server/accountworker.test.js` holds the four columns; the
   version pins moved to acct45 (and `gatekeys.json`'s record with them).
 
 ## HERALD — the Patreon tier between Disciple and Hierophant (2026-10-01, world138, acct45)
@@ -4503,7 +4503,7 @@ stroked glyph in it.
   at 13, 15, 20 and 40 px, beside the Disciple's, the Apostle's and the Hierophant's and the moderator's shield. A
   periwinkle was lost on the day sky, a silver read as a bare name, and a purple as the Apostle's; a raised trumpet
   read as a pick and a trumpet alone as a megaphone - the banner is what makes it a herald's.
-- Pins: `test/herald.test.js` (6); the vocabulary's exact lists in `acc3titles.test.js`, `titlen.test.js` and
+- Pins: `test/net/herald.test.js` (6); the vocabulary's exact lists in `acc3titles.test.js`, `titlen.test.js` and
   `penitent.test.js`, and PATREON-LINK's tier map, moved with it; the relay's pins moved to world138, crediting HERALD
   (`auditbounty1.test.js` holds the credit). `tools/mutants/herald.json` (12, all dead); seven older records re-aimed
   by content (`penitent.json` 4, `shadowfang.json` 2, `soc1.json`'s version record) and PATREON-LINK's two config
@@ -4532,7 +4532,7 @@ players can also equip/unequip their glyphs".
   screen, as it is none on anybody else's.
 - **The card**: each glyph on the account card is a button now - full strength while shown, faded while hidden.
   Others see the change from the next hello, as a title. A relay before world143 shows every glyph.
-- Pins: `test/glyphwear.test.js`; `test/titlen.test.js` (MOD2's list).
+- Pins: `test/net/glyphwear.test.js`; `test/net/titlen.test.js` (MOD2's list).
 
 ## AEGIS — Sureme's own: the Aegis of Oblivion, its glyph and the Oblivion Ward (2026-10-03, world160, acct73)
 
@@ -4595,7 +4595,7 @@ broken arcs of violet runic script: beads on the line, curled ends, combs and a 
   the Apostle, the Protector, Shadow Fang and Penitent; the ward in a real WebGL2 from above, from a third-person camera
   and from low, at kindle 0, 0.5 and 1, and the symbols at several moments of their flights. `tools/auraProbe.mjs` now
   draws both auras: 22/22 (the fire's 11 unchanged; the symbols lit over the ward to the chest, nothing over the fire).
-- Pins: `test/aegis.test.js` (12). `tools/mutants/aegis.json` (38, all dead). The vocabulary's exact lists in
+- Pins: `test/net/aegis.test.js` (12). `tools/mutants/aegis.json` (38, all dead). The vocabulary's exact lists in
   `acc3titles.test.js` moved; the relay's pins moved to world160 crediting AEGIS (`auditbounty1.test.js` holds the
   credit) and the account's to acct73. Seven older records re-aimed by content (`herald.json`, `penitent.json`,
   `shadowfang.json`, `ribbon.json`, `wb9g.json` 3) and the version records in `soc1.json` and `gatekeys.json`.
@@ -4656,7 +4656,7 @@ glyph design if possible. with the same color of the name".
   wearer's own eye looking level and looking down. `tools/auraProbe.mjs` now draws all three auras: 33/33 (the ring
   whole and golden, the pool, no seam, no jump at the wrap, the column bright at its edges and faint across, dark beside
   it and over the crown, nothing unkindled, risen to the waist at half kindled, no veil from inside).
-- Pins: `test/primarch.test.js` (11). `tools/mutants/primarch.json` (34, all dead). The vocabulary's exact lists in
+- Pins: `test/net/primarch.test.js` (11). `tools/mutants/primarch.json` (34, all dead). The vocabulary's exact lists in
   `acc3titles.test.js` and `titlen.test.js` moved, and `aegis.test.js`'s newest-word and one-list pins (PIN MOVED); the
   relay's pins moved to world162 crediting PRIMARCH (`auditbounty1.test.js` holds the credit), the account's to acct76.
   Seven older records re-aimed by content, all dead (`aegis.json` 4, `herald.json`, `penitent.json`,
@@ -4698,7 +4698,7 @@ sign-in; link shared characters; grant by name; move the cutoff later), Mac chos
   it. Moving the cutoff, a by-name list and a sign-in carry-over were offered and not chosen.
 - The account service is still `acct76` - PRIMARCH's, undeployed, one deploy for both - and the rule takes effect when
   that deploy applies 0078. No relay change: Founder is already in the token's vocabulary.
-- Pins: `test/founder4.test.js` (5) - the law; the migration run over a seeded database (each of the five records, the
+- Pins: `test/server/founder4.test.js` (5) - the law; the migration run over a seeded database (each of the five records, the
   earliest of several linked rows, nothing without a shared character or without an earlier one, one hop, guests
   filled); its shape (the five sources, no table left behind); and the real Worker before and after 0078 (Founder in
   the wardrobe and on the signed token). `tools/mutants/founder4.json` (12, all dead); three of `founder3.json`'s
@@ -4741,7 +4741,7 @@ linking characters at every save; every account), Mac chose "Time zone + name li
   be typed by anyone. FOUNDER_HANDLES stays for them, optional and empty.
 - `ACCOUNT_VERSION` acct92 in both the Worker and `wrangler.toml`; migration 0087 (two indexes), no relay change
   (Founder is already in the token's vocabulary), no client change. The version's pins moved to acct92.
-- Pins: `test/founder5.test.js` (7) - the clock, the names, the config and the real Worker (an account first seen at
+- Pins: `test/server/founder5.test.js` (7) - the clock, the names, the config and the real Worker (an account first seen at
   10pm New York time on the 24th and one named in the config each wear Founder on the signed token; one neither holds
   none); the live link's statement and indexes (its query plans read them), and the real Worker through a cloud save
   and a customs (Founder the moment the character arrives; nothing for a character no earlier row holds, nor one
@@ -4899,7 +4899,7 @@ left in it.) SirMcMobdon already holds SHADOW-FANG's title and glyph (black #0d0
   checks could not fail - three own-eye points read off the canvas, "unkindled" compared a frame with itself, the hood
   was read against the black sky, and "open" passed with the opening gone.) NOT SEEN: in a real game client on a real
   body (ARENA2's, the Morrowind rig's or Bloodmoon's wolf).
-- Pins: `test/shadowcloak.test.js` (19) - the vocabulary; the grant; the real service end to end (wardrobe and signed
+- Pins: `test/net/shadowcloak.test.js` (19) - the vocabulary; the grant; the real service end to end (wardrobe and signed
   token); the account card's note (the aura's name, never its key); the token (one carrying every glyph and the cloak
   inside the relay's own bound) and the relay at world167; the law's measures (the hood's height and place, the
   cape's, the opening, nothing of the projection left, the mesh's every cell two triangles tiling it); the emblem as
@@ -5080,7 +5080,7 @@ painting is used.
 - **Seen**, in headless Chromium's WebGL2 through the pass itself over a stand-in body: behind, in front,
   three-quarters, beside, from above, half kindled, running, mid-beat, on a 2.09 m Beholder frame and on a Morrowind
   torso leaning into a run; and through the committed `tools/auraProbe.mjs`: 62/62, the wings' 9.
-- Pins: `test/seraphwings.test.js` (19 since AUDIT 3) - the vocabulary; the grant; the service end to end; the account card's note;
+- Pins: `test/net/seraphwings.test.js` (19 since AUDIT 3) - the vocabulary; the grant; the service end to end; the account card's note;
   the token and the relay; the law (rates whole, the mesh, the fan); the vertex half RUN (roots, sides, the fan's order,
   none in front, the facing, ribbons turned to the eye, waves beyond the breath and along each strand, the breath, the
   roots still, the wrap); on the body (pose, breadth, trail, lift); the light RUN; the ground and the sparks; no pow of a
@@ -5116,7 +5116,7 @@ the grant, versions and docs. What they found, and what was done:
   (3 s), the latest badge. No relay change, no version: the relay's own reconnect law does it. `scenes/world.js`
   asks for it when my aura (`ownAura`) differs from the one the last minted token said (`_auraHeard`, set by the
   minter's hook) - so a mint, which said it already, asks nothing. Pinned end to end through the real Room
-  (`test/auralive.test.js`, 6): a peer draws it, no leave, the host's seat kept, not superseded, taken off the same
+  (`test/net/auralive.test.js`, 6): a peer draws it, no leave, the host's seat kept, not superseded, taken off the same
   way; a run of changes one hello; a halo's socket too; the refusals.
 - **The draw cap 32** (AURA_DRAW_MAX, was 16 - a hub's crowd is more than sixteen, and the seventeenth wearer in reach
   was drawn by nobody); **a peer who blinks out of the list keeps their kindling** for AURA_FORGET_S (2 s) - it was lit
@@ -5163,7 +5163,7 @@ the grant, versions and docs. What they found, and what was done:
   one at 1080p, close up) - only the developers wear them. Cheaper ways are recorded for a later pass: the broad
   strands' noise per vertex, a smaller backlight, an indexed mesh, broad strands alone past 12 m. The sin hash's large
   arguments (the sparks') hash coarsely on some mobile GPUs.
-- Pins: `test/seraphwings.test.js` 20 (the backlight's fade from the eye; a swim then a ride or a crouch, open and lit;
+- Pins: `test/net/seraphwings.test.js` 20 (the backlight's fade from the eye; a swim then a ride or a crouch, open and lit;
   no strand twisted at its tip); `tools/mutants/seraphwings.json` 97 (four new, one re-aimed). The probe 62/62.
 
 ### WINGS-FIT (2026-10-05, Mac: "the wings should sit farther back on the eye of the beholder skin. Currently it attachs way to close and clips on certain rotational directions instead of moving with rotation. Also, the aura itself is WAY too bright. It really needs to match this and the slimness of the wings"; then "I also think theyre way to long, too large and overbearing")
@@ -5200,7 +5200,7 @@ behind the head.
   third as bright; the pool under half (0.07); the sparks softer; the light on the world 4.5 m at seven tenths (was 7 m
   at full). A strand's heart at its brightest over the clock 1.34 (was 2.70), the backlight's 0.96 (was 3.65), the pool
   0.15 (was 0.33).
-- Pins: `test/seraphwings.test.js` 21 - WINGS-FIT's own (the depth carried, dropped and uploaded, the roots there, THE
+- Pins: `test/net/seraphwings.test.js` 21 - WINGS-FIT's own (the depth carried, dropped and uploaded, the roots there, THE
   LAW from the front round to either side and many at the old depth, the backlight and the world's light behind the
   roots, the slimness, the length and the light's caps; the low plumes short in the shape);
   the figure facing nowhere facing the eye; the pool and the world's light re-pinned dimmer; a turn's sweep of the
@@ -5273,7 +5273,7 @@ read here; the aura is drawn from the sentence.
   error; every square node's law stands lit is lit in #a349a4 itself and every square over a column's top dark, square
   for square; over a bright floor still #a349a4; another moment, other squares, every one the frame; its feet on the
   ring from above, read inside it where the wall stands over nothing; no jump at the wrap; nothing unkindled.
-- Pins: `test/crystalfist.test.js` (12) - the vocabulary and the face; the glyph's shape against the reference; the grant
+- Pins: `test/net/crystalfist.test.js` (12) - the vocabulary and the face; the glyph's shape against the reference; the grant
   (case-folded, beside the Disciple, off the list, a guest, the other lists' holders); the service end to end; the token
   and the relay (world171); the name over a head, the account card's rules and the classic face; the look's law; the
   columns' law (the level at recorded moments, up and down, the ring's columns differing, the feet first while it kindles,
@@ -5290,7 +5290,7 @@ read here; the aura is drawn from the sentence.
   kept as the owner gave it, a lighter purple the owner's call; the squares are flat on the strip's faces, so at the
   ring's two sides, seen edge on, they narrow to lines; the columns stand on a wearer turned beast and on a rider as the
   ring of fire does; one program draws all six auras, so a compile failure would take them all (the eager compile in
-  `test/shadowcloak.test.js` and the probe are the guard).
+  `test/net/shadowcloak.test.js` and the probe are the guard).
 
 ## DEV4 — RookieG a developer (2026-10-05, with CRYSTAL-FIST's acct83)
 
@@ -5298,7 +5298,7 @@ The owner: "Also add RookieG(Dev) as developer"; asked whether the brackets were
 then "Change RookieG(Dev) to RookieG". `DEVELOPER_HANDLES` holds `RookieG`, fifth: the developer title, the dev glyph,
 /red, /mute and /unmute (titles.js `canModerate`) and the developers' Seraph Wings, case-folded as every list is. The
 handle exactly: `RookieG(Dev)` (a handle may carry brackets - `net/handleShape.js` HANDLE_RE) is another account and
-holds none of it, nor does a near name. Pins: `test/titlen.test.js` (the list, the handle case-folded, the bracketed
+holds none of it, nor does a near name. Pins: `test/net/titlen.test.js` (the list, the handle case-folded, the bracketed
 handle and four near names refused); `tools/mutants/titlen.json` DEV4-rookieg-not-granted (the bracketed handle listed
 instead - dead) and DEV3's record re-aimed by content.
 
@@ -5316,7 +5316,7 @@ faces and the glyph; the pins, the mutants and the docs), every finding checked 
 | A5 | LOW: a glow cut into a line over each column's top | the glow gone |
 | A6 | LOW: the ring repeated every six seconds (1/2, 1/3, 1/2 Hz) and two wearers six seconds of seed apart rose as one; `uSeed` unused | rates 61, 41, 59 in 120 s; the wearer's own clock (`resonanceClock`) |
 | A7 | (found fixing A3) the ground's middle, where atan(0, 0) is no number, painted white under the premultiplied blend | the ground answers the ring's feet alone |
-| A8 | LOW: the widest-token pin left out `ar` and `cl`; with them a token is 639 of 640 | `test/shadowfang.test.js` carries both |
+| A8 | LOW: the widest-token pin left out `ar` and `cl`; with them a token is 639 of 640 | `test/ui/shadowfang.test.js` carries both |
 | A9 | LOW: the glyph's ends square where the reference's corners are rounded two pixels | each corner taken off alike |
 | A10 | LOW: pins - the ring "inside the fire's" up to 0.9 m; a frozen bounce or a dropped beat passed both sides; the kindle's foot unpinned; two tautologies | the recorded levels, the strict radius, the foot first, a stopped rate refused |
 | A11 | LOW: docs - "a one-colour title wears every face's black text shadow" (not the classic face's); Rendering.md's probe count; a comment that credited CRYSTAL-FIST with ARENA-LADDER's renumbering; RESONANCE_RGB a second literal of the purple | each corrected; the purple imported |
@@ -5324,8 +5324,8 @@ faces and the glyph; the pins, the mutants and the docs), every finding checked 
 
 Left, said: the title's contrast (the "Left as they are" above); the classic face's backslash rests on FONT0003's glyph 59
 having a width, as `~`, `^` and `|` do - no ARENA2 here to read it; a token with every glyph AND `gx` was over the
-relay's 640 before this change (no player holds every glyph). Pins: `test/crystalfist.test.js` (12, rewritten for A2-A10),
-`test/shadowfang.test.js` (A8); `tools/mutants/crystalfist.json` 45, all dead; the probe 71/71.
+relay's 640 before this change (no player holds every glyph). Pins: `test/net/crystalfist.test.js` (12, rewritten for A2-A10),
+`test/ui/shadowfang.test.js` (A8); `tools/mutants/crystalfist.json` 45, all dead; the probe 71/71.
 
 ## SPRITE-FACE — the wings face as the sprite's picture does (2026-10-05)
 
@@ -5365,7 +5365,7 @@ make the aura misallign".
   unchanged; exterior.js draws no aura - FLAGGED, unchanged.
 - **The sprite's own turning is the mod's** - its eight pictures, its gate, its delayed repaint - and is not changed; the
   aura now follows it exactly, picture for picture and frame for frame.
-- Pins: `test/spriteface.test.js` (5) - the law (the round trip from every line of sight, the bucket's middle, half a
+- Pins: `test/player/eyeOfTheBeholder/spriteface.test.js` (5) - the law (the round trip from every line of sight, the bucket's middle, half a
   picture at most, no line no facing); my body DRIVEN frame by frame (every frame the picture shown; a key turning the
   walk first and the picture after the delay, the wings with the picture; the eye going round, the picture changing and
   the wings with it, the walk still; the saddle; first person; undrawn); a peer's walker, beast and rider driven through
@@ -5438,7 +5438,7 @@ among them.
   handle exactly, was drafted and held for the owner's word - it rewrites rows across the live database. There is still
   no rename route (OPEN above), so such a player cannot choose a new handle.
 - acct117 (with YARD-SWEEP, `06-Systems/Online-Arc.md`).
-- **Pinned**: `test/handleemail.test.js` (4) - the law and the refusal's order and sentence; the real route refusing
+- **Pinned**: `test/net/handleemail.test.js` (4) - the law and the refusal's order and sentence; the real route refusing
   one; an address chosen before signing in, named by its guest name in the login and the token, its card showing its
   handle; the form refusing before any request and never refusing the sign-in; `tools/mutants/handleemail.json` (6,
   all killed).
@@ -5460,7 +5460,7 @@ signs it.
 - **The mint** (`/v1/auth/token`, accounts.js wornNameOf): the account's name, or - where the row chose its
   character's - the realm character's own name, off the row the token is minted for: `server-account/src/realm.js`
   realmMintFacts answers `name`, a fifth answer of SCALE4f's one read of that row, never a second statement
-  (`test/scale4f.test.js` holds it to its own read beside the four). Never a word of the request: the body names WHICH
+  (`test/server/scale4f.test.js` holds it to its own read beside the four). Never a word of the request: the body names WHICH
   character, as it always did. Another account's character, one not in play, or none named: the account's, silently -
   there is nothing to wear. The answer says `name` (the token's - the room's), `accountName` (the account's own),
   `nameAs`, and, where the character's name stood aside, `nameWhy` and `nameWord`.
@@ -5521,12 +5521,12 @@ signs it.
 - **No relay change.** `n` was always "the display name" (identityToken.js), and claimsValid ties it to nothing but
   the wire's own law, so the relay draws whatever the mint signs. `RELAY_VERSION` stays world197. acct122 - acct121 on its branch,
   renumbered past BAL9 at the merge (`05-Combat/Balance-Arc.md` section 15 took acct121 the same day).
-- **Pinned**: `test/nameas_service.test.js` (6) - the law; the route; the mint over a real realm character; the
-  fallbacks through the real mint; a letter by account; a note's account. `test/nameas_client.test.js` (7) - the
+- **Pinned**: `test/net/nameas_service.test.js` (6) - the law; the route; the mint over a real realm character; the
+  fallbacks through the real mint; a letter by account; a note's account. `test/net/nameas_client.test.js` (7) - the
   minter's two names; the reason in words; the stamp; the flow; the card; the host by source; a friend's letter's
-  wire. `test/mail1.test.js`'s friend-letter pin re-aimed and driven end to end over the real service - the letter
-  reaches the friend's account and not the account whose username is the row's word. `test/scale4f.test.js`'s oracle
-  carries the fifth answer; `test/accountworker.test.js`'s schema pin the column. `tools/mutants/nameas.json` - 39,
+  wire. `test/server/mail1.test.js`'s friend-letter pin re-aimed and driven end to end over the real service - the letter
+  reaches the friend's account and not the account whose username is the row's word. `test/server/scale4f.test.js`'s oracle
+  carries the fifth answer; `test/server/accountworker.test.js`'s schema pin the column. `tools/mutants/nameas.json` - 39,
   all dead. Re-aimed: ACCOUNT_VERSION's pins at acct122 (PIN MOVED; BAL9c's service-behind-the-law record re-aimed
   with them, its mutant still below law 3's floor); CHAT1's and AUDIT DROPS F's online-frame order,
   for the frame's call; SHADOW-FANG's skin pin on the mint's adoption (the account's name beside the answer it keeps
@@ -5603,7 +5603,7 @@ does not call a right code wrong.
 **Not done, and offered:** passkeys (Face ID, a fingerprint, Windows Hello) as a second way in, and an emailed reset for
 the players who chose to give an address - each its own slice if it is wanted.
 
-Pinned by `test/recoveryset.test.js` (17), `test/audit_recoveryset.test.js` (15) and the moved pins of ACC1c, ACC1e
+Pinned by `test/server/recoveryset.test.js` (17), `test/server/audit_recoveryset.test.js` (15) and the moved pins of ACC1c, ACC1e
 and AUDIT 68 (`accountworker`, `accountflow`, `enhancedaccount`, `audit68_backend`) and of TERMS1 (`terms1`);
 `tools/mutants/recoveryset.json` (47: 44 dead, three recorded equivalent - guards no writer reaches) and
 `tools/mutants/audit_recoveryset.json` (47, all dead).
@@ -5664,6 +5664,6 @@ RED1's /red, MOD1's /mute and /unmute and the protection from being muted (`canM
 (`isDeveloper`) and the POI editor's builder door (`poi.js`; BUILDER_HANDLES does not name them). A title or aura the
 row still stores is not worn (`titleWorn`, `auraWorn`: a stored choice, a grant checked now), so no column is cleared
 and no migration runs. Nothing else changes: the DEATHLOOP1 and DEATH-BODY1 records keep their
-reports, which are history. Pins: `test/titlen.test.js` (the list; the handle in any case holds no title, glyph, wings or
+reports, which are history. Pins: `test/net/titlen.test.js` (the list; the handle in any case holds no title, glyph, wings or
 moderating, and wears neither what it stored); `tools/mutants/titlen.json` DEV5-trashbattery-still-listed (the handle
 left on the list - dead), and DEV3's and DEV4's records re-aimed by content.

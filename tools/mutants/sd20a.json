@@ -5,7 +5,7 @@
     "old": "const pulseStepPct = (step, n) => Math.min(SD_PULSE_MAX, SD_PULSE_PCT + step * Math.max(0, Math.floor(Number(n) || 0)));",
     "new": "const pulseStepPct = (step, n) => SD_PULSE_PCT + step * Math.max(0, Math.floor(Number(n) || 0));",
     "tests": [
-      "test/sd20a_fight.test.js"
+      "test/net/superDungeon/sd20a_fight.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "(atk?.sh?.ps != null ? pulseStepPct(atk.sh.ps, atk.n) :",
     "new": "(atk?.sh?.ps != null ? SD_PULSE_PCT + atk.sh.ps * Math.max(0, Math.floor(Number(atk.n) || 0)) :",
     "tests": [
-      "test/sd20a_fight.test.js"
+      "test/net/superDungeon/sd20a_fight.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "export const SD_PULSE_MAX = 0.75;",
     "new": "export const SD_PULSE_MAX = 1;",
     "tests": [
-      "test/sd20a_fight.test.js"
+      "test/net/superDungeon/sd20a_fight.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "text: 'Each Mantella Pulse climbs twice as fast, to three quarters of your health at most.'",
     "new": "text: 'Each Mantella Pulse strikes harder than the last by twice as much.'",
     "tests": [
-      "test/sd20a_fight.test.js"
+      "test/net/superDungeon/sd20a_fight.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "export const arenaHolds = (joined, x, z) => !!joined && Number.isFinite(x)",
     "new": "export const arenaHolds = (joined, x, z) => Number.isFinite(x)",
     "tests": [
-      "test/sd20a_fight.test.js"
+      "test/net/superDungeon/sd20a_fight.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "Math.hypot(x - SD_ARENA.x, z - SD_ARENA.z) <= SD_ARENA.r;",
     "new": "Math.hypot(x - SD_ARENA.x, z - SD_ARENA.z) <= Infinity;",
     "tests": [
-      "test/sd20a_fight.test.js"
+      "test/net/superDungeon/sd20a_fight.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "export const SD_ARENA_FLOORS = Object.freeze([Object.freeze({ kind: 'disc', ...SD_ARENA })]);",
     "new": "export const SD_ARENA_FLOORS = Object.freeze([Object.freeze({ kind: 'disc', ...SD_ARENA }), Object.freeze({ kind: 'band', x: 0, z0: 0, z1: SD_ARENA.z, halfW: 40 })]);",
     "tests": [
-      "test/sd20a_fight.test.js"
+      "test/net/superDungeon/sd20a_fight.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "    return arenaHolds(true, x, z);",
     "new": "    return false;",
     "tests": [
-      "test/sd20a_fight.test.js"
+      "test/net/superDungeon/sd20a_fight.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "player.arena = sdArenaHeld() ? _realmArenaHeld : sdConcordHere()",
     "new": "player.arena = sdConcordHere()",
     "tests": [
-      "test/sd20a_fight.test.js"
+      "test/net/superDungeon/sd20a_fight.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "      if (!out.all) {\n        out.all = true;\n",
     "new": "      if (landing('all')) {\n",
     "tests": [
-      "test/sd20a_fight.test.js"
+      "test/net/superDungeon/sd20a_fight.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "      if (!out.all) {\n        out.all = true;\n",
     "new": "      {\n        out.all = true;\n",
     "tests": [
-      "test/sd20a_fight.test.js"
+      "test/net/superDungeon/sd20a_fight.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "      if (now - (b.pAt ?? b.since ?? 0) > SD_POSE_FRESH_MS) continue;\n",
     "new": "",
     "tests": [
-      "test/sd20a_fight.test.js"
+      "test/net/superDungeon/sd20a_fight.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": ", ...(isSdRoom(a.key) ? { pAt: now } : {}) }",
     "new": ", }",
     "tests": [
-      "test/sd20a_fight.test.js"
+      "test/net/superDungeon/sd20a_fight.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": ", ...(isSdRoom(a.key) ? { pAt: now } : {}) }",
     "new": ", pAt: now }",
     "tests": [
-      "test/sd20a_fight.test.js"
+      "test/net/superDungeon/sd20a_fight.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "export const SD_POSE_FRESH_MS = 25_000;",
     "new": "export const SD_POSE_FRESH_MS = 60_000;",
     "tests": [
-      "test/sd20a_fight.test.js"
+      "test/net/superDungeon/sd20a_fight.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "bodies = this._sdFightBodies(f, now), census",
     "new": "bodies = this._sdFightBodies(f), census",
     "tests": [
-      "test/sd20a_fight.test.js"
+      "test/net/superDungeon/sd20a_fight.test.js"
     ],
     "note": "INT11-INT14 (PIN MOVED): re-aimed by content at the lane's own change of this text. "
   },
@@ -150,7 +150,7 @@
     "old": "if (alive && link.counted()) {",
     "new": "if (alive) {",
     "tests": [
-      "test/sd20a_fight.test.js"
+      "test/net/superDungeon/sd20a_fight.test.js"
     ]
   },
   {
@@ -159,8 +159,8 @@
     "old": "law: Object.freeze({ heartX: 1.25 })",
     "new": "law: Object.freeze({ heartX: 1.5 })",
     "tests": [
-      "test/sd20a_fight.test.js",
-      "test/sd18a_marks.test.js"
+      "test/net/superDungeon/sd20a_fight.test.js",
+      "test/net/superDungeon/sd18a_marks.test.js"
     ]
   },
   {
@@ -169,7 +169,7 @@
     "old": "    if (R && f.pulseAt < R.at + SD_PULSE_CLEAR_MS) f.pulseAt = R.at + SD_PULSE_CLEAR_MS;\n    else {",
     "new": "    {",
     "tests": [
-      "test/sd20a_fight.test.js"
+      "test/net/superDungeon/sd20a_fight.test.js"
     ]
   },
   {
@@ -178,7 +178,7 @@
     "old": " && !(f.clock && f.clock.a === SD_BLOWS.pulse.id)) {",
     "new": ") {",
     "tests": [
-      "test/sd20a_fight.test.js"
+      "test/net/superDungeon/sd20a_fight.test.js"
     ]
   },
   {
@@ -187,7 +187,7 @@
     "old": "export const SD_PULSE_CLEAR_MS = 4000;",
     "new": "export const SD_PULSE_CLEAR_MS = 0;",
     "tests": [
-      "test/sd20a_fight.test.js"
+      "test/net/superDungeon/sd20a_fight.test.js"
     ]
   },
   {
@@ -196,7 +196,7 @@
     "old": "export const SD_REM = Object.freeze({ r: 2.2, h: 7.2, speed: 2.6, keep: 19 });",
     "new": "export const SD_REM = Object.freeze({ r: 2.2, h: 7.2, speed: 2.6, keep: 18 });",
     "tests": [
-      "test/sd20a_fight.test.js"
+      "test/net/superDungeon/sd20a_fight.test.js"
     ]
   },
   {
@@ -205,7 +205,7 @@
     "old": "* SD_CAST_BACK_LOSS));\n      hurtPlayer(playerEntity, dmg, { bypassShield: true, spare: () => {} });",
     "new": "* SD_CAST_BACK_LOSS));\n      hurtPlayer(playerEntity, dmg, { bypassShield: true });",
     "tests": [
-      "test/sd20a_fight.test.js"
+      "test/net/superDungeon/sd20a_fight.test.js"
     ]
   },
   {
@@ -214,7 +214,7 @@
     "old": "* SD_FRAY_LASH));\n      hurtPlayer(playerEntity, dmg, { bypassShield: true, spare: () => {} });",
     "new": "* SD_FRAY_LASH));\n      hurtPlayer(playerEntity, dmg, { bypassShield: true });",
     "tests": [
-      "test/sd20a_fight.test.js"
+      "test/net/superDungeon/sd20a_fight.test.js"
     ]
   },
   {
@@ -223,7 +223,7 @@
     "old": "(over || !behindPillar(atk.x, atk.z, px, pz))",
     "new": "!behindPillar(atk.x, atk.z, px, pz)",
     "tests": [
-      "test/sd20a_fight.test.js"
+      "test/net/superDungeon/sd20a_fight.test.js"
     ]
   },
   {
@@ -232,7 +232,7 @@
     "old": "feetOver = ry >= SD_PILLAR_OVER_Y;",
     "new": "feetOver = false;",
     "tests": [
-      "test/sd20a_fight.test.js"
+      "test/net/superDungeon/sd20a_fight.test.js"
     ]
   },
   {
@@ -241,7 +241,7 @@
     "old": "  if (H.over) return true;",
     "new": "  if (false) return true;",
     "tests": [
-      "test/sd20a_fight.test.js"
+      "test/net/superDungeon/sd20a_fight.test.js"
     ]
   },
   {
@@ -250,7 +250,7 @@
     "old": "cam.yaw, !!sdBlows?.over?.()) : null;",
     "new": "cam.yaw, false) : null;",
     "tests": [
-      "test/sd20a_fight.test.js"
+      "test/net/superDungeon/sd20a_fight.test.js"
     ]
   },
   {
@@ -259,7 +259,7 @@
     "old": "export const SD_PILLAR_OVER_Y = SD_PILLAR_H - 0.5;",
     "new": "export const SD_PILLAR_OVER_Y = 0;",
     "tests": [
-      "test/sd20a_fight.test.js"
+      "test/net/superDungeon/sd20a_fight.test.js"
     ]
   },
   {
@@ -268,7 +268,7 @@
     "old": "return Math.max(Math.min(SD_HEART.min, Math.round(team)), ",
     "new": "return Math.max(SD_HEART.min, ",
     "tests": [
-      "test/sd20a_fight.test.js"
+      "test/net/superDungeon/sd20a_fight.test.js"
     ]
   }
 ]

@@ -43,7 +43,7 @@ character's house is still the batch's own `no-home`. The town's answer marks th
 (never another account's, never a price), the client keeps the mark, and the door says the bank's own words for a
 crossed deed (`HOME_CROSSED_LINES`: "That came into the realm through customs. The bank of the Empire does not buy it
 back. It stays your home.") and asks no price. A sale is one at a time a house (`sale-out`, silent - the first
-answer speaks), and `busy` has its own sentence. `test/fb0930_homecrossed.test.js` (5) drives the real service and
+answer speaks), and `busy` has its own sentence. `test/systems/online/fb0930_homecrossed.test.js` (5) drives the real service and
 client; three older pins that held the zero sale were re-aimed (`auditrealm` twice, `fb0929_customs`; PIN MOVED) and
 `auditrealm2_client`'s C6 mount handed the new word. `acct33`.
 
@@ -66,7 +66,7 @@ when it ran out.
 **The fix** (`scenes/foragingWait.js`): `holds()` answers false while the release runs, so a box it runs is shown; one
 release runs only the boxes held when it began, so it ends whatever a box does; a box that takes the slot still ends
 the release, and the next is shown when the slot is free. A player already stuck sits out what is left of the page at
-the next login and then reads the finds. `test/fb0930_chopwait.test.js` (3); two records re-aimed (FORAGE4-10,
+the next login and then reads the finds. `test/systems/quest/fb0930_chopwait.test.js` (3); two records re-aimed (FORAGE4-10,
 AUDIT28-H6).
 
 ## RESPAWN-GROUND: a dungeon death wakes at its own door, on the ground (3)
@@ -87,7 +87,7 @@ eye is always on its pixel.
 
 **The fix** (`scenes/world.js`): the pixel is read with the drowned dungeon's return point, before the rise is
 scheduled; and an eye off the new pixel's square is stood on its centre before the build is awaited (the body too, in
-walk mode) - which covers Recall, a quest's teleport and the cemetery out of a dungeon as well. `test/fb0930_respawnground.test.js`
+walk mode) - which covers Recall, a quest's teleport and the cemetery out of a dungeon as well. `test/player/fb0930_respawnground.test.js`
 (2); `oh_abyss`'s B5 pin re-aimed.
 
 ## REALM-BIRTH: a character born online boots the Online door's Play of it (4)
@@ -100,7 +100,7 @@ realm's three keys) booted the same character fine.
 
 **The fix** (`systems/realmSaves.js`): `realmBootSearch` builds that Play key for key and names its host (`classic`,
 `world`); the boot joins the character and takes the load arm, so the save chargen left in Privateer's Hold is the one
-that loads. A reload of that page (F5) goes back into the character rather than to the menu. `test/fb0930_realmbirth.test.js`
+that loads. A reload of that page (F5) goes back into the character rather than to the menu. `test/systems/fb0930_realmbirth.test.js`
 (2) runs `main.js`'s own scene doors and front-door decisions and `realmBirth`'s reload expression; `realm3` re-aimed.
 
 ## FALL-KEPT: a save taken mid-fall lands the fall (5)
@@ -116,7 +116,7 @@ street, the building re-entered, the dungeon's saved position; the door-less rep
 none). Both are bounded by the world's tallest drop (MaxTerrainHeight x TerrainScale, 1,923.75 m) and that drop's speed
 from rest, so a torn save stands no fall the world does not hold; a torn or absent record lands as every save did. The
 re-skin hold's release keeps a fall across its re-anchor. Saving in the air is not refused: a refusal would skip the
-quiet saves (the checkpoint, the page-hide save, the exit autosave) and lose their progress. `test/fb0930_fallkept.test.js`
+quiet saves (the checkpoint, the page-hide save, the exit autosave) and lose their progress. `test/systems/save/fb0930_fallkept.test.js`
 (8); ten older pins re-aimed to the pose's new field.
 
 ## PACK-PHONE: the stacked pack's region gives way, and the body is a choice on a phone (6)
@@ -135,7 +135,7 @@ U53's phone order rule had ordered nothing since PX19f wrapped `.charcol`.
 and scrolls on its own, the dock grows from nothing to at least 45% (the item count never sizes it), and the doll is
 capped at `min(34dvh, 240px)`. On a touch phone the body is hidden until the header's **Body** shows it, the choice
 remembered on the player's own shelf (`packPhoneDoll`); the worn panels take the doll's column and keep every act, the
-tab strip is one row, and on its side the phone is two columns. The dead U53 rule is gone. `test/fb0930_packphone.test.js`
+tab strip is one row, and on its side the phone is two columns. The dead U53 rule is gone. `test/systems/fb0930_packphone.test.js`
 (5); the layout probe (`tools/enhancedPackLayoutProbe.mjs`, rebuilt - its front door was gone) measures seven phones, a
 tablet, a narrow mouse window and the desk: 63/131 checks before, 131/131 after (a 915x412 list 0px to 237px; 412x915
 8px to 362px; the desk unchanged at 446px).
@@ -153,7 +153,7 @@ closed saying "Worn yes" whatever the hood was.
 drape's other drawing (`variant ^ 1` - the felt temperature's tables pair the drawings, one hooded in each), says "You
 raise your hood." / "You lower your hood.", redraws the doll and keeps the card up; a raised hood puts a chip on its
 panel; an enchanted hooded cloak keeps its Use for its Used payload. The hint names the skin's own button. The classic
-window is DFU's and unchanged - it redraws its doll at every drawing. `test/fb0930_hoodsaid.test.js` (4); three older
+window is DFU's and unchanged - it redraws its doll at every drawing. `test/systems/fb0930_hoodsaid.test.js` (4); three older
 pins and three records re-aimed.
 
 ## CC: Climates & Calories - six departures from the mod as read (11)
@@ -171,32 +171,32 @@ the red, the Casual loan owed through three. No source of the mod's (the bundle 
 `ui/enhanced/enhancedTavern.js`), each a declared departure (Port-Ledger A) but one:
 - **TAVERN-DRINK**: a drink quenches the thirst whole, whatever its kind, as a meal fills the stomach whole; its
   drunkenness by kind and its quarter hour stand, and the Casual loan comes back in the same pick. The desert juice:
-  150 to 12.5 in one cup. `test/fb0930_cc_drink.test.js` (3).
+  150 to 12.5 in one cup. `test/systems/survival/fb0930_cc_drink.test.js` (3).
 - **INN-WATER**: every tavern menu - the classic picker and the enhanced list - opens its drinks with "Fill your
   waterskins", at the list's cheapest soft drink (2 gold at quality 10), the fountain's own law (`drinkAtSource`: every
   skin filled, the thirst quenched, its words, no time passed); refused before any coin moves with "You carry no
   waterskin." or "Your waterskins are full.". Tavern rows are no realm act; the water pays as the others do.
-  `test/fb0930_cc_innwater.test.js` (4).
+  `test/systems/survival/fb0930_cc_innwater.test.js` (4).
 - **MENU-CLIMATE** - the port's own fault: `MENU_KEY_BY_CLIMATE` was written 224-233 over climates that run 223 (Ocean)
   to 232 (Haunted Woodlands), so every climate served the menu of the one before it - Sentinel's desert the bay's
   bananas, the mountains the desert's camel milk, the Ocean the default. Keyed by the enum's names now, each the menu its
-  number was written for. `test/fb0930_cc_menuclimate.test.js` (2). [AUDIT C&C I8 (2026-10-12): the table is the mod's
+  number was written for. `test/systems/survival/fb0930_cc_menuclimate.test.js` (2). [AUDIT C&C I8 (2026-10-12): the table is the mod's
   own climate fallback now, behind the region (`regionMenuDay`) - the Ocean the default, the mountains the North's.]
 - **ROOF-SHELTER**: inside a building the natural temperature is the milder of the street's own now and the roofed half
   (a tie the roof's) - a roof never makes it hotter or colder than the street. The desert inn at 23:00 reads 5, at noon
   27 (warm); a mountain inn keeps its roof's -30 against a street of -60. Underground unchanged.
-  `test/fb0930_cc_roof.test.js` (3). [AUDIT C&C T4 (2026-10-12): the milder by size picked across nought, and a
+  `test/systems/survival/fb0930_cc_roof.test.js` (3). [AUDIT C&C T4 (2026-10-12): the milder by size picked across nought, and a
   warmer street read colder inside - it is the street's own reading softened to the roof's size now, never across
   nought and never harsher than the street. T9: the mod's published source reads the climate, the season and the hour
   indoors, with no weather and no halving, and charges no temperature indoors at all.]
 - **CLOTHES-BREATHE**: above a natural ten (the warm word's line) clothing counts at half its warmth, truncated, before
-  the wet eats it; the cold and armour unchanged. `test/fb0930_cc_breathe.test.js` (2). [AUDIT TEMP-UI E7
+  the wet eats it; the cold and armour unchanged. `test/systems/survival/fb0930_cc_breathe.test.js` (2). [AUDIT TEMP-UI E7
   (2026-10-12): the half came at once, so a warmer world read cooler - it eases in now, a degree less a degree past
   ten, never past half.]
 - **WARM-SAID**: leaving scorching for a stage that is not red says "You are cooling down.", leaving freezing or deadly
   cold "You are warming up.", and a soaking dried "You have dried off." - once a recovery, the improving stages still
   silent. A Woodlands winter soak, then an inn: "You are warming up." at 22 minutes, "You have dried off." at 79, and
-  comfortable. `test/fb0930_cc_said.test.js` (3).
+  comfortable. `test/systems/survival/fb0930_cc_said.test.js` (3).
 
 Older pins re-aimed: `surv5_ui` (the drink, the menu keys), `survtiers` (the order call), `surv1_model` (the hood's two
 reads), and two `survtiers` records.
@@ -210,7 +210,7 @@ comes as a letter of credit worth the whole withdrawal, no commission. One maker
 pinned equal to the game's own letter) writes it on the record and in the pack; the service reads nothing but `true` as
 a letter and moves the lit light's index with the pack; the Guild tab says the trade window's line. The reporter's
 parenthesis - gold put in before the realm - is AUDIT REALM L1-F3's law (a realm character takes out only what realm
-characters put in), unchanged; its refusal now says the rule. `test/fb0930_guildletter.test.js` (6); four records
+characters put in), unchanged; its refusal now says the rule. `test/systems/fb0930_guildletter.test.js` (6); four records
 re-aimed (`guild1b`, `realm5`). `acct33`.
 
 ## PROTECT-FIGHT: under the protection, a fight spares the street's walkers (9)
@@ -227,7 +227,7 @@ GameManager.AreEnemiesNearby over both street pools (`fightHere`) - the walkers 
 the swing stopped on them; with none near a blow at a townsperson is meant (a vampire's feeding, the Brotherhood's
 count, pinned by `disc10_lycan`/`disc10_vampire`) and DFU's rule stands, as it does with the protection off. The
 fixed-city host's riding trample asks the same rule as world.js's (it took the walkers unfiltered). The passive
-Conspiracy levy that followed a first mark is retired by REP1 (#464). `test/fb0930_protectfight.test.js` (2); two
+Conspiracy levy that followed a first mark is retired by REP1 (#464). `test/scenes/fb0930_protectfight.test.js` (2); two
 RAID-GUARDS-NPC records re-aimed.
 
 ## CUSTOMS-ELSEWHERE: a character counted on another account is told so (10)
@@ -240,7 +240,7 @@ the account it went online with, and one character played on two accounts (a gue
 another; the desktop app beside the web) got "no record" - sending the player for a pass they did not need. Customs
 names that case now (`customs-other-account`, 403: "The realm knows this character from another account - the one you
 played it online with. Sign in with that account to bring it in."), and a character already brought in from any
-account is `customs-already`; the gate (customsRealm's one guarded write) is unchanged. `test/fb0930_customselsewhere.test.js`
+account is `customs-already`; the gate (customsRealm's one guarded write) is unchanged. `test/net/fb0930_customselsewhere.test.js`
 (1); `realm1`'s stranger line and one `customspass` record re-aimed. `acct33`.
 
 Pins: `test/fb0930_{homecrossed,chopwait,respawnground,realmbirth,fallkept,packphone,hoodsaid,guildletter,protectfight,

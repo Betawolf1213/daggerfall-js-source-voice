@@ -56,7 +56,7 @@ The keys were never the hole: G under the page puts the page away and G again pl
 (`ui/messageBox.js`'s, DLG1) replays its press on the canvas, so its host already handed it to the top window; only
 the keyed menu reached its window directly. `10-UI/Tutorials.md` carries the note.
 
-`test/fb1013b_plealoop.test.js` (4): the report's court through the real host, flow, page and dialog - covered, the plea
+`test/ui/fb1013b_plealoop.test.js` (4): the report's court through the real host, flow, page and dialog - covered, the plea
 is painted, wears the class the composed sheet gives no pointer (and no `.dlg-` rule gives back), answers neither
 button; the canvas click puts the page away and marks it read; uncovered, Guilty pleads once, the prison screen
 replaces the plea, its buttons never come back, the term is served once and released once; the stack's answer through
@@ -121,7 +121,7 @@ the console lines are there to name the source: a player who still loses the bod
 `[online] a body's drawn pose is not finite` or `[mw] a body's picture could not be measured` (the desktop app: View,
 Toggle Developer Tools, Console).
 
-`test/fb1013b_onebadbody.test.js` (3): one body of five whose picture cannot be measured is refused at the door, the
+`test/net/peer/fb1013b_onebadbody.test.js` (3): one body of five whose picture cannot be measured is refused at the door, the
 other four each in their own tile and quad, the first tile drawn once (the real Renderer over a recording GL and the
 real drawRigSpriteBox; a width or a height alone not a number refused too); a peer whose drawn pose goes non-finite
 keeps its body where it last stood and its yaw a number, moves on with the next good pose, says so once, and a body
@@ -139,10 +139,10 @@ born on a bad yaw takes the first good one (the real PeerBodies over a stub rig)
 
 ## Pins
 
-`test/fb1013b_plealoop.test.js` (4), `test/fb1013b_onebadbody.test.js` (3). `tools/mutants/fieldbugs1013b.json`: 20, all
+`test/ui/fb1013b_plealoop.test.js` (4), `test/net/peer/fb1013b_onebadbody.test.js` (3). `tools/mutants/fieldbugs1013b.json`: 20, all
 dead (PLEA-LOOP 12, ONE-BAD-BODY 8). Re-aimed by content, dead: `auditdisc28_arrest.json`'s
 AR1-an-abandoned-trial-still-steps (the step's new guard), `climb5.json`'s CLIMB5-body-eases-to-the-camera (the yaw read
 once as `want`) and `htwaist.json`'s HT-WAIST-BACK-the-pace-jump-read-as-a-sprint (the jump test without the pace's
-start over). PIN MOVED: `test/climb5.test.js` C4's source read of the eased yaw. The real-GL proof is
+start over). PIN MOVED: `test/net/climb5.test.js` C4's source read of the eased yaw. The real-GL proof is
 `tools/oneBadBodyProbe.mjs` (horse3dProbe's page, Chromium): ALL GREEN on this tree, and on main before it (`00d4d202`)
 the third horse read 0 texels - two failures.

@@ -40,7 +40,7 @@ Mac's call and the weapon's nature agreed.
 
 **It cost one duplicate to find out.** `hostCombat.js` carried a
 *second* copy of the weapon-to-skill table — the duplicate
-`test/audit24_onehome.test.js`'s ratchet had been naming for months —
+`test/systems/talk/audit24_onehome.test.js`'s ratchet had been naming for months —
 and that copy answered `null`, so `isBowWeapon` said false and the gun
 fell through to the melee arc in every host. The table is one table
 now; `hostCombat.js` re-exports its door, `weaponSkillUsed`.
@@ -144,7 +144,7 @@ shadowed, and alpha is never written.
 **Not for sale, and that takes no code.** A shop's shelf is built from
 `GROUP_TEMPLATE_INDICES`, DFU's own group enum table, and a custom
 template is not in it — the survival mod had to *add* its provisions
-to the shelves deliberately. `test/thunderlock.test.js` pins that as a
+to the shelves deliberately. `test/systems/thunderlock.test.js` pins that as a
 law rather than an accident. (SHOP-PELLETS, 2026-10-07: the GUN stays
 so, by Mac's word above; its SHOT is sold now, at Mac's later word -
 "allowing the purchase of the ammunition in stores" - section
@@ -1638,7 +1638,7 @@ the missile's anchor. (The thrown torch had already done this by hand -
 `droppedTorches.js` lowers its projectile by half its texture height -
 which is the same law written once more; it stays as it is, cited.)
 
-**Pinned** in `test/thunderlock.test.js` (+2, 39): `centredBase` by
+**Pinned** in `test/systems/thunderlock.test.js` (+2, 39): `centredBase` by
 value (half the height, not the width; no size yet is the position
 itself), every batch build in the three lanes taking it - counted per
 file, the fourth host's and the world hosts' by their exact lines, the
@@ -1751,7 +1751,7 @@ the attach. (2) The crossbow animation's timing against the gun's
 the reload is the gun's own now - a pump laid over the borrowed groups -
 and the breech no longer opens before the bang.)
 
-**Pins** (`test/fieldgunmwaudit.test.js`, 6): the hold and the voice
+**Pins** (`test/combat/fieldgunmwaudit.test.js`, 6): the hold and the voice
 under the arm (held at the click, released with the bang and the flash
 on the same frame, once), the classic lane untouched and third person
 held like first, the never-swallowed ceiling, the muzzle door in both
@@ -1824,7 +1824,7 @@ the shipped NIF is 360 triangles and no boundary (it was 295 and eleven loops). 
 (`thunderlock_gilded.nif` over `thunderlock_gilded.dds`, `characters/ownModels/ownWeaponModels.js` OWN_MW_GILDED) is the same
 capped mesh in gold leaf (`tools/meshTexture.mjs` GILDED_BANDS).
 
-**Pins** (`test/thunderlockart.test.js`, 4; `tools/mutants/thunderlockart.json`, 11 dead): the stand-in's dye, the
+**Pins** (`test/systems/thunderlockart.test.js`, 4; `tools/mutants/thunderlockart.json`, 11 dead): the stand-in's dye, the
 pictures by job (and the Hourlock's gold layer through the doll's own door; a hotbar slot of shot with its count and
 no bar), the derivation pixel for pixel (the pellet left Mac's 12px ball), the mesh
 closed (an open cube capped facing out; the shipped gun and its twin with no boundary). Moved: FIELD-GUN-MW2's preload
@@ -1852,7 +1852,7 @@ stays a find: the shelf still names nothing of it, and `thunderlock.test.js` sto
 finds none.
 
 A departure of kind (Port-Ledger section A): a shelf carries a thing DFU's never does. **Pins**
-(`test/shoppellets.test.js`, 3; `tools/mutants/shoppellets.json`, 7 dead) - and the four that enumerate a Weapon Smith's,
+(`test/systems/shoppellets.test.js`, 3; `tools/mutants/shoppellets.json`, 7 dead) - and the four that enumerate a Weapon Smith's,
 an Armorer's or a General Store's shelf moved with it, each saying so.
 
 ## MW-GUN-FEEL (2026-10-07): the kick and the reload, under the Morrowind arm
@@ -1888,7 +1888,7 @@ These are JUDGEMENTS stated as ones, like `roomShake` - the lab's numbers are pi
 are degrees and metres, and no conversion between the two is honest. They are one frozen row, `ARM_GUN_FEEL`, for Mac to
 move once he has seen them on his own Morrowind data; this container has none to look through.
 
-**Pins** (`test/mwgunfeel.test.js`, 5; `tools/mutants/mwgunfeel.json`, 11 dead): the pose (the kick, the pump's shape,
+**Pins** (`test/combat/mwgunfeel.test.js`, 5; `tools/mutants/mwgunfeel.json`, 11 dead): the pose (the kick, the pump's shape,
 nothing outside the reload, the tail at rest), the matrix (turned about the shoulder, back toward the eye, down),
 the arm (the drawn view IS `K x lens`, built and drawn on the fixture rig; a still pose is none), the rig under a
 stubbed arm (no clack before the bang, the kick on the shot, the pump at its depth mid-reload, still at the ready) and

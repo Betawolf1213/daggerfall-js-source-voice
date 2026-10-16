@@ -128,7 +128,7 @@ number: `world.js:N` was a claim about every line above N, so every
 change to a host rewrote the docs that cited below it, and two branches
 that touched one conflicted on the same doc lines. Write a number and
 `npm run cites -- --apply` converts it (tools/citeAnchor.mjs);
-test/citeanchor.test.js resolves every anchor (CA1) and refuses a live
+test/tooling/citeanchor.test.js resolves every anchor (CA1) and refuses a live
 number (CA2). Records keep their numbers: struck text is the
 measurement's, a renumbering told as history is written as plain
 numbers (`world.js line 6142`), not as a cite, and a line the code no
@@ -209,7 +209,7 @@ will notice says so in its pull request's description, under `## Patch
 notes: <title>` - the template asks, the release reads it there
 (`scripts/desktopRelease.mjs notes`), and the published release is the
 archive. Never commit a patch-notes file: 147 piled up at the root, each
-read once, and `test/rel4_release.test.js` now fails the suite on one.
+read once, and `test/tooling/rel4_release.test.js` now fails the suite on one.
 A description fixed after its release was cut reaches it on its own:
 editing a merged pull request's description has
 `.github/workflows/release-notes.yml` rewrite that release's notes (REL7).
@@ -229,7 +229,7 @@ buildDungeonContext and bootExterior each keep their whole state in one
 function's scope, and world.js grew from 8,897 lines to 36,374 in a month. New
 behaviour goes into a module the host wires (`fishHost.js` is the shape) - and
 on the relay into a Room method of its own, not into `_message` - never into the
-host's own function. `test/hostceiling.test.js` holds each to a ceiling in code
+host's own function. `test/scenes/hostceiling.test.js` holds each to a ceiling in code
 lines (comments are no weight; a fix's 250 lines of room), on a pull request
 and on a contributor's machine, never on a deploy; a slice that moves code out
 lowers it in the same change. The method and the map are
@@ -247,7 +247,7 @@ lowers it in the same change. The method and the map are
 - `08-Audio/` - music (HMI/XMI), sound effects, audio state machine
 - `09-Testing/` - test doctrine, harnesses, data validation
 - `10-UI/` - HUD, menus, native Daggerfall UI reproduction
-- `11-Multiplayer/` - co-op: the three locked decisions, the architecture, the arc (the design the ONLINE arc grows into - presence, then chat, then the room's memory (WORLD1), then the room's simulation (WORLD2), then the room's events (WORLD3), then the room's loot (WORLD4) - `06-Systems/Online-Arc.md`); and `World-Bosses.md` (WB, 2026-09-25) - the Oblivion Gate: a world boss on the shared clock, the relay's first authority over a foe; and `Sigil-Sets.md` (SET, 2026-09-26) - SIGIL SETS: armour, shields and weapons whose sigils name a Daedric Prince's set, 2 / 4 / 6-piece abilities that grow with the set's lowest piece, the gate boss's Aetheric Ruhn's Regalia, and the Sigil Broker beside the gate; and `Super-Dungeons-Look.md` (SD-LOOK, 2026-10-08) - the Abyss Dungeon's visual spec: the Rift, the Return, the step through and the Hour's set pieces rebuilt in Daggerfall's pixel art, five lights with five meanings, and the build order its slices ship in; and `Elite-Gates.md` (EG, 2026-10-11; revised by AUDIT EG0, widened by EG0b, polished by AUDIT EG II) - ELITE GATES: the gate's Elite tier, the Elite Breach - a Weir Key (account-held, rolled by the service: from Dagon's Breach with a pity count, a fallen Valkynaz, the Remnant and, rarely, dungeons' elites by tier) raises a company's arch, timed like the gate's, into the Battlespire's torn halls: endless procedural halls in a fixed rhythm (Rift-Yards, Spans, Ramparts, Athenaeums, Proving Walks and the Deepway, each with variants; twists; Brink halls), fragments the courses pass through (the Oblivion Caverns and nine kin, set-piece passages, a High Road and a Low Road at every fork, engines, alcoves), nine Court lords with three phases each and four Valkynaz on their own ground, Redoubts as checkpoints with one life and one recall (at a Redoubt or by a Memento), Reliquaries opened only by walking home, Vestiges with Masteries and Accords, five laws that keep every blow fair and nothing faster, the Covenant's patience, two season boards and an all-time one, and a presentation built to be read by everyone; and `Kings-Gambit.md` (KG0, 2026-10-13) - THE KING'S GAMBIT: a Daggerfall Unity mod's tactics game - two armies of Daggerfall's bestiary and their kings on a board of fifteen by thirteen - read off its assembly and designed onto the tavern's card table: the army the Iliac cards, the kings the Bay's, the board the cloth, the relay running it online; decided whole (the owner: "Make the best and most detailed decisions. We also have permission" - section 10): the cards standing, the mod's roster, nine creatures painted into the set, the Bay's kings, a regular's tier, the lean, a night's purse; KG1 SHIPPED the same day (section 11): the law, `src/net/kingsGambit.js` - the mod's whole game as pure data, every board, unit, blow and hazard its own, pinned by `test/kg1_law.test.js` and 98 mutants, all dead; KG2 SHIPPED (section 12): the innkeeper's play, `src/systems/gambit/gambitPatrons.js` - a regular's tier the regular's seed's, the army Auto-filled to it, AiAction verbatim at float32 - and the tiers measured, 1,000 games each (`tools/kgMeasure.mjs`); AUDIT KG (section 13, `01-Overview/Audit-Kings-Gambit.md`): the law, the play and the record read cold and every finding fixed, and section 14 binds the table's UI to Enhanced Plus, the house's own coat and plain words; then KG-SET, KG3, KG4, KG5 (online) and KG6 (gold and the season's Grandmaster) shipped (sections 15-19), and AUDIT KG II (section 20, `01-Overview/Audit-Kings-Gambit-II.md`) read them all cold - 83 findings, each fixed or pinned
+- `11-Multiplayer/` - co-op: the three locked decisions, the architecture, the arc (the design the ONLINE arc grows into - presence, then chat, then the room's memory (WORLD1), then the room's simulation (WORLD2), then the room's events (WORLD3), then the room's loot (WORLD4) - `06-Systems/Online-Arc.md`); and `World-Bosses.md` (WB, 2026-09-25) - the Oblivion Gate: a world boss on the shared clock, the relay's first authority over a foe; and `Sigil-Sets.md` (SET, 2026-09-26) - SIGIL SETS: armour, shields and weapons whose sigils name a Daedric Prince's set, 2 / 4 / 6-piece abilities that grow with the set's lowest piece, the gate boss's Aetheric Ruhn's Regalia, and the Sigil Broker beside the gate; and `Super-Dungeons-Look.md` (SD-LOOK, 2026-10-08) - the Abyss Dungeon's visual spec: the Rift, the Return, the step through and the Hour's set pieces rebuilt in Daggerfall's pixel art, five lights with five meanings, and the build order its slices ship in; and `Elite-Gates.md` (EG, 2026-10-11; revised by AUDIT EG0, widened by EG0b, polished by AUDIT EG II) - ELITE GATES: the gate's Elite tier, the Elite Breach - a Weir Key (account-held, rolled by the service: from Dagon's Breach with a pity count, a fallen Valkynaz, the Remnant and, rarely, dungeons' elites by tier) raises a company's arch, timed like the gate's, into the Battlespire's torn halls: endless procedural halls in a fixed rhythm (Rift-Yards, Spans, Ramparts, Athenaeums, Proving Walks and the Deepway, each with variants; twists; Brink halls), fragments the courses pass through (the Oblivion Caverns and nine kin, set-piece passages, a High Road and a Low Road at every fork, engines, alcoves), nine Court lords with three phases each and four Valkynaz on their own ground, Redoubts as checkpoints with one life and one recall (at a Redoubt or by a Memento), Reliquaries opened only by walking home, Vestiges with Masteries and Accords, five laws that keep every blow fair and nothing faster, the Covenant's patience, two season boards and an all-time one, and a presentation built to be read by everyone; and `Kings-Gambit.md` (KG0, 2026-10-13) - THE KING'S GAMBIT: a Daggerfall Unity mod's tactics game - two armies of Daggerfall's bestiary and their kings on a board of fifteen by thirteen - read off its assembly and designed onto the tavern's card table: the army the Iliac cards, the kings the Bay's, the board the cloth, the relay running it online; decided whole (the owner: "Make the best and most detailed decisions. We also have permission" - section 10): the cards standing, the mod's roster, nine creatures painted into the set, the Bay's kings, a regular's tier, the lean, a night's purse; KG1 SHIPPED the same day (section 11): the law, `src/net/kingsGambit.js` - the mod's whole game as pure data, every board, unit, blow and hazard its own, pinned by `test/net/kg1_law.test.js` and 98 mutants, all dead; KG2 SHIPPED (section 12): the innkeeper's play, `src/systems/gambit/gambitPatrons.js` - a regular's tier the regular's seed's, the army Auto-filled to it, AiAction verbatim at float32 - and the tiers measured, 1,000 games each (`tools/kgMeasure.mjs`); AUDIT KG (section 13, `01-Overview/Audit-Kings-Gambit.md`): the law, the play and the record read cold and every finding fixed, and section 14 binds the table's UI to Enhanced Plus, the house's own coat and plain words; then KG-SET, KG3, KG4, KG5 (online) and KG6 (gold and the season's Grandmaster) shipped (sections 15-19), and AUDIT KG II (section 20, `01-Overview/Audit-Kings-Gambit-II.md`) read them all cold - 83 findings, each fixed or pinned
 - `01-Overview/Active-Arcs.md` - ACTIVE ARCS, one line per arc, each naming its own page (HARD5, 2026-09-15: moved out of this file, which was 291 KB)
 - `01-Overview/Audit-Log.md` - THE AUDIT LOG, newest first: every audit that has no page of its own (HARD5, same move)
 
@@ -265,21 +265,21 @@ in 89 lines. One line per arc, each naming its own page.
 Regenerated mechanically at the AUDIT 18 close, from the FLAGGED/INTERIM
 sites themselves. The audit retired 30+ flags whose text had gone false and
 the eleven fix domains moved many more, so every line number and quotation
-here was re-derived rather than edited. test/audit18_bible_docs.test.js now
+here was re-derived rather than edited. test/bible/audit18_bible_docs.test.js now
 pins this list BOTH ways: a citation that drifts, a flag retired without its
 sentence, or a new flag never listed all fail the suite.
 
 AUDIT 18: "Line numbers refreshed" used to close this paragraph as a hand
 kept promise, and six of the 109 citations had already drifted (up to 41
 lines) when 9036e49 moved chargenArt.js. The promise is gone; the list is
-now checked mechanically both ways by test/audit18_bible_docs.test.js -
+now checked mechanically both ways by test/bible/audit18_bible_docs.test.js -
 every citation's quoted text must sit on the cited line, and every
 FLAGGED/INTERIM site in `src/` must appear here. A slice that moves a
 flagged site turns that test red until the list is regenerated.
 
 CITE-ANCHOR (2026-10-06): the entries carry no line numbers. An entry
 names its file and quotes its flag, and the quote is the address -
-test/audit18_bible_docs.test.js matches each entry to a line of its file
+test/bible/audit18_bible_docs.test.js matches each entry to a line of its file
 that reads so, and the flags in `src/` to the entries both ways, counted.
 A number here was a claim about every line above the flag: any edit above
 one rewrote this list, and two branches that both made one conflicted on it.
@@ -331,7 +331,8 @@ through the fetchBytes seam, signature unchanged.
 ## Repo layout
 
 The map is `01-Overview/Code-Map.md` (TIDY1, 2026-10-16): every directory, what lives there, where a new
-file goes, and how a file moves (`tools/moveModule.mjs`).
+file goes, and how a file moves (`tools/moveModule.mjs`). Code is filed by layer, then by feature
+(`src/systems/arena/`), and the tests the same way (`test/systems/arena/` - TIDY2 and TIDY5).
 
 `src/main.js` is the entry point and scene router - no longer thin: it
 builds the Renderer, holds the ARENA2 data gate, installs the cursor,

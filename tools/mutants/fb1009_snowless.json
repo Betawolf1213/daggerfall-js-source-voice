@@ -5,7 +5,7 @@
     "old": "return groundIsSnowy(climateSettings, season) && !(_snowlessGround?.(climateSettings.groundArchive + 1) ?? false);",
     "new": "return groundIsSnowy(climateSettings, season);",
     "tests": [
-      "test/fb1009_snowless.test.js"
+      "test/systems/fb1009_snowless.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "return s?.kind === 'array' && dfmodFileName(s.key) === SNOWLESS_FILE_NAME;",
     "new": "return s?.kind === 'array';",
     "tests": [
-      "test/fb1009_snowless.test.js"
+      "test/systems/fb1009_snowless.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "setSnowlessGround(winterGroundSnowless);",
     "new": "setSnowlessGround(null);",
     "tests": [
-      "test/fb1009_snowless.test.js"
+      "test/systems/fb1009_snowless.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "const snowy = groundWearsSnow(getWorldClimateSettings(climateIndex)",
     "new": "const snowy = groundIsSnowy(getWorldClimateSettings(climateIndex)",
     "tests": [
-      "test/fb1009_snowless.test.js"
+      "test/systems/fb1009_snowless.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "if (word === WEATHER_ENUM.snow) return snowy ? word : WEATHER_ENUM.rain;",
     "new": "if (word === WEATHER_ENUM.snow) return word;",
     "tests": [
-      "test/fb1009_snowless.test.js"
+      "test/systems/fb1009_snowless.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "if (!snowGroundLawOn() || (word !== WEATHER_ENUM.rain && word !== WEATHER_ENUM.thunder && word !== WEATHER_ENUM.snow)) return word;",
     "new": "if (!snowGroundLawOn() || (word !== WEATHER_ENUM.rain && word !== WEATHER_ENUM.thunder)) return word;",
     "tests": [
-      "test/fb1009_snowless.test.js"
+      "test/systems/fb1009_snowless.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "bare: snowless ? () => true : ground.bare",
     "new": "bare: false ? () => true : ground.bare",
     "tests": [
-      "test/fb1009_snowless.test.js"
+      "test/systems/fb1009_snowless.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "const snowless = cs?.climateType === 0 || winterGroundSnowless(winterArchive);",
     "new": "const snowless = winterGroundSnowless(winterArchive);",
     "tests": [
-      "test/fb1009_snowless.test.js"
+      "test/systems/fb1009_snowless.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "desertNow = cs?.climateType === 0 || winterGroundSnowless(winterArchiveOf(cs));",
     "new": "desertNow = cs?.climateType === 0;",
     "tests": [
-      "test/fb1009_snowless.test.js"
+      "test/systems/fb1009_snowless.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "    if (word !== 'rain' && word !== 'thunder' && word !== 'snow') return word;",
     "new": "    if (word !== 'rain' && word !== 'thunder') return word;",
     "tests": [
-      "test/fb1009_snowless.test.js"
+      "test/systems/fb1009_snowless.test.js"
     ]
   }
 ]

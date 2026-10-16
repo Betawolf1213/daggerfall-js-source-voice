@@ -102,7 +102,7 @@
 //    mirror images - her stern quarters (0.36 m apart) and four quads: Mac
 //    drew each the mirror of its partner, but their corners start
 //    elsewhere - and the bake keeps that too, as he sees it (pinned in
-//    test/auditgalleon_bake.test.js). A polygon
+//    test/tooling/auditgalleon_bake.test.js). A polygon
 //    its triangles do not TILE is refused by object and number, never
 //    patched (tools/fbxMesh.mjs tilingFault: every triangle wound with its
 //    face, their areas its area to 1e-6, no part of its plane covered more
@@ -118,7 +118,7 @@
 //    (five faces aft of the sternpost); it turns, so it is its own part.
 //
 // The output is a JSON a test re-bakes byte for byte
-// (test/galleon_model.test.js): the source is committed beside it, so the
+// (test/world/ships/galleon_model.test.js): the source is committed beside it, so the
 // file is a DERIVATION, never a blob.
 //
 // SHIPS-2 (2026-10-07): the reading, the cut and the refusals are every ship's now - tools/shipBake.mjs, the bake for

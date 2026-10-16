@@ -5,7 +5,7 @@
     "old": "    case TELEGRAPH_KIND.mark: return box(sh.origin[0], sh.origin[1], sh.origin[0], sh.origin[1], telegraphMarkReach(sh));",
     "new": "    case TELEGRAPH_KIND.mark: return box(sh.origin[0], sh.origin[1], sh.origin[0], sh.origin[1], sh.r + sh.r1 + M);",
     "tests": [
-      "test/fb1013e_aoeperf.test.js"
+      "test/net/gate/fb1013e_aoeperf.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "Math.max(sh.r + TELEGRAPH_MARK_RING, Math.hypot(sh.r, sh.halfW), sh.r + sh.r1)",
     "new": "Math.max(sh.r, Math.hypot(sh.r, sh.halfW), sh.r + sh.r1)",
     "tests": [
-      "test/fb1013e_aoeperf.test.js"
+      "test/net/gate/fb1013e_aoeperf.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "Math.max(sh.r + TELEGRAPH_MARK_RING, Math.hypot(sh.r, sh.halfW), sh.r + sh.r1)",
     "new": "Math.max(sh.r + TELEGRAPH_MARK_RING, sh.r + sh.r1)",
     "tests": [
-      "test/fb1013e_aoeperf.test.js"
+      "test/net/gate/fb1013e_aoeperf.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "Math.max(sh.r + TELEGRAPH_MARK_RING, Math.hypot(sh.r, sh.halfW), sh.r + sh.r1)",
     "new": "Math.max(sh.r + TELEGRAPH_MARK_RING, Math.hypot(sh.r, sh.halfW))",
     "tests": [
-      "test/fb1013e_aoeperf.test.js"
+      "test/net/gate/fb1013e_aoeperf.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "  if (!sh || sh.kind !== TELEGRAPH_KIND.lane || sh.pool !== TELEGRAPH_POOL.path) return null;",
     "new": "  if (sh) return null;",
     "tests": [
-      "test/fb1013e_aoeperf.test.js"
+      "test/net/gate/fb1013e_aoeperf.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "w = sh.halfW + TELEGRAPH_TIGHT_PAD;",
     "new": "w = sh.halfW * 0.5;",
     "tests": [
-      "test/fb1013e_aoeperf.test.js"
+      "test/net/gate/fb1013e_aoeperf.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "  return { a: [sh.origin[0] - ux * w, sh.origin[1] - uz * w], u: [ux, uz], len: l + 2 * w, w };",
     "new": "  return { a: [sh.origin[0], sh.origin[1]], u: [ux, uz], len: l + w, w };",
     "tests": [
-      "test/fb1013e_aoeperf.test.js"
+      "test/net/gate/fb1013e_aoeperf.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "  return { a: [sh.origin[0] - ux * w, sh.origin[1] - uz * w], u: [ux, uz], len: l + 2 * w, w };",
     "new": "  return { a: [sh.origin[0] - ux * w, sh.origin[1] - uz * w], u: [ux, uz], len: l + w, w };",
     "tests": [
-      "test/fb1013e_aoeperf.test.js"
+      "test/net/gate/fb1013e_aoeperf.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": " : uStrip == 1 ? uWalkA + uWalkU",
     "new": " : uStrip == 2 ? uWalkA + uWalkU",
     "tests": [
-      "test/fb1013e_aoeperf.test.js"
+      "test/net/gate/fb1013e_aoeperf.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "      gl.bindVertexArray(this.walkVao);\n      gl.uniform1i(U.uStrip, 1);",
     "new": "      gl.uniform1i(U.uStrip, 1);",
     "tests": [
-      "test/fb1013e_aoeperf.test.js"
+      "test/net/gate/fb1013e_aoeperf.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "    if (strip) { gl.uniform1i(U.uStrip, 0); gl.bindVertexArray(this.vao); }",
     "new": "    if (strip) { gl.bindVertexArray(this.vao); }",
     "tests": [
-      "test/fb1013e_aoeperf.test.js"
+      "test/net/gate/fb1013e_aoeperf.test.js"
     ]
   }
 ]

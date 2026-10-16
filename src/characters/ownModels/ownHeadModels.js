@@ -20,7 +20,7 @@ const PART = Object.freeze({ head: 0, hair: 1 });
 
 /** One part as a BODY record reads (formats/morrowind/mwFirstPerson.js readBodyPart): a skin, playable, never a vampire's, a
  *  third-person part - its id the shipped mesh's name. Exactly the record a BODY of that id, mesh, race and part reads
- *  as - nothing the build could tell from the data's (test/mwheads1.test.js holds each to bodyParts' reading).
+ *  as - nothing the build could tell from the data's (test/tooling/mwheads1.test.js holds each to bodyParts' reading).
  *  @param {string} race @param {boolean} female @param {'head'|'hair'} slot @param {string} id */
 const record = (race, female, slot, id) => Object.freeze({
   id, model: `${id}.nif`, race, part: PART[slot], female, playable: true, skin: true, vampire: false, bodyKind: 0, slot, firstPerson: false,
@@ -53,7 +53,7 @@ export function ownFacePools(race, female) {
   return byRace?.[female ? 'female' : 'male'] ?? null;
 }
 
-/** Every mesh path the port's own heads and hairs name - the coverage walk's (each ships, test/mwheads1.test.js). The
+/** Every mesh path the port's own heads and hairs name - the coverage walk's (each ships, test/tooling/mwheads1.test.js). The
  *  build asks a pool's own, through facePools' `has`. */
 export const ownHeadModelPaths = () => Object.values(OWN_HEADS)
   .flatMap((bySex) => Object.values(bySex))

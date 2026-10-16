@@ -2,7 +2,7 @@
 //
 //   node tools/mailProbe.mjs        (SHOT_DIR=tools/shots by default)
 //
-// test/mail1.test.js drives the tab over a fake document, which proves what it DOES and nothing about how it LOOKS:
+// test/server/mail1.test.js drives the tab over a fake document, which proves what it DOES and nothing about how it LOOKS:
 // whether the widest sender, the longest subject and a letter of one unbroken word stay inside the panel, whether the
 // form fits a phone, whether a finger can hit what it needs. This mounts the REAL panel (ui/socialPanel.js) over the
 // real enhanced sheet in Chromium with a REAL MailBox (net/mail.js) whose fetch answers the service's own shapes, at

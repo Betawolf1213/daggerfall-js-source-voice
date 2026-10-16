@@ -5,7 +5,7 @@
     "old": "buf(gl.ELEMENT_ARRAY_BUFFER, model.indices instanceof Uint32Array ? model.indices : Uint32Array.from(model.indices));",
     "new": "buf(gl.ELEMENT_ARRAY_BUFFER, model.indices);",
     "tests": [
-      "test/wbx_gate_fixes.test.js"
+      "test/world/gate/wbx_gate_fixes.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "  const indices = new Uint32Array(count);",
     "new": "  const indices = new Uint16Array(count);",
     "tests": [
-      "test/wbx_gate_fixes.test.js"
+      "test/world/gate/wbx_gate_fixes.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "    const at = bossPlace(s, s.fell.at);\n    portal = {",
     "new": "    const at = [0, 0];\n    portal = {",
     "tests": [
-      "test/wbx_gate_fixes.test.js"
+      "test/world/gate/wbx_gate_fixes.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "    if (!portalLaid) { portalLaid = true; layPortalDoor(portalDoor(at)); }",
     "new": "    layPortalDoor(portalDoor(at));",
     "tests": [
-      "test/wbx_gate_fixes.test.js"
+      "test/world/gate/wbx_gate_fixes.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "        if (f.taken || !f.left || !f.fly.rest) return;",
     "new": "        if (f.taken || !f.left) return;",
     "tests": [
-      "test/wb9f_gate_spoils.test.js"
+      "test/scenes/wb9f_gate_spoils.test.js"
     ],
     "why": "GATE-UX: the walk-over's wait is gone - a piece is no target until it rests"
   },
@@ -51,7 +51,7 @@
     "old": "root: [f.fly.pos[0], f.fly.pos[1] + f.h, f.fly.pos[2]]",
     "new": "root: [f.fly.pos[0], f.fly.pos[1], f.fly.pos[2]]",
     "tests": [
-      "test/wbx_gate_fixes.test.js"
+      "test/world/gate/wbx_gate_fixes.test.js"
     ]
   },
   {
@@ -60,7 +60,7 @@
     "old": "    const icon = f.sprite && typeof f.sprite === 'object';",
     "new": "    const icon = false;",
     "tests": [
-      "test/wbx_gate_fixes.test.js"
+      "test/world/gate/wbx_gate_fixes.test.js"
     ]
   },
   {
@@ -69,8 +69,8 @@
     "old": "Math.round(pct * Math.max(1, maxHealth) + Math.max(0, base))",
     "new": "Math.round(pct * Math.max(1, maxHealth))",
     "tests": [
-      "test/wbx_gate_fixes.test.js",
-      "test/wb4_gate_boss.test.js"
+      "test/world/gate/wbx_gate_fixes.test.js",
+      "test/net/gate/wb4_gate_boss.test.js"
     ]
   },
   {
@@ -79,7 +79,7 @@
     "old": "      const fx = Math.sin(sh.yaw), fz = Math.cos(sh.yaw), along = rx * fx + rz * fz, side = rx * fz - rz * fx;",
     "new": "      const fx = -Math.sin(sh.yaw), fz = -Math.cos(sh.yaw), along = rx * fx + rz * fz, side = rx * fz - rz * fx;",
     "tests": [
-      "test/wbx_gate_fixes.test.js"
+      "test/world/gate/wbx_gate_fixes.test.js"
     ]
   },
   {
@@ -88,7 +88,7 @@
     "old": "      if (s.fell || s.wrath != null || bossAct(s, t, hurtAt).act === 'gone') mark = null;",
     "new": "      if (s.wrath != null) mark = null;",
     "tests": [
-      "test/wbx_gate_fixes.test.js"
+      "test/world/gate/wbx_gate_fixes.test.js"
     ]
   },
   {
@@ -97,8 +97,8 @@
     "old": "  2: Object.freeze([Object.freeze({ a: 'cross', court: 1 }), Object.freeze({ wait: 'arrive' }), Object.freeze({ a: 'nova' })]),",
     "new": "  2: Object.freeze([Object.freeze({ a: 'nova' })]),",
     "tests": [
-      "test/wbx_gate_fixes.test.js",
-      "test/wb3_gate_room.test.js"
+      "test/world/gate/wbx_gate_fixes.test.js",
+      "test/net/gate/wb3_gate_room.test.js"
     ]
   },
   {
@@ -107,8 +107,8 @@
     "old": "pct: 0.52, base: 14, el: 'fire', aim: 'self', phase: 3, range: 40, w: 2, minGap: 0 }),",
     "new": "pct: 0.52, base: 14, el: 'fire', aim: 'self', phase: 2, range: 40, w: 2, minGap: 0 }),",
     "tests": [
-      "test/wbx_gate_fixes.test.js",
-      "test/wb3_gate_room.test.js"
+      "test/world/gate/wbx_gate_fixes.test.js",
+      "test/net/gate/wb3_gate_room.test.js"
     ]
   },
   {
@@ -117,7 +117,7 @@
     "old": "    const a = atk.yw + (k * 2 * Math.PI) / A.n;",
     "new": "    const a = atk.yw + (k * Math.PI) / A.n;",
     "tests": [
-      "test/wbx_gate_fixes.test.js"
+      "test/world/gate/wbx_gate_fixes.test.js"
     ]
   },
   {
@@ -126,7 +126,7 @@
     "old": "    if (!inFire) { inFire = true; if (t - outAt >= POOL_TICK_MS) { burnAt = t; return; } }",
     "new": "    if (!inFire) { inFire = true; burnAt = -Infinity; }",
     "tests": [
-      "test/wbx_gate_fixes.test.js"
+      "test/world/gate/wbx_gate_fixes.test.js"
     ]
   },
   {
@@ -135,7 +135,7 @@
     "old": "  for (const p of pools ?? []) if (now >= p.from && now < p.until && Math.hypot(px - p.x, pz - p.z) <= p.r) return p;",
     "new": "  for (const p of pools ?? []) if (now >= p.from && Math.hypot(px - p.x, pz - p.z) <= p.r) return p;",
     "tests": [
-      "test/wbx_gate_fixes.test.js"
+      "test/world/gate/wbx_gate_fixes.test.js"
     ]
   },
   {
@@ -144,7 +144,7 @@
     "old": "  return [atk.x + (e[0] - atk.x) * k, atk.z + (e[1] - atk.z) * k];\n}",
     "new": "  return [e[0], e[1]];\n}",
     "tests": [
-      "test/wbx_gate_fixes.test.js"
+      "test/world/gate/wbx_gate_fixes.test.js"
     ]
   },
   {
@@ -153,7 +153,7 @@
     "old": " const c = courtPhaseCard(s.phase); if (c) beat = { kind: 'phase', at: t, until: t + TITLE_HOLD_MS, ...c }; }",
     "new": " }",
     "tests": [
-      "test/wbx_gate_fixes.test.js"
+      "test/world/gate/wbx_gate_fixes.test.js"
     ]
   },
   {
@@ -162,7 +162,7 @@
     "old": "export const regenBarred = () => _on;",
     "new": "export const regenBarred = () => false;",
     "tests": [
-      "test/wbx_gate_fixes.test.js"
+      "test/world/gate/wbx_gate_fixes.test.js"
     ]
   },
   {
@@ -171,7 +171,7 @@
     "old": "  if (target?.spareGear) return;",
     "new": "  if (target) return;",
     "tests": [
-      "test/wbx_gate_fixes.test.js"
+      "test/world/gate/wbx_gate_fixes.test.js"
     ]
   },
   {
@@ -180,7 +180,7 @@
     "old": "  e.spareGear = true;",
     "new": "  e.spareGear = false;",
     "tests": [
-      "test/wbx_gate_fixes.test.js"
+      "test/world/gate/wbx_gate_fixes.test.js"
     ]
   },
   {
@@ -189,7 +189,7 @@
     "old": "    if (trapMark && s.fell.at < trapMark.until) soulTrap(",
     "new": "    if (trapMark) soulTrap(",
     "tests": [
-      "test/wbx_gate_fixes.test.js"
+      "test/world/gate/wbx_gate_fixes.test.js"
     ]
   },
   {
@@ -198,7 +198,7 @@
     "old": "    if (!s.fell || trapJudged === s.day) return;",
     "new": "    if (!s.fell) return;",
     "tests": [
-      "test/wbx_gate_fixes.test.js"
+      "test/world/gate/wbx_gate_fixes.test.js"
     ]
   },
   {
@@ -207,7 +207,7 @@
     "old": "      if (trapMark && t < trapMark.until) trapMark.until = Math.max(trapMark.until, t + rounds * COURT_ROUND_MS);",
     "new": "      if (trapMark && t < trapMark.until) trapMark = { chance, until: Math.max(trapMark.until, t + rounds * COURT_ROUND_MS) };",
     "tests": [
-      "test/wbx_gate_fixes.test.js"
+      "test/world/gate/wbx_gate_fixes.test.js"
     ]
   },
   {
@@ -216,7 +216,7 @@
     "old": "  portalDoor: layPortalDoor = () => {}, soulTrap = () => {},",
     "new": "  wayHome = () => {}, portalDoor: layPortalDoor = () => {}, soulTrap = () => {},",
     "tests": [
-      "test/wbx_gate_fixes.test.js"
+      "test/world/gate/wbx_gate_fixes.test.js"
     ]
   }
 ]

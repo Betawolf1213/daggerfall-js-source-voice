@@ -1,6 +1,6 @@
 // The account service over node:sqlite with every migration applied - D1's surface as the Worker uses it (prepare /
 // bind / first / all / run, and batch as ONE transaction, rolled back whole when a statement throws) - and the Worker
-// stood on it with a registered-account helper. AUDIT 28's pins (test/audit28_marks.test.js, audit28_notice.test.js)
+// stood on it with a registered-account helper. AUDIT 28's pins (test/net/audit28_marks.test.js, audit28_notice.test.js)
 // drive the real service through it; marks1 and notice1 keep their own copies, written first.
 import { readFileSync, readdirSync } from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';

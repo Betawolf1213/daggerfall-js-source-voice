@@ -49,7 +49,7 @@ to its texel before the next is written - every drawn pixel identical.
 The `<rect>` beside 232 of them (the paper-doll placement
 `TextureReplacement.OverridePaperdollItemRect` reads) is written into
 `src/systems/roleplayRealismItems/rriIndex.js` beside each sprite's size. What the folder
-may hold is this manifest's own file list (`test/doctrine.test.js`
+may hold is this manifest's own file list (`test/tooling/doctrine.test.js`
 derives the folder's membership from it).
 
 ## What is ported, and where

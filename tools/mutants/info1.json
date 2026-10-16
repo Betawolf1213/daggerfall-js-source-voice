@@ -5,7 +5,7 @@
     "old": "    if (String(pgText ?? '').trim() === '') return;",
     "new": "",
     "tests": [
-      "test/hudtext.test.js"
+      "test/ui/enhanced/hudtext.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "    if (String(pgText ?? '').trim() === '') return;",
     "new": "    if (String(pgText ?? '') === '') return;",
     "tests": [
-      "test/hudtext.test.js"
+      "test/ui/enhanced/hudtext.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "    this.lines.push({ id: ++this._nextId, text: pgText });",
     "new": "    this.lines.push({ id: ++this._nextId, text: String(pgText).trim() });",
     "tests": [
-      "test/hudtext.test.js"
+      "test/ui/enhanced/hudtext.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "    if (String(pgText ?? '').trim() === '') return;",
     "new": "    if (String(pgText ?? '').trim() === '') { this.onMessage?.(pgText); return; }",
     "tests": [
-      "test/hudtext.test.js"
+      "test/ui/enhanced/hudtext.test.js"
     ]
   }
 ]

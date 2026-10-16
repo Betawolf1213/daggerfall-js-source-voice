@@ -41,7 +41,7 @@ world not moving is presented again. The presenters already refuse a second scre
 screen is untouched; a load restores the save's health under its latch and a respawn heals first, so neither is caught
 mid-way. It covers every door that can take the screen, not only the priest's: the stack's replace, the surrender box
 ("O1 - the replace door", `Field-Bugs-2026-09-27c.md`), a journey's level-up box over a death on the road. `presentPlayerDeath`
-is no blow - the saves, the shield and AvoidDeath were asked on the transition, once. `test/fb0930b_deathkept.test.js` (3).
+is no blow - the saves, the shield and AvoidDeath were asked on the transition, once. `test/systems/fb0930b_deathkept.test.js` (3).
 `tools/mutants/fb0930b_deathkept.json` (8, all dead).
 
 Found on the way, not changed: the doors themselves still take the screen for a frame, and the death presented again
@@ -77,7 +77,7 @@ fix read as whole.
 between that and the landing, so the latch is exactly the build's frames. A held frame steps nothing and bills nothing
 (`holdFrame`); the landing's `player.spawn` re-anchors the fall, so a death mid-fall carries none of it across. It
 covers every teleport's build - the respawn, Recall, the cemetery, a quest's teleport, the court's release, fast travel
-and the loads - none of which walks the player during it. `test/fb0930b_respawnheld.test.js` (2); `seasoncalendar`'s
+and the loads - none of which walks the player during it. `test/player/fb0930b_respawnheld.test.js` (2); `seasoncalendar`'s
 hold pin re-aimed (PIN MOVED). `tools/mutants/fb0930b_respawnheld.json` (2, both dead).
 
 Found on the way, not changed: a checkpoint (the two-minute realm checkpoint, the page-hide save) is not refused while
@@ -136,7 +136,7 @@ below): no cast in the water under a quarter of the fatigue bar (`NET_TIRED_SHAR
 falls into it (the kind's frame cancels the act it started); the prompt and E say "too tired to fish in the water - get
 out and rest", with a quarter of the bar to swim out on (of 6,400, four minutes of treading water at the worst rate).
 The test is the collapse's own - Foraging's world's `swimming`, `isPlayerSwimming` - so a pier or a deck asks nothing.
-`test/fb0930b_fishtired.test.js` (3), red on the code before.
+`test/systems/fb0930b_fishtired.test.js` (3), red on the code before.
 
 **Not chosen.** Charging a still swimmer nothing (a change to every swimmer; FATIGUE-IDLE kept the swim's price on
 purpose, and it misses the Lamia); a warning alone (a toast among the haul toasts, and the trap still set).
@@ -161,7 +161,7 @@ water!" on the HUD, with no box. The ticker drains to nothing once a game minute
 so MEASURED on the real ticker: from full health a drain at 5, 10 ... 50 real seconds, dead at 50 - where it was dead at
 the first. At the shore the collapse is the rest hour it always was, and on dry feet foes about still kill. Come Sail
 Away hears no death of a swimmer still swimming (its OnPlayerDeath rides the collapse's two arms). The interior host
-passes no swimmer and is unchanged. `test/fb0930b_swimspent.test.js` (3), red on the code before; `rest`'s water case
+passes no swimmer and is unchanged. `test/systems/fb0930b_swimspent.test.js` (3), red on the code before; `rest`'s water case
 and `csa_close`'s CSA-J dungeon pin re-aimed (PIN MOVED), `fishtired`'s stand-in for world.js given the drown arm.
 
 ## TOOL-SAID, then TOOL-USE: a profession tool is the profession's (2)
@@ -205,7 +205,7 @@ Foraging's yields, quests or wear: it says where the profession is done ("Loggin
 wilderness: walk up to one until the prompt shows, then press E (or use the Wood-Axe)."). Foraging's own refusal
 ("You cannot mine in here!") is no longer said there. Offline and a guest's lane are the mod's 1:1; the Spade stays
 Foraging's alone. The Sickle's Use holds the steady hand itself (no E held: Escape or walking off ends it), and the
-net's Use is a tap - the shortest throw, E taking the tug. `test/fb0930b_toolsaid.test.js` (10), over the real
+net's Use is a tap - the shortest throw, E taking the tug. `test/systems/fb0930b_toolsaid.test.js` (10), over the real
 `useItem`, `hotbarPress` and `createGatherHost` with its four kinds; red on the code before.
 
 **Found on the way, left open.** A tree node draws no picture of its own (`treeHost.js` `flatsOf: () => []`): 6 nodes
@@ -231,7 +231,7 @@ notice (`guilds.js`); nothing in the lycanthropy code touches either.
 
 **The fix** (`ui/enhanced/enhancedPorts.js`): the teller's row reads "Account in <region>", and each other region holding gold
 stands beneath it ("Banked in Daggerfall 12,345"), in both lanes; the classic parchment is DFU's and unchanged.
-`test/fb0930b_bankregion.test.js` (2): the report red on the code before, and the curse's walk a guard.
+`test/systems/fb0930b_bankregion.test.js` (2): the report red on the code before, and the curse's walk a guard.
 
 **For Guppy** (#support): becoming a werewolf doesn't touch the bank or the guilds; each region keeps its own account,
 so the gold is in the region it was deposited in (the classic sheet's gold button lists every one). If the Fighters
@@ -263,12 +263,12 @@ the cull and held the encounter cap; `inSight` kept its swings; either, or `woul
 rest); the pixel's build stands it back on its floor, no fall billed. The column alone is asked, never the height: a
 flyer, a levitator or a swimmer over built ground, and a Deep Waters swimmer (a carved cell answers its seafloor), step
 as before; the interior host and the one-location host hand no law and hold nothing. A quickload's attacker across a
-pixel edge still building is kept, where it used to fall and be culled. `test/fb0930b_fallhold.test.js` (8), seven red
+pixel edge still building is kept, where it used to fall and be culled. `test/scenes/fb0930b_fallhold.test.js` (8), seven red
 on the code before; `foecatchup`'s two step records re-aimed by content.
 
 ## RES-RING, RES-MARK, HOME-PLAQUE: a quest's residence, found (5)
 
-**Reproduced first** (`test/fb0930b_questresidence.test.js`: the real QuestMachine with `Place _house_ local house2` in
+**Reproduced first** (`test/systems/fb0930b_questresidence.test.js`: the real QuestMachine with `Place _house_ local house2` in
 a crafted town, the real TopicTree fed by the machine's hooks, AnswerPipeline and the talk macros, discovery.js,
 `stampResidenceQuestNames` and the Enhanced town sheet): a townsperson's "Let me just mark The T'erdta Residence here on
 your map" leaves the Place's hint flag at LocationWasMarkedOnMap and the house discovered under the quest's name - and
@@ -296,7 +296,7 @@ the sheet's pen and ring read it; the classic plate's ladder is unchanged. RES-M
 whatever the roll; every other building keeps DFU's roll, and indoors never marks. HOME-PLAQUE (`systems/online/onlineHomes.js`
 `homeDoorName`, `scenes/worldModes.js`): a nameless house whose door has verbs to list is named with DFU's own word,
 "Residence" (Internal_Strings 50): its plaque stands, "Go in" lit, and the click goes in; the quest's residence reads
-apart by its name. `test/fb0930b_questresidence.test.js` (3), red on the code before; `answerpipeline`'s quest-person
+apart by its name. `test/systems/fb0930b_questresidence.test.js` (3), red on the code before; `answerpipeline`'s quest-person
 hint at 0.9 re-aimed to the map (PIN MOVED), `home2`, `home1` and `empirebank`'s door-name source pins re-aimed.
 
 **Left as they are.** A quest person's generated home (`_contact_home_`) is a second quest "Residence" under General
@@ -322,7 +322,7 @@ its list of ground-eye passes to adapt (fog, clouds, rain, shadows, grass, billb
 `csaDrawWaves()` ran on every exterior frame.
 
 **The fix** (`scenes/world.js`): `if (!tvf) csaDrawWaves();` - the travel view's own gate, the grass's. Only the
-drawing: the waves' state (the currents, the helm's neighbours) is untouched. `test/fb0930b_tvsurf.test.js` (2);
+drawing: the waves' state (the currents, the helm's neighbours) is untouched. `test/scenes/fb0930b_tvsurf.test.js` (2);
 `fbsea_water`'s order pin re-aimed at the gated line (PIN MOVED).
 
 ## For Mac (part two)

@@ -35,7 +35,7 @@ export function ownCloakFor(piece) {
   return Object.freeze({ id: 'daggerfall_cloak', model: cloakModel(painting), painting });
 }
 
-/** Every mesh path the cloak can ask for - the coverage walk's (each ships, test/mwcloak1.test.js). */
+/** Every mesh path the cloak can ask for - the coverage walk's (each ships, test/tooling/mwcloak1.test.js). */
 export const ownCloakModelPaths = () => CLOAK_PAINTINGS.map((p) => `meshes/${cloakModel(p)}`);
 
 /** Is a bound piece's slot the cloak's? The composer labels the add `cloak (<id>)`, as every worn add is labelled
@@ -69,7 +69,7 @@ const outfit = (archive, hides, covers = []) => Object.freeze({
 const PAIR = (...parts) => parts.flatMap((p) => [`right ${p}`, `left ${p}`]);
 
 /** Each walker sprite's outfit, by its archive (the walker's picture). The skin each hides is what it covers all round
- *  (test/mwfolk1.test.js measures every one). */
+ *  (test/tooling/mwfolk1.test.js measures every one). */
 export const TOWNSFOLK_OUTFITS = Object.freeze(Object.fromEntries([
   outfit(381, ['groin']),                                                                                // Redguard: the grey robe with the red hem
   outfit(382, ['groin']),                                                                                // Redguard: the kilt, the wrist cuffs, the sandals
@@ -93,7 +93,7 @@ export function ownOutfitFor(id) {
   return null;
 }
 
-/** Every mesh path an outfit can ask for - the coverage walk's (each ships, test/mwfolk1.test.js). */
+/** Every mesh path an outfit can ask for - the coverage walk's (each ships, test/tooling/mwfolk1.test.js). */
 export const ownOutfitModelPaths = () => Object.values(TOWNSFOLK_OUTFITS).map((o) => `meshes/${o.model}`);
 
 /** Is a bound piece's slot an outfit's? The composer labels it `outfit (<id>)`, as the cloak's is `cloak (<id>)`. */

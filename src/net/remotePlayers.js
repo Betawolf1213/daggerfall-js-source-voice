@@ -1287,7 +1287,7 @@ export class RemotePlayers {
    * rule is the same, nothing ahead of it moved), because a name's colour is not this module's business to know. A peer is a tab in a room; whether that tab belongs to somebody in my party (PARTY_MAX seats) is the social
    * picture's question (net/social.js colorOf -> PARTY_GREEN or null), and the host asks it. Nothing is passed on
    * the probe hosts and on every caller written before the party existed, so the default path stays exactly what it
-   * was: white, byte for byte (test/online.test.js pins it).
+   * was: white, byte for byte (test/net/online.test.js pins it).
    * @param {((id: string) => number[]|null)|null} colorOf peer id -> an RGBA array, or null for the plain name
    */
   /**

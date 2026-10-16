@@ -12,7 +12,7 @@ Every finding below was read again on the tree before it was fixed. The new code
 `tools/mutants/homeprice.json` 56 of 56 dead (26 before the audit, every survivor the lenses found among the new 30),
 and the records the fixes moved were re-aimed by content and killed again (PIN MOVED, below). One older survivor came
 with it: `auditrealm.json` AUDIT-REALM-L1F3-the-price-refunded, alive since AUDIT REALM because every fixture paid its
-price, dies under `test/homeprice.test.js`'s home whose price and payment differ (D2).
+price, dies under `test/systems/homeprice.test.js`'s home whose price and payment differ (D2).
 
 The one decision asked: C1, a knightly order's free house sold back online - "Online price".
 
@@ -100,4 +100,4 @@ hundreds), `realm6.json` REALM6-second-press-pays (the repeat's sale), `empireac
 EMPIRE-ACCOUNT-house-sold-to-the-branch (the sale's price its caller's), `gatekeys.json` GATEKEYS-the-empty-var-back
 (acct75), and main's two `survtiers3.json` cite records at the merge.
 
-The tests: `test/homeprice.test.js` (8), `test/guild1d_service.test.js` (D4), and the moved pins above.
+The tests: `test/systems/homeprice.test.js` (8), `test/net/guild1d_service.test.js` (D4), and the moved pins above.

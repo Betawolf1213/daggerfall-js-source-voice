@@ -62,7 +62,7 @@ URL is computed off the app root (`systems/appRoot.js`, the held map's
 shape). What the folder may hold is the mod's own manifest:
 `tools/diverseWeaponsIndex.mjs` derives the door's index from it (1,298
 stems with a bitmask over MetalTypes' order - 39 KB where the names are
-350) and `test/doctrine.test.js` derives the folder's membership from
+350) and `test/tooling/doctrine.test.js` derives the folder's membership from
 it, so a name the set lacks is a miss without a fetch and a file the
 bundle did not ship cannot land there. The player's own `.dfmod`,
 attached, still answers first - a newer version's art wins.
@@ -178,7 +178,7 @@ file back, so the shipped off applies; `setModSetting` stamps the key
 when a player sets it from then on, so a choice made after the reset is
 kept across reloads (`KEY_MIGRATIONS`, which match on a value, could not
 tell the two apart). A file that never mentioned the mod is not grown
-one. `test/disc20.test.js` (E).
+one. `test/systems/disc20.test.js` (E).
 
 ## The icons (DW3)
 
@@ -226,7 +226,7 @@ doors carried one. DW3:
   and gated on the mod's switch at lookup, so the switch takes effect
   without a reload. Installed at the scene boot (`scenes/shared.js`),
   not at `worldTick`'s module scope, where the mod's law sits in an
-  import cycle (a TDZ, caught by `test/tdz.test.js`'s kind of failure
+  import cycle (a TDZ, caught by `test/tree/tdz.test.js`'s kind of failure
   on the first run).
 
 ### DYE-ICON (2026-09-26) - the classic arm dyes
@@ -263,7 +263,7 @@ leather armour are dyed too; a garment's 18 is its own swatch.
   carries the item now, and `decorTool.js` thumbOf asks a mount by the
   dye and swatch its numbers name, as it hangs.
 
-Pinned in `test/dyeicon.test.js` (and the real TEXTURE.234 Daedric
+Pinned in `test/systems/item/dyeicon.test.js` (and the real TEXTURE.234 Daedric
 dagger, data-gated); `tools/mutants/dyeicon.json`. The audit's pins -
 the room's preview driven, the DOM door executed with a swatch, two
 metals of one record on one wall - in `tools/mutants/auditdyeicon.json`
@@ -339,7 +339,7 @@ arm's one exception (Silver is Unchanged), the item's dye at the doll
   by (`weaponRig.js`), so each template draws its own - the mod's
   purpose over DFU's cache slot. Recorded at the key, and here.
 
-Suite `test/auditdw.test.js` (5). Mutants: the archive preload taking
+Suite `test/combat/weapon/auditdw.test.js` (5). Mutants: the archive preload taking
 lazy entries, a frame awaited alone, the doubled flag ignored, the
 per-record ask dropped - all dead.
 
@@ -375,7 +375,7 @@ TrueTextureSize, a `w_` hit takes the doubled box and its shift.
 `vendor/diverse-weapons/` - the script verbatim, the manifest verbatim
 (12,937 files), the preset verbatim, the zip's readme. Campaign
 `tools/mutants/dw1.json` (21: 20 dead, 1 equivalent as recorded). Suites
-`test/dw1_diverseweapons.test.js`, `test/unitybundleworker.test.js`,
-`test/dw2_shipped.test.js`, `test/dw3_icons.test.js`, `test/auditdw.test.js`. The shipped set: `public/art/diverse-weapons/`
+`test/combat/weapon/dw1_diverseweapons.test.js`, `test/formats/unitybundleworker.test.js`,
+`test/tooling/dw2_shipped.test.js`, `test/systems/dw3_icons.test.js`, `test/combat/weapon/auditdw.test.js`. The shipped set: `public/art/diverse-weapons/`
 (12,624 PNGs), `src/combat/diverseWeapons/diverseWeaponsIndex.js` (generated), the two
 tools.

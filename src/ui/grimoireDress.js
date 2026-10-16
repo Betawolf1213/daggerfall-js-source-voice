@@ -865,7 +865,7 @@ ${G} [data-grim-on="page"] { background: none !important; border-color: transpar
   color: ${T.ink} !important; text-shadow: 0 1px 0 rgba(255,240,205,0.4) !important; text-decoration: none; }
 ${G} [data-grim-on="page"].primary { color: ${T.red} !important; }
 /* HUD-CLASS: a chosen press (\`.on\` - a word the HUD writes too) is named by its own press root, so no rule of the dress
-   can reach the HUD's \`.on\` (test/hudclass_sheets.test.js); at rest only, so the hover after it still wins as it did */
+   can reach the HUD's \`.on\` (test/ui/naval/hudclass_sheets.test.js); at rest only, so the hover after it still wins as it did */
 ${at(PRESS_ROOTS, '[data-grim-on="page"].on:not(:hover):not(:focus-visible)')} { color: ${T.red} !important; }
 ${G} [data-grim-on="page"]:hover, ${G} [data-grim-on="page"]:focus-visible { color: ${T.redHi} !important; background: none !important;
   text-decoration: underline solid ${T.red}; text-underline-offset: 0.2em; outline: none; }
@@ -2299,7 +2299,7 @@ export const grimoireKitCss = () => snapCss(`${faceCss()}\n${kitCss()}\n${roster
 /** Every whole-pixel font size in a sheet moved to the face's grid (the kit's own, so it obeys its own law). */
 export const snapCss = (css) => css.replace(/font-size:\s*([\d.]+)px/g, (m, n) => `font-size: ${snapSize(+n)}px`);
 /** HUD-CLASS: the sheet evaluated once, as the dress lays it - the text the audit of the game's sheets reads
- *  (test/hudclass_sheets.test.js: a sheet whose selectors are built where it is laid is read only as an export). Pure:
+ *  (test/ui/naval/hudclass_sheets.test.js: a sheet whose selectors are built where it is laid is read only as an export). Pure:
  *  the card's choices are the root's attributes, never a rebuild. */
 export const GRIMOIRE_KIT_CSS = grimoireKitCss();
 

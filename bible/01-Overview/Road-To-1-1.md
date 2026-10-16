@@ -119,7 +119,7 @@ in the wave reports.
   over it (`ui/prisonScreen.js:"export const COURT_IMG"`, `scenes/arrestFlow.js:"---- ROAD-B B5: THE"`), and
   the prison screen's held-Back accelerator, DFU's raw Escape poll
   rather than a binding (`ui/prisonScreen.js:"The held-Back accelerator"`). Both pinned by
-  `test/roadb_court_backdrop.test.js` (10).
+  `test/scenes/roadb_court_backdrop.test.js` (10).
 
 ## Wave C - the two arcs - CLOSED 2026-09-02
 
@@ -353,8 +353,8 @@ The two things the Wave G lanes wrote down at their sites are closed:
   had no reader in either host - both skip the roll now (the port has
   no ship state to ask for the other half).
 
-Pins in `test/exteriorfoes.test.js` (the loop's shape, both swimming
-gates, both callers, the watch route); `test/restwhere.test.js` names
+Pins in `test/scenes/exteriorfoes.test.js` (the loop's shape, both swimming
+gates, both callers, the watch route); `test/systems/rest/restwhere.test.js` names
 both homes of the catch-up. Open flags: 7.
 
 Its review (two lenses, two refuters each; 3 confirmed, 0 refuted):
@@ -471,8 +471,8 @@ maps have no consumer yet; and nothing here has been seen in a browser -
 the loose PNG landing the right way up on a flat and a tap on hardware
 are the two surfaces that want eyes.
 
-Pins: `test/roadh_missiles.test.js` (12), `test/roadh_seasons_tex.test.js`
-(5), `test/roadh_residue.test.js` (8), `test/roadh_tail.test.js` (4);
+Pins: `test/scenes/roadh_missiles.test.js` (12), `test/systems/roadh_seasons_tex.test.js`
+(5), `test/ui/touch/roadh_residue.test.js` (8), `test/scenes/roadh_tail.test.js` (4);
 every one checked dead under a mutation that reverts its law. Open
 flags: 7.
 
@@ -488,7 +488,7 @@ flags: 7.
   two outdoor hosts compose the union of those answers once each rather
   than at every gate. What is left of the watch is that union: a fifth
   host still has to say which stacks are live over its frame. Swept by
-  `test/roadb_host_pause.test.js` (no file outside the module decides a
+  `test/scenes/roadb_host_pause.test.js` (no file outside the module decides a
   pause by counting depth; the callers of `paused()` are exactly the
   stack owners).
 - The FLAGGED/INTERIM ledger (Home.md open flags) - items above

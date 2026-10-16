@@ -862,7 +862,7 @@ export function createEotbBody({ count = spriteCount, urlFor = eotbSpriteUrl, de
      * rather than registered by the rig itself. That is the direction
      * the rest of this module already runs: the body owns its three
      * `mwView` seams and the rig owns the arm. MWFIX's pin
-     * (`test/mwattach.test.js`) states the same law from the other side
+     * (`test/scenes/mwattach.test.js`) states the same law from the other side
      * - `weaponRig.js` must not mention the view layer, because the
      * classic sprite path is the only path it knows.
      */

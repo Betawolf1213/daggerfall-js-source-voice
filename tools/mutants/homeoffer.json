@@ -5,7 +5,7 @@
     "old": "  if (isBash || asked) return null;",
     "new": "  if (isBash) return null;",
     "tests": [
-      "test/homeoffer.test.js"
+      "test/systems/online/homeoffer.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "  if (isBash || asked) return null;",
     "new": "  if (asked) return null;",
     "tests": [
-      "test/homeoffer.test.js"
+      "test/systems/online/homeoffer.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "  if (door === 'own') return mode === 'info' ? 'menu' : null;",
     "new": "  if (door === 'own') return 'menu';",
     "tests": [
-      "test/homeoffer.test.js"
+      "test/systems/online/homeoffer.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "  if (door !== 'none' || !(price > 0)) return null;",
     "new": "  if (door !== 'none') return null;",
     "tests": [
-      "test/homeoffer.test.js"
+      "test/systems/online/homeoffer.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "  if (door !== 'none' || !(price > 0)) return null;",
     "new": "  if (!(price > 0)) return null;",
     "tests": [
-      "test/homeoffer.test.js"
+      "test/systems/online/homeoffer.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "  if (mode === 'info') return 'offer';\n",
     "new": "",
     "tests": [
-      "test/homeoffer.test.js"
+      "test/systems/online/homeoffer.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "  return mode === 'steal' || declined ? null : 'offer';",
     "new": "  return null;",
     "tests": [
-      "test/homeoffer.test.js"
+      "test/systems/online/homeoffer.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "  return mode === 'steal' || declined ? null : 'offer';",
     "new": "  return declined ? null : 'offer';",
     "tests": [
-      "test/homeoffer.test.js"
+      "test/systems/online/homeoffer.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "  return mode === 'steal' || declined ? null : 'offer';",
     "new": "  return mode === 'steal' ? null : 'offer';",
     "tests": [
-      "test/homeoffer.test.js"
+      "test/systems/online/homeoffer.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "homeDoorPrompt({ door, mode, price, declined",
     "new": "homeDoorPrompt({ door, mode: 'info', price, declined",
     "tests": [
-      "test/homeoffer.test.js"
+      "test/systems/online/homeoffer.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "declined: _homeDeclined.has(homeIdOf(bd)), asked",
     "new": "declined: false, asked",
     "tests": [
-      "test/homeoffer.test.js"
+      "test/systems/online/homeoffer.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "action: () => { _homeDeclined.add(homeIdOf(bd)); homeOnward(hit, entries)(); } },",
     "new": "action: () => { homeOnward(hit, entries)(); } },",
     "tests": [
-      "test/homeoffer.test.js"
+      "test/systems/online/homeoffer.test.js"
     ]
   }
 ]

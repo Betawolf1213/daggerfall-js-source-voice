@@ -8,7 +8,7 @@
 //
 // TWO HALVES. `cardHudModel` is pure: the table's view (systems/card/cardTableSession.js view(), legal()) as the rows,
 // cards and buttons the panel shows - every label and every enabled flag decided here, pinned by
-// test/cards4_hud.test.js. `createCardTableHud` paints that model into the page and hands presses back to the host.
+// test/systems/card/cards4_hud.test.js. `createCardTableHud` paints that model into the page and hands presses back to the host.
 //
 // Not a DFU member: Daggerfall Unity has no card games. Ledger A row (TAVERN CARDS).
 import { rankOf, suitOf, isCard } from '../../net/card/cardLaw.js';

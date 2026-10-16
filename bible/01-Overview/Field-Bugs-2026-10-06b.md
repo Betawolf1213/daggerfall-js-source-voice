@@ -92,11 +92,11 @@ carries the line's jitter. No live relay takes that path (the relay passes the s
 in place before, 290 and 20 walk cycles started over after. The POSE_FAR_SHARE doc in `net/wire.js` still says the
 interval is clamped; that file's bytes are the relay's version (SLAM8), so its correction rides the next relay window.
 
-**Pinned** in `test/runinplace.test.js` (5): for each play-out, a peer whose poses stop while it walks stands within
+**Pinned** in `test/net/runinplace.test.js` (5): for each play-out, a peer whose poses stop while it walks stands within
 the hold and reads standing for the rest of its silence, and its first step after walks again (on the code before:
 286 frames of 286 drawn in place); a sender's lost pose every second stands it a moment and never reads it standing;
 and the one home - the drawn pose made in `tick`, the hold the sender's own constant, `peerMoving` reading it.
-`tools/mutants/runinplace.json`: 5, all dead. AUDIT 637's in `test/audit637_runinplace.test.js` (9): a peer drawn
+`tools/mutants/runinplace.json`: 5, all dead. AUDIT 637's in `test/net/audit637_runinplace.test.js` (9): a peer drawn
 first at its welcome's, join's or first pose's place, running or walking, timed or not; a pose-less introduction; a
 snap after a stand; a runner; a walk along z and a climb along y; the exact frame the body stands on; the far peer from
 a 10 fps sender, never read standing; and a moving peer's silence still stood past GAP_MAX_MS or its own longer

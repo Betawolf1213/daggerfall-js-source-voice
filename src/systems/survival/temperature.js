@@ -197,7 +197,7 @@ export function sunlit({ hour = 12, weather = 'sunny', insideBuilding = false, i
 }
 
 /** TEMP-UI (2026-10-12): the hour's band by NAME - the bands hourTemperature reads, said for the breakdown ('day' its
- *  zero, 'evening' and 'dawn' its -10 x the night multiplier, 'night' its -20 x; test/tempui.test.js holds the two to
+ *  zero, 'evening' and 'dawn' its -10 x the night multiplier, 'night' its -20 x; test/systems/survival/tempui.test.js holds the two to
  *  one another over every minute of the day). */
 export function hourBand(hour) {
   const h = ((Math.floor(hour ?? 12)) % 24 + 24) % 24;
@@ -471,7 +471,7 @@ export const HOUR_NAMES = Object.freeze({ day: 'Daytime', evening: 'Evening', da
  * climate always, then every part that moved the number - the season, the hour, the weather, a roof, the ground, the
  * resistances (on the air - AUDIT TEMP-UI E1: the body's own warmth is not resisted), the race, the clothing (with what it would be dry,
  * where the wet ate some), the armour (and its metal in the sun or the cold), a fire, wet clothes, bare skin, a drink to
- * hand, a Legendary garment's degrees. The values sum to `temp.felt` to the degree (test/tempui.test.js sweeps it).
+ * hand, a Legendary garment's degrees. The values sum to `temp.felt` to the degree (test/systems/survival/tempui.test.js sweeps it).
  */
 export function temperatureBreakdown(env = {}, temp = null) {
   if (!temp) return [];

@@ -4,7 +4,7 @@
 // and the hand that runs a countdown to twelve. Four rules: the void is black; metal and stone are structure and do not
 // glow; light appears only where it means something; every surface reads as Daggerfall pixel art.
 //
-// Pure, and a leaf: the lights are the values of their homes (pinned equal by test/sd25_look.test.js - their homes keep
+// Pure, and a leaf: the lights are the values of their homes (pinned equal by test/world/superDungeon/sd25_look.test.js - their homes keep
 // them, nothing is re-pointed), copied here so a picture painter in world/ never imports a scene or a GL module.
 //
 // Not a DFU member. Ledger A (SUPER-DUNGEONS).

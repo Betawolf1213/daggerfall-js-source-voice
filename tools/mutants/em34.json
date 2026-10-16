@@ -5,7 +5,7 @@
     "old": "      if (first) { ctx.moveTo(x, y); first = false; } else { ctx.lineTo(x, y); }\n    }\n  }\n  ctx.stroke();",
     "new": "      if (first) { ctx.moveTo(x, y); first = false; } else { ctx.lineTo(x, y); }\n    }\n    ctx.stroke();\n  }\n  ctx.stroke();",
     "tests": [
-      "test/inkautomap.test.js"
+      "test/ui/ink/inkautomap.test.js"
     ],
     "note": "A stroke per chain doubles every shared end and reads as a smudge."
   },
@@ -15,7 +15,7 @@
     "old": "  ctx.lineWidth = Math.max(WALL_PEN_MIN, Math.min(WALL_PEN * 1.6, view.scale * 0.22));",
     "new": "  ctx.lineWidth = view.scale * 0.22;",
     "tests": [
-      "test/inkautomap.test.js"
+      "test/ui/ink/inkautomap.test.js"
     ],
     "note": "A whole level fitted on the sheet would have no walls at all."
   },
@@ -25,7 +25,7 @@
     "old": "    ctx.fill();\n  }\n\n  // THE WALL: the outline of everything revealed on this storey.",
     "new": "    ctx.fill();\n    ctx.stroke();\n  }\n\n  // THE WALL: the outline of everything revealed on this storey.",
     "tests": [
-      "test/inkautomap.test.js"
+      "test/ui/ink/inkautomap.test.js"
     ],
     "note": "Two outlines over one room double every shared wall."
   },
@@ -35,7 +35,7 @@
     "old": "  const occ = opts.walked?.occupancy ?? null;",
     "new": "  const occ = null; const later = opts.walked?.occupancy ?? null; void later;",
     "tests": [
-      "test/inkautomap.test.js"
+      "test/ui/ink/inkautomap.test.js"
     ],
     "note": "No wash at all, which is the same loss from the other side."
   },
@@ -45,7 +45,7 @@
     "old": "        while (gx + run < occ.w && occ.at(gx + run, gz)) run++;",
     "new": "        while (false) run++;",
     "tests": [
-      "test/inkautomap.test.js"
+      "test/ui/ink/inkautomap.test.js"
     ],
     "note": "A fillRect a cell shows its own grid at this alpha."
   },
@@ -55,8 +55,8 @@
     "old": "  const hx = Math.sin(yaw), hy = -Math.cos(yaw);",
     "new": "  const hx = Math.sin(yaw), hy = Math.cos(yaw);",
     "tests": [
-      "test/inkautomap.test.js",
-      "test/townsheet.test.js"
+      "test/ui/ink/inkautomap.test.js",
+      "test/ui/ink/townsheet.test.js"
     ],
     "note": "The motor measures yaw from -Z; a plan lays z down the paper."
   },
@@ -66,8 +66,8 @@
     "old": "  ctx.moveTo(x + hx * CARET_R, y + hy * CARET_R);",
     "new": "  ctx.moveTo(x + hx * CARET_R * 0.2, y + hy * CARET_R * 0.2);",
     "tests": [
-      "test/inkautomap.test.js",
-      "test/townsheet.test.js"
+      "test/ui/ink/inkautomap.test.js",
+      "test/ui/ink/townsheet.test.js"
     ]
   },
   {
@@ -76,7 +76,7 @@
     "old": "  ctx.stroke();   // the halo first\n  ctx.fill();",
     "new": "  ctx.fill();\n  ctx.stroke();   // the halo first",
     "tests": [
-      "test/inkautomap.test.js"
+      "test/ui/ink/inkautomap.test.js"
     ],
     "note": "A halo over the ink it carries is a halo that hides it."
   },
@@ -86,7 +86,7 @@
     "old": "    ctx.arc(x, y, BEACON_R + pulse * 2, 0, Math.PI * 2);",
     "new": "    ctx.arc(x, y, BEACON_R, 0, Math.PI * 2);",
     "tests": [
-      "test/inkautomap.test.js"
+      "test/ui/ink/inkautomap.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "        ctx.strokeText(m.name, hx + NOTE_PIN.head + 7, hy);\n",
     "new": "",
     "tests": [
-      "test/inkautomap.test.js"
+      "test/ui/ink/inkautomap.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "  for (let i = win.shown.length - 1; i >= 0; i--) {\n    const f = win.shown[i];    // top of the paper is the TOP floor",
     "new": "  for (let i = 0; i < win.shown.length; i++) {\n    const f = win.shown[i];    // top of the paper is the TOP floor",
     "tests": [
-      "test/inkautomap.test.js"
+      "test/ui/ink/inkautomap.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "  const top = (opts.reserveTop ?? 0) + padY;",
     "new": "  const rowsTotal = shown.length * rowH + Math.max(0, shown.length - 1) * gap;\n  const top = Math.max(padY, ((opts.paperH ?? 400) - rowsTotal) / 2);",
     "tests": [
-      "test/inkautomap.test.js"
+      "test/ui/ink/inkautomap.test.js"
     ],
     "note": "THE DEFECT THE BROWSER PROBE SAW, put back: centred down the right edge, \"Floor 1\" lands squarely under the right gauntlet. The paper's rectangle is not the part of it a player can SEE."
   },
@@ -123,7 +123,7 @@
     "old": "  if (all.length <= max) return all;",
     "new": "  return all;",
     "tests": [
-      "test/inkautomap.test.js"
+      "test/ui/ink/inkautomap.test.js"
     ]
   },
   {
@@ -132,7 +132,7 @@
     "old": "  lo = Math.max(0, Math.min(all.length - max, lo));",
     "new": "  lo = Math.max(0, lo);",
     "tests": [
-      "test/inkautomap.test.js"
+      "test/ui/ink/inkautomap.test.js"
     ]
   },
   {
@@ -141,7 +141,7 @@
     "old": "    const rows = model?.rows ?? [];\n    if (frame && frame.rows === rows) return frame;",
     "new": "    const rows = (model?.rows ?? []).filter((r) => rec()?.revealed?.has(r.key));\n    if (frame && frame.rows === rows) return frame;",
     "tests": [
-      "test/automapsheet.test.js"
+      "test/ui/automap/automapsheet.test.js"
     ],
     "note": "Then the map renumbers itself as the player explores, and the frame slides under the caret."
   },
@@ -151,7 +151,7 @@
     "old": "    if (frame && frame.rows === rows) return frame;",
     "new": "    if (frame && frame.model === model) return frame;",
     "tests": [
-      "test/automapsheet.test.js"
+      "test/ui/automap/automapsheet.test.js"
     ],
     "note": "A host that hands a fresh bag back per call re-derives every triangle in the level, every frame."
   },
@@ -161,7 +161,7 @@
     "old": "    for (const chain of [...plan.chains, ...(plan.openChains ?? [])]) for (const p of chain) [p.x, p.y] = toPlan(p.x, p.y);",
     "new": "",
     "tests": [
-      "test/automapsheet.test.js"
+      "test/ui/automap/automapsheet.test.js"
     ],
     "note": "The window's clamp wants a map that starts at (0,0); a dungeon sits wherever its blocks were laid."
   },
@@ -171,7 +171,7 @@
     "old": "    return deps.insideBuilding ? r.revealed : r.visitedThisRun;",
     "new": "    return r.visitedThisRun;",
     "tests": [
-      "test/automapsheet.test.js"
+      "test/ui/automap/automapsheet.test.js"
     ],
     "note": "DFU's always-colour law: a building has no grayscale tier at all (AutomapModel.cs:46-72)."
   },
@@ -181,7 +181,7 @@
     "old": "      return `${cutKey()}|${deps.insideBuilding ? 'in' : 'dn'}${turned}`;",
     "new": "      return `${cut?.key ?? 'none'}|${deps.insideBuilding ? 'in' : 'dn'}${turned}`;",
     "tests": [
-      "test/automapsheet.test.js"
+      "test/ui/automap/automapsheet.test.js"
     ],
     "note": "A storey change drops the cache, so the key answers 'none' and the kept ink layer shows the old storey."
   },
@@ -191,7 +191,7 @@
     "old": "        segments: boundarySegments, link: linkSegments, floors: f.floors, bounds: f.bounds,\n      })\n      : null;",
     "new": "        segments: boundarySegments, link: linkSegments,\n      })\n      : null;",
     "tests": [
-      "test/automapsheet.test.js"
+      "test/ui/automap/automapsheet.test.js"
     ],
     "note": "The wash then sits beside its own walls rather than inside them."
   },
@@ -201,7 +201,7 @@
     "old": "    const mine = (y) => solidOn || sheetAt(f, y) === index;   // EM3-3D: the solid map shows every floor",
     "new": "    const mine = () => true;   // EM3-3D: the solid map shows every floor",
     "tests": [
-      "test/automapsheet.test.js"
+      "test/ui/automap/automapsheet.test.js"
     ],
     "note": "A note sits 0.7 off whatever surface it was stuck to; it belongs to the storey nearest its height."
   },
@@ -211,7 +211,7 @@
     "old": "    if (!solidOn && sheetAt(f, feet[1]) !== index) return null;\n",
     "new": "",
     "tests": [
-      "test/automapsheet.test.js"
+      "test/ui/automap/automapsheet.test.js"
     ],
     "note": "A lie the 3D map could not tell."
   },
@@ -221,7 +221,7 @@
     "old": "    if (!sm || !r?.entranceDiscovered || !f.sheets.length) return null;",
     "new": "    if (!sm || !f.sheets.length) return null;",
     "tests": [
-      "test/automapsheet.test.js"
+      "test/ui/automap/automapsheet.test.js"
     ]
   },
   {
@@ -230,7 +230,7 @@
     "old": "    const want = Math.max(0, Math.min(f.sheets.length - 1, next));",
     "new": "    const want = next;",
     "tests": [
-      "test/automapsheet.test.js"
+      "test/ui/automap/automapsheet.test.js"
     ]
   },
   {
@@ -239,8 +239,8 @@
     "old": "      if (code === 'PageUp' || code === 'BracketRight') return step(1);",
     "new": "      if (code === 'PageUp' || code === 'ArrowUp') return step(1);",
     "tests": [
-      "test/heldmap.test.js",
-      "test/automapsheet.test.js"
+      "test/ui/heldmap.test.js",
+      "test/ui/automap/automapsheet.test.js"
     ],
     "equivalent": true,
     "why": "The unit pins drive `step` and `key` directly rather than through the window's pan ladder, so none of them can fail this. IT IS COVERED, by tools/enhancedMapProbe.mjs: \"THE ARROWS PAN, they do not change storey\" presses ArrowRight on a zoomed automap sheet and asserts the storey held while the view moved."
@@ -251,7 +251,7 @@
     "old": "  if (HOUSES.has(byte)) return 'house';",
     "new": "  if (HOUSES.has(byte) || SHOWALL.has(byte)) return 'house';",
     "tests": [
-      "test/townsheet.test.js"
+      "test/ui/ink/townsheet.test.js"
     ],
     "note": "THE DEFECT A PIN FOUND, put back: 0xfb is in SHOWALL, so every patch of scenery draws as architecture."
   },
@@ -261,7 +261,7 @@
     "old": "export const isEnterable = (byte) => { const q = quarterOf(byte); return q !== null && q !== 'house'; };",
     "new": "export const isEnterable = (byte) => quarterOf(byte) !== null;",
     "tests": [
-      "test/townsheet.test.js"
+      "test/ui/ink/townsheet.test.js"
     ]
   },
   {
@@ -270,7 +270,7 @@
     "old": "export const isBuilt = (byte) => quarterOf(byte) !== null;",
     "new": "export const isBuilt = (byte) => byte !== 0xff;",
     "tests": [
-      "test/townsheet.test.js"
+      "test/ui/ink/townsheet.test.js"
     ],
     "note": "Then the whole town is one solid block and there is no plan at all."
   },
@@ -280,7 +280,7 @@
     "old": "      const dst = (by + y) * w + bx;",
     "new": "      const dst = (h - 1 - (by + BLOCK_PX - 1 - y)) * w + bx;",
     "tests": [
-      "test/townsheet.test.js"
+      "test/ui/ink/townsheet.test.js"
     ],
     "note": "The shipped map's own two flips, which mirror the plan against the names when the two are drawn as one picture."
   },
@@ -290,7 +290,7 @@
     "old": "      const dst = (by + y) * w + bx;",
     "new": "      const dst = (by + BLOCK_PX - 1 - y) * w + bx;",
     "tests": [
-      "test/townsheet.test.js"
+      "test/ui/ink/townsheet.test.js"
     ]
   },
   {
@@ -299,7 +299,7 @@
     "old": "    if (bx < 0 || by < 0 || bx + BLOCK_PX > w || by + BLOCK_PX > h) continue;   // a block off its own grid",
     "new": "",
     "tests": [
-      "test/townsheet.test.js"
+      "test/ui/ink/townsheet.test.js"
     ]
   },
   {
@@ -308,7 +308,7 @@
     "old": "  return (x, y) => (x >= 0 && y >= 0 && x < field.w && y < field.h) && pick(field.bytes[y * field.w + x]);",
     "new": "  return (x, y) => pick(field.bytes[y * field.w + x]);",
     "tests": [
-      "test/townsheet.test.js"
+      "test/ui/ink/townsheet.test.js"
     ],
     "note": "boundarySegments walks one past the edge on every side; an unbounded reader wraps a row."
   },
@@ -318,7 +318,7 @@
     "old": "  for (const q of QUARTERS) {\n    const chains = plan?.quarters?.[q];\n    if (!chains?.length) continue;",
     "new": "  ctx.strokeStyle = TOWN_PEN.wall;\n  trace(plan?.chains);\n  ctx.stroke();\n  for (const q of QUARTERS) {\n    const chains = plan?.quarters?.[q];\n    if (!chains?.length) continue;",
     "tests": [
-      "test/townsheet.test.js"
+      "test/ui/ink/townsheet.test.js"
     ]
   },
   {
@@ -327,7 +327,7 @@
     "old": "    ctx.fill('evenodd');",
     "new": "    ctx.fill();",
     "tests": [
-      "test/townsheet.test.js"
+      "test/ui/ink/townsheet.test.js"
     ]
   },
   {
@@ -336,7 +336,7 @@
     "old": "      ctx.closePath();\n    }\n  };",
     "new": "    }\n  };",
     "tests": [
-      "test/townsheet.test.js"
+      "test/ui/ink/townsheet.test.js"
     ]
   },
   {
@@ -345,7 +345,7 @@
     "old": "        } else if (b.questName) {\n          // a discovered residence is named ONLY by a quest\n          text = b.questName;\n          quest = true;\n        }",
     "new": "        } else {\n          text = rec.displayName || b.name || '';\n        }",
     "tests": [
-      "test/townsheet.test.js"
+      "test/ui/ink/townsheet.test.js"
     ],
     "note": "A home you have found is still nobody's business - the shipped map's own ladder."
   },
@@ -355,7 +355,7 @@
     "old": "          text = rec.customUserDisplayName || rec.displayName || b.name || '';",
     "new": "          text = rec.displayName || rec.customUserDisplayName || b.name || '';",
     "tests": [
-      "test/townsheet.test.js"
+      "test/ui/ink/townsheet.test.js"
     ]
   },
   {
@@ -364,7 +364,7 @@
     "old": "      } else if (reveal) {",
     "new": "      } else if (true) {",
     "tests": [
-      "test/townsheet.test.js"
+      "test/ui/ink/townsheet.test.js"
     ],
     "note": "The map would hand the player every shop in the city before they had walked a street."
   },
@@ -374,7 +374,7 @@
     "old": "if (!named.has(b?.buildingKey) && (!(b?.questName || b?.questMarked) || !found.has(b.buildingKey))) continue;   // RES-RING",
     "new": "if (!named.has(b?.buildingKey) && (!(b?.questName || b?.questMarked))) continue;   // RES-RING",
     "tests": [
-      "test/townsheet.test.js"
+      "test/ui/ink/townsheet.test.js"
     ],
     "note": "The map would give the quest away before the player had found the door."
   },
@@ -384,7 +384,7 @@
     "old": "    const base = Math.max(NAME_SIZE_MIN, Math.min(NAME_SIZE_MAX, NAME_SIZE * Math.sqrt(view.scale)));",
     "new": "    const base = NAME_SIZE;",
     "tests": [
-      "test/townsheet.test.js"
+      "test/ui/ink/townsheet.test.js"
     ]
   },
   {
@@ -393,7 +393,7 @@
     "old": "    const base = Math.max(NAME_SIZE_MIN, Math.min(NAME_SIZE_MAX, NAME_SIZE * Math.sqrt(view.scale)));",
     "new": "    const base = NAME_SIZE * Math.sqrt(view.scale);",
     "tests": [
-      "test/townsheet.test.js"
+      "test/ui/ink/townsheet.test.js"
     ]
   },
   {
@@ -402,7 +402,7 @@
     "old": "    if (view.scale >= NAME_ZOOM_MIN) {",
     "new": "    if (true) {",
     "tests": [
-      "test/townsheet.test.js"
+      "test/ui/ink/townsheet.test.js"
     ],
     "note": "At a fit they are a grey band rather than words, and the solver's work is spent for nothing."
   },
@@ -412,7 +412,7 @@
     "old": "        }).filter((n) => n.px > -n.w && n.px < paperW + n.w\n          && n.py - n.h / 2 > reserveTop && n.py < paperH + n.h",
     "new": "        }).filter((n) => true || (n.px > -n.w && n.px < paperW + n.w\n          && n.py - n.h / 2 > reserveTop && n.py < paperH + n.h)",
     "tests": [
-      "test/townsheet.test.js"
+      "test/ui/ink/townsheet.test.js"
     ]
   },
   {
@@ -421,7 +421,7 @@
     "old": "    if (plates?.key === key) return plates.rows;",
     "new": "",
     "tests": [
-      "test/townsheet.test.js"
+      "test/ui/ink/townsheet.test.js"
     ],
     "note": "The collision solver is the most expensive thing this sheet does and the view moves far more often than the town."
   },
@@ -431,7 +431,7 @@
     "old": "        if (!s || s.replaced) return;   // the solver gave up on it",
     "new": "        if (!s) return;",
     "tests": [
-      "test/townsheet.test.js"
+      "test/ui/ink/townsheet.test.js"
     ],
     "equivalent": true,
     "why": "The unit fixtures never overrun the collision solver's three iterations, so no plate comes back `replaced`. IT IS COVERED, by tools/enhancedMapProbe.mjs, which lays a nine-block town of twelve named buildings and counts the plates that survive at two zooms."
@@ -442,7 +442,7 @@
     "old": "    this.isTravelMap = this._slot.ids.includes('world');",
     "new": "    this.isTravelMap = true;",
     "tests": [
-      "test/map3_heldpose.test.js"
+      "test/combat/map3_heldpose.test.js"
     ],
     "note": "The world host reads it to know a TRAVEL map is up; a crypt's plan is not a thing you can travel from."
   },
@@ -452,7 +452,7 @@
     "old": "    leaving?.unmount?.();\n",
     "new": "",
     "tests": [
-      "test/heldmap.test.js"
+      "test/ui/heldmap.test.js"
     ],
     "equivalent": true,
     "why": "EM1's world sheet is the only one that claims chrome, and the unit pins drive the switch with a stub sheet that claims none - so nothing is left showing for them to notice. IT IS COVERED, by tools/enhancedMapProbe.mjs: three checks walk a town sheet to the bay and back and assert the search box is hidden, then shown, then hidden again."
@@ -463,7 +463,7 @@
     "old": "  if (byte === TAVERN_BYTE) return 'tavern';",
     "new": "  if (byte === TAVERN_BYTE) return 'shop';",
     "tests": [
-      "test/townsheet.test.js"
+      "test/ui/ink/townsheet.test.js"
     ],
     "note": "The whole point of four colours is that four things look different."
   },
@@ -473,7 +473,7 @@
     "old": "const byteOfType = (type) => type + 1;",
     "new": "const byteOfType = (type) => type;",
     "tests": [
-      "test/townsheet.test.js"
+      "test/ui/ink/townsheet.test.js"
     ],
     "note": "A summary's type is the grid's byte MINUS one. Lose that and every name is lettered as the quarter next door. (PROF-FOUND, 2026-10-12: re-aimed to byteOfType, the plus-one's one home now that the opened shops' bytes are made from it too.)"
   },
@@ -483,7 +483,7 @@
     "old": "export const QUARTER_WASH_A = 0.36;",
     "new": "export const QUARTER_WASH_A = 1;",
     "tests": [
-      "test/townsheet.test.js"
+      "test/ui/ink/townsheet.test.js"
     ],
     "note": "Opaque, the parchment stops reading through and the sheet is a sticker again."
   },
@@ -493,7 +493,7 @@
     "old": "export const QUARTER_INK_MIX = 0.55;",
     "new": "export const QUARTER_INK_MIX = 0;",
     "tests": [
-      "test/townsheet.test.js"
+      "test/ui/ink/townsheet.test.js"
     ],
     "note": "Unmixed, a name is classic's flat blue on parchment rather than ink with a hue."
   },
@@ -503,7 +503,7 @@
     "old": "      return `${f.w}x${f.h}|${plan?.chains?.length ?? 0}|${q}`;",
     "new": "      return `${f.w}x${f.h}|${plan?.chains?.length ?? 0}`;",
     "tests": [
-      "test/townsheet.test.js"
+      "test/ui/ink/townsheet.test.js"
     ],
     "note": "EM3's own lesson on the other sheet: a key that does not name what is inked keeps an old wash under a new outline."
   },
@@ -513,7 +513,7 @@
     "old": "      ctx.arc(p.x, ay, ANCHOR_R, 0, Math.PI * 2);",
     "new": "      ctx.arc(p.x, p.y, ANCHOR_R, 0, Math.PI * 2);",
     "tests": [
-      "test/townsheet.test.js"
+      "test/ui/ink/townsheet.test.js"
     ],
     "note": "Then the tick says nothing the words did not already say, and says it in the wrong place."
   },
@@ -523,7 +523,7 @@
     "old": "      if (Math.abs(p.y - ay) > p.size * LEAD_AT) {",
     "new": "      if (true) {",
     "tests": [
-      "test/townsheet.test.js"
+      "test/ui/ink/townsheet.test.js"
     ],
     "note": "A line under every name in a dense quarter is the smear the solver exists to prevent."
   },
@@ -533,7 +533,7 @@
     "old": "      if (Math.abs(p.y - ay) > p.size * LEAD_AT) {",
     "new": "      if (false) {",
     "tests": [
-      "test/townsheet.test.js"
+      "test/ui/ink/townsheet.test.js"
     ],
     "note": "A displaced plate then floats over a building it does not name, which is the lie EM8 was written to stop."
   },
@@ -543,7 +543,7 @@
     "old": "    const base = Math.max(NAME_SIZE_MIN, Math.min(NAME_SIZE_MAX, NAME_SIZE * Math.sqrt(view.scale)));\n    return base * weight;",
     "new": "    return Math.max(NAME_SIZE_MIN, Math.min(NAME_SIZE_MAX, NAME_SIZE * Math.sqrt(view.scale) * weight));",
     "tests": [
-      "test/townsheet.test.js"
+      "test/ui/ink/townsheet.test.js"
     ],
     "note": "THE DEFECT THE PINS FOUND, put back: past scale 2.4 every plate is already at NAME_SIZE_MAX, so a landmark and the shop beside it come out identical exactly where the map is most read."
   },
@@ -553,7 +553,7 @@
     "old": "      ctx.fillStyle = p.quest ? TOWN_PEN.quest : (QUARTER_INK[p.quarter ?? ''] ?? TOWN_PEN.name);",
     "new": "      ctx.fillStyle = QUARTER_INK[p.quarter ?? ''] ?? TOWN_PEN.name;",
     "tests": [
-      "test/townsheet.test.js"
+      "test/ui/ink/townsheet.test.js"
     ],
     "note": "A quest is why the map is open at all; it outranks knowing the building is somebody's house."
   }

@@ -4,7 +4,7 @@
 // their rite (off the gate's own spot and facing - net/gate/gateLaw.js), who stands there, when the rite holds, and how many
 // may break it. Design: bible/11-Multiplayer/World-Bosses.md section 19 D.
 //
-// PURE and imported by the relay: an edit here is an edit to the relay's law (test/relayversion.test.js).
+// PURE and imported by the relay: an edit here is an edit to the relay's law (test/net/relayversion.test.js).
 //
 // Not a DFU member. Ledger A (WB).
 import { GATE_SALT, gateHash, gateRoll, gateSpotLocal, gateYaw, gateTimes, isGateDay, PIXEL_M, GATE_COLLAPSE_MS } from './gateLaw.js';

@@ -167,7 +167,7 @@ export const usingRightHandFromSaveVars = (saveVars) => !saveVars?.usingLeftHand
  * rig THREW - loudly, at the save. This returns null, and the composed
  * bag then simply omits the pair, which a presence-gated restore reads
  * as "leave the live hand". That is quieter, and quieter is worse.
- * `test/hard2c_weaponpose.test.js` pins the difference rather than
+ * `test/combat/hard2c_weaponpose.test.js` pins the difference rather than
  * leaving it to be discovered: if a caller ever does pass null, the
  * pin says what changed and when.
  */

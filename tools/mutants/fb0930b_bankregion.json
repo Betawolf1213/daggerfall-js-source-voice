@@ -5,7 +5,7 @@
     "old": "here ? `Account in ${here}` : 'Account balance', L.account]",
     "new": "'Account balance', L.account]",
     "tests": [
-      "test/fb0930b_bankregion.test.js"
+      "test/systems/fb0930b_bankregion.test.js"
     ],
     "note": "EMPIRE-ACCOUNT (PIN MOVED): re-aimed by content - online the row is the Empire's one account; offline, BANK-REGION as it shipped."
   },
@@ -15,7 +15,7 @@
     "old": "L.account], ...elsewhere, ['Gold carried', L.inventory],",
     "new": "L.account], ['Gold carried', L.inventory],",
     "tests": [
-      "test/fb0930b_bankregion.test.js"
+      "test/systems/fb0930b_bankregion.test.js"
     ]
   },
   {
@@ -24,7 +24,7 @@
     "old": "(i !== gold && a?.accountGold > 0 ?",
     "new": "(a?.accountGold > 0 ?",
     "tests": [
-      "test/fb0930b_bankregion.test.js"
+      "test/systems/fb0930b_bankregion.test.js"
     ],
     "note": "EMPIRE-ACCOUNT (PIN MOVED): re-aimed by content - online the row is the Empire's one account; offline, BANK-REGION as it shipped."
   },
@@ -34,7 +34,7 @@
     "old": "(i !== gold && a?.accountGold > 0 ?",
     "new": "(i !== gold && a ?",
     "tests": [
-      "test/fb0930b_bankregion.test.js"
+      "test/systems/fb0930b_bankregion.test.js"
     ],
     "note": "EMPIRE-ACCOUNT (PIN MOVED): re-aimed by content - online the row is the Empire's one account; offline, BANK-REGION as it shipped."
   },
@@ -44,7 +44,7 @@
     "old": "  const vamp = !!(entity.racialOverride && !entity.racialOverride.ended\n    && entity.racialOverride.racial === 'vampirism');",
     "new": "  const vamp = !!(entity.racialOverride && !entity.racialOverride.ended);",
     "tests": [
-      "test/fb0930b_bankregion.test.js"
+      "test/systems/fb0930b_bankregion.test.js"
     ]
   },
   {
@@ -53,7 +53,7 @@
     "old": "  if (!restore) endOldLifeEffects(entity);",
     "new": "  if (!restore) { endOldLifeEffects(entity); entity.guildMemberships = null; }",
     "tests": [
-      "test/fb0930b_bankregion.test.js"
+      "test/systems/fb0930b_bankregion.test.js"
     ]
   },
   {
@@ -62,7 +62,7 @@
     "old": "  if (!restore) endOldLifeEffects(entity);",
     "new": "  if (!restore) { endOldLifeEffects(entity); for (const a of entity.bankAccounts ?? []) a.accountGold = 0; }",
     "tests": [
-      "test/fb0930b_bankregion.test.js"
+      "test/systems/fb0930b_bankregion.test.js"
     ]
   },
   {
@@ -71,7 +71,7 @@
     "old": "  snap.bankAccounts = (entity.bankAccounts ?? []).map((a) => ({ ...a }));",
     "new": "  snap.bankAccounts = [];",
     "tests": [
-      "test/fb0930b_bankregion.test.js"
+      "test/systems/fb0930b_bankregion.test.js"
     ]
   },
   {
@@ -80,7 +80,7 @@
     "old": "  snap.guildMemberships = entity.guildMemberships\n    ? (isMembershipStore",
     "new": "  snap.guildMemberships = !entity.guildMemberships\n    ? (isMembershipStore",
     "tests": [
-      "test/fb0930b_bankregion.test.js"
+      "test/systems/fb0930b_bankregion.test.js"
     ]
   }
 ]

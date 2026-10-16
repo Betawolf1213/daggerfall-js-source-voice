@@ -5,7 +5,7 @@
   "old": "  const clear = pool.filter((c) => clearOf(c.pos, existing, DFIRE.entranceM));",
   "new": "  const clear = pool;",
   "tests": [
-   "test/auditrestparty_fires.test.js"
+   "test/world/auditrestparty_fires.test.js"
   ]
  },
  {
@@ -14,7 +14,7 @@
   "old": "  const first = near(inReach.length ? inReach : clear.filter((c) => c.start)) ?? near(clear);",
   "new": "  const first = near(inReach.length ? inReach : pool.filter((c) => c.start)) ?? near(pool);",
   "tests": [
-   "test/auditrestparty_fires.test.js"
+   "test/world/auditrestparty_fires.test.js"
   ]
  },
  {
@@ -23,7 +23,7 @@
   "old": "  const reach = Math.max(SQ(DFIRE.entranceM), first ? d2(first.pos, from) : Infinity);",
   "new": "  const reach = SQ(DFIRE.entranceM);",
   "tests": [
-   "test/auditrestparty_fires.test.js"
+   "test/world/auditrestparty_fires.test.js"
   ]
  },
  {
@@ -32,7 +32,7 @@
   "old": "  const want = doorFire ? count - 1 : count;",
   "new": "  const want = count;",
   "tests": [
-   "test/auditrestparty_fires.test.js"
+   "test/world/auditrestparty_fires.test.js"
   ]
  },
  {
@@ -41,7 +41,7 @@
   "old": "    if (!levelRound(probe, pos)) continue;   // AUDIT REST-PARTY C3: no stair, no ramp, no ledge\n",
   "new": "",
   "tests": [
-   "test/auditrestparty_fires.test.js"
+   "test/world/auditrestparty_fires.test.js"
   ]
  },
  {
@@ -50,7 +50,7 @@
   "old": " || !(Math.abs(g.y - pos[1]) <= DFIRE.levelM)) return false;",
   "new": ") return false;",
   "tests": [
-   "test/auditrestparty_fires.test.js"
+   "test/world/auditrestparty_fires.test.js"
   ]
  },
  {
@@ -59,7 +59,7 @@
   "old": "    if (!g || !(g.ny > DFIRE.flatNy) || ",
   "new": "    if (!g || ",
   "tests": [
-   "test/auditrestparty_fires.test.js"
+   "test/world/auditrestparty_fires.test.js"
   ]
  },
  {
@@ -68,7 +68,7 @@
   "old": "  flatNy: 0.99,",
   "new": "  flatNy: 0.9,",
   "tests": [
-   "test/auditrestparty_fires.test.js"
+   "test/world/auditrestparty_fires.test.js"
   ]
  },
  {
@@ -77,7 +77,7 @@
   "old": "  levelR: 0.5,",
   "new": "  levelR: 0.05,",
   "tests": [
-   "test/auditrestparty_fires.test.js"
+   "test/world/auditrestparty_fires.test.js"
   ]
  },
  {
@@ -86,7 +86,7 @@
   "old": " && hit.key === DUNGEON_BUCKET ? { y: from[1] - hit.dist, ny: hit.normal[1] } : null;",
   "new": " ? { y: from[1] - hit.dist, ny: hit.normal[1] } : null;",
   "tests": [
-   "test/auditrestparty_fires.test.js"
+   "test/world/auditrestparty_fires.test.js"
   ]
  },
  {
@@ -95,7 +95,7 @@
   "old": "      const hit = collider.raycastHit(from, [0, -1, 0], DFIRE.floorM + 1);",
   "new": "      const hit = collider.raycastHit(from, [0, -1, 0], DFIRE.floorM + 1, ONLY_DUNGEON);",
   "tests": [
-   "test/auditrestparty_fires.test.js"
+   "test/world/auditrestparty_fires.test.js"
   ]
  },
  {
@@ -104,7 +104,7 @@
   "old": "    ...(b?.layout?.exitDoors ?? []).filter(isDungeonExitDoor).map((d) => at(b, d)),",
   "new": "    ...(b?.layout?.exitDoors ?? []).map((d) => at(b, d)),",
   "tests": [
-   "test/auditrestparty_fires.test.js"
+   "test/world/auditrestparty_fires.test.js"
   ]
  },
  {
@@ -113,7 +113,7 @@
   "old": ".map((h) => [h.x, h.lawFoot ?? h.foot ?? h.y, h.z]);",
   "new": ".map((h) => [h.x, h.y, h.z]);",
   "tests": [
-   "test/auditrestparty_fires.test.js"
+   "test/world/auditrestparty_fires.test.js"
   ],
   "note": "AUDIT REST-PARTY C7 (PIN MOVED): the law reads lawFoot first."
  },
@@ -123,7 +123,7 @@
   "old": "cls === 'move' || cls === 'specialDoor' ? `act:${bi}:${p.position}` : 'dungeon'",
   "new": "'dungeon'",
   "tests": [
-   "test/auditrestparty_fires.test.js"
+   "test/world/auditrestparty_fires.test.js"
   ]
  },
  {
@@ -132,7 +132,7 @@
   "old": "foot: size ? f.y - size.h / 2 : undefined,",
   "new": "foot: undefined,",
   "tests": [
-   "test/auditrestparty_fires.test.js"
+   "test/world/auditrestparty_fires.test.js"
   ]
  },
  {
@@ -141,7 +141,7 @@
   "old": "  const { doors, existing } = fireLayoutInputs(blocks, layoutHearths(blocks, sizeOf));\n  const plan",
   "new": "  const { existing } = fireLayoutInputs(blocks, layoutHearths(blocks, sizeOf));\n  const doors = blocks.flatMap((b) => (b.layout.exitDoors ?? []).map((d) => [d.matrix[12] + b.originX, d.matrix[13], d.matrix[14] + b.originZ]));\n  const plan",
   "tests": [
-   "test/auditrestparty_fires.test.js"
+   "test/world/auditrestparty_fires.test.js"
   ],
   "note": "AUDIT REST II (PIN MOVED): the tool's report is the law's one call now (dungeonFirePlan - F2/F5/F6), so the line after the inputs is the plan; re-aimed by content, every door face read as an exit."
  }

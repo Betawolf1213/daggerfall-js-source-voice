@@ -127,8 +127,8 @@ first was already fixed on main as CARDS-TOUCH, found live and shipped on its ow
 
 ## Pins
 
-`test/auditcards6_a.test.js` 10, `test/auditcards6_b.test.js` 11, `test/auditcards6_c.test.js` 17,
-`test/auditcards6_d.test.js` 11, `test/auditcards6_e.test.js` 10. Pins moved with their fixes, each with a PIN MOVED note: the copy doors'
+`test/systems/auditcards6_a.test.js` 10, `test/systems/auditcards6_b.test.js` 11, `test/net/iliac/auditcards6_c.test.js` 17,
+`test/net/iliac/auditcards6_d.test.js` 11, `test/systems/auditcards6_e.test.js` 10. Pins moved with their fixes, each with a PIN MOVED note: the copy doors'
 harnesses (`audit625_loot`, `sigil1`, `survtiers3`, `audit68_dungeonctx`, `corpsegold`, `loot7check`, `seatheal`), the
 quest block's (`cards9_sources`), the hoard's look (`sd9e_spoils`) (A3, A8, A-); the deal's line, a loss's stake, the
 think cap (`cards10_table`) and the poison's minute (`cards2b_seated`) (B1, B4, B11); the commit's game and turn, the

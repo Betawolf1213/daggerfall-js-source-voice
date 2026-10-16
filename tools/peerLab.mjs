@@ -205,6 +205,6 @@ console.log(`  composes ${out.counters.composes}, uploads ${out.counters.uploads
 if (out.leftover) for (const l of out.leftover) console.log(`  after wave ${l.wave}: dom ${l.dom}, textures ${l.textures}, batches ${l.batches}, dolls ${l.dolls}, mobiles ${l.mobiles}, footsteps ${l.footsteps}, swings ${l.attackAn}, rides ${l.riding}, climbs ${l.climb}, names ${l.names}, gl tex/buf live ${l.glTex}/${l.glBuf}, heap ${(l.heap / 1e6).toFixed(1)} MB`);
 if (process.env.OUT) writeFileSync(process.env.OUT, JSON.stringify(out));
 if (errors.length) console.log('errors:', errors.slice(0, 6).join('\n  '));
-// the lab judges its run (test/probehygiene.test.js T3): a page that threw, or no frame measured, is no measure
+// the lab judges its run (test/tooling/probehygiene.test.js T3): a page that threw, or no frame measured, is no measure
 if (errors.length || !rows.length || !rows.every((r) => Number.isFinite(r.total))) process.exitCode = 1;
 await browser.close(); await server.close();

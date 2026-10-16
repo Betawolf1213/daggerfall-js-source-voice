@@ -139,7 +139,7 @@ read and never written (the pool's, the riders'; a riding frame is a new array
 each time it is decoded), so a kept hide never goes stale. The helpers answer
 into scratch rather than a new array, and the lattice's nine points are kept
 for the last cell asked - the same arithmetic, so every picture, the 3D
-horse's too, is byte for byte what it was (`test/perfhide.test.js` pins the
+horse's too, is byte for byte what it was (`test/systems/horse/perfhide.test.js` pins the
 digests). `07-Rendering/Performance-Priority.md` PERF-HIDE has the measure.
 
 ## Where it is worn
@@ -317,7 +317,7 @@ the player's horse is let go, so a remount never gallops in place on the gait it
   on the screen, especially in third person"): in third person the riding sprite is not drawn at all -
   `player/mwView.js` mwViewHides hides the first-person horse whenever the Morrowind body is in third person (its horse
   is in the world); before, mwViewDrawSaddle's false out of first person let the sprite paint over the 3D rider.
-  Pinned: `test/horsepov.test.js`; mutants `tools/mutants/horsepov.json`.
+  Pinned: `test/player/horsepov.test.js`; mutants `tools/mutants/horsepov.json`.
 - **Other riders** (`net/peer/peerBodies.js`): a peer on a horse whose Morrowind body stands here sits a 3D horse of its
   own, in the look their pose names (`rc`), stepped at the body's pace; the rider layer yields them
   (`net/peer/peerRiders.js` sync's `yields`, `scenes/world.js` peerRidesIn3d) - a beast stays the layer's. A yielded rider
@@ -348,8 +348,8 @@ seconds, its own batches.
 
 ### The audit (AUDIT COATS3D, 2026-10-11)
 
-Thirteen findings on the branch, each fixed and pinned (`test/coats3d_horse3d.test.js` "COATS3D AUDIT", and the
-billboard's in `test/coats1_horsecoats.test.js`): the billboards turned to the drawing eye in the bay's every frame
+Thirteen findings on the branch, each fixed and pinned (`test/formats/morrowind/coats3d_horse3d.test.js` "COATS3D AUDIT", and the
+billboard's in `test/systems/horse/coats1_horsecoats.test.js`): the billboards turned to the drawing eye in the bay's every frame
 (`horseCartPool.js` faceTeams lost the look - A1); the 3D dye ran only while the player rode (A2); a yielded rider with
 no standing body was drawn by nobody (A3); the look cache deleted looks on screen past twelve (A4); a concealed owner's
 3D horses drew in the opaque pass (A5); a look chosen on the sprite lane dyed all 136 mounted sprites in one task -
@@ -368,4 +368,4 @@ a choice, the one worn pressed (`choiceRow`, the paint row's own, shared).
 Pressing one restyles the ridden horse in the pack and tells the host, as a
 paint does - Horse Cart and Cargo on or off.
 
-Pinned: `test/coats1_horsecoats.test.js`; COATS3D, `test/coats3d_horse3d.test.js`.
+Pinned: `test/systems/horse/coats1_horsecoats.test.js`; COATS3D, `test/formats/morrowind/coats3d_horse3d.test.js`.

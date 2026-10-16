@@ -81,7 +81,7 @@ let stateDir = null;
 const dropState = () => { if (stateDir) { try { rmSync(stateDir, { recursive: true, force: true }); } catch { /* gone */ } stateDir = null; } };
 
 /** The edits this probe makes beside the frame probe's (FRAME_PROBE_EDITS' shape: each needle asserted, and held to the
- *  tree by test/perfon4_probes.test.js). */
+ *  tree by test/tooling/perfon4_probes.test.js). */
 export const ONLINE_PROBE_EDITS = Object.freeze([
   // the account base may be the local service - serviceBase answers an https base alone
   { file: 'src/net/accountClient.js', edits: [["/^https:\\/\\/\\S+$/.test(v)", "/^(https:\\/\\/\\S+|http:\\/\\/127\\.0\\.0\\.1:\\d+)$/.test(v)"]] },
@@ -94,7 +94,7 @@ export const ONLINE_PROBE_EDITS = Object.freeze([
     window.__probeOnline = () => ({ peers: online ? online.drawable().length : null, status: online ? online.status : null, ways: livingWays.size, frame: window.__frame | 0 });`]] },
 ]);
 
-/** The page's server's transforms: the frame probe's and this probe's own (exported for test/perfon4_probes.test.js). */
+/** The page's server's transforms: the frame probe's and this probe's own (exported for test/tooling/perfon4_probes.test.js). */
 export const probePlugins = () => [probeTransforms(), editsPlugin('online-probe-transforms', ONLINE_PROBE_EDITS)];
 
 /** The bots' knobs, as tools/loadHarness.mjs makeBot reads them: guests (no registration), seven in ten walking. */

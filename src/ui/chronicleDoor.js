@@ -170,7 +170,7 @@ function enhancedChronicleOverlay(deps, section) {
     // is what L is) and Escape ('back'), which is the pause key. The
     // three sibling doors carry this comment BECAUSE they hit it first;
     // the rule was enforced by memory in three files and missed in the
-    // fourth. test/crash1_overlay_contract.test.js derives it now.
+    // fourth. test/ui/crash1_overlay_contract.test.js derives it now.
     isChoiceWindow: true,
     get done() { return done; },
     input() { /* the view's own capture keydown owns the keyboard */ },

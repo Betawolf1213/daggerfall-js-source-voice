@@ -5,7 +5,7 @@
     "old": "band: Object.freeze({ h: 0.2, w: 0.73 })",
     "new": "band: Object.freeze({ h: 0.2, w: 0.83 })",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "cap: Object.freeze({ y1: SD_PILLAR_H, w: SD_PILLAR_W / 2 }),",
     "new": "cap: Object.freeze({ y1: SD_PILLAR_H + 0.2, w: SD_PILLAR_W / 2 }),",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "plinth: Object.freeze({ y1: 0.45, w: SD_PILLAR_W / 2 }),",
     "new": "plinth: Object.freeze({ y1: 0.45, w: 0.7 }),",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "    f.quad(rec, C(a, y0), C(a, y1), C(b, y1), C(b, y0), [u / tile, -y0 / tile], [u / tile, -y1 / tile], [(u + len) / tile, -y1 / tile], [(u + len) / tile, -y0 / tile]);",
     "new": "    f.quad(rec, C(b, y0), C(b, y1), C(a, y1), C(a, y0), [u / tile, -y0 / tile], [u / tile, -y1 / tile], [(u + len) / tile, -y1 / tile], [(u + len) / tile, -y0 / tile]);",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "  const px = SD_ARENA.x + Math.cos(a) * SD_PILLAR_R, pz = SD_ARENA.z + Math.sin(a) * SD_PILLAR_R, w = SD_PILLAR_W / 2;",
     "new": "  const px = SD_ARENA.x + Math.cos(a) * SD_PILLAR_R, pz = SD_ARENA.z + Math.sin(a) * SD_PILLAR_R, w = SD_PILLAR_W / 2 - 0.1;",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "  for (let row = 0; row < S / H; row++) for (let c = 0; c < 3; c++) bevel(albedo,",
     "new": "  for (let i = 0; i < emission.colors.length; i += 4) emission.colors[i] = 9;\n  for (let row = 0; row < S / H; row++) for (let c = 0; c < 3; c++) bevel(albedo,",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "    if (bx < J || by < J) { putTexel(albedo, x, y, step(B, 0)); continue; }",
     "new": "    if (bx < J) { putTexel(albedo, x, y, step(B, 0)); continue; }",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "export const SD_PILLAR_DIAL = Object.freeze({ y: 11.3, r: 0.66, lift: 0.01 });",
     "new": "export const SD_PILLAR_DIAL = Object.freeze({ y: 11.3, r: 0.66, lift: 0.05 });",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "n: Object.freeze([nx, 0, nz])",
     "new": "n: Object.freeze([-nx, 0, -nz])",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "for (const [sx, sz] of [[1, 0], [0, 1], [-1, 0], [0, -1]]) prism(f, rec, px, pz, square(N.bar)",
     "new": "for (const [sx, sz] of [[1, 1], [-1, 1], [-1, -1], [1, -1]]) prism(f, rec, px, pz, square(N.bar)",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "bar: 0.025, plate: 0.08, flameY: 12.86 });",
     "new": "bar: 0.025, plate: 0.08, flameY: 13.6 });",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "vec2 dir = vec2(sin(a), cos(a)), side = vec2(cos(a), -sin(a));",
     "new": "vec2 dir = vec2(cos(a), sin(a)), side = vec2(sin(a), -cos(a));",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "if (spade >= 0.0 && spade <= 1.0 && off <= ",
     "new": "if (spade >= 9.0 && spade <= 1.0 && off <= ",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "float w = mod(h, 3.0) < 0.5 ?",
     "new": "float w = mod(h, 3.0) < -0.5 ?",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "    handsAt(s, sec * 1000, _a1, _seen1);",
     "new": "    handsAt(s, t, _a1, _seen1);",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "  const e = sdTick(t / 1000) - sec;",
     "new": "  const e = 1;",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "Math.atan2((at[0] - d.at[0]) * d.right[0] + (at[2] - d.at[2]) * d.right[2], at[1] - d.at[1])",
     "new": "Math.atan2(-((at[0] - d.at[0]) * d.right[0] + (at[2] - d.at[2]) * d.right[2]), at[1] - d.at[1])",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "    if (d < best) { best = d; e0 = e; }",
     "new": "    if (e0 < 0) { best = d; e0 = e; }",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "W.one[1] = AY + SD_REMNANT_BODY.heartY - p.sink;",
     "new": "W.one[1] = AY - p.sink;",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "old": "const [x, z] = clearOfPillars(s.rem.x, s.rem.z);",
     "new": "const [x, z] = [s.rem.x, s.rem.z];",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -185,7 +185,7 @@
     "old": "    const k = dk < 1 && q >= extra.length && arenaLamp(l) ? dk : 1;",
     "new": "    const k = dk < 1 && q >= extra.length ? dk : 1;",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -194,7 +194,7 @@
     "old": "    const k = dk < 1 && q >= extra.length && arenaLamp(l) ? dk : 1;",
     "new": "    const k = dk < 1 && arenaLamp(l) ? dk : 1;",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -203,7 +203,7 @@
     "old": "if (t - called < DIM_IN) { u = (t - called) / DIM_IN; by = DIM_TO - 1; }",
     "new": "if (t - called < 0) { u = (t - called) / DIM_IN; by = DIM_TO - 1; }",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -212,7 +212,7 @@
     "old": "    else if (t - at < DIM_OUT) { u = (t - at) / DIM_OUT; from = DIM_TO; by = 1 - DIM_TO; }",
     "new": "    else { out[0] = DIM_TO; return out; }",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -221,7 +221,7 @@
     "old": "  if (s.su > t && s.stunAt > 0) { if (t - s.stunAt < DIM_OUT) { u = (t - s.stunAt) / DIM_OUT; from = DIM_TO; by = 1 - DIM_TO; } }",
     "new": "  if (s.su > t && s.stunAt > 0) { out[0] = DIM_TO; return out; }",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -230,7 +230,7 @@
     "old": "markShape([0, 0], 0, SD_MARK_COLOR.echoes[0], SD_ECHO.r), markShape([0, 0], 0, SD_MARK_COLOR.echoes[1], SD_ECHO.r)",
     "new": "markShape([0, 0], 0, SD_MARK_COLOR.echoes[1], SD_ECHO.r), markShape([0, 0], 0, SD_MARK_COLOR.echoes[0], SD_ECHO.r)",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -239,7 +239,7 @@
     "old": "      if (!(s.ec?.[e]?.h > 0)) continue;",
     "new": "      if (!s.ec?.[e]) continue;",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -248,7 +248,7 @@
     "old": "    if (onFloor(p)) { const m = _marks[0];",
     "new": "    if (onFloor(p) || s.ph === 2) { const m = _marks[0];",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -257,7 +257,7 @@
     "old": "    if (onFloor(p)) { const m = _marks[0]; m.origin[0] = p.x; m.origin[1] = p.z; m.yaw = p.yw; _picked[n++] = m; }",
     "new": "    if (onFloor(p)) { const m = _marks[0]; m.origin[0] = p.x; m.origin[1] = p.z; _picked[n++] = m; }",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -266,7 +266,7 @@
     "old": "    if (_sdPillarPass.draw(proj, view, sdPillarLookAt(s, t, _sdPillarLook, _sdGlowMemo), fog,",
     "new": "    if (false && _sdPillarPass.draw(proj, view, sdPillarLookAt(s, t, _sdPillarLook, _sdGlowMemo), fog,",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -275,7 +275,7 @@
     "old": "    bodyMarks: () => sdArenaMarksAt(sdFightLink.state(), sdFightLink.now()),",
     "new": "    bodyMarks: () => [],",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -284,7 +284,7 @@
     "old": "cam.pos, host.sdLampDim?.() ?? null);",
     "new": "cam.pos);",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -293,7 +293,7 @@
     "old": "      for (let i = 0; i < under.length; i++) { pass.draw(under[i],",
     "new": "      for (let i = 0; i < 0; i++) { pass.draw(under[i],",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -302,7 +302,7 @@
     "old": "  if (s !== _handsOf || sec !== _handsSec) {",
     "new": "  if (true) {",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -311,7 +311,7 @@
     "old": "  sdLampDimInto(s, t, look.k);\n",
     "new": "  look.k = Float64Array.of(sdLampDimAt(s, t), 0);\n",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   },
   {
@@ -320,7 +320,7 @@
     "old": "  return list;\n}",
     "new": "  return list.slice(0, n);\n}",
     "tests": [
-      "test/sd25_arena.test.js"
+      "test/world/superDungeon/sd25_arena.test.js"
     ]
   }
 ]

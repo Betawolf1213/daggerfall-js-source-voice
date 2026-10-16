@@ -306,7 +306,7 @@ rows were in the DOM the whole time and the lines were in the log; they
 were drawn zero pixels tall. `flex: none` on the row is the fix: a chat
 line does not shrink, the list scrolls.
 
-**Why no pin caught it.** `test/chat1.test.js` drives the panel against
+**Why no pin caught it.** `test/net/chat1.test.js` drives the panel against
 a fake document, and a fake document has no layout - its boxes are
 whatever the fake says they are. That is the right tool for the panel's
 BEHAVIOUR (the keys, the IME, the grown list, the badge) and it can
@@ -317,7 +317,7 @@ actually hold:
   server and no game data - the panel's own sheet is the subject. It
   fails on the old CSS and passes on the new, and it checks the closed
   peek too, so a fix to the list cannot quietly break the overlay.
-- `test/chat1.test.js` holds the **law**, and states it over the SHEET
+- `test/net/chat1.test.js` holds the **law**, and states it over the SHEET
   rather than over `.dfchat-line`: the sheet still contains a
   fixed-height flex-column scroller (so the rule cannot go vacuous),
   and nothing in the sheet hides its overflow without also refusing to

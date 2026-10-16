@@ -481,7 +481,7 @@ const JEWEL_WOODS = Object.freeze(['ironwood', 'ghostwood'].map((w) => Object.fr
 /** THE GEMS A JEWELLER SETS (4.6): DFU's eight (professionLaw GEMS - the veins') and the sea's Pearl (DFU 77, Fishing's).
  *  The Siege-cracked Gem is none of them - a Lapidary's stands in for any (LAPIDARY, recipeInputs). */
 export const JEWEL_GEMS = Object.freeze([...GEMS.map((g) => g.key), PEARL.key]);
-/** A gem's word, DFU's template's name ('gem:ruby' Ruby - pinned equal to the rows, test/prof10_law.test.js). */
+/** A gem's word, DFU's template's name ('gem:ruby' Ruby - pinned equal to the rows, test/net/prof10_law.test.js). */
 export const gemWord = (key) => (typeof key === 'string' && key.startsWith('gem:') ? key[4].toUpperCase() + key.slice(5) : '');
 /**
  * THE EIGHT PIECES (9.3: "Ring - 1 Silver, Gold or Platinum (+ a gem); Mark - 1 metal + 1 gem; Bracelet - 2 metal; Bracer

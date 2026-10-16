@@ -289,7 +289,7 @@ comments carry them (`AUDIT-RR Fn`).
   + `(Armor)` (:691-692): the loot table's rolls are in Items already;
   the port converted the equip table alone.
 
-Suite `test/auditrr.test.js` (the Items test executes the class
+Suite `test/systems/auditrr.test.js` (the Items test executes the class
 virtuals, the group registry under each switch and the stored weight;
 the shelf's second loop and the mints are pinned by source).
 
@@ -337,7 +337,7 @@ hook. The paid findings, numbered as the code comments carry them:
   (RoleplayRealismItemsMod.cs:788-789 draws twice; the port once - the
   same distribution, a seeded stream differs).
 
-Suite `test/auditrr2.test.js` (shared with the RR page): G7-G10 by
+Suite `test/systems/auditrr2.test.js` (shared with the RR page): G7-G10 by
 execution, G11/G12 by source.
 
 ## DISC21-A (2026-09-24) - the questions' dagger, worn to 20% of nothing
@@ -349,7 +349,7 @@ damaged". `AssignSkillEquipment`'s first act wears the dagger a biography answer
 of nothing is 0: broken to the equip check, undamaged to the repairer. The biography mints through `createWeapon` and
 `mintCondition` now, the kit mints the dagger before it wears it (`isQuestionsDagger`, `QUESTIONS_DAGGER_WEAR`, one
 home in `systems/conditionRepair.js`), and a load mints a never-minted wearable by the law it missed - the kit's 20%
-for this dagger at 0. `test/disc21.test.js` (A). `01-Overview/Field-Bugs-2026-09-23.md`, DISC21-A.
+for this dagger at 0. `test/systems/disc21.test.js` (A). `01-Overview/Field-Bugs-2026-09-23.md`, DISC21-A.
 
 ## DISC29-B (2026-09-28) - the word a rarity name dropped, and the two mods that read the raw make
 
@@ -376,13 +376,13 @@ the bare TEMPLATE's name (`systems/loot/lootRarity.js rarityName`), so the long 
   BetterFootstepsComponent.cs:256-259) read the PROPERTY this mod overrides; the port read the raw `material`, so
   brigandine boots walked in plate and a mail hauberk clanked as plate. Both read `rriNativeMaterialValue` now.
 
-`test/disc29_rarity.test.js` (6), `test/if1_immersivefootsteps.test.js` (the boots' ladder);
+`test/systems/disc29_rarity.test.js` (6), `test/systems/if1_immersivefootsteps.test.js` (the boots' ladder);
 `tools/mutants/disc29.json` (DISC29-B, 11). `01-Overview/Field-Bugs-2026-09-28f.md`, DISC29-B.
 
 ## Record
 
-`vendor/roleplay-realism-items/`. Suites `test/rri1_items.test.js` (9),
-`test/rri2_realism.test.js` (11), `test/auditrr.test.js` (15) and `test/auditrr2.test.js` (17, both shared with the RR page). Campaigns `tools/mutants/rri1.json`
+`vendor/roleplay-realism-items/`. Suites `test/systems/rri1_items.test.js` (9),
+`test/systems/rri2_realism.test.js` (11), `test/systems/auditrr.test.js` (15) and `test/systems/auditrr2.test.js` (17, both shared with the RR page). Campaigns `tools/mutants/rri1.json`
 (11), `tools/mutants/rri2.json` (18). The shipped set:
 `public/art/roleplay-realism-items/` (280 PNGs), `src/systems/roleplayRealismItems/rriIndex.js`
 (generated), `tools/rriExtract.mjs`.

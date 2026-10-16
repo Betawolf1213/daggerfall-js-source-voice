@@ -5,7 +5,7 @@
     "old": ".wb-marks-card.wb-marks-arrive { right: 18px; bottom: max(96px, 14vh); width: 340px; }",
     "new": ".wb-marks-card.wb-marks-arrive { left: 50%; top: max(30%, 206px); transform: translateX(-50%); }",
     "tests": [
-      "test/gateux_gate.test.js"
+      "test/ui/gate/gateux_gate.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "  const tags = [model.fightersLine ?? BOSS_BAR_TEXT.fighters(model.fighters),",
     "new": "  const tags = [`${model.fightersLine ?? BOSS_BAR_TEXT.fighters(model.fighters)}  ·  Phase ${model.phase}`,",
     "tests": [
-      "test/gateux_gate.test.js"
+      "test/ui/gate/gateux_gate.test.js"
     ]
   },
   {
@@ -23,10 +23,10 @@
     "old": "      loadTex();\n      floor.forEach((f, i) => {\n        if (f.taken) return;",
     "new": "      loadTex();\n      floor.forEach((f, i) => {\n        if (f.taken) return;\n        if (f.fly.rest) { takeOne(f); return; }",
     "tests": [
-      "test/gateux_gate.test.js",
-      "test/wb5_gate_spoils.test.js",
-      "test/wb9f_gate_spoils.test.js",
-      "test/wbx_gate_fixes.test.js"
+      "test/ui/gate/gateux_gate.test.js",
+      "test/systems/item/wb5_gate_spoils.test.js",
+      "test/scenes/wb9f_gate_spoils.test.js",
+      "test/world/gate/wbx_gate_fixes.test.js"
     ]
   },
   {
@@ -35,7 +35,7 @@
     "old": "p.hits = (p.hits ?? 0) + 1; p.best",
     "new": "p.best",
     "tests": [
-      "test/gateux_gate.test.js"
+      "test/ui/gate/gateux_gate.test.js"
     ]
   },
   {
@@ -44,7 +44,7 @@
     "old": "p.best = Math.max(p.best ?? 0, got);",
     "new": "p.best = (p.best ?? 0) + got;",
     "tests": [
-      "test/gateux_gate.test.js"
+      "test/ui/gate/gateux_gate.test.js"
     ]
   },
   {
@@ -53,7 +53,7 @@
     "old": "if (b.dead && !p.down) p.falls",
     "new": "if (b.dead) p.falls",
     "tests": [
-      "test/gateux_gate.test.js"
+      "test/ui/gate/gateux_gate.test.js"
     ]
   },
   {
@@ -62,7 +62,7 @@
     "old": "  p.cxd = (p.cxd ?? 0) + got;   // GATE-UX: the chart says the crystals apart\n",
     "new": "",
     "tests": [
-      "test/gateux_gate.test.js"
+      "test/ui/gate/gateux_gate.test.js"
     ]
   },
   {
@@ -71,7 +71,7 @@
     "old": "    .sort((a, b) => b.dealt - a.dealt || a.joinedAt - b.joinedAt).slice(0, DAMAGE_CHART_MAX)",
     "new": "    .slice(0, DAMAGE_CHART_MAX)",
     "tests": [
-      "test/gateux_gate.test.js"
+      "test/ui/gate/gateux_gate.test.js"
     ]
   },
   {
@@ -80,7 +80,7 @@
     "old": ".filter((q) => q.dealt > 0 || q.stoodMs > 0)",
     "new": ".filter(() => true)",
     "tests": [
-      "test/gateux_gate.test.js"
+      "test/ui/gate/gateux_gate.test.js"
     ]
   },
   {
@@ -89,7 +89,7 @@
     "old": ").slice(0, DAMAGE_CHART_MAX)\n",
     "new": ")\n",
     "tests": [
-      "test/gateux_gate.test.js"
+      "test/ui/gate/gateux_gate.test.js"
     ]
   },
   {
@@ -98,7 +98,7 @@
     "old": "n: f.fell.n, ...(f.fell.dm ? { dm: f.fell.dm } : {}) } : null,",
     "new": "n: f.fell.n } : null,",
     "tests": [
-      "test/gateux_gate.test.js"
+      "test/ui/gate/gateux_gate.test.js"
     ]
   },
   {
@@ -107,7 +107,7 @@
     "old": "n: Object.keys(f.players).length, dm: damageChart(f) };",
     "new": "n: Object.keys(f.players).length };",
     "tests": [
-      "test/gateux_gate.test.js"
+      "test/ui/gate/gateux_gate.test.js"
     ]
   },
   {
@@ -116,7 +116,7 @@
     "old": "return rows.every((r, i) => r && (i === 0 || r.d <= rows[i - 1].d)) ? rows : null;",
     "new": "return rows.every((r) => r) ? rows : null;",
     "tests": [
-      "test/gateux_gate.test.js"
+      "test/ui/gate/gateux_gate.test.js"
     ]
   },
   {
@@ -125,7 +125,7 @@
     "old": "if (!Array.isArray(dm) || dm.length > GATE_CHART_MAX) return null;",
     "new": "if (!Array.isArray(dm)) return null;",
     "tests": [
-      "test/gateux_gate.test.js"
+      "test/ui/gate/gateux_gate.test.js"
     ]
   },
   {
@@ -134,7 +134,7 @@
     "old": "  const dm = x.dm == null ? null : gateChart(x.dm);\n",
     "new": "  const dm = x.dm == null ? null : gateChart(x.dm);\n  if (x.dm != null && !dm) return null;\n",
     "tests": [
-      "test/gateux_gate.test.js"
+      "test/ui/gate/gateux_gate.test.js"
     ]
   },
   {
@@ -143,7 +143,7 @@
     "old": "? { n: sanitizeName(r.n), l: r.l,",
     "new": "? { n: r.n, l: r.l,",
     "tests": [
-      "test/gateux_gate.test.js"
+      "test/ui/gate/gateux_gate.test.js"
     ]
   },
   {
@@ -152,7 +152,7 @@
     "old": "if (s.fell) return g.dm && !s.fell.dm ? { ...s, fell: { ...s.fell, dm: g.dm }, heardAt: now } : { ...s, heardAt: now };",
     "new": "if (s.fell) return { ...s, heardAt: now };",
     "tests": [
-      "test/gateux_gate.test.js"
+      "test/ui/gate/gateux_gate.test.js"
     ]
   },
   {
@@ -161,7 +161,7 @@
     "old": "fell: { at: g.at, top: g.top, n: g.n, ...(g.dm ? { dm: g.dm } : {}) },",
     "new": "fell: { at: g.at, top: g.top, n: g.n },",
     "tests": [
-      "test/gateux_gate.test.js"
+      "test/ui/gate/gateux_gate.test.js"
     ]
   },
   {
@@ -170,7 +170,7 @@
     "old": "if (!(age >= DAMAGE_CHART_DELAY_MS) || age >= DAMAGE_CHART_DELAY_MS + DAMAGE_CHART_MS) return null;",
     "new": "if (!(age >= DAMAGE_CHART_DELAY_MS)) return null;",
     "tests": [
-      "test/gateux_gate.test.js"
+      "test/ui/gate/gateux_gate.test.js"
     ]
   },
   {
@@ -179,7 +179,7 @@
     "old": "if (!(age >= DAMAGE_CHART_DELAY_MS) || age",
     "new": "if (!(age >= 0) || age",
     "tests": [
-      "test/gateux_gate.test.js"
+      "test/ui/gate/gateux_gate.test.js"
     ]
   },
   {
@@ -188,7 +188,7 @@
     "old": "const alpha = Math.min(1, shown / 250, (DAMAGE_CHART_MS - shown) / DAMAGE_CHART_FADE_MS);",
     "new": "const alpha = 1;",
     "tests": [
-      "test/gateux_gate.test.js"
+      "test/ui/gate/gateux_gate.test.js"
     ]
   },
   {
@@ -197,7 +197,7 @@
     "old": "frac: most > 0 ? Math.max(0, Math.min(1, r.d / most)) : 0,",
     "new": "frac: whole > 0 ? Math.max(0, Math.min(1, r.d / whole)) : 0,",
     "tests": [
-      "test/gateux_gate.test.js"
+      "test/ui/gate/gateux_gate.test.js"
     ]
   },
   {
@@ -206,7 +206,7 @@
     "old": "const mine = at >= DAMAGE_CHART_ROWS ? row(dm[at], at) : null;",
     "new": "const mine = null;",
     "tests": [
-      "test/gateux_gate.test.js"
+      "test/ui/gate/gateux_gate.test.js"
     ]
   },
   {
@@ -215,7 +215,7 @@
     "old": "const more = n - rows.length - (mine ? 1 : 0);",
     "new": "const more = n - rows.length;",
     "tests": [
-      "test/gateux_gate.test.js"
+      "test/ui/gate/gateux_gate.test.js"
     ]
   },
   {
@@ -224,7 +224,7 @@
     "old": "  if (model.key !== shown.key) {\n    shown.key = model.key;",
     "new": "  if (model.key !== shown.key || true) {\n    shown.key = model.key;",
     "tests": [
-      "test/gateux_gate.test.js"
+      "test/ui/gate/gateux_gate.test.js"
     ]
   },
   {
@@ -233,7 +233,7 @@
     "old": ".wb-dmg-chart { position: fixed; right: 18px; bottom: max(96px, 14vh);",
     "new": ".wb-dmg-chart { position: fixed; left: 50%; top: 30%; transform: translateX(-50%);",
     "tests": [
-      "test/gateux_gate.test.js"
+      "test/ui/gate/gateux_gate.test.js"
     ]
   },
   {
@@ -242,7 +242,7 @@
     "old": "since: chartAt, now: t }) : null, { hidden: hudHidden() || veiled() });",
     "new": "since: chartAt, now: t }) : null, { hidden: hudHidden() });",
     "tests": [
-      "test/gateux_gate.test.js"
+      "test/ui/gate/gateux_gate.test.js"
     ]
   },
   {
@@ -251,7 +251,7 @@
     "old": "      drawGateDamageChart(null);   // GATE-UX\n",
     "new": "",
     "tests": [
-      "test/gateux_gate.test.js"
+      "test/ui/gate/gateux_gate.test.js"
     ]
   },
   {
@@ -260,7 +260,7 @@
     "old": "      if (s.fell && chartAt === null) chartAt = t;\n",
     "new": "",
     "tests": [
-      "test/gateux_gate.test.js"
+      "test/ui/gate/gateux_gate.test.js"
     ]
   },
   {
@@ -269,7 +269,7 @@
     "old": "top: f.fell.top, n: f.fell.n, ...(f.fell.dm ? { dm: f.fell.dm } : {}) }]);",
     "new": "top: f.fell.top, n: f.fell.n }]);",
     "tests": [
-      "test/gateux_gate.test.js"
+      "test/ui/gate/gateux_gate.test.js"
     ]
   },
   {
@@ -278,7 +278,7 @@
     "old": "    me: () => online?.name ?? null,",
     "new": "    me: () => null,",
     "tests": [
-      "test/gateux_gate.test.js"
+      "test/ui/gate/gateux_gate.test.js"
     ]
   }
 ]

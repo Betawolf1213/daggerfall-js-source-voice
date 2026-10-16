@@ -5,7 +5,7 @@
     "old": "export const LEVEL_NY = Math.cos((20 * Math.PI) / 180);",
     "new": "export const LEVEL_NY = FLOOR_NY;",
     "tests": [
-      "test/automapfloors.test.js"
+      "test/systems/automap/automapfloors.test.js"
     ],
     "note": "THE ARC'S OWN FINDING, put back. A ramp puts a walkable triangle at every height between the floors it joins, so a gap-walk over the walkable set has no gap to find - and every real dungeon has ramps."
   },
@@ -15,8 +15,8 @@
     "old": "  const voters = tris.filter((t) => t.flat !== false);",
     "new": "  const voters = tris;",
     "tests": [
-      "test/automapfloors.test.js",
-      "test/disc22g_automap.test.js"
+      "test/systems/automap/automapfloors.test.js",
+      "test/ui/disc22g_automap.test.js"
     ],
     "note": "The other side of the same law: a storey is defined by its FLAT floor."
   },
@@ -26,7 +26,7 @@
     "old": "    if (!(up >= FLOOR_NY)) continue;",
     "new": "    if (!(up >= LEVEL_NY)) continue;",
     "tests": [
-      "test/automapfloors.test.js"
+      "test/systems/automap/automapfloors.test.js"
     ],
     "note": "FLOOR_NY draws, LEVEL_NY votes; drawing at the voting threshold cuts every ramp out of the plan."
   },
@@ -36,7 +36,7 @@
     "old": "export const FLOOR_NY = Math.cos((SLOPE_LIMIT_DEG * Math.PI) / 180);",
     "new": "export const FLOOR_NY = Math.cos((45 * Math.PI) / 180);",
     "tests": [
-      "test/automapfloors.test.js"
+      "test/systems/automap/automapfloors.test.js"
     ],
     "note": "ONE HOME: a re-tuned motor must move the map with it."
   },
@@ -46,7 +46,7 @@
     "old": "export const FLOOR_MIN_GAP = CAPSULE_HEIGHT + 1.2;",
     "new": "export const FLOOR_MIN_GAP = 3.0;",
     "tests": [
-      "test/automapfloors.test.js"
+      "test/systems/automap/automapfloors.test.js"
     ]
   },
   {
@@ -55,7 +55,7 @@
     "old": "    if (last && l.lo - last[last.length - 1].hi <= minGap) last.push(l); else runs.push([l]);",
     "new": "    if (last && l.lo - last[last.length - 1].hi <= 0.01) last.push(l); else runs.push([l]);",
     "tests": [
-      "test/automapfloors.test.js"
+      "test/systems/automap/automapfloors.test.js"
     ],
     "note": "A dais, a table and a balcony rail would each be a floor on the strip."
   },
@@ -65,7 +65,7 @@
     "old": "    if (last && l.lo - last[last.length - 1].hi <= minGap) last.push(l); else runs.push([l]);",
     "new": "    if (last && l.lo - last[0].lo <= minGap) last.push(l); else runs.push([l]);",
     "tests": [
-      "test/automapfloors.test.js"
+      "test/systems/automap/automapfloors.test.js"
     ],
     "note": "A long gentle rise would be cut into storeys at fixed intervals."
   },
@@ -75,7 +75,7 @@
     "old": "      storeys.push({ y: area > 0 ? sum / area : a.y,",
     "new": "      storeys.push({ y: near.length ? near.reduce((n, l) => n + l.y, 0) / near.length : a.y,",
     "tests": [
-      "test/automapfloors.test.js"
+      "test/systems/automap/automapfloors.test.js"
     ],
     "note": "One great hall decides a floor's level; a stray step must not move it."
   },
@@ -85,7 +85,7 @@
     "old": "  const sorted = [...(voters.length ? voters : tris)].sort((a, b) => a.y - b.y);",
     "new": "  const sorted = [...(voters.length ? voters : tris)];",
     "tests": [
-      "test/automapfloors.test.js"
+      "test/systems/automap/automapfloors.test.js"
     ]
   },
   {
@@ -94,7 +94,7 @@
     "old": "  return storeys.map((st, index) => ({ index, y: st.y,",
     "new": "  return storeys.reverse().map((st, index) => ({ index, y: st.y,",
     "tests": [
-      "test/automapfloors.test.js"
+      "test/systems/automap/automapfloors.test.js"
     ]
   },
   {
@@ -103,7 +103,7 @@
     "old": "  const sorted = [...(voters.length ? voters : tris)]",
     "new": "  const sorted = [...voters]",
     "tests": [
-      "test/automapfloors.test.js"
+      "test/systems/automap/automapfloors.test.js"
     ],
     "note": "A map with no storey on the strip is a map that draws nothing."
   },
@@ -113,7 +113,7 @@
     "old": "    tx(m, p[i0], p[i0 + 1], p[i0 + 2], A);",
     "new": "    tx(null, p[i0], p[i0 + 1], p[i0 + 2], A);",
     "tests": [
-      "test/automapfloors.test.js"
+      "test/systems/automap/automapfloors.test.js"
     ],
     "note": "Every revealed row carries its own placement; block-local coordinates would pile every room on the origin."
   },
@@ -123,7 +123,7 @@
     "old": "  out[0] = m[0] * x + m[4] * y + m[8] * z + m[12];\n  out[1] = m[1] * x + m[5] * y + m[9] * z + m[13];\n  out[2] = m[2] * x + m[6] * y + m[10] * z + m[14];",
     "new": "  out[0] = m[0] * x + m[1] * y + m[2] * z + m[3];\n  out[1] = m[4] * x + m[5] * y + m[6] * z + m[7];\n  out[2] = m[8] * x + m[9] * y + m[10] * z + m[11];",
     "tests": [
-      "test/automapfloors.test.js"
+      "test/systems/automap/automapfloors.test.js"
     ]
   },
   {
@@ -132,7 +132,7 @@
     "old": "    const up = normals ? fileUp(m, normals, i0, i1, i2) : Math.abs(ny) / len;",
     "new": "    const up = normals ? fileUp(m, normals, i0, i1, i2) : ny / len;",
     "tests": [
-      "test/automapfloors.test.js"
+      "test/systems/automap/automapfloors.test.js"
     ],
     "note": "A row with no file normals (DISC22-G: the fallback arm) reads either winding; a one-sided test there drops a fixture wound the other way."
   },
@@ -142,7 +142,7 @@
     "old": "    if (area < MIN_TRI_AREA) continue;",
     "new": "    if (area < 0) continue;",
     "tests": [
-      "test/automapfloors.test.js"
+      "test/systems/automap/automapfloors.test.js"
     ]
   },
   {
@@ -151,7 +151,7 @@
     "old": "    if (!(len > 0)) continue;",
     "new": "    if (false) continue;",
     "tests": [
-      "test/automapfloors.test.js"
+      "test/systems/automap/automapfloors.test.js"
     ],
     "note": "This one survived the first campaign and taught the pin what the guard is really for. A zero-area triangle is dropped by MIN_TRI_AREA anyway - but a NaN vertex gives area NaN, and `NaN < MIN_TRI_AREA` is FALSE, so it lands in the list at y NaN and drags a storey to nowhere. Only `!(len > 0)` catches it.",
     "equivalent": true,
@@ -163,7 +163,7 @@
     "old": "      y: (A[1] + B[1] + C[1]) / 3,",
     "new": "      y: A[1],",
     "tests": [
-      "test/automapfloors.test.js"
+      "test/systems/automap/automapfloors.test.js"
     ]
   },
   {
@@ -172,7 +172,7 @@
     "old": "    if (d < bestD) { bestD = d; best = i; }",
     "new": "    if (d <= bestD) { bestD = d; best = i; }",
     "tests": [
-      "test/automapfloors.test.js"
+      "test/systems/automap/automapfloors.test.js"
     ],
     "equivalent": true,
     "why": "<= and < pick the same storey unless two storeys are exactly equidistant, which deriveFloors' own minGap makes unreachable: two storeys that close together are one run."
@@ -183,7 +183,7 @@
     "old": "  return { x0: x0 - cell, z0: z0 - cell, x1: x1 + cell, z1: z1 + cell };",
     "new": "  return { x0, z0, x1, z1 };",
     "tests": [
-      "test/automapfloors.test.js"
+      "test/systems/automap/automapfloors.test.js"
     ],
     "note": "An island that runs off the grid's edge has no shore there - the coastline would not close."
   },
@@ -193,7 +193,7 @@
     "old": "      const px = b.x0 + (gx + 0.5) * cell;",
     "new": "      const px = b.x0 + gx * cell;",
     "tests": [
-      "test/automapfloors.test.js"
+      "test/systems/automap/automapfloors.test.js"
     ],
     "note": "The outline would bleed a cell past the geometry rather than sitting half a cell inside it."
   },
@@ -203,7 +203,7 @@
     "old": "    const pz = b.z0 + (gz + 0.5) * cell;",
     "new": "    const pz = b.z0 + gz * cell;",
     "tests": [
-      "test/automapfloors.test.js"
+      "test/systems/automap/automapfloors.test.js"
     ]
   },
   {
@@ -212,7 +212,7 @@
     "old": "  const gx1 = Math.min(w - 1, Math.ceil((Math.max(t.ax, t.bx, t.cx) - b.x0) / cell));",
     "new": "  const gx1 = w - 1;",
     "tests": [
-      "test/automapfloors.test.js"
+      "test/systems/automap/automapfloors.test.js"
     ],
     "equivalent": true,
     "why": "Widening the scan is pure cost, not a wrong answer: inTri still decides every cell. The box is a broad phase, and the pin that would catch its loss is a WORK count, which this module does not yet keep."
@@ -223,7 +223,7 @@
     "old": "  return !(neg && pos);",
     "new": "  return !neg;",
     "tests": [
-      "test/automapfloors.test.js"
+      "test/systems/automap/automapfloors.test.js"
     ]
   },
   {
@@ -232,7 +232,7 @@
     "old": "  const toWorld = (chain) => chain.map((p) => ({ x: occ.x0 + p.x * cell, y: occ.z0 + p.y * cell }));",
     "new": "  const toWorld = (chain) => chain.map((p) => ({ x: p.x, y: p.y }));",
     "tests": [
-      "test/automapfloors.test.js"
+      "test/systems/automap/automapfloors.test.js"
     ],
     "note": "The player's caret and the beacons land in world units; a plan in cells would need a second transform nobody wrote."
   },
@@ -242,7 +242,7 @@
     "old": "  const mine = set.length ? trianglesFor(tris, floors, set) : [];\n  const bounds = box ?? planBounds(mine, cell);\n  const occ = floorOccupancy(mine, { cell, bounds, keep: (y) => want.has(floorAt(floors, y)) });",
     "new": "  const mine = tris;\n  const bounds = box ?? planBounds(mine, cell);\n  const occ = floorOccupancy(mine, { cell, bounds });",
     "tests": [
-      "test/automapfloors.test.js"
+      "test/systems/automap/automapfloors.test.js"
     ],
     "note": "Which is DFU's cut plane again, and the reason Mac asked for floors."
   },
@@ -252,7 +252,7 @@
     "old": "  return [Math.max(0, Math.min(floors.length - 1, wanted ?? 0))];",
     "new": "  return [wanted ?? 0];",
     "tests": [
-      "test/automapfloors.test.js"
+      "test/systems/automap/automapfloors.test.js"
     ],
     "note": "The floor strip's up arrow on the top storey would draw an empty page."
   },
@@ -262,7 +262,7 @@
     "old": "  if (!floors.length) return { floors, index: -1, chains: [], openChains: [], occupancy: null, bounds: box };",
     "new": "",
     "tests": [
-      "test/automapfloors.test.js"
+      "test/systems/automap/automapfloors.test.js"
     ]
   },
   {
@@ -271,7 +271,7 @@
     "old": "  if (!p || !idx) return out;",
     "new": "  if (false) return out;",
     "tests": [
-      "test/automapfloors.test.js"
+      "test/systems/automap/automapfloors.test.js"
     ]
   },
   {
@@ -280,7 +280,7 @@
     "old": "label: `Floor ${index + 1}` }));",
     "new": "label: `Floor ${index}` }));",
     "tests": [
-      "test/automapfloors.test.js"
+      "test/systems/automap/automapfloors.test.js"
     ],
     "note": "Mac chose 'Derived floors, labelled 1..N'."
   }

@@ -140,7 +140,7 @@ export function survivalHudChips(entity, now, { vampire = false, endurance = 50,
  * in the live tier - `rules`; the fire read off the live air, `env`, where the reader hands it in, else the record's
  * `s.warmed`; the comfortable band 'ok'), the way it runs ('cold', 'hot', or 'mild' for comfortable) and where it
  * stands on the plate's scale (`at`, 0..1 over TEMP_SCALE, clamped - the deadly cold and the scorching are past its
- * ends). Null with no reading yet. Pure: the HUD draws it, test/tempui.test.js holds it to the chip.
+ * ends). Null with no reading yet. Pure: the HUD draws it, test/systems/survival/tempui.test.js holds it to the chip.
  */
 export const TEMP_SCALE = Object.freeze({ min: -60, max: 60 });
 export function temperatureReadout(entity, felt = entity?.survival?.felt, { rules = null, env = null } = {}) {

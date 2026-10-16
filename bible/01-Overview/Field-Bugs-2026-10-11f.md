@@ -45,10 +45,10 @@ station (Professions-Arc 22's law), so neither has a press to change.
 NOT CHANGED. A Mages Guild hall's enchanter is Daggerfall's service popup, 1:1; Disenchanting there is still the Stores
 page's, which the Professions page's line now names. The account service is untouched - no deploy.
 
-Pinned by `test/fb1011f_stationdoor.test.js` (8): the three host functions lifted from `worldModes.js` and run over the
+Pinned by `test/net/fb1011f_stationdoor.test.js` (8): the three host functions lifted from `worldModes.js` and run over the
 real ChoiceWindow and the real service tables - the chooser's lines and options, each door, Esc, the maker's "not
 ready", offline, the spellmaking and forge stations, a visitor - and the real Stores page's landing with a recording
-frame. `tools/mutants/fb1011f_stationdoor.json` (14, all dead). `test/homestations.test.js`'s press pin re-aimed by
+frame. `tools/mutants/fb1011f_stationdoor.json` (14, all dead). `test/ui/homestations.test.js`'s press pin re-aimed by
 content (the maker's call moved into openStationMaker).
 
 ## The station's refund (2)

@@ -61,8 +61,8 @@ step that timed answers which never came and held few of its own rules.
 
 ## Proof
 
-- `test/audit_d1near.test.js` (6): a pin for every FIXED finding of the step and the records above.
-- `test/d1near.test.js` (2), PIN MOVED: the report's run on the hardened step (its fake curl honours `-f`, `-o`, `-D` and
+- `test/bible/audit_d1near.test.js` (6): a pin for every FIXED finding of the step and the records above.
+- `test/bible/d1near.test.js` (2), PIN MOVED: the report's run on the hardened step (its fake curl honours `-f`, `-o`, `-D` and
   `--max-time`, and a fake wrangler answers as D1's REST API - `test/d1nearStep.mjs`, shared by both files), its three
   sentences' pattern letting a quote stand, and the toml's comment held as D1-NEAR's.
 - `tools/mutants/audit_d1near.json`: 22 mutants, 22 dead - the one first survivor (the health's middle guard, which only

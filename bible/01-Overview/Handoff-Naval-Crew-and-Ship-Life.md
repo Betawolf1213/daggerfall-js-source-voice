@@ -120,7 +120,7 @@ next to the player. A party going over the rail is dealt rail spots
   - the speech drawn by `navalHud`'s `drawCrewLines`.
 - `src/scenes/comeSailAway/comeSailAwayPeers.js`: a peer's boat carries its `peerKey`,
   which seeds its crew.
-- `test/livingcrew.test.js` (13 tests) and
+- `test/systems/naval/livingcrew.test.js` (13 tests) and
   `tools/mutants/livingcrew.json` (54 records).
 - Docs:
   - the Naval-Combat "LIVING CREW" section;

@@ -117,8 +117,8 @@ word, a duplicate or a cost. A finding two lenses made is listed once, under the
 
 ## Pins and mutants
 
-`test/dsize1_mediumdungeons.test.js`, `test/sense1_dungeonsense.test.js`, `test/echo1_dungeonecho.test.js`,
-`test/wayout1_wayout.test.js`, `test/guide8_questguidance.test.js` (and the pins this pass moved: `audit28`, `ft1`,
+`test/systems/quest/dsize1_mediumdungeons.test.js`, `test/systems/sense1_dungeonsense.test.js`, `test/systems/echo1_dungeonecho.test.js`,
+`test/systems/wayout1_wayout.test.js`, `test/ui/automap/guide8_questguidance.test.js` (and the pins this pass moved: `audit28`, `ft1`,
 `guide1`, `guide5`, `audit39`, `rr3b`, `nodemarks`). Mutation-proven: `tools/mutants/dsize1.json` (26), `sense1.json`
 (44), `echo1.json` (35), `wayout1.json` (34), `guide8.json` (34) - 173 records, every one dead (C2's survivor among them,
 dead at last); and the 19 records of other lists whose code this pass moved, re-aimed by content and run again, every

@@ -229,7 +229,7 @@ check('the recovery code is brass and large', codeRow?.codeColor === BRASS && pa
 check('the leading button wears brass', measured.filter((m) => m.primaryColor).every((m) => m.primaryColor === BRASS));
 
 // ═══ TERMS1: THE BOXES, MEASURED ══════════════════════════════════
-// test/terms1.test.js proves what the card BUILDS; this proves what a
+// test/ui/enhanced/terms1.test.js proves what the card BUILDS; this proves what a
 // player SEES - the rules applied, the rows tall enough for a thumb.
 const reg = measured.find((m) => m.stage === 'register');
 check('TERMS1: creating an account draws two boxes, both UNTICKED', reg?.agree.length === 2 && reg.agree.every((a) => a.type === 'checkbox' && a.checked === false),
@@ -242,7 +242,7 @@ check('TERMS1: each document opens outside the game, at the site', reg?.agree.ev
 check('TERMS1: no other stage draws a box', measured.filter((m) => m.stage !== 'register').every((m) => m.agree.length === 0));
 
 // ═══ NAME-AS: THE NAME IN GAME, MEASURED ═══════════════════════════
-// test/nameas_client.test.js proves what the card BUILDS; this proves the toggle is PAINTED - in the card's own colour
+// test/net/nameas_client.test.js proves what the card BUILDS; this proves the toggle is PAINTED - in the card's own colour
 // (a button with no title class inherits it: never the user agent's black on the card's dark), the chosen one at full
 // strength behind the doubled edge and the other dimmed, the line under them quiet and close to its buttons.
 const toggles = measured.filter((m) => m.nameAs);

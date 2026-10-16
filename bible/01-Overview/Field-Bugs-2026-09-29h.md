@@ -14,7 +14,7 @@ two, below - so every cite of this page stands.*
 | 1 | "(Mobile) Can't accept terms of entry for palaces. The onscreen keyboard won't pop up" | QuinsmQuansm | a castle is the world host's dungeon mode, and the host's `overlayActive` read the town's window slot and the travel view, never the modes' own stacks: the touch layer's nav row - its abc field (the phone's keyboard) and its Return - never stood over the guard's box | fixed (TOUCH-HELD) |
 | 2 | "Boat deed not working in port towns ... it tells me I'm not near a port" | Swordsman | Come Sail Away's own IsNearPort, ported 1:1: a location MAPS.BSA flags PortTownAndUnknown (343 of 15,251) inside a square three pixels west and north of the player and one east and south; the map's harbours are Travel Options' list, 35 of whose 378 carry no flag; the refusal named no port | fixed, a departure (DEED-PORT) |
 | 3 | "Boat Noises at Kinging Court ... the large boats floating underneath the town ... They'll likely need to be de-spawned" | Julian (weerdo27) | two Large Boats the port lost before FIELD-CSA1 (a respawn's teleport left them in the old frame's numbers - under the town), kept in the save where they stood and restored there, their loops heard whenever the pixel is near; the deed of a Large Boat is spent on placing | fixed (LOST-BOAT) |
-| 4 | "Lycanthropy still tied to server clock ... resting did not progress the disease ... I had gotten another disease ... and had to cure it which likely wiped my lycanthropy progress" | Julian | no clock fault: the infection is stamped and read on the character's own clock and an online rest moves it (LIVED1, `test/lived1.test.js`); the cure ended it - DFU's own law, an infection is a disease bundle and Cure Disease ends every one | fixed, a departure (INFECTION-KEPT) |
+| 4 | "Lycanthropy still tied to server clock ... resting did not progress the disease ... I had gotten another disease ... and had to cure it which likely wiped my lycanthropy progress" | Julian | no clock fault: the infection is stamped and read on the character's own clock and an online rest moves it (LIVED1, `test/systems/lived1.test.js`); the cure ended it - DFU's own law, an infection is a disease bundle and Cure Disease ends every one | fixed, a departure (INFECTION-KEPT) |
 | 5 | "Elite Dungeons that despawn stay on map ... no entrance anymore but are still marked on overworld map" | Cruor | the Overworld's `tvSpawnGone` excused a spawn on any BUILT pixel - and a pixel built after the spawn's clock ran out is built empty | fixed (SPAWN-PLATE) |
 | 6 | "The interior lighting flickers and shadows are cast through walls. The MG is especially noticeable" (with MD-Geist: switch Enhanced Lighting off; LostMyLeg: the Improved Interior Lighting patch "as a 2nd option") | Kristian B | the same report 28f answered (DISC29-E), fixed by PR #418 the morning after it was posted; what it left is a carried light's leak through a wall; the second option shipped as Modded lighting (PR #437) | nothing new; said |
 | 7 | "I hit rank 4 (Curate) in the temple of Stendarr ... Bookshelves were telling me I was the wrong rank" | ThetaDecay | the shelf read the building faction's own `ggroup` - a temple's is its divine's, None - instead of GetGuildGroup's walk to the templar child: every temple shelf refused every member at every rank | fixed (TEMPLE-SHELF) |
@@ -44,7 +44,7 @@ waited) and the title exit - each reaches `online`, `seatOut` and the duel manag
 **The fix.** The four registrations stand below the duel's (THE CHECKPOINT'S DOORS, after `duelHeal`), where every
 binding they reach exists before any of them can run; the exit autosave is named where it was written
 (`exitAutosave`) and handed to `beforeunload` there. `whenPageGoes` stays where it was - it reads the session alone.
-`test/fb0929h_boothide.test.js` (3) walks every callback `bootWorld` hands to a page door (`beforeunload`, `pagehide`,
+`test/scenes/fb0929h_boothide.test.js` (3) walks every callback `bootWorld` hands to a page door (`beforeunload`, `pagehide`,
 `pageshow`, `visibilitychange`, `whenPageHides`, `whenPageGoes`, `setBeforeTitleExit`, `saveSoon.ready`) through the
 functions it calls and names any binding it reaches that the boot declares past one of its own awaits - BOOTORDER's
 gate walks what the boot RUNS, and a door runs whenever the page says. On the code before, it names 36 reads across
@@ -66,7 +66,7 @@ Escape, which cancels the box. The standalone dungeon host's hook (`!!ctx.uiOver
 
 **The fix.** The world host's hook reads `modes?.overlayHeld` too (`modes` is a `var` until the boot builds it). The
 pad shares the hook (GP1): a window indoors is a cursor for it now on the classic skin as well, which PADPLUS2 had made
-it under Plus alone. `test/fb0929h_touchheld.test.js` (2) lifts the host's own hook and drives the real touch layer
+it under Plus alone. `test/ui/fb0929h_touchheld.test.js` (2) lifts the host's own hook and drives the real touch layer
 over a stub document: the row stands over the dungeon's box, abc raises a focused field, "yes" and ⏎ go through the
 dungeon's own key route (`routeKey`) into a real `ActionInputBox`, which submits "yes" - an answer the guard's table
 takes. The tv1 pin and its mutant record were re-aimed at the line.
@@ -96,7 +96,7 @@ walk, whenever the traveller came within the grid; from farther away it vanished
 
 **The fix.** Standing on the ground is the build's word: `built.get(key)?.location == null` (whether the pixel stood a location), never
 `!built.has(key)`. OW5b D2 is kept - a spawn still standing on ground built before its time ran out keeps its plate
-until that ground is built again. `test/fb0929h_spawnplate.test.js` (2) runs the two host functions lifted off
+until that ground is built again. `test/world/fb0929h_spawnplate.test.js` (2) runs the two host functions lifted off
 world.js over the real ledger through the report's sequence (found, built, seven days, built again) and the cleared
 clock's; the tv6 pin that held the flawed rule now holds both halves; two OW4/OW5b records re-aimed.
 
@@ -115,7 +115,7 @@ in", for as long as the page stood. The presence link does not rejoin until its 
 (10 s), past which a full room closes a socket that has said nothing. A late token and every refusal are said in the
 console (`[online] no identity token within 8000 ms`, `[account] no identity token: no sign-in stored on this device`,
 `[account] no identity token: <the service's word> (<status>)`), so the next report can tell a slow service from a
-missing sign-in or a refused one. `test/fb0929h_tokenwait.test.js` (4); ACC1d's "under 5 s" bound re-aimed (its premise
+missing sign-in or a refused one. `test/net/fb0929h_tokenwait.test.js` (4); ACC1d's "under 5 s" bound re-aimed (its premise
 is gone) and two ACC1d records re-aimed; MUT-AIM's carried map shrank by one (ACC1d-12 names one site now).
 
 ## BOUNTY-LAIR: the lair stands where a quest's foe would (9)
@@ -129,7 +129,7 @@ quest's foe is stood at one (`markerScenePosition`).
 **The fix.** `systems/quest/place.js` `dungeonQuestSpawnSpots` - the 199.11 markers of a laid-out dungeon in its
 scene's frame, beside the quest law's own constants - answered by the dungeon context (`questSpawnSpots`); the lair is
 one of them, by BOUNTY1's own band (25 to 90 m, else the farthest), and a foe's place only in a dungeon with none
-(types 17-18 carry no quest markers). `test/fb0929h_bountylair.test.js` (3): the marker law (199.11 alone - not an
+(types 17-18 carry no quest markers). `test/scenes/fb0929h_bountylair.test.js` (3): the marker law (199.11 alone - not an
 enemy, an item marker or a treasure flat that shares the record's number - under each block's origin), and the host's
 own `_standBountyDungeonPack` lifted off world.js: a sealed room's foe in the band is never the lair when a marker is.
 `06-Systems/Bounty-Boards.md` says so.
@@ -146,7 +146,7 @@ spent placing it. Online there is no console to purge it.
 whose place is `LOST_UNDER_M` (2 m) under the ground or under the sea's top is lost, and an uncrewed one is packed into
 its parts - the mod's own PackBoat, its cargo with it - for the player to place again, with a line that says so. A
 crewed hull is left: its deed still calls it to a port (useBoatDeed repositions). Never a boat placed indoors, never
-indoors, never the one being sailed. `test/fb0929h_lostboat.test.js` (3) over the real hulls: the report's two Large
+indoors, never the one being sailed. `test/systems/comeSailAway/fb0929h_lostboat.test.js` (3) over the real hulls: the report's two Large
 Boats under a town given back, a boat afloat (and on a recentred sea) kept, a keel on a beach kept, a crewed hull kept,
 the seabed given back, a boat whose ground is not built asked when it is, a boat asked once, the pixel's row read
 against the scene's z.
@@ -164,7 +164,7 @@ one runs, the cure - the temple's paid and holiday arms (`guildServiceActions.js
 else to end ends the infection, so a bitten player who does not want the curse still cures it before the turn, as in
 the classic game. The temple prices what the cure takes (`curableDiseaseCount`): the plague beside an infection is one
 disease's price. A stranger's cast still never ends it (AUDIT SPELL-GIFT B6), and the turn's CureAll of the old life
-(`lycanthropy.js` endOldLifeEffects) still ends every disease. `test/fb0929h_infectionkept.test.js` (3): the report's
+(`lycanthropy.js` endOldLifeEffects) still ends every disease. `test/systems/fb0929h_infectionkept.test.js` (3): the report's
 sequence through the real temple (bitten, the dream, the plague, the cure, the turn on the fourth day), the escape at
 the temple, on a holiday and cast, and the turn; the `infection`, `spellgift` and `audit27d` pins moved (a mate's first
 cure takes the plague, a second the infection) and B6's record re-aimed.
@@ -185,7 +185,7 @@ infection's days and every need stood still behind them (AUDIT LIVED1 For Mac 2,
 journey, the Overworld's walk, the helm's time scale), the frame raises its minutes past the world's on the
 character's own clock (`walkRaise`, handed to `playerTicker.tick` - LIVED1's door a rest already uses, so the needs,
 the rounds and the letters walk them); the world's clock still moves its real minutes alone, and offline nothing
-changes. No faster than a rest already moves it. `test/fb0929h_walkclock.test.js` (2): the frame's own raise lifted off
+changes. No faster than a rest already moves it. `test/systems/fb0929h_walkclock.test.js` (2): the frame's own raise lifted off
 world.js, and thirty-two days at x40 through the real ticker - the character lives them and a rank's wait opens.
 
 ## DEED-PORT: the deed asks the map's harbours, round the player (2)
@@ -201,7 +201,7 @@ coast pushed back) is not it.
 way: 7 x 7 at the default); a harbour the map draws is a port beside a flagged location (`csaIsPortTown`, which the
 naval shipwright and the port traffic read too); a refusal of the deed or the variant box names the nearest harbour and
 the way to it ("There is no port nearby. The nearest port is Daggerfall, to the north-west"). The range is still the
-mod's slider (1-10, 3). `test/fb0929h_deedport.test.js` (3): the host's port test and nearest-port finder lifted off
+mod's slider (1-10, 3). `test/systems/comeSailAway/fb0929h_deedport.test.js` (3): the host's port test and nearest-port finder lifted off
 world.js over the real port list, and the runtime's square and refusal; CSA-H's square pin and four of its records
 re-aimed.
 
@@ -244,7 +244,7 @@ left to Mac.
 
 ### VEIN-NEED: E at a node that cannot be worked says what it needs, when nothing else takes the press (1)
 
-**Reproduced first**, on the real gathering host over a real book (`test/fb0929h_veinneed.test.js`): a dungeon nobody
+**Reproduced first**, on the real gathering host over a real book (`test/scenes/fb0929h_veinneed.test.js`): a dungeon nobody
 has confirmed, Mining 0, a Pick-Axe in the pack, a vein under the crosshair. Every vein there is Silver at tier 3; the
 prompt reads "[E] Mine Silver - needs Mining 25", the screenshot's words. `press()` answers false - the press goes on
 down the dungeon's ladder - and at the ladder's foot, with nothing under the ray (`key === null`), the ladder answers
@@ -278,7 +278,7 @@ rank beside it:
 One press, one line; a press with no node under the look forgets the one before. The prompt is unchanged (PROF0 8's
 form): it already says what the node needs, and the press now says it too, with the rank the player holds.
 
-`test/fb0929h_veinneed.test.js` (5). MEASURED against the code before the fix (its new doors stubbed to the old
+`test/scenes/fb0929h_veinneed.test.js` (5). MEASURED against the code before the fix (its new doors stubbed to the old
 silence), three fail - the report reproduced on the real host; each need's words off each kind's own plan; each
 ladder's new line lifted off its source and run, with every arm of both ladders before it - and two hold, as they
 must: the pack's line and the vein's skipped checks as they stand, and the presses that must still say nothing (the

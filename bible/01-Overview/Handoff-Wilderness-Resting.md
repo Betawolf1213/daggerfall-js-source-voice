@@ -3,7 +3,7 @@
 Mac handed over a zip, `WildernessRestingHOTHOTFIX`, and asked for it to
 be implemented. It was not a mod: it was four files out of a working
 tree - `src/scenes/world.js`, `src/scenes/exterior.js`,
-`test/camp1_groups.test.js`, `test/restx2_online_rest.test.js` - carrying
+`test/systems/camp1_groups.test.js`, `test/systems/rest/restx2_online_rest.test.js` - carrying
 **four separable features and a stale base**.
 
 **The base predated JAN1.** Copied in as given, those two hosts would
@@ -105,8 +105,8 @@ handler is in this tree. Zero callers anywhere, including in the zip.
 
 ## The campaign
 
-`test/camp1_groups.test.js` (7 - two new), `test/restx2_online_rest.test.js`
-and `test/donline1_respawn.test.js` re-aimed, plus `exteriorfoes` and
+`test/systems/camp1_groups.test.js` (7 - two new), `test/systems/rest/restx2_online_rest.test.js`
+and `test/scenes/donline1_respawn.test.js` re-aimed, plus `exteriorfoes` and
 `roadb_guard_conversion`, whose anchors quoted the signature that grew.
 `tools/mutants/camp1rest.json` (7 dead) and `tools/mutants/donline2.json`
 (3 dead).

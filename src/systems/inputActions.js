@@ -318,7 +318,7 @@ export const DEFAULT_BINDINGS = Object.freeze([
   // goes. Digit1-Digit4 are unspent by SetupDefaults, unspent by the port
   // (PX15's Tab, HT4's G, SOC5's F, HT's O and X are the whole of the port's
   // own spending) and unspent by every vendored mod's TextKey defaults - the
-  // HT4 pin in test/ht1_handheldtorches.test.js walks that whole set and is
+  // HT4 pin in test/systems/ht1_handheldtorches.test.js walks that whole set and is
   // what makes that a fact rather than a hope. They ride here, not in a host,
   // so a bindings file written before this slice gains them on the next boot:
   // loadOrCreateBindings follows every load with resetDefaults(store, true),
@@ -497,7 +497,7 @@ export function actionLive(action) {
 /**
  * KB1: THE CONTROLS PAGE'S ORDER - every action, in the group a player looks for it under, with the words they would
  * use. ONE table, read by the enhanced Controls pane (ui/enhanced/enhancedControls.js), the replace prompt's names
- * (systems/controlsConfig.js actionLabel) and bible Controls.md; test/kb1_keybinds.test.js holds that every action
+ * (systems/controlsConfig.js actionLabel) and bible Controls.md; test/ui/kb1_keybinds.test.js holds that every action
  * in ACTIONS is in exactly one group or in HIDDEN_ACTIONS. A group with `mod` is that vendored mod's keys, drawn only
  * while the mod is on (the readers' actionLive gate is the same switch).
  *
@@ -1568,9 +1568,9 @@ export function endFrame(state) {
 // GetUnaryKey - the combo's hit and the plain key's suppression - read
 // that stored flag. The four hosts that own a Set now fill it BEFORE their
 // dispatch ladder, as PollInput does (:1795-1809). Pinned from both
-// orders in test/g3_heldorder.test.js - the ring fill is its host
+// orders in test/systems/g3_heldorder.test.js - the ring fill is its host
 // sweep, discovered from `const keys = new Set();` - and in
-// test/a8_combos.test.js' two-modifier pair. (test/combohosts.test.js
+// test/systems/a8_combos.test.js' two-modifier pair. (test/systems/combohosts.test.js
 // is AUDIT 58's sweep of the Set ARGUMENT and carries neither claim.)
 //
 // GP1 (2026-09-11) PORTED THE AXES AND THE JOYSTICK: AxisActions and

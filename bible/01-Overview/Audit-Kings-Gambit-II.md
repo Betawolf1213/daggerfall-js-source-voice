@@ -35,7 +35,7 @@ whole languages (D1); and a phone watcher had no press at all (D2).
 |---|---|---|---|
 | A1 | HIGH | A stand carried no game number, so a Leave pressed in the deal's pause and heard just after the deal forfeited a game the player never saw - the whole pot the other's. `t.dealtAt` was written and never read (Iliac Hand's AUDIT CARDS-6 E13, not carried) | FIXED: every stand names the game its panel showed (`standUp`); the relay passes it; one naming the game before, within GAMBIT_LATE_MS (3 s) of the deal and before the seat acted (`spoke`), lets the game go - each stake home, nothing rated |
 | A2 | MED | A sit on its way when the panel closed or Play a regular instead was pressed was never stood up - a ghost seat holding the cloth (Iliac Hand's E11, not carried) | FIXED: `g.sitting`; `standUp` stands from a seat or a sit on its way |
-| A3 | MED | The pins held less than 18.1 and 19.1 said: the order's room, the drained room's no contest, a room that cannot sign, an empty table owing a cash-out, owed results at a hello and a sit - each mutated, each survived | PINNED (`test/auditkg2_relay.test.js`) |
+| A3 | MED | The pins held less than 18.1 and 19.1 said: the order's room, the drained room's no contest, a room that cannot sign, an empty table owing a cash-out, owed results at a hello and a sit - each mutated, each survived | PINNED (`test/net/auditkg2_relay.test.js`) |
 | A4 | LOW | 19 said the escrow's bound "counts a pot's two stakes alone"; it counts every King's Gambit stake at the table over 30 days (a 200 stake cashed out at 600) | FIXED: the sentence; and a King's Gambit cash-out is no more than twice its own stake (`cashoutCards`) |
 | A5 | LOW | GAMBIT_RELAY_MIN said 203 in the docs; the code is 204 | FIXED (with B14, E7) |
 | A6 | LOW | Stale sentences: the relay's "the green table only", the table's "Friendly: no gold (KG6 brings it)", 5.8's LATER beside its BUILT | FIXED (5.8's LATER deleted - RETIRING A FLAG DELETES THE SENTENCE) |
@@ -78,7 +78,7 @@ whole languages (D1); and a phone watcher had no press at all (D2).
 | C7 | MED | The chosen card was drawn lifted and pressed unlifted - a press on its top centimetre moved a piece behind it | FIXED |
 | C8 | MED | The information box gave no hazard and only a count of foes (14.5) | FIXED: the foes by name, the cell's hazard |
 | C9 | MED | A regular's night was the table's - a second table paid a full night again | FIXED: the tavern's (`cardTavernKey`) |
-| C10 | MED | KG3's pad pins never ran the pad layer or the host's listeners | FIXED: `test/auditkg2_board.test.js` drives them |
+| C10 | MED | KG3's pad pins never ran the pad layer or the host's listeners | FIXED: `test/systems/auditkg2_board.test.js` drives them |
 | C11 | LOW | 17.4 credited a forfeit's groan to the mod; the mod's forfeit is silent (`pendingSounds.Clear`, IL_098f) | FIXED: silent, the mod's |
 | C12 | LOW | Section 17 named one host | FIXED |
 | C13 | LOW | Under a finger a foe's card snapped to the player's piece beside it | FIXED: a foe's card is that foe; the mat, a wall or one's own card snaps |
@@ -116,7 +116,7 @@ whole languages (D1); and a phone watcher had no press at all (D2).
 | E1 | HIGH | A broken source at the gold table (a blow, a turn's end, the deal) was unguarded; kg5_table's branch never ran | PINNED; the branch runs |
 | E2, E3, E10, E13 | HIGH-MED | (A3 (b), (d), (e); A4) | PINNED or FIXED there |
 | E4 | HIGH | The order's room, a Ready in a layer, a room with no key, a Ready refused after its spend | PINNED |
-| E5 | HIGH | The season cap, the rating written only while both stand, a kept game off the board, the #1 recounted | PINNED (`test/auditkg2_season.test.js`) |
+| E5 | HIGH | The season cap, the rating written only while both stand, a kept game off the board, the #1 recounted | PINNED (`test/net/gambit/auditkg2_season.test.js`) |
 | E6 | MED | 18.1 said kg5.json 49; it is 48 (KG6 retired KG5-R-gold-table) | FIXED |
 | E7, E15, E18 | MED-LOW | (B14, B15, A6) | FIXED there |
 | E8 | MED | Testing's kg5_relay row: "the gold table refused", world203 | FIXED |
@@ -135,8 +135,8 @@ Come Sail Away's, not this game's: reported to the owner, the record left as mai
 
 ## Pinned
 
-`test/auditkg2_relay.test.js` (12), `test/auditkg2_online.test.js` (11), `test/auditkg2_board.test.js` (8),
-`test/auditkg2_panel.test.js` (6), `test/auditkg2_season.test.js` (3). PINS MOVED: `kg3_host` (the press beside the
+`test/net/auditkg2_relay.test.js` (12), `test/net/auditkg2_online.test.js` (11), `test/systems/auditkg2_board.test.js` (8),
+`test/net/iliac/auditkg2_panel.test.js` (6), `test/net/gambit/auditkg2_season.test.js` (3). PINS MOVED: `kg3_host` (the press beside the
 lifted card, the forfeit's silence), `kg3_panel` (range; the online states swept), `kg5_client` (the held press; the
 watcher's More), `kg5_table` (the broken source's branch runs), `kg6_season` (the board's words; the badge's colour),
 `cards2b_seated` (the Escape arm a block). Mutants: `tools/mutants/auditkg2.json`, 73, all dead (two survived their

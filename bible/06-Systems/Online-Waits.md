@@ -58,8 +58,8 @@ deposits, loans, letters of credit, the Marks exchange and a ship's sale; the pa
 quest-givers and the main quest's S0000012 messenger forty-five; the library's 9-23 twenty-five. OL4's own record named
 the bank and the library a follow-up ("Recorded, not carried", `Online-Arc.md` OL4); this carries it, with the palace.
 
-Pins: `test/ol6_service_hours.test.js` (with DFU's own rows for the three and Suns Rest, AUDIT WAITS O1);
-`test/lockpicking.test.js` PIN MOVED (the palace's and the bank's online answers). `tools/mutants/ol6.json` 11, all
+Pins: `test/systems/ol6_service_hours.test.js` (with DFU's own rows for the three and Suns Rest, AUDIT WAITS O1);
+`test/systems/lockpicking.test.js` PIN MOVED (the palace's and the bank's online answers). `tools/mutants/ol6.json` 11, all
 dead; OL4's list 15, all dead, OL5's record re-aimed by content.
 
 ## 3. WAIT2 - WAVE-WAIT: a wave the quest waits on comes on the short wait
@@ -90,7 +90,7 @@ prompt; his mute ends earlier, when `_S.06_` sends the messenger), and it was se
   harasser's gap brings the harm sooner, not the story. Of the 42 unread waves longer than the short wait, 39 have no
   `killed` reader at all; the other three's kills only say a line or end their own wave.
 
-Pins: `test/wavewait_quests.test.js` (the real scripts, parsed and ticked). `tools/mutants/wavewait.json` 19, all dead.
+Pins: `test/systems/quest/wavewait_quests.test.js` (the real scripts, parsed and ticked). `tools/mutants/wavewait.json` 19, all dead.
 
 ## 4. WAIT3 - SUMMON-NAME: online the summoner calls the prince you name
 
@@ -114,7 +114,7 @@ A witches' coven keeps its own law - one prince a day, drawn (the event clock's 
 Hircine; they are told apart by the summoner's faction, as DFU's own service tells them (AUDIT WAITS S5), so a coven
 never opens the list. Without the list's art loaded the summoner falls back to DFU's day. Offline: DFU's day.
 
-Pins: `test/summonname_online.test.js`. `tools/mutants/summonname.json` 20, all dead; DAEDRA1's two records in the
+Pins: `test/systems/summonname_online.test.js`. `tools/mutants/summonname.json` 20, all dead; DAEDRA1's two records in the
 moved Yes re-aimed by content, its 13 all dead.
 
 ## 5. WAIT4 - BANISH-SKY: a banishment's thirty days are the calendar's the player sees
@@ -150,7 +150,7 @@ thirty days the call named, of the calendar the player sees:
 
 The other reading of REP3 - keep its "~2.5 real days" and say sixty days on the calendar - is OPEN 4.
 
-Pins: `test/banishsky_standing.test.js`; the census rows (`test/fixtures/time1_census.json`, the sky's law both
+Pins: `test/systems/banishsky_standing.test.js`; the census rows (`test/fixtures/time1_census.json`, the sky's law both
 ways). `tools/mutants/banishsky.json` 21, all dead (with REP3's and AUDIT REP's lists, two records re-aimed by
 content: 49).
 
@@ -250,9 +250,9 @@ comments and pins saying more, or less, than the code. Each fix is pinned and ea
   and guild halls keep R1; narrowed. **O4** - the night-clerk paragraph spoke of shops alone, and UpdateNpcPresence's
   docblock of DFU's hours where it reads the effective ones.
 
-Pins and mutants: `test/wavewait_quests.test.js` 8 (`wavewait.json` 19), `test/summonname_online.test.js` 6
-(`summonname.json` 20), `test/banishsky_standing.test.js` 7 (`banishsky.json` 21; with REP3's and AUDIT REP's, 49),
-`test/ol6_service_hours.test.js` 5 (`ol6.json` 11); DAEDRA1's 13 and OL4's 15 run again, all dead.
+Pins and mutants: `test/systems/quest/wavewait_quests.test.js` 8 (`wavewait.json` 19), `test/systems/summonname_online.test.js` 6
+(`summonname.json` 20), `test/systems/banishsky_standing.test.js` 7 (`banishsky.json` 21; with REP3's and AUDIT REP's, 49),
+`test/systems/ol6_service_hours.test.js` 5 (`ol6.json` 11); DAEDRA1's 13 and OL4's 15 run again, all dead.
 
 ## OPEN - Mac's calls
 

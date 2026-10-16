@@ -6,7 +6,7 @@
 // panning, zooming toward the cursor, picking a mark and marking one,
 // the card and the boxes as DOM the player can click, and the window
 // walking open -> map -> closing -> done against a real clock. The LAWS
-// are pinned in node (test/heldmap.test.js); here every number the
+// are pinned in node (test/ui/heldmap.test.js); here every number the
 // screen shows is re-checked against the modules imported INTO the page.
 //
 // CI has no ARENA2 and never will, so the bay is SYNTHETIC: a 96x64

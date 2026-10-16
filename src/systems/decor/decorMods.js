@@ -17,7 +17,7 @@
 // THE PIECES are the port's own stand-ins for what the mods place (world/
 // townStandIns.js, world/detStandIns.js, systems/detailedShips.js), MEASURED
 // over the mods' own blocks - both town packs and the two ships, rebuilt
-// from the player's BLOCKS.BSA (test/decormods.test.js measures them again
+// from the player's BLOCKS.BSA (test/systems/decor/decormods.test.js measures them again
 // where ARENA2 is at hand): each with how many times the mods stand it, a
 // room's where any of it stands inside (offered in every room, and a yard),
 // a street's where all of it stands outside (a yard's alone). Never the

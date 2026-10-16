@@ -45,7 +45,7 @@ own copy of the cave - unless the player who came in was in their party, and the
 
 ## KEPT-KILL: a kept quest foe's fall is said in the heir's party pose (2)
 
-**Reproduced first** (`test/keptkill.test.js`, the dungeon's own-lane doors sliced out of the source and run - the
+**Reproduced first** (`test/systems/quest/keptkill.test.js`, the dungeon's own-lane doors sliced out of the source and run - the
 questparty3c harness): the owner stands Runaway Pet's tiger; a party member whose copy holds no such quest (a share
 refused - Runaway Pet is a guild quest, and a non-member's receipt is refused `'guild'` - or a link a reload dropped)
 stands no puppet of it (DISC28-J). The owner dies to it or walks out: the handover names that member heir, who takes it
@@ -76,11 +76,11 @@ lane is the room's, so a death nobody linked saw was nobody's word.
 `relay-deploy.yml` deploys on the merge - and a relay deploy drops every open socket once. Until it is live the hub
 strips the field, and the kill counts on no copy that did not see it, as before; nothing else changes.
 
-Pins: `test/keptkill.test.js` (7): the wire's law, every vendored quest name and Foe symbol inside it, the gap and its
+Pins: `test/systems/quest/keptkill.test.js` (7): the wire's law, every vendored quest name and Foe symbol inside it, the gap and its
 say in the dungeon, the witness's key equal to the heir's, the ledger, Runaway Pet's `killed 1 _tiger_` firing on the
 owner's and a linked copy from the heir's word (and not on an unlinked one, and not twice), and the hosts' wiring.
 Red on the code before (the module's exports are not there). Mutants: `tools/mutants/keptkill.json` (22, all dead).
-PIN MOVED: `test/questparty.test.js` (the world host's
+PIN MOVED: `test/scenes/questparty.test.js` (the world host's
 `onPuppetDied` shape); the relay's version pins to world137 and `relayversion.test.js`'s row; mutants
 `questparty.json` QP-no-kill-credit and `questparty3c.json` QP3C-no-kill re-aimed by content, `soc1.json`
 S38-version-not-bumped to world137.
@@ -120,7 +120,7 @@ withdrawn after it shipped; 2 was both.
 
 ## LOOK-BUTTONS: the painter's buttons drawn (3)
 
-**Reproduced first** (`test/fb1001_look.test.js`: the decorator's real sheet, `DECOR_CSS`, cascaded over the real panel
+**Reproduced first** (`test/net/fb1001_look.test.js`: the decorator's real sheet, `DECOR_CSS`, cascaded over the real panel
 and the real decorator tool by a small selector matcher - classes, attributes, `:not`, descendants, specificity - with
 its own sanity pin; and the yard's decorator on the real homes registry over the real Worker): on her own lot the
 owner opens the decorator, Exterior, Walls, Swamp and Manor - the house wears it (the host's preview) - and "The town's
@@ -166,13 +166,13 @@ house - paint it to keep it" over a house wearing its painted look. **Why.** Lea
 tried look; closing put it away on the house alone. **The fix** (`ui/decorPanel.js` `hide`): the tried look goes with
 the close.
 
-`test/fb1001_look.test.js` (7), five red on the code before (the cascade's sanity pin and the no-second-ask guard are
+`test/net/fb1001_look.test.js` (7), five red on the code before (the cascade's sanity pin and the no-second-ask guard are
 green both sides). `tools/mutants/fb1001_look.json` (15: 14 dead, 1 equivalent as recorded - a landed flight's count
 left behind is never read); `home1`'s HOME1-two-asks-in-flight re-aimed by content.
 
 ## RENT-REST: a tenant rests in the home they rent (4)
 
-**Reproduced first** (`test/fb1001_rent.test.js`: the real Worker and its rent route, `accountHomes`, `realmGoldAct`,
+**Reproduced first** (`test/systems/fb1001_rent.test.js`: the real Worker and its rent route, `accountHomes`, `realmGoldAct`,
 `createOnlineHomes`, and the interior host's rest bag over `interiorRestPlace` and `canRest`): walking in, the tenant
 is told "You rent a room here ... You may rest here."; pressing Rest, `{ allowed: false }`, "You have not rented a room
 here." The owner rests.
@@ -238,7 +238,7 @@ was handed the plaque's read in flight, answered before the rent landed.
 
 **The fix** (`systems/online/onlineHomes.js`, the merge's one rule with LOOK-STALE): a forced ask is asked after the flight it
 finds; one such read a town, however many ask - the first to land sets out a forced flight, and `ensure` hands the
-rest that flight. `test/fb1001_rent.test.js` (6), each red on the code before. `tools/mutants/fb1001_rent.json` (28: 27
+rest that flight. `test/systems/fb1001_rent.test.js` (6), each red on the code before. `tools/mutants/fb1001_rent.json` (28: 27
 dead, 1 equivalent as recorded - `finding` in the panel's signature, which the doorway count beside it changes with);
 `housing`'s HOME-RENT-the-orphans-number-taken re-aimed by content.
 
@@ -267,7 +267,7 @@ about 3.6.
 
 ## ROAD-LOT: a yard's lot is no road (5)
 
-**Reproduced first** (`test/fb1001_yard.test.js`: the real yard - `createHomeYards`, the decorator, the panel, `decorRoom`,
+**Reproduced first** (`test/scenes/fb1001_yard.test.js`: the real yard - `createHomeYards`, the decorator, the panel, `decorRoom`,
 the real `Collider` and the real account Worker over node:sqlite through `accountDecor` - over a town of the producers'
 own, `test/fb1001Town.mjs`: `layoutLocation`/`layoutRmbBlock`, `setLocationTiles`, the terrain kernel with the road
 painter's mask): house A's lot runs onto the street on its north (record 46) and a road-grass edge (55) cuts into its
@@ -328,7 +328,7 @@ line cite into world.js moved.
 **Found on the way, not changed.** Any other re-stand (the minute read finding a list in another order) still leaves a
 yard's models undrawn for a frame.
 
-`test/fb1001_yard.test.js` (5), each red on the code before on its own assertion. `tools/mutants/fb1001_yard.json` (34,
+`test/scenes/fb1001_yard.test.js` (5), each red on the code before on its own assertion. `tools/mutants/fb1001_yard.json` (34,
 34 dead); `decor1` (2), `fieldbugs27g` DECOR-FLIP and `housing` (3) re-aimed by content, all dead; `homeyard`'s
 lot-marks pin re-aimed at `DECOR_LOT_MARKS` (PIN MOVED). Four hosts: `world.js` WIRED (the rebase; the road read off its
 built pixel); `worldModes.js` shares `createDecorRoom` (`restand` never called indoors); `dungeonContext.js` has no
@@ -381,14 +381,14 @@ point climbs 1% faster - x1.08 at 125, x1.17 at 150, x1.4 at 200 - bounded at th
 DFU's base/3, and the spell still doubles it. The 1% a point is the lane's own number, one constant to tune. A curse or
 a Fortify that lifts the live Climbing past 100 speeds the climb as it already speeds the run.
 
-`test/fb1001_move.test.js` (2) and `test/fb1001_climb.test.js` (2), red on the code before. `tools/mutants/fb1001_move.json`
+`test/systems/fb1001_move.test.js` (2) and `test/systems/fb1001_climb.test.js` (2), red on the code before. `tools/mutants/fb1001_move.json`
 (16, 16 dead). Four hosts: none needed wiring - MOVE-BANK lives in `skills.js` and `advancement.js`, CLIMB-PAST in the
 motor and `climbing.js`; `world.js`, `exterior.js`, `worldModes.js` and `dungeonContext.js` each hand the odometer and
 the climbing deps as before.
 
 ## MARKET-KEEP: a piece the service calls another's stays in the pack (2)
 
-**Reproduced first** (`test/fb1001_market.test.js`: the real Worker and the real anvil craft, the piece handed on with
+**Reproduced first** (`test/net/fb1001_market.test.js`: the real Worker and the real anvil craft, the piece handed on with
 `settleRealmTrade` - the law the service settles a realm trade by): the crafter makes a sword and trades it to Ann; the
 product's owner stays the crafter. Ann presses List: the piece leaves her pack, the service answers `market-not-yours`,
 and her pack is empty - the piece destroyed. A listing kept through a network silence and answered "not yours" on a
@@ -461,7 +461,7 @@ than this batch; the hand-over closes it); Stores materials withdrawn to the pac
 shop (older; the market walls them now); the four foods are not walled (their templates ride client settings; worth
 almost nothing).
 
-`test/fb1001_market.test.js` (3) and `test/fb1001_market_goods.test.js` (12), red on the code before (the goods file
+`test/net/fb1001_market.test.js` (3) and `test/systems/fb1001_market_goods.test.js` (12), red on the code before (the goods file
 fails to load without its modules). `tools/mutants/fb1001_market.json` (66, 66 dead - AUDIT PROF-541 R2-S2's two among them); the 246 market mutants of the
 arcs before (prof5, prof5b, audit30, audit31, goldmarket and others) re-run - 236 dead, 9 equivalent as recorded, and
 audit30's U2, which did not parse on the base either, re-aimed and dead. PIN MOVED: AUDIT 31 H1 at `market-listed`, the
@@ -512,7 +512,7 @@ gate). The classic lane without the sea mod never hid it, and the fixed-city hos
 **The fix** (`scenes/world.js`): `_dwPrecipOff` is `_dwAirOff` - the distance fog's "under" (the water over the
 eye), which already took the wisps and the bolts. Under the sea the rain is still hidden, swimmer or not; a swimmer
 with the head out of the sea sees the rain, as does a body in a puddle. A departure from the mod (Port-Ledger).
-`test/fb1001_puddlerain.test.js` (2), `tools/mutants/fb1001_puddlerain.json` (4, all dead).
+`test/player/fb1001_puddlerain.test.js` (2), `tools/mutants/fb1001_puddlerain.json` (4, all dead).
 
 Found on the way, not changed: a puddle still SWIMS the body (MAC2's coverage law on DFU's shallow records) - no rest
 there, no encounter roll, the swim's speed and tally, SWIM-SPENT's drain; that a puddle should not sink the player at
@@ -533,7 +533,7 @@ nearly half the ground falls under 0.3 of the profile and a quarter under 0.15, 
 heart, an eighth of it. And `fallTerms`: under FALL_LOOK
 (0.05..0.6 of the profile) a rain's or a snow's fog thins to a quarter of its row's density (the mode kept, so no
 switch on the screen) and its sun and grass come up to an overcast sky's; any other word is handed back as it came.
-Enhanced only, as WX2 is; the classic lane still draws DFU's cap on the sim's word. `test/fb1001_rainsprinkle.test.js`
+Enhanced only, as WX2 is; the classic lane still draws DFU's cap on the sim's word. `test/systems/weather/fb1001_rainsprinkle.test.js`
 (2), `tools/mutants/fb1001_rainsprinkle.json` (7, all dead).
 
 ## CLOUD-SQUARE: the sky map read through a B-spline (3)
@@ -545,7 +545,7 @@ hardware-bilinear stand-in: the one tap's slope jumps by 2 a texel at a texel's 
 B-spline's by a thousandth of that, there and everywhere across the cloud.
 
 **The fix** (`render/volumetricClouds.js` `COMPOSITE_FS`): `mapBicubic`, a cubic B-spline over the map in four
-bilinear taps, wrapping in azimuth and clamping at the rows as the one tap did. `test/fb1001_cloudsquare.test.js` (2),
+bilinear taps, wrapping in azimuth and clamping at the rows as the one tap did. `test/render/fb1001_cloudsquare.test.js` (2),
 `tools/mutants/fb1001_cloudsquare.json` (3, all dead).
 
 Investigated, not changed: a weather cell's column in front of the deck spends part of the march's 24 km budget, so
@@ -575,7 +575,7 @@ thin neutral grey (0.02); the sun's key light untouched under the water. No caus
 One full-screen triangle drawn twice (multiply, then add, alpha kept) after the arrows and before the weapon and the
 HUD, on either skin; no depth is read (no program of every lane can), so the shafts are the near water's. Seen in a
 real browser over a synthetic seabed: the blue-green body, the far floor closed sooner, the shafts leaning with a
-morning sun, converging looking up, moving between t 0 and t 4. `test/fb1001_underwater.test.js` (5),
+morning sun, converging looking up, moving between t 0 and t 4. `test/world/fb1001_underwater.test.js` (5),
 `tools/mutants/fb1001_underwater.json` (12, all dead).
 
 Not in it: dungeon water (DFU's own UnderwaterFog, dense already) and the wilderness's lakes (no exterior submersion
@@ -599,7 +599,7 @@ other player is grown by the traveller's own law at their own feet (`tvOwnGrow` 
 beasts and walkers (size, offset, reach), dolls and class sprites, Morrowind bodies (`drawThird`'s `grow` and the
 view's lean, culled by their grown reach); names over the grown heads; no giant's shadow; no walker's lantern.
 
-`test/fb1001_overworld.test.js` (5), `tools/mutants/fb1001_overworld.json` (12, all dead).
+`test/net/peer/fb1001_overworld.test.js` (5), `tools/mutants/fb1001_overworld.json` (12, all dead).
 
 ## The frame rate (6, 7, 8)
 
@@ -618,7 +618,7 @@ whose peer mounted or left the list a moment was thrown away and built again on 
 (`turnLeadMargin` - the angle the view turned last frame, three frames of it at the body's distance, capped), so the
 bodies about to come into view are skinned on the budget before; the third-person mesh has no sphere to walk
 (`bounds: false`); the weapon asked of a look is one object; a person's body key is its look less its weapons (the
-hand is `setWeapon`'s); a lingering body is kept as a spare. `test/fb1001_mwcrowd.test.js` (4),
+hand is `setWeapon`'s); a lingering body is kept as a spare. `test/net/peer/fb1001_mwcrowd.test.js` (4),
 `tools/mutants/fb1001_mwcrowd.json` (8, all dead). PIN MOVED: `wb9h_crowd_bodies` (the lingering body kept),
 `audit_wb9` (an armor change rebuilds, a weapon no longer does), `werewolf1` (the person's key); `wb9h.json`'s
 WB9h-the-linger-spared retired (it is the law now; MW-CROWD-the-lingering-body-unloaded is its inverse), nine older
@@ -644,7 +644,7 @@ quarter-steps short of the crossing (the height falls with t, so every step befo
 quarters, so the step it starts on is the one it reached) - or not at all where nothing can be met. The same answer to
 the bit (a thousand columns at random, and the coast's whole mesh, against the walk as it stood); 540 lookups and
 1.8 ms for the coast above, 3.3 ms at Distance 4. Every straight-down ray Come Sail Away casts gains it (PlaceBoat's,
-the foes' under a boat owner). `test/fb1001_coastships.test.js` (COAST-RAY, 2).
+the foes' under a boat owner). `test/scenes/fb1001_coastships.test.js` (COAST-RAY, 2).
 
 Found on the way, not changed: near a port whose shore sounds no harbour, the naval host sounds it again every ten
 seconds (`navalHost.js`, HARBOUR_RETRY_S) - 10,000 to 26,000 `isWater` asks a time; and the carved sea's two blended
@@ -663,7 +663,7 @@ meshes are left undrawn under a pixel (AUDIT NAV1's CULL_DETAIL_PX); and a flag'
 **The fix**: `scenes/world.js` `pushSeenShipFlats` - the boats' flats take the hull's law (a sphere under a pixel across
 at the drawing buffer's height from this frame's eye is not drawn; under the game's 70-degree lens on a 1080-line
 buffer a flat 0.4 by 0.5 m is a pixel at ~490 m, a sail far past it); `world/quat.js` `quatRotateInto` - quatRotate's products in its order, written into a
-scratch triple (to the bit, 2,000 cases), which the flag cubes turn through. `test/fb1001_coastships.test.js`
+scratch triple (to the bit, 2,000 cases), which the flag cubes turn through. `test/scenes/fb1001_coastships.test.js`
 (SHIP-FLAGS, SHIP-FLATS, 2). `tools/mutants/fb1001_coastships.json` (9: 8 dead, 1 equivalent as recorded).
 
 Left open: the hull's tree walk itself (pruning the subtrees the pool never reads - the oar effects' - would halve a
@@ -730,7 +730,7 @@ held finger or a swinging stick strikes once, and a press with no act is never b
 ring meets the notch" (`ui/professions/profHud.js`). THE FOUR HOSTS: the streaming world wired (the street, and the dungeon and the
 buildings through the same hooks); the fixed city (`scenes/exterior.js`) stands no nodes (PROF0 17.1, FLAGGED there);
 the interiors (`scenes/worldModes.js`) and the dungeon (`scenes/dungeonContext.js`) hold their swing off an act as
-before and are reached by the world host's hooks. `test/fb1001_mining.test.js` (ACT-TOUCH 4, ACT-CLICK 1).
+before and are reached by the world host's hooks. `test/scenes/fb1001_mining.test.js` (ACT-TOUCH 4, ACT-CLICK 1).
 
 ## NODE-AIM and VEIN-CLEAR: the node you look at is the one you get (1)
 
@@ -748,7 +748,7 @@ from its base to its aim point (the point of it the look passes nearest - the lo
 along its bearing, held between the two); of the nodes in the cone, nearest the look first, the first the collider
 says is seen is the target. A vein's stone tile and its last fallback are never inside a rock piece (`insideRocks`,
 AUDIT 29 C11's test for a rock's foot). The act's own aim - its glint points - is the node's aim point, as before.
-`test/fb1001_mining.test.js` (NODE-AIM 2, VEIN-CLEAR 1).
+`test/scenes/fb1001_mining.test.js` (NODE-AIM 2, VEIN-CLEAR 1).
 
 ## CURE-ALL: the turn cures the old life and leaves this one's buffs (2)
 
@@ -769,7 +769,7 @@ player").
 **The fix** (`systems/lycanthropy.js`): CureAll whole, through the port's own homes - `fillVitalSigns` (statMods.js),
 `cureAllPoisons` and `cureAllDiseases` (effects.js), `cureAllAttributes` (guildServiceFlow.js; no effect of the port
 holds a skill down, so CureAllSkills has nothing to cure). The buffs running at the turn run on, shown. One home for
-both curses, as before. `test/fb1001_regen.test.js` (CURE-ALL 2).
+both curses, as before. `test/systems/fb1001_regen.test.js` (CURE-ALL 2).
 
 ## AREA-SELF: a caster's own blast of gifts lands on them as a self-cast (3)
 
@@ -791,14 +791,14 @@ a gift (`allyCastable`, the ally law's one test), it lands as a self-cast. A bla
 saved against as before. A departure (Port-Ledger). The reach was DFU's - an Area at Range spell's caster in its blast
 only where it bursts within 4.35 m (`spellcast.js` EXPLOSION_RADIUS and the player's 0.35 body), an Area Around
 Caster's never - and Mac, asked, took it away for a spell of gifts: AREA-CASTER, below, lands it on its caster at the
-cast, so the burst passes them by. `test/fb1001_regen.test.js` (AREA-SELF with AREA-CASTER 3).
+cast, so the burst passes them by. `test/systems/fb1001_regen.test.js` (AREA-SELF with AREA-CASTER 3).
 
 ## RARITY-WEAR: no slot, no tier (4)
 
 **Reproduced first** (the real `rollSpoils` and `rollRaidSpoils` over two thousand seeds, the real `equipItem`): the
 Gate's spoils and a town's thanks mint their base in `gateSpoils.js` spoilsBase, a jewel a third of the time drawn over
 `ITEM_GROUPS.Jewellery` - Amulet, Bracer, Ring, Bracelet, Mark, Torc, Cloth Amulet and Wand. The Wand (140) has no slot
-(GetJewelleryEquipSlot's None; `equipRules.js` has no row, `test/equipmechanics.test.js` pins "wands resolve nowhere"),
+(GetJewelleryEquipSlot's None; `equipRules.js` has no row, `test/ui/equipmechanics.test.js` pins "wands resolve nowhere"),
 and the ladder graded it all the same: its affixes and a Held enchantment read worn pieces alone (`lootRarity.js`
 wornItems, `enchantments.js` equippedEnchantedItems), so a King's Mark on one was a different picture, a WEAR that did
 nothing, and a USE that said "Nothing happens." The search lane's run: 82 of 706 King's Marks on a Wand.
@@ -808,7 +808,7 @@ rarityEligible refuses a piece no slot takes; the spoils' base is made again whe
 draws what it drew before); and a save's rolled wands load as the Amulet (`repairRarityBases`, beside DISC29-B's repair
 in `save.js`, every list the save carries): the same weight and condition, a Legendary keeping its record's name, a
 Magic or Rare one named for its new base, the price moved by the two bases. DFU's own wands (MAGIC.DEF's, Use a cast)
-and a plain one stay wands. `test/fb1001_wand.test.js` (3).
+and a plain one stay wands. `test/systems/fb1001_wand.test.js` (3).
 
 ## CLOAK-DRAPE: the drape beside the hood (5)
 
@@ -821,7 +821,7 @@ the pack still stepped them; the classic window's Use and middle click were neve
 **The fix** (`systems/useItem.js` nextDrape, drapeCount; `ui/enhanced/enhancedInventory.js`): a worn hooded garment of more than
 one drape - the casual cloak - carries Change drape beside the hood: the next drape, the hood as it was, said ("You
 rearrange your cloak."), the doll redrawn and the card kept up, as the hood's press is. A formal cloak and plain robes
-hang one way and get none; an enchanted casual cloak keeps its Use beside it. `test/fb1001_drape.test.js` (2).
+hang one way and get none; an enchanted casual cloak keeps its Use beside it. `test/systems/fb1001_drape.test.js` (2).
 
 ## TRADE-KNOWN: the report did not reproduce (6)
 
@@ -851,7 +851,7 @@ leaves, wherever it bursts and if it bursts nowhere. Once: the burst that catche
 arm in explodeAt now lands nothing on them), or a second Regenerate's rounds would stack onto the first. The landing
 says a Heal's "You are healed N points.", as a Caster Only cast does. A spell with harm in it is DFU's still: its caster
 only where its blast reaches them, and saved against; a foe's blast of gifts is saved against. In the ledger with
-AREA-SELF. `test/fb1001_regen.test.js` (AREA-CASTER 3).
+AREA-SELF. `test/systems/fb1001_regen.test.js` (AREA-CASTER 3).
 
 ## CLIMB-NODE: the free climb holds at a node (1; asked)
 
@@ -867,7 +867,7 @@ start time again, never the rest of it). A jump's grab and a mantle are a jump's
 shimmy and climbing anywhere else are CLIMB2's. THE FOUR HOSTS: the streaming world's one motor (its dungeon and its
 buildings drive the same `player`) is handed the hold; the fixed city (`scenes/exterior.js`) and the standalone
 dungeon (`scenes/dungeon.js`) stand no nodes and hand none; the interiors (`scenes/worldModes.js`) and the dungeon
-mode (`scenes/dungeonContext.js`) are the world host's motor. `test/fb1001_climbnode.test.js` (4).
+mode (`scenes/dungeonContext.js`) are the world host's motor. `test/player/fb1001_climbnode.test.js` (4).
 
 ## Found on the way, not changed
 
@@ -907,8 +907,8 @@ home for the five acts' starts); the net's prompt names no hour (`scenes/fishHos
 (the Fishing-Net's line, the Professions page's Fishing how-to: "at any hour"); the service answers a harvest at any hour
 (`server-account/src/professions.js` harvestNode - the check, its hour helper and `prof-night`'s status gone; the client
 keeps the word's text for a service not yet redeployed). Foraging's own Use - offline and a guest's lane, the mod's 1:1 -
-keeps the mod's day (`test/forage2_tools.test.js` pins its refusal). The first and last daylight hours still halve the
-net's wait: a bonus, not a gate. `test/fb1001_anyhour.test.js` (3); `tools/mutants/fb1001_anyhour.json` (5) - all dead.
+keeps the mod's day (`test/systems/forage2_tools.test.js` pins its refusal). The first and last daylight hours still halve the
+net's wait: a bonus, not a gate. `test/scenes/fb1001_anyhour.test.js` (3); `tools/mutants/fb1001_anyhour.json` (5) - all dead.
 PIN MOVED, each by content: `prof1_service` (02:00 harvests), `prof2_service` (a surface vein by night), `prof4_service`
 (a tree by night), `prof8_service` (a haul at 23:00), `prof8_client` (the net cast at 21:00; no hour has words),
 `fb0930b_toolsaid` (the net's line). MUTANTS RETIRED (the law they guarded is gone): `prof1.json` PROF1-31,
@@ -948,7 +948,7 @@ ground a client stands on, the counters, the pad, the finger, and part four's ow
 | PAD-CLASSIC | 3 | the Professions pages are DOM on the classic skin too, and the pad's cursor clicked the DOM only under Plus: the Forge, the Anvil, Withdraw unpressable on Classic with a pad | the pad's click reaches the page on every skin, as a mouse's does (`ui/gamepadInput.js` pointerAt) |
 | NAVAL-E | 4 | at sea the net's cast stands in the look and the node had E first: the readout said "E: board her" and E cast the net (with a foe near, it said "You cannot fish with enemies nearby!") | the street asks the sea first (`scenes/naval/navalHost.js` takesActivate; `world.js`) |
 
-Pins: `test/fb1001_audit.test.js` (10), `fb1001_ground.test.js` (9), `fb1001_nodes.test.js` (5),
+Pins: `test/systems/fb1001_audit.test.js` (10), `fb1001_ground.test.js` (9), `fb1001_nodes.test.js` (5),
 `fb1001_stations.test.js` (3); mutants `tools/mutants/fb1001_audit.json` (16), `fb1001_ground.json` (21),
 `fb1001_nodes.json` (9), `fb1001_stations.json` (4) - all dead. PIN MOVED, each by content: `fb1001_mining` (the tap's
 strike its third line, after the view's test; the attack hook hears a held stroke's repeat), `fb1001_regen` (the cured
@@ -1041,7 +1041,7 @@ first audit commit without moving `ACCOUNT_VERSION` (its law says every change t
 that did not happen looks like one that did). Both ride **acct46** (`server-account/src/service.js`, `wrangler.toml` -
 acct45 on this branch, renumbered past main's PATREON-LINK at the merge); no migration, no route changed.
 
-Pins: `test/fb1001_touchhold.test.js` (7), `test/fb1001_herbxp.test.js` (3); mutants
+Pins: `test/systems/fb1001_touchhold.test.js` (7), `test/net/fb1001_herbxp.test.js` (3); mutants
 `tools/mutants/fb1001_touchhold.json` (21), `fb1001_herbxp.json` (6) - all dead. PIN MOVED, each by content: `prof1_service`
 (a common herb at rank 10: 30), `pad1` PAD1-C (B's UI action is Back, a window's alone - A, X and Y keep DFU's clicks),
 `padplus1` PADPLUS3 (right's tap on its release), `touchbuttons` (the law; the default corner), `renown4b` (the corner
@@ -1077,7 +1077,7 @@ NODE-CLEAR read the same, truer, pieces. SETTLE-SAID: the ground's nodes ask the
 settlement", E goes on to the door or says it, the tool's Use says it; a dungeon's vein asks none. Node places are the
 client's alone (the service checks a node's key and slot, never where it stands): no service change.
 
-Pins: `test/fb1001_rockfoot.test.js` (4), `test/fb1001_settlesaid.test.js` (2); `tools/mutants/fb1001_boulders.json`
+Pins: `test/world/worldOfDaggerfall/fb1001_rockfoot.test.js` (4), `test/scenes/fb1001_settlesaid.test.js` (2); `tools/mutants/fb1001_boulders.json`
 (12, all dead). PIN MOVED, each by content: `prof2_client` (the rock pieces' line; PROF2 stand and DONE WHEN with the
 boulders' own pieces, claimed first), `fb1001_mining` VEIN-CLEAR (the field's one piece the boulder's). Mutant records
 re-aimed by content, dead: `audit29.json` AUDIT29-C11-a-foot-inside-a-neighbour, `prof2.json` PROF2-31, PROF2-32.
@@ -1113,7 +1113,7 @@ over the water there was no prompt, E went on to the door behind, and the net's 
 CAST_RISE_M), and it yields: of the nodes in the cone, a node of the ground (an herb on the bank) is the target before it
 (`yields`, `scenes/gatherHost.js` findTarget).
 
-Pins: `test/fb1001_lifeskills.test.js` (4), `test/fb1001_rockfoot.test.js` ROCK-SHARE; `tools/mutants/fb1001_boulders.json`
+Pins: `test/scenes/fb1001_lifeskills.test.js` (4), `test/world/worldOfDaggerfall/fb1001_rockfoot.test.js` ROCK-SHARE; `tools/mutants/fb1001_boulders.json`
 24, all dead. PIN MOVED, each by content: `prof1_law` (the counts), `prof2_law` and `prof2_service` (the Mountain's five; a
 sixth slot `bad-node`), `prof2_client` PROF2 stand (the nodes at a field 6 m apart), `fb1001_mining` VEIN-CLEAR (a stone a
 metre across over each vein's own tile, the boulders' - the veins fall back), `prof8_client` (the cast at the eye's
@@ -1131,7 +1131,7 @@ door or a crewman looked at level or up cast the net instead; a level look did s
 cone held 0 degrees), so NAVAL-E guarded only boarding. Now the cast passes the press on as a node with a need does
 (VEIN-NEED's hand-back): `press` is false, the ladder tries what is under the look, and the host's `sayNeed` - called at
 the ladder's foot when nothing opened - casts it. A press the ladder took is never cast by a later hand-back
-(CAST_HANDBACK_MS). The net's Use casts at once, as before. Pins: `test/fb1001_lifeskills.test.js` CAST-LOOK and CAST-E;
+(CAST_HANDBACK_MS). The net's Use casts at once, as before. Pins: `test/scenes/fb1001_lifeskills.test.js` CAST-LOOK and CAST-E;
 `fb0930b_fishtired`'s angler presses as the world does (the press, then the hand-back) - PIN MOVED; mutants
 `fb1001_boulders.json` CAST-E 3, dead; `fb0929h_veinneed.json` VEIN-NEED-said-twice re-aimed by content, dead.
 
@@ -1154,7 +1154,7 @@ seventh of the rock-field pixels): before the branch 20% of the few boulders tha
 than the reach; after ROCK-FOOT and ROCK-SHARE 15% of the boulders and 19% of the veins. A foot now stands FOOT_INSET_M
 (0.5 m) inside its pixel (`scenes/mineHost.js` onPixel): none off it, 96% of the law's boulders standing, and the veins
 with no foot on the pixel on its own stone instead (93% stand - the rest stood where no look reached them). Pins:
-`test/fb1001_rockfoot.test.js` FOOT-IN (the host finds an edge boulder from the next pixel) and the shipped-fields test
+`test/world/worldOfDaggerfall/fb1001_rockfoot.test.js` FOOT-IN (the host finds an edge boulder from the next pixel) and the shipped-fields test
 now over the real sites, every node on its pixel; mutants `fb1001_boulders.json` FOOT-IN 2, dead; `audit29.json` C11
 re-aimed by content, dead.
 
@@ -1203,7 +1203,7 @@ takes a GETTER and asks it at every call - underground the dungeon context's eng
 host's; a context left from a descent never answers outside one. Cast When Strikes and reflection ride the same
 getter, and so do an item's self-cast utilities (Dispel, Identify, Create Item, Recall) - underground through the
 dungeon's own foe pool and windows now, not the street's. `scenes/world.js` and `scenes/exterior.js` mount it alike.
-`test/fb1001_castuse.test.js` (Area at Range and Single Target at Range; Area Around Caster reproduced, not pinned).
+`test/scenes/fb1001_castuse.test.js` (Area at Range and Single Target at Range; Area Around Caster reproduced, not pinned).
 
 ## SLOW-SLIP, SLOW-GRASP, SLOW-PRESS: Slowfall is heard by everything a fall does (5)
 
@@ -1222,7 +1222,7 @@ fall is not grasped onto a wall (a departure - Port-Ledger); a climb under way i
 foot climbs as ever. SLOW-PRESS: once a slow fall's press into a face has held it up a step's height, it is spent - the frozen
 momentum keeps what the collider let it do, and the Jump spell's air control is refused that way until the body
 leaves the face; a lip in the step band is still stepped onto (the audit's SP1, SP2). Enhanced Climbing's own grab (Jump + Forward) is a deliberate act and is
-left. `test/fb1001_slowfall.test.js`.
+left. `test/player/fb1001_slowfall.test.js`.
 
 ## ORBIT-FREE: a drag turns and tilts once it means to (6; asked)
 
@@ -1236,7 +1236,7 @@ automap port is unaffected), and the held sheet's own `orbitBy` already takes bo
 8 px; a locked drag then keeps what it holds back the other way, less its drift (each move forgives half its own travel
 along the lock - the slope the lock's own 2:1 calls drift); past 24 px of it the drag turns AND tilts every move to its
 release, the held-back travel spent first. A sideways sweep that drifts or wobbles still never tilts.
-`test/fb1001_orbitfree.test.js`. The pad (right stick: turn and zoom) and two fingers (twist) never tilt; not asked.
+`test/ui/fb1001_orbitfree.test.js`. The pad (right stick: turn and zoom) and two fingers (twist) never tilt; not asked.
 
 ## CURSOR-EDGE: the gauntlet everywhere (8)
 
@@ -1253,7 +1253,7 @@ inside the viewport: the gauntlet (`ui/plus/plusCursor.js`) was 31x34, the class
 selector(::-webkit-scrollbar)` (Firefox), the pack card's thin bar the same; the gauntlet 31x32 (two near-twin rows of
 the hand dropped, 2x the exact double), the pad's drawn box with it (`ui/gamepadInput.js`); the classic arrow cropped
 to what it draws and scaled only as far as 32 DIP allows (`ui/cursor.js`). Menus' scrollbars in Chromium are now the
-10 px stone slider the skin always meant. `test/fb1001_cursoredge.test.js`.
+10 px stone slider the skin always meant. `test/ui/enhanced/fb1001_cursoredge.test.js`.
 
 ## FRIENDS-SYNC: a friend is a player, on every device (3; asked)
 
@@ -1286,9 +1286,9 @@ in `auditsoc` B5/B18/B10 and `soc3_socialpanel`. The harness signs a social hell
 (`fakeRoom.mjs`), and its issued-at walk restarts from the clock past MAX_TTL_S. Mutant records re-aimed by content:
 `auditsoc.json` A7-replaced-socket-never-leaves, `soc1.json` S11-state-to-every-tab, and `soc1.json`
 S38-version-not-bumped (it still said world140 - missed at world141's bump - now world142); 158 dead, 2 equivalent as
-recorded. `test/fb1001_friendsync.test.js`.
+recorded. `test/net/fb1001_friendsync.test.js`.
 
-**Main's red, ported.** `test/herald.test.js` still pinned world140 (CLIMB5's bump missed it), and five relay pins did
+**Main's red, ported.** `test/net/herald.test.js` still pinned world140 (CLIMB5's bump missed it), and five relay pins did
 not parse (the bump's message carried an unescaped quote); 22 line cites into world.js, exterior.js, worldModes.js,
 dungeon.js and dungeonContext.js stood where #504's merge moved the code from - struck Ledger rows, the Settings
 spec's viewport row and chargenSession's overlayHover cite (citedrift CD4, CD8) - re-aimed by content.
@@ -1312,7 +1312,7 @@ unscaled UV map, so every face of the scaled piece carries the texture at its pe
 its rows along the edge they ran along (the spire's face: 74 texels a metre, where it carried 0.07), tiled REPEAT, each plane shifted by whole
 repeats to start near zero, a vertex two planes share copied for the second. Positions, indices, the collider and the
 mining boxes are the model's own; a camp, a house or the shrine statue (2.65 at most) is the same object, batched byte
-for byte as before. A departure (Port-Ledger). `test/fb1001_wodrock.test.js`; `tools/mutants/fb1001_wodrock.json` (17,
+for byte as before. A departure (Port-Ledger). `test/world/worldOfDaggerfall/fb1001_wodrock.test.js`; `tools/mutants/fb1001_wodrock.json` (17,
 all dead).
 
 ## GATE-HP: the report did not reproduce (7)
@@ -1322,11 +1322,11 @@ all dead).
 court's `feet()` stands (null outside it); GATE-HEAL (#507) adds to a figure owed the relay, after the heal has landed;
 the relay's damage chart and heal bucket are figures, and no frame writes the local player's health (the duel
 opponent's alone); the account service lands a checkpoint only under the tab's lease at the next sequence and restores
-no older copy, and RESCUE-SAVE's device copy loses to any newer record (`test/rescuesave.test.js`); the renown layer
+no older copy, and RESCUE-SAVE's device copy loses to any newer record (`test/server/rescuesave.test.js`); the renown layer
 keeps health's fraction both ways. An EXACT old health returns only through `restorePlayer` (`systems/save/save.js`) from the
 save the login loads, so if the 6% is the gate's, that save never held the heal. What can leave a heal out of it, none
 confirmed as Leafen's: a page closed rather than Exited, then a login elsewhere (the final checkpoint usually lands
-after the lease is let go - `test/rescuesave.test.js` pins that the device keeps it); a tab that lost its seat
+after the lease is let go - `test/server/rescuesave.test.js` pins that the device keeps it); a tab that lost its seat
 (ONE-SEAT) plays on and saves nothing; a save past 512K characters on a full device's hidden page; a composer that
 throws on every checkpoint (`[online] checkpoint failed` on the console). And "in chunks from full" argues against a
 stale save - the HUD's first frame is drawn after the boot's load, so a load at 6% shows 6% at once. The two floors near
@@ -1349,7 +1349,7 @@ pinned red on the branch before its fix (a gap pin's mutants are its claim) and 
 | F2 | FRIENDS-SYNC | the union was cut at FRIENDS_MAX (and PENDING_MAX) but every record it named was renamed onto the player: a cut friend kept the player, saw their presence, and could not be removed by them | what the player's record kept of a friend is what the friend's keeps of the player (`_mergeLegacy`) |
 | F5 | FRIENDS-SYNC | a client built before world142 expects its picture under the profile's id (AUDIT SOC B19) and refused every one the hub sent: no friends, no party, no word why - and SRV-N's notice baselines on the first version a page hears | the hub hello carries `ps` (1 or nothing; `net/online.js`, `net/wire.js` parseClient); a hello without it is told "update the game to see your friends and party" in the words its chat prints |
 | F3 | FRIENDS-SYNC | the reconnect-replace leave's new compare was right and unpinned - `b.acct !== m.acct` survived every suite (every reconnect a logout, a party of one deleted) | pinned |
-| F4 | FRIENDS-SYNC | the A10/B9 rewrite pinned the bound with `<=`: three bound mutants that died before lived | pinned exactly again (`test/auditsoc.test.js`) |
+| F4 | FRIENDS-SYNC | the A10/B9 rewrite pinned the bound with `<=`: three bound mutants that died before lived | pinned exactly again (`test/net/auditsoc.test.js`) |
 | F6 | FRIENDS-SYNC | the merge's bounds - 129 records over the 128-record write, a friend's request, my own other device, an online friend's picture - unpinned | pinned |
 | SP1 | SLOW-PRESS | under the Jump spell the airborne branch re-reads the input every step, so Forward held re-pressed a slow fall into a face past the slope limit after SLOW-PRESS had spent it: 72 degrees at a walk 19.9 s to come down 12 m, 74 at a run crept UP the face and stayed | the way the face refused is kept while it holds the body, and the air control refused it (`player/motor.js`) |
 | SP2 | SLOW-PRESS | a regression of part five's own: SLOW-PRESS spent the press on the step the body first touched a wall, and the collider's step-up needs that push the step after - a slow glide a step under a lower roof's lip fell into the street (148 of 230 arrivals at 1 m/s on the roof, 216 before) | spent only once the face has held the body over the spell's line further than a step's rise (STEP_OFFSET) |
@@ -1369,10 +1369,10 @@ pinned red on the branch before its fix (a gap pin's mutants are its claim) and 
 The relay's bytes moved with F1, F2 and F5, before any deploy: world142's LAW row is rewritten in place (never shipped).
 Mutant records re-aimed by content: `soc1.json` S11-state-to-every-tab and `soc2.json` C2-one-half-sent. Pin moved:
 `soc2_session` (the hello's `ps`); the harness's hello with an account says `ps` unless a pin asks for an old build.
-`test/fb1001_friendsaudit.test.js`; `tools/mutants/fb1001_friendsaudit.json` (15, all dead). `test/fb1001_slowaudit.test.js` (SP1 and SP2 red on the branch before);
-`tools/mutants/fb1001_slowaudit.json` (6, all dead), `fb1001_slowfall.json` judged dead again. `test/fb1001_castaudit.test.js`
-(CU1 and CU2 red on the branch before); `tools/mutants/fb1001_castaudit.json` (8, all dead). `test/fb1001_uiaudit.test.js` (UI1 and UI2
-red on the branch before); `tools/mutants/fb1001_uiaudit.json` (9, all dead). `test/fb1001_wodaudit.test.js` (WR1 and WR2 red
+`test/net/fb1001_friendsaudit.test.js`; `tools/mutants/fb1001_friendsaudit.json` (15, all dead). `test/player/fb1001_slowaudit.test.js` (SP1 and SP2 red on the branch before);
+`tools/mutants/fb1001_slowaudit.json` (6, all dead), `fb1001_slowfall.json` judged dead again. `test/scenes/fb1001_castaudit.test.js`
+(CU1 and CU2 red on the branch before); `tools/mutants/fb1001_castaudit.json` (8, all dead). `test/ui/fb1001_uiaudit.test.js` (UI1 and UI2
+red on the branch before); `tools/mutants/fb1001_uiaudit.json` (9, all dead). `test/world/worldOfDaggerfall/fb1001_wodaudit.test.js` (WR1 and WR2 red
 on the branch before); `tools/mutants/fb1001_wodaudit.json` (5, all dead), `fb1001_wodrock.json` judged again. Measured and asked:
 at the pebble's density the rock read as rock within some 10 m, a regular lattice at 30 to 100 m and its mean colour
 from 300 m (no anisotropy on model textures) - and the spire is seen from hundreds of metres. Mac: *"Cap at ~8 m a

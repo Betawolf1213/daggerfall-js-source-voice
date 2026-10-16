@@ -5,7 +5,7 @@ arrows to sometimes be retrieved from enemies 3. Allow crafting of arrows 4. Buf
 
 Four slices, one record: STUCK-ARROWS, ARROW-LODGE, FLETCH and SHOP-ARROWS. Every one is a departure from Daggerfall
 Unity, whose bow loses a shaft that misses, keeps every one that strikes, crafts none and shelves twenty at most. The
-departures are Ledger A's (`01-Overview/Port-Ledger.md`, ARROW-SUPPLY). Pins: `test/arrowsupply.test.js`. Mutants:
+departures are Ledger A's (`01-Overview/Port-Ledger.md`, ARROW-SUPPLY). Pins: `test/systems/arrowsupply.test.js`. Mutants:
 `tools/mutants/arrowsupply.json`.
 
 ## 1. STUCK-ARROWS - a shaft that meets the world stays there, and is taken back
@@ -132,9 +132,9 @@ law, one export now (`shopAmmoStack`), at `SHOP_ARROWS_MAX` 100:
 The quiver is minted as the shelf mints arrows, its stack roll answered by a constant, so it merges with DFU's own
 draw when there is one. Pins moved, each marked PIN MOVED (SHOP-ARROWS):
 
-- `test/shopstock.test.js`: the counter's list;
-- `test/roada2_itemseconomy.test.js`: DFU's Range(1, 21) read off a shelf behind the counter;
-- `test/shoppellets.test.js`: the Weapon Smith's counter is the next shelf plus the shot AND the quiver.
+- `test/systems/shopstock.test.js`: the counter's list;
+- `test/systems/roada2_itemseconomy.test.js`: DFU's Range(1, 21) read off a shelf behind the counter;
+- `test/systems/shoppellets.test.js`: the Weapon Smith's counter is the next shelf plus the shot AND the quiver.
 
 ## 5. The process laws, applied
 
@@ -149,11 +149,11 @@ draw when there is one. Pins moved, each marked PIN MOVED (SHOP-ARROWS):
 - **A SLICE CLOSES ITS LEDGER ROW:** Ledger A's ARROW-SUPPLY row. Section C names no arrow-recovery or arrow-crafting
   member.
 - **PINS MOVED** (each marked PIN MOVED in its file, with what moved it):
-  - ARROW-LODGE: a recovery pin now hands the blow a roll under the chance - `test/arrowflight.test.js`,
-    `test/audit39_worldmodes.test.js`, `test/audit58_combat.test.js`, `test/fb1004e_arena.test.js`.
-  - STUCK-ARROWS: the hosts' source pins read the flights' pool and the loose's word - `test/arrowflight.test.js`,
-    `test/audit39_worldmodes.test.js`, `test/thunderlock.test.js`, `test/audit23.test.js` (the dungeon's save).
-  - FLETCH: the Wood Bundle's one Use is the fletching's - `test/forage2_tools.test.js`.
-  - SHOP-ARROWS: the three in section 4, and `test/audit18_systems_items.test.js` (the Armorer's counter).
+  - ARROW-LODGE: a recovery pin now hands the blow a roll under the chance - `test/systems/arrowflight.test.js`,
+    `test/scenes/audit39_worldmodes.test.js`, `test/systems/audit58_combat.test.js`, `test/systems/arena/fb1004e_arena.test.js`.
+  - STUCK-ARROWS: the hosts' source pins read the flights' pool and the loose's word - `test/systems/arrowflight.test.js`,
+    `test/scenes/audit39_worldmodes.test.js`, `test/systems/thunderlock.test.js`, `test/systems/audit23.test.js` (the dungeon's save).
+  - FLETCH: the Wood Bundle's one Use is the fletching's - `test/systems/forage2_tools.test.js`.
+  - SHOP-ARROWS: the three in section 4, and `test/systems/audit18_systems_items.test.js` (the Armorer's counter).
   - Mutant records re-aimed by content: `fieldgun14.json` (6, 7), `tech1.json` (a shaft untallied, the shot at plain
     speed), `shoppellets.json` (the two that read the counter's law).

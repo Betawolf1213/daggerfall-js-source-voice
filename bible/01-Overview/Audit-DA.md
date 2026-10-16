@@ -86,7 +86,7 @@ real shell launched under xvfb.
 
 ## The pins
 
-`test/filestorage.test.js` now holds ten audit tests plus the two
+`test/systems/save/filestorage.test.js` now holds ten audit tests plus the two
 drift pins this audit was convened around: `globalThis.localStorage`
 may appear in `src/` only inside `systems/appStorage.js` (a sixth
 storage consumer would work in every browser and silently split its

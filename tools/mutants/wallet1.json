@@ -6,7 +6,7 @@
     "new": "stackable: false, hasNoEncumbrance: false,",
     "why": "the wallet weighs what a sack weighs",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -16,7 +16,7 @@
     "new": "playerTextureRecord: 0, stackable: true,",
     "why": "two wallets share a slot",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -26,7 +26,7 @@
     "new": "bound: false, packOnly: true,",
     "why": "the wallet dropped, traded or sold",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -36,7 +36,7 @@
     "new": "bound: true, packOnly: false,",
     "why": "the wallet stowed in the wagon or the storage",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -46,7 +46,7 @@
     "new": "worldTextureArchive: 205, worldTextureRecord: 19,",
     "why": "another picture than DFU's Small Sack",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -56,7 +56,7 @@
     "new": "item?.templateIndex === WALLET_TEMPLATE;",
     "why": "any group's 580 read as a wallet",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -66,7 +66,7 @@
     "new": "Object.freeze([SIGIL_STONE_TEMPLATE, WELKYND_SHARD_TEMPLATE]);",
     "why": "the letters of credit left on the pages",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -76,7 +76,7 @@
     "new": "!!item;",
     "why": "the wallet holds every piece (the Portal Stone, itself)",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "new": "  if (hasWallet(entity.items)) return 0;",
     "why": "a character with no pack list given nothing (a throw)",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -96,7 +96,7 @@
     "new": "  addItem(entity.items, mintWallet());",
     "why": "a second wallet given to a character carrying one",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -106,7 +106,7 @@
     "new": "",
     "why": "a character marked as given one given one again",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -116,7 +116,7 @@
     "new": "  return giveWallet(entity);",
     "why": "the gift never marked - given at every load the wallet is not carried",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -126,7 +126,7 @@
     "new": "return n;",
     "why": "a reader's nonsense believed",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -136,7 +136,7 @@
     "new": "return Number.isSafeInteger(n) ? n : null;",
     "why": "a negative balance counted",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -146,7 +146,7 @@
     "new": "const n = null;",
     "why": "the host's silver never read",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -156,7 +156,7 @@
     "new": "then(() => undefined);",
     "why": "a refresh that rejects rejects the wallet's ask",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -166,7 +166,7 @@
     "new": ".filter((it) => walletHolds(it));",
     "why": "a worn crystal counted in the wallet and taken off the doll's",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "new": "n + (it.templateIndex === t ? 1 : 0)",
     "why": "a stack counted as one",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -186,7 +186,7 @@
     "new": "g",
     "why": "the letters worth nothing",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -196,7 +196,7 @@
     "new": "gold: 0,",
     "why": "the purse's gold never counted",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -206,7 +206,7 @@
     "new": "      : { key: 'silver', label: 'Silver', figure: num(0), none: false, note: null };",
     "why": "an unknown silver said as none",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -216,7 +216,7 @@
     "new": "figure: num(n), none: !n",
     "why": "nothing held said as 0",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -226,7 +226,7 @@
     "new": "",
     "why": "the wallet's Use DFU's 'nothing happens'",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -236,7 +236,7 @@
     "new": "isBound(item) && !BOUND_KEEPS.includes(kind);",
     "why": "the law lets a pack-only piece into the wagon and the storage",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -246,7 +246,7 @@
     "new": "false;",
     "why": "no piece is pack-only",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -256,7 +256,7 @@
     "new": "`${name || 'That'} is bound to you.`",
     "why": "the refusal in another piece's words",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -266,8 +266,8 @@
     "new": "Object.freeze([570, 571, 572, 582]);",
     "why": "the realm's trade service takes a wallet",
     "tests": [
-      "test/wallet1.test.js",
-      "test/auditrealm.test.js"
+      "test/systems/wallet1.test.js",
+      "test/systems/auditrealm.test.js"
     ]
   },
   {
@@ -277,7 +277,7 @@
     "new": "snap.walletGift = entity.walletGift;",
     "why": "a character born with its kit's wallet saved as one from before it",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -287,7 +287,7 @@
     "new": "entity.walletGift = 0;",
     "why": "every load reads the save as one from before the wallet",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -297,7 +297,7 @@
     "new": "  // giveWalletGift(entity);   // WALLET1",
     "why": "a character from before the wallet never given one",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -307,7 +307,7 @@
     "new": "",
     "why": "a new character's kit holds no wallet",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -317,8 +317,8 @@
     "new": "if (VALUABLES.has(g) || (g === 'MiscItems'",
     "why": "the wallet off Valuables",
     "tests": [
-      "test/wallet1.test.js",
-      "test/packPages.test.js"
+      "test/systems/wallet1.test.js",
+      "test/systems/item/packPages.test.js"
     ]
   },
   {
@@ -328,8 +328,8 @@
     "new": ") return 'valuables';",
     "why": "the letters of credit back on Misc (the page's bug)",
     "tests": [
-      "test/wallet1.test.js",
-      "test/packPages.test.js"
+      "test/systems/wallet1.test.js",
+      "test/systems/item/packPages.test.js"
     ]
   },
   {
@@ -339,8 +339,8 @@
     "new": "const paged = items;",
     "why": "the held pieces on the pages and in the wallet both",
     "tests": [
-      "test/wallet1.test.js",
-      "test/packPages.test.js"
+      "test/systems/wallet1.test.js",
+      "test/systems/item/packPages.test.js"
     ]
   },
   {
@@ -350,7 +350,7 @@
     "new": "const walletItem = null;",
     "why": "the pack never finds its wallet",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -360,7 +360,7 @@
     "new": "if (r.kind === 'binder') return { kind: 'pickWallet', item: r.item };",
     "why": "the wallet's Use falls to the readers' message",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -370,7 +370,7 @@
     "new": "  if (act.kind === 'pickWallet') return render();",
     "why": "the Use opens nothing",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -380,7 +380,7 @@
     "new": "if (false) (c.querySelector('.card-body') ?? c).append(walletSheet(model.wallet));",
     "why": "the wallet's card with no sheet",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -390,7 +390,7 @@
     "new": "if (false) acts.append(walletBack(model.wallet.item));",
     "why": "a held piece's card with no way back",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -400,7 +400,7 @@
     "new": "    for (const it of w.held) rows.append(el('p', 'meta', itemLine(it, deps.entity).name));",
     "why": "a held piece's row opens nothing",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -410,7 +410,7 @@
     "new": "  b.onclick = () => {};\n  return b;",
     "why": "the way back goes nowhere",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -420,7 +420,7 @@
     "new": "    refreshWalletSilver()",
     "why": "the silver asked at every draw of the sheet",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -430,7 +430,7 @@
     "new": "",
     "why": "a second mount never asks the silver",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -440,7 +440,7 @@
     "new": "refreshWalletSilver();",
     "why": "the answer never reaches the sheet",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -450,7 +450,7 @@
     "new": "refreshWalletSilver().then(() => { if (host && picked === model?.wallet?.item) { refresh(); render(); } });",
     "why": "an answer landing while a piece is picked is lost for the mount (the bug the pin found)",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -460,7 +460,7 @@
     "new": "  if (false) {",
     "why": "the enhanced pack's refusal in the bound law's words",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -470,7 +470,7 @@
     "new": "if (r.kind === 'wallet') { void refreshWalletSilver(); return; }",
     "why": "the classic Use says nothing",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -480,7 +480,7 @@
     "new": "center: true })) }]; return; }",
     "why": "the classic Use never asks the silver",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -490,7 +490,7 @@
     "new": "        if (false) { this._refuse(",
     "why": "the classic window's refusal in the bound law's words",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -500,7 +500,7 @@
     "new": "",
     "why": "a wallet pressed on the hotbar says nothing",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -510,7 +510,7 @@
     "new": "  if (false) {",
     "why": "the hotbar's wallet falls through the arms",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -520,7 +520,7 @@
     "new": "",
     "why": "the wallet's card says nothing of what it is for",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -530,7 +530,7 @@
     "new": "  if (false) setWalletSilver(",
     "why": "the wallet never told the account's silver",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   },
   {
@@ -540,7 +540,7 @@
     "new": "setWalletSilver(() => marksBook.state.balance,",
     "why": "a closed book's balance counted",
     "tests": [
-      "test/wallet1.test.js"
+      "test/systems/wallet1.test.js"
     ]
   }
 ]

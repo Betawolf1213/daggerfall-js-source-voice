@@ -118,7 +118,7 @@ screenshot - before any line was changed.
 
 ## The campaign
 
-`test/jan1_fixes.test.js` (4) and `test/jan1_field.test.js` (4).
+`test/systems/jan1_fixes.test.js` (4) and `test/world/terrain/jan1_field.test.js` (4).
 `tools/mutants/jan1.json`: **26 mutants, 26 killed**, including the
 eight that are the bugs themselves (the hook read after the close, the
 truthy empty table, the raw `item.value`, the ungated up, the pose left

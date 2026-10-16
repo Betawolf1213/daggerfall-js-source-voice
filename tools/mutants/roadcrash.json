@@ -5,7 +5,7 @@
     "old": "      st.destinationName = null;\n      st.corners = locBorderCornerRects(st.locationRect, st.locationBorderRect);",
     "new": "      st.corners = locBorderCornerRects(st.locationRect, st.locationBorderRect);",
     "tests": [
-      "test/roadcrash.test.js"
+      "test/systems/travel/roadcrash.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "    if (!st.locationRect || !st.locationBorderRect) {\n      ui?.closeWindow();\n      if (st.autopilot) interruptTravel();\n      return;\n    }",
     "new": "    if (false) {\n      ui?.closeWindow();\n      if (st.autopilot) interruptTravel();\n      return;\n    }",
     "tests": [
-      "test/roadcrash.test.js"
+      "test/systems/travel/roadcrash.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "      ui?.closeWindow();\n      if (st.autopilot) interruptTravel();\n      return;",
     "new": "      ui?.closeWindow();\n      return;",
     "tests": [
-      "test/roadcrash.test.js"
+      "test/systems/travel/roadcrash.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "        if (countSetBits(dir) === 1) {",
     "new": "        if (countSetBits(dir) >= 1) {",
     "tests": [
-      "test/roadcrash.test.js"
+      "test/systems/travel/roadcrash.test.js"
     ]
   }
 ]

@@ -5,7 +5,7 @@
     "old": "hero ? g.name : [...g.name][0] ?? ''",
     "new": "g.name",
     "tests": [
-      "test/wb9g_insignia.test.js"
+      "test/net/wb9g_insignia.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "hero ? g.name : [...g.name][0] ?? ''",
     "new": "[...g.name][0] ?? ''",
     "tests": [
-      "test/wb9g_insignia.test.js"
+      "test/net/wb9g_insignia.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "hero ? 'insignia-word' : 'insignia-word mono'",
     "new": "'insignia-word'",
     "tests": [
-      "test/wb9g_insignia.test.js"
+      "test/net/wb9g_insignia.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "    addItem(items, Object.assign(sigilStone(), { stackCount: offer.price }));   // the stones back: the service holds no sale\n",
     "new": "",
     "tests": [
-      "test/wb9g_insignia.test.js"
+      "test/net/wb9g_insignia.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "  if (insigniaUnheard(r)) {",
     "new": "  if (false) {",
     "tests": [
-      "test/wb9g_insignia.test.js"
+      "test/net/wb9g_insignia.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "!(Number.isFinite(r?.status) && r.status < 500)",
     "new": "!Number.isFinite(r?.status)",
     "tests": [
-      "test/wb9g_insignia.test.js"
+      "test/net/wb9g_insignia.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "  save();\n  return { ok: true, data: r.data };",
     "new": "  return { ok: true, data: r.data };",
     "tests": [
-      "test/wb9g_insignia.test.js"
+      "test/net/wb9g_insignia.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "  if (!spendStones(items, offer?.price)) return { ok: false, error: 'stones' };\n",
     "new": "  if (stoneCount(spendableStonesIn(items)) < offer?.price) return { ok: false, error: 'stones' };\n",
     "tests": [
-      "test/wb9g_insignia.test.js"
+      "test/net/wb9g_insignia.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "      if (s.ok && (pendingInsig || deps.insigniaBusy?.())) buy.setAttribute('disabled', '');",
     "new": "",
     "tests": [
-      "test/wb9g_insignia.test.js"
+      "test/net/wb9g_insignia.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "        if (pendingInsig || deps.insigniaBusy?.()) return;\n",
     "new": "",
     "tests": [
-      "test/wb9g_insignia.test.js"
+      "test/net/wb9g_insignia.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "insignia = CASE WHEN COALESCE(insignia, '') = '' THEN ?2 ELSE insignia || ' ' || ?2 END",
     "new": "insignia = ?2",
     "tests": [
-      "test/wb9g_insignia.test.js"
+      "test/net/wb9g_insignia.test.js"
     ]
   },
   {
@@ -104,8 +104,8 @@
     "old": "  if (!inCourt(pose.x, pose.z, f.court, POSE_SLACK)) return 0;\n",
     "new": "",
     "tests": [
-      "test/audit_wb9.test.js",
-      "test/wb9b_gate_courts.test.js"
+      "test/net/gate/audit_wb9.test.js",
+      "test/net/gate/wb9b_gate_courts.test.js"
     ]
   },
   {
@@ -114,7 +114,7 @@
     "old": "  if (!inCourt(pose.x, pose.z, f.court, POSE_SLACK)) return out;   // AUDIT WB9 (brain F1): from his court, as a blow on him\n",
     "new": "",
     "tests": [
-      "test/audit_wb9.test.js"
+      "test/net/gate/audit_wb9.test.js"
     ]
   },
   {
@@ -123,7 +123,7 @@
     "old": "      if (!fromHisCourt(s, t)) return false;   // AUDIT WB9 (brain F1): the relay takes no blow from outside the court he fights in\n",
     "new": "",
     "tests": [
-      "test/audit_wb9.test.js"
+      "test/net/gate/audit_wb9.test.js"
     ]
   },
   {
@@ -132,7 +132,7 @@
     "old": " && fromHisCourt(s, t)) for (let k = 0; k < rk.n; k++)",
     "new": ") for (let k = 0; k < rk.n; k++)",
     "tests": [
-      "test/audit_wb9.test.js"
+      "test/net/gate/audit_wb9.test.js"
     ]
   },
   {
@@ -141,7 +141,7 @@
     "old": "  if (!reckonOpen(f, now)) return out;   // AUDIT WB9 (brain F2): only while the Reckoning still winds up, and not in its last breath\n",
     "new": "",
     "tests": [
-      "test/audit_wb9.test.js"
+      "test/net/gate/audit_wb9.test.js"
     ]
   },
   {
@@ -150,7 +150,7 @@
     "old": "now < f.atk.at - RECKON_CLOSE_MS;",
     "new": "now < f.atk.at;",
     "tests": [
-      "test/audit_wb9.test.js"
+      "test/net/gate/audit_wb9.test.js"
     ]
   },
   {
@@ -159,7 +159,7 @@
     "old": "!(rk.landAt !== null && t >= rk.landAt - RECKON_CLOSE_MS) && ",
     "new": "",
     "tests": [
-      "test/audit_wb9.test.js"
+      "test/net/gate/audit_wb9.test.js"
     ]
   },
   {
@@ -168,7 +168,7 @@
     "old": "...(g.a === ATTACKS.wrath.id ? { stunUntil: 0 } : {}), ",
     "new": "",
     "tests": [
-      "test/audit_wb9.test.js"
+      "test/net/gate/audit_wb9.test.js"
     ]
   },
   {
@@ -177,7 +177,7 @@
     "old": "    f.cx = null;   // AUDIT WB9 (brain F4): a kill mid-Reckoning spends its crystals - no beat after the fall clears them\n",
     "new": "",
     "tests": [
-      "test/audit_wb9.test.js"
+      "test/net/gate/audit_wb9.test.js"
     ]
   },
   {
@@ -186,7 +186,7 @@
     "old": "for (let j = 0; j <= k; j++) if (!Number.isFinite(xa[j])) xa[j] = g.at - ATTACKS.cross.windup;",
     "new": "xa[k] = g.at - ATTACKS.cross.windup;",
     "tests": [
-      "test/audit_wb9.test.js"
+      "test/net/gate/audit_wb9.test.js"
     ]
   },
   {
@@ -195,7 +195,7 @@
     "old": "    edge = abs(min(sector, d - uBody));",
     "new": "    edge = min(ang <= uHalfArc ? abs(d - uR) : 1e3, d > uBody && d <= uR ? abs(ang - uHalfArc) * d : 1e3);",
     "tests": [
-      "test/audit_wb9.test.js"
+      "test/net/gate/audit_wb9.test.js"
     ]
   },
   {
@@ -204,7 +204,7 @@
     "old": "  float hz = 1.5 + 0.5 * T2;",
     "new": "  float hz = 1.5 + 1.5 * T2;",
     "tests": [
-      "test/audit_wb9.test.js"
+      "test/net/gate/audit_wb9.test.js"
     ]
   },
   {
@@ -213,7 +213,7 @@
     "old": "    if (Array.isArray(walks) && shape.kind !== TELEGRAPH_KIND.mark) {",
     "new": "    if (false) {",
     "tests": [
-      "test/audit_wb9.test.js"
+      "test/net/gate/audit_wb9.test.js"
     ]
   },
   {
@@ -222,7 +222,7 @@
     "old": "    if (Array.isArray(walks) && shape.kind !== TELEGRAPH_KIND.mark) {",
     "new": "    if (Array.isArray(walks)) {",
     "tests": [
-      "test/audit_wb9.test.js"
+      "test/net/gate/audit_wb9.test.js"
     ]
   },
   {
@@ -231,7 +231,7 @@
     "old": "(one && w.k !== k0 && w.k !== k0 - 1)",
     "new": "(one && w.k !== k0)",
     "tests": [
-      "test/audit_wb9.test.js"
+      "test/net/gate/audit_wb9.test.js"
     ]
   },
   {
@@ -240,7 +240,7 @@
     "old": "  bool clipOut = uOnWalk == 0 ? c > uFloorR : (length(vCourt - uWalkC0) <= uFloorR || length(vCourt - uWalkC1) <= uFloorR);",
     "new": "  bool clipOut = uOnWalk == 0 ? c > uFloorR : false;",
     "tests": [
-      "test/audit_wb9.test.js"
+      "test/net/gate/audit_wb9.test.js"
     ]
   },
   {
@@ -249,7 +249,7 @@
     "old": "      for (const w of WALKS) _walked[w.k] = walkFormed(s.xa, w.k, t);",
     "new": "      for (const w of WALKS) _walked[w.k] = 0;",
     "tests": [
-      "test/audit_wb9.test.js"
+      "test/net/gate/audit_wb9.test.js"
     ]
   },
   {
@@ -258,7 +258,7 @@
     "old": "      flyRay = plane ? (a, d, l) => ray?.(a, d, l) ?? plane(a, d, l) : ray;",
     "new": "      flyRay = ray;",
     "tests": [
-      "test/audit_wb9.test.js"
+      "test/net/gate/audit_wb9.test.js"
     ]
   },
   {
@@ -267,7 +267,7 @@
     "old": "export function quickLootSpend() { _pending = null; }",
     "new": "export function quickLootSpend() { }",
     "tests": [
-      "test/audit_wb9.test.js"
+      "test/net/gate/audit_wb9.test.js"
     ]
   },
   {
@@ -276,7 +276,7 @@
     "old": "if (key.startsWith('spoil')) { quickLootSpend(); host.takeSpoil?.(key); return true; }",
     "new": "if (key.startsWith('spoil')) { host.takeSpoil?.(key); return true; }",
     "tests": [
-      "test/wb9f_gate_spoils.test.js"
+      "test/scenes/wb9f_gate_spoils.test.js"
     ]
   },
   {
@@ -285,8 +285,8 @@
     "old": "      b.bank = Math.min(EFFECTS_BANK_MAX_S, b.bank + dt);   // AUDIT WB9 (bodies F1)",
     "new": "      b.bank += dt;",
     "tests": [
-      "test/audit_wb9.test.js",
-      "test/wb9h_crowd_bodies.test.js"
+      "test/net/gate/audit_wb9.test.js",
+      "test/net/peer/wb9h_crowd_bodies.test.js"
     ]
   },
   {
@@ -295,7 +295,7 @@
     "old": "      const i = this._spares.findIndex((x) => x.key !== keep);",
     "new": "      const i = 0;",
     "tests": [
-      "test/audit_wb9.test.js"
+      "test/net/gate/audit_wb9.test.js"
     ]
   },
   {
@@ -304,7 +304,7 @@
     "old": "this._build(b, look, shown, glyphs)",
     "new": "this._build(b, peer.look, peer.shown, peer.glyphs)",
     "tests": [
-      "test/audit_wb9.test.js"
+      "test/net/gate/audit_wb9.test.js"
     ]
   },
   {
@@ -313,7 +313,7 @@
     "old": "veil: conceal ? (conceal(peer.id) ?? null) : null };",
     "new": "veil: null };",
     "tests": [
-      "test/audit_wb9.test.js"
+      "test/net/gate/audit_wb9.test.js"
     ]
   },
   {
@@ -322,7 +322,7 @@
     "old": "    _targets.length = 0;\n    _crystalDraw.length = 0;\n    if (rk && !rk.ended) {",
     "new": "    if (s.stunAt && s.stunAt !== stunHeard && t < s.stunUntil) { stunHeard = s.stunAt; if (t - s.stunAt <= RECKON_LATE_MS) { say(COURT_RECKON_TEXT.broken(bossOf(s).name)); sound(BOSS_CUES.stunned, s, t, null); } }\n    _targets.length = 0;\n    _crystalDraw.length = 0;\n    if (rk && !rk.ended) {",
     "tests": [
-      "test/audit_wb9.test.js"
+      "test/net/gate/audit_wb9.test.js"
     ]
   }
 ]

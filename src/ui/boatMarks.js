@@ -23,7 +23,7 @@
 //     (BOAT_MARK_NEAR_M), whose bearing would swing with every step.
 // The colour keeps clear of every other mark on the strip (the party's
 // green, the Detect markers' red, the gate's ember, the quest's gold, the
-// ships' red, bone and grey, the professions' five - test/boatmark.test.js
+// ships' red, bone and grey, the professions' five - test/ui/boatmark.test.js
 // holds the distances), and the shape is its own: a sail over a hull.
 // A leaf - it imports nothing, so the HUD takes it without taking the
 // sailing runtime.

@@ -430,13 +430,13 @@ statics and its collider bucket, both freed with the pixel; the fixed city (`?ex
 its life; TREES-SEATED's seat reads them. Every point of every such footprint stands within 0.15 m of what is drawn -
 the hills, the pads, or the author's own models under it (a temple on its foundations, a stair on its landing) - but
 two, named: Merdale's third stair, whose pad would bury the second, and TEMPASH4's temple's back edge, 2.27 m over the
-pack's own hill too (`test/fb1013e_hillseat.test.js`; the whole packs swept with the player's ARCH3D on `ARENA2_PATH`).
+pack's own hill too (`test/world/fb1013e_hillseat.test.js`; the whole packs swept with the player's ARCH3D on `ARENA2_PATH`).
 
 ### Not stood in
 
 What follows draws nothing, as in DFU without the peers - each because no
 stand-in could be MADE for it from what is known, not because it was missed
-(`test/wd3_standins.test.js` pins this list against every placement of both
+(`test/world/wd3_standins.test.js` pins this list against every placement of both
 packs):
 
 | ids | placed | why |
@@ -494,23 +494,23 @@ layout pins above, and by four more things the stand-ins needed:
 
 ## Proved
 
-- `test/wd3_pack.test.js` - the pack's rows, reader, refusals and bytes; the
+- `test/formats/worldData/wd3_pack.test.js` - the pack's rows, reader, refusals and bytes; the
   vendored packs' form; with ARENA2 every one of the 8,547 files rebuilt
   sha256-exact.
-- `test/wd3_door.test.js` - load priority, the packs on the door, the online
+- `test/systems/wd3_door.test.js` - load priority, the packs on the door, the online
   gate, pinned towns and the reading town, OtherNames, the windmills, the
   Master Armorer, the decor catalogue, the loader.
-- `test/wd3_layoutPins.test.js` - the stamps, the pins, every record stamped
+- `test/systems/wd3_layoutPins.test.js` - the stamps, the pins, every record stamped
   where it is made, the cached scenes and the discoveries, the load.
-- `test/wd3_online.test.js` - the service's layouts on the real service over
+- `test/net/wd3_online.test.js` - the service's layouts on the real service over
   SQLite, the client's ask and the room's switches.
-- `test/fb1003c_citywall.test.js` - the city walls' corners: the law off the
+- `test/world/fb1003c_citywall.test.js` - the city walls' corners: the law off the
   pack (all 224 pieces filling 448-576 units off the crossing of their two
   lines, the tower 64 units in from it; the 210 on lines of the author's own
   segments, the segments beginning where it ends), the stand-in cut from a
   445 and its faces on the cuts, its install, and the real pipeline building
   it from ARCH3D for the renderer and the collider.
-- `test/wd3_standins.test.js` - every stand-in above, its install and gates;
+- `test/world/wd3_standins.test.js` - every stand-in above, its install and gates;
   with ARENA2 the coverage of both packs' every placement, the housing names,
   and the alias beds built from the player's own ARCH3D.
 - Renders (the headless probe over the player's data): the beds in their six

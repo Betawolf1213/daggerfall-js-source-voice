@@ -9,7 +9,7 @@ Villages and Beautiful Cities (WD3, `03-World/Beautiful-Towns.md`). Written as 2
 
 Two audits ran beside the fixes - the quests (read-only, then fixed: QUEST-AUDIT below) and the towns' geometry (with
 CITY-WALLS). Both measured over the player's own data: the freeware ARENA2 fetched into a scratch directory outside the
-tree, never committed (its `test/wd3_pack.test.js` sweep rebuilt all 8,547 of both packs' files sha256-exact against
+tree, never committed (its `test/formats/worldData/wd3_pack.test.js` sweep rebuilt all 8,547 of both packs' files sha256-exact against
 it, so it is the data the packs were built over). It held no TEXTURE files, so nothing here was rendered.
 
 | | Report | What it was | Done |
@@ -58,9 +58,9 @@ The four hosts: `scenes/world.js` (its pack and hotbar place through `camps.plac
 frame) and `scenes/exterior.js` (the same placeItem; no save, no room) wired; `scenes/dungeonContext.js` wired (its own
 pool and pack doors; its onChanged the act); `scenes/worldModes.js` unaffected (a building's placing is refused for being
 indoors before any strike). The dungeon's own campfires (`world/dungeon/dungeonFires.js`) and the world's hearths (HEARTH1) are
-not in the pool and are never struck. `test/fb1004d_campcap.test.js` (5: the law; the brick - four saved camps, a fifth
+not in the pool and are never struck. `test/systems/survival/fb1004d_campcap.test.js` (5: the law; the brick - four saved camps, a fifth
 placed, the oldest's gear home once; no item twice over nine placings at the cap; online - a cell peer, a dungeon host's
-memory, a joiner, a stale memory; the four hosts by source); `test/surv3_camps.test.js`'s cap pin re-aimed to the new
+memory, a joiner, a stale memory; the four hosts by source); `test/systems/survival/surv3_camps.test.js`'s cap pin re-aimed to the new
 law. `tools/mutants/fb1004d_campcap.json` (21, all dead); the 113 older records aimed at the two camp modules re-run -
 110 dead, 3 equivalent as recorded.
 
@@ -72,9 +72,9 @@ item`, which no Item resource has, so every quest item a building or a dungeon s
 while the wardrobes beside it were named - and it found one cause more, ROBES-PRESS: the press raced a building's
 furniture by its whole box, so robes on a mattress or a shelf could not be picked up at all. At the merge of main this
 branch's copy (`worldTooltips.js` questStandName and the two namers) was withdrawn for main's (`questStandItem`), with
-its pins and mutants; main's `test/fb1004c_robes.test.js` holds the law.
+its pins and mutants; main's `test/systems/fb1004c_robes.test.js` holds the law.
 
-Kept from this branch, as the record's regression pins (`test/fb1004d_questtrace.test.js`, 2): the trace - O0A0AL00 on
+Kept from this branch, as the record's regression pins (`test/systems/quest/fb1004d_questtrace.test.js`, 2): the trace - O0A0AL00 on
 the real parser and machine in Beautiful Villages' Moorham Manor (Shalgora), the robes standing at the farmhouse's own
 199.18 item marker and the click handing them over with message 1018 and the note - and where the robes on the
 reporter's paperdoll came from: a wardrobe mints clothing by the PLAYER's gender (StockHouseContainer,
@@ -112,8 +112,8 @@ and the packs' never leaves the landing over nothing. Of Daggerfall's own blocks
 floor and four are refused (`ALCHAS01` #1, `LIBRAS00` #4 and #8, `BOOKAS02` #5) where DFU drops the player into the
 void - a departure (Port-Ledger, Ledger A). The four hosts: `scenes/worldModes.js` wired (the one door into a building);
 `scenes/world.js` and `scenes/exterior.js` through createWorldModes; `scenes/dungeonContext.js` has its own landing and
-no void failsafe. `test/fb1004d_voidentry.test.js` (10: nine over the real packs, one sweep on the player's data);
-`test/fb1001b_vampsun.test.js`'s stub tavern given a floor (a room of nothing is refused now);
+no void failsafe. `test/world/fb1004d_voidentry.test.js` (10: nine over the real packs, one sweep on the player's data);
+`test/systems/fb1001b_vampsun.test.js`'s stub tavern given a floor (a room of nothing is refused now);
 `tools/mutants/fb1004d_voidentry.json` (24, all dead). Not changed: DFU's marker lift (AddFlats) needs `TEXTURE.199`;
 seven of DFU's floored landings stand 0.05 m inside geometry; a throw after the room is set up; six graveyard blocks that
 fail to lay out ("No interior 3D models") now say DFU's line.
@@ -134,7 +134,7 @@ same cross-section, so the corridor has no opening left. Checked clean: the gate
 match the drawn meshes in both exterior hosts; a stand-in with no mesh is neither drawn nor collided; the House5 boxes
 have no size; the terrain flattens as Daggerfall Unity flattens it. The author's farms stand inside the ring and reach
 at most 50 units into a wall piece (house `215` in `WALLAA06/12/13.FARMAA01`; fence `518` 27; windmill `41600` 3 off the
-face) - as Daggerfall Unity places them, recorded and unchanged. `test/fb1004d_citywalls.test.js` (three over the packs,
+face) - as Daggerfall Unity places them, recorded and unchanged. `test/world/fb1004d_citywalls.test.js` (three over the packs,
 one on the player's data); `tools/mutants/fb1004d_citywalls.json` (5, all dead).
 
 **CROPS** (`world/flatFields.js` sowField, cropRecordsFor, blockSolids, CROP_OVERLAP_RADIUS; `world/rmbFlats.js`;
@@ -146,15 +146,15 @@ plant at the field's own height; each a random record (GetRandomRecord), not the
 desert its own record, 20. Measured: 30,503 of 6,195,788 plants refused, over 33,497 fields in 4,290 towns (19 of them
 in the second desert). Not copied: the component gives every plant the last record's billboard size. Some 144,000
 plants stand inside the hollow walls, more than a metre from any face, as the component's own check would sow them -
-unseen with every ring shut. `test/fb1004d_crops.test.js` (7); `tools/mutants/fb1004d_crops.json` (16, all dead);
-`test/wd3_standins.test.js`, `test/fb1003b_trees.test.js`, `test/natureground.test.js` and fieldgun20's FIELD-GUN20-7
+unseen with every ring shut. `test/world/fb1004d_crops.test.js` (7); `tools/mutants/fb1004d_crops.json` (16, all dead);
+`test/world/wd3_standins.test.js`, `test/world/fb1003b_trees.test.js`, `test/world/terrain/natureground.test.js` and fieldgun20's FIELD-GUN20-7
 follow the new law.
 
 **DOMES** (`world/townStandIns.js` DOME_UNIT, DOME_PROFILE, DOME_SPIRE, DOME_BANDS). The three domes (`53182`, `53187`,
 `53194`; ten placements, on gem stores', markets' and pawnshops' roofs) were a 3.6 m cap over a drum sunk 1.2 m into the
 roof. They stand at the pack's own profile now, measured off its HF Dome 03 and 04 meshes at the prefabs' 4.6875: an
 octagonal drum 4.8 m across on the origin to 3.63 m, the dome to 8.43 m, 03's spire to 10.75 m, each band the picture
-its prefab names. `test/fb1004d_domes.test.js` (5); `tools/mutants/fb1004d_domes.json` (7, all dead).
+its prefab names. `test/world/fb1004d_domes.test.js` (5); `tools/mutants/fb1004d_domes.json` (7, all dead).
 
 The four hosts: `scenes/world.js` and `scenes/exterior.js` wired (the fields' climate and solids); `scenes/worldModes.js`
 and `scenes/dungeonContext.js` sow no exterior field and stand no dome or wall. Not changed: the collider ignores
@@ -187,7 +187,7 @@ bfcache restore excepted. The four hosts: `scenes/world.js` wired (each pixel's 
 in destroyPixel and a failed build's ledger, settled once published; the pixels' keep is the view);
 `scenes/worldModes.js` wired (a building's and a dungeon's hold, handed to their contexts, which settle once built and
 release last in destroy()); `scenes/dungeonContext.js` wired; `scenes/exterior.js` unaffected (its one city through the
-pinned doors; its buildings and dungeons through worldModes). `test/fb1004d_placelru.test.js` (10: the same census at 12
+pinned doors; its buildings and dungeons through worldModes). `test/scenes/fb1004d_placelru.test.js` (10: the same census at 12
 places and at 48, what live places draw, shared and pinned things, a revisit, the keep and the settle, the miss door,
 the stamp, the hosts by source); `tools/mutants/fb1004d_placelru.json` (47, all dead); perfextb's PERF-EXT11-5
 re-aimed. Still kept for the session, bounded by content: the frames the hosts' own lazy doors upload (outdoor foes,
@@ -221,9 +221,9 @@ where a body fits; a flyer keeps its height; with no spot it stays. Puppets are 
 fell. The foe stands beside the crate rather than overlapping it and walking out as in DFU - a departure (Port-Ledger,
 Ledger A). The four hosts: `scenes/dungeonContext.js` wired; `scenes/worldModes.js`, `scenes/exterior.js` and
 `scenes/world.js` through the shared pool's spawnFoe (a building's quest marker, a save's restore, a boulder outdoors),
-unchanged; the player's own spawn not wired (no case in the data). `test/fb1004d_cratefree.test.js` (17: 13 on fixtures,
-four on the player's data); `tools/mutants/fb1004d_cratefree.json` (22, all dead); `test/audit0928_merge.test.js`,
-`test/disc28_flyer.test.js` and `test/incident_ceiling_bats.test.js` take the new door. Not changed: SEARCH1's last
+unchanged; the player's own spawn not wired (no case in the data). `test/systems/quest/fb1004d_cratefree.test.js` (17: 13 on fixtures,
+four on the player's data); `tools/mutants/fb1004d_cratefree.json` (22, all dead); `test/characters/audit0928_merge.test.js`,
+`test/characters/enemy/disc28_flyer.test.js` and `test/scenes/incident_ceiling_bats.test.js` take the new door. Not changed: SEARCH1's last
 resort still checks nothing (reached far less often); a swimmer restored mid-water inside a model.
 
 ## BOOK-RISE (7)
@@ -241,7 +241,7 @@ restart (inferred). frame() now asks closeBook again every frame while a close i
 Home.md's ASYNC NEVER DROPS. No sync loop on the path runs long (242 frames in 7-31 ms for an empty hall, a 400-row hall,
 a phone at 3x and a 120x90 view). The four hosts: one face, so all reach it - `scenes/worldModes.js` (a seat palace's
 shelf; a crown castle's, on the dungeon's stack), `scenes/dungeonContext.js` (its castle shelves), `scenes/world.js`
-(the board's Seat tab), `scenes/exterior.js` (its ordinary books). `test/fb1004d_bookrise.test.js` (2: every way out at
+(the board's Seat tab), `scenes/exterior.js` (its ordinary books). `test/ui/enhanced/fb1004d_bookrise.test.js` (2: every way out at
 every moment of the book's life; a long hall in its rise, its opening, open, mid-turn and under a held E);
 `tools/mutants/fb1004d_bookrise.json` (7, all dead).
 
@@ -257,7 +257,7 @@ someone owns online; the bank's sale gives the hold up first. **Deploy the accou
 Four calls left to Mac, built as follows: a held house costs none of the three homes; a deed customs carried in is not held (HOME1's "Stay
 offline only"); to other players a knight's house is the knight's home, always shut; the knight may still sell it at the
 bank for Daggerfall's share. Not reconciled: a knight's house another player claimed before this stays theirs.
-`test/fb1004d_knight_house.test.js` (10); `tools/mutants/fb1004d_knight_house.json` (40, all dead); eight older records
+`test/systems/fb1004d_knight_house.test.js` (10); `tools/mutants/fb1004d_knight_house.json` (40, all dead); eight older records
 (`home1` 5, `arena4b_homes` 2, `gatekeys` 1) re-aimed by content and twelve version pins moved to acct75 on its branch, acct77 at the merge of main (past HOME-PRICE's acct75 and PRIMARCH and FOUNDER4's acct76).
 
 ## CULL-SIZE (9)
@@ -278,7 +278,7 @@ hosts' townspeople, a ship's crew, a dungeon's mobiles - so all were culled by a
 of the stored one and the drawn quad's half-diagonal now - the stored float bit for bit where the size has not grown, so
 it never culls more than before. The four hosts: every reader takes it through the one file (the crowd and peer cull,
 the flats' pass, the shadow replays, the air pass, SC1's scans, the ship-flat rule); none edited.
-`test/fb1004d_cullsize.test.js` (4); `tools/mutants/fb1004d_cullsize.json` (8, all dead); AUDIT 68's S16 pin moved;
+`test/scenes/fb1004d_cullsize.test.js` (4); `tools/mutants/fb1004d_cullsize.json` (8, all dead); AUDIT 68's S16 pin moved;
 tv1's AUDIT-DEEP-R7 re-aimed. Two older records survive unchanged on HEAD's bounds.js and are noted, not fixed:
 `perfon2.json` PERF-ON2-the-peers-are-submitted-uncut-again and `shadowreach.json` world-peer-gate-still-skips (their
 source patterns match identical lines further down world.js).
@@ -340,7 +340,7 @@ remote search's after 250 darts, :815); the re-seat (QUESTOR-MOVED's `reseatMove
 re-reads the place's declared P2/P3 from Quests-Places by its name now: over the audit's forty villages, 130 re-seats,
 every one into a house. No departure beyond WD3's re-seat itself, which now keeps DFU's own declared law and fallback.
 The four hosts: the quest machine's, run by `scenes/world.js`'s load (applyLayoutPins) and as a shared quest arrives;
-`scenes/exterior.js`, `scenes/worldModes.js` and `scenes/dungeonContext.js` never call it. `test/fb1004d_reseatdeclared.test.js`
+`scenes/exterior.js`, `scenes/worldModes.js` and `scenes/dungeonContext.js` never call it. `test/systems/quest/fb1004d_reseatdeclared.test.js`
 (4); `tools/mutants/fb1004d_reseatdeclared.json` (5, all dead).
 
 ### RESEAT-GAPS (6)
@@ -353,7 +353,7 @@ chosen again where a building of its kind stands, what was assigned to it carrie
 stranger's house meanwhile, and `pc at` cannot fire there. Siblings are compared only where their records stand (the
 "two in one building" did not reproduce with re-seats in turn; the stale keys' over-exclusion was the defect). Measured:
 of 265 cities with a weaponsmith in Daggerfall's layout, 247 have one chosen again in Beautiful Cities' and 18 are
-unseated (none stands). A port-only mechanism, as the re-seat is. `test/fb1004d_reseatgaps.test.js` (5);
+unseated (none stands). A port-only mechanism, as the re-seat is. `test/systems/quest/fb1004d_reseatgaps.test.js` (5);
 `tools/mutants/fb1004d_reseatgaps.json` (8, all dead); `audit1003_wd`'s markerless arm, its two mutant records and
 `arena1_move`'s pin re-aimed.
 
@@ -376,7 +376,7 @@ player's data the gated test finds every one of 1,105 buildings in 665 towns cur
 Departures: the eight markers moved, the backstop, the load's mend (Port-Ledger, Ledger A). The four hosts:
 `scenes/worldModes.js` wired (its interior adapter serves `scenes/world.js` and `scenes/exterior.js`); `scenes/world.js`'s
 load runs the mend; `scenes/dungeonContext.js` unaffected (a dungeon's markers are Daggerfall's RDB). 
-`test/fb1004d_questmarkers.test.js` (11, two gated); `tools/mutants/fb1004d_questmarkers.json` (19, all dead); six source
+`test/systems/quest/fb1004d_questmarkers.test.js` (11, two gated); `tools/mutants/fb1004d_questmarkers.json` (19, all dead); six source
 pins re-aimed (audit24_wave22, audit26_questitem, questflatanchor, fb1003b_totem, interiorfoes, rogueimp). Not changed: a
 void marker whose 4 m ray reaches a lower storey's floor.
 
@@ -395,7 +395,7 @@ classic, and discoveries made there under the mod are forgotten once (WD3's law)
 out among their own houses stay the author's. A curation of the mod's data (Port-Ledger, Ledger A); DFU's quest law is
 untouched. The four hosts: the door asks the pins on every location and block read, so `scenes/world.js`,
 `scenes/exterior.js` and `scenes/worldModes.js` serve the same towns; `scenes/dungeonContext.js` unaffected (none of the
-34 has a dungeon). `test/fb1004d_templehome.test.js` (4); `tools/mutants/fb1004d_templehome.json` (4, all dead);
+34 has a dungeon). `test/systems/fb1004d_templehome.test.js` (4); `tools/mutants/fb1004d_templehome.json` (4, all dead);
 `wd3_layoutPins`' row pin re-aimed.
 
 Recorded, not changed here: the destinations that moved (5) - changed since by QUEST-AUDIT II (`01-Overview/Quest-Audit-II.md`): a local destination a town's own layout held and the mods' no longer does is taken in the nearest town that has one (NEAR-SITE), and Pothago's L0B60Y10 in the region's own towns, else the nearest town of another region (NEAR-REGION); a questor met in a house is seated again where their own person still stands on their own key, and a guild's contact (a Thieves Guild or Dark Brotherhood House2 hall) in a hall of their guild (HOUSE-HALL) - a commoner who no longer stands is not, and their hall is unseated.

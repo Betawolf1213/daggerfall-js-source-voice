@@ -5,7 +5,7 @@
     "old": "  dfLocation.mapTableData.locationId = dfLocation.exterior.recordElement.header.locationId;\n",
     "new": "",
     "tests": [
-      "test/rr3b_worlddata.test.js"
+      "test/systems/talk/rr3b_worlddata.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "  dfLocation.exterior.recordElement.header.unknown2 = locationIndex >>> 0;\n  dfRegion.mapTable.push",
     "new": "  dfRegion.mapTable.push",
     "tests": [
-      "test/rr3b_worlddata.test.js"
+      "test/systems/talk/rr3b_worlddata.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "  regions.set(regionIndex, NO_REPLACEMENT);\n  return false;",
     "new": "  return false;",
     "tests": [
-      "test/rr3b_worlddata.test.js"
+      "test/systems/talk/rr3b_worlddata.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "    if (cached !== NO_REPLACEMENT) { copyRegionInto(cached, dfRegion); return true; }",
     "new": "    if (cached !== NO_REPLACEMENT) { return true; }",
     "tests": [
-      "test/rr3b_worlddata.test.js"
+      "test/systems/talk/rr3b_worlddata.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "  return a.isOn?.() ?? true;\n}",
     "new": "  return true;\n}",
     "tests": [
-      "test/rr3b_worlddata.test.js"
+      "test/systems/talk/rr3b_worlddata.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "  if (!worldDataOn() || !dfRegion) return false;",
     "new": "  if (!dfRegion) return false;",
     "tests": [
-      "test/rr3b_worlddata.test.js"
+      "test/systems/talk/rr3b_worlddata.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "  if (nextBlockIndex === 0) nextBlockIndex = _blocksFile.count;\n",
     "new": "",
     "tests": [
-      "test/rr3b_worlddata.test.js"
+      "test/systems/talk/rr3b_worlddata.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "    if (_blocksFile.getBlockIndex(blockName) === -1) assignNextIndex(blockName);\n  }\n  for (const dungeonBlock",
     "new": "    assignNextIndex(blockName);\n  }\n  for (const dungeonBlock",
     "tests": [
-      "test/rr3b_worlddata.test.js"
+      "test/systems/talk/rr3b_worlddata.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "  if (!_blocksFile) return false;   // ContentReader/BlockFileReader null",
     "new": "  if (!_blocksFile) return true;   // ContentReader/BlockFileReader null",
     "tests": [
-      "test/rr3b_worlddata.test.js"
+      "test/systems/talk/rr3b_worlddata.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "    if (variant === NO_VARIANT) cacheBlock(blockName, NO_REPLACEMENT);\n    return null;",
     "new": "    cacheBlock(blockKey, NO_REPLACEMENT);\n    return null;",
     "tests": [
-      "test/rr3b_worlddata.test.js"
+      "test/systems/talk/rr3b_worlddata.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "  const dfBlock = blockFromJson(json, block, blockName);\n  if (blockName.endsWith('.RMB')) replaceRmbBlockBuildingData(blockName, block, dfBlock);   // :382-384",
     "new": "  const dfBlock = blockFromJson(json, json.Index ?? block, blockName);\n  if (blockName.endsWith('.RMB')) replaceRmbBlockBuildingData(blockName, block, dfBlock);   // :382-384",
     "tests": [
-      "test/rr3b_worlddata.test.js"
+      "test/systems/talk/rr3b_worlddata.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "  const variant = getBuildingVariantHere(blockName, recordIndex, NO_VARIANT);\n  const key = `${blockIndex}|${recordIndex}|${variant}`;",
     "new": "  const variant = '_master';\n  const key = `${blockIndex}|${recordIndex}|${variant}`;",
     "tests": [
-      "test/rr3b_worlddata.test.js"
+      "test/systems/talk/rr3b_worlddata.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "  for (let i = 0; i < AUTO_MAP_DATA_SIZE; i++) if (src[i] !== 30) blockAutoMapData[i] = src[i];",
     "new": "  for (let i = 0; i < AUTO_MAP_DATA_SIZE; i++) blockAutoMapData[i] = src[i];",
     "tests": [
-      "test/rr3b_worlddata.test.js"
+      "test/systems/talk/rr3b_worlddata.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "  for (let y = 0; y < 16; y++) {\n    for (let x = 0; x < 16; x++, i++) {",
     "new": "  for (let x = 0; x < 16; x++) {\n    for (let y = 0; y < 16; y++, i++) {",
     "tests": [
-      "test/rr3b_worlddata.test.js"
+      "test/systems/talk/rr3b_worlddata.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "  textureBitfield: (((f.TextureArchive ?? 0) << 7) | ((f.TextureRecord ?? 0) & 0x7f)) & 0xffff,",
     "new": "  textureBitfield: 0,",
     "tests": [
-      "test/rr3b_worlddata.test.js"
+      "test/systems/talk/rr3b_worlddata.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "locationType: enumOf(LOCATION_TYPES, mt.LocationType, LOCATION_TYPES.None),",
     "new": "locationType: LOCATION_TYPES.None,",
     "tests": [
-      "test/rr3b_worlddata.test.js"
+      "test/systems/talk/rr3b_worlddata.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "  while (buildingDataList.length < 32) buildingDataList.push({ ...emptyBuildingData(), buildingType: -1 });",
     "new": "",
     "tests": [
-      "test/rr3b_worlddata.test.js"
+      "test/systems/talk/rr3b_worlddata.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "xPos: subRecords[i]?.xPos ?? 0, zPos: subRecords[i]?.zPos ?? 0, yRotation: subRecords[i]?.yRotation ?? 0 }));",
     "new": "xPos: 0, zPos: 0, yRotation: 0 }));",
     "tests": [
-      "test/rr3b_worlddata.test.js"
+      "test/systems/talk/rr3b_worlddata.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "          if (drawn) drawn.used = false;\n",
     "new": "",
     "tests": [
-      "test/rr3b_worlddata.test.js"
+      "test/systems/talk/rr3b_worlddata.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "old": "          list[i].nameSeed = (replacement.nameSeed + locationIndex) & 0xffff;",
     "new": "          list[i].nameSeed = replacement.nameSeed;",
     "tests": [
-      "test/rr3b_worlddata.test.js"
+      "test/systems/talk/rr3b_worlddata.test.js"
     ]
   },
   {
@@ -185,7 +185,7 @@
     "old": "        list[i].buildingType = replacement.buildingType;\n      }\n      // RMBLayout.cs:677-683",
     "new": "      }\n      // RMBLayout.cs:677-683",
     "tests": [
-      "test/rr3b_worlddata.test.js"
+      "test/systems/talk/rr3b_worlddata.test.js"
     ]
   },
   {
@@ -194,7 +194,7 @@
     "old": "    worldDataDoor()?.getDFRegionAdditionalLocationData(region, rec.dfRegion);\n",
     "new": "",
     "tests": [
-      "test/rr3b_worlddata.test.js"
+      "test/systems/talk/rr3b_worlddata.test.js"
     ]
   },
   {
@@ -203,7 +203,7 @@
     "old": "      const replacement = door?.getBuildingReplacementData(rec.name, rec.dfBlock.index, i);",
     "new": "      const replacement = null;",
     "tests": [
-      "test/rr3b_worlddata.test.js"
+      "test/systems/talk/rr3b_worlddata.test.js"
     ]
   },
   {
@@ -212,7 +212,7 @@
     "old": "  snap.worldVariation = getWorldVariationSaveData();\n",
     "new": "",
     "tests": [
-      "test/rr3b_worlddata.test.js"
+      "test/systems/talk/rr3b_worlddata.test.js"
     ]
   }
 ]

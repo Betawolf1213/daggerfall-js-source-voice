@@ -84,7 +84,7 @@ share's design to answer, recorded here for it.
 
 ## Pins
 
-`test/fb1004c_robes.test.js` (12): O0A0AL00 on the real QuestMachine, its own robes and note - the click says 1018 and
+`test/systems/fb1004c_robes.test.js` (12): O0A0AL00 on the real QuestMachine, its own robes and note - the click says 1018 and
 gives the note, no click no note; the one home answers nothing for a plain item, a quest gone, a symbol not held or no
 resolver; quick loot's E and P take the robes and the note comes; the enhanced skin's menu Take and pad X, driven on the
 mounted pane over a pile, and the note comes; no inline copy of the send in either skin or quick loot; the robes named
@@ -92,8 +92,8 @@ from the real resource, a person or foe not; both namers through the one reader;
 mattress win in either list order, the box law alone loses them, the mattress is the bed, air over it and the wall
 past it are not; the three furniture families and the dungeon's searchables marked and the shelf gated on openShelf's
 arms; a resync between the
-pickup and the tick keeps the note coming and the stand down, and makes no click up. `test/quickloot.test.js`'s quest
-corpse take now carries the real resource's click and asserts it; `test/enhancedInventory.test.js`'s two row pins read
+pickup and the tick keeps the note coming and the stand down, and makes no click up. `test/systems/quickloot.test.js`'s quest
+corpse take now carries the real resource's click and asserts it; `test/ui/enhanced/enhancedInventory.test.js`'s two row pins read
 the one home. `tools/mutants/fb1004c_robes.json` (21, all dead); the nine other lists aimed at `player/activate.js`
 re-run beside it (479, all dead).
 
@@ -101,7 +101,7 @@ re-run beside it (479, all dead).
 
 Three readers over the pull request - the surface law; the click, the name and the resync; the suite's runner, the
 docs and the two merges of main - each finding reproduced against the real modules before it was fixed, then pinned
-(`test/fb1004c_audit.test.js`, 7; `test/fastsuite.test.js`, two more) and its fix mutated
+(`test/systems/fb1004c_audit.test.js`, 7; `test/tooling/fastsuite.test.js`, two more) and its fix mutated
 (`tools/mutants/fb1004c_audit.json`, 13, all dead; `tools/mutants/fastsuite.json`, 13, all dead).
 
 | # | Found | Fixed |
@@ -133,7 +133,7 @@ and World Tooltips cite.
 Not changed, and why: quick loot's take-all sends the click for a quest row it then leaves for its weight - DFU sends a
 row's click before CanCarryAmount, and P is a click on each row (its pin's title says so now); a flat on an OPEN decor
 shelf with the room's wall behind it still loses to the shelf's box (a decor piece with no bucket of its own must stay
-pointable, and the room's wall is no target's); test/quickloot.test.js's quest corpse keeps its hand-built resource
+pointable, and the room's wall is no target's); test/systems/quickloot.test.js's quest corpse keeps its hand-built resource
 (the real one is this record's own tests'); FLOW1's "~245 s ... ~80 s a job" is that day's measurement, kept as its
 record; and three cites on main from before this pull request (passiveSpecials.js and exterior.js into world.js,
 Audit-58's `:273-281`) are main's to re-resolve - flagged here, not guessed at.

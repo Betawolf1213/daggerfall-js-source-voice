@@ -5,7 +5,7 @@
     "old": "  if (!sleepModeInn) thisMove = (300 * thisMove) >> 8;",
     "new": "",
     "tests": [
-      "test/travelinn.test.js"
+      "test/systems/online/travelinn.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "  if (!sleepModeInn) thisMove = (300 * thisMove) >> 8;",
     "new": "  if (sleepModeInn) thisMove = (300 * thisMove) >> 8;",
     "tests": [
-      "test/travelinn.test.js"
+      "test/systems/online/travelinn.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "      speedCautious: this.speedCautious,\n      sleepModeInn: this.sleepModeInn,\n      travelShip: this.travelShip,\n      hasHorse: this.hasHorse,",
     "new": "      speedCautious: this.speedCautious,\n      travelShip: this.travelShip,\n      hasHorse: this.hasHorse,",
     "tests": [
-      "test/travelinn.test.js"
+      "test/systems/online/travelinn.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "      sleepModeInn: this.sleepModeInn,   // TRAVEL-FARE: billed online too",
     "new": "      sleepModeInn: this.sleepModeInn && !this.noWorldTime(),",
     "tests": [
-      "test/travelinn.test.js"
+      "test/systems/online/travelinn.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "  return (settings.cautiousTravel || !speedCautious) && (settings.stopAtInnsTravel || !sleepModeInn) && !travelShip;",
     "new": "  return (settings.cautiousTravel || !speedCautious) && !travelShip;",
     "tests": [
-      "test/travelinn.test.js"
+      "test/systems/online/travelinn.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "'Online: the days pass on your own clock.",
     "new": "'Online: the journey is instant.",
     "tests": [
-      "test/travelinn.test.js"
+      "test/systems/online/travelinn.test.js"
     ]
   }
 ]

@@ -90,7 +90,7 @@ export const TEST_LOOT = Object.freeze({
 
 /** FIELD BUGS 2026-09-29 (the sea) #5 (the Discord, through Mac: "Add a ship combat test menu option"): THE SEA
  *  BATTLE. A spawn, as the ride is: the baseline preset landed on the open Bay south of Daggerfall - the map pixel
- *  FIELD-CSA2 proved floats a Small Ship (test/field_csa2.test.js) - put at the helm of an armed Small Ship of their
+ *  FIELD-CSA2 proved floats a Small Ship (test/systems/comeSailAway/field_csa2.test.js) - put at the helm of an armed Small Ship of their
  *  own there, and a pirate brig launched on open water to stand in and engage (the naval host's own spawn door). Come
  *  Sail Away and Naval Combat are turned on at the door (enableTestSea), as the loot door turns its ladder on. */
 export const TEST_SEA = Object.freeze({

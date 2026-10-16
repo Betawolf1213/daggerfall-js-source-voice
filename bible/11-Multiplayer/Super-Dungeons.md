@@ -204,7 +204,7 @@ Its difficulty is the port's hardest:
 
 | | Regular | Elite | Super |
 |---|---|---|---|
-| foes per enemy marker | 1 | 3 | 3 (the Elite's expansion; its 64 KiB foe frame was proven at 151 markers, the largest spawn template - a Hollow's templates, 12+-block labyrinths and keeps with up to two-block exteriors, are measured over MAPS.BSA and BLOCKS.BSA by `test/sd11f_scenes.test.js`, AUDIT SD II L8 D1) |
+| foes per enemy marker | 1 | 3 | 3 (the Elite's expansion; its 64 KiB foe frame was proven at 151 markers, the largest spawn template - a Hollow's templates, 12+-block labyrinths and keeps with up to two-block exteriors, are measured over MAPS.BSA and BLOCKS.BSA by `test/scenes/sd11f_scenes.test.js`, AUDIT SD II L8 D1) |
 | foe health / damage | x1 / x1 | x2 / x2 | x4 / x2.5 |
 | foe level band | the player's | the player's | at least 24 (the top band: Daedra, liches, ancient vampires) |
 | elite foes (5x health, 3x damage) | 1 at 20% | 3-4 | 6 |
@@ -725,11 +725,11 @@ merges - section 14).
 The slice was first built as "medium everywhere online" (Mac's first word) and turned to the world's mix the same hour
 on his second; nothing of the first shape shipped but the room per layout, which both needed.
 
-Pins: `test/sdonline.test.js` (10 - the world's sizes and their weights, the size law online and off with its guards
+Pins: `test/systems/sdonline.test.js` (10 - the world's sizes and their weights, the size law online and off with its guards
 and the stamps, the build's size, the room law at both ends, driven end to end, the hosts by source, the row, a session
 in the medium and the small rooms, the relay's Room keeping each size's memory apart; MAPS.BSA whole with ARENA2);
-`test/dsize1_mediumdungeons.test.js`, `test/ft1_smallerdungeons.test.js`, `test/auditworld34.test.js`,
-`test/uxb1e_onlinesync.test.js`, `test/features.test.js`, `test/ft18_features.test.js` (PINS MOVED);
+`test/systems/quest/dsize1_mediumdungeons.test.js`, `test/systems/ft1_smallerdungeons.test.js`, `test/net/auditworld34.test.js`,
+`test/systems/online/uxb1e_onlinesync.test.js`, `test/systems/features.test.js`, `test/systems/ft18_features.test.js` (PINS MOVED);
 `tools/mutants/sdonline.json` (13) and `tools/mutants/dsize1.json` (27), all dead. Deploy: relay first (a page of this
 build on a relay before `world172` - `world176` now - joins a `.s` or `.m` room the relay keeps no world for - presence
 alone, every player stepping their own foes - which is safe, and is why the order matters).
@@ -756,10 +756,10 @@ THE FOUR HOSTS: `scenes/world.js` WIRED (the plates, the held map's seam, the si
 host's line rides its transition hook) and its classic automap title is DFU's native window; `scenes/exterior.js`
 FLAGGED - the `?exterior` bench is offline, and offline every dungeon is DFU's.
 
-Pins: `test/tier1_dungeontiers.test.js` (5), the held map's TIER1 window test (`test/heldmap.test.js`), and the moved
-pins of the plaque's, the plates' and the sight line's call sites (`test/elitedungeons.test.js`,
-`test/spawneddungeons.test.js`, `test/tv6_dungeons.test.js`, `test/worldhover.test.js`, `test/arena_fix.test.js`,
-`test/seat1a_client.test.js`); `tools/mutants/tier1.json` (14, all dead), and the mutant records the change moved
+Pins: `test/world/tier1_dungeontiers.test.js` (5), the held map's TIER1 window test (`test/ui/heldmap.test.js`), and the moved
+pins of the plaque's, the plates' and the sight line's call sites (`test/scenes/elitedungeons.test.js`,
+`test/world/spawneddungeons.test.js`, `test/systems/travel/tv6_dungeons.test.js`, `test/systems/worldhover.test.js`, `test/systems/arena/arena_fix.test.js`,
+`test/net/seat1a_client.test.js`); `tools/mutants/tier1.json` (14, all dead), and the mutant records the change moved
 re-aimed by content (`hub1`, `worldhover`, `survtiers3`).
 
 ### SD1 - shipped 2026-10-05
@@ -777,7 +777,7 @@ One change from this page: the Hollow stands CENTRED in its pixel, as every spaw
 (`world/spawnedDungeons.js spawnedLocationCentreLocal`), not at a spot drawn inside it - so the find is checked against
 the pixel's centre, and the slot needs no spot law.
 
-Pins: `test/sd1_sdlaw.test.js` (9); `tools/mutants/sd1.json` (17, all dead - one survivor at first, the standing
+Pins: `test/net/superDungeon/sd1_sdlaw.test.js` (9); `tools/mutants/sd1.json` (17, all dead - one survivor at first, the standing
 check under an early `next`, now pinned). Wired by nothing yet: SD2 places the Hollow, SD3 runs the director.
 
 ### SD2a - shipped 2026-10-05 (the site's law)
@@ -798,10 +798,10 @@ Known, recorded: a gate day may roll the Hollow's pixel for its own (the gate's 
 Hollow is no roll the gate's scan can see) - a chance of about one in the region's suitable pixels per day of a
 Hollow's life; both then stand in the pixel.
 
-Pins: `test/sd2_sdsite.test.js` (5, over the real gate scanner); `tools/mutants/sd2.json` (13, all dead - one
+Pins: `test/systems/superDungeon/sd2_sdsite.test.js` (5, over the real gate scanner); `tools/mutants/sd2.json` (13, all dead - one
 survivor at first, a fixture whose cities outnumbered eight, now pinned with fewer).
 
-The arc's Ledger row stands from here (`test/doctrine.test.js`: a file citing Ledger A has a row naming it - SD1 and
+The arc's Ledger row stands from here (`test/tooling/doctrine.test.js`: a file citing Ledger A has a row naming it - SD1 and
 SD2a cited one before it was written, and the full suite at the merge of main said so), naming each slice's files as
 they ship.
 
@@ -837,14 +837,14 @@ Sections 2-4 and 14 on the relay - `world172` (`world171` on the branch; main's 
   socket's own welcome (carried across a seam's promotion, AUDIT WB12d C6's law), `SD_HZ_MAX` a second; `onSd` with the
   hub's record - from the hub alone.
 
-Pins: `test/sd3_relay.test.js` (7 - the wire, the director end to end over fake objects, the census's rest, the find,
+Pins: `test/net/sd3_relay.test.js` (7 - the wire, the director end to end over fake objects, the census's rest, the find,
 the realm and its Worker, the session, the seams by source); `tools/mutants/sd3.json` (28, all dead - one survivor at
 first: the cell's pose check, which the hub's own check hid while the hub was up; the far claim is now said with the
 hub down). PINS MOVED at the whole suite: the hub's one alarm carries the director now, so the sweep's and the heralds'
-harnesses (`test/auditsoc.test.js`, `test/discordgates.test.js`, `test/serpent2_herald.test.js`) seed its record with a
-rise ten years off and test their own duties alone; `test/scale2b.test.js` counts twelve calls between rooms, nine on
-ROOM_CALL_MS; `test/raid3_raidLedger.test.js` pins `_alarmRest`'s raid line with the find's re-arm; and `parseClient`'s
-doc names `sd` (`test/auditworld2.test.js` derives the list from its arms). Wired by nothing in the world yet: SD2b
+harnesses (`test/net/auditsoc.test.js`, `test/net/gate/discordgates.test.js`, `test/net/serpent/serpent2_herald.test.js`) seed its record with a
+rise ten years off and test their own duties alone; `test/net/scale2b.test.js` counts twelve calls between rooms, nine on
+ROOM_CALL_MS; `test/net/raid3_raidLedger.test.js` pins `_alarmRest`'s raid line with the find's re-arm; and `parseClient`'s
+doc names `sd` (`test/net/auditworld2.test.js` derives the list from its arms). Wired by nothing in the world yet: SD2b
 stands the Hollow and says the find.
 
 ### SD2b - shipped 2026-10-05 (the Hollow in the world)
@@ -877,9 +877,9 @@ THE FOUR HOSTS: `scenes/world.js` WIRED; `scenes/worldModes.js` FLAGGED - the mo
 dungeon (its plaque and its tier are TIER1's); `scenes/dungeonContext.js` FLAGGED - SD4's (its difficulty, its end);
 `scenes/exterior.js` FLAGGED - the `?exterior` bench is offline.
 
-Pins: `test/sd2b_world.test.js` (5); `tools/mutants/sd2b.json` (17, all dead). The pins SD2b's lines meet were kept by
+Pins: `test/systems/superDungeon/sd2b_world.test.js` (5); `tools/mutants/sd2b.json` (17, all dead). The pins SD2b's lines meet were kept by
 keeping their lines (the ledger's guards and the sweep's frame line stand on lines of their own, the Hollow's rows above
-the hubs'); `test/ow6_ledger.test.js`'s lifted ledger block is handed the index its first-sight door now asks (PIN
+the hubs'); `test/net/ow6_ledger.test.js`'s lifted ledger block is handed the index its first-sight door now asks (PIN
 MOVED); `tools/citeShift.mjs` moved world.js's cites a slice down (173), CD4's gated struck cites by hand (8), and
 `tools/mutants/survtiers3.json`'s two cite records re-aimed by content.
 Next: the omen, the marks and the Timers row (SD2c); a save inside a Hollow and the cast-out at its end (SD2d).
@@ -918,8 +918,8 @@ column in, and the taverns' word rides the world host's own talk seam, which the
 `scenes/dungeonContext.js` FLAGGED - underground there is no sky and no compass of the Bay's; `scenes/exterior.js`
 FLAGGED - the `?exterior` bench is offline, and offline there is no Super dungeon.
 
-Pins: `test/sd2c_omen.test.js` (9); `tools/mutants/sd2c.json` (25, all dead). PINS MOVED: `test/serpent2_herald.test.js`'s
-Timers label (the Super dungeon's row beside the serpent's) and `test/audit18_bible_docs.test.js`'s foreign-pass count
+Pins: `test/ui/enhanced/sd2c_omen.test.js` (9); `tools/mutants/sd2c.json` (25, all dead). PINS MOVED: `test/net/serpent/serpent2_herald.test.js`'s
+Timers label (the Super dungeon's row beside the serpent's) and `test/bible/audit18_bible_docs.test.js`'s foreign-pass count
 (twenty-seven call sites across twenty passes, the omen's after the rite's smoke); Rendering.md lists `sdOmenPass.js`,
 UI.md counts `sdMapMark.js`, Systems.md `sdOmen.js`.
 
@@ -951,7 +951,7 @@ THE FOUR HOSTS: `scenes/world.js` WIRED (the cast-out, the frame, the find's str
 its own door (`unstuck`, `exitDungeonNow` - no line of it changed); `scenes/dungeonContext.js` FLAGGED - the save's
 dungeon home is its own, unchanged; `scenes/exterior.js` FLAGGED - the bench is offline.
 
-Pins: `test/sd2d_castout.test.js` (4); `tools/mutants/sd2d.json` (8, all dead). `tools/mutants/sd2b.json`'s
+Pins: `test/systems/superDungeon/sd2d_castout.test.js` (4); `tools/mutants/sd2d.json` (8, all dead). `tools/mutants/sd2b.json`'s
 SD2b-the-ground-pulled re-aimed by content (the guard has a line of its own beside the cast-out; all 17 dead).
 
 The Hollow's world half is whole: SD4 makes it Super - its difficulty (SD4a), its end, the Rift and the Return (SD4b).
@@ -991,10 +991,10 @@ THE FOUR HOSTS: `scenes/dungeonContext.js` WIRED (all of it); `scenes/world.js` 
 carries its word (SD2b); `scenes/worldModes.js` FLAGGED - nothing of the mode machine reads a tier; `scenes/exterior.js`
 FLAGGED - the bench is offline, and a Super dungeon stands nowhere else.
 
-Pins: `test/sd4a_super.test.js` (7); `tools/mutants/sd4a.json` (23, all dead). PINS MOVED: the Elite's by-source pins
-read the Super's arm beside theirs - `test/elitedungeons.test.js` (the expansion, the piles' quality),
-`test/elitefloor_foetitle.test.js` (the promotion's arm), `test/lr1_lootrarity.test.js`, `test/world8.test.js` and
-`test/audit23_systems.test.js` (the piles' roll); `tools/mutants/revenant.json`'s ELITE-FLOOR-the-per-client-level-asked re-aimed at the promotion's new
+Pins: `test/systems/sd4a_super.test.js` (7); `tools/mutants/sd4a.json` (23, all dead). PINS MOVED: the Elite's by-source pins
+read the Super's arm beside theirs - `test/scenes/elitedungeons.test.js` (the expansion, the piles' quality),
+`test/systems/elitefloor_foetitle.test.js` (the promotion's arm), `test/systems/lr1_lootrarity.test.js`, `test/net/world8.test.js` and
+`test/systems/audit23_systems.test.js` (the piles' roll); `tools/mutants/revenant.json`'s ELITE-FLOOR-the-per-client-level-asked re-aimed at the promotion's new
 options.
 
 SD4b is next: the end, the Rift and the Return.
@@ -1048,12 +1048,12 @@ draw); `scenes/worldModes.js` WIRED (the press arm, the `superRift` forward); `s
 word off the hub's record on the shared clock); `scenes/exterior.js` FLAGGED - the bench is offline, and no Super
 dungeon stands there.
 
-Pins: `test/sd4b_rift.test.js` (10 - the laws over a model hall, the art, the set over a fake renderer and engine, the
+Pins: `test/world/superDungeon/sd4b_rift.test.js` (10 - the laws over a model hall, the art, the set over a fake renderer and engine, the
 step, the bell, the host's two steps run from its own text, the hosts by source); `tools/mutants/sd4b.json` (32, all
 dead - one survived at first, the bell's own darkening, which a loose bound on the darkness let pass; the bound is the
-measured one now). PIN MOVED: `test/rvn7d_stand.test.js` reads the lair's stand through `dungeonEndOf`, and
+measured one now). PIN MOVED: `test/systems/rvn7d_stand.test.js` reads the lair's stand through `dungeonEndOf`, and
 `tools/mutants/rvn7d.json`'s RVN7d-the-nearest is re-aimed at the law's new home, killed there by this slice's test;
-`test/nudedecor.test.js` names the new billboard host (`scenes/superDungeon/sdEnd.js` - a portal, no person).
+`test/scenes/nudedecor.test.js` names the new billboard host (`scenes/superDungeon/sdEnd.js` - a portal, no person).
 
 SD5 is next: the Shattered Hour - the made level, its sky, the way in and out.
 
@@ -1112,14 +1112,14 @@ landing, the light, air and lamps every frame, the room identity, `sdRealmSlot`,
 its Return, never on its foot);
 `scenes/exterior.js` FLAGGED - the bench is offline, and no Hour opens there.
 
-Pins: `test/sd5a_realm.test.js` (12 - the frame, the made location and block, the mesh, the floors, the edge, the lamps
+Pins: `test/world/superDungeon/sd5a_realm.test.js` (12 - the frame, the made location and block, the mesh, the floors, the edge, the lamps
 and light, the art, the hosts by source, and the world host's two steps RUN from its own text); `tools/mutants/sd5a.json` (24, all dead).
-PINS MOVED: the court's by-source pins read the Hour's line beside theirs - `test/arena2_hosts.test.js` and
-`test/wb3b_gate_arena.test.js` (the pause's Save), `test/arena2_hosts.test.js` and `test/wb6b_deadlands_life.test.js`
-(no drip), `test/mapkeep.test.js` (no map slot), `test/disc15.test.js` (the Hour's lamps between the court's and the
-shadow ask) and `test/moonlight.test.js` (the Hour's key, the fourth `setMoonlight`, straight after the court's);
+PINS MOVED: the court's by-source pins read the Hour's line beside theirs - `test/scenes/arena2_hosts.test.js` and
+`test/net/gate/wb3b_gate_arena.test.js` (the pause's Save), `test/scenes/arena2_hosts.test.js` and `test/world/gate/wb6b_deadlands_life.test.js`
+(no drip), `test/systems/automap/mapkeep.test.js` (no map slot), `test/render/disc15.test.js` (the Hour's lamps between the court's and the
+shadow ask) and `test/render/moonlight.test.js` (the Hour's key, the fourth `setMoonlight`, straight after the court's);
 `tools/mutants/wb6b.json` and `audit27h.json` re-aimed; the arc's own -
-`test/sd4a_super.test.js` (the cold fire plan), `test/sd4b_rift.test.js` (the realm's Rift, the kept landing, the
+`test/systems/sd4a_super.test.js` (the cold fire plan), `test/world/superDungeon/sd4b_rift.test.js` (the realm's Rift, the kept landing, the
 door), `tools/mutants/sd4a.json`'s fires-warm.
 
 SD5b next: the Hour's sky (`render/superDungeon/sdSky.js`) on the realm's anchored clock.
@@ -1157,10 +1157,10 @@ never retried; on the anchored clock, in the frame's haze, at the realm's gain; 
 `scenes/dungeonContext.js` FLAGGED - the level knows nothing of its sky; `scenes/exterior.js` FLAGGED - no Hour opens on
 the bench.
 
-Pins: `test/sd5b_sky.test.js` (6 - the clock and its whole cycles, the clock-face and its backward hands, the shards,
+Pins: `test/render/sd5b_sky.test.js` (6 - the clock and its whole cycles, the clock-face and its backward hands, the shards,
 the shaders, the draw over a recording GL, the hosts by source); `tools/mutants/sd5b.json` (22, all dead). PINS MOVED:
-`test/farring.test.js`, `test/perf2.test.js` and `test/glstate.test.js` count 23 foreign passes marked in `world.js`
-(the Hour's sky the 23rd), and `test/audit18_bible_docs.test.js` (AUDIT 39r) 28 across both exterior hosts, twenty-one
+`test/ui/farring.test.js`, `test/render/perf2.test.js` and `test/render/glstate.test.js` count 23 foreign passes marked in `world.js`
+(the Hour's sky the 23rd), and `test/bible/audit18_bible_docs.test.js` (AUDIT 39r) 28 across both exterior hosts, twenty-one
 passes.
 
 SD6 next: the Orrery of Endings (section 8) - the stones, the riddle, the relay's judgement and the bridge it lays.
@@ -1194,7 +1194,7 @@ slot alike on the relay and every page:
 
 THE FOUR HOSTS: none yet - FLAGGED all four; the law is read by SD6b's relay and SD6c's hall.
 
-Pins: `test/sd6a_orrery.test.js` (11 - the stones, the hours, the gearing over 500 slots, the riddles' truth and their
+Pins: `test/net/superDungeon/sd6a_orrery.test.js` (11 - the stones, the hours, the gearing over 500 slots, the riddles' truth and their
 forest over 500, the brute force over all 12^6 configurations for five, the words, the start, a hall that learns the
 gearing by turning each stone once and reaches the Concord inside the fray in all 500 - and a thousand random halls
 that never do - one turn judged, the reach, the draw from the slot and THE GOLDEN DRAW: slot 1's order, start, truth
@@ -1234,11 +1234,11 @@ THE FOUR HOSTS: none wired - the hall's page is SD6c's. `scenes/world.js` FLAGGE
 stones and their turns to `sendSdTurn`); `scenes/worldModes.js`, `scenes/dungeonContext.js` and `scenes/exterior.js`
 FLAGGED.
 
-Pins: `test/sd6b_hall.test.js` (6 - the wire; a turn judged end to end over the fake world: the hall at the hello, a
+Pins: `test/net/sd6b_hall.test.js` (6 - the wire; a turn judged end to end over the fake world: the hall at the hello, a
 turn from reach kept and said to all, out of reach, the settling, a number said twice, the dead, a turn in a cell; the
 fray's snap and the Concord, kept past an eviction and heard by a newcomer; the Hour closed; the session; the relay by
-source); `tools/mutants/sd6b.json` (25, all dead). PINS MOVED: `test/sd3_relay.test.js` reads two kinds each way;
-`test/relayversion.test.js` - `net/superDungeon/sdBrain.js` joins the relay's bundle, and `world175` is re-hashed in place (undeployed).
+source); `tools/mutants/sd6b.json` (25, all dead). PINS MOVED: `test/net/sd3_relay.test.js` reads two kinds each way;
+`test/net/relayversion.test.js` - `net/superDungeon/sdBrain.js` joins the relay's bundle, and `world175` is re-hashed in place (undeployed).
 
 SD6c next: the hall on the page - the stones and their hands, the plaques, the dial, the lash, and the bridge the
 Concord lays.
@@ -1288,11 +1288,11 @@ plaques' keys routed to the dungeon host's press, the turn and the word forwarde
 `sdPose`); `scenes/dungeonContext.js` WIRED (the hall made for the Hour alone, stood, framed in `sdPose` before the
 world pass, its targets, names and presses, freed); `scenes/exterior.js` FLAGGED - no Hour opens on the bench.
 
-Pins: `test/sd6c_hall.test.js` (9 - the layout, the hand's turn, the models, the floors and the edge, the art, the set
+Pins: `test/world/superDungeon/sd6c_hall.test.js` (9 - the layout, the hand's turn, the models, the floors and the edge, the art, the set
 over a fake renderer, the press, the world host's hall run from its own text, the hosts by source);
-`tools/mutants/sd6c.json` (33, all dead). PINS MOVED: `test/relayversion.test.js` - `world175` re-hashed in place for the
-hour's word (`sdHourWord`, which the riddles now speak with); `test/sd4b_rift.test.js` (the dungeon host's press and the
-mode machine's route take the hall's keys too) and `test/sd5a_realm.test.js` (the edge widened with the Concord);
+`tools/mutants/sd6c.json` (33, all dead). PINS MOVED: `test/net/relayversion.test.js` - `world175` re-hashed in place for the
+hour's word (`sdHourWord`, which the riddles now speak with); `test/world/superDungeon/sd4b_rift.test.js` (the dungeon host's press and the
+mode machine's route take the hall's keys too) and `test/world/superDungeon/sd5a_realm.test.js` (the edge widened with the Concord);
 `tools/mutants/sd4b.json`'s press-unrouted and `sd5a.json`'s dial and edge re-aimed by content (the island builder is
 exported as `realmIsland` for the first step).
 
@@ -1331,9 +1331,9 @@ realm's frame. The page stands, moves and judges it (SD7b); the relay never does
 
 THE FOUR HOSTS: none yet - FLAGGED all four; the law is read by SD7b's page.
 
-Pins: `test/sd7a_steps.test.js` (7 - the course; fair to the engine; the Drift; the Beat; the Crumble; the Warp's
-breath; the void and the spans); `tools/mutants/sd7a.json` (22, all dead). PINS MOVED: `test/sd5a_realm.test.js` (the
-Steps' span and the arena, the arena's floor probes and its nearest lamps at its new place); `test/relayversion.test.js`
+Pins: `test/world/superDungeon/sd7a_steps.test.js` (7 - the course; fair to the engine; the Drift; the Beat; the Crumble; the Warp's
+breath; the void and the spans); `tools/mutants/sd7a.json` (22, all dead). PINS MOVED: `test/world/superDungeon/sd5a_realm.test.js` (the
+Steps' span and the arena, the arena's floor probes and its nearest lamps at its new place); `test/net/relayversion.test.js`
 - `world176` re-hashed in place (`net/superDungeon/sdBrain.js` is in the relay's bundle; undeployed).
 
 SD7b next: the Steps on the page - the slabs and their colliders, moving on the realm's clock and carrying a body that
@@ -1390,11 +1390,11 @@ cast-back's cost and line - `sdCastBack`); `scenes/worldModes.js` WIRED (the rid
 the realm's clock handed to the dungeon host - `sdClock`); `scenes/dungeonContext.js` WIRED (the Steps made for the Hour
 alone, stood once, ridden on the outer host's clock, freed); `scenes/exterior.js` FLAGGED - no Hour opens on the bench.
 
-Pins: `test/sd7b_steps.test.js` (12 - the steps made; the art; stood; on the realm's clock; carried; the Crumble, my own;
+Pins: `test/world/superDungeon/sd7b_steps.test.js` (12 - the steps made; the art; stood; on the realm's clock; carried; the Crumble, my own;
 the Warp's breath and the Beat's tick; the void; the edge; the engine, run; the cast-back from the hosts' own text; the
 hosts by source); `tools/mutants/sd7b.json` (37, all dead - a shudder pinned at float32's precision survived first: the
-pin now asks for a real one). PINS MOVED: `test/sd6c_hall.test.js` (the Concord's floors take the Steps');
-`test/audit_seats_client.test.js` (the ward answers in the Hour too) and `tools/mutants/audit_seats_client.json`'s world
+pin now asks for a real one). PINS MOVED: `test/world/superDungeon/sd6c_hall.test.js` (the Concord's floors take the Steps');
+`test/net/audit_seats_client.test.js` (the ward answers in the Hour too) and `tools/mutants/audit_seats_client.json`'s world
 ward re-aimed by content; `tools/mutants/sd6c.json`'s lash re-aimed by content (the cast-back takes the same two lines).
 
 SD8 next: the Last Moment - the Brass Remnant (section 10), the relay's brain for it, three phases.
@@ -1444,11 +1444,11 @@ times and heals.
 
 THE FOUR HOSTS: none yet - FLAGGED all four; the law is read by SD8b's relay and SD8c's page.
 
-Pins: `test/sd8a_remnant.test.js` (12 - the numbers; a share and a seat; belief; the Walking Hour; the Dragon Break and
+Pins: `test/net/superDungeon/sd8a_remnant.test.js` (12 - the numbers; a share and a seat; belief; the Walking Hour; the Dragon Break and
 its pair's Hand, close in and from afar; the Last Moment and the Reset; the Hour's own blows; lost; the geometry; whole
 fights simulated; the state; the gate's hand and purse shared); `tools/mutants/sd8a.json` (42, all dead - the pair's Hand
 was each Echo's own at first, with the other joining when free, and two seeds never paired it: the Hand is the pair's
-clock now, and a hold that only a close fight needs is pinned by one). PINS MOVED: `test/relayversion.test.js` -
+clock now, and a hold that only a close fight needs is pinned by one). PINS MOVED: `test/net/relayversion.test.js` -
 `world176` re-hashed in place (`net/gate/gateBrain.js` exports its hand and purse; undeployed).
 
 SD8b next: the relay runs it - the realm's fight on its alarm, the wire's kinds, the `in` and the blows believed, the fall
@@ -1482,12 +1482,12 @@ Sections 10 and 14 on the relay - `world176` still, re-hashed in place while it 
 THE FOUR HOSTS: none wired - the fight's page is SD8c's. `scenes/world.js` FLAGGED (it will hand the fight to the arena's set
 and its blows to `sendSdBlow`); `scenes/worldModes.js`, `scenes/dungeonContext.js` and `scenes/exterior.js` FLAGGED.
 
-Pins: `test/sd8b_fight.test.js` (7 - the wire; the realm runs the fight - its `in`, its share, its beat, believed blows and
+Pins: `test/net/superDungeon/sd8b_fight.test.js` (7 - the wire; the realm runs the fight - its `in`, its share, its beat, believed blows and
 refused ones, the fight at the hello; refused `in`s; lost and fresh, through an eviction and past a sleep; the fall - said,
 kept, told, the hub's record and its fan, the newcomer refused, the beat stopped; the page; the relay by source);
-`tools/mutants/sd8b.json` (27, all dead). PINS MOVED: `test/sd3_relay.test.js` and `test/sd6b_hall.test.js` (the fight's kinds after
-theirs); `test/relayversion.test.js` - `net/superDungeon/sdRemnant.js` joins the relay's bundle, `world176` re-hashed in place;
-`test/scale2b.test.js` - thirteen calls between rooms, the tell of the fall on the find's own retry (still nine on
+`tools/mutants/sd8b.json` (27, all dead). PINS MOVED: `test/net/sd3_relay.test.js` and `test/net/sd6b_hall.test.js` (the fight's kinds after
+theirs); `test/net/relayversion.test.js` - `net/superDungeon/sdRemnant.js` joins the relay's bundle, `world176` re-hashed in place;
+`test/net/scale2b.test.js` - thirteen calls between rooms, the tell of the fall on the find's own retry (still nine on
 ROOM_CALL_MS); `tools/mutants/sd6b.json`'s `pz` unknown re-aimed by content (the kinds' list grew).
 
 SD8c next: the Remnant on the page - the colossus, its Echoes and Hearts drawn, the telegraphs, the bar, the blows sent
@@ -1548,13 +1548,13 @@ pillars and the lamps' posts with the floors; the hall and the arena posed befor
 skipped); `scenes/world.js` WIRED (the link, online alone; the realm's fight words from its own slot; my `in` with my
 level and my blows; the fight forgotten out of the realm; the bar); `scenes/exterior.js` FLAGGED (no Hour offline).
 
-Pins: `test/sd8c_remnant_page.test.js` (11 - the page follows the law; the fold word by word; my place in the fight; the
+Pins: `test/net/superDungeon/sd8c_remnant_page.test.js` (11 - the page follows the law; the fold word by word; my place in the fight; the
 realm's `me`; the set; my `in` and my blows; the bar; the bar's marks; the bodies made; the pillars; the hosts by source);
 `tools/mutants/sd8c.json` (53, all dead - two survived at first: a blow into a fight that never answered me, which
 the opening refused anyway, and a frame ending my blow, which a second meeting of the same body hid; each pinned on its
-own now). PINS MOVED: `test/wb4b_gate_blows.test.js`, `test/wb9c_gate_reckoning.test.js`,
-`test/wb11_gate_host.test.js` (the three seams answered by the Remnant in the Hour); `test/sd5a_realm.test.js` (the
-fight's frame after the realm's); `test/relayversion.test.js` - `world176` re-hashed in place (`me`);
+own now). PINS MOVED: `test/net/gate/wb4b_gate_blows.test.js`, `test/net/gate/wb9c_gate_reckoning.test.js`,
+`test/net/gate/wb11_gate_host.test.js` (the three seams answered by the Remnant in the Hour); `test/world/superDungeon/sd5a_realm.test.js` (the
+fight's frame after the realm's); `test/net/relayversion.test.js` - `world176` re-hashed in place (`me`);
 `tools/mutants/wb4b.json`'s shut door re-aimed by content.
 
 SD8d next: its blows on me - the telegraphs on the arena's floor, each judged on my own machine (the ring jumped, the
@@ -1598,13 +1598,13 @@ my entity, the dungeon context's strike door; framed in the realm, forgotten out
 `scenes/worldModes.js` WIRED (the dungeon arm draws the floor in the Hour, after the court's); `scenes/dungeonContext.js`
 unchanged (its strike door is the gate's); `scenes/exterior.js` FLAGGED (no Hour offline).
 
-Pins: `test/sd8d_remnant_blows.test.js` (8 - the Stomp; the Hour-Hand; the Volley and the Hour's own; the floor's shapes;
+Pins: `test/net/superDungeon/sd8d_remnant_blows.test.js` (8 - the Stomp; the Hour-Hand; the Volley and the Hour's own; the floor's shapes;
 the driver judging on my feet; the brass burning and the Hour striking; the fall and the floor drawn over the arena; the
 hosts by source); `tools/mutants/sd8d.json` (32, all dead - at first one record did not parse, and two survived: a
 second health guard behind the frame's own (dropped - one law, the frame's) and the burning brass never drawn (pinned
-now)). PINS MOVED: `test/sd8c_remnant_page.test.js` (the blows forgotten with the fight); `test/audit18_bible_docs.test.js`
+now)). PINS MOVED: `test/net/superDungeon/sd8c_remnant_page.test.js` (the blows forgotten with the fight); `test/bible/audit18_bible_docs.test.js`
 (AUDIT 39r - twenty-nine foreign-pass call sites: the floor's hook), and the world host's own three counts of them,
-twenty-four now (`test/farring.test.js`, `test/glstate.test.js`, `test/perf2.test.js` - found by the whole suite). My copies of the court's `strike`
+twenty-four now (`test/ui/farring.test.js`, `test/render/glstate.test.js`, `test/render/perf2.test.js` - found by the whole suite). My copies of the court's `strike`
 and `me` doors were reworded so the gate's records keep one site each (`wb4.json`'s, `gateux.json`'s).
 
 The Brass Remnant (SD8) is whole: its law, the relay running it, the page showing it and carrying my blows, its blows on
@@ -1638,15 +1638,15 @@ THE FOUR HOSTS: none wired - the receipt's page is SD9c's (the spoils thrown fro
 FLAGGED (it will hand `onSdReceipt` to the spoils and `sendSdSpent` to their taking); `scenes/worldModes.js`,
 `scenes/dungeonContext.js` and `scenes/exterior.js` FLAGGED.
 
-Pins: `test/sd9a_receipt.test.js` (6 - the receipt; the wire; the relay signing the fall; the hub keeping them; the
+Pins: `test/net/superDungeon/sd9a_receipt.test.js` (6 - the receipt; the wire; the relay signing the fall; the hub keeping them; the
 page; the relay by source); `tools/mutants/sd9a.json` (55, all dead - at first three survived: an order mutant that
 left the first mint in place (re-aimed, and pinned by the record as the fall was fanned), another account's receipt
 kept (its pin had changed the slot as well) and the newest-socket loop, which was the gate's own copy of the rule:
 the hub now hands by `_siegeSockets` (AUDIT SEATS-3 B4's one pass), the serpent's way, and the pin is ONE-SEAT's -
-a new tab takes the seat, and the receipt goes to it, never the tab it closed). PINS MOVED: `test/relayversion.test.js` - `net/superDungeon/sdReceipt.js`
-joins the relay's bundle, `world176` re-hashed in place; `test/sd3_relay.test.js` and `test/sd8b_fight.test.js` (the
+a new tab takes the seat, and the receipt goes to it, never the tab it closed). PINS MOVED: `test/net/relayversion.test.js` - `net/superDungeon/sdReceipt.js`
+joins the relay's bundle, `world176` re-hashed in place; `test/net/sd3_relay.test.js` and `test/net/superDungeon/sd8b_fight.test.js` (the
 kinds' lists - `spent` in, `rcpt` out; a late `in` reads the fall under its receipt; the tell's projection carries
-`rc` and `here`); `test/auditwbx2.test.js` - the hub's sweep reads six cursors in its one read now, the Hour's
+`rc` and `here`); `test/net/gate/auditwbx2.test.js` - the hub's sweep reads six cursors in its one read now, the Hour's
 `sweep:sdrc` last (found by the whole suite); `tools/mutants/sd6b.json`'s `pz` unknown and `sd8b.json`'s hub-not-told
 re-aimed by content. Two of
 my lines were reworded so the gate's records keep one site each (`earned` as a filter; the bucket's toll).
@@ -1690,18 +1690,18 @@ THE FOUR HOSTS: `scenes/world.js` WIRED (the book made online on the account ser
 handed every receipt the relay hands, offered again each frame); `scenes/worldModes.js`, `scenes/dungeonContext.js`
 unchanged; `scenes/exterior.js` FLAGGED (no Hour offline).
 
-Pins: `test/sd9b_claim.test.js` (8 - the roll; the claim; the grants; the worker; the client's call; the device's
+Pins: `test/server/sd9b_claim.test.js` (8 - the roll; the claim; the grants; the worker; the client's call; the device's
 book; the words and the cards; the hosts and the service by source); `tools/mutants/sd9b.json` (34, all dead - at first one hung: a roll that drew once for both grants could never give the aura alone, and the pins' search for such a seed looped; it is bounded now, and fails).
 PINS MOVED: `ACCOUNT_VERSION` acct91 (acct92 since the merge past CAP-OFF, acct93 since the merge past FOUNDER5, acct94 since the merge past CRAFT2-CRAFT5) in the fifteen files that hold it and
 `server-account/wrangler.toml`;
-`test/duel_record.test.js` (the Inspect card's record carries the Hours); the vocabulary's newest (`test/acc3titles`,
-`test/aegis`, `test/primarch`, `test/crystalfist` - Hourbreaker after the Crystal Fist); `test/relayversion.test.js`
+`test/server/duel_record.test.js` (the Inspect card's record carries the Hours); the vocabulary's newest (`test/acc3titles`,
+`test/aegis`, `test/primarch`, `test/crystalfist` - Hourbreaker after the Crystal Fist); `test/net/relayversion.test.js`
 (`world176` re-hashed: the token's titles); `.github/workflows/account-deploy.yml` (the service now bundles
-`net/superDungeon/sdReceipt.js` and `systems/wind/wind.js` - `test/accountdeploy.test.js` walks the graph); three records from earlier
+`net/superDungeon/sdReceipt.js` and `systems/wind/wind.js` - `test/server/accountdeploy.test.js` walks the graph); three records from earlier
 slices re-aimed by content (`fb1004d_knight_house.json`'s version and `gatekeys.json`'s empty var - acct91 -, and
-`raid4.json`'s Inspect record, which carries the Hours now). Found by the whole suite: `test/accountworker.test.js`
+`raid4.json`'s Inspect record, which carries the Hours now). Found by the whole suite: `test/server/accountworker.test.js`
 (the schema - `sd_kills` among the tables, `sd_honours` among the row's columns) and
-`test/serpent1_auditclient.test.js` (the Inspect card's facts - the Hours after the serpents).
+`test/net/serpent/serpent1_auditclient.test.js` (the Inspect card's facts - the Hours after the serpents).
 
 SD9c next: The Turning Hour - the aura's look, worn.
 
@@ -1730,11 +1730,11 @@ Section 11's aura - "a slow wheel of brass gears and gold light about the wearer
 THE FOUR HOSTS: unchanged - the pass draws every wearer's look already (`scenes/world.js`, `scenes/worldModes.js`);
 `scenes/dungeonContext.js`, `scenes/exterior.js` untouched.
 
-Pins: `test/sd9c_turning.test.js` (4 - held and worn; the look's law; the wheel, the shader run; the dial and the
+Pins: `test/server/sd9c_turning.test.js` (4 - held and worn; the look's law; the wheel, the shader run; the dial and the
 light, the shader run); `tools/mutants/sd9c.json` (20, all dead). The shaders compiled and linked in headless
 Chromium's WebGL2 (swiftshader), and the ground and the strip were rendered to images and looked at. PINS MOVED: the
 vocabulary's auras (`test/aegis`, `test/primarch`, `test/seraphwings`, `test/shadowcloak`, `test/crystalfist` - the
-Turning Hour after the Crystal Resonance; `test/primarch`'s paints); `test/relayversion.test.js` (`world176`
+Turning Hour after the Crystal Resonance; `test/primarch`'s paints); `test/net/relayversion.test.js` (`world176`
 re-hashed: the token's auras); thirteen records from the earlier auras' slices re-aimed by content - their
 vocabulary's line and their paints' (`aegis`, `crystalfist`, `primarch`, `seraphwings`, `shadowcloak`), and the Broker's-first
 order across the held auras, which now hold the Hour's grant too. The strip's kindling is worded apart from the
@@ -1774,7 +1774,7 @@ THE FOUR HOSTS: as the Coilscale's - the powers ride SET2's seams, which every h
 host-side wiring is `scenes/world.js`'s voice, which `scenes/worldModes.js`'s interiors and `scenes/dungeonContext.js`'s
 dungeons sound through; `scenes/exterior.js`, the offline town page, registers no sets' voice.
 
-Pins: `test/sd9d_numidium.test.js` (8 - the law; the records; minted and checked; the drop; Dwemer Brass; Gearward;
+Pins: `test/systems/sd9d_numidium.test.js` (8 - the law; the records; minted and checked; the drop; Dwemer Brass; Gearward;
 The Hour Turns; the host); `tools/mutants/sd9d.json` (44, all dead). PINS MOVED: the sets' lists (`test/set1_law`,
 `test/serpentset` - the Brass after the Coilscale, its records after the serpent's) and the powers' states and voice
 (`test/set3_powers`); three records re-aimed by content (`set1.json`'s order, `serpentset.json`'s set and its
@@ -1818,7 +1818,7 @@ THE FOUR HOSTS: the burst, the pool's floor and its press are the streaming page
 it already asks for the court's; `scenes/exterior.js`, the offline town page, has no Hour. A receipt granted outside
 the realm is the world host's, in every mode.
 
-Pins: `test/sd9e_spoils.test.js` (9 - the roll; the order, an oracle over 300 seeds; the list; the keys; the pool's
+Pins: `test/systems/sd9e_spoils.test.js` (9 - the roll; the order, an oracle over 300 seeds; the list; the keys; the pool's
 roll; the burst; no spoils, said; on the arena's floor, over the real collider; the host); `tools/mutants/sd9e.json`
 (44, all dead). PINS MOVED: the gate's spoils seams (`test/wb9f_gate_spoils` - the floor of the place I stand in;
 `test/gateux_gate` - the press), the receipt's handler (`test/sd9b_claim`), the arena floor's pass (`test/sd8d_remnant_blows`
@@ -1860,7 +1860,7 @@ THE FOUR HOSTS: the way home is the dungeon host's (`scenes/dungeonContext.js`, 
 machine's doors (`scenes/worldModes.js` `sdWayHome`, `sdHomeAt`) to the world host's (`scenes/world.js`); the readouts
 are the Hollow host's, which frames in every mode (SD2d), voiced by the world host. `scenes/exterior.js` has no Hollow.
 
-Pins: `test/sd10_collapse.test.js` (4 - the readouts' law; the readouts in the Hollow and the Hour; the way home; the
+Pins: `test/scenes/sd10_collapse.test.js` (4 - the readouts' law; the readouts in the Hollow and the Hour; the way home; the
 hosts by source); `tools/mutants/sd10.json` (21, all dead). PINS MOVED: the Hour's Rift set (`test/sd5a` - its way
 home with it).
 
@@ -1930,15 +1930,15 @@ are said as they stand now (6, 10, 11 and 14).
   fly; the gate's court refills its own (AUDIT WB11 C8), and the arena's are left for a follow-up (AUDIT SD II: none is
   made while no blow is in flight).
 
-Pins: `test/sd10b_audit.test.js` (17 - a fresh fight's blows; the next Hour's lines; the way home one place a fall; the
+Pins: `test/net/superDungeon/sd10b_audit.test.js` (17 - a fresh fight's blows; the next Hour's lines; the way home one place a fall; the
 Rift's memory; the receipts wherever they come; clear of the pillars; nothing made a frame for nothing; Gearward and the
 world boss; the body's blows alone; a Hollow whole; an ended Hour lost; the hub's silence; no blow past the Hour; the
 fall at its instant; the seats; no write for a known `in`; past the Orrery alone); `tools/mutants/sd10b.json` (54, all
 dead). RE-AIMED BY CONTENT, each still dead: `sd4b.json` (2), `sd6c.json`, `sd7a.json`, `sd7b.json`, `sd8a.json`,
-`sd8b.json` (3), `sd9d.json` (3). PINS MOVED: the world host's (`test/sd4b_rift.test.js`, `test/sd5a_realm.test.js`,
-`test/sd10_collapse.test.js`); the relay's (`test/sd3_relay.test.js` - the busy refusal; `test/sd8b_fight.test.js`,
-`test/sd8c_remnant_page.test.js`, `test/sd9a_receipt.test.js` - their realms past the Concord);
-`test/relayversion.test.js` (`world176` re-hashed in place).
+`sd8b.json` (3), `sd9d.json` (3). PINS MOVED: the world host's (`test/world/superDungeon/sd4b_rift.test.js`, `test/world/superDungeon/sd5a_realm.test.js`,
+`test/scenes/sd10_collapse.test.js`); the relay's (`test/net/sd3_relay.test.js` - the busy refusal; `test/net/superDungeon/sd8b_fight.test.js`,
+`test/net/superDungeon/sd8c_remnant_page.test.js`, `test/net/superDungeon/sd9a_receipt.test.js` - their realms past the Concord);
+`test/net/relayversion.test.js` (`world176` re-hashed in place).
 
 ### SD11 - AUDIT SD II (the arc audited again, eight lenses)
 
@@ -1981,7 +1981,7 @@ fixed and pinned, slice by slice below; what was not is said so. The relay stays
 outdoors the gate's glows follow the clock's window style, which its art means ("the veins burn by night"). Whether the
 court's fire should be its own colour is the gate's call.
 
-Pins: `test/sd11a_scenes.test.js` (17 - the hall through the game's camera; the stones and plaques stand; the glows
+Pins: `test/scenes/superDungeon/sd11a_scenes.test.js` (17 - the hall through the game's camera; the stones and plaques stand; the glows
 `white`; the walk; the sign; every face out; the aurorae whole round; no pow of a negative; the clock-face and the shards
 over its whole period; no blood on a mover; a frame makes nothing, measured in a child against a control (the arc's own
 code - the dungeon arm's general lines and the renderer's own copies are any dungeon's); the same lights and sky made
@@ -1990,12 +1990,12 @@ forgotten; the breath seen; the void's span); `tools/mutants/sd11a.json` (68, al
 TurboFan's escape analysis takes the allocations they put back). RE-AIMED BY CONTENT, each still dead: `blood1.json` (2),
 `sd4b.json`, `sd5a.json`, `sd6c.json` (3), `sd7a.json` (5), `sd7b.json` (4), `sd8c.json` (3), `sd9c.json` (2), `sd9e.json`
 - four of them now the other way, the law itself turned (`SD6C-the-right-the-left`, `SD9C-the-dial-forward-in-law`,
-`SD9C-the-dial-forward`, `SD7B-the-void-before-the-first-step`). PINS MOVED: `test/sd6c_hall.test.js` (the layout on
-camRight; the floors with the solids; the full fray; the bridge hidden), `test/sd7b_steps.test.js` (the void's span; the
-breath's draw), `test/sd5a_realm.test.js` (one light object; six sub-meshes), `test/sd8c_remnant_page.test.js` (the
-collider's posts), `test/sd9c_turning.test.js` (through the game's camera), `test/sd9e_spoils.test.js` (the spoils'
-lights through `realmLightsWith`), and the dungeon arm's draw loop in `test/perf5.test.js`, `test/disc15.test.js`,
-`test/wb6a_deadlands.test.js` and `test/crashreport.test.js` (a hidden draw skipped).
+`SD9C-the-dial-forward`, `SD7B-the-void-before-the-first-step`). PINS MOVED: `test/world/superDungeon/sd6c_hall.test.js` (the layout on
+camRight; the floors with the solids; the full fray; the bridge hidden), `test/world/superDungeon/sd7b_steps.test.js` (the void's span; the
+breath's draw), `test/world/superDungeon/sd5a_realm.test.js` (one light object; six sub-meshes), `test/net/superDungeon/sd8c_remnant_page.test.js` (the
+collider's posts), `test/server/sd9c_turning.test.js` (through the game's camera), `test/systems/sd9e_spoils.test.js` (the spoils'
+lights through `realmLightsWith`), and the dungeon arm's draw loop in `test/scenes/perf5.test.js`, `test/render/disc15.test.js`,
+`test/world/gate/wb6a_deadlands.test.js` and `test/scenes/crashreport.test.js` (a hidden draw skipped).
 
 #### SD11b - the relay
 
@@ -2032,17 +2032,17 @@ after the census (G9), the `in` refused in words, over and full (G11) - each pin
 - A determined group of REGISTERED accounts can still spend the Orrery's thread, each its own six - moderation's: every
   turn carries its turner.
 
-Pins: `test/sd11b_relay.test.js` (22 - two `in`s, one fight, one ask; a blow whose fight was replaced; a missed answer;
+Pins: `test/net/superDungeon/sd11b_relay.test.js` (22 - two `in`s, one fight, one ask; a blow whose fight was replaced; a missed answer;
 a lost fight seats nobody; the guests' sixty-four; a kill told late; a hello wakes its fight; the fall told once and
 until heard; a slot never used twice; a held receipt handed on; the realm's door; the level and the share, and their
 law; a find told once; no spent past the hub's slot; the stones' rights, their law and the realm's; the Echoes' and the
 Hearts' blows; the dead and the `in` refused; the director's retry and re-read; the relay by source; the page lashes whom
 the realm names); `tools/mutants/sd11b.json` (55, all dead). RE-AIMED BY CONTENT, each still dead: `sd3.json` (2),
 `sd6b.json` (3), `sd6c.json` (2), `sd8b.json` (2), `sd8c.json`, `sd10b.json` (7), `audit1003b.json`,
-`audit_seats_relay.json`, `serpent1_audit.json`. PINS MOVED: `test/sd3_relay.test.js` (the realm's list keeps its guests;
-the hello's gate after the token; a find told once the hub's word has grown old), `test/sd6b_hall.test.js` (the snap
-names whom it lashes; `w`), `test/sd6c_hall.test.js` (the lash on whom the snap names), `test/sd10b_audit.test.js` (a
-miss's back-off), `test/relayversion.test.js` (`world176` re-hashed in place).
+`audit_seats_relay.json`, `serpent1_audit.json`. PINS MOVED: `test/net/sd3_relay.test.js` (the realm's list keeps its guests;
+the hello's gate after the token; a find told once the hub's word has grown old), `test/net/sd6b_hall.test.js` (the snap
+names whom it lashes; `w`), `test/world/superDungeon/sd6c_hall.test.js` (the lash on whom the snap names), `test/net/superDungeon/sd10b_audit.test.js` (a
+miss's back-off), `test/net/relayversion.test.js` (`world176` re-hashed in place).
 
 #### SD11c - the hosts, the page and the rewards
 
@@ -2082,18 +2082,18 @@ slot, and the relay's newest socket, another slot's fight and list, a hub that t
 - A death in the Hour's last seconds of collapse wakes at the Hollow's pixel after the Hollow has gone; its words still
   say "before the Hollow's door".
 
-Pins: `test/sd11c_page.test.js` (17 - the cast-out closes the window; cast out once it acts; the end judged where I
+Pins: `test/systems/sd11c_page.test.js` (17 - the cast-out closes the window; cast out once it acts; the end judged where I
 stand; the step asks again and the Rift remembers; the way back past the Return; a Mark in a Hollow gone; my Hour's
 receipt waits; the Inspect card's four; the spent word owed; the claims book's week; no Vigil on a saved blow; the world
 host's fight from its text; the Hour's death and the floor's last words; the whole state; the End stops the Echoes; the
-smaller gaps; an older Hour's words), `test/sd11c_law.test.js` (4 - the Echoes' and Hearts' belief; one hand; the share
-away and back; never thrice running), `test/sd11b_relay.test.js` (+1 - the relay's smaller arms);
+smaller gaps; an older Hour's words), `test/net/superDungeon/sd11c_law.test.js` (4 - the Echoes' and Hearts' belief; one hand; the share
+away and back; never thrice running), `test/net/superDungeon/sd11b_relay.test.js` (+1 - the relay's smaller arms);
 `tools/mutants/sd11c.json` (77, all dead). RE-AIMED BY CONTENT, each still dead: `auditwb_spoils.json`, `auditwbx2.json`,
-`raid4b.json`, `sd2d.json` (4), `sd9b.json`, `sd9e.json` (3), `wb5b.json`. PINS MOVED: `test/castle1.test.js`
-(a pixel with no dungeon enters nothing), `test/sd2d_castout.test.js` (the cast-out answers, under the Hour's veil),
-`test/sd4b_rift.test.js` and `test/sd5a_realm.test.js` (the landing past the Return; the Hour's waking words),
-`test/sd9e_spoils.test.js` (the spent word answered; the receipt kept whichever link; a checkpoint as I leave),
-`test/sd10b_audit.test.js` (the same), `test/wb5b_gate_claim.test.js` (the card's four), `test/world1.test.js` (the exit's
+`raid4b.json`, `sd2d.json` (4), `sd9b.json`, `sd9e.json` (3), `wb5b.json`. PINS MOVED: `test/scenes/castle1.test.js`
+(a pixel with no dungeon enters nothing), `test/systems/superDungeon/sd2d_castout.test.js` (the cast-out answers, under the Hour's veil),
+`test/world/superDungeon/sd4b_rift.test.js` and `test/world/superDungeon/sd5a_realm.test.js` (the landing past the Return; the Hour's waking words),
+`test/systems/sd9e_spoils.test.js` (the spent word answered; the receipt kept whichever link; a checkpoint as I leave),
+`test/net/superDungeon/sd10b_audit.test.js` (the same), `test/net/gate/wb5b_gate_claim.test.js` (the card's four), `test/net/world1.test.js` (the exit's
 window, its slot popped first - still inside the function).
 
 #### SD11d - what the player reads, hears and sees
@@ -2118,19 +2118,19 @@ window, its slot popped first - still inside the function).
 L6 F24 (the fighters' count) was SD11b's present share. L6 F9, F16 and the Rift plaque's count (F5) are the scenes'
 (SD11f); F19 and F22 are the words' and the docs'.
 
-Pins: `test/sd11d_words.test.js` (15 - the voice; a thread; the kill read whole; the hosts through the voice, from
+Pins: `test/scenes/superDungeon/sd11d_words.test.js` (15 - the voice; a thread; the kill read whole; the hosts through the voice, from
 their text; the bar's one callout; the Echo's clock and the return; the Hearts heard and said; five Hearts in a second;
 the fade counted; near the arena, from the host's text; the Hour's own veil; the chart in brass; a Hollow's name small;
 WB13b's words over the arc; the End's pitch and no pow); `tools/mutants/sd11d.json` (71). RE-AIMED BY CONTENT:
 `sd10.json` (4), `sd11b.json`, `sd11c.json` (6), `sd2b.json`, `sd2d.json`, `sd4b.json`, `sd5a.json` (3), `sd8c.json`,
-`sd8d.json`, `wb6c.json`. PINS MOVED: `test/sd1_sdlaw.test.js` (the names), `test/sd2b_world.test.js` (a found Hollow's
-fade), `test/sd2d_castout.test.js` (the cast-out under the brass), `test/sd4b_rift.test.js` (the Rift's word through the
-voice), `test/sd5a_realm.test.js` (the Hour's lines and veil), `test/sd6c_hall.test.js` (the hall's say),
-`test/sd7b_steps.test.js`, `test/sd8c_remnant_page.test.js` (the bar's order, the Echo's clock, the fight's lines near
-the arena), `test/sd8d_remnant_blows.test.js` (the call's count, the fall to all), `test/sd10_collapse.test.js` (the
-readouts' words), `test/sd10b_audit.test.js`, `test/sd11b_relay.test.js`, `test/sd11c_page.test.js` (the voice in their
-rigs), `test/tier1_dungeontiers.test.js` (the plaque's article), `test/wb6c_gate_veil.test.js` (the step's look),
-`test/relayversion.test.js` (`world176` re-hashed in place - `net/superDungeon/sdLaw.js` is in the bundle).
+`sd8d.json`, `wb6c.json`. PINS MOVED: `test/net/superDungeon/sd1_sdlaw.test.js` (the names), `test/systems/superDungeon/sd2b_world.test.js` (a found Hollow's
+fade), `test/systems/superDungeon/sd2d_castout.test.js` (the cast-out under the brass), `test/world/superDungeon/sd4b_rift.test.js` (the Rift's word through the
+voice), `test/world/superDungeon/sd5a_realm.test.js` (the Hour's lines and veil), `test/world/superDungeon/sd6c_hall.test.js` (the hall's say),
+`test/world/superDungeon/sd7b_steps.test.js`, `test/net/superDungeon/sd8c_remnant_page.test.js` (the bar's order, the Echo's clock, the fight's lines near
+the arena), `test/net/superDungeon/sd8d_remnant_blows.test.js` (the call's count, the fall to all), `test/scenes/sd10_collapse.test.js` (the
+readouts' words), `test/net/superDungeon/sd10b_audit.test.js`, `test/net/superDungeon/sd11b_relay.test.js`, `test/systems/sd11c_page.test.js` (the voice in their
+rigs), `test/world/tier1_dungeontiers.test.js` (the plaque's article), `test/ui/gate/wb6c_gate_veil.test.js` (the step's look),
+`test/net/relayversion.test.js` (`world176` re-hashed in place - `net/superDungeon/sdLaw.js` is in the bundle).
 
 #### SD11e - the laws
 
@@ -2158,16 +2158,16 @@ L4 F1 and F1b were SD11a's, and so was C3 (`spanAt`'s comment says near edges). 
   reach it, the other 36 m off - and 3 at the weakest, which the old law failed in 30: the weakest build's own reach.
 - In melee alone, the weakest build (Speed 10, Running 0) still loses one Reset in five: a party's reach is its own.
 
-Pins: `test/sd11e_laws.test.js` (12 - the paired Hand by the escape search, beyond and between; the End's wind-up, the
+Pins: `test/net/superDungeon/sd11e_laws.test.js` (12 - the paired Hand by the escape search, beyond and between; the End's wind-up, the
 law's and the page's; nothing past the End; the disc and the ring; the ring jumped running out and run in through once;
 no stale span; no Heart in its body; the ring by count, and a lone melee fighter's every Reset made; the Hand's way as
 it gathers; its range; nobody on the Steps; the words and the comments); `tools/mutants/sd11e.json` (37, all dead).
 RE-AIMED BY CONTENT, each still dead: `sd1.json`, `sd11b.json`, `sd11c.json`, `sd8a.json` (4), `sd8b.json`, `sd8c.json`
 (3), `sd8d.json` (3) - one now the other way, the law itself turned (`SD8A-the-ring-no-width`: the ring has no width to
 lose, and its mutant puts the band back); and every other record on the files this slice touched (243) re-judged, all
-still dead. PINS MOVED: `test/sd6a_orrery.test.js` (the mirror riddle's words), `test/sd8a_remnant.test.js` (the pair's
-ways by `pairWay`; the ring's front's centre stops at 22 m), `test/sd8b_fight.test.js` (the relay's import of the arena's
-slack), `test/sd8d_remnant_blows.test.js` (the End at the rim, within the arena's slack), `test/relayversion.test.js`
+still dead. PINS MOVED: `test/net/superDungeon/sd6a_orrery.test.js` (the mirror riddle's words), `test/net/superDungeon/sd8a_remnant.test.js` (the pair's
+ways by `pairWay`; the ring's front's centre stops at 22 m), `test/net/superDungeon/sd8b_fight.test.js` (the relay's import of the arena's
+slack), `test/net/superDungeon/sd8d_remnant_blows.test.js` (the End at the rim, within the arena's slack), `test/net/relayversion.test.js`
 (`world176` re-hashed in place - `net/superDungeon/sdRemnant.js`, `net/superDungeon/sdLaw.js`, `net/superDungeon/sdBrain.js` and the relay's `in` are in the
 bundle).
 
@@ -2179,7 +2179,7 @@ bundle).
 | L6 F16 | THE WAY HOME ROSE UNSEEN AND UNSAID. It stood up whole, without a sound or a word, where the gate's portal rises and is said | it rises out of the floor over `SD_HOME_RISE_MS` (the gate's portal's), the Rift's bell tolled once where it rises, a fourth higher and heard across the arena (`systems/superDungeon/sdRiftSound.js` `tollRiftBell`), and the Hour says *"The way home stands open."* - said and tolled as it rises, never to a page that comes later (`scenes/world.js` `sdHomeAge`, handed through the mode machine to the dungeon host's `standReturn`) |
 | L6 F5 | THE FADE UNCOUNTED AT THE DOOR. The Rift admitted a newcomer to the last second of a Hollow unbeaten, and its plaque said nothing of the time | its plaque's second row counts its Hour (`world/superDungeon/sdDungeon.js` `sdRiftCount`): *Fades in 46h 12m*, its last hour by the second, *Collapses in 2:31* in its collapse - the minutes and seconds rounded up, never less than is left |
 | SD9c | THE WHEEL STEPPING BACK. The Turning Hour's wheel steps as a clock's escapement does, "never back" - and its angle rose, so through the camera's one mirror it stepped anticlockwise, the dial's own way | its angle falls: forward, clockwise as the eye sees it, against the dial turning back (`render/auraRing.js` `turningWheelAngle` and the shader's `turningWheel`) |
-| L8 D1, G15 | THE HOLLOW'S FOE FRAME CLAIMED, NEVER MEASURED. 151 markers is the largest SPAWN template; a Hollow's (12+-block labyrinths and keeps, up to two-block exteriors) were never counted | said so, and measured: every Hollow template's enemy markers over MAPS.BSA and BLOCKS.BSA, the largest tripled, under `FOES_FRAME_MAX` (`test/sd11f_scenes.test.js`, skipped without the real data - not run in this session) |
+| L8 D1, G15 | THE HOLLOW'S FOE FRAME CLAIMED, NEVER MEASURED. 151 markers is the largest SPAWN template; a Hollow's (12+-block labyrinths and keeps, up to two-block exteriors) were never counted | said so, and measured: every Hollow template's enemy markers over MAPS.BSA and BLOCKS.BSA, the largest tripled, under `FOES_FRAME_MAX` (`test/scenes/sd11f_scenes.test.js`, skipped without the real data - not run in this session) |
 | L8 D2, D3 | "THE REGION'S LARGEST CITY", "THE BAY'S EIGHT LARGEST" | the first of the region's cities ranked as its hub is (a city, the one named for its region, then the largest) with a suitable pixel; the Bay's first eight by the hubs' own claim |
 | L8 D4 | "NEARLY TWICE THE WARDEN'S SHARE" | more than twice (525 s of reference damage against his 240; 1.75x a Colossal Warden's) |
 | L8 D5 | THE SIGHTING "WITHIN 600 M", "NORTH-WEST" | on first crossing into its pixel (some 410 to 580 m), once, *"...to the Northwest!"* |
@@ -2191,13 +2191,13 @@ bundle).
 
 L8 D16 (the code's comments on `n` and the great cities) is the laws' (SD11e).
 
-Pins: `test/sd11f_scenes.test.js` (5 - the way home pressed alone; its rise and toll; said as it rises, from the world
-host's text; the Rift's count; a Hollow's foes fit the frame, over the real data); `test/sd9c_turning.test.js` (the
+Pins: `test/scenes/sd11f_scenes.test.js` (5 - the way home pressed alone; its rise and toll; said as it rises, from the world
+host's text; the Rift's count; a Hollow's foes fit the frame, over the real data); `test/server/sd9c_turning.test.js` (the
 wheel forward on the screen, PIN MOVED); `tools/mutants/sd11f.json` (24). RE-AIMED BY CONTENT: `sd9c.json` (the wheel's
 shader), `sd10.json` (3 - the way home stood twice, and its stand; "carried off where it rises" recorded EQUIVALENT:
-pressed alone, no step into it is ever taken), `sd10b.json` (2). PINS MOVED: `test/sd10_collapse.test.js` (the way home
-pressed alone; its words; the hosts' stand with its age; its place said as it rises), `test/sd10b_audit.test.js` and
-`test/sd11c_page.test.js` (the Rift's and the way home's rigs), `test/sd4b_rift.test.js` (the Hollow's Rift counts its
+pressed alone, no step into it is ever taken), `sd10b.json` (2). PINS MOVED: `test/scenes/sd10_collapse.test.js` (the way home
+pressed alone; its words; the hosts' stand with its age; its place said as it rises), `test/net/superDungeon/sd10b_audit.test.js` and
+`test/systems/sd11c_page.test.js` (the Rift's and the way home's rigs), `test/world/superDungeon/sd4b_rift.test.js` (the Hollow's Rift counts its
 Hour).
 
 ### SD-ONELIFE - shipped 2026-10-07 (one life a Hollow)
@@ -2222,11 +2222,11 @@ good. You wake before the Abyss Dungeon's door."*) and is final for that Hollow 
 What a fallen fighter earned stands: a part in the Remnant's kill is on its receipt (SD9a's law, the gate's), and the
 spoils thrown are the world's.
 
-Pins: `test/sd12_onelife.test.js` (3 - the realm remembers a death; the Rift's word; the page, from its text);
-`tools/mutants/sd12_onelife.json` (11). RE-AIMED BY CONTENT: `sd4b.json` (2), `sd10b.json`, `sd11c.json` (2). PINS MOVED: `test/sd3_relay.test.js` (the realm's record keeps `dead`),
-`test/sd4b_rift.test.js` (the Rift asked with the fallen), `test/sd5a_realm.test.js` and `test/sd11c_page.test.js` (the
-death's words; the device's memory is `sdSlotsKept`), `test/sd10b_audit.test.js` (the Rift's rig),
-`test/relayversion.test.js` (`world176` re-hashed in place - `net/superDungeon/sdLaw.js` is in the bundle).
+Pins: `test/net/superDungeon/sd12_onelife.test.js` (3 - the realm remembers a death; the Rift's word; the page, from its text);
+`tools/mutants/sd12_onelife.json` (11). RE-AIMED BY CONTENT: `sd4b.json` (2), `sd10b.json`, `sd11c.json` (2). PINS MOVED: `test/net/sd3_relay.test.js` (the realm's record keeps `dead`),
+`test/world/superDungeon/sd4b_rift.test.js` (the Rift asked with the fallen), `test/world/superDungeon/sd5a_realm.test.js` and `test/systems/sd11c_page.test.js` (the
+death's words; the device's memory is `sdSlotsKept`), `test/net/superDungeon/sd10b_audit.test.js` (the Rift's rig),
+`test/net/relayversion.test.js` (`world176` re-hashed in place - `net/superDungeon/sdLaw.js` is in the bundle).
 
 THE FOUR HOSTS (AUDIT SD III, SD20f H3: this record had none): `scenes/world.js` WIRED (the slot of the Hour I die in
 kept - `_sdFallen`, the death block's first statement - and the Rift asked with it, `sdRiftOf`; no Resurrect raising me
@@ -2269,7 +2269,7 @@ Steps, -19.8 the hall, -19.9 the Hollow, -19.6 the collapse); every peak under -
 every second sounding; the fall rung out before the collapse's song; one player through all nine and an unpressed song
 after.
 
-Pins: `test/sd13_score.test.js` (7 - the songs; the Hour's sound; the levels; where I stand; the law; the fall played
+Pins: `test/systems/superDungeon/sd13_score.test.js` (7 - the songs; the Hour's sound; the levels; where I stand; the law; the fall played
 whole; the host, from the world host's text); `tools/mutants/sd13.json` (27).
 
 THE FOUR HOSTS (AUDIT SD III, SD20f H3: this record had none): `scenes/world.js` WIRED (`hourScoreFrame` - the Hour's
@@ -2307,10 +2307,10 @@ heard over 1.5 s late is never sounded. With the blows' 14, the Orrery's 4, the 
 and the way home's toll, the arc speaks in 60 cues (the Hour's air, SD14b, past them). The world host makes it beside
 the fight's link, frames it with the blows in the Hour and lets it go with the link out of it.
 
-Pins: `test/sd14a_voice.test.js` (7 - the voice; the turns; hurt and the slip; strides and the growl; the Echoes; the
+Pins: `test/scenes/superDungeon/sd14a_voice.test.js` (7 - the voice; the turns; hurt and the slip; strides and the growl; the Echoes; the
 releases, the shock and the sting; forgotten and the host's); `tools/mutants/sd14a.json` (27). RE-AIMED BY CONTENT:
-`sd11c.json` (the fight left once). PINS MOVED: `test/sd11c_page.test.js`, `test/sd8c_remnant_page.test.js`,
-`test/sd8d_remnant_blows.test.js` (the voice framed and let go beside the blows).
+`sd11c.json` (the fight left once). PINS MOVED: `test/systems/sd11c_page.test.js`, `test/net/superDungeon/sd8c_remnant_page.test.js`,
+`test/net/superDungeon/sd8d_remnant_blows.test.js` (the voice framed and let go beside the blows).
 
 THE FOUR HOSTS (AUDIT SD III, SD20f H3: this record had none): `scenes/world.js` WIRED (`sdRemVoice` - made beside the
 blows, framed in the fight's frame for the living, let go with the Hour); `scenes/worldModes.js` FLAGGED - nothing of the
@@ -2344,7 +2344,7 @@ the street - each is played under the Hour's name and `audio.js` `fadeFar` lets 
 engine's at a time. The world host frames it on the sky's clock (`deadlandsSeconds`) after the ways out
 have run, beside the Deadlands' own. With the Remnant's voice (SD14a) the arc speaks in 64 cues and four beds.
 
-Pins: `test/sd14b_air.test.js` (5 - the beds; the made sounds; the events; heard from its quarter; the world host);
+Pins: `test/scenes/sd14b_air.test.js` (5 - the beds; the made sounds; the events; heard from its quarter; the world host);
 `tools/mutants/sd14b.json` (16).
 
 THE FOUR HOSTS (AUDIT SD III, SD20f H3: this record had none): `scenes/world.js` WIRED (`sdAirFrame` - the Hour's air
@@ -2375,9 +2375,9 @@ In a real browser (`tools/sdMotesProbe.mjs`, 19 checks): the program compiles an
 arena and under the sky, at two times, the frame is lit, there is no GL error, and every mote asked (up to twelve of
 each kind in view) is lit where `sdMoteAt` projects it.
 
-Pins: `test/sd14c_motes.test.js` (5 - over a thousand; each in its place; on the Hour's clock; the shader RUN holds the
+Pins: `test/world/superDungeon/sd14c_motes.test.js` (5 - over a thousand; each in its place; on the Hour's clock; the shader RUN holds the
 law, and the small faded; drawn, and the world host's); `tools/mutants/sd14c.json` (13). PINS MOVED:
-`test/sd8d_remnant_blows.test.js`, `test/sd9e_spoils.test.js` (the Hour's world pass draws the motes beside the blows
+`test/net/superDungeon/sd8d_remnant_blows.test.js`, `test/systems/sd9e_spoils.test.js` (the Hour's world pass draws the motes beside the blows
 and the loot lines).
 
 THE FOUR HOSTS (AUDIT SD III, SD20f H3: this record had none): `scenes/world.js` WIRED (the motes - `SdMotesRenderer`,
@@ -2411,9 +2411,9 @@ card (WB13e); the Hour told neither - in first person at a colossus's feet the f
 The world host reads the fight once a frame for the bar, the ground and the card, hides all three with the HUD, and
 puts them away with the bar.
 
-Pins: `test/sd15_read.test.js` (6 - the Stomp; the Hand, the Volley and the Echoes'; the way out and the ground view; the
+Pins: `test/net/superDungeon/sd15_read.test.js` (6 - the Stomp; the Hand, the Volley and the Echoes'; the way out and the ground view; the
 beats; the Hour's card and the host's; the burning brass felt); `tools/mutants/sd15.json` (21). PINS MOVED:
-`test/sd8c_remnant_page.test.js` (the fight read once; one hide), `test/sd11c_page.test.js` and `test/sd11a_scenes.test.js`
+`test/net/superDungeon/sd8c_remnant_page.test.js` (the fight read once; one hide), `test/systems/sd11c_page.test.js` and `test/scenes/superDungeon/sd11a_scenes.test.js`
 (the arena read in the fight's rigs).
 
 THE FOUR HOSTS (AUDIT SD III, SD20f H3: this record had none): `scenes/world.js` WIRED (the fight's frame reads the
@@ -2451,11 +2451,11 @@ the Stomp, a Volley, the Pulse, the Hearts and the fall each drawn by the gate's
 burst lit where the law stands it, the brass warm and the Hearts green about them, and a flash in the Hour's light for
 each that throws one.
 
-Pins: `test/sd16_fx.test.js` (6 - more than the gate; a landing once, where the law puts it; the Hand, the Volley, an
+Pins: `test/scenes/superDungeon/sd16_fx.test.js` (6 - more than the gate; a landing once, where the law puts it; the Hand, the Volley, an
 Echo's and the Hour's own; the turns, the Echoes and the Hearts; the fall; the bursts as the pass takes them and the
-world host's); `tools/mutants/sd16.json` (28). PINS MOVED: `test/sd8c_remnant_page.test.js`,
-`test/sd8d_remnant_blows.test.js`, `test/sd14a_voice.test.js`, `test/sd11c_page.test.js` (its sparks framed and left
-beside the voice), `test/sd14c_motes.test.js`, `test/sd9e_spoils.test.js` (drawn after the motes; lit after the spoils);
+world host's); `tools/mutants/sd16.json` (28). PINS MOVED: `test/net/superDungeon/sd8c_remnant_page.test.js`,
+`test/net/superDungeon/sd8d_remnant_blows.test.js`, `test/scenes/superDungeon/sd14a_voice.test.js`, `test/systems/sd11c_page.test.js` (its sparks framed and left
+beside the voice), `test/world/superDungeon/sd14c_motes.test.js`, `test/systems/sd9e_spoils.test.js` (drawn after the motes; lit after the spoils);
 records re-aimed by content: `sd11c.json` G3, `sd14a.json` never-let-go, `sd9e.json` unlit.
 
 THE FOUR HOSTS (AUDIT SD III, SD20f H3: this record had none): `scenes/world.js` WIRED (`sdFx` framed in the fight's
@@ -2499,12 +2499,12 @@ Hour's world pass after the sparks. In a real browser (`tools/sdBodyProbe.mjs`, 
 every one of 17 poses names its state, draws its body and differs from its rest by 900 to 4,000 pixels; the beam lights
 the frame out of the hand. `SD_BODY_SHOT=<png>` writes the tiles.
 
-Pins: `test/sd17_body.test.js` (6 - the parts; eighteen states, at rest the whole, the joints kept, the turns' senses;
+Pins: `test/scenes/superDungeon/sd17_body.test.js` (6 - the parts; eighteen states, at rest the whole, the joints kept, the turns' senses;
 the states as the fight turns, the walk in step and dipping; every blow moved; the gears and the beam; the scene and the
 world); `tools/mutants/sd17.json` (38). Found by its own test: the falling ease read nought before its start, so the
 stun's slump, the Hand's raised arm and the Volley's throw never showed - fixed before it shipped. PINS MOVED:
-`test/sd8c_remnant_page.test.js`, `test/sd11a_scenes.test.js` (the draws after the Hearts), `test/sd14c_motes.test.js`,
-`test/sd16_fx.test.js`, `test/sd8d_remnant_blows.test.js`, `test/sd9e_spoils.test.js` (the beam after the sparks);
+`test/net/superDungeon/sd8c_remnant_page.test.js`, `test/scenes/superDungeon/sd11a_scenes.test.js` (the draws after the Hearts), `test/world/superDungeon/sd14c_motes.test.js`,
+`test/scenes/superDungeon/sd16_fx.test.js`, `test/net/superDungeon/sd8d_remnant_blows.test.js`, `test/systems/sd9e_spoils.test.js` (the beam after the sparks);
 `sd8c.json` SD8C-an-echo-unscaled re-aimed by content.
 
 THE FOUR HOSTS (AUDIT SD III, SD20f H3: this record had none): `scenes/dungeonContext.js` WIRED (the Remnant it stands -
@@ -2538,10 +2538,10 @@ keeps both, and reads its Reset's clock after a stun or the Last Moment's return
 - **The relay** births every fight with its slot's marks (`sdMarksOf(s)`); the Orrery frays by them
 (`orreryOf(s).fray`). Relay world176 re-hashed in place (undeployed): `net/superDungeon/sdMarks.js` joined the bundle.
 
-Pins: `test/sd18a_marks.test.js` (5 - the marks and the cycle; the profile and the stamps; the law under its marks; the
+Pins: `test/net/superDungeon/sd18a_marks.test.js` (5 - the marks and the cycle; the profile and the stamps; the law under its marks; the
 blow its frame says; the wire, the page, the Orrery and the relay); `tools/mutants/sd18a.json` (42, one equivalent as
 recorded: the ring's closing check - the walk's first ring closes at every seat count from 6 to 12). PINS MOVED:
-`test/sd8b_fight.test.js` (the Volley's marks at most Sunfall's seven), `test/relayversion.test.js` (the graph, the
+`test/net/superDungeon/sd8b_fight.test.js` (the Volley's marks at most Sunfall's seven), `test/net/relayversion.test.js` (the graph, the
 hash). Records re-aimed by content (22): `sd15.json` (3), `sd17.json` (2), `sd6a.json` (2), `sd8a.json` (6),
 `sd8b.json`, `sd8c.json` (3), `sd8d.json` (5) - each run again, every one dead.
 
@@ -2575,10 +2575,10 @@ the dungeon context's strike door, magic's cast added); a plain blow never asks.
 - **The hall**: the Ending's own stone lit in its light (`sdEndingStoneLight` - in the Hour's light channel, breathing
 on the hall's clock), and the fray's arc round once by the Hollow's own snap (36 for the Fraying).
 
-Pins: `test/sd18b_seen.test.js` (6 - the view; the card and the world's; the bar and the wake; the element on the floor;
-the strike; the hall); `tools/mutants/sd18b.json` (25). PINS MOVED: `test/sd11a_scenes.test.js`,
-`test/sd11c_page.test.js` (the marks card in the fight's rigs), `test/sd15_read.test.js` (the ground in its element),
-`test/sd16_fx.test.js`, `test/sd9e_spoils.test.js` (the stone's light after the landings'); records re-aimed by content:
+Pins: `test/net/superDungeon/sd18b_seen.test.js` (6 - the view; the card and the world's; the bar and the wake; the element on the floor;
+the strike; the hall); `tools/mutants/sd18b.json` (25). PINS MOVED: `test/scenes/superDungeon/sd11a_scenes.test.js`,
+`test/systems/sd11c_page.test.js` (the marks card in the fight's rigs), `test/net/superDungeon/sd15_read.test.js` (the ground in its element),
+`test/scenes/superDungeon/sd16_fx.test.js`, `test/systems/sd9e_spoils.test.js` (the stone's light after the landings'); records re-aimed by content:
 `sd10b.json` (3), `sd11a.json` (2), `sd15.json`, `sd8d.json` - each run again, dead.
 
 THE FOUR HOSTS (AUDIT SD III, SD20f H3: this record had none): `scenes/world.js` WIRED (the marks card as I step into the
@@ -2604,9 +2604,9 @@ there is no lion; the sun goes down twice; the tide comes in where there is no s
 earth; the dead in their barrows turn their heads toward the walls; a dragon's shadow crosses where no dragon flies - the bell
 where none is kept), and its card on the held map says *It keeps the Ending of <stone>*.
 
-Pins: `test/sd18c_endings.test.js` (4 - the lights; the bodies and the scene; the sparks; the word);
-`tools/mutants/sd18c.json` (13). PINS MOVED: `test/sd8c_remnant_page.test.js` (the art's records; the context's birth of
-the scene), `test/sd2c_omen.test.js` (the map card's line, the rumor by the slot's Ending).
+Pins: `test/scenes/superDungeon/sd18c_endings.test.js` (4 - the lights; the bodies and the scene; the sparks; the word);
+`tools/mutants/sd18c.json` (13). PINS MOVED: `test/net/superDungeon/sd8c_remnant_page.test.js` (the art's records; the context's birth of
+the scene), `test/ui/enhanced/sd2c_omen.test.js` (the map card's line, the rumor by the slot's Ending).
 
 THE FOUR HOSTS (AUDIT SD III, SD20f H3: this record had none): `scenes/dungeonContext.js` WIRED (the Remnant burns in its
 Hollow's Ending's light - the slot's marks, `sdMarksOf`, handed to the body it stands); `scenes/world.js` WIRED (the
@@ -2642,11 +2642,11 @@ owed, and a Hollow found in its last hour faded in chat before it was found).
 - **The next one's rise** (`systems/eventTimers.js`): once a Hollow is gone - beaten, collapsed or faded unfound - the
 Timers count the next slot's not-before (`rec.next`), never where; the row goes once it may rise.
 
-Pins: `test/sd19_presence.test.js` (6 - the air's law; the grade and the light; the sky and the light by source; the
-banner and the card; the words; the next rise); `tools/mutants/sd19.json` (34). PINS MOVED: `test/sd2b_world.test.js`
-and `test/sd11c_page.test.js` (the marks line after the find), `test/sd2c_omen.test.js` (the gone state's next-rise row),
-`test/wb2_gate.test.js` and `test/wb9a_gate_marks_seen.test.js` (the banner and the card as wishes, cleared indoors for a
-Hollow too), `test/wbx8_gate_sky.test.js`, `test/sunbaby1_event.test.js`, `test/sunbaby2_phases.test.js` and `test/event1_live_event.test.js` (the lights under `sdBrassLight`, the haze's dread grade now `d`), `test/auditwb_world.test.js` (the banner a wish, hidden by the same three). Records
+Pins: `test/systems/superDungeon/sd19_presence.test.js` (6 - the air's law; the grade and the light; the sky and the light by source; the
+banner and the card; the words; the next rise); `tools/mutants/sd19.json` (34). PINS MOVED: `test/systems/superDungeon/sd2b_world.test.js`
+and `test/systems/sd11c_page.test.js` (the marks line after the find), `test/ui/enhanced/sd2c_omen.test.js` (the gone state's next-rise row),
+`test/world/gate/wb2_gate.test.js` and `test/net/gate/wb9a_gate_marks_seen.test.js` (the banner and the card as wishes, cleared indoors for a
+Hollow too), `test/systems/gate/wbx8_gate_sky.test.js`, `test/net/sunbaby1_event.test.js`, `test/world/sunbaby2_phases.test.js` and `test/render/event1_live_event.test.js` (the lights under `sdBrassLight`, the haze's dread grade now `d`), `test/scenes/auditwb_world.test.js` (the banner a wish, hidden by the same three). Records
 re-aimed by content: `EVENT1-controller-fog-ungraded`, `SD18B-the-card-never-fades`, `SUNBABY1-host-light-unlifted`,
 `WB2-the-banner-follows-indoors`.
 
@@ -2682,7 +2682,7 @@ conflicted with main since SD13. The relay stays `world176`, re-hashed in place 
 | F9 | THE HEARTS' FLOOR WALLED THE WEAKEST. Each Heart held at least 20: a lone fighter at level one or two (6-7 a second at reference) met three Hearts of 20 - ten seconds of its damage in the 7.5 they stand - and every Reset landed and healed: the Last Moment could not be won | the floor never more than one second of the living's damage (`heartHpFor`): a lone fighter's three are three seconds; a strong fighter's floor is 20 as ever |
 | F10 | THE HOUR'S COSTS KILLED. The void's cast-back (15%) and the Orrery's lash took their share through `bypassShield` alone - the SetHealth(0) door, which no death save answers: with one life a Hollow, a setback was the end of it | both leave a body at one (`characters/playerEntity.js` `hurtPlayer`'s `spare`, the duel's floor): a setback, never the death that ends a Hollow |
 
-Pins: `test/sd20a_fight.test.js` (10 - the Pulse's ceiling over a whole Restless Hour under the Underking; the arena
+Pins: `test/net/superDungeon/sd20a_fight.test.js` (10 - the Pulse's ceiling over a whole Restless Hour under the Underking; the arena
 holding, its floors and the host's choice by its own text; the whole arena's blows judged however late; a frozen page
 absent from the relay's census and back at its next pose; a blow strikes a fighter; the Reset's race - the Hardened
 Hearts' share of their window, a Pulse deferred, a Reset waiting, eight minutes of a Last Moment with neither atop the
@@ -2691,11 +2691,11 @@ one, through the real `hurtPlayer`); `tools/mutants/sd20a.json` (30, all dead). 
 `sd5a.json` (`SD5A-the-edge-lost`), `sd6c.json` (`SD6C-the-lash-shielded`, `SD6C-the-edge-never-widened`), `sd7b.json`
 (`SD7B-world-the-shield-takes-it`), `sd8a.json` (`SD8A-the-pulse-unchanging`, `SD8A-the-reset-never`), `sd8d.json`
 (`SD8D-the-pillars-shade-forgotten`, `SD8D-the-arena-reaching-the-steps`), `sd11e.json` (`SD11E-C2-struck-on-the-steps`),
-`sd15.json` (`SD15-the-shade-ignored`, `SD15-the-beams-past-read`). PINS MOVED: `test/sd5a_realm.test.js` and
-`test/sd6c_hall.test.js` (the arena's edge, the held rim first), `test/sd8a_remnant.test.js` (the Hearts' floor),
-`test/sd8b_fight.test.js` (the relay's import), `test/sd11e_laws.test.js` (the whole arena's blow, judged however late),
-`test/sd15_read.test.js` (the read told `over`; its stub link a fighter's), `test/sd18a_marks.test.js` (the Hardened
-Hearts a quarter again), `test/relayversion.test.js` (`world176` re-hashed in place).
+`sd15.json` (`SD15-the-shade-ignored`, `SD15-the-beams-past-read`). PINS MOVED: `test/world/superDungeon/sd5a_realm.test.js` and
+`test/world/superDungeon/sd6c_hall.test.js` (the arena's edge, the held rim first), `test/net/superDungeon/sd8a_remnant.test.js` (the Hearts' floor),
+`test/net/superDungeon/sd8b_fight.test.js` (the relay's import), `test/net/superDungeon/sd11e_laws.test.js` (the whole arena's blow, judged however late),
+`test/net/superDungeon/sd15_read.test.js` (the read told `over`; its stub link a fighter's), `test/net/superDungeon/sd18a_marks.test.js` (the Hardened
+Hearts a quarter again), `test/net/relayversion.test.js` (`world176` re-hashed in place).
 
 THE FOUR HOSTS: `scenes/world.js` WIRED (the held arena, `sdArenaHeld` and `_realmArenaHeld`; the cast-back and the lash
 at one; the read's `over`); `scenes/worldModes.js` FLAGGED - the mode machine casts back and rides the Steps as before
@@ -2714,13 +2714,13 @@ the blows' rig are the world host's, the dungeon host stands the Hour's level al
 
 The relay stays `world176`, re-hashed in place; the account service stays `acct94` (both undeployed - the arc's own).
 
-Pins: `test/sd20b_relay.test.js` (4 - a premature word for the next slot and the real find after the rise; the next
+Pins: `test/net/superDungeon/sd20b_relay.test.js` (4 - a premature word for the next slot and the real find after the rise; the next
 slot told from `next`, two ahead held; a death past the list refused at the door; the honours the claim's own draw);
 `tools/mutants/sd20b.json` (8, all dead). RE-AIMED BY CONTENT, each still dead: `sd11b.json`
 (`SD11b-L7M4-the-hubs-slot-unread`), `sd12_onelife.json` (`SD12-ONELIFE-unread-at-the-door`, `SD12-ONELIFE-twice-over`),
-`sd9b.json` (`SD9B-the-guest-counted`). PINS MOVED: `test/sd9b_claim.test.js` (the claims roll by their own draw - a
+`sd9b.json` (`SD9B-the-guest-counted`). PINS MOVED: `test/server/sd9b_claim.test.js` (the claims roll by their own draw - a
 `rand` that answers the claim's four bytes with a chosen seed; the worker's claim under a mocked draw),
-`test/relayversion.test.js` (`world176` re-hashed in place).
+`test/net/relayversion.test.js` (`world176` re-hashed in place).
 
 THE FOUR HOSTS: none wired - the relay (`server/src/index.js`) and the account service (`server-account/src/sds.js`)
 alone. `scenes/world.js`, `scenes/worldModes.js`, `scenes/dungeonContext.js` and `scenes/exterior.js` FLAGGED: a cell's
@@ -2750,7 +2750,7 @@ SAID SO, and left: while a blow is in flight the rig's own numbers (a walk, a bl
 hundred bytes a frame - numbers boxed across the rig's calls, and the answer's own three objects; a young space takes them
 in a scavenge no frame notices.
 
-Pins: `test/sd20c_render.test.js` (12 - every burst on the floor and the gate's pass reading it; the whole arena's shakes
+Pins: `test/scenes/superDungeon/sd20c_render.test.js` (12 - every burst on the floor and the gate's pass reading it; the whole arena's shakes
 on the arena, a reach's anywhere; the band drawn rim to reach at the law's width, run on the vertex stage itself, its
 uniform's precision one; the turn, the short way round, and the lost fight's bodies where they stood; the gears on edge,
 rolling forward; the brass GLSL equal to its JS on the GLSL evaluator and every sky pass grading by it; no reversed
@@ -2772,16 +2772,16 @@ bound); `tools/mutants/sd20c.json` (53, all dead). RE-AIMED BY CONTENT, each sti
 `SD19-the-grade-in-place`, moved with the ramp to `world/superDungeon/sdBrassSky.js`), `sd20a.json` (`SD20A-F8-the-read-shaded`),
 `sd6c.json` (`SD6C-the-bridge-never-laid`), `sd8a.json` (`SD8A-no-shade`), `sd8c.json` (`SD8C-no-kneel`,
 `SD8C-an-echo-unscaled`), `sd9e.json` (`SD9E-unlit`), `wb6a.json` (`WB6a-the-horizon-not-the-skys`). PINS MOVED:
-`test/sd14c_motes.test.js` (each sense through the game's camera), `test/sd16_fx.test.js` (the Hand's flash out of its
+`test/world/superDungeon/sd14c_motes.test.js` (each sense through the game's camera), `test/scenes/superDungeon/sd16_fx.test.js` (the Hand's flash out of its
 chest, the fall's feet on the arena, the spent Hearts' burst, the Hour's lights into one kept list),
-`test/sd17_body.test.js` (its right at +x, the band and the light's drop, the world's kept beams), `test/sd18b_seen.test.js`
-(the stone's light before its face, into the world's kept light), `test/sd19_presence.test.js` (`setBrass` telling the sky's
-passes), `test/event1_live_event.test.js`, `test/enhancedSky.test.js`, `test/sunbaby1_event.test.js` and
-`test/weather3d_distantstorms.test.js` (each sky pass's final colour, the brass after the dread; the water's sky),
-`test/sd8c_remnant_page.test.js` (the kneel eased), `test/sd9e_spoils.test.js` (the Hour's lights composed into the kept
-list), `test/sd11a_scenes.test.js` (the lights sorted in past the cap), `test/sd11c_page.test.js` (its harness's warm
-flag), `test/sd6c_hall.test.js` (the bridge laid), `test/audit39_render.test.js` and `test/wb6a_deadlands.test.js` (the
-rising edges), `test/relayversion.test.js` (`world176` re-hashed in place).
+`test/scenes/superDungeon/sd17_body.test.js` (its right at +x, the band and the light's drop, the world's kept beams), `test/net/superDungeon/sd18b_seen.test.js`
+(the stone's light before its face, into the world's kept light), `test/systems/superDungeon/sd19_presence.test.js` (`setBrass` telling the sky's
+passes), `test/render/event1_live_event.test.js`, `test/render/enhancedSky.test.js`, `test/net/sunbaby1_event.test.js` and
+`test/systems/weather3d_distantstorms.test.js` (each sky pass's final colour, the brass after the dread; the water's sky),
+`test/net/superDungeon/sd8c_remnant_page.test.js` (the kneel eased), `test/systems/sd9e_spoils.test.js` (the Hour's lights composed into the kept
+list), `test/scenes/superDungeon/sd11a_scenes.test.js` (the lights sorted in past the cap), `test/systems/sd11c_page.test.js` (its harness's warm
+flag), `test/world/superDungeon/sd6c_hall.test.js` (the bridge laid), `test/render/audit39_render.test.js` and `test/world/gate/wb6a_deadlands.test.js` (the
+rising edges), `test/net/relayversion.test.js` (`world176` re-hashed in place).
 
 THE FOUR HOSTS: `scenes/world.js` WIRED (the passes built as the Hour is stood in; the Hour's lights, the stone's light
 and the beams into kept lists; the read's feet); `scenes/worldModes.js` FLAGGED - the mode machine draws none of the Hour's
@@ -2806,7 +2806,7 @@ weight the controller sets (none there: there is no Hollow offline).
 | A11 | THE WORKS BUILT EVERY FRAME. With the archive read and no context to make them on, the works and the hum were built anew every frame - 2.2 ms | built once; only the registration is asked again |
 | A12 | THE HEARTS A LANDED RESET TOOK, UNHEARD. A Reset that lands breaks no Heart (SD11d), and the ones left standing went in silence while they burst in its light (SD20c, V10) | each rings low as it goes, live - the crystal's ring, never its shatter (`scenes/superDungeon/sdRemnantBlows.js`); a stun heard late still shatters nothing |
 
-Pins: `test/sd20d_audio.test.js` (12 - the Hour's song held through the veil, from the world host's own text; every
+Pins: `test/scenes/superDungeon/sd20d_audio.test.js` (12 - the Hour's song held through the veil, from the world host's own text; every
 score let go by a fade; no war over the dead; the place's hold and the whole Hour's End; the End whole once and its knells
 over a whole half minute; a page away hears nothing it missed; the Hearts a landed Reset takes; the named beds on a fake
 context - looped by the engine, kept, live, risen, faded, moved; the made beds, their seams and their one build; the
@@ -2820,10 +2820,10 @@ works under the Beat; the Rift's bell asked until it stands; no note struck twic
 `SD14b-the-gears-never-stood`, `SD14b-the-hum-bright`, `SD14b-the-old-air-left`), `sd4b.json`
 (`SD4B-the-bell-undarkened`), `sd8d.json` (`SD8D-no-landing-heard`, `SD8D-the-wind-up-unheard`), `wb6b.json`
 (`WB6b-stop-leaves-a-bed-looping`), `wb7.json` (`WB7-the-courts-song-left-playing-outside`). PINS MOVED:
-`test/sd13_score.test.js` (the host's harness - the living, the step, where I stood; let go by a fade, counted),
-`test/sd14a_voice.test.js` (the knell among the cues; the voice framed for the living; a growl's wait framed - one step
-that long is a page away), `test/sd14b_air.test.js` (the beds named native loops, all four made, nothing before the
-archive), `test/wb6b_deadlands_life.test.js` (the Deadlands' beds named native loops), `test/wb7_boss_audio.test.js` (the
+`test/systems/superDungeon/sd13_score.test.js` (the host's harness - the living, the step, where I stood; let go by a fade, counted),
+`test/scenes/superDungeon/sd14a_voice.test.js` (the knell among the cues; the voice framed for the living; a growl's wait framed - one step
+that long is a page away), `test/scenes/sd14b_air.test.js` (the beds named native loops, all four made, nothing before the
+archive), `test/world/gate/wb6b_deadlands_life.test.js` (the Deadlands' beds named native loops), `test/systems/gate/wb7_boss_audio.test.js` (the
 court's song let go by a fade).
 
 THE FOUR HOSTS: `scenes/world.js` WIRED (the Hour's score held under the veil, faded, silent over the dead, where I stood
@@ -2860,7 +2860,7 @@ court and no arena bout, and its music is the director's alone.
 The relay stays `world176`, re-hashed in place (undeployed): its bundle carries `net/superDungeon/sdLaw.js`'s and `net/superDungeon/sdMarks.js`'s
 words and never sends them.
 
-Pins: `test/sd20e_text.test.js` (12 - the banner's words, wrap and brass, by its own draw and the world's ask; the card's
+Pins: `test/ui/gate/sd20e_text.test.js` (12 - the banner's words, wrap and brass, by its own draw and the world's ask; the card's
 brass, its class and its signs, the gate's kept; the title card's places and the foot stepping aside, the chevron's ring,
 the Plus skin's card; the callout's still head, *Undone* drawn and the gate's *Felled*; one count of time over a sweep of
 times; the ring's centre and drawn reach on a real held map; the Dragon's names and the window's one form; the lines said
@@ -2872,16 +2872,16 @@ CONTENT, each still dead: `eventtip.json` (`EVENT-TIP-a-square-ring`), `sd11c.js
 (`SD11f-the-hours-by-the-second`, `SD11f-the-minutes-rounded-down`, `SD11f-the-collapse-uncounted`), `sd18b.json`
 (`SD18B-no-row`), `sd19.json` (`SD19-the-banner-nameless`, `SD19-the-banner-stateless`, `SD19-the-marks-line-one-omen`,
 `SD19-world-door-over-the-gate`), `sd20a.json` (`SD20A-F1-the-omens-old-words`), `sd8c.json` (`SD8C-the-turns-unsaid`),
-`wb1.json` (`WB1-the-ring-lost-at-the-far-zoom`). PINS MOVED: `test/auditwb_world.test.js` and
-`test/sd19_presence.test.js` (the banner's look; its words, the marks line's articles, the last hour's region),
-`test/sd10_collapse.test.js`, `test/sd1_sdlaw.test.js`, `test/sd2d_castout.test.js`, `test/sd5a_realm.test.js` and
-`test/sd12_onelife.test.js` (the player's word), `test/sd11a_scenes.test.js` and `test/sd11c_page.test.js` (the veil
-in the fight frame's harness; the death's words; the region as a region), `test/sd11d_words.test.js` (the callout's
-count after the dash, the fade's words, the Dragon Break's window), `test/sd11f_scenes.test.js` (the Rift's count in the
-Timers' words), `test/sd18a_marks.test.js` (the callout), `test/sd18b_seen.test.js` (no omens' line; the card's clock
-from the veil; its brass), `test/sd20a_fight.test.js` (the Restless omen's words), `test/sd8c_remnant_page.test.js` (the
-Dragon Break's window; the hide under the veil), `test/features.test.js` (the notes' ceiling, +57 - the growth and no
-more), `test/relayversion.test.js` (`world176` re-hashed in place).
+`wb1.json` (`WB1-the-ring-lost-at-the-far-zoom`). PINS MOVED: `test/scenes/auditwb_world.test.js` and
+`test/systems/superDungeon/sd19_presence.test.js` (the banner's look; its words, the marks line's articles, the last hour's region),
+`test/scenes/sd10_collapse.test.js`, `test/net/superDungeon/sd1_sdlaw.test.js`, `test/systems/superDungeon/sd2d_castout.test.js`, `test/world/superDungeon/sd5a_realm.test.js` and
+`test/net/superDungeon/sd12_onelife.test.js` (the player's word), `test/scenes/superDungeon/sd11a_scenes.test.js` and `test/systems/sd11c_page.test.js` (the veil
+in the fight frame's harness; the death's words; the region as a region), `test/scenes/superDungeon/sd11d_words.test.js` (the callout's
+count after the dash, the fade's words, the Dragon Break's window), `test/scenes/sd11f_scenes.test.js` (the Rift's count in the
+Timers' words), `test/net/superDungeon/sd18a_marks.test.js` (the callout), `test/net/superDungeon/sd18b_seen.test.js` (no omens' line; the card's clock
+from the veil; its brass), `test/net/superDungeon/sd20a_fight.test.js` (the Restless omen's words), `test/net/superDungeon/sd8c_remnant_page.test.js` (the
+Dragon Break's window; the hide under the veil), `test/systems/features.test.js` (the notes' ceiling, +57 - the growth and no
+more), `test/net/relayversion.test.js` (`world176` re-hashed in place).
 
 THE FOUR HOSTS: `scenes/world.js` WIRED (the banner's brass asked for a Hollow's door alone; the Hour's readouts under
 the veil and the card's clock from its opening); `scenes/worldModes.js` FLAGGED - the mode machine says nothing the
@@ -2903,7 +2903,7 @@ the dungeon host stands the Rift and the way home, whose plaques' words are `wor
 | H9 | THE VEIL COLD FOR A HOLLOW. The step's veil was built ahead only when a gate stood (AUDIT WB D5): a session no gate stood in compiled it as the first Rift step began | built ahead as a Hollow stands (`warmGateVeil` in the Hollow host's `stand`) |
 | H10 | /unstuck IN THE HOUR. It left by the dungeon's door - no veil, none of the Hour's words, the one way out of the Hour that was neither | the Hour's own way out (`sdWayHome`): under its veil, in its words; refused there (the dead's is the death's), nothing more said |
 
-Pins: `test/sd20f_hosts.test.js` (5 - the kept slots by account over one store and two tabs, run from the world host's
+Pins: `test/scenes/superDungeon/sd20f_hosts.test.js` (5 - the kept slots by account over one store and two tabs, run from the world host's
 own text; the cast-out once a stay on the real Hollow host over the world's own doors, asked again, never sooner, and at
 once on a new stay; the Hour's voice leaving its turns; the step under another's veil - the world's two doors, the dungeon
 host's answer and the Rift's walk-in kept armed; the veil warmed, and /unstuck in the Hour run from its own text);
@@ -2911,8 +2911,8 @@ host's answer and the Rift's walk-in kept armed; the veil warmed, and /unstuck i
 (`SD11c-L1F2-latched-on-the-refusal`, `SD11c-L1F3-never-judged-where-I-stand`, `SD11c-L6F17-never-kept`,
 `SD11c-L6F17-never-read`, `SD11c-L6F17-unbounded`), `sd11d.json` (`SD11D-the-leave-never-letting-go`), `sd2d.json`
 (`SD2D-never-cast-out`, `SD2D-cast-out-every-frame`), `sd4b.json` (`SD4B-the-word-unasked`). PINS MOVED:
-`test/sd11c_page.test.js` and `test/sd12_onelife.test.js` (the kept slots' harness handed the signed-in account - none:
-the device's), `test/sd11d_words.test.js` (the voice's frame leaves, it no longer clears), `test/tr2_riding.test.js` (CI's second shard
+`test/systems/sd11c_page.test.js` and `test/net/superDungeon/sd12_onelife.test.js` (the kept slots' harness handed the signed-in account - none:
+the device's), `test/scenes/superDungeon/sd11d_words.test.js` (the voice's frame leaves, it no longer clears), `test/systems/tr2_riding.test.js` (CI's second shard
 found it red from SD20d on: "no true-loop source on this channel" read the whole engine, and took SD20d's named beds - a
 looped source, its pitch beside it - for the riding channel; read now on the channel's own code,
 `SD20F-the-riding-channel-looped` its mutant, dead).
@@ -2936,7 +2936,7 @@ its one-step-at-a-time unchanged; `scenes/exterior.js` FLAGGED - the `?exterior`
 | D8 | the Smaller dungeons row said a quest's dungeon keeps its full size | *"a quest keeps the size it was set up at"* - the law (a quest started with the switch on builds small after it is turned off) |
 | D9 | `systems/quest/quest.js`'s stamp comment said "online, Disabled" | the world's sizes (`ONLINE_DUNGEONS_STATE`) |
 
-Pins: `test/sd20g_delve.test.js` (7 - a fall one way at a walk and a run, two to six metres, and walked down it; a step
+Pins: `test/systems/quest/sd20g_delve.test.js` (7 - a fall one way at a walk and a run, two to six metres, and walked down it; a step
 down and a hop filled, its air not; stairs both ways; the hosts handing the motor's fall; the drop kept, once, capped,
 saved and loaded, gone with another layout and a hidden map; the split said as built; an ended quest's item, foe and
 person unmarked; a hundred new cells and one build, the back-off's gaps, the asks paced by the clock and a walled step
@@ -2950,13 +2950,13 @@ Smaller dungeons row); `tools/mutants/sd20g.json` (24, all dead). RE-AIMED BY CO
 `AUDIT-DELVE-C9-no-budget`, `AUDIT-DELVE-C9-the-rest-never-asked`, `AUDIT-DELVE-B2-built-whenever-it-grows`),
 `sd20f.json` (`SD20F-H6-the-step-unseen`, `SD20F-H6-the-way-back-unseen` - the step's read guarded on the object, as
 audit24 wave37's law holds every read above `var modes`), `em3mapchoice.json` (`EM3-TRAIL-kept-across-a-new-layout`,
-`EM3-TRAIL-HideAll-keeps-the-trail` - the drops cleared on the same lines). PINS MOVED: `test/wayout1_wayout.test.js` (new cells attached
+`EM3-TRAIL-HideAll-keeps-the-trail` - the drops cleared on the same lines). PINS MOVED: `test/systems/wayout1_wayout.test.js` (new cells attached
 at once - the way out along them within the second, the field built once; the build counted by `builds()`, the refield
 every WAY_REFIELD_S; the host hands the drops with the teleporters; and its pins on how many steps are asked hold the
 clock - CI's slower runner spent `WAY_ASK_MS` mid-build and asked the rest in the next aim, 98 for 76, so those pins
-read the count alone, and the clock's pace is `sd20g_delve`'s own), `test/tier1_dungeontiers.test.js` (the tier kept by
-place), `test/playerdeath.test.js` and `test/audit39_dungeonshared.test.js` (the bench's and the world's motor state
-carry the fall), `test/ft1_smallerdungeons.test.js` (the Smaller dungeons row's law), `test/features.test.js` (the
+read the count alone, and the clock's pace is `sd20g_delve`'s own), `test/world/tier1_dungeontiers.test.js` (the tier kept by
+place), `test/systems/playerdeath.test.js` and `test/scenes/audit39_dungeonshared.test.js` (the bench's and the world's motor state
+carry the fall), `test/systems/ft1_smallerdungeons.test.js` (the Smaller dungeons row's law), `test/systems/features.test.js` (the
 notes' ceiling, +1).
 
 THE FOUR HOSTS: `scenes/worldModes.js` WIRED (its `motorState` hands the fall under way); `scenes/dungeonContext.js`
@@ -2989,8 +2989,8 @@ court's pattern, never took that rule. Now it has the court's law whole:
 
 No relay change (`world/superDungeon/sdRealm.js` is the page's alone) and nothing in the account service.
 
-Pins: `test/sd21_alone.test.js` (4 - the place, through the real companion layer, the party panel, the word);
-`tools/mutants/sd21_alone.json` (13, all dead). PINS MOVED: `test/sd5a_realm.test.js` (the realm's words carry the
+Pins: `test/scenes/sd21_alone.test.js` (4 - the place, through the real companion layer, the party panel, the word);
+`tools/mutants/sd21_alone.json` (13, all dead). PINS MOVED: `test/world/superDungeon/sd5a_realm.test.js` (the realm's words carry the
 companions' refusal; the Hour's frame says it after the realm's own).
 
 THE FOUR HOSTS: `scenes/world.js` WIRED (the place none in the Hour, the party's cards none there, the word);
@@ -3017,11 +3017,11 @@ Not changed: an interior enemy marker can still stand somewhere only a teleporte
 reachability walk over the collider would answer that, and the navmesh's bake (5-11 s and up to 1.3 GB on the largest
 whole layouts, ENHANCED AI 3b) is no price for every player's Rift; recorded here should a report come.
 
-Pins: `test/sd22_reach.test.js` (7 - no start marker beside the enemy markers; an interior block's first, the
+Pins: `test/world/sd22_reach.test.js` (7 - no start marker beside the enemy markers; an interior block's first, the
 screenshot's layout; which block holds a marker; a Rift somewhere, never none; the host's call unchanged; the way out
 with no door found; the spot outside taken before the player is moved in); `tools/mutants/sd22_reach.json` (13, all
-dead). PINS MOVED: `test/sd4b_rift.test.js` (the candidates: no start markers beside the enemy markers, those placed
-alone when there is none), `test/sd5a_realm.test.js` (the way out of the Hour: its door's landing, else `from`). The gate's records rerun beside them: `wb3b.json` 36 of 37 dead - its
+dead). PINS MOVED: `test/world/superDungeon/sd4b_rift.test.js` (the candidates: no start markers beside the enemy markers, those placed
+alone when there is none), `test/world/superDungeon/sd5a_realm.test.js` (the way out of the Hour: its door's landing, else `from`). The gate's records rerun beside them: `wb3b.json` 36 of 37 dead - its
 `WB3b-the-omen-deaf-to-the-kill` survives on main alone too (main's own gap, not this slice's).
 
 THE FOUR HOSTS: `scenes/dungeonContext.js` WIRED (the end asked over the new candidates - its call unchanged);
@@ -3051,11 +3051,11 @@ Not changed, and why:
   species, and a random marker that draws from it stands under the water the veto asks it to be above.
 - THE COMPANION in maya's picture was stood beside her because she was outside the Hour (SD-ALONE, as designed).
 
-Pins: `test/sd23_sky.test.js` (3 - the world host's own `shiftedDoor`, `sdHollowDoors` and `door` seam read off its
+Pins: `test/world/sd23_sky.test.js` (3 - the world host's own `shiftedDoor`, `sdHollowDoors` and `door` seam read off its
 text, over a streamer shifted 560 m down and a Hollow entrance the real `getStaticDoors` mints: the way out on the
 ground before the door, the raw door 560 m up; the same through the mode machine's own `returnLanding`, its door gone
 where I went in, a Hollow a pixel east by that pixel's translation; the find's door a pixel's width off beside mine);
-`tools/mutants/sd23_sky.json` (4, all dead). PINS MOVED: `test/sd5a_realm.test.js` (`sdHollowDoors` through
+`tools/mutants/sd23_sky.json` (4, all dead). PINS MOVED: `test/world/superDungeon/sd5a_realm.test.js` (`sdHollowDoors` through
 `shiftedDoor` - the old pin held the raw list's text, the defect itself).
 
 THE FOUR HOSTS: `scenes/world.js` WIRED (both of the Hollow's door seams through `shiftedDoor`);
@@ -3092,9 +3092,9 @@ reload). The relay could take a frame that comes during a hello as after it (eac
 keep the hub's ask off the hello's path - a relay change, which moves `RELAY_VERSION`, and its deploy drops every
 connected player once: Mac's call, open.
 
-Pins: the five that sent ahead of a welcome now deliver one and say what waits - `test/online.test.js` (ONLINE1: a pose
-before the welcome held), `test/chat1.test.js` (CHAT1: a line before it held), `test/relayh1.test.js`,
-`test/htwaistnet_peers.test.js` and `test/invisnet.test.js` (the real Room's own welcome handed to the sender);
+Pins: the five that sent ahead of a welcome now deliver one and say what waits - `test/net/online.test.js` (ONLINE1: a pose
+before the welcome held), `test/net/chat1.test.js` (CHAT1: a line before it held), `test/net/relayh1.test.js`,
+`test/net/htwaistnet_peers.test.js` and `test/net/invisnet.test.js` (the real Room's own welcome handed to the sender);
 `tools/mutants/sd24_hello.json` (3 - the gate gone, the hello held by it, the welcome marking nothing - all dead).
 Unpinned beside them: the gate at the pose's halo copies, the last pose, a cell's foes and the realm's own words, the same
 law at each. RE-AIMED BY CONTENT: `tools/mutants/sd6b.json`'s `SD6B-a-turn-from-a-cell` (the Orrery's turn guard grew the
@@ -3132,9 +3132,9 @@ with no game data, through the game's own renderer: every view, the Rift's state
 (`?fight=`, `?collapse=`), the veil at any moment (`?veil=`), the arena's reads (`?fight=pulse|reset|end|stomp|held`), an
 exact eye in the realm's frame (`?rx=`).
 
-Pins: `test/sd25_look.test.js` (S0-S6, every slice's law run from its own code - the shaders through `test/glsl.mjs`),
-`test/sd25_arena.test.js` (S7), `test/sd25_remnant.test.js` (S8), `test/sd25_steps.test.js` (S9),
-`test/sd25_orrery.test.js` (S10), `test/sd25_hang.test.js` (S11); `tools/mutants/sd25_look.json`, `sd25_arena.json`,
+Pins: `test/world/superDungeon/sd25_look.test.js` (S0-S6, every slice's law run from its own code - the shaders through `test/glsl.mjs`),
+`test/world/superDungeon/sd25_arena.test.js` (S7), `test/world/superDungeon/sd25_remnant.test.js` (S8), `test/world/superDungeon/sd25_steps.test.js` (S9),
+`test/world/superDungeon/sd25_orrery.test.js` (S10), `test/world/superDungeon/sd25_hang.test.js` (S11); `tools/mutants/sd25_look.json`, `sd25_arena.json`,
 `sd25_remnant.json`, `sd25_steps.json`, `sd25_orrery.json`, `sd25_hang.json` (all dead). The pins each slice moved are marked PIN MOVED where they stand (the hosts'
 foreign-pass counts, the veil's looks, the Rift's stand and art, the sky's paint).
 
@@ -3200,8 +3200,8 @@ S2's hubs and seats. Deploy notes: S2 and F37 can move a live Hollow's pixel onc
 disagree during the rollout). Also seen and left: the Rift's and the Return's windows draw before `drawFoes`, so a flat
 behind a window can draw over it.
 
-Pins: `test/sd26_net.test.js`, `test/sd26_render.test.js`, `test/sd26_dungeon.test.js`, `test/sd26_audio.test.js`,
-`test/sd26_text.test.js`; `tools/mutants/sd26_net.json`, `sd26_render.json`, `sd26_dungeon.json`, `sd26_audio.json`,
+Pins: `test/net/superDungeon/sd26_net.test.js`, `test/world/superDungeon/sd26_render.test.js`, `test/world/sd26_dungeon.test.js`, `test/scenes/superDungeon/sd26_audio.test.js`,
+`test/ui/gate/sd26_text.test.js`; `tools/mutants/sd26_net.json`, `sd26_render.json`, `sd26_dungeon.json`, `sd26_audio.json`,
 `sd26_text.json` (all dead). The pins each fix moved are marked PIN MOVED (AUDIT SD IV) where they stand, and every
 mutant record a fix moved was re-aimed by content and run again (all dead).
 
@@ -3236,7 +3236,7 @@ Measured as L2 F9 measures (a child, a 64 MB young space, the least of six windo
 frame (the air 0.3). Not fixed (the cut): the fight bar's and the voice's ~2.4 KB a frame, a hidden tab's Concord
 replayed whole on return, and the other unverified findings kept with the audit's notes.
 
-Pins: `test/sd27_audit.test.js`; `tools/mutants/sd27_audit.json` (23, all dead - with the moved killers in
+Pins: `test/scenes/sd27_audit.test.js`; `tools/mutants/sd27_audit.json` (23, all dead - with the moved killers in
 `sd25_look`, `sd25_orrery` and `sd25_steps`). The pins each fix moved are marked PIN MOVED (AUDIT SD V) where they stand,
 and the mutant records a fix moved were re-aimed by content and run again (all dead).
 
@@ -3296,10 +3296,10 @@ Said so, not changed: a fall told after the hub already posted the fade (its tel
 AUDIT SD II, L3 F4) moves the record to `fell`, but the herald has posted that slot's end, so the channel keeps the
 fade. The grace exists so that this is rare; posting a correction would need a fifth post for one race.
 
-Pins: `test/sdherald.test.js` (10 - the names, each post, what is owed through a Hollow's life, the hub over the real
+Pins: `test/net/superDungeon/sdherald.test.js` (10 - the names, each post, what is owed through a Hollow's life, the hub over the real
 Room with Discord stubbed, no webhook, the door and the order by source); `tools/mutants/sdherald.json` (34, all dead).
 PIN MOVED: RELAY_VERSION's pin in 37 files, disc7's list of versions, soc1.json's S38-version-not-bumped (world186),
-relayversion's bundle graph, and `test/sd3_relay.test.js`'s pin on the hub's alarm (the herald after the director's
+relayversion's bundle graph, and `test/net/sd3_relay.test.js`'s pin on the hub's alarm (the herald after the director's
 beat); two records re-aimed by content - `discordgates.json`'s door (the door holds `sdRole` too) and `serpent2.json`'s
 beat off the alarm (the alarm line ends with this herald's beat) - both lists and `sd3.json` run again, all dead.
 

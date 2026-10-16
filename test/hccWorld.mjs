@@ -1,6 +1,6 @@
 // HCC: THE RUNTIME'S FAKE HOST - a flat world at y = 0 around a player who walks and mounts, the eight settings at
-// their defaults, the hotkeys, the windows' questions. One home for test/hcc_runtime.test.js and the branch audit's
-// pins (test/audit_hcc_branch.test.js). `w.noGround` takes the ground away (a spot the probe cannot hit yet); `w.ground`
+// their defaults, the hotkeys, the windows' questions. One home for test/systems/horse/hcc_runtime.test.js and the branch audit's
+// pins (test/scenes/audit_hcc_branch.test.js). `w.noGround` takes the ground away (a spot the probe cannot hit yet); `w.ground`
 // is its height, `w.slope` a side slope in degrees (WAGON-HITCH's audit). `presentation` stands a real pool's in for the
 // fake parts (WAGONS2: Mac's wagons, as the pool mints them).
 import { createHorseCartRuntime } from '../src/systems/horse/horseCart.js';

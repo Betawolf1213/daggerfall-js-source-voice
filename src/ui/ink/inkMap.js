@@ -121,7 +121,7 @@ export const QUARTER_INK_A = 0.95;
  * taste. Laid over the parchment, the four washes must stay far enough
  * apart that a player can tell a tavern from a house at a glance, and
  * the four inks the same while each stays dark enough to letter with -
- * `test/townsheet.test.js` puts every pair through CIE76 and holds
+ * `test/ui/ink/townsheet.test.js` puts every pair through CIE76 and holds
  * these floors.
  *
  * The first cut sat at 0.30 and the tightest pair - the tavern's green
@@ -168,7 +168,7 @@ export const quarterInk = (c, mix = QUARTER_INK_MIX) => rgba(mixRgb([c.r, c.g, c
  * clears EM7's paper floor (QUARTER_INK_PAPER_DE) at it - the city's
  * pale tan binds, 45.5 at 0.58 and 44.9 at 0.57 - and every step past it
  * toward the pen spends the hue that tells the kinds apart.
- * test/fb0929d_mapkey.test.js measures both on the player's own
+ * test/ui/fb0929d_mapkey.test.js measures both on the player's own
  * FMAP_PAL.COL (the colours are ARENA2 data: nowhere else to measure).
  */
 export const MARK_INK_MIX = 0.58;

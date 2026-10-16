@@ -5,7 +5,7 @@
     "old": "        case 'gettingQuests': return [{\n          rows:",
     "new": "        case 'gettingQuests': return [];\n        case '__never': return [{\n          rows:",
     "tests": [
-      "test/gql1.test.js"
+      "test/systems/quest/gql1.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "        case 'pickQuest': return [{\n          picker:",
     "new": "        case 'pickQuest': return [];\n        case '__never2': return [{\n          picker:",
     "tests": [
-      "test/gql1.test.js"
+      "test/systems/quest/gql1.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "        case 'gettingQuests': return [{",
     "new": "        case 'gettingQuestsX': return [{",
     "tests": [
-      "test/gql1.test.js"
+      "test/systems/quest/gql1.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "          rows: step.textLines.map((line) => expandMacroValues(line, { pcf: firstName(ctx.playerEntity?.name ?? '') })),",
     "new": "          rows: step.textLines,",
     "tests": [
-      "test/gql1.test.js"
+      "test/systems/quest/gql1.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "{ pcf: firstName(ctx.playerEntity?.name ?? '') }",
     "new": "{ pcf: ctx.playerEntity?.name ?? '' }",
     "tests": [
-      "test/gql1.test.js"
+      "test/systems/quest/gql1.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "          onClick: () => this.offerBoxes(step.onClose(), rows),",
     "new": "          onClick: () => [],",
     "tests": [
-      "test/gql1.test.js"
+      "test/systems/quest/gql1.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "          onPick: (index) => this.offerBoxes(step.onPick(index), rows),",
     "new": "          onPick: (index) => { step.onPick(index); return []; },",
     "tests": [
-      "test/gql1.test.js"
+      "test/systems/quest/gql1.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "          onPick: (index) => this.offerBoxes(step.onPick(index), rows),",
     "new": "          onPick: (index) => this.offerBoxes(step.onPick(index + 1), rows),",
     "tests": [
-      "test/gql1.test.js"
+      "test/systems/quest/gql1.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "          picker: step.entries,",
     "new": "          picker: [],",
     "tests": [
-      "test/gql1.test.js"
+      "test/systems/quest/gql1.test.js"
     ]
   }
 ]

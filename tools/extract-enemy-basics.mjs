@@ -7,7 +7,7 @@
 //
 // AUDIT 24 (wave 23): the extraction itself now lives in
 // extractEnemyBasics.lib.mjs as a pure function, so the SAME code the
-// gate in test/audit24_enemytable.test.js runs is the code that writes
+// gate in test/systems/audit24_enemytable.test.js runs is the code that writes
 // this file. A column the extraction never looked at used to be
 // invisible from both sides - see the library header.
 import { readFileSync, writeFileSync } from 'node:fs';

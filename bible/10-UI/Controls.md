@@ -7,7 +7,7 @@ This page is the standard. The code that holds it is `src/systems/inputActions.j
 `DEFAULT_BINDINGS`, `ACTION_GROUPS`, `MOD_ACTIONS`, `HIDDEN_ACTIONS`, `actionLive`, `migrateKeyBinds`),
 `src/ui/input.js` (the readers every key goes through), and the three controls windows (the enhanced pane
 `src/ui/enhanced/enhancedControls.js`, the classic grid `src/ui/controlsWindow.js` and its ADVANCED popup
-`src/ui/mouseControlsWindow.js`). The laws are pinned by execution in `test/kb1_keybinds.test.js`; the Ledger A row
+`src/ui/mouseControlsWindow.js`). The laws are pinned by execution in `test/ui/kb1_keybinds.test.js`; the Ledger A row
 THE KEYBINDING STANDARD records every departure from DFU's table.
 
 ## The six laws
@@ -44,7 +44,7 @@ THE KEYBINDING STANDARD records every departure from DFU's table.
    for when it is switched back on. A mod that takes effect when the game next loads (Come Sail Away, Travel
    Options) answers as its host latched it at mount - switched off mid-game, its keys work until the next load, as
    its runtime does (AUDIT PRE-MERGE 0928 U7, `modSettings.js` latchModLoaded). No gameplay code reads a bound key by its raw code except the reservations the
-   sweep in `test/kb1_keybinds.test.js` names with their reasons (the back-button latch, Alt's preventDefault, the
+   sweep in `test/ui/kb1_keybinds.test.js` names with their reasons (the back-button latch, Alt's preventDefault, the
    travel panel's help, a talk window's confirm alias, the developer fly-cam).
 6. **Tests hold it, and old saves come forward.** The file carries `version: 3` (MODE-WHEEL: a version-2 file lets
    Left Alt go where it still holds Sneak, so the mode wheel lands there - Ledger A's CROUCH-SNEAK + MODE-WHEEL row).
@@ -232,8 +232,8 @@ Options' bar) hides it. It spends NO key of its own and adds no binding.
 ## AUDIT KB1 (2026-09-24, Mac: "Audit this before we merge")
 
 Three lenses over the standard - the registry and the carry, the windows and the pad and the chat, the scene hosts -
-found seventeen things; every one is paid and pinned by execution in `test/kb1_audit.test.js` (the pane's Escape in
-`test/enhancedControls.test.js`). The ones that change what a player meets:
+found seventeen things; every one is paid and pinned by execution in `test/ui/kb1_audit.test.js` (the pane's Escape in
+`test/ui/enhanced/enhancedControls.test.js`). The ones that change what a player meets:
 
 - **The carry's order** (above, law 6): a torch key saved as E no longer takes E from Interact; an old Travel
   Options key, the mod off, no longer takes the torch's G; a lost key is said, not silent.
@@ -283,7 +283,7 @@ the wagon deposits it. Port-Ledger A, SHIFT AND A CLICK STOW THE WHOLE STACK.
 
 ## The defaults
 
-Generated from `ACTION_GROUPS` and the two default tables; the enhanced pane draws exactly these groups. Held so by `test/audit0928_input.test.js` (AUDIT PRE-MERGE 0928 D2: the Come Sail Away table had shown two of its nine rows).
+Generated from `ACTION_GROUPS` and the two default tables; the enhanced pane draws exactly these groups. Held so by `test/systems/audit0928_input.test.js` (AUDIT PRE-MERGE 0928 D2: the Come Sail Away table had shown two of its nine rows).
 
 ### Movement
 

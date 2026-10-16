@@ -571,8 +571,8 @@ export function pointFaceMatrices(pos, far, out) {
 const _faceProj = new Float32Array(16), _faceView = new Float32Array(16);
 /** PERF-ALLOC1: world/mat4.js lookAt written into `out` (a Float32Array(16)), the centre as three numbers - its
  *  arithmetic in its order, so its floats; nothing allocated. HERE and not in mat4.js: mat4.js is in the relay's bundle
- *  (test/relayversion.test.js RELAY_GRAPH), and a byte of it changed is a relay deploy - the client's own scratch twin
- *  costs the relay nothing. test/perfalloc1.test.js holds it to mat4.js's lookAt to the bit. */
+ *  (test/net/relayversion.test.js RELAY_GRAPH), and a byte of it changed is a relay deploy - the client's own scratch twin
+ *  costs the relay nothing. test/render/perfalloc1.test.js holds it to mat4.js's lookAt to the bit. */
 export function lookAtInto(out, eye, cx, cy, cz, up) {
   const zx = eye[0] - cx, zy = eye[1] - cy, zz = eye[2] - cz;
   const zl = Math.hypot(zx, zy, zz);
@@ -813,7 +813,7 @@ float sunCascadeTap(int c, vec3 wp, vec3 n, bool soft, float h) {
   // sub-texel fraction (8 bits on the players' D3D11-class cards), and the
   // four taps quantise other fractions than the nine did - under a 255th
   // of the sun's light, in a penumbra only (0.93 of one at worst over the
-  // provers' random maps; test/perfexta.test.js's twin holds it under
+  // provers' random maps; test/render/perfexta.test.js's twin holds it under
   // one), 2 of 518,400 pixels by one step on SwiftShader.
   // Five fetches a fragment gone: every flat by day, and every lit
   // fragment of the near cascades.
@@ -1472,7 +1472,7 @@ export class ShadowPass {
     }
     let s = exact ?? best;
     // AUDIT PERF-INST: a full memory is the filed path's - this scan runs at SHADOW_INSTANCE_LINEAR placements or fewer,
-    // under the cap (test/perfinst.test.js holds the two apart), so a draw it finds nothing for is a new placement
+    // under the cap (test/render/perfinst.test.js holds the two apart), so a draw it finds nothing for is a new placement
     if (!s) {
       inst.push({ m: new Float32Array(matrix), at: null, seen: this.frameNo, ord: inst.length, key: NaN, filed: false });
       if (inst.length > SHADOW_INSTANCE_LINEAR) _fileAll(o, this._shiftNow);   // PERF-INST: past the scan's count - filed from here on

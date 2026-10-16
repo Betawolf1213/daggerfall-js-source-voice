@@ -30,7 +30,7 @@
 // rollout in both lanes; this window is the mod's LEVEL-UP alone.
 //
 // ── THE ONE HOME ──────────────────────────────────────────────────
-// a11's law (test/advancementui.test.js) is that the Level++ and the
+// a11's law (test/systems/advancementui.test.js) is that the Level++ and the
 // health roll live in ONE place and never in a window. They do here
 // too: this screen owns the cursor and the keys, and
 // systems/oblivionLeveling.js's commitVirtueLevelUp owns the change.

@@ -393,7 +393,7 @@ pixel), its outputs two class instances filled in place, its step and the view f
 marks' and the chip's empty lists are one frozen list. A moment allocates at the moment, never a frame: its place, a
 burst into the impact engine's one pass (at most 39 sparks - Ground Slam's; a Volley arrow's 5 - up to three rings and
 one light, under the engine's own caps), a sound, and a Volley's six landing lines cast once at its loose.
-`test/techfx1.test.js` measures the frame (L2 F9's measure, the least of six windows in a child with a 64 MB young
+`test/systems/techfx1.test.js` measures the frame (L2 F9's measure, the least of six windows in a child with a 64 MB young
 space, against a control that must show) - at rest: the springs' step, the fold, the lens, the sky's pitch, the
 hands, the hosts' own marks call, the chip with nothing in hand, the runner's frame with a technique in hand and with
 its cooldown running, the chip ready and recovering, the technique key's held poll; with all five springs in flight:
@@ -452,7 +452,7 @@ swing its techniques and say "Not here." for the rest; none of the four is such 
   version (`loot.js` `validLootList`'s own message), and the account service's judge must know the law - so the item
   law's version 2 moved `ACCOUNT_VERSION` to acct108 (acct105 on this branch, then acct106 and acct107 - renumbered past THE INTEGRITY ARC lane 3's acct105 at the #745 merge, SCALE4d's acct106 at the #755 merge and LW15's acct107 at the #749 merge), and a site deploy waits for that service (AUDIT TECH1; a law moved
   without it ships the site first, and an honest technique piece reads as a forgery - a hold and a strike - in the gap).
-  `test/tech1_roster.test.js` holds each law version to the first service that carries it.
+  `test/systems/tech1_roster.test.js` holds each law version to the first service that carries it.
 - **What a referee counts.** The arena's and the court's referees count a blow by its sequence. A Piercing Shot is one
   shaft and one blow to both: the court's `blowQ` keeps a blow's sequence until a body repeats, and the arena's lane
   gives a piercing shaft's later bodies its first one's (`arrowFlight.js` `shaftSequence`, while that is still the
@@ -487,7 +487,7 @@ the real collider. What they found, and what was done:
 | finding | severity | done |
 | --- | --- | --- |
 | The outdoor ground was invisible to every aim: `raycast` meets meshes alone, and outdoors the ground is the collider's terrain sampler - a Volley outdoors, a ground leap, answered "Out of reach" (the tests' fake collider let its ray meet the ground) | blocker | `rayHit` marches the terrain; THE GROUND OUTDOORS on the real Collider |
-| `ACCOUNT_VERSION` did not move with the item law: a site deploy could ship before the judge that knows a technique line, and an honest piece read as a forgery (a hold, a strike) | blocker | acct108 (acct105 until the #745 merge renumbered it past INT11-INT14's, acct106 until the #755 merge renumbered it past SCALE4d's, acct107 until the #749 merge renumbered it past LW15's); the law-to-service pin (`test/tech1_roster.test.js`) |
+| `ACCOUNT_VERSION` did not move with the item law: a site deploy could ship before the judge that knows a technique line, and an honest piece read as a forgery (a hold, a strike) | blocker | acct108 (acct105 until the #745 merge renumbered it past INT11-INT14's, acct106 until the #755 merge renumbered it past SCALE4d's, acct107 until the #749 merge renumbered it past LW15's); the law-to-service pin (`test/systems/tech1_roster.test.js`) |
 | Shadowstep turned the view from mid-dash, so the body landed behind the foe looking away, and its 'view' blow struck nothing - its price paid; its `target` was read by nothing | major | the turn from the landing (`face(point, from)`); a target's blow is the target's alone |
 | A leap under a ceiling turned back at it and landed metres short (2.8 m: a 9 m leap came down at 3.75 m) | major | `flightApex` lowers the apex to fit, or refuses with "No room to leap." |
 | A click in the air (or the touch Attack button) started a plain swing, and the landing's strike had no machine to start on | major | no gesture and no touch swing while `techniqueFlying()` |
@@ -510,13 +510,13 @@ a finding outside this change (`test/importGraph.mjs` - fixed there). The corpse
 it (the street's sigil stamps and death rolls) draw later in their stream by the technique pass's draws, as the socket
 pass already made them - the kit's own pieces are what they were (law 9).
 
-**Tests** `test/tech1_audit.test.js` (11 at the audit, 13 after THE FOLLOW-UP) - one a finding, on the real classes; the outdoor ground in
-`test/tech1_runner.test.js` THE GROUND OUTDOORS. **Mutants** 39 audit records in `tools/mutants/tech1.json`, all dead (the
+**Tests** `test/systems/tech1_audit.test.js` (11 at the audit, 13 after THE FOLLOW-UP) - one a finding, on the real classes; the outdoor ground in
+`test/systems/tech1_runner.test.js` THE GROUND OUTDOORS. **Mutants** 39 audit records in `tools/mutants/tech1.json`, all dead (the
 first run left the walled shaft alive: its test's flat ceiling was the one the middle's ray already saw - a beam over
 part of the disc kills it). `TECH1-the-cap-past-the-referee` (16 m/s raised past the siege's 18) is retired: the cap is 12
 now, and `TECH1-AUDIT-the-run-past-the-arena` (12 raised to 16) is the stricter record on the same line. Re-aimed by content, their laws unchanged: `fb1009g_bowclock.json` (the gesture's gate
 carries the flight's), `gatekeys.json` and `fb1004d_knight_house.json` (acct105, then acct106 at the #745 merge, acct107 at the #755 merge and acct108 at the #749 merge), and this list's own `TECH1-the-turn-unmade`
-(the turn now takes the landing point). One pin moved, marked `PIN MOVED (AUDIT TECH1)`: `test/mwattackclip.test.js`
+(the turn now takes the landing point). One pin moved, marked `PIN MOVED (AUDIT TECH1)`: `test/formats/morrowind/mwattackclip.test.js`
 MW-D12 reads the gesture's gate with the flight's term (no line around it could carry the term without breaking the
 pin's own shape).
 
@@ -534,8 +534,8 @@ What the audit had left, and what it found outside this change, each decided:
 | `loot16.json` LOOT16-a-row-of-nothing, surviving on main | recorded `equivalent` with its reason: three drawback rows fit every piece, so the filter it removes is never empty |
 | Other players do not see a Volley's falling shafts or the marks (TECH2) | not in this change: it needs a wire field and a relay version bump - its own slice |
 
-Tests: THE ONE SHAFT and THE REFORGE'S WORD in `test/tech1_audit.test.js`; the court's `find`s and the lane's sequence in
-`test/tech1_hosts.test.js`. Mutants: six more in `tools/mutants/tech1.json` (the shaft each body, the newest unasked, the
+Tests: THE ONE SHAFT and THE REFORGE'S WORD in `test/systems/tech1_audit.test.js`; the court's `find`s and the lane's sequence in
+`test/scenes/tech1_hosts.test.js`. Mutants: six more in `tools/mutants/tech1.json` (the shaft each body, the newest unasked, the
 lane unsequenced, a struck crystal and a struck host in the way, the word left off), all dead; IMPORT-GRAPH1's six in
 `tools/mutants/importgraph1.json`, all dead.
 
@@ -544,7 +544,7 @@ lane unsequenced, a struck crystal and a struck host in the way, the word left o
 Five lanes read THE FEEL against the running code, not its tests: the moments and the runner's state, the view and the
 screen in every host, the bursts, shakes and sounds in all four hosts, the frame's cost and the tests' strength, and
 the doctrine and the records. Every finding below was reproduced before it was fixed, and each fix is pinned
-(`test/techfx1_audit.test.js`, one test a finding, and `test/techfx1.test.js`) and mutated (`tools/mutants/techfx1.json`).
+(`test/systems/techfx1_audit.test.js`, one test a finding, and `test/systems/techfx1.test.js`) and mutated (`tools/mutants/techfx1.json`).
 
 | finding | what was wrong | now |
 | --- | --- | --- |
@@ -590,7 +590,7 @@ Four lanes read the newest part, The card's block, against the running game, and
 card's code on every surface an item's lines reach, its look at four screen sizes and every Plus theme (Chromium, the
 pack's own cards, measured before and after against the tree it was built on), the patch notes and the page against the
 source, and the tests against mutants applied in a worktree. Every finding was reproduced before it was fixed; each fix
-is pinned in `test/techcard1.test.js` and mutated (`tools/mutants/techcard1.json` - 275 records run on the files it
+is pinned in `test/ui/techcard1.test.js` and mutated (`tools/mutants/techcard1.json` - 275 records run on the files it
 touched: 274 dead, 1 equivalent as recorded). main (#752 PERF-PRIORITY, #754 BENCH-CAM + YARDS-FOUND) was merged in
 first.
 
@@ -621,23 +621,23 @@ Gauntlets' Flying Kick and Haymaker) - every technique a press away.
 
 ## Tests
 
-- `test/tech1_roster.test.js` (9) - the roster, the families (an arrow and a pellet none), the numbers and the card's
+- `test/systems/tech1_roster.test.js` (9) - the roster, the families (an arrow and a pellet none), the numbers and the card's
   words; the line (appended last, in no pool, no slot, its params, its label, a name it never gives); ADD (the band, the
   worth, before a gem's, one at most, another family refused); the door's LAST draw (every door with the pass off and
   on, piece for piece, over seeds; the corpse kit); the Reforge, the Hone, the Exalted; the card (a Legendary's line in
   the Legendary band); the item law (every honest shape lawful, each forgery named); the Test Room.
-- `test/tech1_runner.test.js` (16) - the refusals in order and their words, asked again at the release; the aim and its
+- `test/systems/tech1_runner.test.js` (16) - the refusals in order and their words, asked again at the release; the aim and its
   marks; a swing's blow on the real PlayerWeapon (the formula's damage times the multiplier, the arc, single, the
   wounded share, a player's body passed); a Volley's queue, its spend, a shot's tally a shaft, and its fall; a Piercing
   Shot; the leap on the real PlayerMotor (lands on its aim, air control does not steer it); the cooldown and its line;
   the aim set aside (the Activate press; a door crossed mid-aim, the next rig holding the same weapon; another rig
   mid-swing); THE LOOSE HELD (the Morrowind arm's held hit); THE GROUND OUTDOORS (on the real Collider).
-- `test/fb1015_kickair.test.js` (5) - KICK-AIR on a real PlayerMotor over a real Collider through the press, the hold
+- `test/systems/fb1015_kickair.test.js` (5) - KICK-AIR on a real PlayerMotor over a real Collider through the press, the hold
   and the release: the kick from a jump (the same blow and landing as from the ground, the foe struck), pressed on the
   ground and let go in the air, the other leaps and dashes refused in the air, the kick's other refusals (the saddle, a
   slow fall, the water, a levitation), and no feather fall (a 7 m ledge's fall kept). Mutants
   `tools/mutants/fb1015_kickair.json` (9, all dead).
-- `test/tech1_hosts.test.js` (4) - the action, its key and its rows; the rig's order, its held-hit flag; THE FOUR HOSTS,
+- `test/scenes/tech1_hosts.test.js` (4) - the action, its key and its rows; the rig's order, its held-hit flag; THE FOUR HOSTS,
   swept from the source (each host's door, and each ground pass's marks call right after its foes'); the dungeon lane;
   the mark's own size in the pass; the world host's chip seam and recentre, the HUD's colour, the side buttons' guard.
 - `test/honestItems.mjs` - the honest-producers sweep forces a technique on every weapon and Gauntlets through every
@@ -646,10 +646,10 @@ Gauntlets' Flying Kick and Haymaker) - every technique a press away.
 - Mutants `tools/mutants/tech1.json` (70 at TECH1, all dead; AUDIT TECH1 retired one and added 39 - 108; THE FOLLOW-UP added 6 - 114). The first run left five alive, and each was a gap: a Legendary's
   band on the card, a door crossed mid-aim, a shaft's tally, the release's second asking (four pins added), and an
   ammunition check that could never change an answer (an arrow and a pellet swing with no skill), deleted.
-- `test/techfx1.test.js` (13) - THE FEEL: the table read as the peaks the screen reaches, the springs, comfort, every
+- `test/systems/techfx1.test.js` (13) - THE FEEL: the table read as the peaks the screen reaches, the springs, comfort, every
   moment on the real runner in the rig's own frame order on the motor's typed feet, the camera's channel, the hands'
   dip, the thirteen bursts, the four hosts' doors, the setting, and the frame's allocation at rest and in flight.
-- `test/techfx1_audit.test.js` (7) - AUDIT TECH-FX, one test a finding: the motor's feet, the arm's dip, the roll on the
+- `test/systems/techfx1_audit.test.js` (7) - AUDIT TECH-FX, one test a finding: the motor's feet, the arm's dip, the roll on the
   screen, the hit off the machine, a recentre in flight, the chip and the key (and the held poll's index), the offset
   in place and the one speed.
 - Mutants `tools/mutants/techfx1.json` (54 at TECH-FX, all dead; AUDIT TECH-FX re-aimed 14 by content and added 29 -
@@ -659,7 +659,7 @@ Gauntlets' Flying Kick and Haymaker) - every technique a press away.
   survivor (the exported marks call's fresh list, unmeasured once the hosts' call short-circuited before it) is pinned
   and dead. `tech1.json`'s five records on the rig's context and the load, and `uxb1.json`'s two on the held poll, were
   re-aimed by content.
-- `test/techcard1.test.js` (10) - TECH-CARD: the parts and the line they make; the view (and where it is null, and the
+- `test/ui/techcard1.test.js` (10) - TECH-CARD: the parts and the line they make; the view (and where it is null, and the
   band with a gem's line after it); the tier list's `technique: false`, exactly the block's line; the block in both
   dresses on the fake document (the key, no key, a press, a duel in both, the words as literals); the glyph's pixels,
   its blue and its place in the block; the pack's hover card, detail card and Info box, executed on a sigil weapon (the
@@ -695,7 +695,7 @@ pass's castSpeed line), and in `loot16_curses`, `loot20_sockets`, `loot21_stones
 `lr1_lootrarity` both arcs' moves together (`cards9_sources` reads the gem arc's passes after the card, as the gem arc
 moved it). `TECH1-the-pass-before-the-late-finds` is re-aimed as `TECH1-the-pass-before-the-gem-find`.
 **Merging FIELD BUGS 2026-10-10 (#743).** TRUE-CURSE's `damnPass` is another last draw at the host door and the corpse
-kit, so the technique pass follows it too, and `test/fb1010_truecurse.test.js` reads it there (`PIN MOVED (TECH1)`: the
+kit, so the technique pass follows it too, and `test/systems/fb1010_truecurse.test.js` reads it there (`PIN MOVED (TECH1)`: the
 two doors' source pins, and the Test Room's damned weapon last but the twelve technique pieces). The order record is
 re-aimed as `TECH1-the-pass-before-the-damning`; the first run left it alive (a door's seeds seldom made a cursed
 Legendary weapon, so the damning seldom drew), and THE DOOR now forces the curse over 399 seeds and holds every piece,
@@ -704,7 +704,7 @@ is rolled after its damning, lawful. The Reforge's
 Exalted line on a Legendary counts back from the gems' lines (GEM1) and then past a technique's (TECH1).
 The ledger row, set at the foot of section A, moved sections B, C and D down one line: their line cites were
 re-resolved by `tools/citeShift.mjs` (and the numbered and inline `:NNN` identifiers of Port-Status section 2 by hand,
-with section A's tally, now 300 rows) - `test/citedrift.test.js` CD1, CD3 and CD5.
+with section A's tally, now 300 rows) - `test/scenes/citedrift.test.js` CD1, CD3 and CD5.
 
 **Kept as they were.** Every other arc's pinned line stands byte for byte: the foes' telegraph call in each host, the
 quad's uniforms, the dungeon lane's boss, rival, crystal, host and companion lines, the HUD's set-power chips and their

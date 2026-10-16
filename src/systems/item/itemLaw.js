@@ -19,7 +19,7 @@
 // ═══ A FINDING IS A PROOF, NEVER A GUESS ═══════════════════════════
 //
 // A finding holds a character's trade (the hold, judge.js) and refuses a piece on the wire, so the law carries only
-// rules every honest producer keeps - pinned by test/int1_itemlaw.test.js, which mints through the producers
+// rules every honest producer keeps - pinned by test/systems/item/int1_itemlaw.test.js, which mints through the producers
 // themselves (the loot doors, the spoils, the Broker's days, the item maker, the Aetheric and Gilded records, the
 // Reforge's hone and reforge, the curse and socket passes) and asserts no finding on any of it. Where the port carries a
 // legacy shape (a Regalia's fire at 50, a Broker ware sold before its binding, a classic save's raw words) the law
@@ -114,7 +114,7 @@ const CLASSIC_GROUPS = (() => {
 })();
 /** THE PORT'S OWN TEMPLATES' GROUPS. A custom row carries no group (registerCustomTemplates takes none): the producer
  *  writes it. Every index not named here is UselessItems2's - the custom items' own group. Pinned by the producer sweep
- *  (test/int1_itemlaw.test.js): every custom index a producer mints, in the group it mints it in. */
+ *  (test/systems/item/int1_itemlaw.test.js): every custom index a producer mints, in the group it mints it in. */
 export const CUSTOM_TEMPLATE_GROUPS = Object.freeze({
   Weapons: Object.freeze([513, 514, 560, 561]),
   Armor: Object.freeze([515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526]),
@@ -132,7 +132,7 @@ export function templateGroups(/** @type {number} */ i) {
 /** The armour materials a piece may carry: leather, chain (and the classic second chain), the ten plates. */
 const ARMOR_MATERIALS = Object.freeze([0x0000, 0x0100, 0x0103, 0x0200, 0x0201, 0x0202, 0x0203, 0x0204, 0x0205, 0x0206, 0x0207, 0x0208, 0x0209]);
 /** The poisons a foe's blade carries (poisons.js POISON_START_VALUE and its eight - pinned equal by
- *  test/int1_itemlaw.test.js: the Worker bundles no poisons.js, whose diseases ride with it), or none (-1). */
+ *  test/systems/item/int1_itemlaw.test.js: the Worker bundles no poisons.js, whose diseases ride with it), or none (-1). */
 const LAW_POISON_FIRST = 128, LAW_POISON_LAST = 135;
 /** The souls a trap may hold: a monster's (enchantmentCatalogue SOUL_COUNT, EnemyBasics' first 43) and a person's - DFU's
  *  kill door traps any foe's mobile id (mysticism.js attemptSoulTrap; only Azura's Star asks `< 128`), a guard's and a
@@ -416,7 +416,7 @@ const classicSlots = (/** @type {any[]} */ rows) => rows.length === 10 && rows.s
 // as DFU reads it: 36 regular magic items, each ONE enchantment, and 23 artifacts, each a fixed set. The port reads the
 // player's own MAGIC.DEF (shared.js loadMagicRegistries), which DFU's fixes may differ from in a row's PARAM - never in
 // the rows' kinds or their count - so the law holds the kinds and the counts, and leaves the params to the catalogue's
-// range. Pinned to the file's rows by test/int1_itemlaw.test.js.
+// range. Pinned to the file's rows by test/systems/item/int1_itemlaw.test.js.
 
 /** The kinds a regular magic item's one row is (every RegularMagicItem row of the table). */
 export const REGULAR_MAGIC_TYPES = Object.freeze([T.CastWhenUsed, T.CastWhenHeld, T.CastWhenStrikes, T.VampiricEffect, T.AbsorbsSpells, T.EnhancesSkill]);

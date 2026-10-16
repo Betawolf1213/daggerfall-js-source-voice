@@ -100,7 +100,7 @@ THE FIX: the record a move makes is stamped with the layout the new house's town
 move's stamp. worldModes.js reads the stamp and the crate through restoreInteriorScene, unchanged. exterior.js runs no
 move: the fixed city stands no save's records. dungeonContext.js has no house.
 
-**Pinned.** `test/fb1007_homewipe.test.js` (4, new):
+**Pinned.** `test/systems/fb1007_homewipe.test.js` (4, new):
 
 - the field's sequence through the real moveArenaHomes - two lost reads, four boots - with every save those boots wrote
   holding the new home whole, and the visit after finding it;
@@ -110,5 +110,5 @@ move: the fixed city stands no save's records. dungeonContext.js has no house.
 - the online host, by source.
 
 `tools/mutants/fb1007_homewipe.json` (12, all dead), the shipped block restored among them (three tests fail). Re-aimed
-by content: test/arena4b_homeclient.test.js's host pin (the call carries the stamp now) and
+by content: test/systems/arena/arena4b_homeclient.test.js's host pin (the call carries the stamp now) and
 `tools/mutants/arena2.json` ARENA2-MARKS-KEPT (dead).

@@ -96,13 +96,13 @@ the press, as any foe there does. A companion on a boat's deck with her hull ins
 which answers (its plaque lights her verbs) - except under sail, where a hull press does nothing; a look past the hull
 reaches him. The street's person reach is the plaque's 6.4 in every mode (Steal's pickpocket refuses past 3.2).
 
-PINS MOVED. `test/hard2_activationrace.test.js` (HARD2's call shape) and `test/audit66_handheldtorches.test.js` (F7's
+PINS MOVED. `test/scenes/hard2_activationrace.test.js` (HARD2's call shape) and `test/systems/audit66_handheldtorches.test.js` (F7's
 source half): both exterior hosts hand the race `door: modes.exteriorActivationHit(cam.pos, useFwd)`, still one pick
-of the door set a press. `test/audittact.test.js` C5: the assertion stands (the door pass is still never his); its
-words now say his yield is ALLY-YIELDS'. `test/audit63_guilds_court.test.js` (AUDIT 65 HP-2/HP-3) lifts the world
+of the door set a press. `test/scenes/audittact.test.js` C5: the assertion stands (the door pass is still never his); its
+words now say his yield is ALLY-YIELDS'. `test/systems/audit63_guilds_court.test.js` (AUDIT 65 HP-2/HP-3) lifts the world
 dungeon's arm out of the source and runs it over the names it reads: it hands `_pick` too (none there).
 
-Pinned by `test/fb1012d_allyyields.test.js` (7): the companion stood by the real layer (`createCrewAshore`), the body
+Pinned by `test/scenes/fb1012d_allyyields.test.js` (7): the companion stood by the real layer (`createCrewAshore`), the body
 laid by the pool's producer (`corpseLootTargets`), through the real picks - a body, a helm, a door, a static NPC and a
 townsperson each in and past its reach; a hostile foe and a watchman still the hit; another player's companion
 yields, another player's team never takes it; every mode; the plaque swept against the press (every answer the same);
@@ -135,8 +135,8 @@ THE OWNER'S CALL, recorded: whether a FOUND piece of DFU magic should break for 
 the loot doors as found and lets only those break (every piece held today, the reporter's among them, still refused);
 marking the shelves' pieces instead would let every unmarked piece held today break, bought ones included - a leak.
 
-PIN MOVED: `test/loot9_reforge.test.js` (the card's source line) and its mutant `LOOT9-card-salvages-the-worn`, re-aimed.
-Pinned by `test/fb1012d_salvageclassic.test.js` (4), every fixture the real producer's (the reported dagger from
+PIN MOVED: `test/systems/loot9_reforge.test.js` (the card's source line) and its mutant `LOOT9-card-salvages-the-worn`, re-aimed.
+Pinned by `test/systems/fb1012d_salvageclassic.test.js` (4), every fixture the real producer's (the reported dagger from
 `createRegularMagicItem` over DFU's MAGIC.DEF rows, a guild shelf, an Item Maker piece, a Superior, ladder pieces);
 `tools/mutants/fb1012d_salvageclassic.json` (11, all dead).
 
@@ -181,7 +181,7 @@ ASKED OF THE REPORTER: whether "You're going to need a bigger boat", "The boat d
 (a Small Ship or a Large Galley among them?); Ship handling Responsive or Classic; whether a reload or a door changed it;
 and whether, between the rowboat and the Carrack's crossing home, anything went into her hold, to a counter or the bank.
 
-Pinned by `test/fb1012d_etherstrand.test.js` (4): the reported sequence through the real runtime and hosts; the design's
+Pinned by `test/systems/comeSailAway/fb1012d_etherstrand.test.js` (4): the reported sequence through the real runtime and hosts; the design's
 refusal kept, and a save in that state loading and sailing; the cargo reading (at 2,100 kg the rowboat, the Large Boat
 and the Small Ship lie dead and say so, the Carrack makes way); the words' one home and the crossing's line beneath its
 own. `tools/mutants/fb1012d_etherstrand.json` (9, all dead). Re-aimed by content: `csa_sailing.json`
@@ -203,7 +203,7 @@ newborn's realm character id. Their own `born` was kept: the reporter's "clone o
 the nightblade gone. With two persons carrying one character id, every load after found the first of them (the clone)
 and wrote into it. Offline the birth lands in the same turn as the chargen, so no tick falls between. Reproduced
 through the producers - two players wed, two children on the elder's clock, the mantle passed, the second chosen, the
-born page's tick, the press, the first save - in `test/fb1012d_familytree.test.js`.
+born page's tick, the press, the first save - in `test/systems/legacy/fb1012d_familytree.test.js`.
 
 FIXED, two laws. A page bearing a member (`born`, until `onBorn` lands them) is the fall's answer and offers the
 Succession to nobody (`legacyHost.js:"if (family.pending) return deps.entity?.chargenDone"`). And a save writes only the person who IS the character in the world
@@ -283,7 +283,7 @@ flag). The front door (`main.js`) boots only the world host.
 
 ## Pins (5)
 
-- `test/fb1012d_familytree.test.js` (5): the report end to end through the producers (two players wed, two children on
+- `test/systems/legacy/fb1012d_familytree.test.js` (5): the report end to end through the producers (two players wed, two children on
   the elder's clock, the mantle passed, the second chosen online; the born page offers no Succession; a press all the
   same leaves the first child whole, one person carries the heir's character, the realm's boot plays the heir and every
   save after); a save never writes a fallen into an heir or a switch's target, and still writes the one played; the
@@ -336,7 +336,7 @@ NOT HERE. A hand on his ship's deck is the deck lane's draw (MWNPC10b: her seed 
 every reader stand one crew - `navalCrew.js` drawBodies), not his own person: a hand taken ashore is drawn as himself
 from then on, and the deck does not know his name. The boarding's men over the rail are the ship's, not companions.
 
-PROVEN. test/fb1012d_allyrace.test.js (3): the crew's hand through eight doors and a load one person - race, sex, face,
+PROVEN. test/scenes/fb1012d_allyrace.test.js (3): the crew's hand through eight doors and a load one person - race, sex, face,
 head and clothes - where the stand's own law drew her as more than one race on the same stands, two hands two people,
 and a second pool fed my frame draws her as I do; a revenant born off a real pool's body keeps that body's person, its
 three returns and a dungeon-shaped record are it, sworn and stood by the layer through four doors it is the one that

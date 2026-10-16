@@ -121,7 +121,7 @@ export const STAR_POLE = Object.freeze([0, 0.622244, 0.782823]);   // unit: the 
 // The shader's hash/value-noise/fbm, in JS, IDENTICALLY - so the port
 // can ask "is a cloud in front of the sun right now" without reading a
 // pixel back. The shader is the same three functions in GLSL, and
-// test/enhancedSky.test.js pins the two texts against each other line
+// test/render/enhancedSky.test.js pins the two texts against each other line
 // for line, because a drift here is a sun that dims when the sky says
 // it should not.
 const fract = (x) => x - Math.floor(x);

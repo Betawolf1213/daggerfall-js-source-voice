@@ -5,7 +5,7 @@
     "old": "  for (const b of acts.querySelectorAll('button')) if (b.classList.contains('act')) pairGuard(b);   // AUDIT MERGE-PLUS C1\n",
     "new": "",
     "tests": [
-      "test/auditmergeplus_pack.test.js"
+      "test/systems/auditmergeplus_pack.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "    if (paired) equipByDoubleClick(first);\n",
     "new": "",
     "tests": [
-      "test/auditmergeplus_pack.test.js"
+      "test/systems/auditmergeplus_pack.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "first === picked && Number.isFinite(e.timeStamp) && e.timeStamp - lastClick.at <= DOUBLE_CLICK_MS;",
     "new": "first === picked;",
     "tests": [
-      "test/auditmergeplus_pack.test.js"
+      "test/systems/auditmergeplus_pack.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "const paired = !!first && first === picked && ",
     "new": "const paired = !!first && ",
     "tests": [
-      "test/auditmergeplus_pack.test.js"
+      "test/systems/auditmergeplus_pack.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "  setTimeout(() => { _dragged = false; }, 0);\n",
     "new": "",
     "tests": [
-      "test/auditmergeplus_pack.test.js"
+      "test/systems/auditmergeplus_pack.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "      if (lockRefuses(it, 'drop') && remoteTargetType(this.hooks, { usingWagon: this.usingWagon, chooseOne: this.chooseOne }) === REMOTE_TARGET_TYPES.Dropped) {",
     "new": "      if (false) {",
     "tests": [
-      "test/auditmergeplus_pack.test.js"
+      "test/systems/auditmergeplus_pack.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "lockRefuses(it, 'drop') && remoteTargetType(this.hooks, { usingWagon: this.usingWagon, chooseOne: this.chooseOne }) === REMOTE_TARGET_TYPES.Dropped",
     "new": "lockRefuses(it, 'drop')",
     "tests": [
-      "test/auditmergeplus_pack.test.js"
+      "test/systems/auditmergeplus_pack.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "    if ((this.mode === 'Sell' || this.mode === 'SellMagic') && lockRefuses(item, 'sell')) {",
     "new": "    if (false) {",
     "tests": [
-      "test/auditmergeplus_pack.test.js"
+      "test/systems/auditmergeplus_pack.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "(this.mode === 'Sell' || this.mode === 'SellMagic') && lockRefuses",
     "new": "this.mode === 'Sell' && lockRefuses",
     "tests": [
-      "test/auditmergeplus_pack.test.js"
+      "test/systems/auditmergeplus_pack.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "(this.mode === 'Sell' || this.mode === 'SellMagic') && lockRefuses(item, 'sell')",
     "new": "lockRefuses(item, 'sell')",
     "tests": [
-      "test/auditmergeplus_pack.test.js"
+      "test/systems/auditmergeplus_pack.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "    (a.locked === true) === (b.locked === true) &&",
     "new": "    true &&",
     "tests": [
-      "test/auditmergeplus_pack.test.js"
+      "test/systems/auditmergeplus_pack.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "  if (stack.locked === true) picked.locked = true;   // AUDIT MERGE-PLUS C4: the part split off keeps the stack's lock\n",
     "new": "",
     "tests": [
-      "test/auditmergeplus_pack.test.js"
+      "test/systems/auditmergeplus_pack.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "    if (filled.length === 1 && equipByDoubleClick(secondClick(`worn:${fam.label}`, top.item, e))) return;",
     "new": "    if (equipByDoubleClick(secondClick(`worn:${fam.label}`, top.item, e))) return;",
     "tests": [
-      "test/auditmergeplus_pack.test.js"
+      "test/systems/auditmergeplus_pack.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": " && !isLightSource(item) && !isEnchanted(item)) return null;",
     "new": " && !isLightSource(item)) return null;",
     "tests": [
-      "test/auditmergeplus_pack.test.js"
+      "test/systems/auditmergeplus_pack.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "at - lastClick.at <= DOUBLE_CLICK_MS && e.detail >= 2 ? lastClick.item : null;",
     "new": "at - lastClick.at <= DOUBLE_CLICK_MS ? lastClick.item : null;",
     "tests": [
-      "test/auditmergeplus_pack.test.js"
+      "test/systems/auditmergeplus_pack.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "      + `|${v.item && v.type !== 'spell' ? `${rarityAttr(v.item) ?? ''}${validSigil(v.item.sigil) ? '*' : ''}${setIdOf(v.item) ?? ''}` : ''}`   // SET5: and its set\n",
     "new": "",
     "tests": [
-      "test/auditmergeplus_pack.test.js"
+      "test/systems/auditmergeplus_pack.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "`${rarityAttr(v.item) ?? ''}${validSigil(v.item.sigil) ? '*' : ''}${setIdOf(v.item) ?? ''}`",
     "new": "`${validSigil(v.item.sigil) ? '*' : ''}${setIdOf(v.item) ?? ''}`",
     "tests": [
-      "test/auditmergeplus_pack.test.js"
+      "test/systems/auditmergeplus_pack.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "`${rarityAttr(v.item) ?? ''}${validSigil(v.item.sigil) ? '*' : ''}${setIdOf(v.item) ?? ''}`",
     "new": "`${rarityAttr(v.item) ?? ''}${setIdOf(v.item) ?? ''}`",
     "tests": [
-      "test/auditmergeplus_pack.test.js"
+      "test/systems/auditmergeplus_pack.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "if ((e?.detail ?? 0) < 2) { lastClick = { key: null, item: null, at: -Infinity }; run?.(e); return; }",
     "new": "if ((e?.detail ?? 0) < 2) { run?.(e); return; }",
     "tests": [
-      "test/auditmergeplus_pack.test.js"
+      "test/systems/auditmergeplus_pack.test.js"
     ]
   }
 ]

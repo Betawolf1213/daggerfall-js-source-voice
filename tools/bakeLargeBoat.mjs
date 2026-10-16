@@ -24,7 +24,7 @@
 // under the sea (the mod's skiff's 0.64), her deck 0.90 m over it and her gunwale 2.25; MIDSHIP 6.24 the middle of her
 // length (to 0.3 cm); CENTRELINE her hull object's own scene Y, to the bit.
 //
-// The output is a JSON a test re-bakes byte for byte (test/ships2_bake.test.js).
+// The output is a JSON a test re-bakes byte for byte (test/tooling/ships2_bake.test.js).
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { readFbx } from './fbxRead.mjs';

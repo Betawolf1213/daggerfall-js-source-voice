@@ -10,7 +10,7 @@ on:
       - 'src/assets/intro/**'
       - 'src/assets/branding/**'
       - 'tools/intro*.mjs'
-      - 'test/intro.test.js'
+      - 'test/ui/intro.test.js'
       - '.github/workflows/intro-quality.yml'
 
 permissions:

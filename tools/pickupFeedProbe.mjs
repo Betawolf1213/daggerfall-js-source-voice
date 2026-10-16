@@ -12,7 +12,7 @@
 // THE ICONS ARE STAND-INS. This container has no ARENA2, so the cached icon door (textureCanvas.requestFittedIcon) has
 // no archive to read; the page hands the feed's icon seam small pixel pictures of its own so the card's picture slot is
 // seen at its real size. The address the real door is asked for is the pack's own (inventoryItemImage) and is pinned in
-// test/pickupfeed.test.js.
+// test/systems/pickupfeed.test.js.
 //
 // HAUL-CARDS (2026-10-03): four scenes more - a vein's card bumped and its gem, a raid's three silver cards, the day's
 // cap beside a pickup, a Motherlode's one card - built from answers through ui/haulCards.js and drawn by `showHaul`,

@@ -60,7 +60,7 @@ through `hurtFoe`; the powers sleep in duels and arena PvP; Earthshaker-alike re
 
 | # | Sev | Finding | Verdict |
 |---|---|---|---|
-| C1 | MED | `test/lootbanner.test.js`'s pin on the Hour's popup door matched the serpent's identical new line, so the Hour's could be dropped unseen (HONOUR-BANNER-world-hands-no-door SURVIVED) | FIXED: anchored to `createSdClaims`'s own door; the record dies again |
+| C1 | MED | `test/systems/lootbanner.test.js`'s pin on the Hour's popup door matched the serpent's identical new line, so the Hour's could be dropped unseen (HONOUR-BANNER-world-hands-no-door SURVIVED) | FIXED: anchored to `createSdClaims`'s own door; the record dies again |
 | C2 | LOW | The two new chat lines were hard-coded English and the L10N4 ratchet was raised for them | FIXED: routed (`serpent.honour.title` / `.aura`), drafted in-session in the thirteen whole languages through `tools/l10nInSession.mjs`, the ratchet back to 4 (the records' words stay with the ladder's - `Gilded.md` section 7) |
 | C3 | LOW | Two claims at the same moment from two devices can both answer "New" | LEFT: one client claims in turn; only two tabs or devices at once, and the Hour's claim is the same - the row stays right |
 | C4 | INFO | A lost answer's retry says `claimed`: the grant is held but not said | LEFT: the Hour's own behaviour; the wardrobe shows it |
@@ -103,7 +103,7 @@ re-aimed record still aimed at its law (the 87 run again; the one survivor, WB5-
 
 ## Pinned
 
-`test/gilded2_world.test.js` (8) and `tools/mutants/gilded2.json` (25, all dead); `test/serpent5_honours.test.js` (9)
-and `tools/mutants/serpent5.json` (30, all dead); `test/auditcards5_ui.test.js`'s Gilded rows; `test/lootbanner.test.js`'s
+`test/systems/gilded2_world.test.js` (8) and `tools/mutants/gilded2.json` (25, all dead); `test/net/serpent/serpent5_honours.test.js` (9)
+and `tools/mutants/serpent5.json` (30, all dead); `test/systems/auditcards5_ui.test.js`'s Gilded rows; `test/systems/lootbanner.test.js`'s
 anchored door; `tools/auraProbe.mjs`'s Maelstrom (77/77). The lanes' repros (lane B's real-flow scripts, lane D's
 real-GL probe) were run again against the fixed tree, and their numbers are the ones written above.

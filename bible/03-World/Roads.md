@@ -614,7 +614,7 @@ section and the pin on the comment's text all asserted a departure the
 code did not have; all four now say the smoother is his with nothing
 corrected, and the pin asserts `NO DIVERGENCE` is what the module says.
 
-**The arrays are his by hash now.** `test/vendorIntegrity.test.js` pins
+**The arrays are his by hash now.** `test/tooling/vendorIntegrity.test.js` pins
 the sha256 of all four against `ajrb/dfunity-mods` master, verified
 this audit; Audit-51.md's "sha256 recorded in the test run" named a pin
 that did not exist. The hashes are in the vendor README too.
@@ -679,7 +679,7 @@ beside `withRoads`, and the worker transfers it. The host keeps it on the
 built pixel as `p.paths`, and `keep()` refuses a blade on a marked tile.
 
 Nothing about the tilemap the painter writes changes; without the array
-the painter is byte-for-byte what it was, which `test/grasspath.test.js`
+the painter is byte-for-byte what it was, which `test/world/terrain/grasspath.test.js`
 pins directly.
 
 The water half of the same report - *"some textures not taking the water
@@ -718,7 +718,7 @@ before the track, his order, so the whole arm was water where the dirt track ran
 the road with its banks; LANDFORM3 cuts the painted water into the land, and the room's rivers are on - a straight
 sunken channel up to the town. `roadsProducer.js` `waterOffPaths` gives each such arm to its path, once, as the arrays
 load: the painter, the channel's cut and the maps all read the arrays, so all three agree. A crossing shares no arm,
-and its ford or causeway stands as it did. Pinned by `test/fb1009b_canalarm.test.js`.
+and its ford or causeway stands as it did. Pinned by `test/world/road/fb1009b_canalarm.test.js`.
 
 ## VERGE1 - clear roadsides: nothing of the wild stands over a road (2026-10-07, a port departure)
 
@@ -802,7 +802,7 @@ them.
 roads and lays no wild nature: nothing to clear. `scenes/worldModes.js` and
 `scenes/dungeonContext.js` - no terrain nature.
 
-Pinned in `test/verge1.test.js` (the band's geometry, across pixels and at
+Pinned in `test/world/road/verge1.test.js` (the band's geometry, across pixels and at
 the map's edge, the reach and the crowns' bake byte for byte, F8 end to
 end, the herbs, the veins and the Motherlode, the switch and the host);
 mutants in `tools/mutants/verge1.json` (23, all dead). Not verified here:
@@ -858,7 +858,7 @@ roads, so it fits no tree (not wired: its location tilemap is the bench's
 own, and its streets were never asked of a road). `scenes/worldModes.js` and
 `scenes/dungeonContext.js` stand no terrain trees.
 
-Pinned in `test/lptfit.test.js` (5: the mask off the painter's own pixel and
+Pinned in `test/world/road/lptfit.test.js` (5: the mask off the painter's own pixel and
 the lookup, the room, the cap, the set, the host); `test/lpt1_lowpolytrees`'s
 host pin moved; mutants `tools/mutants/lptfit.json` (15, all dead) and
 `LPT1-flats-unscaled` re-aimed. Not verified here: no ARENA2, so no real

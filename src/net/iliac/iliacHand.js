@@ -30,7 +30,7 @@
 // THE EFFECT LANGUAGE. A card's text is data: `fx`, a list of records `{on, do, to?, n?, tag?, cost?, pick?, card?,
 // kind?}` - WHEN (`on`: ILIAC_TRIGGERS), WHAT (`do`: ILIAC_VERBS), TO WHOM (`to`: ILIAC_TARGETS, narrowed by `tag`, by
 // `cost` [lo, hi] and to one card by `pick`: ILIAC_PICKS). `fxText` says a list in the player's words, and the catalog's
-// every `text` is pinned to be exactly that sentence (test/cards8_catalog.test.js), so what a card says is what it does.
+// every `text` is pinned to be exactly that sentence (test/systems/loot/cards8_catalog.test.js), so what a card says is what it does.
 // A holding's text is the same language, aimed at both sides of it (`to: 'here'`). The verbs:
 //   buff / weaken  +n / -n power: for good on a trigger (a weaken never takes a card's power below 0), while the
 //                  source stands when `ongoing` (the total is floored at 0 too).

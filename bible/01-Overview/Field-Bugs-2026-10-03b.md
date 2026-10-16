@@ -37,9 +37,9 @@ keeps the plane and NATURE-GROUND's lift, byte for byte; a hill the port does no
 DFU stands it. All four hosts: the streamed world (world.js) and the one-location exterior (exterior.js) seat; the
 interior host (worldModes.js) and the dungeon (dungeonContext.js) stand no RMB exterior flat (pinned). Port-Ledger's
 NATURE-GROUND row and Beautiful-Towns' hills row narrowed. NOT SEEN ON A GPU: driven over the pack's own six blocks with
-the stand-ins the pipeline builds. `test/fb1003b_trees.test.js` decodes the six blocks from the vendored pack (their
+the stand-ins the pipeline builds. `test/world/fb1003b_trees.test.js` decodes the six blocks from the vendored pack (their
 records are carried whole - no game data) through blockFromJson, layoutRmbBlock, collectBlockFlats and RMBRP_PIECES,
-and measures with a ray of its own; `test/natureground.test.js`'s pins re-aimed (`tools/mutants/natureground.json`'s
+and measures with a ray of its own; `test/world/terrain/natureground.test.js`'s pins re-aimed (`tools/mutants/natureground.json`'s
 lift-dropped record with them).
 
 The mounds themselves were drawn at the pack's measured shape by FIELD BUGS 2026-10-05 HILL-SHAPES
@@ -82,10 +82,10 @@ town pack that failed to load in one session and loaded in the next (or the reve
 Daggerfall city's arena cell. THE FOUR HOSTS: world.js (the seam) and worldModes.js (the interior's one name
 derivation, mounted by the world and exterior hosts) are wired; exterior.js's standalone seam has no online homes and
 answers "known" by its absence; dungeonContext.js stands no questor met in a building (key 0).
-`test/fb1003b_questor.test.js` builds every fixture from its producer: the Person and its hall through the setup chain
+`test/systems/quest/fb1003b_questor.test.js` builds every fixture from its producer: the Person and its hall through the setup chain
 off a clicked NPC, every click by collectInteriorPeople + staticNpcData, the building stood in by the directory walk,
-a party copy by the share envelope. `test/wd3_layoutPins.test.js` and `test/audit1003_wd.test.js` give their
-hand-built sites the scope a declared Place parses to; `test/audit24_onehome.test.js` reads the name derivation's new
+a party copy by the share envelope. `test/systems/wd3_layoutPins.test.js` and `test/systems/quest/audit1003_wd.test.js` give their
+hand-built sites the scope a declared Place parses to; `test/systems/talk/audit24_onehome.test.js` reads the name derivation's new
 first arm. `03-World/Beautiful-Towns.md`'s exception is retired, Audit-WD3's "Not changed" bullet is struck, and
 Port-Ledger WD3 departure (8) names the questor.
 
@@ -117,9 +117,9 @@ foe of the sharer's for that quest and that Foe - a building's or the street's p
 puppet in `_ownFrom`; otherwise it stands its own wave, as CreateFoe.TryPlacement always places (CreateFoe.cs:183-212).
 Solo play was never affected. THE FOUR HOSTS: world.js is wired (both arms); worldModes.js and dungeonContext.js are
 reached through `insideFoes` and needed no change; exterior.js is FLAGGED - the dev host has no session, party or
-share, and stands every wave. `test/fb1003b_vermin.test.js` runs the real machine, the real share path, the real
+share, and stands every wave. `test/systems/quest/fb1003b_vermin.test.js` runs the real machine, the real share path, the real
 OnlineSession floors, world.js's lifted sync, seam and partner calls, and two real pools; before the fix it reproduces
-the report - a spider, killed, then bats only. `test/questparty.test.js` and `test/questparty3b.test.js` re-aimed, and
+the report - a spider, killed, then bats only. `test/scenes/questparty.test.js` and `test/scenes/questparty3b.test.js` re-aimed, and
 `tools/mutants/questparty.json`'s QP-sharer-anywhere and QP-world-receiver-stands-its-own with them (still dead);
 Port-Ledger's QUEST-PARTY phase 1 and 3b rows and `06-Systems/Online-Arc.md`'s wave sentences narrowed.
 
@@ -155,7 +155,7 @@ memory's restore, in either order. THE FOUR HOSTS: `worldModes.js` (both adapter
 building's item stands still - DFU adds DaggerfallMarker in RDBLayout alone and a building marker's ID is 0,
 Place.cs:1503-1506) and `dungeonContext.js` (the mover) are wired; `world.js` and `exterior.js` stand no dungeon quest
 item of their own (their mount routes through worldModes); the standalone `scenes/dungeon.js` stands no quest.
-`test/fb1003b_totem.test.js` - S0000008's own lines through the real Place, Item and PlaceItem, the dungeon through
+`test/systems/quest/fb1003b_totem.test.js` - S0000008's own lines through the real Place, Item and PlaceItem, the dungeon through
 layoutDungeon, the motion through the real ActionSystem, the room's word through sharedRecord and validActionRecord.
 `06-Systems/Quest-Arc.md` TOTEM-CAGE. The worldModes.js lines it moved were re-aimed across the bible and the tree by
 `tools/citeShift.mjs`.
@@ -185,7 +185,7 @@ out of every tab, and `enchantDecision` answers `{ kind: 'refused', text }` befo
 that never came off the list (a window open across the change, a probe) lays nothing on, renames nothing and takes
 no gold. The line is the port's own. Every other item is DFU's: a Legendary, an Exalted, a signature drop and an
 artifact are out because they carry enchantments, a crafted piece of jewellery keeps PROF10 J2's door.
-`test/fb1003b_aethericmaker.test.js`, every fixture from its producer (the gate boss's spoils, the Sigil Broker's
+`test/systems/fb1003b_aethericmaker.test.js`, every fixture from its producer (the gate boss's spoils, the Sigil Broker's
 Regalia ware, a raid's thanks).
 
 **Said, not fixed.** A piece enchanted before keeps its rows - stripping a player's item on load is Mac's call
@@ -217,9 +217,9 @@ gone with the room's collider, and the street's motor takes its first step befor
 4.19 m measured). It is there from the first step now. `keepExteriorBoats` stays. THE FOUR HOSTS: world.js is the one
 host with a cabin (fixed here); worldModes.js builds the room and asks these arms (unchanged); the standalone
 exterior.js has no sailing runtime and dungeonContext.js no exterior fleet. `03-World/Come-Sail-Away.md`'s cabin
-section says it. `test/fb1003b_cabinhull.test.js`: a deed ship from the real runtime, a peer's off a minted wire
+section says it. `test/systems/comeSailAway/fb1003b_cabinhull.test.js`: a deed ship from the real runtime, a peer's off a minted wire
 record, the cabin and its landing from the shipped access, the real motor and collider, world.js's own functions
-lifted from its source; `test/csa_together.test.js`'s, `test/prww1_werewolf.test.js`'s and `test/wb4_gate_boss.test.js`'s
+lifted from its source; `test/systems/csa_together.test.js`'s, `test/net/prww1_werewolf.test.js`'s and `test/net/gate/wb4_gate_boss.test.js`'s
 source pins, five `fb1001b_peerboats` mutants, `prww1.json`'s PRWW1-modal-hook-narrowed-back and `wb4.json`'s
 WB4-the-body-not-drawn re-aimed at the lines moved (each still dead).
 

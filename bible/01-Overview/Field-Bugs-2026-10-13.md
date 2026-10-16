@@ -24,6 +24,6 @@ its stack, which is right for it. Nothing else in the rule changed.
 225%), touch on. Before: every door's pane at 1280x720 showed 166 px - the screenshot's strip - 6 checks failed. After:
 every pane the full 720, every first button on the screen; every screen the probe holds passes.
 
-**Pinned.** `test/shorttouch.test.js` +1 (TALL-TOUCH: both halves landscape, at least 600 wide, no height ceiling, the
+**Pinned.** `test/ui/enhanced/shorttouch.test.js` +1 (TALL-TOUCH: both halves landscape, at least 600 wide, no height ceiling, the
 narrow window's half bounded at 860); `tools/mutants/short_touch.json` +2 (the 560 ceiling back; the narrow window's
 half dropped), 7/7 dead.

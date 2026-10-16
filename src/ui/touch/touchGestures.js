@@ -25,7 +25,7 @@
 //     TAP_PX - the sub-tap-radius motion before it is paid in one lump,
 //     so nothing is dropped and the camera starts at once.
 // Pure: no DOM, no clock of its own. Times are the caller's ms.
-// Pinned by test/touchinput.test.js, each rule with its mutant.
+// Pinned by test/player/touchinput.test.js, each rule with its mutant.
 
 export const TAP_PX = 12;
 export const TAP_MS = 300;

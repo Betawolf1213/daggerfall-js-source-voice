@@ -11,7 +11,7 @@
 //
 // What this canNOT see, stated so nobody mistakes green for finished:
 // weaponRig's branch, the four hosts' camera dep, and the enhanced-menu
-// card are pinned in node (test/fparm.test.js, test/mwattach.test.js)
+// card are pinned in node (test/formats/morrowind/fparm.test.js, test/scenes/mwattach.test.js)
 // and proven by Mac in the game. This probe proves the arm DRAWS.
 //
 // THE LESSONS IT IS BUILT AROUND:

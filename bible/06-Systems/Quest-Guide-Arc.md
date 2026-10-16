@@ -172,13 +172,13 @@ logbook's, because a loud read latches the last-referenced resource and
 place for the next entry's pronouns. The classic logbook keeps DFU's
 order.
 
-**Pins.** `test/guide1_questLens.test.js` (7): the feed over the real
+**Pins.** `test/ui/quest/guide1_questLens.test.js` (7): the feed over the real
 bridge and machine; the order; the quiet read over every message of the
 corpus; a whole game played twice, the lens re-reading and looking at
 every tick and not - the same save, popups, topics, seed and roll draws,
 and no draw from Math.random inside a look; the target and the said law
-over producer-minted Places; the one homes. `test/questbridge.test.js`'s
-MAC-K2 walk pin and `test/enhancedPause.test.js`'s PX22 timer pin grew
+over producer-minted Places; the one homes. `test/systems/quest/questbridge.test.js`'s
+MAC-K2 walk pin and `test/ui/enhanced/enhancedPause.test.js`'s PX22 timer pin grew
 with the walk's `steps` and `ended` and the one urgent number.
 `tools/mutants/guide1.json`: 38 mutants - 37 dead, and `GUIDE1-quiet-read-reveals`
 equivalent as recorded since AUDIT GUIDE L3 gave the quiet read its own
@@ -268,8 +268,8 @@ reads it); `remainWords` moved from the pause window into
 the Quests tab's PX22 meta line reads - so the tab had never been mounted
 headless with a live quest in it; the minimal DOM carries it now. The
 refusals' new `false` re-aimed four suites' door pins
-(`test/audit64_travel.test.js`, `test/audit58_magic.test.js`,
-`test/partytravel.test.js`, `test/fb0929_vampirehood.test.js` - AUDIT
+(`test/systems/audit64_travel.test.js`, `test/systems/audit58_magic.test.js`,
+`test/systems/party/partytravel.test.js`, `test/systems/fb0929_vampirehood.test.js` - AUDIT
 GUIDE D2) and five other slices' mutant records by
 content (`auditpartyui`, `auditpartyui2`, `party-travel`, `vamphood`,
 `qtlive1`).
@@ -284,7 +284,7 @@ now RECORDS every interval instead of arming it - a pin fires one by
 hand, and every mount asserts none is left standing - so a leak fails a
 pin instead of holding the run open.
 
-**Pins.** `test/guide2_wayThere.test.js` (6): the words over producer-
+**Pins.** `test/ui/enhanced/guide2_wayThere.test.js` (6): the words over producer-
 minted Places; the pause tab mounted and pressed (the handoff before the
 door, the resume on a refusal, no door no button, the note, the unasked
 map); the trail's older places (offered once); the chronicle mounted and
@@ -412,7 +412,7 @@ A sound can be a row of its own when someone asks for one.
 slots, the HUD's other row), Enhanced, on by default (DECISIONS 2), the
 player's own online (news is no one else's).
 
-**Pins.** `test/guide3_herald.test.js` (8): the words; one notice per
+**Pins.** `test/ui/quest/guide3_herald.test.js` (8): the words; one notice per
 quest (rank, cap, clock); the bridge's feed over the real bridge and
 machine (one look after each tick and none between, the baseline, new,
 updated, completed, ended); only while listening (the switch, the
@@ -421,7 +421,7 @@ never knows (a whole game through the bridge's tick, heard and unheard);
 the HUD's clock and the stack's face (the rows' classes, hidden and
 stopped, run out, off at its hide door); one call, every host (by
 source, and the herald's import graph kept off the quest machine); the
-opening over the corpus. `test/enhancedNotice.test.js`'s
+opening over the corpus. `test/ui/enhancedNotice.test.js`'s
 roster knows the herald as the stack's newest importer.
 `tools/mutants/guide3.json`: 45 mutants (GUIDE4 added
 `GUIDE3-small-word-kept`; AUDIT GUIDE D2). Ledger A: A QUEST'S NEWS IS A
@@ -538,7 +538,7 @@ keys (DECISIONS 6).
 **The switch.** Features row `quest-tracker` - Interface, beside
 `quest-herald`, Enhanced, on by default, the player's own online.
 
-**Pins.** `test/guide4_tracker.test.js` (9): which quest; the words;
+**Pins.** `test/ui/quest/guide4_tracker.test.js` (9): which quest; the words;
 the choice kept (the save slot); the bridge's feed over the real bridge
 and machine (the baseline heard, the news followed, a tracked quest
 through its ending, the host's questions and "(you are here)", no face
@@ -549,7 +549,7 @@ with nothing to say, the classes, hidden under the gate, the height
 published and taken back, off at its hide door, the choice kept); the
 journal's toggle in the Quests tab (and the tab opening on the card's
 quest) and in the chronicle; one call, every host (by source, and the
-import graph). `test/soc4_partyhud.test.js`'s position pins grew the
+import graph). `test/net/soc4_partyhud.test.js`'s position pins grew the
 card's variable; GUIDE3's suite hears the herald alone (the tracker off)
 and six of its feed mutants were re-aimed at the two-face gate and one
 added, with `font1.json`'s GUIDE3 and `auditsoc.json`'s GUIDE4 re-aims
@@ -655,7 +655,7 @@ the map readers or the raids.
 `quest-tracker`, Enhanced, on by default (DECISIONS 7), the player's own
 online.
 
-**Pins.** `test/guide5_marks.test.js` (8): only what the map holds (the
+**Pins.** `test/ui/quest/guide5_marks.test.js` (8): only what the map holds (the
 marks, the merge, the cards, the resolver; the host's marks read and
 checked; the card's note and no mark, the classic skin); one model, two
 faces (the marks alone feed it, neither forgets it, the herald never
@@ -679,7 +679,7 @@ note.
 GUIDE1-GUIDE5 read by eight lenses over a frozen tree, main merged in
 first - `01-Overview/Audit-Guide.md` is the record. Every finding was
 reproduced, fixed, pinned by a test that failed on the unfixed tree
-(`test/audit_guide.test.js`, 38) and mutation-proven
+(`test/ui/quest/audit_guide.test.js`, 38) and mutation-proven
 (`tools/mutants/audit_guide.json`, 73); what it changed in a slice is
 written into that slice's section above under its `AUDIT GUIDE <ID>`.
 One call it made is Mac's to reverse (DECISIONS 8).

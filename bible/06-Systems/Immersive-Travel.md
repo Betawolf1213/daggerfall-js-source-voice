@@ -156,7 +156,7 @@ classic block reads 32 slots (28 removed - Warm Ashes' patches, diffed against a
 real BSA, remove the same), and a scale of 1 on the two classic models, whose
 records carry none (6 sets). What it cannot carry is any other round-trip change
 to a classic record (an automap byte, a rotation's equivalent). The loader checks each rebuild against the
-author's sha256 and says when it differs, and `test/it1_worlddata.test.js`
+author's sha256 and says when it differs, and `test/formats/worldData/it1_worlddata.test.js`
 checks all four with `ARENA2_PATH` set. **OWED:** that run, on a machine with
 the ARENA2 - and if it differs, `node tools/immersiveTravelPatches.mjs
 <immersivetravel.dfmod> <arena2>`, which writes WD1's own diff, checked.
@@ -251,13 +251,13 @@ character's own clock (LIVED1).
     the mod as here, at every walled city's WALLAA09 gate. While the mod is
     loaded the flat wears classic's own bearded man's face (182.3, 429), written
     into FLATS.CFG's dictionary as Roleplay & Realism writes it
-    (`immersiveTravel.js` `IT_DRIVER_FACE`). `test/fb1009b_driverface.test.js`.
+    (`immersiveTravel.js` `IT_DRIVER_FACE`). `test/systems/fb1009b_driverface.test.js`.
 
 ## Pins
 
-`test/it1_immersivetravel.test.js` (13), `test/it1_worlddata.test.js` (5, one
-with `ARENA2_PATH`), `test/it1_heldmap.test.js` (4), `test/it1_classicmap.test.js`
+`test/systems/guild/it1_immersivetravel.test.js` (13), `test/formats/worldData/it1_worlddata.test.js` (5, one
+with `ARENA2_PATH`), `test/systems/travel/it1_heldmap.test.js` (4), `test/systems/it1_classicmap.test.js`
 (2); `tools/mutants/it1.json` (35, all dead; AUDIT IT1 W3 retired IT1-26). AUDITED the same day (AUDIT IT1,
-`01-Overview/Audit-IT1.md`): `test/auditit1.test.js` (16) and
+`01-Overview/Audit-IT1.md`): `test/systems/auditit1.test.js` (16) and
 `tools/mutants/auditit1.json` (30, all dead). Not seen in a browser: no ARENA2,
 no GPU in this container.

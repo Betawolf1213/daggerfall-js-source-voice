@@ -68,7 +68,7 @@ fixed one does not. A departure (Port-Ledger A, NEAR-SITE and NEAR-REGION).
 **Verified** over the player's data with the audit's own harness, after AUDIT QA2: the 574 regressed pairs all start in
 every draw (0 failures in 4,592 asks); the Kynareth temples' 2,580 pairs (sixteen draws) are no worse than Daggerfall's layout in any pair, where 226 failed - the 129 that fail every draw are C0B00Y02's `local tavern` at temples whose own layout holds none either, failing as DFU fails them (4,128 of 4,128 in Daggerfall's layout); the manors' 2,386
 noble and commoner pairs start wherever the mods took a house - every failure left is R0C11Y28's `local temple` at the 1,193 manors that seat nobles, which no layout of a manor holds (DFU's law); Pothago's four halls give L0B60Y10 (0 failures in 32); and no control pair of the 1,419 is worse than Daggerfall's layout (67 start where it fails - the mods' own buildings).
-`test/qa2_nearsite.test.js` (8); `tools/mutants/qa2_nearsite.json` (10) and `tools/mutants/qa2_audit.json`, all dead.
+`test/systems/quest/qa2_nearsite.test.js` (8); `tools/mutants/qa2_nearsite.json` (10) and `tools/mutants/qa2_audit.json`, all dead.
 
 ## 2. Markers by quest law: recorded
 
@@ -116,12 +116,12 @@ paths), keyed by the name the town lays the block under (AUDIT QA2: TEMPASA2's J
 room, the guild's services and the questor walk all read it. A temple that stands a summoner of its own keeps it. A
 curation of the mod's data (Port-Ledger A, TEMPLE-SUMMONER). THE FOUR HOSTS: `scenes/world.js`, `scenes/worldModes.js`,
 `scenes/dungeonContext.js` and `scenes/exterior.js` all read blocks through `BlocksFile.getBlock` and the door, none
-with a seam of its own. `test/qa2_summoners.test.js` (6, the measurement and the door over the vendored pack gated on
+with a seam of its own. `test/systems/qa2_summoners.test.js` (6, the measurement and the door over the vendored pack gated on
 ARENA2 with ARCH3D); `tools/mutants/qa2_summoners.json` (8) and `tools/mutants/qa2_audit.json`, all dead.
 
 ## 4. State across layouts: HOUSE-HALL, PIN-SLEEP, SHARED-SEAT, SITE-LINKS
 
-Code read and every defect reproduced on the real modules before it was fixed (`test/qa2_layouts.test.js` (12);
+Code read and every defect reproduced on the real modules before it was fixed (`test/systems/quest/qa2_layouts.test.js` (12);
 `tools/mutants/qa2_layouts.json` (13) and `tools/mutants/qa2_audit.json`, all dead). THE FOUR HOSTS: the re-seat runs in
 `scenes/world.js`'s applyLayoutPins - on its own load, and on `scenes/dungeonContext.js`'s same-dungeon load
 (`opts.layoutPinsLoaded`, handed down by `scenes/worldModes.js`) - and as a shared quest arrives (the machine);

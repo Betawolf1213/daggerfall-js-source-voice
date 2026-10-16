@@ -66,7 +66,7 @@ import { ARMOR_MATERIAL, isPlate } from '../../systems/armorMaterials.js';
 
 /** Roleplay & Realism Items' Jerkin (systems/roleplayRealismItems/rriItems.js RRI_TEMPLATES,
  *  ItemJerkin). Restated rather than imported for the leaf's sake;
- *  test/mwbrig2.test.js holds it to the mod's own row. */
+ *  test/formats/morrowind/mwbrig2.test.js holds it to the mod's own row. */
 export const RRI_JERKIN_TEMPLATE = 520;
 
 /** MW-BRIG4: the metals the Jerkin is a BRIGANDINE in - every plate material, Iron to Daedric (rriItems.js lightWord:
@@ -74,7 +74,7 @@ export const RRI_JERKIN_TEMPLATE = 520;
 export const BRIGANDINE_METALS = Object.freeze(Object.keys(ARMOR_MATERIAL).filter((k) => isPlate(ARMOR_MATERIAL[k])));
 
 /** MW-STEEL1: Daggerfall's classic armour templates (combat/enemyEquipment.js ARMOR_ENUM, DFU's ItemEnums.Armor),
- *  restated for the leaf's sake; test/mwsteel1.test.js holds them to the enum. */
+ *  restated for the leaf's sake; test/tooling/mwsteel1.test.js holds them to the enum. */
 export const CLASSIC_ARMOR_TEMPLATE = Object.freeze({
   Cuirass: 102, Gauntlets: 103, Greaves: 104, Left_Pauldron: 105, Right_Pauldron: 106, Helm: 107, Boots: 108,
 });

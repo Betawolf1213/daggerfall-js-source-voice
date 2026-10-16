@@ -5,15 +5,15 @@
 // Records, Rules), over a save with something on every page: a fighter of the Red Banner two tiers up, in the laurel,
 // with bouts behind them, a wager won and one waiting. Each must stand inside the viewport with nothing spilling
 // sideways and the page never scrolling sideways, its words in the pixel face, and every tab a `role="tab"`.
-// test/arena3_window.test.js holds the window's law on a fake page; this photographs what a fake cannot.
+// test/systems/arena/arena3_window.test.js holds the window's law on a fake page; this photographs what a fake cannot.
 // Photographs to SHOT_DIR (default tools/shots/, ignored).
 // ARENA4b: and THE WINDOW ONLINE over a realm's board (the service's `/v1/arena/board`, with the account's `me.record` and
 // `me.recent`): the Records page the account's (its note, its record, its last bouts - a rated bout's rating in its line),
 // no purses chip in the header, and the Leaderboards' fastest Grand Champion with the realm's Hall of Champions under it
-// (test/arena4b_window.test.js holds the law).
+// (test/systems/arena/arena4b_window.test.js holds the law).
 // ARENA5: and YOUR LADDER REPLAY on the Records page - the save keeps three of its bouts (systems/arena/arenaReplay.js), each
 // row the records keep carrying Watch the replay: inside the window at every width, and its press the host's
-// (`act('replay', { i })`); test/arena5_replay.test.js holds the law.
+// (`act('replay', { i })`); test/systems/arena/arena5_replay.test.js holds the law.
 //
 //     node tools/arenaWindowProbe.mjs
 import { createServer } from 'vite';

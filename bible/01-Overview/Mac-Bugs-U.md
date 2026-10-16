@@ -85,7 +85,7 @@ had only looked like one.
 
 ## The campaign
 
-`test/macu_directions.test.js` (5): the carried row IS the vendored
+`test/systems/talk/macu_directions.test.js` (5): the carried row IS the vendored
 CSV's row (nine compass phrases, none naming the building; 7332 the
 same in both and so NOT carried); the reader answering the table before
 the file through every accessor, a table-only record, `{ table: null }`

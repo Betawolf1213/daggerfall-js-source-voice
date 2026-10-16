@@ -5,7 +5,7 @@
     "old": "WON: 3,",
     "new": "WON: 4,",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "DAY_WITH: 2,",
     "new": "DAY_WITH: 3,",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "CALLED: 10,",
     "new": "CALLED: 8,",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "DAY_AWAY: -1,",
     "new": "DAY_AWAY: -2,",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "KNOCKED: -8,",
     "new": "KNOCKED: -6,",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "SENT_TWICE: -10,",
     "new": "SENT_TWICE: -8,",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "KIN_EXECUTED: -15 });",
     "new": "KIN_EXECUTED: -12 });",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "export const DEVOTED = Object.freeze({ AT: 90, BLOWS: 1.1, WARN_S: 15 });",
     "new": "export const DEVOTED = Object.freeze({ AT: 85, BLOWS: 1.1, WARN_S: 15 });",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "export const DEVOTED = Object.freeze({ AT: 90, BLOWS: 1.1, WARN_S: 15 });",
     "new": "export const DEVOTED = Object.freeze({ AT: 90, BLOWS: 1.2, WARN_S: 15 });",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "export const DEVOTED = Object.freeze({ AT: 90, BLOWS: 1.1, WARN_S: 15 });",
     "new": "export const DEVOTED = Object.freeze({ AT: 90, BLOWS: 1.1, WARN_S: 30 });",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "[[DEVOTED.AT, 'Devoted'], [50, 'Loyal'], [20, 'Wavering'], [0, 'Restless']]",
     "new": "[[DEVOTED.AT, 'Devoted'], [60, 'Loyal'], [20, 'Wavering'], [0, 'Restless']]",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "[[DEVOTED.AT, 'Devoted'], [50, 'Loyal'], [20, 'Wavering'], [0, 'Restless']]",
     "new": "[[DEVOTED.AT, 'Devoted'], [50, 'Loyal'], [25, 'Wavering'], [0, 'Restless']]",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "export const movedLoyalty = (v, d) => Math.max(0, Math.min(100, Math.round(",
     "new": "export const movedLoyalty = (v, d) => Math.max(0, Math.min(1000, Math.round(",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "export const movedLoyalty = (v, d) => Math.max(0, Math.min(100, Math.round(",
     "new": "export const movedLoyalty = (v, d) => Math.max(-100, Math.min(100, Math.round(",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "export const isDevoted = (v) => Number.isFinite(v) && v >= DEVOTED.AT;",
     "new": "export const isDevoted = (v) => Number.isFinite(v) && v > DEVOTED.AT;",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "(a === b || (factionOf(a) != null && factionOf(a) === factionOf(b)));",
     "new": "(a === b);",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "(a === b || (factionOf(a) != null && factionOf(a) === factionOf(b)));",
     "new": "(a === b || factionOf(a) === factionOf(b));",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "      r.companion.loyalty = movedLoyalty(r.companion.loyalty, st === 'with' ? LOYALTY.DAY_WITH : LOYALTY.DAY_AWAY);\n",
     "new": "",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "      if (st !== 'with' && st !== 'away') continue;\n",
     "new": "",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "old": "    rested: state === 'away' && c?.rested === true,",
     "new": "    rested: c?.rested === true,",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -185,7 +185,7 @@
     "old": "    rested: state === 'away' && c?.rested === true,",
     "new": "    rested: false,",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -194,7 +194,7 @@
     "old": "    sentDay: Number.isInteger(c?.sentDay) && c.sentDay >= 0 ? c.sentDay : null,",
     "new": "    sentDay: Number.isInteger(c?.sentDay) ? c.sentDay : null,",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -203,7 +203,7 @@
     "old": "  const v = voiceParts(r, 'devoted_warn', capFirst(firstWord(playerName)), rolls);",
     "new": "  const v = voiceParts({ ...r, mobileType: 128 }, 'devoted_warn', capFirst(firstWord(playerName)), rolls);",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -212,7 +212,7 @@
     "old": "  warn: 'Companion', deserted: 'Oathbreaker',",
     "new": "  deserted: 'Oathbreaker',",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -221,7 +221,7 @@
     "old": "    if (c.rested) { c.rested = false; c.loyalty = movedLoyalty(c.loyalty, LOYALTY.CALLED); }\n",
     "new": "",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -230,7 +230,7 @@
     "old": "    if (c.rested) { c.rested = false; c.loyalty",
     "new": "    if (c.rested) { c.loyalty",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -239,7 +239,7 @@
     "old": "    if (c.sentDay === day) c.loyalty = movedLoyalty(c.loyalty, LOYALTY.SENT_TWICE);",
     "new": "    c.loyalty = movedLoyalty(c.loyalty, LOYALTY.SENT_TWICE);",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -248,7 +248,7 @@
     "old": "    c.sentDay = day;\n",
     "new": "",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -257,7 +257,7 @@
     "old": "    if (!byYou) return;\n",
     "new": "",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -266,7 +266,7 @@
     "old": " * (isDevoted(r.companion?.loyalty) ? DEVOTED.BLOWS : 1);",
     "new": "",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -275,7 +275,7 @@
     "old": "c.health = null; c.rested = true; });",
     "new": "c.health = null; });",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -284,7 +284,7 @@
     "old": "c.health = null; c.loyalty = movedLoyalty(c.loyalty, LOYALTY.KNOCKED); });",
     "new": "c.health = null; });",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -293,7 +293,7 @@
     "old": "  const tgt = t?.entity && !t.dead && t.entity.health > 0 ? t : null;",
     "new": "  const tgt = t?.entity ? t : null;",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -302,7 +302,7 @@
     "old": "  return !(last.entity?.health > 0);",
     "new": "  return true;",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -311,7 +311,7 @@
     "old": "  rec._fightLast = null;\n  return !(last.entity",
     "new": "  return !(last.entity",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -320,7 +320,7 @@
     "old": "  return revenantCompanionUpdate(_player, id, (c) => { c.loyalty = movedLoyalty(c.loyalty, LOYALTY.WON); });",
     "new": "  return revenantCompanionUpdate(_player, id, () => {});",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -329,7 +329,7 @@
     "old": "    if (!sameKin(r.mobileType, mobileType) || !(swornBodyOf(r.id)?.health > 0)) continue;",
     "new": "    if (!(swornBodyOf(r.id)?.health > 0)) continue;",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -338,7 +338,7 @@
     "old": "    if (!sameKin(r.mobileType, mobileType) || !(swornBodyOf(r.id)?.health > 0)) continue;",
     "new": "    if (!sameKin(r.mobileType, mobileType)) continue;",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -347,7 +347,7 @@
     "old": "export const devotedWithYou = () => revenantsWithYou().find((r) => isDevoted(r.companion?.loyalty) && swornBodyOf(r.id)?.health > 0) ?? null;",
     "new": "export const devotedWithYou = () => revenantsWithYou().find((r) => swornBodyOf(r.id)?.health > 0) ?? null;",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -356,7 +356,7 @@
     "old": "export const devotedWithYou = () => revenantsWithYou().find((r) => isDevoted(r.companion?.loyalty) && swornBodyOf(r.id)?.health > 0) ?? null;",
     "new": "export const devotedWithYou = () => revenantsWithYou().find((r) => isDevoted(r.companion?.loyalty)) ?? null;",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -365,7 +365,7 @@
     "old": "  swornWitness(f.mobileType ?? f.entity?.mobileType);",
     "new": "",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -374,7 +374,7 @@
     "old": "{ markFoeThreat(f); try { _windupAtMe?.(f, b); } catch { /* a warning is no blow's business */ } }",
     "new": "{ markFoeThreat(f); }",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -383,7 +383,7 @@
     "old": "    if (s.key === LOCAL_TARGET) { markFoeThreat(f); try { _windupAtMe?.(f, b); } catch { /* a warning is no blow's business */ } }",
     "new": "    if (s.key === LOCAL_TARGET) markFoeThreat(f);\n    try { _windupAtMe?.(f, b); } catch { /* a warning is no blow's business */ }",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -392,7 +392,7 @@
     "old": "    for (const rec of revenantAshore.bodies()) if (rec.revenantCompanion && !rec.dead && swornFightStep(rec)) swornFightWon(rec.revenantCompanion);\n",
     "new": "",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -401,7 +401,7 @@
     "old": "sendRevenantAway(last.id, { byYou: false })",
     "new": "sendRevenantAway(last.id)",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -410,7 +410,7 @@
     "old": "    if (!isBackFacing(cam.yaw, player.feetAt(), f.ai.feet)) return;\n",
     "new": "",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -419,7 +419,7 @@
     "old": "    revenantSay(revenantWarnEvent(r, playerEntity?.name), (l) => townTalk.say(l));\n  });",
     "new": "  });",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -428,7 +428,7 @@
     "old": "  text.append(...loyaltyRow(el, r, meter));   // RVN11 (22.4): its loyalty, wherever it is\n",
     "new": "",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -437,7 +437,7 @@
     "old": "  text.append(...loyaltyRow(el, r, meter));",
     "new": "  if (state === 'with') text.append(...loyaltyRow(el, r, meter));",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -446,7 +446,7 @@
     "old": "el('span', `cmp-loyw is-${word.toLowerCase()}`, word)",
     "new": "el('span', 'cmp-loyw', word)",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -455,7 +455,7 @@
     "old": "  lb.title = `Loyalty ${v} of 100`;\n",
     "new": "",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   },
   {
@@ -464,7 +464,7 @@
     "old": "meter(v, 100, '')",
     "new": "meter(v, 90, '')",
     "tests": [
-      "test/rvn11a_loyalty.test.js"
+      "test/systems/revenant/rvn11a_loyalty.test.js"
     ]
   }
 ]

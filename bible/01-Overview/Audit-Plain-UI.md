@@ -14,7 +14,7 @@ WHILE THE VERIFIER IS READING), each told to verify a finding in the code before
 |---|---|---|
 | W - the words | every new sentence a player reads, against the law that enforces it - client and service | each claim traced to its enforcing function in `src/net/`, `src/systems/legacy/`, `src/systems/livingWorld/` and `server-account/src/` |
 | C - the code | the commit's `src/` | a browser-shaped `toggle` simulated over the fake DOM; every door a living body carries; the import graph for cycles; edge values through the badge |
-| T - the pins and the record | `test/plainui.test.js`, the moved pins, the records, the bible | 13 scratch mutants of laws the commit added; every fixture against the shape its producer mints (`readStandings`, `meritAsks`, `listWrits`); every doc claim against the code |
+| T - the pins and the record | `test/systems/legacy/plainui.test.js`, the moved pins, the records, the bible | 13 scratch mutants of laws the commit added; every fixture against the shape its producer mints (`readStandings`, `meritAsks`, `listWrits`); every doc claim against the code |
 | U - the render | the board on both skins, the Family page, the talk panel | Chromium at 390, 1280, 1920 and 2560 px; eight readers of the Seat tab; long names on the tree; the badge in every standing |
 
 No lane found a crash, a mechanic moved, or silver or gold touched: PLAIN-UI is words and layout. The findings are
@@ -45,7 +45,7 @@ hard to find.
 | C5 | LOW | The badge's words could crush the conversation on a short landscape screen | FIXED: held to 4.4em, scrolling |
 | C6 | LOW | How it works with Legacy on and no house said nothing of why | FIXED: the no-house line |
 | T4 | MED | `bound` is null until an account's first influence, and every fixture said `'g1'`: an unbound account sent "elsewhere" was a mutant no pin killed | PINNED: a `bound: null` reader earns here |
-| T5 | MED | 13 laws the commit added survived every pin (the words' fold, the dd, the chapters' fold, the toll setting read, five sizes the record claims, the badge's press, its mark, its reset) | PINNED, each (`test/audit_plainui.test.js`) |
+| T5 | MED | 13 laws the commit added survived every pin (the words' fold, the dd, the chapters' fold, the toll setting read, five sizes the record claims, the badge's press, its mark, its reset) | PINNED, each (`test/ui/audit_plainui.test.js`) |
 | T6 | LOW | "every name the tab uses" - the Works, Fealty and Pacts were not in the list; "A tenth" and "0 to 100" typed | FIXED: both entries; `SEAT_LEGACY_SHARE`, `STRENGTH_MIN`, `STRENGTH_MAX` |
 | R1 | LOW | Plain-Words.md: the words "said nowhere" (they were used, defined nowhere); the cap "said only when it refused" (the Merit line showed it); a party member "at their town's pixel" (where they stand); "on the classic skin the Chronicle's People page" (that page is the enhanced Chronicle's) | FIXED |
 | R2 | LOW | Stale: Legacy-Arc 11 "three pages on the rail", Professions-Arc 10.11's present-tense guide "folded under one line", `seatTab.js`'s header order, `enhancedMenu.js`'s `famSec` comment | FIXED |
@@ -65,9 +65,9 @@ hard to find.
 
 ## Proof
 
-- `test/audit_plainui.test.js` (11): a pin for every FIXED and PINNED finding above.
+- `test/ui/audit_plainui.test.js` (11): a pin for every FIXED and PINNED finding above.
 - `tools/mutants/audit_plainui.json`: 31 mutants, 31 dead; `tools/mutants/plainui.json`'s 20 (four re-aimed by
   content), `audit657.json`'s D4, `board_ui.json`'s guide and `lw2.json`'s two talk doors re-aimed and dead again.
-- PINS MOVED in `test/plainui.test.js` (the words that changed), `test/audit657_board.test.js` (D4 by the press),
-  `test/lw6c_keepsake.test.js` (the refusal before the moment, U11).
+- PINS MOVED in `test/systems/legacy/plainui.test.js` (the words that changed), `test/ui/audit657_board.test.js` (D4 by the press),
+  `test/systems/livingWorld/lw6c_keepsake.test.js` (the refusal before the moment, U11).
 - `tools/noticeBoardProbe.mjs` on both skins, desktop and phone: every tab inside the viewport, nothing spilling.

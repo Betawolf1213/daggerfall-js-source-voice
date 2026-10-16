@@ -2,7 +2,7 @@
 //
 //   node tools/journalProbe.mjs        (SHOT_DIR=tools/shots by default)
 //
-// test/journal1.test.js drives the chronicle's Share, the reader's window and the Letters tab's Keep over fake documents,
+// test/net/journal1.test.js drives the chronicle's Share, the reader's window and the Letters tab's Keep over fake documents,
 // which proves what they DO and nothing about how they LOOK. This stands the real surfaces over the real enhanced sheet
 // in Chromium, at the widest content the law allows, and reads the layout back - at a desktop, a narrow window, and a
 // phone on the touch skin:

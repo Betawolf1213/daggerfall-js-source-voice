@@ -58,7 +58,7 @@ whole outside the repository; not yet seen in the game.
   it said nothing, and the door band's `CheckComponent<DaggerfallActionDoor>` misses a DaggerfallActionDoorSpecial. Both
   hosts had the door band first for every `kind === 'door'`, so EVERY SECRET WALL UNDER THE CROSSHAIR SAID "Door", and a
   Direct-flagged action door said "Door" where the mod says "<Interact>". One function, the mod's order.
-- `test/sense1_dungeonsense.test.js` (20); `tools/mutants/sense1.json` (44).
+- `test/systems/sense1_dungeonsense.test.js` (20); `tools/mutants/sense1.json` (44).
 
 ## ECHO1 - THE CHAIN'S ECHO, AND ITS EXAMINE (SHIPPED 2026-10-05)
 
@@ -86,7 +86,7 @@ whole outside the repository; not yet seen in the game.
   north-east", "Works something above it"), walked without playing it (`chainMovers` along `ActionSystem.nextOf`, loop-
   and depth-safe to IsPlaying's own `PLAY_DEPTH_MAX`), from the object's own box. On the World Tooltips label; never
   under the author's `HideDefaultInteractTooltip`.
-- `test/echo1_dungeonecho.test.js` (11); `tools/mutants/echo1.json` (35).
+- `test/systems/echo1_dungeonecho.test.js` (11); `tools/mutants/echo1.json` (35).
 
 ## WAYOUT1 - THE WAY OUT ON THE COMPASS (SHIPPED 2026-10-05)
 
@@ -111,7 +111,7 @@ whole outside the repository; not yet seen in the game.
 - **THE MARK**: an arrow pointing up and out, a dark body (`WAY_BODY_CSS`) rimmed in the parchment's light
   (`WAY_MARK_CSS`), in its own band under the strip (clear of the quest's diamond and the letters), on the compass's
   bearing law, clamped; enhanced HUD only (the classic compass is DFU's).
-- `test/wayout1_wayout.test.js` (13, the real tick at the motor's speeds among them); `tools/mutants/wayout1.json` (34).
+- `test/systems/wayout1_wayout.test.js` (13, the real tick at the motor's speeds among them); `tools/mutants/wayout1.json` (34).
 
 ## GUIDE8 - THE GUIDANCE TIERS (SHIPPED 2026-10-05; the Town tier and the Exact tier indoors at AUDIT DELVE)
 
@@ -138,7 +138,7 @@ which draws them on the held map (`quests`) and the compass (`questCompassMark`,
 - **THE COMPASS**: the followed quest's nearest mark, else the nearest (the enhanced compass's quest diamond); the
   tracker is fed while the Town or Exact tier is on (`followOn`).
 - Exact is the one tier that can spoil a search: off by default, its own row, the enhanced skin only.
-- `test/guide8_questguidance.test.js` (15, the echo's sheet mark with it); `tools/mutants/guide8.json` (34).
+- `test/ui/automap/guide8_questguidance.test.js` (15, the echo's sheet mark with it); `tools/mutants/guide8.json` (34).
 
 ## DETECT-FINDS - A SEARCHED OBJECT'S FIND IS TREASURE (SHIPPED 2026-10-05)
 
@@ -148,7 +148,7 @@ Treasure walks every DaggerfallLoot; SEARCH1's coffins, shelves, chests and crat
 nothing yet (the find is rolled at the search), so GetLootFlags gives it no Treasure bit - as an empty corpse. The
 street's searched headstones need nothing of their own: a grave's find is minted as a dropped pile (`scenes/world.js
 activateGrave` -> `droppedLoot.dropPile`), and the street's Detect walk carries every pile (pinned).
-`test/dsize1_mediumdungeons.test.js`.
+`test/systems/quest/dsize1_mediumdungeons.test.js`.
 
 ## DSIZE1 - MEDIUM DUNGEONS (SHIPPED 2026-10-05; REDESIGNED at AUDIT DELVE against MAPS.BSA)
 
@@ -168,7 +168,7 @@ Disabled: the room built every dungeon whole); a quest whose markers were chosen
 size where the medium size is either side (`adoptLinkedDungeonSize`, the machine's Start); and a quest frozen at another
 size loaded online is RE-LAID on the room's build (`systems/quest/questRepair.js`: its markers enumerated again, its
 placements put back, its stamp the room's). Its own row beside DFU's, which stays DFU's switch, whole.
-`test/dsize1_mediumdungeons.test.js` (11, DETECT-FINDS' with it, MAPS.BSA's with ARENA2); `tools/mutants/dsize1.json`
+`test/systems/quest/dsize1_mediumdungeons.test.js` (11, DETECT-FINDS' with it, MAPS.BSA's with ARENA2); `tools/mutants/dsize1.json`
 (27).
 
 **MEDIUM-DISTINCT (2026-10-08, Mac: "Medium dungeons just copy and paste 2 layouts together") - NEVER ONE INTERIOR
@@ -199,7 +199,7 @@ THE FOUR HOSTS: `scenes/worldModes.js` and `scenes/dungeonContext.js` build and 
 `scenes/exterior.js` size the quest layer's locations through it and load quests through the bridge, which runs the
 re-lay. AUDIT FIELD-BUGS 1008 (`01-Overview/Audit-Log.md`): the re-lay reads only a build that moved (`distinct`), offline
 only a dungeon a link holds (unlinked, the build is the settings'), and a shared copy arriving
-(`questRepair.js relayQuestMovedLayout`). `test/mediumdistinct.test.js` (4); `tools/mutants/mediumdistinct.json` (18), all dead.
+(`questRepair.js relayQuestMovedLayout`). `test/systems/quest/mediumdistinct.test.js` (4); `tools/mutants/mediumdistinct.json` (18), all dead.
 
 **SD-ONLINE (2026-10-05, Mac: "So medium dungeons will be the new by default option thats on (online only)", then "On
 second thought. Large, medium and small should all play into account online" - "World mixes sizes") - ONLINE EVERY
@@ -216,7 +216,7 @@ every dungeon whole and the relay keeps a room's memory for thirty days, so a re
 `dungeon:m<id>.s` or `dungeon:m<id>.m` (`net/online.js roomKeyFor`, reading `world/smallerDungeons.js
 builtDungeonSize` off the build through the mode machine's identity; `net/wire.js` WORLD_ROOM and DUNGEON_ROOM_TAGS -
 the relay's `world172` - `world171` on its branch, renumbered past main's CRYSTAL-FIST at the merge), while a dungeon built whole - the main story's, the undercroft, one the world leaves large, one
-no bigger than its size - keeps the room and the memory it always had. `test/sdonline.test.js` (10);
+no bigger than its size - keeps the room and the memory it always had. `test/systems/sdonline.test.js` (10);
 `tools/mutants/sdonline.json` (13).
 
 ## THE FOUR HOSTS

@@ -221,7 +221,7 @@ export class LevelingChoiceScreen {
    *  sends. This screen sits at the END of the chargen window, whose
    *  earlier stage IS a choice window taking raw codes, so a caller
    *  walking the whole wizard with codes must not fall off a cliff at
-   *  the last screen (test/audit17f.test.js's walk does exactly that). */
+   *  the last screen (test/systems/audit17f.test.js's walk does exactly that). */
   static ACTIONS = Object.freeze({
     // LEGACY-CHOICE: each way its own - with two options either moves between them, with three they are a direction
     up: 'up', ArrowUp: 'up', down: 'down', ArrowDown: 'down',

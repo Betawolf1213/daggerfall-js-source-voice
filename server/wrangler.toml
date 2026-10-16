@@ -22,7 +22,7 @@
 #
 # (This block claimed the opposite until 2026-09-21, fifteen weeks after
 # #209 made that false, and Mac had to be the one to notice.
-# test/relaydeploy.test.js reads the workflow's OWN TRIGGER now and
+# test/server/relaydeploy.test.js reads the workflow's OWN TRIGGER now and
 # holds every live comment to it - the claim is derived from the
 # workflow rather than retyped beside it, which is what let the old
 # sentence rot in place.)

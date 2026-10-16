@@ -79,7 +79,7 @@ for (const [designs, opts] of LINES) {
     const k = fit(d);
     for (const r of rows) {
       const body = bodyAt(faces, r.y);
-      // The trunk only — see test/drapeclip.test.js for why measuring
+      // The trunk only — see test/characters/drapeclip.test.js for why measuring
       // against arms produced a correct number and a terrible garment.
       for (const [group, e] of Object.entries(body)) {
         if (group !== 'body') continue;

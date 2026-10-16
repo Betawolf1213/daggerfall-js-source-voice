@@ -5,7 +5,7 @@
     "old": "  if (!a.zone || !t.zone) return",
     "new": "  if (!t.zone) return",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "  if (kin) return { ok: false, dealt: 0, fell: false, fall: null, why: 'kin' };",
     "new": "  if (false) return { ok: false, dealt: 0, fell: false, fall: null, why: 'kin' };",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "  if (a.down || t.down) return",
     "new": "  if (a.down) return",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ],
     "equivalent": true,
     "why": "refereeBlow and refereeCast (net/siege/siegeRef.js) refuse a down fighter on either side themselves - `if (by.down || to.down)` - and a fighter down here is down there (wildBlow sets both); the referee's own check is pinned by the siege's tests."
@@ -34,7 +34,7 @@
     "old": "const mend = (x, now) => { if (!x.down && now - x.struckAt >= WILD_REF.mendMs && now - x.zoneAt >= WILD_REF.mendMs) x.f.hp = x.f.max; };",
     "new": "const mend = (x, now) => { if (false) x.f.hp = x.f.max; };",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -43,7 +43,7 @@
     "old": "const mend = (x, now) => { if (!x.down && now - x.struckAt >= WILD_REF.mendMs && now - x.zoneAt >= WILD_REF.mendMs) x.f.hp = x.f.max; };",
     "new": "const mend = (x, now) => { if (!x.down && now - x.struckAt >= WILD_REF.mendMs && now - x.zoneAt >= WILD_REF.mendMs) { x.f.hp = x.f.max; x.f.casts = []; } };",
     "tests": [
-      "test/int10_spells.test.js"
+      "test/net/duel/int10_spells.test.js"
     ]
   },
   {
@@ -52,7 +52,7 @@
     "old": "  if (!fall || fall.killer !== killer || fall.picked ||",
     "new": "  if (!fall || fall.picked ||",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -61,7 +61,7 @@
     "old": "  if (!fall || fall.killer !== killer || fall.picked ||",
     "new": "  if (!fall || fall.killer !== killer ||",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -70,7 +70,7 @@
     "old": "fall.picked || now - fall.at > WILD_REF.pickMs) return null;",
     "new": "fall.picked) return null;",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -79,7 +79,7 @@
     "old": "if (!fall.picked && now - fall.at > WILD_REF.pickMs) { fall.picked = true; out.push(fall); }",
     "new": "if (false) { fall.picked = true; out.push(fall); }",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -88,7 +88,7 @@
     "old": "  if (z && x.down && now - x.downAt >= WILD_REF.riseMs) {",
     "new": "  if (false) {",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -97,7 +97,7 @@
     "old": "  if (x.pose && !refereeStep(x.pose, p, now - x.poseAt, x.f)) x.jumpAt = now;",
     "new": "  if (false) x.jumpAt = now;",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -106,7 +106,7 @@
     "old": " || !ID_RE.test(c.k) || c.f === c.k) return false;",
     "new": " || !ID_RE.test(c.k)) return false;",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -115,7 +115,7 @@
     "old": "  if (WILD_FOREIGN.some((f) => c[f] !== undefined)) return false;\n",
     "new": "",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -124,7 +124,7 @@
     "old": " || c.w < -1 || c.w >= WILD_WORN_MAX) return false;",
     "new": " || c.w < -1) return false;",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -133,7 +133,7 @@
     "old": "  if (v !== V) return { ok: false, why: 'version' };\n",
     "new": "",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ],
     "note": "MAC (2026-10-14, re-aimed by content): the fall receipt and the collect share one verify, verifyAs"
   },
@@ -143,7 +143,7 @@
     "old": "  if (!rec?.ok) return null;",
     "new": "  if (!rec) return null;",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -152,7 +152,7 @@
     "old": "  if (named && sub !== named) return null;",
     "new": "  if (false) return null;",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ],
     "note": "PVP-LOOT (re-aimed by content, FIELD BUGS 2026-10-14): the killer's piece's gate is remainsNamedFor's - one law, read by takeFrom and by the relay's friend law"
   },
@@ -162,7 +162,7 @@
     "old": "  if (!rec?.ok || !remainsLive(rec, now) || remainsEmpty(rec)) return [];",
     "new": "  if (!remainsLive(rec, now) || remainsEmpty(rec)) return [];",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -171,7 +171,7 @@
     "old": "      if (!o.ok || o.claims.wr !== d.r) { this._junk(ws); return; }",
     "new": "      if (false) { this._junk(ws); return; }",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -180,7 +180,7 @@
     "old": "      if (!o.ok || o.claims.wr !== d.r) { this._junk(ws); return; }",
     "new": "      if (!o.ok) { this._junk(ws); return; }",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -189,7 +189,7 @@
     "old": "        rec.ok = rec.items.length === rec.wn && (await remainsDigest(rec.items, { subtle: crypto.subtle })) === rec.wh;",
     "new": "        rec.ok = rec.items.length === rec.wn;",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -198,7 +198,7 @@
     "old": "    for (const sub of [fall.fallen, fall.killer]) {",
     "new": "    for (const sub of [fall.killer]) {",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -207,7 +207,7 @@
     "old": "    if (owed && sk) { for (const w of owed)",
     "new": "    if (false) { for (const w of owed)",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -216,7 +216,7 @@
     "old": "    if (b?.kind === 'royal' && (m.k === 'cast' || !royalMayStrike(b, a.sub, target.sub, now))) return;",
     "new": "    if (b?.kind === 'royal' && (heal || !royalMayStrike(b, a.sub, target.sub, now))) return;",
     "tests": [
-      "test/int10_spells.test.js"
+      "test/net/duel/int10_spells.test.js"
     ]
   },
   {
@@ -225,7 +225,7 @@
     "old": "      if (ctx.nowS < c.i + WILD_FALL_GRACE_S) return { error: 'grace' };\n",
     "new": "",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -234,7 +234,7 @@
     "old": "    if (player.id !== c.f && player.id !== c.k) return { error: 'not-yours' };\n",
     "new": "",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -243,7 +243,7 @@
     "old": "  const keep = (/** @type {any} */ it) => { const k = ledgerKeyOf(it); return k != null && barred.has(k); };",
     "new": "  const keep = (/** @type {any} */ _it) => false;",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -252,7 +252,7 @@
     "old": "  const burnt = !!holdRefusal(row);",
     "new": "  const burnt = false;",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -261,7 +261,7 @@
     "old": "  if (had) {",
     "new": "  if (false) {",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -270,7 +270,7 @@
     "old": "  } else if (typeof body?.n !== 'string' || !WILD_NONCE_RE.test(body.n)) return { error: 'nonce' };",
     "new": "  }",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -279,7 +279,7 @@
     "old": "${seize ? ', lease = NULL' : ''}",
     "new": "${seize ? '' : ''}",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -288,7 +288,7 @@
     "old": "  const hb = aside(bag), hc = aside(cart);",
     "new": "  const hb = [], hc = aside(cart);",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -297,7 +297,7 @@
     "old": "  for (const [it, from] of took.slice(records.length)) {",
     "new": "  for (const [it, from] of []) {",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -306,7 +306,7 @@
     "old": "    online?.setWildZone?.(wildCan() ? 1 : 0);",
     "new": "    void 0;",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -315,7 +315,7 @@
     "old": "      if (!r || i === rec.wi) continue;",
     "new": "      if (!r) continue;",
     "tests": [
-      "test/wild1_fight.test.js"
+      "test/net/wild1_fight.test.js"
     ]
   },
   {
@@ -324,7 +324,7 @@
     "old": "    const it = rec.wk && rec.wk === me() ? rec.items[rec.wi] : null;",
     "new": "    const it = null;",
     "tests": [
-      "test/wild1_fight.test.js"
+      "test/net/wild1_fight.test.js"
     ]
   },
   {
@@ -333,7 +333,7 @@
     "old": "      if (!b || b.s !== d.s || b.offered ||",
     "new": "      if (!b || b.offered ||",
     "tests": [
-      "test/wild1_fight.test.js"
+      "test/net/wild1_fight.test.js"
     ]
   },
   {
@@ -342,7 +342,7 @@
     "old": "      if (!once({ k: 'pick', r: b.s, w: i, ...tm }, { room: b.room })) return false;",
     "new": "      if (!once({ k: 'pick', r: b.s, w: i, ...tm })) return false;",
     "tests": [
-      "test/wild1_fight.test.js"
+      "test/net/wild1_fight.test.js"
     ]
   },
   {
@@ -351,7 +351,7 @@
     "old": "  if (them.id !== to) return { ok: false, dealt: 0, fell: false, bout, why: 'not-opponent' };\n",
     "new": "",
     "tests": [
-      "test/int8_duel_ref.test.js"
+      "test/net/duel/int8_duel_ref.test.js"
     ]
   },
   {
@@ -360,7 +360,7 @@
     "old": "  if (now < bout.startMs || now >= bout.endMs) return",
     "new": "  if (now >= bout.endMs) return",
     "tests": [
-      "test/int8_duel_ref.test.js"
+      "test/net/duel/int8_duel_ref.test.js"
     ]
   },
   {
@@ -369,7 +369,7 @@
     "old": " || c.f[0] === c.f[1]) return false;",
     "new": ") return false;",
     "tests": [
-      "test/int8_duel_ref.test.js"
+      "test/net/duel/int8_duel_ref.test.js"
     ]
   },
   {
@@ -378,7 +378,7 @@
     "old": "  if (!c.f.includes(player.id)) return { error: 'not-yours' };\n",
     "new": "",
     "tests": [
-      "test/duel_record.test.js"
+      "test/server/duel_record.test.js"
     ]
   },
   {
@@ -387,7 +387,7 @@
     "old": "    if (r == null || !lawful(it)) continue;",
     "new": "    if (r == null) continue;",
     "tests": [
-      "test/int7_arms.test.js"
+      "test/net/arena/int7_arms.test.js"
     ]
   },
   {
@@ -396,7 +396,7 @@
     "old": "    if (siegeIsBow(it.templateIndex)) bow = 1;",
     "new": "    if (false) bow = 1;",
     "tests": [
-      "test/int7_arms.test.js"
+      "test/net/arena/int7_arms.test.js"
     ]
   },
   {
@@ -405,7 +405,7 @@
     "old": "  if (who?.wa !== undefined) claims.wa = who.wa;",
     "new": "  if (false) claims.wa = who.wa;",
     "tests": [
-      "test/int7_arms.test.js"
+      "test/net/arena/int7_arms.test.js"
     ]
   },
   {
@@ -414,7 +414,7 @@
     "old": "  if (c.wa !== undefined && !(c.rc === 1 && armsIssuable(c.wa))) return false;",
     "new": "  if (c.wa !== undefined && !armsIssuable(c.wa)) return false;",
     "tests": [
-      "test/int7_arms.test.js"
+      "test/net/arena/int7_arms.test.js"
     ]
   },
   {
@@ -423,7 +423,7 @@
     "old": "    if (now - x.outAt >= WILD_REF.riseMs && !x.down) { x.f.hp = x.f.max; x.struckAt = -Infinity; }",
     "new": "    if (!x.down) { x.f.hp = x.f.max; x.struckAt = -Infinity; }",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -432,7 +432,7 @@
     "old": "&& now - x.zoneAt >= WILD_REF.mendMs) x.f.hp = x.f.max; };",
     "new": ") x.f.hp = x.f.max; };",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -441,7 +441,7 @@
     "old": "  if (!carry || !Number.isFinite(carry.at) || !(now - carry.at < Math.max(WILD_REF.mendMs, carry.down ? WILD_REF.riseMs : 0))) return;",
     "new": "  return;",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -450,7 +450,7 @@
     "old": "  } else if (z && !x.zone && carry && carry.at > x.outAt) takeCarry(x, carry, now);",
     "new": "  }",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -459,7 +459,7 @@
     "old": "  if (carry.down && now - carry.downAt < WILD_REF.riseMs) { x.down = true; x.downAt = carry.downAt; x.f.down = true; x.f.hp = 0; return; }",
     "new": "  if (false) return;",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -468,7 +468,7 @@
     "old": "  if (x && x.zone) { x.zone = false; x.outAt = now; }",
     "new": "  if (false) { x.zone = false; x.outAt = now; }",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -477,7 +477,7 @@
     "old": "  if (now - a.jumpAt < WILD_REF.jumpMs) return",
     "new": "  if (false) return",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -486,7 +486,7 @@
     "old": "  if (st.falls.size >= WILD_REF.fallsMax) { evicted = st.falls.values().next().value; evicted.picked = true; st.falls.delete(evicted.r); }",
     "new": "  if (st.falls.size >= WILD_REF.fallsMax) st.falls.delete(st.falls.keys().next().value);",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -495,7 +495,7 @@
     "old": "  if (Array.isArray(wt) && wt.length === 2 && wt.every((n) => Number.isSafeInteger(n) && n >= 0 && n < 65536)) fall.wt = [wt[0], wt[1]];",
     "new": "",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -504,7 +504,7 @@
     "old": "    if (remainsSpent(rec) && now - rec.at < WILD_TOMB_MIN_MS) continue;",
     "new": "",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -513,7 +513,7 @@
     "old": "  if (!rec || rec.ok || rec.oid === oid || now - (rec.lastAt ?? rec.at) < WILD_STALL_MS) return false;",
     "new": "  if (!rec || rec.ok || rec.oid === oid) return false;",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -522,7 +522,7 @@
     "old": "return { r: v.r, gi: typeof v.gi === 'string' && v.gi ? v.gi : null, os:",
     "new": "return { r: v.r, gi: null, os:",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -531,7 +531,7 @@
     "old": "  if (coin) took.push([coin, 'gold']);\n",
     "new": "",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -540,7 +540,7 @@
     "old": "  drop.sort((a, b) => worth.get(b[0]) - worth.get(a[0]));",
     "new": "",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -549,7 +549,7 @@
     "old": "    const held = list.map((it, i) => (keep(it) || (wildCanLose(it) && !recordFits(wildRecord(it))) ? [i, it] : null)).filter((x) => x !== null);",
     "new": "    const held = list.map((it, i) => (keep(it) ? [i, it] : null)).filter((x) => x !== null);",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -558,7 +558,7 @@
     "old": "  if (lit !== undefined) entity.lightSourceIndex = bag.indexOf(lit);",
     "new": "",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -567,9 +567,9 @@
     "old": "      if (cartCoin) cartCoin.stackCount = Math.max(0, Math.floor(cartCoin.stackCount ?? 0)) + gold.cart;\n      gold.purse = 0; gold.cart = 0;",
     "new": "      entity.goldPieces += gold.cart;\n      gold.purse = 0; gold.cart = 0;",
     "equivalent": true,
-    "why": "the gold is the second record a death takes, after one piece of at most WILD_RECORD_BYTES_MAX (4 KiB), and a remains holds WILD_REMAINS_ITEMS_MAX (96) records and WILD_REMAINS_BYTES_MAX (100 KiB): the gold always fits, so its put-back never runs - kept as the law's word on a coin that would not fit; the cart's share out of the cart is pinned where the gold is taken (test/int9_wild_ref.test.js, the poor pack).",
+    "why": "the gold is the second record a death takes, after one piece of at most WILD_RECORD_BYTES_MAX (4 KiB), and a remains holds WILD_REMAINS_ITEMS_MAX (96) records and WILD_REMAINS_BYTES_MAX (100 KiB): the gold always fits, so its put-back never runs - kept as the law's word on a coin that would not fit; the cart's share out of the cart is pinned where the gold is taken (test/net/int9_wild_ref.test.js, the poor pack).",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -578,7 +578,7 @@
     "old": "  if (!Array.isArray(wt)) return offer[w] ?? null;",
     "new": "  return offer[w] ?? null;",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -587,7 +587,7 @@
     "old": "  return k ? [k, ...drop] : drop;",
     "new": "  return drop;",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -596,7 +596,7 @@
     "old": "    const same = (/** @type {any} */ it) => !!it && (s.u ? it.uid === s.u : s.p ? it.provenance === s.p\n      : ",
     "new": "    const same = (/** @type {any} */ it) => !!it && (false ? 0 : false ? 0\n      : ",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -605,7 +605,7 @@
     "old": "    order = await mintRemainsOrder({ s: fallen, wr: r, wh, wn: records.length, wm, ...(killerFirst && killer ? { wk: killer, wi: 0, ...(escrow ? { we: 1 } : {}) } : {}), ...(wg ? { wg } : {}) }, signing, { subtle: ctx.subtle, nowS: oi });",
     "new": "    order = await mintRemainsOrder({ s: fallen, wr: r, wh, wn: records.length, wm, ...(killerFirst && killer ? { wk: killer, wi: 0, ...(escrow ? { we: 1 } : {}) } : {}), ...(wg ? { wg } : {}) }, signing, { subtle: ctx.subtle, nowS: ctx.nowS });",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ],
     "note": "MAC (2026-10-14, re-aimed by content): the order says an escrowed piece, we"
   },
@@ -615,7 +615,7 @@
     "old": "  if (!burnt && records.length && wm && ctx.nowS < oi + ORDER_TTL_S) {",
     "new": "  if (!burnt && records.length && wm) {",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -624,7 +624,7 @@
     "old": "  if (!room) return { error: 'room' };",
     "new": "",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -633,7 +633,7 @@
     "old": "records: list(had.items), kept: list(had.kept), burnt: had.burnt === 1, killerFirst: had.wi === 0, wm: had.wm,",
     "new": "records: list(had.items), kept: list(had.kept), burnt: had.burnt === 1, killerFirst: had.wi === 0, wm: room,",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -642,7 +642,7 @@
     "old": "    return key === drop.taken[i].provenance ? rec : { ...rec, uid: mintItemId(ctx.rand) };",
     "new": "    return rec;",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -651,7 +651,7 @@
     "old": "    ...knownCopySteps(ctx.db, charId, dropped, ctx.nowS),\n",
     "new": "",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -660,7 +660,7 @@
     "old": "  const barred = await piecesBarred(ctx.db, charId, wildDropCandidates(stored, w, wt, cart).map(ledgerKeyOf).filter((k) => k != null));",
     "new": "  const barred = await piecesBarred(ctx.db, charId, takeWildDeath(JSON.parse(JSON.stringify(stored)), w, () => false, wt, cart).taken.map(ledgerKeyOf).filter((k) => k != null));",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -669,7 +669,7 @@
     "old": "      if (now && now.lease === at.lease) seq = now.seq;",
     "new": "",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -678,7 +678,7 @@
     "old": "  const tk = { took: wildTookOf(drop.taken, drop.from), gold: drop.gold };",
     "new": "  const tk = { took: [], gold: { purse: 0, cart: 0 } };",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -687,7 +687,7 @@
     "old": "      if (c.wm !== a.key) { this._junk(ws); return; }",
     "new": "",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -696,7 +696,7 @@
     "old": "    if (remainsEmpty(rec)) this._wdunTellGone(rec.os);\n    await this.state.storage.put(wildRemainsKey(rec.r), rec);",
     "new": "    if (remainsEmpty(rec)) { map.delete(rec.r); await this.state.storage.delete(wildRemainsKey(rec.r)); this._wdunTellGone(rec.os); }\n    else await this.state.storage.put(wildRemainsKey(rec.r), rec);",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -705,7 +705,7 @@
     "old": "now, gi: c.wg ?? null, wh: c.wh,",
     "new": "now, gi: a.sub === c.s ? a.gi ?? null : null, wh: c.wh,",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -714,7 +714,7 @@
     "old": "      if (rec && rec.oid !== a.id && !remainsTakeover(rec, a.id, now)) return;",
     "new": "      if (rec && rec.oid !== a.id) return;",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -723,7 +723,7 @@
     "old": "    try { await this.state.storage.put(`${WILD_FALL_PREFIX}${rid}`, res.fall); } catch (e) { console.warn('[wild] fall kept failed', e?.message ?? e); }",
     "new": "",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -732,7 +732,7 @@
     "old": "    if (!a.sub || (z === 1 && !a.ci)) return;",
     "new": "    if (!a.sub) return;",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -741,7 +741,7 @@
     "old": "    if (a.sub && this._wildRef && ![...this._all()].some(([w, b]) => w !== ws && b.id && b.sub === a.sub)) wildGone(this._wildRef, a.sub, Date.now());",
     "new": "",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -750,7 +750,7 @@
     "old": "    const fall = wildPick(st, a.sub, d.r, d.w, now, Number.isInteger(d.t) ? [d.t, d.m] : null);",
     "new": "    const fall = wildPick(st, a.sub, d.r, d.w, now, null);",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -759,7 +759,7 @@
     "old": "    if (this.status === 'open' && this.wildOk && this._ws && this._welcomed.has(this._ws)) { this._sayZone(this._ws, v); this._wildZoneAt = now; }",
     "new": "    if (this.status === 'open' && this.wildOk && this._ws && this._welcomed.has(this._ws)) { this._sayZone(this._ws, v); this._wildZoneAt = now; }\n    for (const h of this._halo.values()) if (h.status === 'open' && h.wildOk && h.ws && this._welcomed.has(h.ws)) this._sayZone(h.ws, v);",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -768,7 +768,7 @@
     "old": "    if (v === this._wildZone && !(v === 1 && now - this._wildZoneAt >= WILD_ZONE_KEEP_MS)) return;",
     "new": "    if (v === this._wildZone) return;",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -777,7 +777,7 @@
     "old": "        if (old.wildOk && old.status === 'open') this._sayZone(old.ws, 0);",
     "new": "",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -786,7 +786,7 @@
     "old": "    if (!wildDirected(d) && room && room !== this.room && !halo) return false;",
     "new": "",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -795,7 +795,7 @@
     "old": "      const g = validDuelRefOut(m);\n      if (g) this._deliver('dref', () => this.onDuelRef?.(g, room));",
     "new": "      if (!primary) return;\n      const g = validDuelRefOut(m);\n      if (g) this._deliver('dref', () => this.onDuelRef?.(g, room));",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -804,7 +804,7 @@
     "old": "        askMine(rec);   // AUDIT INT9: an ask that never left",
     "new": "        void 0;   // AUDIT INT9: an ask that never left",
     "tests": [
-      "test/wild1_fight.test.js"
+      "test/net/wild1_fight.test.js"
     ]
   },
   {
@@ -813,7 +813,7 @@
     "old": "    return json({ kin: pa.some((x) => pb.includes(x)) });",
     "new": "    return json({ kin: false });",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -822,7 +822,7 @@
     "old": "    const parties = (r) => [r?.party, r?.partyWas && now - r.partyWas.at < WILD_REF.truceMs ? r.partyWas.id : null].filter(Boolean);",
     "new": "    const parties = (r) => [r?.party].filter(Boolean);",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -831,7 +831,7 @@
     "old": "r?.partyWas && now - r.partyWas.at < WILD_REF.truceMs ? r.partyWas.id : null",
     "new": "r?.partyWas ? r.partyWas.id : null",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -840,7 +840,7 @@
     "old": "    let kin = !!(rooms?.idFromName && rooms?.get), heard = !kin;",
     "new": "    let kin = false, heard = true;",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -849,7 +849,7 @@
     "old": "    has(r) { return recs.has(r) || saidIds.has(r); },",
     "new": "    has(r) { return recs.has(r); },",
     "tests": [
-      "test/wild1_fight.test.js"
+      "test/net/wild1_fight.test.js"
     ]
   },
   {
@@ -858,8 +858,8 @@
     "old": "  return Math.max(0, (armsOk(wa) ? Math.min(reach, wa[0]) : reach) + SIEGE_BONUS_MAX) * SIEGE_CRIT_MAX;",
     "new": "  return Math.max(0, reach + SIEGE_BONUS_MAX) * SIEGE_CRIT_MAX;",
     "tests": [
-      "test/int7_arms.test.js",
-      "test/int9_wild_ref.test.js"
+      "test/net/arena/int7_arms.test.js",
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -868,7 +868,7 @@
     "old": " || (shaft && armsOk(wa) && wa[1] !== 1)) return",
     "new": ") return",
     "tests": [
-      "test/int7_arms.test.js"
+      "test/net/arena/int7_arms.test.js"
     ]
   },
   {
@@ -877,7 +877,7 @@
     "old": "  if (reach == null) return 0;",
     "new": "  if (reach == null) return 9999;",
     "tests": [
-      "test/int7_arms.test.js"
+      "test/net/arena/int7_arms.test.js"
     ]
   },
   {
@@ -886,7 +886,7 @@
     "old": "(arenaArmsOk(wa) ? Math.min(wmax + mat, wa[0]) : wmax + mat)",
     "new": "(wmax + mat)",
     "tests": [
-      "test/int7_arms.test.js"
+      "test/net/arena/int7_arms.test.js"
     ]
   },
   {
@@ -895,8 +895,8 @@
     "old": "ci: c.ci, wa: c.wa };",
     "new": "ci: c.ci };",
     "tests": [
-      "test/int7_arms.test.js",
-      "test/int9_wild_ref.test.js"
+      "test/net/arena/int7_arms.test.js",
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -905,8 +905,8 @@
     "old": "    const res = duelBlow(st, a.sub, d.to, { d: d.d, r, held, wa: a.wa ?? null }, now);",
     "new": "    const res = duelBlow(st, a.sub, d.to, { d: d.d, r, held, wa: null }, now);",
     "tests": [
-      "test/int7_arms.test.js",
-      "test/int8_duel_ref.test.js"
+      "test/net/arena/int7_arms.test.js",
+      "test/net/duel/int8_duel_ref.test.js"
     ]
   },
   {
@@ -915,7 +915,7 @@
     "old": "held: siegeHeld(look, m.w, m.m), d: m.d, r: m.r, wa: a.wa ?? null }, now);   // INT7: clipped to the striker's signed arms",
     "new": "held: siegeHeld(look, m.w, m.m), d: m.d, r: m.r, wa: null }, now);   // INT7: clipped to the striker's signed arms",
     "tests": [
-      "test/int7_arms.test.js"
+      "test/net/arena/int7_arms.test.js"
     ]
   },
   {
@@ -924,8 +924,8 @@
     "old": "{ d: d.d, r, held, wa: a.wa ?? null, kin, rid }",
     "new": "{ d: d.d, r, held, wa: null, kin, rid }",
     "tests": [
-      "test/int7_arms.test.js",
-      "test/int9_wild_ref.test.js"
+      "test/net/arena/int7_arms.test.js",
+      "test/net/int9_wild_ref.test.js"
     ]
   },
   {
@@ -934,7 +934,7 @@
     "old": "    arms_top: judged.arms[0],\n",
     "new": "    arms_top: null,\n",
     "tests": [
-      "test/int7_arms.test.js"
+      "test/net/arena/int7_arms.test.js"
     ]
   },
   {
@@ -943,7 +943,7 @@
     "old": "WHERE r.id = ? AND r.player = ?').bind(id, playerId).first();",
     "new": "WHERE r.id = ? AND (r.player = ? OR 1)').bind(id, playerId).first();",
     "tests": [
-      "test/int7_arms.test.js"
+      "test/net/arena/int7_arms.test.js"
     ],
     "note": "SCALE4f (2026-10-10) re-aimed it by content: the four reads of the realm row are one (realm.js realmMintFacts)."
   },
@@ -953,7 +953,7 @@
     "old": "  const lv = row.level_seen ?? summary?.level;",
     "new": "  const lv = summary?.level ?? row.level_seen;",
     "tests": [
-      "test/int7_arms.test.js"
+      "test/net/arena/int7_arms.test.js"
     ],
     "note": "SCALE4f (2026-10-10) re-aimed it by content: the four reads of the realm row are one (realm.js realmMintFacts)."
   },
@@ -963,8 +963,8 @@
     "old": "ask.s !== s || yes.s !== s ||",
     "new": "ask.s !== s ||",
     "tests": [
-      "test/int8_duel_ref.test.js",
-      "test/duel_session.test.js"
+      "test/net/duel/int8_duel_ref.test.js",
+      "test/net/duel/duel_session.test.js"
     ]
   },
   {
@@ -973,8 +973,8 @@
     "old": "  if (st.of.has(a.sub) || st.of.has(b.sub) || st.bouts.size",
     "new": "  if (st.bouts.size",
     "tests": [
-      "test/int8_duel_ref.test.js",
-      "test/duel_session.test.js"
+      "test/net/duel/int8_duel_ref.test.js",
+      "test/net/duel/duel_session.test.js"
     ]
   },
   {
@@ -983,8 +983,8 @@
     "old": "  if (fromCentre(a.pose, c) > ROYAL_RING.radiusM || fromCentre(b.pose, c) > ROYAL_RING.radiusM) return { no: 'range' };",
     "new": "",
     "tests": [
-      "test/int8_duel_ref.test.js",
-      "test/duel_session.test.js"
+      "test/net/duel/int8_duel_ref.test.js",
+      "test/net/duel/duel_session.test.js"
     ]
   },
   {
@@ -993,8 +993,8 @@
     "old": "  if (now < bout.startMs) return duelEnd(st, bout, null, 'cancelled');",
     "new": "",
     "tests": [
-      "test/int8_duel_ref.test.js",
-      "test/duel_session.test.js"
+      "test/net/duel/int8_duel_ref.test.js",
+      "test/net/duel/duel_session.test.js"
     ]
   },
   {
@@ -1003,8 +1003,8 @@
     "old": "  return duelEnd(st, bout, sides[1].sub, why === 'yield' ? 'yield' : 'left');",
     "new": "  return duelEnd(st, bout, sides[0].sub, why === 'yield' ? 'yield' : 'left');",
     "tests": [
-      "test/int8_duel_ref.test.js",
-      "test/duel_session.test.js"
+      "test/net/duel/int8_duel_ref.test.js",
+      "test/net/duel/duel_session.test.js"
     ]
   },
   {
@@ -1013,8 +1013,8 @@
     "old": "    if (now >= bout.endMs) { out.push(duelEnd(st, bout, null, 'draw')); continue; }",
     "new": "",
     "tests": [
-      "test/int8_duel_ref.test.js",
-      "test/duel_session.test.js"
+      "test/net/duel/int8_duel_ref.test.js",
+      "test/net/duel/duel_session.test.js"
     ]
   },
   {
@@ -1023,8 +1023,8 @@
     "old": "    for (const x of [bout.a, bout.b]) { if (here(x.sub)) x.goneAt = null; else x.goneAt ??= now; }",
     "new": "",
     "tests": [
-      "test/int8_duel_ref.test.js",
-      "test/duel_session.test.js"
+      "test/net/duel/int8_duel_ref.test.js",
+      "test/net/duel/duel_session.test.js"
     ]
   },
   {
@@ -1033,8 +1033,8 @@
     "old": "    if (outA || outB) out.push(duelEnd(",
     "new": "    if (false) out.push(duelEnd(",
     "tests": [
-      "test/int8_duel_ref.test.js",
-      "test/duel_session.test.js"
+      "test/net/duel/int8_duel_ref.test.js",
+      "test/net/duel/duel_session.test.js"
     ]
   },
   {
@@ -1043,8 +1043,8 @@
     "old": "  if (refereeStep(me.pose, p, now - me.poseAt, me.f)) { me.pose",
     "new": "  if (true) { me.pose",
     "tests": [
-      "test/int8_duel_ref.test.js",
-      "test/duel_session.test.js"
+      "test/net/duel/int8_duel_ref.test.js",
+      "test/net/duel/duel_session.test.js"
     ]
   },
   {
@@ -1053,8 +1053,8 @@
     "old": "  if (fromCentre(p, bout.c) > ROYAL_RING.radiusM + ROYAL_RING.outSlackM) me.outAt ??= now; else me.outAt = null;",
     "new": "  me.outAt = null;",
     "tests": [
-      "test/int8_duel_ref.test.js",
-      "test/duel_session.test.js"
+      "test/net/duel/int8_duel_ref.test.js",
+      "test/net/duel/duel_session.test.js"
     ]
   },
   {
@@ -1063,7 +1063,7 @@
     "old": "    if (r.no) { this._send(ws, JSON.stringify({ t: 'dref', k: 'no', s: d.s, why: r.no })); return null; }",
     "new": "    if (r.no) return null;",
     "tests": [
-      "test/int8_duel_ref.test.js"
+      "test/net/duel/int8_duel_ref.test.js"
     ]
   },
   {
@@ -1072,7 +1072,7 @@
     "old": "    this._duelSay(sides, word);",
     "new": "    this._duelSay(sides, (x) => (end.w != null && x.sub !== end.f[end.w] ? { ...word, rc: undefined } : word));",
     "tests": [
-      "test/int8_duel_ref.test.js"
+      "test/net/duel/int8_duel_ref.test.js"
     ]
   },
   {
@@ -1081,8 +1081,8 @@
     "old": "       AND NOT EXISTS (SELECT 1 FROM duel_results WHERE rk = ?4)",
     "new": "",
     "tests": [
-      "test/int8_duel_ref.test.js",
-      "test/duel_record.test.js"
+      "test/net/duel/int8_duel_ref.test.js",
+      "test/server/duel_record.test.js"
     ]
   },
   {
@@ -1091,7 +1091,7 @@
     "old": "        return no('retired', 410, origin);",
     "new": "        return json({ recorded: true }, 200, origin);",
     "tests": [
-      "test/duel_record.test.js"
+      "test/server/duel_record.test.js"
     ]
   },
   {
@@ -1100,7 +1100,7 @@
     "old": "  mine: (c, who) => Array.isArray(c?.f) && c.f.includes(who) });",
     "new": "  mine: () => true });",
     "tests": [
-      "test/int8_duel_ref.test.js"
+      "test/net/duel/int8_duel_ref.test.js"
     ]
   },
   {
@@ -1109,8 +1109,8 @@
     "old": "      if (primary) this.duelOk = relaySupportsDuelRef(relayV);",
     "new": "      if (primary) this.duelOk = true;",
     "tests": [
-      "test/int8_duel_ref.test.js",
-      "test/duel_wire.test.js"
+      "test/net/duel/int8_duel_ref.test.js",
+      "test/net/duel_wire.test.js"
     ]
   },
   {
@@ -1119,7 +1119,7 @@
     "old": "  if (!seize && charId && at.id !== charId) return { error: 'not-yours' };",
     "new": "",
     "tests": [
-      "test/int9_wild_ref.test.js"
+      "test/net/int9_wild_ref.test.js"
     ]
   }
 ]

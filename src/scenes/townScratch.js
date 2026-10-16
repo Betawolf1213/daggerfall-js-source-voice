@@ -29,7 +29,7 @@
 // hundreds of lines below it: handing the function over directly reads
 // a `const` in its temporal dead zone and throws "Cannot access X
 // before initialization" the moment the scene runs. Lint, the build
-// and the whole suite pass on that; test/tdz.test.js is what catches
+// and the whole suite pass on that; test/tree/tdz.test.js is what catches
 // it, and did.
 // ═══════════════════════════════════════════════════════════════════
 import { personWantsToStop } from '../characters/mobile/mobilePerson.js';

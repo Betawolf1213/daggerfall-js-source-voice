@@ -10,7 +10,7 @@
 // spell maker has to supply.
 //
 // THE SIGN IS THE MECHANIC, and M3's own header described it
-// backwards - corrected there and pinned in test/enchanting.test.js.
+// backwards - corrected there and pinned in test/systems/enchanting.test.js.
 // A POWER costs POSITIVE points. A SIDE EFFECT costs NEGATIVE points,
 // so adding one to the total REDUCES it: taking a drawback BUYS you
 // budget. That is the whole trade the item maker offers, and it is

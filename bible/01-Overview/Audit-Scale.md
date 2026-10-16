@@ -15,7 +15,7 @@ them acct95 and 0091, past SD9b's. Five lenses:
   the pushed head (`26594ff5`, a detached worktree) so the fixes never moved under a verdict (Home.md, 17l).
 
 Every finding was reproduced before it was fixed, and every fix is pinned by a test that fails on the code as it stood.
-`test/auditscale.test.js` was run against a copy of the snapshot, and the service's and the client's finding pins fail
+`test/net/auditscale.test.js` was run against a copy of the snapshot, and the service's and the client's finding pins fail
 there: A1, A2, A3/A5, A7, B1, B2, B3, B4 and B6. A4's, A6's, B1's, B7's and C9's pins are the ones they moved in
 scale4b, scale4c and scale3 (PIN MOVED, each red on the snapshot). The harness's own (C1, C2, C5, C11-C13) are pinned on
 exports the snapshot did not have, so each is proven instead by a mutant putting its old behaviour back. The pins that

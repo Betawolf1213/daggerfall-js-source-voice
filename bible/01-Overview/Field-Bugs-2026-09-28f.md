@@ -85,7 +85,7 @@ is charged once, and the tier is honoured.
 - **"Never lowers past 1%."** The same round's cost is `Mathf.Min(CurrentFatigue - 100, encOver * 100)`
   (RoleplayRealism.cs:595) - negative below 100 raw, and `DecreaseFatigue` of a negative REFILLS: each round puts the
   bar back to 100 raw, 1.2% of the pool, which the HUD prints as 1%. The collapse at 0 never comes. It is the mod's own
-  arithmetic, ported and pinned as such (`test/rr1_realism.test.js`), and DFU with the mod shows the same floor.
+  arithmetic, ported and pinned as such (`test/systems/rr1_realism.test.js`), and DFU with the mod shows the same floor.
 
 What would change it is Mac's: a departure from the mod (the round never refills - then the overload runs the bar to 0
 and the exhaustion collapse, which kills with foes near, returns every few minutes of carrying too much), a gentler
@@ -175,7 +175,7 @@ as its module loads, and reads without writing). A foe's
 machine, a peer's walker and the viewers keep DFU's line (DFU never asks it for a foe at all). Measured on the real rig
 at the mods' defaults: an average fighter's longsword 1.08 s a blow; live Speed 95 with a dagger - this report's
 werewolf - 1.71 a second (DFU's line: 3.3); nothing past two a second at the cap, mods on or off. Pins
-`test/swinglaw.test.js` (7) and `test/disc29_swing.test.js` (2); `tools/mutants/swinglaw.json` (23, all dead).
+`test/systems/swinglaw.test.js` (7) and `test/systems/disc29_swing.test.js` (2); `tools/mutants/swinglaw.json` (23, all dead).
 `05-Combat/Combat.md` SWING-LAW.
 
 ## DISC29-H: the Mages Guild's own trap, and a way into it DFU does not have (Triage)
@@ -197,16 +197,16 @@ summon-and-kill quest forward for the party. `06-Systems/Quest-Arc.md` DISC29-H.
 
 ## Record
 
-`test/disc29_throne.test.js` (5, one on the real N0000037), `test/disc29_rarity.test.js` (6),
-`test/disc29_watchdog.test.js` (5), `test/disc29_gallop.test.js` (4), `test/disc29_questinfo.test.js` (3),
-`test/disc29_swing.test.js` (2), `test/disc29_lamps.test.js` (4, 5 since AUDIT PRE-MERGE 0929 E3); one test added to
-`test/if1_immersivefootsteps.test.js`. E: DISC24-C's walk re-aimed (the card walks with the eye), the SC1 and WEEDS1
+`test/world/disc29_throne.test.js` (5, one on the real N0000037), `test/systems/disc29_rarity.test.js` (6),
+`test/ui/enhanced/disc29_watchdog.test.js` (5), `test/systems/disc29_gallop.test.js` (4), `test/player/disc29_questinfo.test.js` (3),
+`test/systems/disc29_swing.test.js` (2), `test/render/disc29_lamps.test.js` (4, 5 since AUDIT PRE-MERGE 0929 E3); one test added to
+`test/systems/if1_immersivefootsteps.test.js`. E: DISC24-C's walk re-aimed (the card walks with the eye), the SC1 and WEEDS1
 source pins, and seven older mutant records (auditlight, auditreach 2, el8, perfexta, perfextb, weeds1) re-aimed by
-content; its two batch fields born with the batch (PERF-EXT10, `render/contract.js`; `test/hard3_types.test.js`
-counts 40 - 39 since AUDIT PRE-MERGE 0929 E1 retired `_shPlacedAt`); `test/el2_shadows.test.js`'s point guard pinned by `pointShadowAt`'s own head, its record aimed at one
-site and off `test/mutantdrift.test.js`'s CARRIED_AIM. Re-aimed to the new laws:
-`test/enhancedNotice.test.js`, `test/worldhover.test.js`, `test/uxb1m_privateproperty.test.js`,
-`test/resourcesafety.test.js`, `test/auditretro1.test.js`, `test/dungeonquestclick.test.js`.
+content; its two batch fields born with the batch (PERF-EXT10, `render/contract.js`; `test/systems/save/hard3_types.test.js`
+counts 40 - 39 since AUDIT PRE-MERGE 0929 E1 retired `_shPlacedAt`); `test/render/el2_shadows.test.js`'s point guard pinned by `pointShadowAt`'s own head, its record aimed at one
+site and off `test/tooling/mutantdrift.test.js`'s CARRIED_AIM. Re-aimed to the new laws:
+`test/ui/enhancedNotice.test.js`, `test/systems/worldhover.test.js`, `test/ui/uxb1m_privateproperty.test.js`,
+`test/systems/resourcesafety.test.js`, `test/render/auditretro1.test.js`, `test/scenes/dungeonquestclick.test.js`.
 `tools/mutants/disc29.json` (45, all dead); `tools/mutants/ba1.json` and `tools/mutants/worldhover.json` re-aimed by
 content. The committed mutants on every file this batch changed were re-run: 378 (B's files), 367 (A's), 77 (D's
 faces), F's and 560 (E's render files) - all dead, the eight already recorded as equivalent standing (four of them
@@ -214,4 +214,4 @@ E's). Cites: `tools/citeShift.mjs` moved 194
 into the files this batch shifted, and 38 more into E's render files; the 13 it leaves by design - struck Ledger and Settings rows the citedrift gates
 (CD4, CD8) resolve by content, and a continuation on the line below its file's name (`chargenSession.js`'s `(:N)`) -
 were mapped through the same diff with the base line's text checked against the tree's. `bible/10-UI/UI.md` counts 241
-modules; `test/audit26_talk.test.js` counts the seventh static-NPC name site (the Info look).
+modules; `test/systems/audit26_talk.test.js` counts the seventh static-NPC name site (the Info look).

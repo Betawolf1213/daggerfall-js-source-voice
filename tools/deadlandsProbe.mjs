@@ -1,6 +1,6 @@
 // WB6a - THE DEADLANDS' SKY AND SEA, COMPILED, LINKED AND DRAWN IN A REAL BROWSER.
 //
-// node holds the pass's law (test/wb6a_deadlands.test.js drives it over a fake GL); what node cannot answer is whether
+// node holds the pass's law (test/world/gate/wb6a_deadlands.test.js drives it over a fake GL); what node cannot answer is whether
 // the GLSL COMPILES and LINKS in a real WebGL2 context, whether the sky lands only where the court left the far plane
 // clear (PERF2's law), and whether what lands is the Deadlands: a red overcast over the horizon, the beam standing over
 // the great tower, the fire of the sea under the rim, and no edge between the sea and the sky. So: the repo's own

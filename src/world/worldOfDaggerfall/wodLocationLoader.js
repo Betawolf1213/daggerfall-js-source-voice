@@ -222,7 +222,7 @@ export function pickLocations(tile, session, getPrefab, pathsPoint = null, siteC
 
 /**
  * AddLocation's loop VERBATIM (:91-256): the whole list scanned for the tile. The law `pickLocations`' pixel walk is
- * held to (test/flow2_fast_tests.test.js), and the walk itself for a session without the index or a pixel off the map.
+ * held to (test/systems/flow2_fast_tests.test.js), and the walk itself for a session without the index or a pixel off the map.
  * Same parameters and answer as `pickLocations`.
  * @param {{mapPixelX:number, mapPixelY:number, hasLocation:boolean, mapRegionIndex:number, worldHeight:number}} tile
  * @param {LocationSession} session

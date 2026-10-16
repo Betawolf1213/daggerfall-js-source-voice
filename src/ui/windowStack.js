@@ -200,7 +200,7 @@ export function makeWindowStack({ hud = null, onTop = null, onWindowChange = nul
      *  no longer the hosts' pause question - counting it to decide
      *  whether the world is stopped was the per-host arithmetic
      *  `paused()` replaced, and no host does it now
-     *  (test/roadb_host_pause.test.js sweeps for it). */
+     *  (test/scenes/roadb_host_pause.test.js sweeps for it). */
     depth: () => windows.length - (hud ? 1 : 0),
 
     /** PushWindow (:79-91). RISE-STUCK: over a window that holds the

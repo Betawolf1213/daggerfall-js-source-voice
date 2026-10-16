@@ -58,14 +58,14 @@ the wallet's pieces unchanged, and no spender, save or service changed for it.
 
 THE LETTER OF CREDIT'S PAGE, a bug found on the way. `ui/packPages.js` promised "Currency (letters of credit)" on
 Valuables since PX31, but DFU's letter is MiscItems 275, so its group alone filed it under Misc; and the pin that said
-otherwise (`test/packPages.test.js`) asked about a `Currency` 276 - DFU's Gold Pieces, a shape no producer mints
+otherwise (`test/systems/item/packPages.test.js`) asked about a `Currency` 276 - DFU's Gold Pieces, a shape no producer mints
 (TEST THE SHAPE THE PRODUCER MINTS). `pageOf` names the letter now, and the pin asks about `letterOfCredit()`'s own.
 
 ## The piece
 
 Template 580, beside the gate's 570-572 and below the professions' reserved 600 (`Professions-Arc.md` 4.8). DFU's
 Small Sack's picture and price (ItemTemplates 86): the picture is DFU's own, and the price is the one every minted item
-carries (`test/startinggear.test.js`'s 17e F2 law) - it is never sold. No weight (`hasNoEncumbrance`, the Small Cart's
+carries (`test/systems/startinggear.test.js`'s 17e F2 law) - it is never sold. No weight (`hasNoEncumbrance`, the Small Cart's
 column), so a wallet costs a pack nothing; the pieces it holds weigh what they always did. `UselessItems2`, the
 Materials Bag's group.
 
@@ -105,13 +105,13 @@ boot among them). A round trip gives none: `snapshotPlayer` writes the mark.
 
 ## Pinned
 
-`test/audit625_wallet.test.js` (4 - AUDIT 625's: the decoration and the revenant pass it by, the sheet's rows the pack's
-own with every gesture and frame, the silver's words and the hotbar's ask). `test/wallet1.test.js` (10 - the piece, the
+`test/systems/audit625_wallet.test.js` (4 - AUDIT 625's: the decoration and the revenant pass it by, the sheet's rows the pack's
+own with every gesture and frame, the silver's words and the hotbar's ask). `test/systems/wallet1.test.js` (10 - the piece, the
 gift, the pack-only law on both skins and the service's bound row, what it holds,
 the silver's door, the enhanced pack's partition, the sheet driven through the mounted pack, the sheet's silver - asked
 once a mount, an answer that lands while a piece is picked kept for the way back - the Use on both skins and the
-hotbar, the hosts). Moved: `test/packPages.test.js` (the letter's page, the pages' list), `test/auditrealm.test.js`
-(the twelfth registrar, its bound row), `test/audit17f.test.js` and `test/settings.test.js` (DFU's bag, the wallet set
+hotbar, the hosts). Moved: `test/systems/item/packPages.test.js` (the letter's page, the pages' list), `test/systems/auditrealm.test.js`
+(the twelfth registrar, its bound row), `test/systems/audit17f.test.js` and `test/systems/settings.test.js` (DFU's bag, the wallet set
 aside). `tools/mutants/wallet1.json` (54, all dead).
 
 ## WALLET-UI (2026-10-07, Mac: "Polish and organize the ingame wallet item for ease of readability") - the sheet a ledger
@@ -129,8 +129,8 @@ ONE SET OF WORDS: the classic box says the same rows as lines (walletLines: `${l
 are exactly what they were (the WALLET1 pin holds them unmoved) and the two skins cannot disagree. The four hosts are
 untouched.
 
-- **Pinned**: `test/wallet_ui.test.js` (2: the ledger and the classic lines it says; the sheet drawn through the
-  mounted pack, and its rules); `tools/mutants/wallet_ui.json` (7, all dead). PIN MOVED: `test/wallet1.test.js` (the
+- **Pinned**: `test/systems/wallet_ui.test.js` (2: the ledger and the classic lines it says; the sheet drawn through the
+  mounted pack, and its rules); `tools/mutants/wallet_ui.json` (7, all dead). PIN MOVED: `test/systems/wallet1.test.js` (the
   sheet's words read off the ledger's rows - its heads, each row's label and figure, the worth's note - where they read
   the paragraphs). Re-aimed: wallet1.json's two lines' records onto the ledger (an unknown silver said as a count; an
   empty holding said as nought). `tools/walletProbe.mjs` stands the real pack in Chromium at a desktop's width and a

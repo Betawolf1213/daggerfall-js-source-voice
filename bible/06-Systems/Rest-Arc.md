@@ -319,7 +319,7 @@ shelves and in piles (`src/systems/healingSupply.js`); C&C's rations and watersk
 3. an info-card arm (`src/systems/item/itemInfo.js` and the enhanced card), or it falls to the generic misc text;
 4. a shelf provider or a fixed count (`registerCustomItemsForGroup`, or the healing supply's fixed-count shape);
 5. loot hooks where listed (`registerTabledLootHandler` for piles J-O, `registerEnemyLootExtra` for foes);
-6. any new item field declared in `ITEM_FIELDS` (`src/systems/item/itemFields.js`; `test/rf5_itemfields.test.js` pins
+6. any new item field declared in `ITEM_FIELDS` (`src/systems/item/itemFields.js`; `test/systems/rf5_itemfields.test.js` pins
    that mints write nothing undeclared);
 7. the online essentials price arm; the hotbar already takes any item;
 8. crafted ones: a recipe row in `src/net/recipeLaw.js` (or a conversion in `src/net/professionLaw.js`), a `mintPiece`
@@ -444,9 +444,9 @@ QCLOCK-WORLD's clock, online only - the gate is the quest hooks' `sharedClock`, 
   only waits its played days, where TIMEFREE froze it for ever. So the one harmful misreading is the first - R1 found
   two - and it is what the pins guard: the split, both tables, the 31 main-quest deadlines, and every vendored clock
   ticked online past the short wait - all 135 delays landed, not one of the 264 deadlines cut (266 and 133 since AUDIT REST-PARTY)
-  (`test/rest8_questwaits.test.js`).
-- **Pins:** `test/rest8_questwaits.test.js` (TIMEFREE's file re-aimed: the freeze assertions now "runs on played
-  time"), `test/rest8_audit_timefree.test.js` (AUDIT TIMEFREE's and AUDIT TIMEFREE II's, re-aimed the same way; T7
+  (`test/systems/quest/rest8_questwaits.test.js`).
+- **Pins:** `test/systems/quest/rest8_questwaits.test.js` (TIMEFREE's file re-aimed: the freeze assertions now "runs on played
+  time"), `test/systems/quest/rest8_audit_timefree.test.js` (AUDIT TIMEFREE's and AUDIT TIMEFREE II's, re-aimed the same way; T7
   retired with the freeze; R1's two, ticked). Campaigns `tools/mutants/rest8.json` (22) and
   `tools/mutants/rest8_audit_timefree.json` (14), all dead; `tools/mutants/qtlive1.json`'s one moved record re-aimed.
   `Online-Time-Arc.md` 6.3d is the law's page. The Online pane's sentence is REST9's (the words), and still says
@@ -632,7 +632,7 @@ Mac: "Go" - every recommendation of section 15 taken. Slices REST1-REST6 and RES
   the release the templates shipped in (section 6's last rule: the templates ship a release before any shelf, pile, foe
   or recipe carries them) - until REST-LOOT opened them (below); offline the shelves and the piles carry them with
   Climates & Calories.
-- **AUDIT REST** (2026-10-03, an independent pass over REST1-REST6; `test/auditrest.test.js`, `tools/mutants/auditrest.json`).
+- **AUDIT REST** (2026-10-03, an independent pass over REST1-REST6; `test/systems/survival/auditrest.test.js`, `tools/mutants/auditrest.json`).
   Fixed: a Campfire left standing in a dungeon was lost at the exit - the dungeon keeps nothing of mine, so it now comes
   back into the pack with its fuel (`camps.js` packOwnFires; an Ember Jar's goes with the dungeon); the Draught makes
   only a ROUGH night a bed's (a fire or a tent prices as one already, and a tent's fire stays tended) and is spent by
@@ -654,7 +654,7 @@ Mac: "Go" - every recommendation of section 15 taken. Slices REST1-REST6 and RES
   two-sided; the ceiling and wall rays are the guard).
 - **AUDIT REST-PARTY** (2026-10-03, the arc audited again with the party rest adapted to the night - four lenses: the
   act and the ambush, the Campfire and the supplies, the dungeon fires, the quest waits; the party by hand.
-  `test/auditrestparty.test.js`, `auditrestparty_camps.test.js`, `auditrestparty_quests.test.js`,
+  `test/systems/rest/auditrestparty.test.js`, `auditrestparty_camps.test.js`, `auditrestparty_quests.test.js`,
   `auditrestparty_fires.test.js`; `tools/mutants/auditrestparty*.json`, every mutant dead).
   - **The party's night** (2.6), its decision lifted into `src/systems/party/partyRestLaw.js` (`nightMoved`,
     `carriedNightAction`, `carriedRestKind`) and run on a table - REST5 had pinned it by regexes alone. P1: it carried
@@ -723,7 +723,7 @@ Mac: "Go" - every recommendation of section 15 taken. Slices REST1-REST6 and RES
 - **AUDIT REST II** (2026-10-03, Mac: "After this lets do a comprehensive audit. This needs to be perfection" - eight
   lenses over the whole pull request: the act and the night, the party's night, the Campfire and the supplies, the
   dungeon fires, the quest clocks, the four hosts and the frame, what the player is told, the merges and the tests;
-  every finding verified before it was fixed, each fix pinned red first and mutation-proven: `test/auditrest2_camps.test.js`,
+  every finding verified before it was fixed, each fix pinned red first and mutation-proven: `test/systems/auditrest2_camps.test.js`,
   `auditrest2_party.test.js`, `auditrest2_quests.test.js`, `auditrest2_fires.test.js`; `tools/mutants/auditrest2_*.json`).
   - **The Campfire's lifecycle (H).** H1, AUDIT REST-PARTY B1's own regression: a Recall or an anchor teleport out of a
     dungeon passes `cacheScene` false (a dungeon caches nothing, Teleport.cs), as the load does, so B1's load arm
@@ -805,7 +805,7 @@ Mac: "Go" - every recommendation of section 15 taken. Slices REST1-REST6 and RES
 - **AUDIT REST III** (2026-10-03, Mac: "Audit this and ensure its perfection" - six fresh lenses over every AUDIT REST II
   fix: the Campfire's lifecycle, the supplies and the shops, the party's night and the act, the quest clocks, the
   dungeon fires, and what the player and the next developer are told; every finding verified before it was fixed, each
-  fix pinned and mutation-proven: `test/auditrest3.test.js`, the E1, C6 and B1 pins in the files whose harness they
+  fix pinned and mutation-proven: `test/systems/auditrest3.test.js`, the E1, C6 and B1 pins in the files whose harness they
   ride (`auditrest2_fires`, `auditrest2_party`, `auditrest2_camps`); `tools/mutants/auditrest3.json`).
   - **Found and fixed.** E1 (medium): F1's joiner ran encounterSpot and the host ran it again - two trials of the same
     dice, so in a fire room 24-30 m across the joiner asked where the host stood nothing (its night broken for nothing,
@@ -858,7 +858,7 @@ Mac: "Go" - every recommendation of section 15 taken. Slices REST1-REST6 and RES
   through it is the same arithmetic as before, bit for bit), and the short rest pays through it
   (`src/systems/rest/restAct.js` `sleepShortRest`, called by createRestDeps' `restShort`, so both skins and the party's
   carried short rest take it). With the arc off there is no need to pay, and a vampire has none (the minute law freezes
-  the debt). `test/restsleep1_shortrest.test.js`, `tools/mutants/restsleep1.json` (11, all dead); SURV1's and AUDIT
+  the debt). `test/systems/survival/restsleep1_shortrest.test.js`, `tools/mutants/restsleep1.json` (11, all dead); SURV1's and AUDIT
   SURV's floor records re-aimed by content to the lifted lines.
 - **CAMP-ROLL** (2026-10-04, from play: *"In a party, or with other players. Every player spawns their own enemies when
   resting. What's a detailed way to handle this?"*, then *"Do it"*). 2.6 carried a member who stood by, but a member who
@@ -888,7 +888,7 @@ Mac: "Go" - every recommendation of section 15 taken. Slices REST1-REST6 and RES
   interior bag carries none; the `?exterior` dev host (`exterior.js`) has no party. NOT DONE, and why: strangers, and
   members resting alone, at one fire still each roll - a stranger's stamps ride no pose I can read (the party pose goes
   to the party alone), and a member who chose to rest alone chose their own night. No relay change (the marks are
-  values of a field the pose carries). `test/camproll.test.js` (11), `tools/mutants/camproll.json` (32, all dead); the
+  values of a field the pose carries). `test/systems/camproll.test.js` (11), `tools/mutants/camproll.json` (32, all dead); the
   carried night's pins moved to the bag's sequence (`rest5_partynight`, `auditrestparty`, their mutants re-aimed by
   content), RESTFIX1's and REST6's window pins re-aimed, AUDIT REST III's C6 records aimed at the channel's own line,
   and AUDIT OW5b E1's stander scope given the two new names.
@@ -915,7 +915,7 @@ Mac: "Go" - every recommendation of section 15 taken. Slices REST1-REST6 and RES
   where each player stands (`campFromWire`: the sender's own boat is that peer's, one named by my id mine); a peer's
   word that only moves her keeps its camp standing. A camp on a deck is a fire to rest at and cook by like any other.
   THE FOUR HOSTS: `scenes/world.js` hands the boats; a building (`worldModes.js`) and a dungeon (`dungeonContext.js`)
-  stand no boat of the camps', the standalone street (`exterior.js`) no Come Sail Away. `test/deckcamp.test.js`,
+  stand no boat of the camps', the standalone street (`exterior.js`) no Come Sail Away. `test/systems/survival/deckcamp.test.js`,
   `tools/mutants/deckcamp.json` (20, all dead).
 - **REST-LOOT (2026-10-05, Mac: "the new resting items we added, along with majicka potions should be more common loot
   drops"; `Loot-Arc.md` section 19, LOOT-EASE)** - the switch is ON: the templates have been in every release since the
@@ -927,7 +927,7 @@ Mac: "Go" - every recommendation of section 15 taken. Slices REST1-REST6 and RES
   was the Ember Jar alone, 2) - before PLAIN-LOOT's three in four on a plain foe. The Bedroll stays the counter's,
   online's rest point bought. A full body's cap keeps a supply before a Common piece (`foeLootCap.js`
   `registerLootSupply`). The shut release stands behind the switch, every pin of it kept through
-  `_setRestItemsOnlineForTests` - the way back if an older client ever meets one. `test/rest6_consumables.test.js`
+  `_setRestItemsOnlineForTests` - the way back if an older client ever meets one. `test/systems/survival/rest6_consumables.test.js`
   (REST-LOOT), the customs pins re-aimed (`auditrest2_camps`, `auditrest3`, `auditrestparty_camps`);
   `tools/mutants/lootease.json`'s REST-LOOT rows, `rest6.json`'s switch record turned round.
 
@@ -966,7 +966,7 @@ Mac: "Go" - every recommendation of section 15 taken. Slices REST1-REST6 and RES
   tent wore under PROF9 too), and an old save's kit fire has no fuel of its own to keep. One kit, every night - what a
   Field Cook had before REST. No relay or account-service change: the service validates the spec's id, and its
   description is the client's (`net/professionLaw.js`, "A night at your own Campfire spends no fuel."). The dead
-  `keep` option leaves placeCampItem. Pinned in `test/prof9_client.test.js` (the law and the pool), seven mutants dead.
+  `keep` option leaves placeCampItem. Pinned in `test/systems/prof9_client.test.js` (the law and the pool), seven mutants dead.
 - 2026-10-03: AUDIT REST II (As built, "AUDIT REST II"): eight lenses, every finding verified and fixed, pinned red
   first and mutation-proven - the Campfire's lifecycle (H1-H15), the party's night and the act (P1-P9), the quest
   clocks (Q1-Q5, THE RULE), the dungeon fires (F1-F9), the tests and merges, and what the player is told.
@@ -987,5 +987,5 @@ Mac: "Go" - every recommendation of section 15 taken. Slices REST1-REST6 and RES
   passed, the mage disappeared, but no enemies showed up"): N0B20Y02's `_S.12_` - the three-hour guard of "Protect an
   Honored Mage", which section 8's reading and AUDIT REST II's sweep called a delay - is a deadline by hand
   (ONLINE_DEADLINES): a window to act, and the Nightblades' 55-minute interval is longer than the 24-minute cut. 272
-  deadlines and 127 delays. `test/fb1006c_guardwindow.test.js`; `test/rest8_questwaits.test.js`,
-  `test/auditrest2_quests.test.js` and `test/auditrestparty_quests.test.js` moved with it.
+  deadlines and 127 delays. `test/systems/quest/fb1006c_guardwindow.test.js`; `test/systems/quest/rest8_questwaits.test.js`,
+  `test/systems/quest/auditrest2_quests.test.js` and `test/systems/quest/auditrestparty_quests.test.js` moved with it.

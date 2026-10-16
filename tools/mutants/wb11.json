@@ -5,7 +5,7 @@
     "old": "  if (!P.legion || f.fell || f.wrath) return;",
     "new": "  if (f.fell || f.wrath) return;",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "    legion: !!T('legion')?.legion,",
     "new": "    legion: true,",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "if (!mark || dist(b.x, b.z, f.pos[0], f.pos[1]) > dist(mark.x, mark.z, f.pos[0], f.pos[1])) mark = b;",
     "new": "if (!mark || dist(b.x, b.z, f.pos[0], f.pos[1]) < dist(mark.x, mark.z, f.pos[0], f.pos[1])) mark = b;",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "    if (now < (a.up ?? 0)) continue;   // still rising out of the fire",
     "new": "    if (false) continue;   // still rising out of the fire",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "if (live.some((b) => dist(b.x, b.z, x, z) < HOST_SPAWN_CLEAR) || ",
     "new": "if (",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "rimSpots(C, n, here, rng, away, SAP_SPREAD, clear)",
     "new": "rimSpots(C, n, here, rng)",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "    if (H.fed < SAP_FEEDS_MAX && f.max > 0) {",
     "new": "    if (f.max > 0) {",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "      out.push({ k: 'adie', is: [a.i], w: HOST_GONE.fed, h, m, at: now });",
     "new": "      out.push({ k: 'adie', is: [a.i], w: HOST_GONE.fed, at: now });",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "    if (bearersStand(f) && now < f.waitUntil) return heldBeat(f, now, out);",
     "new": "    if (false) return heldBeat(f, now, out);",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "    if (bearersStand(f) && now < f.waitUntil) return heldBeat(f, now, out);",
     "new": "    if (bearersStand(f)) return heldBeat(f, now, out);",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "  if (now < a.next || !here.some((b) => dist(b.x, b.z, a.x, a.z) <= BEARER_PULSE_NEAR)) return;",
     "new": "  if (now < a.next) return;",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "  if (H.wardCt === f.court) return;\n",
     "new": "",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "    hostGone(f, now, out, HOST_GONE.crumbled);   // WB11b: his host crumbles at every turn - each kind is its phase's or its court's\n",
     "new": "",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "    // crumbling first read it as the Ward-Bearers' cap and said his ward broke - it stands through the wind-up)\n    hostGone(f, now, out, HOST_GONE.crumbled);\n",
     "new": "    // crumbling first read it as the Ward-Bearers' cap and said his ward broke - it stands through the wind-up)\n",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "    if (f.lg) f.lg.ads = [];   // WB11b: and his host goes with him (the fall's word says so - no word of its own)\n",
     "new": "",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "  if (!inCourt(pose.x, pose.z, f.court, POSE_SLACK)) return out;\n  const [ax, az] = hostAt(a, now);",
     "new": "  const [ax, az] = hostAt(a, now);",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "  if (r === HIT_KINDS.Melee && dist(pose.x, pose.z, ax, az) - HOST_KINDS[a.k].r > MELEE_REACH + POSE_SLACK) return out;\n",
     "new": "",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "  p.hd = (p.hd ?? 0) + got;\n",
     "new": "",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "  p.hd = (p.hd ?? 0) + got;\n",
     "new": "  p.hd = (p.hd ?? 0) + got;\n  f.threat[sub] = (f.threat[sub] ?? 0) + got;\n",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "old": "    ...(f.lg ? { lg: hostStateOf(f.lg) } : {}),",
     "new": "    ...{},",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -185,7 +185,7 @@
     "old": "const hostId = (i) => Number.isSafeInteger(i) && i >= 1 && i <= GATE_SEQ_MAX;",
     "new": "const hostId = (i) => Number.isSafeInteger(i) && i >= 0 && i <= GATE_SEQ_MAX;",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -194,7 +194,7 @@
     "old": "if (fed && !(gateHp(m.h) && gateHp(m.m) && m.h <= m.m)) return null;",
     "new": "if (fed && !(gateHp(m.h) && gateHp(m.m))) return null;",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -203,7 +203,7 @@
     "old": "v.length >= min && v.length <= GATE_HOST_MAX &&",
     "new": "v.length >= min && v.length <= GATE_HOST_MAX + 1 &&",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -212,7 +212,7 @@
     "old": "      const gone = [...H.gone, ...out].slice(-HOST_GONE_KEPT);",
     "new": "      const gone = H.gone;",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -221,7 +221,7 @@
     "old": "    case 'ad': case 'amv': case 'aatk': case 'ah': case 'adie': return foldHost(s, g, now);",
     "new": "    case 'ad': case 'aatk': case 'ah': case 'adie': return foldHost(s, g, now);",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -230,7 +230,7 @@
     "old": "  if (!(now >= atk.at)) return 'wait';   // (spelled apart from strikeVerdict's - a mutant record aims at that one alone)\n  if (now > atk.at + Math.max(B.active, 1) + STRIKE_LATE_MS) return 'miss';",
     "new": "  if (now > atk.at + Math.max(B.active, 1) + STRIKE_LATE_MS) return 'miss';",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -239,7 +239,7 @@
     "old": "if (Number.isFinite(a.rose) && t - a.rose <= HOST_LATE_MS && !s.fell && s.wrath == null) {",
     "new": "if (!s.fell && s.wrath == null) {",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -248,7 +248,7 @@
     "old": "if (v !== 'wait') { b.judged = at; if (v === 'hit') land(hostBlowUnder(a.k, P)); }",
     "new": "if (v !== 'wait') { b.judged = at; land(hostBlowUnder(a.k, P)); }",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -257,7 +257,7 @@
     "old": "if (act.act === 'gone') { destroyBatch(b); falling.delete(key); continue; }",
     "new": "if (act.act === 'gone') { falling.delete(key); continue; }",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -266,7 +266,7 @@
     "old": "  if (now < s.shieldUntil) for (const a of ads) {",
     "new": "  if (true) for (const a of ads) {",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -275,7 +275,7 @@
     "old": "!s.lg || !fromHisCourt(s, t) ? NONE : host.targets();",
     "new": "!s.lg ? NONE : host.targets();",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -284,7 +284,7 @@
     "old": "  if (since < riseMs) return { act: 'rise',",
     "new": "  if (false) return { act: 'rise',",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -293,7 +293,7 @@
     "old": "  sapper: Object.freeze({ burning: 35, rime: 38, storm: 36, venom: 37 }),",
     "new": "  sapper: Object.freeze({ burning: 35, rime: 35, storm: 36, venom: 37 }),",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -302,7 +302,7 @@
     "old": "&& bearers > 0 && now < s.shieldUntil && !callout) callout =",
     "new": "&& bearers > 99 && now < s.shieldUntil && !callout) callout =",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -311,7 +311,7 @@
     "old": "  const hosted = dm.some((r) => r.a !== undefined);",
     "new": "  const hosted = true;",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -320,8 +320,8 @@
     "old": "return pairs.filter((q) => q[0] < nT && q[1] < nT).map(",
     "new": "return pairs.filter((q) => q[0] < nT - 1 && q[1] < nT - 1).map(",
     "tests": [
-      "test/wb8b_gate_marks.test.js",
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb8b_gate_marks.test.js",
+      "test/net/gate/wb11_gate_host.test.js"
     ]
   },
   {
@@ -330,7 +330,7 @@
     "old": "else if (m.k === 'ahit') this._gateFan(applyHostHit(f, a.sub, m.i, m.d, m.r, at, now, m.q));",
     "new": "else if (m.k === 'ahit') applyHit(f, a.sub, m.d, m.r, at, now, m.q);",
     "tests": [
-      "test/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js"
     ],
     "note": "INT11-INT14 (PIN MOVED): re-aimed by content at the lane's own change of this text. "
   }

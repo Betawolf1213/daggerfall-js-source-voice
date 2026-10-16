@@ -5,7 +5,7 @@
     "old": "export const PRIZE_DEED_SHARE = 0.25;",
     "new": "export const PRIZE_DEED_SHARE = 1;",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "Math.round(HULL_PRICES[hull] * PRIZE_DEED_SHARE)",
     "new": "Math.round(HULL_PRICES[1] * PRIZE_DEED_SHARE)",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "  deed.message = boatItemMessage(hull, variant);\n",
     "new": "",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "  deed.value = value;\n",
     "new": "",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "  deed.name = boatItemName(deed.name, hull, variant);\n",
     "new": "",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "const deed = mintBoatItem(BOAT_DEED_TEMPLATE, uid);",
     "new": "const deed = mintBoatItem(BOAT_DEED_TEMPLATE, 0);",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "if (deed?.templateIndex !== BOAT_DEED_TEMPLATE || GetPlacedBoatWithUID(deed.UID) != null) return null;",
     "new": "if (GetPlacedBoatWithUID(deed?.UID) != null) return null;",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "if (deed?.templateIndex !== BOAT_DEED_TEMPLATE || GetPlacedBoatWithUID(deed.UID) != null) return null;",
     "new": "if (deed?.templateIndex !== BOAT_DEED_TEMPLATE) return null;",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "    takePlaceItem(placed);\n",
     "new": "",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "const placed = PlaceBoat([...position], [...direction],",
     "new": "const placed = PlaceBoat([...position], [0, 0, 1],",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "    StopPlacing();\n    return placed;",
     "new": "    return placed;",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "    state.placeItemCollection = itemCollection;\n    const placed",
     "new": "    state.placeItemCollection = null;\n    const placed",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "const claimable = (entry) => !entry.owner && typeof csa()",
     "new": "const claimable = (entry) => typeof csa()",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "!entry.owner && typeof csa()?.LaunchFromDeed === 'function' && typeof",
     "new": "!entry.owner && typeof",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": " && typeof deps.board?.mintUid === 'function'",
     "new": "",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": " && typeof deps.board?.packDeed === 'function'",
     "new": "",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "    const r = claimable(entry) ? csa() : null;",
     "new": "    const r = csa();",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "        if (which === 'claim') return claimPrize(entry, boat);   // SHIP-CLAIM: she is mine\n",
     "new": "",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "        return true;\n      },\n      /** AUDIT NAV1 (B11): Leave her",
     "new": "      },\n      /** AUDIT NAV1 (B11): Leave her",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ],
     "note": "Repatch 8761: re-aimed at the same fate/return behavior after guarded passenger return; behavioral assertions retained."
   },
@@ -177,7 +177,7 @@
     "old": "        if (pz.fate) return false;\n        if (which === 'claim')",
     "new": "        if (which === 'claim')",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -186,7 +186,7 @@
     "old": "const claimDetail = (entry) => (entry.boat?.crewed ?",
     "new": "const claimDetail = (entry) => (!entry.boat?.crewed ?",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -195,7 +195,7 @@
     "old": "deps.board.mintUid(), prizeDeedValue(s.hull));",
     "new": "deps.board.mintUid(), prizeDeedValue(s.hull) * 4);",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -204,7 +204,7 @@
     "old": "const deed = mintDeed(s.hull, s.variant, deps.board.mintUid()",
     "new": "const deed = mintDeed(s.hull, 0, deps.board.mintUid()",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -213,7 +213,7 @@
     "old": "mintDeed(s.hull, s.variant, deps.board.mintUid(), ",
     "new": "mintDeed(s.hull, s.variant, 0, ",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -222,7 +222,7 @@
     "old": "    const pack = deps.board.packDeed(deed);",
     "new": "    const pack = (deps.board.packDeed(deed), () => []);",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -231,7 +231,7 @@
     "old": "    try { boat = r.LaunchFromDeed(deed, pack, at, forwardOfYaw(s.yaw), deps.board.terrainAt?.(at)); } catch (err) { console.warn('[naval] a claimed prize would not be placed', err); }",
     "new": "    boat = r.LaunchFromDeed(deed, pack, at, forwardOfYaw(s.yaw), deps.board.terrainAt?.(at));",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -240,7 +240,7 @@
     "old": "    if (!boat) { const list = pack(), i = list.indexOf(deed); if (i >= 0) list.splice(i, 1); deps.board?.forgetDeed?.(deed); return false; }",
     "new": "    if (!boat) return false;",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ],
     "note": "AUDIT HOLDINGS (PIN MOVED): re-aimed by content to the line the audit's fix rewrote - its law the same."
   },
@@ -250,7 +250,7 @@
     "old": "    const at = [s.pos[0], deps.seaY(), s.pos[2]];",
     "new": "    const at = [0, deps.seaY(), 0];",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -259,7 +259,7 @@
     "old": "forwardOfYaw(s.yaw), deps.board.terrainAt?.(at))",
     "new": "forwardOfYaw(0), deps.board.terrainAt?.(at))",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -268,7 +268,7 @@
     "old": "forwardOfYaw(s.yaw), deps.board.terrainAt?.(at))",
     "new": "forwardOfYaw(s.yaw))",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -277,7 +277,7 @@
     "old": "    if (pz.hold.length) deps.board?.giveItems?.(pz.hold.splice(0), boat);\n",
     "new": "",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -286,7 +286,7 @@
     "old": "st.damage.restore({ hull: Math.max(1, ((d.hull - took.hull) / d.maxHull) * st.damage.maxHull), sail: ((d.sail - took.sail) / d.maxSail) * st.damage.maxSail, crew: 0 });",
     "new": "st.damage.restore({ crew: 0 });",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -295,7 +295,7 @@
     "old": ", sail: ((d.sail - took.sail) / d.maxSail) * st.damage.maxSail, crew: 0 });",
     "new": ", crew: 0 });",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -304,7 +304,7 @@
     "old": " * st.damage.maxSail, crew: 0 });",
     "new": " * st.damage.maxSail });",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -313,7 +313,7 @@
     "old": "    st.lastCrew = st.damage.crew;   // no hand of hers ever lost to my crew's spirits\n",
     "new": "",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -322,7 +322,7 @@
     "old": "hull: Math.max(1, ((d.hull - took.hull) / d.maxHull) * st.damage.maxHull)",
     "new": "hull: ((d.hull - took.hull) / d.maxHull) * st.damage.maxHull",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -331,7 +331,7 @@
     "old": "    const took = pz.took ?? { hull: 0, sail: 0 };",
     "new": "    const took = { hull: 0, sail: 0 };",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -340,7 +340,7 @@
     "old": "          pz.took = { hull: st.damage.hull - was[0], sail: st.damage.sail - was[1] };",
     "new": "          void was;",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -349,7 +349,7 @@
     "old": "st.guns.barrels = pz.chosen === 'powder' ? 0 : s.guns.barrels;",
     "new": "st.guns.barrels = s.guns.barrels;",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -358,7 +358,7 @@
     "old": "st.guns.barrels = pz.chosen === 'powder' ? 0 : s.guns.barrels;",
     "new": "st.guns.barrels = pz.chosen === 'powder' ? 0 : st.guns.barrels;",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -367,7 +367,7 @@
     "old": "    drop(entry);\n    deps.board?.redeck?.(hers, boat);",
     "new": "    deps.board?.redeck?.(hers, boat);",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -376,7 +376,7 @@
     "old": "    drop(entry);\n    deps.board?.redeck?.(hers, boat);",
     "new": "    s.damage.scuttle(); s.damage.apply({ hull: 0, sail: 0, crew: 0, fire: true }, clock); igniteShip(entry);\n    deps.board?.redeck?.(hers, boat);",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -385,7 +385,7 @@
     "old": "    deps.board?.redeck?.(hers, boat);\n",
     "new": "",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -394,7 +394,7 @@
     "old": "    if (entry.fromHarbour) departedOf(entry.fromHarbour, where().day ?? 0).add(s.seed);\n",
     "new": "",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -403,7 +403,7 @@
     "old": "    if (!returnFromPrize(pz, captor)) returnAboard(boat);\n    return true;\n  }",
     "new": "    return true;\n  }",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ],
     "note": "Repatch 8761: re-aimed at the same fate/return behavior after guarded passenger return; behavioral assertions retained."
   },
@@ -413,7 +413,7 @@
     "old": "deps.say?.(boat.crewed ? `${name} is yours",
     "new": "deps.say?.(!boat.crewed ? `${name} is yours",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -422,7 +422,7 @@
     "old": "claim: model.raid ? null : model.claimOffer?.()?.detail ?? null,",
     "new": "claim: model.claimOffer?.()?.detail ?? null,",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -431,7 +431,7 @@
     "old": "const claim = sail ? null : button('Claim her',",
     "new": "const claim = button('Claim her',",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -440,7 +440,7 @@
     "old": "for (const n of [claim, claimNote]) if (n) { if (t.claim) n.removeAttribute('hidden'); else n.setAttribute('hidden', ''); }",
     "new": "for (const n of [claim, claimNote]) if (n) n.removeAttribute('hidden');",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -449,7 +449,7 @@
     "old": "    if (m.fate?.('claim') === false) {",
     "new": "    if (false) {",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -458,7 +458,7 @@
     "old": "{ note = { text: 'She cannot be claimed.', warn: true }; render(); return; }",
     "new": "{ note = { text: 'She cannot be claimed.', warn: true }; render(); }",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -467,7 +467,7 @@
     "old": "    claimNote.textContent = t.claim ?? '';\n",
     "new": "",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -476,7 +476,7 @@
     "old": "    if (claim && t.claim) claim.setAttribute('title', t.claim);\n",
     "new": "",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -485,7 +485,7 @@
     "old": "      mintUid: () => csaNewItemUid(),",
     "new": "      mintUid: () => Date.now(),",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -494,7 +494,7 @@
     "old": "      packDeed: (item) => { titleDeed(item, { port: null }); return () => fleetBook(); },",
     "new": "      packDeed: (item) => { navalGiveItems([item], null); return () => playerEntity.items; },",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -503,7 +503,7 @@
     "old": "      terrainAt: (p) => csaTerrainOf(csaPixelAt(p[0], p[2])),",
     "new": "      terrainAt: () => null,",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -512,7 +512,7 @@
     "old": "      redeck: (from, to) => { for (const f of _deckBodies) if (f.deckBoat === from) f.deckBoat = to; },",
     "new": "      redeck: (from, to) => { },",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   },
   {
@@ -521,7 +521,7 @@
     "old": "for (const f of _deckBodies) if (f.deckBoat === from) f.deckBoat = to;",
     "new": "for (const f of _deckBodies) f.deckBoat = to;",
     "tests": [
-      "test/shipclaim.test.js"
+      "test/systems/naval/shipclaim.test.js"
     ]
   }
 ]

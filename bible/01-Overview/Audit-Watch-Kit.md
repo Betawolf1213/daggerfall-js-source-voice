@@ -8,7 +8,7 @@ and the record and the tests (D) - the last with 66 fresh mutants thrown at the 
 suites named for their files: each an untested behaviour, now pinned or recorded equivalent with its reason.
 
 Every finding was re-run before it was fixed and is pinned by a test that fails on the code as it stood:
-`test/auditwatchkit_crew.test.js` (W, D1, D5 and the crew's safety net), `auditwatchkit_sea.test.js` (N, W2, W6, W10's
+`test/systems/naval/auditwatchkit_crew.test.js` (W, D1, D5 and the crew's safety net), `auditwatchkit_sea.test.js` (N, W2, W6, W10's
 wiring, W12), `auditwatchkit_magic.test.js` (M and the gifts' safety net), `auditwatchkit_ui.test.js` (U1, U2, U4,
 U6, U8, U9, P1, P2, P6 and the panel's safety net), `auditwatchkit_world.test.js` (U3, U5, U7, P3-P5) and
 `auditwatchkit_net.test.js` (the host's, the captains' and the world's safety net). Mutation-proven: their six lists,

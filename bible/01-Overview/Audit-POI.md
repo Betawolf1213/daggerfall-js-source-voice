@@ -41,14 +41,14 @@ whose text a fix moved was re-aimed by content and dies again. The lead merged t
 
 | Fix lane | Findings | Commit | Pins | Mutants |
 |---|---|---|---|---|
-| A, the store | S1-S14 (S11 the service's half), U13 the store's words | 31a8727161 | `test/auditpoi_store.test.js` 21 | `auditpoi_store.json` 52 |
-| B, the runtime | R1-R9, R11-R15, S11 the client's half | da47048b72 | `test/auditpoi_runtime.test.js` 17 | `auditpoi_runtime.json` 39 |
-| C, the editor | E1-E18 | 7bbb07f3b8 | `test/auditpoi_editor.test.js` 15 | `auditpoi_editor.json` 42 |
-| D, the panels | U1-U13, P6, P8, T8; the panels' halves of C1-C5 and C7 | 585e89fbcd | `test/auditpoi_panels.test.js` 18 | `auditpoi_panels.json` 72 |
-| E, glTF | G1-G8 (with P9), R10 | 4ba911d677 | `test/auditpoi_gltf.test.js` 12 | `auditpoi_gltf.json` 45 |
-| F, the UV editor | M1-M13 | 2e5d74ba07 | `test/auditpoi_uv.test.js` 14 | `auditpoi_uv.json` 40 |
-| G, the packs | P1-P5, P7, P10-P12, T1-T7 | 4ff98ffc5d | `test/auditpoi_packs.test.js` 10 | `auditpoi_packs.json` 57 |
-| the lead | L1-L12 and the joins below | 2ed8b3901b, 7a7a056940, 822fb2a73d, e9269f5b90 and this record's | `test/auditpoi_lead.test.js` 12 | `auditpoi_lead.json` 42 |
+| A, the store | S1-S14 (S11 the service's half), U13 the store's words | 31a8727161 | `test/poi/auditpoi_store.test.js` 21 | `auditpoi_store.json` 52 |
+| B, the runtime | R1-R9, R11-R15, S11 the client's half | da47048b72 | `test/poi/auditpoi_runtime.test.js` 17 | `auditpoi_runtime.json` 39 |
+| C, the editor | E1-E18 | 7bbb07f3b8 | `test/scenes/auditpoi_editor.test.js` 15 | `auditpoi_editor.json` 42 |
+| D, the panels | U1-U13, P6, P8, T8; the panels' halves of C1-C5 and C7 | 585e89fbcd | `test/poi/auditpoi_panels.test.js` 18 | `auditpoi_panels.json` 72 |
+| E, glTF | G1-G8 (with P9), R10 | 4ba911d677 | `test/poi/auditpoi_gltf.test.js` 12 | `auditpoi_gltf.json` 45 |
+| F, the UV editor | M1-M13 | 2e5d74ba07 | `test/poi/auditpoi_uv.test.js` 14 | `auditpoi_uv.json` 40 |
+| G, the packs | P1-P5, P7, P10-P12, T1-T7 | 4ff98ffc5d | `test/poi/auditpoi_packs.test.js` 10 | `auditpoi_packs.json` 57 |
+| the lead | L1-L12 and the joins below | 2ed8b3901b, 7a7a056940, 822fb2a73d, e9269f5b90 and this record's | `test/poi/auditpoi_lead.test.js` 12 | `auditpoi_lead.json` 42 |
 
 What a player met: a body inside a POI lost its floor and walls whenever any approval landed anywhere (R1); grass and
 banners drawn over a POI's glass (R4); a stretched part lit by the wrong normal (R5) and a mirrored one drawn inside out
@@ -222,7 +222,7 @@ shelveOne, which passed `not-found` alone by, so a pack holding an entry taken o
 that id by for a copy's again, the shelve's `not-found` (an answer the store no longer gives) dropped, and
 `auditpoi_packs`' fake shelf answers as the store now does, PIN MOVED; C1 pinned end to end (the approval's request
 carries the `docSha` of the document looked at, `auditpoi_panels` U12); the panel's z-index 40 to 39 (2ed8b3901b:
-`test/mwattach.test.js` MWFIX 1, nothing at or above the asset picker's 40, was red on the POI branch's own head);
+`test/scenes/mwattach.test.js` MWFIX 1, nothing at or above the asset picker's 40, was red on the POI branch's own head);
 poiDiff's tags change carrying the tags themselves (lane D's U13 lists them the reader's way; `poi6_review` and
 `auditpoi_panels` PIN MOVED); and two pins red on the frozen head, the arc's own: `oncrash1` C2 (a hand-rolled angle
 wrap - uvMesh.js:"ang[k] = ang[ref] + wrapAngle(ang[k] - ang[ref]);" now, the port's one wrap in one step) and
@@ -235,10 +235,10 @@ THE IMPORT (the import's metas carry the bytes put - L9's, PIN MOVED).
 
 ## The pins and the lists
 
-New, each count the manifest's (top-of-line `test(` calls): `test/auditpoi_store.test.js` 21,
-`test/auditpoi_runtime.test.js` 17, `test/auditpoi_editor.test.js` 15, `test/auditpoi_panels.test.js` 18,
-`test/auditpoi_gltf.test.js` 12, `test/auditpoi_uv.test.js` 14, `test/auditpoi_packs.test.js` 10,
-`test/auditpoi_lead.test.js` 12 - 119, each lane's proven red on the code as it stood. The arc's
+New, each count the manifest's (top-of-line `test(` calls): `test/poi/auditpoi_store.test.js` 21,
+`test/poi/auditpoi_runtime.test.js` 17, `test/scenes/auditpoi_editor.test.js` 15, `test/poi/auditpoi_panels.test.js` 18,
+`test/poi/auditpoi_gltf.test.js` 12, `test/poi/auditpoi_uv.test.js` 14, `test/poi/auditpoi_packs.test.js` 10,
+`test/poi/auditpoi_lead.test.js` 12 - 119, each lane's proven red on the code as it stood. The arc's
 own nine files keep their counts (`poi1_store` 10, `poi2_runtime` 12, `poi3_edit` 13, `poi3b_panel` 6, `poi4_gltf` 6,
 `poi4b_library` 7, `poi5_panel` 2, `poi5_uv` 7, `poi6_review` 8). The suite: 27,577 tests across 3,156 files at the
 frozen head, 27,696 across 3,164 with every lane and the lead merged.
@@ -260,20 +260,20 @@ records by its `world.js` lines), C's 60 (`audit27h`, `auditcontrib`, `kb1audit`
 F's 42, G's over `dataSource.js` (`auditbr5`, `auditve`, `dw1`, `ti3`, `ve1`, `ve4`, `ws1`, `sp1`) - all dead or
 equivalent as recorded.
 
-PIN MOVED, each with its note at the change: `test/poi1_store.test.js` - the approval naming `docSha` (S1), a live asset
-cached a day (S4), the list's revisions with the rollback's own (S14); `test/accountworker.test.js` ACC1b - two tables,
-`poi_rev_assets` and `poi_upload_days` (the POI migration grown in place, not yet deployed - 0116 since KG6 took 0115); `test/poi2_runtime.test.js` - settle
-runs twelve frames (R8); `test/poi3b_panel.test.js` - OPENING FROM THE STORE's revisions carry the store's `base` (P6,
-T7), and THE EDITOR IN THE WORLD's translucent line reads `mwv.eye` (R4, R14); `test/poi3_edit.test.js` WORDS -
-`index-range` in words of its own (L8); `test/poi4_gltf.test.js` - the GLB's colours through poiMaterialOf (R10),
-REFUSALS' file carrying the skin its node names (G6); `test/poi4b_library.test.js` - THE STORE's `poi-gone` and
-`poi-shelf-full` (U13), PLACING AN ENTRY one step (E11), RECORDS kept with its lights (L7); `test/poi5_uv.test.js` THE
-DIRECT SOLVE - the Hermitian factor over complex entries (M13); `test/poi6_review.test.js` - BACK OUT's light read back
+PIN MOVED, each with its note at the change: `test/poi/poi1_store.test.js` - the approval naming `docSha` (S1), a live asset
+cached a day (S4), the list's revisions with the rollback's own (S14); `test/server/accountworker.test.js` ACC1b - two tables,
+`poi_rev_assets` and `poi_upload_days` (the POI migration grown in place, not yet deployed - 0116 since KG6 took 0115); `test/poi/poi2_runtime.test.js` - settle
+runs twelve frames (R8); `test/poi/poi3b_panel.test.js` - OPENING FROM THE STORE's revisions carry the store's `base` (P6,
+T7), and THE EDITOR IN THE WORLD's translucent line reads `mwv.eye` (R4, R14); `test/poi/poi3_edit.test.js` WORDS -
+`index-range` in words of its own (L8); `test/poi/poi4_gltf.test.js` - the GLB's colours through poiMaterialOf (R10),
+REFUSALS' file carrying the skin its node names (G6); `test/poi/poi4b_library.test.js` - THE STORE's `poi-gone` and
+`poi-shelf-full` (U13), PLACING AN ENTRY one step (E11), RECORDS kept with its lights (L7); `test/poi/poi5_uv.test.js` THE
+DIRECT SOLVE - the Hermitian factor over complex entries (M13); `test/poi/poi6_review.test.js` - BACK OUT's light read back
 with no warning and its glow through poiMaterialOf (G7, R10), A PACK's damaged mesh worn by a POI (P11) and T4's real
 check, INTO THE STORE's copy under its own id (P4), T5 and T6, WHAT IT CHANGES's tags themselves (the lead's join);
-`test/auditpoi_panels.test.js` - the tags (the lead's join); `test/cursortoggle.test.js` and
-`test/tv1_travel_view.test.js` - the cursor toggle's check with the editor, and `test/fb0929_overworld_mouse.test.js` -
-`poiEditor: null` in its scope (E1); `test/travelmap.test.js` U41 - the core's window 13400 (POI-2's teardown line); `test/poi3b_panel.test.js` THE IMPORT - the
+`test/poi/auditpoi_panels.test.js` - the tags (the lead's join); `test/systems/cursortoggle.test.js` and
+`test/render/tv1_travel_view.test.js` - the cursor toggle's check with the editor, and `test/scenes/fb0929_overworld_mouse.test.js` -
+`poiEditor: null` in its scope (E1); `test/formats/travelmap.test.js` U41 - the core's window 13400 (POI-2's teardown line); `test/poi/poi3b_panel.test.js` THE IMPORT - the
 metas with their bytes (L9).
 
 The words: every new sentence goes through `t()` - A's ten (five refusals in `accountClient.js`, five

@@ -137,7 +137,7 @@ wait for the Enhanced AI switch; the rest work without it (section 2.1).
 10. **Two stale lines in its record**, corrected with this proposal (section 32): `Revenants.md` put its pages on the
     Stats rail (both moved to the Holdings tab with HOLDINGS, 2026-10-03 - `ui/enhanced/enhancedMenu.js pauseHoldings`), and
     named its relay `world144` / `world152` (the branch-era numbers; it shipped as `world153`,
-    `test/relayversion.test.js`).
+    `test/net/relayversion.test.js`).
 
 ---
 
@@ -171,7 +171,7 @@ value, as TACT4's do; TACT2's five-foe seeded pin and C15's knockback pins hold 
   builds its pool with no `fates` today, so its revenants die outright; FEUD flags it in every RVN slice rather than
   widening it (section 32).
 - **One home per number.** The shapes' numbers in the leaf `ai/blowShapes.js` (the renderer imports it and the brain
-  must not ride the boot graph - `test/boot2.test.js`); every other TELL number on one table in a new leaf beside it;
+  must not ride the boot graph - `test/render/boot2.test.js`); every other TELL number on one table in a new leaf beside it;
   every RVN number at the top of `systems/revenant/revenant.js` or its new sibling.
 - **Two clocks.** Every TELL timer reads the brain's clock (`ai/tacticsClock.js tacticsNow`); every RVN day reads the
   character's (`worldTick.ownMinutes`, through `revenant.js nowMinutes`).
@@ -493,7 +493,7 @@ Only on a hit (a dodged blow does nothing), and only to the local player (each c
   the same fields.
 - At `FOES_MS` (200 ms) a record arrives up to 200 ms late; `wl` absorbs it, and the mark starts part-filled.
 - The relay fans foe frames unparsed, but `wire.js` is in its bundle: `RELAY_VERSION` bumps, with a new row in
-  `test/relayversion.test.js` (one bump for TELL8 and RVN13 if they ship together).
+  `test/net/relayversion.test.js` (one bump for TELL8 and RVN13 if they ship together).
 
 ### 10.2 Blows at peers
 
@@ -933,7 +933,7 @@ The Companions page (`ui/companionRoster.js`): a loyalty bar beside its health, 
 - **Narrator only**: the fourteen flinches (14.1) and the band's scatter (17).
 - **Placeholders**: `{p}` today. FEUD widens the bank's law, deliberately and pinned exactly, to `{p}`, `{how}` (a
   learned habit: "blade", "arrows", "fire"...), `{item}`, `{move}` and `{ally}` (the companion felled).
-  `test/revenant_voice.test.js`'s pin moves to the new list, and each placeholder is filled on every path (a line said
+  `test/systems/revenant/revenant_voice.test.js`'s pin moves to the new list, and each placeholder is filled on every path (a line said
   with a `{` left in it is a failure).
 - About 260 new lines; every one at most 96 characters, none twice.
 - **As built (RVN12a; the record at the foot)**: RVN12 in two parts - RVN12a the words, RVN12b the page and the card.
@@ -1315,7 +1315,7 @@ With 22 and 23 as recommended together (measured): the will 100 / 90 / 12%, the 
   `scenes/dungeonContext.js` WIRED (its door, sinks and swing; `scenes/dungeon.js` hosts it).
 - **Not built here** - a peer's relayed blow weighs K = 1 and a puppet carries no stagger (TELL8); the target bar's
   poise track and the tags (TELL9); the weakness's X (RVN3).
-- Pins `test/tell1_poise.test.js` (15): the table whole; the classes on DFU's weights; poise; every multiplier's
+- Pins `test/systems/tell1_poise.test.js` (15): the table whole; the classes on DFU's weights; poise; every multiplier's
   `healthMult` through its producer (and the three not exported by their source); the classes and the back; on the real
   motor a hold that lands, a break and a stagger (its length, its token, its cooldown, nothing decided, standing, then
   the beat), no stunlock, the weight's length and an elite's poise, a paralysis and the switch off; a staggered foe's x1.25
@@ -1368,7 +1368,7 @@ With 22 and 23 as recommended together (measured): the will 100 / 90 / 12%, the 
   `cityGuards.js`: the hold into the sprite, the strike clip held, `tellCues` after the sprite, `setBatchGlint` beside
   the hit flash. Every host that runs them is wired with them (`world.js`, `exterior.js`, `worldModes.js`, the dungeon).
 - **Not built here** - the puppet's held pose (TELL8); a feint (TELL5) - its no-glint and no-WIND are in place.
-- Pins `test/tell2_tell.test.js` (20): the held swing on the real frame lists (the stand, the release, the cancel and
+- Pins `test/characters/enemy/tell2_tell.test.js` (20): the held swing on the real frame lists (the stand, the release, the cancel and
   its Hurt, the head `-1`, a DFU swing never held, the replace); on the real motor (begun once, released once, dropped on
   a break and a lost place); end to end on the real sprite and in the ear; the cues; the glint's curve, colour and batch,
   the reduced-motion read; the shaders and the renderer; the ground; the three pools. Pins moved (each marked
@@ -1403,7 +1403,7 @@ With 22 and 23 as recommended together (measured): the will 100 / 90 / 12%, the 
   `render/foeTelegraph.js` sets `uIron` per blow. Its glint is red (the blow's colour, TELL2). The target bar's "Iron"
   is TELL9's. `tools/foeTelegraphProbe.mjs` reads the second rim and the hatch off a real frame (19 held).
 - **Not built here** - an iron miss's longer window (TELL4); the target bar's word (TELL9); a revenant's iron (RVN).
-- Pins `test/tell3_iron.test.js` (9): the numbers; the guard by shape and weight, every brute by its own; an elite's
+- Pins `test/characters/enemy/tell3_iron.test.js` (9): the numbers; the guard by shape and weight, every brute by its own; an elite's
   third (and an Elite Dungeon's foe not one; the roll's draw); the blow's length and guard; ON THE REAL MOTOR a giant's
   slam iron - every blow held, none weighed, its mark standing, landing where aimed at its longer landing, red on its
   body - a paralysis still stopping it, an elite orc's sweep iron where a plain orc's breaks; the door's hold; the
@@ -1441,7 +1441,7 @@ With 22 and 23 as recommended together (measured): the will 100 / 90 / 12%, the 
   `STAGGER_IMMUNE` and the blow's cooldown.
 - **Not built here** - a peer's (6.3, TELL8); the "Perfect" tag on the target bar (TELL9); the charge, the leap and the
   ring's windows ride their shapes in TELL6.
-- Pins `test/tell4_punish.test.js` (11): the windows and the bound; ON THE REAL MOTOR a miss overreaching (its window,
+- Pins `test/characters/enemy/tell4_punish.test.js` (11): the windows and the bound; ON THE REAL MOTOR a miss overreaching (its window,
   the lock, the token kept, the stand, then RECOVER and the token on, the pose let go), a landing opening none, a late
   dodge perfect and an early one plain, the first blow staggering (its length, the window shut, the token, its Hurt)
   and inside the guard not, its place gone and the switch off; the x1.3; the spent pose on three real lists (and its
@@ -1483,7 +1483,7 @@ With 22 and 23 as recommended together (measured): the will 100 / 90 / 12%, the 
   join with RVN4.
 - **Not built here** - the charge's tracking and its chain (TELL6); a revenant's Patient and last-stand numbers (RVN2,
   RVN4); a peer's (TELL8).
-- Pins `test/tell5_patterns.test.js` (10): the lengths; the tiers and the families; the turn; ON THE MOTOR a drawn
+- Pins `test/characters/enemy/tell5_patterns.test.js` (10): the lengths; the tiers and the families; the turn; ON THE MOTOR a drawn
   length (an elite's quicker), a lunge tracking then locking with its foe turning, a sweep never turning, a feint cut
   into a plain blow (no verdict, no weight, no overreach, its fade, no wind-up near, none from an ordinary orc), a chain
   (its gap, its law's shape from the new facing, quick, the window after its last) and a break ending it, none from an
@@ -1507,7 +1507,7 @@ With 22 and 23 as recommended together (measured): the will 100 / 90 / 12%, the 
   its tiers), a revenant less 8% a rank (rank 5: 4.8-9); an elite revenant the elite's less its rank. A last stand's
   x0.7 joins with RVN4. `BLOW_COOLDOWN_MIN`/`MAX` read the ordinary range from the table, its one home.
 - **Still one at a time** - unchanged (`windupNear`, a chain one).
-- Pins `test/tell7_tier.test.js` (5): the tier (the live level); the whole set and what it adds, existing shapes
+- Pins `test/characters/enemy/tell7_tier.test.js` (5): the tier (the live level); the whole set and what it adds, existing shapes
   only; the cooldowns; ON THE MOTOR a level-1 revenant telegraphing where an ordinary level-1 orc never does, each
   tier's cooldown on the pinned roll. Pin moved: `tell1_poise` (the table). Mutant records re-aimed by content:
   `tact4` (two), `tell1`.
@@ -1528,7 +1528,7 @@ With 22 and 23 as recommended together (measured): the will 100 / 90 / 12%, the 
 - **Who** - TELL7's whole set: an elite, a champion or a revenant Giant, Iron or Flesh Atronach, or Daedra Lord.
   Heavy and massive bodies all, so iron (TELL3's `IRON_SHAPES`); it never turns (TELL5); it chains into a slam; its
   miss leaves a second's window (TELL4), iron's 0.3 s more.
-- Pins `test/tell6a_ring.test.js` (5): the numbers and the verdict all round; every shape's mirror inside its own
+- Pins `test/characters/enemy/tell6a_ring.test.js` (5): the numbers and the verdict all round; every shape's mirror inside its own
   quad with its glow's room; who throws it (and who never does), its iron, its chain and its window; ON THE MOTOR an
   elite giant's ring landing on a player in its annulus, and missing one who hugs its feet - its iron window.
 - Mutants `tools/mutants/tell6a.json` (11), all dead; TELL7's two waiting records answered (16 dead).
@@ -1552,7 +1552,7 @@ With 22 and 23 as recommended together (measured): the will 100 / 90 / 12%, the 
   run, its LAND at the strike the run decides (`tellCues` reads a run as a landing still to come).
 - `tools/foeTelegraphProbe.mjs` gains the charge's lane (past the lunge's reach and wider: 23 held).
 - **Not built here** - the push (TELL6e); an iron charge's knockdown (OPEN 6, TELL6e); a peer's (TELL8).
-- Pins `test/tell6b_charge.test.js` (5): the numbers, the lane, the ground's mirror and branch; who and when (the
+- Pins `test/characters/enemy/tell6b_charge.test.js` (5): the numbers, the lane, the ground's mirror and branch; who and when (the
   band, a wall, cover, the pool in reach and out); ON THE MOTOR an elite grizzly's charge from 6.5 m running into a
   player who stands - a hit where it meets them, stopping short of the lane's end - and an elite Orc Warlord's past one
   who steps out after its aim locks, overreaching at the lane's end and never chaining; the ear. Pin moved: `tact2`
@@ -1578,7 +1578,7 @@ With 22 and 23 as recommended together (measured): the will 100 / 90 / 12%, the 
   mark lay flat at the foe's feet on a hillside. `fitBlowToGround` now asks `Collider.surfaceHit` (the nearer of a mesh
   and the ground), and a leap samples the slope out to its point.
 - `tools/foeTelegraphProbe.mjs` gains the leap (a disc at its point, nothing at its foe's feet: 24 held).
-- Pins `test/tell6c_leap.test.js` (5): the numbers, the disc at its point, its mirror and quad; who and when (the band,
+- Pins `test/characters/enemy/tell6c_leap.test.js` (5): the numbers, the disc at its point, its mirror and quad; who and when (the band,
   the line, the ground, a flyer, the pool beside the charge); the mark on the ground at its point and an outdoor lunge
   on its hillside; ON THE MOTOR an elite spider's crouch, its arc and its landing on the player who stood at its point,
   and on the ground a player left - its window there. Pins moved: `tell6a_ring` (a leap's quad by its point),
@@ -1608,7 +1608,7 @@ With 22 and 23 as recommended together (measured): the will 100 / 90 / 12%, the 
   street hosts' `onArrow` (`world.js`, `exterior.js`, `worldModes.js`), carry it. The ear: no LAND (a shot strikes
   nothing).
 - `tools/foeTelegraphProbe.mjs` gains the line (to its target, thin, stopping there: 25 held).
-- Pins `test/tell6d_aimed.test.js` (5): the numbers, the line and its mirror; the loose (its bearing and pitch, the
+- Pins `test/characters/enemy/tell6d_aimed.test.js` (5): the numbers, the line and its mirror; the loose (its bearing and pitch, the
   shot taken once and never before its draw, its flight x1.3 as fast, its weight end to end through the
   formulas); ON THE MOTOR an elite archer's shot wound up instead of loosed - its line to me locked, no held swing, its
   glint, its draw at the landing, no window - and an ordinary archer's never; the pools, the hosts and the ear wired.
@@ -1646,7 +1646,7 @@ With 22 and 23 as recommended together (measured): the will 100 / 90 / 12%, the 
   blinking) under `BLEED_ICON` - the atlas's first icon, as every bundle that names none draws; a bleed's own icon is
   TELL9's to choose.
 - **Not built here** - a peer's (each client applies its own, TELL8); the bleed's own icon (TELL9).
-- Pins `test/tell6e_landing.test.js` (10): the law by shape; THE REAL PLAYER MOTOR's push (its v^2/2a, its edge), its
+- Pins `test/scenes/tell6e_landing.test.js` (10): the law by shape; THE REAL PLAYER MOTOR's push (its v^2/2a, its edge), its
   rattle and its knockdown (no move, the eye down and up); the frame (the push along the blow, the dip, a bleed begun, a
   knockdown taking the push, its 5 s guard); the bleed (its ticks, its mark, a heal ending it, a second adding the
   first's remainder, its HUD row); the pools' word (fresh, damaging, spent either way); the helper's tick through the
@@ -1702,7 +1702,7 @@ With 22 and 23 as recommended together (measured): the will 100 / 90 / 12%, the 
   index still the atlas's first for DFU's shape, drawn from the glyph - `statusGlyphColor32` uploaded once a name).
 - **Not built here** - the peers' side of every word and track (TELL8); "Weakness" said (RVN3); a revenant's ember on
   the track (RVN).
-- Pins `test/tell9_screen.test.js` (9): the track's law (every state, the clamp, the switch); the bar's foe on a threat
+- Pins `test/ui/enhanced/tell9_screen.test.js` (9): the track's law (every state, the clamp, the switch); the bar's foe on a threat
   (the 2 s yield, the refresh, a bout, the dead, the poise riding the target); ON THE REAL BRAIN a wind-up taking the
   bar through its cues, the track filling as my blows hold and "Staggered" at the break, a blow at another target
   marking nothing; the words (the join, its window and target, a miss, the door's mine-only gate, "Open" and "Stagger"
@@ -1725,7 +1725,7 @@ With 22 and 23 as recommended together (measured): the will 100 / 90 / 12%, the 
   blow and its state (`blowWireKey`), never `wl` (it runs down every frame; the landing it names is fixed).
 - **The law** - `net/wire.js validFoeRecord`: the four wind-up fields together or none, each bounded (`FOE_WINDUP_MS`
   3000, `wo` as `f`, `FOE_WINDUP_REACH` 64 m for `wp`), `ws` 1 or 2. The relay forwards both unread; its bundle
-  carries wire.js, so **`RELAY_VERSION` world162** (`test/relayversion.test.js`'s row; 25 pins moved with it).
+  carries wire.js, so **`RELAY_VERSION` world162** (`test/net/relayversion.test.js`'s row; 25 pins moved with it).
 - **The puppet** - `applyBlowRecord` (both readers, the exterior's `applyPuppetRecord` and the dungeon's
   `applyFoeRecord`) keeps a SYNTHETIC brain state on the puppet's `ai._tac` (`puppet: true`), so every reader of a
   wind-up reads a peer's foe as its own: the ground (the mark from `wl`, part-filled by the shape's nominal length), the
@@ -1759,7 +1759,7 @@ With 22 and 23 as recommended together (measured): the will 100 / 90 / 12%, the 
   up at a peer (its arrow is its owner's flight); onlookers see its line. A puppet's poise track shows its state, not
   its meter (`taken` is the owner's and not on the wire - it reads empty until it breaks).
 - **Not built here** - RVN13's fields (`ad`, `wq`, `p2`, `rt`); a revenant's ember on a puppet's mark (RVN5).
-- Pins `test/tell8_online.test.js` (10): the record's law field by field; the owner's word (the flags, the clamp, the
+- Pins `test/ai/tell8_online.test.js` (10): the record's law field by field; the owner's word (the flags, the clamp, the
   projection, the key without `wl`); the puppet's state (the part-filled mark, its colour and glint, its tracking, kept
   seen, the late record); the field gone (a feint's cut, a break's cancel), the stagger and the overreach on its entity
   through the real fold; each judging their own feet (the verdict, the weight, the effect, the perfect dodge, an
@@ -1861,7 +1861,7 @@ and `dungeonContext.js`.
 - `tools/foeTelegraphProbe.mjs` gains the contrast's dark band, the rear disc and the shatter (white, cracked, going
   out): **34 held** in Chromium.
 - **Not built here** - the live Playwright run of a real fight (no ARENA2 in this tree); RVN's harness rows.
-- Pins `test/audittell.test.js` (25), and two in `test/tell8_online.test.js` (O2; B8, O4, O6). Pins moved (each
+- Pins `test/scenes/audittell.test.js` (25), and two in `test/ai/tell8_online.test.js` (O2; B8, O4, O6). Pins moved (each
   marked): `tell5_patterns` (the rig spends the verdict a frame step after its landing; B9), `tell9_screen` (a charge's
   run reads empty, an unseen state; the word and the flash, U3/U4), `tell8_online` (`wn` on every record; P1),
   `audittact` (H1 in three hosts; the watch's L8), `tell6e_landing` (the building's frame, L6; the pools' word, L8),
@@ -1929,7 +1929,7 @@ and `dungeonContext.js`.
   writes one that no deed folds (a puppet's deeds are its owner's - RVN13's to carry).
 - **Section 32's corrections** - `06-Systems/Revenants.md` already said the Holdings tab and `world153` (read
   again); it gains the fields (section 5) and the ledger (section 17).
-- Pins `test/rvn1_ledger.test.js` (16). Pins moved (each marked `PIN MOVED (RVN1: ...)`): `tell1_poise` (the landing
+- Pins `test/systems/rvn1_ledger.test.js` (16). Pins moved (each marked `PIN MOVED (RVN1: ...)`): `tell1_poise` (the landing
   notes between the take and the sink), `audittell` (one `mine` for U6's tag and the ledger).
 - Mutants `tools/mutants/rvn1.json` (85), all dead: three survived their first run - the player under an always-open
   gate and an older record whose draw was the mutant's own `fire` (each pinned now), and the beast row in `kinPool`,
@@ -1977,7 +1977,7 @@ and `dungeonContext.js`.
   swing's backstab; `scenes/dungeon.js` hosts it).
 - **Not built here** - a peer's blow on my revenant rolls against its puppet, which carries no adaptations until
   RVN13's `ad`; the taunt that names one (RVN12's `{how}`).
-- Pins `test/rvn2_adapt.test.js` (11; the fold's revenant on a fixed id - a drawn weakness among the fights' had made
+- Pins `test/systems/rvn2_adapt.test.js` (11; the fold's revenant on a fixed id - a drawn weakness among the fights' had made
   it flaky, which the gate caught). Pins moved (each marked `PIN MOVED (RVN2: ...)`): `rvn1_ledger` (a record holds
   its rank's), `audit18_hosts_dungeon` (the shaft hands its foe to the backstab), `auditworld6bii` and `questparty2` (the
   cull's A2 and Q4). The edge's class reader is `adaptBlowClass` (the gate's one-name law: `ai/puppetBlows.js` owns
@@ -2026,7 +2026,7 @@ and `dungeonContext.js`.
   `scenes/dungeonContext.js` WIRED (its seam, flinch, tear-away, sink; `scenes/dungeon.js` hosts it).
 - **Not built here** - rumour's hint (RVN7); the will on a peer's screen (RVN13); a voice for the flinch and the will
   (RVN12).
-- Pins `test/rvn3_weak.test.js` (9). Pins moved (each marked `PIN MOVED (RVN3: ...)`): `revenant` and `revenant_card`
+- Pins `test/systems/rvn3_weak.test.js` (9). Pins moved (each marked `PIN MOVED (RVN3: ...)`): `revenant` and `revenant_card`
   (the escapes' `unbroken`), `revenant_fate` (the dungeon's seam), `rvn2_adapt` (its weakness now x1.5 and -50), `tell1_poise`, `exteriorfoes`,
   `hostmagic_wiring`, `audit26_combat`, `audit68_review`, `audit68_worldjs`, `auditworld6biii`, `enchantpool` and `world2`
   (the sinks', the doors' signatures' and the landing's `element`; exterior.js's and worldModes.js's `whole`; world2's
@@ -2070,7 +2070,7 @@ and `dungeonContext.js`.
   foe - roar, rim and size; `scenes/dungeon.js` hosts it).
 - **Not built here** - rank 5's band running to it, and its kin stepping out of a portal: the band is RVN6's, and is
   built with it; `p2` on the wire (RVN13); the last stand's own words (RVN12 - the cornered's stand in).
-- Pins `test/rvn4_stand.test.js` (8). Pins moved (each marked `PIN MOVED (RVN4: ...)`): `tell1_poise` (the motor's
+- Pins `test/systems/revenant/rvn4_stand.test.js` (8). Pins moved (each marked `PIN MOVED (RVN4: ...)`): `tell1_poise` (the motor's
   lock), `tell2_tell` (the pools' glint, its rim after it), `revenant_audit` (the spell's and the shaft's refusals),
   `rvn3_weak` (a rank-3 one's last stand comes first - the will's pins stand it already; the dungeon's refusal).
 - Mutants `tools/mutants/rvn4.json` (49): 48 dead, 1 recorded equivalent (the ring's own iron wind-up is the roar's
@@ -2115,7 +2115,7 @@ and `dungeonContext.js`.
   edge and the *signature* voice moment (RVN12). **FEUD WIRE** carried it: a signature of reach rides flagged (`wk`
   +64) and a peer's puppet strikes it at x2.0, in its ember, its WIND deeper; the pyre still rides nowhere (a spell,
   wound up only at me), and its called name stays its owner's (its voice reads the owner's record).
-- Pins `test/rvn5_sig.test.js` (13). Pins moved (each marked `PIN MOVED (RVN5: ...)`): `tell6c_leap` (the shader's
+- Pins `test/systems/rvn5_sig.test.js` (13). Pins moved (each marked `PIN MOVED (RVN5: ...)`): `tell6c_leap` (the shader's
   disc uniforms shared with the pyre), `audittell` (B6: the feint's guard reads the signature and the pyre too).
 - Mutants `tools/mutants/rvn5.json` (91): 91 dead. Mutant records re-aimed by content (16): `tell2` (2), `tell3` (2),
   `tell4`, `tell5` (2), `tell6a` (2), `tell6c` (4), `tell6d` (3), and the cite shift's two (`survtiers`,
@@ -2149,7 +2149,7 @@ and `dungeonContext.js`.
   stands.
 - **Not built here** - `rt` on the wire (RVN13): a peer sees the followers as ordinary foes, and their scatter as a
   run; the scatter's own voice (narrator only, 23).
-- Pins `test/rvn6_band.test.js` (7). Pin moved (marked `PIN MOVED (RVN6: ...)`): `revenant` (its escape's door - the
+- Pins `test/systems/rvn6_band.test.js` (7). Pin moved (marked `PIN MOVED (RVN6: ...)`): `revenant` (its escape's door - the
   band scatters first).
 - Mutants `tools/mutants/rvn6.json` (52): 52 dead.
 
@@ -2174,7 +2174,7 @@ and `dungeonContext.js`.
   (section 32): the single-location host builds no location index, so its revenants roam.
 - **Not built here** - the rumour (RVN7b), the map's mark and the journal's row (RVN7c), the lair stand and the rest
   (RVN7d).
-- Pins `test/rvn7a_lair.test.js` (6). Mutants `tools/mutants/rvn7a.json` (24): 24 dead. Mutant records re-aimed by
+- Pins `test/systems/revenant/rvn7a_lair.test.js` (6). Mutants `tools/mutants/rvn7a.json` (24): 24 dead. Mutant records re-aimed by
   content (2): `survtiers3`'s two cite mutants (a citation they read moved) - judged again: dead.
 
 ### RVN7b - BUILT 2026-10-04 (the loot-rarity row on; the world host's talk)
@@ -2193,7 +2193,7 @@ and `dungeonContext.js`.
   pipeline) and `scenes/dungeonContext.js` (no town) have nothing more to wire.
 - **Not built here** - the map's mark and the journal's row (RVN7c), the lair stand (RVN7d); the rumour's own voice
   lines (RVN12).
-- Pins `test/rvn7b_rumor.test.js` (5). Mutants `tools/mutants/rvn7b.json` (28): 28 dead.
+- Pins `test/systems/rvn7b_rumor.test.js` (5). Mutants `tools/mutants/rvn7b.json` (28): 28 dead.
 
 ### RVN7c - BUILT 2026-10-04 (the loot-rarity row on; the world host's maps and journal)
 
@@ -2215,7 +2215,7 @@ and `dungeonContext.js`.
   `scenes/dungeonContext.js` (`scenes/dungeon.js`) read the world host's maps and quest log; `scenes/exterior.js` -
   FLAGGED (section 32): its revenants roam, so no lair is marked there.
 - **Not built here** - the lair stand (RVN7d).
-- Pins `test/rvn7c_map.test.js` (7). Pin moved (marked `PIN MOVED (RVN7c: ...)`): `rvn7a_lair` (the page's lair line,
+- Pins `test/systems/rvn7c_map.test.js` (7). Pin moved (marked `PIN MOVED (RVN7c: ...)`): `rvn7a_lair` (the page's lair line,
   now marked on the map). Mutants `tools/mutants/rvn7c.json` (35): 35 dead; `rvn7a`'s page mutant re-aimed by content
   - judged again: dead.
 
@@ -2249,7 +2249,7 @@ and `dungeonContext.js`.
   RVN6's) - `exterior.js` FLAGGED (section 32): its revenants roam.
 - **Not built here** - the lair stand on the wire beyond SUMMON-SYNC's loose lane (`rt`, RVN13); its own voice lines
   (RVN12 - the taunt's bank stands in).
-- Pins `test/rvn7d_stand.test.js` (6). Pins moved (each marked `PIN MOVED (RVN7d: ...)`): `audit68_dungeonctx` (the
+- Pins `test/systems/rvn7d_stand.test.js` (6). Pins moved (each marked `PIN MOVED (RVN7d: ...)`): `audit68_dungeonctx` (the
   rest's harness asks after a revenant at home), `restsync` (the offline arm's harness), `encounterplace` (the
   encounter door's signature and a returning person's gender), `loosefoespawn` (the loose door's signature and record),
   `revenant_card` (the escape's door scatters its band first). Mutants `tools/mutants/rvn7d.json` (40): 40 dead. Mutant
@@ -2278,7 +2278,7 @@ and `dungeonContext.js`.
   underground); `scenes/worldModes.js` and `scenes/dungeonContext.js` die through the world host's respawn;
   `scenes/exterior.js` - FLAGGED (section 32): no online respawn there.
 - **Not built here** - its next taunt's word on it (RVN12, `{item}`); the page's *Took* (RVN12).
-- Pins `test/rvn8_took.test.js` (6). Mutants `tools/mutants/rvn8.json` (34): 34 dead. Mutant record re-aimed by
+- Pins `test/systems/rvn8_took.test.js` (6). Mutants `tools/mutants/rvn8.json` (34): 34 dead. Mutant record re-aimed by
   content (1): `revenantaudit`'s A6 (the cap's filter now spares a holder too) - judged again: dead.
 
 ### RVN9 - BUILT 2026-10-04 (the loot-rarity row on; every host's encounter tick)
@@ -2297,7 +2297,7 @@ and `dungeonContext.js`.
   `scenes/dungeonContext.js` run under the world host's tick; online the character's own clock stands while away
   (TIME1), so nothing festers between sessions.
 - **Not built here** - the page's pips (RVN12); a festered epithet bank of its own (RVN12).
-- Pins `test/rvn9_fester.test.js` (6). Mutants `tools/mutants/rvn9.json` (29): 28 dead, 1 recorded equivalent (the
+- Pins `test/systems/rvn9_fester.test.js` (6). Mutants `tools/mutants/rvn9.json` (29): 28 dead, 1 recorded equivalent (the
   tick's fast path for a day already counted: without it the loop counts no day and sets the day to itself). Mutant
   record re-aimed by content (1): `rvn1`'s rank-2 signature (the festering's rank-up draws one too, so its line named two
   sites) - judged again: dead.
@@ -2329,7 +2329,7 @@ and `dungeonContext.js`.
   (section 32): a spell's knock-out, a peer's foe's, a door walked through, `exterior.js`'s companions (none).
 - **Not built here** - the return's taunt naming the companion (`felled_return`, `routed_return` - RVN12's words, the
   history's `ally`); felled and routed epithet banks past rank 3 (the risen, as every deed's).
-- Pins `test/rvn10_deeds.test.js` (11). Mutants `tools/mutants/rvn10.json` (65): 65 dead. Pins moved (4):
+- Pins `test/systems/rvn10_deeds.test.js` (11). Mutants `tools/mutants/rvn10.json` (65): 65 dead. Pins moved (4):
   `crewcompanions` (the knock-out arm's two strings and the crew's `onKnocked`), `audit26_dungeonfoes` F212 (the
   teleport core's window 6800 -> 7000: the jump's rout above its needles), `qx1_exterior_host`'s lifted Recall (the
   sweep's three names stubbed - none engaged). Mutant records re-aimed by content (9):
@@ -2359,7 +2359,7 @@ and `dungeonContext.js`.
   their pools' `tellCues` tell the one listener; `scenes/exterior.js` - FLAGGED (section 32): no companions there.
 - **Not built here** - desertion (RVN11b), betrayal (RVN11c); the warning's and the witness's own voice lines (RVN12's
   `devoted_warn`).
-- Pins `test/rvn11a_loyalty.test.js` (10). Mutants `tools/mutants/rvn11a.json` (52): 52 dead. Pin moved (1):
+- Pins `test/systems/revenant/rvn11a_loyalty.test.js` (10). Mutants `tools/mutants/rvn11a.json` (52): 52 dead. Pin moved (1):
   `revenant_audit` C3/C7 (the slots' hold passes `byYou: false`). Mutant records re-aimed by content (5): `tell9`'s two
   (the wind-up line now tells the host too), `revenantaudit`'s C5 (the knock's line moves loyalty), `survtiers3`'s two
   (the cites the shift moved) - each judged again: dead.
@@ -2383,7 +2383,7 @@ and `dungeonContext.js`.
   in every mode (`scenes/worldModes.js`, `scenes/dungeonContext.js`); `exterior.js` stands no companions (FLAGGED,
   section 32) - a record there deserts all the same.
 - **Not built here** - its voice (`deserted`, RVN12); betrayal (RVN11c).
-- Pins `test/rvn11b_desert.test.js` (7). Mutants `tools/mutants/rvn11b.json` (30): 30 dead. Mutant records re-aimed by
+- Pins `test/systems/rvn11b_desert.test.js` (7). Mutants `tools/mutants/rvn11b.json` (30): 30 dead. Mutant records re-aimed by
   content (4): `revenantaudit`'s A6 and `revenant`'s no-cap (the cap's lines now `trimLiving`'s), `rvn11a`'s
   warn-kicker and `rvn9`'s card-unsaid (their lines carry the deserter's too) - each judged again: dead.
 
@@ -2405,7 +2405,7 @@ and `dungeonContext.js`.
   pass `turned`); `scenes/worldModes.js` - its interiors are the street pool's kind (`interiorPool`); `scenes/exterior.js`
   - FLAGGED (section 32): no companions there.
 - **Not built here** - its voice (`betrayed`, three lines - RVN12).
-- Pins `test/rvn11c_betray.test.js` (7). Mutants `tools/mutants/rvn11c.json` (37): 37 dead. Pins moved (6):
+- Pins `test/systems/rvn11c_betray.test.js` (7). Mutants `tools/mutants/rvn11c.json` (37): 37 dead. Pins moved (6):
   `loosefoespawn` SD1, `rvn7d_stand` (the loose stand's signature and record, both builds' stand), `loot7_champions`,
   `revenant` THE HOSTS, `rvn6_band` THE CAP (the band's arm), `revenant_companions` the world's wiring (the places'
   `turn`). Mutant records re-aimed by content (10): `rvn1`'s two dungeon tags, `rvn7d`'s build-unapplied and
@@ -2428,7 +2428,7 @@ and `dungeonContext.js`.
   `scenes/worldModes.js` - its interiors are the street pool's kind; `scenes/exterior.js` - its pool's signature, as the
   street's (FLAGGED as ever, section 32: no companions, no fates).
 - **Not built here** - the page and the card (RVN12b).
-- Pins `test/rvn12a_words.test.js` (5). Mutants `tools/mutants/rvn12a.json` (33): 33 dead. Pins moved (5):
+- Pins `test/systems/revenant/rvn12a_words.test.js` (5). Mutants `tools/mutants/rvn12a.json` (33): 33 dead. Pins moved (5):
   `revenant_voice` (the key moments with the last stand and the betrayal; the placeholders widened), `rvn11a_loyalty`
   (the warning's own voice), `rvn5_sig` (the dungeon's call hands my name), `rvn11c_betray` (the betrayer's card hands
   it). Mutant records re-aimed by content (9): `revenantaudit`'s A11 and `revenantvoice`'s name-unfilled (the fill
@@ -2448,7 +2448,7 @@ and `dungeonContext.js`.
 - **Four hosts** - the page and the card are the Enhanced Plus menu's and HUD's, every host's; the record's `unbroken`
   is written by the street's and the dungeon's tear-away (`scenes/worldModes.js`'s interiors the street pool's kind;
   `scenes/exterior.js` - no `fates`, so no tear-away there: FLAGGED as ever, section 32).
-- Pins `test/rvn12b_page.test.js` (5). Mutants `tools/mutants/rvn12b.json` (25): 25 dead. Pin moved (1): `rvn2_adapt`
+- Pins `test/systems/revenant/rvn12b_page.test.js` (5). Mutants `tools/mutants/rvn12b.json` (25): 25 dead. Pin moved (1): `rvn2_adapt`
   (the page's learned row is chips now). Mutant records re-aimed by content (4): `rvn10`'s ally-unsaved,
   history-ally-dropped and page-name-dropped (the history's extra fields), `rvn2`'s page-unnamed (the chips) - each
   judged again: dead.
@@ -2469,7 +2469,7 @@ and `dungeonContext.js`.
 - **Not on the wire** - the theft, loyalty, festering, the lair and the rumours: the character's own.
 - **The dungeon stream's gap** - no `nm` rides the room record, so no follower's `rt` either: AUDIT TELL's flag on
   that stream names it (one gap, one flag - the open flags stay nine), and section 32 says so.
-- Pins `test/rvn13_wire.test.js` (6). Mutants `tools/mutants/rvn13.json` (35): 35 dead. Pins moved (9):
+- Pins `test/systems/rvn13_wire.test.js` (6). Mutants `tools/mutants/rvn13.json` (35): 35 dead. Pins moved (9):
   `audit68_dungeonctx` (the name rides the key, its fields after), `revenant_card` (the key; the puppet's name stood
   again), `tell8_online` (both keys), `world2` (the room record's line), `world3` (its key), `world6biiie` (the peer's
   hit's reveal after it), `audittell` (the flag's words); and the relay's name in 27 tests (world163 -> world164,
@@ -2561,7 +2561,7 @@ was fixed. "Every host" is the four by name: `scenes/world.js`, `scenes/exterior
   number Mac called (OPEN 11, 12, 5), so none was tuned here: section 31's OPEN 22-24 put them to him, each alternative
   measured (300 fights a cell).
 
-- Pins `test/auditfeud.test.js` (19). Pins moved (each marked): `rvn9_fester` (the wound clock: nothing until it passes
+- Pins `test/systems/auditfeud.test.js` (19). Pins moved (each marked): `rvn9_fester` (the wound clock: nothing until it passes
   the last counted day, R4), `rvn12a_words` (the cold theft's line, V2), `rvn13_wire` (both writers without the id, W2),
   `revenant_audit` (the load's clear, H1), `rvn7d_stand` (`lairable`, H3), `tell8_online` (the street's sender, W1), `audittell` (the dungeon's sender, its weakness after its feet, W1),
   `world2` (the room record's writer, W2); the lifted harnesses of `audit68_dungeonctx`, `loot7check` and `restsync` hold the
@@ -2601,7 +2601,7 @@ was fixed. "Every host" is the four by name: `scenes/world.js`, `scenes/exterior
   90.4%), the ranks (2.95 / 2.70).
 - **Hosts** - none: the will, the stand and the page are read where they were (`revenantFate.revenantWillHolds` and
   `beginLastStand` in both pools' damage doors, `revenantPage`); the wire carries no number of these.
-- Pins `test/feudbalance.test.js` (4). Pins moved (each marked): `rvn3_weak` (the law's breaking, the page's words),
+- Pins `test/systems/revenant/feudbalance.test.js` (4). Pins moved (each marked): `rvn3_weak` (the law's breaking, the page's words),
   `rvn4_stand` (the shares, four places, and the page), `auditfeud` (the duel's seeds and the target). Mutants
   `tools/mutants/feudbalance.json` (8), all dead; re-aimed by content (4): `rvn3` (2), `rvn4` (1), `auditfeud`'s target
   (1) - each judged again, all dead.
@@ -2664,7 +2664,7 @@ it was fixed.
   "push" (an iron ring rattles and knocks down). FEUD BALANCE's two duplicate mutants dropped (FB-will-unread was
   `rvn3`'s; FB-stand-rank4 `rvn4`'s): six there now.
 - **Not changed** - a revenant puppet's blows at a peer (section 32); the band and the flight in the harness (disclosed).
-- Pins `test/auditfeud2.test.js` (14). Pins moved (each marked): `auditfeud` (both senders' `damage > 0`, the abyss, the
+- Pins `test/systems/auditfeud2.test.js` (14). Pins moved (each marked): `auditfeud` (both senders' `damage > 0`, the abyss, the
   duel's seeds), `feudbalance` (the verdict through `feudVerdict`), `rvn3_weak` (one stagger), `rvn4_stand` (a marker),
   `audittell` and `tell8_online` (the senders' `damage > 0`), `world2`, `waveD_dungeonHost`, `world6biiie` (two) and
   `audit39_worldmodes` (every shaft carries its bow); the lifted harnesses unchanged.
@@ -2698,7 +2698,7 @@ rode no wire, and a signature of reach landed at its shape's multiplier (a slam'
   owner is.
 - **Not on the wire** - the pyre (a spell, wound up only at me - RVN13) and the signature's called name (its voice reads
   the owner's record).
-- Pins `test/feudwire.test.js` (8 - one through the real street pool). Pins moved (each marked): `tell8_online` (the law's flag bound, both keys, both
+- Pins `test/systems/revenant/feudwire.test.js` (8 - one through the real street pool). Pins moved (each marked): `tell8_online` (the law's flag bound, both keys, both
   applies), `rvn13_wire` (the street's reader; the relay), `revenant_card` (the street's key), `world3` (the room's
   key); and the relay's name in 28 tests (world164 -> world165,
   `relayversion` excluded as its own law asks, its world165 row added). Mutants `tools/mutants/feudwire.json` (35): 35
@@ -2747,7 +2747,7 @@ the rest a flight had scattered it, and two kin step out of a portal. Its band f
 58 s (its band slain, the portal every time). Alone and never running: 12.7% and 94.6% - AUDIT FEUD 2's. Every RVN
 target holds (the will 100 / 88.0 / 11.4%, dodging struck 0% in 99.2% of the time, the ranks 2.69 / 2.62), so no call
 goes to Mac. TELL's half is unchanged (its fights stand no band).
-- Pins `test/feudharness.test.js` (7). Pins moved (each marked): `auditfeud` (the duel's laws on its seeds, alone and
+- Pins `test/systems/revenant/feudharness.test.js` (7). Pins moved (each marked): `auditfeud` (the duel's laws on its seeds, alone and
   never running), `auditfeud2` (the dodger waits on every wind-up at me). Mutants `tools/mutants/feudharness.json` (25):
   25 dead. Re-aimed by content (2): `auditfeud`'s AF-S28-dodge-early and `auditfeud2`'s AF2-S1-dodger-early; every
   record on the harness (16) judged again: all dead.
@@ -2805,7 +2805,7 @@ moved 232 commits (#586-#622) when it was picked up. `origin/main` `cc7585cb` me
   `fb1004e_overworld` (the legend's stub carries the lairs), `rvn7c_map` (the lairs' clause, the trader asked after
   it), `tell8_online` (TELL8's wire is world170's row), `travelmap` (U41's window to 10800 - the last needle at 10563 on
   main, 10533 on the branch, 10685 merged).
-- **New** - `test/feudmerge.test.js` (FM1 a sand shard drawn for the stands; FM2 one mark, two judges, through the real
+- **New** - `test/characters/feudmerge.test.js` (FM1 a sand shard drawn for the stands; FM2 one mark, two judges, through the real
   brain) and `tools/mutants/feudmerge.json` (5). Mutant records re-aimed by content (35): `arenaladder` (5), `tell7`
   (7), `rvn5` (3), `tell8` (3), `tact4` (3), `survtiers3` (3), `tell6a` (2), `tell5` (2), `audittact`, `rvn7c`, `soc1`,
   `survtiers`, `tell6b`, `tell6c`, `tell6d` (one each). The 40 records the merge re-aimed or added, judged again (`node tools/mutate.mjs`): 39 dead, 1 equivalent as

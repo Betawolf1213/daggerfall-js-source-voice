@@ -5,7 +5,7 @@
     "old": "aabb: d.court ? courtDoorAabb(d) : doorWorldAabb(d),",
     "new": "aabb: doorWorldAabb(d),",
     "tests": [
-      "test/wbx_gate_fixes.test.js"
+      "test/world/gate/wbx_gate_fixes.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "export const COURT_DOOR_DEPTH = 0.3;",
     "new": "export const COURT_DOOR_DEPTH = 2.45;",
     "tests": [
-      "test/wbx_gate_fixes.test.js"
+      "test/world/gate/wbx_gate_fixes.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "    normal: { x: 0, y: 0, z: 1 },\n    court: true,",
     "new": "    normal: { x: 0, y: 0, z: 1 },",
     "tests": [
-      "test/wbx_gate_fixes.test.js"
+      "test/world/gate/wbx_gate_fixes.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "ejectFromCourt(COURT_TEXT.collapse); gateCourt?.leave();",
     "new": "ejectFromCourt(COURT_TEXT.collapse);",
     "tests": [
-      "test/ss1_stones.test.js"
+      "test/systems/item/ss1_stones.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "      if (!right && !middle) box.click(vx, vy);",
     "new": "      box.click(vx, vy);",
     "tests": [
-      "test/ss1_stones.test.js"
+      "test/systems/item/ss1_stones.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "    this._tip.hide();   // AUDIT SS: the piece's tooltip drew over the question until the mouse moved\n",
     "new": "",
     "tests": [
-      "test/ss1_stones.test.js"
+      "test/systems/item/ss1_stones.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "const ground = t === REMOTE_TARGET_TYPES.Dropped || (t === REMOTE_TARGET_TYPES.Loot && this.hooks.loot?.playerOwned === true);",
     "new": "const ground = t === REMOTE_TARGET_TYPES.Dropped;",
     "tests": [
-      "test/ss1_stones.test.js"
+      "test/systems/item/ss1_stones.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "const n = ground && !dismantleRefusal(it) ? dismantleStones(it) : 0;",
     "new": "const n = ground ? dismantleStones(it) : 0;",
     "tests": [
-      "test/ss1_stones.test.js"
+      "test/systems/item/ss1_stones.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "      if (t !== REMOTE_TARGET_TYPES.Merchant) {",
     "new": "      if (true) {",
     "tests": [
-      "test/ss1_stones.test.js"
+      "test/systems/item/ss1_stones.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "const rows = box.painting ? box.rows : fitBoxRows(font, box.rows);",
     "new": "const rows = fitBoxRows(font, box.rows);",
     "tests": [
-      "test/ss1_stones.test.js"
+      "test/systems/item/ss1_stones.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "      if (host) clear();\n",
     "new": "",
     "tests": [
-      "test/ss1_stones.test.js"
+      "test/systems/item/ss1_stones.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "  dispose() { if (!this.done) this._close(); }",
     "new": "  dispose() {}",
     "tests": [
-      "test/ss1_stones.test.js"
+      "test/systems/item/ss1_stones.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "  if (saleRefused(item)) return null;",
     "new": "  if (false) return null;",
     "tests": [
-      "test/ss1_stones.test.js"
+      "test/systems/item/ss1_stones.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "  if (side === 'local' && saleRefused(item)) return 0;",
     "new": "  if (false) return 0;",
     "tests": [
-      "test/ss1_stones.test.js"
+      "test/systems/item/ss1_stones.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "  if (isBound(item) || lockRefuses(item, 'sell')) return;   // AUDIT SS",
     "new": "  // AUDIT SS",
     "tests": [
-      "test/ss1_stones.test.js"
+      "test/systems/item/ss1_stones.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "&& !isEquipped(it) && !isBound(it) && !lockRefuses(it, 'sell') && !isSummoned(it));",
     "new": "&& !isEquipped(it) && !isSummoned(it));",
     "tests": [
-      "test/ss1_stones.test.js"
+      "test/systems/item/ss1_stones.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "    if (isBound(it) || lockRefuses(it, 'sell')) return 0;",
     "new": "",
     "tests": [
-      "test/ss1_stones.test.js"
+      "test/systems/item/ss1_stones.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "  if (!real || real.id !== offer.id || real.price !== offer.price) return { ok: false, reason: 'gone' };",
     "new": "  if (!real) return { ok: false, reason: 'gone' };",
     "tests": [
-      "test/set7_broker.test.js"
+      "test/systems/item/set7_broker.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "  if (stack.bound === true) picked.bound = true;",
     "new": "",
     "tests": [
-      "test/ss1_stones.test.js"
+      "test/systems/item/ss1_stones.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "old": "r: peerHanded(t.items).map((it) => ({ ...it })),",
     "new": "r: t.items.map((it) => ({ ...it })),",
     "tests": [
-      "test/ss1_stones.test.js"
+      "test/systems/item/ss1_stones.test.js"
     ]
   },
   {
@@ -185,9 +185,9 @@
     "old": "r: peerHanded(held).map((it) => ({ ...it })),",
     "new": "r: held.map((it) => ({ ...it })),",
     "tests": [
-      "test/ss1_stones.test.js",
-      "test/world4.test.js",
-      "test/world8.test.js"
+      "test/systems/item/ss1_stones.test.js",
+      "test/net/world4.test.js",
+      "test/net/world8.test.js"
     ]
   },
   {
@@ -196,7 +196,7 @@
     "old": "if (yesKey) yes.onclick({ detail: 1, stopPropagation() {} }); else closeDismantle();",
     "new": "closeDismantle();",
     "tests": [
-      "test/ss1_stones.test.js"
+      "test/systems/item/ss1_stones.test.js"
     ]
   },
   {
@@ -205,7 +205,7 @@
     "old": "keepKey = e.key === 'Escape' || e.code === 'KeyN' || e.key === 'Enter' || e.code === 'NumpadEnter';",
     "new": "keepKey = e.key === 'Escape';",
     "tests": [
-      "test/ss1_stones.test.js"
+      "test/systems/item/ss1_stones.test.js"
     ]
   },
   {
@@ -214,7 +214,7 @@
     "old": "const away = (e) => { if (e.target === mine || !mine.contains(e.target)) { e.stopPropagation(); closeDismantle(); } };",
     "new": "const away = (e) => { if (!mine.contains(e.target)) { e.stopPropagation(); closeDismantle(); } };",
     "tests": [
-      "test/ss1_stones.test.js"
+      "test/systems/item/ss1_stones.test.js"
     ]
   },
   {
@@ -223,7 +223,7 @@
     "old": "  dismantleOff = () => { clearTimeout(timer); ",
     "new": "  dismantleOff = () => { ",
     "tests": [
-      "test/ss1_stones.test.js"
+      "test/systems/item/ss1_stones.test.js"
     ]
   },
   {
@@ -232,7 +232,7 @@
     "old": "  dismantleOff = () => { clearTimeout(timer); document.removeEventListener('pointerdown', away, true); document.removeEventListener('keydown', key, true); };",
     "new": "  dismantleOff = () => { clearTimeout(timer); };",
     "tests": [
-      "test/ss1_stones.test.js"
+      "test/systems/item/ss1_stones.test.js"
     ]
   },
   {
@@ -241,7 +241,7 @@
     "old": "  dismantleEl.setAttribute('aria-modal', 'true');\n",
     "new": "",
     "tests": [
-      "test/ss1_stones.test.js"
+      "test/systems/item/ss1_stones.test.js"
     ]
   },
   {
@@ -250,7 +250,7 @@
     "old": "    if (!r.ok) { refusedFor(r.reason); return; }",
     "new": "    if (!r.ok) return;",
     "tests": [
-      "test/ss1_stones.test.js"
+      "test/systems/item/ss1_stones.test.js"
     ]
   },
   {
@@ -259,7 +259,7 @@
     "old": "  infoOff = () => { clearTimeout(timer); ",
     "new": "  infoOff = () => { ",
     "tests": [
-      "test/ss1_stones.test.js"
+      "test/systems/item/ss1_stones.test.js"
     ]
   },
   {
@@ -268,7 +268,7 @@
     "old": "const away = (e) => { if (e.target === mine || !mine.contains(e.target)) { e.stopPropagation(); closeInfo(); } };",
     "new": "const away = (e) => { if (!mine.contains(e.target)) { e.stopPropagation(); closeInfo(); } };",
     "tests": [
-      "test/ss1_stones.test.js"
+      "test/systems/item/ss1_stones.test.js"
     ]
   },
   {
@@ -277,7 +277,7 @@
     "old": ".card .lockline, .card .boundline, .pack-shell .card p.lockline, .pack-shell .card p.boundline {",
     "new": ".card .lockline, .card .boundline {",
     "tests": [
-      "test/ss1_stones.test.js"
+      "test/systems/item/ss1_stones.test.js"
     ]
   }
 ]

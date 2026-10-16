@@ -815,7 +815,7 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
    *  rest in her mesh node's frame (Boat.MeshObject, which the swell rolls and pitches - the deck's frame) - her
    *  switched-on, non-trigger colliders' triangles: a mesh's, a box's six faces, a built-in's - and kept. Null before
    *  the models are in. AUDIT NAV2 F57: ONE DECK A HULL, whatever her rig - a rig carries no collider of its own (the
-   *  Large Boat's seven stand her rig 0's own, pinned rig by rig - test/auditnav2_deck.test.js), so every rig's deck is
+   *  Large Boat's seven stand her rig 0's own, pinned rig by rig - test/systems/naval/auditnav2_deck.test.js), so every rig's deck is
    *  the one the preload bakes, never a throwaway boat spawned and a deck baked mid-voyage (a Coasting Trader's rig 3
    *  first seen cost an 8.6-9.3 ms crew frame, the bake 4.9-16.9 ms); `variant` is a caller's word, never the key.
    *  AUDIT NAV2 F39: and a classic model's collider (a ModelHelper's - the Large Galley's helm - the bed) as the world's

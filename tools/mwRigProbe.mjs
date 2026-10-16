@@ -1,7 +1,7 @@
 // MW-D9g: THE SEAM NOTHING HAS EVER RUN.
 //
 // mwArmProbe proves the ARM draws: it builds one and calls update/draw
-// itself. test/fparm.test.js proves the ENGINE's arithmetic. Both of them
+// itself. test/formats/morrowind/fparm.test.js proves the ENGINE's arithmetic. Both of them
 // drive fpArm DIRECTLY, and its own header says what that leaves out:
 // "weaponRig's branch, the four hosts' camera dep, and the enhanced-menu
 // card are pinned in node and proven by Mac in the game".

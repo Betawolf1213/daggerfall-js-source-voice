@@ -5,7 +5,7 @@
     "old": "export const DESERT = Object.freeze({ AT: 20, CHANCE: 0.15 });",
     "new": "export const DESERT = Object.freeze({ AT: 21, CHANCE: 0.15 });",
     "tests": [
-      "test/rvn11b_desert.test.js"
+      "test/systems/rvn11b_desert.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "export const DESERT = Object.freeze({ AT: 20, CHANCE: 0.15 });",
     "new": "export const DESERT = Object.freeze({ AT: 20, CHANCE: 0.2 });",
     "tests": [
-      "test/rvn11b_desert.test.js"
+      "test/systems/rvn11b_desert.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "Math.min(Math.ceil(goods.length / 2), room | 0)",
     "new": "Math.min(Math.floor(goods.length / 2), room | 0)",
     "tests": [
-      "test/rvn11b_desert.test.js"
+      "test/systems/rvn11b_desert.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "Math.min(Math.ceil(goods.length / 2), room | 0)",
     "new": "Math.ceil(goods.length / 2)",
     "tests": [
-      "test/rvn11b_desert.test.js"
+      "test/systems/rvn11b_desert.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "  const goods = list.filter((it) => !isGold(it)).sort((a, b) => value(b) - value(a));",
     "new": "  const goods = list.slice().sort((a, b) => value(b) - value(a));",
     "tests": [
-      "test/rvn11b_desert.test.js"
+      "test/systems/rvn11b_desert.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": ".sort((a, b) => value(b) - value(a));\n  const kept",
     "new": ".sort((a, b) => value(a) - value(b));\n  const kept",
     "tests": [
-      "test/rvn11b_desert.test.js"
+      "test/systems/rvn11b_desert.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "  return { kept, back: [...goods.slice(kept.length), ...list.filter((it) => isGold(it))] };",
     "new": "  return { kept, back: goods.slice(kept.length) };",
     "tests": [
-      "test/rvn11b_desert.test.js"
+      "test/systems/rvn11b_desert.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "  const list = Array.isArray(items) ? items.filter((it) => it && typeof it === 'object') : [];\n  const goods",
     "new": "  const list = Array.isArray(items) ? items.filter((it) => it != null) : [];\n  const goods",
     "tests": [
-      "test/rvn11b_desert.test.js"
+      "test/systems/rvn11b_desert.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "if (r.companion?.loyalty < DESERT.AT && rolls() < DESERT.CHANCE)",
     "new": "if (r.companion?.loyalty < DESERT.AT && rolls() <= DESERT.CHANCE)",
     "tests": [
-      "test/rvn11b_desert.test.js"
+      "test/systems/rvn11b_desert.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "if (r.companion?.loyalty < DESERT.AT && rolls() < DESERT.CHANCE)",
     "new": "if (r.companion?.loyalty <= DESERT.AT && rolls() < DESERT.CHANCE)",
     "tests": [
-      "test/rvn11b_desert.test.js"
+      "test/systems/rvn11b_desert.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "      if (r.companion?.loyalty < DESERT.AT && rolls() < DESERT.CHANCE) revenantDeserts(player, r, { now: d * MINUTES_PER_DAY, rolls });\n",
     "new": "",
     "tests": [
-      "test/rvn11b_desert.test.js"
+      "test/systems/rvn11b_desert.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "    // RVN11b (22.2): DESERTION - under DESERT.AT, once a day (a resting one too), one time in DESERT.CHANCE\n    for (const r of swornRevenants()) {\n      if (r.companion?.loyalty < DESERT.AT",
     "new": "    // RVN11b (22.2): DESERTION - under DESERT.AT, once a day (a resting one too), one time in DESERT.CHANCE\n    for (const r of swornRevenants()) {\n      if (r.companion?.loyalty + 2 < DESERT.AT",
     "tests": [
-      "test/rvn11b_desert.test.js"
+      "test/systems/rvn11b_desert.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "  r.sworn = false; r.fate = null; r.companion = null; r.out = false;\n  r.epithet = REVENANT_EPITHETS.deserted[0];",
     "new": "  r.fate = null; r.out = false;\n  r.epithet = REVENANT_EPITHETS.deserted[0];",
     "tests": [
-      "test/rvn11b_desert.test.js"
+      "test/systems/rvn11b_desert.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "  r.epithet = REVENANT_EPITHETS.deserted[0];\n",
     "new": "  r.epithet = revenantEpithet('deserted', r.rank, player?.name ?? '', rolls, r.epithet);\n",
     "tests": [
-      "test/rvn11b_desert.test.js"
+      "test/systems/rvn11b_desert.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "  r.epithet = REVENANT_EPITHETS.deserted[0];\n  r.name = joinName(r.given, r.epithet);\n",
     "new": "  r.epithet = REVENANT_EPITHETS.deserted[0];\n",
     "tests": [
-      "test/rvn11b_desert.test.js"
+      "test/systems/rvn11b_desert.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "  r.dueAt = dueFrom(now, rolls);\n  r.notice = 'deserted';",
     "new": "  r.dueAt = now;\n  r.notice = 'deserted';",
     "tests": [
-      "test/rvn11b_desert.test.js"
+      "test/systems/rvn11b_desert.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "  r.notice = 'deserted';\n  deed(r, 'deserted', now);",
     "new": "  deed(r, 'deserted', now);",
     "tests": [
-      "test/rvn11b_desert.test.js"
+      "test/systems/rvn11b_desert.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "  deed(r, 'deserted', now);\n  trimLiving(r);",
     "new": "  trimLiving(r);",
     "tests": [
-      "test/rvn11b_desert.test.js"
+      "test/systems/rvn11b_desert.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "  trimLiving(r);   // a living one again: the cap holds\n",
     "new": "",
     "tests": [
-      "test/rvn11b_desert.test.js"
+      "test/systems/rvn11b_desert.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "old": "    const drop = living.filter((x) => x !== keep && !x.out",
     "new": "    const drop = living.filter((x) => !x.out",
     "tests": [
-      "test/rvn11b_desert.test.js"
+      "test/systems/rvn11b_desert.test.js"
     ]
   },
   {
@@ -185,7 +185,7 @@
     "old": "    for (const it of back) { if (isGoldPieces(it)) addGoldPieces(player, it.stackCount ?? 1); else addItem(player.items, it); }\n  }\n  r.took = [...(r.took ?? []), ...kept];",
     "new": "  }\n  r.took = [...(r.took ?? []), ...kept];",
     "tests": [
-      "test/rvn11b_desert.test.js"
+      "test/systems/rvn11b_desert.test.js"
     ]
   },
   {
@@ -194,7 +194,7 @@
     "old": "    for (const it of back) { if (isGoldPieces(it)) addGoldPieces(player, it.stackCount ?? 1); else addItem(player.items, it); }\n  }\n  r.took",
     "new": "    for (const it of back) addItem(player.items, it);\n  }\n  r.took",
     "tests": [
-      "test/rvn11b_desert.test.js"
+      "test/systems/rvn11b_desert.test.js"
     ]
   },
   {
@@ -203,7 +203,7 @@
     "old": "room: TOOK_MAX - (r.took?.length ?? 0) });",
     "new": "room: TOOK_MAX });",
     "tests": [
-      "test/rvn11b_desert.test.js"
+      "test/systems/rvn11b_desert.test.js"
     ]
   },
   {
@@ -212,7 +212,7 @@
     "old": "  r.took = [...(r.took ?? []), ...kept];\n",
     "new": "",
     "tests": [
-      "test/rvn11b_desert.test.js"
+      "test/systems/rvn11b_desert.test.js"
     ]
   },
   {
@@ -221,7 +221,7 @@
     "old": " : r.notice === 'deserted' ? revenantDesertEvent(r, { playerName: player.name }) : null;",
     "new": " : null;",
     "tests": [
-      "test/rvn11b_desert.test.js"
+      "test/systems/rvn11b_desert.test.js"
     ]
   },
   {
@@ -230,7 +230,7 @@
     "old": "  warn: 'Companion', deserted: 'Oathbreaker',",
     "new": "  warn: 'Companion',",
     "tests": [
-      "test/rvn11b_desert.test.js"
+      "test/systems/rvn11b_desert.test.js"
     ]
   },
   {
@@ -239,7 +239,7 @@
     "old": "  const kept = w?.kept?.length ? ` It kept your ${w.kept.length === 1 ? w.kept[0] : `${w.kept.slice(0, -1).join(', ')} and ${w.kept.at(-1)}`}.` : '';",
     "new": "  const kept = '';",
     "tests": [
-      "test/rvn11b_desert.test.js"
+      "test/systems/rvn11b_desert.test.js"
     ]
   },
   {
@@ -248,7 +248,7 @@
     "old": "  const back = w?.back ? ` It left the rest of its pack to you.` : '';",
     "new": "  const back = '';",
     "tests": [
-      "test/rvn11b_desert.test.js"
+      "test/systems/rvn11b_desert.test.js"
     ]
   },
   {
@@ -257,7 +257,7 @@
     "old": "if (s?.sworn && s.companion?.items?.length && !r.sworn) {",
     "new": "if (s?.sworn && s.companion?.items?.length && !r.sworn && !(r.history ?? []).some((h) => h.deed === 'deserted')) {",
     "tests": [
-      "test/rvn11b_desert.test.js"
+      "test/systems/rvn11b_desert.test.js"
     ]
   },
   {
@@ -266,7 +266,7 @@
     "old": "setSwornLeftListener((id) => forgetSwornMember(id));\n",
     "new": "",
     "tests": [
-      "test/rvn11b_desert.test.js"
+      "test/systems/rvn11b_desert.test.js"
     ]
   }
 ]

@@ -156,7 +156,7 @@ door), so there is nothing there to wire.
 
 ## 5. Proof
 
-- `test/menuorder.test.js` (12): the glyphs (twelve by twelve, a rect a lit pixel, a mask each, every kind and station
+- `test/ui/menuorder.test.js` (12): the glyphs (twelve by twelve, a rect a lit pixel, a mask each, every kind and station
   pictured); the decorator's tiles, its kind glyphs and letters, its badges, the Pictures / List switch, the tabs' and
   chips' glyphs, the switch after the tabs; a placed piece's pictured presses, Remove warned, the bar's legend folded
   behind Keys, the legend's pairs, the fold's count; the counter's title, its named column, its two figures, a price on
@@ -165,7 +165,7 @@ door), so there is nothing there to wire.
   cards; the board's rows pictured - a Market material row, a supplier's and a trader's piece, none without a picture,
   a Stores card - the Market's views their glyphs, a phone's row of them its height; the rest - the Vendor page's pieces
   and the Market's crafted pieces pictured, the Reforge's, the yard's and a merchant's glyphs, the Reforge's buttonless
-  row, the ships' sizes in the yard's order, the host's hand-over in world.js (`test/shipyards1_host.test.js`'s window:
+  row, the ships' sizes in the yard's order, the host's hand-over in world.js (`test/systems/shipyards1_host.test.js`'s window:
   each page its glyph, a ship on every card). PINS MOVED: the bar's keys read whole (`decor1e`, `decorfigure`), DECOR-FLIP reads the legend's own pair
   (`decorflip`), PLUS-DRESS's warn literals carry the decorator's Remove and the counter's Steal (`plusdress1`), the
   stations' order read in the tiles' list (`prof9_client`, `prof10_client`, `prof11_client`, `prof12_client`).
@@ -195,7 +195,7 @@ door), so there is nothing there to wire.
   `decor.bar.keys.*`), the counter's title, column and figures (`trade.counter.*`), the station tiles' Here, Away and
   hint (`prof.page.tile.*`) - as getters where a table is exported, so a test reading `DECOR_ACT_GROUPS.use` still reads
   English; the view tabs take their glyph from `chip`'s own argument, never read back off their (now translatable)
-  words. The ratchet (`test/l10n4_hardcoded.test.js`) holds `decorPanel.js` at 96. The thirteen whole languages hold
+  words. The ratchet (`test/systems/l10n4_hardcoded.test.js`) holds `decorPanel.js` at 96. The thirteen whole languages hold
   the 36 new keys, drafted in-session (`tools/l10nInSession.mjs`). Re-aimed by content and dead again: `basehide.json`'s
   BASEHIDE-the-tab-uncounted, `decor1e.json`'s DECOR1e-the-tabs-idle, `decor2b.json`'s DECOR2b-the-tab-unpressed-in-a-look,
   and `menuorder.json`'s MENUORDER-decor-tab-icons-one, MENUORDER-trade-figures-together, MENUORDER-trade-magic-title.

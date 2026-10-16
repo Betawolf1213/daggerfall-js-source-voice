@@ -125,7 +125,7 @@ export const KG_COMMANDS = Object.freeze(['move', 'attack', 'potion', 'end']);
 
 const f32 = Math.fround;
 // Mathf.RoundToInt, which rounds a half to the even neighbour, is `systems/mathf.js`'s roundToInt: ONE DFU MEMBER, ONE
-// EXPORT (test/audit24_onehome.test.js).
+// EXPORT (test/systems/talk/audit24_onehome.test.js).
 
 // ── THE UNITS AND THE ROSTER ──────────────────────────────────────────────────────────────────────────────────────
 

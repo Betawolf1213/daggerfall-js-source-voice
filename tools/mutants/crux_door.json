@@ -5,7 +5,7 @@
     "old": "      if (!isDungeonExitDoor(door)) continue;\n",
     "new": "",
     "tests": [
-      "test/crux_door.test.js"
+      "test/world/crux_door.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "export const isDungeonExitDoor = (door) => door?.doorType === DOOR_TYPE.DUNGEON_EXIT;",
     "new": "export const isDungeonExitDoor = (door) => door?.doorType !== DOOR_TYPE.DUNGEON_EXIT;",
     "tests": [
-      "test/crux_door.test.js"
+      "test/world/crux_door.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "export const isDungeonExitDoor = (door) => door?.doorType === DOOR_TYPE.DUNGEON_EXIT;",
     "new": "export const isDungeonExitDoor = (door) => door?.doorType >= DOOR_TYPE.DUNGEON_ENTRANCE;",
     "tests": [
-      "test/crux_door.test.js"
+      "test/world/crux_door.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "      if (isDungeonExitDoor(door)) {",
     "new": "      if (door.doorType === DOOR_TYPE.DUNGEON_EXIT) {",
     "tests": [
-      "test/crux_door.test.js"
+      "test/world/crux_door.test.js"
     ]
   }
 ]

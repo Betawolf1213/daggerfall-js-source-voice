@@ -12,7 +12,7 @@
 // ONE VERTEX, MANY RINGS. Every province is a ring (or rings - an island is a ring of its own) of NAMED vertices, and
 // a border is the run of vertices two rings share, spelled in each. That is what makes the topology checkable: an edge
 // in ONE ring is coast, an edge in TWO is a border between the two provinces, an edge in three is a mistake, and
-// test/tamriel.test.js holds the table to it (`classifyEdges`). The coast is drawn from the rings; the borders from
+// test/ui/tamriel.test.js holds the table to it (`classifyEdges`). The coast is drawn from the rings; the borders from
 // BORDERS, the same vertices, so the two cannot disagree.
 //
 // THE BAY IS A HOLE. The Iliac Bay's own ground (the rectangle bayPictureRect names, about x 46..99, y 52..79 here) is

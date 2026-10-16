@@ -7,7 +7,7 @@
 // pixels and numbers, no renderer and no GL in this file, an atlas of the port's own under a pseudo-archive far above
 // any classic one (GALLEON_ARCHIVE). Deterministic, on fixed seeds, so every client's galleon is the same ship.
 // AUDIT GN-R12: HER TEXELS, AS SHE WEARS THEM (each picture's median over the area of every mesh she draws that wears it,
-// test/auditgalleon_prefab.test.js R12): her planking - decks, rails and stairs, ceilings, beams, her ports' throats - at
+// test/world/ships/auditgalleon_prefab.test.js R12): her planking - decks, rails and stairs, ceilings, beams, her ports' throats - at
 // Daggerfall's own density, 3.1 cm a texel square (two metres a 64-texel tile, as a classic wall), her bottom 3.1 by 3.5
 // where it slopes from its plan; her liveries a little coarser and not square - her side 4.4 cm along her by 4.5 up (its
 // lowest slice 5.1 by 4.6, where she turns under), her castle 4.1 by 5.2, her stern 4.3-4.4 by 5.2; her spars 3.1-3.3 cm

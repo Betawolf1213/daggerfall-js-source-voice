@@ -5,7 +5,7 @@
     "old": "export const SD_MOTES = Object.freeze({ dust: 320, sparks: 360, hour: 300, shards: 240 });",
     "new": "export const SD_MOTES = Object.freeze({ dust: 200, sparks: 200, hour: 200, shards: 200 });",
     "tests": [
-      "test/sd14c_motes.test.js"
+      "test/world/superDungeon/sd14c_motes.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "export const SD_MOTE_HALL = Object.freeze({ r: SD_ORRERY.r + 4, y: [0.4, 7] });",
     "new": "export const SD_MOTE_HALL = Object.freeze({ r: SD_ORRERY.r + 40, y: [0.4, 7] });",
     "tests": [
-      "test/sd14c_motes.test.js"
+      "test/world/superDungeon/sd14c_motes.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "export const SD_MOTE_VOID = Object.freeze({ halfW: 14, z: [SD_FIRST_STEP.z, 0], y: [-26, 1.5] });",
     "new": "export const SD_MOTE_VOID = Object.freeze({ halfW: 14, z: [SD_FIRST_STEP.z, 0], y: [-26, 6] });",
     "tests": [
-      "test/sd14c_motes.test.js"
+      "test/world/superDungeon/sd14c_motes.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "return { p: [SD_ARENA.x + Math.cos(ang) * rad, y, SD_ARENA.z + Math.sin(ang) * rad], size: 0.16",
     "new": "return { p: [SD_ARENA.x + Math.cos(ang) * rad, y, SD_ORRERY.z + Math.sin(ang) * rad], size: 0.16",
     "tests": [
-      "test/sd14c_motes.test.js"
+      "test/world/superDungeon/sd14c_motes.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "const life = SD_SKY_PERIOD / turnsOf(SD_MOTE_TURNS.dust, a), u = ((T + b * life) % life) / life;",
     "new": "const life = SD_SKY_PERIOD / (turnsOf(SD_MOTE_TURNS.dust, a) + 0.5), u = ((T + b * life) % life) / life;",
     "tests": [
-      "test/sd14c_motes.test.js"
+      "test/world/superDungeon/sd14c_motes.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "size: 0.12 + 0.12 * c, alpha: Math.min(1, u * 8) * (1 - u) * (1 - u), heat: 1 - u };",
     "new": "size: 0.12 + 0.12 * c, alpha: 0.5, heat: 1 - u };",
     "tests": [
-      "test/sd14c_motes.test.js"
+      "test/world/superDungeon/sd14c_motes.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "const turns = turnsOf(SD_MOTE_TURNS.hour, a), ang = c * TAU + (T / SD_SKY_PERIOD) * turns * TAU;",
     "new": "const turns = turnsOf(SD_MOTE_TURNS.hour, a), ang = c * TAU - (T / SD_SKY_PERIOD) * turns * TAU;",
     "tests": [
-      "test/sd14c_motes.test.js"
+      "test/world/superDungeon/sd14c_motes.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "    float ang = c * TAU - T / PERIOD * TAU, rad = sqrt(a) * ${f(SD_MOTE_HALL.r)};",
     "new": "    float ang = c * TAU - T / PERIOD * TAU, rad = a * ${f(SD_MOTE_HALL.r)};",
     "tests": [
-      "test/sd14c_motes.test.js"
+      "test/world/superDungeon/sd14c_motes.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "  gl_PointSize = clamp(px, ${f(SD_MOTE_MIN_PX)}, 32.0);",
     "new": "  gl_PointSize = clamp(px, 1.0, 32.0);",
     "tests": [
-      "test/sd14c_motes.test.js"
+      "test/world/superDungeon/sd14c_motes.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "  vAlpha *= clamp(px / ${f(SD_MOTE_MIN_PX)}, 0.0, 1.0);\n",
     "new": "",
     "tests": [
-      "test/sd14c_motes.test.js"
+      "test/world/superDungeon/sd14c_motes.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "    gl.enable(gl.DEPTH_TEST);\n    gl.depthMask(false);\n    gl.enable(gl.BLEND);\n    gl.blendFunc(gl.ONE, gl.ONE);\n    gl.drawArrays(gl.POINTS, 0, this.count);",
     "new": "    gl.enable(gl.DEPTH_TEST);\n    gl.enable(gl.BLEND);\n    gl.blendFunc(gl.ONE, gl.ONE);\n    gl.drawArrays(gl.POINTS, 0, this.count);",
     "tests": [
-      "test/sd14c_motes.test.js"
+      "test/world/superDungeon/sd14c_motes.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "    gl.blendFunc(gl.ONE, gl.ONE);\n    gl.drawArrays(gl.POINTS, 0, this.count);",
     "new": "    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);\n    gl.drawArrays(gl.POINTS, 0, this.count);",
     "tests": [
-      "test/sd14c_motes.test.js"
+      "test/world/superDungeon/sd14c_motes.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "const motes = !!sdMotesPassOf()?.draw(proj, view, deadlandsSeconds(), fog, skyGain(renderer._fogColor, SD_REALM_FOG.color), renderer.worldViewportPx?.[3]);",
     "new": "const motes = false;",
     "tests": [
-      "test/sd14c_motes.test.js"
+      "test/world/superDungeon/sd14c_motes.test.js"
     ]
   }
 ]

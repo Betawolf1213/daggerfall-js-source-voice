@@ -70,7 +70,7 @@ standing. That is the encounter pool's own order (exteriorFoes.js `batches()`, r
 foe). The draw's statements move whole and unchanged. update() returns what it always did, the live batches and the
 corpses, so no host changes.
 
-`test/fb1006_watchswing.test.js` (3, new) runs the real pool on watch1.test.js's synthetic CLASS18.CFG and pins three
+`test/scenes/fb1006_watchswing.test.js` (3, new) runs the real pool on watch1.test.js's synthetic CLASS18.CFG and pins three
 things:
 
 - A 1-health watchman whose blow at a player wearing the Ring dies by its reflection is not drawn, the update does not
@@ -83,7 +83,7 @@ On the code before the fix, the first pin threw the field's TypeError at the sam
 `g.batch.conceal`), and the other two failed on what was drawn. Mutants (`tools/mutants/fb1006.json`, 3, all dead): the
 draw's dead skip removed, the skip narrowed to a body with no corpse, and the push removed. The cites into
 `cityGuards.js` that the move shifted were re-aimed by `node tools/citeShift.mjs` (9). One more, a continuation on the
-line after its cite in `test/roadg_pools.test.js`, was moved by hand to the prune it names.
+line after its cite in `test/scenes/roadg_pools.test.js`, was moved by hand to the prune it names.
 
 ## THE FOUR HOSTS (17e)
 

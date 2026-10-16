@@ -5,7 +5,7 @@
     "old": "  return weak === cls || (metal != null && weak === metal);",
     "new": "  return weak === cls;",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "  if (weak === 'daylight') return !!day;",
     "new": "  if (weak === 'daylight') return true;",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "((ledger.weak | 0) > 0 || (ledger.staggers | 0) + (ledger.perfect | 0) >= WILL_STAGGERS)",
     "new": "((ledger.weak | 0) > 0 || (ledger.staggers | 0) + (ledger.perfect | 0) > WILL_STAGGERS)",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "((ledger.weak | 0) > 0 || (ledger.staggers | 0) + (ledger.perfect | 0) >= WILL_STAGGERS)",
     "new": "((ledger.staggers | 0) + (ledger.perfect | 0) >= WILL_STAGGERS)",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "export const willMatters = (rank) => (rank | 0) >= WILL_RANK;",
     "new": "export const willMatters = (rank) => (rank | 0) >= 2;",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "export const WEAK = Object.freeze({ STRUCK: 1.5,",
     "new": "export const WEAK = Object.freeze({ STRUCK: 1.25,",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "  daylight: 'It squints and shrinks from the daylight.',\n",
     "new": "",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "export const FLINCH_HEALTH = 0.5;",
     "new": "export const FLINCH_HEALTH = 0.7;",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "export const WEAK_HINTS = Object.freeze({ element: 'An element',",
     "new": "export const WEAK_HINTS = Object.freeze({ element: 'Fire',",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "  if (!_weak || !entity?.revenant) return false;",
     "new": "  return false;",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "  if (feudWeakBlow(entity, { cls, metal })) {\n    l.weak++;",
     "new": "  if (feudWeakBlow(entity, { cls, metal })) {",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "    try { _onWeak?.(entity); } catch { /* the reveal is not the blow's problem */ }\n",
     "new": "",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "noteFeudHarm(target, cls, damage, { silver, metal: metalOf(weapon) });",
     "new": "noteFeudHarm(target, cls, damage, { silver });",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "feudWeakBlow(target, { kind: info?.kind ?? 'melee', weapon, attacker })) return WEAK.STRUCK;",
     "new": "feudWeakBlow(target, { kind: info?.kind ?? 'melee', weapon, attacker })) return 1;",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "  if (edge.weak === 'daylight') { if (skyIsDay()) return WEAK.DAYLIGHT; }",
     "new": "  if (edge.weak === 'daylight') { if (skyIsDay()) return 1; }",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "const skyIsDay = () => { try { return !isNight(skyMinutes()); } catch { return false; } };",
     "new": "const skyIsDay = () => true;",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "  else if (info?.kind !== 'spell' && feudWeakBlow(target, { kind: info?.kind ?? 'melee', weapon, attacker })) return WEAK.STRUCK;",
     "new": "  else if (info?.kind !== 'spell' && feudWeakBlow(target, { kind: info?.kind ?? 'melee', weapon, attacker })) return WEAK.STRUCK * (edge.taken[adaptBlowClass(attacker, weapon, info?.kind)] ?? 1);",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "  if (weakEl) m.resist[weakEl] = (m.resist[weakEl] ?? 0) + WEAK.RESIST;\n",
     "new": "",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "  return isWeakBlow(weak, c, metal ?? metalOf(weapon), skyIsDay());",
     "new": "  return isWeakBlow(weak, null, metal ?? metalOf(weapon), skyIsDay());",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "old": "(kind === 'spell' ? (element != null ? elementFeudClass(element) : null) :",
     "new": "(kind === 'spell' ? null :",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -185,7 +185,7 @@
     "old": "  r.weakKnown = 2;\n  touch(r);\n  persist();\n  sayRevenant(",
     "new": "  touch(r);\n  persist();\n  sayRevenant(",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -194,7 +194,7 @@
     "old": "  if (entity._weakTold) return;\n  entity._weakTold = true;\n",
     "new": "  entity._weakTold = true;\n",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -203,7 +203,7 @@
     "old": "  if (at) { try { door?.sfx?.(SOUND.Burning, at); } catch { /* a host with no sound */ } }\n",
     "new": "",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -212,7 +212,7 @@
     "old": "  sayRevenant(revenantWeaknessEvent(r, { found: true }), (l) => door?.say?.(l));\n",
     "new": "",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -221,7 +221,7 @@
     "old": "|| !(e.health < (e.maxHealth || 1) * FLINCH_HEALTH)) return null;",
     "new": ") return null;",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -230,7 +230,7 @@
     "old": "  f._flinched = true;\n  const r = revenantById(e.revenant.id);",
     "new": "  const r = revenantById(e.revenant.id);",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ],
     "equivalent": true,
     "why": "The once-a-stand flag is the cheap early-out; the record's own weakKnown (set to 1 by the first flinch) refuses a second line anyway, so no pin can tell the two apart from outside. Kept so a stand never looks the record up twice."
@@ -241,7 +241,7 @@
     "old": "  if (!r || r.defeated || r.sworn || (r.weakKnown | 0) > 0) return null;",
     "new": "  if (!r || r.defeated || r.sworn) return null;",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -250,7 +250,7 @@
     "old": "  r.weakKnown = 1;\n",
     "new": "",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -259,7 +259,7 @@
     "old": "  const body = found ? `${name} - its weakness, laid bare.` : (FLINCH_LINES[r?.weak] ?? 'It shies from something.');",
     "new": "  const body = found ? `${name} - its weakness, laid bare.` : 'It shies from something.';",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -268,7 +268,7 @@
     "old": "  const body = `${r.given} staggers into the smoke, unbroken.`;",
     "new": "  const body = `${r.given} got away.`;",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -277,7 +277,7 @@
     "old": "  return !!r && willMatters(r.rank) && !willBroken(f.entity._feud);",
     "new": "  return false;",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -286,7 +286,7 @@
     "old": "  return !!r && willMatters(r.rank) && !willBroken(f.entity._feud);",
     "new": "  return !!r && willMatters(r.rank);",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -295,7 +295,7 @@
     "old": "  f.portalFx = { dir: 'out', at: now, delay: TEAR_MS.delay, ms: TEAR_MS.ms, tint: DISSOLVE_EMBER };",
     "new": "  f.portalFx = { dir: 'out', at: now, delay: TEAR_MS.delay, ms: TEAR_MS.ms };",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -304,7 +304,7 @@
     "old": "    const tint = p.tint ?? DISSOLVE_ARCANE;",
     "new": "    const tint = DISSOLVE_ARCANE;",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -313,7 +313,7 @@
     "old": "  if (f.entity) f.entity.health = 1;\n  if (f.ai) { f.ai.target = null; f.ai.fleeLeft = 0; f.ai.velX = 0; f.ai.velZ = 0; }",
     "new": "  if (f.ai) { f.ai.target = null; f.ai.fleeLeft = 0; f.ai.velX = 0; f.ai.velZ = 0; }",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -322,7 +322,7 @@
     "old": "if (revenantWillHolds(f)) tearAway(f); else yieldFoe(f); return; }",
     "new": "yieldFoe(f); return; }",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -331,7 +331,7 @@
     "old": "    if (f.yielded || f.executing || f.sparing || f.leaving || f.roaring) return;",
     "new": "    if (f.yielded || f.executing || f.sparing || f.roaring) return;",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -340,7 +340,7 @@
     "old": ": unbroken ? revenantUnbrokenEvent(r, playerEntity?.name, { archive: f.archive }) :",
     "new": ":",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -349,7 +349,7 @@
     "old": "    beginTearAway(f, () => escapeFoe(f, { unbroken: true }));",
     "new": "    beginTearAway(f, () => {});",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -358,7 +358,7 @@
     "old": "      if (f.entity.revenant?.id && !f._flinched) { const ev = revenantFlinch(f, { archive: f.archive }); if (ev) revenantSay(ev, say); }\n",
     "new": "",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -367,7 +367,7 @@
     "old": "wc, fromPlayer, element,   // TELL8: a peer's blow's class; AUDIT TELL U6: whose blow; RVN3: a spell's element",
     "new": "wc, fromPlayer,   // TELL8: a peer's blow's class; AUDIT TELL U6: whose blow; RVN3: a spell's element",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -376,7 +376,7 @@
     "old": "if (revenantWillHolds(foe)) tearAwayDungeonFoe(foe); else yieldDungeonFoe(foe); return; }",
     "new": "yieldDungeonFoe(foe); return; }",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -385,7 +385,7 @@
     "old": "    if (foe.yielded || foe.executing || foe.sparing || foe.leaving || foe.roaring) return;",
     "new": "    if (foe.yielded || foe.executing || foe.sparing || foe.roaring) return;",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -394,7 +394,7 @@
     "old": "      if (f.entity?.revenant?.id && !f._flinched) { const ev = revenantFlinch(f, { archive: f.mobileArchive }); if (ev) revenantSay(ev, (l) => hudText.add(l)); }\n",
     "new": "",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -403,7 +403,7 @@
     "old": "wc, fromPlayer, element,   // TELL8: a joiner's blow's class; AUDIT TELL U6: whose blow; RVN3: a spell's element",
     "new": "wc, fromPlayer,   // TELL8: a joiner's blow's class; AUDIT TELL U6: whose blow; RVN3: a spell's element",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -412,7 +412,7 @@
     "old": "whole: !!o?.whole, round: !!o?.round, element: o?.element ?? null }),   // RVN3: a landing's element",
     "new": "whole: !!o?.whole, round: !!o?.round }),   // RVN3: a landing's element",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -421,7 +421,7 @@
     "old": "round: !!o?.round, element: o?.element ?? null }) : cityGuards.hurtGuard(g,",
     "new": "round: !!o?.round }) : cityGuards.hurtGuard(g,",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -430,7 +430,7 @@
     "old": "{ fromPlayer: fp, kind: 'spell', whole: !!o?.whole, round: !!o?.round, element: o?.element ?? null })",
     "new": "{ fromPlayer: fp, kind: 'spell', round: !!o?.round, element: o?.element ?? null })",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -439,7 +439,7 @@
     "old": "{ fromPlayer: fp, kind: 'spell', whole: !!o?.whole, round: !!o?.round, element: o?.element ?? null });   // TELL1",
     "new": "{ fromPlayer: fp, kind: 'spell', round: !!o?.round, element: o?.element ?? null });   // TELL1",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -448,7 +448,7 @@
     "old": "      return sinks.hurt(d, { ...(o ?? {}), element: spell?.element ?? null });",
     "new": "      return sinks.hurt(d, o);",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -457,7 +457,7 @@
     "old": "  const v = blowWeight(damage, k, { back: back && !watchful, weak });",
     "new": "  const v = blowWeight(damage, k, { back: back && !watchful, weak: peer && weak });",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -466,7 +466,7 @@
     "old": "weapon: striker ? (striker.entity?.weapon ?? null) : weapon, element, attacker:",
     "new": "weapon: striker ? (striker.entity?.weapon ?? null) : weapon, attacker:",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -475,7 +475,7 @@
     "old": "  if (k === 1) return `Weakness: ${WEAK_HINTS[weaknessKind(r.weak)] ?? 'Something'}.`;",
     "new": "  if (k === 1) return `Weakness: ${WEAK_NAMES[r.weak]}.`;",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   },
   {
@@ -484,7 +484,7 @@
     "old": "export const willWords = (r) => (willMatters(r?.rank) ?",
     "new": "export const willWords = (r) => (true ?",
     "tests": [
-      "test/rvn3_weak.test.js"
+      "test/systems/rvn3_weak.test.js"
     ]
   }
 ]

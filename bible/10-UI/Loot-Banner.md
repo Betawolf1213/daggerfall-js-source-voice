@@ -124,10 +124,10 @@ the Old Coil's (`net/serpent/serpentClaims.js`, Coilbreaker and The Maelstrom, o
 
 ## Pins
 
-`test/lootbanner.test.js` (the watcher, the cards, the baselines and the wire, the law, the face, the top tiers, the
+`test/systems/lootbanner.test.js` (the watcher, the cards, the baselines and the wire, the law, the face, the top tiers, the
 codex, the wiring; HONOUR-BANNER's entry and face, and the Hour's door - world.js's and `sdClaims.js`'s, raised only for
-a newly held honour); the lamp's door in `test/lampkeeper2.test.js` (AUDIT FIVE-ASKS E7); the pickup feed's hand-off in
-`test/pickupfeed.test.js`. `tools/mutants/lootbanner.json`: 33, all dead; HONOUR-BANNER's in `tools/mutants/honour_banner.json`.
+a newly held honour); the lamp's door in `test/server/lampkeeper2.test.js` (AUDIT FIVE-ASKS E7); the pickup feed's hand-off in
+`test/systems/pickupfeed.test.js`. `tools/mutants/lootbanner.json`: 33, all dead; HONOUR-BANNER's in `tools/mutants/honour_banner.json`.
 PROBE: `node tools/lootBannerProbe.mjs` - the real banners over the real HUD and a notice toast in Chromium at a desktop,
 a laptop and a phone: at the right edge, under the notices, no sideways scroll, every name in its tier's colour, the top
 tiers big and taller, the best of a burst standing first. 183 checks.

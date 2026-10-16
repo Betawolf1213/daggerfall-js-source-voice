@@ -78,7 +78,7 @@ mod's own `WindNaturalPlanner.cs`, `WindRecordWeights.cs` and the state
 machine's method bodies copied from the decompiled `WindMod` (the engine's
 reads replaced by the frame's inputs) under .NET 8, and runs a 30,000-frame
 scenario - the weather, the door, the map, a debug storm - twice (the
-built-in settings and gusty ones). `test/windfall1_model.test.js` runs the
+built-in settings and gusty ones). `test/systems/windfall1_model.test.js` runs the
 same scenario through the port: the trace of every float the C# holds, as
 bits, hashes to the reference's (`19e6ad4f...`, `671c6551...`), and the
 planner's and the tables' to `de42ad23...`.
@@ -222,7 +222,7 @@ rolls or is written for anyone else.
 
 ## Pins
 
-`test/windfall1_model.test.js` (8) and `test/windfall1_presentation.test.js`
+`test/systems/windfall1_model.test.js` (8) and `test/systems/windfall1_presentation.test.js`
 (12); `tools/mutants/windfall1.json` (61, all dead). The vertex wind and
 BB_VS run through the GLSL evaluator (`test/glsl.mjs`); the shaders compile in
 Chromium's WebGL2.

@@ -247,7 +247,7 @@ cheaper test and the only one that is safe that early - and the pixel is
 read once per build rather than three times. Before TO1 the pixel
 builder reached none of those bindings; this call was the slice's own.
 
-The gate this deserved is `test/bootorder.test.js`: it walks the boot's
+The gate this deserved is `test/scenes/bootorder.test.js`: it walks the boot's
 statements up to and including the first build, follows every call into
 the functions `bootWorld` declares, and names every binding they reach
 that the boot walk has not declared yet. Eight names stand on an
@@ -255,7 +255,7 @@ allow-list, each reachable only down a branch a first build cannot take
 and each older than this arc; a ninth fails the suite rather than a
 player's browser.
 
-Pinned in `test/to1_travelOptions.test.js` as a LAW rather than a
+Pinned in `test/systems/travel/to1_travelOptions.test.js` as a LAW rather than a
 literal: every one of those bindings must be declared before the line
 `const playerPixel = await buildPixel(first.px, first.py)`, and the mod
 must be assigned there, never re-declared. Mutants
@@ -392,7 +392,7 @@ must be assigned there, never re-declared. Mutants
    passage from one port to another over no water is still a ship, as
    the mod's own `HasNoOceanTravel` lets it be; and Travel Options' paid
    teleportation (any Mages Guild rank) stays the player's dial.
-   `test/travelonline.test.js` (3); `tools/mutants/travelonline.json`
+   `test/systems/travel/travelonline.test.js` (3); `tools/mutants/travelonline.json`
    (all dead).
    **IT1** (2026-10-04, the owner: instant travel online "as an option but with
    a cost", then Immersive Travel 1:1): a carriage driver's trip is DFU's fast
@@ -613,7 +613,7 @@ belong to the BOOT arc are here because they are the same story.
   as null; declaring it up there is what makes that sentence true.
 
 - **F6 - and the gate that was meant to catch this did not.** Reverting
-  BOOT-TDZ2's guard left `test/bootorder.test.js` GREEN, because the
+  BOOT-TDZ2's guard left `test/scenes/bootorder.test.js` GREEN, because the
   walker is name-based and cannot see conditions: `walkMode` was
   allow-listed, so it was blessed down every path. `questBridge` was
   allow-listed on a reason that was simply false - "quest placements
@@ -743,7 +743,7 @@ third was a thing the port never said out loud.
   and sunburn ticks (`needs.js:"&& !vampire && !ctx.beastForm"`), and, for a traveller who is also
   `byFire`, the exposure damage at `:422`. Harm you cannot answer while
   the autopilot holds the controls is not a loss worth keeping. The law
-  is executed now, not matched: `test/surv7_feed.test.js` runs ten game
+  is executed now, not matched: `test/systems/surv7_feed.test.js` runs ten game
   hours with the knob both ways and asserts fatigue held at zero while
   every accrual lands on the same number.
 
@@ -793,7 +793,7 @@ third was a thing the port never said out loud.
   `systems/travel/travelAutopilot.js` beside the autopilot, for the reason that
   file is pure: the pins drive them on a table. Six mutants ride them.
 
-Pinned in `test/to1_travelOptions.test.js` (TO-FIELD) with three
+Pinned in `test/systems/travel/to1_travelOptions.test.js` (TO-FIELD) with three
 mutants - `travel-drive-ungated`, `needs-at-travel-scale`,
 `follow-key-unsaid`. `tools/mutants/surv7.json`'s
 `SURV7-the-world-feeds-the-dungeon-too` was re-aimed by content onto the
@@ -849,7 +849,7 @@ overlay prints the stack in red. Three fixes, at the root:
   racing until the player finds the key. A pick that is not one edge is
   a junction here: stop, say so, map up. Departure 17.
 
-Pinned by execution in `test/roadcrash.test.js` (4): the interrupted
+Pinned by execution in `test/systems/travel/roadcrash.test.js` (4): the interrupted
 journey's stale name and the ring arm clearing it, the rects holding
 across a crossing into a null-answering neighbour and the corner
 arrival going on round the town; the null-rect state shown to throw in
@@ -1003,7 +1003,7 @@ at once (AUDIT OW5 T1), and its words say so. The Overworld's OW-ONLY
 (`06-Systems/Travel-View.md`) made every walked trip on the enhanced interface
 the Overworld's; on, this switch gives the mod's own first-person journey back
 - a map pick walked on the ground, the mod's resume for it, the view neither
-raised with it nor stopping it (`test/ow_toggle.test.js`). A journey of the
+raised with it nor stopping it (`test/systems/travel/ow_toggle.test.js`). A journey of the
 mod's own begun at a boat's helm meets the mod's own ocean stop, as the mod
 does (AUDIT OW5 S1: the Overworld's crossing alone stands it down).
 
@@ -1011,7 +1011,7 @@ does (AUDIT OW5 S1: the Overworld's crossing alone stands it down).
 same shape again, OFF, beside it on the tile: with First-Person Travel on, a map pick is the Overworld's route - its
 planner, its join, the peaks and the water, its refusals - walked by this mod's autopilot leg by leg, in first person.
 A departure from the mod, which never routes to a named destination (TO-FIELD above) - off, it is the mod's beeline
-again. `06-Systems/Travel-View.md` TO-ROADS (`test/fb0929d_toroads.test.js`).
+again. `06-Systems/Travel-View.md` TO-ROADS (`test/systems/travel/fb0929d_toroads.test.js`).
 
 **Not done, and said.** A gap barely wider than the corridor is threaded
 when it is on the line, or found while the detour walks past it at a
@@ -1025,7 +1025,7 @@ five degrees in one update is an arrival) can end a LEG early while a
 detour turns hard close to its target at high acceleration; the next leg
 starts from where the body is, which is the mod's own answer.
 
-Pinned by execution in `test/travelnav.test.js` (19 of its 22 - TRAVEL-NAV2
+Pinned by execution in `test/systems/travel/travelnav.test.js` (19 of its 22 - TRAVEL-NAV2
 added three): every layout the
 request named - a building across the line, a wall with no gap, a U-shaped
 pocket (and one deeper than the look-ahead), trunks across and along the
@@ -1102,7 +1102,7 @@ was taken out again. The four hosts: the journey is wired in
 travel map, and `scenes/worldModes.js` and `scenes/dungeonContext.js`
 never run a journey.
 
-Pinned in `test/travelnav.test.js` (three tests, each failing with
+Pinned in `test/systems/travel/travelnav.test.js` (three tests, each failing with
 `src/` set aside while the other nineteen pass): no headway on its own, a
 leg at a time, and the fuzzed layout flown at x1 and x10 (arrives or
 stops, never touches, never for ever); a jump - the mod's bearing from
@@ -1302,7 +1302,7 @@ would need the host to cap the strafe axis after the steering has run, the
 frame's own strafe unknown to it and the diagonal step between the two
 feelers unseen - a redesign, not a patch.
 
-Pinned in `test/travelnav.test.js` (four tests - three failing on
+Pinned in `test/systems/travel/travelnav.test.js` (four tests - three failing on
 TRAVEL-STRAFE's steering while the others pass, the fourth pinning what
 was right and unpinned): the let-go frame and the whole corridor by the
 numbers; the nearer end by the numbers, the detour begun past the target
@@ -1349,7 +1349,7 @@ content now: `travelAutopilot.js`'s `player.update` call,
 `Quest-Arc.md`'s two classic-spell reads, `Combat.md`'s
 `onPlayerArrowHitFoe`, Port-Status' `currentWeatherKey` and, on the same
 row, the `CleanupUntrackedObjects` sweep and its missile half in
-`hostMagic.js`, and `test/qx1_exterior_host.test.js`'s
+`hostMagic.js`, and `test/systems/qx1_exterior_host.test.js`'s
 `getClassicSpellEffects`.
 
 ## RISE-STUCK (2026-09-27) - a death ends the journey
@@ -1429,7 +1429,7 @@ panel keeps the player's CHOSEN rate apart from the rate IN FORCE (`travelContro
 `_timeAcceleration`): a cap lowers the one in force, and the next uncapped journey - or the Acceleration Limit dial
 opened in play (`setAccelerationLimit`) - brings it back. A journey already showing keeps its higher rate when a path
 replaces it, as the mod's does (no push, no clamp). `alwaysUseStartingAccel` still resets both. The session's alone:
-the mod saves no travel state (departure 8). Pins: `test/travel_speed_preference.test.js`, `tools/mutants/to1.json`.
+the mod saves no travel state (departure 8). Pins: `test/systems/travel/travel_speed_preference.test.js`, `tools/mutants/to1.json`.
 
 ## RATE-LAW (2026-10-04) - the dials go, and a journey runs at its ground's rate
 
@@ -1439,7 +1439,7 @@ Mac: *"Remove travel options dials"*, then *"Roads now travel at x100 and non ro
 over the strip's own recess after "TIME x:"), the enhanced panel's Time stepper and ENEMY-PACE's near-enemies stepper
 under it, the tile's Acceleration Limit dial, and the three keys of the mod's TimeAcceleration section that started
 and bounded the spinner (`DefaultStartingAcceleration`, `AlwaysUseStartingAcceleration`, `AccelerationLimit` - no
-longer declared; `test/to1_travelOptions.test.js` names them as the one section of the vendored `modsettings.json`
+longer declared; `test/systems/travel/to1_travelOptions.test.js` names them as the one section of the vendored `modsettings.json`
 the port leaves out). With them went the half limit while a path is followed (`:705`) and TRAVEL-LAST-SPEED's
 remembered rate.
 
@@ -1467,14 +1467,14 @@ road" / "off the road"). The Overworld's movement keys (TV-WASD) travel at the s
 **Online** nothing new: the clock rules are TO-ONLINE's and WALK-CLOCK's, unchanged - x100 and x60 are rates the
 spinner could already reach (its limit went to 100).
 
-Pins: `test/travel_speed_preference.test.js` (the law through the real mod and panel, and the host's
-`travellerOnRoad` lifted and run), `test/tv_wasd.test.js`, `test/enemy_pace.test.js`, `test/to1_travelOptions.test.js`,
-`test/to_live.test.js`, `test/disc22e_travel_click.test.js`; `tools/mutants/ratelaw.json` (19, all dead); the retired
+Pins: `test/systems/travel/travel_speed_preference.test.js` (the law through the real mod and panel, and the host's
+`travellerOnRoad` lifted and run), `test/systems/travel/tv_wasd.test.js`, `test/ui/enhanced/enemy_pace.test.js`, `test/systems/travel/to1_travelOptions.test.js`,
+`test/systems/to_live.test.js`, `test/ui/travel/disc22e_travel_click.test.js`; `tools/mutants/ratelaw.json` (19, all dead); the retired
 spinner's and limit's records left their files (to1, fb1002c, tv_wasd) with the code they killed.
 
 ### RATE-LAW-FIX (2026-10-05) - the deep audit's three
 
-The deep audit of the branch found three holes in the law; each is fixed and pinned (`test/ratelawfix.test.js`,
+The deep audit of the branch found three holes in the law; each is fixed and pinned (`test/systems/travel/ratelawfix.test.js`,
 `tools/mutants/ratelawfix.json`).
 - **A route's last stretch to a spot** ran at its pixel's step's rate - the last leg aims at the spot itself, which
   can lie anywhere in its pixel: a road route to a camp half a pixel from the road ran there at x100 across the
@@ -1492,15 +1492,15 @@ at the law's x60 and x100 it starts 1.5 to 2.5 times as far out as at the old di
 
 ## Pins
 
-`test/to1_travelOptions.test.js`. `tools/mutants/to1.json`.
-`test/travel_speed_preference.test.js`, `tools/mutants/ratelaw.json` (RATE-LAW, 19 dead).
-`test/roadcrash.test.js`, `tools/mutants/roadcrash.json` (ROAD-CRASH).
-`test/travelnav.test.js`, `tools/mutants/travelnav.json` (TRAVEL-NAV),
+`test/systems/travel/to1_travelOptions.test.js`. `tools/mutants/to1.json`.
+`test/systems/travel/travel_speed_preference.test.js`, `tools/mutants/ratelaw.json` (RATE-LAW, 19 dead).
+`test/systems/travel/roadcrash.test.js`, `tools/mutants/roadcrash.json` (ROAD-CRASH).
+`test/systems/travel/travelnav.test.js`, `tools/mutants/travelnav.json` (TRAVEL-NAV),
 `tools/mutants/travelnav2.json` (TRAVEL-NAV2), `tools/mutants/travelstrafe.json` (TRAVEL-STRAFE, 7 dead),
 `tools/mutants/audittravelstrafe.json` (AUDIT TRAVEL-STRAFE, 14 dead),
 `tools/mutants/audittravelstrafe2.json` (AUDIT TRAVEL-STRAFE2, 11 dead).
-`test/spawntravel.test.js`, `tools/mutants/spawntravel.json` (SPAWN-TRAVEL).
-`test/risestuck.test.js`, `tools/mutants/rise_stuck.json` (RISE-STUCK).
-`test/disc28e_shipport.test.js`, `tools/mutants/disc28e.json` (SHIP-PORT's ten, SHIP-SAIL's twenty-three).
-`test/fb0929d_toroads.test.js`, `tools/mutants/fb0929d_toroads.json` (TO-ROADS, 14 dead, 2 equivalent).
-`test/fb0929f_tofare.test.js`, `tools/mutants/fb0929f_tofare.json` (TO-FARE, 2 dead).
+`test/world/spawntravel.test.js`, `tools/mutants/spawntravel.json` (SPAWN-TRAVEL).
+`test/systems/travel/risestuck.test.js`, `tools/mutants/rise_stuck.json` (RISE-STUCK).
+`test/systems/travel/disc28e_shipport.test.js`, `tools/mutants/disc28e.json` (SHIP-PORT's ten, SHIP-SAIL's twenty-three).
+`test/systems/travel/fb0929d_toroads.test.js`, `tools/mutants/fb0929d_toroads.json` (TO-ROADS, 14 dead, 2 equivalent).
+`test/systems/fb0929f_tofare.test.js`, `tools/mutants/fb0929f_tofare.json` (TO-FARE, 2 dead).

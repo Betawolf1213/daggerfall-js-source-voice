@@ -90,7 +90,7 @@ through the same holes.
 
 ## Pins
 
-`test/windows1_rooms.test.js` (the rooms), `test/windows1_view.test.js` (the
+`test/render/windows1_rooms.test.js` (the rooms), `test/render/windows1_view.test.js` (the
 view out); mutants `tools/mutants/windows1.json`; PROBE
 `tools/realWindowsProbe.mjs` (a synthetic street on SwiftShader - its lane
 runs report GL error 1282 from the Enhanced Lighting air pass's replay as it
@@ -181,11 +181,11 @@ about it - a twin wall differs from its window wall by a speckle of noise, and 4
 same blues); then only the panes are kept - a texel with three glass neighbours, joined across lead three texels wide,
 24 of them to a window - with their edges. The lead of a lattice and the frame are other colours and stay: the street
 is seen through the panes. Every window wall of the 36 has its glass found (35 - 011 has none to find), none of the
-clothes; the counts are pinned (`test/windows1_view.test.js`, gated on `ARENA2_PATH`). Two known looks: 440 (the swamp
+clothes; the counts are pinned (`test/render/windows1_view.test.js`, gated on `ARENA2_PATH`). Two known looks: 440 (the swamp
 manor) paints the band its window stands in with the glass's own blues, so the band opens with it, a wide window; 128
 and 140 (the mountain farm and manor) shade their panes with grey strokes in the lattice's own greys, which stay.
 
 The pipeline's arm now asks it of a pack's picture of a window wall too (it was `!swap`), cut by the classic mask as
-the exterior arm cuts a pack's window - a repaint keeps the window where it stood. Pins: `test/windows1_view.test.js`
+the exterior arm cuts a pack's window - a repaint keeps the window where it stood. Pins: `test/render/windows1_view.test.js`
 V8 (a synthetic window wall - its panes, its lead, its frame, the wall's speckle, a half-repainted wall and a stray blob)
 and the gated corpus test; mutants `tools/mutants/windows1.json` GLASS-ALL-* (13, all dead).

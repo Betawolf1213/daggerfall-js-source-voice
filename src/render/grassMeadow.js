@@ -45,7 +45,7 @@
 //
 // Everything here is pure and deterministic; the shader's half of the law
 // is written from these same numbers (render/labGrass.js
-// GRASSMEADOW_VS_EDITS), and test/grassmeadow.test.js holds the two
+// GRASSMEADOW_VS_EDITS), and test/render/grassmeadow.test.js holds the two
 // together.
 import { MEADOW_SPRITES, MEADOW_ALPHABET } from './meadowArt.js';
 import { smoothstep } from '../systems/mathf.js';

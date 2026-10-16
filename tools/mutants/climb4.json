@@ -5,7 +5,7 @@
     "old": "const v = Math.min(FEEL.DIP_MAX, FEEL.DIP_BASE + FEEL.DIP_PER_SPEED * speed);",
     "new": "const v = Math.min(FEEL.DIP_MAX, FEEL.DIP_BASE);",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "this.pitchV -= FEEL.CATCH_PITCH_DEG * DEG * 8 * (v / FEEL.DIP_MAX);",
     "new": "this.pitchV += FEEL.CATCH_PITCH_DEG * DEG * 8 * (v / FEEL.DIP_MAX);",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "rollT = FEEL.SWAY_ROLL_DEG * DEG * Math.sin(2 * Math.PI * FEEL.SWAY_HZ * this.t);",
     "new": "rollT = 0;",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "rollT = FEEL.SHIMMY_ROLL_DEG * DEG * this.shimmySide * s;",
     "new": "rollT = -FEEL.SHIMMY_ROLL_DEG * DEG * this.shimmySide * s;",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "rollT = FEEL.CLIMB_ROLL_DEG * DEG * Math.sin(Math.PI * ph);",
     "new": "rollT = FEEL.CLIMB_ROLL_DEG * DEG * Math.abs(Math.sin(Math.PI * ph));",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "const k = clamp01((PARKOUR_GRIP_LOW - m.grip) / PARKOUR_GRIP_LOW);",
     "new": "const k = clamp01((m.grip - PARKOUR_GRIP_LOW) / PARKOUR_GRIP_LOW);",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "case 'mantle': pitchT = FEEL.MANTLE_LOOK_UP_DEG * DEG * bump(t, 0, 0.5) - FEEL.MANTLE_CREST_DEG * DEG * bump(t, 0.35, 1); break;",
     "new": "case 'mantle': pitchT = FEEL.MANTLE_LOOK_UP_DEG * DEG * bump(t, 0, 0.5) + FEEL.MANTLE_CREST_DEG * DEG * bump(t, 0.35, 1); break;",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "case 'vault': pitchT = -FEEL.VAULT_DIP_DEG * DEG * bump(t, 0.15, 0.95);",
     "new": "case 'vault': pitchT = FEEL.VAULT_DIP_DEG * DEG * bump(t, 0.15, 0.95);",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "case 'lower': pitchT = -FEEL.LOWER_LOOK_DOWN_DEG * DEG * bump(t, 0, 0.75); break;",
     "new": "case 'lower': pitchT = FEEL.LOWER_LOOK_DOWN_DEG * DEG * bump(t, 0, 0.75); break;",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "if (e.kind === 'lower' && n) this._turnTo(Math.atan2(-n[0], -n[2]), yaw, Math.max(0.05, e.dur / 5));",
     "new": "if (e.kind === 'lower' && n) this._turnTo(Math.atan2(n[0], n[2]), yaw, Math.max(0.05, e.dur / 5));",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "if (e.kind === 'corner' && e.turn) { this.turnLeft += e.turn;",
     "new": "if (e.kind === 'corner' && e.turn) { this.turnLeft -= e.turn;",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "rollT = FEEL.LEAP_ROLL_DEG * DEG * right * bump(t, 0, 1);",
     "new": "rollT = -FEEL.LEAP_ROLL_DEG * DEG * right * bump(t, 0, 1);",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "this.fovV += FEEL.LAUNCH_FOV * 8;",
     "new": "",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "if (d) this._turnTo(Math.atan2(d[0], d[2]), yaw, FEEL.EJECT_TURN_S / 3);",
     "new": "",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "cr = Math.cos(fx.roll), sr = Math.sin(fx.roll);",
     "new": "cr = Math.cos(fx.roll), sr = -Math.sin(fx.roll);",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "    this.turnYaw += dyaw;\n    this.residualPitch += dpitch;\n  }",
     "new": "    this.add(dyaw, dpitch);\n  }",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "sounds?.update(dt, m);",
     "new": "",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "    this.parkoured = null;\n    if (this.climbEvents.length) this.climbEvents = [];",
     "new": "    this.parkoured = null;",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "this._pkMoveEvent(nx, 0);",
     "new": "",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "old": "this._pkEmit('release', { mode: this._wall.mode, normal: [...this._wall.normal] });",
     "new": "this._pkEmit('release', { normal: [...this._wall.normal] });",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -185,7 +185,7 @@
     "old": "split: move.split ?? 0.5, ",
     "new": "",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -194,7 +194,7 @@
     "old": "if (!m || !this.on()) { this.cues = null; this.prev = null; return; }",
     "new": "if (!m) { this.cues = null; this.prev = null; return; }",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -203,7 +203,7 @@
     "old": "return (_install ??= (async () => {",
     "new": "return (_install = (async () => {",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -212,7 +212,7 @@
     "old": "if (!m || !this.on()) { this.cues = null; this.prev = null; return; }\n    if (this.install && this.audio) installClimbSounds(this.audio);",
     "new": "if (this.install && this.audio) installClimbSounds(this.audio);\n    if (!m || !this.on()) { this.cues = null; this.prev = null; return; }",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -221,7 +221,7 @@
     "old": "Math.min(C.CATCH_MAX, C.CATCH_BASE + C.CATCH_PER_SPEED * speed)",
     "new": "Math.min(C.CATCH_MAX, C.CATCH_BASE)",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -230,7 +230,7 @@
     "old": "speed > C.HARD_CATCH_SPEED ? 0.5 : 0",
     "new": "0.5",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -239,7 +239,7 @@
     "old": "if (!from) cues.push([0, 'grab', C.GRAB * 0.9, 1, 0]);",
     "new": "cues.push([0, 'grab', C.GRAB * 0.9, 1, 0]);",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -248,7 +248,7 @@
     "old": "if (rise < C.STEP_UP_RISE) {",
     "new": "if (rise < 0) {",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -257,7 +257,7 @@
     "old": "const split = Number.isFinite(e.split) ? Math.min(1, Math.max(0, e.split)) : 0.5;",
     "new": "const split = 0.5;",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -266,7 +266,7 @@
     "old": "cues.push([split, 'whoosh', C.WHOOSH * 0.6, 1.1, 0]);",
     "new": "",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -275,7 +275,7 @@
     "old": "cues.push([0.92, 'step', C.FOOT, C.FOOT_PITCH, 0]);",
     "new": "",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -284,7 +284,7 @@
     "old": "cues.push([0.7, 'step', C.SHIMMY * 1.15, C.SHIMMY_PITCH, 0]);",
     "new": "",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -293,7 +293,7 @@
     "old": "cues.push([1, 'grab', C.GRAB * 1.2, 1, 0]);",
     "new": "cues.push([0.9, 'grab', C.GRAB * 1.2, 1, 0]);",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -302,7 +302,7 @@
     "old": "cues.push([1, 'grab', C.GRAB * 1.1, 1, 0]);",
     "new": "",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -311,7 +311,7 @@
     "old": "if (this.cues && !live) {\n            this._flush(1, m);   // the move's arrival: its last cues are its own sound of the hold\n          } else {\n            this._play('grab', CLIMB_SOUND.GRAB * (e.mode === 'hang' ? 0.85 : 0.75));   // the hands onto the wall\n          }",
     "new": "this._play('grab', CLIMB_SOUND.GRAB * (e.mode === 'hang' ? 0.85 : 0.75));   // the hands onto the wall",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -320,7 +320,7 @@
     "old": "this._flush(1);   // a move chained on",
     "new": "// a move chained on",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -329,7 +329,7 @@
     "old": "if (!moving) {",
     "new": "if (true) {",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -338,7 +338,7 @@
     "old": "this.climbPhase += travel / FEEL.REACH;",
     "new": "this.climbPhase += travel / FEEL.SHIMMY_SPAN;",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -347,7 +347,7 @@
     "old": "if (Math.floor(this.climbPhase - 0.5) > Math.floor(was - 0.5)) this._play('step', CLIMB_SOUND.FOOT, CLIMB_SOUND.FOOT_PITCH);",
     "new": "",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -356,7 +356,7 @@
     "old": "if (keys.length > 1 && key === prev) key = keys[(keys.indexOf(key) + 1) % keys.length];",
     "new": "",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -365,7 +365,7 @@
     "old": "this._play('crumble', CLIMB_SOUND.TRICKLE);\n        this.trickleAt = this.t + this._between(CLIMB_SOUND.TRICKLE_MIN_S, CLIMB_SOUND.TRICKLE_MAX_S);",
     "new": "this._play('crumble', CLIMB_SOUND.TRICKLE);",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -374,7 +374,7 @@
     "old": "if (!(m.grip > 0)) {",
     "new": "if (m.grip > 0) {",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -383,7 +383,7 @@
     "old": "this._strain(0.7, m);",
     "new": "",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -392,7 +392,7 @@
     "old": "this._play('step', CLIMB_SOUND.LET_GO, 1.15);",
     "new": "",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -401,7 +401,7 @@
     "old": "if (this.rand() >= Math.min(0.9, chance * (1 + (1 - grip)))) return;",
     "new": "if (this.rand() < Math.min(0.9, chance * (1 + (1 - grip)))) return;",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -410,7 +410,7 @@
     "old": "if (!this.strain || this.t - this.lastStrain < CLIMB_SOUND.STRAIN_GAP_S) return;",
     "new": "if (!this.strain) return;",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -419,8 +419,8 @@
     "old": "this.audio?.playOneShot?.(voice.clip, CLIMB_SOUND.STRAIN, 1 + (voice.pitchLift ?? 0));",
     "new": "this.audio?.playOneShot?.(voice.clip, CLIMB_SOUND.STRAIN, 1);",
     "tests": [
-      "test/climb4.test.js",
-      "test/audit58_saveaudio.test.js"
+      "test/player/climb4.test.js",
+      "test/scenes/audit58_saveaudio.test.js"
     ]
   },
   {
@@ -429,7 +429,7 @@
     "old": "export function playerClimbStrain(playerEntity, rolls = Math.random) {\n  if (!playerEntity || !combatVoicesEnabled() || suppressOptionalCombatVoices(playerEntity)) return null;",
     "new": "export function playerClimbStrain(playerEntity, rolls = Math.random) {\n  if (!playerEntity || suppressOptionalCombatVoices(playerEntity)) return null;",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -438,7 +438,7 @@
     "old": "export function playerClimbStrain(playerEntity, rolls = Math.random) {\n  if (!playerEntity || !combatVoicesEnabled() || suppressOptionalCombatVoices(playerEntity)) return null;",
     "new": "export function playerClimbStrain(playerEntity, rolls = Math.random) {\n  if (!playerEntity || !combatVoicesEnabled()) return null;",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -447,7 +447,7 @@
     "old": "const rand = rng(0x700511);",
     "new": "const rand = Math.random;",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -456,7 +456,7 @@
     "old": "const tau = climbing ? CLIMB_LOWER_TAU.down : CLIMB_LOWER_TAU.up;",
     "new": "const tau = climbing ? CLIMB_LOWER_TAU.up : CLIMB_LOWER_TAU.down;",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -465,7 +465,7 @@
     "old": "return Math.abs(target - next) < 0.005 ? target : next;",
     "new": "return next;",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -474,7 +474,7 @@
     "old": "return { ...rect, y: rect.y + climbDrop(lower, rect.h) };",
     "new": "return { ...rect, y: rect.y - climbDrop(lower, rect.h) };",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -483,8 +483,8 @@
     "old": "offsetHeight: weaponOffsetHeight() - climbDrop(_climbLower, c.height) }",
     "new": "offsetHeight: weaponOffsetHeight() + climbDrop(_climbLower, c.height) }",
     "tests": [
-      "test/climb4.test.js",
-      "test/machij_sprites_and_chat.test.js"
+      "test/player/climb4.test.js",
+      "test/systems/machij_sprites_and_chat.test.js"
     ]
   },
   {
@@ -493,7 +493,7 @@
     "old": "if (!armsClimb && (_climbLower >= CLIMB_LOWER_GONE || (_climbLower >= 0.5",
     "new": "if (!armsClimb && ((_climbLower >= 0.5",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -502,7 +502,7 @@
     "old": "!fpsSpellCasting.isPlayingAnim && !climbing && !actTool();",
     "new": "!fpsSpellCasting.isPlayingAnim && !actTool();",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -511,8 +511,8 @@
     "old": "climbing: !!(player.climb?.isClimbing || player.mantling || player.onWall),\n    // EOTB-IL",
     "new": "climbing: !!(player.climb?.isClimbing || player.mantling),\n    // EOTB-IL",
     "tests": [
-      "test/climb4.test.js",
-      "test/ww2_idlebob.test.js"
+      "test/player/climb4.test.js",
+      "test/player/ww2_idlebob.test.js"
     ]
   },
   {
@@ -521,7 +521,7 @@
     "old": "const climbFeel = createClimbFeelHost(() => player, cam, lookFilter, { audio, strain: (r) => playerClimbStrain(playerEntity, r) });",
     "new": "const climbFeel = createClimbFeelHost(() => player, cam, lookFilter, { audio });",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -530,7 +530,7 @@
     "old": "const climbFeel = createClimbFeelHost(() => player, cam, lookFilter, { audio, strain: (r) => playerClimbStrain(playerEntity, r) });",
     "new": "const climbFeel = createClimbFeelHost(() => player, cam, lookFilter);",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -539,7 +539,7 @@
     "old": "const climbFeel = createClimbFeelHost(() => player, cam, lookFilter, { audio, strain: (r) => playerClimbStrain(playerEntity, r) });",
     "new": "const climbFeel = createClimbFeelHost(() => player, cam, lookFilter);",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -548,7 +548,7 @@
     "old": "climbFeel.frame(dt, _overlayHeld || _seasonHeld);   // CLIMB4",
     "new": "// CLIMB4",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -557,7 +557,7 @@
     "old": "host.climbFeel?.frame(dt, overlayHeld);",
     "new": "",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -566,7 +566,7 @@
     "old": "climbFeel.view(view, !tvf && !mwv.thirdPerson);",
     "new": "climbFeel.view(view, !mwv.thirdPerson);",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -575,8 +575,8 @@
     "old": "const P = mirrorProjectionX(perspective(fieldOfView() + climbFeel.fovRad(), worldAspect, 0.2, 6000));",
     "new": "const P = mirrorProjectionX(perspective(fieldOfView(), worldAspect, 0.2, 6000));",
     "tests": [
-      "test/climb4.test.js",
-      "test/dwf_audit.test.js"
+      "test/player/climb4.test.js",
+      "test/scenes/dwf_audit.test.js"
     ]
   },
   {
@@ -585,7 +585,7 @@
     "old": "        case 'wallrun': pitchT = FEEL.WALLRUN_UP_DEG * DEG * bump(t, 0, 1.2);",
     "new": "        case 'wallrun': pitchT = -FEEL.WALLRUN_UP_DEG * DEG * bump(t, 0, 1.2);",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -594,7 +594,7 @@
     "old": "  const e00 = cr, e01 = -sr * cp, e02 = -sr * sp;\n  const e10 = sr, e11 = cr * cp, e12 = cr * sp;\n  const e20 = 0, e21 = -sp, e22 = cp;",
     "new": "  const e00 = cr, e01 = -sr, e02 = 0;\n  const e10 = cp * sr, e11 = cp * cr, e12 = sp;\n  const e20 = -sp * sr, e21 = -sp * cr, e22 = cp;",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -603,7 +603,7 @@
     "old": "      if (this.fx.yaw) lookFilter?.turn?.(this.fx.yaw);\n",
     "new": "",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -612,7 +612,7 @@
     "old": "      this.applied = firstPerson && this.fx ? this.fx : null;",
     "new": "      this.applied = this.fx ? this.fx : null;",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -621,7 +621,7 @@
     "old": "  const sounds = audio ? new ClimbSounds({ audio, strain }) : null;",
     "new": "  const sounds = audio ? new ClimbSounds({ audio }) : null;",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -630,7 +630,7 @@
     "old": "    move.speed = Math.hypot(this.velY, this._airVelX, this._airVelZ);",
     "new": "    move.speed = 0;",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -639,7 +639,7 @@
     "old": "    this._pkEmit('launch', { dir: [dir[0], 0, dir[2]], along, up });\n",
     "new": "",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -648,7 +648,7 @@
     "old": "pk.say?.(PARKOUR_GRIP_LOW_TEXT); this._pkEmit('gripLow'); }",
     "new": "pk.say?.(PARKOUR_GRIP_LOW_TEXT); }",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -657,7 +657,7 @@
     "old": "      if (playerWeapon.sheathed || (entity?.equipCountdown ?? 0) > 0 || _climbing) return;   // CLIMB4: no swing with the hands on the wall",
     "new": "      if (playerWeapon.sheathed || (entity?.equipCountdown ?? 0) > 0) return;   // CLIMB4: no swing with the hands on the wall",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -666,7 +666,7 @@
     "old": "    if (this.install && this.audio) installClimbSounds(this.audio);\n",
     "new": "",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   },
   {
@@ -675,7 +675,7 @@
     "old": "    if (this.rand() >= Math.min(0.9, chance * (1 + (1 - grip)))) return;\n",
     "new": "",
     "tests": [
-      "test/climb4.test.js"
+      "test/player/climb4.test.js"
     ]
   }
 ]

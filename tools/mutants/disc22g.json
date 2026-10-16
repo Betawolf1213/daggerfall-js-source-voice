@@ -5,7 +5,7 @@
     "old": "    const up = normals ? fileUp(m, normals, i0, i1, i2) : Math.abs(ny) / len;",
     "new": "    const up = Math.abs(ny) / len;",
     "tests": [
-      "test/disc22g_automap.test.js"
+      "test/ui/disc22g_automap.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "  if (m) {\n    const ny = m[1] * x + m[5] * y + m[9] * z;",
     "new": "  if (false) {\n    const ny = m[1] * x + m[5] * y + m[9] * z;",
     "tests": [
-      "test/disc22g_automap.test.js"
+      "test/ui/disc22g_automap.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "    for (const l of [...run].filter((v) => v.area >= minArea).sort((a, b) => b.area - a.area)) {",
     "new": "    for (const l of [...run].sort((a, b) => b.area - a.area)) {",
     "tests": [
-      "test/disc22g_automap.test.js"
+      "test/ui/disc22g_automap.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "      if (anchors.every((a) => Math.abs(a.y - l.y) >= minGap)) anchors.push(l);",
     "new": "      if (!anchors.length) anchors.push(l);",
     "tests": [
-      "test/disc22g_automap.test.js"
+      "test/ui/disc22g_automap.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "    if (!mine) { mine = rowFloorTriangles(r, []); _rowTris.set(r, mine); }",
     "new": "    mine = rowFloorTriangles(r, []);",
     "tests": [
-      "test/disc22g_automap.test.js"
+      "test/ui/disc22g_automap.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "    if (open(ox, oy)) openings.push(seg);\n    else if (!pass?.(ox, oy)) walls.push(seg);",
     "new": "    walls.push(seg);",
     "tests": [
-      "test/disc22g_automap.test.js"
+      "test/ui/disc22g_automap.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "      full: fullFloor(f, index),",
     "new": "      full: null,",
     "tests": [
-      "test/disc22g_automap.test.js"
+      "test/ui/disc22g_automap.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "    index = here >= 0 ? here : Math.max(0, Math.min(frame.sheets.length - 1, index));",
     "new": "    index = Math.max(0, Math.min(frame.sheets.length - 1, index));",
     "tests": [
-      "test/disc22g_automap.test.js"
+      "test/ui/disc22g_automap.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "      if (rows.length) _frames.set(rows, base);",
     "new": "",
     "tests": [
-      "test/disc22g_automap.test.js"
+      "test/ui/disc22g_automap.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "      const scale = restScale(min, fit);   // capped first, so the centre holds",
     "new": "      const scale = min;   // capped first, so the centre holds",
     "tests": [
-      "test/disc22g_automap.test.js"
+      "test/ui/disc22g_automap.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "      const home = this._sheet?.homeView?.(limits) ?? { ox: 0, oy: 0, scale: scaleMinOf(limits) };",
     "new": "      const home = { ox: 0, oy: 0, scale: scaleMinOf(limits) };",
     "tests": [
-      "test/disc22g_automap.test.js"
+      "test/ui/disc22g_automap.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "      if (!lastView || !r?.notes || !f.sheets.length || typeof deps.askText !== 'function') return false;",
     "new": "      return false;",
     "tests": [
-      "test/disc22g_automap.test.js"
+      "test/ui/disc22g_automap.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "        else if (!String(text).trim()) r.notes.delete(id);",
     "new": "",
     "tests": [
-      "test/disc22g_automap.test.js"
+      "test/ui/disc22g_automap.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "        if (text == null) { if (fresh) r.notes.delete(id); }",
     "new": "        if (text == null) { /* kept */ }",
     "tests": [
-      "test/disc22g_automap.test.js"
+      "test/ui/disc22g_automap.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "        if (!solidOn && !onRevealedFloor(mx, my)) return false;",
     "new": "",
     "tests": [
-      "test/disc22g_automap.test.js"
+      "test/ui/disc22g_automap.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "        links: linksHere(),",
     "new": "",
     "tests": [
-      "test/disc22g_automap.test.js"
+      "test/ui/disc22g_automap.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "there >= 0 && there !== index ? `to ${f.sheets[there].label}` : ''",
     "new": "''",
     "tests": [
-      "test/disc22g_automap.test.js"
+      "test/ui/disc22g_automap.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "      if (code === 'Home') {",
     "new": "      if (code === 'Home_') {",
     "tests": [
-      "test/disc22g_automap.test.js"
+      "test/ui/disc22g_automap.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "    breathes() { return !!entranceHere() || echoesBreathe() || readPartyBodies(deps.party).length > 0",
     "new": "    breathes() { return echoesBreathe() || readPartyBodies(deps.party).length > 0",
     "tests": [
-      "test/disc22g_automap.test.js"
+      "test/ui/disc22g_automap.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "old": "    ctx.setLineDash?.([3, 4]);",
     "new": "    ctx.setLineDash?.([]);",
     "tests": [
-      "test/disc22g_automap.test.js"
+      "test/ui/disc22g_automap.test.js"
     ]
   }
 ]

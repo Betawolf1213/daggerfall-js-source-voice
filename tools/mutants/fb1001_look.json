@@ -5,7 +5,7 @@
     "old": "  const paintBtns = el('div', 'dfdecor-paint-btns');",
     "new": "  const paintBtns = el('div', 'dfdecor-rent-actions');",
     "tests": [
-      "test/fb1001_look.test.js"
+      "test/net/fb1001_look.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": ".dfdecor-paint-btns { display: flex; flex-wrap: wrap; gap: 4px; }",
     "new": ".dfdecor-paint-btns { flex-wrap: wrap; gap: 4px; }",
     "tests": [
-      "test/fb1001_look.test.js"
+      "test/net/fb1001_look.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": ".dfdecor-card:not([data-mode=\"paint\"]) .dfdecor-paint-actions { display: none; }",
     "new": ".dfdecor-card .dfdecor-paint-actions { display: none; }",
     "tests": [
-      "test/fb1001_look.test.js"
+      "test/net/fb1001_look.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "        if (writesTo(id) !== gen) return towns.has(id);",
     "new": "",
     "tests": [
-      "test/fb1001_look.test.js"
+      "test/net/fb1001_look.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "    writes.set(id, writesTo(id) + 1);",
     "new": "",
     "tests": [
-      "test/fb1001_look.test.js"
+      "test/net/fb1001_look.test.js"
     ]
   },
   {
@@ -50,8 +50,8 @@
     "old": "    if (flying) return !force || (forcedFlight.has(id) && askedAt.get(id) === writesTo(id)) ? flying : afterFlight(id, flying);",
     "new": "    if (flying) return flying;",
     "tests": [
-      "test/fb1001_look.test.js",
-      "test/fb1001_rent.test.js"
+      "test/net/fb1001_look.test.js",
+      "test/systems/fb1001_rent.test.js"
     ]
   },
   {
@@ -60,8 +60,8 @@
     "old": "    if (flying) return !force || (forcedFlight.has(id) && askedAt.get(id) === writesTo(id)) ? flying : afterFlight(id, flying);",
     "new": "    if (flying) return !force ? flying : afterFlight(id, flying);",
     "tests": [
-      "test/fb1001_look.test.js",
-      "test/fb1001_rent.test.js"
+      "test/net/fb1001_look.test.js",
+      "test/systems/fb1001_rent.test.js"
     ]
   },
   {
@@ -70,7 +70,7 @@
     "old": "    askedAt.set(id, gen);",
     "new": "",
     "tests": [
-      "test/fb1001_look.test.js"
+      "test/net/fb1001_look.test.js"
     ]
   },
   {
@@ -79,7 +79,7 @@
     "old": "    const gen = writesTo(id);",
     "new": "    const gen = 0;",
     "tests": [
-      "test/fb1001_look.test.js"
+      "test/net/fb1001_look.test.js"
     ]
   },
   {
@@ -88,9 +88,9 @@
     "old": "      .finally(() => { asking.delete(id); askedAt.delete(id); forcedFlight.delete(id); });",
     "new": "      .finally(() => { asking.delete(id); forcedFlight.delete(id); });",
     "tests": [
-      "test/fb1001_look.test.js",
-      "test/homelook.test.js",
-      "test/home1.test.js"
+      "test/net/fb1001_look.test.js",
+      "test/net/homelook.test.js",
+      "test/server/home1.test.js"
     ],
     "equivalent": true,
     "why": "tidiness only: askedAt is read only while a flight stands in `asking`, and every new flight writes its own count before it is seen - a count left behind by a landed flight is never read"
@@ -101,7 +101,7 @@
     "old": "    if (mode === 'paint') paintLook = null;\n    unregister();",
     "new": "    unregister();",
     "tests": [
-      "test/fb1001_look.test.js"
+      "test/net/fb1001_look.test.js"
     ]
   },
   {
@@ -110,8 +110,8 @@
     "old": "    if (flying) return !force || (forcedFlight.has(id) && askedAt.get(id) === writesTo(id)) ? flying : afterFlight(id, flying);",
     "new": "    if (flying) return !force || forcedFlight.has(id) ? flying : afterFlight(id, flying);",
     "tests": [
-      "test/fb1001_look.test.js",
-      "test/fb1001_rent.test.js"
+      "test/net/fb1001_look.test.js",
+      "test/systems/fb1001_rent.test.js"
     ]
   },
   {
@@ -120,8 +120,8 @@
     "old": "    if (flying) return !force || (forcedFlight.has(id) && askedAt.get(id) === writesTo(id)) ? flying : afterFlight(id, flying);",
     "new": "    if (flying) return !force || askedAt.get(id) === writesTo(id) ? flying : afterFlight(id, flying);",
     "tests": [
-      "test/fb1001_look.test.js",
-      "test/fb1001_rent.test.js"
+      "test/net/fb1001_look.test.js",
+      "test/systems/fb1001_rent.test.js"
     ]
   },
   {
@@ -130,8 +130,8 @@
     "old": "    if (force) forcedFlight.add(id);\n",
     "new": "",
     "tests": [
-      "test/fb1001_look.test.js",
-      "test/fb1001_rent.test.js"
+      "test/net/fb1001_look.test.js",
+      "test/systems/fb1001_rent.test.js"
     ]
   },
   {
@@ -140,8 +140,8 @@
     "old": "      .finally(() => { asking.delete(id); askedAt.delete(id); forcedFlight.delete(id); });",
     "new": "      .finally(() => { asking.delete(id); askedAt.delete(id); });",
     "tests": [
-      "test/fb1001_look.test.js",
-      "test/fb1001_rent.test.js"
+      "test/net/fb1001_look.test.js",
+      "test/systems/fb1001_rent.test.js"
     ]
   }
 ]

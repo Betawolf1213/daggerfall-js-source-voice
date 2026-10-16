@@ -297,7 +297,7 @@ Measured after, the answer's probe through the real fold and throw: no resistanc
 and +40, two Rares at +25, two at +35 or one line at 50 all at the throw's own 95 - about 72% turned whole and 17% of
 the damage on average - where two Rares at +25 had been every cast, and nothing.
 
-Pinned: `test/loot12_resistcap.test.js` (3) - the fold over real worn pieces (two Rares 45 not 50, a third adding
+Pinned: `test/systems/loot12_resistcap.test.js` (3) - the fold over real worn pieces (two Rares 45 not 50, a third adding
 nothing, another element its own, a spell of both meeting both, an Aetheric piece whole beside the held sum and never
 counted as rolled, off nothing), every record's own resistance line whole on its own and an Exalted line at 50 held,
 and the saving throw over 4,000 seeded casts (never immune by rolled gear, three in four whole, a spell's Elemental
@@ -318,7 +318,7 @@ fifth, and luck alone no longer reaches a plain foe's ceilings); and AUDIT 625 L
 between the two thresholds moves from 0.15 to 0.12 (90 per mille at 50, 135 at 100). `Loot-Rarity.md`'s luck bullet is
 rewritten to the law.
 
-Pinned: `test/loot13_luck.test.js` (3) - the multiplier (1 at 50, a point 1%, the ends, a drained or fortified luck
+Pinned: `test/systems/loot13_luck.test.js` (3) - the multiplier (1 at 50, a point 1%, the ends, a drained or fortified luck
 read at the end, every threshold leaned before its cap, the caps held, the champion's leaned), the source outranking
 luck again (the rat at 65 under the tier-8 corpse at 50, the plain humanoid a tenth of its ceiling at 55, a Legendary
 possible at Luck 40 at every level, the drought lifting it), and the host door (a seeded roll between the two leaned
@@ -367,7 +367,7 @@ content (`loot2.json` LOOT2-the-worth-forgotten, `loot9.json` LOOT9-price-stays)
 garment takes its Superior's Magic and its Masterwork's Rare through `src/systems/smithItems.js` `mintPiece` unchanged -
 `rarityEligible` was the only door shut.
 
-Pinned: `test/loot14_wardrobe.test.js` (7) - every template eligible and the pool alone over 4,200 seeded mints (no
+Pinned: `test/systems/loot14_wardrobe.test.js` (7) - every template eligible and the pool alone over 4,200 seeded mints (no
 other group meets the wardrobe's kinds), the leans and three golden mints, every reader through the real fold (DRESS1's
 standing and its own cap, the lining in the cold and the heat, the storm's soaking at 30% and at most 75%, a river
 whatever you wear, one minute of the needs, off nothing), survival Off said on the card, the price at half and the
@@ -405,7 +405,7 @@ thirty. Five records whose lines now read `recordFitsGroup` were re-aimed by con
 LOOT10-wire-another-group, LOOT10-imprint-any-group and LOOT10-imprint-unfound; `auditloot.json`
 AUDITLOOT-F1-wire-unfitted and AUDITLOOT-F8-imprint-of-the-thirty), the laws they pin unmoved.
 
-Pinned: `test/loot15_garments.test.js` (4) - the records' law (six, of either cut, each landing on every template it
+Pinned: `test/systems/loot15_garments.test.js` (4) - the records' law (six, of either cut, each landing on every template it
 names, the wardrobe's lines at the Legendary band, a priced enchantment that is no held spell, six families, a brief
 inside CARD-FIT's 32, no artifact's name; a door's roll on the robes, Casual Pants with no record a Rare, the thirty
 never on a garment); every power through its own reader against a twin with the same lines and no power (the felt
@@ -455,7 +455,7 @@ AUDIT 26's count of the guild popup's click sounds is six (the temple's row clic
 was re-aimed by content (`loot2.json` LOOT2-perfect-before-it-is-read: the Perfect's line carries a curse's word now),
 its law unmoved; LOOT14's two door records follow the door's new lines.
 
-Pinned: `test/loot16_curses.test.js` (5) - the curse's law (the table's six live rows and their params by group, no
+Pinned: `test/systems/loot16_curses.test.js` (5) - the curse's law (the table's six live rows and their params by group, no
 drawback that undoes the piece's own good; over 1,100 seeded mints of every group at Rare and Legendary the line a
 number of the group the piece lacked or a free param, from the top half, the name kept, the line's worth on the price,
 the flavour kept and the drawback beside it, never twice; never a Magic, an Exalted or a plain piece); the doors (one in
@@ -490,7 +490,7 @@ Measured through the law over 4,000 seeded Rares honed until none was left: a me
 and 19,050 gold), a tenth past 10 (2,046 shards); a Magic's, 2 (3 shards and 150 gold). The first hones are cheap and
 always worth one; Perfect is a chase with a price, as the design asked.
 
-Pinned: `test/loot17_hone.test.js` (4) - the lines a hone takes (every rolled line under its top, an Exalted's own line;
+Pinned: `test/systems/loot17_hone.test.js` (4) - the lines a hone takes (every rolled line under its top, an Exalted's own line;
 never a record's, a plain or cursed Legendary's, a Common's); the hone over 600 seeds from a line's floor (always up,
 never past the top, every value above reached, the kind, param and name kept, the price by the worth, the count, the
 other lines untouched), one under the top to the top and then nothing, a Rare honed to every top Perfect, an Exalted's
@@ -536,7 +536,7 @@ splicing: the filter stands between the walk and its take), its law unmoved. LOO
 anchored lines (the refusal's unknown, shards and gold, the press's payment, the price's move); they are written in
 their own words now, so each LOOT9 record names its one site again, and LOOT17's records follow.
 
-Pinned: `test/loot18_seen.test.js` (6) - the mark's law (gear alone, the lock's twin both ways, the field the wire
+Pinned: `test/systems/loot18_seen.test.js` (6) - the mark's law (gear alone, the lock's twin both ways, the field the wire
 carries and no other shape of it); the pack's card (Junk beside the lock, the line, the picture's mark, the lock lifting
 it; local unworn gear alone); the counter (two of five on it whole and the counter's confirm - a worn, a bound and a
 kept piece left; none at a Buy, none where the shop takes none); Salvage every Magic (the three it may break and never
@@ -568,7 +568,7 @@ player's pixel, null at sea), handed to the interior host, and `src/scenes/world
 **What moved.** LOOT10's pin of the guild's tabs reads five (the scryers' the fifth), and LOOT16's of the guild's pages
 with it.
 
-Pinned: `test/loot19_scry.test.js` (4) - the families, their kinds and words, the region's rows; the nearest hidden haunt
+Pinned: `test/systems/loot19_scry.test.js` (4) - the families, their kinds and words, the region's rows; the nearest hidden haunt
 (five away over five and a fraction, the baked flag and the player's store each hiding one, a tie to the lower id, none
 of a family's); the scrying (every refusal asked first and nothing taken, paid, on the map and named, the next nearest
 and then none, off); the page (a row a family, "None hidden" refused, the press and its word, the row lit), the codex's
@@ -607,7 +607,7 @@ Measured through the real door over 40,000 seeded boss corpses: 143 Rares in a t
 **What moved.** The guild's tabs read six in LOOT10's pin and LOOT16's, and LR1's Test Room counts take the socketed
 Rare and the Ruby.
 
-Pinned: `test/loot20_sockets.test.js` (5) - the eight gems in their templates' order, their lines by the piece's kind,
+Pinned: `test/systems/loot20_sockets.test.js` (5) - the eight gems in their templates' order, their lines by the piece's kind,
 set and unset in place (the line after the piece's own, the socket named, the price by the worth, the name kept, one gem
 at a time, unset as it was); the gem's line through the fold, LOOT12's cap, a weapon's fire, leech and damage and the
 card, and never a roll's (no band, never reforged or honed, a Perfect kept Perfect, an Exalted's own line still its
@@ -635,7 +635,7 @@ Room lays one of each.
 
 **What moved.** LR1's Test Room count takes the two stones.
 
-Pinned: `test/loot21_stones.test.js` (4) - the rows (their indices past DFU's table, their art, miscellany, the wire,
+Pinned: `test/systems/loot21_stones.test.js` (4) - the rows (their indices past DFU's table, their art, miscellany, the wire,
 Use offered, never laddered); the finds (late, their tiers, never in rollUniqueFinds' place, rollLateFinds rolling them
 alone and the Welkynd first, a find under its tier no draw, and over 29 seeds each door's own draws replayed with the
 last two found and not found - the stones last, everything before them the seed's own; off nothing); the uses through
@@ -760,7 +760,7 @@ LOOT15's degrees (off the felt number, beside a spell's), LOOT18's card pin, AUD
 re-aimed by content, laws unmoved: `loot8.json` (1), `loot12.json` (3), `loot14.json` (1), `loot15.json` (5),
 `loot16.json` (2), `loot18.json` (6), `loot20.json` (1), `fb0929d_accompare.json` (1).
 
-Pinned: `test/auditloot2.test.js` (17) - one block a finding, each driven through the real code: the fall's bill and
+Pinned: `test/systems/auditloot2.test.js` (17) - one block a finding, each driven through the real code: the fall's bill and
 the dungeon's reading it; the degrees on their own side, never past comfortable, the real robes on the auditor's night;
 a quest's ruby never offered or taken, a loose one beside it taken; a Diamond's blade reforged; one row a kind; no
 drawback against a standing or a slayer over 1,500 seeds; the leans of a cursed and an Exalted garment's line and a

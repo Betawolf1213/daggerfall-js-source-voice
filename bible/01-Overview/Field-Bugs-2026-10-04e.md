@@ -36,7 +36,7 @@ while the crossbar is in force; with it off the d-pad is the hotbar's four), and
 - any other action on no key still presses nothing. A row with no button that takes one another row holds leaves that
 row UNBOUND (it has nothing to give back), and the window now says so ("Bound. Jump is unbound now.") where it said the
 other row "took the old button". THE FOUR HOSTS: the Overworld is world.js's alone (TV1's pin); the dial's door is
-`ui/input.js` routeKeyAction in every host, unchanged. `test/fb1004e_padarrange.test.js` (the rows and their binds, the
+`ui/input.js` routeKeyAction in every host, unchanged. `test/ui/plus/fb1004e_padarrange.test.js` (the rows and their binds, the
 cleared row said; the d-pad's tap and hold - the dial's Tab, the Overworld's door, once each).
 
 ## PAD-ARRANGE (1)
@@ -69,7 +69,7 @@ pad the live device and a window up:
 
 All sixteen crossbar slots are reached so, where the keyboard's row of ten never could reach the six past it.
 Not built: a pad's own cursor-less slot picker (the cursor and the d-pad jumps reach the risen bar). Pins:
-`test/fb1004e_padarrange.test.js` (the prompts; the poller over a pack window's two tabs - LT, LB + A placing slot 7
+`test/ui/plus/fb1004e_padarrange.test.js` (the prompts; the poller over a pack window's two tabs - LT, LB + A placing slot 7
 with no click, a fresh A a click again, LB + X placing and never quick-acting, the bumpers turning no tab in hand on the
 crossbar and turning them with nothing in hand and on the row of ten; the bar on a fake page - the pad's Add in hand and
 put down on the click on crossbar slot 12 (the press alone puts nothing down), the mouse's Add on the first free slot as
@@ -97,7 +97,7 @@ session's let-go, which dismisses the bout and then heals - until another bout i
 after the bout went (in the wild) is never paid. THE FOUR HOSTS: the driver is world.js's and exterior.js's (both hand
 it the same deps); every host spends through the one spendAmmoFor and lands its shafts through the one
 playerArrowHitFoe (world.js, exterior.js, worldModes.js, dungeonContext.js), so the tally is the same wherever the bout
-stands. A departure (Ledger A, ARENA-ARROWS). Pins: `test/fb1004e_arena.test.js` (the law - the drop never handed
+stands. A departure (Ledger A, ARENA-ARROWS). Pins: `test/systems/arena/fb1004e_arena.test.js` (the law - the drop never handed
 back, no tally no pay; the tally - conjured and other packs' rounds uncounted, a lootable lodge uncounted, a bout
 fighter's and a relay stand-in's counted; a ladder bout driven - seven spent, two conjured, two dropped, the five loosed
 handed back and said, paid once; a bout dismissed before its heal - the let-go pays the three it loosed, not the four
@@ -119,7 +119,7 @@ Only the curse: any other quest's foes are placed as DFU places them. THE FOUR H
 the seam; worldModes.js answers for its dungeon arm; dungeonContext.js stands what worldModes.js places
 (spawnQuestFoe) - nothing to wire. Recorded: online a world quest's waves are the world's (questFoeHost.js
 WORLD_QUESTS), and their leash to the grounds is this client's alone - a partner off the grounds is not kept off by
-mine. A departure (Ledger A, CURSE-OFF-SAND). Pins: `test/fb1004e_arena.test.js` (the law; a CreateFoe driven through
+mine. A departure (Ledger A, CURSE-OFF-SAND). Pins: `test/systems/arena/fb1004e_arena.test.js` (the law; a CreateFoe driven through
 the machine - twelve hours on the grounds make no wave and raise no encounter event, then off them the next interval's
 wave stands; the hosts' seams, and no refusal left at placement).
 
@@ -137,7 +137,7 @@ changed: the melee stays a melee - giving its fighters one side against the play
 owner. THE FOUR HOSTS: every blast is hostMagic.js's explodeAt - world.js's, exterior.js's and dungeonContext.js's own
 createPlayerMagic, and worldModes.js's interiors through the host's (`magicHooks.explodeAt`) - and dungeonContext.js's
 foe missiles reach it carrying their foe, so every host asks boutTeammates. A
-departure (Ledger A, ARENA-TEAMS). Pins: `test/fb1004e_arena.test.js`.
+departure (Ledger A, ARENA-TEAMS). Pins: `test/systems/arena/fb1004e_arena.test.js`.
 
 ## UNDERCROFT-DEEP (2)
 
@@ -150,8 +150,8 @@ A rest within the hall's reach is never broken; out in the deep it is a keep's. 
 4's line kept). Recorded: a deep marker the layout left without a foe stays empty (the table's own roll), and online a
 deep foe may stand as an elite as any keep's does (the rank roll is the dungeon's, unchanged). ARENA-FIX 4's record in
 `11-Multiplayer/Arena.md` is superseded in place. Pins:
-`test/fb1004e_arena.test.js` (the law over a 240 m cellar; the small rig's undercroft - all of it the hall's reach -
-stands nothing), `test/arena_fix.test.js` (PIN MOVED: the population line and the rest gate).
+`test/systems/arena/fb1004e_arena.test.js` (the law over a 240 m cellar; the small rig's undercroft - all of it the hall's reach -
+stands nothing), `test/systems/arena/arena_fix.test.js` (PIN MOVED: the population line and the rest gate).
 
 ## OW-NODE-KM, OW-WHO, OW-KIN (3)
 
@@ -173,7 +173,7 @@ filtered by the same Players switches, drawn in the kin's colour; the legend nam
 only while one is drawn (a press re-says it), and the key gains a Players row while travellers are in the book (its word
 never hidden on a phone - the key's grid would shift a column).
 `scenes/travelView.js` carries every new field through to the readout (the drop AUDIT NAMES N2-1 found once). Pins:
-`test/fb1004e_overworld.test.js`; PIN MOVED: `tv3_travellers`, `tv5_far_places`, `ows1_ships`.
+`test/ui/fb1004e_overworld.test.js`; PIN MOVED: `tv3_travellers`, `tv5_far_places`, `ows1_ships`.
 
 ## OW-HUBS (3)
 
@@ -184,7 +184,7 @@ The Overworld draws a carriage town's dot as a brass wheel and edges its plate i
 LEFT of the town's mark (the anchor stands right), clear of all its ink - the glyph, a hub's circle and a seat's ring
 (markReach) - at every band, in the anchor's pens (`ui/ink/inkMap.js` carriageWheelAt, paintCarriageWheel). The names keep
 off it (placeNames seeds its ground with the glyphs', and a carriage town's own name set to the left goes past it).
-Pins: `test/fb1004e_overworld.test.js`.
+Pins: `test/ui/fb1004e_overworld.test.js`.
 
 ## SEAT-TIP (5)
 
@@ -199,7 +199,7 @@ whole sentences that name two guilds, so they are bounded at SEAT_TIP_TEXT_MAX (
 `textMax`) where every other card keeps TIP_TEXT_MAX's 80 - the card wraps them in its 320 px. And the travel map's I
 box named a held seat "unheld" - `seatInfoLine(seat)` was asked with no holder; it names it now. Online alone, as the
 seats are. Recorded: a touch screen has no hover, so the Overworld shows it no card (a press on a plate is the plate's
-own pick, travelViewHudPickAt) - the travel map's I box says the holder there. Pins: `test/fb1004e_overworld.test.js`; PIN MOVED:
+own pick, travelViewHudPickAt) - the travel map's I box says the holder there. Pins: `test/ui/fb1004e_overworld.test.js`; PIN MOVED:
 `seat1a_client`.
 
 ## WILD-ROAD (4)
@@ -228,7 +228,7 @@ THE HUNTING PROMPTS the report named are gone whole: main's HUNT-OUT (`06-System
 `scenes/hunting.js` - while this slice stood. The slice's HUNT-ROAD (a World switch, Hunting while travelling, holding
 that roll on the road) had nothing left to hold and was taken out at the merge of main: its feature row, its `held` door
 and its pins. Not changed: the roaming bands (TV7/OW6) and the camps - they are groups already and the Wilderness camps
-& packs switch is theirs. Pins: `test/fb1004e_road.test.js` (the law - the imp, the giant, the lich, the class foe;
+& packs switch is theirs. Pins: `test/systems/fb1004e_road.test.js` (the law - the imp, the giant, the lich, the class foe;
 runEncounterTick's head mounted - the switch's row, the rat passed by on the road and met off it, the switch, a level
 2's rat, the patrol, two minutes whose rat's minute passes and the orc's stands; `onTheRoad` mounted - the window up
 with no journey, a journey, the Overworld, a rest); PIN MOVED: `auditpscale1` (the mount names the road's words),
@@ -244,9 +244,9 @@ A horse under the Overworld's time scale passes 8 m a frame (about x45 at 60 fps
 riding clock's sixteen repaints a second beat the orientation's ten. Now the placing asks its repaint with a flag of its
 own and never touches `lastOrientation`; a body moving under its own input is never placed (its facing is the move's);
 and the floating origin's shift moves the sprite's own feet (an 819 m recentre read as a placing too). Pins:
-`test/fb1004e_horseface.test.js` (a gallop at three times PLACE_JUMP_M a frame shows the slow ride's view from behind,
+`test/player/eyeOfTheBeholder/fb1004e_horseface.test.js` (a gallop at three times PLACE_JUMP_M a frame shows the slow ride's view from behind,
 both sides and ahead, never -1; a placing at rest still faces the view; a strafe's gallop keeps the move's facing; the
-rebase, and mwViewRebase's call). `test/arena_fix.test.js`'s ARENA-FIX 14 pins hold.
+rebase, and mwViewRebase's call). `test/systems/arena/arena_fix.test.js`'s ARENA-FIX 14 pins hold.
 
 ## The gates
 

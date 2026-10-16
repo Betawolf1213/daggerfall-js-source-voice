@@ -5,7 +5,7 @@
     "old": "      if (paralyzed || (!shown() && !torchOnly && !sheetOnly && !shieldRect && !gunSliding && !armCasts && !armsClimb)) return;",
     "new": "      if (paralyzed || (!shown() && !sheetOnly && !shieldRect && !gunSliding && !armCasts && !armsClimb)) return;",
     "tests": [
-      "test/ht1_handheldtorches.test.js"
+      "test/systems/ht1_handheldtorches.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "        && (entity?.equipCountdown ?? 0) <= 0 && isHeldLight(entity?.lightSource)\n        && (!fpArm.active() || fpArm.torchShown())\n        && !lanternAtWaist(entity?.lightSource);",
     "new": "        && (entity?.equipCountdown ?? 0) <= 0\n        && (!fpArm.active() || fpArm.torchShown())\n        && !lanternAtWaist(entity?.lightSource);",
     "tests": [
-      "test/ht1_handheldtorches.test.js"
+      "test/systems/ht1_handheldtorches.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "      const torchOnly = !shown() && !spellArmed() && !fpsSpellCasting.isPlayingAnim",
     "new": "      const torchOnly = !shown() && !fpsSpellCasting.isPlayingAnim",
     "tests": [
-      "test/ht1_handheldtorches.test.js"
+      "test/systems/ht1_handheldtorches.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "      if (torchOnly && !gunSliding) return;   // TORCH-VIS: the lit hand ALONE - a sheathed stance still draws no weapon, clone or sprite (FIELD-GUN13: unless the gun is still on its way out, which the hand is drawn behind)\n",
     "new": "",
     "tests": [
-      "test/ht1_handheldtorches.test.js"
+      "test/systems/ht1_handheldtorches.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "export const carriedLeftVisible = (type) => !(weaponFlags(type) & MW_TWO_HANDED);",
     "new": "export const carriedLeftVisible = (type) => !!(weaponFlags(type) & MW_TWO_HANDED);",
     "tests": [
-      "test/ht1_handheldtorches.test.js"
+      "test/systems/ht1_handheldtorches.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "export const isHeldLight = (it) => isTorch(it) || isLantern(it);",
     "new": "export const isHeldLight = (it) => !!it;",
     "tests": [
-      "test/ht1_handheldtorches.test.js"
+      "test/systems/ht1_handheldtorches.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "        && (!fpArm.active() || fpArm.torchShown())\n        && !lanternAtWaist(",
     "new": "        && true\n        && !lanternAtWaist(",
     "tests": [
-      "test/ht1_handheldtorches.test.js"
+      "test/systems/ht1_handheldtorches.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "    torchShown: () => torchVisible(),",
     "new": "    torchShown: () => true,",
     "tests": [
-      "test/ht1_handheldtorches.test.js"
+      "test/systems/ht1_handheldtorches.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "export const isLitTorch = (item) => !!item && item.templateIndex === TEMPLATES.Torch;",
     "new": "export const isLitTorch = (item) => !!item && (item.templateIndex === TEMPLATES.Torch || item.templateIndex === TEMPLATES.Lantern);",
     "tests": [
-      "test/ht1_handheldtorches.test.js"
+      "test/systems/ht1_handheldtorches.test.js"
     ]
   }
 ]

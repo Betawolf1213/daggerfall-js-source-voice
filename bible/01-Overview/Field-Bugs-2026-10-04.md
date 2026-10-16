@@ -42,7 +42,7 @@ to start while the pack is full, and the Stores page's Put in (or a Materials Ba
 The four hosts: the gathering acts run in `scenes/world.js` alone (its one `createGatherHost`, whose hands are
 `carryHands` - `give` is `giveCarried(playerEntity, ...)`, pinned by BAG1's wired test); `scenes/exterior.js`,
 `scenes/worldModes.js` and `scenes/dungeonContext.js` run no harvest (a dungeon's veins are world.js's gather host
-too). `test/fb1004_packover.test.js`; `tools/mutants/fb1004_packover.json` (6, all dead), with `tools/mutants/bag1.json`
+too). `test/net/fb1004_packover.test.js`; `tools/mutants/fb1004_packover.json` (6, all dead), with `tools/mutants/bag1.json`
 (89, all dead) run beside it. BAG1's own page restated (Materials-Bag.md 3, 7, 13).
 
 ## BAG-SHELF (2)
@@ -55,7 +55,7 @@ turns, so a bag-owner who opened that shelf first stocked it without a bag for e
 on every General Store shelf online now, whoever stocks it, as the horse and the cart do; offline none, as before (one to
 a character: ONE-BAG). A shelf already stocked this game day keeps that stock
 until its restock. The four hosts: shelves are stocked in `scenes/worldModes.js` alone (openShelf, openMerchantSell);
-exterior.js, world.js and dungeonContext.js stock no shop shelf. Pinned in `test/bag1_client.test.js` (BAG1 bought: a
+exterior.js, world.js and dungeonContext.js stock no shop shelf. Pinned in `test/systems/bag1_client.test.js` (BAG1 bought: a
 bag-owner's shelf and a second shelf both shelve it); `tools/mutants/bag1.json`'s shelf records retargeted (the first
 shelf alone, none to a bag-owner, offline) - 89, all dead.
 
@@ -74,7 +74,7 @@ alone (the audit's F4): offline a shelf sells out as Daggerfall's does. And onli
 (`shopBuysItem`, the audit's F1/F2): the only endless rows on a shelf are those it stocked itself, so a Pawn Shop that
 rolled no Campfire still has none to sell. Online the restocked shelf is what the window's close publishes to the
 room. The four hosts: shop shelves are stocked and bought from in `scenes/worldModes.js` alone. Pinned by
-`test/fb1004_endless.test.js` (6: the bag bought five times and still one on the shelf, a fresh record; ten Campfires
+`test/systems/fb1004_endless.test.js` (6: the bag bought five times and still one on the shelf, a fresh record; ten Campfires
 bought and the shelf as stocked, three in one purchase three back, fresh and whole; nothing else restocked; the two
 purchases' calls and no other, by source; no buy-back online, DFU's offline; no restock offline);
 `tools/mutants/fb1004_endless.json` (11, all dead). DECOR2b's counter pin
@@ -97,7 +97,7 @@ rewritten). Not closed, and why: a companion's pack forced back into the player'
 takes whatever it held, a bag beside a bag among it - a second bag adds no room (the bag's list and its 300 kg are the
 character's), so it is a bag held twice, not a gain. The four hosts: every
 trade and keyed shelf is `scenes/worldModes.js`'s; the take ladder is the one module every host's windows call.
-Pinned by `test/fb1004_onebag.test.js` (6); `tools/mutants/fb1004_onebag.json` (8, all dead). The 97 line cites into
+Pinned by `test/systems/professions/fb1004_onebag.test.js` (6); `tools/mutants/fb1004_onebag.json` (8, all dead). The 97 line cites into
 worldModes.js that ENDLESS-STOCK and ONE-BAG moved, re-resolved by `tools/citeShift.mjs` (struck ones kept, but the
 one CD4 gates).
 

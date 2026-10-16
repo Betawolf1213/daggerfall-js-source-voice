@@ -41,12 +41,12 @@ Reproduced with the real wizard mounted in Chromium at her sizes (an iPhone's 39
   the next such report names what failed.
 
 Re-measured with the fix at all eight sizes and both stages: every attribute's stepper and the primary are reachable,
-and a tap lands (77 to 78). Pinned by `test/chargenphone.test.js` (5); `tools/mutants/chargenphone.json` (17 dead);
+and a tap lands (77 to 78). Pinned by `test/ui/enhanced/chargenphone.test.js` (5); `tools/mutants/chargenphone.json` (17 dead);
 measured again by `tools/chargenPhoneProbe.mjs` (`npm run chargenphone`, the pre-merge audit's).
 
 ## BACKUP-NEWER: a newer backup is named, and the Load pane can restore it (report 2)
 
-Reproduced through the real account service (`test/cloudsaves.test.js` runs the Worker in-process).
+Reproduced through the real account service (`test/server/cloudsaves.test.js` runs the Worker in-process).
 
 - **Why the PC never recovered it.** A download was offered only for a backup with NO local slot of the same identity
   (character, save name) - the cloud-only grid. The Mac was a fresh install, so its backup was a tile with Download.
@@ -62,8 +62,8 @@ Reproduced through the real account service (`test/cloudsaves.test.js` runs the 
 - **Tell the player:** until this ships, do not press *Back up again* on the PC; if it was pressed after the Mac's
   backup, the cloud holds the PC's older save - back up from the Mac again first.
 
-Pinned by `test/cloudsaves.test.js` (his round trip PC -> Mac -> PC through the real service, what a restore never
-removes, the menu's wiring) and `test/savetile.test.js`; `tools/mutants/backupnewer.json` (16 dead).
+Pinned by `test/server/cloudsaves.test.js` (his round trip PC -> Mac -> PC through the real service, what a restore never
+removes, the menu's wiring) and `test/ui/savetile.test.js`; `tools/mutants/backupnewer.json` (16 dead).
 
 ## BALANCE1: exertion costs a quarter less, a blow wears gear 40% less (Mac's ask)
 
@@ -94,6 +94,6 @@ The change (a departure, Ledger A):
   longsword now lasts ~555 landed hits, the cuirass ~545 chest hits. NOT scaled: an enchantment's charge, a torch's
   burn, survival's rust.
 - DFU's constants and formulas stay verbatim and stay pinned where they were; the parity files run the wear scale at
-  1 through a test seam (`_wearScaleForTests`), and `test/balance1.test.js` (5) pins the scales;
+  1 through a test seam (`_wearScaleForTests`), and `test/systems/balance1.test.js` (5) pins the scales;
   `tools/mutants/balance1.json` (24 dead). Both are one constant each; a further turn is that constant and its own
-  pins in `test/balance1.test.js` - every other pin reads the scale (the pre-merge audit made that true).
+  pins in `test/systems/balance1.test.js` - every other pin reads the scale (the pre-merge audit made that true).

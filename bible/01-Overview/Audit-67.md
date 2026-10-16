@@ -8,7 +8,7 @@ five modules and their hosts - the discovery law against `Automap.cs`,
 the window against `DaggerfallAutomapWindow.cs`, the host and render
 plumbing, and the nine pin files read as an adversary with a forty-mutant
 probe and an end-to-end scenario. **Thirty-one findings, twenty-seven
-paid**, each paid one pinned (`test/audit_amap.test.js`, and the pins
+paid**, each paid one pinned (`test/systems/automap/audit_amap.test.js`, and the pins
 appended to the chrome and notes files); four recorded as residue below.
 The scenario lane's verdict on the code before any fix - "nothing threw,
 no NaN, nothing visibly wrong" over a synthetic dungeon, a closed door, a

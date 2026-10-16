@@ -10,7 +10,7 @@ texture-mod door given DFU's load order and terrain import, the Texture Overhaul
 - **the tests' own honesty:** fresh mutants on every new line.
 
 Every finding was re-run before it was fixed and is pinned by a test that fails on the code as it stood:
-`test/auditve.test.js` (D1, P1, P2, and the review's R findings), with the moved pins in `ve1_vanillaEnhanced`,
+`test/systems/auditve.test.js` (D1, P1, P2, and the review's R findings), with the moved pins in `ve1_vanillaEnhanced`,
 `ve4_vanillaEnhancedShipped` and `overhauls` each carrying a `PIN MOVED` note. Mutation-proven: `tools/mutants/auditve.json`,
 and every older record the fixes moved re-aimed and killed again (`ve1.json`, `ve4.json`). Each fix carries an
 `AUDIT VE` comment.
@@ -56,7 +56,7 @@ the terrain import (TextureReplacement.cs:325-352, TextureReader.cs:757-803), ch
 too; the key case; the port's vendored art (no name shared with Vanilla Enhanced); the other doors (the paper doll,
 item icons, Weapon Widget, Diverse Weapons, Improved Interior Lighting); no IndexedDB; the caches; the shipped files;
 the AssetInjection gate. **What did not** is below - each reproduced as a pin red on the code it read
-(`test/auditve.test.js`), fixed at its root, and mutation-proven.
+(`test/systems/auditve.test.js`), fixed at its root, and mutation-proven.
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|

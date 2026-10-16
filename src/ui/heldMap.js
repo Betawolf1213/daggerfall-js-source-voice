@@ -484,7 +484,7 @@ export { TRAVEL_VIEW_BUTTON };
 const FOCUS_SCALE = 6;
 /** How often the breathing rings repaint the sheet while one is up. */
 const PULSE_HZ = 10;
-/** FINDME: the red cross's half-beats a second - on, off, twice a second (a named rate: test/heldmap.test.js U61 keeps
+/** FINDME: the red cross's half-beats a second - on, off, twice a second (a named rate: test/ui/heldmap.test.js U61 keeps
  *  travel-law fragments such as `* 4)` out of this window's code). */
 const FINDME_BLINK_HZ = 4;
 const HANDS_LOST_TICKS = 45;   // AUDIT-MAP2: ticks without corners before the hands lane gives the sheet back to the sprite
@@ -1268,7 +1268,7 @@ export class HeldMapWindow {
         // and they are what makes the sheet readable zoomed out.
         //
         // `placeNames` itself is NOT deleted - it is inkMap's law and
-        // its own pin stands (test/heldmap.test.js): what went is this
+        // its own pin stands (test/ui/heldmap.test.js): what went is this
         // sheet's use of it, and the measure cache it needed.
         paintInkStatic(ctx, env.model, env.view, {
           paperW: env.paperW, paperH: env.paperH, dpr: env.dpr, band: env.band,

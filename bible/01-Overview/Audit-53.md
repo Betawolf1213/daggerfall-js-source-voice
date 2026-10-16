@@ -213,7 +213,7 @@ both directions:
 - **Its remedy became the third critical.** "A palettized IMG mints its
   own `DFPalette`" was copied one file over to a file the predicate
   excludes, and the courtroom rendered solid red.
-- **Its guard became a lens.** `test/incident_texture.test.js` -
+- **Its guard became a lens.** `test/formats/incident_texture.test.js` -
   designated by the incident record as THE protection - produced **7 of
   the closeout's 42 findings**, every one of them a way the guard could
   not do its job. It has since been rebuilt to read
@@ -332,7 +332,7 @@ a policy problem forever.**
 
 The campaign's second front. `Home.md`'s generated open-flags list is
 mechanically derived from the FLAGGED/INTERIM sites in `src/` and pinned
-both ways by `test/audit18_bible_docs.test.js`, so it cannot be edited
+both ways by `test/bible/audit18_bible_docs.test.js`, so it cannot be edited
 into agreement - the flags themselves have to move.
 
 **All 145 flag sites were triaged against the tree and the reference:

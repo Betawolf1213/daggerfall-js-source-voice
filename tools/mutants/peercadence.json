@@ -5,7 +5,7 @@
     "old": "export const POSE_CADENCE = [[10, 1], [25, 2], [Infinity, 3]];",
     "new": "export const POSE_CADENCE = [[10, 1], [25, 2], [Infinity, 1]];",
     "tests": [
-      "test/peercadence.test.js"
+      "test/net/peer/peercadence.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "  for (const [within, every] of POSE_CADENCE) if (d2 <= within * within) return every;",
     "new": "  for (const [within, every] of POSE_CADENCE) if (d2 < within * within) return every;",
     "tests": [
-      "test/peercadence.test.js"
+      "test/net/peer/peercadence.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "      const must = !b.posed || !(b.rig.thirdActive?.() ?? true);",
     "new": "      const must = !(b.rig.thirdActive?.() ?? true);",
     "tests": [
-      "test/peercadence.test.js"
+      "test/net/peer/peercadence.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "        posed: false, phase: this._phase++, bank: 0,   // PEER-CADENCE",
     "new": "        posed: false, phase: 0, bank: 0,   // PEER-CADENCE",
     "tests": [
-      "test/peercadence.test.js"
+      "test/net/peer/peercadence.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "      else b.rig.update(dt, { pose: false });",
     "new": "      else { /* skipped */ }",
     "tests": [
-      "test/peercadence.test.js"
+      "test/net/peer/peercadence.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "b.bank = 0; b.posed = true; b.owed = false;",
     "new": "b.posed = true; b.owed = false;",
     "tests": [
-      "test/peercadence.test.js"
+      "test/net/peer/peercadence.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "      b.bank = Math.min(EFFECTS_BANK_MAX_S, b.bank + dt);   // AUDIT WB9 (bodies F1)",
     "new": "      b.bank = dt;   // AUDIT WB9 (bodies F1)",
     "tests": [
-      "test/peercadence.test.js"
+      "test/net/peer/peercadence.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "(this._frame + b.phase) % poseCadenceFor(b.d2) === 0 ? 1 : 0;",
     "new": "(this._frame + b.phase) % poseCadenceFor(b.cadenceD2 ??= b.d2) === 0 ? 1 : 0;",
     "tests": [
-      "test/peercadence.test.js"
+      "test/net/peer/peercadence.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "        if (pose) {\n          posePartClocks(t.arm, weaponClockValue(), { frameTime: partClock });",
     "new": "        if (true) {\n          posePartClocks(t.arm, weaponClockValue(), { frameTime: partClock });",
     "tests": [
-      "test/peercadence.test.js"
+      "test/net/peer/peercadence.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "          frames++;   // the POSED frames - a skipped one is not a frame the skin saw\n        }\n        if (!thirdMesh) return;",
     "new": "        }\n        frames++;\n        if (!thirdMesh) return;",
     "tests": [
-      "test/peercadence.test.js"
+      "test/net/peer/peercadence.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "          stepRigEffects(t.arm, { dt: effectsDt, clock:",
     "new": "          stepRigEffects(t.arm, { dt, clock:",
     "tests": [
-      "test/peercadence.test.js"
+      "test/net/peer/peercadence.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "        if (!thirdMesh) return;   // never posed yet: nothing to hide\n",
     "new": "",
     "tests": [
-      "test/peercadence.test.js"
+      "test/net/peer/peercadence.test.js"
     ]
   },
   {
@@ -113,8 +113,8 @@
     "old": "    update(dt, { pose = true, effectsDt = dt } = {}) {",
     "new": "    update(dt, { pose = false, effectsDt = dt } = {}) {",
     "tests": [
-      "test/peercadence.test.js",
-      "test/fparm.test.js"
+      "test/net/peer/peercadence.test.js",
+      "test/formats/morrowind/fparm.test.js"
     ]
   },
   {
@@ -123,7 +123,7 @@
     "old": "      if (idleState) advanceClip(idleState, (idleSource || rig()).keys, dt, null);\n      refreshIdle();",
     "new": "      if (idleState && pose) advanceClip(idleState, (idleSource || rig()).keys, dt, null);\n      refreshIdle();",
     "tests": [
-      "test/peercadence.test.js"
+      "test/net/peer/peercadence.test.js"
     ]
   },
   {
@@ -132,7 +132,7 @@
     "old": "    b.d2 = near ? dist2(f, near) : 0;",
     "new": "    b.d2 = near ? dist2(f, near) * 4 : 0;",
     "tests": [
-      "test/peercadence.test.js"
+      "test/net/peer/peercadence.test.js"
     ]
   },
   {
@@ -141,7 +141,7 @@
     "old": "        posed: false, phase: this._phase++, bank: 0,",
     "new": "        posed: false, phase: (this._phase += 2), bank: 0,",
     "tests": [
-      "test/peercadence.test.js"
+      "test/net/peer/peercadence.test.js"
     ]
   },
   {
@@ -150,7 +150,7 @@
     "old": "    this._frame++;\n",
     "new": "",
     "tests": [
-      "test/peercadence.test.js"
+      "test/net/peer/peercadence.test.js"
     ]
   },
   {
@@ -159,7 +159,7 @@
     "old": "if (b.far || dt > 0 || !this._buildInRange) { b.posed = false; b.stale = false; b.owed = false; }   // AUDIT PEER-CADENCE F2: far",
     "new": "if (b.far || dt > 0 || !this._buildInRange) { b.stale = false; b.owed = false; }   // AUDIT PEER-CADENCE F2: far",
     "tests": [
-      "test/peercadence.test.js"
+      "test/net/peer/peercadence.test.js"
     ]
   },
   {
@@ -168,7 +168,7 @@
     "old": "b.swing = null; b.pending = null; b.posed = false; }",
     "new": "b.swing = null; b.pending = null; }",
     "tests": [
-      "test/peercadence.test.js"
+      "test/net/peer/peercadence.test.js"
     ]
   },
   {
@@ -177,7 +177,7 @@
     "old": "const must = !b.posed || !(b.rig.thirdActive?.() ?? true);",
     "new": "const must = !b.posed;",
     "tests": [
-      "test/peercadence.test.js"
+      "test/net/peer/peercadence.test.js"
     ]
   }
 ]

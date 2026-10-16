@@ -1,6 +1,6 @@
 // YARD-LIGHT's rig: the world host's own night light composition, run out of its source over a real Renderer on a fake
-// GL (audit0928_render.test.js's R2 harness, with the yards in its scope) - test/yardlight.test.js and
-// test/audityardlight.test.js share it.
+// GL (audit0928_render.test.js's R2 harness, with the yards in its scope) - test/scenes/yardlight.test.js and
+// test/world/audityardlight.test.js share it.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { Renderer } from '../src/render/renderer.js';

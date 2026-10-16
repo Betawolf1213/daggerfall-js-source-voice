@@ -14,7 +14,7 @@ Decision 9).
 **Reproduced first**, on the base, over the real account Worker and the real relay Room under one key pair: the
 service signed an identity token for an offline character's id - what a build from before the realm names at its
 mint - and the relay WELCOMED it, in a place room and in the hub; customs refused the same character
-`customs-never-online`. `test/realmdoor.test.js`'s first pin is that story, with the door now shut.
+`customs-never-online`. `test/net/realmdoor.test.js`'s first pin is that story, with the door now shut.
 
 **Why.** The realm (REALM P1, main at f4dc60ce, 2026-09-28 23:38:54 UTC) was the new build's law alone. Its boot never
 takes a local slot online (`world.js` `realmRefused`) and its Online door lists realm characters only - but neither
@@ -46,7 +46,7 @@ character made after it has no trace from before it. Customs was right; the door
   elsewhere, or its account signed out and another in - goes to the Online door with the realm's own word
   (`realmSaves.js` `realmDoorShut`, the online frame's first question), never the old build's "out of date".
 
-Pinned: `test/realmdoor.test.js` (6), `tools/mutants/realmdoor.json` (12 mutants, 12 dead).
+Pinned: `test/net/realmdoor.test.js` (6), `tools/mutants/realmdoor.json` (12 mutants, 12 dead).
 
 ## CUSTOMS-PASS: the characters already stranded (Mac: "Staff customs pass")
 
@@ -64,11 +64,11 @@ exactly as the game shows it; `--account <id>` when two guests share a name; `--
 as a developer (a handle in `DEVELOPER_HANDLES`) with `DAGGER_HANDLE` and `DAGGER_PASSWORD`, which it signs out again,
 or `DAGGER_SECRET`.
 
-Pinned: `test/customspass.test.js` (6), `tools/mutants/customspass.json` (14 mutants, 14 dead).
+Pinned: `test/server/customspass.test.js` (6), `tools/mutants/customspass.json` (14 mutants, 14 dead).
 
 ## The realm6 flake, explained
 
-FIELD BUGS 2026-09-29 noted that `test/realm6.test.js`'s end-to-end sale failed once under load and could not say why.
+FIELD BUGS 2026-09-29 noted that `test/server/realm6.test.js`'s end-to-end sale failed once under load and could not say why.
 It failed again in this batch's second full run (the sequence 3 where 4 was asked). The cause: `realmSaves.js`
 `realmGoldAct` sends the outcome's checkpoint and does not wait for it - by design, as the host never does - and the pin
 read `session.seq` right after the act, so a checkpoint answered later than the record read beside it (a loaded

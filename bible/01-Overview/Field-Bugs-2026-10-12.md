@@ -29,7 +29,7 @@ not readable without ARENA2.
 FIXED. A later berth's jetty ends where it first meets an earlier berth's pier - their decks stand at one height, so the
 walk is a T and every quay still reaches land. The pool lays berths in order, each only once every earlier one has its
 plan, so every client plans it against the same piers. `findHarbour` refuses a berth whose ship and quay overlap an
-earlier one's (separating axes). The fuzz: 20 towns to 0, berth count unchanged. test/quaycrossing.test.js.
+earlier one's (separating axes). The fuzz: 20 towns to 0, berth count unchanged. test/systems/naval/quaycrossing.test.js.
 
 ## VOID-ROOM: the void between storeys is no room (3)
 
@@ -43,8 +43,8 @@ interior changes, so every placement after began there, behind faces the flight 
 the same shape in the dungeon's fires.
 
 FIXED. A spot whose ray below and ray above both struck a face's back (`hit.back`) is outside every room. Both, not
-the one: an upstairs floor laid on the ceiling below is met from behind going down and is a room. test/homedoors.test.js
-built its boxes inside out and is re-wound (as auditrestparty_fires was); test/decorrooms.test.js's VOID-ROOM pins the
+the one: an upstairs floor laid on the ceiling below is met from behind going down and is a room. test/scenes/decor/homedoors.test.js
+built its boxes inside out and is re-wound (as auditrestparty_fires was); test/systems/decor/decorrooms.test.js's VOID-ROOM pins the
 four tabs down to three.
 
 ## RING-HOLD: the hold that stays says whose it is, and a refusal names the piece (5)
@@ -68,14 +68,14 @@ a strike a hold, the same piece's included. A piece parked on the ground while i
 after is exactly what the strikes are for - counting a signature once would let it be parked forever. What trapped the
 player was the notice, which offered "until it is gone" as the way out and never said the holds were counting. Every
 law hold's notice now ends `TRADE_HELD_STRIKES` (`net/realm/realmTradeLaw.js`): "Each time the law holds it counts: the third
-time, trading stays frozen until staff have looked." - the generic one and the one naming the piece; test/ringhold.test.js
-pins it on both and pins the words' "third" to the service's STRIKES_FOR_REVIEW. test/ringhold.test.js. The reporter's hold is staff's: `node tools/realmReview.mjs holds`,
+time, trading stays frozen until staff have looked." - the generic one and the one naming the piece; test/systems/item/ringhold.test.js
+pins it on both and pins the words' "third" to the service's STRIKES_FOR_REVIEW. test/systems/item/ringhold.test.js. The reporter's hold is staff's: `node tools/realmReview.mjs holds`,
 `findings <id>`, `clear`.
 
 ## ETHER-HOLD and UW-GLOW (7, 8)
 
-Recorded on their pages: `03-World/Eltheric-Ocean.md` "Recorded departures" (test/ethersea_dwhold.test.js) and
-`07-Rendering/Enhanced-Lighting-Arc.md` UW-GLOW (test/uw_glow.test.js).
+Recorded on their pages: `03-World/Eltheric-Ocean.md` "Recorded departures" (test/world/ethersea_dwhold.test.js) and
+`07-Rendering/Enhanced-Lighting-Arc.md` UW-GLOW (test/render/uw_glow.test.js).
 
 ## CHAPTERS-ON: the switch #734 never threw (1)
 
@@ -86,7 +86,7 @@ over the real migrations with production's vars: `dev` gives `chapters=[]`; `on`
 member's writ. Throwing it gives the Roll every online character's guild standing, so it waited on Mac's word.
 
 SWITCHED ON (2026-10-12, Mac: "Turn them on"). `CHAPTERS_OPEN = "on"`; the two pins that held `"dev"` moved
-(chap1_roll, chap2_halls); CHAPTER_TITLES is its own switch and stays off. test/chapterson.test.js stands the service
+(chap1_roll, chap2_halls); CHAPTER_TITLES is its own switch and stays off. test/server/chapterson.test.js stands the service
 under the toml's own vars: three ordinary week-old accounts witness a town's halls, and a member's board lists both
 chapters, a hall writ and the member's own writ (at `dev` the witness answers 403). What follows the deploy: boards fill region by
 region as three week-old accounts witness each town - a client refused today stamped today's date for that town, so it

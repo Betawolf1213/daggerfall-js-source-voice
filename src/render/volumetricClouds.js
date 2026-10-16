@@ -47,7 +47,7 @@
 // ground agree because they are one field.
 //
 // The ray construction in the composite is the dome's own, line for
-// line (test/volumetricClouds.test.js pins the two texts against each
+// line (test/render/volumetricClouds.test.js pins the two texts against each
 // other), so a cloud sits where the dome's sun is.
 //
 // Behind Enhanced Environments only (the one switch), on the port's own

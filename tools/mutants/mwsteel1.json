@@ -5,7 +5,7 @@
     "old": "const steel = plate(ARMOR_MATERIAL.Steel);",
     "new": "const steel = plate(ARMOR_MATERIAL.Silver);",
     "tests": [
-      "test/mwsteel1.test.js"
+      "test/tooling/mwsteel1.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "export const STEEL_HELM_STYLES = Object.freeze(['closed', 'open']);",
     "new": "export const STEEL_HELM_STYLES = Object.freeze(['open', 'closed']);",
     "tests": [
-      "test/mwsteel1.test.js"
+      "test/tooling/mwsteel1.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "part('right hand', 'steel_plate_gauntlet_right.nif', ['right wrist', 'right forearm']),",
     "new": "part('right hand', 'steel_plate_gauntlet_right.nif', ['right wrist']),",
     "tests": [
-      "test/mwsteel1.test.js"
+      "test/tooling/mwsteel1.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "const helmClosed = Object.freeze([part('hair', 'steel_plate_helm_closed.nif', ['head'])]);",
     "new": "const helmClosed = Object.freeze([part('head', 'steel_plate_helm_closed.nif', ['head'])]);",
     "tests": [
-      "test/mwsteel1.test.js"
+      "test/tooling/mwsteel1.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "        for (const h of p.hides ?? []) claim(ARMO_PART.findIndex((r) => r.name === h), prio, null, add);\n",
     "new": "",
     "tests": [
-      "test/mwsteel1.test.js"
+      "test/tooling/mwsteel1.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "      for (const p of ownArmorParts(own, { helmStyle })) {",
     "new": "      for (const p of own.parts) {",
     "tests": [
-      "test/mwsteel1.test.js"
+      "test/tooling/mwsteel1.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "      if (own) { out.push({ kind: 'own', item: aName, material: mName, via: 'armor', own: 'ownArmorModels', index: tmpl, model: ownModelsOf(own).join(' + ') }); continue; }\n",
     "new": "",
     "tests": [
-      "test/mwsteel1.test.js"
+      "test/tooling/mwsteel1.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "    const helmStyle = getPref('mwSteelHelm');",
     "new": "    const helmStyle = undefined; void getPref;",
     "tests": [
-      "test/mwsteel1.test.js"
+      "test/tooling/mwsteel1.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "key: 'mwSteelHelm', initial: 'closed',",
     "new": "key: 'mwSteelHelm', initial: 'open',",
     "tests": [
-      "test/mwsteel1.test.js"
+      "test/tooling/mwsteel1.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "  mwSteelHelm: rebuildMorrowindBody,   // MW-STEEL1",
     "new": "  // mwSteelHelm: rebuildMorrowindBody,   // MW-STEEL1",
     "tests": [
-      "test/mwsteel1.test.js"
+      "test/tooling/mwsteel1.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "      if (count) setCount(count, count.decoded.props[0] - less);",
     "new": "      if (count) setCount(count, count.decoded.props[0]);",
     "tests": [
-      "test/mwsteel1.test.js"
+      "test/tooling/mwsteel1.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "      if (parents.length && parents.every((p) => gone.has(p))) { gone.add(id); grew = true; }",
     "new": "      if (parents.length && parents.some((p) => gone.has(p))) { gone.add(id); grew = true; }",
     "tests": [
-      "test/mwsteel1.test.js"
+      "test/tooling/mwsteel1.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "    if (Math.max(...off) > BOX_SLACK) {",
     "new": "    if (Math.max(...off) > 99) {",
     "tests": [
-      "test/mwsteel1.test.js"
+      "test/tooling/mwsteel1.test.js"
     ]
   }
 ]

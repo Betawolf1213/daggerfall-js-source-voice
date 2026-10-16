@@ -133,7 +133,7 @@ export const EL_SPEC_STRENGTH = 0.12;
  *  x^16 * x^8 - four squarings and one multiply. Generated from the gloss, so the constant keeps its one home and a
  *  new gloss still gets its chain. `n` a positive integer. Equal to pow() in exact arithmetic; in float it rounds
  *  five times where the driver's pow() carries log2's and exp2's error, so it sits nearer x^n than pow() did
- *  (test/la_cost.test.js runs it against Math.pow over [0, 1]). */
+ *  (test/render/la_cost.test.js runs it against Math.pow over [0, 1]). */
 export function powChainGlsl(name, n) {
   if (!Number.isInteger(n) || n < 1) throw new Error(`powChainGlsl: the exponent must be a positive integer, got ${n}`);
   const lines = [], terms = [];

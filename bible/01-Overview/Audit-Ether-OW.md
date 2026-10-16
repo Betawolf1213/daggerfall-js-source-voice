@@ -37,8 +37,8 @@ unbounded or doubled, pins that could not fail, and a record that overclaimed.
 | C1-4 | NIT | The places' rects at mount allocated a 16 KB tilemap per template | FIXED: one scratch tilemap, cleared per template (`deepWatersLocationRects`' own way) |
 | C1-5 | NIT | ONE HOME: the bakes' pair routed by its own frame test beside `waterFrameOf` and `inEther` | FIXED: `DeepWatersBakes.of` and `frameOf` read `waterFrameOf` |
 | C1-6 | NIT | `DeepWatersBakes.answers` had no caller but a test | FIXED: removed |
-| T-1 | MAJOR | ETHER-OW broke `test/owdungeons.test.js` (its host list lifted alone, `tvDungeonRowsAt` undefined) - the branch red, and 50 OW-DUNGEONS and TV-PERF records without a verdict | FIXED in feabe8089 (found by the author's own changed-tests run at the same time): the lists' rows lifted beside it |
-| T-2 | MAJOR | The find list and the model list past the Veil were unpinned (and an isle's row's region) | PINNED: lifted and run over an uncharted ruin within a kilometre (`test/ether_ow.test.js`) |
+| T-1 | MAJOR | ETHER-OW broke `test/world/owdungeons.test.js` (its host list lifted alone, `tvDungeonRowsAt` undefined) - the branch red, and 50 OW-DUNGEONS and TV-PERF records without a verdict | FIXED in feabe8089 (found by the author's own changed-tests run at the same time): the lists' rows lifted beside it |
+| T-2 | MAJOR | The find list and the model list past the Veil were unpinned (and an isle's row's region) | PINNED: lifted and run over an uncharted ruin within a kilometre (`test/systems/travel/ether_ow.test.js`) |
 | T-3 | MAJOR | The chase word's place was unpinned on its row and on the column's floor; the moved pins refused only values where floor and truncation agree | PINNED: both axes, the floor, a whole native unit, the world's last pixel |
 | T-4 | MAJOR | The bakes' pair: 5 of its 13 delegates routed in a test, the Bay's rows into the Eltheric's bake and an eviction's halves unpinned | PINNED: every delegate on both sides and off the map, prepare and evict, the Bay's rows never adopted past the Veil |
 | T-5 | MAJOR | "The near kept" could not fail (a prepare rebuilds what eviction drops), and the main thread's bound was unpinned | PINNED: a marked plane kept as the same bytes, the bound exact, an adopt bounded, the classes let go |
@@ -49,7 +49,7 @@ unbounded or doubled, pins that could not fail, and a record that overclaimed.
 | T-10 | MINOR | The places' rects pinned for the haven alone | PINNED: a ruin's and a port's, each its own list's |
 | T-11 | MINOR | "Past the box: no ground" was refused by the water law, not the ground | PINNED: over the continent's land, west of the box and off the map |
 | T-12 | NIT | `etherPlaceRows`' closed circle unpinned | PINNED |
-| T-13 | NIT | The S5 lines in `test/ether_ow.test.js` could not fail (the fixture's Bay all land) | PINNED: over a world all water |
+| T-13 | NIT | The S5 lines in `test/systems/travel/ether_ow.test.js` could not fail (the fixture's Bay all land) | PINNED: over a world all water |
 | T-14 | NIT | The pits' hold pinned for the box alone | PINNED: a pixel of the continent west of the Bay |
 | T-15 | NIT | The chart's dialog's name unpinned | PINNED: the mounted window's |
 | T-16 | NIT | A tile's east-edge clamp unpinned | PINNED |
@@ -59,7 +59,7 @@ unbounded or doubled, pins that could not fail, and a record that overclaimed.
 | D-4 | MINOR | The planner's widest box "under twice the Bay's whole map" - 1,001 by 1,012 pixels, 2.03 times | FIXED: "about twice", the box's size given |
 | D-5 | MINOR | `ui/etherChartWindow.js`'s header said nothing on the chart is pressed - its Overworld door is | FIXED (RETIRING A FLAG DELETES THE SENTENCE) |
 | D-6 | MINOR | The Page-Index's line for the sea named neither ETHER-CHART2 nor ETHER-OW | FIXED |
-| D-7 | MINOR | The rename rewrote a player's own words in a quoted report | FIXED: the report's spelling restored (Field-Bugs-2026-10-12d, `test/fb1012d_etherstrand.test.js`); the ELTHERIC section says quoted words keep theirs |
+| D-7 | MINOR | The rename rewrote a player's own words in a quoted report | FIXED: the report's spelling restored (Field-Bugs-2026-10-12d, `test/systems/comeSailAway/fb1012d_etherstrand.test.js`); the ELTHERIC section says quoted words keep theirs |
 | D-8 | MINOR | Travel-View's AUDIT OW5b S5 "the raiders' sea is on the map" - or the box now | FIXED, said in place |
 | D-9 | MINOR | The chart's patch note: the ship's label can stand over a name (it takes the clearest spot) | FIXED in the PR |
 | D-10 | NIT | "S5's floored pixel kept" - the floor is ETHER-OW's; S5's edges are what was kept | FIXED in both pages |
@@ -88,7 +88,7 @@ ground; the view, its painter and its journeys are the Bay's, unchanged).
 
 ## The merge with main's localization arc
 
-Main took the localization arc (#865) while the audit stood, and its ratchet (`test/l10n4_hardcoded.test.js` - no file
+Main took the localization arc (#865) while the audit stood, and its ratchet (`test/systems/l10n4_hardcoded.test.js` - no file
 holds more hard-coded English than it did) found the chart: ETHER-CHART2 rewrote `ui/etherChartWindow.js` with 22
 literals of prose where main's old chart had 6. FIXED at the root, by the arc's own brief (`tools/l10n/ROUTE-BRIEF.md`):
 every word the chart's own code writes - its title and line, the ruler's Veil and edge, the key, a way, an isle's line
@@ -107,15 +107,15 @@ LEFT, and why: the sea's own vocabulary - its name, its bands', its isles' kinds
 
 ## The pins
 
-`test/audit_etherow.test.js` (5) - C2-1's law and the service end to end over the real database, C2-2's plates lifted
-and run, C2-3's board lifted and run, and the chart in French and in English (the merge's routing). The rest stand in the slices' own files: `test/ether_deep.test.js` (C1, T-4 - T-7,
-T-10, T-16), `test/ether_ow.test.js` (T-2, T-3, T-8, T-11 - T-13, T-15, C2-3's raiders), `test/nav_r_raiders.test.js`
-(T-9), `test/oh_host.test.js` (T-14). `tools/mutants/audit_etherow.json` (50 records) - every fix and every pin the audit
-added, and the routing's - all die; the 115 records aimed at the chart across seven lists all die after it. PIN MOVED: the chart's routed lines in `test/etherchart2.test.js`, `test/audit_etherchart2.test.js` and
-`test/auditcaptsea.test.js` (their English assertions as they were); the account version in nineteen suites (acct125) and the relay's in its own (world199);
-`test/seat1b_client.test.js` (the relay's mint reads the one home); `test/audit68_worldjs.test.js` (the board's decision
-asks the Veil); `test/ows3_raiders.test.js` (the raiders' host reads the sea fight past the Veil);
-`test/tv6_dungeons.test.js`, `test/ow5_audit.test.js` and `test/owdungeons.test.js` (the lists' key). Re-aimed by
+`test/systems/audit_etherow.test.js` (5) - C2-1's law and the service end to end over the real database, C2-2's plates lifted
+and run, C2-3's board lifted and run, and the chart in French and in English (the merge's routing). The rest stand in the slices' own files: `test/world/deepWater/ether_deep.test.js` (C1, T-4 - T-7,
+T-10, T-16), `test/systems/travel/ether_ow.test.js` (T-2, T-3, T-8, T-11 - T-13, T-15, C2-3's raiders), `test/systems/naval/nav_r_raiders.test.js`
+(T-9), `test/scenes/oh_host.test.js` (T-14). `tools/mutants/audit_etherow.json` (50 records) - every fix and every pin the audit
+added, and the routing's - all die; the 115 records aimed at the chart across seven lists all die after it. PIN MOVED: the chart's routed lines in `test/ui/etherchart2.test.js`, `test/ui/audit_etherchart2.test.js` and
+`test/systems/naval/auditcaptsea.test.js` (their English assertions as they were); the account version in nineteen suites (acct125) and the relay's in its own (world199);
+`test/net/seat1b_client.test.js` (the relay's mint reads the one home); `test/world/audit68_worldjs.test.js` (the board's decision
+asks the Veil); `test/systems/ows3_raiders.test.js` (the raiders' host reads the sea fight past the Veil);
+`test/systems/travel/tv6_dungeons.test.js`, `test/player/eyeOfTheBeholder/ow5_audit.test.js` and `test/world/owdungeons.test.js` (the lists' key). Re-aimed by
 content: four of `tools/mutants/ether_deep.json` (the raw reader, the keep, the route, the rects' scratch),
 `seat1b.json`'s relay record, `soc1.json`'s relay version, the account-version records, and seven records the
 routing moved (audit_etherchart2, audit_etherow, auditcaptsea two, eltheric, ethercross two).

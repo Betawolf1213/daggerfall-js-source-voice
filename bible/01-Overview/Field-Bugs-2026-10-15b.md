@@ -29,5 +29,5 @@ player's third-person body, the voxel rigs). Ground-truthed in a real WebGL2 con
 complete, and a texel passes and fails the depth test within 0.0005 of the depth pictureDepth names.
 
 Not reproduced in play here (this container has no ARENA2 or Morrowind data); the record and the pins are the code's.
-`bible/04-Characters/Morrowind-NPCs.md` section 29; `test/fb1015_lootbody.test.js` (7),
+`bible/04-Characters/Morrowind-NPCs.md` section 29; `test/render/fb1015_lootbody.test.js` (7),
 `tools/mutants/fb1015_lootbody.json` (13, 13 dead).

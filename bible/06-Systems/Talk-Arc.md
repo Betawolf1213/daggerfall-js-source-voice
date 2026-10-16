@@ -583,7 +583,7 @@ static NPC of any race), and `dfRandom` gained the Seed accessor pair
 C#'s settable property is - without which the male-name nudge is not
 portable at all.
 
-**test/talkengine.test.js** builds all four modules exactly as world.js
+**test/systems/talkengine.test.js** builds all four modules exactly as world.js
 builds them and drives a conversation through the assembly - the click,
 the greeting, the tone gate, the mill's news, the tree's knowledge
 reset, the questor door and the envelope. All six passed on the first
@@ -1094,7 +1094,7 @@ rumor and news record:
   fates (answerPipeline, TK-iii) - the strings sat shipped and
   unreachable.
 
-Pins: 6 in `test/talknews.test.js` - the lord-name law driven with
+Pins: 6 in `test/systems/talk/talknews.test.js` - the lord-name law driven with
 expectations computed by seeding the same stream by hand (which kills
 a swapped seed half, a flipped parity and a wrong bank each exactly;
 and taught its own lesson: the expectation must be computed BEFORE the
@@ -1130,7 +1130,7 @@ remained after TN1, mounted:
   The bag literal (regent, bank, palace, temple-child laws) exists
   exactly once and a pin counts it.
 
-Pins: 6 in `test/interiorseams.test.js` (the two macro flows with
+Pins: 6 in `test/systems/quest/interiorseams.test.js` (the two macro flows with
 C#'s "[invalid]" arm on the handler, the four world mounts and the
 one-bag law source-pinned). Campaign: 7 mutants, 7 killed.
 
@@ -1166,7 +1166,7 @@ TalkManager.GetBuildingList's questor half (:2807-2874):
   the spent-roll ordering, the named-building drop - all in
   npcSession, all already pinned.
 
-Pins: 5 in `test/questorpool.test.js` (the walk on fixture blocks,
+Pins: 5 in `test/systems/questorpool.test.js` (the walk on fixture blocks,
 the SetLayoutData law per person, an end-to-end walk-to-pool mint
 keyed by the walk's own seed, the two mounts). Campaign: 8 mutants,
 8 killed.
@@ -1201,7 +1201,7 @@ throws, and `world.js` turns that into the bridge's own no-faction 0.
 A host that cannot name a court shows no court rather than taking down
 the frame.
 
-Pins: 5 in `test/regioncourt.test.js`, one of them ARENA2-gated and
+Pins: 5 in `test/formats/regioncourt.test.js`, one of them ARENA2-gated and
 therefore half-blind by the known charter - it asserts on the shipped
 corpus that every region really does resolve exactly one court, which
 is what makes DFU's throw unreachable, and that a region's court is
@@ -1277,7 +1277,7 @@ parameter is legitimately named and a sweep that flags its own subject
 can never pass. PY1's precedent, kept narrow - one line, not a whole
 block named after the slice, which is the mistake EF1c had to undo.
 
-Pins: 6 in `test/regionlive.test.js`, the sixth being CQ1b's per-slice
+Pins: 6 in `test/scenes/regionlive.test.js`, the sixth being CQ1b's per-slice
 second-home check, applied at the time rather than an hour later.
 Campaign: 11 mutants, 11 killed. Open flags 167 -> 166.
 
@@ -1686,4 +1686,4 @@ sentences ("%loc is %di of here"). Daggerfall Unity reads its
 table row before the file in the file's own byte shape, so the answer
 pipeline, townTalk's mobile chain and every other TEXT.RSC reader see
 one kind of record. Record: `01-Overview/Mac-Bugs-U.md`. Pinned by
-`test/macu_directions.test.js` (5), `tools/mutants/macu.json` (7 dead).
+`test/systems/talk/macu_directions.test.js` (5), `tools/mutants/macu.json` (7 dead).

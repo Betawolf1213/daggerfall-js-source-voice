@@ -5,7 +5,7 @@
     "old": "  undead: Object.freeze([15, 17, 18, 19, 23, 28, 30, 32, 33]),",
     "new": "  undead: Object.freeze([15, 17, 18, 19, 23, 32, 33]),",
     "tests": [
-      "test/loot6_signatures.test.js"
+      "test/systems/loot/loot6_signatures.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "  beast: Object.freeze([0, 2, 3, 4, 5, 6, 8, 9, 10, 11, 13, 14, 20, 41, 42]),",
     "new": "  beast: Object.freeze([0, 2, 3, 4, 5, 6, 8, 9, 10, 11, 13, 14, 20, 39, 41, 42]),",
     "tests": [
-      "test/loot6_signatures.test.js"
+      "test/systems/loot/loot6_signatures.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "  warrior: Object.freeze([140, 141, 142, 143, 144, 145, 146]),",
     "new": "  warrior: Object.freeze([140, 141, 142, 143, 144, 145]),",
     "tests": [
-      "test/loot6_signatures.test.js"
+      "test/systems/loot/loot6_signatures.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "  'dragon',   // 14 DragonsDen",
     "new": "  'brute',   // 14 DragonsDen",
     "tests": [
-      "test/loot6_signatures.test.js"
+      "test/systems/loot/loot6_signatures.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "export const SIGNATURE_WEIGHT = 5;",
     "new": "export const SIGNATURE_WEIGHT = 1;",
     "tests": [
-      "test/loot6_signatures.test.js"
+      "test/systems/loot/loot6_signatures.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "  let r = rolls() * total;",
     "new": "  rolls(); let r = rolls() * total;",
     "tests": [
-      "test/loot6_signatures.test.js"
+      "test/systems/loot/loot6_signatures.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "  return { kind: 'corpse', tier: level, boss, family: foeFamily(mobileType) };",
     "new": "  return { kind: 'corpse', tier: level, boss, family: null };",
     "tests": [
-      "test/loot6_signatures.test.js"
+      "test/systems/loot/loot6_signatures.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "    if (tier !== 'common') { applyRarity(it, tier, rolls, null, { family: source.family ?? null }); minted.push(it); }",
     "new": "    if (tier !== 'common') { applyRarity(it, tier, rolls); minted.push(it); }",
     "tests": [
-      "test/loot6_signatures.test.js"
+      "test/systems/loot/loot6_signatures.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "  const source = corpseSource(basics, entity.level, entity.mobileType);   // LOOT6: its family",
     "new": "  const source = corpseSource(basics, entity.level);   // LOOT6: its family",
     "tests": [
-      "test/loot6_signatures.test.js"
+      "test/systems/loot/loot6_signatures.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "  wyrmbane: 'dragon', 'mountains-root': 'dragon',",
     "new": "  wyrmbane: 'dragon',",
     "tests": [
-      "test/loot6_signatures.test.js"
+      "test/systems/loot/loot6_signatures.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": ", family: dungeonFamily(dfLocation.mapTableData.dungeonType) }, { luck, rolls, find });",
     "new": " }, { luck, rolls, find });",
     "tests": [
-      "test/loot6_signatures.test.js"
+      "test/systems/loot/loot6_signatures.test.js"
     ]
   }
 ]

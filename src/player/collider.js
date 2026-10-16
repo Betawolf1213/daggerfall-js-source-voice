@@ -122,7 +122,7 @@ function rayMarks(bucket) {
   if (bucket.markEpoch !== MARK_EPOCH) { m.fill(0); bucket.markEpoch = MARK_EPOCH; }
   return m;
 }
-/** FB0930-FRAME: the pin's door to the stamp - test/fb0930_frame.test.js walks a bucket across the wrap. */
+/** FB0930-FRAME: the pin's door to the stamp - test/player/fb0930_frame.test.js walks a bucket across the wrap. */
 export function _setRayStampForTest(n) { RAY_STAMP = n; }
 /** PERF-CLIMB: the resolve's fixed-point stop (_resolveCapsule), on unless a pin turns it off to hold the answers the
  *  same with it and without it. */
@@ -434,7 +434,7 @@ function wideOnRay(bucket, ox, oy, oz, dir, reach) {
   return out;
 }
 /** OW-WOD-LAG: how many wide faces the tree hands a sphere of radius `r` at a WORLD point in bucket `key` (no mover's
- *  turn) - the query's own walk, counted: the pin that the tree culls (test/ow_wod.test.js). */
+ *  turn) - the query's own walk, counted: the pin that the tree culls (test/world/worldOfDaggerfall/ow_wod.test.js). */
 export function wideCandidates(collider, key, p, r) {
   const bucket = collider._buckets.get(key);
   if (!bucket || !bucket.wide.length) return 0;

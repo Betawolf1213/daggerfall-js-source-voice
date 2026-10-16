@@ -104,7 +104,7 @@ Considered and NOT done, each with its reason:
   NATIVE-WINDOW RULE): no element without its DFU source. The board's chapter card says what the band does instead
   (GUILD3d).
 - **`SEAT_WEEK_ZERO_S` (writLaw) and `SEAT_WEEK0_MS` (townSeatLaw) as one export.** One instant, twice - each pinned to
-  the epoch's own formula (`test/audit31_law.test.js` the writs', `test/seat1a_client.test.js` the seats'), so one through
+  the epoch's own formula (`test/net/audit31_law.test.js` the writs', `test/net/seat1a_client.test.js` the seats'), so one through
   the other (AUDIT GUILD3 R15: this said "pinned equal"); importing townSeatLaw into writLaw would carry the seats' graph
   into every writ reader. Left, pinned.
 
@@ -248,7 +248,7 @@ Sigil's top stage beside the band's; neither is a guild's (AUDIT GUILD3's words 
 | A cut that takes depth | Each cut's mechanics move to the band it stood for (law 1), and the record names where each went - the Decline's fall to Failing (AUDIT GUILD3 R1) |
 | A developers' Season under way with a retired event | Read as none, its Strength the week's alone; its Chronicle row, if one was written, keeps its words |
 | An Ascendant chapter's patron paying more than a stranger | The better of the two (`chapterHallFactor`) |
-| A new power added to a table with no words | The sweep (`test/guild3_plain.test.js`) fails the suite |
+| A new power added to a table with no words | The sweep (`test/net/guild3_plain.test.js`) fails the suite |
 
 ## 7. The four hosts (THE FOUR HOSTS RULE)
 
@@ -261,10 +261,10 @@ Sigil's top stage beside the band's; neither is a guild's (AUDIT GUILD3's words 
 
 ## 8. Pins
 
-`test/guild3_plain.test.js` (the words, the ledger's words and direction, the rank list and its sweep, the disband
+`test/net/guild3_plain.test.js` (the words, the ledger's words and direction, the rank list and its sweep, the disband
 list on the service through the real Worker and on the page, the treasury's line, the no-guild primer, the chapter card,
 the five events, the Ascendant band and its High Master, the patron's price) and `tools/mutants/guild3.json`; the audit's
-pins, `test/audit_guild3.test.js` and `tools/mutants/audit_guild3.json` (`01-Overview/Audit-Guild3.md`).
+pins, `test/net/audit_guild3.test.js` and `tools/mutants/audit_guild3.json` (`01-Overview/Audit-Guild3.md`).
 
 **The pins GUILD3 moved, each said where it stands** (`PIN MOVED: GUILD3...` - AUDIT GUILD3 R4: eight files had moved
 unmarked, marked since): the chairs' and the council's words

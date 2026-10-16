@@ -41,7 +41,7 @@ copy through execFileSync's default 1 MiB buffer; `world.js` crossed
 1 MiB with the COMM merge, the read threw ENOBUFS, and a catch meant for
 new files swallowed it - no cite into the tree's largest file would ever
 move, and the run still said "0 to move". Fixed before the fix wave, since
-every cluster leaned on the tool (`test/audit68_citeshift.test.js`). Main's CITE-BUF found and
+every cluster leaned on the tool (`test/tooling/audit68_citeshift.test.js`). Main's CITE-BUF found and
 fixed the same bug the same day; the merge keeps main's `GIT_MAX_BUFFER`
 and both pins.
 
@@ -118,7 +118,7 @@ the limit and their commits are the record.
 Four hostile lanes read the integrated diff (scenes; combat, characters,
 AI, player, world; systems, net, UI, the Workers and the shell; formats,
 render, tools and CI). Eleven findings, all paid; the pins are
-`test/audit68_review.test.js` and additions to the exterior, worldmodes
+`test/scenes/audit68_review.test.js` and additions to the exterior, worldmodes
 and backend pin files, each run against the unfixed code first.
 
 - **High - the relay's hit bytes (a merge of two lanes' intents).** X8

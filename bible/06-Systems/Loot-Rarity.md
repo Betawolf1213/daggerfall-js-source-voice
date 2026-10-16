@@ -16,7 +16,7 @@ enhancement (OL1), as it always did. Off, not one field is written and
 not one read moves - so the 1:1 lane is one press away, not lost.
 
 One module: `src/systems/loot/lootRarity.js`. One pin file:
-`test/lr1_lootrarity.test.js` (20). One tuning table: `RARITY_WEIGHTS`
+`test/systems/lr1_lootrarity.test.js` (20). One tuning table: `RARITY_WEIGHTS`
 and `SOURCE_MULT`, per mille.
 
 ## The ladder
@@ -366,7 +366,7 @@ but the suite's only wire pin was that `affixes` is a declared array
 field and that a string there is refused. Nothing would have caught a
 tier, an affix list, a Legendary's record or an affix-bought price lost
 on the way across, in either door. Four pins now cover both doors by
-execution (`test/lr1_lootrarity.test.js`, AUDIT-LR), and two mutants
+execution (`test/systems/lr1_lootrarity.test.js`, AUDIT-LR), and two mutants
 were run and killed: the value floor turned into a ceiling, and the
 affix list's check removed.
 
@@ -419,9 +419,9 @@ flip alone would have done nothing for him - or for any existing
 player - and the switch would have looked broken. Fixed at the root
 (the shelf persists overrides, not defaults) with a one-time stamped
 adoption for the shelves already written: PREF1, recorded in
-`10-UI/Features-Arc.md` and pinned in `test/pref1_shelf.test.js`.
+`10-UI/Features-Arc.md` and pinned in `test/systems/pref1_shelf.test.js`.
 
-**The trap this had to avoid.** `test/lr1_lootrarity.test.js` drives
+**The trap this had to avoid.** `test/systems/lr1_lootrarity.test.js` drives
 its OFF half through a helper that was a bare `_resetForTests()`. With
 the row shipping ON, that helper stops meaning "off" - every "off is
 DFU exactly" pin in the file would have gone on testing the ON path, in
@@ -436,4 +436,4 @@ jewel over all eight Jewellery templates (`systems/gate/gateSpoils.js` spoilsBas
 tier read by nothing. Now `systems/equip.js` wearableItem (GetEquipSlot on an empty table) is the one law: the ladder
 grades no piece it refuses (`rarityEligible`), the spoils' base is made again on one, and a save's rolled wands load as
 the Amulet - the same weight and condition (`repairRarityBases`, `RARITY_HOME`). The Jewellery records still name no
-templates: a King's Mark lands on any wearable jewel. `test/fb1001_wand.test.js`.
+templates: a King's Mark lands on any wearable jewel. `test/systems/fb1001_wand.test.js`.

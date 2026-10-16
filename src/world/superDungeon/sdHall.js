@@ -209,7 +209,7 @@ function faceRing(out, F, rec, cy, a, b, o0, o1, sides) {
 
 /** SD-LOOK S10: STONE `i`'s OWN VISUAL, as quads - plinth, chamfered shaft, relief, dial and its notch, levers, the crown's
  *  cradle and the banner's rod (its cap is its solid's own box, stoneSolids; its bezel, gear, hand and banner their own
- *  meshes). Every corner within SD_LAW_MARGIN of its solids: test/sd25_orrery.test.js holds it there. */
+ *  meshes). Every corner within SD_LAW_MARGIN of its solids: test/world/superDungeon/sd25_orrery.test.js holds it there. */
 export function stoneQuads(i) {
   const out = [], F = stoneAt(i), { P, R, n } = F, S = SD_STONE_SHAPE, A = SD_HALL_ATLAS, rec = SD_HALL_ATLAS_RECORD;
   // the plinth's two steps, each band of its cell

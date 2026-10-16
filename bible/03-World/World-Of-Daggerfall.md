@@ -68,7 +68,7 @@ there - the one instance of another pixel that can act (it ends the call once th
 type 2 there is skipped either way, anything else fails step 3). The verbatim scan is kept as `pickLocationsScan`,
 the law the walk is held to: equal on every pixel of the shipped lists under four tiles (the game's, no roads with a
 site refused, a tile that holds a location, the sea - 587,384 tiles, 239,059 placements), and pinned on made lists of
-types 0, 1 and 2 on and off the grid (test/flow2_fast_tests.test.js). A pixel off the 1000 x 500 grid, or a session
+types 0, 1 and 2 on and off the grid (test/systems/flow2_fast_tests.test.js). A pixel off the 1000 x 500 grid, or a session
 with no index, walks the scan.
 
 Step 8's `hasLocation` is what makes the FIRST valid instance naming a
@@ -413,7 +413,7 @@ that lands while the build is in flight is heard (AUDIT BRANCH m4).
 
 A second, independent pass read the port against the eight sources.
 It found four behaviours the port did not yet share, and all four are
-fixed and pinned (`test/wod5_audit.test.js`):
+fixed and pinned (`test/scenes/wod5_audit.test.js`):
 
 - the mirrored wall drawn inside out;
 - a region visited between two builds going unheard;
@@ -441,7 +441,7 @@ and HCC's own AUDIT BRANCH). Five lenses then read the whole branch: the
 C# again, the streaming host at run time, the shared modules against
 main, online with saves and HCC, and performance, the build, the data
 and the docs. Every finding below was reproduced by execution before it
-was fixed. They are pinned in `test/audit_wod_branch.test.js`, the
+was fixed. They are pinned in `test/world/worldOfDaggerfall/audit_wod_branch.test.js`, the
 mutants are in `tools/mutants/auditwod.json`, and every one dies.
 
 - **B1, the blocker: a mountain froze the tab.** All nine
@@ -507,7 +507,7 @@ try. The treasure marker's save stays a reading above.
 ## AFTER THE AUDIT: TERRAIN-SCALE1, BUILD-FAIL1, WOD6 (2026-09-23)
 
 Mac: "Make the best decisions and take care of the found properly".
-Pinned in `test/terrainscale1.test.js` and `test/audit_wod_branch.test.js`;
+Pinned in `test/world/terrain/terrainscale1.test.js` and `test/world/worldOfDaggerfall/audit_wod_branch.test.js`;
 the mutants are `tools/mutants/terrainscale1.json` and `auditwod.json`,
 and every one dies.
 
@@ -640,8 +640,8 @@ measured on each side's own clock (a pair ten seconds apart doubled or
 collapsed by id order); a race lost while the camp still built; a
 reader's allowance full of an owner's old camps spending a new marker
 it could not show; the owner's list sending its oldest 64 for ever; a
-peer's springs never forgotten; and the stale paragraph above. Pinned in `test/wod7_sharedcamps.test.js` and the audit's rig
-(`test/audit_wod_branch.test.js`); mutants `tools/mutants/wod7.json`.
+peer's springs never forgotten; and the stale paragraph above. Pinned in `test/scenes/wod7_sharedcamps.test.js` and the audit's rig
+(`test/world/worldOfDaggerfall/audit_wod_branch.test.js`); mutants `tools/mutants/wod7.json`.
 
 ## THE FOUR HOSTS
 
@@ -757,7 +757,7 @@ pixel); a rock field or mountain keeps every piece but those whose own mesh box
 reaches a road (no mesh, no collider). Deterministic online: the lane forces
 Basic Roads. A pixel built before the network lands is built again by the roads
 sweep, and asks then. Over the shipped lists no whole site reaches a road; the
-pieces do. Pinned in `test/roadsclear.test.js`, mutants in
+pieces do. Pinned in `test/world/worldOfDaggerfall/roadsclear.test.js`, mutants in
 `tools/mutants/roadsclear.json`. The wilderness camps (CAMP-RING) take the same
 test for their anchor (its whole ring) and each member.
 
@@ -799,5 +799,5 @@ Online alone: the gate is online's, and online this mod is the room's, forced
 on (`systems/online/onlineLane.js`) - so every client that sees a gate stands the same
 rock and refuses the same pieces, and the ground the room shares (the flatten)
 is refused with the site on every one of them. Offline the mod stands 1:1.
-Pinned in `test/gateclear.test.js`, mutants in `tools/mutants/gateclear.json`;
+Pinned in `test/world/gate/gateclear.test.js`, mutants in `tools/mutants/gateclear.json`;
 `01-Overview/Field-Bugs-2026-09-28b.md` has the reading.

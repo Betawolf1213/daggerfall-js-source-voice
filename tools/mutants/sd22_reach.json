@@ -5,7 +5,7 @@
     "old": "  if (inner.length) return dryFirst(inner);",
     "new": "  if (inner.length) return [...inner, ...(blocks ?? []).flatMap((b) => (b?.layout?.startMarkers ?? []).map((m) => ({ x: m.x + (b.originX ?? 0), y: m.y, z: m.z + (b.originZ ?? 0) })))];",
     "tests": [
-      "test/sd22_reach.test.js"
+      "test/world/sd22_reach.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "  const inner = marks.filter((m) => !SD_BORDER_BLOCK_RE.test(blockOf(m)?.name ?? ''));",
     "new": "  const inner = marks;",
     "tests": [
-      "test/sd22_reach.test.js"
+      "test/world/sd22_reach.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "export const SD_BORDER_BLOCK_RE = /^b/i;",
     "new": "export const SD_BORDER_BLOCK_RE = /^B/;",
     "tests": [
-      "test/sd22_reach.test.js"
+      "test/world/sd22_reach.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "export const SD_BORDER_BLOCK_RE = /^b/i;",
     "new": "export const SD_BORDER_BLOCK_RE = /b/i;",
     "tests": [
-      "test/sd22_reach.test.js"
+      "test/world/sd22_reach.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "    return m.x >= ox && m.x < ox + RDB_SIDE && m.z >= oz && m.z < oz + RDB_SIDE;",
     "new": "    return m.x >= ox && m.x <= ox + RDB_SIDE && m.z >= oz && m.z < oz + RDB_SIDE;",
     "tests": [
-      "test/sd22_reach.test.js"
+      "test/world/sd22_reach.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "    return m.x >= ox && m.x < ox + RDB_SIDE && m.z >= oz && m.z < oz + RDB_SIDE;",
     "new": "    return m.x >= ox && m.x < ox + RDB_SIDE;",
     "tests": [
-      "test/sd22_reach.test.js"
+      "test/world/sd22_reach.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "    return m.x >= ox && m.x < ox + RDB_SIDE && m.z >= oz && m.z < oz + RDB_SIDE;",
     "new": "    return m.x > ox && m.x < ox + RDB_SIDE && m.z > oz && m.z < oz + RDB_SIDE;",
     "tests": [
-      "test/sd22_reach.test.js"
+      "test/world/sd22_reach.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "  if (marks.length) return dryFirst(marks);",
     "new": "  if (false) return marks;",
     "tests": [
-      "test/sd22_reach.test.js"
+      "test/world/sd22_reach.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "      if (Number.isFinite(m?.x) && Number.isFinite(m?.z)) out.push({ x: m.x + (b.originX ?? 0)",
     "new": "      if (false) out.push({ x: m.x + (b.originX ?? 0)",
     "tests": [
-      "test/sd22_reach.test.js"
+      "test/world/sd22_reach.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "for (const e of enemies ?? []) if (e && !e.eliteCopy && Number.isFinite(e.x)",
     "new": "for (const e of enemies ?? []) if (e && Number.isFinite(e.x)",
     "tests": [
-      "test/sd22_reach.test.js"
+      "test/world/sd22_reach.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": ".map((e) => e.door)) ?? dungeonReturn.from ?? null);",
     "new": ".map((e) => e.door)));",
     "tests": [
-      "test/sd22_reach.test.js"
+      "test/world/sd22_reach.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "        from: { pos: [player.pos[0], player.pos[1] + CAPSULE_HEIGHT / 2, player.pos[2]], normal: [Math.sin(cam.yaw), 0, Math.cos(cam.yaw)] },",
     "new": "        from: null,",
     "tests": [
-      "test/sd22_reach.test.js"
+      "test/world/sd22_reach.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "        from: { pos: [player.pos[0], player.pos[1] + CAPSULE_HEIGHT / 2, player.pos[2]], normal: [Math.sin(cam.yaw), 0, Math.cos(cam.yaw)] },",
     "new": "        from: { pos: [player.pos[0], player.pos[1], player.pos[2]], normal: [Math.sin(cam.yaw), 0, Math.cos(cam.yaw)] },",
     "tests": [
-      "test/sd22_reach.test.js"
+      "test/world/sd22_reach.test.js"
     ]
   }
 ]

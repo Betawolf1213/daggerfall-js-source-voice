@@ -10,7 +10,7 @@ Four calls were Mac's (2026-10-01): carpenter's stores **"Priced per hull, no po
 co-op combat now"**; grog **"Once per port day"**; and at the helm **"Back on deck while sailing"**.
 
 Every finding was re-run before it was fixed and is pinned by a test that fails on the code as it stood:
-`test/auditcrew.test.js` (CC-A layer, CC-B combat, CC-D crew, CC-E co-op, CC-F the safety net), with the moved pins in
+`test/systems/naval/auditcrew.test.js` (CC-A layer, CC-B combat, CC-D crew, CC-E co-op, CC-F the safety net), with the moved pins in
 `crewcompanions`, `shipcrew`, `deckwalk`, `wod3_spawner`, `world2`, `world6bii`, `auditworld6bii`, `renown1`,
 `respawn1`, `questparty3c` and `audit24_lifetimes` each carrying a `PIN MOVED` note. Mutation-proven:
 `tools/mutants/auditcrew.json` (87 mutants, all dead), and every older record the fixes moved re-aimed and killed again. Each

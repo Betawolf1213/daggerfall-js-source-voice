@@ -5,7 +5,7 @@
     "old": "  return { pitch: (k * f.kickDegPerPx - d * f.reloadPitchDeg) * (Math.PI / 180),",
     "new": "  return { pitch: (-k * f.kickDegPerPx - d * f.reloadPitchDeg) * (Math.PI / 180),",
     "tests": [
-      "test/mwgunfeel.test.js"
+      "test/combat/mwgunfeel.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "  return smooth(0, f.reloadIn, share) * (1 - smooth(1 - f.reloadOut, 1, share));",
     "new": "  return smooth(0, f.reloadIn, share);",
     "tests": [
-      "test/mwgunfeel.test.js"
+      "test/combat/mwgunfeel.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "  const py = pivot[1] * unitsPerMetre, pz = pivot[2] * unitsPerMetre;",
     "new": "  const py = 0 * pivot[1], pz = 0 * pivot[2];",
     "tests": [
-      "test/mwgunfeel.test.js"
+      "test/combat/mwgunfeel.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "  const tz = pz - (s * py + c * pz) + back * unitsPerMetre;",
     "new": "  const tz = pz - (s * py + c * pz) - back * unitsPerMetre;",
     "tests": [
-      "test/mwgunfeel.test.js"
+      "test/combat/mwgunfeel.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "      const view = gunFeel ? multiply(armKickMatrix(gunFeel, MW_UNITS_PER_METER), lens, new Float32Array(16)) : lens;",
     "new": "      const view = gunFeel ? lens : lens;",
     "tests": [
-      "test/mwgunfeel.test.js"
+      "test/combat/mwgunfeel.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "      const view = gunFeel ? multiply(armKickMatrix(gunFeel, MW_UNITS_PER_METER), lens, new Float32Array(16)) : lens;",
     "new": "      const view = gunFeel ? multiply(lens, armKickMatrix(gunFeel, MW_UNITS_PER_METER), new Float32Array(16)) : lens;",
     "tests": [
-      "test/mwgunfeel.test.js"
+      "test/combat/mwgunfeel.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "    if (_tlShotAt < 0 || m.now < tlReloadFrom(m) - 1e-9) return;\n",
     "new": "\n",
     "tests": [
-      "test/mwgunfeel.test.js"
+      "test/combat/mwgunfeel.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "    fpArm.setGunFeel(sheathed ? null : armGunPose(-_tlKick.y, share));",
     "new": "    fpArm.setGunFeel(sheathed ? null : armGunPose(0 * _tlKick.y, share));",
     "tests": [
-      "test/mwgunfeel.test.js"
+      "test/combat/mwgunfeel.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "    const from = _tlShotAt >= 0 ? tlReloadFrom(m) : Infinity;",
     "new": "    const from = _tlShotAt >= 0 ? m.cooldownUntil - 1.7 : Infinity;",
     "tests": [
-      "test/mwgunfeel.test.js"
+      "test/combat/mwgunfeel.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "* (m.tick ?? GUN_TICK_SECONDS));\n",
     "new": "* (m.tick ?? GUN_TICK_SECONDS) + 0.5);\n",
     "tests": [
-      "test/mwgunfeel.test.js"
+      "test/combat/mwgunfeel.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "  const k = Number.isFinite(kickPx) && Math.abs(kickPx) >= ARM_KICK_REST_PX ? kickPx : 0;",
     "new": "  const k = Number.isFinite(kickPx) ? kickPx : 0;",
     "tests": [
-      "test/mwgunfeel.test.js"
+      "test/combat/mwgunfeel.test.js"
     ]
   }
 ]

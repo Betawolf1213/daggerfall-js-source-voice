@@ -290,7 +290,7 @@ thirteen. The simulation leaves out the formulas' tail (an elite, the mentor, a 
 
 ## 10. What shipped
 
-All four slices in one pull request, each with its pins and mutants (`test/bal_arc.test.js`, 14 tests since AUDIT
+All four slices in one pull request, each with its pins and mutants (`test/systems/bal_arc.test.js`, 14 tests since AUDIT
 BAL, below; `tools/mutants/bal.json`, 61 mutants).
 
 **BAL1** - `combat/pcaao.js` pcaaoAlterDamageBasedOnWepCondition and pcaaoAlterArmorReducBasedOnItemCondition take
@@ -298,14 +298,14 @@ BAL, below; `tools/mutants/bal.json`, 61 mutants).
 `modules.equipmentDamageEnhanced`. Pinned: every band at 0-100% both ways, edged and blunt, weapon and armour; through
 `pcaaoAttackDamage` (400 seeded swings of a fresh longsword at an Orc Warlord: x1.3 with the wear, x1 without; a
 foe's blow on fresh plate: more taken without the wear's 0.85); the stats card's headline swing (x1.3 / x1).
-`test/pcaao.test.js` (the mod's own numbers, its wear on) unmoved.
+`test/systems/pcaao.test.js` (the mod's own numbers, its wear on) unmoved.
 
 **BAL2** - one line for the hit (`chanceToHitMod = Math.ceil(F(skill(attacker, skillID) * F(1.5)))`), one roll for the
 crit (`crit / (4 - luckTerm)`), one multiplier and aim (`1 + floor(crit / 5) * 0.05`, `+floor(crit / 4)`), one classic
 arm without the module (`crit / 3` for `+crit / 3`). Pinned by execution: a class foe's landing over a hundred
 evenly spaced rolls on a bare player (Long Blade 20: 62; ten more skill, fifteen more to hit; the 97 clamp), its crit
 doubling a blow (10 -> 20) at the player's quarter (0.24 crits, 0.25 does not), and a crit's +25 to hit on a player
-who dodges at 100 (the 3% floor -> 25). PIN MOVED in `test/pcaao.test.js`: a monster's classic crit roll (crit/3 for
+who dodges at 100 (the 3% floor -> 25). PIN MOVED in `test/systems/pcaao.test.js`: a monster's classic crit roll (crit/3 for
 +crit/3) and its divisor (90 / (4 - 2) = 45%). PIN MOVED by the full suite: two overhaul blows whose first roll is a
 monster's crit (`audit39_combat`, `diseases`: 2 x 1.2 = 2.4 -> 2 is now 2 x 1.4 = 2.8 -> 3), and CI's
 `wear_vanilla` - an armed Knight's 300 blows on iron plate fall under 5 damage 29 or 52 times by the spawn's own
@@ -419,7 +419,7 @@ RECORDED, NOT CHANGED:
   under that copy's last point, and the owner lands it on its own. A copy that lags its owner's a hit behind could let
   one through - a two-client edge, not the report's lane.
 
-Pinned: `test/bal5_blowback.test.js` (5) by execution - the real Ancient Lich's row struck at a player in Rare thorns
+Pinned: `test/systems/bal5_blowback.test.js` (5) by execution - the real Ancient Lich's row struck at a player in Rare thorns
 lines through the real damage door, worn to its last point and never killed; Spite alone and both together the same;
 3,000 seeded Rare cuirasses never drawing Troll's Blood and drawing every other armour flavour; a piece that drew it
 lawful to `itemFindings`. `tools/mutants/bal5.json` (12, all dead).
@@ -528,7 +528,7 @@ RECORDED, NOT CHANGED:
   reading it would make the beast stronger in PvP, not weaker.
 - **The wereboar** is the werewolf in another skin (the same advantages, claws and change), as in DFU.
 
-Pinned: `test/bal6_curses.test.js` (6) by execution - the advantages through liveStat and skillValue in both forms, at
+Pinned: `test/systems/bal6_curses.test.js` (6) by execution - the advantages through liveStat and skillValue in both forms, at
 the change's instant and after a round, a pre-BAL6 save's word rewritten; the heal's day, the Ring's change without it,
 the stamp clamped on a load; BAL6-CLAWS: 2,000 seeded beast swings at a Lich's Mithril whole, as at no metal, with
 the soft rule on and off and nothing said, a man's fist the same, and DFU's core seed for seed; BAL6-GAUNTLETS:
@@ -541,7 +541,7 @@ roof, bare and hooded. `tools/mutants/bal6.json` (26, all dead: BAL6-CLAWS retir
 four at the restored gates - the claws as silver in either core, the claws refused with DFU's line under the overhaul
 with its soft rule off, every fist gated; BAL6-GAUNTLETS aimed eleven - every fist's, iron's -1 taken, leather or chain
 a metal, a metal past Daedric, the wrong slot, either core without it, the metal as to-hit in either core, the card
-without it, and mintCondition's plate offset, which `test/audit23_systems.test.js` pins). AUDIT CLAWS's own, below.
+without it, and mintCondition's plate offset, which `test/systems/audit23_systems.test.js` pins). AUDIT CLAWS's own, below.
 
 ### AUDIT CLAWS (2026-10-12, the owner: "Audit this") - BAL6-CLAWS and BAL6-GAUNTLETS read again before they merge
 
@@ -549,7 +549,7 @@ Three independent lanes, each a cold read of the pull request (#841) against a f
 repros: every place a claw blow is struck, refereed, predicted or shown, and the beast-form flag's life; every gauntlet
 the game can put on and what it is made of; and what the change says and pins (every number recomputed, its pins
 mutated past their 26 records - 47 more, and 5). CI's own run found one more. Every finding was reproduced before it
-was fixed. FOUND, each fixed and pinned (`test/auditclaws.test.js` 4; `test/bal6_curses.test.js`'s pins strengthened,
+was fixed. FOUND, each fixed and pinned (`test/systems/auditclaws.test.js` 4; `test/systems/bal6_curses.test.js`'s pins strengthened,
 still 6; `tools/mutants/auditclaws.json` 22 of 22 dead, `bal6.json` 26 of 26):
 
 - **HIGH - A1: the gauntlets never reached a refereed blow.** The duel, the siege, the Royal Tourney, a siege work and
@@ -596,7 +596,7 @@ still 6; `tools/mutants/auditclaws.json` 22 of 22 dead, `bal6.json` 26 of 26):
   (`ui/statsCard.js` as it was); the card still models the cores for whatever entity it is handed, and the pages say
   what a player can see.
 - **LOW - CI: the account Worker bundles the law.** The account service reaches `combat/formulas.js`, so
-  `combat/clawMetal.js` joined its bundle without joining its deploy's path filter (`test/accountdeploy.test.js` walks
+  `combat/clawMetal.js` joined its bundle without joining its deploy's path filter (`test/server/accountdeploy.test.js` walks
   the graph): a change to it alone would never have deployed the service. FIXED
   (`.github/workflows/account-deploy.yml`). The change's own fast runs could not see it - a Worker's import walk
   imports nothing of the file and names it nowhere - so the suite's eight import-graph walks ran with them after.
@@ -665,7 +665,7 @@ RECORDED, NOT CHANGED:
   stacked burst on a cooldown.
 - **Gortwog's Cleaver** keeps its record's Vampiric Effect: one named Legendary, never a random draw.
 
-Pinned: `test/bal7_loot.test.js` (3) by execution - 3,000 seeded Rare blades never drawing Vampiric Effect and drawing
+Pinned: `test/systems/bal7_loot.test.js` (3) by execution - 3,000 seeded Rare blades never drawing Vampiric Effect and drawing
 every other weapon flavour, a piece that drew it lawful, the Cleaver's record; a line and a gem healing 10 of 100;
 Hist-Sap's round at 61 and 42 of 100; Open Hand's 20 again for 10, a 1 for 1, a weapon's for nothing.
 `tools/mutants/bal7.json` (6). PIN MOVED: `loot5_powers` (Hist-Sap's 62 and 44 are 61 and 42, Open Hand's 7 is 4) and
@@ -716,7 +716,7 @@ RECORDED, NOT CHANGED:
   x0.8 at a Mithril foe). The arena's blow table has no row for its template 560 (a bare hand's cap, 122, where its own
   would be ~96) - harmless at its numbers.
 
-Pinned: `test/bal8_pvp.test.js` (3) - the ceiling by execution (two blows reach 180, the third lands nothing, the
+Pinned: `test/net/siege/bal8_pvp.test.js` (3) - the ceiling by execution (two blows reach 180, the third lands nothing, the
 window slides at 5 s to the millisecond, casts and a blow sharing it, INT10's three still its own, a heal no harm, a
 fighter without the field); one referee for the three lanes and the arena's two doors by source.
 `tools/mutants/bal8.json` (7). PIN MOVED: `tools/mutants/pvpref.json`'s five clipping records, re-aimed by content; the
@@ -873,7 +873,7 @@ owner made the call above): each pays in its own dimension by this section's law
 foe, never in a refereed fight, so the referee's heal ceiling (INT10's 40) is not reached. The bullet stood in the list
 above until AUDIT SCHOOLS (L5) moved it out: a change is no "recorded, not changed".
 
-Pinned: `test/bal9_destruction.test.js` (6) by execution - through the real cast engine's two landing doors (the
+Pinned: `test/systems/bal9_destruction.test.js` (6) by execution - through the real cast engine's two landing doors (the
 Lich's tier 135 noted, a cast at 120 weighing 1.125, a rat's never under the quarter, an ally's and a peer's strike
 spell nothing, a foe's spell on me its caster); through the real applySpell on a chargen'd mage mastered online and off
 (x1, x1.17, x1.4; a damage over time's round; nothing offline, at a player's stand-in, from a peer's or a foe's cast, on a

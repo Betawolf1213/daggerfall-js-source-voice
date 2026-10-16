@@ -465,5 +465,5 @@ export const yardPoints = (kind) => (kind === 'transport'
 /** SHIPYARDS (2026-10-11): THE YARDS' FACE KIT, ONE DOOR - world/shipyardModel.js and world/lighthouseModel.js build the
  *  port's places with it (the faces, a face's UVs, a hexahedron, a box, a post, a fence run, a floor, a lean-to, a
  *  signboard, a wheel, a drum, and assemble under an archive). One object, so no helper's name is declared twice across
- *  the port's modules (test/audit24_onehome.test.js). */
+ *  the port's modules (test/systems/talk/audit24_onehome.test.js). */
 export const YARD_MESH_KIT = Object.freeze({ faces, uvOf, hexa, box, post, fenceRun, floor, leanTo, signboard, wheel, drum, assemble });

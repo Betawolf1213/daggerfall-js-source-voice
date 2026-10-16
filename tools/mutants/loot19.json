@@ -5,7 +5,7 @@
     "old": "export const SCRY_PRICE = Object.freeze({ shards: 3, gold: 500 });",
     "new": "export const SCRY_PRICE = Object.freeze({ shards: 2, gold: 400 });",
     "tests": [
-      "test/loot19_scry.test.js"
+      "test/systems/loot19_scry.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "DUNGEON_FAMILY.flatMap((f, i) => (f === family ? [i] : []));",
     "new": "DUNGEON_FAMILY.flatMap((f, i) => (f !== family ? [i] : []));",
     "tests": [
-      "test/loot19_scry.test.js"
+      "test/systems/loot19_scry.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "  return w.length > 1 ? `${w.slice(0, -1).join(', ')} and ${w[w.length - 1]}` : (w[0] ?? '');",
     "new": "  return w.join(', ');",
     "tests": [
-      "test/loot19_scry.test.js"
+      "test/systems/loot19_scry.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "    mapId: row.mapId, discovered: !!row.discovered, dungeonType: row.dungeonType,",
     "new": "    mapId: row.mapId, discovered: false, dungeonType: row.dungeonType,",
     "tests": [
-      "test/loot19_scry.test.js"
+      "test/systems/loot19_scry.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "    ...longitudeLatitudeToMapPixel(row.longitude, row.latitude),\n",
     "new": "    x: 0, y: 0,\n",
     "tests": [
-      "test/loot19_scry.test.js"
+      "test/systems/loot19_scry.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "    if (!kinds.includes(r?.dungeonType) || r.discovered || hasDiscoveredLocationId(r.mapId)) continue;",
     "new": "    if (r?.dungeonType === 255 || r.discovered || hasDiscoveredLocationId(r.mapId)) continue;",
     "tests": [
-      "test/loot19_scry.test.js"
+      "test/systems/loot19_scry.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "    if (!kinds.includes(r?.dungeonType) || r.discovered || hasDiscoveredLocationId(r.mapId)) continue;",
     "new": "    if (!kinds.includes(r?.dungeonType) || hasDiscoveredLocationId(r.mapId)) continue;",
     "tests": [
-      "test/loot19_scry.test.js"
+      "test/systems/loot19_scry.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "    if (!kinds.includes(r?.dungeonType) || r.discovered || hasDiscoveredLocationId(r.mapId)) continue;",
     "new": "    if (!kinds.includes(r?.dungeonType) || r.discovered) continue;",
     "tests": [
-      "test/loot19_scry.test.js"
+      "test/systems/loot19_scry.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "    if (d < bestD || (d === bestD && r.mapId < best.mapId)) { best = r; bestD = d; }",
     "new": "    if (best == null || d > bestD) { best = r; bestD = d; }",
     "tests": [
-      "test/loot19_scry.test.js"
+      "test/systems/loot19_scry.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "    if (d < bestD || (d === bestD && r.mapId < best.mapId)) { best = r; bestD = d; }",
     "new": "    if (d < bestD || (d === bestD && r.mapId > best.mapId)) { best = r; bestD = d; }",
     "tests": [
-      "test/loot19_scry.test.js"
+      "test/systems/loot19_scry.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "  if (!lootRarityOn()) return 'off';\n  if (!SCRY_FAMILIES.includes(family)) return 'family';",
     "new": "  if (!SCRY_FAMILIES.includes(family)) return 'family';",
     "tests": [
-      "test/loot19_scry.test.js"
+      "test/systems/loot19_scry.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "  if (!SCRY_FAMILIES.includes(family)) return 'family';\n",
     "new": "",
     "tests": [
-      "test/loot19_scry.test.js"
+      "test/systems/loot19_scry.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "  if (!where?.at || !Array.isArray(where.rows) || !where.rows.length) return 'nowhere';",
     "new": "  if (!where?.at || !Array.isArray(where.rows)) return 'nowhere';",
     "tests": [
-      "test/loot19_scry.test.js"
+      "test/systems/loot19_scry.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "  if (!nearestHidden(where.rows, family, where.at)) return 'none';\n",
     "new": "",
     "tests": [
-      "test/loot19_scry.test.js"
+      "test/systems/loot19_scry.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "  if (shardsHeld(player?.items) < SCRY_PRICE.shards) return 'shards';\n",
     "new": "",
     "tests": [
-      "test/loot19_scry.test.js"
+      "test/systems/loot19_scry.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "  if (totalGoldAmount(player) < SCRY_PRICE.gold) return 'gold';\n",
     "new": "",
     "tests": [
-      "test/loot19_scry.test.js"
+      "test/systems/loot19_scry.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "  spendShards(player.items, SCRY_PRICE.shards);\n",
     "new": "",
     "tests": [
-      "test/loot19_scry.test.js"
+      "test/systems/loot19_scry.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "  deductGold(player, SCRY_PRICE.gold);\n",
     "new": "",
     "tests": [
-      "test/loot19_scry.test.js"
+      "test/systems/loot19_scry.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "  discoverLocation(place.mapId, { regionName: place.regionName, locationName: place.name });\n",
     "new": "",
     "tests": [
-      "test/loot19_scry.test.js"
+      "test/systems/loot19_scry.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "old": "    if (page === 'scry') { renderScry(payer, have); return; }   // LOOT19\n",
     "new": "",
     "tests": [
-      "test/loot19_scry.test.js"
+      "test/systems/loot19_scry.test.js"
     ]
   },
   {
@@ -185,8 +185,8 @@
     "old": "export const REFORGE_GUILD_PAGES = Object.freeze(['reforge', 'salvage', 'imprint', 'codex', 'scry', 'sockets']);",
     "new": "export const REFORGE_GUILD_PAGES = Object.freeze(['reforge', 'salvage', 'imprint', 'codex', 'sockets']);",
     "tests": [
-      "test/loot10_codex.test.js",
-      "test/loot19_scry.test.js"
+      "test/systems/loot10_codex.test.js",
+      "test/systems/loot19_scry.test.js"
     ]
   },
   {
@@ -195,7 +195,7 @@
     "old": "      if (why) refusePress(btn, REFORGE_REFUSALS[why] ?? '', refused);   // MENU-ORDER: pressed, it says why\n      row.append(text, el('span', 'broker-price', reforgePriceText(SCRY_PRICE)), btn);",
     "new": "      row.append(text, el('span', 'broker-price', reforgePriceText(SCRY_PRICE)), btn);",
     "tests": [
-      "test/loot19_scry.test.js"
+      "test/systems/loot19_scry.test.js"
     ]
   },
   {
@@ -204,7 +204,7 @@
     "old": "        const done = deps.scry?.(f) ?? { ok: false, reason: 'nowhere' };",
     "new": "        const done = { ok: false, reason: 'nowhere' };",
     "tests": [
-      "test/loot19_scry.test.js"
+      "test/systems/loot19_scry.test.js"
     ]
   },
   {
@@ -213,7 +213,7 @@
     "old": "  if (why === 'none') return 'None hidden';   // LOOT19\n",
     "new": "",
     "tests": [
-      "test/loot19_scry.test.js"
+      "test/systems/loot19_scry.test.js"
     ]
   },
   {
@@ -222,7 +222,7 @@
     "old": "    if (kin && pages.includes('scry') && SCRY_FAMILIES.includes(kin)) {",
     "new": "    if (kin && SCRY_FAMILIES.includes(kin)) {",
     "tests": [
-      "test/loot19_scry.test.js"
+      "test/systems/loot19_scry.test.js"
     ]
   },
   {
@@ -231,7 +231,7 @@
     "old": "      go.onclick = (e) => { e.stopPropagation(); page = 'scry'; scryKin = kin; note = null; render(); };",
     "new": "      go.onclick = (e) => { e.stopPropagation(); page = 'scry'; note = null; render(); };",
     "tests": [
-      "test/loot19_scry.test.js"
+      "test/systems/loot19_scry.test.js"
     ]
   },
   {
@@ -240,7 +240,7 @@
     "old": "      scry: (family) => { const done = scryPlace(playerEntity, family, host.scryWhere?.() ?? null); if (done.ok) surfacePlayer(); return done; },   // LOOT19: the scryers\n",
     "new": "",
     "tests": [
-      "test/loot19_scry.test.js"
+      "test/systems/loot19_scry.test.js"
     ]
   },
   {
@@ -249,7 +249,7 @@
     "old": "    scryWhere,   // LOOT19: the guild's scryers read this host's region\n",
     "new": "",
     "tests": [
-      "test/loot19_scry.test.js"
+      "test/systems/loot19_scry.test.js"
     ]
   }
 ]

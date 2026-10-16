@@ -36,9 +36,9 @@ briefly shared a name.
 `F4` and `F5` by number **37 times across 14 files** - `src/world/terrain/terrainGenClient.js:"rides his data too."`,
 `src/world/terrain/terrainGenWorker.js:"rides his data on"`, `src/world/terrain/terrainHelper.js:"AUDIT 58 F4 — TERRAINHELPER'S"`,
 `src/world/roadsCache.js:"for the height CONTENT"`, `src/scenes/world.js:"import { buildMapDict"`,
-`src/formats/woodsFile.js:"AUDIT 58 F4: write"`, `test/modsettings.test.js`,
-`test/audit58_terrainhelper.test.js`, `test/ledger.test.js:"Ledger cites the gamepad note at inputActions.js:${cite"`,
-`test/citedrift.test.js`, `Port-Ledger.md:82-83`, `Testing.md` - and
+`src/formats/woodsFile.js:"AUDIT 58 F4: write"`, `test/world/terrain/modsettings.test.js`,
+`test/formats/audit58_terrainhelper.test.js`, `test/systems/ledger.test.js:"Ledger cites the gamepad note at inputActions.js:${cite"`,
+`test/scenes/citedrift.test.js`, `Port-Ledger.md:82-83`, `Testing.md` - and
 there is no F1 or F2 anywhere. That is the collision fossilised: the
 first lane minted its numbers as a CONTINUATION of main's Audit-54.md
 F1-F2 (the two grass uniforms nothing reads, and `textScale`). The
@@ -354,7 +354,7 @@ Road-to-1:1 campaign audit, which is `Audit-53.md`. **Home.md's index
 listed `Audit-48.md` twice under two unrelated audits**, and `Audit-49.md`
 carried a byte-identical copy of `Audit-53.md`'s description, so the
 campaign had two entries and the lab-grass audit's real subject had none -
-which is now pinned: `test/audit18_bible_docs.test.js`'s "names every
+which is now pinned: `test/bible/audit18_bible_docs.test.js`'s "names every
 record" test asserts **one entry per record**, the other half of a law
 that a duplicate had always satisfied. Port-Status stated three different
 open-flag remainders on one page, in a paragraph that forbids exactly
@@ -493,7 +493,7 @@ BOOKS 10000->5 alias pinned on two of its four readers, and
 `chooseEnemyWeapon`'s tie-break; and two records - eight `src` files
 declaring a RECORDED DEPARTURE that Port-Ledger section A does not row
 (the doctrine gate satisfied vacuously), and Home.md's Active-arcs index
-missing the live Enhanced Environments arc. Both lanes landed after this record was written: the eight laws are pinned in `test/audit58_pins2.test.js` (squashed as 1bd7c60, 27 mutants driven, 27 dead), and the seams lane (242d2f8) shipped the talk listbox's "...never mind..." repair through `_repairCaptions` in `src/ui/native/nativeTalk.js`, eight owed section A rows (Port-Ledger section A stands at 77 rows, 70 standing) with a second-tier doctrine gate that resolves a RECORDED-departure claim against a row naming the file, and the Enhanced Environments arc's index row with a pin over every `*-Arc.md` in the bible.
+missing the live Enhanced Environments arc. Both lanes landed after this record was written: the eight laws are pinned in `test/systems/audit58_pins2.test.js` (squashed as 1bd7c60, 27 mutants driven, 27 dead), and the seams lane (242d2f8) shipped the talk listbox's "...never mind..." repair through `_repairCaptions` in `src/ui/native/nativeTalk.js`, eight owed section A rows (Port-Ledger section A stands at 77 rows, 70 standing) with a second-tier doctrine gate that resolves a RECORDED-departure claim against a row naming the file, and the Enhanced Environments arc's index row with a pin over every `*-Arc.md` in the bible.
 
 Left, deliberately, each recorded at its site or here:
 
@@ -512,7 +512,7 @@ Left, deliberately, each recorded at its site or here:
   `_makeEnemiesHostile`, `exterior.js`'s (whose hand-spelled quest-door
   join was lifted to `_liveEnemyDatabase`, so its two arms cannot walk
   different databases), and `worldModes.js`'s `interiorEnemyDatabase`.
-  Pinned RUNNING against the live pool in `test/roadg_pools.test.js`.
+  Pinned RUNNING against the live pool in `test/scenes/roadg_pools.test.js`.
   **G1's review closed the arm the lane missed**: an ARROW reaches a pool
   through two seams, and only `dealDamage` (inside `arrowFlight`'s own
   `dmg > 0` fork) had been wired - the unconditional `onAttackFromPlayer`
@@ -576,8 +576,8 @@ Left, deliberately, each recorded at its site or here:
   (`GameObjectHelper.cs:812-828`, written onto the container at
   :697-698) - the Wave G review-fix closed that arm's one loot kind, and
   made the pins behind both halves of this row behavioural. Pinned by
-  `test/road_g5_dropicons.test.js` (18) and four new tests in
-  `test/bankpreview.test.js`; 53 mutants driven, 53 dead.
+  `test/systems/road_g5_dropicons.test.js` (18) and four new tests in
+  `test/ui/bankpreview.test.js`; 53 mutants driven, 53 dead.
   Recorded in `bible/10-UI/UI-Arc.md`.
 - Roughly two dozen stale `exterior.js:NNN` citations across `src/`
   comments, bible pages and test headers, already stale before Wave F

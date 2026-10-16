@@ -13,7 +13,7 @@ repository's own tags, headless Chromium over the launcher page, and 49
 mutants of lane 5's own (all 49 survived the suites as they stood).
 
 Every finding a lane VERIFIED was fixed at its root and pinned - in
-`test/audit_install.test.js` or beside the slice it belongs to (da8,
+`test/tooling/audit_install.test.js` or beside the slice it belongs to (da8,
 da9, da10, rel4, autoupdate, updatecheck), with
 `tools/mutants/auditinstall.json` (71, all dead) and the slices' own
 lists re-aimed by content. SUSPECTED findings are fixed where the fix
@@ -325,7 +325,7 @@ in Chromium and in the real Electron window (E).
 One P1 in the code (R2-B1, round 1's own fix) and one in the merge
 instructions (R2-C6); P2s in lanes B to E, and lane A's all P3. Every
 VERIFIED finding was fixed at its root and pinned - in
-`test/audit_install2.test.js` (25 tests) or restated beside the slice it
+`test/tooling/audit_install2.test.js` (25 tests) or restated beside the slice it
 belongs to - with `tools/mutants/auditinstall2.json` (123, all dead: lane
 E's surviving mutants among them) and 29 round-1 records re-aimed by
 content at the code that replaced theirs. Findings are R2-<lane><n>; where
@@ -344,7 +344,7 @@ two lanes found one thing, one number holds it and the other points there.
   argument instead (a `.cmd` shim), Windows would have shipped as 0.1.0
   and never updated again. The stamp runs in bash, and a law reads every
   workflow as GitHub does: a script that reads a variable names its shell
-  wherever a leg can be Windows. `test/updatecheck.test.js` had pinned
+  wherever a leg can be Windows. `test/tooling/updatecheck.test.js` had pinned
   the broken line as right.
 - **R2-B4 (P2): softprops/action-gh-release was still a tag that can
   move** - in the one job with `contents: write`, publishing unsigned

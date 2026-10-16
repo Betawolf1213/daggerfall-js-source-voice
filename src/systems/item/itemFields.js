@@ -29,7 +29,7 @@
 //
 // WHAT DECLARES A FIELD. Every field the port's own mints write
 // (loot.js's factories, books, potions, gold, the classic importer,
-// equip, repair, loot rarity) is here; test/rf5_itemfields.test.js
+// equip, repair, loot rarity) is here; test/systems/rf5_itemfields.test.js
 // runs the mints and pins that no undeclared key appears.
 
 import { GROUP_TEMPLATE_INDICES } from './itemTemplatesData.js';

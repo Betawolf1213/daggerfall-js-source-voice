@@ -155,10 +155,10 @@ session, whose rooms they are; the fixed city plays offline.
 
 | File | Tests | Mutants |
 |---|---|---|
-| `test/auditscale2_acct.test.js` - the account service, its doors, the load harness | 11 | `auditscale2_acct.json` 42, all dead |
-| `test/auditscale2_bus.test.js` - the bus and its shards, a court and its copies | 12 | `auditscale2_bus.json` 45: 44 dead, 1 equivalent as recorded (a gate word handed up as parsed: parseClient writes every frame `t` first) |
-| `test/auditscale2_client.test.js` - the client | 13 | `auditscale2_client.json` 38, all dead |
-| `test/auditscale2_relay.test.js` - SCALE5b's and SCALE5d's relay halves | 12 | `auditscale2_relay.json` 44, all dead |
+| `test/server/auditscale2_acct.test.js` - the account service, its doors, the load harness | 11 | `auditscale2_acct.json` 42, all dead |
+| `test/net/auditscale2_bus.test.js` - the bus and its shards, a court and its copies | 12 | `auditscale2_bus.json` 45: 44 dead, 1 equivalent as recorded (a gate word handed up as parsed: parseClient writes every frame `t` first) |
+| `test/net/auditscale2_client.test.js` - the client | 13 | `auditscale2_client.json` 38, all dead |
+| `test/net/auditscale2_relay.test.js` - SCALE5b's and SCALE5d's relay halves | 12 | `auditscale2_relay.json` 44, all dead |
 
 Every fix's pin was red on a scratch copy of `e729cea7`, but the number pins (D-8's) and D-7's, which hold laws that
 already held - each proven by its mutants instead. PIN MOVED, each a pin that read a line a fix moved: scale5c (a woken

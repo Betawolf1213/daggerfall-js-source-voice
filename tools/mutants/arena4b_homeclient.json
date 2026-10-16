@@ -5,7 +5,7 @@
     "old": "return arenaHouseFor(o, (summaries ?? []).filter((s) => homeCandidate(s) && s.hasInterior !== false), opts);",
     "new": "return arenaHouseFor(o, summaries, opts);",
     "tests": [
-      "test/arena4b_homeclient.test.js"
+      "test/systems/arena/arena4b_homeclient.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "if (d?.to) { m = moveOf(d); empty(m, d.repeat !== true); } },",
     "new": "if (d?.to) { m = moveOf(d); } },",
     "tests": [
-      "test/arena4b_homeclient.test.js"
+      "test/systems/arena/arena4b_homeclient.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "if (d?.to) { m = moveOf(d); empty(m, d.repeat !== true); } },",
     "new": "if (d?.to) { m = moveOf(d); empty(m, true); } },",
     "tests": [
-      "test/arena4b_homeclient.test.js"
+      "test/systems/arena/arena4b_homeclient.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "((h.mine && h.character === character) || (h.hall && h.keeper))",
     "new": "(h.mine || (h.hall && h.keeper))",
     "tests": [
-      "test/arena4b_homeclient.test.js"
+      "test/systems/arena/arena4b_homeclient.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "    empty(m, false);\n",
     "new": "    empty(m, true);\n",
     "tests": [
-      "test/arena4b_homeclient.test.js"
+      "test/systems/arena/arena4b_homeclient.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "if (credit && !m.hall && m.refund > 0) hooks.credit?.(m.refund);",
     "new": "if (credit && m.refund > 0) hooks.credit?.(m.refund);",
     "tests": [
-      "test/arena4b_homeclient.test.js"
+      "test/systems/arena/arena4b_homeclient.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "hooks.discover?.(m.to, m.hall);",
     "new": "hooks.discover?.(m.to, false);",
     "tests": [
-      "test/arena4b_homeclient.test.js"
+      "test/systems/arena/arena4b_homeclient.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "      held.add(to.buildingKey);\n",
     "new": "\n",
     "tests": [
-      "test/arena4b_homeclient.test.js"
+      "test/systems/arena/arena4b_homeclient.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "    hooks.notice?.(m.hall ? ARENA_TEXT.homeMove.hallMoved : ARENA_TEXT.deedMoved);\n",
     "new": "\n",
     "tests": [
-      "test/arena4b_homeclient.test.js"
+      "test/systems/arena/arena4b_homeclient.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "checkpointLanded(await hooks.checkpoint?.())) await api.arenaSeen(mapId, m.from);",
     "new": "checkpointLanded(await hooks.checkpoint?.())) void m;",
     "tests": [
-      "test/arena4b_homeclient.test.js"
+      "test/systems/arena/arena4b_homeclient.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "if (checkpointLanded(await hooks.checkpoint?.())) await api.arenaSeen(mapId, m.from);",
     "new": "await hooks.checkpoint?.(); await api.arenaSeen(mapId, m.from);",
     "tests": [
-      "test/arena4b_homeclient.test.js"
+      "test/systems/arena/arena4b_homeclient.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "(rentAnchorOf(x?.anchor) || (x?.moved === true && x.anchor == null))",
     "new": "rentAnchorOf(x?.anchor)",
     "tests": [
-      "test/arena4b_homeclient.test.js"
+      "test/systems/arena/arena4b_homeclient.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "!used.has(x.room) && Array.isArray(x.anchor) && roomOf(",
     "new": "!used.has(x.room) && roomOf(",
     "tests": [
-      "test/arena4b_homeclient.test.js"
+      "test/systems/arena/arena4b_homeclient.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "      void moveArenaHomesOnline();   // ARENA4b",
     "new": "      // ARENA4b",
     "tests": [
-      "test/arena4b_homeclient.test.js"
+      "test/systems/arena/arena4b_homeclient.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "          checkpoint: () => onlineCheckpointLanded(),   // the emptied scene in the save before the move is said read - AUDIT PRE-MERGE 1003 O10: the realm's answer to its put, not the hand-over\n",
     "new": "",
     "tests": [
-      "test/arena4b_homeclient.test.js"
+      "test/systems/arena/arena4b_homeclient.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "arenaSeen: (mapId, from) => post('/v1/homes/arena-seen', { mapId, from }),",
     "new": "arenaSeen: (mapId, from) => post('/v1/homes/arena-moves', { mapId, from }),",
     "tests": [
-      "test/arena4b_homeclient.test.js"
+      "test/systems/arena/arena4b_homeclient.test.js"
     ]
   }
 ]

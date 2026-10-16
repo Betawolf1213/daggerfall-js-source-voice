@@ -24,7 +24,7 @@ for the finding's reason, and mutation-proven: `tools/mutants/audit0929_terms.js
 ## Fixed
 
 **TERMS1** (`.github/workflows/account-deploy.yml`, `.github/workflows/deploy.yml`, `server-account/src/accounts.js`,
-`src/net/accountClient.js`, `src/ui/enhanced/enhancedAccount.js`; the pins in `test/audit0929_terms.test.js`)
+`src/net/accountClient.js`, `src/ui/enhanced/enhancedAccount.js`; the pins in `test/server/audit0929_terms.test.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
@@ -35,8 +35,8 @@ for the finding's reason, and mutation-proven: `tools/mutants/audit0929_terms.js
 | T4 | low | Two comments said what the code does not: the route table's `POST /v1/auth/guest { label? }` (that body is refused), and legalLaw.js's "a relative link would open nothing" in the desktop app (it opens the bundled copy in a window of the app). | Corrected; the absolute URL stays, for the live text. |
 
 **DISC29 A and B** (`src/world/actionSystem.js`, `src/player/collider.js`, `src/scenes/dungeonContext.js`,
-`src/player/motor.js`, `src/systems/save/save.js`; the pins in `test/audit0929_actions.test.js`, `test/disc29_throne.test.js`,
-`test/disc29_rarity.test.js`)
+`src/player/motor.js`, `src/systems/save/save.js`; the pins in `test/player/audit0929_actions.test.js`, `test/world/disc29_throne.test.js`,
+`test/systems/disc29_rarity.test.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
@@ -45,7 +45,7 @@ for the finding's reason, and mutation-proven: `tools/mutants/audit0929_terms.js
 | D3 | low | The load's rarity-name repair (and DISC21-A's condition repair beside it) walked the pack, the wagon and the repairer's alone: a piece kept in a house chest, a dropped pile, a dead foe's pack or a boat's hold loaded with the name its make had lost, and kept it once carried out. | One walk: every list of the character's own things the save carries (`net/realm/realmGoldLaw.js stashedItemLists`, customs' own), repaired in the save before the scene cache is restored from it and before the world and the mods' data go back to their hosts. |
 
 **DISC29-E** (`src/render/shadowPass.js`, `src/render/renderer.js`, `src/render/contract.js`; the pins in
-`test/disc29_lamps.test.js`, `test/lightnear1.test.js`, `test/hard3_types.test.js`)
+`test/render/disc29_lamps.test.js`, `test/render/lightnear1.test.js`, `test/systems/save/hard3_types.test.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
@@ -54,8 +54,8 @@ for the finding's reason, and mutation-proven: `tools/mutants/audit0929_terms.js
 | E3 | low | The card's two lamps were ranked among the eight nearest the EYE: with the camera 4 m or more away (the setting runs to 10) the lamps nearest a still player were often not casters, and his silhouette still hopped as the camera circled (MAGEAA00: 12 of 39 spots at 6 m). | The two casting lights nearest the card, by the pick's own measure and DISC6's hold, are made casters (`reserveSelfCasters`), each in place of the eye's farthest pick. |
 
 **SWING-LAW** (`src/player/eyeOfTheBeholder/eotbBody.js`, `src/combat/weapon/weaponRig.js`, `src/combat/swingLaw.js`, `src/systems/roleplayRealism/rrRealism.js`,
-`src/systems/roleplayRealism/rrInstall.js`, `src/characters/weaponStates.js`; the pins in `test/audit0929_swing.test.js`,
-`test/rr1_realism.test.js`, `test/swinglaw.test.js`, `test/disc28_speed.test.js`)
+`src/systems/roleplayRealism/rrInstall.js`, `src/characters/weaponStates.js`; the pins in `test/systems/audit0929_swing.test.js`,
+`test/systems/rr1_realism.test.js`, `test/systems/swinglaw.test.js`, `test/combat/disc28_speed.test.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
@@ -66,8 +66,8 @@ for the finding's reason, and mutation-proven: `tools/mutants/audit0929_terms.js
 | S2, S4 | low | The handling table said "Dagger (and the tanto)" (DFU draws the tanto as a long blade) and that a staff "sweeps a little quicker" (every staff is two-handed: quicker than the other two-handers, not than a sword); the record's saber row gave 0.83 s mods off at Strength 50 (0.92 there - 0.83 from 56 up), and the PR's warhammer row left out the Strength. | The words corrected. |
 
 **WB8** (`src/net/gate/gateBrain.js`, `src/net/gate/gateMods.js`, `src/net/wire.js`, `src/net/gate/gateLink.js`, `src/scenes/gate/gateCourt.js`,
-`src/ui/gate/gateBossBar.js`, `src/systems/gate/gateOmen.js`, `src/net/gate/gateLaw.js`; the pins in `test/audit0929_gate.test.js`,
-`test/wb8b_gate_marks.test.js`, `test/wb8c_gate_detail.test.js`)
+`src/ui/gate/gateBossBar.js`, `src/systems/gate/gateOmen.js`, `src/net/gate/gateLaw.js`; the pins in `test/net/gate/audit0929_gate.test.js`,
+`test/net/gate/wb8b_gate_marks.test.js`, `test/net/gate/wb8c_gate_detail.test.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
@@ -78,7 +78,7 @@ for the finding's reason, and mutation-proven: `tools/mutants/audit0929_terms.js
 | W2-3 | low | A feeding heard late was said, and growled, whenever an earlier one had been heard this entry - "first of the entry" stood in for "stale". | Judged by its age alone (`FED_LATE_MS`). |
 | W1-4 | low | "Every four gates bring all four aspects and all eight trials" is true of each ROUND (gates 4k to 4k+3), not of any four running (and could not be of 112 different sets); "a pair comes back every 28 gates" - 25 is the least. | The words corrected. |
 
-**The merges** (`test/relayversion.test.js`, `src/net/wire.js`, fourteen version pins, `bible/06-Systems/Online-Arc.md`,
+**The merges** (`test/net/relayversion.test.js`, `src/net/wire.js`, fourteen version pins, `bible/06-Systems/Online-Arc.md`,
 `server-account/src/service.js`)
 
 | ID | Sev | Finding | Fix |
@@ -95,13 +95,13 @@ no feature commit explains are the renumbered migration, the account suites tick
 With every lens's fix in, the whole suite and a re-run of every committed mutant record on a file the audit changed
 (2,264 records) found what the lenses had not:
 
-- **S6** (above): `test/weaponrig.test.js`'s silent drag went silent in the wrong place - the swing law's reader had
+- **S6** (above): `test/combat/weapon/weaponrig.test.js`'s silent drag went silent in the wrong place - the swing law's reader had
   grown an equip table on the rig's bare body, and the unsheathe lost its sound.
 - D2's press first rode a second argument at the dungeon lanes' two `motionBagOf` calls, and five older pins of the
   one motion bag (WW1, WW2, MW-D39, PX26 F4) failed: they hold that every host reads the bag as `motionBagOf(player)`,
   so no host can hand the rig a partial one. They were right about the home. The yaw is the motor's own word now
   (`moveYaw`, written beside moveForward and moveStrafe as it moves), the bag carries it, and every host call is
-  `motionBagOf(player)` again - no host can forget it. `test/disc21.test.js` reads the load's one walk (D3), and runs it
+  `motionBagOf(player)` again - no host can forget it. `test/systems/disc21.test.js` reads the load's one walk (D3), and runs it
   now, over a house chest's dagger.
 - Of the 2,264 records, 2,226 died and 17 stand equivalent as recorded. Nineteen no longer applied - the audit had moved
   their source - and were re-aimed by content, each at its law where it now stands. Two survived.
@@ -109,7 +109,7 @@ With every lens's fix in, the whole suite and a re-run of every committed mutant
   out of the lo tier - and is recorded so; the clause stays, DISC24-C's law said where the class is decided.
   `MWCROUCH-the-levitate-descent-takes-the-EDGE` survives on main too: its pin asked only whether a host read the held
   crouch anywhere, and dungeon.js and worldModes.js feed two descents (the motor's and Deep Waters' swim's). It holds
-  every one now (`test/mwcrouch_edges.test.js`).
+  every one now (`test/player/mwcrouch_edges.test.js`).
 - The 19 re-aimed, the equivalence, MWCROUCH's and the 45 whose tests the whole suite had first caught red (their
   verdicts then said nothing) were judged again on a green baseline: 64 dead, the one equivalent standing.
 - `tools/accountProbe.mjs` (`npm run account`, the Worker in a real workerd) still asked the bare request for

@@ -55,7 +55,7 @@ under nothing, no price is under the best haggler's, P0.4's buy-back law holds f
 nothing moves - no seller or buyer at 0 to 100 sees a different price. It is the reporter's hard cap, placed where the
 formula ends: the only shape that keeps P0.4 and "no skill lowers a sale" together, because any slope past 100 in the
 ask would pull the half down for everyone. Offline, DFU's reads stand (For Mac, below).
-`test/fb0929f_mercantile.test.js` (3; all three fail on the code before it), `tools/mutants/fb0929f_mercantile.json`
+`test/systems/fb0929f_mercantile.test.js` (3; all three fail on the code before it), `tools/mutants/fb0929f_mercantile.json`
 (10, 10 dead). MERC-RISE's third pin flipped: a seller lifted past 100 is held to half of what the counter asks them
 ONLINE, which reads 100 there, where it was held to half of Daggerfall's own ask, a price under nothing by 234 - and
 its mutant list lost the two records whose reference followed that lift and re-aimed two at the fixed reference (4, 4
@@ -75,7 +75,7 @@ Skill haggles too. It reaches play wherever a player sets the mod's fare scaling
 Climates & Calories; the dials are the player's own online, `ONLINE_PLAYERS_OWN_MODS`), through both maps and a party's
 fare (`travelFareDeps`); online MERC-CAP reads the skill no further than 100. Offline it is the mod's own call over
 DFU's unbounded read, so past 233 a scaled fare bills under nothing, as a room does - which the stat read never could;
-it goes to Mac with the rest (For Mac). `test/fb0929f_tofare.test.js` (2; both fail on the code before it),
+it goes to Mac with the rest (For Mac). `test/systems/fb0929f_tofare.test.js` (2; both fail on the code before it),
 `tools/mutants/fb0929f_tofare.json` (2, 2 dead). Five line cites into `travelPopUp.js` moved with it
 (`tools/citeShift.mjs`). `06-Systems/Travel-Options.md` TO-FARE.
 
@@ -94,7 +94,7 @@ the ceiling, the best haggler's, and the skills move a sale under it.
 
 ## Ported, not this batch's
 
-- **`test/tv6_dungeons.test.js`'s walk pin was red on main.** TO-ROADS gave `travelViewWalkTo` a third option
+- **`test/systems/travel/tv6_dungeons.test.js`'s walk pin was red on main.** TO-ROADS gave `travelViewWalkTo` a third option
   (`roads = false`), and AUDIT OW4 D1/D6's pin still lifted the function by its two-option signature ("the walk, with
   its one option"). The one-line re-aim LIVED1 (#442) and SPAWN-SHORE (#441) both carry was ported here, byte for byte;
   SPAWN-SHORE has since landed it on main, and the merge took it clean.

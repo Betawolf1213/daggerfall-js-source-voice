@@ -115,7 +115,7 @@ export const commissionFilledBy = (c, piece) => !!piece && piece.recipe === c.re
  * WHAT EACH GUILD RANK MAY DO OF PROF6'S (the ranks that may - GUILD1's ranks, 0 the Guildmaster, 1 an Officer): post a
  * guild writ (an Officer within the week's budget, 11), set the Officers' budget, withdraw from the guild Stores (7 -
  * any member deposits, GUILD1's own `deposit`). Kept here, not in guildLaw.js's GUILD_POWERS: the relay bundles
- * guildLaw.js (SLAM13, test/relayversion.test.js), and powers it never reads must not move its law.
+ * guildLaw.js (SLAM13, test/net/relayversion.test.js), and powers it never reads must not move its law.
  */
 export const WRIT_POWERS = Object.freeze({
   postWrit: Object.freeze([0, 1]),

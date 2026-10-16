@@ -17,7 +17,7 @@ import { trs, multiply } from '../src/world/mat4.js';
 import { transformedAabb, localAabb } from '../src/render/frustum.js';
 import { modelFootRects, footRectsAt } from '../src/scenes/homeYards.js';
 
-/** The distantland fake woods (test/terrainworker.test.js's): the kernel's three-method surface. */
+/** The distantland fake woods (test/world/terrain/terrainworker.test.js's): the kernel's three-method surface. */
 export const fakeWoods = {
   getHeightMapValuesRange1Dim(mx, my, d) {
     const a = new Float32Array(d * d);

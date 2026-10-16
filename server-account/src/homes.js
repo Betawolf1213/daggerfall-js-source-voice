@@ -578,7 +578,7 @@ export async function homeLayoutsKept(ctx) {
 // never opens again and the new key's is any house's.
 
 /** Every column of a home's row the move carries to the new key, beside the key itself and the hall's guild (set after
- *  the old row goes) - pinned against the table's own columns (test/arena4b_homes.test.js), so a column added to `homes`
+ *  the old row goes) - pinned against the table's own columns (test/net/arena4b_homes.test.js), so a column added to `homes`
  *  later is carried or the pin says why not. */
 export const HOME_MOVE_CARRIED = Object.freeze(['player', 'char_id', 'owner_name', 'region', 'entry', 'price', 'bought_at', 'paid', 'rent_due', 'look', 'layout', 'deed']);   // FIELD BUGS 2026-10-04d KNIGHT-HOUSE: a deed's hold stays one (none stands in the cell: holdDeed refuses it)
 /** The most moves one read of a character's lists. */

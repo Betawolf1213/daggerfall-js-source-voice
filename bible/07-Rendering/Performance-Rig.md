@@ -100,7 +100,7 @@ it was.
 
 ## What is pinned, and what deliberately is not
 
-`test/perfrig1.test.js` (7): the skin loop bit-identical to the old
+`test/formats/morrowind/perfrig1.test.js` (7): the skin loop bit-identical to the old
 loop at several poses and across repeated calls; the accumulators the
 batch's, zeroed, and the second call constructing nothing sized to the
 mesh (a typed-array constructor count, which is how the 156 KB was
@@ -236,7 +236,7 @@ pieces, so the probe's milliseconds understate a retail body by an
 order of magnitude and are not reported as a saving; the counts are
 exact and the skin is what PERF-RIG1 costed.
 
-**Pinned** in test/peercadence.test.js (7): the cadence's rows and its
+**Pinned** in test/net/peer/peercadence.test.js (7): the cadence's rows and its
 inclusive edges; PeerBodies stepping a stub rig every frame and posing
 near ones every frame and far ones one in three, evenly; the first step
 of a standing body posed whatever its phase; three bodies at one
@@ -405,7 +405,7 @@ the first fill. The fixture rig is four small pieces, so the probe reports
 counts, not milliseconds - and a retail body's skin is PERF-RIG1's ~0.3 ms
 at 3,000 vertices and more clothed, its build seconds.
 
-**Pinned** in `test/wb9h_crowd_bodies.test.js` (7): the view's sides off
+**Pinned** in `test/net/peer/wb9h_crowd_bodies.test.js` (7): the view's sides off
 the game's own mirrored lens; a body behind the eye neither drawn nor
 skinned while its clocks run, one just past the edge skinned inside the
 margin and not drawn, and one the view swings onto posed at no dt with
@@ -436,7 +436,7 @@ was kept (`_keepSpare` now keeps the spare a hand-over is for); a queued
 build read its peer's look when the queue reached it, keyed on the look
 asked for (it is built from the look its key names); and a concealed peer
 who took a spare was drawn open for its first frame (its veil is set as it
-stands). Pinned in `test/audit_wb9.test.js`; mutants in
+stands). Pinned in `test/net/gate/audit_wb9.test.js`; mutants in
 `tools/mutants/audit_wb9.json`.
 
 **Still open.** The sprite render is still one a SEEN body a frame (the
@@ -450,7 +450,7 @@ still a long task on the main thread when it comes.
 "Culling performance issues when using the morrowind model and around a large
 group of players." Read on the code after WB9h (no GPU here to measure): the
 crowd's skins were budgeted, but four costs were left, each fixed with the
-picture unchanged (`test/fb1001_mwcrowd.test.js`, `tools/mutants/fb1001_mwcrowd.json`):
+picture unchanged (`test/net/peer/fb1001_mwcrowd.test.js`, `tools/mutants/fb1001_mwcrowd.json`):
 
 - THE TURN. The skins are decided on the last body pass's view with
   CULL_MARGIN_M (2 m), about 11 degrees of lead at 10 m - and a body the view
@@ -538,7 +538,7 @@ world frame's `frame()`, and nothing closed it until the next world
 frame's first mark - the rAF wait counted as `air`. (`?perf=cpu` folded the
 menu frame's resolve into the world frames' `air` mean the same way.) The
 mark is a world frame's only now - `_perfOpen`, AUDIT 68 S16's flag -
-pinned in `test/auditretro2.test.js`.
+pinned in `test/ui/auditretro2.test.js`.
 
 ## GROUND-LAST - the ground is drawn after the meshes (2026-09-21)
 
@@ -657,7 +657,7 @@ court's braziers flicker its light - so keeping it would change what it looks li
 drawn and their size on the screen, and nothing in it is drawn for nothing. NOT SEEN: the classic class sprite and the
 paperdoll (they need ARENA2), the name layer and the auras (not drawn by the probe), and any of this on a GPU.
 
-Pinned: `test/fb1013e_aoeperf.test.js` (4) - his mark's quad holds every fragment the shader draws for it at four
+Pinned: `test/net/gate/fb1013e_aoeperf.test.js` (4) - his mark's quad holds every fragment the shader draws for it at four
 pixel sizes under each term of its reach and is a third of the box it was; a path's strip, as the vertex stage lays it,
 holds every fragment the shader draws for it, the pass laying it on the walkways' quad and putting the court's back;
 every other shape keeps TELEGRAPH_REACH; and the count at a fighter's eye at 960x540 and 1920x1080 (the AoE frame under
@@ -689,6 +689,6 @@ which no shader reads while it holds it. LIGHT-ID (`07-Rendering/Enhanced-Lighti
 by its producer's record: his glow moving draws its cube whole, straight into its layers (six faces, no copy, the same
 casters), and a light in the twelve draws no lo map - the landing's worst lo frame is the session's first landing
 growing the lo array, now the lamps past the twelve alone. The flashes stand still, so their cubes are what they were.
-`test/lightid.test.js` pins the walk's and the landing's counts both ways. On SwiftShader the pass was a few per cent of
+`test/render/lightid.test.js` pins the walk's and the landing's counts both ways. On SwiftShader the pass was a few per cent of
 the court's frame (the lit court dominates there); on a GPU it is framebuffer switches and the bodies' corners, not
 measured here.

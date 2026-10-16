@@ -5,7 +5,7 @@
     "old": "if (ATTRS.includes(k)) put(`pct.${k}`, v);",
     "new": "if (ATTRS.includes(k)) put(`pct.${k}`, v * 2);",
     "tests": [
-      "test/firm2_balance.test.js"
+      "test/net/firmament/firm2_balance.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "else if (k.startsWith('skill.')) put(`skillPct.${k.slice(6)}`, v);",
     "new": "else if (k.startsWith('skill.')) put(`skillPct.${k.slice(6)}`, v * 2);",
     "tests": [
-      "test/firm2_balance.test.js"
+      "test/net/firmament/firm2_balance.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "K(\"Night Mother's Embrace\", { unawareDmg: 19,",
     "new": "K(\"Night Mother's Embrace\", { unawareDmg: 30,",
     "tests": [
-      "test/firm2_balance.test.js"
+      "test/net/firmament/firm2_balance.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "K('Merchant Prince', { 'skill.Mercantile': 11,",
     "new": "K('Merchant Prince', { 'skill.Mercantile': 20,",
     "tests": [
-      "test/firm2_balance.test.js"
+      "test/net/firmament/firm2_balance.test.js"
     ]
   }
 ]

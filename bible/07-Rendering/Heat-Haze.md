@@ -34,7 +34,7 @@ frame.
 THE NOISE IS THE MOD'S OWN: `System.Random(1212701233)`'s NextDouble in turn,
 an 8 x 8 lattice smoothstepped to 64 x 64 in single precision and rounded
 banker's-way as `Mathf.RoundToInt` - its SHA-256 is the mod's own C#'s,
-compiled under .NET 8 (`test/haze1_heatHaze.test.js`).
+compiled under .NET 8 (`test/systems/haze1_heatHaze.test.js`).
 
 THE SHADER, LINE FOR LINE (`vendor/heat-haze/shaders/HeatHaze.glsl`): the fade
 by the ring's own height (`(|y| - 25) / 45`, smoothstepped, discarded at the
@@ -90,4 +90,4 @@ Online the haze is the player's own (`systems/online/onlineLane.js`
 
 ## Pins
 
-`test/haze1_heatHaze.test.js` (9); `tools/mutants/haze1.json` (25, all dead).
+`test/systems/haze1_heatHaze.test.js` (9); `tools/mutants/haze1.json` (25, all dead).

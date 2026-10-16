@@ -825,7 +825,7 @@ export function visibleRangeBounds(ranges, out, skip = null) {
  *  diagonal, so a longsword pointing at the viewer, or a bow's stave,
  *  widened the picture past its 110:184 cell, and object-fit shrank the
  *  body in it (bare 0.943 of the cell, longsword 0.891, long bow 0.774
- *  on the pin's stand-in, test/prbow1b_followups.test.js).
+ *  on the pin's stand-in, test/formats/morrowind/prbow1b_followups.test.js).
  *
  *  THE WINDOW IS WHAT IS DRAWN, AT THE YAW ASKED - the tight box of every
  *  range the portrait SHOWS (the body, the held weapon, the lit torch,
@@ -3144,7 +3144,7 @@ const FOLLOW_CAMERA_KEY = 'dagger.mwArmsFollowCamera3';
 /** WW1: a screen-space transform over the arms' composite, or null - set per frame by the rig from the weapon widget. */
 let screenTransform = null;
 // DA1: through the storage seam, not localStorage directly - the pin
-// in test/filestorage.test.js caught this landing bare on the merge,
+// in test/systems/save/filestorage.test.js caught this landing bare on the merge,
 // which would have split the toggle out of the desktop app's file
 // store (the seam's whole reason). First firing of that pin, one
 // merge after it was written.

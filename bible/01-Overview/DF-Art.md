@@ -108,7 +108,7 @@ judged on contact sheets: each painted picture beside its looked one, and real r
 
 ## Pinned
 
-- `test/dflook.test.js` (8): with no palette, painted as painted; every opaque texel a palette colour, never index 0's;
+- `test/world/dflook.test.js` (8): with no palette, painted as painted; every opaque texel a palette colour, never index 0's;
   alpha untouched; the grain bounded, deterministic, its seed's own and clumped; hue above light; the port rows' shape;
   the pipeline's hand-over; every door.
 - **The windows:**

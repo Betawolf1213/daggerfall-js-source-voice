@@ -31,7 +31,7 @@ import { windowEmissionRGB } from './render/windowEmission.js';
 // routes - and the pins that hold them (classicstart, hard2s, macn) -
 // read as before. The hosts carry no import-time side effects (nothing
 // at their top level runs), so evaluating them later changes nothing
-// but WHEN. test/boot1.test.js walks this file's static graph and holds
+// but WHEN. test/scenes/boot1.test.js walks this file's static graph and holds
 // that no host is on it, transitively - a pin on the regex alone would
 // pass the day something else on the entry imported a host for us.
 const bootExterior = (...a) => import('./scenes/exterior.js').then((m) => m.bootExterior(...a));
@@ -374,7 +374,7 @@ const rememberReload = () => {
 // BOOT1: NO DOCUMENT, NO BOOT. This entry loads in node now - the four
 // hosts were the static imports that used to reject it at link time
 // (world.js's import.meta.glob), and with those behind doors the body
-// below RUNS under test/moduleload_smoke.test.js. boot() then reached
+// below RUNS under test/tree/moduleload_smoke.test.js. boot() then reached
 // for `document`, rejected, and its own catch reached for `document`
 // again to report it - an unhandled rejection after the test ended,
 // for a page that does not exist. A runtime with no document has

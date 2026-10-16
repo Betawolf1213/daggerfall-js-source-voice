@@ -984,7 +984,7 @@ normalise - one cross product a triangle, NEGATED on a MIRRORED piece because ru
 13's X negation reverses the winding and the left arm would light
 inside-out (rule 13's rendering consequence, which MW8 also lacked); a
 posed vertex normal was mirrored with its vertex and takes no flip. Pins
-`test/mwsmooth.test.js`, `tools/mutants/mwsmooth.json`.
+`test/formats/morrowind/mwsmooth.test.js`, `tools/mutants/mwsmooth.json`.
 
 THE PORT MAPPER IS RETIRED (MW-D10), AND RULE 54 IS THE PLACEMENT. The
 mapper solved a uniform scale from the arm's clip bounds, pushed it a
@@ -1027,7 +1027,7 @@ static plausible arm; and Unload returns the classic sprite.
 WHAT THE PROBE CANNOT SEE, stated rather than implied: it does not boot
 the game, because that needs ARENA2 and the player's own Daggerfall data.
 weaponRig's branch, the four hosts' camera dep and the card are pinned in
-node (test/fparm.test.js, test/mwattach.test.js, test/enhancedMenu.test.js)
+node (test/formats/morrowind/fparm.test.js, test/scenes/mwattach.test.js, test/systems/enhancedMenu.test.js)
 and proven by Mac in play. Three mutation campaigns back them: 12/12 on
 the wiring pins, 6/8 on the probe layers, 24/24 inherited from MW-D7.
 
@@ -1173,7 +1173,7 @@ nothing could see them.
 
 Original status line: reference only. No code in this tree implements this yet - the
 first import arc was reverted whole on 2026-08-28 (see the R7 guard in
-test/enhancedMenu.test.js). This file exists so a second attempt starts
+test/systems/enhancedMenu.test.js). This file exists so a second attempt starts
 from what the engine ACTUALLY does instead of from what seemed
 reasonable.
 
@@ -6438,7 +6438,7 @@ note), so nothing moves. Which strike is Morrowind's own direction is
 a one-name table if the chair says it is the other way round; no data
 here to film it.
 
-**Pinned (test/reversedSwing.test.js).** The table and its one name;
+**Pinned (test/combat/reversedSwing.test.js).** The table and its one name;
 attackKeys reversed is the sections in reverse order with each pair in
 file order and a shot never; through a real build on the weapon
 fixture a StrikeRight begins its wind-up at the follow-through's end
@@ -6468,7 +6468,7 @@ the hidden-node search (MW-D49), the shoot keys and the floor at the
 draw (rule 24, MW-D42), the hidden range in both draws, and the
 classic bow's gesture reaching attack() through fpAttack for both the
 instant shot and the held draw. No divergence found; every step is
-pinned on the fixtures (test/mwarrow.test.js). "Offset" is not it.
+pinned on the fixtures (test/formats/morrowind/mwarrow.test.js). "Offset" is not it.
 
 **What CAN empty the bow on retail data, and now does not.** The
 weapon records come from EVERY .esm attached (the load order) and the
@@ -6500,7 +6500,7 @@ arrow, says why ONCE on the console: `[mw] the bow carries no arrow -
 <the card's arrow notes>`. If Mac's bow is still empty after this,
 that line is the next report.
 
-**Pinned (test/arrowPick.test.js).** The pick prefers a present mesh,
+**Pinned (test/combat/arrowPick.test.js).** The pick prefers a present mesh,
 keeps the old pick when none is present, still answers null for a type
 with no record; the preload and the read agree through one directory;
 a real build with an expansion arrow first in the .esm and only the
@@ -6538,7 +6538,7 @@ which is what it was drawn at before.
 **Not ported:** every other part's controllers (the lower body's clock, `mAnimationTimePtr[0]`), the head's
 (`mHeadAnimationTime`), and releaseArrow's launch point - the projectile leaves from DFU's GetAimPosition, not the
 ammunition node's world position. Not seen on a retail bow: pinned on `test/fixtures/mw/bowClip.mjs`, a fixture bow
-that carries both controllers (`test/mwbow1.test.js`; `tools/mutants/mwbow1.json`).
+that carries both controllers (`test/formats/morrowind/mwbow1.test.js`; `tools/mutants/mwbow1.json`).
 `01-Overview/Field-Bugs-2026-10-09g.md`.
 
 ## MW-D51 (2026-09-16): the held torch
@@ -6630,7 +6630,7 @@ HT-WAIST-NET); a lantern or candle is the classic lane's still; the torch's own 
 and colour) is not the rig's - the player torch's light already moves
 with the hand law.
 
-**Pinned (test/mwtorch.test.js, test/mwload_records.test.js).** The
+**Pinned (test/combat/mwtorch.test.js, test/formats/morrowind/mwload_records.test.js).** The
 LIGH reader and its place in the one pass; the pick's four rules; the
 resolve's four refusals and its part; rule 25's walk on a hand-built
 skeleton; the overlay's three answers; the fast path on the fixture
@@ -6670,7 +6670,7 @@ person stands up for the length of an attack or an equip and crouches
 again after. Rule 26 whole is still the recorded gap; MW-D51's one
 mask is the first step toward it, not the last.
 
-**Pinned (test/mwtorch.test.js).** The four terms of idleBaseFor; the
+**Pinned (test/combat/mwtorch.test.js).** The four terms of idleBaseFor; the
 fixture rig's stance reaching refreshIdle (no sneak idle in the
 fixture .kf: the plain idle, as hasAnimation's miss); the refresh
 reading the state and rolling no dice for the sneak base.
@@ -6811,7 +6811,7 @@ untouched.
 
 Not seen in a browser: no Morrowind data in this container, and the cut
 needs the widget's shift over a raised blade. The lens law is pinned
-numerically (`test/macr_fixes.test.js`) and the draw by source; MW-D10
+numerically (`test/ui/enhanced/macr_fixes.test.js`) and the draw by source; MW-D10
 and MW-D23's projection pins re-aimed. Mutants in
 `tools/mutants/macr.json`.
 
@@ -6869,7 +6869,7 @@ the arm three pixels at a time where the paste slides it.
 
 Not seen in a browser: there is no Morrowind data here.
 
-- `test/disc13.test.js` pins it through the real arm on the MW fixtures:
+- `test/systems/disc13.test.js` pins it through the real arm on the MW fixtures:
   - the four screen edges under synthetic shifts, a scale, a drop
     (MAC-R1's case) and a rise;
   - the real widget walking, running, backing up and strafing, with and
@@ -6877,7 +6877,7 @@ Not seen in a browser: there is no Morrowind data here.
   - a half-pixel shift that moves the composite half a pixel and renders
     the same frame;
   - the frame's size, and 4K coverage.
-- `test/macr_fixes.test.js` pins the rows above the top and the rest case.
+- `test/ui/enhanced/macr_fixes.test.js` pins the rows above the top and the rest case.
 - Mutants are in `tools/mutants/disc13.json`. MAC-R1's three pad records
   are re-aimed by content in `tools/mutants/macr.json`.
 ## MAP3 (2026-09-18): the held sheet - the first hand-authored pose
@@ -6949,8 +6949,8 @@ re-places the sheet on the live arm (a PARTIAL spec changes only what it
 names - the pose in force is the base); `window.__heldPose()` reads it
 back. The pose Mac lands on becomes the shipped default.
 
-Pins: `test/map3_heldpose.test.js` (16) on the real fixture rig
-headless; `test/heldmap.test.js` MAP3 (4); `tools/mutants/map3.json` 39
+Pins: `test/combat/map3_heldpose.test.js` (16) on the real fixture rig
+headless; `test/ui/heldmap.test.js` MAP3 (4); `tools/mutants/map3.json` 39
 dead; a MAP3 layer in `tools/mwArmProbe.mjs`.
 
 **AUDIT-MAP2 (the same day) corrected four things above.** (1) The
@@ -7013,7 +7013,7 @@ Slot_CarriedLeft at the Shield Bone (MW-D51) - so every number is the port's own
   same door - `PeerBodies._arm` hands the rig `!!shown.hl` each frame - and swings it off that body's own stub camera.
   They still HOLD no light (MW-D51's "Recorded, not faked"): this one is in no hand. Handheld-Torches.md HT-WAIST.
 
-Pins: `test/htwaist_mwbody.test.js` - the pick and the resolve; the hang over the vendored retail-shaped skeleton (the
+Pins: `test/combat/htwaist_mwbody.test.js` - the pick and the resolve; the hang over the vendored retail-shaped skeleton (the
 top at the hook on the right hip, plumb under a twisted pelvis, the swing tipping it about the hook, a flame placed by
 the same hang); and a whole `createFpArm()` rig on the fixture body with a pelvis joined through the WS1 bone-addon
 door (a tiny addon NIF written by the pin): built with it, shown through a readied spell, hidden when put out, lit
@@ -7038,7 +7038,7 @@ moves an empty hand in use to the other when it holds a weapon
 (`combat/playerWeapon.js` followHeldHand), and H moves only between two
 held weapons - to an empty hand it is refused without a line, as the
 shield's refusal is. Bare hands stay bare, and a shield is no weapon. The
-classic lane keeps ToggleHand whole. `test/mwhand.test.js`,
+classic lane keeps ToggleHand whole. `test/combat/mwhand.test.js`,
 `tools/mutants/mwhand.json`.
 
 ## DECLARED DIVERGENCE (BEAST-SELF, 2026-09-26): the arm stands aside for the beast
@@ -7066,7 +7066,7 @@ falls back to the first, as it does for any refused body.
 
 Not done: a Morrowind vampire's head (the vampire flag the body-part
 reader drops) - Daggerfall's vampire changes the face alone, which the
-classic HUD and paper doll already wear. `test/beastself.test.js`,
+classic HUD and paper doll already wear. `test/player/beastself.test.js`,
 `tools/mutants/beastself.json`.
 
 SHADOW-FANG (the merge with WEREWOLF1, 2026-09-26): the rig DOES hold one
@@ -7082,7 +7082,7 @@ person and its body in third. A change of form is so two edges (into the
 sprite lane at the change, back when the new form lands), each carried
 by the camera as above; with Eye Of The Beholder off, a third-person
 player falls to the first at the change and stays there. Pinned in
-`test/werewolf1.test.js` (the merge's test), `tools/mutants/werewolf1.json`
+`test/net/peer/werewolf1.test.js` (the merge's test), `tools/mutants/werewolf1.json`
 (the `WEREWOLF1-MERGE-*` rows).
 
 ## DECLARED DIVERGENCE (MW-PACE1, 2026-10-07): a blow paced by Daggerfall's machine
@@ -7118,14 +7118,14 @@ blow with no schedule. A peer's body has no Speed on the wire, but its
 swing count arrives a blow at a time: the burst's shortest gap paces its
 blows (`net/peer/peerBodies.js` peerBlowPace - a pause only lengthens a gap; a
 gap past 2.2 s ends the burst, whose first blow keeps the record's pace),
-its hit two fifths in. `test/mwpace1.test.js`, `tools/mutants/mwpace1.json`
+its hit two fifths in. `test/combat/mwpace1.test.js`, `tools/mutants/mwpace1.json`
 (10, all dead). Ledger A (MW-PACE1).
 
 ## MW-CAST1 (2026-10-07): the cast, played
 
 Mac: *"We need to implement morrowind spell casting effects and
 animations"*. MW-D39 gave the arm a spellcast stance and a cast, and none
-of it reached the screen. Four faults, each pinned in `test/mwcast1.test.js`
+of it reached the screen. Four faults, each pinned in `test/combat/mwcast1.test.js`
 (6) on an arm whose clips carry the spellcast group
 (`test/fixtures/mw/castClip.mjs` - armfpweapon.kf written back by
 `tools/nifWrite.mjs` with the group appended):
@@ -7225,7 +7225,7 @@ Not carried, recorded on the modules: lighting past the white ambient,
 AutoPlay's frame clock, roll/path/look-at/morph controllers, sorting, the
 bolt's light, a looping hit (ContinuousVfx), an actor's facing,
 VFX_Multiple's dummies, and the creatures' and other players' VFX_Hands.
-`test/mwspellfx1.test.js` (16), `test/mwload_records.test.js` (the
+`test/formats/morrowind/mwspellfx1.test.js` (16), `test/formats/morrowind/mwload_records.test.js` (the
 records), `tools/mutants/mwspellfx1.json` (38, all dead).
 
 ## DECLARED DIVERGENCE (CAST-SPEED, 2026-10-08): one cast clock, both lanes
@@ -7272,8 +7272,8 @@ have casting speed a new rarity affix along with scaling with speed"*.
   pass moved all the same: a jewel's proc pool was empty before it, a
   weapon's one narrower, so a seeded hoard holding such a piece rolls on
   from a moved stream; CAST-SPEED-PINS re-aimed the serpent hoard pins
-  that found this, `test/serpent1_client.test.js` and
-  `test/serpentset.test.js`): "+N% casting
+  that found this, `test/systems/serpent1_client.test.js` and
+  `test/systems/serpentset.test.js`): "+N% casting
   speed" on jewellery and weapons, 3-6 / 6-10 / 10-15, worth 60 a point,
   suffix words *of Quickening*, *of Alacrity*, *of the Swift Hand*.
   `systems/loot/lootPowers.js` lootCastSpeed sums every worn line, the weapons
@@ -7291,5 +7291,5 @@ have casting speed a new rarity affix along with scaling with speed"*.
   and not its rate, so another player's copy of my arm plays it at 1. That
   is only how it looks.
 
-`test/castspeed.test.js` (5), `test/hostmagic.test.js` (the tail gate),
+`test/systems/castspeed.test.js` (5), `test/systems/hostmagic.test.js` (the tail gate),
 `tools/mutants/castspeed.json` (17, all dead).

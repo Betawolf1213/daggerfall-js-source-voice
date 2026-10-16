@@ -142,7 +142,7 @@ Brass Remnant drops it, and thirty pellets to hear it toll - after every draw th
 with it).
 
 
-`test/gilded1_gilded.test.js` - the rung, the record, the mint, a static roll, no door alters it, the drop, the power
+`test/systems/gilded1_gilded.test.js` - the rung, the record, the mint, a static roll, no door alters it, the drop, the power
 (the toll and the pellet back), the look, the art and the gold in the hand (a sketch of the idle frame: a glove at the
 foot, the brass above, a glove-hued crevice that touches nothing). Its mutants, `tools/mutants/gilded1.json`: 24, all
 dead. The ladder's own enumerations moved with it, each saying so: LR1, SET6, PI1, WB5, RF5, LOOT9 (the salvage's
@@ -261,9 +261,9 @@ listed in their make's own art; a gilding of the classic frames at load (the met
 ramp - `combat/fpsWeapon.js` `frameToColor32`'s dye seam) and of the Morrowind meshes is the next slice's, to be looked
 at against the player's own data.
 
-**The pins.** `test/gilded2_world.test.js` (8) - the records, the mint, the drops, the floor's pictures, Dragonfire (a
+**The pins.** `test/systems/gilded2_world.test.js` (8) - the records, the mint, the drops, the floor's pictures, Dragonfire (a
 relay body's burn owed, a warded blow nothing), Undertow (the window, a heal for each foe one swing fells) and the look;
-`test/auditcards5_ui.test.js` the Collections page's rows. `tools/mutants/gilded2.json`: 25, all dead (the law's version,
+`test/systems/auditcards5_ui.test.js` the Collections page's rows. `tools/mutants/gilded2.json`: 25, all dead (the law's version,
 the audit's own among them). GILDED1's own pins that read one record moved (`gilded1_gilded.test.js`'s record and codex,
 `loot10_codex.test.js`'s count), and GILDED1's mutant on the Hourlock's first line was re-aimed by content (its first
 three lines, which the Oath's and the Sovereign's first lines share in part).

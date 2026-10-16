@@ -14,7 +14,7 @@
 // this door: the enhanced window and its host element are ui/enhanced/enhancedRest.js's (`openEnhancedRest`), where the
 // generic arms the hosts' frames drive (done, input, click, wheel, hover, tick, draw, dispose) are assigned onto
 // the ONE object every caller reads its `.state`/`.session` off - an object built here and handed in would have to
-// be that same object, and test/partyrest1.test.js holds those arms on the view instead.
+// be that same object, and test/scenes/partyrest1.test.js holds those arms on the view instead.
 //
 // THE PX28 STACK. The enhanced window registers itself on ui/enhanced/enhancedOverlays.js's stack on open (so Escape and
 // the chat's own open-key law see it) and `dispose` is wrapped to unregister it - enhancedRest.js's own close()

@@ -34,7 +34,7 @@ export const LAYOUT_MODS = Object.freeze(['beautiful-villages', 'beautiful-citie
  * name (layoutsMatch) - true while each mod ships one version. A pack of another version may move buildings, and every
  * stamped house, room, site and home would name another one with nothing to say so: updating a vendored pack is a
  * layout migration (records stamped with the old version re-keyed, or their towns kept in the old pack), and
- * test/wd3_layoutPins.test.js holds the vendored packs to these versions until one is written.
+ * test/systems/wd3_layoutPins.test.js holds the vendored packs to these versions until one is written.
  */
 export const LAYOUT_MOD_VERSIONS = Object.freeze({ 'beautiful-villages': '1.4.2', 'beautiful-cities': '0.5.0' });
 

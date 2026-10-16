@@ -40,7 +40,7 @@
 // and drawn as themselves) and the Arena's tiers (182.48 and 184.6 among
 // its seated crowd) drew the figures whatever the setting said. A rule
 // each new host has to remember is a rule the next one forgets, so the
-// source is swept (test/nudedecor.test.js): every file that batches a
+// source is swept (test/scenes/nudedecor.test.js): every file that batches a
 // billboard is named there - one that draws a person asks drawnFlat, any
 // other says why it draws none.
 

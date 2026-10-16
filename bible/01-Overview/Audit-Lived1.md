@@ -25,7 +25,7 @@ is an hour; a rested hour is 0.45 real seconds; SURV7's grace is one world day, 
 
 ## Fixed
 
-Every finding was reproduced against the frozen tree before it was fixed, pinned in `test/auditlived1.test.js` by a
+Every finding was reproduced against the frozen tree before it was fixed, pinned in `test/systems/auditlived1.test.js` by a
 test that fails on the unfixed tree for the finding's reason, and mutation-proven: `tools/mutants/auditlived1.json`,
 67 records, all dead (and the 34 older ones it re-aimed or leaned on - `lived1.json` whole and eight re-aimed by content - re-run: all dead). Each fix carries an `AUDIT LIVED1 <ID>` comment. A finding more than one lane found carries every ID.
 

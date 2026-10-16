@@ -5,7 +5,7 @@
   "old": "  if (!withParty || resterAlone || exempt || dead) return null;",
   "new": "  if (!withParty || resterAlone || dead) return null;",
   "tests": [
-   "test/auditrestparty.test.js"
+   "test/systems/rest/auditrestparty.test.js"
   ]
  },
  {
@@ -14,7 +14,7 @@
   "old": "  if (!withParty || resterAlone || exempt || dead) return null;",
   "new": "  if (!withParty || resterAlone || exempt) return null;",
   "tests": [
-   "test/auditrestparty.test.js"
+   "test/systems/rest/auditrestparty.test.js"
   ]
  },
  {
@@ -23,7 +23,7 @@
   "old": "  if (!withParty || resterAlone || exempt || dead) return null;",
   "new": "  if (!withParty || exempt || dead) return null;",
   "tests": [
-   "test/auditrestparty.test.js"
+   "test/systems/rest/auditrestparty.test.js"
   ]
  },
  {
@@ -32,7 +32,7 @@
   "old": "  if (!near) return here ? 'far' : null;",
   "new": "  if (!near) return 'far';",
   "tests": [
-   "test/auditrestparty.test.js"
+   "test/systems/rest/auditrestparty.test.js"
   ]
  },
  {
@@ -41,7 +41,7 @@
   "old": "  if (!near) return here ? 'far' : null;",
   "new": "  if (!near) return null;",
   "tests": [
-   "test/auditrestparty.test.js"
+   "test/systems/rest/auditrestparty.test.js"
   ]
  },
  {
@@ -50,7 +50,7 @@
   "old": "  if (typeof busy === 'function' ? busy() : busy) return 'busy';",
   "new": "  if (false) return 'busy';",
   "tests": [
-   "test/auditrestparty.test.js"
+   "test/systems/rest/auditrestparty.test.js"
   ],
   "note": "AUDIT REST II (PIN MOVED): carriedNightAction asks the town's law after the rest gate (P4); re-aimed by content."
  },
@@ -60,7 +60,7 @@
   "old": "  if (typeof busy === 'function' ? busy() : busy) return 'busy';",
   "new": "  if (busy === true) return 'busy';",
   "tests": [
-   "test/auditrestparty.test.js"
+   "test/systems/rest/auditrestparty.test.js"
   ],
   "note": "AUDIT REST II (PIN MOVED): carriedNightAction asks the town's law after the rest gate (P4); re-aimed by content."
  },
@@ -70,8 +70,8 @@
   "old": "      if (!rec) { marks.set(acct, { high: at, answered: -Infinity }); return false; }",
   "new": "      if (!rec) { marks.set(acct, { high: -Infinity, answered: -Infinity }); return this.moved(acct, posed, at, now, isNight); }",
   "tests": [
-   "test/auditrestparty.test.js",
-   "test/auditrest2_party.test.js"
+   "test/systems/rest/auditrestparty.test.js",
+   "test/systems/auditrest2_party.test.js"
   ],
   "note": "AUDIT REST II (PIN MOVED): the first sight's baseline is the night watch's (partyRestLaw.js createNightWatch) - nightMoved's own guard was redundant once it read over the mark (no stamp stands over an unset one); re-aimed by content."
  },
@@ -81,7 +81,7 @@
   "old": "  return !!at && at > high && now - at <= freshMs && !!(typeof isNight === 'function' ? isNight(at) : isNight);",
   "new": "  return !!at && at > high && now - at <= freshMs;",
   "tests": [
-   "test/auditrestparty.test.js"
+   "test/systems/rest/auditrestparty.test.js"
   ],
   "note": "AUDIT REST II (PIN MOVED): nightMoved reads over the high-water mark and asks the mark lazily; re-aimed by content."
  },
@@ -91,7 +91,7 @@
   "old": "  return t > o ? theirs : own;",
   "new": "  return own;",
   "tests": [
-   "test/auditrestparty.test.js"
+   "test/systems/rest/auditrestparty.test.js"
   ]
  },
  {
@@ -100,7 +100,7 @@
   "old": "  return t > o ? theirs : own;",
   "new": "  return t < o ? theirs : own;",
   "tests": [
-   "test/auditrestparty.test.js"
+   "test/systems/rest/auditrestparty.test.js"
   ]
  },
  {
@@ -109,7 +109,7 @@
   "old": "typeof k === 'string' && Object.hasOwn(KIND_RANK, k) ? ",
   "new": "typeof k === 'string' && k in KIND_RANK ? ",
   "tests": [
-   "test/auditrestparty.test.js"
+   "test/systems/rest/auditrestparty.test.js"
   ]
  },
  {
@@ -118,7 +118,7 @@
   "old": "export const nightStamp = (t, kind = REST_KIND.Camp) => Math.floor(t / 1000) * 1000 + markOf(kind);",
   "new": "export const nightStamp = (t, kind = REST_KIND.Camp) => Math.floor(t / 1000) * 1000 + markOf(REST_KIND.Camp);",
   "tests": [
-   "test/auditrestparty.test.js"
+   "test/systems/rest/auditrestparty.test.js"
   ]
  },
  {
@@ -127,7 +127,7 @@
   "old": "  for (const kind of NIGHT_KINDS) if (PARTY_NIGHT_MARKS[kind] === ms) return kind;",
   "new": "  for (const kind of NIGHT_KINDS) if (PARTY_NIGHT_MARKS[kind] === ms) return REST_KIND.Camp;",
   "tests": [
-   "test/auditrestparty.test.js"
+   "test/systems/rest/auditrestparty.test.js"
   ],
   "note": "AUDIT REST II (PIN MOVED): nightKindOf reads a frozen key array (P5); re-aimed by content."
  },
@@ -137,7 +137,7 @@
   "old": "      if (!carried) heardNight(spot);",
   "new": "      if (!carried) heardNight(restKind());",
   "tests": [
-   "test/auditrestparty.test.js"
+   "test/systems/rest/auditrestparty.test.js"
   ]
  },
  {
@@ -146,7 +146,7 @@
   "old": "  out.placeKind = () => restKind();",
   "new": "  out.placeKind = () => REST_KIND.Rough;",
   "tests": [
-   "test/auditrestparty.test.js"
+   "test/systems/rest/auditrestparty.test.js"
   ]
  },
  {
@@ -155,8 +155,8 @@
   "old": "      if (kind) _restKindOverride = () => kind;",
   "new": "      if (kind) void kind;",
   "tests": [
-   "test/auditrestparty.test.js",
-   "test/rest5_partynight.test.js"
+   "test/systems/rest/auditrestparty.test.js",
+   "test/systems/rest5_partynight.test.js"
   ],
   "note": "CAMP-ROLL (PIN MOVED): the carried night's sequence is the bag's one (scenes/shared.js restCampNight); re-aimed by content."
  },
@@ -166,8 +166,8 @@
   "old": "exempt: !!modes?.insidePartyRestExempt, dead,",
   "new": "exempt: false, dead,",
   "tests": [
-   "test/auditrestparty.test.js",
-   "test/rest5_partynight.test.js"
+   "test/systems/rest/auditrestparty.test.js",
+   "test/systems/rest5_partynight.test.js"
   ]
  },
  {
@@ -176,8 +176,8 @@
   "old": "    if (!social?.party || modes?.insidePartyRestExempt || !restTogether() || sharedClockOn()) { _partyRestVoteLastReady = null;",
   "new": "    if (!social?.party || modes?.insidePartyRestExempt || !restTogether()) { _partyRestVoteLastReady = null;",
   "tests": [
-   "test/auditrestparty.test.js",
-   "test/restopt.test.js"
+   "test/systems/rest/auditrestparty.test.js",
+   "test/systems/party/restopt.test.js"
   ]
  },
  {
@@ -186,8 +186,8 @@
   "old": "      if (dungeonCtx) { if (load) dungeonCtx.camps?.dropOwn?.(); else carried = dungeonCtx.camps?.packOwnFires?.({ quiet: true }) ?? 0; }",
   "new": "      if (dungeonCtx) { carried = dungeonCtx.camps?.packOwnFires?.({ quiet: true }) ?? 0; }",
   "tests": [
-   "test/auditrestparty_camps.test.js",
-   "test/auditrest2_camps.test.js"
+   "test/systems/survival/auditrestparty_camps.test.js",
+   "test/systems/auditrest2_camps.test.js"
   ],
   "note": "AUDIT REST II H1 (PIN MOVED): the arm reads the load's own flag, not cacheScene"
  },
@@ -197,7 +197,7 @@
   "old": "    const carried = dungeonCtx.camps?.packOwnFires?.({ quiet: true }) ?? 0;   // AUDIT REST-PARTY B3",
   "new": "    const carried = 0;   // AUDIT REST-PARTY B3",
   "tests": [
-   "test/auditrestparty_camps.test.js"
+   "test/systems/survival/auditrestparty_camps.test.js"
   ]
  },
  {
@@ -206,7 +206,7 @@
   "old": "    const tended = c.rec.kind === CAMP_KIND.Tent || (c.rec.kind === CAMP_KIND.Fire && !!c.rec.fuel);",
   "new": "    const tended = c.rec.kind === CAMP_KIND.Tent;",
   "tests": [
-   "test/auditrestparty_camps.test.js"
+   "test/systems/survival/auditrestparty_camps.test.js"
   ]
  },
  {
@@ -215,7 +215,7 @@
   "old": "      if (c.owner == null || alive.has(c.owner) || c.rec.kind",
   "new": "      if (c.owner == null || c.rec.kind",
   "tests": [
-   "test/auditrestparty_camps.test.js"
+   "test/systems/survival/auditrestparty_camps.test.js"
   ]
  },
  {
@@ -224,7 +224,7 @@
   "old": "c.rec.kind !== CAMP_KIND.Fire || fireLit(c.rec, t)) continue;",
   "new": "c.rec.kind !== CAMP_KIND.Fire) continue;",
   "tests": [
-   "test/auditrestparty_camps.test.js"
+   "test/systems/survival/auditrestparty_camps.test.js"
   ]
  },
  {
@@ -233,7 +233,7 @@
   "old": "    if (peers) camps.sweepColdAbsent(new Set(peers.map((q) => q?.id)));\n  }",
   "new": "  }",
   "tests": [
-   "test/auditrestparty_camps.test.js"
+   "test/systems/survival/auditrestparty_camps.test.js"
   ],
   "note": "AUDIT REST II (PIN MOVED): F9 moved the frame's sweep into sweepColdPeers (once a second, while a peer's camp stands); re-aimed by content at the same call - the room never swept."
  },
@@ -243,7 +243,7 @@
   "old": "  if (!restItemsOnline()) {",
   "new": "  if (false) {",
   "tests": [
-   "test/auditrestparty_camps.test.js"
+   "test/systems/survival/auditrestparty_camps.test.js"
   ]
  },
  {
@@ -252,7 +252,7 @@
   "old": "  const h = (item, list, ctx) => (restItemsShut() ? { kind: 'text', text: REST_ITEM_TEXT.notOnline } : fn(item, list, ctx));",
   "new": "  const h = (item, list, ctx) => fn(item, list, ctx);",
   "tests": [
-   "test/auditrestparty_camps.test.js"
+   "test/systems/survival/auditrestparty_camps.test.js"
   ]
  },
  {
@@ -261,7 +261,7 @@
   "old": "  h.usable = () => !restItemsShut();",
   "new": "  h.usable = () => true;",
   "tests": [
-   "test/auditrestparty_camps.test.js"
+   "test/systems/survival/auditrestparty_camps.test.js"
   ]
  },
  {
@@ -270,7 +270,7 @@
   "old": "  if (mine && !camp.jar && (camp.kind === CAMP_KIND.Tent || !!camp.fuel)) rows.push",
   "new": "  if (mine && !camp.jar) rows.push",
   "tests": [
-   "test/auditrestparty_camps.test.js"
+   "test/systems/survival/auditrestparty_camps.test.js"
   ]
  },
  {
@@ -279,7 +279,7 @@
   "old": "  if (!tent && (camp?.kind !== CAMP_KIND.Fire || !camp.fuel)) return",
   "new": "  if (!tent && camp?.kind !== CAMP_KIND.Fire) return",
   "tests": [
-   "test/auditrestparty_camps.test.js"
+   "test/systems/survival/auditrestparty_camps.test.js"
   ]
  },
  {
@@ -288,7 +288,7 @@
   "old": "    const capOf = (it) => Math.min(CAMPFIRE_USES, it.maxCondition ?? CAMPFIRE_USES);",
   "new": "    const capOf = () => CAMPFIRE_USES;",
   "tests": [
-   "test/auditrestparty_camps.test.js"
+   "test/systems/survival/auditrestparty_camps.test.js"
   ]
  },
  {
@@ -297,7 +297,7 @@
   "old": "  if (wakingHeld(s, now)) return { kind: 'text', text: REST_ITEM_TEXT.saltsHeld };",
   "new": "  if (false) return { kind: 'text', text: REST_ITEM_TEXT.saltsHeld };",
   "tests": [
-   "test/auditrestparty_camps.test.js"
+   "test/systems/survival/auditrestparty_camps.test.js"
   ]
  },
  {
@@ -306,7 +306,7 @@
   "old": "    if (!item || (spentCharges(item) && !spentCharges(it))) item = it;",
   "new": "    if (!item) item = it;",
   "tests": [
-   "test/auditrestparty_camps.test.js"
+   "test/systems/survival/auditrestparty_camps.test.js"
   ]
  },
  {
@@ -315,7 +315,7 @@
   "old": "  const step = REST_WAIT_PER_HOUR / MINUTES_PER_TICK;",
   "new": "  const step = (REST_WAIT_PER_HOUR / MINUTES_PER_TICK) * 6;",
   "tests": [
-   "test/auditrestparty.test.js"
+   "test/systems/rest/auditrestparty.test.js"
   ]
  },
  {
@@ -324,7 +324,7 @@
   "old": "  _night.abortForEnemySpawn();\n  return true;",
   "new": "  return true;",
   "tests": [
-   "test/auditrestparty.test.js"
+   "test/systems/rest/auditrestparty.test.js"
   ]
  },
  {
@@ -333,7 +333,7 @@
   "old": "    ambushNight();   // AUDIT REST-PARTY A1",
   "new": "    void 0;   // AUDIT REST-PARTY A1",
   "tests": [
-   "test/auditrestparty.test.js"
+   "test/systems/rest/auditrestparty.test.js"
   ]
  },
  {
@@ -342,7 +342,7 @@
   "old": "    ambushNight();   // AUDIT REST-PARTY A1",
   "new": "    void 0;   // AUDIT REST-PARTY A1",
   "tests": [
-   "test/auditrestparty.test.js"
+   "test/systems/rest/auditrestparty.test.js"
   ]
  },
  {
@@ -351,7 +351,7 @@
   "old": "    else if (!ambushNight()) this._pendingEnemySpawn = true;",
   "new": "    else this._pendingEnemySpawn = true;",
   "tests": [
-   "test/auditrestparty_camps.test.js"
+   "test/systems/survival/auditrestparty_camps.test.js"
   ]
  },
  {
@@ -360,7 +360,7 @@
   "old": "    else if (!ambushNight()) overlay._pendingEnemySpawn = true;",
   "new": "    else overlay._pendingEnemySpawn = true;",
   "tests": [
-   "test/auditrestparty_camps.test.js"
+   "test/systems/survival/auditrestparty_camps.test.js"
   ]
  },
  {
@@ -369,7 +369,7 @@
   "old": "    restKind: () => (_restFromBed ? 'bed' : camps.fireNear(",
   "new": "    restKind: () => (camps.fireNear(",
   "tests": [
-   "test/auditrestparty_camps.test.js"
+   "test/systems/survival/auditrestparty_camps.test.js"
   ]
  },
  {
@@ -378,7 +378,7 @@
   "old": "    const cut = !!result?.rentExpired && hours < NIGHT_HOURS;",
   "new": "    const cut = false;",
   "tests": [
-   "test/auditrestparty_camps.test.js"
+   "test/systems/survival/auditrestparty_camps.test.js"
   ]
  },
  {
@@ -387,7 +387,7 @@
   "old": "  if (opened?.point?.where && !now?.point) return null;",
   "new": "",
   "tests": [
-   "test/auditrestparty_camps.test.js"
+   "test/systems/survival/auditrestparty_camps.test.js"
   ]
  },
  {
@@ -396,7 +396,7 @@
   "old": "  if (Number.isFinite(hpAtOpen) && Number.isFinite(hpNow) && hpNow < hpAtOpen) return null;",
   "new": "",
   "tests": [
-   "test/auditrestparty_camps.test.js"
+   "test/systems/survival/auditrestparty_camps.test.js"
   ]
  },
  {
@@ -405,7 +405,7 @@
   "old": "  return { ...opened, night: now ? !!now.night : !!opened?.night };",
   "new": "  return { ...opened, night: !!opened?.night };",
   "tests": [
-   "test/auditrestparty_camps.test.js"
+   "test/systems/survival/auditrestparty_camps.test.js"
   ]
  },
  {
@@ -414,7 +414,7 @@
   "old": "  if (opened?.point?.where && !now?.point) return null;",
   "new": "  if (!now?.point) return null;",
   "tests": [
-   "test/auditrestparty_camps.test.js"
+   "test/systems/survival/auditrestparty_camps.test.js"
   ]
  },
  {
@@ -423,7 +423,7 @@
   "old": "      if (spot && sharedClockOn() && inFireWard(dungeonFires, spot)) spot = null;",
   "new": "      if (spot && inFireWard(dungeonFires, spot)) spot = null;",
   "tests": [
-   "test/auditrestparty_camps.test.js"
+   "test/systems/survival/auditrestparty_camps.test.js"
   ]
  },
  {
@@ -432,7 +432,7 @@
   "old": "[h.x, h.lawFoot ?? h.foot ?? h.y, h.z]",
   "new": "[h.x, h.foot ?? h.y, h.z]",
   "tests": [
-   "test/auditrestparty_camps.test.js"
+   "test/systems/survival/auditrestparty_camps.test.js"
   ]
  },
  {
@@ -441,7 +441,7 @@
   "old": "? classicBillboardSize(t, f.record) : null;   // AUDIT REST-PARTY C7",
   "new": "? billboardSize(t, f.record) : null;   // AUDIT REST-PARTY C7",
   "tests": [
-   "test/auditrestparty_camps.test.js"
+   "test/systems/survival/auditrestparty_camps.test.js"
   ]
  }
 ]

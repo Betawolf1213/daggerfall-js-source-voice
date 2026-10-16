@@ -38,5 +38,5 @@ right hand the striking weapon is null - the bare fist - and Open Hand's gate is
 with an iron kite shield equipped land the same blows and the same second blows, number for number. A player who last
 switched to the left hand is put back on the right by the shield.
 
-`test/fb1015e_rose.test.js` (2), `tools/mutants/fb1015e_rose.json` (11, 11 dead). Not reproduced in play here (this
+`test/systems/fb1015e_rose.test.js` (2), `tools/mutants/fb1015e_rose.json` (11, 11 dead). Not reproduced in play here (this
 container has no ARENA2); the trace and the pins are the real modules'.

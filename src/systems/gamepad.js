@@ -2,7 +2,7 @@
 // law, the half the port never had: "AXES + JOYSTICK (AxisActions,
 // JoystickUIActions): no gamepad layer in the port" stood flagged at
 // inputActions.js since I2. This module is the PURE half - no DOM, no
-// Gamepad API, no frame - so test/gamepad.test.js can execute each law
+// Gamepad API, no frame - so test/systems/gamepad.test.js can execute each law
 // against its mutant; ui/gamepadInput.js is the poller that feeds it.
 //
 // WHAT DFU HAS. Unity's Input Manager exposes sixteen joystick axes

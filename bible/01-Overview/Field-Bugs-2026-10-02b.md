@@ -18,7 +18,7 @@ Carrack. Every finding was reproduced on the real modules first, pinned by tests
 
 ## SEA-LEVEL: the flatten keeps the sea (1, 2)
 
-**Reproduced first** (`test/fb1002b_sealevel.test.js`: the sampler's own sea, World of Daggerfall's own flatten, Deep
+**Reproduced first** (`test/world/terrain/fb1002b_sealevel.test.js`: the sampler's own sea, World of Daggerfall's own flatten, Deep
 Waters' own hole mask, Unity's SampleHeight, world.js's `csaTerrainOf` mounted, the runtime over the vendored hulls).
 A headland at twice the sea's height with a site levelled on its corner lifted every probed point of the open sea to
 34.229-34.523 m (a site 7 m over the sea: 34.053-34.112); the real mask carved 0 of its 15,600 sea cells; a Small Ship or
@@ -45,7 +45,7 @@ the sea was lifted settles nowhere of itself: the pixel built again under her, B
 
 ## ROCK-FREE audited (3-6)
 
-**Reproduced first** (`test/fb1002b_rocks.test.js`: the real `Collider`, world.js's own `csaSphereCastAll` lifted, the
+**Reproduced first** (`test/systems/comeSailAway/fb1002b_rocks.test.js`: the real `Collider`, world.js's own `csaSphereCastAll` lifted, the
 runtime over the vendored hulls; a Small Ship under sail). A 2 m boulder 4.2 m off her line mid-sweep answered nothing;
 a shelf under her keel and a rock ahead built as ONE model took her 15.5 m into the rock; a rock along her starboard side
 and one off her port bow took her 15.9 m into the second; a boat's hull unmoved since its bake (its turn null) closing
@@ -80,7 +80,7 @@ was tried and left: with the sweep's reach, a rock at either end froze her for g
 
 ## CREW-SAY audited (8)
 
-**Reproduced first** (`test/fb1002b_crewsay.test.js`: the real crew life over five minutes, the HUD's layout and DOM).
+**Reproduced first** (`test/systems/naval/fb1002b_crewsay.test.js`: the real crew life over five minutes, the HUD's layout and DOM).
 Two pairs at one old yarn were laid as one bubble by no name (147 frame-groups in ten calm minutes); from the deck in
 battle at scale 2 a bubble jumped 247 px in a frame as two hands' distances crossed; on a 960x540 screen at scale 2,
 62 bubbles stood wholly off its top, 1,071 partly.
@@ -97,7 +97,7 @@ monospace, accounted for.
 
 ## The pins and the mutants
 
-`test/fb1002b_rocks.test.js` (8), `test/fb1002b_sealevel.test.js` (3), `test/fb1002b_crewsay.test.js` (3), each red on
+`test/systems/comeSailAway/fb1002b_rocks.test.js` (8), `test/world/terrain/fb1002b_sealevel.test.js` (3), `test/systems/naval/fb1002b_crewsay.test.js` (3), each red on
 e2466e2bd. `tools/mutants/fb1002b_rocks.json` (26), `fb1002b_sealevel.json` (8), `fb1002b_crewsay.json` (15) - all dead.
 PINS MOVED, each by content: `fb1002_rocks` (its rocks inside her own length, its ledge under her keel, the keel line
 for the "beneath" rule, `pass` gone), `fb1002_seaheld` (SEA-SHOAL struck; BEACH-READ's ground put right by the pixel

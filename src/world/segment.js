@@ -3,7 +3,7 @@
 // that imports nothing. net/gate/gateStrike.js declared it first and world/tamriel/tamrielGeography.js imported it from there -
 // which dragged the whole of net/ (wire.js and twenty modules with it) into the terrain WORKER's bundle through
 // the ground beyond the Bay (world/tamriel/tamrielGround.js). The worker's import graph is pure by law (EV7,
-// test/terrainworker.test.js), so the helper lives here and both import it.
+// test/world/terrain/terrainworker.test.js), so the helper lives here and both import it.
 
 /** Distance from (px, pz) to the segment (ax, az)-(bx, bz), same units. */
 export function segmentDistance(px, pz, ax, az, bx, bz) {

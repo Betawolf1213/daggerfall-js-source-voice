@@ -109,9 +109,9 @@ no town.
 
 ### Pins and mutants
 
-`test/auditlwrooms.test.js` (8): the doors (A1/B1), the reader's quest and the beds (B2), the step and the edge (A3/D5),
+`test/systems/livingWorld/auditlwrooms.test.js` (8): the doors (A1/B1), the reader's quest and the beds (B2), the step and the edge (A3/D5),
 the stir and company (A2/D2), the face (A4), the far view (A5), the word and the ray (B3/B4), the walk's laws (D6, D7,
-D11). `test/lwrooms_tavern.test.js` (9) carries C1, C4, D1's minute and lunch and E1's walk. PIN MOVED: `lw8_indoors`
+D11). `test/systems/livingWorld/lwrooms_tavern.test.js` (9) carries C1, C4, D1's minute and lunch and E1's walk. PIN MOVED: `lw8_indoors`
 (the host's lines), `lw8c_astir` (the way in's row; the partition's side by the mock's own law), `lwfix1_review` (a walk
 over 4 m to go; the way in's row), `lwfix6_rooms` (the way in's row; the quest kept clear when one is placed),
 `lwlodge_tavern` (down to the common room where the player is not looking), `lwrooms_tavern` (the eight ways, the

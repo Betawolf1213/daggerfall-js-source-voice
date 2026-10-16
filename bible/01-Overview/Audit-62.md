@@ -32,7 +32,7 @@ The renumber is a rename only: **every tag this branch wrote now reads
 AUDIT 62** - comments, pins, the four `audit62_*.test.js` files, the
 Testing.md rows, the arc-page sections. Main's `Audit-61.md` is untouched
 and is the one this record sits beside. The navmesh digest pin
-(`test/enhancedAI.test.js`) was re-pinned once, because the renumber
+(`test/ai/nav/enhancedAI.test.js`) was re-pinned once, because the renumber
 touched the comments inside the body it hashes; the body's code did not
 change.
 
@@ -117,7 +117,7 @@ the lanes tagged them; C0-C38 in the fleet's own ledger).
   "bake with anchors at every foe spawn so the key can stay anchor-free"
   - as answering a different question.)
 - **F38 - the ARENA2 pin reported a pass it never earned**
-  (`test/enhancedAI.test.js`). Its body was `assert.ok(true)` behind a
+  (`test/ai/nav/enhancedAI.test.js`). Its body was `assert.ok(true)` behind a
   gate that never checked the path existed. It skips without the
   archives and reports TODO with them, asserting nothing either way, with
   the body it owes written out beside it. The real bake waits on ARENA2.

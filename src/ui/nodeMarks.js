@@ -14,7 +14,7 @@
 // green, the Detect markers' blood red, the gate's ember and the ships'
 // red, bone and grey - and of each other (AUDIT NODE-MARKS: Logging's
 // pale heartwood was a ship's bone and Hunting's coral a hostile ship's
-// red; test/nodemarks.test.js holds the distances). Mining keeps the
+// red; test/scenes/nodemarks.test.js holds the distances). Mining keeps the
 // copper PROF2's Prospector's veins were drawn in, near the quest's gold,
 // the gate's ember and a hostile ship's red - told apart by shape alone:
 // theirs are diamonds on the strip's middle and a ship's triangle points

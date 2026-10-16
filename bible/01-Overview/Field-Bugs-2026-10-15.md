@@ -53,8 +53,8 @@ CHANGED (Mac, asked of four shapes - no wait, a review anywhere, both, or DFU's 
 THE FOUR HOSTS: the guild popup is worldModes.js's alone (openGuildService, every interior, online and offline) - WIRED;
 world.js opens no popup of its own (its exteriors enter their halls through worldModes); exterior.js, the offline fixed
 city, constructs no GuildServiceWindow; dungeonContext.js stands no guild hall. Recorded in Port-Ledger section A
-(PROMO-NOW). Pinned by `test/fb1015_promonow.test.js` (8); `tools/mutants/fb1015_promonow.json` (10, all dead). PIN
-MOVED: `test/guildreveal.test.js`'s G8 seam pin reads the flag beside the ceiling, and `tools/mutants/chap4b.json`'s
+(PROMO-NOW). Pinned by `test/systems/guild/fb1015_promonow.test.js` (8); `tools/mutants/fb1015_promonow.json` (10, all dead). PIN
+MOVED: `test/systems/guild/guildreveal.test.js`'s G8 seam pin reads the flag beside the ceiling, and `tools/mutants/chap4b.json`'s
 CHAP4B-FLOW-CEILING is re-aimed at the same line (34, all dead).
 
 What the reporter is owed: online a promotion no longer waits 28 days. Talk to a guild-service NPC at the hall and you

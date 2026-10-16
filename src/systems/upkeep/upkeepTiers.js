@@ -34,8 +34,8 @@
 // pin written before the tiers still pins it.
 //
 // A LEAF: no imports, so the prefs shelf's load (uiPrefs.js), the switch and the laws read it without a cycle.
-// The shelf is on the entry's static path (test/boot2.test.js holds this a leaf there) and in the account Worker's
-// bundle (.github/workflows/account-deploy.yml names this file, test/accountdeploy.test.js's walk).
+// The shelf is on the entry's static path (test/render/boot2.test.js holds this a leaf there) and in the account Worker's
+// bundle (.github/workflows/account-deploy.yml names this file, test/server/accountdeploy.test.js's walk).
 
 export const HORSE_CARE_OFF = 'off';
 /** The tiers in the Features bar's order - the gentlest first after Off, as Climates & Calories'. */
@@ -43,7 +43,7 @@ export const HORSE_CARE_TIER_IDS = Object.freeze([HORSE_CARE_OFF, 'boons', 'hard
 export const HORSE_CARE_DEFAULT = 'boons';
 
 /** What each tier is STORED as on the prefs shelf - the values the Features row's segments write (systems/features.js
- *  'horse-care'; test/horsetiers.test.js holds the row to this). OFF KEEPS THE OLD SWITCH'S OWN `false`: a player who
+ *  'horse-care'; test/systems/horsetiers.test.js holds the row to this). OFF KEEPS THE OLD SWITCH'S OWN `false`: a player who
  *  turned horse care off before the tiers is on Off with no conversion, and a build from before them reads it as off.
  *  Hard is stored by name, and the default is never stored at all (uiPrefs.js PREF1). */
 export const HORSE_CARE_STORED = Object.freeze({ off: false, boons: 'boons', hard: 'hard' });

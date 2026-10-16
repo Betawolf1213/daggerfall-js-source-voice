@@ -285,10 +285,10 @@ oil under lock (`PORT_TEXT`).
 night) from the town, from the sea, from under the corbels and from the gallery into the lantern, by day and by night -
 never yet in a port town of the player's.
 
-**Tests.** `test/beacontower.test.js` (8): the tower is stone, the battlements, the walk is clear, the lantern is open, the
+**Tests.** `test/world/beacontower.test.js` (8): the tower is stone, the battlements, the walk is clear, the lantern is open, the
 roof's point is the lantern's top, the fire, the art and the words - on the producer's own model and the real collider's
-rays. PIN MOVED: `test/shipyards1_place.test.js` (the gallery's spot between the lantern and the parapet; the art's list;
-the third mesh the flames), `test/shipyards1_audit_port.test.js` (the gallery holds inside the parapet; the guard's line;
+rays. PIN MOVED: `test/world/shipyards1_place.test.js` (the gallery's spot between the lantern and the parapet; the art's list;
+the third mesh the flames), `test/systems/shipyards1_audit_port.test.js` (the gallery holds inside the parapet; the guard's line;
 the hollow tower to the roof's point; L5-2's pin the flames' - drawn with noShadow in the lanterns' hours, never by day,
 never in the collider). Mutants: `tools/mutants/beacontower.json` (21), every one dead - BEACON-the-tower-whitewashed
 survived the first cut of its pin, which read only faces wholly over the cottage's chimney while the shaft is one face
@@ -356,7 +356,7 @@ never a refused stair).
   Fleet's host) and the stair (`climbLighthouse`); the town map, the talk directory and the Overworld's marks are
   handed its sites, and the docks' mark is the quay pool's. Its per-frame work is the host's own functions (`portFrame`,
   `portLightsInto`, `portBodies`, `portBatchesInto`, `portGlows`), never inline in `frame`: PERF-V8's budget
-  (`test/perfv8.test.js` - an inline loop, try or spread put the frame's registers past r123, where every operand goes
+  (`test/scenes/perfv8.test.js` - an inline loop, try or spread put the frame's registers past r123, where every operand goes
   wide; the frame stands at main's register count).
 - `scenes/worldModes.js` - WIRED: the street's one ray reaches them (`portTargets`), the `port:` arm (the too-far
   refusal, the plaque's lit row); a sold ship's cabin (`cabinHolds`, `cabinSold`). Its interiors stand no port.
@@ -371,22 +371,22 @@ ships realm customs crossed (`crossed`).
 ## Not seen
 
 This container holds no ARENA2, so no real port was laid out here: the places are proven on synthetic grounds and
-seas (`test/shipyards1_place.test.js`) and the models in a software render of their own geometry - the shipyard, the
+seas (`test/world/shipyards1_place.test.js`) and the models in a software render of their own geometry - the shipyard, the
 lighthouse and the overhauled quay - never in a Daggerfall town. Where a port's places fall is for the owner's eyes; a
 port that finds no room logs it.
 
 ## Tests
 
-`test/shipyards1.test.js` - the places, the towns, the keys, the keepers and names, the rows, the stock, the price, no
+`test/systems/shipyards1.test.js` - the places, the towns, the keys, the keepers and names, the rows, the stock, the price, no
 loop online, what the shipyard takes back, the shelves, the hall's roster, the fees, signing on and paying off.
-`test/shipyards1_host.test.js` - the host's pages, buying, the fleet page and selling, the Fleet's acts, the crew hall,
-the window's words, the window mounted, the door. `test/shipyards1_place.test.js` - the footprints, backing onto the
+`test/systems/shipyards1_host.test.js` - the host's pages, buying, the fleet page and selling, the Fleet's acts, the crew hall,
+the window's words, the window mounted, the door. `test/world/shipyards1_place.test.js` - the footprints, backing onto the
 sea, the bearing, the town's own sea, no room, the models, the art, the pool, the hold-back, the press, the stair and its
-page, the plaques, the lamp, the Overworld's marks. `test/shipyards1_found.test.js` - the Where-is page, the answer, the town map,
+page, the plaques, the lamp, the Overworld's marks. `test/systems/shipyards1_found.test.js` - the Where-is page, the answer, the town map,
 the docks on the Overworld, the glyphs, the four hosts, the lamp reaching the renderer (`test/yardLightRig.mjs`, the host's
-own light composition), the tutorial's pages. `test/piers1.test.js` - the pier's dress. `test/shipyards1_audit.test.js` and
-`test/shipyards1_audit_port.test.js` - AUDIT SHIPYARDS's pins (below). `test/beacontower.test.js` - BEACON-TOWER's (above).
-`test/fb1014_inlandports.test.js` - INLAND-PORTS's: the open sea, the ring, the towns, the host's (and on the real map,
+own light composition), the tutorial's pages. `test/systems/naval/piers1.test.js` - the pier's dress. `test/systems/shipyards1_audit.test.js` and
+`test/systems/shipyards1_audit_port.test.js` - AUDIT SHIPYARDS's pins (below). `test/world/beacontower.test.js` - BEACON-TOWER's (above).
+`test/systems/naval/fb1014_inlandports.test.js` - INLAND-PORTS's: the open sea, the ring, the towns, the host's (and on the real map,
 the 106 and the 49). Mutants: `tools/mutants/shipyards1.json` (76), `tools/mutants/shipyards1_audit.json` (72),
 `tools/mutants/beacontower.json` (21) and `tools/mutants/fb1014_inlandports.json` (14), every one dead.
 

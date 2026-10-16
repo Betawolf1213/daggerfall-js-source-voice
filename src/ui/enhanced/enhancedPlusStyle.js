@@ -2140,7 +2140,7 @@ ${ARENA_WINDOW_CSS}
 `;
 
 /** AUDIT MERGE-PLUS D3: the lane's words on Stone's light grey (ONLINE_DRESS_CSS, last) - each 4.5:1 or better over
- *  Stone's panel and ground (PLUS_THEMES.stone), measured in test/auditmergeplus_ui.test.js. */
+ *  Stone's panel and ground (PLUS_THEMES.stone), measured in test/ui/enhanced/auditmergeplus_ui.test.js. */
 export const STONE_DIM = '#e2dccd';
 export const STONE_WORD = '#fbf8f0';
 export const STONE_AMBER = '#ffd98a';

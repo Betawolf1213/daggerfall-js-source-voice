@@ -43,7 +43,7 @@ Its fingerprints, so a copy handed over again can be checked against the one thi
 | `Foraging.dll`, out of the bundle | `3834aa3a313f545c45de6008cafdb05f0497743e5ff573c7c0af4d29762016a7` |
 
 **Nothing is vendored at FORAGE0**, DECIDED: in this tree a vendored folder is a shipped mod - the About screen must
-credit it (CR1, `test/credits.test.js`) and a credited mod must have a working row on the Features home (WM3), which a
+credit it (CR1, `test/systems/credits.test.js`) and a credited mod must have a working row on the Features home (WM3), which a
 mod with nothing built cannot honestly have. So FORAGE1 carries the files, the README, the registry row, the credit
 and the Features row together, as `vendor/foraging/`:
 
@@ -843,7 +843,7 @@ mod a player can actually use - tools that chop, quests that pay - never a switc
 | **FORAGE2** - SHIPPED 2026-09-28 | The twelve templates; the seven textures; the six tools' uses (5, 6), the result box, the wear; the foods (7); the console command (8); the three-valued water state in the streaming host | Each tool, used in each host, gives the mod's line, yield and quest |
 | **FORAGE3** - SHIPPED 2026-09-28 | ~~`GetCustomItemsForGroup` as a registry~~ (shipped early, with FORAGE1); `PlayerActivate.OnLootSpawned` and `LootTables.OnLootSpawned` as registries (RRI's subscriber first); Foraging's three hooks | A Prison's pile holds a Spade; a General Store's hook adds 0-1 |
 | **FORAGE4** - SHIPPED 2026-09-28 | Online: the wait (13.1) | Online, the Wood-Axe gives its bundles, a 12-second wait and 20% fatigue; the shared clock does not move |
-| **FORAGE-FIX** - SHIPPED 2026-09-28 | Q7-Q11 and Q13 (12), carried by the slice that ports each - the quest and list patches and Q11 in FORAGE1, Q10 in FORAGE2 - in section A's FORAGING row | Each patch pinned against the verbatim line it replaces, and each patched quest and the list run on the port's machine (`test/foragefix.test.js`) |
+| **FORAGE-FIX** - SHIPPED 2026-09-28 | Q7-Q11 and Q13 (12), carried by the slice that ports each - the quest and list patches and Q11 in FORAGE1, Q10 in FORAGE2 - in section A's FORAGING row | Each patch pinned against the verbatim line it replaces, and each patched quest and the list run on the port's machine (`test/systems/quest/foragefix.test.js`) |
 
 The professions take the tools in their own slices: **PROF1** (Herbalism: the Sickle's steady hand, the Basket's
 search) **needs FORAGE1-2 (shipped)** - Foraging's templates, checks and lines, and the tools on the shelves - and
@@ -854,8 +854,8 @@ FORAGE2's three-valued water state (shipped).
 
 ## 18. The pins
 
-They stand in `test/forage1_law.test.js`, `test/forage2_tools.test.js`, `test/foragefix.test.js`,
-`test/forage3_loot.test.js` (the hooks, Q1, Q2 and Q12) and `test/forage4_wait.test.js` (the wait).
+They stand in `test/systems/foraging/forage1_law.test.js`, `test/systems/forage2_tools.test.js`, `test/systems/quest/foragefix.test.js`,
+`test/systems/foraging/forage3_loot.test.js` (the hooks, Q1, Q2 and Q12) and `test/systems/quest/forage4_wait.test.js` (the wait).
 
 - The templates: the twelve rows `deepEqual` the vendored `ItemTemplates.json`; group 9; none stackable.
 - The checks: for each tool, a fixture failing each check alone gives that check's exact line, and a fixture failing
@@ -976,7 +976,7 @@ Offline Foraging, whole, in one change - so the Features row switches a mod a pl
   unordered compare DFU passes; the console command answered with the switch off; fatigue could rise past the
   maximum; a food ate one off a stack (DFU removes the item); a tool wore when its quest was not found; a refused use
   from the hotbar flashed as used; a duel's foe was not an enemy near.
-- **Pins**: `test/forage1_law.test.js` (15), `test/forage2_tools.test.js` (15) and `test/foragefix.test.js` (5);
+- **Pins**: `test/systems/foraging/forage1_law.test.js` (15), `test/systems/forage2_tools.test.js` (15) and `test/systems/quest/foragefix.test.js` (5);
   `tools/mutants/forage1.json`, 32 mutations, 32 dead.
 
 **Not yet** (at FORAGE2): FORAGE3's hooks - since shipped, below - and FORAGE4's online wait: online, `raise time by`
@@ -1012,7 +1012,7 @@ The three loot hooks, 1:1 off IL_0520-IL_0b8f, and the two DFU events they hang 
   its "what a player sees" corrected - interiors hold piles only in a tavern or a Thieves Guild or Dark Brotherhood
   house.
 - **FLAGGED by name**: a joiner's copy of a body the host killed online (15).
-- **Pins**: `test/forage3_loot.test.js` (12), the loot sites' older pins re-aimed at the one homes
+- **Pins**: `test/systems/foraging/forage3_loot.test.js` (12), the loot sites' older pins re-aimed at the one homes
   (`rri2_realism`, `roada2_itemseconomy`, `lr1_lootrarity`, `wod3_spawner`, `world8`); `tools/mutants/forage3.json`,
   22 mutations, 22 dead.
 - **The test reset's leak** (found 2026-09-28 by the whole suite on the bounty boards' integration, AUDIT BOUNTY1):
@@ -1046,7 +1046,7 @@ Online Foraging - the wait (13.1), and with it Foraging whole in both lanes:
   city) and `scenes/dungeonContext.js` standing alone never run the shared clock, so their RaiseTime is the offline
   advance and they wire no `waitOnline` (the fixed city's bridge reports it absent, with its other unwired seams).
 - **The ledger**: section A's FORAGING row, departure (5), says the wait as built.
-- **Pins**: `test/forage4_wait.test.js` (10) - the hunt's defaults kept, the four options, the seconds, the slot, a
+- **Pins**: `test/systems/quest/forage4_wait.test.js` (10) - the hunt's defaults kept, the four options, the seconds, the slot, a
   foe, the held boxes, the reload and the cap, the door both ways, the done-when on the machine (ChopWoodQuest online:
   a 12-second wait, 20% fatigue, the clock never asked), the wiring; `tools/mutants/forage4.json`, 18 mutations, 18 dead.
   (HUNT-OUT, 2026-10-04: the hunt's defaults and the four options went with the hunt; the file holds 14 tests - the
@@ -1063,6 +1063,6 @@ once); **F5** the textures are registered whatever the switch says (said); **F6*
 save; **F7** a switched-off Foraging has no console command. With the hosts' lens: the held boxes wait until the
 finished page has left the slot (H6), and the hunt page hears Escape as townTalk hands it, `back` (H7) - C&C's own
 search's Escape was never heard either. The patch table's count corrected (Q10 and Q11 are the port's own code).
-`test/audit28_forage.test.js` (10); `tools/mutants/audit28.json` F1-F7, H6, H7, H11, H12; `forage4.json` and
+`test/systems/audit28_forage.test.js` (10); `tools/mutants/audit28.json` F1-F7, H6, H7, H11, H12; `forage4.json` and
 `auditsurv.json` re-aimed, every one dead. (HUNT-OUT, 2026-10-04: H7's test and record retired with the hunt page -
 the wait page takes no key; `audit28_forage.test.js` holds 9.)

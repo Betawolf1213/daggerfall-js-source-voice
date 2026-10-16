@@ -60,7 +60,7 @@ export const MAX_TIME_SCALE = 100;
  *  dial: the land loading (systems/travel/travelGovernor.js), an alerted enemy
  *  (systems/travel/travelThreat.js) and the ring walk's own ceiling
  *  (travelPaths.js MAX_CIRCUMNAVIGATION_ACCEL). */
-export const TRAVEL_ROAD_RATE = ROAD_PACE_MAX;   // PACE-DIALS: the dial's top (MAX_TIME_SCALE, pinned equal - test/pacedials.test.js)
+export const TRAVEL_ROAD_RATE = ROAD_PACE_MAX;   // PACE-DIALS: the dial's top (MAX_TIME_SCALE, pinned equal - test/systems/travel/pacedials.test.js)
 export const TRAVEL_OPEN_RATE = OPEN_PACE_MAX;
 /** The rate a fast traveller's ground asks for: a road or a track, or not. PACE-DIALS (2026-10-06, the player: "Revert
  *  back to the overworld timer multiplier for ppl to set to 60x and 100x on roads"): the two rates above are now the

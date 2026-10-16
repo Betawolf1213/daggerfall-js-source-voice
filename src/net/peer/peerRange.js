@@ -15,7 +15,7 @@
 //
 // THE DEFAULT IS PAST A SHOT'S REACH. Another player's arrow or spell flies MISSILE_SPEED for MISSILE_LIFESPAN_S
 // (systems/spellcast.js): 25 x 8 = 200 m (x1.3 is a foe archer's aimed shot alone, BLOW.aimed.speed - 260 m, still
-// short of it). At the default 300 m nobody who can reach me with a shot is cut - test/peerrange.test.js holds the
+// short of it). At the default 300 m nobody who can reach me with a shot is cut - test/systems/peerrange.test.js holds the
 // numbers together. The near tier (150 m) can; its row says so.
 //
 // ALWAYS DRAWN: a party mate (AUDIT PARTY8's "a party mate before a stranger"), and the player I duel, from its count

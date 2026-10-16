@@ -130,7 +130,7 @@ current design "does not work in an enjoyable manner"):
   (BUILT - CRAFT-WORTH, 2026-10-11, the exploit audit: a counter, the keyed shelf and a patron pay a crafted piece what
   they pay the plain piece its recipe makes - its quality's Magic or Rare roll is power, never price; a Masterwork staff
   of three planks had sold for ~1,280 gold, ~79k-320k gold an hour; `systems/tradeModes.js` counterValueOf,
-  `systems/loot/lootRarity.js` craftedRarityWorth, `net/patronLaw.js` patronWorth, `test/craftworth.test.js`);
+  `systems/loot/lootRarity.js` craftedRarityWorth, `net/patronLaw.js` patronWorth, `test/systems/craftworth.test.js`);
   customs reads the server's level, not the client's; a defaulted loan stops
   being free gold.
 - **Phase 3 - make the friction fair.** The Vault, Loadouts and secure
@@ -303,7 +303,7 @@ Update (AUDIT HOME-PRICE E2).
 **The four hosts.** `scenes/world.js` and `scenes/exterior.js` put the town's
 blocks on every door's building record and on the bank's directory
 (`townBlocks`, `homeTownBlocks`); `scenes/worldModes.js` prices the door, the
-deed and the sale; the dungeon host prices no door. `test/homeprice.test.js`
+deed and the sale; the dungeon host prices no door. `test/systems/homeprice.test.js`
 (8), `tools/mutants/homeprice.json` (56, all dead). **Not verified here:** this
 tree has no ARENA2, so the spread over Daggerfall's real house models was not
 measured - the rate, the factor and the range are set from the field's prices

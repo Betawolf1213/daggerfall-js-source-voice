@@ -58,7 +58,7 @@ The patch arrived as whole files cut from main at `b27721a1` (#396), not a diff.
 (`git merge-file`: main's file, the base, the patch's) onto main `43c8762d`: no conflicts, since main had not touched the
 map files and only lightly the rest. Done at the merge:
 
-- **The switch**: the Features row, `dungeonMap3dOn` reading it beside the kill door, `test/em3_mapchoice.test.js`
+- **The switch**: the Features row, `dungeonMap3dOn` reading it beside the kill door, `test/ui/map/em3_mapchoice.test.js`
   driven through the real automap door, `tools/mutants/em3mapchoice.json`.
 - **Types**: 22 `tsc` errors - the trail's record fields, the sheet's `domTools`/`portals`, the solid options, the orbit's
   literal types.

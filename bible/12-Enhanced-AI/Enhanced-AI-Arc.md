@@ -25,7 +25,7 @@ the enhanced tab."
    is Mac's file from `// Agent params` to the end; the header differs
    only by the four-line `surfaceY` inlined verbatim from project-final's
    terrain.js and a linter global. A change is made in both repos and
-   said in both - the body is pinned by DIGEST (`test/enhancedAI.test.js`,
+   said in both - the body is pinned by DIGEST (`test/ai/nav/enhancedAI.test.js`,
    AUDIT 62 F4: the old pin read only the two head lines), re-recorded
    deliberately with the commit the change was made in. AUDIT 62 F1
    (2026-09-07) is the first body change, made here first and owed to
@@ -188,7 +188,7 @@ the foe was still turning in place; the fault pin used a mesh-less chf,
 which `findPath` answers with null - that is never-traps working - and
 needed a Proxy that throws.
 
-Pins: 14 in `test/enhancedAI4.test.js`. Campaign: 20 mutants, 20
+Pins: 14 in `test/ai/nav/enhancedAI4.test.js`. Campaign: 20 mutants, 20
 killed against a green baseline; two survived the first pass (a stale
 route steering one tick after the bake vanished; a route surviving
 non-pursuit) and are pinned.
@@ -391,12 +391,12 @@ F1's freeze several times over - and the classic motor stands, as it
 did behind a degenerate bake. NAV_BAKE_VERSION is 4: main's
 DUNGEON-SEAMS took 3 for the corners it moved under the same key, this
 bake took 3 on its branch, and the merge renumbered it so each
-invalidates the other's caches. Pinned in `test/enhancedAI.test.js`
+invalidates the other's caches. Pinned in `test/ai/nav/enhancedAI.test.js`
 (DEGENERATE-BAKE ROOT) and `tools/mutants/navbake.json`.
 
 ### AUDIT PRE-MERGE 0928 - the bake read again before the merge (2026-09-28)
 
-Lens N's findings, each pinned red first in `test/audit0928_nav.test.js`
+Lens N's findings, each pinned red first in `test/ai/nav/audit0928_nav.test.js`
 and mutation-proven (`tools/mutants/navbake.json`,
 `tools/mutants/audit0928_nav.json`):
 

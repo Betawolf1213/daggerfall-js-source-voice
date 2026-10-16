@@ -125,7 +125,7 @@ bug" is worth more on the record than a tidy one.
 | the pooled lantern selection is identical | 60 random towns, both ways | identical |
 | nothing else reads what the cull skips | grep for `_bbKey` outside the renderer | **two passes did — F1** |
 
-**Pinned** in `test/perfon2_peercull.test.js` (12). Mutants
+**Pinned** in `test/render/perfon2_peercull.test.js` (12). Mutants
 `tools/mutants/perfon2.json`: 31 — 31 dead, 0 survived.
 
 ## The lesson

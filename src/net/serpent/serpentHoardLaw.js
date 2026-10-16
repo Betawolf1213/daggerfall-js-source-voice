@@ -5,7 +5,7 @@
 // section 8.
 //
 // ITS OWN FILE, NEVER net/serpent/serpentLaw.js: the relay bundles that one (it runs the serpent's fight), and RELAY_VERSION
-// hashes every file of its graph (test/relayversion.test.js) - a law the relay never reads, written there, would have
+// hashes every file of its graph (test/net/relayversion.test.js) - a law the relay never reads, written there, would have
 // been a relay deploy that drops every connected player. The relay does not import this.
 //
 // Pure. Not a DFU member. Ledger A (SERPENT1).

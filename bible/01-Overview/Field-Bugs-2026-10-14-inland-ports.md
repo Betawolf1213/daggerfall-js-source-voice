@@ -133,16 +133,16 @@ THE FOUR HOSTS. `scenes/world.js` decides and stands the port's places (wired, a
 single-town bench, stands no port (its own FLAGGED line in `scenes/portHost.js`); `scenes/worldModes.js` (interiors)
 reads DFU's byte for the bank's ship alone (untouched); `scenes/dungeonContext.js` stands no town.
 
-`test/fb1014_inlandports.test.js` (7): the open sea's flood (a channel round a corner the sea, a lake and a pond not,
+`test/systems/naval/fb1014_inlandports.test.js` (7): the open sea's flood (a channel round a corner the sea, a lake and a pond not,
 every edge seeded); the ring (two off the sea, three not, its own pixel); the report's town - a capital on the table with
 a pond beside it no port, Daggerfall's shape a port, a lake village none, a tomb on the sea none; the host's open sea
 lifted off world.js and run (flooded once, the ether's water past the Veil, the continent's past the edge only with the
 land beyond the Bay, nothing off the map else); the host's wiring and the board's list lifted and run; the harbour
 office's `seaAt` lifted and run - 300 days of a board's bounties and salvages and 200 charts off a port with a lake in
 their reach, never on it, and no cargo for a port by the lake; and on the real map (ARENA2_PATH) the counts above, the 49 by name, the kept towns'
-bearings, and Ilessan Hills' old field - the town's middle - and its ponds. `test/fb1013c_porttowns.test.js` and
-`test/shipyards1_found.test.js` PIN MOVED (the board's ports and the shipyard law's towns the open sea's; the host's
-words), and `test/auditcaptsea.test.js` (B10's edge the open sea's). `tools/mutants/fb1014_inlandports.json` 15/15 dead
+bearings, and Ilessan Hills' old field - the town's middle - and its ponds. `test/systems/naval/fb1013c_porttowns.test.js` and
+`test/systems/shipyards1_found.test.js` PIN MOVED (the board's ports and the shipyard law's towns the open sea's; the host's
+words), and `test/systems/naval/auditcaptsea.test.js` (B10's edge the open sea's). `tools/mutants/fb1014_inlandports.json` 15/15 dead
 (`auditcaptsea`'s ACS-B10-sea-at re-aimed at the open sea's edge, dead, and the 11 other records of `captboard`,
 `capttrade`, `fb1013c_porttowns` and `shipyards1_audit` on the office's sea and the host's port test run again, dead); `shipyards1_audit`'s AUDIT-SHIPYARDS-the-host-asks-no-data
 and -the-docks-wait-the-yards-test re-aimed by content, and the 26 records of `shipyards1`, `shipyards1_audit`,

@@ -885,7 +885,7 @@ BUILT (CHAP6e, 2026-10-09, Mac: "continue"), the Season's two titles - `src/net/
 badge (`src/ui/playerBadge.js`):
 
 - **The High Master** (GUILD3e: now a Master's chair at a chapter that stands Ascendant, by its Strength, Season or none -
-  `CHAPTER_ASCENDANT_FROM`; `test/chap6e_titles.test.js` pins it): a Master's seat at a chapter whose Ascendancy is this counted Season's (the event the chapter drew
+  `CHAPTER_ASCENDANT_FROM`; `test/net/chap6e_titles.test.js` pins it): a Master's seat at a chapter whose Ascendancy is this counted Season's (the event the chapter drew
   for it) is signed `highmaster` on the token in the Master's place, with the Master's own claim - "High Master of the
   Fighters Guild, Anticlere". NARROWED: no title of its own in the wardrobe - an account wears its Master's title and
   the mint adds "High" for the Season, so the Master who wore it before keeps wearing it, and nothing is left worn and
@@ -1299,7 +1299,7 @@ the law and every place this slice narrowed it (BUILT, CHAP1).
   the kept adoption replaced it (3.2). A gain the day's ceiling cut is said: "Your standing with the Mages Guild can rise
   no further today." - AUDIT CHAP D2: now "... rises no further today. The rest will follow in the days to come."
   `systems/realmSaves.js` gained one read-only getter, the session's lease.
-- **Pins.** `test/chap1_roll.test.js`, 19 tests: the twenty-two and the leaf as the one home; the credit, the seed and
+- **Pins.** `test/systems/guild/chap1_roll.test.js`, 19 tests: the twenty-two and the leaf as the one home; the credit, the seed and
   the shapes against literals; the service over the real migrations - the switch at off, dev and on, the seed's cap
   either side of the epoch, a second seed ignored (AUDIT CHAP R11: this said refused), the day's bound and its rollover, the record line by line, a repeat,
   a lost race, the tenure, the lease, a stranger, a tombstone, the delete; the tab against a fake door - the seed, the
@@ -1314,7 +1314,7 @@ Five lenses - the service, the playing tab, Daggerfall's law, the record and the
 `01-Overview/Audit-Chapters.md` holds every finding and its fix. Its marks on this page are AUDIT CHAP <ID>. The Roll as
 it now stands: a pace with what it leaves owed, a cap that is a customs crossing's and keeps a member's rank, the kept
 adoption in the save in place of a claim as the page goes, a write that stands under its own tag with the lease asked
-inside it, a rank bounded by the Roll's reputation. `test/audit_chap1.test.js` (22) pins every fix, and
+inside it, a rank bounded by the Roll's reputation. `test/net/audit_chap1.test.js` (22) pins every fix, and
 `tools/mutants/audit_chap1.json` (49) mutates it; `tools/mutants/chap1.json` holds 25 (eleven re-aimed by content, the
 page-leave one retired with the code it held). One narrowing of Mac's Authority call, which he confirmed (R1, at the
 head of the page: "Approved").
@@ -1342,7 +1342,7 @@ The second slice's delivery half; section 4 carries the law and every narrowing 
   `ui/noticeWindow.js` (a hall writ's card under the guild's seal: "Wanted: 30 Oak Logs, for the Fighters Guild in
   Anticlere", paying "... and standing with the Fighters Guild"); `world.js` `profWritTaken` ("The Fighters Guild will
   remember it.") and the tracker's `refresh`.
-- **Pins.** `test/chap2_halls.test.js`, 16 tests: the law against literals; a town's halls off a fake faction file
+- **Pins.** `test/net/chap2_halls.test.js`, 16 tests: the law against literals; a town's halls off a fake faction file
   (a hall by its group, a temple through its templar order, the hidden two by their own faction, a commoner's door and
   a shop never, none before the file); the hall book's day and its stops; the service over the real migrations - a
   guest, the switch at the route and in the module, the age, the first answer, the hour; a region's chapters
@@ -1352,10 +1352,10 @@ The second slice's delivery half; section 4 carries the law and every narrowing 
   `tools/mutants/chap2.json`: 39 mutants, 39 dead - four (a chapter's own dice, the module's switch, the region a town
   is confirmed for, a standing read as a membership) survived their first run, and each has its pin. Three older
   records (`board_ui.json`, `chap1.json`, `prof6.json`) re-aimed by content at the lines this slice moved; the
-  `writ-cap` sentence names the writs, not the Court's (`test/prof1_client.test.js`, PIN MOVED); the reveal's call at
-  the entry edge carries the witness (`test/audit63_guilds_court.test.js`, `test/hub1.test.js`, PIN MOVED). AUDIT CHAP2
+  `writ-cap` sentence names the writs, not the Court's (`test/systems/prof1_client.test.js`, PIN MOVED); the reveal's call at
+  the entry edge carries the witness (`test/systems/audit63_guilds_court.test.js`, `test/ui/ink/hub1.test.js`, PIN MOVED). AUDIT CHAP2
   R13: and two version records (`gatekeys.json`, `fb1004d_knight_house.json`) and seventeen version pins moved to
-  `acct94`, and `test/accountworker.test.js`'s tables gained `hall_writ_days`.
+  `acct94`, and `test/server/accountworker.test.js`'s tables gained `hall_writ_days`.
 
 ## AUDIT CHAP2 - everything so far read again (2026-10-08, Mac: "Lets do a deep comprehensive audit on everything so far")
 
@@ -1371,7 +1371,7 @@ Court's top slot (E5); a board read in a region with no chapter reads no ground 
 `no-writ` to every stranger (S2); offline, a hidden guild's halls are revealed for a membership in either book, as DFU
 reveals them (D4). Two questions were Mac's: a rank-8 or rank-9 crossing's 80 or 90 (3.6, E6) and CHAP3's Merit writs
 (section 4, E4) - DECIDED as the record recommended (Mac: "You can decide whatever is best"): a rank-8/9 crossing keeps
-79, and CHAP3's Merit writs are each member's own. `test/audit_chap2.test.js` (34) pins every fix and the pins lens's gaps; `tools/mutants/audit_chap2.json`
+79, and CHAP3's Merit writs are each member's own. `test/net/audit_chap2.test.js` (34) pins every fix and the pins lens's gaps; `tools/mutants/audit_chap2.json`
 mutates it.
 
 ## CHAP2b - the receipts' standing and the receipt writs, as built (2026-10-08, Mac: "Keep going with the arc/slices")
@@ -1387,13 +1387,13 @@ The second slice's receipt half; section 4 carries the law and its calls (BUILT,
   Still `acct94` - nothing of the arc has shipped.
 - **The client.** `src/ui/noticeWindow.js` (an ask's card, no Take); `src/scenes/world.js` (the gate and raid carriers
   hand a credited answer to the tab's refresh and say the guilds' memory).
-- **Pins.** `test/chap2b_receipts.test.js`, 12 tests: the law against literals; a gate and raids through the real
+- **Pins.** `test/net/chap2b_receipts.test.js`, 12 tests: the law against literals; a gate and raids through the real
   routes over the real migrations (the credit, the head and the claim sequence, a repeat, the writ once a day, a raid's
   region, a region with no chapter); nothing for a non-member, no chapter, the switch shut or a gate with no region;
   the bounds (100 and the owed, another account's character, a dead one, a receipt credited once, a store that throws);
   a lost race; the board's asks (the rows, a member's state, the hidden two, the switch); the delete; the card in a DOM;
   the wiring. `tools/mutants/chap2b.json`: 29 mutants, 28 dead, 1 equivalent as recorded. The host's gate and raid
-  carriers' wiring pins moved (`test/auditonline2.test.js`, `test/raid4_rewards.test.js`, `test/wb5b_gate_claim.test.js`,
+  carriers' wiring pins moved (`test/net/auditonline2.test.js`, `test/net/raid4_rewards.test.js`, `test/net/gate/wb5b_gate_claim.test.js`,
   PIN MOVED); their mutant lists hold, 70 dead. The full suite: 22977 tests, 0 failing once they moved.
 
 ## CHAP3a - a member's own writ and the week's Merit, as built (2026-10-08, Mac: "Keep going with the arc/slices")
@@ -1410,7 +1410,7 @@ The third slice's first half; section 5.1 carries the law and what building it n
   receipt's Merit and answers it. Still `acct94` - nothing of the arc has shipped.
 - **The client.** `src/ui/noticeWindow.js` (a member's own card - "Your writ" - and the Merit lines under the day's
   count); `src/scenes/world.js` (a member's own writ refreshes the Roll as a hall writ does, and says its Merit).
-- **Pins.** `test/chap3a_merit.test.js`, 13 tests: the law against literals (the numbers, the week, the share, the
+- **Pins.** `test/net/chap3a_merit.test.js`, 13 tests: the law against literals (the numbers, the week, the share, the
   draw and its dice, the line); the board's own writ through the real routes over the real migrations (one a guild with
   a chapter, written once, its owner's alone - another account's reader, the account's other character and a second
   member of it each see their own or none - gone once no member, the switch shut before and after it was posted); a
@@ -1437,7 +1437,7 @@ The third slice's second half; sections 5.2 and 5.3 carry the law and what build
   Still `acct95` - nothing of the arc has shipped.
 - **The client.** `src/net/accountClient.js` (`accountRoll.list`); `src/ui/noticeWindow.js` (the chapters' lines under
   the Merit lines).
-- **Pins.** `test/chap3b_strength.test.js`, 11 tests: the law against literals (the numbers, the step, the cap, the idle
+- **Pins.** `test/net/chap3b_strength.test.js`, 11 tests: the law against literals (the numbers, the step, the cap, the idle
   week, the bounds, a Season's end, the bands, the writs by band, the line); every region's chapters at once (an
   unconfirmed town, a town confirmed for another region, the isolate's minute); a week settled (the week's Merit alone, a
   chapter with Merit and no town, the key - never twice - and the next week from the last); the week's scale (the accounts
@@ -1462,7 +1462,7 @@ whole: the week's Merit, the Turning's Strength, its band on the writs and the h
   quality to the three shelves); `src/systems/guild/guildServiceActions.js` and `src/ui/guildServiceWindows.js` (training's
   offer and gold check by a factor, DFU's own at 1); `src/ui/spellbookWindow.js` and `src/ui/spell/spellMakerWindow.js` (the
   trade price and the gold cost by a factor). No service change; still `acct95`.
-- **Pins.** `test/chap3c_halls.test.js`, 9 tests: the law against literals (the factor by band and unknown, a price laid
+- **Pins.** `test/systems/guild/chap3c_halls.test.js`, 9 tests: the law against literals (the factor by band and unknown, a price laid
   over and its rounding, the shelf's quality, its bounds, DFU's potion count read through it); the sheet over a fake door
   (nothing before its read, one read at a time, the beat, a failed read keeping the last, a door that throws, the stops,
   a row naming no guild); training's offer and gold check, DFU's chain and RefinedTraining's; a spell bought; a spell
@@ -1494,7 +1494,7 @@ book's key and bound).
 - **E4 DECIDED** (Mac: "Your decision", after the audit): `npcChapterLaw.js` `STRENGTH_SHORT` in `strengthAfter` (a
   week short of its target, above 50, three back toward 50) and `meritOfReceipt` (a receipt's 50 shared among its
   chapters), read by `npcReceipts.js` creditReceipt. CHAP3a's receipt pin moved (25 each, PIN MOVED).
-- **Pins.** `test/audit_chap3.test.js`, 18 tests, one a finding or a group; `tools/mutants/audit_chap3.json`, 45 mutants:
+- **Pins.** `test/net/audit_chap3.test.js`, 18 tests, one a finding or a group; `tools/mutants/audit_chap3.json`, 45 mutants:
   40 dead, 5 equivalent as recorded (AUDIT CHAP4: 41 and 4 since - `A3-S2-OFF` dies with S2). Thirty older records re-aimed at the code the fixes moved, all dead - two of them
   (AUDIT CHAP2's `T-LAW-ADOPT-BASE-HAS`, CHAP3c's `CHAP3C-SHEET-BUSY`) no longer equivalent, killed by new pins. The
   pins the fixes moved say PIN MOVED.
@@ -1511,7 +1511,7 @@ The fourth slice's service half; sections 3.5 and 6 carry the law and what build
   batch) and a character's (`chapterSeatsOf`, on the Roll's answer - `index.js`); `npcRoll.js`: the recorded rank
   through `rollBookRankOf`; `realm.js`: a deleted character's seats; migration `0103_npc_seats`. Still `acct95` (`acct100`
   since the merges of main past SCALE4's, TAVERN CARDS', SERVER-POST's, PERMADEATH-HOUSES' and CARDS9 and CARDS10's, `acct103` past INT1-INT6's, BAG-CRAFT's and UNWITNESSED-ORE's).
-- **Pins.** `test/chap4a_seats.test.js`, 13 tests: the law against literals (the numbers, the cap, Eligible at each
+- **Pins.** `test/net/chap4a_seats.test.js`, 13 tests: the law against literals (the numbers, the cap, Eligible at each
   edge, the standing, the plan's order, vacancy, ties, carry and limits, the changes); the Turning through the real
   migrations (who is placed and who never - under the line, a second short, an account too new, dead, gone; the window;
   the carry against a newcomer; `since` through a move; the Chronicle; a gate's agreement; the developers' weeks;
@@ -1530,7 +1530,7 @@ The fourth slice's client half; sections 3.5 and 6 carry the law and what buildi
 - **The client.** `src/net/npcRollTracker.js` (the `cap` door, `onCapped`, `onSeats`, `seats`); `src/scenes/worldModes.js`
   (the hall popup's seated services and ceiling); `src/scenes/world.js` (`seatRankHere`, `chapterSeatRank`,
   `rollRankCeiling`, the teleport's fee, the lines). No service change.
-- **Pins.** `test/chap4b_seats.test.js`, 8 tests: the law against literals (the seats kept, a seat's rank by guild and
+- **Pins.** `test/systems/guild/chap4b_seats.test.js`, 8 tests: the law against literals (the seats kept, a seat's rank by guild and
   region, the seated book's reads, its write-through and its guards, the hold in both books, every line); DFU's review
   under the ceiling through updateRank and the push effects; the teleport's gate at a seat's rank; the tab holding the
   book and saying the seats through two answers; the hosts' wiring. `tools/mutants/chap4b.json`: 34 mutants, all dead.
@@ -1542,14 +1542,14 @@ The fourth slice's titles; section 6 carries the law and what building it narrow
 
 - **The token and the relay.** `src/net/identityToken.js`: CHAPTER_TITLES, last in TITLES, and `titleClaimed` (a seat's
   and a chapter's title ride with `ts`); `src/net/wire.js` badged and readBadge carry it. RELAY_VERSION `world183` (`world177`, `world178`, `world179`, `world180`, `world181` then `world182` on its branch, renumbered past main's Wrothgarian zone, Tavern Cards, Hour's First, Tavern Tables, TV-BEYOND and CARDS10 at the merges), its
-  law recorded in `test/relayversion.test.js`; forty-one tests' version pins moved with it (PIN MOVED).
+  law recorded in `test/net/relayversion.test.js`; forty-one tests' version pins moved with it (PIN MOVED).
 - **The law.** `src/net/npcChapterLaw.js`: the key (`chapterTitleKey`, `chapterOfTitleKey`), the words
   (`chapterTitleText`) and the titles a character's seats give it (`chapterTitlesOf`).
 - **The service.** `server-account/src/npcChapters.js` (`chapterTitlesOpenFor`, `chapterTitlesOfAccount`);
   `titles.js` holds them off the row's `chapterTitles`; `index.js` lays them on the wardrobe's and the mint's row and
   signs one only for its character. `wrangler.toml`: `CHAPTER_TITLES = "off"`. Still `acct96` (`acct100` since the merges of main past TAVERN CARDS', SERVER-POST's and PERMADEATH-HOUSES' and CARDS9 and CARDS10's, `acct103` past INT1-INT6's, BAG-CRAFT's and UNWITNESSED-ORE's).
 - **The client.** `src/ui/playerBadge.js`: the words off the claim, the plain words, three colours.
-- **Pins.** `test/chap4c_titles.test.js`, 7 tests: the vocabulary and the claim's law, the relay's stamp and read; the
+- **Pins.** `test/net/chap4c_titles.test.js`, 7 tests: the vocabulary and the claim's law, the relay's stamp and read; the
   key and the words (and none for a hidden guild, no guild, no region); the titles a character's seats give it (the
   order, the Former Master's guards, the hidden); the badge; the service shut and open (the wardrobe, the signed claims,
   another character's none, a hidden guild's none), a Former Master through the Season's floor, held again, an officer's
@@ -1572,7 +1572,7 @@ The fourth slice's last; section 6 carries the law and what building it narrowed
   `src/ui/noticeWindow.js`: the Focus under its chapter's line, its Master's choice; `src/ui/hallOfRecords.js`: "The
   Chapters of <Region>" after the seat's own rows (and under the empty seat's word); `src/scenes/world.js`: the board's
   `setFocus`, the Hall's read.
-- **Pins.** `test/chap4d_focus.test.js`, 9 tests: the families (a guild of one none); the focused writs (every other, the
+- **Pins.** `test/net/chap4d_focus.test.js`, 9 tests: the families (a guild of one none); the focused writs (every other, the
   same slot's dice, the guards); the Chronicle in words (each arm, the Season's, the hidden, a gone member, no week); the
   Hall's section; the Focus set (the seat asked, the account, the dead, the family, the week); the board's lines and the
   post's writs (the week's, a lapsed one, a stored one not its guild's, an officer's none); the Chronicle's read (the
@@ -1593,7 +1593,7 @@ The fifth slice's first; sections 5.3 and 9 carry the law and what building it n
 - **The client.** `src/net/chapterSheet.js`: the seats kept, `chapterOf(faction, region)` a copy; `src/ui/chapterRoll.js`:
   the roll as a book (the Hall of Records' face); `src/scenes/worldModes.js` openBookshelf: the roll the shelf's first
   book, and alone for a stranger the shelf refuses; `src/scenes/world.js`: the host's `chapterRoll`.
-- **Pins.** `test/chap5a_roll.test.js`, 6 tests: the seats as the roll reads them (the order, the caps, the guards); the
+- **Pins.** `test/net/chap5a_roll.test.js`, 6 tests: the seats as the roll reads them (the order, the caps, the guards); the
   roll's words (the title's guards, each line, the list); the book; the sheet the tab holds (the seats kept, a copy,
   forgotten at a stop); the service's seats (its Master first, its officers by tenure, named as now, never a hidden
   guild's, another region's its own); the wiring. `tools/mutants/chap5a.json`: 35 mutants, all dead. Pins moved: CHAP3b's
@@ -1612,7 +1612,7 @@ decision 2 narrows by the one input it names (`06-Systems/Living-World.md`).
   `chapterNews` in the line context.
 - **The host.** `src/scenes/world.js`: `livingChapterOf` (the sheet's Strength in the politic region, banded, its guild
   named) handed to the living town where there is a sheet.
-- **Pins.** `test/chap5b_people.test.js`, 8 tests: the guild's days by the band (the offsets, the count, the default);
+- **Pins.** `test/systems/livingWorld/chap5b_people.test.js`, 8 tests: the guild's days by the band (the offsets, the count, the default);
   a hall's days by its own guild (the guards, the table); the town's evenings, the trades' and the court's, and every
   plan today's with no sheet; the town's chapters; the living town's plans by the sheet's bands, made again the minute
   they move - the same day asked again too - as a reader that read them first; the town's talk (not Steady, two days
@@ -1642,7 +1642,7 @@ evenings by band, the talk's days, the seats' beat).
   `chapterFactionOf`. `world.js`: a town's evenings by its own region; the ceiling before the first word; one Hall of
   Records read. `worldModes.js`: a seat's title at its halls; a knightly order's gifts by the book; the refused shelf's
   line. `lines.js`: the talk reworded. `noticeWindow.js`: a late Focus said in the chat.
-- **Pins.** `test/audit_chap4.test.js`, 28 tests, one a finding or a group; `tools/mutants/audit_chap4.json`, 71
+- **Pins.** `test/net/audit_chap4.test.js`, 28 tests, one a finding or a group; `tools/mutants/audit_chap4.json`, 71
   mutants, all dead. Thirty-seven older records re-aimed at the code the fixes moved, all dead; CHAP4a's two carry
   records retired with it (42 there now); AUDIT CHAP3's `A3-S2-OFF` no longer equivalent. The pins the fixes moved say
   PIN MOVED.
@@ -1661,7 +1661,7 @@ The sixth slice's first; section 7 carries the law and what building it narrowed
   `server-account/src/professions.js`: a shut hall posts no writs nor its members their own; a Crackdown's pay half
   again; the board's chapter lines carry the event. Migrations `0102` (the event columns) and `0103` (the Chronicle's
   two new kinds, a comment) grown in place - nothing shipped; still `acct99` (`acct100` since the merges of main past CARDS9 and CARDS10's, `acct103` past INT1-INT6's, BAG-CRAFT's and UNWITNESSED-ORE's).
-- **Pins.** `test/chap6a_events.test.js`, 16 tests: the events and their numbers; every weight's modifier; the draw
+- **Pins.** `test/net/chap6a_events.test.js`, 16 tests: the events and their numbers; every weight's modifier; the draw
   (its sameness, its spread, a weight of none, its golden rolls); the rivals and the pick; a Decline's week, a
   Rivalry's end, a Crackdown's pay and line; the Season's lines; the draw at a Season's opening with every input
   moved; no draw mid-Season, uncounted, unconfirmed or shut; a Decline's Season; the Season's end (one race a pair, the
@@ -1685,7 +1685,7 @@ The sixth slice's second; section 7 carries the law and what building it narrowe
   one hall writ more a day. `index.js` and `service.js`: the route and its refusals (`no-event` and `closed` 409,
   `not-member` 403). Migrations `0102` (`doctrine`, `doctrine_season`) and `0103` (`npc_chapter_backing`) grown in place -
   nothing shipped; still `acct99` (`acct100` since the merges of main past CARDS9 and CARDS10's, `acct103` past INT1-INT6's, BAG-CRAFT's and UNWITNESSED-ORE's).
-- **Pins.** `test/chap6b_backing.test.js`, 11 tests: the doctrines and their roll (golden); the sides; a Schism's winner
+- **Pins.** `test/net/chap6b_backing.test.js`, 11 tests: the doctrines and their roll (golden); the sides; a Schism's winner
   and a Succession's heir; the lines; a backing (one an account a chapter a Season, changed, the alt's the account's,
   through the route); every refusal and its status (the grace before the third Turning settles among them); the
   Succession named (the Master's, the richer backer's in the Season and the chapter alone, an officer's a member's, the
@@ -1709,7 +1709,7 @@ The sixth slice's third; sections 7 and 9 carry the law and what building it nar
   Season lines; `livingChapterOf` the whole chapter, its event and shut halls. `src/systems/livingWorld/lines.js`:
   `CHAPTER_EVENT_NEWS` and the news pool's reading of it; `livingTown.js`: `chapterNews` the Season first.
   `server-account/src/npcChapters.js`: the sheet's and the board's `season` for a Schism and a Succession.
-- **Pins.** `test/chap6c_words.test.js`, 9 tests: the Season as the sheet says it; the candidates' names (golden, the
+- **Pins.** `test/systems/livingWorld/chap6c_words.test.js`, 9 tests: the Season as the sheet says it; the candidates' names (golden, the
   stream put back); every line; a member's choices and what a backing says; the sheet's Season; the board (the lines,
   the choices to a member alone, the mark, the press, the word, the read; a Succession's names, a refusal, a late word);
   the town's talk (shut first, then the event, else the band; the words); the wiring. `tools/mutants/chap6c.json`: 62
@@ -1731,7 +1731,7 @@ The sixth slice's fourth; sections 7 and 9 carry the law and what building it na
   the player's region) for the band's `chapterStrength`. `src/systems/livingWorld/dayPlan.js`: `GUILD_DAYS_SHUT`, the
   `shut` band, the `guildsman` at home, a sellsword's and an adventurer's visit gated with their draws kept.
   `livingTown.js`: `_chapterRead` reads a shut chapter as the band `shut`.
-- **Pins.** `test/chap6d_halls.test.js`, 6 tests: the price factor (none, the band, an Ascendancy on both services, the
+- **Pins.** `test/systems/livingWorld/chap6d_halls.test.js`, 6 tests: the price factor (none, the band, an Ascendancy on both services, the
   doctrine on training alone, both, the names it does not know); the shelf (the doctrine's two, the bounds, DFU's own);
   the shut read and its line; a shut hall's evenings and guildsmen in a synthetic town; the living town's read; the
   wiring. `tools/mutants/chap6d.json`: 24 mutants, all dead. Three older records re-aimed by content (CHAP3c's host,
@@ -1744,7 +1744,7 @@ The sixth slice's last; sections 6 and 7 carry the law and what building it narr
 
 - **The token and the relay.** `src/net/identityToken.js`: `highmaster` and `seasonmaster` join CHAPTER_TITLES and
   TITLES, last, each with the seats' claim. RELAY_VERSION `world182` grown in place (`world183` since the merge of main past CARDS10's) - undeployed, its law re-hashed in
-  `test/relayversion.test.js` (bytes `3012337d...` before it).
+  `test/net/relayversion.test.js` (bytes `3012337d...` before it).
 - **The law.** `src/net/npcChapterLaw.js`: `chapterTitleText` words both (a Season's Master's Season 1 to 9999);
   `chapterTitlesOf` marks a Master's seat in an Ascendancy `high`, first among the Masters', and adds each Season held
   whole (`kept`), last, newest first, once.
@@ -1752,7 +1752,7 @@ The sixth slice's last; sections 6 and 7 carry the law and what building it narr
   read off `npc_chapters`, the Chronicle's 'season' rows read for good; `index.js`: the mint signs `highmaster` in the
   Master's place. `titles.js`: the wardrobe's comment. Still `acct99` (`acct100` since the merges of main past CARDS9 and CARDS10's, `acct103` past INT1-INT6's, BAG-CRAFT's and UNWITNESSED-ORE's); `CHAPTER_TITLES` still shipped "off".
 - **The client.** `src/ui/playerBadge.js`: the two plain words and colours.
-- **Pins.** `test/chap6e_titles.test.js`, 6 tests: the vocabulary, the claim and the relay's carry; the words (the
+- **Pins.** `test/net/chap6e_titles.test.js`, 6 tests: the vocabulary, the claim and the relay's carry; the words (the
   Season's guard, a hidden guild's none, the plain words, the colours); the law (the mark, the order, the kept Seasons'
   guards); the High Master through the service (the mint, never worn alone, another Season's or event's, an officer's,
   no Season counted); the Season's Master (shut, none yet, with no seat, a struck chapter, hidden, unreadable, another
@@ -1775,7 +1775,7 @@ The seventh slice's first; section 8 carries the law and what building it narrow
   `service.js`: the route and its refusals; migrations `0102` (`patron`, `patron_season`) and `0103`
   (`npc_chapter_patron_bids`, the Chronicle's 'patron' kind) grown in place. Still `acct99` (`acct100` since the merges of main past CARDS9 and CARDS10's, `acct103` past INT1-INT6's, BAG-CRAFT's and UNWITNESSED-ORE's). `src/net/accountClient.js`:
   the three new refusals' words.
-- **Pins.** `test/chap7a_patrons.test.js`, 7 tests: the law (the bounds, the escrow's id, the winner's order, the
+- **Pins.** `test/net/chap7a_patrons.test.js`, 7 tests: the law (the bounds, the escrow's id, the winner's order, the
   kinds); the words (the patron's fields, the Chronicle's line and its guards); a bid (escrowed, raised by the
   difference, never lowered, made once, each refusal); the Turning (the highest burnt, the rest home, a struck chapter's,
   a gone guild's, an earlier Season's, the patron written, the Chronicle's rows, the sheet's patron and one gone since,
@@ -1799,7 +1799,7 @@ slices stand.
   the banners on the halls' pass, the modes host's `guildId`, the board's `patron` door. `src/scenes/worldModes.js`: the
   hall priced with the reader's guild. `src/ui/noticeWindow.js`: the patron's line, a guildmaster's bid and its choices,
   `bidPatron`. `src/net/accountClient.js`: `accountRoll.patron`.
-- **Pins.** `test/chap7b_patrons_client.test.js`, 6 tests: the members' price (a Failing chapter's, the Season's tenths
+- **Pins.** `test/net/chap7b_patrons_client.test.js`, 6 tests: the members' price (a Failing chapter's, the Season's tenths
   on it, another guild's, none); the board's words and offers (the cap); the sheet's patron (its arms, a copy); the
   banners (two a hall, the region, the arms, the door, no region); the board (the lines, the offers, a press and its word,
   a refusal, a late answer, no door, no bid); the wiring. `tools/mutants/chap7b.json`: 44 mutants, 43 dead and one
@@ -1832,7 +1832,7 @@ rumour mill NARROWED); section 11 (the reads' indexes, `chapterEvents.js`); sect
   `src/scenes/world.js` (`guildId`, `chapterHere`'s book, the banners' faction, the halls online alone);
   `worldModes.js` (`shutBox` on the services); `spellbookWindow.js` (the haggle's cost); `chapterEvents.js` (the
   Crackdown's words); `accountClient.js` (`guild-patron`'s sentence).
-- **The tests.** `test/audit_chap5.test.js` (29); `tools/mutants/audit_chap5.json` (71, all dead). Thirty-two older
+- **The tests.** `test/net/audit_chap5.test.js` (29); `tools/mutants/audit_chap5.json` (71, all dead). Thirty-two older
   records re-aimed and run again, all dead; CHAP6a's two pay records retired; CHAP6b's `CHAP6B-HEIR-TOP` no longer
   equivalent. Older pins moved (PIN MOVED): CHAP3c, CHAP6a, CHAP6b, CHAP6c, CHAP6d, CHAP7a, CHAP7b.
 

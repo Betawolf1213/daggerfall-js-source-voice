@@ -30,7 +30,7 @@ key walks the rows (`systems/quickLoot.js` `plaqueStep`; its Controls row). Wher
 skin, touch - the node asks through a list window (`ListPickerWindow`, the boat menu's precedent). The hover yields to a
 ray winner in reach when no row of the node is pressable, so a door or a body behind a spent patch is still the press.
 
-`test/fb0930b_toolsaid.test.js` (+5); `tools/mutants/profmenu.json`.
+`test/systems/fb0930b_toolsaid.test.js` (+5); `tools/mutants/profmenu.json`.
 
 ## PROF-SCENES, then PROF-RETICLE: the act on the crosshair (2)
 
@@ -59,8 +59,8 @@ Under the crosshair the count's pips and one line of hint - the act's own words,
 cue is a shape and a sound (`actCues`, `systems/professions/profSounds.js`, DFU's own clips - GATHER-FEEL, 2026-10-13, moved them
 to the gathering's ear, `06-Systems/Professions-Arc.md` section 44). The node's name is the menu's; the act carries none.
 
-`test/profreticle.test.js` (10); `test/audit32_pages.test.js` P11 (the line's degree the same across as up, now the
-lens's) and `test/prof7_client.test.js` (the Gentle hold an arc) re-aimed; `tools/mutants/profreticle.json` 57, all
+`test/systems/profreticle.test.js` (10); `test/ui/audit32_pages.test.js` P11 (the line's degree the same across as up, now the
+lens's) and `test/systems/prof7_client.test.js` (the Gentle hold an arc) re-aimed; `tools/mutants/profreticle.json` 57, all
 dead; `tools/profReticleProbe.mjs` (every act over a sky and a field, desk, phone and reduced motion). NOT SEEN IN THE
 WORLD ON A GPU: the probe draws the marks over a flat ground through a 65 degree lens, not the frame.
 
@@ -89,5 +89,5 @@ classic skin, off a document or if the hook throws, Daggerfall's line is said as
 counts what moved. The plaque's hide and teardown take the cards down. Not here: a loot window's clicks (the item moves
 in the window), DFU's arrows line, torches and the Burning Court's spoils, which keep their own words.
 
-`test/pickupfeed.test.js` (22); `test/quickloot.test.js`, `discord5`, `audit24_wave38` and `disc7` re-aimed;
+`test/systems/pickupfeed.test.js` (22); `test/systems/quickloot.test.js`, `discord5`, `audit24_wave38` and `disc7` re-aimed;
 `tools/mutants/pickupfeed.json` 54, all dead; `tools/pickupFeedProbe.mjs` (202 layout checks at desk and phone).

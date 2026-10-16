@@ -319,7 +319,7 @@ export function generateBackstory(textRsc, backstoryId, effects, ctx = {}) {
   // (:509-512), so DFU shows "%q1b[nullMCP]" for a question with
   // fewer than three tokens where this port shows nothing. That
   // divergence is older than this fix and pinned as it stands
-  // (test/biography.test.js); it is not re-decided here. Everything
+  // (test/systems/biography.test.js); it is not re-decided here. Everything
   // ELSE rides the real ladder, sentinels and all.
   const mcp = { source: biogMacroSource(ctx.raceKey ?? null, ctx.seed ?? 0) };
   const hooks = { playerRaceName: () => ctx.raceName ?? null };   // %ra, MacroHelper.cs:942-945

@@ -8,7 +8,7 @@ pause face and its window of every shared moment). Two lenses, each reproducing 
 - **UI** the window - the real `mountEnhancedMenu` in pause mode in Chromium with a fixture source, at 1280x800,
   390x844, 844x390 and 667x375, the keyboard, a pad's bumpers, a rotation, every Plus theme.
 
-Every finding was checked before it was fixed; pins in `test/timers1.test.js` (each `AUDIT TIMERS1 <ID>`), and each fix
+Every finding was checked before it was fixed; pins in `test/ui/enhanced/timers1.test.js` (each `AUDIT TIMERS1 <ID>`), and each fix
 carries the same comment.
 
 ## Fixed

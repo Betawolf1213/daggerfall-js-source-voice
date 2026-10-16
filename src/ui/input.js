@@ -220,7 +220,7 @@ export function saySwingChain() {
  * nothing and fires on either order, in DFU and here. "Either 'K' or
  * 'L' are not being held" (:1623-1624) is DFU's COMMENT, not its code,
  * and the pins are written against the code, both ways round
- * (test/g3_heldorder.test.js).
+ * (test/systems/g3_heldorder.test.js).
  *
  * FindKeyboardActions runs GetUnaryKey over EVERY bound code each
  * frame (:1826-1832 over existingKeyDict, :1327-1341), so every combo
@@ -410,7 +410,7 @@ export function actionsOf(e, keys = null) {
  *  the LATCH, so a DOUBLE-bound "Shift + W" walks only from a frame
  *  where the Shift stood clean, and a W already held when the Shift
  *  arrives keeps walking forward; SINGLE-bound, :1636 has nothing to
- *  bite on and it walks on either order (test/g3_heldorder.test.js).
+ *  bite on and it walks on either order (test/systems/g3_heldorder.test.js).
  *  This is the seam the held-order remainder named, and it is the same
  *  one line for line in all four hosts. */
 export function held(keys, action) {
@@ -679,7 +679,7 @@ export function routeKeyUp(e, ctx) {
  *  combo, and GetUnaryKey's combo branch (InputManager.cs:1666-1712)
  *  is dead for every DISPATCHED action while staying live for the
  *  polled ones, which read through held(). Every host that registers a
- *  keydown hands its own Set in; test/combohosts.test.js sweeps them. */
+ *  keydown hands its own Set in; test/systems/combohosts.test.js sweeps them. */
 /** CG2 (2026-09-08, Mac: "unable to type in your name"): a key typed
  *  INTO a DOM text field is the field's. The enhanced wizard's name
  *  boxes are real <input>s over the canvas; every host's keydown ladder

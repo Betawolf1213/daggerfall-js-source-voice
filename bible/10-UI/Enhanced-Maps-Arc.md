@@ -51,7 +51,7 @@ One sentence behind it: **inside is inside**. The context is DERIVED
 from the flags every host already keeps (`isPlayerInsideDungeon`,
 `isPlayerInside`, whether the map pixel carries a location), never
 declared by a host — a host that declares is a host that forgets.
-`systems/map/mapTabs.js`, pinned in `test/maptabs.test.js`.
+`systems/map/mapTabs.js`, pinned in `test/systems/map/maptabs.test.js`.
 
 **One key.** `AutoMap` opens the map wherever the player is, on
 whichever tab that place offers, and the tabs do the rest.
@@ -520,7 +520,7 @@ classic twin has always taken its own binding back
 sheet, because the tabs mean one window can be entered by either key and
 the player should not have to remember which.
 
-**WHAT LET THE FIRST ONE THROUGH.** `test/map3_heldpose.test.js` pinned
+**WHAT LET THE FIRST ONE THROUGH.** `test/combat/map3_heldpose.test.js` pinned
 the gate — and pinned it as `isTravelMap`, so when EM4 narrowed the tag
 the pin was updated to match the new shape and went green over the
 regression. A pin that asserts the wiring as it is will always agree
@@ -654,6 +654,6 @@ all.
 
 Code: `ui/town/townMapMarks.js` (the rows and the reading), `ui/ink/inkTown.js` (`paintBoardMark`, `paintHomeMark`),
 `ui/town/townSheet.js`, `ui/town/townMapDoor.js`, `scenes/world.js` (`townBoardMarks`, `townHomes`). Pins:
-`test/town_marks.test.js` (9). Mutants: `tools/mutants/town_marks.json` (35, all dead); `disc23a.json`'s breathing
+`test/ui/town/town_marks.test.js` (9). Mutants: `tools/mutants/town_marks.json` (35, all dead); `disc23a.json`'s breathing
 record and `survtiers3.json`'s two cite records re-aimed.
 

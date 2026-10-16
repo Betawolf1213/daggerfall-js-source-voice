@@ -8,7 +8,7 @@ foe, the living crew, online and the seams, the frame's cost - and the merges we
 normalized lines counted three ways: nothing lost).
 
 Every finding below was re-run on its probe before it was fixed, and pinned by a test that fails on the code as the
-second pass shipped it: `test/auditnav2_online.test.js` (8), `auditnav2_boarding` (7), `auditnav2_captains` (17, 19 as
+second pass shipped it: `test/systems/naval/auditnav2_online.test.js` (8), `auditnav2_boarding` (7), `auditnav2_captains` (17, 19 as
 the runner counts them), `auditnav2_helm` (9), `auditnav2_combat` (6), `auditnav2_deck` (12) and `auditnav2_crew` (26)
 - 85 pins. Mutation-proven: `tools/mutants/auditnav2_*.json`, 213 records, all dead. Each fix carries an
 `AUDIT NAV2 F<n>` comment. Six fixers worked in parallel on files of their own and were merged here; F43 and F62 were
@@ -157,7 +157,7 @@ the pin's 0.1 s.
 ## Not fixed
 
 - **The helm**: the Ship handling taken at the helm is not in the save (a load takes the row's again); the pad's d-pad
-  under the travel view; a journey with the view down; `test/helmway.test.js`'s comment.
+  under the travel view; a journey with the view down; `test/systems/naval/helmway.test.js`'s comment.
 - **The crew**: `MobileUnit.update` still answers a new object each call (PERF-TOWN1's per-unit row would end it; its
   settings read is shared with the town's loop, kept live on purpose); `comeSailAwayPeers.js` stamps `peerKey` at
   build and `realign` can move a boat to another slot without restamping, so after an owner's boat list reorders a

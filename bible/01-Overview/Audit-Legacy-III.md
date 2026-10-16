@@ -20,7 +20,7 @@ Eighty-four findings by id (A1-A17, O1-O12, W1-W7, U1-U9, P1-P17, F1-F22), sever
 three lenses - each pinned once, under its first id: U4 = A14, U5 = A10 = F8, U6 = A12 = F4, U7 = A11 = F10, P1 = O2,
 P2 = A4, P3 = A3, P4 = A6, F1 = A5, F2 = A16, F9 = A9, W7 = F13; lens A's own unconfirmed U1-U3 were confirmed and are
 A17, A2's realm half and P6. Every one was verified against the code before it was fixed, and every finding but the
-record corrections (A16, F2, F5, F7, F12-F20, F22) is pinned by id in `test/auditlegacy3.test.js` (51 tests; the older
+record corrections (A16, F2, F5, F7, F12-F20, F22) is pinned by id in `test/systems/legacy/auditlegacy3.test.js` (51 tests; the older
 pins the fixes moved carry their PIN MOVED notes). Mutation-proven: `tools/mutants/auditlegacy3.json` - 204 records,
 202 dead and 2 equivalent as recorded (each with its reason), after eight first-run survivors showed eight pins that
 held nothing and were sharpened; the 35 earlier records the fixes moved (32 whose text changed, 3 the fixes gave a

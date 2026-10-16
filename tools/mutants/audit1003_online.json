@@ -5,7 +5,7 @@
     "old": "  if (e.some((x) => x.k === 'heal')) for (const f of st.b.fighters) f.health = f.maxHealth;\n",
     "new": "",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "          if (!(healed && h < (P.health ?? h))) {",
     "new": "          {",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "const healed = C.b.phase === 'heal' || C.b.phase === 'done';",
     "new": "const healed = boutOver(C.b);",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "const healed = C.b.phase === 'heal' || C.b.phase === 'done';",
     "new": "const healed = C.b.phase === 'heal';",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "if (!(healed && h < (P.health ?? h))) {",
     "new": "if (!healed) {",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "yieldEarly : ARENA_NO_TEXT[w.m] ?? w.m); if (over) { if (bout.priv) letGoPriv(true); else endBout(); }",
     "new": "yieldEarly : ARENA_NO_TEXT[w.m] ?? w.m);",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "{ say(ARENA_NO_TEXT[w.m] ?? w.m); if (over) endBout(); return true; }",
     "new": "{ say(ARENA_NO_TEXT[w.m] ?? w.m); return true; }",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "(w.m === 'no bout' || w.m === 'void' || w.m === 'no contest')",
     "new": "(w.m === 'no bout' || w.m === 'no contest')",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "    if (deps.bouts.relay?.()?.o === bout.o) deps.bouts.dismiss?.();\n    bout = null;",
     "new": "    bout = null;",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "deps.bouts.dismiss?.();\n    bout = null;\n  }",
     "new": "deps.bouts.dismiss?.();\n  }",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "    if ((w?.k === 'st' && FOUGHT.has(w.ph)) || (w?.k === 'ev' && (w.e ?? []).some((e) => FOUGHT.has(e.k)))) exBegun.add(hour);\n",
     "new": "",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "(w?.k === 'st' && FOUGHT.has(w.ph)) || ",
     "new": "",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": " || (w?.k === 'ev' && (w.e ?? []).some((e) => FOUGHT.has(e.k)))",
     "new": "",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "BOUT_PHASES.slice(BOUT_PHASES.indexOf('fight'))",
     "new": "BOUT_PHASES.slice(BOUT_PHASES.indexOf('call'))",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "return !!ex && !!online()?.exhibitionBegun?.(ex.hour);",
     "new": "return false;",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -140,8 +140,8 @@
     "old": "return !!s && !!s.arenaOk && !s.superseded;",
     "new": "return !!s && s.status === 'open' && !!s.arenaOk && !s.superseded;",
     "tests": [
-      "test/audit1003_online.test.js",
-      "test/arena4b_stands.test.js"
+      "test/systems/arena/audit1003_online.test.js",
+      "test/systems/arena/arena4b_stands.test.js"
     ]
   },
   {
@@ -150,8 +150,8 @@
     "old": "return !!s && !!s.arenaOk && !s.superseded;",
     "new": "return !!s && !s.superseded;",
     "tests": [
-      "test/audit1003_online.test.js",
-      "test/arena4b_stands.test.js"
+      "test/systems/arena/audit1003_online.test.js",
+      "test/systems/arena/arena4b_stands.test.js"
     ]
   },
   {
@@ -160,8 +160,8 @@
     "old": "return !!s && !!s.arenaOk && !s.superseded;",
     "new": "return !!s && !!s.arenaOk;",
     "tests": [
-      "test/audit1003_online.test.js",
-      "test/arena4b_stands.test.js"
+      "test/systems/arena/audit1003_online.test.js",
+      "test/systems/arena/arena4b_stands.test.js"
     ]
   },
   {
@@ -170,7 +170,7 @@
     "old": "if (!hallSend(q)) return { ok: false, text: O.hallWait };",
     "new": "if (!hallSend(q)) return { ok: false, text: O.whyOffline };",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -179,7 +179,7 @@
     "old": "    for (const l of [hallLink, city?.link, asking?.link]) { try { l?.tick?.(); } catch { /* its own trouble */ } }\n",
     "new": "",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -188,7 +188,7 @@
     "old": "[hallLink, city?.link, asking?.link]",
     "new": "[city?.link, asking?.link]",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -197,7 +197,7 @@
     "old": "[hallLink, city?.link, asking?.link]",
     "new": "[hallLink, asking?.link]",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -206,7 +206,7 @@
     "old": "[hallLink, city?.link, asking?.link]",
     "new": "[hallLink, city?.link]",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -215,7 +215,7 @@
     "old": "    hallRequeue();\n",
     "new": "",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -224,7 +224,7 @@
     "old": "if (hallLink.status !== 'open') { hallQ.sent = false; return; }",
     "new": "if (hallLink.status !== 'open') return;",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -233,7 +233,7 @@
     "old": "(hall.queue !== 'queued' && hall.queue !== 'offer')",
     "new": "hall.queue !== 'queued'",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -242,7 +242,7 @@
     "old": "    if (hallQ.sent && hall.queue === 'offer') hall = { ...hall, queue: 'queued', offer: null };",
     "new": "",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -251,7 +251,7 @@
     "old": "      hallQ = { w: q, sent: true };",
     "new": "",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -260,7 +260,7 @@
     "old": ", send: { cheer: (c) => boutSend({ k: 'ch', c }) } } });",
     "new": " } });",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -269,7 +269,7 @@
     "old": ", send: { cheer } } });",
     "new": " } });",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -278,7 +278,7 @@
     "old": "send: { cheer: p.send?.cheer },",
     "new": "send: {},",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -287,7 +287,7 @@
     "old": "C.you || typeof C.relay.send?.cheer !== 'function' ? null",
     "new": "C.you ? null",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -296,7 +296,7 @@
     "old": "city === C && C.sent && C.link",
     "new": "city === C && C.link",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -305,7 +305,7 @@
     "old": "    if ((w.k === 'of' || w.k === 'go') && !live()) return;\n",
     "new": "",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -314,7 +314,7 @@
     "old": "  function leaveAll() {\n    if (hallLink) { try { hallLink.leave?.(); } catch { /* gone */ } hallLink = null; }\n",
     "new": "  function leaveAll() {\n",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -323,7 +323,7 @@
     "old": "    hall = { ...HALL_EMPTY };\n    closeCity();\n    closeAsk();\n    if (bout?.priv) letGoPriv(false); else endBout();",
     "new": "    closeCity();\n    closeAsk();\n    if (bout?.priv) letGoPriv(false); else endBout();",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -332,7 +332,7 @@
     "old": "    hall = { ...HALL_EMPTY };\n    closeCity();\n    closeAsk();",
     "new": "    hall = { ...HALL_EMPTY };\n    closeAsk();",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -341,7 +341,7 @@
     "old": "    closeCity();\n    closeAsk();\n    if (bout?.priv) letGoPriv(false); else endBout();",
     "new": "    closeCity();\n    if (bout?.priv) letGoPriv(false); else endBout();",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -350,7 +350,7 @@
     "old": "    closeAsk();\n    if (bout?.priv) letGoPriv(false); else endBout();   // AUDIT PRE-MERGE 1003b C2: a session's fighter healed as it goes\n    sess = null;",
     "new": "    closeAsk();\n    sess = null;",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -359,8 +359,8 @@
     "old": "    try { arenaOnline?.leaveAll(); } catch (e) { console.warn('[online] leaving the arena\\'s rooms', e?.message ?? e); }\n",
     "new": "",
     "tests": [
-      "test/audit1003_online.test.js",
-      "test/oneseat.test.js"
+      "test/systems/arena/audit1003_online.test.js",
+      "test/net/oneseat.test.js"
     ]
   },
   {
@@ -369,7 +369,7 @@
     "old": "if (checkpointLanded(await hooks.checkpoint?.())) await",
     "new": "if (hooks.checkpoint?.() !== false) await",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -378,8 +378,8 @@
     "old": "export const checkpointLanded = (c) => c === undefined || c === true || c?.ok === true;",
     "new": "export const checkpointLanded = (c) => c !== false;",
     "tests": [
-      "test/audit1003_online.test.js",
-      "test/arena4b_homeclient.test.js"
+      "test/systems/arena/audit1003_online.test.js",
+      "test/systems/arena/arena4b_homeclient.test.js"
     ]
   },
   {
@@ -388,7 +388,7 @@
     "old": "const opts = sink ? { quiet: true, sink } : { quiet: true };",
     "new": "const opts = { quiet: true };",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -397,7 +397,7 @@
     "old": "if (realmSession) return realmCheckpoint({ sink });",
     "new": "if (realmSession) return realmCheckpoint();",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -406,7 +406,7 @@
     "old": "    return put ?? false;\n  };",
     "new": "    return true;\n  };",
     "tests": [
-      "test/audit1003_online.test.js"
+      "test/systems/arena/audit1003_online.test.js"
     ]
   },
   {
@@ -415,8 +415,8 @@
     "old": "checkpoint: () => onlineCheckpointLanded(),",
     "new": "checkpoint: () => onlineCheckpoint(),",
     "tests": [
-      "test/audit1003_online.test.js",
-      "test/arena4b_homeclient.test.js"
+      "test/systems/arena/audit1003_online.test.js",
+      "test/systems/arena/arena4b_homeclient.test.js"
     ]
   }
 ]

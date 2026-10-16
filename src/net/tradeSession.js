@@ -1,6 +1,6 @@
 // @ts-check
 // TRADE1 (2026-09-21): THE TRADE, AS A STATE MACHINE. Pure - no DOM, no game import: everything the game owns (the pack,
-// the item law, the socket) is handed in, so test/trade_session.test.js drives two of these against each other over a
+// the item law, the socket) is handed in, so test/net/trade_session.test.js drives two of these against each other over a
 // fake wire and pins the law without a browser.
 //
 // WHAT A TRADE IS. Two players stand in one room. One asks (`ask`), the other answers (`yes`/`no`). Then each stages an

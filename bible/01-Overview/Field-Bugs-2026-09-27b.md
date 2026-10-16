@@ -23,13 +23,13 @@ no peer candidate carried one (its own note: "a peer's flags are a later slice's
   `seen` beside `drawable`). Its cast is still seen - a missile leaves an invisible caster's hand in DFU too.
   At the merge onto main, main's PEERLIGHT2 (a peer's Light spell hangs a candle - a sprite and its light - before
   them) read the whole list; it reads `seen` now, so the classic lane's invisible player does not walk behind a
-  floating candle (`test/invisnet.test.js`, mutant `INVIS-candle-for-all`). A torch's light (PEERLIGHT1) is a light
+  floating candle (`test/net/invisnet.test.js`, mutant `INVIS-candle-for-all`). A torch's light (PEERLIGHT1) is a light
   alone, no sprite, and stays - DFU turns a concealed entity's renderer off, not the lights about it.
 - **The F key and the plaque** skip a concealed peer (`peerInSight`).
 - **The foes.** `peersNear` carries each peer's bits, and both foe pools' peer candidates answer `concealment()` off
   them (`concealFlagsOfBits`), so EnemySenses.BlockedByIllusionEffect reads a peer as it reads any target.
 
-Pinned: `test/invisnet.test.js` (5). `tools/mutants/invisnet.json` (15 dead, the candle's at the merge).
+Pinned: `test/net/invisnet.test.js` (5). `tools/mutants/invisnet.json` (15 dead, the candle's at the merge).
 
 ## HOUSE-DROP: a visitor drops nothing in someone else's online home (report 2)
 
@@ -47,7 +47,7 @@ work (the owner's floor, the dropper's own shown to all, or no drop), Mac chose 
 - Only a VISITOR in someone else's online home: the owner's own floor, an offline house and every other building are
   as they were.
 
-Pinned: `test/housedrop.test.js` (5). `tools/mutants/housedrop.json` (16 dead).
+Pinned: `test/systems/housedrop.test.js` (5). `tools/mutants/housedrop.json` (16 dead).
 
 ## INVIS-LOOK: the transparent look (the follow-up, the same day)
 
@@ -63,7 +63,7 @@ an INVISIBLE player takes the shimmer too (a foe's invisibility is still not dra
 - No name over a concealed peer; a concealed walker's lantern is not drawn; F and the plaque still skip them, and
   their foes still read the flags.
 
-Pinned: `test/invislook.test.js` (7). `tools/mutants/invislook.json` (31 dead).
+Pinned: `test/net/invislook.test.js` (7). `tools/mutants/invislook.json` (31 dead).
 
 ## PSCALE-OWN: the first of phase 3c's two gaps (Mac: "Finish the 2 gaps")
 
@@ -71,7 +71,7 @@ A shared quest's foe underground (QUEST-PARTY phase 3c's own lane) was the one f
 party's size weighed. It is weighed now, as every other shared foe is: as tough as the party striking it, striking each
 as a party's foe, counted by whoever runs it - my own quest's by me whoever holds the seat, a party member's puppet by
 its owner's record. My private quest's foe and my summoned ally stay unweighed. `06-Systems/Online-Arc.md` (PSCALE-OWN).
-Pinned: `test/pscaleown.test.js` (3). `tools/mutants/pscaleown.json` (7 dead).
+Pinned: `test/scenes/quest/pscaleown.test.js` (3). `tools/mutants/pscaleown.json` (7 dead).
 
 ## SUMMON-SYNC: the second gap - a summon's foe underground is the room's
 
@@ -81,4 +81,4 @@ every player in the room sees it, strikes it through its owner and is hunted by 
 nearest it; an owner gone without a word takes it along. A summoned ALLY is handed to nobody, outside or underground -
 it goes with its summoner (an heir stood it as everyone's foe). With that the ONLINE-DUNGEON-FOES flag is retired - a private
 quest's foe stays its player's own by the party's law. `06-Systems/Online-Arc.md` (SUMMON-SYNC).
-Pinned: `test/summonsync.test.js` (9). `tools/mutants/summonsync.json` (24 dead).
+Pinned: `test/scenes/summonsync.test.js` (9). `tools/mutants/summonsync.json` (24 dead).

@@ -5,7 +5,7 @@
     "old": "    if (giving && goldEntry != null) bar.append(goldField());\n    win.append(bar);\n",
     "new": "    win.append(bar);\n    if (giving && goldEntry != null) win.append(goldField());\n",
     "tests": [
-      "test/golddrop.test.js"
+      "test/systems/golddrop.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "  .pack-shell .packitems { display: none; }\n",
     "new": "",
     "tests": [
-      "test/golddrop.test.js"
+      "test/systems/golddrop.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "  .pack-shell .packcarry { flex: 1 1 auto; min-width: 0; overflow: hidden; }\n",
     "new": "  .pack-shell .packcarry { flex: 1 1 auto; }\n",
     "tests": [
-      "test/golddrop.test.js"
+      "test/systems/golddrop.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "  .pack-shell .packgold .goldbtn::after, .pack-shell .packbar .bagbtn::after { content: ''; position: absolute; left: 0; right: 0; top: -8px; bottom: -8px; }",
     "new": "  .pack-shell .packgold .goldbtn::after, .pack-shell .packbar .bagbtn::after { content: ''; position: absolute; left: 0; right: 0; top: 0; bottom: 0; }",
     "tests": [
-      "test/golddrop.test.js"
+      "test/systems/golddrop.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": ".pack-shell .packbar > .goldfield { position: absolute; right: 16px; bottom: calc(100% + 8px); z-index: 5;",
     "new": ".pack-shell .packbar > .goldfield { position: static; right: 16px; bottom: calc(100% + 8px); z-index: 5;",
     "tests": [
-      "test/golddrop.test.js"
+      "test/systems/golddrop.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": ".pack-shell .packbar > .goldfield { position: absolute; right: 16px; bottom: calc(100% + 8px); z-index: 5;",
     "new": ".pack-shell .packbar > .goldfield { position: absolute; right: 16px; bottom: calc(100% + 8px); z-index: 0;",
     "tests": [
-      "test/golddrop.test.js"
+      "test/systems/golddrop.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": ".pack-shell .packbar { position: relative; }\n",
     "new": "",
     "tests": [
-      "test/golddrop.test.js"
+      "test/systems/golddrop.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": ".pack-shell .packgold .goldbtn { align-self: center; margin: -6px 0 -6px 12px; min-height: 32px; padding: 0 12px;\n  font-size: 12px; }\n",
     "new": "",
     "tests": [
-      "test/golddrop.test.js"
+      "test/systems/golddrop.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "e.target.closest('button, input, .goldfield')",
     "new": "e.target.closest('button')",
     "tests": [
-      "test/golddrop.test.js"
+      "test/systems/golddrop.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "    const giving = remote?.kind !== 'reward' && remote?.kind !== 'bag';",
     "new": "    const giving = remote?.kind !== 'bag';",
     "tests": [
-      "test/golddrop.test.js"
+      "test/systems/golddrop.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "    if (giving && goldEntry != null) bar.append(goldField());\n",
     "new": "    if (goldEntry != null) bar.append(goldField());\n",
     "tests": [
-      "test/golddrop.test.js"
+      "test/systems/golddrop.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "    const giving = remote?.kind !== 'reward' && remote?.kind !== 'bag';",
     "new": "    const giving = !session.chooseOne;",
     "tests": [
-      "test/golddrop.test.js"
+      "test/systems/golddrop.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "    addItem(to, goldStack(plan.amount));\n",
     "new": "    addItem(session.chooseOne ? dropped : to, goldStack(plan.amount));\n",
     "tests": [
-      "test/golddrop.test.js"
+      "test/systems/golddrop.test.js"
     ]
   },
   {
@@ -122,8 +122,8 @@
     "old": "  head.append(acts);\n  col.append(head);\n",
     "new": "  if (!deps.loot || deps.loot.storage === true) { const g = el('button', 'act', `${GOLD_VERB[remote?.kind] ?? 'Drop'} gold`); g.onclick = () => { goldEntry = goldEntry == null ? '0' : null; render(); }; acts.append(g); }\n  head.append(acts);\n  col.append(head);\n",
     "tests": [
-      "test/golddrop.test.js",
-      "test/enhancedInventory.test.js"
+      "test/systems/golddrop.test.js",
+      "test/ui/enhanced/enhancedInventory.test.js"
     ]
   },
   {
@@ -132,7 +132,7 @@
     "old": "give.onclick = () => { goldEntry = goldEntry == null ? '0' : null; if (goldEntry != null) picked = null; notice = null; render(); };",
     "new": "give.onclick = () => { goldEntry = goldEntry == null ? '0' : null; if (goldEntry != null) picked = null; render(); };",
     "tests": [
-      "test/golddrop.test.js"
+      "test/systems/golddrop.test.js"
     ]
   },
   {
@@ -141,7 +141,7 @@
     "old": "  notice = null;\n  goldEntry = null;\n  repaints = 0;",
     "new": "  notice = null;\n  repaints = 0;",
     "tests": [
-      "test/golddrop.test.js"
+      "test/systems/golddrop.test.js"
     ]
   },
   {
@@ -150,7 +150,7 @@
     "old": "      gold.append(give);\n",
     "new": "      if (remote?.kind !== 'wagon' || goldEntry == null) gold.append(give);\n",
     "tests": [
-      "test/golddrop.test.js"
+      "test/systems/golddrop.test.js"
     ]
   }
 ]

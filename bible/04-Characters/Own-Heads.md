@@ -74,7 +74,7 @@ its name by what it is drawn for:
   lines of `bakeHeads.mjs` PAINTINGS and a re-bake.
 
 Whether the geometry is wholly the owner's own work is also the owner's to confirm: its objects are named for the
-Morrowind head they were modelled from (`test/doctrine.test.js` says so on the export's row and on every mesh's -
+Morrowind head they were modelled from (`test/tooling/doctrine.test.js` says so on the export's row and on every mesh's -
 AUDIT MW-HEADS1 L1-F3: the meshes' rows did not).
 
 ## Worn
@@ -129,7 +129,7 @@ Breton women's heads are not in this batch. The first person draws no head or ha
 
 ## How it was proven
 
-`test/mwheads1.test.js` (8): every head and hair re-made from the committed export and its six paintings byte for byte,
+`test/tooling/mwheads1.test.js` (8): every head and hair re-made from the committed export and its six paintings byte for byte,
 each DDS its painting, the export and each painting by hash, each painting under the name the export gives its
 material (a material read as another's picture, and a part off its box on either side, refused); the shipped paths
 exactly the pools' parts; each part one rigid shape of its own
@@ -147,15 +147,15 @@ head and hair where its archive loaded (makeVendoredArchive over the shipped fil
 did not, the match asked - and a body not a player's in the data's, its archive loaded or not (MW-HEADS2). MW-HEADS2's
 doors by source: the local player's build and the peers' ask, the people's lanes, an NPC's talk-window face and an
 escort's do not, the face match's memo keyed on its pools, the third-person body asking as the build was asked.
-`test/fparm.test.js` AUDIT 32 F1: the face match reads the face on -Y. `test/mwload_records.test.js`: the kept verdict's key names the pools measured - another
-pool another key, the same pool the same. PIN MOVED (AUDIT MW-HEADS1): `test/fparm.test.js` MW-D27 (the picker takes
-the archives' directory) and MW-D35 (the matcher is handed the build's pools), `test/mwload_records.test.js` (the
-key's source), `test/arrowPick.test.js` (eighteen doors pass the one directory). PIN MOVED: `test/mwnpc17_wardrobe.test.js` MWNPC17d's walk and
+`test/formats/morrowind/fparm.test.js` AUDIT 32 F1: the face match reads the face on -Y. `test/formats/morrowind/mwload_records.test.js`: the kept verdict's key names the pools measured - another
+pool another key, the same pool the same. PIN MOVED (AUDIT MW-HEADS1): `test/formats/morrowind/fparm.test.js` MW-D27 (the picker takes
+the archives' directory) and MW-D35 (the matcher is handed the build's pools), `test/formats/morrowind/mwload_records.test.js` (the
+key's source), `test/combat/arrowPick.test.js` (eighteen doors pass the one directory). PIN MOVED: `test/characters/mwnpc17_wardrobe.test.js` MWNPC17d's walk and
 MWNPC17e's street re-aimed from the Breton men (whose pools are the port's own now) to the Nord men, and its memo pin
 read with MW-FOLK1's outfit key. `tools/mutants/mwheads2.json` (16, all dead - the eyepatch in the headband again, the eyepatch's painting on the other head; every Breton man in them again, the player not, the body or the
 match or a peer or the local player not asking, the peers built as people, an escort or an NPC's portrait a player's, one
 memo for two pools, the bake's +Y, the match reading the back, every member of the line a player on the Family tab).
-`test/portrait3d.test.js`: an NPC's portrait walked over the data's, an escort's the data's, a player's the port's own;
+`test/ui/portrait3d.test.js`: an NPC's portrait walked over the data's, an escort's the data's, a player's the port's own;
 a member of the line not played (`facePose`'s `kin`) the data's, as their body in the world. `tools/mutants/mwheads1.json` (26, all dead - the tenth paints the eyepatch onto h04; the audit's sixteen the own pools
 without their meshes, the match measured anyway, a key without its pools, the hairs named heads, the crown's refusal
 unread, a coverage walk short of the hairs, and fbxMesh's material reader's refusals). The audit: `01-Overview/Audit-MW-Heads-Folk.md`.

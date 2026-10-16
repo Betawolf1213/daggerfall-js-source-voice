@@ -5,12 +5,12 @@
     "old": "if (!panel || panel.act !== act || panel.which !== which) {",
     "new": "if (true) {",
     "tests": [
-      "test/profreticle.test.js",
-      "test/prof7_client.test.js",
-      "test/prof8_client.test.js",
-      "test/audit32_pages.test.js",
-      "test/fb1001_touchhold.test.js",
-      "test/fb1001_nodes.test.js"
+      "test/systems/profreticle.test.js",
+      "test/systems/prof7_client.test.js",
+      "test/world/terrain/prof8_client.test.js",
+      "test/ui/audit32_pages.test.js",
+      "test/systems/fb1001_touchhold.test.js",
+      "test/scenes/fb1001_nodes.test.js"
     ]
   },
   {
@@ -19,12 +19,12 @@
     "old": "const a = anchor?.();",
     "new": "const a = null;",
     "tests": [
-      "test/profreticle.test.js",
-      "test/prof7_client.test.js",
-      "test/prof8_client.test.js",
-      "test/audit32_pages.test.js",
-      "test/fb1001_touchhold.test.js",
-      "test/fb1001_nodes.test.js"
+      "test/systems/profreticle.test.js",
+      "test/systems/prof7_client.test.js",
+      "test/world/terrain/prof8_client.test.js",
+      "test/ui/audit32_pages.test.js",
+      "test/systems/fb1001_touchhold.test.js",
+      "test/scenes/fb1001_nodes.test.js"
     ]
   },
   {
@@ -33,12 +33,12 @@
     "old": "if (st.kind === 'fish' && st.phase === 'tug') flags.push('fish-tug');",
     "new": "",
     "tests": [
-      "test/profreticle.test.js",
-      "test/prof7_client.test.js",
-      "test/prof8_client.test.js",
-      "test/audit32_pages.test.js",
-      "test/fb1001_touchhold.test.js",
-      "test/fb1001_nodes.test.js"
+      "test/systems/profreticle.test.js",
+      "test/systems/prof7_client.test.js",
+      "test/world/terrain/prof8_client.test.js",
+      "test/ui/audit32_pages.test.js",
+      "test/systems/fb1001_touchhold.test.js",
+      "test/scenes/fb1001_nodes.test.js"
     ]
   },
   {
@@ -47,12 +47,12 @@
     "old": "    if (a.clean) ear.say('clean', null, { of: a.act });   // PROF-SCENES: a clean finish rings - as its last blow lands\n",
     "new": "",
     "tests": [
-      "test/profreticle.test.js",
-      "test/prof7_client.test.js",
-      "test/prof8_client.test.js",
-      "test/audit32_pages.test.js",
-      "test/fb1001_touchhold.test.js",
-      "test/fb1001_nodes.test.js"
+      "test/systems/profreticle.test.js",
+      "test/systems/prof7_client.test.js",
+      "test/world/terrain/prof8_client.test.js",
+      "test/ui/audit32_pages.test.js",
+      "test/systems/fb1001_touchhold.test.js",
+      "test/scenes/fb1001_nodes.test.js"
     ]
   },
   {
@@ -61,12 +61,12 @@
     "old": "const HITS = Object.freeze([0, 1, 2, 3, 4].map((i) => SOUND.Hit1 + i));",
     "new": "const HITS = Object.freeze([0].map((i) => SOUND.Hit1 + i));",
     "tests": [
-      "test/profreticle.test.js",
-      "test/prof7_client.test.js",
-      "test/prof8_client.test.js",
-      "test/audit32_pages.test.js",
-      "test/fb1001_touchhold.test.js",
-      "test/fb1001_nodes.test.js"
+      "test/systems/profreticle.test.js",
+      "test/systems/prof7_client.test.js",
+      "test/world/terrain/prof8_client.test.js",
+      "test/ui/audit32_pages.test.js",
+      "test/systems/fb1001_touchhold.test.js",
+      "test/scenes/fb1001_nodes.test.js"
     ]
   },
   {
@@ -75,7 +75,7 @@
     "old": "else if (act.act.state.done) { hud.setMeter(act.act, act.label ?? '', { byUse: act.heldByUse === true }); finish(act); }",
     "new": "else if (act.act.state.done) { finish(act); }",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -84,7 +84,7 @@
     "old": "anchor: () => reticleAnchor(canvas, fieldOfView()) }",
     "new": "anchor: () => reticleAnchor(canvas, 1.13) }",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -93,7 +93,7 @@
     "old": "if (Number(a.focal) > 0) focal = a.focal;",
     "new": "",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -102,7 +102,7 @@
     "old": "meter.style.setProperty?.('--ry', `${a.y.toFixed(1)}px`);",
     "new": "meter.style.setProperty?.('--ry', `${(a.y + 28).toFixed(1)}px`);",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -111,7 +111,7 @@
     "old": "panel.ui.update(act, { label, byUse, reduced: reduced(), focal });",
     "new": "panel.ui.update(act, { label, byUse, reduced: reduced() });",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -120,7 +120,7 @@
     "old": "const viewH = Math.max(1, canvas.height - largeHudHeight) / dpr;",
     "new": "const viewH = Math.max(1, canvas.height) / dpr;",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -129,7 +129,7 @@
     "old": "focal: viewH / 2 / Math.tan(Math.max(0.1, Number(fovRad) || 1.13) / 2),",
     "new": "focal: viewH / 2 / Math.tan(Math.max(0.1, Number(fovRad) || 1.13)),",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -138,7 +138,7 @@
     "old": "    y: crosshairCentreY(canvas.height, largeHudHeight) / dpr,\n    focal",
     "new": "    y: (canvas.height / 2) / dpr,\n    focal",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -147,7 +147,7 @@
     "old": "const dy = (p[0] - (aim?.yaw ?? 0)) * rad,",
     "new": "const dy = ((aim?.yaw ?? 0) - p[0]) * rad,",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -156,7 +156,7 @@
     "old": "-focal * Math.tan(Math.max(-lim, Math.min(lim, dp)))]",
     "new": "focal * Math.tan(Math.max(-lim, Math.min(lim, dp)))]",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -165,7 +165,7 @@
     "old": "dp = (p[1] - (aim?.pitch ?? 0)) * rad;",
     "new": "dp = (p[1] - (aim?.yaw ?? 0)) * rad;",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -174,7 +174,7 @@
     "old": "Math.max(0, Number(deg) || 0)",
     "new": "(Number(deg) || 0)",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -183,7 +183,7 @@
     "old": "        place(n, offsetOf(MINE_POINTS[i], st.aim, ctx.focal));\n",
     "new": "        place(n, offsetOf(MINE_POINTS[i], null, ctx.focal));\n",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -192,7 +192,7 @@
     "old": "const d = `${r1(2 * reachPx(MINE_ACT.radiusDeg, ctx.focal))}px`;",
     "new": "const d = `${r1(reachPx(MINE_ACT.radiusDeg, ctx.focal))}px`;",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -201,7 +201,7 @@
     "old": "      setPips(Math.min(st.points, st.need));\n      if (st.strikes > seen)",
     "new": "      setPips(0);\n      if (st.strikes > seen)",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -210,7 +210,7 @@
     "old": "flash.fire([0, 0], st.last === 'glint' ? 'gold' : '');",
     "new": "flash.fire([0, 0], '');",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -219,12 +219,12 @@
     "old": "setClass(n, i === st.glint ? `prof-glint${ctx.reduced ? ' still' : ''}` : 'prof-point');",
     "new": "setClass(n, 'prof-point');",
     "tests": [
-      "test/profreticle.test.js",
-      "test/prof7_client.test.js",
-      "test/prof8_client.test.js",
-      "test/audit32_pages.test.js",
-      "test/fb1001_touchhold.test.js",
-      "test/fb1001_nodes.test.js"
+      "test/systems/profreticle.test.js",
+      "test/systems/prof7_client.test.js",
+      "test/world/terrain/prof8_client.test.js",
+      "test/ui/audit32_pages.test.js",
+      "test/systems/fb1001_touchhold.test.js",
+      "test/scenes/fb1001_nodes.test.js"
     ]
   },
   {
@@ -233,7 +233,7 @@
     "old": "ring.setAttribute('r', String(Math.round(r * R * 100) / 100));",
     "new": "",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -242,7 +242,7 @@
     "old": "band.setAttribute('stroke-width', String(Math.round(Math.max(0, 2 * st.band * R) * 100) / 100));",
     "new": "band.setAttribute('stroke-width', String(Math.round(Math.max(0, st.band * R) * 100) / 100));",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -251,7 +251,7 @@
     "old": "setSvgClass(ring, a.inBand ? 'ring-line in-band' : 'ring-line');",
     "new": "",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -260,7 +260,7 @@
     "old": "show(art, !ctx.reduced); show(bar, !!ctx.reduced);",
     "new": "show(art, true); show(bar, false);",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -269,7 +269,7 @@
     "old": "flash.fire([0, 0], st.last === 'clean' ? 'gold' : '');",
     "new": "flash.fire([0, 0], '');",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -278,12 +278,12 @@
     "old": "      hold.set(a.progress);\n",
     "new": "",
     "tests": [
-      "test/profreticle.test.js",
-      "test/prof7_client.test.js",
-      "test/prof8_client.test.js",
-      "test/audit32_pages.test.js",
-      "test/fb1001_touchhold.test.js",
-      "test/fb1001_nodes.test.js"
+      "test/systems/profreticle.test.js",
+      "test/systems/prof7_client.test.js",
+      "test/world/terrain/prof8_client.test.js",
+      "test/ui/audit32_pages.test.js",
+      "test/systems/fb1001_touchhold.test.js",
+      "test/scenes/fb1001_nodes.test.js"
     ]
   },
   {
@@ -292,7 +292,7 @@
     "old": "setSvgClass(hold.el, st.bruised ? 'prof-arc prof-hold bruised' : 'prof-arc prof-hold');",
     "new": "",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -301,12 +301,12 @@
     "old": "  if (st.kind === 'trace' && st.gentle) return 'hold';\n",
     "new": "",
     "tests": [
-      "test/profreticle.test.js",
-      "test/prof7_client.test.js",
-      "test/prof8_client.test.js",
-      "test/audit32_pages.test.js",
-      "test/fb1001_touchhold.test.js",
-      "test/fb1001_nodes.test.js"
+      "test/systems/profreticle.test.js",
+      "test/systems/prof7_client.test.js",
+      "test/world/terrain/prof8_client.test.js",
+      "test/ui/audit32_pages.test.js",
+      "test/systems/fb1001_touchhold.test.js",
+      "test/scenes/fb1001_nodes.test.js"
     ]
   },
   {
@@ -315,7 +315,7 @@
     "old": "        placeScaled(glint, x, y);\n",
     "new": "",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -324,7 +324,7 @@
     "old": "clock.set(1 - clamp01(st.showing / Math.max(0.01, st.glint)));",
     "new": "clock.set(1);",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -333,7 +333,7 @@
     "old": "slots.forEach((s, i) => setClass(s, i < st.hits.length ? (st.hits[i] ? 'prof-slot found' : 'prof-slot missed')",
     "new": "slots.forEach((s, i) => setClass(s, i < 0 ? (st.hits[i] ? 'prof-slot found' : 'prof-slot missed')",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -342,7 +342,7 @@
     "old": "if (st.hits[seen - 1]) { const [x, y] = spot(lastSpot); placeScaled(flash.el, x, y); flash.fire(null, 'gold'); }",
     "new": "",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -351,12 +351,12 @@
     "old": "      guide.setAttribute('points', line);\n",
     "new": "",
     "tests": [
-      "test/profreticle.test.js",
-      "test/prof7_client.test.js",
-      "test/prof8_client.test.js",
-      "test/audit32_pages.test.js",
-      "test/fb1001_touchhold.test.js",
-      "test/fb1001_nodes.test.js"
+      "test/systems/profreticle.test.js",
+      "test/systems/prof7_client.test.js",
+      "test/world/terrain/prof8_client.test.js",
+      "test/ui/audit32_pages.test.js",
+      "test/systems/fb1001_touchhold.test.js",
+      "test/scenes/fb1001_nodes.test.js"
     ]
   },
   {
@@ -365,7 +365,7 @@
     "old": "tube.setAttribute('stroke-width', String(r1(2 * reachPx(st.tol, ctx.focal))));",
     "new": "tube.setAttribute('stroke-width', String(r1(2 * reachPx(TRACE_ACT.tolDeg, ctx.focal))));",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -374,7 +374,7 @@
     "old": "      show(zone, !st.tracing);\n",
     "new": "",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -383,7 +383,7 @@
     "old": "drawn.setAttribute('points', st.tracing ? (st.path ?? [])",
     "new": "drawn.setAttribute('points', false ? (st.path ?? [])",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -392,12 +392,12 @@
     "old": "setClass(n, st.tracing && i <= st.reached ? `prof-glint",
     "new": "setClass(n, st.tracing && i < st.reached ? `prof-glint",
     "tests": [
-      "test/profreticle.test.js",
-      "test/prof7_client.test.js",
-      "test/prof8_client.test.js",
-      "test/audit32_pages.test.js",
-      "test/fb1001_touchhold.test.js",
-      "test/fb1001_nodes.test.js"
+      "test/systems/profreticle.test.js",
+      "test/systems/prof7_client.test.js",
+      "test/world/terrain/prof8_client.test.js",
+      "test/ui/audit32_pages.test.js",
+      "test/systems/fb1001_touchhold.test.js",
+      "test/scenes/fb1001_nodes.test.js"
     ]
   },
   {
@@ -406,7 +406,7 @@
     "old": "const s = st.slips > 0 ? t('prof.reticle.trace.slips', 'slips {n}', { n: st.slips }) : '';",
     "new": "const s = '';",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -415,7 +415,7 @@
     "old": "wind.set((m - FISH_ACT.throwMinM) / span);",
     "new": "wind.set(0);",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -424,7 +424,7 @@
     "old": "        if (metres.textContent !== said) metres.textContent = said;\n",
     "new": "",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -433,7 +433,7 @@
     "old": "setClass(float, `prof-float${phase === 'tug' ? ' dip' : ''}${st.school !== null ? ' school' : ''}`);",
     "new": "setClass(float, `prof-float${st.school !== null ? ' school' : ''}`);",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -442,7 +442,7 @@
     "old": "setClass(float, `prof-float${phase === 'tug' ? ' dip' : ''}${st.school !== null ? ' school' : ''}`);",
     "new": "setClass(float, `prof-float${phase === 'tug' ? ' dip' : ''}`);",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -451,12 +451,12 @@
     "old": "      show(haul, phase === 'haul');\n",
     "new": "",
     "tests": [
-      "test/profreticle.test.js",
-      "test/prof7_client.test.js",
-      "test/prof8_client.test.js",
-      "test/audit32_pages.test.js",
-      "test/fb1001_touchhold.test.js",
-      "test/fb1001_nodes.test.js"
+      "test/systems/profreticle.test.js",
+      "test/systems/prof7_client.test.js",
+      "test/world/terrain/prof8_client.test.js",
+      "test/ui/audit32_pages.test.js",
+      "test/systems/fb1001_touchhold.test.js",
+      "test/scenes/fb1001_nodes.test.js"
     ]
   },
   {
@@ -465,7 +465,7 @@
     "old": "band.style.bottom = pc(st.bandAt);",
     "new": "band.style.bottom = pc(0);",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -474,7 +474,7 @@
     "old": "setClass(haul, inside ? 'prof-haulbar' : 'prof-haulbar slipping');",
     "new": "",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -483,7 +483,7 @@
     "old": "        fill.set(st.fill);\n",
     "new": "",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -492,7 +492,7 @@
     "old": "      show(flashRing, phase === 'tug');\n",
     "new": "",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -501,7 +501,7 @@
     "old": "setClass(hint, now - saidAt > HINT_MS ? 'prof-hint faded' : 'prof-hint');",
     "new": "",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -510,7 +510,7 @@
     "old": "const key = h.replace(/[\\d.]+/g, '#');",
     "new": "const key = h;",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -519,7 +519,7 @@
     "old": "if (key !== said) { said = key; saidAt = now; }",
     "new": "if (said === null) { said = key; saidAt = now; }",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -528,7 +528,7 @@
     "old": "padding: 0; margin: 0; background: none; border: 0; box-shadow: none;",
     "new": "padding: 0; margin: 0; background: rgba(10,12,17,0.9); border: 0; box-shadow: none;",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -537,7 +537,7 @@
     "old": "left: var(--rx, 50%); top: var(--ry, 50%); transform: translate(-50%, -50%); z-index: 12;",
     "new": "left: var(--rx, 50%); top: var(--ry, 50%); transform: translateX(-50%); z-index: 12;",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   },
   {
@@ -546,7 +546,7 @@
     "old": "${R} .prof-hint.faded { opacity: 0; }",
     "new": "${R} .prof-hint.faded { opacity: 1; }",
     "tests": [
-      "test/profreticle.test.js"
+      "test/systems/profreticle.test.js"
     ]
   }
 ]

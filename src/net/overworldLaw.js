@@ -33,7 +33,7 @@
 // net/gate/gateLaw.js (the relay's copy of the spawn hash) and net/raid/raidLaw.js (two clocks' skew) - all three the relay's
 // already, so the worker's graph grows by this file alone. The band's, the raider's and the spawn's own numbers are
 // PINNED EQUAL here, never imported (gateLaw.js's law for this very hash): their modules reach the map files, and every
-// byte this file reaches is the relay's deploy - test/ow6_ledger.test.js holds each copy to its home.
+// byte this file reaches is the relay's deploy - test/net/ow6_ledger.test.js holds each copy to its home.
 //
 // Not a DFU member: Daggerfall has no other players, and no Overworld.
 import { WORLD_CELL, sharedClassicMinutes, cellOfRoom, OW_BAND_ID_RE, OW_RAIDER_ID_RE, OW_WORD_IDS_MAX, OW_WORD_ROWS_MAX, OW_CELL_SPENT_MAX, OW_CELL_ROWS_MAX, owWireRow } from './wire.js';

@@ -5,7 +5,7 @@
     "old": "  for (const r of Array.isArray(feud) ? feud : []) if (r?.sworn && !r.defeated) out.push(...lists(r.companion?.items));\n",
     "new": "",
     "tests": [
-      "test/itemwalk.test.js"
+      "test/systems/itemwalk.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "if (r?.sworn && !r.defeated) out.push(",
     "new": "if (r && !r.defeated) out.push(",
     "tests": [
-      "test/itemwalk.test.js"
+      "test/systems/itemwalk.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "if (r?.sworn && !r.defeated) out.push(",
     "new": "if (r?.sworn) out.push(",
     "tests": [
-      "test/itemwalk.test.js"
+      "test/systems/itemwalk.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "const REVENANT_VENDOR = 'Revenant';",
     "new": "const REVENANT_VENDOR = 'Revenants';",
     "tests": [
-      "test/itemwalk.test.js"
+      "test/systems/itemwalk.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "      repairItemLists([given]);\n",
     "new": "",
     "tests": [
-      "test/itemwalk.test.js"
+      "test/systems/itemwalk.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "    if (!repairedLists.has(r.items)) { repairItemLists([r.items]); repairedLists.add(r.items); }",
     "new": "    if (!repairedLists.has(r.items)) repairedLists.add(r.items);",
     "tests": [
-      "test/itemwalk.test.js"
+      "test/systems/itemwalk.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": ", ...heldItemLists(snap)];",
     "new": "];",
     "tests": [
-      "test/itemwalk.test.js"
+      "test/systems/itemwalk.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "own?.bagItems, own?.furnishings, own?.otherItems",
     "new": "own?.bagItems, own?.otherItems",
     "tests": [
-      "test/itemwalk.test.js"
+      "test/systems/itemwalk.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "    out.push(...listsOf(Object.values(scene?.decorOwn ?? {})));\n",
     "new": "",
     "tests": [
-      "test/itemwalk.test.js"
+      "test/systems/itemwalk.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "    for (const shelf of Object.values(scene?.guildShelves ?? {})) out.push(...listsOf(shelf?.items));\n",
     "new": "",
     "tests": [
-      "test/itemwalk.test.js"
+      "test/systems/itemwalk.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "  for (const foe of arrayOf(snap?.world?.foes)) if (!foe?.dead) out.push(...listsOf(foe?.items));\n",
     "new": "",
     "tests": [
-      "test/itemwalk.test.js"
+      "test/systems/itemwalk.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "  for (const guard of arrayOf(snap?.world?.guards)) out.push(...listsOf(guard?.items));\n",
     "new": "",
     "tests": [
-      "test/itemwalk.test.js"
+      "test/systems/itemwalk.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "  for (const r of arrayOf(snap?.modData?.[REVENANT_VENDOR]?.list)) out.push(...listsOf(r?.took));\n",
     "new": "",
     "tests": [
-      "test/itemwalk.test.js"
+      "test/systems/itemwalk.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "const REVENANT_VENDOR = 'Revenant';",
     "new": "const REVENANT_VENDOR = 'Revenants';",
     "tests": [
-      "test/itemwalk.test.js"
+      "test/systems/itemwalk.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "if (res?.resourceSpecific?.item) out.push([res.resourceSpecific.item]);",
     "new": ";",
     "tests": [
-      "test/itemwalk.test.js"
+      "test/systems/itemwalk.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "  for (const foe of arrayOf(snap?.interior?.foes)) out.push(...listsOf(foe?.items));\n",
     "new": "",
     "tests": [
-      "test/itemwalk.test.js"
+      "test/systems/itemwalk.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "  for (const guard of arrayOf(snap?.interior?.guards)) out.push(...listsOf(guard?.items));\n",
     "new": "",
     "tests": [
-      "test/itemwalk.test.js"
+      "test/systems/itemwalk.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "      out.push(...listsOf(res?.resourceSpecific?.itemQueue));\n",
     "new": "",
     "tests": [
-      "test/itemwalk.test.js"
+      "test/systems/itemwalk.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "  for (const p of arrayOf(line?.people)) out.push(...listsOf(p?.bequest));\n",
     "new": "",
     "tests": [
-      "test/itemwalk.test.js"
+      "test/systems/itemwalk.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "old": "  out.push(...listsOf(line?.pending?.bequest));\n",
     "new": "",
     "tests": [
-      "test/itemwalk.test.js"
+      "test/systems/itemwalk.test.js"
     ]
   },
   {
@@ -185,7 +185,7 @@
     "old": "out.push(...listsOf(r?.items, r?.first));",
     "new": "out.push(...listsOf(r?.first));",
     "tests": [
-      "test/itemwalk.test.js"
+      "test/systems/itemwalk.test.js"
     ]
   },
   {
@@ -194,7 +194,7 @@
     "old": "out.push(...listsOf(r?.items, r?.first));",
     "new": "out.push(...listsOf(r?.items));",
     "tests": [
-      "test/itemwalk.test.js"
+      "test/systems/itemwalk.test.js"
     ]
   },
   {
@@ -203,7 +203,7 @@
     "old": "const LEGACY_VENDOR = 'ProjectLegacy';",
     "new": "const LEGACY_VENDOR = 'Project-Legacy';",
     "tests": [
-      "test/itemwalk.test.js"
+      "test/systems/itemwalk.test.js"
     ]
   },
   {
@@ -212,8 +212,8 @@
     "old": "const repairLists = savedItemLists(snap, entity);",
     "new": "const repairLists = savedItemLists(snap);",
     "tests": [
-      "test/disc21.test.js",
-      "test/disc29_rarity.test.js"
+      "test/systems/disc21.test.js",
+      "test/systems/disc29_rarity.test.js"
     ]
   },
   {
@@ -222,8 +222,8 @@
     "old": "  repairItemLists(repairLists);\n",
     "new": "",
     "tests": [
-      "test/disc21.test.js",
-      "test/itemwalk.test.js"
+      "test/systems/disc21.test.js",
+      "test/systems/itemwalk.test.js"
     ]
   }
 ]

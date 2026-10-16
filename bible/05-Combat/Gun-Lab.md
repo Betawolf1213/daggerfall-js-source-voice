@@ -13,7 +13,7 @@ surface, at a real window size, with a real cadence.
 **Nothing here touches the game.** `combat/fpsWeapon.js`,
 `combat/weapon/weaponRig.js` and `characters/weapons.js` are untouched; no
 module the game runs imports `src/tools/gunLab.js`, and
-`test/gunLab.test.js` fails if one ever does. This port is a 1:1 DFU
+`test/combat/weapon/gunLab.test.js` fails if one ever does. This port is a 1:1 DFU
 translation — a gun is a DEPARTURE, and a departure gets prototyped
 and judged before it is built, which is the same door
 `grass-proto.html` and `water.html` came through.
@@ -74,7 +74,7 @@ mod's switches.
 **The split.** Those four functions were inline in
 `combat/weapon/weaponWidget.js`; the arithmetic is untouched, the component
 imports them back and calls them where it used to do the work itself,
-and `test/ww1_weaponwidget.test.js` passes unchanged. They are their
+and `test/combat/weapon/ww1_weaponwidget.test.js` passes unchanged. They are their
 own file for two reasons: a second copy of a bob pinned to an IL
 offset would be a second copy to drift, and the component reaches the
 inventory, the equip tables and a vendored mod's mesh folder — four
@@ -147,7 +147,7 @@ cannot be interrupted (FPSWeapon.OnAttackDirection).
 ## The art, and why it is sliced in the browser
 
 `public/art/gun-idle.png` and `public/art/gun-fire-sheet.webp` are
-OURS — on `test/doctrine.test.js`'s allow-list with that reason, no
+OURS — on `test/tooling/doctrine.test.js`'s allow-list with that reason, no
 ARENA2 pixel in them. The sheet is cut at runtime rather than
 pre-exported as six PNGs, because that makes the background key a LIVE
 CONTROL, and the key is the whole problem:
@@ -217,7 +217,7 @@ lock-up lands *with* the sprite arriving.
 **Every pick is CC0** — the only license that clears
 `public/README.md`'s bar for what ships out of `public/` without an
 attribution trail to maintain. All 16 files are on
-`test/doctrine.test.js`'s allow-list, `public/sfx/SOURCES.md` names
+`test/tooling/doctrine.test.js`'s allow-list, `public/sfx/SOURCES.md` names
 every one with its uploader and link, and the probe fetches all 16 and
 fails if any is not RIFF / 11025 / 8-bit / mono.
 

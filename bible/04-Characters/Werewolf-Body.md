@@ -118,14 +118,14 @@ The first player to transform with Bloodmoon attached is the check; a refusal is
 
 ## Pins
 
-- `test/werewolf1.test.js` (17): the paths and sources, the robe and its first-person ladder, the head and hair, the
+- `test/net/peer/werewolf1.test.js` (17): the paths and sources, the robe and its first-person ladder, the head and hair, the
   build (read log: the wolf's files - its head and hair bound on the fixture's own third-person skeleton - none of the
   person's, not the base's bone addon nor the person's first-person neck), the refusal and its notes, the robe with no
   MODL, the third person's ladder, the rig and its gates, the queue, the per-frame door through a refusal and back
   (a real `createWeaponRig().frame()`), the weapon rig, the peers (key, refusal, throttle), the host, the same-frame
   handoff and the garment pool, and (the merge) BEAST-SELF's stand-aside asked of the form. `tools/mutants/werewolf1.json`
   29, all dead.
-- `test/shadowfangskin.test.js` (8): who wears it, the law (base, strand, flat light, cut-only fringe, wrap, the opaque
+- `test/net/shadowfangskin.test.js` (8): who wears it, the law (base, strand, flat light, cut-only fringe, wrap, the opaque
   neighbourhood), the eyes (named, the head's blob, never the fur - seven furs, three seeds), light and dark wolves and
   the law's golden fingerprint, the mips, the rig (both views skinned, painted in the build, shared module-wide), the
   skin riding the form, and whose skin (the stored session, the asking session, the peer's key and build).

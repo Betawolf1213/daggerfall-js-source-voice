@@ -501,7 +501,7 @@ const GUILD_HOLDS = Object.freeze([
   ['guild-battle', (/** @type {string} */ p) => `EXISTS (SELECT 1 FROM town_seat_rights WHERE (guild_id = ${p} OR against = ${p}) AND ${SEAT_BATTLE_PENDING})`],   // SEAT1c: a battle it is named in, still to come
   ['guild-patron', (/** @type {string} */ p) => `EXISTS (SELECT 1 FROM npc_chapter_patron_bids WHERE guild_id = ${p} AND state = 'open')`],   // AUDIT CHAP5 E4: a bid for a chapter's patronage, its escrow burnt with the guild
 ]);
-/** The codes GUILD_HOLDS names, once each - the client's GUILD_HOLD_CODES is swept against them (test/audit_guild3.test.js). */
+/** The codes GUILD_HOLDS names, once each - the client's GUILD_HOLD_CODES is swept against them (test/net/audit_guild3.test.js). */
 export const GUILD_HOLD_KEEP_CODES = Object.freeze([...new Set(GUILD_HOLDS.map(([code]) => code))]);
 /**
  * PROF6: whether a guild still keeps something - goods in its guild Stores, a writ or a contract standing (or a closed
@@ -529,7 +529,7 @@ async function endGuild(db, guildId, player, nowS, { alone = false } = {}) {
  *  GUILD3 T1: the gate's own), each on the guild's own index (S2, the plan pinned). AUDIT GUILD3 S3: and,
  *  last, the silver the guildmaster's account (?2) has no room for - guildMarksSweep's own test - so it is said before the
  *  press as every other hold is (it was said only once nothing else held, after a press). Exported for the plan's pin
- *  (test/audit_guild3.test.js). */
+ *  (test/net/audit_guild3.test.js). */
 export const GUILD_HOLDS_SQL = `SELECT (SELECT treasury FROM guilds WHERE id = ?1) AS treasury,
       ${GUILD_HOLDS.map(([, sql], n) => `${sql('?1')} AS h${n}`).join(',\n      ')},
       COALESCE((SELECT balance FROM guild_marks WHERE guild_id = ?1), 0) > 0

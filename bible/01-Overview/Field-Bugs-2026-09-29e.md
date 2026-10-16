@@ -84,7 +84,7 @@ is the clip's own length either way: at a player's frame rate, the moan came bac
 
 ## Records
 
-- Tests: `test/field_wind1.test.js` (5) - the bed is a wind, not a moan (no voice in any fifth of a second, a steady
+- Tests: `test/systems/field_wind1.test.js` (5) - the bed is a wind, not a moan (no voice in any fifth of a second, a steady
   level, no hiss, eight seconds at 22050 Hz, at 0.0349, the same every boot); the loop has no seam (across the wrap no
   step and no bend larger than the largest inside the bed, over nine beds); the driver over a recording engine (the
   bed registered, one `audio.loop` for the whole blow at the slewed gain, gain and pitch live, the riding loop never
@@ -95,9 +95,9 @@ is the clip's own length either way: at a player's frame rate, the moan came bac
   never registered, the pitch not live; the bed filtered once from rest, without its low-pass, narrow as a whistle,
   unlevelled, at the blow's level, unseeded, a second long; the engine's pitch dead, the bed remade, made at the SND's
   rate, left silent, claimed with no context) - all dead.
-- Re-aimed by content, never loosened: `test/wind3_windworld.test.js`'s loop test - the gain law's pins as they were,
+- Re-aimed by content, never loosened: `test/systems/wind3_windworld.test.js`'s loop test - the gain law's pins as they were,
   the driver's from the clip swap on the riding loop to the one native loop of the bed.
-- Beside it, on Mac's word: `test/audit18_ui_native.test.js`'s stub renderer answers `endUiRun`. 5ad5b481 (Texture Mods)
+- Beside it, on Mac's word: `test/ui/audit18_ui_native.test.js`'s stub renderer answers `endUiRun`. 5ad5b481 (Texture Mods)
   made PERF-2D's close the talk window draw's last call, and the file's two pins that draw it over the ARENA2 art (F8/F9,
   F10b) threw on the stub from then on - on main too, unseen, since CI runs without the data. 17 of 17 with it now.
 - The live probes were scratch, not committed: a vite server over the tree and over a worktree of main, Playwright's

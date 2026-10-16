@@ -9,7 +9,7 @@
 //   |                        |              |              | dungeonEnemies.js expandEliteEnemies), its 64 KiB frame |
 //   |                        |              |              | proven at 151 markers - the largest spawn template; a   |
 //   |                        |              |              | Hollow's own templates measured against it (AUDIT SD II |
-//   |                        |              |              | L8 D1, test/sd11f_scenes.test.js, over the real data)  |
+//   |                        |              |              | L8 D1, test/scenes/sd11f_scenes.test.js, over the real data)  |
 //   | foe health / damage    | x1 / x1      | x2 / x2      | x4 / x2.5                                              |
 //   | foe level band         | the player's | the player's | at least SUPER_FOE_LEVEL_MIN - the tables' top band     |
 //   | elite foes             | 1 at 20%     | 3-4          | 6 (systems/eliteFoes.js)                               |

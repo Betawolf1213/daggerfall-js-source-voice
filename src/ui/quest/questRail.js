@@ -79,7 +79,7 @@ const NOT_AN_END = /(?:^|\s)(?:St|Mr|Mrs|Ms|Dr|Mt|Sr|Jr|Lt|Sgt|Capt|Gen|Col|Prof
 
 /** The cap on an opening, in characters: three short lines of a notice.
  *  Of the corpus's 408 logged entries it cuts 56 (100 cut 159: a
- *  Daggerfall journal's first sentence is long - test/guide3_herald.test.js
+ *  Daggerfall journal's first sentence is long - test/ui/quest/guide3_herald.test.js
  *  pins the count). */
 export const OPENING_MAX = 140;
 
@@ -89,7 +89,7 @@ export const OPENING_MAX = 140;
  * words). Here, beside journalLines, and not in the lens: the HUD draws
  * the herald, and a face the HUD imports must not pull the quest machine
  * into the HUD's import graph (the cycle place.js -> ... -> save.js ->
- * hud.js that GUIDE3 met on its first full run - test/guide3_herald.test.js
+ * hud.js that GUIDE3 met on its first full run - test/ui/quest/guide3_herald.test.js
  * walks the graph). The lines are the quest author's own, hard-wrapped for a 1996
  * logbook under a date header: the opening drops the header, joins the
  * wrap, keeps the first sentence and, past `max`, cuts it at a word with

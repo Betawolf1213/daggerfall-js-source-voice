@@ -31,7 +31,7 @@ between stops. It mends by REP4's ways - a point back every seven days, five at 
 hand it - `src/scenes/exteriorFoes.js` `liveHoverName` (the street's, for both above-ground hosts, and the pool every
 building's foes stand in), `src/scenes/worldModes.js`'s interior arm and `src/scenes/dungeonContext.js`'s.
 
-The trace, over the real parser and machine (`test/fb1004f_questfoe.test.js`): A0C00Y08 places `_darkb_` - the man the
+The trace, over the real parser and machine (`test/systems/quest/fb1004f_questfoe.test.js`): A0C00Y08 places `_darkb_` - the man the
 journal names - at `_place_`, a building of the quest's town, and `pc at _place_ set _S.11_`. Walking in, the first
 tick runs `_S.11_`: `hide npc _darkb_` (he goes) and `pick one of _S.01_ _S.02_
 _S.03_ _S.04_`, each of which is `restrain foe` and `place foe` of one of an Archer, a Bard, a Rogue or a Spellsword.
@@ -61,10 +61,10 @@ foe pools). The classic skins' panel draws a pile's rows and nothing else (`ui/c
 so the line is the enhanced plaque's alone; and the plaque is not drawn on a touch screen (`ui/worldPlaque.js`
 `worldPlaqueOn`), so a phone sees no line - the tap-anchored plaque is that surface's own later slice.
 
-Pins `test/fb1004f_questfoe.test.js` (3): the trace (the man hidden, one Rogue at peace on his marker, the pool's hover
+Pins `test/systems/quest/fb1004f_questfoe.test.js` (3): the trace (the man hidden, one Rogue at peace on his marker, the pool's hover
 `{ title: 'Rogue', subs: ['Quest: The Assassin'] }`, the plaque's frame, a quest person no line, and the kill firing
 `_S.07_`); the law (a kind label cut, no line before the journal or after the quest, none for a nameless quest, a
 hostile foe unnamed, a plain foe's frame unchanged); the hosts (the interior and dungeon arms, the street hosts through
-the pool, the watch none, the classic panel refusing a name frame). `test/loot7check.test.js` and
-`test/revenant_audit.test.js` hold the street's and the dungeon's "- beaten" cue with the line beside it. Ledger A:
+the pool, the watch none, the classic panel refusing a name frame). `test/systems/loot7check.test.js` and
+`test/systems/revenant/revenant_audit.test.js` hold the street's and the dungeon's "- beaten" cue with the line beside it. Ledger A:
 QUEST-FOE-LINE.

@@ -5,7 +5,7 @@
     "old": "    const afloat = (on.peers?.() ?? []).filter((p) => Array.isArray(p.feet) && deps.isWater(p.feet[0], p.feet[2], 0));",
     "new": "    const afloat = (on.peers?.() ?? []).filter((p) => Array.isArray(p.feet));",
     "tests": [
-      "test/seatraffic_online.test.js"
+      "test/systems/naval/seatraffic_online.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "        density: launchesTraffic() ? trafficDensity(feet) : 0,",
     "new": "        density: standsSea() ? trafficDensity(feet) : 0,",
     "tests": [
-      "test/seatraffic_online.test.js"
+      "test/systems/naval/seatraffic_online.test.js"
     ]
   }
 ]

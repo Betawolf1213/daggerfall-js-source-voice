@@ -5,7 +5,7 @@
     "old": "  hellfire: Object.freeze({ r: 3, ms: 6000, pct: 0.08, base: 3 }),",
     "new": "  hellfire: Object.freeze({ r: 3, ms: 6000, pct: 0.05, base: 2 }),",
     "tests": [
-      "test/wb9d_gate_ground.test.js"
+      "test/net/gate/wb9d_gate_ground.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "since >= 0 && since < GROUND_BITE_MS ? 1 - since / GROUND_BITE_MS : 0;",
     "new": "since >= 0 && since < GROUND_BITE_MS ? 1 : 0;",
     "tests": [
-      "test/wb9d_gate_ground.test.js"
+      "test/net/gate/wb9d_gate_ground.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "warn: peril ? GROUND_VIEW_TEXT.peril(peril.name) : inside ? GROUND_VIEW_TEXT.warn(ground) : null",
     "new": "warn: peril ? GROUND_VIEW_TEXT.peril(peril.name) : GROUND_VIEW_TEXT.warn(ground)",
     "tests": [
-      "test/wb9d_gate_ground.test.js"
+      "test/net/gate/wb9d_gate_ground.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "  if (model.edge !== shown.edge) { shown.edge",
     "new": "  if (true) { shown.edge",
     "tests": [
-      "test/wb9d_gate_ground.test.js"
+      "test/net/gate/wb9d_gate_ground.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "    warnNode.style.display = model.warn ? '' : 'none';",
     "new": "    warnNode.style.display = '';",
     "tests": [
-      "test/wb9d_gate_ground.test.js"
+      "test/net/gate/wb9d_gate_ground.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "    if (!inFire && t - outAt >= POOL_TICK_MS) sound(groundStepCue(P), s, t, null, f);",
     "new": "",
     "tests": [
-      "test/wb9d_gate_ground.test.js"
+      "test/net/gate/wb9d_gate_ground.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "      biteAt = t; biteColor = groundColor;",
     "new": "      biteColor = groundColor;",
     "tests": [
-      "test/wb9d_gate_ground.test.js"
+      "test/net/gate/wb9d_gate_ground.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "    if (so.el) { biteAt = now();",
     "new": "    if (true) { biteAt = now();",
     "tests": [
-      "test/wb9d_gate_ground.test.js"
+      "test/net/gate/wb9d_gate_ground.test.js"
     ]
   },
   {
@@ -77,8 +77,8 @@
     "old": "poolShapes(pools, t, poolColor(P), TELEGRAPH_STYLE[P.el] ?? TELEGRAPH_STYLE.fire)",
     "new": "poolShapes(pools, t, poolColor(P), TELEGRAPH_STYLE.fire)",
     "tests": [
-      "test/wb9d_gate_ground.test.js",
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb9d_gate_ground.test.js",
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   }
 ]

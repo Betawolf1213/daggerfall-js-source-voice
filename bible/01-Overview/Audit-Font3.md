@@ -9,7 +9,7 @@ the body and the tokens on the pixel stack, the surfaces moved). Three lenses ov
 - **B** the browser - the front door's panes measured in Chromium on the base tree (`53d46f0a`) and on FONT3, desktop
   1280x800 and phone 390x844, with the game's own font request fetched through the probe's route.
 
-Every finding below was checked against the code before it was fixed. Pins: `test/audit_font3.test.js`; each fix
+Every finding below was checked against the code before it was fixed. Pins: `test/ui/audit_font3.test.js`; each fix
 carries an `AUDIT FONT3 <ID>` comment.
 
 ## What the browser said (B)

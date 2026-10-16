@@ -8,7 +8,7 @@ mod's compiled IL method by method, with 19 pins and a green gate. This
 audit read the same IL again against the same two modules, the five hosts
 that own a pool, and - separately - the 19 pins against the laws their
 own names claim. **Twelve findings, all paid**, each with a pin in
-`test/audit66_handheldtorches.test.js` that fails on the code as HT1
+`test/systems/audit66_handheldtorches.test.js` that fails on the code as HT1
 shipped it.
 
 The shape of the twelve is worth naming before the list: **one is
@@ -217,7 +217,7 @@ question is written down here for whoever next has the tree.
 
 The 19 HT1 pins passed on the broken code above, which is the audit's
 other finding. The third pass listed what each would survive; these are
-the ones now held by `test/audit66_handheldtorches.test.js`:
+the ones now held by `test/systems/audit66_handheldtorches.test.js`:
 
 - **The masked bow arm.** Every "a bow in the left hand takes both"
   case in the suite had an EMPTY right slot with `usingRightHand` true,

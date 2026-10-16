@@ -68,7 +68,7 @@ person.
 
 ## The pins
 
-`test/cards1_cardlaw.test.js` 15, `test/cards2_seat.test.js` 10, `test/cards2b_seated.test.js` 8.
+`test/net/card/cards1_cardlaw.test.js` 15, `test/world/card/cards2_seat.test.js` 10, `test/net/peer/cards2b_seated.test.js` 8.
 `tools/mutants/cards1.json` 48 (47 dead, 1 equivalent as recorded - a folded seat's bet, which can never top the live
 ones), `cards2.json` 56, `cards2b.json` 40 - all dead. The foreign records the fixes moved were re-aimed by content:
 `climb5.json` (`peerMoving`, back to main's body-camera record), `invisnet.json` (`peersNear`'s row), `worldhover.json`

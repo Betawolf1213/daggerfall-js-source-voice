@@ -38,8 +38,8 @@ counts, every listed fix's comment and every SUPERSEDED stamp but one (T14).
 
 ## Fixed
 
-Every finding was reproduced against the frozen tree before it was fixed, pinned in `test/auditlived1b.test.js` (17
-tests; lane T's in `test/auditlived1b_t.test.js`, 15), and mutation-proven: `tools/mutants/auditlived1b.json`, 118
+Every finding was reproduced against the frozen tree before it was fixed, pinned in `test/systems/auditlived1b.test.js` (17
+tests; lane T's in `test/systems/auditlived1b_t.test.js`, 15), and mutation-proven: `tools/mutants/auditlived1b.json`, 118
 records, all dead - 65 for the fixes and lane T's 53 survivors, re-aimed onto the fixed tree (and the 33 older
 records the fixes moved, re-aimed by content: all dead). Each fix carries an `AUDIT LIVED1b <ID>` comment; a finding more than one lane
 found carries its first ID and the table lists them all.
@@ -136,7 +136,7 @@ The first audit's own record is corrected where this one found its fixes short (
   record names it: dead. Then #441 (SPAWN-SHORE, and main's own fix of the same `tv6_dungeons` pin, identical): 62
   files, 130 hunks - 129 cite-only (179 cites moved) and the Suite line; two survtiers3 cite records re-aimed. It adds
   no time reader.]
-- **Process (T15, beside the first audit's T13):** `test/auditworld34.test.js`'s "A1 executed" waits a fixed 25 ms
+- **Process (T15, beside the first audit's T13):** `test/net/auditworld34.test.js`'s "A1 executed" waits a fixed 25 ms
   between its async steps and failed 2 of 3 unmutated runs under `--jobs` load; a list that names it reads those
   failures as deaths (39 false deaths in lane T's second stage, hiding two real survivors). No list here names it. A lane
   that picks its tests by coverage drops the timing-bound ones, or re-runs a death without them. The same held for

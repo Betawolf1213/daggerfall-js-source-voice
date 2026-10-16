@@ -10,7 +10,7 @@
 // `automap.js`'s `pointInAabb` read a FLAT six-array `a[0]..a[5]`.
 // `undefined` compares false against every number, so EVERY dungeon
 // reveal comparison in the real game answered "outside" and the
-// dungeon map revealed NOTHING. `test/automap.test.js` never saw it
+// dungeon map revealed NOTHING. `test/systems/save/automap.test.js` never saw it
 // because its fixtures were hand-built in the flat form the model
 // layer wanted. The cure is structural, not a patch: ONE shape lives
 // past this boundary. `normalizeAabb` accepts either form at the

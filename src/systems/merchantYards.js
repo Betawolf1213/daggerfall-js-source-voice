@@ -223,7 +223,7 @@ export const CARPENTER_STEAL_TEXT = 'The carpenter never takes an eye off the to
 export const YARD_KEY_BASE = 1 << 25;
 /** Each yard's place past YARD_KEY_BASE - the Stable's and the Wagon Yard's their order's; CARP-YARD: the joinery's
  *  after the port's four places (systems/portPlaces.js FOUND_KIND_ORDER, whose index each one's is - a leaf here, it
- *  cannot read that order; test/carpyard1.test.js holds the two to one), so the shipyard's, the crew hall's, the
+ *  cannot read that order; test/systems/carpyard1.test.js holds the two to one), so the shipyard's, the crew hall's, the
  *  lighthouse's and the docks' keys stay theirs. */
 export const YARD_KEY_SLOT = Object.freeze({ stable: 0, transport: 1, carpenter: 6 });
 /** A yard's key in its town's directory. */

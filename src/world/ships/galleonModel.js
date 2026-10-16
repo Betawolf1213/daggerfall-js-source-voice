@@ -29,8 +29,8 @@
 //
 // THE FRAME is Unity's, the boat's: +x starboard, +y up, +z the bow, the root on the waterline - every measurement
 // below is read off the bake (its frame, tools/bakeGalleon.mjs FRAME: Mac's metres x 0.7) and pinned against it
-// (test/galleon_model.test.js; AUDIT GN-NITS: the ones it left unpinned - the castle's front and aft, the gangway, both
-// doors, her sternpost and her gun deck - test/auditgalleon_prefab.test.js, to the same tolerance). Not a DFU member.
+// (test/world/ships/galleon_model.test.js; AUDIT GN-NITS: the ones it left unpinned - the castle's front and aft, the gangway, both
+// doors, her sternpost and her gun deck - test/world/ships/auditgalleon_prefab.test.js, to the same tolerance). Not a DFU member.
 // Ledger A (GALLEON).
 import { GALLEON_ARCHIVE, TEX, GALLEON_TILE, BANDS } from './galleonArt.js';
 import { MeshBench, colliderOf, prism, rope, box, planarUv, newell, sub, add, scl, dot, cross, norm, len } from './galleonMesh.js';
@@ -47,7 +47,7 @@ export const GALLEON_HULL_NODE = 'NewGalleon';
  *  the midship taken off (tools/bakeGalleon.mjs FRAME) - and pinned there. */
 export const MEASURED = Object.freeze({
   // AUDIT GN-NITS: the gun deck, the castle's front and aft, the gangway, both doorways and the sternpost re-read off the
-  // final bake (eac64ad59) to the tenth of a millimetre and pinned there (test/auditgalleon_prefab.test.js NITS) - they
+  // final bake (eac64ad59) to the tenth of a millimetre and pinned there (test/world/ships/auditgalleon_prefab.test.js NITS) - they
   // had stood unpinned, up to 3.5 mm off it: the gun deck's top 1.0829 (1.085), the bulkhead's doorway 0.7804 a side
   // (0.777) and 3.6785 to its head (3.675), the castle's doorway's jambs 0.7745 a side (0.777) from 6.1784 (6.181)
   mainDeckY: 6.202, mainDeckUnderY: 5.943, gunDeckY: 1.0829, railY: 6.923,
@@ -86,7 +86,7 @@ export const WELL_RAMP_NY = Object.freeze([0.75, 0.9]);
  *  wheel 0.98 m ahead of him - 1.12 m in plan - and 0.05 m under DrivePosition's height). So her wheel is smaller and
  *  lower - its tips 0.66 m round a hub 0.72 m over the roof (6 cm clear of it at the bottom, 9 cm under the lowest
  *  sight line at the top) - and the binnacle forward of it 1.30 m to its hood's top (14 cm under the line): none of the
- *  28 blocked at any turn of the wheel (test/auditgalleon_prefab.test.js P1). */
+ *  28 blocked at any turn of the wheel (test/world/ships/auditgalleon_prefab.test.js P1). */
 export const HELM = Object.freeze({ hub: Object.freeze([0, MEASURED.castleRoofY + 0.72, -12.9]), stand: Object.freeze([0, MEASURED.castleRoofY + CAPSULE_HEIGHT / 2, -14.25]), wheelR: 0.4 });
 /** AUDIT GN2-PF7: her DriveTrigger's node - Come Sail Away's trigger is a metre's cube on it, whatever the node's scale
  *  (ImportCustomGameobject keeps its world scale) - over her wheel AND its binnacle: 0.25 m forward of the hub, so the
@@ -94,13 +94,13 @@ export const HELM = Object.freeze({ hub: Object.freeze([0, MEASURED.castleRoofY 
  *  the cube's). At the hub, that box's fore face stood 0.17 m forward of the cube's: from forward of the wheel (150-210
  *  degrees round it) the activation ray met the pedestal first and the helm was taken one time in six; the mod's
  *  galleon's wheel-well stands inside its cube, every bearing taken. Its after face 1.1 m forward of DrivePosition
- *  (test/auditgalleon2_prefab.test.js PF7). */
+ *  (test/world/ships/auditgalleon2_prefab.test.js PF7). */
 export const DRIVE_TRIGGER_AT = Object.freeze([HELM.hub[0], HELM.hub[1], HELM.hub[2] + 0.25]);
 /** AUDIT GN-P3: Come Sail Away's anchor on her starboard bow - weighed (ActiveObject's, shown as she sails) and let go
  *  (IdleObject's cable down from her hawse) - each node turned `yawDeg` (Unity's: +z toward +x) so the weighed
  *  anchor's shank and arms lie along her bow's flare in plan (hull polygon 1's side, 30.8 deg off her centreline) with
  *  its stock square out from it, the cable's head at her side; and stood out so EVERY vertex of both clears her outer
- *  planking (the bake's own hull triangles under it) by 2 cm or more. Measured (test/auditgalleon_prefab.test.js P3):
+ *  planking (the bake's own hull triangles under it) by 2 cm or more. Measured (test/world/ships/auditgalleon_prefab.test.js P3):
  *  the weighed anchor's nearest vertex 2.0 cm off her side, the let-go cable's 2.0 cm. The mod's anchor stood at
  *  (4.05, 5.85, 15.9) unturned, its mesh reaching 1.62 m inboard of its node: 205 of its 312 vertices inboard of her
  *  outer planking, 62 of them in her open interior (her bow's deck inboard of the bulwark, and between her decks), and
@@ -125,7 +125,7 @@ export const LID = Object.freeze({
  *  bow (5.758 aft to 5.387 fore). So fitted, a shut shutter's inner face lies 1.2 cm off her side at the most along its
  *  edges (port 0's starboard, its aft edge between knuckle and sill: the outer side's fit) and her planking stands 2.3 cm
  *  into it at the most (port 4's fore edge just over the sill, either side, where a crease of the bake's own cut of her
- *  side's 24-gon runs up across the corner), under 0.5 cm everywhere else (test/auditgalleon_prefab.test.js P6). */
+ *  side's 24-gon runs up across the corner), under 0.5 cm everywhere else (test/world/ships/auditgalleon_prefab.test.js P6). */
 const frozen = (a) => Object.freeze(a.map((x) => (Array.isArray(x) ? frozen(x) : x)));
 export const LID_FIT = frozen([
   [[5.788, 5.795, 5.795, 5.795, 5.795], [5.858, 5.858, 5.858, 5.858, 5.858], [5.773, 5.773, 5.774, 5.775, 5.775], [5.757, 5.758, 5.758, 5.758, 5.758]],
@@ -684,7 +684,7 @@ export function ropeLadderGeometry(s = 1) {
  *  canvas with it. Lying open, with her rig as it stands (03efe519e), a cover is 1.85 m or more from the gaff's boom and
  *  spars and 1.45 from its canvas at every trim to 90 either way, 0.2 m from her running rope at the nearest (the
  *  mainsheet, the gaff squared off to starboard, over the aft cover's after end) and 1.47 from a belay
- *  (test/auditgalleon_prefab.test.js P9). */
+ *  (test/world/ships/auditgalleon_prefab.test.js P9). */
 export const HATCH_OPEN_DEG = -178;
 /** A shutter swings up on its top to stand out from her side, a little short of level - as Mac's stands. */
 export const LID_OPEN_DEG = 84;

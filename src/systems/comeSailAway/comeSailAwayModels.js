@@ -217,7 +217,7 @@ export function comeSailAwayModels({ prefabs, meshes, bin, materials, animation,
  *  source's hash), served again only for the same bake to the byte over the same mod table - a bake edited under the same
  *  hash builds anew (the loader's broken-model pin). What it holds is read, never written: a boat instances her tree and
  *  components by copy (world/prefabNode.js instantiatePrefab), and her meshes are drawn, baked and stood on, never changed
- *  (test/auditgalleon2_prefab.test.js PF4). SHIPS-2: every port ship's so, each its own entry - keyed too by the place in
+ *  (test/world/ships/auditgalleon2_prefab.test.js PF4). SHIPS-2: every port ship's so, each its own entry - keyed too by the place in
  *  the table its components take (`base`: the galleon's before them) and every mod prefab its builder reads. */
 const _built = new Map();   // ship key -> { sha256, bake, base, old, built }
 function shipBuilt(ship, json, prefabs, base) {

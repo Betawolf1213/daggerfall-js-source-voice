@@ -46,7 +46,7 @@ and `auditparty8.json` (23, one record re-aimed by content), all dead.
 **HOLD-SOLO REVERTED 2026-10-12 (HOLD-SHARED).** H1-H5 above, and H2's and H6's stands below, went with it: the Hold keys its shared room again, so
 there is no solo dungeon to choose (H1), to remember (H2), to refuse a staff `/tp` into (H3), to hear the clock for (H4)
 or to say alone (H5). Their 13 records left `tools/mutants/fb1007b.json` (46 now); its START-CELL and PH1 records
-re-aimed at `test/holdshared.test.js`, and `auditparty8.json`'s AP-hud-place-by-words back on withMe's last line.
+re-aimed at `test/net/holdshared.test.js`, and `auditparty8.json`'s AP-hud-place-by-words back on withMe's last line.
 `01-Overview/Field-Bugs-2026-10-07b.md` HOLD-SOLO.
 
 ## Stood, and why

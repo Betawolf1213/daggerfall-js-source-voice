@@ -944,7 +944,7 @@ body.draglock .wornrow, body.draglock .wornmap { touch-action: none; }
    the boot error and three bottom sheets are 20, enhancedChunk's "the
    game was updated" scrim is 30, the notice stack (ENH-NOTICE1; AUDIT
    ENH-NOTICE3 A7 lifted it off a tie with that scrim) is 31, the asset
-   picker is 40 (and test/mwattach.test.js holds that it outranks
+   picker is 40 (and test/scenes/mwattach.test.js holds that it outranks
    everything). The first
    cut put the ghost at 30 - a straight COLLISION with the update scrim,
    which won only by an accident of which host it happened to be mounted
@@ -3451,7 +3451,7 @@ ${paceControlsCss('tview')}
    block goes up with them. Without it the bars reached the block's column on a 1024px screen at scale 1 (on a 1280px
    one past 1.16) and the magicka bar stood in the diamond. (UI3: no status row under the vitals now - its chips are
    the status widget's tiles, on this block - so the vitals stand 10 x scale lower than this line counts, and the
-   block keeps it as air.) (test/renown4b.test.js models every edge.) */
+   block keeps it as air.) (test/ui/touch/renown4b.test.js models every edge.) */
 .hud:has(.hud-renown.on) .hud-quick { bottom: calc(22px + 64px * var(--hud-scale) + env(safe-area-inset-bottom, 0px)); }
 /* The caption row: the interaction mode's word, where it already stood,
    and the readied spell beside it. CAPPED AT THE DIAMOND'S OWN WIDTH
@@ -3923,7 +3923,7 @@ ${paceControlsCss('tview')}
    DOM. The rows' own furniture climbs out of auto - the wear bar at 1 (WEAR-UI), the rune and the padlock at 2 -
    and nothing between them and this scrim makes a stacking context, so a positioned scrim at z auto painted UNDER
    every positive layer whatever the DOM order. All three shells' boxes stand at 10, above anything a row carries
-   (test/disc28_shopbox.test.js reads every z-index their shells declare). */
+   (test/ui/enhanced/disc28_shopbox.test.js reads every z-index their shells declare). */
 .trade-shell .sb-ask { position: absolute; inset: 0; display: flex; align-items: center;
   justify-content: center; background: rgba(10,12,17,0.72); padding: 20px;
   z-index: 10; }

@@ -41,7 +41,7 @@
 // and her main deck 7.81. MIDSHIP 4.07 is the middle of her length (to 0.4 cm); CENTRELINE her hull object's own scene
 // Y, to the bit (AUDIT GN-B6).
 //
-// The output is a JSON a test re-bakes byte for byte (test/ships2_bake.test.js): the source is committed beside it, so
+// The output is a JSON a test re-bakes byte for byte (test/tooling/ships2_bake.test.js): the source is committed beside it, so
 // the file is a DERIVATION, never a blob.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';

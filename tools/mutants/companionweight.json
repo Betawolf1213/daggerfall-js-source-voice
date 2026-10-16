@@ -5,7 +5,7 @@
     "old": "export const packCapacityKg = (entity) => (Number(entity?.stats?.strength) > 0 ? entityMaxEncumbrance(entity) : maxEncumbrance(PACK_DEFAULT_STRENGTH));",
     "new": "export const packCapacityKg = (entity) => maxEncumbrance(PACK_DEFAULT_STRENGTH);",
     "tests": [
-      "test/companion_weight.test.js"
+      "test/systems/companion_weight.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "export const PACK_DEFAULT_STRENGTH = 50;",
     "new": "export const PACK_DEFAULT_STRENGTH = 0;",
     "tests": [
-      "test/companion_weight.test.js"
+      "test/systems/companion_weight.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "  if (capacity) {\n    // COMPANION-WEIGHT: a storage with its own limit takes what fits",
     "new": "  if (false) {\n    // COMPANION-WEIGHT: a storage with its own limit takes what fits",
     "tests": [
-      "test/companion_weight.test.js"
+      "test/systems/companion_weight.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "    if (capacity.gone || canHold <= 0) return { ok: false, refusal: packFull(capacity) };\n    return { ok: true, amount: Math.min(canHold, stack), sound: 'click' };",
     "new": "    if (capacity.gone || canHold <= 0) return { ok: false, refusal: packFull(capacity) };\n    return { ok: true, amount: stack, sound: 'click' };",
     "tests": [
-      "test/companion_weight.test.js"
+      "test/systems/companion_weight.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "{ reason: 'packFull', text: packFullText(capacity?.name) });",
     "new": "{ reason: 'packFull', text: packFullText(null) });",
     "tests": [
-      "test/companion_weight.test.js"
+      "test/systems/companion_weight.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "  if (!usingWagon && capacity) {",
     "new": "  if (false) {",
     "tests": [
-      "test/companion_weight.test.js"
+      "test/systems/companion_weight.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "  if (state.usingWagon || state.chooseOne || !deps.loot) return null;\n  const cap = deps.loot.capacity?.();",
     "new": "  if (!deps.loot) return null;\n  const cap = deps.loot.capacity?.();",
     "tests": [
-      "test/companion_weight.test.js"
+      "test/systems/companion_weight.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "    capacity: storeCapacityOf(deps, session), bagLoaded: !bagMayLeave(deps.entity), wagonKg: wagonKgFor(deps.entity),   // COMPANION-WEIGHT: a companion's pack takes what fits\n",
     "new": "    bagLoaded: !bagMayLeave(deps.entity), wagonKg: wagonKgFor(deps.entity),\n",
     "tests": [
-      "test/companion_weight.test.js"
+      "test/systems/companion_weight.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "        capacity: storeCapacityOf(this.hooks, { usingWagon: this.usingWagon, chooseOne: this.chooseOne }),   // COMPANION-WEIGHT: a companion's pack takes what fits\n",
     "new": "",
     "tests": [
-      "test/companion_weight.test.js"
+      "test/systems/companion_weight.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "    capacity: kind === 'wagon' ? wagonKgFor(deps.entity) : kind === 'bag' ? BAG_KG_LIMIT : (storeCapacityOf(deps, state)?.kg ?? null),",
     "new": "    capacity: kind === 'wagon' ? wagonKgFor(deps.entity) : kind === 'bag' ? BAG_KG_LIMIT : null,",
     "tests": [
-      "test/companion_weight.test.js"
+      "test/systems/companion_weight.test.js"
     ]
   },
   {
@@ -95,8 +95,8 @@
     "old": "containerImage: () => CONTAINER_IMAGES.Backpack, playerOwned: true, storage: true, capacity } });",
     "new": "containerImage: () => CONTAINER_IMAGES.Backpack, playerOwned: true, storage: true } });",
     "tests": [
-      "test/companion_weight.test.js",
-      "test/companionkit.test.js"
+      "test/systems/companion_weight.test.js",
+      "test/systems/companionkit.test.js"
     ]
   },
   {
@@ -105,7 +105,7 @@
     "old": "  if (capacity && !usingWagon && packRefuses(capacity, item, item.stackCount ?? 1, remote)) return { ok: false, refusal: packFull(capacity) };\n",
     "new": "",
     "tests": [
-      "test/companion_weight.test.js"
+      "test/systems/companion_weight.test.js"
     ]
   },
   {
@@ -114,7 +114,7 @@
     "old": "      label: cap ? targetIconWeightText(totalWeight(this._remote()), cap.kg) : pileLabel(loot?.pile),",
     "new": "      label: pileLabel(loot?.pile),",
     "tests": [
-      "test/companion_weight.test.js"
+      "test/systems/companion_weight.test.js"
     ]
   },
   {
@@ -123,7 +123,7 @@
     "old": "      if (!pack) return { kg: 0, name: named, gone: true };\n",
     "new": "",
     "tests": [
-      "test/companion_weight.test.js"
+      "test/systems/companion_weight.test.js"
     ]
   },
   {
@@ -132,7 +132,7 @@
     "old": "const packRefuses = (capacity, item, units, remote) => !!capacity.gone || canHoldAmount(",
     "new": "const packRefuses = (capacity, item, units, remote) => canHoldAmount(",
     "tests": [
-      "test/companion_weight.test.js"
+      "test/systems/companion_weight.test.js"
     ]
   },
   {
@@ -141,7 +141,7 @@
     "old": "    if (capacity.gone) { const r = packFull(capacity); return { ok: false, refusal: r, notice: r.text }; }   // AUDIT ECON C5\n",
     "new": "",
     "tests": [
-      "test/companion_weight.test.js"
+      "test/systems/companion_weight.test.js"
     ]
   },
   {
@@ -150,7 +150,7 @@
     "old": "Number(entity?.stats?.strength) > 0 ? entityMaxEncumbrance(entity) :",
     "new": "Number(entity?.stats?.strength) > 0 ? maxEncumbrance(Number(entity.stats.strength)) :",
     "tests": [
-      "test/companion_weight.test.js"
+      "test/systems/companion_weight.test.js"
     ]
   },
   {
@@ -159,7 +159,7 @@
     "old": "packFullGoldText(capacity.name, Math.max(0, canCarry))",
     "new": "packFullGoldText(capacity.name, canCarry)",
     "tests": [
-      "test/companion_weight.test.js"
+      "test/systems/companion_weight.test.js"
     ]
   },
   {
@@ -168,7 +168,7 @@
     "old": "    const canHold = canHoldAmount(stack, effectiveUnitWeightInKg(item), capacity.kg, totalWeight(remote));\n    if (capacity.gone || canHold <= 0)",
     "new": "    const canHold = canHoldAmount(stack, effectiveUnitWeightInKg(item) || 1, capacity.kg, totalWeight(remote));\n    if (capacity.gone || canHold <= 0)",
     "tests": [
-      "test/companion_weight.test.js"
+      "test/systems/companion_weight.test.js"
     ]
   },
   {
@@ -177,7 +177,7 @@
     "old": "const notice = asked > canCarry ? packFullGoldText(",
     "new": "const notice = asked >= canCarry ? packFullGoldText(",
     "tests": [
-      "test/companion_weight.test.js"
+      "test/systems/companion_weight.test.js"
     ]
   },
   {
@@ -186,7 +186,7 @@
     "old": "return cap && Number.isFinite(cap.kg) ? cap : null;",
     "new": "return cap ? cap : null;",
     "tests": [
-      "test/companion_weight.test.js"
+      "test/systems/companion_weight.test.js"
     ]
   }
 ]

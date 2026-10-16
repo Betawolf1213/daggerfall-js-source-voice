@@ -39,7 +39,7 @@ export const lerpF = (a, b, t) => Math.fround(a + Math.fround(Math.fround(b - a)
  * floats (OH-A, 2026-09-26: There's a Hole in the Bottom of the Ocean's
  * GetMidpointColor). ui/fadeLayer.js keeps a private double-precision
  * form of the same member - D4 pins FadeBehaviour's steps in doubles
- * (test/d4_fadelayer.test.js).
+ * (test/ui/d4_fadelayer.test.js).
  * @param {ArrayLike<number>} a @param {ArrayLike<number>} b - rgba
  * @param {number} t
  * @returns {number[]}

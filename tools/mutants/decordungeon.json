@@ -5,7 +5,7 @@
     "old": "  && ((id >= DECOR_FURNITURE_FIRST && id <= DECOR_FURNITURE_LAST) || FREE_STANDING.has(id));",
     "new": "  && true;",
     "tests": [
-      "test/decordungeon.test.js"
+      "test/systems/decor/decordungeon.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "  && ((id >= DECOR_FURNITURE_FIRST && id <= DECOR_FURNITURE_LAST) || FREE_STANDING.has(id));",
     "new": "  && ((id >= DECOR_FURNITURE_FIRST && id <= DECOR_FURNITURE_LAST));",
     "tests": [
-      "test/decordungeon.test.js"
+      "test/systems/decor/decordungeon.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "  62323, 62324, 62325, 62326, 62327, 62328, 62329, 62330,   // the statues - a figure standing and one seated, small and large, in pale stone and in dark (ST0-ST3 26, 14, 5, 3, 6, 7, 8, 6)",
     "new": "  62324, 62325, 62328, 62330,   // the statues World of Daggerfall's palette names - the defect measured",
     "tests": [
-      "test/decordungeon.test.js"
+      "test/systems/decor/decordungeon.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "          if (!isDungeonFurnishing(id) || rdbModelActs(obj) || isActionDoor(rdb, ref)) continue;",
     "new": "          if (!isDungeonFurnishing(id) || isActionDoor(rdb, ref)) continue;",
     "tests": [
-      "test/decordungeon.test.js"
+      "test/systems/decor/decordungeon.test.js"
     ],
     "note": "AUDIT 05b (PIN MOVED): re-aimed by content - the exit door's dead test is gone (A10)."
   },
@@ -42,7 +42,7 @@
     "old": "          if (!isDungeonFurnishing(id) || rdbModelActs(obj) || isActionDoor(rdb, ref)) continue;",
     "new": "          if ((!isDungeonFurnishing(id) && !isActionDoor(rdb, ref)) || rdbModelActs(obj)) continue;",
     "tests": [
-      "test/decordungeon.test.js"
+      "test/systems/decor/decordungeon.test.js"
     ],
     "note": "AUDIT 05b (PIN MOVED): re-aimed by content - the exit door's dead test is gone (A10)."
   },
@@ -52,7 +52,7 @@
     "old": "          if (!Number.isSafeInteger(a) || !Number.isSafeInteger(r) || r < 0 || a === EDITOR_FLATS_ARCHIVE || fr.action > 0 || isNatureArchive(a)) continue;",
     "new": "          if (!Number.isSafeInteger(a) || !Number.isSafeInteger(r) || r < 0 || fr.action > 0 || isNatureArchive(a)) continue;",
     "tests": [
-      "test/decordungeon.test.js"
+      "test/systems/decor/decordungeon.test.js"
     ]
   },
   {
@@ -61,7 +61,7 @@
     "old": "          if (!Number.isSafeInteger(a) || !Number.isSafeInteger(r) || r < 0 || a === EDITOR_FLATS_ARCHIVE || fr.action > 0 || isNatureArchive(a)) continue;",
     "new": "          if (!Number.isSafeInteger(a) || !Number.isSafeInteger(r) || r < 0 || a === EDITOR_FLATS_ARCHIVE || isNatureArchive(a)) continue;",
     "tests": [
-      "test/decordungeon.test.js"
+      "test/systems/decor/decordungeon.test.js"
     ]
   },
   {
@@ -70,7 +70,7 @@
     "old": "          if (!Number.isSafeInteger(a) || !Number.isSafeInteger(r) || r < 0 || a === EDITOR_FLATS_ARCHIVE || fr.action > 0 || isNatureArchive(a)) continue;",
     "new": "          if (!Number.isSafeInteger(a) || !Number.isSafeInteger(r) || r < 0 || a === EDITOR_FLATS_ARCHIVE || fr.action > 0) continue;",
     "tests": [
-      "test/decordungeon.test.js"
+      "test/systems/decor/decordungeon.test.js"
     ]
   },
   {
@@ -79,7 +79,7 @@
     "old": "          add({ model: null, flat: [a, r], ...(isNpcFlat(a) ? { person: true } : {}) }, 'dungeon');",
     "new": "          add({ model: null, flat: [a, r] }, 'dungeon');",
     "tests": [
-      "test/decordungeon.test.js"
+      "test/systems/decor/decordungeon.test.js"
     ]
   },
   {
@@ -88,7 +88,7 @@
     "old": "    else if ((DECOR_FROM[from] ?? 0) < (DECOR_FROM[had.from] ?? 0)) out.set(key, { ...what, count: had.count + 1, from });\n",
     "new": "",
     "tests": [
-      "test/decordungeon.test.js"
+      "test/systems/decor/decordungeon.test.js"
     ]
   },
   {
@@ -97,7 +97,7 @@
     "old": "    if (c.from === 'dungeon' && (kind === 'furniture' || kind === 'decor')) kind = 'dungeon';\n",
     "new": "",
     "tests": [
-      "test/decordungeon.test.js"
+      "test/systems/decor/decordungeon.test.js"
     ]
   },
   {
@@ -106,7 +106,7 @@
     "old": "    list.sort((a, b) => fromOrder(a) - fromOrder(b) || idOrder(a) - idOrder(b));",
     "new": "    list.sort((a, b) => idOrder(a) - idOrder(b));",
     "tests": [
-      "test/decordungeon.test.js"
+      "test/systems/decor/decordungeon.test.js"
     ]
   },
   {
@@ -115,7 +115,7 @@
     "old": "      const lone = taken === 0 && j - i === 1;",
     "new": "      const lone = list.length === 1;",
     "tests": [
-      "test/decordungeon.test.js"
+      "test/systems/decor/decordungeon.test.js"
     ]
   },
   {
@@ -124,7 +124,7 @@
     "old": "    isDungeonBlock: (t) => t === BLOCK_TYPES.Rdb,",
     "new": "    isDungeonBlock: () => false,",
     "tests": [
-      "test/decordungeon.test.js"
+      "test/systems/decor/decordungeon.test.js"
     ]
   }
 ]

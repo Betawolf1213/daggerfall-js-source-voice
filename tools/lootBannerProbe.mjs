@@ -1,7 +1,7 @@
 // LOOT-BANNER, SEEN (2026-10-09, Mac: "something akin to a destiny loot popup notification") - the banners drawn in a real
 // browser over the real enhanced HUD, beside a real notice toast at the right edge, and photographed.
 //
-// The suite holds the banners' LAW (what arrives, what stands, how long) and their DOM's shape (test/lootbanner.test.js);
+// The suite holds the banners' LAW (what arrives, what stands, how long) and their DOM's shape (test/systems/lootbanner.test.js);
 // what it cannot hold is whether a banner reads at the edge of a screen, whether each tier's colour reads over the veil,
 // whether a big one stands out from the rest, and whether the stack steps under the notices and stays on a phone's screen.
 // Those are things about pixels, so the page builds every surface through its real entry - `drawLootBanners` with a

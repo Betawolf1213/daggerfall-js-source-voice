@@ -13,7 +13,7 @@ export const YARD_DRAW_M = 300;
  * (ui/enhanced/enhancedMenu.js, `yardRange`) - metres on the ground from the eye to a yard's house; 0, none: no stranger's yard
  * stands at all (no draw, no solid, no lamp). The default is YARD_DRAW_M, the distance every yard was drawn at before.
  * One's own yard - a home's, a hall's its keeper keeps (homeOutsideKept) - is drawn to YARD_DRAW_M whatever the choice.
- * Its YARD_RANGE_DEFAULT is pinned equal to the shelf's (systems/uiPrefs.js) by test/yardrange.test.js, not imported.
+ * Its YARD_RANGE_DEFAULT is pinned equal to the shelf's (systems/uiPrefs.js) by test/scenes/yardrange.test.js, not imported.
  */
 export const YARD_RANGE_TIERS = Object.freeze([0, 75, 150, YARD_DRAW_M]);
 export const YARD_RANGE_DEFAULT = YARD_DRAW_M;

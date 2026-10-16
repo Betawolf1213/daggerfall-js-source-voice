@@ -5,7 +5,7 @@
     "old": "  const v = isEnhanced() ? getPref(GUIDANCE_PREF) : null;",
     "new": "  const v = getPref(GUIDANCE_PREF);",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "    if (!res || !s.active || s.dead || res.isHidden === true || questEnded(s.behaviour)) continue;",
     "new": "    if (!res || s.dead || res.isHidden === true || questEnded(s.behaviour)) continue;",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "    if (!res || !s.active || s.dead || res.isHidden === true || questEnded(s.behaviour)) continue;",
     "new": "    if (!res || !s.active || s.dead || questEnded(s.behaviour)) continue;",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "    if (!b || f.dead || !feet || b.targetResource?.isHidden === true || questEnded(b)) continue;",
     "new": "    if (!b || !feet || b.targetResource?.isHidden === true || questEnded(b)) continue;",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "    const at = [(box.min[0] + box.max[0]) / 2, box.min[1], (box.min[2] + box.max[2]) / 2];",
     "new": "    const at = [(box.min[0] + box.max[0]) / 2, box.max[1], (box.min[2] + box.max[2]) / 2];",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "  const followed = (uid) => followedId != null && uid != null && String(uid) === String(followedId);",
     "new": "  const followed = (uid) => uid != null;",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "    const name = res.isPerson === true ? (res.displayName || 'Someone') : (itemName(s, res) || 'Quest item');",
     "new": "    const name = itemName(s, res) || 'Quest item';",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "    out.push({ at: [feet[0], feet[1], feet[2]], name: b.targetResource?.displayName || foeName(f) || 'Quest foe', followed: followed(b.questUID) });\n",
     "new": "",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "    for (const q of questSheets()) keep.add(q);   // GUIDE8: a quest's floor is on the strip before it is walked\n",
     "new": "",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "      quest: !!opts.quest?.has?.(f.index),   // GUIDE8: a quest mark stands on this floor",
     "new": "      quest: false,",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "    for (const q of questsHere()) {\n      const p = q.at;\n      if (!mine(p[1])) continue;",
     "new": "    for (const q of questsHere()) {\n      const p = q.at;",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "breathes() { return !!entranceHere() || echoesBreathe() ||",
     "new": "breathes() { return !!entranceHere() ||",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "      paintMarkName(ctx, m.name, x, y + MARK_R * 2 + 2, PLAN_PEN.note);   // AUDIT DELVE D7: the names' pen (the beacon's was 3:1)\n",
     "new": "",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "  const dungeonQuestMarksHere = () => (guidanceTier() !== 'exact' ? null : dungeonQuestMarks({",
     "new": "  const dungeonQuestMarksHere = () => (false ? null : dungeonQuestMarks({",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "key: 'questGuidance', initial: 'journal',",
     "new": "key: 'questGuidance', initial: 'exact',",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "  return v === 'exact' || v === 'town' ? v : 'journal';",
     "new": "  return v === 'exact' ? v : 'journal';",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": " || (Number(b.mapId) >>> 0) !== here) continue;",
     "new": ") continue;",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "followed: followed || !!had?.followed",
     "new": "followed",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "      if (!named.has(b?.buildingKey) && (",
     "new": "      if ((true) && (",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "old": " || ((dfLoc.mapTableData?.mapId ?? -1) >>> 0) !== (Number(bld.mapId) >>> 0)) return null;",
     "new": ") return null;",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -185,7 +185,7 @@
     "old": "    building: said.has(MACRO_TYPES.NameMacro1) && site.siteType === SITE_TYPES.Building",
     "new": "    building: site.siteType === SITE_TYPES.Building",
     "tests": [
-      "test/guide1_questLens.test.js"
+      "test/ui/quest/guide1_questLens.test.js"
     ]
   },
   {
@@ -194,7 +194,7 @@
     "old": "    const b = f ? behaviourOf(f) : null;",
     "new": "    const b = f?.questBehaviour ?? null;",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -203,7 +203,7 @@
     "old": "    out.push({ at: [p.x, p.y, p.z], name: res.displayName || 'Someone', followed: followed(b.questUID) });\n",
     "new": "",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -212,7 +212,7 @@
     "old": "    if (!res || p.active === false || res.isHidden === true || res.isDestroyed === true || questEnded(b)) continue;",
     "new": "    if (!res) continue;",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -221,7 +221,7 @@
     "old": "export const followOn = () => trackerOn() || marksOn() || guidanceTier() !== 'journal';",
     "new": "export const followOn = () => trackerOn() || marksOn();",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -230,7 +230,7 @@
     "old": "    if (best) break;",
     "new": "",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -239,7 +239,7 @@
     "old": "      return solidOn && s >= 0 && s !== index ?",
     "new": "      return false && s >= 0 && s !== index ?",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -248,7 +248,7 @@
     "old": "  const room = Math.max(padX, ...all.map((f) => marksW(f.index) + FLOOR_MARK.gap * scale));",
     "new": "  const room = padX;",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -257,7 +257,7 @@
     "old": "      if (m.kind === 'quest') d = Math.min(",
     "new": "      if (false) d = Math.min(",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -266,7 +266,7 @@
     "old": "${mark.followed ? QUEST_FOLLOWED_TEXT : QUEST_LEGEND_TEXT}",
     "new": "${QUEST_FOLLOWED_TEXT}",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -275,7 +275,7 @@
     "old": "      paintMarkName(ctx, m.name, x, y + MARK_R + 2, PLAN_PEN.note);",
     "new": "      paintMarkName(ctx, m.name, x, y + MARK_R + 2, PLAN_PEN.mark);",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -284,7 +284,7 @@
     "old": "    return f.sheets.length > 0 && all.some((p) => sheetAt(f, p[1]) === index);",
     "new": "    return true;",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -293,7 +293,7 @@
     "old": "        quests: () => interiorQuestMarksHere(),",
     "new": "        quests: () => null,",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   },
   {
@@ -302,7 +302,7 @@
     "old": "          quest: questCompassPick(interiorQuestMarksHere(), player.pos),",
     "new": "          quest: null,",
     "tests": [
-      "test/guide8_questguidance.test.js"
+      "test/ui/automap/guide8_questguidance.test.js"
     ]
   }
 ]

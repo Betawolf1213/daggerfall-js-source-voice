@@ -5,7 +5,7 @@
     "old": "  for (const k of kinds.includes('routed') ? ['routed', ...kinds] : kinds) {\n    const a = k === 'night'",
     "new": "  for (const k of (kinds.includes('routed') ? ['routed', ...kinds] : kinds).slice(1)) {\n    const a = k === 'night'",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "    if (!a || held.has(a)) continue;",
     "new": "    if (!a) continue;",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "    if (!a || held.has(a)) continue;",
     "new": "    if (!a) continue;\n    if (held.has(a)) return null;",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "    if (a === 'silverScarred' && !SILVER_DOUBLED_KINDS.has(mobileType)) continue;",
     "new": "    if (a === 'silverScarred' && false) continue;",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "    if (ADAPT.RESIST_OF[a] && weaknessShut(ADAPT.RESIST_OF[a], career)) continue;\n",
     "new": "",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "(slew ? 'nightStalker' : null)",
     "new": "null",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "(slew ? 'nightStalker' : null)",
     "new": "'nightStalker'",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "back: 'watchful', routed: 'relentless',",
     "new": "back: 'watchful',",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": ".slice(-Math.max(1, Math.min(rank | 0, ADAPT_MAX)))",
     "new": ".slice(-ADAPT_MAX)",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": ".slice(-Math.min(rank, ADAPT_MAX)) : [],   // RVN2: at most its rank's",
     "new": ".slice(-ADAPT_MAX) : [],   // RVN2: at most its rank's",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "if (has(a) && cls !== weak) taken[cls]",
     "new": "if (has(a)) taken[cls]",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "if (has(a) && el !== weak) resist[el]",
     "new": "if (has(a)) resist[el]",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "silverScarred: has('silverScarred') && weak !== 'silver',",
     "new": "silverScarred: has('silverScarred'),",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "  RESIST: 25,",
     "new": "  RESIST: 50,",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "mailed: Object.freeze(['blade', 0.7])",
     "new": "mailed: Object.freeze(['blade', 0.8])",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "braced: Object.freeze(['blunt', 0.75])",
     "new": "braced: Object.freeze(['blunt', 0.7])",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "hewnHard: Object.freeze(['axe', 0.7])",
     "new": "hewnHard: Object.freeze(['blade', 0.7])",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "  TAKEN_FLOOR: 0.6,",
     "new": "  TAKEN_FLOOR: 0.5,",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "poise: (has('braced') ? ADAPT.BRACED_POISE : 1)",
     "new": "poise: (1)",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "old": " * (has('steadfast') ? ADAPT.STEADFAST_POISE : 1),",
     "new": " * 1,",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -185,7 +185,7 @@
     "old": "    iron: has('steadfast') ? ADAPT.STEADFAST_IRON : 0,",
     "new": "    iron: 0,",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -194,7 +194,7 @@
     "old": "    track: has('patient') ? ADAPT.PATIENT_TRACK : null,",
     "new": "    track: null,",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -203,7 +203,7 @@
     "old": "    feint: has('patient') ? ADAPT.PATIENT_FEINT : null,",
     "new": "    feint: null,",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -212,7 +212,7 @@
     "old": "    wind: has('patient') ? ADAPT.PATIENT_WIND : null,",
     "new": "    wind: null,",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -221,7 +221,7 @@
     "old": "farSpeed: has('arrowWise') ? ADAPT.ARROW_SPEED : 0,",
     "new": "farSpeed: 0,",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -230,7 +230,7 @@
     "old": "closes: has('arrowWise'),",
     "new": "closes: false,",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -239,7 +239,7 @@
     "old": "  return attacker?.isPlayer || (attacker?.mobileType ?? -1) >= 128 ? 'h2h' : 'other';",
     "new": "  return 'h2h';",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -248,7 +248,7 @@
     "old": "  if (lesson) r.learned = withLesson(r.learned, lesson, r.rank);\n",
     "new": "",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -257,7 +257,7 @@
     "old": "lessonOf(kinds, r.learned, r.mobileType, entity.career ?? null)",
     "new": "lessonOf(kinds, r.learned, r.mobileType)",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -266,7 +266,7 @@
     "old": "  entity.revenant = revenantStamp(r);   // RVN2: and what it learned, at once",
     "new": "  entity.revenant = { id: r.id, name: r.name, rank: r.rank };",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -275,7 +275,7 @@
     "old": "  entity.revenant = revenantStamp(r);   // RVN2: what it learned stands with it",
     "new": "  entity.revenant = { id: r.id, name: r.name, rank: r.rank, edge: adaptEdge([]) };",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -284,7 +284,7 @@
     "old": "  return edge.taken[adaptBlowClass(attacker, weapon, info?.kind)] ?? 1;",
     "new": "  return 1;",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -293,7 +293,7 @@
     "old": "  Object.assign(m.resist, edge.resist);\n",
     "new": "",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -302,7 +302,7 @@
     "old": "registerSilverDoubleVeto('revenant', (target) => target?.revenant?.edge?.silverScarred === true);",
     "new": "registerSilverDoubleVeto('revenant', () => false);",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -311,7 +311,7 @@
     "old": "  if (edge.relentless && entity.stats) entity.stats.speed = (entity.stats.speed ?? 0) + ADAPT.RELENTLESS_SPEED;\n",
     "new": "",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -320,7 +320,7 @@
     "old": "  if (edge.nightStalker && skyIsNight()) entity.damageScale *= ADAPT.NIGHT_BLOWS;\n",
     "new": "",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -329,7 +329,7 @@
     "old": "(night || !(r.learned ?? []).includes('nightStalker'))",
     "new": "true",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -338,7 +338,7 @@
     "old": "    if (weapon.material === 2 && silverDoubles(target)) damage *= 2;    // Silver (RVN2: unless a veto keeps it plain)",
     "new": "    if (weapon.material === 2) damage *= 2;",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -347,7 +347,7 @@
     "old": "SILVER_DOUBLED_CAREERS.includes(target.careerIndex) && weapon.material === 2 && silverDoubles(target)) {",
     "new": "SILVER_DOUBLED_CAREERS.includes(target.careerIndex) && weapon.material === 2) {",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -356,7 +356,7 @@
     "old": "  for (const fn of _silverVetoes.values()) { try { if (fn(target) === true) return false; }",
     "new": "  for (const fn of _silverVetoes.values()) { try { if (fn(target) === false) return false; }",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -365,7 +365,7 @@
     "old": "  if (edge > 0) s *= edge;\n",
     "new": "",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -374,7 +374,7 @@
     "old": "ent?.revenant?.edge?.iron > 0 ? ent.revenant.edge.iron : 0, ent?.revenant?.p2?.iron",
     "new": "0, ent?.revenant?.p2?.iron",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -383,7 +383,7 @@
     "old": "  const share = Math.max(isElite(ent)",
     "new": "  const share = Math.min(isElite(ent)",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -392,7 +392,7 @@
     "old": "  const [lo, hi] = ent?.revenant?.edge?.wind ?? TELL.WINDUP_VARY;",
     "new": "  const [lo, hi] = TELL.WINDUP_VARY;",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -401,7 +401,7 @@
     "old": "export const feintChance = (ent) => ent?.revenant?.edge?.feint ?? TELL.FEINT_CHANCE;",
     "new": "export const feintChance = (ent) => TELL.FEINT_CHANCE;",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -410,7 +410,7 @@
     "old": "export const trackShare = (ent) => ent?.revenant?.edge?.track ?? TELL.TRACK_SHARE;",
     "new": "export const trackShare = (ent) => TELL.TRACK_SHARE;",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -419,7 +419,7 @@
     "old": "Math.random() < feintChance(ent)) {",
     "new": "Math.random() < TELL.FEINT_CHANCE) {",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -428,7 +428,7 @@
     "old": "now < b0.start + trackShare(ai.vitals?.()) * (b0.land - b0.start)",
     "new": "now < b0.start + TELL.TRACK_SHARE * (b0.land - b0.start)",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -437,7 +437,7 @@
     "old": "((!near && ent?.revenant?.edge?.closes === true) || Math.random() < BLOW_CHANCE)",
     "new": "(Math.random() < BLOW_CHANCE)",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -446,7 +446,7 @@
     "old": "  get speed() { return enemyMoveSpeed(this._liveSpeed() + this._edgeSpeed()); }",
     "new": "  get speed() { return enemyMoveSpeed(this._liveSpeed()); }",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -455,7 +455,7 @@
     "old": "    return e?.farSpeed > 0 && this._dist > e.farAt ? e.farSpeed : 0;",
     "new": "    return e?.farSpeed > 0 ? e.farSpeed : 0;",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -464,7 +464,7 @@
     "old": "  if (foe?.entity?.revenant?.edge?.watchful === true) return 0;   // RVN2",
     "new": "  if (false) return 0;   // RVN2",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -473,7 +473,7 @@
     "old": "  const watchful = f.entity?.revenant?.edge?.watchful === true;",
     "new": "  const watchful = false;",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -482,7 +482,7 @@
     "old": "foe.ai.detected === false && foe.entity?.revenant?.edge?.watchful !== true;",
     "new": "foe.ai.detected === false;",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -491,7 +491,7 @@
     "old": "partyNearFoe(f, _cullAt)) && !_relentless) {",
     "new": "partyNearFoe(f, _cullAt))) {",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -500,7 +500,7 @@
     "old": "backstabChance: backstabChanceOf(playerEntity, back, foe),",
     "new": "backstabChance: backstabChanceOf(playerEntity, back),",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -509,7 +509,7 @@
     "old": "    for (const c of chips) { const chip = el('span', 'rvn-chip', c.name); chip.title = c.title; box.append(chip); }\n    text.append(box);\n    text.append(el('span', 'rvn-effects',",
     "new": "    text.append(box);\n    text.append(el('span', 'rvn-effects',",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -518,7 +518,7 @@
     "old": "arrowWise: 'Arrow-wise',",
     "new": "arrowWise: 'Arrowwise',",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -527,7 +527,7 @@
     "old": "(f) => backstabChanceOf(playerEntity, !!f._backFacing, f)",
     "new": "(f) => backstabChanceOf(playerEntity, !!f._backFacing)",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -536,7 +536,7 @@
     "old": "(f) => backstabChanceOf(playerEntity, isBackFacing(f.ai.yaw, f.ai.feet, eye), f)",
     "new": "(f) => backstabChanceOf(playerEntity, isBackFacing(f.ai.yaw, f.ai.feet, eye))",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   },
   {
@@ -545,7 +545,7 @@
     "old": "(g) => backstabChanceOf(playerEntity, isBackFacing(g.ai.yaw, g.ai.feet, eye), g)",
     "new": "(g) => backstabChanceOf(playerEntity, isBackFacing(g.ai.yaw, g.ai.feet, eye))",
     "tests": [
-      "test/rvn2_adapt.test.js"
+      "test/systems/rvn2_adapt.test.js"
     ]
   }
 ]

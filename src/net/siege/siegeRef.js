@@ -38,7 +38,7 @@
 // A LEAF: the relay bundles every byte it imports (test/relayversion
 // .test.js), so DFU's damage tables are copied here and pinned EQUAL to
 // characters/weapons.js and combat/formulas.js by test, not imported
-// (the gate's way - test/wb4b_gate_blows.test.js).
+// (the gate's way - test/net/gate/wb4b_gate_blows.test.js).
 //
 // Pure: no clock (every `now` an argument), no DOM, no network.
 // ═════════════════════════════════════════════════════════════════════

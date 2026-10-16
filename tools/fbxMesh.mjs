@@ -39,7 +39,7 @@
 //    asking him to re-export is asking him to do by hand what the file
 //    already says. A convex polygon still FANS, corner for corner as it
 //    always did - so every mesh that baked before bakes to the same
-//    bytes (test/fieldgunmw.test.js holds the Thunderlock to that) -
+//    bytes (test/formats/morrowind/fieldgunmw.test.js holds the Thunderlock to that) -
 //    and only a polygon no ear clip can resolve, one that crosses
 //    itself, is refused.
 //

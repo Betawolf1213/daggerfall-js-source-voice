@@ -6,7 +6,7 @@
 //
 //   - a REVENANT (systems/revenant/revenant.js) is called by its own name - "Grushnak the Kinslayer" - and nothing else;
 //   - a LOOT7 CHAMPION by its trait before its kind - "Mighty Orc Warlord" (every trait's name is its id title-cased,
-//     test/loot7_champions.test.js);
+//     test/systems/loot7_champions.test.js);
 //   - an ELITE FOE by "Elite" before its kind - "Elite Orc Warlord" (a foe is an elite or a champion, never both);
 //   - RVN6: a revenant's FOLLOWER by its band after its kind - "Orc of Grushnak's Warband" (never a champion or an elite).
 //

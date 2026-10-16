@@ -756,7 +756,7 @@ export function createSkyController(gl, params) {
 // (?dungeon) and worldModes.js (the modal machine both exterior hosts
 // mount) are parallel motor hosts. Every law below used to live in ONE
 // of them; each omission was a live bug. They are extracted so a host
-// cannot half-apply them again - test/audit18_hosts_outer.test.js
+// cannot half-apply them again - test/scenes/audit18_hosts_outer.test.js
 // source-sweeps the hosts for each call by name.
 // =====================================================================
 

@@ -5,7 +5,7 @@
     "old": "if (!keep || keep(surfaceY(t, px, pz))) covered[k] = 1;",
     "new": "if (!keep || keep(t.y)) covered[k] = 1;",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "  if (t.ay == null || t.by == null || t.cy == null) return t.y;\n",
     "new": "  return t.y;\n",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "    return top > lo && bottom <= hi;",
     "new": "    return bottom > lo && top <= hi;",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "if (s === t || !(Math.abs(y[i] - y[j]) <= rise)) return;",
     "new": "if (s === t) return;",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "    add(s, t, a, b);\n    add(t, s, b, a);\n",
     "new": "    add(s, t, a, b);\n",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "export function storeyLinks(field, { rise = STAIR_RISE, join = LINK_JOIN } = {}) {",
     "new": "export function storeyLinks(field, { rise = STAIR_RISE, join = 1 } = {}) {",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "if (t === s || !(Math.abs(y[i] - y[j]) > rise)) continue;",
     "new": "if (t === s) continue;",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "if (run.every((j) => stack[j * n + i] <= overlap)) run.push(i);",
     "new": "if (!run.length) run.push(i);",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "if (run.every((j) => stack[j * n + i] <= overlap)) run.push(i);",
     "new": "if (run.every((j) => stack[j * n + i] < overlap)) run.push(i);",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "    else if (!pass?.(ox, oy)) walls.push(seg);",
     "new": "    else walls.push(seg);",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "    if (open(ox, oy)) openings.push(seg);",
     "new": "    if (open(ox, oy) || pass?.(ox, oy)) openings.push(seg);",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "      pass: passCells(f, index),   // DISC25-A: ...and an edge onto a stair's far side, on another sheet, is neither\n",
     "new": "",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "      const sheets = groupSheets(field, floors);",
     "new": "      const sheets = groupSheets(field, floors, { overlap: -1 });",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "      if (!seen) continue;\n",
     "new": "",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "      if (inside && l.from > l.to) continue;   // the lower end draws a flight inside the sheet\n",
     "new": "",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ],
     "equivalent": true,
     "why": "Belt and braces: a link's two ends sit on either side of one storey line, a cell apart, so the second end is always within STAIR_MERGE of the first and the merge drops it; storeyLinks sorts by `from`, so the lower end - pointing up the flight - is always the one kept. The line says the law outright rather than leaving it to the merge."
@@ -142,7 +142,7 @@
     "old": "      if (out.some((s) => s.to === to && s.up === up && Math.hypot(s.x - x, s.z - z) < STAIR_MERGE)) continue;\n",
     "new": "",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -151,7 +151,7 @@
     "old": "        x, z, dx: l.dx, dz: -l.dz,   // plan y runs south, world z north",
     "new": "        x, z, dx: l.dx, dz: l.dz,   // plan y runs south, world z north",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -160,7 +160,7 @@
     "old": "        name: inside ? '' : listed(to) ? `${up ? 'up' : 'down'} to ${sheets[to]?.label ?? ''}` : `${up ? 'up' : 'down'} - not explored yet`,",
     "new": "        name: inside ? '' : listed(to) ? `${up ? 'down' : 'up'} to ${sheets[to]?.label ?? ''}` : `${up ? 'up' : 'down'} - not explored yet`,",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -169,7 +169,7 @@
     "old": "      if (stair?.cross && stair.known) setFloor(stair.to);",
     "new": "      if (false) setFloor(stair.to);",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -178,7 +178,7 @@
     "old": "      if (stair) return { label: stair.cross ? `Stairs ${stair.name}` : 'Stairs up', cursor: stair.cross && stair.known ? 'pointer' : '' };\n",
     "new": "",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -187,7 +187,7 @@
     "old": "          if (sheet.storeys.includes(s) && r.revealed.has(f.rows[fl.row[e]]?.key)) return f.floors[s].y;",
     "new": "          if (sheet.storeys.includes(s) && r.revealed.has(f.rows[fl.row[e]]?.key)) return sheet.y;",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -196,7 +196,7 @@
     "old": "    max = Math.min(max, Math.floor((h.y0 - padY - top + gap) / (rowH + gap)));\n",
     "new": "",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -205,7 +205,7 @@
     "old": "    if (h.x1 <= left || h.x0 >= paperW || h.y0 <= top) continue;",
     "new": "    if (h.y0 <= top) continue;",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -214,7 +214,7 @@
     "old": "  max = Math.max(FLOOR_STRIP_MIN, max);",
     "new": "  max = Math.max(1, max);",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -223,7 +223,7 @@
     "old": "    above: hi < all.length - 1 ? all[hi + 1].index : -1,",
     "new": "    above: hi < all.length - 1 ? all[all.length - 1].index : -1,",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -232,7 +232,7 @@
     "old": "      faint: !!opts.seen && !opts.seen.has(f.index) && f.index !== live,",
     "new": "      faint: false,",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -241,7 +241,7 @@
     "old": "    if (r.faint) ctx.globalAlpha = FLOOR_UNSEEN_ALPHA;\n",
     "new": "",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -250,7 +250,7 @@
     "old": "      you: f.index === opts.you,",
     "new": "      you: false,",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -259,7 +259,7 @@
     "old": "      if (under(lx, ly)) continue;\n",
     "new": "",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -268,7 +268,7 @@
     "old": "      if (placed.some((b) => b.x0 < box.x1 && box.x0 < b.x1 && b.y0 < box.y1 && box.y0 < b.y1)) continue;\n",
     "new": "",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -277,7 +277,7 @@
     "old": "    this._writeHint();           // DISC25-A: the foot says the new sheet's keys\n",
     "new": "",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -286,7 +286,7 @@
     "old": "    const text = this._sheet?.hint?.() ?? MAP_HINT;",
     "new": "    const text = MAP_HINT;",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -295,7 +295,7 @@
     "old": "      const b = this._thumbBoxes?.[i] ?? z;",
     "new": "      const b = z;",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -304,7 +304,7 @@
     "old": "      if (!data[(y * zw + x) * 4 + 3]) continue;",
     "new": "      if (!data[(y * zw + x) * 4]) continue;",
     "tests": [
-      "test/disc25a_dungeon_map.test.js"
+      "test/ui/disc25a_dungeon_map.test.js"
     ]
   },
   {
@@ -313,7 +313,7 @@
     "old": "    if (root.style.left !== inset) { root.style.left = inset; root.style.right = inset; }\n",
     "new": "",
     "tests": [
-      "test/disc25b_retro_map.test.js"
+      "test/systems/disc25b_retro_map.test.js"
     ]
   },
   {
@@ -322,7 +322,7 @@
     "old": "    const ui = this._lane === 'hands' ? null : retroScreenRect(W, H);",
     "new": "    const ui = retroScreenRect(W, H);",
     "tests": [
-      "test/disc25b_retro_map.test.js"
+      "test/systems/disc25b_retro_map.test.js"
     ]
   },
   {
@@ -331,7 +331,7 @@
     "old": "    const vw = ui ? ui.w : (root.clientWidth || W);",
     "new": "    const vw = root.clientWidth || W;",
     "tests": [
-      "test/disc25b_retro_map.test.js"
+      "test/systems/disc25b_retro_map.test.js"
     ]
   },
   {
@@ -340,7 +340,7 @@
     "old": "  return pillar > 0 ? { x: pillar, y: 0, w: screenW - pillar * 2, h: screenH } : null;",
     "new": "  return { x: pillar, y: 0, w: screenW - pillar * 2, h: screenH };",
     "tests": [
-      "test/disc25b_retro_map.test.js"
+      "test/systems/disc25b_retro_map.test.js"
     ]
   },
   {
@@ -349,7 +349,7 @@
     "old": "  const aspect = retroRenderingMode() !== 0 ? retroAspectCorrection() : 0;\n  if (!aspect || !(screenW > 0) || !(screenH > 0)) return null;",
     "new": "  const aspect = retroAspectCorrection();\n  if (!aspect || !(screenW > 0) || !(screenH > 0)) return null;",
     "tests": [
-      "test/disc25b_retro_map.test.js"
+      "test/systems/disc25b_retro_map.test.js"
     ]
   },
   {
@@ -358,7 +358,7 @@
     "old": "    if (!isTextEntryTarget(e.target)) return;\n    swallowBrowserKey(e);\n    e.stopPropagation();\n",
     "new": "    if (!isTextEntryTarget(e.target)) return;\n    swallowBrowserKey(e);\n",
     "tests": [
-      "test/disc25e_letter_keys.test.js"
+      "test/ui/disc25e_letter_keys.test.js"
     ]
   },
   {
@@ -367,7 +367,7 @@
     "old": "  root.addEventListener('keydown', (e) => {\n    if (!isTextEntryTarget(e.target)) return;\n",
     "new": "  root.addEventListener('keydown', (e) => {\n",
     "tests": [
-      "test/disc25e_letter_keys.test.js"
+      "test/ui/disc25e_letter_keys.test.js"
     ]
   },
   {
@@ -376,7 +376,7 @@
     "old": "    swallowBrowserKey(e);\n    e.stopPropagation();\n",
     "new": "    e.stopPropagation();\n",
     "tests": [
-      "test/disc25e_letter_keys.test.js"
+      "test/ui/disc25e_letter_keys.test.js"
     ]
   },
   {
@@ -385,7 +385,7 @@
     "old": "    if (isTextEntryTarget(e.target)) return;\n    // ROAD-G G3 - THE RING IS FILLED BEFORE THE LADDER.",
     "new": "    // ROAD-G G3 - THE RING IS FILLED BEFORE THE LADDER.",
     "tests": [
-      "test/disc25e_letter_keys.test.js"
+      "test/ui/disc25e_letter_keys.test.js"
     ]
   },
   {
@@ -394,7 +394,7 @@
     "old": "    if (isTextEntryTarget(e.target)) return;   // DISC25-E: a typed field's key takes no rung (dungeon.js's KB1 gate)\n",
     "new": "",
     "tests": [
-      "test/disc25e_letter_keys.test.js"
+      "test/ui/disc25e_letter_keys.test.js"
     ]
   },
   {
@@ -403,7 +403,7 @@
     "old": "  if (!/^[+-]?\\d+$/.test(t)) return null;\n",
     "new": "",
     "tests": [
-      "test/disc25f_stack_split.test.js"
+      "test/ui/enhanced/disc25f_stack_split.test.js"
     ]
   },
   {
@@ -412,7 +412,7 @@
     "old": "return Number.isInteger(count) && count >= 1 && count <= max ? count : null;",
     "new": "return Number.isInteger(count) && count >= 0 && count <= max ? count : null;",
     "tests": [
-      "test/disc25f_stack_split.test.js"
+      "test/ui/enhanced/disc25f_stack_split.test.js"
     ]
   },
   {
@@ -421,7 +421,7 @@
     "old": "  return stack > 1 && (amount < stack || !!controlDown);",
     "new": "  return stack > 1 && amount < stack;",
     "tests": [
-      "test/disc25f_stack_split.test.js"
+      "test/ui/enhanced/disc25f_stack_split.test.js"
     ]
   },
   {
@@ -430,7 +430,7 @@
     "old": "    if (!splitRequired(item, max, this._controlDown)) { perform(max); return; }",
     "new": "    { perform(max); return; }",
     "tests": [
-      "test/disc25f_stack_split.test.js"
+      "test/ui/enhanced/disc25f_stack_split.test.js"
     ]
   },
   {
@@ -439,7 +439,7 @@
     "old": "      value: this._controlDown ? '0' : String(max),",
     "new": "      value: String(max),",
     "tests": [
-      "test/disc25f_stack_split.test.js"
+      "test/ui/enhanced/disc25f_stack_split.test.js"
     ]
   },
   {
@@ -448,7 +448,7 @@
     "old": "  keyup(code, e = null) {\n    if (isControlCode(code, e)) this._controlDown = false;\n  }\n}",
     "new": "  keyup(code, e = null) {\n  }\n}",
     "tests": [
-      "test/disc25f_stack_split.test.js"
+      "test/ui/enhanced/disc25f_stack_split.test.js"
     ]
   },
   {
@@ -457,7 +457,7 @@
     "old": "    if (this.inputBox) { this.inputBox.click(vx, vy); if (this.inputBox.done) this.inputBox = null; return true; }   // DISC25-F: modal\n",
     "new": "",
     "tests": [
-      "test/disc25f_stack_split.test.js"
+      "test/ui/enhanced/disc25f_stack_split.test.js"
     ]
   },
   {
@@ -466,7 +466,7 @@
     "old": "      this._split(item, amountOf(item), (n) => this._moveCount(item, n, this.hooks.packItems(), this.remoteItems));",
     "new": "      this._moveCount(item, amountOf(item), this.hooks.packItems(), this.remoteItems);",
     "tests": [
-      "test/disc25f_stack_split.test.js"
+      "test/ui/enhanced/disc25f_stack_split.test.js"
     ]
   },
   {
@@ -475,7 +475,7 @@
     "old": "  return qty.item === item ? parseSplitAmount(qty.text, max) : max;",
     "new": "  return max;",
     "tests": [
-      "test/disc25f_stack_split.test.js"
+      "test/ui/enhanced/disc25f_stack_split.test.js"
     ]
   },
   {
@@ -484,7 +484,7 @@
     "old": "      if (qty && max > 1) acts.append(qtyField(picked, max));   // DISC25-F\n    }\n  } else {",
     "new": "    }\n  } else {",
     "tests": [
-      "test/disc25f_stack_split.test.js"
+      "test/ui/enhanced/disc25f_stack_split.test.js"
     ]
   },
   {
@@ -493,7 +493,7 @@
     "old": "  const amount = chosenAmount(item, plan.amount);\n  if (amount == null) { notice = HOW_MANY_ITEMS(plan.amount); render(); return; }\n  // MAC-O6: the same cue",
     "new": "  const amount = chosenAmount(item, plan.amount) ?? plan.amount;\n  // MAC-O6: the same cue",
     "tests": [
-      "test/disc25f_stack_split.test.js"
+      "test/ui/enhanced/disc25f_stack_split.test.js"
     ]
   },
   {
@@ -502,7 +502,7 @@
     "old": "  return qty.item === item ? parseSplitAmount(qty.text, max) : max;",
     "new": "  return max;",
     "tests": [
-      "test/disc25f_stack_split.test.js"
+      "test/ui/enhanced/disc25f_stack_split.test.js"
     ]
   },
   {
@@ -511,7 +511,7 @@
     "old": "    applyTransfer(item, { ...plan, amount }, deps.shelfItems(), basket);",
     "new": "    applyTransfer(item, plan, deps.shelfItems(), basket);",
     "tests": [
-      "test/disc25f_stack_split.test.js"
+      "test/ui/enhanced/disc25f_stack_split.test.js"
     ]
   },
   {
@@ -520,7 +520,7 @@
     "old": "    if (amount < stackOf(item)) applyTransfer(item, { amount }, deps.packItems(), remoteItems(), { entity: deps.entity, fromLocal: true });\n    else {",
     "new": "    if (false) applyTransfer(item, { amount }, deps.packItems(), remoteItems(), { entity: deps.entity, fromLocal: true });\n    else {",
     "tests": [
-      "test/disc25f_stack_split.test.js"
+      "test/ui/enhanced/disc25f_stack_split.test.js"
     ]
   },
   {
@@ -529,7 +529,7 @@
     "old": "  if (max > 1) {\n    if (qty.item !== item) qty = { item, text: String(max) };",
     "new": "  if (false) {\n    if (qty.item !== item) qty = { item, text: String(max) };",
     "tests": [
-      "test/disc25f_stack_split.test.js"
+      "test/ui/enhanced/disc25f_stack_split.test.js"
     ]
   },
   {
@@ -538,7 +538,7 @@
     "old": "return { ok: false, reason: 'guild', guild: guild.name };",
     "new": "return { ok: false, reason: 'guild' };",
     "tests": [
-      "test/disc25d_guild_share.test.js"
+      "test/systems/quest/disc25d_guild_share.test.js"
     ]
   },
   {
@@ -547,7 +547,7 @@
     "old": "  if (named) return `are not a member of ${named}, which this quest requires.`;\n",
     "new": "",
     "tests": [
-      "test/disc25d_guild_share.test.js"
+      "test/systems/quest/disc25d_guild_share.test.js"
     ]
   },
   {
@@ -556,7 +556,7 @@
     "old": "      const why = shareRefusalText(result, quest.data?.build ?? null);   // DISC25-D: a guild refusal names the guild",
     "new": "      const why = SHARE_REFUSAL_TEXT[result.reason];",
     "tests": [
-      "test/disc25d_guild_share.test.js"
+      "test/systems/quest/disc25d_guild_share.test.js"
     ]
   },
   {
@@ -565,7 +565,7 @@
     "old": "isTextEntryTarget(e.target) && e.target.closest?.('.qtyfield') && selected",
     "new": "isTextEntryTarget(e.target) && selected",
     "tests": [
-      "test/disc25f_stack_split.test.js"
+      "test/ui/enhanced/disc25f_stack_split.test.js"
     ]
   },
   {
@@ -574,7 +574,7 @@
     "old": "  if (e.key === 'Enter' && isTextEntryTarget(e.target) && e.target.closest?.('.qtyfield') && selected) { e.preventDefault(); transferSelected(); render(); return; }\n",
     "new": "",
     "tests": [
-      "test/disc25f_stack_split.test.js"
+      "test/ui/enhanced/disc25f_stack_split.test.js"
     ]
   }
 ]

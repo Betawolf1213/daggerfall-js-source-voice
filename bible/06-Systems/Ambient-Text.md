@@ -22,7 +22,7 @@ goes quiet for longer.
 | Settings | `MOD_SETTINGS['ambient-text']` (`src/systems/modSettings.js`) |
 | Row | `mod-ambient-text`, group "The world" (`src/systems/features.js`) |
 | Credit | `CREDITS.mods` (`src/ui/credits.js`), About pane |
-| Pins | `test/ambienttext.test.js` (26) |
+| Pins | `test/systems/ambienttext.test.js` (26) |
 | Registry | `01-Overview/Mod-Registry.md` |
 
 ## AT1 - what the mod actually is
@@ -120,7 +120,7 @@ he wrote ten for speaks often; a family he wrote none for is silent.
 
 A port that filled the gaps, or that picked "from the keys that
 exist", would be a louder and flatter mod wearing this one's name.
-`test/ambienttext.test.js` pins the sparseness from both ends: the
+`test/systems/ambienttext.test.js` pins the sparseness from both ends: the
 count, and that a known-empty family still answers `null`.
 
 **The other direction is pinned too, and it is the pin that matters.**
@@ -384,7 +384,7 @@ extraction only pays once something else reads it.
 
 - **The Testing.md suite count was NOT drifted.** The audit read the
   runner's `# tests 7726` against the doc's 7712 and called it wrong.
-  The doc's number is the `^test\(` count, which `test/manifest.test.js`
+  The doc's number is the `^test\(` count, which `test/bible/manifest.test.js`
   already gates exactly - 7712 was right, and the gate had been holding
   it all along. The runner's larger number counts something else.
 - **The first "banking gone" mutant was equivalent.** Swapping the

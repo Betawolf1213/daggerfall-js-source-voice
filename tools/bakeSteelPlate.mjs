@@ -18,7 +18,7 @@
 //
 // tools/bakeBrigandine.mjs is the precedent and this follows it where they are the same thing - the scene placement
 // kept (`placement: 'scene'`), the textures Mac painted taken as they are and mip-chained, the source committed beside
-// what it makes and the output re-made byte for byte by test/mwsteel1.test.js - and departs where they are not:
+// what it makes and the output re-made byte for byte by test/tooling/mwsteel1.test.js - and departs where they are not:
 //
 //   A SCENE OF PIECES. Mac's two exports were ONE scene twice - twelve objects the same to the vertex, and the helm
 //   alone different (measured at MW-STEEL1's import: every shared object baked byte for byte the same from both). Each piece is
@@ -301,7 +301,7 @@ const piece = (id, file, shapes, lift = 0) => Object.freeze({ id, file, shapes: 
  * crown) by tools/helmLiftProbe.mjs: the set worn on retail's skeleton in its idle, with a stand-in for the scene's
  * head (SCENE_BODY's box, an ellipsoid) on the head bone, drawn from behind at three heights of eye, shows the
  * screenshot's scalp - its height 0.39 of the helm's under it - with the head 3.24, 3.70 and 4.25 higher
- * (test/mwsteel5.test.js holds HELM_LIFT inside that span). Up the head bone is the scene's +Z: the bind stands it
+ * (test/tooling/mwsteel5.test.js holds HELM_LIFT inside that span). Up the head bone is the scene's +Z: the bind stands it
  * upright.
  */
 export const HELM_LIFT = 4;

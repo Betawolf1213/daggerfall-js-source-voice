@@ -13,7 +13,7 @@ and save records, Chromium for the windows):
 Thirty-four rows of findings after the duplicates were folded (AUDIT LEGACY II F11 corrected the count, which said
 thirty-five, and named the retirement's heirloom row H10 - H9 had been given twice). Every one was verified against the
 code before it was fixed, and is pinned by a test that fails on the code as it stood (A9 and U9 were not, until AUDIT
-LEGACY II pinned them in `test/auditlegacy2.test.js`): `test/auditlegacy.test.js` (by id), with the host's own
+LEGACY II pinned them in `test/systems/legacy/auditlegacy2.test.js`): `test/systems/legacy/auditlegacy.test.js` (by id), with the host's own
 pins in `legacy1_family`, `legacy4_heirloom` and `legacy3_familytab` brought to the new law. Mutation-proven:
 `tools/mutants/auditlegacy.json`. Each fix carries an `AUDIT LEGACY` comment.
 

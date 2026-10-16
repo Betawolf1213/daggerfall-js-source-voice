@@ -1592,7 +1592,7 @@ function drawQuickslots(vitals, opts) {
 /** UI2: the spell chip's icon box - the chip's 19px line, a 16px icon at one to one. */
 const SPELL_CHIP_BOX = 18;
 /** UI2: the diamond's cell picture boxes - the sheet's `.hud-qicon` caps (44, and 32 under QUICK_NARROW) less two a
- *  side, pinned against the sheet in test/ui2_hotbar.test.js. */
+ *  side, pinned against the sheet in test/systems/ui2_hotbar.test.js. */
 const QUICK_BOX = 40, QUICK_BOX_NARROW = 28;
 const QUICK_NARROW = '(max-width: 860px)';
 

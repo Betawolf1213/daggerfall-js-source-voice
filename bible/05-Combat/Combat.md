@@ -202,7 +202,7 @@ NOBODY HAS SEEN IT RUN: no GL and no ARENA2 in this container, so the
 corpus pin (five archives, six records, one frame each, fitting the
 fixed 320x200, and the small-frame claim checked against the ART) is
 `skipReal`-gated and the placement is arithmetic against DFU's own
-formulas. `test/fpsspellcasting.test.js`, 11 pins, 9 mutants, 9 dead.
+formulas. `test/combat/fpsspellcasting.test.js`, 11 pins, 9 mutants, 9 dead.
 
 ## C9 (2026-08-16): the FP-weapon HOST ROLLOUT - SHIPPED
 
@@ -774,7 +774,7 @@ wrongly"). Closed:
   the shooter exclusion lives in the flight module where the contact
   is decided.
 
-Pins: 7 in `test/arrowfoes.test.js`. Campaign: 7 mutants, 7 killed.
+Pins: 7 in `test/systems/arrowfoes.test.js`. Campaign: 7 mutants, 7 killed.
 
 ## EW1 - THE ENEMY WEIGHT TERM (2026-08-28)
 
@@ -813,7 +813,7 @@ city watch, exterior foes) and all four now hand the foe's own list
 through; a source sweep holds them there, because a new pool copying a
 three-argument call is how one pool silently goes back to naked foes.
 
-Pins: 6 in `test/enemyweight.test.js`, one of them REGENERATING the
+Pins: 6 in `test/systems/enemyweight.test.js`, one of them REGENERATING the
 constants from FormulaHelper.cs - including the assertion that DFU's
 item term is computed above the type branch, which is the law the
 shape depends on. Campaign: 5 mutants, 5 killed.
@@ -859,7 +859,7 @@ neutral to, and one with an undead phobia lost its penalty entirely.
 An attacker carrying both flips SIGN when the player turns - pinned,
 because no single-arm port can do that.
 
-Pins: 5 in `test/vampireundead.test.js`. Campaign: 4 mutants, 4 killed,
+Pins: 5 in `test/combat/vampireundead.test.js`. Campaign: 4 mutants, 4 killed,
 including the hand-rolled predicate that ignores `ended` - a cured
 vampire must be humanoid again, which is why the arm reads
 `liveVampirism` rather than re-testing the entry shape locally.
@@ -971,7 +971,7 @@ keypress:
 | `vsFoe 0`, teams 2+ | selection is running and rejecting; the bug is in the gates |
 | `vsFoe > 0` | they ARE picking each other; the gap is downstream |
 
-Pins: 7 in `test/infighting.test.js`. Campaign: 12 mutants, 12 killed -
+Pins: 7 in `test/characters/enemy/infighting.test.js`. Campaign: 12 mutants, 12 killed -
 including the census being *defined but never drawn*, which is the
 drawn-door rule applied to a diagnostic. The harness's new
 anchor-uniqueness check earned its keep a second time, refusing
@@ -1005,7 +1005,7 @@ still animating when the door closes would be drawn in the **next**
 building, in the previous one's coordinates. Both interior teardowns
 clear it.
 
-Pins: 6 in `test/interiorblood.test.js`, the first two behavioural
+Pins: 6 in `test/scenes/interiorblood.test.js`, the first two behavioural
 against the real pool with a counting renderer — `clear()` frees every
 batch it made rather than merely emptying the list, and a *warming*
 splash (one whose texture has not resolved yet, so it has no batch) is
@@ -1202,7 +1202,7 @@ defect H2 exists to close, and the one half of it the behavioural
 `explodeAt` pin cannot reach, since that test calls `explodeAt` directly
 with an explicit height.
 
-Both are now **driven** rather than spelled. `test/roadh_missiles.test.js`
+Both are now **driven** rather than spelled. `test/scenes/roadh_missiles.test.js`
 stands a headless exterior encounter pool (every seam stubbed, the spawn
 chain never entered, so no ARENA2 is wanted) with one hand-built foe on
 its shoot frame, and reads what the pool's own call site hands the two
@@ -1271,7 +1271,7 @@ whether the target IS the player (`DaggerfallMissile.cs:584`), and
 spell missile stores at fire time - so the impact fork's non-player arm
 (MT-iv) runs for an arrow as it already did for a bolt.
 
-Pins: `test/roadh_tail.test.js` (4). The crouched-player miss and the
+Pins: `test/scenes/roadh_tail.test.js` (4). The crouched-player miss and the
 giant's head both die under the point law restored; the reach pin drives
 `missileReach` with the dipped vector and reads what the flight asks the
 collider for; the archer arm is pinned on its gate, its target read, its
@@ -1388,7 +1388,7 @@ ALREADY stale before this round and are left as found rather than
 bumped — a mechanical +1 on a wrong number is the defect this round is
 recording.
 
-Pins: `test/roadh_tail.test.js` (4 → 7). Five pins whose subject moved
+Pins: `test/scenes/roadh_tail.test.js` (4 → 7). Five pins whose subject moved
 were re-pointed with the law rather than deleted (the ceiling-bats
 count, AUDIT 23's magic-2 impact point, AUDIT 26's F033 flash order,
 AUDIT 62 F21's foe-vs-foe contact count, MT-iv's arrow fork and wave
@@ -1410,7 +1410,7 @@ stops the shaft on any body it meets and damages only the one it was
 loosed at: a foe-aimed shaft the player steps into is spent on the
 player with no `BowDamage`, no Dodging tally and no recovered Arrow; a
 non-target foe in the way stops it and takes nothing; a player shaft
-(`WeaponDamage`) keeps striking what it hits. `test/roadh_tail.test.js`
+(`WeaponDamage`) keeps striking what it hits. `test/scenes/roadh_tail.test.js`
 drives all five cases and pins the pool's read and the three hosts'
 stores; the two AR1 infighting pins now carry the law they always
 described (the bear the shaft was loosed AT).
@@ -1434,7 +1434,7 @@ Meaner Monsters edit rides `enemyEntity.makeEnemyEntity`'s row. Unity's
 half-to-even round and float32 arithmetic are kept, and so are the four
 clamps the C# throws away. Off by default in the Mods pane; the seven
 shipped module keys default as shipped. Pins: 22 in
-`test/pcaao.test.js`. Not filmed: a game.
+`test/systems/pcaao.test.js`. Not filmed: a game.
 
 **AUDIT PCO1 (2026-09-12, the same day).** Read again method for method
 against the decompiled 1.44, the tables diffed by script. One gap fixed:
@@ -1460,7 +1460,7 @@ affixes, no enchantment) broke and stayed. Mac: "Rarity loot breaks, not
 destroyed". `pcaao.js pcaaoFades` leaves any piece that rolled a tier on the
 ladder out of the fade: it breaks and stays, repairable. DFU's own enchanted
 loot (MAGIC.DEF, made and soul-bound items - no rolled tier) still fades as the
-mod says. Pinned in `test/pcaao.test.js`, mutants in
+mod says. Pinned in `test/systems/pcaao.test.js`, mutants in
 `tools/mutants/rarebreak1.json`.
 ## WW1 - WEAPON WIDGET, THE MOD, 1:1, AND THE MORROWIND ARMS (2026-09-14, Mac's call) - SHIPPED
 
@@ -1484,7 +1484,7 @@ supply through the textures pick (renders of ARENA2, the doctrine's own
 case), read by the SIB1 bundle door under the mod's GUID. On by default
 in the Mods pane with a Mod Authored row on the Features home; the
 Mods pane grew SliderFloatKey for its speeds and sizes. Pins: 14 in
-`test/ww1_weaponwidget.test.js`. Not filmed: a game.
+`test/combat/weapon/ww1_weaponwidget.test.js`. Not filmed: a game.
 
 ## SWING-LAW - the player's swing is the port's own law (2026-09-28)
 
@@ -1549,11 +1549,11 @@ one, and a melee clip's frame rounding left a phantom second one too. The rig sa
 count), and a blow's melee or claw clip starts once; a new rig's count starts over; a bow keeps the IL's poll. The claws'
 clip keeps its fixed tick - stretching it over the blow is a second departure, left for Mac.
 
-**Pins** `test/swinglaw.test.js` (7) and `test/disc29_swing.test.js` (2); RR1's and RRI2's swing pins and AUDIT DISC28 AR-4
+**Pins** `test/systems/swinglaw.test.js` (7) and `test/systems/disc29_swing.test.js` (2); RR1's and RRI2's swing pins and AUDIT DISC28 AR-4
 re-aimed to the law. Mutants `tools/mutants/swinglaw.json` (23, all dead); the 89 committed records on the files it changed
-re-run - 88 dead, RR1-18 equivalent as recorded. AUDIT PRE-MERGE 0929: `test/audit0929_swing.test.js` (4 - one clip a
+re-run - 88 dead, RR1-18 equivalent as recorded. AUDIT PRE-MERGE 0929: `test/systems/audit0929_swing.test.js` (4 - one clip a
 blow, mods on and off, for a claw and a sword and a second and third rig; the reader in a rig built without the boot;
-the reader that never writes), RR1's heft, `test/disc28_speed.test.js` on the weapon as the rig builds it; mutants
+the reader that never writes), RR1's heft, `test/combat/disc28_speed.test.js` on the weapon as the rig builds it; mutants
 `tools/mutants/audit0929_swing.json` (8, all dead). A declared departure: Ledger A (SWING-LAW).
 
 ## TECH1 - WEAPON TECHNIQUES (2026-10-10, the owner's call) - SHIPPED

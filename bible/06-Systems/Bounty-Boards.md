@@ -213,11 +213,11 @@ broke, which the whole suite on its own base would have shown. What was paid:
 
 ## 10. Pins
 
-`test/bounty1.test.js` (17, the archive's) - the ladder, the board every client reads, the half, a hunt Take to
+`test/systems/bounty1.test.js` (17, the archive's) - the ladder, the board every client reads, the half, a hunt Take to
 payday, the party, the wire, the circle, the dungeons, the farms, the journal, the two groups, the tiers.
-`test/auditbounty1.test.js` (5) - B1 to B4, and the wiring (the press, the plaque, the host alone).
+`test/systems/auditbounty1.test.js` (5) - B1 to B4, and the wiring (the press, the plaque, the host alone).
 `tools/mutants/bounty1.json` - 25 mutations (the bounties' 20 and DEATH-PENALTY's 5), 25 dead.
-`test/audit28_bounty.test.js` (12) - section 11; `tools/mutants/audit28.json` B1-B13, dead.
+`test/scenes/audit28_bounty.test.js` (12) - section 11; `tools/mutants/audit28.json` B1-B13, dead.
 
 ## 11. AUDIT 28 (2026-09-28, Mac: "let's audit everything we have so far before we continue")
 

@@ -77,7 +77,7 @@ ring through both phases, so the chat case is held by name.
 
 ## The campaign
 
-`test/mact_bugs.test.js` (5). `tools/mutants/mact.json`: **10 mutants,
+`test/render/mact_bugs.test.js` (5). `tools/mutants/mact.json`: **10 mutants,
 10 killed** - the flag dropped from the record, the mask marking every
 appended light, the mask lifted after the cut, the flash forgetting to
 shift it, the glare, the pick, the table and the march each forgetting

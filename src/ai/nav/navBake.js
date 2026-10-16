@@ -8,7 +8,7 @@
 // No worker here (the client that owns the worker and the cache is
 // ENHANCED AI 3b); no motor here (ENHANCED AI 4). Everything below is
 // pinnable on a synthetic room, and the real dungeons are pinned behind
-// ARENA2 (test/enhancedAI.test.js, DEGENERATE-BAKE ROOT).
+// ARENA2 (test/ai/nav/enhancedAI.test.js, DEGENERATE-BAKE ROOT).
 //
 // THE PHANTOM FLOOR. project-final's buildNav lays an implicit floor
 // under every cell - y = 0 for its arenas, or the terrain when a ground

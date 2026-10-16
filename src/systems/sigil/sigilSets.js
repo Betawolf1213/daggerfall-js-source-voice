@@ -96,7 +96,7 @@ export const SHED_BELOW = 0.35;
  *  a few words, one line of the card's row, and every line a tooltip, a trade or a chat post prints of it; `text` stays
  *  the whole sentence, which the Info box and a row's hover read. A recovery is never in the brief - it is the tier's
  *  `recover` number, which the card draws as its own tag and a line says after the brief. No brief runs past BRIEF_MAX
- *  at any stage (test/cardfit.test.js holds every set's, a new one's too), so a set can never again push a card's
+ *  at any stage (test/ui/enhanced/cardfit.test.js holds every set's, a new one's too), so a set can never again push a card's
  *  buttons off the screen by its words. */
 export const BRIEF_MAX = 32;
 const tier = (at, key, name, values, text, brief) => Object.freeze({ at, key, name, values: Object.freeze(values), text, brief });

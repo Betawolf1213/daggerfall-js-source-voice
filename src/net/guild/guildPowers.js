@@ -8,7 +8,7 @@
 // HALL_POWERS (hallMay), writLaw.js WRIT_POWERS (writMay), townSeatLaw.js SEAT_POWERS (seatMay) and SEAT_LEVER_RANKS -
 // and the service asks them there, so they stay where they are. No page said any of them: a member learnt what its rank
 // could do by the buttons it could not press. This module composes them into one list in words, each line's ranks read
-// off its own table AT THE CALL - a table moved moves the page - and test/guild3_plain.test.js sweeps every key of the
+// off its own table AT THE CALL - a table moved moves the page - and test/net/guild3_plain.test.js sweeps every key of the
 // four tables against it, so a power added with no words fails the suite.
 //
 // AUDIT GUILD3 (bible/01-Overview/Audit-Guild3.md): W3/C6 - what a rank may NOT do is a rank's too (an Officer fills no
@@ -133,7 +133,7 @@ const EXCEPT_MAX = 2;
  * "Everything the Officer may, and: take gold and silver out ..."; where it lacks one or two of that rank's, "Everything the
  * Member may except fill the guild's own writs for their pay or be paid by the guild's own contracts, and: ..." (W3); "The
  * same as the Recruit." where it holds the same; its whole list where it lacks more. A vault's take with a greater limit
- * holds a lesser. Pure over its acts, so test/audit_guild3.test.js fuzzes it (C5).
+ * holds a lesser. Pure over its acts, so test/net/audit_guild3.test.js fuzzes it (C5).
  * @param {(rank: number) => Act[]} acts @param {readonly string[]} [names]
  */
 export function rankLinesOf(acts, names = GUILD_RANK_NAMES) {

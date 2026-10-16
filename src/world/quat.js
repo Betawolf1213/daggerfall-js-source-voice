@@ -120,8 +120,8 @@ export function mat4FromQuatPos(q, p) {
   return m;
 }
 /** AUDIT PRE-MERGE 0928 R5: mat4.js quatToMat4's numbers, written into `out` (a walk's own storage) - its own copy
- *  because mat4.js is in the relay's bundle (test/relayversion.test.js RELAY_GRAPH), where a byte is a relay deploy;
- *  test/audit0928_online.test.js holds the two to the bit. */
+ *  because mat4.js is in the relay's bundle (test/net/relayversion.test.js RELAY_GRAPH), where a byte is a relay deploy;
+ *  test/scenes/audit0928_online.test.js holds the two to the bit. */
 function quatToMat4Into([x, y, z, w], out) {
   const xx = x * x, yy = y * y, zz = z * z;
   const xy = x * y, xz = x * z, yz = y * z, wx = w * x, wy = w * y, wz = w * z;

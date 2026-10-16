@@ -93,7 +93,7 @@ past it is no honest one: a law finding, which holds the trade from day one (INT
 nothing. A bank account is left as it was: its type in DFU's record was not read here. The law's version moved to 4 (a
 finding names its law), `ACCOUNT_VERSION` acct123 with it (TECH1's rule: a law names the first service that carries
 it) - 3 and acct121 on its branch, renumbered past BAL9 (which took them for its caster's lines) at the merge, and
-acct122 past NAME-AS (which took that for the name the room reads) at the next. The honest sweep (`test/int1_itemlaw.test.js`) still finds nothing.
+acct122 past NAME-AS (which took that for the name the room reads) at the next. The honest sweep (`test/systems/item/int1_itemlaw.test.js`) still finds nothing.
 
 ## The review: realm-gains and realm-trades
 
@@ -115,12 +115,12 @@ A developer's alone, as every review route.
 
 ## Pinned
 
-`test/hackedgold.test.js` (10): the law of a peer's word; a body's grant both ways (the field's forged grant, the
+`test/systems/hackedgold.test.js` (10): the law of a peer's word; a body's grant both ways (the field's forged grant, the
 owner's body keeping a letter, its count); a building's word heard and said; every other site by its line; the price
 held under the ceiling (an honest one, a letter, a deed, the floor); the worn offer; the put on the classic pack online
 and off, and the enhanced pack's gates; GOLD-INT's bounds; GOLD-INT over the real service (a letter of a trillion and a
 purse past one count held by the law, the realm trade refusing it as its own); the review (`gains` past the bucket while
-`holds` is empty, `trades` both ways, 403 to anyone else). And `test/int1_itemlaw.test.js`'s HACKED-GOLD PRICE-CAP
+`holds` is empty, `trades` both ways, 403 to anyone else). And `test/systems/item/int1_itemlaw.test.js`'s HACKED-GOLD PRICE-CAP
 (added at the merge past BAL9, after the session's "I dont wanna mess with honest players"): every piece the honest
 sweep mints comes off the wire's projection at the price it did without the ceiling registered - BAL9's caster lines
 and arcane Legendaries among them, and a deed priced past the ceiling at its own price - so the cap can take value from

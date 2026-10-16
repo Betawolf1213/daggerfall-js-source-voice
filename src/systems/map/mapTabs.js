@@ -31,7 +31,7 @@
 //   wilderness   world               no streets to draw and no walls to cut
 //
 // Pure: no DOM, no Electron, no host. The window asks it, the hosts
-// feed it, and test/maptabs.test.js pins it by value and by the
+// feed it, and test/systems/map/maptabs.test.js pins it by value and by the
 // derivation - so a fifth sheet or a fifth context cannot be added in
 // one place and forgotten in the other.
 // ═══════════════════════════════════════════════════════════════════

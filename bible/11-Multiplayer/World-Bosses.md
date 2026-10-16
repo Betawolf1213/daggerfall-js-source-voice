@@ -786,20 +786,20 @@ Mac: *"Discord live gates?"*, then the moments - *"Omen (15 min before), Boss sl
   repository), and `GATE_DISCORD_ROLE`, a var (`server/wrangler.toml`). No webhook, no herald: nothing posted, nothing
   kept. The role must allow anyone to @mention it, or Discord shows the ping and notifies nobody.
 
-Relay world123 (world126 on its branch, renumbered at the merge with main). Pinned in `test/discordgates.test.js` (11); mutants `tools/mutants/discordgates.json` (45, all dead).
+Relay world123 (world126 on its branch, renumbered at the merge with main). Pinned in `test/net/gate/discordgates.test.js` (11); mutants `tools/mutants/discordgates.json` (45, all dead).
 
 **At sea (SERPENT2, 2026-10-04).** The sea serpent has its own herald on the same door and channel
 (`net/serpent/serpentHerald.js`; `Sea-Serpent.md` section 14). It posts its bells fifteen minutes before it rises, pinging
 `SERPENT_DISCORD_ROLE` or else this role, and its kill. It keeps its own vote of where the serpent lies (a `serpent`
 `site` word, folded by this law) and posts the kill AT the agreed site alone, since a cell keeps a forged site's fight
-too. Its beat runs on the hub's alarm after this one. `test/discordgates.test.js` stubs it, so the pins above are the
+too. Its beat runs on the hub's alarm after this one. `test/net/gate/discordgates.test.js` stubs it, so the pins above are the
 gate's alone.
 
 **In the Abyss (SD-HERALD, 2026-10-09).** The Abyss Dungeon has its own herald on the same door and channel
 (`net/superDungeon/sdHerald.js`; `Super-Dungeons.md` SD-HERALD). It posts a Hollow's rise and its find, pinging `SD_DISCORD_ROLE` or
 else this role, and its fall and a found one's fade, pinging nobody - each read off the director's record, so it needs
 no vote: the find names the record's region, never the city. Its beat runs on the hub's alarm after the director's.
-`test/discordgates.test.js` seeds the director with a rise ten years off, so it owes nothing there.
+`test/net/gate/discordgates.test.js` seeds the director with a rise ten years off, so it owes nothing there.
 
 ## 13. The Warden's marks (WB8, 2026-09-28)
 
@@ -883,9 +883,9 @@ his frost as fire, so it is told to reload (GATE-RELOAD's words). Relay world128
   Warden's feeding is said by name ("Valkynaz Ruhn feeds on Ann's soul."; two in one beat, "feeds on the souls of Ann
   and Bran") with his growl, heard live - never one older than FED_LATE_MS (2 s).
 
-Pinned: `test/wb8a_never_swayed.test.js` (4), `test/wb8b_gate_marks.test.js` (15 - the tables, the cycle, the profile
+Pinned: `test/systems/wb8a_never_swayed.test.js` (4), `test/net/gate/wb8b_gate_marks.test.js` (15 - the tables, the cycle, the profile
 against the constants, each trial in the brain, every attack escapable under every set of marks, the wire, the
-relay's draw), `test/wb8c_gate_detail.test.js` (10 - the strike, the ground, the court's strikes and words and body,
+relay's draw), `test/net/gate/wb8c_gate_detail.test.js` (10 - the strike, the ground, the court's strikes and words and body,
 the look and voice, the telegraph and bar, the omen, card and herald, the fold, the seams); mutants
 `tools/mutants/wb8a.json` (12, all dead), `tools/mutants/wb8b.json` (36: 35 dead, the cycle's wrap check equivalent as
 recorded - belt and braces for another salt), `tools/mutants/wb8c.json` (41, all dead).
@@ -908,8 +908,8 @@ Read before PR 418 merged (`bible/01-Overview/Audit-PreMerge-0929.md`, lenses W1
   once a day (a marked court's frame made 8.9 KB of garbage to an unmarked one's 2.5).
 - **W1-4** - the cycle's words: each ROUND of four gates brings every aspect and trial; a pair rests 25 gates at least.
 
-Pinned: `test/audit0929_gate.test.js` (3), and in `test/wb8b_gate_marks.test.js` (the part a fall needs, the ceiling,
-one word a beat, the cone for all 112 sets) and `test/wb8c_gate_detail.test.js` (the court's words); mutants
+Pinned: `test/net/gate/audit0929_gate.test.js` (3), and in `test/net/gate/wb8b_gate_marks.test.js` (the part a fall needs, the ceiling,
+one word a beat, the cone for all 112 sets) and `test/net/gate/wb8c_gate_detail.test.js` (the court's words); mutants
 `tools/mutants/audit0929_gate.json` (11, all dead).
 
 ## 14. Three courts, the Reckoning and the fall seen (WB9, 2026-09-30)
@@ -1126,9 +1126,9 @@ oftener than SWAP_EVERY_MS and never behind a build, and a body given up is kept
 wears the same one. The same crowd: 11 builds, no body taken from a player standing near, a skin and a fifth a frame
 where there were five (`tools/peerCrowdProbe.mjs`).
 
-Pinned: `test/wb9a_gate_marks_seen.test.js` (7), `test/wb9b_gate_courts.test.js` (12), `test/wb9c_gate_reckoning.test.js`
-(16), `test/wb9d_gate_ground.test.js` (5), `test/wb9e_gate_blows.test.js` (6), `test/wb9f_gate_spoils.test.js` (10),
-`test/wb9g_insignia.test.js` (17), `test/wb9h_crowd_bodies.test.js` (7), and the audit's `test/audit_wb9.test.js` (16);
+Pinned: `test/net/gate/wb9a_gate_marks_seen.test.js` (7), `test/net/gate/wb9b_gate_courts.test.js` (12), `test/net/gate/wb9c_gate_reckoning.test.js`
+(16), `test/net/gate/wb9d_gate_ground.test.js` (5), `test/net/gate/wb9e_gate_blows.test.js` (6), `test/scenes/wb9f_gate_spoils.test.js` (10),
+`test/net/wb9g_insignia.test.js` (17), `test/net/peer/wb9h_crowd_bodies.test.js` (7), and the audit's `test/net/gate/audit_wb9.test.js` (16);
 mutants `tools/mutants/wb9b.json` (19, all dead), `tools/mutants/wb9c.json` (31: 30 dead, the dead counted at the
 crystals' growth equivalent as recorded - the court's living are filtered once), `tools/mutants/wb9d.json` (9, all
 dead), `tools/mutants/wb9e.json` (9, all dead), `tools/mutants/wb9f.json` (24, all dead), `tools/mutants/wb9g.json` (64,
@@ -1179,7 +1179,7 @@ the sale's guards and migration, the token's `au` and the relay's stamp, the aur
 bodies' view planes (400k points against a clip-space test), their callers' lenses and the swap's bookkeeping.
 
 RELAY_VERSION world135 (not yet deployed) holds these; ACCOUNT_VERSION acct38 the sale's append. Pinned in
-`test/audit_wb9.test.js` (16) and `test/wb9g_insignia.test.js` (three more); mutants `tools/mutants/audit_wb9.json`
+`test/net/gate/audit_wb9.test.js` (16) and `test/net/wb9g_insignia.test.js` (three more); mutants `tools/mutants/audit_wb9.json`
 (36, all dead). Re-aimed: the WB9b walkway blow, the WB9c court's feet (in his court), the WB9e shader's rim and throb,
 the WB4 telegraph's text (the strip), the WB9f spoil rung, the WB9g host's sale and its UPDATE's mutant, the WB9h bank.
 
@@ -1229,7 +1229,7 @@ give nothing back, and where the peaks were being made - was 34 to 37% in the fi
 25 to 31%); the ostinato moved from the bass family to the brass, the bass voice was taken under the rest (nearly all
 of it is below 120 Hz) and the kit's 55 Hz bass drum dropped for the floor tom, which brought it to 23 to 30%.
 
-Pinned: `test/wb10a_gate_score.test.js` (6) - the press, its graph, the ceiling by construction, the score's presses,
+Pinned: `test/systems/gate/wb10a_gate_score.test.js` (6) - the press, its graph, the ceiling by construction, the score's presses,
 and the jolliness gone by structure (the voices and the writing); mutants `tools/mutants/wb10a.json` (18, all dead;
 WB7's Neapolitan mutant re-aimed at the new progression). `tools/gateScoreProbe.mjs` (20 checks): the loudness floors
 raised to a decibel and more under the table's, each peak under its ceiling, and one player through the whole fight - the
@@ -1294,8 +1294,8 @@ three names, `topDealers`), and said only the three names at the kill. Now:
   screen the blows, the best and the crystals fold away. Seen in headless Chromium in both skins and at phone width (a
   mock court of fifteen) before it shipped; not yet seen over a real fight.
 
-Pinned: `test/gateux_gate.test.js` (11); the walk-over's own pins moved with it (`test/wb5_gate_spoils.test.js`,
-`test/wb9f_gate_spoils.test.js`, `test/wbx_gate_fixes.test.js`), the bar's phase pin (`wbx_gate_fixes`), the kill's
+Pinned: `test/ui/gate/gateux_gate.test.js` (11); the walk-over's own pins moved with it (`test/systems/item/wb5_gate_spoils.test.js`,
+`test/scenes/wb9f_gate_spoils.test.js`, `test/world/gate/wbx_gate_fixes.test.js`), the bar's phase pin (`wbx_gate_fixes`), the kill's
 shape (`wb3_gate_room`), every relay-version pin and the SLAM8 law row (world136). Mutants `tools/mutants/gateux.json`
 (31, all dead); the walk-over's records in `wb5.json` and `wbx.json` re-aimed at the press, WB3's top-unordered at
 topDealers' own sort (the chart's sort reads the same). Found on the way, not this change's: `wb3.json`'s
@@ -1440,7 +1440,7 @@ reload (GATE-RELOAD's words). The bump redeploys the relay and drops every conne
 - The Seducer is drawn in her winged form alone; her change is not played.
 - Offline there is no gate, and so no host.
 
-Pinned (WB11a-c): `test/wb11_gate_host.test.js`, with the rotation's own pins moved in `test/wb8b_gate_marks.test.js`;
+Pinned (WB11a-c): `test/net/gate/wb11_gate_host.test.js`, with the rotation's own pins moved in `test/net/gate/wb8b_gate_marks.test.js`;
 the slices' record is under Shipped, the audit's below.
 
 ### AUDIT WB11 (2026-10-01, Mac: "Definitely want to perform a comprehensive audit on this and ensure it's perfect")
@@ -1519,7 +1519,7 @@ so the two can cross: an old game on the new relay is refused at `in` and told t
 relay still on world139 names the nine trials' marks on the omen and the gate's card while the relay fights the eight's
 (the court reads the fight's own `md`, so the fight itself is right) - for the minutes the relay's job takes.
 
-Pinned in `test/audit_wb11.test.js` (23, one a finding - twenty failed on the unfixed tree for their finding's reason;
+Pinned in `test/net/gate/audit_wb11.test.js` (23, one a finding - twenty failed on the unfixed tree for their finding's reason;
 the three of what was already so, D2/D7's and K1, were proven red by their mutants); mutants
 `tools/mutants/audit_wb11.json` (60, all dead). Re-aimed: the WB11 pins' feet of a rising body, the ward's count and the state's tautology; the WB9c
 court's one crystal stand-in, its relay seam and its two records; WB3's and WB4b's records of the hand and the
@@ -1689,7 +1689,7 @@ the Covenant, the faithful and their rite, the Warden, why the doors close, the 
 - `systems/breachBook.js` gives it with the first ember through the breach's spoils (the court's floor, a receipt
   outside it, or the crash's records), with the courier's line in chat. A town's thanks don't bring it. A character
   who closed breaches before this gets it with their next ember.
-- Pinned in `test/wb12c_burning_doors.test.js` (7); mutants in `tools/mutants/wb12c.json` (19).
+- Pinned in `test/systems/wb12c_burning_doors.test.js` (7); mutants in `tools/mutants/wb12c.json` (19).
 
 ### D. The faithful's rite (WB12d)
 
@@ -1794,8 +1794,8 @@ and name until it is emptied, and wears *Opened* after.
 - The casket (`systems/riteChest.js`): gold (20-40 a level), two to four reagents (a Daedra's Heart 8% of draws), one
   chest in twenty a Magic piece of Dagon's Brand at Faint. The day's memory (`RiteDay`) and the chest's (`RiteChest`)
   are the character's save.
-- Pins `test/wb12d_rite_law.test.js` (9), `test/wb12d_rite_relay.test.js` (12), `test/wb12d_rite_world.test.js` (27),
-  `test/wb12d_rite_host.test.js` (8); mutants `tools/mutants/wb12d.json` (319); Chromium `tools/riteProbe.mjs`.
+- Pins `test/net/gate/wb12d_rite_law.test.js` (9), `test/net/gate/wb12d_rite_relay.test.js` (12), `test/net/gate/wb12d_rite_world.test.js` (27),
+  `test/net/gate/wb12d_rite_host.test.js` (8); mutants `tools/mutants/wb12d.json` (319); Chromium `tools/riteProbe.mjs`.
 
 ### E. The caged Broker (BROKER-CAGE, 2026-10-02)
 
@@ -1855,8 +1855,8 @@ knockback, never a walk or a run) now and then comes out inside it - a whole blo
 
 Relay **world154** (`net/wire.js` RELAY_VERSION, `relaySupportsCage`; world153 on its branch, renumbered past main's REVENANT-WIRE at the merge - a world153 relay never says `cl`, so it is not the cage's): the word's `c`, the cell's and the hub's `cl`,
 the hello's replay until midnight. An older relay ignores `c` (`validRiteIn` projects what it knows) and never says
-`cl`. An older client drops `cl` (`validRiteOut` knows `br` alone). Pinned: `test/brokercage.test.js` (8) and
-`test/set7_broker_world.test.js` (13, re-pinned for the cage); mutants `tools/mutants/brokercage.json` (82), set7's,
+`cl`. An older client drops `cl` (`validRiteOut` knows `br` alone). Pinned: `test/systems/brokercage.test.js` (8) and
+`test/player/set7_broker_world.test.js` (13, re-pinned for the cage); mutants `tools/mutants/brokercage.json` (82), set7's,
 wb12d's and soc1's records the cage moved re-aimed by content. The probe `tools/brokerProbe.mjs` draws her caged from
 three sides and freed, its door swung.
 
@@ -1889,7 +1889,7 @@ pinned red-then-green and its mutant recorded (`tools/mutants/brokercage.json`, 
 | G6 | on a slope the downhill bars stood on air, and the door swung through rising ground | the bars to the lowest corner and beyond, the sill over the ground the leaf sweeps |
 | T1-T5 | pins that could not fail: a hinge equal to its own definition, a foot equal to its constant, a bar gap of constants; the front-left wall, the swing's direction and easing, the drawn turn, the top and front bars, all unpinned | each read off the built geometry or the drawn matrices |
 | D | the docs' "the bars never hide her" (they did), "below" for what is above, the Ledger's "stands only by a gate", the Testing row's pre-cage text | rewritten |
-| D2 | the cage's model claims a Ledger A row and the Ledger named it nowhere - `test/doctrine.test.js` failed on the change as pushed (its own run before the commit had the file untracked, and the pin reads tracked files alone) | named in the breach's Ledger row |
+| D2 | the cage's model claims a Ledger A row and the Ledger named it nowhere - `test/tooling/doctrine.test.js` failed on the change as pushed (its own run before the commit had the file untracked, and the pin reads tracked files alone) | named in the breach's Ledger row |
 
 ### Versions and the deploy
 
@@ -2005,9 +2005,9 @@ rim. Not seen: the game's own art for the flames and the tents (this container h
 a circle, the faithful in a fight, and the hub's word and the chest on the deployed relay and service (world141 and
 acct46 are not deployed).
 
-Pinned in `test/wb12d_rite_relay.test.js` (12), `test/wb12d_rite_law.test.js` (9), `test/wb12d_rite_world.test.js`
-(27), `test/wb12d_rite_host.test.js` (8, the real foe pool and the world's camp law end to end) and
-`test/gateclear.test.js` (+1); mutants `tools/mutants/wb12d.json` (319, every one dead but 5 recorded equivalent).
+Pinned in `test/net/gate/wb12d_rite_relay.test.js` (12), `test/net/gate/wb12d_rite_law.test.js` (9), `test/net/gate/wb12d_rite_world.test.js`
+(27), `test/net/gate/wb12d_rite_host.test.js` (8, the real foe pool and the world's camp law end to end) and
+`test/world/gate/gateclear.test.js` (+1); mutants `tools/mutants/wb12d.json` (319, every one dead but 5 recorded equivalent).
 Re-aimed: discordgates', wb5b's, wb8c's and wb13b's omen and claim pins; the auditpace, auditpscale1, cursesync,
 discordgates, gateclear, loot7 and survtiers3 lists. world141 re-hashed in place (undeployed).
 
@@ -2112,7 +2112,7 @@ The hit law does not move except T2's ring: what lands is what the ground shows.
 - **In it** reads my feet against his blow in flight (never the whole floor's) and his host's, landing soonest first.
   It finds the way out over 24 bearings in 0.25 m steps, on the floor. It turns the way out by the camera's yaw
   (`scenes/world.js` cam.yaw), and the ground view draws it as a chevron 72 px out from the crosshair.
-- Pinned: `test/wb13a_telegraphs.test.js` (13), and the re-pinned WB4, WB9d, WB9e and AUDIT WB9 laws.
+- Pinned: `test/scenes/wb13a_telegraphs.test.js` (13), and the re-pinned WB4, WB9d, WB9e and AUDIT WB9 laws.
 - AUDIT WB9's shader harness takes every derivative the shader asks for (it took one).
 - Mutants: `tools/mutants/wb13a.json` (22).
 - Seven older records were re-aimed by content (the fuse's is gone with the fuse).
@@ -2159,7 +2159,7 @@ What changes beyond the wording:
 - The notice board's card says where and the countdown's state.
 - The relay's protocol words, the save and token keys and Daggerfall's own lines are unchanged.
 - Pinned:
-  - `test/wb13b_words.test.js`: the style as a law over 85 lines of the tables, and the design changes.
+  - `test/net/gate/wb13b_words.test.js`: the style as a law over 85 lines of the tables, and the design changes.
   - 30 older pins re-aimed to the new words.
 - Mutants: `tools/mutants/wb13b.json` (11); eight older records re-aimed. AUDIT WB11 M1's law (Imps capitalised) holds
   on the trial's line.
@@ -2229,7 +2229,7 @@ What changes beyond the wording:
   - The Plus skin dresses the ground warning, the new parts and a lit ward cage.
 - Not done from the audit: the falling chunks, a flash on my own hit before the relay's word, the gate card collapsing
   to a strip, and shorter callout words.
-- Pinned: `test/wb13c_hud.test.js` (10) and the map's tap in `test/eventtip.test.js`. Seven older test files
+- Pinned: `test/ui/gate/wb13c_hud.test.js` (10) and the map's tap in `test/ui/eventtip.test.js`. Seven older test files
   re-pinned.
 - Mutants: `tools/mutants/wb13c.json` (29). Five older records re-aimed.
 - Seen in Chromium at 1280x720, 390x844 and 844x390 in both skins.
@@ -2271,7 +2271,7 @@ What changes beyond the wording:
 - His fire uses the Daedra Lord's spell frames: frame 1 held through the wind-up, frame 3 as it lands.
 - The meteor falls for 1700 ms at 35 degrees, from the same side.
 - No relay change.
-- Pinned in `test/wb13d_blows.test.js` (10), with WB4 and WB9e re-pinned.
+- Pinned in `test/ui/gate/wb13d_blows.test.js` (10), with WB4 and WB9e re-pinned.
 - Mutants in `tools/mutants/wb13d.json` (28), with three older records re-aimed.
 
 ### WB13e. The beats
@@ -2317,7 +2317,7 @@ What changes beyond the wording:
 - Not done: marking the nearest teammate for everyone else when a blow is aimed at them, and a white screen flash
   (the court's light does it instead).
 - The relay is world141, re-hashed in place for `op`. The brain's law stays 5.
-- Pinned in `test/wb13e_beats.test.js` (8), with WB3, WB4, WB7, WB8c, WBX, GATE-UX and WB13b re-pinned.
+- Pinned in `test/net/gate/wb13e_beats.test.js` (8), with WB3, WB4, WB7, WB8c, WBX, GATE-UX and WB13b re-pinned.
 - Mutants in `tools/mutants/wb13e.json` (26), with four older records re-aimed.
 
 ### WB13f. The rhythm
@@ -2345,7 +2345,7 @@ What changes beyond the wording:
   casting frame, until the recovery ends. My blows don't make him flinch out of it.
 - The relay is world141, re-hashed in place. The brain's law stays 5: each screen holds the spent pose from its own
   table.
-- Pinned in `test/wb13f_rhythm.test.js` (5), with WB4 re-pinned: the Slam's recovery is spent now, not idle.
+- Pinned in `test/net/gate/wb13f_rhythm.test.js` (5), with WB4 re-pinned: the Slam's recovery is spent now, not idle.
 - Mutants in `tools/mutants/wb13f.json` (14).
 
 ### Versions
@@ -2413,12 +2413,12 @@ so a stored value that is none of them shows as Everyone on the card and reads a
   distance is cut everywhere but under the travel view - by distance, never by count, my party and my duel always, 300 m
   by default and past another player's shot (200 m) - and the court's count is taken from the players within it.)
 
-Pinned: `test/gatecrowd.test.js` (9) - the law and its held places, the host's crowd and who it shows, the online
+Pinned: `test/systems/gatecrowd.test.js` (9) - the law and its held places, the host's crowd and who it shows, the online
 frame's cut (lifted and evaluated) and the doors that ask it, the card and the shelf's literal, `companionPlace` (lifted
 and run), the companion layer through a court, the court's word (lifted); the party panel's cards in
-`test/auditwatchkit_net.test.js` (none in a court). Moved with it: the drawn list's pins in `test/invisnet.test.js` and
-`test/mwbody1.test.js`, the pick's in `test/invisnet.test.js`, `test/peerplaque.test.js` and
-`test/soc5_interact.test.js`, the gift's in `test/audit27d.test.js`; AUDIT-CC-F-world-helm-stands
+`test/systems/naval/auditwatchkit_net.test.js` (none in a court). Moved with it: the drawn list's pins in `test/net/invisnet.test.js` and
+`test/net/peer/mwbody1.test.js`, the pick's in `test/net/invisnet.test.js`, `test/player/peerplaque.test.js` and
+`test/ui/soc5_interact.test.js`, the gift's in `test/systems/audit27d.test.js`; AUDIT-CC-F-world-helm-stands
 (`tools/mutants/auditcrew.json`) re-aimed by content. Mutants `tools/mutants/gatecrowd.json` (45, all dead). No relay
 change, no account change. Not yet seen in a browser over a real court.
 
@@ -2445,7 +2445,7 @@ world's left (`world/mat4.js` THE HANDEDNESS LAW), so the gate stands as Mac dre
 polygon and triangle reversed with it - and SCALE 0.53: 16.19 m tall, WB2's 16.2, where Mac drew it 30.55 m, so the
 beacon, the light, the clearing and the court's fire keep their sense. The source is committed beside the bake
 (`src/assets/gate/source/Oblivion_Gate.fbx`, 8.2 MiB - the whole scene, the way the ships' sources are) and
-`src/assets/gate/oblivionGate.json` re-bakes from it to the byte; both are on `test/doctrine.test.js`'s published
+`src/assets/gate/oblivionGate.json` re-bakes from it to the byte; both are on `test/tooling/doctrine.test.js`'s published
 assets allowlist.
 
 **The stone** (`world/gate/gateModel.js`). `buildGateModel` lays the bake's triangles as baked (Blender 5.1's own cut,
@@ -2529,24 +2529,24 @@ serves the bake as a JSON module now, and it shoots the stone from a player's ey
 the new opening, narrow between the feet and notched under the lintel; the veins climb the pillars at the texel scale
 of the world round them; the spines' points burn. Not yet seen in the game over a real gate or a real court.
 
-Pinned: `test/gatefbx.test.js` (14) - the bake re-made to the byte (its frame a mirror and every polygon reversed, its
+Pinned: `test/tooling/gatefbx.test.js` (14) - the bake re-made to the byte (its frame a mirror and every polygon reversed, its
 ground, its middle), the scene read for one object (the mirrored one asked nothing; read whole, still refused) and a
 piece in the gate's box refused; the stone's solids closed and wound out, a body sealed in them and free beside them;
 the rise sunk whole on a slope; the court's fire's two laws; the way in driven (shut under the veil, whole as it lifts,
 held from my arrival and closed, a late first word never flashing it, opened for another stepping out of it and for a
 returner, not for the first look, one far off or one still standing, no door); the court gone silent; the door laid
 first; the way home closing with the court; the fires the court hands its pass, and the pass's `fireOnly`; the fire's
-foot; every emission white; the host's seams (/unstuck, stepsIn, the silent court's eject). `test/wb2_gate.test.js`'s
+foot; every emission white; the host's seams (/unstuck, stepsIn, the silent court's eject). `test/world/gate/wb2_gate.test.js`'s
 five on the stone rewritten for Mac's gate: the bake's every triangle in the model as baked, the soles sunk, its reach
 and its parts; the faces out (the soles' walls, each spine about its own axis, `spike()` in three directions, and
 `gateSpines` on a cone and a box); the way in clear and the fire its margin clear of the stone at every 2 cm, at the
 stone's clear at 20 or more of its 24 heights and never a strip past 0.6 m; the opening's top on made-up parts; the art
 and every face on its picture (the rim by hand, its smoulder seen, every face laid with the least stretch its own normal
-allows). Moved with it: `test/wb3b_gate_arena.test.js` (the clear floor has no posts by the bridge, the court's art
-three records, `standCourt` lays no door), `test/wbx_gate_fixes.test.js` (the press test's one door, the pass's one list
-of fires), `test/gateclear.test.js` (GATE_HALF_W for PLINTH_R), `test/wb12d_rite_world.test.js` (the art uploaded),
-`test/auditwbx.test.js` and `test/auditwbx2.test.js` (the sealed-in points off the stone's solids),
-`test/doctrine.test.js`'s allowlist (the source and the bake). Mutants `tools/mutants/gatefbx.json` (58, all dead) and
+allows). Moved with it: `test/net/gate/wb3b_gate_arena.test.js` (the clear floor has no posts by the bridge, the court's art
+three records, `standCourt` lays no door), `test/world/gate/wbx_gate_fixes.test.js` (the press test's one door, the pass's one list
+of fires), `test/world/gate/gateclear.test.js` (GATE_HALF_W for PLINTH_R), `test/net/gate/wb12d_rite_world.test.js` (the art uploaded),
+`test/net/gate/auditwbx.test.js` and `test/net/gate/auditwbx2.test.js` (the sealed-in points off the stone's solids),
+`test/tooling/doctrine.test.js`'s allowlist (the source and the bake). Mutants `tools/mutants/gatefbx.json` (58, all dead) and
 `tools/mutants/wb2.json` re-run (25, all dead); six records retired with the code they guarded -
 WB2-a-spire-in-the-way-in, WB2-the-right-horn-inside-out, WB2-the-root-band-unclamped (the horns, the rim spires, the
 plinth's lip), WB3b-the-membrane-dark, WB3b-the-way-home-faces-out and WB3b-the-way-home-no-exit-door (the bridge's
@@ -2599,7 +2599,7 @@ drawGateMark`), and `scenes/world.js` (`gateOmen`, `gateFrame` in the online fra
 `gateCompassMark`, the travel map's `gate`). Two changes from the page above, both the pins' finds: the province is a
 SHUFFLE BAG, not a bare roll (a bare roll's "never the day before's" repeated after its own bump), and the classic
 page's ring band is a whole pixel (0.75 left as few as four texels). No relay change. Pins
-`test/wb1_gate_omen.test.js` (13); mutants `tools/mutants/wb1.json` (30 dead, 1 equivalent). Not seen in a browser:
+`test/ui/wb1_gate_omen.test.js` (13); mutants `tools/mutants/wb1.json` (30 dead, 1 equivalent). Not seen in a browser:
 this container has no ARENA2 and no relay session; the site's real-data behaviour (which provinces qualify, how many
 pixels each offers) is the first thing to look at on a live omen.
 
@@ -2611,7 +2611,7 @@ mesh - and the beacon from its crown, widening with distance so it still stands 
 `scenes/gate/gatePool.js` (the gate stood each exterior frame where the omen says, rising and sinking with the clock, its
 collider once risen, its light, the eye's box on the fire alone, the door and the walk through the fire, the countdown
 over the screen within 60 m - `ui/gate/gateBanner.js`), the activation race's `gate` family, and the world host's seams.
-The door answers *The gate will not open to you yet.* until WB3's relay. Pins `test/wb2_gate.test.js` (13); mutants
+The door answers *The gate will not open to you yet.* until WB3's relay. Pins `test/world/gate/wb2_gate.test.js` (13); mutants
 `tools/mutants/wb2.json` (28 dead); `tools/gatePassProbe.mjs` compiles, links and draws the pass in a real WebGL2 (9
 checks). Seen in a headless browser with its own stand-in lighting (the stone, its art, the fire and the beacon); not
 yet in the game with ARENA2, where the renderer's own lighting, fog and the terrain under it are the next look.
@@ -2628,7 +2628,7 @@ players can always step out of); the fastest kill is 75 s, not 80 (the bucket's 
 a fighter outside the court (cast out, or away) is handed their receipt through the hub, and a hub hello while the gate
 still stands hears of its kill. **The relay's one secret** is `GATE_SIGNING_KEY` (an Ed25519 private key,
 PKCS8 in base64) - put by the account deploy with its public half since GATE-KEYS; without it the receipts go out
-unsigned, the spoils roll the same, and WB5's account service declines them. Pins `test/wb3_gate_room.test.js` (21);
+unsigned, the spoils roll the same, and WB5's account service declines them. Pins `test/net/gate/wb3_gate_room.test.js` (21);
 mutants `tools/mutants/wb3.json` (60 dead). The arena place (WB3b) is next; until it lands the gate's door still
 answers "not yet".
 
@@ -2647,7 +2647,7 @@ the player on the floor; a death is cast out before the gate; the day's end or g
 way; the map, the rest, the save and the Recall mark are refused inside it. What moved from the page above: the way
 home stands at the floor's edge (the motor's ring is a circle; a bridge beyond it is scenery), and the court stands
 for its fighters until the gate's day ends rather than collapsing with the kill (the spoils need the time - WB5).
-Pins `test/wb3b_gate_arena.test.js` (7); mutants `tools/mutants/wb3b.json` (38 dead; 37 since WB6a took the square sea away). Seen headless with a stand-in
+Pins `test/net/gate/wb3b_gate_arena.test.js` (7); mutants `tools/mutants/wb3b.json` (38 dead; 37 since WB6a took the square sea away). Seen headless with a stand-in
 shader (the floor, the ring, the spires and braziers, the sea of fire); not yet in the game with ARENA2 and a live
 relay, where the arrival, the fog and the braziers' light are the first look. The boss is not drawn yet (WB4).
 
@@ -2669,7 +2669,7 @@ the Wrath's countdown in the last five minutes. AND THE BLOW LANDS ON THE STRUCK
 charge strikes the ground he runs over between two frames, so the lane ahead of him is safe until he gets there; a
 hit takes its share of the player's own maximum health through the dungeon context's own door (`strikePlayer` - the
 hit's sound, the flash, the cry; fire burns unflashed), fire through the game's saving throw (a full resist is said)
-and Dagon's Wrath through nothing. Pins `test/wb4_gate_boss.test.js` (14); mutants `tools/mutants/wb4.json` (40 dead).
+and Dagon's Wrath through nothing. Pins `test/net/gate/wb4_gate_boss.test.js` (14); mutants `tools/mutants/wb4.json` (40 dead).
 The telegraph's shader seen headless over the court for every attack (`tools/gateTelegraphProbe.mjs` holds it: 9
 checks); the sprite not yet seen with ARENA2 and a live relay. The player's blows on him are WB4b.
 
@@ -2684,7 +2684,7 @@ ask it to reach 1.8 m into him and 2.8 m up), a shaft and a missile by his whole
 its aim, a blast at his flank (`systems/spellcast.js` measures a body that states its own radius by it; a foe that
 states none is measured as it always was). He parries as his mobile does, a blow sounds and splashes at his chest and
 the damage number pops as any; the ward turns a blow with the parry's ring and nothing is sent; each blow makes him
-flinch. Pins `test/wb4b_gate_blows.test.js` (5); mutants `tools/mutants/wb4b.json` (22 dead).
+flinch. Pins `test/net/gate/wb4b_gate_blows.test.js` (5); mutants `tools/mutants/wb4b.json` (22 dead).
 
 **WB5a (2026-09-25) - the spoils.** Half a second into his fall his body bursts, and this player's spoils leave his
 chest toward them one at a time (`scenes/gate/gateCourt.js`): rolled off the seed of the receipt the relay signed for them
@@ -2713,7 +2713,7 @@ bound, never handed to another player in a trade - nor (SS3) dropped or put in a
 saved before it stacked is folded on load.
 Leaving the court - by the way home, a death or the day's end - gathers what is still on its floor. No receipt (a
 player who neither dealt their share nor stood half the fight), and it is said the spoils are not theirs. Pins
-`test/wb5_gate_spoils.test.js` (10); mutants `tools/mutants/wb5.json` (34 dead). The glow
+`test/systems/item/wb5_gate_spoils.test.js` (10); mutants `tools/mutants/wb5.json` (34 dead). The glow
 seen headless over the court; the flats and the flight not yet with ARENA2 and a live relay. The account's record of
 gates closed is WB5b.
 
@@ -2733,7 +2733,7 @@ it is offered again on the gate frame no sooner than ten minutes after; an unsig
 The main menu's account card has a *Gates closed* row (the count, or "None yet"), and the Inspect card says *Gates
 closed: N* when there is one to say. `tools/mintGateKeys.mjs` mints the pair in one run, and the account deploy runs it once (GATE-KEYS): the private half
 is the relay's secret, the public half this service's; nothing is written to disk. Until both are set the relay's receipts go out unsigned and
-the spoils still roll; only the record waits. Pins `test/wb5b_gate_claim.test.js` (9); mutants
+the spoils still roll; only the record waits. Pins `test/net/gate/wb5b_gate_claim.test.js` (9); mutants
 `tools/mutants/wb5b.json` (25 dead). Not run against a deployed service.
 
 **WB6a (2026-09-25) - the Deadlands.** Mac walked the court and asked for "an oblivion masterpiece", and saw its
@@ -2742,7 +2742,7 @@ a sea in their place (see "The Deadlands" in section 4): the churning overcast, 
 turning whole and pouring inward, the beam into its eye, the Daedric towers, three ranges with their falls of fire,
 seeded lightning; and a disc of moving fire whose rim becomes the sky's own horizon. The court is lit as itself -
 red from above, fire from below, the vortex's key light from behind the boss. One foreign pass in the dungeon arm,
-after the court's solid geometry and before its flats. Pins `test/wb6a_deadlands.test.js` (8); mutants
+after the court's solid geometry and before its flats. Pins `test/world/gate/wb6a_deadlands.test.js` (8); mutants
 `tools/mutants/wb6a.json` (20 dead); `tools/deadlandsProbe.mjs` compiles, links and draws the pass in a real WebGL2
 (11 checks). Seen headless from the arrival, looking up into the vortex, from the rim, over the court and low
 across the floor; not yet in the running game.
@@ -2755,7 +2755,7 @@ the same moment; and the court has its own air - the wind, the sea's roar, the b
 late by its distance, far roars, fire bursting below - where the dungeon's drips and doors were. The Deadlands' clock
 is the relay's now, so all of it is one moment on every screen (WB6a had handed the sky the page's own clock). The
 lightning's slots were made whole over the period (a 7 s slot left a 5 s stub at the wrap). Pins
-`test/wb6b_deadlands_life.test.js` (8); mutants `tools/mutants/wb6b.json` (27 dead); the probe now draws the land, the
+`test/world/gate/wb6b_deadlands_life.test.js` (8); mutants `tools/mutants/wb6b.json` (27 dead); the probe now draws the land, the
 shards and the life too and links all three programs (15 checks). Seen headless from the arrival, low across the floor
 and at a strike's peak; not yet heard or seen in the running game.
 
@@ -2765,7 +2765,7 @@ built, opening from its middle onto the new one - with the fire's roar and the d
 opening; a court taken by force flashes into fire and opens. The way home offers no wagon (it waits in Tamriel), and a
 forced exit now clears a dungeon exit still pending (a way home, or a wagon prompt's No, that a death, a collapse or a
 load overtook would have walked the player out of the next dungeon on its first frame). Pins
-`test/wb6c_gate_veil.test.js` (4); mutants `tools/mutants/wb6c.json` (22 dead); `tools/gateVeilProbe.mjs` compiles,
+`test/ui/gate/wb6c_gate_veil.test.js` (4); mutants `tools/mutants/wb6c.json` (22 dead); `tools/gateVeilProbe.mjs` compiles,
 links and draws the veil in a real WebGL2 at the law's moments and steps the real layer through a real page (13
 checks). Seen headless over the court's own frame and over a plain one; not yet taken in the running game.
 
@@ -2774,7 +2774,7 @@ steps, his growls between attacks, a grunt when he is hurt, the ground's shock u
 his roar, his body meeting the floor; and the court's own music, written as notes (`systems/gate/gateScore.js` - three war
 songs that grow with his phases and a fanfare at his fall, then quiet), played by the game's own player through a new
 door of the music service (`registerSong`), holding the music while the court stands. Pins
-`test/wb7_boss_audio.test.js` (7); mutants `tools/mutants/wb7.json` (19 dead); `tools/gateScoreProbe.mjs` plays the four
+`test/systems/gate/wb7_boss_audio.test.js` (7); mutants `tools/mutants/wb7.json` (19 dead); `tools/gateScoreProbe.mjs` plays the four
 songs through the real song player and measures them (11 checks: every second sounding, peaks near -12 dBFS, the war
 from -36 to -29 dBFS as the phases turn, the fall silent by 12 s). Heard only as offline renders; not yet in a fight.
 
@@ -2782,8 +2782,8 @@ from -36 to -29 dBFS as the phases turn, the fall silent by 12 s). Heard only as
 town's province, `gateScanner`'s slices), `systems/gate/gateOmen.js` (ready, the settle, each line once past the last),
 `render/gate/gatePass.js` (the fog colour, the spin), `scenes/gate/gatePool.js` (the spin accumulated, the matrix and box
 cached, one empty list, `stands()`), `scenes/world.js` (the scan warmed in idle slices, the omen's readiness, the
-banner under the veil and the held frame, the pass built only while a gate stands). Pins `test/auditwb_world.test.js`
-(10) and one in `test/wb1_gate_omen.test.js`; re-aimed: AUDIT 39's held-frame pin (the world host's countdown goes down
+banner under the veil and the held frame, the pass built only while a gate stands). Pins `test/scenes/auditwb_world.test.js`
+(10) and one in `test/ui/wb1_gate_omen.test.js`; re-aimed: AUDIT 39's held-frame pin (the world host's countdown goes down
 on the plaque's line), four of WB1's mutant records (the scan's new shape; the sea coast's record now the audit's
 own, its law reversed); mutants `tools/mutants/auditwb_world.json` (20 dead, 1 equivalent).
 
@@ -2791,7 +2791,7 @@ own, its law reversed); mutants `tools/mutants/auditwb_world.json` (20 dead, 1 e
 body after the Wrath, the late cry), `net/gate/gateLink.js` (`onRefused`), `scenes/worldModes.js` (the door asked again after
 the fire, no step, way home or pending exit for the dead), `scenes/world.js` (the dead cast out alive, a refused `in`
 and a closed socket taking the player out, the door's refusal), `world/gate/gateArena.js` (`COURT_TEXT.lost`). Pins
-`test/auditwb_court.test.js` (7); re-aimed: WB3b's door window, WB6c's door, way-home and flash pins, AUDIT 28 W2c's and
+`test/net/gate/auditwb_court.test.js` (7); re-aimed: WB3b's door window, WB6c's door, way-home and flash pins, AUDIT 28 W2c's and
 DISC21-B's pending-exit line, five mutant records of WB4, WB6c and WB7 (the marks' new shape, the door's new line);
 mutants `tools/mutants/auditwb_court.json` (18 dead).
 
@@ -2800,7 +2800,7 @@ socket's stamp and the silent unseated, one seat an account in a court, the cour
 alone written, the kill kept before it is said and the hub told until it answers, the hub's kept receipts and
 `_gateReceiptTo`), `net/gate/gateBrain.js` (`freeSeat`, the empty bucket), `net/gate/gateLaw.js` (a day's times made once),
 `net/wire.js` (`HELLO_WAIT_MS`, `GATE_TELL_RETRY_MS`, `gateReceiptKey`). RELAY_VERSION world111 on its branch, world113 at the merge - no file joins the
-bundle; the bump drops every connected player once. Pins `test/auditwb_relay.test.js` (9); re-aimed: the exact-version
+bundle; the bump drops every connected player once. Pins `test/net/gate/auditwb_relay.test.js` (9); re-aimed: the exact-version
 pins and soc1's version record, two WB3 mutant records (the join's `present`, the hub's answer); mutants
 `tools/mutants/auditwb_relay.json` (29 dead).
 
@@ -2809,7 +2809,7 @@ spent by `spentKey` day and account, the records a list, `spoilsStore`'s memory)
 rungs, `me`, one a day and account, the memory), `net/accountClient.js` (the rung carried, `me`),
 `server-account/src/index.js` (the route says the rung - a redeploy of the account service carries it; until then the
 device keeps the old verdict), `scenes/gate/gateCourt.js` (the burst's account), `scenes/world.js` (one store,
-`grantSpoilsOutside`). Pins `test/auditwb_spoils.test.js` (7); re-aimed: WB5's record and spent-day pins, WB5b's queue
+`grantSpoilsOutside`). Pins `test/net/gate/auditwb_spoils.test.js` (7); re-aimed: WB5's record and spent-day pins, WB5b's queue
 (the signed-in account), verdict, worker and seam pins, ten WB5/WB5b mutant records; mutants
 `tools/mutants/auditwb_spoils.json` (26 dead).
 
@@ -2819,7 +2819,7 @@ songs `seamless`), `systems/music.js` (`fadeOut`), `systems/song/songPlayer.js` 
 `render/deadlands.js` (`anchoredClock`, the falls' two layers, `RIDGES_TOP`), `scenes/spoilsPool.js` and
 `world/gate/gateArena.js` (nothing made for an empty floor, the braziers' lights once), `scenes/worldModes.js` (the court's
 equator one array), `scenes/world.js` (the score's fade, the veil told and warmed, the clock, the court's hooks). Pins
-`test/auditwb_sound.test.js` (10); re-aimed: WB2's pool-frame seam, WB6a's lighting and backdrop seams, WB6b's clock
+`test/systems/gate/auditwb_sound.test.js` (10); re-aimed: WB2's pool-frame seam, WB6a's lighting and backdrop seams, WB6b's clock
 and life seams, WB7's score seam, two WB6c mutant records; mutants `tools/mutants/auditwb_sound.json` (24 dead). The
 Deadlands, gate-pass, veil and score probes pass (15, 9, 13 and 11 checks) - the sky's new falls and skip, and the
 world half's membrane, compiled and drawn in a real WebGL2.
@@ -2838,7 +2838,7 @@ leap's flight and hop, the new cues and colours, the stand-in's `spareGear` and 
 `systems/effects.js`, `systems/enchantments.js` and `systems/passiveSpecials.js` (no regeneration), `combat/formulas.js`
 (no wear on him), `scenes/hostMagic.js` and `scenes/dungeonContext.js` (a Soul Trap meets him), `scenes/worldModes.js`
 (`gateWayHome`, `onBossTrap`) and `scenes/world.js` (the seams). RELAY_VERSION world116 - the brain's law moved; no
-frame changes shape. Pins `test/wbx_gate_fixes.test.js` (16); re-aimed: WB3's tables and phases, WB4's strike and the
+frame changes shape. Pins `test/world/gate/wbx_gate_fixes.test.js` (16); re-aimed: WB3's tables and phases, WB4's strike and the
 driver's, WB4b's mark, WB5's glow and burst, WB6c's way home, AUDIT WB A2's burst, thirteen exact-version pins, ten
 mutant records and SURVTIERS3's two cite records; mutants `tools/mutants/wbx.json` (24 dead - the take-after-rest's
 survived the first run and its pin was rebuilt to stand on the piece). Seen through the real renderer headless (the
@@ -2867,7 +2867,7 @@ the attack), `scenes/gate/gateCourt.js` (the trap's day and incumbent, no step i
 `net/gate/gateClaims.js` (the session read once a second) and `scenes/world.js` (the seams). RELAY_VERSION world116 still
 (never deployed; its law now holds these) - **the relay must be deployed with the client**: a world113 tab is refused
 the court in words it knows (R7), and the hub is told a receipt is spent only by a relay that reads the word (S1). Pins
-`test/wbx8_gate_sky.test.js` (5), `test/wbx9_gate_score.test.js` (4), `test/auditwbx.test.js` (14); re-aimed: DISC20's
+`test/systems/gate/wbx8_gate_sky.test.js` (5), `test/systems/gate/wbx9_gate_score.test.js` (4), `test/net/gate/auditwbx.test.js` (14); re-aimed: DISC20's
 graph, WB3's earned, hub and `in`, WB3b's `in` and collapse, WB4's frame, WB4b's missile, WB5's record, the AUDIT WB relay, spoils
 and sound pins, WBX's burning ground and the missile's two quotes in AUDIT WORLD6b-iii and DUEL1; mutants `tools/mutants/wbx8.json` (11), `wbx9.json` (7), `auditwbx.json` (29),
 all dead, and 29 older records in 13 lists re-aimed (EVENT1's storm, WB4's frame, WB5b's retry clock and WB7's fanfare among them). Seen in the real game online (the sky crimson whole and at the omen's depth,
@@ -2878,14 +2878,14 @@ not, M1), `net/gate/gateBrain.js` (`standsAt` and the kept `idle` fraction, M2; 
 `settleAt`, M5/M8), `world/gate/gateBoss.js` (`bossPlace` on `leapAt`), `server/src/index.js` (the spent word kept in the
 copy's place, M3; a court fighter's copy held from their hellos, M4; one read for the sweep's cursors, M9),
 `net/wire.js` (`GATE_HERE_HOLD_MS`), `scenes/spoilsPool.js` (`spentBy`, M6) and `scenes/gate/gatePool.js` (M7). RELAY_VERSION
-world116 still - re-hashed in place, never deployed. Pins `test/auditwbx2.test.js` (8); re-aimed: AUDIT WB A4's kept copy
+world116 still - re-hashed in place, never deployed. Pins `test/net/gate/auditwbx2.test.js` (8); re-aimed: AUDIT WB A4's kept copy
 (its hold), AUDIT WBX S1's spent word (an older day's forgets nothing; the mark in the copy's place), WB5's seams;
 mutants `tools/mutants/auditwbx2.json` (16 dead), eleven older records re-aimed by content, and every gate record on the
 files this touched run again.
 
 **GATE-RELOAD (2026-09-26) - an outdated game told to reload.** Section 12's last part: `net/gate/gateLink.js`
 (`GATE_OUTDATED_TEXT`, `gateRefusalText`, the `no` said through it) and `scenes/world.js` (the refused `in`'s eject in
-the same words). No relay change. Pins `test/gatereload.test.js` (3); re-aimed: AUDIT WB B5's seam pin and its two
+the same words). No relay change. Pins `test/net/gate/gatereload.test.js` (3); re-aimed: AUDIT WB B5's seam pin and its two
 mutant records; mutants `tools/mutants/gatereload.json` (6 dead), `auditwb_court.json` run again (18 dead). Seen in a
 real browser against the real Room: the build before world116 thrown out of the court in *"The gate is closed."*; this
 build, its `in` stripped of `bv`, thrown out in the new words; unaltered, it entered the court and fought on days 518
@@ -2900,7 +2900,7 @@ them walked out of the court. Nothing was lost (leaving gathers the floor into t
 spoils were never seen fall and never picked up. The portal is now PRESSED, as the bridge's membrane always was: its door
 stands in the court's exit doors (the ray, the plaque's "The way back to Tamriel", the press, `gateWayHome`), and its fire
 is walked through freely - a piece lying in it is taken by walking over it, as anywhere on the floor. The court takes no
-way home of its own any more (`scenes/gate/gateCourt.js`; `world.js` hands it the door alone). Pinned: `test/wbx_gate_fixes.test.js`
+way home of its own any more (`scenes/gate/gateCourt.js`; `world.js` hands it the door alone). Pinned: `test/world/gate/wbx_gate_fixes.test.js`
 (WBX2's walk now crosses the risen fire back and forth and stays; the seams: no way home handed or held);
 `tools/mutants/wbx.json` - `SS3-the-court-handed-a-way-home-again` in place of WBX2's walk-through record, whose code is
 gone.
@@ -2916,8 +2916,8 @@ walk test's `home` could never fill (the court takes no way home), so the court'
 court's real floor collider, its targets as `worldModes.js` builds them, and `pickActivatableHit`. And from the same
 audit, older than SS3: leaving the court OFFLINE never gathered its floor - online the court puts itself away the frame
 after an ejection (`gateCourt.leave` -> `spoils.gather`), offline nothing did until the next online frame or boot; the
-offline ejection now leaves the court too (`world.js`). Pinned: `test/wbx_gate_fixes.test.js` (the press),
-`test/ss1_stones.test.js` (the offline gather); `tools/mutants/auditss.json`.
+offline ejection now leaves the court too (`world.js`). Pinned: `test/world/gate/wbx_gate_fixes.test.js` (the press),
+`test/systems/item/ss1_stones.test.js` (the offline gather); `tools/mutants/auditss.json`.
 
 **WB8 (2026-09-28) - never swayed, and marked.** Section 13 above, whole: `world/gate/gateBoss.js` (his `pacifyImmune`, his
 refusal's words, his aspect's colours and voice), `systems/effects.js`, `scenes/hostCombat.js`, `scenes/hostMagic.js`,
@@ -2945,7 +2945,7 @@ deployed relay: the readout was looked at in headless Chromium over a mock court
 
 **WB11 (2026-10-01) - his host, the Legion-Lord.** Section 17 above, whole, in three slices on one branch:
 **WB11a** - `net/gate/gateMods.js` (the ninth trial), `net/gate/gateLaw.js` (the rotation for nine: the bye seat, 144 gates); the
-rotation's own pins moved in `test/wb8b_gate_marks.test.js`, and every pin that named a day's marks re-read against
+rotation's own pins moved in `test/net/gate/wb8b_gate_marks.test.js`, and every pin that named a day's marks re-read against
 it (`wb3_gate_room`, `wb8c_gate_detail` - its Rime-Wrought Colossal and Unyielding night is day 112 now -
 `discordgates`, `eventtip`). **WB11b** - `net/gate/gateBrain.js` (HOST_KINDS and HOST_BLOWS, the waves, the walks, the
 blows, the drinking, the bearers' wait, the crumbling, `applyHostHit`, the state's `lg`, the chart's `a`; the profile's
@@ -2957,7 +2957,7 @@ looks, the acts, the fall, the cues, the stand-in), `scenes/gate/gateHost.js` (n
 cell). What moved from the page as written: a FIRST SIMULATED COURT found a Sapper risen beside the challenger he then
 leapt to, drunk 2.75 s after it rose - so each kind now RISES (HOST_RISE_MS: 0.8, 2.5, 1.5 s) before it walks or strikes
 and is never drunk while rising, and a Sapper rises SAP_SPAWN_CLEAR (8 m) clear of every challenger. The swing on one of
-his host is the eighteenth blood-splash site (`blood1_decals` recounted). Pins `test/wb11_gate_host.test.js` (19);
+his host is the eighteenth blood-splash site (`blood1_decals` recounted). Pins `test/net/gate/wb11_gate_host.test.js` (19);
 mutants `tools/mutants/wb11.json` (37, all dead - the spawn's clearance and the Pulse's "someone near" survived the first
 run and have pins of their own now). Not seen in a browser or on the deployed relay: this container has no ARENA2, so the
 sprites, the tethers and the sounds are the tables' until a Legion-Lord court has been looked at and heard.
@@ -2971,7 +2971,7 @@ never the receiver itself - the heal bucket, the record's `healed`, the row's `h
 `heal`: the caster by peer id, the receiver's own pose), `ui/gate/gateDamageChart.js` (the Healed column - after the host's on a
 Legion-Lord night, in the share's place on a narrow screen). The first cut also counted a fighter's own potions and
 spells, by a watch on its health; asked, Mac took allies only, and the watch went. RELAY_VERSION world138 (WB11's,
-never deployed) re-hashed in place - world140 at the merge. Pins `test/gateheal.test.js` (10); the chart's DOM pins in `gateux_gate` took
+never deployed) re-hashed in place - world140 at the merge. Pins `test/net/gate/gateheal.test.js` (10); the chart's DOM pins in `gateux_gate` took
 its empty cell and WB3's closed list of gate words its `heal`; mutants `tools/mutants/gateheal.json` (30, all dead). Seen
 in a real browser at 1280x720, 390x844 and 844x390 in both skins, with and without the Host column, six figures in the
 Plus skin's pixel face; not yet on the deployed relay.
@@ -2990,7 +2990,7 @@ players once.
 - The Sigil Stone is the Deadlands Ember. A load repair (`systems/gate/gateSpoils.js` nameEmbers) renames every old record.
 - A guard test scans every shipped string for the old names.
 - Relay world141 (not deployed).
-- Pins `test/wb12a_breach_words.test.js` (9); mutants `tools/mutants/wb12a.json` (10), with the campaigns it re-aimed
+- Pins `test/systems/gate/wb12a_breach_words.test.js` (9); mutants `tools/mutants/wb12a.json` (10), with the campaigns it re-aimed
   (162 dead).
 
 Mehrunes Dagon's day (WB12b) was dropped before it shipped (Mac: *"Let's forgoe the monthly raid"*).
@@ -3001,7 +3001,7 @@ Mehrunes Dagon's day (WB12b) was dropped before it shipped (Mac: *"Let's forgoe 
 - `scenes/gate/gateCourt.js` perilAt and `ui/gate/gateGroundView.js`: a blow to come on your feet, said with the way out.
 - `scenes/gate/gateHost.js`: paths and tethers as flowing dashes.
 - world141 re-hashed in place; the brain's law stays 5.
-- Pins `test/wb13a_telegraphs.test.js` (13), with WB4, WB9d, WB9e and AUDIT WB9 re-pinned; mutants
+- Pins `test/scenes/wb13a_telegraphs.test.js` (13), with WB4, WB9d, WB9e and AUDIT WB9 re-pinned; mutants
   `tools/mutants/wb13a.json` (22), with seven older records re-aimed.
 - Seen in Chromium over the stand-in court: every attack, at a fighter's eye and from above, in all four aspects.
 - Not seen: the game's own art and a live fight.
@@ -3012,7 +3012,7 @@ Mehrunes Dagon's day (WB12b) was dropped before it shipped (Mac: *"Let's forgoe 
 - One card subtitle; a phase turn is its name and two orders.
 - Discord and the chat share their sentences, and a screen without the site says "in the wilds".
 - world141 re-hashed in place.
-- Pins `test/wb13b_words.test.js` (5), with 30 older pins re-aimed; mutants `tools/mutants/wb13b.json` (11), with eight
+- Pins `test/net/gate/wb13b_words.test.js` (5), with 30 older pins re-aimed; mutants `tools/mutants/wb13b.json` (11), with eight
   older records re-aimed.
 
 **WB13c (2026-10-01) - the HUD.** Section 20 above (Mac: *"just overall bring more AAA grade polish to what is already
@@ -3024,7 +3024,7 @@ developed"*):
 - The bar is hidden under the step-through fire. A finger's tap shows the breach's card on the map.
 - The classic face is loaded by the gate's own screens.
 - No relay or account change.
-- Pins `test/wb13c_hud.test.js` (10) and `test/eventtip.test.js`, with seven older files re-pinned; mutants
+- Pins `test/ui/gate/wb13c_hud.test.js` (10) and `test/ui/eventtip.test.js`, with seven older files re-pinned; mutants
   `tools/mutants/wb13c.json` (29), with five older records re-aimed.
 
 **WB13d (2026-10-01) - the blows.** Section 20 above:
@@ -3036,7 +3036,7 @@ developed"*):
 - His fire uses his cast pose.
 - The meteor is seen falling.
 - No relay or account change.
-- Pins `test/wb13d_blows.test.js` (10), with WB4 and WB9e re-pinned; mutants `tools/mutants/wb13d.json` (28), with
+- Pins `test/ui/gate/wb13d_blows.test.js` (10), with WB4 and WB9e re-pinned; mutants `tools/mutants/wb13d.json` (28), with
   three older records re-aimed.
 
 **WB13e (2026-10-01) - the beats.** Section 20 above:
@@ -3049,21 +3049,21 @@ developed"*):
 - A Meteor or a Leap aimed at you stings.
 - The court's lines stay up for their length.
 - world141 re-hashed in place for the state's opening end. The brain's law stays 5.
-- Pins `test/wb13e_beats.test.js` (8), with seven older files re-pinned; mutants `tools/mutants/wb13e.json` (26), with
+- Pins `test/net/gate/wb13e_beats.test.js` (8), with seven older files re-pinned; mutants `tools/mutants/wb13e.json` (26), with
   four older records re-aimed.
 
 **WB13f (2026-10-02) - the rhythm.** Section 20 above:
 - No attack more than twice running: past that he walks in, and six seconds of walking break the run.
 - The Slam, the Leap and the Nova recover longer, in a spent pose.
 - world141 re-hashed in place. The brain's law stays 5.
-- Pins `test/wb13f_rhythm.test.js` (5), with WB4 re-pinned; mutants `tools/mutants/wb13f.json` (14).
+- Pins `test/net/gate/wb13f_rhythm.test.js` (5), with WB4 re-pinned; mutants `tools/mutants/wb13f.json` (14).
 
 **WB12c (2026-10-02) - On the Burning Doors.** Section 19 above:
 - The Mages Guild's account of the breaches, the port's first book of its own (id 417), in the classic format.
 - Sold by booksellers, general stores and pawnshops, and found on library shelves, at the odds of any other book.
 - A character's first Deadlands Ember brings a copy by courier.
 - No relay or account change.
-- Pins `test/wb12c_burning_doors.test.js` (7); mutants `tools/mutants/wb12c.json` (19).
+- Pins `test/systems/wb12c_burning_doors.test.js` (7); mutants `tools/mutants/wb12c.json` (19).
 
 **WB12d (2026-10-02) - the faithful's rite.** Section 19 above:
 - Each breach's faithful work their rite in a circle near it, under a pillar of smoke, from the omen to the opening.
@@ -3071,7 +3071,7 @@ developed"*):
   closed, whether or not they fought the Warden.
 - The faithful's chest opens once the rite is broken, once a day a character.
 - world141 re-hashed in place; acct46 (migration 0046) - deploy it first. The brain's law stays 5.
-- Pins `test/wb12d_rite_law.test.js` (6), `test/wb12d_rite_relay.test.js` (4), `test/wb12d_rite_world.test.js` (15);
+- Pins `test/net/gate/wb12d_rite_law.test.js` (6), `test/net/gate/wb12d_rite_relay.test.js` (4), `test/net/gate/wb12d_rite_world.test.js` (15);
   mutants `tools/mutants/wb12d.json` (94).
 
 **The merge with main (2026-10-02).** Main's CLIMB5 and CLIMB6, FRIENDS-SYNC, ELITE FOES and the Seats arc took
@@ -3094,7 +3094,7 @@ once.
   are drawn, the party always, the places held against one less than four metres nearer; one left undrawn is not there to
   press, aim a gift at or hear struck.
 - No relay or account change.
-- Pins `test/gatecrowd.test.js` (9), with auditwatchkit_net, invisnet, mwbody1, peerplaque, soc5_interact and audit27d
+- Pins `test/systems/gatecrowd.test.js` (9), with auditwatchkit_net, invisnet, mwbody1, peerplaque, soc5_interact and audit27d
   re-pinned; mutants `tools/mutants/gatecrowd.json` (45).
 
 ## At sea - the sea serpent (SERPENT1, 2026-10-04)

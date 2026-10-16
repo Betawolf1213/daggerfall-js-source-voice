@@ -1910,7 +1910,7 @@ export function createCityGuards({ renderer, collider, fetchBytes, getTexture, u
     // (the record above) and the fall arm inside update(), which need
     // ARENA2 to reach, and WATCH1's `watch.hurt` net seam (world.js's
     // exteriorFoes.setNet), which hands `{ fromPlayer: false, peer: true }`
-    // through `hurtGuard` and is the one a test drives (test/watch1.test.js).
+    // through `hurtGuard` and is the one a test drives (test/characters/enemy/watch1.test.js).
     _damage: (i, dmg, opts) => { const g = guards[i]; if (g && !g.dead) damageGuard(g, dmg, [0, 0, 0], null, opts); },   // probe/test seam through the REAL death path
     _debug: () => guards.map((g) => ({ dead: g.dead, hp: g.entity.health, pos: g.ai.feet.map((v) => +v.toFixed(1)), detected: g.ai.detected, state: g.attack.machine.state, moving: g.ai.moving, dist: +(g.ai._dist ?? -1).toFixed(1), giveUp: g.ai.giveUpTimer })) };
 }

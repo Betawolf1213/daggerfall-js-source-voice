@@ -6,7 +6,7 @@
 // the tools and the translators read; the English the game shows is the code's own, so it is never loaded here.
 //
 // import.meta.glob is Vite's compile-time macro, absent under bare node - so node sees no files (worldOfDaggerfall.js's
-// door), the module still loads (test/moduleload_smoke.test.js runs every body), and the tests feed the same files off
+// door), the module still loads (test/tree/moduleload_smoke.test.js runs every body), and the tests feed the same files off
 // the disk (_useLocaleFilesForTests) to run the boot's laws. Nothing here may stop the game: a language whose text
 // fails to load leaves English standing.
 

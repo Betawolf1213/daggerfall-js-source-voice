@@ -29,7 +29,7 @@ The draw reads no table as no view now - `CardScene.poses` already takes a null 
 state) and draws the cards in flight with no stacks or bets. Dropping the cloth with the table was the other fix, and
 it would have swept the hand that broke him off the felt the instant it was settled.
 
-Pinned by `test/auditcards6_e.test.js` (the eleventh: through the host's real card block over the relay's own table
+Pinned by `test/systems/auditcards6_e.test.js` (the eleventh: through the host's real card block over the relay's own table
 law - seated, the broke `leave`, the frame's own draw site after it; and E8's refusal the same); `tools/mutants/fb1011g_allin.json`.
 
 ## SLOPE-ALL: Daggerfall's own ramp climbs under All (2)
@@ -54,7 +54,7 @@ floor, a prop's top - which still stand under the global slice. Left as it was: 
 lower storey's slice are still cut by the row's own storey - the ramp's floor draws whole, its upper walls do not.
 Cutting a climbing row at its top storey would be a change to the sheet's design, not this fix.
 
-Pinned by `test/fb1011g_slopeall.test.js` (2: FS_A's own climb expression read out of the source and run - the 1:4
+Pinned by `test/ui/ink/fb1011g_slopeall.test.js` (2: FS_A's own climb expression read out of the source and run - the 1:4
 ramp, 3 to 65 degrees, a level floor, a wall, a tread; the one constant and RAMP-INK's floor law untouched);
 `tools/mutants/fb1011g_slopeall.json` (4).
 
@@ -85,8 +85,8 @@ Not fixed, and why: a raider stuck behind a wall or in water within the raid's 1
 does (unmeasurable here); and `net/online.js` sendRaid reads `raidOk` without SD-HELLO's welcome gate - latent, with no
 road to it found (the cell hellos do not yield).
 
-Pinned by `test/fb1011g_raidword.test.js` (5); `test/raid3_raidLedger.test.js`'s "out of the town: nothing" moved off
-the town's pixel (PIN MOVED); `test/eventtip.test.js`'s host pin carries the ledger (PIN MOVED);
+Pinned by `test/systems/fb1011g_raidword.test.js` (5); `test/net/raid3_raidLedger.test.js`'s "out of the town: nothing" moved off
+the town's pixel (PIN MOVED); `test/ui/eventtip.test.js`'s host pin carries the ledger (PIN MOVED);
 `tools/mutants/fb1011g_raidword.json` (9), `tools/mutants/raid3.json` RAID3-client-word-unsaid and
 `tools/mutants/eventtip.json`'s two re-aimed by content.
 
@@ -107,14 +107,14 @@ kept per pile - with "N more above" over it and "and N more" under it. The class
 (`ui/classicLootPanel.js` lootPanelLines folds both counts into its one foot line). DFU's own loot window scrolls; the
 plaque is the port's (Port-Ledger QUICK-LOOT), and this retires its "glance" sentence in `10-UI/UI-Arc.md`.
 
-Pinned by `test/fb1011g_lootscroll.test.js` (3: the window's law; the take past the old tail; the classic foot line) and
-`test/worldhover.test.js`'s 63rd (the real plaque driven: the wheel to the ninth row, the window following, the lit row
+Pinned by `test/systems/fb1011g_lootscroll.test.js` (3: the window's law; the take past the old tail; the classic foot line) and
+`test/systems/worldhover.test.js`'s 63rd (the real plaque driven: the wheel to the ninth row, the window following, the lit row
 drawn the lit item, the take, the window holding while the light moves inside it); `tools/mutants/fb1011g_lootscroll.json`
-(9). PIN MOVED: `test/worldhover.test.js`'s "an itemised frame carries the rows" and "the same six rows are visible"
-(the frame's rows are every row, the window's are six), `test/quicklootstats.test.js`'s clamp (the wheel walks the whole
+(9). PIN MOVED: `test/systems/worldhover.test.js`'s "an itemised frame carries the rows" and "the same six rows are visible"
+(the frame's rows are every row, the window's are six), `test/systems/quicklootstats.test.js`'s clamp (the wheel walks the whole
 pile and clamps at its last row), both quick-loot suites' fixture (`frameOf` mints every row, as resolveHover does
-now), `test/disc22c_classic_loot.test.js`'s draw site (the window handed to the panel), and
-`test/resourcesafety.test.js`'s plaque slots (the window's `_winKey` and `_winFrom`, both reset by destroyWorldPlaque).
+now), `test/systems/disc22c_classic_loot.test.js`'s draw site (the window handed to the panel), and
+`test/systems/resourcesafety.test.js`'s plaque slots (the window's `_winKey` and `_winFrom`, both reset by destroyWorldPlaque).
 
 ## QUEST-NAME: a quest person is named on the plaque (5)
 
@@ -140,9 +140,9 @@ Left, situational: a living-world resident standing nearer on the ray than the q
 hot-placed after entry is not moved off. Not changed here. Wanted from the reporter: whether the quest had already
 spoken once, whether anyone stood in front of the person, and the town.
 
-Pinned by `test/fb1011g_questname.test.js` (3: the host's helper, run as written over the real plaque namer; both hosts
+Pinned by `test/systems/fb1011g_questname.test.js` (3: the host's helper, run as written over the real plaque namer; both hosts
 asking it before the item gate with their clicks' own keys; the mod's own order, read from the vendored source);
-`tools/mutants/fb1011g_questname.json` (6). PIN MOVED: `test/audit26_talk.test.js` F016 counts eight static-NPC name
+`tools/mutants/fb1011g_questname.json` (6). PIN MOVED: `test/systems/audit26_talk.test.js` F016 counts eight static-NPC name
 sites, the plaque's quest Person the eighth.
 
 ## HELD-SIDE: a trade's refusal says whose hold it was (6)
@@ -178,7 +178,7 @@ next checkpoint once `budget-set` turns enforce off; 'staff', 'dupe' and a 'law'
 Noted, not changed (the owner's call): a stolen counter piece carries no `counterBought` mark (Buy alone writes it), so a
 town's patrons buy stolen goods at a player's public trader, the arbitrage LW-II-2 S1 closed for bought goods.
 
-Pinned by `test/fb1011g_heldside.test.js` (4: the held side second and first through the real Worker over the real
+Pinned by `test/systems/item/fb1011g_heldside.test.js` (4: the held side second and first through the real Worker over the real
 migrations; the words; the client's half carrying the side into its refusal with the session's own hold);
-`test/int2_judge.test.js`'s refused half and its source pin carry the side (PIN MOVED); `tools/mutants/fb1011g_heldside.json`
+`test/server/int2_judge.test.js`'s refused half and its source pin carry the side (PIN MOVED); `tools/mutants/fb1011g_heldside.json`
 (9), `tools/mutants/int2.json` INT3-the-trade-unheld re-aimed by content.

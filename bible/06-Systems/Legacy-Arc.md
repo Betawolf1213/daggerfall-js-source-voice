@@ -219,7 +219,7 @@ line's own law now, Bloodline open at the founder's chargen.
 online when creating a character. Perma Death, the regular option, or the option that skips the liniage system
 entirely. Current characters already created start without this system and requires a new game"; built:
 `ui/legacy/legacyModelChoice.js`, `ui/levelingChoice.js`, `scenes/legacyHost.js found`, `systems/chargenSession.js
-finishChargen`, `test/legacychoice.test.js`, `tools/mutants/legacychoice.json`):
+finishChargen`, `test/systems/legacychoice.test.js`, `tools/mutants/legacychoice.json`):
 - ONLINE THE QUESTION HAS THREE ANSWERS - Enduring (the regular one, first: Enter without reading never costs a
   character), Bloodline (permadeath), and NO LINEAGE (`family.js NO_LINEAGE`): no house and no heirs, the realm's own
   death. On Enhanced Plus it is the popup - the Plus window, the three side by side as stone tiles tagged Not
@@ -304,7 +304,7 @@ finishChargen`, `test/legacychoice.test.js`, `tools/mutants/legacychoice.json`):
 
 *Built: LEGACY5. The law is `systems/legacy/marriage.js`; the host's half `scenes/legacyHost.js` (`topicRows`,
 `weddingStep`, `childrenStep`, `residentDied`, `holdsResident`, the spouses in `residentsOf`); the talk's rows
-`scenes/townTalk.js` (`legacyTopics`); the wiring `scenes/world.js`; pinned in `test/legacy5_marriage.test.js`,
+`scenes/townTalk.js` (`legacyTopics`); the wiring `scenes/world.js`; pinned in `test/systems/legacy/legacy5_marriage.test.js`,
 mutation-proven in `tools/mutants/legacy5.json`. Two players' characters wed online: LEGACY7 part three (section 9).*
 
 - **Courting** a Living World townsperson of a household (the census's `h` roll - never one of the watch, a traveller
@@ -352,15 +352,15 @@ mutation-proven in `tools/mutants/legacy5.json`. Two players' characters wed onl
   `firstNameOf`, since LW4), so its "{who} {house}" read "Tlist Sentinel" for a house named for its seat, and says
   "{who}" now. **AUDIT LEGACY III A16/F2 corrected this line:** it said the news doubled a surname ("Ysolde Hlaalu
   Hlaalu, gone."), which no town ever said.
-  Pinned in `test/legacyname.test.js`, mutation-proven in `tools/mutants/legacyname.json`.
+  Pinned in `test/systems/legacy/legacyname.test.js`, mutation-proven in `tools/mutants/legacyname.json`.
 
 ## 9. ONLINE
 
 *LEGACY7 - built: the line, the tombstone, the member's birth and the house name (`server-account/src/legacy.js`,
-migration `0084_legacy.sql`, acct87; `systems/legacy/realmLine.js`; `test/legacy7_service.test.js`,
-`test/legacy7_online.test.js`, `tools/mutants/legacy7.json`), and two players wed (part three: `net/wedSession.js`, the
+migration `0084_legacy.sql`, acct87; `systems/legacy/realmLine.js`; `test/server/legacy7_service.test.js`,
+`test/systems/legacy/legacy7_online.test.js`, `tools/mutants/legacy7.json`), and two players wed (part three: `net/wedSession.js`, the
 `wed` frame of world174 (world172 on its branch, renumbered past main's WATCH-FIX and SERPENT3 at the merge),
-`server-account/src/legacy.js` realmWed; `test/legacy7_wed.test.js`, `tools/mutants/legacy7wed.json`).*
+`server-account/src/legacy.js` realmWed; `test/systems/legacy/legacy7_wed.test.js`, `tools/mutants/legacy7wed.json`).*
 
 - **The model is the family's**, chosen at the founder's online chargen - Bloodline open online (AUDIT LEGACY B4 shut it
   while a permadeath had no authority there; the tombstone is that authority), said on its card: "Online, the realm
@@ -395,7 +395,7 @@ migration `0084_legacy.sql`, acct87; `systems/legacy/realmLine.js`; `test/legacy
   LEGACY7 an online founder kept the client's id in the record while the realm named the character anew, so its saves
   were refused into the record and its next load founded a second house.
 - **Enduring online** is the offline law: the toll, the rise, the elder's mantle.
-- **A house name online** (LEGACY7 part two, `net/houseLaw.js`; world174, acct87; `test/legacy7_house.test.js`,
+- **A house name online** (LEGACY7 part two, `net/houseLaw.js`; world174, acct87; `test/net/legacy7_house.test.js`,
   `tools/mutants/legacy7house.json`): the account service reads a realm character's house off its line and signs it
   into the identity token beside the guild's tag - `hn` the surname, `hc` the member's given name, `hb` a Bloodline,
   `hg` the generation's numeral from the second of a name ("Ysolde II") - through the name filter (the house is shown
@@ -438,7 +438,7 @@ migration `0084_legacy.sql`, acct87; `systems/legacy/realmLine.js`; `test/legacy
 
 ## 10. WORLD INFLUENCE
 
-*LEGACY6's - built (`systems/legacy/influence.js`; `test/legacy6_influence.test.js`, `tools/mutants/legacy6.json`).*
+*LEGACY6's - built (`systems/legacy/influence.js`; `test/systems/livingWorld/legacy6_influence.test.js`, `tools/mutants/legacy6.json`).*
 
 - **What a member leaves.** At every save (and at their death) the one played's STANDING is written on their person
   (`memberStanding`): their legal reputation in every region, their faction standings (the forty furthest from nothing)
@@ -475,7 +475,7 @@ save from the family's dates. The years are the family's fiction, the world's cl
 
 *Built: LEGACY-HOME. The law is `systems/legacy/household.js`; the host's half `scenes/legacyHost.js` (`residentsOf`,
 `kinOfResident`, `kinSlain`, `kinKilled`, `isFamilyHouse`, `markHome`); the wiring `scenes/world.js`; pinned in
-`test/legacyhome.test.js`, mutation-proven in `tools/mutants/legacyhome.json`.*
+`test/systems/legacyhome.test.js`, mutation-proven in `tools/mutants/legacyhome.json`.*
 
 Mac (2026-10-05): "I think your bloodline should be visible when not playing, and if a house is owned should live in the
 house ... With the ability to switch by interacting with them or by using the ui. Really trying to flesh this out since
@@ -507,7 +507,7 @@ than standing still.
   and the town by day), found in the street and in the house (LW8's rooms). A HOUSE OF THE FAMILY'S holds the line and
   no one else (the census's people of that building are not shown inside it, the one played's own house included); every
   other room of the player's own stays empty, as AUDIT-E1 has it.
-- **How they are drawn.** IN THEIR OWN BODY (LEGACY7 part four, `world/familyBodies.js`; `test/legacy7_body.test.js`,
+- **How they are drawn.** IN THEIR OWN BODY (LEGACY7 part four, `world/familyBodies.js`; `test/systems/legacy/legacy7_body.test.js`,
   `tools/mutants/legacy7body.json`), as the design asked: a member whose newest save wrote down their LOOK - what they
   wore, the hello's own recipe (`family.js memberLook`: race, sex, face, class, the worn kit's doll fields; written at
   every write of the one played, dropped at a death) - is drawn in the street and in a room as an online peer is drawn
@@ -538,7 +538,7 @@ than standing still.
   census's turn (`livingKilled` passes them to the host first: a turn of the lives' named a census place not theirs,
   and the record, alive still, stood them again with the next day's people). A townsperson killed so ends their
   courtship, as one struck down does. Neither death lays remains or a quest: those are the one played's (section 4).
-- **Online** (LEGACY7 part five, `test/legacy7_homes.test.js`, `tools/mutants/legacy7homes.json`): the realm keeps the
+- **Online** (LEGACY7 part five, `test/systems/legacy/legacy7_homes.test.js`, `tools/mutants/legacy7homes.json`): the realm keeps the
   line, so a realm character's ONLINE HOMES (HOME1, `systems/online/onlineHomes.js` - a home is a realm character's) are its
   houses, learned with the save as a deed is offline: the world reads this realm character's rows of the account's
   homes (`/v1/homes/mine`, each named by its town) at the boot and after each home of mine is bought, sold or changed
@@ -565,7 +565,7 @@ than standing still.
 *Built: PERMADEATH-HOUSES (2026-10-09). The law is `systems/legacy/household.js` (`deedsDue`, `syncHouses`' `taken`,
 `heldByDead`); the host's half `scenes/legacyHost.js` (`takeDeeds`); the world's `scenes/world.js` (`legacyInheritHouse`);
 the scene handed on `systems/sceneCache.js` (`graftPermanentScene`); online `server-account/src/homes.js` (`inheritHome`,
-`/v1/homes/inherit`, acct98 - acct97 on its branch, renumbered past SERVER-POST and HOURS-FIRST at the merge). Pinned in `test/permadeath_houses.test.js`, mutation-proven in
+`/v1/homes/inherit`, acct98 - acct97 on its branch, renumbered past SERVER-POST and HOURS-FIRST at the merge). Pinned in `test/systems/legacy/permadeath_houses.test.js`, mutation-proven in
 `tools/mutants/permadeathhouses.json` (30, all dead).*
 
 The owner (2026-10-09): "now all that needs to be looked at is what happens to houses owned by dead permadeath
@@ -666,7 +666,7 @@ world, locked to its own family.
   generation, and in an Enduring house the age against the span, Arkay's toll and the elder's word ("An elder of the
   house: the mantle may pass from you on the Family tab."; "Your span is spent: your next death is your last."). One line
   of age (`ageWord`) is the card's and the sheet's, so they never disagree. The classic skin's F5 sheet is DFU's own art
-  with no slot for it; the pause window carries it in either skin. Pinned in `test/legacysheet.test.js`, mutation-proven
+  with no slot for it; the pause window carries it in either skin. Pinned in `test/systems/legacy/legacysheet.test.js`, mutation-proven
   in `tools/mutants/legacysheet.json`.
 - **Not built** (recorded): the mod's classic 1:1 window in its own art (its pictures are the classic UI's own cuts,
   section 1; Ledger row (9): every skin draws the Enhanced Plus tab), a house's standing by region apart from its
@@ -708,7 +708,7 @@ answered every one received `no` and refused every Yes (net/wedSession.js). Sinc
 LEGACY III's prefix (never lying dead) kept it. Now `legacyHost ? legacyHost.wedRefusal() : 'house'` - 'house' only
 with no house host. The model (Enduring or Bloodlines) was never read by either gate, the realm's included. THE FOUR
 HOSTS: the wedding is the world host's alone (`scenes/exterior.js`, `scenes/worldModes.js` and
-`scenes/dungeonContext.js` carry no realm session). `test/legacy7_wed.test.js` runs `wedCan` out of its own text (the
+`scenes/dungeonContext.js` carry no realm session). `test/systems/legacy/legacy7_wed.test.js` runs `wedCan` out of its own text (the
 null is null, each refusal the house's own, the dead, a death, a relay that cannot carry it, offline);
 `tools/mutants/legacy7wed.json` FB1008-wed-the-null-read-as-no-house, dead. Its standing survivor
 LEGACY7W-partner-dead-or-lineless survives on main as well - not this change's, recorded for its arc.
@@ -759,7 +759,7 @@ nothing twice; a run cut short is planned again):
 - her union with another player's character REPORTED, never reopened - their house heard she died.
 
 Her heir stays, a living member, theirs to keep or delete from the Online door. Her years stay spent: an Enduring
-elder's next death is final, as it was. `test/revive.test.js` (9) runs it over a real death on the real Worker's
+elder's next death is final, as it was. `test/systems/legacy/revive.test.js` (9) runs it over a real death on the real Worker's
 service - the plan applied and run again, a stale device's write after it, the held cases, the tombstone guard, the
 workflow's shape; `tools/mutants/revive.json` (30) all dead.
 
@@ -773,7 +773,7 @@ rewound, read, put the present back (proven by its counts) and failed at the pla
 whether `--find` was ANYWHERE in its words, before asking `--plan` - and the plan's own line carries `--find
 <found.json>`, so it ran as a find and read a facts file the line never named ("The "path" argument must be ... Received
 null"). Nothing was written; the hold lifted; acct132 answered. The mode is now the first word alone, and
-`test/revive.test.js` runs the tool's `--find` and `--plan` as the workflow's own lines write them (mutant
+`test/systems/legacy/revive.test.js` runs the tool's `--find` and `--plan` as the workflow's own lines write them (mutant
 REV-the-mode-any-word, dead). The run is to be made again.
 
 REVIVE-SIZE (2026-10-14, Mac: "are you sure it works"). Read against what the first run found - her line at rev 307, a

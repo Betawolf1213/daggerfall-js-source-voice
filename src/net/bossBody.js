@@ -38,7 +38,7 @@ export const BODY_AFTER_MS = 400;
  *  the walk back are longer; a `dd` and a living pose a beat apart are no rise. */
 export const BODY_RISE_MS = 15_000;
 /** A ship the count wrecked floats again past this share of her hull - the sea's own law (systems/naval/navalYard.js
- *  FIELD_REFLOAT, held equal by test/int11_body.test.js: the relay's bundle does not carry the yard). */
+ *  FIELD_REFLOAT, held equal by test/net/int11_body.test.js: the relay's bundle does not carry the yard). */
 export const HULL_REFLOAT = 0.15;
 /** The most a mend line may hold or fill a second (a staff typo is refused, never obeyed). */
 export const BODY_LINE_MAX = 10;

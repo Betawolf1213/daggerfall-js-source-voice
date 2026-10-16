@@ -5,7 +5,7 @@
     "old": "  if (!app) return;\n  repaintKeepingScroll(app, () => renderInto(), { focus: true });",
     "new": "  repaintKeepingScroll(app, () => renderInto(), { focus: true });",
     "tests": [
-      "test/fieldbugs_x.test.js"
+      "test/systems/fieldbugs_x.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "{ kind: 'map', textId: MAP_TEXT_ID, revealed, macros: { map: revealed } }",
     "new": "{ kind: 'map', textId: MAP_TEXT_ID, revealed }",
     "tests": [
-      "test/fieldbugs_x.test.js"
+      "test/systems/fieldbugs_x.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "else if (r.textId) { out.textId = r.textId; if (r.macros) out.macros = r.macros; }",
     "new": "else if (r.textId) out.textId = r.textId;",
     "tests": [
-      "test/fieldbugs_x.test.js"
+      "test/systems/fieldbugs_x.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "    : row && typeof row === 'object' ? { ...row, text: one(row.text ?? '') } : row));",
     "new": "    : row && typeof row === 'object' ? one(row.text ?? '') : row));",
     "tests": [
-      "test/fieldbugs_x.test.js"
+      "test/systems/fieldbugs_x.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "    _locationRevealedByMapItem = shown;\n",
     "new": "",
     "tests": [
-      "test/fieldbugs_x.test.js"
+      "test/systems/fieldbugs_x.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "    fon: factionName, kno: factionName,\n",
     "new": "",
     "tests": [
-      "test/fieldbugs_x.test.js"
+      "test/systems/fieldbugs_x.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "const rows = (id) => expandGuildRows(townTalk?.lines?.(id) ?? [], guildMacros);",
     "new": "const rows = (id) => townTalk?.lines?.(id) ?? [];",
     "tests": [
-      "test/fieldbugs_x.test.js"
+      "test/systems/fieldbugs_x.test.js"
     ]
   }
 ]

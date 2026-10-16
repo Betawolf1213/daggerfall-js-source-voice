@@ -134,7 +134,7 @@ curse come or the data attached draws the head again. The party's plate keys a s
 
 ## How it was proven
 
-`test/portrait3d.test.js` (15), on the port's own Breton heads and helms read off the disk on the vendored retail
+`test/ui/portrait3d.test.js` (15), on the port's own Breton heads and helms read off the disk on the vendored retail
 skeleton under a counting renderer: the frame face-on, every corner in the window with air, as wide as asked; the hood
 framed only round the head; the portrait the head and hair the curated table names for portrait 6, every range
 textured, the mesh and every texture let go; the steel helm closed hiding the face and hair, open showing the face, the

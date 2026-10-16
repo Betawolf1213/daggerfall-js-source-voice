@@ -5,7 +5,7 @@
     "old": "if (ring_.some((p) => p.bd === lv && isFree(p)))",
     "new": "if (ring_.some((p) => p.bd === lv))",
     "tests": [
-      "test/wildfree.test.js"
+      "test/systems/wild/wildfree.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "const freeFrom = (min) => ring_.filter((p) => p.bd >= min && isFree(p));",
     "new": "const freeFrom = (min) => ring_.filter((p) => p.bd >= min);",
     "tests": [
-      "test/wildfree.test.js"
+      "test/systems/wild/wildfree.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "pool = two.length >= want ? two : all();",
     "new": "pool = all();",
     "tests": [
-      "test/wildfree.test.js"
+      "test/systems/wild/wildfree.test.js"
     ],
     "equivalent": true,
     "why": "The law as it stood is kept verbatim, and this arm of it never decides: it is read only when the pool is short of the count, and by then the floor loop has lowered the floor to 2 (or it began at 1 or 2) - so the two-pixel band IS the pool, or within it, and short too: the whole ring is taken either way. Equivalent in the old law as in this one."
@@ -34,7 +34,7 @@
     "old": "[2, all], [1, all]]",
     "new": "[2, () => pool], [1, () => pool]]",
     "tests": [
-      "test/wildfree.test.js"
+      "test/systems/wild/wildfree.test.js"
     ],
     "equivalent": true,
     "why": "The law as it stood is kept verbatim, and these passes never decide: the band's one-pixel pass fills the count whenever the band holds that many (a pixel is at least 1 from every other), and a band holding fewer was already widened to the whole ring above - so the ring's passes read the band itself, or are never reached. Equivalent in the old law as in this one."
@@ -45,7 +45,7 @@
     "old": "(p.free ??= !!free(p.x, p.y))",
     "new": "(p.free = !!free(p.x, p.y))",
     "tests": [
-      "test/wildfree.test.js"
+      "test/systems/wild/wildfree.test.js"
     ]
   },
   {
@@ -54,7 +54,7 @@
     "old": "free: /** @type {boolean|undefined} */ (undefined) });",
     "new": "free: !!free(x, y) });",
     "tests": [
-      "test/wildfree.test.js"
+      "test/systems/wild/wildfree.test.js"
     ]
   }
 ]

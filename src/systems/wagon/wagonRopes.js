@@ -57,7 +57,7 @@ export function layRope(rope, a, b) {
  *  teams' harnesses were some 7% of what the page allocated, ~1 ms a frame): A ROPE STEPS IN PLACE - its ends kept in
  *  its own arrays, each sub-step's ends in one pair for every rope, and a length as a root of its squares (Math.hypot
  *  of three boxed its every answer, ten iterations of eight links a sub-step). The rope is the one it was, to within
- *  a float's rounding (test/perfrope.test.js holds it to the old law). */
+ *  a float's rounding (test/systems/wagon/perfrope.test.js holds it to the old law). */
 const _ea = [0, 0, 0], _eb = [0, 0, 0];
 const len3 = (x, y, z) => Math.sqrt(x * x + y * y + z * z);
 const keep3 = (to, v) => { to[0] = v[0]; to[1] = v[1]; to[2] = v[2]; };

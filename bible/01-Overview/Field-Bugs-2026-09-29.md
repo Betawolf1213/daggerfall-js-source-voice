@@ -28,7 +28,7 @@ Then: *"I want people to get their stuff back"* (RESTORE, below).
 
 ## CUSTOMS-CARRY: who comes in, what comes with them, and the door says so first (1, 2)
 
-**Reproduced first.** `test/fb0929_customs.test.js` drives the real Worker over the real migrations: a character with a
+**Reproduced first.** `test/server/fb0929_customs.test.js` drives the real Worker over the real migrations: a character with a
 cloud backup from before the realm and no Renown track is refused `customs-never-online` - the field's refusal.
 
 **Why.** Migration 0020 took the realm's census - "the characters that played online before the realm" (decision 3) - of
@@ -56,7 +56,7 @@ so only after it had run, and it runs once.
   behind, the deeds that stay, that the homes and guild place cross, that the offline character keeps everything - off
   customs run on a copy, and runs it on the answer.
 
-Pinned: `test/fb0929_customs.test.js` (5), `tools/mutants/fb0929_customs.json` (13 mutants, 13 dead); S2's pins flipped
+Pinned: `test/server/fb0929_customs.test.js` (5), `tools/mutants/fb0929_customs.json` (13 mutants, 13 dead); S2's pins flipped
 to the new law and their mutants re-aimed. `06-Systems/Realm-Arc.md` CUSTOMS-CARRY.
 
 ## FEATHERWEIGHT: the Mark that read "ERROR" (3)
@@ -66,7 +66,7 @@ Slowfalling; used, it casts Slowfalling on its user for 10 of its 1500 condition
 MagicPowers (DaggerfallUnityItemMCP.cs:345-363) names a CastWhen* spell out of the whole of SPELLS.STD, and
 `itemPowers.js` asked the item maker's list for that one power - which offers Slowfalling only as Cast When Held. It
 reads the SPELLS.STD registry now (and, until that lands, the catalogue's three CastWhen* lists as one table). A saved
-Mark reads right on load. `test/fb0929_featherweight.test.js` (5), `tools/mutants/fb0929_featherweight.json` (4, 4
+Mark reads right on load. `test/systems/item/fb0929_featherweight.test.js` (5), `tools/mutants/fb0929_featherweight.json` (4, 4
 dead). `06-Systems/Systems-Arc.md` FEATHERWEIGHT.
 
 ## FB0929: the Overworld's mouse, free from its first frame (5)
@@ -79,7 +79,7 @@ view (TV1's law, which stands), until the browser's own Escape. The map's Overwo
 lands while the cursor is free is let go now (`player/pointerLock.js`) - which covers Y pressed while a click's relock
 is in flight too. Main's AUDIT OW5 V1 found and fixed the same race the same day; at the merge its one page-wide
 listener stayed and this branch's copy went, and these pins drive it. Reproduced in a
-Node test and in real Chromium first. `test/fb0929_overworld_mouse.test.js` (3),
+Node test and in real Chromium first. `test/scenes/fb0929_overworld_mouse.test.js` (3),
 `tools/mutants/fb0929_overworld_mouse.json` (3, 3 dead). `06-Systems/Travel-View.md` FB0929.
 
 ## FB0929 (min price): a purchase is never free (4)
@@ -94,7 +94,7 @@ pieces in the walk that totals the cost) and Daggerfall's number wherever it is 
 counters, the enhanced quote and the keyed shelf and repair rows all price through it, so what a counter shows is what
 it takes. The SALE is not floored - online a shop pays at most half its ask (P0.4), and a floored sale would mint gold -
 so the floor only raises an ask, and it shut Daggerfall's own loop (a bandage bought for nothing and sold back for a
-gold). `test/fb0929_min_price.test.js` (8), `tools/mutants/fb0929.json` (17, 17 dead). `06-Systems/Systems-Arc.md`
+gold). `test/systems/fb0929_min_price.test.js` (8), `tools/mutants/fb0929.json` (17, 17 dead). `06-Systems/Systems-Arc.md`
 FB0929.
 
 ## FB0929 (raids): the swing no longer finds the town's defenders (6)
@@ -107,7 +107,7 @@ followed. Reproduced in node first (crime 4, both defenders hostile and hunting 
 watch's pool now spares its defenders on every pass (`cityGuards.resolvePlayerHit`), as the player's spells, shafts and
 torches always have, and a defender on the look ray stops the swing short of the townsperson behind. With the
 protection off nothing changes. Port-Ledger A (DFU's ray would still strike an ally alone in front).
-`test/fb0929_raidguards.test.js` (3), `tools/mutants/fb0929_raidguards.json` (5, 5 dead). `03-World/Raiding-Parties.md`
+`test/scenes/fb0929_raidguards.test.js` (3), `tools/mutants/fb0929_raidguards.json` (5, 5 dead). `03-World/Raiding-Parties.md`
 FB0929.
 
 ## RAID-GUARDS and RAID-REP: Mac's two follow-ups on the raids (6)
@@ -121,7 +121,7 @@ player is at, need more testing but I think it improves rep in all regions kinda
   while the guards' damage door refuses any blow of the player's on a raid's defender by whatever road it came: it
   lands nothing and raises no Assault. The crime watch is never spared; with no raid on and the protection off, DFU's
   rule stands. Spells, shafts and thrown torches always passed a defender by. Online, a peer's watchman puppet can
-  still flash under my swing, but its owner refuses the blow. `test/fb0929_raidguards.test.js` (now 5),
+  still flash under my swing, but its owner refuses the blow. `test/scenes/fb0929_raidguards.test.js` (now 5),
   `tools/mutants/raidguards.json` (8, 8 dead).
 - **RAID-REP: checked, and not broken.** GrantReputation raises the raided region's legal reputation, its People and
   its first knightly order - for a player who fought and stands on the town's pixel - and no other region's. The one
@@ -138,7 +138,7 @@ projects hundreds of thousands of pixels out, so the path ran about 1.5 million 
 Chromium, the median. PERF-TV's probe had timed JavaScript and layout, never paint, over a route that stayed on the
 screen. The line is cut to the screen grown by `ROUTE_CLIP_PX` now (`ui/travel/travelViewHud.js`): on the screen it is the
 same line (byte for byte when it is all on screen), and a far pick draws in 16.7 ms. The planner and the journey are
-untouched. `test/fb0929_farroute.test.js` (4), `tools/mutants/fb0929_farroute.json` (13, 13 dead),
+untouched. `test/world/fb0929_farroute.test.js` (4), `tools/mutants/fb0929_farroute.json` (13, 13 dead),
 `tools/travelViewPerf.mjs` times the frames now. `06-Systems/Travel-View.md` PERF-TV.
 
 ## VAMP-HOOD: a vampire with its hood up travels by day (2, the suggestion)
@@ -151,7 +151,7 @@ hour that no rest or trip shortens, and since REALM a realm character cannot sli
 (`survival/temperature.js` `cloakState`, the felt temperature's one hood law) the door opens by day and an arrival is
 not pushed to dusk; a bare head is refused with DFU's line and "Raise the hood of a cloak or robe to travel by day." The
 day's -20 stays (it is the hour's, not the sun's). Port-Ledger A: Starempire42's suggestion, which Sir McMobdon called a good idea, sent in by Mac with the reports.
-`test/fb0929_vampirehood.test.js` (6), `tools/mutants/vamphood.json` (11, 11 dead). `06-Systems/Systems-Arc.md`
+`test/systems/fb0929_vampirehood.test.js` (6), `tools/mutants/vamphood.json` (11, 11 dead). `06-Systems/Systems-Arc.md`
 VAMP-HOOD.
 
 ## The benches (8): not reproduced
@@ -190,12 +190,12 @@ use on the record (`realm_passes`, migration 0024). The realm keeps one way past
 retired at the merge, never deployed, and ToxicTaco69 comes in on a pass (`node tools/customsPass.mjs ToxicTaco69`). A
 character the census counts never spends one, and a character in from any account never comes in twice.
 
-Pinned: main's `test/customspass.test.js`; what this branch keeps of it, the undo giving a spent pass back, is
-`test/house_loss.test.js`.
+Pinned: main's `test/server/customspass.test.js`; what this branch keeps of it, the undo giving a spent pass back, is
+`test/systems/house_loss.test.js`.
 
 ## HOUSE-LOSS: two roads took players' houses at customs (Mac, later)
 
-**Reproduced first** (`test/house_loss.test.js`, all seven failing before the fix), and each road run end to end on the
+**Reproduced first** (`test/systems/house_loss.test.js`, all seven failing before the fix), and each road run end to end on the
 real Worker over the real migrations:
 
 1. **The delete that took what customs carried - rows DESTROYED.** Customs carries the origin's online home, guild place
@@ -234,7 +234,7 @@ offline character"** (`06-Systems/Realm-Arc.md` RESTORE, decisions 10 and 11).
 - **The online homes a deleted customs character took** come back from D1's history through a workflow run by hand
   (below): to the offline character, which can be brought in again, carrying them.
 
-Pinned: `test/restore.test.js` (6), `test/realm_restore.test.js` (5), T3's and HOUSE-LOSS's deed pins flipped;
+Pinned: `test/systems/restore.test.js` (6), `test/net/realm_restore.test.js` (5), T3's and HOUSE-LOSS's deed pins flipped;
 `tools/mutants/restore.json` (45 mutants, 45 dead).
 
 ## For Mac
@@ -270,7 +270,7 @@ Pinned: `test/restore.test.js` (6), `test/realm_restore.test.js` (5), T3's and H
   The unbound Overworld key never asked the sun at all.
 - **A repair is floored too** (DFU groups it with Buy): a rank-9 Fighters Guild member's cheap mend costs a gold now.
   A cheap piece inside a dearer lot can still add nothing, because the lot is haggled once, as DFU does.
-- **One test flaked once under load** (`test/realm6.test.js`'s end-to-end sale) during a full changed-files run; it
+- **One test flaked once under load** (`test/server/realm6.test.js`'s end-to-end sale) during a full changed-files run; it
   passed alone and in 22 runs after, 16 of them at once. Noted, not explained.
 - **MAGIC.DEF, not DFU's patched templates.** DFU 0.11.1+ builds magic items from its bundled MagicItemTemplates.txt;
   the port reads the player's own MAGIC.DEF. On an unpatched MAGIC.DEF a record could differ from DFU's.

@@ -59,14 +59,14 @@ TVRNAS00 #9's design (274 taverns with the packs, 2,326 without) at the T where 
 south, its stools 0.28 m off both walls. A smaller table for the cramped inns, or one of the room's own tables given
 over to cards, would put a table back in them; both are the owner's call, and neither is built.
 
-PINS. `test/fb1011e_wayround.test.js` (6): the law's constant; the Dancing Castle's shape (a hall whose openings lead
+PINS. `test/world/fb1011e_wayround.test.js` (6): the law's constant; the Dancing Castle's shape (a hall whose openings lead
 round a core - the chips table in the hall, no gold table, the player walking straight through the opening WALK-WHOLE's
 gold table shut); GENRAL03's (the table in the hall, not on the doorway WALK-WHOLE's stood on); two tables in a room
 7 by 6, and a lane apart in two rooms with a pillar (the window taking the first in whole, its lane with it); and,
 gated on ARENA2_PATH, every tavern the towns lay with the packs and without - no layout cuts the player's capsule off
 more than a quarter of a square metre (eight classic layouts of one hall keep a 22-cell sliver behind a stool, by a
 wall), the Gold Dungeon stands none, the Dancing Castle its chips table where it stood, and the counts above. PIN
-MOVED: `test/fb1009c_walkwhole.test.js`'s second test, which held the fallback - its room stands none now, and stands
+MOVED: `test/world/fb1009c_walkwhole.test.js`'s second test, which held the fallback - its room stands none now, and stands
 the table once its far corridor is gone. `tools/mutants/fb1011e_wayround.json` (8, all dead);
 `tools/mutants/fb1009c_walkwhole.json` re-aimed by content (4, all dead) - WALK-WHOLE-no-table-when-every-spot-cuts
 RETIRED with the law it pinned, and its cut and its every-spot-cuts records aimed at the window's test;

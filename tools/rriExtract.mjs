@@ -12,7 +12,7 @@
 //   node tools/rriExtract.mjs "<path to roleplayrealism-items.dfmod>"
 //
 // What the folder may hold is the mod's own manifest (vendor/roleplay-
-// realism-items/roleplay-realism-items.dfmod.json; test/doctrine.test.js
+// realism-items/roleplay-realism-items.dfmod.json; test/tooling/doctrine.test.js
 // derives the folder's membership from it).
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, unlinkSync } from 'node:fs';
 import { join, dirname } from 'node:path';

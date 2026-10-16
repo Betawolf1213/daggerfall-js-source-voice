@@ -4,7 +4,7 @@ Opened 2026-10-16 (TIDY1). A teammate's read of the tree: the directories are no
 things are placed where they lie, and nobody knows where anything is. Mac: *"Well I wanna take this on"*, then
 *"Do everything"*.
 
-This page is the map. `test/tidy1_codemap.test.js` holds it to the tree both ways: every directory under `src/` that
+This page is the map. `test/tooling/tidy1_codemap.test.js` holds it to the tree both ways: every directory under `src/` that
 holds code is in the table below, and the table names no directory that is gone. A change that adds a directory
 adds its row here.
 
@@ -42,7 +42,7 @@ and what it takes out lands loose in `src/scenes/` or `src/systems/`.
 | `server-account/` | The account service (a Cloudflare Worker): accounts, and what the realm keeps between sessions - guilds, boards, ladders. `migrations/` are D1 migrations - applied, never edited. |
 | `app/` | The desktop app's Electron shell (`main.cjs`, preloads, packaging). |
 | `bible/` | The design record. `Home.md` is the index and its Process rules bind every change. |
-| `test/` | Every test, flat. `bible/09-Testing/Testing.md` has one row per file. |
+| `test/` | Every test, in the folder of the layer it tests and, there, its feature's folder (`test/systems/arena/`) - mapped below. `bible/09-Testing/Testing.md` has one row per file, by its name. |
 | `tools/` | Developer tools run by hand or by the suite: probes, bakes, gates, the mutation lists (`tools/mutants/`). |
 | `scripts/` | Build, release and bake scripts run by npm and CI (`buildTag`, `desktopRelease`, `updateNumber`, the `bake*` scripts). |
 | `public/` | Vite's static root, copied into the build as-is: art, sound, fonts, the mods' assets. No game data (`Port-Doctrine.md`). |
@@ -192,7 +192,7 @@ wiring in `src/scenes/`. A feature with one or two modules in a layer keeps them
 | `src/characters/ownModels/` | The port's own 3D models: heads, armour, clothing, weapons. |
 | `src/characters/paperdoll/` | The paperdoll. |
 | `src/characters/pieces/` | The voxel pieces a character is built from (heads, bodies, armour, weapons). |
-| `src/characters/rewrite/` | project-final's Rewrite Engine rig, vendored byte for byte (`test/rig.test.js`). |
+| `src/characters/rewrite/` | project-final's Rewrite Engine rig, vendored byte for byte (`test/characters/rig.test.js`). |
 
 #### `src/combat/`
 
@@ -384,6 +384,30 @@ wiring in `src/scenes/`. A feature with one or two modules in a layer keeps them
 | `src/world/water/` | The water's bed, corners and ripples - its models and assembly. |
 | `src/world/worldOfDaggerfall/` | The World of Daggerfall mod's locations - its models and assembly. |
 
+### The tests, `test/`
+
+TIDY5 filed the suite as the code is filed: a test goes in the folder of the layer whose code it tests most - what it
+imports, three to one over what it reads - and, where that layer has the feature's folder, in the same folder there.
+`test/systems/arena/` holds the arena's law tests beside `src/systems/arena/`; `test/net/arena/` its wire's. Five
+folders are not a layer of `src/`:
+
+| Folder | What lives there |
+|---|---|
+| `test/server/` | The relay's and the account Worker's own tests (`server/`, `server-account/`, their migrations). |
+| `test/tooling/` | The tools, the scripts, the desktop shell and CI's workflows: the move tool (`tidy1_codemap.test.js`), the shards, the release, the installers. |
+| `test/bible/` | The bible's gates: `manifest.test.js` (the table in Testing.md), `audit18_bible_docs.test.js` (the docs' cites and counts). |
+| `test/tree/` | Laws over the whole tree: every module loads, no temporal dead zone, the shaders evaluate. |
+| `test/fixtures/` | Data the tests read. Not tests. |
+
+The shared helpers stay at the root - `test/*.mjs` (`importGraph.mjs`, `fakeRoom.mjs`, `bibleIndex.mjs`, ...) and
+`test/modsOff.js` - one import away from every folder. A file's NAME is unique across the tree
+(`test/bible/manifest.test.js` holds it): Testing.md's rows, `tools/testTimes.json` and the bible's mentions find a
+test by its name, so a test can move again without its row moving.
+
+**A new test** goes in the folder of what it tests, by the same rule as a new module (below): its layer, then its
+feature's folder if the layer has one. Every list of tests - `npm test`, a CI shard, `test:changed`, the manifest, the
+mutation tables - walks `test/` recursively, so a new folder needs nothing registered.
+
 ## Where a new file goes
 
 1. **By layer first.** Law that both ends run goes in `src/net/`; drawing goes in `src/render/`; a window goes in
@@ -413,10 +437,14 @@ records quote, the workflows' `paths:`. `--dry-run` says what it would change. T
   or confirm it only counts, before the move lands. An import or a URL built from a template into the old folder
   (`import(`../systems/${name}.js`)`) cannot be rewritten. A quoted `./x.js` outside the folder `x.js` moved to could be
   relative to any file, and a path escaped for a pattern (`systems\/x\.js`) is no path to rewrite: read each one and
-  fix it by hand. The tool cannot see a sweep whose directory is a variable (`test/audit18_bible_docs.test.js`'s U42
+  fix it by hand. A file that moves to another depth keeps its roots - its own folder (`dirname(fileURLToPath(import.meta.url))`,
+  `import.meta.dirname`) raised, a folder URL (`'../'`), a `require`, a root concatenated into a URL
+  (`new URL('../' + p, import.meta.url)`) re-based - but a URL built from a variable (`new URL(p, import.meta.url)`
+  behind a `read('../src/x.js')`) is named, not followed: the paths its callers hand it are re-spelled by hand. The
+  tool cannot see a sweep whose directory is a variable (`test/bible/audit18_bible_docs.test.js`'s U42
   is one), so grep for `readdirSync` over the old directory too.
 - **A move does not touch the relay on its own.** The relay's version is the bytes of its bundle
-  (`test/relayversion.test.js`): a moved file in it, a re-based import, even a path in one of its comments is a new
+  (`test/net/relayversion.test.js`): a moved file in it, a re-based import, even a path in one of its comments is a new
   `RELAY_VERSION`, forty-odd pins moved, and a deploy on merge that drops every connected player. The tool prints a
   RELAY line for each such file and refuses to write unless told `--relay`. A cluster that touches the relay waits
   for a slice that bumps the version anyway, and rides it. (`src/net/wire.js` names most of `src/systems/` in its
@@ -426,21 +454,20 @@ records quote, the workflows' `paths:`. `--dry-run` says what it would change. T
 
 ## The plan
 
-Proposed, to be settled with the team before each step. Each step is one pull request, made by the tool.
+Proposed as six steps, one pull request each. Mac: *"Do everything"* - and the steps that touch the relay became one
+change, because each would have been its own `RELAY_VERSION` and its own deploy that drops every connected player:
+one bump (world209) for all of them is one reconnect, not five.
 
 | Step | What | Status |
 |---|---|---|
-| TIDY1 | This map, its test, the move tool, and the pilot: Come Sail Away's ten modules (`comeSailAway*` and `csaBoatMenu.js`) into `src/systems/comeSailAway/` - a cluster the relay's bundle does not touch. | Shipped |
-| TIDY2 | `src/systems/`'s clusters that leave the relay alone, one per change: `guild*` (7), `rr*` (5), `rri*` (5). | Proposed |
-| TIDY2b | The clusters whose move changes the relay's bytes - each rides a slice that bumps `RELAY_VERSION` anyway: `travel*` (18), `arena*` (16), `item*` (13), `loot*` (9), `wild*` (8), `decor*` (8), `revenant*` (7), `party*` (7), `wagon*` (6), `rest*` (6), `horse*` (5), `iliac*` (5), `weather*` (5), `sd*` (5). | Proposed |
-| TIDY3 | The same in `src/world/` (`sd*` 21, `deep*` 15, `terrain*` 8, `wod*` 8), `src/net/` (`gate*` 10, `sd*` 9, `serpent*` 8) and `src/ui/` (`enhanced*` 42, `hud*` 14, `travel*` 9, `gate*` 8). Seven tests sweep `src/ui/` without recursing, and U42 counts it - they recurse first. | Proposed |
-| TIDY4 | `src/scenes/`: the 32 `*Host.js` modules. Ten tests sweep `src/scenes/` without recursing (`boot1`, `inputmap`, `renowngate` and others) - they recurse first. | Proposed |
-| TIDY5 | `test/`: 3,282 files in one folder, named by the slice that wrote them (`audit24_`, `fb1001_`) rather than by what they test. `manifest.test.js`, the shards and Testing.md all key on the bare file name, so this step needs its own design. | Open question |
-| TIDY6 | The root's lab pages into one folder, and `01-Overview/`'s dated records apart from its overview pages. | Open question |
+| TIDY1 | This map, its test, the move tool, and the pilot: Come Sail Away's ten modules (`comeSailAway*` and `csaBoatMenu.js`) into `src/systems/comeSailAway/` - a cluster the relay's bundle does not touch. | Done |
+| TIDY2 | Every layer of `src/` into feature folders - what was proposed as TIDY2, TIDY2b, TIDY3 and TIDY4 - 762 modules into 134 folders, each a feature's three or more modules in one layer (the tables above). First every test that swept a `src/` folder without recursing was made to recurse, and the module counts count the folders. The relay's files moved under one `RELAY_VERSION`, world209. | Done |
+| TIDY5 | `test/`: the 3,234 test files out of one folder into the layers' and the features' folders (`### The tests`, above). Every list of tests walks `test/` recursively; the manifest keys a file by its name, and holds the names unique. | Done |
+| TIDY6 | `01-Overview/`'s dated records apart from its overview pages. The root's lab pages stay where they are: GitHub Pages serves each at its path (`/sky.html`), with no redirects, and the labs are deployed to be opened on a phone - moving them breaks every link to one. | Open |
 
-One question stays open across all of them: **layer first, or feature first?** The arena's code spans five layers
-(16 modules in `src/systems/`, 6 in `src/net/`, 5 in `src/world/`, 3 in `src/scenes/`, 2 in `src/ui/`). A
+**Layer first, then feature** - the question the plan left open, settled by doing it. The arena's code spans five
+layers (16 modules in `src/systems/`, 6 in `src/net/`, 5 in `src/world/`, 3 in `src/scenes/`, 2 in `src/ui/`). A
 feature-first tree (`src/features/arena/` holding all of them) puts a feature in one place, but the bundles that
 must never pull UI in (the relay, the account Worker) would then need a rule inside every feature folder instead of
-one at the layer. This page proposes layer first because it is what the tree already does (`src/systems/naval/`,
-`src/systems/quest/`) and because the tool makes a later change of mind cheap.
+one at the layer. Layer first is what the tree already did (`src/systems/naval/`, `src/systems/quest/`), and the
+tool makes a later change of mind cheap.

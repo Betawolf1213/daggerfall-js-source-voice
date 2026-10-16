@@ -5,7 +5,7 @@
     "old": "    line('stat', 15, 'endurance'),",
     "new": "    line('stat', 16, 'endurance'),",
     "tests": [
-      "test/gilded2_world.test.js"
+      "test/systems/gilded2_world.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "  templateIndex: WEAPONS.Dai_Katana,\n  material: WEAPON_MATERIALS.Daedric,",
     "new": "  templateIndex: WEAPONS.Dai_Katana,\n  material: WEAPON_MATERIALS.Ebony,",
     "tests": [
-      "test/gilded2_world.test.js"
+      "test/systems/gilded2_world.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "    line('leech', 10),",
     "new": "    line('slayer', 30, 'daedra'),",
     "tests": [
-      "test/gilded2_world.test.js"
+      "test/systems/gilded2_world.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "r.templateIndex === THUNDERLOCK_TEMPLATE ? createThunderlock({ material: r.material }) : createWeapon(r.templateIndex, r.material);",
     "new": "createThunderlock({ material: r.material });",
     "tests": [
-      "test/gilded2_world.test.js"
+      "test/systems/gilded2_world.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "export const GATE_GILDED_CHANCE = 1 / 100;",
     "new": "export const GATE_GILDED_CHANCE = 1 / 50;",
     "tests": [
-      "test/gilded2_world.test.js"
+      "test/systems/gilded2_world.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "export const SERPENT_GILDED_CHANCE = 1 / 100;",
     "new": "export const SERPENT_GILDED_CHANCE = 1 / 20;",
     "tests": [
-      "test/gilded2_world.test.js"
+      "test/systems/gilded2_world.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "  techniquePass(pieces.map((p) => p.item), rolls);\n  // GILDED2",
     "new": "  rollDragonfireOath(rolls);\n  techniquePass(pieces.map((p) => p.item), rolls);\n  // GILDED2",
     "tests": [
-      "test/gilded2_world.test.js"
+      "test/systems/gilded2_world.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "const sovereign = dealt ? rollSunkenSovereign(rolls) : null;",
     "new": "const sovereign = rollSunkenSovereign(rolls);",
     "tests": [
-      "test/gilded2_world.test.js"
+      "test/systems/gilded2_world.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "for (const f of near(door, struck.ai.feet, metres, target)) if (foeGroup(f.entity) === group) door.hurtFoe",
     "new": "for (const f of near(door, struck.ai.feet, metres, target)) door.hurtFoe",
     "tests": [
-      "test/gilded2_world.test.js"
+      "test/systems/gilded2_world.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "for (const f of near(door, struck.ai.feet, metres, target)) if (foeGroup(f.entity) === group)",
     "new": "for (const f of near(door, struck.ai.feet, metres, null)) if (foeGroup(f.entity) === group)",
     "tests": [
-      "test/gilded2_world.test.js"
+      "test/systems/gilded2_world.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "door.hurtFoe(f, Math.max(1, Math.round(amount)));\n}\n/** Earthshaker",
     "new": "door.hurtFoe(f, Math.max(1, Math.round(amount * elementShare(f.entity, 'fire'))));\n}\n/** Earthshaker",
     "tests": [
-      "test/gilded2_world.test.js"
+      "test/systems/gilded2_world.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "case 'dragonfire': if (weapon && foeGroup(target) === p.group)",
     "new": "case 'dragonfire': if (weapon)",
     "tests": [
-      "test/gilded2_world.test.js"
+      "test/systems/gilded2_world.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "n: Math.min(p.max, undertowStacks(target, now) + 1)",
     "new": "n: undertowStacks(target, now) + 1",
     "tests": [
-      "test/gilded2_world.test.js"
+      "test/systems/gilded2_world.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "_undertow.set(target, { n: Math.min(p.max, undertowStacks(target, now) + 1)",
     "new": "_undertow.set(weapon, { n: Math.min(p.max, undertowStacks(target, now) + 1)",
     "tests": [
-      "test/gilded2_world.test.js"
+      "test/systems/gilded2_world.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "{ healMine(me, (me.maxHealth * p.heal) / 100); _undertow.delete(foe); }",
     "new": "{ _undertow.delete(foe); }",
     "tests": [
-      "test/gilded2_world.test.js"
+      "test/systems/gilded2_world.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "{ const u = _undertow.get(foe); if (u && now - u.at <= TOLL_REFUND_S)",
     "new": "{ const u = { at: now }; if (u && now - u.at <= TOLL_REFUND_S)",
     "tests": [
-      "test/gilded2_world.test.js"
+      "test/systems/gilded2_world.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "hint: r.hint ?? GILDED_HINT,",
     "new": "hint: GILDED_HINT,",
     "tests": [
-      "test/gilded2_world.test.js"
+      "test/systems/gilded2_world.test.js"
     ]
   },
   {
@@ -158,8 +158,8 @@
     "old": "export const ITEM_LAW_VERSION = 5;",
     "new": "export const ITEM_LAW_VERSION = 4;",
     "tests": [
-      "test/int1_itemlaw.test.js",
-      "test/tech1_roster.test.js"
+      "test/systems/item/int1_itemlaw.test.js",
+      "test/systems/tech1_roster.test.js"
     ]
   },
   {
@@ -168,7 +168,7 @@
     "old": "until: now + p.seconds, at: now",
     "new": "until: Infinity, at: now",
     "tests": [
-      "test/gilded2_world.test.js"
+      "test/systems/gilded2_world.test.js"
     ]
   },
   {
@@ -177,7 +177,7 @@
     "old": "  if (!(amount > 0)) return;\n  again(target, amount);\n",
     "new": "  if (!(amount > 0)) return;\n",
     "tests": [
-      "test/gilded2_world.test.js"
+      "test/systems/gilded2_world.test.js"
     ]
   },
   {
@@ -186,7 +186,7 @@
     "old": "if (!mine(attacker) || !(damage > 0) || !target || target.isPlayer || target.warded) return;",
     "new": "if (!mine(attacker) || !(damage > 0) || !target || target.isPlayer) return;",
     "tests": [
-      "test/gilded2_world.test.js"
+      "test/systems/gilded2_world.test.js"
     ]
   },
   {
@@ -195,7 +195,7 @@
     "old": "healMine(me, (me.maxHealth * p.heal) / 100); _undertow.delete(foe); }",
     "new": "healMine(me, (me.maxHealth * p.heal) / 100); _undertow = new WeakMap(); }",
     "tests": [
-      "test/gilded2_world.test.js"
+      "test/systems/gilded2_world.test.js"
     ]
   },
   {
@@ -204,7 +204,7 @@
     "old": "case 'dragonfire': if (weapon && foeGroup(target) === p.group) dragonfire(target, (damage * p.share) / 100, p.metres, p.group);",
     "new": "case 'dragonfire': if (weapon && foeGroup(target) === p.group) dragonfire(target, (damage * p.share) / 100, p.metres * 1.13, p.group);",
     "tests": [
-      "test/gilded2_world.test.js"
+      "test/systems/gilded2_world.test.js"
     ]
   },
   {
@@ -213,7 +213,7 @@
     "old": "record: p.tier === 'gilded' ? null : flat() }));",
     "new": "record: flat() }));",
     "tests": [
-      "test/gilded2_world.test.js"
+      "test/systems/gilded2_world.test.js"
     ]
   },
   {
@@ -222,7 +222,7 @@
     "old": "  for (const r of codexGilded()) gilded.append(...codexLine(el, r, rerender));\n",
     "new": "",
     "tests": [
-      "test/auditcards5_ui.test.js"
+      "test/systems/auditcards5_ui.test.js"
     ]
   }
 ]

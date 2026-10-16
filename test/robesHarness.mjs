@@ -1,5 +1,5 @@
-// WHERE-ROBES (FIELD BUGS 2026-10-04c): THE HARNESS its two files share - test/fb1004c_robes.test.js and its audit's,
-// test/fb1004c_audit.test.js. The Qualifying Examination on the real QuestMachine (its vendored script, its own robes
+// WHERE-ROBES (FIELD BUGS 2026-10-04c): THE HARNESS its two files share - test/systems/fb1004c_robes.test.js and its audit's,
+// test/systems/fb1004c_audit.test.js. The Qualifying Examination on the real QuestMachine (its vendored script, its own robes
 // and note), quick loot's switch, the enhanced pack mounted over a pile, and a real Collider's bed room. Not a test file
 // (the suite's glob is test/*.test.js), so it runs nothing of its own.
 import { readFileSync, readdirSync } from 'node:fs';
@@ -47,7 +47,7 @@ export function examination() {
 /** Whether the robes' note reached the player: message 1018 said and `_note_` given. */
 export const noteCame = (e) => e.popups.some((p) => /As you pick up the/.test(p) && /note is tucked/.test(p)) && e.given.includes(e.note);
 
-/** The feature with its switch on and its state clean, restored after (test/quickloot.test.js's own). */
+/** The feature with its switch on and its state clean, restored after (test/systems/quickloot.test.js's own). */
 export function withQuickLoot(fn) {
   setPref('quickLoot', true);
   resetQuickLoot();

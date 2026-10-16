@@ -305,7 +305,7 @@ or off.
 
 ## Pins
 
-`test/pi1_physicalitems.test.js` (15): the record (the manifest and every declared
+`test/systems/pi1_physicalitems.test.js` (15): the record (the manifest and every declared
 key verbatim, the four undeclared ones named), the categories against `.cctor`'s
 list and over every item producer, the sizes and clamps with the IL's constants,
 the picture's box and cut, the scatter and the throw, the spiral (and its 0.1 m
@@ -319,6 +319,6 @@ off), the lines (a presented item's line is its own), the shift-drop law (the
 refusals, the whole stack, the map), and the seams (one maker, the four hosts'
 halves, both packs, both street pools).
 
-`test/audit_pi1.test.js` (20) holds the audit's fixes, one test a finding group
+`test/systems/audit_pi1.test.js` (20) holds the audit's fixes, one test a finding group
 (`01-Overview/Audit-PI1.md`). Mutants: `tools/mutants/pi1.json` (47) and
 `tools/mutants/audit_pi1.json` (52), all dead.

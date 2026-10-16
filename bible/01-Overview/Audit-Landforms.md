@@ -11,7 +11,7 @@ Mac: *"Dont worry about it. Instead let's do just an audit and ensure this is pe
   (Home.md, 17l).
 
 Every finding was reproduced before it was fixed, and every fix is pinned by a test that fails on the code as it
-stood (`test/auditlandforms.test.js`); lane D's coverage pins (D1, D2, D4-D9, D12) hold what was already right and are
+stood (`test/world/terrain/auditlandforms.test.js`); lane D's coverage pins (D1, D2, D4-D9, D12) hold what was already right and are
 proven by their mutants instead - 9 of the 21 pass on the code as it stood, which this paragraph once left out (AUDIT
 LANDFORMS II J8). The pins the fixes moved carry a `PIN MOVED` note. Mutation-proven:
 `tools/mutants/auditlandforms.json`, and every older record the fixes moved re-aimed and killed again. Each fix carries
@@ -97,14 +97,14 @@ was not (AUDIT LANDFORMS II J5) - and 8 went with the stamp (C1). (This said eve
 
 ## Pins
 
-`test/auditlandforms.test.js` - E1, E2; C1 (every writer named, the scene cache written and read with the row on and
+`test/world/terrain/auditlandforms.test.js` - E1, E2; C1 (every writer named, the scene cache written and read with the row on and
 off, the quickload's and the outer camps' reads); B1 (landformLiftAt run, unbuilt and built, the binding); B2 (the field
 is the pipeline's own ground less DFU's, in the wild and through a town's blend; the network landing); D3 (a sea cliff's
 town, every tile DFU's; the classic output bit for bit); C3 (the backoff, and the host's landing run online and off);
-C4; D4-D9, D12 and the written-out law over the new bend and junction. PIN MOVED: `test/landform.test.js`'s road bank
+C4; D4-D9, D12 and the written-out law over the new bend and junction. PIN MOVED: `test/systems/landform.test.js`'s road bank
 (E1), the re-stand and stamp tests (C1: a record is DFU's frame both ways, no stamp anywhere), the host's wiring (C1,
-D3), test 5's rows (D5), test 8's tolerance (D7), test 2's 1.9 x (D6); `test/terrainscale1.test.js`,
-`test/a10_world_misc.test.js`, `test/enterexit.test.js`, `test/audit68_worldjs.test.js` and `test/auditrest3.test.js`
+D3), test 5's rows (D5), test 8's tolerance (D7), test 2's 1.9 x (D6); `test/world/terrain/terrainscale1.test.js`,
+`test/world/a10_world_misc.test.js`, `test/player/enterexit.test.js`, `test/world/audit68_worldjs.test.js` and `test/systems/auditrest3.test.js`
 back to the re-stand's own lines.
 
 `tools/mutants/auditlandforms.json` - 99 mutants, 92 dead, 7 equivalent as recorded (each with its why).
@@ -131,7 +131,7 @@ change carries an `AUDIT LANDFORMS II` comment.
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
-| K1 | Blocker | **This audit's own G1 fix killed the boot, and the gate built for that passed it.** The rides on a rebuilt pixel's ground were read from the publish, which the boot's first build runs before the pools and the player are declared - and the network lands inside that build on most boots, so a headless boot died with `ReferenceError: Cannot access 'droppedLoot' before initialization`. BOOT-TDZ2's static gate allow-lists the four pool names for destroyPixel's guarded reads, and an excuse covered every function. Caught by lens K's save probe before the push. | **The rides are one hook bound once the pools and the player stand** (`world.js` `rideGround`), and **every excuse is its own function's** (`test/bootorder.test.js`: an excused name read anywhere else on the first build's path fails - red on the code as it was). The scoping found one older read, `standWodPile`'s, which stands only the piles an unload carried; excused with that reason. |
+| K1 | Blocker | **This audit's own G1 fix killed the boot, and the gate built for that passed it.** The rides on a rebuilt pixel's ground were read from the publish, which the boot's first build runs before the pools and the player are declared - and the network lands inside that build on most boots, so a headless boot died with `ReferenceError: Cannot access 'droppedLoot' before initialization`. BOOT-TDZ2's static gate allow-lists the four pool names for destroyPixel's guarded reads, and an excuse covered every function. Caught by lens K's save probe before the push. | **The rides are one hook bound once the pools and the player stand** (`world.js` `rideGround`), and **every excuse is its own function's** (`test/scenes/bootorder.test.js`: an excused name read anywhere else on the first build's path fails - red on the code as it was). The scoping found one older read, `standWodPile`'s, which stands only the piles an unload carried; excused with that reason. |
 | I1 | Major | **The lift steepened a sea cliff's plateau into a wall.** The lift steepens a slope by up to 2.8 times, most where the land already rises fastest - nowhere faster than out of the sea. Menevia's plateau (bytes of 75 a pixel from the sea, 785-804 x 178-216): its rim stood at 70 degrees; with I2 and I3 in, four of lane I's 24 journeys along the network still fell where DFU's ground does not - at x1 one of 95 m (450 HP) where the road itself drops down the face ((795, 192) -> (795, 191)); seven of its 28 locations took falls on a run in from their edge (124 approaches of 5,376, the worst 373 m at the Dunynak Excavation); and every 51 m grade over 63 degrees the lift made new on the real data lay within three map pixels of a sea byte. Mac: *"Is it too steep?"*, then *"Go ahead and do whatever you feel is most detailed"*. | **The lift fades beside the sea** (`landforms.js` `cliff`, `cliffFadeAt`): none at a byte node within a pixel of a sea byte, all of it three in, a smoothstep between - in 1024ths, read through the kernel's own bicubic window, so the rim stands as DFU stands it, the plateau behind rises to its whole lift, and a pixel's edge is one number from both pixels; the far ring and the travel view fade a node's lift the same. After, on the real data: the pixels steeper than 63, 68 and 72 degrees DFU's own count again (52, 29, 4; unfaded 116, 60, 29); all 24 journeys bill nothing at x1 or x100; none of the 28 rim locations takes a fall DFU's ground does not give; straight down the fall line from 54 rim pixels 250 damaging runs of 10,056 against DFU's 223 (1,267 before), the worst fall DFU's own 166 m (280 m before) - the rest a road's bench across DFU's own cliff (RESIDUES). The ceiling's glitch, a diagonal step from the sea, keeps a ninth of the lift: about 2.46 km. |
 | I3 | Major | **A Travel Options journey down a lifted mountain road billed lethal falls.** A journey runs the motor at its time scale (x60, x100 on a road: `motor.js` steps `FIXED_DT * scale`), so a collider substep runs far further than a frame's at x1, and the floor arm caught the ground only within `STEP_OFFSET` (0.5 m) under the feet: down a grade steeper than that over a substep's run the body left the floor, flew level and landed 25-55 m down, step after step. The Dragontail road (941, 468) -> (940, 477) billed 2,377 HP at x60 on the lifted ground, and Menevia's 1,771 HP at x100 on DFU's own. | **The floor arm reaches as far down as the slope limit allows over the substep's own run** (`collider.js` `_moveStep`: `max(STEP_OFFSET, run * tan(SLOPE_LIMIT_DEG))`), so a body that follows a road at x1 follows it at x100. At x1 a substep's run is short and nothing changes. Lane I's twelve rim and Dragontail lines, both ways: the Dragontail's bill nothing at x1 or x100 now, DFU's ground nothing anywhere (the rim's remainder is I1's). |
 | J1 | Major | **A track over water was painted a ford and cut a causeway.** The painter paints road, river, stream, track, the first to write a tile keeping it, so the water is painted across a track; the shaper lerped the track after the water, as it does a road. On the real data 7,674 wet corners on a track's bed stood half a metre or more over their channel's floor (the worst 7.87 m), and 169 water tiles lay wholly on a track's bed - most of what the first audit's E2 row called the road's. | **A track gives way to the channel on its own bed too** (`landforms.js`, the layer's `ford`): 0 of the 7,742 now. What stands over a floor is the road's own edge row (Landforms.md, RESIDUES). |
@@ -199,11 +199,11 @@ change carries an `AUDIT LANDFORMS II` comment.
 
 ### Pins and mutants
 
-`test/auditlandforms.test.js` 21 -> 36: F1, F3, F4, I3, J1, J2, I2, G1/G2, G3, H2, H3, H1, J4, J5, J7 (each named
-above), and J3, J6, J12 inside B1's and D7's pins; `test/bootorder.test.js`'s scoped excuses (K1). PIN MOVED: the
+`test/world/terrain/auditlandforms.test.js` 21 -> 36: F1, F3, F4, I3, J1, J2, I2, G1/G2, G3, H2, H3, H1, J4, J5, J7 (each named
+above), and J3, J6, J12 inside B1's and D7's pins; `test/scenes/bootorder.test.js`'s scoped excuses (K1). PIN MOVED: the
 anchor's writer, the lift host's slice and the probe's declaration (F1, F3, F4), the arm-weighting law and the dials
-(J1, I2), the floor (J4, `test/landform.test.js`), test 3's message (J9), the collider's floor arm
-(`test/mac3_downhill.test.js`, I3), and WATER1's beach reads (`test/terrain.test.js`, H2).
+(J1, I2), the floor (J4, `test/systems/landform.test.js`), test 3's message (J9), the collider's floor arm
+(`test/player/mac3_downhill.test.js`, I3), and WATER1's beach reads (`test/world/terrain/terrain.test.js`, H2).
 
 `tools/mutants/auditlandforms.json` - 159: 153 dead, 6 recorded equivalent (60 new, all dead; D-liftfield-unclamped
 no longer equivalent). 24 records the fixes moved re-aimed by content and killed again, across this list,
@@ -310,8 +310,8 @@ final code:
 
 ### Pins and mutants
 
-`test/auditlandforms3.test.js` (13): A1, A2, D4, B1, C1, C2, C3, C4, C5, C6, A7, A8, B4. PIN MOVED: LANDFORM4's rect law
-(`test/landform45.test.js` - at its level where its land stands over it, the ease written out under it), LANDFORM5's
+`test/world/terrain/auditlandforms3.test.js` (13): A1, A2, D4, B1, C1, C2, C3, C4, C5, C6, A7, A8, B4. PIN MOVED: LANDFORM4's rect law
+(`test/world/terrain/landform45.test.js` - at its level where its land stands over it, the ease written out under it), LANDFORM5's
 river (its valley's floor under the land without hills), LANDFORM3's cut and G1/G2's fall back to strict (C1), the
 dials (D8, the valley's), the host's classic rows (B1), the shore's FLOOR hold (a site in the sea now, D4).
 

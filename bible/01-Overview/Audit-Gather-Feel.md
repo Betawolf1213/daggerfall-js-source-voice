@@ -35,7 +35,7 @@ gatherer had taken back, chunks lying off the ground, and laws no pin could fail
 | V3 | MED | The chunks came down on one plane, the node's foot's height, wherever they fell: on a hillside they lay up to 1.1 m over the downhill and 1.2 m inside the uphill | FIXED: each comes down where its arc first meets the ground (`chunkLandingOf` - the kind's `chunkOf` hands the pixel's heightmap; a dungeon vein's one floor), lying on it exactly at any frame rate; the box takes the lowest landing and half a chunk's width |
 | W1 | MED | A fishing peer's water was heard at their feet whenever the listener missed the net's landing - first seen mid-wait, the landing out of earshot or under the floor - for the rest of the cast: the net's place was a cue's alone, and the recentre dropped it | FIXED: the net's place is state, found whenever its act is out; the recentre carries it, and every blow held, with the land (`rebaseSounds`, by its offset) |
 | R5 | MED | Pins that read the constant they pin: the crack's shade and order; the chunks' size, face and speed; the blow's table at a tenth; the slipping catch "louder" asserted as its own gain; the plip's floor; the pitch's jitter - each moved survived | FIXED: each table by its numbers, "louder" as more than one |
-| R6 | MED | The PR's description still said world199 (main's AUDIT ETHER-OW holds it) - the deploy note is the line a reader acts on; and `test/gf2_peeracts.test.js`'s header | FIXED |
+| R6 | MED | The PR's description still said world199 (main's AUDIT ETHER-OW holds it) - the deploy note is the line a reader acts on; and `test/systems/gf2_peeracts.test.js`'s header | FIXED |
 | F3 / R11 | LOW | One landing on three clocks - the ear's (`clock + delay`), the machine's (`landsIn`), the host's countdown (`landing`): at nine frame lengths the clack and the kick fell on different frames, at 1/44.4 s the breaking burst was five (the fall a frame late), and a frame long enough to land one blow and begin the next swing lost the first blow's kick and chunks while its clack played | FIXED: one clock - the machines count their blows landed (`landed`, as the swing passes its hit frame, before a press can begin the next); `stepAct`, the ear's beats that ride a blow and the node's going read it; the countdown gone |
 | F2 / R4 | LOW | Leaving the dungeon or the professions shut put a last swing away but left its blow in the ear - a pick heard at the dungeon's places in the street after leaving; and of the record's five ends only Escape's was pinned | FIXED: one door lets an act go (`letGo`: its ear's beats, the pose's `stop`, its cracks); every door pinned, and the ear holds nothing for a landing that will never come |
 | W2 | LOW | A blow the gatherer took back with Escape was still heard landing by every peer | FIXED: the pose's `stop` beat, counted by `letGo` with a blow in the air; a peer drops the blow counted just before it, under the cue floor too |
@@ -77,20 +77,20 @@ gatherer had taken back, chunks lying off the ground, and laws no pin could fail
 
 ## The pins
 
-- `test/audit_gatherfeel.test.js` - 22, each failing on the snapshot or on a lane's surviving mutant: the landing at
+- `test/systems/audit_gatherfeel.test.js` - 22, each failing on the snapshot or on a lane's surviving mutant: the landing at
   every frame length and through a second act, a tree's and a vein's; every door that lets an act go; Escape for the
   others; node-taken under the blow; the cracks at every end and their bookkeeping; the burst's box, the glint's five,
   the sink, the hillside, a dungeon's floor, the late batches; the stand that keeps the pixel's flats; the chunks at the
   shut; the lane's seam; the trees after a cracked vein; the net's place and the recentre, the gatherer's own and the
   peers'; the body asleep; the reload; BLOW-SHAKE's own doors and the camera's look; F7's take-back and the bus's voice;
   the tables by their numbers, the floor one pose, the dungeon's doc.
-- PIN MOVED: `test/gatherfeel.test.js` G10, G12 and G13 (the ear waits for its machine to land a blow: the drivers step
+- PIN MOVED: `test/systems/gatherfeel.test.js` G10, G12 and G13 (the ear waits for its machine to land a blow: the drivers step
   the machine first, as the host does; G12 and G15 also read that a blow let go is held nowhere);
-  `test/gf2_blowshake.test.js` B1 (every channel, the table's numbers), B6 (asserted), B7 (`stepAct` reads the count;
-  the setting's note); `test/gf2_peeracts.test.js` P7 and P8 (the recentre carries what was held);
-  `test/gf2_veincracks.test.js` V3 (the lane's shade line) and V4 (a chunk's ground handed to `shedChunks`);
-  `test/blood1_decals.test.js` (the lane's albedo line); `test/prof4_client.test.js` (the stand's two lines);
-  `test/profreticle.test.js` (the clean finish rides its blow).
+  `test/systems/gf2_blowshake.test.js` B1 (every channel, the table's numbers), B6 (asserted), B7 (`stepAct` reads the count;
+  the setting's note); `test/systems/gf2_peeracts.test.js` P7 and P8 (the recentre carries what was held);
+  `test/systems/gf2_veincracks.test.js` V3 (the lane's shade line) and V4 (a chunk's ground handed to `shedChunks`);
+  `test/combat/blood1_decals.test.js` (the lane's albedo line); `test/systems/prof4_client.test.js` (the stand's two lines);
+  `test/systems/profreticle.test.js` (the clean finish rides its blow).
 - `tools/mutants/auditgatherfeel.json` - 81, all dead: every fix reverted (the two on V3's own half in the mine kind -
   its ground handed, a dungeon's vein handed none - written at the merge of main, where they were found missing), and
   every lane's survivor re-aimed onto the code as it stands.

@@ -15,7 +15,7 @@ AUDIT 18 rewrote this page: its opening paragraph declared the arc
 unstarted, with the Readers/World prerequisites its only news, through the
 whole S and E arcs. A section
 index nobody opens goes stale silently, so
-`test/audit18_bible_docs.test.js` now fails if a section index says "Not
+`test/bible/audit18_bible_docs.test.js` now fails if a section index says "Not
 started" while its own `*-Arc.md` records a SHIPPED slice.
 
 ## HT1 - HANDHELD TORCHES, THE MOD, 1:1 (2026-09-14, Mac's call) - SHIPPED
@@ -36,7 +36,7 @@ mod's 39 textures are vendored - the author's own art, not a render of
 ARENA2. TextKey and the two Tuple kinds are new to the Mods pane. Under
 the Morrowind arms the law runs and the held torch is the classic
 lane's; a Morrowind LIGH mesh on the `torch` animation group pends
-Mac's word. Pins: 19 in `test/ht1_handheldtorches.test.js`. Not
+Mac's word. Pins: 19 in `test/systems/ht1_handheldtorches.test.js`. Not
 filmed: a game.
 
 `partyArrival.js` validates party arrival with the real player capsule, retries late boat collision for a bounded interval, and refuses unsupported sea landings.

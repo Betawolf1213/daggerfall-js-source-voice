@@ -149,12 +149,12 @@ taken REGIONAL-FOLK (`01-Overview/Field-Bugs-2026-10-10.md`). Three seams were s
 ## Not seen
 
 This container holds no ARENA2, so no real town was laid out here: the yards' places are proven on synthetic grids
-(`test/merchantyards1.test.js`) and the yards themselves in a software render of their own geometry, never in a
+(`test/world/merchantyards1.test.js`) and the yards themselves in a software render of their own geometry, never in a
 Daggerfall town. Where a town's open ground falls is for the owner's eyes - a town that finds no room logs it.
 
 ## Tests
 
-`test/merchantyards1.test.js` - the towns, the stock, what each buys, the General Store's shelf and list, the keeper,
+`test/world/merchantyards1.test.js` - the towns, the stock, what each buys, the General Store's shelf and list, the keeper,
 the place (its ground, its ring, its front, the turns), the measures, both yards apart and a laid-out town read as the
 people's navgrid, the carve, the timber, the sign read from both sides, the art, the pool (standing, the wagons'
 boxes coming in, a yard gone, no ground), the hold-back, the press and the plaque, the yard's frame, and the four hosts;
@@ -241,7 +241,7 @@ THE FOUR HOSTS (YARDS-FOUND): `scenes/world.js` - WIRED (the town map, the direc
 talk window reads the same directory, so a yard is asked after indoors too (the compass's indoor arm measures from the
 building). `scenes/dungeonContext.js` - no town.
 
-Pins: `test/yardsfound1.test.js`. Mutants: `tools/mutants/yardsfound1.json`. Not seen in a real town (no ARENA2 here).
+Pins: `test/systems/yardsfound1.test.js`. Mutants: `tools/mutants/yardsfound1.json`. Not seen in a real town (no ARENA2 here).
 
 ## Beside the port's places (SHIPYARDS, 2026-10-11)
 
@@ -316,7 +316,7 @@ THE FOUR HOSTS (CARP-YARD): `scenes/world.js` - WIRED (the placing, the pool's b
 `scenes/worldModes.js` - its street ray reaches every `yard:` key unchanged, and indoors its workbenchHere answers as
 before. `scenes/exterior.js` - stands no yard (FLAGGED above). `scenes/dungeonContext.js` - no town.
 
-Pins: `test/carpyard1.test.js` (8). Mutants: `tools/mutants/carpyard1.json` (23, all dead). Pins moved: `prof4_client`
+Pins: `test/systems/carpyard1.test.js` (8). Mutants: `tools/mutants/carpyard1.json` (23, all dead). Pins moved: `prof4_client`
 (the bench's empty line, the craft's station question), `audit30_client` and `prof7_client` (the host's question),
 `shipyards1` (the found order), `yardsfound1` (the groups). Mutant records re-aimed: `shipyards1.json` (the found order,
 the mark's kind), `wagons4.json` (the mend row), `prof4.json` (the Linen's gate). Not seen in a real town (no ARENA2

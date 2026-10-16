@@ -381,7 +381,7 @@ the words, the card's model) reads a set's armour as no blow. `systems/sigil/sig
 piece, a shield, a weapon - never ammunition, jewellery or clothing), the worn pieces per set (`wornSetPieces`: the
 seven body slots, the shield, one weapon a set), the state (`setState`: the count, the lowest piece's stage under the
 Renown's cap, `heldPiece` / `heldRenown`, the tiers awake by the count), the session (`setSetsDueling`, `setsAwake`)
-and the powers' one question (`awakeTier` - my entity alone). Pinned: `test/set1_law.test.js` (7);
+and the powers' one question (`awakeTier` - my entity alone). Pinned: `test/systems/sigil/set1_law.test.js` (7);
 `tools/mutants/set1.json` (15, all dead).
 
 ### SET2 - the seams (2026-09-26)
@@ -413,7 +413,7 @@ Every seam the powers read, each a no-op until registered:
 - **The duel's word**: `scenes/world.js duelFrame` tells `setSetsDueling` (AUDIT 625 P2: kept by `systems/sigil/sigil.js`
   setSigilDueling, and raised for an arena's bout between players too).
 
-Pinned: `test/set2_seams.test.js` (8); `tools/mutants/set2.json` (20, all dead).
+Pinned: `test/systems/set2_seams.test.js` (8); `tools/mutants/set2.json` (20, all dead).
 
 ### SET3 - what the sets do (2026-09-26)
 
@@ -458,7 +458,7 @@ my Renown known, no duel)? For anyone else - a peer's entity here, a foe - and w
 Two tier words were made to say what the seams do: Spite answers "a foe whose blow lands" (a claw or an arrow too),
 Nightfall "a weapon blow"; and the Eye says it is absorption, with its gates.
 
-Pinned: `test/set3_powers.test.js` (16); `tools/mutants/set3.json` (55, all dead).
+Pinned: `test/systems/set3_powers.test.js` (16); `tools/mutants/set3.json` (55, all dead).
 
 ### SET4 - drops and growth (2026-09-26)
 
@@ -481,7 +481,7 @@ Pinned: `test/set3_powers.test.js` (16); `tools/mutants/set3.json` (55, all dead
   is said unless its set has just said one. A fresh piece pulls its set down to its stage until it catches up. A set
   that rose has the fold recomputed at once, so its tiers' numbers move with the line.
 
-Pinned: `test/set4_drops_growth.test.js` (7); `tools/mutants/set4.json` (21, all dead). SIGIL1's stamp pins now say
+Pinned: `test/systems/set4_drops_growth.test.js` (7); `tools/mutants/set4.json` (21, all dead). SIGIL1's stamp pins now say
 armour takes a set sigil and a roll of 0 joins a weapon to a set; its mounted drink runs through `drinkWorn`; its
 rise mutant is re-aimed to the law's line.
 
@@ -510,7 +510,7 @@ rise mutant is re-aimed to the law's line.
   are exactly what they were. It leaves the boss last of the pieces, before the Sigil Stone and the gold.
 - **The test room** (`systems/testRoom.js`): the loot ladder's showcase carries the Regalia whole.
 
-Pinned: `test/set6_aetheric.test.js` (6); `tools/mutants/set6.json` (20, all dead). The ladder's pins name the rung
+Pinned: `test/systems/set6_aetheric.test.js` (6); `tools/mutants/set6.json` (20, all dead). The ladder's pins name the rung
 (LR1's order and ranks, every tier's colour rule, WB5's line heights and its fourth piece, the test room's count, the
 armour mints' population, rf5's every-mint coverage); QS1's key mutant is re-aimed (the quickslot key reads the record).
 
@@ -543,7 +543,7 @@ armour mints' population, rf5's every-mint coverage); QS1's key mutant is re-aim
 - **Words tightened on the way**: the Wrath "takes you below 30% health" (a crossing); the Eye of Mora "absorbed 10% of
   the time - its magicka yours, if you have room for it".
 
-Pinned: `test/set5_ui.test.js` (8); `tools/mutants/set5.json` (22, all dead); the probe `tools/setUiProbe.mjs` (156
+Pinned: `test/systems/set5_ui.test.js` (8); `tools/mutants/set5.json` (22, all dead); the probe `tools/setUiProbe.mjs` (156
 checks at a desktop, a laptop and a phone, every state photographed). The card's, the hotbar's and SIGIL-UI's pins
 name the new calls; three MERGE-PLUS C8 mutants and SET3's import mutant are re-aimed.
 
@@ -590,7 +590,7 @@ BROKER-CAGE (2026-10-02) moved her: caged at the faithful's circle from the omen
 them fell (`11-Multiplayer/World-Bosses.md` section 19 E). Where she stands, her box, her press and her leaving above
 are SET7's as built; the cage's are that section's.
 
-Pinned: `test/set7_broker.test.js` (8) and `test/set7_broker_world.test.js` (9); `tools/mutants/set7.json` (56, all
+Pinned: `test/systems/item/set7_broker.test.js` (8) and `test/player/set7_broker_world.test.js` (9); `tools/mutants/set7.json` (56, all
 dead); the probe `tools/brokerProbe.mjs` (221 checks: the REAL renderer drawing her beside a standing gate from three
 sides - a frame without her differs where she stands - and the REAL window at a desktop, a laptop and a phone with its
 header and every row's pieces clear of each other; its first run caught a refusal's sentence on the Buy starving the
@@ -645,7 +645,7 @@ is fixed below or stated in section 8.
   record (`v`), and the joiner it names reports its kill - the Rampage and Eventide fire underground for a joiner, as
   the exterior owner's `slain` word already made them outdoors.
 
-Pinned: the slices' own files, each finding's lines named in its test's title; `test/auditset_c.test.js` (6);
+Pinned: the slices' own files, each finding's lines named in its test's title; `test/systems/auditset_c.test.js` (6);
 `tools/mutants/set1.json` to `set7.json` re-aimed and grown (264), `auditsetc.json` (26) and `auditsetd.json` (6),
 all dead. The probes: `tools/brokerProbe.mjs` 359 checks (its classic-skin views new), `tools/setUiProbe.mjs` 174
 (the hover card at three screens new).
@@ -729,8 +729,8 @@ Mac, after the merge: "we need to make sigil stones bound items and stackable, r
   112px in every row now (`ui/enhanced/enhancedPlusStyle.js`, the classic skin's sheet cut from the same rules). The probe's
   pack is a stack of seven and a locked stone: 359/359.
 
-Pinned: `test/ss1_stones.test.js` (8), `test/set7_broker.test.js` (the purse, the take and the sale over stacks, the
-prices), `test/set7_broker_world.test.js` (the purse's locked count), `test/wb5_gate_spoils.test.js` (the row stacks
+Pinned: `test/systems/item/ss1_stones.test.js` (8), `test/systems/item/set7_broker.test.js` (the purse, the take and the sale over stacks, the
+prices), `test/player/set7_broker_world.test.js` (the purse's locked count), `test/systems/item/wb5_gate_spoils.test.js` (the row stacks
 with its own kind alone); `tools/mutants/ss1.json` (18, all dead), and SET7's three records the change moved re-aimed
 (the price, the take, the heavy sale), all dead with the rest of SET7, WB5 and LOCK1; the probe `tools/brokerProbe.mjs`
 (359).
@@ -754,8 +754,8 @@ container records (`world/interior/interiorShared.js applyInteriorLoot`). A ston
 In the same change, from the players (a Discord report relayed by Mac): the way home where the Warden falls is pressed,
 never walked through - `World-Bosses.md` SS3.
 
-Pinned: `test/ss1_stones.test.js` (13: the law, the enhanced pack's Drop and drag, the classic pack's Remove over the
-ground, a chest, the wagon and the owner's storage, and the lists a peer hands over), `test/wbx_gate_fixes.test.js`
+Pinned: `test/systems/item/ss1_stones.test.js` (13: the law, the enhanced pack's Drop and drag, the classic pack's Remove over the
+ground, a chest, the wagon and the owner's storage, and the lists a peer hands over), `test/world/gate/wbx_gate_fixes.test.js`
 (the portal); `tools/mutants/ss1.json` (29, all dead) and `tools/mutants/wbx.json` (24, all dead).
 
 ### SS4 - the Broker's wares are bound, and no counter buys a bound piece (2026-09-27)
@@ -778,7 +778,7 @@ shouldnt be able to be sold".
 - **Not done**: a ware bought before this change stays unbound (section 8). The relay's code is untouched: no version
   moves.
 
-Pinned: `test/ss1_stones.test.js` (17: the wares' mark, the Broker's card, both counters in Sell and Sell Magic, the
+Pinned: `test/systems/item/ss1_stones.test.js` (17: the wares' mark, the Broker's card, both counters in Sell and Sell Magic, the
 smith and the sage); `tools/mutants/ss1.json` (38, all dead - SS1's binding record re-aimed at the new `isBound`).
 
 ### SS5 - a ware is dismantled in the pack for Sigil Stones (2026-09-27)
@@ -817,7 +817,7 @@ the inventory and recieve back sigil stones".
   the ware off its page after (the probe found the page left stale - the list is now rebuilt, as every act rebuilds
   it), six stones on the stack and the pack's word.
 
-Pinned: `test/ss1_stones.test.js` (22: the law and the price on every ware, the dismantle made and refused, the
+Pinned: `test/systems/item/ss1_stones.test.js` (22: the law and the price on every ware, the dismantle made and refused, the
 enhanced card and its question, the classic Yes/No, the box fitted); `tools/mutants/ss1.json` (63, all dead - SS4's
 ware record re-aimed where the price joined its line).
 
@@ -859,7 +859,7 @@ reproduced before it was fixed. What was found, and what it is now:
   before SS3, and the grant's order is its dup guard); a stone count of 0 or NaN reads as one (nothing writes one); the
   Broker's name column narrows between 720 and 900 px (older than SS2).
 
-Pinned: `test/ss1_stones.test.js` (29), `test/wbx_gate_fixes.test.js` (the press), `test/set7_broker.test.js` (the sale
+Pinned: `test/systems/item/ss1_stones.test.js` (29), `test/world/gate/wbx_gate_fixes.test.js` (the press), `test/systems/item/set7_broker.test.js` (the sale
 held to the stock); `tools/mutants/auditss.json` (31, all dead), and ss1.json's three records the fixes moved re-aimed.
 
 ### RAID4b - the raiding parties' own sets (2026-09-28)
@@ -874,15 +874,15 @@ every reader asks), and the wire's check widened (AUDIT SET D6): a raid set's si
 Aetheric piece of its record's make alone, and its sigil its own record's set, never another's. The Test Room's loot
 ladder lays out the raids' three sets after the Regalia.
 
-Pinned: `test/raid4b_sets.test.js`; `tools/mutants/raid4b.json` (67, all dead), and the 215 older records on the files it
+Pinned: `test/systems/raid4b_sets.test.js`; `tools/mutants/raid4b.json` (67, all dead), and the 215 older records on the files it
 touched run again, all dead - fifteen re-aimed where RAID4b moved their text (the two D6 marks, SET1's order, SET6's
 axe blow and Test Room, RAID4's receipt, the spoils pool's seven, two SURVTIERS3 cite rots).
 
 ### AUDIT SETS - the powers and pieces online, audited (2026-09-28)
 
 Mac: *"1. Audit this properly 2. Ensure online functionality is perfect"*. A lens read RAID4b's powers and pieces
-against the running hosts and ran each doubt as an experiment; pinned in `test/auditsetsonline.test.js` (8 tests, 27
-mutants all dead; the stream's law in `test/restsync.test.js` and `test/questparty3c.test.js`, 10 more), the foe record's field riding the relay's world123 deploy:
+against the running hosts and ran each doubt as an experiment; pinned in `test/systems/auditsetsonline.test.js` (8 tests, 27
+mutants all dead; the stream's law in `test/net/restsync.test.js` and `test/scenes/questparty3c.test.js`, 10 more), the foe record's field riding the relay's world123 deploy:
 
 - **M1: "under half health" was this machine's roll.** A puppet (a foe another player owns) and a dungeon guest's copy
   are rolled here - their own dice, their own level - and only the owner's HEALTH streamed, so Run Them Down read the
@@ -936,8 +936,8 @@ of the streaming page: `scenes/worldModes.js`'s interiors and `scenes/dungeonCon
 and the serpent's hoard, its crash door and its claim's silver (the sea is the streaming world's alone).
 `scenes/exterior.js`, the offline town page, has no sea and registers no sets' voice - the sets are online gear.
 
-Pinned: `test/serpentset.test.js` (the law, the records, the drop, the hoard, the powers, the heal, the host) and
-`test/serpentset_service.test.js` (the embers on the row, the insignia's purse, the serpent's silver);
+Pinned: `test/systems/serpentset.test.js` (the law, the records, the drop, the hoard, the powers, the heal, the host) and
+`test/net/serpent/serpentset_service.test.js` (the embers on the row, the insignia's purse, the serpent's silver);
 `tools/mutants/serpentset.json` (48, all dead). The older pins it moved: SET1's and RAID4b's set lists, SET3's states and
 voice, SERPENT1's hoard list; their records re-aimed by content (SET1's order, SET3's bow and its two Wrath records -
 Shed Skin carries the same crossing and guard - LOOT4's three heal records, now `systems/playerHeal.js`'s).
@@ -951,7 +951,7 @@ the fold for Dwemer Brass; the damage modifier for Gearward, a foe's blow alone;
 when no Bulwark answers, and the hurt listener's heal as the door says it saved; the round's "ready again"; its chip;
 the states), the nine records (`systems/aetheric.js` `NUMIDIUM_SET_PIECES`, `NUMIDIUM_SET_CHANCE`, `rollNumidiumPiece`;
 `AETHERIC_RECORDS` ends with them) and the voice (`scenes/world.js`: the Orrery hall's gear and its low bell). The
-wire's check is the raid sets' (AUDIT SETS L6). Pinned: `test/sd9d_numidium.test.js`; `tools/mutants/sd9d.json` (44,
+wire's check is the raid sets' (AUDIT SETS L6). Pinned: `test/systems/sd9d_numidium.test.js`; `tools/mutants/sd9d.json` (44,
 all dead).
 
 ### AUDIT SD - Gearward and the world boss (2026-10-07)
@@ -959,5 +959,5 @@ all dead).
 `Super-Dungeons.md`'s SD10b (C7, C8). The Remnant's blows came through the court's door with no foe's mark, so Gearward
 never answered the fight its set drops in; now a body's own blow (never the Hour's magic) is marked as a world boss's
 (`setBossStruck`, taken as the door opens, a blow's window old at most) and Gearward alone reads it (section 8). And a
-blow too small to lighten by a whole point no longer spends the winding. Pinned: `test/sd10b_audit.test.js`; `tools/mutants/sd10b.json` (its C7 and
+blow too small to lighten by a whole point no longer spends the winding. Pinned: `test/net/superDungeon/sd10b_audit.test.js`; `tools/mutants/sd10b.json` (its C7 and
 C8 records, all dead); `tools/mutants/sd9d.json`'s Gearward records re-aimed by content.

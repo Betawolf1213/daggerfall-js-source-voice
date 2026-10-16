@@ -95,7 +95,7 @@ At the owner's standing word ("These are all of your decisions"), each his to ov
 
 ## What stands
 
-- `test/audit_guild3.test.js` (16); `tools/mutants/audit_guild3.json` - 55 records, all dead (two survived the first
+- `test/net/audit_guild3.test.js` (16); `tools/mutants/audit_guild3.json` - 55 records, all dead (two survived the first
   run - the leave's account read through the elimination fallback, and the dedupe - and their pins were made to fail
   them).
 - `tools/mutants/guild3.json` - 52, all dead (`GUILD3c-a-disband-asked-a-hand-over` re-aimed at the known map once

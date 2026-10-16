@@ -425,5 +425,5 @@ export const yardArt = () => [
 
 /** SHIPYARDS (2026-10-11): THE YARDS' PAINTING TOOLS, ONE DOOR - world/portArt.js paints the port's pictures with them
  *  (its seeded rng, its noise, an image, a pixel put and got, a mix, the iron's two tones, the signboard and its word).
- *  One object, so no helper's name is declared twice across the port's modules (test/audit24_onehome.test.js). */
+ *  One object, so no helper's name is declared twice across the port's modules (test/systems/talk/audit24_onehome.test.js). */
 export const YARD_ART_KIT = Object.freeze({ rng, noiseField, image, put, get, mix, IRON_DARK, IRON_LIGHT, board, paintWord });

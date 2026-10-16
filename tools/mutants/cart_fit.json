@@ -5,7 +5,7 @@
     "old": "    if (packOpen && loot) shell.classList.add('paired');\n",
     "new": "",
     "tests": [
-      "test/cartfit.test.js"
+      "test/ui/enhanced/cartfit.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "    if (packOpen && loot) shell.classList.add('paired');",
     "new": "    if (loot) shell.classList.add('paired');",
     "tests": [
-      "test/cartfit.test.js"
+      "test/ui/enhanced/cartfit.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "  .pack-shell.paired .pack-win { width: min(1040px, calc(100vw - 32px - 18px - 340px)); }",
     "new": "  .pack-shell.paired .pack-win { width: min(1040px, calc(100vw - 32px - 340px)); }",
     "tests": [
-      "test/cartfit.test.js"
+      "test/ui/enhanced/cartfit.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "@media (min-width: 1770px) {\n  .pack-shell.paired .loot-win.wide { width: 680px; }",
     "new": "@media (min-width: 1366px) {\n  .pack-shell.paired .loot-win.wide { width: 680px; }",
     "tests": [
-      "test/cartfit.test.js"
+      "test/ui/enhanced/cartfit.test.js"
     ]
   }
 ]

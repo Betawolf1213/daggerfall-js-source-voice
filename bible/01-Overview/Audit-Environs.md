@@ -16,7 +16,7 @@ performance doesnt take a hit"*. Five lenses read the branch at `6e8ea589`, each
 - **the cost** (P): the per-frame cost of each mod on this thread and on the GPU (SwiftShader: relative only).
 
 Where two lenses found one fault the ids are joined (G1 = I1). Each fix carries an `AUDIT ENVIRONS <id>` comment and
-is pinned in `test/audit_environs.test.js` (21), or in the moved pin it names. It is mutated in
+is pinned in `test/systems/audit_environs.test.js` (21), or in the moved pin it names. It is mutated in
 `tools/mutants/audit_environs.json`.
 
 ## Fixed
@@ -39,7 +39,7 @@ is pinned in `test/audit_environs.test.js` (21), or in the moved pin it names. I
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
 | G1 = I1 | high | The first blanket tile's index buffer was bound with whatever vertex array the last frame left - the HUD's open 2D run - so the HUD's quads drew nothing ("Must have element array buffer bound") for the rest of the session. | The surface owes the renderer the seam before its first bind (`endUiRun`, `markForeignPass`), on every sync and every upload. |
-| G2 | medium | The pass's `Offset -0.25, -0.25` was left out (SNOWFALL1 kept the sea's one offset): where the snow stands at the ground's own height - a contact ramp's first texel, a faded rim - it fought the ground; 1.5-2.6% of a real scene's snow pixels lost to it, a speckled band along roads, rocks and shores. | `SNOW_LAYER`, the mod's own offset: a layer of the sea's stack, a quarter step over the ground and under the film (`test/fbsea_water.test.js` holds the world renderer to the two). |
+| G2 | medium | The pass's `Offset -0.25, -0.25` was left out (SNOWFALL1 kept the sea's one offset): where the snow stands at the ground's own height - a contact ramp's first texel, a faded rim - it fought the ground; 1.5-2.6% of a real scene's snow pixels lost to it, a speckled band along roads, rocks and shores. | `SNOW_LAYER`, the mod's own offset: a layer of the sea's stack, a quarter step over the ground and under the film (`test/render/fbsea_water.test.js` holds the world renderer to the two). |
 | G3 = I6 | medium | WebGL ignores UNPACK_FLIP_Y_WEBGL for an ImageBitmap, so the albedo stood mirrored north to south. | Decoded bottom row first (`imageOrientation: 'flipY'`), its bytes as authored. |
 | G4 | nit | The albedo blended two levels; the mod's is Point-filtered over its seven. | `NEAREST_MIPMAP_NEAREST`. |
 | G5 | nit | Both faces were drawn; the pass culls its back faces (no Cull statement). | Culled as the ground is - the grids wind as its grid does. |

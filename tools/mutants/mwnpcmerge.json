@@ -5,7 +5,7 @@
   "old": "      if (nrm) { out[o++] = nrm[v * 3]; out[o++] = nrm[v * 3 + 1]; out[o++] = nrm[v * 3 + 2]; } else { out[o++] = 0; out[o++] = 0; out[o++] = 0; }",
   "new": "      { out[o++] = 0; out[o++] = 0; out[o++] = 0; }",
   "tests": [
-   "test/mwnpc1_gpuskin.test.js"
+   "test/formats/morrowind/mwnpc1_gpuskin.test.js"
   ]
  },
  {
@@ -14,7 +14,7 @@
   "old": "nrm[v] = p.mirrored ? -sn[v] : sn[v];",
   "new": "nrm[v] = sn[v];",
   "tests": [
-   "test/mwnpc1_gpuskin.test.js"
+   "test/formats/morrowind/mwnpc1_gpuskin.test.js"
   ]
  },
  {
@@ -23,8 +23,8 @@
   "old": "const nrm = p.normals && p.normals.length === pos.length && batch.normals",
   "new": "const nrm = batch.normals",
   "tests": [
-   "test/mwnpc1_gpuskin.test.js",
-   "test/mwnpc_audit2.test.js"
+   "test/formats/morrowind/mwnpc1_gpuskin.test.js",
+   "test/characters/mwnpc_audit2.test.js"
   ]
  },
  {
@@ -33,7 +33,7 @@
   "old": "  const k = l2 > 1e-24 ? 1 / Math.sqrt(l2) : 0;",
   "new": "  const k = l2 > 1e-24 ? 1 : 0;",
   "tests": [
-   "test/mwnpc1_gpuskin.test.js"
+   "test/formats/morrowind/mwnpc1_gpuskin.test.js"
   ]
  },
  {
@@ -42,7 +42,7 @@
   "old": "    n = l2 > 1e-24 ? m * inversesqrt(l2) : vec3(0.0);",
   "new": "    n = aNormal;",
   "tests": [
-   "test/mwnpc1_gpuskin.test.js"
+   "test/formats/morrowind/mwnpc1_gpuskin.test.js"
   ]
  },
  {
@@ -51,7 +51,7 @@
   "old": "  if (dot(vNormalV, vNormalV) > 1e-20) return vNormalV;\n",
   "new": "",
   "tests": [
-   "test/mwnpc1_gpuskin.test.js"
+   "test/formats/morrowind/mwnpc1_gpuskin.test.js"
   ]
  },
  {
@@ -60,7 +60,7 @@
   "old": "  if (r.gen === gen) return false;",
   "new": "  if (r.gen !== -1) return false;",
   "tests": [
-   "test/mwnpc_mainmerge.test.js"
+   "test/formats/morrowind/mwnpc_mainmerge.test.js"
   ]
  },
  {
@@ -69,7 +69,7 @@
   "old": "    if (r.kind !== 'rigid' || !syncRigidRow(r)) continue;",
   "new": "    if (r.kind !== 'rigid') continue;\n    syncRigidRow(r);",
   "tests": [
-   "test/mwnpc_mainmerge.test.js"
+   "test/formats/morrowind/mwnpc_mainmerge.test.js"
   ]
  },
  {
@@ -78,7 +78,7 @@
   "old": "    out.push({ offset: r.corner0 * floats, data: r.sub });",
   "new": "    out.push({ offset: 0, data: r.sub });",
   "tests": [
-   "test/mwnpc_mainmerge.test.js"
+   "test/formats/morrowind/mwnpc_mainmerge.test.js"
   ]
  },
  {
@@ -87,7 +87,7 @@
   "old": "  r.boxes.clear();\n  if (r.n) r.boxes.set(r.entry, box);",
   "new": "  if (!r.boxes.size && r.n) r.boxes.set(r.entry, box);",
   "tests": [
-   "test/mwnpc_mainmerge.test.js"
+   "test/formats/morrowind/mwnpc_mainmerge.test.js"
   ]
  },
  {
@@ -96,7 +96,7 @@
   "old": "      p.sourceGen = (p.sourceGen | 0) + 1;   // MWNPC1: the GPU stream re-streams this piece's corners (mwGpuSkin.js restreamMovedRows)\n",
   "new": "",
   "tests": [
-   "test/mwnpc_mainmerge.test.js"
+   "test/formats/morrowind/mwnpc_mainmerge.test.js"
   ]
  },
  {
@@ -105,7 +105,7 @@
   "old": "      posePartBatch(p.clip.nif, p.clip.batch, t, p.source, p.sourceNormals);\n      p._clockAt = t;\n      p.sourceGen = (p.sourceGen | 0) + 1;\n",
   "new": "      posePartBatch(p.clip.nif, p.clip.batch, t, p.source, p.sourceNormals);\n      p._clockAt = t;\n",
   "tests": [
-   "test/mwnpc_mainmerge.test.js"
+   "test/formats/morrowind/mwnpc_mainmerge.test.js"
   ]
  },
  {
@@ -114,7 +114,7 @@
   "old": "        for (const m of restreamMovedRows(thirdSkin, pieceLanes)) renderer.updateSkinStream(thirdMesh, m.offset, m.data);",
   "new": "        void restreamMovedRows;",
   "tests": [
-   "test/mwnpc_mainmerge.test.js"
+   "test/formats/morrowind/mwnpc_mainmerge.test.js"
   ]
  },
  {
@@ -123,7 +123,7 @@
   "old": "    if (r.kind === 'skinned' && r.batch !== p.batch) return false;\n",
   "new": "",
   "tests": [
-   "test/mwnpc_mainmerge.test.js"
+   "test/formats/morrowind/mwnpc_mainmerge.test.js"
   ]
  },
  {
@@ -132,7 +132,7 @@
   "old": "      const at = p.followAt ?? fns.attachmentTransform(mats, p.attachRef);",
   "new": "      const at = fns.attachmentTransform(mats, p.attachRef);",
   "tests": [
-   "test/mwnpc_mainmerge.test.js"
+   "test/formats/morrowind/mwnpc_mainmerge.test.js"
   ]
  },
  {
@@ -141,7 +141,7 @@
   "old": "    if (assembly.afterPose) assembly.afterPose(assembly);\n    return assembly;\n  }",
   "new": "    return assembly;\n  }",
   "tests": [
-   "test/mwnpc_mainmerge.test.js"
+   "test/formats/morrowind/mwnpc_mainmerge.test.js"
   ]
  },
  {
@@ -150,7 +150,7 @@
   "old": "  if (gpu) assembly.fns.skinBatch(follow.cloak.batch, assembly.skeleton, assembly.pose, assembly.mats, follow.cloak.positions, null);\n",
   "new": "",
   "tests": [
-   "test/mwnpc_mainmerge.test.js"
+   "test/formats/morrowind/mwnpc_mainmerge.test.js"
   ]
  },
  {
@@ -159,7 +159,7 @@
   "old": "      p.followAt = g.at;\n",
   "new": "",
   "tests": [
-   "test/mwnpc_mainmerge.test.js"
+   "test/formats/morrowind/mwnpc_mainmerge.test.js"
   ]
  },
  {
@@ -168,7 +168,7 @@
   "old": "      if (gpu) continue;\n",
   "new": "",
   "tests": [
-   "test/mwnpc_mainmerge.test.js"
+   "test/formats/morrowind/mwnpc_mainmerge.test.js"
   ]
  },
  {
@@ -177,7 +177,7 @@
   "old": "  for (const p of assembly.pieces) if (p.followAt) p.followAt = null;   // MWNPC1: a placement the last follow left goes with it\n",
   "new": "",
   "tests": [
-   "test/mwnpc_mainmerge.test.js"
+   "test/formats/morrowind/mwnpc_mainmerge.test.js"
   ]
  },
  {
@@ -186,7 +186,7 @@
   "old": "      p.sourceGen = (p.sourceGen | 0) + 1;   // MWNPC1: a GPU stream laid out of the old source streams this one (mwGpuSkin.js)\n",
   "new": "",
   "tests": [
-   "test/mwnpc_mainmerge.test.js"
+   "test/formats/morrowind/mwnpc_mainmerge.test.js"
   ]
  },
  {
@@ -195,7 +195,7 @@
   "old": "if (npcLane && _sg === 1 && isBodyFoe(f)) { npcLane.stand(",
   "new": "if (npcLane && isBodyFoe(f)) { npcLane.stand(",
   "tests": [
-   "test/mwnpc_mainmerge.test.js"
+   "test/formats/morrowind/mwnpc_mainmerge.test.js"
   ]
  },
  {
@@ -204,7 +204,7 @@
   "old": "\"feat:mw-spell-effects\", \"feat:mw-npc-bodies\", \"feat:mw-billboard-look\"]),",
   "new": "\"feat:mw-spell-effects\", \"feat:mw-billboard-look\"]),",
   "tests": [
-   "test/mwnpc_mainmerge.test.js"
+   "test/formats/morrowind/mwnpc_mainmerge.test.js"
   ]
  },
  {
@@ -213,7 +213,7 @@
   "old": "        fb.castOnly = false;\n        flats.push(fb);",
   "new": "        flats.push(fb);",
   "tests": [
-   "test/mwnpc_mainmerge.test.js"
+   "test/formats/morrowind/mwnpc_mainmerge.test.js"
   ]
  },
  {
@@ -222,7 +222,7 @@
   "old": "      for (const b of flats) b.castOnly = false;",
   "new": "      for (const b of flats) void b;",
   "tests": [
-   "test/mwnpc_mainmerge.test.js"
+   "test/formats/morrowind/mwnpc_mainmerge.test.js"
   ]
  }
 ]

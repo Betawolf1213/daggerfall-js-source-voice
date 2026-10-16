@@ -5,7 +5,7 @@
     "old": "else if (near !== round.at || !nearFrom || Math.hypot(f.x - nearFrom.x, f.z - nearFrom.z) > host.radius) near = null;",
     "new": "else near = null;",
     "tests": [
-      "test/partytravel.test.js"
+      "test/systems/party/partytravel.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "Math.hypot(f.x - nearFrom.x, f.z - nearFrom.z) > host.radius) near = null;",
     "new": "false) near = null;",
     "tests": [
-      "test/partytravel.test.js"
+      "test/systems/party/partytravel.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "if (!offerDue || now - settledAt < LEADER_SETTLE_MS || follow",
     "new": "if (!offerDue || follow",
     "tests": [
-      "test/partytravel.test.js"
+      "test/systems/party/partytravel.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "if (!offerDue || now - settledAt < LEADER_SETTLE_MS || follow || host.moving()) return;\n    offerDue = false;",
     "new": "if (!offerDue || now - settledAt < LEADER_SETTLE_MS) return;\n    offerDue = false;\n    if (follow || host.moving()) return;",
     "tests": [
-      "test/partytravel.test.js"
+      "test/systems/party/partytravel.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "leaderSeen.px = p.px; leaderSeen.py = p.py; settledAt = now;",
     "new": "leaderSeen.px = p.px; leaderSeen.py = p.py;",
     "tests": [
-      "test/partytravel.test.js"
+      "test/systems/party/partytravel.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "{ follow = null; offerDue = false; host.say(`The party went on",
     "new": "{ follow = null; host.say(`The party went on",
     "tests": [
-      "test/partytravel.test.js"
+      "test/systems/party/partytravel.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "const why = !host.outdoors() || !host.alive() ? PARTY_TRAVEL_TEXT.off : host.refusal();",
     "new": "const why = null;",
     "tests": [
-      "test/partytravel.test.js"
+      "test/systems/party/partytravel.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "const why = !host.outdoors() || !host.alive() ? PARTY_TRAVEL_TEXT.off : host.refusal();",
     "new": "const why = host.refusal();",
     "tests": [
-      "test/partytravel.test.js"
+      "test/systems/party/partytravel.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "(why === PARTY_TRAVEL_TEXT.off ? why :",
     "new": "(false ? why :",
     "tests": [
-      "test/partytravel.test.js"
+      "test/systems/party/partytravel.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "if (t.arrived && now - t.go > TRIP_FOLLOW_MS) trip = null;",
     "new": "if (now - t.go > TRIP_FOLLOW_MS) trip = null;",
     "tests": [
-      "test/partytravel.test.js"
+      "test/systems/party/partytravel.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "if (t.arrived && now - t.go > TRIP_FOLLOW_MS) trip = null;",
     "new": "if (t.arrived && now - t.go > TRIP_FOLLOW_MS * 1e9) trip = null;",
     "tests": [
-      "test/partytravel.test.js"
+      "test/systems/party/partytravel.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "if (went) { t.arrived = true; return; }",
     "new": "if (went) return;",
     "tests": [
-      "test/partytravel.test.js"
+      "test/systems/party/partytravel.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "besideSeat: followerSeatOf(social()?.party, social()?.acct),",
     "new": "besideSeat: 0,",
     "tests": [
-      "test/partytravel.test.js"
+      "test/systems/party/partytravel.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "    if (m.acct === party.leader) continue;\n",
     "new": "",
     "tests": [
-      "test/partytravel.test.js"
+      "test/systems/party/partytravel.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "const start = Number.isInteger(first) && first > 0 ? first % n : 0;",
     "new": "const start = 0;",
     "tests": [
-      "test/partytravel.test.js"
+      "test/systems/party/partytravel.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "const start = Number.isInteger(first) && first > 0 ? first % n : 0;",
     "new": "const start = Number.isInteger(first) && first > 0 ? Math.min(first, n - 1) : 0;",
     "tests": [
-      "test/partytravel.test.js"
+      "test/systems/party/partytravel.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "const [dx, dz] = offsets[(start + i) % n];",
     "new": "const [dx, dz] = offsets[i === 0 ? start : i - 1];",
     "tests": [
-      "test/partytravel.test.js"
+      "test/systems/party/partytravel.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": ",\n  [BESIDE_DIAG, BESIDE_DIAG], [-BESIDE_DIAG, -BESIDE_DIAG], [-BESIDE_DIAG, BESIDE_DIAG], [BESIDE_DIAG, -BESIDE_DIAG]]",
     "new": "]",
     "tests": [
-      "test/partytravel.test.js"
+      "test/systems/party/partytravel.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "    if (socialLink()?.sendParty(_partyPose)) partyTravel?.sent(_partyPose);",
     "new": "    socialLink()?.sendParty(_partyPose); partyTravel?.sent(_partyPose);",
     "tests": [
-      "test/partytravel.test.js"
+      "test/systems/party/partytravel.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "old": "return partyArrivalBeside([lx, w.y + state.compensation[1], lz], collider, seat, tvSeaY() - 0.1);",
     "new": "return partyArrivalBeside([lx, w.y + state.compensation[1], lz], collider, 0, tvSeaY() - 0.1);",
     "tests": [
-      "test/partytravel.test.js"
+      "test/systems/party/partytravel.test.js"
     ]
   },
   {
@@ -185,7 +185,7 @@
     "old": "moving: () => worldMoveBusy() || !!travelControlUI?.isShowing,",
     "new": "moving: () => worldMoveBusy(),",
     "tests": [
-      "test/partytravel.test.js"
+      "test/systems/party/partytravel.test.js"
     ]
   }
 ]

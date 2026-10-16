@@ -39,7 +39,7 @@
 // arithmetic underneath it.
 //
 // ── THE LAW IS NOT HERE, AND THAT IS THE POINT ────────────────────
-// a11's law (test/advancementui.test.js): the Level++ and the health
+// a11's law (test/systems/advancementui.test.js): the Level++ and the health
 // roll live in ONE place and never in a window. This file writes
 // NOTHING - not entity.level, not entity.stats, not a pool. It is a
 // READING of a live rollout screen, and every act goes back through
@@ -212,7 +212,7 @@ export const STAR_FIGURE = Object.freeze({
  * a point spent on the wrong attribute.
  *
  * So the layout carries its own floor: no pair may be closer than this
- * in BOTH axes, and test/enhancedLevelUp.test.js walks all
+ * in BOTH axes, and test/ui/enhancedLevelUp.test.js walks all
  * twenty-eight pairs against it. The value is what a 56px-wide,
  * 44px-tall target needs at the narrowest width the window supports
  * (a 374px figure: 100 units over 374px is 3.74px a unit, so 15 units
@@ -575,7 +575,7 @@ export function levelProgress(entity, screen) {
  * one moment a player is looking directly at the consequence.
  *
  * THIS IS A SECOND READING OF ONE LAW, which the bible forbids being
- * left unpinned: test/enhancedLevelUp.test.js reconstructs
+ * left unpinned: test/ui/enhancedLevelUp.test.js reconstructs
  * levelUpSkillSum from these roles alone and holds it against the
  * function itself, over generated careers. If the roles ever drift
  * from the sum, that pin fails rather than a player being taught the

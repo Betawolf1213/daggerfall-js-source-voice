@@ -21,7 +21,7 @@ heard in interiors"*.
 7. Mac: crickets heard in interiors.
 
 Every one was reproduced in node before it was touched. The pins are
-`test/disc6.test.js` and `test/audio3d.test.js`, and the mutant sets
+`test/systems/disc6.test.js` and `test/systems/audio3d.test.js`, and the mutant sets
 `tools/mutants/disc6.json` (20) and `tools/mutants/audio3d.json` (17) all
 die.
 
@@ -99,7 +99,7 @@ past 90 degrees onto the front, so a foe behind sounded like one ahead.
   coordinates.
 - Every panner is born in `_panner` with `PANNING_MODEL = 'HRTF'`.
 
-`test/audio3d.test.js` checks the ear against the screen, through the
+`test/systems/audio3d.test.js` checks the ear against the screen, through the
 renderer's own view and mirror, facing north and facing east. HRTF goes
 past DFU (Unity's stereo panner has no front/back cue) at the players'
 ask. The record is Port-Ledger A, THE EARS.
@@ -175,7 +175,7 @@ not reproduced for peers.
 
 Mac: *"1. fix the known gaps 2. for player interaction and horse
 interaction, instead of using a keybind toggle, let's reuse the loot
-scroll menu to select options"*. Pins: `test/disc7.test.js` (11). Mutants:
+scroll menu to select options"*. Pins: `test/systems/disc7.test.js` (11). Mutants:
 `tools/mutants/disc7.json` (38, all dead), plus eighteen older records
 re-aimed by content (quickloot 6, worldhover 5, peerplaque 4, el8 2,
 soc1 1) and two retired with the prompt they covered. DISC6 re-aimed
@@ -266,9 +266,9 @@ everything on the branch since main (DISC6 + DISC7):
 - C: the torch, the lights and the quest
 - D: the evidence, the records and the hygiene
 
-Every verified finding is paid below. The pins are `test/auditdisc7.test.js`
-(10, by execution) and additions to `test/disc6.test.js`,
-`test/disc7.test.js` and `test/peerplaque.test.js`. The mutants are
+Every verified finding is paid below. The pins are `test/systems/auditdisc7.test.js`
+(10, by execution) and additions to `test/systems/disc6.test.js`,
+`test/systems/disc7.test.js` and `test/player/peerplaque.test.js`. The mutants are
 `tools/mutants/auditdisc7.json` (35), and the older records were re-aimed
 by content. Nine older source pins followed the new shapes without
 changing their law: the two exit ladders' anchors (`tryExit(`,
@@ -433,10 +433,10 @@ also here's some bugs"*.
    reloading"*
 
 Each was investigated to its cause in node before it was touched. The pins
-are `test/disc8.test.js` (5, by execution), with re-aimed pins in
-`test/disc6.test.js`, `test/friendlyspells.test.js`,
-`test/jan1_field.test.js`, `test/automapsheet.test.js` and
-`test/ui1_usemagicitem.test.js`. The mutants are `tools/mutants/disc8.json`
+are `test/systems/disc8.test.js` (5, by execution), with re-aimed pins in
+`test/systems/disc6.test.js`, `test/systems/friendlyspells.test.js`,
+`test/world/terrain/jan1_field.test.js`, `test/ui/automap/automapsheet.test.js` and
+`test/systems/ui1_usemagicitem.test.js`. The mutants are `tools/mutants/disc8.json`
 (10); the cricket records in disc6, cricketdungeon, cricketquiet and
 friendlyspells were re-aimed. All die.
 
@@ -595,7 +595,7 @@ state, world.js) still reads the sim's word, so its rain songs can start
 before the front's first drop; the rules (summoning, survival) read the
 sim's word by design.
 
-Pinned by execution in `test/disc8.test.js` (DISC9, with the real front,
+Pinned by execution in `test/systems/disc8.test.js` (DISC9, with the real front,
 the real sim and the mod as shipped); mutants in `tools/mutants/disc8.json`
 (4 more).
 
@@ -605,7 +605,7 @@ the real sim and the mod as shipped); mutants in `tools/mutants/disc8.json`
 
 (Not the survival-tiers branch's DISC10 further down, which fixed the
 cart and the map mark from a different set of reports the same day; that
-round's pins are `test/disc10.test.js`, this one's are named below.)
+round's pins are `test/systems/disc10.test.js`, this one's are named below.)
 
 Mac, with three Discord reports: *"Also vampries and werewolf. I think
 these systems are completely broken and not wired correctly"*.
@@ -638,7 +638,7 @@ for did not:
 **Fix.** A text field owns every key it can type, and never Escape. The
 view follows `cancelled` to the Cancel button's own exit. The rail is a
 readout: out of the tab order, `aria-disabled`, no pointer, no hover.
-Pinned by execution in `test/disc10_hand_chargen_maps.test.js` over a small DOM
+Pinned by execution in `test/ui/enhanced/disc10_hand_chargen_maps.test.js` over a small DOM
 (`test/chargenDom.mjs`).
 
 ## DISC10-A: a weapon swapped into the left hand showed fists
@@ -684,7 +684,7 @@ card now reads "Recipe for" and "Ingredients" from one shared
 `potionRecipeIngredientNames` (MCP's PotionRecipeIngredients). The
 Potion Maker already saw carried recipes.
 
-Pinned: `test/lh1.test.js` (3) and `test/maploot1.test.js` (3), by
+Pinned: `test/systems/lh1.test.js` (3) and `test/systems/loot/maploot1.test.js` (3), by
 execution.
 
 ---
@@ -729,7 +729,7 @@ plays in the right ear and one on the left in the left (L 0.024 / R 0.086
 and mirrored). The renderer's projection puts those same points on the
 same sides. Nothing was changed there.
 
-Pinned by execution in `test/disc11.test.js` (gain times level, with the
+Pinned by execution in `test/systems/disc11.test.js` (gain times level, with the
 mod's recording louder than the street's, at 0.15, 0.5 and 1; the dungeon's
 exit; the jump). Mutants: `tools/mutants/disc11.json` (5).
 
@@ -773,13 +773,13 @@ DFU says "You have no usable magic item" (DaggerfallUI.cs:584-585,
 Internal_Strings.csv:959); the port opened nothing and said nothing. All
 three hosts say it now.
 
-Pinned by execution in `test/disc12.test.js` (the wire's laws, the eased
+Pinned by execution in `test/net/disc12.test.js` (the wire's laws, the eased
 pose, the body following the hand, the beast drawn as the beast, the pack's
 figure, the HUD line). Mutants: `tools/mutants/disc12.json` (9).
 
 The version's own mutant run turned up one survivor on HEAD, soc1 S23 (the
 lead handed to the newest seat when nobody is online): no pin held the
-all-away arm. `test/auditparty8.test.js` now holds it (every remaining seat
+all-away arm. `test/net/auditparty8.test.js` now holds it (every remaining seat
 away - the longest-standing leads), and S23 names that suite.
 
 # CONTRIB - the contributor's drop, integrated and read
@@ -805,7 +805,7 @@ untouched comments sat beside targets that had moved on their side
 (nine cites, spellcost.js line 192 -> 181 among them). A shared line's
 number was read off one side's target and the line cannot say which;
 the tool now maps it from both and moves it only where the two agree,
-else prints it AMBIGUOUS for a person (`test/citemerge.test.js`).
+else prints it AMBIGUOUS for a person (`test/tooling/citemerge.test.js`).
 
 ## The read: three lenses, every finding verified in the code
 
@@ -885,7 +885,7 @@ drop's trailing comments moved back onto the lines they describe.
 - **H5 - the bar's icons skipped DW3's dye.** Asked with it, as the
   diamond and the pack do.
 
-Pinned by execution in `test/auditcontrib.test.js`; mutants:
+Pinned by execution in `test/systems/auditcontrib.test.js`; mutants:
 `tools/mutants/auditcontrib.json` (21, all killed).
 
 # ARROW2 - the double arrows (DISC8-F), found
@@ -921,7 +921,7 @@ and at many frame rates with it on. Three DFU laws the port had not carried:
    frame on the release ran StrikeDown to Idle at once. The port's own gun
    (FIELD-GUN7's lab clock) is no FPSWeapon and keeps its carry.
 
-Pinned by execution in `test/arrow2_bowhide.test.js`: one shot at 60 and
+Pinned by execution in `test/systems/arrow2_bowhide.test.js`: one shot at 60 and
 50 fps, drawback on and off, widget on and off - no nocked frame on screen
 from the first frame the shaft can be drawn until the cooldown ends, and the
 bow back after it; the un-draw keeps the bow; the drawn idle and the +2 tick
@@ -940,7 +940,7 @@ shadow on the ground, not a second arrow.
 Mac: *"I think these systems are completely broken and not wired
 correctly"*. They were: every finding below was confirmed in the code
 before it was changed, and each is pinned by execution in
-`test/disc10_vampire.test.js` (V) and `test/disc10_lycan.test.js` (L).
+`test/systems/disc10_vampire.test.js` (V) and `test/systems/disc10_lycan.test.js` (L).
 
 - **H1 - the hit hook ran before the blow landed.** RacialOverrideEffect.
   OnWeaponHitEntity sat at the tail of the damage FORMULA, before any door
@@ -1013,7 +1013,7 @@ KilledInnocent alone on the live minute
 (`worldTick.playerWeaponKillReported`) - the vampire fed on the blow and is
 not fed twice. Civilians and building interiors were always local to each
 client (their kills were seen dead at the striker), and no dungeon holds
-the city watch. Pinned by execution in `test/disc10_online_kill.test.js`
+the city watch. Pinned by execution in `test/systems/disc10_online_kill.test.js`
 (two clients, the blow out, the death at the owner, the report back);
 mutants in `disc10.json` (79, all dead).
 
@@ -1035,7 +1035,7 @@ these"*.
 3. Triage: *"im stuck in a tree?"*
 
 Each was investigated to its cause in node, against the real modules,
-before it was touched. The pins are `test/disc10.test.js`; the mutants are
+before it was touched. The pins are `test/systems/disc10.test.js`; the mutants are
 `tools/mutants/disc10.json`. All die.
 
 ## DISC10-A: two carts for one Cart transport
@@ -1115,7 +1115,7 @@ Mac, with four Discord screenshots: *"Got some bugs for you"*.
    options for the boat"*.
 
 Each was traced to its cause in node, against the real modules, before it
-was touched. The pins are `test/disc13.test.js`, and every one but A's
+was touched. The pins are `test/systems/disc13.test.js`, and every one but A's
 first fails on the code before the fix. The mutants are
 `tools/mutants/disc13.json` (22). The run by the rule took 209 records:
 this list, every record whose tests this change edited, and every record
@@ -1259,7 +1259,7 @@ correct."*
    like some of the diverse weapon settings arent needed because we have
    other integrations that handle them"*.
 
-The pins are `test/disc14.test.js`; the mutants are
+The pins are `test/combat/weapon/disc14.test.js`; the mutants are
 `tools/mutants/disc14.json`, and all thirteen die.
 
 ## DISC14-A: the horse drawn over the weapon
@@ -1525,7 +1525,7 @@ moves. The first reading of "before diverse weapons" turned the mod off
 and broke MO1's pin, so it was not taken. The preset is the player's to
 choose.
 
-The pins are `test/disc16.test.js` (3), and MAC3's downhill pin reads
+The pins are `test/combat/disc16.test.js` (3), and MAC3's downhill pin reads
 the rest. DW1 and AUDIT-DW pin the preset's default off. DISC14's three B
 pins went with it. The mutants are `tools/mutants/disc16.json`, all
 seven dead; DISC14-B's five records are retired.
@@ -1606,7 +1606,7 @@ it no longer is. Retired with it:
   player's strength), and their 57 mutant records.
 - EM1-25/26 go back to the click arm as it stands.
 
-The pins are `test/disc17.test.js` (5). Its mutants,
+The pins are `test/ui/disc17.test.js` (5). Its mutants,
 `tools/mutants/disc17.json`, are all ten dead.
 
 # DISC18 - the body's legs in the ground, not the save
@@ -1648,7 +1648,7 @@ passes). The cameras keep `feetAt` and its smoothing, as do the torch
 light and every gameplay reader. On a stair the body now steps up a rung
 as the capsule does, and the camera glides after it.
 
-The pins are `test/disc18.test.js` (3):
+The pins are `test/player/disc18.test.js` (3):
 
 - the body on the ground to 0.1 mm on 10 to 40 degree hills, walking and
   running, up and down, at 60 and 144 Hz;
@@ -1806,7 +1806,7 @@ file that never mentioned the mod is not grown one.
 
 ## Pins
 
-`test/disc20.test.js` (13):
+`test/systems/disc20.test.js` (13):
 
 - A: the grass stage run through `test/glsl.mjs` in both styles (no fog
   is the old picture to the bit, 100 m into heavy fog is the fog colour,
@@ -1828,7 +1828,7 @@ GRASS-PX's composition pin now composes both edit lists, and
 `tools/mutants/disc20.json`, are all 34 dead. Of the 88 older records the
 change reaches, 87 died as they stood; `WEATHER3f-squall-strikes` (the
 centre's gate) survived, because R1's winter is snow everywhere and the
-new strike-point gate stood in for it. It runs `test/disc20.test.js` too
+new strike-point gate stood in for it. It runs `test/systems/disc20.test.js` too
 now, which holds a squall's edge over thunder ground dark.
 
 # DISC21 - three Discord reports
@@ -1918,7 +1918,7 @@ own.
 
 ## Pins
 
-`test/disc21.test.js` (4):
+`test/systems/disc21.test.js` (4):
 
 - A: the questions' dagger minted and worn to the kit's 20%, not broken,
   repairable and equipped; the kit minting a dagger that came without a

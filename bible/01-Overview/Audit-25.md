@@ -200,7 +200,7 @@ sharpest instance is `systems/mysticism.js`, which carries the whole
 Mysticism school - `armOpen`, `triggerOpen`, `triggerLock`,
 `dispelNearby`, `dispellableBundles`, `fillEmptyTrap` - and of which
 **only `silenceBlocksCast` has a production consumer**. Every other
-export is referenced solely by `test/mysticism.test.js`, which at
+export is referenced solely by `test/scenes/mysticism.test.js`, which at
 :224 actually *asserts* that the host does not call them. Open, Lock,
 Dispel, Soul Trap, Create Item and Comprehend Languages are written,
 tested, and unreachable.
@@ -346,7 +346,7 @@ nothing here.~~ **TWENTY-ONE OF THAT TWENTY-TWO ARE NOW WIRED** (X1-X11c,
 (29,255) alone, whose only consumer is the unported LycanthropyEffect
 and which no crafting station offers anyway. The live
 figure is GATED rather than restated here - see the Derived figures
-block in Port-Ledger.md, which `test/ledger.test.js` checks against
+block in Port-Ledger.md, which `test/systems/ledger.test.js` checks against
 `SPELL_MAKER_EFFECTS` itself.
 
 **FormulaHelper: ~80 of 97 public statics.** The 17 absent are not

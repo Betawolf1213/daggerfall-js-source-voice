@@ -5,8 +5,8 @@
     "old": "        if (!localSame(r, c) || r.pend || pr.pend || r.pver !== pr.ver) { r.pend = true; r.under = pr; }",
     "new": "        if (!localSame(r, c) || r.pend || pr.pend) { r.pend = true; r.under = pr; }",
     "tests": [
-      "test/perfcrowd1.test.js",
-      "test/audit0928_online.test.js"
+      "test/net/perfcrowd1.test.js",
+      "test/scenes/audit0928_online.test.js"
     ]
   },
   {
@@ -15,8 +15,8 @@
     "old": "        if (!localSame(r, c) || r.pend || pr.pend || r.pver !== pr.ver) { r.pend = true; r.under = pr; }",
     "new": "        if (r.pend || pr.pend || r.pver !== pr.ver) { r.pend = true; r.under = pr; }",
     "tests": [
-      "test/perfcrowd1.test.js",
-      "test/audit0928_online.test.js"
+      "test/net/perfcrowd1.test.js",
+      "test/scenes/audit0928_online.test.js"
     ]
   },
   {
@@ -25,8 +25,8 @@
     "old": "    r.ver = ++_makings; r.pend = false;",
     "new": "    r.ver++; r.pend = false;",
     "tests": [
-      "test/perfcrowd1.test.js",
-      "test/audit0928_online.test.js"
+      "test/net/perfcrowd1.test.js",
+      "test/scenes/audit0928_online.test.js"
     ]
   },
   {
@@ -35,8 +35,8 @@
     "old": "    if (!localSame(rr, root) || rr.pend || rr.pver !== ROOT_MADE) { rr.pend = true; rr.under = null; }",
     "new": "    if (rr.pend || rr.pver !== ROOT_MADE) { rr.pend = true; rr.under = null; }",
     "tests": [
-      "test/perfcrowd1.test.js",
-      "test/audit0928_online.test.js"
+      "test/net/perfcrowd1.test.js",
+      "test/scenes/audit0928_online.test.js"
     ]
   },
   {
@@ -45,8 +45,8 @@
     "old": "        if (!localSame(r, c) || r.pend || pr.pend || r.pver !== pr.ver) { r.pend = true; r.under = pr; }",
     "new": "        if (!localSame(r, c) || r.pend || r.pver !== pr.ver) { r.pend = true; r.under = pr; }",
     "tests": [
-      "test/perfcrowd1.test.js",
-      "test/audit0928_online.test.js"
+      "test/net/perfcrowd1.test.js",
+      "test/scenes/audit0928_online.test.js"
     ]
   },
   {
@@ -55,8 +55,8 @@
     "old": "    if (!r.pend) return r.m;",
     "new": "    return r.m;",
     "tests": [
-      "test/perfcrowd1.test.js",
-      "test/audit0928_online.test.js"
+      "test/net/perfcrowd1.test.js",
+      "test/scenes/audit0928_online.test.js"
     ]
   },
   {
@@ -65,8 +65,8 @@
     "old": "    else { multiply(made(p), mat4FromQuatPosScale(r.lq, r.lt, r.ls, _local), r.m); r.pver = p.ver; }",
     "new": "    else { multiply(p.m, mat4FromQuatPosScale(r.lq, r.lt, r.ls, _local), r.m); r.pver = p.ver; }",
     "tests": [
-      "test/perfcrowd1.test.js",
-      "test/audit0928_online.test.js"
+      "test/net/perfcrowd1.test.js",
+      "test/scenes/audit0928_online.test.js"
     ]
   },
   {
@@ -75,8 +75,8 @@
     "old": "        one(gpu, made(rec));",
     "new": "        one(gpu, rec.m);",
     "tests": [
-      "test/perfcrowd1.test.js",
-      "test/audit0928_online.test.js"
+      "test/net/perfcrowd1.test.js",
+      "test/scenes/audit0928_online.test.js"
     ]
   }
 ]

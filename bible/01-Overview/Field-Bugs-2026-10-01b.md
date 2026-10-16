@@ -12,7 +12,7 @@ modules before it was fixed, pinned by tests that fail on the code as it stood, 
 
 ## PEER-HULL, PEER-DECK: her boat is met and stood on as my own (1, 2)
 
-**Reproduced first** (`test/fb1001b_peerboats.test.js`: Come Sail Away's pool over the vendored hulls, Ann's boat posed
+**Reproduced first** (`test/scenes/fb1001b_peerboats.test.js`: Come Sail Away's pool over the vendored hulls, Ann's boat posed
 off her word, the aboard machine, the real `Collider` and `PlayerMotor`, world.js's own `csaSyncColliders`,
 `csaSphereCastAll` and `csaPeersFrame` lifted and run in the frame's order): a wader running at her Small Ship's beam
 walked through her and ran on 40 m, where my own of the same hull stops him 3.45 m off her keel; a ray across her deck
@@ -31,12 +31,12 @@ or wire change.
 **Not changed.** The mod's own rays (the placing, the riders) still meet the player's own boats alone, so a boat can
 still be placed inside another's; a foe on her deck is not carried (CSA-K's declared limit, reachable now that her deck
 is a floor). Every shown peer boat is solid (at most eight a player); a range limit was not added and a crowded port's
-cost was not measured. Pins: `test/fb1001b_peerboats.test.js` (5); `tools/mutants/fb1001b_peerboats.json` 9, all dead;
+cost was not measured. Pins: `test/scenes/fb1001b_peerboats.test.js` (5); `tools/mutants/fb1001b_peerboats.json` 9, all dead;
 `csa_together.json`'s two records re-aimed, all 93 dead. Not seen in a browser with two players.
 
 ## VAMP-SUN: out of the sun, a vampire is DFU's (3)
 
-**Reproduced first** (`test/fb1001b_vampsun.test.js`). The player, cursed by `createVampirismCurse`, ticked a minute at a
+**Reproduced first** (`test/systems/fb1001b_vampsun.test.js`). The player, cursed by `createVampirismCurse`, ticked a minute at a
 time through the hosts' own ticker. The real mode machine (worldModes, which world.js's street and exterior.js both
 build) entered a real tavern by its own entry at noon; its seam answered that no sun reached him, and the curse's round
 still wrote -20 on the seven stats. dungeonContext's own registration, lifted from src/, did the same in a crypt.
@@ -55,5 +55,5 @@ registration. In the street from 06:00 to 18:00 the seven stats (and an Anthotis
 underground, in a cell or by night he has DFU's +20, and nothing past it - felt within a game minute of the door, DFU's
 round. Unchanged: the skills' +30, holy ground, feeding, and the travel rules (CheckFastTravel reads the hour alone,
 :195-208); the hood still lifts the travel rules only - OPEN for Mac: whether a raised hood in the street by day should
-lift the -20 too. Pins: `test/fb1001b_vampsun.test.js` (4); `tools/mutants/fb1001b_vampsun.json` 10, all dead;
+lift the -20 too. Pins: `test/systems/fb1001b_vampsun.test.js` (4); `tools/mutants/fb1001b_vampsun.json` 10, all dead;
 `vampday.json`'s two records re-aimed (9, all dead); lived1, vamphood and HOOD-SAID re-run (62, all dead).

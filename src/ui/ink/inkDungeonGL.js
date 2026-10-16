@@ -299,7 +299,7 @@ const _rowMesh = new WeakMap();   // row -> { pos: Float32Array, nrm: Float32Arr
  * THE GAME'S OWN CULLING LAW, derived from its matrices and not guessed (Mac: "it shows the outside the wall to
  * the viewer"): the world pass projects through mat4's right-handed lookAt and perspective with the NDC x row
  * mirrored (mirrorProjectionX), and culls with frontFace(CW) - so a face is DRAWN exactly when its wound normal
- * points at the eye (test/em3_3d_dungeon.test.js proves it through those very functions). The classic automap
+ * points at the eye (test/ui/ink/em3_3d_dungeon.test.js proves it through those very functions). The classic automap
  * draws the dungeon through that same pass. The file's own normals are NOT used for this: the earlier cut trusted
  * them, and they are not what the game draws by.
  */

@@ -161,7 +161,7 @@ export function wornNameRefusal(name) {
  *
  * THE CHARACTER'S NAME IS THE SERVICE'S, NEVER THE CLIENT'S: `character` is the realm character's own name, off the row
  * the token is minted for (realm.js realmMintFacts - a realm character of this account, standing and in play), never a
- * word of the request (test/accountworker.test.js: a name in the body never reaches the token). None - no character
+ * word of the request (test/server/accountworker.test.js: a name in the body never reaches the token). None - no character
  * named, an offline one, another account's, a tombstone - is the account's, and silently: there is nothing to wear.
  *
  * AND NEVER ANOTHER ACCOUNT'S USERNAME. A handle is unique (0001's handle_lc index) and is how an account is found - a
@@ -253,7 +253,7 @@ export async function openSession({ db, subtle, rand, nowS }, playerId, deviceLa
 /** SCALE4a (2026-10-08, Mac: "Do 1 2 and 3" - the session and its player were two reads in a row, 4.86 and 4.73 million
  *  of the database's 17.4 million the day before YARD-SHED): THE SESSION'S COLUMNS, named, each read under a `s.` prefix
  *  no column of `players` can carry, so one row holds both without a name in common (`id`, `created_at`, `last_seen`).
- *  The table's own six (0001_accounts.sql; no migration has altered it) - test/scale4a.test.js holds this list to the
+ *  The table's own six (0001_accounts.sql; no migration has altered it) - test/server/scale4a.test.js holds this list to the
  *  migrations' table, so a column added there is a pin that fails until it is named here. */
 export const SESSION_COLUMNS = Object.freeze(['id', 'player_id', 'secret_hash', 'device_label', 'created_at', 'last_seen']);
 /** SCALE4a: the session by its hash and its player beside it, in ONE statement. LEFT, so a session whose player is gone

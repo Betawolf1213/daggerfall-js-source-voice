@@ -20,7 +20,7 @@
 > its "Time remains" and the herald. The bounties' never-lapse and the any-hour letter stay reverted (AUDIT REST II
 > Q3: a bounty held through the never-lapse build runs from the first online tick after the update, once - its ledger
 > carries a version now). Pins:
-> `test/rest8_audit_timefree.test.js` (this audit's, re-aimed) and `test/rest8_questwaits.test.js` (TIMEFREE's);
+> `test/systems/quest/rest8_audit_timefree.test.js` (this audit's, re-aimed) and `test/systems/quest/rest8_questwaits.test.js` (TIMEFREE's);
 > campaigns `tools/mutants/rest8_audit_timefree.json` (14) and `tools/mutants/rest8.json` (22), all dead.
 
 Mac: *"Audit this and ensure its perfect"*, of TIMEFREE (`06-Systems/Online-Time-Arc.md` 6.3b - a quest clock online
@@ -33,7 +33,7 @@ is a deadline that never runs out or a delay that lands on the short wait) and W
   marks), every machine the hosts build, the party resync, the save, the curse arms' walk, the crime guilds' clock,
   the bounties' board and party share, the letter's town hold, the words in the quest texts, the wear's callers.
 
-Every finding was checked against the script and the code before it was fixed. Pins: `test/audit_timefree.test.js` [DELETED by QCLOCK-WORLD; restored as `test/rest8_audit_timefree.test.js` by REST8]
+Every finding was checked against the script and the code before it was fixed. Pins: `test/audit_timefree.test.js` [DELETED by QCLOCK-WORLD; restored as `test/systems/quest/rest8_audit_timefree.test.js` by REST8]
 (and `test/timefree.test.js`'s split); each fix carries an `AUDIT TIMEFREE <ID>` comment. Campaign [DELETED by QCLOCK-WORLD]
 `tools/mutants/audit_timefree.json`: 14, all dead; `tools/mutants/timefree.json` re-aimed, 10, all dead. [DELETED by QCLOCK-WORLD; restored by REST8 as `tools/mutants/rest8_audit_timefree.json` and `tools/mutants/rest8.json`]
 
@@ -90,7 +90,7 @@ and read what ships beside main.
 - **Checked again and fine**: the bounty's time left has one reader (the board window, which drops the line when it is
   null); main's new tests pass beside TIMEFREE (the full suite, below).
 
-Pins: `test/audit_timefree.test.js` (the three ticked runs). [DELETED by QCLOCK-WORLD; re-aimed in `test/rest8_audit_timefree.test.js` by REST8]
+Pins: `test/audit_timefree.test.js` (the three ticked runs). [DELETED by QCLOCK-WORLD; re-aimed in `test/systems/quest/rest8_audit_timefree.test.js` by REST8]
 
 ## Left, said so
 

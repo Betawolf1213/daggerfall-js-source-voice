@@ -29,7 +29,7 @@
 // tools/shipBake.mjs does the reading (sceneObjects - the export's axes, the Blender that wrote it, the transforms it
 // cannot read, all refused by name) and the cutting (fillFace - each polygon as Blender 5.1 cuts it, or refused).
 //
-// The output is a JSON a test re-bakes byte for byte (test/gatefbx.test.js).
+// The output is a JSON a test re-bakes byte for byte (test/tooling/gatefbx.test.js).
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { dirname, resolve } from 'node:path';

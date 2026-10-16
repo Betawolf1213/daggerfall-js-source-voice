@@ -12,13 +12,13 @@ shaders, node probes on the real modules, or Chromium (SwiftShader) - before rep
 - **the cost** (E, P): what the slice costs on the GPU and the CPU, against its own claim of "no geometry grows".
 
 Where two lanes found the same fault the ids are joined. Each fix carries an `AUDIT FAR-SEA1 <id>` comment and is
-pinned in `test/audit_farsea1.test.js` (4) or `test/farsea1.test.js` (10, rewritten), or in the moved pin it names;
+pinned in `test/render/audit_farsea1.test.js` (4) or `test/render/farsea1.test.js` (10, rewritten), or in the moved pin it names;
 it is mutated in `tools/mutants/audit_farsea1.json`: **20 mutants, 20 dead**. The slice's own campaign,
 `farsea1.json`, is **14, 14 dead** after the fixes (seven re-aimed by content at the code they rewrote), and so are the
 records in other campaigns the fixes moved: `perfsun.json` (25, one re-aimed) and `eldistance.json` (5). PIN MOVED, each
-marked in place: `test/el1_enhancedlighting.test.js` and `test/perf2.test.js` (the ring at the far plane by its
-pass's `depthRange`, no depth write), `test/water.test.js`, `test/waternext.test.js` and `test/waterlit1.test.js` (the
-water's light, Fresnel, lobe and glints through the open sea's one text), and `test/roadc_panelframe.test.js` (the
+marked in place: `test/render/el1_enhancedlighting.test.js` and `test/render/perf2.test.js` (the ring at the far plane by its
+pass's `depthRange`, no depth write), `test/world/terrain/water.test.js`, `test/render/waternext.test.js` and `test/render/waterlit1.test.js` (the
+water's light, Fresnel, lobe and glints through the open sea's one text), and `test/ui/automap/roadc_panelframe.test.js` (the
 bracket names the sea's haze).
 
 ## What it costs
@@ -47,10 +47,10 @@ it whole, 11.3 ms counted.
 | P3 | E3, C4 | The water's arm recomputed the distance and the ramp (a second copy of FOG_GLSL's linear law, with another guard) on every water fragment, and its rim term can never reach the streamed sea (the rim opens at 16.8 km, the grid's farthest corner is 8.1 km). | The arm is the world's own factor floored: `fw = mix(fw, max(fw, 1.0 - hold), seaW)` - identical to the law there, pinned against FOG_GLSL's own `fogFactorAt`. `uSeaHaze` is the hold and the sea's height. |
 | P2 | E2 | The sea's look ran on every ring fragment, land included, weighted to nothing. | A branch on the sea's weight. |
 | P4 | E4 | A crossing built the ring's indices and the fill's in two arrays and copied both into a third. | One buffer, the fill written after the ring into the hole's own room. |
-| H1 | B1 | `panelFrame`'s own `beginFrame` cleared the sea's haze and its restore did not bring it back, so a decorator's preview drawn between the water and Iliac Puddle No More's open sea dropped the haze from the open sea for the frame. | The bracket saves and restores `_seaHaze` beside the sea's fog; `test/roadc_panelframe.test.js` names it. |
+| H1 | B1 | `panelFrame`'s own `beginFrame` cleared the sea's haze and its restore did not bring it back, so a decorator's preview drawn between the water and Iliac Puddle No More's open sea dropped the haze from the open sea for the frame. | The bracket saves and restores `_seaHaze` beside the sea's fog; `test/ui/automap/roadc_panelframe.test.js` names it. |
 | H2, P5 | B3, E5 | With the Enhanced water off the ring's sea still took the water's look beside Daggerfall's flat tile, and the sky was read for it every frame. | The sky is read only with the water on; without it the ring's sea is the ground's, as before the slice. |
 | H3 | B2 = C6 | The record named only the streaming host (THE FOUR HOSTS RULE). | Water-Arc's FAR-SEA1 names all four. |
-| C1-C3, C7-C11 | C | Pins that could not fail: the ring's fog inversion and a dead sea line survived (only substrings were pinned); the facing's inputs were pinned on hand-built values, not the vertex shader's lines; `indexOf(...) < at` passed on -1; the band's value, the horizon's upload, the clamp of a negative facing and the open sea's four components were unpinned; the renderer test hand-built the water's uniforms. | `test/farsea1.test.js` rewritten: whole lines in order, the producer's lines, the found index, the band's 1, both of the sky, a facing of -0.3, all four components, `waterUniforms`' own shape. |
+| C1-C3, C7-C11 | C | Pins that could not fail: the ring's fog inversion and a dead sea line survived (only substrings were pinned); the facing's inputs were pinned on hand-built values, not the vertex shader's lines; `indexOf(...) < at` passed on -1; the band's value, the horizon's upload, the clamp of a negative facing and the open sea's four components were unpinned; the renderer test hand-built the water's uniforms. | `test/render/farsea1.test.js` rewritten: whole lines in order, the producer's lines, the found index, the band's 1, both of the sky, a facing of -0.3, all four components, `waterUniforms`' own shape. |
 | C5 | C | `03-World/Sea-Update.md` still said the ring's sea reads a shade darker. | Retired there, as Deep-Waters.md's was. |
 | C12 | C | `seaSky` restated the water's Fresnel and sky lines. | One text (L1). |
 | C13 | C | Claims not true of the code: "no geometry grows" (a 9,409-byte buffer and the fill's triangles), "lit as the water is" (only the Fresnel was), "the land's seam unchanged" (inside the ramp it closed), the Deep-Waters retirement without its conditions, and the hole's "skips every cell" in farRing.js and EV8's record. | Each amended in place. |

@@ -70,7 +70,7 @@ export function opaqueBounds(w, h, drawn) {
 
 /**
  * THE BOXES, one a surface, in CSS pixels - the picture's room in its slot: the room inside the slot's frame, less two
- * pixels a side, so a sprite never touches its frame (each pinned against its sheet's numbers: test/ui1_slots.test.js).
+ * pixels a side, so a sprite never touches its frame (each pinned against its sheet's numbers: test/ui/enhanced/ui1_slots.test.js).
  * A slot the page draws smaller than its box (a worn pair's half, a narrow shelf) shrinks the picture whole and
  * smoothly (ui/textureCanvas.js fittedImg).
  */

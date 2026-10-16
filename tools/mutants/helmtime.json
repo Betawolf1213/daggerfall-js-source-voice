@@ -5,7 +5,7 @@
     "old": "    if (deps.timeLocked?.()) {\n      if (BOAT_TIME_ACTIONS",
     "new": "    if (false) {\n      if (BOAT_TIME_ACTIONS",
     "tests": [
-      "test/csa_time_audio.test.js"
+      "test/systems/comeSailAway/csa_time_audio.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "      if (BOAT_TIME_ACTIONS.some((a) => deps.input.started(a))) deps.midScreenText(HELM_TIME_LOCKED_TEXT, f(1.5));\n",
     "new": "",
     "tests": [
-      "test/csa_time_audio.test.js"
+      "test/systems/comeSailAway/csa_time_audio.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "export const BOAT_TIME_ACTIONS = Object.freeze([BOAT_ACTIONS.timeScaleUp, BOAT_ACTIONS.timeScaleDown, BOAT_ACTIONS.timeScaleReset]);",
     "new": "export const BOAT_TIME_ACTIONS = Object.freeze([BOAT_ACTIONS.timeScaleUp, BOAT_ACTIONS.timeScaleDown]);",
     "tests": [
-      "test/csa_time_audio.test.js"
+      "test/systems/comeSailAway/csa_time_audio.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "        timeDial: !deps.timeLocked?.(),",
     "new": "        timeDial: true,",
     "tests": [
-      "test/csa_time_audio.test.js"
+      "test/systems/comeSailAway/csa_time_audio.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "  if (h.timeDial !== false) out.push({ act: 'slower'",
     "new": "  out.push({ act: 'slower'",
     "tests": [
-      "test/csa_time_audio.test.js"
+      "test/systems/comeSailAway/csa_time_audio.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "    else if (h.timeDial === false) return false;   // HELM-TIME-ONLINE: no dial to step\n",
     "new": "",
     "tests": [
-      "test/csa_time_audio.test.js"
+      "test/systems/comeSailAway/csa_time_audio.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "  if (h.timeDial === false) return false;   // HELM-TIME-ONLINE: no time to put back\n",
     "new": "",
     "tests": [
-      "test/csa_time_audio.test.js"
+      "test/systems/comeSailAway/csa_time_audio.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "  if (h.timeDial === false) { if (trims) rows.push",
     "new": "  if (false) { if (trims) rows.push",
     "tests": [
-      "test/csa_time_audio.test.js"
+      "test/systems/comeSailAway/csa_time_audio.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "    timeLocked: () => sharedClockOn(),",
     "new": "    timeLocked: () => false,",
     "tests": [
-      "test/csa_time_audio.test.js"
+      "test/systems/comeSailAway/csa_time_audio.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "      if (BOAT_TIME_ACTIONS.some((a) => deps.input.started(a))) deps.midScreenText(",
     "new": "      if (true) deps.midScreenText(",
     "tests": [
-      "test/csa_time_audio.test.js"
+      "test/systems/comeSailAway/csa_time_audio.test.js"
     ]
   }
 ]

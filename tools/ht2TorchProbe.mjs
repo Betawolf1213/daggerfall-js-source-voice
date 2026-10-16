@@ -5,7 +5,7 @@
 // source has an equip slot, and the card answered "torch cannot be
 // worn." - so the only act on it that named the torch honestly was
 // Drop. The law is headless and pinned there
-// (test/ht2_packlight.test.js drives `localPrimaryAct` and the use);
+// (test/systems/ht2_packlight.test.js drives `localPrimaryAct` and the use);
 // what only a browser answers is whether the CARD a player actually
 // presses now offers Light, lights that torch, says which one burns,
 // and comes back offering Douse.

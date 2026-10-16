@@ -5,8 +5,8 @@
     "old": "      if (!p || !b.dead || p.fed || !(f.max > 0) || !hasPart(p) || (f.feeds ?? 0) >= P.feedsMax) continue;",
     "new": "      if (!p || !b.dead || p.fed || !(f.max > 0) || (f.feeds ?? 0) >= P.feedsMax) continue;",
     "tests": [
-      "test/audit0929_gate.test.js",
-      "test/wb8b_gate_marks.test.js"
+      "test/net/gate/audit0929_gate.test.js",
+      "test/net/gate/wb8b_gate_marks.test.js"
     ]
   },
   {
@@ -15,8 +15,8 @@
     "old": "      if (!p || !b.dead || p.fed || !(f.max > 0) || !hasPart(p) || (f.feeds ?? 0) >= P.feedsMax) continue;",
     "new": "      if (!p || !b.dead || p.fed || !(f.max > 0) || !hasPart(p)) continue;",
     "tests": [
-      "test/audit0929_gate.test.js",
-      "test/wb8b_gate_marks.test.js"
+      "test/net/gate/audit0929_gate.test.js",
+      "test/net/gate/wb8b_gate_marks.test.js"
     ]
   },
   {
@@ -25,8 +25,8 @@
     "old": "export const hasPart = (p) => p.dealt >= RECEIPT_SHARE * p.share || p.stoodMs >= SEAT_KEEP_MS;",
     "new": "export const hasPart = (p) => p.dealt >= RECEIPT_SHARE * p.share || p.stoodMs > SEAT_KEEP_MS;",
     "tests": [
-      "test/audit0929_gate.test.js",
-      "test/wb8b_gate_marks.test.js"
+      "test/net/gate/audit0929_gate.test.js",
+      "test/net/gate/wb8b_gate_marks.test.js"
     ]
   },
   {
@@ -35,8 +35,8 @@
     "old": "A.shape === 'cone' ? A.r + BOSS_R * (size - 1) : A.r,",
     "new": "A.r,",
     "tests": [
-      "test/audit0929_gate.test.js",
-      "test/wb8b_gate_marks.test.js"
+      "test/net/gate/audit0929_gate.test.js",
+      "test/net/gate/wb8b_gate_marks.test.js"
     ]
   },
   {
@@ -45,8 +45,8 @@
     "old": "      out.push({ k: 'fed', ns, h: Math.round(f.hp), m: Math.round(f.max), at: now });",
     "new": "      out.push({ k: 'fed', ns: ns.slice(0, 1), h: Math.round(f.hp), m: Math.round(f.max), at: now });",
     "tests": [
-      "test/audit0929_gate.test.js",
-      "test/wb8b_gate_marks.test.js"
+      "test/net/gate/audit0929_gate.test.js",
+      "test/net/gate/wb8b_gate_marks.test.js"
     ]
   },
   {
@@ -55,8 +55,8 @@
     "old": "m.ns.length >= 1 && m.ns.length <= GATE_FEEDS_MAX && ",
     "new": "m.ns.length >= 1 && ",
     "tests": [
-      "test/audit0929_gate.test.js",
-      "test/wb8b_gate_marks.test.js"
+      "test/net/gate/audit0929_gate.test.js",
+      "test/net/gate/wb8b_gate_marks.test.js"
     ]
   },
   {
@@ -65,7 +65,7 @@
     "old": "    return `${boss} feeds on the souls of ${ns.slice(0, -1).join(', ')} and ${ns[ns.length - 1]}.`;",
     "new": "    return `${boss} feeds on the souls of ${ns.join(', ')}.`;",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   },
   {
@@ -74,8 +74,8 @@
     "old": "  let P = _profileByMd.get(md);",
     "new": "  let P = null;",
     "tests": [
-      "test/audit0929_gate.test.js",
-      "test/wb8b_gate_marks.test.js"
+      "test/net/gate/audit0929_gate.test.js",
+      "test/net/gate/wb8b_gate_marks.test.js"
     ]
   },
   {
@@ -84,8 +84,8 @@
     "old": "trials: P.trialsLine,",
     "new": "trials: P.trials.map((t) => t.name).join(' - '),",
     "tests": [
-      "test/audit0929_gate.test.js",
-      "test/wb8b_gate_marks.test.js"
+      "test/net/gate/audit0929_gate.test.js",
+      "test/net/gate/wb8b_gate_marks.test.js"
     ]
   },
   {
@@ -94,8 +94,8 @@
     "old": "  if (day !== _marksDay) {",
     "new": "  if (true) {",
     "tests": [
-      "test/audit0929_gate.test.js",
-      "test/wb8b_gate_marks.test.js"
+      "test/net/gate/audit0929_gate.test.js",
+      "test/net/gate/wb8b_gate_marks.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "if (t - s.fed.at <= FED_LATE_MS) {",
     "new": "if (true) {",
     "tests": [
-      "test/wb8c_gate_detail.test.js"
+      "test/net/gate/wb8c_gate_detail.test.js"
     ]
   }
 ]

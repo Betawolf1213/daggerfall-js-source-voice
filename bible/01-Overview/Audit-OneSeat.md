@@ -40,12 +40,12 @@ lens's harnesses lift the old lines, and the suite now runs the fixed ones itsel
 | C5 | low | Only the World link and the presence session told the host of a 4000: a Region link's (this tab's id taken in its channel) left it shut for the page's life, with no Play online here to open it. | Every link's close is the seat's. |
 | C3 | low | The lock was claimed at online start even by a tab with no relay it could reach (a hand-set address that is none) - the other tab of the browser went offline for a tab that never could be online. | A tab with no relay takes no one's seat. (The rest of C3 is recorded below.) |
 
-**The pins** (`test/oneseat.test.js`, `tools/mutants/`)
+**The pins** (`test/net/oneseat.test.js`, `tools/mutants/`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
 | T1 | high | The host's seat code was pinned by its text alone: six natural mutants survived every related file - Play online here reading the link's room (null after the supersede, so the hub's link resumed without its claim and joined nothing), the last word guarded off or commented out (`indexOf` cannot tell), the puppets kept, the riders kept, and `supersede()` not terminal (a tab out of the seat walked through a gate's door). | `seatOut`, `renownAdopt`, `leaveSeat`, `seatLostNow`, `takeSeat` and the frame's seat branch are lifted VERBATIM from world.js and run over stubs that write down, in order, what they are asked; the exit save is run the same way; `supersede()` is pinned terminal. |
-| T2 | med | `test/auditwbx.test.js`: ONE-SEAT's re-aim put a comment in front of `await hub.hello(h6, ...)`, so h6 never said hello and "a fighter in the court: its floor gives it" asked a socket that could not be handed anything (AUDWBX-S4's court mutant survived that file alone). | The hello is a statement again; that file kills the mutant on its own. |
+| T2 | med | `test/net/gate/auditwbx.test.js`: ONE-SEAT's re-aim put a comment in front of `await hub.hello(h6, ...)`, so h6 never said hello and "a fighter in the court: its floor gives it" asked a socket that could not be handed anything (AUDWBX-S4's court mutant survived that file alone). | The hello is a statement again; that file kills the mutant on its own. |
 | T3 | med | AUDWBX-S4-every-tab-handed-it was recorded equivalent, but its `new` also dropped WBX2 M3's spent-receipt test - not equivalent (auditwbx2.test.js kills it). | Re-aimed to change every-tab-for-newest alone; it survives the three gate files, as its `why` says. |
 | T6 | low | "Not taken by Hide" was one CSS slice: the button put in the box (shut unless the chat is open), hidden in the render, or hidden by a rule after the slice all survived. | The button is pinned on the root under the status line, drawn while the chat is hidden, and named by no Hide rule anywhere. |
 
@@ -75,16 +75,16 @@ lens's harnesses lift the old lines, and the suite now runs the fixed ones itsel
 - world119 was still unshipped when the audit ran (main was world118): R1 and R4 ride the same deploy, its LAW hash
   re-recorded. Main's PR 407 then took world119 (AUDIT SET) and PR 408 world120 (PARTY-BUFFS + REST-OPT), and the merges renumbered
   this branch's relay world121. The merge drops every connected player once.
-- `test/oneseat.test.js`: 11 -> 22. `tools/mutants/oneseat.json`: 33 -> 66 (68 at the merge with PR 407), all dead - 33 new, and 7 re-aimed at lines
+- `test/net/oneseat.test.js`: 11 -> 22. `tools/mutants/oneseat.json`: 33 -> 66 (68 at the merge with PR 407), all dead - 33 new, and 7 re-aimed at lines
   the audit changed (the seat's subject line, the lock's claim and hold, the handover's indent, every link's close).
-- `test/auditwbx.test.js` (T2) and `tools/mutants/auditwbx.json` (T3): 28 dead, 1 recorded equivalent.
-- Re-aimed for the fixes: `test/disc19.test.js` finds the exit save by its guard, which asks the seat now (H4) under
+- `test/net/gate/auditwbx.test.js` (T2) and `tools/mutants/auditwbx.json` (T3): 28 dead, 1 recorded equivalent.
+- Re-aimed for the fixes: `test/systems/disc19.test.js` finds the exit save by its guard, which asks the seat now (H4) under
   a comment; H6's line is worded apart from AUDIT DUEL1 D5's exit line, so each mutant names one site; the three
   records of other lists beside the audit's edits (auditduel1 D5, event1, sigil1) were run again and still die.
 - Social-Party-Arc's ONE-SEAT note said a friend's `peers` and B9's newest tab "now meet one tab of a player in the
   hub"; both are keyed by the browser-profile account, and two players signed in within one browser meet the
   client's BroadcastChannel alone (T7). Said so.
-- A pre-existing flake seen by the pins lens, not ONE-SEAT's: `test/chat1.test.js`'s channel storm (on the real clock)
+- A pre-existing flake seen by the pins lens, not ONE-SEAT's: `test/net/chat1.test.js`'s channel storm (on the real clock)
   failed 4 of 8 runs under 8-way load; a `--jobs` run of a list naming it can report a false kill.
 - The commit message of `27c52c1f` called AUDWBX-S4 equivalent as written and said old builds read the 4000 as
   terminal; recorded here - a pushed message is not rewritten.

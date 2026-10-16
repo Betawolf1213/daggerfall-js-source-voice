@@ -40,7 +40,7 @@ export const WAGON_TILE = Object.freeze({
   harness: [0, 0.5],   // WAGONS3: round the strap once, half a metre of it a tile along it
 });
 /** The two sides' liveries: one slice each over the wagons' side walls' height (both bodies stand 0.94 to 3.06 m - the
- *  bake's, test/wagons1.test.js pins it), `recs` top down. */
+ *  bake's, test/systems/item/wagons1.test.js pins it), `recs` top down. */
 export const SIDE_Y0 = 0.94, SIDE_Y1 = 3.06;
 export const BANDS = Object.freeze({
   openSide: Object.freeze({ y0: SIDE_Y0, y1: SIDE_Y1, recs: Object.freeze([TEX.openSide]) }),

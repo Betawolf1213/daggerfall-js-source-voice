@@ -442,7 +442,7 @@ export const isOverkill = (damage, maxHealth) => damagePercent(damage, maxHealth
  * The pins drove the ladder on a table and the hosts never did.
  *
  * So the shape is here rather than at eleven sites, and
- * test/blood1_decals.test.js reads every `showBloodSplash(` in `src/`
+ * test/combat/blood1_decals.test.js reads every `showBloodSplash(` in `src/`
  * and holds that each one hands its blow over. A site that forgets is
  * the failure this whole seam exists to make impossible.
  */

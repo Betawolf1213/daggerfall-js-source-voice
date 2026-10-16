@@ -56,9 +56,9 @@ reputation, the 28 days back - "Pace ranks from joining"):
 THE FOUR HOSTS: the guild popup is worldModes.js's alone (openGuildService) - WIRED; world.js hands it `rollPace`
 (its Roll tracker); exterior.js, the offline fixed city, has no Roll and constructs no GuildServiceWindow;
 dungeonContext.js stands no guild hall. Recorded in Port-Ledger section A (ROLL-PACE, beside PROMO-NOW's row). Pinned
-by `test/fb1015f_rollpace.test.js` (5, the end-to-end one over the real service's Roll and the real tracker);
-`tools/mutants/fb1015f_rollpace.json` (13, all dead). PINS MOVED: `test/audit_chap4.test.js` C3 and
-`test/chap4b_seats.test.js`'s host wiring read `rollPace`; `test/fb1015_promonow.test.js`'s host pin reads the paced
+by `test/systems/guild/fb1015f_rollpace.test.js` (5, the end-to-end one over the real service's Roll and the real tracker);
+`tools/mutants/fb1015f_rollpace.json` (13, all dead). PINS MOVED: `test/net/audit_chap4.test.js` C3 and
+`test/systems/guild/chap4b_seats.test.js`'s host wiring read `rollPace`; `test/systems/guild/fb1015_promonow.test.js`'s host pin reads the paced
 no-wait; `tools/mutants/chap4b.json` CHAP4B-WM-CEILING and CHAP4B-W-CEILING, `audit_chap4.json` AUDIT-CHAP4-C3-CEILING
 and `fb1015_promonow.json` PROMO-NOW-the-host-offline re-aimed at the new lines.
 
@@ -107,7 +107,7 @@ on the host, under the host's concealment law.
 THE FOUR HOSTS: every foe pool runs the one `EnemyAttack.update` - dungeonContext.js's, exteriorFoes.js's (world.js's and
 exterior.js's streets and wilds, and worldModes.js's interiors, IF's one pool factory) and cityGuards.js's - all WIRED by
 the one change. The wild
-gate is world.js's alone (exterior.js has no fast travel). Pinned by `test/fb1015f_invisswing.test.js` (4, the first
+gate is world.js's alone (exterior.js has no fast travel). Pinned by `test/characters/enemy/fb1015f_invisswing.test.js` (4, the first
 over the real motor, senses and a True Invisibility cast through the one spell door); `tools/mutants/
 fb1015f_invisswing.json` (8, all dead). PINS MOVED: the hand-built foes of `enemyattack.test.js`, `arrows.test.js`,
 `audit18_enemies.test.js`, `audit24_characters.test.js` and `audit68_enemies.test.js` that stand DETECTED now carry the
@@ -157,7 +157,7 @@ CHANGED:
 - **A pad buries nothing the author left in the open.** blockHillPatch skips a model whose pad top would cover another's
   exposed vertex, and its bank steepens (at most 8:1) to pass 0.05 m under every exposed vertex and under every door's
   step and DOOR_APPROACH_M (4 m, HILL-HOUSE's rule) out - the doors read off the meshes the hosts already pass in.
-- **The law, swept.** `tools/townSolidsSweep.mjs` (the ARENA2 gate in `test/wd3_standins.test.js`, 820 blocks, 10,269
+- **The law, swept.** `tools/townSolidsSweep.mjs` (the ARENA2 gate in `test/world/wd3_standins.test.js`, 820 blocks, 10,269
   doors) holds three laws: a stand-in that is the pack's mesh exactly holds only what the pack's own meshes hold (HELD);
   no pad over anything left in the open (PADS); every door's approach clear of every port-made solid but the author's
   own (APPROACH). Before: HELD 31, PADS 7, APPROACH 6. After: 10, 0 and 6, each named in the test - the ten the pack's own
@@ -169,9 +169,9 @@ CHANGED:
 
 THE FOUR HOSTS: world.js and exterior.js lay the town blocks through these stand-ins and blockHillPatch - WIRED,
 unchanged (the doors are read off the meshes they already pass in); worldModes.js and dungeonContext.js lay out no town
-block. Pinned by `test/fb1015f_templesteps.test.js` (7); `tools/mutants/fb1015f_templesteps.json` (21, all dead - three
-need ARENA2_PATH). PINS MOVED: `test/wd3_standins.test.js`'s sizes for 53160, 53170, the rocks and the stalls, and its
-door sweep rewritten as the three laws; `test/fb1013e_hillseat.test.js`'s ARENA2 sweep reads the producer's meshes;
+block. Pinned by `test/world/fb1015f_templesteps.test.js` (7); `tools/mutants/fb1015f_templesteps.json` (21, all dead - three
+need ARENA2_PATH). PINS MOVED: `test/world/wd3_standins.test.js`'s sizes for 53160, 53170, the rocks and the stalls, and its
+door sweep rewritten as the three laws; `test/world/fb1013e_hillseat.test.js`'s ARENA2 sweep reads the producer's meshes;
 `tools/mutants/auditwd3.json` AWD3-FOUNDATION-CENTRED re-aimed. Audit-WD3's T1 retired; Field-Bugs-2026-10-13e's NOT SEEN
 narrowed; Port-Ledger's HILL-SEAT row narrowed.
 
@@ -203,7 +203,7 @@ dishes and a potion of the Apothecaries' goods say theirs; and the craft's word 
 a first of the Weavers' cloth, why none came. Eight keys, drafted in-session in the thirteen whole languages (the
 alchemy page's `xp` key retired for `xpShop`). Client only: no account or relay version moves.
 
-Pinned by `test/fb1015f_firstcraft.test.js` (3, over the real recipe tables, the real Worker's craft answer read through
+Pinned by `test/net/fb1015f_firstcraft.test.js` (3, over the real recipe tables, the real Worker's craft answer read through
 the real profBook, and every station page drawn from it); `tools/mutants/fb1015f_firstcraft.json` (20, all dead). PINS
 MOVED: `craft1_chain` and `prof10_client` read the craft's word through `craftXpText`.
 
@@ -242,7 +242,7 @@ CHANGED:
   word, as DFU's weather has no level. The classic sky keeps the mod's whole row.
 
 THE FOUR HOSTS: world.js and exterior.js - WIRED; worldModes.js (interiors) and dungeonContext.js soak nothing (a roof,
-a dungeon: `weatherWetGain` answers 0 before the row). Pinned by `test/fb1015f_wetfall.test.js` (7, one over the
+a dungeon: `weatherWetGain` answers 0 before the row). Pinned by `test/systems/survival/fb1015f_wetfall.test.js` (7, one over the
 real front's frames into the minute law); `tools/mutants/fb1015f_wetfall.json` (10, all dead).
 
 What the reporter is owed: you get wet only when rain is actually falling on you, and a light shower soaks you slowly.

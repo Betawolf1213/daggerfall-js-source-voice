@@ -22,7 +22,7 @@
 // The root is the folder holding `Mods/` and `Locations/` (unrar x the
 // shipped .rar; the archive tests clean with unrar 7). Default outDir
 // is vendor/world-of-daggerfall. It prints each written file's size
-// and sha256, which is what test/wod1_vendor.test.js pins.
+// and sha256, which is what test/systems/wod1_vendor.test.js pins.
 import { readFileSync, writeFileSync, mkdirSync, readdirSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';

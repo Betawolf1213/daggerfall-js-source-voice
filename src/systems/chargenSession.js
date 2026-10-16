@@ -391,7 +391,7 @@ export function createChargenWindow(flow, { onDone, onCancel, hudScale = 2 } = {
   // level-up arms were wired for this slice.
   //
   // (The reserved word for an unwired host is deliberately not used
-  // here: this file's own pin, test/enhancedChargen.test.js's "the FOUR
+  // here: this file's own pin, test/ui/enhanced/enhancedChargen.test.js's "the FOUR
   // HOSTS are each named at the seam", holds that the SKIN fork has no
   // host outside it, and that guard must keep meaning what it says.)
   return withLevelingChoice(flow, { onDone, onCancel, hudScale });

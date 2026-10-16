@@ -13,8 +13,8 @@ with a probe before reporting them:
 Forty-nine findings. Two are the same finding seen twice (D1 = C1, D15h = B8), so 47 are distinct. Every one was read
 again here before any line changed, and the ones that claimed a behaviour were reproduced first (C1 and C2 through the
 real session, B1 against the real float32 planes, B3 by its walk count). Each fix carries an `AUDIT 637 <ID>` comment.
-They are pinned in `test/audit637_roster.test.js` (7), `test/audit637_shadow.test.js` (10) and
-`test/audit637_runinplace.test.js` (9), and mutated in `tools/mutants/audit637.json`: **40 mutants, 40 dead.** A pin a
+They are pinned in `test/net/audit637_roster.test.js` (7), `test/render/audit637_shadow.test.js` (10) and
+`test/net/audit637_runinplace.test.js` (9), and mutated in `tools/mutants/audit637.json`: **40 mutants, 40 dead.** A pin a
 fix moved says `PIN MOVED` where it stands.
 
 ## For Mac
@@ -52,7 +52,7 @@ Nothing here waits on a call to ship; these are yours to make whenever:
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
 | B1 | medium | The cube's float32 slack grew with far alone. A face's far plane is row 3 less row 2 of its float32 view-projection, two entries near 1 whose difference is its normal (2 near / (far - near)); normalised, their rounding grows with far x (far + the place). For a far-96 lantern at the origin a face took spheres 2.75e-3 past the exact bound where the slack was 2e-3, and the pre-pass dropped a draw the face made (one witness of 48, end to end through the real renderer). Nothing visible - the corner zone of a far plane - but the draws were not the draws. | `CUBE_F32_FAR` (4 x 2^-24 / near) times far x the place's size joins the slack. Over fars 4 to 120 (SHADOW_CASTER_MAX_RANGE), places to 120 km and radii 0.05 to 3.7: no violation, the worst corner 0.114 of the slack. |
-| B2 | medium | The pins could not fail several of the new lines: a list reused without emptying it (duplicated flats, 200 of 200 fuzz scenes - the town hid it by accident), the quads asked short of the cube's reach, the wind's lean left out, the class's own slack, and either cache-on ask of the quads. | `test/audit637_shadow.test.js`: the 40-scene differential fuzz, a corner tree kept with its lean, the quads under the static cache, a list emptied whenever the walk opens it (B4's `discard()` now empties them every frame as well, so the walk's own emptying is the second guard - pinned on frames that never discard), the far-96 witness. |
+| B2 | medium | The pins could not fail several of the new lines: a list reused without emptying it (duplicated flats, 200 of 200 fuzz scenes - the town hid it by accident), the quads asked short of the cube's reach, the wind's lean left out, the class's own slack, and either cache-on ask of the quads. | `test/render/audit637_shadow.test.js`: the 40-scene differential fuzz, a corner tree kept with its lean, the quads under the static cache, a list emptied whenever the walk opens it (B4's `discard()` now empties them every frame as well, so the walk's own emptying is the second guard - pinned on frames that never discard), the far-96 witness. |
 | B3 | low (cost, this PR's) | The walk ran every frame there was a caster, so a still town with every map cached paid for lists nobody read: 0.31 -> 0.78 ms a frame (twelve lanterns, 2,000 flats - the audit's measure). | The walk is made by the first lantern that walks (`_candFor`); with no dynamic record in the frame no lantern's dynamic scan is asked - exact, as every arm of `_dynamicNear` reads a record's `dynamic` first. Pinned by walk count, a moving mesh included. Re-measured on the final code with the audit's own town (pre-pass on against off, interleaved): still 0.29 / 0.285 and 0.277 / 0.262 ms a frame - the same; windy 1.55 / 11.93 and 1.40 / 11.61. |
 | B4 | low | Candidate lists held batch references past the frame - a destroyed batch's placement grid with them. | `discard()` empties every list as far as any was filled (`hw`). |
 | B5 | low | A centre at infinity on two axes or more: a face's plane meets it as a NaN and culls nothing, but the cube dropped it. | Kept, as a NaN is. |
@@ -114,7 +114,7 @@ Nothing here waits on a call to ship; these are yours to make whenever:
 ## Found while verifying
 
 - **SLAM8 hashes every byte of the relay's bundle.** C2's first fix also corrected `net/wire.js`'s POSE_FAR_SHARE doc,
-  and `test/relayversion.test.js` failed on it: a comment there is a relay version, and a relay deploy drops every
+  and `test/net/relayversion.test.js` failed on it: a comment there is a relay version, and a relay deploy drops every
   player. The edit was taken back; the correction is item 19 of `Performance-Next.md`, for the next window.
 - **B3 moved a law out from under a mutant.** With no walk in a still frame, the review's still room no longer sees
   PERF-SHADOW1-o (every lantern's quads asked with the walk) - it survived the sweep. The law it breaks still holds a

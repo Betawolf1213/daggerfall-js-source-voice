@@ -52,17 +52,17 @@ The four hosts: `scenes/world.js` and `scenes/exterior.js` build every exterior 
 (interiors) never meets it - it is an exterior subrecord's model; `scenes/dungeonContext.js`'s pre-pass asks the registry
 without a context and would read GetModelData's false, but no dungeon block places it.
 
-The tests: `test/fb1003c_citywall.test.js` (5) - the law off the pack (224 placements in 112 corner composites, two
+The tests: `test/world/fb1003c_citywall.test.js` (5) - the law off the pack (224 placements in 112 corner composites, two
 each, alone and sunk a unit; in all 224 the two pieces' own lines cross 64 units from the corner tower's subrecord on
 both axes, and each piece fills 448-576 off that crossing; the 210 on lines of the author's own 445s with every 445
 beginning at 576 + 1024k, 147 of them abutting one at 576); the stand-in from a stand-in 445 (its bounds, its picture,
 its winding, the cut faces' uvs where the wall's own were, nothing without a 445) and at its cuts (below); the install
 (behind the switch, its need the 445, a build without the 445 never kept); and the real pipeline building it out of a
-fake ARCH3D's 445 for the renderer and the collider. `test/wd3_standins.test.js` reads the new shape: `53210` off the
+fake ARCH3D's 445 for the renderer and the collider. `test/world/wd3_standins.test.js` reads the new shape: `53210` off the
 not-stood-in list, 225 stand-ins in the ARENA2 coverage, and its ARENA2 door sweep handing the build the player's 445.
 `tools/mutants/citywall.json` (10, all dead).
 
-**Not verified here.** This tree has no ARENA2, so the ARENA2 half of `test/wd3_standins.test.js` - the coverage count
+**Not verified here.** This tree has no ARENA2, so the ARENA2 half of `test/world/wd3_standins.test.js` - the coverage count
 and the sweep that no stand-in walls up an exterior door - did not run with the piece in it; nor was it seen rendered.
 Two things only the player's data can show: the 14 placements whose line is all Daggerfall's own segments (read by
 reference, `$c`, from `WALLAA04`) meet a segment at 576 only if that block's wall is the same 445 (their span and their

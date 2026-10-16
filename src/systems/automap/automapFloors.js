@@ -49,7 +49,7 @@
 // two storeys lands on both, which is what a ramp is.
 //
 // Pure: no DOM, no renderer, no host. The rows come in, the plan comes
-// out, and test/automapfloors.test.js drives it with hand-built
+// out, and test/systems/automap/automapfloors.test.js drives it with hand-built
 // geometry - two stacked rooms, a ramp, a partly revealed hall.
 //
 // DISC25-A (2026-09-25, tannim and kurkku on Discord, through Mac: "the

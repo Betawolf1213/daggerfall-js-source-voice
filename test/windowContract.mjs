@@ -1,6 +1,6 @@
 // THE HOST<->WINDOW CONTRACT, DERIVED - the shared library behind
-// test/crash1_overlay_contract.test.js and
-// test/crash2_window_contract.test.js.
+// test/ui/crash1_overlay_contract.test.js and
+// test/ui/crash2_window_contract.test.js.
 //
 // WHY A LIBRARY AND NOT TWO COPIES. CRASH1 shipped a gate whose door
 // list derived and whose ARM list did not: four arm names typed by

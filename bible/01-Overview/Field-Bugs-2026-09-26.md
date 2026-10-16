@@ -71,7 +71,7 @@ the sender's world mints its home (`_<person>_home_`, person.js
 carry one per declared Person, and it must be a Place. Everything A1 refused
 is still refused - pinned beside the new allowances.
 
-`test/sharecopy.test.js` (4): the corpus, generatively; the real producer (a
+`test/systems/quest/sharecopy.test.js` (4): the corpus, generatively; the real producer (a
 quest taken from a questor in town, received by a party member in the
 wilderness with the sender's sites, then resynced); the shape parse never
 reading the receiver's world; A1's guard over the minted tasks and the homes.
@@ -103,7 +103,7 @@ so a building's F5 page wears the world host's bag - every seam the
 enhanced window reads (the quests, the saves, the relock, the exit) is
 the same there.
 
-`test/f5quests.test.js` (4); `tools/mutants/f5quests.json` 11, 11 dead.
+`test/ui/f5quests.test.js` (4); `tools/mutants/f5quests.json` 11, 11 dead.
 Ten older pins re-aimed to where their laws live now; the cites the moved lines shifted, moved (the CD4-gated struck rows by hand).
 
 ## GUARD-ONLINE: Guard the Guild's watch starts when you arrive (report 16) - Mac's call
@@ -127,7 +127,7 @@ questor pays. The arrival is saved with the action. Offline, and every other
 `daily from` quest online, keeps DFU's window. Port-Ledger section A,
 GUARD-ONLINE.
 
-`test/guardonline.test.js` (4); `tools/mutants/guardonline.json` 10, 10 dead.
+`test/systems/quest/guardonline.test.js` (4); `tools/mutants/guardonline.json` 10, 10 dead.
 
 ## LAMP-KEEPER: the keepers that were lamp posts (report 15)
 
@@ -148,7 +148,7 @@ The stand asks for its draw record's replacement before the upload
 (`scenes/interiorContext.js` standPerson). No keeper is removed: each draws
 the mod's picture now.
 
-`test/lampkeeper.test.js` (3); `tools/mutants/lampkeeper.json` 2, 2 dead.
+`test/systems/lampkeeper.test.js` (3); `tools/mutants/lampkeeper.json` 2, 2 dead.
 
 ## SHIP-STORE: the player's own storage takes things in again (report 7)
 
@@ -168,7 +168,7 @@ placed piece); that session opens beside the pack, its side titled
 Storage, with a Store verb (`ui/enhanced/enhancedInventory.js`). A body, a
 stranger's cupboard and a closed shop's shelf keep MAC-M2 B's frame.
 
-`test/shipstore.test.js` (3); `tools/mutants/shipstore.json` 6, 6 dead.
+`test/systems/item/shipstore.test.js` (3); `tools/mutants/shipstore.json` 6, 6 dead.
 
 ## WEAPON-MOUNT: a hung weapon is its own picture again (report 6)
 
@@ -193,7 +193,7 @@ never do. The probe's WEAPON-MOUNT rows: green comes back green on both sets
 If the image showed something else - a mount in the wrong place, or missing
 - that is still open; this is the one defect the code shows.
 
-`test/weaponmount.test.js` (4); `tools/mutants/weaponmount.json` 8, 8 dead.
+`test/render/weaponmount.test.js` (4); `tools/mutants/weaponmount.json` 8, 8 dead.
 
 ## HOME-OFFER: a house for sale asks at its door in any mode (report 3)
 
@@ -211,8 +211,8 @@ that house asks no more unless it is pressed in Info, which always asks
 the No). The owner's menu stays Info's, since an owner's press is the way
 in.
 
-`test/homeoffer.test.js` (5); `tools/mutants/homeoffer.json` 12, 12 dead.
-`test/home1.test.js`'s wiring pin re-aimed.
+`test/systems/online/homeoffer.test.js` (5); `tools/mutants/homeoffer.json` 12, 12 dead.
+`test/server/home1.test.js`'s wiring pin re-aimed.
 
 ## ARMOR-MOUNT: armour goes on display (report 9)
 
@@ -229,8 +229,8 @@ blade does - take it off first.
 A client from before this change reads a hung cuirass as a standing
 picture turned to the eye; it hangs for everyone once they update.
 
-`test/armormount.test.js` (4); `tools/mutants/armormount.json` 3, 3 dead.
-`test/decor2c.test.js` re-aimed (a cuirass hangs), and its "any armour
+`test/systems/item/armormount.test.js` (4); `tools/mutants/armormount.json` 3, 3 dead.
+`test/systems/decor/decor2c.test.js` re-aimed (a cuirass hangs), and its "any armour
 hung" record dropped - that is the law now.
 
 ## VAMP-DAY: a vampire's day is its weak hours, not a burn (report 13) - Mac's call
@@ -253,7 +253,7 @@ holy ground, the feeding, the travel rules (no fast travel by day,
 arriving by night) and a career's own Damage from Sunlight stay as they
 were. A save's curse burns no more from its next round.
 
-A Port-Ledger section A row (VAMP-DAY). `test/vampday.test.js` (5);
+A Port-Ledger section A row (VAMP-DAY). `test/systems/vampday.test.js` (5);
 `tools/mutants/vampday.json` 9, 9 dead. Three older pins re-aimed
 (passivespecials x2, disc10_vampire V1 - onto a sun-cursed career).
 
@@ -278,8 +278,8 @@ loose, which the port runs once, beside the five the page already lists
 twang, with its arrow, on the sprite and under the arm, drawback on or
 off. The clone's melee swing keeps its voice.
 
-`test/bowvoice.test.js`; `tools/mutants/bowvoice.json` 3, 3 dead.
-`test/ww1_weaponwidget.test.js`'s bow pin re-aimed (the clone looses in
+`test/systems/bowvoice.test.js`; `tools/mutants/bowvoice.json` 3, 3 dead.
+`test/combat/weapon/ww1_weaponwidget.test.js`'s bow pin re-aimed (the clone looses in
 silence).
 
 ## MW-HAND: under the Morrowind arm, never an empty hand (report 5) - Mac's call
@@ -299,7 +299,7 @@ with fists. The classic sprite lane keeps DFU's ToggleHand whole
 (`combat/playerWeapon.js` followHeldHand, `combat/weapon/weaponRig.js`;
 `02-Formats/Morrowind-Rules.md` MW-HAND).
 
-`test/mwhand.test.js` (4); `tools/mutants/mwhand.json` 6, 6 dead.
+`test/combat/mwhand.test.js` (4); `tools/mutants/mwhand.json` 6, 6 dead.
 
 ## OCEAN-STUCK: a heavy swimmer is lifted out at the coast (report 11)
 
@@ -311,7 +311,7 @@ More's only way out of the sea, the shore exit, asks for a SURFACE
 swimmer. So the weight sank the player to the carved floor, and at the
 coast that floor meets the carve's wall - metres of it - with nothing to
 lift them. Most players drown and respawn; an Argonian, who breathes
-forever there, stays. Reproduced in `test/dwd_swim.test.js`'s harness: the
+forever there, stays. Reproduced in `test/scenes/dwd_swim.test.js`'s harness: the
 swimmer stood at the wall's foot, pushing, indefinitely.
 
 The exit now takes a swimmer the weight holds under, from wherever it
@@ -322,7 +322,7 @@ walkable landing, a boat), it is still open, and the reporter's place
 and load would settle it.
 
 A departure from the mod, recorded in its Port-Ledger row and
-`03-World/Deep-Waters.md`. `test/oceanstuck.test.js` (3);
+`03-World/Deep-Waters.md`. `test/scenes/oceanstuck.test.js` (3);
 `tools/mutants/oceanstuck.json` 3, 3 dead. `dwd.json`'s load-grace record
 re-aimed.
 
@@ -341,7 +341,7 @@ A beast is never the person now: while its art loads it draws nothing for
 those frames, and the doll it wore as a person goes with the change
 (`net/remotePlayers.js`). A person is untouched.
 
-`test/beastpeer.test.js` (3); `tools/mutants/beastpeer.json` 3, 3 dead.
+`test/net/beastpeer.test.js` (3); `tools/mutants/beastpeer.json` 3, 3 dead.
 The local half (a Morrowind-lane player seeing their own change) is below.
 
 ## GATE-SEEN: the gate is seen from afar, and every client rolls the same spot (report 10)
@@ -371,7 +371,7 @@ Two causes in the code, and two things that are the design:
   the next day. A relay older than world113 answers "The gate will not
   open to you yet."
 
-`test/gateseen.test.js` (6); `tools/mutants/gateseen.json` 10, 10 dead.
+`test/scenes/gateseen.test.js` (6); `tools/mutants/gateseen.json` 10, 10 dead.
 Three older records re-aimed (wb2 x2, auditwb_world).
 
 ## BEAST-SELF: a Morrowind-lane player sees their own change (report 12, the local half)
@@ -392,13 +392,13 @@ back brings the Morrowind arm straight back (it was never torn down).
 Vampires: Daggerfall's vampire changes only the face (the classic HUD and
 paper doll wear it); the Morrowind head is still the person's - not done.
 
-`test/beastself.test.js` (3); `tools/mutants/beastself.json` 9, 9 dead.
+`test/player/beastself.test.js` (3); `tools/mutants/beastself.json` 9, 9 dead.
 
 SHADOW-FANG (the merge): with Bloodmoon attached the Morrowind rig has a
 werewolf of its own (WEREWOLF1, `04-Characters/Werewolf-Body.md`), so the
 stand-aside is asked of the form - aside while the wolf builds, is
 refused, or the curse is the boar's; the standing wolf draws.
-`test/fparm.test.js`'s MW-D8 pin re-aimed (the eighth term).
+`test/formats/morrowind/fparm.test.js`'s MW-D8 pin re-aimed (the eighth term).
 
 ## REST-SYNC: a dungeon rest's encounter is the room's (report 4) - Mac's call
 
@@ -435,7 +435,7 @@ encounter is the HOST's, SHARED (`scenes/dungeonContext.js`):
 Offline nothing changes. A quest's foe and a summon stay their player's
 own (ONLINE-DUNGEON-FOES still stands for them).
 
-`test/restsync.test.js` (10); `tools/mutants/restsync.json` 37, 37 dead.
+`test/net/restsync.test.js` (10); `tools/mutants/restsync.json` 37, 37 dead.
 Re-aimed: the WORLD2/WORLD3 dungeon-host pins (`world2`, `world3`,
 `world4`, `world8`, `auditworld3`, `auditworld4`, `auditworld34`,
 `auditfoes`, `auditrenown1`, `elitepscale`, `world6biiie`,
@@ -481,7 +481,7 @@ Not done: the building's automap still draws a piece taken out (the map
 is built once, at the door). A guest already standing in an online home
 sees the owner's change on their next visit, as with every placed piece.
 
-`test/basehide.test.js` (7); `tools/mutants/basehide.json` 29, 29 dead.
+`test/server/basehide.test.js` (7); `tools/mutants/basehide.json` 29, 29 dead.
 Re-aimed: the room's scene state (`decor2a`, `interiordrop`,
 `terrainscale1`, `scenecache`), PERF6's merge pin, the static-NPC hook's
 place before the flats loop (`audit24_scenes`), the panel's tabs
@@ -510,7 +510,7 @@ into the player's own storage, *Stow gold* into the wagon - and its field
 floating over the footer. The law behind it was already right and is unchanged
 (`itemTransfer.js planDropGold`, the stack minted and merged into the
 remote list, taken back into the purse). A body's tray still never
-offers it. `10-UI/UI-Arc.md` MAC-M2 B; `test/golddrop.test.js` (5),
+offers it. `10-UI/UI-Arc.md` MAC-M2 B; `test/systems/golddrop.test.js` (5),
 `tools/mutants/golddrop.json`.
 
 Not done, said plainly: an ONLINE dungeon chest refuses any stack over
@@ -534,7 +534,7 @@ every face and slides along it; a model aimed at a ceiling hangs from it
 decorator waits for the room's list, which used to stand the room over a
 piece placed before it landed; and a model that would not load is asked
 again rather than remembered as nothing. `06-Systems/Online-Arc.md`
-DECOR-SHELL; `test/decorshell.test.js` (5), `tools/mutants/decorshell.json`.
+DECOR-SHELL; `test/scenes/decor/decorshell.test.js` (5), `tools/mutants/decorshell.json`.
 
 Not reproduced in a browser (no player's save here); the causes are the
 code's own, each pinned over a real collider room. The ghost and the
@@ -559,7 +559,7 @@ them ones XJDHDR's DFU fix pack replaces); measured over every dungeon
 block of the game, the slits fall from 38,885 to 7,215 and the ruled
 models' from 31,263 to 69, and all but twelve of the 31,453 moved corners
 land on a face. `07-Rendering/Rendering.md` DUNGEON-SEAMS,
-`01-Overview/Port-Ledger.md`; `test/dungeonseams.test.js` (9),
+`01-Overview/Port-Ledger.md`; `test/world/dungeonseams.test.js` (9),
 `tools/mutants/dungeonseams.json`.
 
 Not done, said plainly: the 7,146 slits left are on models no rule

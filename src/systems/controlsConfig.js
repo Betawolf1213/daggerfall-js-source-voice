@@ -447,7 +447,7 @@ export function comboFromEvent(code, e) {
  *  module that will not load. This file sits in the chunk the menu and
  *  the world both import, so those players got no game at all. The
  *  captured pair says the same thing - a space between a lower and the
- *  upper after it - and test/nolookbehind.test.js holds the whole tree
+ *  upper after it - and test/systems/nolookbehind.test.js holds the whole tree
  *  to it. */
 export const splitCamel = (s) => s.replace(/([a-z])([A-Z])/g, '$1 $2').trim();
 

@@ -63,7 +63,7 @@ largest defect class (`Audit-53.md`: 37 of 118 confirmed findings are a
 pin that cannot fail).
 
 `bible/09-Testing/Testing.md:4`'s Suite line is not a stale record and
-cannot become one: `test/manifest.test.js` pins it against a live walk
+cannot become one: `test/bible/manifest.test.js` pins it against a live walk
 of `test/` - the total, the file count and every per-file row - so a
 slice that adds a suite and does not re-take the line turns the suite
 red. Its residual difference from `node --test`'s own total is a METRIC
@@ -207,12 +207,12 @@ departure that had no Ledger row is retired rather than given one.
 `SPELL_MAKER_EFFECTS` is **91 rows across 39 groups, 0 inert**
 (`node -e` over `src/systems/spell/spellEffects.js`; the same two numbers are
 gated against `Port-Ledger.md`'s derived-figures block by
-`test/ledger.test.js:"if (c === quote)".."i++; continue;"`). The inert count was already 0 at the
+`test/systems/ledger.test.js:"if (c === quote)".."i++; continue;"`). The inert count was already 0 at the
 superseded page and stays 0: nothing the spell maker offers cannot fire.
 
 `SERVICE_DESTINATION` is **20 guild services, 0 with a null
 destination** (`systems/guild/guildServiceFlow.js`, gated by
-`test/ledger.test.js:"The whole line an"`).
+`test/systems/ledger.test.js:"The whole line an"`).
 
 The superseded page's two magic gaps are closed and verified here:
 `minimumCastingCost` is live at `systems/spellcost.js:"if (spell.minimumCastingCost)"` and is
@@ -266,7 +266,7 @@ places. The table is byte-exact; the old figure is corrected to 182.
 
 Two more of the superseded page's data figures re-measure differently
 and the correction is the port's, not the audit's:
-- **`ENEMY_BASICS` is 62 rows, not 63.** `test/audit24_enemytable.test.js:"62, 'the source still"`
+- **`ENEMY_BASICS` is 62 rows, not 63.** `test/systems/audit24_enemytable.test.js:"62, 'the source still"`
   asserts 62 against the C# source itself and `:172` asserts the enum
   still names 62 mobiles; `grep -c "new MobileEnemy()"` over
   `EnemyBasics.cs` returns 64, which counts the array's own template
@@ -327,7 +327,7 @@ reference surface absent · **Departure** = deliberate, ledgered.
 | **ui-enhanced** | Departure lane | **Departure lane, scoped** | `ui/worldPlaque.js:"THE SKIN GATE IS"` puts the skin gate above `ensure()`, so the unscoped `*`/`html`/`body`/`button`/`#app` rules never reach the classic page. 9 modules / 8,940 lines. |
 | **xcut-seams** | Clean, with one block | **Clean** | The quest machine's region-faction block was the wave. |
 | **xcut-async** | Disciplined / one missing sweep | **Disciplined** | `CleanupUntrackedObjects` has a counterpart in both halves. |
-| **xcut-tests-docs** | Gated half exact / ungated half rotting | **Gated half exact** | The flag list is byte-identical to `regenOpenFlags --check`; `Testing.md:4` is pinned to a live walk of `test/` by `test/manifest.test.js`. |
+| **xcut-tests-docs** | Gated half exact / ungated half rotting | **Gated half exact** | The flag list is byte-identical to `regenOpenFlags --check`; `Testing.md:4` is pinned to a live walk of `test/` by `test/bible/manifest.test.js`. |
 
 **The pause primitive, precisely.** ROAD-B B1 built the stack DFU's
 `UserInterfaceManager` has, with `PauseWhileOpen` as a real latch
@@ -377,7 +377,7 @@ became Wave D's 42 slices.
 
 The list is `bible/Home.md`'s "Open flags", regenerated from `src/` by
 `tools/regenOpenFlags.mjs` and pinned both ways by
-`test/audit18_bible_docs.test.js`. It cannot be edited into agreement.
+`test/bible/audit18_bible_docs.test.js`. It cannot be edited into agreement.
 The nineteen sorted, AS MEASURED, into the four groups below; each
 bullet a later slice closed is struck at its own entry, and what stands
 unstruck here is the nineteen the tool answers today (GP3, 2026-09-11, retired the joystick flag; ONLINE-DUNGEON-FOES, 2026-09-20, added one after this page's measurement, and SUMMON-SYNC, 2026-09-27, retired it; AUDIT 29, 2026-09-28, added one, which CLASSIC-PAGES struck; PROF4, SEAT1a, AUDIT TELL, LEGACY1, CARDS2, AUDIT CARDS, RW1 and MERCHANT-YARDS one each since, AUDIT WAGONS3 four, WARDEN1 one, SHIPYARDS one and POI-2 one, listed last; TAVERN-TABLE, 2026-10-08, retired CARDS2's, and its entry went with it).
@@ -401,7 +401,7 @@ are the **narrowed remainders** Wave D recorded rather than shipped
   and the Dispel Magic bundle picker through `mountSpellWindow` ->
   `pushDungeonWindow` (the banner is at `src/scenes/dungeonContext.js`'s
   "DR1: THE TWO WINDOW SEAMS, MOUNTED"), pinned by three DR1 cases in
-  `test/x11b.test.js`. This was also Ledger row `:835`'s adjudication,
+  `test/systems/x11b.test.js`. This was also Ledger row `:835`'s adjudication,
   and that row is struck with it.
 - **`src/ui/enhanced/enhancedMenu.js` line 4213** - the rest of the keyboard; the
   wizard walks to `done` with no pointer. *The enhanced menu is the
@@ -581,7 +581,7 @@ are the **narrowed remainders** Wave D recorded rather than shipped
   `ExteriorAutomap.cs:1796-1830` registers these as CONSOLE commands
   and the port has no console host. The flag they set,
   `revealUndiscoveredBuildings`, is live and pinned in both states by
-  `test/automap_ext.test.js`; what is missing is the console seam
+  `test/ui/automap_ext.test.js`; what is missing is the console seam
   alone, the same stance `ui/travel/travelMapWindow.js` already records for
   `map_reveallocations`. D5 shipped the other two thirds of this
   header - the residence-with-active-quest plates and the eight button
@@ -619,7 +619,7 @@ are the **narrowed remainders** Wave D recorded rather than shipped
   (`Home.md:116-119`), applied to a retirement record rather than to a
   live flag. The sentence now reads "a hard 0 behind a placeholder
   flag" and says exactly what it said. Pinned in
-  `test/flagsweep.test.js` - the record's own words, the shipped term
+  `test/scenes/flagsweep.test.js` - the record's own words, the shipped term
   it records, and `flagLines()` answering empty over the file -
   mutation-checked by putting the token back.*
 
@@ -643,13 +643,13 @@ are the **narrowed remainders** Wave D recorded rather than shipped
   slice: a frame shape beside WORLD2's index-keyed one, puppet build and
   teardown, hit routing to the owner and a stale sweep. Recorded in
   Online-Arc; the "both halves together" law is pinned in
-  `test/world2.test.js`. REST-SYNC (2026-09-26) paid both halves for a
+  `test/net/world2.test.js`. REST-SYNC (2026-09-26) paid both halves for a
   rest's encounter - the host's, shared (Field-Bugs-2026-09-26); the
   quest foe and the summon still stand, and so does the flag.*~~ **RETIRED (SUMMON-SYNC, 2026-09-27, Mac: "Finish the 2 gaps")** - QUEST-PARTY
   phase 3c paid both halves for a shared quest's foe (its spawner's, on the room's own lane, to the party)
   and SUMMON-SYNC for a summon's - a loose stand, its spawner's, on the same lane, to the whole room; a
   PRIVATE quest's foe stays its player's own by Mac's party law, which is a decision, not a hole. The note
-  stays at the site, in the past tense (`test/world2.test.js` holds both halves in step).
+  stays at the site, in the past tense (`test/net/world2.test.js` holds both halves in step).
 
 **Added after this page was measured.**
 
@@ -678,7 +678,7 @@ this page was measured is struck too (SUMMON-SYNC), and AUDIT 29, PROF4, SEAT1a,
 landing, ROAD-F (GS1, GS2, DR1), QX1/TP2, SUMMON-SYNC, AUDIT 29, PROF4, CLASSIC-PAGES, SEAT1a, ARENA2 (the `?exterior` host's bout driver, flagged by name), ARENA-FIX (that host wired), AUDIT TELL (the dungeon stream's gap, flagged by name) LEGACY1 (the fixed city's death, flagged by name) CARDS2 (the card table's one nameable id, flagged by name), AUDIT CARDS (the sprite lane at its seat, flagged by name), TAVERN-TABLE (CARDS2's retired: the card table is a prop of its own), MERCHANT-YARDS (the `?exterior` bench stands no yard, flagged by name), AUDIT WAGONS3 (WAGONS3's four own limits stood at their lines) WARDEN1 (the `?exterior` bench runs no town watch, flagged by name) SHIPYARDS (the `?exterior` bench stands no port, flagged by name), POI-2 (the `?exterior` bench has no POI feed, flagged by name) and GLASS-ALL (RW1's interior glass retired: a real ARENA2 read), `node tools/regenOpenFlags.mjs --check` answers 19**,
 and no count in
 this file or in `Road-To-1-1.md` may state another figure: the tool is
-the measurement, and `test/citedrift.test.js` holds both documents to
+the measurement, and `test/scenes/citedrift.test.js` holds both documents to
 it. The E-group retired SIX flags, not two - one per lane, and no lane
 could see the others' closures until the squash, which is how "leaving
 17" came to be written three times over a tree that answers 13:
@@ -740,7 +740,7 @@ only live inventory.
   prices and stages against a building record the street does not have
   - and DFU's own arm (`:353-356`) reads quality off
   `PlayerEnterExit.BuildingDiscoveryData`, stale or zero for a player
-  who is not inside one. Pinned in `test/audit26_extnpcs.test.js` (the
+  who is not inside one. Pinned in `test/systems/quest/audit26_extnpcs.test.js` (the
   routing law outdoors, the lifted door's three arms run for real, the
   chain swept), mutation-checked by removing the outdoor arm.*
 
@@ -755,11 +755,11 @@ that was a claim once and is a pointer at a stranger now.
   written, so a cite exact at U44 was six hundred lines out at HEAD, and
   `characters/playerEntity.js`'s was never right at all (the commit that
   wrote it landed on the town-talk topics table, not on a chargen line).
-  Each is re-resolved BY CONTENT and pinned into `test/citedrift.test.js`
+  Each is re-resolved BY CONTENT and pinned into `test/scenes/citedrift.test.js`
   CD4, with this page's one still-open `exterior.js` row into CD6. Only
   `ui/hud/hudLarge.js`'s activation-ray cite and `Home.md`'s generated flag
   were already exact.*
-- ~~The doctrine gate's blind half.~~ **CLOSED.** *`test/doctrine.test.js`
+- ~~The doctrine gate's blind half.~~ **CLOSED.** *`test/tooling/doctrine.test.js`
   scanned only files shouting a DEPARTURE token, so AUDIT 21 F7's other
   half - a `src/` site citing "Ledger A" where no row on that page names
   the file - went on recurring unwatched. Widening the population to
@@ -774,7 +774,7 @@ that was a claim once and is a pointer at a stranger now.
   ROSTER WAS ITSELF A HAND LIST when this was written - nineteen sites
   short of the tree, on the commit that called it live - so the ROAD-G
   review retook it against `src/` and pinned the direction it claims:
-  `test/citedrift.test.js` CD1 walks the tracked tree for the rule's own
+  `test/scenes/citedrift.test.js` CD1 walks the tracked tree for the rule's own
   name and reddens on any site the roster does not carry.*
 - ~~`ui/transportWindow.js`'s "the port's own letters".~~ **SHIPPED.**
   *The one of the seventeen that was a live defect rather than a missing
@@ -886,7 +886,7 @@ that was a claim once and is a pointer at a stranger now.
 ## 2. Port-Ledger section C rows still routed and not struck
 
 Row numbers below are resolved against `Port-Ledger.md` AT THIS SHA and
-held there by `test/citedrift.test.js` - the wave that wrote this
+held there by `test/scenes/citedrift.test.js` - the wave that wrote this
 section moved every one of them by inserting rows above section C, and
 a line number nobody re-resolves is a pointer at a stranger.
 
@@ -926,7 +926,7 @@ ships, which is the warning the section's own preamble opens with.
    point index >= 3; and the one genuinely single-precision half is
    `df3duvparams_lt`/`df3duvmatrix_t` and `l_ComputeDFUVMatrixXY`, whose
    float rounding flips the final truncation on 0.019% of random
-   four-point faces (`test/faceuvresidue.test.js` pins one). And the
+   four-point faces (`test/tooling/faceuvresidue.test.js` pins one). And the
    harness was NOT re-runnable as the row claimed: the float->double
    widening the measurement was taken against was never a committed
    patch. It is one now (`tools/parity/patches/FaceUVTool.cs.patch`).

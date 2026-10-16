@@ -5,7 +5,7 @@
     "old": "export const SD_ORRERY = Object.freeze({ x: 0, z: 42, r: 18 });",
     "new": "export const SD_ORRERY = Object.freeze({ x: 0, z: 40, r: 18 });",
     "tests": [
-      "test/sd5a_realm.test.js"
+      "test/world/superDungeon/sd5a_realm.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "export const SD_REALM_LOCATION_ID = 0x7ffff200;",
     "new": "export const SD_REALM_LOCATION_ID = 0x7ffff000;",
     "tests": [
-      "test/sd5a_realm.test.js"
+      "test/world/superDungeon/sd5a_realm.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "export const isSdRealm = (loc) => Number.isSafeInteger(loc?.sdRealm) && ",
     "new": "export const isSdRealm = (loc) => ",
     "tests": [
-      "test/sd5a_realm.test.js"
+      "test/world/superDungeon/sd5a_realm.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "  const [x, , z] = realmToDungeon(0, 0, SD_ARRIVE_Z);",
     "new": "  const [x, , z] = realmToDungeon(0, 0, 30);",
     "tests": [
-      "test/sd5a_realm.test.js"
+      "test/world/superDungeon/sd5a_realm.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "realmIsland(f, SD_ORRERY.x, SD_ORRERY.z, R, SD_REALM_DIAL_RECORD,",
     "new": "realmIsland(f, SD_ORRERY.x, SD_ORRERY.z, R, SD_REALM_FLOOR_RECORD,",
     "tests": [
-      "test/sd5a_realm.test.js"
+      "test/world/superDungeon/sd5a_realm.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "    f.quad(SD_REALM_ROOT_RECORD, C(x0, -SD_LIP, z0), C(x0, 0, z0),",
     "new": "    if (false) f.quad(SD_REALM_ROOT_RECORD, C(x0, -SD_LIP, z0), C(x0, 0, z0),",
     "tests": [
-      "test/sd5a_realm.test.js"
+      "test/world/superDungeon/sd5a_realm.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "  disc(SD_THRESHOLD);\n  disc(SD_ORRERY);\n",
     "new": "  disc(SD_THRESHOLD);\n",
     "tests": [
-      "test/sd5a_realm.test.js"
+      "test/world/superDungeon/sd5a_realm.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "  Object.freeze({ kind: 'band', ...SD_WALK }),\n",
     "new": "",
     "tests": [
-      "test/sd5a_realm.test.js"
+      "test/world/superDungeon/sd5a_realm.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "rr = Math.max(0, fl.r - inset);",
     "new": "rr = fl.r;",
     "tests": [
-      "test/sd5a_realm.test.js"
+      "test/world/superDungeon/sd5a_realm.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "0, cz + Math.sin(a) * (r - 1)]);",
     "new": "0, cz + Math.sin(a) * (r + 2)]);",
     "tests": [
-      "test/sd5a_realm.test.js"
+      "test/world/superDungeon/sd5a_realm.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "twelfth: 0.035, hour: 0.02,",
     "new": "twelfth: 0.02, hour: 0.02,",
     "tests": [
-      "test/sd5a_realm.test.js"
+      "test/world/superDungeon/sd5a_realm.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "      if (_sdRealm) { hudText.add(SD_REALM_TEXT.noRest); return; }   // SD5a: nor a rest\n",
     "new": "",
     "tests": [
-      "test/sd5a_realm.test.js"
+      "test/world/superDungeon/sd5a_realm.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "    if (_sdRealm) { sdEnd.stand({ rift: { at: realmToDungeon(0, 0, SD_WAY_BACK_Z), size: SD_WAY_BACK_SIZE }, retAt: null, dynamicDraws, hollow: true, probe: SD_THRESHOLD_RIM }); return; }",
     "new": "    if (false) { sdEnd.stand({ rift: { at: realmToDungeon(0, 0, SD_WAY_BACK_Z), size: SD_WAY_BACK_SIZE }, retAt: null, dynamicDraws, hollow: true, probe: SD_THRESHOLD_RIM }); return; }",
     "tests": [
-      "test/sd5a_realm.test.js"
+      "test/world/superDungeon/sd5a_realm.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "      if (hit.sdRealm != null) standSdRealm(ctx);   // SD5a",
     "new": "      if (false) standSdRealm(ctx);   // SD5a",
     "tests": [
-      "test/sd5a_realm.test.js"
+      "test/world/superDungeon/sd5a_realm.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": " isSdRealm(dungeonLoc) ? { kind: 'sd', s: dungeonLoc.sdRealm } :",
     "new": "",
     "tests": [
-      "test/sd5a_realm.test.js"
+      "test/world/superDungeon/sd5a_realm.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "dungeonEntranceLanding(dungeonReturn.sdHollow ? host.sdHollowDoors?.(dungeonReturn.sdHollow) ?? [] : dungeonReturn.candidates.map((e) => e.door))",
     "new": "dungeonEntranceLanding(dungeonReturn.candidates.map((e) => e.door))",
     "tests": [
-      "test/sd5a_realm.test.js"
+      "test/world/superDungeon/sd5a_realm.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "      const word = sdRiftOf(s)?.word;\n      if (word) { sdSay(word); return false; }\n",
     "new": "",
     "tests": [
-      "test/sd5a_realm.test.js"
+      "test/world/superDungeon/sd5a_realm.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "      if (at) modes?.setPlayerLocalPosition?.(at);\n",
     "new": "",
     "tests": [
-      "test/sd5a_realm.test.js"
+      "test/world/superDungeon/sd5a_realm.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "    if (modes?.sdRealmSlot?.() != null) { sdSay(SD_REALM_TEXT.noRecall); return; }",
     "new": "    if (false) { sdSay(SD_REALM_TEXT.noRecall); return; }",
     "tests": [
-      "test/sd5a_realm.test.js"
+      "test/world/superDungeon/sd5a_realm.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "old": "    if (modes?.unstuck?.()) sdSay(/^The Hour /.test(online.error ?? '') ? online.error : SD_REALM_TEXT.lost);",
     "new": "    void SD_REALM_TEXT;",
     "tests": [
-      "test/sd5a_realm.test.js"
+      "test/world/superDungeon/sd5a_realm.test.js"
     ]
   },
   {
@@ -185,7 +185,7 @@
     "old": "    if (!player.arena && modes?.sdRealmSlot?.() != null) player.arena = sdArenaHeld() ? _realmArenaHeld : sdConcordHere() ? _realmArenaBridged : _realmArena;",
     "new": "    if (false) player.arena = sdArenaHeld() ? _realmArenaHeld : sdConcordHere() ? _realmArenaBridged : _realmArena;",
     "tests": [
-      "test/sd5a_realm.test.js"
+      "test/world/superDungeon/sd5a_realm.test.js"
     ]
   },
   {
@@ -194,7 +194,7 @@
     "old": "    if (modes?.sdRealmSlot?.() != null) setCourtRules(true);",
     "new": "    if (false) setCourtRules(true);",
     "tests": [
-      "test/sd5a_realm.test.js"
+      "test/world/superDungeon/sd5a_realm.test.js"
     ]
   },
   {
@@ -203,7 +203,7 @@
     "old": " || modes?.dungeonLocation?.sdRealm === loc?.sdSlot),",
     "new": "),",
     "tests": [
-      "test/sd5a_realm.test.js"
+      "test/world/superDungeon/sd5a_realm.test.js"
     ]
   },
   {
@@ -212,7 +212,7 @@
     "old": "    else if (modes?.roomIdentity?.()?.kind === 'sd') key = sdRoomKey(modes?.roomIdentity?.()?.s);",
     "new": "    else if (false) key = sdRoomKey(modes?.roomIdentity?.()?.s);",
     "tests": [
-      "test/sd5a_realm.test.js"
+      "test/world/superDungeon/sd5a_realm.test.js"
     ]
   }
 ]

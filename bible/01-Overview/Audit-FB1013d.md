@@ -63,7 +63,7 @@ them one that stood no outdoor body at all and one that let the heir empty anoth
 
 ## Pinned
 
-`test/fb1013d_remains.test.js` (11): O1 and B1 (spawns of her region minted by their producer on other pixels, the
+`test/systems/fb1013d_remains.test.js` (11): O1 and B1 (spawns of her region minted by their producer on other pixels, the
 Arena's floor and the Undercroft on Daggerfall's pixel, a keep built at the medium size by `generateMediumDungeon` -
 none stands her or opens her list, her own does, a row from before included; the summary and the key off
 `dungeonContext.js`'s own text), B2 (the lift counted: none on the tick's reads, one at the death), B3 (a duel and a

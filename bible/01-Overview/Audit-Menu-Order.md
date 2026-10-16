@@ -59,10 +59,10 @@ catalogue a sliver, refused presses that looked live under the keys, and pins th
 
 ## Pinned
 
-`test/menuorder.test.js` (12): AUDIT MENU-ORDER the passes (R1 a recorded GL; R2 world.js's order; R3 and R6 the
+`test/ui/menuorder.test.js` (12): AUDIT MENU-ORDER the passes (R1 a recorded GL; R2 world.js's order; R3 and R6 the
 studio and the browser's encoding; R4 and C1 a hold of the panel's own, let go, and an ask that waits out a closed panel;
 C3 one law, one picture) and the screens (C2, C4, C5, U1, U7, U8, U11, U13, U14, U15); test 8 rewritten for U2-U4,
-U9, U15. `test/loot10_codex.test.js` and `test/loot20_sockets.test.js` press the four refusals (U5). PINS MOVED: a
+U9, U15. `test/systems/loot10_codex.test.js` and `test/systems/loot20_sockets.test.js` press the four refusals (U5). PINS MOVED: a
 refused press's name (`set7_broker`, `fb1012d_salvageclassic`), the model picture's rule (menuorder 9), WM3's import
 of the remap seam (`windmillclimate`). Mutants: `tools/mutants/menuorder.json` - the audit's 39 records and 12 re-aimed by
 content, 51 run, 51 dead (one survived its first run - C3's pin read a commented line as the line; anchored, dead); the

@@ -13,7 +13,7 @@ Mac: *"2 bugs. Also need to add the ability to travel faster with WASD"*.
 
 ## TRAVEL-X1: a journey begun from the map ran at x1 (1)
 
-**Reproduced first** (`test/csa_time_audio.test.js`, red before the fix): walking, a pause (the travel map up), a
+**Reproduced first** (`test/systems/comeSailAway/csa_time_audio.test.js`, red before the fix): walking, a pause (the travel map up), a
 journey begun in it at x10, then the first frame after - Come Sail Away's Update put the scale back to one and said
 "Time scale set to 1.".
 
@@ -72,8 +72,8 @@ Not changed: the deed of an uncrewed boat is still spent on placing (the mod's o
 still appears a moment after it is placed while its textures load from ARENA2 (the *"after a delay"*: cosmetic, its
 colliders are there at once). Dying at sea leaves the boat where it was placed; the player swims or sails back to it.
 
-Pinned in `test/csa_placing.test.js` (+3, and OnPositionUpdate's pin re-aimed from the kept bug to the new law) and
-`test/field_csa1.test.js` (2: the init's move keeps any point's natives; the host's helper mounted, and called after
+Pinned in `test/systems/comeSailAway/csa_placing.test.js` (+3, and OnPositionUpdate's pin re-aimed from the kept bug to the new law) and
+`test/world/field_csa1.test.js` (2: the init's move keeps any point's natives; the host's helper mounted, and called after
 the init, before the first await). `tools/mutants/field_csa1.json` 14/14 dead; six CSA-C records touched - five re-aimed to the moved source (one of them
 because the new "Placement aborted!" line held a second copy of its text) and one retired (its mutation is now the
 law) - and one CSA-F record re-aimed (the wake's stop moved into `shiftBoat`).
@@ -84,7 +84,7 @@ law) - and one CSA-F record re-aimed (the wake's stop moved into `shiftBoat`).
 is up and no journey drives, a held key runs the clock at the Travel Options spinner's speed, governed by TV2's load
 governor, x1 again the moment the keys are let go (or a journey begins, the view comes down, a window opens, the body
 swims or takes a helm). The bar says it ("Travelling at ×10"). Decided as lead: the Overworld alone, the spinner's
-speed. `test/tv_wasd.test.js` (6), `tools/mutants/tv_wasd.json` 13/13 dead.
+speed. `test/systems/travel/tv_wasd.test.js` (6), `tools/mutants/tv_wasd.json` 13/13 dead.
 
 ## OW-TOGGLE: first-person travel, a switch (Mac's ask, before the merge)
 
@@ -93,7 +93,7 @@ first person travel accelerated was removed in favor of the overworld travel"* (
 this branch with main's round 2, merged in here). `06-Systems/Travel-View.md` OW-TOGGLE: `GeneralOptions.FirstPersonTravel`,
 the port's own key on Travel Options' pane, OFF and on the tile; on, every walked trip is the mod's own first-person
 journey again - a map pick begun on the ground, the mod's resume, the view neither raised with it nor stopping it, its
-clock never held at x1 under a lowered view. `test/ow_toggle.test.js` (5), `tools/mutants/ow_toggle.json` 7/7 dead.
+clock never held at x1 under a lowered view. `test/systems/travel/ow_toggle.test.js` (5), `tools/mutants/ow_toggle.json` 7/7 dead.
 
 ## AUDIT OW5: the Overworld audited before the merge (Mac's ask)
 
@@ -103,7 +103,7 @@ read-only lenses on one snapshot; every finding verified before it was fixed; th
 pirates, a jump walking a route back to its old leg, the lock under a risen view, E and F from under the view, a
 passenger walked off the deck, a moored boat boarded for a walk inland, an own-pixel sea spot landing the boat mid-sea,
 the whole map's rung cut short, the giant's shadow), the MINORs with them, and five left for Mac with their reasons.
-`test/ow5_audit.test.js` (14) beside the suites it touched; `tools/mutants/ow5.json`.
+`test/player/eyeOfTheBeholder/ow5_audit.test.js` (14) beside the suites it touched; `tools/mutants/ow5.json`.
 
 ## Found on the way, not this batch's
 

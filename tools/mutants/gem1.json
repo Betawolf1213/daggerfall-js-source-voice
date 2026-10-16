@@ -5,7 +5,7 @@
     "old": "  if (weaponSkillUsed(t) === SKILLS.ShortBlade) return WEAPON_SOCKETS.short;",
     "new": "  if (weaponSkillUsed(t) === SKILLS.ShortBlade) return WEAPON_SOCKETS.one;",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "  return WEAPON_HANDS[t] === 'Both' || t === THUNDERLOCK_TEMPLATE ? WEAPON_SOCKETS.two : WEAPON_SOCKETS.one;",
     "new": "  return WEAPON_HANDS[t] === 'Both' ? WEAPON_SOCKETS.two : WEAPON_SOCKETS.one;",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "  return WEAPON_HANDS[t] === 'Both' || t === THUNDERLOCK_TEMPLATE ? WEAPON_SOCKETS.two : WEAPON_SOCKETS.one;",
     "new": "  return WEAPON_HANDS[t] === 'Either' || t === THUNDERLOCK_TEMPLATE ? WEAPON_SOCKETS.two : WEAPON_SOCKETS.one;",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "  if (item.group !== 'Weapons') return 1;",
     "new": "  if (item.group !== 'Weapons') return 2;",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "  if (isAmmunition(item)) return 0;\n  const t = item.templateIndex;",
     "new": "  const t = item.templateIndex;",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "export const WEAPON_SOCKETS = Object.freeze({ short: 1, one: 2, two: 3 });",
     "new": "export const WEAPON_SOCKETS = Object.freeze({ short: 1, one: 2, two: 4 });",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "  return item?.rarity === 'magic' && item.group === 'Weapons' ? Math.min(1, max) : 0;",
     "new": "  return item?.rarity === 'magic' && item.group === 'Weapons' ? max : 0;",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "  return item?.rarity === 'magic' && item.group === 'Weapons' ? Math.min(1, max) : 0;",
     "new": "  return item?.rarity === 'magic' ? Math.min(1, max) : 0;",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -77,8 +77,8 @@
     "old": "  return SOCKET_VALUES.includes(item?.socket) ? [item.socket] : [];",
     "new": "  return [];",
     "tests": [
-      "test/gem1_sockets.test.js",
-      "test/loot20_sockets.test.js"
+      "test/systems/gem1_sockets.test.js",
+      "test/systems/loot20_sockets.test.js"
     ]
   },
   {
@@ -87,7 +87,7 @@
     "old": "  item.sockets = list;\n  delete item.socket;\n",
     "new": "  item.sockets = list;\n",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -96,7 +96,7 @@
     "old": "export const WEAPON_SOCKET_PER_MILLE = Object.freeze({ magic: 120, rare: 250, legendary: 400 });",
     "new": "export const WEAPON_SOCKET_PER_MILLE = Object.freeze({ magic: 240, rare: 250, legendary: 400 });",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -105,7 +105,7 @@
     "old": "export const MORE_SOCKET_PER_MILLE = Object.freeze({ rare: 300, legendary: 450 });",
     "new": "export const MORE_SOCKET_PER_MILLE = Object.freeze({ rare: 600, legendary: 450 });",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -114,7 +114,7 @@
     "old": "    while (list.length < cap && more > 0 && rolls() * 1000 < more)",
     "new": "    while (list.length <= cap && more > 0 && rolls() * 1000 < more)",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -123,7 +123,7 @@
     "old": "      if (!(first > 0) || !(rolls() * 1000 < first)) continue;",
     "new": "      if (!(rolls() * 1000 < first)) continue;",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -132,7 +132,7 @@
     "old": "  const given = [];\n  if (!lootRarityOn()) return given;\n  for (const it of pieces ?? []) {\n    const cap",
     "new": "  const given = [];\n  for (const it of pieces ?? []) {\n    const cap",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -141,7 +141,7 @@
     "old": "  const i = at == null ? list.indexOf(SOCKET_EMPTY) : at;\n  if (list[i] !== SOCKET_EMPTY",
     "new": "  const i = list.indexOf(SOCKET_EMPTY);\n  if (list[i] !== SOCKET_EMPTY",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -150,7 +150,7 @@
     "old": "  item.affixes = [...own, ...socketGems(item).map((g) => gemLine(item, g))];",
     "new": "  item.affixes = [...own, ...socketGems(item).map((g) => gemLine(item, g)).reverse()];",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -159,8 +159,8 @@
     "old": "  if (item.socket != null && item.sockets != null) return false;\n",
     "new": "",
     "tests": [
-      "test/gem1_sockets.test.js",
-      "test/loot20_sockets.test.js"
+      "test/systems/gem1_sockets.test.js",
+      "test/systems/loot20_sockets.test.js"
     ]
   },
   {
@@ -169,7 +169,7 @@
     "old": "    const a = gems[i];",
     "new": "    const a = gems[gems.length - 1 - i];",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -178,7 +178,7 @@
     "old": "  if (!list.length) return gems.length === 0;   // an empty list is no socket\n",
     "new": "  if (!list.length) return false;\n",
     "tests": [
-      "test/auditworld4.test.js"
+      "test/systems/auditworld4.test.js"
     ]
   },
   {
@@ -187,7 +187,7 @@
     "old": "  return n === 1 ? 'Socket: empty' : n > 1 ? `Sockets: ${n} empty` : null;",
     "new": "  return n === 1 ? 'Socket: empty' : null;",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -196,7 +196,7 @@
     "old": "export const gemPieceCap = (id) => AFFIX_RANGES[id]?.rare[1] ?? 0;",
     "new": "export const gemPieceCap = (id) => AFFIX_RANGES[id]?.legendary[1] ?? 0;",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -205,7 +205,7 @@
     "old": "    const value = Math.min(a.value, Math.max(0, gemPieceCap(a.id) - (used.get(key) ?? 0)));",
     "new": "    const value = a.value;",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -214,7 +214,7 @@
     "old": "    const key = `${a.id}:${a.param ?? ''}`;\n    const value",
     "new": "    const key = a.id;\n    const value",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -223,7 +223,7 @@
     "old": "    for (const a of readLines(it)) {   // GEM1: a piece's gems as law 6 holds them",
     "new": "    for (const a of it.affixes) {",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -232,7 +232,7 @@
     "old": "  const pct = readLines(weapon).reduce(",
     "new": "  const pct = weapon.affixes.reduce(",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -241,7 +241,7 @@
     "old": "  return readLines(item).filter((a) => a?.id === id && validAffix(a));",
     "new": "  return item.affixes.filter((a) => a?.id === id && validAffix(a));",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -250,7 +250,7 @@
     "old": "  const mine = readLines(item).filter(validAffix);",
     "new": "  const mine = (Array.isArray(item.affixes) ? item.affixes : []).filter(validAffix);",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -259,7 +259,7 @@
     "old": "  { const c = gemCapLine(item); if (c) out.push(c); }   // GEM1: and law 6, when it holds the gems\n",
     "new": "",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -268,7 +268,7 @@
     "old": "  weaponSocketPass(minted, rolls);   // GEM1: the weapons' own sockets, after every draw before them (law 9)\n",
     "new": "",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -277,7 +277,7 @@
     "old": "  weaponSocketPass(kit, opts.rolls ?? Math.random);   // GEM1: and a weapon's own sockets, after that (law 9)\n",
     "new": "",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -286,7 +286,7 @@
     "old": "  items.push(...(_gemFind?.({ ...source, luck }, rolls) ?? []));   // GEM2: and a graded gem, last of all (systems/gems.js)\n",
     "new": "",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -295,7 +295,7 @@
     "old": "  weaponSocketPass(minted, rolls);   // GEM1: the weapons' own sockets, after every draw before them (law 9)\n  items.push(...(_gemFind?.({ ...source, luck }, rolls) ?? []));   // GEM2: and a graded gem, last of all (systems/gems.js)\n",
     "new": "  items.push(...(_gemFind?.({ ...source, luck }, rolls) ?? []));   // GEM2: and a graded gem, last of all (systems/gems.js)\n  weaponSocketPass(minted, rolls);   // GEM1: the weapons' own sockets, after every draw before them (law 9)\n",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -304,7 +304,7 @@
     "old": "  return at < 0 ? null : ALL_GEM_IDS[GEM_IDS.length + at];",
     "new": "  return null;",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -313,7 +313,7 @@
     "old": "graded('leech', null, [1, 2, 3, 5, 7])",
     "new": "graded('leech', null, [1, 2, 3, 5, 8])",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -322,7 +322,7 @@
     "old": "other: graded('stat', 'luck', [1, 2, 3, 4, 6])",
     "new": "other: graded('stat', 'luck', [1, 2, 4, 6, 8])",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -331,7 +331,7 @@
     "old": "export const GEM_GRADE_PRICE = Object.freeze({ chipped: 0.25, flawed: 0.5, plain: 1, flawless: 2, perfect: 4 });",
     "new": "export const GEM_GRADE_PRICE = Object.freeze({ chipped: 0.25, flawed: 0.5, plain: 1, flawless: 2, perfect: 3 });",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -340,7 +340,7 @@
     "old": "    isIngredient: true,\n",
     "new": "    isIngredient: false,\n",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -349,7 +349,7 @@
     "old": "    worldTextureRecord: dfu.worldTextureRecord,\n",
     "new": "    worldTextureRecord: k,\n",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -358,7 +358,7 @@
     "old": "export const GEM_FIND = Object.freeze({ base: 10, perTier: 2, cap: 50 });",
     "new": "export const GEM_FIND = Object.freeze({ base: 20, perTier: 2, cap: 50 });",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -367,7 +367,7 @@
     "old": "export const GEM_FIND = Object.freeze({ base: 10, perTier: 2, cap: 50 });",
     "new": "export const GEM_FIND = Object.freeze({ base: 10, perTier: 5, cap: 50 });",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -376,7 +376,7 @@
     "old": "export const GEM_FIND = Object.freeze({ base: 10, perTier: 2, cap: 50 });",
     "new": "export const GEM_FIND = Object.freeze({ base: 10, perTier: 2, cap: 150 });",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -385,7 +385,7 @@
     "old": "  const mult = boss ? SOURCE_MULT.boss : (SOURCE_MULT[kind] ?? 1);\n  return Math.max(0, Math.min(GEM_FIND.cap,",
     "new": "  const mult = SOURCE_MULT[kind] ?? 1;\n  return Math.max(0, Math.min(GEM_FIND.cap,",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -394,7 +394,7 @@
     "old": "(GEM_FIND.base + GEM_FIND.perTier * Math.max(0, tier)) * mult * luckMult(luck)));",
     "new": "(GEM_FIND.base + GEM_FIND.perTier * Math.max(0, tier)) * mult));",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -403,7 +403,7 @@
     "old": "export const GEM_BOSS_TIERS = 4;",
     "new": "export const GEM_BOSS_TIERS = 0;",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -412,7 +412,7 @@
     "old": "  for (const b of GEM_GRADE_BANDS) if (t >= b.tier) band = b;",
     "new": "  for (const b of GEM_GRADE_BANDS) if (t > b.tier) band = b;",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -421,7 +421,7 @@
     "old": "  const kind = GEM_IDS[Math.min(GEM_IDS.length - 1, Math.floor(rolls() * GEM_IDS.length))];",
     "new": "  const kind = GEM_IDS[0];",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -430,7 +430,7 @@
     "old": "registerGemFind(rollGemFind);\n",
     "new": "",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -439,7 +439,7 @@
     "old": "export const BOSS_GEMS = Object.freeze({ gate: 1, serpent: 1, abyss: 2 });",
     "new": "export const BOSS_GEMS = Object.freeze({ gate: 1, serpent: 1, abyss: 1 });",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -448,7 +448,7 @@
     "old": "  for (let i = 0; i < (BOSS_GEMS[boss] ?? 0); i++) { const g = rollGem(BOSS_GEM_SOURCE, rolls);",
     "new": "  for (let i = 0; i < (BOSS_GEMS[boss] ?? 0); i++) { const g = rollGem({ tier: 0 }, rolls);",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -457,7 +457,7 @@
     "old": "  const gems = bossGems('gate', rolls);",
     "new": "  const gems = [];",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -466,7 +466,7 @@
     "old": "  socketPass(pieces.map((p) => p.item), rolls);\n  weaponSocketPass(pieces.map((p) => p.item), rolls);\n  const gems = bossGems('gate', rolls);",
     "new": "  const gems = bossGems('gate', rolls);",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -475,7 +475,7 @@
     "old": "  const gems = dealt ? bossGems('serpent', rolls) : [];",
     "new": "  const gems = bossGems('serpent', rolls);",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -484,7 +484,7 @@
     "old": "    ...gems,   // GEM2: the Warden's gem, after the card\n",
     "new": "",
     "tests": [
-      "test/wb5_gate_spoils.test.js"
+      "test/systems/item/wb5_gate_spoils.test.js"
     ]
   },
   {
@@ -493,7 +493,7 @@
     "old": "  Gems: Object.freeze([570, 571, ...GEM_GRADE_TEMPLATES]),",
     "new": "  Gems: Object.freeze([570, 571]),",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -502,7 +502,7 @@
     "old": "export const EXTRACT_PRICE = Object.freeze({ chipped: 50, flawed: 100, plain: 200, flawless: 400, perfect: 800 });",
     "new": "export const EXTRACT_PRICE = Object.freeze({ chipped: 50, flawed: 100, plain: 100, flawless: 400, perfect: 800 });",
     "tests": [
-      "test/loot20_sockets.test.js"
+      "test/systems/loot20_sockets.test.js"
     ]
   },
   {
@@ -511,7 +511,7 @@
     "old": "  return unsetGemRefusal(item, at) ?? (totalGoldAmount(player) < (extractPrice(item, at) ?? 0) ? 'gold' : null);",
     "new": "  return unsetGemRefusal(item, at) ?? null;",
     "tests": [
-      "test/loot20_sockets.test.js"
+      "test/systems/loot20_sockets.test.js"
     ]
   },
   {
@@ -520,7 +520,7 @@
     "old": "  addItem(player.items, /** @type {any} */ (mintGem(gem)));\n",
     "new": "",
     "tests": [
-      "test/loot20_sockets.test.js"
+      "test/systems/loot20_sockets.test.js"
     ]
   },
   {
@@ -529,7 +529,7 @@
     "old": "  deductGold(player, price);\n  addItem(player.items",
     "new": "  addItem(player.items",
     "tests": [
-      "test/loot20_sockets.test.js"
+      "test/systems/loot20_sockets.test.js"
     ]
   },
   {
@@ -538,7 +538,7 @@
     "old": "const refold = (item, player) => { if (isEquipped(item)) notifyEquipChange(player); };",
     "new": "const refold = () => {};",
     "tests": [
-      "test/loot20_sockets.test.js"
+      "test/systems/loot20_sockets.test.js"
     ]
   },
   {
@@ -547,7 +547,7 @@
     "old": "        const done = deps.extractGem?.(it, at) ?? { ok: false, reason: 'not' };",
     "new": "        const done = deps.unsetGem?.(it, at) ?? { ok: false, reason: 'not' };",
     "tests": [
-      "test/loot20_sockets.test.js"
+      "test/systems/loot20_sockets.test.js"
     ]
   },
   {
@@ -556,7 +556,7 @@
     "old": "  markSocketFrame(node, item);   // GEM3: a socket's pip a socket in the top edge; a graded gem's ring (ui/socketWells.js)\n",
     "new": "",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -565,7 +565,7 @@
     "old": "  { const w = socketBlock(picked, side === 'local' && body, ready); if (w) into.append(...w); }",
     "new": "  { const w = socketBlock(picked, false, ready); if (w) into.append(...w); }",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -574,7 +574,7 @@
     "old": "    if (wellAsk?.item !== item || wellAsk.at !== at) { wellAsk = { item, at }; wellOpen = null; notice = UNSET_ASK(v); render(); return; }\n",
     "new": "",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -583,7 +583,7 @@
     "old": "  if (!lootRarityOn()) return null;\n  const list = socketsOf(item);\n  if (!list.length) return null;",
     "new": "  const list = socketsOf(item);\n  if (!list.length) return null;",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -592,7 +592,7 @@
     "old": "    const i = el('i', v === SOCKET_EMPTY ? null : 'set');",
     "new": "    const i = el('i', null);",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -601,7 +601,7 @@
     "old": "          const r = setGemPiece(home, /** @type {string} */ (gem), gemWho(), null, { from: picked });",
     "new": "          const r = { ok: false, reason: 'not' };",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ],
     "note": "AUDIT BAL/GEM (PIN MOVED, 2026-10-10): its line changed with the audit's fix; re-aimed by content."
   },
@@ -611,7 +611,7 @@
     "old": "  if (socketGems(item).length) return 'gems';",
     "new": "  if (false) return 'gems';",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -620,8 +620,8 @@
     "old": "itemBaseValue(item)) + gemWorth(gem);",
     "new": "itemBaseValue(item)) + affixesWorth([line], item);",
     "tests": [
-      "test/gem1_sockets.test.js",
-      "test/loot20_sockets.test.js"
+      "test/systems/gem1_sockets.test.js",
+      "test/systems/loot20_sockets.test.js"
     ]
   },
   {
@@ -630,7 +630,7 @@
     "old": "(legacy ? affixesWorth([line], item) : gemWorth(gem))",
     "new": "gemWorth(gem)",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -639,8 +639,8 @@
     "old": "(legacy ? affixesWorth([line], item) : gemWorth(gem))",
     "new": "affixesWorth([line], item)",
     "tests": [
-      "test/gem1_sockets.test.js",
-      "test/loot20_sockets.test.js"
+      "test/systems/gem1_sockets.test.js",
+      "test/systems/loot20_sockets.test.js"
     ]
   },
   {
@@ -649,7 +649,7 @@
     "old": "  if (!lootRarityOn()) return [];   // AUDIT GEM (law 3)",
     "new": "  // AUDIT GEM (law 3)",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -658,7 +658,7 @@
     "old": "side === 'local' && lootRarityOn() && gemKindOf(picked)",
     "new": "side === 'local' && gemKindOf(picked)",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -667,7 +667,7 @@
     "old": "emptySockets(it) > 0 && itemIsIdentified(it));",
     "new": "emptySockets(it) > 0);",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -676,7 +676,7 @@
     "old": "  if (body && picked !== wellPick) { wellOpen = null; wellAsk = null; gemTargets = null; wellPick = picked; }",
     "new": "",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -685,7 +685,7 @@
     "old": "rarityName(item, tier, item.affixes.filter((a) => a?.gem == null));",
     "new": "rarityName(item, tier, item.affixes);",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -694,7 +694,7 @@
     "old": " && !isEquipped(it) && !isEnchanted(it);",
     "new": " && !isEquipped(it);",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   },
   {
@@ -703,7 +703,7 @@
     "old": "  const at = prefer && looseGem(prefer, gem) ? items.indexOf(prefer) : -1;",
     "new": "  const at = -1;",
     "tests": [
-      "test/gem1_sockets.test.js"
+      "test/systems/gem1_sockets.test.js"
     ]
   }
 ]

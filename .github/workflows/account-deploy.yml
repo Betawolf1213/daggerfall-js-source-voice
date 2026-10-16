@@ -37,7 +37,7 @@ on:
   push:
     branches: [main]
     # EVERY FILE OUTSIDE server-account/ THAT THE WORKER BUNDLES is
-    # listed, and test/accountdeploy.test.js walks the Worker's import
+    # listed, and test/server/accountdeploy.test.js walks the Worker's import
     # graph and holds this list to it. Only identityToken.js was listed
     # until ACC4 - a change to the name filter or the handle shape was
     # bundled into this Worker and did not deploy it.
@@ -589,7 +589,7 @@ jobs:
       # Worker with no signing key still hands out accounts and answers
       # `no-signing-key` on /v1/auth/token rather than minting something
       # the relay would refuse. That arm is pinned in
-      # test/accountworker.test.js and this is the moment it is for.
+      # test/server/accountworker.test.js and this is the moment it is for.
       # `secret put` redeploys the Worker with the binding, so the
       # window is seconds long and nothing is using the service yet.
       #

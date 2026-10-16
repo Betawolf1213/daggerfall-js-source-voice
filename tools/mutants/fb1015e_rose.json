@@ -5,7 +5,7 @@
     "old": "  if (!f?.dead) showFollowUp(n, word);",
     "new": "  if (false) showFollowUp(n, word);",
     "tests": [
-      "test/fb1015e_rose.test.js"
+      "test/systems/fb1015e_rose.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "  if (!f?.dead) showFollowUp(n, word);",
     "new": "  if (!f?.dead) showFollowUp(n * 2, word);",
     "tests": [
-      "test/fb1015e_rose.test.js"
+      "test/systems/fb1015e_rose.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "  if (!f?.dead) showFollowUp(n, word);",
     "new": "  if (!f?.dead) showFollowUp(n);",
     "tests": [
-      "test/fb1015e_rose.test.js"
+      "test/systems/fb1015e_rose.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "  if (!f?.dead) showFollowUp(n, word);",
     "new": "  showFollowUp(n, word);",
     "tests": [
-      "test/fb1015e_rose.test.js"
+      "test/systems/fb1015e_rose.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "again(target, (damage * p.share) / 100, p.name); break;",
     "new": "again(target, (damage * p.share) / 100); break;",
     "tests": [
-      "test/fb1015e_rose.test.js"
+      "test/systems/fb1015e_rose.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "again(target, damage, p.name); break;",
     "new": "again(target, damage); break;",
     "tests": [
-      "test/fb1015e_rose.test.js"
+      "test/systems/fb1015e_rose.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "  if (!registered || !(n > 0)) return null;",
     "new": "  if (!(n > 0)) return null;",
     "tests": [
-      "test/fb1015e_rose.test.js"
+      "test/systems/fb1015e_rose.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "  if (!registered || !(n > 0)) return null;",
     "new": "  if (!registered) return null;",
     "tests": [
-      "test/fb1015e_rose.test.js"
+      "test/systems/fb1015e_rose.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "case 'fists': if (!weapon) again(",
     "new": "case 'fists': if (true) again(",
     "tests": [
-      "test/fb1015e_rose.test.js"
+      "test/systems/fb1015e_rose.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "again(target, (damage * p.share) / 100, p.name); break;",
     "new": "again(target, damage, p.name); break;",
     "tests": [
-      "test/fb1015e_rose.test.js"
+      "test/systems/fb1015e_rose.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "    if (left && isShieldTemplate(left.templateIndex)) {\n      this.usingRightHand = true;\n      this.holdingShield = true;\n      left = null;\n    }\n",
     "new": "    if (left && isShieldTemplate(left.templateIndex)) {\n      this.holdingShield = true;\n    }\n",
     "tests": [
-      "test/fb1015e_rose.test.js"
+      "test/systems/fb1015e_rose.test.js"
     ]
   }
 ]

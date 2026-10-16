@@ -77,7 +77,7 @@ bug as shipped, or both mods off by default, Mac chose the clamp.
 the stock core applies and the mod's author wrote - in both directions:
 every blow lands at least 3 in 100 (55 of 2000 on that Vampire, 51 on the
 Lich) and misses at least 3 in 100, a monster's on the player included.
-Ledger A's PCO1 row records it; `test/pcaao.test.js` pins it.
+Ledger A's PCO1 row records it; `test/systems/pcaao.test.js` pins it.
 
 ## The second departure: the wear modules ship off (WEAR-VANILLA, 2026-10-01)
 
@@ -105,7 +105,7 @@ online the room reads the port's defaults. Measured through `calculateAttackDama
 skills 70, level-10 foes, a quality-10 smith; repair prices unchanged): a
 Daedric longsword's repair 17.5-25.2 gold a landed hit -> 4.8-6.9, a
 Daedric cuirass's 6.4-10.6 a monster's blow -> 0 and an armed foe's 6.4 ->
-0.9; Ebony 4.4-6.7 -> 1.3-2.0 and 2.0-3.5 -> 0-0.3. Ledger A, WEAR-VANILLA; `test/wear_vanilla.test.js`.
+0.9; Ebony 4.4-6.7 -> 1.3-2.0 and 2.0-3.5 -> 0-0.3. Ledger A, WEAR-VANILLA; `test/systems/wear_vanilla.test.js`.
 
 **Below the reduction (AUDIT ECON W1, 2026-10-01).** DFU's member is handed
 the damage the blow DEALT - after the overhaul's armour reduction, as the
@@ -170,7 +170,7 @@ item and an artifact their uses. A save's weapons move to the pool at the
 same share - a broken piece stays broken - on load, and any piece the load
 does not reach before its first wear (`systems/conditionRepair.js`
 `repoolWeapon`, `systems/equip.js` `lowerCondition`; AUDIT WEAPON-POOL,
-below). Ledger A, WEAPON-POOL; `test/weaponpool.test.js`.
+below). Ledger A, WEAPON-POOL; `test/systems/weaponpool.test.js`.
 
 A soft weapon still wears by what it deals: an iron blade on a Ghost does
 nothing in DFU and wears nothing, and does a little under the soft-material
@@ -308,7 +308,7 @@ is not the beast's is the mod's as written.
   the switch** - DFU rewrites the table at Awake; the port overlays the
   row at mint.
 
-## Pinned (`test/pcaao.test.js`, 26)
+## Pinned (`test/systems/pcaao.test.js`, 26)
 
 The ladder; the half-to-even round through a float32 half; DamageModifier
 and the material hit bonus; every hit helper against a hand-worked cell;
@@ -378,7 +378,7 @@ player's in the C# (`playerEntity.Reflexes`); the port's core reads the
 same `playerReflexes`-or-target fallback its stock core does, which
 hands the player's in every fight the player is in. The break message
 on a foe's gear follows the stock port (DFU's ItemBreaks pops it for
-any owner). Pins: 24 in `test/pcaao.test.js`.
+any owner). Pins: 24 in `test/systems/pcaao.test.js`.
 
 ## AUDIT WEAPON-POOL (2026-10-06, Mac: "Audit this") - WEAPON-POOL read again before it merges
 
@@ -386,7 +386,7 @@ Three independent lanes, each a cold read of the PR (#656) against its committed
 reads a weapon's condition (every producer, every reader in points); the migration's reach (every place a save, the
 relay or the account service keeps a weapon, every load path, the boot order, the fingerprint); and what the change
 says and pins (every claim computed, every page it left, its pins mutated past their 23 records). Every finding was
-reproduced before it was fixed. FOUND, each fixed and pinned (`test/auditweaponpool.test.js` 4, `test/weaponpool.test.js`
+reproduced before it was fixed. FOUND, each fixed and pinned (`test/systems/auditweaponpool.test.js` 4, `test/systems/weaponpool.test.js`
 4; `tools/mutants/auditweaponpool.json` 6 of 6 dead, `weaponpool.json` re-aimed by content, 23 of 23):
 
 - **MEDIUM - P1: SELL-AS-FOUND's mark stayed on the row's pool.** Roleplay & Realism: Items marks a found piece's
@@ -473,7 +473,7 @@ alone; a guild's shelf holds no weapon a mint gives.
 
 AUDIT WEAPON-POOL left two gaps it did not cause for their own pass: the load's other repairs walked the lists the
 weapon migration walked, and customs did not count a sworn revenant's pack. Mac asked for both in this pull request.
-`test/itemwalk.test.js` (5), `tools/mutants/itemwalk.json` (25 of 25 dead).
+`test/systems/itemwalk.test.js` (5), `tools/mutants/itemwalk.json` (25 of 25 dead).
 
 - **A - one walk of every list a save holds** (`systems/save/save.js` savedItemLists, heldItemLists). The load's one-time
   item repairs (DISC21-A's mint, WEAPON-POOL's move, DISC29-B's names, WB12a's Embers, RARITY-WEAR's bases) ran over
@@ -520,7 +520,7 @@ Recorded, not changed:
   Foe by the same object in the Foe's `itemQueue`, and a load restores the two as separate copies. After a load, the
   quest repair (`repairActiveQuests`) can place such an item at its marker again, while the foe still carries it.
 
-Re-aimed: `test/disc21.test.js`'s pin on the load's repair line (the walk and the runner), and
+Re-aimed: `test/systems/disc21.test.js`'s pin on the load's repair line (the walk and the runner), and
 `tools/mutants/audit0929_actions.json`'s D3 record (customs' walk dropped from savedItemLists).
 
 ## MEND-WORN (2026-10-07, Mac: "Now we just gotta fix the 'repairs objects' not working") - Repairs Objects mends what is worn
@@ -580,6 +580,6 @@ Recorded, not changed:
 Four hosts: none changed. The law runs in the one round pump (`systems/worldTick.js` runMagicRoundsFor, then
 enchantmentMagicRound) that every host's ticker feeds: exterior.js, world.js and worldModes.js through
 `scenes/shared.js` createPlayerTicker, and dungeonContext.js through tickPlayerMinutes. Deploy: none, since neither
-service's bundle reaches these files. `test/mend_worn.test.js` (8); `tools/mutants/mend_worn.json` (15 of 15 dead, the
+service's bundle reaches these files. `test/systems/mend_worn.test.js` (8); `tools/mutants/mend_worn.json` (15 of 15 dead, the
 old walk restored among them). Re-aimed by content, because the kit's comparator moved into `mendOrder`:
 `tools/mutants/mend_aim.json` MEND-AIM-loot-before-worn and `tools/mutants/prof3.json` PROF3-kit-least-worn (both dead).

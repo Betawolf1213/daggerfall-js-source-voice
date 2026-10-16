@@ -173,13 +173,13 @@ export const REALM_LEVEL_CLAIM_MAX = 1000;
  *    name filter refuses - a house is shown to every player, as an account's name is).
  *  - `name` NAME-AS (2026-10-12): ITS OWN NAME, as its row keeps it (realmNameOf's) - the name the mint signs where the
  *    account chose its character's (accounts.js wornNameOf, which asks whether the wire can carry it). A fifth answer of
- *    the same read, never a second statement: test/scale4f.test.js holds it to its own read beside the four.
+ *    the same read, never a second statement: test/server/scale4f.test.js holds it to its own read beside the four.
  *  The four are read only for a character that is the realm's (`rc` 1), as the mint signs them only then.
  *  SCALE4f (2026-10-10, Mac: "really future proof our archetecture while also increasing performance"; bible
  *  11-Multiplayer/Scale-Arc.md SCALE4f): THE FOUR READS OF ONE ROW, IN ONE. These were four functions and four
  *  statements of the same realm_characters row (realmCharacterHeld, realmLevelOf, realmArmsOf, legacy.js realmHouseOf),
  *  asked by every mint - and a relay deploy's wave asks the mint of every player at once. One statement answers exactly
- *  what the four answered: test/scale4f.test.js holds it to them, as they stood at acct106, over every state a row can be
+ *  what the four answered: test/server/scale4f.test.js holds it to them, as they stood at acct106, over every state a row can be
  *  in. */
 export async function realmMintFacts({ db }, /** @type {string} */ playerId, /** @type {unknown} */ id) {
   const none = { rc: 0, cl: null, wa: null, house: null, name: null };

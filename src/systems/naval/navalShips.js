@@ -138,7 +138,7 @@ export const HULL_BUILDS = Object.freeze([
     rig: Object.freeze([]),
   }),
   // SHIPS-2 (2026-10-07): hull 1 is Mac's Tiny Ship now (world/ships/largeBoatModel.js) and every number here is hers, off her
-  // own model (test/ships2_largeboat.test.js pins each to it): a swivel's muzzle at each of her six swivels on her
+  // own model (test/world/ships/ships2_largeboat.test.js pins each to it): a swivel's muzzle at each of her six swivels on her
   // gunwale's cap and the one on the cap at her port bow (the galleon's chaser, its barrel's end); her box her hull's and
   // her stern rail's MeshCollider's bounds; her deck and her half beam inside her ceiling at it. HER RIG IS HER PLAN'S:
   // each box carries the `variant` it is canvas of (Come Sail Away's walk reads one plan's Booms and Sails - the boat's
@@ -178,7 +178,7 @@ export const HULL_BUILDS = Object.freeze([
     ),
   }),
   // GALLEON (2026-10-01, Mac: "ensuring cannon fire shoots from the cannon holes properly"): hull 2 is Mac's galleon now
-  // (world/ships/galleonModel.js) and every number here is hers, off her own model (test/galleon_model.test.js pins each to
+  // (world/ships/galleonModel.js) and every number here is hers, off her own model (test/world/ships/galleon_model.test.js pins each to
   // it): a gun at each of her ten gunports, its muzzle a hair outside her planking at the port's middle - the ports
   // 1.56 to 2.93 m over the sea, her gun deck at 1.0829 - so a broadside leaves her through the holes it is fired from;
   // two chasers on swivels over her bow rail; the barrels over her stern under the castle. Her box is her hull's and
@@ -217,7 +217,7 @@ export const HULL_BUILDS = Object.freeze([
   }),
   // SHIPS-2 (2026-10-07, Mac: "implement both of these new ship placement models ... ensure it matches the love we gave
   // the other new ship model"): hull 4 is Mac's carrack now (world/ships/carrackModel.js) and every number here is hers, off
-  // her own model (test/ships2_carrack.test.js pins each to it), as hull 2's are the galleon's: a gun at each of her ten
+  // her own model (test/systems/naval/ships2_carrack.test.js pins each to it), as hull 2's are the galleon's: a gun at each of her ten
   // gunports, its muzzle 9 cm outside her planking in the port - her ports 3.07 to 4.06 m over the sea, her guns on
   // platforms a step (0.38 m) over her gun deck's 1.9576 m, their axis 0.43 m over the sills - two chasers on swivels on her bow's
   // deck, the barrels over her quarter rail at her stern. Her box is her hull's, her houses' and her quarter rail's
@@ -225,7 +225,7 @@ export const HULL_BUILDS = Object.freeze([
   // her deck her main deck, her half beam at it inside her rail's cap. Her rig is each of her five sails as it hangs
   // set in any wind, each on its boom about its mast's axis (the spritsail's about its slings under her bowsprit) - her
   // lateen in two (its canvas a sloping quad: its foot's band the length of it, its peak's over her middle house),
-  // every box three quarters and more canvas across its face (test/ships2_carrack.test.js). Her hull points, canvas
+  // every box three quarters and more canvas across its face (test/systems/naval/ships2_carrack.test.js). Her hull points, canvas
   // points and crew are the Carrack's as the mod built it, and her handling with them (her Modifiers are its own).
   Object.freeze({   // 4 Carrack - five ports a side on her gun deck, the guns' axis 6.5 cm under the ports' middle (3.4982), on their platforms
     hull: 4, gun: 'long',

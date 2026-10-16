@@ -5,7 +5,7 @@
     "old": "label: (a) => `${a.value}% life leech on this weapon's own blows` }),",
     "new": "label: (a) => `${a.value}% life leech` }),",
     "tests": [
-      "test/loot4_procs.test.js"
+      "test/systems/loot4_procs.test.js"
     ]
   }
 ]

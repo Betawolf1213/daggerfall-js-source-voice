@@ -5,7 +5,7 @@
     "old": "export const SD_BEAT_BLINK_HZ = 2.5;",
     "new": "export const SD_BEAT_BLINK_HZ = 3.5;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "Math.floor(warned * 2 * SD_BEAT_BLINK_HZ)",
     "new": "Math.floor(t * 2 * SD_BEAT_BLINK_HZ)",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "  mantella: Object.freeze([0.45, 1.0, 0.6]),",
     "new": "  mantella: Object.freeze([0.5, 1.0, 0.6]),",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "  const s = Math.floor(t), e = Math.min(1, (t - s) / SD_TICK_EASE_S);",
     "new": "  const s = Math.floor(t), e = t - s;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "  return [...r[f - i > bayer(x, y) ? i + 1 : i]];",
     "new": "  return r[i].map((v, k) => Math.round(v + (r[i + 1][k] - v) * (f - i)));",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "    if (fx < J || fy < J) { putTexel(albedo, x, y, step(B, 0)); continue; }",
     "new": "    if (fx < J || fy < J) { putTexel(albedo, x, y, step(B, 0)); putTexel(emission, x, y, scale(step(Br, 3), 0.18)); continue; }",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "    putTexel(albedo, x, y, ramp(Br, 0.2 + 0.55 * g, x, y));",
     "new": "    putTexel(albedo, x, y, ramp(Br, 0.2 + 0.55 * g, x, y)); putTexel(emission, x, y, scale(ramp(Br, 0.2 + 0.55 * g, x, y), 0.12));",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "  quantize(albedo, paletteOf(Co, Br));\n",
     "new": "",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ],
     "equivalent": true,
     "why": "every texel of the street is painted from a ramp's step already (ramp, step); quantize is the pixel law's backstop for a painter that blends, kept so the next one cannot drift"
@@ -79,7 +79,7 @@
     "old": "  ground: Object.freeze([0.34, 0.2, 0.08]),",
     "new": "  ground: Object.freeze([0.12, 0.1, 0.07]),",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -88,7 +88,7 @@
     "old": "    this._air.setGrade?.(this._sceneGrade); this._sceneGrade = null;",
     "new": "    this._air.setGrade?.(this._sceneGrade);",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -97,7 +97,7 @@
     "old": "    this.adaptParams[1] = g?.adaptKey ?? AIR_ADAPT_KEY;",
     "new": "    this.adaptParams[1] = g?.adaptKey ?? this.adaptParams[1];",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -106,7 +106,7 @@
     "old": "export const SD_TOOTH_TOP = SD_RIM_H - 0.05;",
     "new": "export const SD_TOOTH_TOP = SD_RIM_H + 0.05;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -115,7 +115,7 @@
     "old": "len = k === 0 ? SD_COMPASS.north",
     "new": "len = k === 2 ? SD_COMPASS.north",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -124,7 +124,7 @@
     "old": "    quadFacing(f, SD_REALM_EDGE_RECORD, E(re, a0, ye), E(re, a1, ye), E(ro, a1, ye), E(ro, a0, ye), [0, 0], [1, 0], [1, 1], [0, 1], UP);\n",
     "new": "",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -133,7 +133,7 @@
     "old": "      quadFacing(f, SD_REALM_EDGE_RECORD, P(xl, Y, true), P(xl, Y, false), P(xr, Y, false), P(xr, Y, true), [0, 0], [0, 1], [1, 1], [1, 0], UP);\n",
     "new": "",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -142,7 +142,7 @@
     "old": "{ bands: SD_ARENA_BANDS }",
     "new": "{}",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -151,7 +151,7 @@
     "old": "if (n.y < 0.0) p = (1.0 - abs(n.zx)) *",
     "new": "if (n.y < 0.0) p = (1.0 - abs(n.xz)) *",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -160,7 +160,7 @@
     "old": "Object.freeze({ az: 0, elev: 0.2, r: 0.34,",
     "new": "Object.freeze({ az: 0, elev: 0.38, r: 0.34,",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -169,7 +169,7 @@
     "old": "V: Object.freeze({ w: 5, rows: Object.freeze([17, 17, 17, 10, 10, 4, 4]) }),",
     "new": "V: Object.freeze({ w: 5, rows: Object.freeze([4, 4, 10, 10, 17, 17, 17]) }),",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -178,7 +178,7 @@
     "old": "'III', 'IV', 'V',",
     "new": "'III', 'IIII', 'V',",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -187,7 +187,7 @@
     "old": "  o = vec4(sdPixel(col, cellF, uSteps), 1.0);",
     "new": "  o = vec4(col, 1.0);",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -196,7 +196,7 @@
     "old": "float k = e >= 0.0 ? 0.75 * exp(-e * 3.2) :",
     "new": "float k = e >= 0.0 ? 0.95 :",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -205,7 +205,7 @@
     "old": "(reach[b] + reach[b + 4]) - (reach[a] + reach[a + 4]) || a - b",
     "new": "(reach[a] + reach[a + 4]) - (reach[b] + reach[b + 4]) || a - b",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -214,7 +214,7 @@
     "old": "    if (room >= size / 2 + SD_RIFT_AIR_M) return [...BEARINGS[k]];",
     "new": "    if (room >= 0) return [...BEARINGS[k]];",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -223,7 +223,7 @@
     "old": ", lit = Math.ceil(left * 24), c = COLLAPSE_LOOK;",
     "new": ", lit = 24, c = COLLAPSE_LOOK;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -232,7 +232,7 @@
     "old": "c.aperture = entered ? 1 / 3 + (2 / 3) * left : 0;",
     "new": "c.aperture = 1 / 3 + (2 / 3) * left;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -241,7 +241,7 @@
     "old": "const ro = P.iris1 * R, rv = a * ro * 0.97;",
     "new": "const ro = P.iris1 * R, rv = (0.1 + a) * ro * 0.88;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -250,7 +250,7 @@
     "old": "const ro = P.iris1 * R, rv = a * ro * 0.97;",
     "new": "const ro = P.iris1 * R, rv = a * ro * 0.8;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -259,7 +259,7 @@
     "old": "rift.ring0 = L.tickHz > 0 ? -((tolls - 1) + jolt) * (Math.PI / 6)",
     "new": "rift.ring0 = L.tickHz > 0 ? ((tolls - 1) + jolt) * (Math.PI / 6)",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -268,7 +268,7 @@
     "old": "        gear: standMesh(buildRiftGear(size), true),",
     "new": "        gear: standMesh(buildRiftGear(size), false),",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -277,7 +277,7 @@
     "old": "  float wave = uRipple.z > 0.0 ? uRipple.z * exp(-uRipple.w * 2.5) * sin(length(rp) * 18.0 - uRipple.w * 14.0) * exp(-length(rp) * 2.0) : 0.0;",
     "new": "  float wave = uRipple.z * exp(-uRipple.w * 2.5) * sin(length(rp) * 18.0 - uRipple.w * 14.0) * exp(-length(rp) * 2.0);",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -286,7 +286,7 @@
     "old": "    return -Math.PI * 2 * turns;",
     "new": "    return Math.PI * 2 * turns;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -295,7 +295,7 @@
     "old": "    return -TAU * turns;",
     "new": "    return TAU * turns;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -304,7 +304,7 @@
     "old": "export const SD_VEIL_SLOW_S = 6;",
     "new": "export const SD_VEIL_SLOW_S = 2;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -313,7 +313,7 @@
     "old": "float w = mode < 0.5 ? 0.008 * step(${f4(SD_VEIL_TURN_S)}, t) :",
     "new": "float w = mode < 0.5 ? 0.008 :",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -322,7 +322,7 @@
     "old": "mode < 2.5 ? 0.008 * (1.0 - uMend) : 0.012;",
     "new": "mode < 2.5 ? 0.008 : 0.012;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -331,7 +331,7 @@
     "old": "vec2 rel = uv - seed - vec2((h - 0.5) * 0.3 * tt, -2.4 * tt * tt);",
     "new": "vec2 rel = uv - seed;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -340,7 +340,7 @@
     "old": "  c = floor(c * 6.0 + bayer4(gl_FragCoord.xy)) / 6.0;   // six levels",
     "new": "  c = clamp(c, 0.0, 1.0);   // six levels",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -349,7 +349,7 @@
     "old": "  if (uReduce > 0.5) {",
     "new": "  if (false) {",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -358,7 +358,7 @@
     "old": "const held = seconds(t) >= (VEIL_HOUR_HOLD_S[hourMode()] ?? 0);",
     "new": "const held = true;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -367,7 +367,7 @@
     "old": "for (const want = Math.min(3, 1 + Math.floor((seconds(t) / VEIL_CLOSE_S) * 3)); ratchets < want; ratchets++)",
     "new": "for (const want = 1; ratchets < want; ratchets++)",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -376,7 +376,7 @@
     "old": "const notes = m === SD_VEIL_MODE.home ? H.mended : H.quarters;",
     "new": "const notes = H.mended;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -385,7 +385,7 @@
     "old": "centre = l > VEIL_CENTRE_MAX ? [(x / l) * VEIL_CENTRE_MAX, (y / l) * VEIL_CENTRE_MAX] : [x, y];",
     "new": "centre = [x, y];",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -394,7 +394,7 @@
     "old": "try { reduce = !!win.matchMedia?.(REDUCE_QUERY)?.matches; } catch { reduce = false; }",
     "new": "reduce = false;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -403,7 +403,7 @@
     "old": "const px = hp ? 'pixelated' : '';",
     "new": "const px = '';",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -412,7 +412,7 @@
     "old": "const k = hp ? VEIL_HOUR_SCALE : VEIL_SCALE;",
     "new": "const k = VEIL_SCALE;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -421,7 +421,7 @@
     "old": "      sdVeilAim(proj, view, look?.window?.model ?? look?.bay?.model);\n",
     "new": "",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -430,7 +430,7 @@
     "old": "memo.floodK = age < SD_FLOOD.front_s ? 1 : 1 - (age - SD_FLOOD.front_s) / SD_FLOOD.fade_s;",
     "new": "memo.floodK = 1;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -439,7 +439,7 @@
     "old": "const age = (t - (memo.pulseAt ?? -Infinity)) / 1000;",
     "new": "const age = (t - (clk?.a === PULSE.id ? clk.at : -Infinity)) / 1000;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -448,7 +448,7 @@
     "old": "Math.floor(((t - called) / RESET.windup) * 12) + 1))",
     "new": "Math.floor(((t - called) / RESET.windup) * 12)))",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -457,7 +457,7 @@
     "old": "if (atk && atk.a === RESET.id && t < atk.at + RESET.active && !(s.su > t)) {",
     "new": "if (atk && atk.a === RESET.id && t < atk.at + RESET.active) {",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -466,7 +466,7 @@
     "old": "if (s.lost || (clk && clk.a === END.id) || (Number.isFinite(s.ends) && t >= s.ends - END.windup)) memo.end = 1;",
     "new": "if (s.lost) memo.end = 1;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -475,7 +475,7 @@
     "old": "out[1] = Math.max(0, Math.min(1, (t - (atk.at - RESET.windup)) / RESET.windup)); }",
     "new": "out[1] = 1; }",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -484,7 +484,7 @@
     "old": "out[2] = s.ends - t <= 60_000 ? 1 : 0; }",
     "new": "out[2] = 0; }",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -493,7 +493,7 @@
     "old": "      int order = h == 0 ? 12 : h;",
     "new": "      int order = h == 0 ? 1 : 13 - h;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -502,7 +502,7 @@
     "old": "g = order > ${12 - SD_RESET_EMBER} ? EMBER : SOUL;",
     "new": "g = SOUL;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -511,7 +511,7 @@
     "old": "if (uFlood.x >= 0.0 && r <= uFlood.x) {",
     "new": "if (uFlood.x >= 0.0) {",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -520,7 +520,7 @@
     "old": "if (ec[i].h > 0 && rolling(ec[i].atk, t, out[n])) n++;",
     "new": "if (rolling(ec[i].atk, t, out[n])) n++;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -529,7 +529,7 @@
     "old": "w.k = u > 0.8 ? Math.max(0, (1 - u) / 0.2) : 1;",
     "new": "w.k = 1;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -538,7 +538,7 @@
     "old": "  if (v > 0.86) k = 1.25;\n",
     "new": "",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -547,7 +547,7 @@
     "old": "gl.uniform1f(U.uH, w.h ?? SD_STOMP_WALL.h);",
     "new": "gl.uniform1f(U.uH, SD_STOMP_WALL.h);",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -556,7 +556,7 @@
     "old": "gl.uniform3fv(U.uColor, w.color ?? SD_STOMP_WALL.color);",
     "new": "gl.uniform3fv(U.uColor, SD_STOMP_WALL.color);",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -565,7 +565,7 @@
     "old": "const c = opts?.centre ?? (fresh ? [aimX, aimY] : null),",
     "new": "const c = opts?.centre,",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -574,7 +574,7 @@
     "old": "const fresh = now() - aimAt < VEIL_AIM_MS && theme !== VEIL_THEMES.hourCast;",
     "new": "const fresh = theme !== VEIL_THEMES.hourCast;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -583,7 +583,7 @@
     "old": "const fresh = now() - aimAt < VEIL_AIM_MS && theme !== VEIL_THEMES.hourCast;",
     "new": "const fresh = now() - aimAt < VEIL_AIM_MS;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -592,7 +592,7 @@
     "old": "[0, B.armBot], [-L.spadeW / 2,",
     "new": "[0, B.armBot + 0.2], [-L.spadeW / 2,",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -601,7 +601,7 @@
     "old": "bell: Object.freeze({ x: 1.8, top: 6.78, mouth: 5.85, r: 0.6 }),",
     "new": "bell: Object.freeze({ x: 1.8, top: 6.78, mouth: 5.85, r: 0.75 }),",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -610,7 +610,7 @@
     "old": "tipY = k % 2 ? K.crown.y + 0.12 : SD_REM.h;",
     "new": "tipY = k % 2 ? K.crown.y + 0.12 : SD_REM.h - 0.1;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -619,7 +619,7 @@
     "old": "const h0 = SD_HEART_LIGHT.hz[0], h1 = SD_HEART_LIGHT.hz[1], T =",
     "new": "const h0 = SD_HEART_LIGHT.hz[0], h1 = h0, T =",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -628,7 +628,7 @@
     "old": "!(s.su > t)) ? H.flare : 1;",
     "new": "!(s.su > t)) ? 1 : 1;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -637,7 +637,7 @@
     "old": "const heartColor = SD_ENDINGS.find((E) => E.id === ending)?.light ?? MANTELLA_LIGHT;",
     "new": "const heartColor = MANTELLA_LIGHT;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -646,8 +646,8 @@
     "old": "const reads = drawSdArenaReads(proj, view, fog); if (blows",
     "new": "const reads = false; if (blows",
     "tests": [
-      "test/sd8d_remnant_blows.test.js",
-      "test/sd16_fx.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js",
+      "test/scenes/superDungeon/sd16_fx.test.js"
     ]
   },
   {
@@ -656,7 +656,7 @@
     "old": "SD_REALM_FOG.color), sdSkyClockNow())) renderer.markForeignPass();",
     "new": "SD_REALM_FOG.color), null)) renderer.markForeignPass();",
     "tests": [
-      "test/sd5b_sky.test.js"
+      "test/render/sd5b_sky.test.js"
     ]
   },
   {
@@ -665,7 +665,7 @@
     "old": "      for (let i = 0; i < hearts.length; i++) _sdHourLights.push(hearts[i]);\n",
     "new": "",
     "tests": [
-      "test/sd9e_spoils.test.js"
+      "test/systems/sd9e_spoils.test.js"
     ]
   },
   {
@@ -674,7 +674,7 @@
     "old": "  emitReturn(w, h, (n) => fs[n]);",
     "new": "  emitReturn(w, h, (n) => (n === 'key' ? faces() : fs[n]));",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -683,7 +683,7 @@
     "old": "a = (i === 2 ? 1 : -1) * A.swing * (1 - stage(k, A.arches)); }",
     "new": "a = 0; }",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -692,7 +692,7 @@
     "old": "      else lift = A.drop * (1 - stage(k, A.key));",
     "new": "      else lift = 0;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -701,7 +701,7 @@
     "old": "      ret.hand.hidden = !!ret.parts && k < SD_HOME_ASSEMBLY.key[1];",
     "new": "      ret.hand.hidden = false;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -710,7 +710,7 @@
     "old": "scale ?? (rift?.hollow ? SD_HOME_SCALE : 1)",
     "new": "scale ?? 1",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -719,7 +719,7 @@
     "old": "(SD_RETURN_SIZE.w / 2) * ret.scale, SD_RETURN_SIZE.h * ret.scale)",
     "new": "SD_RETURN_SIZE.w / 2, SD_RETURN_SIZE.h)",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -728,7 +728,7 @@
     "old": "out.h = B.tall + (B.low - B.tall) * e;",
     "new": "out.h = B.tall;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -737,7 +737,7 @@
     "old": "out.y0 = foot; out.h",
     "new": "out.y0 = 0; out.h",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -746,7 +746,7 @@
     "old": "_sdBeacon[0], SD_RETURN_SIZE.h * SD_HOME_SCALE)",
     "new": "_sdBeacon[0])",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -755,7 +755,7 @@
     "old": "  if (age < 0) {\n",
     "new": "  if (age < -Infinity) {\n",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -764,7 +764,7 @@
     "old": "up ? SD_RIFT_LIGHT.ret : SD_RIFT_LIGHT.column",
     "new": "SD_RIFT_LIGHT.ret",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -773,7 +773,7 @@
     "old": "      if (i < 2) lift = ret.lift;",
     "new": "      if (i < 2) lift = 0;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -782,7 +782,7 @@
     "old": "if (key === SD_RETURN_KEY && ret) { ret.hoverAt = now(); return",
     "new": "if (key === SD_RETURN_KEY && ret) { return",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -791,7 +791,7 @@
     "old": "t - ret.hoverAt < SD_PLATE_HOLD_MS ? PLATE_LIT : null",
     "new": "PLATE_LIT",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -800,7 +800,7 @@
     "old": "putTexel(plate.emission, x, y, texelAt(lit.emission, x, y)); }",
     "new": "putTexel(plate.emission, x, y, moon); }",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -809,7 +809,7 @@
     "old": "plate: standMesh(buildReturnPlate(), true)",
     "new": "plate: standMesh(buildReturnPlate(), false)",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -818,7 +818,7 @@
     "old": "ret.plate.hidden = !!ret.parts && k < 1;",
     "new": "ret.plate.hidden = false;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -827,7 +827,7 @@
     "old": "(c[1] + t * c[3]) / SD_RIFT_ATLAS.size]; };",
     "new": "1 - (c[1] + t * c[3]) / SD_RIFT_ATLAS.size]; };",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -836,7 +836,7 @@
     "old": "{ exhaled(t); arrived(); }",
     "new": "{ arrived(); }",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -845,7 +845,7 @@
     "old": "        here = true;\n",
     "new": "        here = false;\n",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -854,7 +854,7 @@
     "old": "rift.n[N_RING] = rift.ring0 - xe * Math.PI * 2 * rift.turn;",
     "new": "rift.n[N_RING] = rift.ring0;",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -863,7 +863,7 @@
     "old": "      if (kind === 'exhale') rift.exhaleAt = t;\n",
     "new": "",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -872,7 +872,7 @@
     "old": "    arrived: () => modes?.dungeonCtx?.sdEndPulse?.('exhale'),",
     "new": "",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   },
   {
@@ -881,7 +881,7 @@
     "old": "    sdEndPulse: sdEnd ? (kind) => sdEnd.pulse(kind) : undefined,",
     "new": "",
     "tests": [
-      "test/sd25_look.test.js"
+      "test/world/superDungeon/sd25_look.test.js"
     ]
   }
 ]

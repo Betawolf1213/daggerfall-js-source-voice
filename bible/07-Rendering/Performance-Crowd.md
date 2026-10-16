@@ -22,10 +22,10 @@ a zip. They were taken as a commit on that base and merged onto main after #752,
   draw are NOT taken - the pass's own measure found "single texel flips inside a moon's point-sampled face", and the
   picture is kept.
 - NOT TAKEN: this pass's PERF-V8 (main's frame is PERF-PRIORITY's PERF-V8 - twenty-one closures named `frame...`, made
-  in place, measured by `test/perfv8.test.js`; the two cannot both stand) and v5's PERF-DECOR1 (PERF-PRIORITY's PERF-YARD
+  in place, measured by `test/scenes/perfv8.test.js`; the two cannot both stand) and v5's PERF-DECOR1 (PERF-PRIORITY's PERF-YARD
   culls the yards' pieces by their world boxes, with the shadow's reach, and the merchant yards with them).
 - The port's own fixes to the pass: three of its instruments (`tools/peerLab.mjs`, `tools/nameLayerBench.mjs`,
-  `tools/perfRig.mjs`) could not fail - a browser probe must judge its subject (`test/probehygiene.test.js` T3) - so each
+  `tools/perfRig.mjs`) could not fail - a browser probe must judge its subject (`test/tooling/probehygiene.test.js` T3) - so each
   fails its run on a page error, a GL error or no frame measured; and its pin of its own PERF-V8 is not taken.
 - The sections below are this pass's record as made; where the port differs, it says so.
 
@@ -53,7 +53,7 @@ instruments over the REAL modules instead, each a minute or less, and kept the r
 This pass wrapped the world host's frame's fifteen largest blocks as arrow functions called in place (`(() => { ...
 })();`), the modal arm's body among them. Main had PERF-PRIORITY's PERF-V8 by the time the files came: twenty-one
 statements as closures named `frame...`, lines inserted only, the frame 40,033 bytes of bytecode (`Performance-Priority.md`
-PERF-V8, `test/perfv8.test.js` - every frame and closure under the ceiling and under three quarters of it, the closures'
+PERF-V8, `test/scenes/perfv8.test.js` - every frame and closure under the ceiling and under three quarters of it, the closures'
 rules over the parse). The two wrap overlapping blocks and cannot both stand; main's is kept, and this pass's pin of its
 own wrappers (perfcrowd1's V8) with it is not taken.
 
@@ -74,7 +74,7 @@ font size, written at 0.1 px as its distance changes, is what a MOVING crowd sti
 out and shapes its text again: ~12 ms a frame for 60 labels all changing size on this machine); rounding it to 0.5 px
 would end most of that, and Dudey kept the smooth size.
 
-Pins: `test/name1_bubbles.test.js` (the anchor in the transform), `test/perfcrowd1.test.js` (NAMES1). In the port it
+Pins: `test/net/name1_bubbles.test.js` (the anchor in the transform), `test/net/perfcrowd1.test.js` (NAMES1). In the port it
 stands in place of PERF-PRIORITY's PERF-NAMES (the transform alone): the same anchor, and the rest added.
 
 ## PERF-LEAK1 — nobody to label, no labels kept
@@ -86,7 +86,7 @@ peer lab's churn: 86-156 nodes left after each wave before, 6 (the lab's own pag
 
 ## PERF-INPUT1 — the binding maps walked without pairs
 
-**SUPERSEDED at the merge onto main (2026-10-10) by main's AUDIT TECH-FX** (`src/ui/input.js` actionCodes): an action's codes are kept in an index rebuilt on a binding change, so a poll walks no map at all - better than the forEach walk below, which was dropped for it. `test/perfcrowd1.test.js` keeps this slice's behaviour half (the secondary dict answers, the primary first, nothing unbound); TECH-FX's own pins hold the mechanism.
+**SUPERSEDED at the merge onto main (2026-10-10) by main's AUDIT TECH-FX** (`src/ui/input.js` actionCodes): an action's codes are kept in an index rebuilt on a binding change, so a poll walks no map at all - better than the forEach walk below, which was dropped for it. `test/net/perfcrowd1.test.js` keeps this slice's behaviour half (the secondary dict answers, the primary first, nothing unbound); TECH-FX's own pins hold the mechanism.
 
 PERF-NEXT item 2. `actionDown` walked the four binding dicts with `for (const [code, a] of map)`, a pair a binding for
 every action polled every frame - 75 KB a frame by the real game's heap profile. It walks them with `forEach` and two
@@ -100,7 +100,7 @@ Six layers of RemotePlayers' sync (the steps, the climb, the swing, the hooves, 
 the host's `toScene` for the same pose - a triple and a frame conversion each, every peer every frame. The first asks,
 the rest read its answer (`_feet`, cleared at each peer and at the sync's end). And `namePoints` handed every head to
 `projectToScreen`, which multiplied proj x view again for each: the product is made once a frame and handed in (the
-same float32 product). Pins: `test/perfcrowd1.test.js` (PEERS2).
+same float32 product). Pins: `test/net/perfcrowd1.test.js` (PEERS2).
 
 ## PERF-PEERS4 — a class sprite's archive warmed once it stands as the peer
 
@@ -117,7 +117,7 @@ body's) decoded a PNG and handed it to the row converter, which copied it into a
 The decode is that door's alone, so it is turned in place (`toColor32OrderInPlace`, formats/color32Order.js;
 `worldOrderColors(image, { owned: true })`): toColor32Order's answer byte for byte, without a raster a sprite. The peer
 lab's arrival stalls were the collector's (50-80 ms mark-compacts among the sprite decodes); this is one raster fewer
-of the garbage behind them. Pins: `test/eotb_audit2.test.js` (owned, odd and even heights, no copy).
+of the garbage behind them. Pins: `test/player/eyeOfTheBeholder/eotb_audit2.test.js` (owned, odd and even heights, no copy).
 
 ## PERF-SNOW1 — the snow, measured
 
@@ -126,7 +126,7 @@ of the garbage behind them. Pins: `test/eotb_audit2.test.js` (owned, odd and eve
 the mod's own rebuilds, already paced (SNOW_FRAME_BUDGET_MS) and already reusing the last build's samples (AUDIT
 ENVIRONS P3). The snow before the ground (AUDIT ENVIRONS G7) is already the GPU's early-depth win. Taken: the road
 classifier's paint is a module function, not a closure minted on each of the up to six predictions a painted tile's
-classification asks (`roadPaint`) - the golden model test (`test/snowfall1_model.test.js`) holds every prediction, and
+classification asks (`roadPaint`) - the golden model test (`test/systems/snowfall1_model.test.js`) holds every prediction, and
 the bench's deterministic hash is the same before and after.
 
 ## PERF-GC1 — the young generation's room (the desktop app)
@@ -138,7 +138,7 @@ work. The peer lab, forty peers, two runs each, the steady frames' layer time: d
 three (those are mark-compacts - the old generation's - which this does not touch). The desktop shell (app/main.cjs)
 now starts V8 with `--max-semi-space-size=32`: the smaller of the two, for the low-memory machines - the young
 generation grows to it only under a high allocation rate. The browser build keeps the browser's own. Pin:
-`test/perfcrowd1.test.js` (GC1).
+`test/net/perfcrowd1.test.js` (GC1).
 
 ## PERF-SIM1 — the simulation's span in parts
 
@@ -150,7 +150,7 @@ lookup): `sim` (the modal gate, the quests, the street's resources), `motor` (th
 `stream`, `hosts` (bounties, legacy, patches, notices, farms, the pump), `view` (the projection and the cameras),
 `weather`, `snow`, `storms` (the lightning, the dread, the sky and light settings), `scene` (spawners, gates, fog,
 pools, the lights chosen), `begin` (the renderer's frame open). The next readout from the same street names the
-part. Pin: `test/perfrig1.test.js` (the zones' order).
+part. Pin: `test/formats/morrowind/perfrig1.test.js` (the zones' order).
 
 The second readout, the same street: `scene 5.9-9.8 ms` the largest, then `bodies` 1.9-2.7, `batches` 1.3-3.9, `motor`
 1.1-2.1; `snow` 0.1-0.9 and every other part under 1.5. PERF-SIM2 splits `scene` again: `scene` (the World of
@@ -182,9 +182,9 @@ node (`_walkRec`, as PrefabNode keeps its own world matrix) - the WeakMap's ask 
 `tools/csaBench.mjs`, twelve ships (7,384 objects), the frame and its draw: standing 9.6 -> 4.6 ms, rocking (`BOB=1`)
 9.5 -> 5.4; the frame alone (the `sails` span) rocking 7.0 -> 3.2.
 
-Pins: `test/perfcrowd1.test.js` (SAILS1 - every matrix activeObjects' to the bit through a turned spar, a moved hull, a
+Pins: `test/net/perfcrowd1.test.js` (SAILS1 - every matrix activeObjects' to the bit through a turned spar, a moved hull, a
 part off while its hull moved and on again, a part hung under the hull and under its parent's sibling),
-`tools/mutants/perfsails1.json` (8, 8 dead), and AUDIT PRE-MERGE 0928 R5's own (`test/audit0928_online.test.js`: the walk
+`tools/mutants/perfsails1.json` (8, 8 dead), and AUDIT PRE-MERGE 0928 R5's own (`test/scenes/audit0928_online.test.js`: the walk
 activeObjects' to the bit, nothing allocated by a second frame - its mutant re-aimed).
 
 ## PERF-SKY1 — the stars are a night's (the port takes this part alone)
@@ -196,7 +196,7 @@ position's alone - the same in every fragment of the draw, so the taps' implicit
 the port: the real pass in Chromium (the sky lab, `sky.html?sky=dynamic`), main against the change, eight hours from
 dawn round to the small hours, three views each - all 24 byte for byte the same. The slice's other half (the frame's
 constants out of the pixel) is not taken: its own measure found texels flipped inside a moon's face. Pin:
-`test/perfsky1.test.js` (1); mutants `tools/mutants/perfsky1.json` (2, both dead).
+`test/render/perfsky1.test.js` (1); mutants `tools/mutants/perfsky1.json` (2, both dead).
 
 ## PERF-COMPILE1, PERF-PEERS1, PERF-GPU1, FP-SHADOW1 — v5's, carried in these files
 

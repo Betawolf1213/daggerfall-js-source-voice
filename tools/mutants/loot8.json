@@ -5,7 +5,7 @@
     "old": "export const DROUGHT_STEP = 25;",
     "new": "export const DROUGHT_STEP = 20;",
     "tests": [
-      "test/loot8_drought.test.js"
+      "test/systems/loot8_drought.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "export const DROUGHT_STEP_MULT = 0.2;",
     "new": "export const DROUGHT_STEP_MULT = 0.25;",
     "tests": [
-      "test/loot8_drought.test.js"
+      "test/systems/loot8_drought.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "export const DROUGHT_MAX_MULT = 3;",
     "new": "export const DROUGHT_MAX_MULT = 4;",
     "tests": [
-      "test/loot8_drought.test.js"
+      "test/systems/loot8_drought.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "1 + DROUGHT_STEP_MULT * Math.floor(Math.max(0, Number(d) || 0) / DROUGHT_STEP)",
     "new": "1 + DROUGHT_STEP_MULT * (Math.max(0, Number(d) || 0) / DROUGHT_STEP)",
     "tests": [
-      "test/loot8_drought.test.js"
+      "test/systems/loot8_drought.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "=> Math.min(DROUGHT_MAX_MULT, 1 + DROUGHT_STEP_MULT",
     "new": "=> (1 + DROUGHT_STEP_MULT",
     "tests": [
-      "test/loot8_drought.test.js"
+      "test/systems/loot8_drought.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "  if (!item || item.untaken !== true) return false;",
     "new": "  if (!item) return false;",
     "tests": [
-      "test/loot8_drought.test.js"
+      "test/systems/loot8_drought.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "  delete item.untaken;\n",
     "new": "  void 0;\n",
     "tests": [
-      "test/loot8_drought.test.js"
+      "test/systems/loot8_drought.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "  if (!lootRarityOn()) return false;\n  if (isGarment(item)",
     "new": "  if (isGarment(item)",
     "tests": [
-      "test/loot8_drought.test.js"
+      "test/systems/loot8_drought.test.js"
     ],
     "note": "Re-aimed by content (AUDIT LOOT II A10): a garment that could never be a Legendary counts nothing, after the switch."
   },
@@ -78,7 +78,7 @@
     "old": "_drought = rarityRank(item) >= RARITIES.legendary.rank ? 0 :",
     "new": "_drought = false ? 0 :",
     "tests": [
-      "test/loot8_drought.test.js"
+      "test/systems/loot8_drought.test.js"
     ]
   },
   {
@@ -87,7 +87,7 @@
     "old": "_drought = rarityRank(item) >= RARITIES.legendary.rank ? 0 :",
     "new": "_drought = rarityRank(item) >= RARITIES.rare.rank ? 0 :",
     "tests": [
-      "test/loot8_drought.test.js"
+      "test/systems/loot8_drought.test.js"
     ]
   },
   {
@@ -96,7 +96,7 @@
     "old": ": Math.min(DROUGHT_MAX, _drought + 1);",
     "new": ": _drought + 1;",
     "tests": [
-      "test/loot8_drought.test.js"
+      "test/systems/loot8_drought.test.js"
     ]
   },
   {
@@ -105,7 +105,7 @@
     "old": "return Number.isSafeInteger(d) && d >= 0 ?",
     "new": "return Number.isSafeInteger(d) ?",
     "tests": [
-      "test/loot8_drought.test.js"
+      "test/systems/loot8_drought.test.js"
     ]
   },
   {
@@ -114,7 +114,7 @@
     "old": "return Number.isSafeInteger(d) && d >= 0 ?",
     "new": "return Number.isFinite(d) && d >= 0 ?",
     "tests": [
-      "test/loot8_drought.test.js"
+      "test/systems/loot8_drought.test.js"
     ]
   },
   {
@@ -123,7 +123,7 @@
     "old": "? Math.min(DROUGHT_MAX, d) : 0;",
     "new": "? d : 0;",
     "tests": [
-      "test/loot8_drought.test.js"
+      "test/systems/loot8_drought.test.js"
     ]
   },
   {
@@ -132,7 +132,7 @@
     "old": "  getSaveData: () => ({ drought: _drought }),",
     "new": "  getSaveData: () => ({ drought: 0 }),",
     "tests": [
-      "test/loot8_drought.test.js"
+      "test/systems/loot8_drought.test.js"
     ]
   },
   {
@@ -141,7 +141,7 @@
     "old": "  restoreSaveData: (r) => { _drought = validDroughtRecord(r); },",
     "new": "  restoreSaveData: () => {},",
     "tests": [
-      "test/loot8_drought.test.js"
+      "test/systems/loot8_drought.test.js"
     ]
   },
   {
@@ -150,7 +150,7 @@
     "old": "  newSaveData: () => ({ drought: 0 }),",
     "new": "  newSaveData: () => ({ drought: 50 }),",
     "tests": [
-      "test/loot8_drought.test.js"
+      "test/systems/loot8_drought.test.js"
     ]
   },
   {
@@ -159,7 +159,7 @@
     "old": "registerLegendaryFind(DROUGHT, () => (lootRarityOn() ? droughtMult() : 1));",
     "new": "registerLegendaryFind(DROUGHT, null);",
     "tests": [
-      "test/loot8_drought.test.js"
+      "test/systems/loot8_drought.test.js"
     ]
   },
   {
@@ -168,7 +168,7 @@
     "old": "registerLegendaryFind(DROUGHT, () => (lootRarityOn() ? droughtMult() : 1));",
     "new": "registerLegendaryFind(DROUGHT, () => droughtMult());",
     "tests": [
-      "test/loot8_drought.test.js"
+      "test/systems/loot8_drought.test.js"
     ]
   },
   {
@@ -177,7 +177,7 @@
     "old": "registerTakeListener(DROUGHT, noteTaken);",
     "new": "registerTakeListener(DROUGHT, null);",
     "tests": [
-      "test/loot8_drought.test.js"
+      "test/systems/loot8_drought.test.js"
     ]
   },
   {
@@ -186,7 +186,7 @@
     "old": "    addItem(entity.items, item); tellTaken(item);",
     "new": "    addItem(entity.items, item);",
     "tests": [
-      "test/loot8_drought.test.js"
+      "test/systems/loot8_drought.test.js"
     ]
   },
   {
@@ -195,7 +195,7 @@
     "old": "  for (const fn of _takeListeners.values()) { try { fn(item); } catch { /* a listener is not the take's problem */ } }",
     "new": "  for (const fn of _takeListeners.values()) fn(item);",
     "tests": [
-      "test/loot8_drought.test.js"
+      "test/systems/loot8_drought.test.js"
     ]
   },
   {
@@ -204,7 +204,7 @@
     "old": "  if (toPlayer && landed) tellTaken(landed);",
     "new": "  void tellTaken;",
     "tests": [
-      "test/loot8_drought.test.js"
+      "test/systems/loot8_drought.test.js"
     ]
   },
   {
@@ -213,7 +213,7 @@
     "old": "  if (toPlayer && landed) tellTaken(landed);",
     "new": "  if (landed) tellTaken(landed);",
     "tests": [
-      "test/loot8_drought.test.js"
+      "test/systems/loot8_drought.test.js"
     ]
   },
   {
@@ -222,7 +222,7 @@
     "old": "    it.untaken = true;   // LOOT8: a piece a source door rolled",
     "new": "    void 0;   // LOOT8: a piece a source door rolled",
     "tests": [
-      "test/loot8_drought.test.js"
+      "test/systems/loot8_drought.test.js"
     ]
   },
   {
@@ -231,7 +231,7 @@
     "old": "    if (!rarityEligible(it)) continue;\n    it.untaken = true;",
     "new": "    it.untaken = true;\n    if (!rarityEligible(it)) continue;",
     "tests": [
-      "test/loot8_drought.test.js"
+      "test/systems/loot8_drought.test.js"
     ]
   },
   {
@@ -240,7 +240,7 @@
     "old": "    if (piece || rarityRank(found) >= RARITIES.legendary.rank) found.untaken = true;",
     "new": "    void piece;",
     "tests": [
-      "test/loot8_drought.test.js"
+      "test/systems/loot8_drought.test.js"
     ]
   },
   {
@@ -249,7 +249,7 @@
     "old": "  untaken: bool(),",
     "new": "  untakenX: bool(),",
     "tests": [
-      "test/loot8_drought.test.js"
+      "test/systems/loot8_drought.test.js"
     ]
   },
   {
@@ -258,7 +258,7 @@
     "old": " import '../systems/loot/lootDrought.js';",
     "new": "",
     "tests": [
-      "test/loot8_drought.test.js"
+      "test/systems/loot8_drought.test.js"
     ]
   },
   {
@@ -267,7 +267,7 @@
     "old": "    if (piece || rarityRank(found) >= RARITIES.legendary.rank) found.untaken = true;",
     "new": "    found.untaken = true;",
     "tests": [
-      "test/loot8_drought.test.js"
+      "test/systems/loot8_drought.test.js"
     ]
   }
 ]

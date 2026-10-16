@@ -5,7 +5,7 @@
     "old": "const SIDES = [[0, 1], [0, -1], [1, 1], [1, -1], [2, 1]];",
     "new": "const SIDES = [[0, 1], [0, -1], [1, 1], [2, 1]];",
     "tests": [
-      "test/wb9h_crowd_bodies.test.js"
+      "test/net/peer/wb9h_crowd_bodies.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "planes[i + 2] * z + planes[i + 3] < -r) return false;",
     "new": "planes[i + 2] * z + planes[i + 3] < 0) return false;",
     "tests": [
-      "test/wb9h_crowd_bodies.test.js"
+      "test/net/peer/wb9h_crowd_bodies.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "  if (proj?.length !== 16 || view?.length !== 16) return null;\n",
     "new": "",
     "tests": [
-      "test/wb9h_crowd_bodies.test.js"
+      "test/net/peer/wb9h_crowd_bodies.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "        if (!this._sees(b, 0, g)) {",
     "new": "        if (false) {",
     "tests": [
-      "test/wb9h_crowd_bodies.test.js"
+      "test/net/peer/wb9h_crowd_bodies.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": ": !b.inView ? 0 : (b.owed || b.stale) ? 2",
     "new": ": false ? 0 : (b.owed || b.stale) ? 2",
     "tests": [
-      "test/wb9h_crowd_bodies.test.js"
+      "test/net/peer/wb9h_crowd_bodies.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "    b.inView = !this._planesOk || this._sees(b, turnLeadMargin(Math.sqrt(b.d2), this._turn));",
     "new": "    b.inView = !this._planesOk || this._sees(b, 0);",
     "tests": [
-      "test/wb9h_crowd_bodies.test.js"
+      "test/net/peer/wb9h_crowd_bodies.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "      if (b.stale) {\n",
     "new": "      if (false) {\n",
     "tests": [
-      "test/wb9h_crowd_bodies.test.js"
+      "test/net/peer/wb9h_crowd_bodies.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "b.rig.update(0, { pose: true, effectsDt: b.bank });",
     "new": "b.rig.update(0, { pose: true, effectsDt: 0 });",
     "tests": [
-      "test/wb9h_crowd_bodies.test.js"
+      "test/net/peer/wb9h_crowd_bodies.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "(b.rank > 0 && skins < this._skinBudget)",
     "new": "(b.rank > 0)",
     "tests": [
-      "test/wb9h_crowd_bodies.test.js"
+      "test/net/peer/wb9h_crowd_bodies.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "      else if (b.rank > 0) b.owed = true;\n",
     "new": "",
     "tests": [
-      "test/wb9h_crowd_bodies.test.js"
+      "test/net/peer/wb9h_crowd_bodies.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "      const pose = b.rank === 3 || (b.rank > 0 && skins < this._skinBudget);",
     "new": "      const pose = b.rank > 0 && skins < this._skinBudget;",
     "tests": [
-      "test/wb9h_crowd_bodies.test.js"
+      "test/net/peer/wb9h_crowd_bodies.test.js"
     ]
   },
   {
@@ -104,9 +104,9 @@
     "old": "    if (now - w.since < SWAP_DWELL_MS || now - this._swappedAt < SWAP_EVERY_MS) return false;",
     "new": "    if (now - this._swappedAt < SWAP_EVERY_MS) return false;",
     "tests": [
-      "test/wb9h_crowd_bodies.test.js",
-      "test/mwbody1.test.js",
-      "test/auditparty8.test.js"
+      "test/net/peer/wb9h_crowd_bodies.test.js",
+      "test/net/peer/mwbody1.test.js",
+      "test/net/auditparty8.test.js"
     ]
   },
   {
@@ -115,7 +115,7 @@
     "old": "    if (now - w.since < SWAP_DWELL_MS || now - this._swappedAt < SWAP_EVERY_MS) return false;",
     "new": "    if (now - w.since < SWAP_DWELL_MS) return false;",
     "tests": [
-      "test/wb9h_crowd_bodies.test.js"
+      "test/net/peer/wb9h_crowd_bodies.test.js"
     ]
   },
   {
@@ -124,7 +124,7 @@
     "old": "    for (const b of this._bodies.values()) if (b.state === 'building') return false;\n",
     "new": "",
     "tests": [
-      "test/wb9h_crowd_bodies.test.js"
+      "test/net/peer/wb9h_crowd_bodies.test.js"
     ]
   },
   {
@@ -133,7 +133,7 @@
     "old": "    if (!unseen) this._swappedAt = this._now();\n",
     "new": "",
     "tests": [
-      "test/wb9h_crowd_bodies.test.js"
+      "test/net/peer/wb9h_crowd_bodies.test.js"
     ]
   },
   {
@@ -142,8 +142,8 @@
     "old": "      const spare = this._takeSpare(w.key);",
     "new": "      const spare = null;",
     "tests": [
-      "test/wb9h_crowd_bodies.test.js",
-      "test/mwbody1.test.js"
+      "test/net/peer/wb9h_crowd_bodies.test.js",
+      "test/net/peer/mwbody1.test.js"
     ]
   },
   {
@@ -152,7 +152,7 @@
     "old": "if (this._spares[i].key === key) return this._spares.splice(i, 1)[0];",
     "new": "if (this._spares[i]) return this._spares.splice(i, 1)[0];",
     "tests": [
-      "test/wb9h_crowd_bodies.test.js"
+      "test/net/peer/wb9h_crowd_bodies.test.js"
     ]
   },
   {
@@ -161,7 +161,7 @@
     "old": "if (now - this._spares[i].at > SPARE_MS) this._unloadSpare",
     "new": "if (false) this._unloadSpare",
     "tests": [
-      "test/wb9h_crowd_bodies.test.js"
+      "test/net/peer/wb9h_crowd_bodies.test.js"
     ]
   },
   {
@@ -170,7 +170,7 @@
     "old": "    while (this._spares.length > this._spareMax) {",
     "new": "    while (false) {",
     "tests": [
-      "test/wb9h_crowd_bodies.test.js"
+      "test/net/peer/wb9h_crowd_bodies.test.js"
     ]
   },
   {
@@ -179,7 +179,7 @@
     "old": "    b.rig.attach(this.renderer, null);\n",
     "new": "",
     "tests": [
-      "test/wb9h_crowd_bodies.test.js"
+      "test/net/peer/wb9h_crowd_bodies.test.js"
     ]
   },
   {
@@ -188,7 +188,7 @@
     "old": "        if (!b.far && dt > 0) { b.peer = peer; this._step(b, dt, b.inView); }",
     "new": "        if (!b.far && dt > 0) { b.peer = peer; this._step(b, dt, false); }",
     "tests": [
-      "test/wb9h_crowd_bodies.test.js"
+      "test/net/peer/wb9h_crowd_bodies.test.js"
     ]
   },
   {
@@ -197,7 +197,7 @@
     "old": "    for (const s of this._spares) this._unloadSpare(s);\n",
     "new": "",
     "tests": [
-      "test/wb9h_crowd_bodies.test.js"
+      "test/net/peer/wb9h_crowd_bodies.test.js"
     ]
   },
   {
@@ -206,7 +206,7 @@
     "old": "    if (!this.enabled()) { if (this._bodies.size || this._spares.length) this.destroy(); return; }",
     "new": "    if (!this.enabled()) { if (this._bodies.size) this.destroy(); return; }",
     "tests": [
-      "test/wb9h_crowd_bodies.test.js"
+      "test/net/peer/wb9h_crowd_bodies.test.js"
     ]
   },
   {
@@ -215,7 +215,7 @@
     "old": "    b.cam = peerCamera(peer.shown, f, b.speed, b.cam, b.yaw);",
     "new": "    b.cam = peerCamera({ ...peer.shown, yaw: b.yaw }, f, b.speed, b.cam);",
     "tests": [
-      "test/wb9h_crowd_bodies.test.js"
+      "test/net/peer/wb9h_crowd_bodies.test.js"
     ]
   }
 ]

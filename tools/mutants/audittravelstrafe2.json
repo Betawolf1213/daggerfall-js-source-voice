@@ -5,7 +5,7 @@
     "old": "inp.manual ? 0 : openWant);",
     "new": "inp.manual ? need : openWant);",
     "tests": [
-      "test/travelnav.test.js"
+      "test/systems/travel/travelnav.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "inp.manual ? 0 : openWant);",
     "new": "inp.manual ? pass : openWant);",
     "tests": [
-      "test/travelnav.test.js"
+      "test/systems/travel/travelnav.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "if (fw > 0.05) s.sBlock = Math.max(s.sBlock, f.along + c * fw);",
     "new": "if (true) s.sBlock = Math.max(s.sBlock, f.along + c * fw);",
     "tests": [
-      "test/travelnav.test.js"
+      "test/systems/travel/travelnav.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "if (fw > 0.05) s.sBlock = Math.max(s.sBlock, f.along + c * fw);",
     "new": "if (fw > 0.05) s.sBlock = Math.max(s.sBlock, f.along + c);",
     "tests": [
-      "test/travelnav.test.js"
+      "test/systems/travel/travelnav.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "if (fw > 0.05) s.sBlock = Math.max(s.sBlock, f.along + c * fw);",
     "new": "if (fw > 0.05) s.sBlock = Math.max(s.sBlock, f.along + c * fw + 3);",
     "tests": [
-      "test/travelnav.test.js"
+      "test/systems/travel/travelnav.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "if (fw > 0.05) s.sBlock = Math.max(s.sBlock, f.along + c * fw);",
     "new": "if (fw > 0.5) s.sBlock = Math.max(s.sBlock, f.along + c * fw);",
     "tests": [
-      "test/travelnav.test.js"
+      "test/systems/travel/travelnav.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "|| toGo <= s.goStart)) {",
     "new": "|| toGo <= s.bestDist)) {",
     "tests": [
-      "test/travelnav.test.js"
+      "test/systems/travel/travelnav.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "|| toGo <= s.goStart)) {",
     "new": "|| toGo <= s.goStart - 1)) {",
     "tests": [
-      "test/travelnav.test.js"
+      "test/systems/travel/travelnav.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "      if (s.episode) endEpisode();\n      s.bestDist = Infinity; s.noGain = 0;\n",
     "new": "      if (s.episode) endEpisode();\n      s.bestDist = Infinity; s.noGain = 0; s.grind = 0; s.winAsked = 0; s.winMoved = 0;\n",
     "tests": [
-      "test/travelnav.test.js"
+      "test/systems/travel/travelnav.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "    if (inp.manual) {\n      s.ox = inp.x; s.oz = inp.z;\n",
     "new": "    if (inp.manual) {\n      if (s.episode) { s.ox = inp.x; s.oz = inp.z; }\n",
     "tests": [
-      "test/travelnav.test.js"
+      "test/systems/travel/travelnav.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "(!s.episode || f.along >= s.sStart || toGo <= s.goStart)",
     "new": "(!s.episode || f.along >= s.sStart + 0.4 || toGo <= s.goStart)",
     "tests": [
-      "test/travelnav.test.js"
+      "test/systems/travel/travelnav.test.js"
     ]
   }
 ]

@@ -20,7 +20,7 @@
 // a picture. The card stock is the house deck's own (cardFaces.js STOCK): one tavern, one card stock.
 //
 // THE TABLES ARE PURE (EMBLEM_PAINTERS' keys, KIND_ART, TIER_FRAMES, iliacLayout, wrapCardText): pinned by
-// test/cards8_faces.test.js against a recording context; only the painting needs a page.
+// test/net/iliac/cards8_faces.test.js against a recording context; only the painting needs a page.
 //
 // SCALE: every measure is in u = h / 100, so one painter serves the Collections grid's 78 x 112 tile (CSS px, at a
 // devicePixelRatio of 1 or 2), the large view of a pressed card (about 260 x 371) and a 350 x 500 card held up to read.

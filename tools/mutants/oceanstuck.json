@@ -5,7 +5,7 @@
     "old": "(swimCheckY(centreOf(p)) >= oceanY - 0.75 || heldUnder(p))",
     "new": "swimCheckY(centreOf(p)) >= oceanY - 0.75",
     "tests": [
-      "test/oceanstuck.test.js"
+      "test/scenes/oceanstuck.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "(swimCheckY(centreOf(p)) >= oceanY - 0.75 || heldUnder(p))",
     "new": "(swimCheckY(centreOf(p)) >= oceanY - 0.75 || true)",
     "tests": [
-      "test/oceanstuck.test.js"
+      "test/scenes/oceanstuck.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "(p.carriedWeight?.() ?? 0) * 4 > OVER_ENCUMBERED_LIMIT && !p.levitating",
     "new": "(p.carriedWeight?.() ?? 0) * 4 < OVER_ENCUMBERED_LIMIT && !p.levitating",
     "tests": [
-      "test/oceanstuck.test.js"
+      "test/scenes/oceanstuck.test.js"
     ]
   }
 ]

@@ -54,7 +54,7 @@ import { prepareImport, uploadImport } from '../../poi/poiImport.js';
 
 export const POI_PANEL_STYLE_ID = 'dfpoi-style';
 export const POI_PANEL_CSS = `
-/* AUDIT POI (the lead's): 39, under the asset picker's 40 (scenes/dataSource.js ASSET_PICKER_Z; test/mwattach.test.js MWFIX 1 - nothing at or above it) */
+/* AUDIT POI (the lead's): 39, under the asset picker's 40 (scenes/dataSource.js ASSET_PICKER_Z; test/scenes/mwattach.test.js MWFIX 1 - nothing at or above it) */
 .dfpoi { position: fixed; inset: 0; pointer-events: none; z-index: 39; font: 12px/1.35 system-ui, sans-serif; color: #e9e4d9; }
 .dfpoi * { box-sizing: border-box; }
 .dfpoi-dock { pointer-events: auto; position: absolute; background: rgba(14, 16, 19, .93); border: 1px solid #6b5230; border-radius: 6px; overflow: auto; }

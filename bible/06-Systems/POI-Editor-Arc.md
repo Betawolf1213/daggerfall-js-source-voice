@@ -136,8 +136,8 @@ approver is in `APPROVER_HANDLES` (Lattymoy); a builder is an approver, a develo
   version's one row, and the documents only when it moved; a game holding a version newer than the kept one is answered
   the version read now (S11: a stale isolate had handed it the older feed).
 
-Pinned by `test/poi1_store.test.js` (10) on the real Worker over the real migrations; `tools/mutants/poi1.json` 16, all
-dead. AUDIT POI: `test/auditpoi_store.test.js` (21) on the same Worker, `tools/mutants/auditpoi_store.json` 52, all dead
+Pinned by `test/poi/poi1_store.test.js` (10) on the real Worker over the real migrations; `tools/mutants/poi1.json` 16, all
+dead. AUDIT POI: `test/poi/auditpoi_store.test.js` (21) on the same Worker, `tools/mutants/auditpoi_store.json` 52, all dead
 (`01-Overview/Audit-POI.md`). The account deploy's path filter carries the three shared law files. acct135 (acct133, then acct134, on
 the branch, renumbered past LAMP-KEEPER II's and KG6's at the merges).
 
@@ -181,7 +181,7 @@ the branch, renumbered past LAMP-KEEPER II's and KG6's at the merges).
   of their own, `POI_MARKS_MAX` (256) - AUDIT POI R7: the bounty's eight). Wired in `world.js` only; the bench
   (`exterior.js`) has no feed - FLAGGED.
 - **THE MATERIALS** (`src/poi/poiRuntime.js`, pure): a material's LOOK (picture, tint, alpha, sampler, emission) is one
-  texture record under `POI_TEXTURE_ARCHIVE` (600000, owned alone - `test/sd26_render.test.js` ONE ARCHIVE, ONE OWNER);
+  texture record under `POI_TEXTURE_ARCHIVE` (600000, owned alone - `test/world/superDungeon/sd26_render.test.js` ONE ARCHIVE, ONE OWNER);
   two materials alike share it. The tint is baked into the picture (the mesh shader has none), a cutout's alpha
   thresholded at ITS cutoff to all or nothing (the shader cuts at a half), a blend's alpha kept times the tint's, and a
   cut-out's or a blend's clear texels coloured from their nearest, their alpha untouched (AUDIT POI R9: a filter or a
@@ -200,9 +200,9 @@ the branch, renumbered past LAMP-KEEPER II's and KG6's at the merges).
   texture's own SAMPLER (`samplerParams`: wrap per axis - repeat, clamp, mirror - and the filter) is keyed apart
   (`samplerKey`), the emission map with it.
 
-Pinned by `test/poi2_runtime.test.js` (11) - the renderer on a recording GL, the shaders' text, the pictures, models and
+Pinned by `test/poi/poi2_runtime.test.js` (11) - the renderer on a recording GL, the shaders' text, the pictures, models and
 matrices, the feed and assets on a fake service, the host on a fake streamer, collider and renderer;
-`tools/mutants/poi2.json` 27, all dead. AUDIT POI: `test/auditpoi_runtime.test.js` (17),
+`tools/mutants/poi2.json` 27, all dead. AUDIT POI: `test/poi/auditpoi_runtime.test.js` (17),
 `tools/mutants/auditpoi_runtime.json` 39, all dead.
 
 ## POI-3a - the editor's core (2026-10-14)
@@ -262,8 +262,8 @@ Pure where it can be, so the editor and the tests read it the same way:
   whatever of it is held (E6); a drag read in the frame it began in, so a floating-origin recentre mid-drag moves
   nothing (E7). Wired by POI-3b.
 
-Pinned by `test/poi3_edit.test.js` (13) and `test/poi2_runtime.test.js`'s host pick; `tools/mutants/poi3.json` 34, all
-dead. AUDIT POI: `test/auditpoi_editor.test.js` (15), `tools/mutants/auditpoi_editor.json` 42, all dead. A LIGHT HELD
+Pinned by `test/poi/poi3_edit.test.js` (13) and `test/poi/poi2_runtime.test.js`'s host pick; `tools/mutants/poi3.json` 34, all
+dead. AUDIT POI: `test/scenes/auditpoi_editor.test.js` (15), `tools/mutants/auditpoi_editor.json` 42, all dead. A LIGHT HELD
 (POI-3b): its pivot where it shines from, the move handle alone, dragged in its POI's frame, every light of the POI
 marked as a small star.
 
@@ -323,9 +323,9 @@ button opens it again after an exit.
   where the next click meets the ground (or a model on it); no POI held, a new one stands round it in the same step
   (E11). Cancel stops it: nothing more uploaded, nothing placed (U9).
 
-Pinned by `test/poi3b_panel.test.js` (6) - the panel headless over the shared fake document (test/chargenDom.mjs), the
+Pinned by `test/poi/poi3b_panel.test.js` (6) - the panel headless over the shared fake document (test/chargenDom.mjs), the
 import, and the world's wiring by source; `tools/mutants/poi3b.json` 12, all dead. AUDIT POI:
-`test/auditpoi_panels.test.js` (18) and the lead's `test/auditpoi_lead.test.js` (L1, L6, L7),
+`test/poi/auditpoi_panels.test.js` (18) and the lead's `test/poi/auditpoi_lead.test.js` (L1, L6, L7),
 `tools/mutants/auditpoi_panels.json` 72 and `auditpoi_lead.json`, all dead.
 
 ## POI-4 - the glTF 2.0 reader (2026-10-14)
@@ -373,7 +373,7 @@ import, and the world's wiring by source; `tools/mutants/poi3b.json` 12, all dea
   (EXT_mesh_gpu_instancing's copies come in as one - G8), `extension-ignored` (any other extension used and not read -
   G8), `image-format`. The editor says each in the builder's language.
 
-Pinned by `test/poi4_gltf.test.js` (6); `tools/mutants/poi4.json` 11, all dead. AUDIT POI: `test/auditpoi_gltf.test.js`
+Pinned by `test/poi/poi4_gltf.test.js` (6); `tools/mutants/poi4.json` 11, all dead. AUDIT POI: `test/poi/auditpoi_gltf.test.js`
 (12), `tools/mutants/auditpoi_gltf.json` 45, all dead. The asset library, the upload and the editor's import dialog come
 with POI-3.
 
@@ -422,9 +422,9 @@ without its file.
 It rides acct135 with POI-1's store - neither deployed before it - its table in migration 0116 (acct133, then acct134, and 0113, then
 0114, on the branch, renumbered past LAMP-KEEPER II's and KG6's at the merges).
 
-Pinned by `test/poi4b_library.test.js` (7); `tools/mutants/poi4b.json` 23, all dead. AUDIT POI: the shelf in
-`test/auditpoi_store.test.js` (S8, S10, U13), placing in `test/auditpoi_editor.test.js` (E6, E11), the picture in
-`test/auditpoi_uv.test.js` (M8, M12), the entry in `test/auditpoi_packs.test.js` (T3).
+Pinned by `test/poi/poi4b_library.test.js` (7); `tools/mutants/poi4b.json` 23, all dead. AUDIT POI: the shelf in
+`test/poi/auditpoi_store.test.js` (S8, S10, U13), placing in `test/scenes/auditpoi_editor.test.js` (E6, E11), the picture in
+`test/poi/auditpoi_uv.test.js` (M8, M12), the entry in `test/poi/auditpoi_packs.test.js` (T3).
 
 ## POI-5 - the material editor and the UV editor (2026-10-14)
 
@@ -478,9 +478,9 @@ Mac, asked what "UV map" covers: **"Full UV editor"**.
   (U7); closing lets it all go - an Apply still going up, an unwrap still out (U7, L2) - and leaving the editor closes
   it (U8).
 
-Pinned by `test/poi5_uv.test.js` (7) and `test/poi5_panel.test.js` (2); `tools/mutants/poi5.json` 19, all dead. AUDIT
-POI: `test/auditpoi_uv.test.js` (14), `tools/mutants/auditpoi_uv.json` 40, all dead; the panel's halves in
-`test/auditpoi_panels.test.js` (U6, U7, U8) and `test/auditpoi_lead.test.js` (L2, L3).
+Pinned by `test/poi/poi5_uv.test.js` (7) and `test/ui/poi5_panel.test.js` (2); `tools/mutants/poi5.json` 19, all dead. AUDIT
+POI: `test/poi/auditpoi_uv.test.js` (14), `tools/mutants/auditpoi_uv.json` 40, all dead; the panel's halves in
+`test/poi/auditpoi_panels.test.js` (U6, U7, U8) and `test/poi/auditpoi_lead.test.js` (L2, L3).
 
 ## POI-6 - approvals, history, and out and back in (2026-10-14)
 
@@ -537,7 +537,7 @@ having to access the codebase".
   unsaved changes is left as it is, and said. Cancel stops it - nothing more uploaded, nothing opened (U9); a refusal
   says the store's word, where, and the law's problems (C5, L5).
 
-Pinned by `test/poi6_review.test.js` (8); `tools/mutants/poi6.json` 21, all dead. AUDIT POI:
-`test/auditpoi_packs.test.js` (10), the queue, history and pack dialogs in `test/auditpoi_panels.test.js`, the round
-trip in `test/auditpoi_gltf.test.js`, `test/auditpoi_lead.test.js` (L4, L5); `tools/mutants/auditpoi_packs.json` 57, all
+Pinned by `test/poi/poi6_review.test.js` (8); `tools/mutants/poi6.json` 21, all dead. AUDIT POI:
+`test/poi/auditpoi_packs.test.js` (10), the queue, history and pack dialogs in `test/poi/auditpoi_panels.test.js`, the round
+trip in `test/poi/auditpoi_gltf.test.js`, `test/poi/auditpoi_lead.test.js` (L4, L5); `tools/mutants/auditpoi_packs.json` 57, all
 dead.

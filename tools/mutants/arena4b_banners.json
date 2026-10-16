@@ -5,7 +5,7 @@
     "old": "export const bannerClaim = (b) => (ARENA_BANNERS.includes(b) ? b : null);",
     "new": "export const bannerClaim = (b) => (typeof b === 'string' && b ? b : null);",
     "tests": [
-      "test/arena4b_banners.test.js"
+      "test/net/arena/arena4b_banners.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "lv: m.lv } : {}), ...(bannerClaim(m.b) ? { b: m.b } : {}), ...(m.u === 1",
     "new": "lv: m.lv } : {}), ...(m.u === 1",
     "tests": [
-      "test/arena4b_banners.test.js"
+      "test/net/arena/arena4b_banners.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "      if (bannerClaim(m.b)) out.b = m.b;",
     "new": "",
     "tests": [
-      "test/arena4b_banners.test.js"
+      "test/net/arena/arena4b_banners.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "const exBill = (v) => (bannerClaim(v?.b) ? { b: v.b } : null);",
     "new": "const exBill = () => null;",
     "tests": [
-      "test/arena4b_banners.test.js"
+      "test/net/arena/arena4b_banners.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "...(e.title ? { t: e.title } : {}), ...(e.banner ? { b: e.banner } : {}) }; }",
     "new": "...(e.title ? { t: e.title } : {}) }; }",
     "tests": [
-      "test/arena4b_banners.test.js"
+      "test/net/arena/arena4b_banners.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "banner: bannerClaim(m.b), casual: m.u === 1, at: now });",
     "new": "banner: null, casual: m.u === 1, at: now });",
     "tests": [
-      "test/arena4b_banners.test.js"
+      "test/net/arena/arena4b_banners.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "title: e.title, banner: e.banner ?? null }));",
     "new": "title: e.title }));",
     "tests": [
-      "test/arena4b_banners.test.js"
+      "test/net/arena/arena4b_banners.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "title: a.title ?? null, banner: m.b ?? null, tk: m.z }]",
     "new": "title: a.title ?? null, tk: m.z }]",
     "tests": [
-      "test/arena4b_banners.test.js"
+      "test/net/arena/arena4b_banners.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "banner: bannerClaim(x.banner), in: false",
     "new": "banner: null, in: false",
     "tests": [
-      "test/arena4b_banners.test.js"
+      "test/net/arena/arena4b_banners.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "banner: bannerClaim(x.banner), in: false",
     "new": "banner: x.banner ?? null, in: false",
     "tests": [
-      "test/arena4b_banners.test.js"
+      "test/net/arena/arena4b_banners.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "...(x.title ? { t: x.title } : {}), ...(x.banner ? { b: x.banner } : {}) });",
     "new": "...(x.title ? { t: x.title } : {}) });",
     "tests": [
-      "test/arena4b_banners.test.js"
+      "test/net/arena/arena4b_banners.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "a: { b: ARENA_EX_BANNERS[0] }, b: { b: ARENA_EX_BANNERS[1] }, tier: st.tier,",
     "new": "tier: st.tier,",
     "tests": [
-      "test/arena4b_banners.test.js"
+      "test/net/arena/arena4b_banners.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "lv: Math.max(1, Math.floor(deps.level?.() ?? 1)), ...myBanner(), ...(casual",
     "new": "lv: Math.max(1, Math.floor(deps.level?.() ?? 1)), ...(casual",
     "tests": [
-      "test/arena4b_banners.test.js"
+      "test/net/arena/arena4b_banners.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "lv: Math.max(1, Math.floor(deps.level?.() ?? 1)), ...myBanner(), ...(bout.ticket",
     "new": "lv: Math.max(1, Math.floor(deps.level?.() ?? 1)), ...(bout.ticket",
     "tests": [
-      "test/arena4b_banners.test.js"
+      "test/net/arena/arena4b_banners.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "const b = bannerClaim(board?.me?.banner);",
     "new": "const b = board?.me?.banner;",
     "tests": [
-      "test/arena4b_banners.test.js"
+      "test/net/arena/arena4b_banners.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "b: side?.b ?? ARENA_EX_BANNERS[i] });",
     "new": "b: ARENA_EX_BANNERS[i] });",
     "tests": [
-      "test/arena4b_banners.test.js"
+      "test/net/arena/arena4b_banners.test.js"
     ]
   }
 ]

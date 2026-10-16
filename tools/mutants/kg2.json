@@ -5,7 +5,7 @@
     "old": "key: 'amateur', stake: 10,",
     "new": "key: 'amateur', stake: 11,",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "stake: 10, budget: 220,",
     "new": "stake: 10, budget: 221,",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "budget: 220, potions: 2,",
     "new": "budget: 220, potions: 3,",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "potions: 2, blunder: 0.35 }",
     "new": "potions: 2, blunder: 0.36 }",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "key: 'seasoned', stake: 50,",
     "new": "key: 'seasoned', stake: 51,",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "stake: 50, budget: 300,",
     "new": "stake: 50, budget: 299,",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "budget: 300, potions: 3,",
     "new": "budget: 300, potions: 2,",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "potions: 3, blunder: 0.15 }",
     "new": "potions: 3, blunder: 0.16 }",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "key: 'veteran', stake: 200,",
     "new": "key: 'veteran', stake: 201,",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "stake: 200, budget: 360,",
     "new": "stake: 200, budget: 361,",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "budget: 360, potions: 3,",
     "new": "budget: 360, potions: 4,",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "potions: 3, blunder: 0.05 }",
     "new": "potions: 3, blunder: 0.06 }",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "key: 'grandmaster', stake: 1000,",
     "new": "key: 'grandmaster', stake: 999,",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "stake: 1000, budget: 450,",
     "new": "stake: 1000, budget: 449,",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "budget: 450, potions: 4,",
     "new": "budget: 450, potions: 3,",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "potions: 4, blunder: 0 }",
     "new": "potions: 4, blunder: 0.01 }",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "Object.freeze([73856093, 0x127409F])",
     "new": "Object.freeze([73856094, 0x127409F])",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "0x127409F]);",
     "new": "0x127409E]);",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "Object.freeze([40, 75, 93])",
     "new": "Object.freeze([41, 75, 93])",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "old": "[40, 75, 93]",
     "new": "[40, 76, 93]",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -185,7 +185,7 @@
     "old": "75, 93]);",
     "new": "75, 92]);",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -194,7 +194,7 @@
     "old": "const h = (((Math.imul(seed | 0, GAMBIT_TIER_HASH[0]) ^ GAMBIT_TIER_HASH[1]) % 100) + 100) % 100;",
     "new": "const h = (Math.imul(seed | 0, GAMBIT_TIER_HASH[0]) ^ GAMBIT_TIER_HASH[1]) % 100;",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -203,7 +203,7 @@
     "old": "Math.imul(seed | 0, GAMBIT_TIER_HASH[0])",
     "new": "((seed | 0) * GAMBIT_TIER_HASH[0])",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -212,7 +212,7 @@
     "old": "GAMBIT_TIERS[band < 0 ? GAMBIT_TIERS.length - 1 : band]",
     "new": "GAMBIT_TIERS[band < 0 ? GAMBIT_TIERS.length - 2 : band]",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -221,7 +221,7 @@
     "old": "findIndex((b) => h < b)",
     "new": "findIndex((b) => h <= b)",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -230,7 +230,7 @@
     "old": "autoFill([], tier.budget, rand32)",
     "new": "autoFill([], KG_POINT_BUDGET, rand32)",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -239,7 +239,7 @@
     "old": "potions: [KG_POTIONS_PER_SIDE, tier.potions]",
     "new": "potions: [tier.potions, KG_POTIONS_PER_SIDE]",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -248,7 +248,7 @@
     "old": "budgets: [KG_POINT_BUDGET, tier.budget]",
     "new": "budgets: [tier.budget, tier.budget]",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -257,7 +257,7 @@
     "old": "armies: [army, regularArmy(tier, rand32)]",
     "new": "armies: [regularArmy(tier, rand32), army]",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -266,7 +266,7 @@
     "old": "GAMBIT_BLUNDER_STRIKE = 0.5;",
     "new": "GAMBIT_BLUNDER_STRIKE = 0.6;",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -275,7 +275,7 @@
     "old": "if (foes.length > 0 && value(rand32) < f32(GAMBIT_BLUNDER_STRIKE)) {",
     "new": "if (value(rand32) < f32(GAMBIT_BLUNDER_STRIKE) && foes.length > 0) {",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -284,7 +284,7 @@
     "old": "value(rand32) < f32(GAMBIT_BLUNDER_STRIKE)) {",
     "new": "value(rand32) <= f32(GAMBIT_BLUNDER_STRIKE)) {",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -293,7 +293,7 @@
     "old": "  if (!cells.length) return null;\n  const [col, row]",
     "new": "  const [col, row]",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -302,7 +302,7 @@
     "old": "if (value(rand32) < f32(tier.blunder)) return blunder(state, mine, rand32);",
     "new": "if (nextDouble(rand32) < tier.blunder) return blunder(state, mine, rand32);",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -311,7 +311,7 @@
     "old": "if (value(rand32) < f32(tier.blunder))",
     "new": "if (value(rand32) <= f32(tier.blunder))",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -320,7 +320,7 @@
     "old": "const p = mine[drawBelow(mine.length, rand32)];",
     "new": "const p = mine[drawBelow(mine.length - 1, rand32)];",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -329,7 +329,7 @@
     "old": "target: foes[drawBelow(foes.length, rand32)].id",
     "new": "target: foes[0].id",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -338,7 +338,7 @@
     "old": "  if (value(rand32) < f32(tier.blunder)) return",
     "new": "  if (tier.blunder > 0 && value(rand32) < f32(tier.blunder)) return",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -347,7 +347,7 @@
     "old": "Object.freeze({ king: 0.5, other: 0.3 })",
     "new": "Object.freeze({ king: 0.49, other: 0.3 })",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -356,7 +356,7 @@
     "old": "other: 0.3 })",
     "new": "other: 0.29 })",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -365,7 +365,7 @@
     "old": "if (share <= f32(p.king ?",
     "new": "if (share < f32(p.king ?",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -374,7 +374,7 @@
     "old": "&& share < low) { drinker = p; low = share; }",
     "new": "&& share <= low) { drinker = p; low = share; }",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -383,7 +383,7 @@
     "old": "if (state.potions[side] > 0) {",
     "new": "if (state.potions[side] >= 0) {",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -392,7 +392,7 @@
     "old": "f32(p.king ? GAMBIT_POTION_LINE.king : GAMBIT_POTION_LINE.other)",
     "new": "f32(GAMBIT_POTION_LINE.other)",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -401,7 +401,7 @@
     "old": "if (!h || !h.active || !(lastAction",
     "new": "if (!h || !(lastAction",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -410,7 +410,7 @@
     "old": "!(lastAction || p.hp <= KG_HAZARD_DAMAGE[h.kind])",
     "new": "!(p.hp <= KG_HAZARD_DAMAGE[h.kind])",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -419,7 +419,7 @@
     "old": "p.hp <= KG_HAZARD_DAMAGE[h.kind]",
     "new": "p.hp < KG_HAZARD_DAMAGE[h.kind]",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -428,7 +428,7 @@
     "old": "const lastAction = state.actions === 1;",
     "new": "const lastAction = state.actions === 2;",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -437,7 +437,7 @@
     "old": "if (hazardAt(state, c, r)) continue;",
     "new": "if (hazardAt(state, c, r)?.active) continue;",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -446,7 +446,7 @@
     "old": "(p.king ? near : -near)",
     "new": "(p.king ? -near : near)",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -455,7 +455,7 @@
     "old": "const score = f32((p.king ? near : -near) + f32(value(rand32) * f32(GAMBIT_JITTER)));",
     "new": "const score = f32(p.king ? near : -near);",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -464,7 +464,7 @@
     "old": "if (score > best) { best = score; cell = [c, r]; }",
     "new": "if (score >= best) { best = score; cell = [c, r]; }",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -473,7 +473,7 @@
     "old": "    if (drinker) return { type: 'potion', piece: drinker.id };",
     "new": "    if (drinker && false) return { type: 'potion', piece: drinker.id };",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -482,7 +482,7 @@
     "old": "Object.freeze({ king: 40, kill: 30 })",
     "new": "Object.freeze({ king: 39, kill: 30 })",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -491,7 +491,7 @@
     "old": "({ king: 40, kill",
     "new": "({ king: 41, kill",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -500,7 +500,7 @@
     "old": "kill: 30 })",
     "new": "kill: 29 })",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -509,7 +509,7 @@
     "old": "kill: 30 })",
     "new": "kill: 31 })",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -518,7 +518,7 @@
     "old": "if (t.hp <= p.atk) score",
     "new": "if (t.hp < p.atk) score",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -527,7 +527,7 @@
     "old": "if (score > best) { best = score; striker = p; struck = t; }",
     "new": "if (score >= best) { best = score; striker = p; struck = t; }",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -536,7 +536,7 @@
     "old": "let score = f32(p.atk + value(rand32));",
     "new": "let score = f32(p.atk);",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -545,7 +545,7 @@
     "old": "alarm: 4, flee: 5",
     "new": "alarm: 3, flee: 5",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -554,7 +554,7 @@
     "old": "alarm: 4,",
     "new": "alarm: 5,",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -563,7 +563,7 @@
     "old": "flee: 5,",
     "new": "flee: 4,",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -572,7 +572,7 @@
     "old": "flee: 5,",
     "new": "flee: 6,",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -581,7 +581,7 @@
     "old": "stay: -100,",
     "new": "stay: 0,",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -590,7 +590,7 @@
     "old": "reach: 50,",
     "new": "reach: 49,",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -599,7 +599,7 @@
     "old": "reach: 50,",
     "new": "reach: 51,",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -608,7 +608,7 @@
     "old": "king: 20,",
     "new": "king: 19,",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -617,7 +617,7 @@
     "old": "king: 20,",
     "new": "king: 21,",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -626,7 +626,7 @@
     "old": "space: 0.5,",
     "new": "space: 0.4,",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -635,7 +635,7 @@
     "old": "space: 0.5,",
     "new": "space: 0.6,",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -644,7 +644,7 @@
     "old": "spaceMax: 20,",
     "new": "spaceMax: 19,",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -653,7 +653,7 @@
     "old": "close: 3 })",
     "new": "close: 2 })",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -662,7 +662,7 @@
     "old": "close: 3 })",
     "new": "close: 4 })",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -671,7 +671,7 @@
     "old": "here <= W.alarm && there > here ?",
     "new": "here <= W.alarm && there >= here ?",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -680,7 +680,7 @@
     "old": "here <= W.alarm &&",
     "new": "here < W.alarm &&",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -689,7 +689,7 @@
     "old": "if (f.king) kingInRange = true;",
     "new": "kingInRange = true;",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -698,7 +698,7 @@
     "old": "(p.ranged ? f32(W.space * Math.min(there, W.spaceMax)) : 0)",
     "new": "f32(W.space * Math.min(there, W.spaceMax))",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -707,7 +707,7 @@
     "old": "f32((here - there) * W.close)",
     "new": "f32((there - here) * W.close)",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -716,7 +716,7 @@
     "old": "if (score > top) { top = score; mover = p; to = [c, r]; }",
     "new": "if (score >= top) { top = score; mover = p; to = [c, r]; }",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -725,7 +725,7 @@
     "old": "let top = f32(0), mover",
     "new": "let top = f32(-1), mover",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -734,7 +734,7 @@
     "old": "score = f32(score + f32(value(rand32) * f32(GAMBIT_JITTER)));",
     "new": "score = f32(score);",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -743,7 +743,7 @@
     "old": "GAMBIT_JITTER = 0.1;",
     "new": "GAMBIT_JITTER = 0.2;",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -752,7 +752,7 @@
     "old": "Object.freeze({ warning: 8, active: 40 })",
     "new": "Object.freeze({ warning: 7, active: 40 })",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -761,7 +761,7 @@
     "old": "warning: 8,",
     "new": "warning: 9,",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -770,7 +770,7 @@
     "old": "active: 40 })",
     "new": "active: 39 })",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -779,7 +779,7 @@
     "old": "active: 40 })",
     "new": "active: 41 })",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -788,7 +788,7 @@
     "old": "return !h ? 0 : h.active ? GAMBIT_HAZARD_PENALTY.active : GAMBIT_HAZARD_PENALTY.warning;",
     "new": "return !h ? 0 : GAMBIT_HAZARD_PENALTY.active;",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -797,7 +797,7 @@
     "old": "const maps = foes.map((f) => pathMap(state.tiles, f.col, f.row));",
     "new": "const maps = mine.map((f) => pathMap(state.tiles, f.col, f.row));",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -806,7 +806,7 @@
     "old": "maps.reduce((m, d) => Math.min(m, d[cellIndex(c, r)]), KG_UNREACHABLE)",
     "new": "maps.reduce((m, d) => Math.min(m, d[cellIndex(c, r)]), 0)",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -815,7 +815,7 @@
     "old": "if (!state || state.over || state.turn !== side || state.ending || state.actions <= 0 || !playable(tier)) return null;",
     "new": "if (!state || state.over || state.turn !== side || !playable(tier)) return null;",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -824,7 +824,7 @@
     "old": "if (out?.state) return { cmd, state: out.state, events: out.events };",
     "new": "if (out) return { cmd, state: out.state ?? state, events: out.events ?? [] };",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -833,7 +833,7 @@
     "old": "const out = cmd ? gambitAct(state, side, cmd, gameRand) : null;",
     "new": "const out = cmd ? gambitAct(state, side, cmd, aiRand) : null;",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -842,7 +842,7 @@
     "old": "GAMBIT_JITTER = 0.1;",
     "new": "GAMBIT_JITTER = 0.6;",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -851,7 +851,7 @@
     "old": "reach: 50, king: 20,",
     "new": "reach: 50, king: 0,",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -860,7 +860,7 @@
     "old": "p.hp <= KG_HAZARD_DAMAGE[h.kind]",
     "new": "p.hp <= KG_HAZARD_DAMAGE.fire",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -869,7 +869,7 @@
     "old": "if (cell) return { type: 'move', piece: p.id, col: cell[0], row: cell[1] };",
     "new": "if (cell) return { type: 'move', piece: p.id, col: cell[0], row: cell[1] }; else break;",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -878,7 +878,7 @@
     "old": "  for (const p of mine) {\n    const h = hazardAt",
     "new": "  for (const p of mine.slice().reverse()) {\n    const h = hazardAt",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -887,7 +887,7 @@
     "old": "score = f32(score + f32(value(rand32) * f32(GAMBIT_JITTER)));",
     "new": "score = score + value(rand32) * GAMBIT_JITTER;",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -896,7 +896,7 @@
     "old": "const score = f32((p.king ? near : -near) + f32(value(rand32) * f32(GAMBIT_JITTER)));",
     "new": "const score = (p.king ? near : -near) + value(rand32) * GAMBIT_JITTER;",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -905,7 +905,7 @@
     "old": "let score = f32(p.atk + value(rand32));",
     "new": "let score = p.atk + nextDouble(rand32);",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -914,7 +914,7 @@
     "old": "value(rand32) < f32(GAMBIT_BLUNDER_STRIKE)",
     "new": "nextDouble(rand32) < GAMBIT_BLUNDER_STRIKE",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -923,7 +923,7 @@
     "old": "foes[drawBelow(foes.length, rand32)]",
     "new": "foes[foes.length - 1 - drawBelow(foes.length, rand32)]",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -932,7 +932,7 @@
     "old": "  try { cmd = regularAction(state, side, tier, checkedRand32(aiRand)); } catch { return null; }",
     "new": "  cmd = regularAction(state, side, tier, aiRand);",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -941,7 +941,7 @@
     "old": "  if (!state || !playable(tier)) return null;",
     "new": "  if (!state) return null;",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -950,7 +950,7 @@
     "old": "state.actions <= 0 || !playable(tier)) return null;",
     "new": "state.actions <= 0) return null;",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -959,7 +959,7 @@
     "old": "    if (st.round > rounds) return { end: st.pieces.every((p) => p.king) ? 'kings' : 'long', rounds: st.round };",
     "new": "    if (st.round > rounds) return { end: 'long', rounds: st.round };\n    if (st.pieces.every((p) => p.king)) return { end: 'kings', rounds: st.round };",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   },
   {
@@ -968,7 +968,7 @@
     "old": "export const gameSeed = (seed, g) => mix32((Math.imul(seed, 1000003) + Math.imul(g, 7919) + 1) >>> 0) || 1;",
     "new": "export const gameSeed = (seed, g) => (Math.imul(seed, 1000003) + Math.imul(g, 7919) + 1) >>> 0;",
     "tests": [
-      "test/kg2_patrons.test.js"
+      "test/tooling/kg2_patrons.test.js"
     ]
   }
 ]

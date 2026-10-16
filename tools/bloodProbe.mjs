@@ -527,7 +527,7 @@ for (const lane of ['classic', 'lane']) {
     // half-vector lined up, at ANY angle - the look of wet plastic. A
     // liquid film is Schlick: about two per cent head-on, most of the
     // light at a graze. The ANGLE itself is pinned where it can be
-    // isolated - the pure `wetSheen` in test/blood1_decals.test.js -
+    // isolated - the pure `wetSheen` in test/combat/blood1_decals.test.js -
     // because it cannot be isolated HERE: the glint is a Blinn-Phong
     // lobe as well as a Fresnel term, and turning the quad to a grazing
     // angle walks the normal out of the lobe, so the picture would

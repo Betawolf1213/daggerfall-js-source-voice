@@ -20,7 +20,7 @@
 // same place are proved by running them, not by the shape of the host's lines.
 // AUDIT OW4 (2026-09-28, the second pass): a spot re-aimed while it walks sets out (P1); a halt lapses (P2); a journey that
 // cannot run is not set out again by the party (P4); a member's own journey under a halt leaves the walk (P6). The host's
-// half is run from its own source text (test/tv8_party_walk.test.js lifts partyWalkFrame - AUDIT OW4 P7).
+// half is run from its own source text (test/systems/travel/tv8_party_walk.test.js lifts partyWalkFrame - AUDIT OW4 P7).
 // ═══════════════════════════════════════════════════════════════════
 
 /** How near the leader a member stands to be asked (m) - the party gathered for the road, a little wider than a rest's. */

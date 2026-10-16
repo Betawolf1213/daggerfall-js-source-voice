@@ -5,7 +5,7 @@
   "old": "    quietNights(() => {\n      if (kind) _restKindOverride = () => kind;",
   "new": "    ((fn) => fn())(() => {\n      if (kind) _restKindOverride = () => kind;",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -14,7 +14,7 @@
   "old": "      if (kind) _restKindOverride = () => kind;\n      out.setResting(true);",
   "new": "      out.setResting(true);",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -23,7 +23,7 @@
   "old": "      if (!b) camp?.close?.();",
   "new": "      if (b) camp?.close?.();",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -32,7 +32,7 @@
   "old": "now - cur.at <= freshMs && m.acct < me && (!leader || m.acct < leader.acct)) leader = m;",
   "new": "now - cur.at <= freshMs && m.acct > me && (!leader || m.acct < leader.acct)) leader = m;",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -41,7 +41,7 @@
   "old": "m.acct < me && (!leader || m.acct < leader.acct)) leader = m;",
   "new": "m.acct < me) leader = m;",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -50,7 +50,7 @@
   "old": "campOf(cur.at) === 'open' && now - cur.at <= freshMs && m.acct < me",
   "new": "campOf(cur.at) === 'open' && m.acct < me",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -59,7 +59,7 @@
   "old": "if (m.p?.rs && campOf(cur.at) === 'open' && now",
   "new": "if (m.p?.rs && campOf(cur.at) !== null && now",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -68,7 +68,7 @@
   "old": "if (m.p?.rs && campOf(cur.at) === 'open'",
   "new": "if (campOf(cur.at) === 'open'",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -77,7 +77,7 @@
   "old": "        if (!m?.acct || restsAlone(m) || !inCamp(m)) continue;",
   "new": "        if (!m?.acct || !inCamp(m)) continue;",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -86,7 +86,7 @@
   "old": "        if (cur.enemy !== null && cur.enemy !== was.enemy) return { act: 'enemy', acct: m.acct, name: m.name };\n",
   "new": "",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -95,7 +95,7 @@
   "old": "const kind = cur.at > was.at && now - cur.at <= freshMs ? kindOf(cur.at) : null;",
   "new": "const kind = now - cur.at <= freshMs ? kindOf(cur.at) : null;",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -104,7 +104,7 @@
   "old": "        if (!was) { base.set(m.acct, cur); continue; }",
   "new": "        if (!was) { base.set(m.acct, { at: 0, enemy: null }); continue; }",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -113,7 +113,7 @@
   "old": "      if (now - firstAsk >= waitMs || !leader) return { act: 'roll' };",
   "new": "      if (!leader) return { act: 'roll' };",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -122,7 +122,7 @@
   "old": "    if (dx * dx + dz * dz < m2) return false;",
   "new": "    if (dx * dx + dz * dz < m2 && f === feet[0]) return false;",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -131,7 +131,7 @@
   "old": "export const CAMP_MARKS = Object.freeze({ open: 774, done: 773 });",
   "new": "export const CAMP_MARKS = Object.freeze({ open: 776, done: 773 });",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -140,7 +140,7 @@
   "old": "  const v = act?.night && !act.meditate ? deps.camp?.verdict?.() ?? null : null;",
   "new": "  const v = !act?.meditate ? deps.camp?.verdict?.() ?? null : null;",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -149,7 +149,7 @@
   "old": "  if (v?.act === 'enemy') { deps.onEnemyBreak?.(); return",
   "new": "  if (v?.act === 'enemy') { return",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -158,7 +158,7 @@
   "old": "    const r = deps.restCampNight?.(v.kind, true) ?? null;",
   "new": "    const r = deps.restNight?.({ rentedHours }) ?? null;",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -167,7 +167,7 @@
   "old": "    if (this.state === 'campWait') { if (channelBroken(",
   "new": "    if (this.state === 'campWait') { if (false && channelBroken(",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -176,7 +176,7 @@
   "old": "this._finishAct(); else this._campStep(); return; }",
   "new": "this._finishAct(); return; }",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -185,7 +185,7 @@
   "old": "    this.deps.camp?.open?.(!!this._act.night);",
   "new": "",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -194,7 +194,7 @@
   "old": "      if (!act || (act === 'busy' && _campWatch.isOpen())) continue;",
   "new": "      if (!act) continue;",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -203,7 +203,7 @@
   "old": "    settle: () => { if (social && campMarkOf(_partyRestJustStartedAt) === 'open') campStampNow('done'); },",
   "new": "    settle: () => { if (social) campStampNow('done'); },",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -212,7 +212,7 @@
   "old": "    camp: opts.campRest ?? null,\n",
   "new": "",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -221,7 +221,7 @@
   "old": "    for (const env of campPasses(base, campFeet(), hit.minDistance)) {",
   "new": "    for (const env of [base]) {",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -230,7 +230,7 @@
   "old": "deps.restAct?.() ?? null)) finishAct(); else campStep(); return; }",
   "new": "deps.restAct?.() ?? null)) finishAct(); return; }",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -239,7 +239,7 @@
   "old": "      if (fresh) render();",
   "new": "      render();",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -248,7 +248,7 @@
   "old": "                : overlay.state === 'campWait' ? campWaitCard()\n",
   "new": "",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -257,7 +257,7 @@
   "old": "    deps.camp?.open?.(!!act.night);",
   "new": "",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -266,7 +266,7 @@
   "old": "  return [{ ...env, overlapSphere: (p, r) => !!env.overlapSphere?.(p, r) || !campClear(p, feet, min) }, env];",
   "new": "  return [{ ...env, overlapSphere: (p, r) => !!env.overlapSphere?.(p, r) || !campClear(p, feet, min) }];",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -275,7 +275,7 @@
   "old": "overlapSphere: (p, r) => !!env.overlapSphere?.(p, r) || !campClear(p, feet, min) }",
   "new": "overlapSphere: (p) => !campClear(p, feet, min) }",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -284,7 +284,7 @@
   "old": "      if (spot) break;\n    }\n    if (!spot) return null;\n    ambushNight();",
   "new": "      break;\n    }\n    if (!spot) return null;\n    ambushNight();",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -293,7 +293,7 @@
   "old": "    this.deps.camp?.settle?.();   // CAMP-ROLL: a loiter is no night",
   "new": "    // CAMP-ROLL: a loiter is no night",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  },
  {
@@ -302,7 +302,7 @@
   "old": "overlay._loiterOffer = true; deps.camp?.settle?.(); overlay.state = 'hours';",
   "new": "overlay._loiterOffer = true; overlay.state = 'hours';",
   "tests": [
-   "test/camproll.test.js"
+   "test/systems/camproll.test.js"
   ]
  }
 ]

@@ -74,7 +74,7 @@ const DEG = 180 / Math.PI;
 
 /** DECOR-FIGURE: whether a catalogue entry takes a size step - never one of Daggerfall's people (net/decorLaw.js
  *  decorIsFigure: a flat of a person's archive - the catalogue's Vendors, every one of them (BLOCKS.BSA's people records
- *  stand in those archives alone - test/people.test.js), or a person's flat however it was reached). AUDIT DECOR-FIGURE
+ *  stand in those archives alone - test/world/people.test.js), or a person's flat however it was reached). AUDIT DECOR-FIGURE
  *  C3: by the archive alone, as the room draws one and the service writes one - the catalogue's kind, which neither of
  *  them reads, was a second law. The placer's and the bar's buttons' (scenes/decor/decorTool.js) one question. */
 export const decorEntrySized = (entry) => !decorIsFigure(entry);

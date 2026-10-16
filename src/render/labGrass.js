@@ -324,7 +324,7 @@ void main(){
  * own text (plus GRASS2's five). The pixel style is a SECOND list of
  * edits laid on top of them, and what the game compiles is
  * `GAME_GRASS_VS` / `GAME_GRASS_FS` = the lab's text with both lists
- * applied. The pin in test/grasspx.test.js re-applies the list and
+ * applied. The pin in test/render/grasspx.test.js re-applies the list and
  * compares, and holds that every `from` is found exactly once - so a
  * lab line that moved cannot turn an edit into a silent no-op, and a
  * change to the compiled text that is not on a list still fails.

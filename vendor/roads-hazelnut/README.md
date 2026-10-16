@@ -20,7 +20,7 @@ Mac (Lattymoy) on 2026-09-02. Record of the permission:
 > [Mac: paste the text of the permission, or the link to it, here.]
 
 Integrity (sha256, verified against github.com/ajrb/dfunity-mods master
-on 2026-09-08 and pinned by `test/vendorIntegrity.test.js`):
+on 2026-09-08 and pinned by `test/tooling/vendorIntegrity.test.js`):
 
 - `roadData.bytes` 249ee50c54c564b9f89e3cf0cb28f87e0ab1c5603cdd4f794afc4e96a6b6af8a
 - `trackData.bytes` dce018b03bee20f846bfca0854ae38cf737b8a684e92bf95cd7468df403385a6

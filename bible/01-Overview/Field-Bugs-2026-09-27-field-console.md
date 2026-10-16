@@ -17,7 +17,7 @@ was read; each is either fixed here, recorded as expected, or open.
   fetch lands, so the read hit the dead zone and the region's people never
   loaded: every town's talk ran without its people. It is a hoisted
   declaration now, and everything its body reads is declared before townTalk
-  is built (`test/fieldconsole1.test.js`, `test/regionlive.test.js`).
+  is built (`test/systems/fieldconsole1.test.js`, `test/scenes/regionlive.test.js`).
 - **`/assets/undefined` 404, twice at boot and twice at every door**
   (reproduced in the bundle, the initiator Handheld Torches' sprite loader).
   Both of that mod's loaders (the hand's sprite, the dropped torch's flats)
@@ -101,7 +101,7 @@ was read; each is either fixed here, recorded as expected, or open.
   and the classic motor stands, as it did behind a degenerate bake. The
   memory itself belongs to Mac's navmesh body (sparse cells, packed boxes,
   the poly merge), untouched here and owed to project-final. Pinned in
-  `test/enhancedAI.test.js` (DEGENERATE-BAKE ROOT: the doorway at every
+  `test/ai/nav/enhancedAI.test.js` (DEGENERATE-BAKE ROOT: the doorway at every
   alignment, the boundary floor, the doors, the anchor union, the worker's
   death, and with ARENA2 both real dungeons) and `tools/mutants/navbake.json`
   (10 mutants, all dead).

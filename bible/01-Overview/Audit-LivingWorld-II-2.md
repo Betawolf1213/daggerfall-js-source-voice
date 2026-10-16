@@ -28,7 +28,7 @@ AUDIT LW-II) and the day's two merges from main (#741-#744's wagons, gems and ba
 Findings seen by two lenses are pinned once, under the first id: C5 = H6, C6 = H1, C11 = W8, D4 = H5, W3 = H8,
 W4 = H4, S6 = P8, D12 within P13.
 
-## R (with D3, P6, P17) - the road (`test/auditlwii2_road.test.js`, 17; `auditlwii2_road.json`, 45)
+## R (with D3, P6, P17) - the road (`test/systems/livingWorld/auditlwii2_road.test.js`, 17; `auditlwii2_road.json`, 45)
 
 All FIXED:
 
@@ -59,7 +59,7 @@ place (the fight's place is the trouble's own, every reader's), so its people st
 minutes and come back to the ring for the halt. R8's head is not mutation-pinned: on the synthetic map the merchant
 never outranks the hired.
 
-## C (with H1, R9, P4, P7) - the caravan's door (`test/auditlwii2_door.test.js`, 13; `auditlwii2_door.json`, 44)
+## C (with H1, R9, P4, P7) - the caravan's door (`test/systems/livingWorld/auditlwii2_door.test.js`, 13; `auditlwii2_door.json`, 44)
 
 All FIXED:
 
@@ -101,7 +101,7 @@ All FIXED:
 Seen and left for Mac: the hold-up stands on the player's deeds alone - a caravan whose only guard the character
 struck down before hiring on yields as they walk beside it, and C2 then ends the contract unpaid.
 
-## S (with W6, P1, P3, P8) - the patrons' service (`test/auditlwii2_service.test.js`, 14; `auditlwii2_service.json`, 45)
+## S (with W6, P1, P3, P8) - the patrons' service (`test/systems/auditlwii2_service.test.js`, 14; `auditlwii2_service.json`, 45)
 
 All FIXED:
 
@@ -137,7 +137,7 @@ All FIXED:
 - **P1, P3 - PINNED**: P7's door in a town of two traders; a listing's first whole hour and its expiry; a guild's hall
   never a patrons' trader. The P lane's four records carried, all dead.
 
-## W (with H4, H7, H8, C11, P12) - the patrons seen and the word (`test/auditlwii2_town.test.js`, 11; `auditlwii2_town.json`, 32)
+## W (with H4, H7, H8, C11, P12) - the patrons seen and the word (`test/systems/livingWorld/auditlwii2_town.test.js`, 11; `auditlwii2_town.json`, 32)
 
 All FIXED:
 
@@ -167,7 +167,7 @@ All FIXED:
 
 Recorded, not changed (W9, a record): the stranger's repute regard moves nothing a player sees.
 
-## C and H (with P2, P5, P11) - the outlaws (`test/auditlwii2_outlaws.test.js`, 10; `auditlwii2_outlaws.json`, 47)
+## C and H (with P2, P5, P11) - the outlaws (`test/systems/livingWorld/auditlwii2_outlaws.test.js`, 10; `auditlwii2_outlaws.json`, 47)
 
 All FIXED:
 
@@ -196,7 +196,7 @@ All FIXED:
 Seen and not changed: the trouble world's `resolved` can fire inside a read (inside `fate`, inside `townTrips`); an
 entry being built then can be kept after the clear half band-less. C8's own clear of the memo has the same exposure.
 
-## D (with H5, P10) - the deep's own (`test/auditlwii2_deep.test.js`, 15; `auditlwii2_deep.json`, 34)
+## D (with H5, P10) - the deep's own (`test/scenes/auditlwii2_deep.test.js`, 15; `auditlwii2_deep.json`, 34)
 
 All FIXED:
 
@@ -263,7 +263,7 @@ D3 (the road fixer's): see R.
 
 - Findings by id: R 11, C 15, D 13, S 9 (S9 found by the fix), W 11, H 10, P 17 - 86, 78 once the eight a second lens
   saw are counted once. Every code finding FIXED or PINNED; the records-only ones corrected (R10, W9, H10, P13-P16, D12).
-- Pins: `test/auditlwii2_door.test.js` 13, `_deep` 15, `_outlaws` 10, `_service` 14, `_town` 11, `_road` 17 - 80
+- Pins: `test/systems/livingWorld/auditlwii2_door.test.js` 13, `_deep` 15, `_outlaws` 10, `_service` 14, `_town` 11, `_road` 17 - 80
   (`09-Testing/Testing.md`). Mutants: `tools/mutants/auditlwii2_door.json` 44, `_deep` 34, `_outlaws` 47, `_service` 45,
   `_town` 32, `_road` 45 - 247, all dead; the P lane's 47 survivors among them, each now killed by its pin. The earlier
   records the fixes moved were re-aimed by content, their names kept (each lane's section of `06-Systems/Living-World-II.md`

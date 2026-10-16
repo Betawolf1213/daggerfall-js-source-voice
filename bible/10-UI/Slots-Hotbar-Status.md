@@ -353,7 +353,7 @@ over two weapons, a shield over a two-hander and clothing boots over iron ones, 
 - A weapon's rarity damage affix stays its own line on both cards: the Damage delta compares the Damage rows.
 - The shop's and a player trade's detail strips draw no comparison.
 
-Pinned: `test/fb0929d_accompare.test.js` (5), `tools/mutants/fb0929d_accompare.json` (35 mutants, 35 dead). Seen in
+Pinned: `test/systems/fb0929d_accompare.test.js` (5), `tools/mutants/fb0929d_accompare.json` (35 mutants, 35 dead). Seen in
 Chromium with the real ARENA2's icons at 1366x768 and on a phone (a scratch probe, not committed).
 
 ## HB-LYCFREE - the curse's spell free from the bar, and the hotbar by default (2026-09-30)
@@ -374,5 +374,5 @@ have stored the old 'quickbar' (PREF1 writes no default), so a player who had tu
 `quickslots: false` alone. That shelf keeps the diamond's style and stays Off, and is written as rev 2 at its next
 save. A player who had chosen Diamond left no trace and moves to the hotbar with everyone else.
 
-Pinned: `test/hb_lycfree.test.js` (8). The diamond's own suites choose the diamond now that it is not the default
+Pinned: `test/systems/hb_lycfree.test.js` (8). The diamond's own suites choose the diamond now that it is not the default
 (Testing.md's row names them).

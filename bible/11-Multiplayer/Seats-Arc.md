@@ -414,7 +414,7 @@ referees up to 256 fighters against one foe.
   relay-run guards (a crown siege at its largest; a revolt's 13 rebels stand in the guards' place) - with headless
   clients, the SLAM probes' way, at or under 60% of every room budget (`FOES_ROOM_BYTES_PER_S`, `HIT_ROOM_BYTES_PER_S`, the pose fan).
   If it cannot, siege sizes drop to 8 against 8 and 16 against 16 until it can.
-  MEASURED (PVP-REF, 2026-10-01, `test/pvpref_measure.test.js` - the real Room on the fake object, 106 headless
+  MEASURED (PVP-REF, 2026-10-01, `test/net/pvpref_measure.test.js` - the real Room on the fake object, 106 headless
   sockets all moving at 4 Hz, every fighter striking at four a second and casting at the window's): the pose fan 36% of
   its design point (21,293 sends a second against SLAM6's 59,000), the siege's fanned frames 26% of
   `FOES_ROOM_BYTES_PER_S`, the busiest socket's 4% of `HIT_ROOM_BYTES_PER_S`. **The sizes stand.**
@@ -750,7 +750,7 @@ the Forge's and the Workshop's route - `server-account/src/professions.js` seatS
 jewellery** a quality step (the Forge's law, nothing past Masterwork). DECIDED, a **dish** - which takes no quality - its XP
 half again a step (the clean pan's own step, Professions-Arc 35; `recipeLaw.js` cookXp). DECIDED, a **brew** its Potent
 chance +10 a step (`alchemyLaw.js` potentChance; the brew carries its town as a craft does). Nobody else's, no other town's,
-no other hall's. Pinned through the real Worker: `test/prof12_apothecary.test.js`. AUDITED (2026-10-03, AUDIT PROF12 P1):
+no other hall's. Pinned through the real Worker: `test/net/prof12_apothecary.test.js`. AUDITED (2026-10-03, AUDIT PROF12 P1):
 the Seat tab's line for it said every tier made "members' alchemy, cooking and jewelcrafting here" a quality step better -
 true of jewellery alone; it says each profession's own now (`fortLaw.js` FORT_EFFECT_WORDS): "members' jewellery here a
 quality step better, their dishes half again the XP, their brews +10% Potent chance" (tier 2: two steps, twice the XP,
@@ -1210,7 +1210,7 @@ Every law in Home.md's Process section, and what it demands of this arc:
 |---|---|
 | **THE MODAL CONTRACT** | The board's window and the siege's result card gate a host frame: each returns the same type from every exit, asserted in a test, not a comment |
 | **THE SLOT IS EMPTIED BEFORE THE OCCUPANT IS TOLD** | The board's window lives in the host's overlay slot: the slot is nulled before the window is disposed, and its close dispatches its callback once however many doors call it |
-| **ONE DFU MEMBER, ONE EXPORT** | Nothing DFU owns is re-typed: `REGION_NAMES`, `BUILDING_TYPES.Palace`, `BULLETIN_BOARD_MODEL_ID`, `DEFAULT_WEAPON_REACH`, `WEAPON_MATERIALS` are imported; the kingdom map is the one new table, and it lives in townSeatLaw.js alone. PVP-REF, recorded: the relay's referee (`siegeRef.js`) is a leaf the relay bundles, so it COPIES DFU's damage tables and the reach, pinned equal to their homes by test (`test/pvpref_law.test.js` - the gate's way, `test/wb4b_gate_blows.test.js`) |
+| **ONE DFU MEMBER, ONE EXPORT** | Nothing DFU owns is re-typed: `REGION_NAMES`, `BUILDING_TYPES.Palace`, `BULLETIN_BOARD_MODEL_ID`, `DEFAULT_WEAPON_REACH`, `WEAPON_MATERIALS` are imported; the kingdom map is the one new table, and it lives in townSeatLaw.js alone. PVP-REF, recorded: the relay's referee (`siegeRef.js`) is a leaf the relay bundles, so it COPIES DFU's damage tables and the reach, pinned equal to their homes by test (`test/systems/pvpref_law.test.js` - the gate's way, `test/net/gate/wb4b_gate_blows.test.js`) |
 | **A PIN MUST FAIL** | Every number in Appendix B is pinned by `deepEqual` against the law module's table, and each slice's mutants (`tools/mutants/seat*.json`) prove a one-character change of any rule reddens a test |
 | **TEST THE SHAPE THE PRODUCER MINTS** | Seats in tests come from the derivation run over a fixture MAPS set, never hand-built rows; receipts come from the relay's own signer; a settled week from `settleWeek` itself |
 | **ASYNC NEVER DROPS** | Every service call (pledge, tribute, window, edict, sign) carries a request id; a second press while one is in flight coalesces; a lost answer is re-asked with the same id (Renown's `last_rid` pattern). DECIDED (the audit of the arc, recording the departure): only two seat calls carry a request id - Tribute and a work's funding (`net/accountClient.js` accountSeats `tribute`, `fortFund`); the set-state acts carry none, because a re-asked one is idempotent or refused as a repeat: a pledge, a window and an Edict are upserts (`seatInfluence.js` pledgeSeat, `seatBattles.js` setWindow, `seatHolding.js` proclaimEdict - the same row written again, another of the hour's rate spent; a taking-down asked twice answers `seat-no-pledge`/`seat-no-edict`); a signing answers `sign-twice` and a hire `hire-twice` (`seatBattles.js` signBattle, hireSellsword). The second press is the Seat tab's one-at-a-time door (`ui.run`). NOT YET: a lost answer to a set-state act re-asked by itself - the player presses again |

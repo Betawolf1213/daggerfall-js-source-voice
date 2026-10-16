@@ -42,7 +42,7 @@ import { CLIMATES, MAX_MAP_PIXEL_X, MAX_MAP_PIXEL_Y } from '../formats/mapsTable
 export const ETHER_BOX = Object.freeze({ x0: 64, x1: 8128, y0: -7680, y1: -2688 });
 /** ELTHERIC (2026-10-12, the owner: "Apparently the ocean is suppose to be eltheric not etheric"): THE SEA'S WORD, one
  *  home for every word a player reads of it - the lore's Eltheric Ocean, the name the world already gave the waters west
- *  of the Bay (world/tamriel/tamrielGeography.js SEAS, the intro map's; pinned the same, test/eltheric.test.js). It was the
+ *  of the Bay (world/tamriel/tamrielGeography.js SEAS, the intro map's; pinned the same, test/world/eltheric.test.js). It was the
  *  "Etheric Sea", in fourteen literals across eight modules. */
 export const ETHER_WORD = 'Eltheric';
 /** What the world calls it - the loading screen, the Overworld's line, the chart; at a sentence's head, ETHER_SEA_TITLE. */
@@ -53,7 +53,7 @@ export const ETHER_SEA_TITLE = `The ${ETHER_WORD} Ocean`;
  *  cliffs' fade six) inside it. AUDIT CAPTAIN'S SEA G1: four drew the Bay's clamped row 0 on the Veil's horizon. */
 export const ETHER_MARGIN = 64;
 /** A map pixel's side (metres) - MapsFile's 32768 world units at 40 a metre (world/tamriel/tamrielFrame.js KM_PER_PIXEL): net/gate/gateLaw.js
- *  PIXEL_M's, held here rather than imported so the terrain worker reads no net law (test/ethersea.test.js pins them equal). */
+ *  PIXEL_M's, held here rather than imported so the terrain worker reads no net law (test/world/ethersea.test.js pins them equal). */
 const PIXEL_M = 819.2;
 /** A league: three miles, the sea's own measure (metres) - the captain's log's too (captainLedger.js reads it here). */
 export const LEAGUE_M = 4828;
@@ -151,7 +151,7 @@ export const EDGE_CELLS = 1;
 /** AUDIT CAPTAIN'S SEA H1/P2: a port isle's shore stands about this far from its town's middle (m: its pixel's half and
  *  the kernel's fall past it), and its harbour is sounded this far past the town's footprint (shipLife.js findHarbour's
  *  `reach` - the Bay's ports' HARBOUR_REACH is 420 m from a coastal town). Measured through the kernel over every kind of
- *  town a port stands (test/auditcaptsea.test.js). */
+ *  town a port stands (test/systems/naval/auditcaptsea.test.js). */
 export const ETHER_PORT_SHORE_M = 900;
 export const ETHER_HARBOUR_REACH = 900;
 /** Where an isle's land is centred, in its own pixels' bytes: a port's on its town's pixel's middle (the kernel lays a

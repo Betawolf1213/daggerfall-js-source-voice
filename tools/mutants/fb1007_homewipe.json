@@ -5,7 +5,7 @@
     "old": "  const kept = containsPermanentScene(cache, to) ? cache.scenes.get(to) ?? null : null;   // HOME-WIPE: the owner's record\n  if (kept) {\n    if (out.crate.length) {\n      const lc = kept.lootContainers;   // every entry is copySceneEntry's: the list is always there\n      const chest = lc.find((c) => c?.key === ARENA_CRATE_KEY);\n      if (chest) { chest.items = [...(Array.isArray(chest.items) ? chest.items : []), ...out.crate.map(copyItem)]; chest.crate = true; }\n      else lc.push({ key: ARENA_CRATE_KEY, items: out.crate.map(copyItem), crate: true, stockedDate: 0 });\n    }\n  } else if (out.crate.length || permanent) {\n    cacheScene(cache, to, stampLayout({ lootContainers: out.crate.length ? [{ key: ARENA_CRATE_KEY, items: out.crate.map(copyItem), crate: true, stockedDate: 0 }] : [], frame: 'building' }, layout));   // CRATE-LAYOUT\n  }\n  if (permanent) addPermanentScene(cache, to);\n",
     "new": "  if (out.crate.length || permanent || containsPermanentScene(cache, to)) {\n    cacheScene(cache, to, { lootContainers: out.crate.length ? [{ key: ARENA_CRATE_KEY, items: out.crate.map(copyItem), crate: true, stockedDate: 0 }] : [], frame: 'building' });\n    if (permanent) addPermanentScene(cache, to);\n  }\n",
     "tests": [
-      "test/fb1007_homewipe.test.js"
+      "test/systems/fb1007_homewipe.test.js"
     ],
     "why": "the field bug itself: the block as it shipped before the fix - a replayed move wrote an empty record over the owner's home"
   },
@@ -15,7 +15,7 @@
     "old": "  const kept = containsPermanentScene(cache, to) ? cache.scenes.get(to) ?? null : null;   // HOME-WIPE: the owner's record",
     "new": "  const kept = null;   // HOME-WIPE: the owner's record",
     "tests": [
-      "test/fb1007_homewipe.test.js"
+      "test/systems/fb1007_homewipe.test.js"
     ]
   },
   {
@@ -24,7 +24,7 @@
     "old": "  const kept = containsPermanentScene(cache, to) ? cache.scenes.get(to) ?? null : null;   // HOME-WIPE: the owner's record",
     "new": "  const kept = cache.scenes.get(to) ?? null;   // HOME-WIPE: the owner's record",
     "tests": [
-      "test/fb1007_homewipe.test.js"
+      "test/systems/fb1007_homewipe.test.js"
     ]
   },
   {
@@ -33,7 +33,7 @@
     "old": "    if (out.crate.length) {\n      const lc = kept.lootContainers;",
     "new": "    if (true) {\n      const lc = kept.lootContainers;",
     "tests": [
-      "test/fb1007_homewipe.test.js"
+      "test/systems/fb1007_homewipe.test.js"
     ]
   },
   {
@@ -42,7 +42,7 @@
     "old": "chest.items = [...(Array.isArray(chest.items) ? chest.items : []), ...out.crate.map(copyItem)];",
     "new": "chest.items = [...out.crate.map(copyItem)];",
     "tests": [
-      "test/fb1007_homewipe.test.js"
+      "test/systems/fb1007_homewipe.test.js"
     ]
   },
   {
@@ -51,7 +51,7 @@
     "old": "chest.items = [...(Array.isArray(chest.items) ? chest.items : []), ...out.crate.map(copyItem)];",
     "new": "chest.items = [...(Array.isArray(chest.items) ? chest.items : [])];",
     "tests": [
-      "test/fb1007_homewipe.test.js"
+      "test/systems/fb1007_homewipe.test.js"
     ]
   },
   {
@@ -60,7 +60,7 @@
     "old": "chest.crate = true; }",
     "new": "chest.crate = chest.crate; }",
     "tests": [
-      "test/fb1007_homewipe.test.js"
+      "test/systems/fb1007_homewipe.test.js"
     ]
   },
   {
@@ -69,7 +69,7 @@
     "old": "      else lc.push({ key: ARENA_CRATE_KEY,",
     "new": "      else [].push({ key: ARENA_CRATE_KEY,",
     "tests": [
-      "test/fb1007_homewipe.test.js"
+      "test/systems/fb1007_homewipe.test.js"
     ]
   },
   {
@@ -78,7 +78,7 @@
     "old": "frame: 'building' }, layout));   // CRATE-LAYOUT",
     "new": "frame: 'building' }, null));   // CRATE-LAYOUT",
     "tests": [
-      "test/fb1007_homewipe.test.js"
+      "test/systems/fb1007_homewipe.test.js"
     ]
   },
   {
@@ -87,7 +87,7 @@
     "old": "{ layout: slot.layout ?? null }",
     "new": "{ layout: null }",
     "tests": [
-      "test/fb1007_homewipe.test.js"
+      "test/systems/fb1007_homewipe.test.js"
     ]
   },
   {
@@ -96,7 +96,7 @@
     "old": "homeSceneName(now.mapId, to), { layout: layoutStampOfMapId(now.mapId) }),",
     "new": "homeSceneName(now.mapId, to), { layout: null }),",
     "tests": [
-      "test/fb1007_homewipe.test.js"
+      "test/systems/fb1007_homewipe.test.js"
     ]
   },
   {
@@ -105,7 +105,7 @@
     "old": "  if (permanent) addPermanentScene(cache, to);\n  return out;",
     "new": "  if (false) addPermanentScene(cache, to);\n  return out;",
     "tests": [
-      "test/fb1007_homewipe.test.js"
+      "test/systems/fb1007_homewipe.test.js"
     ]
   }
 ]

@@ -35,7 +35,7 @@ land and water under the one water law, and nothing in this slice or the ones be
 sea inlet traced as a coast reads as such a band, ending in a ring. Where that map stands was not found from its names.
 If the bands are new, their place is wanted.
 
-Pinned by `test/fb1009b_canalarm.test.js` (his arrays as they load: no shared arm, every other water arm his to the
+Pinned by `test/world/road/fb1009b_canalarm.test.js` (his arrays as they load: no shared arm, every other water arm his to the
 bit, the crossings standing; painted with the rivers on, every shared arm's tiles the path's); `tools/mutants/fb1009b_canalarm.json`.
 
 ## PARTY-TRUCE: a party left is no fight for ten minutes (2)
@@ -45,8 +45,8 @@ minutes, both ways, each client reading its own party; a party's walk that ends 
 in its question. Not done, and the owner's: a floor for new players. Guild members fight nobody of their own guild
 here (Mac, 2026-10-14, "Guildmates are friends" - `01-Overview/Field-Bugs-2026-10-14.md` PVP-LOOT). THE FOUR
 HOSTS: the zone's fights are world.js's alone (`wildFair`, the one fairness gate; the zone's dungeons are its modes) -
-exterior.js, worldModes.js and dungeonContext.js stand no zone fight. Pinned by `test/fb1009b_partytruce.test.js` and
-`test/tv8_party_walk.test.js`; `tools/mutants/fb1009b_partytruce.json`.
+exterior.js, worldModes.js and dungeonContext.js stand no zone fight. Pinned by `test/systems/wild/fb1009b_partytruce.test.js` and
+`test/systems/travel/tv8_party_walk.test.js`; `tools/mutants/fb1009b_partytruce.json`.
 
 ## The Stolen Item (3): DFU's own, kept
 
@@ -66,7 +66,7 @@ the door's name. Every Dark Brotherhood contract's questor stands at the hall, s
 name and wrote it over the reveal at the next door's look or town map's open - no plate, no name, the members-only lock
 still opening. It never stamps a Thieves Guild or Dark Brotherhood hideout now (UndiscoverBuilding's own shield), and
 a nameless Place names nothing; a save that carries the blank heals on the next entry's reveal. Pinned by
-`test/fb1009b_hallstamp.test.js`; `tools/mutants/fb1009b_hallstamp.json` (and `disc28.json` re-aimed).
+`test/systems/guild/fb1009b_hallstamp.test.js`; `tools/mutants/fb1009b_hallstamp.json` (and `disc28.json` re-aimed).
 
 ## MARK-WIRE: the receiver's marks are one list (5)
 
@@ -77,7 +77,7 @@ named `equipSlot` and `questItem` and not the new mark - so every marked piece w
 market, a home vendor's stall and a realm trade alike. The three receiver's marks are `RECEIVER_MARKS` now, read by the
 clamp (`systems/loot/loot.js`), a wild death's record (`systems/wild/wildDeath.js`) and the law. THE WORKER: the law is the
 account service's too (`server-account/src/market.js` imports it) - the service's deploy carries the fix. Pinned by
-`test/fb1009b_markwire.test.js` and `test/fb1001_market_goods.test.js` (the HUD's watcher run before the list);
+`test/systems/fb1009b_markwire.test.js` and `test/systems/fb1001_market_goods.test.js` (the HUD's watcher run before the list);
 `tools/mutants/fb1009b_markwire.json`.
 
 ## PARK-HELLO: nothing past a hello until the welcome (6)
@@ -89,7 +89,7 @@ Shattered Hour's realm asks the hub about its Hollow first whenever its copy is 
 park arrived meanwhile, the relay refused it ('park before hello') with a policy close, and the Rift cast its player
 out at the Hollow's door ("The way to the Shattered Hour is lost"). Within ten seconds of another player's hello the
 realm needed no ask - the Recall that let them in. Both wait for the welcome now (the park's tick tries again; an owed
-look stays owed). Client-only: the relay unchanged. Pinned by `test/fb1009b_parkhello.test.js` over the real session and
+look stays owed). Client-only: the relay unchanged. Pinned by `test/net/fb1009b_parkhello.test.js` over the real session and
 the relay's own parse; `tools/mutants/fb1009b_parkhello.json` (and `profile2.json` re-aimed). Not changed: THE RELAY'S
 HALF - a frame arriving while a hello awaits is still refused there; an older client still meets it.
 
@@ -106,7 +106,7 @@ stand that reach in (`scenes/gatherHost.js` nearRocks, in the pixel's own frame 
 neighbour built after stands the pixels it reaches again. The Motherlode's heart, stood unasked before standAnywhere,
 is asked too. A node stands BESIDE its own pixel's pieces alone, so a pixel with no neighbour reaching in stands as it
 did. Positions are the client's alone (the service checks a node's key and slot), and every client with the same 3x3
-built stands alike. Pinned by `test/fb1009b_rocknear.test.js` (the law and the real host); `tools/mutants/fb1009b_rocknear.json`
+built stands alike. Pinned by `test/world/terrain/fb1009b_rocknear.test.js` (the law and the real host); `tools/mutants/fb1009b_rocknear.json`
 (and `audit29.json`, `auditsilver.json`, `fb1001_boulders.json`, `fb1001_nodes.json`, `prof2.json` re-aimed).
 
 ## Lord K'avar Part 1 (8): not reproduced
@@ -128,5 +128,5 @@ quest. Not changed.
 WALLAA09 gate - flat 357.3, a bearded man, which FLATS.CFG has no row for, under the Carriage Drivers' faction with no
 flat of its own. GetPortraitIndexFromStaticNPCBillboard starts at 410 and both its lookups missed; every walled city's
 WALLAA09 driver showed the OOPS face. While the mod is loaded the flat wears classic's own bearded man's face (182.3,
-429), written into FLATS.CFG's dictionary as Roleplay & Realism writes it. Pinned by `test/fb1009b_driverface.test.js`;
+429), written into FLATS.CFG's dictionary as Roleplay & Realism writes it. Pinned by `test/systems/fb1009b_driverface.test.js`;
 `tools/mutants/fb1009b_driverface.json`.

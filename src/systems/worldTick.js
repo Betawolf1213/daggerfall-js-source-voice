@@ -13,7 +13,7 @@
 // It lives here rather than in a scene because a scene cannot be tested -
 // the four hosts have zero execution coverage, which is exactly why the
 // gap survived. Everything the tick needs arrives as arguments, so the
-// whole law is exercised by test/audit18.test.js against plain objects.
+// whole law is exercised by test/scenes/audit18.test.js against plain objects.
 //
 // The FOE half stays in the dungeon host: it walks that host's live foe
 // list, and no other host has one.
@@ -1532,7 +1532,7 @@ export function resetMagicRoundMarker(v = null) {
  *
  * The contract is not changed here, because every caller reads the
  * answer as "the clock now" and that is still true. What is added is a
- * way to ASK, and a pin (test/clockrefusal.test.js) that requires
+ * way to ASK, and a pin (test/systems/clockrefusal.test.js) that requires
  * every caller either to consult it or to be listed with the reason it
  * does not need to. A silent refusal is fine; an unnoticed one is not.
  */

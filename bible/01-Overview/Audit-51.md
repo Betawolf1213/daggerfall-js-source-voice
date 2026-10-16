@@ -83,7 +83,7 @@ same file always was; pinned at the boundary.
 - **Data:** the four vendored arrays are byte-identical to the ones
   extracted from the shipped .dfmod - and, since the MODS AUDIT of
   2026-09-08, to `ajrb/dfunity-mods` master by sha256, PINNED in
-  `test/vendorIntegrity.test.js` (this bullet used to say "recorded in
+  `test/tooling/vendorIntegrity.test.js` (this bullet used to say "recorded in
   the test run"; no test carried a hash).
 - **Paint order:** roads, rivers-with-joins, streams, tracks; the first
   to paint a tile wins; a non-zero tile stops every painter. Oracle-

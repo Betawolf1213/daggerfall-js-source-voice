@@ -49,7 +49,7 @@ import {
  *  this file is still the weapon's one front door. NOT wrapped in a
  *  `TEMPLATE` object: systems/survival/food.js already exports that
  *  name with other numbers in it, and one name meaning two things is
- *  what test/audit24_onehome.test.js's ratchet is for. */
+ *  what test/systems/talk/audit24_onehome.test.js's ratchet is for. */
 export { THUNDERLOCK_TEMPLATE, PELLET_TEMPLATE };
 
 /** The group a weapon must be in for equip, the paperdoll and the
@@ -287,7 +287,7 @@ export function installThunderlockIcons({ fetchBytes = null } = {}) {
 // GROUP_TEMPLATE_INDICES, which is DFU's own enum table, and a custom
 // template is not in it. The survival mod had to ADD its provisions to
 // the shelves deliberately; this one simply never appears there.
-// test/thunderlock.test.js pins that as a law rather than an accident.
+// test/systems/thunderlock.test.js pins that as a law rather than an accident.
 //
 // FOUND, THEN, and by the port's own loot ladder (systems/loot/lootRarity.js
 // LR1-LR5). It registers as a UNIQUE FIND, which is a different

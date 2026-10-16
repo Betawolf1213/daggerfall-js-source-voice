@@ -5,7 +5,7 @@
     "old": "export const SEA_ZOOM_RATIO = 1.5;",
     "new": "export const SEA_ZOOM_RATIO = 1.2;",
     "tests": [
-      "test/fbsea_zoom.test.js"
+      "test/player/fbsea_zoom.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "      if (seaFar > MAX_DISTANCE && !(delta > 0 && baseDistance === MIN_DISTANCE)) {",
     "new": "      if (seaFar > MAX_DISTANCE && (baseDistance > MAX_DISTANCE || (delta < 0 && baseDistance === MAX_DISTANCE))) {",
     "tests": [
-      "test/fbsea_zoom.test.js"
+      "test/player/fbsea_zoom.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "      if (seaFar > MAX_DISTANCE && !(delta > 0 && baseDistance === MIN_DISTANCE)) {",
     "new": "      if (seaFar > MAX_DISTANCE) {",
     "tests": [
-      "test/fbsea_zoom.test.js"
+      "test/player/fbsea_zoom.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "      if (far < MAX_Z && clicks && (-z > baseDist + 1e-6 || (clicks < 0 && -z >= baseDist - 1e-6))) {",
     "new": "      if (far < MAX_Z && clicks && (z < MAX_Z || (clicks < 0 && z <= MAX_Z))) {",
     "tests": [
-      "test/fbsea_zoom.test.js"
+      "test/player/fbsea_zoom.test.js"
     ],
     "note": "AUDIT PR478 (PIN MOVED): re-aimed at the audited line."
   },
@@ -42,7 +42,7 @@
     "old": "        offsetScroll += z + seaZoomStep(-z, clicks > 0 ? 1 : -1, Math.min(baseDist, -MAX_Z), -far);",
     "new": "        offsetScroll += z + seaZoomStep(-z, clicks > 0 ? 1 : -1, 0, -far);",
     "tests": [
-      "test/fbsea_zoom.test.js"
+      "test/player/fbsea_zoom.test.js"
     ]
   }
 ]

@@ -54,7 +54,7 @@ terms minted at its death. `06-Systems/Online-Arc.md` CORPSE-GOLD.
 
 ## Verification
 
-`test/corpsegold.test.js` (4) mounts the real `restoreSharedWorld`, `applyWorld`, `patchFoe`, `applyLoot`, `retypeFoe`
+`test/systems/corpsegold.test.js` (4) mounts the real `restoreSharedWorld`, `applyWorld`, `patchFoe`, `applyLoot`, `retypeFoe`
 and `stand()` from the context's source, with buildFoeAt's art await and fresh roll as the one stand-in. Run against
 main's `dungeonContext.js` it fails 3 of 4: the emptied body comes back holding the rebuild's 501 gold, a body taken
 from is not kept apart, and a refused record moves the next one up. The unopened-body case passes on both. Mutants

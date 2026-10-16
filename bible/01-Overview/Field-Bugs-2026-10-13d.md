@@ -22,7 +22,7 @@ hostile foe near. SWIM-SPENT
 (`Field-Bugs-2026-09-30b.md`) changed the water's arm of this law and no other. (SPENT-ASHORE, `Field-Bugs-2026-10-13e.md`, a batch of
 the same day merged after this one, changed the dry arm too: a collapse with a foe near costs a tenth of the health at
 each drain to nothing, so the elder dies of the collapses as they come, through the same door - and has the bar's warning
-to get clear. `test/fb1013d_remains.test.js`'s fall moved with it.)
+to get clear. `test/systems/fb1013d_remains.test.js`'s fall moved with it.)
 
 THE SPAN IS THE ENDURING MODEL'S. Each death took Arkay's toll, years off a span (a Breton's 90, born at 23, five
 years a death at the Standard toll); spent, the next death is the last (`systems/legacy/age.js payToll`), and she
@@ -165,7 +165,7 @@ play online.
 
 ## Pins (1)
 
-- `test/fb1013d_remains.test.js` (11): the report through the producers it can run - the Legacy host (its death as the
+- `test/systems/fb1013d_remains.test.js` (11): the report through the producers it can run - the Legacy host (its death as the
   collapse decides it, `exhaustionOutcome` over `areEnemiesNearby`, at the one damage door's SetHealth(0); the
   Succession and the birth; the save door), a real ground pool, the transfer laws, the made dungeons' producers - and the
   world host's own `legacyHere`, `legacyInDungeonOf`, `legacyAtPlace`, `anchorLanding`, `legacyRemainsFeet`, the stand,

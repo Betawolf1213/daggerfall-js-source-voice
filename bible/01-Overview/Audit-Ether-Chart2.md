@@ -15,7 +15,7 @@ the render, was the author's, in Chromium:
 | Lane | Over | How |
 |---|---|---|
 | C - the code | `ui/etherChartWindow.js`, its host's door, its producer's word | the model run in node over every corner and edge of the sea's box, the Veil, x1 - x16 and three canvas sizes; a captain of 4,096 isles timed; the window driven in Chromium (listeners counted, the fonts' promises after unmount, taps, drags, the zoom's ends) |
-| T - the pins | `test/etherchart2.test.js`, the moved pins in `test/auditcaptsea.test.js`, the mutant lists | the 49 committed records run; 109 scratch mutants of the laws the change added, 32 survivors re-run against 11 more suites; every fixture against `etherHost.chart`'s word; every existence assertion against a mutant |
+| T - the pins | `test/ui/etherchart2.test.js`, the moved pins in `test/systems/naval/auditcaptsea.test.js`, the mutant lists | the 49 committed records run; 109 scratch mutants of the laws the change added, 32 survivors re-run against 11 more suites; every fixture against `etherHost.chart`'s word; every existence assertion against a mutant |
 | D - the record | the bible's lines, the module's comments, the commit and PR #847 | every number and name checked against the code and the tests; the old chart rebuilt to check what the record says it replaced; the doc gates run |
 | U - the render | the chart at x1 - x16; 390 and 844 px phones, 1280, 1280x600 and 2560 desktops; the world's edge, the Veil at x16, the Abyss, every legend, an empty captain and one of 2,856 isles; the fonts' stylesheet held back | screenshots read by eye; WCAG contrast of every word and mark on every water; deuteranopia and protanopia simulated (Machado); repaints timed |
 
@@ -57,7 +57,7 @@ patching each one.
 | C9 | LOW | The Veil's name's spots were not checked against the canvas, the band plates or the scale | FIXED by U2 |
 | C10 | LOW | The label pass scanned every isle's mark for every name: x1 with 4,096 charted ran 11-15 ms in node | FIXED: each mark's box made once, a port's name against the ports' marks alone; measured in Chromium, 2,856 isles charted, a repaint at x1 7.1 ms (9.7 before it) and 2-3 ms from x2 (the probe) |
 | C11 | LOW | `repaint` refreshed the card but not the note line: with the ship moved, the two would give different leagues | FIXED: the note said again on every repaint |
-| T2 | HIGH | The painter was almost unpinned: every mark grey, rocks in ink, one water for every band, the ship undrawn or turned the wrong way, the pointer mirrored, Veilhaven's ring, the bearing, the rings, the card, the washes and dashes, names drawn off their boxes, the key's marks - all survived | PINNED: a stateful stub watches `paintChart`, `paintRuler`, `paintScale`, `paintMark` and `paintKey` draw for draw (`test/audit_etherchart2.test.js`) |
+| T2 | HIGH | The painter was almost unpinned: every mark grey, rocks in ink, one water for every band, the ship undrawn or turned the wrong way, the pointer mirrored, Veilhaven's ring, the bearing, the rings, the card, the washes and dashes, names drawn off their boxes, the key's marks - all survived | PINNED: a stateful stub watches `paintChart`, `paintRuler`, `paintScale`, `paintMark` and `paintKey` draw for draw (`test/ui/audit_etherchart2.test.js`) |
 | T3 | MED | Nothing in node could see the model measuring in another face, case or tracking than the painter's | PINNED: a width that tells face, case and tracking apart; every name, plate, card, pointer and ruler word as wide as it is drawn |
 | T4 | MED | A name's box was not held to its name (a west box 8 px short survived) | PINNED: every lettered box its name's width, on its isle's row, beside its isle |
 | T5 | MED | The haunts' floor was never met in the fixture, and an unfiltered haunt off the chart would be named at its edge | PINNED: views that meet both floors; x16 about Veilhaven names none |
@@ -88,7 +88,7 @@ patching each one.
 
 ## The pins and the probe
 
-`test/audit_etherchart2.test.js` (16) and `tools/mutants/audit_etherchart2.json` (56 records). The records aimed at
+`test/ui/audit_etherchart2.test.js` (16) and `tools/mutants/audit_etherchart2.json` (56 records). The records aimed at
 `ui/etherChartWindow.js` across the four lists - auditcaptsea's 17, ethercross's 11, etherchart2's 24 and the audit's
 56, 108 in all - all die. `tools/etherChartProbe.mjs` runs in Chromium what node cannot see, and exits 1 on a failure:
 the mean letter, the window fitting at five sizes, the late face's canvas against a fresh one's, and a full captain's

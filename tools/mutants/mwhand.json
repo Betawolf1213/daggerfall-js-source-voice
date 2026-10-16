@@ -5,7 +5,7 @@
     "old": "    if (this.usingRightHand && !this.currentRightHandWeapon && this.currentLeftHandWeapon) { this.usingRightHand = false; return true; }\n",
     "new": "",
     "tests": [
-      "test/mwhand.test.js"
+      "test/combat/mwhand.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "    if (!this.usingRightHand && !this.currentLeftHandWeapon && this.currentRightHandWeapon) { this.usingRightHand = true; return true; }\n",
     "new": "",
     "tests": [
-      "test/mwhand.test.js"
+      "test/combat/mwhand.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "    if (fpArm.ready()) playerWeapon.followHeldHand();   // MW-HAND: under the Morrowind arm, never an empty hand while the other holds a weapon\n",
     "new": "",
     "tests": [
-      "test/mwhand.test.js"
+      "test/combat/mwhand.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "    if (fpArm.ready()) playerWeapon.followHeldHand();",
     "new": "    if (true) playerWeapon.followHeldHand();",
     "tests": [
-      "test/mwhand.test.js"
+      "test/combat/mwhand.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "      if (bindWorn && fpArm.ready() && !(playerWeapon.currentRightHandWeapon && playerWeapon.currentLeftHandWeapon)) return false;\n",
     "new": "",
     "tests": [
-      "test/mwhand.test.js"
+      "test/combat/mwhand.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "      if (bindWorn && fpArm.ready() && !(playerWeapon.currentRightHandWeapon",
     "new": "      if (bindWorn && !(playerWeapon.currentRightHandWeapon",
     "tests": [
-      "test/mwhand.test.js"
+      "test/combat/mwhand.test.js"
     ]
   }
 ]

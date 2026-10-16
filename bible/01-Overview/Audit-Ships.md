@@ -16,7 +16,7 @@ were there before the branch.
 
 Thirty-nine findings. Five are the same finding seen twice (B2 = C1, B8 = D5, D1 = A6, D6 = A5, D9 = C3), so 34 are
 distinct. Every one was reproduced here before any line changed. Each fix carries an `AUDIT SHIPS <ID>` comment. They
-are pinned in `test/auditships.test.js` (20, the serpent's) and `test/auditships_sail.test.js` (9, the sailing's), plus
+are pinned in `test/net/serpent/auditships.test.js` (20, the serpent's) and `test/systems/auditships_sail.test.js` (9, the sailing's), plus
 the pins they moved (`PIN MOVED` where each stands) and the seven pins lens E strengthened. They are mutated in
 `tools/mutants/auditships.json` and `tools/mutants/auditships_sail.json`: **97 mutants, 97 dead.**
 
@@ -151,8 +151,8 @@ main's WATCH-FIX at the merge) is not yet deployed.
 2026-10-06, Mac: "Audit everything" again, of PR #634 with the first round's fixes. Five lenses (A the sailing, B the
 serpent's brain and relay, C its client and the pair's share, D the tests and the docs, E the mutation coverage). Mac
 then stopped the round ("Can we stop with the probes. This is eating usage and taking far too long") and asked for a
-speed indicator and sails that work: what was fixed by then is below, pinned in `test/auditships2.test.js` (15) and
-`test/auditships2_sail.test.js` (4), with the moved pins noted on their rows (`09-Testing/Testing.md`). The mutation
+speed indicator and sails that work: what was fixed by then is below, pinned in `test/net/serpent/auditships2.test.js` (15) and
+`test/systems/comeSailAway/auditships2_sail.test.js` (4), with the moved pins noted on their rows (`09-Testing/Testing.md`). The mutation
 records for the serpent's half are `tools/mutants/auditships2.json` (32, with 25 more re-aimed by content and
 `AUDIT-SHIPS-D2-hold-dropped` retired - XB2 removed the law it held); the round stopped before they were run.
 

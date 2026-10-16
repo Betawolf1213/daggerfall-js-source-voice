@@ -60,7 +60,7 @@ Windmills of Daggerfall into this tree - confirmed by Mac 2026-09-23.**
   a classic ARCH3D model or a TEXTURE flat, which the port reads from
   the player's own ARENA2 like every other model.
 
-## Integrity (sha256, pinned by `test/wod1_vendor.test.js`)
+## Integrity (sha256, pinned by `test/systems/wod1_vendor.test.js`)
 
 - `world_of_daggerfall.dfmod` (not vendored) 72960f2dd828a8cbccb83521b532d74d1e10927772c9cf8a69050c13ca699ded
 - `Scripts/DungeonExterior.cs` 25e82a5eef715c0e3b005ffce5506d4cd38f070a633801dc1710fd9c6de3799d

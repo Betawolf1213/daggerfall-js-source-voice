@@ -1,7 +1,7 @@
 # UI-CALM - the quiet pass (2026-10-14)
 
 > Enhanced Plus and DFO Grimoire. The sheet is `ui/uiCalmStyle.js` (laid after Plus's by `ui/enhanced/enhancedStyle.js`
-> injectEnhancedStyle); the behaviour lives in the modules named under each point. Pinned by `test/uicalm.test.js`
+> injectEnhancedStyle); the behaviour lives in the modules named under each point. Pinned by `test/ui/enhanced/uicalm.test.js`
 > and `tools/mutants/uicalm.json`.
 
 ## The report

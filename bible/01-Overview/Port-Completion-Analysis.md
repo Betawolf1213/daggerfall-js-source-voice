@@ -28,7 +28,7 @@ The HONEST still-open list as of the re-verification:
    (formats/save/saveTreeFile.js, characterRecord.js, saveVarsFile.js,
    saveImageFile.js, bioFile.js, saveGames.js + spellsStd's
    readSpellRecord + systems/classicSave.js's document conversion),
-   pinned in test/classicsave.test.js. **NARROWED AGAIN (SAV2, same
+   pinned in test/systems/classicsave.test.js. **NARROWED AGAIN (SAV2, same
    day): the IMPORT CORE ships too** - classicSaveToSnapshot builds
    the port's own save envelope from a classic save
    (StartFromClassicSave's whole data half, the weather 0x7f/5<->6
@@ -48,7 +48,7 @@ The HONEST still-open list as of the re-verification:
    2026-08-27)**: every MacroHelper.cs row is now handled in
    questMacros.js, null-handled where C# is null, or RECORDED at the
    per-window expander that owns it (37 tokens, each verified in its
-   named home) - and `test/macrocoverage.test.js` is the coverage
+   named home) - and `test/systems/quest/macrocoverage.test.js` is the coverage
    GATE this page asked for, diffing the C# table mechanically. What
    remains is per-MCP SOURCES: the biography MCP (the %q block's
    answers), the spell-info MCP (%1am..%clm/%mpw), the bank MCP
@@ -58,7 +58,7 @@ The HONEST still-open list as of the re-verification:
    actions (Q5 + MT-iii, 2026-08-27)**: fourteen guards retired in one slice (the skill/
    attribute/season/weather/climate conditions, SetPlayerCrime,
    PayMoney, JournalNote, TrainPc, KillFoe, UnrestrainFoe, RunQuest,
-   SpawnCityGuards, Enemies - pinned in test/questactions5.test.js,
+   SpawnCityGuards, Enemies - pinned in test/systems/questactions5.test.js,
    including DFU's own RestrainFoe-shadows-UnrestrainFoe parse
    quirk). The four left each name their blocker in GUARD_PATTERNS:
    CastEffectDo (effect-template registry lookup by key), WorldUpdate
@@ -154,11 +154,11 @@ SHIPPED 2026-08-27 (Q5)**: ~~`Climate`~~, ~~`Enemies`~~,
 ~~`TrainPc`~~, ~~`UnrestrainFoe`~~, ~~`Weather`~~,
 ~~`WhenAttributeLevel`~~, ~~`WhenSkillLevel`~~ - real templates with
 host doors through world.js (Quest-Arc's Q5 record;
-test/questactions5.test.js). **TWO MORE SHIPPED 2026-08-27 (MT-iii)**:
+test/systems/questactions5.test.js). **TWO MORE SHIPPED 2026-08-27 (MT-iii)**:
 ~~`ChangeFoeInfighting`~~ and ~~`ChangeFoeTeam`~~, which item 5's
 MobileTeams slice unblocked the same day - both writing every live
 instance of a foe symbol through the new `questFoeInstances` door
-(Characters-Arc's MT record; test/enemyinfighting.test.js).
+(Characters-Arc's MT record; test/characters/enemy/enemyinfighting.test.js).
 
 **Macros: 83 of MacroHelper's 217 appear anywhere in `src/`; 134 do not.**
 The missing set is dominated by the biography/class-question block

@@ -1,6 +1,6 @@
 // WB4a - THE BOSS'S TELEGRAPH, COMPILED, LINKED AND DRAWN IN A REAL BROWSER.
 //
-// node holds the telegraph's law (test/wb4_gate_boss.test.js: the shader's own reading held to the strike's law at
+// node holds the telegraph's law (test/net/gate/wb4_gate_boss.test.js: the shader's own reading held to the strike's law at
 // every point of the floor, the pass over a fake GL); what node cannot answer is whether the GLSL COMPILES and LINKS in
 // a real WebGL2 context, whether the targets' array survives as a uniform the optimiser did not drop, and whether the
 // shape actually lands on the court's floor - bright where the slam lands, dark past its edge, dim through its

@@ -137,15 +137,15 @@ which said they did before their doors had a card; `src/scenes/exterior.js`, the
 
 ## 5. Proof
 
-- `test/plainui.test.js` (8): the next step's every arm; the guide's open and its kept fold; the word list and its
+- `test/systems/legacy/plainui.test.js` (8): the next step's every arm; the guide's open and its kept fold; the word list and its
   numbers by tier; How chapters work over the cards, open, folded and absent, its numbers; the Family page's model,
   toll, numbers, rail and dispatch; the regard badge's words, bar and names, the panel's read of its hook; the town's
-  card and the hook's wiring; the board's type. PINS MOVED: `test/board_ui.test.js`'s Seat tab (the panels' order),
-  `test/audit657_board.test.js`'s D4 (its reader pledged in the region, so the guide's kept fold is pinned from the
-  folded side) and `test/lw2_livingTown.test.js`'s talk doors (the regard beside them); their three mutant records
+  card and the hook's wiring; the board's type. PINS MOVED: `test/ui/board_ui.test.js`'s Seat tab (the panels' order),
+  `test/ui/audit657_board.test.js`'s D4 (its reader pledged in the region, so the guide's kept fold is pinned from the
+  folded side) and `test/systems/livingWorld/lw2_livingTown.test.js`'s talk doors (the regard beside them); their three mutant records
   (`audit657.json`, `board_ui.json`, `lw2.json`) re-aimed by content and dead again.
 - `tools/mutants/plainui.json`: 20 mutants, 20 dead (four re-aimed by content at AUDIT PLAIN-UI).
-- AUDIT PLAIN-UI (`01-Overview/Audit-Plain-UI.md`): `test/audit_plainui.test.js` (11), `tools/mutants/audit_plainui.json`
+- AUDIT PLAIN-UI (`01-Overview/Audit-Plain-UI.md`): `test/ui/audit_plainui.test.js` (11), `tools/mutants/audit_plainui.json`
   31 mutants, 31 dead.
 - `tools/noticeBoardProbe.mjs` photographs the two guides unfolded (`work-guide`, `seat-guide`) beside its other shots,
   desktop and phone - every tab inside the viewport, nothing spilling sideways.

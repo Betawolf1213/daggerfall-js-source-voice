@@ -88,7 +88,7 @@ than ducking. Found on the way and not this bug: ObstacleCheck is still cast at 
 item), and over a made doorway 1.0 m wide and 0.8 m deep, narrower than any dungeon door, a lone foe approaching off its
 line paces the wall beside it - DFU's detour, which the port runs verbatim.
 
-Pins: `test/fb1014b_doorjam.test.js` (8; the last on the player's ARENA2, skipped without it - six real 2.25 m doorways
+Pins: `test/characters/enemy/fb1014b_doorjam.test.js` (8; the last on the player's ARENA2, skipped without it - six real 2.25 m doorways
 and three Mages through each). Without the duck the report's corridor holds all three foes at the lintel on both lanes,
 and on N0000000.RDB not one Mage comes through a door. KEEP FULL HEIGHT's two: a ducking Mage-height foe is hit by a
 missile and found by a touch at its head over the crouch, met by the crosshair and held by the lock-on whole, aimed at
@@ -97,7 +97,7 @@ by a hunter at 2.475, and sees over a 1.6 m parapet a 1.65 eye cannot; and a swe
 `tools/mutants/fb1014b_doorjam.json`, 26: 25 dead, 1 recorded equivalent (the strict 1.65 gate - a body of exactly 1.65
 ducked to 1.65 sweeps what it had); eight of them switch a reader - the lock-on, the crosshair, the missile, the touch,
 the hunter's aim, the eye, a companion's bar, the target pass's eye - to the duck. Re-aimed at
-`controllerHeight`: `test/incident_ceiling_bats.test.js`'s and `test/squeeze1.test.js`'s Move pins and
+`controllerHeight`: `test/scenes/incident_ceiling_bats.test.js`'s and `test/player/squeeze1.test.js`'s Move pins and
 `tools/mutants/fbsea.json`'s walker record.
 
 THE FOUR HOSTS. The duck is the motor's own, and every host's foes step the motor; none of the four was edited.

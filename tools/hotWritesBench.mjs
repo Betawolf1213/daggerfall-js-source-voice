@@ -20,7 +20,7 @@
 //
 // A tree is measured from a snapshot of its commit (`git worktree add <dir> <commit>`, the tool copied in): the
 // SCALE4h record's before and after are two runs, one of each. Not in the suite: it measures, and a pin holds the law
-// (test/scale4h.test.js).
+// (test/server/scale4h.test.js).
 import { isMain } from './lib/isMain.mjs';
 import { standService } from '../test/accountDb.mjs';
 import { seatRealm, freshSave } from '../test/realmSeat.mjs';

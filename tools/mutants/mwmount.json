@@ -5,7 +5,7 @@
     "old": "const eye = centre.map((c, k) => (k === thin ? c + span * 2 : c));",
     "new": "const eye = centre.map((c, k) => (k === mid ? c + span * 2 : c));",
     "tests": [
-      "test/mwmount.test.js"
+      "test/formats/morrowind/mwmount.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "  up[long] = 1;\n  const halfW",
     "new": "  up[mid] = 1;\n  const halfW",
     "tests": [
-      "test/mwmount.test.js"
+      "test/formats/morrowind/mwmount.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "export function mountFrame(bounds, px, { air = 1.04, cap",
     "new": "export function mountFrame(bounds, px, { air = 1, cap",
     "tests": [
-      "test/mwmount.test.js"
+      "test/formats/morrowind/mwmount.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "const ph = Math.min(cap, Math.max(8, px | 0));",
     "new": "const ph = Math.max(8, px | 0);",
     "tests": [
-      "test/mwmount.test.js"
+      "test/formats/morrowind/mwmount.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "const { view, proj } = f ?? iconFrame(bounds);",
     "new": "const { view, proj } = iconFrame(bounds);",
     "tests": [
-      "test/mwmount.test.js"
+      "test/formats/morrowind/mwmount.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "      const rec = iconRecordOf(cat, item);\n      if (!rec || !rec.model) return null;\n      const ckey = `mount:",
     "new": "      const rec = iconRecordOf(cat, { ...item, material: 0 });\n      if (!rec || !rec.model) return null;\n      const ckey = `mount:",
     "tests": [
-      "test/mwmount.test.js"
+      "test/formats/morrowind/mwmount.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "      await loadFromArchives(cat.archives, [path]);\n      const arc = cat.archives.find((a) => a.has(path));\n      if (!arc || (typeof arc.loaded",
     "new": "      const arc = cat.archives.find((a) => a.has(path));\n      if (!arc || (typeof arc.loaded",
     "tests": [
-      "test/mwmount.test.js"
+      "test/formats/morrowind/mwmount.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "const ckey = `mount:${cat.gen}:${rec.id}:${px | 0}`;\n      if (ITEM_ICON_CACHE.has(ckey)) return ITEM_ICON_CACHE.get(ckey);\n",
     "new": "const ckey = `mount:${cat.gen}:${rec.id}:${px | 0}`;\n",
     "tests": [
-      "test/mwmount.test.js"
+      "test/formats/morrowind/mwmount.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "mountPictureStamp() { return built && built.ok && built.catalog ? String(built.catalog.gen) : null; },",
     "new": "mountPictureStamp() { return null; },",
     "tests": [
-      "test/mwmount.test.js"
+      "test/formats/morrowind/mwmount.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "renderer?.uploadTexture?.(archive, pic.key, toColor32(pic.image), { mips: false, variant: '' })",
     "new": "renderer?.uploadTexture?.(archive, pic.key, { width: pic.image.width, height: pic.image.height, colors: pic.image.data }, { mips: false, variant: '' })",
     "tests": [
-      "test/mwmount.test.js"
+      "test/formats/morrowind/mwmount.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "return tex ? { tex, w: pic.w, h: pic.h, key: pic.key } : null;",
     "new": "return tex ? { tex, w: pic.image.width, h: pic.image.height, key: pic.key } : null;",
     "tests": [
-      "test/mwmount.test.js"
+      "test/formats/morrowind/mwmount.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "    return tex ? { tex, w: pic.w, h: pic.h, key: pic.key } : null;   // MW-ASSIGN: the key, for a billboard's own\n  }).catch(() => null);",
     "new": "    return tex ? { tex, w: pic.w, h: pic.h, key: pic.key } : null;   // MW-ASSIGN: the key, for a billboard's own\n  });",
     "tests": [
-      "test/mwmount.test.js"
+      "test/formats/morrowind/mwmount.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "  return loadMwMountArt(deps, decorMountItem(d))\n    .then((mw) => mw ?? loadMountArt(deps, flat[0], flat[1], decorMountDye(d), decorMountDyeTarget(d)));",
     "new": "  return loadMountArt(deps, flat[0], flat[1], decorMountDye(d), decorMountDyeTarget(d))\n    .then((c) => c ?? loadMwMountArt(deps, decorMountItem(d)));",
     "tests": [
-      "test/mwmount.test.js"
+      "test/formats/morrowind/mwmount.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "return loadMwMountArt(deps, decorMountItem(d))",
     "new": "return loadMwMountArt(deps, d)",
     "tests": [
-      "test/mwmount.test.js"
+      "test/formats/morrowind/mwmount.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": ".then((mw) => mw ?? loadMountArt(deps, flat[0], flat[1], decorMountDye(d), decorMountDyeTarget(d)));",
     "new": ".then((mw) => mw);",
     "tests": [
-      "test/mwmount.test.js"
+      "test/formats/morrowind/mwmount.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "    arts.clear();\n    stands.clear();\n    for (const e of [...standing.values()]) if (decorIsMount(e.piece) || decorStandsOwn(e.piece)) put(e.piece);\n",
     "new": "",
     "tests": [
-      "test/mwmount.test.js"
+      "test/formats/morrowind/mwmount.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "    arts.clear();\n    stands.clear();\n",
     "new": "    stands.clear();\n",
     "tests": [
-      "test/mwmount.test.js"
+      "test/formats/morrowind/mwmount.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "for (const e of [...standing.values()]) if (decorIsMount(e.piece) || decorStandsOwn(e.piece)) put(e.piece);",
     "new": "for (const e of [...standing.values()]) put(e.piece);",
     "tests": [
-      "test/mwmount.test.js"
+      "test/formats/morrowind/mwmount.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "renderer, mwPicture: deps.mwPicture }, entry.flat, entry.item)",
     "new": "renderer }, entry.flat, entry.item)",
     "tests": [
-      "test/mwmount.test.js"
+      "test/formats/morrowind/mwmount.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "old": "    mwPicture: decorMwPicture,   // MW-MOUNT: the ghost hangs as the room will\n",
     "new": "",
     "tests": [
-      "test/mwmount.test.js"
+      "test/formats/morrowind/mwmount.test.js"
     ]
   },
   {
@@ -185,7 +185,7 @@
     "old": "if (mwStamp !== _decorMwStamp) { _decorMwStamp = mwStamp; interiorDecor.refreshMounts(); }",
     "new": "if (mwStamp !== _decorMwStamp) { _decorMwStamp = mwStamp; }",
     "tests": [
-      "test/mwmount.test.js"
+      "test/formats/morrowind/mwmount.test.js"
     ]
   }
 ]

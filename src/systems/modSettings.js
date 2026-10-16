@@ -441,7 +441,7 @@ export const MOD_SETTINGS = Object.freeze({
       // KEEP-BOATS (2026-09-30, Mac: ship ownership "less punishing" - "Keep boats & cargo"): A DEPARTURE FROM THE
       // MOD'S SHIPPED DEFAULT. The mod ships it off, and off a boat placed in a dungeon was destroyed once the player
       // was back outside - a packable one and its hold for good, a crewed one's hold with it (UpdateBoatVisibility).
-      // The port ships it ON; the switch stays the player's. Pinned: test/csa_registration.test.js DEPARTED.
+      // The port ships it ON; the switch stays the player's. Pinned: test/systems/csa_registration.test.js DEPARTED.
       'Compatibility.PersistentDungeonBoats': Object.freeze({ default: true, get description() { return t('mods.comeSailAway.Compatibility.PersistentDungeonBoats.description', 'Keep a boat placed indoors or underground when you leave it (off, it is gone once you are back outside).'); } }),
       'Map.RestrictPositionReadingTime': Object.freeze({ default: true, get description() { return t('mods.comeSailAway.Map.RestrictPositionReadingTime.description', 'Position can only be viewed around midday and midnight'); } }),
       'Map.RestrictPositionReadingWeather': Object.freeze({ default: true, get description() { return t('mods.comeSailAway.Map.RestrictPositionReadingWeather.description', 'Position can only be viewed in Sunny or Cloudy weather'); } }),
@@ -789,7 +789,7 @@ export const MOD_SETTINGS = Object.freeze({
       // unbound in DFU's own defaults and unused by this mod's other two keys
       // and by every other vendored mod, and it says what it does: on and off.
       // The player may still bind it wherever they like; this is about what
-      // SHIPS. test/ht1_handheldtorches.test.js HT4 is the gate that caught it.
+      // SHIPS. test/systems/ht1_handheldtorches.test.js HT4 is the gate that caught it.
       'Handling.ToggleLightInput': Object.freeze({ default: "O", text: true, get description() { return t('mods.handheldTorches.Handling.ToggleLightInput.description', 'Button used to quickly ignite or douse your light source'); } }),   // KB1: not read by the mod any more - the key is the registry's action (inputActions.js MOD_ACTIONS); a player's saved value is carried there once (migrateKeyBinds)
       'Handling.RememberLastLightSource': Object.freeze({ default: true, get description() { return t('mods.handheldTorches.Handling.RememberLastLightSource.description', 'Igniting with the key re-lights the light you last doused, if you still carry one.'); } }),
       // HT4 (2026-09-15, Mac: "Pressing tab drops torches, tab is reserved
@@ -843,7 +843,7 @@ export const MOD_SETTINGS = Object.freeze({
       // first-person hand never holds it, and the light shines from the hip
       // (systems/playerTorch.js lanternAtWaist). Torches and candles are
       // still held. The vendored modsettings.json is untouched; the pane's
-      // pin names this key as the port's (test/ht1_handheldtorches.test.js).
+      // pin names this key as the port's (test/systems/ht1_handheldtorches.test.js).
       'Handling.LanternsAtWaist': Object.freeze({ default: true, get description() { return t('mods.handheldTorches.Handling.LanternsAtWaist.description', 'If enabled, lanterns hang at your waist instead of being held: they never need a free hand, are never stowed, and light you from the hip. Torches and candles are still held. (This port’s own switch - the mod has none.)'); } }),
       'Throwing.ThrowTorchInput': Object.freeze({ default: "X", text: true, get description() { return t('mods.handheldTorches.Throwing.ThrowTorchInput.description', 'Hold to wind up a throw, release to throw a torch.'); } }),   // KB1: not read by the mod any more - the key is the registry's action (inputActions.js MOD_ACTIONS); a player's saved value is carried there once (migrateKeyBinds)
       'Throwing.ThrowStrength': Object.freeze({ default: 1.0, min: 0.0, max: 10.0, float: true, step: 0.25, get description() { return t('mods.handheldTorches.Throwing.ThrowStrength.description', 'Multiplier on the throw\u2019s speed (25 at full Strength).'); } }),
@@ -1268,7 +1268,7 @@ export const MOD_SETTINGS = Object.freeze({
       // RATE-LAW (2026-10-04, Mac: "Remove travel options dials" / "Roads now travel at x100 and non roads at x60"): the
       // mod's TimeAcceleration section (DefaultStartingAcceleration, AlwaysUseStartingAcceleration, AccelerationLimit)
       // is not declared - the spinner it started and bounded is gone, and a journey runs at its ground's rate
-      // (systems/timeScale.js travelRateOf). The vendored modsettings.json keeps the three; test/to1_travelOptions.test.js
+      // (systems/timeScale.js travelRateOf). The vendored modsettings.json keeps the three; test/systems/travel/to1_travelOptions.test.js
       // names them as the one section the port leaves out.
       'Teleportation.EnablePaidTeleportation': Object.freeze({ default: false, get description() { return t('mods.travelOptions.Teleportation.EnablePaidTeleportation.description', "Enable paid Mages teleportation service for all guild members, before rank 8"); } }),
       // the shipped file's spacer section "__" carries no keys

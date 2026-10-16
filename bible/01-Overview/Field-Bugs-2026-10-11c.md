@@ -79,4 +79,4 @@ measured share is in the last row above. Not touched here: it is a change to the
 town, which stands no boat. Online, the forced three (Iliac Puddle No More, the Ocean Holes, Detailed Ships) cost what the
 "Come Sail Away off" row and the "five off" row differ by - within this probe's noise in an inland town.
 
-Pinned by `test/fb1011c_seatown.test.js` (4); `tools/mutants/fb1011c_seatown.json` (8, all dead).
+Pinned by `test/systems/comeSailAway/fb1011c_seatown.test.js` (4); `tools/mutants/fb1011c_seatown.json` (8, all dead).

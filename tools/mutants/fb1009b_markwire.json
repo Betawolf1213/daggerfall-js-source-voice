@@ -5,8 +5,8 @@
     "old": "export const TRADE_VOLATILE_FIELDS = Object.freeze(['stackCount', 'value', ...RECEIVER_MARKS]);",
     "new": "export const TRADE_VOLATILE_FIELDS = Object.freeze(['stackCount', 'value', 'equipSlot', 'questItem']);",
     "tests": [
-      "test/fb1009b_markwire.test.js",
-      "test/fb1001_market_goods.test.js"
+      "test/systems/fb1009b_markwire.test.js",
+      "test/systems/fb1001_market_goods.test.js"
     ]
   },
   {
@@ -15,7 +15,7 @@
     "old": "    for (const k of RECEIVER_MARKS) delete rec[k];\n",
     "new": "    for (const k of RECEIVER_MARKS) if (k !== 'acquired') delete rec[k];\n",
     "tests": [
-      "test/fb1009b_markwire.test.js"
+      "test/systems/fb1009b_markwire.test.js"
     ]
   },
   {
@@ -24,7 +24,7 @@
     "old": "export const RECEIVER_MARKS = Object.freeze(['equipSlot', 'questItem', 'acquired', 'wagonEntry', 'horseBond', 'horseFed']);",
     "new": "export const RECEIVER_MARKS = Object.freeze(['equipSlot', 'questItem', 'wagonEntry', 'horseBond', 'horseFed']);",
     "tests": [
-      "test/fb1009b_markwire.test.js"
+      "test/systems/fb1009b_markwire.test.js"
     ]
   }
 ]

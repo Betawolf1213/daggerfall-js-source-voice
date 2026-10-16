@@ -5,7 +5,7 @@
     "old": "(rec.group === GARMENT_RECORD_GROUP && isGarment(item))",
     "new": "(rec.group === GARMENT_RECORD_GROUP)",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "export const GARMENT_RECORD_GROUP = 'Clothing';",
     "new": "export const GARMENT_RECORD_GROUP = 'MensClothing';",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "export const allLegendaries = () => [...LEGENDARIES, ...WARDROBE_LEGENDARIES, ...ARCANE_LEGENDARIES, ..._customLegendaries];",
     "new": "export const allLegendaries = () => [...LEGENDARIES, ...ARCANE_LEGENDARIES, ..._customLegendaries];",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "export const allLegendaries = () => [...LEGENDARIES, ...WARDROBE_LEGENDARIES, ...ARCANE_LEGENDARIES, ..._customLegendaries];",
     "new": "export const allLegendaries = () => [...WARDROBE_LEGENDARIES, ...LEGENDARIES, ...ARCANE_LEGENDARIES, ..._customLegendaries];",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "const pool = allLegendaries().filter((l) => recordFitsGroup(l, item) &&",
     "new": "const pool = allLegendaries().filter((l) => l.group === item.group &&",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "recordFitsGroup(legendaryById(item.imprint), item)",
     "new": "legendaryById(item.imprint)?.group === item.group",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "  if (power.kind === 'hood') return hoodCapable(item);",
     "new": "  if (power.kind === 'hood') return true;",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "${p.survival && !survivalOn() ? SURVIVAL_OFF_NOTE : ''}",
     "new": "${''}",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "${p.survival && !survivalOn() ? SURVIVAL_OFF_NOTE : ''}",
     "new": "${!survivalOn() ? SURVIVAL_OFF_NOTE : ''}",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "templates: Object.freeze([163, 200])",
     "new": "templates: Object.freeze([163])",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "kind: 'climate', heat: 20, survival: true,",
     "new": "kind: 'climate', heat: 10, survival: true,",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "kind: 'climate', cold: 20, survival: true,",
     "new": "kind: 'climate', cold: 10, survival: true,",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "kind: 'school', school: 23, less: 25,",
     "new": "kind: 'school', school: 23, less: 20,",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "kind: 'school', school: 23, less: 25,",
     "new": "kind: 'school', school: 21, less: 25,",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "kind: 'longroad', fatigue: 25, fall: 50,",
     "new": "kind: 'longroad', fatigue: 25, fall: 33,",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "kind: 'longroad', fatigue: 25, fall: 50,",
     "new": "kind: 'longroad', fatigue: 0, fall: 50,",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "kind: 'bearing', standing: 5,",
     "new": "kind: 'bearing', standing: 3,",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "kind: 'hood', skill: 16, more: 25,",
     "new": "kind: 'hood', skill: 13, more: 25,",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "  return fx.length > 0 && fx.every((e) => effectSchool(e) === school);",
     "new": "  return fx.length > 0 && fx.some((e) => effectSchool(e) === school);",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "old": "  return fx.length > 0 && fx.every((e) => effectSchool(e) === school);",
     "new": "  return fx.every((e) => effectSchool(e) === school);",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -185,7 +185,7 @@
     "old": "  const fx = (spell?.effects ?? []).filter((e) => e && e.type > -1);",
     "new": "  const fx = (spell?.effects ?? []).filter((e) => e);",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -194,7 +194,7 @@
     "old": "    else if (p.kind === 'school' && spellOfSchool(spell, p.school)) pct += p.less;",
     "new": "    else if (p.kind === 'school') pct += p.less;",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -203,7 +203,7 @@
     "old": "    else if (p.kind === 'school' && spellOfSchool(spell, p.school)) pct += p.less;",
     "new": "    else if (p.kind === 'school' && spellOfSchool(spell, p.school)) pct += 0;",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -212,7 +212,7 @@
     "old": "const n = fn(casterEntity, sp, spell);",
     "new": "const n = fn(casterEntity, sp);",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -221,7 +221,7 @@
     "old": "      case 'climate': m().heatDegrees += p.heat ?? 0; m().coldDegrees += p.cold ?? 0; break;",
     "new": "      case 'climate': m().coldDegrees += p.cold ?? 0; break;",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -230,7 +230,7 @@
     "old": "      case 'climate': m().heatDegrees += p.heat ?? 0; m().coldDegrees += p.cold ?? 0; break;",
     "new": "      case 'climate': m().heatDegrees += p.heat ?? 0; break;",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -239,7 +239,7 @@
     "old": "      case 'longroad': m().fatigueLess += p.fatigue ?? 0; m().fallLess += p.fall ?? 0; break;",
     "new": "      case 'longroad': m().fallLess += p.fall ?? 0; break;",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -248,7 +248,7 @@
     "old": "      case 'longroad': m().fatigueLess += p.fatigue ?? 0; m().fallLess += p.fall ?? 0; break;",
     "new": "      case 'longroad': m().fatigueLess += p.fatigue ?? 0; break;",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -257,7 +257,7 @@
     "old": "for (let g = 0; g < s.length; g++) s[g] += p.standing ?? 0; break; }",
     "new": "for (let g = 0; g < 1; g++) s[g] += p.standing ?? 0; break; }",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -266,7 +266,7 @@
     "old": "      case 'hood': if (hoodUp(item)) m().skills[p.skill]",
     "new": "      case 'hood': if (item) m().skills[p.skill]",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -275,7 +275,7 @@
     "old": "registerEntityFold(LOOT_POWERS, wardrobeFold);",
     "new": "void wardrobeFold;",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -284,7 +284,7 @@
     "old": "export const WARDROBE_CHANNELS = Object.freeze(['warmth', 'dry', 'coldDegrees', 'heatDegrees', 'fatigueLess', 'fallLess']);",
     "new": "export const WARDROBE_CHANNELS = Object.freeze(['warmth', 'dry', 'heatDegrees', 'fatigueLess', 'fallLess']);",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -293,7 +293,7 @@
     "old": "export const WARDROBE_CHANNELS = Object.freeze(['warmth', 'dry', 'coldDegrees', 'heatDegrees', 'fatigueLess', 'fallLess']);",
     "new": "export const WARDROBE_CHANNELS = Object.freeze(['warmth', 'dry', 'coldDegrees', 'fatigueLess', 'fallLess']);",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -302,7 +302,7 @@
     "old": "export const WARDROBE_CHANNELS = Object.freeze(['warmth', 'dry', 'coldDegrees', 'heatDegrees', 'fatigueLess', 'fallLess']);",
     "new": "export const WARDROBE_CHANNELS = Object.freeze(['warmth', 'dry', 'coldDegrees', 'heatDegrees', 'fallLess']);",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -311,7 +311,7 @@
     "old": "export const WARDROBE_CHANNELS = Object.freeze(['warmth', 'dry', 'coldDegrees', 'heatDegrees', 'fatigueLess', 'fallLess']);",
     "new": "export const WARDROBE_CHANNELS = Object.freeze(['warmth', 'dry', 'coldDegrees', 'heatDegrees', 'fatigueLess']);",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -320,7 +320,7 @@
     "old": "    coldDegrees: Number(mods.coldDegrees) || 0, heatDegrees: Number(mods.heatDegrees) || 0,",
     "new": "    coldDegrees: Number(mods.coldDegrees) || 0, heatDegrees: Number(mods.heatDegrees) || 0, frostResist: Number(mods.coldDegrees) || 0,",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ],
     "note": "Re-aimed by content (AUDIT LOOT II A2): the degrees ride beside the host's own resistances now - the law is that a spell's frost resistance survives the wardrobe's context, and this lays one over it."
   },
@@ -330,7 +330,7 @@
     "old": "    coldDegrees: Number(mods.coldDegrees) || 0, heatDegrees: Number(mods.heatDegrees) || 0,",
     "new": "    coldDegrees: Number(mods.coldDegrees) || 0, heatDegrees: Number(mods.heatDegrees) || 0, fireResist: Number(mods.heatDegrees) || 0,",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ],
     "note": "Re-aimed by content (AUDIT LOOT II A2): as the frost record - a spell's fire resistance survives the wardrobe's context."
   },
@@ -340,7 +340,7 @@
     "old": "export const WARDROBE_FALL_MOST = 75;",
     "new": "export const WARDROBE_FALL_MOST = 100;",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -349,7 +349,7 @@
     "old": "export const WARDROBE_FATIGUE_MOST = 50;",
     "new": "export const WARDROBE_FATIGUE_MOST = 100;",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -358,7 +358,7 @@
     "old": "  return Math.trunc(FALL_HP_PER_METRE * (distance - FALL_DAMAGE_THRESHOLD) * (1 - less));",
     "new": "  return Math.trunc(FALL_HP_PER_METRE * (distance - FALL_DAMAGE_THRESHOLD));",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ],
     "note": "Re-aimed by content (AUDIT LOOT II A1): the bill is shared.js playerFallDamage now, read by applyFallLanding and the dungeon's landing alike."
   },
@@ -368,7 +368,7 @@
     "old": "  const less = Math.min(WARDROBE_FALL_MOST, Math.max(0, Number(entity?._mods?.fallLess) || 0)) / 100;",
     "new": "  const less = Math.min(WARDROBE_FALL_MOST, Number(entity?._mods?.fallLess) || 0) / 100;",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ],
     "note": "Re-aimed by content (AUDIT LOOT II A1): the clamp moved with the bill into shared.js playerFallDamage."
   },
@@ -379,7 +379,7 @@
     "new": "  return careerTartFatigueLoss(entity);",
     "note": "Re-aimed by content (the whole suite's fourth finding): PROF9 pins its tart line verbatim, so the Long Road is laid over the career's and the tart's in the exported function and PROF9's lines stand in its helper; the law is the same.",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -388,7 +388,7 @@
     "old": "Math.min(WARDROBE_FATIGUE_MOST, Math.max(0, Number(entity?._mods?.fatigueLess) || 0))",
     "new": "Math.min(WARDROBE_FATIGUE_MOST, Number(entity?._mods?.fatigueLess) || 0)",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -397,7 +397,7 @@
     "old": "allLegendaries().filter((r) => recordFitsGroup(r, item) &&",
     "new": "allLegendaries().filter((r) => r.group === item.group &&",
     "tests": [
-      "test/loot15_garments.test.js"
+      "test/systems/loot15_garments.test.js"
     ]
   },
   {
@@ -406,8 +406,8 @@
     "old": "  for (const rec of WARDROBE_LEGENDARIES) put(",
     "new": "  for (const rec of []) put(",
     "tests": [
-      "test/lr1_lootrarity.test.js",
-      "test/loot3_legendaries.test.js"
+      "test/systems/lr1_lootrarity.test.js",
+      "test/systems/loot3_legendaries.test.js"
     ]
   }
 ]

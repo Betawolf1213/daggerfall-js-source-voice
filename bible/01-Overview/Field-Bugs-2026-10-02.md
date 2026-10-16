@@ -50,9 +50,9 @@ piece does. The mod's own site names part the layouts exactly (every 'Rocks' or 
 the same list. Seen on the real renderer at the reporter's place: the sky over Hadus is clear and the outcrops stand as
 the mod lays them.
 
-`test/fb1002_rocksunk.test.js` (5; the lift off the real mesh with ARENA2_PATH); the source pins of
-`test/wodbush.test.js`, `test/roadsclear.test.js` (the shrub's block between a piece's box and its road test) and
-`test/prof2_client.test.js` (`rockPick`) re-aimed; `tools/mutants/fb1002_rocksunk.json` 5, 5 dead;
+`test/world/worldOfDaggerfall/fb1002_rocksunk.test.js` (5; the lift off the real mesh with ARENA2_PATH); the source pins of
+`test/world/terrain/wodbush.test.js`, `test/world/worldOfDaggerfall/roadsclear.test.js` (the shrub's block between a piece's box and its road test) and
+`test/net/prof2_client.test.js` (`rockPick`) re-aimed; `tools/mutants/fb1002_rocksunk.json` 5, 5 dead;
 `tools/mutants/wodbush.json` re-aimed, 7, 7 dead. World.js is line-neutral: no cite moves.
 
 ## Part two - the climb out of a dungeon's pit, the hunt under the foes, the net at the helm, the boat's loop; and the climb audited on Daggerfall's dungeons
@@ -219,7 +219,7 @@ traced by hand only (CORNER-TOP above).
 **RETIRED by HUNT-OUT (2026-10-04)**: the text hunt is removed whole, and this fix with it - its tests and its
 mutant records went with the hunt (`06-Systems/Climates-Calories.md`). The record below is what shipped.
 
-**Reproduced first** (`test/fb1002_fieldbugs.test.js`, on surv6's composed hunt): the box opens, a foe comes near, and
+**Reproduced first** (`test/scenes/fb1002_fieldbugs.test.js`, on surv6's composed hunt): the box opens, a foe comes near, and
 the box stays. On Yes the search runs its 4-8 s with the player frozen. At the turn to the result, `onSearched` called
 `advanceMinutes`, whose encounter tick (`world.js` `runEncounterTick(feet, true)`) replays 30-60 minutes of wanderer
 rolls at once and stands a hit 10-20 m away, facing the player (`_standEncounterFoe`), while the result is on screen.
@@ -272,7 +272,7 @@ changed while they read: A the climb's mechanics, traced on boxes; B the climb o
 Forward-only probe never ran (8 dungeons and 551 walls, 3 town blocks and 241 walls, about 30 scripted runs a wall a
 tree: Back from every height, strafes, jump catches, leaps, the hang's shimmy, 15-45 degree approaches, Climbing 5
 tired, and Back pressed every 0.15 m up the wall); C the hunt, the net and the loop, read; D the records and their
-pins. Every finding was reproduced on the code first, fixed, pinned red in `test/fb1002_audit.test.js` and its mutant
+pins. Every finding was reproduced on the code first, fixed, pinned red in `test/world/fb1002_audit.test.js` and its mutant
 killed.
 
 | | Finding | Fix |
@@ -313,22 +313,22 @@ near N0000008's floor are on both trees.
 **Not covered.** The world host's 30 m law and HELM-NET's `busy` wiring are pinned by source only (the host is not
 composed in a test). Leaps were run from mid-wall only, at Jumping 50.
 
-Pinned: `test/fb1002_audit.test.js` (12), the last on ARENA2 (CRACK-LIP on N0000008, STEP-BACK on the Mordywyr
+Pinned: `test/world/fb1002_audit.test.js` (12), the last on ARENA2 (CRACK-LIP on N0000008, STEP-BACK on the Mordywyr
 Mines' N0000033, CORNER-TOP in the reporter's pit, and no fall at B1's three yaws). `tools/mutants/fb1002_audit.json`
 (19), all dead.
 
 ## Pins and mutants
 
-- `test/fb1002_climb.test.js` (7): SEAM-STEP (the jamb on either hand; a slab it cannot step out from holds it in
+- `test/player/fb1002_climb.test.js` (7): SEAM-STEP (the jamb on either hand; a slab it cannot step out from holds it in
   place), HUG-TOUCH (Climbing 0 up the real wall's two triangles, at its pace), CRACK-LIP (the climb past a 2.5 cm
   slot; no grip and no ledge at the slot; a 10 cm sill still a hold), STEP-BACK (past 0.2 and 0.3 m step-backs to the
   top of a 9 m wall with no let-go; the reach never lifts the body onto a step's edge; a face turned across the wall
   not reached for), CORNER-TOP (either hand, 45 and 60 degrees), the laws by source, and the reporter's two walls on
   ARENA2.
-- `test/fb1002_fieldbugs.test.js` (8): HUNT-FOES (the ask, the busy page, the result left alone, the minutes at the
+- `test/scenes/fb1002_fieldbugs.test.js` (8): HUNT-FOES (the ask, the busy page, the result left alone, the minutes at the
   close and under a dropped box, by source), HELM-NET (a deck fishes, the helm does not; by source), HELM-HUSH (both
   crossfades leave the playing loop alone; a second boat placed under the first's fade).
-- `test/fb1002_audit.test.js` (12): the audit's (above).
+- `test/world/fb1002_audit.test.js` (12): the audit's (above).
 - Red on the code before, every test. `tools/mutants/fb1002_climb.json` (15), `tools/mutants/fb1002_fieldbugs.json`
   (12) and `tools/mutants/fb1002_audit.json` (19), all dead. After the audit's changes the eight lists its code touches
   (those three, `surv6`, `csa_time`, `forage4`, `climbfield`, `climb3`) were run again on the final code: 208 dead,
@@ -379,7 +379,7 @@ was fixed, pinned by tests that fail on the code as it stood, and mutation-prove
 
 ## ROCK-FREE: a rock is met from outside, collider by collider (1)
 
-**Reproduced first** (`test/fb1002_rocks.test.js`: Come Sail Away's runtime over the vendored hulls, the real `Collider`,
+**Reproduced first** (`test/systems/comeSailAway/fb1002_rocks.test.js`: Come Sail Away's runtime over the vendored hulls, the real `Collider`,
 world.js's own `csaSphereCastAll` lifted from its source; a Small Ship under sail, the wind astern). A shelf 3 m under the
 sea's line, under her where she starts, and a rock standing out of the sea 80 m ahead, both of one pixel: in 90 s she
 sailed through the rock and on, 855 m, to (22.1, 1055.7); without the shelf the rock held her off at (99.3, 245.8). A hull
@@ -431,7 +431,7 @@ open water's track frame for frame; rowing into a rock she is held off it as bef
 
 ## SEA-SHOAL: a carved sea is water (2)
 
-**Reproduced first** (`test/fb1002_seaheld.test.js`: the sampler's own sea, World of Daggerfall's own flatten, Unity's
+**Reproduced first** (`test/world/terrain/fb1002_seaheld.test.js`: the sampler's own sea, World of Daggerfall's own flatten, Unity's
 SampleHeight, world.js's `csaTerrainOf` mounted, the carve's floor read and the runtime). The open sea reads 33.994 m,
 6 mm under the line (FIELD-CSA2). A headland standing 34 m over the sea in the pixel's far corner, with a site levelled on
 it (`wodLocationLoader.js` `flattenForLocation`), lifted every sea point probed - 100 to 990 m from the site - to
@@ -472,7 +472,7 @@ stern on a shore refuses back. Forward still asks the centre's; the strafes keep
 
 ## CREW-SAY: the words never over each other (3)
 
-**Reproduced first** (`test/fb1002_crewsay.test.js`: the real crew life, its tables' own lines, projected from the helm's
+**Reproduced first** (`test/systems/naval/fb1002_crewsay.test.js`: the real crew life, its tables' own lines, projected from the helm's
 eye; the HUD's own layout and DOM). Nothing scrambles a crewman's words - every line is crewLife.js's and shipCrew.js's
 English. Over ten minutes of two crews of sixty, two or more lines were up in 5,103 of 12,000 frames, and in 2,843 of
 them bubbles stood over each other: the chorus is every hand at once (sung by two or more in 1,225 frames, up to six
@@ -510,12 +510,12 @@ Re-judging every record the change can move (the four moved pins' and every reco
 `systems/comeSailAway/comeSailAway.js` and `ui/naval/navalHud.js`: 869 - 863 dead, 4 equivalent as recorded) left two survivors, and each
 survives on this tree's base (d96bdc123) alike - older than this work, in code it does not touch, reported for their own
 fix: `auditdisc28_motion.json` AUDIT-DISC28-MO2-rest-kills-PH1 (`player/collider.js` `lowOneWay`, PH1 at rest, against
-`test/disc28_swim.test.js`) and `fb0929h_lostboat.json` LOST-BOAT-a-crewed-hull-packed (`systems/comeSailAway/comeSailAway.js`
-`recoverLostBoats`' crewed-hull exemption, against `test/fb0929h_lostboat.test.js`).
+`test/player/disc28_swim.test.js`) and `fb0929h_lostboat.json` LOST-BOAT-a-crewed-hull-packed (`systems/comeSailAway/comeSailAway.js`
+`recoverLostBoats`' crewed-hull exemption, against `test/systems/comeSailAway/fb0929h_lostboat.test.js`).
 
 ## The pins and the mutants
 
-`test/fb1002_rocks.test.js` (6), `test/fb1002_seaheld.test.js` (3), `test/fb1002_crewsay.test.js` (3), each red on the
+`test/systems/comeSailAway/fb1002_rocks.test.js` (6), `test/world/terrain/fb1002_seaheld.test.js` (3), `test/systems/naval/fb1002_crewsay.test.js` (3), each red on the
 code before. `tools/mutants/fb1002_rocks.json` (25), `fb1002_seaheld.json` (4), `fb1002_crewsay.json` (20) - all dead.
 PINS MOVED, each by content: `csa_sailing` (back asks the stern; the pin's title), `csa_close` (the sampler's clamp line),
 `colliderkeys` (four cell lookups: ROCK-FREE's two), `perfcol1` (three module scratch Sets: the hull sweep's two, made
@@ -573,13 +573,13 @@ glint itself, and the hint says so: "click the glint" (C3).
 
 ## Pins and mutants (part four)
 
-- `test/fb1002_herbcursor.test.js` (6): the law; the hold (refused requests, the last release, once-only, the late
+- `test/systems/foraging/fb1002_herbcursor.test.js` (6): the law; the hold (refused requests, the last release, once-only, the late
   lock, the boot's reset); the report, answered (the Basket's search through the real host and herbKind: the cursor
   asked in the press's frame, held through the three glints, every clicked glint found, the look handed back once);
   every end (Escape, walking off, a window, the professions shut, `dispose`); the other acts (a vein asks the look; a
   common herb's hand and, stood again at tier 2, the Sickle's steady hold ask nothing); the world's seam, by source.
 - `tools/mutants/fb1002_herbcursor.json` (17, with the audit's let-go-before-the-end), all dead.
-- PIN MOVED: `test/chat1.test.js`'s source pin on world.js's `pointerLock.js` import (holdCursor joined it). Six
+- PIN MOVED: `test/net/chat1.test.js`'s source pin on world.js's `pointerLock.js` import (holdCursor joined it). Six
   records re-aimed by content to the two lines of `pointerLock.js` the hold changed - one each in `menurelock1.json`
   and `freemouse1.json`, three in `fb0929_overworld_mouse.json`, one in `ow5.json` - each killed by the tests its
   original was (their four lists, 55, all dead). The cites the change moved were re-resolved (`tools/citeShift.mjs
@@ -594,7 +594,7 @@ A the mouse and the lock in a browser (a fake one with Chromium's and Firefox's 
 page-released exception, the post-Escape cooldown, Escape's unlock on its keyup - over the real `pointerLock.js` and
 gathering host); B the host's acts and the click (every start and end, the real activation gate); C every other
 minigame and station, on both skins, with a mouse, FreeMouse, a pad and a finger; D the records. Every finding was
-reproduced red in `test/fb1002_herbcursor_audit.test.js` first - world.js's own lines (the seam, the Escape's keyup,
+reproduced red in `test/systems/fb1002_herbcursor_audit.test.js` first - world.js's own lines (the seam, the Escape's keyup,
 the street ladder's two clicks) lifted out of the source and run over the real modules - then fixed and its mutant
 killed.
 
@@ -626,12 +626,12 @@ the Professions key).
 turn the view, so it cannot bruise (the turn keys and the feet still do) - pre-existing, and keeping still is the
 act. Taking the look for a mine, a trace or a net is one-way: the player frees the mouse again if they want it.
 
-Pinned: `test/fb1002_herbcursor_audit.test.js` (10). `tools/mutants/fb1002_herbcursor_audit.json` (14), all dead. On
+Pinned: `test/systems/fb1002_herbcursor_audit.test.js` (10). `tools/mutants/fb1002_herbcursor_audit.json` (14), all dead. On
 the final code, the two lists with every record any other list aims at the files the audit changed (`pointerLock.js`,
 `gatherHost.js`, `herbHost.js`, `herbAct.js` and `profReticle.js` whole, world.js within 30 lines of its changes: 242):
 272 dead; VEIN-NEED-press-keeps-nothing survives, on the base too (below).
-PIN MOVED: `test/prof1_client.test.js` (the ladder's order: the act's click before the node's),
-`test/fb0930b_toolsaid.test.js` (the node's click refused on the act's; the Basket's words); STEADY-SAID-the-key-never-named
+PIN MOVED: `test/systems/prof1_client.test.js` (the ladder's order: the act's click before the node's),
+`test/systems/fb0930b_toolsaid.test.js` (the node's click refused on the act's; the Basket's words); STEADY-SAID-the-key-never-named
 (`fb1001_nodes.json`) re-aimed to the new words (its list, 9, all dead). The audit's cites re-resolved (`tools/citeShift.mjs`
 against 8e5dcbe2, 4: the same range, grown by A2's refusal); world.js stayed line-neutral (the ladder's two lines
 traded places).

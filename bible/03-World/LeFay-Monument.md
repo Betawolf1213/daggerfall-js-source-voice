@@ -104,7 +104,7 @@ unseen, and the count still counts.
 
 ## Verification
 
-- `test/lefay1_monument.test.js` (21): the place (HOLD-MONUMENT: the Hold, and Gothway Garden no longer); the
+- `test/world/lefay1_monument.test.js` (21): the place (HOLD-MONUMENT: the Hold, and Gothway Garden no longer); the
   Hold's spot (beside the exit landing and never on the way out - AUDIT FIVE-ASKS B1/B2 - or, with no door, beside its
   start marker and never on its landing, clear of every model of the camp - and handed no camp,
   among them; the camp closed only in a block of its name; no marker, the grid's middle; neither host closes the camp

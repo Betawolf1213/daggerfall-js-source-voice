@@ -5,7 +5,7 @@
     "old": "    note: target.locationName && target.onMap === false ? WHERE_TEXT.offMap : null,",
     "new": "    note: target.locationName && !target.onMap ? WHERE_TEXT.offMap : null,",
     "tests": [
-      "test/guide2_wayThere.test.js"
+      "test/ui/enhanced/guide2_wayThere.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "  const where = [target.buildingName, place].filter(Boolean).join(', ');",
     "new": "  const where = [place].filter(Boolean).join(', ');",
     "tests": [
-      "test/guide2_wayThere.test.js"
+      "test/ui/enhanced/guide2_wayThere.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "    where: target.here ? `${where} (${WHERE_TEXT.here})` : where,",
     "new": "    where,",
     "tests": [
-      "test/guide2_wayThere.test.js"
+      "test/ui/enhanced/guide2_wayThere.test.js"
     ]
   },
   {
@@ -32,8 +32,8 @@
     "old": "  formatText(localizedText('locationInRegionProvince', '{0} in {1} province'), locationName, regionName);",
     "new": "  formatText(localizedText('locationInRegionProvince', '{0}, {1}'), locationName, regionName);",
     "tests": [
-      "test/guide2_wayThere.test.js",
-      "test/audit26_systems2.test.js"
+      "test/ui/enhanced/guide2_wayThere.test.js",
+      "test/systems/audit26_systems2.test.js"
     ]
   },
   {
@@ -42,7 +42,7 @@
     "old": "  const onMap = where.canFindPlace ? !!where.canFindPlace(site.regionName, site.locationName) : null;",
     "new": "  const onMap = where.canFindPlace ? !!where.canFindPlace(site.regionName, site.locationName) : false;",
     "tests": [
-      "test/guide2_wayThere.test.js"
+      "test/ui/enhanced/guide2_wayThere.test.js"
     ]
   },
   {
@@ -51,7 +51,7 @@
     "old": "  if (typeof message?.getTextTokens !== 'function') return null;\n",
     "new": "",
     "tests": [
-      "test/enhancedChronicle.test.js"
+      "test/ui/enhanced/enhancedChronicle.test.js"
     ]
   },
   {
@@ -60,7 +60,7 @@
     "old": "  if (said.find && door) {\n    const go = el('button', 'act', WHERE_TEXT.show);",
     "new": "  if (said.find) {\n    const go = el('button', 'act', WHERE_TEXT.show);",
     "tests": [
-      "test/guide2_wayThere.test.js"
+      "test/ui/enhanced/guide2_wayThere.test.js"
     ]
   },
   {
@@ -69,7 +69,7 @@
     "old": "    go.onclick = () => { onAction('handoff'); if (door(find) === false) onAction('resume'); };",
     "new": "    go.onclick = () => { if (door(find) === false) onAction('resume'); onAction('handoff'); };",
     "tests": [
-      "test/guide2_wayThere.test.js"
+      "test/ui/enhanced/guide2_wayThere.test.js"
     ]
   },
   {
@@ -78,7 +78,7 @@
     "old": "    go.onclick = () => { onAction('handoff'); if (door(find) === false) onAction('resume'); };",
     "new": "    go.onclick = () => { onAction('handoff'); door(find); };",
     "tests": [
-      "test/guide2_wayThere.test.js"
+      "test/ui/enhanced/guide2_wayThere.test.js"
     ]
   },
   {
@@ -87,7 +87,7 @@
     "old": "      const where = questWhere(sel.written?.at(-1)?.message, 'px-qwhere');",
     "new": "      const where = questWhere(sel.written?.[0]?.message, 'px-qwhere');",
     "tests": [
-      "test/guide2_wayThere.test.js"
+      "test/ui/enhanced/guide2_wayThere.test.js"
     ]
   },
   {
@@ -96,7 +96,7 @@
     "old": "  if (!said || (wayOnly && !(said.find && door)) || (skip &&",
     "new": "  if (!said || (wayOnly && !said.find) || (skip &&",
     "tests": [
-      "test/guide2_wayThere.test.js"
+      "test/ui/enhanced/guide2_wayThere.test.js"
     ]
   },
   {
@@ -105,7 +105,7 @@
     "old": " || (skip && said.find?.locationName === skip.locationName && said.find?.regionName === skip.regionName)) return null;",
     "new": ") return null;",
     "tests": [
-      "test/guide2_wayThere.test.js"
+      "test/ui/enhanced/guide2_wayThere.test.js"
     ]
   },
   {
@@ -114,7 +114,7 @@
     "old": "      go.onclick = () => { onExit(); door(find); };",
     "new": "      go.onclick = () => { onExit(); deps.showQuestPlace?.(find); };",
     "tests": [
-      "test/guide2_wayThere.test.js"
+      "test/ui/enhanced/guide2_wayThere.test.js"
     ]
   },
   {
@@ -123,7 +123,7 @@
     "old": "      go.onclick = () => { onExit(); door(find); };",
     "new": "      go.onclick = () => { door(find); onExit(); };",
     "tests": [
-      "test/guide2_wayThere.test.js"
+      "test/ui/enhanced/guide2_wayThere.test.js"
     ]
   },
   {
@@ -132,7 +132,7 @@
     "old": "        if (section === 'quests' && e.uid != null) {\n          const state = questState(e);",
     "new": "        if (section === 'quests' && e.uid != null && !isFolded(folded, section, i)) {\n          const state = questState(e);",
     "tests": [
-      "test/guide2_wayThere.test.js"
+      "test/ui/enhanced/guide2_wayThere.test.js"
     ]
   },
   {
@@ -141,7 +141,7 @@
     "old": "    if (e.find && typeof door === 'function') {",
     "new": "    if (e.find) {",
     "tests": [
-      "test/guide2_wayThere.test.js"
+      "test/ui/enhanced/guide2_wayThere.test.js"
     ]
   },
   {
@@ -150,7 +150,7 @@
     "old": "  armClocks();   // GUIDE2: after the spans exist\n",
     "new": "",
     "tests": [
-      "test/guide2_wayThere.test.js"
+      "test/ui/enhanced/guide2_wayThere.test.js"
     ]
   },
   {
@@ -159,7 +159,7 @@
     "old": "    destroy() {\n      disarmClocks();\n",
     "new": "    destroy() {\n",
     "tests": [
-      "test/guide2_wayThere.test.js"
+      "test/ui/enhanced/guide2_wayThere.test.js"
     ]
   },
   {
@@ -168,7 +168,7 @@
     "old": "      if (!Number.isFinite(left)) { render(); return; }",
     "new": "      if (!Number.isFinite(left)) continue;",
     "tests": [
-      "test/guide2_wayThere.test.js"
+      "test/ui/enhanced/guide2_wayThere.test.js"
     ]
   },
   {
@@ -177,7 +177,7 @@
     "old": "      span.textContent = `Time remains: ${remainWords(left)}`;",
     "new": "      span.textContent = `${remainWords(left)}`;",
     "tests": [
-      "test/guide2_wayThere.test.js"
+      "test/ui/enhanced/guide2_wayThere.test.js"
     ]
   },
   {
@@ -186,7 +186,7 @@
     "old": "      showQuestPlace: (modes?.mode ?? 'exterior') === 'exterior' ? (find) => showQuestPlace(find) : undefined,",
     "new": "      showQuestPlace: (find) => showQuestPlace(find),",
     "tests": [
-      "test/guide2_wayThere.test.js"
+      "test/ui/enhanced/guide2_wayThere.test.js"
     ]
   },
   {
@@ -195,8 +195,8 @@
     "old": "    if (giveOffer()) return false;",
     "new": "    if (giveOffer()) return;",
     "tests": [
-      "test/guide2_wayThere.test.js",
-      "test/audit58_magic.test.js"
+      "test/ui/enhanced/guide2_wayThere.test.js",
+      "test/systems/audit58_magic.test.js"
     ]
   },
   {
@@ -205,7 +205,7 @@
     "old": "    townTalk.showOverlay(_travelMap);\n    return true;\n",
     "new": "    townTalk.showOverlay(_travelMap);\n",
     "tests": [
-      "test/guide2_wayThere.test.js"
+      "test/ui/enhanced/guide2_wayThere.test.js"
     ]
   },
   {
@@ -214,7 +214,7 @@
     "old": "    canFindPlace: host.questCanFindPlace,\n    currentLocationName: host.questLocationName,\n  });\n",
     "new": "    canFindPlace: host.questCanFindPlace,\n    currentLocationName: host.questLocationName,\n    showQuestPlace: host.showQuestPlace,\n  });\n",
     "tests": [
-      "test/guide2_wayThere.test.js"
+      "test/ui/enhanced/guide2_wayThere.test.js"
     ]
   }
 ]

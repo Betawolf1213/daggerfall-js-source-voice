@@ -18,7 +18,7 @@ then every finding reproduced again on the LIVE tree before its fix:
 | B - the dress and the layout | the roles, the chrome, both panels' sheets, the Collections page's | Chromium over the card lab and the real Collections page: Enhanced Plus in all six colours, the classic skin, the DFO Grimoire dress; 390x844, 360x640, 844x390 and 640x360 touched; contrast sampled off the real grounds; every one of 16,870 UI rules matched against the panels |
 | C - Hold'em, the binder, Collections, the lab, the probe | `ui/card/cardTableHud.js`, `cardBinderPage.js`, `collectionsPage.js`, `cardPanelKit.js`, `tools/cardPanelsProbe.mjs` | 984 model states and 2,394 presses compared against the base (57a214095); pixel ratios 1 to 3; an instrumented probe |
 | D - the localization and the scan | the routed words, the thirteen languages' drafts, the meta records, `tools/l10nHardcoded.mjs` | every draft read in its UI context against its language's glossary and rows; the meta re-hashed with the pipeline's own hash; the scan run old and new over the whole tree and over adversarial strings |
-| E - the pins, the mutants, the record | `test/cardsplus.test.js`, the moved pins, `tools/mutants/cardsplus.json`, the bible, the PR's description | mutants written for every claim a test title makes, run against 59 card and kit suites; every doc line checked against the code |
+| E - the pins, the mutants, the record | `test/ui/cardsplus.test.js`, the moved pins, `tools/mutants/cardsplus.json`, the bible, the PR's description | mutants written for every claim a test title makes, run against 59 card and kit suites; every doc line checked against the code |
 
 Around the audit the branch took main twice: before its fixes #867, #860, #847 and #872 (the Localization arc's next
 batches, the Eltheric Ocean, MENU-ORDER), and after them #866, #873 and #875 (RAIN-HOURS and RAIN-HEART,
@@ -91,8 +91,8 @@ selectors and no prose; a repaint about 5 ms at a pixel ratio of 2, and only on 
 
 ## Pinned
 
-`test/cardsplus.test.js` (11 - the audit's two: lane A's, lanes B and C's; the others extended), the scan's own test
-(`test/l10n4_hardcoded.test.js`), `tools/cardPanelsProbe.mjs` (1,690 checks over 105 pages). Mutants
+`test/ui/cardsplus.test.js` (11 - the audit's two: lane A's, lanes B and C's; the others extended), the scan's own test
+(`test/systems/l10n4_hardcoded.test.js`), `tools/cardPanelsProbe.mjs` (1,690 checks over 105 pages). Mutants
 `tools/mutants/cardsplus.json`: 82, all dead, on the final tree (CP-watcher-end retired with the check it mutated - A6). Records re-aimed by content: `auditcards6_b` (AC6-B10-fallback-hand,
 AC6-B10-tab-walk), `fb1011_cardskept` (CP-fold-forgotten), and `cardsplus`'s own. The 127 older records aimed at the
 files the audit changed (`ui/card/cardTableHud.js` 41, `ui/grimoireDress.js` 33, `ui/enhanced/enhancedFrame.js` 26,

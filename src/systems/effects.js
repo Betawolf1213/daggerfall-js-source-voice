@@ -25,7 +25,7 @@
 // initial round (the joining instance is never added to liveEffects). The three keys above are EXAMPLES of
 // those round laws, not the library's extent: EF1 measured it and all
 // 91 of DFU's classic keys land (see applySpell's skip counter and
-// test/effectcoverage.test.js, which regenerates the key set from the
+// test/systems/effectcoverage.test.js, which regenerates the key set from the
 // effect classes). This header claimed otherwise for as long as the
 // counter did - a stale sentence propagates, because the next reader
 // finds it twice and believes it.
@@ -1806,7 +1806,7 @@ export function applySpell(spell, casterLevel, target, sinks, rolls = Math.rando
     // keys - the 82 written as literals plus ElementalResistance's
     // five (8,0-8,4) and Pacify's four (33,0-33,3), which build
     // theirs from a loop variable - drives through this loop without
-    // reaching it. test/effectcoverage.test.js regenerates that key
+    // reaching it. test/systems/effectcoverage.test.js regenerates that key
     // set from the effect classes and proves it, rather than
     // asserting a number somebody counted once.
     out.skipped++;

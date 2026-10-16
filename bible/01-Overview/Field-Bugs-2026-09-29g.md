@@ -36,7 +36,7 @@ and the townsperson at Mac's word on the first draft (*"Spare townspeople in rai
 still DFU's Murder, and still turned the defenders). The civilian arm passes them by - and the first on the look ray
 stops the swing, as a spared defender does (the body DFU's SphereCast meets first); the world host's trample list is
 filtered by the same rule. No raid, DFU's Assault and Murder stand, whatever the setting.
-`test/fb0929_raidguards.test.js` (+1, failing on the code before it), `tools/mutants/fb0929g_raidguardnpc.json` (9, 9
+`test/scenes/fb0929_raidguards.test.js` (+1, failing on the code before it), `tools/mutants/fb0929g_raidguardnpc.json` (9, 9
 dead, the audit's five among them).
 
 **AUDIT 29g (Mac: "audit this").** A code review of the batch found one fault, in this fix: `resolveCivilianHit`
@@ -55,7 +55,7 @@ Criminal_Conspiracy and calls the watch (PlayerEntity.cs:498-511). DFU writes th
 SuppressCrime (:2345-2355) is never asked of. V4 routed every write through the setter, this one too, so a transformed
 lycanthrope with a hated name drew the watch with NO crime: never halted, never charged, and the watch never stood down
 while he stayed a beast (EnemyEntity keeps guards while transformed). Both hosts (`world.js`, `exterior.js`) write the
-field now. `test/beastform.test.js`'s V4 pin allows that one write and no other; `audit26_dungeonfoes` and
+field now. `test/systems/beastform.test.js`'s V4 pin allows that one write and no other; `audit26_dungeonfoes` and
 `exteriorfoes` pin the field. `tools/mutants/fb0929g_werelevy.json` (2, 2 dead).
 
 ## WARDEN-STRIKE: a Cast When Strikes spell on the Gate's Warden reaches him (9)
@@ -70,7 +70,7 @@ court's own spell door through the enchant ctx's `bossSpell` - which only the du
 hosted court never mounts one (`worldModes` builds it with `enchantCtx: false`: the outer host's ctx is the live one).
 The world host's and the fixed-city host's mounts passed none, so in the real game the spell went nowhere. They hand it
 to the live court's door now (`modes.dungeonCtx.spellOnBoss`, on the dungeon api, shut outside a court).
-`test/fb0929g_wardenstrike.test.js` (3; all fail on the code before it), `tools/mutants/fb0929g_wardenstrike.json` (4,
+`test/scenes/fb0929g_wardenstrike.test.js` (3; all fail on the code before it), `tools/mutants/fb0929g_wardenstrike.json` (4,
 4 dead).
 
 **What online does to a strike (For Mac 4).** A foe another player spawned - a shared dungeon's, a cell's encounter,
@@ -109,7 +109,7 @@ on one lands on the copy as before and its damage crosses as a blow. A foe that 
 send it back to (the stand-in caster), so the reflected bundle lands nowhere. A lingering damage effect's later ticks
 are nobody's blow at the owner (the stand-in is no player), as a fall's are, so a kill by a tick pays no one. The
 striker hears no "Trap active." line, because the save is rolled at the owner.
-`test/strikeshared.test.js` (7), `tools/mutants/strikeshared.json` (16, 16 dead).
+`test/scenes/strikeshared.test.js` (7), `tools/mutants/strikeshared.json` (16, 16 dead).
 
 ## OW6-NEAR: the journey's hold on enemies begins 40% nearer (6)
 
@@ -119,7 +119,7 @@ for enemies nearby. The lead-in is reach + THREAT_WARN_S x (own pace + the enemy
 that shortens it by exactly the asked 40% - for every threat, with no band's, raider's or camp's sight or chase moved,
 which would also change when they spot the traveller - is the warning: 2 -> 1.2. A rider at x40 is held from 768 m
 short of a band's sight, not 1280; on foot 168 m, not 280. The second "too early" after OW6-LATE's 5 -> 2.
-`test/ow6_slowdown.test.js` re-derived; `tools/mutants/ow6s.json` (27, 27 dead).
+`test/systems/travel/ow6_slowdown.test.js` re-derived; `tools/mutants/ow6s.json` (27, 27 dead).
 
 ## What is Daggerfall's own (3, 4, 7, 8)
 

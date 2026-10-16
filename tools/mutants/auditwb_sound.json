@@ -5,7 +5,7 @@
     "old": "      if (stingAt !== null && s.fell) return now - stingAt < SCORE_STING_MS ? GATE_SONGS.fell : SCORE_SILENCE;",
     "new": "",
     "tests": [
-      "test/auditwb_sound.test.js"
+      "test/systems/gate/auditwb_sound.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "      if (law === GATE_SONGS.fell && stingAt === null) stingAt = now + SCORE_STING_LEAD_MS;",
     "new": "      if (s.fell && stingAt === null) stingAt = now + SCORE_STING_LEAD_MS;",
     "tests": [
-      "test/auditwb_sound.test.js"
+      "test/systems/gate/auditwb_sound.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "      if (s.day !== day) { day = s.day; stingAt = null; }",
     "new": "      if (s.day !== day) { day = s.day; }",
     "tests": [
-      "test/auditwb_sound.test.js"
+      "test/systems/gate/auditwb_sound.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "    if (!this.playing || this._current === null) { this.stop(); return; }\n    const sw = { from: this._current, to: null, timer: null };",
     "new": "    { this.stop(); return; }\n    const sw = { from: this._current, to: null, timer: null };",
     "tests": [
-      "test/auditwb_sound.test.js"
+      "test/systems/gate/auditwb_sound.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "      this._switch = null;\n      this.player?.stop();\n      this._audio?.stop();\n      if (sw.to && !this._start(sw.to)",
     "new": "      this._switch = null;\n      if (sw.to && !this._start(sw.to)",
     "tests": [
-      "test/auditwb_sound.test.js"
+      "test/systems/gate/auditwb_sound.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "(want === SCORE_SILENCE) { if (music.current !== null) music.fadeOut(); }",
     "new": "(want === SCORE_SILENCE) { if (music.current !== null) music.stop(); }",
     "tests": [
-      "test/wb7_boss_audio.test.js"
+      "test/systems/gate/wb7_boss_audio.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "{ gruntAt = t; hpHeard = s.hp; sound(BOSS_CUES.hurt, s, t, null); }",
     "new": "{ gruntAt = t; hpHeard = s.hp; sound(BOSS_CUES.hurt, s, t, null); } hpHeard = s.hp;",
     "tests": [
-      "test/auditwb_sound.test.js"
+      "test/systems/gate/auditwb_sound.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "    if (hpHeard === null || s.hp > hpHeard) hpHeard = s.hp;",
     "new": "    if (hpHeard === null) hpHeard = s.hp;",
     "tests": [
-      "test/auditwb_sound.test.js"
+      "test/systems/gate/auditwb_sound.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "    const seamless = !!this.song.seamless && this.loop && durationTicks > 0;",
     "new": "    const seamless = false;",
     "tests": [
-      "test/auditwb_sound.test.js"
+      "test/systems/gate/auditwb_sound.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "      this._originTime += durationTicks * secondsPerTick;",
     "new": "      this._originTime += (durationTicks + 1) * secondsPerTick;",
     "tests": [
-      "test/auditwb_sound.test.js"
+      "test/systems/gate/auditwb_sound.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "durationTicks: bars * 4 * SCORE_TPQ, seamless: true, level };",
     "new": "durationTicks: bars * 4 * SCORE_TPQ, level };",
     "tests": [
-      "test/auditwb_sound.test.js"
+      "test/systems/gate/auditwb_sound.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "    frameDrawn() { hostCounts = true; drawnN++; },",
     "new": "    frameDrawn() { drawnN++; },",
     "tests": [
-      "test/auditwb_sound.test.js"
+      "test/systems/gate/auditwb_sound.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "      if (phase === 'shut') { wait = VEIL_OPEN_WAIT_TICKS; drawnAt = drawnN; kick(); }",
     "new": "      if (phase === 'shut') { wait = VEIL_OPEN_WAIT_TICKS; kick(); }",
     "tests": [
-      "test/auditwb_sound.test.js"
+      "test/systems/gate/auditwb_sound.test.js"
     ]
   },
   {
@@ -122,8 +122,8 @@
     "old": "    try { if (gatePool?.frame(dt)) warmGateVeil(); }",
     "new": "    try { gatePool?.frame(dt); }",
     "tests": [
-      "test/auditwb_sound.test.js",
-      "test/wb2_gate.test.js"
+      "test/systems/gate/auditwb_sound.test.js",
+      "test/world/gate/wb2_gate.test.js"
     ]
   },
   {
@@ -132,7 +132,7 @@
     "old": "      draw(t);   // AUDIT WB D6",
     "new": "      // AUDIT WB D6",
     "tests": [
-      "test/auditwb_sound.test.js"
+      "test/systems/gate/auditwb_sound.test.js"
     ]
   },
   {
@@ -141,7 +141,7 @@
     "old": "    if (anchor === null || Math.abs(anchor + p - w) > slackMs) anchor = w - p;",
     "new": "    if (anchor === null) anchor = w - p;",
     "tests": [
-      "test/auditwb_sound.test.js"
+      "test/systems/gate/auditwb_sound.test.js"
     ]
   },
   {
@@ -150,7 +150,7 @@
     "old": "    if (anchor === null || Math.abs(anchor + p - w) > slackMs) anchor = w - p;",
     "new": "    anchor = w - p;",
     "tests": [
-      "test/auditwb_sound.test.js"
+      "test/systems/gate/auditwb_sound.test.js"
     ]
   },
   {
@@ -159,7 +159,7 @@
     "old": "      float pour = 0.55 + 0.45 * fg;",
     "new": "      float pour = 0.55 + 0.45 * dnoise(vec2(id * 3.1, e * 260.0 + t * ${w(FALL_TURNS)}));",
     "tests": [
-      "test/auditwb_sound.test.js"
+      "test/systems/gate/auditwb_sound.test.js"
     ]
   },
   {
@@ -168,7 +168,7 @@
     "old": "      float fk = 1.0 - abs(2.0 * fph - 1.0);",
     "new": "      float fk = 0.5;",
     "tests": [
-      "test/auditwb_sound.test.js"
+      "test/systems/gate/auditwb_sound.test.js"
     ]
   },
   {
@@ -177,7 +177,7 @@
     "old": "  if (e < ${RIDGES_TOP.toFixed(4)}) {",
     "new": "  if (true) {",
     "tests": [
-      "test/auditwb_sound.test.js"
+      "test/systems/gate/auditwb_sound.test.js"
     ]
   },
   {
@@ -186,7 +186,7 @@
     "old": "export const RIDGES_TOP = 0.42;",
     "new": "export const RIDGES_TOP = 0.3;",
     "tests": [
-      "test/auditwb_sound.test.js"
+      "test/systems/gate/auditwb_sound.test.js"
     ]
   },
   {
@@ -195,7 +195,7 @@
     "old": "      _lights.length = 0;",
     "new": "      const _lights = [];",
     "tests": [
-      "test/auditwb_sound.test.js"
+      "test/systems/gate/auditwb_sound.test.js"
     ]
   },
   {
@@ -204,7 +204,7 @@
     "old": "      if (!floor.length) return NONE;\n      const out = [];",
     "new": "      const out = [];",
     "tests": [
-      "test/auditwb_sound.test.js"
+      "test/systems/gate/auditwb_sound.test.js"
     ]
   },
   {
@@ -213,7 +213,7 @@
     "old": "export const courtLights = () => (_courtLights ??= ",
     "new": "export const courtLights = () => (",
     "tests": [
-      "test/auditwb_sound.test.js"
+      "test/systems/gate/auditwb_sound.test.js"
     ]
   }
 ]

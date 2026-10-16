@@ -764,7 +764,7 @@ ${THEME_CSS}
  * carved window, a box inside it a panel, a figure's socket a well. Generated here from FRAME_TONES, so the site and
  * the game cannot carve two different stones.
  *
- * ONE DIFFERENCE, AND IT IS THE PAGE'S LAW: the site may carry no url() (test/landing.test.js - a page about the game
+ * ONE DIFFERENCE, AND IT IS THE PAGE'S LAW: the site may carry no url() (test/ui/enhanced/landing.test.js - a page about the game
  * draws nothing but CSS), and the game's window frame is a picture (frameSvg's border-image). So a window here is cut
  * from borders and shadows - the lit and shaded bevel, the outline, the engraved inner line, the hard drop - and its
  * brass fittings, rivet and all, are solid gradients laid at its four corners on a pseudo-element. Paint, like the kit:

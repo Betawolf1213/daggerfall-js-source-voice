@@ -5,7 +5,7 @@
     "old": "  const fld = { ...rmb.FldHeader, AutoMapData: arenaAutoMap(rmb.FldHeader.AutoMapData, rmb) };",
     "new": "  const fld = rmb.FldHeader;",
     "tests": [
-      "test/arena_townmap.test.js"
+      "test/ui/town/arena_townmap.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "    return inBox && x * x + z * z > SAND_R * SAND_R ? ARENA_MAP_BYTE : v;",
     "new": "    return inBox ? ARENA_MAP_BYTE : v;",
     "tests": [
-      "test/arena_townmap.test.js"
+      "test/ui/town/arena_townmap.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "    const inBox = Math.abs(x - box.center[0])",
     "new": "    const inBox = true || Math.abs(x - box.center[0])",
     "tests": [
-      "test/arena_townmap.test.js"
+      "test/ui/town/arena_townmap.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "z = (63 - Math.floor(i / 64) + 0.5) * MAP_PX - cz;",
     "new": "z = (Math.floor(i / 64) + 0.5) * MAP_PX - cz;",
     "tests": [
-      "test/arena_townmap.test.js"
+      "test/ui/town/arena_townmap.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "export const ARENA_MAP_BYTE = BUILDING_TYPES.GuildHall + 1;",
     "new": "export const ARENA_MAP_BYTE = BUILDING_TYPES.GuildHall;",
     "tests": [
-      "test/arena_townmap.test.js"
+      "test/ui/town/arena_townmap.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "export const arenaTownLandmark = (dfBlock) => (dfBlock?.name === ARENA_BLOCK",
     "new": "export const arenaTownLandmark = (dfBlock) => (dfBlock",
     "tests": [
-      "test/arena_townmap.test.js"
+      "test/ui/town/arena_townmap.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "    for (const bl of this.deps.blocks ?? []) {",
     "new": "    for (const bl of []) {",
     "tests": [
-      "test/arena_townmap.test.js"
+      "test/ui/town/arena_townmap.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "      const anchor = nameplateAnchor(bl.x, bl.y, lm.position);",
     "new": "      const anchor = nameplateAnchor(bl.y, bl.x, lm.position);",
     "tests": [
-      "test/arena_townmap.test.js"
+      "test/ui/town/arena_townmap.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "    if (!p || p.isResidence || p.landmark) return;",
     "new": "    if (!p || p.isResidence) return;",
     "tests": [
-      "test/arena_townmap.test.js"
+      "test/ui/town/arena_townmap.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "    for (const bl of deps.blocks ?? []) {",
     "new": "    for (const bl of []) {",
     "tests": [
-      "test/arena_townmap.test.js"
+      "test/ui/town/arena_townmap.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "y: sheetY(ensureField().h, ay), key: null,",
     "new": "y: ay, key: null,",
     "tests": [
-      "test/arena_townmap.test.js"
+      "test/ui/town/arena_townmap.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "key: null, quarter: quarterOfType(lm.buildingType) });",
     "new": "key: null, quarter: null });",
     "tests": [
-      "test/arena_townmap.test.js"
+      "test/ui/town/arena_townmap.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "autoMapData, landmark: arenaTownLandmark(bl.dfBlock) })),",
     "new": "autoMapData, landmark: null })),",
     "tests": [
-      "test/arena_townmap.test.js"
+      "test/ui/town/arena_townmap.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "autoMapData, landmark: arenaTownLandmark(bl.dfBlock) })),",
     "new": "autoMapData, landmark: null })),",
     "tests": [
-      "test/arena_townmap.test.js"
+      "test/ui/town/arena_townmap.test.js"
     ]
   }
 ]

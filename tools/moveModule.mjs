@@ -49,7 +49,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 /** Tracked files that can hold an address. */
 export const TEXT_EXT = /\.(js|mjs|cjs|ts|json|md|html|yml|yaml|toml|css|txt)$/;
 /** Files whose text is a record that is never rewritten. */
-export const FROZEN = [/^server(-account)?\/migrations\//, /^package-lock\.json$/, /(^|\/)node_modules\//, /^tools\/moveModule\.mjs$/, /^test\/tidy1_codemap\.test\.js$/, /^tools\/moveLedger\.json$/];
+export const FROZEN = [/^server(-account)?\/migrations\//, /^package-lock\.json$/, /(^|\/)node_modules\//, /^tools\/moveModule\.mjs$/, /^test\/(?:[\w-]+\/)*tidy1_codemap\.test\.js$/, /^tools\/moveLedger\.json$/];
 /** Every move made, in order: [[from, to], ...]. */
 export const LEDGER = 'tools/moveLedger.json';
 /** The roots a path is also spelled from: `systems/x.js` is src's, `01-Overview/X.md` the bible's. */
@@ -61,8 +61,13 @@ const CODE_EXT = /\.(js|mjs|cjs|ts|html)$/;
 const SPECIFIER_RES = [
   /(\bfrom\s*)(['"])(\.{1,2}\/[^'"\n]*)\2/g,
   /(^\s*import\s*)(['"])(\.{1,2}\/[^'"\n]*)\2/gm,
-  /(\bimport\s*\(\s*)(['"`])(\.{1,2}\/[^'"`\n]*)\2/g,
-  /(\bnew URL\(\s*)(['"`])(\.{1,2}\/[^'"`\n]*)\2(?=\s*,\s*import\.meta\.url)/g,
+  // (a template's `${…}` may quote: `${key.split('_')[0]}`)
+  /(\bimport\s*\(\s*)(['"`])(\.{1,2}\/(?:\$\{[^}\n]*\}|[^'"`\n])*)\2/g,
+  // a URL off the module's own: a path, a folder (`'.'`, `'../'`), or a bare name beside it (`'fixtures/x.json'`)
+  /(\bnew URL\(\s*)(['"`])(\.{1,2}(?:\/(?:\$\{[^}\n]*\}|[^'"`\n])*)?|[\w-](?:\$\{[^}\n]*\}|[^'"`\n:])*)\2(?=\s*,\s*import\.meta\.url)/g,
+  // a createRequire's require, relative to its module as an import is - named, or called where it is made
+  /(\brequire\s*\(\s*)(['"])(\.{1,2}\/[^'"\n]*)\2/g,
+  /(\bcreateRequire\(\s*import\.meta\.url\s*\)\s*\(\s*)(['"])(\.{1,2}\/[^'"\n]*)\2/g,
 ];
 
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -98,7 +103,7 @@ function folderFrom(fromFile, dir, home) {
  * Rewrite the specifiers of one file. `file` is where the text stands now, `home` where it will stand (the same for a
  * file that does not move), `moved` maps an old repository path to its new one.
  */
-export function rewriteSpecifiers(text, file, home, moved) {
+export function rewriteSpecifiers(text, file, home, moved, exists = null) {
   let n = 0;
   for (const re of SPECIFIER_RES) {
     text = text.replace(re, (all, lead, quote, spec) => {
@@ -112,13 +117,31 @@ export function rewriteSpecifiers(text, file, home, moved) {
         n++;
         return `${lead}${quote}${out}${quote}`;
       }
-      const target = posix.normalize(posix.join(posix.dirname(file), s.path));
+      const target = posix.normalize(posix.join(posix.dirname(file), s.path)).replace(/\/$/, '') || '.';
       const next = moved.get(target) ?? target;
       if (next === target && home === file) return all;
-      const out = specifierTo(home, next) + s.tail;
+      // one that names nothing from where its file stood is not its file's - a `node -e` child's root-relative import,
+      // a fixture's source - and is left as it is written
+      if (exists && !moved.has(target) && target !== '.' && !exists(target)) return all;
+      // a folder keeps its spelling's slash: `'../'` stays a folder, `'..'` stays without
+      let out = (next === posix.dirname(home) ? (s.path.startsWith('..') ? '.' : './') : specifierTo(home, next));
+      if (/\/$/.test(s.path) && !out.endsWith('/')) out += '/';
+      if (!/\/$/.test(s.path) && out !== './' && out.endsWith('/')) out = out.slice(0, -1);
+      out += s.tail;
       if (out === spec) return all;
       n++;
       return `${lead}${quote}${out}${quote}`;
+    });
+  }
+  // CONCATENATED: `new URL('../' + p, import.meta.url)` - the literal is a folder of the module's own, its file chosen by
+  // what is added to it; a moved file's folder is re-based as a template's is
+  if (home !== file) {
+    text = text.replace(/(\bnew URL\(\s*)(['"])(\.{1,2}(?:\/(?:[\w.-]+\/)*)?)\2(\s*\+)(?=[^;\n]*?,\s*import\.meta\.url)/g, (all, lead, quote, dir, plus) => {
+      const out = folderFrom(file, dir.endsWith('/') ? dir : `${dir}/`, home);
+      const keep = dir.endsWith('/') ? out : out.replace(/\/$/, '');
+      if (keep === dir) return all;
+      n++;
+      return `${lead}${quote}${keep}${quote}${plus}`;
     });
   }
   return { text, n };
@@ -128,7 +151,8 @@ export function rewriteSpecifiers(text, file, home, moved) {
  *  has nothing to rewrite there, and is not tried. */
 export function namesIn(text) {
   const out = new Set();
-  for (const m of text.matchAll(/([\w-]+(?:\.[\w-]+)*)\\?\.(m?js|cjs|json|md|html)(?![\w-])/g)) out.add(`${m[1]}.${m[2]}`);
+  // a name's own dots may be escaped too: `online\.test\.js` is online.test.js, not test.js
+  for (const m of text.matchAll(/([\w-]+(?:\\?\.[\w-]+)*)\\?\.(m?js|cjs|json|md|html)(?![\w-])/g)) out.add(`${m[1].replace(/\\/g, '')}.${m[2]}`);
   return out;
 }
 
@@ -142,22 +166,39 @@ export function byName(moves) {
 /** A path escaped for a pattern: `src\/systems\/x\.js`. */
 const escaped = (p) => p.replace(/[/.]/g, (c) => `\\${c}`);
 
-/** Rewrite the root paths and src paths of the moved files in any text. `names` is byName(moved), for speed. */
+/** Rewrite the root paths and src paths of the moved files in any text. `names` is byName(moved), for speed: only the
+ *  moves whose file the text names are tried, all of them in one pass - a page that names three thousand tests is read
+ *  once, not three thousand times. */
 export function rewritePaths(text, moved, names = byName(moved)) {
-  let n = 0;
+  const plain = new Map(), esc2 = new Map();   // a spelling -> [what it becomes, whether it is a root's own spelling]
   for (const name of namesIn(text)) for (const [from, to] of names.get(name) ?? []) {
-    const swap = (re, next) => { text = text.replace(re, (_, lead = '') => { n++; return lead + next; }); };
-    swap(new RegExp(`(?<![\\w\\-./])(\\/|\\.\\/|(?:\\.\\.\\/)+)?${esc(from)}(?![\\w\\-])`, 'g'), to);
-    swap(new RegExp(`(?<![\\w\\-.])(?<!\\\\/)(\\\\/|\\\\.\\\\/|(?:\\\\.\\\\.\\\\/)+)?${esc(escaped(from))}(?![\\w\\-])`, 'g'), escaped(to));
+    plain.set(from, [to, false]);
+    esc2.set(escaped(from), [escaped(to), false]);
     const root = ROOTS.find((r) => from.startsWith(r) && to.startsWith(r));
     if (!root) continue;
     // with a `./` or `../..` before it, a src path is a specifier QUOTED - a pin reading another file's import
     // (`from.includes('../systems/x.js')`): the specifier pass cannot know what it is relative to, and the src path
     // names the same file from any depth it is written at
     const [f, t] = [from.slice(root.length), to.slice(root.length)];
-    swap(new RegExp(`(?<![\\w\\-./])(\\.\\/|(?:\\.\\.\\/)+)?${esc(f)}(?![\\w\\-])`, 'g'), t);
-    swap(new RegExp(`(?<![\\w\\-.])(?<!\\\\/)(\\\\.\\\\/|(?:\\\\.\\\\.\\\\/)+)?${esc(escaped(f))}(?![\\w\\-])`, 'g'), escaped(t));
+    if (!plain.has(f)) plain.set(f, [t, true]);
+    if (!esc2.has(escaped(f))) esc2.set(escaped(f), [escaped(t), true]);
   }
+  if (!plain.size) return { text, n: 0 };
+  let n = 0;
+  const alt = (m) => [...m.keys()].sort((a, b) => b.length - a.length).map(esc).join('|');
+  // a root path may stand after `/`; a root's own spelling may not (`foo/systems/x.js` is no src path)
+  text = text.replace(new RegExp(`(?<![\\w\\-./])(\\/|\\.\\/|(?:\\.\\.\\/)+)?(${alt(plain)})(?![\\w\\-])`, 'g'), (all, lead = '', key) => {
+    const [to, own] = plain.get(key);
+    if (own && lead === '/') return all;
+    n++;
+    return lead + to;
+  });
+  text = text.replace(new RegExp(`(?<![\\w\\-.])(?<!\\\\/)(\\\\/|\\\\.\\\\/|(?:\\\\.\\\\.\\\\/)+)?(${alt(esc2)})(?![\\w\\-])`, 'g'), (all, lead = '', key) => {
+    const [to, own] = esc2.get(key);
+    if (own && lead === '\\/') return all;
+    n++;
+    return lead + to;
+  });
   return { text, n };
 }
 
@@ -215,12 +256,42 @@ export function blindSpots(text, file, fromDirs, moved = new Map(), names = byNa
   return out;
 }
 
+/** A module's own folder, as the tests spell it. */
+const OWN_DIR = /dirname\(fileURLToPath\(import\.meta\.url\)\)|import\.meta\.dirname/g;
+
+/**
+ * ROOTED. A file that finds the tree from its own folder - `join(dirname(fileURLToPath(import.meta.url)), '..')` -
+ * finds it `deeper` folders short once it moves down. Its own folder is made to mean what it meant where the file was
+ * written: an argument of `'..'` a level where it heads a join or resolve, a `dirname()` a level elsewhere
+ * (`import.meta.dirname` there is joined with `'..'`, and the file must import `join`). Returns the text and what it
+ * could not do.
+ */
+export function rebaseOwnDir(text, deeper, file = '') {
+  if (deeper <= 0 || !OWN_DIR.test(text)) return { text, n: 0, blind: [] };
+  OWN_DIR.lastIndex = 0;
+  const ups = Array(deeper).fill("'..'").join(', ');
+  let n = 0;
+  const blind = [];
+  text = text.replace(/\b(join|resolve)\(\s*(dirname\(fileURLToPath\(import\.meta\.url\)\)|import\.meta\.dirname)\s*([,)])/g, (all, fn, own, after) => {
+    n++;
+    return `${fn}(${own}, ${ups}${after === ',' ? ',' : ')'}`;
+  });
+  // what is left stands alone: its own folder, raised
+  text = text.replace(/(?<!\b(?:join|resolve)\(\s*)(dirname\(fileURLToPath\(import\.meta\.url\)\)|import\.meta\.dirname)(?!,\s*'\.\.')/g, (all, own) => {
+    n++;
+    if (own.startsWith('dirname')) return `${'dirname('.repeat(deeper)}${own}${')'.repeat(deeper)}`;
+    if (!/\bjoin\b[^;\n]*from 'node:path'/.test(text)) blind.push(`${file}: import.meta.dirname, and no join imported to raise it`);
+    return `join(${own}, ${ups})`;
+  });
+  return { text, n, blind };
+}
+
 /**
  * Plan a move over the texts of the tree. `moves` is [[from, to], ...] of repository paths; `texts` a Map of every
  * tracked text file. Returns the new texts by their NEW path, the count of addresses rewritten in each, and the blind
  * spots.
  */
-export function planMove(moves, texts) {
+export function planMove(moves, texts, exists = null) {
   const moved = new Map(moves), names = byName(moves);
   const fromDirs = [...new Set(moves.map(([f]) => posix.dirname(f)))];
   const writes = new Map(), counts = new Map(), blind = [];
@@ -228,19 +299,38 @@ export function planMove(moves, texts) {
   // in a pin is rewritten, so the pin's old spelling is still there to find
   const changes = new Map();
   for (const [file, text] of texts) {
-    if (!CODE_EXT.test(file) || FROZEN.some((re) => re.test(file))) continue;
+    // the subjects pins read - a test's own imports are its own, rewritten once by the specifier pass
+    if (!CODE_EXT.test(file) || FROZEN.some((re) => re.test(file)) || /^test\//.test(file)) continue;
     const c = specifierChanges(text, rewriteSpecifiers(text, file, moved.get(file) ?? file, moved).text);
     if (c.size) changes.set(file, c);   // by the path a pin names it by now
   }
+  const depth = (f) => f.split('/').length;
   for (const [file, text] of texts) {
-    if (FROZEN.some((re) => re.test(file))) continue;
     const home = moved.get(file) ?? file;
+    if (FROZEN.some((re) => re.test(file))) {
+      // a frozen file's text is a fixture - but a frozen file that moves still has to reach what it imports
+      if (home !== file && CODE_EXT.test(file)) {
+        const r = rewriteSpecifiers(text, file, home, moved, exists), o = rebaseOwnDir(r.text, depth(home) - depth(file), home);
+        writes.set(home, o.text); blind.push(...o.blind);
+      }
+      continue;
+    }
     let t = text, n = 0;
     if (changes.size && /^test\//.test(file)) {
       const q = rewriteQuotedImports(t, changes, home);
       t = q.text; n += q.n; blind.push(...q.blind);
     }
-    if (CODE_EXT.test(file)) { const r = rewriteSpecifiers(t, file, home, moved); t = r.text; n += r.n; }
+    if (CODE_EXT.test(file)) { const r = rewriteSpecifiers(t, file, home, moved, exists); t = r.text; n += r.n; }
+    if (home !== file && /\.(m?js|cjs)$/.test(file)) {
+      const o = rebaseOwnDir(t, depth(home) - depth(file), home);
+      t = o.text; n += o.n; blind.push(...o.blind);
+      if (depth(home) < depth(file) && OWN_DIR.test(t)) blind.push(`${home}: finds the tree from its own folder, and moved up`);
+      OWN_DIR.lastIndex = 0;
+      // a URL off its own folder whose path is a variable: the literals its callers hand it are not re-based
+      if (home !== file && depth(home) !== depth(file) && /\bnew URL\(\s*[A-Za-z_$][\w$.]*\s*,\s*import\.meta\.url\s*\)/.test(t)) {
+        blind.push(`${home}: builds a URL off its own folder from a variable - the paths handed to it are spelled from where it stood`);
+      }
+    }
     if (/^tools\/mutants\/.*\.json$/.test(file)) {
       const r = rewriteRecords(t, moved, file);
       t = r.text; n += r.n; blind.push(...r.blind);
@@ -368,7 +458,7 @@ function main(argv) {
   const texts = new Map();
   for (const f of tracked) if (TEXT_EXT.test(f)) texts.set(f, readFileSync(join(ROOT, f), 'utf8'));
 
-  const { writes, counts, blind } = planMove(moves, texts);
+  const { writes, counts, blind } = planMove(moves, texts, within(trackedSet));
   const moved = new Map(fixup ? [] : moves), back = new Map([...moved].map(([f, t]) => [t, f]));
   const after = new Set(tracked.map((f) => moved.get(f) ?? f));
   const was = within(trackedSet), now = within(after);

@@ -16,7 +16,7 @@
 // changes (`log` is a bare addLogStep); and every text read it offers
 // moves state.
 //
-// THREE LAWS, each pinned (test/guide1_questLens.test.js):
+// THREE LAWS, each pinned (test/ui/quest/guide1_questLens.test.js):
 //
 // THE MACHINE NEVER KNOWS. Nothing here writes quest state - and a read
 // of an entry is not free. Message.getTextTokens, the journal's own

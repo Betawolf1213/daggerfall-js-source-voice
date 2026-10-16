@@ -644,7 +644,7 @@ export const ICON_ECTOPLASM = Object.freeze([254, 39]);
  * THE APOTHECARIES' SIXTEEN (4.5: "the sixteen DFU ingredients that DFU's potion recipes need and no gathering route
  * yields (FACT, POTION_RECIPES) ... at a fifth of DFU's price in Marks, rounded up"): each DFU's own ingredient in its own
  * group (itemTemplatesData.js; withdrawn, DFU's item - profItems.js mintMaterialItem), in 4.5's order, `value` its counter
- * price - 4.5's own numbers, pinned equal to a fifth of itemTemplates.json's basePrice rounded up (test/prof12_law.test.js)
+ * price - 4.5's own numbers, pinned equal to a fifth of itemTemplates.json's basePrice rounded up (test/systems/prof12_law.test.js)
  * - and its tier its price's, as a body's part is (gemTierOfPrice). The Stores' family the Essences': DECIDED, the
  * alchemist's and the enchanter's goods share one filter (8's "Essences"), no new one.
  */
@@ -997,7 +997,7 @@ export function craftXpCap(profession, ranks) {
 // Masonry's two seat choices act on what SEAT2b builds - the fortification projects (SEAT0 7.5: each tier's materials
 // delivered to the seat's stockpile by writs) and a capture's tier down ("When the seat changes hands each drops one
 // tier") - and no fortification stands yet. So the law and its helpers stand here, pure and pinned
-// (test/prof11_law.test.js), for SEAT2b to call; which member's choice stands for a seat (a project's Builder, a
+// (test/net/prof11_law.test.js), for SEAT2b to call; which member's choice stands for a seat (a project's Builder, a
 // capture's Fortifier) is SEAT2b's to say. Both are chosen now - they cost nothing until a seat reads them.
 
 /** The Builder (3.3: "fortification projects need 10% less stone"): the share of a project's stone taken off, percent. */

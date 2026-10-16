@@ -2,7 +2,7 @@
 // `TravelOptionsMod.Localize` reads (:1322-1341), restated here key for
 // key. The CSV itself is vendored beside it
 // (vendor/travel-options/TravelOptionsModData.csv) and
-// test/to1_travelOptions.test.js reads that file and asserts this table
+// test/systems/travel/to1_travelOptions.test.js reads that file and asserts this table
 // matches it entry for entry, so the two cannot drift: the vendored
 // file is the record, this is what the game reads without a fetch.
 //

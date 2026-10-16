@@ -101,7 +101,7 @@ town); `scenes/dungeonContext.js` - no town. Lens C found each claim true; this 
 
 ### Pins and mutants
 
-`test/auditlwstir.test.js` (25): F1; A1 past 2^24 at the online rate; A2 the gate's rounds; A3 the handover; A4 the
+`test/systems/livingWorld/auditlwstir.test.js` (25): F1; A1 past 2^24 at the online rate; A2 the gate's rounds; A3 the handover; A4 the
 plea at the stall; A5 no name to a stranger; A6 the pair's hour; A7 the pair's second; B1/C1 the roads' word come late;
 B2 the lent and the household; B4 the bodies drawn (real `ResidentWalker`s); B6 the held walker; B7 after the words; C2
 the walk out; D2 the numbers; D4 the gate's, the patrol's, the town's and the beggar's laws, the order and the edges (four

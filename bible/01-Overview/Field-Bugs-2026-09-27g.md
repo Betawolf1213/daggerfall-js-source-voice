@@ -29,7 +29,7 @@ reader as a list and threw on every press. The guild popup read the same answer 
 onto itself as a message box.
 
 A service's answer is a box only when its rows are a LIST now (`systems/guild/guildServiceFlow.js` isServiceBox), asked by
-the station, the popup's onService, the probe door and both popups' own pushes. `test/stationrows.test.js` (3).
+the station, the popup's onService, the probe door and both popups' own pushes. `test/ui/stationrows.test.js` (3).
 
 ## DECOR-MODFLATS: "Decoration 49" onward (1)
 
@@ -49,7 +49,7 @@ stopped them:
   and its picture decodes in its own time, so a row asked before the scan had decoded its archive could be answered
   none for good. The door waits for the picture now, landed or missed (a throw included).
 
-`test/decormodflats.test.js` (5); the account service's own acceptance of a Detailed Ships flat, `test/decor1.test.js`.
+`test/systems/decor/decormodflats.test.js` (5); the account service's own acceptance of a Detailed Ships flat, `test/server/decor1.test.js`.
 
 ## DECOR-FLIP: a picture turned half round faces the other way (2)
 
@@ -57,7 +57,7 @@ A billboard turns to the eye whatever its record says, so a placed picture's tur
 the wrong way for the room stood that way for good. A placed flat turned more than a quarter either way is now drawn
 mirrored (the renderer's flip is the sign of a batch's width), the ghost as it will stand, and the bar says what a turn
 does to a picture. A hung mount spins on its wall and a model turns in earnest; neither mirrors.
-`net/decorLaw.js` decorFlatMirrored. `test/decorflip.test.js` (3).
+`net/decorLaw.js` decorFlatMirrored. `test/net/decorflip.test.js` (3).
 
 ## MW-ASSIGN: the pieces the Morrowind item map never asked about (3)
 
@@ -74,7 +74,7 @@ one item map could read, which was DFU's own weapons and armour. Three kinds sto
   It stands as its Morrowind picture on the billboard pass now, its ghost with it (`scenes/decor/decorRoom.js`
   MW_STAND_ARCHIVE); a thing with no Morrowind record, and everything without a build, stands as its world picture.
 
-`test/mwassign.test.js` (4). Chain armour other than the cuirass and greaves stays as the item map recorded it:
+`test/formats/morrowind/mwassign.test.js` (4). Chain armour other than the cuirass and greaves stays as the item map recorded it:
 retail Morrowind has no such pieces, and the map says so rather than standing a wrong metal in.
 
 ## GUILD-LIVE and GUILD-WRAP: the Guild tab (4)
@@ -85,7 +85,7 @@ dead until the panel was shut and opened, which is the only thing that rebuilt i
 read on every keystroke and on the live pass, and what a press does reads the draft at the press (Deposit had captured
 the amount at the build). A roster row's buttons are one group that wraps below the name - the friends row's own fix
 (MAIL1) - so a deposit, which puts "a moment" beside every button while it is out, no longer squeezes a guildmaster's
-roster names to a syllable a line. `ui/socialPanel.js`. `test/guildlive.test.js` (3).
+roster names to a syllable a line. `ui/socialPanel.js`. `test/net/guild/guildlive.test.js` (3).
 
 ## DECOR-ROOMS: a house's rooms, as tabs (5)
 
@@ -95,12 +95,12 @@ its own collider now, a few hundred rays a frame while the panel is up (`systems
 on, joined where the rise is a step and nothing stands between them at waist height - a wall, or a door as it stands,
 which is what the flight cannot pass. A house of two rooms or more gets a tab a room in the panel: the eye's own room is
 chosen first, the room's placed pieces and own furniture are listed (and "Take all out" means the room's), and the next
-flight begins over the chosen room's floor - a piece moved flies from its own room. `test/decorrooms.test.js` (5).
+flight begins over the chosen room's floor - a piece moved flies from its own room. `test/systems/decor/decorrooms.test.js` (5).
 
 ## STATION-FEES: crafting stations cost ten times as much (6)
 
 DECOR_STATION_FEES: Alchemy 50,000 gold, Spellmaking 100,000, Enchanting 200,000 (were 5,000, 10,000 and 20,000). The
-licence is still paid once and never refunded. `test/homestations.test.js`.
+licence is still paid once and never refunded. `test/ui/homestations.test.js`.
 
 ## EMPIRE-BANK: online, the Bank of the Empire (7)
 
@@ -110,7 +110,7 @@ name a building was discovered by, so it is read live for a bank). The Empire le
 lent: a tenth of DFU's level x 50,000, or of Roleplay & Realism's per-level loan (on by default, and kept on online),
 rounded down. Interest (10%) and the year to repay are unchanged; offline, the bank is Daggerfall's.
 `world/buildingNames.js`, `systems/banking.js`, `systems/discovery.js`, `ui/enhanced/enhancedPorts.js`.
-`test/empirebank.test.js` (4). Port-Ledger section A.
+`test/systems/empirebank.test.js` (4). Port-Ledger section A.
 
 ## HOME-MAGIC: a visitor casts nothing in another's home (8)
 
@@ -119,7 +119,7 @@ spell (a free one, an item's, included), fires none (a spell readied outside is 
 spell on themselves: "You cannot cast spells in another's home." An item refused so spends no durability. Potions are
 drunk as ever. The owner's own home, an offline house and every other building are as they were.
 `scenes/hostMagic.js` castRefusal, `scenes/worldModes.js` visitorMagicRefusal, `systems/enchantments.js`.
-`test/homemagic.test.js` (3). Port-Ledger section A.
+`test/systems/homemagic.test.js` (3). Port-Ledger section A.
 
 ## THE FOUR HOSTS
 

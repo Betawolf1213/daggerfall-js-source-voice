@@ -21,7 +21,7 @@
 //   "preset:graphics", "bindings", "link:overhauls", "mods-index" - the screen's own pieces
 //
 // THE MAP IS TOTAL AND DISJOINT: every one of DFU's keys, every Features row and every port row stands in exactly one
-// section, and test/org2_options.test.js pins all three both ways. A DFU re-bake that adds a key, a registry row added
+// section, and test/systems/org2_options.test.js pins all three both ways. A DFU re-bake that adds a key, a registry row added
 // without a place, fails the build rather than quietly dropping a row off the screen.
 //
 // It is still close to DFU's own pages (DaggerfallAdvancedSettingsWindow.cs:234-238 gamePlay/interface/enhancements/

@@ -32,7 +32,7 @@
 //     (formats/worldData/worldDataJson.js modelJson). Any other round-trip change to
 //     the classic records (an automap byte, a rotation written as its
 //     equivalent) it can only find against the classic block - so the
-//     loader's sha256 check, and test/it1_worlddata.test.js with
+//     loader's sha256 check, and test/formats/worldData/it1_worlddata.test.js with
 //     ARENA2_PATH set, are what say whether it rebuilds the author's file;
 //     run this tool again with an ARENA2 to replace it with WD1's.
 //

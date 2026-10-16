@@ -28,7 +28,7 @@
 // module first. Nothing is forced at a mount site, because a port that
 // forces at forty-seven `isEnhanced()` sites is a port where the
 // forty-eighth is missed. And the FUTURE half of Mac's sentence is a
-// pin, not a promise: test/onlinelane.test.js walks PREF_DEFAULTS and
+// pin, not a promise: test/systems/onlinelane.test.js walks PREF_DEFAULTS and
 // MOD_SETTINGS and fails on any boolean switch this module has neither
 // forced nor declared the player's own, so a new enhancement cannot
 // land without answering the question.
@@ -262,7 +262,7 @@ export function onlineForcedPref(key, search) {
  * room's rivers are ON, past the mod's shipped off: a room that held
  * the mod's default would have no rivers at all, and the channels are
  * what Mac asked to see online. (The smoother still moves no river's
- * height; the kernel's cut does - test/landform.test.js measures it.)
+ * height; the kernel's cut does - test/systems/landform.test.js measures it.)
  *
  * MODS-ONLINE-4 (2026-09-22, Mac: "What about player balance?"): AND
  * THE READING ABOVE ANSWERED THE WRONG QUESTION FOR THREE OF THEM.
@@ -433,7 +433,7 @@ export const ONLINE_ROOM_MOD_KEYS = Object.freeze({
 /**
  * THE MODS WHOSE EVERY SWITCH IS THE PLAYER'S, ONLINE.
  *
- * Hand-written, and that is the point: test/onlinelane.test.js walks
+ * Hand-written, and that is the point: test/systems/onlinelane.test.js walks
  * MOD_SETTINGS and fails on a vendor that is in neither this list nor
  * ONLINE_ROOM_MOD_KEYS, so a new mod cannot land without someone
  * answering the question above for it. A list derived from the table

@@ -5,7 +5,7 @@
     "old": "flags: 0, magnitude: 0, soundIndex: 0, factionOrMobileId: 0,",
     "new": "flags: 0, magnitude: 0, soundIndex: 1, factionOrMobileId: 0,",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "flags: 0, magnitude: 0, soundIndex: 0, factionOrMobileId: 0,",
     "new": "flags: 0, magnitude: 1, soundIndex: 0, factionOrMobileId: 0,",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "getBlockIndex: (name) => (name === GATE_ARENA_BLOCK ? GATE_ARENA_BLOCK_INDEX",
     "new": "getBlockIndex: (name) => (name === 'X' ? GATE_ARENA_BLOCK_INDEX",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "  const [x, , z] = courtToDungeon(0, 0, ARRIVE_Z);",
     "new": "  const [x, , z] = courtToDungeon(0, 0, 0);",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "export const isGateArena = (loc) => Number.isSafeInteger(loc?.gate) && loc?.dungeon?.recordElement?.header?.locationId === GATE_ARENA_LOCATION_ID;",
     "new": "export const isGateArena = (loc) => Number.isSafeInteger(loc?.gate);",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "    f.tri(COURT_FLOOR_RECORD, c, p1, p0, uvFloor(c), uvFloor(p1), uvFloor(p0));",
     "new": "    f.tri(COURT_FLOOR_RECORD, c, p0, p1, uvFloor(c), uvFloor(p0), uvFloor(p1));",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "    const r = RIM_OUT + 1.5 + (i % 3) * 0.8;",
     "new": "    const r = 10 + (i % 3) * 0.8;",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "  const RING_SIDES = 96, rr0 = BOSS_REACH_R - RUNE_HALF_W, rr1 = BOSS_REACH_R + RUNE_HALF_W, y = 0.02;",
     "new": "  const RING_SIDES = 96, rr0 = COURT_R - 3 - RUNE_HALF_W, rr1 = COURT_R - 3 + RUNE_HALF_W, y = 0.02;",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "    if (!clearOf(k, a, BRAZIER_CLEAR)) continue;\n    out.push(",
     "new": "    out.push(",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "    for (let k = 0; k < FLOOR_SIDES; k++) {\n      const a0 = (k / FLOOR_SIDES) * Math.PI * 2, a1 = ((k + 1) / FLOOR_SIDES) * Math.PI * 2;\n      out.push(",
     "new": "    for (let k = 0; k < FLOOR_SIDES / 2; k++) {\n      const a0 = (k / FLOOR_SIDES) * Math.PI * 2, a1 = ((k + 1) / FLOOR_SIDES) * Math.PI * 2;\n      out.push(",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "  const x = t[0] + g.spot[0] + dx * out, z = t[2] + g.spot[1] + dz * out;",
     "new": "  const x = t[0] + g.spot[0] - dx * out, z = t[2] + g.spot[1] - dz * out;",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "  return Number.isFinite(y) ? { pos: [x, y, z], normal: [dx, 0, dz] } : null;",
     "new": "  return { pos: [x, y, z], normal: [dx, 0, dz] };",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "      const hot = tone(x, y) > 0.7;",
     "new": "      const hot = tone(x, y) > 0;",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "  if (s.day === null) return s;   // nothing but a whole state starts a fight",
     "new": "  if (s.day === undefined) return s;   // nothing but a whole state starts a fight",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "    case 'atk': return { ...s, atk: { i: g.i,",
     "new": "    case 'atk': return s.atk ? s : { ...s, atk: { i: g.i,",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "        if (Number.isSafeInteger(day) && !falls.has(day)) {",
     "new": "        if (Number.isSafeInteger(day)) {",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "      if (g.d !== undefined && g.d !== s.day) return s;",
     "new": "      if (false) return s;",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "  const along = Math.min(len, (Math.max(0, now - m.at) / 1000) * m.v);\n  return [",
     "new": "  const along = (Math.max(0, now - m.at) / 1000) * m.v;\n  return [",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "      if (hit.gateArena) standCourt(ctx);   // WB3b: the court, before the start marker is read and before any namer\n",
     "new": "\n",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "old": "  const returnLanding = () => (dungeonReturn.gate ? host.gateLanding?.(dungeonReturn.gate) ?? null : dungeonReturn.arena",
     "new": "  const returnLanding = () => (false ? host.gateLanding?.(dungeonReturn.gate) ?? null : dungeonReturn.arena",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -185,7 +185,7 @@
     "old": "    roomIdentity: () => (mode === 'dungeon' ? (isGateArena(dungeonLoc) ? { kind: 'gate', day: dungeonLoc.gate } :",
     "new": "    roomIdentity: () => (mode === 'dungeon' ? (false ? { kind: 'gate', day: dungeonLoc.gate } :",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -194,7 +194,7 @@
     "old": "      if (isGateArena(dfLocation)) { hudText.add(COURT_TEXT.noMap); return; }",
     "new": "      void COURT_TEXT;",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -203,7 +203,7 @@
     "old": "      if (isGateArena(dfLocation)) { hudText.add(COURT_TEXT.noRest); return; }",
     "new": "      void 0;",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -212,7 +212,7 @@
     "old": "      if (isGateArena(dfLocation)) { if (!quiet) hudText.add(COURT_TEXT.noSave); return false; }",
     "new": "      void 0;",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -221,7 +221,7 @@
     "old": "    ready: () => !!online?.gateOk,",
     "new": "    ready: () => false,",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -230,7 +230,7 @@
     "old": "online.welcomes !== _gateInFor && online.sendGate({ k: 'in',",
     "new": "online.welcomes !== _gateInFor && false && online.sendGate({ k: 'in',",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -239,7 +239,7 @@
     "old": "    if (!player.arena && modes?.gateArenaDay?.() != null) { _courtArena.xa",
     "new": "    if (!player.arena && false) { _courtArena.xa",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -248,7 +248,7 @@
     "old": "    const courtGate = modes?.gateArenaGate?.() ?? null;",
     "new": "    const courtGate = null;",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -257,7 +257,7 @@
     "old": "    if (modes?.gateArenaDay?.() != null) { setMidScreenText(COURT_TEXT.noMark); return; }",
     "new": "    void COURT_TEXT;",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -266,7 +266,7 @@
     "old": "    if (courtDay != null && Date.now() + _sharedOffsetMs >= gateTimes(courtDay).wrathAt + GATE_COLLAPSE_MS) {",
     "new": "    if (courtDay != null && false) {",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -275,7 +275,7 @@
     "old": "    fellAt: (day) => gateLink?.fellAt(day) ?? null,   // WB3b: the relay's word of the kill",
     "new": "    fellAt: () => null,   // WB3b: the relay's word of the kill",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -284,7 +284,7 @@
     "old": "`${top.slice(0, -1).join(', ')} and ${top[top.length - 1]}`",
     "new": "`${top.slice(0, -1).join(', ')}`",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -293,7 +293,7 @@
     "old": "  lights.forEach((l, i) => { packLight(data, n + i, l); colors.set(l.color, (n + i) * 3); });",
     "new": "  lights.forEach((l, i) => { packLight(data, n + i, l); colors.set(l.color, (n + i) * 3); carried[n + i] = 1; });",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   },
   {
@@ -302,7 +302,7 @@
     "old": "  if (lit.data.carried) carried.set(lit.data.carried.subarray(0, n));",
     "new": "  if (false) carried.set(lit.data.carried.subarray(0, n));",
     "tests": [
-      "test/wb3b_gate_arena.test.js"
+      "test/net/gate/wb3b_gate_arena.test.js"
     ]
   }
 ]

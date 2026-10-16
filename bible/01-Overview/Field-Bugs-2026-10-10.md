@@ -37,7 +37,7 @@ notices in order and touched nothing else, and four Enters took four.
 
 The board is the port's (BOUNTY1, Port-Ledger A; DFU has none) and the fix is inside its window, so every host that
 mounts it has it: world.js's `openBoardWindow`, which worldModes.js reaches through `bountyHost.openBoard`; exterior.js
-(the fixed city) keeps DFU's board, and dungeonContext.js stands none. Pinned by `test/fb1010_spamtake.test.js` (5, on
+(the fixed city) keeps DFU's board, and dungeonContext.js stands none. Pinned by `test/ui/fb1010_spamtake.test.js` (5, on
 the real host's board, attached as `ui/bounty/bountyDoor.js` attaches it); `tools/mutants/fb1010.json`.
 
 ## FIND-FIRST: the Enhanced world map opens on me (3)
@@ -63,7 +63,7 @@ skin's with the Enhanced map on (`ui/map/mapSkin.js` heldMapChosen); the classic
 no travel map; worldModes.js and dungeonContext.js open none of their own - indoors the map key is not offered, and the
 journal's and the Party tab's doors are refused at world.js's (DFU's cannotTravelIndoors). Not a departure from DFU (the
 held map is the port's, MAP1). There is no switch: a scroll or a pinch is the way back to the Bay, and a switch is the
-owner's to ask for. Pinned by `test/fb1010_findfirst.test.js` (5); `tools/mutants/fb1010.json`. Two source pins shaped
+owner's to ask for. Pinned by `test/systems/fb1010_findfirst.test.js` (5); `tools/mutants/fb1010.json`. Two source pins shaped
 the host's line: the map's `onTravel` stays the first key of the build (fb0929d_toroads, partytravel), so the word is a
 call on the window built, as `gotoPlace` is.
 
@@ -94,7 +94,7 @@ portrait at this update - the Living World's "identity for life" (`06-Systems/Li
 once. A courtship begun before it kept the old look in its copy; the wedding asks the census for the resident as they
 are now (`residentNow`, world.js's census through `scenes/legacyHost.js` weddingNow; the copy only where no town can be
 minted - AUDIT FB1010 C1). A spouse already wed keeps the look they wed with: they are the line's, not the census's.
-Port-Ledger A, REGIONAL-FOLK. Pinned by `test/fb1010_regionalfolk.test.js` (5); `tools/mutants/fb1010.json`.
+Port-Ledger A, REGIONAL-FOLK. Pinned by `test/systems/livingWorld/fb1010_regionalfolk.test.js` (5); `tools/mutants/fb1010.json`.
 
 ## TRUE-CURSE: a damned Legendary weapon, which no temple lifts (6)
 
@@ -124,8 +124,8 @@ The item law (`systems/item/itemLaw.js`, the account service's too - it bundles 
 changes) stands behind a damned curse on a Legendary weapon and nowhere else (validCurse). No new field: a damned curse
 is a curse whose drawback is the damned row. The Test Room lays one, known, last (Wyrmbane, `systems/testRoom.js`); its
 cursed Legendary stays LOOT16's. LOOT16's own law and its pins stand as they were; LR3's count of the Test Room grew by
-the damned blade (`test/lr1_lootrarity.test.js`, PIN MOVED). Port-Ledger A, TRUE-CURSE. Pinned by
-`test/fb1010_truecurse.test.js` (8); `tools/mutants/fb1010.json`.
+the damned blade (`test/systems/lr1_lootrarity.test.js`, PIN MOVED). Port-Ledger A, TRUE-CURSE. Pinned by
+`test/systems/fb1010_truecurse.test.js` (8); `tools/mutants/fb1010.json`.
 
 ## Kept: the rations (5)
 
@@ -181,5 +181,5 @@ LEGACY7-model-rewritten and `legacy7wed.json` LEGACY7W-partner-dead-or-lineless;
 AUDIT-LEGACY-III-A2-newer-save-drops-the-stores-facts does not parse on main either. Records this branch's lines moved,
 re-aimed by content: `loot16.json` LOOT16-wire-uncarried, -the-curse-said-unknown, -the-curse-never-said, -lift-unknown
 and -the-line-worthless; `rr2.json` RR2-7 (R&R's Nord arm, now the one table's). Pins moved: LR3's Test Room count
-(`test/lr1_lootrarity.test.js`), AUDIT 23's People map (`test/audit23_hosts.test.js`). `tools/mutants/fb1010.json`: 50,
+(`test/systems/lr1_lootrarity.test.js`), AUDIT 23's People map (`test/systems/audit23_hosts.test.js`). `tools/mutants/fb1010.json`: 50,
 all dead.

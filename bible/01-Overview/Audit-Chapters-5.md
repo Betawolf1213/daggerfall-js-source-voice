@@ -20,7 +20,7 @@ while any of them was reading (Home.md, DO NOT FIX WHILE THE VERIFIER IS READING
 - **the pins** (T): the arc's test files and mutation lists - drifted records, wrong-reason kills, weak pins, gaps.
 
 Every finding was re-read here before a line moved. Each fix carries an `AUDIT CHAP5 <ID>` comment and a pin in
-`test/audit_chap5.test.js` (29), and is mutated in `tools/mutants/audit_chap5.json`: **71 records, all dead** (three
+`test/net/audit_chap5.test.js` (29), and is mutated in `tools/mutants/audit_chap5.json`: **71 records, all dead** (three
 survived the first run - S1's chapter, S3's active membership, T8's confirmed rival - and their pins were made to fail
 them). Twenty-two older records the fixes moved were re-aimed by content and six the pins lens found misaimed (T1 to
 T3) re-aimed, all thirty-two run again, all dead; two were retired with the Marks' half again they mutated (CHAP6a's

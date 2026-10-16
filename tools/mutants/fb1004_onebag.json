@@ -5,7 +5,7 @@
     "old": "  if (isBagItem(item) && !ownWagon && holdsOtherBag([bag, entity?.wagonItems], item)) return { ok: false, refusal: REFUSAL.secondBag };\n",
     "new": "",
     "tests": [
-      "test/fb1004_onebag.test.js"
+      "test/systems/professions/fb1004_onebag.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "holdsOtherBag([bag, entity?.wagonItems], item)",
     "new": "holdsOtherBag([bag], item)",
     "tests": [
-      "test/fb1004_onebag.test.js"
+      "test/systems/professions/fb1004_onebag.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "  if (isBagItem(item) && !ownWagon && holdsOtherBag([bag, entity?.wagonItems], item)) return",
     "new": "  if (!ownWagon && holdsOtherBag([bag, entity?.wagonItems], item)) return",
     "tests": [
-      "test/fb1004_onebag.test.js"
+      "test/systems/professions/fb1004_onebag.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "l.some((x) => x !== item && isBagItem(x))",
     "new": "l.some((x) => isBagItem(x))",
     "tests": [
-      "test/fb1004_onebag.test.js"
+      "test/systems/professions/fb1004_onebag.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "    if (isBagItem(it) && holdsOtherBag([playerEntity.items, playerEntity.wagonItems], it)) return false;   // ONE-BAG: as the counter's planTake refuses it\n",
     "new": "",
     "tests": [
-      "test/fb1004_onebag.test.js"
+      "test/systems/professions/fb1004_onebag.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "lines: [bought === false ? BAG_WORDS.second : 'You do not have enough gold.']",
     "new": "lines: ['You do not have enough gold.']",
     "tests": [
-      "test/fb1004_onebag.test.js"
+      "test/systems/professions/fb1004_onebag.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "  if (isBagItem(item) && !ownWagon && holdsOtherBag(",
     "new": "  if (isBagItem(item) && holdsOtherBag(",
     "tests": [
-      "test/fb1004_onebag.test.js"
+      "test/systems/professions/fb1004_onebag.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "  if (isBagItem(item) || isPackOnly(item)) return null;\n  const flat = decorItemFlat(item);",
     "new": "  if (isPackOnly(item)) return null;\n  const flat = decorItemFlat(item);",
     "tests": [
-      "test/fb1004_onebag.test.js"
+      "test/systems/professions/fb1004_onebag.test.js"
     ]
   }
 ]

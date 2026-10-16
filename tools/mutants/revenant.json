@@ -5,7 +5,7 @@
     "old": "  if (!special) return false;\n",
     "new": "",
     "tests": [
-      "test/revenant.test.js"
+      "test/systems/revenant.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "  if ((entity.level | 0) < REVENANT_MIN_LEVEL) return false;\n",
     "new": "",
     "tests": [
-      "test/revenant.test.js"
+      "test/systems/revenant.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "  if (!entity || !revenantOn()) return false;",
     "new": "  if (!entity) return false;",
     "tests": [
-      "test/revenant.test.js"
+      "test/systems/revenant.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "if (!(entity.health <= 0) || !killer || killer.isPlayer || !(killer.health > 0)) return;",
     "new": "if (!killer || killer.isPlayer || !(killer.health > 0)) return;",
     "tests": [
-      "test/revenant.test.js"
+      "test/systems/revenant.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "  } finally { setSeed(saved); }",
     "new": "  } finally { /* kept */ }",
     "tests": [
-      "test/revenant.test.js"
+      "test/systems/revenant.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "    r.rank = Math.min(REVENANT_MAX_RANK, r.rank + 1);",
     "new": "    r.rank = Math.min(REVENANT_MAX_RANK, r.rank);",
     "tests": [
-      "test/revenant.test.js"
+      "test/systems/revenant.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "  if (living.length > REVENANT_MAX) {",
     "new": "  if (living.length > REVENANT_MAX * 10) {",
     "tests": [
-      "test/revenant.test.js"
+      "test/systems/revenant.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "  if (living.some((r) => r.out)) return null;\n",
     "new": "",
     "tests": [
-      "test/revenant.test.js"
+      "test/systems/revenant.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "  const due = living.filter((r) => r.dueAt <= now && (night",
     "new": "  const due = living.filter((r) => r.dueAt <= now + 99999 && (night",
     "tests": [
-      "test/revenant.test.js"
+      "test/systems/revenant.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "export const livingRevenants = () => _state.list.filter((r) => !r.defeated && !r.gone && !r.sworn);",
     "new": "export const livingRevenants = () => _state.list.filter((r) => !r.gone && !r.sworn);",
     "tests": [
-      "test/revenant.test.js"
+      "test/systems/revenant.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "    if (!had || s.rev > had.rev) by.set(s.id, s);",
     "new": "    if (!had || s.rev < had.rev) by.set(s.id, s);",
     "tests": [
-      "test/revenant.test.js"
+      "test/systems/revenant.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "  getSaveData: () => ({ v: 1, list: _state.list.map((r) => (r.gone ? r : { ...r, out: false, outAt: 0, dueAt: r.out ? Math.max(r.dueAt, nowMinutes() + REVENANT_LOST_MINUTES) : r.dueAt })), lastDay: _state.lastDay }),",
     "new": "  getSaveData: () => ({ v: 1, list: _state.list.map((r) => (r.gone ? r : { ...r })), lastDay: _state.lastDay }),",
     "tests": [
-      "test/revenant.test.js"
+      "test/systems/revenant.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "  if (rk >= L.rareFromRank || rolls()",
     "new": "  if (rolls()",
     "tests": [
-      "test/revenant.test.js"
+      "test/systems/revenant.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "  if (!revenantSpeaks(r.mobileType)) {\n    const body = beastBody(personality, event);",
     "new": "  if (false) {\n    const body = beastBody(personality, event);",
     "tests": [
-      "test/revenant.test.js"
+      "test/systems/revenant.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "    f.fleeing = false;\n    f.escaped = true;\n",
     "new": "    f.fleeing = false;\n    f.escaped = true;\n    f.corpse = true;\n",
     "tests": [
-      "test/revenant.test.js"
+      "test/systems/revenant.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "  f._fleeRolled = true;\n  if (!rollRevenantFlee(f.entity, rolls)) return null;",
     "new": "  if (!rollRevenantFlee(f.entity, rolls)) return null;",
     "tests": [
-      "test/revenant_card.test.js"
+      "test/systems/revenant_card.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "  && (!checkLevel || (entity.level | 0) >= ELITE_FOE_MIN_LEVEL)\n",
     "new": "\n",
     "tests": [
-      "test/elitefloor_foetitle.test.js"
+      "test/systems/elitefloor_foetitle.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "  return entity?.eliteFoe ? `Elite ${named}` : named;",
     "new": "  return named;",
     "tests": [
-      "test/elitefloor_foetitle.test.js"
+      "test/systems/elitefloor_foetitle.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "    const killer = _blowKiller ?? playerHarmMark();",
     "new": "    const killer = _blowKiller;",
     "tests": [
-      "test/revenant_card.test.js"
+      "test/systems/revenant_card.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "old": "    const killer = _blowKiller ?? playerHarmMark();",
     "new": "    const killer = playerHarmMark() ?? _blowKiller;",
     "tests": [
-      "test/revenant_card.test.js"
+      "test/systems/revenant_card.test.js"
     ]
   },
   {
@@ -185,7 +185,7 @@
     "old": "  return _mark && now <= _mark.until ? _mark.entity : null;",
     "new": "  return _mark ? _mark.entity : null;",
     "tests": [
-      "test/revenant_card.test.js"
+      "test/systems/revenant_card.test.js"
     ]
   },
   {
@@ -194,7 +194,7 @@
     "old": "  if (!shown && ev.line) say?.(ev.line);",
     "new": "",
     "tests": [
-      "test/revenant_card.test.js"
+      "test/systems/revenant_card.test.js"
     ]
   },
   {
@@ -203,7 +203,7 @@
     "old": "    if (!ev || !isEnhanced()) return false;",
     "new": "    if (!ev) return false;",
     "tests": [
-      "test/revenant_card.test.js"
+      "test/systems/revenant_card.test.js"
     ]
   },
   {
@@ -212,7 +212,7 @@
     "old": "typed: still ? full.length : 0,",
     "new": "typed: full.length,",
     "tests": [
-      "test/revenant_card.test.js"
+      "test/systems/revenant_card.test.js"
     ]
   },
   {
@@ -221,7 +221,7 @@
     "old": "  if (hidden) return _cards.length;\n",
     "new": "",
     "tests": [
-      "test/revenant_card.test.js"
+      "test/systems/revenant_card.test.js"
     ]
   },
   {
@@ -230,7 +230,7 @@
     "old": "    if (ev.id) for (const c of _cards) if (c.ev.id === ev.id && c.outMs == null) c.outMs = REVENANT_SLIDE_MS;\n",
     "new": "",
     "tests": [
-      "test/revenant_card.test.js"
+      "test/systems/revenant_card.test.js"
     ]
   },
   {
@@ -239,7 +239,7 @@
     "old": "    for (const c of _cards.slice(REVENANT_CARDS_MAX)) if (c.outMs == null) c.outMs = REVENANT_SLIDE_MS;\n",
     "new": "",
     "tests": [
-      "test/revenant_card.test.js"
+      "test/systems/revenant_card.test.js"
     ]
   },
   {
@@ -248,7 +248,7 @@
     "old": "  return { archive: a, record: b?.hasIdle ? 15 : 0 };",
     "new": "  return { archive: a, record: 0 };",
     "tests": [
-      "test/revenant_card.test.js"
+      "test/systems/revenant_card.test.js"
     ]
   },
   {
@@ -257,7 +257,7 @@
     "old": "  drawRevenantCards({ hidden: true });   // REVENANT-CARD: the same door\n",
     "new": "",
     "tests": [
-      "test/revenant_card.test.js"
+      "test/systems/revenant_card.test.js"
     ]
   },
   {
@@ -266,7 +266,7 @@
     "old": "  const living = all.filter((r) => !r.defeated && !r.sworn)",
     "new": "  const living = all.filter((r) => !r.sworn)",
     "tests": [
-      "test/revenant_card.test.js"
+      "test/systems/revenant_card.test.js"
     ]
   },
   {
@@ -275,7 +275,7 @@
     "old": ".sort((a, b) => b.rank - a.rank || a.dueAt - b.dueAt);",
     "new": ".sort((a, b) => a.rank - b.rank || a.dueAt - b.dueAt);",
     "tests": [
-      "test/revenant_card.test.js"
+      "test/systems/revenant_card.test.js"
     ]
   },
   {
@@ -284,7 +284,7 @@
     "old": "revenantFleeStep(f, _pf, { mayRun: !onlineRoom() || !_roomFoe,",
     "new": "revenantFleeStep(f, _pf, { mayRun: true,",
     "tests": [
-      "test/revenant_card.test.js"
+      "test/systems/revenant_card.test.js"
     ]
   },
   {
@@ -293,7 +293,7 @@
     "old": "!r.nm.length || r.nm.length > REVENANT_NAME_MAX || ",
     "new": "!r.nm.length || ",
     "tests": [
-      "test/revenant_card.test.js"
+      "test/systems/revenant_card.test.js"
     ]
   },
   {
@@ -302,7 +302,7 @@
     "old": "    if (typeof r.nm === 'string' && r.nm && f.entity.revenant?.name !== r.nm) { f.entity.revenant = { id: null, name: r.nm, rank: 0 }; f._feudWire = null; }",
     "new": "    if (false) { f.entity.revenant = { id: null, name: r.nm, rank: 0 }; f._feudWire = null; }",
     "tests": [
-      "test/revenant_card.test.js"
+      "test/systems/revenant_card.test.js"
     ]
   },
   {
@@ -311,7 +311,7 @@
     "old": "if (_revenant) { Promise.resolve(_standEncounterFoe({ ...hit, mobileType: _revenant.mobileType, revenant: _revenant }, playerFeet)).then((f) => { if (!f) releaseRevenantStand(_revenant); }); break; }",
     "new": "if (false) { break; }",
     "tests": [
-      "test/revenant_card.test.js"
+      "test/systems/revenant_card.test.js"
     ]
   },
   {
@@ -320,7 +320,7 @@
     "old": "    if (d > REVENANT_ESCAPE_NEAR) return 'escape';\n    f.fleeing = false;\n    return 'cornered';",
     "new": "    return 'escape';",
     "tests": [
-      "test/revenant_card.test.js"
+      "test/systems/revenant_card.test.js"
     ]
   },
   {
@@ -329,7 +329,7 @@
     "old": "    f.fleeing = false;\n    return 'cornered';",
     "new": "    f.fleeing = false;\n    f._fleeRolled = false;\n    return 'cornered';",
     "tests": [
-      "test/revenant_card.test.js"
+      "test/systems/revenant_card.test.js"
     ]
   },
   {
@@ -338,7 +338,7 @@
     "old": "  due[0].out = true;\n",
     "new": "",
     "tests": [
-      "test/revenant_card.test.js"
+      "test/systems/revenant_card.test.js"
     ]
   },
   {
@@ -347,7 +347,7 @@
     "old": "  if (r && r.out && !r.defeated && !r.gone) { r.out = false; r.outAt = 0; }",
     "new": "  /* kept */",
     "tests": [
-      "test/revenant_card.test.js"
+      "test/systems/revenant_card.test.js"
     ]
   },
   {
@@ -356,7 +356,7 @@
     "old": "  if (i >= 0) _state.list[i] = /** @type {any} */ ({ id: r.id, rev: (r.rev | 0) + 1, gone: true });",
     "new": "  if (i >= 0) _state.list.splice(i, 1);",
     "tests": [
-      "test/revenant_card.test.js"
+      "test/systems/revenant_card.test.js"
     ]
   },
   {
@@ -365,7 +365,7 @@
     "old": "  for (const r of fallen.slice(REVENANT_FALLEN_MAX)) bury(r);\n",
     "new": "",
     "tests": [
-      "test/revenant_card.test.js"
+      "test/systems/revenant_card.test.js"
     ]
   },
   {
@@ -374,7 +374,7 @@
     "old": "killer.isPlayer || !(killer.health > 0)) return;",
     "new": "killer.isPlayer) return;",
     "tests": [
-      "test/revenant_card.test.js"
+      "test/systems/revenant_card.test.js"
     ]
   },
   {
@@ -383,7 +383,7 @@
     "old": "    pools ??= [...(foes ?? []), ...(playerDoor()?.foes?.() ?? [])];",
     "new": "    pools ??= [...(foes ?? [])];",
     "tests": [
-      "test/revenant_card.test.js"
+      "test/systems/revenant_card.test.js"
     ]
   },
   {
@@ -392,7 +392,7 @@
     "old": "  const gone = _cards.filter((c) => c.outMs != null && c.outMs <= 0);",
     "new": "  const gone = _cards.filter((c) => c.outMs && c.outMs <= 0);",
     "tests": [
-      "test/revenant_card.test.js"
+      "test/systems/revenant_card.test.js"
     ]
   },
   {
@@ -401,8 +401,8 @@
     "old": "promoteEliteFoe(entity, { eliteDungeon: !!e.elite, superDungeon: !!e.superTier, checkLevel: false })",
     "new": "promoteEliteFoe(entity, { eliteDungeon: !!e.elite, superDungeon: !!e.superTier })",
     "tests": [
-      "test/elitefloor_foetitle.test.js",
-      "test/revenant_card.test.js"
+      "test/systems/elitefloor_foetitle.test.js",
+      "test/systems/revenant_card.test.js"
     ]
   },
   {
@@ -411,8 +411,8 @@
     "old": "e.champion == null && kindLevel(e.mobileType) >= ELITE_FOE_MIN_LEVEL) pool.push(i);",
     "new": "e.champion == null) pool.push(i);",
     "tests": [
-      "test/elitefloor_foetitle.test.js",
-      "test/revenant_card.test.js"
+      "test/systems/elitefloor_foetitle.test.js",
+      "test/systems/revenant_card.test.js"
     ]
   }
 ]

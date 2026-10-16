@@ -5,7 +5,7 @@
     "old": "  if (typeof win.matchMedia !== 'function') return true;   // no media queries: the sniff is all there is",
     "new": "  return true;",
     "tests": [
-      "test/touchdevice.test.js"
+      "test/ui/touch/touchdevice.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "    return coarse && win.matchMedia('(hover: none)').matches;",
     "new": "    return coarse;",
     "tests": [
-      "test/touchdevice.test.js"
+      "test/ui/touch/touchdevice.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "    if (!coarse && !fine) return true;   // the query is unknown here (neither answers): the sniff stands\n",
     "new": "",
     "tests": [
-      "test/touchdevice.test.js"
+      "test/ui/touch/touchdevice.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "  if (!sniff) return false;\n",
     "new": "",
     "tests": [
-      "test/touchdevice.test.js"
+      "test/ui/touch/touchdevice.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "  if (door !== null) return door;\n",
     "new": "",
     "tests": [
-      "test/touchdevice.test.js"
+      "test/ui/touch/touchdevice.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "  return m ? m[1] === 'on' : null;",
     "new": "  return m ? true : null;",
     "tests": [
-      "test/touchdevice.test.js"
+      "test/ui/touch/touchdevice.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "  } catch { return true; }",
     "new": "  } catch { return false; }",
     "tests": [
-      "test/touchdevice.test.js"
+      "test/ui/touch/touchdevice.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "const LEAN = typeof window !== 'undefined' && !window.daggerShell && isTouchDevice();",
     "new": "const LEAN = typeof window !== 'undefined' && isTouchDevice();",
     "tests": [
-      "test/touchdevice.test.js"
+      "test/ui/touch/touchdevice.test.js"
     ]
   }
 ]

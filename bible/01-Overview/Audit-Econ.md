@@ -18,7 +18,7 @@ older records the fixes moved were re-aimed by content and killed again (PIN MOV
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
-| O1 | Major | **Repairing worn loot to sell it paid every player online.** Roleplay & Realism: Items' condition prices are the room's and its rolls hand loot over at 20-75%, so a sale climbs with a repair; at REPAIR-RATE's third the repair cost less than the sale it added. A value-1000 piece found at 20% at a quality-10 counter: -97 at the old two thirds, +102 now (Mercantile 30 / Personality 40), +180 for a top haggler; a Daedric longsword +2,592. | **SELL-AS-FOUND**: each of the mod's rolls (a pile's, a body's, a shelf's) leaves the condition it set as `foundCondition`, and online the Sell arm reads a piece no higher (`tradeModes.js saleConditionPercentage`). A repair or a kit is for using a piece; wear after the find still lowers the sale; a piece handed over whole is untouched; offline the mod's prices stand. Ledger A. `test/sell_as_found.test.js`. |
+| O1 | Major | **Repairing worn loot to sell it paid every player online.** Roleplay & Realism: Items' condition prices are the room's and its rolls hand loot over at 20-75%, so a sale climbs with a repair; at REPAIR-RATE's third the repair cost less than the sale it added. A value-1000 piece found at 20% at a quality-10 counter: -97 at the old two thirds, +102 now (Mercantile 30 / Personality 40), +180 for a top haggler; a Daedric longsword +2,592. | **SELL-AS-FOUND**: each of the mod's rolls (a pile's, a body's, a shelf's) leaves the condition it set as `foundCondition`, and online the Sell arm reads a piece no higher (`tradeModes.js saleConditionPercentage`). A repair or a kit is for using a piece; wear after the find still lowers the sale; a piece handed over whole is untouched; offline the mod's prices stand. Ledger A. `test/systems/sell_as_found.test.js`. |
 | O2 | Minor | WEAR-VANILLA reversed REALM P0.2's own decision - `fadingEnchantedItems` off was a hole the room closed - and recorded it in the Ledger only; `onlineLane.js` still called the room's rule a hole, and said every forced key is the mod's shipped default (`equipDamage` is the port's). | `onlineLane.js` and `06-Systems/Realm-Arc.md` record the reversal: the item sink given up by choice. |
 | O3 | Nit | No deploy note, and the account service redeploys on `net/recipeLaw.js` to a byte-identical bundle. | "Deploy: none" on each row; this commit touches no file either service bundles (esbuild's inputs, both entries). |
 
@@ -69,7 +69,7 @@ older records the fixes moved were re-aimed by content and killed again (PIN MOV
 
 D1 is W3. D2's survivors are P4's, C4's and R4's. D3-D6, every stale sentence: `05-Combat/Physical-Combat-Overhaul.md`
 (two departures, not one; the scale 1; the mod's wear before the reduction, DFU's below it), `09-Testing/Testing.md`
-(pcaao, repair_ease, modsonline, balance1's present-tense 2.8x and doubled count), `test/modsonline.test.js`,
+(pcaao, repair_ease, modsonline, balance1's present-tense 2.8x and doubled count), `test/systems/modsonline.test.js`,
 `01-Overview/Audit-Watch-Kit.md`'s answered pack line rewritten, the patch notes as a player reads them, the four hosts
 named in `03-World/Naval-Combat.md`, `06-Systems/Economy-Arc.md`'s Mercantile line (MERC-RISE). D9: `HEALING_RECIPE_KEY`
 is loot.js's `CLASSIC_RECIPE_KEYS[2]`, one export. And the lens's own catch: wear_vanilla's "repairable" was never

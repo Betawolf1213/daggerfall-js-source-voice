@@ -5,7 +5,7 @@
     "old": "afterFrames(() => { if (attacking === b && attackSeq === mine) { attacking = null; hooks.attack(0, 0, false); } });",
     "new": "if (attacking === b) { attacking = null; hooks.attack(0, 0, false); }",
     "tests": [
-      "test/touchbuttons.test.js"
+      "test/ui/touch/touchbuttons.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "if (attacking === b && attackSeq === mine) {",
     "new": "if (attacking === b) {",
     "tests": [
-      "test/touchbuttons.test.js"
+      "test/ui/touch/touchbuttons.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable === true)) { target.blur?.(); target = doc.body; }",
     "new": "",
     "tests": [
-      "test/menupad.test.js"
+      "test/ui/settings/menupad.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "'Controls/JoystickDeadzone': { min: 0, max: 0.9,",
     "new": "'Controls/JoystickDeadzone': { min: 0, max: 1,",
     "tests": [
-      "test/menupad.test.js"
+      "test/ui/settings/menupad.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "deadzone: getFloat('Controls', 'JoystickDeadzone', 0, 0.9),",
     "new": "deadzone: getFloat('Controls', 'JoystickDeadzone', 0, 1),",
     "tests": [
-      "test/menupad.test.js"
+      "test/ui/settings/menupad.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "    if (held) { state.lastEl = held; state.lastRect = ui.candidates().find((c) => c.el === held)?.rect ?? null; state.lostAt = null; }\n",
     "new": "",
     "tests": [
-      "test/menupad.test.js"
+      "test/ui/settings/menupad.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "  if (prev && still[prev]) return prev;\n",
     "new": "",
     "tests": [
-      "test/menupad.test.js"
+      "test/ui/settings/menupad.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "Left: [-1, 0]",
     "new": "Left: [-1, -1]",
     "tests": [
-      "test/touchbuttons.test.js"
+      "test/ui/touch/touchbuttons.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "\"Controls/JoystickMovementThreshold\": \"Gamepad Movement Threshold\",",
     "new": "\"Controls/JoystickMovementThreshold\": \"Gamepad Movement Deadzone\",",
     "tests": [
-      "test/menupad.test.js"
+      "test/ui/settings/menupad.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "guildShelf(`BuyMagicItems|${sellsSoulGems ? 1 : 0}|${playerLevel}|${gender}`,",
     "new": "guildShelf('BuyMagicItems',",
     "tests": [
-      "test/guildshelf.test.js"
+      "test/systems/guildshelf.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "  if (store) for (const k of Object.keys(store)) if (store[k]?.day !== today && !shelfStands(store[k], today)) delete store[k];",
     "new": "",
     "tests": [
-      "test/guildshelf.test.js"
+      "test/systems/guildshelf.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "openPeers(list, isPartyMate).filter((p) => !(duelMgr.fighting && p.id === duelMgr.opponent) && crowdDrawnHere(p));",
     "new": "openPeers(list, isPartyMate).filter((p) => crowdDrawnHere(p));",
     "tests": [
-      "test/audit27d.test.js"
+      "test/systems/audit27d.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "      if (duelMgr.fighting && id === duelMgr.opponent) return;   // AUDIT SPELL-GIFT B1: the duel's own law - a beneficial spell stays home\n",
     "new": "",
     "tests": [
-      "test/audit27d.test.js"
+      "test/systems/audit27d.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "      if (!m.mate) continue;\n",
     "new": "",
     "tests": [
-      "test/spellgift.test.js"
+      "test/systems/spellgift.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "ally: true, mate: q.mate !== false, id: q.id,",
     "new": "ally: true, id: q.id,",
     "tests": [
-      "test/spellgift.test.js"
+      "test/systems/spellgift.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "const giftablePeers = (list) => openPeers(list, isPartyMate).filter(",
     "new": "const giftablePeers = (list) => (list ?? []).filter(",
     "tests": [
-      "test/audit27d.test.js"
+      "test/systems/audit27d.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "    if (chance > best) best = chance;",
     "new": "    return chance;",
     "tests": [
-      "test/audit27d.test.js"
+      "test/systems/audit27d.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "    return [...marks.filter((m) => m.mate), ...marks.filter((m) => !m.mate)];",
     "new": "    return marks;",
     "tests": [
-      "test/audit27d.test.js"
+      "test/systems/audit27d.test.js"
     ]
   },
   {
@@ -167,8 +167,8 @@
     "old": "cureAllOfKind(target, CURE_KINDS[e.subType], ctx?.strangerCast === true || plainDiseaseLive(target));",
     "new": "cureAllOfKind(target, CURE_KINDS[e.subType], plainDiseaseLive(target));",
     "tests": [
-      "test/spellgift.test.js",
-      "test/audit27d.test.js"
+      "test/systems/spellgift.test.js",
+      "test/systems/audit27d.test.js"
     ]
   },
   {
@@ -177,8 +177,8 @@
     "old": "{ allyCast: true, strangerCast: !mate }",
     "new": "{ allyCast: true }",
     "tests": [
-      "test/audit27d.test.js",
-      "test/allycast.test.js"
+      "test/systems/audit27d.test.js",
+      "test/systems/allycast.test.js"
     ]
   },
   {
@@ -187,7 +187,7 @@
     "old": "      if (!mate && !(peersNear() ?? []).some((p) => p.id === id)) return;\n",
     "new": "",
     "tests": [
-      "test/audit27d.test.js"
+      "test/systems/audit27d.test.js"
     ]
   },
   {
@@ -196,7 +196,7 @@
     "old": "const loud = mate || !(t - (_strangerCastSaid.get(id) ?? -Infinity) < STRANGER_CAST_SAY_MS);",
     "new": "const loud = true;",
     "tests": [
-      "test/audit27d.test.js"
+      "test/systems/audit27d.test.js"
     ]
   },
   {
@@ -205,7 +205,7 @@
     "old": "    if (covered) for (const c of cards.values()) c.hpH = null;\n",
     "new": "",
     "tests": [
-      "test/partybuffs.test.js"
+      "test/ui/partybuffs.test.js"
     ]
   },
   {
@@ -214,7 +214,7 @@
     "old": "const restsWithParty = () => getPref('restWithParty') !== false || !socialLink()?.restOptOk;",
     "new": "const restsWithParty = () => getPref('restWithParty') !== false;",
     "tests": [
-      "test/audit27d.test.js"
+      "test/systems/audit27d.test.js"
     ]
   },
   {
@@ -223,7 +223,7 @@
     "old": "      if (primary) this.restOptOk = relaySupportsRestOpt(relayV);   // REST-OPT (AUDIT C1)\n",
     "new": "",
     "tests": [
-      "test/audit27d.test.js"
+      "test/systems/audit27d.test.js"
     ]
   },
   {
@@ -232,7 +232,7 @@
     "old": "export const REST_OPT_RELAY_MIN = 120;",
     "new": "export const REST_OPT_RELAY_MIN = 119;",
     "tests": [
-      "test/audit27d.test.js"
+      "test/systems/audit27d.test.js"
     ]
   },
   {
@@ -241,8 +241,8 @@
     "old": "partyRestsTogether(restsWithParty(), social?.party ?? null, !!social?.leads?.());",
     "new": "partyRestsTogether(getPref('restWithParty') !== false, social?.party ?? null, !!social?.leads?.());",
     "tests": [
-      "test/audit27d.test.js",
-      "test/restopt.test.js"
+      "test/systems/audit27d.test.js",
+      "test/systems/party/restopt.test.js"
     ]
   },
   {
@@ -251,7 +251,7 @@
     "old": "  return !!m?.p?.rs && (restsAlone(m) || !mineTogether);",
     "new": "  return restsAlone(m) || !mineTogether;",
     "tests": [
-      "test/audit27d.test.js"
+      "test/systems/audit27d.test.js"
     ]
   },
   {
@@ -260,7 +260,7 @@
     "old": "  return !!m?.p?.rs && (restsAlone(m) || !mineTogether);",
     "new": "  return false;",
     "tests": [
-      "test/audit27d.test.js"
+      "test/systems/audit27d.test.js"
     ]
   },
   {
@@ -269,8 +269,8 @@
     "old": "const camp = social?.isPartyPeer(p.id) ? otherPartyCamp(p.id) : true;",
     "new": "const camp = !social?.isPartyPeer(p.id);",
     "tests": [
-      "test/partyrest1.test.js",
-      "test/audit27d.test.js"
+      "test/scenes/partyrest1.test.js",
+      "test/systems/audit27d.test.js"
     ]
   },
   {
@@ -279,7 +279,7 @@
     "old": "    _restAloneNight = !restTogether();   // REST-OPT (AUDIT C3): a night granted as my own stays my own - a leader who turns the switch back on mid-night pulls nobody into it\n",
     "new": "",
     "tests": [
-      "test/audit27d.test.js"
+      "test/systems/audit27d.test.js"
     ]
   },
   {
@@ -288,7 +288,7 @@
     "old": "    _restAloneNight = false;   // REST-OPT (AUDIT C3): a followed night is the party's\n",
     "new": "",
     "tests": [
-      "test/audit27d.test.js"
+      "test/systems/audit27d.test.js"
     ]
   },
   {
@@ -297,8 +297,8 @@
     "old": "(_restAloneNight && playerEntity.isResting)",
     "new": "false",
     "tests": [
-      "test/restopt.test.js",
-      "test/audit27d.test.js"
+      "test/systems/party/restopt.test.js",
+      "test/systems/audit27d.test.js"
     ]
   },
   {
@@ -307,8 +307,8 @@
     "old": ".filter((m) => !m.peers?.some((id) => _hiddenPeers.has(id)))",
     "new": "",
     "tests": [
-      "test/compassparty.test.js",
-      "test/audit27d.test.js"
+      "test/ui/hud/compassparty.test.js",
+      "test/systems/audit27d.test.js"
     ]
   },
   {
@@ -317,7 +317,7 @@
     "old": "    if (!social?.party) return [];   // AUDIT COMPASS-PARTY C6: no walk of the room's players out of a party - the compass asks every frame\n",
     "new": "",
     "tests": [
-      "test/audit27d.test.js"
+      "test/systems/audit27d.test.js"
     ]
   },
   {
@@ -326,7 +326,7 @@
     "old": "Turn on \"Rest with my party\" (${optionPath('card:peerSprites')}) to rest with them.",
     "new": "Turn on \"Rest with my party\" in Settings to rest with them.",
     "tests": [
-      "test/audit27d.test.js"
+      "test/systems/audit27d.test.js"
     ]
   },
   {
@@ -335,8 +335,8 @@
     "old": "\n      || tradeCommitBytes({ items: wired, g, to: this.peer, s: this.sid, r: this.rev + 1 }) > TRADE_DATA_MAX",
     "new": "",
     "tests": [
-      "test/tradeinfo.test.js",
-      "test/audit27d.test.js"
+      "test/systems/tradeinfo.test.js",
+      "test/systems/audit27d.test.js"
     ]
   },
   {
@@ -345,7 +345,7 @@
     "old": "o: TRADE_REV_MAX, items, g }).length;",
     "new": "o: 0, items, g }).length;",
     "tests": [
-      "test/tradeinfo.test.js"
+      "test/systems/tradeinfo.test.js"
     ]
   },
   {
@@ -354,7 +354,7 @@
     "old": ",\n        rows: (id, pick) => townTalk.lines(id, pick) });",
     "new": " });",
     "tests": [
-      "test/tradeinfo.test.js"
+      "test/systems/tradeinfo.test.js"
     ]
   },
   {
@@ -363,7 +363,7 @@
     "old": "  if (!data || typeof data !== 'object' || data.questName !== questName) return { ok: false, reason: 'mismatch' };\n  const local",
     "new": "  if (!data || typeof data !== 'object' || data.questName !== questName) return { ok: false, reason: 'mismatch' };\n  data = fullShareMarkers(data);\n  const local",
     "tests": [
-      "test/sharemend.test.js"
+      "test/systems/quest/sharemend.test.js"
     ]
   },
   {
@@ -372,7 +372,7 @@
     "old": "return { ok: false, reason: still && !still.questComplete && !still.questTombstoned ? 'restore' : 'gone' };",
     "new": "return { ok: false, reason: 'gone' };",
     "tests": [
-      "test/sharemend.test.js"
+      "test/systems/quest/sharemend.test.js"
     ]
   },
   {
@@ -381,7 +381,7 @@
     "old": "return { ok: false, reason: still && !still.questComplete && !still.questTombstoned ? 'restore' : 'gone' };",
     "new": "return { ok: false, reason: 'restore' };",
     "tests": [
-      "test/sharemend.test.js"
+      "test/systems/quest/sharemend.test.js"
     ]
   },
   {
@@ -390,7 +390,7 @@
     "old": "  said.add(key);\n  return !sync || fresh;",
     "new": "  if (sync) said.add(key);\n  return !sync || fresh;",
     "tests": [
-      "test/sharemend.test.js"
+      "test/systems/quest/sharemend.test.js"
     ]
   },
   {
@@ -399,7 +399,7 @@
     "old": "|${result?.guild ?? ''}|${copy}`;",
     "new": "|${result?.guild ?? ''}`;",
     "tests": [
-      "test/sharemend.test.js"
+      "test/systems/quest/sharemend.test.js"
     ]
   },
   {
@@ -408,7 +408,7 @@
     "old": "if (t && !tier.has(t)) lines.push(t);",
     "new": "if (t && !lines.includes(t)) lines.push(t);",
     "tests": [
-      "test/tradeinfo.test.js"
+      "test/systems/tradeinfo.test.js"
     ]
   },
   {
@@ -417,7 +417,7 @@
     "old": ", station: editing.station ?? null }",
     "new": " }",
     "tests": [
-      "test/homestations.test.js"
+      "test/ui/homestations.test.js"
     ]
   },
   {
@@ -426,7 +426,7 @@
     "old": ", ...(entry.station ? { station: entry.station } : {})",
     "new": "",
     "tests": [
-      "test/homestations.test.js"
+      "test/ui/homestations.test.js"
     ]
   },
   {
@@ -435,7 +435,7 @@
     "old": "    return pieceWrite(piece.id, () => stationNow(r, piece, want));\n",
     "new": "    return stationNow(r, piece, want);\n",
     "tests": [
-      "test/homestations.test.js"
+      "test/ui/homestations.test.js"
     ],
     "note": "AUDIT YARD-HEIGHT (PIN MOVED, re-aimed by content): the guard is the piece's one queue of writes (pieceWrite) - stationBusy, which it made redundant, is gone."
   },
@@ -445,7 +445,7 @@
     "old": "    deps.say?.(DECOR_STATION_GOLD_WENT);\n",
     "new": "",
     "tests": [
-      "test/homestations.test.js"
+      "test/ui/homestations.test.js"
     ],
     "note": "AUDIT YARD-HEIGHT (PIN MOVED, re-aimed by content: one write of a piece at a time)."
   },
@@ -455,7 +455,7 @@
     "old": ":${it.piece.station ?? ''}:",
     "new": ":",
     "tests": [
-      "test/homestations.test.js"
+      "test/ui/homestations.test.js"
     ]
   },
   {
@@ -464,7 +464,7 @@
     "old": "    const what = stationBtn.dataset.what;\n",
     "new": "    const what = decorStationWords(it.piece, stationOffer).what;\n",
     "tests": [
-      "test/homestations.test.js"
+      "test/ui/homestations.test.js"
     ]
   },
   {
@@ -473,7 +473,7 @@
     "old": "return armed ? { pick, act: 'Press again to unmake - nothing back', what: 'station:none' } : { pick, act: 'Unmake station (nothing back)', what: 'arm' };",
     "new": "return { pick, act: 'Unmake station (nothing back)', what: 'station:none' };",
     "tests": [
-      "test/homestations.test.js"
+      "test/ui/homestations.test.js"
     ]
   },
   {
@@ -482,7 +482,7 @@
     "old": "min-height: 0; overflow-y: auto; }",
     "new": "min-height: 0; }",
     "tests": [
-      "test/homestations.test.js"
+      "test/ui/homestations.test.js"
     ]
   },
   {
@@ -491,7 +491,7 @@
     "old": "  if (piece?.station) return { pick, act: `Change station - ${gold} (no refund)`, what: `station:${kind}` };\n",
     "new": "",
     "tests": [
-      "test/homestations.test.js"
+      "test/ui/homestations.test.js"
     ]
   },
   {
@@ -500,7 +500,7 @@
     "old": "${it.piece.station ? ' (the station licence is not)' : ''}",
     "new": "",
     "tests": [
-      "test/homestations.test.js"
+      "test/ui/homestations.test.js"
     ]
   },
   {
@@ -509,7 +509,7 @@
     "old": "for (const t of lines.length ? lines : [DECOR_STATION_REFUSED]) say(t);",
     "new": "for (const t of lines) say(t);",
     "tests": [
-      "test/homestations.test.js"
+      "test/ui/homestations.test.js"
     ]
   },
   {
@@ -518,7 +518,7 @@
     "old": "return t ? { title: craft ? `${t} (${craft})` : t } : craft ? { title: craft } : null;",
     "new": "return t ? { title: t } : null;",
     "tests": [
-      "test/homestations.test.js"
+      "test/ui/homestations.test.js"
     ]
   },
   {
@@ -527,7 +527,7 @@
     "old": "    stationPick.setAttribute('aria-label', `Station craft: ${words.pick.replace(/^Station: | >$/g, '')} - press for the next`);   // AUDIT HOME-STATIONS S9\n",
     "new": "",
     "tests": [
-      "test/homestations.test.js"
+      "test/ui/homestations.test.js"
     ]
   }
 ]

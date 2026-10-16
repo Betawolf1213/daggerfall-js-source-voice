@@ -16,7 +16,7 @@
 // ManifestResource rows resolved to `[length][bytes]` records in the
 // CLI resources blob. Pure: bytes in, `{ name, bytes }` out, so
 // `tools/hccAssets.mjs` reproduces `vendor/horse-cart-and-cargo/Textures/`
-// from the shipped bundle and `test/hcc_assets.test.js` pins that the
+// from the shipped bundle and `test/tooling/hcc_assets.test.js` pins that the
 // vendored files ARE the assembly's.
 
 const u16 = (b, o) => b[o] | (b[o + 1] << 8);

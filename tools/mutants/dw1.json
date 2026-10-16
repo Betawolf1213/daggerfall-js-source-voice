@@ -5,7 +5,7 @@
     "old": "export const moddedWeaponHUDAnimsEnabled = () => modSetting('diverse-weapons', 'Enabled') === true;",
     "new": "export const moddedWeaponHUDAnimsEnabled = () => true;",
     "tests": [
-      "test/dw1_diverseweapons.test.js"
+      "test/combat/weapon/dw1_diverseweapons.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "    if (isArtifact(weapon)) {",
     "new": "    if (false) {",
     "tests": [
-      "test/dw1_diverseweapons.test.js"
+      "test/combat/weapon/dw1_diverseweapons.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "            } else {\n              return 'STAFFOFMAGNUS.CIF';\n            }",
     "new": "            }",
     "tests": [
-      "test/dw1_diverseweapons.test.js"
+      "test/combat/weapon/dw1_diverseweapons.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "    case W.Arrow: return 'ARROW.CIF';\n    default: return '';\n  }\n}",
     "new": "    case W.Arrow: return 'ARROW.CIF';\n    default: return 'WEAPON04.CIF';\n  }\n}",
     "tests": [
-      "test/dw1_diverseweapons.test.js"
+      "test/combat/weapon/dw1_diverseweapons.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "  if (!enabled || !item) return classic;",
     "new": "  if (!item) return classic;",
     "tests": [
-      "test/dw1_diverseweapons.test.js"
+      "test/combat/weapon/dw1_diverseweapons.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "  return moddedWeaponFilename(item) || classic;",
     "new": "  return moddedWeaponFilename(item);",
     "tests": [
-      "test/dw1_diverseweapons.test.js"
+      "test/combat/weapon/dw1_diverseweapons.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "  return doubleScale ? [`w_${plain}`, plain] : [plain];",
     "new": "  return doubleScale ? [`w_${plain}`] : [plain];",
     "tests": [
-      "test/dw1_diverseweapons.test.js"
+      "test/combat/weapon/dw1_diverseweapons.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "  const plain = `${file}_${record}-${frame}${metalName ? `_${metalName}` : ''}`;",
     "new": "  const plain = `${file}_${record}-${frame}_${metalName}`;",
     "tests": [
-      "test/dw1_diverseweapons.test.js"
+      "test/combat/weapon/dw1_diverseweapons.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "  if (!on) return settings;",
     "new": "  if (false) return settings;",
     "tests": [
-      "test/dw1_diverseweapons.test.js"
+      "test/combat/weapon/dw1_diverseweapons.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "  moddedWeaponHUDAnimsEnabled() && modSetting('diverse-weapons', 'WeaponWidgetPreset') === true;",
     "new": "  modSetting('diverse-weapons', 'WeaponWidgetPreset') === true;",
     "tests": [
-      "test/dw1_diverseweapons.test.js"
+      "test/combat/weapon/dw1_diverseweapons.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "      const v = (typeof raw === 'string' && /^(true|false)$/i.test(raw.trim())) ? /^true$/i.test(raw.trim()) : raw;",
     "new": "      const v = raw;",
     "tests": [
-      "test/dw1_diverseweapons.test.js"
+      "test/combat/weapon/dw1_diverseweapons.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "      if (!def) continue;\n      // DFU writes booleans",
     "new": "      if (!def) { out[name] = raw; continue; }\n      // DFU writes booleans",
     "tests": [
-      "test/dw1_diverseweapons.test.js"
+      "test/combat/weapon/dw1_diverseweapons.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "  const names = (fileNames ?? []).filter((n) => (n.startsWith(DFMOD_KEY_PREFIX) && isDiverseDfmod(n)) || (isPng(n) && isDiversePng(n)));",
     "new": "  const names = (fileNames ?? []).filter((n) => n.startsWith(DFMOD_KEY_PREFIX) || (isPng(n) && isDiversePng(n)));",
     "tests": [
-      "test/dw1_diverseweapons.test.js"
+      "test/combat/weapon/dw1_diverseweapons.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "      const attached = _names.length ? await attachedImage(name, decode) : null;   // nothing attached: no bundle walk",
     "new": "      const attached = await attachedImage(name, decode);",
     "tests": [
-      "test/dw1_diverseweapons.test.js"
+      "test/combat/weapon/dw1_diverseweapons.test.js"
     ],
     "equivalent": true,
     "why": "the guard is cost, not answer: with no names registered the bundle walk finds nothing and the PNG find finds nothing, so every ask answers null without calling the loader either way; what the guard saves is a promise and a bundle-walk per ask on a weapon load with the flag on and nothing attached"
@@ -133,8 +133,8 @@
     "old": "    return toScreenOrder(await decode(bytes));",
     "new": "    return toColor32(await decode(bytes));",
     "tests": [
-      "test/dw1_diverseweapons.test.js",
-      "test/dw2_shipped.test.js"
+      "test/combat/weapon/dw1_diverseweapons.test.js",
+      "test/tooling/dw2_shipped.test.js"
     ]
   },
   {
@@ -143,7 +143,7 @@
     "old": "  return (await diverseWeaponsImage(name)) ?? (await weaponWidgetImage(name)) ?? null;",
     "new": "  return (await weaponWidgetImage(name)) ?? (await diverseWeaponsImage(name)) ?? null;",
     "tests": [
-      "test/dw1_diverseweapons.test.js"
+      "test/combat/weapon/dw1_diverseweapons.test.js"
     ]
   },
   {
@@ -152,8 +152,8 @@
     "old": "export const frameName = (askName, record, frame, metal) => `${askName}_${record}-${frame}${metal ? `_${metal}` : ''}`;",
     "new": "export const frameName = (askName, record, frame) => `${askName}_${record}-${frame}`;",
     "tests": [
-      "test/auditdw.test.js",
-      "test/dw1_diverseweapons.test.js"
+      "test/combat/weapon/auditdw.test.js",
+      "test/combat/weapon/dw1_diverseweapons.test.js"
     ]
   },
   {
@@ -162,7 +162,7 @@
     "old": "    const key = `${type}:${item?.material ?? 0}:${thunderlock ? (gilded ? 'gilded' : '') : atlasFileName(item, WEAPON_FILE[type] ?? '')}`;",
     "new": "    const key = `${type}:${item?.material ?? 0}`;",
     "tests": [
-      "test/dw1_diverseweapons.test.js"
+      "test/combat/weapon/dw1_diverseweapons.test.js"
     ]
   },
   {
@@ -171,7 +171,7 @@
     "old": "    const file = atlasFileName(w.specificWeapon, classic);",
     "new": "    const file = classic;",
     "tests": [
-      "test/dw1_diverseweapons.test.js"
+      "test/combat/weapon/dw1_diverseweapons.test.js"
     ]
   },
   {
@@ -180,7 +180,7 @@
     "old": "      if (misses.has(name)) continue;   // answered \"nothing carries it\": the next name's turn",
     "new": "",
     "tests": [
-      "test/dw1_diverseweapons.test.js"
+      "test/combat/weapon/dw1_diverseweapons.test.js"
     ]
   },
   {
@@ -189,7 +189,7 @@
     "old": "  setDiverseWeaponsSources(names, loadTextureFile);   // DW1: Diverse Weapons' bundle, a sprite set per weapon\n",
     "new": "",
     "tests": [
-      "test/dw1_diverseweapons.test.js"
+      "test/combat/weapon/dw1_diverseweapons.test.js"
     ]
   },
   {
@@ -198,7 +198,7 @@
     "old": "      if (!hasDiverseWeaponsSprite(name) || typeof fetchFn !== 'function') return null;",
     "new": "      if (typeof fetchFn !== 'function') return null;",
     "tests": [
-      "test/dw2_shipped.test.js"
+      "test/tooling/dw2_shipped.test.js"
     ]
   },
   {
@@ -207,7 +207,7 @@
     "old": "        return toScreenOrder(await decode(new Uint8Array(await res.arrayBuffer())));   // a PNG's rows are top-first: no flip (HT3)",
     "new": "        return toColor32(await decode(new Uint8Array(await res.arrayBuffer())));",
     "tests": [
-      "test/dw2_shipped.test.js"
+      "test/tooling/dw2_shipped.test.js"
     ]
   },
   {
@@ -216,7 +216,7 @@
     "old": "      if (attached) return attached;",
     "new": "",
     "tests": [
-      "test/dw2_shipped.test.js"
+      "test/tooling/dw2_shipped.test.js"
     ]
   },
   {
@@ -225,7 +225,7 @@
     "old": "  if (m[2] === undefined) return (bits & DIVERSE_WEAPONS_BARE) !== 0;",
     "new": "  if (m[2] === undefined) return true;",
     "tests": [
-      "test/dw2_shipped.test.js"
+      "test/tooling/dw2_shipped.test.js"
     ]
   },
   {
@@ -234,7 +234,7 @@
     "old": "  if (!Number.isFinite(v) || v === DYE_COLORS.Unchanged) return '';",
     "new": "  if (!Number.isFinite(v)) return '';",
     "tests": [
-      "test/dw3_icons.test.js"
+      "test/systems/dw3_icons.test.js"
     ]
   },
   {
@@ -243,7 +243,7 @@
     "old": "  if (v) return (!v.gate || v.gate() === true) ? decodedFrom(key, liveEntry(key)) : null;   // SURV2: the port's own, ungated - DW3: unless its registration gates it",
     "new": "  if (v) return decodedFrom(key, liveEntry(key));",
     "tests": [
-      "test/dw3_icons.test.js"
+      "test/systems/dw3_icons.test.js"
     ]
   },
   {
@@ -252,8 +252,8 @@
     "old": "    const swap = decodedTexture(archive, record, 0, 'Albedo', dye);",
     "new": "    const swap = decodedTexture(archive, record, 0);",
     "tests": [
-      "test/dw3_icons.test.js",
-      "test/texturereplacement.test.js"
+      "test/systems/dw3_icons.test.js",
+      "test/systems/texturereplacement.test.js"
     ]
   },
   {
@@ -262,7 +262,7 @@
     "old": "      if (!dyeToken(dye)) continue;",
     "new": "",
     "tests": [
-      "test/dw3_icons.test.js"
+      "test/systems/dw3_icons.test.js"
     ]
   },
   {
@@ -271,7 +271,7 @@
     "old": "  if (item.artifact) return DYE_COLORS.Unchanged;   // SetArtifact :611, the last writer",
     "new": "",
     "tests": [
-      "test/dw3_icons.test.js"
+      "test/systems/dw3_icons.test.js"
     ]
   },
   {
@@ -280,7 +280,7 @@
     "old": "    const key = `${img.archive}_${img.record}${token ? `_${token}` : ''}${img.dyeTarget != null ? `_t${img.dyeTarget}d${img.dye}` : ''}`;",
     "new": "    const key = `${img.archive}_${img.record}`;",
     "tests": [
-      "test/dw3_icons.test.js"
+      "test/systems/dw3_icons.test.js"
     ]
   },
   {
@@ -289,7 +289,7 @@
     "old": "  const swap = hasTextureReplacement(archive, record, 0, 'Albedo', dye)",
     "new": "  const swap = false",
     "tests": [
-      "test/dw3_icons.test.js"
+      "test/systems/dw3_icons.test.js"
     ]
   },
   {
@@ -298,8 +298,8 @@
     "old": "    if (entry && !entry.lazy && !decodedFrom(key, entry)) todo.push([key, entry]);",
     "new": "    if (entry && !decodedFrom(key, entry)) todo.push([key, entry]);",
     "tests": [
-      "test/dw3_icons.test.js",
-      "test/auditdw.test.js"
+      "test/systems/dw3_icons.test.js",
+      "test/combat/weapon/auditdw.test.js"
     ]
   },
   {
@@ -308,7 +308,7 @@
     "old": "          await preloadIconRecord(icons, img);   // AUDIT-DW F1: this record's replacement, decoded when it is drawn - not the archive's 280 before the first classic icon",
     "new": "",
     "tests": [
-      "test/auditdw.test.js"
+      "test/combat/weapon/auditdw.test.js"
     ]
   },
   {
@@ -317,7 +317,7 @@
     "old": "  if (!entry || !hasTextureReplacement(archive, record, frame, map, dye)) return Promise.resolve(null);",
     "new": "  if (!entry) return Promise.resolve(null);",
     "tests": [
-      "test/dw3_icons.test.js"
+      "test/systems/dw3_icons.test.js"
     ]
   },
   {
@@ -326,7 +326,7 @@
     "old": "      asks.push(Promise.resolve(ask(name)).then((img) => { row[f] = img ?? null; }, () => { row[f] = null; }));",
     "new": "      row[f] = (await Promise.resolve(ask(name)).catch(() => null)) ?? null;",
     "tests": [
-      "test/auditdw.test.js"
+      "test/combat/weapon/auditdw.test.js"
     ]
   },
   {
@@ -335,7 +335,7 @@
     "old": "      else if (w.s.doubleScale && custom.doubled !== false) {   // AUDIT-DW F3: only a `w_` texture is drawn into the doubled box",
     "new": "      else if (w.s.doubleScale) {",
     "tests": [
-      "test/auditdw.test.js"
+      "test/combat/weapon/auditdw.test.js"
     ]
   },
   {
@@ -344,8 +344,8 @@
     "old": "    if (!w.s.doubleScale || w.s.trueSize || !w.art) return false;",
     "new": "    if (!w.s.doubleScale || !w.art) return false;",
     "tests": [
-      "test/auditdw.test.js",
-      "test/ww1_weaponwidget.test.js"
+      "test/combat/weapon/auditdw.test.js",
+      "test/combat/weapon/ww1_weaponwidget.test.js"
     ]
   },
   {
@@ -354,8 +354,8 @@
     "old": "    return record != null && !!customTexture(record, Math.max(0, w.currentFrame))?.doubled;",
     "new": "    return record != null;",
     "tests": [
-      "test/auditdw.test.js",
-      "test/ww1_weaponwidget.test.js"
+      "test/combat/weapon/auditdw.test.js",
+      "test/combat/weapon/ww1_weaponwidget.test.js"
     ]
   }
 ]

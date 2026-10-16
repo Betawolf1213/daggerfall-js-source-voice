@@ -5,7 +5,7 @@
     "old": "        updateBillboardDelayed(frameCurrent, orientationChosen, stateCurrent);   // SPRITE-FLICKER: the IL's lastOrientation",
     "new": "        updateBillboardDelayed(frameCurrent, lastOrientation, stateCurrent);",
     "tests": [
-      "test/eotb_body.test.js"
+      "test/player/eyeOfTheBeholder/eotb_body.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "    if (stateLast !== stateCurrent || (animating && !isAnimating)) updateBillboardDelayed(frameCurrent, orientationChosen, stateCurrent);   // SPRITE-FLICKER",
     "new": "    if (stateLast !== stateCurrent || (animating && !isAnimating)) updateBillboardDelayed(frameCurrent, lastOrientation, stateCurrent);",
     "tests": [
-      "test/eotb_body.test.js"
+      "test/player/eyeOfTheBeholder/eotb_body.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "          updateBillboardDelayed(frameCurrent, orientationChosen, stateCurrent);   // SPRITE-FLICKER",
     "new": "          updateBillboardDelayed(frameCurrent, lastOrientation, stateCurrent);",
     "tests": [
-      "test/eotb_body.test.js"
+      "test/player/eyeOfTheBeholder/eotb_body.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "    orientationChosen = o;   // SPRITE-FLICKER",
     "new": "    ;",
     "tests": [
-      "test/eotb_body.test.js"
+      "test/player/eyeOfTheBeholder/eotb_body.test.js"
     ]
   }
 ]

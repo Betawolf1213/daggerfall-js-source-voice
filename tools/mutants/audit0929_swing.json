@@ -5,7 +5,7 @@
     "old": "        const fresh = last.swingN == null || last.swingN !== clipSwing;",
     "new": "        const fresh = true;",
     "tests": [
-      "test/audit0929_swing.test.js"
+      "test/systems/audit0929_swing.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "    swingN: swing.n,",
     "new": "    /* no count */",
     "tests": [
-      "test/audit0929_swing.test.js"
+      "test/systems/audit0929_swing.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "      clipSwing = null;   // AUDIT PRE-MERGE 0929 S1",
     "new": "      /* kept */   // AUDIT PRE-MERGE 0929 S1",
     "tests": [
-      "test/audit0929_swing.test.js"
+      "test/systems/audit0929_swing.test.js"
     ]
   },
   {
@@ -32,8 +32,8 @@
     "old": "  return swingFrameSeconds(blend, { heft: swingHeft(weight, liveStrength), handling",
     "new": "  return swingFrameSeconds(blend, { handling",
     "tests": [
-      "test/rr1_realism.test.js",
-      "test/swinglaw.test.js"
+      "test/systems/rr1_realism.test.js",
+      "test/systems/swinglaw.test.js"
     ]
   },
   {
@@ -42,7 +42,7 @@
     "old": "    const weight = readSwing(ctx)?.weight ?? 0;",
     "new": "    const weight = 0;",
     "tests": [
-      "test/rr1_realism.test.js"
+      "test/systems/rr1_realism.test.js"
     ]
   },
   {
@@ -51,8 +51,8 @@
     "old": "export function installSwingLaw() { registerSwingReader(readSwing); }\ninstallSwingLaw();",
     "new": "export function installSwingLaw() { registerSwingReader(readSwing); }",
     "tests": [
-      "test/audit0929_swing.test.js",
-      "test/swinglaw.test.js"
+      "test/systems/audit0929_swing.test.js",
+      "test/systems/swinglaw.test.js"
     ]
   },
   {
@@ -61,8 +61,8 @@
     "old": "import '../swingLaw.js';",
     "new": "// no reader",
     "tests": [
-      "test/audit0929_swing.test.js",
-      "test/swinglaw.test.js"
+      "test/systems/audit0929_swing.test.js",
+      "test/systems/swinglaw.test.js"
     ]
   },
   {
@@ -71,8 +71,8 @@
     "old": "  const slots = entity.equip?.slots;",
     "new": "  const slots = (entity.equip ??= { slots: {} }).slots;",
     "tests": [
-      "test/audit0929_swing.test.js",
-      "test/weaponrig.test.js"
+      "test/systems/audit0929_swing.test.js",
+      "test/combat/weapon/weaponrig.test.js"
     ]
   }
 ]

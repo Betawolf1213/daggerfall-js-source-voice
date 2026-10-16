@@ -1,6 +1,6 @@
 // SD16 - THE HOUR'S BLOWS SEEN, DRAWN IN A REAL BROWSER (the motes' probe's method, tools/sdMotesProbe.mjs).
 //
-// node holds the bursts' law (test/sd16_fx.test.js - which kinds, where, when, the shakes and the lights); what node
+// node holds the bursts' law (test/scenes/superDungeon/sd16_fx.test.js - which kinds, where, when, the shakes and the lights); what node
 // cannot answer is whether the gate's spark pass, fed the Hour's bursts in the dungeon's frame, lights the frame where
 // they stand. So: the repo's own modules served as they are, a fight turned through its landings and turns on a fake
 // link, scenes/superDungeon/sdFx.js's own draw over a cleared frame from the arena's rim, the frame read back about each burst. It runs

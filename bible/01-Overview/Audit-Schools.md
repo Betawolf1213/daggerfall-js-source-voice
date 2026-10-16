@@ -76,7 +76,7 @@ survived its suite in every lane's sample.
 
 ## Pinned
 
-`test/audit_schools.test.js` (28) - every FIXED finding above, by execution through the producers that mint the
+`test/systems/audit_schools.test.js` (28) - every FIXED finding above, by execution through the producers that mint the
 shapes in play (design page section 10 names them). Mutants: `tools/mutants/audit_schools.json` (95, the audit's) and
 `tools/mutants/schools.json` (65, the arc's - twelve re-aimed by content, one replaced: the judge reads no spell now,
 so its record is the unknown id's), every one dead but the reflected-landing guard recorded equivalent (L5 M4); and

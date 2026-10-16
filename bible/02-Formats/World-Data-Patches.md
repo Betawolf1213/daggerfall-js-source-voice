@@ -109,5 +109,5 @@ each file rebuilt only when the door first asks for it.
 
 The two packs: Beautiful Villages 7,526 files in 2,712 nodes, 2.58 MB
 gzipped; Beautiful Cities 1,021 files in 4,339 nodes, 2.17 MB. With
-`ARENA2_PATH` set, `test/wd3_pack.test.js` rebuilds all 8,547 of them
+`ARENA2_PATH` set, `test/formats/worldData/wd3_pack.test.js` rebuilds all 8,547 of them
 from the player's own BSA files, sha256 for sha256 (about eight seconds).

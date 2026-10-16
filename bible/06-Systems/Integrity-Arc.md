@@ -85,7 +85,7 @@ owes the law's graph no import). `itemFindings(item)` answers short codes, empty
 regular magic items of ONE row each and 23 artifacts of fixed sets. The port reads the player's own MAGIC.DEF, which DFU's
 fixes may differ from in a row's param - never its kinds or their count - so the law holds `magic: true` to one row of a
 kind the regular items carry, and `artifact: true` to its index's record: its template, and its rows' kinds within the
-record's (`REGULAR_MAGIC_TYPES`, `ARTIFACT_RECORDS`, held to the file by `test/int1_itemlaw.test.js` through
+record's (`REGULAR_MAGIC_TYPES`, `ARTIFACT_RECORDS`, held to the file by `test/systems/item/int1_itemlaw.test.js` through
 `test/dfuMagicItems.mjs`). Before the audit both flags were legacy shapes the law took whole - ten rows at 127 on any
 dagger passed. **A classic save's piece** (ten slots, `None` among them - `classicSave.js`, offline, through customs)
 follows the classic item maker's law, which is not this tree's: the law takes it as it stands, and the realm keeps it its
@@ -103,7 +103,7 @@ level, the ladder at every source with its last,
 curse and socket passes forced, every foe's kit and death, the spoils, 400 of the Broker's days, every Aetheric and Gilded
 record, the Reforge's reforge, hone, gem and imprint, every shop at every quality, chargen for every class and race, all
 815 recipes at every quality, the item maker driven as its window drives it, and every port item home - and
-`test/int1_itemlaw.test.js` asserts no finding on any of it, in the save and on the wire. The first sweep found six
+`test/systems/item/int1_itemlaw.test.js` asserts no finding on any of it, in the save and on the wire. The first sweep found six
 places the law disagreed with honest play, each fixed in the law or the schema, never in the producer: a food stage's
 textures written `undefined`; the maker's single-setting arm adding a many-instance effect twice; the maker enchanting a
 Dwemer Pellet (its window refuses only the Arrow); gold piles past the wire's bound; a quest's gold stack; and
@@ -169,8 +169,8 @@ realmHoldOf; the audit: a held character listed its craft for 900,000 gold), and
 character that MADE it, whatever character the act names (`realm.js` craftHoldOf, CRAFT-HOLD below). A held character with
 pieces of its make at the account is not deleted (its row is where the hold lives). A piece listed or
 vaulted before the law read listings is read as it is bought or taken, and goes to nobody if the law refuses it.
-`test/int2_judge.test.js` sweeps the service's source: no `prepareRealmRecord` that takes goods or gold out without
-`outbound`, the three sinks aside (a home and its decor bought from the realm, a guild founded); `test/int6_review.test.js`
+`test/server/int2_judge.test.js` sweeps the service's source: no `prepareRealmRecord` that takes goods or gold out without
+`outbound`, the three sinks aside (a home and its decor bought from the realm, a guild founded); `test/net/int6_review.test.js`
 holds the routes over HTTP, each refusal its 409.
 
 ### INT4 - the ids and the ledger (`systems/item/itemIds.js`, `server-account/src/ledger.js`)
@@ -213,7 +213,7 @@ the join sets `played_at`, so time on another character fills nothing). A gain n
 (a gate's, a raid's, a serpent's, an Abyss Dungeon's receipt, recorded) fills it by `spoilsGrant`. Every hour's unexplained
 gain and loss and the seconds played are kept (`realm_wealth_hours`).
 
-The audit's corrections, each pinned (`test/int5_budget.test.js`): the first judgement CHARGES what a save adds to its
+The audit's corrections, each pinned (`test/server/int5_budget.test.js`): the first judgement CHARGES what a save adds to its
 baseline (INT2); a bucket a win's spoils filled past the cap is spent down, never cut to it; a win's grant reads the
 level the realm TRUSTS (`verdict.js` trustedLevel: the save's, never past one more a `LEVEL_RISE_S` (300 s) of play since
 it last rose - a level of 1000 in one save made a win worth two million), and lands as a change, so a grant between a
@@ -271,7 +271,7 @@ node tools/realmReview.mjs characters <handle>
 node tools/realmReview.mjs repair <realm character id> <ticket> <faction id> <0x40 | 64 | Summoned> <gold> [note]
 ```
 
-Pinned by `test/fb1014_summonrepair.test.js` over the real Worker and the playing tab's own session and join;
+Pinned by `test/net/fb1014_summonrepair.test.js` over the real Worker and the playing tab's own session and join;
 `tools/mutants/fb1014_summonrepair.json` (16, dead).
 
 ### 4b. The audit (2026-10-09, Mac: "Lets do a comprehensive audit on this")
@@ -287,7 +287,7 @@ found, the wire dropping whole lists, the shop's shelf judged, the budget chargi
 piles, a rented room's chest, a craft and a market purchase (INT1, INT2, INT5); the item law's graph carrying a module
 that makes URLs from `import.meta.url` as it loads into the Worker (`comeSailAwayModels.js`, through the boats' items - a
 start the deploy would refuse: the hull table moved to `systems/comeSailAway/comeSailAwayHulls.js`, a leaf, and
-`test/accountdeploy.test.js` bundles the Worker with `import.meta.url` undefined and loads it); an O(n^2) walk on every
+`test/server/accountdeploy.test.js` bundles the Worker with `import.meta.url` undefined and loads it); an O(n^2) walk on every
 route's ids. Mutant records `tools/mutants/int_audit.json`; the arc's own records re-aimed.
 
 ### What lane 1 leaves open
@@ -493,7 +493,7 @@ death door; the duel referee's word dropped on a halo, a bout's frames sent to a
 the first blow (INT8); and in the pins, a duel's ring copied by hand, a pick window read through a signed fall, asserts
 of a literal beside the value, a constant nothing read (`DUEL_RANGE_TYPES`, retired), two DUEL1 records retired whose
 laws still stand (re-aimed). The four-point duel cast path in `systems/effects.js` (`duelCast`, `bundleDuel`) is
-DORMANT: no caller sets it since INT8, kept as it stands and pinned so (`test/int8_duel_ref.test.js`).
+DORMANT: no caller sets it since INT8, kept as it stands and pinned so (`test/net/duel/int8_duel_ref.test.js`).
 
 ### Decisions (2026-10-09)
 
@@ -547,8 +547,8 @@ Mac, on "Equipped items Disappear after looting in PvP zone" (`01-Overview/Field
   reload meets the new client.
 - Boss fights are lane 3's.
 
-**Pins.** `test/int7_arms.test.js`, `test/int8_duel_ref.test.js`, `test/int9_wild_ref.test.js`,
-`test/int10_spells.test.js`; the pins they moved are marked PIN MOVED where they stand. Mutants:
+**Pins.** `test/net/arena/int7_arms.test.js`, `test/net/duel/int8_duel_ref.test.js`, `test/net/int9_wild_ref.test.js`,
+`test/net/duel/int10_spells.test.js`; the pins they moved are marked PIN MOVED where they stand. Mutants:
 `tools/mutants/int_lane2.json`; the records INT7-INT10 moved re-aimed by content, and fifteen of DUEL1's
 (`tools/mutants/duel.json` and `auditduel1.json`) retired with the laws they checked - the defender's resolve, the
 loser's report, the mutual draw, the duel's heal - which are the referee's now. Migration `0104_referee`;
@@ -679,7 +679,7 @@ measures nothing.
 ### 6b. The audit (2026-10-10, the owner: "Fix everything in the branch")
 
 A review of lane 3 as first built found fifteen things, each fixed and pinned where it was found
-(`test/int_lane3_audit.test.js`, mutants `tools/mutants/int_lane3_audit.json`). Live at the deploy, enforced or not: the
+(`test/net/int_lane3_audit.test.js`, mutants `tools/mutants/int_lane3_audit.json`). Live at the deploy, enforced or not: the
 body's word spent the fight's own blows' bucket - four of the gate's sixteen a second, four of the serpent's ten while
 her carpenters worked, so a swing's frames and a coil's `held`/`esc` (never said again) were refused; and the serpent's
 host asked the PRIMARY socket's relay whether to say it, down a halo whose relay could be older (the junk that closes a
@@ -691,10 +691,10 @@ count wrecked never floated again (her once-said `wr 0` dropped while the count 
 twice); the fall said once, to the sockets of that beat; a hull's word waking a sleeping fight and returning before its
 beat was armed. And the census built twice a beat, every pose of a cell whose serpent fell hours ago trailed,
 review.js's quantile loop copied, a constant's doc comment orphaned, a test's clock left frozen by a throw in its setup.
-Pins moved, each marked PIN MOVED: posAt's "all after" (`test/int11_body.test.js`), the serpent host's version check
-and the INT13 pin's second `wr 0` (`test/int12_body_relay.test.js`), the gate's heal read by source
-(`test/gateheal.test.js`), the Hour's word routing and its census read once (`test/sd8b_fight.test.js`,
-`test/sd20a_fight.test.js`), and world188's hash, re-recorded in place (undeployed).
+Pins moved, each marked PIN MOVED: posAt's "all after" (`test/net/int11_body.test.js`), the serpent host's version check
+and the INT13 pin's second `wr 0` (`test/net/int12_body_relay.test.js`), the gate's heal read by source
+(`test/net/gate/gateheal.test.js`), the Hour's word routing and its census read once (`test/net/superDungeon/sd8b_fight.test.js`,
+`test/net/superDungeon/sd20a_fight.test.js`), and world188's hash, re-recorded in place (undeployed).
 
 ### Decisions (2026-10-10)
 
@@ -743,7 +743,7 @@ the clock, and the legacy record held to its own law.
   pile's count past one DFU `int` are law findings (`itemLaw.js` GOLD_INT_MAX, `judge.js` purseWord) - the absurd holds
   from day one, the measure no longer saturates; the law's version 4, `ACCOUNT_VERSION` acct123 (TECH1's rule; 3 and acct121 on its branch, renumbered past BAL9 at the merge, acct122 past NAME-AS at the next). The
   review (INT6): `realm-gains` (who went past the bucket, largest first) and `realm-trades` (whom a character traded
-  with, and what each gave). `test/hackedgold.test.js` (10), and `int1_itemlaw`'s honest sweep through the projection with
+  with, and what each gave). `test/systems/hackedgold.test.js` (10), and `int1_itemlaw`'s honest sweep through the projection with
   and without the ceiling - no honest price moved; `tools/mutants/hackedgold.json` (34, all dead). Read again
   against the session's "I dont wanna mess with honest players": an honest player feels it at one place alone - online
   a letter goes into no room's container or body, and one already lying there is dropped (no one can tell it from a
@@ -758,10 +758,10 @@ the clock, and the legacy record held to its own law.
   Its review added: a held character with pieces of its make at the account is not deleted (its row is where the hold
   lives; one with none goes, its Stores with it), and the guild Stores deposit and the guild writ supply ask the hold
   (they asked none). `ACCOUNT_VERSION` acct116 (acct115 on its branch, renumbered past BR5 at the merge).
-  `test/crafthold.test.js` (7); `tools/mutants/crafthold.json` (15, all dead). Record:
+  `test/tree/crafthold.test.js` (7); `tools/mutants/crafthold.json` (15, all dead). Record:
   `01-Overview/Exploit-Audit-2026-10-11.md`.
 - **INT1-INT6 (2026-10-09): lane 1, the economy - built, and audited (4b).** Migration `0096_integrity`;
-  `ACCOUNT_VERSION` acct100 (acct99 and migration 0095 on its branch, renumbered past main's CARDS9 and CARDS10 at the merge). Pins: `test/int1_itemlaw.test.js`, `int2_judge.test.js`, `int4_itemids.test.js`,
+  `ACCOUNT_VERSION` acct100 (acct99 and migration 0095 on its branch, renumbered past main's CARDS9 and CARDS10 at the merge). Pins: `test/systems/item/int1_itemlaw.test.js`, `int2_judge.test.js`, `int4_itemids.test.js`,
   `int5_budget.test.js`, `int6_review.test.js`, and `accountdeploy.test.js`'s Worker load; the honest sweep
   `test/honestItems.mjs` over DFU's own magic table (`test/dfuMagicItems.mjs`). Mutants `tools/mutants/int1.json`,
   `int2.json`, `int4_int5.json` and `int_audit.json`: 111, all dead (the arc's two that first survived - a weapon's row on
@@ -769,16 +769,16 @@ the clock, and the legacy record held to its own law.
   pins (a level in every save, a tile claiming the save's own level, crafted pieces' `products` rows of their own
   template, a peer's piece in its group), the checkpoint's answer carrying `tradeHeld`, the last clean save kept past the
   rotation, the race pin's join moved to the checkpoint's batch, the version pins at acct100. The account Worker bundles the
-  item law's graph (`.github/workflows/account-deploy.yml` lists it, `test/accountdeploy.test.js` holds the list).
+  item law's graph (`.github/workflows/account-deploy.yml` lists it, `test/server/accountdeploy.test.js` holds the list).
 - **INT7-INT10 (2026-10-09): lane 2, PvP refereed everywhere - built, and audited (5b).** Migration `0104_referee` (the arms on the row, a
   duel's receipt's bout id, a death's drop's falls); `ACCOUNT_VERSION` acct104 and `RELAY_VERSION` world185 (acct101 and
   migration 0097 on its branch, renumbered past main's BAG-CRAFT at the merge; then acct102, migration 0098 and world183,
   renumbered past the Chapters' acct103, migrations 0098-0103 and CHAP4c's world183 at the next; then world184, past
-  PERF-RELAY1's). Pins: `test/int7_arms.test.js`,
+  PERF-RELAY1's). Pins: `test/net/arena/int7_arms.test.js`,
   `int8_duel_ref.test.js`, `int9_wild_ref.test.js`, `int10_spells.test.js`. Mutants `tools/mutants/int_lane2.json`:
   122, 120 dead and 2 equivalent as recorded (a fallen struck - the referee refuses it itself; a coin put back that always
   fits) - its audit's (5b) among them, each survivor of the run pinned since; the records INT7-INT10 moved re-aimed by content (38 - 36 dead, 1 equivalent as recorded,
-  `test/relayversion.test.js`'s own judged with its row), fifteen of DUEL1's retired with their laws. Pins moved (each
+  `test/net/relayversion.test.js`'s own judged with its row), fifteen of DUEL1's retired with their laws. Pins moved (each
   marked PIN MOVED where it stands): DUEL1's and WILD1's defender, gift and loser's report, the duel's heal and trail,
   the deposit that needs the service's order, the token's `wa`, the order kinds, the hour's sweeps (twenty), the version
   pins at acct104 and world185. The account Worker bundles the zone's drop law (`.github/workflows/account-deploy.yml`).
@@ -786,14 +786,14 @@ the clock, and the legacy record held to its own law.
   boss kill's row keeps the relay's measure); `ACCOUNT_VERSION` acct105 and `RELAY_VERSION` world188 (world186 on its branch, renumbered past SD-HERALD's world186
   and WAGONS1's world187 at the merge of main; `net/bossBody.js`,
   `net/bossRef.js`, `net/gate/gateStrike.js` with `world/segment.js`, and `systems/serpent/serpentStrike.js` join the relay's bundle;
-  `net/bossBody.js` the account Worker's, through the receipts). Pins: `test/int11_body.test.js` (the law and the three
-  judges), `test/int12_body_relay.test.js` (the relay over the real Room, measured and enforced; the receipts; the
+  `net/bossBody.js` the account Worker's, through the receipts). Pins: `test/net/int11_body.test.js` (the law and the three
+  judges), `test/net/int12_body_relay.test.js` (the relay over the real Room, measured and enforced; the receipts; the
   service and the review; the client's glue). Mutants `tools/mutants/int_lane3.json`: 92, all dead - the run's five
   survivors each pinned since (a sweep read at one end; the relay's pose trail; a wreck's volleys, which a lone ship's
   wreck had hidden by taking the serpent's last health out with her share; the review's lost receipts; world188 the
   first relay that counts); the nineteen older records the lane moved re-aimed by content, all dead. Pins moved (each marked PIN MOVED
   where it stands): the gate's, the Abyss Dungeon's and the serpent's word kinds (`vt` in, `bd` out), the Hour's census
   and its receipts' and the gate's receipts' mint by source, the version pins at acct105 and world188.
-  AUDITED (6b, 2026-10-10): `test/int_lane3_audit.test.js` (16); mutants `tools/mutants/int_lane3_audit.json`: 46, all dead
+  AUDITED (6b, 2026-10-10): `test/net/int_lane3_audit.test.js` (16); mutants `tools/mutants/int_lane3_audit.json`: 46, all dead
   (two first survived and are pinned since); fourteen older records re-aimed by content, all dead; world188 re-hashed in
   place (undeployed); pins moved in `int11_body`, `int12_body_relay`, `gateheal`, `sd8b_fight` and `sd20a_fight`.

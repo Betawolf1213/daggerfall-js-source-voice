@@ -41,7 +41,7 @@ row since KB1 took the mod keys into Controls, so this stand-down guards a branc
 guard. AUDIT UI-1 and UI-2 below: the pause key now closes on a Ctrl/Alt combo too, and on its release - the "never
 its auto-repeat" above held for a rebound key only until then.)
 
-`test/disc28_pause.test.js` (9 since AUDIT UI-5, over the table the game mints): the real registry, the real input table and the mounted screen - a rebound P resumes
+`test/ui/enhanced/disc28_pause.test.js` (9 since AUDIT UI-5, over the table the game mints): the real registry, the real input table and the mounted screen - a rebound P resumes
 and is stopped there, its repeat does nothing, an unbound letter does nothing, the literal Escape still resumes, the boot
 menu ignores P; the capture's stand-down and its owner by source.
 
@@ -62,8 +62,8 @@ courtroom with nothing over it and `arrested` standing - every damage veto on, n
   answer does and dropping its veto; the arrival calls it where it clears the crime. A trial already under way is left
   to its release.
 
-`test/disc28_arrest.test.js` (6) through the real flow, the real court and the one damage door. JAIL-HIT's mutant
-records re-aimed (6 dead); `test/courtrescue.test.js`'s anchor re-aimed.
+`test/scenes/disc28_arrest.test.js` (6) through the real flow, the real court and the one damage door. JAIL-HIT's mutant
+records re-aimed (6 dead); `test/systems/courtrescue.test.js`'s anchor re-aimed.
 
 ## DISC28-C: the shop's confirm box stands above the rows' markers (7)
 
@@ -73,7 +73,7 @@ at 2 (`ui/enhanced/enhancedPlusStyle.js`) - and nothing between the lists and th
 positive layer painted over the modal whatever the DOM order: the column of dashes in the screenshot is one wear bar per
 row. The three shells that raise an `.sb-ask` box (trade, spellbook, tavern) stand it at layer 10.
 
-`test/disc28_shopbox.test.js` (4) reads every z-index the shipped stylesheets (the classic face's and Plus's) declare
+`test/ui/enhanced/disc28_shopbox.test.js` (4) reads every z-index the shipped stylesheets (the classic face's and Plus's) declare
 under each shell and holds the box above them all.
 
 ## DISC28-D: the first-person swing reads the live Speed (8)
@@ -86,7 +86,7 @@ at Speed 50, while the third-person body and the widget's clone read the live st
 read (a function, or a number for a fixed-speed weapon), and the rig hands it the entity's `liveStat(entity, 'speed')`.
 Roleplay & Realism's and RR Items' registered anim-time overrides receive the same live value.
 
-`test/disc28_speed.test.js` (4): the swing lasts five of the formula's ticks at Speed 20, 50 and 100; a Speed that
+`test/combat/disc28_speed.test.js` (4): the swing lasts five of the formula's ticks at Speed 20, 50 and 100; a Speed that
 changes mid-life changes the next swing; a number still fixes it; the rig's reader by source.
 
 SUPERSEDED FOR THE PLAYER by SWING-LAW (`05-Combat/Combat.md`, DISC29-G in `Field-Bugs-2026-09-28f.md`): the formula
@@ -128,7 +128,7 @@ exhausted collapses every few game minutes until they rest - a survival-arc desi
 LIVED1: online the collapse's RaiseTime moves the character's own clock, so it charges its hour and pays it in full,
 as offline.]
 
-`test/disc28_fatigue.test.js` (E: 6) drives the real tick and revival: a Hard body hunted to death by its own drain,
+`test/systems/disc28_fatigue.test.js` (E: 6) drives the real tick and revival: a Hard body hunted to death by its own drain,
 12, 60 and 90 game minutes on the death screen, stands up at the floor and survives its first tick. AUDIT DISC19 S4's
 pin re-aimed ("a sliver is raised to the floor; above the floor, fatigue left is kept") and its four mutants re-aimed.
 
@@ -151,7 +151,7 @@ absence and pays both halves through the loop's own body.) [LIVED1: the dead spa
 character's own, on a clock that stood under the screen.] The conspiracy roll itself is unchanged; whether to soften it
 is Mac's call (below).
 
-`test/disc28_fatigue.test.js` (F: 4): an arrival across three boundaries pays three points of recovery (a +3 kept since AUDIT TM-1), one inside an interval pays none
+`test/systems/disc28_fatigue.test.js` (F: 4): an arrival across three boundaries pays three points of recovery (a +3 kept since AUDIT TM-1), one inside an interval pays none
 (DFU's `[last, now)`), the shield holds, a death across a boundary pays it.
 
 ## DISC28-G: a rising swimmer meets the ceiling, never its top face (9b)
@@ -171,7 +171,7 @@ At rest, falling and moving sideways, PH1 is exactly as it was. (AUDIT MO-1 belo
 set a swimmer on a ceiling's top by another road, a wall's diagonal edge read as a floor. PH1's floor must now be a
 floor-sloped face in every pass.)
 
-`test/disc28_swim.test.js` (7). PH1's and SQUEEZE1's source pins re-aimed; ASQ-S1's mutant record re-aimed.
+`test/player/disc28_swim.test.js` (7). PH1's and SQUEEZE1's source pins re-aimed; ASQ-S1's mutant record re-aimed.
 
 ## DISC28-H: a flyer never starts with its feet under the floor below its marker (10)
 
@@ -187,7 +187,7 @@ centre, half a sprite lower again.
 not the floor beneath it); a bat high under a ceiling keeps DFU's hang exactly (the ceiling-bats law). Both streamed-puppet
 stands in `scenes/dungeonContext.js` build with `feetGiven`.
 
-`test/disc28_flyer.test.js` (6 since AUDIT MO-4: the context's own `buildFoeAt` and puppet stands mounted, flown on the
+`test/characters/enemy/disc28_flyer.test.js` (6 since AUDIT MO-4: the context's own `buildFoeAt` and puppet stands mounted, flown on the
 real EnemyAI over the real collider). The bats pin and WORLD3's `buildFoeAt` signature pin re-aimed.
 
 ## DISC28-I: the shared quest ends for the whole party, and its house opens for its holder (1)
@@ -222,7 +222,7 @@ it, so its own holder was locked out while the friend it was shared with (whose 
 `machine.isActiveQuestBuilding` is DFU's member; the door (`scenes/worldModes.js` questSiteHere) and the house market
 ask it.
 
-`test/disc28_quest.test.js` (9): the real machine, the real share path and the vendored A0C00Y07. QUEST-PARTY's and
+`test/systems/quest/disc28_quest.test.js` (9): the real machine, the real share path and the vendored A0C00Y07. QUEST-PARTY's and
 PARTY8's pins and records re-aimed.
 
 ## DISC28-J: a partner's quest foe credits a linked copy (9a)
@@ -247,7 +247,7 @@ quest said Y; the door and the map said X. DFU does the same. THE DEPARTURE (Por
 quest no longer gives, once the player has learned of it, is re-stamped. (AUDIT QS-K1/QS-K2: in place - the player's
 own map name and the lockpick record kept, a house the player owns never renamed - and at the town map's open too.)
 
-`test/disc28_names.test.js` (2).
+`test/systems/disc28_names.test.js` (2).
 
 ## For Mac
 
@@ -277,7 +277,7 @@ hand, *"don't cut anything, definitely fix everything"*. The branch was first me
 on the merged tree), then read in five lanes - the pause key and the shop box; the arrest and Speed; the dead span and
 the absence; the swimmer and the flyer; the shared quest - each on a snapshot of the merged tree with DFU's own C#
 beside it, every finding reproduced through the real modules before it was reported. Each lane then fixed its own on
-its own branch, and every fix was read again here before it was taken. Pinned in `test/auditdisc28_ui.test.js`,
+its own branch, and every fix was read again here before it was taken. Pinned in `test/ui/auditdisc28_ui.test.js`,
 `auditdisc28_arrest`, `auditdisc28_time`, `auditdisc28_motion` and `auditdisc28_quests`, beside the batch's own
 re-aimed pins; the mutants in `tools/mutants/auditdisc28_*.json`, all dead, and every older record whose site or
 killer a fix touched re-run.
@@ -453,7 +453,7 @@ killer a fix touched re-run.
 
 - The camera's recoil sway on a world-hosted dungeon's own load, recorded by 27h's DIAL-LOAD read: the context raises
   `onStartLoad` once its own load is under way and worldModes hands it the world host's `cameraRecoilReset`
-  (`test/dialload.test.js`).
+  (`test/scenes/dialload.test.js`).
 - `tools/mutants/auditdisc19.json`'s AUDIT-DISC19-W3-quiet-cumulative no longer parsed (its `else` left dangling);
   re-aimed to make the stand-down clock run under a threat, and dead.
 

@@ -29,12 +29,12 @@ mutation-proven. The record's own re-judge, left half done, is finished here (be
 | A18 | a sunk packet stood again | a player who never saw her go stood her afresh where she went down | spent by every player who sees it, and said in the word |
 | A19 | the near list let a packet go beside the player | only packets whose PLACE on the clock lay within 1,600 m were handed over: one fallen that far behind (1 km in 20 minutes) was let go at the player's side | every packet of the lanes about the player |
 | A20 | the port's own faded out before the one in port | the player who rolled the port sailed past HARBOUR_LEAVE; their moored ships faded from their berths for the one still there, the roll long done | taken over where they lie |
-| A21 | the lookout sounded for ever | a way gone NaN - SHIPLIFE-AI-no-hold's mutant - stepped `courseClear`'s soundings without end: test/shiplife.test.js hung for good, on 168bf2587 alike | a reach or a start no number is no clear course |
+| A21 | the lookout sounded for ever | a way gone NaN - SHIPLIFE-AI-no-hold's mutant - stepped `courseClear`'s soundings without end: test/systems/naval/shiplife.test.js hung for good, on 168bf2587 alike | a reach or a start no number is no clear course |
 | A22 | a packet behind her clock came about short of her port | the clock's leg turned under her and she sailed home from mid-lane; and (found by the audit's own mutants) a peer's copy kept the leg she was first known on for good - taken over, she sailed it again from wherever she was, or went for the nearest harbour's berth | the leg she sails is hers till she has sailed it - mine, and a peer's followed by where she lies; taken over, her errand her lane's |
 
 ## The packets (A2, A3, A5-A8, A17-A19, A22)
 
-**Reproduced first** (`test/auditbay_lanes.test.js`, the real host). A packet lagging round a headland steered for her
+**Reproduced first** (`test/systems/naval/auditbay_lanes.test.js`, the real host). A packet lagging round a headland steered for her
 place on the clock up its far side: 49 of 100 points of the line from her to it over the land (A6). Struck, she stayed
 the lane's - `linerBusy` read "not afloat" as busy and the director's density counted her its own - two minutes and 5
 km on (A2). At her voyage's turn, moored at her home port, she faded out at her berth and another was stood at the
@@ -74,7 +74,7 @@ phase sails her).
 word - and kept her own leg (`way`, `dest`) from the first tag as mine did, but never moved it on: a copy known on her
 leg out, met again sailing home, was taken over and turned about for the port behind her. And `adopt` drew her
 SHIP-LIFE's errand where she lay: a merchantman mid-lane within VOYAGE_REACH of a harbour was sent for its nearest
-free berth - the port she had left, out through its mouth again. Both pinned (`test/auditbay_lanes.test.js`,
+free berth - the port she had left, out through its mouth again. Both pinned (`test/systems/naval/auditbay_lanes.test.js`,
 "another's packet is followed along her own leg", "at her port by her errand").
 
 **Said, not fixed.** The schedule's LANE_CRUISE stays 70% - its speed is every client's shared clock, and a packet
@@ -109,7 +109,7 @@ nowrap; text-overflow: ellipsis`) - the aside card's 64 px held.
 
 ## Everything of her fading with her (A12-A14)
 
-**Reproduced first** (`test/auditbay_render.test.js`). The pool's light list lit 8 of 8 lanterns at full with a tenth
+**Reproduced first** (`test/scenes/naval/auditbay_render.test.js`). The pool's light list lit 8 of 8 lanterns at full with a tenth
 of her in the world; the host's far lamps drew hers; a twentieth of her flew her flag, laid her wake and splashes
 (world.js's particle lists), burned (her flame flats), raised embers, smoke and her founder, and lit her burning glow;
 the depth maps drew her whole.
@@ -148,7 +148,7 @@ none of that change's), SEAPEACE-the-prize-let-go-before-the-grapple surviving (
 
 ## The pins and the mutants
 
-`test/auditbay_lanes.test.js` (25) and `test/auditbay_render.test.js` (4), each red on ea3a7361e (A21's by its
+`test/systems/naval/auditbay_lanes.test.js` (25) and `test/scenes/naval/auditbay_render.test.js` (4), each red on ea3a7361e (A21's by its
 worker's clock: the soundings never stopped). `tools/mutants/auditbay.json` (121): 119 dead, two equivalent as
 recorded (the lying-off's point - her own leg's end or her clock's, one point whenever she lies off it; the host's
 bound on the spent it says - the word's record keeps the last NAVAL_WIRE_SPENT itself). Its first run's ten survivors:

@@ -23,7 +23,7 @@
 //
 // THE FRAME is Unity's, the boat's: +x starboard, +y up, +z the bow, the root on the waterline - every measurement below
 // is read off the bake (tools/bakeLargeBoat.mjs FRAME: Mac's metres x 0.72) and pinned against it
-// (test/ships2_largeboat.test.js). Not a DFU member. Ledger A (SHIPS-2).
+// (test/world/ships/ships2_largeboat.test.js). Not a DFU member. Ledger A (SHIPS-2).
 import { LARGE_BOAT_ARCHIVE, TEX, LARGE_BOAT_TILE, BANDS } from './largeBoatArt.js';
 import { MeshBench, colliderOf, prism, box, planarUv, sub, add, dot } from './galleonMesh.js';
 import { bakedPartGeometry, benchPart, mastCap, mergeGeometries, chaserGeometry, RUDDER_DEG } from './galleonModel.js';
@@ -39,7 +39,7 @@ export const LARGE_BOAT_HULL_NODE = 'NewLargeBoat';
 const GALLEON_ID = 112412;
 
 /** Her measurements in the boat's frame (metres): each read off the bake (tools/bakeLargeBoat.mjs FRAME) and pinned
- *  there (test/ships2_largeboat.test.js). */
+ *  there (test/world/ships/ships2_largeboat.test.js). */
 export const MEASURED = Object.freeze({
   deckY: 0.9032, gunwaleY: 2.2488, keelY: -0.6147,
   // her ceiling's face (her bulwark's inner side) and her planking's widest, amidships

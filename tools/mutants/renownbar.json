@@ -5,8 +5,8 @@
     "old": "  renownTrack.append(renownFill, renownGhost, renownNum);\n",
     "new": "  renownTrack.append(renownFill, renownGhost);\n",
     "tests": [
-      "test/renownbar.test.js",
-      "test/renown4.test.js"
+      "test/ui/enhanced/renownbar.test.js",
+      "test/server/renown4.test.js"
     ]
   },
   {
@@ -15,8 +15,8 @@
     "old": "    put(parts.renownNum, 'renownT', rv.text);   // UI3: the XP in the bar\n",
     "new": "",
     "tests": [
-      "test/renownbar.test.js",
-      "test/renown4.test.js"
+      "test/ui/enhanced/renownbar.test.js",
+      "test/server/renown4.test.js"
     ]
   },
   {
@@ -25,7 +25,7 @@
     "old": ".hud-renown.on { display: grid; grid-template-columns: 36px minmax(0, 1fr) 36px; }",
     "new": ".hud-renown.on { display: grid; grid-template-columns: 36px minmax(0, 1fr); }",
     "tests": [
-      "test/renownbar.test.js"
+      "test/ui/enhanced/renownbar.test.js"
     ]
   },
   {
@@ -34,8 +34,8 @@
     "old": ".hud-renown.on { display: grid;",
     "new": ".hud-renown.on { display: flex;",
     "tests": [
-      "test/renownbar.test.js",
-      "test/renown4.test.js"
+      "test/ui/enhanced/renownbar.test.js",
+      "test/server/renown4.test.js"
     ]
   },
   {
@@ -44,7 +44,7 @@
     "old": "grid-template-columns: 36px minmax(0, 1fr) 36px; }",
     "new": "grid-template-columns: 30px minmax(0, 1fr) 30px; }",
     "tests": [
-      "test/renownbar.test.js"
+      "test/ui/enhanced/renownbar.test.js"
     ]
   },
   {
@@ -53,7 +53,7 @@
     "old": ".hud-renown .hud-renowntrack { width: auto; height: 20px;",
     "new": ".hud-renown .hud-renowntrack { width: auto; height: 8px;",
     "tests": [
-      "test/renownbar.test.js"
+      "test/ui/enhanced/renownbar.test.js"
     ]
   },
   {
@@ -62,8 +62,8 @@
     "old": "'{name} - Renown {level}, {progress}', ",
     "new": "'{name} - Renown {level}', ",
     "tests": [
-      "test/renownbar.test.js",
-      "test/renown1.test.js"
+      "test/ui/enhanced/renownbar.test.js",
+      "test/net/renown1.test.js"
     ]
   }
 ]

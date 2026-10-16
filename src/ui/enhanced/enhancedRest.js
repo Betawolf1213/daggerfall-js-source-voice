@@ -567,7 +567,7 @@ export function mountEnhancedRest(hostEl, deps, ignoreAllocatedBed = false) {
  *  screen shares - ui/tradeDoor.js, ui/inventoryDoor.js) and the view mounted into it. ui/restDoor.js is the fork
  *  that calls this on the enhanced skin; the window object it returns carries every generic arm a host's frame
  *  drives (done, input, click, wheel, hover, tick, draw, dispose - assigned above, and pinned by
- *  test/partyrest1.test.js), so a host reads it exactly as it reads ui/restWindow.js's RestWindow. */
+ *  test/scenes/partyrest1.test.js), so a host reads it exactly as it reads ui/restWindow.js's RestWindow. */
 export function openEnhancedRest(deps, ignoreAllocatedBed = false) {
   const host = document.createElement('div');
   host.id = 'enhanced-rest';

@@ -5,7 +5,7 @@
     "old": "const TOP = [0, 3, 2, 1], UNDER = [4, 5, 6, 7];",
     "new": "const TOP = [0, 1, 2, 3], UNDER = [4, 5, 6, 7];",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "const SIDES = Object.freeze([[0, 1, 5, 4], [1, 2, 6, 5]",
     "new": "const SIDES = Object.freeze([[0, 4, 5, 1], [1, 2, 6, 5]",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "h: kind === 'riser' ? SD_RISER_H + SD_STEP_THICK : SD_STEP_THICK",
     "new": "h: SD_STEP_THICK",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "crumble: Object.freeze({ atlas: SD_STEPS_RECORD.crumble[0] }),",
     "new": "crumble: Object.freeze({ atlas: SD_STEPS_RECORD.riser }),",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ],
     "why": "Re-aimed by content (SD-LOOK S9)."
   },
@@ -42,7 +42,7 @@
     "old": "for (const [a, b, e, g] of [TOP, UNDER, ...SIDES]) indices.push(a, b, e, a, e, g);",
     "new": "for (const [a, b, e, g] of [TOP, UNDER, ...SIDES]) indices.push(a, e, b, a, g, e);",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -51,7 +51,7 @@
     "old": "SD_REALM_FLOOR_RECORD, { y: c.y });",
     "new": "SD_REALM_FLOOR_RECORD, {});",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -60,7 +60,7 @@
     "old": "const C = (x, y, z) => realmToDungeon(cx + x, y0 + y, cz + z);",
     "new": "const C = (x, y, z) => realmToDungeon(cx + x, y, cz + z);",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -69,7 +69,7 @@
     "old": "return d < S.core ? scale(col, k)",
     "new": "return d < S.core ? BLACK",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ],
     "why": "Re-aimed by content (SD-LOOK S9)."
   },
@@ -79,7 +79,7 @@
     "old": "if (r < D.hub) return BLACK;   // the hub",
     "new": "if (r < D.hub) return scale(col, 1);   // the hub",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ],
     "why": "Re-aimed by content (SD-LOOK S9)."
   },
@@ -89,7 +89,7 @@
     "old": "collider?.addMesh?.(st.key, positions, indices, identity(), () => st.T);",
     "new": "collider?.addMesh?.(st.key, positions, indices, identity());",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -98,7 +98,7 @@
     "old": "else st.T[1] = SD_STEP_GONE_Y;",
     "new": "else st.T[1] = y;",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -107,7 +107,7 @@
     "old": "const falter = beatBlinks(s, t) && Math.floor(warned * 2 * SD_BEAT_BLINK_HZ) % 2 === 1;",
     "new": "const falter = false;",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ],
     "why": "Re-aimed by content (SD-LOOK S9)."
   },
@@ -117,7 +117,7 @@
     "old": "    stepAt(s, t, _at);",
     "new": "    _at[0] = s.x; _at[1] = s.y; _at[2] = s.z;",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -126,7 +126,7 @@
     "old": "if (dx || dy || dz) body.carryBy?.(dx, dy, dz);",
     "new": "if (false) body.carryBy?.(dx, dy, dz);",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -135,7 +135,7 @@
     "old": "if (on && on.solid && on.wasSolid) {",
     "new": "if (on) {",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -144,7 +144,7 @@
     "old": "if (on && live && on.s.kind === 'crumble' && on.touched == null) {",
     "new": "if (on && on.s.kind === 'crumble' && on.touched == null) {",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -153,7 +153,7 @@
     "old": "if (c.shaking) { sx = SD_CRUMBLE_SHAKE",
     "new": "if (false) { sx = SD_CRUMBLE_SHAKE",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -162,7 +162,7 @@
     "old": "if (!(since >= 0 && since < SD_CRUMBLE_DELAY + SD_CRUMBLE_BACK)) { st.touched = null; since = -1; }",
     "new": "if (since < 0) { st.touched = null; since = -1; }",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -171,7 +171,7 @@
     "old": "if (g.push && inBreath(rz) && dt > 0)",
     "new": "if (g.push && spanAt(rz) >= 1 && dt > 0)",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -180,7 +180,7 @@
     "old": "body.height, !!body.grounded && !body.jumping);",
     "new": "body.height, true);",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -189,7 +189,7 @@
     "old": "g.push * Math.min(dt, BREATH_DT_MAX)",
     "new": "g.push * dt",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -198,7 +198,7 @@
     "old": "if (g.warn && span === 2 && lastWarned !== gust) {",
     "new": "if (g.warn && span === 2) {",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -207,7 +207,7 @@
     "old": "if (g.warn && span === 2 && lastWarned",
     "new": "if (g.warn && span >= 0 && lastWarned",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -216,7 +216,7 @@
     "old": "if (lastTick != null && b !== lastTick) play(SD_STEPS_SOUNDS.tick, 0.35, 1.6);",
     "new": "if (false) play(SD_STEPS_SOUNDS.tick, 0.35, 1.6);",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -225,7 +225,7 @@
     "old": "return realmToDungeon(...castBackTo(lastSpan));",
     "new": "return realmToDungeon(...castBackTo(0));",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -234,7 +234,7 @@
     "old": "if (inVoid(ry)) {",
     "new": "if (inVoid(ry) && spanAt(rz) >= 0) {",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -243,7 +243,7 @@
     "old": "if (!live || !body?.pos) return null;",
     "new": "if (!body?.pos) return null;",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -252,7 +252,7 @@
     "old": "export const SD_STEPS_FREE_HALF_W = 40;",
     "new": "export const SD_STEPS_FREE_HALF_W = 4;",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -261,7 +261,7 @@
     "old": "  Object.freeze({ kind: 'disc', ...SD_ARENA }),\n",
     "new": "",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -270,7 +270,7 @@
     "old": "realmArena([...SD_REALM_FLOORS, ...SD_HALL_FLOORS, ...SD_STEPS_FLOORS])",
     "new": "realmArena([...SD_REALM_FLOORS, ...SD_HALL_FLOORS])",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -279,7 +279,7 @@
     "old": "registerLevitateWard(() => inSiegeRoom() || modes?.sdRealmSlot?.() != null);",
     "new": "registerLevitateWard(() => inSiegeRoom());",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -288,7 +288,7 @@
     "old": "* SD_CAST_BACK_LOSS));\n      hurtPlayer(playerEntity, dmg, { bypassShield: true, spare: () => {} });",
     "new": "* SD_CAST_BACK_LOSS));\n      hurtPlayer(playerEntity, dmg, { spare: () => {} });",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -297,7 +297,7 @@
     "old": "* SD_CAST_BACK_LOSS));",
     "new": "* 0));",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -306,7 +306,7 @@
     "old": "    player.freezeMotor = TELEPORT_FREEZE_S;\n    player.spawn(at[0], at[1], at[2]);",
     "new": "    player.spawn(at[0], at[1], at[2]);",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -315,7 +315,7 @@
     "old": "dungeonCtx?.sdStepsRide?.(dt, player, !overlayHeld)",
     "new": "dungeonCtx?.sdStepsRide?.(dt, player, true)",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -324,7 +324,7 @@
     "old": "sdClock: () => host.deadlandsSeconds?.() ?? performance.now() / 1000,",
     "new": "sdClock: () => performance.now() / 1000,",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   },
   {
@@ -333,7 +333,7 @@
     "old": "return sdSteps.ride(opts.sdClock?.() ?? performance.now() / 1000, dt, body, live);",
     "new": "return sdSteps.ride(performance.now() / 1000, dt, body, live);",
     "tests": [
-      "test/sd7b_steps.test.js"
+      "test/world/superDungeon/sd7b_steps.test.js"
     ]
   }
 ]

@@ -175,7 +175,7 @@ page says it the way a friend's row does (SOC3): a dot, lit while the member is 
   names each member by the account's handle, and a member playing another character of theirs is at play. A guild's
   members are each other's by an invitation accepted, which is what a friendship grants presence on (AUDIT ONLINE A6).
 
-Pins: `test/guildseen.test.js` (the service through the real Worker, the law, the book, the page);
+Pins: `test/net/guildseen.test.js` (the service through the real Worker, the law, the book, the page);
 `tools/mutants/guildseen.json`, 14 of 14 dead.
 
 | Host | GUILD-SEEN |
@@ -207,7 +207,7 @@ before the press, and a refusal's word the page cannot read again never a lock.
 
 ## Pins
 
-`test/guild2_service.test.js` (the service, through the real Worker) and `test/guild2_client.test.js` (the laws, the
+`test/net/guild2_service.test.js` (the service, through the real Worker) and `test/net/guild/guild2_client.test.js` (the laws, the
 art, the book, the door, the pages); `tools/mutants/guild2.json`.
 
 ## The audit (2026-10-03, Mac: "Audit this")

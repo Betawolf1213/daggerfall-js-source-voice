@@ -128,7 +128,7 @@ export const DECOR_FURNITURE_LAST = 43999;
  *  the THINGS kept (a statue, a sword, a pedestal, a hanging, a coffin) - never the dungeon itself: its structure (a
  *  wall, a stair, a floor, a platform, a pit, a cave's cone of rock), its passages (a door, a trapdoor, a portcullis, a
  *  ramp, a bridge) or its mechanisms (a lever and its housing). Each is named by the tag Daggerfall's own dungeon editor
- *  gave its reference (BLOCKS.BSA's model list), with how many times it stands still there - test/decordungeon.test.js
+ *  gave its reference (BLOCKS.BSA's model list), with how many times it stands still there - test/systems/decor/decordungeon.test.js
  *  measures both again over the player's own blocks. */
 export const DECOR_FREE_STANDING = Object.freeze([
   60512, 60520,   // the boulders (ST1 1, ST9 1)

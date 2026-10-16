@@ -16,7 +16,7 @@
 // AUDIT 62 F1 (2026-09-07): THE FIRST CHANGE TO THE BODY, and it is said
 // here for project-final to take: the poly-mesh weld, the lattice cut's
 // height, the bake's vertex heights, the level-aware locate and heights
-// (grep AUDIT 62). test/enhancedAI.test.js pins the body by digest; a
+// (grep AUDIT 62). test/ai/nav/enhancedAI.test.js pins the body by digest; a
 // change re-pins it deliberately, with project-final's commit beside it.
 //
 // THE TWO LINES. (1) project-final imports surfaceY from its terrain

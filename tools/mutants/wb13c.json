@@ -5,7 +5,7 @@
     "old": "move: !!aimed && aimed === P.atk[A.key].name }",
     "new": "move: !!aimed }",
     "tests": [
-      "test/wb13c_hud.test.js"
+      "test/ui/gate/wb13c_hud.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "dagon: isDagons(A), move:",
     "new": "dagon: !!A.el, move:",
     "tests": [
-      "test/wb13c_hud.test.js"
+      "test/ui/gate/wb13c_hud.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "const alpha = s.fell ? Math.max(0, Math.min(1, 1 - (since - FELL_HOLD_MS) / FELL_FADE_MS)) : 1;",
     "new": "const alpha = s.fell ? 0 : 1;",
     "tests": [
-      "test/wb13c_hud.test.js"
+      "test/ui/gate/wb13c_hud.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "t: now < atk.at ? tel.t : 1,",
     "new": "t: now < atk.at ? tel.t : 0,",
     "tests": [
-      "test/wb13c_hud.test.js"
+      "test/ui/gate/wb13c_hud.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "  shown.g = stepGhost(shown.g, frac * 100, dt);",
     "new": "  shown.g = { at: frac * 100, pct: frac * 100, hold: 0 };",
     "tests": [
-      "test/wb13c_hud.test.js"
+      "test/ui/gate/wb13c_hud.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "const subColor = model.epithet ? model.epithetColor ?? '' : '';",
     "new": "const subColor = '';",
     "tests": [
-      "test/wb13c_hud.test.js"
+      "test/ui/gate/wb13c_hud.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "const near = !!model.wrath && !!model.wrathNear;",
     "new": "const near = false;",
     "tests": [
-      "test/wb13c_hud.test.js"
+      "test/ui/gate/wb13c_hud.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "flashing(shown.breakAt, now, FLASH_MS.wardBreak) ? ' wbreak' : ''",
     "new": "shown.breakAt !== null ? ' wbreak' : ''",
     "tests": [
-      "test/wb13c_hud.test.js"
+      "test/ui/gate/wb13c_hud.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "if (shown.warded && !model.warded && !model.fallen) shown.breakAt = now;",
     "new": "if (shown.warded && !model.warded) shown.breakAt = now;",
     "tests": [
-      "test/wb13c_hud.test.js"
+      "test/ui/gate/wb13c_hud.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "if (shown.outAt === null) shown.outAt = now;\n    else if (now - shown.outAt >= CALLOUT_OUT_MS)",
     "new": "if (shown.outAt === null) shown.outAt = now - CALLOUT_OUT_MS;\n    if (now - shown.outAt >= CALLOUT_OUT_MS)",
     "tests": [
-      "test/wb13c_hud.test.js"
+      "test/ui/gate/wb13c_hud.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "if (fresh) shown.inAt = now;",
     "new": "shown.inAt = now;",
     "tests": [
-      "test/wb13c_hud.test.js"
+      "test/ui/gate/wb13c_hud.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "${shown.move ? ' aimed' : ''}",
     "new": "",
     "tests": [
-      "test/wb13c_hud.test.js"
+      "test/ui/gate/wb13c_hud.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "(shown.spentNew?.[i] && flashing(shown.spentAt, now, FLASH_MS.spent) ? 'wb-boss-mark spent now' : 'wb-boss-mark spent')",
     "new": "'wb-boss-mark spent now'",
     "tests": [
-      "test/wb13c_hud.test.js"
+      "test/ui/gate/wb13c_hud.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "if (shown.spent !== null) { shown.spentNew = [...spent].map((c, i) => c === '1' && shown.spent[i] !== '1'); shown.spentAt = now; }",
     "new": "{ shown.spentNew = [...spent].map((c, i) => c === '1' && shown.spent?.[i] !== '1'); shown.spentAt = now; }",
     "tests": [
-      "test/wb13c_hud.test.js"
+      "test/ui/gate/wb13c_hud.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "    shown = { ...SHOWN(), vis: shown.vis };\n    parts.calloutText.textContent = '';\n",
     "new": "    shown = { ...SHOWN(), vis: shown.vis };\n",
     "tests": [
-      "test/wb13c_hud.test.js"
+      "test/ui/gate/wb13c_hud.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "    shown = { ...SHOWN(), vis: shown.vis };",
     "new": "    shown = { ...SHOWN(), vis: shown.vis, introAt: shown.introAt };",
     "tests": [
-      "test/wb13c_hud.test.js"
+      "test/ui/gate/wb13c_hud.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "@media (max-height: 480px) {\n  .wb-boss-bar { top: 44px; }",
     "new": "@media (max-height: 1px) {\n  .wb-boss-bar { top: 44px; }",
     "tests": [
-      "test/wb13c_hud.test.js"
+      "test/ui/gate/wb13c_hud.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "peril?.name ?? null), { hidden: hudHidden() || veiled() });",
     "new": "peril?.name ?? null), { hidden: hudHidden() });",
     "tests": [
-      "test/wb13c_hud.test.js"
+      "test/ui/gate/wb13c_hud.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "drawGateBossBar(bossBarModel(s, t, bossOf(s), peril?.name ?? null)",
     "new": "drawGateBossBar(bossBarModel(s, t, bossOf(s), null)",
     "tests": [
-      "test/wb13c_hud.test.js"
+      "test/ui/gate/wb13c_hud.test.js"
     ]
   },
   {
@@ -176,9 +176,9 @@
     "old": "@media (max-width: 640px), (max-height: 480px) {",
     "new": "@media (max-width: 640px) {",
     "tests": [
-      "test/wb13c_hud.test.js",
-      "test/gateheal.test.js",
-      "test/audit_wb11.test.js"
+      "test/ui/gate/wb13c_hud.test.js",
+      "test/net/gate/gateheal.test.js",
+      "test/net/gate/audit_wb11.test.js"
     ]
   },
   {
@@ -187,7 +187,7 @@
     "old": "entering: shown < CHART_IN_MS,",
     "new": "entering: true,",
     "tests": [
-      "test/wb13c_hud.test.js"
+      "test/ui/gate/wb13c_hud.test.js"
     ]
   },
   {
@@ -196,7 +196,7 @@
     "old": "animation-delay: ${i * CHART_ROW_STEP_MS}ms;",
     "new": "animation-delay: 0ms;",
     "tests": [
-      "test/wb13c_hud.test.js"
+      "test/ui/gate/wb13c_hud.test.js"
     ]
   },
   {
@@ -205,7 +205,7 @@
     "old": "  body:has(.dfparty:not([style*=\"display: none\"])) .wb-marks-card { right: 220px; }",
     "new": "  body:has(.dfparty:not([style*=\"display: none\"])) .wb-marks-card { right: 18px; }",
     "tests": [
-      "test/wb13c_hud.test.js"
+      "test/ui/gate/wb13c_hud.test.js"
     ]
   },
   {
@@ -214,7 +214,7 @@
     "old": ".wb-marks-tip { font-size: 13px; opacity: 0.85; color: #e9c9a6; }",
     "new": ".wb-marks-tip { font-size: 12px; font-style: italic; opacity: 0.8; color: #e9c9a6; }",
     "tests": [
-      "test/wb13c_hud.test.js"
+      "test/ui/gate/wb13c_hud.test.js"
     ]
   },
   {
@@ -223,7 +223,7 @@
     "old": "    if (doc.head) injectEnhancedFonts(doc);   // WB13c: Cormorant on the classic skin too (it came only if another window had asked)\n",
     "new": "",
     "tests": [
-      "test/wb13c_hud.test.js"
+      "test/ui/gate/wb13c_hud.test.js"
     ]
   },
   {
@@ -232,7 +232,7 @@
     "old": "          if (e.pointerType !== 'mouse') this._tapTip(px, py, e.clientX, e.clientY);   // WB13c: a finger has no hover\n",
     "new": "",
     "tests": [
-      "test/eventtip.test.js"
+      "test/ui/eventtip.test.js"
     ]
   },
   {
@@ -241,7 +241,7 @@
     "old": "if (this._tipUntil !== null && this._clock >= this._tipUntil) {",
     "new": "if (false) {",
     "tests": [
-      "test/eventtip.test.js"
+      "test/ui/eventtip.test.js"
     ]
   },
   {
@@ -250,7 +250,7 @@
     "old": "if (e.pointerType !== 'mouse') this._tapTip(",
     "new": "if (true) this._tapTip(",
     "tests": [
-      "test/eventtip.test.js"
+      "test/ui/eventtip.test.js"
     ]
   },
   {
@@ -259,7 +259,7 @@
     "old": "{ if (e.pointerType !== 'mouse' && this._tipUntil !== null) return; this._hoverAt = null; this._showTip(null); }",
     "new": "{ this._hoverAt = null; this._showTip(null); }",
     "tests": [
-      "test/eventtip.test.js"
+      "test/ui/eventtip.test.js"
     ]
   }
 ]

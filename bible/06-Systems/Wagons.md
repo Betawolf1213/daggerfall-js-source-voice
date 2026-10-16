@@ -45,7 +45,7 @@ Two stations are skipped by name:
 - the handcart at X 74. This is the Tiny file's own station; Mac was unsure of
   it, and the Wagon Cart was chosen over it.
 
-The joined copies above Y 15 are skipped too. `test/wagons1_bake.test.js`
+The joined copies above Y 15 are skipped too. `test/tooling/wagons1_bake.test.js`
 re-bakes all three files byte for byte. It also refuses a scene that moves
 under a spec: a part out of its box, an object no spec names, or a skipped
 station standing inside a wagon.
@@ -483,7 +483,7 @@ Items and economy, motion and drawing, the caravan's room, and online.
 
 The relay and the visits, the riders and the wheels, the caravan's room as a
 house, the windows' render half, and the items with the docs and the pins.
-Each fix is pinned in `test/wagons2_final.test.js` (or beside its own law's
+Each fix is pinned in `test/systems/wagons2_final.test.js` (or beside its own law's
 tests) and has its mutants in `tools/mutants/wagons2_final.json`.
 
 - **The relay** (re-hashed in place; world187 since main's INT7-INT10 and SD-HERALD took world185 and world186).
@@ -746,7 +746,7 @@ as before.
 
 ### Pins (WAGONS3)
 
-`test/wagons3.test.js`. Mutants: `tools/mutants/wagons3.json`. Records
+`test/player/wagons3.test.js`. Mutants: `tools/mutants/wagons3.json`. Records
 re-aimed: `auditinvis.json`, `fbsea.json`, `hcc.json`, `macbugs.json`,
 `ow1.json`, `wagonhitch.json`, `wagons2.json`, `wagons2_wheels.json` (its
 "the bogie out of the bounds" recorded equivalent: the front axle's reach lies
@@ -841,7 +841,7 @@ about a pivot over the wagon:
 - The hosts (`src/scenes/world.js`, `src/scenes/exterior.js`) hand
   `pivotFloor: _driverSeat ? hcc.cameraFloor() : null`.
 
-Measured on the fake world (`test/benchcam1.test.js`): the sprite's camera on
+Measured on the fake world (`test/player/benchcam1.test.js`): the sprite's camera on
 the Caravan stands its whole two metres level and looking down, and comes in
 no lower than the roof looking up. The Morrowind camera keeps its base
 distance (2.74 m) level and looking down, and holds 1.69 m looking up 0.2
@@ -852,9 +852,9 @@ THE FOUR HOSTS (BENCH-CAM): `src/scenes/world.js` and `src/scenes/exterior.js`
 wired; `src/scenes/worldModes.js` and `src/scenes/dungeonContext.js` drive no
 wagon.
 
-Pins: `test/benchcam1.test.js`; `test/wagons3.test.js`'s camera wall (PIN
+Pins: `test/player/benchcam1.test.js`; `test/player/wagons3.test.js`'s camera wall (PIN
 MOVED: the open wagon's tilt is a wall, its camera free from the pivot over
-it); `test/maca_camera_sphere.test.js`'s mwView pin (PIN MOVED: the call
+it); `test/player/maca_camera_sphere.test.js`'s mwView pin (PIN MOVED: the call
 carries `pivotFloor` after its two seams). Mutants: `tools/mutants/benchcam1.json`. Record retired:
 `AUDIT-WAGONS3-B1-every-body-a-cabin` (its law - the caravan's body alone a
 wall - is the one this slice reverses; BENCH-CAM-the-tilt-no-shell holds the
@@ -898,12 +898,12 @@ hitched. The wheels keep their own law (wheelUv, on their hub): they roll.
   and ten under (45 rows, 26 of them window). Inside, its sill stands 0.73 m
   over the floor (it was 0.84).
 
-Pins: `test/wagonuv1.test.js`, read off the built geometry - borne level,
+Pins: `test/world/wagonuv1.test.js`, read off the built geometry - borne level,
 every square face of the cart wears its picture as planarUv lays it on a
 level face, and each wheel's picture stands upright on its hub; the windows'
 glass stands the same each way from the body's middle, each window in the
 middle of its half, and centred between the trims in the picture.
-`test/wagons2.test.js`'s windows-meet pin holds the room to the side.
+`test/systems/wagon/wagons2.test.js`'s windows-meet pin holds the room to the side.
 Mutants: `tools/mutants/wagonuv1.json` (7, all dead).
 
 Seen through the port's own CPU rasteriser (`src/ui/modelIcon.js`
@@ -947,7 +947,7 @@ The four hosts: `scenes/worldModes.js` WIRED (the document said and stood);
 onCaravan); `scenes/exterior.js` and `scenes/dungeonContext.js` stand no
 caravan room - FLAGGED as WAGONS2-VISIT left them.
 
-Pins: `test/wagons2_visit.test.js` (18) - the document's taken-out list
+Pins: `test/systems/wagons2_visit.test.js` (18) - the document's taken-out list
 (its law, its cap, a full room, an older document) and the interior host's
 room (the owner says it, the guest sets it, a document taking nothing out
 puts it back). Mutants: six in `tools/mutants/wagons2_visit.json`
@@ -990,19 +990,19 @@ comes back as the Small Cart, as built.
 
 ## Pins
 
-- `test/wagons1_bake.test.js` - the bake.
-- `test/wagons1.test.js` - the kinds, capacity, pictures, parts, measures,
+- `test/tooling/wagons1_bake.test.js` - the bake.
+- `test/systems/item/wagons1.test.js` - the kinds, capacity, pictures, parts, measures,
   faces, cargo, seats, icon, pool, cart's tilt, caravan's row, the word and
   the hosts.
-- `test/wagons1_seats.test.js` - the seats' words, the owner, the rider, the
+- `test/scenes/wagons1_seats.test.js` - the seats' words, the owner, the rider, the
   journey, the companions, the caravan and the interior host.
 
-- `test/wagons2.test.js`, `test/wagons2_wheels.test.js` - WAGONS2 and its audit.
-- `test/wagons2_visit.test.js`, `test/wagons2_visit_relay.test.js` - the visits.
-- `test/wagons2_final.test.js` - the final audit (and its riders' and
+- `test/systems/wagon/wagons2.test.js`, `test/systems/horse/wagons2_wheels.test.js` - WAGONS2 and its audit.
+- `test/systems/wagons2_visit.test.js`, `test/net/wagons2_visit_relay.test.js` - the visits.
+- `test/systems/wagons2_final.test.js` - the final audit (and its riders' and
   windows' pins beside their own, in `wagons2.test.js` and
   `windows1_view.test.js`).
-- `test/wagonuv1.test.js` - WAGON-UV: the cart laid level, the caravan's
+- `test/world/wagonuv1.test.js` - WAGON-UV: the cart laid level, the caravan's
   windows centred (its mutants `tools/mutants/wagonuv1.json`).
 
 The mutants are in `tools/mutants/wagons1.json`, `wagons2.json`, `wagons2_wheels.json`, `wagons2_visit.json` and `wagons2_final.json`. Records re-aimed:

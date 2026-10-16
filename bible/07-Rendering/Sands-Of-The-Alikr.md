@@ -52,6 +52,6 @@ lacks is the classic record (`recordOwners`, by the pack). Ledger A.
 
 ## Pins
 
-`test/environs_texturePacks.test.js` (4); `tools/mutants/alikr1.json` (7, all
-dead); `test/doctrine.test.js` holds the directory to Port-Doctrine's second
+`test/systems/environs_texturePacks.test.js` (4); `tools/mutants/alikr1.json` (7, all
+dead); `test/tooling/doctrine.test.js` holds the directory to Port-Doctrine's second
 exception.

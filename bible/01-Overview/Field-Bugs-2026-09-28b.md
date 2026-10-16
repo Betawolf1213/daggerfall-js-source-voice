@@ -70,7 +70,7 @@ shape (`world/gate/gateClearance.js`):
   (the rock goes), any other is marked current; a pixel building across the turn is asked as it publishes.
 
 A port departure from World of Daggerfall 1:1, on the mod's page (`03-World/World-Of-Daggerfall.md` GATE-CLEAR) and in
-Ledger section A. Pinned in `test/gateclear.test.js` (8), mutants `tools/mutants/gateclear.json` (23, all dead).
+Ledger section A. Pinned in `test/world/gate/gateclear.test.js` (8), mutants `tools/mutants/gateclear.json` (23, all dead).
 ROADS-CLEAR's site pin and record read the composed line now (`roadsclear.json` still all dead).
 
 ## GATE-COLLAPSE: the sealed hours count down to the collapse (1b)
@@ -85,9 +85,9 @@ Mac's call: *"Count down to collapse"* - the schedule stays, and the sealed hour
   your time).*
 
 `net/gate/gateLaw.js` is in the relay's bundle (SLAM13: the law is the whole import graph), so the words are a new relay law:
-**world125** (no wire change), its row in `test/relayversion.test.js`, the fourteen pins of the current version moved
+**world125** (no wire change), its row in `test/net/relayversion.test.js`, the fourteen pins of the current version moved
 with it, disc7's list and soc1's S38 record. It rides the raids' own undeployed world124 deploy. Pinned in
-`test/wb1_gate_omen.test.js` and `test/wb2_gate.test.js`; mutants `tools/mutants/gatecollapse.json` (9, all dead); SET7's
+`test/ui/wb1_gate_omen.test.js` and `test/world/gate/wb2_gate.test.js`; mutants `tools/mutants/gatecollapse.json` (9, all dead); SET7's
 plaque record re-aimed by content.
 
 ## EVENT-TIP: the world's events answer a hover (Mac's tooltip)
@@ -111,7 +111,7 @@ follows a STILL pointer on the map's own poll (a countdown's second, a town clea
 goes on leaving, on a press and when the sheet closes or changes. The classic region page is DFU's window: it keeps the
 gate's ring and draws no raids and no card.
 
-Pinned in `test/eventtip.test.js` (7), mutants `tools/mutants/eventtip.json` (27, all dead). SEEN IN A REAL BROWSER:
+Pinned in `test/ui/eventtip.test.js` (7), mutants `tools/mutants/eventtip.json` (27, all dead). SEEN IN A REAL BROWSER:
 `tools/heldMapProbe.mjs` section 8 mounts the map with the real producers (an omen on a turned clock, `raidMapMarks` over
 a raid in `rollRaids`' own shape) and hovers them in Chromium - 7 checks, all passing: the raid's card and its words, the
 card whole on the screen beside the pointer, the label line, the crimson ink on the sheet, the ring's card, the card
@@ -166,5 +166,5 @@ redeploys the Worker: every player dropped once); never in the repository or a c
 *Allow anyone to @mention this role*, and its id (Developer Mode, right-click the role, Copy Role ID) goes in
 `server/wrangler.toml` as `GATE_DISCORD_ROLE`.
 
-Relay **world123** (world126 on its branch, renumbered at the merge with main). Pinned in `test/discordgates.test.js` (11), mutants `tools/mutants/discordgates.json` (45, all
+Relay **world123** (world126 on its branch, renumbered at the merge with main). Pinned in `test/net/gate/discordgates.test.js` (11), mutants `tools/mutants/discordgates.json` (45, all
 dead).

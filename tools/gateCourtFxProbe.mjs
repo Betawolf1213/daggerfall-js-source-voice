@@ -1,6 +1,6 @@
 // WB9c / WB9e - THE COURT'S CRYSTALS AND HIS BLOWS' FALL, COMPILED, LINKED AND DRAWN IN A REAL BROWSER.
 //
-// node holds both passes' law (test/wb9c_gate_reckoning.test.js, test/wb9e_gate_blows.test.js: the cluster's model,
+// node holds both passes' law (test/net/gate/wb9c_gate_reckoning.test.js, test/net/gate/wb9e_gate_blows.test.js: the cluster's model,
 // its growth, the sparks' flight and the meteor's fall in JS, the passes over a fake GL); what node cannot answer is
 // whether their GLSL COMPILES and LINKS in a real WebGL2 context (GLSL ES 3.00 asks every uniform shared by the two
 // stages to carry one precision - the crystal's glow once failed exactly there), and whether what they draw lands

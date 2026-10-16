@@ -28,7 +28,7 @@
 // guns' (systems/naval/galleonGunDeck.js) as a broadside is laid.
 //
 // THE FRAME is Unity's, the boat's: +x starboard, +y up, +z the bow, the root on the waterline - every measurement below
-// is read off the bake (tools/bakeCarrack.mjs FRAME: Mac's metres x 0.8) and pinned against it (test/ships2_carrack.test.js).
+// is read off the bake (tools/bakeCarrack.mjs FRAME: Mac's metres x 0.8) and pinned against it (test/systems/naval/ships2_carrack.test.js).
 // Not a DFU member. Ledger A (SHIPS-2).
 import { CARRACK_ARCHIVE, TEX, CARRACK_TILE, BANDS } from './carrackArt.js';
 import { MeshBench, colliderOf, prism, rope, box, planarUv, sub, add, scl, dot, cross, norm } from './galleonMesh.js';
@@ -48,7 +48,7 @@ export const CARRACK_HULL_NODE = 'NewCarrack';
 const GALLEON_ID = 112412;
 
 /** Her measurements in the boat's frame (metres): each read off the bake - the scene's number x 0.8, the waterline and
- *  the midship taken off (tools/bakeCarrack.mjs FRAME) - and pinned there (test/ships2_carrack.test.js). */
+ *  the midship taken off (tools/bakeCarrack.mjs FRAME) - and pinned there (test/systems/naval/ships2_carrack.test.js). */
 export const MEASURED = Object.freeze({
   gunDeckY: 1.9576, mainDeckY: 7.8082, mainDeckUnderY: 7.5086, railY: 8.6343, bowRailY: 9.7475,
   // her side: widest at the knuckle her ports straddle, the throats' inner planking
@@ -96,7 +96,7 @@ export const LADDER_Z = 0.35;
  *  about the port's middle, every 0.18 m) - its board `thick`, its inner face `gap` off her planking, its hinge's eyes
  *  `eyeR` round its pin at `eyesZ`. Finer than the galleon's four rows by five: under her ports her side turns in at a
  *  chine that climbs as she narrows forward (2.75 m up at port 4's after edge, 3.2 at its fore edge), and the board is
- *  bent over it at every station (test/ships2_carrack.test.js measures its inner face against her side). */
+ *  bent over it at every station (test/systems/naval/ships2_carrack.test.js measures its inner face against her side). */
 const SILL_TO_FOOT = (MEASURED.portSillY - (MEASURED.portTopY + 0.07 - 1.78)) / 8;
 export const LID = Object.freeze({
   rows: Object.freeze([MEASURED.portTopY + 0.07, MEASURED.knuckleY, ...[2, 1].map((k) => MEASURED.portSillY + k * (MEASURED.knuckleY - MEASURED.portSillY) / 3), MEASURED.portSillY, ...[1, 2, 3, 4, 5, 6, 7].map((k) => MEASURED.portSillY - k * SILL_TO_FOOT), MEASURED.portTopY + 0.07 - 1.78]),
@@ -541,7 +541,7 @@ export const TAFFRAIL_Z = -23.05;
  *  `yawDeg` (Unity's: +z toward +x) so it lies flattest along her bow's flare (its stock and ring piece, 1.6 m across its
  *  node unturned, along her side: turned every 10 degrees round, -150 stands its node nearest her side, 0.61 m off it -
  *  unturned, 1.6 m), and stood out so EVERY vertex of both clears her outer planking by 2 cm or more (the galleon's AUDIT
- *  GN-P3 law) and no edge of either crosses a face of hers (test/ships2_carrack.test.js measures it on the mod's own
+ *  GN-P3 law) and no edge of either crosses a face of hers (test/systems/naval/ships2_carrack.test.js measures it on the mod's own
  *  mesh - its vertices clear at 4.094, the let-go anchor's shank under the water crossed her bow's swell between them,
  *  and stood 0.1 m further out it clears): its node over her main deck's height, its cable's head under her bow's rail. */
 export const ANCHOR = Object.freeze({ yawDeg: -150, weighed: Object.freeze([4.334, 7.2, 18.2]), letGo: Object.freeze([4.244, 7.2, 18.2]) });

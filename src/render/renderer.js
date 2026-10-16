@@ -1772,7 +1772,7 @@ export class Renderer {
     // DRAW pays; upload-time binds are creation cost, not frame cost.
     this._perf = perfOn() ? setMeter(gl, new PerfMeter(gl, perfZones(), perfCpu())) : null;   // EL8: `?perf` - a GPU-timed line every PERF_EVERY world frames; VC6d: `?perf=zones` per pass, and the meter is findable by its context (the sky's march marks its own span); PERF-CPU: `?perf=cpu` tiles the same zones on the MAIN THREAD's clock, which is the one a script-bound frame is losing
     this._perfOpen = false;   // AUDIT 68 S16-perf-no-resolve-leak: a world frame's meter frame begun and not yet closed (_perfClose)
-    this._frameStamp = 0;      // PERF3: bumped by beginFrame (and the state restores) - the terrain program's frame-constant block is uploaded once per stamp; LA-COST1: and the billboard's, the decal's and the character's, and bumped by every setter and seam that moves a value in any of the four (the law: test/la_cost.test.js)
+    this._frameStamp = 0;      // PERF3: bumped by beginFrame (and the state restores) - the terrain program's frame-constant block is uploaded once per stamp; LA-COST1: and the billboard's, the decal's and the character's, and bumped by every setter and seam that moves a value in any of the four (the law: test/render/la_cost.test.js)
     // PERF-CROWD2 (2026-09-19): THE BILLBOARD PASS CULLS, so that no host
     // has to remember to. PERF-ON2 found the peers submitted uncut and
     // PERF-CROWD found the whole town beside them - and then the same
@@ -2114,7 +2114,7 @@ export class Renderer {
    *  `activeTexture` is a pure selector - it has no effect but to say
    *  which unit the next `bindTexture` means - so this shadow cannot
    *  change a picture on its own. What it CAN do is go stale, which is
-   *  why the funnel law (`test/glstate.test.js`) allows exactly one raw
+   *  why the funnel law (`test/render/glstate.test.js`) allows exactly one raw
    *  `gl.activeTexture` in this file, inside here. */
   _activeTexture(unit) {
     if (this._activeUnit === unit) return;
@@ -2188,7 +2188,7 @@ export class Renderer {
     // PERF-2D: THE ONE GAP THIS CHANGE CANNOT GUARD, MADE LOUD.
     //
     // Every path inside this file closes the 2D run before it needs the
-    // baseline, and `test/glstate.test.js` reads that law out of the
+    // baseline, and `test/render/glstate.test.js` reads that law out of the
     // source. The SKY, the rain, the wisps, the sand and the grass are
     // not inside this file: the hosts hand them `renderer.gl` at
     // construction and call `draw` on them directly, so nothing here can
@@ -3148,7 +3148,7 @@ export class Renderer {
    *  happens: on demand, at the head of everything that needs the
    *  baseline back, instead of eagerly after every quad.
    *
-   *  The law, and `test/glstate.test.js` reads it out of the source:
+   *  The law, and `test/render/glstate.test.js` reads it out of the source:
    *  **every method in this file that issues a `gl.draw*` either is one
    *  of the three 2D primitives or calls `_close2D()` first**, and so
    *  does every seam where foreign GL can run (`beginFrame`,
@@ -5384,7 +5384,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     const gl = this.gl;
     // EVERY global this pass can touch, saved by name. A thirteenth
     // one added to the renderer later must be added HERE - the source
-    // pin in test/roadc_panelframe.test.js is what enforces it.
+    // pin in test/ui/automap/roadc_panelframe.test.js is what enforces it.
     this._panelSaved = {
       screenOffset: this._screenOffset ? [...this._screenOffset] : [0, 0],
       clipY: this._clipY,
@@ -6607,7 +6607,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     // frame writes into the rest is Smis, booleans, strings or objects,
     // which need no box (`sway`'s fraction is written once, by the host).
     // A field a batch gains anywhere in src/ belongs here too -
-    // test/perfextb.test.js sweeps the writes, and weighs the record.
+    // test/render/perfextb.test.js sweeps the writes, and weighs the record.
     // PERF-EXT1 (2026-09-25, the same players): `_place`, the placements on
     // a grid (bounds.js placementGrid), for a static batch of more than one
     // flat - a pixel-wide wood's sphere reaches every shadow in its pixel,

@@ -12,11 +12,11 @@ And: *"And just to make sure, I want the performance to be absolutely flawless."
 
 | # | Report | Root cause | Fix | Pins | Mutants |
 |---|--------|------------|-----|------|---------|
-| 1 | the sprite not on the deck | the helmsman never said where they stood (drawn from a lagged world pose while their boat was led ahead); a passenger stood in the root's frame while the owner's deck rocked; a body carried by a deck read as walking | the helm word; the deck pose under the glue; pace and the moving bit measured on the deck | `test/fbsea_deck.test.js` (4) | 7 |
-| 2 | aquatic creatures collide | a swimmer frozen while the player is aboard read GROUNDED (`velY === 0`), its ray down met the hull from inside, and Come Sail Away made it a rider | the rider reads the motor's own CharacterController.isGrounded | `test/fbsea_aquatic.test.js` (2) | 3 |
-| 3 | zoom out farther | both cameras stopped at their references' foot distances beside ships 44-93 m long, and the helm's own rig pinned the camera | a helm's zoom reaches three of the hull's half-extents by a ratio a notch; the camera passes her own buckets | `test/fbsea_zoom.test.js` (3) | 6 |
-| 4 | water flickers from a distance | Come Sail Away's frames have one mip level (the breakers boiled); the sea's sheets 3-10 cm apart fought in a 24-bit buffer from a raised eye | the frames' chains; the sea's stack in window depth | `test/fbsea_water.test.js` (8), `tools/fbseaWaterProbe.mjs` | 15 |
-| 5 | a ship combat test option | none existed | the Test Room's Sea battle | `test/fbsea_testroom.test.js` (4) | 6 |
+| 1 | the sprite not on the deck | the helmsman never said where they stood (drawn from a lagged world pose while their boat was led ahead); a passenger stood in the root's frame while the owner's deck rocked; a body carried by a deck read as walking | the helm word; the deck pose under the glue; pace and the moving bit measured on the deck | `test/net/peer/fbsea_deck.test.js` (4) | 7 |
+| 2 | aquatic creatures collide | a swimmer frozen while the player is aboard read GROUNDED (`velY === 0`), its ray down met the hull from inside, and Come Sail Away made it a rider | the rider reads the motor's own CharacterController.isGrounded | `test/characters/enemy/fbsea_aquatic.test.js` (2) | 3 |
+| 3 | zoom out farther | both cameras stopped at their references' foot distances beside ships 44-93 m long, and the helm's own rig pinned the camera | a helm's zoom reaches three of the hull's half-extents by a ratio a notch; the camera passes her own buckets | `test/player/fbsea_zoom.test.js` (3) | 6 |
+| 4 | water flickers from a distance | Come Sail Away's frames have one mip level (the breakers boiled); the sea's sheets 3-10 cm apart fought in a 24-bit buffer from a raised eye | the frames' chains; the sea's stack in window depth | `test/render/fbsea_water.test.js` (8), `tools/fbseaWaterProbe.mjs` | 15 |
+| 5 | a ship combat test option | none existed | the Test Room's Sea battle | `test/systems/fbsea_testroom.test.js` (4) | 6 |
 
 `tools/mutants/fbsea.json`: 37 records, all dead (two survivors on the first run - the deck key and the Bay's stage - each
 closed by a pin that could fail it). Four older records re-aimed by content (`csa_together.json` CSAK-aboard-glue-axis
@@ -24,7 +24,7 @@ and CSAK-host-ahead-real-clock, `htwaist.json` HT-WAIST-BACK-the-walker-pace-unm
 
 ## #1 THE SPRITE ON THE DECK
 
-**Reproduced first.** `test/fbsea_deck.test.js` over the real Small Ship: a passenger said at rest and stood in her
+**Reproduced first.** `test/net/peer/fbsea_deck.test.js` over the real Small Ship: a passenger said at rest and stood in her
 root's frame is 0.3 m and more off her rocking deck at the bow; the helmsman had no word at all, so a reader drew them
 from their world pose; a peer carried at 6 m/s standing read a 6 m/s stride.
 
@@ -43,7 +43,7 @@ on a new deck; the host's moving bit is measured on what carries the player (a d
 
 ## #2 AQUATIC CREATURES
 
-**Reproduced first.** `test/fbsea_aquatic.test.js`: a slaughterfish frozen 2.5 m under the sea line with the real Small
+**Reproduced first.** `test/characters/enemy/fbsea_aquatic.test.js`: a slaughterfish frozen 2.5 m under the sea line with the real Small
 Ship over it - its ray down its height meets her hull from inside (the port's meshes answer from either face), and the
 world's rider handle, lifted from its source, read it grounded.
 
@@ -56,7 +56,7 @@ whether its last Move stood it on something (false if it never moved), written b
 
 ## #3 THE ZOOM AT A HELM
 
-**Reproduced first.** `test/fbsea_zoom.test.js`: the Morrowind camera stops at its reference's 800 units (11.4 m) and
+**Reproduced first.** `test/player/fbsea_zoom.test.js`: the Morrowind camera stops at its reference's 800 units (11.4 m) and
 Eye of the Beholder at its -10; at the galley's wheel her own rig pins the camera a few metres out.
 
 **Fix.** `player/seaZoom.js` (the one home both cameras read): at a helm the zoom reaches SEA_ZOOM_REACH (3) of the

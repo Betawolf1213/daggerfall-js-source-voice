@@ -12,7 +12,7 @@
 //
 // PERF-SUN (2026-09-19) paid exactly this for ONE door - the sway's `swayDisabled` in systems/wind/windDrive.js keeps its
 // answer until the search string changes, `cullDisabled`'s shape - and every door written since was written the old
-// way again, because the fix lived in one file. So the shape has ONE HOME now, and test/perfurl_doors.test.js sweeps
+// way again, because the fix lived in one file. So the shape has ONE HOME now, and test/systems/perfurl_doors.test.js sweeps
 // src/ for a door that parses on its own.
 //
 // WHY A SEARCH-KEYED MEMO AND NOT A LATCH. The page's search does change once: the boot publishes the params it

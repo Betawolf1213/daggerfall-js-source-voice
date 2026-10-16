@@ -179,7 +179,7 @@ export function generateTileData(heightmapData, mapPixelX, mapPixelY, hDim = HEI
     // double - fround(27.2 / 1539) * 1539 = 27.20000077 - and against
     // the double 27.2 the compare FAILED for every clamped sea sample:
     // through this job an open ocean was 0 water corners in 16641
-    // (test/terrain.test.js pins the flat-sea case), and every ocean
+    // (test/world/terrain/terrain.test.js pins the flat-sea case), and every ocean
     // tile the port ever drew was the beach band's dirt. The height is
     // rounded to float32 and compared against the reference's float32
     // thresholds (terrainSampler.js: the constants are the floats), which

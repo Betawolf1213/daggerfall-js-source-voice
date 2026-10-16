@@ -49,7 +49,7 @@ a carriage (model 41214) and its team or a cart (41207, 41209, 41109), the horse
   The port (`src/systems/immersiveTravel.js`) cites the IL offsets it restates. Its three
   hard-coded tables (40 capitals, 15 large docks, 382 dock pixels) are field data the dump
   does not print; `src/systems/immersiveTravelTables.js` carries them and
-  `test/it1_immersivetravel.test.js` finds each one, whole, in this DLL's bytes.
+  `test/systems/guild/it1_immersivetravel.test.js` finds each one, whole, in this DLL's bytes.
 - `WorldDataPatches/WALLAA0x.RMB.json` - **the author's edit of each gate block, and only
   the edit** (5 to 10 inserted records and 34 round-trip ops, 2,962 to 3,895 bytes against
   the shipped 186,594 to 188,400). A whole RMB block is Daggerfall's layout - game data, which this repository
@@ -70,7 +70,7 @@ a carriage (model 41214) and its team or a cart (41207, 41209, 41109), the horse
   (`bible/02-Formats/World-Data-Patches.md` names two: an automap ground-flat byte zeroed,
   a rotation written as its equivalent).
   The loader checks every rebuild against the recorded sha256 and says when it differs;
-  `test/it1_worlddata.test.js` checks all four with `ARENA2_PATH` set. Run the tool again
+  `test/formats/worldData/it1_worlddata.test.js` checks all four with `ARENA2_PATH` set. Run the tool again
   with an ARENA2 to replace them with WD1's diff, checked byte for byte:
 
       node tools/immersiveTravelPatches.mjs <immersivetravel.dfmod> <arena2>

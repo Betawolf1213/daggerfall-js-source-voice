@@ -164,7 +164,7 @@ sample. Every sea corner fell through to the beach band, and every
 ocean tile this port ever drew was dirt. The height is rounded to
 float32 and compared against float32 thresholds now, which is the
 arithmetic the reference does (`world/terrain/terrainTiles.js`; pinned ungated
-in `test/terrain.test.js`). The audit's lane B then took the rest of
+in `test/world/terrain/terrain.test.js`). The audit's lane B then took the rest of
 the class: the beach jitter is float32 per operation as
 `Unity.Mathematics.Random.NextFloat(min, max)` is (the double form
 differed from the reference in 17% of draws by an ulp and moved the
@@ -328,7 +328,7 @@ where the nearest bank is across the seam, under at least one ring of
 water; the surface above hides most of it.
 
 **Pinned** in `test/water2.test.js` (DELETED) (5); WATER1's pins in
-`test/water.test.js` moved to the basin's shapes. Not seen on a GPU
+`test/world/terrain/water.test.js` moved to the basin's shapes. Not seen on a GPU
 or with ARENA2 - the lab (`water.html`) carves the same basin, and
 `npm run perf` measures what it costs (nothing per frame: the walk and
 the carve are at the build).
@@ -521,7 +521,7 @@ deleted; the water surface rides the terrain's own buffers again
 quad again; the shader has no depth attribute, no swell, no foam, no
 art sampler and no mask view; the swim law takes no art. The lab and
 the probe are WATER1's (10 checks). `test/water2..5.test.js` (DELETED) are
-deleted with their subjects; `test/water.test.js` is WATER1's suite
+deleted with their subjects; `test/world/terrain/water.test.js` is WATER1's suite
 with MAC2's pins. The Ledger rows THE BASIN and THE WATER IS THE
 ART'S are struck.
 
@@ -580,7 +580,7 @@ hosts (`scenes/world.js`, `scenes/exterior.js`) pass the same switch
 through `setBlockData`; the dungeon and interior navgrids have no
 tile law and take nothing.
 
-**Pinned** in `test/waternpc.test.js` (4): the classic lane against
+**Pinned** in `test/world/waternpc.test.js` (4): the classic lane against
 DFU's seven and against the twelve staying weight 7 there; the
 enhanced family recomputed from the corner table rather than listed;
 DFU's own `OnShallowWaterTile` contradiction as the reason; and both
@@ -657,7 +657,7 @@ happened to encode as zero reads as a one-tile pond to every consumer.
 Mac's own guess ("some waterbeds are just 1 tile") is the right one. The
 port keeps it.
 
-**Pinned** in `test/grasspath.test.js` (2), with `test/water.test.js`
+**Pinned** in `test/world/terrain/grasspath.test.js` (2), with `test/world/terrain/water.test.js`
 holding the law's table unmoved.
 
 ## WATER-D1 - THE DUNGEON WATER WAS DRAWN AFTER THE FRAME HAD BEEN RESOLVED (2026-09-21)
@@ -712,7 +712,7 @@ is the context's own `dt` sum on the one rate. The AIWATER skip for a
 spawned dungeon stands as Mac's patch wrote it; its cause is this one,
 so it is his call whether a spawn gets its water back.
 
-**Pinned** in `test/waterd1.test.js` (4): the renderer's own contract on
+**Pinned** in `test/render/waterd1.test.js` (4): the renderer's own contract on
 a recording GL - with the lane and the air up, a `drawWater` before the
 first screen quad draws with the frame target bound and the same call
 after it draws on the canvas (the mechanism the defect rode, so a future
@@ -721,7 +721,7 @@ symptom); the ORDER inside `drawFoes`, derived - every `renderer.draw*`
 in the body precedes the overlay call, and the water is among them,
 after the last billboards; no scene file but the context calls
 `drawWater` and both hosts name the tile at the build; the colour's one
-home and the level law untouched. `test/water.test.js`'s two host pins
+home and the level law untouched. `test/world/terrain/water.test.js`'s two host pins
 re-aimed at the context. Mutants: `tools/mutants/waterd1.json`, 10, 10
 dead - among them the defect put back as a SECOND draw after the
 overlay, a host regrowing its own draw, and the screen quad no longer
@@ -815,7 +815,7 @@ Bubumbaret: the record-23 tile is its painted pool with the water inside
 the rim, and the town's record-9 tiles are their own ground. The before and
 after shots are renders of game data and stay out of the repo.
 
-**Pinned** in `test/waterpuddle.test.js` (6): the list and the
+**Pinned** in `test/world/waterpuddle.test.js` (6): the list and the
 tolerance; the colour rule texel-exact (24 water, 25 dry), the speck
 dropped, the fleck filled, record 9 in grass dry, the copy; `cleanMask`'s
 edge law; the shader's record test, its alpha read through the turn and
@@ -833,7 +833,7 @@ Port-Ledger section A, row PUDDLE-DRY.
 
 **What a puddle is, measured.** A census of BLOCKS.BSA (a scratch script
 over every RMB block's 16x16 ground, not committed; the figures are
-pinned with ARENA2 in `test/puddledry.test.js`): 920 blocks, 1,311
+pinned with ARENA2 in `test/world/puddledry.test.js`): 920 blocks, 1,311
 patches of water - 4-connected, a tile counted wet where the draw's table
 (`WATER_DRAW_MASK_TABLE`) gives it any water corner, so a pond's shore
 ring is part of its pond. 674 patches are ONE tile: 632 of them DFU's
@@ -872,15 +872,15 @@ loses its puddles too, the departure Mac chose so the two never
 disagree. WATER-PUDDLE's art mask stays for the shallow art that still
 meets a pond.
 
-**Pinned** in `test/puddledry.test.js` (7), its fixtures the block
+**Pinned** in `test/world/puddledry.test.js` (7), its fixtures the block
 reader's own ground decode: the list; a pool in the sand is sand, the
 byte whole, a wet neighbour never taken; a patch of art and a lone tile
 of anything wet dried; a pond in its ring, a basin and art meeting a
 shore kept; once a ground, never from nothing; the one door by source;
 with ARENA2, every block served with no puddle, 686 dried, 560 kept (PIN
 MOVED by WATER-DRAW2), a
-moat whole. Moved: `test/terrain.test.js`'s Daggerfall city histogram and
-`test/rr3b_worlddata.test.js`'s GetBlock pin (PIN MOVED). Mutants (12,
+moat whole. Moved: `test/world/terrain/terrain.test.js`'s Daggerfall city histogram and
+`test/systems/talk/rr3b_worlddata.test.js`'s GetBlock pin (PIN MOVED). Mutants (12,
 12 dead): `tools/mutants/puddledry.json` - the first run's two survivors
 were a redundant sentinel ternary (taken out: `convertTile` answers
 record 0 for the zero byte either way) and a wet diagonal neighbour no
@@ -1012,7 +1012,7 @@ footsteps' own on-water answer, and every boat afloat (Come Sail Away's). The re
 water, `RIPPLE_SCALE` a step) only when it moved, on unit 1 - the billboards' emission unit, whose shadow it forgets
 after the bind - and the water adds its slope inside the field, faded at the field's edge. Drawn only.
 
-**Pinned**: `test/waterbed.test.js` (6), `test/waterripples.test.js` (6), `test/waternext.test.js` (8); WATER1's pins
+**Pinned**: `test/world/terrain/waterbed.test.js` (6), `test/world/water/waterripples.test.js` (6), `test/render/waternext.test.js` (8); WATER1's pins
 moved to the new shapes (`water.test.js`, `waterlit1`, `dwc_fog`, `perfextb`, `perfsun_fragment`, `grain1_terrainmip`,
 `ft6_water`, `terrainworker`, `dwe_decorations` - each PIN MOVED; `rr3b` is PUDDLE-DRY's, above - AUDIT WATER-NEXT m1/m4). Mutants: `tools/mutants/waternext.json`, all dead (the first run's four
 survivors - the chamfer's diagonal, the byte bias after a step, unit 1's shadow pinned on a twin line, the gale pinned
@@ -1112,13 +1112,13 @@ corner whose water faces away. A connectivity that asks the corners on the share
 (CASTAA27's moat, 168 tiles to 87) and dries 28 shore edges with them. That is a rule for Mac to choose, not one to
 ride in on this fix.
 
-**Pinned** in `test/waterdraw2.test.js` (5): the lists, and the table at every turn as literals; the law's table
+**Pinned** in `test/world/water/waterdraw2.test.js` (5): the lists, and the table at every turn as literals; the law's table
 untouched; PUDDLE-DRY on the block reader's own ground (a lone island, corner and half-turned saddle dried; an island
 with its shore kept; art meeting a corner kept; a pool among islands made grass, never an island); the sheet and the
 bed over a pond of islands; and, with ARENA2, no record and turn the art paints water at a corner in every clean
 climate left dry, the corners and the saddles exactly the art's (36), and what BLOCKS.BSA lays. PIN MOVED:
-`test/grasspath.test.js`'s WATER-DRAW1 difference (SHALLOW_DRAWN and WATER-DRAW2's three, a saddle only half
-turned) and `test/puddledry.test.js`'s census. Mutants: `tools/mutants/waterdraw2.json` (9, all dead).
+`test/world/terrain/grasspath.test.js`'s WATER-DRAW1 difference (SHALLOW_DRAWN and WATER-DRAW2's three, a saddle only half
+turned) and `test/world/puddledry.test.js`'s census. Mutants: `tools/mutants/waterdraw2.json` (9, all dead).
 
 ## WATER-OFF - THE WATER IS THE PLAYER'S, ONLINE TOO (2026-10-08)
 
@@ -1135,8 +1135,8 @@ Not settled here, recorded for Mac: the falling frame rate itself was not profil
 the water or Low Poly Trees (every GL object freed, the buffers reused) and named suspects that FILL rather than leak -
 Iliac Puddle No More's population near the sea (`MaxLiveFish` 720 by default, each fish an update and a ray), Low Poly
 Trees' 3D trees replacing their far pictures as atlases finish, and Full water's frame copy (two with the sea in view).
-Pins: `test/ft6_water.test.js`, `test/water.test.js`, `test/onlinelane.test.js` (the player's enhancements, by name),
-`test/uxb1e_onlinesync.test.js` (PIN MOVED: another forced switch stands in the sync's example).
+Pins: `test/systems/ft6_water.test.js`, `test/world/terrain/water.test.js`, `test/systems/onlinelane.test.js` (the player's enhancements, by name),
+`test/systems/online/uxb1e_onlinesync.test.js` (PIN MOVED: another forced switch stands in the sync's example).
 
 ## FAR-SEA1 - THE SEA REACHES THE HORIZON (2026-10-10)
 
@@ -1212,14 +1212,14 @@ not more visible - with the sky the water reflects close to the fog's colour, th
 haze than the ring's flat ocean tint did - and a sea that reads further would want its own hold, which is Mac's call
 (D4). **Not seen on a real GPU with ARENA2** - Mac's eye on the same peak is the gate.
 
-**Pinned** in `test/farsea1.test.js` (10): the law run in the GLSL evaluator (the world's ramp exactly, the hold, the
+**Pinned** in `test/render/farsea1.test.js` (10): the law run in the GLSL evaluator (the world's ramp exactly, the hold, the
 rim, a late start; capped, not scaled), the constants, the open sea's one text and the water calling it, all three
 ring shaders (their lines in order, the sea's inputs as the vertex shader mints them, `ringSea` run), the sea
 vertices, the fill's cells and their order, the pass through a recording GL, the water's arm against `FOG_GLSL`'s own
-factor, the renderer's frame block and the world host's wiring; and `test/audit_farsea1.test.js` (AUDIT FAR-SEA1,
-below). PIN MOVED: `test/water.test.js` (the dome's sky read once),
-`test/el2_shadows.test.js` (beginFrame's window), `test/glstate.test.js` (AUDIT 47's sweep reads the new leaf),
-`test/dynamicSkies.test.js` (AUDIT 61 F9's ramp from the fog's start, now the law's), `test/boot2.test.js` (the entry's
+factor, the renderer's frame block and the world host's wiring; and `test/render/audit_farsea1.test.js` (AUDIT FAR-SEA1,
+below). PIN MOVED: `test/world/terrain/water.test.js` (the dome's sky read once),
+`test/render/el2_shadows.test.js` (beginFrame's window), `test/render/glstate.test.js` (AUDIT 47's sweep reads the new leaf),
+`test/systems/dynamicSkies.test.js` (AUDIT 61 F9's ramp from the fog's start, now the law's), `test/render/boot2.test.js` (the entry's
 static reach, 75 - the new leaf, which imports nothing), and the
 `tools/mutants/eldistance.json` record of the lane ring's fog (re-aimed by content). Mutants:
 `tools/mutants/farsea1.json` (14, all dead; seven re-aimed by content at the audit's code). Seen in Chromium by
@@ -1291,7 +1291,7 @@ draw no enhanced water and no RMB ground.
 reaches about a unit), so it reads clear and its silt shows through - the look WATER-NEXT chose. A deeper or murkier
 small pond is a tuning of `BED_RAMP`/`WATER_ABSORB`, not this fix.
 
-**Pinned** in `test/shoresilt.test.js` (6). PIN MOVED: `test/waternext.test.js` (the bed's off-switch answers a
+**Pinned** in `test/world/shoresilt.test.js` (6). PIN MOVED: `test/render/waternext.test.js` (the bed's off-switch answers a
 `vec2`). Mutants: `tools/mutants/shoresilt.json` (11, all dead); `tools/mutants/waternext.json`'s BEDFACE-always-on
 and BEDFACE-puddle-lost re-aimed at the `vec2` text (both dead).
 
@@ -1325,7 +1325,7 @@ the dungeons (`scenes/dungeonContext.js`) draw no enhanced water and carve no be
 tiles for puddles. The bed is shallower within a cell of the bank and a cell narrower: a pond two tiles across is no
 longer carved at all - its sheet still reads the bed's depth, so it is tinted as it was, over its silt.
 
-**Pinned** in `test/bankflush.test.js` (3). PIN MOVED: `test/waternext.test.js` and `test/audit_waternext.test.js` (the
+**Pinned** in `test/world/water/bankflush.test.js` (3). PIN MOVED: `test/render/waternext.test.js` and `test/world/terrain/audit_waternext.test.js` (the
 swell's growth; the re-carve's fields). Mutants: `tools/mutants/bankflush.json` (6, all dead);
 `tools/mutants/audit_waternext.json`'s AUDIT-WATER-NEXT-H2-swell-on-uncarved-ground re-aimed at the new line.
 

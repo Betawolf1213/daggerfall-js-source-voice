@@ -441,7 +441,7 @@ export function classicItemsAndSpells(saveTree, { spellsByIndex = null } = {}) {
   // production caller throws on a tree without exactly one Character
   // record before it ever gets here, so the path is unreachable THERE;
   // it is reachable from any direct caller, and a pin already is one
-  // (test/audit63_items_loot.test.js). A returned shape that one arm does
+  // (test/systems/audit63_items_loot.test.js). A returned shape that one arm does
   // not honour is the measured failure mode of this codebase - a correct
   // law with a broken seam - whichever arm happens to be cold today.
   if (!character) return { items: [], wagonItems: [], spells: [], goldPieces: 0, scratch };

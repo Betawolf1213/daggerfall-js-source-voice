@@ -5,7 +5,7 @@
     "old": "  for (let i = 0; i < ix.nodes.length; i++) ix.on[i] = ix.nodes[i].activeSelf && (ix.parent[i] < 0 || ix.on[ix.parent[i]]) ? 1 : 0;",
     "new": "  for (let i = 0; i < ix.nodes.length; i++) ix.on[i] = 1;",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "on[e.i] && e.collider.m_Enabled !== false",
     "new": "on[e.i]",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "  return tMin >= 0 ? tMin : null;\n}",
     "new": "  return tMax >= 0 ? Math.max(tMin, 0) : null;\n}",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "      if (o[a] < min[a] || o[a] > max[a]) return null;\n      continue;",
     "new": "      continue;",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "  if (det === 0) return null;\n  const inv = 1 / det;",
     "new": "  if (det <= 0) return null;\n  const inv = 1 / det;",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "  return tEnter >= 0 ? tEnter : null;\n}",
     "new": "  return tExit >= 0 ? Math.max(tEnter, 0) : null;\n}",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "  return faces.filter((f) => !f.dead).map((f) => ({ n: f.n, d: f.d }));",
     "new": "  return faces.map((f) => ({ n: f.n, d: f.d }));",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "  if (i3 < 0) return null;\n  /** @type",
     "new": "  if (i3 < 0) i3 = (i2 + 1) % count;\n  /** @type",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "    if (e.collider.m_IsTrigger && !triggers) continue;\n    const node = ix.nodes[e.i];",
     "new": "    const node = ix.nodes[e.i];",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "if (t != null && t <= maxDistance && (!best || t < best.distance))",
     "new": "if (t != null && (!best || t < best.distance))",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "      if (collider.m_Convex) { const h = hullOf(g); t = h ? rayConvexEntry(o, d, h) : null; }\n      else t = g.indices.length > MESH_GRID_FROM * 3 ? rayMeshEntryWithin(o, d, g, maxDistance) : rayMeshEntry(o, d, g);",
     "new": "      t = g.indices.length > MESH_GRID_FROM * 3 ? rayMeshEntryWithin(o, d, g, maxDistance) : rayMeshEntry(o, d, g);",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "if (!/^\\s*[+-]?\\d+\\s*$/.test(String(s)))",
     "new": "if (!/^\\s*[+-]?[\\d.]+\\s*$/.test(String(s)))",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "  if (s == null) return 0;\n  if (!/",
     "new": "  if (!/",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "  return enter > 0 ? enter : null;",
     "new": "  return enter !== 0 ? Math.abs(enter) : null;",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "  return map[num5 * 128 + num4] >> 2;",
     "new": "  return map[num4 * 128 + num5] >> 2;",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "  return map[num5 * 128 + num4] >> 2;",
     "new": "  return map[num5 * 128 + num4];",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "  const num4 = Math.min(127, Math.max(0, Math.trunc(f(128 * num2))));",
     "new": "  const num4 = Math.min(127, Math.max(0, Math.floor(f(128 * num2))));",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ],
     "equivalent": true,
     "why": "a negative 128th clamps to 0 whether it truncates to -0 or floors to -1; only the sign of the rounding differs, and the clamp takes both to the first column"
@@ -160,7 +160,7 @@
     "old": "  const num5 = Math.min(127, Math.max(0, Math.trunc(f(128 * num3))));",
     "new": "  const num5 = Math.max(0, Math.trunc(f(128 * num3)));",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -169,7 +169,7 @@
     "old": "      if (ipnm && String(val2.name).includes('DeepWaters')) {",
     "new": "      if (ipnm) {",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -178,7 +178,7 @@
     "old": "const val5 = deps.raycast(at, [0, -1, 0], PLACE_RAY_DISTANCE, { triggers: false });",
     "new": "const val5 = deps.raycast(at, [0, -1, 0], PLACE_RAY_DISTANCE, { triggers: true });",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -187,7 +187,7 @@
     "old": "        if (state.placeItem != null && state.placeItem.templateIndex === BOAT_DEED_TEMPLATE) boat = GetPlacedBoatWithUID(state.placeItem.UID);\n        if (boat == null) boat = PlaceBoat(at",
     "new": "        if (boat == null) boat = PlaceBoat(at",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -196,7 +196,7 @@
     "old": "      if (!boat.crewed) removeItem(state.placeItemCollection, state.placeItem);",
     "new": "      if (true) removeItem(state.placeItemCollection, state.placeItem);",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -205,7 +205,7 @@
     "old": "        transferAll(value, boat.Cargo.Items);",
     "new": "        boat.Cargo.Items.push(...value);",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -214,7 +214,7 @@
     "old": "const num = f(f(f(deps.blockWaterLevel()) * -1) * f(0.025));",
     "new": "const num = f(f(deps.blockWaterLevel()) * f(0.025));",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -223,7 +223,7 @@
     "old": "          boat2.inside = true;\n",
     "new": "",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -232,7 +232,7 @@
     "old": "        if (num2 > PLACE_RAY_DISTANCE) {",
     "new": "        if (num2 > Infinity) {",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -241,7 +241,7 @@
     "old": "        if (val2.distance > num2) {",
     "new": "        if (true) {",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -250,7 +250,7 @@
     "old": "      if (val2.terrain != null && tileMapIndexAtPosition(val2.point, val2.terrain) === 0) {",
     "new": "      if (val2.terrain != null) {",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -259,7 +259,7 @@
     "old": "      const num3 = upPlaneRaycast(origin, direction, seaTop());",
     "new": "      const num3 = upPlaneRaycast(origin, direction, 0);",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -268,7 +268,7 @@
     "old": "    } else {\n      deps.hudText('Placement aborted!', 3);",
     "new": "    } else {\n      deps.hudText('Placement aborted!');",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -277,7 +277,7 @@
     "old": "  const playerRight = () => quatRotate(deps.player().rotation, [1, 0, 0]);",
     "new": "  const playerRight = () => quatRotate(deps.player().rotation, [0, 0, 1]);",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -286,7 +286,7 @@
     "old": "    if (terrain != null && !sameTerrain(terrain, deps.playerTerrain())) boat.MapPixel = GetMapPixelFromTerrain(terrain);",
     "new": "",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -295,7 +295,7 @@
     "old": "(terrain.sampleHeight(point) < WATER_LEVEL ? 0 : 1)",
     "new": "(terrain.sampleHeight(point) <= WATER_LEVEL ? 0 : 1)",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -304,7 +304,7 @@
     "old": "    if (deps.blockWaterLevel() !== NO_WATER_LEVEL) boat.NodeTileMapIndices.fill(0);\n    return true;",
     "new": "    boat.NodeTileMapIndices.fill(0);\n    return true;",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -313,7 +313,7 @@
     "old": "    if (terrainTransform == null) return;\n    readNodes(boat, terrainTransform);",
     "new": "    readNodes(boat, terrainTransform ?? deps.playerTerrain());",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -322,7 +322,7 @@
     "old": "      if (allBoat2.inside || (allBoat2.MapPixel != null && pixelsApart(deps.currentMapPixel(), allBoat2.MapPixel) > 1)) {",
     "new": "      if (allBoat2.inside || (allBoat2.MapPixel != null && pixelsApart(deps.currentMapPixel(), allBoat2.MapPixel) > 2)) {",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -331,7 +331,7 @@
     "old": "        if (allBoat2.inside && !deps.persistentDungeonBoats()) list.push(allBoat2);",
     "new": "",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -340,7 +340,7 @@
     "old": "        if (allBoat2.inside && !deps.persistentDungeonBoats()) list.push(allBoat2);",
     "new": "        if (allBoat2.inside) list.push(allBoat2);",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -349,7 +349,7 @@
     "old": "        if (allBoat.inside && inDungeon() && allBoat.MapPixel.X === cur.X && allBoat.MapPixel.Y === cur.Y) {",
     "new": "        if (allBoat.MapPixel.X === cur.X && allBoat.MapPixel.Y === cur.Y) {",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ],
     "note": "AUDIT PR478 (PIN MOVED): re-aimed at the audited line."
   },
@@ -359,7 +359,7 @@
     "old": "    } else if (!boat.GameObject.activeSelf) setBoatActive(boat, true);\n    UpdateBoatNodesAtMapPixel(boat, boat.MapPixel);",
     "new": "    } else if (!boat.GameObject.activeSelf) setBoatActive(boat, true);",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -368,7 +368,7 @@
     "old": "      if (ridesTheWorld(allBoat)) OnPositionUpdateBoat(allBoat, offset);\n      UpdateBoatVisibilityOf(allBoat);\n    }",
     "new": "      if (ridesTheWorld(allBoat)) OnPositionUpdateBoat(allBoat, offset);\n    }",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -377,7 +377,7 @@
     "old": "      if (hit?.root != null && hit.root === state.AllBoats[i].GameObject) { result = i; break; }",
     "new": "      if (hit?.name != null) { result = i; break; }",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -386,7 +386,7 @@
     "old": "    } else if (state.placing && activateComplete && f(f(deps.time()) - f(state.placeTime)) > PLACE_CLICK_DELAY) {",
     "new": "    } else if (state.placing && activateComplete && f(f(deps.time()) - f(state.placeTime)) >= 0) {",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -395,7 +395,7 @@
     "old": "    if (paused) { state.wasPaused = true; return; }",
     "new": "    if (paused) { state.wasPaused = true; }",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -404,7 +404,7 @@
     "old": "export const hullFromMessage = (message) => Math.trunc(message / 10) % 10;",
     "new": "export const hullFromMessage = (message) => message % 10;",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -413,7 +413,7 @@
     "old": "        boat.Position = [p[0], f(p[1] + num), p[2]];",
     "new": "        boat.Position = [p[0], p[1], p[2]];",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -422,7 +422,7 @@
     "old": "    const num = f(f(deps.worldCompensation()[1]) - f(data.worldCompensation?.y ?? 0));",
     "new": "    const num = f(f(data.worldCompensation?.y ?? 0) - f(deps.worldCompensation()[1]));",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -431,7 +431,7 @@
     "old": "      for (const allBoat of state.AllBoats) deps.pool.remove(allBoat);\n      state.AllBoats.length = 0;",
     "new": "      state.AllBoats.length = 0;",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -440,7 +440,7 @@
     "old": "        setLights(boat, !!placedBoat.lights);",
     "new": "",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -449,7 +449,7 @@
     "old": "    const data = { ...newSaveData(), ...dataIn };",
     "new": "    const data = dataIn;",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -458,7 +458,7 @@
     "old": "    if (pendingRestore) return JSON.parse(JSON.stringify(pendingRestore));",
     "new": "",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -467,7 +467,7 @@
     "old": "      applySaveData(data);\n      OnLoad();",
     "new": "      applySaveData(data);",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -476,7 +476,7 @@
     "old": "    if (!state.mapMarkers.some((m) => m.position[0] === mapPixel[0] && m.position[1] === mapPixel[1])) state.mapMarkers.push",
     "new": "    state.mapMarkers.push",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -485,7 +485,7 @@
     "old": "    if (boat === undefined) throw new RangeError(`ArgumentOutOfRangeException: Index was out of range. (${num})`);",
     "new": "    if (boat === undefined) return `Boat at index ${num} was purged.`;",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -494,7 +494,7 @@
     "old": "    if (args.length > 2) return 'Error - Too many arguments, check the usage notes.';",
     "new": "    if (args.length > 3) return 'Error - Too many arguments, check the usage notes.';",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -503,7 +503,7 @@
     "old": "      if (num === 0) variant = random.range(0, 7);\n    } else if (args.length === 2) {",
     "new": "      variant = random.range(0, 7);\n    } else if (args.length === 2) {",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -512,7 +512,7 @@
     "old": "    if (!state.placing) {\n      state.placing = true;",
     "new": "    {\n      state.placing = true;",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   },
   {
@@ -521,7 +521,7 @@
     "old": "    if (!deps.pool.ready()) {   // DECLARED",
     "new": "    if (false) {   // DECLARED",
     "tests": [
-      "test/csa_placing.test.js"
+      "test/systems/comeSailAway/csa_placing.test.js"
     ]
   }
 ]

@@ -71,7 +71,7 @@ export const TRADE_VOLATILE_FIELDS = Object.freeze(['stackCount', 'value', ...RE
 export const REALM_TRADE_RECORD_MAX = 4096;
 /** AUDIT REALM F1: THE ROWS THAT BIND EVERY PIECE OF THEIR KIND - systems/item/itemBound.js isBound's other half (SS1: "Its
  *  template row can say `bound`"), which this Worker cannot read, since the template table is the game's. The Sigil
- *  Stone's row (systems/gate/gateSpoils.js SIGIL_STONE_TEMPLATES) is the one; test/auditrealm.test.js holds this list equal to
+ *  Stone's row (systems/gate/gateSpoils.js SIGIL_STONE_TEMPLATES) is the one; test/systems/auditrealm.test.js holds this list equal to
  *  every row the game registers with `bound`. The service read `rec.bound` alone, and a stone's record carries no mark
  *  of its own - so two halves naming a stone moved it between two realm characters. */
 export const BOUND_TEMPLATES = Object.freeze([570, 571, 572, 580, 582]);   // LOOT9: the Welkynd Shard's row beside the Stone's; PORTAL1: the Portal Stone's beside the shard's; WALLET1: the Wallet's (systems/walletItem.js); CARDS8: the Card Binder's (systems/iliac/iliacItems.js)

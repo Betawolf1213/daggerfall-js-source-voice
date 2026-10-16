@@ -19,7 +19,7 @@
 // THE LIST IS EMPTY AT FT0 AND FILLS ONE SLICE AT A TIME
 // (bible/10-UI/Features-Arc.md - the inventory is the work list; a row
 // is audited and fixed before it moves here). checkFeatures() is the
-// registry's own law, pinned by test/features.test.js: every row's
+// registry's own law, pinned by test/systems/features.test.js: every row's
 // control must name a key its store really has, so a typo cannot ship
 // a switch wired to nothing.
 
@@ -376,7 +376,7 @@ export const FEATURES = Object.freeze([
   // HORSE-TIERS (2026-10-15, Mac: "Allow turn off. Rework this system to be more in line with how we handle climates and
   // calories boons."): TIERS ON THE ONE KEY, as Climates & Calories' row has them - Off (DFU's horse, stored as the old
   // switch's own `false`), Boons (the default, never stored - BOONS-DEFAULT's way) and Hard (the system as it stood, by
-  // name); systems/upkeep/upkeepTiers.js HORSE_CARE_STORED and HORSE_CARE_DEFAULT, which test/horsetiers.test.js holds the
+  // name); systems/upkeep/upkeepTiers.js HORSE_CARE_STORED and HORSE_CARE_DEFAULT, which test/systems/horsetiers.test.js holds the
   // row to. The player's online, every tier, as every Climates & Calories tier is (MODS-ONLINE-3's reading: a tier
   // decides only what THIS player's horse pays) - the lane forced it on there until Mac's word.
   Object.freeze({
@@ -405,7 +405,7 @@ export const FEATURES = Object.freeze([
   // WAGON-TIERS (2026-10-15, Mac: "Yes, same tiers"): horse care's model on its own key - Off (DFU's plain wagon, stored
   // as the old switch's own `false`), Boons (the default, never stored: it wears and is mended, and wear costs nothing)
   // and Hard (the system as it stood, by name); systems/upkeep/upkeepTiers.js WAGON_UPKEEP_STORED and WAGON_UPKEEP_DEFAULT,
-  // which test/wagontiers.test.js holds the row to. The player's online, every tier (MODS-ONLINE-3's reading).
+  // which test/systems/wagontiers.test.js holds the row to. The player's online, every tier (MODS-ONLINE-3's reading).
   Object.freeze({
     id: 'wagon-upkeep',
     group: 'world',
@@ -474,7 +474,7 @@ export const FEATURES = Object.freeze([
   // "smarter AI and elites offline") turned it ON offline as it always
   // was online: the port's game is the one it plays, the classic motor
   // one choice away and All off's. The words are AUDIT 59 F3's, kept
-  // true by test/ft5_enhancedai.test.js against the arc's own list of
+  // true by test/systems/ft5_enhancedai.test.js against the arc's own list of
   // what is still ahead. NOT a merge with DFU's Enhancements/
   // EnhancedCombatAI ("Smarter Enemies", UNAVAILABLE in settings.js: the port runs the
   // classic path only) - a different thing that shares half a name,
@@ -1609,7 +1609,7 @@ export const FEATURES = Object.freeze([
     // write difficulty.js SURVIVAL_STORED - Off as the old switch's own
     // `false` (AUDIT SURV-TIERS: an older build reading the same shelf
     // still sees Off as off), Casual and Hard by name - and the default
-    // is its SURVIVAL_DEFAULT (test/survtiers.test.js holds the row to
+    // is its SURVIVAL_DEFAULT (test/systems/survival/survtiers.test.js holds the row to
     // them, as the Gore row is held to GORE_TIERS).
     //
     // SURV-BOONS (2026-10-12, the owner: "Players would still be able to switch between CAC versions"): A FOURTH SEGMENT ON

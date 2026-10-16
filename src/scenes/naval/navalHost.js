@@ -251,7 +251,7 @@ export function watchesFar(e, eye, fought) {
  *  AUDIT PEER-HULL-RANGE: AND PAST THE FOG ON EVERY LANE - the first cut's 3,000 / 3,500 m stood inside it (the enhanced
  *  lane's linear fog ends at 2400 x Land View / 3, world/weather.js scaleFogForDistance: 4,000 m at its default 5,
  *  4,800 m at 6), so a ship came into being 63-75% fogged. At 5,000 m every row DFU, the port and Dynamic Skies draw
- *  has closed (test/peerhullrange.test.js); the ships this is for were 80-700 km off, so the frame's saving is the same. */
+ *  has closed (test/systems/naval/peerhullrange.test.js); the ships this is for were 80-700 km off, so the frame's saving is the same. */
 export const PEER_HULL_NEAR_M = 5000;
 export const PEER_HULL_FAR_M = 5500;
 /** OWN-HULL-RANGE (2026-10-12, a player's live client travelling the overworld: 14 hulls 9-727 km off, 90 -> 37 FPS

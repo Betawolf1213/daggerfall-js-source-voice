@@ -21,7 +21,7 @@
 //
 // HOW A FRAME IS HELD. Each host's rAF callback asks `frameCapSkip(now)`
 // before its clock stamp and its input frame (the pins in
-// test/fpscap1.test.js say where). A held callback re-arms and returns:
+// test/ui/settings/fpscap1.test.js say where). A held callback re-arms and returns:
 // nothing is simulated or drawn, `last` does not move (so the next drawn
 // frame's dt covers the held time), and the input rings keep gathering
 // (beginInputFrame has not run), so no key press is lost. The decision

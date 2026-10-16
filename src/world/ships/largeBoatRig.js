@@ -27,7 +27,7 @@
 // and a topmast stay from the topmast's head to her bowsprit's end, a bobstay under it to her stem. Her running rope is
 // the large square sail's braces, aft to her stern rail's cap at her quarters, and the staysails' sheets to her gunwale;
 // a gaff's and a lateen's boom swings over her helm, and no sheet is led from them to her deck (they would cross her
-// helmsman's step and her tiller - test/ships2_largeboat.test.js sweeps every plan).
+// helmsman's step and her tiller - test/world/ships/ships2_largeboat.test.js sweeps every plan).
 //
 // Not a DFU member. Ledger A (SHIPS-2).
 import { MeshBench, prism, rope, add, sub, scl, len, norm, lerp3 } from './galleonMesh.js';

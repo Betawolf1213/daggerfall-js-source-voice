@@ -5,7 +5,7 @@
     "old": "L[0] += dx; L[1] += dz; L[2] = (L[2] + dy + 256) & 255;",
     "new": "L[0] = q[i][0]; L[1] += dz; L[2] = (L[2] + dy + 256) & 255;",
     "tests": [
-      "test/arena5_replay.test.js"
+      "test/systems/arena/arena5_replay.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "        if (dx === 0 && dz === 0 && dy === 0) { R.zeros[i]++; continue; }\n",
     "new": "",
     "tests": [
-      "test/arena5_replay.test.js"
+      "test/systems/arena/arena5_replay.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "export const REPLAY_TICK_MS = 1000 / REPLAY_HZ;",
     "new": "export const REPLAY_TICK_MS = 1000 / 5;",
     "tests": [
-      "test/arena5_replay.test.js"
+      "test/systems/arena/arena5_replay.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "    if (R.ticks >= REPLAY_MAX_TICKS) { R.full = true; break; }\n",
     "new": "",
     "tests": [
-      "test/arena5_replay.test.js"
+      "test/systems/arena/arena5_replay.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "const fi = (id) => (id == null ? -1 : R.ids.indexOf(id));",
     "new": "const fi = () => -1;",
     "tests": [
-      "test/arena5_replay.test.js"
+      "test/systems/arena/arena5_replay.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "if (i < 0 || t - R.lastStrike[i] < 300) return R;",
     "new": "if (i < 0) return R;",
     "tests": [
-      "test/arena5_replay.test.js"
+      "test/systems/arena/arena5_replay.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "  snap.arena.replays = arenaReplaysSnapshot(entity.arenaReplays ?? []);\n",
     "new": "",
     "tests": [
-      "test/arena5_replay.test.js"
+      "test/systems/arena/arena5_replay.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "[rec, ...arenaReplaysRestore(list)].slice(0, REPLAY_KEEP)",
     "new": "[...arenaReplaysRestore(list), rec].slice(0, REPLAY_KEEP)",
     "tests": [
-      "test/arena5_replay.test.js"
+      "test/systems/arena/arena5_replay.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "  if (!isStr(r.d, REPLAY_BYTES_MAX) || !decodePoses(r)) return null;",
     "new": "  if (!isStr(r.d, REPLAY_BYTES_MAX)) return null;",
     "tests": [
-      "test/arena5_replay.test.js"
+      "test/systems/arena/arena5_replay.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "    beginRecording(C, t);   // ARENA5: a ladder bout recorded for its replay\n",
     "new": "",
     "tests": [
-      "test/arena5_replay.test.js"
+      "test/systems/arena/arena5_replay.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "    if (rec && P) P.arenaReplays = keepReplay(P.arenaReplays, rec);",
     "new": "    void keepReplay;",
     "tests": [
-      "test/arena5_replay.test.js"
+      "test/systems/arena/arena5_replay.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "    if (!C.ladder || C.practice || C.relay || !C.b) return;",
     "new": "    if (!C.ladder || C.relay || !C.b) return;",
     "tests": [
-      "test/arena5_replay.test.js"
+      "test/systems/arena/arena5_replay.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "{ recordEvent(C.rec, e); hear(C, e, t, near); }",
     "new": "{ hear(C, e, t, near); }",
     "tests": [
-      "test/arena5_replay.test.js"
+      "test/systems/arena/arena5_replay.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "    if (C?.ladder && C.b && boutLive(C.b)) recordStrike(C.rec, lawNow(), YOU);",
     "new": "",
     "tests": [
-      "test/arena5_replay.test.js"
+      "test/systems/arena/arena5_replay.test.js"
     ],
     "note": "AUDIT PRE-MERGE 1003 B1 (re-aimed by content): the law's clock."
   },
@@ -132,7 +132,7 @@
     "old": "    if (rec && row && Number.isFinite(row.at) && row.tier === rec.next?.tier) rec.at = row.at;\n",
     "new": "",
     "tests": [
-      "test/arena5_replay.test.js"
+      "test/systems/arena/arena5_replay.test.js"
     ]
   },
   {
@@ -141,7 +141,7 @@
     "old": "    if (C?.relay?.replay) replayFrame(C, t);",
     "new": "",
     "tests": [
-      "test/arena5_replay.test.js"
+      "test/systems/arena/arena5_replay.test.js"
     ]
   },
   {
@@ -150,7 +150,7 @@
     "old": "      if (a[0] === b[0] && a[1] === b[1]) continue;",
     "new": "      continue;",
     "tests": [
-      "test/arena5_replay.test.js"
+      "test/systems/arena/arena5_replay.test.js"
     ]
   },
   {
@@ -159,7 +159,7 @@
     "old": "      deps.say?.(nx ? ARENA_TEXT.replay.call(nx.tierName, nx.grand ? ARENA_TEXT.grandLabel : nx.champion ? ARENA_TEXT.champLabel : nx.label) : ARENA_TEXT.replay.callBare);\n",
     "new": "",
     "tests": [
-      "test/arena5_replay.test.js"
+      "test/systems/arena/arena5_replay.test.js"
     ]
   },
   {
@@ -168,7 +168,7 @@
     "old": "      for (const w of R.feed.first) relayWord(w);\n",
     "new": "",
     "tests": [
-      "test/arena5_replay.test.js"
+      "test/systems/arena/arena5_replay.test.js"
     ]
   },
   {
@@ -177,7 +177,7 @@
     "old": "      if (foe._pup && !foe._pup.moving && Number.isInteger(i)) foe._pup.yaw = R.feed.yawAt(i, t);",
     "new": "      void i;",
     "tests": [
-      "test/arena5_replay.test.js"
+      "test/systems/arena/arena5_replay.test.js"
     ]
   },
   {
@@ -186,7 +186,7 @@
     "old": "  words.sort((a, b) => a.t - b.t);",
     "new": "",
     "tests": [
-      "test/arena5_replay.test.js"
+      "test/systems/arena/arena5_replay.test.js"
     ]
   },
   {
@@ -195,7 +195,7 @@
     "old": "      if (q === i || rec.f[q].s === rec.f[i].s) continue;",
     "new": "      if (q !== i) continue;",
     "tests": [
-      "test/arena5_replay.test.js"
+      "test/systems/arena/arena5_replay.test.js"
     ]
   },
   {
@@ -204,7 +204,7 @@
     "old": "  if (replays > 0) options.push({ code: 'KeyR', label: ARENA_TEXT.replay.herald, act: 'replay' });",
     "new": "",
     "tests": [
-      "test/arena5_replay.test.js"
+      "test/systems/arena/arena5_replay.test.js"
     ]
   },
   {
@@ -213,7 +213,7 @@
     "old": "banner: b.team, replay: replayOf(b),",
     "new": "banner: b.team, replay: null,",
     "tests": [
-      "test/arena5_replay.test.js"
+      "test/systems/arena/arena5_replay.test.js"
     ]
   },
   {
@@ -222,7 +222,7 @@
     "old": "      if (online()) return { ok: false, text: ARENA_TEXT.replay.offline };\n      if (!atGate) return { ok: false, text: ARENA_TEXT.window.whyGate };\n",
     "new": "      if (online()) return { ok: false, text: ARENA_TEXT.replay.offline };\n",
     "tests": [
-      "test/arena5_replay.test.js"
+      "test/systems/arena/arena5_replay.test.js"
     ]
   }
 ]

@@ -1,6 +1,6 @@
 // WB7 - THE WARDEN'S SCORE, PLAYED BY THE GAME'S OWN PLAYER IN A REAL BROWSER, RENDERED AND MEASURED.
 //
-// node holds the score's shape and its law (test/wb7_boss_audio.test.js); what node cannot answer is what the songs
+// node holds the score's shape and its law (test/systems/gate/wb7_boss_audio.test.js); what node cannot answer is what the songs
 // SOUND like through the game's own song player and FM bank: whether every voice the score asks for makes a sound,
 // whether the mix clips, whether the war songs grow as the phases do, and whether the fall rings out and then leaves
 // the court quiet. So: the repo's own modules served as they are, each song played by systems/song/songPlayer.js into an

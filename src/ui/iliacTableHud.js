@@ -14,7 +14,7 @@
 //
 // TWO HALVES, as the Hold'em panel's. `iliacHudModel` is pure: the game's view (net/iliac/iliacHand.js iliacView, the offline
 // session's or the relay's) and the host's staging as the rows, cards and buttons the panel shows - every label and every
-// enabled flag decided here, pinned by test/cards10_table.test.js. `createIliacTableHud` paints that model into the page
+// enabled flag decided here, pinned by test/systems/cards10_table.test.js. `createIliacTableHud` paints that model into the page
 // and hands presses back to the host.
 //
 // STAGING READS ONLY WHAT THE PLAYER SEES. `stagedRefusal` is the rules' playsRefusal said over the view (his hand, his

@@ -5,9 +5,9 @@
     "old": "export const FACE_THE_EYE = trs(0, 0, 0, -90, 180, 0);",
     "new": "export const FACE_THE_EYE = trs(0, 0, 0, -90, 0, 0);",
     "tests": [
-      "test/cards3b_hand.test.js",
-      "test/cards3_motion.test.js",
-      "test/auditcards2_cloth.test.js"
+      "test/world/card/cards3b_hand.test.js",
+      "test/world/card/cards3_motion.test.js",
+      "test/world/card/auditcards2_cloth.test.js"
     ]
   },
   {
@@ -16,9 +16,9 @@
     "old": "  const lean = HELD_LEAN_DEG + (PEEK_LEAN_DEG - HELD_LEAN_DEG) * p;",
     "new": "  const lean = HELD_LEAN_DEG;",
     "tests": [
-      "test/cards3b_hand.test.js",
-      "test/cards3_motion.test.js",
-      "test/auditcards2_cloth.test.js"
+      "test/world/card/cards3b_hand.test.js",
+      "test/world/card/cards3_motion.test.js",
+      "test/world/card/auditcards2_cloth.test.js"
     ]
   },
   {
@@ -27,9 +27,9 @@
     "old": "  const gap = HELD_GAP + (PEEK_GAP - HELD_GAP) * p;",
     "new": "  const gap = HELD_GAP;",
     "tests": [
-      "test/cards3b_hand.test.js",
-      "test/cards3_motion.test.js",
-      "test/auditcards2_cloth.test.js"
+      "test/world/card/cards3b_hand.test.js",
+      "test/world/card/cards3_motion.test.js",
+      "test/world/card/auditcards2_cloth.test.js"
     ]
   },
   {
@@ -38,9 +38,9 @@
     "old": "HELD_AT[2] - k * 0.002, -lean, 0, -k * HELD_FAN_DEG);",
     "new": "HELD_AT[2] + k * 0.002, -lean, 0, -k * HELD_FAN_DEG);",
     "tests": [
-      "test/cards3b_hand.test.js",
-      "test/cards3_motion.test.js",
-      "test/auditcards2_cloth.test.js"
+      "test/world/card/cards3b_hand.test.js",
+      "test/world/card/cards3_motion.test.js",
+      "test/world/card/auditcards2_cloth.test.js"
     ]
   },
   {
@@ -49,9 +49,9 @@
     "old": "  if (!dir || !(dir[1] < -1e-6)) return null;",
     "new": "  if (!dir) return null;",
     "tests": [
-      "test/cards3b_hand.test.js",
-      "test/cards3_motion.test.js",
-      "test/auditcards2_cloth.test.js"
+      "test/world/card/cards3b_hand.test.js",
+      "test/world/card/cards3_motion.test.js",
+      "test/world/card/auditcards2_cloth.test.js"
     ]
   },
   {
@@ -60,9 +60,9 @@
     "old": "    const to = Math.min(legal.raise.max, Math.max(legal.raise.min, Math.floor(Number(sliderValue) || legal.raise.min)));",
     "new": "    const to = Math.floor(Number(sliderValue) || legal.raise.min);",
     "tests": [
-      "test/cards3b_hand.test.js",
-      "test/cards3_motion.test.js",
-      "test/auditcards2_cloth.test.js"
+      "test/world/card/cards3b_hand.test.js",
+      "test/world/card/cards3_motion.test.js",
+      "test/world/card/auditcards2_cloth.test.js"
     ]
   },
   {
@@ -71,9 +71,9 @@
     "old": "  return depth(p) > depth(place.holes[0]) + 0.02;",
     "new": "  return depth(p) > depth(place.stack) - 0.5;",
     "tests": [
-      "test/cards3b_hand.test.js",
-      "test/cards3_motion.test.js",
-      "test/auditcards2_cloth.test.js"
+      "test/world/card/cards3b_hand.test.js",
+      "test/world/card/cards3_motion.test.js",
+      "test/world/card/auditcards2_cloth.test.js"
     ]
   },
   {
@@ -82,9 +82,9 @@
     "old": "    const off = side * RIFFLE_PART * part * (1 - fallen);",
     "new": "    const off = 0;",
     "tests": [
-      "test/cards3b_hand.test.js",
-      "test/cards3_motion.test.js",
-      "test/auditcards2_cloth.test.js"
+      "test/world/card/cards3b_hand.test.js",
+      "test/world/card/cards3_motion.test.js",
+      "test/world/card/auditcards2_cloth.test.js"
     ]
   },
   {
@@ -93,9 +93,9 @@
     "old": "    const layer = fallen > 0.5 ? k : RIFFLE_HALF + inHalf;",
     "new": "    const layer = 0;",
     "tests": [
-      "test/cards3b_hand.test.js",
-      "test/cards3_motion.test.js",
-      "test/auditcards2_cloth.test.js"
+      "test/world/card/cards3b_hand.test.js",
+      "test/world/card/cards3_motion.test.js",
+      "test/world/card/auditcards2_cloth.test.js"
     ]
   },
   {
@@ -104,9 +104,9 @@
     "old": "      const dealAt = t + gather + RIFFLE_S;",
     "new": "      const dealAt = t + gather;",
     "tests": [
-      "test/cards3b_hand.test.js",
-      "test/cards3_motion.test.js",
-      "test/auditcards2_cloth.test.js"
+      "test/world/card/cards3b_hand.test.js",
+      "test/world/card/cards3_motion.test.js",
+      "test/world/card/auditcards2_cloth.test.js"
     ]
   },
   {
@@ -115,9 +115,9 @@
     "old": "settleMs(live.length * 2) + Math.round((GATHER_S + RIFFLE_S) * 1000));",
     "new": "settleMs(live.length * 2) + Math.round(GATHER_S * 1000));",
     "tests": [
-      "test/cards3b_hand.test.js",
-      "test/cards3_motion.test.js",
-      "test/auditcards2_cloth.test.js"
+      "test/world/card/cards3b_hand.test.js",
+      "test/world/card/cards3_motion.test.js",
+      "test/world/card/auditcards2_cloth.test.js"
     ]
   },
   {
@@ -126,9 +126,9 @@
     "old": "back, c.matrix ?? cardMatrix(c.pos, c.yaw, c.roll), null,",
     "new": "back, cardMatrix(c.pos, c.yaw, c.roll), null,",
     "tests": [
-      "test/cards3b_hand.test.js",
-      "test/cards3_motion.test.js",
-      "test/auditcards2_cloth.test.js"
+      "test/world/card/cards3b_hand.test.js",
+      "test/world/card/cards3_motion.test.js",
+      "test/world/card/auditcards2_cloth.test.js"
     ]
   },
   {
@@ -137,9 +137,9 @@
     "old": "    window.addEventListener('pointermove', move);\n    window.addEventListener('pointerdown', down, true);",
     "new": "    window.addEventListener('pointermove', move);\n    window.addEventListener('pointerdown', down);",
     "tests": [
-      "test/cards3b_hand.test.js",
-      "test/cards3_motion.test.js",
-      "test/auditcards2_cloth.test.js"
+      "test/world/card/cards3b_hand.test.js",
+      "test/world/card/cards3_motion.test.js",
+      "test/world/card/auditcards2_cloth.test.js"
     ]
   },
   {
@@ -148,9 +148,9 @@
     "old": "    g.unlisten?.();   // CARDS3b: and the cursor's listeners\n",
     "new": "\n",
     "tests": [
-      "test/cards3b_hand.test.js",
-      "test/cards3_motion.test.js",
-      "test/auditcards2_cloth.test.js"
+      "test/world/card/cards3b_hand.test.js",
+      "test/world/card/cards3_motion.test.js",
+      "test/world/card/auditcards2_cloth.test.js"
     ]
   }
 ]

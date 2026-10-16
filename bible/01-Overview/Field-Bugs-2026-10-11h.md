@@ -49,7 +49,7 @@ The client is untouched.
 
 THE FOUR HOSTS. None - the account service alone. The account deploy ships it.
 
-Pinned by `test/seat1c_service.test.js` SEAT-CAP (1): 120 guilds pledged at Alcaire Keep, read on its board before and
+Pinned by `test/net/seat1c_service.test.js` SEAT-CAP (1): 120 guilds pledged at Alcaire Keep, read on its board before and
 after the Turning, and a guild's 6,000 at Anticlere claiming its Charter at that Turning; and the fake's own bound.
 `guildmastersOf` runs at a Season's end alone and no pin crowds one - its list goes through the same `allIn`.
 `tools/mutants/seat_cap.json` (6, all dead: each list bound whole again). Three records re-aimed by content
@@ -76,7 +76,7 @@ nothing and answers `pending`. A pending seat READ (the list, the standings, the
 turned. A settler cut off (its client gone, its isolate lost) frees the Turning when its lease runs out. `settleDue`
 itself is unchanged - the loop the lease holder runs.
 
-Pinned by `test/seat1c_service.test.js` SEAT-LEASE (1): a lease held by another - the standings and the list answer
+Pinned by `test/net/seat1c_service.test.js` SEAT-LEASE (1): a lease held by another - the standings and the list answer
 unsettled, a pledge `seats-settling` 503, the clock pending; run out, the next read settles and frees it; nothing due asks
 one read and no lease; a settle that throws frees it. `tools/mutants/seat_lease.json` (5, all dead). acct118 (the
 version pins moved); `seat1c.json` and `season1.json`'s records on the route's settle line re-aimed by content, and
@@ -127,11 +127,11 @@ Read and set aside: the realm checkpoint's ledger read (`item_uids` by character
 piece's row is deleted, and kept `gone` only while a copy of it is known - so it is the character's holding, not its
 history, and nothing narrower is owed it.
 
-Pinned by `test/d1load.test.js` (4): the questions over the service's own dataset, weighted, ordered by the wait, the
+Pinned by `test/server/d1load.test.js` (4): the questions over the service's own dataset, weighted, ordered by the wait, the
 window's guard, an answer drawn and an empty one said; the workflow by hand only, its input read once as environment, its
 own queue, writing nothing, and its metrics step run under bash over a fake SQL API - every question drawn, a refusal
 warned and never drawn; the witness rows once a minute for twenty sales' Tithes and a standings, read again a minute on,
-the Turning fresh; the lease read with no write while held, a racer held off by the WHERE. `test/stormshed.test.js` C,
-`test/seat1b_service.test.js` THE PLEDGE and `test/seat_standing_festival.test.js` S1 moved with them (PIN MOVED).
+the Turning fresh; the lease read with no write while held, a racer held off by the WHERE. `test/net/stormshed.test.js` C,
+`test/net/seat1b_service.test.js` THE PLEDGE and `test/scenes/seat_standing_festival.test.js` S1 moved with them (PIN MOVED).
 `tools/mutants/d1load.json` (12: 11 dead, 1 equivalent as recorded - the status check beside loadTable's own refusal);
 `stormshed.json`, `seat_lease.json` and `seat_standing_festival.json`'s records re-aimed by content.

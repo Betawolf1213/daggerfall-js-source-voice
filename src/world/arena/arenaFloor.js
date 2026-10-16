@@ -326,7 +326,7 @@ export function crowdSeats(heightAt, { step = 1.15 } = {}) {
  * hair over the stairs' nosings (world/arena/arenaModel.js withStairRamps). A seat now stands where a body does: the ground
  * SEAT_FOOT_M to each side of it, along the radius and across it, within SEAT_LEVEL_M of its own - the terrace's floor
  * and the wooden tiers; a coping, a fence and a stair (a ramp is a stair's slope, 43 degrees) are not level a stride wide.
- * Of the 1,853 seats Kamer's mesh gave, 1,576 stand (test/audit1003_world.test.js), a sold-out crowd's 420 several times
+ * Of the 1,853 seats Kamer's mesh gave, 1,576 stand (test/world/audit1003_world.test.js), a sold-out crowd's 420 several times
  * over. Pure.
  */
 export const SEAT_FOOT_M = 0.35;

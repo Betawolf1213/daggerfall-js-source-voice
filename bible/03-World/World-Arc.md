@@ -31,7 +31,7 @@ compensation. tools/screenshot.mjs gained SHOT_TIMEOUT and SHOT_EVAL
 (post-ready action + stream-idle wait) for flight shots. Floating-origin
 invariant pinned: after any number of crossings the current pixel's
 frame sits at the origin and native coordinates round-trip exactly.
-Pins in test/streaming.test.js.
+Pins in test/world/streaming.test.js.
 AUDIT NOTE (M9 audit): re-diffed against StreamingWorld.cs +
 FloatingOrigin.cs - two corrections landed: init now PRESERVES the
 vertical compensation across re-inits (verbatim ResetStreamingWorld
@@ -85,7 +85,7 @@ lands on integer sample coordinates by construction). ?world scatters
 nature per pixel on post-blend heights + final tilemap, batched
 world-framed per (natureArchive, record). Integration pins: city pixel
 (207,213) 1237 flats (rect-suppressed), wilderness (206,213) 5331 -
-44013 across the 3x3. Pins in test/terrain.test.js.
+44013 across the 3x3. Pins in test/world/terrain/terrain.test.js.
 
 REAL FORESTS (FOREST1, 2026-10-01; AUDIT FOREST1 the same day) is the
 port's departure from that scatter, behind the enhanced Features row
@@ -98,7 +98,7 @@ in fields, the Oblivion Gate's clearing kept, Logging's trees in the
 woods. Off, on a desert, or with an archive that has no Tree table, the
 scatter above stands byte for byte. The rules and the numbers (measured
 on the real WOODS.WLD) are the Port-Ledger A row (REAL FORESTS); the audit
-is `01-Overview/Audit-Forest1-Grass.md`; pins in test/forest1.test.js.
+is `01-Overview/Audit-Forest1-Grass.md`; pins in test/systems/forest1.test.js.
 
 CLEAR ROADSIDES (VERGE1, 2026-10-07, Mac: "Making sure objects, like
 trees, avoid pathways and roads") keeps the disc of every wild flat's
@@ -106,7 +106,7 @@ widest picture - a Low Poly tree's crown among them - off the painted roads
 and tracks, in both scatters, with the herbs, the veins on the stone and
 World of Daggerfall's flats; behind the enhanced row `roadVerges`, forced on
 online. The record is `03-World/Roads.md` VERGE1; pins in
-test/verge1.test.js.
+test/world/road/verge1.test.js.
 
 BLENDED CLIMATES (ECOTONE1, 2026-10-07, Mac: "Making it where bione
 transitions are insta t and instead fade and transition naturally into each
@@ -116,7 +116,7 @@ neighbours' tile sets across it, a border tile's flats are laid by the
 climate that owns it (between two wooded climates only the species change),
 the grass grows by the ground under it. Behind the enhanced row
 `climateBlend`, forced on online. The record is `07-Rendering/Rendering.md`
-ECOTONE1; pins in test/ecotone1.test.js.
+ECOTONE1; pins in test/systems/ecotone1.test.js.
 
 ## Milestone 7 - locations on terrain (SHIPPED)
 
@@ -157,7 +157,7 @@ Integration pins for pixel (207,213): avg 0.166147 / max 0.171953, rect
 untouched, post-assign histogram 2:8183 / 1:3173 / 46:1717 / 11:905
 (PUDDLE-DRY's: the city's 61 puddle tiles are ground; it was
 2:8173 / 1:3142 / 46:1706 / 11:899 - AUDIT WATER-NEXT m5),
-climate 231 -> ground 302. Pins in test/terrain.test.js.
+climate 231 -> ground 302. Pins in test/world/terrain/terrain.test.js.
 AUDIT NOTE (M7 audit): the 64-entry marching-squares lookup was
 machine-verified against a source-parsed reconstruction - identical
 64/64. All 15251 exterior locations in the game stamp + blend clean
@@ -193,7 +193,7 @@ different concrete samples, all pins pin OUR pipeline. Open-ocean pixels
 clamp to exactly 0.017674 everywhere (pinned). Scene: ?terrain=<x>,<y> (RETIRED in Rendering-Arc R9 - the streaming world owns terrain)
 (default 207,213) renders a 5x5 pixel neighborhood on an elevation ramp;
 ground TEXTURING (tilemap), locations-on-terrain, and streaming remain
-queued. Pins in test/terrain.test.js.
+queued. Pins in test/world/terrain/terrain.test.js.
 
 ## Milestone 5 - RDB dungeons + action records (SHIPPED)
 
@@ -233,7 +233,7 @@ disable in block order). Corpus: all 187 RDBs lay out clean; placements
 ?dungeon=<name> (&region=), camera at the start marker. Routed onward:
 enemies (Characters), treasure/loot (Systems), water plane + point lights
 (Rendering), torch/animal audio (Audio), door/action behavior (Player).
-Pins in test/dungeon.test.js.
+Pins in test/world/dungeon.test.js.
 
 ## Milestone 4 - building interiors + doors (SHIPPED)
 
@@ -264,7 +264,7 @@ instances filtered (one per flagged block/record combo). Scene:
 marker facing the interior bounding center; `SHOT_QUERY` drives the shot
 tool at any scene. Routed onward: people flats (Characters), furniture
 actions / loot / spawn points (Systems), point lights (Rendering), ladder +
-door behavior (Player). Pins in test/interior.test.js.
+door behavior (Player). Pins in test/world/interior.test.js.
 
 TOWER-FLOORS (FIELD BUGS 2026-10-07b, `01-Overview/Field-Bugs-2026-10-07b.md`; Jacob: "The two Daggerfall Castle
 courtyard tower interiors are very bugged") - the port's one departure in AddModels: an ObjectType 5 model is
@@ -275,7 +275,7 @@ courtyard towers (CUSTAA05 #0 and #1, five storeys), the castle's three dungeon-
 blocks no location places (LIBRAM00 #7, BOOKAS00 #8). Each stood half its height under its storey - the towers'
 furniture 1.625 m over the floor and their lights and markers 1.575 m, a stair 3.2 m under its own, the room's door
 1.6 m under the street's. The two House2 rooms' hall 28703 is written off even this convention and left as written
-(AUDIT FB1007b F1, `01-Overview/Audit-FB1007b.md`). Pinned by `test/fb1007b_towerfloors.test.js`.
+(AUDIT FB1007b F1, `01-Overview/Audit-FB1007b.md`). Pinned by `test/world/fb1007b_towerfloors.test.js`.
 
 ## Milestone 3 - flats and billboards (SHIPPED)
 
@@ -304,7 +304,7 @@ climate (Daggerfall city -> Woodlands 302). Scene selectable with
 ?region=&loc=. Daggerfall city: 64 blocks, 1109 placements, 202 unique
 meshes, 181 textures, meshes and textures shared across blocks, per-block
 ground meshes, origin folded into each placement matrix.
-`src/world/locationLayout.js`, pins in test/world.test.js.
+`src/world/locationLayout.js`, pins in test/world/world.test.js.
 
 ## Milestone 1 - single RMB block render (SHIPPED)
 
@@ -338,7 +338,7 @@ Modules:
   (PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers, playwright@1.56.0 pinned to the
   provisioned chromium-1194). Waits for window.__shotReady.
 
-Numeric anchors (test/world.test.js): model 456 p0 (-9.6, 0, 12.8),
+Numeric anchors (test/world/world.test.js): model 456 p0 (-9.6, 0, 12.8),
 uv0 (0, -2), fan [0,2,1,0,3,2]; MAGEAA00 model 0 world origin (48.2, 0, 25.4)
 via T(48, 0, 25.6) * Ry(-270deg).
 
@@ -350,7 +350,7 @@ swaps, sky; Player: movement, collision, activation; Audio: ambient).
 
 ## Testing
 
-Real-data pins live in `test/world.test.js`. Screenshot harness is manual
+Real-data pins live in `test/world/world.test.js`. Screenshot harness is manual
 proof, not a suite gate (needs ARENA2 + chromium).
 
 ## T1 (2026-08-17): TOWNS - the wandering population SHIPPED
@@ -983,7 +983,7 @@ same, so the probe stopped demanding a walker); ?play without
 overlay; and __talk's answer window reports { text, kind }, not a
 string.
 
-Pins: test/mapReveal.test.js x6 (the boundary/inside fork, the store's
+Pins: test/systems/talk/mapReveal.test.js x6 (the boundary/inside fork, the store's
 whole-record/no-dupe/per-location laws, the envelope round trip incl.
 pre-T4 empty, the macro tables, the townTalk source sweep - the hosts'
 zero-execution-coverage idiom - and the ARENA2 record-id gate).
@@ -1031,7 +1031,7 @@ strengthened (a mutable pick poisoned to a different index before
 the restore call), proven green on clean code, and m2 re-run to a
 kill. A PIN MUST FAIL, enforced the hard way.
 
-Pins: test/droppedloot.test.js +3 (the pixel sweep incl. the
+Pins: test/scenes/droppedloot.test.js +3 (the pixel sweep incl. the
 pixel-less exemption and the freed batches; the native round trip
 under a moved origin + y shift with empties skipped and the record
 unrerolled under a poisoned roll seam; the world-host wiring sweep -
@@ -1063,7 +1063,7 @@ RESIDUE: quest reveals ride the quest machine; the standalone
 Mutations: 3 run, 3 killed (the filter dropped; the entry writer
 dropped; every row claiming baked-discovered).
 
-Pins: test/travelvisibility.test.js x2 (the hidden barrow absent
+Pins: test/systems/map/travelvisibility.test.js x2 (the hidden barrow absent
 from matches until discoverLocation learns it, the baked town
 findable from the first key; the law-inputs/writer source sweep).
 
@@ -1121,7 +1121,7 @@ common way into a dungeon is through its door. `startInDungeon` (a new
 game) passes `true`; the standalone `?dungeon` host keeps the default,
 because it is `StartDungeonInterior` by definition.
 
-Pins: 7 in `test/dungeonentry.test.js`. Campaign: 19 mutants, 19
+Pins: 7 in `test/scenes/dungeonentry.test.js`. Campaign: 19 mutants, 19
 killed, including the bug itself restored as one mutant - and after one
 survivor that was the fixture's fault, not the code's: the pin for
 `closestDoorTo` measuring in **three** dimensions used doors that a
@@ -1357,7 +1357,7 @@ removed: it is interior machinery, its three materials carry no texture
 at all, and the strict reader rejected it outright rather than baking a
 mesh with nothing to sample.
 
-8 pins in `test/windmillmesh.test.js`; 7 mutants, 7 killed - including
+8 pins in `test/world/windmillmesh.test.js`; 7 mutants, 7 killed - including
 the two that are not source edits, a dropped submesh and a Daggerfall
 texture export appearing in `vendor/`.
 
@@ -1525,7 +1525,7 @@ looking at it.
   wrapping) sample correctly - all of it wants one run.
 - **Sound.** Kamer loops a clip on the mill; the port does not.
 
-Pins: 7 in `test/windmillwiring.test.js`, source sweeps for R5's reason -
+Pins: 7 in `test/world/windmillwiring.test.js`, source sweeps for R5's reason -
 it wired a paint into `buildPixel`, lint passed, the build passed, 4,283
 tests passed, and the world host was dead on its first terrain load,
 because nothing in the suite drives that path.
@@ -1537,7 +1537,7 @@ travel-map and live-weather slice - including `systems/weather/weatherSim.js`'s
 own header. A slice id is a grep handle in this repo, and two meanings
 for one handle makes both useless.
 
-Pins: 15 in `test/windmills.test.js` (12 at WM1, 3 more at WM2b for the
+Pins: 15 in `test/world/windmills.test.js` (12 at WM1, 3 more at WM2b for the
 mount-versus-conjugate defect). Campaign: 15 mutants, 14 killed,
 and the survivor recorded rather than papered over - `over <= 0`
 weakened to `over < 0` is EQUIVALENT, because at `over === 0` the
@@ -1915,7 +1915,7 @@ the implementation cannot tell you the design was wrong.** The pin that
 would have caught it is the one that shipped instead - the two laws
 compared against each other, where they agree and where they part.
 
-Pins: 5 in `test/windmillclimate.test.js`. The law half is kept as
+Pins: 5 in `test/world/windmillclimate.test.js`. The law half is kept as
 INDEPENDENT EVIDENCE for WM2e rather than as WM3's own claim: WM2e says
 the sail is 067_1 in every one of the seventeen prefabs, and these pins
 say ApplyClimate would not have moved it either, computed from the
@@ -2034,7 +2034,7 @@ H1's projection presents that space as DFU does, not mirrored, so the
 same t is the same way round on screen. `ROTOR_SIGN` is -1 now, his
 sign verbatim, and the pin says +Y goes to +X.
 
-8 pins in `test/windmillmachinery.test.js`; 6 mutants, 6 killed. Not
+8 pins in `test/world/windmillmachinery.test.js`; 6 mutants, 6 killed. Not
 seen: no GL and no ARENA2 here. The one-look questions are the gear
 standing as a vertical shaft at x 11 inside the machinery and the
 roller lying across at y -7, both computed from the prefab's numbers
@@ -2071,7 +2071,7 @@ no idea what the weather is); the modal frame silences them all,
 because `PlayerEnterExit` disables the exterior parent indoors and a
 disabled AudioSource stops, and the retry brings them back on the way
 out; a destroyed pixel stops its own; the room's `destroy` stops the
-gear's. 5 pins in `test/windmillsound.test.js`; 6 mutants, 6 killed.
+gear's. 5 pins in `test/world/windmillsound.test.js`; 6 mutants, 6 killed.
 
 **WM4 closes the rar.** Every file in it is now either carried,
 verified equal, or recorded as outside the shipped manifest. Nobody has

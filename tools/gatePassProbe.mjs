@@ -1,6 +1,6 @@
 // WB2 - THE GATE'S FIRE AND BEACON, COMPILED, LINKED AND DRAWN IN A REAL BROWSER.
 //
-// node holds the pass's law (test/wb2_gate.test.js drives it over a fake GL); what node cannot answer is whether the
+// node holds the pass's law (test/world/gate/wb2_gate.test.js drives it over a fake GL); what node cannot answer is whether the
 // GLSL COMPILES and LINKS in a real WebGL2 context, whether the arch's profile survives as a uniform the optimiser did
 // not drop, and whether the fire actually lands on the pixels between the pillars - bright and hot when open, an ember
 // when sealed - and the beacon on the sky over the crown. So: the repo's own modules served as they are (no bundler -

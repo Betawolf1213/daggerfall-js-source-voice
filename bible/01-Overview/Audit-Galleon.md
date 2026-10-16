@@ -7,7 +7,7 @@ lenses read it against its own pages and against the mod's own galleon on the re
 pictures, her prefab and loader, her deck and crew, her guns, the tests that pin it all - with the head frozen.
 
 Every finding below was re-run on its probe before it was fixed, and pinned by a test that fails on the code as it
-stood: `test/auditgalleon_bake.test.js` (11), `auditgalleon_rig` (11), `auditgalleon_prefab` (18), `auditgalleon_deck`
+stood: `test/tooling/auditgalleon_bake.test.js` (11), `auditgalleon_rig` (11), `auditgalleon_prefab` (18), `auditgalleon_deck`
 (14), `auditgalleon_guns` (11) and `auditgalleon_sea` (5) - 70 pins. Mutation-proven:
 `tools/mutants/auditgalleon_*.json`, 211 records, 210 dead and one recorded equivalent (G5's node between her root and
 her MeshObject, at identity on every hull). Each fix in code carries an `AUDIT GN-<id>` comment (AUDIT GALLEON-2: P13's are tagged GN-NITS and GN-CROWSNEST; D6, P11, T5 and T7-T11 changed records, not code). Four fixers worked in parallel

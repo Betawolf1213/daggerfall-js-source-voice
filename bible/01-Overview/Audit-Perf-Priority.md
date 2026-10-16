@@ -12,7 +12,7 @@ THE VERIFIER IS READING), told to reproduce every finding (a script, a surviving
 
 | Lane | Over | How |
 |---|---|---|
-| V8 | PERF-V8 (the world host's `frame`, its 21 closures, `test/perfv8.test.js`) | the frame against main's line for line; eslint-scope over both trees (4,956 references); V8's census of every function; each closure folded back and measured; mutants of its own |
+| V8 | PERF-V8 (the world host's `frame`, its 21 closures, `test/scenes/perfv8.test.js`) | the frame against main's line for line; eslint-scope over both trees (4,956 references); V8's census of every function; each closure folded back and measured; mutants of its own |
 | Yard | PERF-YARD (`decorRoom.js`, `homeYards.js`, `yardCull`) | the frame's matrices traced through every camera variant (acorn over world.js); 400 mirrored cameras x 200 boxes sampled inside every culled box; the shadow reach's space; mutants over fifteen yard test files |
 | Inst | PERF-INST (`shadowPass.js` `_movedFiled`, the grid) | a differential fuzz against the shipped scan as the oracle (~12 million draws, caps 66 to 4,096, boundary, wrapped, huge and non-finite layouts); benches by layout; the memory and the hitches at the cap; mutants |
 | Col2 | PERF-COL2 (`collider.js`, the marks) | a differential fuzz of main's collider against this one (~175,000 queries, all fifteen kinds, crossings, re-anchors, removals, growth); the rounding of the frames; the rebuild's cost; mutants |

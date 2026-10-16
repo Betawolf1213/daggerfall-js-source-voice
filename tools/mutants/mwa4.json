@@ -5,7 +5,7 @@
     "old": "  if (count) {\n    actions.push({ label: t('menu.mw.remove', 'Remove data'),",
     "new": "  if (true) {\n    actions.push({ label: t('menu.mw.remove', 'Remove data'),",
     "tests": [
-      "test/mwarms_fps.test.js"
+      "test/ui/enhanced/mwarms_fps.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "{ label: t('menu.mw.attach', 'Attach data'), primary: !count, onClick: attach }",
     "new": "{ label: t('menu.mw.attach', 'Attach data'), primary: true, onClick: attach }",
     "tests": [
-      "test/mwarms_fps.test.js"
+      "test/ui/enhanced/mwarms_fps.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "if (armState?.third && !armState.third.ok) out.push(",
     "new": "if (armState?.third) out.push(",
     "tests": [
-      "test/mwarms_fps.test.js"
+      "test/ui/enhanced/mwarms_fps.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "if (e && !e.raceIsThere) {",
     "new": "if (e) {",
     "tests": [
-      "test/mwarms_fps.test.js"
+      "test/ui/enhanced/mwarms_fps.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "return reason === 'not built' || reason === 'unloaded' ? t('menu.mw.buildsLater', 'Builds when you play') : reason;",
     "new": "return reason;",
     "tests": [
-      "test/mwarms_fps.test.js"
+      "test/ui/enhanced/mwarms_fps.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "      \"card:morrowind\", \"card:packs\"]),",
     "new": "      \"card:packs\"]),",
     "tests": [
-      "test/features.test.js"
+      "test/systems/features.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "    if (n > 0 && playerEntity?.chargenDone) {",
     "new": "    if (n > 0) {",
     "tests": [
-      "test/mwarms_fps.test.js"
+      "test/ui/enhanced/mwarms_fps.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "      async () => {\n        fpArm.unload();\n        const ds = await import('../../scenes/dataSource.js');\n        await ds.clearStoredMorrowind();",
     "new": "      async () => {\n        const ds = await import('../../scenes/dataSource.js');\n        await ds.clearStoredMorrowind();",
     "tests": [
-      "test/mwarms_fps.test.js"
+      "test/ui/enhanced/mwarms_fps.test.js"
     ]
   },
   {
@@ -77,8 +77,8 @@
     "old": "enabled: () => enhanced && morrowindDataCount() > 0, generation: morrowindDataGeneration, collider: () => collider, gate: BODY_BUILD_GATE, horses: () => horseRigFor(renderer), buildOpts: playerBuildOpts });",
     "new": "enabled: () => enhanced, generation: morrowindDataGeneration, collider: () => collider, gate: BODY_BUILD_GATE, horses: () => horseRigFor(renderer), buildOpts: playerBuildOpts });",
     "tests": [
-      "test/mwbody1.test.js",
-      "test/mwarms_fps.test.js"
+      "test/net/peer/mwbody1.test.js",
+      "test/ui/enhanced/mwarms_fps.test.js"
     ]
   },
   {
@@ -87,7 +87,7 @@
     "old": "  if (!entity?.chargenDone || !(dataCount() > 0) || standing(entity)) return null;",
     "new": "  if (!entity?.chargenDone || standing(entity)) return null;",
     "tests": [
-      "test/mwarms_fps.test.js"
+      "test/ui/enhanced/mwarms_fps.test.js"
     ]
   },
   {
@@ -96,7 +96,7 @@
     "old": "const FOLLOW_CAMERA_KEY = 'dagger.mwArmsFollowCamera3';",
     "new": "const FOLLOW_CAMERA_KEY = 'dagger.mwArmsFollowCamera2';",
     "tests": [
-      "test/fparm.test.js"
+      "test/formats/morrowind/fparm.test.js"
     ]
   }
 ]

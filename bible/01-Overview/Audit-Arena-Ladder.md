@@ -17,7 +17,7 @@ the owner chose the climb's law from four questions:
   (world169 - world167 on this branch until main's SHADOW-CLOAK and SERAPH-WINGS took it and world168) and an account-service migration (0082,
   acct82 - acct79 until main's GLOBAL-MARKET, SHADOW-CLOAK and SERAPH-WINGS took acct79, acct80 and acct81).
 
-Pinned by `test/arenaladder_audit.test.js` (23 at the first pass, each red on the code before it) and mutation-checked
+Pinned by `test/systems/arenaladder_audit.test.js` (23 at the first pass, each red on the code before it) and mutation-checked
 (`tools/mutants/arenaladder.json`, 54 at the first pass, all dead); the second pass - AUDIT ARENA-LADDER 2, at the
 foot - added its own. Nothing here was seen in a browser.
 
@@ -114,8 +114,8 @@ champion elite. `scenes/exteriorFoes.js` carries the street's foe-vs-foe shape f
 The owner, on the work above: "Audit this". Four read-only lenses again (the telegraphs between fighters, the offline
 ladder and the bout's fixes, the relay, the account service and the client's ticket), every finding reproduced on the
 real modules (the brain, the bout driver, the relay's brain over `test/fakeRoom.mjs`, the service over node:sqlite)
-and fixed here. Pinned by `test/arenaladder_audit.test.js` (nine AUDIT ARENA-LADDER 2 tests, O5 rewritten - 32 in all)
-and `test/qx1_exterior_host.test.js` (the Recall refusal, driven); mutation-checked in `tools/mutants/arenaladder.json`:
+and fixed here. Pinned by `test/systems/arenaladder_audit.test.js` (nine AUDIT ARENA-LADDER 2 tests, O5 rewritten - 32 in all)
+and `test/systems/qx1_exterior_host.test.js` (the Recall refusal, driven); mutation-checked in `tools/mutants/arenaladder.json`:
 32 `ARENA-LADDER-2-` records (each fix taken out, and a pin fails) and nine of the first pass's re-aimed onto the new code,
 all dead - three survived their first run and were mended (a pin for the flush before the ask, a slow failing floor, and
 a redundant line taken out: `arenaLadderRestore` already keeps `paid` at least `won`).

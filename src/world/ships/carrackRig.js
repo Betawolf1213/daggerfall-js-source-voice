@@ -20,7 +20,7 @@
 // HER TRIM IS THE MOD'S CARRACK'S, AND IT IS WIDER THAN THE GALLEON'S: with no gaff the auto-trim braces her square yards
 // to 45 degrees either way (HasLargeSquareSailWithGaff false: the galleon's stop at 30), and her lateen swings to 90.
 // So her shrouds lead well aft of their masts (`CHANNELS`): a course braced sharp up swings its after half back toward
-// them, and its canvas must pass every shroud at 45 (test/ships2_carrack.test.js sweeps it). And HER MIZZEN CARRIES NO
+// them, and its canvas must pass every shroud at 45 (test/systems/naval/ships2_carrack.test.js sweeps it). And HER MIZZEN CARRIES NO
 // SHROUD AND NO BACKSTAY: her lateen's yard and canvas sweep a ring round it from 12.4 m up, 9 m out aft and 5.3 m
 // forward, at the 90 degrees the mod swings it - farther than her side stands from it - so any rope from the mizzen's
 // head to her rail would be cut by it at some trim; she is stayed forward to the main mast (`stayLines`' mizzen stay,
@@ -43,7 +43,7 @@ import { FIX_DEFORMATIONS_INTERVAL } from '../skinnedBake.js';
 
 /**
  * Where her rig stands (the boat's frame, metres), measured off the bake (src/assets/ships/carrack.json - roles
- * foreMast, mainMast, mizzenMast and bowsprit) and pinned there (test/ships2_carrack.test.js): each mast a regular
+ * foreMast, mainMast, mizzenMast and bowsprit) and pinned there (test/systems/naval/ships2_carrack.test.js): each mast a regular
  * pentagonal prism, a corner forward and a flat face aft, its axis at x 0 and `masts.*.z`, its corners `footR` from it
  * at `footY` (its step) tapering to `headR` at its head (`masts.*.top`); the bowsprit a pentagon too, a corner up, its
  * axis from `bowsprit.heel` to `bowsprit.end` and its flat underside from `bowsprit.underHeel` to `bowsprit.underEnd`.
@@ -225,7 +225,7 @@ function standingRiggingGeometry() {
  * The running rope's belays (her frame; the starboard one, the port its mirror), every one on her rail's cap (the waist's
  * 8.6343, its cap from x 5.807 to 6.086) or her bow's: the fore course's braces aft to the waist abaft the fore channels,
  * its sheets forward of them; the main course's sheets forward of the main channels; the main yards' braces to the
- * waist forward of her entry port (under her lateen's sweep: test/ships2_carrack.test.js); the spritsail's to her bow's
+ * waist forward of her entry port (under her lateen's sweep: test/systems/naval/ships2_carrack.test.js); the spritsail's to her bow's
  * rail where it narrows to her stem.
  */
 const BELAYS = Object.freeze({

@@ -5,7 +5,7 @@
     "old": "export const FESTER = Object.freeze({ DAYS: 3, EVERY: 3,",
     "new": "export const FESTER = Object.freeze({ DAYS: 2, EVERY: 3,",
     "tests": [
-      "test/rvn9_fester.test.js"
+      "test/systems/rvn9_fester.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "export const FESTER = Object.freeze({ DAYS: 3, EVERY: 3,",
     "new": "export const FESTER = Object.freeze({ DAYS: 3, EVERY: 2,",
     "tests": [
-      "test/rvn9_fester.test.js"
+      "test/systems/rvn9_fester.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "CATCHUP: 7, HEALTH: 0.10, BLOWS: 0.05 });",
     "new": "CATCHUP: 10, HEALTH: 0.10, BLOWS: 0.05 });",
     "tests": [
-      "test/rvn9_fester.test.js"
+      "test/systems/rvn9_fester.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "CATCHUP: 7, HEALTH: 0.10, BLOWS: 0.05 });",
     "new": "CATCHUP: 7, HEALTH: 0.15, BLOWS: 0.05 });",
     "tests": [
-      "test/rvn9_fester.test.js"
+      "test/systems/rvn9_fester.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "CATCHUP: 7, HEALTH: 0.10, BLOWS: 0.05 });",
     "new": "CATCHUP: 7, HEALTH: 0.10, BLOWS: 0.1 });",
     "tests": [
-      "test/rvn9_fester.test.js"
+      "test/systems/rvn9_fester.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "return past >= 0 && past % FESTER.EVERY === 0; };",
     "new": "return past >= -3 && past % FESTER.EVERY === 0; };",
     "tests": [
-      "test/rvn9_fester.test.js"
+      "test/systems/rvn9_fester.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "return past >= 0 && past % FESTER.EVERY === 0; };",
     "new": "return past >= 0; };",
     "tests": [
-      "test/rvn9_fester.test.js"
+      "test/systems/rvn9_fester.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "  if (!revenantOn()) return [];\n  const day = Math.floor(now / MINUTES_PER_DAY);",
     "new": "  const day = Math.floor(now / MINUTES_PER_DAY);",
     "tests": [
-      "test/rvn9_fester.test.js"
+      "test/systems/rvn9_fester.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "  if (_state.lastDay == null) { _state.lastDay = day; persist(); return []; }   // the first count: from here",
     "new": "  if (_state.lastDay == null) _state.lastDay = day - 1;",
     "tests": [
-      "test/rvn9_fester.test.js"
+      "test/systems/rvn9_fester.test.js"
     ]
   },
   {
@@ -86,8 +86,8 @@
     "old": "  if (day <= _state.lastDay) return [];   // the encounter tick's every ask: nothing new. AUDIT FEUD: nor a clock behind it (a reload of an older save) - the mirror counted those days; none counts twice\n",
     "new": "",
     "tests": [
-      "test/rvn9_fester.test.js",
-      "test/auditfeud.test.js"
+      "test/systems/rvn9_fester.test.js",
+      "test/systems/auditfeud.test.js"
     ]
   },
   {
@@ -96,7 +96,7 @@
     "old": "  for (let d = Math.max(_state.lastDay + 1, day - FESTER.CATCHUP + 1); d <= day; d++) {",
     "new": "  for (let d = _state.lastDay + 1; d <= day; d++) {",
     "tests": [
-      "test/rvn9_fester.test.js"
+      "test/systems/rvn9_fester.test.js"
     ]
   },
   {
@@ -105,7 +105,7 @@
     "old": "  for (let d = Math.max(_state.lastDay + 1, day - FESTER.CATCHUP + 1); d <= day; d++) {",
     "new": "  for (let d = Math.max(_state.lastDay + 2, day - FESTER.CATCHUP + 1); d <= day; d++) {",
     "tests": [
-      "test/rvn9_fester.test.js"
+      "test/systems/rvn9_fester.test.js"
     ]
   },
   {
@@ -114,7 +114,7 @@
     "old": "      if (r.out || !festersOn(",
     "new": "      if (!festersOn(",
     "tests": [
-      "test/rvn9_fester.test.js"
+      "test/systems/rvn9_fester.test.js"
     ]
   },
   {
@@ -123,7 +123,7 @@
     "old": "      if (r.rank >= REVENANT_MAX_RANK) { r.wrath = Math.min(WRATH_MAX, (r.wrath | 0) + 1); touch(r); continue; }\n",
     "new": "",
     "tests": [
-      "test/rvn9_fester.test.js"
+      "test/systems/rvn9_fester.test.js"
     ]
   },
   {
@@ -132,7 +132,7 @@
     "old": "      if (r.rank >= REVENANT_MAX_RANK) { r.wrath = Math.min(WRATH_MAX, (r.wrath | 0) + 1); touch(r); continue; }",
     "new": "      if (r.rank >= REVENANT_MAX_RANK) { r.wrath = (r.wrath | 0) + 1; touch(r); continue; }",
     "tests": [
-      "test/rvn9_fester.test.js"
+      "test/systems/rvn9_fester.test.js"
     ]
   },
   {
@@ -141,7 +141,7 @@
     "old": "      if (r.wrath >= WRATH_MAX) {\n        r.rank += 1;",
     "new": "      if (r.wrath >= WRATH_MAX - 1) {\n        r.rank += 1;",
     "tests": [
-      "test/rvn9_fester.test.js"
+      "test/systems/rvn9_fester.test.js"
     ]
   },
   {
@@ -150,7 +150,7 @@
     "old": "        r.rank += 1;\n        r.wrath = 0;\n",
     "new": "        r.rank += 1;\n",
     "tests": [
-      "test/rvn9_fester.test.js"
+      "test/systems/rvn9_fester.test.js"
     ]
   },
   {
@@ -159,7 +159,7 @@
     "old": "        r.epithet = revenantEpithet('festered', r.rank, player?.name ?? '', rolls, r.epithet);\n",
     "new": "",
     "tests": [
-      "test/rvn9_fester.test.js"
+      "test/systems/rvn9_fester.test.js"
     ]
   },
   {
@@ -168,7 +168,7 @@
     "old": "        deed(r, 'festered', d * MINUTES_PER_DAY);\n",
     "new": "",
     "tests": [
-      "test/rvn9_fester.test.js"
+      "test/systems/rvn9_fester.test.js"
     ]
   },
   {
@@ -177,7 +177,7 @@
     "old": "        r.notice = 'festered';\n        up.push(r);",
     "new": "        up.push(r);",
     "tests": [
-      "test/rvn9_fester.test.js"
+      "test/systems/rvn9_fester.test.js"
     ]
   },
   {
@@ -186,7 +186,7 @@
     "old": "  _state.lastDay = day;\n  persist();\n  return up;",
     "new": "  persist();\n  return up;",
     "tests": [
-      "test/rvn9_fester.test.js"
+      "test/systems/rvn9_fester.test.js"
     ]
   },
   {
@@ -195,7 +195,7 @@
     "old": "  revenantFester(player, { now, rolls });   // RVN9",
     "new": "  // RVN9",
     "tests": [
-      "test/rvn9_fester.test.js"
+      "test/systems/rvn9_fester.test.js"
     ]
   },
   {
@@ -204,7 +204,7 @@
     "old": "r.notice === 'festered' ? revenantFesterEvent(r) : r.notice === 'deserted'",
     "new": "r.notice === 'festered' ? null : r.notice === 'deserted'",
     "tests": [
-      "test/rvn9_fester.test.js"
+      "test/systems/rvn9_fester.test.js"
     ]
   },
   {
@@ -213,7 +213,7 @@
     "old": "  const body = `${r.given} grows bolder - it has waited too long.`;",
     "new": "  const body = `${r.given} grows bolder.`;",
     "tests": [
-      "test/rvn9_fester.test.js"
+      "test/systems/rvn9_fester.test.js"
     ]
   },
   {
@@ -222,7 +222,7 @@
     "old": " lair: 'Its lair', festered: 'Grows bolder',",
     "new": " lair: 'Its lair',",
     "tests": [
-      "test/rvn9_fester.test.js"
+      "test/systems/rvn9_fester.test.js"
     ]
   },
   {
@@ -231,7 +231,7 @@
     "old": "  if (wrath) {\n    entity.maxHealth",
     "new": "  if (false) {\n    entity.maxHealth",
     "tests": [
-      "test/rvn9_fester.test.js"
+      "test/systems/rvn9_fester.test.js"
     ]
   },
   {
@@ -240,7 +240,7 @@
     "old": "    entity.damageScale *= 1 + FESTER.BLOWS * wrath;\n",
     "new": "",
     "tests": [
-      "test/rvn9_fester.test.js"
+      "test/systems/rvn9_fester.test.js"
     ]
   },
   {
@@ -249,7 +249,7 @@
     "old": "    entity.damageScale *= 1 + FESTER.BLOWS * wrath;\n  }\n  r.wrath = 0;",
     "new": "    entity.damageScale *= 1 + FESTER.BLOWS * wrath;\n  }",
     "tests": [
-      "test/rvn9_fester.test.js"
+      "test/systems/rvn9_fester.test.js"
     ]
   },
   {
@@ -258,7 +258,7 @@
     "old": "        if (r.rank >= SIG_RANK && !r.sig) r.sig = drawSignature(r.id, r.mobileType);\n        deed(r, 'festered'",
     "new": "        deed(r, 'festered'",
     "tests": [
-      "test/rvn9_fester.test.js"
+      "test/systems/rvn9_fester.test.js"
     ]
   }
 ]

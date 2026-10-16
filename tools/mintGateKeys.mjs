@@ -5,7 +5,7 @@
 //   node tools/mintGateKeys.mjs --pipe   both halves, bare, one per line
 //
 // Prints and keeps nothing. NOTHING IS EVER WRITTEN TO DISK, and
-// test/wb5b_gate_claim.test.js reads this file to keep it that way.
+// test/net/gate/wb5b_gate_claim.test.js reads this file to keep it that way.
 //
 // GATE-KEYS (2026-09-26): THE ACCOUNT DEPLOY RUNS THIS, ONCE. Its step
 // "Mint the gate receipt pair" (.github/workflows/account-deploy.yml)

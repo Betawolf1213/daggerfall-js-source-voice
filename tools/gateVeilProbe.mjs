@@ -1,6 +1,6 @@
 // WB6c - THE GATE'S VEIL, COMPILED, LINKED, DRAWN AND STEPPED THROUGH IN A REAL BROWSER.
 //
-// node holds the veil's law and its layer over a fake page (test/wb6c_gate_veil.test.js); what node cannot answer is
+// node holds the veil's law and its layer over a fake page (test/ui/gate/wb6c_gate_veil.test.js); what node cannot answer is
 // whether the GLSL COMPILES and LINKS in a real WebGL2 context, whether the fire it draws is where the law says - the
 // screen clear before it closes, the corners taken first, all of it fire when shut with the eye burning at the middle,
 // the middle opened first - and whether the real layer on a real page closes, answers, opens and hides. So: the repo's

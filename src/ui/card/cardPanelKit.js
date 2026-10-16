@@ -16,7 +16,7 @@
 //   - each panel's own sheet writes GEOMETRY and WORDS: its layout, its edges' widths, the face's trio
 //     (ui/pixelifyFive.js PIXEL_FONT_CSS) on its root, its words' colours. `cardPanelChromeCss` is the chrome both wear
 //     - the window's box, the header band, the line and its tones, the presses' row, the log - and every class in either
-//     panel is a word of its own (test/cardsplus.test.js sweeps them against the enhanced sheets' bare components);
+//     panel is a word of its own (test/ui/cardsplus.test.js sweeps them against the enhanced sheets' bare components);
 //   - the kit PAINTS every surface by its role (FRAME_ROLES' `body .dfcards` and `body .dfiliac` entries - a leading
 //     `body`, because the panels' sheets land after the skin's): the panel a carved window with brass fittings, a seat
 //     or a holding a stone panel, the presses raised stone that go brass under the pointer, the press a panel is for in

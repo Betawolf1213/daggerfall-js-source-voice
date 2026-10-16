@@ -13,7 +13,7 @@ A **performance lens** (P) measured the branch against main, on this thread and 
 SwiftShader, so they are relative only.
 
 Where two lenses found the same fault, the ids are joined (H1 = F1 = G4). Each fix carries an `AUDIT WATER-NEXT <id>`
-comment and is pinned in `test/audit_waternext.test.js` (11), or in the moved pin it says. It is mutated in
+comment and is pinned in `test/world/terrain/audit_waternext.test.js` (11), or in the moved pin it says. It is mutated in
 `tools/mutants/audit_waternext.json`: **40 mutants, 40 dead**. The branch's own campaigns are also all dead after the
 fixes: `waternext.json` (35, seven re-aimed at the code the fixes rewrote) and `puddledry.json` (12). So are the records
 in other campaigns that the fixes moved: `landform.json` (36, two re-aimed), `lwdry.json` (24, one) and `perfextc.json`
@@ -78,7 +78,7 @@ its own (G2). Its shading is within 2-3% of main's. A real GPU was not measured 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
 | M1 | high | The ripple field never slept again once the eye moved while rings were live. A slide carried heights onto the edge rows, which a step never writes. They stood there, its energy never fell, and the texture went up 30 times a second for the rest of the session. The record said "asleep when still" and "the edge stays still". | A slide writes the inside only, so the edge stays still water and the field sleeps (pinned: asleep within the steps a damped ring takes, all bytes 128). |
-| M2, M3 | medium | Of 37 one-line mutants aimed at laws the record claims, 35 survived the branch's pins: the host's stir loop, the shader's ripple slope, the sheet's depth upload, the sea's tilemap-unit emptying and more. | `test/audit_waternext.test.js` pins the laws by behaviour where node can run them (the bed, the halo, the stir, the composition on the GLSL evaluator) and by text where only a browser can. Its 40 mutants are all dead. |
+| M2, M3 | medium | Of 37 one-line mutants aimed at laws the record claims, 35 survived the branch's pins: the host's stir loop, the shader's ripple slope, the sheet's depth upload, the sea's tilemap-unit emptying and more. | `test/world/terrain/audit_waternext.test.js` pins the laws by behaviour where node can run them (the bed, the halo, the stir, the composition on the GLSL evaluator) and by text where only a browser can. Its 40 mutants are all dead. |
 | M4 | medium | Port-Ledger's WATER1 row and Water-Arc's "The departure" and "What it does not do" still described WATER1 as the water drawn now. | Narrowed in place: superseded by WATER-NEXT 2-4. |
 | m1, m4, m11 | low | The record counted `waternext.test.js` as 7 tests (it is 8), listed `perf2` as moved (WATER-NEXT never touched it) and left out `terrainworker` and `dwe_decorations`. It said "four more texels" where the shader reads seven. | Corrected. |
 | m3 | low | "The classic lane draws DFU's flat tile": the switch is the SKIN. The Enhanced skin on the classic lighting lane draws the new water. | "The classic skin". |
@@ -89,7 +89,7 @@ its own (G2). Its shading is within 2-3% of main's. A real GPU was not measured 
 | m10 | nit | Comments claimed a boat bobs on `swellAt` (no caller), that "a creature's splash" stirs the field (only the player and the boats do), and that "every boat afloat that moves" stirred it (every active boat did). | Corrected. The first two are recorded under "Recorded" below; the third is now true (P3). |
 | m13 | nit | The Deep Waters and Come Sail Away Ledger rows still described the top's column share and the breakers as drawn. | Each points at WATER-NEXT. |
 | m2, m14 | low | The PR's notes said PUDDLE-DRY dries "700 tiles" (it is 700 patches), and that Simple "drops the see-through look" (it keeps the blended look-through and drops the copy and the ripples). | The PR's description. |
-| - | low | At the merge of main, `test/features.test.js` said the Enhanced water note grew by 7 when it grew by 22 (the branch had raised the ceiling 164 and spent 15 from the old slack). | The ceiling is main's 18051 plus the branch's real 179. |
+| - | low | At the merge of main, `test/systems/features.test.js` said the Enhanced water note grew by 7 when it grew by 22 (the branch had raised the ceiling 164 and spent 15 from the old slack). | The ceiling is main's 18051 plus the branch's real 179. |
 
 ## Recorded
 

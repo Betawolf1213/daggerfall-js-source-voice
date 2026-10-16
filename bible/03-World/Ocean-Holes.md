@@ -455,7 +455,7 @@ fixed:
 
 ## Tests
 
-`test/oh_abyss.test.js` (the abyss over a fake world: TryEnterPit's gates
+`test/scenes/oh_abyss.test.js` (the abyss over a fake world: TryEnterPit's gates
 and the data it writes, the build's flood / rename / enemies, the arrival,
 the failed door and the port's refusal, the way up by the entrance, the
 depth and the surface, the Recall binding and IsPendingAbyssRecall while
@@ -463,11 +463,11 @@ the dungeon is laid out, the respawner, the save and the load, Update's
 names and releases, ProcessAbyssEnemy's gates and picks, the quota in
 floats, OnEnemySpawn, the presentation; the loot pair against the mod's
 own diagnostics case, the arrow, `weaponOfMaterial`, `lootMatrix`, and the
-two loot events and their wiring), `test/oh_placement.test.js` (the pure law against the assembly: the hash,
+two loot events and their wiring), `test/world/oh_placement.test.js` (the pure law against the assembly: the hash,
 the buckets, the placement, the fall, the cut's vertex pass, the grid, the
 rays, the names and ids, the roster, the fixtures, the armour ladder, the
 template, the flood, the disc, the puff, the miasma's particle system, the
-midpoint colour) and `test/oh_host.test.js` (the tile host: the gates in
+midpoint colour) and `test/scenes/oh_host.test.js` (the tile host: the gates in
 order, the waits, the bake's rejections, the depth, the state machine, the
 suppression, the settings' re-cut, the entrance's once-a-second, the
 dependency's half of the API, RefreshLoadedTile through the sea's own

@@ -17,8 +17,8 @@ together), each reproducing what it reported with the repo's own code:
 - **D** the record - every claim, count and cite of the arc's pages and patch notes against the code.
 
 The lenses reported 73 findings - 68 once those two lenses shared are written once, nine of them high. Every finding below was checked against the code before it was fixed, pinned by a test that FAILED on the unfixed tree
-for the finding's reason (`test/audit1003_server.test.js` 11, `_bouts` 9, `_online` 10, `_world` 7, `_wd` 8, `_ui` 17,
-`_record` 2; the merge's `MIGRATION-PREFIX` in `test/accountdeploy.test.js`) and mutation-proven:
+for the finding's reason (`test/net/arena/audit1003_server.test.js` 11, `_bouts` 9, `_online` 10, `_world` 7, `_wd` 8, `_ui` 17,
+`_record` 2; the merge's `MIGRATION-PREFIX` in `test/server/accountdeploy.test.js`) and mutation-proven:
 `tools/mutants/audit1003_server.json` 30, `audit1003_bouts.json` 33, `audit1003_online.json` 46, `audit1003_world.json`
 30, `audit1003_wd.json` 26, `audit1003_ui.json` 46, `audit1003_record.json` 3 - all 214 dead. Each fix carries an
 `AUDIT PRE-MERGE 1003 <ID>` comment. An ID two lenses found is written once, with both names.
@@ -26,7 +26,7 @@ for the finding's reason (`test/audit1003_server.test.js` 11, `_bouts` 9, `_onli
 ## Fixed
 
 **The relay and the account service** (`server/src/index.js`, `src/net/arena/arenaBrain.js`, `src/net/arena/arenaLaw.js`,
-`server-account/src/arena.js`, `letters.js`, `board.js`; the pins in `test/audit1003_server.test.js`)
+`server-account/src/arena.js`, `letters.js`, `board.js`; the pins in `test/net/arena/audit1003_server.test.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
@@ -40,7 +40,7 @@ for the finding's reason (`test/audit1003_server.test.js` 11, `_bouts` 9, `_onli
 | S8 | low | THE ARENA'S HONOURS WERE WORN NOWHERE BUT THE CARD. A Grand Champion's letters and notices showed no title, the season's first no laurel (`letters.js`, `board.js` read their badges without ARENA_HONOUR_PATHS). | `withArenaHonoursAll` lays them on the rows the inbox and the board read. |
 
 **The bout engine and the book** (`src/scenes/arena/arenaBouts.js`, `src/systems/arena/arenaBook.js`, `src/scenes/arena/arenaGate.js`,
-`src/systems/arena/arenaHerald.js`, `src/systems/arena/arenaText.js`; the pins in `test/audit1003_bouts.test.js`)
+`src/systems/arena/arenaHerald.js`, `src/systems/arena/arenaText.js`; the pins in `test/systems/arena/audit1003_bouts.test.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
@@ -53,7 +53,7 @@ for the finding's reason (`test/audit1003_server.test.js` 11, `_bouts` 9, `_onli
 
 **The online half** (`src/scenes/arena/arenaOnline.js`, `src/net/arena/arenaBrain.js`, `src/scenes/arena/arenaGate.js`,
 `src/scenes/arena/arenaBouts.js`, `src/scenes/world.js`, `src/systems/online/onlineHomes.js`; the pins in
-`test/audit1003_online.test.js`)
+`test/systems/arena/audit1003_online.test.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
@@ -69,7 +69,7 @@ for the finding's reason (`test/audit1003_server.test.js` 11, `_bouts` 9, `_onli
 **The arena in the world** (`src/world/arena/arenaFloor.js`, `src/world/arena/arenaModel.js`, `src/world/arena/arenaCity.js`,
 `src/world/customModels.js`, `src/scenes/dungeonContext.js`, `src/scenes/dataPipeline.js`, `src/scenes/world.js`,
 `src/scenes/worldModes.js`, `src/scenes/dungeon.js`, `src/scenes/arena/arenaBouts.js`; the pins in
-`test/audit1003_world.test.js`)
+`test/world/audit1003_world.test.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
@@ -83,7 +83,7 @@ for the finding's reason (`test/audit1003_server.test.js` 11, `_bouts` 9, `_onli
 
 **WD3** (`server-account/src/halls.js`, `server-account/src/townLayout.js`, `server-account/src/homes.js`,
 `server-account/src/index.js`, `src/net/accountClient.js`, `src/net/guild/guildBook.js`, `src/systems/online/onlineHomes.js`,
-`src/scenes/worldModes.js`, `src/systems/quest/place.js`; the pins in `test/audit1003_wd.test.js`)
+`src/scenes/worldModes.js`, `src/systems/quest/place.js`; the pins in `test/systems/quest/audit1003_wd.test.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
@@ -94,7 +94,7 @@ for the finding's reason (`test/audit1003_server.test.js` 11, `_bouts` 9, `_onli
 
 **The window and the HUD** (`src/ui/arena/arenaDoor.js`, `src/ui/arena/arenaWindow.js`, `src/ui/arena/arenaHud.js`,
 `src/ui/enhanced/enhancedPlusStyle.js`, `src/ui/hud/hudFoeTarget.js`, `src/systems/arena/arenaBoard.js`, `src/systems/arena/arenaText.js`,
-`src/scenes/world.js`, `src/scenes/exterior.js`; the pins in `test/audit1003_ui.test.js`)
+`src/scenes/world.js`, `src/scenes/exterior.js`; the pins in `test/systems/arena/audit1003_ui.test.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
@@ -115,8 +115,8 @@ for the finding's reason (`test/audit1003_server.test.js` 11, `_bouts` 9, `_onli
 | U15 | low | A keyboard's Cheer dropped the focus (the press `disabled`). | `aria-disabled`. |
 
 **The merges** (`server-account/src/service.js`, `server-account/wrangler.toml`, `server-account/migrations/`,
-`test/accountdeploy.test.js`, twelve version pins, `bible/01-Overview/Port-Status-2026-09-02.md`,
-`test/enhancedAI.test.js`, `bible/09-Testing/Testing.md`)
+`test/server/accountdeploy.test.js`, twelve version pins, `bible/01-Overview/Port-Status-2026-09-02.md`,
+`test/ai/nav/enhancedAI.test.js`, `bible/09-Testing/Testing.md`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
@@ -127,7 +127,7 @@ for the finding's reason (`test/audit1003_server.test.js` 11, `_bouts` 9, `_onli
 
 **The record** (`bible/11-Multiplayer/Arena.md`, `bible/03-World/Beautiful-Towns.md`, `bible/02-Formats/World-Data-Patches.md`,
 `bible/01-Overview/Port-Ledger.md`, `vendor/daggerfall-arena/README.md`, `src/characters/enemy/enemyMotor.js`, the patch notes;
-the pin in `test/audit1003_record.test.js`)
+the pin in `test/systems/arena/audit1003_record.test.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
@@ -227,7 +227,7 @@ Beside them the regression sweep: every arena, audit, TACT2 and WD3 mutant list 
 alive the 19 that need the player's ARENA2 data, each `why` naming it (18 of `arena2triage.json`, and
 `ARENAFIX-RAMPS-UNREGISTERED`). The lenses reported 63 findings, 54 once the ones two lenses shared are written once;
 four were high. Each was checked against the code, pinned by a test that FAILED on the frozen tree for the finding's
-reason (`test/audit1003b_relay.test.js` 11, `_client` 10, `_ui` 5; `arena6_private`'s wire test and TACT2's archer pin
+reason (`test/net/arena/audit1003b_relay.test.js` 11, `_client` 10, `_ui` 5; `arena6_private`'s wire test and TACT2's archer pin
 strengthened), and mutation-proven (`tools/mutants/audit1003b.json` 50, all dead; `arena6.json` 62, all dead - 31 of them
 the mutants its titles named that no record held, D1; `tact2.json` 26). Each fix carries an `AUDIT PRE-MERGE 1003b <ID>`
 comment.
@@ -284,7 +284,7 @@ comment.
 | M4, D7, D8, D9, D20 | low | THE PR DESCRIPTION: "the last three merges" (four), "number-only conflicts in cites" (two were counts), a stale Verification, a deploy line without ARENA6. | Rewritten. |
 
 **The record** (lens D): D1 (above); D2 the arena6 test's "the result listed" (it voids); D3 `ui/arena/arenaWindow.js` claimed
-tested and mounted nowhere (now `test/audit1003b_ui.test.js`); D4 Home.md's index; D5/C9 the ARENA6 record's four hosts;
+tested and mounted nowhere (now `test/ui/enhanced/audit1003b_ui.test.js`); D4 Home.md's index; D5/C9 the ARENA6 record's four hosts;
 D6 arenaGate's "from anywhere online"; D10-D13 "six-letter", the refusal words, "picked" for "called", the keep's order;
 D14-D15 a JSDoc's `busy`, tick's stranded doc; D16-D19 the patch notes (the alphabet "read aloud", the box's name, the
 host's way back, a session's bouts not on the list); D21 the Ledger's ARENA6 (written into the arena's row, so no Ledger

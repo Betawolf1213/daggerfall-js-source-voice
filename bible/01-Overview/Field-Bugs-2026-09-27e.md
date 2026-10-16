@@ -43,7 +43,7 @@ Each service's shelf is now minted once a game day and kept on the building (`sy
 shelf as it was left, and it rides the scene cache beside the shop shelves' own stock - a walk out of the hall and
 back, and a save and a load, keep what was bought gone. The next day restocks it. A world move clears the ordinary
 scene cache, so a visit after one mints the day's shelf again, as a shop's shelves re-roll. Offline and online
-alike; a recorded departure (Port-Ledger section A, GUILD-SHELF). Pinned: `test/guildshelf.test.js` (6),
+alike; a recorded departure (Port-Ledger section A, GUILD-SHELF). Pinned: `test/systems/guildshelf.test.js` (6),
 `tools/mutants/guild_shelf.json` (9, all dead).
 
 ## SHORT-TOUCH: a short landscape touch screen keeps the two columns (2)
@@ -58,7 +58,7 @@ height (`ui/enhanced/enhancedStyle.js`, not the chargen wizard, whose phone stri
 window opened 270 px down the screen with its Close off the bottom and the menu under it; on a short screen it
 takes the height now. Measured: `tools/shortTouchProbe.mjs` (four handheld viewports - 24 failures before, none
 after: every door's pane shows the whole height and its first button can be reached). Pinned:
-`test/shorttouch.test.js` (3), `tools/mutants/short_touch.json` (5, all dead).
+`test/ui/enhanced/shorttouch.test.js` (3), `tools/mutants/short_touch.json` (5, all dead).
 
 ## PAD-DOOR and PAD-SETTINGS: the front door answers a controller, and its speeds can be set (2)
 
@@ -77,7 +77,7 @@ The "1.0" was a readout. The four gamepad settings (Gamepad Look Speed, Cursor S
 Deadzone) went live at GP1 and never got a row in `ui/settings/settingsLaw.js` NUMBER_LAW, so each fell through to the
 honest readout for a number with no stated range - a bare value with nothing to press. They are numbers with
 steppers now, over their consumer's own clamps (`systems/gamepad.js` controllerSettings - the range-equals-clamp
-law), shown as x1.0 and percentages. Pinned: `test/menupad.test.js` (9; 13 with the AUDIT's), `tools/mutants/pad_door.json` (13, all dead).
+law), shown as x1.0 and percentages. Pinned: `test/ui/settings/menupad.test.js` (9; 13 with the AUDIT's), `tools/mutants/pad_door.json` (13, all dead).
 
 ## TOUCH-BUTTONS: the bottom-right corner is the player's, and Attack is one of its choices (2)
 
@@ -92,7 +92,7 @@ presses. A host with no attack (the fly-cam) is offered no Attack slot. The layo
 16 to 280 px the HUD's model was drawn against (Jump and the F button where they stood), and the model now keeps
 clear of the widest corner a player can choose. On a handheld with a controller, the pad's own attack (RT) works
 in-game as it always did - the missing piece there was the front door (PAD-DOOR). Pinned:
-`test/touchbuttons.test.js` (8; 9 with the AUDIT's), `tools/mutants/touch_buttons.json` (12, all dead); four older pins re-aimed at the
+`test/ui/touch/touchbuttons.test.js` (8; 9 with the AUDIT's), `tools/mutants/touch_buttons.json` (12, all dead); four older pins re-aimed at the
 slots (TI1's held pair, SOC C9's F button, AUDIT 39 F127, RENOWN4b's corner).
 
 **The Android app.** There is no APK and none is planned in this batch: the game is a web app, and on Android it can
@@ -111,7 +111,7 @@ case, not a hard-coded self-only. A gift sorts with the receiver's buffs (it wen
 aimed at a player raises "Cast Heal on Bran" without the peer menu; a blast names everyone it reached in one line.
 Her whitelist is the stranger's list: a spell made only of it may be cast on any player, and the receiver applies
 it from a stranger only while their "Spells from strangers" switch is on (default on). `06-Systems/Online-Arc.md`
-SPELL-GIFT; `test/spellgift.test.js` (7; 9 with the AUDIT's), `tools/mutants/spell_gift.json` (13).
+SPELL-GIFT; `test/systems/spellgift.test.js` (7; 9 with the AUDIT's), `tools/mutants/spell_gift.json` (13).
 
 ## PARTY-BUFFS: a mate's live effects sit on their card, and heals float (3)
 
@@ -125,7 +125,7 @@ does not float while they rest (the pose's new `rs` covers their own rest and on
 or for a rise from death. On the enhanced skin, a heal I take floats "+N" in green just under the reticle, beside
 the damage numbers. That heal can come from my spell, a potion or a friend. What a window restores (a rest, a
 level-up, a load) is not floated, nor a heal taken while a window hides the HUD (AUDIT B10). `06-Systems/Online-Arc.md`
-PARTY-BUFFS; `test/partybuffs.test.js` (8; 9 with the AUDIT's),
+PARTY-BUFFS; `test/ui/partybuffs.test.js` (8; 9 with the AUDIT's),
 `tools/mutants/party_buffs.json`.
 
 ## COMPASS-PARTY: party members are green marks on the compass (4)
@@ -137,7 +137,7 @@ Where a member's body is drawn in your area, the mark points at them. Outdoors, 
 their pose: the leader's own position, or the middle of the member's map pixel. A member in your own pixel whose body
 is not drawn here (inside a building, say) gets no mark, because the middle of the town is not where they are.
 Indoors and in dungeons, only the members standing in the same place are marked. `06-Systems/Online-Arc.md`
-COMPASS-PARTY; `test/compassparty.test.js` (4), `tools/mutants/compass_party.json` (14).
+COMPASS-PARTY; `test/ui/hud/compassparty.test.js` (4), `tools/mutants/compass_party.json` (14).
 
 ## REST-OPT: a party member may rest alone (3)
 
@@ -151,7 +151,7 @@ them:
 - their own Rest opens a rest of their own, as in a tavern, and `/ready` tells them they rest on their own.
 
 A leader who turns it off leaves everyone to rest for themselves, because only the leader can open the party's vote.
-`06-Systems/Online-Arc.md` REST-OPT; `test/restopt.test.js` (3), `tools/mutants/rest_opt.json` (17).
+`06-Systems/Online-Arc.md` REST-OPT; `test/systems/party/restopt.test.js` (3), `tools/mutants/rest_opt.json` (17).
 
 ## SHARE-MEND: guild and temple quests share, and a refusal says why once (3)
 
@@ -175,7 +175,7 @@ A leader who turns it off leaves everyone to rest for themselves, because only t
 Every refusal now reads in the second person: the receiver's "... but you That quest is no longer active." is
 gone. The guild gate itself stands (DISC25-D): a Fighters, Mages, Thieves or Dark Brotherhood quest still needs its
 guild. Temple and knightly-order quests never had a gate. `06-Systems/Online-Arc.md` SHARE-MEND;
-`test/sharemend.test.js` (6; 8 with the AUDIT's), `tools/mutants/share_mend.json` (15).
+`test/systems/quest/sharemend.test.js` (6; 8 with the AUDIT's), `tools/mutants/share_mend.json` (15).
 
 ## TRADE-INFO and TRADE-FIT: an item's magic in words, and an offer too big says so (3)
 
@@ -190,7 +190,7 @@ given (about nine richly enchanted items were enough). It is now refused in word
 carry - offer fewer items."), and the offer already on the table stands. It is measured by the COMMIT its goods will
 ride at the wire's own data cap (AUDIT D1 - the first cut measured the offer's frame against the relay's, 43
 characters looser, and a commit refused after the peer's had left stranded the peer's goods). `06-Systems/Online-Arc.md` TRADE-INFO;
-`test/tradeinfo.test.js` (3; 5 with the AUDIT's), `tools/mutants/trade_info.json` (8).
+`test/systems/tradeinfo.test.js` (3; 5 with the AUDIT's), `tools/mutants/trade_info.json` (8).
 
 ## CHAT-POST: an item posted in chat (3)
 
@@ -199,7 +199,7 @@ tab as one line: its name in brackets, its damage or armour, and its magic in th
 list). For example: "[Longsword] Damage 2 - 16 · Potent vs Daedra · Feather weight" (a steel one). A line too long for the chat is cut
 at a whole word and ends "...". The relay carries text alone, so the item travels as words, not as a live link. It
 goes through the tab's own door, so the Party tab still needs a party. `06-Systems/Online-Arc.md` CHAT-POST;
-`test/chatpost.test.js` (2), `tools/mutants/chat_post.json` (8).
+`test/systems/chatpost.test.js` (2), `tools/mutants/chat_post.json` (8).
 
 ## HOME-STATIONS: crafting stations in a home, a house or a ship (3)
 
@@ -214,7 +214,7 @@ A station is kept with the piece in the save, and in an online home by the accou
 first).
 An online home whose service predates this is paid nothing, and the player is told. The prices are a first pass for
 Mac to tune (net/decorLaw.js DECOR_STATION_FEES). `06-Systems/Online-Arc.md` HOME-STATIONS;
-`test/homestations.test.js` (4; 8 with the AUDIT's), `tools/mutants/home_stations.json` (14).
+`test/ui/homestations.test.js` (4; 8 with the AUDIT's), `tools/mutants/home_stations.json` (14).
 
 ## THE FOUR HOSTS
 
@@ -231,7 +231,7 @@ Six lenses read the twelve slices - the Android and shop four, SPELL-GIFT and PA
 the quest share, trade and chat three, HOME-STATIONS, and a cross-cutting one (the wire and the servers, the four
 hosts, the docs against the code, the pins' own strength: the batch's 152 mutants re-run, 151 dead and 1 equivalent
 as recorded). Every finding was checked against the code before anything moved; the real ones are fixed
-and pinned (`test/audit27d.test.js` and the slices' own suites), and every fix has a mutant that its pin kills
+and pinned (`test/systems/audit27d.test.js` and the slices' own suites), and every fix has a mutant that its pin kills
 (`tools/mutants/audit27d.json`, 58, all dead). RELAY_VERSION world120 at the merge with main (world121 on its branch; the wire names two constants; the relay does
 nothing new).
 

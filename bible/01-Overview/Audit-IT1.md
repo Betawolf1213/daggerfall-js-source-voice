@@ -14,7 +14,7 @@ before reporting them (a node probe or a transliteration of the IL for every cla
   Beautiful Cities' pack (built against a real BSA).
 
 26 findings. Every one was re-read here before a line moved; three lenses found the same popup bug (C2 = L2 = H-M1),
-so 24 are distinct. Each fix carries an `AUDIT IT1 <ID>` comment, is pinned in `test/auditit1.test.js` (16) and is
+so 24 are distinct. Each fix carries an `AUDIT IT1 <ID>` comment, is pinned in `test/systems/auditit1.test.js` (16) and is
 mutated in `tools/mutants/auditit1.json`: **30 mutants, 30 dead.** The pins the fixes moved say `(PIN MOVED)` where they
 stand.
 
@@ -78,7 +78,7 @@ stand.
   quarter - from the mod's team or horses at all four gates and every composite on them. Clipping is likely and
   unproven without the models' sizes; it sharpens the page's NOT SEEN for the owner's eyes.
 - **G5's second half**: the rule that `registerWorldDataPatch` hands `onServed` the very object it registered is
-  pinned by source (`test/it1_worlddata.test.js`); a refactor that registered a copy would lay the carriages twice on
+  pinned by source (`test/formats/worldData/it1_worlddata.test.js`); a refactor that registered a copy would lay the carriages twice on
   the gates with no town mod. No behavioural pin: the door needs a bound BLOCKS.BSA.
 - **The sheet's chips on a driver's map** (H-L2): the mod has no path buttons; the sheet keeps its chips, local to that
   sheet - departure 7.
@@ -86,6 +86,6 @@ stand.
 ## Not verified here
 
 No ARENA2 and no GPU in this container. The four patches now carry every round-trip change the files themselves show;
-any other (an automap byte) only `ARENA2_PATH=... node --test test/it1_worlddata.test.js` can say, and
+any other (an automap byte) only `ARENA2_PATH=... node --test test/formats/worldData/it1_worlddata.test.js` can say, and
 `node tools/immersiveTravelPatches.mjs <immersivetravel.dfmod> <arena2>` writes WD1's checked diff, which the layer now
 takes. Nothing was seen in a browser.

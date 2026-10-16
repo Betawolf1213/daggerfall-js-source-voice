@@ -5,7 +5,7 @@
     "old": "export const ARENA_PRIVATE_CODE_RE = /^[ABCDEFGHJKMNPQRSTUVWXYZ2-9]{6}$/;",
     "new": "export const ARENA_PRIVATE_CODE_RE = /^[A-Z0-9]{6}$/;",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "export const ARENA_PRIVATE_ROOM_RE = /^arena:p[ABCDEFGHJKMNPQRSTUVWXYZ2-9]{6}$/;",
     "new": "export const ARENA_PRIVATE_ROOM_RE = /^arena:p[A-Z0-9]{6}$/;",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "isArenaBoutRoom(key) || isArenaExhibitionRoom(key) || isArenaPrivateRoom(key);",
     "new": "isArenaBoutRoom(key) || isArenaExhibitionRoom(key);",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "if (b < A.length * 8 && out.length < ARENA_PRIVATE_CODE_LEN)",
     "new": "if (b < 256 && out.length < ARENA_PRIVATE_CODE_LEN)",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "  if (now - S.at >= ARENA_PRIVATE_LIFE_MS) return 'life';\n",
     "new": "",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "  if (S.hostGoneAt != null && now - S.hostGoneAt >= ARENA_PRIVATE_HOST_GONE_MS) return 'host';\n",
     "new": "",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "(st.equal ? ARENA_PRIVATE_VITALITY : pvpVitality(x.lv))",
     "new": "pvpVitality(x.lv)",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "  if (x.guest) return 'guest fighter';\n",
     "new": "",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "  if (S.kicked.includes(who.sub)) return { no: 'removed' };\n",
     "new": "",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "  if (red && blue && red === blue) return { no: 'same fighter' };\n",
     "new": "",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "if (!a.lk) { no('host guest'); return; }",
     "new": "if (false) { no('host guest'); return; }",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "if (S.host !== sub) { no(S.members[sub] ? 'host only'",
     "new": "if (false) { no(S.members[sub] ? 'host only'",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "    if (st.priv) return true;\n",
     "new": "",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "f: /** @type {any[]} */ (g.f), casual: true, equal: true, priv: true, now",
     "new": "f: /** @type {any[]} */ (g.f), casual: false, equal: true, priv: true, now",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": ": !S.members[a.sub] ? (S.kicked.includes(a.sub) ? 'removed' : 'not member')",
     "new": ": false ? (S.kicked.includes(a.sub) ? 'removed' : 'not member')",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "    else if (!sess.sent) {\n      const bn = bannerClaim",
     "new": "    else if (false) {\n      const bn = bannerClaim",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "    sess.state = w;\n",
     "new": "    void w;\n",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "deps.closeWindow?.(); deps.standOnMark?.(side === 1 ? 'rival' : 'ladder'); say(O.privToSand); }",
     "new": "deps.closeWindow?.(); }",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "    if (stay) { deps.standOnMark?.('watch'); say(O.privToStands); }\n",
     "new": "",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "old": "if (SESSION_ENDS.has(w.m)) { say(text); leaveSession(true, text); return true; }",
     "new": "if (SESSION_ENDS.has(w.m)) { say(text); leaveSession(false, text); return true; }",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -185,7 +185,7 @@
     "old": "        if (deps.guest?.()) return { ok: false, text: ARENA_NO_TEXT['host guest'] };\n",
     "new": "",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -194,7 +194,7 @@
     "old": "      if (sess) return { ok: false, text: O.privIn };   // ARENA6: one place at a time",
     "new": "      if (false) return { ok: false, text: O.privIn };   // ARENA6: one place at a time",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -203,7 +203,7 @@
     "old": "      if (!ARENA_PRIVATE_CODE_RE.test(code)) return { ok: false, text: O.privBadCode };\n",
     "new": "",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -212,7 +212,7 @@
     "old": "  const host = w.h === 1;\n  const name = (id) =>",
     "new": "  const host = true;\n  const name = (id) =>",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -221,7 +221,7 @@
     "old": "      join: { label: T.privJoin,",
     "new": "      xjoin: { label: T.privJoin,",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -230,7 +230,7 @@
     "old": "    if (o.online?.session) placeSession(",
     "new": "    if (false) placeSession(",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -239,7 +239,7 @@
     "old": "    standOnMark: (kind) => modes?.standOnArenaMark?.(kind) ?? false,",
     "new": "    standOnMark: () => false,",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -248,7 +248,7 @@
     "old": "    leaveFloor: () => modes?.leaveArenaFloor?.() ?? false,",
     "new": "    leaveFloor: () => false,",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -257,7 +257,7 @@
     "old": "    if (typeof kind === 'string' && kind.startsWith('priv')) return online()?.act(kind, data)",
     "new": "    if (false) return online()?.act(kind, data)",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -266,7 +266,7 @@
     "old": "{ sess = null; say(O.privOutdoors); sessLast",
     "new": "{ sess = null; sessLast",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -275,7 +275,7 @@
     "old": "{ sess = null; say(O.privOutdoors); sessLast",
     "new": "{ say(O.privOutdoors); sessLast",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -284,7 +284,7 @@
     "old": "export const ARENA_PRIVATE_CODE_LEN = 6;",
     "new": "export const ARENA_PRIVATE_CODE_LEN = 7;",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -293,7 +293,7 @@
     "old": "if (key.startsWith('arena:') && !isArenaRoom(key))",
     "new": "if (key.startsWith('arena:') && (!isArenaRoom(key) || key.startsWith('arena:p')))",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -302,7 +302,7 @@
     "old": " || isArenaPrivateRoom(`arena:${o}`) ? `arena:${o}`",
     "new": " ? `arena:${o}`",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -311,7 +311,7 @@
     "old": "if (m.a === 'open' && S.host !== sub) { no('taken'); return; }",
     "new": "if (false) { no('taken'); return; }",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -320,7 +320,7 @@
     "old": "m: list.map(([s, x]) => [x.id, x.name,",
     "new": "m: list.map(([s, x]) => [s, x.name,",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -329,7 +329,7 @@
     "old": "      if (!same) await this._sessionSave();\n      this._sessionFan(S, null, ws);",
     "new": "      if (!same) await this._sessionSave();",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -338,7 +338,7 @@
     "old": "if (!x || !here(sub)) return 'not here';",
     "new": "if (!x) return 'not here';",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -347,7 +347,7 @@
     "old": "if (!S.red || !S.blue) return { no: 'no picks' };",
     "new": "",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -356,7 +356,7 @@
     "old": "if (S && st.priv && st.res && !st.histed)",
     "new": "if (false && S && st.priv && st.res && !st.histed)",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -365,7 +365,7 @@
     "old": "if (S) { await this._sessionClear(S, now); return true; }",
     "new": "",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -374,7 +374,7 @@
     "old": "if (!(st.priv && seatOnMark(st, j.id, now)) && cur.pose)",
     "new": "if (cur.pose)",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -383,7 +383,7 @@
     "old": "this._sessionSay(S, { k: 'no', m: 'voided' });\n      await this._sessionClear(S, now);",
     "new": "this._sessionSay(S, { k: 'no', m: 'voided' });\n      S.hist.push({ red: 'Alva', blue: 'Brann', winner: null, how: 'void', at: now });\n      await this._sessionClear(S, now);",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -392,7 +392,7 @@
     "old": "if (st && st.f.some((x) => x.sub === k.sub)) { await this._sessionClear(S, now); return; }",
     "new": "",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -401,7 +401,7 @@
     "old": "now - S.hostGoneAt >= ARENA_PRIVATE_HOST_GONE_MS",
     "new": "now - S.hostGoneAt >= 0",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -410,7 +410,7 @@
     "old": "export const ARENA_PRIVATE_HOST_GONE_MS = 15 * 60_000;",
     "new": "export const ARENA_PRIVATE_HOST_GONE_MS = 14 * 60_000;",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -419,7 +419,7 @@
     "old": "export const ARENA_PRIVATE_HOST_GONE_MS = 15 * 60_000;",
     "new": "export const ARENA_PRIVATE_HOST_GONE_MS = 16 * 60_000;",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -428,7 +428,7 @@
     "old": "export const ARENA_PRIVATE_LIFE_MS = 8 * 3600_000;",
     "new": "export const ARENA_PRIVATE_LIFE_MS = 7 * 3600_000;",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -437,7 +437,7 @@
     "old": "export const ARENA_PRIVATE_LIFE_MS = 8 * 3600_000;",
     "new": "export const ARENA_PRIVATE_LIFE_MS = 9 * 3600_000;",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -446,7 +446,7 @@
     "old": "if (m.a === 'close') { await this._sessionEnd(S, 'closed'); return; }",
     "new": "",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -455,7 +455,7 @@
     "old": "export const ARENA_PRIVATE_MEMBERS_MAX = ARENA_SPECTATORS_MAX + 2;",
     "new": "export const ARENA_PRIVATE_MEMBERS_MAX = ARENA_SPECTATORS_MAX + 3;",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -464,7 +464,7 @@
     "old": "if (Object.keys(S.members).length >= ARENA_PRIVATE_MEMBERS_MAX) {",
     "new": "if (false) {",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -473,7 +473,7 @@
     "old": "sub !== S.host && !here(sub) && !keep.includes(sub)",
     "new": "sub !== S.host && !keep.includes(sub)",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -482,7 +482,7 @@
     "old": ": !st ? 'no bout' : null;",
     "new": ": null;",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -491,7 +491,7 @@
     "old": "if (!ARENA_PS_ACTS.includes(m.a)) return null;",
     "new": "",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -500,7 +500,7 @@
     "old": "const mid = (v) => typeof v === 'string' && (v === '' || ARENA_MEMBER_ID_RE.test(v));\n      if (m.a === 'pick')",
     "new": "const mid = (v) => typeof v === 'string';\n      if (m.a === 'pick')",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -509,7 +509,7 @@
     "old": "if (typeof m.c !== 'string' || !ARENA_PRIVATE_CODE_RE.test(m.c) ||",
     "new": "if (typeof m.c !== 'string' ||",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -518,7 +518,7 @@
     "old": "if (typeof id !== 'string' || !ARENA_MEMBER_ID_RE.test(id) ||",
     "new": "if (typeof id !== 'string' ||",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -527,7 +527,7 @@
     "old": "if (!Array.isArray(m.m) || m.m.length > ARENA_PRIVATE_MEMBERS_MAX) return null;",
     "new": "if (!Array.isArray(m.m)) return null;",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -536,7 +536,7 @@
     "old": "(m.ph !== '' && !ARENA_ST_PHASES.includes(m.ph))",
     "new": "false",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -545,7 +545,7 @@
     "old": "(m.f.length === 2 && m.f.every(",
     "new": "(m.f.length >= 1 && m.f.every(",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   },
   {
@@ -554,7 +554,7 @@
     "old": "  'bout on': 'A bout is on - end it first.',\n",
     "new": "",
     "tests": [
-      "test/arena6_private.test.js"
+      "test/systems/arena/arena6_private.test.js"
     ]
   }
 ]

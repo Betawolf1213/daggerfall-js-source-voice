@@ -5,7 +5,7 @@
     "old": "          if (grounded) hits.push({ part: 'ring', pct: A.ringPct, base: A.ringBase, ...el });",
     "new": "          hits.push({ part: 'ring', pct: A.ringPct, base: A.ringBase, ...el });",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "    if (out[part]) return false;",
     "new": "    if (false) return false;",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "    return !late;",
     "new": "    return true;",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "      if (landing('disc') && d <= S.r) hits.push(",
     "new": "      if (landing('disc')) hits.push(",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": " && (over || !behindPillar(atk.x, atk.z, px, pz))) {",
     "new": ") {",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "if (!out.beam && !stale && t0 <= end && handSwept(atk, px, pz, Math.max(t0, atk.at), t1) &&",
     "new": "if (!out.beam && !stale && t0 <= end && Math.hypot(px - atk.x, pz - atk.z) <= SD_BLOWS.hand.len &&",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "      if (landing('discs') && (atk.tg ?? []).some((q) => dist(px, pz, q[0], q[1]) <= S.r)) hits.push({ part: 'discs', pct: A.pct, base: A.base, ...el });",
     "new": "      if (landing('discs')) for (const q of atk.tg ?? []) if (dist(px, pz, q[0], q[1]) <= S.r) hits.push({ part: 'discs', pct: A.pct, base: A.base, ...el });",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "      const pct = A === SD_BLOWS.pulse ? pulsePctOf(atk) :",
     "new": "      const pct = A === SD_BLOWS.pulse ? pulsePctOf({ n: 0 }) :",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "        if (inArena(px, pz, SD_ARENA_SLACK)) hits.push(",
     "new": "        if (true) hits.push(",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "  for (const p of pools) if (now >= p.from && now < p.until && dist(px, pz, p.x, p.z) <= p.r) return p;",
     "new": "  for (const p of pools) if (now >= p.from && dist(px, pz, p.x, p.z) <= p.r) return p;",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "        if (A === SD_BLOWS.volley) pools.push(...sdVolleyPools(atk));\n",
     "new": "",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "      if (t - outAt >= POOL_TICK_MS) { const f = feet(); if (f) play(SD_BLOW_CUES.pool, f); burnAt = t; return; }",
     "new": "      if (t - outAt >= POOL_TICK_MS) { burnAt = -Infinity; }",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "if (A === SD_BLOWS.reset) say(SD_BLOWS_TEXT.reset(s.cx?.c?.length ?? 0), false, SD_HEARTS_KEY);",
     "new": "if (false) say(SD_BLOWS_TEXT.reset(0));",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "    if (A === SD_BLOWS.end && endSaid !== s.fi && t < atk.at) { endSaid = s.fi; say(SD_BLOWS_TEXT.end); }",
     "new": "    if (A === SD_BLOWS.end && t < atk.at) { say(SD_BLOWS_TEXT.end); }",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "      const f = feet(), e = player(), alive = !!f && !!e && e.health > 0;",
     "new": "      const f = feet(), e = player(), alive = !!f && !!e;",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "    if (s.fell && fellFi !== s.fi) {",
     "new": "    if (s.fell) {",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "        if (!again) sound(SD_BLOW_CUES.land[A.key], s, b, atk, t);\n",
     "new": "",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "    m.seen = v.seen;\n",
     "new": "",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "    const dmg = strikeDamage(pct, e.maxHealth, base);",
     "new": "    const dmg = strikeDamage(pct, e.maxHealth, 0);",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "old": "      chartAt = t; chartFell = s.fell;",
     "new": "      chartFell = s.fell;",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -185,7 +185,7 @@
     "old": "r0: Math.max(0, front - A.width / 2), r1: front + A.width / 2, t: 1 }));",
     "new": "r0: Math.max(0, A.r - A.width / 2), r1: A.r + A.width / 2, t: 1 }));",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -194,7 +194,7 @@
     "old": "      const a = handAngleAt(atk, now);",
     "new": "      const a = handAngleAt(atk, now) == null ? null : atk.yw;",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -203,7 +203,7 @@
     "old": "    t: w > 0 ? clamp01(since / w) : 1,",
     "new": "    t: 1,",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -212,7 +212,7 @@
     "old": "  const w = atkWindup(atk, A, phase, b), since = now - (atk.at - w),",
     "new": "  const w = A.windup, since = now - (atk.at - w),",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -221,7 +221,7 @@
     "old": "edge: A === SD_BLOWS.reset || A === SD_BLOWS.end ? TELEGRAPH_EDGE_DAGON : TELEGRAPH_EDGE,",
     "new": "edge: TELEGRAPH_EDGE,",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -230,7 +230,7 @@
     "old": "    if (!m.cued) { m.cued = true; if (t < atk.at && !again) { sound(SD_BLOW_CUES.windup[A.key], s, b, atk, t);",
     "new": "    if (!m.cued) { m.cued = true; if (t < atk.at && !again) { void 0;",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -239,7 +239,7 @@
     "old": "      for (const p of sdPoolShapes(pools, t)) out.push(p);\n",
     "new": "",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -248,7 +248,7 @@
     "old": "    const floorCourts = floor?.courts ?? COURTS, floorR = floor?.r ?? COURT_R;",
     "new": "    const floorCourts = floor?.courts ?? COURTS, floorR = COURT_R;",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -257,7 +257,7 @@
     "old": "  const C = courts[k], half = R + TELEGRAPH_MARGIN;",
     "new": "  const C = courts[k], half = COURT_R + TELEGRAPH_MARGIN;",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -266,7 +266,7 @@
     "old": "    if (inRealm) { try { sdBlows?.frame(); }",
     "new": "    if (false) { try { sdBlows?.frame(); }",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -275,7 +275,7 @@
     "old": "    grounded: () => !!player.grounded,",
     "new": "    grounded: () => true,",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   },
   {
@@ -284,7 +284,7 @@
     "old": "      _sdLate.on = isSdRealm(dungeonLoc); _sdLate.proj = proj;",
     "new": "      _sdLate.on = false; _sdLate.proj = proj;",
     "tests": [
-      "test/sd8d_remnant_blows.test.js"
+      "test/net/superDungeon/sd8d_remnant_blows.test.js"
     ]
   }
 ]

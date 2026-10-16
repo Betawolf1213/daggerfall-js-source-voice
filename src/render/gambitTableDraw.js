@@ -39,7 +39,7 @@ import {
 } from '../world/gambitCloth.js';
 import { gambitPileStep } from '../world/gambitMotion.js';
 
-export { GAMBIT_CARD_SHARE };   // KG3's import site (test/kg3_draw.test.js) - its home is the cloth's now (KG4: the press reads it)
+export { GAMBIT_CARD_SHARE };   // KG3's import site (test/world/card/kg3_draw.test.js) - its home is the cloth's now (KG4: the press reads it)
 
 /** The game's textures: one archive - the atlas of its pieces (and its hurt and healed tints), the board's mat, and the
  *  effects' atlas. */

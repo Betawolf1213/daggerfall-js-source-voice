@@ -238,7 +238,7 @@ d-pad press given the glass is the glass's, the helm's gesture on it yielding, i
 ## GLASS-SPOT and GLASS-CLEAR - nothing spotted before the glass; the ship out of its way (2026-10-11)
 
 The owner: "You can spot ships before you even decide to use the spyglass and the ship blocks your view most of the
-time when using your spyglass". `test/glassclear.test.js` (9), `tools/mutants/glassclear.json` (41, all dead).
+time when using your spyglass". `test/systems/naval/glassclear.test.js` (9), `tools/mutants/glassclear.json` (41, all dead).
 
 **GLASS-SPOT - A SAIL NOT MADE OUT GIVES NO CARD** (`navalHost.js targetCard`). The helm's target card named every hull
 within 900 m the look passed over - "Unknown two-master", her range, her way - so a ship was spotted, and ranged, at a
@@ -284,7 +284,7 @@ WHAT IT CANNOT CLEAR: where the sea holds the focus short of her. From the x4 gl
 that is only the Large Galley's long bow (93 m of her, her helm 82 m abaft her stem): the focus stops at the sea's 63 m,
 and her bow past it stays in view. A lower glass (x2) or a look lowered toward her deck brings the sea's foot nearer -
 the Carrack's, the Large Boat's and the galleon's forward deck then stay in the glass too. Every other hull and bearing,
-at x4 and x8, looking level or above: nothing of her past the focus (test/glassclear.test.js walks each hull's parts on
+at x4 and x8, looking level or above: nothing of her past the focus (test/systems/naval/glassclear.test.js walks each hull's parts on
 twelve bearings at x4, level and raised).
 
 ## CAPT-BOARD - the harbourmaster's board
@@ -393,20 +393,20 @@ out of a wreck the same). The Captain page lists the charts marked.
 
 ## Tests and mutants
 
-`test/captcrew.test.js` (`tools/mutants/captcrew.json`), `test/captlog.test.js` (`tools/mutants/captlog.json`),
-`test/captwaters.test.js` (`tools/mutants/captwaters.json`), `test/spyglass.test.js` (`tools/mutants/spyglass.json`),
-`test/captboard.test.js` (`tools/mutants/captboard.json`), `test/capttrade.test.js` (`tools/mutants/capttrade.json`) -
-every mutant dead; AUDIT CAPTAIN'S SEA's own in `test/auditcaptsea.test.js` (68 tests;
+`test/systems/naval/captcrew.test.js` (`tools/mutants/captcrew.json`), `test/systems/naval/captlog.test.js` (`tools/mutants/captlog.json`),
+`test/systems/naval/captwaters.test.js` (`tools/mutants/captwaters.json`), `test/systems/naval/spyglass.test.js` (`tools/mutants/spyglass.json`),
+`test/systems/naval/captboard.test.js` (`tools/mutants/captboard.json`), `test/systems/naval/capttrade.test.js` (`tools/mutants/capttrade.json`) -
+every mutant dead; AUDIT CAPTAIN'S SEA's own in `test/systems/naval/auditcaptsea.test.js` (68 tests;
 `tools/mutants/auditcaptsea.json`, 331 records; `01-Overview/Audit-Captains-Sea.md`, which names the 47 suites its fixes
 moved and those main's merges moved). The suites whose pins moved with the slices say so where they moved (PIN MOVED):
 the crew card's line, the Holdings tabs, the tags and the hails now knowing a ship first (`test/navalSea.mjs knowAll`),
-the action tables, the lens, the sky's and the far ring's lens narrowed with the world's (`test/climb4.test.js`,
-`test/hudlarge.test.js` E5), the wheel's rung for the glass (`test/audit24_wave37.test.js`). The harbour office's day is
+the action tables, the lens, the sky's and the far ring's lens narrowed with the world's (`test/player/climb4.test.js`,
+`test/systems/hudlarge.test.js` E5), the wheel's rung for the glass (`test/scenes/audit24_wave37.test.js`). The harbour office's day is
 a reader of the event clock, named in `test/fixtures/time1_census.json`.
 
-GLASS-SPOT and GLASS-CLEAR: `test/glassclear.test.js` (9 tests; `tools/mutants/glassclear.json`, 41 records, all
-dead). Their pins moved say so (PIN MOVED): the look's card on an unknown hull (`test/spyglass.test.js` "at sea, the
-eye", `test/auditcaptsea.test.js` S24), the frame's lens and the glass's hold now taking the focus (`test/spyglass.test.js`
-"the world", `test/dwf_audit.test.js` E5-1/E5-4), `lowerGlass` putting it back (`test/auditcaptsea.test.js` S1/S15), and the players' names' sight test
-(`test/name1_bubbles.test.js`); three records re-aimed by content (NAV1H-the-card-by-the-look-alone,
+GLASS-SPOT and GLASS-CLEAR: `test/systems/naval/glassclear.test.js` (9 tests; `tools/mutants/glassclear.json`, 41 records, all
+dead). Their pins moved say so (PIN MOVED): the look's card on an unknown hull (`test/systems/naval/spyglass.test.js` "at sea, the
+eye", `test/systems/naval/auditcaptsea.test.js` S24), the frame's lens and the glass's hold now taking the focus (`test/systems/naval/spyglass.test.js`
+"the world", `test/scenes/dwf_audit.test.js` E5-1/E5-4), `lowerGlass` putting it back (`test/systems/naval/auditcaptsea.test.js` S1/S15), and the players' names' sight test
+(`test/net/name1_bubbles.test.js`); three records re-aimed by content (NAV1H-the-card-by-the-look-alone,
 SPY-W-lens-unnarrowed, NAME1-host-sight-test-dropped) and four recorded `equivalent` (above).

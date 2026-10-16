@@ -1,7 +1,7 @@
 // ONLINE1 (2026-09-12): THE RELAY - a Cloudflare Worker and its Room
 // Durable Object. The law is in relay.js (the port's own src/net/wire.js,
 // pure, tested); this file is the I/O: the upgrade, the hibernatable
-// sockets, the fan-out. test/online_relay.test.js drives the Room over
+// sockets, the fan-out. test/server/online_relay.test.js drives the Room over
 // fake sockets and a fake state.
 //
 // AUDIT ONLINE (2026-09-12): the room's key rides every socket's

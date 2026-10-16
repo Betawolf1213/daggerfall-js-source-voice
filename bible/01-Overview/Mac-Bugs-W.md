@@ -440,7 +440,7 @@ the last line of the handler.
 (!app) return`). The handler order stands — the action first, as DFU's
 yes-button — because the guard belongs at the one entry every handler
 repaints through, not in each handler. Pinned by source in
-`test/fieldbugs_x.test.js`; the mutant (guard removed) dies.
+`test/systems/fieldbugs_x.test.js`; the mutant (guard removed) dies.
 
 ## X2 — MACROS1 `%map`: the record was shown, the context was not
 
@@ -479,7 +479,7 @@ One walk, as MH1 meant. Two other verbatim `rows` sites stand
 and their records were not read for macros here; they are the next
 place this class will be found.
 
-**Pins.** `test/fieldbugs_x.test.js` (4). Mutants
+**Pins.** `test/systems/fieldbugs_x.test.js` (4). Mutants
 (`tools/mutants/fieldbugs_x.json`): the guard removed, the map's macro
 dropped, the inventory dropping it, the row shape lost, the world hook
 unanswered, `%fon` dropped, the join rows verbatim again — 7, all dead.

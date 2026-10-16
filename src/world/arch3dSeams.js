@@ -28,7 +28,7 @@
 // rules per model, each a coordinate that moves to the face it was meant
 // to meet, measured by tools/seamCensus.mjs over every dungeon block of
 // the player's own data, where each moved corner lands measured too (and
-// pinned by test/dungeonseams.test.js, data-gated). The reader is untouched - the
+// pinned by test/world/dungeonseams.test.js, data-gated). The reader is untouched - the
 // patch is applied to a COPY where the pipeline builds a model
 // (scenes/dataPipeline.js), so the parity harness still reads DFU's
 // bytes - and it is recorded as a departure in the Port-Ledger.

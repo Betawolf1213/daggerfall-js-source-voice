@@ -5,7 +5,7 @@
     "old": "  if (rep < -10) return localizedText('aScoundrel', 'a scoundrel');",
     "new": "  if (rep <= -10) return localizedText('aScoundrel', 'a scoundrel');",
     "tests": [
-      "test/rep5_notices.test.js"
+      "test/systems/rep5_notices.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "    if (player !== playerEntity) return;\n",
     "new": "",
     "tests": [
-      "test/rep5_notices.test.js"
+      "test/systems/rep5_notices.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "    if (v < 0) player.legalRep[key] = v + 1;",
     "new": "    if (v < 0) changeLegalRep(player, key, 1, { kind: 'drift' });",
     "tests": [
-      "test/rep5_notices.test.js"
+      "test/systems/rep5_notices.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "  if (delta && _legalRepNotifier) {",
     "new": "  if (_legalRepNotifier) {",
     "tests": [
-      "test/rep5_notices.test.js"
+      "test/systems/rep5_notices.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "    if (rep === 0 && left === 0) continue;\n",
     "new": "",
     "tests": [
-      "test/rep5_notices.test.js"
+      "test/systems/rep5_notices.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "  return out.sort((a, b) => a.rep - b.rep);",
     "new": "  return out;",
     "tests": [
-      "test/rep5_notices.test.js"
+      "test/systems/rep5_notices.test.js"
     ]
   },
   {
@@ -59,8 +59,8 @@
     "old": "  statsLaw(detail, playerEntity);\n  statsGuilds(detail, playerEntity);",
     "new": "  statsGuilds(detail, playerEntity);",
     "tests": [
-      "test/rep5_notices.test.js",
-      "test/guildrep.test.js"
+      "test/systems/rep5_notices.test.js",
+      "test/systems/guild/guildrep.test.js"
     ]
   },
   {
@@ -69,7 +69,7 @@
     "old": "t('pause.law.known', 'known to the watch (a stop: {gold} gold)', { gold: challengeFine(entity, i, { worldNow }) })",
     "new": "'known to the watch'",
     "tests": [
-      "test/rep5_notices.test.js"
+      "test/systems/rep5_notices.test.js"
     ]
   },
   {
@@ -78,7 +78,7 @@
     "old": "t('pause.law.banishedDays', 'banished, {days, plural, one {# day} other {# days}} left (a pardon: {gold} gold)', { days, gold: pardonPrice(entity, i) })",
     "new": "t('pause.law.banishedDays', 'banished, {days, plural, one {# day} other {# days}} left', { days })",
     "tests": [
-      "test/rep5_notices.test.js"
+      "test/systems/rep5_notices.test.js"
     ]
   }
 ]

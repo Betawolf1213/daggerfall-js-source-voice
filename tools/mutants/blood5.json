@@ -5,7 +5,7 @@
     "old": "        settle(f.to, f.land.normal, f.land.opts, f.land.kind, f.land.drips);",
     "new": "        settle(f.from, f.land.normal, f.land.opts, f.land.kind, f.land.drips);",
     "tests": [
-      "test/blood5_flight.test.js"
+      "test/combat/blood5_flight.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "  out[1] = k >= 1 ? f.to[1] : f.from[1] + f.vy * tt - 0.5 * g * tt * tt;",
     "new": "  out[1] = k >= 1 ? f.to[1] : f.from[1] + (f.to[1] - f.from[1]) * k;",
     "tests": [
-      "test/blood5_flight.test.js"
+      "test/combat/blood5_flight.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "  const T = (vy + Math.sqrt(vy * vy - 2 * g * dy)) / g;",
     "new": "  const T = (vy + Math.sqrt(vy * vy - 1.8 * g * dy)) / g;",
     "tests": [
-      "test/blood5_flight.test.js"
+      "test/combat/blood5_flight.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "      if (i > 0) { land(fly, pos, at,",
     "new": "      if (i >= 0) { land(fly, pos, at,",
     "tests": [
-      "test/blood5_flight.test.js"
+      "test/combat/blood5_flight.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "    _flying = [];               // BLOOD5:",
     "new": "    // BLOOD5:",
     "tests": [
-      "test/blood5_flight.test.js"
+      "test/combat/blood5_flight.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "    if (!on()) { _flying = []; return 0; }",
     "new": "",
     "tests": [
-      "test/blood5_flight.test.js"
+      "test/combat/blood5_flight.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "for (const p of [f.from, f.to, f.pos])",
     "new": "for (const p of [f.from, f.pos])",
     "tests": [
-      "test/blood5_flight.test.js"
+      "test/combat/blood5_flight.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "      const p = k < _flying.length ? _flying[k].pos : lead;",
     "new": "      const p = k < _flying.length ? _flying[k].pos : [0, 0, 0];",
     "tests": [
-      "test/blood5_flight.test.js"
+      "test/combat/blood5_flight.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "      if (_dropBatch) _dropBatch.noShadow = true;",
     "new": "",
     "tests": [
-      "test/blood5_flight.test.js"
+      "test/combat/blood5_flight.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "    return settle(at, normal, opts, kind, drips);\n  }",
     "new": "    return fly ? null : settle(at, normal, opts, kind, drips);\n  }",
     "tests": [
-      "test/blood5_flight.test.js"
+      "test/combat/blood5_flight.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "          opts.stretch = impactStretch(across, arc.vy - DROP_GRAVITY * arc.T);",
     "new": "",
     "tests": [
-      "test/blood5_flight.test.js"
+      "test/combat/blood5_flight.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "  return Math.min(STREAK_MAX, Math.hypot(h, v) / v);",
     "new": "  return Math.min(STREAK_MAX, Math.hypot(h, v) / h);",
     "tests": [
-      "test/blood5_flight.test.js"
+      "test/combat/blood5_flight.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "    const vy = need * (DROP_CEILING_SPARE.min",
     "new": "    const vy = need * 0.9 * (DROP_CEILING_SPARE.min",
     "tests": [
-      "test/blood5_flight.test.js"
+      "test/combat/blood5_flight.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "  return b + (a - b) * h - k * h * (1 - h);",
     "new": "  return Math.min(a, b);",
     "tests": [
-      "test/blood5_flight.test.js"
+      "test/combat/blood5_flight.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "    const row = Math.floor(next / cells), col = next % cells;\n    next++;",
     "new": "    const row = Math.floor(next / cells), col = next % cells;\n    next += next === 3 ? 2 : 1;",
     "tests": [
-      "test/blood5_flight.test.js"
+      "test/combat/blood5_flight.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "      colors[o + 3] = 255;\n    }\n  }\n  return (_droplet",
     "new": "      colors[o + 3] = Math.round(255 * (1 - rim * 0.5));\n    }\n  }\n  return (_droplet",
     "tests": [
-      "test/blood5_flight.test.js"
+      "test/combat/blood5_flight.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "    let r = R * (SPRAY_NEAR + (1 - SPRAY_NEAR) * Math.pow(frac(rng() + i * 0.4142135624), 0.8));",
     "new": "    let r = R * (SPRAY_NEAR + (1 - SPRAY_NEAR) * Math.pow(rng(), 0.8));",
     "tests": [
-      "test/blood1_decals.test.js"
+      "test/combat/blood1_decals.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "    : 1 + (SPRAY_SCALE_MAX - 1) * Math.pow(2 * v - 1, 3);",
     "new": "    : 1 + (SPRAY_SCALE_MAX - 1) * Math.pow(2 * v - 1, 0.3);",
     "tests": [
-      "test/blood1_decals.test.js"
+      "test/combat/blood1_decals.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "BLEED_RADIUS, BLEED_RATE, null, { up: false, streak: false, launch: DRIP_LAUNCH });",
     "new": "BLEED_RADIUS, BLEED_RATE, null, { up: false, streak: false });",
     "tests": [
-      "test/blood5_flight.test.js"
+      "test/combat/blood5_flight.test.js"
     ]
   }
 ]

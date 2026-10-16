@@ -102,7 +102,7 @@ a temple's courtyard is. The navgrid asks nonzero alone, so nothing walks differ
 map carries a landmark (`arenaTownLandmark`, handed by both exterior hosts): "Arena", lettered at the colosseum's place
 by the building plates' own law (`ui/exteriorAutomapWindow.js` buildPlates, `ui/town/townSheet.js` named), always - there is
 no door to discover it by and no record to rename. `scenes/worldModes.js` and `scenes/dungeonContext.js` open no town
-map. Tests: `test/arena_townmap.test.js` (4); mutants: `tools/mutants/arena_map.json` (14, all dead).
+map. Tests: `test/ui/town/arena_townmap.test.js` (4); mutants: `tools/mutants/arena_map.json` (14, all dead).
 
 **What it displaces (Mac: "Move them to a new house").** GEMSAL03 stood 19 buildings - a tavern, two gem stores,
 fifteen houses and a house of the Academics. With ARENADAG.RMB laid no building has a key in cell (4,3), so every
@@ -265,7 +265,7 @@ names, banners, health; your stamina), the **crowd meter**, the **timer**, the H
 | **ARENA4b** (SHIPPED 2026-10-03 - the record below) | the online half finished: the relay's exhibition, the ladder's trust (`cl`), the players' blows, the banners billed, the stands' cheer, the realm's Hall and Records, the laurel online, the gate online, a bout's Renown, the displaced online homes, the casual bout | the relay over fake sockets, the service over node:sqlite, the client headless, the UI probes |
 | **ARENA5** (SHIPPED 2026-10-03 - the record below) | the audit: every slice re-read against this page, the probes, the mutants; and what it found unbuilt - the banners on the sand, the Hall's plaque wall, your ladder replay | the mutant lists of every slice, the UI probes, the browser list in its record |
 | **ARENA6** (SHIPPED 2026-10-03 - the record below) | private sessions: a host opens a session under a code, members join by it, the host picks who fights and calls the bout, everyone else watches; equal health; accounts fight, guests watch | the relay over fake sockets, the client end to end on the real Room, the window's model |
-| **ARENA-COPY** (2026-10-03 - the record below) | the plain-words pass: every line and press of the arena's own text said short and plain | the words pin (`test/arena2_hud.test.js`), the suites that name the lines |
+| **ARENA-COPY** (2026-10-03 - the record below) | the plain-words pass: every line and press of the arena's own text said short and plain | the words pin (`test/systems/arena/arena2_hud.test.js`), the suites that name the lines |
 
 ## ARENA1 record (2026-10-02) - SHIPPED
 
@@ -278,7 +278,7 @@ block at BsaFile.Count, RR3b's pin - and every pack's indices are untouched. The
 entries the old block's named buildings DREW (`talkTopics.drawNamedBuildings`, the readers' own draw, which now also
 answers each block's draws).
 
-**Measured with ARENA2** (`test/arena1_city.test.js`): classic - 316 entries to **313** (GEMSAL03's tavern and two gem
+**Measured with ARENA2** (`test/world/arena/arena1_city.test.js`): classic - 316 entries to **313** (GEMSAL03's tavern and two gem
 stores; its sixteen houses draw nothing), the city's 647 buildings to **628** (19 gone, none left in the cell), and
 **all 628 others unchanged** in name, faction, quality, type and seed; Beautiful Cities - 566 to **563**, 566 buildings
 to **547**, **all 547 unchanged**. Both: LocationId 50026, the castle 50027 (16 blocks), MapId unchanged, the Palace
@@ -288,7 +288,7 @@ to **547**, **all 547 unchanged**. Both: LocationId 50026, the castle 50027 (16 
 4,773 triangles carried; **365** that are copies of Daggerfall's dungeon models left out and rebuilt from the player's
 ARCH3D as **18 placements** of 8 models (62209, 63000, 63004, 63007, 63024, 63028, 63035, 72006; 13 whole, 39
 triangles under another of Daggerfall's pictures as Kamer gave them). Rebuilt and merged it is the bundle's mesh again,
-**5,138 of 5,138 triangles** - corners, uvs, winding and picture (`test/arena1_extract.test.js`). The design page's
+**5,138 of 5,138 triangles** - corners, uvs, winding and picture (`test/tooling/arena1_extract.test.js`). The design page's
 "25 placements" were the survey's overlapping matches; the tool claims each triangle once, so 18 carry all 365.
 Registered as 864102 climate-free (RuntimeMaterials' `ApplyClimate` 0) with the pieces it reads
 (`registerCustomModel(..., { climateFree, needs })`; `dataPipeline` loads their pictures, then hands the build
@@ -462,7 +462,7 @@ the stall, the ring-out and the judges are the law suites'. After the fall the H
 ## ARENA-FIX record (2026-10-02) - the QA round
 
 A visual QA pass over ARENA1 and ARENA2 in the browser (the `?exterior&shot&play` host, SwiftShader, the player's ARENA2)
-and the ARENA2 builder's own open items. Every item fixed and pinned (`test/arena_fix.test.js`, 20 tests; the arena1/arena2
+and the ARENA2 builder's own open items. Every item fixed and pinned (`test/systems/arena/arena_fix.test.js`, 20 tests; the arena1/arena2
 suites updated where the law moved); mutants `tools/mutants/arenafix.json` (43, all dead).
 
 1. **The stairs walk** (`world/arena/arenaModel.js withStairRamps`). The gate courtyard's flight up to the ring failed: its foot
@@ -518,7 +518,7 @@ suites updated where the law moved); mutants `tools/mutants/arenafix.json` (43, 
    fighter on its mark (or the walk's limit). A pit has no gates: its fighter stands on its mark. The pace is the walk's
    own step's (AUDIT PRE-MERGE 1003 D1: it was a field the motor put back only at its own arrival, and the bout ends every
    walk in itself, at its mark or the walk's limit - so every fighter that walked in fought its bout at 0.7 of its speed;
-   `test/audit1003_record.test.js`).
+   `test/systems/arena/audit1003_record.test.js`).
 9. **The misses** (`formulas.js registerAttackResolutionListener`, `playerWeapon.js registerPlayerSwingListener`): every
    attack's resolution is told; between two fighters of a live bout on different sides, no damage is the striker's miss,
    and the player's swing that reached nobody is the player's - the judges' third count is live.
@@ -680,7 +680,7 @@ bout stood on the floor's instance as puppets, the Herald and the HUD driven fro
 yield and misses told; `src/systems/arena/arenaBoard.js` the window online - the Bouts page's live bouts with Watch, Find a
 match, Leave the queue, Accept/Decline on a 20 s clock, the rating and rank chips, the Rules page's "The realm").
 
-**Verified.** `test/arena4_client.test.js` (8), `test/arena4_relay.test.js` (7) and `test/arena4_service.test.js` (7):
+**Verified.** `test/net/arena/arena4_client.test.js` (8), `test/net/arena/arena4_relay.test.js` (7) and `test/net/arena/arena4_service.test.js` (7):
 the relay over fake sockets, the service over node:sqlite with every migration, the client headless. Its mutants were
 named in its tests but no list was written; ARENA5 wrote `tools/mutants/arena4.json` (the record below).
 
@@ -837,7 +837,7 @@ What the audit found it closed - ARENA4's online gaps in ARENA4b (the record abo
 - The page's "What the mod is" called DFARENA's 42512-42514 "the seating tiers": they are banners (DFU's tapestry range
   42500-42571; World of Daggerfall's catalogue names 42512 "Flag" and 42514 "Flower Banner Long") - corrected here and in
   `vendor/daggerfall-arena/README.md`. Section 7's "migration 0047+" is 0074 and its `arena:<id>` is `arena:b<id>`.
-- `test/arena2_hosts.test.js`'s header still called exterior.js FLAGGED (ARENA-FIX 12 wired it).
+- `test/scenes/arena2_hosts.test.js`'s header still called exterior.js FLAGGED (ARENA-FIX 12 wired it).
 - ARENA4 shipped no record, no Ledger row, no Testing.md rows and no mutant list: all written (the records above,
   Port-Ledger's ARENA4 row at the merge and the ARENA4b/ARENA5 row now, `tools/mutants/arena4.json`).
 
@@ -845,7 +845,7 @@ What the audit found it closed - ARENA4's online gaps in ARENA4b (the record abo
 the gate takes the street's own path in both hosts with no arena condition anywhere (the bout driver's crime door,
 `setCrimeCommitted(Assault)`, `_crimeResponse`, `_spawnGuards`, `cityGuards.spawnCityGuards` over the walkers' pool);
 the wardens are static Royal Guard people, and DFU's SpawnCityGuards converts mobile walkers only, so the watch coming
-from their posts would depart from DFU (`test/arena5_wardens.test.js`).
+from their posts would depart from DFU (`test/systems/arena/arena5_wardens.test.js`).
 
 **The mutants.** Every list of the arc, by slice: `arena1.json` 26, `arena2.json` 77, `arena3.json` 62,
 `arenafix.json` 43 (as their records say; measured again in a tree without the player's data at AUDIT PRE-MERGE
@@ -985,14 +985,14 @@ pause door is `opts.makeArenaWindow`, world.js's, through worldModes.js). `scene
 arena online (its arena gate has no `online`), so it draws no session card; private sessions are ?world's alone, as the
 rest of the arena online is.
 
-**Tests.** `test/arena6_private.test.js` (10): the relay over fake sockets and fake objects - the door and the code,
+**Tests.** `test/systems/arena/arena6_private.test.js` (10): the relay over fake sockets and fake objects - the door and the code,
 the session opened, the host's words and their refusals, the bout with equal health refereed and kept, void, kick, the
 host's absence and the session's ends, the seats, the wire both ways (the lock and its words); the client end to end on
 the real Room (two screens: host, join by code, pick, go, both screens' bout, the host's void sending both fighters back
 to the stands, Close taking both screens out of the instance); the client's refusals and the card; the hosts' seams.
-AUDIT PRE-MERGE 1003b's: `test/audit1003b_relay.test.js` (11), `test/audit1003b_client.test.js` (10 - fourteen as run, C2 four ways),
-`test/audit1003b_ui.test.js` (5 - the window mounted). Mutants: `tools/mutants/arena6.json`, `tools/mutants/audit1003b.json`
-(the counts in Testing.md's rows). HOTFIX 1003f's: `test/hotfix1003_stands.test.js` (3), `tools/mutants/hotfix1003f.json`
+AUDIT PRE-MERGE 1003b's: `test/net/arena/audit1003b_relay.test.js` (11), `test/systems/arena/audit1003b_client.test.js` (10 - fourteen as run, C2 four ways),
+`test/ui/enhanced/audit1003b_ui.test.js` (5 - the window mounted). Mutants: `tools/mutants/arena6.json`, `tools/mutants/audit1003b.json`
+(the counts in Testing.md's rows). HOTFIX 1003f's: `test/net/arena/hotfix1003_stands.test.js` (3), `tools/mutants/hotfix1003f.json`
 (10), and the records whose laws it turned re-aimed by content (arena4.json, arena4b_exhibition.json, audit1003b.json).
 
 **Not done / open.** A session's bout is one against one (the tournament's own format - brackets, rounds - is the

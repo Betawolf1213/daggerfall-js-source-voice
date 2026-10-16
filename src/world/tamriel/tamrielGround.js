@@ -15,7 +15,7 @@
 // ones, and at the Bay's edge that window reaches past the data - where WoodsFile CLAMPS to the edge's own pixel. Any
 // other answer there would re-shape the Bay's edge tiles, and every anchor, save and seam that stands on them. So the
 // seam band (SEAM_PX pixels past the edge) answers EXACTLY the clamped read, and the authored ground blends in from the
-// edge's byte over BLEND_PX pixels after it: test/tamriel2.test.js holds every Bay pixel's samples byte-identical with
+// edge's byte over BLEND_PX pixels after it: test/world/tamriel2.test.js holds every Bay pixel's samples byte-identical with
 // the ground composed and without.
 //
 // THE HEIGHT LAW is the raster's (world/tamriel/tamrielRaster.js reads it from here, one home): the sea's byte is 0; land starts

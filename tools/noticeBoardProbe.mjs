@@ -4,7 +4,7 @@
 // Market's views, Vendors, Guilds, Seat), over books with something on every tab: notes new and old, the server's word,
 // a guild's poster, Court and guild writs, listings near and far, a seat held and besieged with the reader's guild
 // pledged to it. Each tab must stand inside the viewport with nothing spilling sideways, and its words in the pixel
-// face. The pins hold the window's law on a fake page (test/board_ui.test.js); this photographs what a fake cannot.
+// face. The pins hold the window's law on a fake page (test/ui/board_ui.test.js); this photographs what a fake cannot.
 // Photographs to SHOT_DIR (default tools/shots/, ignored).
 //
 //     node tools/noticeBoardProbe.mjs [--only=<tab>] [--skin=enhanced|classic]

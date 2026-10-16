@@ -66,13 +66,13 @@ import { arenaSeasonOf } from '../../src/net/arena/arenaLaw.js';
 import { REALM_FINDINGS_KEEP_S, REALM_WEALTH_KEEP_S } from './review.js';   // INT2/INT5: the judge's record's keeping
 import { WILD_FALLS_KEEP_S } from './wild.js';   // INT9: a death's drop's keeping
 
-/** The two schedules - wrangler.toml's [triggers] crons name exactly these (test/scale4b.test.js holds the two to
+/** The two schedules - wrangler.toml's [triggers] crons name exactly these (test/server/scale4b.test.js holds the two to
  *  each other). The hour's minute is off the hour, where every other Worker's cron lands. */
 export const CRON_MINUTE = '* * * * *';
 export const CRON_HOUR = '41 * * * *';
 
 /** A rate window's row is dead once its window has closed; the longest window any bucket counts is an hour
- *  (accounts.js overRate's callers - test/scale4b.test.js sweeps every one), so a day past its start is two dozen
+ *  (accounts.js overRate's callers - test/server/scale4b.test.js sweeps every one), so a day past its start is two dozen
  *  windows dead. */
 export const RATE_ROW_KEEP_S = 24 * 3600;
 /** Rows one sweep's statement takes at once, and how many times a job asks again while it took a full page - a firing

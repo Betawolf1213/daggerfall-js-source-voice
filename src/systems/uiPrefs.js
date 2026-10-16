@@ -166,17 +166,17 @@ export const PREF_DEFAULTS = Object.freeze({
   // GATE-CROWD (2026-10-07, Mac: "some type of filter when there are too many people"): how many other players an
   // Oblivion Gate's court draws at once - the nearest, the party always (net/gate/gateCrowd.js GATE_CROWD_TIERS; 0 everyone,
   // the default - Mac: "The default other setting should be everyone"). Its GATE_CROWD_DEFAULT, pinned equal by
-  // test/gatecrowd.test.js and not imported: the shelf is on the boot path, and the import made net/gate/gateCrowd.js the
-  // entry's 69th file, past BOOT2's ceiling (test/boot2.test.js)
+  // test/systems/gatecrowd.test.js and not imported: the shelf is on the boot path, and the import made net/gate/gateCrowd.js the
+  // entry's 69th file, past BOOT2's ceiling (test/render/boot2.test.js)
   gateCrowd: 0,
   // PEER-RANGE (2026-10-10, the owner: "the rendering of players far out is contributing to poor performance"): how far
   // out, in metres on the ground, other players are drawn - my party and the one I duel always (net/peer/peerRange.js
   // PEER_RANGE_TIERS; 0 everyone the relay sends). The default 300, past a player's shot (200 m); its PEER_RANGE_DEFAULT, pinned
-  // equal by test/peerrange.test.js and not imported, for GATE-CROWD's reason above
+  // equal by test/systems/peerrange.test.js and not imported, for GATE-CROWD's reason above
   peerRange: 300,
   // YARD-RANGE (2026-10-11, a player: "20-40 fps in cities"): how far out, in metres on the ground, other players' yards are
   // drawn - one's own always (scenes/homeYards.js YARD_RANGE_TIERS; 0 none). The default 300, the distance every yard was
-  // drawn at before; its YARD_RANGE_DEFAULT, pinned equal by test/yardrange.test.js and not imported, for GATE-CROWD's reason
+  // drawn at before; its YARD_RANGE_DEFAULT, pinned equal by test/scenes/yardrange.test.js and not imported, for GATE-CROWD's reason
   yardRange: 300,
   nightCrickets: true,   // SNDREP1: the night crickets loop (SoundClips.AmbientCrickets) - on by default; off silences it
   distantHowl: true,     // SNDREP1: the distant howl (SoundClips.AmbientDistantHowl) - on by default; off silences it
@@ -348,7 +348,7 @@ export function savePrefs() {
   catch (e) { console.warn('[uiPrefs] screen preferences could not be saved', e); return false; }
 }
 /** The shelf's real overrides: every key whose value differs from the
- *  default, plus `open` and the stamp. Pure; pinned in test/pref1_shelf.test.js. */
+ *  default, plus `open` and the stamp. Pure; pinned in test/systems/pref1_shelf.test.js. */
 export function overridesOf(prefs) {
   const out = {};
   for (const [k, v] of Object.entries(prefs ?? {})) {

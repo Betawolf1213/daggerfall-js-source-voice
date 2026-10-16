@@ -353,7 +353,7 @@ export function countsByName(quest, foe) {
  *  They ride the cell as an encounter's do - their spawner's, everyone else's puppet, anyone's to strike and to be
  *  hunted by. Their quest holds them while their spawner does; a foe handed on (a door, a death) is its heir's plain
  *  foe, which no quest counts. So A QUEST JOINS THIS LIST ONLY IF NO TASK COUNTS ITS FOES - no `killed`, no `injured`,
- *  nothing but their Foe line and the actions that stand them (test/cursesync.test.js holds every entry to it). */
+ *  nothing but their Foe line and the actions that stand them (test/systems/quest/cursesync.test.js holds every entry to it). */
 export const WORLD_QUESTS = Object.freeze(['S0000977']);
 
 /** CURSE-SYNC: the name of the quest pool foe `f` stands for - its behaviour's quest as the behaviour resolved it, else

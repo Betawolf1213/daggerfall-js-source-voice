@@ -6,7 +6,7 @@ court opens, both clocks a term or a stop reads, both street hosts' gates, the t
 legal standing, and the retired levy's readers and records.
 
 Every finding below was checked against the code before it was fixed and pinned by a test that fails on the code as
-REP shipped it: `test/auditrep.test.js` (7, and an eighth for Mac's call below). Mutation-proven:
+REP shipped it: `test/systems/auditrep.test.js` (7, and an eighth for Mac's call below). Mutation-proven:
 `tools/mutants/auditrep.json` 19 records, all dead. Each
 fix carries an `AUDIT REP F<n>` comment. Two older pins moved with it, each marked PIN MOVED: `rep3_banishment`'s short
 purse (F4) and `audit39_guildstravel`'s F99, whose court now banishes on the trusted calendar (F2). Five court rigs that
@@ -48,7 +48,7 @@ Mac, on the three questions this record put to him: *"What do you think? I trust
    was waiting there too. `world.js respawnOnlinePlayer` now clears the crime through the one setter and ends the chase
    (`arrestFlow.abandon`) at its top, before the teleport's await. A charge already laid stays whole, because only a
    sentence gives any of it back: a Murder that dies instead of serving keeps -20, not a sentence's -10. An uncaught
-   crime goes with the death uncharged, as it goes with any journey away. Pinned in `test/auditrep.test.js` (8);
+   crime goes with the death uncharged, as it goes with any journey away. Pinned in `test/systems/auditrep.test.js` (8);
    2 more mutants, dead.
 3. **The numbers stand as first cut**, to be tuned from what players report rather than guessed again now.
 

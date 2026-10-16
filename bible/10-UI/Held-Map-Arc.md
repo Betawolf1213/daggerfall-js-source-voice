@@ -169,7 +169,7 @@ skins cannot drift:
   alone), haloed then inked in the full pen (`HARBOUR_HALO`,
   `HARBOUR_PEN`), whether or not the mod restricts ship travel - the
   quays stand at every port (`03-World/Holdings.md` 7);
-  `test/portmap.test.js`, `tools/mutants/portmap.json`; a Ports button in
+  `test/ui/ink/portmap.test.js`, `tools/mutants/portmap.json`; a Ports button in
   the foot row shown while the mod restricts ship travel to ports, and P
   as its key (the sheet's own spelling). Per-open, as the classic one is
   (departure 6).
@@ -211,7 +211,7 @@ matters.
 
 ## Pins
 
-`test/heldmap.test.js` (47; the seven MAP2 pins drive a fake mod's
+`test/ui/heldmap.test.js` (47; the seven MAP2 pins drive a fake mod's
 settings through the window: the ports law over a REAL port id from the
 mod's list, the harbour glyph by band and condition, the mark through the
 store and its ring at far, the I box and its two closers, the H rows and
@@ -236,7 +236,7 @@ placement in rank order, the paint's order and flags, the selection
 (16 px, bare paper clears, a hidden band cannot be picked, the hover
 line), pan/wheel/keys under the clamp, the search's glide, the layout
 on PAPER of a 4:3 stage, the sprite's doctrine row and the hand key.
-`test/soc6_partymap.test.js` (18): the party laws re-driven over the
+`test/ui/soc6_partymap.test.js` (18): the party laws re-driven over the
 ink through a recording context. Mutants: `tools/mutants/map1.json`,
 42 dead, 0 survived. The relief map's records re-aimed: to1 C1/C3 to
 `heldMap.js`, AUDIT SOC D2 to `inkMap.js`, AUDIT-EL F5 retired with
@@ -252,7 +252,7 @@ browser probe written for the sheet (`tools/heldMapProbe.mjs` - a
 synthetic bay on the menu page through real pointer events, 37 checks,
 two screenshots a person can look at), and a read of the screenshots.
 Twenty-two findings fixed, five departures recorded, every fix pinned
-two-way (`test/heldmap.test.js` +20, 67 in all) and mutated
+two-way (`test/ui/heldmap.test.js` +20, 67 in all) and mutated
 (`tools/mutants/auditmap.json`: 26 dead, 0 survived).
 
 **The screenshot's own two (A1).** The coast tracer emitted the DATA's
@@ -423,7 +423,7 @@ over the sheet are the arm's own hands, posed, not a keyed overlay;
 there is no separate handcrafted picture for Morrowind - the sheet is
 the same ink.
 
-**Pins.** `test/map3_heldpose.test.js` (16): the quaternion laws
+**Pins.** `test/combat/map3_heldpose.test.js` (16): the quaternion laws
 (Hamilton, the intrinsic X-Y-Z order, the 3x3 conversion through all four
 trace branches), `deltaTracks` (wrapped, zero skipped, missing bone
 skipped, lowercased, base untouched), `heldSampler` (base times delta,
@@ -446,7 +446,7 @@ zero tilt), a forearm delta moving the hand and not the other arm, the
 door keeping the bones in force through a paper-only spec, the rebuild
 re-adding the sheet, unload dropping it; the hide lines, the draw seam's
 `_armDrewLast`, the holder on the one dep bag and the door.
-`test/heldmap.test.js` (+4, 71): the hands lane through a faked holder
+`test/ui/heldmap.test.js` (+4, 71): the hands lane through a faked holder
 (sprite and thumbs gone, the matrix of the corners, the inverse pointer,
 a pick and a pan under the angle, moving corners, no corners, release
 once), the sprite lane when the arm is not drawn (never polled, still
@@ -588,10 +588,10 @@ MAP3 touched it, and so do the MAP3 layer's three texel readbacks
 there; the held map probe's parchment readback passes in the same
 Chromium. The two disagree on the page they boot; not chased.
 
-**Pins.** `test/map3_heldpose.test.js` 17 (+1: the alias resolution;
+**Pins.** `test/combat/map3_heldpose.test.js` 17 (+1: the alias resolution;
 the packing through mwSkin's poseSkeleton, the normal through packFpArm,
 the reach's growth and restoration, drewLast per call, the eye-synced
-source, the mirrored sheet, the sliver, the horizon), `test/heldmap.test.js`
+source, the mirrored sheet, the sliver, the horizon), `test/ui/heldmap.test.js`
 78 (+7: the way back, the pointer off the sheet, the close, T1/T2, T3,
 T4, the perf-and-polish sweep; the resize pin re-aimed). Mutants:
 `tools/mutants/map3.json` rewritten, 70 records, 68 dead, 2 equivalent
@@ -654,9 +654,9 @@ the two things every real open has. Both defects were invisible to 78
 pins, 50 browser checks and two audits, and obvious in ten seconds of
 play.
 
-Pins: `test/heldmap.test.js` (the URL law and `appRootFrom`'s four
-shapes), `test/map3_heldpose.test.js` (the sheathed draw, the
-availability question, `holdingPaper`), `test/ht1_handheldtorches.test.js`
+Pins: `test/ui/heldmap.test.js` (the URL law and `appRootFrom`'s four
+shapes), `test/combat/map3_heldpose.test.js` (the sheathed draw, the
+availability question, `holdingPaper`), `test/systems/ht1_handheldtorches.test.js`
 re-aimed to the two-leg gate. Mutants: `map1.json`
 `sprite-url-document-relative`, `map3.json` `sheathed-arm-does-not-draw`
 and `holder-asks-did-it-draw`, `torchvis.json` re-aimed. Browser:
@@ -729,7 +729,7 @@ is a measurement, and the thing that measures them is a kept probe now
 rather than a scratch script, so the next reader can re-run the numbers
 instead of trusting this page.
 
-Pins: `test/heldmap.test.js` (the geometry as a law over five viewports,
+Pins: `test/ui/heldmap.test.js` (the geometry as a law over five viewports,
 the `hidesHud` word, and the cuffs driven through the window itself over
 a synthetic sprite). Mutants: `map1.json` `MAPFIELD2-*`, `map3.json`
 `foot-no-scrim` re-aimed by content. Browser:
@@ -798,7 +798,7 @@ brightness key are removed, not merely unused. The new painting carries
 a real alpha channel - 857,265 pixels exactly transparent, no matte at
 all - so the picture states its own silhouette. Reviving the key on this
 art would be a BUG, because these gauntlets are grey and reach luma 0: a
-brightness key punches holes straight through them. `test/heldmap.test.js`
+brightness key punches holes straight through them. `test/ui/heldmap.test.js`
 pins the absence by name, and `map1.json`
 `MAPFIELD4-the-brightness-key-comes-back` is its killer. If a matted
 painting is ever supplied again the key comes back from here, keyed to
@@ -843,7 +843,7 @@ that no sheet pixel at all falls under the colour line (five do), and
 that the right forearm crosses under the sheet (it does not - that came
 from misreading an ASCII dump's column scale).
 
-Pins: `test/heldmap.test.js` (the colour key over a zone with a crack
+Pins: `test/ui/heldmap.test.js` (the colour key over a zone with a crack
 speck, the seeded side, clear ground, and the cut cuffs driven through
 `_paintSheet` itself). Mutants: `map1.json`, `MAPFIELD4-*` x4 plus the
 re-aimed `MAPFIELD2-*`. Browser: `tools/heldMapArtProbe.mjs`, 19 checks.
@@ -921,7 +921,7 @@ record mentioned; a track's dashes are stroked at a width of 1 written
 into the paint; and the far band draws neither, inking cities only and
 skipping the tracks.)
 
-Pins: `test/heldmap.test.js` - the halo pass ahead of every ink stroke
+Pins: `test/ui/heldmap.test.js` - the halo pass ahead of every ink stroke
 (which takes two marks to state at all), a name kept off every glyph
 with the four candidates driving it, rank read at the SIDE it now
 decides, and a town ringed on all four sides losing its label and
@@ -973,7 +973,7 @@ closing). A fade of a third of a second reads as instant; a travelling
 thing at the same length reads as hurried, and leaving should be a touch
 quicker than arriving.
 
-Pins: `test/heldmap.test.js` - mounted DOWN before the first tick, a
+Pins: `test/ui/heldmap.test.js` - mounted DOWN before the first tick, a
 monotonic rise that ends with NO transform left on the stage, the root
 never carrying an opacity, the fade rule excluding the stage by name, a
 close mid-rise lowering from where it was, and the hands lane never
@@ -1117,7 +1117,7 @@ for a map that opens and never for a press that was refused. The view
 is not put back when the map closes - Mac asked for a transition, and
 the wheel is where it was.
 
-**Pins** (`test/mappov.test.js`, 4): the Morrowind lane goes first at
+**Pins** (`test/player/mappov.test.js`, 4): the Morrowind lane goes first at
 once with nothing queued, keeps its distance and moves the rig, and a
 view already first is left alone; the EOTB lane through its own toggle
 with the other camera untouched; by source, the builder is the one mint
@@ -1169,7 +1169,7 @@ the arm must be first-person before the window's first tick asks it),
 which MAP-POV had done for the V key alone.
 
 The fix is small because the pieces were all there; what was missing was
-one seam written once. test/mwmap1.test.js (3): the holder's four doors
+one seam written once. test/ui/town/mwmap1.test.js (3): the holder's four doors
 against a live, swapped, absent and doorless rig; the two doors carrying
 the holder into a real HeldMapWindow and null without one; every host by
 source. tools/mutants/mwmap1.json: 7, 7 dead; MAP3's two holder mutants
@@ -1205,9 +1205,9 @@ of the thumb under the line, 66 of 396,440 sheet pixels). The stage is the sprit
 before. The Morrowind hands lane (MAP3/MW-MAP1) is untouched: it is the arm's own lane, entered only when a
 holder says the arm is drawn.
 
-Pins: `test/maptoggle.test.js` (4, driven: the gate on/off/classic, the doors handing out the held sheet or the
+Pins: `test/ui/map/maptoggle.test.js` (4, driven: the gate on/off/classic, the doors handing out the held sheet or the
 classic null against a live switch, the row, the fourth painting's numbers against the file's own header);
-`test/heldmap.test.js` U61 re-aimed to the gate. `tools/mutants/maptoggle.json`: 9 records, 9 dead. Not
+`test/ui/heldmap.test.js` U61 re-aimed to the gate. `tools/mutants/maptoggle.json`: 9 records, 9 dead. Not
 verified in a browser beyond the probe.
 
 ## MAP-LAG - what lies under the ink is kept too (2026-09-23, Mac) - REMOVED by DISC17-C
@@ -1233,7 +1233,7 @@ forecast are gone, with `ui/weatherLayer.js`. The sheet contract loses
 `paintUnder` (the town's and the automap's were empty), and the hover is
 written inline in the pointer's move as EM1/EM3 had it. `heldMap.js` is
 its pre-weather self plus MAP-FIELD8 and MAP-FIT1. Pinned by
-`test/disc17.test.js`. `01-Overview/Field-Bugs-2026-09-23.md`, DISC17.
+`test/ui/disc17.test.js`. `01-Overview/Field-Bugs-2026-09-23.md`, DISC17.
 
 ## EVENT-TIP: the world's events answer a hover (2026-09-28)
 
@@ -1245,7 +1245,7 @@ mark, the gate's ring (an AREA - anywhere in it), then the province. The one wri
 DOM card at the pointer (`.hmtip`, the pixel home's plaque; `pointer-events: none`), turned where the screen would cut
 it, rewritten only when its words change, refreshed on the poll under a STILL pointer (the label with it), hidden on
 leaving, on a press, on a sheet change and at close. The classic window draws no card. Pinned in
-`test/eventtip.test.js`; seen in Chromium by `tools/heldMapProbe.mjs` section 8. `01-Overview/Field-Bugs-2026-09-28b.md`.
+`test/ui/eventtip.test.js`; seen in Chromium by `tools/heldMapProbe.mjs` section 8. `01-Overview/Field-Bugs-2026-09-28b.md`.
 
 ## MAP-KEY - a key to filter by, and a dungeon in orange (2026-09-29, a player through Mac)
 
@@ -1293,11 +1293,11 @@ dungeon's plan shows none.
 lit toggle that seems to do nothing: every kind the band does not ink is dimmed, titled "zoom in to see" (at mid, the
 graveyards, covens and homes). The toggles flip the store at every band.
 
-Pins: `test/fb0929d_mapkey.test.js` (8; the last measures the player's own FMAP_PAL.COL where ARENA2_PATH has it).
+Pins: `test/ui/fb0929d_mapkey.test.js` (8; the last measures the player's own FMAP_PAL.COL where ARENA2_PATH has it).
 `tools/mutants/fb0929d_mapkey.json`: 39, 39 dead - the two on `MARK_INK_MIX` against the real palette alone - and the
 403 older records on the four files it touched re-judged (400 dead, 3 equivalent as recorded). Re-aimed:
 `map1.json` MAPFIELD6-the-halo-is-drawn-per-mark-not-per-pass (the ink pass carries its ink now), and
-`test/soc6_partymap.test.js`'s foot pin (the key is the foot's first child). Seen in Chromium through a scratch mount of
+`test/ui/soc6_partymap.test.js`'s foot pin (the key is the foot's first child). Seen in Chromium through a scratch mount of
 the synthetic bay, at the near and the far band. `tools/heldMapProbe.mjs` was not extended: it fails six of its own
 checks on the base as well (the stage, the sprite and thumb keys, the open sea, the hover cursor), and its I/H checks
 still look for the box ENH-NOTICE3 moved onto the notice panel - its own repair, not this slice's.

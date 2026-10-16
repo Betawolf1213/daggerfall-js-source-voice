@@ -36,7 +36,7 @@ drawn after it threw the same way until the game was reloaded. A home's alchemy 
 own presses) threw the same way. The suite was green because the fake document's `children` are arrays; the walk beside
 it, `stationWorkable`, already walked by iteration for exactly this reason.
 
-FIXED. `holdsHead` walks by iteration, as `stationWorkable` does. Pinned by `test/fb1014_storescrash.test.js`, which draws
+FIXED. `holdsHead` walks by iteration, as `stationWorkable` does. Pinned by `test/net/fb1014_storescrash.test.js`, which draws
 the page through its own draw on nodes whose `children` are shaped as the browser mints them; the old walk fails it with
 the player's own message (`tools/mutants/fb1014_storescrash.json`, 1, dead).
 
@@ -57,7 +57,7 @@ reporter's building could not be read here (no ARENA2), and the dungeon builder 
 test (`dungeonContext.js`).
 
 FIXED. A bed model is listed before the prop gate, whatever its ObjectType; the furniture chain stays the prop's.
-Pinned by `test/fb1014_innbeds.test.js` (`tools/mutants/fb1014_innbeds.json`, 1, dead).
+Pinned by `test/scenes/fb1014_innbeds.test.js` (`tools/mutants/fb1014_innbeds.json`, 1, dead).
 
 ## GROG-WORD: the yard says a crew's spirits as the helm does (3)
 
@@ -74,7 +74,7 @@ of that day the two said different things.
 
 FIXED. The row says why it wants none (`drunk`: below the top with the day's round drunk), and the window says the
 crew's own spirits and that they have had today's round, its press Tomorrow. One round a port day stands. Pinned by
-`test/fb1014_grogword.test.js` (`tools/mutants/fb1014_grogword.json`, 2, dead).
+`test/systems/naval/fb1014_grogword.test.js` (`tools/mutants/fb1014_grogword.json`, 2, dead).
 
 ## MEND-STARVE: a piece that wears itself is mended last (4)
 
@@ -94,7 +94,7 @@ It dates from MEND-WORN (2026-10-07). The one change to the target inside the re
 
 FIXED. A worn piece carrying either row is mended after every other damaged piece; once nothing else wants the tick, the
 tick holds it against its own wear, as before. Port-Ledger's MEND-WORN row records it. Pinned by
-`test/fb1014_mendstarve.test.js` (`tools/mutants/fb1014_mendstarve.json`, 3, dead).
+`test/systems/fb1014_mendstarve.test.js` (`tools/mutants/fb1014_mendstarve.json`, 3, dead).
 
 ## FINE-MENDS: a fine paid on the spot mends the name (5)
 
@@ -113,7 +113,7 @@ quietly charges a Conspiracy and the sentence gives it back whole; a standing me
 CHANGED (Mac, asked: "Fine raises standing"). A fine paid on the spot mends the name by a temple penance's step,
 PENANCE_POINTS (5), never past the -10 line - the reporter is clear in one or two fines; a name far under the line pays
 more fines, each its own standing's price, and the temple stays the way to mend it faster. The HUD's legal notice says
-the rise. The grace is unchanged. Recorded in Port-Ledger's REP1 row. Pinned by `test/fb1014_finemends.test.js`
+the rise. The grace is unchanged. Recorded in Port-Ledger's REP1 row. Pinned by `test/systems/fb1014_finemends.test.js`
 (`tools/mutants/fb1014_finemends.json`, 2, dead).
 
 ## LEECH-HAND: the leech line says whose blows it heals on (6)
@@ -126,13 +126,13 @@ on nothing until the player switches to it - the rule since LOOT4, unchanged in 
 2026-10-12, lowers a leech summed past 10%).
 
 CHANGED (Mac, asked: "Keep per-hand"). The rule stands; the line says it - "5% life leech on this weapon's own blows",
-on the item card, a gem's line and the Reforge. PIN MOVED: `test/loot4_procs.test.js`
+on the item card, a gem's line and the Reforge. PIN MOVED: `test/systems/loot4_procs.test.js`
 (`tools/mutants/fb1014_leechhand.json`, 1, dead).
 
 ## Asked of the players (7, 8, 9)
 
 LOOK AROUND, WITH SECRETS (7). `systems/dungeon/dungeonSense.js`, `scenes/dungeonContext.js`, `render/nodeGlow.js` - none changed
-since 2026-10-10, `test/sense1_dungeonsense.test.js` green. The tier lights nothing by itself: an Info ask in a dungeon
+since 2026-10-10, `test/systems/sense1_dungeonsense.test.js` green. The tier lights nothing by itself: an Info ask in a dungeon
 (F3 - unbound for a brand-new key file since MODE-WHEEL - or the wheel flicked to Info) lights what is within 8 m and in
 sight for six seconds, a chain-moved secret among them, purple and the faintest form (its shimmer nothing under Reduced
 Motion). Read on the code and not proven: a secret slab thicker than about 1.2 m hides its own glow card, planted at the
@@ -177,7 +177,7 @@ and the summoner says it (`summon.noQuest`, drafted in the 25 languages): "Herma
 you in this region. You keep your gold - try the summoning in another region." Every other outcome is DFU's, paid as
 before: a missed roll (a coven's reprisal with it), the prince met before, the quest offered on his film. The quest is
 made once a summoning: the host's second ask, after the gold, is gone, and with it the "%dae answers your summons" box
-of a quest arm that had no offer. Pinned by `test/fb1014_summonoffer.test.js`, which makes W0C00Y00 through the real
+of a quest arm that had no offer. Pinned by `test/systems/fb1014_summonoffer.test.js`, which makes W0C00Y00 through the real
 bridge in one crafted region with a palace and the same region without one; on the old law all four of its tests fail
 (`tools/mutants/fb1014_summonoffer.json`, 7, dead).
 
@@ -191,7 +191,7 @@ flag bits on one faction of a realm character's record and gives gold back as a 
 the developers' list like every review act and written among the character's findings. It refuses a faction the record
 does not hold and a bit that is not set, so a repair aimed at the wrong character mends and gives nothing. The record is
 seized one sequence on, the rollback's way: the tab playing it cannot write over it, and its next join plays the mended
-record. Pinned by `test/fb1014_summonrepair.test.js` (`tools/mutants/fb1014_summonrepair.json`, 16, dead). For the
+record. Pinned by `test/net/fb1014_summonrepair.test.js` (`tools/mutants/fb1014_summonrepair.json`, 16, dead). For the
 reporter, once acct136 is live, signed in as a developer (DAGGER_HANDLE and DAGGER_PASSWORD), the first command naming
 the character's id for the second:
 
@@ -230,7 +230,7 @@ FIXED. The friend law is the drop's. `remainsNamedFor` (`wildLaw.js:"export cons
 record is for - the killer's worn piece its order's killer, every other record nobody in particular - and the room asks
 the friend law only of a record named for nobody (`server/src/index.js:"if (rec && !remainsNamedFor(rec, d.i) && rec.os"`);
 takeFrom keeps the named piece its killer's alone, by the same member. The drop stays the fallen's and her foes': a
-guildmate or a party member of hers is refused every record of it. Relay world205 (world201 on its branch, one bump past main's CHAT-TRADE world201 and FIVE-ASKS world202 at the merge; world203 on the integration, renumbered past main's KG-SET world203 and KG5 world204 at the merge of main; the deploy drops every player once). Pinned by `test/fb1014_pvploot.test.js`, end to end through the real account service, the real
+guildmate or a party member of hers is refused every record of it. Relay world205 (world201 on its branch, one bump past main's CHAT-TRADE world201 and FIVE-ASKS world202 at the merge; world203 on the integration, renumbered past main's KG-SET world203 and KG5 world204 at the merge of main; the deploy drops every player once). Pinned by `test/systems/fb1014_pvploot.test.js`, end to end through the real account service, the real
 relay room and the killer's own book, over the game's own pieces: a stranger, a guildmate and a party member each get the
 longsword unequipped, as it was minted, under the service's fresh id; the drop is refused to her friends and taken by a
 stranger; a stranger asking first for the named piece is refused (`tools/mutants/fb1014_pvploot.json`, 5, dead - the
@@ -254,7 +254,7 @@ DECIDED (Mac, 2026-10-14), asked what this fix left open:
   the killer's tab carries into its own record; nobody collecting, the fallen's tab takes it back once no collect can be
   signed - each end once, guarded to one row, whichever host restarts (`11-Multiplayer/Wild-Zone.md` section 4,
   `06-Systems/Integrity-Arc.md` INT9). Pinned end to end through the real relay room, account service and clients by
-  `test/fb1014_pvpescrow.test.js` - a guildmate's blow lands nothing; the piece commits to its killer only on the
+  `test/systems/fb1014_pvpescrow.test.js` - a guildmate's blow lands nothing; the piece commits to its killer only on the
   collect; uncollected, it comes back to its fallen; a collect carried three times hands one piece; a room woken
   mid-escrow, a batch that failed either side of its landing and a game closed while one was held each end with exactly
   one owner (`tools/mutants/fb1014_pvpescrow.json`, 18, dead). Relay world205 (world201 on its branch, re-hashed in place
@@ -275,7 +275,7 @@ escrow; `scenes/exterior.js`, offline, NOT WIRED on purpose.
 
 AT THE MERGE (the field-bugs pull request's full suite): the escrow's six refusal words - `no-escrow`, `escrow-moved`,
 `escrow-collected`, `escrow-returned`, `escrow-late`, `escrow-wait` (`server-account/src/wild.js`) - had no sentence, and
-ACC1e (`test/accountflow.test.js`) walks every word the service can say. The world host settles them without a word to
+ACC1e (`test/server/accountflow.test.js`) walks every word the service can say. The world host settles them without a word to
 the player, but a word the service can say is a word with a sentence: `src/net/accountClient.js` REFUSAL_WORDS holds the
 six (`account.refusal.noEscrow` and the five beside it), drafted in the 25 languages (`tools/l10nInSession.mjs`).
 
@@ -336,12 +336,12 @@ never moves a quest site. What stays: a site whose town holds no other building 
 rung); a deleted account's homes go by the database's cascade, which no client carries, so the pages online keep them as
 homes until their next boot (a quest passes over them meanwhile).
 
-Pinned by `test/fb1014_questhome.test.js` (6) - the real Worker, the client's own door, the real registry, the real relay
+Pinned by `test/net/fb1014_questhome.test.js` (6) - the real Worker, the client's own door, the real registry, the real relay
 over a real hub room and the real client session on its hub link, and the reporter's own quest taken by the real machine:
 the boot's read; the reporter's region; the wiring; the home order and word; the live list (a house bought after a
 page's boot read never holds a quest picked after it, a page that joins later hears the held word, a sale says the
 house a house again); the re-pick (a site not reached chosen again in its own town, its link and name following; a
-reached one kept) - `tools/mutants/fb1014_questhome.json`, 25, all dead (the 24th, HOME_RELAY_MIN back at 201, added at the merge; the 25th, at 204 - main's KG5 room - at the merge of main). PIN MOVED in `test/wd3_online.test.js` (the
-read's `homes`), `test/home1.test.js` (the seam; the claim's order), `test/arena4b_homes.test.js` (the move's order),
-`test/guild1c.test.js` and `test/renown1.test.js` (ORDER_KINDS), the account service's version pins (acct136, acct133 on its branch and acct134 on the integration) and the
-relay's (world205, world201 on its branch and world203 on the integration, `test/relayversion.test.js` its law row - `src/net/homeLaw.js` joins the relay's bundle).
+reached one kept) - `tools/mutants/fb1014_questhome.json`, 25, all dead (the 24th, HOME_RELAY_MIN back at 201, added at the merge; the 25th, at 204 - main's KG5 room - at the merge of main). PIN MOVED in `test/net/wd3_online.test.js` (the
+read's `homes`), `test/server/home1.test.js` (the seam; the claim's order), `test/net/arena4b_homes.test.js` (the move's order),
+`test/net/guild1c.test.js` and `test/net/renown1.test.js` (ORDER_KINDS), the account service's version pins (acct136, acct133 on its branch and acct134 on the integration) and the
+relay's (world205, world201 on its branch and world203 on the integration, `test/net/relayversion.test.js` its law row - `src/net/homeLaw.js` joins the relay's bundle).

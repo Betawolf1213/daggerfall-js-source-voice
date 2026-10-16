@@ -53,7 +53,7 @@ VOID-ENTRY's classic voids (`01-Overview/Field-Bugs-2026-10-04d.md`) were 18: tw
 whose rooms stood half a shell under the street - they land on a floor now (AUDIT FB1007b F2: a cut-off entrance cell,
 its walls crossed at its centre and no ceiling over it, in rooms no player can enter), and the count is 16, every one a
 check marker over nothing, in ten A-set blocks no location places (AUDIT FB1007b T1: not the desert's - the desert's are
-the B set; `test/fb1004d_voidentry.test.js` re-pinned; Port-Ledger's VOID-ENTRY row, Beautiful-Towns and enterExit.js's
+the B set; `test/world/fb1004d_voidentry.test.js` re-pinned; Port-Ledger's VOID-ENTRY row, Beautiful-Towns and enterExit.js's
 note narrowed).
 
 All four hosts: the world host's and the one-location exterior's buildings are built by worldModes.js
@@ -91,7 +91,7 @@ instanced").** Privateer's Hold keys its shared world room, `dungeon:m187853213`
 marks nothing `solo`, `systems/startDungeon.js` keeps isStartCell and isStartDungeon (PH1, TUT1) and loses
 isTutorialHold, and AUDIT FB1007b's H1-H5 went with it (the page's memory of the Hold, the staff `/tp` refusal, the hub
 link's clock, the Local tab's, the page's, the party card's and the Online pane's words) and the Playing Online page's
-"Your starting cave is yours alone". Pinned by `test/holdshared.test.js` and `tools/mutants/holdshared.json`;
+"Your starting cave is yours alone". Pinned by `test/net/holdshared.test.js` and `tools/mutants/holdshared.json`;
 `06-Systems/Online-Arc.md` HOLD-SHARED. What follows is the record of what was built and is no longer.
 
 `scenes/worldModes.js` roomIdentity (`solo`) and PH1's respawn; `scenes/world.js` the key block; `systems/startDungeon.js`
@@ -134,19 +134,19 @@ dungeonContext.js builds no motor (nor does the standalone scenes/dungeon.js's, 
 
 ## Pins
 
-- `test/fb1007b_towerfloors.test.js` (4; three gated on ARENA2): the law on the layout's own input shape; the towers'
+- `test/world/fb1007b_towerfloors.test.js` (4; three gated on ARENA2): the law on the layout's own input shape; the towers'
   five storeys, furniture, stairs and doors, and every marker on a floor the room holds; the two House2 rooms, no
   location's, their shells on the ground storey; the whole corpus's moved set.
-- `test/fb1007b_familyseat.test.js` (8): the host's move, refusals and store; every merge, either copy the newer; the
+- `test/systems/legacy/fb1007b_familyseat.test.js` (8): the host's move, refusals and store; every merge, either copy the newer; the
   name kept through every merge (two tabs over one store); the stamp after the seat it moves; every guard; the House
   page's two presses, its refusal, its word's lifetime, the keyboard and the hint; the world host's provider.
 - `test/fb1007b_holdsolo.test.js` (9; one gated on ARENA2) - DELETED with HOLD-SOLO's revert (2026-10-12); its start
-  cell pin stands in `test/holdshared.test.js`. It held: the start cell, a custom one too; roomIdentity and the key
+  cell pin stands in `test/net/holdshared.test.js`. It held: the start cell, a custom one too; roomIdentity and the key
   block executed from their source; the shipped cell's Hold alone solo; the staff teleport, the hub's clock, the Hold's
   own memory and its words, executed; the world's one location on the start cell.
-- `test/fb1007b_climbtravel.test.js` (7): the report measured and the law, both lanes, on the world host's motor; the
+- `test/systems/fb1007b_climbtravel.test.js` (7): the report measured and the law, both lanes, on the world host's motor; the
   climb off the journey; a hold let go; the host's wiring; the journey out of doors, a hold a load carried, and no
   journey from a wall, on the host's own lines.
-- Re-pinned: `test/fb1004d_voidentry.test.js` (classic voids 16, the two House2 rooms' doors off the list);
-  `test/legacyname.test.js` (a merge where neither copy holds the name names it for the seat).
+- Re-pinned: `test/world/fb1004d_voidentry.test.js` (classic voids 16, the two House2 rooms' doors off the list);
+  `test/systems/legacy/legacyname.test.js` (a merge where neither copy holds the name names it for the seat).
 - The audit: `01-Overview/Audit-FB1007b.md`.

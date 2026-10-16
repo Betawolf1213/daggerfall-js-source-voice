@@ -72,7 +72,7 @@ PINNED AGAINST THE ASSEMBLY ITSELF: the session's C# reference compiles the
 mod's own sources (SnowpackState, SnowDepthRules, SnowCoverageData,
 SnowContactRamp, PersistentTrackField, the rasterizers, CorpseImpressions'
 rasterizer, the statics, BasicRoadsClassifier and BasicRoadsTerrain) under
-.NET 8 and runs nine scenarios off one LCG; `test/snowfall1_model.test.js`
+.NET 8 and runs nine scenarios off one LCG; `test/systems/snowfall1_model.test.js`
 runs the same through the port, and every section's trace - float and double
 bits, mask hashes, the save's cells in the dictionary's order - hashes to the
 reference's (`5ce5e363...` the snowpack, `e1e83e50...` Resolve, `b4789563...`
@@ -188,7 +188,7 @@ tier `drawSnow` draws) and the foes' ground pass lies its marks over it.
   down. The window, the ring and the blanket were sampled, committed and
   uploaded round a traveller crossing the land at the journey's x60, for a
   picture nobody saw. Held to the frame in play's every clock by
-  `test/fb1009_travelperf.test.js`.
+  `test/scenes/fb1009_travelperf.test.js`.
 - **A SAVE PACKS ONCE A CHANGE** (TV-SAVE, the port's own). The track field's
   record (`PersistentTrackField.writeSaveData`) is packed again only when the
   field has changed since the last one (`revision`: a cell made or deepened,
@@ -220,13 +220,13 @@ tier `drawSnow` draws) and the foes' ground pass lies its marks over it.
 
 ## Pins
 
-`test/environs_texturePacks.test.js` (4); `tools/mutants/alikr1.json` (7, all
-dead); `test/doctrine.test.js` holds `public/art/snowfall/` to Port-Doctrine's
-second exception. The dynamic snow: `test/snowfall1_model.test.js` (12) and
-`test/snowfall1_runtime.test.js` (15); `tools/mutants/snowfall1.json` (42, all
+`test/systems/environs_texturePacks.test.js` (4); `tools/mutants/alikr1.json` (7, all
+dead); `test/tooling/doctrine.test.js` holds `public/art/snowfall/` to Port-Doctrine's
+second exception. The dynamic snow: `test/systems/snowfall1_model.test.js` (12) and
+`test/render/snowfall1_runtime.test.js` (15); `tools/mutants/snowfall1.json` (42, all
 dead). The shader's variants compile and draw in Chromium's WebGL2 on both
 lanes (a synthetic hill through the real renderer, the mod's masks and
 albedo: the snow on the ground, the track in it, no GL error). AUDIT ENVIRONS
-(`01-Overview/Audit-Environs.md`): `test/audit_environs.test.js` (21),
+(`01-Overview/Audit-Environs.md`): `test/systems/audit_environs.test.js` (21),
 `tools/mutants/audit_environs.json`. TV-SNOW, TV-SAVE and TV-REFILL (FIELD BUGS
-2026-10-09): `test/fb1009_travelperf.test.js`, `tools/mutants/fb1009_travelperf.json`.
+2026-10-09): `test/scenes/fb1009_travelperf.test.js`, `tools/mutants/fb1009_travelperf.json`.

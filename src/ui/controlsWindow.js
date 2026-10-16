@@ -95,7 +95,7 @@ import { gameSettingsText } from '../systems/textDatabases.js';   // L10N3f: DFU
  *  (systems/inputActions.js DEFAULT_BINDINGS), and online forces the enhanced
  *  lane whole (systems/online/onlineLane.js), so the one player who can use the action
  *  is the one player already looking at the window that offers it.
- *  test/soc5_interact.test.js pins both halves: this table still ends at 40, and
+ *  test/ui/soc5_interact.test.js pins both halves: this table still ends at 40, and
  *  the enhanced pane still lists the action.
  *
  *  AUDIT SOC D3: ...AND SO IT YIELDS HERE. Staging is ALL of ACTIONS (the dicts

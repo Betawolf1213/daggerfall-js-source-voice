@@ -63,7 +63,7 @@ conflict (CLAUDE.md).
 
 ## Pins
 
-`test/auditcards4_client.test.js` 7, `test/auditcards4_pins.test.js` 7, `test/auditcards4_tidy.test.js` 6; added to
-`test/cards6_relay.test.js` (B2, B3, B4, the void's reach), `test/cards6_service.test.js` (A1-A7, E6),
-`test/cards6_client.test.js` (C4), `test/cards5_client.test.js` (D2, D3, the looks), `test/cards3b_hand.test.js` (D5),
-`test/auditcards3_pins.test.js` (D1). `tools/mutants/auditcards4.json`.
+`test/net/card/auditcards4_client.test.js` 7, `test/net/auditcards4_pins.test.js` 7, `test/net/card/auditcards4_tidy.test.js` 6; added to
+`test/net/cards6_relay.test.js` (B2, B3, B4, the void's reach), `test/net/cards6_service.test.js` (A1-A7, E6),
+`test/net/card/cards6_client.test.js` (C4), `test/systems/cards5_client.test.js` (D2, D3, the looks), `test/world/card/cards3b_hand.test.js` (D5),
+`test/world/card/auditcards3_pins.test.js` (D1). `tools/mutants/auditcards4.json`.

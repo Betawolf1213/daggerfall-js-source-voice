@@ -672,7 +672,7 @@ Mac: NPCs "perform activities" - the room's residents no longer stand where they
 ## LW-FIX1 - the review's six (2026-10-05)
 
 An independent read of LW6 to LW8c (a reviewing agent, its findings verified against the code before any fix) found six
-defects; each is fixed and pinned (`test/lwfix1_review.test.js`, `tools/mutants/lwfix1.json`, and LW6's own host pin).
+defects; each is fixed and pinned (`test/systems/livingWorld/lwfix1_review.test.js`, `tools/mutants/lwfix1.json`, and LW6's own host pin).
 
 - **The dungeon the player is in** (`world.js livingDungeonHere`) was read off `dungeonCtx.location()`, a seam the
   dungeon's context does not carry - its summary is the abyss seam's (`dungeonCtx.abyss.location()`, DungeonSummary.
@@ -697,7 +697,7 @@ defects; each is fixed and pinned (`test/lwfix1_review.test.js`, `tools/mutants/
 ## LW-FIX2 - the seams' three (2026-10-05)
 
 A second read (an agent auditing every member the living world's host reads off another module, each finding verified
-before the fix) found three more; each is fixed and pinned (`test/lwfix2_watch.test.js`, `tools/mutants/lwfix2.json`).
+before the fix) found three more; each is fixed and pinned (`test/systems/livingWorld/lwfix2_watch.test.js`, `tools/mutants/lwfix2.json`).
 
 - **The turned watch** (`scenes/livingWorld/livingWatch.js watchStep`). A struck watchman's guard, cut down, was ended through
   `town.slay(...)`, a method no LivingTown has (`slay` is the host's option): a TypeError the moment he fell, in the
@@ -715,7 +715,7 @@ before the fix) found three more; each is fixed and pinned (`test/lwfix2_watch.t
 ## LW-FIX3 - the town's five (2026-10-05)
 
 The deep audit of everything the branch made (seven agents, each finding verified against the code before the fix)
-found five in the town core; each is fixed and pinned (`test/lwfix3_town.test.js`, `tools/mutants/lwfix3.json`).
+found five in the town core; each is fixed and pinned (`test/systems/livingWorld/lwfix3_town.test.js`, `tools/mutants/lwfix3.json`).
 
 - **The walks coming near** (`livingTown.js _tick`, CENSUS_PATHS, WALK_STRAY_M, `walkGap`). The census read a walk
   whose path was not searched yet at its start, and only a row on the street searches its own path - so a walk begun
@@ -741,7 +741,7 @@ found five in the town core; each is fixed and pinned (`test/lwfix3_town.test.js
 
 ## LW-FIX4 - the turns' eleven (2026-10-05)
 
-The deep audit's road and deep findings; each is fixed and pinned (`test/lwfix4_turns.test.js`,
+The deep audit's road and deep findings; each is fixed and pinned (`test/systems/livingWorld/lwfix4_turns.test.js`,
 `tools/mutants/lwfix4.json`).
 
 - **A turn never re-rolls the pure world** (`lives.js placeAt` `diced`; `trouble.js` the shape and the end; the host's
@@ -778,7 +778,7 @@ The deep audit's road and deep findings; each is fixed and pinned (`test/lwfix4_
 
 ## LW-FIX5 - the deep's four (2026-10-05)
 
-The deep audit's deep and deed findings; each is fixed and pinned (`test/lwfix5_deep.test.js`,
+The deep audit's deep and deed findings; each is fixed and pinned (`test/systems/livingWorld/lwfix5_deep.test.js`,
 `tools/mutants/lwfix5.json`).
 
 - **A keepsake carried home** (`keepsake.js keepsakeFor`'s `homeOf`; `livingTown.js _homeOfPlace`). The deep's dead are
@@ -800,7 +800,7 @@ The deep audit's deep and deed findings; each is fixed and pinned (`test/lwfix5_
 
 ## LW-FIX6 - the rooms' seven (2026-10-05)
 
-The deep audit's indoor and host findings; each is fixed and pinned (`test/lwfix6_rooms.test.js`,
+The deep audit's indoor and host findings; each is fixed and pinned (`test/systems/livingWorld/lwfix6_rooms.test.js`,
 `tools/mutants/lwfix6.json`).
 
 - **A player's own room stands nobody** (`worldModes.js` `ctx.ownedRoom`; the host's `building()`). DFU's AddPeople
@@ -836,7 +836,7 @@ The deep audit's indoor and host findings; each is fixed and pinned (`test/lwfix
 
 Mac: "how is performance after we integrate this?" - then "Do it". The living world's own script time a frame,
 measured on V8 with the synthetic towns and map and Hazelnut's road bytes (`tools/livingPerfProbe.mjs`; no GPU, no
-ARENA2 - its numbers are the CPU's, comparable before and after). Pinned by `test/lwperf_cost.test.js` and
+ARENA2 - its numbers are the CPU's, comparable before and after). Pinned by `test/systems/livingWorld/lwperf_cost.test.js` and
 `tools/mutants/lwperf.json`.
 
 | | before | after |
@@ -890,7 +890,7 @@ ARENA2 - its numbers are the CPU's, comparable before and after). Pinned by `tes
 ## LW-STAND - the street's own (2026-10-05)
 
 Mac, from play: "I also noticed sometimes NPC's will get stuck over bodies of water, or be stuck running into walls".
-Three causes in the town, each fixed and pinned (`test/lwstand_street.test.js`, `tools/mutants/lwstand.json`, 15
+Three causes in the town, each fixed and pinned (`test/systems/livingWorld/lwstand_street.test.js`, `tools/mutants/lwstand.json`, 15
 dead); the audit the same day (the last item) re-cut how a stand is found.
 
 - **The street** (`places.js` `streetGeometry`, STAND_REACH_M). The street net's cells - a building's footprint and the
@@ -948,7 +948,7 @@ dead); the audit the same day (the last item) re-cut how a stand is found.
 
 ## LW-DRY - a party stops on dry ground (2026-10-05)
 
-The same report's other half, on the roads ("stuck over bodies of water"). Pinned by `test/lwdry_ground.test.js` and
+The same report's other half, on the roads ("stuck over bodies of water"). Pinned by `test/systems/livingWorld/lwdry_ground.test.js` and
 `tools/mutants/lwdry.json` (24 dead); PIN MOVED: `terrain` (WATER1's compare, its one home). The audit the same day
 (the last item) re-cut the night and the trouble.
 
@@ -1034,7 +1034,7 @@ call for call.
   the lane, for a peer's watchman). `scenes/worldModes.js` - WIRED (a building's watch, called in by a crime indoors).
   `scenes/exterior.js` - FLAGGED: the fixed-city page has no living town, and keeps DFU's watch. `scenes/dungeonContext.js`
   - no watch stands there.
-- **Pinned** by `test/haltone_watch.test.js` (the voice; the real pool driven frame by frame against DFU's cadence; who
+- **Pinned** by `test/scenes/haltone_watch.test.js` (the voice; the real pool driven frame by frame against DFU's cadence; who
   calls; the incident and the wall; the tells; beyond the pool; the hosts) and `tools/mutants/haltone.json`.
 
 
@@ -1083,7 +1083,7 @@ its root; the classic lane's DFU watch is untouched but for the race (DFU's own 
   WIRED for the race alone (its pool's `live()`; the fixed-city page has no living town). `scenes/worldModes.js` - no
   conversion: a building's watch comes through its door, its pool empty (PlayerEntity.cs:653-654).
   `scenes/dungeonContext.js` - no watch stands there.
-- **Pinned** by `test/watchfix_watch.test.js` (the race on the real pool; the one law and whose hand; a load; the
+- **Pinned** by `test/systems/livingWorld/watchfix_watch.test.js` (the race on the real pool; the one law and whose hand; a load; the
   walk-away; the ends; a load's resident; the town's side; online; the hosts) and `tools/mutants/watchfix.json`.
   PIN MOVED: `lwfix2_watch`, `lwfix5_deep`, `lw7_deeds` (the first cut's model, `dead` read as a kill, and its
   wiring), and every relay pin to world172.
@@ -1141,7 +1141,7 @@ stop, so at five in the evening more "guards" walked the street than mid-shift.
   drawing (`world/travellerSprites.js`): `scenes/world.js` stands the street that dresses him; `scenes/worldModes.js`
   the rooms (LW8, through the sprites); `scenes/exterior.js` - the fixed-city page has no living town;
   `scenes/dungeonContext.js` - no watch stands there.
-- **Pinned** by `test/watchday_watch.test.js` (the strength; the duty; round the clock; the night over the turn; the pair;
+- **Pinned** by `test/systems/livingWorld/watchday_watch.test.js` (the strength; the duty; round the clock; the night over the turn; the pair;
   the uniform; the post; a great city) and `tools/mutants/watchday.json`. PIN MOVED: `lw1_livingWorld` (the census's watch, the
   shifts), `lwfix3_town` (the beat to the shift's end), `watchfix_watch` (the census full, a returning resident comes on
   as the player turns; his patrol's mate a witness).
@@ -1212,7 +1212,7 @@ street and the rooms, and ranked what the player saw.
 - **The four hosts.** `scenes/world.js` - WIRED (the street's town; the towns of the road for {place}).
   `scenes/worldModes.js` - WIRED (the rooms, through `livingIndoors.js`). `scenes/exterior.js` - FLAGGED as LW2 has it:
   the fixed-city page keeps DFU's walkers. `scenes/dungeonContext.js` - no town.
-- **Pinned** by `test/lwtalk_town.test.js` (the facing; the meeting; the exchanges; the street; every reader alike; the
+- **Pinned** by `test/systems/livingWorld/lwtalk_town.test.js` (the facing; the meeting; the exchanges; the street; every reader alike; the
   word to the player; the words; the hosts) and `tools/mutants/lwtalk.json`. PIN MOVED: `lw1_livingWorld` (the meeting's
   phase and exchanges), `lw2_livingTown` (the gate's idle record; the churn under a cap waits on a round's turn),
   `lw3_roads` (an armed traveller standing: the class sprite's idle, the outfit's own on the wheel),
@@ -1248,7 +1248,7 @@ WATCH-KNOWS) - classic play keeps DFU's watch.
   `livingWorldOn` - the region's name and the world's calendar a banishment runs on). `scenes/worldModes.js` - WIRED (a
   building's watch strikes through the host's arrest flow). `scenes/exterior.js` - FLAGGED as LW2 has it: the
   fixed-city page keeps DFU's watch (its arrest flow hands no `warnsFirst`). `scenes/dungeonContext.js` - no town.
-- **Pinned** by `test/watchknows_watch.test.js` (the word by the law; the first offence warned; the hosts) and
+- **Pinned** by `test/systems/livingWorld/watchknows_watch.test.js` (the word by the law; the first offence warned; the hosts) and
   `tools/mutants/watchknows.json`.
 
 ## WATCH-PROTECTS - the watch protects the town's people (2026-10-06)
@@ -1290,7 +1290,7 @@ departure (Port-Ledger WATCH-PROTECTS) - classic play keeps DFU's street.
   street's `dangers`, `livingDangers`). `scenes/exterior.js` - FLAGGED as LW2 has it: the fixed-city page keeps DFU's
   street (no quarry, no dangers). `scenes/worldModes.js` - none: indoors the street's people are nobody's quarry
   (`livingQuarry` is the exterior's alone). `scenes/dungeonContext.js` - no town.
-- **Pinned** by `test/watchprotects_watch.test.js` (who hunts; the one blow; the watch comes; the street runs, cornered,
+- **Pinned** by `test/systems/livingWorld/watchprotects_watch.test.js` (who hunts; the one blow; the watch comes; the street runs, cornered,
   chased; the frightened silent; the run's body; struck down; the hosts) and `tools/mutants/watchprotects.json`.
 
 ## LW-WALLS - the city behind its walls (2026-10-06)
@@ -1341,7 +1341,7 @@ location frame, the buildings' summaries - the population block's own text, pinn
   and numbers its people knowing it - no host change. `scenes/exterior.js` - FLAGGED as LW2 has it: the fixed-city page
   keeps DFU's pool. `scenes/worldModes.js` - through the town (LW8): a room's people are the same census's.
   `scenes/dungeonContext.js` - no town.
-- **Pinned** by `test/lwwalls_city.test.js` (the doors' street - smaller or not, a building once, the ties, no doors;
+- **Pinned** by `test/systems/livingWorld/lwwalls_city.test.js` (the doors' street - smaller or not, a building once, the ties, no doors;
   the synthetic walled city, `test/lwTown.mjs walledTown`, its streets and fields, doors, gates and square, its street
   by day and the farmhouse in its fields; the watch at doors onto the street; the host's build replayed word for word;
   and, where ARENA2_PATH names the data, Ripmarket and every one of the game's 410 cities) and
@@ -1356,7 +1356,7 @@ below): at midday and in the evening 12-54% of the bodies in view stood within h
 walked inside each other for seconds on end. DFU's walkers keep off one another by the tiles they
 claim (`mobilePerson.js _setTarget`, CityNavigation's Occupied flag, MobilePersonMotor.cs SetTargetPosition); a
 resident claims none (LW2: its day lays its walk), and nothing else kept them apart. Three causes, each fixed at its
-root (`test/lwspace_street.test.js`, `tools/mutants/lwspace.json`).
+root (`test/systems/livingWorld/lwspace_street.test.js`, `tools/mutants/lwspace.json`).
 
 - **Those alone at a spot** (`meetups.js aloneStands`, SPACE_M, SPACE_STEP_M, SPACE_FAR_M; `livingTown.js _spaceAlone`).
   One alone stood at a place drawn off their id - a bearing and a distance, 1 to 3.5 m out (LW-STAND) - so at a busy
@@ -1410,7 +1410,7 @@ root (`test/lwspace_street.test.js`, `tools/mutants/lwspace.json`).
   street it runs (no host change); `scenes/worldModes.js` - the rooms keep their own places (LW8, `livingIndoors.js`
   INDOOR_APART_M, never on one another); `scenes/exterior.js` - FLAGGED as LW2 has it: the fixed-city page keeps DFU's
   walkers, who claim their tiles; `scenes/dungeonContext.js` - no town.
-- **Pinned** by `test/lwspace_street.test.js` (the alone places' law; the town's day - apart, alike on two readers, kept
+- **Pinned** by `test/systems/livingWorld/lwspace_street.test.js` (the alone places' law; the town's day - apart, alike on two readers, kept
   as others come; the circles laid together, and those alone about them, in the close-built town's lanes; in file and
   its chain; the step aside - round one standing, two coming at each other, two going one way, the trail, the stand and
   the hold; the street through the day; and, where ARENA2_PATH names the data, Ripmarket, Wayrest and Daggerfall at one
@@ -1427,7 +1427,7 @@ place". Measured on the game's own towns (LW-SPACE's probe, `tools/livingCrowdPr
 of a town stood out of doors at 8-28 spots, 30-64 of them about one point - the square's (Bubyrydata: 64 of its 161, at
 eight spots); through the day, the most of a town at one spot was 41 on average over a sample of thirty-four towns, and
 70 at the most - Kirkcester's every homemaker at its one shop's front at twenty past nine. Three causes, each fixed at
-its root (`test/lwspread_town.test.js`, `tools/mutants/lwspread.json`).
+its root (`test/systems/livingWorld/lwspread_town.test.js`, `tools/mutants/lwspread.json`).
 
 - **The square was one point.** Six in ten of a town kept it for their first social spot (84-85% for one of their two),
   and every stall stood there, a mercenary's morning, an adventurer's afternoon, a visitor's and a courtier's talk. The
@@ -1475,11 +1475,11 @@ its root (`test/lwspread_town.test.js`, `tools/mutants/lwspread.json`).
   runs the town it lays (no host change); `scenes/worldModes.js` - the rooms keep their own places (LW8, untouched);
   `scenes/exterior.js` - FLAGGED as LW2 has it: the fixed-city page keeps DFU's walkers; `scenes/dungeonContext.js` - no
   town.
-- **Pinned** by `test/lwspread_town.test.js` (the square's points - and a plaza behind a wall within its reach none of
+- **Pinned** by `test/systems/livingWorld/lwspread_town.test.js` (the square's points - and a plaza behind a wall within its reach none of
   them; the corners - and a plaza across two blocks' border one of them, a lane none; one's own point; the favourites -
   the same whatever order the town's spots stand in; the day - whatever takes one to the square their own point, the
   watch's beat its own, the evening and the market at their own minute; the synthetic towns' crowds; and, where
-  ARENA2_PATH names the data, the sample of thirty-four towns) and `test/lwspace_street.test.js` (the hold: held aside,
+  ARENA2_PATH names the data, the sample of thirty-four towns) and `test/systems/livingWorld/lwspace_street.test.js` (the hold: held aside,
   still aside; a held body trailing its walk's point stands), `tools/mutants/lwspread.json` (26, all dead). PIN MOVED:
   `lw1_livingWorld` (a social favourite a corner or one's own point of the square), `lwperf_cost` (the favourites
   written the slow way, to LW-SPREAD's law; the arrival's window at eight), `lw2_livingTown` (the one waiting to be
@@ -1501,7 +1501,7 @@ plans, the visits a day into a building not one's home nor one's work): a guild 
 sellsword's or an adventurer's hour - one of the two halls nearest their home, whatever its guild (a sorcerer at the
 Fighters Guild, Daggerfall's knightly halls eight a day of them) - and nobody else, 10-12 a day in a city of three
 hundred; an errand went into one of the four shops nearest home, or stood at a market, half and half, whatever the
-trade - a city's banks saw 1-6 a day, its library 0-4. Two causes, each fixed at its root (`test/lwerrands_town.test.js`,
+trade - a city's banks saw 1-6 a day, its library 0-4. Two causes, each fixed at its root (`test/systems/livingWorld/lwerrands_town.test.js`,
 `tools/mutants/lwerrands.json`).
 
 - **Nobody belonged to a guild.** A resident keeps a guild now by their trade or their class (`dayPlan.js guildHallOf`,
@@ -1521,7 +1521,7 @@ trade - a city's banks saw 1-6 a day, its library 0-4. Two causes, each fixed at
   trade needs ERRAND_NEED_SHARE (0.6) of the time - by its weight among the kinds the town keeps, the nearer of its two
   nearest home - else one of the four shops nearest home (`errandShop`; the first cut's every errand). A merchant's two
   afternoon shops and a visitor's are theirs too.
-- **Measured** (before / after; each town's day by its plans, as `test/lwerrands_town.test.js` reads it):
+- **Measured** (before / after; each town's day by its plans, as `test/systems/livingWorld/lwerrands_town.test.js` reads it):
 
   | | into the guild halls | of them a knightly hall's | into the banks | into the shops |
   |---|---|---|---|---|
@@ -1536,7 +1536,7 @@ trade - a city's banks saw 1-6 a day, its library 0-4. Two causes, each fixed at
   it lays (no host change); `scenes/worldModes.js` - the rooms show whoever their plans put inside (LW8, untouched: the
   guild halls, the banks and the shops now see their visitors); `scenes/exterior.js` - FLAGGED as LW2 has it;
   `scenes/dungeonContext.js` - no town.
-- **Pinned** by `test/lwerrands_town.test.js` (the factions; a resident's guild - by trade, by class, by hand, the nearest
+- **Pinned** by `test/systems/livingWorld/lwerrands_town.test.js` (the factions; a resident's guild - by trade, by class, by hand, the nearest
   hall, none without one; the guild's days; the evenings - kept at their hour, never a hall's own members, the
   travellers' own guild; an errand's shop - by need at its weights and its share, the nearer two, the browse; the day's
   errands - into a shop two in three, every shop one `errandShop` can give; and, where ARENA2_PATH names the data,
@@ -1579,7 +1579,7 @@ nearest their home (their own or the next), and they had no breakfast.
   Rest markers) and the bed of the room the player rents there (`rentedBedHere`); `scenes/world.js` - WIRED: it hands
   them to the room's residents (`beds`, `rented`); `scenes/exterior.js` - FLAGGED as LW2 has it (no living town);
   `scenes/dungeonContext.js` - no town.
-- **Pinned** by `test/lwlodge_tavern.test.js` (the lodger's day - breakfast, supper at their own, up before bed, a
+- **Pinned** by `test/systems/livingWorld/lwlodge_tavern.test.js` (the lodger's day - breakfast, supper at their own, up before bed, a
   visitor and an adventurer homed there, never the staff; who lodges where; the rooms dealt and the rented one; by their
   bed in a mock room with a bed in it - off it, a corner's, a closet's, a bed on the floor, a stair; in the tavern - by
   the bed, no table, no stirring, the rented bed, the going up; the hosts) and `tools/mutants/lwlodge.json` (29, all
@@ -1637,14 +1637,14 @@ class's sprite was a fighter's on the road alone (LW3's armed walk, LW0 decision
   draws it as any person (its archive, record and frame); `scenes/worldModes.js` - WIRED through the host (the
   building's billboard pass draws the room's residents, LW8); `scenes/exterior.js` - FLAGGED as LW2 has it (no living
   town); `scenes/dungeonContext.js` - no town.
-- **Pinned** by `test/lwlooks_town.test.js` (8: the town's class; the still pictures' kinds, sexes and seeds; the game's
+- **Pinned** by `test/systems/livingWorld/lwlooks_town.test.js` (8: the town's class; the still pictures' kinds, sexes and seeds; the game's
   own in FLATS.CFG - their sexes, none censored, their heights; the walker as a picture - its frames, armed under it,
   dressed as another; on the street - come on as it, a picture never walking up out of sight, in view never changed,
   looked away from the picture, walking on themselves; the street's classes and the art come late; indoors - the
   court's on the way in, in a circle herself (the room's circles of the frame), in view never changed, in no other
   building, a talk target, the fallen no one; the host) and `tools/mutants/lwlooks.json` (36, all dead); the court read
   after the frame's circles are dealt is checked by hand (read before them, a courtier in a circle stood as the picture
-  a frame). PIN MOVED: `test/lw8_indoors.test.js` (indoors one whose calling is a class's wears it - a priest the
+  a frame). PIN MOVED: `test/systems/livingWorld/lw8_indoors.test.js` (indoors one whose calling is a class's wears it - a priest the
   healer's robes); `tools/mutants/lw3.json` LW3-never-armed and LW3-host-tripless-town and `lw8.json` LW8-unarmed
   re-aimed by content. The 376 records of the lists on the files LW-LOOKS touched (`livingTown.js`, `livingIndoors.js`,
   `residentWalker.js`, `travellerSprites.js`), of `lw3` and `lw8` whole, and naming `lw8_indoors`, re-judged: 374 dead,
@@ -1700,7 +1700,7 @@ A screenshot in Daggerfall - 1 fps, "script 6179.8 ms", the game's own frame 637
   (no host change; its frame's clock is the cap above); `scenes/worldModes.js` - the rooms read the town's people, its
   lodgers and who is inside (`lodgersAt`, `insideAt`) through the same caches, kept the same; `scenes/exterior.js` -
   FLAGGED as LW2 has it: the fixed-city page keeps DFU's walkers; `scenes/dungeonContext.js` - no town.
-- **Pinned** by `test/lwdawn_caches.test.js` (5: the two doors; the great city across the turn - the turn plans the
+- **Pinned** by `test/systems/livingWorld/lwdawn_caches.test.js` (5: the two doors; the great city across the turn - the turn plans the
   day once, the morning walk read off the day before, then no plan and no road read a frame; each cache's other day
   kept and served as it was; a day planned before its roads planned again wherever it is kept; the berth sounded
   once) and `tools/mutants/lwdawn.json` (19, all dead); the probe's row fails before the change. The 206 records of
@@ -1714,7 +1714,7 @@ every one the day had in a room stood within a few strides of its door, and a ro
 biggest crowd - the places stood at within CROWD_M, 2.5 m, of one another, chained - 12 of the 12 on the way in, 9.0-9.7
 on average through ten minutes of the room astir); and the day sat people in the tavern for hours they never meant to
 spend there (the town of sixteen blocks: 23 inside before noon; twelve stays of four hours and more in five days). Five
-causes, each fixed at its root, and the one risk the first fix made, closed (`test/lwrooms_tavern.test.js`,
+causes, each fixed at its root, and the one risk the first fix made, closed (`test/systems/livingWorld/lwrooms_tavern.test.js`,
 `tools/mutants/lwrooms.json`). AUDIT LW-ROOMS (2026-10-08, Mac: "Audit this"; the record is
 `01-Overview/Audit-LW-Rooms.md`) measured it on the game's own rooms and towns and changed these laws - each below.
 
@@ -1814,7 +1814,7 @@ causes, each fixed at its root, and the one risk the first fix made, closed (`te
   hands it the doors' measure, every one of the building's people, the quest's apart, and stops the talk ray at the
   room's walls; `scenes/exterior.js` - FLAGGED as LW2 has it: the fixed-city page keeps DFU's walkers and stands nobody
   of the living world in a room; `scenes/dungeonContext.js` - no town.
-- **Pinned** by `test/lwrooms_tavern.test.js` (9: a long gap at one place indoors spent at home, a short one waited out
+- **Pinned** by `test/systems/livingWorld/lwrooms_tavern.test.js` (9: a long gap at one place indoors spent at home, a short one waited out
   there, out of doors stood out there between, the small town's tavern sitting no afternoon out; the lunch after the
   stint at eleven from its end, one a day, the great town's tavern before noon, read every minute; the floor walked -
   the eight ways, a long hall to its far wall and every corner, the reach, the cells, the floor under the way in, a
@@ -1825,7 +1825,7 @@ causes, each fixed at its root, and the one risk the first fix made, closed (`te
   none across it in six; the hold - a small room's three, a closet's household, a great hall's twelve, a lodger by
   their bed on none of the floor; a place of their own - the dice's, the farthest, its ties the dice's, a lodger
   counting nowhere; the synthetic hall on the port's collider - on the floor, in no table, clear of the way in, a
-  table's own crowd at the most), `test/auditlwrooms.test.js` (8, AUDIT LW-ROOMS's) and `tools/mutants/lwrooms.json`
+  table's own crowd at the most), `test/systems/livingWorld/auditlwrooms.test.js` (8, AUDIT LW-ROOMS's) and `tools/mutants/lwrooms.json`
   (27, all dead) and `tools/mutants/auditlwrooms.json` (40: 37 dead, 3 equivalent as recorded). PIN MOVED:
   `lw8_indoors` (the room sounded: the lattice's, apart to a centimetre), `lw8b_talk` (the word to the player: they come
   in from out of reach of every place), `lw8c_astir` (where they make for: not drawn to their own table, a place of
@@ -1939,7 +1939,7 @@ PLEA_SCRIPTS, WATCH_CALLS, STALL_CRIES, BEGGAR_CRIES, DRINKING_SONGS).
   a shout, a song a song - `ui/naval/navalHud.js` draws each its own way; the street's lines were all talk);
   `scenes/worldModes.js` - FLAGGED: no incident indoors yet (a room's talk is LW8b's, all talk); `scenes/exterior.js` -
   FLAGGED as LW2 has it (no living town); `scenes/dungeonContext.js` - no town.
-- **Pinned** by `test/lwstir_street.test.js` (11: the gate - the halt's share, length and round, the plan's stay, the
+- **Pinned** by `test/systems/livingWorld/lwstir_street.test.js` (11: the gate - the halt's share, length and round, the plan's stay, the
   post's word to one of a party, none without a post through it, off duty, nor one of the town, the gate's word first in
   its round; the town at its gates - the plans' halt where a post keeps the gate, none where a post would leave within
   it, nor in a town of nine blocks, nor off a ship, every halt's word by its post, the post's stand kept, the two turned
@@ -1997,9 +1997,9 @@ its boot, the offline one after its grass settled (AUDIT PERF-ON4 - `07-Renderin
 - **Left:** a frame that waits still plans every trip near again - shorter now, not gone. Keeping a waiting traveller's
   work beside the pair it waits on would end it, and is its own slice.
 
-Pinned by `test/perfways1.test.js` (3) and `tools/mutants/perfways1.json` (13, all dead - AUDIT PERF-ON4 added the
+Pinned by `test/systems/livingWorld/perfways1.test.js` (3) and `tools/mutants/perfways1.json` (13, all dead - AUDIT PERF-ON4 added the
 calls past the floor held to the floor's direction, network and ground, the time's edge, the cap's exact value, and the
-shipped clock, `performance.now`, which no pin had run); `test/lw3_roads.test.js`'s
+shipped clock, `performance.now`, which no pin had run); `test/systems/livingWorld/lw3_roads.test.js`'s
 budget pin moved onto a clock where a pair takes the frame's whole asking time (`tools/mutants/lw3.json`
 LW3-ways-budget-unspent re-aimed by content). The four hosts: `world.js` holds the book and calls its `frame()` (both
 arms, unchanged); `exterior.js` keeps DFU's pool and has no roads; `worldModes.js` and `dungeonContext.js` reach the
@@ -2056,7 +2056,7 @@ choice, of three put to him: **a tone they like raises both; a tone they dislike
   `scenes/dungeonContext.js` FLAGGED - none holds a talk door of its own (the room's residents are the street's talk,
   LW8).
 
-Pinned by `test/tonetaste.test.js` (4: the law over every group, the real town's regard, the real Legacy host's
+Pinned by `test/systems/livingWorld/tonetaste.test.js` (4: the law over every group, the real town's regard, the real Legacy host's
 courtship, the talk's door); pins moved by intent, each a PIN MOVED note (`legacy5_marriage`, `lw7_deeds`,
 `lwfix2_watch`, `lw8_indoors`); `tools/mutants/tonetaste.json` (11, all dead) and six LW7/LW8 records re-aimed at the
 taste, dead.

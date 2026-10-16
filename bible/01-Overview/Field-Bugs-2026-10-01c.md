@@ -37,7 +37,7 @@ set into the piles - and as first shipped this stood those too, as shards up to 
 ROCK-SUNK (`Field-Bugs-2026-10-02.md`) stands the shrub alone: a site the mod names 'Rocks' or 'Mountains' keeps the
 mod's height (`world/worldOfDaggerfall/wodLocationObjects.js` `isWodShrub`).
 
-`test/wodbush.test.js` (5); `tools/mutants/wodbush.json` 7, 7 dead.
+`test/world/terrain/wodbush.test.js` (5); `tools/mutants/wodbush.json` 7, 7 dead.
 
 ## PARTY-READY: the ready-up stays on screen (2)
 
@@ -60,7 +60,7 @@ moves, and the set-out, a call-off or a lapse says its own line over it; and a m
 the box asking only once it is closed unanswered. No regression in the history the clone holds: a gap in PARTY-UI's
 design (2026-09-26), not a break.
 
-Found on the way: `test/partytravel.test.js` did not parse - two unescaped `'` in its RELAY_VERSION history line,
+Found on the way: `test/systems/party/partytravel.test.js` did not parse - two unescaped `'` in its RELAY_VERSION history line,
 since the merge before this one - so none of its tests ran and every mutant list naming it (`party-travel.json`,
 `auditpartyui.json`, ...) killed nothing. Escaped; the lists that name it run real again (101 dead in the two
 re-aimed).
@@ -69,7 +69,7 @@ Not changed, and asked: if "the ui element" is the PARTY HUD (the portraits, SOC
 screen while the box stands - a member without the tab open is asked by the box, and the whole enhanced HUD hides
 under a pausing window by design.
 
-`test/partytravel.test.js` (+3), `test/soc3_socialpanel.test.js` (+1); `tools/mutants/partyready.json` 14, 14 dead.
+`test/systems/party/partytravel.test.js` (+3), `test/net/soc3_socialpanel.test.js` (+1); `tools/mutants/partyready.json` 14, 14 dead.
 
 ## OW6-HALF: the journey's hold on enemies begins half as far out (3)
 
@@ -80,5 +80,5 @@ lead-in for every threat without moving any band's, raider's, ship's or camp's s
 when they spot the traveller. A rider at x40 is held from 384 m short of a band's sight, not 768; on foot 84 m, not
 168. The reach is still met at walking pace. The third "too early": 5 -> 2 (OW6-LATE), 2 -> 1.2 (OW6-NEAR), 1.2 -> 0.6.
 
-`test/ow6_slowdown.test.js` re-derived (each threat that would no longer hold at x40 stands nearer, so its pin still
+`test/systems/travel/ow6_slowdown.test.js` re-derived (each threat that would no longer hold at x40 stands nearer, so its pin still
 means what it did); `tools/mutants/ow6s.json` 27, 27 dead.

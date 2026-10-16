@@ -15,7 +15,7 @@ read it, each over that frozen tree, each reproducing what it reported with the 
 - **D** the record, the doctrine and the merge - every claim of the arc's pages against the code, every cite.
 
 Every finding below was checked against the code before it was fixed, pinned by a test that FAILED on the unfixed tree
-for the finding's reason (`test/audit_guide.test.js`, 38 tests; the style sheet's and the hosts' wiring, which a new
+for the finding's reason (`test/ui/quest/audit_guide.test.js`, 38 tests; the style sheet's and the hosts' wiring, which a new
 suite cannot run against the old files, were proven red by their mutants instead) and mutation-proven:
 `tools/mutants/audit_guide.json` 73, all dead. Each fix carries an `AUDIT GUIDE <ID>` comment. An ID two lenses found
 is written once, with both names.
@@ -114,7 +114,7 @@ With every lens's fix in, the kill run over the audit's records and every GUIDE 
 - **H11** (low, fixed): GUIDE3's own flag in the bridge - the herald's first look after it came on is a baseline -
   said nothing once L8 made the lens reset after a gap; where the tracker had kept the lens looking, it dropped the
   real news of the tick the herald came on in. It is gone: the baseline is the lens's
-  (`test/audit_guide.test.js` H11). GUIDE3's two records on it are re-aimed at the lens's gap rule, where the law
+  (`test/ui/quest/audit_guide.test.js` H11). GUIDE3's two records on it are re-aimed at the lens's gap rule, where the law
   now stands, and GUIDE4's and L4's that named it follow.
 - `GUIDE2-note-underfoot` was made equivalent by W2 - a place the map lacks is never here, so the off-map note's
   `!here` said nothing. The clause is gone and the record retired (guide2: 24).
@@ -134,7 +134,7 @@ Then, with `tv5`'s 85 beside them: 348 records, 347 dead, the one equivalent sta
 
 The whole suite then found two pins the audit's own fixes had moved, both red for the right reason:
 
-- `test/tv5_far_places.test.js` holds TravelView's FURNITURE list exactly, and T1 added the card to it: the pin names
+- `test/ui/travel/tv5_far_places.test.js` holds TravelView's FURNITURE list exactly, and T1 added the card to it: the pin names
   `.qtrack` now. The tv5 records' verdicts until then ran over that red pin and said nothing; they are judged again
   below.
 - GUIDE2's four-hosts pin forbids a bare `return;` in the street's map door, and D6's first wording of its comment
@@ -148,7 +148,7 @@ so; below). Four tv5 records survive on main (below).
 ## Found at the integration
 
 Main was red on one test of its own: TO-ROADS x OW-PATH (`9921c7901`) gave `travelViewWalkTo` a `roads` option and
-`test/tv6_dungeons.test.js`'s AUDIT OW4 D1/D6 lift still read the old signature. Fixed in the merge.
+`test/systems/travel/tv6_dungeons.test.js`'s AUDIT OW4 D1/D6 lift still read the old signature. Fixed in the merge.
 
 ## Not faults
 
@@ -181,10 +181,10 @@ Main was red on one test of its own: TO-ROADS x OW-PATH (`9921c7901`) gave `trav
   dungeonContext.js lines that have moved; Port-Status's keyboard row cites an enhancedMenu.js line the FLAGGED
   comment has left; Quest-Arc's note on the gender arm cites questBridge.js for code that lives in `staticNpc.js`
   now. The classic logbook's own wrong cite was D4's and is fixed.
-- `test/da9_arena2detect.test.js` DA9-Windows fails whenever the TMPDIR path contains "daggerfall"
+- `test/tooling/da9_arena2detect.test.js` DA9-Windows fails whenever the TMPDIR path contains "daggerfall"
   (`app/lib/arena2Detect.cjs`).
 - Four tv5 records - `EDGE-FURNITURE-stale-on-show`, `AUDIT-DEEP2-E6-bands-unshared`, `-E7-corner-piece-ignored`
-  and `-E8-foot-ends-overlap` - survive on main: the Overworld Block (`4150578f3`) left `test/tv5_far_places.test.js`
+  and `-E8-foot-ends-overlap` - survive on main: the Overworld Block (`4150578f3`) left `test/ui/travel/tv5_far_places.test.js`
   unable to fail them. At its parent all four die; at it, and at main today (#446), all four stand. The travel
   view's readout is not this arc's, and its pins are left to its own next pass.
 - A press on a raid's blades falls to the map-coordinates arm as a quest's diamond did (K1).

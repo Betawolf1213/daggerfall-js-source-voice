@@ -49,7 +49,7 @@ consumer, and each was checked for a port consumer.
 
 Each read now sits at DFU's own site with DFU's getter range; the four
 keys are LIVE at the module that reads them; a shape guard pins that a
-consumer naming a Settings key reads it. `test/audit28_settings.test.js`,
+consumer naming a Settings key reads it. `test/systems/audit28_settings.test.js`,
 6 pins; 5 mutants, 5 killed.
 
 ### The rest of the 35, classified

@@ -200,7 +200,7 @@ Dynamic Skies), and a shift-0 LUT is a 64 MiB 3D texture.
 
 Five lenses - fidelity to DFU, WebGL2 correctness, host integration,
 the pins and the docs, cost and robustness - and every confirmed
-finding fixed and pinned (`test/auditretro1.test.js`) or recorded above.
+finding fixed and pinned (`test/render/auditretro1.test.js`) or recorded above.
 
 - **HIGH, C1.** Shift-F11 under any open window quick-loaded with no
   prompt: the two arms that let QuickLoad through a window read F11's
@@ -233,7 +233,7 @@ Main merged in first (DISC22, OVH1-OVH4, FGH2H, QUEST-UID1), then five
 fresh lenses - the first pass's own fixes (F), integration with main and
 play in every host (G), fidelity (H), the pins and the docs (I), cost and
 robustness (J). Nothing HIGH; every confirmed finding fixed and pinned
-(`test/auditretro2.test.js`, the first pass's file where its own pin was
+(`test/ui/auditretro2.test.js`, the first pass's file where its own pin was
 the wrong one) or recorded above.
 
 - **MED (the pins).** A committed mutant survived: the first pass's D5
@@ -279,7 +279,7 @@ the wrong one) or recorded above.
 
 ## Testing
 
-`test/retro1.test.js` (20 pins): the settings and their clamps, the
+`test/render/retro1.test.js` (20 pins): the settings and their clamps, the
 targets, the pillarbox to the cast, the frame's config and the toggle;
 the palette, the tree's tie laws, the LUT against the tree texel for
 texel (whole cubes at shifts 3 and 4, five whole slices at the shipped
@@ -292,7 +292,7 @@ the words; Shift-F11; the muzzle and the bolts.
 `tools/mutants/retro1.json`: 54 mutants, all dead (thirteen re-aimed by
 content at the audit, two more at its second pass).
 
-`test/auditretro1.test.js` (30 pins), on a STATEFUL fake GL with
+`test/render/auditretro1.test.js` (30 pins), on a STATEFUL fake GL with
 WebGL2's own constants (units, attachments, each texture's parameters,
 the feedback-loop and sampler-type rules): one pin a finding, above,
 plus the LUT's and the palette's SHA-256 (D1), the pass's GL state
@@ -302,7 +302,7 @@ pass (D3), every late-upload cap (D4) and the lane's retro slot (D5).
 the second pass; B6's fix spans two sites, so its revert was checked by
 hand against the pre-audit renderer). The fake GL is `test/retroGl.mjs`.
 
-`test/auditretro2.test.js` (16 pins), the second pass's: a pack's frame
+`test/ui/auditretro2.test.js` (16 pins), the second pass's: a pack's frame
 flagged (F2), the lane's resolve under a scissor (F3), the LUT's jobs,
 failures, block cap and streamed slabs (F4-F7, J3-J6, I4 with shift 0's
 SHA-256), what the present hands the shader (I5), a stale modifier

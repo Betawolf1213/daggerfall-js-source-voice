@@ -25,7 +25,7 @@ whose box would come within TAG_CLEAR of one laid is not drawn that frame, and o
 come back (a bobbing view never flickers it). A box is read off its words with the 11px face's advances, measured on
 the game's own page in Chromium (an uppercase name 7.5 px a letter at its 0.08em, a line 7.3 at 0.06em) and rounded up
 - never off the page in a frame; 120 random harbours at HUD scales 1, 1.5 and 2, drawn there, put no drawn tag's real
-box over another's. `03-World/Naval-Combat.md` SHIP-CLUTTER. `test/shipclutter.test.js`; the
+box over another's. `03-World/Naval-Combat.md` SHIP-CLUTTER. `test/ui/naval/shipclutter.test.js`; the
 three suites that drew several tags at one point (`shipstance`, `shipfade`, `navaudit_presentation`) now draw them apart.
 
 ## TO-LIVE (2)
@@ -41,7 +41,7 @@ is on the tile beside Cautiously: TO-FIELD2 turned it on and FT14 took the pane 
 stopping at inns, Recklessly's too, was always a journey. The rule itself (ui/travel/travelPopUp.js isPlayerControlledTravel,
 TravelOptionsMod's IsPlayerControlledTravel) is unchanged: Recklessly camping out is the mod's journey whatever the
 dials say (its readme, :11). The mod's own switch stays the load's (AUDIT PRE-MERGE 0928 U7), and the tile's effect
-line is the switch's (FT9), unchanged. `test/to_live.test.js`.
+line is the switch's (FT9), unchanged. `test/systems/to_live.test.js`.
 
 ## KEY-BOOT (3)
 
@@ -52,7 +52,7 @@ button's synthetic key) threw "ReferenceError: Cannot access '..' before initial
 crash banner (`main.js crashOverlay`: no dismiss), which stood over the session that otherwise ran on. The ladder's
 arms now wait on `_worldKeysLive`, set as the boot's last line hands the first frame its turn; before the latch a key
 fills the held ring and the browser's own keys are still swallowed, and a window's keys (townTalk, above the ladder)
-are its as ever. BOOT-HIDE's walk turned on the keys: `test/keyboot.test.js` walks the ladder's statements before the
+are its as ever. BOOT-HIDE's walk turned on the keys: `test/scenes/keyboot.test.js` walks the ladder's statements before the
 latch through every function of the boot they reach and finds no binding declared past an await (the death screen's
 own flag aside, read only under a death screen); with the latch taken out it names `socialMenuCanOpen`.
 
@@ -64,7 +64,7 @@ own body tone at 0.35 - darker than any band of the fill, lost reading as lost (
 (1.2 s) in all at the most before it drains, however the losses keep coming - a flurry inside it still reads as one run
 of damage (the VB2 law), but fatigue through a fight no longer pins it at the fight's first level. The law is the foe
 bar's, the gate boss's and the naval card's too (they share `stepGhost`). The classic HUD's trails are DFU's own dark
-colours and unchanged. `test/ghostcap.test.js`.
+colours and unchanged. `test/ui/ghostcap.test.js`.
 
 ## SWIM-EYE (5)
 
@@ -84,7 +84,7 @@ moats, puddles) is unchanged - it is where the report met it, and with the eye w
 **Said, not fixed.** At a field of view past about 105 the near plane can still graze flat ground at the bounce's foot
 (DFU's own lens, the port's 0.2 near plane). Deep Waters' carve and the terrain's clip are read from different masks
 (the carve from heights, the clip from water tiles): a carved cell under a non-water tile is drawn as ground and walked
-through to the seafloor - a separate path, not reproduced here. `test/swimeye.test.js`; `test/a6_motor_residue.test.js`
+through to the seafloor - a separate path, not reproduced here. `test/player/swimeye.test.js`; `test/player/a6_motor_residue.test.js`
 holds the two values.
 
 ## SPRITE-GRAD (6)
@@ -104,8 +104,8 @@ compiles, links and draws both lanes clean.
 is the ambient occlusion's silhouette normal (`render/airPass.js` AO_FS - its derivatives taken against far-plane
 positions since AUDIT FLICKER F3, spread by the depth-aware blur): `?air=off` tells the two apart, `?lighting=classic`
 rules the lane out. The Video pane's World Texture Filter (`Video/MainFilterMode`) has no consumer in the renderer - it
-changes nothing at all, which is why the report's filter change did nothing either way. `test/spritegrad.test.js`;
-`test/combatVisuals.test.js` ECV1's pin follows the mask.
+changes nothing at all, which is why the report's filter change did nothing either way. `test/render/spritegrad.test.js`;
+`test/systems/combatVisuals.test.js` ECV1's pin follows the mask.
 
 Mutation list: `tools/mutants/fb1002c.json` - 28 mutants over every fix above, 28 dead.
 
@@ -129,5 +129,5 @@ puts her is taken up at PUPPET_CATCH (1 a second), never faster than PUPPET_CATC
 (0.3 m/s + a tenth). The same relay: drawn at 4.7 m/s at most (p95 4.4), 0.6 m/s a frame at the 99th, never astern,
 error 1.1 m at most (it was 2.1); at a steady 80 ms, a third of the old error. A ship lying still, struck, going down or
 orphaned is still eased onto her word; a boarding's haul (the stander's own ship moved 20 m at once) still snaps as it did.
-`test/puppetglide.test.js`; `tools/mutants/fb1002d.json`.
+`test/scenes/naval/puppetglide.test.js`; `tools/mutants/fb1002d.json`.
 

@@ -5,7 +5,7 @@
     "old": "  card.style.maxHeight = `${Math.round(room)}px`;\n",
     "new": "",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "    card.classList.add(cls);\n    took.push(cls);\n",
     "new": "    took.push(cls);\n",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "    if (!over()) break;\n",
     "new": "",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "  const over = () => (body ? body.scrollHeight > body.clientHeight + 1 : card.scrollHeight > card.clientHeight + 1);",
     "new": "  const over = () => card.scrollHeight > card.clientHeight + 1;",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "        fitCard(card, (sheet ? Math.round(window.innerHeight * CARD_SHEET_SHARE) : bandFoot - bandTop) - chrome);\n        if (sheet) return;\n        const tw = tip.offsetWidth; const th = tip.offsetHeight;\n",
     "new": "        if (sheet) return;\n        const tw = tip.offsetWidth; const th = tip.offsetHeight;\n        fitCard(card, (sheet ? Math.round(window.innerHeight * CARD_SHEET_SHARE) : bandFoot - bandTop) - chrome);\n",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "bandFoot = Math.min(w.bottom, window.innerHeight) - 10;",
     "new": "bandFoot = w.bottom - 10;",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "        const box = tip.offsetParent ?? frame;\n",
     "new": "        const box = frame;\n",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "        if (sheet) return;\n",
     "new": "",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "  const { c, line, big } = infoCard(picked, side, render, { body: true });",
     "new": "  const { c, line, big } = infoCard(picked, side, render, { body: false });",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -86,8 +86,8 @@
     "old": "itemPowerLines(picked, deps, { set: false, lore: false, technique: false })",
     "new": "itemPowerLines(picked, deps, { set: false, lore: true, technique: false })",
     "tests": [
-      "test/cardfit.test.js",
-      "test/lr1_lootrarity.test.js"
+      "test/ui/enhanced/cardfit.test.js",
+      "test/systems/lr1_lootrarity.test.js"
     ]
   },
   {
@@ -96,7 +96,7 @@
     "old": "  const words = !lore ? null : item.legendary",
     "new": "  const words = item.legendary",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -105,7 +105,7 @@
     "old": "    if (tier.length) boxes.splice(1, 0, tier.map((text) => ({ text, center: true }))); }",
     "new": "    void tier; }",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -114,7 +114,7 @@
     "old": "    const tier = rarityLines(item, { sigil: false, set: false, technique: false }).filter((t) => t && !said.has(t));",
     "new": "    const tier = rarityLines(item, { sigil: false, set: false, technique: false }).filter((t) => t);",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -123,8 +123,8 @@
     "old": "  const box = el('section', full ? 'setbox' : 'setbox compact');",
     "new": "  full = true;\n  const box = el('section', full ? 'setbox' : 'setbox compact');",
     "tests": [
-      "test/cardfit.test.js",
-      "test/set5_ui.test.js"
+      "test/ui/enhanced/cardfit.test.js",
+      "test/systems/set5_ui.test.js"
     ]
   },
   {
@@ -133,8 +133,8 @@
     "old": "el('span', 'set-tier-text', full ? t.text : t.brief)",
     "new": "el('span', 'set-tier-text', t.text)",
     "tests": [
-      "test/cardfit.test.js",
-      "test/set5_ui.test.js"
+      "test/ui/enhanced/cardfit.test.js",
+      "test/systems/set5_ui.test.js"
     ]
   },
   {
@@ -143,7 +143,7 @@
     "old": "    if (!full && t.recover != null) {",
     "new": "    if (false) {",
     "tests": [
-      "test/set5_ui.test.js"
+      "test/systems/set5_ui.test.js"
     ]
   },
   {
@@ -152,7 +152,7 @@
     "old": "full || v.stage < 0 ? `${v.count}/${v.of}` : `${v.count}/${v.of} · ${v.stageName}`",
     "new": "`${v.count}/${v.of}`",
     "tests": [
-      "test/set5_ui.test.js"
+      "test/systems/set5_ui.test.js"
     ]
   },
   {
@@ -161,7 +161,7 @@
     "old": "    const whole = full ? '' : t.text;\n",
     "new": "    const whole = '';\n",
     "tests": [
-      "test/set5_ui.test.js"
+      "test/systems/set5_ui.test.js"
     ]
   },
   {
@@ -170,9 +170,9 @@
     "old": "  if (!full) return compactSigil(box, head, v, setPiece);\n",
     "new": "",
     "tests": [
-      "test/cardfit.test.js",
-      "test/sigilui1.test.js",
-      "test/set5_ui.test.js"
+      "test/ui/enhanced/cardfit.test.js",
+      "test/ui/enhanced/sigilui1.test.js",
+      "test/systems/set5_ui.test.js"
     ]
   },
   {
@@ -181,7 +181,7 @@
     "old": "    const next = i === v.rank + 1;",
     "new": "    const next = i === v.stage + 1;",
     "tests": [
-      "test/sigilui1.test.js"
+      "test/ui/enhanced/sigilui1.test.js"
     ]
   },
   {
@@ -190,8 +190,8 @@
     "old": "v.to == null ? 'Fully grown' : `${v.xp.toLocaleString('en-US')}/${v.to.toLocaleString('en-US')}`",
     "new": "sigilProgressText(v)",
     "tests": [
-      "test/sigilui1.test.js",
-      "test/cardfit.test.js"
+      "test/ui/enhanced/sigilui1.test.js",
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -200,7 +200,7 @@
     "old": "  if (v.held) box.append(el('p', 'sigil-note', `Renown holds it:",
     "new": "  if (false) box.append(el('p', 'sigil-note', `Renown holds it:",
     "tests": [
-      "test/sigilui1.test.js"
+      "test/ui/enhanced/sigilui1.test.js"
     ]
   },
   {
@@ -209,7 +209,7 @@
     "old": "(v) => `Cheat death, then half damage ${v.halved}s`)",
     "new": "(v) => `Cheat death, then all damage is halved for ${v.halved}s`)",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -218,7 +218,7 @@
     "old": "(v) => `A kill: a ${v.ward}-point ward`)",
     "new": "(v) => `A kill: a ${v.ward}-point ward, every ${v.recover}s`)",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -227,8 +227,8 @@
     "old": "        recover: Number.isFinite(values.recover) ? values.recover : null };",
     "new": "        recover: null };",
     "tests": [
-      "test/cardfit.test.js",
-      "test/set5_ui.test.js"
+      "test/ui/enhanced/cardfit.test.js",
+      "test/systems/set5_ui.test.js"
     ]
   },
   {
@@ -237,8 +237,8 @@
     "old": "`${t.at} pieces - ${t.name}: ${t.brief}${t.recover != null",
     "new": "`${t.at} pieces - ${t.name}: ${t.text}${t.recover != null",
     "tests": [
-      "test/cardfit.test.js",
-      "test/set5_ui.test.js"
+      "test/ui/enhanced/cardfit.test.js",
+      "test/systems/set5_ui.test.js"
     ]
   },
   {
@@ -247,7 +247,7 @@
     "old": ".pack-shell .packtip.packdetail .card > .acts { flex: 0 0 auto; margin-top: 8px; padding-top: 10px;",
     "new": ".pack-shell .packtip.packdetail .card > .acts { margin-top: 8px; padding-top: 10px;",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -256,8 +256,8 @@
     "old": "  max-height: none; bottom: auto; right: auto; }",
     "new": "  }",
     "tests": [
-      "test/cardfit.test.js",
-      "test/enhancedInventory.test.js"
+      "test/ui/enhanced/cardfit.test.js",
+      "test/ui/enhanced/enhancedInventory.test.js"
     ]
   },
   {
@@ -266,7 +266,7 @@
     "old": "left: 0 !important; right: 0; top: auto !important; bottom: 0; max-height: none; }",
     "new": "left: 0 !important; right: 0; top: auto !important; }",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -275,7 +275,7 @@
     "old": "@media (min-width: 641px) { .pack-shell .packtip.packdetail .sheet-close { display: none; } }\n",
     "new": "",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -284,7 +284,7 @@
     "old": ".stats > .pair { display: contents; }",
     "new": "",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -293,7 +293,7 @@
     "old": ".packdetail ul.rarity li.lore { color: var(--dim); font-style: italic; }",
     "new": ".packdetail ul.rarity li:last-child:not(:first-child):not(:nth-child(2)) { color: var(--dim); font-style: italic; }",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -302,7 +302,7 @@
     "old": ".inv-tip dl.stats > .pair { display: contents; }   /* CARD-FIT: a pair's group steps out of the hover card's grid */\n",
     "new": "",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -311,7 +311,7 @@
     "old": "  const lines = itemPowerLines(item, d, { set: false, lore: false });\n  const sigil = setSigilLines(item)[0];",
     "new": "  const lines = itemPowerLines(item, d);\n  const sigil = setSigilLines(item)[0];",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -320,7 +320,7 @@
     "old": "  if (sigil) lines.push(sigil);\n",
     "new": "",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -329,7 +329,7 @@
     "old": "  if (set) lines.push(worn ? (setLines(item)[0] ?? set.name) : `${set.name} set`);",
     "new": "  if (set) lines.push(setLines(item)[0] ?? set.name);",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -338,7 +338,7 @@
     "old": "    ...itemBriefLines(item, d)].filter(Boolean);",
     "new": "    ...itemPowerLines(item, d)].filter(Boolean);",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -347,7 +347,7 @@
     "old": ".ptrade-shell .trade-detail-info { max-height: min(30dvh, 180px); overflow-y: auto; overscroll-behavior: contain; }\n",
     "new": "",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -356,7 +356,7 @@
     "old": "@media (max-width: 640px) { .ptrade-shell .trade-detail { flex-wrap: wrap; }",
     "new": "@media (max-width: 640px) { .ptrade-shell .trade-detail { }",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -365,7 +365,7 @@
     "old": "  if (overlayAction(e) === 'back' && picked) { e.preventDefault(); e.stopPropagation(); if (!e.repeat) { picked = null; render(); } return; }\n",
     "new": "",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -374,7 +374,7 @@
     "old": "background:transparent;overflow:hidden;overflow:clip';",
     "new": "background:transparent;overflow:hidden';",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -383,7 +383,7 @@
     "old": "  const away = (e) => { if (e.target === mine || !mine.contains(e.target)) { e.stopPropagation(); closeInfo(); } };",
     "new": "  const away = (e) => { if (!mine.contains(e.target)) { e.stopPropagation(); closeInfo(); } };",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -392,7 +392,7 @@
     "old": ".inv-info > .card { width: min(380px, 92vw); max-height: 86vh; overflow: hidden;",
     "new": ".inv-info > .card { width: min(380px, 92vw); max-height: 86vh; overflow: auto;",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -401,7 +401,7 @@
     "old": "  const body = el('div', 'inv-info-body');\n  card.append(body);\n",
     "new": "  const body = card;\n",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -410,7 +410,7 @@
     "old": "  if (item === picked) return;   // CARD-FIT U14",
     "new": "  // CARD-FIT U14",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -419,7 +419,7 @@
     "old": "        if (!tip.isConnected) return;\n        const w = frame.getBoundingClientRect();",
     "new": "        if (!on || !tip.isConnected) return;\n        const w = frame.getBoundingClientRect();",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -428,7 +428,7 @@
     "old": "  max-height: 136px; overflow-y: auto; overscroll-behavior: contain; }",
     "new": "  overscroll-behavior: contain; }",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -437,7 +437,7 @@
     "old": ", .card[data-rarity] > .card-body > ul.rarity > li:first-child::before { content: var(--rar-pips);",
     "new": " { content: var(--rar-pips);",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   },
   {
@@ -446,7 +446,7 @@
     "old": ".card[data-rarity] > ul.rarity > li:first-child, .card[data-rarity] > .card-body > ul.rarity > li:first-child { color: var(--rar);",
     "new": ".card[data-rarity] > ul.rarity > li:first-child { color: var(--rar);",
     "tests": [
-      "test/cardfit.test.js"
+      "test/ui/enhanced/cardfit.test.js"
     ]
   }
 ]

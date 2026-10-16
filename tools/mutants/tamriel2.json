@@ -5,7 +5,7 @@
     "old": "if (!provinceKeyAt(px, py)) return 0;",
     "new": "if (!provinceKeyAt(px, py)) return SHORE_BYTE;",
     "tests": [
-      "test/tamriel2.test.js"
+      "test/world/tamriel2.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "const inland = Math.min(1, coastDistanceAt(px, py) / PLAIN_REACH);",
     "new": "const inland = 0;",
     "tests": [
-      "test/tamriel2.test.js"
+      "test/world/tamriel2.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "return Math.max(SHORE_BYTE, Math.min(255, Math.round(h)));",
     "new": "return Math.max(0, Math.min(255, Math.round(h)));",
     "tests": [
-      "test/tamriel2.test.js"
+      "test/world/tamriel2.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "return Math.max(0, -x, x - (BAY_W - 1), -y, y - (BAY_H - 1));",
     "new": "return Math.max(0, -x, x - (BAY_W - 1), -y);",
     "tests": [
-      "test/tamriel2.test.js"
+      "test/world/tamriel2.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "const cacheKey = (x, y) => (x + 8192) * 32768 + (y + 8192);",
     "new": "const cacheKey = (x, y) => (x + 8192) * 32768 + (y + 8193);",
     "tests": [
-      "test/tamriel2.test.js"
+      "test/world/tamriel2.test.js"
     ],
     "equivalent": true,
     "why": "equivalent: the store and the read use the one key function, and any injective key answers every pixel the same - a shifted key is still one key a pixel"
@@ -52,7 +52,7 @@
     "old": "return key ? (provinceByKey(key)?.climate ?? CLIMATES.Woodlands) : CLIMATES.Ocean;",
     "new": "return key ? CLIMATES.Woodlands : CLIMATES.Ocean;",
     "tests": [
-      "test/tamriel2.test.js"
+      "test/world/tamriel2.test.js"
     ]
   },
   {
@@ -61,7 +61,7 @@
     "old": "return key ? (provinceByKey(key)?.climate ?? CLIMATES.Woodlands) : CLIMATES.Ocean;",
     "new": "return key ? (provinceByKey(key)?.climate ?? CLIMATES.Woodlands) : CLIMATES.Woodlands;",
     "tests": [
-      "test/tamriel2.test.js"
+      "test/world/tamriel2.test.js"
     ]
   },
   {
@@ -70,7 +70,7 @@
     "old": "export const SEAM_PX = 2;",
     "new": "export const SEAM_PX = 1;",
     "tests": [
-      "test/tamriel2.test.js"
+      "test/world/tamriel2.test.js"
     ]
   },
   {
@@ -79,7 +79,7 @@
     "old": "    if (d <= SEAM_PX) return woods.getHeightMapValue(x, y);\n    const edge",
     "new": "    const edge",
     "tests": [
-      "test/tamriel2.test.js"
+      "test/world/tamriel2.test.js"
     ]
   },
   {
@@ -88,7 +88,7 @@
     "old": "const t = Math.min(1, (d - SEAM_PX) / BLEND_PX);",
     "new": "const t = Math.min(0.5, (d - SEAM_PX) / BLEND_PX);",
     "tests": [
-      "test/tamriel2.test.js"
+      "test/world/tamriel2.test.js"
     ]
   },
   {
@@ -97,7 +97,7 @@
     "old": "return bayEdgeDistance(x, y) <= SEAM_PX ? woods.getLargeMapData(x, y) : tamrielLargeMap(x, y);",
     "new": "return woods.getLargeMapData(x, y);",
     "tests": [
-      "test/tamriel2.test.js"
+      "test/world/tamriel2.test.js"
     ]
   },
   {
@@ -106,7 +106,7 @@
     "old": "return bayEdgeDistance(x, y) <= SEAM_PX ? woods.getLargeMapData(x, y) : tamrielLargeMap(x, y);",
     "new": "return bayEdgeDistance(x, y) < SEAM_PX ? woods.getLargeMapData(x, y) : tamrielLargeMap(x, y);",
     "tests": [
-      "test/tamriel2.test.js"
+      "test/world/tamriel2.test.js"
     ]
   },
   {
@@ -115,7 +115,7 @@
     "old": "const ground = Object.create(woods);",
     "new": "const ground = { ...woods };",
     "tests": [
-      "test/tamriel2.test.js"
+      "test/world/tamriel2.test.js"
     ]
   },
   {
@@ -124,7 +124,7 @@
     "old": "return (x, y) => (inBay(x, y) ? bayClimateIndex(x, y) : tamrielClimateAt(x, y));",
     "new": "return (x, y) => tamrielClimateAt(x, y);",
     "tests": [
-      "test/tamriel2.test.js"
+      "test/world/tamriel2.test.js"
     ]
   },
   {
@@ -133,7 +133,7 @@
     "old": "if (!!f && px >= f.x0 && px < f.x0 + f.w && py >= f.y0 && py < f.y0 + f.h) return true;",
     "new": "if (false) return true;",
     "tests": [
-      "test/tamriel2.test.js"
+      "test/world/tamriel2.test.js"
     ]
   },
   {
@@ -142,7 +142,7 @@
     "old": "if (!!f && px >= f.x0 && px < f.x0 + f.w && py >= f.y0 && py < f.y0 + f.h) return true;",
     "new": "if (!!f && px >= f.x0 && py >= f.y0 && py < f.y0 + f.h) return true;",
     "tests": [
-      "test/tamriel2.test.js"
+      "test/world/tamriel2.test.js"
     ]
   },
   {
@@ -151,7 +151,7 @@
     "old": "        if (!StreamingWorldState.streams(px, py)) continue;   // TAMRIEL2: the frame, where the host set one",
     "new": "        if (!StreamingWorldState.onMap(px, py)) continue;",
     "tests": [
-      "test/tamriel2.test.js"
+      "test/world/tamriel2.test.js"
     ]
   },
   {
@@ -160,7 +160,7 @@
     "old": "    ? (x, y) => (x >= 0 && y >= 0 && x < mapWidth && y < mapHeight ? heightBytes[y * mapWidth + x] : byteAtPast(x, y))",
     "new": "    ? (x, y) => heightBytes[clampY(y) * mapWidth + clampX(x)]",
     "tests": [
-      "test/tamriel2.test.js"
+      "test/world/tamriel2.test.js"
     ]
   },
   {
@@ -169,7 +169,7 @@
     "old": "    ? (x, y) => (x >= 0 && y >= 0 && x < mapWidth && y < mapHeight ? heightBytes[y * mapWidth + x] : byteAtPast(x, y))",
     "new": "    ? (x, y) => byteAtPast(x, y)",
     "tests": [
-      "test/tamriel2.test.js"
+      "test/world/tamriel2.test.js"
     ]
   },
   {
@@ -178,7 +178,7 @@
     "old": "this._tamriel = !!woods?.isTamrielGround;",
     "new": "this._tamriel = false;",
     "tests": [
-      "test/tamriel2.test.js"
+      "test/world/tamriel2.test.js"
     ]
   },
   {
@@ -187,7 +187,7 @@
     "old": "return !!getPref('tamrielLand') && (isOnlinePage(search) || isEnhanced(search));",
     "new": "return !!getPref('tamrielLand');",
     "tests": [
-      "test/tamriel2.test.js"
+      "test/world/tamriel2.test.js"
     ]
   },
   {
@@ -196,7 +196,7 @@
     "old": "if (pageParam('tamrielland', search) === 'off') return false;",
     "new": "if (false) return false;",
     "tests": [
-      "test/tamriel2.test.js"
+      "test/world/tamriel2.test.js"
     ]
   }
 ]

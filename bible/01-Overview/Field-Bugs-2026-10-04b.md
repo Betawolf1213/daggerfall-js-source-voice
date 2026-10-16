@@ -36,16 +36,16 @@ as it goes, and further than 8 m from the leader it walks at 1.6 times its pace 
 Through the same doorway the companion is at heel the moment the player stops; the pathing motor asks for no route.
 
 Found on the way: the wider walk gate alone lets DFU's detour work a companion round the one wall of
-`test/crewcompanions.test.js`'s divided room (it pinned him at 6.87 m before), so that test's last pin - "the classic
+`test/systems/naval/crewcompanions.test.js`'s divided room (it pinned him at 6.87 m before), so that test's last pin - "the classic
 motor walks straight at the wall" - was no longer true; it is restated as the time to heel (the route about 2.7 s, the
 straight line about 5.5 s). It is still the trail that takes him through the doorway.
 
 The four hosts: the companion layer is `scenes/world.js`'s alone (its two `createCrewAshore`, the crew's and the
 sworn's, whose follow handles carry the trail); the motor's follow runs in the pools of `scenes/worldModes.js` (a
 building's, `exteriorFoes.js`) and `scenes/dungeonContext.js` (classic or the pathing motor) with nothing of theirs
-changed; `scenes/exterior.js` FLAGGED - the dev host stands no companions. Pinned by `test/fb1004b_companions.test.js`
+changed; `scenes/exterior.js` FLAGGED - the dev host stands no companions. Pinned by `test/scenes/fb1004b_companions.test.js`
 (the doorway through the layer's own trail and without it, the line, the pathing motor's trail-first, the trail's law,
-the walk) and `test/crewcompanions.test.js` (re-pinned).
+the walk) and `test/systems/naval/crewcompanions.test.js` (re-pinned).
 
 ## QUIET-COMPANIONS (2)
 

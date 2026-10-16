@@ -22,7 +22,7 @@ ported as `src/systems/handheldTorches.js` (the component) and
 burning foes), with `src/systems/keyCodes.js` for its key names. On by
 default (MO1); the four presentation modules (Sprite, Bob, Inertia,
 Step) ship OFF as the mod ships them. Pins: 19 in
-`test/ht1_handheldtorches.test.js`.
+`test/systems/ht1_handheldtorches.test.js`.
 
 ## The source the port reads
 
@@ -405,7 +405,7 @@ table beside the other two. Inertia and Step stay off, as the widget
 ships them; the player may still turn any of the three either way.
 The mod's own file is untouched.
 
-Pin: `test/ht1_handheldtorches.test.js` HT5 - every motion module
+Pin: `test/systems/ht1_handheldtorches.test.js` HT5 - every motion module
 the two mods share ships with the SAME default, Bob's is on, the mod's
 file still says off, and the bench walks with Bob on and the hand
 moves off its rest; the three HT1 pins that encoded "the other three
@@ -449,7 +449,7 @@ come - and now guards its upload loop, recording an empty record that
 **The class, closed.** Four doors had walked into the same trap (see the
 Ledger's TEX1 row). Every texture door in the tree converts with
 `toColor32` at the door now, no module under `src/` imports
-`toColor32Order` at all, and `test/tex1_texturedoors.test.js` pins that -
+`toColor32Order` at all, and `test/systems/tex1_texturedoors.test.js` pins that -
 so a fifth door cannot be written wrong. The pin also EXECUTES this
 crash: the real component, the real `Renderer.uploadTexture` on a gl
 stub, the old shape proved unable to reject.
@@ -581,7 +581,7 @@ class properly. Which way up the rows go is a different question, and
 the only door where it was visible had never drawn a frame, because
 `Modules.Sprite` shipped off until MODS-ON turned it on.
 
-Pinned: `test/ht3_sprite_upright.test.js` (3) - the two orders executed
+Pinned: `test/formats/ht3_sprite_upright.test.js` (3) - the two orders executed
 against a five-row raster, which door takes which, and the screen-quad
 convention read at its own source.
 
@@ -599,7 +599,7 @@ already spent, and one press both opened the dial and dropped the light.
 The default is **G** now: unbound in DFU's own `DEFAULT_BINDINGS`, and
 not one of the mod's other two keys (F to ignite, X to throw). It stays
 the player's to rebind, and the departure is declared in
-`test/ht1_handheldtorches.test.js`'s own `PORT_DEFAULT` table beside
+`test/systems/ht1_handheldtorches.test.js`'s own `PORT_DEFAULT` table beside
 MODS-ON's, so every other key of the bundle is still held to the shipped
 value and a third departure that arrives without a decision behind it
 fails right there.
@@ -702,10 +702,10 @@ closed for Eye Of The Beholder's `Camera.SwitchShoulder` / `AutoTogglePerspectiv
 half of the report that was not a bug, "if you scroll up after rebinding, there should be a Continue" - is in
 UI-Arc.md's DISCORD5 record.
 
-Pins: `test/ht1_handheldtorches.test.js` (the hand table under the mod's law - strict, relaxed at rest, relaxed in a
+Pins: `test/systems/ht1_handheldtorches.test.js` (the hand table under the mod's law - strict, relaxed at rest, relaxed in a
 swing, the punching left hand, both-free-only-sheathed; the fourth departure in the defaults table),
-`test/audit66_handheldtorches.test.js` (the punching hand), `test/ww1_weaponwidget.test.js` (a claymore mirrors
-under its switch), `test/discord5.test.js` (both compares by source, the relaxed default, every read TextKey in its
+`test/systems/audit66_handheldtorches.test.js` (the punching hand), `test/combat/weapon/ww1_weaponwidget.test.js` (a claymore mirrors
+under its switch), `test/systems/discord5.test.js` (both compares by source, the relaxed default, every read TextKey in its
 tile). `tools/mutants/discord5.json`: 20 records, 20 dead. Not verified in a browser.
 
 ## DISC7 - THE LOOP FOLLOWS THE LIGHT (2026-09-23, Mac: "fix the known gaps")
@@ -822,7 +822,7 @@ up, which the flats' shared pass cannot carry); `exterior.js` holds no online se
 no body. Its batch goes when the lantern is put out, when the walker goes or stops being one, and when the layer is
 destroyed; the recentre carries it; its draw builds nothing. It lights nothing - no peer's light does. The rider and
 the beast still hang none, on your screen or theirs; the Morrowind body is not a sprite and is unchanged. Pins:
-`test/htwaistback.test.js` (8, every one failing on the base); `test/htwaist_eotb.test.js`'s bodies stand with their
+`test/player/eyeOfTheBeholder/htwaistback.test.js` (8, every one failing on the base); `test/systems/htwaist_eotb.test.js`'s bodies stand with their
 backs to the camera now, and its sideways walk is a back diagonal and the side view, both its negative cases (the tilt
 is read walking straight away).
 
@@ -843,14 +843,14 @@ off that body's own stub camera (`peerCamera`: `mv` as the forward move, the pac
 eased yaw, the walk clip's phase) exactly as yours swings off the motor's bag; the pose carries no direction of
 travel, so a peer backing away swings as its legs walk, forward. It is the body's own mesh, released with the body
 (EVERY ALLOCATION HAS AN OWNER). The HELD torch still rides nothing (Morrowind-Rules.md MW-D51 "Recorded, not faked";
-`test/mwtorch.test.js` still pins that `peerBodies.js` passes no torch) - this light is in no hand. RELAY_VERSION
+`test/combat/mwtorch.test.js` still pins that `peerBodies.js` passes no torch) - this light is in no hand. RELAY_VERSION
 world108 (world106 on its branch; main's DISC23-B took world106 and DUEL1 world107 first), its LAW row recorded (the `net/wire.js` RELAY_VERSION chain is the record). No RELAY_MIN gate: a pose field
 has never had one (DISC12's `lh`/`wb`, PCORPSE1's `dd`) - an older relay's `validPose` drops `hl`, the others see no
 lantern, and nothing closes. Not carried: the lantern's LIGHT (a peer casts none - the light is the player torch's own),
 and the lantern on a peer drawn as the paperdoll, the class sprite, or Eye Of The Beholder's rider and lycanthrope
 (your own sprite draws none on the beast or the rider either); on a peer drawn as their chosen Eye Of The Beholder set
 it hangs since HT-WAIST-BACK, above. Online-Arc.md HT-WAIST-NET. Pins:
-`test/htwaistnet_peers.test.js` (6, every one failing on the base).
+`test/net/htwaistnet_peers.test.js` (6, every one failing on the base).
 
 **Decisions taken, for Mac's eye.** The RIGHT hip, not mirrored by Handedness (the left is the scabbard's). The beast
 form keeps the lantern lit (it takes both hands, and a lantern at the waist needs none - Relaxed does the same) but
@@ -862,8 +862,8 @@ capsule centre) is unchanged and recorded here for a later look.
 **Not verified in a browser** - there is no Morrowind data or ARENA2 in this container. The hook, the sprite's hip
 and the swing's constants are port-own tuning, set against the vendored skeleton and the law's own numbers.
 
-Pins: `test/htwaist_setting.test.js`, `test/htwaist_handlaw.test.js`, `test/htwaist_swing.test.js`,
-`test/htwaist_mwbody.test.js`, `test/htwaist_eotb.test.js` (34 tests, every one failing on the base); HT1's pane pin
+Pins: `test/systems/htwaist_setting.test.js`, `test/systems/htwaist_handlaw.test.js`, `test/systems/htwaist_swing.test.js`,
+`test/combat/htwaist_mwbody.test.js`, `test/systems/htwaist_eotb.test.js` (34 tests, every one failing on the base); HT1's pane pin
 names the key. `tools/mutants/htwaist.json`: 68 records, 68 dead - HT-WAIST-BACK's 19 among them, and two of
 HT-WAIST's (the sprite's tilt, its re-mint) re-aimed by content at the lantern's one home; the 50 this line said
 before was one over the 49 the file held (and `torchvis.json`'s two gate records re-aimed by content at the gate's new

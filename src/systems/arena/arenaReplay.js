@@ -13,7 +13,7 @@
 // when it moves, each strike's moment and striker, and THE BOUT LAW'S OWN EVENTS (systems/arena/arenaBout.js - the call, the
 // criers, the count, every blow, the end, the verdict, the healers) with their times to a hundredth of a second. Bounded:
 // at most REPLAY_MAX_TICKS (four minutes - the law's three of fighting and its ceremony), four fighters, so a Grand
-// Melee's worst is under REPLAY_BYTES_MAX; measured in test/arena5_replay.test.js. Versioned inside its own shape (`v`);
+// Melee's worst is under REPLAY_BYTES_MAX; measured in test/systems/arena/arena5_replay.test.js. Versioned inside its own shape (`v`);
 // a save from before ARENA5 - or a record of any other shape - reads back with none.
 //
 // HOW IT PLAYS. Not a second driver: the relay's bout mirror (scenes/arena/arenaBouts.js startRelay / relayWord over

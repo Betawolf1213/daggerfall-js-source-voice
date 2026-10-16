@@ -388,7 +388,7 @@ export function expandRandomTextRecord(recordIndex, ctx) {
  * `%2com` is a CLASSIC macro. MacroHelper.cs's dictionary carries
  * `%1com` (:44, GreetingOrFollowUpText) and has no row for its sibling
  * - 217 rows, checked cell for cell against the C# by
- * test/macrocoverage.test.js, and `%2com` is in neither the handled
+ * test/systems/quest/macrocoverage.test.js, and `%2com` is in neither the handled
  * set nor the null one. So GetValue takes its outermost else
  * (:526-527) and answers `symbolStr + "[undefined]"`, and TEXT.RSC
  * 7212's own text puts that straight in the player's mouth. Daggerfall

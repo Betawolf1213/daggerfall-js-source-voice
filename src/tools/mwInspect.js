@@ -16,7 +16,7 @@
 // readNifHeader, walkEsm and subrecords are FORMAT READERS; they sat in
 // tools/ only because the first consumer happened to be a page.
 //
-// This shim stays so mw-inspect.html and test/mwinspect.test.js keep
+// This shim stays so mw-inspect.html and test/formats/morrowind/mwinspect.test.js keep
 // working unchanged - both import behaviourally, neither greps this
 // path - and so the move is reviewable as a move rather than as a
 // rewrite. `export *` cannot drift from what it forwards.

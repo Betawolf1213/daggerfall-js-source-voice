@@ -2,8 +2,8 @@
 // Start registers (ComeSailAway.cs:1079-1080, ItemHelper.RegisterCustomItem(index, UselessItems2, type)).
 //
 // THE ROWS are the bundle's ItemTemplates.json, carried here field for field: the vendored file keeps the author's
-// trailing comma (DFU's fsJsonParser takes it, a strict parser does not - test/csa_registration.test.js), so the rows
-// ride as Roleplay Realism: Items' do, and test/csa_items.test.js holds them to the file. Registered at import, as
+// trailing comma (DFU's fsJsonParser takes it, a strict parser does not - test/systems/csa_registration.test.js), so the rows
+// ride as Roleplay Realism: Items' do, and test/systems/csa_items.test.js holds them to the file. Registered at import, as
 // Iliac Puddle No More's fish are: a row nobody mints costs nothing, and an item the save carries keeps its name,
 // weight and picture whether or not the mod is on.
 //

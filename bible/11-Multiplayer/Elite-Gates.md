@@ -106,7 +106,7 @@ So, as decided here (each decision is argued in its section):
 
 Daggerfall has no Elite Breach, no torn halls and no other players, so none of this is a DFU member. Its Ledger A row,
 ELITE-GATES, is opened by the first file that cites it, and every later file that cites it is added to the row by name
-in the same change: `test/doctrine.test.js` fails a file citing Ledger A that no row names (SD2a's record). The row
+in the same change: `test/tooling/doctrine.test.js` fails a file citing Ledger A that no row names (SD2a's record). The row
 lists the Spire's departures from DFU: Resurrect refused, Levitate and Slowfall banned, a technique's flight refused on
 traversal ground, Stendarr's AvoidDeath refused, a limit of two potions a hall, a jump buffer and a late press, and no
 DEATH-PENALTY inside.
@@ -899,7 +899,7 @@ weight, drawn differently. The budget is the measured knob of EG's tuning pass (
 **Where the law lives.** The relay draws halls too, so the span law must not pull client code into the relay bundle.
 Today `src/world/superDungeon/sdSteps.js`, which holds the platform clock (`stepAt`, `beatStands`), imports `src/world/superDungeon/sdHall.js`,
 and through it the Hour's art; the union floor's bearing search lives in `src/scenes/gate/gateCourt.js`, which imports
-`render/`, `ui/` and `world/` modules. Neither is in `RELAY_GRAPH` (`test/relayversion.test.js`). So:
+`render/`, `ui/` and `world/` modules. Neither is in `RELAY_GRAPH` (`test/net/relayversion.test.js`). So:
 
 - EG4 moves the platform clock (`stepAt`, `beatStands`, `beatBlinks`, `crumbleAfter`, `gustAt`) into
   `net/egSpanLaw.js`, a leaf, and `src/world/superDungeon/sdSteps.js` re-exports it;
@@ -915,7 +915,7 @@ and through it the Hour's art; the union floor's bearing search lives in `src/sc
 
 - The spec law is pinned against golden specs for fixed seeds.
 - Every spec field the relay reads is pinned against the brain that reads it.
-- A change to the draw changes the relay version, as the Orrery's golden draw does (`test/relayversion.test.js`).
+- A change to the draw changes the relay version, as the Orrery's golden draw does (`test/net/relayversion.test.js`).
 
 ## 10. The spans - generated platforming
 
@@ -1252,7 +1252,7 @@ registered there.
 fire walls, read from the player's own ARENA2 at runtime through the data pipeline (`getTexture`), never shipped.
 Vanilla Enhanced does not repaint 356. DFU's table (`src/world/emissiveTextures.js`) marks its records 0, 2 and 3
 emissive, but DFU lights them through `TextureReader.GetFireWallColors32`, which the port has not ported: so
-`src/scenes/dataPipeline.js` skips `FIRE_WALLS_ARCHIVE` at both upload arms, `test/audit39_render.test.js` pins the
+`src/scenes/dataPipeline.js` skips `FIRE_WALLS_ARCHIVE` at both upload arms, `test/render/audit39_render.test.js` pins the
 skip, and 356 draws unlit today. EG6b ports `GetFireWallColors32` (the fire falls are its first consumer) and re-pins
 audit39. Everything else is painted in code into the band's archives (section 25).
 

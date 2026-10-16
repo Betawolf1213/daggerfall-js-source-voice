@@ -21,7 +21,7 @@
 // column through the helm, beside the plume: the rows of head above the shell's first row, over the rows of shell under
 // it - the ratio the screenshot measures. Mac's camera's height is not known, so three heights of eye are read; each
 // gives the raise at which the ratio crosses the screenshot's, and HELM_LIFT is held inside their span
-// (test/mwsteel5.test.js).
+// (test/tooling/mwsteel5.test.js).
 //
 // WHAT IT DOES NOT RULE OUT. A head bigger than the scene's Breton (the screenshot's race is not recorded) would show
 // the same scalp at a smaller raise, and a shot from behind sees nothing of an offset front to back.

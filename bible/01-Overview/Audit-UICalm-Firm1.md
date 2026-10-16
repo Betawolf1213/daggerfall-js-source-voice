@@ -99,7 +99,7 @@ cost or a word.
 
 ## Pinned
 
-`test/audit_uicalm_firm1.test.js` (33) - every FIXED finding above: L1, L2 and L5's service and powers by execution
+`test/systems/audit_uicalm_firm1.test.js` (33) - every FIXED finding above: L1, L2 and L5's service and powers by execution
 through the real Worker, door, book, law, fold, damage door and ship scene; the saddle panel and the calm HUD driven;
 the Firmament window, the front door and the walk as text pins (they want a canvas and a screen - each fix proven by a
 Chromium probe on the fixed tree, none committed). Mutants: `tools/mutants/audit_uicalm_firm1.json` (133 - each fix

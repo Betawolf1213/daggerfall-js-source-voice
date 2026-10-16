@@ -114,7 +114,7 @@ export function groundItemLists(/** @type {any} */ save) {
 
 /** The most a realm character of `level` can owe the Empire's bank: the Empire lends a tenth of DFU's level x 50,000
  *  (banking.js calculateMaxBankLoan online - Roleplay & Realism's per-level choice is never more), and the debt is the
- *  loan and its tenth (calculateBankLoanRepayment) - pinned equal by test/int2_judge.test.js; the Worker bundles no
+ *  loan and its tenth (calculateBankLoanRepayment) - pinned equal by test/server/int2_judge.test.js; the Worker bundles no
  *  banking.js. A loan the save claims past it lends the wealth nothing (AUDIT INT: a forged loan of ten million hid ten
  *  million of forged gold from the budget). */
 export const realmLoanOwedMax = (/** @type {number} */ level) => Math.trunc(Math.max(1, Math.trunc(level) || 1) * 5_000 * 1.1);

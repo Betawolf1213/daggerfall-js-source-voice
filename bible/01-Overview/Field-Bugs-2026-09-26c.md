@@ -25,16 +25,16 @@ write was skipped and the action completed anyway, silently. So every quest foe 
 and that nobody may target (EnemySenses.GetTargets :806-807, :814-815, the port's `enemyTargets.js getTargets`): the
 crew stood idle, and the raiders fought the player alone. Every host was affected, and every quest using the action.
 
-Each half had been pinned apart: `test/enemyinfighting.test.js` wrote to fixtures shaped `{ behaviour }`, and
-`test/dungeoninfighting.test.js` read `questBehaviour`. No test ran the action against a real record. The action now
-writes the record's `questBehaviour`, the fixtures are the record's shape, and `test/waallies.test.js` runs the author's
+Each half had been pinned apart: `test/characters/enemy/enemyinfighting.test.js` wrote to fixtures shaped `{ behaviour }`, and
+`test/scenes/dungeoninfighting.test.js` read `questBehaviour`. No test ran the action against a real record. The action now
+writes the record's `questBehaviour`, the fixtures are the record's shape, and `test/systems/quest/waallies.test.js` runs the author's
 own quest through the machine over records of the exterior pool's shape, then the real target machine: the crew takes
 a raider and the raider the crew, and neither ever targets the player's side wrongly.
 
 As in DFU, with "Enemies fight each other" off the allies still stand idle: the else-arm reads the mobile's own team,
 which `change foe ... team` does not touch (EnemySenses.cs :801). The setting ships on.
 
-`test/waallies.test.js` (3); `test/enemyinfighting.test.js` re-aimed; `tools/mutants/waallies.json` 3, 3 dead.
+`test/systems/quest/waallies.test.js` (3); `test/characters/enemy/enemyinfighting.test.js` re-aimed; `tools/mutants/waallies.json` 3, 3 dead.
 
 ## What the spawns are (reports 2 and 3), read before anything was changed
 
@@ -66,7 +66,7 @@ at its tail - so at sea it read `false` every time and stood three groups of two
 seabed. The crossing asks the deep itself now (`scenes/world.js _deepSuppressesSpawns`, the frame's flag write asks the
 same), and a swimmer too, as the lone roll's gate does.
 
-`test/campsea.test.js` (2); `tools/mutants/campsea.json` 3, 3 dead.
+`test/systems/campsea.test.js` (2); `tools/mutants/campsea.json` 3, 3 dead.
 
 ## QUEST-WAVE: a wave placed in one tick sees its own stands in flight (report 3)
 
@@ -78,8 +78,8 @@ meets a rail and every spot of a tick falls in the same two small slivers: measu
 off. The loose-foe door (AUDIT 68 S21) held its spots already; its set is the same one now, so a quest wave and a loose
 foe see each other in flight too.
 
-`test/questwave.test.js` (3); `tools/mutants/questwave.json` 6, 6 dead. Re-aimed: `test/audit62_hosts.test.js`,
-`test/interiorfoes.test.js` (the occupancy pins), `test/qx1_exterior_host.test.js` (its two loops sample the law's
+`test/scenes/questwave.test.js` (3); `tools/mutants/questwave.json` 6, 6 dead. Re-aimed: `test/scenes/audit62_hosts.test.js`,
+`test/scenes/interiorfoes.test.js` (the occupancy pins), `test/systems/qx1_exterior_host.test.js` (its two loops sample the law's
 geometry, so each stand lands before the next is placed; the mount takes the two new names).
 
 Open, for Mac: whether foes should stop under a quest's message box offline (DFU pauses the game there; WINFOE1 chose
@@ -96,7 +96,7 @@ every client stands its own deep. The mod's range stays, so a player offline may
 only rule was weighed and not taken: a ship at sea is already over deep water, so it would not have touched the ship's
 case. Ledger A row.
 
-`test/seacap.test.js` (2); `tools/mutants/seacap.json` 3, 3 dead.
+`test/systems/seacap.test.js` (2); `tools/mutants/seacap.json` 3, 3 dead.
 
 ## FOE-CATCHUP: a hitch cannot snowball (report 2)
 
@@ -110,8 +110,8 @@ foeFrameDt`, at the street's, the watch's and the dungeon's step): from 20 fps u
 little slower than the world, instead of the world stopping. The motor's own `update(dt)` contract and the player's
 jank clamp are unchanged. Ledger A row.
 
-`test/foecatchup.test.js` (3); `tools/mutants/foecatchup.json` 5, 5 dead; `test/audit24_wave32.test.js` and
-`test/exteriorfoes.test.js` re-aimed at the capped call.
+`test/scenes/foecatchup.test.js` (3); `tools/mutants/foecatchup.json` 5, 5 dead; `test/systems/audit24_wave32.test.js` and
+`test/scenes/exteriorfoes.test.js` re-aimed at the capped call.
 
 ## QUEST-POPUP-PAUSE: offline, a quest's box holds the foes again (report 2)
 
@@ -124,9 +124,9 @@ bag (`host.questBoxHoldsFoes`). The rule is one function, `scenes/quest/questFoe
 keeps WINFOE1 (a foe still walks up and breaks a rest), and a rest under a box resumes with the foes when it closes;
 the dungeon already held its foes under any window. Online nothing is held: the room keeps one clock for everyone.
 
-`test/quest_popup_pause.test.js` (3: the rule, a real pool handed the zero frame, the wiring by source);
-`tools/mutants/questpopuppause.json` 11, 11 dead; `test/winfoe1_foes_under_windows.test.js`, `test/disc19.test.js`,
-`test/interiorfoes.test.js`, `test/qx1_exterior_host.test.js` and `test/roadb_indoor_watch.test.js` re-aimed at the held
+`test/scenes/quest_popup_pause.test.js` (3: the rule, a real pool handed the zero frame, the wiring by source);
+`tools/mutants/questpopuppause.json` 11, 11 dead; `test/scenes/winfoe1_foes_under_windows.test.js`, `test/systems/disc19.test.js`,
+`test/scenes/interiorfoes.test.js`, `test/systems/qx1_exterior_host.test.js` and `test/scenes/roadb_indoor_watch.test.js` re-aimed at the held
 clock.
 
 ## FOE-SPACING: a pack keeps apart (report 3)
@@ -144,8 +144,8 @@ runs on the frame the pool hands its foes (FOE-CATCHUP's cap), so nothing moves 
 frame for 32 bodies, 0.7 ms for 256 heaped in a 3 m square. A watchman and a monster, in two pools, can still stand in
 one spot. Ledger A row.
 
-`test/foespacing.test.js` (6: a pair, a heap, the skips, a wall and an edge over the real collider, a real encounter
-pool, the three pools by source); `tools/mutants/foespacing.json` 13, 13 dead; `test/world2.test.js`'s loop pin re-aimed.
+`test/scenes/foespacing.test.js` (6: a pair, a heap, the skips, a wall and an edge over the real collider, a real encounter
+pool, the three pools by source); `tools/mutants/foespacing.json` 13, 13 dead; `test/net/world2.test.js`'s loop pin re-aimed.
 
 ## DEEP-SHARE: players near each other share one sea (online)
 
@@ -170,8 +170,8 @@ together saw two different seas, and each stood a whole cap. Now:
   relay change and no version bump; an older client ignores `dz` and stands twelve, as before. (A first cut tagged the
   record itself, which moved the wire and so the relay's version - the full check refused it.)
 
-`test/deepshare.test.js` (5: the election, the cap, the frame's law, an owner's twenty and forty over two real pools
-with a junk `dz`, by source); `tools/mutants/deepshare.json` 16, 16 dead; `test/dwe_enemies.test.js`'s lane pin and
+`test/scenes/deepshare.test.js` (5: the election, the cap, the frame's law, an owner's twenty and forty over two real pools
+with a junk `dz`, by source); `tools/mutants/deepshare.json` 16, 16 dead; `test/scenes/dwe_enemies.test.js`'s lane pin and
 eight older mutant records (`dwe.json`, `watch1.json`, and `survtiers3.json`'s two cites the move shifted) re-aimed.
 
 ## QUEST-PARTY phase 1: a shared quest's foes ride to the party (online)

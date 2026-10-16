@@ -164,7 +164,7 @@ surface — a decision, not a fix.
 
 ---
 
-## The pins — `test/macn_bugs.test.js`, 19 tests
+## The pins — `test/systems/macn_bugs.test.js`, 19 tests
 
 Aimed at producers and populations. N1: `setItemFields` fills and never
 overwrites; `equipmentItems`' seven records all carry a name and

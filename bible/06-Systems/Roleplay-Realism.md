@@ -112,7 +112,7 @@ Read against the C#:
   Ship row stayed dark everywhere except aboard, which is why turning
   Travel Options' port rule off changed nothing. The host answers
   `locationLoaded` now, so a player who switches the rule on gets the
-  mod's port rule and not a ban (`test/disc13.test.js`).
+  mod's port rule and not a ban (`test/systems/disc13.test.js`).
 - **Purification** keeps its eight ingredients (the same recipe key)
   with HealHealth and CurePoison `(3,1)` where DFU's carries HealHealth
   and Invisibility `(13,0)`.
@@ -516,7 +516,7 @@ PitchMaxLimit snap and the 75-degree floor; the walker at 1 FPS against
 the mod's 5; a negative nameSeed; two deliberate C# slip fixes in RR3a;
 the title reload after a world-data install.
 
-Suite `test/auditrr.test.js` (15). The float32 edges, the neck band,
+Suite `test/systems/auditrr.test.js` (15). The float32 edges, the neck band,
 the riding contacts, the negative key, the class virtuals and the
 override context are pinned by execution; the hosts' wiring by source.
 
@@ -633,7 +633,7 @@ them over frames - a stall at most, not a difference in what stands.
 `modelFromJson` drops XScale/YScale/ZScale (RMBLayout.cs:76) - a
 general port gap, no RR file carries them.
 
-Suite `test/auditrr2.test.js` (17). Extra Weight, the cry's gender, the
+Suite `test/systems/auditrr2.test.js` (17). Extra Weight, the cry's gender, the
 riding contacts' latch and direction, the wire clamp, the stored fur
 weight, the equip delay, the merged table, the shelf's stack, the
 synthetic gate, the pitch clamp and the variant flag by execution; the
@@ -663,16 +663,16 @@ penalty starts at 75% of the number the pack shows. Horse and cart add
 nothing to the ceiling, in DFU or in Horse Cart and Cargo - the wagon
 is its own 750 kg (`ItemHelper.WagonKgLimit`).
 
-Pinned in `test/rr1_realism.test.js` ENC-CEIL (the allowance from the
+Pinned in `test/systems/rr1_realism.test.js` ENC-CEIL (the allowance from the
 real producer; literals off the real ceiling of 90); mutants
 `tools/mutants/enc_ceil.json` (3, all dead).
 `01-Overview/Field-Bugs-2026-09-27.md`.
 
 ## Record
 
-`vendor/roleplay-realism/`. Suites `test/rr1_realism.test.js` (12),
-`test/rr2_realism.test.js` (12), `test/rr3_questline.test.js` (11),
-`test/rr3b_worlddata.test.js` (9), `test/auditrr.test.js` (15), `test/auditrr2.test.js` (17). Campaigns `tools/mutants/rr1.json`
+`vendor/roleplay-realism/`. Suites `test/systems/rr1_realism.test.js` (12),
+`test/systems/rr2_realism.test.js` (12), `test/systems/quest/rr3_questline.test.js` (11),
+`test/systems/talk/rr3b_worlddata.test.js` (9), `test/systems/auditrr.test.js` (15), `test/systems/auditrr2.test.js` (17). Campaigns `tools/mutants/rr1.json`
 (18: 17 dead, 1 equivalent - RR1-17 went with the seam it aimed at, FGH2H-R), `tools/mutants/rr2.json` (28 dead),
 `tools/mutants/rr3.json` (33: 31 dead, 2 equivalent),
 `tools/mutants/rr3b.json` (24 dead).

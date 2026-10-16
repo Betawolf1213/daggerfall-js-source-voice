@@ -21,7 +21,7 @@ Elite Dungeons", relayed by Mac with the Discord thread it came from. Read on th
 `src/net/overworldLaw.js` (`OW_GENERAL_TTL_MIN`, `OW_CLEARED_TTL_MIN`, `OW_REBIRTH_MIN`, `owRowUntil`, `owRowFits`,
 `owFoldRows`, `owPrune`, `toWelcome`), `src/systems/save/save.js` (comments).
 
-**Reproduced first.** main's own host run (test/spawneddungeons.test.js, AUDIT OW5b D2: spawnedDungeonAt lifted and run)
+**Reproduced first.** main's own host run (test/world/spawneddungeons.test.js, AUDIT OW5b D2: spawnedDungeonAt lifted and run)
 asserted the lockout as its law - the first build of a spawn's pixel wrote its ledger row and owed it to the cell, seven
 game days on the pixel built empty, and thirty days on it was still empty with the row kept. Run against main's
 modules: `owFoldRows` took a row whose first sight was fifty-nine real days old (the cell kept that spawn dead), and a
@@ -53,12 +53,12 @@ over, and replaces a held one with a later life's - the report's veteran, who he
 leaves out every row whose life is over by the latest clock the ledger was asked at, so a save carries none; with no
 clock ever asked (an offline session never reads these clocks) every row is kept as it was.
 
-`test/spawneddungeons.test.js` (21; four new, the AUDIT OW5b D2 host run rewritten - streamed in, no clock; entered, the
+`test/world/spawneddungeons.test.js` (21; four new, the AUDIT OW5b D2 host run rewritten - streamed in, no clock; entered, the
 seven days; past them, empty however it is asked; a minute short of the wait, empty; the wait over, the same dungeon,
-no row saved; the next entry, the new life's clocks owed to the cell), `test/ow6_ledger.test.js` (19; the pins, the
+no row saved; the next entry, the new life's clocks owed to the cell), `test/net/ow6_ledger.test.js` (19; the pins, the
 fits, the prune and the welcome on the new end, one new law test - a later life taken whole, a minute before its end the
 same life's - and the host's merge at its clock), `tools/mutants/spawnrebirth.json` (17, 17 dead), and the records of
-`tools/mutants/ow6l.json` and `ow6h.json` this moved, re-aimed by content (83 dead across the four lists). PIN MOVED: `test/tv6_dungeons.test.js`'s
+`tools/mutants/ow6l.json` and `ow6h.json` this moved, re-aimed by content (83 dead across the four lists). PIN MOVED: `test/systems/travel/tv6_dungeons.test.js`'s
 AUDIT OW4 D5 host run enters the spawn before its clock can run out.
 
 **RELAY_VERSION world198.** The cell's keep is the relay's law, so this needs the relay's deploy, which drops every
@@ -96,8 +96,8 @@ moved): eight findings, six fixed, two answered.
 | F7 | The world197 bump's note kept world196's (CHAT-LANG) inline, and this bump dropped it | real | fixed: world197 and world196 on their own history lines in `wire.js`; world198 re-hashed in place, undeployed |
 | F8 | `spawnExpired` wrote the two clocks a second time beside `spawnDeath` | real, a cleanup | fixed: one law - dead from `spawnDeath`, back REBIRTH_TTL_MINUTES after it (the same answers, a negative elapsed never expiry) |
 
-Pins: `test/ow6_ledger.test.js` (20; F1's host run - a run three keeps long underground, its entry said from the cell
-it comes out in), `test/tv6_dungeons.test.js` (F2 on the AUDIT OW4 D2/D4 host), `test/spawneddungeons.test.js` (F4 on
+Pins: `test/net/ow6_ledger.test.js` (20; F1's host run - a run three keeps long underground, its entry said from the cell
+it comes out in), `test/systems/travel/tv6_dungeons.test.js` (F2 on the AUDIT OW4 D2/D4 host), `test/world/spawneddungeons.test.js` (F4 on
 the save test, F6 on the host run and the clear's source). Mutants: `tools/mutants/spawnrebirth.json` (23 - F1, F2,
 F4 and F6 added; the short clock's record left to `ttl1.json`, whose three expiry records re-aim at `spawnDeath`), and
 `fb0929h_spawnplate.json`, `ow4d.json` and `ow5d.json`'s `tvSpawnGone` and `_locationToBuild` records re-aimed by

@@ -18,7 +18,7 @@ Each delivered source file was compared with the main commit it was built on (th
 Where that base was main's current file, it was copied as delivered: `render/airPass.js`, `render/shadowPass.js`,
 `ui/enhanced/enhancedRest.js`, `systems/quest/place.js`, the new `systems/quest/questReach.js`, and the delivered tests. Where
 main had moved since, the change was three-way merged against its base: `systems/features.js` (base 7d3ebfdb1) and
-`ui/restWindow.js` (966e8041e), both clean. `test/features.test.js` was delivered on a base before IT1's Immersive Travel
+`ui/restWindow.js` (966e8041e), both clean. `test/systems/features.test.js` was delivered on a base before IT1's Immersive Travel
 row, so it is main's file with the handoff's two changes (the `nearby-quests` id, the ceiling raised by its row's 289
 characters - 15945); `ft18_features` and `ft8_combatvisuals` count the new row (73, 31). Every line a copied file
 removed from main was read: each is the delivered change itself (the old self-silhouette, the old hours box, the old
@@ -59,6 +59,6 @@ its patch did not apply; it was ported by hand, keeping what main had decided si
   `ENDLESS-off-refuses-a-camp-again`, `ENDLESS-off-opens-no-menu-again`, `ENDLESS-off-tends-no-fire-again`).
   `SURVTIERS-off-eats-at-hard` is recorded equivalent: the Off meal never reads the tier's rules.
 
-Pins: `test/steady_balance.test.js` (4), `test/nearby_quests.test.js` (6), `test/loiter_anywhere.test.js` (8),
-`test/endless_provisions.test.js` (5); the delivered changes to `features`, `sc1_shadowcache` and
+Pins: `test/render/steady_balance.test.js` (4), `test/systems/quest/nearby_quests.test.js` (6), `test/systems/rest/loiter_anywhere.test.js` (8),
+`test/systems/endless_provisions.test.js` (5); the delivered changes to `features`, `sc1_shadowcache` and
 `el1_enhancedlighting`.

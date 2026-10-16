@@ -49,7 +49,7 @@ the arm; a host with no arm gets no door. A building's F5 page used to be handed
 sheet builder; it is handed the building's own now (`scenes/worldModes.js` interiorPauseHooks, the bag its pause door
 spreads), whose doors mount in the building's slot. And a door that opens another window HANDS OFF rather than resumes
 (`ui/pauseDoor.js` pauseMenuAct 'handoff'): nothing relocks under the window about to open, and a pause window opened
-from the classic pause's Controls button does not bounce back to it first. `test/escbook.test.js` (3).
+from the classic pause's Controls button does not bounce back to it first. `test/ui/escbook.test.js` (3).
 
 ## SEA-RISE: the sea's deathloop (2)
 
@@ -71,7 +71,7 @@ What made it a LOOP was the port's own:
 "No More Puddles does nothing": its switch is the ROOM's online (forced on, the Mods pane greys it "On (online)") and
 offline it reaches the next world load - it never drained a sea under a swimmer, and it never touched the weight rule.
 Dropping to 62.5 kg (the pack now waits for you), Levitate, Water Walking or Water Breathing gets a sinking swimmer up.
-`test/searise.test.js` (3).
+`test/player/searise.test.js` (3).
 
 ## SHIELD-OUT: the street's shield (5)
 
@@ -81,7 +81,7 @@ had not moved, and only a DOWNWARD crossing (hitShield) repoints the sheet. The 
 off for the repair (DFU repairs nothing equipped) and re-reads it when it goes back on. The widgets count their steps
 together now, and a widget that missed any re-reads its shield on its next frame (`combat/shieldWidget.js`
 `_widgetSteps`, `stale`): repaired indoors is repaired outside, and a shield battered indoors is battered outside. A
-widget that never looked away keeps the mod's own law. `test/shieldout.test.js` (3).
+widget that never looked away keeps the mod's own law. `test/combat/shieldout.test.js` (3).
 
 ## LIST-FIT: the list tile holds its picture (1)
 
@@ -93,7 +93,7 @@ picture hung out of its box. The trade tile is a flex room now, centred, as the 
 the edge. Measured in Chromium over the injected sheets (a pauldron, a dai-katana, a staff, a spellbook; fitted,
 Morrowind-square, grid-sized and raw 2x pictures): eight tiered trade rows overflowed before, none after. The UI pass's
 fit law (UI1, merged the same day) had already sized each picture under the box, so the report's build may have been
-the one before it; the tile now holds whatever it is handed. `test/listfit.test.js` (1).
+the one before it; the tile now holds whatever it is handed. `test/ui/enhanced/listfit.test.js` (1).
 
 ## MAP-KEEP: a load greyed the map (6)
 
@@ -115,7 +115,7 @@ are drawn transparent (the dungeon default) or cut away (Cutout, which Return cy
 below an upper floor's faces point away - DFU's own presentation, which the port draws as DFU does. A player moving
 between storeys sees "parts disappear" and reappear with no data lost. The video and the cut-off second message were
 not readable here; if the parts come back when the player returns to their height, that is the slice.
-`test/mapkeep.test.js` (3).
+`test/systems/automap/mapkeep.test.js` (3).
 
 ## BUFF-END: ending a spell of your own (7)
 
@@ -143,7 +143,7 @@ choice to end one:
   ended: the door a pad, a finger or a player who never frees the mouse can use. It is the Enhanced Plus pause
   window's (AUDIT B5): the classic pause has no tabs - its Controls button opens the enhanced menu, where Stats is one.
 
-`test/buffend.test.js` (5). Port-Ledger A.
+`test/ui/hud/buffend.test.js` (5). Port-Ledger A.
 
 ## HOLD-STEP: hold to repeat, and a typed value (8)
 
@@ -163,7 +163,7 @@ The Enhanced Plus spell maker's effect editor (the port of DFU's window, `ui/enh
 Measured in Chromium over the port (a scratch probe): a 1.2 s hold is nine repeats and its release adds none, a 0.2 s
 press one step, 42 and 7 typed set, "abc" and Escape put the value back, a disabled spinner has no field, and a view
 changed under a held button stops the hold and presses nothing of the new view. The classic
-window keeps DFU's click-per-step. `test/holdstep.test.js` (4). Port-Ledger A.
+window keeps DFU's click-per-step. `test/ui/enhanced/holdstep.test.js` (4). Port-Ledger A.
 
 ## THE FOUR HOSTS
 
@@ -184,7 +184,7 @@ Mac: *"Lets audit before merging"*. The branch was first merged with main (#412,
 number both sides had moved, `tools/citeMerge.mjs` on the merged tree), then read in five lanes - the F5 page's doors;
 the sea and the shield; the map and the list tile; ending a spell; the spell maker's hold and field. Every finding was
 checked against the code before anything moved, and the port's in Chromium over the real `SpellMakerWindow` (scratch
-probes). Pinned in `test/audit27h.test.js` (11) and the slices' own suites; `tools/mutants/audit27h.json` (45, all
+probes). Pinned in `test/ui/enhanced/audit27h.test.js` (11) and the slices' own suites; `tools/mutants/audit27h.json` (45, all
 dead), and the 130 older records whose killers or sites the fixes touched re-run - all dead but the two recorded as
 equivalent.
 
@@ -309,7 +309,7 @@ load never met it (worldQuickLoad places by itself); the standalone ?dungeon and
 - **One copy.** The key route, the world's dungeon-save restore and the CASTLE1 probe hand the same law. S2 had edited
   three copies of it and missed the probe's, which still kept the latch.
 
-`test/dialload.test.js` (2) runs `restoreSaved`, the pause bag and both hosts' laws out of the live source;
+`test/scenes/dialload.test.js` (2) runs `restoreSaved`, the pause bag and both hosts' laws out of the live source;
 `tools/mutants/dialload.json` (6, all dead). The pins that had copied the applier's text (audit23, mac6, overlayTyping,
 AUDIT 27h S2) read the law by name now, and S2's runs it.
 
@@ -333,4 +333,4 @@ tests, none failing), lint, the types and the build are clean on the branch, and
   under 0.6 degrees at the default High and gone within five seconds of the hit; the fix is a load-start seam across
   the hosts, its own slice. FIXED in the 2026-09-28 batch's audit (Field-Bugs-2026-09-28 ## AUDIT, Mac: "definitely fix
   everything"): the context raises `onStartLoad` once its own load is under way, and worldModes hands it the world
-  host's `cameraRecoilReset`; the standalone host keeps its wrapper. Pinned in `test/dialload.test.js`.
+  host's `cameraRecoilReset`; the standalone host keeps its wrapper. Pinned in `test/scenes/dialload.test.js`.

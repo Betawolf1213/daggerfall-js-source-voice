@@ -6,7 +6,7 @@ every reader of her numbers); the runtime logic of the repairs and the salvage o
 saves, the docs and the tests' own honesty; and the mutants - every list a touched test kills, run again over the
 change (710 mutants: 708 dead, two survivors below).
 
-Every finding was re-run before it was fixed, and is pinned in `test/tougherships.test.js` or the moved pins (each a
+Every finding was re-run before it was fixed, and is pinned in `test/systems/naval/tougherships.test.js` or the moved pins (each a
 `PIN MOVED` note). Mutation-proven: `tools/mutants/tougherships.json` (28 mutants), the older records the fixes moved
 re-aimed (`auditnav2_captains.json` F26, `shipcrew.json` SCH-save-mates-dropped, SCH-the-pace-under-fire-unread - its
 name was stale), and the 741 mutants of every list the touched tests kill run again over the fixed tree (nav_a.json's
@@ -55,10 +55,10 @@ list with them): 739 dead, two survivors, both standing on the base as well (bel
   inside her great guns' dead zone only by a stall, and with the ships toughened none of the eight stalls whether she
   does or not (the 8-duel runs came out identical with and without the mutant). Re-pinned at its source: a war galley
   on a Large Boat lying still keeps her station off it (78-80 m; the mutant's 61-63 m) -
-  `test/auditnav2_captains.test.js`.
+  `test/systems/naval/auditnav2_captains.test.js`.
 - **NAV-B-her-colours-struck SURVIVED** on this change and on its base (`7305011de`) alike - not this change's. RECORDED
   for its own slice.
-- **NAV-A-the-far-ship-first SURVIVED** the re-run (its list joined it for `test/nav_a_guns.test.js`, which this change
+- **NAV-A-the-far-ship-first SURVIVED** the re-run (its list joined it for `test/systems/naval/nav_a_guns.test.js`, which this change
   touched) - and survives on the base (`7305011de`) alike: a ball meeting two hulls along its step takes the nearer, and
   no pin flies one through two. Not this change's. RECORDED for its own slice.
 - The duel bar's samples re-rolled with the toughness. 32 duels a pairing, before and after: cutter on sloop 20-12 and

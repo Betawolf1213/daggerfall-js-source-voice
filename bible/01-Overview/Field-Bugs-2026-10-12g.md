@@ -41,7 +41,7 @@ FIXED. The ring is tried first, every tick, as DFU tries it; a room where it pla
 it has missed ROOM_RING_MISSES (30) times - three seconds of the machine's ten ticks - takes a ring at half the least
 distance (2.5 m) that does not mind the view (the spawner's own `lineOfSightCheck: false`), then the room's own markers
 (enter, rest, quest and treasure), the farthest within the ring's 20 m with a floor under it and a clear test point, the
-ring's own height over the floor. A DEPARTURE (Port-Ledger). test/fb1012g_shoprats.test.js (4); interiorfoes' pin of the
+ring's own height over the floor. A DEPARTURE (Port-Ledger). test/scenes/quest/fb1012g_shoprats.test.js (4); interiorfoes' pin of the
 arm moved (PIN MOVED).
 
 ## KEEP-CLICK: the boot's repair takes only a free key (2)
@@ -59,7 +59,7 @@ functions and `loadOrCreateBindings` over a stubbed store.
 FIXED. The repair fills a default only where no action holds it - DFU's own autofill law (TestSetBinding). A swing
 cleared with Right Click free still goes back on it. A player who clears Activate (mouse) and gives Left Click away
 keeps the layout; the E key's Interact still activates, but a readied spell is cast by Activate (mouse), so that player
-casts with whatever key they give it. test/fb1012g_keepclick.test.js (2); a Port-Ledger row for MAC-D1, which had none.
+casts with whatever key they give it. test/systems/fb1012g_keepclick.test.js (2); a Port-Ledger row for MAC-D1, which had none.
 
 ## HOLD-KEPT: a home's storage is never laid on the wrong chest or kept out of reach (3)
 
@@ -84,7 +84,7 @@ A record no chest of this visit stands for sets what it held down at the player'
 said ("What a chest here held, where no chest stands now, was set down at your feet."), as the arena's crate already
 was. When the owner's decor list stands (never while the record is held back for another layout), what a piece the
 service no longer has held - by the service's whole list, read by this build or not - is set down at the owner's feet
-and said. test/fb1012g_holdkept.test.js (4); arena2_move's pin of the crate arm moved (PIN MOVED).
+and said. test/scenes/fb1012g_holdkept.test.js (4); arena2_move's pin of the crate arm moved (PIN MOVED).
 
 NOT SEEN. Which path took this reporter's things. HOME-WIPE (`01-Overview/Field-Bugs-2026-10-07.md`, fixed 2026-10-07)
 emptied a home the arena moved, under the same overload; an older desktop build still carries it. The reporter is asked:
@@ -112,7 +112,7 @@ on the travel map, RevealLocation's own door (a refused offer reveals nothing). 
 person standing at such a site (`place npc ... at`) points at it in the enhanced faces, its town and region named: the
 quest list and the tracker say "Gothhead in ... province", the map's diamond and the compass have it. A site in the
 quest's own town is DFU's, unmarked and unrevealed; the classic logbook's box keeps DFU's GetLastPlaceMentionedInMessage.
-Pinned in test/qa2_nearsite.test.js over the real quest text (QUEST-TOWN).
+Pinned in test/systems/quest/qa2_nearsite.test.js over the real quest text (QUEST-TOWN).
 
 ## OPEN-HAND: the Rose's second blow reaches the Gate's Warden (5)
 
@@ -129,7 +129,7 @@ in a dungeon with the Rose, +9% at the Gate (its +25 Hand-to-Hand alone).
 FIXED. A follow-up on a body no foe record holds is owed, by the body (a WeakMap), and the dungeon host's claim takes it
 before the ward is read: the Warden's, a crystal's, one of his host's - one frame, one blow token, the relay's caps
 deciding what lands. A player's claim drops it (BAL8: the referee's blow alone). Many Endings' echo rides the same door;
-the sets' reach powers still never reach him (AUDIT SET P-L9). test/fb1012g_openhand.test.js (2); four source pins moved
+the sets' reach powers still never reach him (AUDIT SET P-L9). test/systems/fb1012g_openhand.test.js (2); four source pins moved
 (wb4b_gate_blows, wb9c_gate_reckoning, wb11_gate_host, arena4b_blows).
 
 ANSWERED. "80-90 a crit instead of 100-130" is not the gauntlets: the first blow is never weaker with them, in either
@@ -154,7 +154,7 @@ reporter's "only from a certain distance".
 FIXED. The compass marks every lode the warning has told of until it rises, then while it stands - never once spent,
 gone or the day's find made; the warning and the rising are never said to an account whose Motherlode today is found.
 The far mark is its own aqua (`#00e5c8`, clear of every other mark by more than the 75 the nodes keep - a Fisher's blue,
-the nearest, by 113) and is drawn over the near nodes. test/fb1012g_lodemark.test.js (3); three source pins moved
+the nearest, by 113) and is drawn over the near nodes. test/net/fb1012g_lodemark.test.js (3); three source pins moved
 (prof2b_client, nodemarks, auditsilver_client).
 
 ## PANE-CLIP: the view out draws only what stands past the glass (7)
@@ -179,7 +179,7 @@ sampler back on unit 0 after). The building's own walls seen from inside are bac
 its pad and both hosts' `outsideViewClip` are gone. Proven on SwiftShader (`tools/realWindowsProbe.mjs`, its new
 `inside-wing` shot: a wall of the building past the glass, red, and one before it, green): HEAD's box shows 0 of the red,
 the pane clip 35,208 pixels of it; the green 0 either way; every other shot's numbers are HEAD's.
-test/fb1012g_paneclip.test.js (3); windows1_view V4 and V10 and the RW1 mutant re-aimed.
+test/render/fb1012g_paneclip.test.js (3); windows1_view V4 and V10 and the RW1 mutant re-aimed.
 
 NOT SEEN. The Savage Goat's shape - one L-shaped model or two models side by side - needs the data; either is drawn now.
 The reporter is asked to look again.
@@ -200,7 +200,7 @@ Horse Cart and Cargo horse or team in the pool, Morrowind on. Reproduced through
 the horse rig and the pool (GL stubbed).
 
 FIXED. Opened once, flushed in a `finally`. And a frame's start shuts any batch a pass left open (said once on the
-console): one frame's pictures lost, never the session's. test/fb1012g_batchshut.test.js (3).
+console): one frame's pictures lost, never the session's. test/render/fb1012g_batchshut.test.js (3).
 
 NOT SEEN. A solo player reaching this (it needs a concealed peer): the code read finds no other open batch, and every
 other caller begins and flushes in a `finally`. Should it happen alone, the console's "a character batch was left open"

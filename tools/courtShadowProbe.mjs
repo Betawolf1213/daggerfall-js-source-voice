@@ -17,7 +17,7 @@
 //
 // Two arms: `before` - the pass with LIGHT-ID's two laws off (render/shadowPass.js SHADOW_TUNING `moverDirect` and
 // `loUnread` false, the pins' oracles: a light that moved through its static cache, and a lo map for every light that may
-// cast) - and `now`. test/lightid.test.js pins the counts (`courtShadowCounts`).
+// cast) - and `now`. test/render/lightid.test.js pins the counts (`courtShadowCounts`).
 //
 // Usage: node tools/courtShadowProbe.mjs [bodies=8]
 import { Renderer, WORLD_FRAME } from '../src/render/renderer.js';

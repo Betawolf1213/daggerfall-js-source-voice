@@ -85,7 +85,7 @@ export { charSheetArtLoaded };
 export function warmLevelUpWindow() {
   if (!isEnhanced() || typeof document === 'undefined') return null;
   // `.catch(() => null)` IS THE GATE'S OWN VOCABULARY, not a shortcut
-  // around it: test/menu1_enhanced_chunk.test.js allows a bare dynamic
+  // around it: test/ui/enhanced/menu1_enhanced_chunk.test.js allows a bare dynamic
   // import on exactly that shape - "a feature that is off rather than
   // a screen that failed" - and a warm is precisely that. Nothing
   // waits on it; the MOUNT still goes through the one home below, with

@@ -1,7 +1,7 @@
 // SD17 - THE BODY MOVED, DRAWN IN A REAL BROWSER (the motes' and the sparks' probes' method, tools/sdFxProbe.mjs; on
 // Vite's own server - the scene's graph reaches `import.meta.glob`).
 //
-// node holds the rig's law (test/sd17_body.test.js - the states, the joints kept, every blow moved); what node cannot
+// node holds the rig's law (test/scenes/superDungeon/sd17_body.test.js - the states, the joints kept, every blow moved); what node cannot
 // answer is what the body LOOKS like in each pose, and whether the beam's pass compiles, links and lights the frame. So:
 // the Remnant's own seven parts (world/superDungeon/sdRemnantModel.js buildRemnantParts) stood by the rig's own matrices
 // (scenes/superDungeon/sdRemnantRig.js) in a plain lit pass, one pose a tile - and the Hour-Hand's beam (render/superDungeon/sdBeam.js) out of its

@@ -332,19 +332,19 @@ No relay change. The servers keep the save opaque, and `RELAY_VERSION` does not 
 
 ## Record
 
-- Pins: `test/lived1.test.js` (13). The superseded pins are re-aimed in their own files; each re-aim is
+- Pins: `test/systems/lived1.test.js` (13). The superseded pins are re-aimed in their own files; each re-aim is
   named in the commit.
 - Mutants: `tools/mutants/lived1.json` (26, all dead). The older slices' records that named the retired
   source were re-aimed by content where their law stands (46, all dead) and retired with it where it
   does not (14: the arrival's and the correction's shifts and pauses, the session counter and its seed,
   the rest arm's second window).
 - Audited: `01-Overview/Audit-Lived1.md` - six lanes, every finding reproduced and fixed or recorded;
-  `test/auditlived1.test.js` (13), `tools/mutants/auditlived1.json` (67, all dead; three of I's retired
+  `test/systems/auditlived1.test.js` (13), `tools/mutants/auditlived1.json` (67, all dead; three of I's retired
   with the mark they tested by AUDIT LIVED1b, their law held by its P3 records).
 - Audited again, comprehensively: `01-Overview/Audit-Lived1b.md` - eleven lanes (the clock core, a
   604-site census, the save, party and exploits, the words, systematic mutants, the merge with main, DFU
-  fidelity, offline parity, a fuzzer, the first audit's own fixes); `test/auditlived1b.test.js` (17) and
-  lane T's `test/auditlived1b_t.test.js` (16: the laws 53 of its 237 new mutants found unpinned, and V9's hole),
+  fidelity, offline parity, a fuzzer, the first audit's own fixes); `test/systems/auditlived1b.test.js` (17) and
+  lane T's `test/systems/auditlived1b_t.test.js` (16: the laws 53 of its 237 new mutants found unpinned, and V9's hole),
   `tools/mutants/auditlived1b.json` (118, all dead).
 - Merged with main after AUDIT LIVED1b (PRs #418, #428-#433, #435-#439, #441): the resolutions are its M's,
   recorded in `01-Overview/Audit-Lived1b.md`.

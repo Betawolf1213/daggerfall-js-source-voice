@@ -57,7 +57,7 @@ is written - every drawn pixel identical, every hidden pixel hidden; not
 byte-lossless, because the ghost colour under the transparent pixels
 collapses to one index. What the folder may hold is this manifest's own
 file list (`tools/diverseWeaponsIndex.mjs` derives the door's index from
-it; `test/doctrine.test.js` derives the folder's membership from it), so
+it; `test/tooling/doctrine.test.js` derives the folder's membership from it), so
 the port cannot quietly widen it. These sprites are the author's own
 paintings rather than renders of ARENA2, so Port-Doctrine's "a render of
 game data is game data" ruling - the one that keeps Weapon Widget's and

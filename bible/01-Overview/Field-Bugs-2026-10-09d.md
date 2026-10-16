@@ -42,7 +42,7 @@ What it gives up - the owner's call, recorded at `06-Systems/Professions-Arc.md`
 station's put-in takes the client's word for what the pack holds, so a modified client can craft from goods it never
 had, and earn the craft's XP. Since the audit, nothing more.
 
-Pinned by `test/fb1009d_bagcraft.test.js`; `tools/mutants/fb1009d_bagcraft.json` (21, all dead). Nine mutant records
+Pinned by `test/systems/fb1009d_bagcraft.test.js`; `tools/mutants/fb1009d_bagcraft.json` (21, all dead). Nine mutant records
 of BAG1, CRAFT1, CRAFT4, PROF4, KNIGHT-HOUSE and GATEKEYS re-aimed by content to the lines this moved.
 
 ## AUDIT BAG-CRAFT (same day, Mac: "Audit this")
@@ -55,5 +55,5 @@ Stores, a guild writ and a Drakes order. Fixed by the stations' wall: the Stores
 pack uncounted; a smelt's products of it loose, a piece of it walled to gold. **C1**: source pins a comment could
 satisfy, now on lines of code. **C2**: the audit's own survivor, a writ's put-in reading the loose units as in, pinned.
 **B1 (LOW)**: a refused craft's put-in stays in the Stores - kept, loose there and the next station's.
-`test/auditbagcraft.test.js` (4); `tools/mutants/auditbagcraft.json` (23, all dead); 23 records of BAG1, CRAFT1,
+`test/net/auditbagcraft.test.js` (4); `tools/mutants/auditbagcraft.json` (23, all dead); 23 records of BAG1, CRAFT1,
 CRAFT4, GOLD-MARKET, PROF2, PROF12 and BAG-CRAFT re-aimed by content (41 with BAG-CRAFT's own list, all dead).

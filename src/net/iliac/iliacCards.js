@@ -19,7 +19,7 @@
 // A CARD'S WORDS ARE THE DISPLAY'S (KG-SET, 2026-10-13): its rules and its flavor are said in the player's language by
 // `systems/iliac/iliacCardWords.js` (cardRules, cardFlavor), never written here - the relay shows no word, and L10N4's ratchet
 // holds this file's English from growing. A card's rules there are EXACTLY what `fxText(fx, kind)` says of its effects
-// (test/cards8_catalog.test.js), so a card's words are still its rules. Its `name` stays here: Daggerfall's own, the
+// (test/systems/loot/cards8_catalog.test.js), so a card's words are still its rules. Its `name` stays here: Daggerfall's own, the
 // canonical name fxText's summons say.
 //
 // THE ART IS OURS (6.2): an emblem is a picture the painter draws in code, never an ARENA2 sprite or a render of one

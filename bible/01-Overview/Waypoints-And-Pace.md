@@ -72,7 +72,7 @@ CACHE-OFF RETIRED (CACHE-COPY, 2026-10-07, `07-Rendering/Enhanced-Lighting-Arc.m
 fix, I want to fix the flickering issue properly"): the blink was the cache's COPY, not the cache - on Direct3D (ANGLE,
 every browser on Windows) a depth blit out of an array's layer is a Texture2D shader handed the layer's array view, and
 the driver's read. The copy is a draw and the cache is on again: `shadowcache=on`, the device's switch and the "Shadow
-cache" part are gone, `?shadowcache=off` is SC1's door as it was. `test/antiflicker.test.js` holds EMPTY-HOLD's constant
+cache" part are gone, `?shadowcache=off` is SC1's door as it was. `test/render/antiflicker.test.js` holds EMPTY-HOLD's constant
 alone (1) and `tools/mutants/antiflicker.json` its six EMPTY-HOLD, IDLER-STICKY and POISE-QUIET records.
 
 ## What integration changed
@@ -115,10 +115,10 @@ the replay's discard and the hold's refusal read the same one, before the edge i
 filters' block too: five boxes where it read four); MAP-KEY (the key's FILTER rows); CHAT1 and GUILD1c (the hub's line);
 DEEP2 (the menu holds the keys); TV2 (the click's own ray, read at the click's site - the menu casts the same one); EL1
 (the row's new part); HARD3 (the batch's fields); FONT3 (the floor's sheets); and the arc pages' module counts AUDIT18
-reads (Systems.md 428, UI.md 316). The anti-flicker patch's own two moves stand as written (`test/perfurl_doors.test.js`,
-`test/sc1_shadowcache.test.js`: the door asked by nothing answers off).
+reads (Systems.md 428, UI.md 316). The anti-flicker patch's own two moves stand as written (`test/systems/perfurl_doors.test.js`,
+`test/render/sc1_shadowcache.test.js`: the door asked by nothing answers off).
 
-New: `test/pacedials.test.js` (8), `test/waypoints.test.js` (9), `test/antiflicker.test.js` (3).
+New: `test/systems/travel/pacedials.test.js` (8), `test/systems/map/waypoints.test.js` (9), `test/render/antiflicker.test.js` (3).
 `tools/mutants/waypoints_pace.json` (23) and `tools/mutants/antiflicker.json` (10), all dead; thirteen records of other
 lists re-aimed by content and dead (auditlight, audit_flicker, disc15, disc17, disc24, el3, guild1c, ow1, ratelaw x3,
 tv1, tv2).

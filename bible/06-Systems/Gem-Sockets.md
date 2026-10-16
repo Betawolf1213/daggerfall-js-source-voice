@@ -251,7 +251,7 @@ counter there.
 
 ### AUDIT GEM (2026-10-10, Mac: "We need to audit this and ensure perfection")
 
-Four independent lanes read both arcs; the gem lane's findings, each fixed and pinned (`test/gem1_sockets.test.js`'s
+Four independent lanes read both arcs; the gem lane's findings, each fixed and pinned (`test/systems/gem1_sockets.test.js`'s
 AUDIT GEM pin and its tightened rates, the GEM3 pin's new steps):
 
 - **Salvage broke set gems** - a Magic weapon holds one since GEM1, and "Salvage every Magic" swept a Perfect Diamond
@@ -272,7 +272,7 @@ AUDIT GEM pin and its tightened rates, the GEM3 pin's new steps):
   the next socket's odds per tier and its stop at the first miss; a boss's find four tiers deeper; the test hooks put
   back in `finally` (gem1, loot16, loot20, loot21).
 
-Pinned: `test/gem1_sockets.test.js` (9). `tools/mutants/gem1.json`.
+Pinned: `test/systems/gem1_sockets.test.js` (9). `tools/mutants/gem1.json`.
 
 ### GEM-RARE - a third as many gems (Mac, 2026-10-11: "We need to make gems that can be slotted more rare. Currently they are too common")
 
@@ -294,6 +294,6 @@ seeds: a tier-3 corpse 16.3 in a thousand (the law's 16; GEM2's 45), a tier-10 c
 body 50.3 (the cap; 150) - Flawless 60.0 and Perfect 40.0 in a hundred, the bands' as before - and a tier-18 pile 48.6
 (the cap; 150).
 
-Pinned: `test/gem1_sockets.test.js`'s GEM2 find (the chance by tier to the new cap, by kind and by luck - PIN MOVED).
+Pinned: `test/systems/gem1_sockets.test.js`'s GEM2 find (the chance by tier to the new cap, by kind and by luck - PIN MOVED).
 `tools/mutants/gem1.json`: GEM2's base mutant re-aimed at the new table (`GEM2-the-find-twenty`, 10 to 20), and GEM2's 5 a tier and its cap of
 150 each put back alone (`GEM-RARE-five-a-tier-again`, `GEM-RARE-the-old-cap`) - 78, all dead.

@@ -5,25 +5,25 @@
     "old": "      if (next === target && home === file) return all;",
     "new": "      if (next === target) return all;",
     "tests": [
-      "test/tidy1_codemap.test.js"
+      "test/tooling/tidy1_codemap.test.js"
     ]
   },
   {
     "name": "TIDY1-a-page-url-taken-for-a-module",
     "file": "tools/moveModule.mjs",
-    "old": "/(\\bnew URL\\(\\s*)(['\"`])(\\.{1,2}\\/[^'\"`\\n]*)\\2(?=\\s*,\\s*import\\.meta\\.url)/g,",
-    "new": "/(\\bnew URL\\(\\s*)(['\"`])(\\.{1,2}\\/[^'\"`\\n]*)\\2/g,",
+    "old": "/(\\bnew URL\\(\\s*)(['\"`])(\\.{1,2}(?:\\/(?:\\$\\{[^}\\n]*\\}|[^'\"`\\n])*)?|[\\w-](?:\\$\\{[^}\\n]*\\}|[^'\"`\\n:])*)\\2(?=\\s*,\\s*import\\.meta\\.url)/g,",
+    "new": "/(\\bnew URL\\(\\s*)(['\"`])(\\.{1,2}(?:\\/(?:\\$\\{[^}\\n]*\\}|[^'\"`\\n])*)?|[\\w-](?:\\$\\{[^}\\n]*\\}|[^'\"`\\n:])*)\\2/g,",
     "tests": [
-      "test/tidy1_codemap.test.js"
+      "test/tooling/tidy1_codemap.test.js"
     ]
   },
   {
     "name": "TIDY1-the-src-path-reaches-into-another-tree",
     "file": "tools/moveModule.mjs",
-    "old": "    swap(new RegExp(`(?<![\\\\w\\\\-./])(\\\\.\\\\/|(?:\\\\.\\\\.\\\\/)+)?${esc(f)}(?![\\\\w\\\\-])`, 'g'), t);",
-    "new": "    swap(new RegExp(`(\\\\.\\\\/|(?:\\\\.\\\\.\\\\/)+)?${esc(f)}(?![\\\\w\\\\-])`, 'g'), t);",
+    "old": "  text = text.replace(new RegExp(`(?<![\\\\w\\\\-./])(\\\\/|\\\\.\\\\/|(?:\\\\.\\\\.\\\\/)+)?(${alt(plain)})(?![\\\\w\\\\-])`, 'g'), (all, lead = '', key) => {",
+    "new": "  text = text.replace(new RegExp(`(\\\\/|\\\\.\\\\/|(?:\\\\.\\\\.\\\\/)+)?(${alt(plain)})(?![\\\\w\\\\-])`, 'g'), (all, lead = '', key) => {",
     "tests": [
-      "test/tidy1_codemap.test.js"
+      "test/tooling/tidy1_codemap.test.js"
     ]
   },
   {
@@ -32,16 +32,16 @@
     "old": "if (/readdirSync\\(/.test(l) && named && !/recursive:\\s*true/.test(l))",
     "new": "if (/readdirSync\\(/.test(l) && named)",
     "tests": [
-      "test/tidy1_codemap.test.js"
+      "test/tooling/tidy1_codemap.test.js"
     ]
   },
   {
     "name": "TIDY1-a-migration-rewritten",
     "file": "tools/moveModule.mjs",
-    "old": "    if (FROZEN.some((re) => re.test(file))) continue;\n",
-    "new": "    if (false) continue;\n",
+    "old": "    if (FROZEN.some((re) => re.test(file))) {\n      // a frozen file's text is a fixture",
+    "new": "    if (false) {\n      // a frozen file's text is a fixture",
     "tests": [
-      "test/tidy1_codemap.test.js"
+      "test/tooling/tidy1_codemap.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "relay.has(back.get(f) ?? f) && t !== texts.get(back.get(f) ?? f)",
     "new": "relay.has(back.get(f) ?? f) && t !== texts.get(f)",
     "tests": [
-      "test/tidy1_codemap.test.js"
+      "test/tooling/tidy1_codemap.test.js"
     ]
   },
   {
@@ -59,16 +59,16 @@
     "old": "(a.length !== b.length || resolves(oldFile, a[i], was)) && !resolves(newFile, spec, now)",
     "new": "(a.length !== b.length || resolves(oldFile, a[i], was)) && false",
     "tests": [
-      "test/tidy1_codemap.test.js"
+      "test/tooling/tidy1_codemap.test.js"
     ]
   },
   {
     "name": "TIDY1-a-quoted-specifier-left",
     "file": "tools/moveModule.mjs",
-    "old": "    swap(new RegExp(`(?<![\\\\w\\\\-./])(\\\\.\\\\/|(?:\\\\.\\\\.\\\\/)+)?${esc(f)}(?![\\\\w\\\\-])`, 'g'), t);",
-    "new": "    swap(new RegExp(`(?<![\\\\w\\\\-./])()?${esc(f)}(?![\\\\w\\\\-])`, 'g'), t);",
+    "old": "  text = text.replace(new RegExp(`(?<![\\\\w\\\\-./])(\\\\/|\\\\.\\\\/|(?:\\\\.\\\\.\\\\/)+)?(${alt(plain)})(?![\\\\w\\\\-])`, 'g'), (all, lead = '', key) => {",
+    "new": "  text = text.replace(new RegExp(`(?<![\\\\w\\\\-./])(\\\\/)?(${alt(plain)})(?![\\\\w\\\\-])`, 'g'), (all, lead = '', key) => {",
     "tests": [
-      "test/tidy1_codemap.test.js"
+      "test/tooling/tidy1_codemap.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "if (b === null || keep.has(a) || !text.includes(a))",
     "new": "if (!text.includes(a))",
     "tests": [
-      "test/tidy1_codemap.test.js"
+      "test/tooling/tidy1_codemap.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "filter(([f, t]) => f !== file && posix.dirname(t) !== posix.dirname(file))",
     "new": "filter(([f]) => f !== file)",
     "tests": [
-      "test/tidy1_codemap.test.js"
+      "test/tooling/tidy1_codemap.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "        if (!t || home === file) return all;",
     "new": "        if (!t || true) return all;",
     "tests": [
-      "test/tidy1_codemap.test.js"
+      "test/tooling/tidy1_codemap.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "    return !p || p === '.' || exists(p);",
     "new": "    return true;",
     "tests": [
-      "test/tidy1_codemap.test.js"
+      "test/tooling/tidy1_codemap.test.js"
     ]
   },
   {
@@ -113,16 +113,16 @@
     "old": "l.matchAll(/(?:import\\(|new URL\\()\\s*`([^`]*)`/g)",
     "new": "l.matchAll(/(?:import\\()\\s*`([^`]*)`/g)",
     "tests": [
-      "test/tidy1_codemap.test.js"
+      "test/tooling/tidy1_codemap.test.js"
     ]
   },
   {
     "name": "TIDY2-a-pattern-left-escaped",
     "file": "tools/moveModule.mjs",
-    "old": "    swap(new RegExp(`(?<![\\\\w\\\\-.])(?<!\\\\\\\\/)(\\\\\\\\/|\\\\\\\\.\\\\\\\\/|(?:\\\\\\\\.\\\\\\\\.\\\\\\\\/)+)?${esc(escaped(from))}(?![\\\\w\\\\-])`, 'g'), escaped(to));",
-    "new": "    ;",
+    "old": "    const [to, own] = esc2.get(key);\n    if (own && lead === '\\\\/') return all;",
+    "new": "    const [to, own] = esc2.get(key);\n    return all;",
     "tests": [
-      "test/tidy1_codemap.test.js"
+      "test/tooling/tidy1_codemap.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "const ROOTS = ['src/', 'bible/'];",
     "new": "const ROOTS = ['src/'];",
     "tests": [
-      "test/tidy1_codemap.test.js"
+      "test/tooling/tidy1_codemap.test.js"
     ]
   },
   {
@@ -140,7 +140,106 @@
     "old": "    for (const [k, v] of out) if (v === from) out.set(k, to);\n",
     "new": "\n",
     "tests": [
-      "test/tidy1_codemap.test.js"
+      "test/tooling/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "TIDY5-its-own-folder-left",
+    "file": "tools/moveModule.mjs",
+    "old": "  if (deeper <= 0 || !OWN_DIR.test(text)) return { text, n: 0, blind: [] };",
+    "new": "  if (true) return { text, n: 0, blind: [] };",
+    "tests": [
+      "test/tooling/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "TIDY5-a-standalone-dirname-left",
+    "file": "tools/moveModule.mjs",
+    "old": "    if (own.startsWith('dirname')) return `${'dirname('.repeat(deeper)}${own}${')'.repeat(deeper)}`;",
+    "new": "    if (own.startsWith('dirname')) return own;",
+    "tests": [
+      "test/tooling/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "TIDY5-a-folder-loses-its-slash",
+    "file": "tools/moveModule.mjs",
+    "old": "      if (/\\/$/.test(s.path) && !out.endsWith('/')) out += '/';",
+    "new": "",
+    "tests": [
+      "test/tooling/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "TIDY5-a-child-import-re-based",
+    "file": "tools/moveModule.mjs",
+    "old": "      if (exists && !moved.has(target) && target !== '.' && !exists(target)) return all;",
+    "new": "",
+    "tests": [
+      "test/tooling/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "TIDY5-a-concatenated-root-left",
+    "file": "tools/moveModule.mjs",
+    "old": "      if (keep === dir) return all;",
+    "new": "      return all;",
+    "tests": [
+      "test/tooling/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "TIDY5-a-require-left",
+    "file": "tools/moveModule.mjs",
+    "old": "  /(\\brequire\\s*\\(\\s*)(['\"])(\\.{1,2}\\/[^'\"\\n]*)\\2/g,",
+    "new": "",
+    "tests": [
+      "test/tooling/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "TIDY5-a-test-quoted-as-a-subject",
+    "file": "tools/moveModule.mjs",
+    "old": "    if (!CODE_EXT.test(file) || FROZEN.some((re) => re.test(file)) || /^test\\//.test(file)) continue;",
+    "new": "    if (!CODE_EXT.test(file) || FROZEN.some((re) => re.test(file))) continue;",
+    "tests": [
+      "test/tooling/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "TIDY5-an-escaped-name-read-from-its-last-dot",
+    "file": "tools/moveModule.mjs",
+    "old": "  for (const m of text.matchAll(/([\\w-]+(?:\\\\?\\.[\\w-]+)*)\\\\?\\.(m?js|cjs|json|md|html)(?![\\w-])/g)) out.add(`${m[1].replace(/\\\\/g, '')}.${m[2]}`);",
+    "new": "  for (const m of text.matchAll(/([\\w-]+(?:\\.[\\w-]+)*)\\\\?\\.(m?js|cjs|json|md|html)(?![\\w-])/g)) out.add(`${m[1].replace(/\\\\/g, '')}.${m[2]}`);",
+    "tests": [
+      "test/tooling/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "TIDY5-a-made-require-left",
+    "file": "tools/moveModule.mjs",
+    "old": "  /(\\bcreateRequire\\(\\s*import\\.meta\\.url\\s*\\)\\s*\\(\\s*)(['\"])(\\.{1,2}\\/[^'\"\\n]*)\\2/g,",
+    "new": "",
+    "tests": [
+      "test/tooling/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "TIDY5-a-variable-url-unnamed",
+    "file": "tools/moveModule.mjs",
+    "old": "      if (home !== file && depth(home) !== depth(file) && /\\bnew URL\\(\\s*[A-Za-z_$][\\w$.]*\\s*,\\s*import\\.meta\\.url\\s*\\)/.test(t)) {",
+    "new": "      if (false) {",
+    "tests": [
+      "test/tooling/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "TIDY5-a-quoting-template-left",
+    "file": "tools/moveModule.mjs",
+    "old": "/(\\bnew URL\\(\\s*)(['\"`])(\\.{1,2}(?:\\/(?:\\$\\{[^}\\n]*\\}|[^'\"`\\n])*)?|[\\w-](?:\\$\\{[^}\\n]*\\}|[^'\"`\\n:])*)\\2(?=\\s*,\\s*import\\.meta\\.url)/g,",
+    "new": "/(\\bnew URL\\(\\s*)(['\"`])(\\.{1,2}(?:\\/[^'\"`\\n]*)?|[\\w-](?:\\$\\{[^}\\n]*\\}|[^'\"`\\n:])*)\\2(?=\\s*,\\s*import\\.meta\\.url)/g,",
+    "tests": [
+      "test/tooling/tidy1_codemap.test.js"
     ]
   }
 ]

@@ -14,7 +14,7 @@ froze every hull-2 ship at every harbour berth; D-wall brought D1's level-jumpin
 fallback hull; D7 turned the Carrack's shut cargo doors into a hole. And G2's shutter snap held in the test's frame
 order, not the game's.
 
-GALLEON-2 pins: `test/auditgalleon2_bake.test.js` (9), `auditgalleon2_prefab` (11), `auditgalleon2_rig` (4),
+GALLEON-2 pins: `test/tooling/auditgalleon2_bake.test.js` (9), `auditgalleon2_prefab` (11), `auditgalleon2_rig` (4),
 `auditgalleon2_deck` (6), `auditgalleon2_sea` (7), `auditgalleon2_guns` (8), and pins added to
 `auditgalleon_rig` (RG7), `auditnav2_captains` (TS4) and `auditgalleon_guns` (G2, G3 and G5 strengthened).
 

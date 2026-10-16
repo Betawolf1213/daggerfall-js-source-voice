@@ -47,7 +47,7 @@
 // long, the caravan's body 5.8 m long, 2.7 m wide and 3.5 m to its roof, its floor 0.94 m up and 2.57 m under the
 // roof - a Daggerfall horse (the mod's 3 m billboard) to pull them and a body to stand in.
 //
-// The output is one JSON a wagon, each a test re-bakes byte for byte (test/wagons1_bake.test.js): the source is
+// The output is one JSON a wagon, each a test re-bakes byte for byte (test/tooling/wagons1_bake.test.js): the source is
 // committed beside them, so the files are a DERIVATION, never a blob.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { createHash } from 'node:crypto';

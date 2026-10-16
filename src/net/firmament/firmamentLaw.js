@@ -38,7 +38,7 @@ import { FIRM_NODES, FIRM_ADJ, START_KEYS, firmNode } from './firmamentTree.js';
  *  - 98 at Renown 50, beside up to 125 Craft points: well under half of the 518 stars, every cap still holding). */
 export const STARS_PER_RENOWN = 2;
 /** The highest Renown the purse reads (net/identityToken.js RENOWN_MAX - restated here so the Worker's graph stays this
- *  file and the tree; test/firm1_law.test.js holds the two equal). */
+ *  file and the tree; test/net/firmament/firm1_law.test.js holds the two equal). */
 export const FIRM_RENOWN_MAX = 50;
 /** Profession ranks, summed over the ten tracks, for one Craft point. */
 export const CRAFT_RANKS_PER_POINT = 8;

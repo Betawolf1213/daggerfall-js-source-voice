@@ -385,9 +385,9 @@ stays), and online a quest's countdowns are WORLD7's again:
   its holder's clock (a member's play spends their copy, a rest spends neither); the save's move onto the character's
   clock. QFAIL-FREE (a failed quest online costs its faction nothing) stays.
 
-Pins: `test/time3_quests.test.js` (the Clock, the wave, the party's copies and the rest re-aimed - a rest spends
-nothing, the same mechanics driven by lived play), `test/world7.test.js`, `test/world5.test.js`,
-`test/auditworld78.test.js` (the charge's source); `ui/enhanced/enhancedMenu.js` says it at the door. `tools/mutants/time3.json`
+Pins: `test/systems/quest/time3_quests.test.js` (the Clock, the wave, the party's copies and the rest re-aimed - a rest spends
+nothing, the same mechanics driven by lived play), `test/systems/quest/world7.test.js`, `test/systems/quest/world5.test.js`,
+`test/systems/quest/auditworld78.test.js` (the charge's source); `ui/enhanced/enhancedMenu.js` says it at the door. `tools/mutants/time3.json`
 re-aimed (61, all dead): TIME3's law back - the raise charged whole - is a mutant now.
 
 ### 6.3d Quest waits on the short wait (REST8, 2026-10-03) [SUPERSEDES 6.3c's delays on played time; 6.3b's DELAY HALF RESTORED]
@@ -423,10 +423,10 @@ night is a raise, which 6.3c charges nothing. So 6.3b's reading comes back for i
   N0B20Y02's Nightblades - first comes inside the short wait; the waves after it, and every wave that harasses, keep
   their pacing]
 - **The edge**: a deadline read as a delay fires its end two minutes in, as under 6.3b; a delay read as a deadline only
-  waits its played days now (6.3b froze it). The pins guard the first: `test/rest8_questwaits.test.js` (6.3b's file,
+  waits its played days now (6.3b froze it). The pins guard the first: `test/systems/quest/rest8_questwaits.test.js` (6.3b's file,
   re-aimed - every vendored clock ticked past the short wait online: all 127 delays land, not one of the 272 deadlines
   is cut; 264 and 135 as REST8 built it, then AUDIT REST-PARTY D2's two, AUDIT REST II's three, AUDIT REST III's two
-  and GUARD-WINDOW's one) and `test/rest8_audit_timefree.test.js` (AUDIT TIMEFREE's, and R1's). Campaigns `tools/mutants/rest8.json`
+  and GUARD-WINDOW's one) and `test/systems/quest/rest8_audit_timefree.test.js` (AUDIT TIMEFREE's, and R1's). Campaigns `tools/mutants/rest8.json`
   (22) and `tools/mutants/rest8_audit_timefree.json` (14), all dead.
 - **AUDIT REST II (2026-10-03) - THE RULE, decided:** a clock the quest's own text presents to the player as a TIME
   LIMIT - a window to act, to return, to fetch something before it is lost - is a deadline, kept at its days of played
@@ -444,7 +444,7 @@ night is a raise, which 6.3c charges nothing. So 6.3b's reading comes back for i
   or names another clock's). Q3: a bounty held through 6.3b's never-lapse carried a `takenAt` days behind the world's
   clock and lapsed, kills and all, on the first tick after the update - the ledger saves a version (`bountyBoard.js`
   `BOUNTY_LEDGER_VERSION`), and an older ledger's held rows run from now once, online (`restampNeverLapsed`; offline
-  untouched). Pins `test/auditrest2_quests.test.js`; campaign `tools/mutants/auditrest2_quests.json` (18, all dead).
+  untouched). Pins `test/systems/quest/auditrest2_quests.test.js`; campaign `tools/mutants/auditrest2_quests.json` (18, all dead).
 - Offline: none of it. DFU's clock, whole.
 
 ### 6.4 Weather keeps its pace
@@ -575,7 +575,7 @@ does online: "Short real wait"; asked whether the bounties, the curse quests and
 5. **AUDIT TIME** over the arc, the house's four lenses.
 
 Each slice is pinned red first, with its own mutant campaign (`tools/mutants/time<n>.json`; TIME4, words alone,
-is held by `test/time4_words.test.js` instead; AUDIT TIME's one TIME4 mutant, the pane's minutes, rides
+is held by `test/systems/quest/time4_words.test.js` instead; AUDIT TIME's one TIME4 mutant, the pane's minutes, rides
 `time1.json`), a Testing.md
 row, and its player-facing notes in its pull request's description. TIME2 and TIME3 are independent of
 each other once TIME1 has landed.
@@ -649,7 +649,7 @@ terms; 9 is new and not built.
   character's clock. Added to section 7 and TIME1: the gates' and raids' words. The census became a table.
   No reader found saves a sky minute.
 - 2026-10-01: BUILT. TIME1: the sky's law (`net/skyLaw.js`), its install and `skyMinutes()`, every sky reader
-  moved and every event reader held by the census (`test/time1_census.test.js` over
+  moved and every event reader held by the census (`test/scenes/time1_census.test.js` over
   `test/fixtures/time1_census.json`), the weather's season, the nightfall words, the gates' and raids' local
   times, `tools/skyCutover.mjs`. TIME2: the full moon's night online. TIME3: quests on the character's clock and
   the sky (6.3a). TIME4: the Online pane's sentence, this page, `Lived-Time.md`, `Online-Arc.md`, `Quest-Arc.md`,
@@ -665,7 +665,7 @@ terms; 9 is new and not built.
   across the switch); main merged in; the patch notes' words corrected.
 - 2026-10-02: QCLOCK-WORLD (6.3c): TIMEFREE's quest half reverted before the merge, and online a quest's countdowns
   charge the time played with the world's clock and never a raise - a rest, a wait or a journey spends no quest days.
-  `test/time3_quests.test.js` re-aimed, `tools/mutants/time3.json` (61, all dead); its patch notes ride the Rest arc's
+  `test/systems/quest/time3_quests.test.js` re-aimed, `tools/mutants/time3.json` (61, all dead); its patch notes ride the Rest arc's
   pull request (REL6), "Patch notes: Quest timers on the world's clock".
 - 2026-10-02: AUDIT TIME, four lenses (the sky and the moon; the quests; the hosts, saves and wire; the words and
   the tests). Fixed: the coven's daily re-roll was stamped and saved on the sky - its key is the event clock's day
@@ -692,24 +692,24 @@ terms; 9 is new and not built.
   on this build; the mixed-build skew after the switch is section 4's. Each code fix has a pin and a mutant.
 - 2026-10-02: SKY-SLOW. The 48 sky zoomed by; the not-yet-live row was replaced with TimeScale 24 (a day every real
   hour, midnight on the hour UTC) at the aligned instant 2026-10-03T17:07:30Z. The Online pane's sentence, the patch
-  notes and the pins (`test/time1_sky.test.js`, `test/time2_moon.test.js`, `test/time4_words.test.js`) moved with it.
+  notes and the pins (`test/systems/time1_sky.test.js`, `test/systems/time2_moon.test.js`, `test/systems/quest/time4_words.test.js`) moved with it.
 - 2026-10-03: REST8 (6.3d, `Rest-Arc.md` section 8, OPEN 12 option A): 6.3b's delay half restored on 6.3c's clock -
   the reading and its two tables whole, a delay cut once to the short wait, a deadline on played time; the crime-guild
   letters and the curse arms on the short wait; R1: K0C00Y02's gold and S0000502's tower read as the deadlines they
-  are. `test/rest8_questwaits.test.js`, `test/rest8_audit_timefree.test.js`, `tools/mutants/rest8.json` (22) and
+  are. `test/systems/quest/rest8_questwaits.test.js`, `test/systems/quest/rest8_audit_timefree.test.js`, `tools/mutants/rest8.json` (22) and
   `tools/mutants/rest8_audit_timefree.json` (14), all dead.
 - 2026-10-03: AUDIT REST II, the quest clocks (6.3d): THE RULE decided - a time limit the text sets is a deadline;
   R0C11Y03's return a deadline and `ONLINE_CLOSINGS` retired; S0000011's chapter and O0B00Y12's drop deadlines by hand;
   269 and 130, the main quest's 32; the bounties held through 6.3b's never-lapse re-stamped once online.
-  `test/auditrest2_quests.test.js`, `tools/mutants/auditrest2_quests.json` (18, all dead).
+  `test/systems/quest/auditrest2_quests.test.js`, `tools/mutants/auditrest2_quests.json` (18, all dead).
 - 2026-10-03: AUDIT REST III, the quest clocks (6.3d): K0C00Y07's ransom and B0B71Y03's daughter - dead clocks whose
   text sets a limit, read "a few days" online - deadlines by hand, 271 and 128; a held bounty's day moves with the lane
-  (Bring online lapsed a ledger of this build's bounties on the first tick). `test/auditrest3.test.js`,
+  (Bring online lapsed a ledger of this build's bounties on the first tick). `test/systems/auditrest3.test.js`,
   `tools/mutants/auditrest3.json`.
 - 2026-10-06: GUARD-WINDOW (FIELD BUGS 2026-10-06c, `01-Overview/Field-Bugs-2026-10-06c.md`): N0B20Y02's three-hour
   guard is a deadline by hand - read as a delay, it was cut to the 24-minute short wait and the mage was hidden before
   the attack its 55-minute interval sends; a guard who stepped out in those two real minutes lost the attack for good.
-  272 and 127. `test/fb1006c_guardwindow.test.js`, `tools/mutants/fb1006c.json`.
+  272 and 127. `test/systems/quest/fb1006c_guardwindow.test.js`, `tools/mutants/fb1006c.json`.
 - 2026-10-07: WAITS (`Online-Waits.md`, Mac: "What are some elements that are still far too lengthy?", then "Take care of
   this, you have autonomy"): the sweep of every wait still long online, and four built - OL6 (the bank, the library and
   the palace on the shift), WAVE-WAIT (a wave the quest waits on first comes inside the short wait), SUMMON-NAME (online

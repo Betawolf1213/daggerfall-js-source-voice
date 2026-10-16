@@ -34,7 +34,7 @@ old save loads not stabled. The Stable's card says Stabled only for a pair sent 
 door leaves it outside), and horse care's keep follows the card: a horse never sent is with its owner. THE FOUR HOSTS:
 worldModes.js runs every interior and dungeon entry through handlePreTransition; world.js and exterior.js reach it
 through createWorldModes; dungeonContext.js has no door from outdoors, and its save seams carry the words. Pinned by
-`test/fb1015_wagonstabled.test.js` (`tools/mutants/fb1015_wagonstabled.json`, 27, dead); PINS MOVED: hcc_law (the
+`test/systems/horse/fb1015_wagonstabled.test.js` (`tools/mutants/fb1015_wagonstabled.json`, 27, dead); PINS MOVED: hcc_law (the
 record's field count, 15 to 17), holdings (the Stable's view and words), steed1_horsecare (the keep's view), wagons2
 (the journey's source).
 
@@ -57,8 +57,8 @@ mendOrder inside each. Arbeck's other worn gear is still mended first. The accep
 below its condition the tick holds it and the pack waits - Cast When Held wears on every tick's round out of rest, so
 while one is worn and damaged nothing carried is mended, and two such pieces share the tick (the more worn is held).
 The repair kit (`smithItems.js` repairKitTargets) was already worn-first and is unchanged. Pinned by
-`test/fb1015_mendtiers.test.js` (`tools/mutants/fb1015_mendtiers.json`, 5: 4 dead, 1 equivalent as recorded); PIN MOVED
-in `test/fb1014_mendstarve.test.js` (the boots wait); re-aimed by content: MEND-STARVE-the-self-wearing-piece-first-again
+`test/systems/fb1015_mendtiers.test.js` (`tools/mutants/fb1015_mendtiers.json`, 5: 4 dead, 1 equivalent as recorded); PIN MOVED
+in `test/systems/fb1014_mendstarve.test.js` (the boots wait); re-aimed by content: MEND-STARVE-the-self-wearing-piece-first-again
 and MEND-WORN-pack-order (dead).
 
 ## KICK-AIR: the Flying Kick goes from the air (3)
@@ -80,7 +80,7 @@ knockdown - is the kick's too. From the air it is the same kick, aimed from the 
 mid-fall keeps that fall's start: the launch had re-anchored it, so a kick near the ground would have cancelled a
 12 m fall's damage. THE FOUR HOSTS: none changed - exterior.js, world.js and worldModes.js each hand the one
 PlayerMotor to the runner, and dungeonContext.js reads worldModes' (or `dungeon.js`'s) through its technique door.
-Pinned by `test/fb1015_kickair.test.js` (`tools/mutants/fb1015_kickair.json`, 9, dead).
+Pinned by `test/systems/fb1015_kickair.test.js` (`tools/mutants/fb1015_kickair.json`, 9, dead).
 
 ## CART-AWAY: a wagon away from a death in the zone keeps its cargo (6)
 
@@ -101,7 +101,7 @@ holds no map files, honours it only where the stored record's mode agrees. A sei
 none; a repeat ask answers the first take. THE LIMIT: the wagon record is the client's own (Wild-Zone.md section 22).
 THE FOUR HOSTS: world.js WIRED (one existing line); dungeonContext.js and worldModes.js reach it through world.js;
 exterior.js NOT WIRED (online only). No migration; the account service's version moves (acct138). Pinned by
-`test/fb1015_cartaway.test.js` (`tools/mutants/fb1015_cartaway.json`, 20, dead); PINS MOVED: int9_wild_ref,
+`test/systems/fb1015_cartaway.test.js` (`tools/mutants/fb1015_cartaway.json`, 20, dead); PINS MOVED: int9_wild_ref,
 fb1014_pvpescrow; re-aimed: INT9-AUDIT-SVC-THE-FITTED-FEW-ASKED, ESCROW-the-escrow-asked-of-any-room.
 
 ## The right arm: asked of the player (4)

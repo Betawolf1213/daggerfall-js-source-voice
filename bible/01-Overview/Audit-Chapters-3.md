@@ -17,7 +17,7 @@ VERIFIER IS READING):
 - **the pins** (T): the eight test files and the eight mutation lists - flakes, weak pins, wrong equivalences, gaps.
 
 Every finding was re-read here before a line moved. Each fix carries an `AUDIT CHAP3 <ID>` comment and a pin in
-`test/audit_chap3.test.js` (18), and is mutated in `tools/mutants/audit_chap3.json`: **45 records, 40 dead, 5 equivalent
+`test/net/audit_chap3.test.js` (18), and is mutated in `tools/mutants/audit_chap3.json`: **45 records, 40 dead, 5 equivalent
 as recorded** (each with its reason; AUDIT CHAP4: 41 and 4 since - `A3-S2-OFF` dies now that S2 records the shut weeks). Thirty older records the fixes moved were re-aimed by content and run again: all
 dead - AUDIT CHAP2's `T-LAW-ADOPT-BASE-HAS` and CHAP3c's `CHAP3C-SHEET-BUSY` among them, no longer called equivalent (T6,
 T7). The service stayed `acct95` (`acct103` since, renumbered past SCALE4's, TAVERN CARDS', SERVER-POST's, PERMADEATH-HOUSES', CARDS9's, INT1-INT6's, BAG-CRAFT's and UNWITNESSED-ORE's at the merges of main): none of the arc has shipped, so migrations `0092` to `0095` (today's `0099` to `0102` - AUDIT CHAP5 R7) grew in place.

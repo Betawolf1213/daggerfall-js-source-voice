@@ -72,7 +72,7 @@ other value names no tier and is dropped at the load. No save holds the switch: 
 `horseFed`) are its world, and no tier rewrites them but by its law. The shelf is in the account Worker's bundle, so the
 tiers' leaf is too, and the account deploy's path filter names it (`.github/workflows/account-deploy.yml`, ACC4's walk).
 
-Pinned: `test/horsetiers.test.js` (7 - the one key, the switch online, Boons never below DFU's horse, the shelf, Off's
+Pinned: `test/systems/horsetiers.test.js` (7 - the one key, the switch online, Boons never below DFU's horse, the shelf, Off's
 minutes, no red, the one accessor); mutants `tools/mutants/horsetiers.json` (20, all dead). The pins written before
 the tiers pin Hard, PIN MOVED where their vocabulary did: the upkeep is handed Hard's rules where it was handed `true`.
 
@@ -206,7 +206,7 @@ pane before RR2 brought it), so no player holds a saved off, and nothing is rese
 gallop into a town, as the mod pairs the two (TrampleCivilians, shipped on; `systems/roleplayRealism/rrRidingHost.js`): a gallop into a
 townsperson tramples them - Assault, and the watch called - and the Horses tutorial says so ("Don't gallop into people
 in town: trampling them is a crime"). Pinned through the mod's own CanRun line, lifted from `systems/roleplayRealism/rrInstall.js` and
-run over the real upkeep and motor (`test/horsewalk.test.js`, IN A TOWN): as the port ships it, Run gallops a horse in a
+run over the real upkeep and motor (`test/systems/horsewalk.test.js`, IN A TOWN): as the port ships it, Run gallops a horse in a
 town and its release walks it; the room's on whatever a player saved; and the mod's own rule, Galloping In Towns off,
 walks it in a town with Run held and gallops it out of one. A cart is unchanged - the mod never lets it run, in a town
 or out - and rolls on DFU's cart base, 7.6 m/s at Speed 50: above the walk and under the gallop, as it always stood under
@@ -311,10 +311,10 @@ upkeep its odometer's metres, the HUD its bar and the Stable page its acts. `sce
 (`transport.js` dismountOnTransition) - and are named, not wired; worldModes.js reads the accessor for one thing, a
 Stable's prices (its counter stands indoors).
 
-Pinned: `test/steed1_horsecare.test.js`; mutants `tools/mutants/steed1.json`, and HORSE-LIVES's and UPKEEP-ONLINE's
-`tools/mutants/wagonmend.json`. THE WALK: `test/horsewalk.test.js`; mutants `tools/mutants/horsewalk.json` (40, all
+Pinned: `test/systems/steed1_horsecare.test.js`; mutants `tools/mutants/steed1.json`, and HORSE-LIVES's and UPKEEP-ONLINE's
+`tools/mutants/wagonmend.json`. THE WALK: `test/systems/horsewalk.test.js`; mutants `tools/mutants/horsewalk.json` (40, all
 dead - TOWN-GALLOP retired the town walk's two with their law) and TOWN-GALLOP's `tools/mutants/towngallop.json` (7,
 all dead). The saddle panel and the page's polish:
-`test/steedui_saddle.test.js`; mutants `tools/mutants/steedui.json`. The panel as a HUD piece:
-`test/fb1014_ridingpanel.test.js`; mutants `tools/mutants/fb1014_ridingpanel.json`. THE TIERS: `test/horsetiers.test.js`;
+`test/systems/steedui_saddle.test.js`; mutants `tools/mutants/steedui.json`. The panel as a HUD piece:
+`test/ui/enhanced/fb1014_ridingpanel.test.js`; mutants `tools/mutants/fb1014_ridingpanel.json`. THE TIERS: `test/systems/horsetiers.test.js`;
 mutants `tools/mutants/horsetiers.json`.

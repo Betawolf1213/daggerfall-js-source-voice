@@ -5,7 +5,7 @@
     "old": "  .shell:not(.wizard) { grid-template-columns: min(var(--side), 34vw) 1fr; grid-template-rows: none; }\n",
     "new": "",
     "tests": [
-      "test/shorttouch.test.js"
+      "test/ui/enhanced/shorttouch.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "  .shell:not(.wizard) > .side { display: flex; flex-direction: column; min-height: 0; }\n",
     "new": "",
     "tests": [
-      "test/shorttouch.test.js"
+      "test/ui/enhanced/shorttouch.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "  .shell:not(.wizard) .brand { padding: 10px 14px 6px; }",
     "new": "  .shell .brand { padding: 10px 14px 6px; }",
     "tests": [
-      "test/shorttouch.test.js"
+      "test/ui/enhanced/shorttouch.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "  .px-stage.px-acctstage { padding: max(10px, env(safe-area-inset-top)) 16px 10px; overflow: hidden; }",
     "new": "  .px-acctstage { padding: max(10px, env(safe-area-inset-top)) 16px 10px; overflow: hidden; }",
     "tests": [
-      "test/shorttouch.test.js"
+      "test/ui/enhanced/shorttouch.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "  .px-win.px-acctwin { max-height: calc(100dvh - 20px); }",
     "new": "",
     "tests": [
-      "test/shorttouch.test.js"
+      "test/ui/enhanced/shorttouch.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "@media (pointer: coarse) and (orientation: landscape) and (min-width: 600px), (orientation: landscape) and (min-width: 600px) and (max-width: 860px) {",
     "new": "@media (pointer: coarse) and (orientation: landscape) and (max-height: 560px) and (min-width: 600px) {",
     "tests": [
-      "test/shorttouch.test.js"
+      "test/ui/enhanced/shorttouch.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "@media (pointer: coarse) and (orientation: landscape) and (min-width: 600px), (orientation: landscape) and (min-width: 600px) and (max-width: 860px) {",
     "new": "@media (pointer: coarse) and (orientation: landscape) and (min-width: 600px) {",
     "tests": [
-      "test/shorttouch.test.js"
+      "test/ui/enhanced/shorttouch.test.js"
     ]
   }
 ]

@@ -42,7 +42,7 @@ and the spell maker, a foe's cast (`enemyCasting.js`, priced at the player's ski
 absorb's refund (`absorption.js` effectCastingCost) and a held item's equip bill (`enchantments.js` assignHeldSpell).
 The port's own cost modifiers (SET2's sets, LOOT15's focus) run after it, unchanged.
 
-`test/fb1012c_spellcost.test.js` (3): the field's cast to the point in both lanes, through the ready's price and the
+`test/systems/fb1012c_spellcost.test.js` (3): the field's cast to the point in both lanes, through the ready's price and the
 spell maker's two labels with the page online; the term swept online and off (two divisors, nine values, skills -50 to
 2000 - never under nothing, never rising with the skill, DFU's to 100, 100 / skill past it, half at 200, the page's
 switch the default); and a second effect never makes a spell cheaper online, with the held-item bill above the floor

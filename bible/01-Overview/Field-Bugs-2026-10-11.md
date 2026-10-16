@@ -26,7 +26,7 @@ The book is handed AUDIT WB A6's one store now (`spoilsPool.js` `spoilsStore`, r
 and the Iliac claims reach it), JSON over the device's Storage, its memory standing in for a storage that refuses writes.
 TEST THE SHAPE THE PRODUCER MINTS: the pin lifts the host's own expression out of world.js and runs the real book over it
 and a device Storage - a buy-in stakes, is kept as JSON, sits and is owed at its room - and a bare Storage handed to the
-book is the report, refused. `11-Multiplayer/Tavern-Cards.md` section 36. Pinned by `test/fb1011_cardskept.test.js`;
+book is the report, refused. `11-Multiplayer/Tavern-Cards.md` section 36. Pinned by `test/scenes/fb1011_cardskept.test.js`;
 `tools/mutants/fb1011_cardskept.json` (11, all dead).
 
 ## CARDS-PANEL: the card table's panel (5)
@@ -39,7 +39,7 @@ All in) - a pick moves the slider and its words and never deals or raises; the s
 the deal and the call drawn heavier, the stand lighter; a fold in the header that puts the seats, the board, the note
 and the log away so the cloth shows, kept across repaints; and the log a line a sentence, the newest last and in view
 (the run of sentences in one box cut the newest off). `11-Multiplayer/Tavern-Cards.md` section 36. Pinned by
-`test/fb1011_cardskept.test.js`; PIN MOVED: `cards4_hud` - the buy-in's and the raise's models carry their picks.
+`test/scenes/fb1011_cardskept.test.js`; PIN MOVED: `cards4_hud` - the buy-in's and the raise's models carry their picks.
 
 ## DRAGON-SOUL: the Dragonling the world spawns binds at -5000 (2)
 
@@ -55,7 +55,7 @@ A departure (Port-Ledger A, DRAGON-SOUL): index 34 binds at -5000, the quest Dra
 worth. The binding alone moved. A soul's SoulPts (the gold it adds to a shop's soul gem and to a soul-bound item's
 price, `enchantments.js` `legacyEnchantmentValue`) stay DFU's - 0 for 34 - so a monster every encounter spawns is no
 500,000-gold gem; and the shops' filled traps still never draw 34 (`shopStock.js` `SOULLESS_DRAWS`, DFU's veto). Pinned
-by `test/fb1011_dragonsoul.test.js` (the service's empty trap filled by the soul trap's own roll with a general-spawn
+by `test/systems/fb1011_dragonsoul.test.js` (the service's empty trap filled by the soul trap's own roll with a general-spawn
 Dragonling, enumerated from the pack, offered by the picker at -5000; its SoulPts and the soulless cells untouched);
 PIN MOVED: `enchantmentcatalogue` - 34's cost, the table's sum (99680 -> 94680), SoulBound's (-23440 -> -28440) and the
 side effects' (-55160 -> -60160). `tools/mutants/fb1011_dragonsoul.json` (2, both dead).
@@ -79,7 +79,7 @@ Confirm and drops what was staged on every walk away (FIX-F; the head says so) -
   is the page's first card (`ctl-intro`), read once: 138 px on the desktop, and on a phone (where the law's line is the
   intro's to say) one row of buttons and the owed line, 90 px.
 
-Pinned by `test/fb1011_unsavedmark.test.js`; `tools/mutants/fb1011_unsavedmark.json` (11, all dead). Not changed, and
+Pinned by `test/ui/enhanced/fb1011_unsavedmark.test.js`; `tools/mutants/fb1011_unsavedmark.json` (11, all dead). Not changed, and
 the owner's if it should be: leaving the page commits a staging with no clash, as DFU's own window does (OnPop applies on
 leave) - a reversal of FIX-F's "leaving discards".
 
@@ -102,6 +102,6 @@ helm is `world.js`'s (the streaming host runs Come Sail Away and owns every jump
 `dungeonContext.js` run no helm and no teleport core - an interior's or a dungeon's Recall jumps through world.js's.
 
 Not changed: an anchor set ON a deck is the deck's world point at that moment (DFU's anchor knows no boat), so a Recall to
-it lands where the boat was, in the water. Pinned by `test/csa_sailing.test.js` (the runtime: unreleased, the landing is
-pinned back; released, it stands, the skiff packed, a disembark's hold ended) and `test/fb1011_helmjump.test.js` (the
+it lands where the boat was, in the water. Pinned by `test/systems/comeSailAway/csa_sailing.test.js` (the runtime: unreleased, the landing is
+pinned back; released, it stands, the skiff packed, a disembark's hold ended) and `test/scenes/fb1011_helmjump.test.js` (the
 host); `tools/mutants/fb1011_helmjump.json` (6, all dead).

@@ -992,7 +992,7 @@ export function landformLiftField(woods, px, py, locationRect = null, hDim = HEI
  * @param {?Uint8Array} [o.sites] - LANDFORM4: landformSites' table, the game's own locations; null pulls no ground (a
  *   world whose map table is not read - a test, a tool).
  * @param {boolean} [o.hills] - LANDFORM5: false leaves the hills out - the land the paths' own pins read their cuts on
- *   (test/auditlandforms.test.js); no kernel of the game passes it.
+ *   (test/world/terrain/auditlandforms.test.js); no kernel of the game passes it.
  * @param {?Uint8Array} [o.climates] - LANDFORM6: landformClimates' table, the land each climate wears; null stands every
  *   sample in woodlands (a test, a tool).
  * @param {number} [o.hDim]

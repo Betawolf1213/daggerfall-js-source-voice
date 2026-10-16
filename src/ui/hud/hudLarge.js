@@ -120,7 +120,7 @@
 // draws into (player/tapRay.js), so a reduced viewport moves no pick
 // on either device. (That cite pointed sixty-odd lines past the call, into
 // the AUDIT 18 arrow-streaming block, for a whole wave - a withdrawal
-// is only as good as its evidence, so test/hudlarge.test.js RESOLVES
+// is only as good as its evidence, so test/systems/hudlarge.test.js RESOLVES
 // the line numbers here rather than trusting them.) E5 shipped the
 // viewport it withdrew that clause about, and the withdrawal held:
 // not one activation site changed.

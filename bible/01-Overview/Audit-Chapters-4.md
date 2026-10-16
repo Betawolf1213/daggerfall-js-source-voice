@@ -20,7 +20,7 @@ reading (Home.md, DO NOT FIX WHILE THE VERIFIER IS READING):
 - **the pins** (T): the arc's test files and mutation lists - flakes, weak pins, wrong equivalences, gaps.
 
 Every finding was re-read here before a line moved. Each fix carries an `AUDIT CHAP4 <ID>` comment and a pin in
-`test/audit_chap4.test.js` (28), and is mutated in `tools/mutants/audit_chap4.json`: **71 records, all dead**. Thirty-seven
+`test/net/audit_chap4.test.js` (28), and is mutated in `tools/mutants/audit_chap4.json`: **71 records, all dead**. Thirty-seven
 older records the fixes moved were re-aimed by content and run again, all dead; two were retired with the carry they
 mutated (CHAP4a's `CHAP4A-CARRY`, `CHAP4A-SCORE-CARRY` - E1); AUDIT CHAP3's `A3-S2-OFF`, recorded equivalent, dies now
 (S2). The service stays `acct98` and the relay `world180` (`acct99` and `world182` since the merges of main past PERMADEATH-HOUSES, TAVERN-TABLES and TV-BEYOND; `acct100` and `world183` past CARDS9 and CARDS10 - AUDIT CHAP5 R9; `acct103` past INT1-INT6, BAG-CRAFT and UNWITNESSED-ORE): none of the arc has shipped, so migrations `0096`, `0100` and

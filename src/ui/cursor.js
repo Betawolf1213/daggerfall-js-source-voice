@@ -17,7 +17,7 @@
 // and a canvas a controller hid the pointer on (ui/gamepadInput.js) keeps it hidden. Enhanced Plus wears its gauntlet.
 // NEVER TRAPS: the rule names `auto` after the arrow - an arrow that will not load is the OS's.
 //
-// A LEAF on the boot path (test/boot2.test.js): the skin and the root are systems/ modules already on the entry's reach.
+// A LEAF on the boot path (test/render/boot2.test.js): the skin and the root are systems/ modules already on the entry's reach.
 
 import { isEnhanced } from '../systems/uiSkin.js';
 import { APP_ROOT } from '../systems/appRoot.js';

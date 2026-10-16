@@ -2,7 +2,7 @@
 // every burst) must stand where HUD-MOVE put it from its first frame, not at the next 250 ms sweep - so its builder
 // asks for a sweep the moment it appends. The sweep lives in ui/hud/hudLayout.js, whose own imports (the previews' party,
 // boss and revenant hosts) reach the quest machine; the notice module is on the quest herald's static path, which
-// must never reach it (test/guide3_herald.test.js THE HUD STAYS LIGHT). So the builder imports this leaf - no imports
+// must never reach it (test/ui/quest/guide3_herald.test.js THE HUD STAYS LIGHT). So the builder imports this leaf - no imports
 // of its own - and hudLayout seats its sweep here when it loads. Nothing seated, nothing is moved yet: no layout is
 // put on any piece until hudLayout has loaded, so there is nothing to place.
 let placer = null;

@@ -39,8 +39,8 @@ Re-run at AUDIT PRE-MERGE 1003 on PR #545's head, without ARENA2: the same 35 de
 
 **The packs and the door** (`src/formats/worldData/worldDataReplacement.js`, `src/formats/worldData/worldDataPack.js`,
 `src/scenes/modWorldData.js`, `src/systems/layoutPins.js`, `src/systems/features.js`, `tools/worldDataPackBuild.mjs`,
-`tools/worldDataPackNames.mjs`; the pins in `test/wd3_door.test.js`, `test/wd3_pack.test.js`,
-`test/wd3_layoutPins.test.js`)
+`tools/worldDataPackNames.mjs`; the pins in `test/systems/wd3_door.test.js`, `test/formats/worldData/wd3_pack.test.js`,
+`test/systems/wd3_layoutPins.test.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
@@ -51,12 +51,12 @@ Re-run at AUDIT PRE-MERGE 1003 on PR #545's head, without ARENA2: the same 35 de
 | P6 | - | Two asks at once for one pinned pack (the online layouts' retries) fetched it twice. | The first pass: the two asks share one fetch. |
 | B1 | - | A town mod switched on whose pack did not load (the network; a browser without DecompressionStream, where the reader reached for `node:zlib`) was latched loaded all the same. Its towns stood as Daggerfall's while records were stamped with the mod. Online, a home could be bought keyed in another layout than the room's. | Round 3: a mod is latched loaded only once its pack is on the door. One whose pack did not load is a mod not loaded: its towns are Daggerfall's and stamped so, the game says so (`worldDataPacksMissing`), and online no home is bought ("Reload the game to buy a home", `home-towns`). The reader asks for `node:zlib` only under node. |
 | B4 | - | The packs' cost. They were fetched one after another with no timeout, so a stalled fetch held the boot. Every block was hashed against the author's file the first time it was served, each hash a hitch on a phone. Memory was unbounded: the door kept every block it served and a pack every node it decoded, and a walk over every block of both packs grew the heap by 259 MB. | Round 3: the packs are fetched side by side under `PACK_FETCH_TIMEOUT_MS` (120 s), and one block in 8 is spot-checked. Round 4: the door keeps the 192 blocks most recently served (`BLOCK_CACHE_MAX`) and a pack the 1,024 nodes most recently read (`DECODED_NODES_MAX`). The same walk now grows the heap by 84 MB. |
-| B5 | - | Two stamps are one layout whatever versions they name, which holds only while each mod ships one version. Nothing held the vendored packs to the versions the stamps were made against: a pack of another version could move buildings under every stamped record with nothing to say so. | Round 4: `LAYOUT_MOD_VERSIONS` (1.4.2 and 0.5.0). `test/wd3_layoutPins.test.js` holds the vendored packs to them until a layout migration is written. |
+| B5 | - | Two stamps are one layout whatever versions they name, which holds only while each mod ships one version. Nothing held the vendored packs to the versions the stamps were made against: a pack of another version could move buildings under every stamped record with nothing to say so. | Round 4: `LAYOUT_MOD_VERSIONS` (1.4.2 and 0.5.0). `test/systems/wd3_layoutPins.test.js` holds the vendored packs to them until a layout migration is written. |
 | B9 | - | The two switches' Features row said "Takes effect when the game next loads". But the switch is latched for the game, so an in-game Load keeps the towns the game started with, and offline the towns also need Replace Game Artwork. | Round 4: the row says "Takes effect when the game is next started (an in-game Load keeps the towns it started with). Offline it also needs Replace Game Artwork." |
 
 **Online homes and rooms** (`server-account/src/homes.js`, `server-account/src/index.js`, `src/net/accountClient.js`,
 `src/net/online.js`, `src/world/interior/interiorShared.js`, `src/systems/online/onlineHomes.js`, `src/scenes/world.js`,
-`src/scenes/worldModes.js`, `src/scenes/homeYards.js`; the pins in `test/wd3_online.test.js`)
+`src/scenes/worldModes.js`, `src/scenes/homeYards.js`; the pins in `test/net/wd3_online.test.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
@@ -75,7 +75,7 @@ Re-run at AUDIT PRE-MERGE 1003 on PR #545's head, without ARENA2: the same 35 de
 **The housing promise: records kept in their layout** (`src/systems/layoutPins.js`, `src/systems/sceneCache.js`,
 `src/systems/banking.js`, `src/systems/realmCustoms.js`, `src/systems/repairService.js`, `src/systems/tavern.js`,
 `src/systems/quest/person.js`, `src/systems/quest/machine.js`, `src/systems/quest/place.js`, `src/scenes/world.js`,
-`src/scenes/worldModes.js`; the pins in `test/wd3_layoutPins.test.js`, `test/audit68_worldmodes.test.js`)
+`src/scenes/worldModes.js`; the pins in `test/systems/wd3_layoutPins.test.js`, `test/scenes/audit68_worldmodes.test.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
@@ -92,9 +92,9 @@ Re-run at AUDIT PRE-MERGE 1003 on PR #545's head, without ARENA2: the same 35 de
 | G3 | - | An inside save (and a Recall anchor set indoors) found its building's door by the block's index. A block a world-data mod ADDS is numbered past BLOCKS.BSA in the order a session first reads it, so another session, or a town pinned in again, numbers it anew, and the saved index named nothing or another added block. | Round 3: the door is found by the building's key, with the index only preferred. |
 
 **Daggerfall's own laws the mods meet** (`src/scenes/worldModes.js`, `src/systems/layoutPins.js`, `src/scenes/world.js`,
-`src/systems/talk/talkTopics.js`; the pins in `test/wd3_standins.test.js`, `test/wd3_layoutPins.test.js`,
-`test/wd3_door.test.js`, and the climate's source pins in `test/windmillwiring.test.js`, `test/seasoncalendar.test.js`,
-`test/wod4_privateershold.test.js`)
+`src/systems/talk/talkTopics.js`; the pins in `test/world/wd3_standins.test.js`, `test/systems/wd3_layoutPins.test.js`,
+`test/systems/wd3_door.test.js`, and the climate's source pins in `test/world/windmillwiring.test.js`, `test/scenes/seasoncalendar.test.js`,
+`test/world/worldOfDaggerfall/wod4_privateershold.test.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
@@ -105,7 +105,7 @@ Re-run at AUDIT PRE-MERGE 1003 on PR #545's head, without ARENA2: the same 35 de
 
 **The stand-ins** (`src/world/townStandIns.js`, `src/world/detStandIns.js`, `src/scenes/modWorldData.js`,
 `src/systems/textureReplacement.js`, `src/render/renderer.js`, `src/scenes/dataPipeline.js`; the pins in
-`test/wd3_standins.test.js`, `test/wd3_door.test.js`)
+`test/world/wd3_standins.test.js`, `test/systems/wd3_door.test.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|

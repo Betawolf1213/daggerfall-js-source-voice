@@ -94,7 +94,7 @@ resampled, greyscaled cutout of a classic frame could still produce
 those numbers, which is why the question stays open.
 
 Every texture here has a row on the doctrine allow-list in
-`test/doctrine.test.js` (the pin that fails on any tracked raster it
+`test/tooling/doctrine.test.js` (the pin that fails on any tracked raster it
 cannot explain): ten rows say "the mod's own art", the nine above say
 "PROVENANCE OPEN, Mac's ruling pending". The windmills precedent
 (`vendor/windmills-kamer/README.md`) left textures OUT when they were

@@ -383,7 +383,7 @@ export async function bootExterior(canvas, renderer, params, status) {
   //   DYNAMIC, not a static import: `questData.js` is built on Vite's
   // `import.meta.glob`, a compile-time transform that simply does not
   // exist under bare node, and a static import would drag THIS FILE out
-  // of test/moduleload_smoke.test.js's importable set - the one test
+  // of test/tree/moduleload_smoke.test.js's importable set - the one test
   // that RUNS this host's module body rather than reading it as text,
   // and the test written after a boot failure that every text pin
   // missed. world.js is on that exclusion list for exactly this import;
@@ -3767,7 +3767,7 @@ export async function bootExterior(canvas, renderer, params, status) {
   // out of the deployed build. This host's window is synchronous today,
   // so the same shape is LATENT here rather than live; one added await
   // between here and the declaration reopens it, which is why the cure
-  // is the same. test/audit24_wave37.test.js holds both halves of it:
+  // is the same. test/scenes/audit24_wave37.test.js holds both halves of it:
   // `modes?.` on every reference above the declaration, and `var` at it.
   canvas.addEventListener('pointerdown', (e) => {
     if (townTalk.pointerdown(e)) return;
@@ -4339,7 +4339,7 @@ export async function bootExterior(canvas, renderer, params, status) {
   // this binding and are live before it is assigned, so it must exist
   // and read undefined rather than throw a TDZ ReferenceError. Every
   // reference BEFORE this line must therefore be `modes?.` - which is
-  // what test/audit24_wave37.test.js asserts, both ways.
+  // what test/scenes/audit24_wave37.test.js asserts, both ways.
   // V2c: createWorldModes also registers setPassiveSpecialsHost (the
   // sunlight/holy-place seam) for THIS page - THE FOUR HOSTS RULE.
   var modes = createWorldModes({

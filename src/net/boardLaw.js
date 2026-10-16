@@ -73,7 +73,7 @@ export const BOARD_RID_RE = /^[A-Za-z0-9_-]{8,40}$/;
 
 /**
  * A note as the service keeps it, checked: its words (letterWords), its days and its button - or the ONE word that
- * refuses it. Each refusal is spelled `return { error: '...' }` so test/accountflow.test.js can walk this file for the
+ * refuses it. Each refusal is spelled `return { error: '...' }` so test/server/accountflow.test.js can walk this file for the
  * words the service answers with.
  * @param {{ subject?: unknown, body?: unknown, days?: unknown, button?: unknown }} note
  * @returns {{ subject: string, body: string, days: number, button: string|null } | { error: string }}

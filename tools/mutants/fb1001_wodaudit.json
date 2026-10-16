@@ -5,7 +5,7 @@
     "old": "const n0 = cross(e1, e2), t0 = scaled(rows, 1 / len(rows)), b0 = cross(scaled(n0, 1 / len(n0)), t0);",
     "new": "const n0 = cross(e1, e2), t0 = scaled(e1, 1 / len(e1)), b0 = cross(scaled(n0, 1 / len(n0)), t0);",
     "tests": [
-      "test/fb1001_wodaudit.test.js"
+      "test/world/worldOfDaggerfall/fb1001_wodaudit.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "const f1 = lin(rows), m1 = cross(lin(e1), lin(e2)), lf = len(f1), lm = len(m1);",
     "new": "const f1 = lin(e1), m1 = cross(lin(e1), lin(e2)), lf = len(f1), lm = len(m1);",
     "tests": [
-      "test/fb1001_wodaudit.test.js"
+      "test/world/worldOfDaggerfall/fb1001_wodaudit.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "minStretch = WOD_ROCK_MODELS.has(modelId) ? WOD_ROCK_PEBBLE_MIN : WOD_ROCK_STRETCH_MIN) {",
     "new": "minStretch = WOD_ROCK_STRETCH_MIN) {",
     "tests": [
-      "test/fb1001_wodaudit.test.js"
+      "test/world/worldOfDaggerfall/fb1001_wodaudit.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "const cpu = wodRockUvs(cpuModels.get(m.modelId), m.matrix, m.modelId);",
     "new": "const cpu = wodRockUvs(cpuModels.get(m.modelId), m.matrix);",
     "tests": [
-      "test/fb1001_wodaudit.test.js"
+      "test/world/worldOfDaggerfall/fb1001_wodaudit.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "export const WOD_ROCK_PEBBLE_MIN = 1.05;",
     "new": "export const WOD_ROCK_PEBBLE_MIN = 0.5;",
     "tests": [
-      "test/fb1001_wodaudit.test.js"
+      "test/world/worldOfDaggerfall/fb1001_wodaudit.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "          if (fine > cap) { const q = cap / fine; ux *= q; uy *= q; vx *= q; vy *= q; }",
     "new": "",
     "tests": [
-      "test/fb1001_wodaudit.test.js"
+      "test/world/worldOfDaggerfall/fb1001_wodaudit.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "  const cap = WOD_ROCK_MODELS.has(modelId) ? WOD_ROCK_MAX_REPEATS_PER_M : Infinity;",
     "new": "  const cap = WOD_ROCK_MAX_REPEATS_PER_M;",
     "tests": [
-      "test/fb1001_wodaudit.test.js"
+      "test/world/worldOfDaggerfall/fb1001_wodaudit.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "          const fine = Math.sqrt((s1 + s2) / 2);",
     "new": "          const fine = Math.sqrt(Math.max(0, (s1 - s2) / 2));",
     "tests": [
-      "test/fb1001_wodaudit.test.js"
+      "test/world/worldOfDaggerfall/fb1001_wodaudit.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "          if (fine > cap) { const q = cap / fine;",
     "new": "          if (fine > 0) { const q = cap / fine;",
     "tests": [
-      "test/fb1001_wodaudit.test.js"
+      "test/world/worldOfDaggerfall/fb1001_wodaudit.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "export const WOD_ROCK_MAX_REPEATS_PER_M = 1 / 8;",
     "new": "export const WOD_ROCK_MAX_REPEATS_PER_M = 1 / 2;",
     "tests": [
-      "test/fb1001_wodaudit.test.js"
+      "test/world/worldOfDaggerfall/fb1001_wodaudit.test.js"
     ]
   }
 ]

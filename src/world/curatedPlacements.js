@@ -13,7 +13,7 @@
 // The house is moved, not the hill: each row stands one record of one pack block at a MEASURED spot of the same block -
 // the nearest to the author's on the block's ground, its footprint 1.5 m clear of every other piece, hill and flat of
 // the block and of the block's edge, its door and the four metres before it clear of every hill and piece
-// (tools/curatedPlacements.mjs measures it; test/fb1009e_hillhouse.test.js holds the row to the measurement on the
+// (tools/curatedPlacements.mjs measures it; test/tooling/fb1009e_hillhouse.test.js holds the row to the measurement on the
 // player's data) - with the author's own facing. Its RECORD is kept, so DFU's building key - (block x << 16) +
 // (block y << 8) + record - is the same house's: a quest made before this stands its person in the same house, now
 // standing where the player can reach it. The automap's bytes are stamped with the house's type at its new footprint, so

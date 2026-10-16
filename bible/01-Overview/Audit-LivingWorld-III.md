@@ -16,13 +16,13 @@ their wagons"*, of main at `314ff136`: the whole living world (`06-Systems/Livin
   the roads' layer lays it - the train on the march, the fight's ring at a halt, the camp's ring and its parked teams -
   minute by minute, and counting what stands in what (the Small Cart's footprint and the pool's horse box).
 - **Fix.** By the lead, after every lane reported (DO NOT FIX WHILE THE VERIFIER IS READING). Each fix pinned in
-  `test/auditlwiii_wagons.test.js` (8), `test/auditlwiii_road.test.js` (2), `test/auditlwiii_town.test.js` (4),
-  `test/auditlwiii_deep.test.js` (3) and one new test in `test/lw4b_roadFights.test.js`, and mutation-proven in
+  `test/systems/livingWorld/auditlwiii_wagons.test.js` (8), `test/systems/livingWorld/auditlwiii_road.test.js` (2), `test/systems/livingWorld/auditlwiii_town.test.js` (4),
+  `test/scenes/auditlwiii_deep.test.js` (3) and one new test in `test/systems/livingWorld/lw4b_roadFights.test.js`, and mutation-proven in
   `tools/mutants/auditlwiii.json` (50: 48 dead, 2 equivalent as recorded). A pin elsewhere a fix moved says so where it
   stands (`PIN MOVED (AUDIT LW-III)`); the 26 earlier records a fix moved are re-aimed by content, their names kept,
   all dead.
 
-## W - the caravans' wagons (`test/auditlwiii_wagons.test.js`, 8)
+## W - the caravans' wagons (`test/systems/livingWorld/auditlwiii_wagons.test.js`, 8)
 
 The probe, four synthetic days (1,012 trips, 652 with a team), before and after:
 
@@ -70,7 +70,7 @@ Seen and not changed: two parties whose roads CROSS walk through each other at t
 (one way each, at a right angle, the abreast law reads neither); a moving wagon still claims no box on the collider (a
 box that moves under the player traps them - WAGONS3's own "spawning the wagon can trap you").
 
-## R - the roads (`test/lw4b_roadFights.test.js`, `test/auditlwiii_road.test.js`)
+## R - the roads (`test/systems/livingWorld/lw4b_roadFights.test.js`, `test/systems/livingWorld/auditlwiii_road.test.js`)
 
 - **R1 (HIGH) - the pool's relevance cull ended a stood road fight**: a fight is stood within LIVE_M (150 m) and kept
   to LIVE_KEEP_M (260 m), and its bodies were spawned unmanaged, so exteriorFoes.js's cull (ENCOUNTER_CULL_DISTANCE,
@@ -87,7 +87,7 @@ box that moves under the player traps them - WAGONS3's own "spawning the wagon c
   the way home stand one inn at two places a pixel apart. The pin (`lw9_traffic` "where the way first comes within a
   pixel") and the doc ("where the way comes nearest it") disagree; a lodged party is indoors either way. Mac's call.
 
-## C - the caravan's door and the patrons (`test/lw11_caravan.test.js`, `test/auditlwiii_road.test.js`)
+## C - the caravan's door and the patrons (`test/systems/livingWorld/lw11_caravan.test.js`, `test/systems/livingWorld/auditlwiii_road.test.js`)
 
 - **C1 - the escort's door read the caravan's future**: a trip is fated as it is minted, and the door refused any trip
   `turned` - so the caravan the dice would turn home never offered "hire on", a day before its trouble: the one an
@@ -107,7 +107,7 @@ box that moves under the player traps them - WAGONS3's own "spawning the wagon c
   after a level-up and a load); the counter's mark is the client's (already recorded). The lane found no gold or item
   duplicated, no escort paid twice and no sale a client could forge.
 
-## T - the living town (`test/auditlwiii_town.test.js`, 4)
+## T - the living town (`test/systems/livingWorld/auditlwiii_town.test.js`, 4)
 
 - **T1 - what one reader alone has moved other people**: one lent to the watch was left out of the spot's deal (every
   circle after theirs re-paired, in 186 of 186 lends), and a trample or a strike-down freed its circle's places, so
@@ -131,7 +131,7 @@ box that moves under the player traps them - WAGONS3's own "spawning the wagon c
 - Unpinned, not changed: a pair alone at a spot talking (`_tick`'s `< 2`), the greeting's reach, the alone ring's
   inward step - each survives a one-line mutant.
 
-## D - the deep (`test/auditlwiii_deep.test.js`, 3)
+## D - the deep (`test/scenes/auditlwiii_deep.test.js`, 3)
 
 - **D1 (HIGH) - remains laid before a save made inside the dungeon were laid again on the load**, beside the pile the
   load restored - the same weapon, armour, purse and keepsake, one more set each save and load, and emptying the

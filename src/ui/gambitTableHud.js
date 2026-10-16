@@ -6,7 +6,7 @@
 //
 // TWO HALVES, as the other two panels'. `gambitHudModel` is pure: the table's state as the rows, tiles, chips, lines
 // and presses the panel shows - every word through the text core (ui/gambitTableWords.js), every number the law's own
-// export, every press's lawfulness and the reason it is refused decided here (section 14.9, test/kg3_panel.test.js).
+// export, every press's lawfulness and the reason it is refused decided here (section 14.9, test/systems/kg3_panel.test.js).
 // `createGambitTableHud` paints that model into the page and hands presses back to the table's half
 // (scenes/gambitTableGame.js).
 //
@@ -738,7 +738,7 @@ export function createGambitTableHud({ onPress, doc = globalThis.document }) {
 /** THE BOARD'S OWN KEYS (14.3): the arrows and the d-pad step the cell cursor, Enter, Space and the pad's A press its
  *  cell, Escape and the pad's B cancel. They are the panel's keys while a battle is on - a window's own, as
  *  ui/input.js's overlayAction reads a window's arrows and Enter - so the hosts ask `gambitBoardKey` and read no bound
- *  key raw (KB1 law 5; test/inputmap.test.js I2). */
+ *  key raw (KB1 law 5; test/scenes/inputmap.test.js I2). */
 export const GAMBIT_CURSOR_KEYS = Object.freeze({
   ArrowLeft: 'ArrowLeft', ArrowRight: 'ArrowRight', ArrowUp: 'ArrowUp', ArrowDown: 'ArrowDown',
   [DPAD_CODES.left]: 'ArrowLeft', [DPAD_CODES.right]: 'ArrowRight', [DPAD_CODES.up]: 'ArrowUp', [DPAD_CODES.down]: 'ArrowDown',

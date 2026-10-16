@@ -123,7 +123,7 @@ let _courtArt = null;
  *  by its constructor (dfPalette.js:"export class DFPalette") - and the courtroom draws
  *  as a solid red panel. The mint-your-own law belongs to PRIS00I0
  *  below and to those six names only; read
- *  test/incident_texture.test.js, which now sweeps both directions. */
+ *  test/formats/incident_texture.test.js, which now sweeps both directions. */
 export async function preloadCourtScreenArt(deps) {
   if (!_courtArt) _courtArt = { court: await loadImg(deps, COURT_IMG) };
   return _courtArt;

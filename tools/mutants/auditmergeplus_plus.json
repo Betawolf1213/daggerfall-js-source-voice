@@ -5,7 +5,7 @@
     "old": "noteMyBlow(pos, bloodIndex, hit, (q) => sceneToOnline(q));",
     "new": "noteMyBlow(pos, bloodIndex, hit, campToWire);",
     "tests": [
-      "test/auditmergeplus_plus.test.js"
+      "test/systems/auditmergeplus_plus.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "    sceneToOnline = nativeFrame ? campToWire : (q) => [q[0], shedY ? q[1] - state.compensation[1] : q[1], q[2]];   // AUDIT MERGE-PLUS B1\n",
     "new": "",
     "tests": [
-      "test/auditmergeplus_plus.test.js"
+      "test/systems/auditmergeplus_plus.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "  let sceneToOnline = campToWire;\n",
     "new": "",
     "tests": [
-      "test/auditmergeplus_plus.test.js"
+      "test/systems/auditmergeplus_plus.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "    if (hotbarView(entity)[i]?.ghost) { say?.(HOTBAR_TEXT.lightGone(e.name)); return { kind: 'refused', name: e.name }; }\n",
     "new": "",
     "tests": [
-      "test/auditmergeplus_plus.test.js"
+      "test/systems/auditmergeplus_plus.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "      if (entity) entity.equipCountdown = before;   // AUDIT MERGE-PLUS B2: the shield is back where it was - nothing changed hands\n",
     "new": "",
     "tests": [
-      "test/auditmergeplus_plus.test.js"
+      "test/systems/auditmergeplus_plus.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "if (!s || s.tick < tick - 1) { seen.set(id, { hk, hu, tick }); return; }",
     "new": "if (!s) { seen.set(id, { hk, hu }); return; }",
     "tests": [
-      "test/auditmergeplus_plus.test.js"
+      "test/systems/auditmergeplus_plus.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "      s.tick = tick;\n",
     "new": "",
     "tests": [
-      "test/auditmergeplus_plus.test.js"
+      "test/systems/auditmergeplus_plus.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "      tick++;\n",
     "new": "",
     "tests": [
-      "test/auditmergeplus_plus.test.js"
+      "test/systems/auditmergeplus_plus.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "      if (seen.size > 64) for (const [id, s] of seen) if (s.tick < tick - 1) seen.delete(id);   // AUDIT MERGE-PLUS B3: bounded\n",
     "new": "",
     "tests": [
-      "test/auditmergeplus_plus.test.js"
+      "test/systems/auditmergeplus_plus.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "if (at && !(t - (s.bt ?? -Infinity) < FX_MIN_GAP_S)) {",
     "new": "if (at) {",
     "tests": [
-      "test/auditmergeplus_plus.test.js"
+      "test/systems/auditmergeplus_plus.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "if (hu && hu !== s.hu && !(t - (s.ut ?? -Infinity) < FX_MIN_GAP_S)) {",
     "new": "if (hu && hu !== s.hu) {",
     "tests": [
-      "test/auditmergeplus_plus.test.js"
+      "test/systems/auditmergeplus_plus.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "let range = Math.min(lt >> 1, peerLightRangeMax());",
     "new": "let range = lt >> 1;",
     "tests": [
-      "test/auditmergeplus_plus.test.js"
+      "test/systems/auditmergeplus_plus.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "} else { P.xbHeld.clear(); for (const st of Object.values(P.dh)) st.t = -1; }",
     "new": "} else { P.xbHeld.clear(); if (!overlay) for (const st of Object.values(P.dh)) st.t = -1; }",
     "tests": [
-      "test/auditmergeplus_plus.test.js"
+      "test/systems/auditmergeplus_plus.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "      for (const st of Object.values(P.dh)) st.t = -1;   // AUDIT MERGE-PLUS B4: and a d-pad press the pad dropped mid-way (it opened the map on the pad's return)\n",
     "new": "",
     "tests": [
-      "test/auditmergeplus_plus.test.js"
+      "test/systems/auditmergeplus_plus.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "crossbar && CROSSBAR_HOLD.includes(c) ? `${row.label} (off while the crossbar holds it)` : row.label",
     "new": "row.label",
     "tests": [
-      "test/auditmergeplus_plus.test.js"
+      "test/systems/auditmergeplus_plus.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "export function plusPadLegend(store, { crossbar = crossbarInForce() } = {}) {",
     "new": "export function plusPadLegend(store, { crossbar = false } = {}) {",
     "tests": [
-      "test/auditmergeplus_plus.test.js"
+      "test/systems/auditmergeplus_plus.test.js"
     ]
   }
 ]

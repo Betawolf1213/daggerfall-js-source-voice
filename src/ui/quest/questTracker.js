@@ -32,8 +32,8 @@
 // all four hosts make, outside the skin's gate so that off it reaches its
 // hide door (AUDIT 64 F37). UPDATED, NOT REBUILT (ui/enhanced/enhancedHudText.js's
 // law): a still frame writes nothing. And like the herald it imports
-// nothing of the quest machine: the HUD imports it (test/guide3_herald.test.js
-// and test/guide4_tracker.test.js walk the graph).
+// nothing of the quest machine: the HUD imports it (test/ui/quest/guide3_herald.test.js
+// and test/ui/quest/guide4_tracker.test.js walk the graph).
 
 import { isEnhanced } from '../../systems/uiSkin.js';
 import { getPref } from '../../systems/uiPrefs.js';

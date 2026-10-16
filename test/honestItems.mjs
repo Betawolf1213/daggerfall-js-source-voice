@@ -1279,7 +1279,7 @@ const QUEST_TABLES = await load('../src/systems/quest/tables.js');
 const QUEST_MACHINE = await load('../src/systems/quest/machine.js');
 const QUEST_DIR = new URL('../vendor/dfu-quests/', import.meta.url);
 
-/** The quest machine's host, as test/questitems.test.js stands it: no world, the player at `level`. */
+/** The quest machine's host, as test/systems/quest/questitems.test.js stands it: no world, the player at `level`. */
 function questMachine(level) {
   const none = () => undefined;
   const m = new QUEST_MACHINE.QuestMachine({

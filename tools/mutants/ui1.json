@@ -5,7 +5,7 @@
     "old": "(snap && whole / s >= SNAP)",
     "new": "(snap && whole / s >= 1)",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "  const s = Math.min(boxDev / side, (cap > 0 ? cap : ICON_CAP) * r);",
     "new": "  const s = boxDev / side;",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "  const r = clampDpr(dpr);",
     "new": "  const r = 1;",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "const DPR_MIN = 0.5, DPR_MAX = 8;",
     "new": "const DPR_MIN = 1, DPR_MAX = 8;",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "prescale: s > 1 ? Math.ceil(s) : 1,",
     "new": "prescale: 1,",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "Math.floor(box * r)",
     "new": "Math.round(box * r)",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "  return x1 < 0 ? null : { x: x0, y: y0, w: x1 - x0 + 1, h: y1 - y0 + 1 };",
     "new": "  return { x: x0, y: y0, w: x1 - x0 + 1, h: y1 - y0 + 1 };",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "  loot: 30,",
     "new": "  loot: 32,",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "(globalThis.matchMedia?.(PHONE_QUERY)?.matches ? SLOT_BOX.gridPhone : SLOT_BOX.grid)",
     "new": "(SLOT_BOX.grid)",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "globalThis.matchMedia?.(WIDE_QUERY)?.matches",
     "new": "false",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "(x, y) => data[(y * w + x) * 4 + 3] > TRIM_ALPHA",
     "new": "() => true",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "paintedCanvas(bigW, bigH, false,",
     "new": "paintedCanvas(bigW, bigH, true,",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "    while (cur && cur.width >= 2 * f.outW && cur.height >= 2 * f.outH) {",
     "new": "    while (false) {",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "  const key = `${name}@${box}x${r}c${cap}${trim ? '' : 'w'}${snap ? '' : 'nosnap'}`;",
     "new": "  const key = `${name}@x${r}c${cap}${trim ? '' : 'w'}${snap ? '' : 'nosnap'}`;",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "  if (fitted.has(key)) { hear(fitWaiting.get(key), onReady); return fitted.get(key); }",
     "new": "  if (fitted.has(key)) { return fitted.get(key); }",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "  if (icons.has(key)) { hear(waiting.get(key), onReady); return icons.get(key); }",
     "new": "  if (icons.has(key)) { return icons.get(key); }",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "    width: `${pic.w}px`, height: `${pic.h}px`, maxWidth: '100%',",
     "new": "    maxWidth: '100%',",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "  if (line.stack && from === 'local') row.append(el('span', 'count', String(line.stack)));\n",
     "new": "",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "  if (line.stack && from === 'local') row.append(",
     "new": "  if (line.stack) row.append(",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "old": "row.append(tileWithWear(line, row, from === 'remote' ? SLOT_BOX.loot : gridBox()));",
     "new": "row.append(tileWithWear(line, row, gridBox()));",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -185,8 +185,8 @@
     "old": "  const tile = () => itemTile(line, gridBox(), () =>",
     "new": "  const tile = () => itemTile(line, 38, () =>",
     "tests": [
-      "test/ui1_slots.test.js",
-      "test/enhancedInventory.test.js"
+      "test/ui/enhanced/ui1_slots.test.js",
+      "test/ui/enhanced/enhancedInventory.test.js"
     ]
   },
   {
@@ -195,7 +195,7 @@
     "old": "(wake) => linePictureUrl(line, { scale: 1, onReady: wake })",
     "new": "(wake) => linePictureUrl(line, { scale: 2, onReady: wake })",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -204,7 +204,7 @@
     "old": ".pack-shell .pack-dock .itemrow[data-locked] .count { right: 16px; }",
     "new": "",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -213,7 +213,7 @@
     "old": "linePicture(line, { box: SLOT_BOX.row, onReady: render })",
     "new": "linePicture(line, { box: SLOT_BOX.loot, onReady: render })",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -222,7 +222,7 @@
     "old": "requestFittedIcon(img.archive, img.record, { box: SLOT_BOX.broker,",
     "new": "requestFittedIcon(img.archive, img.record, { box: SLOT_BOX.card,",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -231,7 +231,7 @@
     "old": ".pack-shell .equipped .wornrow[data-rarity] {\n  border-color:",
     "new": ".pack-shell .equipped .wornrow[data-rarity] .tile {\n  border-color:",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -240,7 +240,7 @@
     "old": ".pack-shell .pack-dock .itemrow .count { right: 4px;",
     "new": ".pack-shell .pack-dock .itemrow .tile { background: rgba(3,4,6,0.4); }\n.pack-shell .pack-dock .itemrow .count { right: 4px;",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -249,7 +249,7 @@
     "old": ".pack-shell .pack-dock .itemrow[data-sigil]::after, .pack-shell .wornsock[data-sigil]::after,\n.pack-shell .equipped .wornrow[data-sigil]::after { right: 3px; top: 3px; }",
     "new": ".pack-shell .pack-dock .itemrow[data-sigil]::after, .pack-shell .wornsock[data-sigil]::after { right: 3px; top: 3px; }",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -258,7 +258,7 @@
     "old": ".pack-shell .equipped .wornrow[data-locked] .tile::before { content: none; }\n",
     "new": "",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -267,7 +267,7 @@
     "old": ".pack-shell .equipped .wornrow[data-sigil] .worncount { right: 18px; }",
     "new": "",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -276,7 +276,7 @@
     "old": "objectFit: 'contain', imageRendering: '',",
     "new": "objectFit: 'contain', imageRendering: 'auto',",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -285,7 +285,7 @@
     "old": "\nimg.fit { image-rendering: pixelated; }",
     "new": "\n",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -294,7 +294,7 @@
     "old": ".pack-shell .wornsock .tile img.fit { image-rendering: auto; }",
     "new": ".pack-shell .wornsock .tile img.fit { image-rendering: pixelated; }",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -303,7 +303,7 @@
     "old": ":root .pack-shell .equipped .wornrow[data-rarity] {",
     "new": ".pack-shell .equipped .wornrow[data-rarity] {",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -312,7 +312,7 @@
     "old": "  globalThis.addEventListener?.('resize', resizeHandler);\n",
     "new": "",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -321,7 +321,7 @@
     "old": "if (sig !== fitSig) { fitSig = sig; if (host) render(); }",
     "new": "{ fitSig = sig; if (host) render(); }",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -330,7 +330,7 @@
     "old": "while (fitted.size > FIT_CACHE_MAX) {",
     "new": "while (fitted.size > Infinity) {",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -339,7 +339,7 @@
     "old": "const DPR_MIN = 0.5, DPR_MAX = 8;",
     "new": "const DPR_MIN = 0.5, DPR_MAX = 4;",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -348,7 +348,7 @@
     "old": "  return `${archive}_${record}${token ? `_${token}` : ''}${dyed ? `_t${dyeTarget}d${dye}` : ''}`;",
     "new": "  return `${archive}_${record}${token ? `_${token}` : ''}`;",
     "tests": [
-      "test/ui1_slots.test.js"
+      "test/ui/enhanced/ui1_slots.test.js"
     ]
   },
   {
@@ -357,8 +357,8 @@
     "old": "(wake) => requestIcon(archive, record, { scale: 1, dye, dyeTarget, onReady: wake })",
     "new": "(wake) => requestIcon(archive, record, { scale: 1, dye, onReady: wake })",
     "tests": [
-      "test/ui1_slots.test.js",
-      "test/dw3_icons.test.js"
+      "test/ui/enhanced/ui1_slots.test.js",
+      "test/systems/dw3_icons.test.js"
     ]
   }
 ]

@@ -771,7 +771,7 @@ export function createWorldModes(host) {
       e.stopImmediatePropagation?.(); e.preventDefault?.();
     };
     // the cloth's three, taken and let go as one list - and the host's own keydown stays the one this file registers by
-    // name (test/modalkeys.test.js V4 and test/inputmap.test.js U43 read the host's handler from that registration)
+    // name (test/systems/modalkeys.test.js V4 and test/scenes/inputmap.test.js U43 read the host's handler from that registration)
     // AUDIT KG II C3: a finger the cloth took is held until it lifts - never the touch layer's stick (cardPressHeld)
     const lift = (e) => { if (e.pointerType === 'touch' || e.pointerType === 'pen') gg.fingerUp?.(); };
     const on = /** @type {[string, (e: any) => void][]} */ ([['pointerdown', down], ['mousedown', mouseDown], ['keydown', key], ['pointerup', lift], ['pointercancel', lift]]);
@@ -1519,7 +1519,7 @@ export function createWorldModes(host) {
   // first-hour probe started a new game and sat at `mode null` for
   // 420 seconds. Lint, the vite build and all 3005 tests were green
   // on it - a TDZ is legal syntax, the identifier IS bound, and
-  // nothing in the suite executes a host constructor. test/tdz.test.js
+  // nothing in the suite executes a host constructor. test/tree/tdz.test.js
   // is the gate for the whole class now: it parses src/ with rollup's
   // own parseAst and reports any const or let read in the SAME
   // execution scope as, and before, its declaration.
@@ -12198,7 +12198,7 @@ export function createWorldModes(host) {
     // and it was a SECOND LAW for one fact, resting on a diagnosis
     // that was simply wrong - so it is gone, and the pin that stood
     // for it is now the real invariant: one feeder per Set, and every
-    // reader on a fed one (test/mack_bugs.test.js).
+    // reader on a fed one (test/ui/mack_bugs.test.js).
     // I4: a right-click on a window is the WINDOW's (the remove
     // gesture), never a swing - dungeon.js:"const dir = _tapDir" and both exterior slots
     // have always said so, and this host's modal arm had no gate at
@@ -12764,7 +12764,7 @@ export function createWorldModes(host) {
     // and whatever opened was still up when the wizard closed. So the
     // rule covers the DUNGEON arm below as much as the interior one:
     // this return is the only thing standing between a typed name and
-    // the bindings. Pinned in test/modalkeys.test.js, red-proofed both
+    // the bindings. Pinned in test/systems/modalkeys.test.js, red-proofed both
     // ways.
     if (townTalk?.overlayActive) return;
     // AUDIT 29 D1: an Escape the outer host spent ending a gathering act (world.js marks it) - underground it also paused
@@ -12788,7 +12788,7 @@ export function createWorldModes(host) {
     // MENU-RELOCK: read BEFORE the mode ladder, never between a mode's
     // check and its dispatch. U43's law is that the interior arm routes
     // the WHOLE table over its own ctx and nothing stands in between -
-    // test/qs7_one_dispatch.test.js and test/flagsweep.test.js hold that
+    // test/systems/qs7_one_dispatch.test.js and test/scenes/flagsweep.test.js hold that
     // shape by source, and a `const` slipped under the `if` broke both.
     // One read serves both arms: only one ctx is live per mode.
     const hadOverlay = !!(mode === 'interior' ? interiorKeyCtx : dungeonCtx)?.uiOverlayActive;

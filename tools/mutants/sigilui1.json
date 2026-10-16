@@ -5,7 +5,7 @@
     "old": "  const stage = sigilStageIn(s, _renown);",
     "new": "  const stage = _renown ? sigilRank(s) : -1;",
     "tests": [
-      "test/sigilui1.test.js"
+      "test/ui/enhanced/sigilui1.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "(s.xp - from) / (next.xp - from)",
     "new": "s.xp / next.xp",
     "tests": [
-      "test/sigilui1.test.js"
+      "test/ui/enhanced/sigilui1.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "  if (v.held) box.append(el('p', 'sigil-note', `Your Renown holds it at ",
     "new": "  if (false) box.append(el('p', 'sigil-note', `Your Renown holds it at ",
     "tests": [
-      "test/sigilui1.test.js"
+      "test/ui/enhanced/sigilui1.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "    const g = el('span', `sigil-gem${st.grown ? ' grown' : ''}${st.awake ? ' awake' : ''}`);",
     "new": "    const g = el('span', `sigil-gem${st.grown ? ' grown' : ''}`);",
     "tests": [
-      "test/sigilui1.test.js"
+      "test/ui/enhanced/sigilui1.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "  if (sigil) out.push(...setSigilLines(item));   // SIGIL1",
     "new": "  out.push(...setSigilLines(item));   // SIGIL1",
     "tests": [
-      "test/sigilui1.test.js"
+      "test/ui/enhanced/sigilui1.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "  rare: `--rar: #e4c34f;",
     "new": "  rare: `--rar: #9a9079;",
     "tests": [
-      "test/sigilui1.test.js"
+      "test/ui/enhanced/sigilui1.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "  if (rar) n.dataset.rarity = rar; else delete n.dataset.rarity;",
     "new": "  delete n.dataset.rarity;",
     "tests": [
-      "test/sigilui1.test.js"
+      "test/ui/enhanced/sigilui1.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "  if (validSigil(item?.sigil)) node.dataset.sigil = '';",
     "new": "",
     "tests": [
-      "test/sigilui1.test.js"
+      "test/ui/enhanced/sigilui1.test.js"
     ]
   }
 ]
