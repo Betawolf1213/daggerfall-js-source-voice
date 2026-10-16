@@ -11,7 +11,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { egHallOf, egHeroSeam, egHeroTrials, egHeroCands, egHeroStatic, egHeroExit, egHeroCourtOf, egHeroLanding, egSpecDigest, egCircleOfHall, egOnFight, egOnFloor, egFightPieceAt, egKeepOnFight, egFloorTest,
+import { egHallOf, egHeroSeam, egHeroTrials, egHeroCands, egHeroStatic, egHeroExit, egHeroCourtOf, egHeroLanding, egSpecDigest, egCircleOfHall, egSpecGive, egSpecForget, egFirstHallOf, egOnFight, egOnFloor, egFightPieceAt, egKeepOnFight, egFloorTest,
   EG_SPEC, EG_HERO_LAW, EG_DECREE_LAW, EG_HALL_LEN_MAX, EG_HANG_CM, EG_SPEC_SAID_MAX, EG_HERO_WAY_CM, EG_HERO_SHAFT_CM, EG_HERO_LAND_ROOM_CM, EG_FRAGS_MAX, EG_STEP } from '../src/net/egLaw.js';
 import { EG_LAWS, EG_LAW_KEEP_DAYS, egLawKnown } from '../src/net/egDurable.js';
 import { EG_HERO_FRAGS, egHeroFragRegistry, egHeroFragLaws } from '../src/net/egHeroFrags.js';
@@ -52,15 +52,22 @@ const hash = (law) => { let acc = 0x811c9dc5; for (const [s, h, g] of LAW_HALLS)
 /** The halls the laying's pins read, each with a hero of the test registry (seed, hall, ground): a Span's Low Road, a first
  *  circle's Span, a Brink, a Deepway's shaft, a Deepway's chamber, a Rift-Yard's, a Wellspring's, a Proving Walk's. */
 const H = { low: [0xbeef, 7, 0], high: [0xbeef, 2, 0], brink: [8, 26, 0], shaft: [77, 17, 0], deepCh: [12345, 12, 0], deepRift: [34, 12, 0], yard: [3, 16, 0], spring: [8, 24, 0], proving: [2, 8, 0] };
-const hall = (k, law = EG_SPEC) => withHeroes(() => egHallOf(...H[k].slice(0, 2), H[k][2], law));
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): the laying's pins read spec law 8's halls by name - the hero laid on a
+// course along +z from the plate, where laws 7 and 8 lay it; a LAW 9 hall lays its hero where its course stands along its way,
+// beside its rooms (test/law9_rooms.test.js)
+const hall = (k, law = 8) => withHeroes(() => egHallOf(...H[k].slice(0, 2), H[k][2], law));
+/** A circle's five halls of spec law 8, given as a law-foreign client is given them (egSpecGive - the relay's bytes for a breach
+ *  of law 8): the circle drawn, collided and swept where law 8 lays its hero (PIN MOVED, THE ASCENT) - egSpecForget after. */
+const give8 = (seed, c) => { for (let s = 1; s <= 5; s++) egSpecGive(egHallOf(seed, egFirstHallOf(c) + s - 1, 0, 8)); };
 const cm = (v) => Math.round(v * 100);
 
 test('EG-HERO-LAY THE LAW PIN (sections 9 and 22): spec law 7 is the law, laws 4, 5 and 6 kept beside it their seven days each, byte for byte (their 800 halls hashed whole, the existing pins); a hall of law 7 with no layable hero for its kits is law 6\'s hall but its number - so with the reference alone registered (which no hall lays) every law-7 hall is law 6\'s; with the ten heroes (the merge of the four bands\' authors) every one fits its slot (the Stacks\' chamber since its second shelf was deepened to leave THE LANDING ROOM), law 7\'s 800 halls are hashed whole, each with no hero laid is law 6\'s, and the heroes laid as counted; a breach opened records law 7; the law\'s copies of the wire\'s bound and the hang held equal (mutants: law 7 not in the table; the law before forgotten; the reference laid; a hall with no hero moved)', () => {
   // PIN MOVED (AUDIT EG V, f): spec law 8 (the ways laid) is the build's law, law 7 kept beside it - this pin names law 7, whose
   // laying it holds (test/egaudit5_f.test.js pins law 8's)
-  assert.deepEqual([EG_SPEC, EG_HERO_LAW, EG_DECREE_LAW], [8, 7, 6]);
-  assert.deepEqual({ ...EG_LAWS }, { 4: '2026-10-11', 5: '2026-10-12', 6: '2026-10-13', 7: '2026-10-13', 8: '2026-10-15' });
-  assert.deepEqual([4, 5, 6, 7, 8, 9].map(egLawKnown), [true, true, true, true, true, false]);
+  // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9): spec law 9 the build's, laws 4 to 8 kept beside it
+  assert.deepEqual([EG_SPEC, EG_HERO_LAW, EG_DECREE_LAW], [9, 7, 6]);
+  assert.deepEqual({ ...EG_LAWS }, { 4: '2026-10-11', 5: '2026-10-12', 6: '2026-10-13', 7: '2026-10-13', 8: '2026-10-15', 9: '2026-10-16' });
+  assert.deepEqual([4, 5, 6, 7, 8, 9, 10].map(egLawKnown), [true, true, true, true, true, true, false]);
   assert.ok((Date.parse(EG_LAWS[7]) - Date.parse(EG_LAWS[4])) / 86_400_000 <= EG_LAW_KEEP_DAYS, 'every law before inside its keep');
   assert.deepEqual([hash(4), hash(5), hash(6)], [1228307904, 1301097644, 201408482], 'laws 4, 5 and 6, byte for byte');
   // the reference alone registered: no candidate anywhere, so law 7 is law 6 but its number
@@ -90,7 +97,7 @@ test('EG-HERO-LAY THE LAW PIN (sections 9 and 22): spec law 7 is the law, laws 4
   }
   assert.deepEqual(laid, { egheroOssuary: 22, egheroGloam: 24, egheroEclipse: 3, egheroClanPit: 10, egheroForgeGut: 4, egheroColonnade: 3, egheroCaverns: 3, egheroStacks: 6, egheroDeepCaverns: 3 });
   const B = egBreachNew({ b: '0123456789abcdef', ez: 'z'.repeat(20), s: 'a', o: 'A', ew: 0, rh: 0, seed: 77, op: 1_800_000_000_000, co: [['a', 'A', 1]], site: { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 }, wg: [] });
-  assert.equal(B.egv, 8, 'a breach opened now is of law 8 (PIN MOVED, AUDIT EG V)');
+  assert.equal(B.egv, 9, 'a breach opened now is of law 9 (PIN MOVED, AUDIT EG V; THE ASCENT)');
   assert.equal(EG_SPEC_SAID_MAX, EG_SPEC_WIRE_MAX, 'the law\'s bound on a spec said whole is the wire\'s');
   assert.equal(EG_HANG_CM, SD_ROOT_DEPTH * 100, 'the hanging underside is the Steps\' root');
   assert.equal(EG_HERO_WAY_CM, EG_STEP.ledge.w);
@@ -253,19 +260,19 @@ test('EG-HERO-LAY A PASSAGE LAID FROM ITS LAW (sections 11.4-11.7): on THE FORK\
   // the High Road's pieces stand apart from its box - a hero as wide as the gap between the roads does not fit there
   const wide = { ...TEST.egRefFrag, box: [-1800, ...REF.box.slice(1)] }, W = egHeroFragRegistry([wide]);
   withHeroes(() => {
-    const t = egHeroTrials(...H.low).find((x) => x.id);
+    const t = egHeroTrials(...H.low, 8).find((x) => x.id);
     assert.match(t.why, /its box meets step \d+'s swept box/);
-    assert.equal(egHallOf(...H.low.slice(0, 2), 0).heroes, undefined);
+    assert.equal(egHallOf(...H.low.slice(0, 2), 0, 8).heroes, undefined);
   }, W);
   for (const s of spec.steps) if (s.road === 0) assert.ok(egFragApart(egFragBoxAt(rec, cm(q.x), cm(q.y), cm(q.z)), [cm(s.x - s.w / 2 - s.amp), cm(s.y) - EG_HANG_CM, cm(s.z - s.d / 2 - s.gap), cm(s.x + s.w / 2 + s.amp), cm(s.y), cm(s.z + s.d / 2)], EG_FRAG_APART_CM));
   // a first circle's Span (its one course - the High Road's own passage) and a Brink lay it too, on the course's line
   for (const k of ['high', 'brink']) { const s = hall(k); assert.deepEqual([s.heroes[0].x, s.heroes[0].road, s.frags[s.heroes[0].f].hero], [0, 0, 'egRefFrag'], k); }
   // an inner piece keeps its authored size (EG6c's departure 12), never EG_STEP's
   const wideLedge = egHeroFragRegistry([{ ...TEST.egRefFrag, course: TEST.egRefFrag.course.map((c, i) => (i === 0 ? { ...c, w: 280 } : c)) }]);
-  withHeroes(() => assert.deepEqual(egHallOf(...H.low.slice(0, 2), 0).steps.filter((x) => x.kit === 'caverns' && x.road === 1).map((x) => x.w), [2.8, 3, 2.4]), wideLedge);
+  withHeroes(() => assert.deepEqual(egHallOf(...H.low.slice(0, 2), 0, 8).steps.filter((x) => x.kit === 'caverns' && x.road === 1).map((x) => x.w), [2.8, 3, 2.4]), wideLedge);
   // a hero that would carry the hall past EG_HALL_LEN_MAX does not fit
   const L = 9000, long = egHeroFragRegistry([{ ...TEST.egRefFrag, box: [...REF.box.slice(0, 5), L], sockets: { in: REF.sockets.in, out: [{ ...REF.sockets.out[1], z: L }] }, floors: [...REF.floors, { y: 0, poly: [[300, 3000], [300, L], [-300, L], [-300, 3000]], fight: 0 }], open: [...REF.open, [4, 1], [4, 3]], ceil: null }]);
-  withHeroes(() => assert.match(egHeroTrials(...H.high).find((t) => t.id)?.why ?? '', /past 158 m/), long);
+  withHeroes(() => assert.match(egHeroTrials(...H.high, 8).find((t) => t.id)?.why ?? '', /past 158 m/), long);
 });
 
 test('EG-HERO-LAY A CHAMBER AND A SHAFT LAID (sections 8.1, 8.5, 8.8 and 11.4): a hero chamber\'s court is laid at its own size - its mouth at the court\'s near edge, its middle the court\'s, its reach the court\'s radius - with no code-built disc, its trial on its fight floors (a Rift-Yard\'s rifts its own rift anchors where it names five, a Deepway\'s where it names three, a Wellspring\'s set by the hall law on its floor), the Clan Pit\'s Honour Horn its kit\'s; a hero shaft lowers the course to its exit (mutants: the code-built disc kept; the court at the code-built size; the anchors unread; the trial off its floors; the horn lost; the shaft\'s exit unread)', () => {
@@ -309,17 +316,17 @@ test('EG-HERO-LAY A CHAMBER AND A SHAFT LAID (sections 8.1, 8.5, 8.8 and 11.4): 
   const prov = hall('proving'), qp = prov.heroes[0], next = prov.steps.find((x) => x.z > qp.z);
   assert.equal(cm(next.z - next.d / 2 - next.gap), cm(qp.z) + C.box[5], 'the second span from its exit face');
   // a Reliquary Vault's Proving Walk keeps its code-built court; a court too narrow for the champion's standards does not fit
-  withHeroes(() => assert.match(egHeroTrials(58, 8, 0)[0].why, /Reliquary Vault/));
+  withHeroes(() => assert.match(egHeroTrials(58, 8, 0, 8)[0].why, /Reliquary Vault/));
   const narrow = egHeroFragRegistry([{ ...C, floors: C.floors.map((f) => (f.fight && f.y === 0 ? { ...f, poly: [[600, 100], [600, 3300], [-600, 3300], [-600, 100]] } : f)),
     graph: { ...C.graph, nodes: C.graph.nodes.map((n) => (n[1] === 0 ? [Math.max(-500, Math.min(500, n[0])), ...n.slice(1)] : n)) } }]);
-  withHeroes(() => assert.match(egHeroTrials(...H.proving).find((t) => t.id).why, /proving's place at \(-?\d+, \d+\) stands on none of its fight floors/), narrow);
-  withHeroes(() => assert.equal(egHallOf(...H.deepRift).heroes?.[0].id, 'egLayChamber', 'its rifts in its walls its own places, never held to its floor'), narrow);
+  withHeroes(() => assert.match(egHeroTrials(...H.proving, 8).find((t) => t.id).why, /proving's place at \(-?\d+, \d+\) stands on none of its fight floors/), narrow);
+  withHeroes(() => assert.equal(egHallOf(...H.deepRift, 8).heroes?.[0].id, 'egLayChamber', 'its rifts in its walls its own places, never held to its floor'), narrow);
   assert.deepEqual(prov.foe, { x: 0, z: (cm(qp.z) + R.cz + 400) / 100 }, 'the champion 4 m past its middle');
   // the Clan Pit's own call: a chamber of its kit stands its Honour Horn at the court's middle
   const pit = egHeroFragRegistry([{ ...C, id: 'egLayPit', kit: 'clanpit', band: 3, reverb: 'quarry', variant: 'test-pit' }]);
   withHeroes(() => {
     let found = null;
-    for (const seed of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]) for (let h = 77; h <= 100 && !found; h++) { const s = egHallOf(seed, h, 0); if (s.heroes) found = s; }
+    for (const seed of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]) for (let h = 77; h <= 100 && !found; h++) { const s = egHallOf(seed, h, 0, 8); if (s.heroes) found = s; }
     assert.ok(found, 'a Clan Pit hero laid');
     const q = found.heroes[0];
     assert.deepEqual(found.spots.horn, [{ x: 0, z: (cm(q.z) + R.cz) / 100, r: 6 }]);
@@ -337,8 +344,11 @@ test('EG-HERO-LAY A CHAMBER AND A SHAFT LAID (sections 8.1, 8.5, 8.8 and 11.4): 
 });
 
 test('EG-HERO-LAY THE SOLVER AND THE REAL MOTOR (section 10.5; tools/egSpanSolve.mjs): every course of a hall a hero stands in is proven by THE TIMED SOLVER, and the sweep\'s real motor (player/motor.js PlayerMotor on player/collider.js Collider over the circle\'s floors - the hero\'s proxy in its bucket - and its pieces as the screen rides them) crosses each: a Span\'s two roads through a passage, a first circle\'s Span, a Deepway down a hero shaft and through a hero chamber (mutants: the proxy left out of the collider; the hero\'s floors unread by the sweep\'s ground)', () => {
+  // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9): spec law 8's circles swept (give8); a LAW 9 hall's courses are swept along its route
+  // by THE ROUTE'S PROOFS (tools/egSpanSolve.mjs)
   withHeroes(() => {
     for (const k of ['low', 'high', 'shaft', 'deepCh']) {
+      give8(H[k][0], egCircleOfHall(H[k][1]));
       const [seed, h, geo] = H[k], S = sweepStand(seed, egCircleOfHall(h), geo), spec = S.specs.find((s) => s.h === h);
       assert.ok(spec.heroes, `${k}: its hero stood`);
       assert.ok(egSpanProof(spec).ok, `${k}: proven`);
@@ -348,9 +358,11 @@ test('EG-HERO-LAY THE SOLVER AND THE REAL MOTOR (section 10.5; tools/egSpanSolve
         assert.ok(r.ok, `${k} road ${road}: ${r.why} at step ${r.step}`);
       }
       S.span.clear();
+      egSpecForget();
     }
   });
 });
+
 
 test('EG-HERO-LAY THE RELAY JUDGES FROM THE LAW (sections 11.7, 13.2 and 21): the census\'s fight floor is the hero\'s polygons at their heights (net/egFair.js egFightFloorAt - its balcony 1.5 m up the highest under a body on it; its chasm none), its hazards bite on the shared clock - judged by the relay (net/bossRef.js judgePlace) as every screen bites (egHazardBites) - only on its fight floor; the union floor\'s floor, the fight floor\'s piece and the legion\'s keep are its polygons; its floors and stairs hold a body on the fair trail (mutants: a polygon unread in each)', () => {
   const spec = hall('low'), q = spec.heroes[0], h = spec.h;
@@ -415,8 +427,11 @@ test('EG-HERO-LAY THE LEGION WALKS ITS GRAPH (section 11.7): the hall\'s walk gr
 });
 
 test('EG-HERO-LAY THE CLIENT DRAWS IT (sections 11.6-11.9; THE SWAP; EVERY ALLOCATION HAS AN OWNER): the circle\'s one mesh carries the hero\'s mesh half at its origin (its ground where its law lays ground, its rock a record\'s cell at a time, each an occluder of its own) and the circle\'s one collider bucket its proxy - so they are freed with the circle, no buffer of their own; its lights join the circle\'s in its kit\'s colours; its clamp is its law\'s - its walls hold, its open edges and stair free, its ceiling over it or the sky; its reverb zone its box\'s reach; no code-built niche or spout inside its box; its fight floors cut for the telegraph pass (mutants: the mesh off its origin; its rock not dithered; its ground told by its record; its rock one piece; the proxy dropped; a wall unread; an open edge clamped; the ceiling unread)', () => {
+  // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9): the circle drawn of spec law 8's halls (give8)
   withHeroes(() => {
-    const [seed, h] = H.low, c = egCircleOfHall(h), spec = egHallOf(seed, h, 0), q = spec.heroes[0], mesh = EG_HERO_FRAG_MESHES.egRefFrag;
+    const [seed, h] = H.low, c = egCircleOfHall(h);
+    give8(seed, c);
+    const spec = egHallOf(seed, h, 0), q = spec.heroes[0], mesh = EG_HERO_FRAG_MESHES.egRefFrag;
     const model = buildEgCircleModel(seed, c, 0), tris = egCircleColliderTris(seed, c, 0);
     egHeroMeshSeam({});   // the same halls, the hero's mesh unknown to this build: its law stands, nothing of it drawn
     const bare = buildEgCircleModel(seed, c, 0), bareTris = egCircleColliderTris(seed, c, 0);
@@ -483,7 +498,9 @@ test('EG-HERO-LAY THE CLIENT DRAWS IT (sections 11.6-11.9; THE SWAP; EVERY ALLOC
     }
     assert.ok(egOnFloorAt(spec, q.x + 2, q.z + 5, q.y, 0.5) && !egOnFloorAt(spec, q.x + 2.8, q.z + 5, q.y, 0.5));
     // a chamber's mesh, read from the meshes it is handed (a test's seam)
-    const [s2, h2] = H.deepCh, c2 = egCircleOfHall(h2), withMesh = buildEgCircleModel(s2, c2, 0);
+    const [s2, h2] = H.deepCh, c2 = egCircleOfHall(h2);
+    give8(s2, c2);
+    const withMesh = buildEgCircleModel(s2, c2, 0);
     egHeroMeshSeam({});
     const without = buildEgCircleModel(s2, c2, 0);
     egHeroMeshSeam(MESHES);
@@ -494,6 +511,7 @@ test('EG-HERO-LAY THE CLIENT DRAWS IT (sections 11.6-11.9; THE SWAP; EVERY ALLOC
     for (let i = 0; i < bareTris.length; i += 3) assert.ok(!inBox(bareTris, i), 'no code-built collider triangle in its box');
     for (let i = 0; i < bare.positions.length; i += 3) assert.ok(!inBox(bare.positions, i), 'no code-built drawn vertex in its box');
   });
+  egSpecForget();
   // no code-built spout over a hero's slag, nor niche in its walls
   const slag = { x0: 0, steps: [{ kind: 'slag', x: 0, y: 0, z: 10, w: 4, d: 3, amp: 2.05, period: 20, phase: 0 }], caves: [] };
   assert.equal(egSlagSpouts(slag).length, 2);
@@ -504,8 +522,9 @@ test('EG-HERO-LAY A DURABLE BREACH KEEPS ITS LAW (section 22, THE LAW PIN): with
   withHeroes(() => {
     const [seed, h] = H.low;
     const B = egBreachNew({ b: '0123456789abcdef', ez: 'z'.repeat(20), s: 'a', o: 'A', ew: 0, rh: 0, seed, op: 1_800_000_000_000, co: [['a', 'A', 1]], site: { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 }, wg: [] });
-    B.h = h;
-    const s7 = egHallOf(seed, h, 0), s6 = egHallOf(seed, h, 0, 6);
+    B.h = h; B.egv = 7;   // PIN MOVED (THE ASCENT): the breach of law 7 named (one opened now is of law 9)
+    const s7 = egHallOf(seed, h, 0, 7), s6 = egHallOf(seed, h, 0, 6);
+
     assert.ok(s7.heroes && !s6.heroes);
     assert.equal(egStateOf(B, 1_800_000_000_000).dg, egSpecDigest(s7), 'law 7\'s breach: the hero\'s hall');
     B.egv = 6;

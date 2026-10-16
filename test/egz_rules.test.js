@@ -4,7 +4,7 @@
 // WAKE (a hall woken before a member's `here` counted, the gather's wait 10 s after two in a row, a late `here` heard) and
 // LIFELINE IN THE CENSUS (egHeal's window, egCensusDr's share). Every fixture is the producers' own: specs from egHallOf,
 // trails from egPoseIn and egFairPose, members from egEnter, frames from egStep through the wire, the real Room.
-import test from 'node:test';
+import test, { beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { fakeRoom } from './fakeRoom.mjs';
 import { EG_INTERNAL_OPEN, validEgOut, validEgIn, EG_TOLL_WIRE_MAX, EG_RUN_KINDS } from '../src/net/wire.js';
@@ -24,6 +24,16 @@ import { createEgClient, EG_HEAL_SEND_MS } from '../src/scenes/egClient.js';
 /** PIN MOVED (AUDIT EG V, d: lane4 L4-7 - the count is mended, and Lifeline opened, only by a heal a relayed cast backs): the healer's cast seen - the room's record of a cast from the healer to the member (server/src/index.js _egCastSaw). */
 const CAST_SEEN = () => true;
 import { EG_PRES_TEXT } from '../src/ui/egBeats.js';
+import { egGive8 } from './egGive8.mjs';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courses along +z
+// from the plate, its courts and its lords where law 8 lays them) and stand on it still - the halls they read are law 8's,
+// given as a breach of law 8's are given to a client (test/egGive8.mjs); LAW 9's own ground is test/law9_height.test.js's and
+// test/law9_rooms.test.js's. Given before every test (a client that leaves its breach forgets them)
+beforeEach(() => {
+  egGive8(12345, [1, 2, 3]);
+  egGive8(77, [1]);
+});
 
 const T0 = 1_800_000_000_000;
 const CB = '0123456789abcdef';

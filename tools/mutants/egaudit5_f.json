@@ -2,8 +2,8 @@
   {
     "name": "EGA5F-law-table",
     "file": "src/net/egDurable.js",
-    "old": "7: '2026-10-13', 8: '2026-10-15' }",
-    "new": "7: '2026-10-13' }",
+    "old": "7: '2026-10-13', 8: '2026-10-15', 9: '2026-10-16' }",
+    "new": "7: '2026-10-13', 9: '2026-10-16' }",
     "tests": [
       "test/egaudit5_f.test.js"
     ],
@@ -12,7 +12,7 @@
   {
     "name": "EGA5F-spec-seven",
     "file": "src/net/egLaw.js",
-    "old": "export const EG_SPEC = 8;",
+    "old": "export const EG_SPEC = 9;",
     "new": "export const EG_SPEC = 7;",
     "tests": [
       "test/egaudit5_f.test.js"
@@ -133,7 +133,7 @@
   {
     "name": "EGA5F-third-past-room",
     "file": "src/net/egLaw.js",
-    "old": "else if (third && edge + EG_FORK_THIRD_CM <= EG_HALL_LEN_MAX * 100)",
+    "old": "else if (third && (L9 || edge + EG_FORK_THIRD_CM <= EG_HALL_LEN_MAX * 100))",
     "new": "else if (third)",
     "tests": [
       "test/egaudit5_f.test.js"

@@ -47,7 +47,9 @@ const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 test('THE ASCENT - HEIGHT (Elite-Gates-Ascent.md section 2): THE LAW OF IT - LAW 9 judges by height (EG_HEIGHT_LAW, a spec\'s own law number), every law before in plan alone (its halls\' every answer as it was); floors stacked stand EG_STACK_M (4 m) apart; a floor bears feet in the walk graph\'s band (0.5 m under to 3.0 m over its top), any floor when the feet are not known; a body\'s storey is the top of the fight floor its feet stand on, else its feet (mutants: the law gate at 8; the band\'s under or over widened; the stack\'s bound moved; a storey read off the feet on a floor)', () => {
   assert.deepEqual([EG_HEIGHT_LAW, EG_STACK_M, EG_GROUND_UNDER_M, EG_GROUND_OVER_M], [9, 4, 0.5, 3]);
   assert.deepEqual([4, 5, 6, 7, 8].map((v) => egByHeight({ v })), [false, false, false, false, false], 'the laws before judge in plan alone');
-  assert.ok(Object.keys(EG_LAWS).every((v) => !egByHeight({ v: Number(v) })), 'every law a breach may be opened under today');
+  // PIN MOVED (THE ROOMS, LAW 9 - 2026-10-16): law 9 is in EG_LAWS now (the build draws it) - it alone of them judges by height
+  assert.ok(Object.keys(EG_LAWS).every((v) => egByHeight({ v: Number(v) }) === (Number(v) >= EG_HEIGHT_LAW)), 'every law a breach may be opened under today');
+  assert.equal(egByHeight({ v: Math.max(...Object.keys(EG_LAWS).map(Number)) }), true, 'the newest, law 9, by height');
   assert.deepEqual([egByHeight({ v: 9 }), egByHeight({ law: 9 }), egByHeight({ v: 10 }), egByHeight(null), egByHeight({})], [true, true, true, false, false]);
   assert.deepEqual([egFeetY({ v: 9 }, 5), egFeetY({ v: 8 }, 5), egFeetY({ v: 9 }, undefined)].map(String), ['5', 'NaN', 'NaN'], 'a height handed a hall of the law before is not known');
   assert.deepEqual([egBears(0, 0), egBears(0, -0.5), egBears(0, -0.51), egBears(0, 3), egBears(0, 3.01), egBears(5, NaN)], [true, true, false, true, false, true], 'the band');
@@ -359,7 +361,9 @@ test('THE ASCENT - HEIGHT (section 2): THE CLIENT\'S TRAVERSAL GROUND READS THE 
   try {
     for (const v of [9, 8]) {
       egSpecForget();
-      assert.ok(egSpecGive({ ...yard, v, fl: [{ ...LOW, z: 40 }, { ...HIGH, z: 40 }] }));
+      // PIN MOVED (THE ROOMS, LAW 9 - 2026-10-16): the yard is a real LAW 9 hall now, which says its law (`law` - egByHeight's
+      // gate before `v`), so the law asked is said in both
+      assert.ok(egSpecGive({ ...yard, v, law: v, fl: [{ ...LOW, z: 40 }, { ...HIGH, z: 40 }] }));
       assert.equal(egHallOf(77, yard.h, 0).v, v);
       const got = [stand(0, 0, 40), stand(0, 5, 40), stand(8, 5, 40), stand(8, 0, 40), stand(30, 0, 40)];
       assert.deepEqual(got, v === 9 ? [false, false, true, false, true] : [false, false, false, false, true], `law ${v}: ${got}`);

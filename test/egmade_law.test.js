@@ -15,6 +15,7 @@ import { gateArenaLocation, COURT_TEXT } from '../src/world/gateArena.js';
 import { sdRealmLocation, SD_REALM_TEXT } from '../src/world/sdRealm.js';
 import { egHallLocation, EG_HALL_TEXT } from '../src/world/egHall.js';
 import { EG_TEXT, EG_SPEC, egHallOf, egCircleSpecs, egOnFight, egSpecForget, EG_SEALED_MS } from '../src/net/egLaw.js';
+import { egGive8 } from './egGive8.mjs';   // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9): a law 8 circle given
 import { registerSpirePotionLaw, spirePotionRefusal, SPIRE_POTION_TEXT } from '../src/systems/spireKit.js';
 import { POTION_RECIPES, potionRecipeKey } from '../src/systems/potionRecipes.js';
 import { useItem } from '../src/systems/useItem.js';
@@ -196,6 +197,10 @@ test('EG-H2 THE SPIRE\'S TRAVERSAL GROUND AND THE CLIENT\'S LAW PIN (sections 10
   const co = [['acct-0', 'Mac', 1]];
   const B = egBreachNew({ b: '0123456789abcdef', ez: 'z'.repeat(20), s: 'acct-0', o: 'Mac', ew: 0, rh: 0, seed: 77, op: 1_800_000_000_000, co, site: { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 }, wg: [] });
   egEnter(B, 'acct-0', 'ordacct-0'.padEnd(20, 'x'), 30, clock);
+  // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): the circle given at spec law 8 (test/egGive8.mjs): the feet stood at
+  // the plate's height on law 8's yard and span (a LAW 9 hall's floors stand at their own heights - test/law9_height.test.js's
+  // traversal ground by the feet)
+  egGive8(77, [1]);
   const circle = egCircleSpecs(77, 1, 0);
   const yard = circle.find((s) => (s.fl ?? []).length), span = circle.find((s) => s.kind === 'span');
   B.h = yard.h; B.sg = 'trial'; B.wk = clock - 1000; B.cnt = { left: 1_500_000, at: clock - 1000 };

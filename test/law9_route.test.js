@@ -290,7 +290,9 @@ const SITE = { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 };
 /** A breach of two at hall `h` of `seed` - the hall given with `route` - its trial woken with the company on the plate. */
 function breachAt(seed, h, route) {
   egSpecForget();
-  const real = egHallOf(seed, h, 0);
+  // PIN MOVED (THE ROOMS, LAW 9 - 2026-10-16): the hall drawn under spec law 8 - the route given is laid over law 8's line (its
+  // fork, its passage at z 29); a LAW 9 hall's own route is test/law9_rooms.test.js's
+  const real = egHallOf(seed, h, 0, 8);
   assert.ok(egSpecGive({ ...real, route }));
   let s = seed;
   const rng = () => { s = (Math.imul(s, 1103515245) + 12345) >>> 0; return s / 4294967296; };

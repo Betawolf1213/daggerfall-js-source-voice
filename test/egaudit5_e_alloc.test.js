@@ -6,7 +6,7 @@
 // frame (identity), and what the two hottest paths allocate, measured by V8's own sampling heap profiler (node:inspector -
 // every sampled allocation, collected or not, by the source file of the frame that made it) against a bound well under
 // what they made before (the lane's ~49 KB and ~23 KB a frame).
-import test from 'node:test';
+import test, { beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { Session } from 'node:inspector/promises';
@@ -29,6 +29,16 @@ import { EG_PRES_TEXT } from '../src/ui/egBeats.js';
 import { EG_OCCLUDE_CHEST_M } from '../src/scenes/egOcclude.js';
 import { lookAt, perspective } from '../src/world/mat4.js';
 import { TELEGRAPH_KIND, TELEGRAPH_POOL, TELEGRAPH_EDGE_DAGON, telegraphBounds } from '../src/render/gateTelegraph.js';
+import { egGive8 } from './egGive8.mjs';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courses along +z
+// from the plate, its courts and its lords where law 8 lays them) and stand on it still - the halls they read are law 8's,
+// given as a breach of law 8's are given to a client (test/egGive8.mjs); LAW 9's own ground is test/law9_height.test.js's and
+// test/law9_rooms.test.js's. Given before every test (a client that leaves its breach forgets them)
+beforeEach(() => {
+  egGive8(1, [1, 2, 6]);
+  egGive8(77, [2]);
+});
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const between = (src, a, b) => { const i = src.indexOf(a), j = src.indexOf(b, i); assert.ok(i >= 0 && j > i, `${a} .. ${b}`); return src.slice(i, j); };

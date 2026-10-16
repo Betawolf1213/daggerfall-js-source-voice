@@ -8,6 +8,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { egBreachNew, egEnter, egStep, egBlow, egDown, egWord, EG_RD_RECALL_MS, EG_RD_WINDOW_MS } from '../src/net/egBrain.js';
 import { egHallOf, egCircleOfHall, egFirstHallOf, egBossOf, EG_SEALED_MS, EG_LORDS } from '../src/net/egLaw.js';
+import { egGive8 } from './egGive8.mjs';   // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9): law 8's circles given
 import { EG_OFFER_MAX, EG_VESTIGES, EG_MASTERIES } from '../src/net/egVestige.js';
 import { egBossNo } from '../src/net/egLords.js';
 import { validEgOut } from '../src/net/wire.js';
@@ -95,6 +96,9 @@ function play({ n = 3, seed = 12345, start = 0, until = () => false, hook = null
 }
 
 test('EG-FULL A BREACH PLAYED THROUGH SIX CIRCLES: a company of three walked and fought from the first hall through thirty - every kind of hall stood and passed, every Court\'s lord felled (its fall said by name), six Redoubts taken with their offers and the company\'s word, the count still running; every frame the director says passes the wire (mutants: a hall that never closes; a frame the wire refuses; a Court with no lord)', () => {
+  // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): the six circles given at spec law 8 (test/egGive8.mjs) - the company
+  // walks each hall's line from its plate to its door, law 8's; a LAW 9 hall is walked along its route (THE ROUTE'S PROOFS' sweep)
+  egGive8(12345, [1, 2, 3, 4, 5, 6]);
   const { B, frames, bad } = play({ n: 3, seed: 12345, until: (b) => b.h > 30 });
   assert.equal(bad, 0, 'every frame passes the wire');
   assert.equal(B.end, null);

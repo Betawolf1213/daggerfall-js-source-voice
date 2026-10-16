@@ -7,7 +7,7 @@
 // Deadeye's striker (net/egBrain.js hostHits - `esay` 'storm' and 'deadeye', `s` the striker). Every fixture is the producers'
 // own: the director's breach and Court, blows through egBlow, the screen from createEgClient and its fight from createEgFight,
 // each door its own (hurtPlayer, tellPlayerCast, calculateCastCost).
-import test from 'node:test';
+import test, { beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { validEgOut, validEgIn, EG_SAY_KEYS } from '../src/net/wire.js';
@@ -28,6 +28,16 @@ import { tellPlayerCast } from '../src/systems/playerCasts.js';
 import { _resetPlayerHealForTests } from '../src/systems/playerHeal.js';
 import { EG_BEATS, EG_BEAT_SOUNDS, EG_PRES_TEXT, egBeatPlan, egBeatMemo, egBeatWatch, egHolderNow, egHolderMemo, egHolderWatch } from '../src/ui/egBeats.js';
 import { egSpireHudModel, drawEgSpireHud, destroyEgSpireHud } from '../src/ui/egSpireHud.js';
+import { egGive8 } from './egGive8.mjs';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courses along +z
+// from the plate, its courts and its lords where law 8 lays them) and stand on it still - the halls they read are law 8's,
+// given as a breach of law 8's are given to a client (test/egGive8.mjs); LAW 9's own ground is test/law9_height.test.js's and
+// test/law9_rooms.test.js's. Given before every test (a client that leaves its breach forgets them)
+beforeEach(() => {
+  egGive8(77, [1]);
+  egGive8(12345, [1]);
+});
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const T0 = 1_800_000_000_000;

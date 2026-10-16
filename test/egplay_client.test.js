@@ -12,6 +12,7 @@ import { readFileSync } from 'node:fs';
 import { fakeRooms } from './fakeRoom.mjs';
 import { SOCIAL_ROOM, EG_KEY, validEgOut, validEgIn, EG_BRAIN_V } from '../src/net/wire.js';
 import { egRoomKey, egHallOf, egCircleSpecs, egOnArrive, egFirstHallOf, EG_SEALED_MS, EG_GATHER_MS, EG_REST_MS, EG_TEXT, EG_VOID_Y, EG_COUNT_START_MS } from '../src/net/egLaw.js';
+import { egGive8 } from './egGive8.mjs';   // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9): a law 8 circle given
 import { mintEgOrder } from '../src/net/identityToken.js';
 import { readEgReceipt } from '../src/net/egReceipt.js';
 import { realmToDungeon, dungeonToRealm } from '../src/net/sdBrain.js';
@@ -131,6 +132,7 @@ async function intoFirstHall(P) {
   step(EG_SEALED_MS); await beat(1000);
   client.command('');
   await settle();
+  egGive8(rec().seed, [1]);   // PIN MOVED (THE ASCENT): the first circle given at law 8 (below)
   await enter();
   await frame(300);
   for (let i = 0; i < 6 && rec().sg !== 'trial'; i++) await frame(EG_GATHER_MS / 3);
@@ -161,6 +163,9 @@ test('EG-PLAY THE CLIENT ON THE RELAY: the Weir Key turned stakes it and hands t
     assert.deepEqual(asked.admit, [B]);
     assert.equal(asked.enter.length, 1);
     assert.deepEqual([asked.enter[0].b, asked.enter[0].c, asked.enter[0].seed], [B, 1, rec().seed]);
+    // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): the breach's first circle given at spec law 8 (test/egGive8.mjs - its
+    // seed the hub's own draw), before the client stands it: I strike the rifts and walk to the door on law 8's ground
+    egGive8(rec().seed, [1]);
     await enter();
     await frame(300);
     assert.equal(rec().mem[ME].in, 1, 'my admission said to the room');

@@ -16,6 +16,13 @@ import { EG_WALL } from '../src/world/egGround.js';
 import { egCircleParts } from '../src/world/egCircleParts.js';
 import { egHallOf, egCircleSpecs, egCircleOfHall } from '../src/net/egLaw.js';
 import { createEgOccluders, egOccludersHit, egSegTri, egSegBox, egOccludeEase, egOccludeRanges, EG_OCCLUDE_KEEP, EG_OCCLUDE_FADE_S, EG_OCCLUDE_BODY_M, EG_OCCLUDE_CHEST_M, EG_OCCLUDE_VIEWS_MAX } from '../src/scenes/egOcclude.js';
+import { egLawSeam } from '../src/net/egLaw.js';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins measure spec law 8's halls - drawn where no law is named
+// (net/egLaw.js egLawSeam - a test's seam, never a breach's: a breach draws its own law), the dress, the camera and the client
+// as they were written over law 8's ground; LAW 9's dress is THE DRESS slice's (Elite-Gates-Ascent.md section 8) and its
+// ground test/law9_rooms.test.js's
+egLawSeam(8);
 
 const I4 = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
 /** Every index a list of sub-mesh ranges covers, as one sorted list. */

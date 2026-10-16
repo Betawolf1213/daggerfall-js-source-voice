@@ -156,6 +156,8 @@ on:
       - "src/net/egLaw.js"
       - "src/net/egRoute.js"
       - "src/net/egRouteProof.js"
+      - "src/net/egAscent.js"
+      - "src/net/egRoomLaw.js"
       - "src/net/egWalkGraph.js"
       - "src/net/sdBrain.js"
       - "src/net/egSpanLaw.js"

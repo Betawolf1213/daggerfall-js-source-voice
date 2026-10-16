@@ -6,7 +6,7 @@
 // word's arrival at the room). Every fixture is the producers' own: the breach and its fight from the director (egEnter,
 // egStep, egAim's `eb`, egStateOf and egFightState through the wire), the census from egCount and egHeal, the screen from
 // createEgFight and createEgClient - and each blow is counted by both on the same inputs.
-import test from 'node:test';
+import test, { beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { validEgOut, validEgIn } from '../src/net/wire.js';
@@ -23,6 +23,15 @@ import { createEgFight, egShieldBreach, egLifelineOpen } from '../src/scenes/egF
 /** PIN MOVED (AUDIT EG V, d: lane4 L4-7 - the count is mended, and Lifeline opened, only by a heal a relayed cast backs): the healer's cast seen - the room's record of a cast from the healer to the member (server/src/index.js _egCastSaw). */
 const CAST_SEEN = () => true;
 import { createEgClient, egLifelineOf, EG_HEAL_SEND_MS } from '../src/scenes/egClient.js';
+import { egGive8 } from './egGive8.mjs';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courses along +z
+// from the plate, its courts and its lords where law 8 lays them) and stand on it still - the halls they read are law 8's,
+// given as a breach of law 8's are given to a client (test/egGive8.mjs); LAW 9's own ground is test/law9_height.test.js's and
+// test/law9_rooms.test.js's. Given before every test (a client that leaves its breach forgets them)
+beforeEach(() => {
+  egGive8(12345, [1]);
+});
 
 const T0 = 1_800_000_000_000;
 const SITE = { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 };

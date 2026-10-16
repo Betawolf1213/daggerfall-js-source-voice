@@ -182,8 +182,8 @@
   {
     "name": "EGZ-the-law-before-drawn-in-the-new",
     "file": "src/net/egLaw.js",
-    "old": "  let spec = layHall(seed >>> 0, h, geo | 0, 0, law), tries = 0, at = 0;",
-    "new": "  let spec = layHall(seed >>> 0, h, geo | 0, 0, EG_SPEC), tries = 0, at = 0;",
+    "old": "    spec = layHall(seed >>> 0, h, geo | 0, 0, law);\n    while (spec.steps.length && !egSpanProof(spec).ok && tries < EG_RELAY_MAX)",
+    "new": "    spec = layHall(seed >>> 0, h, geo | 0, 0, EG_SPEC);\n    while (spec.steps.length && !egSpanProof(spec).ok && tries < EG_RELAY_MAX)",
     "tests": [
       "test/egz_frag.test.js"
     ]
@@ -200,8 +200,8 @@
   {
     "name": "EGZ-a-hall-that-names-the-wrong-law",
     "file": "src/net/egLaw.js",
-    "old": "    v: law, seed, h, c, slot, kind,",
-    "new": "    v: EG_SPEC, seed, h, c, slot, kind,",
+    "old": "v: law, ...(L9 ? { law } : {}), seed, h, c, slot, kind,",
+    "new": "v: EG_SPEC, ...(L9 ? { law } : {}), seed, h, c, slot, kind,",
     "tests": [
       "test/egz_frag.test.js"
     ]
@@ -218,8 +218,8 @@
   {
     "name": "EGZ-the-law-before-forgotten",
     "file": "src/net/egDurable.js",
-    "old": "export const EG_LAWS = Object.freeze({ 4: '2026-10-11', 5: '2026-10-12', 6: '2026-10-13', 7: '2026-10-13', 8: '2026-10-15' });",
-    "new": "export const EG_LAWS = Object.freeze({ 5: '2026-10-12', 6: '2026-10-13', 7: '2026-10-13', 8: '2026-10-15' });",
+    "old": "export const EG_LAWS = Object.freeze({ 4: '2026-10-11', 5: '2026-10-12', 6: '2026-10-13', 7: '2026-10-13', 8: '2026-10-15', 9: '2026-10-16' });",
+    "new": "export const EG_LAWS = Object.freeze({ 5: '2026-10-12', 6: '2026-10-13', 7: '2026-10-13', 8: '2026-10-15', 9: '2026-10-16' });",
     "tests": [
       "test/egz_frag.test.js"
     ]

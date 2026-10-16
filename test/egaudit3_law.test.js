@@ -57,10 +57,11 @@ const courtOf = (spec) => {
 test('AUDIT EG III LAW 6 - THE LAW PIN (section 22): spec law 6 is the law, laws 4 and 5 kept beside it their seven days each, byte for byte (their 800 halls hashed whole); law 6 laid byte for byte as this audit laid it; a hall of no span decree is law 5\'s whole but its number; a breach opened records law 6, and one of law 5 draws law 5\'s halls (mutants: law 6 not in the table; the law before forgotten; law 6 laid on plain ground)', () => {
   // PIN MOVED (EG-HERO-LAY): spec law 7 (the heroes laid) is the build's law now, law 6 kept beside it its seven days and still
   // laid byte for byte as this audit laid it (test/eghero_lay.test.js pins law 7). PIN MOVED (AUDIT EG V, f): spec law 8 (the ways
-  // laid) is the build's law, laws 4 to 7 kept beside it (test/egaudit5_f.test.js pins law 8)
-  assert.deepEqual([EG_SPEC, EG_DECREE_LAW], [8, 6]);
-  assert.deepEqual({ ...EG_LAWS }, { 4: '2026-10-11', 5: '2026-10-12', 6: '2026-10-13', 7: '2026-10-13', 8: '2026-10-15' });
-  assert.deepEqual([4, 5, 6, 7, 8, 3].map(egLawKnown), [true, true, true, true, true, false]);
+  // laid) is the build's law, laws 4 to 7 kept beside it (test/egaudit5_f.test.js pins law 8). PIN MOVED (THE ASCENT - THE ROOMS,
+  // 2026-10-16): spec law 9 (the hall a way of rooms) is the build's law, laws 4 to 8 kept beside it (test/law9_rooms.test.js)
+  assert.deepEqual([EG_SPEC, EG_DECREE_LAW], [9, 6]);
+  assert.deepEqual({ ...EG_LAWS }, { 4: '2026-10-11', 5: '2026-10-12', 6: '2026-10-13', 7: '2026-10-13', 8: '2026-10-15', 9: '2026-10-16' });
+  assert.deepEqual([4, 5, 6, 7, 8, 9, 3].map(egLawKnown), [true, true, true, true, true, true, false]);
   const days = (a, b) => (Date.parse(EG_LAWS[b]) - Date.parse(EG_LAWS[a])) / 86_400_000;
   assert.ok(days(4, 6) <= EG_LAW_KEEP_DAYS && days(5, 6) <= EG_LAW_KEEP_DAYS, 'every law before inside its keep');
   assert.equal(hash(4), 1228307904, 'law 4, byte for byte');
@@ -71,12 +72,12 @@ test('AUDIT EG III LAW 6 - THE LAW PIN (section 22): spec law 6 is the law, laws
     const a = egHallOf(77, h, 0, 5), b = egHallOf(77, h, 0, 6);
     assert.equal(JSON.stringify({ ...b, v: 5 }), JSON.stringify(a), `hall ${h}: law 6 on plain ground is law 5's`);
   }
-  // the director: a breach opened now is of the build's law (PIN MOVED, EG-HERO-LAY: law 7; AUDIT EG V, f: law 8), one of law 6
-  // draws law 6's halls, and one of law 5 law 5's (its stage's digest)
+  // the director: a breach opened now is of the build's law (PIN MOVED, EG-HERO-LAY: law 7; AUDIT EG V, f: law 8; THE ASCENT:
+  // law 9), one of law 6 draws law 6's halls, and one of law 5 law 5's (its stage's digest)
   const B = egBreachNew({ b: '0123456789abcdef', ez: 'z'.repeat(20), s: 'a', o: 'A', ew: 0, rh: 0, seed: 77, op: 1_800_000_000_000, co: [['a', 'A', 1]], site: { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 }, wg: [] });
-  assert.equal(B.egv, 8, 'the breach records the law it opened under');
+  assert.equal(B.egv, 9, 'the breach records the law it opened under');
   B.h = 2;
-  assert.equal(egStateOf(B, 1_800_000_000_000).dg, egSpecDigest(egHallOf(77, 2, 0, 8)));
+  assert.equal(egStateOf(B, 1_800_000_000_000).dg, egSpecDigest(egHallOf(77, 2, 0, 9)));
   B.egv = 6;
   assert.equal(egStateOf(B, 1_800_000_000_000).dg, egSpecDigest(egHallOf(77, 2, 0, 6)), 'law 6\'s breach, law 6\'s hall');
   B.egv = 5;
@@ -84,9 +85,11 @@ test('AUDIT EG III LAW 6 - THE LAW PIN (section 22): spec law 6 is the law, laws
 });
 
 test('AUDIT EG III LAW 6 - EVERY SPAN CARRIES THE DECREES (section 14: "every span (a Span\'s, a Proving Walk\'s) carries a Gust section ... two Gust sections"): Gale-Swept lays a Gust section a rank on every road of a Span - THE FORK\'s Low Road too - and on a Proving Walk\'s second span, each on its island, two pieces each at rank II; in the Galleries (no Gust of their own) exactly so; law 5 laid none on a Proving Walk or a Low Road and one at rank II (mutants: the Low Road\'s sections dropped; the Proving Walk\'s second span its own run; rank II one section; a Gust section with no island)', () => {
+  // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): the decrees' sections read along a course laid from the plate along +z
+  // - spec law 8's line (laws 6 to 8 lay the decrees alike); a LAW 9 hall's courses stand along its way (test/law9_rooms.test.js)
   let walks = 0, lows = 0, highs = 0;
   for (const { seed, h } of spans([1, 2, 3, 5, 8, 13], 2, 12)) for (const gale of [1, 2]) {
-    const spec = egHallOf(seed, h, geoOf(gale, 0)), galleries = spec.band === 0;
+    const spec = egHallOf(seed, h, geoOf(gale, 0), 8), galleries = spec.band === 0;
     const roads = spec.kind === 'proving' ? [course(spec, 0, courtOf(spec).z + courtOf(spec).r)] : spec.fork ? [course(spec, 0), course(spec, 1)] : [course(spec, 0)];
     for (const ev of roads) {
       const R = runs(ev, 'gust');
@@ -110,7 +113,7 @@ test('AUDIT EG III LAW 6 - EVERY SPAN CARRIES THE DECREES (section 14: "every sp
 test('AUDIT EG III LAW 6 - CRUMBLING HALLS ON EVERY SPAN (section 14: "every span carries a Crumble section, and has one island fewer | two Crumble sections, two islands fewer"): a Crumble section a rank on every road of a Span and on a Proving Walk (rank II\'s second ending its first span), each laid straight on from the ground before it - never on an island of its own - two pieces each at rank II; a Proving Walk\'s second span is the decrees\' alone, in their order (mutants: rank II one section; a Crumble section on an island; the Low Road\'s second dropped; the Proving Walk\'s second section on its second span)', () => {
   let n = 0;
   for (const { seed, h } of spans([1, 2, 3, 5, 8, 13], 2, 12)) for (const cr of [1, 2]) {
-    const spec = egHallOf(seed, h, geoOf(0, cr));
+    const spec = egHallOf(seed, h, geoOf(0, cr), 8);   // PIN MOVED (THE ASCENT): spec law 8's line - see the Gust's, above
     if (spec.kind === 'proving') {
       // the Proving Walk exactly: rank II's second section ends the first span; the second span is the Crumble section alone,
       // straight on from the court
@@ -131,7 +134,7 @@ test('AUDIT EG III LAW 6 - CRUMBLING HALLS ON EVERY SPAN (section 14: "every spa
   // the decrees together on a Proving Walk's second span, in their order: each Gust section on its island, then the Crumble
   // section straight on from the last gust - no island of its own
   for (const { seed, h } of spans([1, 2, 3], 2, 12)) {
-    const spec = egHallOf(seed, h, geoOf(2, 1));
+    const spec = egHallOf(seed, h, geoOf(2, 1), 8);
     if (spec.kind !== 'proving') continue;
     const C = courtOf(spec), ev = course(spec, 0, C.z + C.r);
     assert.match(ev.join(' '), /^\| gust gust \| gust gust( crumble){2,3}$/, `seed ${seed} hall ${h}: ${ev.join(' ')}`);
@@ -140,8 +143,11 @@ test('AUDIT EG III LAW 6 - CRUMBLING HALLS ON EVERY SPAN (section 14: "every spa
 
 test('AUDIT EG III LAW 6 - INSIDE THE WIRE\'S BOUND, PROVEN (sections 9, 10.5): every traverse and Proving Walk of law 6, under every ground of the span decrees, runs no longer than EG_HALL_LEN_MAX (the gate\'s wire bound under it) and is laid by THE TIMED SOLVER without its last resort; the sweep crosses them with the real motor (tools/egSpanSolve.mjs --sweep, 25 seeds a band on every pull request) (mutants: a set piece\'s runs kept under two ranks; a Gust section beside an island already laid)', () => {
   let n = 0, longest = 0;
+  // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): spec law 8's halls, laid by the solver inside EG_RELAY_MAX; a LAW 9
+  // hall's bound (x, z and y) and its tries are test/law9_rooms.test.js's
   for (const { seed, h } of spans([1, 4, 5, 7, 21, 123, 190], 1, 20)) for (let geo = 0; geo <= 8; geo++) {
-    const spec = egHallOf(seed, h, geo);
+    const spec = egHallOf(seed, h, geo, 8);
+
     n++;
     longest = Math.max(longest, spec.len);
     assert.ok(spec.len <= EG_HALL_LEN_MAX, `seed ${seed} hall ${h} ground ${geo}: ${spec.len} m`);

@@ -225,7 +225,12 @@ test('EG10 THE SWAP IN PLACE, EXECUTED - THE FREE PINS (scenes/worldModes.js egS
   const lays = (b, kinds) => Array.from({ length: 21 }, (_, i) => i + 1).some((c) => egBandOfCircle(c) === b && egCircleSpecs(SEED, c).some((s) => s.steps.some((q) => kinds.includes(q.kind))));
   const pieceTex = (b) => (lays(b, ['beat']) ? EG_BEAT_STONE_RECORDS.reduce((n, q) => n + q.warn.length + q.back.length, 0) * 2 : 0) + (lays(b, ['crumble', 'bone']) ? EG_CRUMBLE_TELL_RECORDS.length * 2 : 0);
   const bands = new Set(Array.from({ length: 21 }, (_, i) => egBandOfCircle(i + 1)));
-  assert.equal(R.textures, tex + [...bands].filter((b) => b !== egBandOfCircle(1)).reduce((n, b) => n + bandTex(b) + tellTex(b) + pieceTex(b), 0), 'each band\'s dress (and its Beats\' and its pieces\' pictures) uploaded once a session, never by a swap');
+  // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): the first circle's band's pieces its first circle does not lay go up
+  // with the first of its circles that does, once a session as the others' (law 9's first circle of this seed lays no Crumble;
+  // law 8's did, so its band's went up with the stand)
+  const b1 = egBandOfCircle(1), in1 = (kinds) => egCircleSpecs(SEED, 1).some((s) => s.steps.some((q) => kinds.includes(q.kind)));
+  const later1 = (lays(b1, ['beat']) && !in1(['beat']) ? tellTex(b1) + EG_BEAT_STONE_RECORDS.reduce((n, q) => n + q.warn.length + q.back.length, 0) * 2 : 0) + (lays(b1, ['crumble', 'bone']) && !in1(['crumble', 'bone']) ? EG_CRUMBLE_TELL_RECORDS.length * 2 : 0);
+  assert.equal(R.textures, tex + later1 + [...bands].filter((b) => b !== b1).reduce((n, b) => n + bandTex(b) + tellTex(b) + pieceTex(b), 0), 'each band\'s dress (and its Beats\' and its pieces\' pictures) uploaded once a session, never by a swap');
   assert.equal(R.made - R.freed, base.live);
   assert.equal(R.wm.meshKey, egCircleKey(SEED, 1));
 });

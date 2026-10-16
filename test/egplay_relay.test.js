@@ -15,6 +15,7 @@ import { egRoomKey, egHallOf, EG_SEALED_MS, EG_GATHER_MS, EG_SPEC } from '../src
 import { mintEgOrder } from '../src/net/identityToken.js';
 import { readEgReceipt } from '../src/net/egReceipt.js';
 import { realmToDungeon, dungeonToRealm } from '../src/net/sdBrain.js';
+import { egGive8 } from './egGive8.mjs';   // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9): a law 8 circle given
 
 const { subtle } = globalThis.crypto;
 const T0 = 1_800_000_000_000;
@@ -119,6 +120,9 @@ test('EG-PLAY THE OPEN AND THE CALL: the hub verifies the service\'s order (its 
 
 test('EG-PLAY THE ROOM: it admits its company alone, inside the open window - a stranger refused, the opener\'s admission spent once; the first hall wakes EG_GATHER_MS after the company stands on its plate and the count runs from thirty minutes; the rifts break under blows from the floor, the door opens, a step through it pulls the company to the next hall (mutants: a stranger admitted; an order spent twice; the hall woken before the gather)', async () => {
   await withBreach(async ({ eg, beat, admit, step }) => {
+    // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): the breach's first circle given at spec law 8 (test/egGive8.mjs - its
+    // seed the hub's own draw): the company strikes the rifts of a yard laid where law 8 lays it
+    egGive8(eg.store.get(EG_KEY).seed, [1]);
     const spec = egHallOf(eg.store.get(EG_KEY).seed, 1);
     // before the open: closed
     const early = eg.connect(); await eg.hello(early, 'peer-mac', at(spec.x0 + spec.arrive.x, spec.arrive.z), { kind: 'linked', tokenSub: 'acct-mac', charLevel: 20 });
@@ -180,6 +184,9 @@ test('EG-PLAY THE ROOM: it admits its company alone, inside the open window - a 
 
 test('EG-PLAY ONE LIFE (EG-FULL, section 16.5): a death in the breach is the member\'s fall, said by their own word (`fell` - the death save turned it aside) - said to all with whether it is final (a solo member\'s is: nobody living is left to recall it), the member a witness; no member living, the breach ends a wipe, the end receipt (`e1`, kind x, why wipe) minted to its socket, and its room beats no more (mutants: a death that costs nothing; the end never said; the last living member\'s fall said first)', async () => {
   await withBreach(async ({ eg, beat, admit, step }) => {
+    // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): the breach's first circle given at spec law 8 (test/egGive8.mjs - its
+    // seed the hub's own draw): the company strikes the rifts of a yard laid where law 8 lays it
+    egGive8(eg.store.get(EG_KEY).seed, [1]);
     const spec = egHallOf(eg.store.get(EG_KEY).seed, 1);
     step(EG_SEALED_MS); await beat(1000);
     const ws = eg.connect(); await eg.hello(ws, 'peer-mac', at(spec.x0, 0), { kind: 'linked', tokenSub: 'acct-mac', charLevel: 20 });

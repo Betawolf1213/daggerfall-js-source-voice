@@ -311,15 +311,17 @@ export const egDieBetween = (r, lo, hi) => lo + Math.floor(r() * (hi - lo + 1));
  * most EG_DROP_CM onto its walled landing (still ground where the course stands under 2 m). Every gap EG_GAP_MIN_CM to
  * EG_GAP_MAX_CM. Pure.
  * @param {number} seed @param {number} hall @param {number} band
+ * THE ASCENT (spec law 9): `floors` - a road's crumbles and Drops come down to the height it began at (and to what `floor`
+ * says), never to the plates' own 0.
  * @param {{ r: () => number, sizes: Readonly<Record<string, { w: number, d: number }>>,
- *   start: { x: number, y: number, z: number, r: number }, checkR: number }} o
+ *   start: { x: number, y: number, z: number, r: number }, checkR: number, floors?: boolean }} o
  */
-export function egSpanOf(seed, hall, band, { r, sizes, start, checkR }) {
+export function egSpanOf(seed, hall, band, { r, sizes, start, checkR, floors = false }) {
   /** each road's layer: its course spec, where it stands (`edge`, `y`) and the height its spec has said (`said`) */
   const roads = new Map();
   let L = /** @type {any} */ (null), span = 0, risen = false, n = 0;
   const road = (k, from = start) => {
-    if (!roads.has(k)) roads.set(k, { spec: { road: k, start: { ...from }, checkR, toEnd: 0, sections: [{ span, pieces: [] }] }, edge: from.z + from.r, y: from.y, said: from.y });
+    if (!roads.has(k)) roads.set(k, { spec: { road: k, start: { ...from }, checkR, toEnd: 0, sections: [{ span, pieces: [] }] }, edge: from.z + from.r, y: from.y, said: from.y, base: floors ? from.y : 0 });
     L = roads.get(k);
   };
   road(0);
@@ -370,17 +372,25 @@ export function egSpanOf(seed, hall, band, { r, sizes, start, checkR }) {
           step('beat', gap(), { x, kit, beat: (b++ % 2) * EG_BEAT_HALF_MS });
         }
       } else if (kind === 'crumble') {
-        // down toward the plates' height while above it (never up: a course below it - a Mist Stair's, a Sinking Stair's - stays)
-        const drop = L.y > 0 ? Math.ceil(L.y / Math.max(1, count)) : 0;
-        for (let q = 0; q < count; q++) { if (L.y > 0) L.y = Math.max(0, L.y - drop); step('crumble', gap(), { x, kit }); }
+        // down toward the plates' height while above it (never up: a course below it - a Mist Stair's, a Sinking Stair's - stays).
+        // THE ASCENT (spec law 9): toward its road's floor (`base` - the height its course began at; 0, the plates', before)
+        const drop = L.y > L.base ? Math.ceil((L.y - L.base) / Math.max(1, count)) : 0;
+        for (let q = 0; q < count; q++) { if (L.y > L.base) L.y = Math.max(L.base, L.y - drop); step('crumble', gap(), { x, kit }); }
       } else if (kind === 'gust') for (let q = 0; q < count; q++) step('gust', gap(), { x, kit, period: 6000, phase: q * 0 });
       else if (kind === 'rail') for (let q = 0; q < count; q++) step('rail', gap(), { x, kit, amp: egDieBetween(r, 150, 200), period: egDieBetween(r, 60, 90) * 100, phase: q * 1500 });   // LAYER THREE: its travel under the least gap less EG_RAIL_CLEAR
       else if (kind === 'pend') for (let q = 0; q < count; q++) step('pend', gap(), { x, kit, amp: 0, period: egDieBetween(r, 30, 50) * 100, phase: q * 700 });
       else if (kind === 'vent') for (let q = 0; q < count; q++) step('vent', gap(), { x, kit, period: egDieBetween(r, 40, 60) * 100, phase: egDieBetween(r, 0, 39) * 100 });
-      else if (kind === 'drop' && L.y < 200) for (let q = 0; q < count; q++) step('still', gap(), { x, kit });
-      else if (kind === 'drop') { const fall = Math.min(EG_DROP_CM, Math.max(200, L.y)); L.y = Math.max(0, L.y - fall); step('drop', gap(), { x, kit }); }
+      else if (kind === 'drop' && L.y - L.base < 200) for (let q = 0; q < count; q++) step('still', gap(), { x, kit });
+      else if (kind === 'drop') { const fall = Math.min(EG_DROP_CM, Math.max(200, L.y - L.base)); L.y = Math.max(L.base, L.y - fall); step('drop', gap(), { x, kit }); }
       else for (let q = 0; q < count; q++) step('still', gap(), { x, kit });
     },
+    /** THE ASCENT (spec law 9): the height the road's crumbles and Drops come down to - where its course began (the plates'
+     *  0 until said; every law before spec law 9 leaves it so). */
+    floor(y) { L.base = y; },
+    /** THE ASCENT (spec law 9): the generator as it stands - every road's spec and place, the section, the riser spent, the
+     *  pieces' count - to stand again after a course laid only to be measured (save, then load). */
+    save: () => ({ roads: JSON.stringify([...roads.entries()]), cur: [...roads.entries()].find(([, q]) => q === L)?.[0] ?? 0, span, risen, n }),
+    load(o) { roads.clear(); for (const [k, q] of JSON.parse(o.roads)) roads.set(k, q); L = roads.get(o.cur); span = o.span; risen = o.risen; n = o.n; },
     /** Every road's course spec (its sections as said). */
     specs: () => [...roads.values()].map((q) => q.spec),
     /** EVERY ROAD'S COURSE, laid by courseOf - `{ road, steps, checkpoints, end }` (cm, the hall's frame), road 0 first. */
@@ -780,9 +790,12 @@ export const egRouteSolved = (/** @type {any} */ spec, road = 0) => solvedLegs(s
  * THE TIMED SOLVER on a hall's course: `{ ok, why }` - every pair's windows, every Crumble left in time, every Vent's
  * platform wide enough, every Drop's landing deep enough. `why` names each failure (the step's number and what failed).
  * THE ASCENT (spec law 9, section 6): a routed hall's courses as they stand along its way, every link of its proven roads by
- * its kind's law (net/egRouteProof.js), and THE MEDIAN over THE ROUTE (egRouteCross).
+ * its kind's law (net/egRouteProof.js), and THE MEDIAN over THE ROUTE (egRouteCross). THE ROOMS: `median` false - a course
+ * proven alone (net/egLaw.js egAscentProof, its route dropped) leaves THE MEDIAN to the whole hall's route, which waits for its
+ * pairs where the way brings a body to them (a course of two pieces alone would refuse a wait the road absorbs).
+ * @param {any} spec @param {boolean} [median]
  */
-export function egSpanProof(spec) {
+export function egSpanProof(spec, median = true) {
   const why = [], [B] = buildsOf(spec.v), law8 = (spec.v ?? 0) >= EG_SOLVE_LAW;   // AUDIT EG V: a law-8 hall on THE LAW'S CLOCK
   for (const s of spec.steps ?? []) {
     if (s.kind === 'vent' && Math.min(s.w, s.d) < EG_VENT_MIN_W) why.push(`${s.i}: a Vent's platform under ${EG_VENT_MIN_W} m`);
@@ -824,7 +837,7 @@ export function egSpanProof(spec) {
   if (routed) for (const road of roads) for (const g of egRouteLegs(spec, road)) { const w = egLegRefusal(g); if (w) why.push(`road ${road}, link ${g.i}: ${w}`); }
   // THE MEDIAN, road by road: no road whose ordinary crossing runs far past its best. THE ASCENT: over THE ROUTE - the road's
   // links from the arrival plate to the door, its courses' pairs waited for where the way brings a body to them
-  if (!why.length) for (const road of roads) {
+  if (!why.length && median) for (const road of roads) {
     const c = routed ? egRouteCross(spec, road) : egRoadCross(spec, road);
     if (c.n && c.fast > 0 && c.median > EG_MEDIAN_X * c.fast) why.push(`road ${road}: a median crossing of ${c.median.toFixed(1)} s past ${EG_MEDIAN_X} x its fastest ${c.fast.toFixed(1)} s`);
   }

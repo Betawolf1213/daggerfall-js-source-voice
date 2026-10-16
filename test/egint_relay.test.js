@@ -6,7 +6,7 @@
 // pose on a moving piece judged on the piece's clock position), THE CLOCK CORRECTED, THE FEINT'S CUT, WATCHFIRE'S TELL AND
 // ITS UNTELL, THE UNION FLOOR in time with the place in its set (net/egFloor.js), and THE BODY COUNTED - enforced in the
 // Spire: a count at nothing is the member's one life, and a member alive by its own word is never felled.
-import test from 'node:test';
+import test, { beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { fakeRoom } from './fakeRoom.mjs';
 import { EG_INTERNAL_OPEN, validEgOut, validEgIn, validPose, EG_KINDS, EG_OUT_KINDS, EG_FIGHT_KINDS, POSE_TS_MOD } from '../src/net/wire.js';
@@ -27,6 +27,15 @@ import { egHazardParts } from '../src/net/egFragLaw.js';
 import { egPieceAt } from '../src/net/egSpanLaw.js';
 import { runSpeed } from '../src/player/motor.js';
 import { TELL } from '../src/ai/tells.js';
+import { egGive8 } from './egGive8.mjs';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courses along +z
+// from the plate, its courts and its lords where law 8 lays them) and stand on it still - the halls they read are law 8's,
+// given as a breach of law 8's are given to a client (test/egGive8.mjs); LAW 9's own ground is test/law9_height.test.js's and
+// test/law9_rooms.test.js's. Given before every test (a client that leaves its breach forgets them)
+beforeEach(() => {
+  egGive8(12345, [1, 3]);
+});
 
 const { subtle } = globalThis.crypto;
 const T0 = 1_800_000_000_000;

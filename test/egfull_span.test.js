@@ -78,11 +78,13 @@ test('EG-FULL THE REACH IS NEVER GENEROUS (section 10.5): at every height the so
 });
 
 test('EG-FULL THE TIMED SOLVER (section 10.5): every course the generator lays is proven - its pairs a window of EG_WINDOW_MIN in every 12 s and never more than EG_WAIT_MAX to wait, every Crumble left in time, every Vent\'s platform and Drop\'s landing wide enough; a gap past the reach, a Rail that strands its rider and a Pendulum that never clears are refused; a course laid again says how often (mutants: the solver skipped; a wait unbounded; a redraw that never tries)', () => {
+  // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): spec law 8's halls by name, each the one course THE TIMED SOLVER proves
+  // whole; a LAW 9 hall's courses are proven where they stand (net/egLaw.js egAscentProof - test/law9_rooms.test.js)
   let laid = 0, halls = 0;
   for (const seed of [77, 0xbeef, 3, 99]) {
     for (let c = 1; c <= 20; c++) {
       for (const geo of [0, 4]) {
-        for (const s of egCircleSpecs(seed, c, geo)) {
+        for (const s of egCircleSpecs(seed, c, geo, 8)) {
           if (!s.steps.length) continue;
           halls++;
           const p = egSpanProof(s);

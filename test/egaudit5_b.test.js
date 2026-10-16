@@ -35,6 +35,12 @@ import { validEgOut, EG_YAW_WIRE_MAX, EG_OUTLINE_WIRE_MAX } from '../src/net/wir
 import { foldEg, EG_STATE_EMPTY } from '../src/net/egLink.js';
 import { egChainMates } from '../src/scenes/egFight.js';
 import { judgeShapes } from '../src/net/bossRef.js';
+import { egGive8Hall } from './egGive8.mjs';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courts and its
+// lords, its courses along +z from the plate, where law 8 lays them) and stand on it still - a finder scans law 8's halls by
+// name, and a breach stands in a circle given at law 8 as a breach of law 8's is given to a client (test/egGive8.mjs
+// egGive8Hall); LAW 9's own ground is test/law9_height.test.js's and test/law9_rooms.test.js's
 
 const T0 = 1_800_000_000_000;
 const SITE = { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 };
@@ -43,13 +49,13 @@ const MIN = 60_000;
 const seeded = (seed) => { let s = seed; return () => { s = (Math.imul(s, 1103515245) + 12345) >>> 0; return s / 4294967296; }; };
 /** The first hall of a seed (from `from`) whose spec passes `ok` - `[seed, h, spec]`. */
 function hallWhere(ok, { seeds = 400, from = 1, to = 200, step = 1 } = {}) {
-  for (let seed = 1; seed <= seeds; seed++) for (let h = from; h <= to; h += step) { const s = egHallOf(seed, h, 0); if (ok(s)) return [seed, h, s]; }
+  for (let seed = 1; seed <= seeds; seed++) for (let h = from; h <= to; h += step) { const s = egHallOf(seed, h, 0, 8); if (ok(s)) return [seed, h, s]; }
   throw new Error('no hall found');
 }
 /** A lord's fight stood and woken as the director stands it, `n` members at level 40; `step(here)` beats it in the director's
  *  order (the lords, then the blows' words), every frame kept, the words said counted. */
 function court(seed, h, key, { n = 2, rng = seeded(seed), decrees = {} } = {}) {
-  const spec = egHallOf(seed, h, 0);
+  const spec = egGive8Hall(seed, h, 0);
   const subs = Array.from({ length: n }, (_, i) => `acct-${i}`);
   const F = egFightNew(spec, T0, subs.map(() => 40), subs), frames = [], view = egFightView(spec), said = {};
   egLordsNew(F, spec, key, T0, frames, { decrees, n });
@@ -80,7 +86,7 @@ function breachAt(seed, h, { n = 1, strata = [], tide = null, dc = [], wake = tr
   let now = T0 + EG_SEALED_MS + 100;
   for (const [sub] of co) egEnter(B, sub, `ord${sub}`.padEnd(20, 'x'), 40, now);
   B.strata = [...strata]; B.tide = tide; B.dc = dc;
-  const spec = egHallOf(seed, h, 0);
+  const spec = egGive8Hall(seed, h, 0);
   B.h = h; B.sg = 'arrive'; B.wk = now; B.cnt = { left: 30 * MIN, at: now }; B.pulledAt = now; B.su = now + 30_000;
   const pos = Object.fromEntries(co.map(([sub], i) => [sub, { sx: spec.x0 + spec.arrive.x + i * 0.5, z: spec.arrive.z }]));
   const trails = Object.fromEntries(co.map(([sub]) => [sub, []])), frames = [];
@@ -649,7 +655,7 @@ test('AUDIT EG V NEW-1 A MEMBER INSIDE A LORD\'S BODY NEVER FREEZES IT (section 
 
 // ── L1-7 and L1-18, THE LEGION'S HALVES ───────────────────────────────────────────────────────────────────────────────
 test('AUDIT EG V L1-7 and L1-18 THE LEGION\'S HALVES (sections 8.7, 13.2 and 14): an add turned to strike says its facing (a Shielded elite\'s back is judged by it); Chained Blows\' second shape is said with the first, its dim outline from the word, its fill THE CHAINED GAP from the first\'s landing (mutants: the add\'s turn unsaid; the chained fill from the word)', () => {
-  const spec = egHallOf(1, 1, 0), view = egFightView(spec);
+  const spec = egHallOf(1, 1, 0, 8), view = egFightView(spec);
   const F = egFightNew(spec, T0, [40]), out = [];
   const [a] = egLegionRaise(F, [EG_KIND.breaker], [[spec.fight.x, spec.fight.z]], T0 - 5000, []);
   a.up = 0;

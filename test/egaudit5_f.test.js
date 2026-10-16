@@ -32,20 +32,23 @@ function reaches(spec, from, to) {
 const regionOf = (spec, f) => { const view = egFightView(spec), G = egWalkGraph(view), i = view.fl.indexOf(f); return G.rg.findIndex((r) => r.f === i); };
 
 test('AUDIT EG V L5-2 L5-5 L5-6 L5-9 L5-11 L5-14 L5-15 L5-17 L3-11 L3-18 THE LAW PIN (section 22): spec law 8 is the law (net/egLaw.js EG_WAYS_LAW, the solver\'s EG_SOLVE_LAW one law with it), laws 4 to 7 kept beside it their seven days each, byte for byte (their 800 halls hashed whole); law 8\'s 800 halls hashed whole; a breach opened records law 8 (mutants: law 8 not in the table; a law before moved; law 8 laid as law 7)', () => {
-  assert.deepEqual([EG_SPEC, EG_WAYS_LAW, EG_SOLVE_LAW, EG_HERO_LAW], [8, 8, 8, 7]);
-  assert.deepEqual({ ...EG_LAWS }, { 4: '2026-10-11', 5: '2026-10-12', 6: '2026-10-13', 7: '2026-10-13', 8: '2026-10-15' });
-  assert.deepEqual([4, 5, 6, 7, 8, 9].map(egLawKnown), [true, true, true, true, true, false]);
-  assert.ok((Date.parse(EG_LAWS[8]) - Date.parse(EG_LAWS[4])) / 86_400_000 <= 7, 'every law before inside its keep');
+  // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): spec law 9 is the build's law now, law 8 kept beside it its seven days
+  // and still laid byte for byte as AUDIT EG V laid it (test/law9_rooms.test.js pins law 9); every pin below of law 8's ground
+  // asks law 8 by name
+  assert.deepEqual([EG_SPEC, EG_WAYS_LAW, EG_SOLVE_LAW, EG_HERO_LAW], [9, 8, 8, 7]);
+  assert.deepEqual({ ...EG_LAWS }, { 4: '2026-10-11', 5: '2026-10-12', 6: '2026-10-13', 7: '2026-10-13', 8: '2026-10-15', 9: '2026-10-16' });
+  assert.deepEqual([4, 5, 6, 7, 8, 9, 10].map(egLawKnown), [true, true, true, true, true, true, false]);
+  assert.ok((Date.parse(EG_LAWS[9]) - Date.parse(EG_LAWS[4])) / 86_400_000 <= 7, 'every law before inside its keep');
   assert.deepEqual([hash(4), hash(5), hash(6), hash(7)], [1228307904, 1301097644, 201408482, 2018192008], 'laws 4 to 7, byte for byte');
   assert.equal(hash(8), 3066462283, 'law 8, as AUDIT EG V lays it');
   const B = egBreachNew({ b: '0123456789abcdef', ez: 'z'.repeat(20), s: 'a', o: 'A', ew: 0, rh: 0, seed: 77, op: 1_800_000_000_000, co: [['a', 'A', 1]], site: { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 }, wg: [] });
-  assert.equal(B.egv, 8, 'a breach opened now is of law 8');
-  for (const [s, h, g] of LAW_HALLS) assert.ok(egHallOf(s, h, g).len <= EG_HALL_LEN_MAX, `seed ${s} hall ${h}: inside the wire's bound`);
+  assert.equal(B.egv, 9, 'a breach opened now is of law 9 (PIN MOVED, THE ASCENT)');
+  for (const [s, h, g] of LAW_HALLS) for (const law of [8, 9]) assert.ok(egHallOf(s, h, g, law).len <= EG_HALL_LEN_MAX, `seed ${s} hall ${h} law ${law}: inside the wire's bound`);
 });
 
 test('AUDIT EG V L5-15 L5-14 A RAISED FLOOR\'S WAY UP, THE LAW (sections 8.3, 13.3, 13.4): from law 8 a Rampart\'s every caster pillar is reached by a stair from the walkway\'s edge onto its top 2 m up (no flat side span under it), the Wyrm\'s every perch by a stair from the court onto its top 3 m up, the Council Rotunda\'s every balcony by two stairs from its floor - each foot on its floor, each top on its raised floor - and the walk graph climbs every one; law 7 laid none (mutants: a pillar\'s span flat; a perch\'s span flat; the Rotunda\'s stairs one a balcony; no stair at all)', () => {
   // the Rampart (seed 1's Hall 4): six pillars, six stairs, no side lane
-  const R8 = egHallOf(1, 4, 0), R7 = egHallOf(1, 4, 0, 7), walk = R8.walk;
+  const R8 = egHallOf(1, 4, 0, 8), R7 = egHallOf(1, 4, 0, 7), walk = R8.walk;
   const pillars = R8.discs.filter((d) => d.role === 'pillar');
   assert.deepEqual([pillars.length, R8.ramps.length, R8.lanes.filter((l) => l.role === 'side').length], [6, 6, 0]);
   assert.deepEqual([R7.ramps.length, R7.lanes.filter((l) => l.role === 'side').length], [0, 6], 'law 7: a flat side span to each');
@@ -59,7 +62,7 @@ test('AUDIT EG V L5-15 L5-14 A RAISED FLOOR\'S WAY UP, THE LAW (sections 8.3, 13
     assert.ok(reaches(R8, regionOf(R8, w), regionOf(R8, p)), 'the walk graph climbs it');
   }
   // the Wyrm's perches (seed 1's Hall 85): three stairs from the court, no flat span in the fight floor
-  const W8 = egHallOf(1, 85, 0), W7 = egHallOf(1, 85, 0, 7);
+  const W8 = egHallOf(1, 85, 0, 8), W7 = egHallOf(1, 85, 0, 7);
   assert.equal(W8.lord, 'wyrm');
   const perches = W8.discs.filter((d) => d.role === 'perch'), court = W8.fl.find((f) => f.t === 'd' && f.r > 10);
   assert.deepEqual([perches.length, W8.ramps.length, W8.lanes.length, W8.fl.filter((f) => f.t === 'l').length], [3, 3, 0, 0]);
@@ -71,7 +74,7 @@ test('AUDIT EG V L5-15 L5-14 A RAISED FLOOR\'S WAY UP, THE LAW (sections 8.3, 13
     assert.ok(reaches(W8, regionOf(W8, court), regionOf(W8, W8.fl.find((f) => f.t === 'd' && f.x === d.x && f.z === d.z))), 'the walk graph climbs it');
   }
   // the Council Rotunda (seed 1's Hall 25): two stairs a balcony
-  const C8 = egHallOf(1, 25, 0), C7 = egHallOf(1, 25, 0, 7);
+  const C8 = egHallOf(1, 25, 0, 8), C7 = egHallOf(1, 25, 0, 7);
   assert.equal(C8.lord, 'ilthys');
   assert.deepEqual([C8.ramps.length, C7.ramps.length], [6, 0]);
   const floor = C8.fl.find((f) => f.t === 'd' && f.r === 24);
@@ -97,7 +100,7 @@ test('AUDIT EG V L3-18 THE RELIQUARY VAULT ON A FORKED SPAN, THE LAW (section 8.
     assert.deepEqual(s7.spots.vault ?? [], [], 'law 7: no vault');
   }
   for (const [seed, h] of [[1, 122], [3, 82], [4, 22]]) {
-    const s8 = egHallOf(seed, h, 0);
+    const s8 = egHallOf(seed, h, 0, 8);
     assert.ok(s8.fork && s8.twist === 'vault', `seed ${seed} hall ${h}: a forked span turns the Vault`);
     const [v] = s8.spots.vault, isle = s8.islands.find((q) => q.road === 0 && Math.abs(q.z + q.r - s8.fork.z) < 1e-9);
     assert.deepEqual([v.x, v.z], [-EG_FORK_VAULT_CM / 100, isle.z], 'off the fork\'s island, across from the Low Road');
@@ -147,7 +150,7 @@ test('AUDIT EG V L5-5 THE SINKING STAIR\'S ISLAND (sections 8.9, 11.3: "Its cour
   assert.ok(!sinking(egHallOf(8, 26, 8, 7)), 'law 7: seed 8\'s Brink laid on its last resort');
   let n = 0;
   for (let seed = 1; seed <= 12; seed++) for (let geo = 0; geo <= 8; geo++) {
-    const s = egHallOf(seed, 26, geo);
+    const s = egHallOf(seed, 26, geo, 8);
     assert.ok(sinking(s) && s.laid <= 2, `seed ${seed} ground ${geo}: the Sinking Stair stands (${s.laid} tries)`);
     const flights = s.steps.filter((q) => q.kind === 'sink'), last = flights[flights.length - 1];
     const isle = s.islands.find((q) => q.z > last.z && q.z - q.r - (last.z + last.d / 2) < 3);
@@ -159,13 +162,13 @@ test('AUDIT EG V L5-5 THE SINKING STAIR\'S ISLAND (sections 8.9, 11.3: "Its cour
     n++;
   }
   assert.equal(n, 108);
-  assert.ok(egHallOf(8, 26, 8).frags.some((f) => f.play === 'sinking'), 'seed 8\'s, its own');
+  assert.ok(egHallOf(8, 26, 8, 8).frags.some((f) => f.play === 'sinking'), 'seed 8\'s, its own');
 });
 
 test('AUDIT EG V L5-11 A SPAN\'S PASSAGES BY CIRCLE (section 11.4: "in circles 1-2 every span carries one passage; in circles 3-10, one or two; deeper, up to three"): from law 8 a forked span\'s way to the fork runs through a passage one span in two from circle 3 and every span from circle 11 (never under three ranks of the span decrees, whose sections take its room) - both roads pass through it - and deeper the Low Road\'s still ground is a second passage where the hall has room; every hall inside EG_HALL_LEN_MAX; law 7 laid one (mutants: no passage on the way to the fork; a trunk passage under three ranks of the span decrees; the deep spans\' way a passage one in two; the third never)', () => {
   const seen = {};
   for (let seed = 1; seed <= 20; seed++) for (let c = 1; c <= 24; c++) for (const geo of c <= 1 ? [0] : [0, 1, 3, 8]) {
-    const h = 5 * (c - 1) + 2, s = egHallOf(seed, h, geo);
+    const h = 5 * (c - 1) + 2, s = egHallOf(seed, h, geo, 8);
     if (s.kind !== 'span') continue;
     const n = s.frags.filter((f) => f.cls === 'passage').length, extra = (geo % 3) + Math.floor(geo / 3);
     const band = c <= 2 ? '1-2' : c <= 10 ? '3-10' : extra <= 2 ? '11+' : '11+ decrees';
@@ -196,7 +199,7 @@ test('AUDIT EG V L5-9 THE ECLIPSE\'S REACH (section 11.2: "the nearest is never 
   assert.equal(egFragChamber('gloam', zero, 2600, { law: 8 }).play, 'balcony', 'another kit\'s balcony unmoved');
   for (const [seed, h] of [[22, 69], [27, 74], [43, 71], [50, 64]]) {
     assert.equal(egHallOf(seed, h, 0, 7).frags.find((f) => f.kit === 'eclipse').play, 'balcony');
-    assert.equal(egHallOf(seed, h, 0).frags.find((f) => f.kit === 'eclipse').play, 'arch');
+    assert.equal(egHallOf(seed, h, 0, 8).frags.find((f) => f.kit === 'eclipse').play, 'arch');
   }
   const worst = (s) => {
     let w = 0;
@@ -216,7 +219,7 @@ test('AUDIT EG V L5-9 THE ECLIPSE\'S REACH (section 11.2: "the nearest is never 
   assert.ok(worst(egHallOf(43, 71, 0, 7)) > 24, 'law 7\'s balcony in a 26 m court past the reach');
   let n = 0;
   for (let seed = 1; seed <= 40; seed++) for (let h = 51; h <= 75; h++) {
-    const s = egHallOf(seed, h, 0);
+    const s = egHallOf(seed, h, 0, 8);
     if (!s.hazards.some((q) => q.kind === 'eclipse')) continue;
     n++;
     assert.ok(worst(s) <= EG_ECLIPSE_REACH_CM / 100 + 1e-6, `seed ${seed} hall ${h}: ${worst(s).toFixed(2)} m from a haven`);
@@ -240,7 +243,7 @@ test('AUDIT EG V L5-6 THE SET PIECES\' MARGIN (section 11.3: "proven by the solv
   const B = egSpanBuildOf(8);
   let pieces = 0;
   for (let seed = 1; seed <= 10; seed++) for (const geo of [0, 2, 4, 8]) for (const h of [26, 51, 76]) {
-    const s = egHallOf(seed, h, geo), f = s.frags.find((q) => EG_SET_PIECES.includes(q.play));
+    const s = egHallOf(seed, h, geo, 8), f = s.frags.find((q) => EG_SET_PIECES.includes(q.play));
     assert.ok(f, `seed ${seed} hall ${h} ground ${geo}: its set piece stands`);
     assert.equal(egSpanProof(s).ok, true);
     for (const p of egSpanPairs(s).filter((q) => EG_SET_KITS.includes(q.a?.kit) || EG_SET_KITS.includes(q.b?.kit))) {
@@ -253,7 +256,7 @@ test('AUDIT EG V L5-6 THE SET PIECES\' MARGIN (section 11.3: "proven by the solv
   assert.equal(pieces, 120);
   // THE HAMMERS: a Forge Line whose first conveyor must be ridden past a hammer's beat - landed on only rolled 1.5 m back and leapt
   // off only rolled 1.5 m out, a 20 s roll: 5.4 s aboard at the least, past the hammer's 5 s - is refused, and passed with no hammer
-  const s8 = egHallOf(1, 76, 0), rails = s8.steps.filter((q) => q.kit === 'forgeline');
+  const s8 = egHallOf(1, 76, 0, 8), rails = s8.steps.filter((q) => q.kit === 'forgeline');
   assert.ok(rails.length === 3 && s8.hazards.filter((h) => h.kind === 'hammerline').length === 3 && rails.every((q) => q.gap === EG_GAP_MIN_CM / 100));
   const rail = (i, z, gap, amp, period) => ({ i, kind: 'rail', span: 0, x: 0, y: 0, z, w: 3, d: 3, amp, period, phase: 0, beat: 0, gap, road: 0, kit: 'forgeline', after: i === 2 ? 2.4 : 0 });
   const steps = [rail(0, 10, 4.76, 2, 20), rail(1, 17.76, 4.76, 0, 6), rail(2, 23.16, 2.4, 0, 6)];
@@ -284,6 +287,8 @@ test('AUDIT EG V L5-2 THE TIMED SOLVER ON THE LAW\'S CLOCK (section 9: "the law 
   try {
     BANNED.forEach((k) => { Math[k] = () => { throw new Error(`Math.${k} asked`); }; });
     assert.doesNotThrow(() => lay(8), 'law 8 decides on the law\'s clock alone');
+    assert.doesNotThrow(() => lay(9), 'and law 9 (THE ASCENT - its route planner and its rooms, their sanity and their proof)');
+
     assert.throws(() => lay(7), /Math\.sin asked/, 'law 7 on the screens\' clock');
     // a shaft's own crossing on its hall's law: a Drift in a shaft proven with the screens' clock refused
     const drift = { i: 0, kind: 'drift', span: 0, x: 0, y: 0, z: 10, w: 3, d: 3, amp: 1, period: 4, phase: 0, beat: 0, gap: 2.4, road: 0, kit: null, after: 2.4 };

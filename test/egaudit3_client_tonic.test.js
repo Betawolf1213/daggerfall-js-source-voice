@@ -5,7 +5,7 @@
 // same share of magicka. Long Step's word to its user (`egot` `longstep`) gave a line and nothing more: now my crumbles wait
 // half a second more for one span (systems/spireVestiges.js spireCrumbleWait, the holder's `ls`). Fixtures the producers':
 // the breach from the director (egBreachNew, egEnter, egStateOf, egWord through the wire), the census its own.
-import test from 'node:test';
+import test, { beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { validEgIn, validEgOut, EG_KINDS } from '../src/net/wire.js';
 import { egHallOf, EG_SEALED_MS } from '../src/net/egLaw.js';
@@ -17,6 +17,15 @@ import { realmToDungeon } from '../src/net/sdBrain.js';
 import { createEgClient, EG_TONIC_TEXT, EG_LONG_STEP_LOOK } from '../src/scenes/egClient.js';
 import { spireCrumbleWait, spireHeld, EG_LONG_STEP_S, _resetSpireVestigesForTests } from '../src/systems/spireVestiges.js';
 import { EG_VESTIGES } from '../src/net/egVestige.js';
+import { egGive8 } from './egGive8.mjs';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courses along +z
+// from the plate, its courts and its lords where law 8 lays them) and stand on it still - the halls they read are law 8's,
+// given as a breach of law 8's are given to a client (test/egGive8.mjs); LAW 9's own ground is test/law9_height.test.js's and
+// test/law9_rooms.test.js's. Given before every test (a client that leaves its breach forgets them)
+beforeEach(() => {
+  egGive8(77, [1, 2]);
+});
 
 const T0 = 1_800_000_000_000, ME = 'acct-0', BID = '0123456789abcdef';
 const LINE = { depth: 1, perS: 0.05 };

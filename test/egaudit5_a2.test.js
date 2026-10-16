@@ -18,7 +18,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { validEgOut } from '../src/net/wire.js';
-import { egHallOf, egCirclePlan, egFirstHallOf, egSeed, egTimes, EG_SEALED_MS, EG_ARRIVE_MAX_MS, EG_GATHER_MS, EG_ABSENT_TRIAL_MS } from '../src/net/egLaw.js';
+import { egHallOf, egCirclePlan, egFirstHallOf, egCircleOfHall, egSeed, egTimes, EG_SEALED_MS, EG_ARRIVE_MAX_MS, EG_GATHER_MS, EG_ABSENT_TRIAL_MS } from '../src/net/egLaw.js';
+import { egGive8 } from './egGive8.mjs';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground and stand on it still -
+// each breach's circle (and the next) given at law 8 as a breach of law 8's is given to a client (test/egGive8.mjs); LAW 9's own
+// ground is test/law9_height.test.js's and test/law9_rooms.test.js's
 import { egBreachNew, egEnter, egStep, egPoseIn, egFall, egWord, egBlow, egDown, egCompanyOf, egOrreryTurns, egCaptiveSpots, EG_ORRERY_REACH, EG_SQUAD_HOLD_MS, EG_CHAINS } from '../src/net/egBrain.js';
 import { EG_ROLE, EG_FL, egBodiesOf, egHas } from '../src/net/egBodies.js';
 import { EG_KIND } from '../src/net/egLegion.js';
@@ -43,6 +48,7 @@ function breach(n, h, seed = 12345, { rh = 0, ew = 0 } = {}) {
   const rng = () => { s = (Math.imul(s, 1103515245) + 12345) >>> 0; return s / 4294967296; };
   const co = Array.from({ length: n }, (_, i) => [`acct-${i}`, `M${i}`, i + 1]);
   const B = egBreachNew({ b: '0123456789abcdef', ez: 'z'.repeat(20), s: 'acct-0', o: 'M0', ew, rh, seed, op: T0, co, site: SITE, wg: [] });
+  egGive8(seed, [egCircleOfHall(h), egCircleOfHall(h) + 1]);   // PIN MOVED (THE ASCENT): its circle and the next at law 8 (above)
   B.pr = '';
   let now = T0 + EG_SEALED_MS + 100;
   for (const [sub] of co) assert.equal(egEnter(B, sub, `ord${sub}`.padEnd(20, 'x'), 40, now), null);
@@ -225,6 +231,7 @@ test('AUDIT EG V L3-13 THE FIRST HALL\'S GATHER RUNS WHOLE (section 7: "A gather
   assert.equal(egEnter(B, 'acct-0', 'o'.repeat(20), 40, now), null);
   now = T.admitUntil - 3000;
   assert.equal(egEnter(B, 'acct-1', 'p'.repeat(20), 40, now), null);
+  egGive8(12345, [1]);   // PIN MOVED (THE ASCENT): law 8's first circle given (above)
   const sp = egHallOf(12345, 1, 0);
   let woke = 0;
   for (; now < T.admitUntil + 10_000 && !woke; now += 250) { egStep(B, now, co.map(([sub]) => ({ sub, sx: sp.x0 + sp.arrive.x, z: sp.arrive.z, dead: false, at: now })), rng); if (B.sg === 'trial') woke = now; }

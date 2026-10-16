@@ -21,6 +21,7 @@ import {
   TELEGRAPH_EDGE_DAGON, TELEGRAPH_THROB_MAX_HZ, spireTelegraphVs, spireTelegraphFs,
 } from '../src/render/gateTelegraph.js';
 import { egCircleSpecs, egHallOf, egOnFight } from '../src/net/egLaw.js';
+import { egGive8 } from './egGive8.mjs';   // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9): a law 8 circle given
 import { EG_HAZARDS } from '../src/net/egFragLaw.js';
 import { EG_FL, EG_ROLE } from '../src/net/egBodies.js';
 import { EG_FIGHT_EMPTY, EG_STATE_EMPTY } from '../src/net/egLink.js';
@@ -40,9 +41,11 @@ import { lookAt, perspective, multiply, mirrorProjectionX, UP_Y } from '../src/w
 import { setPref } from '../src/systems/uiPrefs.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
-/** The first circle (seeds 1-120, circles 1-20) one of whose specs `want` takes. */
+/** The first circle (seeds 1-120, circles 1-20) one of whose specs `want` takes. PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 -
+ *  2026-10-16): of spec law 8's halls, its circle given (test/egGive8.mjs) - the telegraph's pins were written on law 8's ground
+ *  (a code-built court and its balcony, a Drop's wall, a Rift-Yard's floor); LAW 9's storeys are test/law9_height.test.js's */
 function findSpec(want) {
-  for (let seed = 1; seed <= 120; seed++) for (let c = 1; c <= 20; c++) for (const s of egCircleSpecs(seed, c, 0)) if (want(s)) return { seed, c, s };
+  for (let seed = 1; seed <= 120; seed++) for (let c = 1; c <= 20; c++) for (const s8 of egCircleSpecs(seed, c, 0, 8)) if (want(s8)) { egGive8(seed, [c]); return { seed, c, s: egHallOf(seed, s8.h, 0) }; }
   throw new Error('no such hall');
 }
 /** A code-built Rift-Yard whose fight floors stand at two heights (its disc court and a balcony). PIN MOVED (AUDIT EG IV, the

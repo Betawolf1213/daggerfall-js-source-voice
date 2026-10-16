@@ -1084,7 +1084,7 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
       overDrop = false;
       if (!live || !body?.pos) return null;
       const [rx, ry, rz] = dungeonToRealm(body.pos[0], body.pos[1], body.pos[2]);
-      if (!body.grounded) { const hs = specs.find((q) => Math.abs(rx - q.x0) <= 40); overDrop = !!hs && egOverDrop(hs, rx - hs.x0, ry, rz); }   // EG-ZG (section 25.8)
+      if (!body.grounded) { const hs = specs.find((q) => Math.abs(rx - q.x0) <= ((q.law ?? 0) >= 9 ? 160 : 40)); overDrop = !!hs && egOverDrop(hs, rx - hs.x0, ry, rz); }   // EG-ZG (section 25.8); THE ASCENT (spec law 9): a hall's ground its whole bound (160 m), never its line's 40
       const footing = spireFooting();
       // THE GUST (section 10.3): the Steps' breath over a Gust section of the hall I stand in, Iron Footing taking its share
       if (dt > 0 && footing < 1) {
@@ -1093,7 +1093,7 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
       }
       // EG-ZL - THE GUST'S WIND (section 10.3: "the wind rising (AmbientWindMoanDeep)"): a second before each gust over a Gust
       // section I stand in (its islands too), once a gust, with its banners' clack - the Steps' own two sounds
-      const heard = gusts.find((q) => rx >= q.spec.x0 - 40 && rx <= q.spec.x0 + 40 && rz >= q.h0 && rz <= q.h1);
+      const heard = gusts.find((q) => Math.abs(rx - q.spec.x0 - ((q.spec.law ?? 0) >= 9 ? q.x : 0)) <= 40 && rz >= q.h0 && rz <= q.h1);   // THE ASCENT (spec law 9): about the section's own line, wherever its course stands
       if (heard && gustAt(t, _gust).warn && lastWarned !== Math.floor(t / SD_GUST_EVERY)) { lastWarned = Math.floor(t / SD_GUST_EVERY); play(SD_STEPS_SOUNDS.moan, 0.9); play(SD_STEPS_SOUNDS.clack, 0.45, 2.2); }
       // THE FORGE BRIDGE (section 8.3): its walkway runs toward the arrival plate, carrying whoever stands on it
       if (dt > 0 && key === EG_FLOOR_KEY && body.grounded) {

@@ -54,7 +54,7 @@ import { egRouted, egRouteRoads, egClimbPitches, egPitchWallS, EG_ROUTE_COURSE_R
 import { egRouteLen } from '../src/net/egRoute.js';
 import { egSynth9Give } from './lib/egLaw9Synth.mjs';   // THE ASCENT: synthetic LAW 9 halls, until THE ROOMS lays them
 import { egCircleColliderTris } from '../src/world/egHall.js';
-import { createEgSpan, egStepKey, EG_FLOOR_KEY } from '../src/scenes/egSpan.js';
+import { createEgSpan, egStepKey, EG_FLOOR_KEY, EG_GUST_REACH_M } from '../src/scenes/egSpan.js';
 import { egGustSections } from '../src/world/egLook.js';
 import { PlayerMotor, walkSpeed } from '../src/player/motor.js';
 import { Collider } from '../src/player/collider.js';
@@ -251,7 +251,9 @@ function pilotOf(S, spec, road, t0, trace = null) {
   };
   // the gust's sections of this hall (the screen's own reach: its Gust pieces, 4 m either side)
   const gz = egGustSections([spec]);
-  const gusty = (r, z, a, b) => { if (!gz.some((g) => g.road === r && z >= g.z0 && z <= g.z1)) return false; for (let u = a; u <= b; u += 0.05) if (gustAt(u).push) return true; return false; };
+  // THE ASCENT (LAW 9): a section pushes only about its own line (the screen's EG_GUST_REACH_M - scenes/egSpan.js), never a
+  // course of another line beside its z (a hall's courses stand side by side)
+  const gusty = (r, z, a, b, x = null) => { if (!gz.some((g) => g.road === r && z >= g.z0 && z <= g.z1 && (x == null || Math.abs(x - g.x) <= EG_GUST_REACH_M))) return false; for (let u = a; u <= b; u += 0.05) if (gustAt(u).push) return true; return false; };
 
   // THE PLANNER's chain (crossPairs sets it), since when I stand on what I stand on, and the crust's lane I landed on
   let pairs = /** @type {any[]} */ ([]), standSince = t, standLane = -1;
@@ -309,7 +311,7 @@ function pilotOf(S, spec, road, t0, trace = null) {
   /** a launch of pair `pi` at `u` the pilot takes: it lands held either side, no gust in the flight, a Pendulum clear */
   const takes = (pi, u, lane = -1) => {
     const p = pairs[pi];
-    return lands(p, u) && !gusty((p.b ?? p.a)?.road ?? 0, lzOf(p, u, lane), u - 0.2, u + airOf(p) + 0.1) && pendClear(pi, u - HOLD_S, lane) && pendClear(pi, u, lane) && pendClear(pi, u + HOLD_S, lane);
+    return lands(p, u) && !gusty((p.b ?? p.a)?.road ?? 0, lzOf(p, u, lane), u - 0.2, u + airOf(p) + 0.1, (p.b ?? p.a)?.x ?? null) && pendClear(pi, u - HOLD_S, lane) && pendClear(pi, u, lane) && pendClear(pi, u + HOLD_S, lane);
   };
   const launch = (pi, ready, since, depth = 0, lane = -1) => {
     const p = pairs[pi], gone = goneAt(p.a, since, lane), air = airOf(p), nx = pairs[pi + 1];

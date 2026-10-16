@@ -21,6 +21,12 @@ import { foldEg, EG_STATE_EMPTY } from '../src/net/egLink.js';
 import { egLookOf } from '../src/scenes/egFight.js';
 import { EG_LORD_PRESENCE } from '../src/world/egKit.js';   // EG-LOOK (section 9): the sprite at the lord's presence
 import { dpsRef } from '../src/net/gateBrain.js';
+import { egGive8Hall } from './egGive8.mjs';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courts and its
+// lords, its courses along +z from the plate, where law 8 lays them) and stand on it still - a finder scans law 8's halls by
+// name, and a breach stands in a circle given at law 8 as a breach of law 8's is given to a client (test/egGive8.mjs
+// egGive8Hall); LAW 9's own ground is test/law9_height.test.js's and test/law9_rooms.test.js's
 
 const T0 = 1_800_000_000_000;
 const SITE = { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 };
@@ -38,7 +44,7 @@ function breachAt(seed, h, { lvs = [40, 40], dc = [] } = {}) {
   let now = T0 + EG_SEALED_MS + 100;
   co.forEach(([sub], i) => egEnter(B, sub, `ord${sub}`.padEnd(20, 'x'), lvs[i], now));
   B.dc = dc.map((p) => [...p]);
-  const spec = egHallOf(seed, h, 0);
+  const spec = egGive8Hall(seed, h, 0);
   B.h = h; B.sg = 'arrive'; B.wk = now; B.cnt = { left: 1_800_000, at: now }; B.pulledAt = now; B.su = now + 30_000;
   const pos = Object.fromEntries(co.map(([sub], i) => [sub, { sx: spec.x0 + spec.arrive.x + i * 0.5, z: spec.arrive.z }]));
   const deadOf = {}, frames = [];
@@ -53,7 +59,7 @@ function breachAt(seed, h, { lvs = [40, 40], dc = [] } = {}) {
 const rowsOf = (frames, i) => frames.flatMap((f) => (f.k === 'efs' ? f.b : f.k === 'ead' ? f.a : [])).filter((t) => t[0] === i);
 
 test('EG-ZQ THE LEGION\'S WAY ON IS KEPT ONLY WHILE IT IS WALKED (section 11.7; EG-ZK\'s departure 7 retired): a Lurker of the legion walking the graph of seed 77\'s Hall 14 to a member past its chamber\'s arch goes to the gap, through it, and heads for the gap\'s far node - set down back on its own half beside the wall (a charge cut there, a push: net/egBodies.js egPlace), its next walk goes by the gap again, never straight across the wall to that node; the rule is the graph\'s own (net/egWalkGraph.js egWayOn), and the lords keep it through the same function: a node still walked to is kept, one left behind dropped, one stood at reached - its region and its floor the walker\'s (mutants: the legion\'s walk keeping a node it was set down from; a node kept with no walk to it; a reached node\'s region or floor not taken; the lords\' rule a second copy)', () => {
-  const spec = egHallOf(77, 14, 0), view = egFightView(spec), G = egWalkGraph(view), d = spec.deco.find((q) => q.t === 'arch');
+  const spec = egHallOf(77, 14, 0, 8), view = egFightView(spec), G = egWalkGraph(view), d = spec.deco.find((q) => q.t === 'arch');
   assert.deepEqual(G.rg, [{ f: 0, side: -1 }, { f: 0, side: 1 }], 'the arch\'s disc in two halves');
   const F = egFightNew(spec, T0, [40, 40]);
   const [lk] = egLegionRaise(F, [EG_KIND.lurker], [[10, d.z + 8]], T0, [], {});
@@ -75,7 +81,7 @@ test('EG-ZQ THE LEGION\'S WAY ON IS KEPT ONLY WHILE IT IS WALKED (section 11.7; 
   for (let k = 0; k < 60; k++) { const x0 = lk.x, z0 = lk.z; now += 250; egCarry(F, now); assert.equal(egArchCut(spec, x0, z0, lk.x, lk.z), null, 'never across the wall'); walkGraph(F, view, lk, goal[0], goal[1], 1.5, speed, now); }
   assert.ok(lk.z < d.z && Math.hypot(lk.x - goal[0], lk.z - goal[1]) < 3, `and on through the gap to its member (${lk.x}, ${lk.z})`);
   // THE RULE, on bodies the producers walk: a node still walked to kept; one left behind dropped; one stood at reached
-  const bal = egHallOf(77, 12, 0), vb = egFightView(bal), Gb = egWalkGraph(vb), q = bal.ramps[0];
+  const bal = egHallOf(77, 12, 0, 8), vb = egFightView(bal), Gb = egWalkGraph(vb), q = bal.ramps[0];
   const Fb = egFightNew(bal, T0, [40]);
   const up = Gb.nodes.findIndex((n) => Math.abs(n.x - q.bx) < 1e-9 && Math.abs(n.z - q.bz) < 1e-9 && vb.fl[Gb.rg[n.rg].f].y === q.y1);
   const low = egRegionAt(vb, Gb, q.ax, q.az, 0)[0];
@@ -107,7 +113,7 @@ test('EG-ZQ THE LEGION\'S WAY ON IS KEPT ONLY WHILE IT IS WALKED (section 11.7; 
 
 test('EG-ZQ A PINNED CASTER KEEPS TO ITS PILLAR (sections 8.3 and 12; EG-ZJ\'s finding retired): on every Rampart of seeds 1-6 whose pinned Casters (a company of two) include one on a pillar whose plan meets a bastion\'s - the walk graph stepping off that pillar onto the bastion (its lip, one way) - every pinned Caster stands on its pillar through fifty seconds of the company marching the walkway; the lip is still the graph\'s (an unpinned walker on the pillar steps off it to a member on the bastion), and the pin keeps the Caster to its own region (mutants: the pin unread; a pinned walker\'s goal its member\'s region)', () => {
   let halls = 0, kept = 0;
-  for (let seed = 1; seed <= 6 && halls < 2; seed++) for (let c = 1; c <= 20 && halls < 2; c++) for (const s of egCircleSpecs(seed, c, 0)) {
+  for (let seed = 1; seed <= 6 && halls < 2; seed++) for (let c = 1; c <= 20 && halls < 2; c++) for (const s of egCircleSpecs(seed, c, 0, 8)) {
     if (s.kind !== 'rampart' || halls >= 2) continue;
     const pillars = s.discs.filter((p) => p.role === 'pillar'), bastions = s.discs.filter((p) => p.role === 'bastion');
     const meets = (p) => bastions.find((b) => Math.hypot(p.x - b.x, p.z - b.z) < p.r + b.r + 0.3) ?? null;
@@ -146,7 +152,7 @@ test('EG-ZQ A PINNED CASTER KEEPS TO ITS PILLAR (sections 8.3 and 12; EG-ZJ\'s f
 
 test('EG-ZQ THE LORDS\' SHARES (section 13.2, THE LAW EVERY LORD KEEPS; EG-ZK\'s departure 1 retired): a Proving Walk\'s champion stood for the company the hall woke with is its fighters\' shares (ttkRef - here EG_PROVE_HP_S x the depth - x each one\'s reference damage); a member fallen before the wake and called back by a Memento in the hall brings its share at the fraction the champion stands at; a fall retires the fallen\'s share at that fraction and the whole fight is said with it, a witness seen in the hall restores nothing, a recall restores it; the last share is never retired; all through the seam\'s join, by the gate\'s own retireShare and restoreShare (mutants: a joiner\'s share unbrought or brought whole; a fall\'s share kept; the seen step restoring the fallen; the recall never restoring; the last share retired; the whole fight unsaid; the held threshold left; a mirror sized)', () => {
   let S = null;
-  for (let seed = 1; seed <= 40 && !S; seed++) for (const s of egCircleSpecs(seed, 1, 0)) if (!S && s.kind === 'proving' && s.spots.niche?.length) S = breachAt(seed, s.h, { lvs: [40, 20, 30] });
+  for (let seed = 1; seed <= 40 && !S; seed++) for (const s of egCircleSpecs(seed, 1, 0, 8)) if (!S && s.kind === 'proving' && s.spots.niche?.length) S = breachAt(seed, s.h, { lvs: [40, 20, 30] });
   const { B, spec } = S, niche = spec.spots.niche[0], dps = [45, 25, 35];
   assert.deepEqual([40, 20, 30].map(dpsRef), dps);
   // acct-2 falls on the arrival plate before the hall wakes: its Memento lies where it fell
@@ -277,12 +283,12 @@ test('EG-ZQ THE GRAND DUKE\'S DECREE FOLDS (sections 8.5 and 14; EG5\'s departur
 });
 
 test('EG-ZQ A SPOT\'S HEIGHT IS SAID IN CENTIMETRES (section 9; EG-ZJ\'s finding decided): the spec says a spot\'s x and z in metres and its y as the law lays it - seed 1\'s Hall 22, a Deepway, has Lurker spots at y -760 over its floors at -7.6 m, and every spot\'s y over three seeds\' first twenty circles is whole centimetres a hundred times a floor the law laid; no spec law moved for it (section 22) (mutants: a spot\'s y said in metres without a law; the page\'s claim)', () => {
-  const s = egHallOf(1, 22, 0);
+  const s = egHallOf(1, 22, 0, 8);
   assert.equal(s.kind, 'deepway');
   assert.deepEqual(s.spots.lurker.filter((q) => q.y !== 0).map((q) => q.y), [-760, -760]);
   assert.deepEqual([...new Set(s.fl.map((f) => f.y))].sort((a, b) => a - b), [-7.6, 0, 3.2]);
   let ys = 0;
-  for (let seed = 1; seed <= 3; seed++) for (let c = 1; c <= 20; c++) for (const h of egCircleSpecs(seed, c, 0)) {
+  for (let seed = 1; seed <= 3; seed++) for (let c = 1; c <= 20; c++) for (const h of egCircleSpecs(seed, c, 0, 8)) {
     const floors = new Set([...h.fl.map((f) => Math.round(f.y * 100)), ...h.discs.map((d) => Math.round(d.y * 100))]);
     for (const [role, list] of Object.entries(h.spots)) for (const q of list) {
       if (q.y == null) continue;

@@ -7,7 +7,7 @@
 // stillness on my trail - beside Iron Footing in scenes/egClient.js's push and the spans' spireFooting). Every fixture is the
 // producers' own: the breach and its door from the director, trails from egPoseIn, frames through the wire, the screen from
 // createEgFight and createEgClient.
-import test from 'node:test';
+import test, { beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { validEgOut, validEgIn } from '../src/net/wire.js';
@@ -21,6 +21,15 @@ import { realmToDungeon } from '../src/net/sdBrain.js';
 import { createEgFight } from '../src/scenes/egFight.js';
 import { createEgClient } from '../src/scenes/egClient.js';
 import { spireHolderStep, _resetSpireVestigesForTests } from '../src/systems/spireVestiges.js';
+import { egGive8 } from './egGive8.mjs';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courses along +z
+// from the plate, its courts and its lords where law 8 lays them) and stand on it still - the halls they read are law 8's,
+// given as a breach of law 8's are given to a client (test/egGive8.mjs); LAW 9's own ground is test/law9_height.test.js's and
+// test/law9_rooms.test.js's. Given before every test (a client that leaves its breach forgets them)
+beforeEach(() => {
+  egGive8(12345, [1]);
+});
 
 const T0 = 1_800_000_000_000;
 const SITE = { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 };

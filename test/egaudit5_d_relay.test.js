@@ -15,7 +15,7 @@
 //   L4-10  A ROOM WOKEN MID-TRIAL HOLDS THE BODY of a member whose socket is gone, from the pose its record kept;
 //   lane 4's UNVERIFIED: the hub's held receipts (egRcFold) keep EG_RC_KEEP unclaimed ones whatever spent marks stand
 //          beside them; a whole fight's blows (`efs`) never past the wire's bound.
-import test from 'node:test';
+import test, { beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { fakeRoom } from './fakeRoom.mjs';
 import { fakeSocketClass } from './fakeSocket.mjs';
@@ -35,6 +35,15 @@ import { healRef } from '../src/net/gateBrain.js';
 import { OnlineSession, HEARTBEAT_MS } from '../src/net/online.js';
 import { EG_VESTIGES } from '../src/net/egVestige.js';
 import { EG_BLOWS_MAX } from '../src/net/egShape.js';
+import { egGive8 } from './egGive8.mjs';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courses along +z
+// from the plate, its courts and its lords where law 8 lays them) and stand on it still - the halls they read are law 8's,
+// given as a breach of law 8's are given to a client (test/egGive8.mjs); LAW 9's own ground is test/law9_height.test.js's and
+// test/law9_rooms.test.js's. Given before every test (a client that leaves its breach forgets them)
+beforeEach(() => {
+  egGive8(12345, [1, 6]);
+});
 
 const { subtle } = globalThis.crypto;
 const T0 = 1_800_000_000_000, B = 'feedfacecafe0a3c', SEED = 12345;

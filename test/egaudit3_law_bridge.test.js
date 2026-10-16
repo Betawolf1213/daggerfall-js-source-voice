@@ -6,7 +6,7 @@
 // the relay and every screen), the fair trail counting it as ground while it stands (net/egFair.js), the screen's plank
 // drawn gold under THE EDGE LINE with its collider (scenes/egSpan.js), and the ask offered and taken (scenes/egClient.js - B,
 // the pad's up, the touch button, `/breach bridge`). The solver never sees it: a bridge is a help, never needed.
-import test from 'node:test';
+import test, { beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { egHallOf, EG_SEALED_MS } from '../src/net/egLaw.js';
 import { egSpanPairs, egBridgeOf, egBridgeAhead, egBridgeY, egOnBridge, egSpanProof, EG_SB_MS, EG_SB_AHEAD_M, EG_SB_BEHIND_M, EG_SB_LAP_M, EG_SB_W_MIN, EG_SB_W_MAX, EG_SB_RISE_CM, EG_STEP_DOWN_CM } from '../src/net/egSpanLaw.js';
@@ -25,6 +25,15 @@ import { setPref } from '../src/systems/uiPrefs.js';
 import { realmToDungeon } from '../src/net/sdBrain.js';
 import { SD_REALM_EDGE_RECORD } from '../src/world/sdRealm.js';
 import { Collider } from '../src/player/collider.js';
+import { egGive8 } from './egGive8.mjs';
+
+// PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courses along +z
+// from the plate, its courts and its lords where law 8 lays them) and stand on it still - the halls they read are law 8's,
+// given as a breach of law 8's are given to a client (test/egGive8.mjs); LAW 9's own ground is test/law9_height.test.js's and
+// test/law9_rooms.test.js's. Given before every test (a client that leaves its breach forgets them)
+beforeEach(() => {
+  egGive8(1, [2]);
+});
 
 const T0 = 1_800_000_000_000;
 /** Seed 1's Hall 7: a forked Span of the Galleries, its first gap off the arrival plate a plain one. */
