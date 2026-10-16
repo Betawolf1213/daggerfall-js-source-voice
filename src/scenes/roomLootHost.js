@@ -10,7 +10,7 @@ import { grantEliteLoot } from '../systems/eliteFoes.js';
 import { isDeepPileKey } from '../systems/restItems.js';
 import { isEquipped, unequipItem } from '../systems/equip.js';
 import { LOOT_LIST_MAX, validLootList } from '../systems/loot.js';
-import { neverPeerHanded, peerHanded } from '../systems/peerWord.js';
+import { neverPeerHanded, peerHanded, notCarried } from '../systems/peerWord.js';
 import { playerEntity } from '../characters/playerEntity.js';
 import { raiseEnemyDeath } from './corpseMarker.js';
 import { rollCorpseKit } from '../systems/foeLootCap.js';
@@ -370,6 +370,7 @@ export function createRoomLoot(host) {
   /** `n` of a piece into this player's hands: coin to the purse, the rest to the pack (it stacks). */
   function roomGive(item, n) {
     if (n <= 0) return;
+    if (!notCarried([item])?.length) return;   // AUDIT AUTO-HOLD: never a piece I carry - a second of it is a copy, my own locked with it (systems/peerWord.js)
     if (isGoldPieces(item)) { addGoldPieces(playerEntity, n); return; }
     addItem((playerEntity.items ??= []), Number.isInteger(item?.stackCount) ? { ...item, stackCount: n } : item);
   }

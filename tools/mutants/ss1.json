@@ -21,8 +21,9 @@
   {
     "name": "SS1-a-record-unbinding-its-row",
     "file": "src/systems/itemBound.js",
-    "old": "export const isBound = (/** @type {any} */ item) => item?.bound === true || templateByIndex(item?.templateIndex)?.bound === true;",
-    "new": "export const isBound = (/** @type {any} */ item) => item?.bound === true || (item?.bound !== false && templateByIndex(item?.templateIndex)?.bound === true);",
+    "note": "AUDIT AUTO-HOLD (PIN MOVED): re-aimed by content - a binding of its nature is isBoundByNature now (isBound adds the realm lock)",
+    "old": "export const isBoundByNature = (/** @type {any} */ item) => item?.bound === true || templateByIndex(item?.templateIndex)?.bound === true;",
+    "new": "export const isBoundByNature = (/** @type {any} */ item) => item?.bound === true || (item?.bound !== false && templateByIndex(item?.templateIndex)?.bound === true);",
     "tests": [
       "test/ss1_stones.test.js"
     ]
@@ -30,7 +31,8 @@
   {
     "name": "SS1-the-table-takes-a-bound-piece",
     "file": "src/systems/tradePack.js",
-    "old": "  if (isBound(item)) return BOUND_TRADE_TEXT;   // SS1\n",
+    "note": "AUDIT AUTO-HOLD (PIN MOVED): re-aimed by content - the refusal's words are boundTradeText(item)",
+    "old": "  if (isBound(item)) return boundTradeText(item);   // SS1; AUDIT AUTO-HOLD: a piece the realm locked, in its own words\n",
     "new": "",
     "tests": [
       "test/ss1_stones.test.js"
@@ -147,7 +149,8 @@
   {
     "name": "SS1-the-card-line-missing",
     "file": "src/ui/enhancedInventory.js",
-    "old": "  if (isBound(picked)) into.append(el('p', 'boundline', BOUND_LINE));   // SS1: the lock's line style, without its padlock",
+    "note": "AUDIT AUTO-HOLD (PIN MOVED): re-aimed by content - the card's line is boundLine(picked)",
+    "old": "  if (bline) into.append(el('p', 'boundline', bline));   // SS1: the lock's line style, without its padlock",
     "new": "",
     "tests": [
       "test/ss1_stones.test.js"
@@ -246,8 +249,8 @@
   {
     "name": "SS3-a-body-on-the-wire-lands-a-bound-piece",
     "file": "src/scenes/dungeonContext.js",
-    "old": "const li = peerHanded(validLootList(sf.items));",
-    "new": "const li = validLootList(sf.items);",
+    "old": "const li = notCarried(peerHanded(validLootList(sf.items)));",
+    "new": "const li = notCarried(validLootList(sf.items));",
     "tests": [
       "test/ss1_stones.test.js"
     ]
@@ -255,8 +258,8 @@
   {
     "name": "SS3-a-peers-grant-lands-a-bound-piece",
     "file": "src/scenes/exteriorFoes.js",
-    "old": "      const grant = peerHanded(validLootList(data.grant));",
-    "new": "      const grant = validLootList(data.grant);",
+    "old": "      const grant = notCarried(peerHanded(validLootList(data.grant)));",
+    "new": "      const grant = notCarried(validLootList(data.grant));",
     "tests": [
       "test/ss1_stones.test.js"
     ]
@@ -264,8 +267,9 @@
   {
     "name": "SS4-the-mark-ignored",
     "file": "src/systems/itemBound.js",
-    "old": "export const isBound = (/** @type {any} */ item) => item?.bound === true || templateByIndex(item?.templateIndex)?.bound === true;",
-    "new": "export const isBound = (/** @type {any} */ item) => templateByIndex(item?.templateIndex)?.bound === true;",
+    "note": "AUDIT AUTO-HOLD (PIN MOVED): re-aimed by content - a binding of its nature is isBoundByNature now (isBound adds the realm lock)",
+    "old": "export const isBoundByNature = (/** @type {any} */ item) => item?.bound === true || templateByIndex(item?.templateIndex)?.bound === true;",
+    "new": "export const isBoundByNature = (/** @type {any} */ item) => templateByIndex(item?.templateIndex)?.bound === true;",
     "tests": [
       "test/ss1_stones.test.js"
     ]

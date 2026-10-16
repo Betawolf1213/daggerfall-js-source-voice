@@ -268,6 +268,7 @@ import { buildingGreeting, shopQualityPresentation } from '../systems/buildingGr
 import { setUnleveledLootWorld, unleveledLootPreTransition, unleveledLootExteriorTransition } from '../systems/unleveledLoot.js';   // UL1: PlayerEnterExit's world and its transition events   // BG1: the shop quality + the householder's greeting
 import { discoverBuilding, undiscoverBuilding, getDiscoveredBuilding, getLastLockpickAttempt, setLastLockpickAttempt, shownBuildingName } from '../systems/discovery.js';   // H3: selling a house takes its name back off the map
 import { BUILDING_KEY_0 } from '../systems/talkTopics.js';   // H3: the no-key key both ship interiors are filed under
+import { carriedPieces } from '../systems/itemIds.js';   // AUTO-HOLD: the room's word never lands a piece I carry (world/interiorShared.js)
 import { interiorLocationKey, mintInteriorShared, composeInteriorShared, applyInteriorShared, applyInteriorLoot, interiorActionRecords, interiorLootKeyOf, interiorLootRecords } from '../world/interiorShared.js';   // WORLD6a: the building as a world room - the pure half; AUDIT WORLD6a A1: the bag minted there
 import { getHolidayId } from '../systems/holidays.js';
 import { guildOfFaction, guildGroupOfFaction, isMember } from '../systems/guilds.js';
@@ -13373,7 +13374,7 @@ export function createWorldModes(host) {
     restorePlaceSharedWorld(shared) {
       if (mode === 'dungeon') return dungeonCtx ? dungeonCtx.restoreSharedWorld(shared) : false;
       if (mode !== 'interior' || !interiorCtx || !_intShared?.locationKey || _intShared.applied) return false;
-      const ok = applyInteriorShared(interiorCtx, shared, { ..._intShared, today: stockedToday() });   // AUDIT WORLD6a A2: the day bounded by today
+      const ok = applyInteriorShared(interiorCtx, shared, { ..._intShared, today: stockedToday(), carried: carriedPieces(playerEntity) });   // AUDIT WORLD6a A2: the day bounded by today; AUTO-HOLD: never a piece I carry back on the shelf
       if (ok) _intShared.applied = true;
       return ok;
     },
@@ -13381,7 +13382,7 @@ export function createWorldModes(host) {
       if (mode === 'dungeon') return dungeonCtx ? !!dungeonCtx.applyActions?.(id, data) : false;
       if (mode !== 'interior' || !interiorCtx || !_intShared?.locationKey || !data || data.k !== _intShared.locationKey) return false;
       const n = (Array.isArray(data.a) ? interiorCtx.actions.applyRemote(data.a) : 0)
-        + (!_intShared.home && Array.isArray(data.l) ? applyInteriorLoot(interiorCtx, data.l, { seen: _intShared.seen, openKey: _intShared.openKey, today: stockedToday(), unreadable: _intShared.unreadable }) : 0);   // HOME1: no word lands on a home's cupboards (world/interiorShared.js)
+        + (!_intShared.home && Array.isArray(data.l) ? applyInteriorLoot(interiorCtx, data.l, { seen: _intShared.seen, openKey: _intShared.openKey, today: stockedToday(), unreadable: _intShared.unreadable, carried: carriedPieces(playerEntity) }) : 0);   // HOME1: no word lands on a home's cupboards (world/interiorShared.js); AUTO-HOLD: nor a piece I carry
       return n > 0;
     },
     placeActionRecords(keys) {
