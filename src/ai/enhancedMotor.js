@@ -301,6 +301,20 @@ export class EnhancedEnemyAI extends EnemyAI {
     }
   }
 
+  /** FIELD BUGS 2026-10-16 INDOOR-WATCH (scenes/interiorNav.js, NO ROUTE): stood at `feet` by the host, on the island
+   *  the route could not reach. The pursuit stands - its target, its give-up timer, its belief of where the player is;
+   *  what the motor held of where it stood goes: the grounding (a step from here bills no fall from the old floor), the
+   *  detour and its obstacle flags, the route and the stuck clocks. */
+  standAt(feet) {
+    this.feet[0] = feet[0]; this.feet[1] = feet[1]; this.feet[2] = feet[2];
+    this.lastGroundedY = feet[1]; this._airborne = false; this.velY = 0; this.landedFall = 0; this._restGrounded = false;
+    this.destination = [feet[0], feet[1], feet[2]]; this.detourDestination = [feet[0], feet[1], feet[2]];
+    this.obstacleDetected = false; this.fallDetected = false; this.foundUpwardSlope = false; this.foundDoor = false;
+    this.avoidObstaclesTimer = 0; this.checkingClockwiseTimer = 0; this.didClockwiseCheck = false;
+    this.knockbackSpeed = 0; this.moving = false;
+    this.path = null; this.pathI = 1; this.repathT = 0; this.stuckT = 0; this.lastX = feet[0]; this.lastZ = feet[2];
+  }
+
   /** WORLD2: the base resume, and the cached path with it - the next pursuit paths from where the puppet stood. */
   resumeLive() {
     super.resumeLive();
