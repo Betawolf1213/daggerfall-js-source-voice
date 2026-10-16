@@ -8,7 +8,7 @@ A departure of the port's own, the enhanced lane's alone: Features, World tab, T
 `horseCare` pref - three tiers since HORSE-TIERS (below): Off, Boons (the default) and Hard, each player's own online.
 Off, a horse is DFU's: no stats, no walk or gallop of its own, nothing to feed - at once, at every door the tier
 governs (a player's "the horse care toggle in the settings menu doesn't seem to work" was traced so,
-`01-Overview/Field-Bugs-2026-10-14-riding-panel.md`, and Mac's word on it made the tiers). The saddle panel stands in
+`01-Overview/bugs/Field-Bugs-2026-10-14-riding-panel.md`, and Mac's word on it made the tiers). The saddle panel stands in
 every tier: it is the ride's, and Off it shows the gait and its doors alone.
 
 ## The tiers (HORSE-TIERS, 2026-10-15)

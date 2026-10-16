@@ -61,7 +61,7 @@
 // TABLE_GAP_M), it holds one to every INDOOR_FLOOR_M2 of floor, and one who stirs makes for a place of their own
 // (`stirPlace`).
 //
-// AUDIT LW-ROOMS (2026-10-08, bible/01-Overview/Audit-LW-Rooms.md): the room measured as its build hung it, the same
+// AUDIT LW-ROOMS (2026-10-08, bible/01-Overview/audits/Audit-LW-Rooms.md): the room measured as its build hung it, the same
 // for every reader - every door shut (`doorsShut`), the building's own people every one, every bed's stand kept clear,
 // the reader's quest's people kept clear only when one is placed; the walk slid along what it meets into a doorway off
 // its lines, over a lip the room's people step over, standing nobody on an edge; one stirring to a place of their own

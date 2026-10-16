@@ -86,7 +86,7 @@ function blockAt(L, n) {
 }
 
 const LEDGER = 'bible/01-Overview/Port-Ledger.md';
-const STATUS = 'bible/01-Overview/Port-Status-2026-09-02.md';
+const STATUS = 'bible/01-Overview/handoffs/Port-Status-2026-09-02.md';
 const ROAD = 'bible/01-Overview/Road-To-1-1.md';
 
 /** The Ledger's line N, 1-based, as the citations write it. */
@@ -733,7 +733,7 @@ const SOURCE_CITES = [
     EX, /if \(act === 'Rest'\) \{ e\.preventDefault\(\); hudCtx\.toggleRest\(\); return true; \}/],
   ['test/ui/roade_up_seam.test.js', /exterior\.js:(?:"[^"]+"(?:\.\."[^"]+")?|\d+(?:-\d+)?)\/exterior\.js:"([^"]+)"(?:\.\."([^"]+)")?/,
     EX, /if \(act === 'Escape' && pauseDoorReady\(\)\) \{ hudCtx\.togglePause\(\); return true; \}/],
-  ['bible/01-Overview/Audit-58.md', /`src\/scenes\/exterior\.js:"([^"]+)"(?:\.\."([^"]+)")?` now/, EX, /setDefaultEnchantCtx/],
+  ['bible/01-Overview/audits/Audit-58.md', /`src\/scenes\/exterior\.js:"([^"]+)"(?:\.\."([^"]+)")?` now/, EX, /setDefaultEnchantCtx/],
   ['bible/06-Systems/Systems-Arc.md', /`exterior\.js:"([^"]+)"(?:\.\."([^"]+)")?`, `world\.js:(?:"[^"]+"(?:\.\."[^"]+")?|\d+(?:-\d+)?)`/, EX, /playerTicker\.advance\(60\);/],
   ['bible/09-Testing/Testing.md', /keydown ladder \(exterior\.js:"([^"]+)"(?:\.\."([^"]+)")?\)/,
     EX, /^ {4}if \(e\.code === 'Escape'\) backButtonHeld = true;$/],
@@ -930,7 +930,7 @@ const LEDGER_CITES = [
   ['test/tooling/probehygiene.test.js', [/THREE PROBES THE T2 SWEEP FOUND STALE/]],
   ['bible/09-Testing/Testing.md', [/THREE PROBES THE T2 SWEEP FOUND STALE/,
     /FaceUVTool's 1,803-UV residual/]],
-  ['bible/01-Overview/Port-Status-2026-09-02.md',
+  ['bible/01-Overview/handoffs/Port-Status-2026-09-02.md',
     [/THE KEYBINDING REGISTRY/, /THE KEYBINDING REGISTRY/, /VidFile: a MID-STREAM PALETTE/]],
   ['tools/parity/prepare.sh', [/FaceUVTool's 1,803-UV residual/]],
 ];

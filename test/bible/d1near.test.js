@@ -4,7 +4,7 @@
 // North America: every statement on the primary paid the Pacific, ~150-180 ms each, thirteen or fourteen of them for a
 // look at the Guild tab. And every deploy says where the Worker answers from, what a statement costs it there and where
 // D1 says its primary is, so the place is read, never taken on its word again. bible/11-Multiplayer/Scale-Arc.md
-// D1-NEAR; audited, bible/01-Overview/Audit-D1-Near.md (its own pins: test/bible/audit_d1near.test.js).
+// D1-NEAR; audited, bible/01-Overview/audits/Audit-D1-Near.md (its own pins: test/bible/audit_d1near.test.js).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';

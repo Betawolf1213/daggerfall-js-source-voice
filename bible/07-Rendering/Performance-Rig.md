@@ -599,7 +599,7 @@ seen body's picture is taken in ONE bind of the sprite target now, a tile each, 
 
 ## AOE-PERF - the boss's circles laid over their own ground; the crowd measured (FIELD BUGS 2026-10-13e, 2026-10-13)
 
-HellRay on Discord, `01-Overview/Field-Bugs-2026-10-13e.md`: *"massive FPS drops when the boss performs AoE attacks and
+HellRay on Discord, `01-Overview/bugs/Field-Bugs-2026-10-13e.md`: *"massive FPS drops when the boss performs AoE attacks and
 circles appear on the ground ... Player sprites also cause severe performance drops, especially when more than 10 players
 are gathered in one area."* Measured first, by `tools/fb1013ePerfProbe.mjs`: the real Renderer in Chromium on SwiftShader
 (software GL - its time grows with the fragments and vertices it shades, so it measures overdraw; it is no GPU and its

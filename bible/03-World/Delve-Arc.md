@@ -10,7 +10,7 @@ asks for it by name (DSIZE1). The rest is legibility: what is near and can be wo
 and - asked for - where a quest's thing is. Every slice but one is an Enhanced row on the Features home with its own
 switch. Two things reach the classic skin, both rightly: DETECT-FINDS is SEARCH1's, ungated as SEARCH1 is; and a quest
 frozen at the medium size keeps its dungeon whatever the skin, as DFU's frozen Enabled outlives its setting. Ledger A:
-THE DELVE ARC row. AUDITED the same day (AUDIT DELVE, `01-Overview/Audit-Delve.md`), with MAPS.BSA and BLOCKS.BSA read
+THE DELVE ARC row. AUDITED the same day (AUDIT DELVE, `01-Overview/audits/Audit-Delve.md`), with MAPS.BSA and BLOCKS.BSA read
 whole outside the repository; not yet seen in the game.
 
 | Slice | What | Row | Default |
@@ -158,7 +158,7 @@ own law (`regenerateDungeon`, the one body both sizes draw through) - its own bl
 DFRandom seeded on the MapId, so the same every visit - as two interior blocks side by side (the starting block first)
 and the six border blocks that close them: the commonest shape MAPS.BSA has (every one of its 1,162 eight-block
 dungeons). The first cut's cross of five over thirteen touched only the 159 dungeons over thirteen, every one of them
-four interior blocks in a ring of ten - it made them bigger inside (`01-Overview/Audit-Delve.md`, the real data). Every
+four interior blocks in a ring of ten - it made them bigger inside (`01-Overview/audits/Audit-Delve.md`, the real data). Every
 guard Smaller Dungeons keeps, Medium keeps (main story, the arena's undercroft, online, a quest's frozen size); Smaller
 Dungeons wins when both are on; DFU's `useSmallerDungeon` stays DFU's, verbatim. The quest freeze and the save stamp
 carry it as 3, APPENDED past DFU's NotSet/Disabled/Enabled (which stay verbatim); the load-time warp compares the stamp
@@ -173,7 +173,7 @@ placements put back, its stamp the room's). Its own row beside DFU's, which stay
 
 **MEDIUM-DISTINCT (2026-10-08, Mac: "Medium dungeons just copy and paste 2 layouts together") - NEVER ONE INTERIOR
 BLOCK TWICE.** GetRandomBlock draws with replacement, and the medium size draws its two interior blocks from a pool of
-two to four (a dungeon of 10 to 22 blocks - `01-Overview/Audit-Delve.md`'s sizes; MAPS.BSA repeats names within a list
+two to four (a dungeon of 10 to 22 blocks - `01-Overview/audits/Audit-Delve.md`'s sizes; MAPS.BSA repeats names within a list
 too), so a quarter to a half of them laid the same block twice side by side: one area and its copy (the report's map,
 two identical halves). Now an interior block that repeats one already laid takes the pool's next block round from the
 repeated one's first place in it that is not laid (`world/smallerDungeons.js distinctInterior`, after the draws in
@@ -197,7 +197,7 @@ DFU's draw for draw. What the move would strand, held:
 THE FOUR HOSTS: `scenes/worldModes.js` and `scenes/dungeonContext.js` build and save through the law
 (`dungeonLocationFor`, `smallerDungeonsStamp`, `needsStartWarp`) and need no seam; `scenes/world.js` and
 `scenes/exterior.js` size the quest layer's locations through it and load quests through the bridge, which runs the
-re-lay. AUDIT FIELD-BUGS 1008 (`01-Overview/Audit-Log.md`): the re-lay reads only a build that moved (`distinct`), offline
+re-lay. AUDIT FIELD-BUGS 1008 (`01-Overview/audits/Audit-Log.md`): the re-lay reads only a build that moved (`distinct`), offline
 only a dungeon a link holds (unlinked, the build is the settings'), and a shared copy arriving
 (`questRepair.js relayQuestMovedLayout`). `test/systems/quest/mediumdistinct.test.js` (4); `tools/mutants/mediumdistinct.json` (18), all dead.
 

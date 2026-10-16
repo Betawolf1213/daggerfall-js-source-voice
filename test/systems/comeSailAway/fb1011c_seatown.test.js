@@ -1,4 +1,4 @@
-// SEA-TOWN (FIELD BUGS 2026-10-11c, bible/01-Overview/Field-Bugs-2026-10-11c.md). A Discord report: frames fell in a
+// SEA-TOWN (FIELD BUGS 2026-10-11c, bible/01-Overview/bugs/Field-Bugs-2026-10-11c.md). A Discord report: frames fell in a
 // crowded inland town (Chesterwark) with the World tab's "The sea & ships" mods on, and came back with them off - online,
 // where the room holds three of the five on, so the switch that moved was Come Sail Away's. Measured in the real game
 // (tools/frameProbe.mjs over the freeware ARENA2): with no boat owned the mods cost nothing there; with five boats owned,

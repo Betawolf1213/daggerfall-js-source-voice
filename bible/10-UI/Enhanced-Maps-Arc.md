@@ -624,7 +624,7 @@ lies over another (`groupSheets`) - a cell is on the storey its own surface
 is nearest (`surfaceY`), the stairs between storeys are found
 (`levelField`, `storeyLinks`), drawn and taken with a press, the strip stops
 above the thumb and marks you and the way out, and the foot says the keys.
-The record is `01-Overview/Field-Bugs-2026-09-25.md` DISC25-A.
+The record is `01-Overview/bugs/Field-Bugs-2026-09-25.md` DISC25-A.
 
 ## TOWN-MARKS (2026-09-29) - the Notice Boards and the player housing on the town plan
 

@@ -110,7 +110,7 @@ elites (x3) and the Enhanced AI's slams (x1.75) on top of BAL2's crit, nothing c
 claymore slam killed a 110-health player from full in about one landed slam in ten. BAL2 stands; the damage door now
 leaves a player at full health at 1 when one foe's blow would kill them (`characters/playerEntity.js` hurtPlayer),
 before any death save, and the next blow kills as it always has. A fall, a spell or a world boss's strike is no blow.
-`01-Overview/Field-Bugs-2026-10-11b.md`.
+`01-Overview/bugs/Field-Bugs-2026-10-11b.md`.
 
 ## 5. BAL3 - the place sets the threat
 

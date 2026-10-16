@@ -136,7 +136,7 @@ lands, never at the Succession's choice - B1) and the estate are undone if that 
 bears them again (A2); a member whose character id no save holds (their saves deleted) is born again from their
 person rather than loaded (A2/B1). Until the heir lands, the page that chose acts for no one (A1) - and the page BEARING
 them offers the Succession to nobody: it is the fall's answer, and a save writes only the person who is the character in
-the world (FB1012d HEIR-CLONE, `01-Overview/Field-Bugs-2026-10-12d.md`: online the birth waits on the realm with the
+the world (FB1012d HEIR-CLONE, `01-Overview/bugs/Field-Bugs-2026-10-12d.md`: online the birth waits on the realm with the
 world running, the waiting fall's window rose over the newborn, and a press wrote the newborn over their sibling). The
 heir is born in a PLACE: the family's seat - the first town its founder stands in, or the town or the home of the
 house's own (a farm, a manor - FB1012d SEAT-HOME) the player moved it to (FAMILY-SEAT, section 11) - else the nearest
@@ -261,11 +261,11 @@ finishChargen`, `test/systems/legacychoice.test.js`, `tools/mutants/legacychoice
   inventory window over it, in any mode (`openLootList`), by itself once a visit and never in a fight (the body below is
   pressed as any body, a fight included - DFU's loot window pauses the world): what the heir leaves stays
   with them, and nothing is ever laid in the world twice (AUDIT LEGACY H1). AND THEY ARE SEEN THERE (FB1013d
-  REMAINS-STAND, `01-Overview/Field-Bugs-2026-10-13d.md`: H1 had taken the pile's picture with the pile, and in Castle
+  REMAINS-STAND, `01-Overview/bugs/Field-Bugs-2026-10-13d.md`: H1 had taken the pile's picture with the pile, and in Castle
   Wayrest's halls an heir walked past a six-pace spot nothing marked): a body - their own picture, a line of light over
   it - stands where they lie, on the floor under the fallen's last position underground (in their own dungeon: its row,
   its pixel, its own key and the size it was built at - a made dungeon is no table row, the Undercroft wears its city's,
-  and another size is another layout: AUDIT FB1013d O1 and B1, `01-Overview/Audit-FB1013d.md`) and at the spot outdoors
+  and another size is another layout: AUDIT FB1013d O1 and B1, `01-Overview/audits/Audit-FB1013d.md`) and at the spot outdoors
   (at the height they stood), in the pool of the host the heir stands in; its list is the record's own
   (`scenes/legacyRemainsStand.js`), so it is pressed as any body and no save carries it. A death in a building keeps the
   street's law and stands none. "Never in a fight" is the place the heir stands in (LIVE-FIGHT: the street's pools,
@@ -636,11 +636,11 @@ world, locked to its own family.
   - **The house**: its model, its seat, its generations, the living and the fallen of the blood (how, where and by whom
     each fell; a spouse among the house's dead said wed in - AUDIT LEGACY III A15/U9/F6), and
     (LEGACY-HOME) its homes, the family home among them, the player's to choose (section 10b). FAMILY-SEAT (FIELD BUGS
-    2026-10-07b, `01-Overview/Field-Bugs-2026-10-07b.md`; afjiz: "the option in the enhanced ui to reset your family
+    2026-10-07b, `01-Overview/bugs/Field-Bugs-2026-10-07b.md`; afjiz: "the option in the enhanced ui to reset your family
     seat to a town your currently in"): the seat noted at the first town - a road crossed, a journey's way - moves, two
     presses as a switch is, to the town the one played stands in (its streets or a building of it, never a dungeon
     under it; never while a Succession waits): `Make <town> the family seat` (`scenes/legacyHost.js` familySeatHere,
-    moveFamilySeat). FB1012d SEAT-HOME (`01-Overview/Field-Bugs-2026-10-12d.md`; "the house (admittedly a tiny hovel on
+    moveFamilySeat). FB1012d SEAT-HOME (`01-Overview/bugs/Field-Bugs-2026-10-12d.md`; "the house (admittedly a tiny hovel on
     a farm) purchased and made the seat of the house ... was not where the heir ended up spawning"): or to a place where
     the house holds a home of its own - a farm, a manor (`placeHere`, by the place's map id against the line's houses). The heirs are born there, the fallen laid to rest there, the house's news told there, and a house
     with no home lives there; the house keeps its name. A moved seat carries when (`seat.at`, the wall clock - after the
@@ -649,7 +649,7 @@ world, locked to its own family.
     so a stale tab's write carried the old one back over the move. The name stays the house's in every merge: a copy
     that never learned it takes it from the copy that holds it (`systems/legacy/family.js` nameHouse) - never names
     itself for a moved seat. Where the move is not offered, the page says where it is. (AUDIT FB1007b S1-S5, T3:
-    `01-Overview/Audit-FB1007b.md`.)
+    `01-Overview/audits/Audit-FB1007b.md`.)
   - **The Hall of Ancestors**: every house founded on this machine, living and ended, with its generations and counts.
 - **The Succession** (at a final death, a passing of the mantle, or a save of the past loaded): its own window
   (`ui/legacy/legacySuccession.js`, `ui/legacy/legacyDoor.js`), the death's own screen while it stands - the fallen's line, then the
@@ -680,21 +680,21 @@ world, locked to its own family.
 | LEGACY2 | Enduring: the span, the toll, the offline respawn, the elder, passing the mantle; the model's chargen question | built |
 | LEGACY3 | the Family tab (Enhanced Plus); the Succession; the Hall | built |
 | LEGACY4 | heirlooms, the remains, the death quest, the rest and the blessing | built |
-| AUDIT LEGACY | the five-lens audit of LEGACY1-4 (`01-Overview/Audit-Legacy.md`) - the two authorities, the death at the door | built |
+| AUDIT LEGACY | the five-lens audit of LEGACY1-4 (`01-Overview/audits/Audit-Legacy.md`) - the two authorities, the death at the door | built |
 | LEGACY5 | courting, marriage, children, surnames' cadet branches | built |
 | LEGACY6 | world influence: the inherited standing and regard, the towns' talk, the killer remembered | built |
 | LEGACY7 | online: the service's lineage, the tombstone, the heir's realm birth, the house name; two players wed (part three); the line in its own body (part four) and in its online homes (part five) | built |
 | LEGACY-SHEET | the house on the character sheet: the model, the generation, an Enduring house's age, toll and elder's word (section 11) | built |
 | LEGACY-NAME | a house founded nameless named at its seat; a seat's house said once; the news's doubled surname (section 8) | built |
-| FAMILY-SEAT | the seat moved from the House page to the town the one played stands in; the later move stands in every merge, and the house's name with it (section 11; `01-Overview/Field-Bugs-2026-10-07b.md`, `01-Overview/Audit-FB1007b.md`) | built, audited |
-| FB1012d | HEIR-CLONE (the page bearing an heir offers no Succession; a save writes only the one in the world), SEAT-HOME (the seat moved to a home of the house's own - a farm), BIRTH-START (the Online page's birth in its seat); UNION-CHILDREN planned (sections 4, 9, 10b, 11; `01-Overview/Field-Bugs-2026-10-12d.md`) | built |
+| FAMILY-SEAT | the seat moved from the House page to the town the one played stands in; the later move stands in every merge, and the house's name with it (section 11; `01-Overview/bugs/Field-Bugs-2026-10-07b.md`, `01-Overview/audits/Audit-FB1007b.md`) | built, audited |
+| FB1012d | HEIR-CLONE (the page bearing an heir offers no Succession; a save writes only the one in the world), SEAT-HOME (the seat moved to a home of the house's own - a farm), BIRTH-START (the Online page's birth in its seat); UNION-CHILDREN planned (sections 4, 9, 10b, 11; `01-Overview/bugs/Field-Bugs-2026-10-12d.md`) | built |
 | LEGACY-CHOICE | the popup online: Enduring, Bloodline or no lineage at chargen, kept on the character; online a house founded at a birth alone - a character loaded with no house plays without one (section 6) | built |
 | AGELESS-CURSE | the cursed pay no toll: a vampire, a werewolf or a wereboar in an Enduring house rises from every death with no years taken, the span spent or not; cured, the toll again (section 6) | built |
 | LEGACY-HOME | the bloodline in the world: the family home, the seat's townsfolk, their day, Play as by talking (section 10b) | built |
-| AUDIT LEGACY II | the six-lens audit of LEGACY1-4 and LEGACY-HOME (`01-Overview/Audit-Legacy-II.md`) | built |
-| AUDIT LEGACY III | the six-lens audit of the whole arc, server side too (`01-Overview/Audit-Legacy-III.md`) - character-bound weddings, the line's own route bound, the write made from what it read, two copies' persons kept apart, the news on the reader's clock | built |
-| FB1013d | REMAINS-STAND (the remains seen where they lie: a body over the record's own list), LIVE-FIGHT (the remains' fight is the place the heir stands in); ESTATE-WIDER planned - the wagon and the bank's balance, the owner's call (section 7; `01-Overview/Field-Bugs-2026-10-13d.md`) | built |
-| AUDIT FB1013d | the three-lane audit of REMAINS-STAND and LIVE-FIGHT (`01-Overview/Audit-FB1013d.md`) - the fallen's dungeon by its row, its pixel, its own key and the size it was built at; the height the death's to ask; a duel and a hostile ship a fight; a claim lapsed at the stand lays its bones at once; a load lets the bodies go and the tick waits out a world moved; the bones put back lie again | built |
+| AUDIT LEGACY II | the six-lens audit of LEGACY1-4 and LEGACY-HOME (`01-Overview/audits/Audit-Legacy-II.md`) | built |
+| AUDIT LEGACY III | the six-lens audit of the whole arc, server side too (`01-Overview/audits/Audit-Legacy-III.md`) - character-bound weddings, the line's own route bound, the write made from what it read, two copies' persons kept apart, the news on the reader's clock | built |
+| FB1013d | REMAINS-STAND (the remains seen where they lie: a body over the record's own list), LIVE-FIGHT (the remains' fight is the place the heir stands in); ESTATE-WIDER planned - the wagon and the bank's balance, the owner's call (section 7; `01-Overview/bugs/Field-Bugs-2026-10-13d.md`) | built |
+| AUDIT FB1013d | the three-lane audit of REMAINS-STAND and LIVE-FIGHT (`01-Overview/audits/Audit-FB1013d.md`) - the fallen's dungeon by its row, its pixel, its own key and the size it was built at; the height the death's to ask; a duel and a hostile ship a fight; a claim lapsed at the stand lays its bones at once; a load lets the bodies go and the tick waits out a world moved; the bones put back lie again | built |
 | REVIVE | a death taken back by the operator, and it holds: the `revived` stamp every copy and the realm's write honour; the "Realm revive" run (Time Travel read, guarded writes) - for TheHalfinStream, Mac: "Full revive" (section REVIVE) | built |
 
 ## WED-GATE - a character who may wed, weds (FIELD BUGS 2026-10-08)
@@ -715,12 +715,12 @@ LEGACY7W-partner-dead-or-lineless survives on main as well - not this change's, 
 
 ## PLAIN-UI - How it works (2026-10-12)
 
-The Family tab's fourth page, HOW IT WORKS (`src/ui/familyPages.js` `familyGuide`, `drawGuidePage`): the house, death in the house's own model and its toll, who carries on, what carries on (the estate to whoever takes the line; the blood and the hearth a newborn's, at birth), heirlooms and remains, marriage and children, playing another, and the tree's marks - every number the law's own - and the tab's type a step larger. AUDIT PLAIN-UI (`01-Overview/Audit-Plain-UI.md`) set its words against `family.js`, `heirloom.js`, `marriage.js` and `scenes/legacyHost.js`. A player: "Same issues with the project legacy system." The record: `10-UI/Plain-Words.md`.
+The Family tab's fourth page, HOW IT WORKS (`src/ui/familyPages.js` `familyGuide`, `drawGuidePage`): the house, death in the house's own model and its toll, who carries on, what carries on (the estate to whoever takes the line; the blood and the hearth a newborn's, at birth), heirlooms and remains, marriage and children, playing another, and the tree's marks - every number the law's own - and the tab's type a step larger. AUDIT PLAIN-UI (`01-Overview/audits/Audit-Plain-UI.md`) set its words against `family.js`, `heirloom.js`, `marriage.js` and `scenes/legacyHost.js`. A player: "Same issues with the project legacy system." The record: `10-UI/Plain-Words.md`.
 
 ## REVIVE - a death taken back, and it holds (2026-10-14, acct132)
 
 Mac, of TheHalfinStream's Enduring elder - who died of her years in Castle Wayrest on 2026-10-13 while the remains bug
-(`01-Overview/Field-Bugs-2026-10-13d.md` REMAINS-STAND) hid what she lay with: *"I want to roll back this specific
+(`01-Overview/bugs/Field-Bugs-2026-10-13d.md` REMAINS-STAND) hid what she lay with: *"I want to roll back this specific
 account"*; of three ways offered, *"Undo the death"*; told a plain undo would not stick, *"Full revive"*.
 
 WHY A PLAIN UNDO DOES NOT STICK. A death is a fact every copy of a line keeps (`store.js` mergeFacts: "a death is only

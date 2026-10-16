@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-10 (bible/01-Overview/Field-Bugs-2026-10-10.md), TRUE-CURSE - the Discord's "True cursed item
+// FIELD BUGS 2026-10-10 (bible/01-Overview/bugs/Field-Bugs-2026-10-10.md), TRUE-CURSE - the Discord's "True cursed item
 // experience": "a super powerful sword that drains a ton of your hp ... cannot have their curse lifted". A DAMNED piece:
 // one cursed Legendary weapon in DAMNED_IN, its curse line at the very top of its band, its drawback DFU's Health Leech:
 // Whenever Used (8 health a strike, 16 a use), and no temple lifts it. Taking it off ends the bite, as any curse's.

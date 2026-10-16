@@ -309,7 +309,7 @@ rig is the authoring bench for monster morphologies. Slices:
   reversed comparison; so do we), MeleeAnimation gates (in sight,
   22.5deg yaw toward the LAST-KNOWN target position - INVIS-SWING,
   2026-10-15: the port faced the live feet, so an undetected invisible
-  player was struck, `01-Overview/Field-Bugs-2026-10-15f.md` -
+  player was struck, `01-Overview/bugs/Field-Bugs-2026-10-15f.md` -
   distance <= MeleeDistance + rate-of-approach),
   ResetMeleeTimer arithmetic exact (Range(1500,3001), -50/level over
   10, +450/reflex step, 0-floor, /980). Unity-Random slots stay
@@ -2627,7 +2627,7 @@ not one.
   use interior spawn points at all; it calls PlaceFoeFreely, and says
   why: "Spawn points work well for 'interior hunt' quests but less so
   for 'directly attack the player'. Feel just placing freely will
-  yield best results overall." SHOP-RATS (`01-Overview/Field-Bugs-2026-10-12g.md`) keeps that ring first, every
+  yield best results overall." SHOP-RATS (`01-Overview/bugs/Field-Bugs-2026-10-12g.md`) keeps that ring first, every
   tick, and gives a foe it has missed thirty times a near ring that does not mind the view, then the room's own
   markers - a shop's counter and shelves left DFU's ring no room at all (a departure, Port-Ledger).
 - **`enemiesNearby`** was a literal `false` at three consumers (the
@@ -2858,7 +2858,7 @@ ARENA2 in the container: the bats' height, the halved capsule's feel
 at doors, and flyers and swimmers in every host want Mac's eyes on the
 live site.
 
-DOOR-JAM (FIELD BUGS 2026-10-14b, `01-Overview/Field-Bugs-2026-10-14b.md`):
+DOOR-JAM (FIELD BUGS 2026-10-14b, `01-Overview/bugs/Field-Bugs-2026-10-14b.md`):
 the sized capsule met the doors. A Mage's, a Healer's, a Spellsword's, a
 Lich's and a Daedra Lord's stand taller than nine in ten of the dungeons'
 doorways, and DFU's counterpart to SetupDemoEnemy's height - EnemyMotor

@@ -140,7 +140,7 @@ The answer says the hold (`tradeHeld`) and, when the law holds it, the first pie
 and template); the client's session keeps it and tells the player as it moves, naming the piece (`systems/realmSaves.js`
 onTradeHeld, `systems/item/itemIds.js` tradeHeldNotice) - and a trade refused over its own hold says that notice, the piece
 named; a law hold standing past STRIKES_FOR_REVIEW with nothing found answers `tradeHeldWhy: { code: 'review' }`, said as
-staff's (RING-HOLD, `01-Overview/Field-Bugs-2026-10-12.md`: it read "something" once the Ring was gone). The cutover (decision 3): the first judgement's baseline is the
+staff's (RING-HOLD, `01-Overview/bugs/Field-Bugs-2026-10-12.md`: it read "something" once the Ring was gone). The cutover (decision 3): the first judgement's baseline is the
 record the realm ALREADY HELD for the character, read once from R2 - never the save the first judged checkpoint brings,
 which is charged for what it adds like any other (the audit: the first judged save could hold anything, and was the
 baseline); a new character's baseline is a newborn's purse, a customs character's its level's allowance. A wealth past
@@ -154,7 +154,7 @@ holdOf). Staff's and the copies' are staff's alone to lift - a breach of the law
 audit: a 'law' checkpoint stepped it down, and the next clean one lifted it). The law's lifts at the next clean
 checkpoint until `STRIKES_FOR_REVIEW` (3) HOLDS have come - a strike a hold, never a checkpoint (the audit: one piece
 carried six minutes was staff's), the same piece taken up again included - and every law hold's notice says the holds
-are counting (RING-WARN, `01-Overview/Field-Bugs-2026-10-12.md`); its finding is written once a signature. Staff who judge the law's word wrong clear it
+are counting (RING-WARN, `01-Overview/bugs/Field-Bugs-2026-10-12.md`); its finding is written once a signature. Staff who judge the law's word wrong clear it
 (`law_excused`): the same signature holds nothing again, a new one does. A verdict writes over the row only as it read
 it (`judge_rev`): a staff act, or a copy another's checkpoint charged, landing in between stands, and the next checkpoint
 judges again.
@@ -233,7 +233,7 @@ service keeps the held side with the word (`realm_trades.why` `trade-held:a`) an
 'theirs', the word itself unchanged for an older client); the client says whose, and mine in the words of my own hold's
 notice (`TRADE_HELD_NOTICES`, now in `net/realm/realmTradeLaw.js`, re-exported by `systems/item/itemIds.js`). No road from
 shoplifting to a hold was found - the budget is the one measure that sees theft, and it holds only under `enforce`.
-The record and staff's check: `01-Overview/Field-Bugs-2026-10-11g.md` HELD-SIDE.
+The record and staff's check: `01-Overview/bugs/Field-Bugs-2026-10-11g.md` HELD-SIDE.
 
 ### INT6 - the review (`server-account/src/review.js`, `tools/realmReview.mjs`)
 
@@ -316,7 +316,7 @@ route's ids. Mutant records `tools/mutants/int_audit.json`; the arc's own record
   the coin another machine rolled. Asked whether to close it (each player's own roll of that coin), the session: "I
   dont wanna mess with honest players" - it stays. So `enforce`, as built, would hold an honest player who took a
   forger's coin: the coin on a peer's word wants charging to its giver, or a witness, first
-  (`01-Overview/Field-Bugs-2026-10-12f.md`, For Mac).
+  (`01-Overview/bugs/Field-Bugs-2026-10-12f.md`, For Mac).
 - **Customs** brings an offline character's items in whole (RESTORE, "Keep all"); its first judgement charges what they
   add past its level's allowance to the budget, which holds nothing until staff turn it on.
 - A piece's id rides only the character's own five lists' stamping: a piece set out in a room or kept in a chest since
@@ -443,7 +443,7 @@ receipt's carrier); `scenes/dungeonContext.js` and `scenes/worldModes.js` NO DUE
   stalled `WILD_STALL_MS`, when the second lays it afresh. The remains' guild is the order's (the killer carrying it wrote
   its own). The deposit goes in chunks bounded by the wire's frame. The killer's game asks for its piece the moment the
   room says the remains, and again until the ask leaves. The cron sweeps the falls after `WILD_FALLS_KEEP_S`.
-  PVP-LOOT (FIELD BUGS 2026-10-14, `01-Overview/Field-Bugs-2026-10-14.md`): the room's friend law (PVPDUNGEONS, a
+  PVP-LOOT (FIELD BUGS 2026-10-14, `01-Overview/bugs/Field-Bugs-2026-10-14.md`): the room's friend law (PVPDUNGEONS, a
   fallen's party and guild take nothing of its remains) is the DROP's - the record the order names is its killer's
   whoever the fallen's guild or party counts them (`wildLaw.js:"export const remainsNamedFor"`), and a collect is never
   asked it. Read over that record too, it refused a guildmate's kill the piece the service had already taken off the
@@ -509,7 +509,7 @@ DORMANT: no caller sets it since INT8, kept as it stands and pinned so (`test/ne
 
 ### Decisions (2026-10-14, FIELD BUGS PVP-LOOT)
 
-Mac, on "Equipped items Disappear after looting in PvP zone" (`01-Overview/Field-Bugs-2026-10-14.md` PVP-LOOT):
+Mac, on "Equipped items Disappear after looting in PvP zone" (`01-Overview/bugs/Field-Bugs-2026-10-14.md` PVP-LOOT):
 
 1. **"Guildmates are friends."** The referee counts one guild kin, as a party, its truce and a duel are - one law
    (`wildRef.js:"export function wildKin"`) at the relay and at every client door (INT9, who fights).
@@ -732,7 +732,7 @@ the clock, and the legacy record held to its own law.
 ## Progress
 
 - **HACKED-GOLD (2026-10-12, in a session: "apparently theres people handing out hacked gold ingame"): what a peer's
-  word hands on, what the law counts, and what staff see.** `01-Overview/Field-Bugs-2026-10-12f.md`. A peer's word (a
+  word hands on, what the law counts, and what staff see.** `01-Overview/bugs/Field-Bugs-2026-10-12f.md`. A peer's word (a
   room's container record, a body's grant, a foe's heir's pack, a worn offer) credited value no record held - a letter
   of credit at any worth, an item's price from below alone - so a modified client handed out gold it was never charged
   for. LETTER-PEER (`systems/peerWord.js`): a letter never rides a peer's word, SS3's shape widened - every site that
@@ -759,7 +759,7 @@ the clock, and the legacy record held to its own law.
   lives; one with none goes, its Stores with it), and the guild Stores deposit and the guild writ supply ask the hold
   (they asked none). `ACCOUNT_VERSION` acct116 (acct115 on its branch, renumbered past BR5 at the merge).
   `test/tree/crafthold.test.js` (7); `tools/mutants/crafthold.json` (15, all dead). Record:
-  `01-Overview/Exploit-Audit-2026-10-11.md`.
+  `01-Overview/audits/Exploit-Audit-2026-10-11.md`.
 - **INT1-INT6 (2026-10-09): lane 1, the economy - built, and audited (4b).** Migration `0096_integrity`;
   `ACCOUNT_VERSION` acct100 (acct99 and migration 0095 on its branch, renumbered past main's CARDS9 and CARDS10 at the merge). Pins: `test/systems/item/int1_itemlaw.test.js`, `int2_judge.test.js`, `int4_itemids.test.js`,
   `int5_budget.test.js`, `int6_review.test.js`, and `accountdeploy.test.js`'s Worker load; the honest sweep

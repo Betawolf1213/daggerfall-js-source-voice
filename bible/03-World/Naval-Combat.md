@@ -36,7 +36,7 @@ carries its row instead. It stands on three things the port already had:
 | NAV-H | THE HOST: the sea fight stood in the streaming world - the frame, the input, the activation, the draw, the lights, the origin, the colliders, the save, the transitions, the quests, the settings | `scenes/naval/navalHost.js`, `scenes/world.js` (the NAV-H block) |
 | AUDIT NAV1 | THE DEEP AUDIT (2026-09-29): six lenses measured the arc against Black Flag on its own harnesses; the captains' seamanship rebuilt (below), the hulls kept apart, a galley's ram, the sea on the world's clock; THE GUNS - the captains' gunnery and the run-out that tells a broadside is coming, the rig a target, fire, the prize kept a prize, the readout's warning and tally | `systems/naval/navalAI.js`, `navalShips.js` (the hulls' extents and rigs, the classes' pace, the carriages), `navalDirector.js` (the berths), `navalDamage.js`, `navalShots.js`, `navalGunnery.js`, `navalWire.js` (the run-out's bits, a barrel's fire), `navalSounds.js` and `tools/navalSfx.mjs` (the run-out), `navalEffects.js` (the glint, the shreds), `scenes/naval/navalHost.js` (`stepSea`, `separateHulls`, `checkShipRams`, `strike`, the tell and the tally), `ui/naval/navalHud.js` (the warning, the tally), `scenes/comeSailAway/comeSailAwayPeers.js` (helmBoats' hull and heading); THE HELM - the aim a look lays and its red, the broadside camera, the brace, the ram, her hurts in her handling, the shipwright and the mending at sea: `navalGunnery.js` (lookReach), `navalYard.js`, `systems/comeSailAway/comeSailAway.js` (wayScale, sailRefused), `render/navalRender.js` (the posts, the strikes, the tones), `ui/naval/navalYardWindow.js`, `ui/naval/navalPlunderDoor.js` (one door for both windows) |
 | NAV-R | WARM ASHES' RAIDERS AS SHIPS (merged OWS3): a raider near the player at sea stood as a pirate of her seed's own class and name, sailing her seeded course until her lookout sights a boat, then fighting and boarding as any pirate; spent for her life; one copy between two players | `systems/naval/navalRaiders.js`, `scenes/naval/navalHost.js` (`raiders`, `raiderShipOf`), `systems/naval/navalAI.js` (`sight`, `course`), `scenes/world.js` (`raidShips`, the marks) |
-| AUDIT NAV2 | THE SECOND PASS'S DEEP AUDIT (2026-09-30, Mac: "Let's do a deep comprehensive audit on everything developed thus far"): seven lenses over SEA-PEACE, HELM-KEYS, DECK-FIELD, HELM-WAY, DECK-WALK, SHIPMATES and LIVING CREW and the merges that carried them - sixty-two findings, each pinned red first, fixed and mutation-proven: the captain's temper and a boat's hands on the word, a boarding shared with the room, the stern chase, the way round land, the dead zone, a fighting power the duels bear out (Mac's call), the helm's handling and its advice, a shipmate no mark, a deck of every level, the crew at a boarding at hand (`01-Overview/Audit-NAV2.md`) | `systems/naval/navalWire.js` (`k`, `m`), `navalAI.js` (`strikeTime`, `odds`, `layMin`, `routeTo`), `navalDeck.js` (levels, pieces, `mainLevel`), `crewLife.js`, `scenes/naval/navalHost.js`, `scenes/naval/navalCrew.js`, `scenes/world.js`, `systems/comeSailAway/comeSailAway.js`, `systems/helmWay.js`, `player/mobileEnemyActivate.js`, `scenes/hostEnchant.js`, `characters/enemy/enemyCasting.js` |
+| AUDIT NAV2 | THE SECOND PASS'S DEEP AUDIT (2026-09-30, Mac: "Let's do a deep comprehensive audit on everything developed thus far"): seven lenses over SEA-PEACE, HELM-KEYS, DECK-FIELD, HELM-WAY, DECK-WALK, SHIPMATES and LIVING CREW and the merges that carried them - sixty-two findings, each pinned red first, fixed and mutation-proven: the captain's temper and a boat's hands on the word, a boarding shared with the room, the stern chase, the way round land, the dead zone, a fighting power the duels bear out (Mac's call), the helm's handling and its advice, a shipmate no mark, a deck of every level, the crew at a boarding at hand (`01-Overview/audits/Audit-NAV2.md`) | `systems/naval/navalWire.js` (`k`, `m`), `navalAI.js` (`strikeTime`, `odds`, `layMin`, `routeTo`), `navalDeck.js` (levels, pieces, `mainLevel`), `crewLife.js`, `scenes/naval/navalHost.js`, `scenes/naval/navalCrew.js`, `scenes/world.js`, `systems/comeSailAway/comeSailAway.js`, `systems/helmWay.js`, `player/mobileEnemyActivate.js`, `scenes/hostEnchant.js`, `characters/enemy/enemyCasting.js` |
 | SHIP-LIFE | SHIPS THAT BERTH AND GO SOMEWHERE (Mac's item 1, slice E): a port's harbour found off the terrain, its berths and mouth; a bounded A* over the water; the errands - moored, depart, voyage, arrive, patrol, lurk - drawn off a ship's seed; the harbour roll of moored ships, the port's and the day's | `systems/naval/shipLife.js`, `navalAI.js` (the cruise branch's errand, `moor`), `navalDirector.js` (`berthed`), `scenes/naval/navalHost.js` (`harbourFrame`, the errands' door), `scenes/world.js` (`navalHarbourNear`) |
 
 ## How it plays
@@ -901,7 +901,7 @@ to 24% in 180 s, then cruised away).
   takes and never the men, while every hurt kills men and, since HELM-WAY, a ship with no hands strikes: its favourite
   lost four of the eight navy-pirate matchups (a sloop beat a cutter 6 of 8, a war galley 7 of 8). Now wherever the odds
   lean WARY_ODDS or better the favourite wins six of eight, and every duel is fought to a strike (the table:
-  `01-Overview/Audit-NAV2.md`). A player's boat is sized off her build, her hurts and her hands (`myPowerOf`; single-
+  `01-Overview/audits/Audit-NAV2.md`). A player's boat is sized off her build, her hurts and her hands (`myPowerOf`; single-
   handed without a crew node; a player's boat never strikes by her men), a peer's off their word's (`peerPowerOf`, AUDIT
   NAV2 F2). So a wary brig leaves a sound Large Boat, Small Ship, Carrack or Large Galley - crewless (1.10 to one) or
   crewed (0.94) - and takes a sound Rowboat (it has no gun to size her against); she takes a merchant galleon (1.49),
@@ -1201,13 +1201,13 @@ is stamped with whose and which at its build (`comeSailAwayPeers.js peerKey`); t
 her widest cell whatever `z` was asked (the new `deck.rail`).
 
 Pins: `test/systems/naval/livingcrew.test.js` (13); AUDIT NAV2's `test/systems/naval/auditnav2_crew.test.js` (26, `tools/mutants/auditnav2_crew.json`
-64, all dead - `01-Overview/Audit-NAV2.md`). Mutants: `tools/mutants/livingcrew.json` (54), all dead; twelve records re-aimed
+64, all dead - `01-Overview/audits/Audit-NAV2.md`). Mutants: `tools/mutants/livingcrew.json` (54), all dead; twelve records re-aimed
 onto the new text (the spawn's crew and deck, the muster's, the hands', the repel's, the tags' and bars' clears, B2's
 hands, B9's captain, B10's stack), all dead.
 
 ## SHIP-LIFE (2026-09-30) - ships that berth, depart, voyage and keep their own errands
 
-Mac's item 1 of the six-part sea ask, slice E (`01-Overview/Handoff-Naval-Crew-and-Ship-Life.md`): "ships that berth at
+Mac's item 1 of the six-part sea ask, slice E (`01-Overview/handoffs/Handoff-Naval-Crew-and-Ship-Life.md`): "ships that berth at
 ports, depart, voyage and keep their own errands". Before it the sea stood ships on a ring round the player and let each
 cruise to random waypoints; a port had no ships at all. `systems/naval/shipLife.js`, pure, and the host's harbours:
 
@@ -1286,7 +1286,7 @@ won went with it: a prize's hold not yet emptied, and the casks of the ships the
   was back outside, a packable one and its hold for good, and a crewed one's hold with it. The port ships the key ON; it
   stays the player's switch. `test/systems/csa_registration.test.js` names it among the DEPARTED defaults.
 
-AUDIT PR478 (`01-Overview/Audit-PR478.md`): off the helm the stow goes into the player's boat nearest them before the
+AUDIT PR478 (`01-Overview/audits/Audit-PR478.md`): off the helm the stow goes into the player's boat nearest them before the
 pack, and what will not fit is said (D1); naval combat switched off stows before it takes the sea (D3); a boat kept in a
 dungeon stands in that dungeon alone, never a building on its pixel (D2). SHIP-LIFE's own findings (A1-A5, B1-B7) are
 recorded there too.
@@ -1376,7 +1376,7 @@ followers and Come Sail Away's crew never leaves the boat; all of this is the po
   further for the second). No foe to fight - or a fight that has drawn him past `FOLLOW_LEASH` - a companion turns and
   walks to the leader (`enemyMotor.js _followTicks`: the pursuit's own turn-then-walk, standing inside `stop`, off
   again past `stop + FOLLOW_SLACK`); the pathing motor routes it round walls on the navmesh (`enhancedMotor.js
-  _followGoal`, the route dropped as he turns between following and fighting). COMPANION-TRAIL (FIELD BUGS 2026-10-04b, `01-Overview/Field-Bugs-2026-10-04b.md`): out of sight of the leader he walks the leader's own trail - the crumbs the layer drops where the player walked (`crewAshore.js drop`), the newest in sight (`enemyMotor.js _trailGoal`) - and the pathing motor asks the trail before the navmesh; he walks on while he turns inside 30 degrees, and hurries past 8 m. AUDIT CREW CC-B3/B4: he fights only a
+  _followGoal`, the route dropped as he turns between following and fighting). COMPANION-TRAIL (FIELD BUGS 2026-10-04b, `01-Overview/bugs/Field-Bugs-2026-10-04b.md`): out of sight of the leader he walks the leader's own trail - the crumbs the layer drops where the player walked (`crewAshore.js drop`), the newest in sight (`enemyMotor.js _trailGoal`) - and the pathing motor asks the trail before the navmesh; he walks on while he turns inside 30 degrees, and hurries past 8 m. AUDIT CREW CC-B3/B4: he fights only a
   foe within the leash of his LEADER that he can pursue; drawn past the leash he is RETURNING - every target dropped,
   the secondary one too - until he is home; a foe never seen, or given up on, leaves him following. Left `CATCH_UP_M`
   behind, or `CATCH_UP_DY` a floor away while the leader stands on one, he is stood behind the player again, his motor
@@ -1388,7 +1388,7 @@ followers and Come Sail Away's crew never leaves the boat; all of this is the po
   else-arm; a plain summon keeps DFU's chain) - and a quest's foes too; never the player's foe nor an ally's. [ASSIST,
   FIELD BUGS 2026-10-05c: he puts a foe fighting his side - a player, a companion, himself - first
   (`COMPANION_ASSIST_PRIORITY`): DFU's chain gave its +5 to a foe targeting no one, so an idle foe behind a wall outranked
-  the one striking the player whenever it stood outside his view cone (`01-Overview/Field-Bugs-2026-10-05c.md`).] A monster
+  the one striking the player whenever it stood outside his view cone (`01-Overview/bugs/Field-Bugs-2026-10-05c.md`).] A monster
   fighting him keeps the town's watch. The layer's catch-up (`CATCH_UP_M`) comes long before the street's cull
   (`ENCOUNTER_CULL_DISTANCE`); he takes no encounter slot; he is `transient` (no place's save) and the room's save skips
   him. His green bar shows in every mode (`navalCrewBars`, the host's `drawCompanionBars`, under a dungeon window too),
@@ -1398,7 +1398,7 @@ followers and Come Sail Away's crew never leaves the boat; all of this is the po
   `enemyMotor.js:"FLYER_FLOOR_LIFT = 0.1"`) is combat's and never runs while following; it read a leader a hair below
   it as a descent and climbed the ghost till its 2.6 m met the ceiling. The bar stands over the body and under the
   ceiling over it (`navalHud.js:"export function crewBarPoint"`) - over the ceiling the sight test hid it
-  (`01-Overview/Field-Bugs-2026-10-09c.md`).]
+  (`01-Overview/bugs/Field-Bugs-2026-10-09c.md`).]
 - **CO-OP** (AUDIT CREW CC-E, Mac: *"Full co-op combat now"*). The owner simulates and the striker reports, as for the
   player's own blows: a companion's blow on a foe another client stands goes to its owner as an ALLY's (`al`, `ac` his
   number - the owner's foe turns on him, never on his player); a foe's blow on another's companion goes to the
@@ -1409,7 +1409,7 @@ followers and Come Sail Away's crew never leaves the boat; all of this is the po
   the hit and the frame carry what they always passed through. Said: another's foe fighting my companion swings at him
   only on its owner's screen (a record names no companion as its target).
 
-Pins: `test/systems/naval/crewcompanions.test.js` and `test/systems/naval/auditcrew.test.js` (AUDIT CREW, `01-Overview/Audit-Crew.md`) (the party's laws, the follow brain on a flat and round a wall on a real navmesh,
+Pins: `test/systems/naval/crewcompanions.test.js` and `test/systems/naval/auditcrew.test.js` (AUDIT CREW, `01-Overview/audits/Audit-Crew.md`) (the party's laws, the follow brain on a flat and round a wall on a real navmesh,
 the targets, the layer through doors, sweeps, knocks and catch-ups, the deck, the menu, the wiring by source).
 `tools/mutants/crewcompanions.json`: 47 mutants, all dead.
 
@@ -1724,7 +1724,7 @@ tags and card, SHIP-LIFE's harbours and NAV-R's shared clock.
   your aid (A11: she read "bound out to sea"); a packet leaving a harbour with no name reads her lane's next port
   (A16); another player's packet, known by her seed, reads her lane along her own leg (A22, below), and another's ship
   lying still at a berth of a harbour I know reads moored at it (A9: both read nothing).
-- **SHIP-CLUTTER** (FIELD BUGS 2026-10-02c, `01-Overview/Field-Bugs-2026-10-02c.md`; `ui/naval/navalHud.js layoutNavalTags`,
+- **SHIP-CLUTTER** (FIELD BUGS 2026-10-02c, `01-Overview/bugs/Field-Bugs-2026-10-02c.md`; `ui/naval/navalHud.js layoutNavalTags`,
   `navalTagBox`; `scenes/world.js navalTags`). Off a harbour every tag stood on its own spar and every one within
   TAG_DETAIL_M read its second line - five names through five lines (Discord: "an overabundance of ship text on the
   high seas"). The tags are laid before they are worn: ONE second line - the card's ship's, else the tag nearest the
@@ -1836,7 +1836,7 @@ records on navalHost.js, navalHud.js, navalShips.js and comeSailAwayPool.js, and
 first 491 as this commit lands - 483 dead, two equivalent as recorded, and six that survive on 168bf2587 alike, none
 of this change's (A0928-R5-flat-scale-walks-again, NAV-B-her-colours-struck, NAV-C-the-tactic-ignored,
 NAV1-the-tacks-carry-dropped, NAV1-no-pay-off, NAV1-never-warped); the rest are judged after it. AUDIT BAY judged the
-rest (`01-Overview/Audit-Ships-of-the-Bay.md`): of all 1,014, 1,004 dead, the two equivalent and the six, and two the
+rest (`01-Overview/audits/Audit-Ships-of-the-Bay.md`): of all 1,014, 1,004 dead, the two equivalent and the six, and two the
 change's own - SEAPEACE-the-prize-let-go-before-the-grapple surviving (pins the fade weakened, A15) and
 SHIPLIFE-AI-no-hold hanging its suite for good (A21) - each dead now.
 
@@ -1844,14 +1844,14 @@ THE MERGE with main (2026-10-02, the branch's own, for its pull request): FONT3'
 which stands at 11px as every enhanced line now does (its 9px is under the floor); SILVER met SHIP-NAMES' wares, whose
 coin "Drake" - the old currency's name, gone from every word a player reads - is an Ingot now, at its own place in the
 bank (so every other name stands); main's FIELD BUGS 2026-10-02 met this branch's of the same name, both kept on one
-page as its convention keeps them (`01-Overview/Field-Bugs-2026-10-02.md`, part three); the cites each side moved were
+page as its convention keeps them (`01-Overview/bugs/Field-Bugs-2026-10-02.md`, part three); the cites each side moved were
 mapped by citeMerge, CD4's struck ones by hand.
 
 ## TOUGHER-SHIPS, QUICK-REPAIRS and SALVAGE (2026-10-03) - ships that last, repairs that need no port - DECLARED
 
 Mac: *"For naval combat and such I want to buff health of ships, allow for more streamlined repairs, allow sunken
 vessels to provide nessecary materials so you dont have to rely on the port"*. Daggerfall has no ships; all of this is
-the port's own. Audited the same day (`01-Overview/Audit-Tougher-Ships.md`, AUDIT TOUGHER-SHIPS): what follows is the
+the port's own. Audited the same day (`01-Overview/audits/Audit-Tougher-Ships.md`, AUDIT TOUGHER-SHIPS): what follows is the
 law as the audit left it.
 
 - **Tougher ships** (`navalShips.js` SHIP_TOUGHNESS, 1.6). Every hull stands that many times her first build's hull and
@@ -2018,11 +2018,11 @@ the first run's four survivors each named a test that was not checking its law (
 once built, a stale owner masking the sink window, the sea off the player's shore), and each test was mended.
 AUDIT NAV2's own suites - `test/systems/naval/auditnav2_online.test.js`, `auditnav2_boarding`, `auditnav2_captains`,
 `auditnav2_helm`, `auditnav2_combat`, `auditnav2_deck` and `auditnav2_crew` - and their mutant lists
-(`tools/mutants/auditnav2_*.json`) are the audit's record's (`01-Overview/Audit-NAV2.md`).
+(`tools/mutants/auditnav2_*.json`) are the audit's record's (`01-Overview/audits/Audit-NAV2.md`).
 SHIPS OF THE BAY's (2026-10-02) - `test/systems/naval/shipnames.test.js`, `shipstance`, `shipfade`, `sealanes` - and their lists
 (`tools/mutants/shipnames.json`, `shipstance.json`, `shipfade.json`, `sealanes.json`) are recorded in its section above;
 AUDIT BAY's - `test/systems/naval/auditbay_lanes.test.js`, `auditbay_render` and `tools/mutants/auditbay.json` - are the audit's
-record's (`01-Overview/Audit-Ships-of-the-Bay.md`).
+record's (`01-Overview/audits/Audit-Ships-of-the-Bay.md`).
 
 ## GALLEON (2026-10-01) - Mac's galleon, her guns out of her ports - OURS
 

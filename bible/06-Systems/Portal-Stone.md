@@ -4,7 +4,7 @@ The owner, 2026-10-04: *"So with the removal of fast travel, I want to implement
 this should cost weykar shards (from dismantling gear with rarity). These should always be readily available. When
 using this item, it opens a portal allowing you to traverse to anywhere on the map. This is a one use item that stays
 open for a short time, allowing multiple players to traverse."* Then: *"Audit this. It needs to be perfect. Also every
-current player should recieve x10 of these. They should stack."* (AUDIT PORTAL1, `01-Overview/Audit-PORTAL1.md`;
+current player should recieve x10 of these. They should stack."* (AUDIT PORTAL1, `01-Overview/audits/Audit-PORTAL1.md`;
 PORTAL-GIFT, below.)
 
 "Weykar shards" are the **Welkynd Shards** LOOT9 shipped (`06-Systems/Loot-Arc.md` section 11): what salvaging a

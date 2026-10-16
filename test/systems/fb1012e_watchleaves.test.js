@@ -1,4 +1,4 @@
-// WATCH-LEAVES (bible/01-Overview/Field-Bugs-2026-10-12e.md; the owner, 2026-10-12: "I notice sometimes guards will
+// WATCH-LEAVES (bible/01-Overview/bugs/Field-Bugs-2026-10-12e.md; the owner, 2026-10-12: "I notice sometimes guards will
 // spawn randomly to attack nearby enemies in towns and then despawn" - asked, "Walk in, walk off"). The town watch's
 // defenders (DISC19-F, systems/town/townWatch.js) were stood down by deleting them where they stood - the crime watch's
 // despawn (EnemyEntity.cs:184-191), never this squad's - so a player watching the fight saw them vanish. They walk off

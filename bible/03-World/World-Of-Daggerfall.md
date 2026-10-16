@@ -216,7 +216,7 @@ flat, by its ARCHIVE STRING:
   DFU as here. The rock fields' 157 placements of the same model are
   boulders set into the outcrops and keep the mod's height (ROCK-SUNK,
   `isWodShrub`): standing them raised shards up to 377 m tall round
-  every rock field (`01-Overview/Field-Bugs-2026-10-02.md`).
+  every rock field (`01-Overview/bugs/Field-Bugs-2026-10-02.md`).
 - **a flat** is a billboard, base-anchored where `AlignToBase` and the
   scale fix (`LocationLoader.cs:243-248`) leave it; the four records the
   layouts scale are batches at their own size.
@@ -800,4 +800,4 @@ on (`systems/online/onlineLane.js`) - so every client that sees a gate stands th
 rock and refuses the same pieces, and the ground the room shares (the flatten)
 is refused with the site on every one of them. Offline the mod stands 1:1.
 Pinned in `test/world/gate/gateclear.test.js`, mutants in `tools/mutants/gateclear.json`;
-`01-Overview/Field-Bugs-2026-09-28b.md` has the reading.
+`01-Overview/bugs/Field-Bugs-2026-09-28b.md` has the reading.

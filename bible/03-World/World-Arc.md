@@ -98,7 +98,7 @@ in fields, the Oblivion Gate's clearing kept, Logging's trees in the
 woods. Off, on a desert, or with an archive that has no Tree table, the
 scatter above stands byte for byte. The rules and the numbers (measured
 on the real WOODS.WLD) are the Port-Ledger A row (REAL FORESTS); the audit
-is `01-Overview/Audit-Forest1-Grass.md`; pins in test/systems/forest1.test.js.
+is `01-Overview/audits/Audit-Forest1-Grass.md`; pins in test/systems/forest1.test.js.
 
 CLEAR ROADSIDES (VERGE1, 2026-10-07, Mac: "Making sure objects, like
 trees, avoid pathways and roads") keeps the disc of every wild flat's
@@ -266,7 +266,7 @@ tool at any scene. Routed onward: people flats (Characters), furniture
 actions / loot / spawn points (Systems), point lights (Rendering), ladder +
 door behavior (Player). Pins in test/world/interior.test.js.
 
-TOWER-FLOORS (FIELD BUGS 2026-10-07b, `01-Overview/Field-Bugs-2026-10-07b.md`; Jacob: "The two Daggerfall Castle
+TOWER-FLOORS (FIELD BUGS 2026-10-07b, `01-Overview/bugs/Field-Bugs-2026-10-07b.md`; Jacob: "The two Daggerfall Castle
 courtyard tower interiors are very bugged") - the port's one departure in AddModels: an ObjectType 5 model is
 stood on its lowest vertex at the storey it is written at (`FLOOR_MODEL_TYPE`), where DFU places it centred like any
 model. Classic writes the type at a storey - 1,250 of its 1,433 interior records are flat planes, which do not
@@ -275,7 +275,7 @@ courtyard towers (CUSTAA05 #0 and #1, five storeys), the castle's three dungeon-
 blocks no location places (LIBRAM00 #7, BOOKAS00 #8). Each stood half its height under its storey - the towers'
 furniture 1.625 m over the floor and their lights and markers 1.575 m, a stair 3.2 m under its own, the room's door
 1.6 m under the street's. The two House2 rooms' hall 28703 is written off even this convention and left as written
-(AUDIT FB1007b F1, `01-Overview/Audit-FB1007b.md`). Pinned by `test/world/fb1007b_towerfloors.test.js`.
+(AUDIT FB1007b F1, `01-Overview/audits/Audit-FB1007b.md`). Pinned by `test/world/fb1007b_towerfloors.test.js`.
 
 ## Milestone 3 - flats and billboards (SHIPPED)
 
@@ -954,7 +954,7 @@ discovery no-dupe all mutation-checked (three planted mutants caught).
   the direction arm is the T3c 7333 chain unchanged (MAC-U 2026-09-18:
   7333 itself is now DFU's Internal_RSC phrase, read before the file by
   `TextRsc` - classic's "%loc is %di of here" doubled the building name
-  inside every frame; `01-Overview/Mac-Bugs-U.md`). The mobile-talk
+  inside every frame; `01-Overview/bugs/Mac-Bugs-U.md`). The mobile-talk
   hosts are the two exteriors, so isInside is false at this seam;
   interiors join with static-NPC talk (in flight in a parallel lane).
 - **%hnr/%ra** (talkSession.honorificOf / raceDisplayName): %hnr is

@@ -24,7 +24,7 @@ Three probe-only edits beside the frame probe's two, the tree untouched: the acc
 `onlineLane.js ONLINE_REFUSED_FLAGS`, because it installs the probe seams - which are the instrument here); and the
 composer's hook. Every edit is a table now (`FRAME_PROBE_EDITS`, `ONLINE_PROBE_EDITS`), each needle asserted where it is
 made and held to the tree by `test/tooling/perfon4_probes.test.js`, so a needle a change moves fails the suite and not the next
-probe run - and, since AUDIT PERF-ON4 (`01-Overview/Audit-Perf-On4.md`), each edit's effect with it. The online probe
+probe run - and, since AUDIT PERF-ON4 (`01-Overview/audits/Audit-Perf-On4.md`), each edit's effect with it. The online probe
 now settles its page before the first crowd (the grass, then the Living World's way book standing still), measures a
 crowd only when the session is open and draws exactly it (or fails the run, saying so), and runs its crowds in the
 order given, 0, 20, 60 and 0 again by default; this page's first figures came before that (below).
@@ -115,7 +115,7 @@ the lists with the lanterns'. SHADOW_TUNING.sunPrepass false is the oracle and t
 **Measured** (Knightstale by day, `INSTR=shadow`, one arm after the other, `tools/frameAb.mjs`): the sun's three
 replays 2.48 -> 1.42 ms a frame by the pass's own timer (2.20 -> 1.48 by sample count), the same 201 draws a frame, and
 their allocations 79 -> 18 KB a frame. Those are the replays' own: the walk they now read their lists from was not
-timed. AUDIT PERF-ON4 (S4, `01-Overview/Audit-Perf-On4.md`) timed it beside them, in one tree with the switch for the
+timed. AUDIT PERF-ON4 (S4, `01-Overview/audits/Audit-Perf-On4.md`) timed it beside them, in one tree with the switch for the
 off arm: the replays 2.28 -> 1.02 ms and the walk 0.63, the shadow pass 4.70 -> 4.23 by its timer (3.28 -> 2.95 by sample
 count), the replays' and the walk's allocations 78 -> 21 + 11 KB, the same 201 draws - about 0.6 ms a frame saved. The
 frame's total moves within the probe's noise (13.62 -> 13.57).

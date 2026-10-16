@@ -200,7 +200,7 @@ bites. Known, its tier line reads "Cursed Rare" or "Cursed Legendary" and the dr
 Cure Disease priest lifts it for gold - a quarter of the piece's price, at least 300 - the drawback gone and the line
 KEPT: the find's reward, paid for. Salvage, the Reforge and the hone take a cursed piece as its tier.
 
-TRUE-CURSE (`01-Overview/Field-Bugs-2026-10-10.md`): one cursed Legendary weapon in four is DAMNED, in its own pass after
+TRUE-CURSE (`01-Overview/bugs/Field-Bugs-2026-10-10.md`): one cursed Legendary weapon in four is DAMNED, in its own pass after
 every draw a door makes (`damnPass`, law 9) - its line at the top of its band, its drawback Health Leech: Whenever Used
 (8 health a strike, 16 a use), "Damned Legendary" once known, and no temple lifts it. Taking it off ends the bite; on the
 arena's sand it holds the wielder at 1.

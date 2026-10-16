@@ -908,7 +908,7 @@ ETHER-CHART2 and ETHER-OW) wrote 22 literals of prose where main's chart had 6. 
 (`sea.chart.*`, 33 keys - the catalog's 2,470), by ROUTE-BRIEF's laws, and drafted in-session into the thirteen whole
 languages; the twelve drafting owe them with the rest. The sea's own vocabulary (its name, bands, kinds and compass
 points) stays `world/ethericSea.js`'s, passed as arguments in English: that module is the account Worker's too, so its
-routing is its own. `01-Overview/Audit-Ether-OW.md` has the record; `test/systems/audit_etherow.test.js` reads the chart in
+routing is its own. `01-Overview/audits/Audit-Ether-OW.md` has the record; `test/systems/audit_etherow.test.js` reads the chart in
 French and in English.
 
 ## The chronicle's quest Abandon, routed from the start (2026-10-13, QUEST-SHELF-MAIN)

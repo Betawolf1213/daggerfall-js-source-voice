@@ -4,7 +4,7 @@
 // (ui/oreMapTip.js): the ground's veins (its climate's table), its dungeons' deep veins, its kingdom's own ore, and
 // whether the witnesses have vouched for it - every word read off the law that stands the veins, so the card cannot
 // promise an ore the ground would not give. The world host hands the map the card and asks the ground's witnessed
-// state once a pixel, through the gathering host. bible/01-Overview/Field-Bugs-2026-10-11d.md.
+// state once a pixel, through the gathering host. bible/01-Overview/bugs/Field-Bugs-2026-10-11d.md.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';

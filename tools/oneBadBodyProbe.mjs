@@ -1,4 +1,4 @@
-// ONE-BAD-BODY LIVE PROOF (FIELD BUGS 2026-10-13b, bible/01-Overview/Field-Bugs-2026-10-13b.md): ONE BODY'S BAD MEASURE
+// ONE-BAD-BODY LIVE PROOF (FIELD BUGS 2026-10-13b, bible/01-Overview/bugs/Field-Bugs-2026-10-13b.md): ONE BODY'S BAD MEASURE
 // BLANKS NO OTHER, ON A REAL GL.
 //
 // test/net/peer/fb1013b_onebadbody.test.js holds the law in node over a recording GL: a picture whose size is not a number is

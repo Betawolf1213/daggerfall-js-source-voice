@@ -5,7 +5,7 @@
 // into the Stores as loose - a station's alone (server-account/src/professions.js depositStores; AUDIT BAG-CRAFT A1,
 // test/net/auditbagcraft.test.js, the stations' wall at every other door). A writ, the market and the Stores page's
 // Put in still move only what the service handed out. bible/06-Systems/Materials-Bag.md section 14;
-// bible/01-Overview/Field-Bugs-2026-10-09c.md.
+// bible/01-Overview/bugs/Field-Bugs-2026-10-09c.md.
 import '../chargenDom.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';

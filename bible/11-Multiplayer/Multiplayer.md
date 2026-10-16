@@ -76,7 +76,7 @@ In the open air, in a building and in a dungeon, and a host who leaves hands the
 marker's foe stands once for the party). And a kill of one counts for every copy of the quest, wherever its member
 stands - KEPT-KILL (2026-10-01, Mac: "If someone kills a quest target regardless of relation then it should ping the
 quest for the players involved regardless"): a foe handed to a member whose copy holds no such quest says its fall in
-that member's party pose (`qk`), and every linked copy counts it once (`01-Overview/Field-Bugs-2026-10-01.md`).
+that member's party pose (`qk`), and every linked copy counts it once (`01-Overview/bugs/Field-Bugs-2026-10-01.md`).
 `06-Systems/Online-Arc.md` (QUEST-PARTY).
 
 **And a world quest's - CURSE-SYNC (2026-09-27).** S0000977, the Curse of Daggerfall, is no player's story: every character runs it and no task counts its foes, so the ghosts and wraiths it stands in Daggerfall's streets at night ride the cell as an encounter's do - everyone sees them, strikes them and is hunted by them. `06-Systems/Online-Arc.md` (CURSE-SYNC).

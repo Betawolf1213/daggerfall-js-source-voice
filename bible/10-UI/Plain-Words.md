@@ -67,7 +67,7 @@ systems. Theres just so many systems that dont explain what they are and its ext
   reader with no Merit yet in any of the region's chapters, folded for one with some - the service sends a Merit row for
   every membership, none earned and a week's wait included (`server-account/src/npcMerit.js` `meritAsks`; AUDIT
   PLAIN-UI T3). The guide stands where the cards do - on every board since CHAPTERS-ON (2026-10-12, `server-account/wrangler.toml`
-  `CHAPTERS_OPEN = "on"`; `01-Overview/Field-Bugs-2026-10-12.md`), which met this arc at its merge.
+  `CHAPTERS_OPEN = "on"`; `01-Overview/bugs/Field-Bugs-2026-10-12.md`), which met this arc at its merge.
 - **PLAIN-UI c, the Family tab.** A fourth page on its rail, HOW IT WORKS (`FAMILY_PAGE_SECTIONS` `guide`,
   `drawGuidePage`, drawn by `src/ui/enhanced/enhancedMenu.js` `pauseFamily`): `familyGuide(model, tollShare)` - the house; death in
   the house's own model (both, before one is founded), its toll the Features tile's (`legacySettings().tollShare`); who
@@ -145,7 +145,7 @@ which said they did before their doors had a card; `src/scenes/exterior.js`, the
   folded side) and `test/systems/livingWorld/lw2_livingTown.test.js`'s talk doors (the regard beside them); their three mutant records
   (`audit657.json`, `board_ui.json`, `lw2.json`) re-aimed by content and dead again.
 - `tools/mutants/plainui.json`: 20 mutants, 20 dead (four re-aimed by content at AUDIT PLAIN-UI).
-- AUDIT PLAIN-UI (`01-Overview/Audit-Plain-UI.md`): `test/ui/audit_plainui.test.js` (11), `tools/mutants/audit_plainui.json`
+- AUDIT PLAIN-UI (`01-Overview/audits/Audit-Plain-UI.md`): `test/ui/audit_plainui.test.js` (11), `tools/mutants/audit_plainui.json`
   31 mutants, 31 dead.
 - `tools/noticeBoardProbe.mjs` photographs the two guides unfolded (`work-guide`, `seat-guide`) beside its other shots,
   desktop and phone - every tab inside the viewport, nothing spilling sideways.

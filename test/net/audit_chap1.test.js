@@ -1,6 +1,6 @@
 // AUDIT CHAP (2026-10-07, Mac: "Lets do a deep audit on everything so far before we continue"): CHAP0's record and
 // CHAP1's Roll read by five lenses - the service (S), the playing tab (C), Daggerfall's law (D), the record (R) and the
-// pins (T) - at 1100fec1. bible/01-Overview/Audit-Chapters.md holds every finding; these pins hold every fix, each
+// pins (T) - at 1100fec1. bible/01-Overview/audits/Audit-Chapters.md holds every finding; these pins hold every fix, each
 // named by its finding's ID, and tools/mutants/audit_chap1.json is their mutants.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';

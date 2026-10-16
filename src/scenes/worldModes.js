@@ -596,7 +596,7 @@ export function createWorldModes(host) {
   // drawYaw - the wagon bench's way). Others see it seated through the wire's pose (`modes.seatPose`). The capsule stays
   // where it stood (a chair is no floor to stand a capsule in - CARDS2b's law), and another player's chair is theirs.
   // THE FOUR HOSTS: this host's interiors. world.js and exterior.js stand no room; dungeonContext.js's castles keep their
-  // chairs as geometry for now (named in bible/01-Overview/Five-Asks-2026-10-14.md).
+  // chairs as geometry for now (named in bible/01-Overview/handoffs/Five-Asks-2026-10-14.md).
   let chairSeat = null;   // { key, feet, yaw, top, eye } while seated
   function sitOnChair(i) {
     const ch = interiorCtx?.chairs?.[i];
@@ -5083,7 +5083,7 @@ export function createWorldModes(host) {
     // the player's smelting is done; where the Stores page is not (offline, the switch shut, the classic skin) it says
     // so (AUDIT 29 B2 - it landed on the Character page without a word)
     if (PROF_STATIONS.includes(piece.station)) { if (forgeOffered()) interiorKeyCtx.togglePause({ at: 'stores' }); else say(stationColdLine(piece.station)); return; }   // PROF4: the workbench too; PROF7: the loom; PROF11: the mason's bench
-    // STATION-DOOR (bible/01-Overview/Field-Bugs-2026-10-11f.md): an alchemy or enchanting station is Daggerfall's maker
+    // STATION-DOOR (bible/01-Overview/bugs/Field-Bugs-2026-10-11f.md): an alchemy or enchanting station is Daggerfall's maker
     // AND its profession's act, which is the Stores page's (the brew, Disenchanting) - online the press offers both; the
     // maker alone where the page is not
     if (Object.hasOwn(STORES_ACT_STATIONS, piece.station) && forgeOffered()) { offerStationActs(piece); return; }
@@ -6536,7 +6536,7 @@ export function createWorldModes(host) {
           gold: totalGoldAmount(playerEntity),
           daedraRep: (fid) => getReputation(store, fid),
           hasSummoned: (fid) => getFlag(store, fid, FACTION_FLAGS.Summoned),
-          // SUMMON-OFFER (bible/01-Overview/Field-Bugs-2026-10-14.md): the prince's quest, asked for where DFU asks
+          // SUMMON-OFFER (bible/01-Overview/bugs/Field-Bugs-2026-10-14.md): the prince's quest, asked for where DFU asks
           // (GetQuest, after the roll) and BEFORE the gold is spent or the prince recorded - null where it cannot
           // be made (a remote site the region does not have: W0C00Y00's palace)
           offerQuest: (questName) => questBridge?.offerDaedricQuest?.(questName, summonerId) ?? null,

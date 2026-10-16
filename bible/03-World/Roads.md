@@ -249,7 +249,7 @@ relief and a toggle back finds the cache stale again.
 
 ## Audit 46 (2026-09-02)
 
-Everything so far: `01-Overview/Audit-46.md`. 21 mutants, 21 dead. A1
+Everything so far: `01-Overview/audits/Audit-46.md`. 21 mutants, 21 dead. A1
 fixed (the map's stride), A10 cleared and pinned (message order keeps
 every chunk built with the network), four low notes recorded.
 
@@ -371,7 +371,7 @@ a handle-holding Proxy-GL.
 
 ## Audit 51 (2026-09-02) - parity by oracle
 
-`01-Overview/Audit-51.md`. The painter matches the mod's PaintPath byte
+`01-Overview/audits/Audit-51.md`. The painter matches the mod's PaintPath byte
 for byte over 651 cases (907 since the MODS AUDIT below); the smoother
 is SmoothRoadsJob; the arrays are his to the byte. ROADS 22's claim
 that the mod paints no ring is corrected there: it paves the rect's
@@ -391,7 +391,7 @@ AUDIT was a false entry; the smoother is his with nothing corrected.
 
 ## Audit 45 (2026-09-01)
 
-The deep pass over Roads 1-3: `01-Overview/Audit-45.md`. F1 the track
+The deep pass over Roads 1-3: `01-Overview/audits/Audit-45.md`. F1 the track
 set (farms out), F2 the build moved into the terrain worker, F3 the
 heuristic made admissible, F6 tracks merge with tracks. Three suspects
 cleared by the line that clears them. Four low findings recorded there.

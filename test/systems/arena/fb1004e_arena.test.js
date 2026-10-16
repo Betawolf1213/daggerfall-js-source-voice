@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-04e - the Arena's feedback (bible/01-Overview/Field-Bugs-2026-10-04e.md, report 2).
+// FIELD BUGS 2026-10-04e - the Arena's feedback (bible/01-Overview/bugs/Field-Bugs-2026-10-04e.md, report 2).
 //
 // Discord (Draugr): "Great feature and first tournament. But some small problems. Arrows are not refunded, which causes
 // problems; The ghosts outside are bothersome (I know they're story related); The multiple npc arena fights will target

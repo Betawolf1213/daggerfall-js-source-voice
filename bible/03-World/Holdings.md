@@ -15,7 +15,7 @@ and Cargo (`06-Systems/Horse-Cart-And-Cargo.md`) and the sea fight (`03-World/Na
 never restates.
 
 Not THE HOLDINGS ARC of the hubs, homes and guilds (`06-Systems/Online-Arc.md`): this arc is named for the pause
-menu's Holdings tab. Audited the same day (`01-Overview/Audit-Holdings.md`, AUDIT HOLDINGS): what follows is the
+menu's Holdings tab. Audited the same day (`01-Overview/audits/Audit-Holdings.md`, AUDIT HOLDINGS): what follows is the
 audited build.
 
 ## 1. The tab (HOLDINGS)
@@ -65,7 +65,7 @@ persistence off, the classic transport's **With you**; the wagon's load against 
   out.
 - **RENAME HORSE** in place, by the name prompt's own law (`renameHorse` - `resolveHorseNameInput`).
 
-**WAGON-STABLED** (FIELD BUGS 2026-10-15d, `01-Overview/Field-Bugs-2026-10-15d.md`; Fay, 2026-10-14: "Wagon appears outside of buildings/dungeons when stabled - I
+**WAGON-STABLED** (FIELD BUGS 2026-10-15d, `01-Overview/bugs/Field-Bugs-2026-10-15d.md`; Fay, 2026-10-14: "Wagon appears outside of buildings/dungeons when stabled - I
 keep sending my wagon away, but every time I enter a building or dungeon it appears outside again"). Stabled WAS the
 mod's WithPlayer and nothing more - the state of a pair beside a player on foot - and the mod's HandlePreTransition
 [IL_98f0] parks a WithPlayer wagon at every door such a player goes through and stands a WithPlayer horse behind them
@@ -223,7 +223,7 @@ waist in JETTY_STEP (1 m): a bank that meets the deck within STEP_M takes a rail
 most, RAMP_MAX (10 m) long; no land within JETTY_MAX, no jetty - the quay stands alone, a stage moored to a bar.
 JETTY_MAX is Iliac Puddle's whole shore fit (SHORE_TERRAIN_FIT_METERS, 180 m) and JETTY_BEACH (20 m) - HARBOUR-BOOK,
 below: the jetty is a pier as long as the shelf asks.
-A harbour's quays never cross (QUAY-CROSSING, `01-Overview/Field-Bugs-2026-10-12.md`): a later berth's jetty ends where it
+A harbour's quays never cross (QUAY-CROSSING, `01-Overview/bugs/Field-Bugs-2026-10-12.md`): a later berth's jetty ends where it
 meets an earlier berth's pier (`planQuay`'s `others`, laid in the berths' order by `scenes/quayPool.js`), and
 `findHarbour` sounds no berth whose ship and quay overlap an earlier one's (`quayBox`, `boxesMeet`).
 On it: a kerb along its face, three iron bollards by her stern, her waist and her bow, a lantern post at each landward
@@ -400,7 +400,7 @@ and refusal, the word's names, the page), `test/systems/naval/crewroles.test.js`
 crew keeping them against a no-roles control, the First Mate's voice, the Crew panel), `test/systems/naval/quays.test.js` (the quay off a
 berth, the shore walked, what stands on it, its model, alongside, docking's law, the pool, the real host's docking and
 gangway, Come Sail Away's seam, the Fleet's word, the world's wiring), `test/systems/naval/auditholdings.test.js` (AUDIT HOLDINGS,
-`01-Overview/Audit-Holdings.md`: a pin a finding), `test/systems/naval/berthhidden.test.js` (BERTH-HIDDEN: a ship out of sight keeps
+`01-Overview/audits/Audit-Holdings.md`: a pin a finding), `test/systems/naval/berthhidden.test.js` (BERTH-HIDDEN: a ship out of sight keeps
 her berth), `test/systems/naval/harbourbook.test.js` (HARBOUR-BOOK: the book, the sea reading the world's, the pier across the shelf,
 the world's wiring); `tools/mutants/holdings.json`, `tools/mutants/fb1015_wagonstabled.json`, `tools/mutants/quays.json`, `tools/mutants/auditholdings.json`,
 `tools/mutants/berthhidden.json`, `tools/mutants/harbourbook.json`.

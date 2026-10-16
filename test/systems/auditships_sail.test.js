@@ -1,4 +1,4 @@
-// AUDIT SHIPS (2026-10-06, Mac: "Audit everything" - PR #634's SAIL-FREE and SERPENT3; bible/01-Overview/Audit-Ships.md):
+// AUDIT SHIPS (2026-10-06, Mac: "Audit everything" - PR #634's SAIL-FREE and SERPENT3; bible/01-Overview/audits/Audit-Ships.md):
 // THE SAILING HALF. Each pin is one finding, fixed at its root: A2 the Overworld journey keeps her off land at her way - it
 // looks as far as her way needs and keeps the reach it saw land at, along her whole beam and the mark's own lane, and
 // never turns her back onto what she turned off; A3 a heave-to's brake sized to the way she heaves to at; A4 the journey

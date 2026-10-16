@@ -1,4 +1,4 @@
-// AUDIT CARDS-6 (2026-10-09, bible/01-Overview/Audit-Cards-6.md) lane E: THE HOLD'EM CLIENT, THE GESTURES, THE SEATED
+// AUDIT CARDS-6 (2026-10-09, bible/01-Overview/audits/Audit-Cards-6.md) lane E: THE HOLD'EM CLIENT, THE GESTURES, THE SEATED
 // SPRITE AND THE RECORDS, driven. The interior host's card block run (test/systems/card/cardssaid.test.js's way: sliced from
 // scenes/worldModes.js, `let cardSeat = null;` to the hurt listener) over the real panel, the real gestures and - for the
 // relay's words - the real relay on test/fakeRoom.mjs: a press on the hand is its own pointer's, and a press the window

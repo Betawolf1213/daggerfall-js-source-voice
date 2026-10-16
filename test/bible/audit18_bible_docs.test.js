@@ -464,7 +464,7 @@ test('AUDIT 39: Rendering.md\'s "0.45 + 0.55*diffuse" base is the renderer\'s re
 // ---------------------------------------------------------------------------
 // AUDIT 39: the index indexes.
 //
-// Home.md declares "Bible is flat under `bible/`. This file is the index",
+// Home.md declared "Bible is flat under `bible/`. This file is the index",
 // and the two newest audit records (Audit-DA, Audit-EV) were reachable only
 // from the arc pages they close - a reader following the instruction reached
 // AUDIT 38 and stopped. The gate is the same both-ways shape as the
@@ -728,7 +728,7 @@ test('WAVE D: two ACTIVE arc pages stop describing work this wave shipped', () =
 // ---------------------------------------------------------------------------
 
 test('AUDIT 58: the campaign record is cited to the file that holds it, and the page is free of its own residue', () => {
-  const STATUS = 'bible/01-Overview/Port-Status-2026-09-02.md';
+  const STATUS = 'bible/01-Overview/handoffs/Port-Status-2026-09-02.md';
   const ROAD = 'bible/01-Overview/Road-To-1-1.md';
 
   // 1. THE CAMPAIGN AUDIT. Whichever file the two pages name, that file
@@ -756,9 +756,9 @@ test('AUDIT 58: the campaign record is cited to the file that holds it, and the 
     }
   }
   // the number 49 means ONE thing, and it is not the campaign
-  assert.match(read('bible/01-Overview/Audit-49.md').split('\n')[0],
+  assert.match(read('bible/01-Overview/audits/Audit-49.md').split('\n')[0],
     /THE LAB'S GRASS AND WEATHER IN THE GAME/);
-  assert.match(indexText(), /`01-Overview\/Audit-49\.md` - CLOSED [0-9-]+: THE LAB'S GRASS AND WEATHER/,
+  assert.match(indexText(), /`01-Overview\/audits\/Audit-49\.md` - CLOSED [0-9-]+: THE LAB'S GRASS AND WEATHER/,
     "the index's row for Audit-49.md is not that record's own subject");
 
   // 2. TESTING.MD IS PINNED, NOT STALE. Both halves: the page may not

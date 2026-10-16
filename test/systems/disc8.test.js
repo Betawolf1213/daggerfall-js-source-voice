@@ -1,5 +1,5 @@
 // DISC8 (2026-09-23, Discord through Mac) - the second round of field
-// reports, 01-Overview/Field-Bugs-2026-09-23.md. Pinned by execution.
+// reports, 01-Overview/bugs/Field-Bugs-2026-09-23.md. Pinned by execution.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';

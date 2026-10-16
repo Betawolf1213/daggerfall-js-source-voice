@@ -1,4 +1,4 @@
-// AUDIT CARDS-6 (2026-10-09, bible/01-Overview/Audit-Cards-6.md) lane B: ILIAC HAND OFFLINE AGAINST THE REGULARS, driven.
+// AUDIT CARDS-6 (2026-10-09, bible/01-Overview/audits/Audit-Cards-6.md) lane B: ILIAC HAND OFFLINE AGAINST THE REGULARS, driven.
 // The stake held from the deal, so a pack emptied mid-game still pays a lost game for keeps and the table never says a
 // take that did not happen (B1); the regular blind to the other side's face-down cards on the last turn too (B2); the
 // cloth's columns clear of the next holding at every pair of the prop's six chairs, and read from the viewer's own (B3);

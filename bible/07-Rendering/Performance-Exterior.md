@@ -3,7 +3,7 @@
 *2026-09-25. Two players via Mac: "fps issues in the exterior but fine
 in the interior", and a second, "me too my friend.. don't know why. I got
 a RX6600" (the first on an RTX 4060 Ti). PERF-SCALE answered the
-per-pixel half the same morning (`01-Overview/Field-Bugs-2026-09-25.md`:
+per-pixel half the same morning (`01-Overview/bugs/Field-Bugs-2026-09-25.md`:
 a render scale, and a counter that names the GPU). Mac, on the rest:
 "Why are you so avoidant when it comes to addressing performance issues?
 I am not getting another player to do the work that youre suppose to
@@ -854,7 +854,7 @@ records and `el5.json`'s bb-bounds-no-flat. 68 run, 68 dead.
 
 *2026-09-25. Two players, relayed by Mac: "fps issues in the exterior but
 fine in the interior" (an RTX 4060 Ti), and "me too my friend.. don't know
-why. I got a RX6600". PERF-SCALE (`01-Overview/Field-Bugs-2026-09-25.md`)
+why. I got a RX6600". PERF-SCALE (`01-Overview/bugs/Field-Bugs-2026-09-25.md`)
 gave them a render scale and a counter that names the GPU; Mac then:
 "Why are you so avoidant when it comes to addressing performance issues? I
 am not getting another player to do the work that youre suppose to do".*

@@ -18,7 +18,7 @@ directory by `test/bible/audit18_bible_docs.test.js`:
 - `ecotoneGlsl.js` - ECOTONE1 BLENDED CLIMATES: the ground's share of its neighbours, one GLSL chunk in both terrain programs (renderer.js TERRAIN_FS and the lane's EL_TERRAIN_FS, called right after the tile's own sample) - the twin of `world/ecotone.js` term for term (the hash, the world lattices, the constants), the neighbours' tile sets on units 3-5 (`ECO_UNITS`), each neighbour's slot (`uEcoSide`, `uEcoCorner`) and the pixel's first world tile (`uEcoOrigin`); a pixel with no border is one uniform test. The section ECOTONE1 below
 - `deepWatersRender.js` - DW-C: Iliac Puddle No More's own passes (jet082's shaders, term for term): the SEAFLOOR (opaque, unlit, both faces - the depth band's sand/mid/deep ramp, the climate's texture and palette, the night's ambient boost, the scene tint while the camera is over the sea, the world fog, and the column's share of the top's alpha carried onto it), the SURFACE's top and underside (the top gone while the fog's presentation is under, the underside only then), and the DISTANCE FOG's sky share - a far-plane triangle, multiply then add, over the pixels no program fogs (the fog itself is `fogGlsl.js`'s `dwWaterFog`, in every world program); `03-World/Deep-Waters.md`
 - `oceanHolesRender.js` - OH-C: There's a Hole in the Bottom of the Ocean's pit, drawn beside the sea's passes and on their frame and column uniforms: three discs of the one 48-segment mesh on Unity's Unlit/Color (the flat colour under the world's fog, then the column's share and the sea's distance fog) - the pit's black and the surface's underside with the opaque floors, the surface's core after the sea's top - and the MIASMA, Standard in Fade mode with emission (the puff's alpha, the tint lit as the billboards take the day's light, fogged, no depth write), camera-facing and no larger than maxParticleSize of the view; every vertex input bound by `layout(location)`; `03-World/Ocean-Holes.md`. OH-E's abyss presentation is no pass of its own: it rides the dungeon frame (`scenes/worldModes.js`, `host.abyssPresentation`) - the water fog's colour and ceiling through the context's UnderwaterFog, the Trilight or flat ambient from the darkened dungeon ambient x DungeonAmbientLightScale, the Light spell's candle at half its range and colour, the player's torch left out of the frame's lights
-- `glRelease.js` - GL-LEAK (FIELD BUGS 2026-10-03, `01-Overview/Field-Bugs-2026-10-03.md`): the page's GL contexts let go as it goes - `loseGlContext` (WEBGL_lose_context's one door) and the seat each context's owner fills (`onPageGone`: the renderer, the held map's ink, the gate's veil, the intro), run by main.js's pagehide (`releaseGlContexts`); a leaf, so the entry's reach is unchanged
+- `glRelease.js` - GL-LEAK (FIELD BUGS 2026-10-03, `01-Overview/bugs/Field-Bugs-2026-10-03.md`): the page's GL contexts let go as it goes - `loseGlContext` (WEBGL_lose_context's one door) and the seat each context's owner fills (`onPageGone`: the renderer, the held map's ink, the gate's veil, the intro), run by main.js's pagehide (`releaseGlContexts`); a leaf, so the entry's reach is unchanged
 - `bannerPass.js` - GUILD1d: a guild's banners beside its hall's door (`11-Multiplayer/Seats-Arc.md` 3.4, 8) - the port's own cloth, 0.9 by 2.7 m, a strip of quads hung from its top edge that swings out along its face on the weather's wind, its picture the heraldry painted once on a canvas (ui/heraldryArt.js drawBanner), the swallowtail's cut discarded, lit by the frame's ambient and sun and fogged as the ground is; one foreign pass on the world host (scenes/hallBanners.js the anchors); SEAT1a: and a seat town's banners on the same pass - the kingdom's plain cloth at its palace door, its gates and over its rumour boards (scenes/seatBanners.js), the halls' and the seats' the nearest sixteen together
 - `duelWall.js` - DUEL1: the duel ring's holographic wall - a cylinder of light added onto the frame (see-through, no depth written, cut by the ground), a grid and rising bands on the cylinder's own coordinates, fogged as the ground is; drawn for the duellists and every onlooker (net/duel/duelSession.js the ring)
 - `rainCurtains.js` - TV4: the weather's CURTAINS stood in the world for the travel view (`06-Systems/Travel-View.md` TV4) - VC7c's own veil (CURTAIN_SHARE of a falling cell's radius, CURTAIN_EXT a metre at a full fall, CURTAIN_STREAKS round its axis) as a cylinder from under the traveller's ground up into the cell's base, its optical depth the CHORD a line of sight takes through the solid cylinder (a back face's chord is none, so no winding is trusted under the mirrored lens), premultiplied over the frame with no depth written and the ground cutting its foot, fogged from the traveller (uFocus), thinning as the eye comes over it; the weather map's cells at the shared minute, never its own. One foreign pass on the world host, under the view alone.
@@ -797,12 +797,12 @@ directory by `test/bible/audit18_bible_docs.test.js`:
   hidden keep (The Citadel of Gaersley) from the air, Real forests on
   and off. The hillside was not photographed: in shot mode a pose
   turns the eye but its x and z stay at the pixel's corner (cause not
-  run down; `01-Overview/Audit-Forest1-Grass.md`) - its proof is the
+  run down; `01-Overview/audits/Audit-Forest1-Grass.md`) - its proof is the
   compiled stage's and the probe's numbers. New shot hooks: `__forestSpot` (the deepest
   wood in the built pixels) and `__grassSpot`'s `steep`.
   **AUDIT GRASS-LIT2 (2026-10-02, Mac: "Audit this"; three read-only
   lenses - the shader, the host, the tests and docs - record in
-  `01-Overview/Audit-Forest1-Grass.md`).** A CELL WALKS ITS OWN
+  `01-Overview/audits/Audit-Forest1-Grass.md`).** A CELL WALKS ITS OWN
   LANTERNS: the frame's list goes up whole once a draw, and before each
   cell `_cellLights` picks the lights whose reach meets the cell's box
   (the shader's own `d >= range` cut, at the box), nearest first, at
@@ -1200,7 +1200,7 @@ directory by `test/bible/audit18_bible_docs.test.js`:
   low-pass, periodic so it has no seam, at the moan's own RMS) on the
   engine's native loop (`audio.registerSamples`, `audio.loop` with a live
   `setPitch`), one source for the whole blow; the gain law above stands.
-  `01-Overview/Field-Bugs-2026-09-29e.md`. THE SWAY: BB_VS takes the wind (`uFlatWind`, one upload a
+  `01-Overview/bugs/Field-Bugs-2026-09-29e.md`. THE SWAY: BB_VS takes the wind (`uFlatWind`, one upload a
   call) and a share per batch (`uSway`, uploaded when it changes), and
   leans the quad by the grass's own wave - the lab's 1.7 / -along*0.35
   gust running across the field, the 0.55/0.75 push - weighted by the
@@ -1917,7 +1917,7 @@ screen was already spared 1.5-2x; the size line shows the ratio so a
 report can say so. No automatic scale: the dial is the player's, and a
 frame-time governor would move the picture under them. Ledger A row
 PERF-SCALE. Pinned: `test/systems/perfscale.test.js` (10); `tools/mutants/perfscale.json`
-(47, all dead). Record: `01-Overview/Field-Bugs-2026-09-25.md`.
+(47, all dead). Record: `01-Overview/bugs/Field-Bugs-2026-09-25.md`.
 
 **The review (2026-09-25).** Seven findings; six fixed, one recorded. A
 return to 100% (or retro off) held the image and the lane's image-sized
@@ -1961,7 +1961,7 @@ its fix:
   window and GPU pairs in Chromium - four ran off the edge before, none
   after).
 
-Also: `01-Overview/Field-Bugs-2026-09-25.md` sent players to an "Enhanced
+Also: `01-Overview/bugs/Field-Bugs-2026-09-25.md` sent players to an "Enhanced
 pane" that FT12 removed - the counter's row is Settings > Interface (or
 `?fps`).
 

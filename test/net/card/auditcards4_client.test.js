@@ -1,4 +1,4 @@
-// AUDIT CARDS-4 (2026-10-08, bible/01-Overview/Audit-Cards-4.md): THE DEVICE'S STAKES BOOK (net/card/cardStakes.js) and the
+// AUDIT CARDS-4 (2026-10-08, bible/01-Overview/audits/Audit-Cards-4.md): THE DEVICE'S STAKES BOOK (net/card/cardStakes.js) and the
 // host's words for it. C1 a stake asked again pays the purse when the service takes it then; C2 a request the service
 // never refused is kept; C3 a receipt acked only once kept; C4 (cards6_client) whose a receipt is; C5 a stake's refusal
 // loses the pending chair; C6 the bound drops a sat stake first and never a receipt, and what nothing can bring home

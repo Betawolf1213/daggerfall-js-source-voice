@@ -1,4 +1,4 @@
-// AUDIT CARDS-3 (2026-10-08, bible/01-Overview/Audit-Cards-3.md, lane D): THE PINS THAT COULD NOT FAIL, MADE TO. Each
+// AUDIT CARDS-3 (2026-10-08, bible/01-Overview/audits/Audit-Cards-3.md, lane D): THE PINS THAT COULD NOT FAIL, MADE TO. Each
 // test names the mutants of tools/mutants/auditcards3.json it kills - the relay's table law (its blinds, its button,
 // its words both ways, its clock), the client's catch-up and clock, the regulars' looks, the hand's grab and betting
 // ground, the riffle, and the host lines no driven test reaches.

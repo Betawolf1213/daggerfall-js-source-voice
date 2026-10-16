@@ -1,4 +1,4 @@
-// AUDIT CARDS-2 (2026-10-08, bible/01-Overview/Audit-Cards-2.md): THE CLOTH - the cards' motion, the table's picture
+// AUDIT CARDS-2 (2026-10-08, bible/01-Overview/audits/Audit-Cards-2.md): THE CLOTH - the cards' motion, the table's picture
 // and the plates. Driven over whole evenings at sixty frames a second (lane C's way): every chip the table holds drawn
 // once on every frame, a showdown's included (M4: the winner's share and the street's last bets were both drawn for a
 // moment); no card jumping, snapping or vanishing between two frames (M6: a fold started from the card's rest, not where

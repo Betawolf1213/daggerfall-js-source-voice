@@ -308,7 +308,7 @@ AND the old `(id, secret)` the hub itself minted is a socket the hub can
 see is the same person, so the hub moves the friend list across. The
 account service never needs to know SOC1 existed.
 
-That slice is built: FRIENDS-SYNC (2026-10-01, `01-Overview/Field-Bugs-2026-10-01.md` part five - "My friend list is
+That slice is built: FRIENDS-SYNC (2026-10-01, `01-Overview/bugs/Field-Bugs-2026-10-01.md` part five - "My friend list is
 different between devices"; Mac: "Build it") keys the hub's account by the token's subject and merges a profile's
 list into it once, on that profile's secret (relay world142). ACC1b mints its own ids and
 knows nothing about the social arc. What survives from ACC0 is the
@@ -1560,7 +1560,7 @@ PC's OLDER save over the Mac's newer one.
   One QuickSave is left, so the quickload and the next save find the restored game.
 - **Back up again asks twice there too** (*"Replace newer backup?"*): it is the one press that loses the newer game.
 
-- **The pre-merge audit hardened it** (`01-Overview/Audit-PreMerge-0927b.md`): a failed restore's *Try again* is the
+- **The pre-merge audit hardened it** (`01-Overview/audits/Audit-PreMerge-0927b.md`): a failed restore's *Try again* is the
   restore again, never a push (the first cut left one press that put the older save over the newer backup); the
   arriving blob's own minute must be the card's, or the restore refuses `stale` and asks the listing again; the slot
   as DRAWN rides the restore, so a copy saved since is kept; a skipped arrival removes the older copy only when this
@@ -2348,7 +2348,7 @@ slower than 2.5 s refused every hello, and the World link's thirty-second
 rejoin met the refusal again for as long as the page stood. The budget is
 8 s now: the service's real answer, under the relay's `HELLO_WAIT_MS`. The
 console says why a hello went unsigned (the minter's own word, or a late
-token). `01-Overview/Field-Bugs-2026-09-29h.md`.
+token). `01-Overview/bugs/Field-Bugs-2026-09-29h.md`.
 
 ---
 
@@ -3747,7 +3747,7 @@ Pinned: `test/net/guild1c.test.js`; `tools/mutants/guild1c.json`.
 
 Mac: *"Remove bought houses decor - the base game decor isnt easy to decorate around when u want more in depth
 house"*. The room's own furniture - Daggerfall's prop models and flats - may be taken out by its owner and put back,
-free (`01-Overview/Field-Bugs-2026-09-26.md` BASE-HIDE). An online home's list of what is out lives here, so every
+free (`01-Overview/bugs/Field-Bugs-2026-09-26.md` BASE-HIDE). An online home's list of what is out lives here, so every
 visitor walks into the room its owner cleared.
 
 - **One row a home.** Migration 0015 adds `home_hidden` (map_id, building_key, keys), the home its primary key,
@@ -4271,7 +4271,7 @@ version is what a later revision would ask again against; asking again is not bu
 also stores an optional email (ACC1c), cloud save backups with a screenshot each (ACC2), and letters between players
 (MAIL1).
 
-**AUDIT PRE-MERGE 0929** (`01-Overview/Audit-PreMerge-0929.md`, lens T), each red first:
+**AUDIT PRE-MERGE 0929** (`01-Overview/audits/Audit-PreMerge-0929.md`, lens T), each red first:
 - **T-CI - the account deploy's own smoke.** It opened a throwaway guest and named one with `{"label":"deploy-smoke"}`
   alone, which TERMS1 refuses: `curl -f` would have failed the job the moment the Worker went live, and every check
   after it - the gate's public half, the registration on Cloudflare (the PBKDF2 outage's own detector), the public key,
@@ -4337,7 +4337,7 @@ lozenge with a sword inside it, the sword's point at the lozenge's lowest corner
 
 ## REALM-DOOR and CUSTOMS-PASS — the mint's realm word, and a developer's pass through customs (2026-09-29, acct22)
 
-From the field (`01-Overview/Field-Bugs-2026-09-29b.md`): Gryphoth made and played a character online on a build from
+From the field (`01-Overview/bugs/Field-Bugs-2026-09-29b.md`): Gryphoth made and played a character online on a build from
 before the realm, after the census froze - the relay still admitted such a build - and Bring online refused it.
 
 - **REALM-DOOR: every identity token says whether its character is the realm's.** `/v1/auth/token` stamps `rc`: 1 when
@@ -4750,7 +4750,7 @@ linking characters at every save; every account), Mac chose "Time zone + name li
 
 ## KNIGHT-HOUSE — a deed the realm gave, held off its character's record (2026-10-04, acct77)
 
-FIELD BUGS 2026-10-04d (`01-Overview/Field-Bugs-2026-10-04d.md`; the law is `06-Systems/Online-Arc.md` KNIGHT-HOUSE).
+FIELD BUGS 2026-10-04d (`01-Overview/bugs/Field-Bugs-2026-10-04d.md`; the law is `06-Systems/Online-Arc.md` KNIGHT-HOUSE).
 A Knightly Order's house was Daggerfall's deed in the save and nothing on this service, so every other player's claim
 on it landed and the knight's own claim paid for it again. Migration `0079_home_deed.sql` adds `homes.deed`;
 `POST /v1/homes/deed` (`server-account/src/homes.js` holdDeed) reads the character's realm record and refuses `no-deed` unless the

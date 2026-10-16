@@ -3,7 +3,7 @@
 // restored the character and left them where they stood, autorun latch and all: routeKey's applier was the only way
 // a host's placement law reached the context. The hosts hand the context their ONE load law when they build it
 // (`placePlayer`), and every load the context runs lands by it unless the door brought its own. Found finishing
-// AUDIT 27h; recorded in bible/01-Overview/Field-Bugs-2026-09-27h.md.
+// AUDIT 27h; recorded in bible/01-Overview/bugs/Field-Bugs-2026-09-27h.md.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';

@@ -320,7 +320,7 @@ magic skills (Destruction/Restoration/Alteration/Thaumaturgy/
 Illusion). CONSUMERS: the cast gate, the HUD readied line, and the
 spellbook all show/spend the LIVE skill-scaled cost - a Destruction
 novice pays more for the same Shock than a master, who bottoms at
-the floor. SPELL-COST-PAST (2026-10-12, `01-Overview/Field-Bugs-2026-10-12c.md`):
+the floor. SPELL-COST-PAST (2026-10-12, `01-Overview/bugs/Field-Bugs-2026-10-12c.md`):
 online, a skill past 100 prices a spell at its cost at 100 times
 100 / skill (`skillScaledCost`) - DFU's `110 - skill` went under
 nothing past 110, and a mastered school with gear cast everything
@@ -8083,7 +8083,7 @@ the code. That law was never about enemies and is not what Mac asked
 for; the civilians still freeze under the talk overlay, and the pin
 says so. `test/scenes/winfoe1_foes_under_windows.test.js` - 1 pin; ROAD-G G2's
 review pin, the interior-foes pin and ROAD-B's indoor-watch pin
-re-aimed. **QUEST-POPUP-PAUSE (2026-09-26, Mac: "Pause them offline"):** offline, a quest's message box on top holds the pools again, as DFU's does; every other window keeps this law, and online nothing is held (`01-Overview/Field-Bugs-2026-09-26c.md`).
+re-aimed. **QUEST-POPUP-PAUSE (2026-09-26, Mac: "Pause them offline"):** offline, a quest's message box on top holds the pools again, as DFU's does; every other window keeps this law, and online nothing is held (`01-Overview/bugs/Field-Bugs-2026-09-26c.md`).
 
 **JAIL-HIT (2026-09-27): the trial is the one window the watch waits
 out.** Discord: *"Guards will still chase you down and kill you, even
@@ -8119,7 +8119,7 @@ pardoned.] Pinned in `test/systems/jailhit.test.js` (3); `arrestshield.test.js`'
 source pin and `audit39_worldlegaltalk.test.js`'s fixture (which never
 answered its surrender box) re-aimed. Mutants
 `tools/mutants/jail_hit.json` (6, all dead).
-`01-Overview/Field-Bugs-2026-09-27.md`.
+`01-Overview/bugs/Field-Bugs-2026-09-27.md`.
 
 ## SURV1-SURV7 - CLIMATES & CALORIES, OVERHAULED WITH PERMISSION (2026-09-18) - SHIPPED
 
@@ -8292,7 +8292,7 @@ dismount, the ship, and a horse swapped for the cart, which now stops at once ra
 The fixed-city host (`?exterior`, `?region`, `?loc`) never handed worldModes its `setTransportMode` seam, so a rider
 walked through a door still mounted there; it hands it the rig's `setMode` as the world host does.
 `test/systems/disc29_gallop.test.js` (4: the real AudioEngine, and every host that makes a mount rig);
-`tools/mutants/disc29.json` (DISC29-F, 3). `01-Overview/Field-Bugs-2026-09-28f.md` DISC29-F.
+`tools/mutants/disc29.json` (DISC29-F, 3). `01-Overview/bugs/Field-Bugs-2026-09-28f.md` DISC29-F.
 
 ### FEATHERWEIGHT - THE MARK THAT READ "ERROR" (2026-09-29)
 
@@ -8348,7 +8348,7 @@ ItemCollection.Transfer -> AddItem (:473-480), which merges a lot into its own s
 also gained FindExistingStack's first term, `checkItem != item`: a record already held is never its own stack-mate.
 A2's and ROAD-Ar R5's pins flipped to the new law (the R5 re-merge now on a potion the producer mints).
 `test/systems/fb0929d_booksplit.test.js` (4); `tools/mutants/fb0929d_booksplit.json`, 11 mutants, 11 dead.
-`01-Overview/Field-Bugs-2026-09-29d.md` BOOK-SPLIT.
+`01-Overview/bugs/Field-Bugs-2026-09-29d.md` BOOK-SPLIT.
 
 ### WERE-FRIGHT - THE BEAST CANNOT SURRENDER; IT ROARS (2026-09-29)
 

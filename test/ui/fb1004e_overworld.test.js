@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-04e - the Overworld map and the travel map (bible/01-Overview/Field-Bugs-2026-10-04e.md, reports 3
+// FIELD BUGS 2026-10-04e - the Overworld map and the travel map (bible/01-Overview/bugs/Field-Bugs-2026-10-04e.md, reports 3
 // and 5). Discord (Chilloutman): "Add a distance filter so players can decide how many km away they hide nodes;
 // Highlight fast travel hubs (cities with carriages); Change name colors of players in your guild or friend list; More
 // filters for players in general (filter by guild, friend, level etc), both in Overworld map and travel map" - and

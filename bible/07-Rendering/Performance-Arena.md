@@ -3,7 +3,7 @@
 *The owner: "Exterior performance is really bad" - "Interior is fine. It's exterior that's the issue" - "If you need
 to, pull the freeware online and do it yourself".*
 
-The audit (AUDIT PERF-ARENA, "Audit everything") is `01-Overview/Audit-Perf-Arena.md`; what it changed is written into the
+The audit (AUDIT PERF-ARENA, "Audit everything") is `01-Overview/audits/Audit-Perf-Arena.md`; what it changed is written into the
 sections below as they now stand.
 
 Every slice below leaves the picture as it was: the same triangles in the same order from the same floats, or the same

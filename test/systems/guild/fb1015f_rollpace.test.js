@@ -3,7 +3,7 @@
 // an online promotion because the Roll paces reputation - but a stranger's quests bank reputation with the guild before
 // the membership begins, and the first review turned it into seven ranks at once. Online a review now promotes no
 // further than the Roll's pace could have paid since it saw the membership begin; the stranger's standing still counts,
-// at that pace, and no rank already held is taken. bible/01-Overview/Field-Bugs-2026-10-15f.md.
+// at that pace, and no rank already held is taken. bible/01-Overview/bugs/Field-Bugs-2026-10-15f.md.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';

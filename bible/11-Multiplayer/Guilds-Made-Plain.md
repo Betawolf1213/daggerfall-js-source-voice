@@ -5,7 +5,7 @@ The port's own. Both guild systems online - a player's guild (GUILD1, GUILD2: `0
 read whole as a player meets them, and made easier to understand without taking a mechanic away that does its own job.
 Offline is DFU 1:1 and untouched (Port-Doctrine; Chapters-Arc law 1).
 
-AUDITED the same day (the owner: "Do a comprehensive audit and ensure absolute perfection"): `01-Overview/Audit-Guild3.md`,
+AUDITED the same day (the owner: "Do a comprehensive audit and ensure absolute perfection"): `01-Overview/audits/Audit-Guild3.md`,
 six cold lanes over a frozen snapshot. What it changed is written into the sections below as they now stand, each
 marked AUDIT GUILD3 and its finding's id.
 
@@ -264,7 +264,7 @@ Sigil's top stage beside the band's; neither is a guild's (AUDIT GUILD3's words 
 `test/net/guild3_plain.test.js` (the words, the ledger's words and direction, the rank list and its sweep, the disband
 list on the service through the real Worker and on the page, the treasury's line, the no-guild primer, the chapter card,
 the five events, the Ascendant band and its High Master, the patron's price) and `tools/mutants/guild3.json`; the audit's
-pins, `test/net/audit_guild3.test.js` and `tools/mutants/audit_guild3.json` (`01-Overview/Audit-Guild3.md`).
+pins, `test/net/audit_guild3.test.js` and `tools/mutants/audit_guild3.json` (`01-Overview/audits/Audit-Guild3.md`).
 
 **The pins GUILD3 moved, each said where it stands** (`PIN MOVED: GUILD3...` - AUDIT GUILD3 R4: eight files had moved
 unmarked, marked since): the chairs' and the council's words

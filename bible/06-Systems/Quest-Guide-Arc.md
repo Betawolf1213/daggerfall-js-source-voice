@@ -34,7 +34,7 @@ What they found, with the gap each surface leaves:
 | Marks | One: a residence an NPC marked, named on the town map (`stampResidenceQuestNames`, the town sheet's ring) | Nothing on the travel map, the held map, the compass or the dungeon map |
 | The way there on the ENHANCED skin | Nothing: only the classic logbook ever calls `gotoPlace`, so the held map's consumer (`heldMap._consumeGotoPlace`) is never reached | DFU's own feature, missing on the default skin |
 | DFU's quest debugger | `GUI/EnableQuestDebugger` is stored and read by nothing (no HUDQuestDebugger port) | DFU's, unported |
-| Accessibility | The Settings Accessibility category: 19 DFU keys, no port rows; `textScale` dead since the old settings window (`01-Overview/Audit-54.md`); `play/index.html` sets `user-scalable=no`; no contrast or screen-reader audit (`01-Overview/Audit-UI.md`, `01-Overview/Audit-UI-2.md`); the notice stack is `aria-live="polite"` | A lane, empty |
+| Accessibility | The Settings Accessibility category: 19 DFU keys, no port rows; `textScale` dead since the old settings window (`01-Overview/audits/Audit-54.md`); `play/index.html` sets `user-scalable=no`; no contrast or screen-reader audit (`01-Overview/audits/Audit-UI.md`, `01-Overview/audits/Audit-UI-2.md`); the notice stack is `aria-live="polite"` | A lane, empty |
 
 ## THE LAWS (every slice of this arc)
 
@@ -304,7 +304,7 @@ unlooked at on a real screen.
 DFU says nothing when the journal changes. A quest's `log` is a bare
 addLogStep, `end quest` files the notebook in silence, and a clock inside
 its last day is a number the logbook shows only when opened. DISC6's
-player named what that costs (`01-Overview/Field-Bugs-2026-09-23.md`):
+player named what that costs (`01-Overview/bugs/Field-Bugs-2026-09-23.md`):
 "Theres no quest notification when you killed all monsters and no quest
 update in the log". GUIDE3 says the journal's news where the enhanced
 skin says news - and nothing the quest itself says moves: its `say`
@@ -677,7 +677,7 @@ note.
 ## THE AUDIT (2026-09-29, Mac: "Lets do an audit on this before we merge")
 
 GUIDE1-GUIDE5 read by eight lenses over a frozen tree, main merged in
-first - `01-Overview/Audit-Guide.md` is the record. Every finding was
+first - `01-Overview/audits/Audit-Guide.md` is the record. Every finding was
 reproduced, fixed, pinned by a test that failed on the unfixed tree
 (`test/ui/quest/audit_guide.test.js`, 38) and mutation-proven
 (`tools/mutants/audit_guide.json`, 73); what it changed in a slice is
@@ -696,7 +696,7 @@ In order. Every one reads the lens and nothing else. SHIPPED: GUIDE2 to GUIDE5 (
 | **GUIDE5 THE MARKS** (SHIPPED) | Every active quest's place on the held map (the followed one filled) and the tracker's quest's place on the enhanced compass - only a target with `find` (DFU's own discovered gate). A place off the map gets the talk arc's hint on the card instead: ask about it, which is what Daggerfall's directions are for (`06-Systems/Talk-Arc.md`, THE COMPASS MARK). The classic travel map stays DFU's. | Departure | `quest-marks` |
 | **GUIDE6 THE ACCESSIBLE JOURNAL** | The pause tab: filter by kind (Main, Guild - the quest list's own group, `findQuestMeta` - Other), sort by updated or deadline, search, each entry's date, the deadline as words AND a date, keyboard and pad navigation with visible focus, a text size that works, and an entry read aloud (speechSynthesis). | Enhanced face | per choice |
 | **GUIDE7 THE ACCESSIBILITY SHELF** | Port rows in the Accessibility category: quest text size, high-contrast panels, reduce motion (the OS's, overridable), quest popups read aloud, notices held until dismissed - and the contrast and screen-reader audit Audit-UI named and nobody ran. | Port's own | per row |
-| **GUIDE8 GUIDANCE TIERS** (SHIPPED 2026-10-05 - `03-World/Delve-Arc.md` GUIDE8; the *Town* tier and *Exact* indoors at AUDIT DELVE, `01-Overview/Audit-Delve.md`) | Journal by default: *Journal* (GUIDE5's law) / *Town* (the building the entry names, ringed on the town map and on the compass while the player is in its town) / *Exact* (the Town tier, and the marker a quest resource stands on, DFU's quest-debugger knowledge, on the dungeon's and the building's map and the compass). Exact is the one tier that can spoil; its own row. | Departure | `quest-guidance` |
+| **GUIDE8 GUIDANCE TIERS** (SHIPPED 2026-10-05 - `03-World/Delve-Arc.md` GUIDE8; the *Town* tier and *Exact* indoors at AUDIT DELVE, `01-Overview/audits/Audit-Delve.md`) | Journal by default: *Journal* (GUIDE5's law) / *Town* (the building the entry names, ringed on the town map and on the compass while the player is in its town) / *Exact* (the Town tier, and the marker a quest resource stands on, DFU's quest-debugger knowledge, on the dungeon's and the building's map and the compass). Exact is the one tier that can spoil; its own row. | Departure | `quest-guidance` |
 | **GUIDE9 DFU'S QUEST DEBUGGER** | HUDQuestDebugger behind the inert `GUI/EnableQuestDebugger`: tasks, timers and globals per quest - for quest authors and bug reports. | 1:1 - DFU's | DFU's own key |
 
 ## DECISIONS (2026-09-29, Mac: "This is your baby. Take your time")

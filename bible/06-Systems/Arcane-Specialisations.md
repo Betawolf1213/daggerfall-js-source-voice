@@ -231,7 +231,7 @@ BUSY-GATE and CRAFT-PROCS at the merge of main).
 - **The numbers are a first cut.** Every one is a constant in `arcanePaths.js` (`PATH_NUMBERS`, and the signature
   records' slots in `PATH_ROWS`), named and pinned on both sides of its line (`test/systems/audit_schools.test.js`), so a
   balance pass moves one number and one pin.
-- **Recorded by the audit, not changed** (`01-Overview/Audit-Schools.md`):
+- **Recorded by the audit, not changed** (`01-Overview/audits/Audit-Schools.md`):
   - The powers' memory (recoveries, Conflux, the guard and ward windows, the Seer's marks) is the session's, as the
     sets' and the loot's: it outlives a character switch by its windows' seconds (L1 L3).
   - "No refereed fight" is `sigil.js` sigilDueling - a duel and arena PvP. In a siege or the Wild Zone the price and
@@ -251,7 +251,7 @@ permanence, held, awake and asleep), the save's round trip, the shelf, the price
 the six schools past 100 through the real `applySpell`, every rider through the real cast engine's landing doors,
 every passive through its own seam, and the judge's finding. The shelf's wiring (`worldModes.js`) and the tally's
 (`hostMagic.js` tallyCastSkills) are pinned by their text, beside the executed price and shelf.
-`test/systems/audit_schools.test.js` (28) - the audit's (`01-Overview/Audit-Schools.md`), by execution through the producers
+`test/systems/audit_schools.test.js` (28) - the audit's (`01-Overview/audits/Audit-Schools.md`), by execution through the producers
 that mint the shapes in play: the real cast engine's release, missiles and doors (`createPlayerMagic` - its cast
 token, its area sweep, its own door to me), real foes (`makeEnemyEntity` over `enemyBasics.js`: the class foes a
 Lightbringer once read as undead), the save, the magic round (`runMagicRoundsFor` - Steadfast at its seam), the

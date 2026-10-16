@@ -1094,7 +1094,7 @@ carries none. `skins.json` carries it now (`"scale": { "16": 81/110 }` on 1524; 
 archive's), `classRecordScale` (`player/classSkins.js`) is read by `spriteOffset`, so the body, its placement and the peers all see it. A sweep
 of every view of every sheet against its group's median found no other (the next lowest, 1524's hurt record 11, is 0.88
 and a standing pose). Pins: `test/net/skin2_class_skins.test.js` ACRO-SHORT (the exact 110 pixels, the sweep, her idle
-wheel through `spriteFor`); mutants `tools/mutants/skin2.json` +5. `01-Overview/Field-Bugs-2026-09-27.md`.
+wheel through `spriteFor`); mutants `tools/mutants/skin2.json` +5. `01-Overview/bugs/Field-Bugs-2026-09-27.md`.
 
 ## SPRITE-FLICKER (2026-10-07): the view that went back
 

@@ -365,7 +365,7 @@ DECIDED (Mac: "tree chopping, picking up ingredients, fishing, etc. Active playe
   encumbered; the tool, its wear, the foe and the load are the client's courtesy, which the service never sees.
   **ANY-HOUR** (2026-10-01, Mac: *"Remove the time limit for professions. Should be available at any time"*): no act
   keeps hours - the daylight 07:00-17:59 the acts borrowed (and the service enforced, `prof-night`) is gone from every
-  profession, client and service (`01-Overview/Field-Bugs-2026-10-01.md` part four); Foraging's own Use keeps the mod's
+  profession, client and service (`01-Overview/bugs/Field-Bugs-2026-10-01.md` part four); Foraging's own Use keeps the mod's
   day.
 - **Wear**: a completed act lowers the tool's condition by 1, as a Foraging use does; a tool lasts 50 harvests.
 - **The attribute bands**: Foraging's attribute pair for the tool widens or narrows the act's skill window - x0.85,
@@ -438,7 +438,7 @@ else Foraging's Fish (1605). A **trophy** is the species' own Deep Waters templa
   harvest was refused `bad-node`, its witnesses `bad-pixels`. The service at acct124; `world/ethericSea.js` in the account
   deploy's path filter (the law imports it). The ground's one home is `ethericSea.js` `onBayOrEther` (ETHER-OW,
   2026-10-13: the Overworld's bands and raiders are born on it too; the law's answers unchanged). A Motherlode is not
-  sited there (AUDIT ETHER-OW C2-1, `01-Overview/Audit-Ether-OW.md`): a strike asks the relay's Watch receipt of the
+  sited there (AUDIT ETHER-OW C2-1, `01-Overview/audits/Audit-Ether-OW.md`): a strike asks the relay's Watch receipt of the
   site's pixel, and the Watch's ground is the Bay's map (`net/watchReceipt.js` `watchPixelOk` - one home, the relay's mint,
   the service's receipt and `motherlodeSites` reading it); the isles' confirmed pixels are never a site. The service at
   acct125, the relay at world199 (its answers as they were).
@@ -460,7 +460,7 @@ BOULDERS (FIELD BUGS 2026-10-01, Mac: "Fix the rest"; the service's acct47): the
 
 MORE-NODES (2026-10-02, Mac: "increase all profession nodes", asked: "Double"; the service's acct48): the trees, the herb patches and the veins twice what they were, every climate (the table above). The day's sixty a profession (and the account's bound) are unchanged, so what doubles is how close the next node stands, not what a day yields (CAP-OFF, 2026-10-07: the sixty and the account's bound are gone - the nodes and the walk between them are the day's whole bound). A signature region's veins stand in the slots after the climate's (a Mountain's thirteenth, Daggerfall's fifth and sixth in the woods).
 
-UNWITNESSED-ORE (FIELD BUGS 2026-10-09e, the Discord's "Mining veins": "I mined about 200-300 veins of iron, but there were not a single vein of silver, gold, platinum or mithril in the mountains ... maybe Mountain area and MountainWoods area are bugged"; the service's acct102): not a bug - the law. A vein on a pixel nobody else had vouched for was held to tier 2, and the Mountain's table holds Iron at 1 and nothing again until Silver at 3: every mountain pixel a lone miner worked stood Iron alone, the Mountain Woods never its Silver, and a lone miner's word confirms nothing (three accounts a week old, the witnessed world above), so the far mountains never came to the rest. A vein on such ground is held where a dungeon's deep vein already is on anyone's word - `UNCONFIRMED_VEIN_TIER`, 3 (`net/nodeLaw.js`, the one cap the wilderness vein, the deep vein and the Court's vein metals read) - so the Mountain stands Silver beside its Iron (73 : 27 by the weights) and the Mountain Woods its Silver beside its three; no other climate's table holds a tier 3, so no other ground moves. Gold, Platinum, Mithril and a region's signature still wait on the witnesses, and a lie about a pixel buys Silver at most - what a dungeon's vein already gives it. The herbs and the trees keep 2. The Mining page says so in the player's words (`ui/professions/profPages.js` MINING_GROUND_LINE). PIN MOVED: PROF2's "an unconfirmed Mountain pixel yields Iron alone" (`test/net/prof2_law.test.js`). Pinned by `test/net/fb1009e_unwitnessedore.test.js`; `tools/mutants/fb1009e_unwitnessedore.json` (4, all dead). ORE-MAP (`01-Overview/Field-Bugs-2026-10-11d.md`): the held map's bare ground says it for a place - its veins, its dungeons', its kingdom's own ore and whether its ground is witnessed (`ui/oreMapTip.js`).
+UNWITNESSED-ORE (FIELD BUGS 2026-10-09e, the Discord's "Mining veins": "I mined about 200-300 veins of iron, but there were not a single vein of silver, gold, platinum or mithril in the mountains ... maybe Mountain area and MountainWoods area are bugged"; the service's acct102): not a bug - the law. A vein on a pixel nobody else had vouched for was held to tier 2, and the Mountain's table holds Iron at 1 and nothing again until Silver at 3: every mountain pixel a lone miner worked stood Iron alone, the Mountain Woods never its Silver, and a lone miner's word confirms nothing (three accounts a week old, the witnessed world above), so the far mountains never came to the rest. A vein on such ground is held where a dungeon's deep vein already is on anyone's word - `UNCONFIRMED_VEIN_TIER`, 3 (`net/nodeLaw.js`, the one cap the wilderness vein, the deep vein and the Court's vein metals read) - so the Mountain stands Silver beside its Iron (73 : 27 by the weights) and the Mountain Woods its Silver beside its three; no other climate's table holds a tier 3, so no other ground moves. Gold, Platinum, Mithril and a region's signature still wait on the witnesses, and a lie about a pixel buys Silver at most - what a dungeon's vein already gives it. The herbs and the trees keep 2. The Mining page says so in the player's words (`ui/professions/profPages.js` MINING_GROUND_LINE). PIN MOVED: PROF2's "an unconfirmed Mountain pixel yields Iron alone" (`test/net/prof2_law.test.js`). Pinned by `test/net/fb1009e_unwitnessedore.test.js`; `tools/mutants/fb1009e_unwitnessedore.json` (4, all dead). ORE-MAP (`01-Overview/bugs/Field-Bugs-2026-10-11d.md`): the held map's bare ground says it for a place - its veins, its dungeons', its kingdom's own ore and whether its ground is witnessed (`ui/oreMapTip.js`).
 
 GATHER-OW (2026-10-02, Mac: "allow them to appear in the overworld without being overwhelming, maybe a glyph marker showing where a group of them are"; asked: "Groups nearby"): on the Overworld each profession's group on a stood pixel - its nodes not yet worked today, as NODE-MARKS would mark them - is one diamond in its compass colour at their middle, its count beside it ("Mining ×6"), the nearest twelve within 3 km (the land streams three pixels out), read again twice a second; the view's filters have a Gathering switch. Not a click of its own: a click there walks to the ground under it. None with the professions shut, nor underground; Hunting's bodies are no group. `scenes/gatherHost.js` overworldGroups, `systems/travel/travelViewFilters.js`, `ui/travel/travelViewHud.js`, `scenes/travelViewMarks.js` travelViewMarks (out of world.js since HOST-SPLIT 1).
 
@@ -547,7 +547,7 @@ laid out for the phone's touch layer as for the desktop.
   be worked the prompt says what it needs ("[E] Mine Silver - needs Mining 25"), E goes on to the door, the chest or
   the foe beside it (AUDIT 29 C1), and when nothing else takes the press the node says its need as a toast, the
   player's own rank beside a rank short - "Mine Silver: needs Mining 25 - your Mining is 0" (VEIN-NEED,
-  `01-Overview/Field-Bugs-2026-09-29h.md`).
+  `01-Overview/bugs/Field-Bugs-2026-09-29h.md`).
 - **The act's meter**: centred on the crosshair, 160 px across at 1080p (30% larger on touch); the ring, the glint,
   the hold meter, the search, the trace and the haul bar each have a still form for Reduced motion.
 - **The haul**: toasts on the right, 4 at most, 3 seconds each - "+3 Oak Logs to your Stores", "+45 Logging XP
@@ -584,7 +584,7 @@ when people gather these items"; a mockup of four screens answered; then "Dude t
 to your Stores"), the XP, a rank's rise, a Motherlode's silver - no picture, no tier, no Stores count, four at most
 (GATHER-SAID had to keep the goods' line from being pushed out by its own XP). A raid's or a gate's silver, a guild
 deed and a contract's pay were said in the chat alone. The enhanced skin already had a better face for a gain: the
-loot's PICKUP-FEED (`ui/pickupFeed.js`, `01-Overview/Field-Bugs-2026-10-01d.md`) - cards under the crosshair, a picture,
+loot's PICKUP-FEED (`ui/pickupFeed.js`, `01-Overview/bugs/Field-Bugs-2026-10-01d.md`) - cards under the crosshair, a picture,
 a tier's colour, a bump that adds.
 
 **DECIDED: the pickup feed carries them, one family, one band** (Mac's mockup: the centre, the loot's own place - a
@@ -850,7 +850,7 @@ etc".
   provenance id (the listing takes the item out of the save; the service holds the record; only the id's **owner**
   may list it, and an id has one live listing at a time - so a duplicated copy can never be sold beside its original,
   section 18). A piece from the pack lists **for gold alone** (MARKET-ANY, FIELD BUGS 2026-10-01 #2 -
-  `01-Overview/Field-Bugs-2026-10-01.md`): a realm character's record is the service's (REALM P1), so the listing takes
+  `01-Overview/bugs/Field-Bugs-2026-10-01.md`): a realm character's record is the service's (REALM P1), so the listing takes
   the record's own piece out of the seller's record in its batch and a delivery puts it into the buyer's - the realm
   trade's move, no new trust; never for Drakes (Marks), since the service never inspects a checkpoint after the first save and a
   save-edited piece would buy them (law 3). Bound, worn, locked, quest and summoned pieces, gold and letters, boat deeds
@@ -981,7 +981,7 @@ save's" - GUILD1), so anything paid in purse gold can be paid by a client that n
     kind check, lived under a pin whose scripted door answered nothing either way; the pin now asks whether the door
     was asked). ACCOUNT_VERSION acct84 (acct83 on the branch, renumbered past CRYSTAL-FIST's at the merge of main), with SERPENT-SET. Forcing every harvest to find (the chance at 1) left all 139
     harvest pins green - none reads a balance a find could move.
-  - **AUDIT 625 (2026-10-05, `01-Overview/Audit-625.md`)** - Mac's call on S1, "A week old, like witnesses": both
+  - **AUDIT 625 (2026-10-05, `01-Overview/audits/Audit-625.md`)** - Mac's call on S1, "A week old, like witnesses": both
     faucets open to an account a WEEK registered (`nodeLaw.js` WITNESS.ageS, the witnesses' own age) - bounded, not
     witnessed, every account added was another day's cap; a younger one's loot find is `marks-young` (403) and its
     harvest finds none though the dice found one, asked after the line as the switch is (S1; the book then holds the
@@ -1819,9 +1819,9 @@ instruction), and what was found (FACT):
   node, and a field's few open sides ran out at two or three). The node's picture is its material's own
   item flat (TEXTURE.254, the metal's own, a new ore Lodestone's; a boulder's loose stone Lodestone's), a small
   cluster at the piece's foot, as PROF1's patches are the herb's own flat (law 6). VEIN-WASH
-  (`01-Overview/Field-Bugs-2026-10-11d.md`): an ore on a picture another ore shares wears its own wash
+  (`01-Overview/bugs/Field-Bugs-2026-10-11d.md`): an ore on a picture another ore shares wears its own wash
   (`scenes/mineHost.js` ORE_WASH - 4.8's "tinted per ore"); Lead keeps DFU's colours. VEIN-HUE
-  (`01-Overview/Field-Bugs-2026-10-12b.md`): every wash is its hue at full spread, Lodestone wears one of its own (the
+  (`01-Overview/bugs/Field-Bugs-2026-10-12b.md`): every wash is its hue at full spread, Lodestone wears one of its own (the
   boulder's loose stone is its lump, unwashed), and a washed vein's wash is its colour (`ORE_DYE`, `uBatchDye`: the
   lit flat's brightness in the wash's hue), not a multiply over the picture's own.
 - **The dungeon veins** (section 6): `1 + hash % 4` a dungeon a UTC day, a dungeon named by DFU's own identity
@@ -1921,7 +1921,7 @@ As built:
   Wayrest pixel's first vein stood at its rock piece is Mithril, mined through the real Worker, smelted at a forge into
   a Mithril Ingot and withdrawn as its registered template.
 - **FIELD BUGS 2026-10-01 part four** ("minig is broken doesnt work"; Mac: "Also mining, the life skill, is broken";
-  `01-Overview/Field-Bugs-2026-10-01.md`): an act's strike is either button (ACT-CLICK - mid-act a left click had been
+  `01-Overview/bugs/Field-Bugs-2026-10-01.md`): an act's strike is either button (ACT-CLICK - mid-act a left click had been
   the act's and nothing else) and a finger's or a pad's Attack or a tap (ACT-TOUCH, `scenes/gatherHost.js` strike - the
   hooks had refused every such press mid-act, so no vein was ever mined on a phone or a pad); a node is found anywhere up
   its upright, base to aim point - a boulder by its stones - and of the nodes in the cone the first SEEN nearest the look
@@ -3139,7 +3139,7 @@ NOT CHANGED, named: the large HUD marks no node, as it marks no mate.
 
 ## 32. AUDIT 2026-10-01 part four - the professions sound (Mac: "let's do a comprehensive audit on this and also ensure the other professions are sound")
 
-Five lanes and a re-read; the record and every finding's reproduction are `01-Overview/Field-Bugs-2026-10-01.md` part
+Five lanes and a re-read; the record and every finding's reproduction are `01-Overview/bugs/Field-Bugs-2026-10-01.md` part
 four (its last section). What the arc's laws now say, by section:
 
 - **5 (the acts)**: **ANY-HOUR** - no act keeps hours (above). An act's strike is never a held stroke's repeat (the Plus
@@ -3173,7 +3173,7 @@ four (its last section). What the arc's laws now say, by section:
 Mac: "They should use the same menu the loot menu uses and not an interaction button" (asked, "One loot-style list");
 then, of the illustrated panels PROF-SCENES built, "move away from the overcomplicated minigame visuals and instead use
 the mechanics on something that doesnt cover the screen" (asked, "Around the crosshair"; the stations, "keep them
-simple"). The record is `01-Overview/Field-Bugs-2026-10-01d.md`; every act's rules, timings and report are 5's and 8's,
+simple"). The record is `01-Overview/bugs/Field-Bugs-2026-10-01d.md`; every act's rules, timings and report are 5's and 8's,
 unmoved.
 
 - **The list (PROF-MENU).** A node under the look is the world plaque's list, the loot pile's own: its name, its
@@ -3190,7 +3190,7 @@ unmoved.
   `systems/gatherSounds.js`, the HUD none).
 - **The stations (PROF-STATIONS).** The heat, the stitch's beat and the plane keep their bars and rules, dressed in the
   plaque's frame and the kit's tones (`ui/professions/profStationStyle.js`); no pictures.
-- **The mouse (HERB-CURSOR, `01-Overview/Field-Bugs-2026-10-02.md` part four, and its audit).** The Basket's glints
+- **The mouse (HERB-CURSOR, `01-Overview/bugs/Field-Bugs-2026-10-02.md` part four, and its audit).** The Basket's glints
   stand about the crosshair, where the look cannot put them under it: its act holds the cursor free while it plays (no
   hold with a pad in hand) and hands the look back at its end - an Escape's on its keyup (`scenes/gatherHost.js`
   `ACT_POINTER`/`actPointer`, `player/pointerLock.js` `holdCursor`); its hint is "click the glint". The mine's points,
@@ -3500,7 +3500,7 @@ Seats-Arc 7.5). What sections 1, 2, 3.3, 4.1, 4.3, 4.5, 9.3 and 9.4 left open fo
   transmutation as every station's fee, paid as the potions are bottled - or a home's **`alchemy` station** (HOME-STATIONS'
   first, its 50,000 licence; a hall member's). `scenes/worldModes.js` alchemyHere. The station's own press opens DFU's
   potion maker, 1:1 - online it asks first, the maker or the brew on the Stores page (STATION-DOOR,
-  `01-Overview/Field-Bugs-2026-10-11f.md`). The Stores page's **The Alchemy Station**.
+  `01-Overview/bugs/Field-Bugs-2026-10-11f.md`). The Stores page's **The Alchemy Station**.
 - **The brew** (9.3: "the service runs DFU's own recipe law on them ... the same twenty recipes, and no new ones, make the
   same potions, into the pack"; `/v1/prof/brew`, `server-account/src/alchemy.js` brewAtStation). The request names the
   potion and the cauldron **as the Stores hold it** (`keys` - an herb its northern or southern, the brewer's: the page
@@ -4224,7 +4224,7 @@ from 200 m (`PROSPECT_M`) - the thread's arithmetic is right. GATHER-OW (section
 profession a pixel, "Mining ×6", for everyone. A dungeon's 1-4 veins a day stood a third of a metre off the wall the
 ray found and half a metre up (`scenes/dungeonContext.js` profVeinWall), and their flats - turned to the eye, spread
 about that point - went into the wall at any look but a near square one. A Deep Delver's x1.5 was its whole effect.
-LODE-MARK (`01-Overview/Field-Bugs-2026-10-12g.md`) puts a Motherlode on everyone's compass from its warning, so the
+LODE-MARK (`01-Overview/bugs/Field-Bugs-2026-10-12g.md`) puts a Motherlode on everyone's compass from its warning, so the
 Sense's thirty minutes were twenty minutes more of one compass mark, and no map marked one. A clean finish on a boulder
 already yields Cut Stone (section 23), so the Stonebreaker gave only the unclean finishes' cut.
 
@@ -4590,7 +4590,7 @@ Chromium's WebGL2 in every variant, and a sheet of a cracked vein rendered there
 the peers' acts are pinned through the real host and a real relay Room between two sessions. Their look in a running
 game, two players at once, is for Mac's eye.
 
-AUDIT GATHER-FEEL (2026-10-13, Mac: "audit everything"): `01-Overview/Audit-Gather-Feel.md` - four cold lanes on a
+AUDIT GATHER-FEEL (2026-10-13, Mac: "audit everything"): `01-Overview/audits/Audit-Gather-Feel.md` - four cold lanes on a
 frozen snapshot of sections 44 and 45; thirty-four findings, one HIGH (every mining act's start blanked its pixel's
 flats for a frame), each fixed, pinned or recorded, and marked `AUDIT GATHER-FEEL <id>` above. A blow lands on one
 clock now, its machine's; an act is let go through one door; a peer drops a blow the gatherer took back; a net's water

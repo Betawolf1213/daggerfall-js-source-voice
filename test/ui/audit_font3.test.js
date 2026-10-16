@@ -1,5 +1,5 @@
 // AUDIT FONT3 (2026-10-02, Mac: "Audit this", of FONT3 - 64369501). Each pin below names its finding
-// (bible/01-Overview/Audit-Font3.md) and fails on the unfixed tree for the finding's reason.
+// (bible/01-Overview/audits/Audit-Font3.md) and fails on the unfixed tree for the finding's reason.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';

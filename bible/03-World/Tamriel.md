@@ -95,7 +95,7 @@ else (`test/ui/tamriel.test.js` sweeps for a second copy), so the probe's correc
 - The world sheet hands `frame` (the continent's box in the Bay's coordinates) and `_limits()` carries it as
   `mapW`/`mapH` with `mapX0`/`mapY0`; `clampView` takes the origin (absent, zero - every other sheet unchanged). The
   home view is the Bay's fit centred on the Bay (`homeView`), so the map's rest is the whole Bay (the player's own map
-  then glides to them - FIND-FIRST, `01-Overview/Field-Bugs-2026-10-10.md`); `-` and the
+  then glides to them - FIND-FIRST, `01-Overview/bugs/Field-Bugs-2026-10-10.md`); `-` and the
   wheel go out from there to the frame's contain. The zone map (WILD2) holds its own limits and the continent is never
   painted under it.
 - The switch is read ONCE at open (`this._tamriel`), the Features row's "takes effect the next time a map is opened".
@@ -183,7 +183,7 @@ towns, roads, dungeons or regions - the later use.
   the world mounts. Off - and on the classic skin - the edge of the world is DFU's: empty.
 - **Readings, honest.** The region past the Bay reads as `getRegionIndexAt`'s clamp (0, the Alik'r Desert) - DFU's own
   clamp, kept; weather, quests and factions key on it and see the Alik'r. Online a player beyond the Bay is seen by
-  whoever stands near, and the Overworld routes over the land there (TV-BEYOND, `01-Overview/Field-Bugs-2026-10-09.md`:
+  whoever stands near, and the Overworld routes over the land there (TV-BEYOND, `01-Overview/bugs/Field-Bugs-2026-10-09.md`:
   the wire and the planner held the Bay's bounds, and the field found both). The sea past the Bay is the kernel's own water tiles (Deep Waters' bathymetry is the Bay's). The Wrothgarians
   and the Dragontails begin in WOODS' bytes and continue in the authored law past the edge; the seam band and the
   blend join them, and the probe's seam report says where the data and the authored shape disagree.

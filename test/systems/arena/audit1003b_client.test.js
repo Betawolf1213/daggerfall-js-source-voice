@@ -2,7 +2,7 @@
 // It needs to be perfection"): THE CLIENT'S SIDE OF A PRIVATE SESSION (ARENA6) - the session on a screen, the hosts'
 // seams, the card - each finding red first on the real modules: the real relay Room over fake sockets
 // (test/fakeRoom.mjs), the real online half (scenes/arena/arenaOnline.js) driving the real bout driver (scenes/arena/arenaBouts.js),
-// as test/systems/arena/arena6_private.test.js's screen() does. The record: bible/01-Overview/Audit-PreMerge-1003.md, its second pass.
+// as test/systems/arena/arena6_private.test.js's screen() does. The record: bible/01-Overview/audits/Audit-PreMerge-1003.md, its second pass.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';

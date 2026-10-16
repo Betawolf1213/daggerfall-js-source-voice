@@ -1,5 +1,5 @@
 // DISC14 (2026-09-23, Discord through Mac). Each pin here fails at d80fe4ef and passes with its fix
-// (bible/01-Overview/Field-Bugs-2026-09-23.md, DISC14).
+// (bible/01-Overview/bugs/Field-Bugs-2026-09-23.md, DISC14).
 //
 // ── DISC14-A: "is there a way to make it so I can see my weapon above my horse?" (Starempire42) ──
 // Riding, the horse's head covered the hand and the root of the blade. DFU draws the mount in OnGUI at GUI.depth 2,

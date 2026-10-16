@@ -439,7 +439,7 @@ what it held - the owner's own things back to the furnishings or the pack, the c
 into Daggerfall's bank account, the furniture marks dropped, every chest's, storage piece's and floor pile's item into the
 new house's `container:0` (a crate set down where the owner first walks in when the house has none) [FIELD BUGS 2026-10-07: never
 over a record the owner already keeps there - what is carried joins its `container:0` (HOME-WIPE); and the record a move
-makes is stamped with its town's layout, the deed's offline (CRATE-LAYOUT) - `01-Overview/Field-Bugs-2026-10-07.md`]. A torch left burning
+makes is stamped with its town's layout, the deed's offline (CRATE-LAYOUT) - `01-Overview/bugs/Field-Bugs-2026-10-07.md`]. A torch left burning
 on the old floor is not carried (recorded) [SUPERSEDED at ARENA-FIX 11: it is put out and carried].
 
 **The four hosts.** world.js WIRED (the driver, the city stage and schedule, the instance's stage through the modes,
@@ -496,7 +496,7 @@ suites updated where the law moved); mutants `tools/mutants/arenafix.json` (43, 
    armourer at his anvil 334:14, the cook 184:16, 334:7, 334:17, 334:18), every one lit; then four chained beasts (a
    Grizzly Bear, a Sabertooth Tiger, a Giant Scorpion, a bear - real bodies, passive, each its own always-held bout tag:
    they target nobody, nobody them; struck, held at the yield floor and the keepers' warning said); the deep cellars
-   quiet [SUPERSEDED at FIELD BUGS 2026-10-04e UNDERCROFT-DEEP, `01-Overview/Field-Bugs-2026-10-04e.md`: a whole RDB
+   quiet [SUPERSEDED at FIELD BUGS 2026-10-04e UNDERCROFT-DEEP, `01-Overview/bugs/Field-Bugs-2026-10-04e.md`: a whole RDB
    block from the stair and from every place the hall took, the keep's own foes stand again; no rest within that reach
    is broken]. The Pit Master's choice opens the PRACTICE BOUT: the bout law over a pit stage (`arenaPitStage` - the pit's
    centre, a 6 m ring, the fighters along its passage), a sparring fighter of the player's tier (`practiceBout`), no purse,
@@ -773,7 +773,7 @@ Daggerfall Bank's letter and the notebook line, and marks the move read only onc
 wrote an empty record over the new home's own, every chest, storage piece, owned thing and floor, which that boot's
 checkpoint sent to the realm; a read lost to the account service's overloads of 2026-10-06 emptied the home at each boot
 after. A record its owner keeps is never written over now, and the new home's record is stamped with the homes' towns'
-layout (CRATE-LAYOUT) - `01-Overview/Field-Bugs-2026-10-07.md`].
+layout (CRATE-LAYOUT) - `01-Overview/bugs/Field-Bugs-2026-10-07.md`].
 `claimHome` and `buyHall` refuse a key in the cell (`home-arena`) - an old build still stands GEMSAL03. The relay needs
 nothing: its interior rooms carry no loot and expire.
 
@@ -878,7 +878,7 @@ own list).
 ## AUDIT PRE-MERGE 1003 (2026-10-03) - what the audit changed in the arena's law
 
 Mac: *"I want to do a comprehensive audit over it and make sure its perfect"*. Every finding and its fix is
-`01-Overview/Audit-PreMerge-1003.md`; what it changed in the arena's own rules, here:
+`01-Overview/audits/Audit-PreMerge-1003.md`; what it changed in the arena's own rules, here:
 
 - **The bout's clock is the world's** (B1): a pause, a window or a hidden tab runs no bout's time, stall or yield.
 - **The sand is no place to fix a bout** (B2): a blow from the stands on an exhibition's fighter is made good; the
@@ -903,7 +903,7 @@ later today and I want them to be able to open a session where people can join, 
 of the session to choose who is fighting and who is in the crowd."* Decided with the owner: **every fighter of a
 session's bout equally whole** (not by level); **registered accounts fight, guests watch**; the host is a registered
 account. Online only (a session is the relay's); nothing of the offline game changes. Read again before it merged by
-AUDIT PRE-MERGE 1003b (`01-Overview/Audit-PreMerge-1003.md`, its second pass) - what that pass changed is written in
+AUDIT PRE-MERGE 1003b (`01-Overview/audits/Audit-PreMerge-1003.md`, its second pass) - what that pass changed is written in
 below, each at its place, and listed at the end.
 
 **The room.** `arena:p<code>` (`net/arena/arenaLaw.js` `arenaPrivateRoom`, `ARENA_PRIVATE_ROOM_RE`): six characters of
@@ -1030,7 +1030,7 @@ shotTally.js` - never an arrow dropped there); the Curse of Daggerfall's ghosts 
 (CURSE-OFF-SAND - its waves are kept off the grounds and the arena's two levels at CreateFoe's spawn event, so a rest
 there is never broken, `systems/arena/arenaGround.js`); a two-against-one's pair seemed to fight each other (ARENA-TEAMS - an area spell's blast passes
 a bout teammate by, and a Grand Melee's HUD says "each alone"); the undercroft held no enemies (UNDERCROFT-DEEP, above).
-The record: `01-Overview/Field-Bugs-2026-10-04e.md`.
+The record: `01-Overview/bugs/Field-Bugs-2026-10-04e.md`.
 
 ## AUDIT ARENA-LADDER (2026-10-05) - fighters telegraph at each other; the climb costs; the bout's holes closed
 
@@ -1065,4 +1065,4 @@ correctness, the online trust), every finding reproduced and fixed here:
   on the relay's clock, a tie a draw, a champion stood elite, an old client's ladder `in` answered `no bout`.
 
 Deploy order: the account service (acct82, migration 0082) BEFORE the relay (world169), BEFORE the site. The record:
-`01-Overview/Audit-Arena-Ladder.md`.
+`01-Overview/audits/Audit-Arena-Ladder.md`.

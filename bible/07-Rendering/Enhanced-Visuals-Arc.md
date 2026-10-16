@@ -433,7 +433,7 @@ and the wiring; the horizon itself is owed to a data-bearing session
 AUDIT EV (2026-08-31): the whole arc audited by three adversarial
 lanes - simulation/async, rendering, test/pin/doc integrity - and
 every confirmed finding fixed in the same change. The full record is
-`01-Overview/Audit-EV.md`; the headline pair: MOONLIGHT LEAKED
+`01-Overview/audits/Audit-EV.md`; the headline pair: MOONLIGHT LEAKED
 INDOORS (one shared renderer, the modal frames never cleared it - the
 AUDIT 26 F001 windowEmission class exactly; both modal arms and the
 automap now go dark explicitly, the stale R12 indirect with them) and

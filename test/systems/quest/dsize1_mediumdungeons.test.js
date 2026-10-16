@@ -13,7 +13,7 @@
 // dungeon has the world's own size now - small, medium or large by its map id - where it was the whole dungeon. And
 // DETECT-FINDS: a
 // searched object's find is in the one loot walk (scenes/shared.js). bible/03-World/Delve-Arc.md, DSIZE1 and
-// DETECT-FINDS; bible/01-Overview/Audit-Delve.md.
+// DETECT-FINDS; bible/01-Overview/audits/Audit-Delve.md.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';

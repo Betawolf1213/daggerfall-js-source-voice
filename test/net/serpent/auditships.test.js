@@ -1,4 +1,4 @@
-// AUDIT SHIPS (2026-10-06, Mac: "Audit everything" - PR #634's SAIL-FREE and SERPENT3; bible/01-Overview/Audit-Ships.md):
+// AUDIT SHIPS (2026-10-06, Mac: "Audit everything" - PR #634's SAIL-FREE and SERPENT3; bible/01-Overview/audits/Audit-Ships.md):
 // THE SERPENT'S HALF. Each pin is one finding, fixed at its root: A1 it leads its marks and never closes slower than the
 // ship it closes on, so at SAIL-FREE's ways one ship alone still can't win and two can (Mac's call); C1 the ships fighting
 // it are the shares in its health, and a ship is the hull a fighter says she is on now; C2 a game told to reload is not

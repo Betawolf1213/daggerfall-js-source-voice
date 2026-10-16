@@ -8,7 +8,7 @@ and view to observe other ships, their allegiance, cargo, etc. 2. A brand new op
 to the etheric sea."* The Eltheric Ocean is its own page (`03-World/Eltheric-Ocean.md`); this one is the Iliac Bay's.
 
 The pre-merge audit (AUDIT CAPTAIN'S SEA, the owner: "Lets do a comprehensive audit, enaure this is insanely detailed
-and perfection. No exceptions") is `01-Overview/Audit-Captains-Sea.md`: its fixes stand in the sections below, each
+and perfection. No exceptions") is `01-Overview/audits/Audit-Captains-Sea.md`: its fixes stand in the sections below, each
 under its finding's id.
 
 **THE PORT'S OWN.** Daggerfall has no sea fight (`03-World/Naval-Combat.md`), and nothing here is transcribed: no DFU
@@ -313,10 +313,10 @@ regard rises by its `standing`, its kind and its purse in the log; failed (a ter
 seconds - or a cargo lost) STANDING_FAILED; given up from the tab, STANDING_ABANDONED. The HUD says each one come
 further ("Clear Wayrest's waters: 2 of 3 pirate ships ended"), the screen's middle each done or failed.
 
-THE PORTS (PORT-TOWNS, `01-Overview/Field-Bugs-2026-10-13c.md`; the owner: "Even the port quests sending you to non port
+THE PORTS (PORT-TOWNS, `01-Overview/bugs/Field-Bugs-2026-10-13c.md`; the owner: "Even the port quests sending you to non port
 places"). The board's ports - the port a captain lies at (`world.js navalPortHere`, the nearest within a map pixel), a
 cargo's, a treasure chart's - are the TOWNS among Travel Options' harbours (`world.js navalPortList`, `portPlaces.js
-isPortTownType`) that the open sea bears on (`portSites.js seaBears` - INLAND-PORTS, `01-Overview/Field-Bugs-2026-10-14-inland-ports.md`):
+isPortTownType`) that the open sea bears on (`portSites.js seaBears` - INLAND-PORTS, `01-Overview/bugs/Field-Bugs-2026-10-14-inland-ports.md`):
 the towns that stand the port's places, 106 on the real map. The table is every place a ship may put
 in at - MAPS.BSA's 343 flagged locations and Hazelnut's extras - and 223 of its 378 are tombs, farms, inns, temples,
 manors, graveyards and ruins, which the board read as ports with harbourmasters until then. A cargo goes only to a port
@@ -337,7 +337,7 @@ salvage's casks float there (SITE_CASK_LIFE each, its own lot - `SITE_LOT`), aga
 water (D2). A boat of mine lying to a port's quay at her helm is the berth a delivery asks after. A site lies past the
 map's edge only where the land beyond the Bay stands (B10: with it off nothing streams there), and never on a lake
 inland: the office's sea is the open sea (`world.js:"seaAt: openSea,"` - the map's water that reaches its border, the
-continent's past it; INLAND-PORTS, `01-Overview/Field-Bugs-2026-10-14-inland-ports.md`, Mac: "Fix harbour seaAt too").
+continent's past it; INLAND-PORTS, `01-Overview/bugs/Field-Bugs-2026-10-14-inland-ports.md`, Mac: "Fix harbour seaAt too").
 
 THE LETTERS: a crown's LETTER OF MARQUE (CAPT-MARQUE above) for MARQUE_PRICE, MARQUE_DAYS of the captain's clock, to its
 Privateers, one crown's at a time (`marqueOffer`); THE ADMIRALTY'S CARRACK - the one Carrack the Bay sells, Come Sail
@@ -397,7 +397,7 @@ out of a wreck the same). The Captain page lists the charts marked.
 `test/systems/naval/captwaters.test.js` (`tools/mutants/captwaters.json`), `test/systems/naval/spyglass.test.js` (`tools/mutants/spyglass.json`),
 `test/systems/naval/captboard.test.js` (`tools/mutants/captboard.json`), `test/systems/naval/capttrade.test.js` (`tools/mutants/capttrade.json`) -
 every mutant dead; AUDIT CAPTAIN'S SEA's own in `test/systems/naval/auditcaptsea.test.js` (68 tests;
-`tools/mutants/auditcaptsea.json`, 331 records; `01-Overview/Audit-Captains-Sea.md`, which names the 47 suites its fixes
+`tools/mutants/auditcaptsea.json`, 331 records; `01-Overview/audits/Audit-Captains-Sea.md`, which names the 47 suites its fixes
 moved and those main's merges moved). The suites whose pins moved with the slices say so where they moved (PIN MOVED):
 the crew card's line, the Holdings tabs, the tags and the hails now knowing a ship first (`test/navalSea.mjs knowAll`),
 the action tables, the lens, the sky's and the far ring's lens narrowed with the world's (`test/player/climb4.test.js`,

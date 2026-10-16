@@ -1,4 +1,4 @@
-// DISC20 (2026-09-24, Mac, five in one message). bible/01-Overview/Field-Bugs-2026-09-23.md, DISC20.
+// DISC20 (2026-09-24, Mac, five in one message). bible/01-Overview/bugs/Field-Bugs-2026-09-23.md, DISC20.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 

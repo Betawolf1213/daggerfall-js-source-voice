@@ -1,5 +1,5 @@
 // AUDIT LEGACY II (2026-10-05, Mac: "let's do a deep comprehensive audit on everything so far"): the six-lens audit of
-// Project Legacy - LEGACY1-LEGACY4, AUDIT LEGACY's fixes and LEGACY-HOME - bible/01-Overview/Audit-Legacy-II.md, every
+// Project Legacy - LEGACY1-LEGACY4, AUDIT LEGACY's fixes and LEGACY-HOME - bible/01-Overview/audits/Audit-Legacy-II.md, every
 // finding pinned here by its id. The law end to end through the real host (scenes/legacyHost.js), the real save
 // records (systems/modSaveData.js), the real store (systems/legacy/store.js), the real Living World town
 // (systems/livingWorld/livingTown.js on the synthetic town) and the real transfer law (systems/item/itemTransfer.js); the

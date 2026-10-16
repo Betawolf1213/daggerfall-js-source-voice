@@ -288,7 +288,7 @@ test('AUDIT TACT D8: the mark lies on the ground it marks - fitted to a ramp und
 });
 
 test('AUDIT TACT D9: the mark is fogged as the ground is - the renderer hands the pass its fog', () => {
-  // PIN MOVED (SNOW-TELL, bible/01-Overview/Field-Bugs-2026-10-11d.md): the frame's snow height handed beside the fog
+  // PIN MOVED (SNOW-TELL, bible/01-Overview/bugs/Field-Bugs-2026-10-11d.md): the frame's snow height handed beside the fog
   assert.match(rd('src/render/renderer.js'), /this\._foeTelegraph\.draw\(list, this\._proj, this\._view, \{ mode: this\._fogMode, density: this\._fogDensity, range: this\._fogRange, camPos: this\._camPos, focus: this\._focus \}, \{ snowRise: this\._snowRise \}\)/);
   // PIN MOVED (TELL2, bible/12-Enhanced-AI/Feud-Arc.md 4.4): the fog's factor goes into the boss's line as `fogK`, floored
   // for a mark near the player
@@ -406,7 +406,7 @@ test('AUDIT TACT C4: the street\'s doorways are mapped once a door generation, a
 
 test('AUDIT TACT C5: my companion and a pickpocket\'s mark are asked of HIM; the pass is for a DOOR, never the shelf behind', () => {
   const peaceful = { ai: { isHostile: false } };
-  // FB1012d ALLY-YIELDS (bible/01-Overview/Field-Bugs-2026-10-12d.md): the door pass is still never his - his own yield is
+  // FB1012d ALLY-YIELDS (bible/01-Overview/bugs/Field-Bugs-2026-10-12d.md): the door pass is still never his - his own yield is
   // `allyYields`, to what the LADDER would take behind him (test/scenes/fb1012d_allyyields.test.js), asked before this one
   assert.equal(yieldsToDoor({ ...peaceful, companion: 'me' }, 2), false, 'my companion\'s pack: the peaceful\'s door pass is not his');
   assert.equal(yieldsToDoor(peaceful, 2, 'steal'), false, 'a pickpocket');

@@ -1,6 +1,6 @@
 // DISC12 (2026-09-23, Mac: "Those open tasks? ... tackle it"): the two online gaps DISC10 left - a peer fighting
 // with the LEFT hand was drawn and heard with the right hand's weapon (or a fist), and a peer in beast form was
-// drawn as the person. The pose carries both now (`lh`, `wb`, world101). 01-Overview/Field-Bugs-2026-09-23.md.
+// drawn as the person. The pose carries both now (`lh`, `wb`, world101). 01-Overview/bugs/Field-Bugs-2026-09-23.md.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';

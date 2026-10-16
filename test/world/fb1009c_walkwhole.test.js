@@ -8,7 +8,7 @@
 // from the entrance. PIN MOVED (WAY-ROUND, FIELD BUGS 2026-10-11e): a room with no other spot stood it where it stood
 // (no tavern lost a table) - and the Gold Dungeon was such a room, so it stood in its corridor all the same; a room
 // with no spot left whole stands none now (test/world/fb1011e_wayround.test.js).
-// `01-Overview/Field-Bugs-2026-10-09c.md`, `01-Overview/Field-Bugs-2026-10-11e.md`; `11-Multiplayer/Tavern-Cards.md`
+// `01-Overview/bugs/Field-Bugs-2026-10-09c.md`, `01-Overview/bugs/Field-Bugs-2026-10-11e.md`; `11-Multiplayer/Tavern-Cards.md`
 // section 28.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';

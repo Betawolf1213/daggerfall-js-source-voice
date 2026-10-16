@@ -262,7 +262,7 @@ is not the beast's is the mod's as written.
   is 1 since WEAR-VANILLA (above), which turned the mod's wear off instead;
   BALANCE1's 0.6 had softened that wear (~2.8x DFU's on a weapon per landed
   hit and ~15x on armour, measured first) without undoing it. Ledger A,
-  `01-Overview/Field-Bugs-2026-09-27-phone-backup-drains.md`.
+  `01-Overview/bugs/Field-Bugs-2026-09-27-phone-backup-drains.md`.
 - A left-hand item that is not a shield still goes through the shield
   roll (the C# never asks IsShield there); `GetShieldProtectedBodyParts`
   answers nothing for it, so it rolls the weak spot.
@@ -553,7 +553,7 @@ The law now (`systems/enchantments.js` `repairsObjectsTarget`, `POOL_WEAPON_MEND
   when it was the most worn and which MEND-STARVE (2026-10-14) had put behind the pack; then the pack. The kit keeps
   the two. While such a piece is below its condition the pack waits, and Cast When Held wears on every tick's round
   out of rest and an all-the-time Item Deteriorates on every one, so while one is worn nothing carried is mended
-  (`01-Overview/Field-Bugs-2026-10-15d.md`).
+  (`01-Overview/bugs/Field-Bugs-2026-10-15d.md`).
 - **Never what a smith refuses** as not repairable (the template's `isNotRepairable`, `repairService.js`
   repairRefusal's). An enchanted piece mends only under AllowMagicRepairs, which is DFU's gate (on by default and online,
   DISC22-A).

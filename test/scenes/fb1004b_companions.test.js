@@ -1,6 +1,6 @@
 // FIELD BUGS 2026-10-04b (Mac, from play): "Companion pathing is really rough. They're also walking towards to the wall,
 // next to the exit that leads to outside" (COMPANION-TRAIL); "Reduce companion noises, they are way too persistant"
-// (QUIET-COMPANIONS); "Reduce Lysandus VENGENANCE audio" (QUIET-VENGEANCE). `01-Overview/Field-Bugs-2026-10-04.md`.
+// (QUIET-COMPANIONS); "Reduce Lysandus VENGENANCE audio" (QUIET-VENGEANCE). `01-Overview/bugs/Field-Bugs-2026-10-04.md`.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';

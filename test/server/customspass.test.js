@@ -1,4 +1,4 @@
-// CUSTOMS-PASS (2026-09-29, the field - bible/01-Overview/Field-Bugs-2026-09-29b.md). Gryphoth's character was made and
+// CUSTOMS-PASS (2026-09-29, the field - bible/01-Overview/bugs/Field-Bugs-2026-09-29b.md). Gryphoth's character was made and
 // played online on a build from before the realm, after the census froze, so the realm never saw it before it began and
 // customs refuses it - by the census law (L1-F5), and rightly. REALM-DOOR stops that happening again; for the characters
 // it already happened to, Mac chose, asked: "Staff customs pass" - a developer grants ONE account a single-use pass, and

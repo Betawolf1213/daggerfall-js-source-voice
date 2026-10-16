@@ -1,7 +1,7 @@
 // AUDIT WATER-NEXT (2026-10-07, Mac: "I want you to do a comprehensive audit ensuring this is perfection and performance is
 // unaffected"): WATER-NEXT 2-4 and PUDDLE-DRY (#674) audited - three lenses (the GL and the shader, the hosts and the
 // world's lifecycle, the record and the pins) and a performance lens measured against main. One test a finding group;
-// each names the ids it holds (bible/01-Overview/Audit-WATER-NEXT.md). Mutants: tools/mutants/audit_waternext.json.
+// each names the ids it holds (bible/01-Overview/audits/Audit-WATER-NEXT.md). Mutants: tools/mutants/audit_waternext.json.
 import '../../modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';

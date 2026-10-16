@@ -1,4 +1,4 @@
-// AUDIT KG II (2026-10-15, bible/01-Overview/Audit-Kings-Gambit-II.md, lane D): THE KING'S GAMBIT'S PANEL AND ITS
+// AUDIT KG II (2026-10-15, bible/01-Overview/audits/Audit-Kings-Gambit-II.md, lane D): THE KING'S GAMBIT'S PANEL AND ITS
 // WORDS, FOUND AND FIXED - the phone's strip (the watcher's presses and More, the clock first, the rest in More's sheet),
 // a watcher's game read as nobody's own, a watched gold game's pot, the guide and the words at the board online, the
 // stake picks first, a press that cannot act saying why, a rank and a seat read and never pressed, the season board

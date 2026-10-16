@@ -1,5 +1,5 @@
 // PROTECT-FIGHT (2026-09-30, FIELD BUGS 2026-09-30 - a player's list through Mac: "Protect bystanders needs to work again
-// - lost rep for no reason"; bible/01-Overview/Field-Bugs-2026-09-30.md). The menu's Protect Bystanders is DFU's
+// - lost rep for no reason"; bible/01-Overview/bugs/Field-Bugs-2026-09-30.md). The menu's Protect Bystanders is DFU's
 // MeleeAttackFriendlyProtection ("Protect Friendlies and Neutrals"), which spares a pacified foe and an ally and, outside
 // a raid (RAID-GUARDS-NPC), never the street's walkers: a swing at a foe just past the reach landed on the townsperson on
 // the look ray - Murder, -20 of the region's law at the arrest - or on a walking guard, Assault and the watch. Under the

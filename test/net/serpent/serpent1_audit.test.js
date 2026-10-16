@@ -1,5 +1,5 @@
 // AUDIT SERPENT (2026-10-04, Mac: "I definitely want to do a conprehensive audit on this and ensure its absolute
-// perfection"): the pins of the four lenses' findings (bible/01-Overview/Audit-Sea-Serpent.md) - each one a law that
+// perfection"): the pins of the four lenses' findings (bible/01-Overview/audits/Audit-Sea-Serpent.md) - each one a law that
 // failed before its fix. THE BRAIN: one timeline on the relay and every client (S2), the coiled ship's word that comes
 // before its coil (S3), the coil let go at the kill and the sounding and the throes said (S4, M2), the yaw a word carries
 // (S6), a share kept only by being at the fight (S8, E2, T2), the coil a ship's alone (S10), the ships counted (B7), the

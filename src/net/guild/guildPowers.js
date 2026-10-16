@@ -11,7 +11,7 @@
 // off its own table AT THE CALL - a table moved moves the page - and test/net/guild3_plain.test.js sweeps every key of the
 // four tables against it, so a power added with no words fails the suite.
 //
-// AUDIT GUILD3 (bible/01-Overview/Audit-Guild3.md): W3/C6 - what a rank may NOT do is a rank's too (an Officer fills no
+// AUDIT GUILD3 (bible/01-Overview/audits/Audit-Guild3.md): W3/C6 - what a rank may NOT do is a rank's too (an Officer fills no
 // writ of its own guild's and is paid by none of its contracts: writLaw.js writDeliverMay, contractPaidMay), so "Everything
 // a Member may" was false; W4/C6 - the acts the service gives the guildmaster by rank alone (a Sellsword hired, any writ
 // withdrawn) and the town board's call for members were unworded; C4 - the writ budget binds the Officers alone; C5 - the

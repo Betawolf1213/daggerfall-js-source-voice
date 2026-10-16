@@ -138,7 +138,7 @@ approver is in `APPROVER_HANDLES` (Lattymoy); a builder is an approver, a develo
 
 Pinned by `test/poi/poi1_store.test.js` (10) on the real Worker over the real migrations; `tools/mutants/poi1.json` 16, all
 dead. AUDIT POI: `test/poi/auditpoi_store.test.js` (21) on the same Worker, `tools/mutants/auditpoi_store.json` 52, all dead
-(`01-Overview/Audit-POI.md`). The account deploy's path filter carries the three shared law files. acct135 (acct133, then acct134, on
+(`01-Overview/audits/Audit-POI.md`). The account deploy's path filter carries the three shared law files. acct135 (acct133, then acct134, on
 the branch, renumbered past LAMP-KEEPER II's and KG6's at the merges).
 
 ## POI-2 - the game stands them (2026-10-14)

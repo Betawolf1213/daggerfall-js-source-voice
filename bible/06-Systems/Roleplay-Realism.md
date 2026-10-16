@@ -47,7 +47,7 @@ after Items'), and the seams they hang on.
 | classicStrengthDamageBonus: `DamageModifier_classicDisplay` (:314-317) | FormulaHelper.DamageModifier | `formulas.js damageModifier` (PCO1's slot, chained) |
 | loanAmountPerLevel: `CalculateMaxBankLoan` (:98, :309-312) | FormulaHelper.cs:2008-2010 | `banking.registerMaxBankLoan` |
 | shipPorts: `IsShipAvailiable` (:610-631) | `TransportManager.ShipAvailiable`, the delegate | `ship.setShipAvailable`; `mountRig` asks with `shipLocation()` = `{ locationLoaded, portTown, onShip }` from the host (DISC13-D: it said `loaded`, which the delegate never read) |
-| encumbranceEffects: `EncumbranceEffects_OnNewMagicRound` (:580-598) | EntityEffectBroker.OnNewMagicRound | `worldTick.registerMagicRoundHook` (the fatigue) + `entityMods.registerEntityFold` (MergeDirectStatMods' channel - the speed) - BALANCE1 (2026-09-27): the round's fatigue on the port's exertion scale (x0.75), its fraction carried on the entity so a light overload's 1 a minute still costs (the pre-merge audit 0927b); `01-Overview/Field-Bugs-2026-09-27-phone-backup-drains.md` |
+| encumbranceEffects: `EncumbranceEffects_OnNewMagicRound` (:580-598) | EntityEffectBroker.OnNewMagicRound | `worldTick.registerMagicRoundHook` (the fatigue) + `entityMods.registerEntityFold` (MergeDirectStatMods' channel - the speed) - BALANCE1 (2026-09-27): the round's fatigue on the port's exertion scale (x0.75), its fraction carried on the entity so a light overload's 1 a minute still costs (the pre-merge audit 0927b); `01-Overview/bugs/Field-Bugs-2026-09-27-phone-backup-drains.md` |
 | bandaging: `UseBandage` (:600-608), `if (rrItemsMod == null && bandaging)` | ItemHelper.RegisterItemUseHandler | never registered - the port carries Items always; `rrBandageHeal` ported for the record |
 | autoExtinguishLight (:633-640) | PlayerEnterExit.OnPreTransition ToDungeonExterior | `worldModes` at the dungeon exit, the light's own "You douse the %it." box |
 | purificationPotion: `CureDiseasePotionRR` | `RegisterEffectTemplate(..., true)` - the recipes replaced | `potions.overridePotionRecipes` |
@@ -175,7 +175,7 @@ its arms to `rrInstall.js`.
   (2026-09-26): lazy means ASKED FOR - the interior person's stand never
   asked, so the classic 197 records drew in their place (record 6 is a
   street lamp); it asks before the upload now
-  (`01-Overview/Field-Bugs-2026-09-26.md`).
+  (`01-Overview/bugs/Field-Bugs-2026-09-26.md`).
 - **EnhancedRiding** (EnhancedRiding.cs). `CanRunUnlessRidingCart`
   (:95-99) on `transport.setCanRunOverride`: no gallop with the cart
   nor in a town unless GallopingInTowns (the host's `inTown`, `riding`,
@@ -666,7 +666,7 @@ is its own 750 kg (`ItemHelper.WagonKgLimit`).
 Pinned in `test/systems/rr1_realism.test.js` ENC-CEIL (the allowance from the
 real producer; literals off the real ceiling of 90); mutants
 `tools/mutants/enc_ceil.json` (3, all dead).
-`01-Overview/Field-Bugs-2026-09-27.md`.
+`01-Overview/bugs/Field-Bugs-2026-09-27.md`.
 
 ## Record
 

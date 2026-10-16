@@ -7,7 +7,7 @@
 // WHAT DFU SAYS. Nothing. A quest's `log` is a bare addLogStep, `end
 // quest` files the notebook in silence, and a clock inside its last day
 // is a number the player must open the logbook to read. DISC6's player
-// said what the silence costs (bible/01-Overview/Field-Bugs-2026-09-23.md):
+// said what the silence costs (bible/01-Overview/bugs/Field-Bugs-2026-09-23.md):
 // "Theres no quest notification when you killed all monsters and no quest
 // update in the log". The quest's OWN words - its `say` popups - are the
 // quest's and stay exactly where they are; what the herald adds is the

@@ -713,7 +713,7 @@ tile). `tools/mutants/discord5.json`: 20 records, 20 dead. Not verified in a bro
 A torch stowed from inside an open inventory kept crackling until the window closed: the component starts and stops
 its loop in its update, and a host holds the rig's frame under a window. The light in hand has one door now
 (`systems/lightSource.js setLightSource`, every writer through it) and the component listens: a light that stops being
-a torch stops the loop on the change. Record: `01-Overview/Field-Bugs-2026-09-23.md` (DISC7).
+a torch stops the loop on the change. Record: `01-Overview/bugs/Field-Bugs-2026-09-23.md` (DISC7).
 
 ## HT-WAIST - THE LANTERN AT THE WAIST (2026-09-24, Mac: "Let the lantern item be able to be hung at the waist instead of having to be held")
 

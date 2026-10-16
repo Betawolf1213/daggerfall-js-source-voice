@@ -306,7 +306,7 @@ quieter bug than the other three only because `Modules.Inertia` is off by
 default; with it on the shield leaned when you walked and never when you
 turned, which is half the module. Pin: *SW1-LOOK*, which also reads the
 clone's positional access so it cannot pass on a name nobody uses. And
-WIDGET-LOOK (FIELD BUGS 2026-10-03, `01-Overview/Field-Bugs-2026-10-03.md`):
+WIDGET-LOOK (FIELD BUGS 2026-10-03, `01-Overview/bugs/Field-Bugs-2026-10-03.md`):
 the look is handed in DFU's own axes (`lookSettings.dfuLookAxes`), not the
 camera's radians, which swayed it a fourteenth of the mod's measure; and
 WIDGET-RECOIL: PCAAO's core (on by default) hands back the part it rolls

@@ -1,4 +1,4 @@
-// QUEST-AUDIT II (bible/01-Overview/Quest-Audit-II.md): A QUEST'S STATE WHEN THE LAYOUT IT WAS MADE IN IS NOT THE ONE
+// QUEST-AUDIT II (bible/01-Overview/audits/Quest-Audit-II.md): A QUEST'S STATE WHEN THE LAYOUT IT WAS MADE IN IS NOT THE ONE
 // PLAYED. The town mods (WD3) lay a town anew; the port keeps a save's records in their own layout (systems/layoutPins.js)
 // and chooses a quest's site, or seats its questor, again where the town stands otherwise (place.js reseatMovedSite,
 // person.js reseatMovedQuestor). Four defects of that machinery, each reproduced on the real modules first:

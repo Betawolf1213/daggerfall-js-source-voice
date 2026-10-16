@@ -12,7 +12,7 @@ three top tiers stand bigger and play a fanfare. Enhanced Plus only.
 
 | Question | Answer |
 |---|---|
-| Which tiers get the banner? | **Rare and up** - Rare, Legendary, Aetheric, Artifact, Gilded. Common and Magic keep the small pickup feed under the crosshair (`01-Overview/Field-Bugs-2026-10-01d.md`, PICKUP-FEED). |
+| Which tiers get the banner? | **Rare and up** - Rare, Legendary, Aetheric, Artifact, Gilded. Common and Magic keep the small pickup feed under the crosshair (`01-Overview/bugs/Field-Bugs-2026-10-01d.md`, PICKUP-FEED). |
 | Which ways of getting an item? | **Everything new to you** - loot, a gate's or a raid's spoils, a quest's reward, a craft, the Sigil Broker, a shop, a trade, the market, a card. |
 | Where? | **The right edge, by the notices.** |
 | How do the top tiers stand out? | **A bigger banner and a sound** - Aetheric, Artifact and Gilded. |
@@ -41,7 +41,7 @@ Materials Bag tells the listeners as if it were new. So the pack is watched, not
   which the realm's volatile fields spread and its moved record strips. ACQUIRE1 first added the mark to the wire's clamp
   and the death record and not there: the pack's record carried it, the List form's offer did not, and the market, a
   stall and a realm trade refused every marked piece ("The realm does not hold that piece where your pack had it" -
-  `01-Overview/Field-Bugs-2026-10-09b.md`).
+  `01-Overview/bugs/Field-Bugs-2026-10-09b.md`).
 - **Cards** stack, and a card that lands on a stack the player already holds merges into it and is gone as a record. So a
   card's arrival is its count rising: the three lists' total of that card, frame to frame, less what a marked record new
   to the lists brought (a stack of the player's own back from a chest).

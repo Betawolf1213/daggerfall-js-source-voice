@@ -1,4 +1,4 @@
-// AUDIT LEGACY III (2026-10-06, bible/01-Overview/Audit-Legacy-III.md): Project Legacy - Mac's own DFU mod, integrated -
+// AUDIT LEGACY III (2026-10-06, bible/01-Overview/audits/Audit-Legacy-III.md): Project Legacy - Mac's own DFU mod, integrated -
 // audited whole a third time, through six lenses (A the law and the host, O online and the server, W the world's
 // wiring, U the windows in a browser, P persistence and the tests' truth, F fidelity and the records). Every finding is
 // pinned here by its id, each through the real doors it was found through: the account Worker over its real migrations
@@ -1756,7 +1756,7 @@ test('AUDIT LEGACY III P16: THE WEDDING HANDSHAKE\'S GUARDS - at most WED_INCOMI
 
 // ─── THE WORLD'S WIRING ────────────────────────────────────────────────────────────────────────────────────────────
 // world.js cannot boot headless (no ARENA2): what can run is lifted out of its own text and run (lens W's way); the rest
-// is pinned by source, its reproduction driven in Chromium (bible/01-Overview/Audit-Legacy-III.md says how).
+// is pinned by source, its reproduction driven in Chromium (bible/01-Overview/audits/Audit-Legacy-III.md says how).
 
 /** world.js's own text from the line matching `from` to the first line matching `to` after it. */
 function liftWorld(from, to) {

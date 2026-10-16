@@ -16,7 +16,7 @@ Provenance and what is carried: `vendor/beautiful-villages/README.md`,
 format they ship in - one pack of the authors' edits over the player's own
 `MAPS.BSA` and `BLOCKS.BSA` - is WD3, `02-Formats/World-Data-Patches.md`.
 The audit (AUDIT WD3, 2026-10-02 - the IDs the code and the tests cite) is
-`01-Overview/Audit-WD3.md`.
+`01-Overview/audits/Audit-WD3.md`.
 
 ## What the player sees
 
@@ -188,7 +188,7 @@ once the towns' layouts are known and their pins stand. A town with no such
 building keeps the record as it was, and the questor's hall is unseated
 (QUEST-AUDIT II HOUSE-HALL).
 
-QUEST-AUDIT II (`01-Overview/Quest-Audit-II.md`, with its AUDIT QA2) closed
+QUEST-AUDIT II (`01-Overview/audits/Quest-Audit-II.md`, with its AUDIT QA2) closed
 four holes of this and reworked one law. A GUILD's questor - a guild-service
 faction, the Thieves Guild's and the Dark Brotherhood's contacts in their House2
 halls among them - is seated by that service in any building of the quest's own
@@ -234,7 +234,7 @@ elsewhere.
   room, its door facing out as every exterior door does. Where that door is the interior door nearest the enter
   marker, TransitionInterior's landing (the door, 0.75 along its normal) stood the player outside the room's
   one-sided shell over nothing, falling for good in the black: 146 of the packs' 10,309 entries (Warvale's `GENRAS00`
-  #1, #2 and #7), and 16 of Daggerfall's own 11,452 (18 until TOWER-FLOORS, `01-Overview/Field-Bugs-2026-10-07b.md`). Each of DFU's two landing arms takes only a spot with a floor
+  #1, #2 and #7), and 16 of Daggerfall's own 11,452 (18 until TOWER-FLOORS, `01-Overview/bugs/Field-Bugs-2026-10-07b.md`). Each of DFU's two landing arms takes only a spot with a floor
   under it now, in DFU's own order, so no landing DFU makes on a floor moves (`player/enterExit.js` `interiorLanding`'s
   `standsAt`); a room with nowhere to stand is refused in DFU's own words, "This house has nothing of value."; and a
   body ten metres under a room's lowest triangle is stood back at its door (FIELD BUGS 2026-10-04d VOID-ENTRY).
@@ -307,7 +307,7 @@ elsewhere.
   Windmills of Daggerfall; its farms are the ones read) - `world/rmbLayout.js`. [FIELD BUGS 2026-10-05c: a
   player's "windmill has disappeared" is this law - five of Kamer's seven farms (FARMAA00/01/02/06/09) stand no mill
   in either mod's own, so online, where both mods are everyone's (WD3), those mills went on 2026-10-03. Kept as DFU
-  reads it (`01-Overview/Field-Bugs-2026-10-05c.md`).]
+  reads it (`01-Overview/bugs/Field-Bugs-2026-10-05c.md`).]
 - **The Order of the Raven.** A block served from JSON keeps its
   `FldHeader.OtherNames`, so RMBLayout's `KRAVE01.HS2` guild hall fires in a
   knightly block of Beautiful Cities as it does in DFU.
@@ -324,7 +324,7 @@ elsewhere.
   Daggerfall's - every one whatever is on, so none renumbers it, and offered
   while the port stands it (asked as the offer is made, AUDIT 05b A3) -
   measured over both packs and Detailed Ships' ships, never the town's own
-  structure (`systems/decor/decorMods.js`; `01-Overview/Field-Bugs-2026-10-05b.md`).
+  structure (`systems/decor/decorMods.js`; `01-Overview/bugs/Field-Bugs-2026-10-05b.md`).
 - **Houses for sale.** Every building the bank or a door can sell in either
   mod stands on a classic model (measured: 1,658 village houses and 3,358 city
   houses), so every price reads the ARCH3D record: the bank's DFU's own `GetHousePrice` over its radius, a door's
@@ -381,7 +381,7 @@ one stand-in, on while either mod that places it is loaded.
 | its city-wall piece | `53210` | 224 | the middle 128 units of Daggerfall's own wall segment (`445`) out of the player's ARCH3D - its stone, its climate - cut and moved onto the piece's line (FIELD BUGS 2026-10-03c, below) |
 
 **The city walls' corners** (FIELD BUGS 2026-10-03c,
-`01-Overview/Field-Bugs-2026-10-03c.md`; Discord: "missing holes in the out
+`01-Overview/bugs/Field-Bugs-2026-10-03c.md`; Discord: "missing holes in the out
 walls of Alik'ra", "Saw the same thing in Chesterwark"). Beautiful Cities turns
 its walls round corners of its own - `WALLAA12` to `WALLAA15`, the 112
 composites built on them. Each stands its corner tower (`444`) where

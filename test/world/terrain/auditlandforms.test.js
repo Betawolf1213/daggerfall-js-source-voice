@@ -1,5 +1,5 @@
 // AUDIT LANDFORMS (2026-10-07, Mac: "Dont worry about it. Instead let's do just an audit and ensure this is perfect")
-// - the audit of LANDFORM1-3 (bible/03-World/Landforms.md, the record bible/01-Overview/Audit-Landforms.md). Every
+// - the audit of LANDFORM1-3 (bible/03-World/Landforms.md, the record bible/01-Overview/audits/Audit-Landforms.md). Every
 // finding fixed here was reproduced first, on the real WOODS.WLD and on this synthetic world, and each pin below fails
 // on the code as it stood.
 import { test } from 'node:test';
@@ -674,7 +674,7 @@ test('AUDIT LANDFORMS D9: a landforms promotion waits for the network in flight,
 });
 
 // ==== AUDIT LANDFORMS II (2026-10-07, Mac: "Do another deep audit on this") ==============================================
-// The second audit, of the slice and the first audit's fixes (its record: bible/01-Overview/Audit-Landforms.md, AUDIT
+// The second audit, of the slice and the first audit's fixes (its record: bible/01-Overview/audits/Audit-Landforms.md, AUDIT
 // LANDFORMS II). Every pin below fails on the code as it stood (c532321f).
 
 /** bootWorld's own statements, in the order the boot runs them. */

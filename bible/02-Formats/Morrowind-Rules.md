@@ -6337,7 +6337,7 @@ for the next draw, whose arrow then left at the click. The ceiling now
 waits while the arm is still drawing (`fpArm.shotBusy`, to a 4s cap), a
 draw clears a release it has not reached, and no shot STARTS while the
 arm cannot draw it - the machine's cycle had outrun the draw and fired
-two arrows from one (`01-Overview/Field-Bugs-2026-10-09g.md`).
+two arrows from one (`01-Overview/bugs/Field-Bugs-2026-10-09g.md`).
 
 THE NOCK. Rule 24's "shoot attach" still drives the arrow wherever the
 data carries it, but the arrow may no longer DEPEND on that key
@@ -6539,7 +6539,7 @@ which is what it was drawn at before.
 (`mHeadAnimationTime`), and releaseArrow's launch point - the projectile leaves from DFU's GetAimPosition, not the
 ammunition node's world position. Not seen on a retail bow: pinned on `test/fixtures/mw/bowClip.mjs`, a fixture bow
 that carries both controllers (`test/formats/morrowind/mwbow1.test.js`; `tools/mutants/mwbow1.json`).
-`01-Overview/Field-Bugs-2026-10-09g.md`.
+`01-Overview/bugs/Field-Bugs-2026-10-09g.md`.
 
 ## MW-D51 (2026-09-16): the held torch
 

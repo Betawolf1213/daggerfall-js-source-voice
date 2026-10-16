@@ -4,10 +4,10 @@
 record at his instruction ("You make the best decisions" - section 14). CHAP1 BUILT (2026-10-07, Mac: "Continue"; its
 record is at the foot, and where it narrowed section 3 the section says so); AUDIT CHAP (2026-10-07, Mac: "Lets do a deep
 audit on everything so far before we continue") read CHAP0 and CHAP1 through five lenses and fixed what they found
-(`01-Overview/Audit-Chapters.md`) - one narrowing of Mac's own Authority call, which he confirmed (R1, below: "Approved").
+(`01-Overview/audits/Audit-Chapters.md`) - one narrowing of Mac's own Authority call, which he confirmed (R1, below: "Approved").
 CHAP2a BUILT (2026-10-07, Mac: "Do it"; the halls witnessed and their delivery writs - section 4, its record at the
 foot); AUDIT CHAP2 (2026-10-08, Mac: "Lets do a deep comprehensive audit on everything so far") read all of it through
-six lenses and fixed what they found (`01-Overview/Audit-Chapters-2.md`) - its two questions decided at Mac's word
+six lenses and fixed what they found (`01-Overview/audits/Audit-Chapters-2.md`) - its two questions decided at Mac's word
 ("You can decide whatever is best": 3.6, 5.1). CHAP2b BUILT (2026-10-08, Mac: "Keep going with the arc/slices"; a
 receipt's standing and the receipt writs - section 4, its record at the foot). CHAP3a BUILT (2026-10-08, the same
 words; a member's own writ and the week's Merit - section 5.1, its record at the foot). CHAP3b BUILT (2026-10-08, Mac:
@@ -22,7 +22,7 @@ its chapter's hall writs, the Chronicle read in the Hall of Records - section 6,
 (2026-10-09, the same word; the sheet carries the seats' holders, and each hall's shelf names them - sections 5.3 and 9,
 its record at the foot). CHAP5b BUILT (2026-10-09, the same word; the hall's people and the town's talk by the band -
 section 9, its record at the foot). AUDIT CHAP4 (2026-10-09, Mac: "Lets do a deep audit on everything so far") read
-all of it again through six lenses and fixed what they found (`01-Overview/Audit-Chapters-4.md`, its record at the
+all of it again through six lenses and fixed what they found (`01-Overview/audits/Audit-Chapters-4.md`, its record at the
 foot); CHAP6a BUILT (2026-10-09, Mac: "continue"; the Season's event drawn, a Decline's weeks, the Season's end - section
 7, its record at the foot); CHAP6b BUILT (2026-10-09, the same word; the Schism's backing and doctrine, the
 Succession's heir, the Master's vote - section 7, its record at the foot); CHAP6c BUILT (2026-10-09, the same word;
@@ -35,12 +35,12 @@ burning the highest and sending the rest home, the patron on the sheet, the boar
 record at the foot); CHAP7b BUILT (2026-10-09, the same word; the patrons on the client - the board's bid, the banners at
 the chapter's halls, the members' Thriving prices - section 8, its record at the foot). The arc's seven slices stand. AUDIT
 CHAP5 (2026-10-09, Mac: "I think we do a deep comprehensive audit across everything") read all of it again through six
-lenses and fixed what they found (`01-Overview/Audit-Chapters-5.md`, its record at the foot). Merged with main
+lenses and fixed what they found (`01-Overview/audits/Audit-Chapters-5.md`, its record at the foot). Merged with main
 past the Super Dungeons arc, then past SCALE4 and TAVERN CARDS (2026-10-08), then past SERVER-POST and HOURS-FIRST
 (2026-10-09), then past PERMADEATH-HOUSES and TAVERN-TABLES, then past TV-BEYOND (2026-10-09), then past CARDS9 and CARDS10 (2026-10-09; Iliac Hand's season board, its migration `0095_iliac_ladder`, `acct99` and `world182` deployed first), then past INT1-INT6 and BAG-CRAFT (2026-10-09; the Integrity arc's lane 1, `0096_integrity`, `acct100`; the stations' loose units, `0097_loose_origin`, `acct101`), then past UNWITNESSED-ORE (2026-10-09; the unwitnessed veins, `acct102`): the arc's migrations are `0098_npc_roll` to `0103_npc_seats`, its service `acct103` and its relay `world183` - the records below name each
 migration by its current number and the service by the version it was built under. AUDIT CHAP3 (2026-10-08, Mac:
 "Let's audit everything we have so far before we continue") read all of it through six lenses and fixed what they found
-(`01-Overview/Audit-Chapters-3.md`); the sections below say where it narrowed them.** CHAP0's claims about the code were read off the tree at `9ed5a681`, each slice's off its own
+(`01-Overview/audits/Audit-Chapters-3.md`); the sections below say where it narrowed them.** CHAP0's claims about the code were read off the tree at `9ed5a681`, each slice's off its own
 parent, cited by file and symbol, never by line, so the page survives the next merge.
 
 Its neighbours: `11-Multiplayer/Seats-Arc.md` (SEAT0 - the week, the Season, the Tides and the witnessed influence this
@@ -51,7 +51,7 @@ page reuses rather than rebuilds), `06-Systems/Professions-Arc.md` (PROF0 - Mark
 
 **GUILD3 (2026-10-11, the owner: "Keeping depth, but making it easier to understand"; "These are all of your
 decisions") - `11-Multiplayer/Guilds-Made-Plain.md` changed this record, each change said where it stands below,
-and AUDIT GUILD3 (`01-Overview/Audit-Guild3.md`) marked every passage that still read as the law of before - a slice's
+and AUDIT GUILD3 (`01-Overview/audits/Audit-Guild3.md`) marked every passage that still read as the law of before - a slice's
 record keeps its day's words as history, each with a "(GUILD3: ...)" note where its law has moved:** the
 Season's events are FIVE (GUILD3e - the Decline and the Ascendancy folded into the Failing and Ascendant bands they
 stood for, the Decline's weekly fall the Failing band's since AUDIT GUILD3 R1; section 7's table, Appendix A); the
@@ -248,9 +248,9 @@ DECIDED. `baseCalculateNewRank` and `updateRank` run unchanged, over the Roll's 
 FACT: the skills are the client's word until Realm phase 3 checks a save; a lied skill buys a rank that costs no rival
 anything, which law 3 allows. BUILT (CHAP1): the 28-day gate and REP6's probation stay DFU's, on the client's own
 calendar, untouched (PROMO-NOW, 2026-10-15, Mac: "No wait" - online a PROMOTION no longer waits the 28 days; a
-demotion, a probation and an expulsion still do, `01-Overview/Field-Bugs-2026-10-15.md`; ROLL-PACE, the same day: and no
+demotion, a probation and an expulsion still do, `01-Overview/bugs/Field-Bugs-2026-10-15.md`; ROLL-PACE, the same day: and no
 further than the Roll's pace since it saw the membership begin - ROLL_GAIN_DAY_MAX a UTC day, the first counted - read
-off the Roll's own reputation, never the page's unclaimed number, `01-Overview/Field-Bugs-2026-10-15f.md`); the Roll records the rank the client reports, bounded by its own reputation (3.2; AUDIT CHAP2 D5:
+off the Roll's own reputation, never the page's unclaimed number, `01-Overview/bugs/Field-Bugs-2026-10-15f.md`); the Roll records the rank the client reports, bounded by its own reputation (3.2; AUDIT CHAP2 D5:
 this said the rank as reported) - so between DFU's reviews, or for a Thieves Guild or Brotherhood member (they never
 expel), the recorded rank may sit BELOW the book's: the Roll's bound, not a demotion. AUDIT CHAP2 C2 (= D1): the tab
 compares its book with the book it last SENT, never with the Roll's record of it, so that difference is claimed once,
@@ -1287,7 +1287,7 @@ the law and every place this slice narrowed it (BUILT, CHAP1).
   standing, under the playing tab's lease. A realm character's delete takes its head, rows and record. Behind
   `CHAPTERS_OPEN` (`server-account/wrangler.toml`), shipped `dev`: the developers' characters first, everyone else's
   standing still the save's until the line says `on` - which it does from CHAPTERS-ON (2026-10-12, Mac: "Turn them
-  on"; `01-Overview/Field-Bugs-2026-10-12.md`). The service is `acct93`; deploy it before the site. No relay
+  on"; `01-Overview/bugs/Field-Bugs-2026-10-12.md`). The service is `acct93`; deploy it before the site. No relay
   change. AUDIT CHAP: a write's guard is a tag of its own, not the next `seq` (a claim's twin wrote its lines twice);
   the lease and the death are asked inside the write; a repeat is any id the record holds; a claim that changes nothing
   writes nothing; a character with no landed save has no Roll (`no-data`), and an undone customs takes its Roll.
@@ -1311,7 +1311,7 @@ the law and every place this slice narrowed it (BUILT, CHAP1).
 ## AUDIT CHAP - CHAP0 and CHAP1 read again (2026-10-07, Mac: "Lets do a deep audit on everything so far before we continue")
 
 Five lenses - the service, the playing tab, Daggerfall's law, the record and the pins - read the tree at `1100fec1`;
-`01-Overview/Audit-Chapters.md` holds every finding and its fix. Its marks on this page are AUDIT CHAP <ID>. The Roll as
+`01-Overview/audits/Audit-Chapters.md` holds every finding and its fix. Its marks on this page are AUDIT CHAP <ID>. The Roll as
 it now stands: a pace with what it leaves owed, a cap that is a customs crossing's and keeps a member's rank, the kept
 adoption in the save in place of a claim as the page goes, a write that stands under its own tag with the lease asked
 inside it, a rank bounded by the Roll's reputation. `test/net/audit_chap1.test.js` (22) pins every fix, and
@@ -1360,7 +1360,7 @@ The second slice's delivery half; section 4 carries the law and every narrowing 
 ## AUDIT CHAP2 - everything so far read again (2026-10-08, Mac: "Lets do a deep comprehensive audit on everything so far")
 
 Six lenses - the service, the client, Daggerfall's law, the economy and its abuse, the record and the pins - read the
-tree at `915043c5`; `01-Overview/Audit-Chapters-2.md` holds every finding and its fix, and its marks on this page are
+tree at `915043c5`; `01-Overview/audits/Audit-Chapters-2.md` holds every finding and its fix, and its marks on this page are
 AUDIT CHAP2 <ID>. What moved, in a line each: the kept adoption names the CLAIM sequence, so a hall writ's +2 no longer
 makes the next page drop the save's unclaimed moves (C1); the tab compares the book it sent, so a rank the Roll bounds
 is claimed once (C2 = D1), and a lease refused ends the asking for that lease alone (C4); the service bounds the claims'
@@ -1472,7 +1472,7 @@ whole: the week's Merit, the Turning's Strength, its band on the writs and the h
 
 ## AUDIT CHAP3 - everything so far read again (2026-10-08, Mac: "Let's audit everything we have so far before we continue")
 
-Six lenses read CHAP0 to CHAP3c and both merges of main (`01-Overview/Audit-Chapters-3.md` is the record, every finding
+Six lenses read CHAP0 to CHAP3c and both merges of main (`01-Overview/audits/Audit-Chapters-3.md` is the record, every finding
 and its fix). What it changed here: law 7 and section 10 (the Chapters' own Turning); section 3.3's rows (a receipt writ
 outside the 3, a raid's real pace, the record's replay); section 4's pay (Merit of a member's own writ alone); 5.1 (one
 member writ a guild a day, a gate's Merit where its day's claims agree, a gate of another week none); 5.2 (the grace,
@@ -1621,7 +1621,7 @@ decision 2 narrows by the one input it names (`06-Systems/Living-World.md`).
 
 ## AUDIT CHAP4 - everything so far read again (2026-10-09, Mac: "Lets do a deep audit on everything so far")
 
-Six lenses read CHAP0 to CHAP5b and two merges of main (`01-Overview/Audit-Chapters-4.md` is the record, every finding
+Six lenses read CHAP0 to CHAP5b and two merges of main (`01-Overview/audits/Audit-Chapters-4.md` is the record, every finding
 and its fix). What it changed here: 3.5 (the ceiling before the Roll's first word; what DFU gives once at 8 or 9, not
 given online; a seat's title at its halls); section 4 (the families the port's own choice); 5.1 (`standings`' reader);
 5.2 (the active count DECIDED, E4; the orders' band in their evenings and talk; the underworld's halls still open);
@@ -1811,7 +1811,7 @@ slices stand.
 
 ## AUDIT CHAP5 - everything read again (2026-10-09, Mac: "I think we do a deep comprehensive audit across everything")
 
-Six lenses read CHAP0 to CHAP7b, the four audits and the merges of main (`01-Overview/Audit-Chapters-5.md` is the
+Six lenses read CHAP0 to CHAP7b, the four audits and the merges of main (`01-Overview/audits/Audit-Chapters-5.md` is the
 record, every finding and its fix). What it changed here: 3.5 (a seat lifts only a book held at 7, D1); 5.2 (the
 orders' band still open); 5.3 (the board's line); section 7 (a Crackdown's half again its members' Merit, never Marks,
 E1; the draw scaled, E3; one race a chapter a Season, E5; a Season's Master the whole Season's, S1; the opening the

@@ -1,4 +1,4 @@
-// DISC17 (2026-09-24, Mac). bible/01-Overview/Field-Bugs-2026-09-23.md, DISC17.
+// DISC17 (2026-09-24, Mac). bible/01-Overview/bugs/Field-Bugs-2026-09-23.md, DISC17.
 //
 // ── DISC17-A: "I really want to give the wisps more opacity and reduce the amount of wind wisps" ──
 // Half as many (WISP_MAX 240 -> 120, a calm 19 -> 10), each twice as dark (WISP_LOOK's alpha 0.10/0.12 -> 0.20/0.24).

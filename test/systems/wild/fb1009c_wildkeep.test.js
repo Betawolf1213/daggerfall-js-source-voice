@@ -6,7 +6,7 @@
 // client's one record of it - world.js `_wildMine`: where it lies, the room, its end, the hall - lived in memory alone:
 // a crash took the held map's ring, the record's claim on the pile and the hall-lock's way back in with it. The record is
 // kept on the device now for the character that fell (systems/wild/wildRemainsWaypoint.js keepMine / keptMine / forgetMine)
-// and read back once by the zone's frame. `01-Overview/Field-Bugs-2026-10-09c.md`.
+// and read back once by the zone's frame. `01-Overview/bugs/Field-Bugs-2026-10-09c.md`.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';

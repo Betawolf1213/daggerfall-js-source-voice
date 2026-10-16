@@ -349,7 +349,7 @@ damaged". `AssignSkillEquipment`'s first act wears the dagger a biography answer
 of nothing is 0: broken to the equip check, undamaged to the repairer. The biography mints through `createWeapon` and
 `mintCondition` now, the kit mints the dagger before it wears it (`isQuestionsDagger`, `QUESTIONS_DAGGER_WEAR`, one
 home in `systems/conditionRepair.js`), and a load mints a never-minted wearable by the law it missed - the kit's 20%
-for this dagger at 0. `test/systems/disc21.test.js` (A). `01-Overview/Field-Bugs-2026-09-23.md`, DISC21-A.
+for this dagger at 0. `test/systems/disc21.test.js` (A). `01-Overview/bugs/Field-Bugs-2026-09-23.md`, DISC21-A.
 
 ## DISC29-B (2026-09-28) - the word a rarity name dropped, and the two mods that read the raw make
 
@@ -377,7 +377,7 @@ the bare TEMPLATE's name (`systems/loot/lootRarity.js rarityName`), so the long 
   brigandine boots walked in plate and a mail hauberk clanked as plate. Both read `rriNativeMaterialValue` now.
 
 `test/systems/disc29_rarity.test.js` (6), `test/systems/if1_immersivefootsteps.test.js` (the boots' ladder);
-`tools/mutants/disc29.json` (DISC29-B, 11). `01-Overview/Field-Bugs-2026-09-28f.md`, DISC29-B.
+`tools/mutants/disc29.json` (DISC29-B, 11). `01-Overview/bugs/Field-Bugs-2026-09-28f.md`, DISC29-B.
 
 ## Record
 

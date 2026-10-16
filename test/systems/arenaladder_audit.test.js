@@ -1,7 +1,7 @@
 // AUDIT ARENA-LADDER (2026-10-05, the owner: "Before we merge this. Can you do a comprehensive audit on the new arena?
 // Ensure AI enemies sometimes recieve telegraphed attacks, ensure climbing the PvE ladder isnt an easy feat, and look at
 // where we can make improvements"; asked, "Lose the tier's run", "No cheese spells or potions", "Elite champions",
-// "Relay and service"). Every finding of bible/01-Overview/Audit-Arena-Ladder.md pinned here: the telegraphs between
+// "Relay and service"). Every finding of bible/01-Overview/audits/Audit-Arena-Ladder.md pinned here: the telegraphs between
 // fighters (the brain's and the relay's), the climb's cost (the run, the elites, the judges' floor, the kit law, the
 // ticket), and the bout's holes (the sand's collapse, a dispelled champion, the player's live tag, a blow from the side).
 import '../modsOff.js';

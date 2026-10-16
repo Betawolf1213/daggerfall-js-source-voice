@@ -39,7 +39,7 @@ imports it, so what the relay refuses the client never sends and what
 the relay sends the client checks by the same law. The pose bound is
 the world's extent (`POSE_BOUND`, `WORLD_PIXEL_BOUND` - 8192 - pixels of
 `PIXEL_UNITS` either way; TV-BEYOND widened it from the map's 1024 when
-TAMRIEL2 streamed the land past the Bay, `01-Overview/Field-Bugs-2026-10-09.md`).
+TAMRIEL2 streamed the land past the Bay, `01-Overview/bugs/Field-Bugs-2026-10-09.md`).
 `test/server/online_relay.test.js` executes it.
 
 **The relay** - `server/` - is a Cloudflare Worker whose one Durable
@@ -1440,7 +1440,7 @@ it:
   starting lock, or LockDoor's 16 where its own action locks it); a
   pick, a bash, an Open and a re-lock to the door's value are shared as
   before, and a Lock spell's lock is its caster's alone
-  (`01-Overview/Field-Bugs-2026-10-13e.md`).
+  (`01-Overview/bugs/Field-Bugs-2026-10-13e.md`).
 - **B3 (low)** `applyRemote` rang the RDB sound only when a TWEEN
   began, but `_play` rings it on every Play - so every zero-duration
   mover (an acting flat's Translation) slid in silence on every screen
@@ -2330,7 +2330,7 @@ boots, and the six keys the menu decides (`BOOT_DOOR_KEYS`) are cleared
 off both copies before the menu runs, so a reload after an online
 session does not show the Mods pane locked for a player who has not
 chosen yet. One home, not a second read path. The record is
-`01-Overview/Mac-Bugs-N.md`.
+`01-Overview/bugs/Mac-Bugs-N.md`.
 
 ## MODS-ONLINE-2 (2026-09-22): the mods are the player's, the ground is the room's
 
@@ -7341,7 +7341,7 @@ frame's `rs`), stands it as a puppet, strikes it by the room's number (`xs` on
 the hit) and loots its body as the room's `enc:<id>`. `isRoomFoe` - the layout's
 run plus the shared encounters - is the one expression both halves read, so the
 two are still paid together (`test/net/world2.test.js`). The quest foe and the
-summon stand where this section left them. `01-Overview/Field-Bugs-2026-09-26.md`
+summon stand where this section left them. `01-Overview/bugs/Field-Bugs-2026-09-26.md`
 REST-SYNC; `test/net/restsync.test.js`. AUDIT PRE-MERGE 0928 M1: an encounter whose species the
 host's Ocean Holes abyss changes keeps its number (the rebuilt body takes the old one's place in the room),
 and a joiner stands it anew by that number; a joiner's copy is no spawn of its own for the abyss to process
@@ -7675,7 +7675,7 @@ Three opus lenses, one each over the merge and the wire, the additions and the h
 
 **A - the quest envelope was trusted whole (lens 1, HIGH).** `receiveSharedQuest` built a live Quest straight from the sender's bytes: any party member could hand the receiver a `GivePc` of anything, a `TeleportPc`, a global-var link. The wire's `questName` gated the receipt but the quest was built from `data.questName` (a share named HARMLESS with the data of a quest the receiver already ran gave them a second live copy); the main quest was refused on SEND only. Now (`systems/quest/questShare.js`): the data must be the quest it names; the main quest is refused on RECEIPT; the envelope's SHAPE - every task symbol and every action TYPE in order, every resource symbol and type - must be the receiver's OWN parse of that quest by name (`machine.parseQuestShape`, the same parser the lists use, `shapeMismatch`), refused as 'mismatch', or 'unknown' with no local source; and every Item resource's item is the receiver's own roll (`takeLocalItems`) - a typed `daggerfallUnityItem` never lands. What remains the sender's: the Places' `siteDetails` (the party goes to the same dungeon), the Persons, the Foes, the task/action STATE - which is the point of sharing. **A2 - live sync paid rewards twice (HIGH).** A partner who was behind resynced my finished quest back into play (tombstoned -> live, a completed GivePc pending again), and a later resync re-armed it: paid twice; once the tombstone expired, a resync counted as a fresh receipt and re-armed everything. Now: a resync onto a `questComplete`/`questTombstoned` copy is refused; a tombstone moves the name from `sharedQuestNames` to `finishedSharedQuestNames`, and a fresh receipt of a finished name is 'done' for the session; action completion is MONOTONIC across a resync (never true -> false off an older copy - it would run, reward and all, when its task next ticked); a reward is re-armed AT MOST ONCE per action for the life of the quest (`_rearmed`). (AUDIT DISC28 QS-4, 2026-09-28: the once is the FIRING's - an action that ran reads complete, and completion is monotonic - and `_rearmed` is retired: spent by the arming, it refused a reward armed and not yet fired when the next envelope landed, and the reward never ran.) **A3 - a malformed resync corrupted the live quest (MEDIUM).** `restoreSaveData` clears as it goes; `{tasks: 7}` left the live quest with no resources and no tasks. Now the resync is DRY-RUN on a scratch Quest first and refused whole; a fresh receipt the restore chokes on lands nothing.
 
-*SHARE-COPY (2026-09-26): A refused EVERY quest - the shape check compared the task symbols minted from the UID counter at parse, and the reference parse ran over the receiver's world. `01-Overview/Field-Bugs-2026-09-26.md`.*
+*SHARE-COPY (2026-09-26): A refused EVERY quest - the shape check compared the task symbols minted from the UID counter at parse, and the reference parse ran over the receiver's world. `01-Overview/bugs/Field-Bugs-2026-09-26.md`.*
 
 **B - the trade.** *B1 (MEDIUM):* editing my offer after my Confirm unlocked both sides at home while the peer, who had confirmed and committed against the old revision, had their goods refused as "not valid" - and lost (the drop's own rig: B's ring and 5 gold vanished). `setOffer` now refuses once `myConfirm` stands, and the window stages, unstages and types nothing after it. *B2 (LOW):* a forged commit arriving while my own commit was still queued ended the session with my reservation neither sent nor restored; `_finish` restores a reserved-but-unsent lot on every ending. *B3 (MEDIUM):* the relay's trade byte budget was the ROOM's - two sockets at `TRADE_HZ_MAX` x `TRADE_FRAME_MAX` spent it and an honest commit whose sender's goods were already gone was dropped; it is the SENDER's now (`a.tbytes`), and the client's inbound trade gate is per sender too (`_inTradeBuckets`), so a flood starves only the flooder. *B4 (found paying B3):* `validTradeData` bounded the DATA at the FRAME's cap, so the widest honest offer passed at home and was refused at the relay's door as 'frame too large' - which closes the socket. `TRADE_DATA_MAX` = the frame cap less the wrapper; what passes at home fits `parseClient` by construction, and `sendTrade` guards the trade cap, not the general one.
 
@@ -8084,7 +8084,7 @@ the bound is the frame's, and the sender clamps to it.
 Pinned in `test/systems/allycast.test.js` PEER-CAST (every level from 1 to a million mints a frame the wire takes, clamped at
 30; the magic host driven with the wire's own door - a level-34 CasterOnly Heal leaves at 30 and the caster is not
 healed); the driven rig's door now sees the frame. Mutants `tools/mutants/peer_cast.json` (3, all dead).
-`01-Overview/Field-Bugs-2026-09-27.md`.
+`01-Overview/bugs/Field-Bugs-2026-09-27.md`.
 
 ## SPELL-GIFT (2026-09-27, Discord - Tabitha: "a LARGE amount of buffs & spells just don't work when cast on another person, even with touch. Normal regen seems okay, but Regen + Anything, Fortify Attributes, etc.") - a buff readied near a mate waits for the aim, and a stranger may be given the safe list
 
@@ -8388,7 +8388,7 @@ view, "Station: Alchemy >" cycles the craft offered, free, and follows a newly c
 **THE PRESS** (`scenes/worldModes.js` useDecorStation). A station pressed by its owner opens its craft's maker
 through the guild service's own door (openServiceFlow, no guild), so the maker's own laws stand: the potion maker's
 ingredients, the spell maker's spellbook, and what each charges. A visitor is told whose home it is, as a storage
-piece's visitor is. STATION-DOOR (`01-Overview/Field-Bugs-2026-10-11f.md`): online, an alchemy or enchanting station
+piece's visitor is. STATION-DOOR (`01-Overview/bugs/Field-Bugs-2026-10-11f.md`): online, an alchemy or enchanting station
 asks first - its maker, or its profession's act on the Stores page (the brew, Disenchanting).
 
 **THE SERVICE** (`server-account/src/decor.js` placeJson). The craft is written with the place. ACCOUNT_VERSION
@@ -8400,7 +8400,7 @@ Pins: `test/ui/homestations.test.js` (4), `tools/mutants/home_stations.json` (14
 
 ## AUDIT - the 2026-09-27 Discord batch ("Lets do a comprehensive audit on these changes")
 
-Six lenses, each finding checked against the code before anything moved; `01-Overview/Field-Bugs-2026-09-27e.md`
+Six lenses, each finding checked against the code before anything moved; `01-Overview/bugs/Field-Bugs-2026-09-27e.md`
 ## AUDIT is the record, with what stands and why. The online half:
 
 - **THE DUEL IS NOT A GIFT (SPELL-GIFT B1).** `allyTargetPick` and `allyMarksNear` draw from `giftablePeers` - never
@@ -8494,7 +8494,7 @@ callbacks in order; the stack's law and its control; the modal hosts' door shape
 window, and `pauseTravel` ending it with the destination kept, by source at the presenter, after the screen and
 guarded; the respawn's catch and the one close door, by source; nothing painted beneath the screen). Mutants
 `tools/mutants/rise_stuck.json` (12, all dead). Not proven in a browser or with two players.
-`01-Overview/Field-Bugs-2026-09-27c.md`.
+`01-Overview/bugs/Field-Bugs-2026-09-27c.md`.
 
 ## REST-ROUNDS (2026-09-27, Discord: "You can become a god with spell effects") - an online rest ages the effects
 
@@ -8537,7 +8537,7 @@ pools; every rest dep of the four hosts spends the end on the rounds, by source;
 online against offline). Re-aimed by content: `world5`
 (RaiseTime online), `restx2_online_rest`, `camp1_groups`, `exteriorfoes`, `partyrest1`, `restwhere`, `audit62_hosts`
 (which had been matching the camp meal's twin line since the rest's changed). Mutants `tools/mutants/rest_rounds.json`
-(9, all dead). `01-Overview/Field-Bugs-2026-09-27c.md`.
+(9, all dead). `01-Overview/bugs/Field-Bugs-2026-09-27c.md`.
 
 [SUPERSEDED BY LIVED1 (2026-09-29): the online arm above is gone. The ticker's `advance(minutes)`
 runs the same tick online as offline, on the character's own clock, so a rested night's rounds,
@@ -8702,7 +8702,7 @@ too (`peerSound` through `play3d`), where PEER-FS1 faked the falloff on a flat o
 
 The panning itself was mirrored for every positional sound in the port (the scene is left-handed, WebAudio
 right-handed) and equal-power, so nothing behind could be told from in front. Both are fixed at the audio door;
-the record is `01-Overview/Field-Bugs-2026-09-23.md` (DISC6-D). No wire or relay change: RELAY_VERSION stays.
+the record is `01-Overview/bugs/Field-Bugs-2026-09-23.md` (DISC6-D). No wire or relay change: RELAY_VERSION stays.
 
 Pins: `test/systems/audio3d.test.js` (4); mutants `tools/mutants/audio3d.json` (17, all dead). ~~The pose carries no speed,
 so a peer's horse keeps the fast clop (DFU's opening clip).~~ DISC7 put the rider's half-speed flag on the pose (`hs`,
@@ -8712,9 +8712,9 @@ world100) and the clop swaps on it. Not verified in a browser.
 
 A player under the crosshair lists the F-menu's enabled acts as the World Tooltips plaque's rows - the loot list's own
 wheel and highlight - and the activate key (or F) presses the lit one through the card's own door, re-read at the press.
-The card stays where the plaque cannot (touch, the classic skin). AUDIT DISC7: a player's list starts unlit (a plain click sends nothing; the wheel or F lights a row), every act the card offers is listed with a refused one's reason, the press re-picks the player on its own ray with walls blocking and never fires on a touch cast; the riders' loop stands on a stale pose, is made within earshot only and moves with the floating origin, and `hs` is latched off a moving frame - `01-Overview/Field-Bugs-2026-09-23.md` (AUDIT DISC7). The pose carries `hs`, the rider's half-speed flag, mounted and moving
+The card stays where the plaque cannot (touch, the classic skin). AUDIT DISC7: a player's list starts unlit (a plain click sends nothing; the wheel or F lights a row), every act the card offers is listed with a refused one's reason, the press re-picks the player on its own ray with walls blocking and never fires on a touch cast; the riders' loop stands on a stale pose, is made within earshot only and moves with the floating origin, and `hs` is latched off a moving frame - `01-Overview/bugs/Field-Bugs-2026-09-23.md` (AUDIT DISC7). The pose carries `hs`, the rider's half-speed flag, mounted and moving
 only and omitted at 0; the receiving riding loop swaps the clop on it. RELAY_VERSION world100 with its law row. Record:
-`01-Overview/Field-Bugs-2026-09-23.md` (DISC7). Pins: `test/systems/disc7.test.js`.
+`01-Overview/bugs/Field-Bugs-2026-09-23.md` (DISC7). Pins: `test/systems/disc7.test.js`.
 
 ## WOD7 (2026-09-23, Mac: "and all the enemies are synced online?" ... "yes dude") - World of Daggerfall's camps, shared
 
@@ -9091,7 +9091,7 @@ member pacing the radius under *Setting out* rebuilt the tab at every crossing (
 `test/net/soc3_socialpanel.test.js` 32 -> 33; `tools/mutants/auditpartyui2.json` (14, 14 dead); five
 `auditpartyui.json` records and the `mappov.json` one re-aimed.
 
-**PARTY-READY (2026-10-01, Mac: "when party readying up, the ui element is hidden"; `01-Overview/Field-Bugs-2026-10-01c.md`).**
+**PARTY-READY (2026-10-01, Mac: "when party readying up, the ui element is hidden"; `01-Overview/bugs/Field-Bugs-2026-10-01c.md`).**
 The ready-up took its own controls off the screen. The leader's Travel map opens the travel map, a window over the HUD,
 and the Social panel closes under any such cover (SOC3) - so the round's count and Call off stood nowhere for the whole
 round, and the HUD's "Waiting for the party to ready up" stood PARTY_REST_FAR_SECONDS (4) of a round that runs
@@ -9495,7 +9495,7 @@ took: three town homes a character, no upkeep.
   (a word about `container:3` would have overwritten the owner's chest, and then been published back as the room's),
   and a refused act's records name none.
 - **Quests** (`systems/quest/place.js`, a departure: Daggerfall has one player): no quest stands in a player's home -
-  Mac's decision (2026-10-15, "Close both"; FIELD BUGS 2026-10-14 QUEST-HOME, `01-Overview/Field-Bugs-2026-10-14.md`).
+  Mac's decision (2026-10-15, "Close both"; FIELD BUGS 2026-10-14 QUEST-HOME, `01-Overview/bugs/Field-Bugs-2026-10-14.md`).
   A quest never picks its residence in one, in any town: the layouts read every online boot makes (WD3) names every
   town's homes by building (`server-account/src/homes.js` homeLayouts' `homes`, acct133), and every act that moves a
   home - a claim, a deed held or sold, a hall bought or sold, an arena move, a sale, a character deleted - answers a
@@ -9601,7 +9601,7 @@ changes to a placed piece.
   families, or one of the 37 things Daggerfall stands outside them (measured: its statues, arms, pedestals, coffins,
   hangings), that stands doing nothing (no action, never a door), a flat but a marker, an acting flat or nature; found
   only there, a piece is "Dungeon furniture"; every place's names are numbered after the earlier places' (a room's
-  first), so no room's name moves (`01-Overview/Field-Bugs-2026-10-05b.md`). DECOR-MODS (the same record, the town
+  first), so no room's name moves (`01-Overview/bugs/Field-Bugs-2026-10-05b.md`). DECOR-MODS (the same record, the town
   mods' furnishings): and the pieces it stands in for what Beautiful Villages, Beautiful Cities and Detailed Ships place
   - 297, measured over their own blocks, a room's or a street's as the mods stand them, never the town's own structure -
   named and numbered after every place of Daggerfall's (`systems/decor/decorMods.js`), every one catalogued whatever is on and
@@ -9976,7 +9976,7 @@ view (`ui/decorPanel.js`, `scenes/decor/decorTool.js setBase`). A piece out is o
 target - and one that holds anything never goes. The list of what is out is the room's scene offline (the save) and
 the account service's online (`home_hidden`, migration 0015; `06-Systems/Accounts-And-Cloud-Saves-Arc.md`), written
 whole by the owner first and stood once the service has it; the room every visitor walks into is the one its owner
-cleared. A sale brings the furniture back. `01-Overview/Field-Bugs-2026-09-26.md` BASE-HIDE;
+cleared. A sale brings the furniture back. `01-Overview/bugs/Field-Bugs-2026-09-26.md` BASE-HIDE;
 `test/server/basehide.test.js`; `tools/mutants/basehide.json`.
 
 
@@ -10802,7 +10802,7 @@ and `test/systems/decor/decor2b.test.js` (the sale's line, the tap under a fligh
 - **The catalogue** (`systems/decor/decorCatalogue.js`): the people Daggerfall stands in its rooms (`blockPeopleRecords`) are
   catalogue pieces too, kind Vendors (Mac: "People category sounds wrong call it vendors") - placed, one is made the
   trader. NUDE-HOSTS (FIELD BUGS 2026-10-05b): Show Nudity governs them as it does the world's people - off, no nude
-  figure is offered, and one placed stands, flies and is pictured as its clothed stand-in (`01-Overview/Field-Bugs-2026-10-05b.md`).
+  figure is offered, and one placed stands, flies and is pictured as its clothed stand-in (`01-Overview/bugs/Field-Bugs-2026-10-05b.md`).
 - **The service** (`server-account/src/market.js` over `migrations/0080_home_vendors.sql` - `market_listings.vendor_map`,
   `vendor_id`; routes `/v1/market/vendor`, `/vendors`, `/myvendors`). A listing named at a trader is the owner's
   character's own trader (`vendor-not-yours`), in the HOME's region whatever the client says; it is filtered out of the
@@ -13097,7 +13097,7 @@ shade; omitted at 0; `poseChanged` sends its edge at once; world118, OWN1's unsh
 gated). A reader draws a concealed peer as DFU draws every concealed entity that is not the player - not at all (no
 rider, body, walker, sprite or name; its cast still seen), skips it for the F key and the plaque, and hands both foe
 pools the flags through each peer candidate's `concealment()`, which enemyMotor's illusion gate already read.
-`01-Overview/Field-Bugs-2026-09-27b.md`. Pinned: `test/net/invisnet.test.js` (5). `tools/mutants/invisnet.json` (15 dead - the candle's at the merge).
+`01-Overview/bugs/Field-Bugs-2026-09-27b.md`. Pinned: `test/net/invisnet.test.js` (5). `tools/mutants/invisnet.json` (15 dead - the candle's at the merge).
 
 ## HOUSE-DROP (2026-09-27, Mac relaying reports: "In houses, players can drop items and the owner cannot see them"; asked, "Block visitor drops") - a visitor's floor refuses
 
@@ -13105,7 +13105,7 @@ A drop is the dropper's own (AUDIT WORLD B3) and an online home's room carries n
 someone else's online home stood on the visitor's screen alone. There, the ground now refuses: both inventory skins
 (the item and the gold), a light dropped or thrown, and a belt at the window's close that hands anything left back to
 the pack. The owner's own floor, an offline house and every other building are as they were.
-`01-Overview/Field-Bugs-2026-09-27b.md`. Pinned: `test/systems/housedrop.test.js` (5). `tools/mutants/housedrop.json` (16 dead).
+`01-Overview/bugs/Field-Bugs-2026-09-27b.md`. Pinned: `test/systems/housedrop.test.js` (5). `tools/mutants/housedrop.json` (16 dead).
 
 ## INVIS-LOOK (2026-09-27, Mac: "Give invisibility the same invisibility we give enemies in enhanced AI. That transparent look") - a concealed peer, drawn as a concealed foe
 
@@ -13124,7 +13124,7 @@ flats and before the water (`opts.lateWorldDraw`, WATER-D1's law), the building 
 over a concealed peer; a concealed walker's lantern is not drawn; no hit reveal (a blow on a peer lands on their own
 screen). F and the plaque still skip a concealed stranger (CONCEAL-MATE: a party mate stays open), and its foes still
 read its flags (INVIS-NET).
-`01-Overview/Field-Bugs-2026-09-27b.md`. Pinned: `test/net/invislook.test.js` (7). `tools/mutants/invislook.json` (31 dead).
+`01-Overview/bugs/Field-Bugs-2026-09-27b.md`. Pinned: `test/net/invislook.test.js` (7). `tools/mutants/invislook.json` (31 dead).
 
 ## CONCEAL-MATE (2026-10-07, a player: "you're not interactable with party members - would be a QoL if you can interact with at least your party members while chameleon or shadow form, invis etc on") - a concealed player stays open to their party
 
@@ -13151,7 +13151,7 @@ RELAY_VERSION world137), and every member's linked copy counts the injury and th
 (`scenes/quest/questFoeHost.js creditKeptKills`). A linked member in the room who saw the puppet fall counted it already: the
 puppet's death names its owner and number, and both doors ask one ledger (`KeptKillLedger`), so the kill counts once.
 A relay before world136 strips the field and nothing changes. The record and the report it answered:
-`01-Overview/Field-Bugs-2026-10-01.md`. Pinned: `test/systems/quest/keptkill.test.js` (7).
+`01-Overview/bugs/Field-Bugs-2026-10-01.md`. Pinned: `test/systems/quest/keptkill.test.js` (7).
 
 ## PSCALE-OWN (2026-09-27, Mac: "Finish the 2 gaps") - a shared quest's foe underground weighs the party
 
@@ -13258,7 +13258,7 @@ drops every connected player once. Pinned:
 fake channel and over the runtime's own, the button over the chat's fake DOM, and the host's seat code RUN, lifted
 from world.js (AUDIT ONESEAT T1). `tools/mutants/oneseat.json` (68 dead - two the merge's with main's SET3: the sets' stat tiers fold as the seat is left and taken back).
 
-**AUDIT ONESEAT** (2026-09-27, Mac: "Audit this" - `bible/01-Overview/Audit-OneSeat.md` is the record). Four lenses,
+**AUDIT ONESEAT** (2026-09-27, Mac: "Audit this" - `bible/01-Overview/audits/Audit-OneSeat.md` is the record). Four lenses,
 each reproducing what it reported. Fixed:
 - *The relay.* A seat that MOVES is not a drain (R1): a claim that closed the hub's lone other socket, or a
   reconnect over its own, left the room "empty" for the hello's sweep, which took every party in the hub (a
@@ -13310,7 +13310,7 @@ streets fought a haunting nobody else saw.
 
 **Not changed.** Every copy still rolls its own, so three players in the streets face three players' ghosts - as a
 cell's encounters already do (WORLD6b) - seen and fought together now. One haunting for everyone near is Mac's call.
-`01-Overview/Field-Bugs-2026-09-27d.md`.
+`01-Overview/bugs/Field-Bugs-2026-09-27d.md`.
 
 Pinned: `test/systems/quest/cursesync.test.js` (10) - the vendored S0000977 in a real machine, its wave bound by the real producer,
 driven through real encounter pools and both handovers mounted. `tools/mutants/cursesync.json` (13 dead). Re-aimed by
@@ -13321,7 +13321,7 @@ content: the handover pins (`auditpscale1`, `questparty2`, `questparty3b`, `summ
 once its quest is known (a quest leaving the table no longer turns a fighting ghost private, and the gates read one
 lookup); the list's admission rule is pinned (no task counts a world quest's foes); IsProtectedQuest's name test has one
 home (`questNameIn`); the name the game mints from `start quest 977 977` is pinned. One party, one haunting is left
-open - PSCALE1's election cannot see who the curse stands for. `01-Overview/Field-Bugs-2026-09-27d.md`.
+open - PSCALE1's election cannot see who the curse stands for. `01-Overview/bugs/Field-Bugs-2026-09-27d.md`.
 
 ## CORPSE-GOLD (2026-09-27, the Discord: "out of sync dungeons can generate infinite gold upon entry if there are dead corpses of monsters") - a rebuilt body takes the room's word
 
@@ -13343,12 +13343,12 @@ index). A refused record is a hole now. A body the room has said nothing of wait
 
 Not closed: the memory is the host's alone and publishes every WORLD_PUBLISH_MS. A non-host who takes, leaves and
 re-enters inside that window reads the older memory, and a backgrounded host publishes nothing. A live loot word about a body whose rebuild is still loading its art is skipped too (no container yet), so that body takes the memory's record. That needs a design
-call (the host answering arrivals with its live loot words, or the relay keeping them). `01-Overview/Field-Bugs-2026-09-27f.md`;
+call (the host answering arrivals with its live loot words, or the relay keeping them). `01-Overview/bugs/Field-Bugs-2026-09-27f.md`;
 `test/systems/corpsegold.test.js` mounts the real restore chain; `tools/mutants/corpsegold.json`.
 
 ## THE 2026-09-27g DISCORD BATCH - one crash, the guild tab, the decorator, the bank, a visitor's magic
 
-Mac, with the Discord's list and a crash box. The batch's record is `01-Overview/Field-Bugs-2026-09-27g.md`; each slice
+Mac, with the Discord's list and a crash box. The batch's record is `01-Overview/bugs/Field-Bugs-2026-09-27g.md`; each slice
 below says what moved and where it is pinned. Mutants: `tools/mutants/fieldbugs27g.json`.
 
 **STATION-ROWS (the crash box: "TypeError: m.rows.map is not a function").** A home's Spellmaking station opens the
@@ -13486,7 +13486,7 @@ The record is `06-Systems/Travel-View.md` OWS. No relay change, and nothing new 
 
 ## THE 2026-09-28 DISCORD BATCH - the pause key, the arrest, the dead span, the swimmer, the flyer, the shared quest
 
-Mac, with eleven Discord screenshots. The batch's record is `01-Overview/Field-Bugs-2026-09-28.md`; its online halves:
+Mac, with eleven Discord screenshots. The batch's record is `01-Overview/bugs/Field-Bugs-2026-09-28.md`; its online halves:
 
 - **DISC28-B** - the world runs under the surrender box (WORLD5), so the arrival's crime clear withdraws a standing
   question (`arrestFlow.crimeCleared`), and a court over no crime arms nothing. AUDIT DISC28 AR-1: a load ends the
@@ -13564,7 +13564,7 @@ collapse (`gateCountdown`'s `closed` arm, `countdownWords`) and its seal line sa
 reads, keeps or sends changed and no wire shape moved, but the law is the whole bundle (SLAM13), so world125 is a new
 row in `test/net/relayversion.test.js` and the pins of the current version moved with it. It ships with the raids' own
 undeployed world124 (#414, folded into the same branch): one deploy, one drop of every connected player.
-`01-Overview/Field-Bugs-2026-09-28b.md`, `11-Multiplayer/World-Bosses.md` "THE GATE IN THE ROCK".
+`01-Overview/bugs/Field-Bugs-2026-09-28b.md`, `11-Multiplayer/World-Bosses.md` "THE GATE IN THE ROCK".
 
 ## DISCORD-GATES (2026-09-28, Mac: "Discord live gates?") - world126
 
@@ -13654,7 +13654,7 @@ and the relay is the one that fights under them, so the relay moved:
 Relay world128 - world126 on its branch, never deployed, and one relay past main's OW6L (world127, the cell's overworld ledger) at the merge with #428-#432, the two in one relay (its row in `test/net/relayversion.test.js` - world125 is VOICE1's, deployed with PR #427 and reverted with #416 forty minutes later; the version pins of the suites that name it moved,
 each with its history). Pinned in `test/net/gate/wb8b_gate_marks.test.js` (the wire and the relay's draw on the real Room).
 
-AUDIT PRE-MERGE 0929 (`01-Overview/Audit-PreMerge-0929.md`, lens W1): only a fall with a real part in the fight behind
+AUDIT PRE-MERGE 0929 (`01-Overview/audits/Audit-PreMerge-0929.md`, lens W1): only a fall with a real part in the fight behind
 it feeds a Soul-Hungry Warden (`hasPart`, AUDIT WBX R2's bar - a fall is the fighter's own word, and twenty-five
 throwaway guests that said `in` dead and went took him from a fifth to all but full), no more than GATE_FEEDS_MAX (5) a
 fight; a Colossal Warden's cone reaches from his body (9.45 m), so R3's law holds under every set of marks. World126's
@@ -13667,7 +13667,7 @@ the real Room).
 The realm (`Realm-Arc.md`) never touched the relay: world124 before it and after. Its separation was the new build's
 law alone - a boot that never takes a local slot online - so a build from before the realm went on playing online as
 an offline character, and a character made there after the census froze could never come in
-(`01-Overview/Field-Bugs-2026-09-29b.md`). The relay now asks, at the door every room shares:
+(`01-Overview/bugs/Field-Bugs-2026-09-29b.md`). The relay now asks, at the door every room shares:
 
 - **The token carries the realm's word on the character** (`net/identityToken.js` `rc`): the account service signs 1
   when the character the mint names is one of the account's realm characters, else 0 (acct22).
@@ -13726,7 +13726,7 @@ character's.
 - OL3's real-time deadlines (said now in the character's time and in play, `ownTimeLeftText`);
 - RESTX2's `_onlineSimMinutes` and REST-ROUNDS / RISE-REST F2's online arm (MAC-LVL1's credit is retired
   in its own record, `09-Testing/Testing.md` mac_online_level's row and Active-Arcs' 2026-09-21 line);
-- C2's correction, C4's load alignment and OL3's (3), stamped by AUDIT LIVED1 (`01-Overview/Audit-Lived1.md`).
+- C2's correction, C4's load alignment and OL3's (3), stamped by AUDIT LIVED1 (`01-Overview/audits/Audit-Lived1.md`).
 
 **WORLD7 stands:** quest clocks charge played time. Moving the countdowns onto the character's clock
 is Lived-Time's OPEN 1.
@@ -14066,7 +14066,7 @@ writes the slots on a tab's close (`beforeunload`); a crash is Marks' own shape,
 walls, from a floor away, and when it could not be worked (every dungeon vein below Mining 25): E takes a node twelve
 degrees from the crosshair, in reach in three dimensions, seen through the place's collider, and ready - else the
 press goes on to the door (and what the node needs, which went with the press, is said again when nothing else takes
-it - VEIN-NEED, `01-Overview/Field-Bugs-2026-09-29h.md`). Underground a click or a finger's tap started an act a swipe could not play and every swing
+it - VEIN-NEED, `01-Overview/bugs/Field-Bugs-2026-09-29h.md`). Underground a click or a finger's tap started an act a swipe could not play and every swing
 was held off: a dungeon vein takes Interact alone, above the quest foe's click. The vein wall's ray hit a closed door
 and stood a vein in a doorway that moved when it opened: the rays read the dungeon's own mesh, and a vein over a pit
 stands on the next bearing. A kept harvest answered through the pump said no rank's rise and left its node drawn: the
@@ -14674,7 +14674,7 @@ count, so every sentence was reworded to read right, never just swapped.
 
 ## STRIKE-SHARED (2026-09-29, Mac: "Do #1") - a strike spell reaches a foe another player runs
 
-For Mac 4 of `01-Overview/Field-Bugs-2026-09-29g.md`, the shared-foe half. A Cast When Strikes spell on a foe
+For Mac 4 of `01-Overview/bugs/Field-Bugs-2026-09-29g.md`, the shared-foe half. A Cast When Strikes spell on a foe
 another player runs (a cell's puppet, a dungeon room's foe on a joiner, a party member's quest foe or loose stand) now
 rides the hit to that foe's owner whole. The hit carries `sp`, the record through the cast frame's `castSpellOf`, and
 `lv`, the striker's level. The owner lands it on the real foe through the cast engine's foe door, and its damage
@@ -14847,7 +14847,7 @@ is one now:
   branch's one migration, `0036_hunting.sql`, already runs after main's `0035_renown_characters.sql`; none is
   renumbered. The relay is main's world133 - the branch never moved it.
 - **Two batches under one letter.** Main's FIELD BUGS 2026-09-29h (eleven #bug-reports threads) and the branch's
-  (VEIN-NEED, one) were written under the same name on the same day. `01-Overview/Field-Bugs-2026-09-29h.md` keeps both:
+  (VEIN-NEED, one) were written under the same name on the same day. `01-Overview/bugs/Field-Bugs-2026-09-29h.md` keeps both:
   main's eleven first, VEIN-NEED as part two, so every cite of the page stands.
 - **Cites.** The files the branch touched only to re-aim cites take main's copy, and `tools/citeMerge.mjs origin/main
   HEAD --apply --struck` re-mapped each line from the side it came from (302 moved). The shared lines it held back as
@@ -15315,7 +15315,7 @@ The design and the record are `11-Multiplayer/Sea-Serpent.md`. What it asks of t
 - Pins: `test/net/serpent/serpent1_law.test.js`, `test/net/serpent/serpent1_relay.test.js`, `test/systems/serpent1_client.test.js`. Mutants:
   `tools/mutants/serpent1.json` (43, all dead). Re-aimed by content: `auditrealm2_client.json` (2), `eventtip.json`,
   `gatekeys.json`, `gateux.json`, `raid4.json`, `seapeace.json`, `survtiers3.json` (2) and `wb12d.json`.
-- **AUDIT SERPENT 2** (`01-Overview/Audit-Sea-Serpent.md`): every word a fight fans names its site (`sx`/`sz` on every
+- **AUDIT SERPENT 2** (`01-Overview/audits/Audit-Sea-Serpent.md`): every word a fight fans names its site (`sx`/`sz` on every
   `serpent` frame of a fight; `validSerpentOut` projects it) and the client folds its own site's alone - a forged
   site's fight heard on a halo socket in the next cell never reads as the client's serpent; a socket about two fights
   hears both. A refusal no longer mutes the client; the cell's other changes are the brain's and the room's (one
@@ -15428,7 +15428,7 @@ the row online with the ground's words; offline it stays the player's, off as
 shipped, and the online sync (UXB1-E) copies the room's on home with the rest.
 The landforms' job lost its own river flag: the painter's switch is the cut's.
 
-AUDIT LANDFORMS (2026-10-07, `01-Overview/Audit-Landforms.md`) added three:
+AUDIT LANDFORMS (2026-10-07, `01-Overview/audits/Audit-Landforms.md`) added three:
 - C3, HIS NETWORK OR NONE YET: one failed fetch of Basic Roads' arrays stood
   that client on the port's own generated network - other roads, no rivers, so
   with the landforms a river pixel's ground a median 4.8 m off its peers'.
@@ -15581,7 +15581,7 @@ nobody to hear, and says so (AUDIT FB1007b H5, with a page held out, the party c
 outside the Hold is the shared world again (its cell's room). The relay is untouched: an older client still joins the old
 room, and only with other older clients.
 
-AUDIT FB1007b (`01-Overview/Audit-FB1007b.md`): no room remembers the Hold, so every entry built it whole, its loot
+AUDIT FB1007b (`01-Overview/audits/Audit-FB1007b.md`): no room remembers the Hold, so every entry built it whole, its loot
 rolled anew at the player's level - online the page keeps its memory as a room keeps one, at the door out, laid back at
 the next door in (WORLD8's hour on it), forgotten by a load (H2); the hub's link hears the relay's clock for it, where
 the presence session hears no welcome (H4); and a staff `/tp` to a player there is refused as unavailable (H3).
@@ -15591,7 +15591,7 @@ Of every location in the world, the start cell holds one: Daggerfall's Privateer
 
 - **Pinned** (until the revert): `test/fb1007b_holdsolo.test.js` (9; one gated on ARENA2) - DELETED by HOLD-SHARED;
   `tools/mutants/fb1007b.json` (its FB1007B-HOLD / START-CELL / PH1 records and the audit's H records). Record:
-  `01-Overview/Field-Bugs-2026-10-07b.md`.
+  `01-Overview/bugs/Field-Bugs-2026-10-07b.md`.
 
 ## HOLD-SHARED (2026-10-12, asked: "I want to revert the change we made to privateers hold making it instanced") - Privateer's Hold is a shared world room again
 
@@ -15656,7 +15656,7 @@ CSPRNG, keeps the deck, tells each seat its own cards alone and the room the pub
 and folds a leaver out of turn; the tables checkpointed to storage. Friendly - no gold moves. The whole record is
 `11-Multiplayer/Tavern-Cards.md` section 17.
 
-AUDIT CARDS-3 (2026-10-08, `01-Overview/Audit-Cards-3.md`; the same row, re-hashed in place): one seat an account in a
+AUDIT CARDS-3 (2026-10-08, `01-Overview/audits/Audit-Cards-3.md`; the same row, re-hashed in place): one seat an account in a
 room; a refused sit moves nothing elsewhere; seats with no socket in the room stood up on the alarm and by an empty
 room's sweep; the room's sits on `holdemSitRoomGate`; a table of other chairs refused; a dropped player's own chair back.
 On the client, the frames restamped on the cloth's clock, and the chair found by the player's own id.
@@ -15669,7 +15669,7 @@ the frame just before it - a socket that missed one asks for the table whole.
 
 CARDS6 (2026-10-08; the same row, re-hashed in place): GOLD TABLES. A sit may carry the service's stake order (`net/identityToken.js` kind `stake`), which the room checks with the key it holds and spends once; a staked seat's leaving is signed back as a cash-out receipt (`net/card/cardReceipt.js`, `c1`, GATE_SIGNING_KEY), owed to its account in the room till its `ack`; a stake never sat is `void`ed back. The service holds the stakes (`server-account/src/cards.js`). The whole record is `11-Multiplayer/Tavern-Cards.md` section 23.
 
-AUDIT CARDS-4 and CARDS6b (2026-10-08, `01-Overview/Audit-Cards-4.md`, Tavern-Cards section 24; the same row, re-hashed
+AUDIT CARDS-4 and CARDS6b (2026-10-08, `01-Overview/audits/Audit-Cards-4.md`, Tavern-Cards section 24; the same row, re-hashed
 in place): another room's stake order is left unspent with nothing handed back; the table is read again after an
 order's await; a room that cannot sign a cash-out seats and voids no stake; a cash-out leaves the queue only once kept;
 a void reaches a receipt's life. And the `topup` word: a gold seat adds a stake of its own between hands, checked before

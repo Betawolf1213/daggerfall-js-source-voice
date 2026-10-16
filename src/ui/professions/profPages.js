@@ -201,7 +201,7 @@ const wordRow = (id, label) => {
   Object.defineProperty(row, 1, { enumerable: true, get: label });
   return Object.freeze(row);
 };
-/** STATION-DOOR (bible/01-Overview/Field-Bugs-2026-10-11f.md): the home stations whose press opens Daggerfall's maker AND
+/** STATION-DOOR (bible/01-Overview/bugs/Field-Bugs-2026-10-11f.md): the home stations whose press opens Daggerfall's maker AND
  *  whose profession's act is this page's - each the act's word, as the press's chooser offers it beside the maker. A
  *  200,000-gold enchanting station opened the item maker alone, and Disenchanting stood at the foot of this page with no
  *  door from the station to it. */

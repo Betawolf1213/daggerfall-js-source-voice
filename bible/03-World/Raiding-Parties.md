@@ -341,7 +341,7 @@ answers with a card: *RAIDING PARTY* / the town and its province / the party att
 driven off (said only once this machine knows some) / *Withdraws at* the raid's end on the game's clock [TIME1: online in this machine's local time, "... your time"; offline
 the game clock's]. The host hands
 the map `raids` (`ui/eventMapMarks.js raidMapMarks` over `raidState()`), none while the mod is off; the classic region
-page, DFU's window, draws no raids. The gate's ring answers the same way. `01-Overview/Field-Bugs-2026-09-28b.md`
+page, DFU's window, draws no raids. The gate's ring answers the same way. `01-Overview/bugs/Field-Bugs-2026-09-28b.md`
 EVENT-TIP.
 
 ## FIELD-RAID-FT - a fast travel into a raided town crashed (2026-09-28)
@@ -396,4 +396,4 @@ a word - was tallied and never said (step F said the word from inside the rect a
 (`scenes/world.js` `exteriorFoes.clearLive()`) took every raider out of the pool without a death, so the raid kept them
 standing and stood no one under its cap. Step F says a raid I fought from anywhere on its pixel now, and
 `raidPoolCleared()` runs beside the sweep. The held map's card counts the town's ledger (`raidRelayState`) against the
-town's target, not this machine's share. The record: `01-Overview/Field-Bugs-2026-10-11g.md` RAID-WORD.
+town's target, not this machine's share. The record: `01-Overview/bugs/Field-Bugs-2026-10-11g.md` RAID-WORD.

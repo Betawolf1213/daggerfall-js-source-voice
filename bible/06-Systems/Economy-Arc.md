@@ -122,7 +122,7 @@ current design "does not work in an enjoyable manner"):
   `src/systems/healingSupply.js`) and COMPANION-WEIGHT (a crew companion's
   pack carries what a person of his strength can, DFU's MaxEncumbrance -
   `03-World/Naval-Combat.md`). Audited the same day (AUDIT ECON,
-  `01-Overview/Audit-Econ.md`).
+  `01-Overview/audits/Audit-Econ.md`).
 - **Phase 1 - see failure.** The server-side gold ledger: each checkpoint's
   gold and item deltas read against budgets, every faucet counted. Nothing
   later is tuned blind.
@@ -199,7 +199,7 @@ current design "does not work in an enjoyable manner"):
 The ask: "We need to make house pricing make sense online". Offered three ways,
 the choice was a new online price "by what you get (its footprint, scaled by
 town size) inside a fixed range the server enforces", with the coherence fixes
-beside it. Audited the same day (`01-Overview/Audit-HomePrice.md`); what the
+beside it. Audited the same day (`01-Overview/audits/Audit-HomePrice.md`); what the
 audit changed is folded in below.
 
 **What did not make sense.**

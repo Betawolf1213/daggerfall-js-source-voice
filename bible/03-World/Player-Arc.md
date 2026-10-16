@@ -591,7 +591,7 @@ LevitateMotor / PlayerSpeedChanger / PlayerEnterExit / PlayerEntity:
   multiplier) - the minute's band, a jump, a swing (8) and Roleplay
   Realism's overload. A full bar at STR/END 50 walks 66.7 real minutes
   (DFU 48.5) and runs 8.1 (DFU 6.1). A departure: Ledger A,
-  `01-Overview/Field-Bugs-2026-09-27-phone-backup-drains.md`.
+  `01-Overview/bugs/Field-Bugs-2026-09-27-phone-backup-drains.md`.
   **FATIGUE-IDLE (2026-09-29, Mac: "You shouldn't lose fatigue at an
   insane rate standing still"; asked, "Nothing")**: standing still ON
   THE GROUND pays no minute's band (`worldTick.js`, off the motor's
@@ -777,7 +777,7 @@ AcrobatMotor/PlayerMotor/FrictionMotor/PlayerHealth read end to end:
   `OnExteriorWater == Swimming` included). Its slowfall clause is
   dropped (JUMP-SLOW, FIELD BUGS 2026-10-11b, a departure: the rise is
   the jump's and the spell takes the descent from the apex -
-  `01-Overview/Field-Bugs-2026-10-11b.md`).
+  `01-Overview/bugs/Field-Bugs-2026-10-11b.md`).
 - **airControl = false** (AcrobatMotor.cs:21): airborne horizontal
   momentum FREEZES at liftoff - DFU recomputes x/z from input only in
   the grounded branch, so mid-air steering does nothing. AUDIT 64 F2:
@@ -2166,7 +2166,7 @@ rounded bottom, with its feet r (1 / cos - 1) over that ground: 5 cm at
 (`restFloor`), the grade taken from the heightfield across the capsule's
 own width. It is read by both the floor snap and the clamp, so MAC3's
 downhill adhesion holds, and flat ground is unchanged.
-`01-Overview/Field-Bugs-2026-09-23.md` DISC16-A.
+`01-Overview/bugs/Field-Bugs-2026-09-23.md` DISC16-A.
 
 ## DISC18 - the body stands on the capsule's feet, not the camera's (2026-09-24, Mac)
 
@@ -2176,7 +2176,7 @@ low-passed feet (MAC1's `STEP_SMOOTH_TAU`, AUDIT 65 XL-4), which trail a
 climb by the climb's vertical speed times the time constant. Walking up
 a 30-degree hill the body sat 13 cm under the ground, and 23 cm running.
 `bodyFeetAt()` is EV1's interpolation alone. The five body draws take it,
-and the cameras keep the smoothing. `01-Overview/Field-Bugs-2026-09-23.md`
+and the cameras keep the smoothing. `01-Overview/bugs/Field-Bugs-2026-09-23.md`
 DISC18.
 
 ## DISC29-A - a Collision01 object is stood on wherever its own surface is (2026-09-28, Skibbster)
@@ -2202,9 +2202,9 @@ Measured on BLOCKS.BSA: of the 104 Collision01 objects (52 models), 49 have no u
 among them), 8 Hurt23/Hurt24 rooms (model 67017 in N0000006 and N0000008), 4 CastSpell (the two thrones, N0000007's
 room), 2 DrainMagicka, a Teleport and an Unknown32 among the 49. Stood on, each now fires as DFU's does.
 `test/world/disc29_throne.test.js` (5, one on the real N0000037); `tools/mutants/disc29.json` (DISC29-A, 7).
-`01-Overview/Field-Bugs-2026-09-28f.md` DISC29-A.
+`01-Overview/bugs/Field-Bugs-2026-09-28f.md` DISC29-A.
 
-**AUDIT PRE-MERGE 0929 D1/D2** (`01-Overview/Audit-PreMerge-0929.md`) - the review above, due at once. DFU's WalkOn is
+**AUDIT PRE-MERGE 0929 D1/D2** (`01-Overview/audits/Audit-PreMerge-0929.md`) - the review above, due at once. DFU's WalkOn is
 the contact's DIRECTION from the controller's centre (`dir.y < -0.9`, :68-71) for EVERY flag; the ray (:74-85) is only
 Collision01's second test. The box's top and a ray under the capsule's centre missed a staircase, where a body rides the
 treads' edges - N0000007's Hurt22 staircase (object 20798, in 69 dungeons) bit 2 times walking all sixteen steps down, 4
@@ -2293,5 +2293,5 @@ not ejected on its own - `/unstuck` (PVPUNSTUCK's walk to the nearest town) is i
 longer marks rock at all (MOUNTAINS WALKABLE, `11-Multiplayer/Wild-Zone.md` section 19), so its travel can walk into a
 massif; and the collider's floor is the bilinear read where the drawn landform ground is triangles, a gap that can reach
 metres on the steepest ridges. `test/player/unstuckout.test.js` (2) - the real collider over real closed rock meshes;
-`tools/mutants/unstuckout.json` (7), all dead. AUDIT FIELD-BUGS 1008 (`01-Overview/Audit-Log.md`): `tvSeaY` declared
+`tools/mutants/unstuckout.json` (7), all dead. AUDIT FIELD-BUGS 1008 (`01-Overview/audits/Audit-Log.md`): `tvSeaY` declared
 beside `state`, before the boot's own load reads it (the outdoor arm's refusals that audit worded went with the arm).

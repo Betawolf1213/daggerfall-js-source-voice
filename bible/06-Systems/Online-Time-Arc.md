@@ -258,7 +258,7 @@ lived with the world - the event clock's movement while you play - and never a r
 ### 5.4 Real time
 
 Unchanged: respawns (WORLD8's real clock - half an hour in the Wrothgarian halls and Abyss Dungeons since
-RESPAWN-30, `bible/01-Overview/Five-Asks-2026-10-14.md`; 20 and 40 minutes in a normal and an elite dungeon), the gate's rise and collapse, the gate boss's own beats, the
+RESPAWN-30, `bible/01-Overview/handoffs/Five-Asks-2026-10-14.md`; 20 and 40 minutes in a normal and an elite dungeon), the gate's rise and collapse, the gate boss's own beats, the
 Seats' weeks, the Sigil stock's and the Marks' UTC days, the renown cap's real hour, a home's rent, the
 bands' and the sea raiders' lives, a held torch's burn.
 
@@ -271,7 +271,7 @@ its clock:
 - **`ownTimeLeftText`'s "of play":** your clock's rate, TimeScale 12; unchanged;
 - **`gateCourt.js COURT_ROUND_MS`:** a magic round, your clock's; unchanged;
 - **`overworldLaw.js OW_REBIRTH_MIN`:** the event clock's; unchanged (SPAWN-REBIRTH, 2026-10-12: it replaced
-  `OW_ROW_KEEP_MIN`, the sixty-day keep - `01-Overview/Field-Bugs-2026-10-12h.md`);
+  `OW_ROW_KEEP_MIN`, the sixty-day keep - `01-Overview/bugs/Field-Bugs-2026-10-12h.md`);
 - **the gate panel's local times** (`sharedWallMs`): the event clock's inverse; unchanged;
 - **the drawn weather's step:** the sky feed measures `dt` in game minutes for the weather's ease
   (`WEATHER_EASE_MINUTES`), the cloud drift (`WIND_SECONDS_PER_MINUTE`, written as 60 / 12), the wind
@@ -472,7 +472,7 @@ does online: "Short real wait"; asked whether the bounties, the curse quests and
   off, ends the quest with no GivePc, TrainPc or StartQuest), costs a standing (a negative `change repute` or
   `legal repute`), or shuts a reward waiting on `not _clock_`. Everything else is a delay. A clock a clock starts is
   asked on its own (Brisienna's invitation is a delay that starts her fortnight, a deadline). AUDIT TIMEFREE
-  (`01-Overview/Audit-Timefree.md`) sharpened the reading: a standing lost or a reward shut counts only by what the
+  (`01-Overview/audits/Audit-Timefree.md`) sharpened the reading: a standing lost or a reward shut counts only by what the
   end or the reader itself DOES, not by a chain of later `when`s (T2); `end quest` is a loss only when the end ALONE
   sets it off, by the engine's own reading of the `when` (T3 - the main quest's endings wait on the story); a quest
   item handed over is progress (T4); `Clock _x_ 00:00` with no travel arm is "at once" (T3); and a CLOSING - a clock
@@ -657,7 +657,7 @@ terms; 9 is new and not built.
 - 2026-10-02: TIMEFREE (6.3b) - online quests are not time: deadlines never run out, delays land on the short wait,
   no countdowns, bounties never lapse, the curse quests and crime-guild letters on the short wait.
   `test/timefree.test.js`, `tools/mutants/timefree.json` (10, all dead). [DELETED by 6.3c]
-- 2026-10-02: AUDIT TIMEFREE (`01-Overview/Audit-Timefree.md`): every vendored clock read by hand, the main quest's
+- 2026-10-02: AUDIT TIMEFREE (`01-Overview/audits/Audit-Timefree.md`): every vendored clock read by hand, the main quest's
   whole; nineteen misread clocks corrected (T1-T6) - among them Brisienna's close, the main quest's endings and
   letter43, quests that never closed after their reward. `test/audit_timefree.test.js`, [DELETED by 6.3c]
   `tools/mutants/audit_timefree.json` (14, all dead). [DELETED by 6.3c]
@@ -706,7 +706,7 @@ terms; 9 is new and not built.
   text sets a limit, read "a few days" online - deadlines by hand, 271 and 128; a held bounty's day moves with the lane
   (Bring online lapsed a ledger of this build's bounties on the first tick). `test/systems/auditrest3.test.js`,
   `tools/mutants/auditrest3.json`.
-- 2026-10-06: GUARD-WINDOW (FIELD BUGS 2026-10-06c, `01-Overview/Field-Bugs-2026-10-06c.md`): N0B20Y02's three-hour
+- 2026-10-06: GUARD-WINDOW (FIELD BUGS 2026-10-06c, `01-Overview/bugs/Field-Bugs-2026-10-06c.md`): N0B20Y02's three-hour
   guard is a deadline by hand - read as a delay, it was cut to the 24-minute short wait and the mage was hidden before
   the attack its 55-minute interval sends; a guard who stepped out in those two real minutes lost the attack for good.
   272 and 127. `test/systems/quest/fb1006c_guardwindow.test.js`, `tools/mutants/fb1006c.json`.

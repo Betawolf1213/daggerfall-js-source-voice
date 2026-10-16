@@ -3,7 +3,7 @@
 // and nothing else; Disenchanting stood at the foot of the Stores page with no door from the station to it - and the
 // alchemy station's brew the same. The press now offers both: the maker, or the act on the Stores page, landed on its
 // station. Driven through the host's own functions (worldModes.js useDecorStation, openStationMaker, offerStationActs)
-// and the page's own draw. bible/01-Overview/Field-Bugs-2026-10-11f.md.
+// and the page's own draw. bible/01-Overview/bugs/Field-Bugs-2026-10-11f.md.
 import '../chargenDom.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';

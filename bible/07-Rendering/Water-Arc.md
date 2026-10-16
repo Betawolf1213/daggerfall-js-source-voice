@@ -1022,7 +1022,7 @@ against itself - each pinned).
 
 Mac: *"I want you to do a comprehensive audit ensuring this is perfection and performance is unaffected"*. Three lenses
 (the GL and the shader; the hosts and the world's lifecycle; the record and the pins) and a performance lens measured
-against main; the findings, the fixes and what is recorded are `01-Overview/Audit-WATER-NEXT.md`. What moved in the laws
+against main; the findings, the fixes and what is recorded are `01-Overview/audits/Audit-WATER-NEXT.md`. What moved in the laws
 above:
 
 - **The bed is the kernel's** (P1). `terrainGen.js restrideGrid` carves it with the grid it builds - the build's, the
@@ -1231,7 +1231,7 @@ frame claimed nearer takes nothing; and the sea takes the water's body when its 
 
 Mac: *"Audit this"*. Five lanes read the frozen branch - the shaders and GL, the hosts and the frame, the pins and the
 record, the numbers at the seams, and the cost - each verifying its findings before reporting; the findings, the
-fixes and what is recorded for Mac are `01-Overview/Audit-FAR-SEA1.md`. What moved in the laws above:
+fixes and what is recorded for Mac are `01-Overview/audits/Audit-FAR-SEA1.md`. What moved in the laws above:
 
 - **The fill was not free** (P1, two lanes). The ring wrote `gl_FragDepth`, which runs a fragment shader before its
   depth test, and the fill rasterized the whole streamed sea: from a raised eye it shaded 55-60% of the frame to show

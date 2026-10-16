@@ -192,7 +192,7 @@ its board by its own brightness and laid on the wood), the inventory's shelf box
   a sheet of the older scroll, a tile the shelf box, a band a plank, a tab the pack's wooden tab plate; a press on a
   page is WRITTEN in ink (the inventory's Wagon/Info/Equip strip), on wood in the pack's yellow, and the way out of a
   window (Close, Exit) wears the pack's own red Exit frame. Plus's diamonds go. AUDIT CARDS-PLUS (2026-10-13,
-  `01-Overview/Audit-Cards-Plus.md`): a tile's chosen, pointed-at and keyboard marks are an outline drawn above its box -
+  `01-Overview/audits/Audit-Cards-Plus.md`): a tile's chosen, pointed-at and keyboard marks are an outline drawn above its box -
   they were inset shadows, and the shelf box's fill paints over every inset shadow, so on every dressed page a chosen
   tile looked as the rest (C2); a warn press answers the pointer and the keyboard, its red brighter and struck twice -
   its own red had outweighed the hover's (B1); and the card tables' states are re-said in the dress's own colours, as
@@ -344,7 +344,7 @@ the points left under the last number of the attributes not too close", "The gol
   clicked on it in the info box"): the player trade window - the one window every skin opens - says a letter of
   credit's worth (`systems/walletItem.js letterWorthLine`) in the detail a click opens and in the row's hover, for a
   letter of either side; its value rides the wire whole (`systems/loot/loot.js wireLootItem` floors, never drops it).
-  Pinned by `test/systems/tradeinfo.test.js` TRADE-LOC. TRADE-LOC II (`01-Overview/Field-Bugs-2026-10-11d.md`): and on the
+  Pinned by `test/systems/tradeinfo.test.js` TRADE-LOC. TRADE-LOC II (`01-Overview/bugs/Field-Bugs-2026-10-11d.md`): and on the
   row itself, under the letter's name - no hover on a phone, and two letters told apart without a click each - and as
   the pack's card's Worth (`letterWorthGold`).
 

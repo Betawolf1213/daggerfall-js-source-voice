@@ -7,7 +7,7 @@
 // Mac: "Server-owned" (bible/11-Multiplayer/Chapters-Arc.md section 3).
 // net/npcChapterLaw.js holds the law; server-account/src/npcRoll.js keeps
 // the Roll; this file decides WHEN to ask and what to hold. Its audit is
-// bible/01-Overview/Audit-Chapters.md (AUDIT CHAP).
+// bible/01-Overview/audits/Audit-Chapters.md (AUDIT CHAP).
 //
 // ═══ THE SERVICE'S WORD IS THE STANDING ════════════════════════════
 //

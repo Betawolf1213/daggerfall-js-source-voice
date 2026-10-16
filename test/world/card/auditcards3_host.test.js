@@ -1,4 +1,4 @@
-// AUDIT CARDS-3 (2026-10-08, bible/01-Overview/Audit-Cards-3.md): THE HOSTS' SEAMS. The relay's frames on the cloth's
+// AUDIT CARDS-3 (2026-10-08, bible/01-Overview/audits/Audit-Cards-3.md): THE HOSTS' SEAMS. The relay's frames on the cloth's
 // own clock (D1); the panel's message rewritten in place, its slider and its buttons kept (B5); the next hand waiting
 // for the cloth (C4); a friendly game never refusing a save (E-N5); the comments back on their own lines (D11).
 import { test } from 'node:test';

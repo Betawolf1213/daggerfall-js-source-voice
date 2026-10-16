@@ -1,4 +1,4 @@
-// QUEST-AUDIT II TEMPLE-SUMMONER (bible/01-Overview/Quest-Audit-II.md; the owner, on the audit's findings: "Restore
+// QUEST-AUDIT II TEMPLE-SUMMONER (bible/01-Overview/audits/Quest-Audit-II.md; the owner, on the audit's findings: "Restore
 // the summoner"): THE DAEDRA SUMMONER OF EVERY BEAUTIFUL VILLAGES TEMPLE.
 //
 // Every Daggerfall temple stands its deity's Daedra summoner (factions 456-498 - guildServices.js NPC_SERVICE's

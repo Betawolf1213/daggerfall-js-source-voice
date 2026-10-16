@@ -6,7 +6,7 @@
 // one of them: L1-5 kept a tag's text out of the build legs' scripts, and
 // in doing so broke the Windows leg. Every finding a lane verified is
 // fixed at its root and pinned here; the record, finding by finding, is
-// bible/01-Overview/Audit-Install.md ("Round 2"). Lane C's notes findings
+// bible/01-Overview/audits/Audit-Install.md ("Round 2"). Lane C's notes findings
 // (C1, C4, E-48..E-51) pinned the PATCH-NOTES-*.md reader REL6 retired -
 // the notes come off the pull requests now (test/tooling/rel4_release.test.js).
 import { test } from 'node:test';

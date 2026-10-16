@@ -158,4 +158,4 @@ memo for two pools, the bake's +Y, the match reading the back, every member of t
 `test/ui/portrait3d.test.js`: an NPC's portrait walked over the data's, an escort's the data's, a player's the port's own;
 a member of the line not played (`facePose`'s `kin`) the data's, as their body in the world. `tools/mutants/mwheads1.json` (26, all dead - the tenth paints the eyepatch onto h04; the audit's sixteen the own pools
 without their meshes, the match measured anyway, a key without its pools, the hairs named heads, the crown's refusal
-unread, a coverage walk short of the hairs, and fbxMesh's material reader's refusals). The audit: `01-Overview/Audit-MW-Heads-Folk.md`.
+unread, a coverage walk short of the hairs, and fbxMesh's material reader's refusals). The audit: `01-Overview/audits/Audit-MW-Heads-Folk.md`.

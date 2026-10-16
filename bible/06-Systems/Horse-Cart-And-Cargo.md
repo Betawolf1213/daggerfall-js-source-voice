@@ -421,7 +421,7 @@ every one dies.
 riding loop; hearing a peer's would be a new feature.~~ **BUILT (RIDE-SOUND,
 DISC6, 2026-09-23).** A riding peer's hooves play at them - TransportManager's
 riding half run off their pose, through a positional loop. Record:
-`01-Overview/Field-Bugs-2026-09-23.md` and `06-Systems/Online-Arc.md`.
+`01-Overview/bugs/Field-Bugs-2026-09-23.md` and `06-Systems/Online-Arc.md`.
 
 **ACT-MENU (DISC7, 2026-09-23).** On the enhanced plaque the mod's verbs
 are rows - Ride / Drive the wagon, Follow me / Wait here, Name over my
@@ -487,7 +487,7 @@ Two faults beside it:
 The kept records from before TERRAIN-SCALE1 need no purge: they stand on
 the ground now and expire on their own. Pinned by `test/systems/disc20.test.js`
 (C); mutants `tools/mutants/disc20.json`.
-`01-Overview/Field-Bugs-2026-09-23.md`, DISC20-C.
+`01-Overview/bugs/Field-Bugs-2026-09-23.md`, DISC20-C.
 
 ## DISC21-B - the exit door's Yes opens the wagon (2026-09-24)
 
@@ -498,7 +498,7 @@ dungeon context's one overlay slot, and `openInventoryWithWagon` refuses a held 
 Every wagon at every exit; the mod's players noticed because it turns off the other road to a wagon underground (the
 inventory key by the exit door, "Access your wagon by activating the dungeon exit with your wagon parked nearby").
 Yes is taken on the next dungeon frame now, once the prompt has left the slot - DFU's close-then-open order.
-`test/systems/disc21.test.js` (B). `01-Overview/Field-Bugs-2026-09-23.md`, DISC21-B.
+`test/systems/disc21.test.js` (B). `01-Overview/bugs/Field-Bugs-2026-09-23.md`, DISC21-B.
 
 ## What is and is not ported
 

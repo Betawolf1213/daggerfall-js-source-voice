@@ -134,7 +134,7 @@ Nothing is saved or sent: where a yard stands is the town's layout, who keeps it
 ## Beside WAGONS3 and REGIONAL-FOLK (the merge, 2026-10-10)
 
 MERCHANT-YARDS and WAGONS3 (`06-Systems/Wagons.md`) were built on two branches and landed together, after main had
-taken REGIONAL-FOLK (`01-Overview/Field-Bugs-2026-10-10.md`). Three seams were settled on the merged tree:
+taken REGIONAL-FOLK (`01-Overview/bugs/Field-Bugs-2026-10-10.md`). Three seams were settled on the merged tree:
 
 - **One race law.** This branch had moved the climate's People map to `characters/mobile/mobilePerson.js` as
   `peopleRaceOf`; REGIONAL-FOLK had put the same map there as `raceOfPeople`, with `walkerRace` over it (a Redguard

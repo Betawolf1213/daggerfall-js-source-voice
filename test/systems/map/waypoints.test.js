@@ -2,7 +2,7 @@
 // Worldmap(V) with right mouseclick context menu players should also be able to rename them. They can be small flags with
 // different colors. Add the waypoints you want to mark (to follow) to the filter list on the overworld map with a dropdown
 // menu. Add Waypoints to the filter on the worldmap"; then "i hope the waypoints are removed when leaving party";
-// bible/01-Overview/Waypoints-And-Pace.md). ONE STORE, BOTH MAPS (systems/map/mapWaypoints.js): a point on the bay in map
+// bible/01-Overview/handoffs/Waypoints-And-Pace.md). ONE STORE, BOTH MAPS (systems/map/mapWaypoints.js): a point on the bay in map
 // pixels, a name, a colour and a kind; a party's or a guild's said on the hub's own channel as one line the chat never
 // shows, moved only by its author; dropped when its group is left.
 import { test } from 'node:test';

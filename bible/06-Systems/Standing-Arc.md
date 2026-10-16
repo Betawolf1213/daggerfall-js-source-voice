@@ -48,7 +48,7 @@ gold, or come with me."* (or *"You are banished from ..."*).
 
 - **P - pay**: the court's own Criminal Conspiracy penalty at that standing, every unit in coin and no days (520 at -11,
   720 at -50, 1,000 at -100; double for a banished face). The fine mends the name a penance's five points, never past
-  the -10 line (FINE-MENDS, `01-Overview/Field-Bugs-2026-10-14.md`), and a day's grace follows. Offered only to a purse
+  the -10 line (FINE-MENDS, `01-Overview/bugs/Field-Bugs-2026-10-14.md`), and a day's grace follows. Offered only to a purse
   that can pay.
 - **S - come quietly**: a Criminal Conspiracy, charged once, and the court - whose sentence gives the charge back.
 - **R - refuse**: the Conspiracy held and the watch called as a seen crime calls it; the chase is DFU's from there.
@@ -153,7 +153,7 @@ faction's charges, Vagrancy's resting law, Roleplay Realism's squads.
 
 `test/systems/rep1_watchstop.test.js` (7), `test/scenes/rep2_sentences.test.js` (8), `test/systems/rep3_banishment.test.js` (5),
 `test/systems/rep4_recovery.test.js` (5), `test/systems/rep5_notices.test.js` (4), `test/systems/guild/rep6_probation.test.js` (3).
-`tools/mutants/rep{1..6}_*.json`: 64 records, 64 dead. AUDIT REP (`01-Overview/Audit-REP.md`, 2026-09-30):
+`tools/mutants/rep{1..6}_*.json`: 64 records, 64 dead. AUDIT REP (`01-Overview/audits/Audit-REP.md`, 2026-09-30):
 `test/systems/auditrep.test.js` (8), `tools/mutants/auditrep.json` 19/19 dead; two pins moved (REP3's short purse, F4;
 audit39_guildstravel's F99, the court's banishment on the trusted calendar, F2). Fifteen older pin files moved with the law (each marked PIN
 MOVED): court, prisonrelease, guilds, rr1_realism, guildrep, auditdisc28_time, disc28_fatigue, auditlived1b, lived1,

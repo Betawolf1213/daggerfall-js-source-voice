@@ -1685,5 +1685,5 @@ sentences ("%loc is %di of here"). Daggerfall Unity reads its
 (`vendor/dfu-text/Internal_RSC.csv`) - and `TextRsc.bytesById` answers a
 table row before the file in the file's own byte shape, so the answer
 pipeline, townTalk's mobile chain and every other TEXT.RSC reader see
-one kind of record. Record: `01-Overview/Mac-Bugs-U.md`. Pinned by
+one kind of record. Record: `01-Overview/bugs/Mac-Bugs-U.md`. Pinned by
 `test/systems/talk/macu_directions.test.js` (5), `tools/mutants/macu.json` (7 dead).

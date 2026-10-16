@@ -1,7 +1,7 @@
 # The Sea Serpent - Sethrakul, the Old Coil (SERPENT1)
 
 > Design page and record of the slice, written 2026-10-04 as it shipped and corrected the same day by its audit
-> (`01-Overview/Audit-Sea-Serpent.md`, whose finding ids - S1, T3, E2 ... - the code's comments cite). The code's
+> (`01-Overview/audits/Audit-Sea-Serpent.md`, whose finding ids - S1, T3, E2 ... - the code's comments cite). The code's
 > comments cite this page by section number; where the page and a pin disagree, the pin is what runs. SERPENT4 (section
 > 16, 2026-10-11) reworked it from the players' feedback: the sentences below say what runs now.
 
@@ -528,7 +528,7 @@ After the kill the bar holds a moment and fades.
 - **No new audio file**: its voice is the game's own records, pitched and placed.
 - **Seen in Node, not in a browser.** The renderer's builders, the host, the brain and the relay are pinned in Node;
   the passes have not been looked at in Chromium. Its first sighting on the live relay is its first look.
-- **The audit's accepted residuals** (`01-Overview/Audit-Sea-Serpent.md`): the first site's lane walk may hitch one
+- **The audit's accepted residuals** (`01-Overview/audits/Audit-Sea-Serpent.md`): the first site's lane walk may hitch one
   frame at the sighting; a video that holds the frame leaves the boss bar as it was (the court's own gap).
 
 ## 13. Records
@@ -555,7 +555,7 @@ After the kill the bar holds a moment and fades.
   row's embers, the insignia's purse and sale, the serpent's silver under the combat cap, the switch and the guest, the
   deploy; AUDIT 625 P4, the embers the claim says, and P5, the claim in production's shape);
   `tools/mutants/serpentset.json` (48), all dead.
-- AUDIT 625's (`01-Overview/Audit-625.md`): `test/systems/audit625_serpent.test.js` (6 - Shed Skin and a saved death, the duel's
+- AUDIT 625's (`01-Overview/audits/Audit-625.md`): `test/systems/audit625_serpent.test.js` (6 - Shed Skin and a saved death, the duel's
   one word and an arena bout between players, a coil per foe, the claim's embers, the powers on minted pieces, the
   card's source and the embers' tier) and the AUDIT 625 records of `tools/mutants/audit625.json`, all dead.
 - SERPENT3's: `test/net/serpent/serpent3.test.js` (12 - section 15) and `tools/mutants/serpent3.json` (46), all dead; five records of
@@ -733,13 +733,13 @@ wind a galleon at 26.5 and a Carrack at 31.8. At 38% of balls striking (AUDIT SE
 never wins at any way up to 26.5 m/s, and wins two fights in twelve at a Carrack's 31.8 in a storm. A pair wins six in
 twelve at the old 8 m/s, ten at 13.3 (two without its share), eleven at 15.9 and every one from 17.7. Three and five
 win every time, in ten to eleven and a half minutes. At 50% a lone ship wins from 21.2 m/s: two in twelve, four at
-26.5, nine at 31.8 (Mac's call, open - `01-Overview/Audit-Ships.md`). At 25% a lone ship never wins, a pair at most
+26.5, nine at 31.8 (Mac's call, open - `01-Overview/audits/Audit-Ships.md`). At 25% a lone ship never wins, a pair at most
 three in twelve, three up to six and five six to eleven.
 
 **The relay:** `world173` (section 11). **Pins:** `test/net/serpent/serpent3.test.js` (12) and the SERPENT1 and AUDIT SERPENT pins it
 moved - the stray's surfacing for the resume's, the Maelstrom at the heart, a late ship's words, the first strike's
 time; `tools/mutants/serpent3.json` (45, all dead - its ram's-doubled-wake record went with the ram's own wake, AUDIT
-SHIPS C4). AUDIT SHIPS (`01-Overview/Audit-Ships.md`): `test/net/serpent/auditships.test.js` (20) and
+SHIPS C4). AUDIT SHIPS (`01-Overview/audits/Audit-Ships.md`): `test/net/serpent/auditships.test.js` (20) and
 `tools/mutants/auditships.json` (73, all dead).
 
 ## 16. The players' fight (SERPENT4, 2026-10-11)
@@ -853,7 +853,7 @@ stood is paid its hoard and its Renown as before, and nothing here.
 hoard's very last draw, one dealing ship's hoard in a hundred (`systems/serpent/serpentSpoils.js`, after the technique pass), so
 every hoard rolled before it is what it was for its seed.
 
-AUDIT WORLD-REWARDS (`01-Overview/Audit-World-Rewards.md`) read this section's slice cold; what it moved is marked
+AUDIT WORLD-REWARDS (`01-Overview/audits/Audit-World-Rewards.md`) read this section's slice cold; what it moved is marked
 where it stands.
 
 **Coilbreaker and The Maelstrom** - the Hour's grants' law (`11-Multiplayer/Super-Dungeons.md` section 11, sds.js) rung

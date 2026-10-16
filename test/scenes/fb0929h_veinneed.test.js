@@ -6,7 +6,7 @@
 // started, or what it needs said" without its second half. The pack's Pick-Axe is Foraging's own use, and "You cannot
 // mine in here!" is the mod's line (FORAGE0 law 1, Mac's) - kept, and left to Mac. VEIN-NEED: a press a node passed
 // on that opened nothing else has the node say what it needs, the player's own rank beside a rank that is short.
-// bible/01-Overview/Field-Bugs-2026-09-29h.md.
+// bible/01-Overview/bugs/Field-Bugs-2026-09-29h.md.
 import '../chargenDom.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';

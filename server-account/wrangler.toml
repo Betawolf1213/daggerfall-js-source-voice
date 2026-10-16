@@ -67,7 +67,7 @@ dataset = "daggerfall_accounts"
 # D1-NEAR (2026-10-12, from play: "a lot of UI elements that utilize the
 # server (like searching players, the guild menu, etc) take an insane
 # amount of time to load"; bible/11-Multiplayer/Scale-Arc.md D1-NEAR,
-# audited in bible/01-Overview/Audit-D1-Near.md): THE WORKER RUNS BESIDE
+# audited in bible/01-Overview/audits/Audit-D1-Near.md): THE WORKER RUNS BESIDE
 # ITS DATABASE'S PRIMARY, BY NAME. A request here makes its D1 round trips
 # one after another - a guild look thirteen or fourteen, a seat board
 # nineteen to thirty-five - and each pays the distance between the Worker

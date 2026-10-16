@@ -205,7 +205,7 @@ one, a bear six to ten and luck, half of it turning), the slaughterfish
 raw fish, and a humanoid a meal on a high roll. [AUDIT C&C I9: both
 halved since the 2.0 integration's yield cuts (`survival/loot.js`
 `ANIMAL_LOOT_SCALE`, `HUMANOID_FOOD_SCALE`, rounded by chance so the cut
-averages a half - `01-Overview/Handoff-FixPackage2.md`), and a plain
+averages a half - `01-Overview/handoffs/Handoff-FixPackage2.md`), and a plain
 foe's body is held to three things in all, gold included, after every
 death handler, the food's too (FOE-CAP, Mac: "never drop more then 3
 items in total max. Gold included") - so a bear leaves three things at
@@ -488,7 +488,7 @@ defaults and, since HUNT-FOES, gives `interruptWhen` the host's
 loading within 30 m: a foe come near closes the ask or the search as a
 No, nothing searched and no minute spent, and only the result page is
 left to be read; `bible/06-Systems/Foraging.md` 13.1,
-`01-Overview/Field-Bugs-2026-10-02.md`.) The beast stands when the box
+`01-Overview/bugs/Field-Bugs-2026-10-02.md`.) The beast stands when the box
 CLOSES, not under it - a foe keeps its clock under a window (WINFOE1)
 and would have had the first blow free - through the overworld host's
 own encounter placement (`_standEncounterFoe` on the wilderness arm,
@@ -1725,7 +1725,7 @@ temperature "seems to never change ... gets to either "Scorching" or "Freezing" 
 recover"; a tavern drink "does not fill your hydration"; and "Waterskins should be refillable at an inn/tavern". The
 minute law was never stuck (every host feeds it; the reading is recomputed each minute); the rules held it in the red
 and said nothing on the way out. Six changes, each a declared departure (Port-Ledger A), the record in
-`01-Overview/Field-Bugs-2026-09-30.md`:
+`01-Overview/bugs/Field-Bugs-2026-09-30.md`:
 
 - **TAVERN-DRINK** (`tavernMenu.js` `tavernDrink`): a drink quenches the thirst whole, as a meal fills the stomach whole;
   its kind's drunkenness and its quarter hour stand. (It took forty off a hundred and fifty, and the quarter hour
@@ -2150,7 +2150,7 @@ found it:
 - **E11 - the Sun Baby's clear sky** soaked a body in the sim's rain; the
   needs feel the weather the land wears. (WET-FALL, 2026-10-15: and the
   soak reads what FALLS - `weatherSim.js` fallingWeather, the street's word
-  and level - with the shown sky the fallback; `01-Overview/Field-Bugs-2026-10-15f.md`.)
+  and level - with the shown sky the fallback; `01-Overview/bugs/Field-Bugs-2026-10-15f.md`.)
 - **E12 - a record with a counter that was no number** read NaN for the
   session and hid the chip; `survivalOf` mends it from the fresh record.
 - **E9, E13**: the plate reads live (above); the SURV1 temperature
@@ -2967,5 +2967,5 @@ body soaked at the downpour's rate under a sky that dropped next to nothing.
 A DEPARTURE FROM THE MOD: `weatherWetGain` scales a rain, storm or snow row by how hard it falls (`fall`, the level the
 street's frame wrote for the ear, DISC9/DISC11 - `weatherSim.js` fallingWeather), and `feltTemperature` soaks on
 `env.falling` while the air and the sun keep the sky's word. Fog is not falling and keeps its row. The classic sky's
-level is 1: the mod's row, whole. The record: `01-Overview/Field-Bugs-2026-10-15f.md`.
+level is 1: the mod's row, whole. The record: `01-Overview/bugs/Field-Bugs-2026-10-15f.md`.
 

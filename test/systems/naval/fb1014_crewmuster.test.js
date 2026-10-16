@@ -1,6 +1,6 @@
 // CREW-MUSTER (FIELD BUGS 2026-10-14, "Crew Attacking Me": "After a battle my crew started attacking me. I jumped out of
 // the seat to defend myself then they stopped attacking. I go back in, they resume ... my crew is only hostile to me when
-// I'm in control of the boat"; Mac's call, 2026-10-14: "Both") - bible/01-Overview/Audit-NAV2.md F40 and
+// I'm in control of the boat"; Mac's call, 2026-10-14: "Both") - bible/01-Overview/audits/Audit-NAV2.md F40 and
 // bible/03-World/Naval-Combat.md LIVING CREW. No crew body ever takes the player for its foe;
 // what turned on him was the F40 muster. A repel thrown back leaves her struck alongside, and at my helm a struck ship in
 // BOARD_RANGE mustered my crew whatever my way - every man to the rail with his blade out, crying "Here they come!" and

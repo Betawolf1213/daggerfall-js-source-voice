@@ -429,7 +429,7 @@ silence, and passing. The helper presses the switch off explicitly now.
 
 ## RARITY-WEAR (FIELD BUGS 2026-10-01) - NO SLOT, NO TIER
 
-Cruor's King's Mark came out a Wand and could not be worn (`01-Overview/Field-Bugs-2026-10-01.md` part four #4). A
+Cruor's King's Mark came out a Wand and could not be worn (`01-Overview/bugs/Field-Bugs-2026-10-01.md` part four #4). A
 Legendary record names the piece a maker minted and never picks the base; the Gate's spoils and a town's thanks drew a
 jewel over all eight Jewellery templates (`systems/gate/gateSpoils.js` spoilsBase), and the eighth, the Wand, has no slot
 (GetJewelleryEquipSlot's None). Every affix and a Held enchantment read worn pieces alone, so one jewel in eight was a

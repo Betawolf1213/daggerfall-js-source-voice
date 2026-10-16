@@ -222,7 +222,7 @@ Options' bar) hides it. It spends NO key of its own and adds no binding.
   stick and the corner); **a pad** keeps its d-pad for the quick slots (a rider's potions are on it) and presses the
   panel with its cursor (PADPLUS1). The classic skin keeps the grip bar's breath and the keys.
 - **It moves** (HUD-SADDLE, FIELD BUGS 2026-10-14, Discord: "Riding Window is not able to be edited in the HUD Editor
-  (Alt+U)" - `01-Overview/Field-Bugs-2026-10-14-riding-panel.md`): the bar is a HUD-MOVE piece, "Riding panel"
+  (Alt+U)" - `01-Overview/bugs/Field-Bugs-2026-10-14-riding-panel.md`): the bar is a HUD-MOVE piece, "Riding panel"
   (`hudLayout.js:"{ id: 'saddle', sel: '.saddlepanel .saddlepanel-bar'"`) - Alt+U frames it, a drag moves it, its
   corner sizes it, its X turns it off in play, and a double-click or Reset puts it back. A panel built at a mount stands
   where the player put it from its first frame (`ui/hud/hudPlacer.js` placeHudPieces, the notice stack's leaf), and while
@@ -496,7 +496,7 @@ buttons on its fixed art, Slide's among them, unbound.
   post-processing) and the Transport window's letters - F, H, C, S behind the Transport key - read off the shortcut
   table, as words and keys with no buttons. A mod's own keys are named on its Features tile too, read-only, with one
   press through to this page.
-- **A key a Confirm still owes says so** (UNSAVED-MARK, FIELD BUGS 2026-10-11, `01-Overview/Field-Bugs-2026-10-11.md`:
+- **A key a Confirm still owes says so** (UNSAVED-MARK, FIELD BUGS 2026-10-11, `01-Overview/bugs/Field-Bugs-2026-10-11.md`:
   "It shows that my selected key is set ... it just didn't save"): its row is edged in brass and says "Not saved yet -
   press Confirm."; the head counts what Confirm owes and lights it (`controlsConfig.js` `unsavedEdits`). The how-to is
   the page's first card, scrolled away; the sticky head is the law's line and its buttons, and on Settings it sticks
@@ -510,7 +510,7 @@ choices while the crossbar is in force - the Overworld on no key at all is the h
 Overworld's alone). Under a window LT raises the hotbar to be arranged: A takes a slot in hand and puts it down on the
 press's click (a swap or a move), Y clears one; with the pad in hand "Add to hotbar" puts the new entry in hand and
 asks for a slot - A on it, or a bumper and the slot's own button on the crossbar (LB + X places too, never the quick
-act); on the row of ten the bumpers stay the tabs'. The mouse taking the hands back lets go of the hand. The record: `01-Overview/Field-Bugs-2026-10-04e.md`.
+act); on the row of ten the bumpers stay the tabs'. The mouse taking the hands back lets go of the hand. The record: `01-Overview/bugs/Field-Bugs-2026-10-04e.md`.
 
 ## UI-CALM - the saddle panel when it is wanted (2026-10-14)
 

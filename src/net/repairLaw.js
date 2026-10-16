@@ -1,5 +1,5 @@
 // @ts-check
-// SUMMON-REPAIR (FIELD BUGS 2026-10-14, bible/01-Overview/Field-Bugs-2026-10-14.md SUMMON-OFFER; Mac, asked how to mend
+// SUMMON-REPAIR (FIELD BUGS 2026-10-14, bible/01-Overview/bugs/Field-Bugs-2026-10-14.md SUMMON-OFFER; Mac, asked how to mend
 // the reporter's save: "Operator tool"): A STAFF REPAIR OF ONE REALM CHARACTER - ITS LAW, the one file the account
 // service's review act (server-account/src/review.js `repair`) and the operator's tool (tools/realmReview.mjs) read.
 //

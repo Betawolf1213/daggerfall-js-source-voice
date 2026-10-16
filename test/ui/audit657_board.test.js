@@ -1,7 +1,7 @@
 // AUDIT 657 (2026-10-07, Mac: "Lets do an audit on everything so far"): THE BOARD'S FINDINGS, PINNED - lens B of PR
 // #657's audit (BOARD-UI: the tabs' sheet, the market's early read, the stall's form, the words) and lens D's D4 (the
 // Seat guide's fold). Each fix carries an `AUDIT 657 <ID>` comment where it stands. The record:
-// bible/01-Overview/Audit-657.md.
+// bible/01-Overview/audits/Audit-657.md.
 import '../chargenDom.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';

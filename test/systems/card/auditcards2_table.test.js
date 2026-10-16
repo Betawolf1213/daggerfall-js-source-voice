@@ -1,4 +1,4 @@
-// AUDIT CARDS-2 (2026-10-08, bible/01-Overview/Audit-Cards-2.md): THE TABLE - the cards' law, the patrons' play, the
+// AUDIT CARDS-2 (2026-10-08, bible/01-Overview/audits/Audit-Cards-2.md): THE TABLE - the cards' law, the patrons' play, the
 // evening's clock, the regulars' book and the save. Driven, each the reproduction of a finding or a mutant the first
 // pins let live: an uncontested pot that went to nobody (A1); a fold out of turn that left the action on a seat nobody
 // could bet against (E3); an all-in run-out said as one street and a hand the blinds settled said with none (L1, L2);

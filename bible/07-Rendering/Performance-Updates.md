@@ -5,8 +5,8 @@ worse and I want to be detailed in my approach to fix everything".*
 
 The reports this answers, as the field pages recorded them: SCRIPT-SPLIT's two counters outdoors (09-26, script 107.5
 and 203.6 ms), FIELD 2026-09-26c's "ship encounters you drop to 1 fps", Regi's "FPS are TANKING when my character loads
-into the outdoors" (`01-Overview/Field-Bugs-2026-09-28e.md`, in frame 63.8 ms) and Skeptikali's dungeon at 99.9% CPU
-(`01-Overview/Field-Bugs-2026-09-28f.md` DISC29-D). The updates they followed, by the merge that put each on `main`:
+into the outdoors" (`01-Overview/bugs/Field-Bugs-2026-09-28e.md`, in frame 63.8 ms) and Skeptikali's dungeon at 99.9% CPU
+(`01-Overview/bugs/Field-Bugs-2026-09-28f.md` DISC29-D). The updates they followed, by the merge that put each on `main`:
 
 | merged | PR | what |
 |---|---|---|

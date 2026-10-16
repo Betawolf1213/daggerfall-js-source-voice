@@ -106,7 +106,7 @@ vendored rows, `SUMMON_BY_NAME_ROWS`, for a record with no second sentence). The
 whole: the price off the summoner's regard (200,000 less a thousand a point), the chance off the prince's own regard and
 his weather - read at the Yes, the sky the summoning is made under (AUDIT WAITS S1) - Sheogorath's gatecrash, the prince
 met before, the gold gone whatever the roll, the quest he offers and his film. (SUMMON-OFFER,
-`01-Overview/Field-Bugs-2026-10-14.md`: the gold and the Summoned flag are taken only once his quest is made - in a
+`01-Overview/bugs/Field-Bugs-2026-10-14.md`: the gold and the Summoned flag are taken only once his quest is made - in a
 region where it cannot be, a palace it wants and the region lacks, the summoning spends and records nothing, and says
 so. DFU's own order left that hole; naming a prince from any region made it a common one.)
 
@@ -271,7 +271,7 @@ Pins and mutants: `test/systems/quest/wavewait_quests.test.js` 8 (`wavewait.json
    The alternative: REP3's "~2.5 real days", said as sixty days of that calendar.
 5. **The cadences the relay keeps** - the serpent's four hours and fifteen-minute door, the gate's ten minutes'
    entry. Recommended: leave until a relay deploy happens for its own reason, then decide with it. The respawn is
-   decided: Mac halved it to half an hour (RESPAWN-30, relay world202 - `bible/01-Overview/Five-Asks-2026-10-14.md`).
+   decided: Mac halved it to half an hour (RESPAWN-30, relay world202 - `bible/01-Overview/handoffs/Five-Asks-2026-10-14.md`).
 
 ## Record
 

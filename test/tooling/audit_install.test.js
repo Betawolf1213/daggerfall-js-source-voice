@@ -4,7 +4,7 @@
 // lifecycle, the release pipeline, ARENA2 detection, and the tests, docs
 // and the player's eye. Every finding a lane verified is fixed at its root
 // and pinned here or beside the slice it belongs to; the record, finding
-// by finding, is bible/01-Overview/Audit-Install.md.
+// by finding, is bible/01-Overview/audits/Audit-Install.md.
 //
 // Pure halves are driven by execution; the shell's wiring and the release
 // workflow are pinned by source (they run in Electron and on GitHub); the

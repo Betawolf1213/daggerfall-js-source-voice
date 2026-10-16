@@ -1,7 +1,7 @@
 // AUDIT PLAIN-UI (2026-10-12, the owner: "Audit this") - PLAIN-UI read by four cold lanes on a frozen snapshot
 // (a1388898): the words against the law that enforces them (W), the code (C), the pins and the record (T), the render (U).
 // Every finding's pin is here, each failing under its finding's mutant (tools/mutants/audit_plainui.json).
-// bible/01-Overview/Audit-Plain-UI.md.
+// bible/01-Overview/audits/Audit-Plain-UI.md.
 import '../chargenDom.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';

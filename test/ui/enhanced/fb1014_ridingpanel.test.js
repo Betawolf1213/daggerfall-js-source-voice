@@ -1,5 +1,5 @@
 // HUD-SADDLE (FIELD BUGS 2026-10-14, Discord: "Riding Window is not able to be edited in the HUD Editor (Alt+U)" - and
-// "the horse care toggle in the settings menu doesn't seem to work"; bible/01-Overview/Field-Bugs-2026-10-14-riding-panel.md).
+// "the horse care toggle in the settings menu doesn't seem to work"; bible/01-Overview/bugs/Field-Bugs-2026-10-14-riding-panel.md).
 //
 // THE RIDING PANEL IS A HUD PIECE. The saddle panel (ui/enhanced/enhancedSaddle.js, STEED-UI) shipped ten days after HUD-MOVE
 // (ui/hud/hudLayout.js) and never joined its registry, so Alt+U framed the compass, the boss bar, the target bar and the

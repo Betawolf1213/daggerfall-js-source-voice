@@ -1396,7 +1396,7 @@ re-aimed by content.
 The nearest-`SHADOW_POINT_CASTERS` pick swapped near-ties on every step and head-bob, and the lamp that lost its
 cube map lit through the ceiling for a frame. `render/shadowPass.js` `CASTER_KEEP_RATIO` (0.8): last frame's
 casters (`holdCasters`, matched by position) are measured at 0.8 of their distance, so a newcomer must be clearly
-nearer to take a map. Record: `01-Overview/Field-Bugs-2026-09-23.md`. Pinned in `test/systems/disc6.test.js`; `tools/mutants/disc6.json`.
+nearer to take a map. Record: `01-Overview/bugs/Field-Bugs-2026-09-23.md`. Pinned in `test/systems/disc6.test.js`; `tools/mutants/disc6.json`.
 
 ## DISC15 - EVERY LIGHT IN A ROOM CASTS (2026-09-24, Mac: "Constant reports of interior light flickering. Opus seemingly always considers it solved. Its not solved")
 
@@ -1457,7 +1457,7 @@ EL8's contact block sampled the previous frame's depth at the clip-space UV as i
 canvas; under a docked large HUD every sample came from the wrong row and near the bottom from the bar's cleared
 strip. `holdPrevRect` keeps the rect the depth was written under (with the view-projection, in `prepare`) and
 `prevDepthUV` maps through it, as DEPTH_GLSL's `depthAt` does for every other screen pass. Record:
-`01-Overview/Field-Bugs-2026-09-23.md` (DISC7). Pins: `test/systems/disc7.test.js`.
+`01-Overview/bugs/Field-Bugs-2026-09-23.md` (DISC7). Pins: `test/systems/disc7.test.js`.
 
 ## LA - THE DEEP AUDIT: THE SHADOWS HOLD STILL (2026-09-27, Mac: "a deep audit on the enhanced lightning system, look for flickering issues, performance improvements and just a complete detailed overhaul to make this insanely better")
 
@@ -1986,9 +1986,9 @@ candle, and a peer's), which has no map at all: a torch behind MAGEAA00's corrid
 view through it. Recorded, not changed - a carried light's map redrawn every frame is a cost for Mac to weigh.
 `test/render/disc29_lamps.test.js` (4); DISC24-C's walk re-aimed so the card walks with the eye; the SC1 and WEEDS1 source
 pins re-aimed. `tools/mutants/disc29.json` (DISC29-E, 11); seven older records re-aimed by content (auditlight,
-auditreach 2, el8, perfexta, perfextb, weeds1). `01-Overview/Field-Bugs-2026-09-28f.md` DISC29-E.
+auditreach 2, el8, perfexta, perfextb, weeds1). `01-Overview/bugs/Field-Bugs-2026-09-28f.md` DISC29-E.
 
-**AUDIT PRE-MERGE 0929 E1-E3** (`01-Overview/Audit-PreMerge-0929.md`, lens E, on the real ShadowPass).
+**AUDIT PRE-MERGE 0929 E1-E3** (`01-Overview/audits/Audit-PreMerge-0929.md`, lens E, on the real ShadowPass).
 - **E1 - a walker's ghost in the lo lamps.** "A flat whose place is still" was every flat an ORIGIN places, the moment
   it stood: a dungeon foe, a peer, the Warden. The lo tier's maps are rebuilt two faces a frame, nearest the eye first,
   so each time one walked on, the lamps outside the eight - the maps they read - kept its silhouette where it had stood:
@@ -2065,7 +2065,7 @@ and F4). `tools/mutants/audit_flicker.json` (28, all dead).
 
 ## CACHE-COPY - THE BLINK WAS THE CACHE'S COPY, NOT THE CACHE (2026-10-07, Mac: "So one thing I noticed, instead of one of my developers fixing the flickering shadow issue, they just turned on the non-baked version on by default, which really really kill performance. Instead of such a half baked fix, I want to fix the flickering issue properly")
 
-**What was turned off.** The anti-flicker patch (`01-Overview/Waypoints-And-Pace.md`, 2026-10-06) answered "every
+**What was turned off.** The anti-flicker patch (`01-Overview/handoffs/Waypoints-And-Pace.md`, 2026-10-06) answered "every
 shadow in the tavern blinking at once ... on every card, and none with `&shadowcache=off`" with CACHE-OFF: SC1's static
 cache off unless asked on. With it off every caster slot replays every caster in its reach into six faces every frame
 (under Steady shadows, every slot) - the cost SC1 was built to remove. The patch's other parts were its guesses on the
@@ -2231,7 +2231,7 @@ pixel it makes.
 
 ## LIGHT-ID - A LIGHT IS SOMEBODY'S LIGHT (2026-10-14, Mac, of AOE-PERF's shadow pass: "Engine fix (Recommended)")
 
-**What the pass spent for nothing** (`01-Overview/Field-Bugs-2026-10-13e.md` AOE-PERF, counted by
+**What the pass spent for nothing** (`01-Overview/bugs/Field-Bugs-2026-10-13e.md` AOE-PERF, counted by
 `tools/courtShadowProbe.mjs`). The shadow pass knew a light only by where it stood: SC1's sticky slots and DISC15's lo
 slots matched a light to its map by position (`samePlace`). A light that moves - the gate boss's glow walking among the
 crowd, a thrown torch, a burning foe - was a new light every frame it moved: its static cache was redrawn, then copied

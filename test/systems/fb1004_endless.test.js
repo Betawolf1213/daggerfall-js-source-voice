@@ -2,7 +2,7 @@
 // same with campfires"). A shop shelf is a container: a purchase took its row off for good, so a General Store's one
 // Materials Bag and its two to four Campfires sold out for the day - and online a shelf is the whole building's. Now a
 // bag or a Campfire bought is put back on the shelf it came from, fresh, by commitTrade's Buy arm; a row stolen from a
-// closed shop's shelf is not (bible/01-Overview/Field-Bugs-2026-10-04.md).
+// closed shop's shelf is not (bible/01-Overview/bugs/Field-Bugs-2026-10-04.md).
 import { test, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';

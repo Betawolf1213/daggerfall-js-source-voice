@@ -13,7 +13,7 @@ and PERF-WAGON (the rest of the carts, wagons and tents, and the fixed city's ho
 standing team's harness neither stepped nor sent), its section after PERF-WAGON's.
 
 AUDITED the same day (the owner: "Lets do an audit on this"): five cold lanes over a frozen snapshot, every finding
-fixed, pinned and mutated or recorded - `01-Overview/Audit-Perf-Priority.md`. What the audit changed is written into
+fixed, pinned and mutated or recorded - `01-Overview/audits/Audit-Perf-Priority.md`. What the audit changed is written into
 each section below as it now stands.
 
 PEER-RANGE (the same day; the owner: "So for online performance, I believe the rendering of players far out is
@@ -464,7 +464,7 @@ dead. Moved with the line: GATE-CROWD's online-frame pin, INVIS-NET's (twice: th
 room), MWBODY1's (the same two), OW-PEERS' and INVIS-LOOK's sync pins, and the boat marker's slice; `tools/mutants/gatecrowd.json`'s spark and drawn-here
 mutants re-aimed, 45 dead.
 
-AUDITED the same day (`01-Overview/Audit-Peer-Range-Halo-Thin.md`): what it changed is written into this section as it
+AUDITED the same day (`01-Overview/audits/Audit-Peer-Range-Halo-Thin.md`): what it changed is written into this section as it
 now stands.
 
 NOT SEEN ON A GPU OR IN THE REAL GAME: no ARENA2 and no GL here. The owner's eye is the next gate - a crowded city

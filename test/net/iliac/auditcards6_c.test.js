@@ -1,4 +1,4 @@
-// AUDIT CARDS-6 (2026-10-09, bible/01-Overview/Audit-Cards-6.md) lanes C and E: THE RELAY'S ILIAC TABLE AND ILIAC HAND
+// AUDIT CARDS-6 (2026-10-09, bible/01-Overview/audits/Audit-Cards-6.md) lanes C and E: THE RELAY'S ILIAC TABLE AND ILIAC HAND
 // ONLINE ON THE CLIENT. Driven: the relay itself (server/src/index.js on the fake room) and its pure table
 // (net/iliac/iliacTable.js) - a ranked result kept owed to both accounts and told again on a hello and a look until the device
 // says it holds it, off the table's queue only once kept (C1); a sit's refusals asked before the room's sit budget is

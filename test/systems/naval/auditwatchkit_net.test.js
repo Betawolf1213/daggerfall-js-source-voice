@@ -1,5 +1,5 @@
 // AUDIT WATCH-KIT (2026-10-01, Mac: "Just want to audit this to make sure it's perfection") - THE SAFETY NET, the
-// lead's share (bible/01-Overview/Audit-Watch-Kit.md, lens D's fresh mutants): behaviour #502 shipped with no pin that
+// lead's share (bible/01-Overview/audits/Audit-Watch-Kit.md, lens D's fresh mutants): behaviour #502 shipped with no pin that
 // could fail on it - the captains' night hold and their flee by flashes, the lurk's night hub, her work off her hurts,
 // the lookout's cry cleared with the sea, a pack stowed only when there is one, a fallen hand's pack not lost, and the
 // world's wiring of the companions' cards and pack door. Each test kills its mutant (tools/mutants/auditwatchkit_net.json).

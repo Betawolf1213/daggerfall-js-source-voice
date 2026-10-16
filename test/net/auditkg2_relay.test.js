@@ -1,4 +1,4 @@
-// AUDIT KG II (2026-10-15, bible/01-Overview/Audit-Kings-Gambit-II.md, lane A): THE KING'S GAMBIT'S MONEY AT THE
+// AUDIT KG II (2026-10-15, bible/01-Overview/audits/Audit-Kings-Gambit-II.md, lane A): THE KING'S GAMBIT'S MONEY AT THE
 // RELAY, FOUND AND FIXED OR PINNED - a stand pressed over the deal (it names the game its panel showed: no contest, each
 // stake home - Iliac Hand's AUDIT CARDS-6 E13); a sit on its way when the panel goes (stood up all the same - E11); and
 // the lines no test held: an order for another room refused unspent, the drained room's no contest, a room that cannot

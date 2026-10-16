@@ -227,7 +227,7 @@ const joinName = (given, epithet) => (/^the /.test(epithet) ? `${given} ${epithe
  *  breaks and runs) one minted on it then and kept, so the revenant it becomes speaks as it already did. */
 const voiceIdOf = (entity) => entity?.revenant?.id ?? (entity._voiceId ??= mintCharacterId());
 const isU32 = (v) => Number.isInteger(v) && v >= 0 && v <= 0xffffffff;
-/** FB1012d ALLY-RACE (bible/01-Overview/Field-Bugs-2026-10-12d.md): ITS PERSON - the seed its Morrowind body's race,
+/** FB1012d ALLY-RACE (bible/01-Overview/bugs/Field-Bugs-2026-10-12d.md): ITS PERSON - the seed its Morrowind body's race,
  *  face, head, hair and clothes are drawn by (characters/foeBodies.js ownPerson). Minted once, at its birth, off the body
  *  that did the deed (foeSeed: the man the player saw), and kept on the record, so every return, the kneel, the oath, the
  *  sworn one at the player's side and a betrayal are that one person - each stand drew its own off where it stood, and

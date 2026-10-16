@@ -3,7 +3,7 @@
 // "0.10kg"). TRADE-LOC (2026-10-10) said a letter's worth in the trade window's detail strip and in the row's hover -
 // one a click away, the other a pointer's alone: a phone has no hover, and two letters in a list could not be told
 // apart without clicking each. The row says it now, under the letter's name, on either side of the trade; and the
-// pack's own card (every pack, shop and trade hover's) says it as its Worth. bible/01-Overview/Field-Bugs-2026-10-11d.md.
+// pack's own card (every pack, shop and trade hover's) says it as its Worth. bible/01-Overview/bugs/Field-Bugs-2026-10-11d.md.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';

@@ -200,7 +200,7 @@ Pins: `test/net/guildseen.test.js` (the service through the real Worker, the law
 may do (the four power tables in words); the Treasury page says which of its gold buys a hall or a new name, and its
 silver lines say which way they went (a Tribute, an upkeep, a patron's bid never "put in"); the Settings page lists
 everything that holds a guild that would go before the press, the guildmaster's view carrying it (one read); the Overview says where the
-rest is run; a character in no guild is told what a guild is for. AUDIT GUILD3 (`01-Overview/Audit-Guild3.md`) made each
+rest is run; a character in no guild is told what a guild is for. AUDIT GUILD3 (`01-Overview/audits/Audit-Guild3.md`) made each
 truer: the rank list says what a rank may not do and every act the service gates by rank; a silver line the service made
 is the guild's; the list of holds is the gate's own (one list), an open writ no "treasury full", the silver's room said
 before the press, and a refusal's word the page cannot read again never a lock.

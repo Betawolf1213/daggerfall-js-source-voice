@@ -260,7 +260,7 @@ test('AUDIT WAGON-PRICE Y4: a marked wagon counts to the wealth measure at its o
   assert.equal(WEALTH_VERSION, 2, 'the measure moved: every stored record measured again, no gain charged');
 });
 
-// HACKED-GOLD PRICE-CAP (bible/01-Overview/Field-Bugs-2026-10-12f.md; the session: "I dont wanna mess with honest
+// HACKED-GOLD PRICE-CAP (bible/01-Overview/bugs/Field-Bugs-2026-10-12f.md; the session: "I dont wanna mess with honest
 // players"): THE CAP NEVER TOUCHES AN HONEST PRICE. systems/loot/loot.js lawPriced holds a peer's price under this law's
 // worthCeiling on every door the wire's projection guards - a room's container, a body, a shop's shelf, a trade, the
 // market's and the post's deliveries - so a ceiling an honest piece passed would take value from an honest player.

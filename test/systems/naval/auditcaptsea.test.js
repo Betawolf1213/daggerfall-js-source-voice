@@ -4,7 +4,7 @@
 // finding verified by a probe and pinned here, executed wherever a seam can be stood up. Ids: C the crew, G the Eltheric
 // ground, X the crossing and the chart, D traffic, law and legends, L the ledger, the save and online, H the docs' and the
 // tests' honesty, S the spyglass, P the isles' places in the world, B the board, the exchange and the charts.
-// bible/01-Overview/Audit-Captains-Sea.md; tools/mutants/auditcaptsea.json.
+// bible/01-Overview/audits/Audit-Captains-Sea.md; tools/mutants/auditcaptsea.json.
 import '../../modsOff.js';
 import { byClass } from '../../chargenDom.mjs';
 import { test } from 'node:test';

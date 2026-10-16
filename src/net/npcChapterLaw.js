@@ -6,7 +6,7 @@
 // make the best decisions") — THE ROLL: a realm character's standing with
 // Daggerfall's own guilds, kept by the account service. The record is
 // bible/11-Multiplayer/Chapters-Arc.md, section 3 (CHAP0), and its audit
-// bible/01-Overview/Audit-Chapters.md (AUDIT CHAP).
+// bible/01-Overview/audits/Audit-Chapters.md (AUDIT CHAP).
 //
 // WHAT IT HOLDS. A realm character's reputation with the twenty-two guild
 // factions - the four guilds, the eight temples, the ten knightly orders

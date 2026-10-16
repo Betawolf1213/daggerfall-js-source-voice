@@ -1,4 +1,4 @@
-// AUDIT PRE-MERGE 1003, lens W - the arena in the world and on screen (bible/01-Overview/Audit-PreMerge-0929.md's form;
+// AUDIT PRE-MERGE 1003, lens W - the arena in the world and on screen (bible/01-Overview/audits/Audit-PreMerge-0929.md's form;
 // bible/11-Multiplayer/Arena.md the design). Each finding pinned by a test that failed on the unfixed tree for the
 // finding's reason; the mutants in tools/mutants/audit1003_world.json.
 //

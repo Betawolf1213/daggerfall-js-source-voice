@@ -651,7 +651,7 @@ DECIDED (Mac: "its tools become the professions' tools").
 - **Wear**: a completed act lowers the tool's condition by **1**, as a Foraging use does, and a break is Foraging's two
   notices ("Your Pick-Axe broke." after DFU's popup). A tool lasts 50 harvests, whichever gesture wore it.
 - **No tool**: the node's prompt says what it needs - "[E] Chop Oak - needs a Wood-Axe" - and E says it too when
-  nothing else under the ray takes the press (VEIN-NEED, `01-Overview/Field-Bugs-2026-09-29h.md`). Hunting excepted
+  nothing else under the ray takes the press (VEIN-NEED, `01-Overview/bugs/Field-Bugs-2026-09-29h.md`). Hunting excepted
   (AUDIT 32 R10): a body is a node only while the pack holds a Skinning Knife - with none it is DFU's corpse alone, and
   no prompt stands in the way of its loot (PROF0 29).
 
@@ -687,7 +687,7 @@ encumbered!". PROF7 BUILT them in that order - settlement, sea, enemies, load - 
 |---|---|
 | Not inside | every act **except a dungeon vein** - the Pick-Axe's one place indoors (PROF0 6) - **and Hunting**, whose body lies where it fell (PROF0 17.1); the inventory's "You cannot mine in here!" is unchanged (FIELD BUGS 2026-09-29h: a player read it beside a dungeon vein as the vein's refusal - the Pick-Axe used at a node is its For Mac 1) |
 | Not in a settlement | every act (no node stands in a rect, PROF0 6) |
-| ~~**Daylight, 07:00-17:59**~~ | RETIRED (ANY-HOUR, 2026-10-01, Mac: *"Remove the time limit for professions. Should be available at any time"*): no profession's act asks it, and the service refuses no hour (`systems/foraging/foragingInstall.js` foragingActRefusal; `01-Overview/Field-Bugs-2026-10-01.md` part four). It stood for Logging, Herbalism, the Basket, surface Mining and Quarrying and Fishing, the service checking it from the act's end. Foraging's own Use (offline, a guest's lane) keeps it, the mod's 1:1 |
+| ~~**Daylight, 07:00-17:59**~~ | RETIRED (ANY-HOUR, 2026-10-01, Mac: *"Remove the time limit for professions. Should be available at any time"*): no profession's act asks it, and the service refuses no hour (`systems/foraging/foragingInstall.js` foragingActRefusal; `01-Overview/bugs/Field-Bugs-2026-10-01.md` part four). It stood for Logging, Herbalism, the Basket, surface Mining and Quarrying and Fishing, the service checking it from the act's end. Foraging's own Use (offline, a guest's lane) keeps it, the mod's 1:1 |
 | Not at sea | every act but Fishing |
 | No enemies near | every act |
 | Not fully encumbered | every act |

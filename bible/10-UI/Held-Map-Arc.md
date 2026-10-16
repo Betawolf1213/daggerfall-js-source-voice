@@ -1222,7 +1222,7 @@ The town and the automap draw nothing there. The world sheet lays the
 weather's own raster (`_drawWeatherUnder`): moved by a pan, stretched by
 a zoom, inked again crisp when the view has held still, and inked as a
 job a slice a frame. With no kept layer the sheet inks the regions as it
-always did. `01-Overview/Field-Bugs-2026-09-23.md`, MAP-LAG.
+always did. `01-Overview/bugs/Field-Bugs-2026-09-23.md`, MAP-LAG.
 
 ## DISC17-C - the weather off the map (2026-09-24, Mac)
 
@@ -1233,7 +1233,7 @@ forecast are gone, with `ui/weatherLayer.js`. The sheet contract loses
 `paintUnder` (the town's and the automap's were empty), and the hover is
 written inline in the pointer's move as EM1/EM3 had it. `heldMap.js` is
 its pre-weather self plus MAP-FIELD8 and MAP-FIT1. Pinned by
-`test/ui/disc17.test.js`. `01-Overview/Field-Bugs-2026-09-23.md`, DISC17.
+`test/ui/disc17.test.js`. `01-Overview/bugs/Field-Bugs-2026-09-23.md`, DISC17.
 
 ## EVENT-TIP: the world's events answer a hover (2026-09-28)
 
@@ -1245,7 +1245,7 @@ mark, the gate's ring (an AREA - anywhere in it), then the province. The one wri
 DOM card at the pointer (`.hmtip`, the pixel home's plaque; `pointer-events: none`), turned where the screen would cut
 it, rewritten only when its words change, refreshed on the poll under a STILL pointer (the label with it), hidden on
 leaving, on a press, on a sheet change and at close. The classic window draws no card. Pinned in
-`test/ui/eventtip.test.js`; seen in Chromium by `tools/heldMapProbe.mjs` section 8. `01-Overview/Field-Bugs-2026-09-28b.md`.
+`test/ui/eventtip.test.js`; seen in Chromium by `tools/heldMapProbe.mjs` section 8. `01-Overview/bugs/Field-Bugs-2026-09-28b.md`.
 
 ## MAP-KEY - a key to filter by, and a dungeon in orange (2026-09-29, a player through Mac)
 
@@ -1309,7 +1309,7 @@ in the book) and drawn in their kin's colour (the legend names a friend's and a 
 carriage town wears a wheel left of its mark, clear of its hub circle and seat ring, at every band, and names keep off
 it; a seat answers its hover with the EVENT-TIP card (who holds it, this week's battle - a seat's lines bounded at 160,
 not 80), and the I box names a held seat's holder - it read "unheld" whoever held it. The record:
-`01-Overview/Field-Bugs-2026-10-04e.md`.
+`01-Overview/bugs/Field-Bugs-2026-10-04e.md`.
 
 ## TAMRIEL1 - the continent round the Bay (2026-10-08)
 
@@ -1327,10 +1327,10 @@ on it did. `ui/map/mapScale.js` mapUiScale is the map's scale: Auto is the scree
 to 1-2 (1 at 1080p and under, as it was), or the player's own 0.75-2 on the Interface tab's Maps row, "Map text and
 icons" (prefs `mapScale`). `_layout` inks on the fitted paper over the scale at full device resolution, and the
 pointer, the hover card and the hands lane come back over it; the chrome is zoomed by `--hm-ui`, each of its
-viewport-relative bounds divided by it. The record: `01-Overview/Field-Bugs-2026-10-09e.md`.
+viewport-relative bounds divided by it. The record: `01-Overview/bugs/Field-Bugs-2026-10-09e.md`.
 
 ORE-MAP (2026-10-11, the Discord's "Arbitrary mining conditions to 'unlock' higher nodes": "add something to the
 overworld map like 'this area is known for X ore'"): online, the professions open, bare ground answers with an ore
 card under the province's name - the pixel's veins, its dungeons', its kingdom's own ore and whether its ground is
 witnessed (`ui/oreMapTip.js`, the host's `oreAt`; its witnessed state asked once a pixel, after the pointer rests).
-A place keeps its own answer. The record: `01-Overview/Field-Bugs-2026-10-11d.md`.
+A place keeps its own answer. The record: `01-Overview/bugs/Field-Bugs-2026-10-11d.md`.

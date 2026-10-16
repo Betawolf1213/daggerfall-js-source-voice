@@ -1,4 +1,4 @@
-// AUDIT KG II (2026-10-15, bible/01-Overview/Audit-Kings-Gambit-II.md, lane E): THE SEASON BOARD'S RATING LINES NO
+// AUDIT KG II (2026-10-15, bible/01-Overview/audits/Audit-Kings-Gambit-II.md, lane E): THE SEASON BOARD'S RATING LINES NO
 // TEST HELD - a pair's season cap (and the cap a kept game says it was held by, D11), a game kept and not counted out
 // of the board's games and the Grandmaster's floor, a rating written only while both ratings stand as read (a claim
 // racing another write retried on the ratings now), and a third player passing the kept #1 counted at once.

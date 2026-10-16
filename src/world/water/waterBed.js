@@ -142,7 +142,7 @@ export const BED_HALO_TILES = Math.ceil(BED_RAMP / TILE_UNITS) + 1;
  * (terrainSampler.js ghostSampler: the neighbour's own kernel) - its index's beach jitter, its latitude, its corners -
  * so both pixels carve a seam vertex from the same tiles, and agree. A neighbour's STAMPED or PAINTED tiles (a town's
  * blocks, a road, a river) are not in its kernel: a bed there may still part at the seam (recorded,
- * bible/01-Overview/Audit-WATER-NEXT.md). Near grids only (stride 1): a strided grid's skirt closes its seams.
+ * bible/01-Overview/audits/Audit-WATER-NEXT.md). Near grids only (stride 1): a strided grid's skirt closes its seams.
  * @param {(x: number, z: number) => number} ghost the sample at a coordinate of this pixel's frame, past its edge too
  * @param {number} px @param {number} py the pixel
  * @param {Uint8Array|number[]} [table]

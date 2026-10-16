@@ -4,7 +4,7 @@ name: Realm restore (what a deleted customs character took with it)
 # it: "To the offline character"). From CUSTOMS-CARRY's arrival on main (2026-09-29 03:09:50 UTC) until HOUSE-LOSS, the
 # Online door's Delete on a customs character whose first save never landed took its online home - every piece, the
 # hidden furniture - its guild place and its track with it, and left the census spent
-# (bible/01-Overview/Field-Bugs-2026-09-29.md). Those rows are gone from the database; D1 Time Travel still holds them.
+# (bible/01-Overview/bugs/Field-Bugs-2026-09-29.md). Those rows are gone from the database; D1 Time Travel still holds them.
 #
 # RUN BY HAND from the Actions tab, on main, at a quiet hour:
 #   1. with apply off (the default): a DRY RUN. The run's summary lists who gets what back, who is held for you (an

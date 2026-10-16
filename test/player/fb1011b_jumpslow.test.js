@@ -1,4 +1,4 @@
-// JUMP-SLOW (FIELD BUGS 2026-10-11b, bible/01-Overview/Field-Bugs-2026-10-11b.md; the Discord's "Fix slowfalling" - "you
+// JUMP-SLOW (FIELD BUGS 2026-10-11b, bible/01-Overview/bugs/Field-Bugs-2026-10-11b.md; the Discord's "Fix slowfalling" - "you
 // can't jump with slowfalling"; Mac: "Give the jump back"). A departure (Port-Ledger A): DFU's HandleJumpInput cancels a
 // jump while the player is slow falling (AcrobatMotor.cs:64-70), and the port carried the cancel AND DFU's ApplyGravity,
 // which sets the fall speed rather than adding to it - so even with the cancel gone the rise lasted one tick (0.069 m).

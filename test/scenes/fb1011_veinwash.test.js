@@ -4,7 +4,7 @@
 // Lodestone record 66, and every new ore borrowed 66 - and PROF2 drew each vein as its metal's picture alone, where
 // PROF0 4.8 had said "tinted per ore". Every ore that shares a picture now wears its own wash (scenes/mineHost.js
 // ORE_WASH, through ARENA5's batch wash - render/renderer.js uBatchTint), and the gathering host stands each wash as
-// its own batch, on the open ground and underground. bible/01-Overview/Field-Bugs-2026-10-11d.md.
+// its own batch, on the open ground and underground. bible/01-Overview/bugs/Field-Bugs-2026-10-11d.md.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 

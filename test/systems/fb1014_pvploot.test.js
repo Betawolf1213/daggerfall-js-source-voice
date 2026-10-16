@@ -8,7 +8,7 @@
 // (net/wild/wildRemains.js askMine). The room judged that take by the PVPDUNGEONS friend law too ("Party/guildmembers cant
 // pick it up" - the DROP's law), so a killer the fallen's guild counted a friend, or one sharing a party with them by the
 // take, was refused: the fallen had lost the piece, and it lay in the remains for nobody until they went. The friend law
-// is the drop's alone now (net/wild/wildLaw.js remainsNamedFor). `01-Overview/Field-Bugs-2026-10-14.md`.
+// is the drop's alone now (net/wild/wildLaw.js remainsNamedFor). `01-Overview/bugs/Field-Bugs-2026-10-14.md`.
 //
 // Mac's decisions of 2026-10-14 since: a guildmate is kin at the referee, so it never fights the fallen, and a piece in
 // escrow is a collect the friend law never reads (test/systems/fb1014_pvpescrow.test.js). Here is the room's old take - a tab

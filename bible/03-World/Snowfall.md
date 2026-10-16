@@ -34,7 +34,7 @@ keeps them in the save and fills them back over the hours. Read off the
 assembly (ilspycmd's C# and `vendor/snowfall/il/DynamicSnow.il.txt`) and its
 one shader's DXBC (`vendor/snowfall/shaders/DynamicSnow.glsl`):
 
-SNOWLESS1 (FIELD BUGS 2026-10-09 #1, `01-Overview/Field-Bugs-2026-10-09.md`) - two departures from the mod. Its
+SNOWLESS1 (FIELD BUGS 2026-10-09 #1, `01-Overview/bugs/Field-Bugs-2026-10-09.md`) - two departures from the mod. Its
 "outside the desert" asks the climate type alone, so under Vanilla Enhanced's Snowless Swamps and Jungles it laid its
 snow over the add-on's green swamp ground, bare only on the roads its own 403 masks leave (DFU's two mods clash the
 same way). A climate whose winter set the add-on decides is the desert's case now: no tier stands while the player is
@@ -123,7 +123,7 @@ the rasterizers, `fa48dcc6...` the statics, `e4c9678b...` Basic Roads,
   a respawn) carries the tiers, their tracks and the last stamp by its move
   (`initOffset`) as a recentre does, so the old place's tracks stay on the old
   place and the arrival's first stamp is no trench (AUDIT ENVIRONS I2).
-- **WHAT IT COSTS** (AUDIT ENVIRONS P1-P8, `01-Overview/Audit-Environs.md`).
+- **WHAT IT COSTS** (AUDIT ENVIRONS P1-P8, `01-Overview/audits/Audit-Environs.md`).
   The ring's rebuild copies the last build's samples where its points fall on
   the same place of the same tile over the same roads and settlements, each
   copy spending the sample budget a sample does (P3); the window's uploads wait
@@ -154,7 +154,7 @@ interiors) and `scenes/dungeonContext.js` (the dungeons) are FLAGGED, not
 wired: their frames run inside the exterior hosts' indoor branch, which ticks
 the mod indoors, and no snow lies there.
 
-SNOW-TELL (`01-Overview/Field-Bugs-2026-10-11d.md`): what stands on the ground
+SNOW-TELL (`01-Overview/bugs/Field-Bugs-2026-10-11d.md`): what stands on the ground
 must stand on the snow too. A foe's telegraph is fitted to the bare ground (the
 colliders know no snow) and lay 0.06 m over it, under this surface; the renderer
 keeps the frame's snow height (`render/snowfallGlsl.js` snowSurfaceRise, each
@@ -227,6 +227,6 @@ second exception. The dynamic snow: `test/systems/snowfall1_model.test.js` (12) 
 dead). The shader's variants compile and draw in Chromium's WebGL2 on both
 lanes (a synthetic hill through the real renderer, the mod's masks and
 albedo: the snow on the ground, the track in it, no GL error). AUDIT ENVIRONS
-(`01-Overview/Audit-Environs.md`): `test/systems/audit_environs.test.js` (21),
+(`01-Overview/audits/Audit-Environs.md`): `test/systems/audit_environs.test.js` (21),
 `tools/mutants/audit_environs.json`. TV-SNOW, TV-SAVE and TV-REFILL (FIELD BUGS
 2026-10-09): `test/scenes/fb1009_travelperf.test.js`, `tools/mutants/fb1009_travelperf.json`.

@@ -1,5 +1,5 @@
 // SHIP-LIFE (2026-09-30, Mac's item 1 of the six-part sea ask: ships that berth at ports, depart, voyage and keep their
-// own errands; `01-Overview/Handoff-Naval-Crew-and-Ship-Life.md` slice E) - systems/naval/shipLife.js driven directly on
+// own errands; `01-Overview/handoffs/Handoff-Naval-Crew-and-Ship-Life.md` slice E) - systems/naval/shipLife.js driven directly on
 // a coast of its own (a shore along z = 200 with a town behind it, a headland to the east reaching 500 m out), the
 // real captains (navalAI.js stepCaptain) sailing its errands, and the real naval host over Come Sail Away's pool
 // (test/navalSea.mjs) and in a room (test/navalRoom.mjs) standing a port's harbour.

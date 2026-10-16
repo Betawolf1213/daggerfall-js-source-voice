@@ -870,7 +870,7 @@ retail-shaped `xbase_anim_sh.nif` (Weapon Sheathing).
 
 ## CLIMB-NODE (FIELD BUGS 2026-10-01) - THE FREE CLIMB HOLDS AT A NODE
 
-Found answering "minig is broken doesnt work" (`01-Overview/Field-Bugs-2026-10-01.md` part four): a vein stands at its
+Found answering "minig is broken doesnt work" (`01-Overview/bugs/Field-Bugs-2026-10-01.md` part four): a vein stands at its
 rock's foot (PROF2), and the free climb's walk-in start (Forward held against a face for `freeStartSeconds`) climbed the
 rock under a player who walked into it to reach the ore - the target and the act lost. Asked, Mac: *"Hold it at
 nodes"*. While a profession's node is under the look (the gathering host's target, its prompt up) or an act plays, the
@@ -1156,7 +1156,7 @@ the behaviour its name says, and the slack's clamp no longer equivalent); the ar
 Chilloutman, on #bug-reports: *"A two blocks wall is too high for my character to climb up, so Im stuck in this hole.
 Luckily I have levitate. Its 'Ruins of Old Carololda's Farm'"*, *"I would have been able with old climbing
 mechanics"*; and Mac: *"Enhanced climbing needs a further perfection audit"*. The climb had been proven on boxes and on
-three town blocks, never in a dungeon. The record (`01-Overview/Field-Bugs-2026-10-02.md`) climbed every wall with a
+three town blocks, never in a dungeon. The record (`01-Overview/bugs/Field-Bugs-2026-10-02.md`) climbed every wall with a
 top in reach of a floor in the reporter's dungeon and in 24 more (the collider as the dungeon host builds it, Forward
 held square and 8 degrees either side, Climbing 100, each failure run again on the classic lane with every roll
 passing), and found five faults the classic climb never had (the fifth, CORNER-TOP, the batch's own review's):

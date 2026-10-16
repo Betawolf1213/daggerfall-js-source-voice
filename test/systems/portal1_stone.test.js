@@ -2,7 +2,7 @@
 // available at all shops, this should cost weykar shards (from dismantling gear with rarity). These should always be
 // readily available. When using this item, it opens a portal allowing you to traverse to anywhere on the map. This is a
 // one use item that stays open for a short time, allowing multiple players to traverse"), and AUDIT PORTAL1 (the owner:
-// "Audit this. It needs to be perfect"; bible/01-Overview/Audit-PORTAL1.md). The laws pinned here:
+// "Audit this. It needs to be perfect"; bible/01-Overview/audits/Audit-PORTAL1.md). The laws pinned here:
 //   - THE STONE: template 572 beside the Welkynd Shard - stacking with its own kind, BOUND (the realm's list names it),
 //     miscellany (never a crystal worn), lighter than the shards it costs.
 //   - THE COUNTER: PORTAL_STONE_SHARDS shards the purse may spend (unlocked, unworn) for one stone, all or nothing,

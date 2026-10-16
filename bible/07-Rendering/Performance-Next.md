@@ -207,7 +207,7 @@ container's CPU, or node/Chromium micro-benchmarks over the real modules where n
    shadow and air passes; V8 deoptimized the shadow replay once on it in node ("wrong call target"). A bound method
    kept on the renderer is the same call.~~ SHIPPED 2026-10-09: PERF-VAO1 (`Performance-Online.md`; no gain measured).
 
-7. **The spell effects' first use, per engine** (IMPACTFX; `01-Overview/Field-Bugs-2026-10-06b.md`) - the light's pass
+7. **The spell effects' first use, per engine** (IMPACTFX; `01-Overview/bugs/Field-Bugs-2026-10-06b.md`) - the light's pass
    is compiled inside the frame of the first landing an engine draws (6.8 ms on SwiftShader), not warmed at idle as the
    renderer's own on-demand programs are (PERF-WARM - AUDIT 637 D9: not every program is; the aura ring and the gate
    court's passes build in their first frame too), and each look's sound is baked on its first play (3-8 ms in node).

@@ -868,7 +868,7 @@ jobs:
           echo "::error::the account service never reported $want - the deploy did not take"
           exit 1
 
-      # D1-NEAR (bible/11-Multiplayer/Scale-Arc.md; audited, 01-Overview/Audit-D1-Near.md): WHERE THE
+      # D1-NEAR (bible/11-Multiplayer/Scale-Arc.md; audited, 01-Overview/audits/Audit-D1-Near.md): WHERE THE
       # WORKER ANSWERS FROM, WHAT A STATEMENT COSTS IT THERE, AND WHERE THE PRIMARY IS - SAID ON EVERY
       # DEPLOY. SCALE1 left the Worker to Smart Placement on the word that it would run beside its
       # database, and nothing said where it ran: on 2026-10-12 it ran in Sydney, a Pacific from the

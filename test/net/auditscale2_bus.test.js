@@ -1,4 +1,4 @@
-// AUDIT SCALE II (2026-10-11, Mac: "Lets do an audit on everything. Ensure perfection"; bible/01-Overview/Audit-Scale-II.md):
+// AUDIT SCALE II (2026-10-11, Mac: "Lets do an audit on everything. Ensure perfection"; bible/01-Overview/audits/Audit-Scale-II.md):
 // THE BUS AND ITS SHARDS, AND A COURT AND ITS COPIES - the machinery SCALE5c and SCALE5d part two share
 // (server/src/index.js ShardSocket, `_hub*`, `_v*`, `_down*`, `_court*`; net/hubShards.js), hardened. Every finding of the
 // audit's relay lanes on it, each reproduced on the frozen head (e729cea7) before it was fixed and each pin red there: a

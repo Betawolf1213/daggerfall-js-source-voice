@@ -1,5 +1,5 @@
 // AUDIT NAV2 (2026-09-30, Mac: "Let's do a deep comprehensive audit on everything developed thus far") - ONLINE, of
-// the sea's second pass (bible/01-Overview/Audit-NAV2.md): what every client must read the same - a captain's temper,
+// the sea's second pass (bible/01-Overview/audits/Audit-NAV2.md): what every client must read the same - a captain's temper,
 // a peer's boat sized up as she sizes herself, a ship's guns out on every screen - and what a handover must keep - a
 // prize to her victor, a boarding that left with its boarder. Several players' hosts over Come Sail Away's real pool
 // and a stand-in relay (test/navalRoom.mjs).

@@ -3321,7 +3321,7 @@ it, where DFU's does nothing: the departure above stands there, in the app as in
 `disable-gpu-vsync` and `disable-frame-rate-limit`; this file's gate then does the holding, up to 300. VSync on, the
 default, changes nothing. In the app the VSync row is a switch that takes effect at the next start (the settings
 tier `restart`, `systems/settings/settings.js` SHELL_AT_LAUNCH); in a browser it stays unavailable. Record:
-`01-Overview/Field-Bugs-2026-09-28e.md`; pins `test/ui/settings/disc28e_vsync.test.js` (7).
+`01-Overview/bugs/Field-Bugs-2026-09-28e.md`; pins `test/ui/settings/disc28e_vsync.test.js` (7).
 
 **THE PACER (AUDIT 28e).** The gate above could not hold frames ABOVE the screen: with the wait lifted a browser frame
 that draws nothing costs a whole refresh (the display scheduler waits out the deadline of a frame with no damage), and

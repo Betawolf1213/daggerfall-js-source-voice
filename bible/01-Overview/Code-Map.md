@@ -41,7 +41,7 @@ and what it takes out lands loose in `src/scenes/` or `src/systems/`.
 | `server/` | The relay (a Cloudflare Worker, one Durable Object `Room` per room): the wire's authority. `server/src/index.js` is its host. |
 | `server-account/` | The account service (a Cloudflare Worker): accounts, and what the realm keeps between sessions - guilds, boards, ladders. `migrations/` are D1 migrations - applied, never edited. |
 | `app/` | The desktop app's Electron shell (`main.cjs`, preloads, packaging). |
-| `bible/` | The design record. `Home.md` is the index and its Process rules bind every change. |
+| `bible/` | The design record, one folder a section (`01-Overview/` to `12-Enhanced-AI/`). `Home.md` is the index and its Process rules bind every change. `01-Overview/` holds the overview pages - this map, `Port-Doctrine.md`, `Port-Ledger.md`, `Host-Split.md` - and files its dated records by kind: `audits/` (every audit and review), `bugs/` (the field-bug passes, the bug lists, the incident), `handoffs/` (hand-offs, integrations, the dated asks and status snapshots). |
 | `test/` | Every test, in the folder of the layer it tests and, there, its feature's folder (`test/systems/arena/`) - mapped below. `bible/09-Testing/Testing.md` has one row per file, by its name. |
 | `tools/` | Developer tools run by hand or by the suite: probes, bakes, gates, the mutation lists (`tools/mutants/`). |
 | `scripts/` | Build, release and bake scripts run by npm and CI (`buildTag`, `desktopRelease`, `updateNumber`, the `bake*` scripts). |
@@ -420,6 +420,9 @@ mutation tables - walks `test/` recursively, so a new folder needs nothing regis
 3. **Loose is for shared things.** A file left loose in a layer is either used across features or one of a
    feature's first two modules.
 4. **A new folder takes its row in the table above** in the same change. The test fails until it does.
+5. **A new record** - an audit, a field-bugs pass, a hand-off - goes in its kind's folder under `01-Overview/`
+   (`audits/Audit-X.md`, `bugs/Field-Bugs-<date>.md`, `handoffs/`), and the index names it by that path.
+   `test/bible/audit18_bible_docs.test.js` finds a record by its name in any of them, so a name is one page.
 
 ## How a file moves
 
@@ -463,7 +466,7 @@ one bump (world209) for all of them is one reconnect, not five.
 | TIDY1 | This map, its test, the move tool, and the pilot: Come Sail Away's ten modules (`comeSailAway*` and `csaBoatMenu.js`) into `src/systems/comeSailAway/` - a cluster the relay's bundle does not touch. | Done |
 | TIDY2 | Every layer of `src/` into feature folders - what was proposed as TIDY2, TIDY2b, TIDY3 and TIDY4 - 762 modules into 134 folders, each a feature's three or more modules in one layer (the tables above). First every test that swept a `src/` folder without recursing was made to recurse, and the module counts count the folders. The relay's files moved under one `RELAY_VERSION`, world209. | Done |
 | TIDY5 | `test/`: the 3,234 test files out of one folder into the layers' and the features' folders (`### The tests`, above). Every list of tests walks `test/` recursively; the manifest keys a file by its name, and holds the names unique. | Done |
-| TIDY6 | `01-Overview/`'s dated records apart from its overview pages. The root's lab pages stay where they are: GitHub Pages serves each at its path (`/sky.html`), with no redirects, and the labs are deployed to be opened on a phone - moving them breaks every link to one. | Open |
+| TIDY6 | `01-Overview/`'s 263 dated records apart from its 12 overview pages: `audits/` (148), `bugs/` (107), `handoffs/` (8). The root's lab pages stay where they are: GitHub Pages serves each at its path (`/sky.html`), with no redirects, and the labs are deployed to be opened on a phone - moving them would break every link to one. | Done |
 
 **Layer first, then feature** - the question the plan left open, settled by doing it. The arena's code spans five
 layers (16 modules in `src/systems/`, 6 in `src/net/`, 5 in `src/world/`, 3 in `src/scenes/`, 2 in `src/ui/`). A

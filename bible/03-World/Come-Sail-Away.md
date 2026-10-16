@@ -611,9 +611,9 @@ step, the steps over the quad's two triangles (GetInterpolatedHeight, the
 drawn ground's own cut), the height a step times size.y over kMaxHeight.
 Declared: the port rounds a height to its step (Unity's own rounding is in
 no source the port has; the sea is step 579 either way).
-`01-Overview/Field-Bugs-2026-09-29c.md`. SEA-SHOAL (FIELD BUGS 2026-10-02)
+`01-Overview/bugs/Field-Bugs-2026-09-29c.md`. SEA-SHOAL (FIELD BUGS 2026-10-02)
 had a carved cell's ground read as its seafloor; its audit struck it
-(FIELD BUGS 2026-10-02b, `01-Overview/Field-Bugs-2026-10-02b.md`): Deep
+(FIELD BUGS 2026-10-02b, `01-Overview/bugs/Field-Bugs-2026-10-02b.md`): Deep
 Waters' real carve takes a cell only where its four corners stand at the
 ocean's height, so it carved none of a sea World of Daggerfall's flatten
 had lifted over the line, and every node there read land still - the ship
@@ -625,7 +625,7 @@ on, PlaceBoatAtRayHit refuses a water tile whose ground stands over the
 line - a town's harbour basin at its ground's height - with a word
 (PLACE_RAISED_TEXT), where it placed her beached; the mod off, the tile
 alone decides, as the C#'s.
-`01-Overview/Field-Bugs-2026-10-02.md`. The Terrain form reads the player's
+`01-Overview/bugs/Field-Bugs-2026-10-02.md`. The Terrain form reads the player's
 terrain unless one is given; the pixel form reads its own pixel's, and
 nothing where none is built. UpdateAllBoatsNodes is kept as the C# has
 it: nothing calls it, and its `MapPixel == CurrentMapPixel` compares two
@@ -775,8 +775,8 @@ than three off water is beached - stopped dead, no move - and CanSail
 wants all five (the sails' arm, CSA-E's).
 
 FIELD BUGS 2026-10-02 (Mac: "ships get stuck in the world of daggerfall
-ocean rocks"; `01-Overview/Field-Bugs-2026-10-02.md`), as its audit left it
-(FIELD BUGS 2026-10-02b, `01-Overview/Field-Bugs-2026-10-02b.md`):
+ocean rocks"; `01-Overview/bugs/Field-Bugs-2026-10-02.md`), as its audit left it
+(FIELD BUGS 2026-10-02b, `01-Overview/bugs/Field-Bugs-2026-10-02b.md`):
 - ROCK-FREE: the world host answers the sweep collider by collider
   (`player/collider.js` `hullSweepAll`) - a bucket's parts, each `addMesh`
   a MeshCollider, as World of Daggerfall's objects are, each answering
@@ -2202,7 +2202,7 @@ Plus only; the classic skin keeps the mod's keys as the mod drew them.
   previews the panel while nobody is at a helm, so the HUD reaches this
   module, and the names read from `systems/comeSailAway/comeSailAway.js` carried the sea's
   whole law onto the HUD's graph, as far as the quest machine AUDIT GUIDE O6
-  keeps off it (`01-Overview/Field-Bugs-2026-10-14-riding-panel.md`, THE HELM
+  keeps off it (`01-Overview/bugs/Field-Bugs-2026-10-14-riding-panel.md`, THE HELM
   PANEL). The hull names come from INT1's leaf, `systems/comeSailAway/comeSailAwayHulls.js`,
   for the same reason. What the panel shows it reads
   (`helmPanelState`) and never writes: the sails and whether they stand; the
@@ -2429,7 +2429,7 @@ astern), 14.38 on her beam (8.75) and 16.2 with the wind on her quarter; a Carra
 full way and 14.6 s (105 m) to lose it; her rudder 2.25 deg/s at rest, 10.50 at 7.4 m/s (an 81 m circle) and 8.49 at
 her full way (a 194 m circle); two seconds from rest with the helm over, 8.8 deg/s (helmWay.js's header - AUDIT NAV2
 F20's pin holds it). Pins: `test/systems/sailfree.test.js`, and the HELM-WAY and AUDIT NAV2 pins it moved;
-`tools/mutants/sailfree.json` (25, all dead). AUDIT SHIPS (`01-Overview/Audit-Ships.md`): `test/systems/auditships_sail.test.js`
+`tools/mutants/sailfree.json` (25, all dead). AUDIT SHIPS (`01-Overview/audits/Audit-Ships.md`): `test/systems/auditships_sail.test.js`
 (9) and the pins it moved; `tools/mutants/auditships_sail.json` (24, all dead).
 
 ## The Overworld's crossing (OWS2, 2026-09-28)
@@ -2567,7 +2567,7 @@ packs every hull (`getBoatTransforms`: `Crewed` sets `packable` too), and makes 
   her hold's weight on top made a ship packed off a plundered hold ONE item heavier than the bearer could ever carry -
   set down in a chest, no take could lift it again. Parts heavier than the bearer's MaxEncumbrance are not made now
   (`partsTooHeavy`): the pick-up and the menu say why, a fast travel and a landfall leave her where she lies; a lost
-  boat is packed whatever she weighs (`01-Overview/Field-Bugs-2026-10-05c.md`).]
+  boat is packed whatever she weighs (`01-Overview/bugs/Field-Bugs-2026-10-05c.md`).]
 - The boat menu lists Pick up on every hull (`systems/comeSailAway/csaBoatMenu.js`). The world host hands the runtime the pack
   (`items.player`) and the menu its word (`noDeed`); an Overworld landfall packs a ship only with her deed.
 - Pins: `test/systems/comeSailAway/shippack.test.js` (8) and `test/systems/naval/shipclaim.test.js`'s two; `test/systems/comeSailAway/boatmenu.test.js`, `test/systems/comeSailAway/csa_boats.test.js`,
@@ -2913,7 +2913,7 @@ A Recall, a guild's teleport, an unstuck, a quest's respawn and the staff's jump
 stood the jumper back at the drive position of the boat the jump had left at sea and hidden. The runtime's `OnPreJump`
 (the port's own event) ends a disembark in flight, as OnStartLoad does, and lets the helm go as OnPreFastTravel does -
 the sail stopped, a packable boat packed - and `world.js` `_teleportToPixel` raises it for every jump that names no
-event of its own, before anything it awaits (Port-Ledger A, HELM-JUMP; `01-Overview/Field-Bugs-2026-10-11.md`). An
+event of its own, before anything it awaits (Port-Ledger A, HELM-JUMP; `01-Overview/bugs/Field-Bugs-2026-10-11.md`). An
 anchor set on a deck is still the deck's world point. `test/systems/comeSailAway/csa_sailing.test.js`, `test/scenes/fb1011_helmjump.test.js`.
 
 ## A boat's Animators found once (SEA-TOWN, 2026-10-11 - OURS)
@@ -2927,7 +2927,7 @@ every boat the player had placed wherever it lay, and the peers' pose did the sa
 Animators, in the same order. The step itself is unchanged - a boat standing nowhere is still asked, because that ask is
 how an Animator starts over from its default state when she stands again ((18)). The naval HUD and the helm panel stopped
 making their keys' names for windows they were not showing. Measured, before and after, in
-`01-Overview/Field-Bugs-2026-10-11c.md`; `test/systems/comeSailAway/fb1011c_seatown.test.js`.
+`01-Overview/bugs/Field-Bugs-2026-10-11c.md`; `test/systems/comeSailAway/fb1011c_seatown.test.js`.
 
 ## What was already waiting in the port
 
@@ -3173,4 +3173,4 @@ mounted with the foes stream, the receiver, the glue, the owner's boat a
 frame ahead; the press, the ladder, the plaque, the pack guard); the motor's
 carry; the helm's buttons; the panel on a page; the Plus dress; the pad's
 gestures and prompts; the pad layer at the helm; the host's helm seam,
-mounted. `tools/mutants/csa_together.json`: 95 mutants, all dead (two of them FIELD BUGS 2026-10-09 #7, `01-Overview/Field-Bugs-2026-10-09.md`).
+mounted. `tools/mutants/csa_together.json`: 95 mutants, all dead (two of them FIELD BUGS 2026-10-09 #7, `01-Overview/bugs/Field-Bugs-2026-10-09.md`).

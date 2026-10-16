@@ -664,7 +664,7 @@ third was a thing the port never said out loud.
 > **WILD-ROAD (FIELD BUGS 2026-10-04e)**: Encounters on the road (a World switch, on) passes a wanderer far beneath the
 > traveller by, and the rest sometimes come as a patrol. The road is a journey under way (the window up and its autopilot
 > steering) or the Overworld - never a rest. (Its HUNT-ROAD, a switch holding TO-FIELD3's hunt on the road, went with
-> HUNT-OUT's removal of the hunt, at the merge of main.) The record: `01-Overview/Field-Bugs-2026-10-04e.md`.
+> HUNT-OUT's removal of the hunt, at the merge of main.) The record: `01-Overview/bugs/Field-Bugs-2026-10-04e.md`.
 
 > **TO-FIELD3 (Mac, 2026-09-18) REVERSED THE TWO GAMEPLAY CHANGES BELOW.**
 > "Remove the changes the past session did to the traveling system... the
@@ -1369,7 +1369,7 @@ not have. Why the journey climbed the wall at all was not looked into (TRAVEL-NA
 ## SHIP-PORT (2026-09-28) - the deck is no port
 
 The Discord through Mac: *"a player is at a port but unable to set sail"*. The batch's record is
-`01-Overview/Field-Bugs-2026-09-28e.md`; the three this arc owns:
+`01-Overview/bugs/Field-Bugs-2026-09-28e.md`; the three this arc owns:
 
 - **The deck.** A player who bought a ship and boarded it in a harbour stands on "Your Ship" (the bank's
   `SHIP_COORDS`, 2,2 or 5,5). The map's ship laws asked `IsNotAtPort` of that pixel, which neither list carries (the
@@ -1404,7 +1404,7 @@ The Discord through Mac: *"a player is at a port but unable to set sail"*. The b
 
 ## TO-FARE (2026-09-29) - the fare's haggle reads the Mercantile skill
 
-Found on MERC-CAP's way (`01-Overview/Field-Bugs-2026-09-29f.md`), fixed at Mac's word: *"Fix the separate bug"*.
+Found on MERC-CAP's way (`01-Overview/bugs/Field-Bugs-2026-09-29f.md`), fixed at Mac's word: *"Fix the separate bug"*.
 The mod scales a fast-travel fare and puts each half back through `FormulaHelper.CalculateTradePrice(cost, 10, false)`
 (TravelTimeCalculatorTO.CalculateTripCost), which reads the traveller's live Mercantile SKILL (GetLiveSkillValue,
 FormulaHelper.cs:1992/1998). `scaleTripCost` read `liveStat(e, 'mercantile')` - a stat by the skill's name, which no

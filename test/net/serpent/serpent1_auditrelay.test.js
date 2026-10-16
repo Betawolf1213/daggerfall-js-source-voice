@@ -1,5 +1,5 @@
 // AUDIT SERPENT (2026-10-04, Mac: "I definitely want to do a conprehensive audit on this and ensure its absolute
-// perfection"): the pins of the audit's findings ON THE RELAY (bible/01-Overview/Audit-Sea-Serpent.md) - each a law that
+// perfection"): the pins of the audit's findings ON THE RELAY (bible/01-Overview/audits/Audit-Sea-Serpent.md) - each a law that
 // failed before its fix, over the real Room in a real cell and the real hub. ONE FIGHT A SITE (S1: a forged site stands
 // its own fight, unheard by an honest client, its kill said for its own site; at most SERPENT_SITES_MAX a day, one an
 // account), the receipt of a fighter away from its cell at the kill (S5), the refused shooter not junked (S7), the slain

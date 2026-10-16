@@ -271,7 +271,7 @@ the wrong one) or recorded above.
 - **Outside retro, first left for their own slices, then fixed the same
   day (Mac: "Take care of those"):** DISC22-C's loot panel stood on the
   screen's middle where a docked bar re-centres the crosshair, and a tall
-  parchment reached over the bar (G5 - `01-Overview/Field-Bugs-2026-09-24.md`);
+  parchment reached over the bar (G5 - `01-Overview/bugs/Field-Bugs-2026-09-24.md`);
   OVH2's `_alphaArt` WeakSet add, the J7 shape (J7 -
   `10-UI/Overhauls.md`); a non-world frame's resolve opened a `?perf`
   `air` span after the meter had closed (J8, the lens's pre-existing

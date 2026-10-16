@@ -63,7 +63,7 @@ export const SMALLER_DUNGEON_THRESHOLD = 5;
  * The quest freeze carries it as ONLINE_DUNGEONS_STATE, so a quest started online builds its dungeons at their online
  * sizes offline too; and offline the `world-dungeon-sizes` row asks for the world's sizes outright.
  *
- * AUDIT DELVE (MAPS.BSA, read whole - bible/01-Overview/Audit-Delve.md): the first cut was a cross of five interior
+ * AUDIT DELVE (MAPS.BSA, read whole - bible/01-Overview/audits/Audit-Delve.md): the first cut was a cross of five interior
  * blocks and its eight-block ring over THIRTEEN, and the real data had it backwards. Of the 4,232 dungeons, 159 have
  * more than thirteen blocks, and every one of them is four interior blocks in a ring of ten: the cross made them
  * BIGGER inside (five interior draws from a pool of four) and touched nothing else. The real sizes are 5 (775), 8

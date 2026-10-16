@@ -1,5 +1,5 @@
 // AUDIT CHAP4 (2026-10-09, Mac: "Lets do a deep audit on everything so far"): the Chapters arc read again, end to end,
-// through six lenses (bible/01-Overview/Audit-Chapters-4.md). Each fix pinned here by its finding's id; the lens T's
+// through six lenses (bible/01-Overview/audits/Audit-Chapters-4.md). Each fix pinned here by its finding's id; the lens T's
 // pins - laws no test could fail - after them.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';

@@ -1,5 +1,5 @@
 // AUDIT 637 (2026-10-06, Mac: "Audit this"), the shadow lens: PR #637's PERF-SHADOW1 (render/shadowPass.js - a
-// lantern's six faces sharing one walk), audited. bible/01-Overview/Audit-637.md. The faces are held to the draws they
+// lantern's six faces sharing one walk), audited. bible/01-Overview/audits/Audit-637.md. The faces are held to the draws they
 // made against the same pass with the pre-pass off (SHADOW_TUNING.facePrepass), and the savings by count. Never on a
 // clock.
 import { test } from 'node:test';

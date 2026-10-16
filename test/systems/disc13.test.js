@@ -1,7 +1,7 @@
 // DISC13 - four Discord reports (2026-09-23, Mac: "Got some bugs for you"). Each was reproduced against the real
 // modules before it was touched, and every pin here fails at a40d13e0 and passes with its fix - except A's first,
 // which measures the cause through the motor's own law and stands either way
-// (bible/01-Overview/Field-Bugs-2026-09-23.md, DISC13).
+// (bible/01-Overview/bugs/Field-Bugs-2026-09-23.md, DISC13).
 //
 // ── DISC13-A: "The shadows seem to flicker when i move" (icebreyker, a torch in a dungeon) ──
 // The camera draws from the motor's INTERPOLATED eye (motor.js eyeAt, EV1) and every host built the lights in the

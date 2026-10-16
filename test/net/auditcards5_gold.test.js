@@ -1,4 +1,4 @@
-// AUDIT CARDS-5 (2026-10-08, bible/01-Overview/Audit-Cards-5.md) lane E: THE GOLD TABLES' BOOKS, again. A winner's
+// AUDIT CARDS-5 (2026-10-08, bible/01-Overview/audits/Audit-Cards-5.md) lane E: THE GOLD TABLES' BOOKS, again. A winner's
 // cash-out bounded by every stake that came to its table, not six deep stakes (E1); a new stake at a chair its player is
 // leaving cashed out is spent and handed back whole, and the client never confirms on a chair it is leaving (E2); the
 // first asking of a stake keeps its request on every word but the service's refusal and the session's never-asked (E3);

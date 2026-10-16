@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-09-29 - CUSTOMS-CARRY (bible/01-Overview/Field-Bugs-2026-09-29.md). From the Discord, through Mac:
+// FIELD BUGS 2026-09-29 - CUSTOMS-CARRY (bible/01-Overview/bugs/Field-Bugs-2026-09-29.md). From the Discord, through Mac:
 // "Bring Online" answered "Only a character that has already played online can be brought into the realm" for characters
 // that had (EnragedBard, Tony H.) - the census (migration 0020) counted Renown tracks alone, and a track needs a first
 // online kill; and a vampire who came in found their guild gone and their gold taken by loans they were never warned of

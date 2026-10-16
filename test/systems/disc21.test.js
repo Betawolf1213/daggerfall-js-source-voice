@@ -1,4 +1,4 @@
-// DISC21 (2026-09-24, three Discord reports relayed by Mac). bible/01-Overview/Field-Bugs-2026-09-23.md, DISC21.
+// DISC21 (2026-09-24, three Discord reports relayed by Mac). bible/01-Overview/bugs/Field-Bugs-2026-09-23.md, DISC21.
 import '../modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';

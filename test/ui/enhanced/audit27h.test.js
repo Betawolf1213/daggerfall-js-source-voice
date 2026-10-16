@@ -1,7 +1,7 @@
 // AUDIT 27h (2026-09-28, Mac: "Lets audit before merging"): the 2026-09-27h Discord batch read again on the tree merged
 // with main (#412), five lanes - the F5 page's doors, the sea and the shield, the map and the list tile, ending a spell,
 // the spell maker's hold and field - every finding checked against the code (and the port's in Chromium) before it
-// moved. Recorded in bible/01-Overview/Field-Bugs-2026-09-27h.md ## AUDIT, with what stands and why.
+// moved. Recorded in bible/01-Overview/bugs/Field-Bugs-2026-09-27h.md ## AUDIT, with what stands and why.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';

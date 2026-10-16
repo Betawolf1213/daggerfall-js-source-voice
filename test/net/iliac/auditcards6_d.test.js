@@ -1,4 +1,4 @@
-// AUDIT CARDS-6 (2026-10-09, bible/01-Overview/Audit-Cards-6.md) lane D: ILIAC HAND'S SEASON BOARD, ITS TITLE AND THE
+// AUDIT CARDS-6 (2026-10-09, bible/01-Overview/audits/Audit-Cards-6.md) lane D: ILIAC HAND'S SEASON BOARD, ITS TITLE AND THE
 // DEVICE'S CARRIER, and two of lane E's about the vouch. Driven on the real Worker over SQLite (server-account/src/
 // iliac.js, arena.js, boardNames.js, index.js), the real carrier (net/iliac/iliacClaims.js), the real realm session and act
 // (systems/realmSaves.js), and the host's own lines sliced out of scenes/world.js and run over them: a rating change lost

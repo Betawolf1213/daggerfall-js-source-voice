@@ -3,7 +3,7 @@
 // round the tick mends (Cast When Held's degrade, CastWhenHeld.cs:27; Item Deteriorates, ItemDeteriorates.cs:29) took
 // +1 and -1 on the same round: its share never rose, it stayed first, and it took every tick. Nothing else - worn or
 // in the pack - was ever mended again (AllowMagicRepairs is the port's default and forced on online, so the enchanted
-// piece is always eligible). Through the round's own payloads. bible/01-Overview/Field-Bugs-2026-10-14.md.
+// piece is always eligible). Through the round's own payloads. bible/01-Overview/bugs/Field-Bugs-2026-10-14.md.
 // MEND-TIERS (FIELD BUGS 2026-10-15d, Mac's call) keeps it behind the rest of what is worn and holds it AHEAD of the
 // pack, where this fix had put it last of all - test/systems/fb1015_mendtiers.test.js; the one pin that said "then the pack" moved.
 import { test } from 'node:test';

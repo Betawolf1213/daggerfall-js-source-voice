@@ -26,7 +26,7 @@
 // so the rarity row's switch reaches what already lies.
 //
 // AUDIT PI1 (2026-10-07, Mac: "Lets do a conprehensive audit and ensure this is perfection"): five readers, each one
-// dimension (the IL, the hosts, this layer, the draw, the pins and the records); bible/01-Overview/Audit-PI1.md is the
+// dimension (the IL, the hosts, this layer, the draw, the pins and the records); bible/01-Overview/audits/Audit-PI1.md is the
 // record, and every `AUDIT PI1 <id>` below names the finding it closes.
 //
 // Not a DFU member. Ledger A (PI).

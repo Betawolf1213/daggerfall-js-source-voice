@@ -1,4 +1,4 @@
-// AETHERIC-MAKER (FIELD BUGS 2026-10-03b, Discord: "Not sure if intentional or not, buuut: Enchanting Aetheric sets" - "You can enchant Ruhn's gear, lol"; `bible/01-Overview/Field-Bugs-2026-10-03b.md`).
+// AETHERIC-MAKER (FIELD BUGS 2026-10-03b, Discord: "Not sure if intentional or not, buuut: Enchanting Aetheric sets" - "You can enchant Ruhn's gear, lol"; `bible/01-Overview/bugs/Field-Bugs-2026-10-03b.md`).
 // Every fixture from its real producer (TEST THE SHAPE THE PRODUCER MINTS): the gate boss's spoils, the Sigil Broker's ware, a raid's thanks.
 import '../modsOff.js';
 import { test } from 'node:test';

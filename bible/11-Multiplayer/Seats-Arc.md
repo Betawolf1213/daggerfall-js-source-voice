@@ -1292,7 +1292,7 @@ Every law in Home.md's Process section, and what it demands of this arc:
   granted no other challenge.
 - **The Turning's settle fails.** It is one D1 transaction: it rolls back whole, and the next read settles it again.
   A read before the batch that throws is not caught, so it fails every seat route until it stops throwing - SEAT-CAP
-  (`01-Overview/Field-Bugs-2026-10-11h.md`, from play: "Time to take a castle and nothing happens") found one: every
+  (`01-Overview/bugs/Field-Bugs-2026-10-11h.md`, from play: "Time to take a castle and nothing happens") found one: every
   guild pledged anywhere bound in one statement, past D1's 100 parameters. Every guild list the seats bind is read
   IN_CHUNK (90) at a time (`seatInfluence.js` allIn), and the tests' fake refuses a statement D1 would. And a week due is
   settled by ONE caller at a time (SEAT-LEASE, the same page): every request had run the whole settle at once, each

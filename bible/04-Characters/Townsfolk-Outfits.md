@@ -214,4 +214,4 @@ was built from). PIN MOVED: `test/characters/mwnpc7_folk.test.js`
 MWNPC7a (the eleven pictures their outfits, the wardrobe's variety read on Breton 391) and
 `test/characters/mwnpc10c_roads.test.js` MWNPC10c-2 (383 its outfit, the wardrobe's resident a Breton 391's, the watch off duty in
 381's). `tools/mutants/mwfolk1.json` (68: 65 dead, and 3 the audit judged equivalent and left alive, each with its reason).
-The audit: `01-Overview/Audit-MW-Heads-Folk.md`.
+The audit: `01-Overview/audits/Audit-MW-Heads-Folk.md`.

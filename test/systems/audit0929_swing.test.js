@@ -1,7 +1,7 @@
 // AUDIT PRE-MERGE 0929 (2026-09-29, Mac: "Audit this") - SWING-LAW's half: one sprite swing a blow on the Eye of the
 // Beholder body (the report's own werewolf clawed two and three times a claw blow, where every peer saw one), and the
 // swing law's reader in every rig (it was a boot call, and a rig built without that boot swung with no weight). The
-// record: bible/01-Overview/Audit-PreMerge-0929.md and bible/05-Combat/Combat.md SWING-LAW.
+// record: bible/01-Overview/audits/Audit-PreMerge-0929.md and bible/05-Combat/Combat.md SWING-LAW.
 //
 // This file never imports scenes/shared.js: the reader it finds is the one combat/weapon/weaponRig.js's import registered.
 import { test } from 'node:test';

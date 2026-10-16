@@ -6,7 +6,7 @@
 // tier 2, and the Mountain's table holds Iron at 1 and nothing again until Silver at 3 - so every mountain pixel nobody
 // else had worked stood Iron alone, and the Mountain Woods never stood its Silver. A lone miner confirms nothing. A vein
 // on such ground is held where a dungeon's deep vein already is - UNCONFIRMED_VEIN_TIER, 3 - and the Mining page says
-// what still waits on the witnesses. `01-Overview/Field-Bugs-2026-10-09e.md`.
+// what still waits on the witnesses. `01-Overview/bugs/Field-Bugs-2026-10-09e.md`.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';

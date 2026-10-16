@@ -1,7 +1,7 @@
 // LPT1 (2026-10-05, the owner: "Next mod to integrate is this ... Its important we make this compatible with seasons of
 // daggerfall, ensure performance doesnt take a hit and draw distance can remain the same. A true visual overhaul with no
 // performance loss"): LOW POLY TREES 5 (SquidKamer). bible/07-Rendering/Low-Poly-Trees.md is the design and
-// bible/01-Overview/Audit-Low-Poly-Trees.md the audit; this file pins the pure module (world/lowPolyTrees.js), the
+// bible/01-Overview/audits/Audit-Low-Poly-Trees.md the audit; this file pins the pure module (world/lowPolyTrees.js), the
 // vendored data, the renderer's mesh mode and handover, the host's door (systems/lowPolyTreesAssets.js) and the two
 // exterior hosts' wiring.
 import { test } from 'node:test';

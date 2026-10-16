@@ -17,7 +17,7 @@
 // Every pin runs the real modules: the sampler's sea (world/terrain/terrainSampler.js), Unity's SampleHeight
 // (world/terrain/terrainSurface.js), world.js's own csaTerrainOf, and Come Sail Away's runtime over the vendored hulls
 // (test/csaScene.mjs).
-// `01-Overview/Field-Bugs-2026-10-02.md`.
+// `01-Overview/bugs/Field-Bugs-2026-10-02.md`.
 import '../../modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';

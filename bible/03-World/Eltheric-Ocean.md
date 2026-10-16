@@ -16,7 +16,7 @@ Enemies should show on the world map just like in the bay"* - ETHER-OW: the Over
 risen past the Veil, its places the isles' and its enemies the Bay's own, seeded on the sea.
 
 The pre-merge audit (AUDIT CAPTAIN'S SEA, the owner: "Lets do a comprehensive audit, enaure this is insanely detailed
-and perfection. No exceptions") is `01-Overview/Audit-Captains-Sea.md`: its fixes stand in the sections below, each
+and perfection. No exceptions") is `01-Overview/audits/Audit-Captains-Sea.md`: its fixes stand in the sections below, each
 under its finding's id.
 
 **THE PORT'S OWN.** Nothing in Daggerfall or DFU lies past the Bay's western water, and nothing here is transcribed.
@@ -360,7 +360,7 @@ where his tab is shown (X11). The helm's plate says "The Veil" in the Veil itsel
 The owner, 2026-10-12: *"I want to improve the [Eltheric] sea map, its icons, the highlight areas, etc and improve
 readability."* Read in Chromium before the change (`ui/etherChartWindow.js` mounted alone, a captain's word of a hundred
 isles charted and three legends heard of, at every zoom and a phone's width - the window needs no game data), the chart
-had six faults, and each is fixed where it starts. Its audit (`01-Overview/Audit-Ether-Chart2.md`, the owner: "Audit and
+had six faults, and each is fixed where it starts. Its audit (`01-Overview/audits/Audit-Ether-Chart2.md`, the owner: "Audit and
 ensure absolute perfection and detail") changed what follows where it is marked with its finding's id.
 
 - **ITS WORDS WERE IN A FACE NO ONE LOADS.** The canvas named "Cormorant Garamond"; the skin's one request carries
@@ -434,7 +434,7 @@ the sheet's narrow rule no longer stretches the Close button over half the heade
 it (THE FOUR HOSTS above).
 
 **Its words** are the text core's since the merge of main's localization arc (L10N4; `sea.chart.*`, read when they are
-drawn, drafted in the thirteen whole languages - `01-Overview/Audit-Ether-OW.md`); the sea's name and its bands',
+drawn, drafted in the thirteen whole languages - `01-Overview/audits/Audit-Ether-OW.md`); the sea's name and its bands',
 kinds' and compass words are `world/ethericSea.js`'s, passed in English until that module's routing.
 
 ## ETHER-LIGHT - the light past the Veil
@@ -471,7 +471,7 @@ THE CAUSE. Under the water past the Veil the ground was the kernel's clamp at Oc
 its floor the drawn ground (the owner: "the area below water is very shallow and has no depth"). Iliac Puddle No More,
 which carves the Bay's seabed (`03-World/Deep-Waters.md`), knows one map - IsValidMapPixel's 1000 x 500 - and every
 query it asks clamps to it: an Eltheric pixel's tile data (`_global`, `_climateAtPixel`) and every bake query read the
-Bay's corner pixel. ETHER-HOLD (below, and `01-Overview/Field-Bugs-2026-10-12.md`) had found that clamp the hard way -
+Bay's corner pixel. ETHER-HOLD (below, and `01-Overview/bugs/Field-Bugs-2026-10-12.md`) had found that clamp the hard way -
 a floor carved against the corner and a swim that read no water over it - and held the carve off the box altogether.
 
 THE LAW. A bake answers a FRAME of pixels (`deepWatersBake.js:"export const BAY_FRAME = Object.freeze({ x0: 0, y0: 0, w: MAP_W, h: MAP_H });"`):
@@ -713,7 +713,7 @@ and `test/systems/travel/tv_wasd.test.js` (the governor's ground), `test/ui/audi
 re-aimed by content: `tools/mutants/ether_nodes.json` (EN-bay-alone, EN-law-margin), `ow3d.json` (OW3D3-rows-off-the-index),
 `ow4t.json` (OW4-B2-live-index), `ow5s.json` (the two S5 records), `tv7.json` (TV7b-off-the-map).
 
-AUDIT ETHER-OW (`01-Overview/Audit-Ether-OW.md`): `test/systems/audit_etherow.test.js` (4) - the Motherlodes' ground (the
+AUDIT ETHER-OW (`01-Overview/audits/Audit-Ether-OW.md`): `test/systems/audit_etherow.test.js` (4) - the Motherlodes' ground (the
 Watch's, one home; the service end to end), a chart a plate at once, no boarding across the Veil; the lanes' other
 pins in their slices' files - `test/world/deepWater/ether_deep.test.js` (the Bay's pixels off the bytes, every delegate routed, the
 keep exact and the near kept, a tile's climates and east edge, the dry check's held bits), `test/systems/travel/ether_ow.test.js`

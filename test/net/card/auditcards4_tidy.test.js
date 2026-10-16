@@ -1,4 +1,4 @@
-// AUDIT CARDS-4 (2026-10-08, bible/01-Overview/Audit-Cards-4.md) lane D's mutants, killed: THE DECK ON THE CLOTH
+// AUDIT CARDS-4 (2026-10-08, bible/01-Overview/audits/Audit-Cards-4.md) lane D's mutants, killed: THE DECK ON THE CLOTH
 // (world/card/cardMotion.js gatherMotion, DECK_PLATES, DECK_CARDS; world/card/cardScene.js the pile and the gathered cards), THE
 // DELTA LAW (net/holdemTable.js STATE_KEYS across a hand's end, validHoldemOut's delta refusals; cardRemoteTable.js a
 // delta's events), the words' shapes (validHoldemIn's stake and ack, validHoldemOut's cash-out), the table's queue

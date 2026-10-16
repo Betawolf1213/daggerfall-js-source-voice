@@ -242,7 +242,7 @@ with the minutes left.
   names for nobody (`server/src/index.js:"if (rec && !remainsNamedFor(rec, d.i) && rec.os"`); a piece in escrow is a
   collect, which the friend law never reads (section 4). The room had refused a killer who was the fallen's guildmate the
   piece the service had already taken off the fallen's record, and it lay there for nobody
-  (`01-Overview/Field-Bugs-2026-10-14.md` PVP-LOOT). Guildmates are kin since (section 3), so the named piece meets the
+  (`01-Overview/bugs/Field-Bugs-2026-10-14.md` PVP-LOOT). Guildmates are kin since (section 3), so the named piece meets the
   friend law only where a party or a guild was joined between the fall and the take, or the hub is silent at it.
 - BESIDE THE BODY (PVPFIX, the owner: "place the pile next to the body not on top of it"): the pile stands a fixed
   step to the side of where they fell, the same on every client (`wildRemains.js:"- on top it was hidden"`) - on top
@@ -646,7 +646,7 @@ half health", "everyone in the zone should see the same ... that the big giant i
   pixel and a red cross blinks over it for three seconds (`_findMe`, `heldMap.js:"_findMe() {"`), on the world map and
   the zone map. Not the zone's alone.
   FIND-FIRST (FIELD BUGS 2026-10-10, the Discord: "make 'Find me' the standard functionality on the world map when I
-  first open it"): the player's own world map opens as this press (`01-Overview/Field-Bugs-2026-10-10.md`).
+  first open it"): the player's own world map opens as this press (`01-Overview/bugs/Field-Bugs-2026-10-10.md`).
 
 ## 19. The mountains walkable (MOUNTAINS WALKABLE)
 

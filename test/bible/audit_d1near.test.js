@@ -1,4 +1,4 @@
-// AUDIT D1-NEAR (2026-10-12, the owner: "Audit this"; bible/01-Overview/Audit-D1-Near.md) - D1-NEAR read by three
+// AUDIT D1-NEAR (2026-10-12, the owner: "Audit this"; bible/01-Overview/audits/Audit-D1-Near.md) - D1-NEAR read by three
 // cold lanes on a frozen snapshot: the platform (P), the measurement and every claim built on it (M), the deploy's
 // report step and its pins (T). These pins hold what the audit FIXED in the step and the records; test/bible/d1near.test.js
 // holds the slice's own law, and test/d1nearStep.mjs runs the step for both as the runner runs it.

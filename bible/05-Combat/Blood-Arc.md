@@ -676,7 +676,7 @@ Slices, each behind its own `features.js` row:
    now (`EL_DECAL_FS`, the flat's model on the lane's pipeline, the
    shadow read along the mark's own surface), the renderer builds it
    as the set's fifth program, and the probe reads both sets.
-   bible/01-Overview/Mac-Bugs-W.md W6 carries the whole of it. The
+   bible/01-Overview/bugs/Mac-Bugs-W.md W6 carries the whole of it. The
    lesson for the next audit is written there too: "the pass renders
    correctly" is a claim about a SET, and the shipped default is the
    lane.

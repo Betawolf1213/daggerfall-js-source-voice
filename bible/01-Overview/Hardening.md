@@ -391,7 +391,7 @@ sections were 254 KB of it and each has its own page:
 | section | was | now |
 | --- | --- | --- |
 | `## Active arcs` | 172 KB in **89 lines** - an index whose entries had grown into essays | `01-Overview/Active-Arcs.md` |
-| `## Audits` | 82 KB in 1,386 lines | `01-Overview/Audit-Log.md` |
+| `## Audits` | 82 KB in 1,386 lines | `01-Overview/audits/Audit-Log.md` |
 
 **Both moves are byte for byte, and nothing was re-worded in them.** A
 rewrite and a relocation in one commit is a diff nobody can read.

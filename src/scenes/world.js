@@ -2905,7 +2905,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   let _legacyMade = () => {};
   /** LEGACY1: the host, once made - a birth's chargen (`?legacyborn=`) waits for it, since the flow's files can land first. */
   const legacyReady = new Promise((res) => { _legacyMade = res; });
-  // AUDIT CHAP C1/C2/C4 (bible/01-Overview/Audit-Chapters.md): THE ROLL'S LAST ADOPTION, KEPT IN THE SAVE - the Roll's
+  // AUDIT CHAP C1/C2/C4 (bible/01-Overview/audits/Audit-Chapters.md): THE ROLL'S LAST ADOPTION, KEPT IN THE SAVE - the Roll's
   // sequence and its twenty-two as this character last adopted them online (net/npcRollTracker.js keeps it at every
   // adoption), so the next page claims whatever moved after it and was never claimed. Offline nothing writes it.
   let rollKept = null;
@@ -11050,7 +11050,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       if (way === 'out') captainLedger.chartIsle(veilhaven().key);   // the landfall's port, on the charts from the first
       else crossGate.asked('out');   // home in the crossing waters: not asked out again until she has left them
       setMidScreenText(crossingWords(way), 7);
-      const heavy = cargoModWords(csaRuntime.state.boatCargoMod);   // FB1012d ETHER-STRAND (bible/01-Overview/Field-Bugs-2026-10-12d.md): the crossing's words cover the helm's - her load said again beneath them, or the boat that came home never says why she will not move
+      const heavy = cargoModWords(csaRuntime.state.boatCargoMod);   // FB1012d ETHER-STRAND (bible/01-Overview/bugs/Field-Bugs-2026-10-12d.md): the crossing's words cover the helm's - her load said again beneath them, or the boat that came home never says why she will not move
       if (heavy) townTalk.say(heavy, 7);
       captainSay();
       return true;
@@ -28214,7 +28214,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (w) townTalk.showOverlay(w);
     return !!w;
   };
-  /** FB1013d REMAINS-STAND (`01-Overview/Field-Bugs-2026-10-13d.md`): WHERE A REMAINS' PLACE STANDS in the pool the one
+  /** FB1013d REMAINS-STAND (`01-Overview/bugs/Field-Bugs-2026-10-13d.md`): WHERE A REMAINS' PLACE STANDS in the pool the one
    *  played stands in now - underground, the floor under the fallen's last position in their own dungeon; outdoors, the
    *  ground under where they fell (at the height they stood at, where the row kept it), once its pixel is built; null
    *  anywhere else. A building's death lies in its town's street by the law (Legacy-Arc section 7: its place names no

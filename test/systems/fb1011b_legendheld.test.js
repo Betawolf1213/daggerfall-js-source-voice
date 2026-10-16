@@ -1,4 +1,4 @@
-// LEGEND-HELD (FIELD BUGS 2026-10-11b, bible/01-Overview/Field-Bugs-2026-10-11b.md; the Discord's "Equipping legendary
+// LEGEND-HELD (FIELD BUGS 2026-10-11b, bible/01-Overview/bugs/Field-Bugs-2026-10-11b.md; the Discord's "Equipping legendary
 // shield Aegis of Dawn damage it by 1/3 of its durability"; Mac: "I dont care about DFU parity"). A departure
 // (Port-Ledger A): DFU bills a Cast-When-Held spell's whole casting cost in condition when the piece goes on
 // (CastWhenHeld.cs; HELD-REWEAR made a re-wear inside six hours free and the bill stop at 1), and the Aegis of Dawn's

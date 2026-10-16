@@ -231,7 +231,7 @@ Mac, 2026-10-08, asked "How can we continue to improve server performance and ov
 the list it was answered with, "Do 1 2 and 3": the account service's two reads made one (SCALE4a), SCALE4 (here 4b and
 4c), and SCALE3. The service is **acct95** with migration **0091** (acct94 and 0090 until the merge with main, where
 SD9b had taken both); it deploys with the site, which waits for it. No relay change. All four were audited before the
-merge (AUDIT SCALE, `01-Overview/Audit-Scale.md`); what it found is written into each section below, and every account
+merge (AUDIT SCALE, `01-Overview/audits/Audit-Scale.md`); what it found is written into each section below, and every account
 figure here was measured again after it. The relay's could not be, on the boot that did (below).
 
 ### SCALE3: the load harness (the local half)
@@ -241,7 +241,7 @@ entry exported no AdmitGate - nor set up a fleet past the line's burst; it expor
 service's entry does, and each bot's guest waits its place in the line. Its three sessions now share one reconnect wave
 and offer the second wire (`--wire 1` runs the first), and its tally reads `poses` and `fb` batches - every figure below
 was taken on the first wire with a wave a session, before SCALE5b and SCALE2c; the audit's own live storm is in
-`01-Overview/Audit-Scale-II.md`.)
+`01-Overview/audits/Audit-Scale-II.md`.)
 
 `tools/loadHarness.mjs` (`npm run load`; `--help` names every knob) runs a fleet of bots against the REAL relay and the
 REAL account service, both in local workerd (`wrangler dev`; the service behind `tools/loadAccountEntry.mjs`).
@@ -944,7 +944,7 @@ into my cell is opening or refused gets every pose through the halo, as before.
 Mutants: `tools/mutants/halothin.json`, 32 dead. SCALE2b's stamp-per-room record re-aimed by content at the halo's send
 (dead). The word moved one line up after CI: WAGONS2-VISIT holds `caravanVisitLink.close()` against `if (!key)`.
 
-AUDITED the same day (`01-Overview/Audit-Peer-Range-Halo-Thin.md`): what it changed is written into this section as it
+AUDITED the same day (`01-Overview/audits/Audit-Peer-Range-Halo-Thin.md`): what it changed is written into this section as it
 now stands.
 
 ## SCALE4e: built (2026-10-10, this branch - the account deploy outlasts an overloaded database)
@@ -1025,7 +1025,7 @@ about (N - 25) / 5 s whatever the spread - 95 s at 500, 395 s at 2,000, half an 
 is the slower door the spread costs nobody a token; it only spreads the line's arrivals and the cells' hellos. Live (60
 bots, the real relay and account service in local workerd, the relay restarted under them): 51 of 111 mints answered
 `queue`, every bot back in its cell in 13-17 s. The minter now waits the line's own `wait` (AUDIT SCALE II L4a). Which
-door sets a reconnect's pace - the line's rate for a mint, or the spread - is Mac's (`01-Overview/Audit-Scale-II.md`,
+door sets a reconnect's pace - the line's rate for a mint, or the spread - is Mac's (`01-Overview/audits/Audit-Scale-II.md`,
 L4). Before this, at 500, the mints overloaded the database, and a page whose mint failed waited
 out STORM-SHED's cooling instead.
 
@@ -1883,7 +1883,7 @@ the height whole (`"y":-1412` for -1412.25 - the bug, pinned); it reads the cent
 room. `SCALE5b-place-unrounded`, the three relay-fan records and the two `NETSMOOTH-1` records (to `wire.js`) re-aimed by
 content. The relay's version pins moved to world194.
 
-## D1-NEAR: built (2026-10-12, this branch - no migration, no version, no drop; audited, `01-Overview/Audit-D1-Near.md`)
+## D1-NEAR: built (2026-10-12, this branch - no migration, no version, no drop; audited, `01-Overview/audits/Audit-D1-Near.md`)
 
 From play: *"I notice a lot of UI elements that utilize the server (like searching players, the guild menu, etc) take
 an insane amount of time to load."*

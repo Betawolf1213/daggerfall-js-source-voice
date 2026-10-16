@@ -673,7 +673,7 @@ release pipeline, ARENA2 detection, and the tests, docs and player's
 eye. Every verified finding was fixed at its root and pinned
 (`test/tooling/audit_install.test.js`, `tools/mutants/auditinstall.json`: 71,
 all dead); the record, finding by finding, is
-[Audit-Install.md](Audit-Install.md).
+[Audit-Install.md](audits/Audit-Install.md).
 
 Mac, again: *"Audit this."* Five fresh lanes read the PR after round 1's
 fixes, each told to find where round 1 did not hold - and round 1's own
@@ -681,7 +681,7 @@ L1-5 fix had stopped every release (the Windows stamp read `"$VERSION"`
 in PowerShell, an unset variable). Every verified finding was fixed at
 its root and pinned (`test/tooling/audit_install2.test.js`,
 `tools/mutants/auditinstall2.json`: 123, all dead); the record is
-Audit-Install.md's [Round 2](Audit-Install.md#round-2-2026-09-29), and
+Audit-Install.md's [Round 2](audits/Audit-Install.md#round-2-2026-09-29), and
 where it found a claim on this page untrue, the claim is struck here.
 
 ## The install is one archive (DA11, 2026-09-30)

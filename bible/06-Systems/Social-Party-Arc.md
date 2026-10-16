@@ -378,7 +378,7 @@ social key, so the port's action keeps it. `test/ui/soc5_interact.test.js` -
 the plaque's own (`ui/socialMenu.js socialPlaqueRows`): a player's list starts unlit, the wheel or F lights a row,
 the activate key or F presses it through the card's door, and a refused row shows and says its reason. F opens the
 card only where the plaque cannot serve - touch, the classic skin, a player a nearer thing hid from its race.
-Record: `01-Overview/Field-Bugs-2026-09-23.md`.
+Record: `01-Overview/bugs/Field-Bugs-2026-09-23.md`.
 ## SOC6 - the party on the map
 
 **One seam, two drawings.** The travel map's one dep bag (`world.js`

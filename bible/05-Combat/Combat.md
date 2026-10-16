@@ -1492,7 +1492,7 @@ Mac: "swing speed is insane", then "Do whatever is the most detailed. I dont car
 do it better". **What changed:** DISC28-D (861462d2) gave the rig the player's live Speed, which it had never read - every
 player had swung at the number 50 - and DFU's line (FormulaHelper.GetMeleeWeaponAnimTime, `3 * (115 - LiveSpeed) / 980`
 a frame, five frames a blow) is a hyperbola in the swing rate: one blow a second at 50, 3.3 at 95, four at the cap, where
-a lycanthrope's +40 Speed puts any base of 60 or more (DISC29-G, `01-Overview/Field-Bugs-2026-09-28f.md`).
+a lycanthrope's +40 Speed puts any base of 60 or more (DISC29-G, `01-Overview/bugs/Field-Bugs-2026-09-28f.md`).
 
 **The law** (`characters/weaponStates.js` - a leaf, so the build-viewer's paste of it still stands):
 

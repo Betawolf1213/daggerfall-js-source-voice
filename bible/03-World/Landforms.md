@@ -936,7 +936,7 @@ Roads network, in scratch, with the slice's own functions:
 ## AUDIT LANDFORMS (2026-10-07)
 
 Mac: *"Dont worry about it. Instead let's do just an audit and ensure this is
-perfect"* - the record is `01-Overview/Audit-Landforms.md`. It changed these
+perfect"* - the record is `01-Overview/audits/Audit-Landforms.md`. It changed these
 laws of this page, each above where it lives:
 
 - a road's low bank falls to the land (E1) and a channel is the water's (E2) -
@@ -954,7 +954,7 @@ laws of this page, each above where it lives:
 ## AUDIT LANDFORMS II (2026-10-07)
 
 Mac: *"Do another deep audit on this"* - the record is
-`01-Overview/Audit-Landforms.md`, AUDIT LANDFORMS II. It changed these laws of
+`01-Overview/audits/Audit-Landforms.md`, AUDIT LANDFORMS II. It changed these laws of
 this page, each above where it lives:
 
 - a track over water is a ford (J1), and a bank is never a launch ramp (I2) -
@@ -987,7 +987,7 @@ normals, a point's lift against the real pipeline in a town, a record's height
 DFU's frame both ways and no stamp anywhere, the switch, the host's wiring, the
 worker byte for byte, and THE CEILING (a glitch byte in a lowland, a road graded
 across it). `test/world/terrain/auditlandforms.test.js` - the audit's own (its record:
-`01-Overview/Audit-Landforms.md`), THE LAW WRITTEN OUT among them: a second
+`01-Overview/audits/Audit-Landforms.md`), THE LAW WRITTEN OUT among them: a second
 statement of the shaper, equal to it at every sample of the fixture's bend,
 junction, ends, crossing and shore; and AUDIT LANDFORMS II's - the ford and the
 stream's crossings and join (the fixture's new track, stream and road), the

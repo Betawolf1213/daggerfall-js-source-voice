@@ -1,6 +1,6 @@
 // AUDIT PRE-MERGE 0929 (2026-09-29, Mac: "Audit this") - TERMS1's half: the deploy that asks the service as a player
 // does, the site that waits for the service its forms ask, a game from before the boxes told the truth, and a keyboard
-// that survives the card's redraw. The record: bible/01-Overview/Audit-PreMerge-0929.md.
+// that survives the card's redraw. The record: bible/01-Overview/audits/Audit-PreMerge-0929.md.
 //
 // Each test failed on the unfixed tree for its finding's reason: the smoke's guest opened with a label alone (T-CI), a
 // deploy job that published with nothing waited on (T2), a bare request answered `terms-unaccepted` - a word no game

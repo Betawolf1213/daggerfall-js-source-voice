@@ -1,4 +1,4 @@
-// HELM-JUMP (FIELD BUGS 2026-10-11, bible/01-Overview/Field-Bugs-2026-10-11.md): "If you recall from the helm of a ship,
+// HELM-JUMP (FIELD BUGS 2026-10-11, bible/01-Overview/bugs/Field-Bugs-2026-10-11.md): "If you recall from the helm of a ship,
 // you get sent to the void. You can unstuck to get out but then you're trapped at sea with no boat." A Recall, a guild's
 // teleport, an unstuck and a quest's respawn are jumps DFU raises neither the travel nor the load event for, and the
 // Come Sail Away helm heard none of them: its sail stood the player back at the drive position of the boat the jump had

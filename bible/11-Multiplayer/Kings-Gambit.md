@@ -910,7 +910,7 @@ The owner, of KG0-KG2: **"Audit this and ensure absolute perfection. Ensure any 
 and easily understandable/readable"**. Four cold lanes read a frozen snapshot (3b50a59b5) - the law against the mod's C#
 (A), the play and its measure against the C# (B), this record's every claim (C), the UI the record plans against
 Enhanced Plus and Plain Words (D) - and every finding was read again against the code or the C# before it was acted on.
-All held. The findings and their verdicts are `01-Overview/Audit-Kings-Gambit.md`; what changed is written into the
+All held. The findings and their verdicts are `01-Overview/audits/Audit-Kings-Gambit.md`; what changed is written into the
 sections above, each marked AUDIT KG and its id. In short:
 
 - THE LAW (A): Auto-fill's lean at float32, as the C#'s 0.5f (A1), and drawn through the checked source, so a stuck one
@@ -1760,7 +1760,7 @@ refusal it pinned (AUDIT KG II E6: the section had not said so).
 The owner: "Lets do last comprehensive audit and ensure perfection." Five cold lanes on a frozen snapshot (6e4441a72) -
 the money and the relay, the online client, the board and the offline game and its sounds, the UI and the words in
 every whole language, the record and its tests and mutants - 83 findings, every one reproduced before it was acted on;
-the page is `01-Overview/Audit-Kings-Gambit-II.md`, each finding with its verdict. What it changed, as the sections
+the page is `01-Overview/audits/Audit-Kings-Gambit-II.md`, each finding with its verdict. What it changed, as the sections
 above now say it:
 
 - A STAKE IS NEVER LOST TO A PRESS (A1, B1, B8, B12, C1-C3): every stand names the game its panel showed - one naming

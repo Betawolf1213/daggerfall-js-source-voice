@@ -3,7 +3,7 @@
 // midline") split the ground between two HOUSES' lots down its middle - and drew the line to every building of the town
 // pixel: a shop, a temple, a tavern within twelve metres of the house took the half of the yard nearer it, though it holds
 // no yard to split with. The midline is now a lot's holder's alone; every building's ground is still never stood on.
-// bible/01-Overview/Field-Bugs-2026-10-12b.md.
+// bible/01-Overview/bugs/Field-Bugs-2026-10-12b.md.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';

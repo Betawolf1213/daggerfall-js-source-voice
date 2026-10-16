@@ -1,4 +1,4 @@
-// FB1012d ALLY-RACE (bible/01-Overview/Field-Bugs-2026-10-12d.md; the owner, 2026-10-12: "companions when morrowind
+// FB1012d ALLY-RACE (bible/01-Overview/bugs/Field-Bugs-2026-10-12d.md; the owner, 2026-10-12: "companions when morrowind
 // attached switches character race"). A companion's Morrowind body drew its race, face, head, hair and clothes off the
 // STAND - characters/foeBodies.js foeSeed's species and where it stood (its number and feet, a dungeon's marker) - and the
 // companion layer (scenes/crewAshore.js) stands a fresh body at every door, dungeon, fast travel, load and sweep: the same

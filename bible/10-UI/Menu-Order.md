@@ -145,7 +145,7 @@ door), so there is nothing there to wire.
   frames already: neither changed.
 - **The four left open by MENU-ORDER f** - a refused press's reason on a touch screen, a ship's own picture, a model's
   own picture in a tile and a portrait phone's placing bar - are MENU-ORDER g's (section 2), CLOSED.
-- **AUDIT MENU-ORDER** (`01-Overview/Audit-Menu-Order.md`): 28 findings (the lanes' two doubles counted once), 26 FIXED; KEPT R2's renderer half (the panel
+- **AUDIT MENU-ORDER** (`01-Overview/audits/Audit-Menu-Order.md`): 28 findings (the lanes' two doubles counted once), 26 FIXED; KEPT R2's renderer half (the panel
   bracket gives the mesh program's uniforms back to no one - a panel comes after the world's last draw, pinned for
   world.js) and R8 (five portrait boats a session, never torn down); OPEN A2 (a yard's climate swaps through the pinned
   upload door, its preview's since AUDIT 05b - its own slice).
@@ -181,7 +181,7 @@ door), so there is nothing there to wire.
   `set7_broker`, `wb9g_insignia`); a model's row is watched as a flat's is (`decor1d`); the shipmaster's window asks her
   picture and wears it (`shipyards1_host`).
 - `tools/mutants/menuorder.json`: 135 mutants, 135 dead (MENU-ORDER g's 49 run on their own; MENU-ORDER a-f's 47 before;
-  AUDIT MENU-ORDER's 39 and its 12 re-aimed - `01-Overview/Audit-Menu-Order.md` Pinned).
+  AUDIT MENU-ORDER's 39 and its 12 re-aimed - `01-Overview/audits/Audit-Menu-Order.md` Pinned).
   MENU-ORDER g re-aimed by content and dead again: `set7.json`'s SET7-a-refused-offers-buy-pressable, `audit_wb9.json`'s
   AUDIT-WB9-the-wares-pressable-mid-sale, `loot16.json`'s LOOT16-a-refusal-pressable, `loot17.json`'s
   LOOT17-a-refused-press-pressable and `loot19.json`'s LOOT19-a-refusal-pressable (each now the `refusePress` call gone);

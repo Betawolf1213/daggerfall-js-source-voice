@@ -356,7 +356,7 @@ point the player is looking at is the point they struck - with a
 little scatter so a flurry fans out. Enhanced only: the enhanced HUD
 registers the hook; the classic path never has one.
 
-ROSE-SEEN (`01-Overview/Field-Bugs-2026-10-15e.md`): a follow-up blow -
+ROSE-SEEN (`01-Overview/bugs/Field-Bugs-2026-10-15e.md`): a follow-up blow -
 Open Hand's second, Many Endings' echo - runs no formula, so the seam
 never heard it and the Rose looked like nothing. It raises its own
 number through `showFollowUp`, tagged with the power's name, under the
@@ -8901,7 +8901,7 @@ grant stood past the sixth row).
   Daggerfall's own answer, not an omission. (DISC22-C, 2026-09-24:
   the classic skins take quick loot too now, at Satranath's report and
   on Mac's parchment - a canvas panel for a LOOT LIST only, with quick
-  loot on; `01-Overview/Field-Bugs-2026-09-24.md` DISC22-C.) It tears down with the
+  loot on; `01-Overview/bugs/Field-Bugs-2026-09-24.md` DISC22-C.) It tears down with the
   host. The context's returned object needed a name (`api`) for the
   frame to ask itself, which is all that change is.
 
@@ -10778,7 +10778,7 @@ bottom right ... I would much rather use a button to attack"): JUMP and
 SHEATHE are the defaults of THREE corner slots the Touch card fills from
 `ui/touch/touchButtons.js`'s table, and ATTACK is one of the choices - a press is
 a swing through the swipe's own seam, never a default
-(`01-Overview/Field-Bugs-2026-09-27e.md`).
+(`01-Overview/bugs/Field-Bugs-2026-09-27e.md`).
 
 The swipe holds the swing-settle law like the mouse button:
 `(rightHeld || swipeHeld)` in all three hosts, so a swing never pays
@@ -12962,7 +12962,7 @@ are plain Buttons and override neither. The port's `scrollerHit`
 already draws that line - `slot` is the items panel, `thumb`/`page-up`
 /`page-down` the rail, `up`/`down` the arrows.
 
-Adjacent, and TAKEN at MAC-N2 (2026-09-16, `01-Overview/Mac-Bugs-N.md`):
+Adjacent, and TAKEN at MAC-N2 (2026-09-16, `01-Overview/bugs/Mac-Bugs-N.md`):
 `ui/native/nativeTrade.js` had no `wheel` either, and `DaggerfallTradeWindow`
 inherits the same two scrollers through `SetupItemListScrollers`. The
 same missing member on the same C# class in a second window - it
@@ -14918,7 +14918,7 @@ the player's OWN storage is the one loot session that opens beside the
 pack - the host's `loot.storage` word, on an owned cupboard or ship's
 chest and an owner's placed storage piece - because a take-only frame
 made every one of them a box that could only be emptied
-(`01-Overview/Field-Bugs-2026-09-26.md`).
+(`01-Overview/bugs/Field-Bugs-2026-09-26.md`).
 
 ### The gate is the SESSION, not the frame
 
@@ -15565,7 +15565,7 @@ pixel face reads as a 2 - and a new character's weapon starts sheathed, as class
 bottom slot. `systems/quickslots.js` `emptySlotLine`: the empty press adds "Press Z to ready your weapon." when the hand
 holds a weapon still sheathed - the main cell's own chip, the player's binding (`ui/quickslotTags.js` `quickslotHand`),
 read off the rig in the player's hands in each host and the interior mode's own. `test/systems/disc21.test.js` (C).
-`01-Overview/Field-Bugs-2026-09-23.md`, DISC21-C.
+`01-Overview/bugs/Field-Bugs-2026-09-23.md`, DISC21-C.
 
 ### AUDIT QS - the arc audited the same day
 
@@ -18805,7 +18805,7 @@ frame now: `'actions'`, a namer's verbs as rows - `resolveHover` makes one from 
 and the paint draws them in the loot list's rows. P and J never arm on a verb, a verb has no stats, and a plaque that
 stands down (a window, the skin) folds nothing, so no highlight outlives what it lit. The press reads the lit verb by key
 (`plaqueActionFor`, `plaqueActionSelection`): a player's acts (the F-menu's own, through its own door) and my horse's
-and wagon's (the mod's interaction mode per row). Record: `01-Overview/Field-Bugs-2026-09-23.md` (DISC7). Pins:
+and wagon's (the mod's interaction mode per row). Record: `01-Overview/bugs/Field-Bugs-2026-09-23.md` (DISC7). Pins:
 `test/systems/disc7.test.js`; mutants `tools/mutants/disc7.json`.
 
 AUDIT DISC7 (2026-09-23, Mac: "Do an audit before we merge"): a player's list starts UNLIT (`actionsUnlit` ->
@@ -18993,7 +18993,7 @@ so its list starts below the fold.
 
 Pinned in `test/ui/enhanced/cartfit.test.js` (2: the wagon and storage pair, a body and the pack alone do not, through the real
 mount; the paired rules and their arithmetic). Mutants `tools/mutants/cart_fit.json` (4, all dead).
-`01-Overview/Field-Bugs-2026-09-27.md`.
+`01-Overview/bugs/Field-Bugs-2026-09-27.md`.
 
 ## ESC-LOCK - THE ESCAPE THE BROWSER KEEPS (2026-09-27, Mac's report)
 
@@ -19037,7 +19037,7 @@ Pinned in `test/player/esclock.test.js` (5: the loss delivered once, as a keydow
 a window's, a freed cursor's, an unfocused or hidden page's, a lock taken back, or a press the browser delivered;
 the disposer takes the listener and a pending delivery; the refused request asked of the shell once and re-run, a tab
 with no shell left alone; the bridge by source); `kb1_keybinds.test.js`'s sweep carries the reservation. Mutants
-`tools/mutants/esc_lock.json` (8, all dead). `01-Overview/Field-Bugs-2026-09-27.md`.
+`tools/mutants/esc_lock.json` (8, all dead). `01-Overview/bugs/Field-Bugs-2026-09-27.md`.
 
 **A THIRD RULE - GECKO ENDS A LOCK ON A TOUCH (TOUCH-UNLOCK, FIELD BUGS 2026-10-09c).** On Firefox for Android and its
 forks every tap opened the pause ("Touching anywhere onscreen in mobile opens the system menu"; Chrome played). Gecko
@@ -19056,7 +19056,7 @@ the layer off, is covered too). Not proven on a device. Pinned in `test/player/f
 The Discord (#bug-reports, Cruor): *"New sigil items descriptor is a bit long! ... all the buttons on it's pop-up card
 are.. off the screen, because it's got a bit much on it!"* Mac: *"Address screenshot for current and future
 weapons/gear. Want to improve this and reduce text bloat"*. The whole record, before and after:
-`01-Overview/Field-Bugs-2026-09-28c.md` (renamed from `-28.md` at the merge with main, whose DISC28 batch took the name).
+`01-Overview/bugs/Field-Bugs-2026-09-28c.md` (renamed from `-28.md` at the merge with main, whose DISC28 batch took the name).
 
 - **The layout** (`ui/enhanced/enhancedInventory.js`): `infoCard(..., { body: true })` puts the card's words in `.card-body`,
   and the detail card hangs its buttons (`itemActs`) under the body. `fitCard(card, room)` writes the card's
@@ -19116,7 +19116,7 @@ time was blank in every interior and dungeon. The streaming hosts' indoor foot i
 now (`frameEnd`); the held frame and the standalone dungeon's overlay return still take none (AUDIT-WH2 L1-F4's own
 reason: a frame that bailed early did next to no work).
 `test/ui/enhanced/disc29_watchdog.test.js` (5); the notice, plaque and Yes/No suites re-aimed to the frame law;
-`tools/mutants/disc29.json` (DISC29-D, 10). `01-Overview/Field-Bugs-2026-09-28f.md` DISC29-D.
+`tools/mutants/disc29.json` (DISC29-D, 10). `01-Overview/bugs/Field-Bugs-2026-09-28f.md` DISC29-D.
 
 ## TOAST-SPLIT - the toasts and the Notice Board share no class (2026-09-29, Mac: "So it seems like the enhanced plus UI regressed. The notifications arent enhanced plus anymore")
 
@@ -19234,7 +19234,7 @@ through the classic travel map a player chose. The input-box line was paid by AU
 through the probe's route): the home screen and the Settings pane under the change - every text node's computed
 family is the pixel stack, and no text box clips. That was the whole of FONT3's own browser check, and it was too
 little: the in-game windows render without ARENA2 too (the repo's own probes and fixtures), and AUDIT FONT3
-(`01-Overview/Audit-Font3.md`) measured them on the base tree and on FONT3 and fixed what the floor and the tracking
+(`01-Overview/audits/Audit-Font3.md`) measured them on the base tree and on FONT3 and fixed what the floor and the tracking
 broke in fixed boxes - the naval plate's batteries, the party rows, the hotbar's corners on a phone, the accessory
 shelf's labels. Pins: `test/ui/font3_readable.test.js` (9: the pair and the trio's order, the body and the
 tokens, the recovery code's reason, THE FLOOR over all 25 sheets, the dim's contrast and order, the named surfaces,
@@ -19282,7 +19282,7 @@ timer's is (QT-LIVE1).
 
 **Seen in a browser** (Chromium 1280x800 and 390x844, the window and the hourglass mounted over the skin's own sheet
 with a fixture source): the hourglass stands 10px left of the profile mark on both; the window holds Now and Coming up,
-its rows scroll inside it. AUDIT TIMERS1 (`01-Overview/Audit-Timers1.md`) then drove the REAL pause face
+its rows scroll inside it. AUDIT TIMERS1 (`01-Overview/audits/Audit-Timers1.md`) then drove the REAL pause face
 (`mountEnhancedMenu` in pause mode) at four sizes, a rotation, the keyboard and a pad, and fixed what it found. Not seen:
 the live pause face online (no relay or ARENA2 here). Pins: `test/ui/enhanced/timers1.test.js`
 (9: the gate, the seat week, the battles, the raids and the two days, the order, the words, the window over a fake
@@ -19592,4 +19592,4 @@ alone. With the Interface tab's Character sheet row on, "Every faction's standin
 default since STANDING-ON, 2026-10-11 - Mac: "should be on by default"), it lists every organization's reputation from the live faction store under its divider
 (`systems/faction/factionStanding.js` standingGroups, drawn by `enhancedMenu.js` statsEveryStanding): the guilds, the temples,
 the knightly orders, the kingdoms, the covens, the vampire clans, the Daedric Princes - a membership under Guilds above,
-with its rank, never twice. The classic skin's sheet is untouched. The record: `01-Overview/Field-Bugs-2026-10-09e.md`.
+with its rank, never twice. The classic skin's sheet is untouched. The record: `01-Overview/bugs/Field-Bugs-2026-10-09e.md`.

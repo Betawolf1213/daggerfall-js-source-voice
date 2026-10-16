@@ -1,5 +1,5 @@
 // AUDIT SERPENT (2026-10-04, Mac: "I definitely want to do a conprehensive audit on this and ensure its absolute
-// perfection"): the pins of the audit's findings ON THE CLIENT AND IN THE BOOKS (bible/01-Overview/Audit-Sea-Serpent.md) -
+// perfection"): the pins of the audit's findings ON THE CLIENT AND IN THE BOOKS (bible/01-Overview/audits/Audit-Sea-Serpent.md) -
 // each a law that failed before its fix. The host end to end against the brain's own words: a new day's attacks judged
 // afresh (H3), a silent fight left (M5), the phase a ship sails in on not said, my ship held in the site's frame (L1), a
 // word the socket would not take said with the next (L3), the wreck

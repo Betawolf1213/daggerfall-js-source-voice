@@ -296,7 +296,7 @@ Also close to 1:1 on the classic path. Gaps:
   (characters/enemy/enemyAttack.js + enemyBasics carry it).
 - ~~`HeightAdjust` unported - tall enemies cannot follow through doorways
   (~35).~~ SHIPPED (DOOR-JAM, FIELD BUGS 2026-10-14b: characters/enemy/enemyMotor.js
-  _heightAdjust and the collider's CollidedSides - `01-Overview/Field-Bugs-2026-10-14b.md`;
+  _heightAdjust and the collider's CollidedSides - `01-Overview/bugs/Field-Bugs-2026-10-14b.md`;
   it bit once the capsule above was sized: 94% of the dungeons' doorways are lower than a
   Mage stands).
 - ~~Interior people are always visible~~ SHIPPED

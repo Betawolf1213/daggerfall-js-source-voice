@@ -1,4 +1,4 @@
-// AUDIT CARDS-3 (2026-10-08, bible/01-Overview/Audit-Cards-3.md): THE RELAY'S CARD TABLES, AUDITED. Driven on the fake
+// AUDIT CARDS-3 (2026-10-08, bible/01-Overview/audits/Audit-Cards-3.md): THE RELAY'S CARD TABLES, AUDITED. Driven on the fake
 // room (server/src/index.js): a refused sit moves nothing at another table (A1); one seat an account (A2); seats whose
 // sockets the relay closed itself, or an empty room left behind, stood up - no ghost deals for ever, nobody takes its
 // cards by its id (A3); the room's sits on one gate, and a word that moved nothing writes nothing (A4); a table open at

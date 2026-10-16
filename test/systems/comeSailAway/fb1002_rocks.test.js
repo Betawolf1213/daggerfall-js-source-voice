@@ -25,11 +25,11 @@
 //                           never grazing onto it again, a holding part silent (a shared edge crossed once), a mover
 //                           never holding; nothing under her keel
 //   THE HOST              - her keel line handed on, an overlap beside her kept where it touches
-// Moved by the record's audit (2026-10-02b, `01-Overview/Field-Bugs-2026-10-02b.md`; its own pins in
+// Moved by the record's audit (2026-10-02b, `01-Overview/bugs/Field-Bugs-2026-10-02b.md`; its own pins in
 // test/systems/comeSailAway/fb1002b_rocks.test.js): the sweep is the sphere's own (no spokes, so no `pass` for them), a ledge is no rock
 // by the KEEL LINE where the host had dropped an overlap "beneath" her, and each sweep reaches her own end (ROCK-REACH)
 // - so the rocks of these pins stand inside her own length, and the ledge under her keel.
-// `01-Overview/Field-Bugs-2026-10-02.md`.
+// `01-Overview/bugs/Field-Bugs-2026-10-02.md`.
 import '../../modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';

@@ -13,7 +13,7 @@ each re-rolled into a stranger at every spawn, wandering the navgrid by tile wei
 
 LW9-LW16 (the road's traffic, the wagon train, the caravan's door, the outlaws, the companies, the deep's own, the
 patrons, the word travels) are designed and built on `06-Systems/Living-World-II.md` (2026-10-09; audited 2026-10-10,
-`01-Overview/Audit-LivingWorld-II.md`).
+`01-Overview/audits/Audit-LivingWorld-II.md`).
 
 ## LW0 - the decisions
 
@@ -36,7 +36,7 @@ Taken at the design, in the request's own order; each is Mac's to overrule.
    `skyMinutesPerMsAt`, twenty-four), so a resident beside the player keeps pace with them and every day is lived at
    walking speed. A journey's time scale speeds the calendar and the people with it.
 4. **A RESIDENT IS A DFU TOWNSPERSON WHO KEEPS THEIR IDENTITY FOR LIFE.** The billboard race is the climate's people
-   (REGIONAL-FOLK, `01-Overview/Field-Bugs-2026-10-10.md`: a Redguard region's are Redguards - its residents were
+   (REGIONAL-FOLK, `01-Overview/bugs/Field-Bugs-2026-10-10.md`: a Redguard region's are Redguards - its residents were
    re-dressed once, at that update, their names and days kept),
    the outfit one of `PERSON_TEXTURES`' four, the talk portrait `PERSON_FACE_RECORDS`' own law, the name `fullName` on
    the region's bank with DFRandom's state saved and put back (`shipCrew.js handName`'s pattern) - every part DFU's, but
@@ -225,7 +225,7 @@ the trample (`retire`), the probes.
   frame's asking has taken under 2 ms (PERF-WAYS1, below); a new network clears the book
   and the host's trips with it (`generation`). Two players on different road networks see their travellers on their
   own roads. `wayOf` lays it through its pixels' centres, which is the road itself; each end is trimmed where the way
-  leaves the town's grid grown by half a block (`wayTrims`, `townExit` - WALL-WAY, `01-Overview/Field-Bugs-2026-10-12b.md`:
+  leaves the town's grid grown by half a block (`wayTrims`, `townExit` - WALL-WAY, `01-Overview/bugs/Field-Bugs-2026-10-12b.md`:
   the radius `townTrim` set a diagonal way's party down inside the walls), so a party walks out past the town's walls;
   the two ends are held to 0.4 of the way each only where they would meet.
 - **Caravans** (`formCaravans`), each a law of the trips alone: a merchant takes the town's sellswords UNDER CONTRACT
@@ -1716,7 +1716,7 @@ on average through ten minutes of the room astir); and the day sat people in the
 spend there (the town of sixteen blocks: 23 inside before noon; twelve stays of four hours and more in five days). Five
 causes, each fixed at its root, and the one risk the first fix made, closed (`test/systems/livingWorld/lwrooms_tavern.test.js`,
 `tools/mutants/lwrooms.json`). AUDIT LW-ROOMS (2026-10-08, Mac: "Audit this"; the record is
-`01-Overview/Audit-LW-Rooms.md`) measured it on the game's own rooms and towns and changed these laws - each below.
+`01-Overview/audits/Audit-LW-Rooms.md`) measured it on the game's own rooms and towns and changed these laws - each below.
 
 - **The room was a fan by its door.** LW8's sounding walked twelve ways out to 6.6 m from the way in and no farther - a
   hall of 24 by 18 m kept 26 places, every one within 6.6 m of its door - and walked them at the way in's own height:

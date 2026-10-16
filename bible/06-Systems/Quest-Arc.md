@@ -6315,7 +6315,7 @@ a building-type door inside a dungeon "To <location>" (its .cs:764-767); the por
 
 Pinned in `test/world/crux_door.test.js` (2: a synthetic block through the real `layoutRdbBlock` and `dfMeshToModel` -
 the list carries all three faces and one survives; the host's copy loop skips the rest). Mutants
-`tools/mutants/crux_door.json` (4, all dead). `01-Overview/Field-Bugs-2026-09-27.md`.
+`tools/mutants/crux_door.json` (4, all dead). `01-Overview/bugs/Field-Bugs-2026-09-27.md`.
 
 ## DISC6-B - THE KILL THAT NEVER COUNTED (2026-09-23, Discord through Mac: "Theres no quest notification when you killed all monsters and no quest update in the log")
 
@@ -6323,7 +6323,7 @@ A party's shared-quest resync (`machine.updateSharedQuest` -> `restoreSaveData`)
 under the foes already standing, and each foe's `QuestResourceBehaviour` kept the Foe it cached on its first frame -
 every death went to the orphan, the `killed N` trigger read the new one, and the last kill fired nothing. The
 behaviour now lets go of a target the quest no longer holds (by UID and by symbol) and resolves it again, and the
-resync keeps this world's Foe counters (the larger kill count; the injury and a pending kill this world's own events set - AUDIT DISC7 D7 dropped the restraint, which is the quest's word on both sides; C2 relinks every standing behaviour at the resync, symbol included, and C3 keeps this world's longer spell and item queues). Record: `01-Overview/Field-Bugs-2026-09-23.md`. Pinned in
+resync keeps this world's Foe counters (the larger kill count; the injury and a pending kill this world's own events set - AUDIT DISC7 D7 dropped the restraint, which is the quest's word on both sides; C2 relinks every standing behaviour at the resync, symbol included, and C3 keeps this world's longer spell and item queues). Record: `01-Overview/bugs/Field-Bugs-2026-09-23.md`. Pinned in
 `test/systems/disc6.test.js`; `tools/mutants/disc6.json`.
 
 ## QUEST-UID1 - a quest offered before a load is not the loaded game's (2026-09-24)
@@ -6394,7 +6394,7 @@ mount; `tools/mutants/qrepair.json`.
 Triage on Discord: thrown out of the Mages Guild in the middle of its guard quest, after killing raiding mages and
 knights - "Not a member", then "ineligible ... less than sterling reputation", then "Your name is familiar to us, and
 not in a very favorable light", and the quest would not complete. What expels is N0B20Y02 ("Protect an Honored Mage")
-itself, faithfully run, as KimNix met it (`01-Overview/Field-Bugs-2026-09-26b.md` DEAD-CLOCK): a click on the sleeping
+itself, faithfully run, as KimNix met it (`01-Overview/bugs/Field-Bugs-2026-09-26b.md` DEAD-CLOCK): a click on the sleeping
 mage is `_S.04_` (-10, popup 1012, and a shielded hostile Mage placed in the hall - the mage himself), and that Mage's
 death is `_S.07_` (-50, the Knight, Battle-mage and Assassin waves, and the seven-day `_S.09_` clock). The next visit's
 UpdateRank finds a negative reputation and expels (TEXT.RSC 668); JOIN reads 612, the record for rep < 0. The raiders'
@@ -6413,7 +6413,7 @@ Not changed, and Mac's to decide: a PARTNER's kill of a shared quest's foe is cr
 (`onPuppetDied` -> `incrementKills`), so `_S.07_` - and its -50 - runs for a member who never touched the mage. That
 same credit is what carries an ordinary summon-and-kill quest forward for the whole party.
 `test/player/disc29_questinfo.test.js` (3); `test/scenes/dungeonquestclick.test.js`'s one-home pin re-aimed to the shared builder;
-`tools/mutants/disc29.json` (DISC29-H, 3). `01-Overview/Field-Bugs-2026-09-28f.md` DISC29-H.
+`tools/mutants/disc29.json` (DISC29-H, 3). `01-Overview/bugs/Field-Bugs-2026-09-28f.md` DISC29-H.
 
 ## TIME3 - QUESTS ON TWO CLOCKS (2026-10-01, Mac: "people have to wait insanely long" / "This needs to be perfect")
 
@@ -6467,7 +6467,7 @@ The travel is read WHOLE from the marker's start, which is DFU's outcome on its 
 the item, the saved action state lands after it); online the room's word can land before a re-mount, and the whole
 travel is the only reading that agrees. The one difference: a quest that hot-places an item onto a marker that already
 moved this visit stands it on the marker, where DFU's reparent leaves it off by the travel.
-`test/systems/quest/fb1003b_totem.test.js`; `tools/mutants/fb1003b_totem.json`. `01-Overview/Field-Bugs-2026-10-03b.md` TOTEM-CAGE.
+`test/systems/quest/fb1003b_totem.test.js`; `tools/mutants/fb1003b_totem.json`. `01-Overview/bugs/Field-Bugs-2026-10-03b.md` TOTEM-CAGE.
 
 ## GUARD-RETURN - a return to the hall re-arms the Nightblades, as in Daggerfall Unity (2026-10-07, a player through the lead)
 
@@ -6549,7 +6549,7 @@ the only path. Repair could not help: it puts back what a marker lost, and his m
 
 Not done, offered to Mac: an Abandon for an ordinary guild quest (DFU's console `endquest`, `machine.tombstoneQuest`) -
 the port gives Abandon to bounties and revenant hunts alone. `test/systems/quest/kvarhold.test.js` (3); `tools/mutants/kvarhold.json`
-(12), all dead. AUDIT FIELD-BUGS 1008 (`01-Overview/Audit-Log.md`): drawn among the few nearest the Hold it leaves, never
+(12), all dead. AUDIT FIELD-BUGS 1008 (`01-Overview/audits/Audit-Log.md`): drawn among the few nearest the Hold it leaves, never
 this client's player (every shared copy the same); a `local dungeon` rescued too; the new site fitted to the size its
 link builds once the link stands there (`fitSiteToBuild`); a reveal that throws leaves the move and the link standing. PIN MOVED: `test/systems/quest/nearby_quests.test.js`'s fixture ids start past 5000 (1001 is Mantellan Crux).
 
@@ -6590,7 +6590,7 @@ as it was. A DEPARTURE (Port-Ledger A), the port's own.
   The classic skin's logbook is DFU's native window and draws no button (THE NATIVE-WINDOW RULE: no DFU geometry to cite
   for one); a quest set aside leaves its active page. The chronicle (the L key) is read-only and leaves it out.
 
-AUDIT QUEST-SHELF (`01-Overview/Audit-Log.md`, 2026-10-09): a copy RUNNING answers for its name before one set aside
+AUDIT QUEST-SHELF (`01-Overview/audits/Audit-Log.md`, 2026-10-09): a copy RUNNING answers for its name before one set aside
 (`sharedCandidateNamed`), so the same quest taken again is never shadowed, and the copy set aside is not reclaimed while
 it runs (`twin`); a reclaim relinks at once what stands of it and its topics; a named NPC's home copy stands
 (`individualHome`); a partner's envelope carries no shelf (`NO_SHELF`); the Settings repair, the rumor mill
@@ -6662,7 +6662,7 @@ a quest up carried its letter, its package, its body part until they took it up 
 
 ## NO-ASKS-AGAIN - a No that leads nowhere asks again, on the next click (2026-10-13, FIELD BUGS 2026-10-13e)
 
-The batch's record: `01-Overview/Field-Bugs-2026-10-13e.md`, report 6.
+The batch's record: `01-Overview/bugs/Field-Bugs-2026-10-13e.md`, report 6.
 
 The report, "Cant complete quest 'the lost child'": *"I found the child in the dungeon, interacted with it, accidentally
 said 'no' when it asked me to get it, and now i cant interact with it at all. Tried restarting the game, didnt help."*

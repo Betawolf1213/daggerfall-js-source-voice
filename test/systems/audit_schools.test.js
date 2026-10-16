@@ -1,4 +1,4 @@
-// AUDIT SCHOOLS (2026-10-13; bible/01-Overview/Audit-Schools.md). The owner: "Lets do a comprehensive audit on
+// AUDIT SCHOOLS (2026-10-13; bible/01-Overview/audits/Audit-Schools.md). The owner: "Lets do a comprehensive audit on
 // everything" - five lanes read SCHOOLS (bible/06-Systems/Arcane-Specialisations.md) at 2c40b7f5: the law and the powers,
 // the spell engine's edits, online integrity, the player's surface and its words, and the pins and the record. Every
 // finding the audit fixed is pinned here BY EXECUTION through the producers that mint the shapes in play - the real cast

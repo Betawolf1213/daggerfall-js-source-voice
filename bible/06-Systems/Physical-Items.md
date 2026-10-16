@@ -320,5 +320,5 @@ refusals, the whole stack, the map), and the seams (one maker, the four hosts'
 halves, both packs, both street pools).
 
 `test/systems/audit_pi1.test.js` (20) holds the audit's fixes, one test a finding group
-(`01-Overview/Audit-PI1.md`). Mutants: `tools/mutants/pi1.json` (47) and
+(`01-Overview/audits/Audit-PI1.md`). Mutants: `tools/mutants/pi1.json` (47) and
 `tools/mutants/audit_pi1.json` (52), all dead.

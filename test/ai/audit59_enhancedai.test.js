@@ -3,7 +3,7 @@
 // back by reverting its revert; this audit reads it against today's
 // tree and the production BUILD, which no node test had looked at. Four
 // findings, all fixed here and pinned below; the sweeps that came back
-// clean are recorded in bible/01-Overview/Audit-59.md.
+// clean are recorded in bible/01-Overview/audits/Audit-59.md.
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';

@@ -1,6 +1,6 @@
 # TAVERN CARDS - a card table in every tavern (CARDS0, the design record)
 
-**Status: DESIGN RECORD, being built - CARDS1 SHIPPED (2026-10-07, section 10; Mac: "Do it"), CARDS2 SHIPPED (the same day, section 11; Mac: "Continue"), CARDS2b SHIPPED (section 12; Mac: "Continue") - the seated Morrowind body, the others' to see, on relay world178; AUDIT CARDS over all of it the same day (section 13, `01-Overview/Audit-Cards.md`); CARDS4 SHIPPED (section 14) and CARDS3 SHIPPED (section 15) together (Mac: "Do 3 and 4") - offline Hold'em against the tavern's regulars for gold, the cards and chips on the cloth; AUDIT CARDS-2 over all of it (section 16, `01-Overview/Audit-Cards-2.md`; Mac: "Perfection"); then (Mac: "Do 3 4 and 5") CARDS5 SHIPPED (section 17, the relay deals - online Hold'em between players, friendly), CARDS4b (section 18, the regulars seated in their chairs) and CARDS3b (section 19, the held hand, the peek, the chips dragged, the riffle); then (Mac: "I wanna do a deep comprehensive of everything and give the cards daggerfall especially themes") AUDIT CARDS-3 over all of it (section 20, `01-Overview/Audit-Cards-3.md`) and CARDS-BAY SHIPPED (section 21, the deck of the Iliac Bay); then (Mac: "#2 and cleanup") CARDS-TIDY (section 22) and CARDS6 SHIPPED (section 23, gold tables online - the stakes escrowed by the realm service); then (Mac: "2 and 3") AUDIT CARDS-4 over them (section 25, `01-Overview/Audit-Cards-4.md`) and CARDS6b SHIPPED (section 24, the top-up and gold owed elsewhere); then (Mac: "So what about card collections?") the Holdings rail's COLLECTIONS page, CARDS7 SHIPPED (Iliac Hand's rules) and CARDS8 SHIPPED (the first set, its painted faces, the Card Binder and the starter deck) - section 26. Then (Mac: "one last comprehensive audit") AUDIT CARDS-5 - section 27. Then (the owner: "Lets instead place a specific table in each inn. A new property specifficaly used for the card table") TAVERN-TABLE - section 28, every tavern's own card table, a prop of its own; then (the owner: "Audit this") AUDIT TAVERN-TABLE - section 29; then (Discord, live: "Card tables just aren't working at all right now" - "it doesnt let him use gold tables"; the owner: "Two tables per tavern") TAVERN-TABLES - section 30, the chips table and the gold table; then (AUDIT CARDS-6's lane E, found live on main) CARDS-TOUCH - section 31, a phone's finger at the table the table's, and (a live report: "Shes clicking deal me in but nothing happens") CARDS-SAID, a refused stake said on the panel. Then (Mac: "Lets build every inch of this. Dont forget about a card needing to come from the abyss dungeon also") CARDS9 SHIPPED (section 32, where cards come from - the Abyss Dungeon's Brass Remnant's card among the bosses'), CARDS10 SHIPPED (section 33, Iliac Hand at the table offline and online, the season board and its title) and CARDS2c and CARDS3c (section 34, the sprite lane seated, the squeeze, the click and the push, the frame cost measured) - relay world182 and account acct99 (world179 and acct97 on their branch, renumbered at the merges), NOT YET DEPLOYED. Then (Mac: "Lets do a deep and comprehensive audit. This must be perfection") AUDIT CARDS-6 - section 35. Then (the owner, 2026-10-13: "Lets improve the illiac bay minigame visuals and ensure the general card UI uses enhanced plus and our fonts. Currently it doesnt") CARDS-PLUS - section 38: the card UI in the Enhanced Plus kit and the game's face on every skin, and Iliac Hand's table made to read as a game. Then The King's Gambit's slices at this table (`Kings-Gambit.md`): KG-SET - section 40, nine cards more and the set's words in the player's language - and KG3 - section 41, the table's third game. Mac answered
+**Status: DESIGN RECORD, being built - CARDS1 SHIPPED (2026-10-07, section 10; Mac: "Do it"), CARDS2 SHIPPED (the same day, section 11; Mac: "Continue"), CARDS2b SHIPPED (section 12; Mac: "Continue") - the seated Morrowind body, the others' to see, on relay world178; AUDIT CARDS over all of it the same day (section 13, `01-Overview/audits/Audit-Cards.md`); CARDS4 SHIPPED (section 14) and CARDS3 SHIPPED (section 15) together (Mac: "Do 3 and 4") - offline Hold'em against the tavern's regulars for gold, the cards and chips on the cloth; AUDIT CARDS-2 over all of it (section 16, `01-Overview/audits/Audit-Cards-2.md`; Mac: "Perfection"); then (Mac: "Do 3 4 and 5") CARDS5 SHIPPED (section 17, the relay deals - online Hold'em between players, friendly), CARDS4b (section 18, the regulars seated in their chairs) and CARDS3b (section 19, the held hand, the peek, the chips dragged, the riffle); then (Mac: "I wanna do a deep comprehensive of everything and give the cards daggerfall especially themes") AUDIT CARDS-3 over all of it (section 20, `01-Overview/audits/Audit-Cards-3.md`) and CARDS-BAY SHIPPED (section 21, the deck of the Iliac Bay); then (Mac: "#2 and cleanup") CARDS-TIDY (section 22) and CARDS6 SHIPPED (section 23, gold tables online - the stakes escrowed by the realm service); then (Mac: "2 and 3") AUDIT CARDS-4 over them (section 25, `01-Overview/audits/Audit-Cards-4.md`) and CARDS6b SHIPPED (section 24, the top-up and gold owed elsewhere); then (Mac: "So what about card collections?") the Holdings rail's COLLECTIONS page, CARDS7 SHIPPED (Iliac Hand's rules) and CARDS8 SHIPPED (the first set, its painted faces, the Card Binder and the starter deck) - section 26. Then (Mac: "one last comprehensive audit") AUDIT CARDS-5 - section 27. Then (the owner: "Lets instead place a specific table in each inn. A new property specifficaly used for the card table") TAVERN-TABLE - section 28, every tavern's own card table, a prop of its own; then (the owner: "Audit this") AUDIT TAVERN-TABLE - section 29; then (Discord, live: "Card tables just aren't working at all right now" - "it doesnt let him use gold tables"; the owner: "Two tables per tavern") TAVERN-TABLES - section 30, the chips table and the gold table; then (AUDIT CARDS-6's lane E, found live on main) CARDS-TOUCH - section 31, a phone's finger at the table the table's, and (a live report: "Shes clicking deal me in but nothing happens") CARDS-SAID, a refused stake said on the panel. Then (Mac: "Lets build every inch of this. Dont forget about a card needing to come from the abyss dungeon also") CARDS9 SHIPPED (section 32, where cards come from - the Abyss Dungeon's Brass Remnant's card among the bosses'), CARDS10 SHIPPED (section 33, Iliac Hand at the table offline and online, the season board and its title) and CARDS2c and CARDS3c (section 34, the sprite lane seated, the squeeze, the click and the push, the frame cost measured) - relay world182 and account acct99 (world179 and acct97 on their branch, renumbered at the merges), NOT YET DEPLOYED. Then (Mac: "Lets do a deep and comprehensive audit. This must be perfection") AUDIT CARDS-6 - section 35. Then (the owner, 2026-10-13: "Lets improve the illiac bay minigame visuals and ensure the general card UI uses enhanced plus and our fonts. Currently it doesnt") CARDS-PLUS - section 38: the card UI in the Enhanced Plus kit and the game's face on every skin, and Iliac Hand's table made to read as a game. Then The King's Gambit's slices at this table (`Kings-Gambit.md`): KG-SET - section 40, nine cards more and the set's words in the player's language - and KG3 - section 41, the table's third game. Mac answered
 four of section 9's five questions the same day, and the house deck's art (Q5) on 2026-10-08; the collectible cards' art is still open. Every DECIDED below binds the build
 slices, and a slice that ships one records any change here first.**
 
@@ -340,7 +340,7 @@ Mac: **"Continue"**.
 ## 13. AUDIT CARDS (2026-10-07): the arc audited
 
 Mac: **"Lets do a comprehensive audit on everything developed so far"**. Five lanes over a frozen snapshot, and the
-sweep of every test reading a touched host; the whole record is `01-Overview/Audit-Cards.md`. What it changed, here:
+sweep of every test reading a touched host; the whole record is `01-Overview/audits/Audit-Cards.md`. What it changed, here:
 
 - **The relay record (C1, C2).** `world175` was live; its row is main's again, and world178 carries CARDS1's dice lift
   beside the seat. The version chains in 37 test files were rebuilt from main: appended, never renamed.
@@ -433,7 +433,7 @@ table's throws are its own.
 ## 16. AUDIT CARDS-2 (2026-10-08): the arc audited again
 
 Mac: **"Lets do a deep comprehensive audit on everything so far. Perfection"**. Six lanes over a frozen snapshot, every
-finding reproduced on the live tree before and after its fix; the whole record is `01-Overview/Audit-Cards-2.md`. What it
+finding reproduced on the live tree before and after its fix; the whole record is `01-Overview/audits/Audit-Cards-2.md`. What it
 changed, here:
 
 - **The gold (H1, M2).** A load's road stands up WITHOUT cashing out (the save's purse is already the character's; the
@@ -542,7 +542,7 @@ The same ask; section 3's DECIDED hand and chips.
 ## 20. AUDIT CARDS-3 (2026-10-08): the arc audited a third time
 
 Mac: **"I wanna do a deep comprehensive of everything"**. Five lanes over a frozen snapshot of CARDS5, CARDS4b and
-CARDS3b (`01-Overview/Audit-Cards-3.md`): 4 HIGH, about 20 MED and a tail of LOW, every one reproduced and fixed or
+CARDS3b (`01-Overview/audits/Audit-Cards-3.md`): 4 HIGH, about 20 MED and a tail of LOW, every one reproduced and fixed or
 recorded. What changed in the record:
 
 - **The relay** (`world178`, undeployed, re-hashed in place): a refused sit moves nothing elsewhere; ONE SEAT AN
@@ -698,7 +698,7 @@ Mac: **"2 and 3"** - section 23's "Not yet", built after AUDIT CARDS-4 (section 
 ## 25. AUDIT CARDS-4 (2026-10-08): the gold tables audited
 
 Mac: **"2 and 3"**. Five lanes over a frozen snapshot of sections 22-23, one of them the device, the relay and the
-service at once over about 14,000 gold evenings - the record is `01-Overview/Audit-Cards-4.md`. What it changed here:
+service at once over about 14,000 gold evenings - the record is `01-Overview/audits/Audit-Cards-4.md`. What it changed here:
 
 - **A stake asked again** after a lost answer is paid from the purse when the service takes it then (C1 - it was paid
   twice); kept on any word but the service's own refusal (C2); its repeat is the SAME order (A1).
@@ -776,7 +776,7 @@ CARDS8"**.
 ## 27. AUDIT CARDS-5 (2026-10-08): the Iliac Hand, its faces, the binder, the page and the gold tables again
 
 Mac: **"Alright, one last comprehensive audit to ensure this is perfection"**. Five lanes over a frozen snapshot of
-section 26 and the gold tables' AUDIT CARDS-4 fixes - the record is `01-Overview/Audit-Cards-5.md`. What it changed here:
+section 26 and the gold tables' AUDIT CARDS-4 fixes - the record is `01-Overview/audits/Audit-Cards-5.md`. What it changed here:
 
 - **The rules** (`net/iliac/iliacHand.js`): a weaken takes from the power the card shows, never below nothing (A1); an unveiled
   card's ongoing text is its own once it is face up, never twice (A2); the reveal's tie is the deal's coin, then turn
@@ -846,7 +846,7 @@ A new property specifficaly used for the card table"**.
   and the lattice room's spots in `test/world/card/taverntable.test.js` moved with it; `tools/mutants/fb1009c_walkwhole.json`
   (`taverntable.json`'s TT-walk-order re-aimed by content).
   AND NEVER IN THE WAY (WAY-ROUND, FIELD BUGS 2026-10-11e, the same thread: "another one at Dancing Castle in
-  Pilliweyn"; `01-Overview/Field-Bugs-2026-10-11e.md`). Read on the player's own taverns (the freeware ARENA2, both town
+  Pilliweyn"; `01-Overview/bugs/Field-Bugs-2026-10-11e.md`). Read on the player's own taverns (the freeware ARENA2, both town
   packs), WALK-WHOLE moved neither table it was written for: the Gold Dungeon's only floor for the ring is the corridor
   its two halves meet by, every spot there cut the walk, and its fallback for such a room - "stands it where it stood
   (no tavern loses its table)", RETIRED - stood it there; and a spot in a doorway or the mouth of an opening passed
@@ -983,7 +983,7 @@ Told the cause, the owner: **"Two tables per tavern"** - one always for gold (re
 
 ## 31. CARDS-TOUCH and CARDS-SAID (2026-10-09): a phone's finger at the table is the table's; a refused stake said on the panel
 
-AUDIT CARDS-6 (over the Iliac Hand branch, `01-Overview/Audit-Cards-6.md` when it lands) found it in lane E as its first
+AUDIT CARDS-6 (over the Iliac Hand branch, `01-Overview/audits/Audit-Cards-6.md` when it lands) found it in lane E as its first
 HIGH, and it reproduced on main as it stood (section 30's merge): **on a phone, a tap on the player's own cards stood
 him up** - folded out of turn, cashed out.
 
@@ -1178,7 +1178,7 @@ The same ask: section 8's last open lines.
 
 Mac: **"Lets do a deep and comprehensive audit. This must be perfection"**. Five lanes over a frozen snapshot of
 sections 32-34, every finding reproduced again on the live tree after the merge of main and fixed or recorded - the
-record is `01-Overview/Audit-Cards-6.md`. What it changed here (sections 32-34 say it in place, each line tagged):
+record is `01-Overview/audits/Audit-Cards-6.md`. What it changed here (sections 32-34 say it in place, each line tagged):
 
 - **Where cards come from** (section 32): a sealed pack is worth `CARD_PACK_WORTH` (171) to the law and taken by
   customs as a card, a realm birth carries none (A1); a card or a pack stood as decor is counted and taken, its piece
@@ -1221,7 +1221,7 @@ record is `01-Overview/Audit-Cards-6.md`. What it changed here (sections 32-34 s
 
 ## 36. CARDS-KEPT and CARDS-PANEL (2026-10-11): a gold table's first stake kept; the panel enhanced
 
-FIELD BUGS 2026-10-11 (`01-Overview/Field-Bugs-2026-10-11.md`, thread 1, Shortstori): "You have too many stakes waiting
+FIELD BUGS 2026-10-11 (`01-Overview/bugs/Field-Bugs-2026-10-11.md`, thread 1, Shortstori): "You have too many stakes waiting
 to be settled - visit the tables they were staked at first", at the first gold table, on every character. And the owner:
 "the card tables UI needs to be enhanced".
 
@@ -1254,7 +1254,7 @@ The Discord's "Crash at card game" - "went all in and got this": the relay stand
 the same frame's draw read `(g.remote ?? g.session).view()` - null online. The draw reads no table as no view now
 (CardScene.poses takes one). "stood" and AUDIT CARDS-6 E8's "other game" took the same branch.
 - **Pins:** `test/systems/auditcards6_e.test.js` 11 (the eleventh). `tools/mutants/fb1011g_allin.json` 1, dead. The record:
-  `01-Overview/Field-Bugs-2026-10-11g.md` ALL-IN.
+  `01-Overview/bugs/Field-Bugs-2026-10-11g.md` ALL-IN.
 
 ## 38. CARDS-PLUS (2026-10-13): the card UI in the Enhanced Plus kit and the game's face; Iliac Hand's table made to read as a game
 
@@ -1349,7 +1349,7 @@ Currently it doesnt"**.
 
 The owner: **"audit everything"**. Five lanes over a frozen snapshot of section 38 (the branch at a23c69cca), every
 finding reproduced again on the live tree after the merge of main and fixed or recorded - the record is
-`01-Overview/Audit-Cards-Plus.md`. What it changed (section 38 says it in place, each line tagged):
+`01-Overview/audits/Audit-Cards-Plus.md`. What it changed (section 38 says it in place, each line tagged):
 
 - **Iliac Hand's table** (lane A, `ui/iliacTableHud.js`): a relay's garbled `turns` or `room` grows no row - the track
   at `ILIAC_TURNS`, a lane's places at `ILIAC_ROOM`, as the gems and the backs were (A1: two million places took 38 s to

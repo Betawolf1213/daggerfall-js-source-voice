@@ -1,4 +1,4 @@
-// AUDIT ETHER-OW (2026-10-13, the owner: "Lets audit everything and ensure perfection"; bible/01-Overview/Audit-Ether-OW.md)
+// AUDIT ETHER-OW (2026-10-13, the owner: "Lets audit everything and ensure perfection"; bible/01-Overview/audits/Audit-Ether-OW.md)
 // - the audit of ELTHERIC, ETHER-DEEP, ETHER-NODES and ETHER-OW, its three lanes' code findings pinned here as the game
 // runs them: C2-1 a Motherlode's site a pixel the Watch can vouch for (ETHER-NODES' isle witnesses confirmed ground past
 // the Veil, where no receipt is ever minted - a Motherlode there could never be struck); C2-2 an isle charted is a plate

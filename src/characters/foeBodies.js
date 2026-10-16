@@ -62,7 +62,7 @@ export function foeSeed(f) {
   }
   return (f._mwSeed = h);
 }
-/** FB1012d ALLY-RACE (bible/01-Overview/Field-Bugs-2026-10-12d.md; the owner: "companions when morrowind attached switches
+/** FB1012d ALLY-RACE (bible/01-Overview/bugs/Field-Bugs-2026-10-12d.md; the owner: "companions when morrowind attached switches
  *  character race"): A PERSON OF THEIR OWN. foeSeed's stand law - its species and where it stood, or its number and
  *  feet - drew a companion afresh at every stand: every door, dungeon, fast travel, load and sweep stood him in a new
  *  body of the Bay's (a Breton hand a Nord through the next door, a Wood Elf through the one after). One whose person is

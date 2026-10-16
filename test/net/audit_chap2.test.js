@@ -1,5 +1,5 @@
 // AUDIT CHAP2 (2026-10-08, Mac: "Lets do a deep comprehensive audit on everything so far") - CHAP0's record, CHAP1's
-// Roll and CHAP2a's halls read again by six lenses at 915043c5 (bible/01-Overview/Audit-Chapters.md, AUDIT CHAP2): a pin
+// Roll and CHAP2a's halls read again by six lenses at 915043c5 (bible/01-Overview/audits/Audit-Chapters.md, AUDIT CHAP2): a pin
 // a fix, and the pins the lens of the pins wrote for every law the arc's three files could not fail.
 //
 // The law against literals; the tab and the hall book against fakes shaped as the service answers; the service over the

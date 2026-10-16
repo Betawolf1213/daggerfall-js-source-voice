@@ -212,7 +212,7 @@ closing for the ward.
 the stage in one head, the nine places, what would raise it, and each tier as one row - its BRIEF (every tier's, the
 three raid sets' too: "Cheat death, then half damage 4s", "Kill marks next foe: +15% (10s)"), a recovery as its own
 dashed tag - with the sentence under the pointer; the sigil in two rows. The Info box says it all: the Prince and the
-role, every sentence above, the sigil's notes. `01-Overview/Field-Bugs-2026-09-28c.md`.
+role, every sentence above, the sigil's notes. `01-Overview/bugs/Field-Bugs-2026-09-28c.md`.
 
 ## 6c. The sea serpent's own set (SERPENT-SET, 2026-10-05)
 

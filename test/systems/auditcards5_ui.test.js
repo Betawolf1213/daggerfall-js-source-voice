@@ -1,4 +1,4 @@
-// AUDIT CARDS-5 (2026-10-08, bible/01-Overview/Audit-Cards-5.md) lane D: THE COLLECTIONS PAGE, driven. The Codex part's
+// AUDIT CARDS-5 (2026-10-08, bible/01-Overview/audits/Audit-Cards-5.md) lane D: THE COLLECTIONS PAGE, driven. The Codex part's
 // rows, its whole lines and its counts (the Reforge's own, D12); the switch, the parts shown, the reset and the landing
 // (D14); the Cards part's faces painted once a size (D1), its acts kept under the keyboard (D2/D3), an armed Delete
 // disarmed by any other press or by leaving (D5), the deck's limits said at the press (D4), the card the binder is short

@@ -122,7 +122,7 @@ Every version of the door grief, fixed without asking further (Mac: "stop asking
 - Not built from the slice: attack tokens and ring slots (they need TACT2's ring); guards giving up a door they cannot
   pass (the doorway rule makes it moot for now).
 - Pins `test/player/tact3.test.js` (15); mutants `tools/mutants/tact3.json` (23), all dead.
-- DOOR-JAM (FIELD BUGS 2026-10-14b, `01-Overview/Field-Bugs-2026-10-14b.md`): the pushes (spaceAcross, the doorway's
+- DOOR-JAM (FIELD BUGS 2026-10-14b, `01-Overview/bugs/Field-Bugs-2026-10-14b.md`): the pushes (spaceAcross, the doorway's
   nudge, and every pool's spaceFoes) sweep a body at its controller's live height (`foeSpacing.js:"export const sweepHeight = (ai) =>"`),
   EnemyMotor.HeightAdjust's 1.65 duck while a foe taller than a doorway passes under its lintel.
 
@@ -208,12 +208,12 @@ Every version of the door grief, fixed without asking further (Mac: "stop asking
   (`net/arena/arenaBrain.js`, the families in the leaf `ai/blowShapes.js`). A verdict is its mark's (AUDIT ARENA-LADDER 2,
   `_blowFor`): a holder whose target changed before its damage frame swings the classic swing, unweighed; on the relay
   one fighter winds up at a time. Street infighting and a peer's foe still see none. The record:
-  `bible/01-Overview/Audit-Arena-Ladder.md`.
+  `bible/01-Overview/audits/Audit-Arena-Ladder.md`.
 - **The ground** - `render/foeTelegraph.js` (`renderer.drawFoeTelegraphs`): one flat quad at the foe's feet, the shape
   the fragment's own `inBlow` (pinned point for point), a dim rim at once, filling outward through the wind-up, a
   flash at the landing (since TELL2 the world boss's readable line - a keyline, a brighten "now", premultiplied over
   the floor, never lost near the player, `Feud-Arc.md` section 4.4); depth-tested, unwritten; drawn under the bodies beside the blood marks in the street,
-  the building, the dungeon and both standalone hosts. SNOW-TELL (`01-Overview/Field-Bugs-2026-10-11d.md`): over the
+  the building, the dungeon and both standalone hosts. SNOW-TELL (`01-Overview/bugs/Field-Bugs-2026-10-11d.md`): over the
   frame's deep snow, where it drew any (`telegraphLift` - the snow stood up to 0.8 m over the ground the blow was
   fitted to, and buried every mark under it).
   `tools/foeTelegraphProbe.mjs` compiles, links and draws the three shapes in a real WebGL2 context (Chromium) and

@@ -124,7 +124,7 @@ export const MAX_ACTIVE_GUARD_SPAWNS = 5;
 /** WERE-FRIGHT: how long a watchman frightened off by a beast runs before he is gone (frighten, below) - long
  *  enough to be seen running, some twenty-odd metres at the watch's pace. The port's own number. */
 export const FRIGHTENED_RUN_SECONDS = 5;
-/** WATCH-LEAVES (bible/01-Overview/Field-Bugs-2026-10-12e.md): one leg of a stood-down defender's walk off - aimed
+/** WATCH-LEAVES (bible/01-Overview/bugs/Field-Bugs-2026-10-12e.md): one leg of a stood-down defender's walk off - aimed
  *  away from where the player stands as it begins, and aimed afresh from where they stand at its end. The port's own
  *  number: short enough that a player who moves is walked away from, not followed. */
 export const DEFENDER_LEAVE_LEG_SECONDS = 3;

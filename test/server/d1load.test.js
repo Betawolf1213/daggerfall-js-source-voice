@@ -2,7 +2,7 @@
 // whatever is the most detailed. I dont want band aid fixes") - WHAT IS FILLING THE ONE DATABASE, READ BY THE OPERATOR:
 // tools/d1Load.mjs builds the Analytics Engine questions over the service's own metrics points (metrics.js) and
 // .github/workflows/d1-load.yml asks them by hand, beside D1's query insights, writing nothing.
-// bible/01-Overview/Field-Bugs-2026-10-11h.md D1-LOAD.
+// bible/01-Overview/bugs/Field-Bugs-2026-10-11h.md D1-LOAD.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, mkdtempSync, writeFileSync, chmodSync } from 'node:fs';

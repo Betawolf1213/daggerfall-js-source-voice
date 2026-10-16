@@ -5,7 +5,7 @@
 // hostile at the first steps (S0000020 object 10406, a DoorText with a trespass on it). Now the contact is the
 // collider's (capsuleContact, the nearest point of the object's own triangles within the capsule's skin), WalkOn is
 // its direction from the controller's centre (dir.y < -0.9) for every flag, a Collision01 casts its ray, and a side is
-// heard only while the body moves into it. The record: bible/01-Overview/Audit-PreMerge-0929.md.
+// heard only while the body moves into it. The record: bible/01-Overview/audits/Audit-PreMerge-0929.md.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';

@@ -261,5 +261,5 @@ change judged whole, Craft for the life ring alone, a repeat, the refund's silve
 `test/systems/firm1_powers.test.js` (10: raw on the key stars, a maxed stat (FIRM-MAX), the Wrothgarian zone, offline, the fold, the duel and the mentor,
 the blow, the spell, the damage and the layer, the acts), `test/net/firmament/firm1_book.test.js` (4: the respec, the read, a change
 coalesced, a lost answer kept), `test/net/firmament/firm2_balance.test.js` (3: FIRM2 - no channel of a sign sums past its cap, a small star
-one for one, the lift past 100), and the audit's `test/systems/audit_uicalm_firm1.test.js` (`01-Overview/Audit-UICalm-Firm1.md`). The lab: `firmament.html`
+one for one, the lift past 100), and the audit's `test/systems/audit_uicalm_firm1.test.js` (`01-Overview/audits/Audit-UICalm-Firm1.md`). The lab: `firmament.html`
 (`?dress=grimoire` for the Grimoire, `?fresh=1`, `?renown=`, `?ranks=`).

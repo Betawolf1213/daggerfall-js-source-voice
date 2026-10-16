@@ -31,7 +31,7 @@
 // long; the world's edge drawn and hatched. A HAUNT is a washed square, a sunk legend's hatched and dashed, her name and
 // state on a plate in a clear corner of her square's part in view. The SHIP is a bone arrowhead in a brass ring and, off
 // the canvas, a pointer at the edge saying how far. The isle named is ringed, a bearing drawn to it from the ship and its
-// card beside it. AUDIT ETHER-CHART2 (bible/01-Overview/Audit-Ether-Chart2.md) took the chart's own words off the map:
+// card beside it. AUDIT ETHER-CHART2 (bible/01-Overview/audits/Audit-Ether-Chart2.md) took the chart's own words off the map:
 // a DEPTH RULER over it names each water in view, the Veil's and the world's edge, and the scale stands in the KEY under
 // it, which says what each mark is.
 //

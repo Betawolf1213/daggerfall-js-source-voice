@@ -1,5 +1,5 @@
 // AUDIT WATCH-KIT (2026-10-01, Mac: "Just want to audit this to make sure it's perfection") - the audit of PR #502
-// (SHIP-WATCH, COMPANION-KIT; bible/01-Overview/Audit-Watch-Kit.md). This suite pins THE SEA BY NIGHT (lens N) and the
+// (SHIP-WATCH, COMPANION-KIT; bible/01-Overview/audits/Audit-Watch-Kit.md). This suite pins THE SEA BY NIGHT (lens N) and the
 // host's side of THE WATCH ABOARD (lens W): who a gun's flashes show, the night's hearing and running, the lanterns a
 // hull carries, the dark's own hours, my lookout's cry and my crew's alarm by the night's law, another player's lamps
 // and her hands' work. Each test fails on the code as #502 stood, for its finding's reason.

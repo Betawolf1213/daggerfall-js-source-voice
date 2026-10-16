@@ -1,5 +1,5 @@
 // AUDIT GUIDE (2026-09-29, Mac: "Lets do an audit on this before we merge") - the Quest Guide arc (GUIDE1-GUIDE5)
-// read by eight lenses over a frozen tree before it merges: bible/01-Overview/Audit-Guide.md. Each pin FAILED on the
+// read by eight lenses over a frozen tree before it merges: bible/01-Overview/audits/Audit-Guide.md. Each pin FAILED on the
 // unfixed tree for its finding's reason; each fix in src carries an `AUDIT GUIDE <ID>` comment.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';

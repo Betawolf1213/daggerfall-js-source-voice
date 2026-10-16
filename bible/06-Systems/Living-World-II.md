@@ -10,7 +10,7 @@ dungeon, and in what order to build: "Your decision" to both (section 1, decisio
 detailed as possible."
 
 **Status: LW9-LW16 BUILT 2026-10-09; AUDITED 2026-10-10** (Mac: "Lets do a deep audit and ensure this is perfection" -
-`01-Overview/Audit-LivingWorld-II.md`: every finding, where it stands below marked AUDIT LW-II, and what was not
+`01-Overview/audits/Audit-LivingWorld-II.md`: every finding, where it stands below marked AUDIT LW-II, and what was not
 changed and why). Eight slices, LW9 to LW16, in the order of decision 2.
 As each one ships, its record is written on this page under its name, the way `06-Systems/Living-World.md` records
 LW1-LW8. That first page stays the record of LW0-LW8 and their fixes, and its LW0 decisions bind here except where
@@ -1141,7 +1141,7 @@ the host's is `scenes/world.js` (the visits, worked a slice a frame).
   is charged, a tale of its region's towns (relations.js TALE_KINDS `held`, `R<region>.<minute>~<crime>`, the name of
   the one robbed - the report now names them), in its own words (HELD_NEWS). A murder charged never one: it is the
   hand's. Void, none. (AUDIT LW-II: the road's reports were void in the host until LW11's audit, C1 - a place held by a
-  newcomer could not be found, so no witness was ever living; see `01-Overview/Audit-LivingWorld-II.md`.)
+  newcomer could not be found, so no witness was ever living; see `01-Overview/audits/Audit-LivingWorld-II.md`.)
 
 ### 9.3 The host, and the measure
 

@@ -87,7 +87,7 @@ IsSnowFreeClimate serves the footsteps and the table never rolls snow
 for a snow-free zone, so nothing in DFU keeps rain off snow. This is a
 departure, recorded on the Ledger, and it is the enhanced lane's.
 
-**SNOWLESS1 (FIELD BUGS 2026-10-09 #1, `01-Overview/Field-Bugs-2026-10-09.md`).** The law asked the archive law alone
+**SNOWLESS1 (FIELD BUGS 2026-10-09 #1, `01-Overview/bugs/Field-Bugs-2026-10-09.md`).** The law asked the archive law alone
 (`groundIsSnowy`: climate type and season), so with Snowless Swamps and Jungles worn every winter rain and storm in an
 Ocean, Rainforest or Swamp climate fell as snow on its green ground (about 37% of a jungle's winter days), and snow
 systems the weather map drifts out of a snowy climate went on snowing over the desert, where nothing turned them back.
@@ -1049,7 +1049,7 @@ job a slice a frame and again only when the view comes to rest. The
 hover reads the forecast only when the pointer rests. The last refresh's
 read is kept for the next open. AUDIT WEATHER3 R2a's law stands (a pan
 reads no weather), and a pan now draws none either. Measures and pins:
-`01-Overview/Field-Bugs-2026-09-23.md`, MAP-LAG.
+`01-Overview/bugs/Field-Bugs-2026-09-23.md`, MAP-LAG.
 
 ## DISC17 - the map's weather removed, the far thunder held (2026-09-24)
 
@@ -1077,7 +1077,7 @@ entirely" and "Sometimes thunder ends abruptly".
   overhead is DFU's ambience at a 3000 m reference, and neither a walk
   nor a recentre changes its level, so it is left as DFU has it.
 - Pinned by `test/ui/disc17.test.js`; mutants `tools/mutants/disc17.json`.
-  `01-Overview/Field-Bugs-2026-09-23.md`, DISC17.
+  `01-Overview/bugs/Field-Bugs-2026-09-23.md`, DISC17.
 
 ## DISC20-D - a storm strikes only where it is drawn (2026-09-24)
 
@@ -1100,7 +1100,7 @@ Mac: *"Lightning can be seen even when its not storming."*
   before, every client still sees the same strikes, and a far storm's
   lightning is still seen from afar.
 - Pinned by `test/systems/disc20.test.js` (D); mutants `tools/mutants/disc20.json`.
-  `01-Overview/Field-Bugs-2026-09-23.md`, DISC20-D.
+  `01-Overview/bugs/Field-Bugs-2026-09-23.md`, DISC20-D.
 
 ## FLOW2 - the map's own work, cut to what it answers (2026-09-26)
 
@@ -1151,7 +1151,7 @@ weather and was left as it stands.
 ## RAIN-HOURS and RAIN-HEART - a wet day rains for half of it, and a front can sprinkle (2026-10-13)
 
 Mac: *"I feel like it rains too much, also sometimes instead of downpours it should just sprinkle"* - the sprinkle for
-the second time (RAIN-SPRINKLE, `01-Overview/Field-Bugs-2026-10-01.md`, was the first).
+the second time (RAIN-SPRINKLE, `01-Overview/bugs/Field-Bugs-2026-10-01.md`, was the first).
 
 **Measured first.** The map's own `weatherAt`, 3,000 places a row over the whole map and twenty years of each season,
 and what falls drawn as the front draws it (`rollPeak` of the place's intensity, at the wander's mean). A woodland
@@ -1238,5 +1238,5 @@ Pinned by `test/systems/weather/rainhours.test.js` (4); `tools/mutants/rainhours
 WET-FALL (2026-10-15, a Discord report: "Player is getting wet despite it not raining. Possibly an oversight in reducing
 the rain?"): RAIN-HEART's level reached the drops, the look and the ear, and not the skin - the survival soak read the
 sim's word at the downpour's rate. It reads what falls now (`weatherSim.js` fallingWeather, the street's word and level
-as the ear's), `01-Overview/Field-Bugs-2026-10-15f.md`; `06-Systems/Climates-Calories.md` WET-FALL.
+as the ear's), `01-Overview/bugs/Field-Bugs-2026-10-15f.md`; `06-Systems/Climates-Calories.md` WET-FALL.
 

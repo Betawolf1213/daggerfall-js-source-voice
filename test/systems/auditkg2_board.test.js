@@ -1,4 +1,4 @@
-// AUDIT KG II (2026-10-15, bible/01-Overview/Audit-Kings-Gambit-II.md, lane C): THE KING'S GAMBIT'S BOARD AND ITS
+// AUDIT KG II (2026-10-15, bible/01-Overview/audits/Audit-Kings-Gambit-II.md, lane C): THE KING'S GAMBIT'S BOARD AND ITS
 // PRESSES, FOUND AND FIXED - the pad's Start and A, and a finger the cloth took, each a stake lost at one press (the
 // host's Escape action, LeftClick's Mouse0 alias and the touch layer's stick now the board's while a battle is on); the
 // d-pad the board's cursor under the Plus crossbar; the lean never thrown away by a sheet over the whole view; the beat

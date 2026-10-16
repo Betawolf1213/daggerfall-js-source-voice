@@ -31,7 +31,7 @@ depth taken to 2400 m, cropped so the rectangle is the pass's whole clip space; 
 and redrawn every 250 ms. The pass is a bracket (the panel's shape, everything put back in a `finally`): the lane is
 suspended (a picture through glass is drawn on the classic set - no shadow maps, no light grid, no air pass), the
 shadow pass records nothing, the street's light is the last exterior frame's (kept by `setWindowRooms`) with the
-host's clock over it, nothing on the room's side of a pane is drawn (PANE-CLIP, `01-Overview/Field-Bugs-2026-10-12g.md`:
+host's clock over it, nothing on the room's side of a pane is drawn (PANE-CLIP, `01-Overview/bugs/Field-Bugs-2026-10-12g.md`:
 the last watched frame's glass and cutout sub-meshes drawn again, depth alone, under the view out's lens -
 `renderer._rwDrawPanes`, the depth read on unit 22 - and a street fragment at or before that depth discarded; the
 building's own walls seen from inside are back faces, so its other wing, a second model of it and a neighbour's wall

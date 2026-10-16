@@ -377,7 +377,7 @@ test('AUDIT 58 F5 ledger: the RE-INTEGRATED road system has its own section A ro
   assert.doesNotMatch(rootFile('src/ui/heldMap.js'), /byRoad: /, 'AUDIT-MAP2: the permanent false went with the relief map\'s route line - the held map\'s trip carries no road term at all');
 
   // ...and the two pages that repeated the stale claim were corrected.
-  const status = rootFile('bible/01-Overview/Port-Status-2026-09-02.md');
+  const status = rootFile('bible/01-Overview/handoffs/Port-Status-2026-09-02.md');
   assert.ok(!/\*\*Removed whole:\*\* the road system/.test(status), 'the status page still says removed whole');
   assert.match(status, /Removed, then re-integrated/, 'and says what actually happened');
   assert.ok(!/Basic Roads' design credited, none of its data/.test(indexText()),

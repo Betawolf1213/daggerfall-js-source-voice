@@ -3,7 +3,7 @@
 // the click, C every other minigame, D the records. Every finding was reproduced red here first; world.js's own lines
 // (the pointer seam, the Escape's keyup, the street ladder's act click) are lifted out of the source and run over the
 // real pointerLock.js, activateGate.js and gathering host, as test/systems/fb1001_audit.test.js lifts the ladder.
-// bible/01-Overview/Field-Bugs-2026-10-02.md, part four's audit.
+// bible/01-Overview/bugs/Field-Bugs-2026-10-02.md, part four's audit.
 import '../chargenDom.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';

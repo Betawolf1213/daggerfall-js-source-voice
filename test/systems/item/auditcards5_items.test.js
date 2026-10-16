@@ -1,4 +1,4 @@
-// AUDIT CARDS-5 (2026-10-08, bible/01-Overview/Audit-Cards-5.md) lane C: THE CARDS AND THE BINDER AS ITEMS, again. A
+// AUDIT CARDS-5 (2026-10-08, bible/01-Overview/audits/Audit-Cards-5.md) lane C: THE CARDS AND THE BINDER AS ITEMS, again. A
 // binder's decks from an old or edited save made sound (C1); no shop buys a card (C2); the hotbar tells one card from
 // another (C3); chargen gives the binder whatever mark an entity carries (C4); the binder's Use opens its sheet (C5);
 // and the survivors of the lane's mutants: the card test, its lines by kind, its price, the mints' bounds, a two-copy

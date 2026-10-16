@@ -737,7 +737,7 @@ law means what it meant. Two doors on the engine for it: `registerSamples(key, s
 MAKES, under a string key, as `registerSound` registers a decoded WAV, so every entry point takes the key - and
 `setPitch` on `loop`'s handle (playbackRate, live, beside WX2's `setVolume`). The wind rides `loop`: one source for the
 whole blow, its gain and pitch set live. The riding loop is unchanged - its clips are made to be replayed.
-`01-Overview/Field-Bugs-2026-09-29e.md`; `test/systems/field_wind1.test.js`.
+`01-Overview/bugs/Field-Bugs-2026-09-29e.md`; `test/systems/field_wind1.test.js`.
 
 ## AUDIT SD III, SD20d (2026-10-07): a named bed - a loop the engine runs
 

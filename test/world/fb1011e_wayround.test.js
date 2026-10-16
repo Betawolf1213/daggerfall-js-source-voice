@@ -9,7 +9,7 @@
 // Castle's (GEMSAM01 #1) gold table stood in its hall's way east, GENRAL03 #2's chips table square in the doorway
 // between its two rooms. world/placedCardTable.js now passes a spot over as well when the walked cells round its table
 // and lane, out to PLACE_ROUND_CELLS past them, fall apart with those cells taken out, and stands no table where no spot
-// is left whole (test/world/fb1009c_walkwhole.test.js's second pin moved with it). `01-Overview/Field-Bugs-2026-10-11e.md`;
+// is left whole (test/world/fb1009c_walkwhole.test.js's second pin moved with it). `01-Overview/bugs/Field-Bugs-2026-10-11e.md`;
 // `11-Multiplayer/Tavern-Cards.md` section 28.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';

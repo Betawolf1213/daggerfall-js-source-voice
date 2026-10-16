@@ -1,4 +1,4 @@
-// AUDIT KG II (2026-10-15, bible/01-Overview/Audit-Kings-Gambit-II.md, lane B): THE KING'S GAMBIT ONLINE, ON THE
+// AUDIT KG II (2026-10-15, bible/01-Overview/audits/Audit-Kings-Gambit-II.md, lane B): THE KING'S GAMBIT ONLINE, ON THE
 // CLIENT, FOUND AND FIXED - the gold table's Ready (one stake on its way, never past a Ready, never a pick the other
 // seat's stake closed, the realm's own refusal said), a watcher (no stake, no gold line, no armed Stand up, a Sit when a
 // seat comes free, both sides' actions shown apart, no deal's muster for a game opened under way), a seated player's

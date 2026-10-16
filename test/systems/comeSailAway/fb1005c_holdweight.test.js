@@ -1,4 +1,4 @@
-// HOLD-WEIGHT (FIELD BUGS 2026-10-05c, bible/01-Overview/Field-Bugs-2026-10-05c.md; the report: "Impossibly heavy boats
+// HOLD-WEIGHT (FIELD BUGS 2026-10-05c, bible/01-Overview/bugs/Field-Bugs-2026-10-05c.md; the report: "Impossibly heavy boats
 // can never be retrieved from storage" - "Parts of Small Ship 'I'" at 450 kg in a chest, the bearer's most 304).
 // PackBoat lays her hold's weight on her parts (SHIP-PACK keeps it, as the mod's own did) and a hold has no ceiling but
 // her speed: a ship packed off a plundered hold was ONE item heavier than the bearer could ever carry, AddItem took it

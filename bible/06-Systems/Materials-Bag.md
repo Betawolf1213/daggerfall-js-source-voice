@@ -301,7 +301,7 @@ and never made, while every other door (a withdrawal, a smelt's carry-out, a ref
 pack's weight (6, the audit's B5). A DFU pack is carried to its limit, so a character with no bag gathered goods it never
 saw. The book mints a harvest through the hands' `give` now (`net/profBook.js` mintHarvest: bag, pack, then the pack past
 its weight, `put.over`), as the Foraging mod's own AddItem does; the node still refuses an act with no room for one unit
-before it starts. The record: `01-Overview/Field-Bugs-2026-10-04.md`.
+before it starts. The record: `01-Overview/bugs/Field-Bugs-2026-10-04.md`.
 
 **BAG-SHELF** (the same day, Mac: "Also nobody can find material bags in store"). The bag stood on a General Store's
 first shelf alone (the second audit's H8) and was left off a shelf stocked by a character who carried one. The first
@@ -361,7 +361,7 @@ them lists for gold alone, as any pack's piece does (MARKET-ANY). Law 3's guaran
 Pinned by `test/systems/fb1009d_bagcraft.test.js` (the done-when: a Steel Longsword from raw goods the service never counted,
 in one press through the real Worker; the law; the service's `work`, `spend` and `all` and a full Store; the book's
 doors; the anvil and the forge over a real carrying book); `tools/mutants/fb1009d_bagcraft.json`. The record:
-`01-Overview/Field-Bugs-2026-10-09d.md`. ACCOUNT_VERSION `acct101`.
+`01-Overview/bugs/Field-Bugs-2026-10-09d.md`. ACCOUNT_VERSION `acct101`.
 
 ## 15. The audit - AUDIT BAG-CRAFT (2026-10-09, Mac: "Audit this")
 

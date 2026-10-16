@@ -258,6 +258,6 @@ character's own clock (LIVED1).
 `test/systems/guild/it1_immersivetravel.test.js` (13), `test/formats/worldData/it1_worlddata.test.js` (5, one
 with `ARENA2_PATH`), `test/systems/travel/it1_heldmap.test.js` (4), `test/systems/it1_classicmap.test.js`
 (2); `tools/mutants/it1.json` (35, all dead; AUDIT IT1 W3 retired IT1-26). AUDITED the same day (AUDIT IT1,
-`01-Overview/Audit-IT1.md`): `test/systems/auditit1.test.js` (16) and
+`01-Overview/audits/Audit-IT1.md`): `test/systems/auditit1.test.js` (16) and
 `tools/mutants/auditit1.json` (30, all dead). Not seen in a browser: no ARENA2,
 no GPU in this container.

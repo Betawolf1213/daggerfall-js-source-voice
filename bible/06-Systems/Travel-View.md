@@ -1229,7 +1229,7 @@ so away from row 250 none comes within sight - recorded here for that branch; th
   a route a boat would have made is said ("There is no way there by land - a boat would carry you across the water.").
   SHIP-SAIL (2026-09-28, Mac: "Shouldn't it already function as such?"): unless the place is one the map's ship
   passage sails to from here - then the passage is OFFERED ("Sail there by ship?", its fare and days) and, on Yes,
-  taken as the map takes it (`01-Overview/Field-Bugs-2026-09-28e.md`). The passage is Daggerfall's, so it is offered
+  taken as the map takes it (`01-Overview/bugs/Field-Bugs-2026-09-28e.md`). The passage is Daggerfall's, so it is offered
   with this mod off too (AUDIT 28e); the boat's line is this mod's, said only with it on.
 - **The planner's sea** (`systems/travel/travelRoute.js`, `sea`): three layers of the grid - ashore with the boat to hand,
   afloat, ashore with it left behind. A step from a land pixel into the water is the LAUNCH (`embark`), steps between
@@ -1711,7 +1711,7 @@ CAMP-SIGHT, CAMP-TRAVEL, CAMP-NOTIMER, TTL1, WORLD1's "True persistance"); the d
   players disagreed for days whether a spawn stood). Each CELL ROOM now keeps a ledger: the spent ids (their own life
   and the next), and a row a spawned pixel - `[px, py, seen, cleared?]` in shared classic minutes, MIN-MERGED, so the
   earliest sight and the earliest clear anyone had win (the spawn ledger's `merge`), kept sixty real days (SPAWN-REBIRTH,
-  2026-10-12, `01-Overview/Field-Bugs-2026-10-12h.md`: a row is a first ENTRY now, kept until its spawn stands again -
+  2026-10-12, `01-Overview/bugs/Field-Bugs-2026-10-12h.md`: a row is a first ENTRY now, kept until its spawn stands again -
   its death and twenty-four real hours - and the same dungeon stands then on fresh clocks). A player's
   spends and first sights and clears are owed to the cell until it takes them (world.js `overworldLedgerFrame`: said a
   second apart, what was not taken said again, nothing to an older relay), and every change is said to everyone in the
@@ -1850,7 +1850,7 @@ over the block's own controls, and not on a touch screen (no hover there). On a 
 their section. Every new field a mark carries rides `scenes/travelView.js`
 through to the readout. The rider's Eye Of The Beholder sprite faces its travel again: a gallop under the time scale had
 been read as a placing every frame (ARENA-FIX 14's -1, painted as orientation 7). The record:
-`01-Overview/Field-Bugs-2026-10-04e.md`.
+`01-Overview/bugs/Field-Bugs-2026-10-04e.md`.
 
 ## WILD-ALERT - the wilderness notices a fast traveller, or it does not (2026-10-04, Mac)
 
@@ -1902,7 +1902,7 @@ re-aimed by content and dead, OW6-S-spent-band-slows retired with the wandering 
 INVIS-SWING (2026-10-15): the notice is EnemySenses' stealth roll, which DFU makes behind BlockedByIllusionEffect - an
 Invisibility blinds every enemy but the thirteen seers. The gate rolled the stealth formula alone; `wildAlert.js`
 noticeRoll now passes the illusion gate first, and both of world.js's checks hand it the traveller's concealment and the
-enemy's sight through it. `01-Overview/Field-Bugs-2026-10-15f.md`.
+enemy's sight through it. `01-Overview/bugs/Field-Bugs-2026-10-15f.md`.
 
 ## WILD-ALERT-FIX - the deep audit's five (2026-10-05)
 
@@ -1937,7 +1937,7 @@ Shabalako on the Discord, "Overworld Travel can be used to exploit climbing leve
 cities where if you keep walking forward into a home can make your character climb and let go of the surface at an
 extremely fast rate, making levelling climbing a joke. An easy fix could be disabling climbing during overworld
 travel."* - and Sahh, of House R'is: *"would also reduce the mortality rate of travellers falling from mountains at
-60x speed"*. `01-Overview/Field-Bugs-2026-10-07b.md`.
+60x speed"*. `01-Overview/bugs/Field-Bugs-2026-10-07b.md`.
 
 The time scale grows the motor's fixed step, never its count (`systems/timeScale.js`): at x60 a step is a second of
 game time, and every climb timer - the classic climb's 0.77 s start and 0.82 s checks, the free climb's start and its
@@ -1956,7 +1956,7 @@ wall (TV-WASD's `onFoot`), so a climber is never put to a journey's pace by the 
 own motor and has no travel; dungeonContext.js builds no motor (the standalone `scenes/dungeon.js` builds its own and
 writes no time scale).
 
-AUDIT FB1007b (`01-Overview/Audit-FB1007b.md`): the motor's journey is out of doors alone (`travellingOutdoors`, C1 -
+AUDIT FB1007b (`01-Overview/audits/Audit-FB1007b.md`): the motor's journey is out of doors alone (`travellingOutdoors`, C1 -
 only the exterior frame's governor clears the keys' travel, so a load taken with the keys held left it standing and no
 wall indoors climbed); a hold a load carried is no body on foot until the step takes it again (the motor's
 `holdPending`, C3 - the keys' travel sped up under it and let it go); and no journey sets out from a wall
@@ -2040,7 +2040,7 @@ side. The box's bounds are the map and the two ends now (`systems/travel/travelR
 host's `beyond` for the ground past its table (kept a pixel at a time, `BEYOND_CACHE_MAX`) where it called it all the
 sea; `apart` leaves an end past the table to the search; a step past the table reads no road's byte. The host hands it
 `tvWater`'s own answer, which is the ground's where TAMRIEL2 composed the reader and the sea off the map where it did
-not (`scenes/world.js`). The record, and the wire's half: `01-Overview/Field-Bugs-2026-10-09.md` TV-BEYOND;
+not (`scenes/world.js`). The record, and the wire's half: `01-Overview/bugs/Field-Bugs-2026-10-09.md` TV-BEYOND;
 `test/systems/travel/fb1009_beyond.test.js`, `tools/mutants/fb1009_beyond.json`.
 
 ## ETHER-OW - the Overworld past the Veil (2026-10-13, the owner)

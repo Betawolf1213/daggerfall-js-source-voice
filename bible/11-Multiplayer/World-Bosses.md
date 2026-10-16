@@ -741,7 +741,7 @@ fight"* is the whole answer for them.
 ### THE GATE IN THE ROCK (2026-09-28): GATE-CLEAR, GATE-COLLAPSE, EVENT-TIP
 
 The field, through Mac: *"gate under the rock didnt go away stayed there"* - *"Never left"*; Mac: *"the gate can spawn
-inside the rock geometry from world of daggerfall"*. The record is `01-Overview/Field-Bugs-2026-09-28b.md`; in short:
+inside the rock geometry from world of daggerfall"*. The record is `01-Overview/bugs/Field-Bugs-2026-09-28b.md`; in short:
 
 - **"Never left" was the sealed hours, not a leak.** The report (14:46 UTC) fell in day 538's `closed` phase (sealed
   14:42:30, wrath 14:52:30), which the map's countdown-less label confirms; every drawer derives the phase from the clock,
@@ -892,7 +892,7 @@ recorded - belt and braces for another salt), `tools/mutants/wb8c.json` (41, all
 
 ### AUDIT PRE-MERGE 0929 (2026-09-29)
 
-Read before PR 418 merged (`bible/01-Overview/Audit-PreMerge-0929.md`, lenses W1 and W2). What moved:
+Read before PR 418 merged (`bible/01-Overview/audits/Audit-PreMerge-0929.md`, lenses W1 and W2). What moved:
 
 - **W1-1 - a Soul-Hungry Warden fed by throwaway guests.** A fall is the fighter's own word (the pose's `dd`), and each
   fed him 3% of his whole health and outlived the fighter's share: twenty-five guests that said `in` dead and went
@@ -2116,7 +2116,7 @@ The hit law does not move except T2's ring: what lands is what the ground shows.
 - AUDIT WB9's shader harness takes every derivative the shader asks for (it took one).
 - Mutants: `tools/mutants/wb13a.json` (22).
 - Seven older records were re-aimed by content (the fuse's is gone with the fuse).
-- AOE-PERF (FIELD BUGS 2026-10-13e, 2026-10-13; `01-Overview/Field-Bugs-2026-10-13e.md`, `07-Rendering/Performance-Rig.md`
+- AOE-PERF (FIELD BUGS 2026-10-13e, 2026-10-13; `01-Overview/bugs/Field-Bugs-2026-10-13e.md`, `07-Rendering/Performance-Rig.md`
   AOE-PERF): T14's quad per shape is the ground the shape can draw on. A blow's stays `TELEGRAPH_REACH` past it - its
   glow, keyline and wave reach as far as the pixel is large. His mark's is its ring and chevron (`telegraphMarkReach`, a
   third of the box it was) and a path's or a tether's is its own strip (`telegraphStrip`, the walkways' quad laid along

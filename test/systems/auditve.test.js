@@ -1,5 +1,5 @@
 // AUDIT VE (2026-10-05, Mac: "Audit this. Ensure this is on by default. And performance isn't affected") - the audit of
-// Vanilla Enhanced, VE1-VE4 (`01-Overview/Audit-VE.md`). Every pin here fails on the code as it stood before its fix:
+// Vanilla Enhanced, VE1-VE4 (`01-Overview/audits/Audit-VE.md`). Every pin here fails on the code as it stood before its fix:
 //   D1 - THE DEFAULT: the shipped Base is on until the player chooses otherwise, its add-ons off; a choice either way is
 //        kept, through a boot and under a copy the player attaches.
 //   P1 - THE DECODE OFF THE MAIN THREAD: the shipped pack's fetch, decode and texture-detail fit run in a worker

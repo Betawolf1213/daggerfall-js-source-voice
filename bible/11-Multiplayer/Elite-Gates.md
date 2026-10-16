@@ -2,8 +2,8 @@
 
 > Design page, written 2026-10-11 before the arc's first slice. The same day it was revised by AUDIT EG0 (five cold
 > lanes on the first draft, 177a3acd6, 105 findings, then a sixth lane on the revision, 28 more:
-> `01-Overview/Audit-EG0.md`), widened by EG0b (the fragments), and polished by AUDIT EG II (six cold lanes on
-> 14b3b172f, 282 findings: `01-Overview/Audit-EG-II.md`). The code's comments will cite this page by section number;
+> `01-Overview/audits/Audit-EG0.md`), widened by EG0b (the fragments), and polished by AUDIT EG II (six cold lanes on
+> 14b3b172f, 282 findings: `01-Overview/audits/Audit-EG-II.md`). The code's comments will cite this page by section number;
 > where the page and a pin disagree, the pin is what runs. Each slice adds its record under section 31. A path that
 > exists today is written from the repository root (`src/net/gate/gateBrain.js`); a path this arc will create is written
 > without `src/` (`net/egLaw.js`).
@@ -3159,7 +3159,7 @@ Five cold lanes on the frozen first draft (177a3acd6), no edit made until every 
 
 There were **105 findings**: 31, 23, 17, 16 and 18. A sixth cold lane then re-read the revision against every
 row and found **28** more (3 HIGH), each fixed in place. Each was verified against the tree, the maths or UESP, and each
-has its verdict and its place in the revision in `01-Overview/Audit-EG0.md`. The revision moved the page whole:
+has its verdict and its place in the revision in `01-Overview/audits/Audit-EG0.md`. The revision moved the page whole:
 
 - **the lore** set right: the Spire's fate, a Valkynaz a warrior duke, the door held by the key and not a lord's will,
   and the torn halls marked as the port's invention;
@@ -3216,7 +3216,7 @@ Six cold lanes on the frozen page (14b3b172f), no edit made until every lane had
 - presentation, feel and accessibility.
 
 There were **282 findings**: 25, 37, 44, 46, 90 and 40. Each has its verdict and its place in this revision in
-`01-Overview/Audit-EG-II.md`. The polish moved the page whole:
+`01-Overview/audits/Audit-EG-II.md`. The polish moved the page whole:
 
 - **the structure**: section 6 numbered, the fragments their own section (11), and every section after it renumbered
   once, before any code cites the page; the words table rebuilt, with five overloaded words split ("the descent"

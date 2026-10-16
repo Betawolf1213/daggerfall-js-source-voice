@@ -1,5 +1,5 @@
 // AUDIT SCALE (2026-10-08, Mac: "Do a comprehensive audit on this and ensure perfection") - the audit of SCALE3 and
-// SCALE4a-c (bible/11-Multiplayer/Scale-Arc.md; the record bible/01-Overview/Audit-Scale.md). Four review lanes read a
+// SCALE4a-c (bible/11-Multiplayer/Scale-Arc.md; the record bible/01-Overview/audits/Audit-Scale.md). Four review lanes read a
 // snapshot of the pushed head (26594ff5): the account service (A), the client's heartbeat (B), the load harness and its
 // numbers (C), the tests' honesty and the record (D). Every finding fixed here was reproduced first, and each pin below
 // fails on the code as it stood - or, for a law that already held and no pin held (lane D's surviving mutants), dies

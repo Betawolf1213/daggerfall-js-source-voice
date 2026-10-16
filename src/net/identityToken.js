@@ -620,7 +620,7 @@ export function orderValid(c) {
   return true;
 }
 
-/* ═══ QUEST-HOME: THE HOME ORDER (bible/01-Overview/Field-Bugs-2026-10-14.md QUEST-HOME; Mac, 2026-10-15: "Close both") ══
+/* ═══ QUEST-HOME: THE HOME ORDER (bible/01-Overview/bugs/Field-Bugs-2026-10-14.md QUEST-HOME; Mac, 2026-10-15: "Close both") ══
  *
  * A home bought, held or given up must reach every page online at once: a quest picks its residence in towns its player
  * never asked about, off the boot's read of every town's homes (server-account/src/homes.js homeLayouts), and a read at

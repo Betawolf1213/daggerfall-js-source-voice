@@ -275,7 +275,7 @@ first playtest is Mac's, with the switch on and then off.
 
 ### AUDIT 59 - before the merge (2026-09-04)
 
-`01-Overview/Audit-59.md`. The arc read against the production build
+`01-Overview/audits/Audit-59.md`. The arc read against the production build
 and the host's lifecycle for the first time. THE WORKER NEVER SHIPPED
 (F1): Vite bundles a module worker only from the literal `new
 Worker(new URL(...), { type: 'module' })`, and 3b spelled it through a
@@ -353,7 +353,7 @@ floor, and the layout's foes on the mesh. It skips without the archives.
 
 A player's console carried `navmesh bake looks degenerate (11 polys from
 17592 triangles)` in the dungeon of map id 1204685
-(`01-Overview/Field-Bugs-2026-09-27-field-console.md`). It reproduced
+(`01-Overview/bugs/Field-Bugs-2026-09-27-field-console.md`). It reproduced
 exactly in node, and it was every classic dungeon's: Privateer's Hold
 baked 130 polys from 9,079 triangles, and 11 of 12 sampled dungeons
 tripped the guard. Four faults in the soup bake compounded, and the

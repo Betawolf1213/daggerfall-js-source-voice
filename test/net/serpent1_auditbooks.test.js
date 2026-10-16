@@ -1,5 +1,5 @@
 // AUDIT SERPENT (2026-10-04, Mac: "I definitely want to do a conprehensive audit on this and ensure its absolute
-// perfection"): THE BOOKS LENS'S PINS (D7/D8 - bible/01-Overview/Audit-Sea-Serpent.md). Its auditor wrote 38 more
+// perfection"): THE BOOKS LENS'S PINS (D7/D8 - bible/01-Overview/audits/Audit-Sea-Serpent.md). Its auditor wrote 38 more
 // mutants of the serpent's books, rewards and relay paths, and 37 lived under SERPENT1's own pins; each test here was
 // written to fail under them (tools/mutants/serpent1_audit.json, the `D-` records): the service's one row and its hour,
 // the route's claimant, the device's carrier, the world's queue and hoard by source, the brain's level and earning, and

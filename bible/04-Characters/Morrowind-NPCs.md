@@ -304,7 +304,7 @@ effect at once with no rebuild; a lean the host hands (the travel view's)
 stands as handed either way. Pinned: `test/systems/bodycard.test.js`; mutants
 `tools/mutants/bodycard.json`.
 
-ONE-BAD-BODY (FIELD BUGS 2026-10-13b, `01-Overview/Field-Bugs-2026-10-13b.md`;
+ONE-BAD-BODY (FIELD BUGS 2026-10-13b, `01-Overview/bugs/Field-Bugs-2026-10-13b.md`;
 the owner: "people are saying with norrowind models, people are invisable.
 Something in a recent commit borked it", online only). The packer places each tile after the last (`x += it.pw`),
 so one picture whose size was not a number - `Math.max(2, NaN)` is NaN,
@@ -579,7 +579,7 @@ INVISLOOK's late-pass mutants re-aimed by content.
   gender's wardrobe in common dyes, each only where no piece of its own
   stands (boots on the feet: no shoes). The look is kept on the foe while
   it wears the same, so a foe is one build for its life. (AMENDED BY FB1012d
-  ALLY-RACE, `01-Overview/Field-Bugs-2026-10-12d.md`: a person of their
+  ALLY-RACE, `01-Overview/bugs/Field-Bugs-2026-10-12d.md`: a person of their
   own is drawn off THEIR seed, not the stand's - a companion the layer
   stood, by its stamp; a revenant, by its record's, minted off the body it
   was born in - so a companion is one person through every door and load.)
@@ -897,7 +897,7 @@ and the quests' (dungeonContext.js) are 8b's.
   mortal (`wardrobeOf` 'none', beside the vampires): a Daedra or a god by
   faction type, Oblivion's or the Fey's by guild group - a prince's sprite
   is no person in clothes. A coven's witch is mortal and is dressed.
-  STALL-FLATS (`01-Overview/Field-Bugs-2026-10-15c.md`; "every animal and
+  STALL-FLATS (`01-Overview/bugs/Field-Bugs-2026-10-15c.md`; "every animal and
   food stand item turned into freaks", "clustered into groups and all have
   their heads down"): nor any flat whose picture is no person's - a body
   stands only for RDBLayout.NPCFlatArchives (`world/npcFlatArchives.js`
@@ -2042,7 +2042,7 @@ ten colours over ten faces.
   is a cuirass and greaves alone in Morrowind (mwItemMap.js's judgement rows),
   so a chain helm is never asked for - iron stands in. The kit's boots are the
   feet (one Daggerfall slot); a robe hides the legs (nothing is put under it).
-  BARE-BOOTS (`01-Overview/Field-Bugs-2026-10-15c.md`, "No boots model on
+  BARE-BOOTS (`01-Overview/bugs/Field-Bugs-2026-10-15c.md`, "No boots model on
   legendary boots"): the player's own pieces and a peer's had no such rule -
   a chain piece imperial chain lacks answered "the classic sprite stands", on
   a figure with no sprite, so chain boots, gauntlets and pauldrons stood bare
@@ -2581,7 +2581,7 @@ DISC20-C's distance from the entry to its ground call (10200 -> 10400, the
 ## 29. FB1015 - THE BODY UNDER A WINDOW, AND WHERE ITS TEXELS STAND (2026-10-15)
 
 The owner: "When looting dead marrowind enemies, they turn to a sprite. The models also clip through geometry."
-Record of the batch: `01-Overview/Field-Bugs-2026-10-15b.md`.
+Record of the batch: `01-Overview/bugs/Field-Bugs-2026-10-15b.md`.
 
 - LOOT-BODY. Both dungeon hosts (scenes/worldModes.js's dungeon arm, scenes/dungeon.js) draw the level's flats under a
   window and return before drawFoes - the only place a foe's body was drawn - and AUDIT MW-NPC C6 (section 21) showed

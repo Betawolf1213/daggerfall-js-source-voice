@@ -194,7 +194,7 @@ same item; the name is the template's).
   stale owner's records are swept with the owner (`camps.js` `sweepOwners`), as today. The cap stays
   `CAMPS_PER_OWNER` 4, and a placing at it is never refused: it packs the owner's OLDEST camp away where it stands,
   its gear home as Pack gives it (FIELD BUGS 2026-10-04d CAMP-CAP - the refusal had locked characters out of camping
-  for good, `01-Overview/Field-Bugs-2026-10-04d.md`).
+  for good, `01-Overview/bugs/Field-Bugs-2026-10-04d.md`).
 - **The record.** `campWire` already carries `w` (0..255) and `k` 1 (fire): charges ride `w`, so a client one build
   behind still validates the record (`validCampRecord` refuses a new `k`, not a new meaning of `w`). Pick-up mints
   541 with `currentCondition = w` (`mintCondition`'s field, `src/systems/item/itemTemplates.js`), the info card's "N uses
@@ -282,7 +282,7 @@ Existing TEXTURE.210 fires are rest points too (2.1); the law only adds where no
 - **A dungeon's bed is a rest point** (FIELD BUGS 2026-10-05 DUNGEON-BEDS, the Discord: "Beds in dungeons should count
   as beds so I can rest in a dungeon"). The page named no dungeon bed and the dungeon's point was a fire alone; its 108
   beds (Roleplay Realism's 41000-41002, 42 RDB blocks) are a bed's rest within a fire's reach of the box
-  (`restAct.js` bedInReach), as is a bed pressed below deck. `01-Overview/Field-Bugs-2026-10-05.md`.
+  (`restAct.js` bedInReach), as is a bed pressed below deck. `01-Overview/bugs/Field-Bugs-2026-10-05.md`.
 - **Rooms count nights** (OPEN 10). Today `checkRent` counts rested hours down and the room's own expiry counts the
   character's days (`src/systems/tavern.js`'s sweep), and the two can disagree (the room's text says it expired while
   the sweep keeps it). Online under REST a room rented for N days buys **N nights**: a night at its bed spends one,
@@ -983,7 +983,7 @@ Mac: "Go" - every recommendation of section 15 taken. Slices REST1-REST6 and RES
   roller off the pose, and the others wait on its night and sleep it, or break with its ambush.
 - 2026-10-05: REST-LOOT (As built; `Loot-Arc.md` section 19): `REST_ITEMS_ONLINE` on - the seven online from the
   shelves, the piles and the foes - and their loot wider and commoner.
-- 2026-10-06: GUARD-WINDOW (FIELD BUGS 2026-10-06c, `01-Overview/Field-Bugs-2026-10-06c.md`; Aru: "the three hours
+- 2026-10-06: GUARD-WINDOW (FIELD BUGS 2026-10-06c, `01-Overview/bugs/Field-Bugs-2026-10-06c.md`; Aru: "the three hours
   passed, the mage disappeared, but no enemies showed up"): N0B20Y02's `_S.12_` - the three-hour guard of "Protect an
   Honored Mage", which section 8's reading and AUDIT REST II's sweep called a delay - is a deadline by hand
   (ONLINE_DEADLINES): a window to act, and the Nightblades' 55-minute interval is longer than the 24-minute cut. 272

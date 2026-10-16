@@ -1,5 +1,5 @@
 // AUDIT LIVED1b (2026-09-29, Mac: "Lets do a comprehensive audit on this") - the second audit of LIVED1 (your own time
-// online) and of the first audit's fixes: eleven lanes over the frozen tree 322b1735 (bible/01-Overview/Audit-Lived1b.md).
+// online) and of the first audit's fixes: eleven lanes over the frozen tree 322b1735 (bible/01-Overview/audits/Audit-Lived1b.md).
 // Each test pins one fix, driving the real modules the way the lane that found it reproduced it; each fix is also
 // mutation-proven (tools/mutants/auditlived1b.json).
 import { test, afterEach } from 'node:test';

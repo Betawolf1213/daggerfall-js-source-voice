@@ -1,5 +1,5 @@
 // AUDIT HOLDINGS (2026-10-03, Mac: "Audit this, ensure its perfection", of PR #549's HOLDINGS arc - the Holdings tab,
-// the Stable, the Fleet, refits, names, crew roles and the ports' quays; bible/01-Overview/Audit-Holdings.md). Every
+// the Stable, the Fleet, refits, names, crew roles and the ports' quays; bible/01-Overview/audits/Audit-Holdings.md). Every
 // finding re-run before it was fixed, and pinned here: each pin fails on the build it fixes.
 import '../../modsOff.js';
 import { test } from 'node:test';

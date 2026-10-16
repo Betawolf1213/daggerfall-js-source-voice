@@ -7,7 +7,7 @@
 // then the pack - and MEND-WORN's mend order within a tier. Through the round's own payloads (enchantmentMagicRound,
 // AllowMagicRepairs on as online forces it), every piece from its producer: the item maker's rows (applyEnchantments
 // over enchantmentSettings), the mobs' iron and leather (weaponOfMaterial, armorOfMaterial) at Roleplay & Realism's
-// found-loot 20-75% (randomConditionLootItems), put on by equipItem. bible/01-Overview/Field-Bugs-2026-10-15c.md.
+// found-loot 20-75% (randomConditionLootItems), put on by equipItem. bible/01-Overview/bugs/Field-Bugs-2026-10-15c.md.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { enchantmentMagicRound, repairsObjectsTarget } from '../../src/systems/enchantments.js';

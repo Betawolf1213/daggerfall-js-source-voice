@@ -2,7 +2,7 @@
 // oversight in reducing the rain?"). RAIN-HEART (Weather-Arc.md) made most rain a sprinkle the eye barely sees, and the
 // front eases every episode in behind its cloud - but the soak read the sim's word at the downpour's rate, so a body
 // soaked under a sky that dropped nothing. The skin now reads what falls - the word and level the street's frame wrote
-// for the ear (DISC9/DISC11) - through weatherSim.js fallingWeather. bible/01-Overview/Field-Bugs-2026-10-15f.md.
+// for the ear (DISC9/DISC11) - through weatherSim.js fallingWeather. bible/01-Overview/bugs/Field-Bugs-2026-10-15f.md.
 import { test, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';

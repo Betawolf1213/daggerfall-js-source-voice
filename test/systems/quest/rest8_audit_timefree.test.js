@@ -1,5 +1,5 @@
 // REST8 (2026-10-03, bible/06-Systems/Rest-Arc.md section 8; Mac's OPEN 12, option A): AUDIT TIMEFREE's pins, restored
-// with the reading they audit (test/audit_timefree.test.js, DELETED by QCLOCK-WORLD; bible/01-Overview/Audit-Timefree.md).
+// with the reading they audit (test/audit_timefree.test.js, DELETED by QCLOCK-WORLD; bible/01-Overview/audits/Audit-Timefree.md).
 // Every vendored clock was read by hand against the reading, the main quest's whole, and each misreading found is pinned
 // here over the real script: the closings that never closed (T1), the letters and arrivals a conditional `when` froze
 // (T2), the endings a sequenced beat froze and the "at once" clocks (T3), the item a closing hands over and the reward

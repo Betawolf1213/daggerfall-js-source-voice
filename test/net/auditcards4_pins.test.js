@@ -1,4 +1,4 @@
-// AUDIT CARDS-4 (2026-10-08, bible/01-Overview/Audit-Cards-4.md) M: THE MUTANTS THE LANES' COPIES SURVIVED, killed. The
+// AUDIT CARDS-4 (2026-10-08, bible/01-Overview/audits/Audit-Cards-4.md) M: THE MUTANTS THE LANES' COPIES SURVIVED, killed. The
 // relay's void doors, its owed cash-outs (told on a sit, by their life, the newest kept past the bound, to the account's
 // other sockets), a stake order at other stakes, the buy-in's edges, the sweep's age; the pure table's queue, its broke
 // flags and a folded leaver's cash-out at once; the service's landed-batch paths and the old save let go; the device's

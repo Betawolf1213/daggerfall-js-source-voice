@@ -7,7 +7,7 @@
 // mattered. Now a player who leaves my party, or whose party I leave, is no fight for WILD_PARTY_TRUCE_MS, both ways
 // (each side reads its own party, and the defender's own client refuses an unfair blow - net/wild/wildFight.js onFrame), and
 // a walk that ends in the zone or at its edge says so in its question (test/systems/travel/tv8_party_walk.test.js runs the host's own
-// walk). `01-Overview/Field-Bugs-2026-10-09b.md`.
+// walk). `01-Overview/bugs/Field-Bugs-2026-10-09b.md`.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';

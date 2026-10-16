@@ -238,7 +238,7 @@ fogged, no light, no new program), a Legendary's and better pulsing. The nearest
 the street and a building; gone the moment its best is taken below Rare. A peer's body in the street shows none: its
 list lives on its owner's side (the street's own law). Off, nothing draws for a tier. A find that carries its own mark
 draws its own line, the row on or off, each kind under its own word (`lootLines.js setLootMarksLive(on, by)`): the open
-zone's remains (WILD1) and the house's fallen (`01-Overview/Field-Bugs-2026-10-13d.md` REMAINS-STAND; AUDIT FB1013d C13).
+zone's remains (WILD1) and the house's fallen (`01-Overview/bugs/Field-Bugs-2026-10-13d.md` REMAINS-STAND; AUDIT FB1013d C13).
 
 ## 14. The slices
 
@@ -357,7 +357,7 @@ land). A held spell is a cheap one - Slowfalling (240), Shadow Form (150), Water
 CastWhenHeld's casting cost in condition at the first equip (LR4's watch item 9); the first ten's Aegis of Dawn keeps
 its Spell Resistance as LR2 shipped it. LEGEND-HELD (FIELD BUGS 2026-10-11b, a departure): a Legendary's equip now bills
 nothing at all - the Aegis's Spell Resistance cost a leather Buckler a third of its condition the first time it went on
-(`01-Overview/Field-Bugs-2026-10-11b.md`); every other held piece keeps DFU's bill.
+(`01-Overview/bugs/Field-Bugs-2026-10-11b.md`); every other held piece keeps DFU's bill.
 
 What moved with the pool: the Sigil Broker's Legendaries are drawn from the thirty (`baseLegendaries` - the port's
 own records, the same on every machine, so the stock is still the day's alone), and the gate's spoils and a town's
@@ -1052,7 +1052,7 @@ death, the supplies through the real hooks with their draws counted, the hosts).
 
 ## 21. AUDIT 625 - the loot lens (2026-10-05)
 
-Mac: *"Lets do a comprehensive audit on this"*, of PR #625. The whole record is `01-Overview/Audit-625.md`; what it
+Mac: *"Lets do a comprehensive audit on this"*, of PR #625. The whole record is `01-Overview/audits/Audit-625.md`; what it
 moved here:
 
 - **L1, a foe restored from a save rolled no kit.** KIT-ROLL found the kit by the foe's equip table, object by object,

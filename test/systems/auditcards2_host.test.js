@@ -1,4 +1,4 @@
-// AUDIT CARDS-2 (2026-10-08, bible/01-Overview/Audit-Cards-2.md): THE TABLE ON THE SEAT - the interior host's card block
+// AUDIT CARDS-2 (2026-10-08, bible/01-Overview/audits/Audit-Cards-2.md): THE TABLE ON THE SEAT - the interior host's card block
 // RUN, not read (lane B's way: sliced from worldModes.js, `let cardSeat = null;` to the hurt listener, and run over the
 // real session, the real gold, the real cursor hold, the real book and the real panel on a fake page), and the panel's
 // own model and log. Driven: a load's road never pays the old game's chips into the loaded character (H1, with the save

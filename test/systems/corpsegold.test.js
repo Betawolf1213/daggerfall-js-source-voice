@@ -2,7 +2,7 @@
 // are dead corpses of monsters"). Mounted, not matched: the room's memory is restored through the REAL
 // restoreSharedWorld, applyWorld, patchFoe, applyLoot, retypeFoe and buildFoeAt's `stand`, sliced out of
 // src/scenes/dungeonContext.js (the context cannot be stood up here). buildFoeAt's art await and its fresh loot roll are
-// the one stand-in. Recorded in bible/01-Overview/Field-Bugs-2026-09-27f.md.
+// the one stand-in. Recorded in bible/01-Overview/bugs/Field-Bugs-2026-09-27f.md.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';

@@ -1,4 +1,4 @@
-// AUDIT CARDS-6 (2026-10-09, bible/01-Overview/Audit-Cards-6.md) lane A: WHERE CARDS COME FROM, AUDITED - their worth,
+// AUDIT CARDS-6 (2026-10-09, bible/01-Overview/audits/Audit-Cards-6.md) lane A: WHERE CARDS COME FROM, AUDITED - their worth,
 // their customs, their sources. A sealed pack is counted at its worth by the customs and both of the service's bounds,
 // taken as a card, and none at a birth (A1); a card or a pack standing as the owner's own decor is counted and taken,
 // its piece with it (A2); a joiner's copy of a body draws for its own card at both copy doors (A3, the real doors run);
@@ -283,7 +283,7 @@ test('AUDIT CARDS-6 A8: the card\'s picture is drawn LAST in its hoard - every e
     ]) {
       // PIN MOVED (GEM2, bible/06-Systems/Gem-Sockets.md): the boss's gems' pictures are drawn after the card's - every
       // record before them still the look-stream's draw it was
-      // PIN MOVED (AUDIT WORLD-REWARDS A1, bible/01-Overview/Audit-World-Rewards.md): the Gate's Dragonfire Oath's picture
+      // PIN MOVED (AUDIT WORLD-REWARDS A1, bible/01-Overview/audits/Audit-World-Rewards.md): the Gate's Dragonfire Oath's picture
       // is drawn after the gems' - every record before it still the look-stream's draw it was
       const oath = name === 'gate' ? list.filter((p) => p.tier === 'gilded') : [];
       const cards = list.filter((p) => p.item?.templateIndex === 581);
