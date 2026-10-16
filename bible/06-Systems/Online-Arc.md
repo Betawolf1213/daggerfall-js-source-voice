@@ -31,7 +31,8 @@ shape, and that record says so at its head.
 (a hello once and first - an id and its secret, a name, a look, a pose
 - then poses at most `POSE_HZ_MAX` a second under a token bucket, and
 pings), the bounds of a name, a pose and a look (its items projected
-onto the six fields the doll reads), the room key's shape, the world's
+onto the six fields the doll reads, and a weapon in a hand's `glow` word -
+WEAPON-GLOW1, `05-Combat/Weapon-Glow.md`), the room key's shape, the world's
 cell shard, the range a pose travels inside a cell, what a joiner is
 told (the nearest `ROSTER_MAX`), the room's own gates (`HELLO_HZ_MAX`,
 `SOCKETS_MAX`, `DROP_STRIKES_MAX`). The relay (`server/src/relay.js`) re-exports it and the session
