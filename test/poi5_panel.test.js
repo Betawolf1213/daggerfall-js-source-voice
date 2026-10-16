@@ -99,9 +99,11 @@ test('POI-5 THE MATERIAL EDITOR: a picture taken from a file - read by its heade
   P.svc.hold = [new Promise((r) => { open1 = r; }), new Promise((r) => { open2 = r; })];
   const first = P.panel.takePicture(PNG, () => {}), second = P.panel.takePicture(PNG, () => {});
   await until(() => !P.svc.hold.length, 'both uploads asked');
-  open1(); await first; await flush();
+  // each upload hashes off the main thread before it asks, so either may take the first hold: wait for whichever
+  // open1 lets go, never `first` by name - awaiting the one still held emptied the loop (deploy run 258, shard 2/4)
+  open1(); await Promise.race([first, second]); await flush();
   assert.equal(saveBtn().disabled, true, 'one upload still in flight: the save held');
-  open2(); await second; await flush();
+  open2(); await Promise.all([first, second]); await flush();
   assert.equal(saveBtn().disabled, false, 'both done: it can be saved');
   P.panel.destroy();
 });
