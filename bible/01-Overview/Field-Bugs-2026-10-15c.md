@@ -1,145 +1,182 @@
-# FIELD BUGS 2026-10-15c - a Wizard at a hundred
+# FIELD BUGS 2026-10-15c - eleven threads, one pull request
 
-One Discord thread in #bug-reports, "why did my rank on mages guild fall if i got max reputation", handed over by Mac as
-a screenshot. Read on the code as it stands at main's `458340b1`.
+Eleven Discord threads handed over by Mac on 2026-10-15 with: "Please tackle all bugs in ONE PR". Two of them are one
+bug (the market's bodies). Read on the code as it stands at main's `bd385fc6` (the FIELD BUGS 2026-10-14 roll-up merged).
+Two calls were Mac's, asked: "Store as loose" (LOOT-LOOSE) and "One body per account" (ONE-BODY).
 
 | | Report | What it was | Done |
 |---|---|---|---|
-| 1 | Dracula/Valentin: "why did my rank on mages guild fall if i got max reputation" (the flair: The Mages Guild, Wizard, +100) | CHAP4b as built (`11-Multiplayer/Chapters-Arc.md` 3.5): online, while the Roll holds, ranks 8 and 9 are the chapters' seats, won by Merit. Every adoption of the Roll's word sets a book above 7 to 7 (`rollBookCap`), and DFU's review stops at 7 (`updateRank`'s `rankCeiling`). Wizard is the Mages Guild's 7 | by design; the hall now says so (SEAT-LINE) |
-| 2 | Temegast: "I was Archmage and now I cant seem to ever get back past the Wizard rank, locking me out of using Mages Guild teleport. All the other guilds tell me what the next rank is and what I need but the Mages Guild does not" | The same hold: Archmage is the Mages Guild's 9, and its Teleport asks rank 8 (`MagesGuild.cs` CanAccessService, `guildServices.js` magesCanAccessService) - a seat's service while the seat is held (3.5). And the hall's line (PROMO-NOW, `Field-Bugs-2026-10-15.md`) answered nothing at the Roll's 7: `rankNeeds` returned null past the ceiling, so a member at 7 was told nothing while a member below it was told the next rank | changed (SEAT-LINE), Mac's call: "Explain the seat" |
-| 3 | Reign Droid: "Im forever trapped as apprentice and cant grow past -20 reputation with the mages guild. The very first quest i did for them dropped my rep by 25 points" (the message runs on past the screenshot) | Daggerfall's own quest script, offered by the player's level: "Guard the Guild" (N0B10Y03) costs the Mages Guild 30 for its guarded treasure taken outside the guard's window - found by AUDIT GUILD-WORDS (L6), below | fixed (QSCRIPT-FREE), Mac's call: "Waive own-guild losses" |
+| 1 | "Random encounter from box - Slaughter fish" | SEARCH1's crate foe drew from the dungeon's layout roster, swimmers and all | SLAUGHTER-BOX |
+| 2 | "Happened after a server restart ... friend who is a duplicate of them" | a cell's room kept two sockets of one account | ONE-BODY (relay world207) |
+| 3 | "the town of penbrugh every animal and food stand item turned into freaks" | a town mod's factioned market flats stood Morrowind bodies | STALL-FLATS |
+| 4 | "The NPC's are clustered into groups and all have their heads down and they just rotate" | the same | STALL-FLATS |
+| 5 | "No boots model on legendary boots" | chain boots have no imperial chain model; the figure stood bare skin | BARE-BOOTS |
+| 6 | "alchemy and some other ingredients when looted from a dungeon are unstorable" | law 3, as written - looted units are never counted | LOOT-LOOSE |
+| 7 | "Quest enemy spawned inside object" | a body inside a pillar to the ceiling read free | QUEST-FOE-WALL |
+| 8 | "Crafting arrows at the workbench is useless" | a mod's Arrow weight made a Twig five arrows, not two | BENCH-ARROWS |
+| 9 | "NONE are the Tambeth Hawkley Residence" | a residence picked in another player's home before QUEST-HOME | QUEST-RESIDENCE |
+| 10 | "Morrowind Axes Registered Wrong Due to Reversed Naming Convention" | DF_TO_MW_WEAPON matched the axes' names, not their hands | MW-AXES |
+| 11 | "Boulder's glint offset is way off" | a boulder's aim point was half its rock's height | BOULDER-GLINT |
 
-## SEAT-LINE: at the Roll's 7, the hall says the next rank is a seat (2)
+The four hosts (THE FOUR HOSTS RULE): every fix sits in a module the hosts share, save three in-place edits - `world.js`'s
+Stores deposit hands the page's order through (LOOT-LOOSE), `worldModes.js`'s quest stand marks its person
+(STALL-FLATS) and its two home door titles read the quest's name (QUEST-RESIDENCE) - each the same line, none grown.
+`exterior.js` and `dungeonContext.js` take nothing new: the market bodies stand in `world.js` and `exterior.js` through
+the one `personLook`; the crate's foe in `dungeonContext.js` through `pickRosterFoe`; the pillar's free in every host
+through `freeLodgedFeet`. And PVP-ESCROW's handoff leaves `bootWorld` for `scenes/wildEscrowHost.js`, the host back
+under the ceiling it had before FB1015's raise (`01-Overview/Host-Split.md`).
 
-`src/systems/guilds.js` rankNeeds; `src/systems/guildServiceFlow.js` rankNeedsLines; `src/scenes/worldModes.js`
-openGuildService (the wiring).
+## SLAUGHTER-BOX: a crate's foe stands on the floor, never a swimmer (1)
 
-ASKED (Mac, of three shapes - explain the seat; explain it and open the Mages Guild's Teleport at 7; retire the cap and
-let DFU's review give 8 and 9 again): "Explain the seat". The seats stand as CHAP4 built them.
+`src/systems/searchables.js` pickRosterFoe; `src/characters/dungeonEnemies.js` WATER_SPECIES (exported, the one home);
+`src/systems/wildDungeons.js` (its own `new Set([11, 41, 42])` retired for it).
 
-CHANGED. A member AT the host's ceiling (online, 7 while the Roll holds) is answered by `rankNeeds` as a seat -
-`{ rank: 8, seat: true, reputation, reputationNeed: 80 }`, rank 8's reputation being the seat's line (`ROLL_SEAT_LINE`)
-- and the hall's line says it, on the enhanced skin, above the popup's buttons:
+FOUND. SEARCH1 (our own - DFU has no searchables) wakes two foes a third of the time a chest or a crate is searched, and
+a chest's or a crate's draws from the dungeon's layout roster (`collectDungeonEnemies`). That roster holds RDBLayout's
+Slaughterfish, Dreugh and Lamia for markers under water (RDBLayout.AddEnemy's water veto keeps them there and nowhere
+else), and nothing took them out before the pick: two Slaughterfish on the dry floor by the crates. The rest ambush reads
+ENCOUNTER_TABLES 0-18 (table 19 holds the swimmers) and the outdoor hosts roll nothing while swimming.
 
-- "Next rank: Master Wizard" (the guild's own title, as below 7);
-- "Ranks 8 and 9 are each chapter's council and Master, won by Merit - no review gives them";
-- "Reputation 72 of 80", while the reputation is short of the seat's line (AUDIT GUILD-WORDS L1-2: at 62 a Wizard's own
-  70 is short too, and the review's demotion is said first - "Your next review lowers you to Warlock: Wizard needs
-  reputation 70.");
-- "Each Sunday's Turning seats the most Merit of the last 4 weeks, among members 14 real days in the guild, on accounts 7
-  real days old" (L3-4: the seats' days are real ones) - the numbers the law's own (`SEAT_MERIT_WEEKS`, `SEAT_TENURE_S`,
-  `SEAT_ACCOUNT_AGE_S`, `npcChapterLaw.js` seatEligibleAt), so a retune moves the words.
+CHANGED. The pick leaves out WATER_SPECIES; a roster of swimmers alone wakes the grave's undead, as an empty one did.
+Pinned in `test/search1_searchables.test.js` (the Aquatic species of EnemyBasics are the layout's three, one home);
+`tools/mutants/fb1015c_slaughterbox.json` 3, all dead. Online: the search is rolled on the searcher's page and its foes
+are loose stands, so the fix holds for the room; no relay change. `06-Systems/Searchables.md`.
 
-The host reads the line off the book SEATED (`seatedBook`, as the hall's services and title already read it), so a
-seat's holder at its own chapter's halls reads 8 or 9 and is told nothing more. A member below 7, a stranger and
-everyone offline see what PROMO-NOW gave them. The skills DFU's rank 8 asks are not listed: a seat asks none (AUDIT CHAP
-R2, AUDIT CHAP5 D1 - it lifts only a book DFU's own review holds at 7). The classic window is DFU's own and draws
-nothing new (THE NATIVE-WINDOW RULE). Two port strings (`guild.rankNeeds.seat`, `guild.rankNeeds.seatMerit`), drafted
-in-session in the thirteen whole languages, "the Turning" in each as the seats' refusal already words it.
+## ONE-BODY: a place stands one body an account (2)
 
-THE FOUR HOSTS: the guild popup is worldModes.js's alone (openGuildService) - WIRED; world.js opens no popup of its own;
-exterior.js constructs no GuildServiceWindow; dungeonContext.js stands no guild hall. Pinned by
-`test/fb1015c_seatline.test.js` (4); `tools/mutants/fb1015c_seatline.json` (8, all dead). PINS MOVED:
-`test/fb1015_promonow.test.js`'s ceiling pin reads the seat where it read null, and its host pin reads the seated book
-(`tools/mutants/fb1015_promonow.json`, 10, all dead, unchanged).
+`server/src/index.js` the hello's one-socket law; `src/net/wire.js` RELAY_VERSION `world207` (`world206` on its branch, renumbered past main's SERPENT5 `world206` at the merge).
 
-What the reporters are owed: online, Master Wizard and Archmage are the chapters' seats - one Master and three
-councillors a chapter, placed at each Sunday's Turning by Merit (a member's own hall writ, and a gate's or a raid's
-receipt in the chapter's region - never a quest; Chapters-Arc 5.1).
-Rank 7 is the highest the guild's own review gives; the hall now says what a seat asks. A seat's holder has its
-rank's services at its chapter's halls, the Teleport among them.
+FOUND. A relay deploy restarts every room and drops every socket (`relay-deploy.yml`). Peers are kept by peer id, and
+a cell's room (`world:x,y` - the open country and the towns) or a world room (a dungeon, an interior) let one account
+stand under two ids: only a gate's court, a siege's field and a Super dungeon's realm closed an account's older socket
+on a new hello (PVP-REF, SD3), and the hub's one seat (ONESEAT) leaves a hung or half-open socket in its cells. So a tab
+that outlived the restart's gap stood beside the account's new one - frozen, clickable, and seen by the friend's own
+page, whose welcome named it (`rosterFor` carries no account, and since NAME-AS a name is not unique, so no client could
+tell them apart). The client's own staleness (80 s, four heartbeats) hides a silent peer, but a welcome names it again,
+and a socket still heartbeating stands for good. AUDIT ONESEAT R3 had recorded the gap, not fixed it.
 
-## Report 3 - found by AUDIT GUILD-WORDS (L6), fixed by QSCRIPT-FREE
+CHANGED (Mac, asked: "One body per account"). A cell's room and a world room close an account's older socket when it
+says hello again under another id (CLOSE_REPLACED, its leave sent to the room), as the gate's, the siege's and the Super
+dungeon's rooms already did. Two tabs of one account in a place are one player now - the older rule ("two players")
+reversed. Relay `world207`, its law row in `test/relayversion.test.js`; the deploy drops every player once. Pinned in
+`test/fb1015c_onebody.test.js`; five relay pins that modelled two tabs of one account in a place moved (PIN MOVED in
+each); `tools/mutants/fb1015c_onebody.json`.
 
-This record first read report 3 as not found: it read only the Mages Guild's rank-0 quests, and the questor's share of a
-propagating change as half. Both were wrong (`01-Overview/Audit-Guild-Words.md`, L6):
+## STALL-FLATS: a body stands only for a person's picture (3, 4)
 
-- The Mages Guild offers its quests by the player's LEVEL (`offerFlow.js`, DFU's `MagesGuild.cs`
-  IsSatisfyQuestReqByLevel), so a new apprentice of level 1 is offered "Guard the Guild" (N0B10Y03, minReq 1), and of
-  level 2 "Protect an Honored Mage" (N0B20Y02).
-- Guard the Guild places a magic item in the hall and runs `change repute with _qgiver_ by -30` when it is taken
-  outside the guard's window; the questor is MG_Quests (63), and the tree's root and a questor take a propagating
-  change whole (`factionRep.js` propagateReputationChange) - the guild takes 30. Protect an Honored Mage takes 10, then
-  50, from a mage of the guild's own faction.
-- -30 beside a +5 earned before reads -25; two later successes leave -20, under rank 1's 10. The other movers this
-  section listed are as they were, with REP4's recovery beside DFU's drift (a point every seven days below zero).
+`src/characters/peopleBodies.js` personLook; `src/scenes/worldModes.js` questStandLook (`questPerson`).
 
-FIXED (Mac, asked of three shapes - waive own-guild losses, gate the two quests on reputation, keep the scripts):
-"Waive own-guild losses" - QSCRIPT-FREE, `06-Systems/Standing-Arc.md`: online a quest's script costs nothing with the
-guild that gave it. What the reporter is owed: online, no Mages Guild quest costs Mages Guild standing now; the -30 they
-took stands (the Roll keeps every loss). A member on probation below -10 is expelled at a review (REP6); the hall's line
-and the Standing page now say the probation's stakes and its days, and every move of a guild's standing on the Roll is
-said as the Roll takes it, online.
+FOUND. Beautiful Villages gives its market blocks' food, goods and animals a faction (TVRNAS02, TEMPASB0, TEMPBSB0,
+RESIAS02: faction 584, flags 6), and RMBLayout makes every factioned flat a StaticNPC - DFU's own rule, kept. MWNPC8b's
+people lane then stood a Morrowind body for each: in TVRNAS02 alone 101 of 112 bodies stood for scenery (TEXTURE.213,
+10021, 205, 204, 211, 214 and the rest), a heap of men at each stall, idle and turning to the eye (`PERSON_TURN_RATE`).
+DFU draws a person only of RDBLayout.NPCFlatArchives (FlatTypes.NPC) and the rest as their billboards; AUDIT WD3 G1 had
+carried that law into the click ray alone. The bowed heads in the second report are likely MW-HEADS1's backwards Breton
+heads (re-baked by MW-HEADS2) - not proven.
 
-## SEAT-WORDS and STANDING-WORDS: what the guild system left unsaid (2026-10-16)
+CHANGED. `personLook` stands no body for a flat outside NPC_FLAT_ARCHIVES (`world/npcFlatArchives.js` isNpcFlat) - the
+editor's 199 with the rest, so MWNPC8b's own marker check folds into it. A quest's person keeps a body whatever FLATS.CFG
+pictures them with (`questPerson`). The StaticNPC list is DFU's still. Pinned in `test/mwnpc8b_streetdungeon.test.js` on
+the vendored pack's TVRNAS02 (113 StaticNPCs, 11 bodies, none for scenery); `fb1015c_stallflats.json` 2, dead;
+`mwnpc8b.json`'s MWNPC8b-marker-bodied re-aimed by content. `04-Characters/Morrowind-NPCs.md` 13b.
 
-ASKED (Mac, "With the new guild system, are there any other descriptions or UI elements we need to further make this
-palatable for players", then of four gaps found on the code - "Seat-locked services", "Standing changes shown",
-"Probation warning", "Tutorial + guide words" - all four).
+## BARE-BOOTS: what imperial chain lacks, iron (5)
 
-FOUND. Online the Roll and the seats changed how a guild plays (Chapters-Arc 3.3-3.5), and four places still spoke as
-DFU does:
+`src/formats/mwItemMap.js` DF_TO_MW_ARMOR_MATERIAL, mwArmorRecords.
 
-- A service a seat's rank opens (the Mages Guild's Teleport at 8, Zenithar's summoning at 8) refused a member at the
-  Roll's 7 with record 3100, which promises a review that online never comes; and a knight asking for the order's house
-  was told DFU's rank-9 record, though online the house reads the book's rank, which stops at 7 (AUDIT CHAP4 E2).
-- The book held at 7 was one chat line, once a hold. Nothing said a guild's standing moved - a quest's +5, a crime's
-  loss through the faction tree, a hall writ's +2 - and after the pace's one line ("rises no further today") nothing said
-  how much was still owed.
-- A probation said "on probation" on the Standing page, and nothing of the review that expels below -10 or ends it.
-- The tutorial's Guilds page said "to rank up, raise the skills it cares about and keep working for it"; no page said the
-  standing's pace or the seats, and the notice board's "How chapters work" named the chairs but never that a guild's own
-  review stops below them.
+FOUND. The Legendary was innocent: "The Wayrest Courier's Treads" is Boots (108) on whatever material the loot made it,
+and DFU's RandomArmorMaterial makes one boot in five Chain. Imperial chain is a cuirass, greaves and coif in Morrowind,
+and the figure's armour (`composeWornArmor`) answered "the classic sprite stands" for the rest - on a figure that has no
+sprite, so the skin stood. Every chain boot, gauntlet and pauldron, Legendary or not. And the material chain was walked
+by material, not by piece: Tribunal attached, Adamantium boots stopped at adamantium (no boots) and never reached ebony.
 
-CHANGED:
+CHANGED. Chain's second token is iron (the NPCs' wardrobe's own stand-in, `wardrobe.js` CHAIN_PIECES), and the chain
+is walked by piece. A departure from MW-D28's recorded judgement ("instead of a wrong metal standing in"), named in
+`mwItemMap.js` and `04-Characters/Morrowind-NPCs.md`. Pinned in `test/fb1015c_bareboots.test.js` (every armour Legendary
+on every base and material, through `applyRarity` and the equip door); `fb1015c_bareboots.json` 2, dead.
 
-- **SEAT-WORDS - the gate.** `guildServiceFlow.js` serviceAccess takes the host's ceiling: online a member refused a
-  service no rank up to it opens but a seat's does is told "Rank 8 offers this. Online, ranks 8 and 9 are chapter seats
-  won by Merit, and a seat's services are at its own chapter's halls, for a member at rank 7. A notice board explains
-  chapters." - at any rank (AUDIT GUILD-WORDS L1-1, L1-5). Offline, for a seat's holder at its own halls (the book read
-  seated) and for a service no rank opens, DFU's answers stand.
-- **SEAT-WORDS - the house.** `knightlyGifts.js` receiveHouseDecision, online: "Online, ranks 8 and 9 are the order's
-  chapter seats, held while won by Merit - and a seat brings no house." A house already given says so, as before.
-- **SEAT-WORDS - the hold.** `scenes/rollNoticeHost.js` (the streaming host's module, HOST-SPLIT): the hold's line
-  stands and pops the new Chapters tutorial page with it; a member of any of the twenty-two coming online is shown the
-  page the first time too (once on the device, always again from Menu > Tutorials).
-- **STANDING-WORDS - the moves.** `net/npcRollTracker.js` hands each adoption's moves to `onStanding`
-  (`npcChapterLaw.js` rollMovesOf: the standing and the owed moved together - a quest's whole reward, a loss the owed
-  absorbed - or the owed paid; at the page's first word, against the kept adoption the Roll still stands at - AUDIT
-  GUILD-WORDS L2-1, L2-2), and the host's module says them in one line: "Standing: The Mages Guild +25 (now 40, 10 more
-  to come)", "The Mages Guild: 10 of what was owed arrived (now 50)". The guilds the character belongs to are named in the
-  player's language, the rest counted (L2-3).
-- **STANDING-WORDS - the owed.** The tracker keeps the Roll's owed in a leaf (`systems/standingOwed.js`; cleared when it
-  stops), and the hall's reputation row says it ("Reputation 72 of 80 (10 more to come)"), as does a note under the
-  guild on the enhanced Standing page ("10 more standing on the way, at most 15 a real day.").
-- **STANDING-WORDS - the probation.** `guilds.js` reviewDaysLeft - the days to the next review on the character's own
-  date - and `guildServiceFlow.js` reviewWarnings: "On probation: your review is at the guild's hall in 8 days or later.
-  Below -10 you are expelled there, below 0 it runs 28 days more, and at 0 or more it ends." (AUDIT GUILD-WORDS L1-3,
-  L1-7: a guild that never expels, and skills short of a member's, have words of their own), and a demotion before it
-  lands (L1-2). First in the hall's line (said even where nothing else is short or no next rank is) and under the guild
-  on the Standing page, both lanes.
-- **The words.** The tutorial's Guilds page gains a point ("Online, a review stops at rank 7: ranks 8 and 9 are chapter
-  seats. See Guild Chapters."), and a new online page, Guild Chapters, says a quest's pace in real days, that no quest
-  costs standing with the guild that gave it (QFAIL-FREE and QSCRIPT-FREE), and the seats. The notice board's guide gains
-  "Your rank" (a review promotes to 7; a chair's services are at its own chapter's halls, for a member at 7) and
-  "Standing" (the pace and the owed, a quest's own guild spared, a hall writ's 2 and a receipt's 1 beyond the pace, 2 more
-  for the day's first receipt where the chapter asks it). Every number is the law's own constant (AUDIT GUILD-WORDS L3-7:
-  the seats' ranks too).
+## LOOT-LOOSE: a looted material goes into the Stores as loose (6)
 
-Twenty-six port strings with SEAT-LINE's two, drafted in-session in the thirteen whole languages and redrafted by the
-audit against each language's glossary (L4). The classic guild window draws nothing new (THE NATIVE-WINDOW RULE): its
-refusals are boxes the classic window already draws, and its hall line stays the enhanced skin's. Offline the Roll, the
-seats and the pace do not run; the review's warnings on the Standing page and the tutorial show on both lanes (L3-8).
+`src/ui/profPages.js` the Stores page's Put in and Put everything in; `src/scenes/world.js` the deposit's order.
 
-THE FOUR HOSTS: the guild popup's gate, house and line are worldModes.js's (openGuildService, openServiceFlow) - WIRED;
-the Roll's tracker is world.js's alone - WIRED through `rollNoticeHost.js`; exterior.js, the offline fixed city, keeps
-no Roll and constructs no GuildServiceWindow; dungeonContext.js stands no guild hall. The Standing page and the notice
-board are windows every host opens. Pinned by `test/fb1015c_guildwords.test.js` (15, rewritten by the audit);
-`tools/mutants/fb1015c_guildwords.json` (72, all dead). PINS MOVED (AUDIT GUILD-WORDS L3-11, the whole list):
-`test/chap4b_seats.test.js`'s gate pin reads the ceiling handed on, its hold pin reads the module, and its review-ceiling
-pin is held to the review's own line (the gate, the house and the hall's line now carry the ceiling too, and the loose
-pin let CHAP4B-WM-CEILING live); `test/fb1015_promonow.test.js` and `test/fb1015c_seatline.test.js`'s host pins read the
-date and the review's book handed on; `test/guildrep.test.js`'s book reads the owed and the warnings, and its menu pin the
-character's date; `test/plainui.test.js`'s guide reads the rank and the standing; `test/l10n3e_names.test.js` counts
-`rollNoticeHost.js`'s name; `test/audit_chap1.test.js`'s kept record carries its owed. Mutants re-aimed: CHAP4B-WM-SEATED,
-SEAT-LINE-the-reputation-always-said, L10N3d2's serviceMembersOnly, and the audit's nine (`Audit-Guild-Words.md`).
+FOUND. Law 3 as written (`06-Systems/Materials-Bag.md` 5): the service counts only what it handed out, and a looted
+unit - rolled on the client - is held and never counted, so the page named it "unstorable" and Put in moved nothing.
+The third report of it (FIELD BUGS 2026-10-09c, 2026-10-09f, 2026-10-13e), each leaving the call to Mac.
+
+CHANGED (Mac, asked: "Store as loose"). Put in and Put everything in take what is held past the count as loose - BAG-
+CRAFT's origin, by its `work` order: the counted first by `all`, then the rest by `work`. Loose units serve every
+crafting station and never a writ, the guild Stores or a Drakes sale, so nothing past the count reaches the economy. The
+card says "N loose". No service change. Pinned in `test/fb1009c_uncounted.test.js` (PIN MOVED: Put in had been shut);
+`fb1009c_uncounted.json` 11, dead. `06-Systems/Materials-Bag.md` 4.
+
+## QUEST-FOE-WALL: a body inside a pillar to the ceiling is freed (7)
+
+`src/characters/foeSpacing.js` lodgedIn.
+
+FOUND. B0B70Y16 Dragonslayer places its Dragonling at a random QuestSpawn marker, as DFU's GetSiteMarker does, and the
+port's stand is DFU's (GameObjectHelper.CreateEnemy at the marker; no free-spot search - DFU's controller pushes out
+of an overlap on its first move). CRATE-FREE (FIELD BUGS 2026-10-04d) frees a body stood inside a model, but asked a lid
+within LODGE_REACH over the knee: a pillar running to the ceiling (uncapped, or capped past the reach) holds a body for
+good - the collider's push is facing-blind - and measured, a flyer stood in a 1 m, 6 m pillar was still in it after ten
+seconds of chase. No ARENA2 here: whether the Elyrrya Tradition's marker stands in a pillar is not measured; the other
+reading (Meaner Monsters' 2.5x Dragonling sprite over a 0.35 m capsule, half the billboard behind a wall it stands by)
+is DFU's too and is not changed.
+
+CHANGED. With no lid in reach, a body is lodged when every bearing meets a face's back - inside a column. Pinned in
+`test/fb1004d_cratefree.test.js` (the column, the capped pillar, beside it, a sleeve open at both ends, the free, and a
+tall crate in a corner); `fb1004d_cratefree.json` 24, dead (two re-aimed by content, two new).
+
+## BENCH-ARROWS: a Twig fletches two arrows, as written (8)
+
+`src/systems/fletching.js` fletchYield.
+
+FOUND. FLETCH's law is a piece's weight over the Arrow's 0.25 kg - Twigs two, a Pine Branch four, a Wood Bundle ten,
+"the workbench's twenty stay the better trade" (`05-Combat/Arrow-Supply.md` 3). `templateByIndex` answers a mod's patch
+first, and Roleplay & Realism: Items (on by default, forced online) makes the Arrow 0.1 kg: a Twig was five arrows, four
+the bench's twenty without its plank and its ingot. The suite never registered the mod's patches.
+
+CHANGED. The Arrow's weight is the classic Arrow's (`ITEM_TEMPLATES`). The bench is untouched. Pinned in
+`test/arrowsupply.test.js` with the mod's patches registered; `arrowsupply.json` 52, dead.
+
+## QUEST-RESIDENCE: a home a quest names says the quest's name (9)
+
+`src/systems/onlineHomes.js` homeDoorTitle; `src/scenes/worldModes.js` the door's plaque and the info click.
+
+FOUND. N0B00Y09 "Research Notes" sets its scholar in `Place _scholar_home_ remote house` - a nearby town's house, named
+"The <surname> Residence". Before QUEST-HOME (main, 2026-10-15) `isPlayerHome` asked `homeAt`, which knew no town the
+page had not asked, so the pick could land in another player's online home - whose door says its owner's name over the
+building's. No door in Tambeth said "The Hawkley Residence". QUEST-HOME's re-pick moves such a site on the next online
+boot (the residence takes a new name - the journal says it); it cannot move one in a town with no other house, or one
+the player has stood in. Not reproduced on the reporter's save.
+
+CHANGED. A home a quest still names says the quest's name first: "The Hawkley Residence (Aldric's home)". Pinned in
+`test/fb1015c_questresidence.test.js`; `fb1015c_questresidence.json` 3, dead; `home1.test.js`'s hover pin moved.
+
+## MW-AXES: the Morrowind axes cross Daggerfall's names (10)
+
+`src/formats/mwFirstPerson.js` DF_TO_MW_WEAPON, dfWeaponShape.
+
+FOUND. Daggerfall's Battle Axe is its one-hander and its War Axe its two-hander (DFU's ItemTemplates; WEAPON_HANDS 127
+'Either', 128 'Both') - the reverse of every later game. DF_TO_MW_WEAPON matched the names (War_Axe -> AxeOneHand,
+Battle_Axe -> AxeTwoHand), and the type picks the mesh, the icon, the clips, the grip and the sheath: a War Axe swung
+one-handed beside a torch, a Battle Axe took both hands.
+
+CHANGED. Battle_Axe -> AxeOneHand (Morrowind's war axes), War_Axe -> AxeTwoHand (its battle axes); the shape tie-break
+crosses the two names. Every row now holds the hands its weapon has, the Flail the one declared fudge. A material
+Morrowind has no two-handed axe in falls back to the type's first record (off-metal) - not measured without the
+retail data; the Wood-Axe (128) now swings two-handed on the Morrowind body, as its rule says. Pinned in
+`test/fb1015c_mwaxes.test.js`; `fb1015c_mwaxes.json` 3, dead; `fparm`, `daedric_model_shape` and `mwattackclip` pins
+moved. `Port-Ledger.md` MW-D9's row corrected.
+
+## BOULDER-GLINT: a boulder's glint stands on its stones (11)
+
+`src/scenes/mineHost.js` BOULDER_LIFT.
+
+FOUND. A node's act - its face and its glint (`ui/profReticle.js`) - stands at the node's aim point, its foot plus its
+`lift`. A boulder's lift was half its ROCK's height (to 1.2 m), set over the loose stones the player sees as the boulder:
+the face stood 30 degrees over the stones at a metre and a half, against 8.7 for a vein. Not changed, recorded: a
+boulder's stones stand off the rock's box (`rockFoot`), which for a turned rock can be far from the rock as it shows.
+
+CHANGED. A boulder's lift is BOULDER_LIFT, 0.4 m - the stones' scale against a vein's 0.5 over its ore. The look still
+meets the node up to its glow's top. Pinned in `test/fb1001_mining.test.js` (NODE-AIM's lift pin moved);
+`fb1015c_boulderglint.json` 1, dead.

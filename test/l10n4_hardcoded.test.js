@@ -209,6 +209,7 @@ const HARDCODED = {
   'src/render/volumetricClouds.js': 2,
   'src/render/waterBedGlsl.js': 1,
   'src/render/waterSurface.js': 1,
+  'src/render/weaponGlowGlsl.js': 1,   // AUDIT WEAPON-GLOW SPR-1: GLOW_FIELD_VS, the field bake's vertex shader - GLSL the scan reads as prose (`in vec2`), gateVeil.js's same line
   'src/render/windWisps.js': 2,
   'src/render/windfallParticles.js': 2,
   'src/scenes/arenaOnline.js': 1,
@@ -340,7 +341,7 @@ const HARDCODED = {
   'src/systems/foragingLaw.js': 64,
   'src/systems/gateOmen.js': 10,
   'src/systems/gateSpoils.js': 3,
-  'src/systems/gilded.js': 5,
+  'src/systems/gilded.js': 15,   // GILDED2: the Dragonfire Oath's and the Sunken Sovereign's names, powers, lore and hints - written as the Hourlock's are
   'src/systems/gravestoneLore.js': 16,
   'src/systems/guilds.js': 3,
   'src/systems/handheldTorches.js': 12,
@@ -642,7 +643,7 @@ const HARDCODED = {
   'src/ui/pickupFeed.js': 1,
   'src/ui/pixelDial.js': 3,
   'src/ui/pixelifyFive.js': 2,
-  'src/ui/playerBadge.js': 23,
+  'src/ui/playerBadge.js': 24,   // SERPENT5: The Maelstrom's word, beside the other auras'
   'src/ui/playerHistory.js': 1,
   'src/ui/plusPad.js': 19,
   'src/ui/plusPadBinds.js': 30,

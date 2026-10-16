@@ -588,7 +588,7 @@
   {
     "name": "SEAT-WORDS-the-gate-without-the-ceiling",
     "file": "src/scenes/worldModes.js",
-    "old": "service, { rankCeiling: host.rollRankCeiling?.() ?? null });   // CHAP4b",
+    "old": "service, { rankCeiling: host.rollPace?.(guild.factionId)?.book ?? null });   // CHAP4b",
     "new": "service);   // CHAP4b",
     "tests": [
       "test/fb1015c_guildwords.test.js"
@@ -597,7 +597,7 @@
   {
     "name": "SEAT-WORDS-the-house-without-the-ceiling",
     "file": "src/scenes/worldModes.js",
-    "old": "receiveHouseDecision(kept, { rankCeiling: host.rollRankCeiling?.() ?? null,",
+    "old": "receiveHouseDecision(kept, { rankCeiling: host.rollPace?.(guild.factionId)?.book ?? null,",
     "new": "receiveHouseDecision(kept, {",
     "tests": [
       "test/fb1015c_guildwords.test.js"
@@ -606,8 +606,8 @@
   {
     "name": "STANDING-WORDS-the-hall-without-the-date",
     "file": "src/scenes/worldModes.js",
-    "old": "now: ownDate(), book: memberships }) : null),",
-    "new": "book: memberships }) : null),",
+    "old": "pace, now: ownDate(), book: memberships }) : null; },",
+    "new": "pace, book: memberships }) : null; },",
     "tests": [
       "test/fb1015c_guildwords.test.js"
     ]
@@ -615,8 +615,8 @@
   {
     "name": "STANDING-WORDS-the-hall-without-the-book",
     "file": "src/scenes/worldModes.js",
-    "old": "now: ownDate(), book: memberships }) : null),",
-    "new": "now: ownDate() }) : null),",
+    "old": "pace, now: ownDate(), book: memberships }) : null; },",
+    "new": "pace, now: ownDate() }) : null; },",
     "tests": [
       "test/fb1015c_guildwords.test.js"
     ]

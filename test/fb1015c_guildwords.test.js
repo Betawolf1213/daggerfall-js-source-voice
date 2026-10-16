@@ -293,9 +293,9 @@ test('STANDING-WORDS: the Standing page draws the review\'s warnings and the owe
 
 test('SEAT-WORDS / STANDING-WORDS: the hosts - the gate and the house take the Roll\'s ceiling, the hall\'s line the character\'s date and the review\'s book, the streets\' tracker the module\'s doors through a lazy chat door and no door of its own over them (mutants: each seam, a door overridden)', () => {
   const wm = src('src/scenes/worldModes.js');
-  assert.ok(wm.includes('const access = serviceAccess(guild, membershipOf(seated(), guild), service, { rankCeiling: host.rollRankCeiling?.() ?? null });'));
-  assert.ok(wm.includes('const decision = receiveHouseDecision(kept, { rankCeiling: host.rollRankCeiling?.() ?? null,'));
-  assert.ok(wm.includes('rankNeedsLines(playerEntity, guild, seated(), store, { rankCeiling: host.rollRankCeiling?.() ?? null, now: ownDate(), book: memberships })'));
+  assert.ok(wm.includes('const access = serviceAccess(guild, membershipOf(seated(), guild), service, { rankCeiling: host.rollPace?.(guild.factionId)?.book ?? null });'));
+  assert.ok(wm.includes('const decision = receiveHouseDecision(kept, { rankCeiling: host.rollPace?.(guild.factionId)?.book ?? null,'));
+  assert.ok(wm.includes('rankNeedsLines(playerEntity, guild, seated(), store, { rankCeiling: pace?.book ?? null, pace, now: ownDate(), book: memberships })'));
   const w = src('src/scenes/world.js');
   const start = w.indexOf('const rollTracker = onlineOn && realmSession ? createRollTracker({');
   const call = w.slice(start, w.indexOf('}) : null;', start));
