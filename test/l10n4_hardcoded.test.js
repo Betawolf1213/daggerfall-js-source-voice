@@ -116,7 +116,7 @@ const HARDCODED = {
   'src/net/professionLaw.js': 109,
   'src/net/raidClaims.js': 5,
   'src/net/realmGoldLaw.js': 1,
-  'src/net/realmTradeLaw.js': 23,
+  'src/net/realmTradeLaw.js': 22,
   'src/net/recipeLaw.js': 109,
   'src/net/relayCfg.js': 3,
   'src/net/renown.js': 2,

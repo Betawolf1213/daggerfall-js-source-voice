@@ -22,7 +22,7 @@ import { seatRealm, freshSave } from './realmSeat.mjs';
 import { DUPE_GRACE_S } from '../server-account/src/ledger.js';
 import { holdOf, lawCountOf, LAW_HOLD_S, LAW_HOLD_REPEAT_S, LAW_FADE_S } from '../server-account/src/verdict.js';
 import { STRIKES_FOR_TIMED } from '../server-account/src/judge.js';
-import { tradeHeldNotice, ledgerKeyOf, carriedLedgerKeys, piecesByKey } from '../src/systems/itemIds.js';
+import { tradeHeldNotice, ledgerKeyOf, carriedLedgerKeys, carriedPieces, piecesByKey } from '../src/systems/itemIds.js';
 import { tradeHeldUntilNotice, heldUntilText } from '../src/net/realmTradeLaw.js';
 import { piecesLockedNotice, wireRealmHolds } from '../src/scenes/realmHoldHost.js';
 import { itemLongName } from '../src/systems/itemInfo.js';
@@ -255,21 +255,27 @@ test('AUTO-HOLD shelf: the room\'s word never lands back a piece its reader carr
   const shelf = { items: [] };
   const ctx = { shelves: [shelf], containers: [] };
   const word = [{ k: 'shelf:0', r: [wire(withId(k)), wire(plain), wire(withId('8b8b8b8b8b8b8b8b', 12)), wire(withId('8b8b8b8b8b8b8b8b', 12))], d: 1 }];
-  const carried = carriedLedgerKeys({ items: [withId(k)] });
-  assert.deepEqual([...carried], [k]);
+  const carried = carriedPieces({ items: [withId(k)] });
+  assert.deepEqual([[...carried.keys], carried.keyOf], [[k], ledgerKeyOf]);
+  assert.deepEqual([...carriedLedgerKeys({ items: [withId(k)], wagonItems: [withId('9c9c9c9c9c9c9c9c', 12)] })], [k, '9c9c9c9c9c9c9c9c']);
   assert.equal(applyInteriorLoot(ctx, word, { carried }), 1);
   assert.deepEqual(shelf.items.map(ledgerKeyOf), [null, '8b8b8b8b8b8b8b8b'], 'mine not back; the twice-named once; the plain piece as it was');
   assert.equal(shelf.items[0].templateIndex, 113);
-  // nothing carried: the word lands whole, twice-named once
-  applyInteriorLoot(ctx, word);
+  // nothing carried: the word lands whole, twice-named once; no rule handed in, as it came
+  applyInteriorLoot(ctx, word, { carried: carriedPieces({}) });
   assert.deepEqual(shelf.items.map(ledgerKeyOf), [k, null, '8b8b8b8b8b8b8b8b']);
+  applyInteriorLoot(ctx, word);
+  assert.deepEqual(shelf.items.map(ledgerKeyOf), [k, null, '8b8b8b8b8b8b8b8b', '8b8b8b8b8b8b8b8b']);
   // the memory's landing hands it on
   const shelf2 = { items: [] };
   assert.equal(applyInteriorShared({ shelves: [shelf2], containers: [], actions: null }, { locationKey: 'L', stamp: 'x', world: { loot: word, actions: [] } }, { locationKey: 'L', stamp: 'y', carried }), true);
   assert.deepEqual(shelf2.items.map(ledgerKeyOf), [null, '8b8b8b8b8b8b8b8b']);
-  assert.deepEqual(withoutCarried([withId(k), withId(k)], null).length, 1);
+  assert.equal(withoutCarried([withId(k), withId(k)], carriedPieces(null)).length, 1);
+  assert.equal(withoutCarried([withId(k), withId(k)], null).length, 2);
   const modes = readFileSync(new URL('../src/scenes/worldModes.js', import.meta.url), 'utf8');
-  assert.equal(modes.match(/carried: carriedLedgerKeys\(playerEntity\)/g)?.length, 2, 'both landings');
-  assert.match(modes, /applyInteriorShared\(interiorCtx, shared, \{ \.\.\._intShared, today: stockedToday\(\), carried: carriedLedgerKeys\(playerEntity\) \}\)/);
-  assert.match(modes, /applyInteriorLoot\(interiorCtx, data\.l, \{ seen: _intShared\.seen, openKey: _intShared\.openKey, today: stockedToday\(\), unreadable: _intShared\.unreadable, carried: carriedLedgerKeys\(playerEntity\) \}\)/);
+  assert.equal(modes.match(/carried: carriedPieces\(playerEntity\)/g)?.length, 2, 'both landings');
+  assert.match(modes, /applyInteriorShared\(interiorCtx, shared, \{ \.\.\._intShared, today: stockedToday\(\), carried: carriedPieces\(playerEntity\) \}\)/);
+  assert.match(modes, /applyInteriorLoot\(interiorCtx, data\.l, \{ seen: _intShared\.seen, openKey: _intShared\.openKey, today: stockedToday\(\), unreadable: _intShared\.unreadable, carried: carriedPieces\(playerEntity\) \}\)/);
+  // the pure half never loads the item law: its registration changes what every reader of the wire lands
+  assert.doesNotMatch(readFileSync(new URL('../src/world/interiorShared.js', import.meta.url), 'utf8'), /from '\.\.\/systems\/(itemIds|itemLaw)\.js'/);
 });

@@ -17974,6 +17974,31 @@
   "tr": "69a9a2a78334",
   "by": "claude-in-session"
  },
+ "realm.locked.listMore": {
+  "en": "a41682d6025c",
+  "tr": "796cb7e56f62",
+  "by": "claude-in-session"
+ },
+ "realm.locked.many": {
+  "en": "e46073bcc552",
+  "tr": "b182a6199408",
+  "by": "claude-in-session"
+ },
+ "realm.locked.manyNamed": {
+  "en": "8b5beec48170",
+  "tr": "8f1b5c056b72",
+  "by": "claude-in-session"
+ },
+ "realm.locked.named": {
+  "en": "77ff36082a76",
+  "tr": "22241a2b2605",
+  "by": "claude-in-session"
+ },
+ "realm.locked.one": {
+  "en": "faa64d578f44",
+  "tr": "7d485b937e5b",
+  "by": "claude-in-session"
+ },
  "rest.exhausted.fighting": {
   "en": "37f9250e69af",
   "tr": "b2a6c3db87e0",

@@ -183,8 +183,8 @@
   {
     "name": "AUTOHOLD-the-piece-unnamed",
     "file": "src/scenes/realmHoldHost.js",
-    "old": "    const t = piecesLockedNotice(piecesByKey(entity, keys).map((it) => itemLongName(it)), keys.length);",
-    "new": "    const t = piecesLockedNotice([], keys.length);",
+    "old": "    const text = piecesLockedNotice(piecesByKey(entity, keys).map((it) => itemLongName(it)), keys.length);",
+    "new": "    const text = piecesLockedNotice([], keys.length);",
     "tests": [
       "test/autohold.test.js"
     ]
@@ -201,7 +201,7 @@
   {
     "name": "AUTOHOLD-the-shelf-lands-mine",
     "file": "src/world/interiorShared.js",
-    "old": "  const keys = new Set(carried ?? []);",
+    "old": "  const keys = new Set(carried.keys ?? []);",
     "new": "  const keys = new Set();",
     "tests": [
       "test/autohold.test.js"
@@ -237,7 +237,7 @@
   {
     "name": "AUTOHOLD-the-host-hands-nothing",
     "file": "src/scenes/worldModes.js",
-    "old": "      const ok = applyInteriorShared(interiorCtx, shared, { ..._intShared, today: stockedToday(), carried: carriedLedgerKeys(playerEntity) });",
+    "old": "      const ok = applyInteriorShared(interiorCtx, shared, { ..._intShared, today: stockedToday(), carried: carriedPieces(playerEntity) });",
     "new": "      const ok = applyInteriorShared(interiorCtx, shared, { ..._intShared, today: stockedToday() });",
     "tests": [
       "test/autohold.test.js"
@@ -246,7 +246,7 @@
   {
     "name": "AUTOHOLD-the-wire-word-unhanded",
     "file": "src/scenes/worldModes.js",
-    "old": ", unreadable: _intShared.unreadable, carried: carriedLedgerKeys(playerEntity) }) : 0);",
+    "old": ", unreadable: _intShared.unreadable, carried: carriedPieces(playerEntity) }) : 0);",
     "new": ", unreadable: _intShared.unreadable }) : 0);",
     "tests": [
       "test/autohold.test.js"

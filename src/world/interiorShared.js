@@ -42,7 +42,6 @@ import { sharedRecord, validActionRecord } from './actionSystem.js';
 import { validLootList, LOOT_LIST_MAX } from '../systems/loot.js';
 import { peerHanded } from '../systems/peerWord.js';   // SS3: a bound piece in a room's container never lands; HACKED-GOLD: nor a letter of credit (systems/peerWord.js)
 import { mintSharedStamp } from '../net/wire.js';   // AUDIT WORLD6a B7: one stamp mint at the wire, twelve digits always
-import { ledgerKeyOf } from '../systems/itemIds.js';   // AUTO-HOLD: a piece the reader carries never lands back
 
 /** The room's own key for a building - the SAME spelling roomKeyFor mints for the relay room (the map id unsigned,
  *  AUDIT WORLD34 A2), so the memory's `locationKey` and the room agree by construction. */
@@ -117,12 +116,15 @@ export function interiorLootRecords(ctx, keys, tooBig = new Set()) {
   return out;
 }
 
-/** AUTO-HOLD (2026-10-16, bible/06-Systems/Integrity-Arc.md): `items` without a piece the ledger follows whose key is in
- *  `carried` (the reader's own - systems/itemIds.js carriedLedgerKeys) or repeats an earlier one's. */
+/** AUTO-HOLD (2026-10-16, bible/06-Systems/Integrity-Arc.md): `items` without a piece the ledger follows whose key is
+ *  among `carried.keys` (the reader's own - systems/itemIds.js carriedPieces) or repeats an earlier one's. The key rule
+ *  comes in with them (`carried.keyOf`, itemIds.js ledgerKeyOf): this half never imports the item law, whose
+ *  registration (systems/loot.js setItemLaw) changes what every reader of the wire lands. No `carried`: as it came. */
 export function withoutCarried(items, carried = null) {
-  const keys = new Set(carried ?? []);
+  if (typeof carried?.keyOf !== 'function') return items;
+  const keys = new Set(carried.keys ?? []);
   return items.filter((it) => {
-    const k = ledgerKeyOf(it);
+    const k = carried.keyOf(it);
     if (!k) return true;
     if (keys.has(k)) return false;
     keys.add(k);

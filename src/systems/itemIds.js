@@ -57,6 +57,10 @@ export function carriedLedgerKeys(/** @type {any} */ entity) {
   return out;
 }
 
+/** AUTO-HOLD: what a room's word needs to keep the reader's own pieces off a shelf (world/interiorShared.js
+ *  withoutCarried) - the keys it carries, and the rule that keys a piece. */
+export const carriedPieces = (/** @type {any} */ entity) => ({ keys: carriedLedgerKeys(entity), keyOf: ledgerKeyOf });
+
 /** AUTO-HOLD: the pieces in the character's own lists that `keys` name, each once - for the locked pieces' notice. */
 export function piecesByKey(/** @type {any} */ entity, /** @type {string[]} */ keys) {
   const want = new Set(keys), out = [];
