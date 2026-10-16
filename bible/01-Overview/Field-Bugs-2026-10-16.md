@@ -15,6 +15,7 @@ main's `7e0424e0`.
 | 8 | "market stalls all shifted into the ground/walls"; "at least the lawn decoration owns" | TEMPLE-STEPS set the stall's box and scale right but kept a guessed shape inside it: a counter 0.75 m high under goods laid for 1.04 m, the awning's edge at 1.84 m, a bench where 20 of 30 stall-keepers stood, the second mesh given a counter over its goods; and its new origins moved every yard's saved stall 2 m back into its wall and grew saved boulders 2-8x | fixed (STALL-SHAPE) |
 | 9 | "you steal something from the shelf and can sell it back to an NPC, and he'll put the item back on the shelf again, and it just goes in a circle"; "when you're sent to prison, all the stolen items stay with you" | nothing marked a piece stolen: a sale landed the very record back on the shelf (T2), where a shut shop's shelf - no roll - gave it up again that night; and no court exit touched an item | fixed (STOLEN-GOODS) |
 | 10 | "Friend invivible and randomly popping up"; "Partied players popping in and out randomly after leaving tombs at graveyard ... also partied players inside tombs are invisible for a time" | every place change is a new relay room whose socket asked for its identity token only as it opened - a mint on the wire (seconds) between the door and the hello, paid going in past the reuse minute and always coming out (the cell outside spent by the token that left it); a hello sent tokenless because its token came late waited out its backoff after the token arrived | fixed (DOOR-TOKEN) |
+| 11 | "If you just sit near the wall between the shelves, when you fail to steal something, the guard will come running, but they simply can't reach you because they run into the wall instead of going through the door" | the watch called into a building walked the classic motor - straight at the player, along the first wall - and only the dungeon baked a navmesh; a partition held them for the whole crime | fixed (INDOOR-WATCH) |
 
 ## FIRST-PICK: a change on its way gates a change, never a rank's first choice (1)
 
@@ -447,3 +448,68 @@ What the reporter is owed: your party mates were never gone. Every door into a t
 connection that waited a few seconds for the account server to vouch for you, and for those seconds neither side could
 see the other. The game now asks for that pass while the tomb loads and while you walk back to its door, so you appear to
 each other as you step through.
+
+## INDOOR-WATCH: the watch called into a building walks round to the player, and a wall never keeps it out (11)
+
+`src/scenes/interiorNav.js` (new): createInteriorNav, doorsOutOfSoup, feetAnchors, polyUnder, noRouteSpot,
+huntsThePlayer; `src/ai/enhancedMotor.js` EnhancedEnemyAI.standAt; `src/scenes/cityGuards.js` createCityGuards' `nav`,
+spawnGuardAt's motor; `src/scenes/exteriorFoes.js` createExteriorFoes' `nav`, spawnFoe's motor; `src/scenes/worldModes.js`
+the module's wiring (makeInteriorFoes, makeInteriorGuards, the building's mount, the interior frame, exitInteriorNow,
+forceExitToExterior).
+
+THE REPORT. "If you just sit near the wall between the shelves, when you fail to steal something, the guard will come
+running, but they simply can't reach you because they run into the wall instead of going through the door. And you can
+sit like that for as long as you like" (the loop it fed is STOLEN-GOODS, above).
+
+FOUND. The watch called into a building (cityGuards.js's indoor arm, PlayerEntity.SpawnCityGuards) stands 2-5 men at the
+lowest outer door and built the classic `EnemyAI` over the room's collider, as did the building's own foes
+(makeInteriorFoes): it steers straight at the player and slides along the first wall it meets. A navmesh existed, but only
+the dungeon baked one (ENHANCED AI 3b-4); "ENHANCED AI 5 - exteriors and interiors ... RMB interiors" was still ahead
+(`12-Enhanced-AI/Enhanced-AI-Arc.md`), and `enhancedAI4.test.js` pinned that "the classic one is stopped by [the
+divider]". Measured on the reporter's shop built as a real Collider (a 12 x 12 m room, a partition with a 1.2 m doorway,
+shelves against its far face, the player between two), the real watch pool spawned through its real indoor arm: in 30 s
+the five watchmen pressed against the partition, none went through the doorway, none saw the player, none swung - the
+nearest 1.41 m away, through the wall.
+
+CHANGED (the owner: "Stop trying to match DFU"):
+- **The room's mesh.** `interiorNav.js` is the mode machine's module: one instance, mounted with each building at the
+  player's arrival and released at both teardowns; its frame runs before either pool steps, and both pools receive it as
+  `nav` (the bake as a thunk, and the routes' world - the two things the dungeon hands its foes). With the Enhanced AI
+  switch on (forced on online), `createCityGuards` and `createExteriorFoes` build `EnhancedEnemyAI` when a host hands
+  them a mesh, as the dungeon's construction sites do; the street's pools hand none.
+- **The bake** is the dungeon's `NavClient` with the dungeon's door rule (unlocked action doors left out of the soup),
+  anchored on the arrival, the room's ways in, each door's watch spot (`indoorWatchSpot`), and the player's feet and the
+  rings round them a straight knee-height line reaches. Asked only on need (a building nobody fights in bakes nothing),
+  never cached (a 30 x 20 m two-storey room of 9,652 triangles bakes in 0.37 s on the main thread; thousands of
+  buildings would each leave an IndexedDB entry nothing evicts); asked again when a door's lock changes the soup, and when
+  the hunted player stands off every island the mesh kept (at most four times a room); one bake at a time, a request made
+  meanwhile held and baked as it lands (ASYNC NEVER DROPS).
+- **NO ROUTE.** A locked inner door or a ladder can leave the player's room an island the routes cannot reach: a
+  watchman of the crime's pursuit whose feet have stood on another island for 2 s is moved onto the player's island at
+  the spot nearest where he stood (the far side of what stopped him, a body's width into the floor; never within 1 m of
+  the player or 0.8 m of another watchman; never in or on anything set down since the bake), and walks the rest
+  (`EnhancedEnemyAI.standAt` keeps the pursuit, drops the old route, fall anchor and detour). Only the watch is moved - a
+  monster a locked door holds is a door that held; the law's answer is not.
+- Measured on the same shop: the room baked 0.53 s after the crime, the first watchman in melee reach with the player in
+  sight at 4.2 s, the five swinging 37 times in 30 s, nobody moved; with a locked door in the doorway, all five moved past
+  the partition at 2.7 s and swung 26 times.
+
+THE FOUR HOSTS: worldModes.js - WIRED (five code lines, createWorldModes 7,072 -> 7,077 under its 7,159; the `nav:` dep
+rides lines the pools already had); world.js and exterior.js - their buildings are the mode machine's, covered; their
+street pools hand no mesh and still walk the classic motor (FLAGGED); dungeonContext.js - its own bake since 3b,
+unchanged. Pinned by `test/fb1016_indoorwatch.test.js` (8, over the real watch pool, foe pool, module, NavClient and a
+real Collider, and the host's wiring by source); `tools/mutants/fb1016_indoorwatch.json` (70, all dead). PINS MOVED:
+`enhancedAI4.test.js` (AUDIT 55's reach pin - interiorNav.js, cityGuards.js and exteriorFoes.js join the switch's
+readers, each behind `nav &&`; AI 4's host pin - each pool's one construction site chooses by the switch),
+`audit63_world_actions.test.js` (the construction site's new spelling), `incident_ceiling_bats.test.js` (the exterior
+pool's regex; the watch's epoch-guard order pin now requires the guard be found at all), `sailingcabins.test.js` (the exit
+harness's scope carries `interiorNav`); their own mutants (6, INDOOR-WATCH-MOVED-*) dead.
+
+FLAGGED, not taken: the streamed world's half of ENHANCED AI 5 (the street watch and street foes still walk the classic
+motor); offline with the switch off, the classic motor's wall stands; decor placed or removed during a visit (DECOR1c,
+BASE-HIDE) does not re-bake the mesh (a moved watchman never lands in or on it, but a route may run through one); a
+watchman can be moved within the player's view; `doorsOutOfSoup` spells the rule the dungeon writes inline on its bake
+line (one home is a later slice's); nothing was seen in a real RMB interior (no ARENA2 in the container).
+
+What the reporter is owed: the watch now walks round through the doorway to reach you between the shelves, and if a
+locked door or a ladder keeps them out they come in anyway after two seconds. Hiding behind a wall no longer works.
