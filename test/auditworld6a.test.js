@@ -85,8 +85,8 @@ test('AUDIT WORLD6a A2/B2/A3: the stocked day is projected like the list - refus
   assert.equal(needsRestock(ctx.shelves[1], today), false);
   assert.equal(applyInteriorLoot(ctx, [{ k: 'shelf:0', r: [], d: 20.9 }], { seen }), 1, 'without a today (a test\'s bare context) the bound is the number\'s shape alone');
   assert.equal(ctx.shelves[0].stockedDate, 20, 'floored');
-  assert.match(rd('src/scenes/worldModes.js'), /applyInteriorShared\(interiorCtx, shared, \{ \.\.\._intShared, today: stockedToday\(\) \}\)/, 'the mode hands today in, for the memory');
-  assert.match(rd('src/scenes/worldModes.js'), /applyInteriorLoot\(interiorCtx, data\.l, \{ seen: _intShared\.seen, openKey: _intShared\.openKey, today: stockedToday\(\), unreadable: _intShared\.unreadable \}\)/, 'and for an act (AUDIT SETS M2: with the building\'s unreadable set)');
+  assert.match(rd('src/scenes/worldModes.js'), /applyInteriorShared\(interiorCtx, shared, \{ \.\.\._intShared, today: stockedToday\(\), carried: carriedPieces\(playerEntity\) \}\)/, 'the mode hands today in, for the memory');   // PIN MOVED (AUTO-HOLD): and the pieces I carry beside it
+  assert.match(rd('src/scenes/worldModes.js'), /applyInteriorLoot\(interiorCtx, data\.l, \{ seen: _intShared\.seen, openKey: _intShared\.openKey, today: stockedToday\(\), unreadable: _intShared\.unreadable, carried: carriedPieces\(playerEntity\) \}\)/, 'and for an act (AUDIT SETS M2: with the building\'s unreadable set)');   // PIN MOVED (AUTO-HOLD): and the pieces I carry beside it
 });
 
 test('AUDIT WORLD6a B3/B4/B5: the law admits exactly what the game names (no zero, no leading zero, in either number); a building\'s memory has its own cap at the relay and at the client; the session spells a negative key as the memory does', async () => {

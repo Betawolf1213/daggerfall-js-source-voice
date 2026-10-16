@@ -56,7 +56,8 @@
   {
     "name": "AUDIT-CRAFT-HOLD-record-unjudged-refused",
     "file": "server-account/src/realm.js",
-    "old": "    WHERE p.provenance = ?1 AND r.held IS NOT NULL`).bind(provenance, playerId).first();\n  return row?.held ? { error: 'trade-held', held: row.held } : null;",
+    "note": "AUDIT AUTO-HOLD (PIN MOVED): re-aimed by content - the hold asked through realm.js holdStandsSql (a dead maker's timed hold run out stands no more)",
+    "old": "    WHERE p.provenance = ?1 AND ${holdStandsSql('r', '?3')}`).bind(provenance, playerId, Math.floor(Date.now() / 1000)).first();\n  return row?.held ? { error: 'trade-held', held: row.held } : null;",
     "new": "    WHERE p.provenance = ?1`).bind(provenance, playerId).first();\n  return row ? (row.held ? { error: 'trade-held', held: row.held } : { error: 'record-unjudged' }) : null;",
     "tests": [
       "test/crafthold.test.js"
@@ -121,7 +122,7 @@
   {
     "name": "CRAFT-HOLD-account-version-unmoved",
     "file": "server-account/src/service.js",
-    "old": "export const ACCOUNT_VERSION = 'acct140';",
+    "old": "export const ACCOUNT_VERSION = 'acct141';",
     "new": "export const ACCOUNT_VERSION = 'acct123';",
     "tests": [
       "test/legacy7_service.test.js",
@@ -132,7 +133,7 @@
   {
     "name": "CRAFT-HOLD-wrangler-version-unmoved",
     "file": "server-account/wrangler.toml",
-    "old": "ACCOUNT_VERSION = \"acct140\"\n",
+    "old": "ACCOUNT_VERSION = \"acct141\"\n",
     "new": "ACCOUNT_VERSION = \"acct123\"\n",
     "tests": [
       "test/realm1.test.js",

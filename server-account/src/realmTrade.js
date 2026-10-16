@@ -31,7 +31,7 @@
 
 import { REALM_ID_RE, LEASE_RE, mintObjectKey, dropObjects, dropIfUnnamed, realmSaveTextOf, holdRefusal } from './realm.js';
 import { wealthOf, ledgerPieces, classicCount } from './judge.js';   // INT5: the trade's wealth, witnessed; INT4: the pieces it moves
-import { piecesRefusal, ledgerMoves } from './ledger.js';   // INT4: a piece a side may give, and the ledger moved with it
+import { piecesRefusal, ledgerMoves, leavingKeys } from './ledger.js';   // INT4: a piece a side may give, and the ledger moved with it
 import { REALM_TEXT_MAX_BYTES } from '../../src/net/realmSaveCodec.js';   // REALM-GZIP: the text's bound
 import { realmTradeHalfOf, halvesAgree, settleRealmTrade, REALM_TRADE_SID_RE, REALM_TRADE_TTL_S } from '../../src/net/realmTradeLaw.js';
 import { canon } from '../../src/net/canon.js';
@@ -151,9 +151,11 @@ export async function tradeRealm({ db, bucket, rand, nowS }, playerId, body) {
   if (!s.ok) return refuse(db, sid, s.why ?? 'goods', playerId, asker, true);
   // INT4: a piece leaves a record only as its own - held by it, unclaimed, no copy (ledger.js piecesRefusal)
   const piecesA = [ledgerPieces(saveA), ledgerPieces(s.a)], piecesB = [ledgerPieces(saveB), ledgerPieces(s.b)];
-  const leftOf = (/** @type {any[][]} */ [was, now]) => { const after = new Set(now.map((p) => p.key)); return [...new Set(was.map((p) => p.key))].filter((k) => !after.has(k)); };
+  // AUDIT AUTO-HOLD: a key whose count fell is leaving - one of two a record held is a copy, never handed on (ledger.js leavingKeys)
+  const leftA = leavingKeys(...piecesA), leftB = leavingKeys(...piecesB);
   const why = (classicCount(s.a) < classicCount(saveA) || classicCount(s.b) < classicCount(saveB) ? 'piece-legacy' : null)   // a classic save's piece: its character's
-    ?? (await piecesRefusal(db, t.a_char, leftOf(piecesA))) ?? (await piecesRefusal(db, id, leftOf(piecesB)));
+    ?? (leftA.twice.length || leftB.twice.length ? 'piece-dupe' : null)
+    ?? (await piecesRefusal(db, t.a_char, leftA.leaving)) ?? (await piecesRefusal(db, id, leftB.leaving));
   if (why) return refuse(db, sid, why, playerId, asker, true);
   // INT5: what the trade moved, witnessed on both rows - a trade is no gain the budget charges
   const movedA = wealthOf(s.a) - wealthOf(saveA), movedB = wealthOf(s.b) - wealthOf(saveB);
