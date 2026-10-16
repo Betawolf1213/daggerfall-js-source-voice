@@ -139,6 +139,7 @@ after(() => { globalThis.setTimeout = realSetTimeout; });
 function dungeon(id, { authority, level, luck, renown, seed, foraging, partners, characterId, foes: nFoes, send, seat }) {
   const player = { level, gender: 'male', name: id, characterId, stats: { luck, strength: 60 }, activeEffects: [], items: [], goldPieces: 0, isPlayer: true };
   const said = [];
+  const told = [];   // every act the dungeon handed its door out (opts.onActions), before world.js or the session saw it
   const windows = [];
   const own = lcg(seed);
   const as = (fn) => {
@@ -154,7 +155,7 @@ function dungeon(id, { authority, level, luck, renown, seed, foraging, partners,
     _authority: authority, playerEntity: player, dfLocation: { mapTableData: { dungeonType: DUNGEON_TYPE } }, lootKey: DUNGEON_LOOT_KEYS[DUNGEON_TYPE],
     _superTier: false, _wildDungeon: false, _wildRing: null, _deepCleared: new Set(), _deepFoeCleared: new Set(),
     SUPER_LOOT_DROP_MULT: 1.5, ELITE_LOOT_DROP_MULT: 1.2, SUPER_LOOT_QUALITY_MULT: 1.5, ELITE_LOOT_QUALITY_MULT: 1.2,
-    opts: { selfId: () => id, onActions: (data) => send(data), onLootClaimed: () => {}, partyLevels: () => partners, roomHost: () => seat(), onFoeHit: () => assert.fail('the host applies its own blows') },
+    opts: { selfId: () => id, onActions: (data) => { told.push(JSON.parse(JSON.stringify(data))); return send(data); }, onLootClaimed: () => {}, partyLevels: () => partners, roomHost: () => seat(), onFoeHit: () => assert.fail('the host applies its own blows') },
     _sharedStamp: `st${seed}`, clearSurplus: () => {},
     addItem, stacksWith, isGoldPieces, addGoldPieces, isEquipped, unequipItem, neverPeerHanded,
     _wallNow: () => clock.t, performance: { now: () => clock.t }, respawnDue, validLootList, peerHanded, LOOT_LIST_MAX, LOOT_NEWER_TEXT, ENEMY_BASICS,
@@ -222,7 +223,7 @@ function dungeon(id, { authority, level, luck, renown, seed, foraging, partners,
     }
   });
   if (state.lootBuiltOf) for (const f of state.foes) f._lootBuilt ??= state.lootBuiltOf(f.entity);
-  return { id, h, state, player, as, said, windows, foes: state.foes };
+  return { id, h, state, player, as, said, told, windows, foes: state.foes };
 }
 
 /** The relay and the wire to it: ONE real Room, and each session's socket joined to a socket of the Room's - a frame
@@ -331,68 +332,69 @@ async function party(foes = 1) {
 const sig = (it) => JSON.stringify(it);
 const baseRows = (list) => (list ?? []).filter((it) => !RL.isPersonalLoot(it)).map(sig);
 const shown = (p, key) => p.as(() => p.h.api.lootContents(key));
+/** A body's base once the room's word for it has LANDED here - its plaque names a list (an unborn body names null, which
+ *  is never read as an empty base: a body whose base rolled nothing is named [] only when its word came). */
+const named = (p, key) => { const l = shown(p, key); assert.ok(Array.isArray(l), `${key} is named on ${p.id} - the room's word for it landed`); return baseRows(l); };
 const kill = (p, i) => p.as(() => p.h.damageFoe(p.foes[i], 9999));
 /** The host kills the room's foes in turn until a body's base holds something (a body's roll may be empty), and names
  *  it: each death's birth goes on the wire as it falls. */
 function lootedKill(p) {
   for (let i = 0; i < p.foes.length; i++) {
     kill(p, i);
-    if (baseRows(shown(p, `corpse:${i}`)).length) return i;
+    if (named(p, `corpse:${i}`).length) return i;
   }
   assert.fail(`none of the room's ${p.foes.length} bodies rolled a base at T0 - stand more foes, or another T0`);
 }
 /** The window's take, as its click makes it: the plan, then the transfer. */
 const take = (p, w, item) => p.as(() => { const plan = planTake(item, { bag: p.player.items }); assert.ok(plan.ok, `${p.id} may take ${item.name}`); return applyTransfer(item, plan, w.items, p.player.items, {}); });
 
-test('PARTY-LOOT OVER THE WIRE: the report - the host\'s kill reaches the party member through the real session and relay; before the room\'s word the body opens nothing and says nothing, then opens on the host\'s base, and the party member\'s open and close leave the host\'s list as it was', async () => {
+test('PARTY-LOOT OVER THE WIRE: the report - the host\'s kill reaches the party member through the real session and relay, its birth BEFORE the body (held, and landed when the host\'s frame lays the body), and the body opens on the host\'s base; the party member\'s open and close tell the wire nothing and leave the host\'s list as it was', async () => {
   const { net, H, J } = await party(4);
   const i = lootedKill(H);
   const key = `corpse:${i}`;
   assert.equal(H.foes[i].dead && H.foes[i].corpse, true, 'the host\'s foe fell');
-  const base = baseRows(shown(H, key));
+  const base = named(H, key);
   assert.equal(H.online.stats.acts, i + 1, 'the host said each body\'s birth at its death, through world.js\'s actSend and the session\'s gate');
-  // the joiner's copy has not fallen: no foes frame has said so
-  const saidBefore = J.online.stats.acts;
-  assert.equal(J.foes[i].dead, false, 'no frame has said the foe fell');
-  assert.equal(J.as(() => J.h.api.takeLoot(key)), 0, 'a living foe opens nothing');
+  assert.equal(H.told.length, i + 1, 'one birth a body, told by the dungeon');
+  const saidBefore = J.online.stats.acts, toldBefore = J.told.length;
   await net.settle();
-  assert.equal(J.foes[i].dead, false, 'the birth crossed the Room first, and waits for the body');
-  assert.equal(shown(J, key), null);
+  assert.equal(J.foes[i].dead, false, 'the birth crossed the Room first: no foes frame has said the foe fell, so the word waits for the body');
   // the host's next frame lays the body on the joiner, and the word that came first lands on it
   clock.t += FOES_MS;
   H.frame();
   await net.settle();
   assert.equal(J.foes[i].dead && J.foes[i].corpse, true, 'the host\'s foes frame laid the body, through the Room and onFoes');
-  assert.deepEqual(baseRows(shown(J, key)), base, 'the joiner sees the host\'s base, piece for piece - not "Empty"');
+  assert.deepEqual(named(J, key), base, 'the joiner sees the host\'s base, piece for piece - not "Empty"');
   assert.ok(J.as(() => J.h.api.takeLoot(key)) > 0, 'the press opens it');
   assert.equal(J.windows.length, 1);
   assert.deepEqual(baseRows(J.windows[0].items), base, 'the window opens on the room\'s base');
   J.windows[0].close();
   await net.settle();
-  assert.equal(J.online.stats.acts, saidBefore, 'an open and a close with nothing taken say nothing on the wire');
+  assert.deepEqual(J.told.slice(toldBefore), [], 'an open and a close with nothing taken tell the wire nothing - not even a word world.js could drop');
+  assert.equal(J.online.stats.acts, saidBefore, 'and nothing went out on the joiner\'s session');
   H.frame();
   await net.settle();
-  assert.deepEqual(baseRows(shown(H, key)), base, 'the host\'s list is as it was - the close wiped nothing');
-  assert.deepEqual(baseRows(shown(J, key)), base, 'and the joiner\'s too');
+  assert.deepEqual(named(H, key), base, 'the host\'s list is as it was - the close wiped nothing');
+  assert.deepEqual(named(J, key), base, 'and the joiner\'s too');
 });
 
 test('PARTY-LOOT OVER THE WIRE: a blast that kills more than the act bucket says in a second - the session refuses the last bodies\' births, world.js keeps their keys, the bodies the host\'s frame lays first stand UNBORN on the party member (no window, no word, none of its own roll), and actFlush\'s heal re-reads the host\'s word through placeActionRecords and they open on the host\'s base', async () => {
-  const n = ACT_HZ_MAX + 3;
+  const n = ACT_HZ_MAX + 5;
   const { net, H, J } = await party(n);
   for (let i = 0; i < n; i++) kill(H, i);   // one blast, one frame
   const refused = Array.from({ length: n - ACT_HZ_MAX }, (_, k) => ACT_HZ_MAX + k);
   const keys = refused.map((i) => `corpse:${i}`);
   assert.equal(H.online.stats.acts, ACT_HZ_MAX, `ACT_HZ_MAX births went (${ACT_HZ_MAX} a second)`);
   assert.deepEqual(H.doors.pending(), keys, 'the refused ones are held by their keys');
-  const bases = H.foes.map((_, i) => baseRows(shown(H, `corpse:${i}`)));
+  const bases = H.foes.map((_, i) => named(H, `corpse:${i}`));
   assert.ok(refused.some((i) => bases[i].length), 'a refused body holds something of the room\'s base');
   H.frame();   // the blast's own frame: its foes stream lays every body, and its actFlush finds no token yet
   await net.settle();
   assert.deepEqual(H.doors.pending(), keys, 'still held: the bucket has not refilled');
   assert.deepEqual(J.foes.map((f) => f.dead && f.corpse), J.foes.map(() => true), 'every body laid on the joiner');
-  for (let i = 0; i < ACT_HZ_MAX; i++) assert.deepEqual(baseRows(shown(J, `corpse:${i}`)), bases[i], `corpse:${i}: its birth landed on its body`);
+  for (let i = 0; i < ACT_HZ_MAX; i++) assert.deepEqual(named(J, `corpse:${i}`), bases[i], `corpse:${i}: its birth landed on its body`);
   // the refused: laid, their words still on the host's side of the wire
-  const said = J.online.stats.acts;
+  const said = J.online.stats.acts, toldBefore = J.told.length;
   for (const i of refused) {
     const key = `corpse:${i}`;
     assert.equal(shown(J, key), null, `${key} names nothing yet - its list is the room's, still on its way`);
@@ -402,12 +404,13 @@ test('PARTY-LOOT OVER THE WIRE: a blast that kills more than the act bucket says
   assert.equal(J.windows.length, 0);
   J.frame();
   await net.settle();
-  assert.equal(J.online.stats.acts, said, 'and nothing of the joiner\'s is said for them');
+  assert.deepEqual(J.told.slice(toldBefore), [], 'and the joiner\'s dungeon tells the wire nothing for them');
+  assert.equal(J.online.stats.acts, said);
   clock.t += FOES_MS;   // one token's refill at ACT_HZ_MAX
   H.frame();   // the next stream frame, and the heal behind it
   await net.settle();
   assert.deepEqual(H.doors.pending(), [], 'the heal went');
-  for (const i of refused) assert.deepEqual(baseRows(shown(J, `corpse:${i}`)), bases[i], `corpse:${i}: the heal landed - the host's base`);
+  for (const i of refused) assert.deepEqual(named(J, `corpse:${i}`), bases[i], `corpse:${i}: the heal landed - the host's base`);
   const open = refused.find((i) => bases[i].length);
   assert.ok(J.as(() => J.h.api.takeLoot(`corpse:${open}`)) > 0, 'a refused body\'s press opens it now');
   assert.deepEqual(baseRows(J.windows[0].items), bases[open], 'on the host\'s base');
@@ -417,28 +420,38 @@ test('PARTY-LOOT OVER THE WIRE: a blast that kills more than the act bucket says
 const pieceKey = (it) => `${it.group}.${it.templateIndex}.${it.material ?? ''}.${it.name ?? ''}`;
 const holding = (p, it) => (isGoldPieces(it) ? (p.player.goldPieces ?? 0) : p.player.items.filter((x) => pieceKey(x) === pieceKey(it)).reduce((s, x) => s + RL.pieceCount(x), 0));
 
-test('PARTY-LOOT OVER THE WIRE: the party member\'s take is a claim the host grants over the wire - the window\'s close says it, the host\'s list loses that one piece and keeps the rest, the verdict comes back through the Room, and the piece is the party member\'s alone', async () => {
+test('PARTY-LOOT OVER THE WIRE: the party member\'s take is a claim the host grants over the wire - the window\'s close tells a claim and never the room\'s state, the piece leaves the party member\'s pack until the grant, the host\'s list loses that one piece and keeps the rest, and the verdict comes back through the Room with the piece the party member\'s alone', async () => {
   const { net, H, J } = await party(4);
   const i = lootedKill(H);
   const key = `corpse:${i}`;
   clock.t += FOES_MS;
   H.frame();
   await net.settle();
-  const base = baseRows(shown(H, key));
-  assert.deepEqual(baseRows(shown(J, key)), base, 'both see one base');
+  const base = named(H, key);
+  assert.deepEqual(named(J, key), base, 'both see one base');
   assert.ok(J.as(() => J.h.api.takeLoot(key)) > 0);
   const w = J.windows[0];
   const piece = w.items.find((it) => !RL.isPersonalLoot(it) && !isGoldPieces(it)) ?? w.items.find((it) => !RL.isPersonalLoot(it));
   assert.ok(piece, 'a base piece to take');
   const had = { J: holding(J, piece), H: holding(H, piece) };
   take(J, w, piece);
-  w.close();   // the close says what was taken: a claim of the host
+  assert.ok(holding(J, piece) > had.J, 'the window\'s transfer put it in the pack');
+  const toldBefore = J.told.length, saidBefore = J.online.stats.acts;
+  w.close();   // the close tells what was taken: a claim of the host
+  assert.equal(holding(J, piece), had.J, 'the close lifted it back out of the pack - it is the joiner\'s only on the host\'s grant');
+  const told = J.told.slice(toldBefore);
+  assert.equal(told.length, 1, 'the close told one word');
+  assert.equal(told[0].l?.length, 1);
+  const word = told[0].l[0];
+  assert.equal(word.k, key, 'about this body');
+  assert.equal(word.q?.length, 1, 'one claim');
+  assert.ok(!('s' in word) && !('x' in word) && !('y' in word), `a claim, never the room's state (${Object.keys(word).join(',')})`);
   await net.settle();
-  assert.ok(J.online.stats.acts >= 1, 'the joiner said its claim through its own session');
+  assert.equal(J.online.stats.acts, saidBefore + 1, 'the claim went out on the joiner\'s own session');
   for (let k = 0; k < 3; k++) { clock.t += FOES_MS; H.frame(); J.frame(); await net.settle(); }   // the host's verdict, said and landed
   const expect = base.slice(); expect.splice(expect.indexOf(sig(piece)), 1);
-  assert.deepEqual(baseRows(shown(H, key)), expect, 'the host\'s list lost the one piece and kept every other');
-  assert.deepEqual(baseRows(shown(J, key)), expect, 'and the joiner sees the same list');
+  assert.deepEqual(named(H, key), expect, 'the host\'s list lost the one piece and kept every other');
+  assert.deepEqual(named(J, key), expect, 'and the joiner sees the same list');
   assert.ok(holding(J, piece) > had.J, `the joiner holds the ${piece.name} it was granted`);
   assert.equal(holding(H, piece), had.H, 'and the host does not');
 });

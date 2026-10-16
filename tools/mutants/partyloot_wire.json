@@ -61,5 +61,68 @@
     "tests": [
       "test/partyloot_wire.test.js"
     ]
+  },
+  {
+    "name": "PARTY-LOOT-WIRE-the-take-kept-before-the-grant",
+    "file": "src/scenes/roomLootHost.js",
+    "old": "    const give = roomLift(obj, k);",
+    "new": "    const give = k;",
+    "tests": [
+      "test/partyloot_wire.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-WIRE-a-party-member-tells-the-rooms-state",
+    "file": "src/scenes/roomLootHost.js",
+    "old": "    if (!host._authority) {",
+    "new": "    if (false) {",
+    "tests": [
+      "test/partyloot_wire.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-WIRE-onAct-lands-nothing",
+    "file": "src/scenes/world.js",
+    "old": "    online.onAct = (id, data) => { modes?.applyPlaceActions?.(id, data); };   // WORLD3: another's door, lever or platform; WORLD6a: in a building too",
+    "new": "    online.onAct = (id, data) => {};   // WORLD3: another's door, lever or platform; WORLD6a: in a building too",
+    "tests": [
+      "test/partyloot_wire.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-WIRE-the-flush-reads-no-records",
+    "file": "src/scenes/world.js",
+    "old": "    const data = modes?.placeActionRecords?.([..._actPend]);",
+    "new": "    const data = null;",
+    "tests": [
+      "test/partyloot_wire.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-WIRE-the-mode-reads-no-dungeon-records",
+    "file": "src/scenes/worldModes.js",
+    "old": "      if (mode === 'dungeon') return dungeonCtx ? (dungeonCtx.actionRecords?.(keys) ?? null) : null;",
+    "new": "      if (mode === 'dungeon') return dungeonCtx ? null : null;",
+    "tests": [
+      "test/partyloot_wire.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-WIRE-the-mode-lands-no-dungeon-act",
+    "file": "src/scenes/worldModes.js",
+    "old": "      if (mode === 'dungeon') return dungeonCtx ? !!dungeonCtx.applyActions?.(id, data) : false;",
+    "new": "      if (mode === 'dungeon') return dungeonCtx ? false : false;",
+    "tests": [
+      "test/partyloot_wire.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-WIRE-the-mode-lands-no-foes-frame",
+    "file": "src/scenes/worldModes.js",
+    "old": "    applyDungeonFoes(id, data) { return mode === 'dungeon' && dungeonCtx ? !!dungeonCtx.applyFoes?.(data, id) : false; },   // AUDIT WORLD2 A1: the streaming host's id rides in - a new host's counter starts over",
+    "new": "    applyDungeonFoes(id, data) { return mode === 'dungeon' && dungeonCtx ? false : false; },   // AUDIT WORLD2 A1: the streaming host's id rides in - a new host's counter starts over",
+    "tests": [
+      "test/partyloot_wire.test.js"
+    ]
   }
 ]

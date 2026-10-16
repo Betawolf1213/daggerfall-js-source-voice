@@ -29,7 +29,7 @@
 // Not in the suite (a toolchain and minutes, tools/loadHarness.mjs's reason) - test/partyloot_wire.test.js is the pin.
 import { createServer } from 'vite';
 import { chromium } from 'playwright';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { existsSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -56,7 +56,7 @@ const sleep = (ms) => new Promise((r) => { setTimeout(r, ms); });
  *  browser's import landing on the very module the dungeon imported; a tree without it marks nothing. */
 export const PARTY_LOOT_PROBE_EDITS = Object.freeze([
   { file: 'src/scenes/worldModes.js', edits: [['    window.__takeLoot = (k) => (dungeonCtx ? dungeonCtx.takeLoot(k) : null);', `    window.__takeLoot = (k) => (dungeonCtx ? dungeonCtx.takeLoot(k) : null);
-    let __personal = () => false; import(/* @vite-ignore */ ['..', 'systems', 'roomLoot.js'].join('/')).then((m) => { if (typeof m.isPersonalLoot === 'function') __personal = m.isPersonalLoot; }).catch(() => {});
+    let __personal = () => false; window.__personalMark = 'none'; import(/* @vite-ignore */ ['..', 'systems', 'roomLoot.js'].join('/')).then((m) => { if (typeof m.isPersonalLoot === 'function') { __personal = m.isPersonalLoot; window.__personalMark = 'roomLoot.js'; } }).catch(() => {});
     window.__isPersonal = (it) => __personal(it);
     window.__bodyLoot = (i) => { const f = dungeonCtx?.foes?.[i]; if (!(f?.dead && f.corpse)) return null; const l = dungeonCtx.lootContents?.(\`corpse:\${i}\`); if (!Array.isArray(l)) return null; const fp = (it) => \`\${it.name} x\${it.stackCount ?? 1} [\${it.templateIndex}/\${it.material ?? '-'}/\${it.currentCondition ?? '-'}/\${(it.enchantments ?? []).length}]\`; return JSON.stringify({ base: l.filter((it) => !__personal(it)).map(fp), mine: l.filter((it) => __personal(it)).map(fp) }); };
     window.__seat = () => (dungeonCtx ? JSON.stringify({ authority: !!dungeonCtx.isAuthority?.(), location: dungeonCtx.locationKey?.() ?? null }) : null);`]] },
@@ -155,6 +155,14 @@ async function main() {
     const [hs, js] = [await host.seat(), await joiner.seat()];
     if (!hs.authority || js.authority || hs.location !== js.location) throw new Error(`not one room with one seat: host ${JSON.stringify(hs)}, joiner ${JSON.stringify(js)}`);
     console.log(`   one room (${hs.location}), the host holds the seat`);
+    // the personal mark the seams read: roomLoot.js's own wherever the tree has it - a mark that did not load would read
+    // a player's bonus as the room's (and no run has yet rolled a bonus to show it)
+    const markWant = existsSync(join(ROOT, 'src/systems/roomLoot.js')) ? 'roomLoot.js' : 'none';
+    for (const who of [host, joiner]) {
+      const mark = await until(who.page, () => window.__personalMark, null, { what: `the ${who.label}'s personal mark`, timeout: 60000 });
+      if (mark !== markWant) throw new Error(`the ${who.label}'s personal mark is ${mark}, not ${markWant}`);
+    }
+    console.log(`   the personal mark: ${markWant}`);
 
     const foes = JSON.parse(await host.page.evaluate(() => window.__foes()));
     const targets = foes.filter((f) => !f.dead).slice(0, KILLS).map((f) => f.i);
