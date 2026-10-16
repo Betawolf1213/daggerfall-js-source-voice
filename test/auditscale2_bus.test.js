@@ -16,6 +16,7 @@ import { SOCIAL_ROOM, GATE_BRAIN_V } from '../src/net/wire.js';
 import { mintOrder, mintGuildOutOrder } from '../src/net/identityToken.js';
 import { gateTimes, gateRoomKey } from '../src/net/gateLaw.js';
 import { COURT_CENTRE, BRAIN_TICK_MS } from '../src/net/gateBrain.js';
+import { ROOM_CALL_MS } from '../server/src/relayScale.js';
 
 const quiet = async (fn) => { const keep = { info: console.info, warn: console.warn, log: console.log }; console.info = console.warn = console.log = () => {}; try { return await fn(); } finally { Object.assign(console, keep); } };
 
@@ -40,6 +41,7 @@ async function world(fn) {
         for (let i = 0; i < 6; i++) {
           for (const [k, r] of [...W.made]) if (H.isChannelShard(k)) await r.room._hubUpFlush();
           for (const [k, r] of [...W.made]) if (H.isChannelBus(k)) await r.room._downFlush();
+          for (const [k, r] of [...W.made]) if (H.isChannelShard(k)) await r.room._hubPoll();   // HUB-PULL: each shard asks for what it is owed
         }
       };
       const link = async (n, key = H.hubOfSubject(`acct-${n}`), extra = {}) => {
@@ -81,6 +83,7 @@ async function court(fn, { start = TT.openAt + 1000 } = {}) {
         for (let i = 0; i < 6; i++) {
           for (const [k, r] of [...W.made]) if (H.isCourtCopy(k)) await r.room._hubUpFlush();
           await F.room._downFlush();
+          for (const [k, r] of [...W.made]) if (H.isCourtCopy(k)) await r.room._hubPoll();   // HUB-PULL: each copy asks for what it is owed
         }
       };
       const into = async (k, peer, pose) => { const C = copy(k); const ws = C.connect(); ws.att.key = KEY; ws.att.ly = k; clock += 10; await C.hello(ws, peer, pose); await settle(); return ws; };
@@ -207,18 +210,24 @@ test('AUDIT SCALE II R2-4 = R3-2: a woken shard knows its own name (its storage)
   });
 });
 
-test('AUDIT SCALE II R2-6: a woken bus asks every shard it has heard from for its sockets - the first line after the wake reaches every shard and a tab on the bus itself, the count is right at once, and a frame the bus could not run is handed again behind its socket\'s hello (mutants: the shards not asked; the asked shard not syncing; the frame not handed again; a pose asking nothing)', async () => {
-  await world(async ({ bus, link, say, tick, settle }) => {
+test('AUDIT SCALE II R2-6 (HUB-PULL): a woken bus tells each shard\'s first poll to say every socket it holds again (`rs`) - a frame said before any shard polled is handed again behind its socket\'s hello and heard, the bus holds every shard\'s sockets once they have polled, and the next line reaches every shard and a tab on the bus itself (mutants: the first poll not told; the told shard not syncing; the frame not handed again)', async () => {
+  await world(async ({ W, bus, link, say, tick, settle }) => {
     const [a, b, c] = namesOnShards(3);
-    const ka = H.hubOfSubject(`acct-${a}`);
+    const ka = H.hubOfSubject(`acct-${a}`), kb = H.hubOfSubject(`acct-${b}`);
     const wa = await link(a), wb = await link(b), wc = await link(c);
     const old = await link('legacy', SOCIAL_ROOM, { hs: undefined });
-    assert.deepEqual(new Set(await bus.store.get(H.VHUBS_KEY)), new Set([a, b, c].map((n) => H.hubOfSubject(`acct-${n}`))), 'the shards heard from, kept');
     bus.wake();
+    assert.equal(bus.room._busCount(), 1, 'a woken bus holds no ShardSocket - its own tab alone');
     for (const ws of [wa, wb, wc, old]) ws.sent.length = 0;
-    await say(wa, ka, { t: 'chat', text: 'first line after the bus slept' });
-    for (const ws of [wb, wc, old]) assert.ok(lines(ws).includes('first line after the bus slept'), 'heard by every shard and the bus\'s own tab');
-    assert.equal(bus.room._busCount(), 4, 'every shard\'s sockets said again at once');
+    await W.room(ka).raw(wa, JSON.stringify({ t: 'chat', text: 'first line after the bus slept' }));
+    await W.room(ka).room._hubUpFlush();   // up before any shard has polled the woken bus
+    assert.ok(lines(old).includes('first line after the bus slept'), 'the frame the bus could not run, handed again behind its hello, and run');
+    await settle();
+    assert.ok(lines(wa).includes('first line after the bus slept'), 'its sender hears it back');
+    assert.equal(bus.room._busCount(), 4, 'every shard\'s first poll told it to say every socket - all held again');
+    for (const ws of [wa, wb, wc, old]) ws.sent.length = 0;
+    await say(wb, kb, { t: 'chat', text: 'and the next' });
+    for (const ws of [wa, wc, old]) assert.ok(lines(ws).includes('and the next'), 'heard by every shard and the bus\'s own tab');
     tick(1000); await settle();
   });
 });
@@ -257,17 +266,22 @@ test('AUDIT SCALE II R2-7: every hand-up and delivery is numbered - one that did
     assert.ok(ran >= 2, 'sent again');
     assert.equal(lines(wc).filter((t) => t === 'line four').length, 1, 'landed, its answer lost, sent again: heard once');
     assert.equal(S._upRetry, null);
-    // a delivery the same way: run by the shard, its answer lost, sent again - heard once
+    // HUB-PULL: a delivery stays until its shard says it ran it - a poll whose answer was lost is answered with it again
     tick(5000);
-    const Sc = W.room(H.hubOfSubject(`acct-${c}`)).room;
-    const realDown = Sc._hubDownInternal.bind(Sc);
-    let dran = 0;
-    Sc._hubDownInternal = async (req) => { const res = await realDown(req); return ++dran === 1 ? new Response('lost', { status: 503 }) : res; };
+    const kc = H.hubOfSubject(`acct-${c}`), Sc = W.room(kc).room;
+    const realPoll = bus.room._hubPollInternal.bind(bus.room);
+    let lost = 0;
+    bus.room._hubPollInternal = async (req) => { const body = await req.clone().json(); const res = await realPoll(new Request(req.url, { method: 'POST', body: JSON.stringify(body) })); if (!lost && body.hub === kc && (await res.clone().json()).d?.length) { lost++; return new Response('lost', { status: 503 }); } return res; };
     await say(wa, ka, { t: 'chat', text: 'line five' });
-    for (let i = 0; i < 3; i++) { tick(1000); await settle(); }
-    Sc._hubDownInternal = realDown;
-    assert.ok(dran >= 2, 'the delivery sent again');
-    assert.equal(lines(wc).filter((t) => t === 'line five').length, 1, 'a delivery landed, its answer lost, sent again: heard once');
+    bus.room._hubPollInternal = realPoll;
+    assert.equal(lost, 1, 'an answer lost on the way');
+    assert.equal(lines(wc).filter((t) => t === 'line five').length, 1, 'answered again with it: heard');
+    // and one handed twice (two polls on the wire, carrying one ack) runs once
+    tick(5000);
+    await W.room(ka).raw(wa, JSON.stringify({ t: 'chat', text: 'line six' }));
+    await W.room(ka).room._hubUpFlush(); await bus.room._downFlush();   // sealed for c's shard, not yet asked for
+    await Promise.all([Sc._hubPoll(), Sc._hubPoll()]);
+    assert.equal(lines(wc).filter((t) => t === 'line six').length, 1, 'a delivery handed twice: heard once');
   });
   await world(async ({ W, link, say, settle, tick }) => {
     const [a, c] = namesOnShards(2);
@@ -275,14 +289,18 @@ test('AUDIT SCALE II R2-7: every hand-up and delivery is numbered - one that did
     const wc = await link(c);
     await link(a, SOCIAL_ROOM, { peer: `peer-${a}-old`, hs: undefined });   // a's tab before the shards holds the seat
     const get = W.ROOMS.get;
-    let failed = 0;
-    W.ROOMS.get = (id) => (id === ka && failed < 9 ? { fetch: async (req) => { if (new URL(req.url).pathname === H.HUB_INTERNAL_DOWN) { failed++; throw new Error('timeout'); } return get(id).fetch(req); } } : get(id));
-    const wa = await link(a);   // not claiming: the bus refuses it and closes it - its every delivery lost
-    for (let i = 0; i < 6; i++) { tick(20_000); await settle(); }
-    W.ROOMS.get = get;
-    assert.equal(wa.closed, null, 'the close lost on the way');
+    let cut = true, failed = 0;
+    // HUB-PULL: shard a's polls never reach the bus - its every delivery owed, never handed
+    W.ROOMS.get = (id) => (id === SOCIAL_ROOM ? { fetch: async (req) => { if (cut && new URL(req.url).pathname === H.HUB_INTERNAL_POLL && (await req.clone().json()).hub === ka) { failed++; throw new Error('timeout'); } return get(id).fetch(req); } } : get(id));
+    const wa = await link(a);   // not claiming: the bus refuses it and closes it - the close owed a, never handed
+    assert.ok(failed > 0);
+    assert.equal(wa.closed, null, 'the close never got there');
+    tick(H.HUB_SILENT_MS + 1000); await W.room(SOCIAL_ROOM).fire();   // a shard silent past HUB_SILENT_MS: what it was owed let go
+    assert.equal(W.room(SOCIAL_ROOM).room._outbox.has(ka), false, 'the silent shard\'s deliveries let go');
+    cut = false;
     tick(61_000); await W.room(ka).fire(); await settle();
     assert.equal(wa.closed?.code, 4000, 'said again at its shard\'s sync - never open and mute');
+    W.ROOMS.get = get;
     void wc; void say;
   });
 });
@@ -300,6 +318,7 @@ test('AUDIT SCALE II R2-8: a reconnect on a shard whose old socket the bus owes 
     const R = W.room(kv); const wv2 = R.connect();
     await R.hello(wv2, `peer-${v}`, null, { name: v, acct: `acct-${v}`, asecret: `secret-of-acct-${v}` });
     await bus.room._downFlush();
+    await R.room._hubPoll(); await R.room._hubPoll();   // HUB-PULL: the delivery run, and the next poll (its `gone`) at the bus before the reconnect's hand-up
     await settle();
     assert.ok(!watcher.sent.some((f) => f.t === 'leave' && f.id === `peer-${v}`), 'no leave said for a reconnect');
     assert.equal(wv2.closed, null);
@@ -317,10 +336,12 @@ test('AUDIT SCALE II R2-9: a shard the bus has not heard from in HUB_SILENT_MS h
     S.sockets.length = 0; S.room._idx = null;   // the shard reset: its sockets gone, nothing said
     S.room._hubUpFlush = () => Promise.resolve();   // and it hands nothing up again (no alarm: it holds no socket)
     assert.equal(bus.room._busCount(), 2);
+    const kept = [...bus.room._vsocks.values()].find((x) => x.hub === kc);
     tick(H.HUB_SILENT_MS + 1000);
     await say(wc, kc, { t: 'chat', text: 'anyone' });   // any other shard's hand-up
     assert.equal([...bus.room._vsocks.values()].filter((x) => x.hub === kv).length, 0, 'its ghosts let go');
     assert.equal(bus.room._busCount(), 1);
+    assert.equal(bus.room._vsocks.get(kept.vid), kept, 'the shard heard from keeps its very ShardSockets - never let go and said again');
   });
 });
 
@@ -408,8 +429,7 @@ test('AUDIT SCALE II R3-6 R3-11: a woken court keeps its copies\' watchers past 
     const w = await into(1, 'peer-0005', at(2, 2));
     set(TT.sealAt + 60_000);
     F.wake();
-    await copy(1).room._hubResyncInternal();
-    await settle();
+    await settle();   // HUB-PULL: the copy's first poll to the woken court is told to say every socket again
     assert.equal(w.closed, null, 'its watcher stays');
     assert.ok(courtVs(F).some((v) => v.att.id === 'peer-0005'), 'held again by the court');
   });
@@ -430,13 +450,18 @@ test('AUDIT SCALE II D-7 D-8: the bus greets a ShardSocket once (a hello said ag
   assert.equal(H.HUB_UP_BURST, 32);
   assert.equal(H.HUB_WHO_MS, 15_000);
   assert.equal(H.HUB_FRAME_MAX, 64 * 1024);
-  await world(async ({ bus, link }) => {
+  assert.equal(H.HUB_POLL_MS, 20_000);   // HUB-PULL
+  assert.equal(H.HUB_OUTBOX_MAX, 1024);   // HUB-PULL audit: PIN MOVED from 256 - a poll's whole deadline of deliveries
+  assert.equal(H.HUB_OUTBOX_BYTES, 2 * 1024 * 1024);   // HUB-PULL audit: PIN MOVED from 4 MiB - every shard's at once a quarter of an object's memory
+  assert.ok(H.HUB_OUTBOX_MAX * H.HUB_BATCH_MS >= H.HUB_POLL_MS + ROOM_CALL_MS, 'a delivery every batch, kept as long as a poll may be out');
+  assert.ok(H.HUB_SHARDS * H.HUB_OUTBOX_BYTES <= 32 * 1024 * 1024, 'the bus\'s outboxes, every shard stalled, a quarter of 128 MB at most');
+  await world(async ({ bus, link, settle }) => {
     const [v] = namesOnShards(1);
     const wv = await link(v);
     const [vws] = [...bus.room._vsocks.values()];
     const before = wv.sent.length;
     await bus.room._vhello(vws.hub, vws.vid, { att: { ...vws.att, key: vws.hub }, m: { secret: `secret-of-peer-${v}` } });
-    await bus.room._downFlush();
+    await settle();
     assert.equal(bus.room._vsocks.size, 1);
     assert.equal([...bus.room._vsocks.values()][0], vws, 'the same ShardSocket');
     assert.equal(wv.closed, null, 'its socket never closed as replaced');

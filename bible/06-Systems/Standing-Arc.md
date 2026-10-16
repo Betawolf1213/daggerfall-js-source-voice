@@ -128,7 +128,18 @@ started (DFU: -16).
 `guilds.js updateRank`: a review that finds a member below zero puts them **on probation** - the rank kept, the next
 review 28 days on, the popup's box saying so. A review that finds a member already on probation AND below -10 expels
 (Roleplay Realism's death squad for the Thieves Guild and the Dark Brotherhood still follows). A fall straight to -22 is
-warned first. A standing back at zero or above ends the probation.
+warned first. A review that finds the standing at zero or above ends the probation - where the guild skills also meet
+rank 0's bars (a member short of them is held on probation at any standing - AUDIT GUILD-WORDS L1-3, recorded for Mac),
+and in a guild that never expels at any standing (its review clamps to rank 0).
+STANDING-WORDS (2026-10-16, `01-Overview/Field-Bugs-2026-10-15g.md`; AUDIT GUILD-WORDS, `01-Overview/Audit-Guild-Words.md`):
+the stakes are said, not only the state - "On probation: your review is at the guild's hall in 8 days or later. Below
+-10 you are expelled there, below 0 it runs 28 days more, and at 0 or more it ends." - first in the hall's line (online)
+and under the guild on the enhanced Standing page (both lanes), the days on the character's own date (`guilds.js`
+reviewDaysLeft, `guildServiceFlow.js` reviewWarnings). A guild that never expels says its review ends it; a member whose
+guild skills fall short of rank 0's bars is told the probation ends only once they rise and the standing is 0 or more
+(AUDIT GUILD-WORDS II A-6); online, where a promotion does not wait (PROMO-NOW), the days say "- sooner if you earn the
+next rank" (II C-7); a probation the next review would begin is warned, below 0 or short of the skills (II A-7); and a
+review that will demote says so before it lands - each with when (II A-8).
 
 ## QFAIL-FREE - a missed quest costs nothing online
 
@@ -165,6 +176,19 @@ its court (DaggerfallCourtWindow) takes nothing:
 
 Pinned by `test/fb1016b_stolengoods.test.js` (7) over the real shelves, both skins' Steal and inventory, the Sell window
 and the arrest flow; `tools/mutants/fb1016b_stolengoods.json` (32, all dead).
+
+## REPUTE-GATE - online, two Mages Guild quests wait for the standing their headers name
+
+`quest/onlineRepute.js`, read by `quest/offerFlow.js` offerGuildQuest (2026-10-16, AUDIT GUILD-WORDS II,
+`01-Overview/Audit-Guild-Words.md`; a Discord report: "The very first quest i did for them dropped my rep by 25 points";
+Mac: "Gate by reputation"). QFAIL-FREE spared a quest's END; a quest's own script still costs its guild, and the Mages
+Guild offers its quests by the player's level (MagesGuild.cs IsSatisfyQuestReqByLevel), so a level-2 apprentice was
+handed "Guard the Guild" (N0B10Y03: -30 for taking the guarded treasure, which the quest then makes the player's) and
+"Protect an Honored Mage" (N0B20Y02: -10 for a click on its mage, -50 for killing it) - though their own headers say
+`-- Repute: 10` and `-- Repute: 20`. Online each is offered only once the guild's standing reaches its header's number;
+every penalty is Daggerfall's, and offline the pool is DFU's. It replaced QSCRIPT-FREE (round I's waiver of a script's
+loss to its own guild), which round II withdrew: it spared that theft and that killing, and the Thieves Guild's and the
+Dark Brotherhood's own penalties, for nothing (A-1, C-1).
 
 ## What stays punishing
 

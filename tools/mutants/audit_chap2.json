@@ -133,14 +133,15 @@
   },
   {
     "name": "T-LAW-FACTIONNAME",
-    "file": "src/net/npcChapterLaw.js",
-    "old": "raw.replace(/^The /, 'the ')",
-    "new": "raw",
+    "file": "src/scenes/rollNoticeHost.js",
+    "old": "  return own ? own() : String(f);",
+    "new": "  return String(f);",
     "tests": [
       "test/audit_chap1.test.js",
       "test/audit_chap2.test.js",
       "test/chap1_roll.test.js",
-      "test/chap2_halls.test.js"
+      "test/chap2_halls.test.js",
+      "test/fb1015g_guildwords.test.js"
     ]
   },
   {
@@ -314,8 +315,8 @@
   {
     "name": "T-TAB-CUT-EMPTY",
     "file": "src/net/npcRollTracker.js",
-    "old": "if (cut.length) onCeiling(cut);",
-    "new": "onCeiling(cut);",
+    "old": "if (paced.length) onCeiling(paced);",
+    "new": "onCeiling(paced);",
     "tests": [
       "test/audit_chap1.test.js",
       "test/audit_chap2.test.js",
@@ -1074,8 +1075,8 @@
   {
     "name": "T-SVC-READ-NOPAY",
     "file": "server-account/src/npcRoll.js",
-    "old": "    if (!paid.length) return { roll: viewOf(kseq, rows), from: kseq };",
-    "new": "    if (false) return { roll: viewOf(kseq, rows), from: kseq };",
+    "old": "    if (!paid.length) return { roll: viewOf(kseq, rows), from: kseq, paid: drained };",
+    "new": "    if (false) return { roll: viewOf(kseq, rows), from: kseq, paid: drained };",
     "tests": [
       "test/audit_chap1.test.js",
       "test/audit_chap2.test.js",
@@ -1123,8 +1124,8 @@
   {
     "name": "T-SVC-CLAIM-SEQ",
     "file": "server-account/src/npcRoll.js",
-    "old": "return { roll: viewOf(kseq + (lines.length > 0 ? 1 : 0), rows), credited };",
-    "new": "return { roll: viewOf(kseq, rows), credited };",
+    "old": "return { roll: viewOf(kseq + (lines.length > 0 ? 1 : 0), rows), credited, paid: drained };",
+    "new": "return { roll: viewOf(kseq, rows), credited, paid: drained };",
     "tests": [
       "test/audit_chap1.test.js",
       "test/audit_chap2.test.js",
@@ -1534,8 +1535,8 @@
   {
     "name": "AUDIT-CHAP2-C1-READ-FROM-SEQ",
     "file": "server-account/src/npcRoll.js",
-    "old": "    if (!paid.length) return { roll: viewOf(kseq, rows), from: kseq };",
-    "new": "    if (!paid.length) return { roll: viewOf(seq, rows), from: seq };",
+    "old": "    if (!paid.length) return { roll: viewOf(kseq, rows), from: kseq, paid: drained };",
+    "new": "    if (!paid.length) return { roll: viewOf(seq, rows), from: seq, paid: drained };",
     "tests": [
       "test/audit_chap1.test.js",
       "test/audit_chap2.test.js",
@@ -1546,8 +1547,8 @@
   {
     "name": "AUDIT-CHAP2-C1-DRAIN-SEQ",
     "file": "server-account/src/npcRoll.js",
-    "old": "    return { roll: viewOf(kseq, rows), from: kseq };   // AUDIT CHAP2 C1: owed paid is the service's own credit",
-    "new": "    return { roll: viewOf(seq + 1, rows), from: seq };",
+    "old": "    return { roll: viewOf(kseq, rows), from: kseq, paid: drained };   // AUDIT CHAP2 C1: owed paid is the service's own credit",
+    "new": "    return { roll: viewOf(seq + 1, rows), from: seq, paid: drained };",
     "tests": [
       "test/audit_chap1.test.js",
       "test/audit_chap2.test.js",
@@ -1693,8 +1694,8 @@
   {
     "name": "AUDIT-CHAP2-S7-OWED-JOIN",
     "file": "server-account/src/npcRoll.js",
-    "old": "joinRecordable(line.rep + line.owed, f)",
-    "new": "joinRecordable(line.rep, f)",
+    "old": "line.rep + line.owed), f)",
+    "new": "line.rep), f)",
     "tests": [
       "test/audit_chap1.test.js",
       "test/audit_chap2.test.js",
