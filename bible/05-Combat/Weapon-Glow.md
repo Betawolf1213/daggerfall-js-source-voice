@@ -176,7 +176,7 @@ NOW (`peerBodies.js` `_arm` - the same template in the same hand is a new look),
 gatherer's tool, a werewolf's claws or a creature, and glows by the VIEWER's switch; the stand-in entity keeps it by the
 wire's one law (`peerStubEntity`, `lookGlowOk`).
 
-**Relay world208** (`src/net/wire.js` RELAY_VERSION; its law row in `test/relayversion.test.js`), NOT YET DEPLOYED. The
+**Relay world209** (`src/net/wire.js` RELAY_VERSION; its law row in `test/relayversion.test.js`; world208 on its branch, renumbered past main's INSTANCES world208 at the merge), NOT YET DEPLOYED. The
 order does not matter: an older relay builds its look items from the fields it knows and strips the word (a peer's
 weapon draws bare until the relay is deployed, and nothing else changes), and an older client never says it and drops
 it on receipt (AUDIT DOC-8).

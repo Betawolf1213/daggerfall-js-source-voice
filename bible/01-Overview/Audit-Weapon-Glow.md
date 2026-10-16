@@ -73,7 +73,7 @@ change; every gate that hides the sprite hides the outline.
 |---|---|---|---|
 | NET-1 | LOW | During a weapon swap (its archives loading, or a hand switch while the arm is busy) the next weapon's glow was drawn on the weapon still held | FIXED: `setWeaponGlow(spec, item)` - the arm lays a glow only while its mesh holds the weapon it is of (`glowShown`, `wornWeaponKey`); pinned on the fixture rig, mutants |
 | NET-2 | LOW | A sheathed weapon's glow drew nothing but still grew a third-person picture by a tenth a side | FIXED: shown only in hand (`weaponInHand`); the picture's room is MW-3's pad, asked of the look shown; pinned, mutant |
-| NET-3 | NIT | world207's note was folded into world208's line | FIXED: its own `// world207:` line, world208 re-hashed in place (undeployed) |
+| NET-3 | NIT | world207's note was folded into world208's line | FIXED: its own `// world207:` line, world208 re-hashed in place (undeployed; the merge of main since renumbered the branch's law world209, past main's INSTANCES world208) |
 | NET-4 | NIT | The wire took `arcane1`/`arcane3` and a weapon's glow in any slot | FIXED: the ten words, a weapon in a hand alone (`lookGlowOk`, `LOOK_GLOW_SLOTS` the siege referee's hands); `composeLook` and `peerStubEntity` read the one law; pinned (a shield in the left hand too), mutants |
 | NET-5 | NIT | Two comments wrong (a `LOOK_ITEM_FIELDS` cite; "allocates nothing") | FIXED |
 | NET-6 | NIT | `_arm`'s glow was pinned by text alone | FIXED: driven through `PeerBodies._arm` with a stub rig (the hand in use, a tool, claws, a creature, the viewer's switch, a new word), `setLook`'s glow-only change; mutants |
@@ -92,7 +92,7 @@ older client never says it); world208 consistent across its pins; `isPlayer` tru
 | DOC-5 | MED | Testing.md's glstate row said three 2D primitives | FIXED, and Rendering-Arc's record annotated |
 | DOC-6 | MED | The law's header named files that never existed | FIXED with LAW-3 |
 | DOC-7 | LOW | No Active-Arcs line | FIXED |
-| DOC-8 | LOW | The page never named the relay version | FIXED: Online names world208 and its rollout |
+| DOC-8 | LOW | The page never named the relay version | FIXED: Online names it (world209 since the merge of main) and its rollout |
 | DOC-9 | LOW | Law 3's wording made the level the tier's | FIXED: the total's (a Rare line of 3 reads 1, a Legendary's floor 2) |
 | DOC-10 | LOW | Shock's surge "a few times a second" - one in five of its thirds of a second | FIXED |
 | DOC-11 | LOW | The read-back exclusion named no mechanism | FIXED: `renderCharacterSpriteImage` raises `_studioDepth` |
