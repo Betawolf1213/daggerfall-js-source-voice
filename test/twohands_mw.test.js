@@ -10,6 +10,10 @@
 // blow's way across the screen, a carry kept across a view switch, the pair's draw composed, the portrait's pair, a
 // failed left-hand swap remembered forever, the mirror's cost, the run's lens - and the rig's own stride phase.
 //
+// TWO-HANDS FIELD (2026-10-16, Mac after the merge): a pair's left arm in first person was out of the picture whole ("No
+// left arm") - mirrored across the chest the clip posed, not across the eye; and on the move in third person both arms
+// swung the same way ("Both arms swing the same direction") - the left arm was the frame's own right, mirrored.
+//
 // TWO-HANDS AUDIT 2 (2026-10-16, lane 3): the made Weapon Bone Left mirrored hand to hand in the skin's frame (M1), the
 // guard dropped where something else has the hands and carried off the arm (M2), the stride following the head bob
 // without jumping (M3, the sprite lane's law too), the guard sized by the blade's own height (M4), the made bone and the
@@ -23,10 +27,10 @@ import { buildSkeleton, poseSkeleton, skeletonSpaceMatrices, injectSkeletonNodes
 import { mat33Mul } from '../src/formats/mwNifMesh.js';
 import { applyMirrorRig, mirrorPlan, counterpartName, strikingSide, limbSkeleton, offWeaponBoneAddon, WEAPON_BONE_LEFT_SOURCE } from '../src/combat/mirrorRig.js';
 import { rotAxisAngle } from '../src/combat/climbRig.js';
-import { createFpArm, fpSkeletonPath, FP_CLIP_PATH, resolveOffWeaponParts, resolveWeaponParts, OFF_WEAPON_BONE, fpWeaponKey, GUARD_LENS_DROP, bladePictureHeight } from '../src/combat/fpArm.js';
+import { createFpArm, fpSkeletonPath, tpSkeletonPath, strideOppositeTime, FP_CLIP_PATH, resolveOffWeaponParts, resolveWeaponParts, OFF_WEAPON_BONE, fpWeaponKey, GUARD_LENS_DROP, bladePictureHeight } from '../src/combat/fpArm.js';
 import { GUARD, RUN_PUMP, RUN_STEP_M, runPhaseOfBob, runPhaseFollow, runPhaseStep } from '../src/combat/handsLaw.js';
 import { HeadBobber } from '../src/player/headBobber.js';
-import { MW_WEAPON_TYPE, assembleFirstPersonArm, poseAssembly } from '../src/formats/mwFirstPerson.js';
+import { MW_WEAPON_TYPE, MW_UNITS_PER_METER, assembleFirstPersonArm, poseAssembly } from '../src/formats/mwFirstPerson.js';
 import { bodyRec } from './fixtures/mw/bodyRec.mjs';
 import { SHADOW_INVERSE_BINDS } from './fixtures/mw/retailRig.mjs';
 
@@ -1077,3 +1081,121 @@ test('TWO-HANDS the arm, by source: the mirror is posed over the clip ahead of t
   assert.match(rig, /fpArm\.setRunHands\?\.\(wanted, \{ speed, phase: Number\.isFinite\(mv\.bobTimer\) \? runPhaseOfBob\(mv\.bobTimer\) : null \}\);/);   // PIN MOVED (TWO-HANDS AUDIT): the arms on the head bob's clock
   assert.match(rig, /const armsRun = fpArm\.active\(\) && !!fpArm\.runPosed\?\.\(\);/);
 });
+
+// ---- TWO-HANDS FIELD (2026-10-16, Mac after the merge) ------------------------------------------------------------
+
+test('TWO-HANDS FIELD the law, A STRIDE\'S OTHER HALF (strideOppositeTime): half the group\'s loop window on, read off its own loop keys inside the block the state plays - wrapping inside the window; the group\'s start to stop where it has no loop keys; another block\'s keys never; nothing without a window', () => {
+  const st = { group: 'walkforward', startTime: 1.0, stopTime: 2.4, loopStartTime: 1.0, loopStopTime: Infinity };
+  const keys = [{ text: 'walkforward: start', time: 1.0 }, { text: 'walkforward: loop start', time: 1.2 }, { text: 'walkforward: loop stop', time: 2.2 }, { text: 'walkforward: stop', time: 2.4 },
+    { text: 'walkforward: loop start', time: 5.0 }, { text: 'walkforward: loop stop', time: 6.0 }];
+  assert.ok(Math.abs(strideOppositeTime(st, 1.3, keys) - 1.8) < 1e-9, 'half the 1.2-2.2 loop on');
+  assert.ok(Math.abs(strideOppositeTime(st, 2.1, keys) - 1.6) < 1e-9, 'wrapped inside the loop');
+  assert.ok(Math.abs(strideOppositeTime(st, 1.1, keys) - 1.6) < 1e-9, 'the intro maps into the loop too - never past it');
+  assert.ok(Math.abs(strideOppositeTime({ ...st, loopStopTime: 2.2 }, 1.3, keys) - strideOppositeTime(st, 1.3, keys)) < 1e-9, 'the state\'s own loop fields move nothing: the keys say the window from the first frame (a first loop read the whole group - the arm jumped as the loop stop was crossed)');
+  assert.ok(Math.abs(strideOppositeTime(st, 1.3) - 2.0) < 1e-9, 'no keys: the group\'s start to stop');
+  assert.ok(Math.abs(strideOppositeTime({ ...st, startTime: 4.8, stopTime: 6.2 }, 5.2, keys) - 5.7) < 1e-9, 'the block played reads its own keys');
+  assert.equal(strideOppositeTime(null, 1), null);
+  assert.equal(strideOppositeTime({ ...st, stopTime: 1.0 }, 1.0), null, 'no window');
+});
+
+/** A female actor's two sources on both rigs (MW-D29's retail arrangement): the weapon groups in the base source, the walk
+ *  in the skeleton's own - its WalkForward1h renamed away, so the drawn walk falls back to WalkForward, whose clip swings
+ *  the right arm (the fixture's 1h walk holds it still). */
+async function walkingPair() {
+  const strip = (b) => { const t = Buffer.from(b); let i; while ((i = t.indexOf('WalkForward1h')) >= 0) t.write('WalkForwardZz', i); return new Uint8Array(t); };
+  const move = strip(f('armfpmove.kf'));
+  const files = new Map([...FILES(), [fpSkeletonPath({ female: true }), f('armfp.nif')], ['meshes/base_anim_female.1st.kf', move],
+    [tpSkeletonPath({ female: true }), f('armfp.nif')], ['meshes/xbase_anim.nif', f('armfp.nif')], ['meshes/xbase_anim.kf', f('armfpweapon.kf')], ['meshes/base_anim_female.kf', move]]);
+  const all = cat(f('armfp.esm'), bodyRec('b_fprace_m_hand', 'fixture\\armfphand.nif', 'fprace', 5), bodyRec('b_fprace_m_upperarm', 'fixture\\armfparm.nif', 'fprace', 8), WEAP);
+  const d = { loadMorrowindArchives: async () => [{ has: (p) => files.has(p), get: (p) => files.get(p) }], storedMorrowindNames: async () => ['armfp.esm'], loadMorrowindFile: async () => all };
+  const cam = { pos: [0, 1.6, 0], yaw: 0, pitch: 0, sneaking: false, move: { forward: 0, strafe: 0, running: false, speed: 0 } };
+  const renderer = { gl: null, createCharacterMesh: () => ({ vao: 1, buffers: [], ranges: [] }), updateCharacterMesh: () => {}, createCharacterTexture: () => 1, renderCharacterSprite: () => ({ tex: {} }), drawCharacterSpriteQuad: () => {}, drawScreenOverlayQuad: () => {}, renderCharacterSpriteImage: () => ({ img: 1 }), createParticleEffect: () => ({}) };
+  const arm = createFpArm();
+  arm.attach(renderer, () => cam);
+  const res = await arm.build({ race: 'fprace', female: true, weapon: LONGSWORD, deps: d });
+  assert.ok(res.ok && res.third?.ok && res.sources.length === 2, `${res.stage} ${res.error} / ${res.third?.error}`);
+  arm.setSheathed(false);
+  for (let i = 0; i < 80; i++) arm.update(0.05);
+  arm.setHands({ mode: 'dual', lead: 'R' });
+  await arm.setOffWeapon(LONGSWORD);
+  return { arm, cam };
+}
+
+test('TWO-HANDS FIELD the arm, A PAIR ON THE MOVE SWINGS ITS ARMS AGAINST EACH OTHER (Mac: "Both arms swing the same direction"): walking in third person the left arm is the right\'s mirror HALF A STRIDE ON - the left wrist stands where the right\'s mirror stands half a loop later, so as the right swings one way the left swings the other; the frame\'s own right arm mirrored had swung both together. Standing, the pair\'s rest again', () => seeded(async () => {
+  const { arm, cam } = await walkingPair();
+  assert.ok(arm.setViewMode('third'));
+  for (let i = 0; i < 10; i++) arm.update(0.05);
+  assert.equal(arm.handsState().composed, 'dual', 'standing: the pair at rest');
+  cam.move.forward = 1; cam.move.speed = 2.0 / MW_UNITS_PER_METER;
+  const t = arm.built().third.arm, plan = mirrorPlan(t.skeleton, GRAPH_ROOT, t.fns.skelMats);
+  const R = [], L = [];
+  for (let i = 0; i < 60; i++) {
+    arm.update(0.05);
+    assert.equal(arm.status().movementGroup, 'walkforward');
+    assert.equal(arm.handsState().composed, 'dual:stride', `frame ${i}: on the move, the stride's other half`);
+    R.push(t.mats.get(plan.hands.R).t.slice()); L.push(t.mats.get(plan.hands.L).t.slice());
+  }
+  // the swing measured: each frame's move of the left wrist against the right's mirrored (x negated about the body's
+  // middle, x0 = 0 on the fixture) - the frame's own mirror is +1 exactly; the stride's other half runs against it
+  const settled = 15;
+  let along = 0, size = 0;
+  for (let i = settled; i + 1 < R.length; i++) {
+    const dR = [-(R[i + 1][0] - R[i][0]), R[i + 1][1] - R[i][1]], dL = [L[i + 1][0] - L[i][0], L[i + 1][1] - L[i][1]];
+    along += dL[0] * dR[0] + dL[1] * dR[1]; size += dR[0] * dR[0] + dR[1] * dR[1];
+  }
+  assert.ok(size > 1e-3, `the right arm swings (${size})`);
+  assert.ok(along / size < -0.5, `the left swings against the right (${(along / size).toFixed(3)}; the frame's own mirror reads +1)`);
+  // and exactly half a loop on: a lag k at which the left is the right's mirror, frame for frame
+  const off = (k) => { let w = 0; for (let i = settled; i + k < R.length; i++) w = Math.max(w, Math.abs(L[i][0] + R[i + k][0]), Math.abs(L[i][1] - R[i + k][1])); return w; };
+  const lags = Array.from({ length: 30 }, (_, k) => off(k));
+  const k = lags.indexOf(Math.min(...lags));
+  assert.ok(lags[k] < 0.01 && k > 0, `the left is the right's mirror ${k} frames on (${lags[k].toFixed(4)}; now: ${lags[0].toFixed(3)})`);
+  const loop = (() => { for (let j = 1; j < 40; j++) { let w = 0; for (let i = settled; i + j < R.length; i++) w = Math.max(w, Math.abs(R[i + j][0] - R[i][0]), Math.abs(R[i + j][1] - R[i][1])); if (w < 1e-3) return j; } return -1; })();
+  assert.equal(k * 2, loop, `half the right arm's own loop (${loop} frames)`);
+  // a clip over the walk poses the body (the draw here, a recoil, a blow): the stride is not the arms' - the pair's own
+  // composition until it ends
+  arm.setSheathed(true);
+  for (let i = 0; i < 60; i++) arm.update(0.05);
+  arm.setSheathed(false);
+  let drawing = 0;
+  for (let i = 0; i < 60; i++) {
+    arm.update(0.05);
+    const st = arm.status();
+    if (st.upperName === 'Equipping' && arm.handsState().pair) { drawing++; assert.equal(arm.handsState().composed, 'dual', `frame ${i}: the draw poses the arms, not the walk`); }
+  }
+  assert.ok(drawing > 0, 'the draw was seen on the walk');
+  assert.equal(arm.handsState().composed, 'dual:stride', 'drawn: the stride again');
+  cam.move.forward = 0; cam.move.speed = 0;
+  for (let i = 0; i < 10; i++) arm.update(0.05);
+  assert.equal(arm.handsState().composed, 'dual', 'stopped: the pair at rest again');
+}));
+
+test('TWO-HANDS FIELD the arm, THE FIRST-PERSON PAIR IS MIRRORED ACROSS THE EYE (Mac: "No left arm"): with the body posed off the eye (the camera node moved across - Morrowind\'s first-person clips pose the body to put the weapon hand in view, not about the eye), the left wrist stands where the right\'s mirror through the EYE stands, so it is in the picture wherever the right is; the body in third person still hangs its left arm on its own chest', () => seeded(async () => {
+  const arm = await drawnArm({ d: bodyDeps() });
+  arm.setHands({ mode: 'dual', lead: 'R' });
+  await arm.setOffWeapon(LONGSWORD);
+  for (let i = 0; i < 6; i++) arm.update(0.05);
+  let h = arm.handsState();
+  assert.ok(Math.abs(h.wrists.L[0] + h.wrists.R[0]) < 0.02, `the eye on the middle: the mirror as it stood (${h.wrists.L} / ${h.wrists.R})`);
+  const b = arm.built();
+  const cam = b.arm.skeleton.nodes.get(b.cameraRef), neck = b.arm.skeleton.nodes.get(cam.parent);
+  assert.equal(cam?.name, 'Camera');
+  // the body off the eye: the chest (the arms' parent, the eye's too) moved one way, the eye on it further
+  neck.rest.translation[0] += 0.2;
+  cam.rest.translation[0] = 0.3;
+  for (let i = 0; i < 6; i++) arm.update(0.05);
+  h = arm.handsState();
+  const eyeX = b.arm.mats.get(b.cameraRef).t[0];
+  assert.ok(Math.abs(eyeX - 0.5) < 1e-6, `the eye moved across, on its chest (${eyeX})`);
+  assert.ok(Math.abs((h.wrists.L[0] - eyeX) + (h.wrists.R[0] - eyeX)) < 0.02, `the left wrist the right's mirror ACROSS THE EYE (${h.wrists.L} / ${h.wrists.R}); hung on the chest it stood at ${(0.4 - h.wrists.R[0]).toFixed(3)}`);
+  assert.ok(Math.abs(h.wrists.L[1] - h.wrists.R[1]) < 0.02 && Math.abs(h.wrists.L[2] - h.wrists.R[2]) < 0.02, 'as far ahead and as high');
+  assert.equal(h.offHidden[0], false, 'the left blade drawn with it');
+  // the body: a shoulder stays on its chest - mirrored about the body's own middle, wherever its camera node stands
+  assert.ok(arm.setViewMode('third'));
+  const t = arm.built().third.arm, tcam = t.skeleton.nodes.get(t.skeleton.byName.get('camera'));
+  if (tcam) tcam.rest.translation[0] = 0.3;
+  for (let i = 0; i < 6; i++) arm.update(0.05);
+  const plan = mirrorPlan(t.skeleton, GRAPH_ROOT, t.fns.skelMats);
+  const tl = t.mats.get(plan.hands.L).t, tr = t.mats.get(plan.hands.R).t;
+  assert.ok(Math.abs(tl[0] + tr[0]) < 0.02, `third person: the body's own mirror (${tl} / ${tr})`);
+}));

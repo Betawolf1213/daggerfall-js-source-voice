@@ -218,18 +218,23 @@ test('TWO-HANDS law: the guard, the run - the guard\'s follower eased in fast an
   assert.equal(runPhaseStep(1, 7, -1), 1, 'no backward time');
   const top = pumpOf(Math.PI / 2, 'R'), back = pumpOf(Math.PI / 2, 'L');
   assert.deepEqual([top.s, back.s], [1, -1], 'out of step by half a stride');
-  // THE RUNNING ARM IS THE ART'S OWN: the top of the stroke is the rise's last frame (a fist up on its forearm), never a lift
-  assert.deepEqual([top.dx, top.dy, top.frame], [RUN_PUMP.IN, 0, RUN_PUMP.ARM_FRAMES.at(-1)], 'the top: in toward the middle, the arm up - no lift');
-  assert.deepEqual([back.dx, back.dy, back.frame], [-RUN_PUMP.OUT, RUN_PUMP.DROP, RUN_PUMP.ARM_FRAMES[0]], 'the bottom: out, the lowest frame, down past the view');
+  // THE RUNNING ARM IS THE ART'S OWN: the rise's lowest frame, its foot on the view's edge at the top of the stroke - never
+  // a lift; PIN MOVED (TWO-HANDS FIELD, Mac: "Too high, like uppercuts"): one frame, not the rise's 1-3 by how far up the
+  // stroke is (2 and 3 are the punch's own peak, half the view high - the real-art pin below), on an even sine
+  assert.deepEqual([top.dx, top.dy, top.frame], [RUN_PUMP.IN, 0, RUN_PUMP.ARM_FRAME], 'the top: in toward the middle, the foot on the edge - no lift');
+  assert.deepEqual([back.dx, back.dy, back.frame], [-RUN_PUMP.OUT, RUN_PUMP.DROP, RUN_PUMP.ARM_FRAME], 'the bottom: out, down past the view');
   assert.ok(RUN_PUMP.DROP > 1, 'the bottom of the stroke leaves the view');
   assert.equal(RUN_PUMP.ARM_STATE, 'StrikeDownRight', 'WEAPON10 record 5 - the one bare-hand record that lifts a fist on its forearm');
-  assert.deepEqual([...RUN_PUMP.ARM_FRAMES], [1, 2, 3], 'the frames that leave their frame only at the foot (frame 0\'s sleeve leaves through its right side, 4\'s its left - the real-art pin below)');
+  assert.equal(RUN_PUMP.ARM_FRAME, 1, 'the rise\'s lowest frame that leaves its frame only at the foot (frame 0\'s sleeve leaves through its right side, 4\'s its left; 2 and 3 the uppercut\'s peak - the real-art pin below)');
   assert.equal(MELEE_PAINTED_ARM[5], 'R', 'the right arm, mirrored for the left (one rule)');
-  const mid = pumpOf(Math.PI / 6, 'R');   // sin = 0.5, snapped up by SHAPE
-  assert.ok(Math.abs(mid.s - Math.pow(0.5, RUN_PUMP.SHAPE)) < 1e-9 && mid.s > 0.5, 'the stroke drives (|sin|^SHAPE)');
-  assert.equal(mid.frame, RUN_PUMP.ARM_FRAMES[Math.floor(mid.s * RUN_PUMP.ARM_FRAMES.length)], 'the frame by how far up the stroke is');
-  for (let k = 0; k < 64; k++) assert.ok(pumpOf(k * Math.PI / 32, 'R').dy >= 0, 'never up: the pump only lowers a sprite');
-  assert.deepEqual({ ...RUN_PUMP, ARM_FRAMES: [...RUN_PUMP.ARM_FRAMES] }, { ARM_STATE: 'StrikeDownRight', ARM_FRAMES: [1, 2, 3], DROP: 1.05, IN: 0.06, OUT: 0.03, SHAPE: 0.7, SWAP: 0.5, IN_TAU: 0.12, OUT_TAU: 0.16, PUNCH_TAU: 0.04, MIN_SPEED: 1.0, CATCH: 0.5, AIR_GRACE: 0.6 }, 'the record\'s numbers (AUDIT 2, L5: each could change unseen)');
+  const mid = pumpOf(Math.PI / 6, 'R');   // sin = 0.5
+  assert.ok(Math.abs(mid.s - 0.5) < 1e-9 && Math.abs(mid.dy - RUN_PUMP.DROP / 4) < 1e-9, 'an even stroke: no snap holding the fist at the top');
+  for (let k = 0; k < 64; k++) {
+    const p = pumpOf(k * Math.PI / 32, 'R'), q = pumpOf((k + 1) * Math.PI / 32, 'R');
+    assert.ok(p.dy >= 0 && p.frame === RUN_PUMP.ARM_FRAME, 'never up: the pump only lowers a sprite');
+    assert.ok((q.s - p.s) * (q.dy - p.dy) <= 1e-12, 'the arm rises as the stroke goes forward and falls as it goes back');
+  }
+  assert.deepEqual({ ...RUN_PUMP }, { ARM_STATE: 'StrikeDownRight', ARM_FRAME: 1, DROP: 1.05, IN: 0.06, OUT: 0.03, SWAP: 0.5, IN_TAU: 0.12, OUT_TAU: 0.16, PUNCH_TAU: 0.04, MIN_SPEED: 1.0, CATCH: 0.5, AIR_GRACE: 0.6 }, 'the record\'s numbers (AUDIT 2, L5: each could change unseen)');
   const want = { running: true, grounded: true, speed: RUN_PUMP.MIN_SPEED, emptyHands: true };
   assert.equal(runHandsWanted(want), true);
   for (const [k, v] of [['running', false], ['standing', true], ['grounded', false], ['crouching', true], ['riding', true], ['swimming', true], ['climbing', true], ['emptyHands', false], ['attacking', true], ['speed', RUN_PUMP.MIN_SPEED - 0.01]]) {
@@ -846,7 +851,7 @@ test('TWO-HANDS rig, the running hands, AUDITED: THE ARM IS THE ART\'S OWN - the
   assert.ok(Number.isFinite(lastRestY.L) && Number.isFinite(lastRestY.R), 'the fists went DOWN out of the view first - never gone in a frame');
   assert.ok(lastRestY.L > 200 * 0.9 && lastRestY.R > 200 * 0.9, `and all the way down before the arms came up: ${JSON.stringify(lastRestY)} (from ${rest.y})`);
   for (const x of await up.frame({ move: 7 })) assert.equal(shownArm(x), side(x), 'each running arm its own side\'s - record 5\'s right arm mirrored for the left');
-  assert.equal(frameOf(top), RUN_PUMP.ARM_FRAMES.at(-1), 'the top of the stroke: the rise\'s last frame, the fist up on its forearm');
+  assert.equal(frameOf(top), RUN_PUMP.ARM_FRAME, 'the top of the stroke: the rise\'s lowest frame, its foot on the edge (PIN MOVED, TWO-HANDS FIELD: was the rise\'s last, the uppercut\'s peak)');
   assert.ok(top.rect.x + top.rect.w / 2 < rest.x + rest.w / 2 - 1, `the top of the stroke in toward the middle: ${JSON.stringify([top.rect, rest])}`);
   assert.equal(top.mirrored, false, 'the right hand: record 5 paints the right arm');
   assert.ok(up.r.twoHands.running);
@@ -1110,18 +1115,23 @@ test('TWO-HANDS x WEAPON-GLOW1: each hand of a pair wears ITS OWN weapon\'s elem
 const ARENA2 = process.env.ARENA2_PATH;
 const NO_ARENA2 = (!ARENA2 || !existsSync(ARENA2)) && 'ARENA2_PATH not set or missing - real-data validation skipped';
 
-test('TWO-HANDS (ARENA2): THE CUT STAYS OFF THE SCREEN, measured on the shipped art - the run\'s frames of WEAPON10\'s rising punch leave their frame at the foot alone (frame 0\'s sleeve by its right side too, 4\'s by its left: never run); every weapon a pair holds is drawn flush to the view\'s side, its hand cut at its outer side (all but the plain mace), so its guard only lowers (Mac: "The sprite on the right moves to the right and exposes where it clips off")', { skip: NO_ARENA2 }, () => {
+test('TWO-HANDS (ARENA2): THE CUT STAYS OFF THE SCREEN, measured on the shipped art - the run\'s frame of WEAPON10\'s rising punch leaves its frame at the foot alone and stands as high as the idle fist (frame 0\'s sleeve by its right side too, 4\'s by its left, 2 and 3 the uppercut\'s peak, half the view: never run); every weapon a pair holds is drawn flush to the view\'s side, its hand cut at its outer side (all but the plain mace), so its guard only lowers (Mac: "The sprite on the right moves to the right and exposes where it clips off")', { skip: NO_ARENA2 }, () => {
   const cif = (file) => { const c = new CifRciFile(); c.load(new Uint8Array(readFileSync(join(/** @type {string} */ (ARENA2), file))), file); return c; };
   /** Opaque pixels down a column, the foot's own row aside (a sleeve leaving at the foot touches its corner). */
   const sideCut = (b, x) => { let n = 0; for (let y = 0; y < b.height - 1; y++) if (b.data[y * b.width + x]) n++; return n; };
   const w10 = cif('WEAPON10.CIF');
   const rec = getWeaponAnims(WEAPON_TYPES.Melee)[STATE_INDEX[RUN_PUMP.ARM_STATE]].Record;
   assert.equal(rec, 5);
+  const idleStands = w10.getDFBitmap(0, 0).height;   // the idle fist, painted to its frame's top (63x53)
   for (let f = 0; f < w10.getFrameCount(rec); f++) {
     const b = w10.getDFBitmap(rec, f);
     const cut = sideCut(b, 0) + sideCut(b, b.width - 1);
     const foot = b.data.subarray((b.height - 1) * b.width).some((v) => v > 0);
-    if (RUN_PUMP.ARM_FRAMES.includes(f)) assert.ok(cut === 0 && foot, `frame ${f}: the arm leaves at its foot alone (${cut} cut at its sides)`);
+    // the rows the arm stands, from its foot: frame 1's fist as high as the idle fist stands, 2 and 3 the uppercut's peak
+    let topRow = 0; while (topRow < b.height && !b.data.subarray(topRow * b.width, (topRow + 1) * b.width).some((v) => v > 0)) topRow++;
+    const stands = b.height - topRow;
+    if (f === RUN_PUMP.ARM_FRAME) assert.ok(cut === 0 && foot && stands <= 1.2 * idleStands, `frame ${f}: the arm leaves at its foot alone (${cut} cut at its sides) and stands ${stands} rows - the idle fist ${idleStands}`);
+    else if (f === 2 || f === 3) assert.ok(stands >= 0.45 * 200, `frame ${f}: the punch's peak, ${stands} of the view's 200 rows - never run (TWO-HANDS FIELD, Mac: "Too high, like uppercuts")`);
     else assert.ok(cut > 0, `frame ${f} is cut at a side (${cut}) - never run`);
   }
   const uncut = [];
