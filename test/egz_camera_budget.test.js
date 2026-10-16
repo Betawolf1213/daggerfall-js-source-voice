@@ -11,7 +11,7 @@ import { createEgSpan } from '../src/scenes/egSpan.js';
 
 
 // ── THE BUDGET ──────────────────────────────────────────────────────────────────────────────────────────────────────
-test('EG-ZN THE BUDGET, MEASURED (section 11.9, as EG-G2 measured): over 60 circles (seeds 7, 99 and 12345, circles 1 to 20) the circle is still one draw of a sub-mesh a record while nothing stands between - a mean of 7.6 GL draws, at worst 8 - and with any one occluder dithering at most two draws more a record it touches: a mean of 9.75, at worst 12; the frame\'s circle and batched pieces together a mean of 26.9 (worst 39) whole and at most 43 with the worst one piece dithering, under the Hour\'s 82 (mutants: a piece\'s runs unmerged; the rest drawn in pieces)', () => {
+test('EG-ZN THE BUDGET, MEASURED (section 11.9, as EG-G2 measured): over 60 circles (seeds 7, 99 and 12345, circles 1 to 20) the circle is still one draw of a sub-mesh a record while nothing stands between - a mean of 11.7 GL draws, at worst 12 (EG-LOOK HALLS: the kit\'s records the academy wears) - and with any one occluder dithering at most two draws more a record it touches: a mean of 16.17, at worst 24; the frame\'s circle and batched pieces together a mean of 31 (worst 43) whole and at most 55 with the worst one piece dithering, under the Hour\'s 82 (mutants: a piece\'s runs unmerged; the rest drawn in pieces)', () => {
   const fake = () => ({ createMesh: (mm) => ({ subMeshes: mm.subMeshes }), destroyMesh: () => {}, updateMeshVertices: () => {} });
   let n = 0, whole = 0, wholeWorst = 0, one = 0, oneWorst = 0, pieces = 0, frame = 0, frameWorst = 0, frameOccWorst = 0;
   for (const seed of [7, 99, 12345]) for (let c = 1; c <= 20; c++) {
@@ -35,8 +35,12 @@ test('EG-ZN THE BUDGET, MEASURED (section 11.9, as EG-G2 measured): over 60 circ
   // inner courses' pieces batched: 7.15, 8; 9.15, 12; 23.8, 35, 39 before. PIN MOVED (AUDIT EG IV, the Fallen Stacks laid): 7.48,
   // 9.61 and 25.2 before. PIN MOVED (AUDIT EG V, f - spec law 8: the stairs up to every raised floor, a span's passages by circle,
   // more twists, their fragments' and their pieces' records and batches): 7.52, 9.64 and 25.5 before, the worst of each as before
-  assert.deepEqual([Math.round((whole / n) * 100) / 100, wholeWorst], [7.6, 8], 'the circle whole: one draw a record, as before');
-  assert.deepEqual([Math.round((one / pieces) * 100) / 100, oneWorst], [9.75, 12], 'one piece dithering');
-  assert.deepEqual([Math.round((frame / n) * 10) / 10, frameWorst, frameOccWorst], [26.9, 39, 43]);   // PIN MOVED at the merge with EG-ZL (its Drift chains, Beat phases and tells are kinds of the batch): 20.7, 30, 34 before
+  // PIN MOVED (EG-LOOK HALLS, Elite-Gates-Look.md sections 2 and 10): the ground dressed as the academy wears four of the kit's
+  // records besides its eight (world/egGround.js EG_GROUND_RECORDS: the shaft, the moulding, the voussoir, the inlay) and each bay
+  // of a wall is a piece of several of them: 7.6, 8; 9.75, 12; 26.9, 39, 43 before - still one draw a record whole, still at
+  // most two draws more a record a dithering piece touches, still under the Hour's 82
+  assert.deepEqual([Math.round((whole / n) * 100) / 100, wholeWorst], [11.7, 12], 'the circle whole: one draw a record, as before');
+  assert.deepEqual([Math.round((one / pieces) * 100) / 100, oneWorst], [16.17, 24], 'one piece dithering');
+  assert.deepEqual([Math.round((frame / n) * 10) / 10, frameWorst, frameOccWorst], [31, 43, 55]);   // PIN MOVED at the merge with EG-ZL (its Drift chains, Beat phases and tells are kinds of the batch): 20.7, 30, 34 before
   assert.ok(frameOccWorst < 82, 'under the Hour\'s own frame');
 });

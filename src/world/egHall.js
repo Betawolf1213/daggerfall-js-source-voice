@@ -49,7 +49,9 @@ import { realmIsland, packRealmFaces, SD_REALM_FLOOR_RECORD, SD_REALM_BRASS_RECO
 import { egCircleSpecs, egBandOfCircle, EG_TEXT } from '../net/egLaw.js';
 import { EG_FRAGS } from '../net/egFragLaw.js';
 import { egSlagX, EG_SLAG_SPOUTS } from '../net/egSpanLaw.js';   // EG-ZC: the slag's spouts
-import { egBandDress, EG_DRESS } from './egBandArt.js';   // EG-G2: the band's dress
+import { egBandDress, egBandArchive, EG_DRESS } from './egBandArt.js';   // EG-G2: the band's dress
+import { EG_KIT_RECORDS } from './egKit.js';   // EG-LOOK: the kit's records, packed under the band's archive
+import { egKitInto, egDiscFloor, egPassage, egRingArcade, egTierBenches, egLongWalls, egChokeArch, egDoorway, egVignette } from './egGround.js';   // EG-LOOK (Elite-Gates-Look.md section 2): THE GROUND, the academy's dress
 import { egAtmosOf } from './egAtmos.js';   // EG-LOOK (Elite-Gates-Look.md section 7): each band's air and light
 import { FIRE_WALLS_ARCHIVE } from './emissiveTextures.js';   // EG-ZH: the Caverns' fire falls wear Daggerfall's own fire
 import { egHeroFragInto, egHeroFragCollider, EG_HERO_FRAG_MESHES } from './egHeroFragModel.js';   // EG-HERO-LAY: a hall's hero, drawn and collided
@@ -148,7 +150,15 @@ function bandModel(f, spec, b) {
   const D = (x, y, z) => egToDungeon(spec, x, y, z);
   const xl = b.x - b.halfW, xr = b.x + b.halfW, y = b.y;
   const rec = b.role === 'walk' ? SD_REALM_COBBLE_RECORD : SD_REALM_FLOOR_RECORD;
-  quadTo(f, rec, D(xl, y, b.z0), D(xr, y, b.z0), D(xr, y, b.z1), D(xl, y, b.z1), [0, 1, 0], [[xl / 2, b.z0 / 2], [xr / 2, b.z0 / 2], [xr / 2, b.z1 / 2], [xl / 2, b.z1 / 2]]);
+  // EG-LOOK (Elite-Gates-Look.md section 2): a fire-lit passage's floor cut into its strips - the fire's channel 0.3 m wide by
+  // each wall, a hand from it, IN the floor's own plane (it was a quad a centimetre over it)
+  const q = b.role === 'cave' ? spec.caves.find((c) => Math.abs(c.x - b.x) < 1e-6 && b.z0 >= c.z0 - 1e-6 && b.z1 <= c.z1 + 1e-6) : null;
+  const fire = !!q && (q.kit === 'caverns' || q.kit === 'deep' || q.kit === 'forge');
+  const xs = fire ? [xl, xl + 0.05, xl + 0.35, xr - 0.35, xr - 0.05, xr] : [xl, xr];
+  for (let i = 0; i + 1 < xs.length; i++) {
+    const a = xs[i], c = xs[i + 1], r = fire && (i === 1 || i === 3) ? EG_DRESS.molten : rec;
+    quadTo(f, r, D(a, y, b.z0), D(c, y, b.z0), D(c, y, b.z1), D(a, y, b.z1), [0, 1, 0], [[a / 2, b.z0 / 2], [c / 2, b.z0 / 2], [c / 2, b.z1 / 2], [a / 2, b.z1 / 2]]);
+  }
   if (b.role === 'cave') return;   // the passage's walls are its kerbs
   for (const [x0, x1] of [[xl, xl + 0.18], [xr - 0.18, xr]]) { const a = D(x0, y, b.z0), c = D(x1, y + 0.12, b.z1); boxD(f, SD_REALM_BRASS_RECORD, a[0], a[1], a[2], c[0], c[1], c[2], false); }
   for (const x of [xl, xr]) { const a = D(x, y - 0.9, b.z0), c = D(x, y, b.z1); quadTo(f, SD_REALM_ROOT_RECORD, [a[0], a[1], a[2]], [a[0], a[1], c[2]], [a[0], c[1], c[2]], [a[0], c[1], a[2]], [x < b.x ? -1 : 1, 0, 0]); }
@@ -247,27 +257,17 @@ export function egHeroDoor(spec, a) {
   }
   return null;
 }
-function caveModel(f, spec, q, occ = whole) {
-  const D = (x, y, z) => egToDungeon(spec, x, y, z), yLo = Math.min(q.y, q.yB ?? q.y), yHi = Math.max(q.y, q.yB ?? q.y), w = q.halfW, X = q.x;
-  const kit = q.kit, open = !!q.open, sky = kit === 'gloam';
-  const wallRec = kit === 'mist' || kit === 'ossuary' ? SD_REALM_ROOT_RECORD : SD_REALM_PILLAR_RECORD;
-  if (!open) for (const s of [-1, 1]) {
-    for (const [z0, z1] of wallRuns(spec, q, s)) {
-      const a = D(X + s * (w + 0.6), yLo - egWallFoot(q), z0), c = D(X + s * w, yHi + q.height, z1);
-      occ(() => boxD(f, wallRec, Math.min(a[0], c[0]), a[1], a[2], Math.max(a[0], c[0]), c[1], c[2], true, 0.5));
-    }
-    // the fire running down the wall's foot - a glowing channel the length of each floor (the Caverns, the Forge)
-    if (kit === 'caverns' || kit === 'deep' || kit === 'forge') for (const [z0, z1, y] of [[q.z0, q.zA, q.y], [q.zB, q.z1, q.yB ?? q.y]]) { const g0 = D(X + s * (w - 0.35), y + 0.01, z0), g1 = D(X + s * (w - 0.05), y + 0.01, z1); quadTo(f, EG_DRESS.molten, [Math.min(g0[0], g1[0]), g0[1], g0[2]], [Math.max(g0[0], g1[0]), g0[1], g0[2]], [Math.max(g0[0], g1[0]), g1[1], g1[2]], [Math.min(g0[0], g1[0]), g1[1], g1[2]], [0, 1, 0]); }
-  }
-  if (!open && !sky && !q.tube) { const a = D(X - w - 0.6, yHi + q.height, q.z0), c = D(X + w + 0.6, yHi + q.height + 1.0, q.z1); occ(() => boxD(f, SD_REALM_ROOT_RECORD, a[0], a[1], a[2], c[0], c[1], c[2], true, 0.5)); }   // a Collapsing Tube's vault falls with its floor (scenes/egSpan.js)
-  // THE KIT'S DRESS - every piece outside the walk (against the walls, overhead, or past the floor's edge). EG-ZN: each box
-  // an occluder of its own - the camera's casts meet only the collider's proxy, so the dress is what stands between
-  const along = (pitch, fn) => { for (let z = q.z0 + pitch / 2; z < q.z1; z += pitch) fn(z, z < q.zA ? q.y : z > q.zB ? (q.yB ?? q.y) : null); };
-  if (kit === 'stacks') along(2.2, (z, y) => { if (y == null) return; for (const s of [-1, 1]) { const a = D(X + s * (w - 0.45), y, z - 0.9), c = D(X + s * w, y + 2.4, z + 0.9); occ(() => boxD(f, SD_REALM_BRASS_RECORD, Math.min(a[0], c[0]), a[1], a[2], Math.max(a[0], c[0]), c[1], c[2], false, 0.5)); } });
-  else if (kit === 'colonnade') along(4, (z, y) => { if (y == null) return; for (const s of [-1, 1]) { const fallen = Math.round(z) % 3 === 0, a = D(X + s * (w + 0.3), y - 0.9, z - 0.5), c = D(X + s * (w + 1.3), y + (fallen ? 0.6 : 4.5), z + (fallen ? 1.6 : 0.5)); occ(() => boxD(f, SD_REALM_PILLAR_RECORD, Math.min(a[0], c[0]), a[1], a[2], Math.max(a[0], c[0]), c[1], c[2], true, 0.5)); } });
-  else if (kit === 'ossuary') along(3, (z) => { for (const s of [-1, 1]) { const a = D(X + s * (w - 0.25), yLo, z - 0.15), c = D(X + s * w, yHi + q.height, z + 0.15); occ(() => boxD(f, SD_REALM_ROOT_RECORD, Math.min(a[0], c[0]), a[1], a[2], Math.max(a[0], c[0]), c[1], c[2], false, 0.5)); } const a = D(X - w, yHi + q.height - 0.4, z - 0.15), c = D(X + w, yHi + q.height, z + 0.15); occ(() => boxD(f, SD_REALM_ROOT_RECORD, a[0], a[1], a[2], c[0], c[1], c[2], true, 0.5)); });
-  else if (kit === 'gloam') along(2.5, (z) => { for (const s of [-1, 1]) { const a = D(X + s * (w + 0.1), yLo - 4, z - 0.2), c = D(X + s * (w + 0.5), yHi + 9, z + 0.2); occ(() => boxD(f, SD_REALM_ROOT_RECORD, Math.min(a[0], c[0]), a[1], a[2], Math.max(a[0], c[0]), c[1], c[2], true, 0.5)); } });
-  else if (kit === 'forge') along(5, (z, y) => { for (const s of [-1, 1]) { const a = D(X + s * (w - 0.3), yHi + 3, z - 2.4), c = D(X + s * w, yHi + 3.3, z + 2.4); occ(() => boxD(f, SD_REALM_BRASS_RECORD, Math.min(a[0], c[0]), a[1], a[2], Math.max(a[0], c[0]), c[1], c[2], true, 0.5)); if (y != null) { const b0 = D(X + s * (w - 0.9), y, z - 0.4), b1 = D(X + s * (w - 0.2), y + 0.8, z + 0.4); occ(() => boxD(f, SD_REALM_PILLAR_RECORD, Math.min(b0[0], b1[0]), b0[1], b0[2], Math.max(b0[0], b1[0]), b1[1], b1[2], false, 0.5)); } } });
+/** EG-LOOK (Elite-Gates-Look.md section 2): the niches' mouths in passage `q`'s wall on `side` (wallRuns' cuts) - each `[za,
+ *  zb, floor, lid]`. */
+function wallCuts(spec, q, side) {
+  return (spec.alcoves ?? []).filter((a) => Math.sign(a.x - q.x) === side && Math.abs(Math.abs(a.x - q.x) - q.halfW) < 3 && a.z > q.z0 && a.z < q.z1).map((a) => [Math.max(q.z0, a.z - NICHE.w / 2), Math.min(q.z1, a.z + NICHE.w / 2), a.y, a.y + NICHE.h]).sort((a, b) => a[0] - b[0]);
+}
+/** EG-LOOK (Elite-Gates-Look.md section 2): a passage as THE ACADEMY'S (world/egGround.js egPassage) - its walls' runs out from
+ *  the collider's planes (pilasters, windows onto the void, a cornice), its vault over the ceiling, its kit's own form; each
+ *  bay a piece the camera dithers (EG-ZN). The fire's channels are its floor's (bandModel). */
+function caveModel(f, spec, q, occ = whole, band = spec.band ?? 0) {
+  const piece = (build) => occ(() => egKitInto(f, build));
+  egPassage(spec, q, { runs: [wallRuns(spec, q, -1), wallRuns(spec, q, 1)], cuts: [wallCuts(spec, q, -1), wallCuts(spec, q, 1)], foot: egWallFoot(q), band, piece });
 }
 /** The alcoves' niches: each a floor, three walls and a lid behind its opening; a jump alcove's ledge is a step's. EG-ZN:
  *  the walls and the lid one occluder a niche, the floor the circle's ground. */
@@ -288,12 +288,7 @@ function nicheModel(f, spec, occ = whole) {
 /** A vignette (section 11.10 - the lore the halls tell): a barricade of lecterns, a rack of broken staves, a Kyn shrine,
  *  a fallen shelf, a weapon rack - small, against a wall, outside the walk. */
 function vignetteModel(f, spec, v) {
-  const D = (x, y, z) => egToDungeon(spec, x, y, z), b = (rec, x0, y0, z0, x1, y1, z1) => { const a = D(v.x + x0, v.y + y0, v.z + z0), c = D(v.x + x1, v.y + y1, v.z + z1); boxD(f, rec, Math.min(a[0], c[0]), Math.min(a[1], c[1]), Math.min(a[2], c[2]), Math.max(a[0], c[0]), Math.max(a[1], c[1]), Math.max(a[2], c[2]), false, 0.5); };
-  if (v.t === 'barricade') { b(SD_REALM_BRASS_RECORD, -0.3, 0, -0.9, 0.3, 1.1, -0.3); b(SD_REALM_BRASS_RECORD, -0.3, 0, 0.1, 0.3, 0.9, 0.7); b(SD_REALM_FLOOR_RECORD, -0.35, 0.9, -0.9, 0.35, 1.0, 0.7); }
-  else if (v.t === 'staves') { for (let k = 0; k < 5; k++) b(SD_REALM_BRASS_RECORD, -0.05, 0, -0.6 + k * 0.3, 0.05, 1.2 + (k % 2) * 0.4, -0.55 + k * 0.3); b(SD_REALM_PILLAR_RECORD, -0.15, 0.9, -0.7, 0.15, 1.0, 0.7); }
-  else if (v.t === 'shrine') { b(SD_REALM_PILLAR_RECORD, -0.4, 0, -0.4, 0.4, 1.0, 0.4); b(SD_REALM_EDGE_RECORD, -0.15, 1.0, -0.15, 0.15, 1.3, 0.15); }
-  else if (v.t === 'shelf') { b(SD_REALM_BRASS_RECORD, -0.3, 0, -1.0, 0.3, 0.5, 1.0); b(SD_REALM_FLOOR_RECORD, -0.25, 0.5, -0.9, 0.25, 0.6, 0.9); }
-  else { b(SD_REALM_PILLAR_RECORD, -0.2, 0, -0.8, 0.2, 1.6, -0.6); b(SD_REALM_PILLAR_RECORD, -0.2, 0, 0.6, 0.2, 1.6, 0.8); for (let k = 0; k < 3; k++) b(SD_REALM_BRASS_RECORD, -0.04, 0.4 + k * 0.4, -0.7, 0.04, 0.46 + k * 0.4, 0.7); }
+  egKitInto(f, (kit) => egVignette(kit, spec, v));   // EG-LOOK (section 2): rebuilt with the kit, inside the box its collider holds
 }
 /** A chamber's arch (section 11.4 - a chokepoint 6 m wide splitting the floor): two walls across it and a lintel. */
 function archParts(spec, d) {
@@ -309,22 +304,13 @@ function rampCorners(spec, q) {
 }
 /** A plate: the Hour's island, and its mark - the arrival plate's gold ring inset; the end plate's door (two posts and a
  *  lintel of basalt across its far side). */
-function plateModel(f, spec, d, occ = whole) {
-  const [sx, , sz] = [spec.x0 + d.x, 0, d.z];
-  realmIsland(f, sx, sz, d.r, SD_REALM_FLOOR_RECORD, { y: d.y });
-  if (d.role === 'arrive') {
-    for (let k = 0; k < SD_ISLAND_SIDES; k++) {
-      const a0 = (k / SD_ISLAND_SIDES) * Math.PI * 2, a1 = ((k + 1) / SD_ISLAND_SIDES) * Math.PI * 2, r0 = d.r - 1.4, r1 = d.r - 1.2;
-      const P = (r, a) => realmToDungeon(sx + Math.cos(a) * r, d.y + 0.01, sz + Math.sin(a) * r);
-      quadTo(f, SD_REALM_EDGE_RECORD, P(r0, a0), P(r0, a1), P(r1, a1), P(r1, a0), [0, 1, 0]);
-    }
-  }
-  if (d.role === 'end') {
-    const D = (x, y, z) => realmToDungeon(sx + x, d.y + y, sz + z), zz = 0;
-    for (const s of [-1, 1]) { const a = D(s * EG_DOOR.halfW - EG_DOOR.post / 2, 0, zz - EG_DOOR.post / 2), c = D(s * EG_DOOR.halfW + EG_DOOR.post / 2, EG_DOOR.h, zz + EG_DOOR.post / 2); occ(() => boxD(f, SD_REALM_PILLAR_RECORD, a[0], a[1], a[2], c[0], c[1], c[2], false, 0.5)); }
-    const a = D(-EG_DOOR.halfW - EG_DOOR.post, EG_DOOR.h, zz - EG_DOOR.post / 2), c = D(EG_DOOR.halfW + EG_DOOR.post, EG_DOOR.h + EG_DOOR.lintel, zz + EG_DOOR.post / 2);
-    occ(() => boxD(f, SD_REALM_BRASS_RECORD, a[0], a[1], a[2], c[0], c[1], c[2], true, 0.5));
-  }
+function plateModel(f, spec, d, occ = whole, band = spec.band ?? 0) {
+  // EG-LOOK (Elite-Gates-Look.md section 2): the rim's lip and the law's edge as the Hour laid them, no teeth; the floor cut
+  // into its border's regions (the arrival plate's gold ring IN it now, inside its compass of inlay - world/egGround.js)
+  realmIsland(f, spec.x0 + d.x, d.z, d.r, SD_REALM_FLOOR_RECORD, { y: d.y, teeth: false, floor: false });
+  egDiscFloor(f, spec, d, SD_REALM_FLOOR_RECORD, band);
+  // the end plate's door: two pilasters on plinths in its posts' boxes, a round arch, a keystone carrying the band's sigil
+  if (d.role === 'end') egDoorway(spec, d, EG_DOOR, band, (build) => occ(() => egKitInto(f, build)));
 }
 
 /** EG-FULL: A LANE (a bridge at any bearing - Grath's between his islands, a perch's side span, a caster's): its floor,
@@ -342,23 +328,16 @@ function laneModel(f, spec, l) {
 }
 /** EG-FULL: THE GROUNDS' DRESS (section 13.3, 11.4) - a chamber's ring wall (open where the course enters and leaves), a
  *  magma chamber's molten floor far below, a pit's tiers, the forge's long walls. */
-function decoModel(f, spec, d, occ = whole) {
-  const P = (x, yy, z) => egToDungeon(spec, x, yy, z);
-  if (d.t === 'wall' || d.t === 'tiers') {
-    const n = 32, y0 = (d.y ?? 0) - 0.5, y1 = (d.y ?? 0) + (d.t === 'tiers' ? d.h * 0.5 : d.h);
-    for (let k = 0; k < n; k++) {
-      const a0 = (k / n) * Math.PI * 2, a1 = ((k + 1) / n) * Math.PI * 2, mid = (a0 + a1) / 2;
-      if (Math.abs(Math.sin(mid)) < 0.2) continue;   // the gaps where the course comes in (-z) and goes on (+z)
-      const p0 = [d.x + Math.sin(a0) * d.r, d.z + Math.cos(a0) * d.r], p1 = [d.x + Math.sin(a1) * d.r, d.z + Math.cos(a1) * d.r];
-      occ(() => quadTo(f, SD_REALM_PILLAR_RECORD, P(p0[0], y0, p0[1]), P(p1[0], y0, p1[1]), P(p1[0], y1, p1[1]), P(p0[0], y1, p0[1]), [-(Math.sin(mid)), 0, -(Math.cos(mid))], [[0, 0], [1, 0], [1, (y1 - y0) / 2], [0, (y1 - y0) / 2]]));   // EG-ZN: a ring wall's segment, an occluder of its own
-      if (d.t === 'tiers') for (let s = 1; s <= 3; s++) { const r = d.r + s * 1.2, yy = y0 + s * (d.h / 6); const q0 = [d.x + Math.sin(a0) * r, d.z + Math.cos(a0) * r], q1 = [d.x + Math.sin(a1) * r, d.z + Math.cos(a1) * r]; quadTo(f, SD_REALM_ROOT_RECORD, P(p0[0] + (q0[0] - p0[0]) * 0.1, yy, p0[1] + (q0[1] - p0[1]) * 0.1), P(p1[0] + (q1[0] - p1[0]) * 0.1, yy, p1[1] + (q1[1] - p1[1]) * 0.1), P(q1[0], yy, q1[1]), P(q0[0], yy, q0[1]), [0, 1, 0]); }
-    }
-  } else if (d.t === 'magma') {
+function decoModel(f, spec, d, occ = whole, band = spec.band ?? 0) {
+  const P = (x, yy, z) => egToDungeon(spec, x, yy, z), piece = (build) => occ(() => egKitInto(f, build));
+  // EG-LOOK (Elite-Gates-Look.md section 2 - world/egGround.js): a ring wall the academy's arcade out from its collider's ring,
+  // open at the course's gaps; a pit's tiers stepped stone benches; the long walls the academy's wall - each bay a piece
+  if (d.t === 'wall') egRingArcade(spec, d, band, piece);
+  else if (d.t === 'tiers') egTierBenches(spec, d, piece);
+  else if (d.t === 'magma') {
     const y = d.y ?? -1.5, r = d.r;
     quadTo(f, EG_DRESS.molten, P(d.x - r, y, d.z - r), P(d.x + r, y, d.z - r), P(d.x + r, y, d.z + r), P(d.x - r, y, d.z + r), [0, 1, 0], [[0, 0], [r / 4, 0], [r / 4, r / 4], [0, r / 4]]);   // EG-G2: the band's liquid
-  } else if (d.t === 'hall') {
-    for (const sgn of [-1, 1]) { const x = d.x + sgn * d.hw; occ(() => quadTo(f, SD_REALM_PILLAR_RECORD, P(x, (d.y ?? 0) - 0.5, d.z0), P(x, (d.y ?? 0) - 0.5, d.z1), P(x, (d.y ?? 0) + d.h, d.z1), P(x, (d.y ?? 0) + d.h, d.z0), [-sgn, 0, 0], [[0, 0], [(d.z1 - d.z0) / 2, 0], [(d.z1 - d.z0) / 2, d.h / 2], [0, d.h / 2]])); }
-  }
+  } else if (d.t === 'hall') egLongWalls(spec, d, band, piece);
 }
 // ── EG-HERO-LAY (2026-10-13, spec law 7): THE HERO DRAWN ─────────────────────────────────────────────────────────────────
 /** The hero meshes the circle draws from (egHeroMeshSeam): world/egHeroFragModel.js EG_HERO_FRAG_MESHES unless a test said
@@ -432,21 +411,25 @@ function heroModel(f, spec, occ = whole) {
  *  `geo` the circle's span decrees (net/egLaw.js egGeoOf) - the same specs the relay judges. EG-ZN: and its OCCLUDERS
  *  (`model.occluders` - egOccluderRuns), each piece of rock laid as runs of the one mesh. */
 export function buildEgCircleModel(seed, c, geo = 0) {
-  const f = faces(), pieces = [], occ = occluderMarker(f, pieces);
+  const f = faces(), pieces = [], occ = occluderMarker(f, pieces), band = egBandOfCircle(c);
   for (const spec of egCircleSpecs(seed, c, geo)) {
     for (const d of spec.discs) {
       if (egIsleDisc(spec, d)) continue;   // LAYER THREE: Grath's islands fall - the spans stand each (scenes/egSpan.js)
-      if (d.role === 'arrive' || d.role === 'end') plateModel(f, spec, d, occ);
-      else realmIsland(f, spec.x0 + d.x, d.z, d.r, d.role === 'court' || d.role === 'isle' || d.role === 'balcony' ? SD_REALM_ARENA_RECORD : SD_REALM_FLOOR_RECORD, { y: d.y, bands: d.role === 'court' || d.role === 'isle' ? Math.max(2, Math.round(d.r / 4)) : 0 });
+      if (d.role === 'arrive' || d.role === 'end') { plateModel(f, spec, d, occ, band); continue; }
+      // EG-LOOK (Elite-Gates-Look.md section 2): the rim and its edge, never the Hour's teeth; the floor cut into its regions
+      // (a court's great mosaic of its band's sigil and its border - world/egGround.js egDiscFloor)
+      const rec = d.role === 'court' || d.role === 'isle' || d.role === 'balcony' ? SD_REALM_ARENA_RECORD : SD_REALM_FLOOR_RECORD;
+      realmIsland(f, spec.x0 + d.x, d.z, d.r, rec, { y: d.y, teeth: false, floor: false });
+      egDiscFloor(f, spec, d, rec, band);
     }
     for (const b of spec.bands) if (!egWallBand(spec, b) && !egTubeBand(b)) bandModel(f, spec, b);   // a Falling Wall's walkway and a Collapsing Tube's floor are the spans' own segments (scenes/egSpan.js)
     for (const l of spec.lanes ?? []) laneModel(f, spec, l);
-    for (const q of spec.caves) caveModel(f, spec, q, occ);
-    for (const d of spec.deco ?? []) decoModel(f, spec, d, occ);
+    for (const q of spec.caves) caveModel(f, spec, q, occ, band);
+    for (const d of spec.deco ?? []) decoModel(f, spec, d, occ, band);
     // EG-FULL LAYER THREE: the alcoves' niches, the vignettes, the chambers' arches and stairs (EG-ZN: each an occluder)
     nicheModel(f, spec, occ);
     for (const v of spec.vignettes ?? []) occ(() => vignetteModel(f, spec, v));
-    for (const d of spec.deco ?? []) if (d.t === 'arch') for (const [x0, y0, z0, x1, y1, z1] of archParts(spec, d)) occ(() => boxD(f, SD_REALM_PILLAR_RECORD, x0, y0, z0, x1, y1, z1, true, 0.5));
+    for (const d of spec.deco ?? []) if (d.t === 'arch') egChokeArch(spec, d, band, archParts(spec, d), (build) => occ(() => egKitInto(f, build)));   // EG-LOOK: its arms dressed in the law's boxes, a voussoir arch over the gap
     for (const q of spec.ramps ?? []) { if (egInHeroBox(spec, (q.ax + q.bx) / 2, (q.az + q.bz) / 2)) continue; const [a, b, c, e] = rampCorners(spec, q); quadTo(f, SD_REALM_FLOOR_RECORD, a, b, c, e, [0, 1, 0]); quadTo(f, SD_REALM_ROOT_RECORD, a, b, [b[0], b[1] - 0.6, b[2]], [a[0], a[1] - 0.6, a[2]], [0, -1, 0]); }   // EG-HERO-LAY: a hero's stairs are its own mesh's
     heroModel(f, spec, occ);   // EG-HERO-LAY: the hall's hero, at its origin
     // EG-ZC: the slag's spouts - iron on the wall, the band's liquid at the mouth facing down onto the lane
@@ -455,7 +438,10 @@ export function buildEgCircleModel(seed, c, geo = 0) {
       quadTo(f, EG_DRESS.molten, [x0, y0 - 0.002, z0], [x1, y0 - 0.002, z0], [x1, y0 - 0.002, z1], [x0, y0 - 0.002, z1], [0, -1, 0]);
     });
   }
-  const model = egBandDress(packRealmFaces(f), egBandOfCircle(c));
+  // the Hour's records it wears onto the band's archive (EG-G2), and the kit's (EG-LOOK - 61, 62, 71: never the Hour's archive,
+  // whose 60-78 are the Steps' pictures; the circle's mesh holds none of the Steps' faces): one model, one upload
+  const model = egBandDress(packRealmFaces(f), band);
+  for (const sm of model.subMeshes) if (EG_KIT_RECORDS.includes(sm.textureRecord)) sm.textureArchive = egBandArchive(band);
   model.occluders = egOccluderRuns(model, pieces);
   return model;
 }
@@ -490,7 +476,7 @@ export function egOccluderRuns(model, pieces) {
       const i = sub.get(rec), s = model.subMeshes[i].startIndex + a * 3;
       for (let j = s; j < s + n * 3; j++) for (let k = 0, v = I[j] * 3; k < 3; k++) { const x = P[v + k]; if (x < b[k]) b[k] = x; if (x > b[k + 3]) b[k + 3] = x; }
       return [i, s, n];
-    });
+    }).sort((x, y) => x[0] - y[0]);   // EG-LOOK HALLS: a piece of several records lists its runs in the sub-meshes' order (the view's)
     return { b, r };
   });
 }

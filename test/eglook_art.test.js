@@ -103,7 +103,9 @@ test('EG-G2 THE DRESS (layer three\'s "the dress is the Hour\'s records"): every
   for (const c of [1, 3, 6, 9, 11, 14, 16, 19]) {
     const m = buildEgCircleModel(7, c, 0), A = EG_BAND_ARCHIVES[egBandOfCircle(c)];
     assert.ok(m.subMeshes.length > 3);
-    for (const sm of m.subMeshes) { assert.equal(sm.textureArchive, A, `circle ${c} record ${sm.textureRecord}: the band's archive`); assert.ok(EG_DRESS_RECORDS.includes(sm.textureRecord)); }
+    // PIN MOVED (EG-LOOK HALLS, Elite-Gates-Look.md section 2): the ground wears the kit's shaft, moulding, voussoir and inlay too
+    // (world/egGround.js EG_GROUND_RECORDS), packed under the band's archive - never the Hour's, whose 60-78 are the Steps'
+    for (const sm of m.subMeshes) { assert.equal(sm.textureArchive, A, `circle ${c} record ${sm.textureRecord}: the band's archive`); assert.ok(EG_BAND_RECORDS.includes(sm.textureRecord)); }
     if (m.subMeshes.some((sm) => sm.textureRecord === EG_DRESS.molten)) molten++;
     const ramp = egCircleSpecs(7, c, 0).find((s) => s.gate);
     if (ramp) assert.ok(egGateParts(ramp).model.subMeshes.every((sm) => sm.textureArchive === A), 'the portcullis dressed');
@@ -114,7 +116,7 @@ test('EG-G2 THE DRESS (layer three\'s "the dress is the Hour\'s records"): every
   const grath = egCircleSpecs(7, 1, 0).find((s) => (s.deco ?? []).some((d) => d.t === 'magma')), magmaY = grath.deco.find((d) => d.t === 'magma').y;
   assert.ok(moltenYs(1).has(magmaY), 'Grath\'s magma in the liquid');
   const cav = egCircleSpecs(7, 2, 0).flatMap((s) => s.caves).find((q) => q.kit === 'caverns');
-  assert.ok(moltenYs(2).has(Math.round((cav.y + 0.01) * 100) / 100), 'the Caverns\' fire channels in the liquid');
+  assert.ok(moltenYs(2).has(Math.round(cav.y * 100) / 100), 'the Caverns\' fire channels in the liquid');   // PIN MOVED (EG-LOOK HALLS): cut IN the floor's plane, no longer a centimetre over it
   // only the Hour's painted records move
   const step = buildStepModel('drift'), recs = step.subMeshes.map((sm) => [sm.textureArchive, sm.textureRecord]);
   egBandDress(step, 2);

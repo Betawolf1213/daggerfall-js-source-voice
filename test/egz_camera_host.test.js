@@ -10,6 +10,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { buildEgCircleModel, egToDungeon, egCircleColliderTris, egCircleLights, egGateParts } from '../src/world/egHall.js';
+import { EG_WALL } from '../src/world/egGround.js';   // EG-LOOK HALLS: the academy's wall
 import { egCircleBuild } from '../src/world/egCircleParts.js';
 import { egHallOf, egCircleSpecs, egCircleOfHall, egBandOfCircle, egSpecGive, EG_TEXT } from '../src/net/egLaw.js';
 import { createEgOccluders, EG_OCCLUDE_CHEST_M } from '../src/scenes/egOcclude.js';
@@ -96,10 +97,12 @@ test('EG-ZN THE PASS ON THE REAL RENDERER (scenes/worldModes.js egOccludeFrame a
   assert.ok(d && ctx.dynamicDraws.includes(d) && d.gpu === wm.mesh, 'one draw of the circle\'s mesh');
   assert.equal(wm.egOcc.stats().pieces, buildEgCircleModel(eh.seed, eh.c, 0).occluders.length, 'the stand handed the pass the circle and its occluders');
   const m = buildEgCircleModel(eh.seed, eh.c, 0), spec = egHallOf(STACKS.seed, STACKS.h, 0), q = spec.caves[0], left = egToDungeon(spec, q.x - q.halfW, 0, 0)[0];
-  const bk = m.occluders.find((o) => Math.abs(o.b[0] - left) < 1e-3 && o.b[3] - o.b[0] < 0.5);
-  const cx = (bk.b[0] + bk.b[3]) / 2;
-  st.feet = [cx, 1.2 - EG_OCCLUDE_CHEST_M, bk.b[5] + 0.35];
-  const mwv = { eye: [cx, 1.2, bk.b[2] - 0.2], focal: [cx, 1.2, bk.b[5] + 0.35], thirdPerson: true };
+  // PIN MOVED (EG-LOOK HALLS, Elite-Gates-Look.md section 2): the Stacks' bookcases are sunk in the academy's wall's bays now
+  // (world/egGround.js) - the piece between is a bay of the left wall, its pilaster between the eye and the body in its recess
+  const bk = m.occluders.find((o) => Math.abs(o.b[0] - (left - EG_WALL.thick)) < 1e-3 && o.b[3] - o.b[0] < 1.5), pEnd = bk.b[2] + EG_WALL.pil;
+  const cx = left - 0.15;
+  st.feet = [cx, 3.6 - EG_OCCLUDE_CHEST_M, pEnd + 0.35];
+  const mwv = { eye: [cx, 3.6, bk.b[2] - 0.2], focal: [cx, 3.6, pEnd + 0.35], thirdPerson: true };
   const frame = (v, dt = 0.1) => { r.beginFrame(I4, I4, new Float32Array([0, 1, 0]), WORLD_FRAME); calls.length = 0; R.shadows.length = 0; wm.egOccludeFrame(v, dt); return calls.slice(); };
   // first person, a witness: nothing
   assert.equal(frame({ ...mwv, thirdPerson: false }).filter((c) => c[0] === 'drawElements').length, 0, 'first person tries nothing');
@@ -120,17 +123,17 @@ test('EG-ZN THE PASS ON THE REAL RENDERER (scenes/worldModes.js egOccludeFrame a
   assert.deepEqual(under, bk.r.map(([, s, n]) => [s, n]), 'only the bookcase dithered');
   if (r._shadows) assert.deepEqual(R.shadows, [wm.mesh], 'the circle\'s shadow recorded once, whole');
   // clear again: the loop's own draw
-  st.feet = [cx + 2, 0.3, bk.b[5] + 0.35];
-  frame({ ...mwv, eye: [cx + 2, 1.2, bk.b[2] - 0.2], focal: [cx + 2, 1.2, bk.b[5] + 0.35] }, 1);
-  assert.equal(frame({ ...mwv, eye: [cx + 2, 1.2, bk.b[2] - 0.2], focal: [cx + 2, 1.2, bk.b[5] + 0.35] }, 1).filter((c) => c[0] === 'drawElements').length, 0);
+  st.feet = [cx + 2, 0.3, pEnd + 0.35];
+  frame({ ...mwv, eye: [cx + 2, 3.6, bk.b[2] - 0.2], focal: [cx + 2, 3.6, pEnd + 0.35] }, 1);
+  assert.equal(frame({ ...mwv, eye: [cx + 2, 3.6, bk.b[2] - 0.2], focal: [cx + 2, 3.6, pEnd + 0.35] }, 1).filter((c) => c[0] === 'drawElements').length, 0);
   assert.equal(d.hidden, false);
   // the chest's ray alone: the eye and the pivot over the bookcase's top, my chest behind it
-  st.feet = [cx, 1.2 - EG_OCCLUDE_CHEST_M, bk.b[5] + 0.35];
-  const high = { ...mwv, eye: [cx, 2.9, bk.b[2] - 0.2], focal: [cx, 2.9, bk.b[5] + 0.35] };
+  st.feet = [cx, 3.6 - EG_OCCLUDE_CHEST_M, pEnd + 0.35];
+  const high = { ...mwv, eye: [cx, 7.0, bk.b[2] - 0.2], focal: [cx, 7.0, pEnd + 0.35] };
   assert.ok(frame(high, 1).filter((c) => c[0] === 'uniform1f' && c[1] === 'uDissolveCut').length > 0, 'the chest\'s ray dithers it');
-  for (let i = 0; i < 3; i++) frame({ ...mwv, eye: [cx + 2, 1.2, bk.b[2] - 0.2], focal: [cx + 2, 1.2, bk.b[5] + 0.35] }, 1);
-  st.feet = [cx + 2, 0.3, bk.b[5] + 0.35];
-  frame({ ...mwv, eye: [cx + 2, 1.2, bk.b[2] - 0.2], focal: [cx + 2, 1.2, bk.b[5] + 0.35] }, 1);
+  for (let i = 0; i < 3; i++) frame({ ...mwv, eye: [cx + 2, 3.6, bk.b[2] - 0.2], focal: [cx + 2, 3.6, pEnd + 0.35] }, 1);
+  st.feet = [cx + 2, 0.3, pEnd + 0.35];
+  frame({ ...mwv, eye: [cx + 2, 3.6, bk.b[2] - 0.2], focal: [cx + 2, 3.6, pEnd + 0.35] }, 1);
   assert.equal(d.hidden, false);
   // the renderer's view: none of a dead mesh or of a view; its sub-meshes its own
   const small = { positions: new Float32Array(9), normals: new Float32Array(9), uvs: new Float32Array(6), indices: new Uint32Array([0, 1, 2]), subMeshes: [{ textureArchive: 1, textureRecord: 0, startIndex: 0, primitiveCount: 1 }] };
@@ -154,7 +157,7 @@ test('EG-ZN THE PASS ON THE REAL RENDERER (scenes/worldModes.js egOccludeFrame a
   assert.equal(wm.egSwapCircle(eh), true);
   // the swap in place: the old circle let go first, the new one handed over; six swaps and back (EG-H3's own pin runs twenty), the meshes at their baseline
   const base2 = R.live, d2 = wm.draw;
-  st.feet = [cx, 1.2 - EG_OCCLUDE_CHEST_M, bk.b[5] + 0.35];
+  st.feet = [cx, 3.6 - EG_OCCLUDE_CHEST_M, pEnd + 0.35];
   frame(mwv);
   assert.equal(d2.hidden, true);
   for (let c = eh.c + 1; c <= eh.c + 6; c++) {
