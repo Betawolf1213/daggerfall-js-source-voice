@@ -377,7 +377,9 @@ function main(argv) {
   // THE RELAY'S BYTES ARE ITS VERSION (test/relayversion.test.js): a move that changes one byte of the relay's bundle -
   // a moved file in it, a re-based import, a path in one of its comments - is a new RELAY_VERSION, and the relay
   // redeploys on its merge and drops every connected player. A tidy is not worth that alone; it goes with a relay slice.
-  const relayHit = relayHits(writes, texts, back, new Set(graph('server/src/index.js')));
+  // a fixup mends a merge whose imports still name the old paths - the relay's walk cannot follow them yet, and the
+  // merged branch's own relay pins answer for its version
+  const relayHit = fixup ? [] : relayHits(writes, texts, back, new Set(graph('server/src/index.js')));
 
   for (const [f, t] of moves) console.log(`${fixup ? 'gone ' : 'move '} ${f} -> ${t}`);
   for (const [f, n] of [...counts].sort()) console.log(`edit  ${f} (${n})`);
