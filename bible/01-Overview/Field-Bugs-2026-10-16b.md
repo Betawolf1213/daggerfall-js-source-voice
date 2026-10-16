@@ -623,7 +623,10 @@ AUDIT (2026-10-16). Read cold over the real minter and host (the auditor's `mint
 huntsThePlayer; `src/ai/enhancedMotor.js` EnhancedEnemyAI.standAt; `src/scenes/cityGuards.js` createCityGuards' `nav`,
 spawnGuardAt's motor; `src/scenes/exteriorFoes.js` createExteriorFoes' `nav`, spawnFoe's motor; `src/scenes/worldModes.js`
 the module's wiring (makeInteriorFoes, makeInteriorGuards, the building's mount, the interior frame, exitInteriorNow,
-forceExitToExterior).
+forceExitToExterior). AUDIT (below): interiorNav.js meshPointUnder, meshPointNear, the module's `goal`, GOAL_REACH,
+FEET_RINGS, FEET_ARC_M, STAND_RISE; enhancedMotor.js `_routeOffMesh`, `navGoal`, `_getDestination`; `src/characters/enemyMotor.js`
+EnemyAI.resumeLive, `_standAfresh`; `src/ai/navmesh.js` collidersAt, buildPackedIndex, mintBucket; `src/ai/navClient.js`
+bake, `_cols`; `src/ai/navBake.js` navInputFromCollider.
 
 THE REPORT. "If you just sit near the wall between the shelves, when you fail to steal something, the guard will come
 running, but they simply can't reach you because they run into the wall instead of going through the door. And you can
@@ -647,14 +650,18 @@ CHANGED (the owner: "Stop trying to match DFU"):
   them a mesh, as the dungeon's construction sites do; the street's pools hand none.
 - **The bake** is the dungeon's `NavClient` with the dungeon's door rule (unlocked action doors left out of the soup),
   anchored on the arrival, the room's ways in, each door's watch spot (`indoorWatchSpot`), and the player's feet and the
-  rings round them a straight knee-height line reaches. Asked only on need (a building nobody fights in bakes nothing),
-  never cached (a 30 x 20 m two-storey room of 9,652 triangles bakes in 0.37 s on the main thread; thousands of
-  buildings would each leave an IndexedDB entry nothing evicts); asked again when a door's lock changes the soup, and when
-  the hunted player stands off every island the mesh kept (at most four times a room); one bake at a time, a request made
+  rings round them, out to GOAL_REACH (4 m), a straight knee-height line reaches. Asked only on need (a building nobody
+  fights in bakes nothing), never cached (the bake is the nav worker's - 0.2-0.7 s for the audit's 936-7,776-triangle
+  halls - and the main thread's share is the soup read at the ask and the landing, AUDIT W2 below; thousands of buildings
+  would each leave an IndexedDB entry nothing evicts); asked again when a door's lock changes the soup, and when the
+  hunted player stands off every island the mesh kept (at most four times a room); one bake at a time, a request made
   meanwhile held and baked as it lands (ASYNC NEVER DROPS).
+- **Off the mesh** (AUDIT W1): a player findPath cannot place - past its half-metre snap, between two deep shelves or in
+  a closet the bake keeps no floor of - is routed to the room's point for them (`nav.goal`: the poly they stand on, else
+  the nearest the knee's line reaches within GOAL_REACH) and walked in from there.
 - **NO ROUTE.** A locked inner door or a ladder can leave the player's room an island the routes cannot reach: a
-  watchman of the crime's pursuit whose feet have stood on another island for 2 s is moved onto the player's island at
-  the spot nearest where he stood (the far side of what stopped him, a body's width into the floor; never within 1 m of
+  watchman of the crime's pursuit whose feet have stood on another island for 2 s is moved onto the player's island (a
+  player on none: the island they are walked in from, AUDIT W1) at the spot nearest where he stood (the far side of what stopped him, a body's width into the floor; never within 1 m of
   the player or 0.8 m of another watchman; never in or on anything set down since the bake), and walks the rest
   (`EnhancedEnemyAI.standAt` keeps the pursuit, drops the old route, fall anchor and detour). Only the watch is moved - a
   monster a locked door holds is a door that held; the law's answer is not.
@@ -679,8 +686,59 @@ BASE-HIDE) does not re-bake the mesh (a moved watchman never lands in or on it, 
 watchman can be moved within the player's view; `doorsOutOfSoup` spells the rule the dungeon writes inline on its bake
 line (one home is a later slice's); nothing was seen in a real RMB interior (no ARENA2 in the container).
 
-What the reporter is owed: the watch now walks round through the doorway to reach you between the shelves, and if a
-locked door or a ladder keeps them out they come in anyway after two seconds. Hiding behind a wall no longer works.
+AUDIT (2026-10-16). Four findings, each fixed and pinned; the audit's own rigs re-run on the fix.
+- **W1 (MAJOR - the report survived).** Shelves 0.8 m deep or more put the tucked player within ISLAND_REACH of the
+  aisle's island - so NO ROUTE never fired - but past findPath's half-metre goal snap
+  (`navmesh.js:"return bestD <= 2 ? best : -1;"`): every route failed (288 repaths, 288 fails in 30 s), the motor fell
+  back to the classic line, and nobody crossed the partition. A 0.7 m closet 2 m deep left the player on no island at
+  all, and three of five watchmen stayed at the partition. FIXED: a route that cannot place its goal asks the host for
+  the mesh's point a route there ends at (`navGoal`, the room's `nav.goal` - `meshPointNear`: the poly the player stands
+  on, else the nearest the knee's line reaches within GOAL_REACH, 4 m, never through a wall) and is solved to it, the
+  straight walk in its last leg (`EnhancedEnemyAI._routeOffMesh`; departure from his repathToward, which answered null,
+  named); the feet's anchor rings reach GOAL_REACH at bearings a body's width apart (`FEET_RINGS`, `FEET_ARC_M`), so the
+  room an off-mesh player is walked in from is kept, behind a locked door too; and NO ROUTE reads that two-tier island
+  for the player and for each watchman - a player on no island is walked in from the island at its edge, and a watchman
+  in the closet beside them is on it, never stood away. FOUND WITH IT: a watchman stopped within reach of the player with
+  a corner of his route still ahead (the aisle's mouth) turned to the corner, and the swing's 22.5 degree gate
+  (`enemyAttack.js` ATTACK_YAW_DEG) never opened - at 0.8 m three of the five never swung, and one on the shipped 0.6 m
+  shop stood 0.93 m off for 30 s without a swing. A foe the classic stop stops on its target in sight now faces the
+  target (`EnhancedEnemyAI._getDestination` - adaptation 1's other half; every enhanced foe's, the dungeon's too).
+  Measured: shelves 0.8 m - first melee reach 4.3 s, 44 swings, every watchman swinging; 1.0 m - 4.4 s, 40; the
+  shipped 0.6 m - 4.2 s, 44 (25 before); the closet 2 m / 3 m deep - 4.0 s / 4.4 s, all five swinging; with a locked
+  door in the partition all five stood at 2.7 s, reach 3.6 s / 3.9 s.
+- **W2 (MINOR - the cost paragraph was false).** "A 30 x 20 m two-storey room of 9,652 triangles bakes in 0.37 s on
+  the main thread" did not reproduce, and in the browser the bake is the worker's. The main thread pays the soup read
+  at the ask (`navInputFromCollider`, synchronous in the module's frame - the crime's) and the landing: the worker's
+  boxes unpacked into objects, the hydrate, the height layer's index built at the first route. Measured (node, CPU ms,
+  one landing per fresh process, median of five, the auditor's furnished halls): 12 x 10 m (936 triangles, 10,872
+  boxes) 26 ms; 30 x 20 m on two storeys (3,780, 54,581) 59 ms; 40 x 30 m (7,776, 109,251) 250 ms, ~190 of it the boxes
+  minted as objects and pushed into the index. FIXED: the boxes stay packed as the worker ships them and the height
+  layer indexes them so (`navmesh.js` buildPackedIndex - typed lists over the same grid, the same buckets in the same
+  order, a bucket's boxes minted on the first query that touches it; made HERE FIRST and owed to project-final, the
+  body's digest re-pinned), and the soup is counted first and written straight into its arrays (the same soup to the
+  bit, about five times cheaper warm). After: 15 / 40 / 46 ms. The worker's bake of those halls is 0.2-0.7 s.
+- **W3 (NIT).** `floorSpot` took a floor up to STAND_STEP (0.3 m) over the poly, so a stool under 0.3 m set down after
+  the bake could be stood on - "never in or on anything set down since the bake" was false for it. FIXED: STAND_RISE,
+  5 cm over the poly's highest corner (the corners are the bake's own floor, to the millimetre); STAND_STEP keeps the
+  side under the poly.
+- **W4 (NIT).** `standAt` reset less than `resumeLive` - the door crouch (DOOR-JAM's controller height, its reset flag
+  and timer), the stuck stamp, the trail's crumb, the fixed step's remainder: a watchman crouched at the wall that
+  stopped him was stood crouched. FIXED: `resumeLive`'s half that is not the pursuit is `EnemyAI._standAfresh`, the one
+  list both call.
+
+Pins: `test/fb1016b_indoorwatch.test.js` 8 -> 13 (THE DEEP SHELVES, THE CLOSET, THE FEET'S RINGS, THE LANDING, THE
+SOUP; THE STAND and THE POOLS extended); `tools/mutants/fb1016b_indoorwatch.json` 70 -> 103, all dead (eight re-aimed by
+content). PINS MOVED: `enhancedAI.test.js` (the navmesh body's digest, re-recorded with W2's packed index - owed to
+project-final), `audit68_enemies.test.js` (the hydrated set's tops read packed, and the set must be the packed one).
+THE FOUR HOSTS, for the audit: worldModes.js - its two pools hand the hook (`cityGuards.js`, `exteriorFoes.js`);
+dungeonContext.js - its construction sites hand no `navGoal`, so a player past the snap of a dungeon's mesh still
+meets the classic line (FLAGGED), while the stop's facing, the packed landing and the soup read are the dungeon's too
+(shared code); world.js and exterior.js - unchanged (their street pools hand no mesh). Landing numbers are node's on a
+loaded container, not a browser's.
+
+What the reporter is owed: the watch now walks round through the doorway to reach you between the shelves - however
+deep they are, or into a closet - and swings when it gets there; if a locked door or a ladder keeps them out they come
+in anyway after two seconds. Hiding behind a wall no longer works.
 
 ## REZ-BLOODLINE: a friend's Resurrect saves a Bloodline character (12)
 

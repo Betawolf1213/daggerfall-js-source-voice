@@ -217,7 +217,7 @@ export function createCityGuards({ renderer, collider, fetchBytes, getTexture, u
   // that hands none (null) has its defenders go by the distance term alone - never in a view it cannot read.
   viewYaw = () => null,
   // FIELD BUGS 2026-10-16 INDOOR-WATCH (ENHANCED AI 5's interior half, scenes/interiorNav.js): the room's mesh -
-  // `{ chf, world }`, the bake's thunk and the routes' world - where the host has one (the mode machine's building);
+  // `{ chf, world, goal }`, the bake's thunk, the routes' world and the off-mesh goal - where the host has one (the mode machine's building);
   // with the Enhanced AI switch on a watchman walks the routes (EnhancedEnemyAI), as a dungeon's foe does. The street's
   // two pools hand none and keep the classic motor.
   nav = null }) {
@@ -351,7 +351,7 @@ export function createCityGuards({ renderer, collider, fetchBytes, getTexture, u
       if (gen !== epoch) return null;
       const idleH = idleSpriteHeight(tex);
       const ai = new (nav && getPref('enhancedAI') ? EnhancedEnemyAI : EnemyAI)(collider, pending.feet, yaw, {   // INDOOR-WATCH: the switch chooses the motor where the room has a mesh; the bake is read per step
-        nav: nav?.chf, navWorld: nav?.world, navSeed: Math.imul(_nextGuardId + 1, 0x9e3779b1) >>> 0,   // the dungeon's three (its seed off the spawn's yaw; the watch faces one way, so off his number)
+        nav: nav?.chf, navWorld: nav?.world, navGoal: nav?.goal, navSeed: Math.imul(_nextGuardId + 1, 0x9e3779b1) >>> 0,   // the dungeon's three (its seed off the spawn's yaw; the watch faces one way, so off his number), and the room's goal for a player off its mesh (AUDIT W1)
         liveSpeed: () => liveStat(entity, 'speed'),   // AUDIT 39: EnemyMotor.cs:432 re-reads LiveSpeed per FixedUpdate
         seesThroughInvisibility: basics.seesThroughInvisibility ?? false,
         height: enemyControllerHeight(idleH, basics.behaviour ?? 'General'),   // REVIEW 2026-09-05: SetupDemoEnemy.cs:103-115

@@ -20,8 +20,8 @@
   {
     "name": "INDOOR-WATCH-the-guards-no-bake",
     "file": "src/scenes/cityGuards.js",
-    "old": "        nav: nav?.chf, navWorld: nav?.world, navSeed: Math.imul(",
-    "new": "        nav: null, navWorld: nav?.world, navSeed: Math.imul(",
+    "old": "        nav: nav?.chf, navWorld: nav?.world, navGoal: nav?.goal, navSeed: Math.imul(",
+    "new": "        nav: null, navWorld: nav?.world, navGoal: nav?.goal, navSeed: Math.imul(",
     "tests": [
       "test/fb1016b_indoorwatch.test.js"
     ]
@@ -29,8 +29,8 @@
   {
     "name": "INDOOR-WATCH-the-guards-own-world",
     "file": "src/scenes/cityGuards.js",
-    "old": "        nav: nav?.chf, navWorld: nav?.world, navSeed: Math.imul(",
-    "new": "        nav: nav?.chf, navWorld: undefined, navSeed: Math.imul(",
+    "old": "        nav: nav?.chf, navWorld: nav?.world, navGoal: nav?.goal, navSeed: Math.imul(",
+    "new": "        nav: nav?.chf, navWorld: undefined, navGoal: nav?.goal, navSeed: Math.imul(",
     "tests": [
       "test/fb1016b_indoorwatch.test.js"
     ]
@@ -56,8 +56,8 @@
   {
     "name": "INDOOR-WATCH-the-foes-no-bake",
     "file": "src/scenes/exteriorFoes.js",
-    "old": "        nav: nav?.chf, navWorld: nav?.world, navSeed: (facing * 1000) | 0,",
-    "new": "        nav: null, navWorld: nav?.world, navSeed: (facing * 1000) | 0,",
+    "old": "        nav: nav?.chf, navWorld: nav?.world, navGoal: nav?.goal, navSeed: (facing * 1000) | 0,",
+    "new": "        nav: null, navWorld: nav?.world, navGoal: nav?.goal, navSeed: (facing * 1000) | 0,",
     "tests": [
       "test/fb1016b_indoorwatch.test.js"
     ]
@@ -65,8 +65,8 @@
   {
     "name": "INDOOR-WATCH-the-foes-own-world",
     "file": "src/scenes/exteriorFoes.js",
-    "old": "        nav: nav?.chf, navWorld: nav?.world, navSeed: (facing * 1000) | 0,",
-    "new": "        nav: nav?.chf, navWorld: undefined, navSeed: (facing * 1000) | 0,",
+    "old": "        nav: nav?.chf, navWorld: nav?.world, navGoal: nav?.goal, navSeed: (facing * 1000) | 0,",
+    "new": "        nav: nav?.chf, navWorld: undefined, navGoal: nav?.goal, navSeed: (facing * 1000) | 0,",
     "tests": [
       "test/fb1016b_indoorwatch.test.js"
     ]
@@ -299,8 +299,8 @@
   {
     "name": "INDOOR-WATCH-through-the-wall",
     "file": "src/scenes/interiorNav.js",
-    "old": "  for (const n of near) if (n.q.d === 0 || kneeLine(collider, feet, [n.q.x, n.y, n.q.z], skip)) return n.i;",
-    "new": "  for (const n of near) return n.i;",
+    "old": "  for (const n of near) if (n.q.d === 0 || kneeLine(collider, feet, [n.q.x, n.y, n.q.z], skip)) return { i: n.i, x: n.q.x, y: n.y, z: n.q.z, d: n.q.d };",
+    "new": "  for (const n of near) return { i: n.i, x: n.q.x, y: n.y, z: n.q.z, d: n.q.d };",
     "tests": [
       "test/fb1016b_indoorwatch.test.js"
     ]
@@ -389,7 +389,7 @@
   {
     "name": "INDOOR-WATCH-on-a-crate",
     "file": "src/scenes/interiorNav.js",
-    "old": "  if (spot[1] < poly.lo - STAND_STEP || spot[1] > poly.hi + STAND_STEP) return null;",
+    "old": "  if (spot[1] < poly.lo - STAND_STEP || spot[1] > poly.hi + STAND_RISE) return null;",
     "new": "  if (spot[1] < poly.lo - LEVEL_DY || spot[1] > poly.hi + LEVEL_DY) return null;",
     "tests": [
       "test/fb1016b_indoorwatch.test.js"
@@ -496,18 +496,18 @@
   },
   {
     "name": "INDOOR-WATCH-standAt-old-floor",
-    "file": "src/ai/enhancedMotor.js",
-    "old": "    this.lastGroundedY = feet[1]; this._airborne = false; this.velY = 0; this.landedFall = 0; this._restGrounded = false;",
-    "new": "    this.landedFall = 0; this._restGrounded = false;",
+    "file": "src/characters/enemyMotor.js",
+    "old": "    this.lastGroundedY = this.feet[1]; this._airborne = false; this.velY = 0; this.landedFall = 0;\n    this.destination = [this.feet[0], this.feet[1], this.feet[2]]; this.detourDestination",
+    "new": "    this.landedFall = 0;\n    this.destination = [this.feet[0], this.feet[1], this.feet[2]]; this.detourDestination",
     "tests": [
       "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
     "name": "INDOOR-WATCH-standAt-keeps-detour",
-    "file": "src/ai/enhancedMotor.js",
-    "old": "    this.obstacleDetected = false; this.fallDetected = false; this.foundUpwardSlope = false; this.foundDoor = false;\n    this.avoidObstaclesTimer = 0; this.checkingClockwiseTimer = 0; this.didClockwiseCheck = false;\n    this.knockbackSpeed = 0; this.moving = false;\n    this.path = null;",
-    "new": "    this.knockbackSpeed = 0; this.moving = false;\n    this.path = null;",
+    "file": "src/characters/enemyMotor.js",
+    "old": "    this.obstacleDetected = false; this.fallDetected = false; this.foundUpwardSlope = false; this.foundDoor = false;\n    this.avoidObstaclesTimer = 0; this.checkingClockwiseTimer = 0; this.didClockwiseCheck = false; this.lastTimeWasStuck = -Infinity;\n",
+    "new": "",
     "tests": [
       "test/fb1016b_indoorwatch.test.js"
     ]
@@ -627,6 +627,303 @@
     "new": "      const idleH = idleSpriteHeight(tex);\n",
     "tests": [
       "test/incident_ceiling_bats.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W1-no-off-mesh-route",
+    "file": "src/ai/enhancedMotor.js",
+    "old": "const np = findPath(chf, this.feet, goal) ?? this._routeOffMesh(chf, goal);",
+    "new": "const np = findPath(chf, this.feet, goal);",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W1-no-last-leg",
+    "file": "src/ai/enhancedMotor.js",
+    "old": "    p.push([goal[0], goal[1], goal[2]]);\n",
+    "new": "",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W1-guards-no-hook",
+    "file": "src/scenes/cityGuards.js",
+    "old": "navGoal: nav?.goal, navSeed: Math.imul(",
+    "new": "navGoal: null, navSeed: Math.imul(",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W1-foes-no-hook",
+    "file": "src/scenes/exteriorFoes.js",
+    "old": "navGoal: nav?.goal, navSeed: (facing * 1000) | 0,",
+    "new": "navGoal: null, navSeed: (facing * 1000) | 0,",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W1-goal-none",
+    "file": "src/scenes/interiorNav.js",
+    "old": "      return q && q.d > 0 ? [q.x, q.y, q.z] : null;",
+    "new": "      return null;",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W1-goal-on-mesh",
+    "file": "src/scenes/interiorNav.js",
+    "old": "      return q && q.d > 0 ? [q.x, q.y, q.z] : null;",
+    "new": "      return q ? [q.x, q.y, q.z] : null;",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W1-no-far-reach",
+    "file": "src/scenes/interiorNav.js",
+    "old": "  return meshPointUnder(chf, feet, { ...opts, reach: ISLAND_REACH }) ?? meshPointUnder(chf, feet, { ...opts, reach: GOAL_REACH });",
+    "new": "  return meshPointUnder(chf, feet, { ...opts, reach: ISLAND_REACH });",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W1-player-island-near-only",
+    "file": "src/scenes/interiorNav.js",
+    "old": "      const me = meshPointNear(r.chf, playerFeet, near)?.i ?? -1;",
+    "new": "      const me = polyUnder(r.chf, playerFeet, near);",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W1-hunter-island-near-only",
+    "file": "src/scenes/interiorNav.js",
+    "old": "        const at = meshPointNear(r.chf, g.ai.feet, near)?.i ?? -1;",
+    "new": "        const at = polyUnder(r.chf, g.ai.feet, near);",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W1-off-island-no-stand",
+    "file": "src/scenes/interiorNav.js",
+    "old": "          bake();\n        }\n      }\n      // their island",
+    "new": "          bake();\n        }\n        return 0;\n      }\n      // their island",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W1-rings-near-only",
+    "file": "src/scenes/interiorNav.js",
+    "old": "export const FEET_RINGS = Object.freeze([0.5, 1.0, 2.0, 3.0, GOAL_REACH]);",
+    "new": "export const FEET_RINGS = Object.freeze([0.5, 1.0]);",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W1-eight-bearings",
+    "file": "src/scenes/interiorNav.js",
+    "old": "    const n = Math.max(8, Math.ceil((2 * Math.PI * r) / FEET_ARC_M));",
+    "new": "    const n = 8;",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W1-stop-faces-corner",
+    "file": "src/ai/enhancedMotor.js",
+    "old": "    if (!last && p && this.inSight && this._dist <= this.stopDistance) { this.destination = [p[0], this._aimY(p[1]), p[2]]; return; }\n",
+    "new": "",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W3-stand-on-a-stool",
+    "file": "src/scenes/interiorNav.js",
+    "old": "spot[1] > poly.hi + STAND_RISE) return null;",
+    "new": "spot[1] > poly.hi + STAND_STEP) return null;",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W4-standAt-not-afresh",
+    "file": "src/ai/enhancedMotor.js",
+    "old": "    this._standAfresh();\n    this.path = null; this.pathI = 1;",
+    "new": "    this.path = null; this.pathI = 1;",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W4-afresh-stays-crouched",
+    "file": "src/characters/enemyMotor.js",
+    "old": "    this.controllerHeight = this.height; this.collidedSides = false; this._resetHeight = false; this._heightChangeTimer = 0;   // DOOR-JAM: it stands at its own height, as a fresh controller does\n",
+    "new": "",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W4-afresh-keeps-crumb",
+    "file": "src/characters/enemyMotor.js",
+    "old": "    this._crumb = null; this._trailMode = null; this._trailT = 0;   // COMPANION-TRAIL: stood afresh, it looks afresh\n",
+    "new": "",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W4-afresh-keeps-step",
+    "file": "src/characters/enemyMotor.js",
+    "old": "    this._acc = 0; this.knockbackSpeed = 0; this.hurtKnock = false; this.moving = false;",
+    "new": "    this.knockbackSpeed = 0; this.moving = false;",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W4-afresh-stuck-stamp",
+    "file": "src/characters/enemyMotor.js",
+    "old": "this.didClockwiseCheck = false; this.lastTimeWasStuck = -Infinity;",
+    "new": "this.didClockwiseCheck = false;",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W2-packed-as-array",
+    "file": "src/ai/navmesh.js",
+    "old": "idx = colliders.box ? buildPackedIndex(colliders) : buildColliderIndex(colliders);",
+    "new": "idx = buildColliderIndex(colliders);",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W2-count-shifted",
+    "file": "src/ai/navmesh.js",
+    "old": "for (let k = k0; k <= k1; k++) for (let i = i0; i <= i1; i++) start[k * bx + i + 1]++;",
+    "new": "for (let k = k0; k <= k1; k++) for (let i = i0; i <= i1; i++) start[k * bx + i]++;",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W2-no-prefix",
+    "file": "src/ai/navmesh.js",
+    "old": "  for (let j = 0; j < bx * bz; j++) start[j + 1] += start[j];\n",
+    "new": "",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W2-fill-wrong-box",
+    "file": "src/ai/navmesh.js",
+    "old": "list[fill[k * bx + i]++] = ci;",
+    "new": "list[fill[k * bx + i]++] = n - 1 - ci;",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W2-mint-top-bottom",
+    "file": "src/ai/navmesh.js",
+    "old": "top: box[o + 4], bottom: box[o + 5],",
+    "new": "top: box[o + 5], bottom: box[o + 4],",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W2-mint-x1",
+    "file": "src/ai/navmesh.js",
+    "old": "x0: box[o], x1: box[o + 1], z0: box[o + 2],",
+    "new": "x0: box[o], x1: box[o], z0: box[o + 2],",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W2-client-unpacks",
+    "file": "src/ai/navClient.js",
+    "old": "      if (m) result = m;",
+    "new": "      if (m) result = { ...m, cols: Array.from({ length: m.cols.noNavTop.length }, (_, i) => ({ x0: m.cols.box[i * 6], x1: m.cols.box[i * 6 + 1], z0: m.cols.box[i * 6 + 2], z1: m.cols.box[i * 6 + 3], top: m.cols.box[i * 6 + 4], bottom: m.cols.box[i * 6 + 5], noNavTop: m.cols.noNavTop[i] === 1 })) };",
+    "tests": [
+      "test/audit68_enemies.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W2-client-recuts-hit",
+    "file": "src/ai/navClient.js",
+    "old": "    if (m) return m.cols;",
+    "new": "    if (m) return trianglesToColliders(input.positions, input.indices, { cs, maxSlope: agent.maxSlope });",
+    "tests": [
+      "test/audit68_enemies.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W2-soup-unturned-x",
+    "file": "src/ai/navBake.js",
+    "old": "const x = R ? R[0] * v[0] + R[3] * v[1] + R[6] * v[2] : v[0],",
+    "new": "const x = v[0],",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W2-soup-unmoved-y",
+    "file": "src/ai/navBake.js",
+    "old": ": v[1]) + t[1], z = R",
+    "new": ": v[1]), z = R",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W2-soup-unmoved-x",
+    "file": "src/ai/navBake.js",
+    "old": "positions[p++] = x + t[0];",
+    "new": "positions[p++] = x;",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W2-soup-indices",
+    "file": "src/ai/navBake.js",
+    "old": "indices[p / 3] = p / 3;",
+    "new": "indices[p / 3] = 0;",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W2-soup-count",
+    "file": "src/ai/navBake.js",
+    "old": "use.push(bucket); tris += bucket.tris.length;",
+    "new": "use.push(bucket); tris += 1;",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-W2-soup-minY",
+    "file": "src/ai/navBake.js",
+    "old": "        if (y < minY) minY = y; if (y > maxY) maxY = y;",
+    "new": "        if (y > maxY) maxY = y;",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
     ]
   }
 ]

@@ -287,7 +287,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
   // on his owner's client, where he is after the player he hunts: here he is silent, and his tells a person's
   oneVoice = () => false,
   // FIELD BUGS 2026-10-16 INDOOR-WATCH (ENHANCED AI 5's interior half, scenes/interiorNav.js): the room's mesh -
-  // `{ chf, world }` - where the host has one (the mode machine's building, makeInteriorFoes); with the Enhanced AI switch
+  // `{ chf, world, goal }` - where the host has one (the mode machine's building, makeInteriorFoes); with the Enhanced AI switch
   // on a foe walks the routes (EnhancedEnemyAI), as a dungeon's does. The street's pools hand none: the classic motor.
   nav = null }) {
   const foes = [];        // { mobile, ai, attack, entity, batch, tex, archive, mobileType, dead, _encounter: true }
@@ -514,7 +514,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       if (!puppet) freeLodgedFeet(collider, pending.feet, { height: enemyControllerHeight(idleH, behaviour), airborne: behaviour === 'Flying' });
       const facing = yaw ?? rolls() * Math.PI * 2;
       const ai = new (nav && getPref('enhancedAI') ? EnhancedEnemyAI : EnemyAI)(collider, pending.feet, facing, {   // INDOOR-WATCH: the switch chooses the motor where the room has a mesh; the bake is read per step
-        nav: nav?.chf, navWorld: nav?.world, navSeed: (facing * 1000) | 0,   // the dungeon's three, its seed off the spawn's facing as its own
+        nav: nav?.chf, navWorld: nav?.world, navGoal: nav?.goal, navSeed: (facing * 1000) | 0,   // the dungeon's three, its seed off the spawn's facing as its own; the room's goal for a player off its mesh (AUDIT W1)
         liveSpeed: () => liveStat(entity, 'speed'),   // AUDIT 39: EnemyMotor.cs:432 re-reads LiveSpeed per FixedUpdate
         seesThroughInvisibility: basics.seesThroughInvisibility ?? false,
         behaviour, mobileId: mobileType,

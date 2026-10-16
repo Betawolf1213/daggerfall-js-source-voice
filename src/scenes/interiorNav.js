@@ -28,9 +28,10 @@
 //   - ASKED ON NEED: the first frame after a motor in the room has read the
 //     mesh. A building nobody fights in bakes nothing (the switch is on by
 //     default, and most doors are a shop's).
-//   - NO CACHE: a room is a fraction of a second in the worker (a 30 x 20 m
-//     two-storey room, 10,000 triangles: 0.37 s on the main thread in node),
-//     and thousands of buildings would each leave an IndexedDB entry nothing
+//   - NO CACHE: a room is a fraction of a second in the worker (0.2-0.7 s for
+//     the audit's 936-7,776-triangle halls; the main thread's share is the
+//     soup read at the ask and the landing, 15-46 ms since AUDIT W2), and
+//     thousands of buildings would each leave an IndexedDB entry nothing
 //     evicts.
 // A bake is asked again - one at a time, a request in flight coalesced, never
 // dropped (ASYNC NEVER DROPS) - when a door's lock changes the soup, and when
@@ -38,12 +39,20 @@
 // door that was locked when it baked, a loft up a ladder), with the player's
 // feet among the anchors.
 //
+// OFF THE MESH (AUDIT W1). findPath snaps a goal half a metre at most; a
+// player tucked between two shelves 0.8 m deep, or in a closet the erosion
+// keeps no floor of, is past it, and every route to them failed. The module's
+// `goal` names the mesh's point a route there ends at (meshPointNear: the poly
+// they stand on, else the nearest the knee's line reaches within GOAL_REACH)
+// and the motor walks in from it (enhancedMotor.js _routeOffMesh).
+//
 // NO ROUTE. A locked inner door, a ladder: the routes cannot take the watch to
 // a player in a room of their own. The crime's watch still comes: a watchman
-// hunting the player whose feet stand on another island than the player's for
-// CUT_OFF_S is stood on the player's island at the spot nearest where he stood
-// - the far side of what stopped him - and walks the rest. Never on the
-// player, never in another watchman, never in a model. Departure from DFU,
+// hunting the player whose feet stand on another island than the player's (a
+// player on none: the island they are walked in from) for CUT_OFF_S is stood
+// on it at the spot nearest where he stood - the far side of what stopped him
+// - and walks the rest. Never on the player, never in another watchman, never
+// in or on a model. Departure from DFU,
 // named: EnemyMotor has no such arm (its watch is stopped by the same wall).
 // The building's own foes route on the mesh but are never stood: a monster a
 // locked door holds is a door that held; the watch is the law's answer.
@@ -64,6 +73,10 @@ import { getPref } from '../systems/uiPrefs.js';
 /** m: a body this far (on the level) from the mesh's nearest poly stands on that poly's island - the narrow gap between
  *  two shelves the bake's erosion trims, a body against a wall. A melee's reach is 2.25. */
 export const ISLAND_REACH = 1.5;
+/** m: off every island, the farthest a body is from the mesh's edge and still walked to - a route to the nearest point
+ *  the knee's line reaches, then the straight walk in (a closet, an alcove, a passage 0.75 m wide or less: the bake's
+ *  one ring of erosion keeps none of them, navBake.js SOUP_AGENT). */
+export const GOAL_REACH = 4;
 /** m: a poly is on a body's level when the body's feet are within this of the poly's own heights. Storeys are 2.5 m and
  *  more apart; a stair's poly spans its rise. */
 export const LEVEL_DY = 0.9;
@@ -76,14 +89,24 @@ export const STAND_CLEAR_M = 1.0;
 export const STAND_CROWD_M = 0.8;
 /** m a stand spot is drawn into its poly from the poly's edge - the capsule's own radius. */
 export const STAND_INSET = CAPSULE_RADIUS;
-/** m a stand spot's floor may lie off its poly's own heights - a voxel's rounding, not a crate's top. */
+/** m a stand spot's floor may lie under its poly's own heights - a voxel's rounding (a ramp's corners are its cells'
+ *  box tops, over its face). */
 export const STAND_STEP = 0.3;
+/** m a stand spot's floor may lie OVER its poly's highest corner (AUDIT W3): the corners are the bake's own floor, to
+ *  the millimetre - anything higher is something set down since the bake, a crate's or a stool's top a body would be
+ *  stood on (STAND_STEP above let a 0.29 m one through). */
+export const STAND_RISE = 0.05;
 /** m over the feet a body's line to the mesh is drawn at - a knee, under a counter's top and over a threshold. */
 export const KNEE_M = 0.5;
-/** The rings round the player's feet the bake is anchored on too (m), each at eight bearings and only where the knee's
- *  line reaches: a body against a wall, between two shelves, stands where the bake's erosion keeps no floor, and an
- *  anchor that does not land is dropped (navBake.js landAnchors) - the room it stands in with it. */
-export const FEET_RINGS = Object.freeze([0.5, 1.0]);
+/** The rings round the player's feet the bake is anchored on too (m), each at bearings FEET_ARC_M apart (eight at the
+ *  least) and only where the knee's line reaches: a body against a wall, between two shelves, in a closet, stands where
+ *  the bake's erosion keeps no floor, and an anchor that does not land is dropped (navBake.js landAnchors) - the room it
+ *  stands in with it. Out to GOAL_REACH (AUDIT W1): the room whose edge a body off the mesh is walked in from is kept,
+ *  behind a locked door too, so NO ROUTE has an island to stand the watch on. */
+export const FEET_RINGS = Object.freeze([0.5, 1.0, 2.0, 3.0, GOAL_REACH]);
+/** m of arc at most between two bearings of a ring - a body's width: a way out at least a body wide, nearer than a
+ *  ring, is crossed by one of its bearings. */
+export const FEET_ARC_M = 2 * CAPSULE_RADIUS;
 /** The most times a room is baked again for the player's feet off the mesh (each a new 2 m cell): a tabletop or a bed
  *  is under the bake's 4 m2 floor and is never kept, so a player walking a table must not bake a room over and over. */
 export const MAX_FEET_BAKES = 4;
@@ -160,10 +183,12 @@ function kneeLine(collider, from, to, skip = null) {
   return !(collider.raycast(a, [dx / l, dy / l, dz / l], l, skip ? { skip } : null) < l);
 }
 
-/** The poly a body at `feet` stands on - on its level, within ISLAND_REACH in the plane, the nearest; one it stands
- *  beside and not in is its only where the knee's line reaches it (`collider`: never the room behind a wall) - or -1. */
-export function polyUnder(chf, feet, { reach = ISLAND_REACH, collider = null, skip = null } = {}) {
-  if (!chf?.mesh?.polys?.length || !feet) return -1;
+/** The point of the mesh a body at `feet` stands on - in the poly on its level, within `reach` in the plane, the
+ *  nearest; one it stands beside and not in is its only where the knee's line reaches it (`collider`: never the room
+ *  behind a wall) - as { i: the poly, x, y, z: its point nearest the feet (y the feet's, within the poly's heights), d:
+ *  how far that is in the plane }, or null. */
+export function meshPointUnder(chf, feet, { reach = ISLAND_REACH, collider = null, skip = null } = {}) {
+  if (!chf?.mesh?.polys?.length || !feet) return null;
   const { polys } = meshInfo(chf);
   const near = [];
   for (let i = 0; i < polys.length; i++) {
@@ -174,8 +199,18 @@ export function polyUnder(chf, feet, { reach = ISLAND_REACH, collider = null, sk
     if (q.d <= reach) near.push({ i, s: q.d + dy, q, y: Math.min(Math.max(feet[1], p.lo), p.hi) });
   }
   near.sort((a, b) => a.s - b.s);
-  for (const n of near) if (n.q.d === 0 || kneeLine(collider, feet, [n.q.x, n.y, n.q.z], skip)) return n.i;
-  return -1;
+  for (const n of near) if (n.q.d === 0 || kneeLine(collider, feet, [n.q.x, n.y, n.q.z], skip)) return { i: n.i, x: n.q.x, y: n.y, z: n.q.z, d: n.q.d };
+  return null;
+}
+
+/** The poly a body at `feet` stands on (meshPointUnder's), or -1. */
+export const polyUnder = (chf, feet, opts) => meshPointUnder(chf, feet, opts)?.i ?? -1;
+
+/** Where a body is on the mesh for the watch: the point it stands on (ISLAND_REACH), else - a closet, an alcove, a
+ *  passage the bake's erosion trimmed to nothing - the nearest the knee's line reaches within GOAL_REACH, the mesh's
+ *  edge it is walked in from; null when neither. */
+export function meshPointNear(chf, feet, opts = {}) {
+  return meshPointUnder(chf, feet, { ...opts, reach: ISLAND_REACH }) ?? meshPointUnder(chf, feet, { ...opts, reach: GOAL_REACH });
 }
 
 /** The island a poly is on (its neighbour links, flooded), or -1. */
@@ -193,8 +228,9 @@ export function sameIsland(chf, a, b, opts = {}) {
 export function feetAnchors(collider, feet) {
   const out = [[feet[0], feet[1], feet[2]]];
   for (const r of FEET_RINGS) {
-    for (let k = 0; k < 8; k++) {
-      const a = (k * Math.PI) / 4, p = [feet[0] + Math.sin(a) * r, feet[1], feet[2] + Math.cos(a) * r];
+    const n = Math.max(8, Math.ceil((2 * Math.PI * r) / FEET_ARC_M));
+    for (let k = 0; k < n; k++) {
+      const a = (k * 2 * Math.PI) / n, p = [feet[0] + Math.sin(a) * r, feet[1], feet[2] + Math.cos(a) * r];
       if (kneeLine(collider, feet, p)) out.push(p);
     }
   }
@@ -202,14 +238,14 @@ export function feetAnchors(collider, feet) {
 }
 
 /** Where a body can stand at (x, z) on a poly's floor: the collider's own floor under it (a face that looks up) within
- *  STAND_STEP of the poly's own heights - never a crate's top or a table's set down since the bake - a body's room there,
- *  in no model - or null. */
+ *  STAND_STEP under the poly's own heights and STAND_RISE over them - never a crate's top or a table's set down since
+ *  the bake - a body's room there, in no model - or null. */
 function floorSpot(collider, poly, x, z) {
   const top = poly.hi + STEP_OFFSET;
   const h = collider.raycastHit([x, top, z], DOWN, top - poly.lo + 1);
   if (!h || !Number.isFinite(h.dist) || h.back === true) return null;
   const spot = [x, top - h.dist, z];
-  if (spot[1] < poly.lo - STAND_STEP || spot[1] > poly.hi + STAND_STEP) return null;
+  if (spot[1] < poly.lo - STAND_STEP || spot[1] > poly.hi + STAND_RISE) return null;
   if (!bodyFits(collider, spot) || lodgedIn(collider, spot)) return null;
   return spot;
 }
@@ -256,6 +292,7 @@ export function huntsThePlayer(g) {
  * THE INTERIOR'S NAV - one for the mode machine, mounted with each room.
  *   nav.chf()   the room's bake, or null (the motor's thunk - a read marks the room as wanting one)
  *   nav.world   the routes' world: the findPath budget and the nav epoch (makeNavWorld), every motor's
+ *   nav.goal(feet)   the mesh's point a route to a goal findPath cannot place ends at, or null (the motor's `navGoal`)
  *   mount(ctx, feet) / release()   the room: its collider, its action doors, its doors and ways in; the player's arrival
  *   frame(dt, playerFeet, watch, grounded)   before the pools step: the budget, the bake, NO ROUTE (answers how many stood)
  * `makeClient` the bake's client (a test's own); `enabled` the switch.
@@ -285,6 +322,15 @@ export function createInteriorNav({ makeClient = () => new NavClient({ store: nu
   return {
     world,
     chf: () => { if (room) room.read = true; return room?.chf ?? null; },
+    /** The motor's second ask when findPath cannot place a goal (`navGoal`): a body off the mesh past findPath's own
+     *  half-metre snap - between two deep shelves, in a closet - is routed to the room's point meshPointNear finds for
+     *  it (never through a wall: the knee's line), and walked in from there; on the mesh, or nowhere near it, null. */
+    goal: (feet) => {
+      const r = room;
+      if (!r?.chf || !feet) return null;
+      const q = meshPointNear(r.chf, feet, { collider: r.collider, skip: doorsOutOfSoup(r.actions) });
+      return q && q.d > 0 ? [q.x, q.y, q.z] : null;
+    },
     /** The room, as it is mounted: `feet` the player's arrival (the restore's own spot, else the door's landing). */
     mount(ctx, feet) {
       this.release();
@@ -323,8 +369,7 @@ export function createInteriorNav({ makeClient = () => new NavClient({ store: nu
       const hunters = (watch ?? []).filter(huntsThePlayer);
       if (!hunters.length) return 0;
       const near = { collider: r.collider, skip: doorsOutOfSoup(r.actions) };
-      const me = polyUnder(r.chf, playerFeet, near);
-      if (me < 0) {
+      if (polyUnder(r.chf, playerFeet, near) < 0) {
         // the hunted player stands on no island the mesh kept: bake again with their feet among the anchors
         const cell = `${Math.floor(playerFeet[0] / 2)},${Math.floor(playerFeet[2] / 2)},${Math.round(playerFeet[1])}`;
         if (grounded && !r.flying && r.tried.size < MAX_FEET_BAKES && !r.tried.has(cell)) {
@@ -332,12 +377,15 @@ export function createInteriorNav({ makeClient = () => new NavClient({ store: nu
           r.feet.push(...feetAnchors(r.collider, playerFeet));
           bake();
         }
-        return 0;
       }
+      // their island - or, off every island (a closet the erosion kept no floor of), the one whose edge they are walked
+      // in from: a watchman cut off from it is stood on it all the same
+      const me = meshPointNear(r.chf, playerFeet, near)?.i ?? -1;
+      if (me < 0) return 0;
       const { island } = meshInfo(r.chf);
       let stood = 0;
       for (const g of hunters) {
-        const at = polyUnder(r.chf, g.ai.feet, near);
+        const at = meshPointNear(r.chf, g.ai.feet, near)?.i ?? -1;
         if (at >= 0 && island[at] === island[me]) { cut.delete(g); continue; }
         const t = cut.has(g) ? cut.get(g) + step : 0;   // cut off from this read on
         cut.set(g, t);

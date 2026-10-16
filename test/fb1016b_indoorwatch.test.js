@@ -19,10 +19,14 @@ import { createCityGuards, indoorWatchSpot, GUARD_INDOOR_DOOR_OFFSET } from '../
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
 import {
   createInteriorNav, doorsOutOfSoup, polyUnder, sameIsland, islandOf, noRouteSpot, feetAnchors, huntsThePlayer, CUT_OFF_S, CHECK_S, STAND_CLEAR_M, STAND_CROWD_M,
+  meshPointNear, ISLAND_REACH, GOAL_REACH,
 } from '../src/scenes/interiorNav.js';
-import { NavClient } from '../src/ai/navClient.js';
+import { NavClient, bakeHere, hydrateHere } from '../src/ai/navClient.js';
+import { navInputFromCollider } from '../src/ai/navBake.js';
+import { packColliders } from '../src/ai/triRaster.js';
+import { findPath, polyHeight } from '../src/ai/navmesh.js';
 import { EnhancedEnemyAI } from '../src/ai/enhancedMotor.js';
-import { EnemyAI, MELEE_DISTANCE } from '../src/characters/enemyMotor.js';
+import { EnemyAI, MELEE_DISTANCE, DOOR_CROUCHING_HEIGHT } from '../src/characters/enemyMotor.js';
 import { bodyFits } from '../src/characters/foeSpacing.js';
 import { tickTactics } from '../src/ai/tacticsClock.js';
 import { setPref } from '../src/systems/uiPrefs.js';
@@ -44,21 +48,39 @@ function boxSoup(x0, y0, z0, x1, y1, z1) {
 /** THE REPORTER'S SHOP: 12 x 12 m, the street door in the south wall (z = 0), a partition at z 6-6.2 with a 1.2 m doorway
  *  at x 1-2.2, shelves 1.5 m wide against the partition's far face with 0.9 m between them, and the player tucked in the
  *  third gap, against the partition - the straight line from the door to them runs into the partition. `locked` hangs a
- *  locked swing door in the doorway (an action door, ActionSystem.addDoor - its own collider bucket). */
+ *  locked swing door in the doorway (an action door, ActionSystem.addDoor - its own collider bucket). `depth` the shelves'
+ *  (AUDIT W1: from 0.8 m the player stands past findPath's half-metre snap of the mesh, though on its island). */
 const PARTITION_Z = 6;
-function shop({ locked = 0 } = {}) {
+function shop({ locked = 0, depth = 0.6 } = {}) {
   const c = new Collider(() => -Infinity);
   const solid = (...b) => { const s = boxSoup(...b); c.addMesh('interior', s.positions, s.indices, Id); };
   solid(-0.2, -0.2, -0.2, 12.2, 0, 12.2);
   solid(-0.2, 0, -0.2, 12.2, 3, 0); solid(-0.2, 0, 12, 12.2, 3, 12.2); solid(-0.2, 0, 0, 0, 3, 12); solid(12, 0, 0, 12.2, 3, 12);
   solid(0, 0, PARTITION_Z, 1, 3, 6.2); solid(2.2, 0, PARTITION_Z, 12, 3, 6.2);
   const shelves = [];
-  for (let x = 3; x + 1.5 < 12; x += 2.4) { solid(x, 0, 6.2, x + 1.5, 1.8, 6.8); shelves.push(x); }
+  for (let x = 3; x + 1.5 < 12; x += 2.4) { solid(x, 0, 6.2, x + 1.5, 1.8, 6.2 + depth); shelves.push(x); }
   const actions = new ActionSystem(c);
   const inner = locked ? actions.addDoor(boxSoup(1, 0, 6.05, 2.2, 2.4, 6.15), Id, { startingLockValue: locked }) : null;
   const player = [shelves[2] + 1.95, 0, 6.56];
   const door = { centre: { x: 8, y: 1.2, z: 0 }, normal: { x: 0, y: 0, z: 1 }, size: { x: 1.2, y: 2.4, z: 0.2 }, matrix: Id };
   return { collider: c, actions, inner, player, door, ctx: { collider: c, actions, doors: [door], waysIn: [] } };
+}
+/** THE CLOSET (AUDIT W1): the shop's partition and doorway, its back room 6 m deep, and off the back room's far wall a
+ *  closet 0.7 m wide and `deep` metres deep (x 6-6.7) - the bake's one ring of erosion keeps no floor of it, so the
+ *  player at its far end stands on NO island, `deep` - 0.2 m past the back room's edge. `locked` as the shop's. */
+function closet({ deep = 3, locked = 0 } = {}) {
+  const c = new Collider(() => -Infinity);
+  const solid = (...b) => { const s = boxSoup(...b); c.addMesh('interior', s.positions, s.indices, Id); };
+  const end = 12.2 + deep;
+  solid(-0.2, -0.2, -0.2, 12.2, 0, end + 0.2);
+  solid(-0.2, 0, -0.2, 12.2, 3, 0); solid(-0.2, 0, 0, 0, 3, 12.2); solid(12, 0, 0, 12.2, 3, 12.2);
+  solid(0, 0, PARTITION_Z, 1, 3, 6.2); solid(2.2, 0, PARTITION_Z, 12, 3, 6.2);
+  solid(0, 0, 12, 6, 3, 12.2); solid(6.7, 0, 12, 12, 3, 12.2);
+  solid(5.8, 0, 12.2, 6, 3, end); solid(6.7, 0, 12.2, 6.9, 3, end); solid(5.8, 0, end, 6.9, 3, end + 0.2);
+  const actions = new ActionSystem(c);
+  if (locked) actions.addDoor(boxSoup(1, 0, 6.05, 2.2, 2.4, 6.15), Id, { startingLockValue: locked });
+  const door = { centre: { x: 8, y: 1.2, z: 0 }, normal: { x: 0, y: 0, z: 1 }, size: { x: 1.2, y: 2.4, z: 0.2 }, matrix: Id };
+  return { collider: c, actions, player: [6.35, 0, end - 0.4], end, door, ctx: { collider: c, actions, doors: [door], waysIn: [] } };
 }
 
 // the watch1 rig's synthetic CLASS18.CFG (disc19.test.js, fb1012e_watchleaves.test.js) - the real spawn, no ARENA2
@@ -157,6 +179,74 @@ test('INDOOR-WATCH THE REPORT: the watch called into the shop comes through the 
     assert.ok(after.guards.guards.some((g) => g.ai.navStats.repaths > 0), 'the routes were solved');
     nav.release();
   });
+});
+
+test('INDOOR-WATCH AUDIT W1 - THE DEEP SHELVES: shelves 0.8 and 1.0 m deep keep the player on the aisle\'s island (so NO ROUTE never fires) but past findPath\'s half-metre snap of it - every route to them failed and the watch walked the classic line into the partition (288 repaths, 288 fails); now a route that cannot place its goal is solved to the room\'s point for it (`nav.goal`: the aisle\'s mouth, never through a wall) with the walk in as its last leg, and each of the five reaches melee and swings - stopped on the player he faces the player, not his route\'s next corner (mutants: the off-mesh route; its last leg; the pool\'s hook; the room\'s goal; the stop\'s facing)', async () => {
+  for (const depth of [0.8, 1.0]) {
+    await seeded(async () => {
+      const S = shop({ depth });
+      const nav = createInteriorNav({ makeClient: realClient });
+      nav.mount(S.ctx, [8, 0, 1.5]);
+      const r = await crime(S, { nav, seconds: 30 });
+      const chf = nav.chf();
+      assert.ok(polyUnder(chf, S.player, { collider: S.collider }) >= 0, `${depth}: on the aisle's island - NO ROUTE is not their answer`);
+      assert.equal(findPath(chf, [5, 0, 4.6], S.player), null, `${depth}: and past findPath's own snap: a route to their feet fails`);
+      const goal = nav.goal(S.player);
+      assert.ok(goal && goal[2] >= 6.2 + depth && Math.abs(goal[0] - S.player[0]) < 0.45 && flat(goal, S.player) <= ISLAND_REACH, `${depth}: the room's goal for them is the aisle's mouth, their side of the partition (${goal?.map((v) => v.toFixed(2))})`);
+      assert.equal(nav.goal([5, 0, 3]), null, 'a goal on the mesh: findPath\'s own');
+      assert.ok(r.seen.crossed, `${depth}: through the doorway`);
+      assert.ok(r.seen.reach != null && r.seen.reach < 10, `${depth}: melee reach, the player in sight (${r.seen.reach} s)`);
+      assert.deepEqual(r.seen.stood, [], `${depth}: walked there - nobody stood`);
+      assert.ok(r.guards.guards.every((g) => g.ai.navGoal === nav.goal && g.ai.navStats.offMesh > 0), `${depth}: each by a route to the room's goal`);
+      const swings = r.guards.guards.map((g) => g.attack.swingSeq ?? 0);
+      assert.ok(swings.every((n) => n > 0), `${depth}: every watchman swings (${swings})`);
+      nav.release();
+    });
+  }
+});
+
+test('INDOOR-WATCH AUDIT W1 - THE CLOSET: a 0.7 m closet the bake keeps no floor of leaves the player at its end on NO island, 2.8 m past the back room\'s edge - routed to the back room\'s edge at its mouth (GOAL_REACH) and walked in, the five reach and swing; with a locked door in the partition NO ROUTE stands them on the island they are walked in from, then they reach and swing; a watchman in the closet beside the player is never stood away (mutants: the goal\'s far reach; the feet\'s far rings; NO ROUTE\'s island for a player on none; a watchman\'s own)', async () => {
+  for (const locked of [0, 20]) {
+    await seeded(async () => {
+      const S = closet({ deep: 3, locked });
+      const nav = createInteriorNav({ makeClient: realClient });
+      nav.mount(S.ctx, [8, 0, 1.5]);
+      const r = await crime(S, { nav, seconds: 30 });
+      const chf = nav.chf();
+      const near = { collider: S.collider };
+      assert.equal(polyUnder(chf, S.player, near), -1, `${locked}: on no island`);
+      const q = meshPointNear(chf, S.player, near);
+      assert.ok(q && q.d > ISLAND_REACH && q.d <= GOAL_REACH && q.x > 6 && q.x < 6.7 && q.z <= 12.2, `${locked}: the back room's edge at the closet's mouth (${q && [q.x, q.z, q.d].map((v) => v.toFixed(2))})`);
+      assert.ok(r.seen.reach != null && r.seen.reach < 10, `${locked}: melee reach, the player in sight (${r.seen.reach} s)`);
+      const swings = r.guards.guards.map((g) => g.attack.swingSeq ?? 0);
+      assert.ok(swings.every((n) => n > 0), `${locked}: every watchman swings (${swings})`);
+      if (!locked) assert.deepEqual(r.seen.stood, [], 'a route there: nobody stood');
+      else {
+        assert.equal(r.seen.stood.length, r.guards.guards.length, 'the locked door: every watchman stood, once');
+        assert.ok(r.seen.stood.every((f) => f[2] > 6.2 && f[2] < 12 && flat(f, S.player) >= STAND_CLEAR_M), 'on the back room\'s floor - the island the player is walked in from');
+      }
+      // a watchman in the closet beside the player - off every island himself - stands where he is
+      const g = r.guards.guards[0], spot = [6.35, 0, S.end - 1.6];
+      g.ai.standAt(spot);
+      for (let f = 0; f < (CUT_OFF_S + 4 * CHECK_S) * 30; f++) nav.frame(1 / 30, S.player, r.guards.guards, true);
+      assert.deepEqual(g.ai.feet, spot, `${locked}: beside the player in the closet, never stood away`);
+      nav.release();
+    });
+  }
+});
+
+test('INDOOR-WATCH AUDIT W1 - THE FEET\'S RINGS reach GOAL_REACH at bearings a body\'s width apart: from the end of a 0.72 m slot running off at 22.5 degrees - between two of eight bearings - an anchor lands out past its mouth, and none through its walls (mutants: the far rings; the bearings\' spacing)', () => {
+  const c = new Collider(() => -Infinity);
+  const a = Math.PI / 8, co = Math.cos(a), si = Math.sin(a);
+  const M = new Float32Array([co, 0, -si, 0, 0, 1, 0, 0, si, 0, co, 0, 0, 0, 0, 1]);   // local +z to bearing 22.5 degrees
+  const floor = boxSoup(-8, -0.2, -8, 8, 0, 8); c.addMesh('floor', floor.positions, floor.indices, Id);
+  for (const b of [[-0.56, 0, -0.7, -0.36, 3, 2.5], [0.36, 0, -0.7, 0.56, 3, 2.5], [-0.56, 0, -0.9, 0.56, 3, -0.7]]) { const s = boxSoup(...b); c.addMesh('slot', s.positions, s.indices, M); }
+  const local = (p) => [p[0] * co - p[2] * si, p[0] * si + p[2] * co];   // world -> the slot's frame
+  const feet = [-0.3 * si, 0, -0.3 * co];   // the slot's far end
+  const anchors = feetAnchors(c, feet);
+  const past = anchors.filter((p) => local(p)[1] > 2.6);
+  assert.ok(past.length >= 1, `an anchor out past the mouth, 2.8 m off (${past.length})`);
+  assert.ok(anchors.every((p) => { const [x, z] = local(p); return z > 2.5 || (Math.abs(x) < 0.36 && z > -0.7); }), 'none through the slot\'s walls');
 });
 
 test('INDOOR-WATCH NO ROUTE: a locked door in the doorway - the routes cannot reach the player\'s room, so after CUT_OFF_S each watchman is stood on the player\'s island, at the spot nearest where he stood: past the partition, never on the player, never in another, in nothing, on its floor; then he reaches melee and swings (mutants: the cut-off; the island test; the knee\'s line; the clearance; the crowd; standAt\'s route)', async () => {
@@ -339,13 +429,23 @@ test('INDOOR-WATCH THE STAND: the spot nearest where he stood on the player\'s i
   S.collider.addMesh('crate', crate.positions, crate.indices, Id);
   const d = stand(door);
   assert.ok(d && bodyFits(S.collider, d) && flat(d, a) > 0.4 && Math.abs(d[1]) < 0.05, `beside the crate on the floor, in nothing - never on its top (${d?.map((v) => v.toFixed(2))})`);
+  // AUDIT W3: a stool set down there too, 0.25 m - under the old STAND_STEP (0.3) over the poly, so its top was stood on
+  const stool = boxSoup(d[0] - 0.3, 0, d[2] - 0.3, d[0] + 0.3, 0.25, d[2] + 0.3);
+  S.collider.addMesh('stool', stool.positions, stool.indices, Id);
+  const e = stand(door);
+  assert.ok(e && bodyFits(S.collider, e) && Math.abs(e[1]) < 0.05 && Math.max(Math.abs(e[0] - d[0]), Math.abs(e[2] - d[2])) > 0.3, `on the floor beside the stool, never on its top (${e?.map((v) => v.toFixed(2))})`);
   // standAt: the pursuit stays, what the motor held of where it stood goes
   const ai = new EnhancedEnemyAI(S.collider, [2.5, 4, 5.65], 0, { nav: () => chf });
   ai.makeHostileToPlayer(600, S.player);
   ai.path = [[1, 4, 1], [2, 4, 2]]; ai.pathI = 1; ai.repathT = 0.3; ai.stuckT = 0.5;
   ai.lastGroundedY = 4; ai._airborne = true; ai.velY = -3; ai.obstacleDetected = true; ai.avoidObstaclesTimer = 0.7;
+  // AUDIT W4: crouched at the wall that stopped him (DOOR-JAM), its stuck stamp, a crumb, a fixed step's remainder
+  ai.controllerHeight = DOOR_CROUCHING_HEIGHT; ai._resetHeight = true; ai._heightChangeTimer = 0.4; ai.collidedSides = true;
+  ai.lastTimeWasStuck = 12; ai._crumb = [2.5, 4, 5]; ai._trailMode = 'crumb'; ai._trailT = 0.3; ai._acc = 0.02; ai.hurtKnock = true;
   const goal = ai.predictedTargetPos;
   ai.standAt(a);
+  assert.deepEqual([ai.controllerHeight, ai._resetHeight, ai._heightChangeTimer, ai.collidedSides], [ai.height, false, 0, false], 'stood up at his own height - resumeLive\'s own list (EnemyAI._standAfresh)');
+  assert.deepEqual([ai.lastTimeWasStuck, ai._crumb, ai._trailMode, ai._trailT, ai._acc, ai.hurtKnock], [-Infinity, null, null, 0, 0, false], 'nothing held of the other side of the wall');
   assert.deepEqual(ai.feet, a, 'stood');
   assert.deepEqual([ai.path, ai.repathT, ai.stuckT], [null, 0, 0], 'the old route and its clocks gone - the next step paths from here');
   assert.deepEqual([ai.lastGroundedY, ai._airborne, ai.velY], [a[1], false, 0], 'its fall anchored on the floor it stands on - four metres down is no fall');
@@ -394,12 +494,60 @@ test('INDOOR-WATCH THE POOLS: the watch and the building\'s foes take the room\'
       assert.ok(ai instanceof EnhancedEnemyAI, `${pool}: the routes`);
       assert.equal(ai.navWorld, nav.world, `${pool}: the room's one world - its budget, its epoch`);
       assert.equal(ai.nav, nav.chf, `${pool}: the room's bake, read per step`);
+      assert.equal(ai.navGoal, nav.goal, `${pool}: the room's goal for a player off its mesh (AUDIT W1)`);
       assert.equal((await spawn(null)).constructor, EnemyAI, `${pool}: no mesh, the classic motor`);
       setPref('enhancedAI', false);
       try { assert.equal((await spawn(nav)).constructor, EnemyAI, `${pool}: the switch off, the classic motor`); } finally { setPref('enhancedAI', true); }
     }
     nav.release();
   });
+});
+
+test('INDOOR-WATCH AUDIT W2 - THE LANDING: a bake\'s boxes are indexed packed, as the worker ships them - never unpacked into objects on the main thread (a 40 x 30 m room\'s 109,251 were ~190 ms of its landing) - and the height layer over the packed set answers every height and every route the unpacked set does (mutants: the packed index\'s count, prefix and fill; a minted box\'s fields; the set\'s length)', () => {
+  const S = shop({ locked: 20 });
+  const input = navInputFromCollider(S.collider, { exclude: doorsOutOfSoup(S.actions) });
+  const { baked, cols } = bakeHere(input, [8, 0, 1.5], undefined, feetAnchors(S.collider, S.player));
+  assert.ok(Array.isArray(cols) && cols.length > 1000, 'the bake\'s own boxes (node: no worker, so the fallback\'s array)');
+  const loose = hydrateHere(baked, cols, input), packed = hydrateHere(baked, packColliders(cols), input);
+  assert.ok(packed.colliders.box instanceof Float64Array, 'the packed set itself');
+  let n = 0;
+  for (let x = -0.6; x <= 12.6; x += 0.17) for (let z = -0.6; z <= 12.6; z += 0.23) {
+    assert.equal(polyHeight(packed, -1, x, z), polyHeight(loose, -1, x, z), `the tallest top at (${x.toFixed(2)}, ${z.toFixed(2)})`);
+    const pi = (n++ % packed.mesh.polys.length);
+    assert.equal(polyHeight(packed, pi, x, z), polyHeight(loose, pi, x, z), `the top nearest poly ${pi}'s level at (${x.toFixed(2)}, ${z.toFixed(2)})`);
+  }
+  for (const [from, to] of [[[8, 0, 1.5], [2.5, 0, 5.6]], [[1.5, 0, 1.5], [11, 0, 5]], [S.player, [11, 0, 11]], [[3, 0, 9], [10.6, 0, 7.4]]]) {
+    assert.deepEqual(findPath(packed, from, to), findPath(loose, from, to), `the route ${from} -> ${to}`);
+  }
+  assert.ok(findPath(packed, S.player, [11, 0, 11]), 'a real route among them');
+});
+
+test('INDOOR-WATCH AUDIT W2 - THE SOUP: navInputFromCollider, counted first and written straight into the soup\'s arrays, is the collider\'s triangles in the world - each corner turned by its bucket\'s rotation and moved by its translation (R v + t), rounded to float32, indexed in order, minY/maxY of the unrounded heights, the excluded buckets out (mutants: the turn; the translation; the indices; the count; the bounds)', () => {
+  const c = new Collider(() => -Infinity);
+  const ang = 0.7, co = Math.cos(ang), si = Math.sin(ang);
+  const T = [317.4, 52.7, -841.2], Rm = [co, 0, -si, 0, 1, 0, si, 0, co];
+  const add = (key, b, t, r) => { const s = boxSoup(...b); c.addMesh(key, s.positions, s.indices, Id, t, r); };
+  add('room', [-0.2, -0.2, -0.2, 12.2, 0, 12.2]);
+  add('far', [3.1, 0, 2.7, 4.3, 1.1, 5.9], () => T);
+  add('mover', [0, 0.3, 0, 2.2, 0.9, 1.3], () => [5.3, 0.1, 7.7], () => Rm);
+  add('door', [1, 0, 6.05, 2.2, 2.4, 6.15]);
+  const want = (exclude) => {
+    const p = []; let minY = Infinity, maxY = -Infinity;
+    for (const [key, b] of c._buckets) {
+      if (exclude.has(key)) continue;
+      const t = b.t ? b.t() : [0, 0, 0], R = b.r ? b.r() : null;
+      for (const tri of b.tris) for (const v of tri) {
+        const w = R ? [R[0] * v[0] + R[3] * v[1] + R[6] * v[2], R[1] * v[0] + R[4] * v[1] + R[7] * v[2], R[2] * v[0] + R[5] * v[1] + R[8] * v[2]] : v;
+        p.push(w[0] + t[0], w[1] + t[1], w[2] + t[2]); minY = Math.min(minY, w[1] + t[1]); maxY = Math.max(maxY, w[1] + t[1]);
+      }
+    }
+    return { positions: Float32Array.from(p), indices: Uint32Array.from(p.slice(0, p.length / 3).map((_, i) => i)), minY, maxY, tris: p.length / 9 };
+  };
+  for (const exclude of [new Set(), new Set(['door']), new Set(['room', 'door'])]) {
+    const got = navInputFromCollider(c, { exclude });
+    assert.deepEqual(got, want(exclude), `the soup without ${[...exclude]}`);
+  }
+  assert.ok(c._buckets.get('mover').r && Math.abs(want(new Set()).maxY - (52.7 + 1.1)) < 1e-4, 'a turned mover and a moved bucket in it, its height the moved one');
 });
 
 test('INDOOR-WATCH THE HOST: the mode machine holds one module, hands it to both pools, mounts it with each building at the player\'s arrival, runs its frame before either pool steps, and releases it at both teardowns; the street\'s hosts hand their pools no mesh (mutants: each wiring line)', () => {
