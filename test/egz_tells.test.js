@@ -453,7 +453,7 @@ test('EG-ZL A GHOST SLAB (section 10.8: "a peer on a crumble the viewer has seen
   const D = readFileSync(new URL('../src/scenes/dungeonContext.js', import.meta.url), 'utf8'), E = readFileSync(new URL('../src/scenes/egClient.js', import.meta.url), 'utf8');
   assert.match(D, /egSpanDraw\(proj, view, fog\) \{ return !!egSpan\?\.drawPass\(proj, view, fog\); \}/);
   assert.match(D, /egSpanPeer\(x, y, z\) \{ return !!egSpan\?\.peerOn\(x, y, z\); \}/);
-  assert.match(E, /const ghosts = !!modes\(\)\?\.dungeonCtx\?\.egSpanDraw\?\.\(proj, view, fog\);[^\n]*\n\s*const over = [^\n]*\n[^\n]*\n\s*return under \|\| drew \|\| ghosts \|\| over \|\| lit;/, 'the client\'s pass draws them, before the lines');
+  assert.match(E, /const ghosts = !!modes\(\)\?\.dungeonCtx\?\.egSpanDraw\?\.\(proj, view, fog\);[^\n]*\n\s*const over = [^\n]*\n[^\n]*\n\s*return painted \|\| under \|\| air \|\| drew \|\| ghosts \|\| over \|\| lit;/, 'the client\'s pass draws them, before the lines');   // PIN MOVED (EG-LOOK SKY+AIR): the pass answers the sky's paint and THE AIR too
 });
 
 /** A breach client inside a span's trial (test/egint_client.test.js's harness, its dungeon context `ctx`). */
