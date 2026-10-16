@@ -110,8 +110,8 @@
   {
     "name": "BASEHIDE-the-list-unread",
     "file": "server-account/src/decor.js",
-    "old": "hidden: S.seat ? [] : await hiddenOf(db, mapId, buildingKey) };",
-    "new": "hidden: [] };",
+    "old": "return { mapId, buildingKey, pieces, hidden: hiddenListOf(hidden?.results?.[0] ?? null) };",
+    "new": "return { mapId, buildingKey, pieces, hidden: [] };",
     "tests": [
       "test/basehide.test.js"
     ]

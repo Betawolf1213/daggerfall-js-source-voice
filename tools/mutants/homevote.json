@@ -322,8 +322,8 @@
   {
     "name": "HOME-VOTE-room-handed-out",
     "file": "server-account/src/decor.js",
-    "old": "  if (!S.seat && !(await homeShownTo(db, mapId, buildingKey, player?.id))) return",
-    "new": "  if (false && !(await homeShownTo(db, mapId, buildingKey, player?.id))) return",
+    "old": "  if (!homeShownOf(shown?.results?.[0] ?? null)) return",
+    "new": "  if (false) return",
     "tests": [
       "test/homevote.test.js"
     ],
@@ -562,8 +562,8 @@
   {
     "name": "HOME-VOTE-II-A1-licence-kept",
     "file": "server-account/src/decor.js",
-    "old": "if (await vendorStocked(db, mapId, p.id)) kept.push(p);",
-    "new": "kept.push(p);",
+    "old": "return traders.filter((_, i) => stockedOf(stock[i]?.results?.[0]));",
+    "new": "return traders;",
     "tests": [
       "test/homevote.test.js"
     ],
@@ -949,5 +949,35 @@
       "test/homevote.test.js"
     ],
     "note": "HOME-SHUN: a home at five down still shown"
+  },
+  {
+    "name": "DECOR-BATCH-the-room-three-trips",
+    "file": "server-account/src/decor.js",
+    "old": "const [{ results = [] }, shown, hidden] = await db.batch([piecesRead, homeShownRead(db, mapId, buildingKey, player?.id), hiddenRead(db, mapId, buildingKey)]);",
+    "new": "const [{ results = [] }, shown, hidden] = [await piecesRead.all(), { results: [await homeShownRead(db, mapId, buildingKey, player?.id).first()] }, { results: [await hiddenRead(db, mapId, buildingKey).first()] }];",
+    "tests": [
+      "test/homevote.test.js"
+    ],
+    "note": "the room's three reads three trips in a row again - the deploy's 000"
+  },
+  {
+    "name": "DECOR-BATCH-the-shop-a-trip-a-trader",
+    "file": "server-account/src/decor.js",
+    "old": "const stock = await db.batch(traders.map((p) => vendorStockedRead(db, mapId, p.id)));",
+    "new": "const stock = []; for (const p of traders) stock.push({ results: [await vendorStockedRead(db, mapId, p.id).first()] });",
+    "tests": [
+      "test/homevote.test.js"
+    ],
+    "note": "a shunned home's traders a trip each"
+  },
+  {
+    "name": "DECOR-BATCH-hidden-dropped",
+    "file": "server-account/src/decor.js",
+    "old": "return { mapId, buildingKey, pieces, hidden: hiddenListOf(hidden?.results?.[0] ?? null) };",
+    "new": "return { mapId, buildingKey, pieces, hidden: [] };",
+    "tests": [
+      "test/homevote.test.js"
+    ],
+    "note": "what the owner took out lost from the batch"
   }
 ]
