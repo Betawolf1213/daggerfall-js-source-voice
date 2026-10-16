@@ -9,6 +9,8 @@ main's `7e0424e0`.
 | 2 | "I reloaded my game near the arena ... I've done all 40 fights already for this season, so I hit fight, and it reset my rank, and when I look at the season it doesn't have a number" | on the online lane before the relay's first welcome every arena door ran the offline law: the Herald offered Fight off the save's ladder, the bout and its purse were this screen's, the window drew the save's season ("Season of 3E 406") and roster - the account's forty wins untouched | fixed (ARENA-WAIT) |
 | 3 | "I paid 2 x 600 gold today, and even though it said +5 reputation, my reputation didn't go up at all ... why I still have a penalty" (the "Possible bug: Repeated ..." thread, after FINE-MENDS); "It didn't work for me either" | the +5 was the law's and it held; a charge costs two names - the law's and half of it off the region's People, spread to the kingdom (the Standing page's Kingdoms row) and read by every commoner - and a sentence gives back both, but the watch's fine and a temple's penance mended the law's alone | fixed (FINE-PEOPLE) |
 | 4 | "Shipyard formatting is cooked" - "The text here may need a bit of work, as you can see!" | a shipyard row's acts track was `auto`: grid grew it to every press and the name box on one line before the words' track had a pixel, so a ship's words stood a word a line | fixed (YARD-ROWS) |
+| 5 | "items not repairing at all with 'repairs objects'" ... "my weapon WILL repair but no other worn items are repairing with repair objects" | a tick mended a pool weapon the classic Dagger's share (32) and every other piece DFU's point - a steel cuirass's 6,144 a point a tick, its % still for an hour while the blade's climbed | fixed (MEND-ARMOUR) |
+| 6 | "turning horse care off completely hides my other horses" | the upkeep's model listed horses only under a care tier, and the page drew the other horses and "Ride this one" only under one: Off (and the classic skin) the ridden horse alone | fixed (HORSE-CARE-OFF) |
 
 ## FIRST-PICK: a change on its way gates a change, never a rank's first choice (1)
 
@@ -151,3 +153,72 @@ a browser): `node tools/shipyardWindowProbe.mjs` measures every row's words on t
 widths.
 
 What the reporter is owed: the shipyard's fleet page reads as a page again.
+
+## MEND-ARMOUR: every worn piece mends its own share a tick, not the weapon alone (5)
+
+`src/systems/enchantments.js` repairsObjectsMend, MEND_SHARE_OF, the RepairsObjects row's magicRound.
+
+THE REPORT. "items not repairing at all with 'repairs objects'" ... "my weapon WILL repair but no other worn items are
+repairing with repair objects."
+
+FOUND. The tick ran and picked the right piece; it mended too little to see. MEND-WORN (2026-10-07) gave a weapon on
+WEAPON-POOL's pool the classic Dagger's share - 32 a tick, its point of its 50 on the 1,600 (`POOL_WEAPON_MEND`,
+`mendsOnPool`) - and every other piece kept DFU's point (`CONDITION_AMOUNT`, `RepairsObjects.cs:26`) against conditions
+in the thousands (`itemTemplates.js` mintCondition: an iron cuirass 4,096, steel 6,144, Daedric 32,768); Port-Ledger's
+MEND-WORN row recorded "armour keeps the point" on purpose, as DFU's. Driven on the real pump (runMagicRoundsFor) over
+the real producers: a steel longsword at 50%, seven pieces of steel plate at 70%, a ring of Repairs Objects worn - after
+720 rounds (about an hour of play) the blade stood at 71% and every piece of plate at 70% (the cuirass 4,301 to 4,337);
+with a shirt and breeches under the plate the kit wanted 8,408 ticks to be whole, about 47 real hours.
+
+CHANGED (the owner: "Stop trying to match DFU"): one law, `repairsObjectsMend` - a tick mends a fiftieth of the piece's
+own condition, rounded, never under DFU's point. That is MEND-WORN's yardstick (the classic Dagger's point of its 50,
+Mac's "Weapons as a classic dagger"), now every piece's: a weapon of any material, armour, clothing, a magic item's or an
+artifact's uses - every share climbs 2% a tick (an iron weapon 32, a Daedric one 256, an iron cuirass 82, steel 123,
+Daedric 655, a shirt 2, Armbands the floor's 1). Unchanged: which piece the tick takes (worn first, least share first,
+MEND-TIERS' tiers), the cadence, the player alone, one piece a tick. The same kit is whole in 164 ticks, about 55 real
+minutes. `05-Combat/Physical-Combat-Overhaul.md` MEND-WORN and Port-Ledger A's MEND-WORN row say so.
+
+THE FOUR HOSTS: none changed - the law runs in the one round pump (`systems/worldTick.js` runMagicRoundsFor, then
+enchantmentMagicRound) that every host's ticker feeds: exterior.js, world.js and worldModes.js through `scenes/shared.js`
+createPlayerTicker, dungeonContext.js through tickPlayerMinutes. Pinned by `test/fb1016_mendarmour.test.js` (2, the
+first the report's kit through the pump, tick by tick); `tools/mutants/fb1016_mendarmour.json` (6, all dead). PINS
+MOVED: `mend_worn.test.js` (the rate; a magic blade's 1,000 uses +20 and an artifact's 400 +8; the Wall of Daggerfall
++41 and the helm +51; the pump's cuirass +820), `fb1014_mendstarve.test.js` and `fb1015_mendtiers.test.js` (a worn piece
+mended whole in a tick or two where it was held), `enchantments.test.js` E1 (a 100-point sword +2); `tools/mutants/
+mend_worn.json`'s six records on the old law re-aimed by content, 15 of 15 dead.
+
+FLAGGED: uses mend by the same law. Under AllowMagicRepairs (the port's default, forced online) a 1,000-use item gets 20
+uses a tick - two Cast When Used casts' worth every twenty seconds - where it got 1. If uses should keep the point, it
+is one guard in repairsObjectsMend.
+
+What the reporter is owed: your armour was being repaired - one point of its thousands every twenty seconds, so its %
+never moved. Every worn piece now mends 2% of itself a tick, as your weapon did: a battered steel kit is whole in under
+an hour.
+
+## HORSE-CARE-OFF: Off, every horse owned keeps its Stable card and "Ride this one" (6)
+
+`src/systems/upkeepRuntime.js` createUpkeep's model; `src/ui/holdingsPages.js` drawStablePage, rideButton, steedLines.
+
+THE REPORT. "turning horse care off completely hides my other horses".
+
+FOUND. The Stable page draws the ridden horse's card from the pack and every other horse's card from the upkeep's model.
+The model built its list of horses only `if (care)`, the page's loop read `care?.horseCare` too, and "Ride this one"
+lived inside the care lines (steedLines). So Off (`horseCareRules` null) - and on the classic skin, where the accessor
+answers null whatever the pref - the page drew the ridden horse alone. The ride itself was never the tier's
+(stableProviderFor routes 'ride' to the upkeep "the mod on or off", chooseRiddenHorse ungated): the other horses were
+owned and rideable, with no door to them. Driven on the real upkeep and page with three horses: on Boons and Hard, three
+cards and two "Ride this one"; Off, one card and none.
+
+CHANGED: the model lists every horse on every tier (its place, whether ridden, its name, its look), the care's fields
+beside them only where horse care rules; the page draws every other horse's card on every tier ("Another horse of
+yours") with "Ride this one" (`rideButton`, one home for both paths); Off and on the classic skin the card shows the
+choice alone - no hunger, bond, breath, stats, oats or apple. `06-Systems/Horse-Care.md` (The Stable page) says so.
+
+THE FOUR HOSTS: world.js and exterior.js build the upkeep over the one accessor and hand the page its provider
+(stableProviderFor) - WIRED as they stood, no host line moved; worldModes.js and dungeonContext.js stand no transport (a
+building or a dungeon puts the rider on foot) and set no provider. Pinned by `test/fb1016_horsecareoff.test.js` (2, over
+the real accessor and pref, the real upkeep, the hosts' provider seam and the page); `tools/mutants/
+fb1016_horsecareoff.json` (7, all dead).
+
+What the reporter is owed: your other horses were never gone, only their cards. With horse care Off the Stable page
+shows every horse you own and lets you ride any of them; only the feeding and the stats wait for horse care.
