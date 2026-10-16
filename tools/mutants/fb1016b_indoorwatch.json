@@ -668,20 +668,22 @@
   {
     "name": "INDOOR-WATCH-AUDIT-W1-goal-none",
     "file": "src/scenes/interiorNav.js",
-    "old": "      return q && q.d > 0 ? [q.x, q.y, q.z] : null;",
-    "new": "      return null;",
+    "old": "  return q && q.d > 0 ? [q.x, q.y, q.z] : null;",
+    "new": "  return null;",
     "tests": [
       "test/fb1016b_indoorwatch.test.js"
-    ]
+    ],
+    "note": "RE-AIMED BY CONTENT (the merge: the building's goal and the dungeon's one law, interiorNav.js navGoalOn)"
   },
   {
     "name": "INDOOR-WATCH-AUDIT-W1-goal-on-mesh",
     "file": "src/scenes/interiorNav.js",
-    "old": "      return q && q.d > 0 ? [q.x, q.y, q.z] : null;",
-    "new": "      return q ? [q.x, q.y, q.z] : null;",
+    "old": "  return q && q.d > 0 ? [q.x, q.y, q.z] : null;",
+    "new": "  return q ? [q.x, q.y, q.z] : null;",
     "tests": [
       "test/fb1016b_indoorwatch.test.js"
-    ]
+    ],
+    "note": "RE-AIMED BY CONTENT (the merge: the building's goal and the dungeon's one law, interiorNav.js navGoalOn)"
   },
   {
     "name": "INDOOR-WATCH-AUDIT-W1-no-far-reach",
@@ -922,6 +924,24 @@
     "file": "src/ai/navBake.js",
     "old": "        if (y < minY) minY = y; if (y > maxY) maxY = y;",
     "new": "        if (y > maxY) maxY = y;",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-the-dungeon-s-placed-foes-handed-none",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "        nav: () => enhancedNav.chf, navWorld: enhancedNav.world, navGoal: (f) => navGoalOn(enhancedNav.chf, f, { collider }), navSeed: (yawDeg * 1000) | 0,   // INDOOR-WATCH AUDIT: a player past the mesh's snap is walked in to, as in a building\n        // AUDIT 39: a THUNK, not a snapshot - TakeAction re-reads\n",
+    "new": "        nav: () => enhancedNav.chf, navWorld: enhancedNav.world, navSeed: (yawDeg * 1000) | 0,\n        // AUDIT 39: a THUNK, not a snapshot - TakeAction re-reads\n",
+    "tests": [
+      "test/fb1016b_indoorwatch.test.js"
+    ]
+  },
+  {
+    "name": "INDOOR-WATCH-AUDIT-the-dungeon-s-spawned-foes-handed-none",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "        nav: () => enhancedNav.chf, navWorld: enhancedNav.world, navGoal: (f) => navGoalOn(enhancedNav.chf, f, { collider }), navSeed: (yawDeg * 1000) | 0,   // INDOOR-WATCH AUDIT: a player past the mesh's snap is walked in to, as in a building\n        liveSpeed: () => liveStat(entity, 'speed'),   // AUDIT 39: EnemyMotor.cs:432 re-reads it per FixedUpdate\n",
+    "new": "        nav: () => enhancedNav.chf, navWorld: enhancedNav.world, navSeed: (yawDeg * 1000) | 0,\n        liveSpeed: () => liveStat(entity, 'speed'),   // AUDIT 39: EnemyMotor.cs:432 re-reads it per FixedUpdate\n",
     "tests": [
       "test/fb1016b_indoorwatch.test.js"
     ]

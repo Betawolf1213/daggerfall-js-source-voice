@@ -726,14 +726,15 @@ AUDIT (2026-10-16). Four findings, each fixed and pinned; the audit's own rigs r
   stopped him was stood crouched. FIXED: `resumeLive`'s half that is not the pursuit is `EnemyAI._standAfresh`, the one
   list both call.
 
-Pins: `test/fb1016b_indoorwatch.test.js` 8 -> 13 (THE DEEP SHELVES, THE CLOSET, THE FEET'S RINGS, THE LANDING, THE
-SOUP; THE STAND and THE POOLS extended); `tools/mutants/fb1016b_indoorwatch.json` 70 -> 103, all dead (eight re-aimed by
-content). PINS MOVED: `enhancedAI.test.js` (the navmesh body's digest, re-recorded with W2's packed index - owed to
+Pins: `test/fb1016b_indoorwatch.test.js` 8 -> 14 (THE DEEP SHELVES, THE CLOSET, THE FEET'S RINGS, THE LANDING, THE
+SOUP, THE DUNGEON'S FOES; THE STAND and THE POOLS extended); `tools/mutants/fb1016b_indoorwatch.json` 70 -> 105, all dead
+(ten re-aimed by content). PINS MOVED: `enhancedAI.test.js` (the navmesh body's digest, re-recorded with W2's packed index - owed to
 project-final), `audit68_enemies.test.js` (the hydrated set's tops read packed, and the set must be the packed one).
 THE FOUR HOSTS, for the audit: worldModes.js - its two pools hand the hook (`cityGuards.js`, `exteriorFoes.js`);
-dungeonContext.js - its construction sites hand no `navGoal`, so a player past the snap of a dungeon's mesh still
-meets the classic line (FLAGGED), while the stop's facing, the packed landing and the soup read are the dungeon's too
-(shared code); world.js and exterior.js - unchanged (their street pools hand no mesh). Landing numbers are node's on a
+dungeonContext.js - WIRED at the merge: both motor sites hand `navGoalOn` over the dungeon's own bake and its collider,
+on the line that hands the bake (the building's `nav.goal` is the same law, `interiorNav.js` navGoalOn; one import line,
+no host line), so a player past the snap of a dungeon's mesh is walked in to as in a building - and the stop's facing,
+the packed landing and the soup read are the dungeon's too (shared code); world.js and exterior.js - unchanged (their street pools hand no mesh). Landing numbers are node's on a
 loaded container, not a browser's.
 
 What the reporter is owed: the watch now walks round through the doorway to reach you between the shelves - however

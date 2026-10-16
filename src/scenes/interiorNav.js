@@ -213,6 +213,16 @@ export function meshPointNear(chf, feet, opts = {}) {
   return meshPointUnder(chf, feet, { ...opts, reach: ISLAND_REACH }) ?? meshPointUnder(chf, feet, { ...opts, reach: GOAL_REACH });
 }
 
+/** INDOOR-WATCH AUDIT: THE MOTOR'S `navGoal` OVER A MESH - for a body findPath cannot place (past its half-metre snap:
+ *  between deep shelves, in a closet, in a dungeon's niche), the mesh's point meshPointNear finds for it (never through a
+ *  wall: the knee's line through `opts.collider`), or null on the mesh or nowhere near it. The building's
+ *  (createInteriorNav's `goal`) and the dungeon's (dungeonContext.js, over its own bake) alike. */
+export function navGoalOn(chf, feet, opts = {}) {
+  if (!chf || !feet) return null;
+  const q = meshPointNear(chf, feet, opts);
+  return q && q.d > 0 ? [q.x, q.y, q.z] : null;
+}
+
 /** The island a poly is on (its neighbour links, flooded), or -1. */
 export const islandOf = (chf, pi) => (pi >= 0 && chf?.mesh?.polys?.length ? meshInfo(chf).island[pi] : -1);
 
@@ -325,12 +335,7 @@ export function createInteriorNav({ makeClient = () => new NavClient({ store: nu
     /** The motor's second ask when findPath cannot place a goal (`navGoal`): a body off the mesh past findPath's own
      *  half-metre snap - between two deep shelves, in a closet - is routed to the room's point meshPointNear finds for
      *  it (never through a wall: the knee's line), and walked in from there; on the mesh, or nowhere near it, null. */
-    goal: (feet) => {
-      const r = room;
-      if (!r?.chf || !feet) return null;
-      const q = meshPointNear(r.chf, feet, { collider: r.collider, skip: doorsOutOfSoup(r.actions) });
-      return q && q.d > 0 ? [q.x, q.y, q.z] : null;
-    },
+    goal: (feet) => (room?.chf ? navGoalOn(room.chf, feet, { collider: room.collider, skip: doorsOutOfSoup(room.actions) }) : null),
     /** The room, as it is mounted: `feet` the player's arrival (the restore's own spot, else the door's landing). */
     mount(ctx, feet) {
       this.release();

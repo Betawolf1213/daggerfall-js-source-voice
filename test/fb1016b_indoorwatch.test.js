@@ -19,7 +19,7 @@ import { createCityGuards, indoorWatchSpot, GUARD_INDOOR_DOOR_OFFSET } from '../
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
 import {
   createInteriorNav, doorsOutOfSoup, polyUnder, sameIsland, islandOf, noRouteSpot, feetAnchors, huntsThePlayer, CUT_OFF_S, CHECK_S, STAND_CLEAR_M, STAND_CROWD_M,
-  meshPointNear, ISLAND_REACH, GOAL_REACH,
+  meshPointNear, ISLAND_REACH, GOAL_REACH, navGoalOn,
 } from '../src/scenes/interiorNav.js';
 import { NavClient, bakeHere, hydrateHere } from '../src/ai/navClient.js';
 import { navInputFromCollider } from '../src/ai/navBake.js';
@@ -565,4 +565,12 @@ test('INDOOR-WATCH THE HOST: the mode machine holds one module, hands it to both
   assert.ok(frame < wm.indexOf('interiorFoes.update(foeDt, player.pos, cam.pos, _interiorSenses());') && frame < wm.indexOf('const _guardBatches = interiorGuards.update(foeDt'), 'before either pool steps');
   assert.equal((wm.match(/interiorGuards = null;\n\s*interiorNav\.release\(\);/g) ?? []).length, 2, 'released at both teardowns, beside the watch');
   for (const host of ['src/scenes/world.js', 'src/scenes/exterior.js']) assert.ok(!/nav: interiorNav|createInteriorNav/.test(rd(host)), `${host}: its street pools walk the classic motor (the streamed world's half of ENHANCED AI 5)`);
+});
+
+test('INDOOR-WATCH AUDIT (the merge): THE DUNGEON\'S FOES TAKE THE SAME OFF-MESH GOAL - both of buildDungeonContext\'s motor sites hand navGoalOn over the dungeon\'s own bake and its collider, on the line that hands the bake (no host line grown); the building\'s goal is the same law, and no mesh or no feet answers nothing (mutant: the dungeon handed none)', () => {
+  const dc = rd('src/scenes/dungeonContext.js');
+  assert.match(dc, /import \{ navGoalOn \} from '\.\/interiorNav\.js';/);
+  assert.equal((dc.match(/nav: \(\) => enhancedNav\.chf, navWorld: enhancedNav\.world, navGoal: \(f\) => navGoalOn\(enhancedNav\.chf, f, \{ collider \}\), navSeed: \(yawDeg \* 1000\) \| 0,/g) ?? []).length, 2, 'both motor sites: the placed foes and the spawned');
+  assert.match(rd('src/scenes/interiorNav.js'), /goal: \(feet\) => \(room\?\.chf \? navGoalOn\(room\.chf, feet, \{ collider: room\.collider, skip: doorsOutOfSoup\(room\.actions\) \}\) : null\),/);
+  assert.deepEqual([navGoalOn(null, [0, 0, 0]), navGoalOn({ mesh: { polys: [] } }, null)], [null, null]);
 });
