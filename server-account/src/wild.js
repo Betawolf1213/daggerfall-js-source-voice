@@ -18,13 +18,34 @@
 // records with a fresh order. A death to a foe, no receipt: the fallen's own act alone, its remains' id the service's (a
 // digest of the character and the tab's own nonce - asked again it is the same fall, and never a relay's id). A record the
 // judge holds (lane 1's freeze) still loses its drop, and the room is given none of it.
-import { verifyWildReceipt, WILD_FALL_GRACE_S } from '../../src/net/wildReceipt.js';
+//
+// MAC'S DECISION (2026-10-14, "Yes, build it"): THE TWO-PHASE HANDOFF. The fallen loses the worn piece its killer picked
+// only once the killer has it. The fall takes that piece off the fallen's record INTO ESCROW - `wild_escrow`, in the fall's
+// own batch, its ledger key the service's (ledger.js ledgerMoves `escrow`) - where a room that signs collects lays it
+// (the tab says so: `collect` 1, its relay's version - net/wire.js relaySupportsWildCollect). The killer's take of it in
+// the room is the room's signed collect (net/wildReceipt.js `g1`), carried by the killer's tab as an act on its record
+// (wildCollect): the piece into that record and the escrow ended, one batch. Nobody collecting by the time the remains
+// could have gone (`until_s`) and a collect signed at its last moment spent (WILD_COLLECT_TTL_S), the fallen's own tab
+// takes it back into its record (wildReclaim), whenever it next plays. Every end moves the escrow's state from 'held' in
+// the batch of the record it lands in, guarded to one row: the piece is in the fallen's record, the escrow, or one
+// record - never two, never none - and an end asked twice moves nothing twice. A record the judge holds keeps the piece
+// (it can never reach its killer, so it is never lost).
+//
+// CART-AWAY (FIELD BUGS 2026-10-15d; Mac, 2026-10-15: "if its parked outside the zone nothing should be lost"): THE CART
+// DROPS ONLY WHILE THE WAGON IS WITH ITS FALLEN. Whether a parked wagon stands on the zone's ground is the zone's mask,
+// which only a client holds (the map files); so the fallen's own tab says its wagon is away (`cart` 0 -
+// src/systems/wildCart.js wildCartAway), and the word is honoured only where the record this service keeps agrees by its
+// mode (src/systems/wildDropLaw.js wildCartMayBeAway: parked, stabled or none - never driven, following or beside them
+// unstabled). A seizure honours none (its carrier holds neither the record nor the mask), and a tab that says nothing
+// (one from before the word) drops the cart as ever. Asked again, a fall answers its first take, whatever is said.
+import { verifyWildReceipt, verifyWildCollect, WILD_FALL_GRACE_S, WILD_COLLECT_TTL_S } from '../../src/net/wildReceipt.js';
 import { mintRemainsOrder, remainsDigest, ORDER_TTL_S } from '../../src/net/identityToken.js';
-import { streamsFoes } from '../../src/net/wire.js';
+import { streamsFoes, WILD_REMAINS_MS } from '../../src/net/wire.js';
 import { GUILD_ID_RE } from '../../src/net/guildLaw.js';
-import { takeWildDeath, wildDropCandidates, wildTookOf } from '../../src/systems/wildDropLaw.js';
+import { takeWildDeath, wildDropCandidates, wildTookOf, wildCartRecordOf, wildCartMayBeAway } from '../../src/systems/wildDropLaw.js';
 import { mintItemId } from '../../src/systems/itemIds.js';
-import { prepareRealmRecord, seizeRealmRecord, realmAtOf, dropIfUnnamed, dropObjects, realmSaveTextOf, holdRefusal } from './realm.js';
+import { giveTradeGoods } from '../../src/net/realmTradeLaw.js';
+import { prepareRealmRecord, seizeRealmRecord, realmAtOf, realmActFirst, recordMovedOf, mustChange, dropIfUnnamed, dropObjects, realmSaveTextOf, holdRefusal, REALM_ID_RE } from './realm.js';
 import { ledgerKeyOf } from './judge.js';
 import { piecesBarred, knownCopySteps } from './ledger.js';
 
@@ -35,6 +56,14 @@ export const WILD_NONCE_RE = /^[0-9a-f]{16}$/;
 
 /** The most a room key may be (the relay's own keys are far shorter). */
 export const WILD_ROOM_MAX = 64;
+/** MAC (2026-10-14): THE ESCROW'S LAST COLLECT - the latest a room may still hold the remains its order laid: the order's
+ *  minute (a deposit never left inside it lays nothing) and the remains' life after it. A collect signed after it is late. */
+export const WILD_ESCROW_HOLD_S = ORDER_TTL_S + Math.ceil(WILD_REMAINS_MS / 1000);
+/** When the escrow may go back to its fallen: past its last collect, and a collect signed at that moment spent. */
+export const escrowBackAt = (/** @type {number} */ until) => until + WILD_COLLECT_TTL_S;
+const parse = (/** @type {any} */ t) => { try { return JSON.parse(t); } catch { return null; } };
+/** An escrow row as its fallen's tab reads it. */
+const escrowView = (/** @type {any} */ e) => (e ? { r: e.r, until: Number(e.until_s), back: escrowBackAt(Number(e.until_s)), state: e.state, rec: parse(e.rec) } : null);
 
 /** A death to a foe's remains' id: twelve hex of SHA-256 over the character and the tab's nonce. */
 async function foeFallId(/** @type {SubtleCrypto} */ subtle, /** @type {string} */ charId, /** @type {string} */ nonce) {
@@ -47,20 +76,21 @@ async function foeFallId(/** @type {SubtleCrypto} */ subtle, /** @type {string} 
  *  service's order over the records. THE FALL'S OWN ORDER: issued at `oi` for room `wm`, the same every asking, good its
  *  minute alone (AUDIT INT9: a fresh order each asking, naming no room, laid one fall's drop twice - in a second room, or
  *  in the first once it had let its emptied remains go). */
-async function answerOf(/** @type {any} */ ctx, /** @type {CryptoKey} */ signing, /** @type {any} */ { r, fallen, killer, records, kept, burnt, killerFirst, wm, oi, wg, tk, seq = null }) {
+async function answerOf(/** @type {any} */ ctx, /** @type {CryptoKey} */ signing, /** @type {any} */ { r, fallen, killer, records, kept, burnt, killerFirst, wm, oi, wg, tk, seq = null, escrow = null }) {
   let order = null;
   if (!burnt && records.length && wm && ctx.nowS < oi + ORDER_TTL_S) {
     const wh = await remainsDigest(records, { subtle: ctx.subtle });
-    order = await mintRemainsOrder({ s: fallen, wr: r, wh, wn: records.length, wm, ...(killerFirst && killer ? { wk: killer, wi: 0 } : {}), ...(wg ? { wg } : {}) }, signing, { subtle: ctx.subtle, nowS: oi });
+    order = await mintRemainsOrder({ s: fallen, wr: r, wh, wn: records.length, wm, ...(killerFirst && killer ? { wk: killer, wi: 0, ...(escrow ? { we: 1 } : {}) } : {}), ...(wg ? { wg } : {}) }, signing, { subtle: ctx.subtle, nowS: oi });
   }
-  return { r, order, items: records, kept, wi: killerFirst ? 0 : -1, took: Array.isArray(tk?.took) ? tk.took : [], gold: { purse: tk?.gold?.purse ?? 0, cart: tk?.gold?.cart ?? 0 }, ...(burnt ? { burnt: true } : {}), ...(seq != null ? { realm: { seq } } : {}) };
+  return { r, order, items: records, kept, wi: killerFirst ? 0 : -1, took: Array.isArray(tk?.took) ? tk.took : [], gold: { purse: tk?.gold?.purse ?? 0, cart: tk?.gold?.cart ?? 0 }, ...(burnt ? { burnt: true } : {}), ...(seq != null ? { realm: { seq } } : {}), ...(escrow ? { escrow: escrowView(escrow) } : {}) };
 }
 
 /**
  * /v1/wild/fall - A DEATH'S DROP, TAKEN. `body.receipt` a fall the relay signed (the caller its fallen or its killer), or
  * none (a death to a foe: the caller's own, `body.n` its tab's nonce); `body.realm` the caller's record where its tab says
  * it stands (the fallen's own act - required of the fallen, never of a killer); `body.room` the room the remains will be
- * laid in (the order names it, and no other room keeps it). Answers `{ r, order, items, kept, took, gold, burnt?, realm? }`
+ * laid in (the order names it, and no other room keeps it); `body.cart` 0 the fallen's word that its wagon is away
+ * (CART-AWAY - honoured where its record agrees, never on a seizure). Answers `{ r, order, items, kept, took, gold, burnt?, realm? }`
  * - the remains' id, the order the room keeps a deposit on (null: nothing for the room), the records taken, the ledger
  * keys the record kept, what the record lost as the fallen's game finds it again - or `{ error }`: 'no-signing-key',
  * 'no-gate-key', 'receipt' (with `why`), 'not-yours', 'no-realm-character', 'grace' (the fallen's own tab has the first
@@ -98,6 +128,7 @@ export async function wildFall(ctx, player, body, { gateKey, signing }, again = 
   const had = await ctx.db.prepare('SELECT player, killer, items, kept, burnt, wi, wm, oi, wg, tk FROM wild_falls WHERE r = ?1').bind(r).first();
   if (had) {
     if (had.player !== fallen) return { error: 'not-yours' };
+    const escrow = await ctx.db.prepare('SELECT * FROM wild_escrow WHERE r = ?1').bind(r).first();   // MAC (2026-10-14): its escrow, as the first asking made it
     const read = (/** @type {any} */ t, /** @type {any} */ none) => { try { return JSON.parse(t) ?? none; } catch { return none; } };
     const list = (/** @type {any} */ t) => { const v = read(t, []); return Array.isArray(v) ? v : []; };
     // AUDIT INT9: the fallen's own tab asking again (its first answer lost) is told where its record stands - the act's
@@ -107,7 +138,7 @@ export async function wildFall(ctx, player, body, { gateKey, signing }, again = 
       const now = await ctx.db.prepare('SELECT seq, lease FROM realm_characters WHERE id = ?1 AND player = ?2 AND dead_at IS NULL').bind(charId, fallen).first();
       if (now && now.lease === at.lease) seq = now.seq;
     }
-    return answerOf(ctx, signing, { r, fallen, killer: had.killer, records: list(had.items), kept: list(had.kept), burnt: had.burnt === 1, killerFirst: had.wi === 0, wm: had.wm, oi: had.oi, wg: had.wg, tk: read(had.tk, {}), seq });
+    return answerOf(ctx, signing, { r, fallen, killer: had.killer, records: list(had.items), kept: list(had.kept), burnt: had.burnt === 1, killerFirst: had.wi === 0, wm: had.wm, oi: had.oi, wg: had.wg, tk: read(had.tk, {}), seq, escrow });
   }
   // the ledger's word on what may leave, before the drop is taken - asked of EVERY piece the death could take (a copy,
   // another's piece, a claim waiting - kept)
@@ -116,16 +147,29 @@ export async function wildFall(ctx, player, body, { gateKey, signing }, again = 
   let stored = null;
   try { stored = JSON.parse(/** @type {string} */ (await realmSaveTextOf(await ctx.bucket.get(row.obj)))); } catch { stored = null; }
   if (!stored || typeof stored !== 'object') return { error: 'no-data' };
-  const barred = await piecesBarred(ctx.db, charId, wildDropCandidates(stored, w, wt).map(ledgerKeyOf).filter((k) => k != null));
+  // LANE 1's FREEZE (Integrity-Arc 3.1): a record the judge holds hands no value to another player - its death still costs
+  // it the drop, and the room is given none of it (no order, nothing deposited). MAC (2026-10-14): and it keeps the worn
+  // piece its killer picked - that one goes only to its killer, who can never have it from a held record
+  const burnt = !!holdRefusal(row);
+  if (burnt) { w = -1; wt = null; }
+  // CART-AWAY: the fallen's own word that its wagon is away, where its record agrees - the cart's pieces and coin stay
+  const away = !seize && body?.cart === 0 && wildCartMayBeAway(wildCartRecordOf(stored));
+  const cart = { cart: !away };
+  const barred = await piecesBarred(ctx.db, charId, wildDropCandidates(stored, w, wt, cart).map(ledgerKeyOf).filter((k) => k != null));
   const keep = (/** @type {any} */ it) => { const k = ledgerKeyOf(it); return k != null && barred.has(k); };
   /** @type {any} */ let drop = null;
-  const change = (/** @type {any} */ save) => { drop = takeWildDeath(save, w, keep, wt); return null; };
+  // MAC (2026-10-14): the killer's piece, where the tab's room collects, into escrow - its ledger key the service's
+  const collect = body?.collect === 1;
+  /** @type {Set<string>} */ const escrowKeys = new Set();
+  const change = (/** @type {any} */ save) => {
+    drop = takeWildDeath(save, w, keep, wt, cart);
+    if (collect && drop.killer) { const k = ledgerKeyOf(drop.taken[0]); if (k != null) escrowKeys.add(k); }
+    return null;
+  };
   // the drop is let go (ledger.js letGoSteps), never the service's: whoever takes it from the remains takes it up
-  const moved = seize ? await seizeRealmRecord(ctx, fallen, charId, change, { escrow: false }) : await prepareRealmRecord(ctx, fallen, /** @type {any} */ (at), change);
+  const moved = seize ? await seizeRealmRecord(ctx, fallen, charId, change, { escrow: escrowKeys }) : await prepareRealmRecord(ctx, fallen, /** @type {any} */ (at), change, { escrow: escrowKeys });
   if (moved.error) return moved;
-  // LANE 1's FREEZE (Integrity-Arc 3.1): a record the judge holds hands no value to another player - its death still costs
-  // it the drop, and the room is given none of it (no order, nothing deposited)
-  const burnt = !!holdRefusal(row);
+  const escrowed = collect && drop.killer;
   // AUDIT INT9: A DROPPED PIECE IS A NEW PIECE IN THE REMAINS. Each valuable one's id is minted afresh for the room, and
   // the id it had is written down as the fallen's own copy (ledger.js knownCopySteps): a fallen whose game kept the piece
   // holds a copy that moves by no route, where before it held the piece again and the one who took it up was charged
@@ -133,6 +177,7 @@ export async function wildFall(ctx, player, body, { gateKey, signing }, again = 
   // same - its fallen taking it back from its own remains holds it as a copy too, worn but never traded.
   const dropped = [];
   const records = drop.records.map((/** @type {any} */ rec, /** @type {number} */ i) => {
+    if (escrowed && i === 0) return rec;   // MAC (2026-10-14): the escrowed piece is no new piece - the same one, the service's until it ends
     const key = ledgerKeyOf(drop.taken[i]);
     if (key == null) return rec;
     dropped.push(key);
@@ -142,11 +187,15 @@ export async function wildFall(ctx, player, body, { gateKey, signing }, again = 
   const gm = await ctx.db.prepare('SELECT guild_id FROM guild_members WHERE player = ?1 AND char_id = ?2').bind(fallen, charId).first();
   const wg = typeof gm?.guild_id === 'string' && GUILD_ID_RE.test(gm.guild_id) ? gm.guild_id : null;
   const tk = { took: wildTookOf(drop.taken, drop.from), gold: drop.gold };
+  const escrow = escrowed ? { r, player: fallen, char_id: charId, killer, rec: JSON.stringify(drop.records[0]), at: ctx.nowS, until_s: ctx.nowS + WILD_ESCROW_HOLD_S, state: 'held' } : null;
   const steps = [
     ...moved.steps,
     ...knownCopySteps(ctx.db, charId, dropped, ctx.nowS),
     ctx.db.prepare('INSERT INTO wild_falls (r, char_id, player, killer, at, items, kept, burnt, wi, wm, oi, wg, tk) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?5, ?11, ?12)')
       .bind(r, charId, fallen, killer, ctx.nowS, JSON.stringify(records), JSON.stringify(kept), burnt ? 1 : 0, killerFirst ? 0 : -1, room, wg, JSON.stringify(tk)),
+    // MAC (2026-10-14): the killer's piece, held - in the batch that took it off the record, or neither lands
+    ...(escrow ? [ctx.db.prepare("INSERT INTO wild_escrow (r, player, char_id, killer, rec, at, until_s, state) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 'held')")
+      .bind(escrow.r, escrow.player, escrow.char_id, escrow.killer, escrow.rec, escrow.at, escrow.until_s)] : []),
   ];
   try { await ctx.db.batch(steps); } catch (e) {
     await dropIfUnnamed(ctx.db, ctx.bucket, fallen, charId, moved.key);
@@ -155,5 +204,96 @@ export async function wildFall(ctx, player, body, { gateKey, signing }, again = 
     throw e;
   }
   await dropObjects(ctx.bucket, [moved.prev]);   // AUDIT INT9: the save two back, as every act drops it
-  return answerOf(ctx, signing, { r, fallen, killer, records, kept, burnt, killerFirst, wm: room, oi: ctx.nowS, wg, tk, seq: seize ? null : moved.seq });
+  return answerOf(ctx, signing, { r, fallen, killer, records, kept, burnt, killerFirst, wm: room, oi: ctx.nowS, wg, tk, seq: seize ? null : moved.seq, escrow });
+}
+
+/**
+ * ONE END OF AN ESCROW, on a record: the piece into it (`at`, where its tab says it stands - `playerId`'s), the escrow's
+ * state moved from 'held' to `state` in the same batch, guarded to exactly one row. Answers `{ r, item, realm }`, or `{ error }`:
+ * the record's own word ('lease', 'seq' - realm.js realmActFirst asked first), or 'escrow-moved' (another end landed).
+ * @param {any} ctx @param {string} playerId @param {{ id: string, lease: string, seq: number }} at @param {any} row
+ * @param {'collected' | 'returned'} state
+ */
+async function endEscrow(ctx, playerId, at, row, state) {
+  const item = parse(row.rec);
+  if (!item || typeof item !== 'object') return { error: 'no-escrow' };
+  const prep = await prepareRealmRecord(ctx, playerId, at, (save) => { giveTradeGoods(save, [item], 0); return null; });
+  if (prep.error) return prep;
+  try {
+    await ctx.db.batch([
+      ...prep.steps,
+      ctx.db.prepare("UPDATE wild_escrow SET state = ?2, to_char = ?3, ended_at = ?4 WHERE r = ?1 AND state = 'held'").bind(row.r, state, at.id, ctx.nowS),
+      mustChange(ctx.db),
+    ]);
+  } catch (e) {
+    if (await dropIfUnnamed(ctx.db, ctx.bucket, playerId, at.id, prep.key)) return { r: row.r, item, realm: { seq: prep.seq } };   // landed, its answer lost
+    const moved = await recordMovedOf(ctx.db, playerId, at);
+    if (moved) return moved;
+    const now = await ctx.db.prepare('SELECT state FROM wild_escrow WHERE r = ?1').bind(row.r).first();
+    if (now && now.state !== 'held') return { error: 'escrow-moved' };
+    throw e;
+  }
+  await dropObjects(ctx.bucket, [prep.prev]);
+  return { r: row.r, item, realm: { seq: prep.seq } };
+}
+
+/**
+ * /v1/wild/collect - A KILLER'S COLLECT: `body.receipt` the room's signed collect (net/wildReceipt.js `g1` - the caller its
+ * killer), `body.realm` where the killer's record stands (the collect's own character). The piece the fall put in escrow
+ * goes into that record, once. Answers `{ r, item, realm }`; `{ r, item, again: true }` for a collect already landed in
+ * this character (nothing moves twice); or `{ error }` - 'no-gate-key', 'receipt' (with `why`), 'not-yours',
+ * 'no-realm-character', 'no-escrow', 'escrow-late' (signed past the escrow's last collect), 'escrow-returned',
+ * 'escrow-collected' (into another character), 'escrow-moved', the record's own words.
+ * @param {any} ctx @param {any} player @param {any} body @param {{ gateKey: CryptoKey | null }} keys
+ */
+export async function wildCollect(ctx, player, body, { gateKey }) {
+  if (!gateKey) return { error: 'no-gate-key' };
+  const v = await verifyWildCollect(body?.receipt, gateKey, { subtle: ctx.subtle, nowS: ctx.nowS });
+  if (!v.ok) return { error: 'receipt', why: v.why };
+  const c = v.claims;
+  if (c.k !== player.id) return { error: 'not-yours' };
+  const side = await realmActFirst(ctx.db, player.id, c.c, body?.realm);   // where the record stands, before any other word
+  if (side.error) return side;
+  if (!side.at) return { error: 'no-realm-character' };
+  const row = await ctx.db.prepare('SELECT * FROM wild_escrow WHERE r = ?1').bind(c.r).first();
+  if (!row || row.killer !== player.id) return { error: 'no-escrow' };
+  if (row.state === 'collected') return row.to_char === side.at.id ? { r: row.r, item: parse(row.rec), again: true } : { error: 'escrow-collected' };
+  if (row.state === 'returned') return { error: 'escrow-returned' };
+  if (c.i > Number(row.until_s)) return { error: 'escrow-late' };
+  return endEscrow(ctx, player.id, side.at, row, 'collected');
+}
+
+/**
+ * /v1/wild/reclaim - THE FALLEN TAKES ITS PIECE BACK: `body.r` the fall, `body.realm` where the fallen's record stands. Once
+ * its killer could no longer collect it (escrowBackAt), the piece the fall put in escrow goes back into that record, once.
+ * Answers `{ r, item, realm }`; `{ r, item, again: true }` (back already - nothing moves twice); or `{ error }` -
+ * 'no-escrow', 'escrow-wait' (with `wait`, seconds to wait), 'escrow-collected' (its killer has it),
+ * 'escrow-moved', the record's own words.
+ * @param {any} ctx @param {any} player @param {any} body
+ */
+export async function wildReclaim(ctx, player, body) {
+  const r = typeof body?.r === 'string' && /^[0-9a-f]{12}$/.test(body.r) ? body.r : null;
+  if (!r) return { error: 'body' };
+  const at = realmAtOf(body?.realm);
+  if (!at) return { error: 'no-realm-character' };
+  const side = await realmActFirst(ctx.db, player.id, at.id, body.realm);
+  if (side.error) return side;
+  if (!side.at) return { error: 'no-realm-character' };
+  const row = await ctx.db.prepare('SELECT * FROM wild_escrow WHERE r = ?1').bind(r).first();
+  if (!row || row.player !== player.id || row.char_id !== side.at.id) return { error: 'no-escrow' };
+  if (row.state === 'returned') return { r, item: parse(row.rec), again: true };
+  if (row.state === 'collected') return { error: 'escrow-collected' };
+  const back = escrowBackAt(Number(row.until_s));
+  if (ctx.nowS < back) return { error: 'escrow-wait', wait: back - ctx.nowS };
+  return endEscrow(ctx, player.id, side.at, row, 'returned');
+}
+
+/** /v1/wild/escrows - A FALLEN'S PIECES IN ESCROW: `body.character` a realm character of the caller's. Answers `{ escrows }`,
+ *  each `{ r, until, back, state, rec }` - the held ones, for its tab to watch and take back (a game closed while one was
+ *  held asks here at its next play). */
+export async function wildEscrows(ctx, player, body) {
+  const id = typeof body?.character === 'string' && REALM_ID_RE.test(body.character) ? body.character : null;
+  if (!id) return { error: 'body' };
+  const { results = [] } = await ctx.db.prepare("SELECT * FROM wild_escrow WHERE char_id = ?1 AND player = ?2 AND state = 'held' ORDER BY at LIMIT 16").bind(id, player.id).all();
+  return { escrows: results.map(escrowView) };
 }

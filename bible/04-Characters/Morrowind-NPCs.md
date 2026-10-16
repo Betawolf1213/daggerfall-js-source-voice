@@ -897,6 +897,18 @@ and the quests' (dungeonContext.js) are 8b's.
   mortal (`wardrobeOf` 'none', beside the vampires): a Daedra or a god by
   faction type, Oblivion's or the Fey's by guild group - a prince's sprite
   is no person in clothes. A coven's witch is mortal and is dressed.
+  STALL-FLATS (`01-Overview/Field-Bugs-2026-10-15c.md`; "every animal and
+  food stand item turned into freaks", "clustered into groups and all have
+  their heads down"): nor any flat whose picture is no person's - a body
+  stands only for RDBLayout.NPCFlatArchives (`world/npcFlatArchives.js`
+  isNpcFlat, FlatTypes.NPC), the editor's 199 with the rest. Beautiful
+  Villages gives its market blocks' food, goods and animals a faction
+  (TVRNAS02, TEMPASB0, TEMPBSB0, RESIAS02: 584), so each was a StaticNPC
+  and, since MWNPC8b, a body - 101 in TVRNAS02 alone, turning to the eye
+  in a heap. They keep their billboards now, as DFU draws them; the
+  StaticNPC list is DFU's still (the click's own law, AUDIT WD3 G1, was
+  already the archive's). A quest's person keeps a body whatever FLATS.CFG
+  pictures them with (`questPerson`, worldModes.js questStandLook).
 - The bound is the lane's: the 'people' lanes take NPC_BODY_TIERS, and
   only one of the three ever runs a frame (the building, the dungeon or
   the street - the scene is one of them). (AMENDED BY MWNPC11, section
@@ -1595,7 +1607,10 @@ Mac: "Do a deep audit and ensure perfection."
     body had stood was drawn nowhere. The flats are shown first on that
     branch (`dungeonContext.js` showBodyFlats; worldModes.js and dungeon.js;
     worldModes holds it above BLOOD1a's marks, which that pin keeps within
-    400 characters of the flats' draw).
+    400 characters of the flats' draw). (AMENDED BY FB1015 LOOT-BODY, section
+    29: the flats are still shown first, and the bodies the lane last synced
+    are drawn over them - the loot window no longer stands a looted body's
+    classic corpse in its place; `showBodyFlats` is `drawWindowBodies`.)
 
   THE CREATURES AND THE SPECIAL FOES (D).
   - D1. A dead foe's body stood where it died - a flyer's in the air, a
@@ -1793,10 +1808,12 @@ THE LOOKS (K).
   puppet (`_mwWire = 'kit'`) stands in its sprite until it has them, then
   is the owner's man in the owner's armour and blade. A record still
   building keeps the look the first word carried. THE DUNGEON'S LAW, said:
-  every machine's copy of a dungeon's foe carries its own roll, and that
-  copy is what its player loots - so a dungeon's body wears its own copy's
-  kit; its race, face and death are the room's (the layout point's, or the
-  owner's seed).
+  every machine's copy of a dungeon's foe wears its own copy's kit, and
+  its race, face and death are the room's (the layout point's, or the
+  owner's seed); what its BODY holds is the room's - one base list every
+  copy computes, the takes against it the room's word, and each player's
+  own bonus over it (PARTY-LOOT, 2026-10-14, Mac: "Shared base + personal
+  bonus" - `06-Systems/Online-Arc.md` PARTY-LOOT), whatever the copy wore.
 - K3. A dungeon's puppet - a room's encounter, a member's own foe - was
   stood at its first streamed feet, its `marker`, and seeded off that: its
   owner's spawn spot to the owner, another man to everyone else. The room's
@@ -2025,6 +2042,15 @@ ten colours over ten faces.
   is a cuirass and greaves alone in Morrowind (mwItemMap.js's judgement rows),
   so a chain helm is never asked for - iron stands in. The kit's boots are the
   feet (one Daggerfall slot); a robe hides the legs (nothing is put under it).
+  BARE-BOOTS (`01-Overview/Field-Bugs-2026-10-15c.md`, "No boots model on
+  legendary boots"): the player's own pieces and a peer's had no such rule -
+  a chain piece imperial chain lacks answered "the classic sprite stands", on
+  a figure with no sprite, so chain boots, gauntlets and pauldrons stood bare
+  skin (one boot in five is chain off DFU's RandomArmorMaterial; the
+  Legendary in the report was innocent). `mwItemMap.js` gives Chain iron as
+  its chain's second token now, the wardrobe's own stand-in, and walks a
+  material's chain by PIECE (Adamantium's Tribunal set, no boots, then
+  ebony). Pinned in `test/fb1015c_bareboots.test.js`.
 - WHO IS WHICH ROLE. A standing person by their faction (`peopleBodies.js`
   wardrobeOf, KIND_ROLE): the old `steel` split - a knightly order's and a
   court's guard `knight`, a fighters' guild's `fighter`; a coven's witch and a
@@ -2551,3 +2577,46 @@ moved: MWNPC8c's two exterior.js records re-aimed by content (the group's
 `else if`, the stale cast-only before this slice's block), both dead;
 DISC20-C's distance from the entry to its ground call (10200 -> 10400, the
 `standFlats` line); PERF-V8's closures (`frameLook`, first).
+
+## 29. FB1015 - THE BODY UNDER A WINDOW, AND WHERE ITS TEXELS STAND (2026-10-15)
+
+The owner: "When looting dead marrowind enemies, they turn to a sprite. The models also clip through geometry."
+Record of the batch: `01-Overview/Field-Bugs-2026-10-15b.md`.
+
+- LOOT-BODY. Both dungeon hosts (scenes/worldModes.js's dungeon arm, scenes/dungeon.js) draw the level's flats under a
+  window and return before drawFoes - the only place a foe's body was drawn - and AUDIT MW-NPC C6 (section 21) showed
+  every corpse flat there so a dead person was drawn somewhere. The loot window is such a window: opened on a body, it
+  stood that body's classic corpse in its place for as long as it was open. The lane's bodies stand as its last sync
+  left them - no sync runs under a window, so none lingers and none steps - so the window's frame now draws them,
+  frozen, before the flats (`characters/foeBodies.js` drawBodiesUnderWindow, through the context's
+  `drawWindowBodies`), and marks each corpse flat cast-only where its body stands; a corpse with no body standing (past
+  the cut, still building, the lane off) keeps its flat, C6's law. The living foes' bodies are drawn with them, as the
+  people's lane already is under a window (drawPeople); a living foe with no body stays undrawn under a window, as
+  before (its billboard is drawFoes'). THE FOUR HOSTS: scenes/dungeonContext.js is the door; scenes/worldModes.js (its
+  dungeon arm) and scenes/dungeon.js are wired; scenes/world.js and scenes/exterior.js draw their pools under a window
+  already (WINFOE1), as does worldModes.js's interior arm - none changed.
+- BODY-DEPTH. Every body is a picture taken into the sprite target and composited as one quad (MWNPC2), and the quad
+  was depth-tested as itself: a flat card through the body's middle, square to the eye's ray (BODY-LEAN). A corpse lying
+  toward the eye had its near half behind the floor's depth at that card and was cut off by the floor; a body at a wall
+  was cut where the card crossed the wall, whatever the body did there. The picture is an ortho down the ray from
+  `reach` behind the box's centre, so a texel's depth d stands `near + d (far - near)` along the ray; the sprite
+  target's depth is a texture now (it was a renderbuffer), and the quad writes each texel's own depth - its point moved
+  along the ray by `near + d (far - near) - base` off the quad (`render/characterSprite.js` pictureDepth, renderer.js
+  drawCharacterSpriteQuad `depth`); an outline texel takes its nearest silhouette texel's, an ember the quad's own. The
+  depth texture stands on unit 1 for the quad and is let go before the target is drawn into again (`_charSpriteRT`), so
+  no program ever samples the texture its own framebuffer writes. A
+  card of its own vertical - the travel view's lean (AUDIT OW4 J6), the Billboard Look (BODY-CARD) - keeps the quad's
+  depth: it is not square to the ray, and the Billboard Look is the flat card on purpose. Every body through the one
+  pass takes it: the foes', the people's, the watch's, the peers', the player's own third-person body, the voxel rigs.
+  Ground-truthed in a real WebGL2 context (SwiftShader): the program links, the target's framebuffer is complete with
+  the depth texture, and a texel passes and fails the frame's depth test within 0.0005 of the depth pictureDepth names
+  - and at the card's depth with none.
+
+PROVEN. `test/fb1015_lootbody.test.js` (7): the window's frame draws both a living and a dead body however long it stays
+open (past BODY_LINGER_MS), steps none, marks a standing body's corpse flat and shows one with none; no lane, or a lane
+offered nothing, shows every flat and draws nothing; both hosts by source; a texel written where its world point stands
+for a standing and a lying body, four eyes (one inside the floored half metre), both doors; the lean and the Billboard
+Look keep the quad's depth; the target, the unit and every drawn exit's depth write by source; unit 1 let go before
+the target is drawn into again (a program sampling it would be a feedback loop). `tools/mutants/fb1015_lootbody.json`:
+13 mutants, 13 dead. Pin moved: AUDIT MW-NPC C6's (`test/mwnpc_audit.test.js`) holds
+C6's own half at the new door - every flat shown before a standing body's is marked; the hosts' order is FB1015's pin.

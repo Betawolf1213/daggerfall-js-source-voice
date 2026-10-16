@@ -125,6 +125,7 @@ import { GUILD_ID_RE, GUILD_TAG_RE, GUILD_MEMBER_RE } from './guildLaw.js';   //
 import { ribbonClaimOk } from './heraldryLaw.js';   // SEASON1 part two: a Season's banner ribbon - heraldryLaw.js imports nothing, so the worker's graph stays flat
 import { worksOf } from './siegeRef.js';   // SEAT2b part two (b): a siege's works on its pass - siegeRef.js imports nothing
 import { houseClaimOk } from './houseLaw.js';   // LEGACY7: a house rides the token - houseLaw.js imports nothing, so the worker's graph stays flat
+import { homeMapIdOk, homeBuildingKeyOk, HOME_ORDER_KEYS_MAX } from './homeLaw.js';   // QUEST-HOME: a home order names a town and its buildings in the homes' own shapes - homeLaw.js imports nothing
 
 /** The only version this file will read or write. It names the
  *  algorithm, so the payload cannot. */
@@ -192,7 +193,7 @@ export const ACCOUNT_KINDS = Object.freeze(['guest', 'linked']);
 /** The titles that exist. A title is WORN one at a time, so a token
  *  carries at most one. Grants are the service's business (who HOLDS
  *  one); this list is the vocabulary both ends share. */
-export const TITLES = Object.freeze(['founder', 'developer', 'dungeonmaster', 'disciple', 'apostle', 'hierophant', 'shadowfang', 'penitent', 'gatebreaker', 'herald', 'warden', 'protector', 'crowned', 'keeper', 'champion', 'grandchampion', 'arenachampion', 'aegis', 'primarch', 'crystalfist', 'hourbreaker', 'hoursfirst', 'iliacchampion', 'chaptermaster', 'chapterofficer', 'formermaster', 'highmaster', 'seasonmaster', 'ilovelamp', 'grandmaster']);   // LAMP-KEEPER II (2026-10-14, Mac: "Anybody that interacts with the lamp model should earn the 'I Love Lamp' title"): I LOVE LAMP, last - laid on the account's row by its first word with a lamp keeper (server-account/src/lamp.js); CHAP4c (2026-10-08, the Chapters arc, Chapters-Arc.md section 6) and CHAP6e (2026-10-09, section 7): a chapter's Master, its officer, its former Master, its High Master and a Season's Master, last (CHAPTER_TITLES, below) - after CARDS10's, at the merge of main (its relay deployed first); CARDS10 (2026-10-08, Tavern-Cards section 6.4, DECIDED: "a ladder ... with a title for the top of it"): ILIAC CHAMPION, last (after HOURS-FIRST's at the merge) - the season's #1 of Iliac Hand's refereed board, while they hold the top, derived at the mint (server-account/src/iliac.js, the row's `iliac`); HOURS-FIRST (2026-10-08, Mac: "for all the accounts here I want to grant them a unique different version of the aura, a title named Hour's First, and each the gilded gun"): HOUR'S FIRST, last - the first group to break an Abyss Dungeon, granted by name (server-account/src/titles.js HOURS_FIRST_HANDLES);   // SD9b (2026-10-07, the Super Dungeons arc): HOURBREAKER, last - one Brass Remnant's kill in four grants it on its first write (server-account/src/sds.js), held for good; CRYSTAL-FIST (2026-10-05, the owner, for Flylighter: "Title: Crystal Fist"): Flylighter's own; PRIMARCH (2026-10-04, GA00250: "the title will be Primarch"): GA00250's own; AEGIS (2026-10-03, the owner: "For the account named Sureme ... a title, glyph and new custom aura for this user. Title: Aegis of Oblivion. Theme: Purple"): Sureme's own, last;   // ARENA4 (2026-10-02, Mac: "Being a top rank PvE fighter comes with it's own title. Being the #1 pvp arena player comes with it's own temporary title/glyph"): the Grand Champion (the ladder's tenth tier's champion beaten, relay-refereed - for good) and the Arena Champion (the season's #1 of the refereed board - while they are #1), both derived at the mint (server-account/src/titles.js, the row's `arena`), last;   // HERALD (2026-10-01, Mac: "Herald doesnt exist ingame yet" - "you'll need to develop the herald title/glyph"): the Patreon tier between Disciple and Hierophant, after the Gatebreaker (the seats' five after it, SEAT1c); TITLE-N (2026-09-24, Mac): the Dungeon Master, and the three Patreon tiers in their order; SHADOW-FANG (2026-09-26, Mac): SirMcMobdon's own; PENITENT (2026-09-29, Mac): Diggleborf's own; WB9g (2026-09-30, Mac: "a brand new title to the broker"): the Gatebreaker, bought with Sigil Stones (net/insignia.js)   // KG6 (2026-10-15, Kings-Gambit.md 10.7): GRANDMASTER last - The King's Gambit's season #1 (server-account/src/gambit.js)
+export const TITLES = Object.freeze(['founder', 'developer', 'dungeonmaster', 'disciple', 'apostle', 'hierophant', 'shadowfang', 'penitent', 'gatebreaker', 'herald', 'warden', 'protector', 'crowned', 'keeper', 'champion', 'grandchampion', 'arenachampion', 'aegis', 'primarch', 'crystalfist', 'hourbreaker', 'hoursfirst', 'iliacchampion', 'chaptermaster', 'chapterofficer', 'formermaster', 'highmaster', 'seasonmaster', 'ilovelamp', 'grandmaster', 'coilbreaker']);   // SERPENT5 (2026-10-15, Mac: "A gilded weapon to the serpent + a rare chance of a title/aura drop"; bible/11-Multiplayer/Sea-Serpent.md section 17): COILBREAKER last - one dealing ship's serpent kill in twenty grants it on its first write (server-account/src/serpents.js), held for good   // LAMP-KEEPER II (2026-10-14, Mac: "Anybody that interacts with the lamp model should earn the 'I Love Lamp' title"): I LOVE LAMP, last - laid on the account's row by its first word with a lamp keeper (server-account/src/lamp.js); CHAP4c (2026-10-08, the Chapters arc, Chapters-Arc.md section 6) and CHAP6e (2026-10-09, section 7): a chapter's Master, its officer, its former Master, its High Master and a Season's Master, last (CHAPTER_TITLES, below) - after CARDS10's, at the merge of main (its relay deployed first); CARDS10 (2026-10-08, Tavern-Cards section 6.4, DECIDED: "a ladder ... with a title for the top of it"): ILIAC CHAMPION, last (after HOURS-FIRST's at the merge) - the season's #1 of Iliac Hand's refereed board, while they hold the top, derived at the mint (server-account/src/iliac.js, the row's `iliac`); HOURS-FIRST (2026-10-08, Mac: "for all the accounts here I want to grant them a unique different version of the aura, a title named Hour's First, and each the gilded gun"): HOUR'S FIRST, last - the first group to break an Abyss Dungeon, granted by name (server-account/src/titles.js HOURS_FIRST_HANDLES);   // SD9b (2026-10-07, the Super Dungeons arc): HOURBREAKER, last - one Brass Remnant's kill in four grants it on its first write (server-account/src/sds.js), held for good; CRYSTAL-FIST (2026-10-05, the owner, for Flylighter: "Title: Crystal Fist"): Flylighter's own; PRIMARCH (2026-10-04, GA00250: "the title will be Primarch"): GA00250's own; AEGIS (2026-10-03, the owner: "For the account named Sureme ... a title, glyph and new custom aura for this user. Title: Aegis of Oblivion. Theme: Purple"): Sureme's own, last;   // ARENA4 (2026-10-02, Mac: "Being a top rank PvE fighter comes with it's own title. Being the #1 pvp arena player comes with it's own temporary title/glyph"): the Grand Champion (the ladder's tenth tier's champion beaten, relay-refereed - for good) and the Arena Champion (the season's #1 of the refereed board - while they are #1), both derived at the mint (server-account/src/titles.js, the row's `arena`), last;   // HERALD (2026-10-01, Mac: "Herald doesnt exist ingame yet" - "you'll need to develop the herald title/glyph"): the Patreon tier between Disciple and Hierophant, after the Gatebreaker (the seats' five after it, SEAT1c); TITLE-N (2026-09-24, Mac): the Dungeon Master, and the three Patreon tiers in their order; SHADOW-FANG (2026-09-26, Mac): SirMcMobdon's own; PENITENT (2026-09-29, Mac): Diggleborf's own; WB9g (2026-09-30, Mac: "a brand new title to the broker"): the Gatebreaker, bought with Sigil Stones (net/insignia.js)   // KG6 (2026-10-15, Kings-Gambit.md 10.7): GRANDMASTER last - The King's Gambit's season #1 (server-account/src/gambit.js)
 
 /** SEAT1c (2026-09-30, Mac: "Finish the seats"; Seats-Arc 7.4): THE SEATS' TITLES - five GENERIC ids, because a town's
  *  or a Season's name cannot be a closed list's word: "Warden of <Town>" (a palace seat's guildmaster), "Protector of
@@ -223,7 +224,7 @@ export const titleClaimed = (t) => SEAT_TITLES.includes(t) || CHAPTER_TITLES.inc
  *  server-account/src/titles.js TIER_AURA: the Oblivion Ward, since PRIMARCH the Golden Radiance and since SHADOW-CLOAK
  *  the Holo Shadow Cloak and since CRYSTAL-FIST the Crystal Resonance; since SERAPH-WINGS, the developers' Seraph Wings -
  *  titles.js DEVELOPER_AURA); this list is the vocabulary both ends share. */
-export const AURAS = Object.freeze(['dagonfire', 'oblivionward', 'radiance', 'shadowcloak', 'seraphwings', 'resonance', 'turninghour', 'firsthour']);   // HOURS-FIRST (2026-10-08, Mac: "a unique different version of the aura"): THE FIRST HOUR, last - The Turning Hour's wheel in the light of the first dawn, its dial turning forward, the Hour's own mark ablaze; Hour's First's own, granted with the title by name, never rolled or sold;   // SD9c (2026-10-07, the Super Dungeons arc): THE TURNING HOUR, last - the Brass Remnant's wheel of brass gears and gold light, one kill in eight on its first write (server-account/src/sds.js), held for good; CRYSTAL-FIST (2026-10-05, the owner, for Flylighter: "a circle of tiny purple squares going up and down out of the ground"): the Crystal Resonance - the Crystal Fist's own ring of rising and falling purple squares, granted with its title by name, never sold.    // SERAPH-WINGS (2026-10-05, Mac: "I want to build an aura for the developers ... Golden Angel wings that flow"): the Seraph Wings.    // SHADOW-CLOAK (2026-10-04, the owner, for SirMcMobdon: "A holo shadow cloak with red accents"): the Holo Shadow Cloak - the Shadow Fang's own hooded cloak of shadow and crimson light, granted with its title by name, never sold; PRIMARCH (2026-10-04, GA00250: "can the aura be a golden light around the character?"): the Golden Radiance - the Primarch's own column of golden light about the body, granted with its title by name, never sold; AEGIS (2026-10-03): the Oblivion Ward - the Aegis of Oblivion's own ring of runes, granted with its title by name (server-account/src/titles.js TIER_AURA), never sold
+export const AURAS = Object.freeze(['dagonfire', 'oblivionward', 'radiance', 'shadowcloak', 'seraphwings', 'resonance', 'turninghour', 'firsthour', 'maelstrom']);   // SERPENT5 (2026-10-15, Sea-Serpent.md section 17): THE MAELSTROM last - the Old Coil's whirlpool of tide and foam about the feet, one dealing ship's serpent kill in fifty on its first write (server-account/src/serpents.js), held for good   // HOURS-FIRST (2026-10-08, Mac: "a unique different version of the aura"): THE FIRST HOUR, last - The Turning Hour's wheel in the light of the first dawn, its dial turning forward, the Hour's own mark ablaze; Hour's First's own, granted with the title by name, never rolled or sold;   // SD9c (2026-10-07, the Super Dungeons arc): THE TURNING HOUR, last - the Brass Remnant's wheel of brass gears and gold light, one kill in eight on its first write (server-account/src/sds.js), held for good; CRYSTAL-FIST (2026-10-05, the owner, for Flylighter: "a circle of tiny purple squares going up and down out of the ground"): the Crystal Resonance - the Crystal Fist's own ring of rising and falling purple squares, granted with its title by name, never sold.    // SERAPH-WINGS (2026-10-05, Mac: "I want to build an aura for the developers ... Golden Angel wings that flow"): the Seraph Wings.    // SHADOW-CLOAK (2026-10-04, the owner, for SirMcMobdon: "A holo shadow cloak with red accents"): the Holo Shadow Cloak - the Shadow Fang's own hooded cloak of shadow and crimson light, granted with its title by name, never sold; PRIMARCH (2026-10-04, GA00250: "can the aura be a golden light around the character?"): the Golden Radiance - the Primarch's own column of golden light about the body, granted with its title by name, never sold; AEGIS (2026-10-03): the Oblivion Ward - the Aegis of Oblivion's own ring of runes, granted with its title by name (server-account/src/titles.js TIER_AURA), never sold
 
 /** The glyphs that exist. A glyph is not worn, it is TRUE of a player -
  *  sprout is "this account is new", dev is "this is a developer", mod is
@@ -571,7 +572,7 @@ async function openSealed(token, publicKey, { subtle, nowS, skewS, valid }) {
  *  second: 'renown', a character's Renown that ROSE while its player was
  *  already in a room, carried in by that player's own client (the token
  *  that let them in said the Renown they had then). */
-export const ORDER_KINDS = Object.freeze(['mute', 'renown', 'guild', 'guildout', 'siege', 'stake', 'deck', 'remains']);   // INT9: a fall's drop, the service's word on what it took   // CARDS10: a ranked seat's deck, vouched for   // GUILD1c: a character's guild now, and a member or a guild gone   // SEAT2a: a battle's pass
+export const ORDER_KINDS = Object.freeze(['mute', 'renown', 'guild', 'guildout', 'siege', 'stake', 'deck', 'remains', 'home']);   // QUEST-HOME: a town's homes moved, the service's word for every page online   // INT9: a fall's drop, the service's word on what it took   // CARDS10: a ranked seat's deck, vouched for   // GUILD1c: a character's guild now, and a member or a guild gone   // SEAT2a: a battle's pass
 /** An order lives a minute - long enough to be carried to every room
  *  the moderator holds, short enough that a leaked one is stale before
  *  anyone could use it for anything but what it already said. */
@@ -610,9 +611,42 @@ export function orderValid(c) {
   const noRemains = REMAINS_FIELDS.every((f) => c[f] === undefined);
   if (c.o !== 'remains' && !noRemains) return false;
   if (c.o === 'remains' && (!remainsOrderValid(c) || c.mu !== undefined || c.lv !== undefined || c.dh !== undefined || !noGuild || !noSiege || !noStake)) return false;
+  // QUEST-HOME: a home order carries its own fields and no other kind's; no other kind carries a home's
+  const noHome = HOME_ORDER_FIELDS.every((f) => c[f] === undefined);
+  if (c.o !== 'home' && !noHome) return false;
+  if (c.o === 'home' && (!homeOrderValid(c) || c.mu !== undefined || c.lv !== undefined || c.dh !== undefined || !noGuild || !noSiege || !noStake || !noRemains)) return false;
   if (!Number.isSafeInteger(c.i) || !Number.isSafeInteger(c.e)) return false;
   if (c.e <= c.i || c.e - c.i > ORDER_TTL_S) return false;
   return true;
+}
+
+/* ═══ QUEST-HOME: THE HOME ORDER (bible/01-Overview/Field-Bugs-2026-10-14.md QUEST-HOME; Mac, 2026-10-15: "Close both") ══
+ *
+ * A home bought, held or given up must reach every page online at once: a quest picks its residence in towns its player
+ * never asked about, off the boot's read of every town's homes (server-account/src/homes.js homeLayouts), and a read at
+ * the boot knows nothing of a house bought after it. The relay has no door to the service, so the service hands the
+ * acting player's client ITS WORD on what moved, an order the hub checks with the key it already holds and fans to
+ * everyone online: `{o:'home', s, bm, bu?, bd?, i, e}` - account `s`'s act left town `bm`'s buildings `bu` homes (a claim,
+ * a deed held, a hall bought, an arena move's new house) and `bd` homes no more (a sale, a deed sold, a hall sold, an
+ * arena move's old house, a character deleted). One town an order; at least one building; never one twice.
+ */
+/** A home order's fields - no other order kind carries one. */
+export const HOME_ORDER_FIELDS = Object.freeze(['bm', 'bu', 'bd']);
+/** Whether a claim set's home fields are a home order's. */
+export function homeOrderValid(c) {
+  if (!homeMapIdOk(c.bm)) return false;
+  const on = c.bu ?? [], off = c.bd ?? [];
+  if (!Array.isArray(on) || !Array.isArray(off) || (c.bu !== undefined && !on.length) || (c.bd !== undefined && !off.length)) return false;
+  const all = [...on, ...off];
+  return all.length > 0 && all.length <= HOME_ORDER_KEYS_MAX && all.every(homeBuildingKeyOk) && new Set(all).size === all.length;
+}
+/** QUEST-HOME: MINT A HOME ORDER - the service's word that account `s`'s act left town `bm`'s buildings `bu` homes and
+ *  `bd` homes no more (either may be empty, never both). */
+export async function mintHomeOrder({ s, bm, bu = [], bd = [] }, privateKey, { subtle, nowS, ttlS = ORDER_TTL_S }) {
+  if (!Number.isSafeInteger(nowS)) throw new TypeError('mintHomeOrder needs an integer epoch-seconds clock');
+  const claims = { o: 'home', s, bm, ...(bu.length ? { bu: [...bu] } : {}), ...(bd.length ? { bd: [...bd] } : {}), i: nowS, e: nowS + ttlS };
+  if (!orderValid(claims)) throw new TypeError('mintHomeOrder refused an order it could not verify');
+  return sealClaims(claims, privateKey, subtle);
 }
 
 /* ═══ CARDS6: THE STAKE (bible/11-Multiplayer/Tavern-Cards.md section 23) ═══════════════════════════════════════════
@@ -665,14 +699,17 @@ export async function verifyStakeOrderAnyAge(token, publicKey, { subtle }) {
  * A death in the open zone drops what the ACCOUNT SERVICE took off the fallen character's judged record
  * (server-account/src/wild.js), never what the fallen's own game hands over. The relay has no door to the service, so the
  * service hands the depositor ITS WORD on the drop, an order the room checks with the key it already holds:
- * `{o:'remains', s, wr, wh, wn, wm, wk?, wi?, wg?, i, e}` - account `s`'s fall left remains `wr` holding `wn` records whose
+ * `{o:'remains', s, wr, wh, wn, wm, wk?, wi?, wg?, we?, i, e}` - account `s`'s fall left remains `wr` holding `wn` records whose
  * list (JSON, as the service answered it) digests to `wh` (hex SHA-256), to be laid in room `wm` alone (AUDIT INT9: an
  * order named no room, so one fall was laid in two); `wk` the killer whose worn piece is the list's record `wi`, theirs
  * alone to take; `wg` the fallen's guild, whose members take nothing of it (PVPDUNGEONS - whoever lays it). The room keeps
- * a deposit only whose records digest to `wh` (net/wildLaw.js), and opens it to takes only then.
+ * a deposit only whose records digest to `wh` (net/wildLaw.js), and opens it to takes only then. MAC'S DECISION
+ * (2026-10-14, the two-phase handoff): `we` 1 - the killer's piece is held by the service in ESCROW (server-account/src/
+ * wild.js), never the room's to hand: the killer's take is a COLLECT the room signs (net/wildReceipt.js `g1`), and the
+ * service commits the piece to the killer's record against it.
  */
 /** A remains order's fields - no other order kind carries one. */
-export const REMAINS_FIELDS = Object.freeze(['wr', 'wh', 'wn', 'wm', 'wk', 'wi', 'wg']);
+export const REMAINS_FIELDS = Object.freeze(['wr', 'wh', 'wn', 'wm', 'wk', 'wi', 'wg', 'we']);
 /** A remains' id (the relay's twelve hex, or the service's for a death no receipt names), and the most records a
  *  remains holds (net/wire.js WILD_REMAINS_ITEMS_MAX, pinned equal). */
 export const REMAINS_ID_RE = /^[0-9a-f]{12}$/;
@@ -683,14 +720,15 @@ export function remainsOrderValid(c) {
   if (!Number.isSafeInteger(c.wn) || c.wn < 0 || c.wn > REMAINS_RECORDS_MAX) return false;
   if (typeof c.wm !== 'string' || c.wm.length > 64 || !streamsFoes(c.wm)) return false;
   if (c.wg !== undefined && !(typeof c.wg === 'string' && GUILD_ID_RE.test(c.wg))) return false;
-  if (c.wk === undefined && c.wi === undefined) return true;
+  if (c.wk === undefined && c.wi === undefined) return c.we === undefined;   // MAC (2026-10-14): an escrow is the killer's piece's
+  if (c.we !== undefined && c.we !== 1) return false;
   return typeof c.wk === 'string' && ID_RE.test(c.wk) && c.wk !== c.s && Number.isSafeInteger(c.wi) && c.wi >= 0 && c.wi < c.wn;
 }
 /** INT9: MINT A REMAINS ORDER - the service's word that account `s`'s fall left remains `wr` of `wn` records digesting to
  *  `wh`, for room `wm` (`wk`, `wi`: the killer's worn piece, theirs alone; `wg`: the fallen's guild). */
-export async function mintRemainsOrder({ s, wr, wh, wn, wm, wk = undefined, wi = undefined, wg = undefined }, privateKey, { subtle, nowS, ttlS = ORDER_TTL_S }) {
+export async function mintRemainsOrder({ s, wr, wh, wn, wm, wk = undefined, wi = undefined, wg = undefined, we = undefined }, privateKey, { subtle, nowS, ttlS = ORDER_TTL_S }) {
   if (!Number.isSafeInteger(nowS)) throw new TypeError('mintRemainsOrder needs an integer epoch-seconds clock');
-  const claims = { o: 'remains', s, wr, wh, wn, wm, ...(wk !== undefined ? { wk, wi } : {}), ...(wg !== undefined ? { wg } : {}), i: nowS, e: nowS + ttlS };
+  const claims = { o: 'remains', s, wr, wh, wn, wm, ...(wk !== undefined ? { wk, wi } : {}), ...(wg !== undefined ? { wg } : {}), ...(we !== undefined ? { we } : {}), i: nowS, e: nowS + ttlS };
   if (!orderValid(claims)) throw new TypeError('mintRemainsOrder refused an order it could not verify');
   return sealClaims(claims, privateKey, subtle);
 }

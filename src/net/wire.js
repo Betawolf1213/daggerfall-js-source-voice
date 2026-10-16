@@ -30,6 +30,9 @@ import { HUB_SHARD_ROOMS, isHubShard, HUB_FIND_Q_MAX, REGION_SHARD_ROOMS } from 
 //                                                       room believes the signature, never the carrier, as a mute order
 //                    {t:'stage', kind}                  EVENT1: A LIVE EVENT STAGED - only from a socket whose TOKEN carried the
 //                                                       dev glyph, in the HUB alone; kind '' ends it (EVENT_HZ_MAX)
+//                    {t:'home', order}                  QUEST-HOME: a HOME order the account service signed - a town's buildings homes
+//                                                       now and none - carried by whoever acted, in the HUB alone; the hub believes
+//                                                       the signature, never the carrier (HOME_ORDER_HZ_MAX)
 //                    {t:'world', data, final?}          the room's memory, from its host alone (WORLD1); final once, the farewell
 //                    {t:'foes', data}                   the host's live foes, FOES_HZ_MAX a second at most (WORLD2)
 //                    {t:'hit', data}                    a blow on the host's foe, from anyone but the host (WORLD2)
@@ -56,6 +59,9 @@ import { HUB_SHARD_ROOMS, isHubShard, HUB_FIND_Q_MAX, REGION_SHARD_ROOMS } from 
 //                    {t:'muted', until}                 MOD1: to the muted player alone - `until` in epoch seconds, 0 when lifted
 //                    {t:'event', kind, at}              EVENT1: the server-wide live event now, to every hub socket when it is staged
 //                                                       or ended; a late joiner reads it off the hub welcome's `ev` ({kind, at}, absent: none)
+//                    {t:'home', l:[{m, u, d, i}]}       QUEST-HOME: homes that moved - town m's buildings u homes now, d none, i the
+//                                                       order's second - to every hub socket at the order, and the held words of the
+//                                                       last HOME_WORDS_KEEP_MS on a hub welcome
 //                    {t:'host', id}                     the room's host changed (WORLD1)
 //                    {t:'world', id, data}              the room's memory, to a socket whose welcome carried none (AUDIT WORLD34 C1)
 //                    {t:'foes', id, data}               the host's live foes, to everyone but the host (WORLD2)
@@ -177,6 +183,7 @@ import { nameAllowed, maskText, textCaught } from './nameFilter.js';   // NAME-F
 import { validRollSpec, validRoll, rollDice, ROLL_DICE_MAX, ROLL_SIDES_MAX, ROLL_MOD_MAX } from './dice.js';   // DICE1: the dice's law - one home for both ends (dice.js imports nothing, so the worker's graph stays flat)
 import { ribbonClaimOk } from './heraldryLaw.js';   // SEASON1 part two: a Season's banner ribbon - heraldryLaw.js imports nothing, so the worker's graph stays flat
 import { GUILD_TAG_RE } from './guildLaw.js';   // GUILD1c: a guild's tag is badged beside the name - guildLaw.js imports nothing, so the worker's graph stays flat
+import { homeMapIdOk, homeBuildingKeyOk, HOME_ORDER_KEYS_MAX } from './homeLaw.js';   // QUEST-HOME: a home word's town and buildings, the homes' own shapes - homeLaw.js imports nothing, so the worker's graph stays flat
 import { RAID_KEY_RE, RAID_SIG_RE, RAID_TARGET_MIN, RAID_TARGET_MAX, RAID_TYPES, RAID_WORD_KILLS_MAX, RAID_ACCOUNTS_MAX, RAID_TOP_MAX, RAID_TOWNS_SHA_RE, RAID_TOWNS_CHUNK, RAID_TOWNS_CHUNKS_MAX } from './raidLaw.js';   // RAID3: a town raid's law - raidLaw.js imports nothing, so the worker's graph stays flat
 import { SIEGE_HIT, SIEGE_WORK_IDS, SIEGE_RAMS_MAX, SIEGE_WORK_TIER_MAX, siegeGateVitality, siegeRamVitality, isSiegeNpcId, SIEGE_NPC_MAX, SIEGE_NPC_KINDS, isBattleRoom } from './siegeRef.js';   // PVP-REF: a siege's blow kinds - siegeRef.js imports nothing, so the worker's graph stays flat; SEAT2b part two (b): the works a blow may name; part two (c): the relay's own fighters
 import { privateInteriorOf } from './privateInterior.js';   // SLIM-FRAME: an owned interior's poses are MapsFile's (nativePoseRoom) - privateInterior.js imports nothing, and the relay walks it already
@@ -350,6 +357,48 @@ export const GUILD_ROOM_HZ_MAX = 4;
 /** GUILD1c: how long the client keeps a guild order to carry down a socket welcomed after it - RENOWN_ORDER_KEEP_MS's
  *  number and reason: inside the order's own minute, with ten seconds for the clocks and the wire. */
 export const GUILD_ORDER_KEEP_MS = 50_000;
+/**
+ * FIELD BUGS 2026-10-14 QUEST-HOME (Mac, 2026-10-15: "Close both"): A HOME THAT MOVED, SAID TO EVERY PAGE ONLINE. A page
+ * reads every town's homes at its boot (server-account/src/homes.js homeLayouts) and knows nothing of a house bought
+ * after it, so a quest could still pick its residence in one. The service answers each act that moves a home with a
+ * signed home order (identityToken.js mintHomeOrder), the acting client carries it to the hub, and the hub - the one room
+ * every online player holds a socket to - checks it with the key it holds and fans it as a home word to everyone:
+ * `{t:'home', l:[{m, u, d, i}]}`, town `m`'s buildings `u` homes now and `d` homes no more, `i` the order's second. The hub
+ * also holds the words of the last HOME_WORDS_KEEP_MS (HOME_WORDS_MAX at most) and says them on every welcome, so a page
+ * whose boot read went out before a purchase and whose hub link opened after it still hears it.
+ *
+ * Orders a socket may carry a second - GUILD_ORDER_HZ_MAX's reason: a home moves a few times a day, and the gate is there
+ * so a socket cannot make the hub verify signatures without limit.
+ */
+export const HOME_ORDER_HZ_MAX = 1;
+/** QUEST-HOME: how long the client keeps a home order to carry to a hub socket welcomed after it - GUILD_ORDER_KEEP_MS's
+ *  number and reason. */
+export const HOME_ORDER_KEEP_MS = 50_000;
+/** QUEST-HOME: how long the hub holds a home word for a page that joins after it, and how many it holds. */
+export const HOME_WORDS_KEEP_MS = 10 * 60_000;
+export const HOME_WORDS_MAX = 128;
+/** QUEST-HOME: the hub's storage key for the words it holds - its own prefix, apart from every one a drain or the hub's
+ *  sweep deletes (EVENT_KEY's reason). */
+export const HOME_WORDS_KEY = 'homewords:held';
+/** QUEST-HOME: home words a page takes in a second - a frame is a list (a welcome's whole held list is one), and the
+ *  relay is the player's own choice (`?server=`), so what one says is gated coming in as a chat line is. */
+export const HOME_IN_HZ_MAX = 4;
+/** QUEST-HOME: one home word as the hub says it - `{m, u, d, i}` - or null: a town, its buildings that are homes now
+ *  and are none, never one twice and never none at all, and the order's second (identityToken.js homeOrderValid's
+ *  shapes, homeLaw.js HOME_ORDER_KEYS_MAX's bound). */
+export function validHomeWord(w) {
+  if (!w || typeof w !== 'object' || Array.isArray(w) || !homeMapIdOk(w.m) || !Number.isSafeInteger(w.i) || w.i <= 0) return null;
+  if (!Array.isArray(w.u) || !Array.isArray(w.d)) return null;
+  const all = [...w.u, ...w.d];
+  if (!all.length || all.length > HOME_ORDER_KEYS_MAX || !all.every(homeBuildingKeyOk) || new Set(all).size !== all.length) return null;
+  return { m: w.m, u: [...w.u], d: [...w.d], i: w.i };
+}
+/** QUEST-HOME: a home frame's words, each valid, in the order said - null for a frame that is no home frame. */
+export function validHomeFrame(m) {
+  if (!m || !Array.isArray(m.l) || !m.l.length || m.l.length > HOME_WORDS_MAX) return null;
+  const words = m.l.map(validHomeWord);
+  return words.every(Boolean) ? words : null;
+}
 /**
  * EVENT1 (2026-09-25, Mac: "I wanna do a fun live event for the server ... turn the skies of Daggerfall into a detailed
  * oblivion styled dread in prep for the world bosses. Red lightning and such"). THE LIVE EVENTS A DEV MAY STAGE for
@@ -1371,7 +1420,10 @@ export const KEEPALIVE_FAN_MS = HEARTBEAT_MS / 2;
  *  is deployed by CI and the relay by hand, so a skew between them is the ordinary state of a release day, and until
  *  now nothing on either end could see it. */
 // Integrated Arena spectator visibility with staff teleport, stable boat identity and private ownership; deploy relay before clients.
-export const RELAY_VERSION = 'world204';   // KG5 (2026-10-15, bible/11-Multiplayer/Kings-Gambit.md sections 5.8 and 18; NOT YET DEPLOYED; world203 on its branch, renumbered past main's FIVE-ASKS world202 at the merge): THE RELAY RUNS THE KING'S GAMBIT - a room keeps King's Gambit tables at the cloth's index beside Hold'em's and Iliac Hand's (net/gambitTable.js), one game a cloth: two seats, each army said at Ready and dealt by the relay's own board and dice, the law's commands, a 60 s turn clock and its idle stand-up, a stand or a socket gone forfeiting; the green table only, friendly. A `gambit` frame, so a new bundle (net/gambitTable.js, net/kingsGambit.js, characters/enemyBasics.js and systems/mathf.js joined it) and a new name (SLAM8). KG6 (section 19, the same name - undeployed): the gold table's Ready a stake (CARDS6's escrow, net/gambitStakes.js), the pot's cash-outs, a rated game's signed result (net/gambitReceipt.js g1) and its `ack`, the GRANDMASTER in the token's titles.
+export const RELAY_VERSION = 'world207';   // ONE-BODY (FIELD BUGS 2026-10-15c, bible/01-Overview/Field-Bugs-2026-10-15c.md; Mac: "One body per account"; NOT YET DEPLOYED; world206 on its branch, renumbered past main's SERPENT5 world206 at the merge): A PLACE STANDS ONE BODY AN ACCOUNT - a cell's room (the open country, a town) and a world room (a dungeon, an interior) close an account's older socket when it says hello again on a new one, as a gate's court, a siege's field and a Super dungeon's realm already did (server/src/index.js the hello's one-socket law). A relay deploy drops every socket, and a tab or a half-open socket that outlived the gap stood beside the account's new one - two bodies of one player, the friend's own page seeing the copy (`rosterFor` carries no account, so no client could tell them apart). Two tabs of one account in a place are one player now.
+// world206:   SERPENT5 (2026-10-15, Mac: "A gilded weapon to the serpent + a rare chance of a title/aura drop"; bible/11-Multiplayer/Sea-Serpent.md section 17; NOT YET DEPLOYED; world205 on its branch, renumbered past main's PVP-LOOT + QUEST-HOME world205 at the merge): the vocabulary's two new words - COILBREAKER last of TITLES and THE MAELSTROM last of AURAS (net/identityToken.js), which the relay reads off every hello's token; nothing else in the law moved. Deploy the relay BEFORE the account service (acct135), or a token signing either word is refused whole
+// world205:   PVP-LOOT + QUEST-HOME (FIELD BUGS 2026-10-14, one pull request, one bump; NOT YET DEPLOYED - world201 on each branch, renumbered past main's CHAT-TRADE world201 and FIVE-ASKS world202 at the merge; world203 on the integration, renumbered past main's KG-SET world203 and KG5 world204 at the merge of main). PVP-LOOT (2026-10-14, the Discord's "Equipped items Disappear after looting in PvP zone" - bible/01-Overview/Field-Bugs-2026-10-14.md): THE FRIEND LAW IS THE DROP'S - a remains' take is refused a fallen's guildmate or party member only for a record of the drop; the record the service's order names (the killer's worn piece, net/wildLaw.js remainsNamedFor) is its killer's whoever the guilds and the hub count them, and takeFrom judges it alone. A guildmate's kill had the room refuse the killer the piece the service had already taken off the fallen's record. Then MAC'S TWO DECISIONS (2026-10-14; bible/11-Multiplayer/Wild-Zone.md sections 3 and 4): "Guildmates are friends" - the referee counts one guild kin, as a party, its truce and a duel (net/wildRef.js wildKin, at the relay and every client door); and "Yes, build it" - THE TWO-PHASE HANDOFF: a piece the service holds in escrow (the order's `we`) the room never hands as a record - its killer's take is answered a signed collect (`cr`, net/wildReceipt.js `g1`), kept with the remains (`wc`) and said again to every asking, which the killer's tab carries to the service; a tab asks the escrow only of a room at WILD_COLLECT_RELAY_MIN or later. QUEST-HOME (2026-10-15, Mac: "Close both" - of a quest's residence that was another player's home; bible/01-Overview/Field-Bugs-2026-10-14.md QUEST-HOME; world201 on its branch - deploy with or after the account service's acct136, in either order: a client sends a home order only to a hub whose welcome names world205, HOME_RELAY_MIN, and an older client drops the frame): THE HUB SAYS A HOME THAT MOVED TO EVERY PAGE ONLINE - the frame `home` both ways (a page carries the service's signed home order in, net/identityToken.js kind 'home'; the hub checks it with the key it holds and fans `{t:'home', l:[{m, u, d, i}]}` to every hub socket, a shard's by the bus), the words of the last HOME_WORDS_KEEP_MS held in the hub's storage (HOME_WORDS_KEY) and said on every welcome (_hubHelloWords), the order's own bucket (homeGate, HOME_ORDER_HZ_MAX).
+// world204:   KG5 (2026-10-15, bible/11-Multiplayer/Kings-Gambit.md sections 5.8 and 18; NOT YET DEPLOYED; world203 on its branch, renumbered past main's FIVE-ASKS world202 at the merge): THE RELAY RUNS THE KING'S GAMBIT - a room keeps King's Gambit tables at the cloth's index beside Hold'em's and Iliac Hand's (net/gambitTable.js), one game a cloth: two seats, each army said at Ready and dealt by the relay's own board and dice, the law's commands, a 60 s turn clock and its idle stand-up, a stand or a socket gone forfeiting; the green table only, friendly. A `gambit` frame, so a new bundle (net/gambitTable.js, net/kingsGambit.js, characters/enemyBasics.js and systems/mathf.js joined it) and a new name (SLAM8). KG6 (section 19, the same name - undeployed): the gold table's Ready a stake (CARDS6's escrow, net/gambitStakes.js), the pot's cash-outs, a rated game's signed result (net/gambitReceipt.js g1) and its `ack`, the GRANDMASTER in the token's titles.
 // world203:   KG-SET (2026-10-13, bible/11-Multiplayer/Kings-Gambit.md section 10.3; NOT YET DEPLOYED; world201, then world202, on its branch, renumbered past main's CHAT-TRADE world201 and FIVE-ASKS world202 at the merges): THE ILIAC SET'S RULES WITHOUT ITS WORDS, AND NINE CARDS MORE - net/iliacCards.js, the relay's catalog, keeps each card's rules and canonical name and no longer its rules text or flavor (said in the player's language by systems/iliacCardWords.js, which the relay never carries), and holds the nine units The King's Gambit's roster brought into the set (the Grizzly Bear, the Sabretooth Tiger, the Spider, the Slaughterfish, the Mummy, the Frost and the Fire Daedra, the Archer and the Ranger). A deck holding one of the nine is a deck an older relay refuses ('bad deck'), so a new bundle, a new name (SLAM8).
 // world202:   FIVE-ASKS (2026-10-14, Mac's five asks - bible/01-Overview/Five-Asks-2026-10-14.md; NOT YET DEPLOYED; world201 on its branch, renumbered past main's CHAT-TRADE world201 at the merge): RESPAWN-30, the dungeons' chest and foe respawn half an hour (RESPAWN_MS - the zone's halls and an Abyss Dungeon), and LAMP-KEEPER II's I Love Lamp in the titles' vocabulary (net/identityToken.js TITLES) the relay's claims check reads.
 // world201:   CHAT-TRADE (2026-10-14, Mac: "New channels: Trading, LFG"; bible/06-Systems/Community-Arc.md CHAT-TRADE; NOT YET DEPLOYED): the Trade and LFG channels, `chat:trade` and `chat:lfg`, joined CHAT_ROOMS - the relay opens them as it opens a language's; nothing else in the law moved. The client's Trade and LFG tabs wait for this relay (TRADE_CHAN_RELAY_MIN)
@@ -1884,7 +1936,7 @@ export function inRangeOf(roomKey, from) {
   return (to) => !!to && Math.max(Math.abs(fx - Math.floor(to.x / PIXEL_UNITS)), Math.abs(fy - Math.floor(to.z / PIXEL_UNITS))) <= RANGE_PIXELS;
 }
 
-/** One client frame, parsed and checked: {t:'hello'|'pose'|'ping'|'chat'|'roll'|'say'|'narrate'|'stage'|'mute'|'renown'|'guild'|'guildout'|'world'|'foes'|'own'|'hit'|'act'|'who'|'quest'|'social'|'party'|'trade'|'cast'|'card'|'page'|'duel'|'wed'|'park'|'caravan'|'look'|'gate'|'siege'|'arena'|'raid'|'raidtowns'|'rite'|'ow'|'trav'|'amap'|'stp'|'cfg'|'find'|'serpent'|'sd'|'wild'|'wdun'|'holdem'|'iliac'|'gambit', ...}
+/** One client frame, parsed and checked: {t:'hello'|'pose'|'ping'|'chat'|'roll'|'say'|'narrate'|'stage'|'mute'|'renown'|'guild'|'guildout'|'home'|'world'|'foes'|'own'|'hit'|'act'|'who'|'quest'|'social'|'party'|'trade'|'cast'|'card'|'page'|'duel'|'wed'|'park'|'caravan'|'look'|'gate'|'siege'|'arena'|'raid'|'raidtowns'|'rite'|'ow'|'trav'|'amap'|'stp'|'cfg'|'find'|'serpent'|'sd'|'wild'|'wdun'|'holdem'|'iliac'|'gambit', ...}
  *  or {error} - the caller closes on an error. INSPECT1: every arm below, named - this line had fallen seven behind
  *  (test/auditworld2.test.js derives the list from the arms now, so it cannot fall behind again - the merge with
  *  main's HCC-PARK was its first catch: the park arm, unnamed). */
@@ -2188,6 +2240,13 @@ export function parseClient(text, { hasHello = false } = {}) {
     return typeof m.order === 'string' && m.order.length > 0 && m.order.length <= 1024
       ? { t: m.t, order: m.order } : { error: `bad ${m.t}` };
   }
+  if (m.t === 'home') {
+    // QUEST-HOME: THE SHAPE ONLY, as the guild order's. Whether it is real is the relay's question - a signature it alone
+    // holds the key to; whose act it was does not matter (every page online hears it, its carrier's too)
+    if (!hasHello) return { error: 'home before hello' };
+    return typeof m.order === 'string' && m.order.length > 0 && m.order.length <= 1024
+      ? { t: 'home', order: m.order } : { error: 'bad home' };
+  }
   if (m.t === 'stp') {
     if (!hasHello) return { error: 'stp before hello' };
     const f = validStaffTeleportIn(m);
@@ -2344,6 +2403,10 @@ export const renownRoomGate = (bucket, nowMs) => tokenGate(bucket, nowMs, RENOWN
 export const guildGate = (bucket, nowMs) => tokenGate(bucket, nowMs, GUILD_ORDER_HZ_MAX);
 /** GUILD1c: the room's own guild-tag budget - see GUILD_ROOM_HZ_MAX. */
 export const guildRoomGate = (bucket, nowMs) => tokenGate(bucket, nowMs, GUILD_ROOM_HZ_MAX);
+/** QUEST-HOME: the home orders' own bucket - see HOME_ORDER_HZ_MAX. */
+export const homeGate = (bucket, nowMs) => tokenGate(bucket, nowMs, HOME_ORDER_HZ_MAX);
+/** QUEST-HOME: the home frames a page takes in - see HOME_IN_HZ_MAX. */
+export const homeInGate = (bucket, nowMs) => tokenGate(bucket, nowMs, HOME_IN_HZ_MAX);
 /** SOC1: the social acts' gate - SOCIAL_HZ_MAX a second, at the hub and at home (an act the hub would refuse is never sent). */
 export const socialGate = (bucket, nowMs) => tokenGate(bucket, nowMs, SOCIAL_HZ_MAX);
 /** SOC1: the party poses' gate - PARTY_HZ_MAX a second, at the hub and at home. */
@@ -3811,6 +3874,13 @@ export const relaySupportsRenown = (v) => { const m = /^world(\d+)$/.exec(typeof
  *  welcome said less (DM_RELAY_MIN's reason). */
 export const GUILD_RELAY_MIN = 115;
 export const relaySupportsGuild = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= GUILD_RELAY_MIN; };
+/** QUEST-HOME: the home frames are world205's - an older relay closes the socket on a frame type it does not know, so a
+ *  home order goes only to a hub whose welcome said world205 or later (DM_RELAY_MIN's reason). world201 on its branch:
+ *  main's world201 is CHAT-TRADE's and world202 FIVE-ASKS', and neither knows the frame - left at 201, a home order sent
+ *  to either would have closed the page's hub socket. world203 on the integration, 205 since the merge of main: main's
+ *  world203 is KG-SET's and world204 KG5's, and neither knows it either. */
+export const HOME_RELAY_MIN = 205;
+export const relaySupportsHome = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= HOME_RELAY_MIN; };
 /** CHAT-LANG: the relay that opens the language channels (CHAT_LANGS in its CHAT_ROOMS) - an older one refuses the key
  *  ('no such room'), so the Language tab joins only once the World link's welcome names this one or later. */
 export const LANG_RELAY_MIN = 196;
@@ -4021,8 +4091,20 @@ export const WILD_KINDS = Object.freeze(['strike', 'spell', 'worn', 'pick', 'zon
  *  the referee's, routed to nobody; `worn` alone is routed. */
 export const WILD_DIRECTED = Object.freeze(['strike', 'spell', 'worn']);
 /** What the room says back: a remains' records (`ri`, a chunk), a record taken (`rm`), a take won (`got`) or lost
- *  (`no`), a remains gone (`gone`). */
-export const WILD_OUT_KINDS = Object.freeze(['ri', 'rm', 'got', 'no', 'gone']);
+ *  (`no`), a remains gone (`gone`); MAC (2026-10-14, the two-phase handoff): a killer's COLLECT (`cr` - the room's signed
+ *  word that its killer took the piece the service holds in escrow, net/wildReceipt.js `g1`, for the killer's tab to
+ *  carry to the service; an older client drops the kind, so it never takes the room's record of a piece in escrow). */
+export const WILD_OUT_KINDS = Object.freeze(['ri', 'rm', 'got', 'no', 'gone', 'cr']);
+/** MAC (2026-10-14): the longest collect on the wire (net/wildReceipt.js WILD_RECEIPT_MAX, pinned equal). */
+export const WILD_COLLECT_MAX = 400;
+/** MAC (2026-10-14): the relay that signs a killer's collect of a piece in escrow - a client asks the service to escrow
+ *  its killer's piece only for a room on one (an older room hands the record, and the escrow would hand it twice).
+ *  world205, the relay that carries it (201 on its branch: main's world201 is CHAT-TRADE's and world202 FIVE-ASKS',
+ *  neither of which signs a collect - left at 201, a tab on either would ask the escrow of a room that hands the record;
+ *  203 on the integration, 205 since the merge of main: main's world203 is KG-SET's and world204 KG5's, rooms that hand
+ *  the record too). */
+export const WILD_COLLECT_RELAY_MIN = 205;
+export const relaySupportsWildCollect = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= WILD_COLLECT_RELAY_MIN; };
 /** The widest wild frame - a deposit of WILD_ITEMS_MAX heavy records, the trade frame's own bound. */
 export const WILD_FRAME_MAX = 12 * 1024;
 export const WILD_DATA_MAX = WILD_FRAME_MAX - 96;
@@ -4235,6 +4317,7 @@ export function validWildOut(m) {
     case 'rm': return intIn(m.i, 0, WILD_REMAINS_ITEMS_MAX - 1) && intIn(m.n, 1, WILD_STACK_MAX) ? { k: 'rm', r, i: m.i, n: m.n } : null;
     case 'got': return intIn(m.i, 0, WILD_REMAINS_ITEMS_MAX - 1) && m.it && typeof m.it === 'object' && !Array.isArray(m.it) ? { k: 'got', r, i: m.i, it: m.it } : null;
     case 'no': return intIn(m.i, 0, WILD_REMAINS_ITEMS_MAX - 1) ? { k: 'no', r, i: m.i } : null;
+    case 'cr': return intIn(m.i, 0, WILD_REMAINS_ITEMS_MAX - 1) && typeof m.cr === 'string' && m.cr.length > 0 && m.cr.length <= WILD_COLLECT_MAX ? { k: 'cr', r, i: m.i, cr: m.cr } : null;   // MAC (2026-10-14): a killer's collect
     default: return { k: 'gone', r };
   }
 }

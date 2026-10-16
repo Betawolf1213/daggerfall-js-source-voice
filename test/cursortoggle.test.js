@@ -171,8 +171,10 @@ test('AUDIT 58 (f3/input): every ENTRY host binds ActivateCursor at most once (T
   assert.match(wm, /^ {4}modalWindowUp,$/m, 'it publishes its window predicate instead');
   for (const host of ['scenes/world.js', 'scenes/exterior.js']) {
     // TV1: the world host ORs the travel view in too - its cursor is the view's while it is up
+    // PIN MOVED (AUDIT POI E1): and the POI editor - its keys are its own while it is open (its Ctrl+Y, Y and Enter freed
+    // the cursor's flag and asked for the lock over it: this boot listener runs before the editor's)
     assert.match(src(host), host.endsWith('world.js')
-      ? /bindCursorToggle\(canvas, \(\) => gamePaused\(\) \|\| \(modes\?\.modalWindowUp\?\.\(\) \?\? false\) \|\| !!travelView\?\.active, \(e\) => actionsOf\(e, keys\)\);/
+      ? /bindCursorToggle\(canvas, \(\) => gamePaused\(\) \|\| \(modes\?\.modalWindowUp\?\.\(\) \?\? false\) \|\| !!travelView\?\.active \|\| !!poiEditor\?\.active\(\), \(e\) => actionsOf\(e, keys\)\);/
       : /bindCursorToggle\(canvas, \(\) => gamePaused\(\) \|\| \(modes\?\.modalWindowUp\?\.\(\) \?\? false\), \(e\) => actionsOf\(e, keys\)\);/,   // UXB1-S: every action a shared key carries   // KB1: with the host's held Set, so a combo'd FreeMouse resolves
       `${host}: one binding, and the mode machine's guard is OR'd into it rather than lost`);
   }

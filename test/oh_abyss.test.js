@@ -713,14 +713,14 @@ test('OH-E the loot events: EnemyEntity.OnLootSpawned carries the table key, the
   offT();
   assert.equal(t.length, 2);
   const ctx = readFileSync(new URL('../src/scenes/dungeonContext.js', import.meta.url), 'utf8');
-  assert.match(ctx, /addPileLootExtras\(items, lootKey, Math\.random, \{ locationIndex: dfLocation\.mapTableData\.dungeonType, luck: liveStat\(playerEntity, 'luck'\), level: effectiveLevel\(playerEntity\), where: 'dungeon' \}\);[^\n]*\n\s*rollLootRarity\(/, 'the dungeon\'s pile: the trio and the event, then the port\'s rarity roll');
+  assert.match(ctx, /addPileLootExtras\(items, lootKey, rolls, \{ locationIndex: dfLocation\.mapTableData\.dungeonType, luck, level, where: 'dungeon', quarters \}\);[^\n]*\n\s*rollLootRarity\(/, 'the dungeon\'s pile: the trio and the event, then the port\'s rarity roll');   // PIN MOVED (PARTY-LOOT): the roll's own terms
   const src = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
   const body = src.slice(src.indexOf('const ohUpgrade = '), src.indexOf('_ohLootOff = () =>'));
   assert.ok(body.includes('ohAbyss.shouldUpgradeLoot()'), 'ShouldUpgradeLoot gates both');
   assert.ok(body.includes('addBonusMagicLoot(lootMatrix(key).MI, items'), 'the key\'s MI column');
   assert.ok(body.indexOf('addBonusMagicLoot(') < body.indexOf('upgradeLoot('), 'AddBonusMagicLoot, then UpgradeLoot over the whole of Items');
-  assert.match(body, /tableLootSpawned\.add\(\(e\) => ohUpgrade\(e\.key, e\.items, \[\], e\.where\)\)/);
-  assert.match(body, /enemyLootSpawned\.add\(\(e\) => ohUpgrade\(e\.lootTableKey, e\.items, e\.worn, e\.where\)\)/);
+  assert.match(body, /tableLootSpawned\.add\(\(e\) => ohUpgrade\(e\.key, e\.items, \[\], e\.where, e\.rolls \?\? Math\.random, e\.roller \?\? playerEntity\)\)/);   // PIN MOVED (PARTY-LOOT): the raiser's dice and roller (a room's base rolls on the room's)
+  assert.match(body, /enemyLootSpawned\.add\(\(e\) => ohUpgrade\(e\.lootTableKey, e\.items, e\.worn, e\.where, e\.rolls \?\? Math\.random, e\.roller \?\? playerEntity\)\)/);
   // AUDIT OH-F B3: the dungeon's rolls alone take the upgrade - the street's foes and guards roll during the build
   assert.match(body, /if \(where !== 'dungeon' \|\| !ohAbyss\.shouldUpgradeLoot\(\)\) return;/);
   assert.equal((ctx.match(/spawnEnemyLoot\(entity, e\.mobileType, basics, D\.playerEntity, \{ \.\.\.eliteLootOpts\(e\), where: 'dungeon' \}\)/g) ?? []).length, 2, 'both of the dungeon\'s foe arms');

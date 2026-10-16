@@ -249,12 +249,14 @@ test('LA-SHADOW4: A DUNGEON TORCH\'S FLICKER - the base\'s far flipped between t
 
 test('LA-SHADOW4: THE PASS - lamps whose flicker crosses 12 redraw nothing after the first crossing, the eight\'s static faces and every lo map alike; the base redrew at each', () => {
   const s = stage();
-  const lamps = (range) => { const L = new Float32Array(12 * 4); for (let i = 0; i < 12; i++) L.set([i * 1.5, 2, 3, range], i * 4); return L; };
+  // LIGHT-ID (re-aimed, Mac 2026-10-14): sixteen lamps - a lamp reading its 512 map keeps no lo map, so the four past the
+  // twelve are the lo maps the flicker must not redraw
+  const lamps = (range) => { const L = new Float32Array(16 * 4); for (let i = 0; i < 16; i++) L.set([i * 1.5, 2, 3, range], i * 4); return L; };
   s.frame({ lights: lamps(11.9), every: true });   // the door: the room recorded
   const first = s.frame({ lights: lamps(11.9), every: true });
-  assert.ok(first.staticFaces > 0 && first.loFaces > 0, 'the maps drawn once');
+  assert.ok(first.staticFaces === 6 * 12 && first.loFaces === 6 * 4, `the maps drawn once - the twelve's static faces, the four's lo maps (${first.staticFaces}, ${first.loFaces})`);
   const grow = s.frame({ lights: lamps(12.3), every: true });
-  assert.ok(grow.staticFaces > 0 && grow.loFaces > 0, 'a range past the far: drawn again, once');
+  assert.ok(grow.staticFaces === 6 * 12 && grow.loFaces === 6 * 4, `a range past the far: drawn again, once (${grow.staticFaces}, ${grow.loFaces})`);
   for (const r of [11.5, 12.6, 11.2, 12.2, 11.4, 12.7]) {
     const st = s.frame({ lights: lamps(r), every: true });
     assert.equal(st.staticFaces, 0, `range ${r}: no static face redrawn`);

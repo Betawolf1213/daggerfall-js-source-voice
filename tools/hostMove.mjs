@@ -245,6 +245,9 @@ export function planMove({ hostFile, fn, names, toFile, ctor, handle = 'host' })
   for (let k = comments.length - 1; k >= 0; k--) {
     const c = comments[k];
     if (c.end > start) continue;
+    // FIELD BUGS 2026-10-14 (PARTY-LOOT's move): a comment that ENDS a code line above is that line's, never the group's
+    // doc - taken as one, its line (a host `let` above the group) went into the module and out of the host
+    if (src.slice(lineStart(c.start), c.start).trim()) break;
     const between = src.slice(c.end, start);
     if (/^[ \t]*\n?[ \t]*$/.test(between) && !/\n\s*\n/.test(between)) start = lineStart(c.start); else break;
   }

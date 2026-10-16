@@ -101,6 +101,7 @@ function worldHost(b) {
     cursorActive, setCursorActive, releaseLook, requestLook, overlayOpen,
     gamePaused: () => w.paused, modes: { modalWindowUp: () => false }, pointerSurfaces: new Set(), tvCursorWas: false,
     get travelView() { return w.travelView; },
+    poiEditor: null,   // PIN MOVED (AUDIT POI E1): the toggle's predicate reads the POI editor's slot too - no editor in this world
     isEnhanced: () => true,
     tvOwnsJourneys: () => true,   // OW-TOGGLE's switch off, its default: the Overworld owns a map's journey
     travelOptions: { get isTravelActive() { return w.journey; }, get state() { return { autopilot: w.journey ? {} : null }; } },

@@ -12,6 +12,7 @@ import assert from 'node:assert/strict';
 import { ChatLog, tagOf, findQuery, playerFound, lineFound, findLines, CHAT_FIND_MAX } from '../src/net/chat.js';
 import { findCommandOf, FIND_COMMANDS, HELP_LINES, parseChatLine } from '../src/net/chatCommands.js';
 import { createChatPanel } from '../src/ui/chatPanel.js';
+import { rosterRows } from '../src/net/roster.js';
 
 // ─── THE LAW ────────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -233,4 +234,46 @@ test('CHAT-FIND panel: /search <name> in the chat field fills the search and sen
   assert.equal(r.panel.find('ann'), 'ann');
   assert.equal(r.log.open, true, 'find() opens the chat on it');
   r.panel.destroy();
+});
+
+// ─── CHAT-FIND-HUB: past what this client knows, the hub's own search ───────────────────────────────────────────────
+
+test('CHAT-FIND-HUB law: the hub\'s answer to the box (`hubFound`) joins the uncut list the search filters - each player once (mine my session\'s), by name, the same frozen array while nothing moved - and never the drawn rows (mutants: the answer unread; a known player twice; the answer unsorted; a stale memo)', () => {
+  const peers = new Map([['p-bor', { id: 'p-bor', name: 'Borgrim' }]]);
+  const hubFound = { q: 'o', l: [{ id: 'p-obr', name: 'Obrin' }, { id: 'p-me', name: 'Mac' }, { id: 'p-bor', name: 'Borgrim' }, null, { id: 'p-ado', name: 'Adolf' }] };
+  const session = { id: 'p-me', name: 'Mac', peers, hubFound };
+  const r = rosterRows(session);
+  assert.deepEqual(r.all.map((x) => [x.id, x.name, x.me]), [['p-ado', 'Adolf', false], ['p-bor', 'Borgrim', false], ['p-me', 'Mac', true], ['p-obr', 'Obrin', false]], 'each once, by name, mine my own');
+  assert.equal(r.all.find((x) => x.id === 'p-obr').tag, tagOf('p-obr'));
+  assert.ok(Object.isFrozen(r.all) && Object.isFrozen(r.all[0]));
+  assert.deepEqual(r.rows.map((x) => x.name), ['Borgrim', 'Mac'], 'the column draws what this client knows');
+  assert.equal(r.total, 2);
+  assert.equal(rosterRows(session).all, r.all, 'the same frozen array while nothing moved');
+  const none = rosterRows({ id: 'p-me', name: 'Mac', peers });
+  assert.deepEqual(none.all.map((x) => x.name), ['Borgrim', 'Mac'], 'no answer, no more');
+});
+
+test('CHAT-FIND-HUB panel: a name typed on a roster that knows fewer than are online asks the hub (the source\'s askFind), and the players it found join the list and its count; cleared, the ask is let go (mutants: the box never asks; the answer unread)', () => {
+  let clock = 1000;
+  const log = new ChatLog({ now: () => clock++ });
+  const asked = [];
+  const session = { id: 'p-me', name: 'Mac', roomCount: 600, hubFound: null, peers: new Map([['p-ann', { id: 'p-ann', name: 'Annalise' }]]), askFind(q) { asked.push(q); if (!q) this.hubFound = null; } };
+  const doc = fakeDocument(), win = fakeWindow(1280);
+  const panel = createChatPanel({ log, onSend: () => true, roster: () => session, action: () => null, doc, win, touch: false });
+  const root = doc.body.children[0];
+  panel.open(); panel.render({});
+  type(one(root, 'dfchat-search'), 'ann');
+  panel.render({});
+  assert.equal(asked.at(-1), 'ann', 'the box asks');
+  assert.deepEqual(find(root, 'dfchat-who-name').map((n) => n.textContent), ['Annalise'], 'the shard\'s own, until the hub answers');
+  session.hubFound = { q: 'ann', l: [{ id: 'p-anx', name: 'Annabeth' }, { id: 'p-ann', name: 'Annalise' }] };
+  panel.render({});
+  assert.deepEqual(find(root, 'dfchat-who-name').map((n) => n.textContent), ['Annabeth', 'Annalise'], 'everyone online the hub found, once each');
+  assert.equal(one(root, 'dfchat-whohead').textContent, 'Online — 2 of 600');
+  assert.equal(one(root, 'dfchat-who-more').textContent, '');
+  one(root, 'dfchat-find-clear').fire('click');
+  panel.render({});
+  assert.equal(asked.at(-1), '', 'cleared: the answer let go');
+  assert.deepEqual(find(root, 'dfchat-who-name').map((n) => n.textContent), ['Annalise', 'Mac'], 'the list as it was');
+  panel.destroy();
 });

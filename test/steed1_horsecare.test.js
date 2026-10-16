@@ -7,6 +7,7 @@
 // item's law, fields and card; the Stable page; and the hosts wiring it.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { HORSE_CARE_HARD as HARD, WAGON_UPKEEP_HARD as WHARD } from '../src/systems/upkeepTiers.js';   // HORSE-TIERS (PIN MOVED): the upkeep is handed a tier's rules - these pins pin the system as it stood, Hard
 import { readFileSync } from 'node:fs';
 import {
   bornStats, horseBornStats, STEED_STATS, STEED_BORN_MIN, STEED_BORN_MAX, bondTier, bondBonus, BOND_TIERS, BOND_STEP, BOND_TENTHS_MAX,
@@ -129,7 +130,7 @@ test('HORSE-LIVES (2026-10-12, the owner: "Horses shouldnt die"): no keep and no
   let t = T0;
   const h = horse(1, { horseFed: T0, horseBond: 40 });
   const items = [h];
-  const u = createUpkeep({ items: () => items, now: () => t, horseCare: () => true });
+  const u = createUpkeep({ items: () => items, now: () => t, horseCare: () => HARD });
   u.tick(0.016, { mode: 'Horse' });
   for (let d = 1; d <= 365; d++) { t = T0 + d * MINUTES_A_DAY; u.tick(0.016, { mode: 'Horse' }); }
   assert.deepEqual([items.length, items[0], t - T0], [1, h, YEAR], 'a year on: still the pack\'s');
@@ -146,7 +147,7 @@ test('HORSE-LIVES (2026-10-12, the owner: "Horses shouldnt die"): no keep and no
   for (const where of ['waiting', 'stabled']) {
     let tw = T0;
     const w = horse(3, { horseFed: T0 });
-    const keep = createUpkeep({ items: () => [w], now: () => tw, horseCare: () => true, where: () => where });
+    const keep = createUpkeep({ items: () => [w], now: () => tw, horseCare: () => HARD, where: () => where });
     keep.tick(0.016);
     for (let d = 1; d <= 30; d++) { tw = T0 + d * MINUTES_A_DAY; keep.tick(0.016); }
     assert.notEqual(steedStats(w, tw).hunger, 'starving', `${where}: never starving`);
@@ -205,7 +206,8 @@ test('STEED1 THE KEEP: a horse first seen comes fed; the stable feeds its own; a
   assert.equal(horseWhereOf(v({ horseMode: HORSE_MODE.HitchedToWagon, wagonMode: WAGON_MODE.FollowingPlayer })), 'with');
   assert.equal(horseWhereOf(v({ horseMode: HORSE_MODE.LooseStationary })), 'waiting');
   assert.equal(horseWhereOf(v({ horseMode: HORSE_MODE.HitchedToWagon, wagonMode: WAGON_MODE.Deployed })), 'waiting');
-  assert.equal(horseWhereOf(v({})), 'stabled', 'out of the world - the Stable card\'s own word');
+  assert.equal(horseWhereOf(v({ horseStabled: true })), 'stabled', 'out of the world - the Stable card\'s own word');
+  assert.equal(horseWhereOf(v({})), 'with', 'WAGON-STABLED (PIN MOVED): never sent to the stable, the mod\'s WithPlayer is beside its owner');
 });
 
 test('STEED1 THE BREATH: a gallop spends it, Endurance slowing the spend; at nought winded until 30% is back; back at a walk, half at the ride\'s pace, slower hungry; a starving horse never gallops (mutants: the spend, the back, the winded threshold, the ridden share, the hunger)', () => {
@@ -241,7 +243,7 @@ test('STEED1 THE BREATH: a gallop spends it, Endurance slowing the spend; at nou
 test('STEED1 THE GALLOP\'S GATE: after the mod\'s word - Roleplay & Realism\'s no gallop in town stands; with no mod ruling, horse care lets a horse gallop on its breath; winded or starving, never; not a horse, or horse care off, no word (mutants: the mod\'s false overridden, the null kept, the gate unread)', () => {
   const items = [horse(2, { horseFed: T0 + 600 })];
   let care = true, now = T0;
-  const u = createUpkeep({ items: () => items, now: () => now, horseCare: () => care });
+  const u = createUpkeep({ items: () => items, now: () => now, horseCare: () => (care ? HARD : null) });
   try {
     setGallopGate((mode, mods) => u.gallopGate(mode, mods));
     setCanRunOverride(null);
@@ -304,7 +306,7 @@ test('STEED1 THE RUNTIME: the ridden horse\'s breath by its seed, back whole ove
   const h1 = horse(2, { horseFed: T0 + 600 }), h2 = horse(3, { horseFed: T0 + 600 });
   const items = [h1, h2, { group: 'Transportation', templateIndex: 93, wagonKind: 'openWagon', value: 9000 }];
   let now = T0, care = true;
-  const u = createUpkeep({ items: () => items, now: () => now, horseCare: () => care, wagonUpkeep: () => false, say: (t) => said.push(t) });
+  const u = createUpkeep({ items: () => items, now: () => now, horseCare: () => (care ? HARD : null), wagonUpkeep: () => false, say: (t) => said.push(t) });
   assert.equal(u.bar('Foot'), null);
   assert.deepEqual(u.bar('Horse'), { amount: 1, low: false });
   assert.equal(u.riderPaysGallop('Horse'), false, 'the horse pays the gallop in breath');
@@ -335,7 +337,7 @@ test('STEED1 THE RUNTIME: the ridden horse\'s breath by its seed, back whole ove
 test('STEED1 THE STABLE\'S ACTS: oats and an apple fed by hand - beside the horse alone, never at the stable; a horse chosen to ride is the pack\'s first, so its look, its breath and its stats are the ridden ones (mutants: the reach unread, the stabled refusal, the reorder)', () => {
   const a = horse(11, { horseFed: T0 - 60 }), b = horse(12, { horseFed: T0 - 60 });
   const items = [oats(2), a, apple(3), b];
-  const u = createUpkeep({ items: () => items, now: () => T0, horseCare: () => true });
+  const u = createUpkeep({ items: () => items, now: () => T0, horseCare: () => HARD });
   assert.equal(u.act('feed', 0, { near: false }).text, STEED_TEXT.notHere);
   assert.equal(u.act('feed', 0, { stabled: true }).text, STEED_TEXT.stabled);
   const r = u.act('feed', 1, { who: 'Shadowmere' });
@@ -343,7 +345,7 @@ test('STEED1 THE STABLE\'S ACTS: oats and an apple fed by hand - beside the hors
   assert.equal(b.horseBond, 30);
   assert.equal(u.act('treat', 0, { who: 'Shadowmere' }).text.startsWith('Shadowmere eats an apple'), true);
   const wagonLoad = [oats(4)];
-  const u2 = createUpkeep({ items: () => items, now: () => T0, horseCare: () => true, stores: () => wagonLoad });
+  const u2 = createUpkeep({ items: () => items, now: () => T0, horseCare: () => HARD, stores: () => wagonLoad });
   assert.equal(u2.model().oats, 5, 'the wagon\'s load counted with the pack\'s');
   const m = u.model({ near: true, name: 'Shadowmere' });
   assert.deepEqual([m.oats, m.apples, m.horses.length, m.horses[0].name, m.horses[1].ridden], [1, 2, 2, 'Shadowmere', false]);
@@ -362,7 +364,7 @@ test('STEED1 THE STABLE\'S ACTS: oats and an apple fed by hand - beside the hors
   // the reach off the mod's runtime
   const rt = (o) => ({ stableView: () => ({ persistence: true, hasHorse: true, transport: TRANSPORT.Foot, horseMode: HORSE_MODE.LooseStationary, wagonMode: WAGON_MODE.WithPlayer, horseName: 'Ash', ...o.view }), canMountHorseFromTransportWindow: () => o.mount, canAccessWagonInventory: () => ({ allowed: o.wagon }) });
   assert.deepEqual(upkeepReach(rt({ mount: true, wagon: false }), true), { near: true, stabled: false, wagonNear: false, who: 'Ash' });
-  assert.deepEqual(upkeepReach(rt({ mount: false, wagon: true, view: { horseMode: HORSE_MODE.WithPlayer } }), true), { near: false, stabled: true, wagonNear: true, who: 'Ash' });
+  assert.deepEqual(upkeepReach(rt({ mount: false, wagon: true, view: { horseMode: HORSE_MODE.WithPlayer, horseStabled: true } }), true), { near: false, stabled: true, wagonNear: true, who: 'Ash' });   // WAGON-STABLED (PIN MOVED): sent away
   assert.deepEqual(upkeepReach(rt({ mount: false, wagon: false }), false), { near: true, stabled: false, wagonNear: true, who: 'Your horse' }, 'the mod off: always beside');
 });
 
@@ -370,8 +372,8 @@ test('STEED1 AN INVENTORY\'S USE: the Sack of Oats feeds the horse ridden - out 
   const h = horse(21, { horseFed: T0 - 60 });
   const items = [h], wagon = [oats(2)];
   let care = true;
-  const u = createUpkeep({ items: () => items, now: () => T0, horseCare: () => care });
-  registerUpkeepUses(u, { reach: () => ({ near: true, stabled: false, wagonNear: true, who: 'Your horse' }), pass: () => {}, horseCare: () => care, wagonUpkeep: () => true });
+  const u = createUpkeep({ items: () => items, now: () => T0, horseCare: () => (care ? HARD : null) });
+  registerUpkeepUses(u, { reach: () => ({ near: true, stabled: false, wagonNear: true, who: 'Your horse' }), pass: () => {}, horseCare: () => (care ? HARD : null), wagonUpkeep: () => WHARD });
   const use = itemUseHandler(UPKEEP_ITEM.Oats);
   assert.equal(use.usable(), true);
   const r = use(wagon[0], wagon);
@@ -426,10 +428,10 @@ test('STEED1 THE ITEM: `horseBond` (tenths, 1..1000) and `horseFed` (a minute, 1
   assert.deepEqual(itemFindings({ ...oats(5), value: 4 }), []);
 });
 
-test('STEED1 THE SWITCH: a Features row of the World tab\'s Travel, on by default, forced on online; the enhanced lane\'s alone', () => {
+test('STEED1 THE SWITCH: a Features row of the World tab\'s Travel; the enhanced lane\'s alone. HORSE-TIERS (PIN MOVED): tiers on the one key, Boons the default, the player\'s online, read through the one accessor (test/horsetiers.test.js holds the rest)', () => {
   const f = FEATURES.find((x) => x.id === 'horse-care');
-  assert.deepEqual([f.group, f.kinds, f.control.store, f.control.key, f.control.initial, f.control.online], ['world', ['enhanced'], 'prefs', 'horseCare', true, true]);
-  assert.match(rd('src/systems/upkeepSwitch.js'), /export const horseCareOn = \(\) => isEnhanced\(\) && getPref\(HORSE_CARE_PREF\) === true;/);
+  assert.deepEqual([f.group, f.kinds, f.control.store, f.control.key, f.control.initial, f.control.online], ['world', ['enhanced'], 'prefs', 'horseCare', 'boons', 'player']);
+  assert.match(rd('src/systems/upkeepSwitch.js'), /export const horseCareRules = \(\) => \(isEnhanced\(\) \? horseCareRulesForTier\(horseCareTierOfStored\(getPref\(HORSE_CARE_PREF\)\)\) : null\);/);
   assert.match(rd('src/ui/settingsMap.js'), /"feat:mod-horse-cart-and-cargo", "feat:horse-care", "feat:wagon-upkeep"\]/);
 });
 
@@ -451,7 +453,7 @@ test('STEED1 THE STABLE PAGE: each horse its card - its bond and hunger in words
   const buttons = (root, label) => { const out = []; const walk = (x) => { for (const c of x.children ?? []) { if (c.tag === 'button' && c.textContent.startsWith(label)) out.push(c); walk(c); } }; walk(root); return out; };
   const a = horse(31, { horseFed: T0 - 60, horseBond: 400 }), b = horse(32, { horseFed: T0 + 600 });
   const items = [a, b, oats(2)];
-  const u = createUpkeep({ items: () => items, now: () => T0, horseCare: () => true });
+  const u = createUpkeep({ items: () => items, now: () => T0, horseCare: () => HARD });
   setHoldingsProvider(stableProviderFor({ runtime: null, on: () => false, hasHorse: () => true, hasCart: () => false, items: () => items, upkeep: u }));
   resetHoldingsPages();
   const draw = () => { const d = el('div', 'px-qdetail'); drawStablePage(d, () => {}, kit); return d; };
@@ -476,7 +478,7 @@ test('STEED1 THE HOSTS (world.js, exterior.js): the upkeep built before the mod\
   for (const host of ['src/scenes/world.js', 'src/scenes/exterior.js']) {
     const s = rd(host);
     assert.ok(s.indexOf('const upkeep = createUpkeep({') > 0 && s.indexOf('const upkeep = createUpkeep({') < s.indexOf('const hccRuntime = createHorseCartRuntime({'), `${host}: before the runtime`);
-    assert.match(s, /horseCare: horseCareOn, wagonUpkeep: wagonUpkeepOn,\n\s*where: \(\) => horseWhereOf\(hccRuntimeOn\(\)\?\.stableView\(\) \?\? null\),/, host);
+    assert.match(s, /horseCare: horseCareRules, wagonUpkeep: wagonUpkeepRules,\n\s*where: \(\) => horseWhereOf\(hccRuntimeOn\(\)\?\.stableView\(\) \?\? null\),/, host);   // HORSE-TIERS / WAGON-TIERS (PIN MOVED): the one accessor each
     assert.match(s, /setGallopGate\(\(mode, mods\) => upkeep\.gallopGate\(mode, mods\)\);\n\s*registerUpkeepUses\(upkeep, \{/, host);
     assert.match(s, /player\.rideSpeedScale = upkeep\.rideScale\(player\.transportMode, wagonLoadShare\(\)\);[^\n]*\n\s*playerBlowFrame\(\{ motor: player,[^\n]*\n\s*if \(_overlayHeld[^\n]*player\.holdFrame\(\);/, `${host}: the pace before the step (and before its blow frame - TELL6e's and DISC8-G's order kept)`);
     assert.match(s, /_surfPath = !!_surf\.path;\n[\s\S]{0,400}?const odo = player\.odometer\?\.h \?\? 0, metres = _upkeepOdo == null \? 0 : Math\.max\(0, odo - _upkeepOdo\);/, `${host}: the metres off the odometer, after the surface`);
@@ -497,7 +499,7 @@ test('AUDIT STEED1 THE KEEP\'S CLOCK: a load and a new character start it afresh
   const h = horse(12, { horseFed: T0 + 60 });
   const items = [h, oats(9)];
   const said = [];
-  const u = createUpkeep({ items: () => items, now: () => t, horseCare: () => on, say: (l) => said.push(l) });
+  const u = createUpkeep({ items: () => items, now: () => t, horseCare: () => (on ? HARD : null), say: (l) => said.push(l) });
   u.tick(0.016, {});
   // the switch off six days, then on: nothing kept meanwhile, nothing to catch up
   on = false; t = T0 + 6 * MINUTES_A_DAY; u.tick(0.016, {});

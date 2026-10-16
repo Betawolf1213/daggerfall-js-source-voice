@@ -23,9 +23,10 @@
 // for.
 import { GUILD_GROUPS, SOCIAL_GROUPS, FACTION_TYPES } from '../formats/factionFile.js';
 import { hasGuildService, npcServiceKind, canAccessService } from './guildServices.js';
-import { isMember, joinedGuildOfGroup, updateRank } from './guilds.js';
+import { isMember, joinedGuildOfGroup, updateRank, rankNeeds, getTitle } from './guilds.js';
+import { SKILL_NAMES } from './skills.js';   // PROMO-NOW: the hall's line names the guild's skills
 import { isDivine } from './guildVariants.js';
-import { localizedText, localizedTable } from './textManager.js';   // L10N3d: the labels and the refusal
+import { localizedText, localizedTable, t } from './textManager.js';   // L10N3d: the labels and the refusal; PROMO-NOW: the hall's line
 
 /** The four ids the window quotes by name (:29-32), plus the two
  *  OnPush records and the spymaster greeting (:455). */
@@ -210,7 +211,7 @@ export function cureAllAttributes(entity) {
  *  argument list (the magicka one needs the entity's career). */
 export function onPushEffects(entity, guild, memberships, store, now, {
   freeHealing = false, freeMagickaRecharge = false, revealLocation = null,
-  ownsHouse = null, rankCeiling = null,
+  ownsHouse = null, rankCeiling = null, promoteWhenEarned = false,
 } = {}) {
   const steps = [];
   // Check guild advancement. UpdateRank returns tokens only when the
@@ -220,7 +221,8 @@ export function onPushEffects(entity, guild, memberships, store, now, {
   // F114: ownsHouse is the host's DaggerfallBankManager.OwnsHouse
   // read (current region), for the knightly rank-9 promotion text.
   // CHAP4b: rankCeiling, the host's - online, while the Roll holds, 7 (ranks 8 and 9 are seats, Chapters-Arc 3.5)
-  const moved = updateRank(memberships, guild, entity, store, now, { revealLocation, ownsHouse, rankCeiling });
+  // PROMO-NOW: promoteWhenEarned, the host's - online, a promotion does not wait the 28 days
+  const moved = updateRank(memberships, guild, entity, store, now, { revealLocation, ownsHouse, rankCeiling, promoteWhenEarned });
   if (moved) {
     // RR1: a mod's TokensExpulsion rides as the box's own rows (centred, %pcn the player's name - MacroHelper's), ahead of the record's
     const rows = moved.lines ? moved.lines.map((t) => ({ text: t.replaceAll('%pcn', entity?.name ?? ''), center: true })) : undefined;
@@ -242,6 +244,31 @@ export function onPushEffects(entity, guild, memberships, store, now, {
     entity.magicka = entity.maxMagicka;   // DFU refills AFTER showing the box
   }
   return steps;
+}
+
+/** PROMO-NOW (FIELD BUGS 2026-10-15, "passed 200 days still no promotion i meet the requirements"): the hall's line for
+ *  a member - the next rank and what it asks that they do not yet have, as the review reads it (guilds.js rankNeeds):
+ *  the guild's reputation, one guild skill at the high bar, a second at the low. The guild's own skills are named when
+ *  a skill is short - they are the port's (FGH2H's hand-to-hand), not a wiki's. Null when nothing is short (the review
+ *  has just promoted) or no review gives a next rank. */
+export function rankNeedsLines(entity, guild, memberships, store, ctx = null) {
+  const n = rankNeeds(memberships, guild, entity, store, ctx);
+  if (!n) return null;
+  const lines = [];
+  if (n.reputation < n.reputationNeed) lines.push(t('guild.rankNeeds.reputation', 'Reputation {have} of {need}', { have: n.reputation, need: n.reputationNeed }));
+  if (n.high < 1) {
+    lines.push(n.best
+      ? t('guild.rankNeeds.highBest', 'A guild skill at {bar} - your best, {skill}, is {value}', { bar: n.skillHigh, skill: SKILL_NAMES[n.best.skill], value: n.best.value })
+      : t('guild.rankNeeds.high', 'A guild skill at {bar}', { bar: n.skillHigh }));
+  }
+  if (n.high + n.low < 2) lines.push(t('guild.rankNeeds.second', 'A second guild skill at {bar}', { bar: n.skillLow }));
+  if (n.high < 1 || n.high + n.low < 2) lines.push(t('guild.rankNeeds.skills', 'Guild skills: {skills}', { skills: guild.skills.map((s) => SKILL_NAMES[s]).join(', ') }));
+  // ROLL-PACE (FIELD BUGS 2026-10-15f): online the Roll pays a rank at its pace since the membership began - when that is
+  // what holds the next one, the hall says how long (`ctx.pace`, npcRollTracker.js rollPaceOf)
+  const wait = n.rank > (ctx?.pace?.ceiling ?? Infinity) ? ctx.pace.wait(n.rank) : null;
+  if (wait > 0) lines.push(t('guild.rankNeeds.paced', '{days, plural, =1 {Earliest promotion: tomorrow} other {Earliest promotion: in # days}}', { days: wait }));
+  if (!lines.length) return null;
+  return [t('guild.rankNeeds.next', 'Next rank: {title}', { title: getTitle({ rank: n.rank }, entity, guild) }), ...lines];
 }
 
 /** The service the popup's middle button runs. DoGuildService's switch

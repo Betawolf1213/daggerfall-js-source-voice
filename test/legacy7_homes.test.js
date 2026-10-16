@@ -84,7 +84,8 @@ test('LEGACY7 part five the registry tells when a home of mine changed - a claim
 
 test('LEGACY7 part five the world host reads this realm character\'s homes - named by their towns - at the boot and after each change of mine, and hands them to the house online; offline, the deeds as before', () => {
   const w = rd('src/scenes/world.js');
-  assert.match(w, /createOnlineHomes\(\{ api: homesApi, character: \(\) => characterIdOf\(playerEntity\), onWrote: \(\) => legacyOnlineHomesRead\(\) \}\)/);
+  // PIN MOVED (FIELD BUGS 2026-10-14 QUEST-HOME, test/fb1014_questhome.test.js): and a home learned of, the quest's re-pick
+  assert.match(w, /createOnlineHomes\(\{ api: homesApi, character: \(\) => characterIdOf\(playerEntity\), onWrote: \(\) => legacyOnlineHomesRead\(\), onHomes: \(\) => homesLearned\(\) \}\)/);
   assert.match(w, /_legacyOnlineHomes = r\.data\.homes\.filter\(\(h\) => h\?\.character === me\)\.map\(\(h\) => \(\{/);
   // PIN MOVED (AUDIT LEGACY III W1): named off the boot's own complete table - the Living World's index read rows the boot had emptied
   assert.match(w, /location: _townOfMapId\.get\(h\.mapId >>> 0\)\?\.name \?\? '',/);

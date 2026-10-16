@@ -42,7 +42,8 @@ bit, the crossings standing; painted with the rivers on, every shared arm's tile
 
 `11-Multiplayer/Wild-Zone.md` section 21b. A player who leaves my party, or whose party I leave, is no fight for ten
 minutes, both ways, each client reading its own party; a party's walk that ends in the zone or its band names the zone
-in its question. Not done, and the owner's: a floor for new players, and whether guild members fight here. THE FOUR
+in its question. Not done, and the owner's: a floor for new players. Guild members fight nobody of their own guild
+here (Mac, 2026-10-14, "Guildmates are friends" - `01-Overview/Field-Bugs-2026-10-14.md` PVP-LOOT). THE FOUR
 HOSTS: the zone's fights are world.js's alone (`wildFair`, the one fairness gate; the zone's dungeons are its modes) -
 exterior.js, worldModes.js and dungeonContext.js stand no zone fight. Pinned by `test/fb1009b_partytruce.test.js` and
 `test/tv8_party_walk.test.js`; `tools/mutants/fb1009b_partytruce.json`.

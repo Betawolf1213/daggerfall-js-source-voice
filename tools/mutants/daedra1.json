@@ -56,8 +56,8 @@
  {
   "name": "DAEDRA1-the-princes-offer-goes-out-raw",
   "file": "src/scenes/worldModes.js",
-  "old": "          const boxes = offered ? questBridge.offerBoxes(offered, (id) => say(id, r.daedra)) : [];",
-  "new": "          const boxes = offered ? questBridge.offerBoxes(offered, (id) => townTalk?.lines?.(id) ?? []) : [];",
+  "old": "          const boxes = questBridge.offerBoxes(offered, (id) => say(id, r.daedra));",
+  "new": "          const boxes = questBridge.offerBoxes(offered, (id) => townTalk?.lines?.(id) ?? []);",
   "tests": [
    "test/daedrasummoning.test.js"
   ]

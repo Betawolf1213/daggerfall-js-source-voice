@@ -354,6 +354,8 @@ test('AUDIT 26 F132: offerNamedQuest offers a real daedric quest - no guild to d
   assert.equal(flow.offeredQuest.externalMCP ?? null, null,
     'no guild rides along on the daedric offer');
 
-  // ...and the null-quest arm is still DFU's silent close (:273-279).
-  assert.deepEqual(flow.offerNamedQuest('__NOPE', 42), { kind: 'close' });
+  // ...and the null-quest arm offers nothing (:273-279) - NO STEP, which
+  // the summoning reads as "no quest here" before it spends the gold or
+  // records the prince (SUMMON-OFFER, test/fb1014_summonoffer.test.js).
+  assert.equal(flow.offerNamedQuest('__NOPE', 42), null);
 });

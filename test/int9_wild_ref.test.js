@@ -463,7 +463,9 @@ test('INT9 THE RELAY, A FALL UNPICKED AND KIN: a fall whose killer never picks i
   assert.ok(rc, 'signed without a pick');
   const v = await verifyWildReceipt(rc.rc, relayKp.publicKey, { subtle, nowS: T + 200 });
   assert.deepEqual([v.claims.r, v.claims.w, v.claims.c], [f.r, -1, RC], 'no piece; the fallen\'s realm character');
-  assert.equal(rd('server/src/index.js').includes("const kin = (duel && (duel.a.sub === tb.sub || duel.b.sub === tb.sub)) || await this._wdunKinOf(a.sub, tb.sub, now);"), true, 'a duel\'s two, and the hub\'s party and its truce, are kin');
+  // PIN MOVED (MAC, 2026-10-14, "Guildmates are friends"): kin is net/wildRef.js wildKin - a duel's two and one guild read
+  // here, the hub's party and its truce asked only when neither is (test/fb1014_pvploot.test.js holds the guild end to end)
+  assert.equal(rd('server/src/index.js').includes("const kin = wildKin({ duel: duelKin, guilds: [a.gi, tb.gi] }) || wildKin({ party: await this._wdunKinOf(a.sub, tb.sub, now) });"), true, 'a duel\'s two, one guild, and the hub\'s party and its truce, are kin');
 }));
 
 test('INT9 THE RELAY, THE DEPOSIT: the room keeps remains only on the service\'s order (its key, this fall\'s id), and only once its records digest to it; a second carrier\'s deposit of a vouched remains is nothing; the killer\'s piece is said with its owner and taken by them alone (mutants: a deposit with no order kept; the digest unread; the piece anyone\'s)', () => withZone(async ({ r, say, join, now }) => {
@@ -696,8 +698,11 @@ test('INT9 THE SERVICE, THE LEDGER AND THE FREEZE: a piece the ledger bars from 
   const held = await fall(h.svc, h.ria, { receipt: await h.receipt(), realm: h.R.at() });
   assert.equal(held.status, 200, JSON.stringify(held.body));
   assert.deepEqual([held.body.burnt, held.body.order], [true, null], 'nothing for the room');
-  assert.equal(held.body.items.length, 4, 'and the death cost the drop');
-  assert.deepEqual(kinds(h.saved().items), [113, 'potion']);
+  // PIN MOVED (MAC, 2026-10-14, the two-phase handoff - "the fallen must lose the worn piece only once the killer actually
+  // has it"): a held record's killer can never have the piece it picked, so the record keeps it; the rest is lost still
+  assert.equal(held.body.items.length, 3, 'and the death cost the drop');
+  assert.deepEqual(kinds(h.saved().items), [113, 'potion', 121], 'the killer\'s pick kept - it could never reach them');
+  assert.equal(held.body.wi, -1, 'no piece of the killer\'s named');
   // the sweep
   const job = HOUR_JOBS.find(([name]) => name === 'wild-falls');
   assert.ok(job, 'the hour sweeps them');
@@ -716,13 +721,13 @@ test('INT9 THE CLIENT: a blow rolled on my own sheet and sent as a number; no de
   assert.ok(w.includes("const n = wildFight.blow(to, 'strike', { by, p: campToWire(player.feetAt()), d: Math.trunc(r.dmg),"));
   assert.ok(!w.includes('resolveDuelStrike(d, playerEntity'), 'the defender resolves nothing');
   assert.ok(w.includes('      forcePlayerDeath(playerEntity);\n'), 'the referee\'s fall, a death');
-  assert.ok(w.includes('call: (at) => wildAccount.fall({ ...(c ? { receipt: rc } : { n: nonce }), realm: at, room: lay }),'));
+  assert.ok(w.includes('call: (at) => wildAccount.fall({ ...(c ? { receipt: rc } : { n: nonce }), realm: at, room: lay, ...(online?.wildCollectAt?.(lay) ? { collect: 1 } : {}), ...wildCartWord(hccOn(), hccRuntime.getSaveData(), wildMaskOf(maps)) }),'));   // PIN MOVED (MAC, 2026-10-14): and my killer's piece into escrow where its room signs the collect; PIN MOVED (CART-AWAY, Mac, 2026-10-15): and my wagon's word (test/fb1015_cartaway.test.js)
   assert.ok(w.includes('const out = wildTakeTook(playerEntity, d.took, d.gold, (it) => { if (isEquipped(it)) unequipItem(playerEntity, it); });'), 'what the service took, and nothing of my own reckoning');
   assert.ok(!w.includes('takeWildDeath('), 'the law never run again on my pack');
   assert.ok(w.includes('if (d.order && n && body) wildDeposit({ r: d.r, items: d.items, o: d.order, p: body.p, room, mine: body });'), 'the service\'s records, on its order');
   assert.ok(w.includes("online?.sendWild({ k: 'fall', r: dep.r, p: dep.p, items: dep.chunks[dep.k], last: dep.k === dep.chunks.length - 1 ? 1 : 0, o: dep.o }, { room: dep.room })"));
   assert.ok(w.includes('_wildDeposits.push({ ...dep, chunks: wildChunks(dep.items, WILD_ITEMS_MAX, room), k: 0, at: Date.now() });'), 'chunked by their bytes');
-  assert.ok(w.includes('wildAccount.fall({ receipt: s.rc, room: s.room }).then((a) => {'), 'the seizure names the room that refereed it');
+  assert.ok(w.includes('wildAccount.fall({ receipt: s.rc, room: s.room, ...(online?.wildCollectAt?.(s.room) ? { collect: 1 } : {}) }).then((a) => {'), 'the seizure names the room that refereed it');   // PIN MOVED (MAC, 2026-10-14): and asks the escrow where it collects
   assert.ok(w.includes('const p = s.p ?? campToWire(player.feetAt());'), 'laid where the body fell');
   assert.ok(!/takeWildDrop\(|takeWildGold\(/.test(w), 'no drop of the client\'s own making');
   // the chunks: every frame of a heavy drop inside the wire's bound

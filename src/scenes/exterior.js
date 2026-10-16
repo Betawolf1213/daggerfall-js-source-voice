@@ -109,7 +109,7 @@ import { createUpkeep, horseWhereOf, upkeepReach, registerUpkeepUses } from '../
 import { createSaddleHost } from './saddleHost.js';   // STEED-UI: world.js's twin - the saddle panel
 import { getBinding } from '../systems/inputActions.js';   // STEED-UI: the saddle panel's keys, named as the helm names them
 import { buttonText } from '../systems/controlsConfig.js';
-import { horseCareOn, wagonUpkeepOn } from '../systems/upkeepSwitch.js';
+import { horseCareRules, wagonUpkeepRules } from '../systems/upkeepSwitch.js';   // HORSE-TIERS / WAGON-TIERS: each upkeep's tier through its one accessor
 import { setGallopGate, setRideWalk } from '../systems/transport.js';   // HORSE-WALK: horse care's walk beside its gallop
 import { wagonKgFor, activeWagonKind, horseCountOf, wagonTeamShort } from '../systems/wagonKinds.js';   // HCC: ItemHelper.WagonKgLimit - WAGONS1: the driven wagon's
 import { SEATED_EYE_HEIGHT } from '../player/seatPose.js';   // WAGONS3: the driver's seated eye
@@ -272,7 +272,7 @@ import { windfallResponse } from '../systems/windfall.js';   // WINDFALL1: a flo
 import { createWindAudio, windSoundOn } from '../systems/windAudio.js';   // WIND3: the wind, heard
 import { PrecipitationRenderer } from '../render/precipitation.js';
 import { warmPrograms } from '../render/warmPrograms.js';
-import { setWeather, setHeardWeather, heardWeather, currentWeather, currentWeatherRaw, tickWeather, weatherJumpStamp, sampleWeatherField, weatherCrossingStamp, currentFieldCells, currentWeatherIntensity, currentCloudBase, currentWindApproach, currentMapSystems, sampleWeatherIndoors, weatherArrivalStamp, mapGround } from '../systems/weatherSim.js';   // W1: the live weather state; WEATHER2b: the field; WEATHER3b: the map's intensity; WEATHER3c: its sky and wind
+import { setWeather, setHeardWeather, heardWeather, fallingWeather, currentWeather, currentWeatherRaw, tickWeather, weatherJumpStamp, sampleWeatherField, weatherCrossingStamp, currentFieldCells, currentWeatherIntensity, currentCloudBase, currentWindApproach, currentMapSystems, sampleWeatherIndoors, weatherArrivalStamp, mapGround } from '../systems/weatherSim.js';   // W1: the live weather state; WEATHER2b: the field; WEATHER3b: the map's intensity; WEATHER3c: its sky and wind
 import { createDistantStorms, thunderSourceAt, THUNDER_SOURCE_M } from '../systems/distantStorms.js';   // WEATHER3d: the storms at a distance
 import { createStormLights } from '../systems/lightning.js';   // BOLT: the strikes themselves (world.js's twin note)
 import { LightningBoltsRenderer } from '../render/lightningBolts.js';   // BOLT: the channels, drawn
@@ -1367,7 +1367,7 @@ export async function bootExterior(canvas, renderer, params, status) {
     const sheltered = m === 'exterior' && !!playerEntity.isResting && !!camps.tentNear(feet);   // AUDIT C&C I2: a rest at a tent sleeps under its roof
     return {
       climateIndex: locClimateIndex,
-      month: dateFromClassicMinutes(wm).month, hour, weather,
+      month: dateFromClassicMinutes(wm).month, hour, weather, falling: fallingWeather(weather),   // WET-FALL: the skin reads what the street's frame saw fall
       insideBuilding: m === 'interior', insideDungeon: m === 'dungeon',
       inSunlight: m === 'exterior' && sunlit({ hour, weather, sheltered }),   // AUDIT C&C: the sun's one law, the replay's too
       swimming: m === 'exterior' && !!player.isPlayerSwimming, transport: !!player.riding,
@@ -1793,17 +1793,17 @@ export async function bootExterior(canvas, renderer, params, status) {
   // STEED1 / WAGONS4: world.js's twin - horse care and wagon upkeep over this host's pack and the character's clock
   const upkeep = createUpkeep({
     items: () => playerEntity.items ?? [], now: () => ownMinutes(),
-    horseCare: horseCareOn, wagonUpkeep: wagonUpkeepOn,
+    horseCare: horseCareRules, wagonUpkeep: wagonUpkeepRules,
     where: () => horseWhereOf(hccRuntimeOn()?.stableView() ?? null),
     stores: () => (upkeepReach(hccRuntimeOn(), !!hccRuntimeOn()).wagonNear ? playerEntity.wagonItems ?? [] : []),   // the wagon's load, where it is in reach
     say: (l) => townTalk.say(l),
   });
   /** The clock passed by an act of upkeep (a kit's hour), as a camp meal's: the ticker, then the encounters it owes. */
   const upkeepPass = (n) => { playerTicker.advance(n); runEncounterTick(walkMode ? player.pos : cam.pos, true); };
-  setRideWalk((mode) => upkeep.rideWalks(mode));   // HORSE-WALK: horse care's horse walks unless it gallops (bible/06-Systems/Horse-Care.md) - the fixed city stands no Overworld and runs no journey, so no road keeps the ride's pace here (world.js rideOnTheRoad)
+  setRideWalk((mode, runAsked) => upkeep.rideWalks(mode, runAsked));   // HORSE-WALK: horse care's horse walks unless it gallops (bible/06-Systems/Horse-Care.md) - the fixed city stands no Overworld and runs no journey, so no road keeps the ride's pace here (world.js rideOnTheRoad)
   setGallopGate((mode, mods) => upkeep.gallopGate(mode, mods));
   registerUpkeepUses(upkeep, {
-    reach: () => upkeepReach(hccRuntimeOn(), !!hccRuntimeOn()), horseCare: horseCareOn, wagonUpkeep: wagonUpkeepOn,
+    reach: () => upkeepReach(hccRuntimeOn(), !!hccRuntimeOn()), horseCare: horseCareRules, wagonUpkeep: wagonUpkeepRules,
     pass: upkeepPass,
   });
   const wagonLoadShare = () => { const lim = wagonKgFor(playerEntity); return lim > 0 ? totalWeight(playerEntity.wagonItems ?? []) / lim : 0; };
@@ -5414,7 +5414,7 @@ export async function bootExterior(canvas, renderer, params, status) {
           metres, road: _surfPath, load: wagonLoadShare(),
           wagonGoes: mode === TRANSPORT_MODES.Cart || !!hccRuntimeOn()?.view?.()?.teamFollowing,
         });
-        saddleHost.motion(gamePaused() ? 0 : dt, metres, galloping);   // STEED-UI: the saddle panel's pace and gait
+        saddleHost.motion(gamePaused() ? 0 : dt, metres, galloping, player.rideWalking);   // STEED-UI: the saddle panel's pace and gait; HORSE-TIERS: the walk the motor took
       }
       // PlayerHeightChanger's sink reads `OnExteriorWater == Swimming`
       // alone (:127, :294, :326, :550) - WaterWalking splashes but

@@ -659,6 +659,7 @@ test('AUDIT DISC19 B1: underground the candle burns its own white - every other 
   // gives them - it sets the Light's colour on DFU's own light prefab, which the dungeon's lights share untouched
   // OH-E: the abyss's arm scales the candle's own white (SuppressAbyssLights' half) - never the dungeon's tint - and
   // hands every other candle back as it came
-  assert.match(src, /const abyssCandle = \(l, abyss\) => \(l && abyss \? \{ \.\.\.l, range: l\.range \* abyss\.magicLightScale, color: \(l\.color \?\? \[1, 1, 1\]\)\.map\(\(c\) => c \* abyss\.magicLightScale\) \} : l\);/);
+  // PIN MOVED (LIGHT-ID): the candle's copy is the candle's light (render/lightId.js adoptLight)
+  assert.match(src, /const abyssCandle = \(l, abyss\) => \(l && abyss \? adoptLight\(\{ \.\.\.l, range: l\.range \* abyss\.magicLightScale, color: \(l\.color \?\? \[1, 1, 1\]\)\.map\(\(c\) => c \* abyss\.magicLightScale\) \}, l\) : l\);/);
   assert.match(branch, /renderer\.setPointLights\(_dgLit\.data, null, \(_dgFade && capFadePairs\(_dgLit\.data, [^\n]*, _dgLit\.colors\)\) \|\| _dgLit\.colors\);/);   // LA-AUDIT A5: the pairs' own colours, the cap's fade on them
 });

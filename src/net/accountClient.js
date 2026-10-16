@@ -136,6 +136,28 @@ const REFUSAL_WORDS = {
   'bad-login': () => t('account.refusal.badLogin', 'That username and password do not match.'),
   'bad-code': () => t('account.refusal.badCode', 'That username and recovery code do not match.'),
   'codes-moved': () => t('account.refusal.codesMoved', 'Your recovery codes changed while that was asked. Try again.'),   // RECOVERY-SET: two presses raced (accounts.js newRecoveryCodes)
+  // POI-1: the POI store's refusals (server-account/src/poi.js) - the editor's, said to a builder or an approver
+  'poi-not-builder': () => t('account.refusal.poiNotBuilder', 'Only builders can do that. Ask a developer to add your username to the builders.'),
+  'poi-not-approver': () => t('account.refusal.poiNotApprover', 'Only an approver can decide what goes into the world.'),
+  'poi-not-author': () => t('account.refusal.poiNotAuthor', 'Only the builder who made that draft can do that.'),
+  'poi-sha': () => t('account.refusal.poiSha', 'That upload was not named the way the editor names files. Reload the editor and try again.'),
+  'poi-sha-mismatch': () => t('account.refusal.poiShaMismatch', 'That upload arrived damaged. Try again.'),
+  'poi-kind': () => t('account.refusal.poiKind', 'That file is not the kind it was sent as.'),
+  'poi-bad-mesh': () => t('account.refusal.poiBadMesh', 'That model could not be read. Import it again.'),
+  'poi-bad-texture': () => t('account.refusal.poiBadTexture', 'That texture is not a PNG, JPEG or WebP image of at most 4096 pixels a side.'),
+  'poi-quota': () => t('account.refusal.poiQuota', 'You have uploaded all you can today. Try again tomorrow.'),
+  'poi-doc': () => t('account.refusal.poiDoc', 'This POI has problems to fix first - the editor lists them.'),
+  'poi-state': () => t('account.refusal.poiState', 'That revision has changed since you opened it. Refresh and try again.'),
+  'poi-not-live': () => t('account.refusal.poiNotLive', 'That POI is not in the world, so it cannot be retired.'),
+  'poi-pending': () => t('account.refusal.poiPending', 'A retirement of that POI is already waiting for approval.'),
+  // AUDIT POI: the store's newer words - a submission changed under the approver's look (S1), a builder's holdings full
+  // (S10: a full shelf had been told a full day's uploads), and an entry taken off the shelf (U13: it had been told the
+  // service does not know the request)
+  'poi-changed': () => t('account.refusal.poiChanged', 'That submission has changed since you looked at it. Look at it again before you decide.'),
+  'poi-drafts-full': () => t('account.refusal.poiDraftsFull', 'You have as many drafts and submissions open as one builder may. Send your drafts, or wait for an approver\'s word on what you sent, before starting another.'),
+  'poi-shelf-full': () => t('account.refusal.poiShelfFull', 'Your entries fill the library shelf. Take some you no longer need off it before you keep more.'),
+  'poi-shelf-spent': () => t('account.refusal.poiShelfSpent', 'You have put as many entries in the library as one builder may, those taken off included. Ask a developer to make room.'),
+  'poi-gone': () => t('account.refusal.poiGone', 'That library entry has been taken off the shelf.'),
   email: () => t('account.refusal.email', 'That does not look like an email address.'),
   rate: () => t('account.refusal.rate', 'Too many attempts. Wait a few minutes and try again.'),
   auth: () => t('account.refusal.auth', 'You have been signed out. Sign in again.'),
@@ -309,6 +331,15 @@ const REFUSAL_WORDS = {
   grace: () => t('account.refusal.grace', 'The fallen still has a moment to settle their own fall. It is tried again shortly.'),
   nonce: () => t('account.refusal.nonce', 'That fall could not be read. Try again.'),
   room: () => t('account.refusal.room', 'That fall named no place its remains could lie. Try again.'),
+  // PVP-ESCROW (FIELD BUGS 2026-10-14, the two-phase handoff - server-account/src/wild.js wildCollect, wildReclaim,
+  // wildEscrows): the world host's collect and reclaim say nothing of these to the player - it keeps what they do not
+  // settle and lets go of what they do - but a word the service can say is a word with a sentence (ACC1e)
+  'no-escrow': () => t('account.refusal.noEscrow', 'That piece is not held for this character.'),
+  'escrow-moved': () => t('account.refusal.escrowMoved', 'That piece moved meanwhile. It is looked at again.'),
+  'escrow-collected': () => t('account.refusal.escrowCollected', 'That piece has already been collected.'),
+  'escrow-returned': () => t('account.refusal.escrowReturned', 'That piece has already gone back to the one who fell.'),
+  'escrow-late': () => t('account.refusal.escrowLate', 'That piece was collected too late - it goes back to the one who fell.'),
+  'escrow-wait': () => t('account.refusal.escrowWait', 'That piece is still held for its killer. It comes back to you shortly.'),
   // MARKS1: Marks, the server's currency (server-account/src/marks.js)
   'marks-need-account': () => t('account.refusal.marksNeedAccount', 'Silver is kept by registered accounts. Add a username to hold it.'),
   'marks-closed': () => t('account.refusal.marksClosed', 'The counting-houses are not striking silver yet.'),
@@ -713,6 +744,8 @@ const REFUSAL_WORDS = {
   'firm-rate': () => t('account.refusal.firmRate', 'Too many changes this hour. Try again later.'),
   'firm-stale': () => t('account.refusal.firmStale', 'Your stars were changed elsewhere. Look again.'),
   'firm-respec-empty': () => t('account.refusal.firmRespecEmpty', 'Nothing is learned yet.'),
+  'repair-no-faction': () => t('account.refusal.repairNoFaction', 'That character\'s record holds no such faction, so nothing was repaired.'),   // SUMMON-REPAIR: the review's repair (tools/realmReview.mjs)
+  'repair-not-set': () => t('account.refusal.repairNotSet', 'That faction does not carry that flag on this character, so nothing was repaired - is it the right character?'),   // SUMMON-REPAIR: a repair aimed at the wrong character mends nothing
 };
 export const REFUSALS = /** @type {Readonly<Record<string, string>>} */ (localizedTable(REFUSAL_WORDS));
 
@@ -830,6 +863,26 @@ export function _resetBusyForTests() { _busy = { n: 0, until: 0 }; }
 export const busyUntil = () => _busy.until;
 const holdFor = (/** @type {number} */ ms) => new Promise((resolve) => { setTimeout(resolve, ms); });
 
+/** QUEST-HOME: the page's ears for a home that moved (onHomeOrders). */
+const _homeOrderEars = new Set();
+/**
+ * FIELD BUGS 2026-10-14 QUEST-HOME (Mac, 2026-10-15: "Close both"): THE PAGE'S EAR FOR A HOME THAT MOVED. An answer of
+ * the service's that says a home was bought, held or given up carries its signed orders (`homeOrders`,
+ * server-account/src/index.js homeOrdersOf) - and each is handed to every ear here, whichever book made the act (a
+ * door's claim, a bank's deed sold, a guild's hall, an arena move, a character deleted), to be carried to the hub, whose
+ * fan reaches every page online (scenes/world.js). One door, so no act can forget to say it. Answers the ear's removal.
+ * @param {(order: string) => void} ear
+ */
+export function onHomeOrders(ear) { _homeOrderEars.add(ear); return () => { _homeOrderEars.delete(ear); }; }
+/** QUEST-HOME: an answer's home orders handed to every ear - an ear's fault is never the call's. */
+function heardHomeOrders(/** @type {any} */ data) {
+  if (!Array.isArray(data?.homeOrders)) return;
+  for (const order of data.homeOrders) {
+    if (typeof order !== 'string' || !order) continue;
+    for (const ear of [..._homeOrderEars]) { try { ear(order); } catch { /* an ear's fault is never the call's */ } }
+  }
+}
+
 export async function call({ fetch, base = DEFAULT_ACCOUNT_SERVICE, secret = null, keepalive = false, now = Date.now, rand = Math.random, hold = holdFor }, path, body = null) {
   const headers = { accept: 'application/json' };
   if (body) headers['content-type'] = 'application/json';
@@ -904,6 +957,7 @@ export async function call({ fetch, base = DEFAULT_ACCOUNT_SERVICE, secret = nul
   // data it let a kept purchase go unminted and cached a blank market for a minute. A 204 says it has nothing to say.
   if (!parsed && res.status !== 204) { forgetD1Bookmark(); return { ok: false, error: 'offline', unknown: true, status: res.status }; }   // AUDIT SCALE II A-6: `offline`, as one never made
   _busy = { n: 0, until: _busy.until };   // BUSY-GATE: an answer starts the count again; a hold already running runs out
+  heardHomeOrders(data);   // QUEST-HOME: a home bought, held or given up, said to every page online
   return { ok: true, data, status: res.status };
 }
 
@@ -1405,10 +1459,17 @@ export function accountDuels({ fetch, storage }) {
  *  `{ n, realm, room }` (a death to a foe: the tab's nonce) - `room` where the remains will lie (AUDIT INT9: the order names
  *  it). Answers `{ r, order, items, kept, took, gold, wi, burnt?, realm? }`. */
 export const wildFallAsk = (io, body) => call(io, '/v1/wild/fall', body);
-/** INT9: the zone's one call, bound to this device's stored session (the duels' way). */
+/** MAC (2026-10-14, the two-phase handoff - server-account/src/wild.js): the killer's collect of its piece in escrow
+ *  (`{ receipt, realm }` - the room's `g1`, the killer's record's `at`), the fallen's taking it back (`{ r, realm }`), and
+ *  the fallen character's pieces still held (`{ character }`). */
+export const wildCollectAsk = (io, body) => call(io, '/v1/wild/collect', body);
+export const wildReclaimAsk = (io, body) => call(io, '/v1/wild/reclaim', body);
+export const wildEscrowsAsk = (io, body) => call(io, '/v1/wild/escrows', body);
+/** INT9: the zone's calls, bound to this device's stored session (the duels' way). */
 export function accountWild({ fetch, storage }) {
   const io = () => { const s = storedSession(storage); return s ? { fetch, base: serviceBase(storage), secret: s.secret } : null; };
-  return { fall: async (body) => { const i = io(); return i ? wildFallAsk(i, body) : { ok: false, error: 'no-session' }; } };
+  const on = (/** @type {(io: any, body: any) => Promise<any>} */ ask) => async (/** @type {any} */ body) => { const i = io(); return i ? ask(i, body) : { ok: false, error: 'no-session' }; };
+  return { fall: on(wildFallAsk), collect: on(wildCollectAsk), reclaim: on(wildReclaimAsk), escrows: on(wildEscrowsAsk) };
 }
 
 /** WB5b: the kill receipt the relay signed for this account, carried to
@@ -1450,7 +1511,8 @@ export function accountRaids({ fetch, storage }) {
 }
 
 /** SERPENT1: a sea serpent's receipt the relay signed for this account, carried to the service with the character that
- *  fought it and this device's claim id (the hoard's key) - `{ recorded, slain, renown, spoils, order }`, or
+ *  fought it and this device's claim id (the hoard's key) - `{ recorded, slain, renown, spoils, order }` (SERPENT5: and
+ *  `title`, `aura`, `titleNew`, `auraNew` - the Old Coil's grants on its first write, acct135), or
  *  `{ recorded: false, why }` (`claimed`, `guest`). */
 // AUDIT 625 P4: and the embers this build's hoard mints (systems/serpentSpoils.js serpentEmbers) - the row counts what the
 // claim says, so a build from before them, saying none, is counted none

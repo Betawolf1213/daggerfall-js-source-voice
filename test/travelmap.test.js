@@ -335,7 +335,9 @@ test('U41: the world host mounts the art window and keeps performFastTravel\'s o
   // 2026-10-11g RAID-WORD); it stood at 12516 on main, 12421 on the branch, 12604 merged
   // PIN MOVED (AUDIT CAPTAIN'S SEA G2/P7), 12600 -> 13000: a pixel this game does not stream landed where the world stands,
   // with its note, above the needles (the last stood at 12608 on the branch; at the merge of SHIPYARDS, 12879 - inside it)
-  const core = src.slice(k, k + 13000);
+  // PIN MOVED (POI-2, found by AUDIT POI), 13000 -> 13400: the approved POIs taken down with the old frame
+  // (`poiHost?.destroyAll()`), with its note, above the last needle (it stood at 12881 on main, 12981 on the POI branch)
+  const core = src.slice(k, k + 13400);
   for (const needle of ['destroyPixel(bx, by)', 'state.init(px, py)', 'awaitedBuild(first.px']) {
     assert.ok(core.includes(needle), `the core carries ${needle}`);
   }

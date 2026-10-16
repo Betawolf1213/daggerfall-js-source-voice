@@ -1415,14 +1415,18 @@ found two things, both from the same root: only the eight lamps nearest the eye 
   through a frame-old depth). `?contact=off` removed it; a stable light order did not (not an index bug).
 
 **The lo tier** (`render/shadowPass.js`, DISC15): in a room its host draws WHOLE, every light the caster table can name
-keeps its own cube map of the room's static casters at SHADOW_LO_SIZE (256), six layers of a second depth array on
-SHADOW_LO_UNIT (8) - sticky by position like SC1's slots, drawn when the light arrives or moves, redrawn for a changed
-static set SHADOW_LO_REBUILDS (2) a frame with the old map standing meanwhile. The eight keep their 512 maps with the
-movers on top; every other light reads its lo map (`uCasterOf` = SHADOW_POINT_CASTERS + j; the lo map's light and far
-are the light's own `uPointLights[i]` and `shadowFarFor` of its range, the same float arithmetic in JS and GLSL). A
-change of the eight now changes a shadow's resolution, never whether the ceiling is there, and no indoor lamp is left
-for the contact march. The same walk after: caster changes move at most 2% of the screen by 12+ levels (d1 <= 1.74),
-and the one-frame flash is gone.
+has a map. The nearest keep their 512 maps with the movers on top (twelve since FLICKER-FIX); every other light reads
+its own cube map of the room's static casters at SHADOW_LO_SIZE (256), six layers of a second depth array on
+SHADOW_LO_UNIT (8) (`uCasterOf` = SHADOW_POINT_CASTERS + j; the lo map's light and far are the light's own
+`uPointLights[i]` and `shadowFarFor` of its range, the same float arithmetic in JS and GLSL) - sticky by position like
+SC1's slots, drawn when its light first reads it and when that light moves, redrawn for a changed static set
+SHADOW_LO_REBUILDS (2) a frame with the old map standing meanwhile. Mac's decision (LIGHT-ID, 2026-10-14: "Engine fix
+(Recommended)"): a light holding a 512 slot draws no lo map, because no shader reads one while it holds the slot; a lo
+map it already has keeps its slot as it stands, and the frame the light leaves the twelve it reads its lo map - one
+drawn then, or its kept one asked its static signature then and redrawn at once if the room changed under it, outside
+the budget - so no lo map is read stale. A change of the twelve changes a shadow's resolution, never whether the
+ceiling is there, and no indoor lamp is left for the contact march. The same walk after: caster changes move at most
+2% of the screen by 12+ levels (d1 <= 1.74), and the one-frame flash is gone.
 
 - **Who asks.** `renderer.everyLightCasts()`, each frame before beginFrame, from the two building hosts (the world's
   interior arm and `?interior=`) - the hosts that draw everything, so every static caster is in the records. A host
@@ -1434,8 +1438,9 @@ and the one-frame flash is gone.
 - **The door.** The records a frame replays are the last frame's, so the first frame through a door had the street's:
   that frame drops them (nothing casts, once) and the tier runs from the next frame on the room's own. Before, the
   eight 512 maps were drawn from the street's walls for that frame.
-- **The cost.** A tavern's twenty lo maps are 120 face replays on the second frame inside (about 3300 draws on
-  TVRNGM03), then none while the room is still; the array grows by SHADOW_LO_STEP (8) slots - 24 for a tavern, 1.5 MB
+- **The cost.** A tavern's lo maps are drawn on the second frame inside - LIGHT-ID: the eight lamps past the twelve's,
+  48 face replays (they were all twenty's, 120, about 3300 draws on TVRNGM03) - then none while the room is still, and
+  six for each lamp that leaves the twelve with no map of its own yet; the array grows by SHADOW_LO_STEP (8) slots - 24 for a tavern, 1.5 MB
   a slot (six 256 x 256 layers of 4 bytes), 38 MB - and is never shrunk. The lo maps hold no movers: a walker casts from the
   eight alone.
 - **The look.** A corridor or a room with no lamp of its own is now lit by its ambient and what comes through its
@@ -1487,7 +1492,7 @@ the frame callback's time, the GL calls by name, and the shadow pass's own count
   DISC15's: each torch's lo map is drawn when it arrives and then served; a light that MOVES past the eight (a thrown
   torch, a burning foe, the court's glow on the boss) is a new light every frame it moves and redraws its six 256
   faces, as it has in the buildings since DISC15 - the player's own candle, torch and muzzle flash are carried and take
-  no map. (LA-AUDIT A1 and A2 priced that and cut it: each face drew the whole level. And a peer's torch is carried too
+  no map. (LIGHT-ID, 2026-10-14: one that moves among the nearest draws no lo map and its cube whole.) (LA-AUDIT A1 and A2 priced that and cut it: each face drew the whole level. And a peer's torch is carried too
   - PEERLIGHT1 marks it so to spare its glare - so it takes no map and lights through the rock: A3, recorded.)
 - **LA-SHADOW4 - a torch's flicker is not a new light.** PERF-FLICKER rounds a shadow's far up to a quantum of 4, which
   swallows the town lantern's wobble (AnimateLight: 16.6 to 18.4, all 20) but not a dungeon's, where each light
@@ -1902,9 +1907,6 @@ claims (mutants, the patch notes, the numbers).
   evaluator now (F-H3: a lo lookup comparing at the live range's own quantum passed every pin).
 
 **Declined, with the reason.**
-- **A2: a light holding a 512 map keeps drawing its lo map** - six unread faces a frame for a mover in the eight. With
-  A1's cells that is 7.8k indices a frame, and DISC15 keeps the eight's lo maps on purpose (a light that leaves the eight
-  has its map, and the hand-over draws nothing); its pins hold that. Tried and reverted.
 - **A1's other two cures** - the lo array blitted into its bigger self instead of redrawn, and a cadence for moving
   lights: with the cells the growth frame is 0.49M indices and a mover 7.8k, both under the base's entry frame.
 - **A3: a peer's torch takes no map and lights through the rock.** PEERLIGHT1 marks it carried to spare its glare, and
@@ -2226,3 +2228,70 @@ Ambience, rain, snow, the interiors; the outdoor weather's `heavy` (0.05)
 and `sandstorm` (0.09) glow lower by the same cap, the same unbounded
 growth. test/uw_glow.test.js pins the gain under the murk and the centre
 pixel it makes.
+
+## LIGHT-ID - A LIGHT IS SOMEBODY'S LIGHT (2026-10-14, Mac, of AOE-PERF's shadow pass: "Engine fix (Recommended)")
+
+**What the pass spent for nothing** (`01-Overview/Field-Bugs-2026-10-13e.md` AOE-PERF, counted by
+`tools/courtShadowProbe.mjs`). The shadow pass knew a light only by where it stood: SC1's sticky slots and DISC15's lo
+slots matched a light to its map by position (`samePlace`). A light that moves - the gate boss's glow walking among the
+crowd, a thrown torch, a burning foe - was a new light every frame it moved: its static cache was redrawn, then copied
+into the live layers, and the movers drawn on top - twelve faces and six copies for six faces anyone sees. And DISC15
+drew a lo map for every light that may cast, the twelve's included, though no shader reads a lo map while its light
+holds a 512 slot (`uCasterOf` names the slot): six more faces a frame for his glow. Mac was asked whether his lights
+should stop casting (composed carried, they cost nothing and cast nothing) and chose to keep the look and fix the
+engine.
+
+**THE ONE CONSTRUCTION SEAM** (`render/lightId.js`). A light's identity is its producer's record's: minted on first ask
+(`src/render/lightId.js:"export function lightIdOf(l)"`) under a Symbol defined not enumerable - the record's fields,
+its deep-equal, a spread of it and its JSON are what they were - and a frozen record (the court's braziers) keeps one in
+a WeakMap. A copy is another record: the two that stand for their light each frame adopt it (worldModes.js's dungeon
+flame tint, `_dgTint`, and the abyss's candle, `abyssCandle`). Every list a frame hands the renderer
+is written there: `lightList` makes it with its `ids` beside the vec4s (a non-enumerable Float64Array, so a list is the
+Float32Array it was), `packLight` writes a record's place and identity side by side, `copyLights` carries a base's
+identities (an anonymous base, none). A pool that refills in order names each entry by the light it stands for
+(`adoptLight` - the street's lanterns, the World of Daggerfall lights and boats, the quays, the yards, the Hour's
+lights, a ship's), a record re-made each frame for a light that lives on adopts its source's (a thrown torch, a camp,
+the gate's and the spoils' lights), and a record reused for another light is `relight`ed (the court's and the Hour's
+burst slots). His glow is one kept record (`world/gateBoss.js` bossGlow's `out`, `scenes/gateCourt.js` `_glow`). The
+renderer lifts the identities with the list (`src/render/renderer.js:"ids: this._pointIds,"`), shifts them under the
+storm's flash and keeps them through a snapshot. A list with no ids - a raw vec4 array - names no light, and the pass
+is what it was. `test/lightid.test.js` sweeps src/ for a light written into a list anywhere else.
+
+**The mover** (`render/shadowPass.js`). A slot is kept by its light's identity first, by place after
+(`src/render/shadowPass.js:"if (!taken[k] && sid[k] === id)"`); a light that kept its own slot and stands elsewhere
+moved (`src/render/shadowPass.js:"const mover = own[rank] === 1"`) and draws its cube whole, straight into the layers
+it is read from - the cached path's casters, static and moving, in one replay: six faces, no static cache, no copy. Its
+slot's cache is marked stale, so the frame it stops it goes back to the cached path and draws its cache once. A light
+with no name is never a mover. `stats.moverFaces` counts the faces.
+
+**The lo law** is DISC15's, amended there: a light holding a 512 slot draws no lo map
+(`src/render/shadowPass.js:"const hi = (i) => SHADOW_TUNING.loUnread"`); one it has is kept and asked its signature
+the frame its light leaves the twelve, redrawn then if the room changed, outside the budget, and one for a light that
+arrived or moved meanwhile is dropped - no lo map is read stale. SHADOW_TUNING's `moverDirect` and `loUnread` false
+put each law back as it was: the pins' oracles and an A/B's off arms. Neither changes a map.
+
+**Counted** (the court, eight Morrowind bodies, Steady shadows, a frame, mean (worst); before / after). He walks among
+them: 12 cube faces (6 static, 6 dynamic), 6 lo faces, 6 copies, 25 depth draws / 6 faces, all whole, no lo face, no
+copy, 19 draws - the same body corners in his maps. A Hellfire lands on five: the flashes stand still, so 36 (66) cube
+faces either way; lo faces 4.3 (126) / 1.9 (54), the worst the session's first landing growing the lo array; depth
+draws 79 (238) / 76 (164). A still court: nothing either way. **The look**, on a real GL (`tools/lightIdLookProbe.mjs`,
+Chromium on SwiftShader: the court's whole frame, his glow walking among ten walkers, then a five-mark Hellfire, 14
+frames each, read back with both laws off and on): not one channel value apart in any frame. Not measured: a GPU's
+time - on SwiftShader the pass is a few per cent of the court's frame.
+
+**No new GPU allocation.** The mover draws into the live layers its slot already owns; the pass's new state is CPU
+arrays it owns beside the slots (`_slotId`, one a slot) and the lo array (`_loUnminded`, grown with it).
+
+**The four hosts.** The pass is the renderer's, under all four (`scenes/exterior.js`, `scenes/world.js`,
+`scenes/worldModes.js`, `scenes/dungeonContext.js`); each host's lights reach it through the composers above, and a
+host list the seam does not name keeps the old path.
+
+`test/lightid.test.js` (10); `tools/mutants/lightid.json` (28, all dead). Re-pinned to the lo law, none loosened, each
+still failing under a one-character mutation: disc15 (six, and the hand-over added), disc29_lamps (DISC29-E's idler),
+la_shadow (LA-SHADOW4's pass: 72 static and 24 lo faces at the crossing), perfexta (PERF-EXT's still hall); PERF-SHADOW1
+needed none. Records re-aimed by content: disc15, el1, el3, perfon2 (2), perfsun3, perfvol, wb3b - all still dead. Pins
+moved: quays (the quay lantern's record adopts its lantern), seraphwings and auditdisc19 (the tint and the candle adopt
+theirs; seraphwings' record re-aimed, dead), and the three rigs that run the hosts' own light composition
+(audit0928_render's R2, audit0928_merge's M4, `test/yardLightRig.mjs`) hand it `adoptLight`. **Measured, kept:** the seam
+copies element by element and names a record through one shared descriptor, so the Hour's lines make nothing a frame
+(sd11a's, sd20c's and sd25's measures).

@@ -62,8 +62,8 @@
   {
     "name": "SCALE4g-preflight-refuses",
     "file": "server-account/src/index.js",
-    "old": "x-realm-summary, x-d1-bookmark',",
-    "new": "x-realm-summary',",
+    "old": "x-realm-summary, x-d1-bookmark, if-none-match',",
+    "new": "x-realm-summary, if-none-match',",
     "tests": [
       "test/scale4g.test.js"
     ],

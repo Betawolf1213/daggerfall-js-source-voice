@@ -68,6 +68,7 @@ on:
       - "src/world/npcFlatArchives.js"
       - "src/net/homeVoteLaw.js"
       - "src/net/guildLaw.js"
+      - "src/net/repairLaw.js"
       - "src/net/hallLaw.js"
       - "src/net/heraldryLaw.js"
       - "src/net/townSeatLaw.js"
@@ -299,6 +300,7 @@ on:
       - "src/systems/wagonKinds.js"
       - "src/systems/walletItem.js"
       - "src/systems/upkeepItemRows.js"
+      - "src/systems/upkeepTiers.js"
       - "src/world/buildingNames.js"
       - "src/world/meshReader.js"
       - "src/world/perlin.js"
@@ -310,6 +312,7 @@ on:
       - "src/world/terrainSurface.js"
       - "src/world/terrainTiles.js"
       - "src/world/waterCorners.js"
+      - "src/world/weather.js"
       - "src/systems/partyScale.js"
       - "src/systems/books.js"
       - "src/systems/booksData.js"
@@ -324,6 +327,9 @@ on:
       - "vendor/iliac-puddle-no-more/ItemTemplates.json"
       - ".github/workflows/account-deploy.yml"
       - "src/systems/legacy/revived.js"
+      - "src/poi/poiLaw.js"
+      - "src/poi/poiMesh.js"
+      - "src/poi/poiImage.js"
   workflow_dispatch:
 
 permissions:
