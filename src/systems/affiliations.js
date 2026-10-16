@@ -12,7 +12,8 @@
 // here now and both skins draw it: the classic box as DFU's tab-stopped
 // table, the enhanced page as its own rows.
 
-import { activeMemberships, GUILDS, getTitle } from './guilds.js';
+import { activeMemberships, GUILDS, getTitle, reviewDaysLeft } from './guilds.js';
+import { standingOwedOf } from './standingOwed.js';   // STANDING-WORDS: what the Roll still owes, online
 import { templeOf, orderOf } from './guildVariants.js';
 import { getReputation } from './factionRep.js';
 import { getLocalizedFactionName } from './textManager.js';   // L10N3e: the faction's name in the player's language
@@ -41,10 +42,13 @@ export function guildForMembership(membership) {
  * shows a translation's name for the faction id - FACTION.TXT's where
  * the language has none. The book is only ever drawn; the faction
  * record keeps FACTION.TXT's name, which is the key.
- * @param {any} entity
- * @returns {{ affiliation: string, title: string, rep: number, factionId: number }[]}
+ * STANDING-WORDS (Field-Bugs-2026-10-15c): each row also carries what the Roll still owes the guild online (`owed`), and
+ * a probation's days to its review on `now` - the character's own date, where the caller has one (`reviewIn`, null
+ * without a probation or a date).
+ * @param {any} entity @param {{ now?: any }} [o]
+ * @returns {{ affiliation: string, title: string, rep: number, factionId: number, probation: boolean, owed: number, reviewIn: number | null }[]}
  */
-export function affiliations(entity) {
+export function affiliations(entity, { now = null } = {}) {
   const out = [];
   for (const membership of Object.values(activeMemberships(entity) ?? {})) {
     const guild = guildForMembership(membership);
@@ -56,6 +60,8 @@ export function affiliations(entity) {
       rep: entity?.factionRep ? getReputation(entity.factionRep, guild.factionId) : 0,
       factionId: guild.factionId,
       probation: !!membership.probation,   // REP6: on probation - the next review below -10 expels
+      owed: standingOwedOf(guild.factionId),   // STANDING-WORDS
+      reviewIn: membership.probation && now ? reviewDaysLeft(membership, now) : null,
     });
   }
   return out;

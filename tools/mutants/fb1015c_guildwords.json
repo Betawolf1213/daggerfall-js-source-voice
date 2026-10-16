@@ -1,0 +1,263 @@
+[
+  {
+    "name": "SEAT-WORDS-the-seat-refusal-gone",
+    "file": "src/systems/guildServiceFlow.js",
+    "old": "  if (Number.isInteger(ceiling) && membership.rank === ceiling) {",
+    "new": "  if (false) {",
+    "tests": [
+      "test/fb1015c_guildwords.test.js"
+    ]
+  },
+  {
+    "name": "SEAT-WORDS-the-seat-refusal-at-any-rank",
+    "file": "src/systems/guildServiceFlow.js",
+    "old": "  if (Number.isInteger(ceiling) && membership.rank === ceiling) {",
+    "new": "  if (Number.isInteger(ceiling)) {",
+    "tests": [
+      "test/fb1015c_guildwords.test.js"
+    ]
+  },
+  {
+    "name": "SEAT-WORDS-the-rank-not-the-first",
+    "file": "src/systems/guildServiceFlow.js",
+    "old": "    for (let rank = ceiling + 1; rank <= SEAT_RANK.master; rank++) {",
+    "new": "    for (let rank = SEAT_RANK.master; rank > ceiling; rank--) {",
+    "tests": [
+      "test/fb1015c_guildwords.test.js"
+    ]
+  },
+  {
+    "name": "SEAT-WORDS-the-house-online-arm-gone",
+    "file": "src/systems/knightlyGifts.js",
+    "old": "  if (Number.isInteger(rankCeiling) && rankCeiling < RECEIVE_HOUSE_RANK) {",
+    "new": "  if (false) {",
+    "tests": [
+      "test/fb1015c_guildwords.test.js"
+    ]
+  },
+  {
+    "name": "SEAT-WORDS-the-given-house-unread",
+    "file": "src/systems/knightlyGifts.js",
+    "old": "((membership?.flags ?? 0) & HOUSE_FLAG_MASK) > 0 ? alreadyGivenHouseText()",
+    "new": "false ? alreadyGivenHouseText()",
+    "tests": [
+      "test/fb1015c_guildwords.test.js"
+    ]
+  },
+  {
+    "name": "SEAT-WORDS-the-page-not-asked-at-the-hold",
+    "file": "src/scenes/rollNoticeHost.js",
+    "old": "      if (line) say(line);\n      noteFirstUse('chapters');\n",
+    "new": "      if (line) say(line);\n",
+    "tests": [
+      "test/fb1015c_guildwords.test.js"
+    ]
+  },
+  {
+    "name": "SEAT-WORDS-the-page-not-asked-at-the-first-word",
+    "file": "src/scenes/rollNoticeHost.js",
+    "old": "      if (first && holdsRollMembership(entityOf())) noteFirstUse('chapters');\n",
+    "new": "",
+    "tests": [
+      "test/fb1015c_guildwords.test.js"
+    ]
+  },
+  {
+    "name": "SEAT-WORDS-the-page-for-a-stranger",
+    "file": "src/scenes/rollNoticeHost.js",
+    "old": "if (first && holdsRollMembership(entityOf()))",
+    "new": "if (first)",
+    "tests": [
+      "test/fb1015c_guildwords.test.js"
+    ]
+  },
+  {
+    "name": "STANDING-WORDS-the-owed-unsaid",
+    "file": "src/scenes/rollNoticeHost.js",
+    "old": "    return c.owed > 0 ? t('chapters.standing.itemOwed'",
+    "new": "    return false ? t('chapters.standing.itemOwed'",
+    "tests": [
+      "test/fb1015c_guildwords.test.js"
+    ]
+  },
+  {
+    "name": "STANDING-WORDS-the-sign",
+    "file": "src/scenes/rollNoticeHost.js",
+    "old": "delta: c.delta > 0 ? `+${c.delta}` : String(c.delta)",
+    "new": "delta: String(c.delta)",
+    "tests": [
+      "test/fb1015c_guildwords.test.js"
+    ]
+  },
+  {
+    "name": "STANDING-WORDS-the-empty-line",
+    "file": "src/scenes/rollNoticeHost.js",
+    "old": "  return items.length ? t('chapters.standing.line', 'Standing: {list}', { list: items.join(', ') }) : null;",
+    "new": "  return t('chapters.standing.line', 'Standing: {list}', { list: items.join(', ') });",
+    "tests": [
+      "test/fb1015c_guildwords.test.js"
+    ]
+  },
+  {
+    "name": "STANDING-WORDS-the-moves-unsaid",
+    "file": "src/net/npcRollTracker.js",
+    "old": ".filter((f) => a.base[f] !== last[f])",
+    "new": ".filter(() => false)",
+    "tests": [
+      "test/fb1015c_guildwords.test.js"
+    ]
+  },
+  {
+    "name": "STANDING-WORDS-the-owed-unkept",
+    "file": "src/net/npcRollTracker.js",
+    "old": "    setStandingOwed(roll.owed);\n",
+    "new": "",
+    "tests": [
+      "test/fb1015c_guildwords.test.js"
+    ]
+  },
+  {
+    "name": "STANDING-WORDS-the-stops-clear",
+    "file": "src/net/npcRollTracker.js",
+    "old": "stoppedLease = ls; setStandingOwed(null); onStop(error);",
+    "new": "stoppedLease = ls; onStop(error);",
+    "tests": [
+      "test/fb1015c_guildwords.test.js"
+    ]
+  },
+  {
+    "name": "STANDING-WORDS-the-first-flag",
+    "file": "src/net/npcRollTracker.js",
+    "old": "    onStanding(changes, !last);",
+    "new": "    onStanding(changes, false);",
+    "tests": [
+      "test/fb1015c_guildwords.test.js"
+    ]
+  },
+  {
+    "name": "STANDING-WORDS-the-owed-row",
+    "file": "src/systems/guildServiceFlow.js",
+    "old": "const reputationLine = (n, owed) => (owed > 0\n",
+    "new": "const reputationLine = (n, owed) => (false\n",
+    "tests": [
+      "test/fb1015c_guildwords.test.js"
+    ]
+  },
+  {
+    "name": "STANDING-WORDS-the-books-owed",
+    "file": "src/systems/affiliations.js",
+    "old": "      owed: standingOwedOf(guild.factionId),   // STANDING-WORDS\n",
+    "new": "      owed: 0,\n",
+    "tests": [
+      "test/fb1015c_guildwords.test.js"
+    ]
+  },
+  {
+    "name": "STANDING-WORDS-the-probation-days",
+    "file": "src/systems/guilds.js",
+    "old": "+ DAYS_BETWEEN_RANK_CHANGES - daySinceZero(now);",
+    "new": "- daySinceZero(now);",
+    "tests": [
+      "test/fb1015c_guildwords.test.js"
+    ]
+  },
+  {
+    "name": "STANDING-WORDS-the-probation-not-first",
+    "file": "src/systems/guildServiceFlow.js",
+    "old": "  return [...probation, next, ...lines];",
+    "new": "  return [next, ...lines, ...probation];",
+    "tests": [
+      "test/fb1015c_guildwords.test.js"
+    ]
+  },
+  {
+    "name": "STANDING-WORDS-the-probation-unsaid-when-nothing-short",
+    "file": "src/systems/guildServiceFlow.js",
+    "old": "  if (!lines.length) return probation.length ? probation : null;",
+    "new": "  if (!lines.length) return null;",
+    "tests": [
+      "test/fb1015c_guildwords.test.js"
+    ]
+  },
+  {
+    "name": "STANDING-WORDS-the-books-review-days",
+    "file": "src/systems/affiliations.js",
+    "old": "reviewIn: membership.probation && now ? reviewDaysLeft(membership, now) : null,",
+    "new": "reviewIn: null,",
+    "tests": [
+      "test/fb1015c_guildwords.test.js"
+    ]
+  },
+  {
+    "name": "SEAT-WORDS-the-tutorials-pace-not-the-laws",
+    "file": "src/systems/tutorialCatalogue.js",
+    "old": "the rest follows later - and a failed quest costs nothing.', { max: ROLL_GAIN_DAY_MAX }),",
+    "new": "the rest follows later - and a failed quest costs nothing.', { max: 10 }),",
+    "tests": [
+      "test/fb1015c_guildwords.test.js"
+    ]
+  },
+  {
+    "name": "SEAT-WORDS-the-guides-writ-not-the-laws",
+    "file": "src/ui/noticeWindow.js",
+    "old": "{ max: ROLL_GAIN_DAY_MAX, writ: HALL_WRIT_REP, receipt: RECEIPT_REP }",
+    "new": "{ max: ROLL_GAIN_DAY_MAX, writ: 3, receipt: RECEIPT_REP }",
+    "tests": [
+      "test/fb1015c_guildwords.test.js"
+    ]
+  },
+  {
+    "name": "SEAT-WORDS-the-gate-without-the-ceiling",
+    "file": "src/scenes/worldModes.js",
+    "old": "service, { rankCeiling: host.rollRankCeiling?.() ?? null });   // CHAP4b",
+    "new": "service);   // CHAP4b",
+    "tests": [
+      "test/fb1015c_guildwords.test.js"
+    ]
+  },
+  {
+    "name": "SEAT-WORDS-the-house-without-the-ceiling",
+    "file": "src/scenes/worldModes.js",
+    "old": "receiveHouseDecision(kept, { rankCeiling: host.rollRankCeiling?.() ?? null,",
+    "new": "receiveHouseDecision(kept, {",
+    "tests": [
+      "test/fb1015c_guildwords.test.js"
+    ]
+  },
+  {
+    "name": "STANDING-WORDS-the-hall-without-the-date",
+    "file": "src/scenes/worldModes.js",
+    "old": "rankCeiling: host.rollRankCeiling?.() ?? null, now: ownDate() }) : null),",
+    "new": "rankCeiling: host.rollRankCeiling?.() ?? null }) : null),",
+    "tests": [
+      "test/fb1015c_guildwords.test.js"
+    ]
+  },
+  {
+    "name": "STANDING-WORDS-the-streets-unwired",
+    "file": "src/scenes/world.js",
+    "old": "    ...rollNoticeDoors({ entityOf: () => playerEntity, say: (text) => chatNotice(text) }),",
+    "new": "    ...rollNoticeDoors({ entityOf: () => playerEntity, say: () => {} }),",
+    "tests": [
+      "test/fb1015c_guildwords.test.js"
+    ]
+  },
+  {
+    "name": "STANDING-WORDS-the-page-without-the-probation",
+    "file": "src/ui/enhancedMenu.js",
+    "old": "    if (a.probation) detail.append(el('p', 'px-note', probationWords(a.reviewIn)));\n",
+    "new": "",
+    "tests": [
+      "test/fb1015c_guildwords.test.js"
+    ]
+  },
+  {
+    "name": "STANDING-WORDS-the-page-without-the-owed",
+    "file": "src/ui/enhancedMenu.js",
+    "old": "    if (a.owed > 0) detail.append(el('p', 'px-note', t('pause.guilds.owed',",
+    "new": "    if (false) detail.append(el('p', 'px-note', t('pause.guilds.owed',",
+    "tests": [
+      "test/fb1015c_guildwords.test.js"
+    ]
+  }
+]

@@ -132,7 +132,7 @@ async function workTab(data) {
 
 test('PLAIN-UI How chapters work stands over the chapters\' cards - open for a reader who earns Merit in none, folded for one who does, absent where the region keeps none - and its numbers are the law\'s own (mutants: the open read backwards; a Merit or a Strength number typed)', async () => {
   const guide = chapterGuide();
-  assert.deepEqual(guide.map(([w]) => w), ['What a chapter is', 'Merit', 'Strength', 'Band', 'The chairs', 'Season', 'Patron']);
+  assert.deepEqual(guide.map(([w]) => w), ['What a chapter is', 'Your rank', 'Standing', 'Merit', 'Strength', 'Band', 'The chairs', 'Season', 'Patron']);   // PIN MOVED (SEAT-WORDS / STANDING-WORDS, Field-Bugs-2026-10-15c.md): the rank and the standing
   const said = (w) => guide.find(([k]) => k === w)[1];
   assert.match(said('Merit'), new RegExp(`${n(MERIT_WRIT)} for filling your own chapter writ.* a share of ${n(MERIT_RECEIPT)} for each .*at most ${n(MERIT_CAP_WEEK)} an account a week in each chapter`));
   assert.match(said('Strength'), new RegExp(`from ${STRENGTH_START}\\. .*up to ${STRENGTH_STEP_MAX}\\. .*a week with no Merit at all costs ${STRENGTH_IDLE};`));   // PIN MOVED: AUDIT PLAIN-UI W1

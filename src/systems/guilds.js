@@ -346,6 +346,14 @@ export function updateRank(memberships, guild, entity, store, now, ctx = null) {
   return { outcome, rank: newRank, textId: textIdFor(guild, outcome, newRank, ctx), lines: rule?.expulsion ?? null };
 }
 
+/** STANDING-WORDS (Field-Bugs-2026-10-15c): the days until a membership's next review may move its rank down - the
+ *  28-day gate UpdateRank reads (`lastRankChange` + DAYS_BETWEEN_RANK_CHANGES), on the character's own date; 0 when it
+ *  is due (the next hall visit reviews). A probation's review is the one that expels below GUILD_EXPEL_BELOW. */
+export function reviewDaysLeft(m, now) {
+  const due = Number(m?.lastRankChange) + DAYS_BETWEEN_RANK_CHANGES - daySinceZero(now);
+  return Number.isFinite(due) ? Math.max(0, due) : 0;
+}
+
 /** PROMO-NOW: what the next rank asks, read exactly as baseCalculateNewRank reads its row - the reputation, and how
  *  many guild skills clear the row's high and low bars. Null for a stranger, without a faction store, or at DFU's
  *  nine. The rows only rise, so the next row met is every row below it met.

@@ -38,8 +38,8 @@
   {
     "name": "SEAT-LINE-the-reputation-always-said",
     "file": "src/systems/guildServiceFlow.js",
-    "old": "      ...(n.reputation < n.reputationNeed\n        ? [t(",
-    "new": "      ...(true\n        ? [t(",
+    "old": "      ...(n.reputation < n.reputationNeed ? [reputationLine(n, owed)] : []),",
+    "new": "      ...(true ? [reputationLine(n, owed)] : []),",
     "tests": [
       "test/fb1015c_seatline.test.js"
     ]

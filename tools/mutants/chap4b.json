@@ -246,8 +246,8 @@
   {
     "name": "CHAP4B-WM-SEATED",
     "file": "src/scenes/worldModes.js",
-    "old": "const access = serviceAccess(guild, membershipOf(seated(), guild), service);",
-    "new": "const access = serviceAccess(guild, membershipOf(memberships, guild), service);",
+    "old": "const access = serviceAccess(guild, membershipOf(seated(), guild), service, {",
+    "new": "const access = serviceAccess(guild, membershipOf(memberships, guild), service, {",
     "tests": [
       "test/chap4b_seats.test.js"
     ]

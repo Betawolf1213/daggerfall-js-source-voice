@@ -127,6 +127,10 @@ started (DFU: -16).
 review 28 days on, the popup's box saying so. A review that finds a member already on probation AND below -10 expels
 (Roleplay Realism's death squad for the Thieves Guild and the Dark Brotherhood still follows). A fall straight to -22 is
 warned first. A standing back at zero or above ends the probation.
+STANDING-WORDS (2026-10-16, `01-Overview/Field-Bugs-2026-10-15c.md`): the stakes are said, not only the state - "On
+probation: at your review in 8 days, below -10 you are expelled - at 0 or more it ends." - first in the hall's line
+(online) and under the guild on the enhanced Standing page (both lanes), the days on the character's own date
+(`guilds.js` reviewDaysLeft, `guildServiceFlow.js` probationWords).
 
 ## QFAIL-FREE - a missed quest costs nothing online
 

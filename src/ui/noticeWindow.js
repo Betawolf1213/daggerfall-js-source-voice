@@ -56,8 +56,9 @@ import { hallPosterName, isChapterWrit, meritLineOf, chapterLineOf, chapterFocus
   chapterBandOf, chapterBandEffectsLine, chapterDutiesLine, meritEarnsOf, chapterSeasonOf,
   MERIT_WRIT, MERIT_RECEIPT, MERIT_TENURE_S, MERIT_CAP_WEEK, STRENGTH_START, STRENGTH_MIN, STRENGTH_MAX, STRENGTH_STEP_MAX, STRENGTH_IDLE, STRENGTH_SHORT, STRENGTH_TARGET,
   CHAPTER_FAILING_FALL, CHAPTER_FAILING_MEETS, CHAPTER_EVENT_EFFECTS, CHAPTER_BANDS, CHAPTER_SEATS, SEAT_RANK, SEAT_TENURE_S, SEAT_ACCOUNT_AGE_S,
-  SEAT_MERIT_WEEKS, CHAPTER_EVENTS, CHAPTER_PATRON_MIN, CHAPTER_PATRON_BAND } from '../net/npcChapterLaw.js';   // CHAP7b: a chapter's patron, a guildmaster's bid; GUILD3d: the chapter's card - its band's effects, its duties
+  SEAT_MERIT_WEEKS, CHAPTER_EVENTS, CHAPTER_PATRON_MIN, CHAPTER_PATRON_BAND, ROLL_BOOK_RANK_MAX, ROLL_GAIN_DAY_MAX, HALL_WRIT_REP, RECEIPT_REP } from '../net/npcChapterLaw.js';   // CHAP7b: a chapter's patron, a guildmaster's bid; GUILD3d: the chapter's card - its band's effects, its duties
 import { chapterSeasonLines, chapterBackChoices, chapterBackedLine } from '../net/chapterEvents.js';   // CHAP6c: a chapter's Season - its lines, a member's choices   // CHAP2a: a hall writ's guild, named; CHAP3a: a member's own writ, its Merit; CHAP3b: a chapter's Strength
+import { t } from '../systems/textManager.js';   // STANDING-WORDS: the guide's rank and standing, in the player's language
 import { movedFirstText } from '../net/bagLaw.js';   // AUDIT2 BAG1 K8: what went into the Stores before a refusal
 import { createMarketTab } from './marketTab.js';   // PROF5: the Market tab
 import { createWorkTab, writWalledText } from './workTab.js';   // PROF6: the Work tab's guild writs and commissions; WRIT-WALL: what no writ may spend, in words
@@ -135,6 +136,10 @@ export function chapterGuide() {
   const patronBand = /** @type {{ name: string }} */ (CHAPTER_BANDS.find((b) => b.band === CHAPTER_PATRON_BAND)).name;
   return [
     ['What a chapter is', 'Each of Daggerfall\'s guilds - the Fighters and Mages Guilds, the temples, the knightly orders - keeps a chapter in every region where it has a hall, shared by every player online. The cards below are this region\'s. Join the guild at one of its halls, as you always would, and its chapters are yours.'],
+    // STANDING-WORDS / SEAT-WORDS (Field-Bugs-2026-10-15c): the guide said what a chair is and never that a guild's own
+    // review stops below it, nor how the standing itself moves online
+    [t('notice.chapters.rank.name', 'Your rank'), t('notice.chapters.rank.words', 'A guild\'s own review still promotes you, up to rank {cap}. Ranks {officer} and {master} are the chairs below, and a service that asks for one comes with the chair.', { cap: ROLL_BOOK_RANK_MAX, officer: SEAT_RANK.officer, master: SEAT_RANK.master })],
+    [t('notice.chapters.standing.name', 'Standing'), t('notice.chapters.standing.words', 'The realm keeps your standing with each of these guilds. It rises at most {max} a day for each - a larger reward is owed and paid on the days after - and a quest that fails costs nothing. A hall writ adds {writ}, and a closed Breach or a defended town adds {receipt} to each of your guilds that keeps a chapter there.', { max: ROLL_GAIN_DAY_MAX, writ: HALL_WRIT_REP, receipt: RECEIPT_REP })],
     ['Merit', `Your work for a chapter this week: ${n(MERIT_WRIT)} for filling your own chapter writ (one a day; goods you bought earn none), and a share of ${n(MERIT_RECEIPT)} for each Dagon's Breach closed or raided town defended in the region. It counts once you have been in the guild ${days(MERIT_TENURE_S)} days - at most ${n(MERIT_CAP_WEEK)} an account a week in each chapter, and in one chapter of each guild a week.`],
     // AUDIT PLAIN-UI W1: the whole of strengthAfter, failingWeekAfter, the Rivalry's swing and strengthSeasonEnd - "Merit
     // raises it" alone hid the week's mark, the fall back toward 50 and the Failing band's fall

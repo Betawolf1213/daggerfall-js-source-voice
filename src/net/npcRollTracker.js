@@ -69,6 +69,7 @@ import {
   rollBookCap, rollSeatsOf, ROLL_SEATS_MS,
 } from './npcChapterLaw.js';
 import { setReputation } from '../systems/factionRep.js';
+import { setStandingOwed } from '../systems/standingOwed.js';   // STANDING-WORDS: the owed, kept for the windows
 
 /** The refusals that end the tracker for this page - the Roll shut, the character no longer this tab's, the account
  *  gone, or a shape the service will not take (a build to update). Every other is asked again. */
@@ -123,17 +124,20 @@ export const rollVampireOf = (/** @type {any} */ entity) => !!(entity?.racialOve
  * `members()` its memberships (rollMembersOf - null with no book); `kept()` the last adoption as the save keeps it and
  * `keep(k)` the new one (the host's mod-save record). `onCeiling(factions)` hears the lines the day's pace cut;
  * `onStop(error)` the refusal that ended it. CHAP4b: `cap()` holds the book at 7 (rollBookCap - the guild factions it
- * held), `onCapped(factions)` hears them; `onSeats(seats, before)` the character's seats at each adoption (`before` null
+ * held), `onCapped(factions)` hears them; STANDING-WORDS: `onStanding(changes, first)` every adoption - each of the
+ * twenty-two the Roll's word moved since its last, `{ f, delta, now, owed }` (none on the page's first word, `first`
+ * true); `onSeats(seats, before)` the character's seats at each adoption (`before` null
  * at the first).
  * @param {{ io: any, character: () => string | null, lease: () => string | null, read: () => Record<number, number> | null,
  *   write: (values: Record<number, number>) => void, members: () => { f: number, rank: number }[] | null,
  *   kept?: () => unknown, keep?: (k: { seq: number, factions: Record<number, number> }) => void, now?: () => number,
  *   rid?: () => string, onCeiling?: (factions: number[]) => void, onStop?: (error: string) => void, cap?: () => number[],
- *   onCapped?: (factions: number[]) => void, onSeats?: (seats: { f: number, region: number, seat: string }[], before: { f: number, region: number, seat: string }[] | null) => void }} o
+ *   onCapped?: (factions: number[]) => void, onSeats?: (seats: { f: number, region: number, seat: string }[], before: { f: number, region: number, seat: string }[] | null) => void,
+ *   onStanding?: (changes: { f: number, delta: number, now: number, owed: number }[], first: boolean) => void }} o
  */
 export function createRollTracker({
   io, character, lease, read, write, members, kept = () => null, keep = () => {}, now = () => Date.now(), rid = () => rollRid(),
-  onCeiling = () => {}, onStop = () => {}, cap = () => [], onCapped = () => {}, onSeats = () => {},
+  onCeiling = () => {}, onStop = () => {}, cap = () => [], onCapped = () => {}, onSeats = () => {}, onStanding = () => {},
 }) {
   /** @type {Record<number, number> | null} the Roll's last word, as adopted */
   let base = null;
@@ -157,7 +161,7 @@ export function createRollTracker({
   let seats = null;
 
   const fail = (/** @type {string} */ error, /** @type {string | null} */ ls = null) => {
-    if (ROLL_STOPS.includes(error)) { stopped = error; stoppedLease = ls; onStop(error); return; }
+    if (ROLL_STOPS.includes(error)) { stopped = error; stoppedLease = ls; setStandingOwed(null); onStop(error); return; }   // STANDING-WORDS: stopped, nothing owed is said
     if (error === 'roll-unseeded') { base = null; pending = null; }   // no Roll after all: read (and seed) again
     nextAt = now() + wait;
     wait = Math.min(ROLL_RETRY_MAX_MS, wait * 2);
@@ -165,6 +169,12 @@ export function createRollTracker({
   const adopt = (/** @type {Record<number, number>} */ from, /** @type {Record<number, number>} */ sent, /** @type {any} */ roll) => {
     const a = rollAdopt(read() ?? from, from, sent, roll.factions);
     write(a.local);
+    // STANDING-WORDS: what the Roll's word moved since its last - a claim's credit, a hall writ's, the owed paid - and what
+    // it still owes, said and kept (none on the page's first word: there is no last to move from)
+    const last = base;
+    setStandingOwed(roll.owed);
+    const changes = last ? ROLL_FACTIONS.filter((f) => a.base[f] !== last[f])
+      .map((f) => ({ f, delta: a.base[f] - last[f], now: a.local[f] ?? a.base[f], owed: Number(roll.owed?.[f]) > 0 ? Number(roll.owed[f]) : 0 })) : [];
     base = a.base;
     keep({ seq: roll.seq, factions: a.base });
     heldKey = rollMembersKey(membersOf(roll.members));
@@ -177,6 +187,7 @@ export function createRollTracker({
     seats = rollSeatsOf(roll.seats);
     heardAt = now();
     onSeats(seats, before);
+    onStanding(changes, !last);
   };
 
   async function first(/** @type {string} */ id, /** @type {string} */ ls, /** @type {Record<number, number>} */ values) {

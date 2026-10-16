@@ -65,4 +65,68 @@ Read, and nothing in it holds a standing at -20 or takes 25 from the Mages Guild
 
 What is needed: the quest's name (the journal, or the questor's town), or the save, and the rest of the message. RECORDED
 for the reporter: a member on probation below -10 is expelled at the review 28 days after the probation began (REP6),
-and the hall's line says the standing ("Reputation -20 of 10").
+and the hall's line says the standing ("Reputation -20 of 10"). Since STANDING-WORDS (below) the probation says its
+stakes and its days, and every standing a quest or a crime moves is said as the Roll takes it - the next such drop
+names its size and its guild in the chat.
+
+## SEAT-WORDS and STANDING-WORDS: what the guild system left unsaid (2026-10-16)
+
+ASKED (Mac, "With the new guild system, are there any other descriptions or UI elements we need to further make this
+palatable for players", then of four gaps found on the code - "Seat-locked services", "Standing changes shown",
+"Probation warning", "Tutorial + guide words" - all four).
+
+FOUND. Online the Roll and the seats changed how a guild plays (Chapters-Arc 3.3-3.5), and four places still spoke as
+DFU does:
+
+- A service a seat's rank opens (the Mages Guild's Teleport at 8, Zenithar's summoning at 8) refused a member at the
+  Roll's 7 with record 3100, which promises a review that online never comes; and a knight asking for the order's house
+  was told DFU's rank-9 record, though online the house reads the book's rank, which stops at 7 (AUDIT CHAP4 E2).
+- The book held at 7 was one chat line, once a hold. Nothing said a guild's standing moved - a quest's +5, a crime's
+  loss through the faction tree, a hall writ's +2 - and after the pace's one line ("rises no further today") nothing said
+  how much was still owed.
+- A probation said "on probation" on the Standing page, and nothing of the review that expels below -10 or ends it.
+- The tutorial's Guilds page said "to rank up, raise the skills it cares about and keep working for it"; no page said the
+  standing's pace or the seats, and the notice board's "How chapters work" named the chairs but never that a guild's own
+  review stops below them.
+
+CHANGED:
+
+- **SEAT-WORDS - the gate.** `guildServiceFlow.js` serviceAccess takes the host's ceiling: a member AT it refused a
+  service the lowest seat rank would open is told "Rank 8 offers this, and online ranks 8 and 9 are chapter seats won
+  by Merit. A notice board explains how chapters work." Below 7, offline, for a seat's holder (the book read seated) and
+  for a service no rank opens, DFU's answers stand.
+- **SEAT-WORDS - the house.** `knightlyGifts.js` receiveHouseDecision, online: "Online, ranks 8 and 9 are the order's
+  chapter seats, held while won by Merit - and a seat brings no house." A house already given says so, as before.
+- **SEAT-WORDS - the hold.** `scenes/rollNoticeHost.js` (the streaming host's module, HOST-SPLIT): the hold's line
+  stands and pops the new Chapters tutorial page with it; a member of any of the twenty-two coming online is shown the
+  page the first time too (once on the device, always again from Menu > Tutorials).
+- **STANDING-WORDS - the moves.** `net/npcRollTracker.js` hands each adoption's moves to `onStanding` - each of the
+  twenty-two the Roll's word moved since its last (a claim's credit, a hall writ's, the owed paid), none at the page's
+  first word - and the host's module says them in one line: "Standing: The Mages Guild +15, now 40 (10 more to come)".
+  The names are FACTION.TXT's in the player's language, else the hall's.
+- **STANDING-WORDS - the owed.** The tracker keeps the Roll's owed in a leaf (`systems/standingOwed.js`; cleared when it
+  stops), and the hall's reputation row says it ("Reputation 62 of 80 (10 more to come)"), as does a note under the
+  guild on the enhanced Standing page ("10 more standing on the way - it rises at most 15 a day.").
+- **STANDING-WORDS - the probation.** `guilds.js` reviewDaysLeft - the days to the next review on the character's own
+  date - and `probationWords`: "On probation: at your review in 8 days, below -10 you are expelled - at 0 or more it
+  ends." First in the hall's line (said even when nothing else is short) and under the guild on the Standing page.
+- **The words.** The tutorial's Guilds page gains a point ("Online, a review stops at rank 7: ranks 8 and 9 are chapter
+  seats. See Guild Chapters."), and a new online page, Guild Chapters, says the day's pace, that a failed quest costs
+  nothing, and the seats. The notice board's guide gains "Your rank" (a review promotes to 7; a service that asks for a
+  chair comes with it) and "Standing" (the pace and the owed, a failed quest free, a hall writ's 2, a receipt's 1). Every
+  number is the law's own constant.
+
+Eighteen port strings, drafted in-session in the thirteen whole languages. The classic guild window draws nothing new
+(THE NATIVE-WINDOW RULE): its refusals are boxes the classic window already draws, and its hall line stays the enhanced
+skin's. Offline nothing changes - the Roll, the seats and the pace are online's.
+
+THE FOUR HOSTS: the guild popup's gate, house and line are worldModes.js's (openGuildService, openServiceFlow) - WIRED;
+the Roll's tracker is world.js's alone - WIRED through `rollNoticeHost.js`; exterior.js, the offline fixed city, keeps
+no Roll and constructs no GuildServiceWindow; dungeonContext.js stands no guild hall. The Standing page and the notice
+board are windows every host opens. Pinned by `test/fb1015c_guildwords.test.js` (9);
+`tools/mutants/fb1015c_guildwords.json` (29, all dead). PINS MOVED: `test/chap4b_seats.test.js`'s gate pin reads the
+ceiling handed on, its hold pin reads the module, and its review-ceiling pin is held to the review's own line (the gate,
+the house and the hall's line now carry the ceiling too, and the loose pin let CHAP4B-WM-CEILING live);
+`test/fb1015_promonow.test.js` and `test/fb1015c_seatline.test.js`'s host pins read the date handed on. Mutants
+re-aimed: CHAP4B-WM-SEATED, SEAT-LINE-the-reputation-always-said and L10N3d2's serviceMembersOnly (chap4b 34,
+fb1015c_seatline 8, l10n3dservices 41 - all dead).

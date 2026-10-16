@@ -6109,6 +6109,21 @@
   "tr": "ce7bc9f088d0",
   "by": "claude-in-session"
  },
+ "chapters.standing.item": {
+  "en": "3464c7c52de7",
+  "tr": "7796d28a9512",
+  "by": "claude-in-session"
+ },
+ "chapters.standing.itemOwed": {
+  "en": "960843819663",
+  "tr": "a72b6a3abb15",
+  "by": "claude-in-session"
+ },
+ "chapters.standing.line": {
+  "en": "213c3d0d15c5",
+  "tr": "53fda19eec9c",
+  "by": "claude-in-session"
+ },
  "chronicle.quests.abandon": {
   "en": "4ff9809f333c",
   "tr": "678e84ed0314",
@@ -7784,6 +7799,16 @@
   "tr": "244b6e525057",
   "by": "claude-in-session"
  },
+ "guild.probation.due": {
+  "en": "19f7f3a7b836",
+  "tr": "59db68ede417",
+  "by": "claude-in-session"
+ },
+ "guild.probation.in": {
+  "en": "ee50a39dffec",
+  "tr": "7b71c3f22502",
+  "by": "claude-in-session"
+ },
  "guild.rankNeeds.high": {
   "en": "a1baa03c371e",
   "tr": "d2215872ef31",
@@ -7804,6 +7829,11 @@
   "tr": "f9c9d185ff1f",
   "by": "claude-in-session"
  },
+ "guild.rankNeeds.reputationOwed": {
+  "en": "1dead1b02645",
+  "tr": "a5cffe44122f",
+  "by": "claude-in-session"
+ },
  "guild.rankNeeds.seat": {
   "en": "7b20e3a58757",
   "tr": "be844ef27067",
@@ -7822,6 +7852,11 @@
  "guild.rankNeeds.skills": {
   "en": "52aa2bb51d9d",
   "tr": "b921261e2e89",
+  "by": "claude-in-session"
+ },
+ "guild.seatService": {
+  "en": "93954193eb4e",
+  "tr": "3cf11382ba30",
   "by": "claude-in-session"
  },
  "holdings.horse.boons.hungry": {
@@ -7847,6 +7882,11 @@
  "holdings.wagon.boons.sound": {
   "en": "25b3b3fa348b",
   "tr": "daa57edf5e2f",
+  "by": "claude-in-session"
+ },
+ "knight.seatHouse": {
+  "en": "936303b3a997",
+  "tr": "20cfeb3fb5a7",
   "by": "claude-in-session"
  },
  "lamp.granted": {
@@ -12939,6 +12979,26 @@
   "tr": "010062424afa",
   "by": "claude-in-session"
  },
+ "notice.chapters.rank.name": {
+  "en": "f655d25b4390",
+  "tr": "37b20cc550f5",
+  "by": "claude-in-session"
+ },
+ "notice.chapters.rank.words": {
+  "en": "39979be9c655",
+  "tr": "9b57cbdb4ff2",
+  "by": "claude-in-session"
+ },
+ "notice.chapters.standing.name": {
+  "en": "742f03c37a89",
+  "tr": "04fc697c1d1d",
+  "by": "claude-in-session"
+ },
+ "notice.chapters.standing.words": {
+  "en": "40442ef0b890",
+  "tr": "9e9f0be0a87d",
+  "by": "claude-in-session"
+ },
  "pause.ask.hint": {
   "en": "3b4376983a26",
   "tr": "6cd56ca88cb2",
@@ -13032,6 +13092,11 @@
  "pause.guilds.none": {
   "en": "124b3ac64e2a",
   "tr": "5a5f516a2631",
+  "by": "claude-in-session"
+ },
+ "pause.guilds.owed": {
+  "en": "a28f42249804",
+  "tr": "bfeab766afd8",
   "by": "claude-in-session"
  },
  "pause.guilds.probation": {
@@ -19037,6 +19102,31 @@
  "trade.counter.title.sellMagic": {
   "en": "2b1ee8ca6b70",
   "tr": "f20d86dd79a1",
+  "by": "claude-in-session"
+ },
+ "tutorials.chapters.body1": {
+  "en": "013dee043fa6",
+  "tr": "0cfaf009ad2c",
+  "by": "claude-in-session"
+ },
+ "tutorials.chapters.body2": {
+  "en": "a00e361bcb4e",
+  "tr": "febe6551d9b7",
+  "by": "claude-in-session"
+ },
+ "tutorials.chapters.title": {
+  "en": "b4f8a1d452d1",
+  "tr": "0d1d795652a0",
+  "by": "claude-in-session"
+ },
+ "tutorials.chapters.trigger": {
+  "en": "365aec48fe12",
+  "tr": "2254f875b2dc",
+  "by": "claude-in-session"
+ },
+ "tutorials.guilds.online": {
+  "en": "b4c2da555bc1",
+  "tr": "dd65d3b9a294",
   "by": "claude-in-session"
  },
  "tutorials.kingsGambit.body1": {

@@ -295,6 +295,7 @@ import { ecotoneOwner, ecoOrigin } from '../world/ecotone.js'; import { MAP_W, M
 import { insideRocks, forestAt } from '../world/terrainNature.js';   // FOREST1 (AUDIT F1): a wood's flats keep out of the rock pieces; GRASS-LIT2: the shot hook's woods
 import { huntKind, createBodyStamps, bodiesHere, trackerMarks } from './huntHost.js';   // PROF7: Hunting's bodies - a kind in it, the kills that stamp them, a Tracker's marks; INDOOR-SKIN: the pool by the mode
 import { fishKind } from './fishHost.js';   // PROF8: Fishing's casts and schools - a kind in it
+import { rollNoticeDoors } from './rollNoticeHost.js';   // SEAT-WORDS / STANDING-WORDS: what the Roll's tracker says
 import { utcDayOfMs } from '../net/nodeLaw.js';   // PROF8: a haul's UTC day
 import { registerPlayerKillListener } from '../systems/playerKills.js';   // PROF7: the player's own kill stamps a body
 import { setProfessionsPages, forgeOffered, focusStoresStation, stationColdLine } from '../ui/profPages.js';   // PROF1: the Professions and Stores pages on the character sheet's rail; CARP-YARD: the joinery's bench opens it
@@ -779,7 +780,7 @@ import { createHallBook, hallFactionsOf, chapterFactionOf, parseHallCommand, hal
 import { createChapterSheet } from '../net/chapterSheet.js';   // CHAP3c: the chapter sheet, for the halls' prices and shelves
 import { createChapterBanners } from './chapterBanners.js';   // CHAP7b: a patron's banners at its chapter's halls
 import { createRollTracker, rollEntityDoors } from '../net/npcRollTracker.js';   // CHAP1: the Roll - this realm character's standing with Daggerfall's guilds, the account service's
-import { rollCeilingLine, rollKeptOf, ROLL_KEPT_VENDOR, hallPosterName, hallRememberLine, isChapterWrit, bookCappedLine, seatLinesOf, seatRankAt, ROLL_BOOK_RANK_MAX, chapterRollTitle, chapterRollLines, chapterBandOf } from '../net/npcChapterLaw.js';   // AUDIT CHAP: the pace's line; the last adoption, kept in the save; CHAP2a: a hall writ's guild, named; CHAP3a: a member's own writ too; CHAP5a: the hall's roll; CHAP5b: a chapter's band, the living town's
+import { rollCeilingLine, rollKeptOf, ROLL_KEPT_VENDOR, hallPosterName, hallRememberLine, isChapterWrit, seatLinesOf, seatRankAt, ROLL_BOOK_RANK_MAX, chapterRollTitle, chapterRollLines, chapterBandOf } from '../net/npcChapterLaw.js';   // AUDIT CHAP: the pace's line; the last adoption, kept in the save; CHAP2a: a hall writ's guild, named; CHAP3a: a member's own writ too; CHAP5a: the hall's roll; CHAP5b: a chapter's band, the living town's
 import { chapterSeasonLines } from '../net/chapterEvents.js';   // CHAP6c: a chapter's Season in words, its candidates named
 import { setHudRenown } from '../ui/hudRenown.js';   // RENOWN4: my own Renown and its bar, under the vitals
 import { pickRegionHubs, hubAtMapId, hubArrivalLine, hubClaim } from '../systems/regionHubs.js';   // HUB1: every region's main city, its hub; SD2b: a populated place's claim (the Hollow's cities)
@@ -22217,7 +22218,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     keep: (k) => { rollKept = k; },
     onCeiling: (factions) => { for (const f of factions) townTalk.say(rollCeilingLine(playerEntity?.factionRep?.dict?.get(f)?.name)); },
     // CHAP4b: ranks 8 and 9 are seats - the book held at 7 said once a hold, the seats as they stand and as they move
-    onCapped: (factions) => { const line = bookCappedLine(factions); if (line) chatNotice(line); },
+    ...rollNoticeDoors({ entityOf: () => playerEntity, say: (text) => chatNotice(text) }),   // SEAT-WORDS / STANDING-WORDS: the hold (and the Chapters page), and what the Roll moved
     onSeats: (seats, before) => { for (const line of seatLinesOf(before, seats)) chatNotice(line); },
     // shut: the save keeps it, quietly - AUDIT CHAP3 C9: a build too old for the service says so, as Renown's stop does
     onStop: (error) => {

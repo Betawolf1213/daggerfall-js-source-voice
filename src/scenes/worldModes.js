@@ -6108,7 +6108,7 @@ export function createWorldModes(host) {
         promoteWhenEarned: sharedClockOn(),   // PROMO-NOW: online, a promotion does not wait the 28 days
       }),
       // PROMO-NOW: online, the popup says what the next rank asks (the enhanced skin's line; the classic window is DFU's)
-      rankNeeds: () => (sharedClockOn() ? rankNeedsLines(playerEntity, guild, seated(), store, { rankCeiling: host.rollRankCeiling?.() ?? null }) : null),   // SEAT-LINE: read seated - a seat's own hall asks nothing more
+      rankNeeds: () => (sharedClockOn() ? rankNeedsLines(playerEntity, guild, seated(), store, { rankCeiling: host.rollRankCeiling?.() ?? null, now: ownDate() }) : null),   // SEAT-LINE: read seated - a seat's own hall asks nothing more; STANDING-WORDS: a probation's days on the character's own date
       onJoin: () => {
         // JoinButton_OnMouseClick (:497-525). joinDecision is null for
         // the two invitation-only guilds, which DFU reaches by
@@ -6138,7 +6138,7 @@ export function createWorldModes(host) {
       onService: () => {
         const shut = shutBox();   // AUDIT CHAP5 D2
         if (shut) return shut;
-        const access = serviceAccess(guild, membershipOf(seated(), guild), service);   // CHAP4b: a seat's rank here
+        const access = serviceAccess(guild, membershipOf(seated(), guild), service, { rankCeiling: host.rollRankCeiling?.() ?? null });   // CHAP4b: a seat's rank here; SEAT-WORDS: a seat's service says so
         if (!access.allowed) {
           return { rows: access.textId ? rows(access.textId) : [access.text] };
         }
@@ -6632,7 +6632,7 @@ export function createWorldModes(host) {
         void homes.ensure(dir?.mapId ?? 0);
         return { rows: [{ text: accountRefusalText('home-layout'), center: true }] };
       }
-      const decision = receiveHouseDecision(kept, {   // AUDIT CHAP4 E2: the book's rank
+      const decision = receiveHouseDecision(kept, { rankCeiling: host.rollRankCeiling?.() ?? null,   // AUDIT CHAP4 E2: the book's rank; SEAT-WORDS: online none
         ownsHouse: ownsHouse(playerEntity.houses, region),
         housesForSale: homes ? currentHousesForSale().filter((h) => !homes.homeAt(dir?.mapId ?? 0, h.buildingKey)) : currentHousesForSale(),
         alreadyOwnResult: TRANSACTION_RESULT.ALREADY_OWN_HOUSE,

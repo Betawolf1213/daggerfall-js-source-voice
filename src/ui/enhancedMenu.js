@@ -145,7 +145,7 @@ import { dateFromClassicMinutes, dateString } from '../systems/gameDate.js';
 // PX5: the pause clock reads THE ONE CLOCK directly (AUDIT 23 C2's
 // law - every host already reads this same module), so no host seam
 // is needed and no host can drift.
-import { worldMinutes, skyMinutes, trustedWorldMinutes, worldSpanRealWords } from '../systems/worldTick.js';
+import { worldMinutes, skyMinutes, trustedWorldMinutes, worldSpanRealWords, ownMinutes } from '../systems/worldTick.js';
 import { BUILD_TAG, UPDATE } from '../buildTag.js';
 import { injectEnhancedStyle, injectEnhancedFonts } from './enhancedStyle.js';
 import { repaintKeepingScroll } from './domRepaint.js';
@@ -168,6 +168,8 @@ import { COLLECTION_PAGE_SECTIONS, collectionsPageShown, drawCollectionsPage, re
 import { swornBodyOf } from '../systems/revenantCompanions.js';   // COMPANION-ROSTER: a sworn one's live health
 import { enemyDisplayName } from '../characters/enemyBasics.js';   // REVENANT-PAGE: a revenant's kind   // REVENANT-PAGE: the foes that have earned your name
 import { affiliations } from '../systems/affiliations.js';
+import { probationWords } from '../systems/guildServiceFlow.js';   // STANDING-WORDS: a probation's stakes, as the hall says them
+import { ROLL_GAIN_DAY_MAX } from '../net/npcChapterLaw.js';   // STANDING-WORDS: the day's pace, said beside the owed
 import { legalRepOf } from '../systems/court.js';   // REP5: the law, region by region
 import { banishmentLeft, banishmentDaysLeft, KNOWN_CRIMINAL_BELOW, pardonPrice, challengeFine } from '../systems/standing.js';
 import { legalStandingWord } from '../systems/legalBands.js';
@@ -5249,7 +5251,7 @@ export function lawRows(entity, worldNow) {
  *  19 says rather than drawing an empty section. */
 export function statsGuilds(detail, entity) {
   detail.append(pxDivider(t('pause.guilds.title', 'Guilds')));
-  const book = affiliations(entity);
+  const book = affiliations(entity, { now: dateFromClassicMinutes(Math.floor(ownMinutes())) });   // STANDING-WORDS: a probation's days on the character's own clock, as the review reads it
   if (!book.length) {
     detail.append(el('p', 'px-note', t('pause.guilds.none', 'You have no affiliations.')));
     return;
@@ -5258,6 +5260,9 @@ export function statsGuilds(detail, entity) {
     const r = el('div', 'px-stat px-guild');
     r.append(el('span', 'k', a.affiliation), el('span', 'v px-rank', a.probation ? t('pause.guilds.probation', '{title} - on probation', { title: a.title }) : a.title), signedRep(a.rep));   // REP6
     detail.append(r);
+    // STANDING-WORDS (Field-Bugs-2026-10-15c): a probation's stakes, and what the Roll still owes online
+    if (a.probation) detail.append(el('p', 'px-note', probationWords(a.reviewIn)));
+    if (a.owed > 0) detail.append(el('p', 'px-note', t('pause.guilds.owed', '{owed} more standing on the way - it rises at most {max} a day.', { owed: a.owed, max: ROLL_GAIN_DAY_MAX })));
   }
 }
 

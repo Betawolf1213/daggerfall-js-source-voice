@@ -58,5 +58,5 @@ test('SEAT-LINE: a seat\'s holder, its book read seated, is told nothing more (m
 
 test('SEAT-LINE: the interior host reads the hall\'s line off the seated book, under the Roll\'s ceiling (mutant: the book unseated)', () => {
   const wm = readFileSync(new URL('../src/scenes/worldModes.js', import.meta.url), 'utf8');
-  assert.ok(wm.includes('rankNeeds: () => (sharedClockOn() ? rankNeedsLines(playerEntity, guild, seated(), store, { rankCeiling: host.rollRankCeiling?.() ?? null }) : null),'));
+  assert.ok(wm.includes('rankNeeds: () => (sharedClockOn() ? rankNeedsLines(playerEntity, guild, seated(), store, { rankCeiling: host.rollRankCeiling?.() ?? null, now: ownDate() }) : null),'));
 });

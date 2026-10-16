@@ -279,6 +279,12 @@ SEAT-LINE (2026-10-15, `01-Overview/Field-Bugs-2026-10-15c.md`; Mac: "Explain th
 said nothing at 7, so a capped Archmage was told nothing at all; at the ceiling it now says the next rank is a seat and
 what a seat asks - the seat's line in reputation, the Turning's Merit, the tenure and the account's age - read off the
 book seated, so a seat's holder at its own halls is told nothing more.
+SEAT-WORDS (2026-10-16, the same page): a service a seat's rank opens, refused at 7, says it is a seat's where DFU's
+record 3100 promised a review; a knight asking for the order's house is told a seat brings none (E2 above); the hold's
+line pops the Guild Chapters tutorial page, as a member's first word online does; and the notice board's guide says a
+guild's own review stops at 7. STANDING-WORDS (the same page): every adoption says what the Roll's word moved since its
+last ("Standing: The Mages Guild +15, now 40 (10 more to come)"), and the owed is kept for the hall's line and the
+Standing page (3.3's pace, said where it is felt).
 
 AUDIT CHAP4 (D2, E2), RECORDED: what DFU GIVES ONCE at rank 8 or 9 and the character keeps is not given online - a seat
 is held, not a rank earned for good. A knightly order's rank-8 and rank-9 armour and its rank-9 house read the BOOK's
