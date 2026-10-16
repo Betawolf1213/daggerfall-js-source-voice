@@ -756,7 +756,7 @@
  },
  {
   "name": "PERF-EXT26-the-worker-waits-for-the-roads-before-a-grid",
-  "file": "src/world/terrainGenWorker.js",
+  "file": "src/world/terrain/terrainGenWorker.js",
   "old": "    if (m.t === 'grid') { answerGrid(m); return; }",
   "new": "    if (m.t === 'grid' && !pendingRoads) { answerGrid(m); return; }",
   "tests": [
@@ -765,7 +765,7 @@
  },
  {
   "name": "PERF-EXT26-the-worker-copies-the-grid-back-instead-of-transferring",
-  "file": "src/world/terrainGenWorker.js",
+  "file": "src/world/terrain/terrainGenWorker.js",
   "old": "    globalThis.postMessage({ t: 'grid', id: m.id, positions, normals, bed }, transfer);",
   "new": "    globalThis.postMessage({ t: 'grid', id: m.id, positions, normals, bed });",
   "tests": [
@@ -774,7 +774,7 @@
  },
  {
   "name": "PERF-EXT26-a-failed-grid-answers-through-the-jobs-FIFO",
-  "file": "src/world/terrainGenWorker.js",
+  "file": "src/world/terrain/terrainGenWorker.js",
   "old": "    globalThis.postMessage({ t: 'gridError', id: m.id, message: e?.message ?? String(e) });",
   "new": "    globalThis.postMessage({ t: 'error', message: e?.message ?? String(e) });",
   "tests": [
@@ -783,7 +783,7 @@
  },
  {
   "name": "PERF-EXT26-the-worker-builds-a-different-grid",
-  "file": "src/world/terrainGenWorker.js",
+  "file": "src/world/terrain/terrainGenWorker.js",
   "old": "    const { positions, normals, bed } = restrideGrid({ ...m, woods, roads, sites, climates });",
   "new": "    const { positions, normals, bed } = restrideGrid({ ...m, woods, roads, sites, climates, stride: 4 });",
   "tests": [
@@ -792,7 +792,7 @@
  },
  {
   "name": "PERF-EXT26-the-client-routes-a-grid-reply-into-the-FIFO",
-  "file": "src/world/terrainGenClient.js",
+  "file": "src/world/terrain/terrainGenClient.js",
   "old": "        if (m.t === 'grid' || m.t === 'gridError') { this._gridAnswer(m); return; }",
   "new": "        if (m.t === 'gridError') { this._gridAnswer(m); return; }",
   "tests": [
@@ -801,7 +801,7 @@
  },
  {
   "name": "PERF-EXT26-the-client-transfers-the-pixels-own-samples",
-  "file": "src/world/terrainGenClient.js",
+  "file": "src/world/terrain/terrainGenClient.js",
   "old": "      this._worker.postMessage({ t: 'grid', id, ...job });",
   "new": "      this._worker.postMessage({ t: 'grid', id, ...job }, [job.samples.buffer]);",
   "tests": [
@@ -810,7 +810,7 @@
  },
  {
   "name": "PERF-EXT26-a-failed-grid-is-left-unbuilt",
-  "file": "src/world/terrainGenClient.js",
+  "file": "src/world/terrain/terrainGenClient.js",
   "old": "      g.resolve(restrideGrid({ woods: this._woods, roads: this._roads ?? null, sites: this._sites, climates: this._climates, ...g.job }));\n      return;",
   "new": "      g.resolve(null);\n      return;",
   "tests": [
@@ -819,7 +819,7 @@
  },
  {
   "name": "PERF-EXT26-a-dead-worker-strands-its-grids",
-  "file": "src/world/terrainGenClient.js",
+  "file": "src/world/terrain/terrainGenClient.js",
   "old": "    for (const g of grids) g.resolve(restrideGrid({ woods: this._woods, roads: this._roads ?? null, sites: this._sites, climates: this._climates, ...g.job }));",
   "new": "    void grids;",
   "tests": [
@@ -828,7 +828,7 @@
  },
  {
   "name": "PERF-EXT26-every-grid-shares-one-id",
-  "file": "src/world/terrainGenClient.js",
+  "file": "src/world/terrain/terrainGenClient.js",
   "old": "    const id = ++this._gridId;",
   "new": "    const id = this._gridId;",
   "tests": [
@@ -837,7 +837,7 @@
  },
  {
   "name": "PERF-EXT26-the-grid-law-drops-the-ghost-rows",
-  "file": "src/world/terrainGen.js",
+  "file": "src/world/terrain/terrainGen.js",
   "old": "  const grid = buildTerrainGrid(samples, stride, ghost);",
   "new": "  const grid = buildTerrainGrid(samples, stride, () => 0);",
   "tests": [

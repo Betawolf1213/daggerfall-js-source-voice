@@ -1,6 +1,6 @@
 // MERCHANT-YARDS (2026-10-10): EVERY CITY'S AND TOWN'S STABLE AND WAGON YARD - systems/merchantYards.js (the trade, the
-// keepers, the towns), world/merchantYardSites.js (where they stand), world/merchantYardModels.js and
-// world/merchantYardArt.js (what they are made of), scenes/merchantYardsHost.js (the pool), the General Store's shelf
+// keepers, the towns), world/merchantYards/merchantYardSites.js (where they stand), world/merchantYards/merchantYardModels.js and
+// world/merchantYards/merchantYardArt.js (what they are made of), scenes/merchantYardsHost.js (the pool), the General Store's shelf
 // they took the horse, the cart and the wagons from, and the wiring in the four hosts.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -14,16 +14,16 @@ import {
 import {
   YARD_FOOT, YARD_PAD_M, BUILDING_CLEAR_M, PROP_CLEAR_M, FLAT_CLEAR_M, YARD_GAP_M, FRONT_ROAD_CELLS, NO_ROAD_COST, YARD_TURNS,
   yardSpans, yardGround, yardSite, yardSitesOn, yardSitesOf, carveYards, yardMeasuresOf, placedModelBox, fieldRect,
-} from '../src/world/merchantYardSites.js';
+} from '../src/world/merchantYards/merchantYardSites.js';
 import { staticBuildingBox, staticBuildingWorldAabb } from '../src/world/staticBuildings.js';   // AUDIT MERCHANT-YARDS R2
-import { buildYardModel, SIGN_BOARD, STABLE_YARD, WAGON_YARD, YARD_FLOOR_Y, signBoxOf, yardPoints } from '../src/world/merchantYardModels.js';
-import { yardArt, yardSignArt, YARD_ARCHIVE, YARD_REC, SIGN_GLYPHS, signGlyph, SIGN_ART_W, SIGN_ART_H, YARD_ART_SIZE } from '../src/world/merchantYardArt.js';
+import { buildYardModel, SIGN_BOARD, STABLE_YARD, WAGON_YARD, YARD_FLOOR_Y, signBoxOf, yardPoints } from '../src/world/merchantYards/merchantYardModels.js';
+import { yardArt, yardSignArt, YARD_ARCHIVE, YARD_REC, SIGN_GLYPHS, signGlyph, SIGN_ART_W, SIGN_ART_H, YARD_ART_SIZE } from '../src/world/merchantYards/merchantYardArt.js';
 import { createMerchantYards, yardToScene, yardBoxToScene, feetInYard, YARD_REACH } from '../src/scenes/merchantYardsHost.js';
 import { YARD_MARGIN } from '../src/scenes/homeYards.js';
 import { stockShopShelf, SHOP_BUYS_GROUPS, shopBuysItem, TRANSPORT_HORSE, TRANSPORT_SMALL_CART } from '../src/systems/shopStock.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { LOCATION_TYPES } from '../src/formats/mapsFile.js';
-import { CityNavigation, NAV_CELL } from '../src/world/cityNavigation.js';
+import { CityNavigation, NAV_CELL } from '../src/world/city/cityNavigation.js';
 import { ROAD_WEIGHT } from '../src/systems/gothwayBoards.js';
 import { WAGON_KINDS } from '../src/systems/wagon/wagonKinds.js';
 import { getSeed, setSeed } from '../src/formats/dfRandom.js';
@@ -569,6 +569,6 @@ test('AUDIT MERCHANT-YARDS G2: THE TIE-BREAK IS THE DOCUMENTED ONE AND THE SAME 
   for (let x = 7; x <= 15; x++) road[27 * W + x] = 1;
   const s = yardSite({ width: W, height: H, blocked, road }, 'stable');
   assert.deepEqual([s.gx, s.gy, s.turn], [19, 7, 1], 'the lower row, though its turn came second');
-  const src = read('src/world/merchantYardSites.js');
+  const src = read('src/world/merchantYards/merchantYardSites.js');
   assert.equal(/Math\.hypot/.test(src.replace(/\/\/[^\n]*/g, '')), false, 'no Math.hypot decides a place');
 });

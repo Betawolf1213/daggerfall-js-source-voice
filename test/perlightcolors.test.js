@@ -13,10 +13,10 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { nearestLights } from '../src/world/cityLights.js';
+import { nearestLights } from '../src/world/city/cityLights.js';
 import { withPlayerLights } from '../src/scenes/magicCandle.js';
 import { Renderer } from '../src/render/renderer.js';
-import { interiorLightProperties } from '../src/world/interiorLights.js';
+import { interiorLightProperties } from '../src/world/interior/interiorLights.js';
 import { interiorLightColor } from '../src/render/enhancedLighting.js';   // INTERIOR-DIM: the hosts' colour x intensity, through the lane's law
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');

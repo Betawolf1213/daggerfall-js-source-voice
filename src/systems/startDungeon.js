@@ -7,7 +7,7 @@
 // itself by its map id, never the configured cell.
 import { getInt } from './settings/settings.js';
 import { longitudeLatitudeToMapPixel } from '../formats/mapsFile.js';
-import { PRIVATEERS_HOLD_MAP_ID } from '../world/dungeonTextures.js';
+import { PRIVATEERS_HOLD_MAP_ID } from '../world/dungeon/dungeonTextures.js';
 
 /** A map pixel ({ x, y }) is the classic start's cell. */
 export const isStartCell = (px) => !!px && px.x === getInt('Startup', 'StartCellX') && px.y === getInt('Startup', 'StartCellY');

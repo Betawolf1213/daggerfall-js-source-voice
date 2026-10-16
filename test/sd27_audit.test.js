@@ -19,8 +19,8 @@ import { sdHourClockOf, sdArenaGlowAt } from '../src/render/sdArenaGlow.js';
 import { SD_SKY_MODE } from '../src/render/sdSky.js';
 import { SD_FIGHT_EMPTY } from '../src/net/sdFightLink.js';
 import { SD_THRESHOLD, realmToDungeon } from '../src/net/sdBrain.js';
-import { SD_THRESHOLD_RIM, SD_WAY_BACK_Z, SD_WAY_BACK_SIZE } from '../src/world/sdRealm.js';
-import { riftLook, SD_RIFT_OPEN_LOOK } from '../src/world/sdDungeon.js';
+import { SD_THRESHOLD_RIM, SD_WAY_BACK_Z, SD_WAY_BACK_SIZE } from '../src/world/superDungeon/sdRealm.js';
+import { riftLook, SD_RIFT_OPEN_LOOK } from '../src/world/superDungeon/sdDungeon.js';
 
 const ROOT = join(import.meta.dirname, '..');
 const read = (p) => readFileSync(join(ROOT, p), 'utf8');
@@ -103,10 +103,10 @@ test('AUDIT SD V (P1-P4, P6): THE HOLLOW\'S AND THE HOUR\'S FRAMES MAKE NOTHING 
     const { createSdEnd } = await import(${url('src/scenes/sdEnd.js')});
     const { SdSkyMap, SD_SKY_STEPS } = await import(${url('src/render/sdSky.js')});
     const { SdHaloRenderer } = await import(${url('src/render/sdHalo.js')});
-    const { handMatrix } = await import(${url('src/world/sdHall.js')});
+    const { handMatrix } = await import(${url('src/world/superDungeon/sdHall.js')});
     const { createSdAir } = await import(${url('src/scenes/sdAir.js')});
     const { realmToDungeon } = await import(${url('src/net/sdBrain.js')});
-    const { SD_THRESHOLD_RIM } = await import(${url('src/world/sdRealm.js')});
+    const { SD_THRESHOLD_RIM } = await import(${url('src/world/superDungeon/sdRealm.js')});
     const renderer = { createMesh: () => ({}), destroyMesh() {}, uploadTexture() {}, uploadEmissionTexture() {} };
     const bytes = (fn) => {
       for (let f = 0; f < 20000; f++) fn();

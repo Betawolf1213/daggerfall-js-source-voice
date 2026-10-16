@@ -18,9 +18,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { paintRoads, pathCorners, TILE } from '../src/world/roadPainter.js';
-import { MAP_W, MAP_H } from '../src/world/roadNetwork.js';
-import { generatePixelTerrain } from '../src/world/terrainGen.js';
+import { paintRoads, pathCorners, TILE } from '../src/world/road/roadPainter.js';
+import { MAP_W, MAP_H } from '../src/world/road/roadNetwork.js';
+import { generatePixelTerrain } from '../src/world/terrain/terrainGen.js';
 
 const bytes = (f) => new Uint8Array(readFileSync(new URL(`../vendor/roads-hazelnut/${f}`, import.meta.url)));
 const roads = bytes('roadData.bytes');

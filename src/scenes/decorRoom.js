@@ -40,7 +40,7 @@ import { localAabb, transformedAabb, aabbOutside } from '../render/frustum.js'; 
 import { RAY_DISTANCE, DEFAULT_ACTIVATION_DISTANCE } from '../player/activate.js';
 import { billboardSize } from '../world/rmbFlats.js';
 import { armFlatAnim } from '../render/flatAnimation.js';
-import { collectInteriorLights } from '../world/interiorLights.js';
+import { collectInteriorLights } from '../world/interior/interiorLights.js';
 import { decorIsMount, decorMountFrame, DECOR_MOUNT_LIFT, decorFlatMirrored, decorDrawnScale, decorIsFigure } from '../net/decorLaw.js';   // DECOR-FIGURE: a figure at its own size; MWNPC18: and in its body
 import { figureLook, personActor } from '../characters/peopleBodies.js';   // MWNPC18: a placed figure, read for its Morrowind body
 import { decorMountDye, decorMountDyeTarget, decorMountItem } from '../systems/decor/decorItems.js';

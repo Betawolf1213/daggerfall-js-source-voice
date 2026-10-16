@@ -62,7 +62,7 @@
 // One owner: the host builds it online, and disposes it with the page.
 // ═══════════════════════════════════════════════════════════════════
 import { utcDayOfMs, pixelKey, parseNodeKey } from '../net/nodeLaw.js';
-import { TERRAIN_SIZE } from '../world/terrainSampler.js';
+import { TERRAIN_SIZE } from '../world/terrain/terrainSampler.js';
 /** A map pixel's side in the scene (metres). */
 const PIXEL_M = TERRAIN_SIZE;
 import { rankName, professionName, DEEP_UNCONFIRMED_PER_DAY } from '../net/professionLaw.js';

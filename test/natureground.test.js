@@ -7,9 +7,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { groundOffPlane, surfaceHeightAt } from '../src/world/terrainSurface.js';
-import { calcAvgMaxHeight, blendLocationTerrain } from '../src/world/terrainTiles.js';
-import { HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { groundOffPlane, surfaceHeightAt } from '../src/world/terrain/terrainSurface.js';
+import { calcAvgMaxHeight, blendLocationTerrain } from '../src/world/terrain/terrainTiles.js';
+import { HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const H = HEIGHTMAP_DIMENSION;

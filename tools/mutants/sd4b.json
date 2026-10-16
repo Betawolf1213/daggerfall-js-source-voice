@@ -1,7 +1,7 @@
 [
   {
     "name": "SD4B-the-last-of-a-tie",
-    "file": "src/world/dungeonEnd.js",
+    "file": "src/world/dungeon/dungeonEnd.js",
     "old": "  return list.reduce((a, m) => (d(m) > d(a) ? m : a));",
     "new": "  return list.reduce((a, m) => (d(m) >= d(a) ? m : a));",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "SD4B-the-height-asked",
-    "file": "src/world/dungeonEnd.js",
+    "file": "src/world/dungeon/dungeonEnd.js",
     "old": "Math.hypot(m.x - from.x, m.z - from.z);",
     "new": "Math.hypot(m.x - from.x, /** @type {any} */ (m).y ?? 0, m.z - from.z);",
     "tests": [
@@ -29,7 +29,7 @@
   },
   {
     "name": "SD4B-the-copies-counted",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "if (e && !e.eliteCopy && Number.isFinite(e.x)",
     "new": "if (e && Number.isFinite(e.x)",
     "tests": [
@@ -38,7 +38,7 @@
   },
   {
     "name": "SD4B-the-start-markers-unplaced",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "out.push({ x: m.x + (b.originX ?? 0), y: m.y, z: m.z + (b.originZ ?? 0) });",
     "new": "out.push({ x: m.x, y: m.y, z: m.z });",
     "tests": [
@@ -47,7 +47,7 @@
   },
   {
     "name": "SD4B-the-walls-unasked",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "  return Math.max(SD_RIFT_MIN_M, Math.min(SD_RIFT_SIZE_M, h, w));",
     "new": "  return Math.max(SD_RIFT_MIN_M, Math.min(SD_RIFT_SIZE_M, h));",
     "tests": [
@@ -56,7 +56,7 @@
   },
   {
     "name": "SD4B-no-least-ring",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "  return Math.max(SD_RIFT_MIN_M, Math.min(SD_RIFT_SIZE_M, h, w));",
     "new": "  return Math.min(SD_RIFT_SIZE_M, h, w);",
     "tests": [
@@ -65,7 +65,7 @@
   },
   {
     "name": "SD4B-the-ring-never-moved",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "  for (const r of [SD_RIFT_SHIFT_M, 2 * SD_RIFT_SHIFT_M]) {",
     "new": "  for (const r of []) {",
     "tests": [
@@ -74,7 +74,7 @@
   },
   {
     "name": "SD4B-through-a-wall",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "  if (probe.ray([from[0], from[1] + SD_CHEST_M, from[2]], dir, r + SD_RIFT_AIR_M) != null) return null;\n",
     "new": "",
     "tests": [
@@ -83,7 +83,7 @@
   },
   {
     "name": "SD4B-onto-another-floor",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "  return y != null && (lower ? y - from[1] : Math.abs(y - from[1])) <= SD_STEP_M ? [x, y, z] : null;",
     "new": "  return y != null ? [x, y, z] : null;",
     "tests": [
@@ -92,7 +92,7 @@
   },
   {
     "name": "SD4B-the-Return-inside-the-ring",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "  for (const r of [rift.size / 2 + SD_RETURN_GAP_M, 1.5]) {",
     "new": "  for (const r of [SD_RETURN_GAP_M, 1.5]) {",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "SD4B-a-newcomer-after-the-kill",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "  if (ph === 'found' || (ph === 'fell' && entered)) return null;",
     "new": "  if (ph === 'found' || ph === 'fell') return null;",
     "tests": [
@@ -110,7 +110,7 @@
   },
   {
     "name": "SD4B-through-before-the-find",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "  return ph === 'risen' ? SD_NO_RIFT : SD_NO_CLOSED;",
     "new": "  return ph === 'risen' ? null : SD_NO_CLOSED;",
     "tests": [
@@ -119,7 +119,7 @@
   },
   {
     "name": "SD4B-closed-with-nothing-heard",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "  if (!rec) return SD_NO_RIFT;",
     "new": "  if (!rec) return SD_NO_CLOSED;",
     "tests": [
@@ -128,7 +128,7 @@
   },
   {
     "name": "SD4B-another-slot-through",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "  if (rec.s !== s) return SD_NO_CLOSED;\n  if (fallen) return SD_NO_FALLEN;\n  const ph = sdPhase(rec, now);\n  if (ph === 'found'",
     "new": "  if (fallen) return SD_NO_FALLEN;\n  const ph = sdPhase(rec, now);\n  if (ph === 'found'",
     "tests": [
@@ -137,7 +137,7 @@
   },
   {
     "name": "SD4B-the-Return-after-the-kill",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "  return ph === 'risen' || ph === 'found';\n}",
     "new": "  return ph === 'risen' || ph === 'found' || ph === 'fell';\n}",
     "tests": [

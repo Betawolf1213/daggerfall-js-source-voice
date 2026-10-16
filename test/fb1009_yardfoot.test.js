@@ -19,7 +19,7 @@ import { accountDecor, SESSION_KEY } from '../src/net/accountClient.js';
 import { localAabb, transformedAabb } from '../src/render/frustum.js';
 import { trs, multiply } from '../src/world/mat4.js';
 import { layoutLocation } from '../src/world/locationLayout.js';
-import { getLocationTerrainTileOrigin } from '../src/world/terrainTiles.js';
+import { getLocationTerrainTileOrigin } from '../src/world/terrain/terrainTiles.js';
 import { buildingSummaries } from '../src/world/buildingSummaries.js';
 import { homeCandidate } from '../src/systems/online/onlineHomes.js';
 import { makeBuildingKey } from '../src/systems/talk/talkTopics.js';

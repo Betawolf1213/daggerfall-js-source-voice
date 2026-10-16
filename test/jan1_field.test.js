@@ -10,9 +10,9 @@ import { createBindings, resetDefaults, DEFAULT_BINDINGS } from '../src/systems/
 import { SHORTCUT_TEXT } from '../src/systems/dialogShortcuts.js';
 import { PlayerWeapon, weaponPoseOf, applyWeaponPose } from '../src/combat/playerWeapon.js';
 import { weaponTypeForItem, WEAPON_TYPES } from '../src/combat/fpsWeapon.js';
-import { blendLocationTerrain } from '../src/world/terrainTiles.js';
-import { HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE } from '../src/world/terrainSampler.js';
-import { tileWeight } from '../src/world/cityNavigation.js';
+import { blendLocationTerrain } from '../src/world/terrain/terrainTiles.js';
+import { HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE } from '../src/world/terrain/terrainSampler.js';
+import { tileWeight } from '../src/world/city/cityNavigation.js';
 import { AIR_GLARE_SLACK, AIR_GLARE_TAPS } from '../src/render/airPass.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');

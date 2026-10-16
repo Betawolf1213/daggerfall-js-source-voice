@@ -1,7 +1,7 @@
 [
   {
     "name": "SD11A-L2F1-the-hand-a-mirror",
-    "file": "src/world/sdHall.js",
+    "file": "src/world/superDungeon/sdHall.js",
     "old": "  const x0 = y1 * n[2] - y2 * n[1], x1 = y2 * n[0] - y0 * n[2], x2 = y0 * n[1] - y1 * n[0];   // its own +x: y x n",
     "new": "  const x0 = n[1] * y2 - n[2] * y1, x1 = n[2] * y0 - n[0] * y2, x2 = n[0] * y1 - n[1] * y0;   // its own +x: y x n",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "SD11A-L2F1-a-sign-wound-away",
-    "file": "src/world/sdHall.js",
+    "file": "src/world/superDungeon/sdHall.js",
     "old": "  return [T(bl), T(add(bl, mul(UP, h))), T(add(br, mul(UP, h))), T(br)];",
     "new": "  return [T(br), T(add(br, mul(UP, h))), T(add(bl, mul(UP, h))), T(bl)];",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "SD11A-L2F1-the-plaque-mirrored",
-    "file": "src/world/sdHall.js",
+    "file": "src/world/superDungeon/sdHall.js",
     "old": "0, SD_ORRERY.z + SD_PLAQUE.r * Math.cos(b)], n, R: [-n[2], 0, n[0]] };",
     "new": "0, SD_ORRERY.z + SD_PLAQUE.r * Math.cos(b)], n, R: [n[2], 0, -n[0]] };",
     "tests": [
@@ -31,7 +31,7 @@
   },
   {
     "name": "SD11A-L2F1-the-notch-wound-away",
-    "file": "src/world/sdHall.js",
+    "file": "src/world/superDungeon/sdHall.js",
     "old": "f.tri(SD_REALM_BRASS_RECORD, T(tip), T(add(add(tip, [0, 0.12, 0]), mul(R, -0.07))), T(add(add(tip, [0, 0.12, 0]), mul(R, 0.07))), [0.5, 0], [0, 1], [1, 1]);",
     "new": "f.tri(SD_REALM_BRASS_RECORD, T(tip), T(add(add(tip, [0, 0.12, 0]), mul(R, 0.07))), T(add(add(tip, [0, 0.12, 0]), mul(R, -0.07))), [0.5, 0], [1, 1], [0, 1]);",
     "tests": [
@@ -52,7 +52,7 @@
   },
   {
     "name": "SD11A-L2F2-the-plaques-not-solid",
-    "file": "src/world/sdHall.js",
+    "file": "src/world/superDungeon/sdHall.js",
     "old": "    boxQuads(at, R, n, 0.07, 0.07, SD_PLAQUE.post).forEach(tri2);\n    tri2(uprightQuad(plaqueFaceFoot(k), R, SD_PLAQUE.w, SD_PLAQUE.h));\n",
     "new": "",
     "tests": [
@@ -72,7 +72,7 @@
   },
   {
     "name": "SD11A-L2F2-inside-the-face-before-it",
-    "file": "src/world/sdHall.js",
+    "file": "src/world/superDungeon/sdHall.js",
     "old": "  return (x - at[0]) * n[0] + (z - at[2]) * n[2] > SD_STONE_SIZE.d / 2;",
     "new": "  return (x - at[0]) * n[0] + (z - at[2]) * n[2] > -SD_STONE_SIZE.d / 2;",
     "tests": [
@@ -123,7 +123,7 @@
   },
   {
     "name": "SD11A-L2F4-the-walk-over-the-dial",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "export const walkFarZ = (x) => islandEdgeZ(SD_ORRERY.x, SD_ORRERY.z, SD_ORRERY.r, x, -1);",
     "new": "export const walkFarZ = (x) => SD_WALK.z1 + 0 * x;",
     "tests": [
@@ -133,7 +133,7 @@
   },
   {
     "name": "SD11A-L2F4-an-end-straight-across",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "    const xs = walkXs(x - h, x + h);",
     "new": "    const xs = [x - h, x + h];",
     "tests": [
@@ -143,7 +143,7 @@
   },
   {
     "name": "SD11A-L2F5-the-sign-over-the-dial",
-    "file": "src/world/sdHall.js",
+    "file": "src/world/superDungeon/sdHall.js",
     "old": "export const SD_EMBLEM = Object.freeze({ y: 2.34, half: 0.25 });",
     "new": "export const SD_EMBLEM = Object.freeze({ y: 2.2, half: 0.28 });",
     "tests": [
@@ -153,7 +153,7 @@
   },
   {
     "name": "SD11A-L2F6-the-left-kerb-down",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "xa = Math.min(xi, xo), xb = Math.max(xi, xo);",
     "new": "xa = xi, xb = xo;",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "SD11A-L2F6-the-underside-up",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "    f.quad(SD_REALM_ROOT_RECORD, down(d), down(c), down(b), down(a), [0, 0], [0, 4], [1, 4], [1, 0]);",
     "new": "    f.quad(SD_REALM_ROOT_RECORD, down(a), down(b), down(c), down(d), [0, 0], [0, 4], [1, 4], [1, 0]);",
     "tests": [
@@ -173,7 +173,7 @@
   },
   {
     "name": "SD11A-L2F6-no-lip-inside",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "    f.quad(SD_REALM_BRASS_RECORD, C(xi1, 0, zi1), C(xi1, SD_RIM_H, zi1), C(xi0, SD_RIM_H, zi0), C(xi0, 0, zi0), [0, 0], [0, 0.1], [1, 0.1], [1, 0]);\n",
     "new": "",
     "tests": [
@@ -183,7 +183,7 @@
   },
   {
     "name": "SD11A-L2F6-a-kerb-a-lid",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "      f.quad(SD_REALM_BRASS_RECORD, P(xa, 0, false), P(xa, H, false), P(xa, H, true), P(xa, 0, true), [0, 0], [0, 0.1], [4, 0.1], [4, 0]);   // toward -x\n",
     "new": "",
     "tests": [
@@ -333,7 +333,7 @@
   },
   {
     "name": "SD11A-L2F9-the-portal-a-hypot",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "  return dx * dx + dz * dz <= reach * reach && feet[1] >= at[1] - SD_STEP_M && feet[1] <= at[1] + height;",
     "new": "  return Math.hypot(dx, dz) <= reach && feet[1] >= at[1] - SD_STEP_M && feet[1] <= at[1] + height;",
     "tests": [
@@ -363,7 +363,7 @@
   },
   {
     "name": "SD11A-L2F9-the-lamps-sorted-by-a-closure",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "  for (let i = 1; i < L.length; i++) {\n    const l = L[i], dl = (l.x - ex) ** 2 + (l.z - ez) ** 2;\n    let j = i - 1;\n    while (j >= 0 && (L[j].x - ex) ** 2 + (L[j].z - ez) ** 2 > dl) { L[j + 1] = L[j]; j--; }\n    L[j + 1] = l;\n  }\n",
     "new": "  L.sort((a, b) => (a.x - ex) ** 2 + (a.z - ez) ** 2 - ((b.x - ex) ** 2 + (b.z - ez) ** 2));\n",
     "tests": [
@@ -374,7 +374,7 @@
   },
   {
     "name": "SD11A-L2F9-the-views-each-frame",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "  let v = H.views.get(m);",
     "new": "  let v = null;",
     "tests": [
@@ -384,7 +384,7 @@
   },
   {
     "name": "SD11A-L2F9-the-lights-fresh",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "  return _realmLight;\n};",
     "new": "  return { tri: { ...tri, sky: [...tri.sky] }, key };\n};",
     "tests": [
@@ -528,7 +528,7 @@
   },
   {
     "name": "SD11A-L2F14-no-post",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "    lampBoxQuads(p, SD_LAMP_POST_W, 0, SD_LAMP_H - SD_LAMP_HEAD).forEach((q, i) => f.quad(SD_REALM_BRASS_RECORD, q[0], q[1], q[2], q[3], ...(i < 4 ? LAMP_SIDE_UV : PILLAR_TOP_UV)));\n",
     "new": "",
     "tests": [
@@ -538,7 +538,7 @@
   },
   {
     "name": "SD11A-L2F14-no-head",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "    lampBoxQuads(p, SD_LAMP_HEAD, SD_LAMP_H - SD_LAMP_HEAD, SD_LAMP_H + SD_LAMP_HEAD, true).forEach((q) => f.quad(SD_HALL_GLOW_RECORD.brass, q[0], q[1], q[2], q[3], ...PILLAR_TOP_UV));\n",
     "new": "",
     "tests": [
@@ -549,7 +549,7 @@
   },
   {
     "name": "SD11A-L2F14-a-head-over-its-near-plane",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "export const SD_LAMP_HEAD = 0.09;",
     "new": "export const SD_LAMP_HEAD = 0.12;",
     "tests": [
@@ -559,7 +559,7 @@
   },
   {
     "name": "SD11A-L2F14-the-posts-off-the-collider",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "  out.set(lamps, floors.length + pillars.length);\n",
     "new": "",
     "tests": [
@@ -619,7 +619,7 @@
   },
   {
     "name": "SD11A-L2F18-the-wrong-way",
-    "file": "src/world/sdSteps.js",
+    "file": "src/world/superDungeon/sdSteps.js",
     "old": "  if (u < span) { out.dir = gustSign(n); out.k = u / span; }",
     "new": "  if (u < span) { out.dir = -gustSign(n); out.k = u / span; }",
     "tests": [
@@ -629,7 +629,7 @@
   },
   {
     "name": "SD11A-L2F18-shown-between-gusts",
-    "file": "src/world/sdSteps.js",
+    "file": "src/world/superDungeon/sdSteps.js",
     "old": "  if (u < span) { out.dir = gustSign(n); out.k = u / span; } else { out.dir = 0; out.k = 0; }",
     "new": "  out.dir = gustSign(n); out.k = u / SD_GUST_EVERY;",
     "tests": [

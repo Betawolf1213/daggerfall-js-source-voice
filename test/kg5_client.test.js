@@ -18,7 +18,7 @@ import { GAMBIT_RESULT_MS } from '../src/systems/gambit/gambitTableSession.js';
 import { gambitPlaces } from '../src/world/gambitCloth.js';
 import { openGambitTableGame } from '../src/scenes/gambitTableGame.js';
 import { relaySupportsGambit, RELAY_VERSION } from '../src/net/wire.js';
-import { CARD_TABLE_W, CARD_TABLE_D } from '../src/world/cardTableProp.js';
+import { CARD_TABLE_W, CARD_TABLE_D } from '../src/world/card/cardTableProp.js';
 import { _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
 import { xorshift } from '../tools/kgMeasure.mjs';
 import { fakeDoc, text } from './decorFakes.mjs';

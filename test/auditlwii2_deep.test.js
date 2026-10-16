@@ -24,7 +24,7 @@ import { RANDOM_TREASURE_MARKER_RECORD } from '../src/systems/loot/loot.js';
 import { RDB_SIDE } from '../src/world/rdbLayout.js';
 import { createOceanHolesAbyss } from '../src/scenes/oceanHolesAbyss.js';
 import { mapPixelToLongitudeLatitude, mapPixelToWorldCoord, worldCoordToMapPixel } from '../src/formats/mapsFile.js';
-import { enemyRoster } from '../src/world/underwaterEnemies.js';
+import { enemyRoster } from '../src/world/underwater/underwaterEnemies.js';
 import { livingMap, partiesOver } from './lwRoads.mjs';
 
 const _read = new Map();

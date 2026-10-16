@@ -22,7 +22,7 @@ import {
   VIEW_MAX_SIDE, VIEW_BUCKET, viewOutDue, VIEW_MAX_AGE_MS, VIEW_RELEASE_MS, createViewOut, viewOutFrame, viewRays,
   viewSkyFrom,
 } from '../src/render/realWindows.js';
-import { interiorGlassMask, interiorWindowOf, isInteriorGlassArchive, GLASS_INDEX, GLASS_RAMP, INTERIOR_WINDOW, glassMaskFromAlpha, glassTexelCount } from '../src/world/interiorGlass.js';
+import { interiorGlassMask, interiorWindowOf, isInteriorGlassArchive, GLASS_INDEX, GLASS_RAMP, INTERIOR_WINDOW, glassMaskFromAlpha, glassTexelCount } from '../src/world/interior/interiorGlass.js';
 import { perspective, lookAt, mirrorProjectionX, identity, multiply } from '../src/world/mat4.js';
 import { TextureFile } from '../src/formats/textureFile.js';
 

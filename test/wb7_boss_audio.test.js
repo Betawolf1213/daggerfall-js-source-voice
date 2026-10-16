@@ -17,11 +17,11 @@ import {
 import { eventsInWindow } from '../src/systems/song/songPlayer.js';
 import { MusicService } from '../src/systems/music.js';
 import { ATTACKS } from '../src/net/gateBrain.js';
-import { BOSS_CUES, BOSS_STRIDE_M, GROWL_EVERY_MS, HURT_GAP_MS, HURT_SHARE, QUAKE_ON, THUD_AT_MS, FALL_MS } from '../src/world/gateBoss.js';
+import { BOSS_CUES, BOSS_STRIDE_M, GROWL_EVERY_MS, HURT_GAP_MS, HURT_SHARE, QUAKE_ON, THUD_AT_MS, FALL_MS } from '../src/world/gate/gateBoss.js';
 import { createGateCourt, ROAR_AFTER_MS } from '../src/scenes/gateCourt.js';
 import { destroyGateBossBar } from '../src/ui/gateBossBar.js';
 import { GATE_STATE_EMPTY } from '../src/net/gateLink.js';
-import { courtToDungeon } from '../src/world/gateArena.js';
+import { courtToDungeon } from '../src/world/gate/gateArena.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const BAR = 4 * SCORE_TPQ;

@@ -26,7 +26,7 @@ import {
   AirPass, AIR_ADAPT_GLSL, AIR_CONTACT_GLSL, AIR_CONTACT_LIFT, AIR_CONTACT_LENGTH, AIR_CONTACT_THICKNESS, AIR_CONTACT_FLOOR,
   AIR_BRIGHT_THRESHOLD, AIR_AO_RADIUS, AIR_AO_STORE, AIR_HAZE_GAIN, AIR_HAZE_REACH, SHAFT_FS, projInfo, unpackAdapt, AIR_ADAPT_STEPS, AIR_ADAPT_LOG_RANGE,
 } from '../src/render/airPass.js';
-import { capFadeColors, capFadePairs, fillLanternPool, rangesFor } from '../src/world/cityLights.js';
+import { capFadeColors, capFadePairs, fillLanternPool, rangesFor } from '../src/world/city/cityLights.js';
 import { sunDirection } from '../src/world/worldClock.js';
 import { perspective, lookAt, multiply } from '../src/world/mat4.js';
 import { summarize, judge, LUM_BLACK } from '../tools/lightFlickerVerdict.mjs';

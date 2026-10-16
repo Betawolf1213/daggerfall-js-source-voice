@@ -1,7 +1,7 @@
 [
   {
     "name": "TS1-constant-is-the-prefab",
-    "file": "src/world/terrainSampler.js",
+    "file": "src/world/terrain/terrainSampler.js",
     "old": "export const STREAMING_TERRAIN_SCALE = 1.25;",
     "new": "export const STREAMING_TERRAIN_SCALE = 1.5;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "TS1-placed-on-the-prefab",
-    "file": "src/world/terrainSurface.js",
+    "file": "src/world/terrain/terrainSurface.js",
     "old": "export function surfaceHeightAt(heightmapData, lx, lz, stride = 1) {\n  const hDim = HEIGHTMAP_DIMENSION;\n  const worldHeight = MAX_TERRAIN_HEIGHT * STREAMING_TERRAIN_SCALE;",
     "new": "export function surfaceHeightAt(heightmapData, lx, lz, stride = 1) {\n  const hDim = HEIGHTMAP_DIMENSION;\n  const worldHeight = MAX_TERRAIN_HEIGHT * 1.5;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "TS1-drawn-on-the-prefab",
-    "file": "src/world/terrainSurface.js",
+    "file": "src/world/terrain/terrainSurface.js",
     "old": "  const cell = TERRAIN_SIZE / (hDim - 1);\n  const worldHeight = MAX_TERRAIN_HEIGHT * STREAMING_TERRAIN_SCALE;",
     "new": "  const cell = TERRAIN_SIZE / (hDim - 1);\n  const worldHeight = MAX_TERRAIN_HEIGHT * 1.5;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "TS1-nature-on-the-prefab",
-    "file": "src/world/terrainNature.js",
+    "file": "src/world/terrain/terrainNature.js",
     "old": "  const worldHeight = MAX_TERRAIN_HEIGHT * STREAMING_TERRAIN_SCALE;   // TerrainNature.LayoutNature's terrainScale - the game scene's (TERRAIN-SCALE1)",
     "new": "  const worldHeight = MAX_TERRAIN_HEIGHT * 1.5;   // TerrainNature.LayoutNature's terrainScale - the game scene's (TERRAIN-SCALE1)",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "TS1-wod-sites-on-the-prefab",
-    "file": "src/world/wodLocationLoader.js",
+    "file": "src/world/worldOfDaggerfall/wodLocationLoader.js",
     "old": "Math.fround(MAX_TERRAIN_HEIGHT * STREAMING_TERRAIN_SCALE)",
     "new": "Math.fround(MAX_TERRAIN_HEIGHT * 1.5)",
     "tests": [

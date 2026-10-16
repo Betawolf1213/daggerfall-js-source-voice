@@ -82,7 +82,7 @@
   },
   {
     "name": "LW-DRY-tile-compare",
-    "file": "src/world/terrainTiles.js",
+    "file": "src/world/terrain/terrainTiles.js",
     "old": "export const isWaterHeight = (height) => height <= SCALED_OCEAN_ELEVATION;",
     "new": "export const isWaterHeight = (height) => height < SCALED_OCEAN_ELEVATION;",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "LW-DRY-tile-height",
-    "file": "src/world/terrainTiles.js",
+    "file": "src/world/terrain/terrainTiles.js",
     "old": "export const sampleHeight = (sample) => Math.fround(sample * MAX_TERRAIN_HEIGHT);",
     "new": "export const sampleHeight = (sample) => sample * MAX_TERRAIN_HEIGHT;",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "LW-DRY-tile-job-unread",
-    "file": "src/world/terrainTiles.js",
+    "file": "src/world/terrain/terrainTiles.js",
     "old": "  if (isWaterHeight(height)) return WATER;",
     "new": "  if (height < 0) return WATER;",
     "tests": [
@@ -212,7 +212,7 @@
   },
   {
     "name": "LW-DRY-nature-own-product",
-    "file": "src/world/terrainNature.js",
+    "file": "src/world/terrain/terrainNature.js",
     "old": "      const height = sampleHeight((opts.beach ?? heightmapData)[hy + hx * hDim]);",
     "new": "      const height = Math.fround((opts.beach ?? heightmapData)[hy + hx * hDim] * MAX_TERRAIN_HEIGHT);",
     "tests": [

@@ -3,18 +3,18 @@
 // the rock fields build their outcrops of the same model: 157 of its 202 placements are boulders scaled 5.6 to 95 and
 // set into the piles on purpose, and standing those on their lowest corner raised them as dark shards up to 377 m tall round every
 // rock field (Hadus sits among them). The shrub alone is stood now: a Rocks or Mountains site keeps the mod's height
-// (world/wodLocationObjects.js isWodShrub, scenes/world.js's WoD loop). Pinned on the shipped layouts and packs through
+// (world/worldOfDaggerfall/wodLocationObjects.js isWodShrub, scenes/world.js's WoD loop). Pinned on the shipped layouts and packs through
 // the real producer (WodWorld.picksFor / placements); with ARENA2_PATH, the lift the boulders took, off the real mesh.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { isWodShrub, WOD_BUSH_MODEL, WOD_ROCK_SITES, objectMatrix } from '../src/world/wodLocationObjects.js';
+import { isWodShrub, WOD_BUSH_MODEL, WOD_ROCK_SITES, objectMatrix } from '../src/world/worldOfDaggerfall/wodLocationObjects.js';
 import { WodWorld } from '../src/world/worldOfDaggerfall.js';
-import { loadLocationPrefab } from '../src/world/wodLocationData.js';
-import { decodeRegionPack } from '../src/world/wodLocationPack.js';
-import { LocationSession } from '../src/world/wodLocationLoader.js';
+import { loadLocationPrefab } from '../src/world/worldOfDaggerfall/wodLocationData.js';
+import { decodeRegionPack } from '../src/world/worldOfDaggerfall/wodLocationPack.js';
+import { LocationSession } from '../src/world/worldOfDaggerfall/wodLocationLoader.js';
 import { transformedAabb } from '../src/render/frustum.js';
 
 const V = new URL('../vendor/world-of-daggerfall/', import.meta.url).pathname;

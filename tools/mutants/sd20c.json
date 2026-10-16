@@ -208,7 +208,7 @@
   },
   {
     "name": "SD20C-V8-the-gpu-grade-unweighted",
-    "file": "src/world/sdBrassSky.js",
+    "file": "src/world/superDungeon/sdBrassSky.js",
     "old": "  return mix(c, g, clamp(w, 0.0, 1.0));",
     "new": "  return mix(c, g, clamp(w * 0.9, 0.0, 1.0));",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "SD20C-V8-the-gpu-luma-flat",
-    "file": "src/world/sdBrassSky.js",
+    "file": "src/world/superDungeon/sdBrassSky.js",
     "old": "  float l = dot(c, vec3(${LUMA.map(f).join(', ')}));",
     "new": "  float l = dot(c, vec3(0.3333, 0.3333, 0.3333));",
     "tests": [
@@ -307,7 +307,7 @@
   },
   {
     "name": "SD20C-V9-the-extras-first",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "sorted = !!eye && m > SD_LIGHTS_CAP && k <= _litIdx.length;",
     "new": "sorted = false;",
     "tests": [
@@ -316,7 +316,7 @@
   },
   {
     "name": "SD20C-V9-sorted-by-centre",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "      const key = Math.max(0, Math.sqrt(dx * dx + dy * dy + dz * dz) - l.range);",
     "new": "      const key = Math.sqrt(dx * dx + dy * dy + dz * dz);",
     "tests": [

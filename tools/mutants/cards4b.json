@@ -1,7 +1,7 @@
 [
   {
     "name": "C4b-race-ignored",
-    "file": "src/world/cardRegulars.js",
+    "file": "src/world/card/cardRegulars.js",
     "old": "race: RACE_OF_BANK[bank] ?? 'Breton'",
     "new": "race: 'Breton'",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "C4b-gown-with-skirt",
-    "file": "src/world/cardRegulars.js",
+    "file": "src/world/card/cardRegulars.js",
     "old": "  else { put(pick(r, kit.chest), EQUIP_SLOTS.ChestClothes); put(pick(r, kit.legs), EQUIP_SLOTS.LegsClothes); }",
     "new": "  put(pick(r, kit.chest), EQUIP_SLOTS.ChestClothes); put(pick(r, kit.legs), EQUIP_SLOTS.LegsClothes);",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "C4b-barefoot",
-    "file": "src/world/cardRegulars.js",
+    "file": "src/world/card/cardRegulars.js",
     "old": "  put(pick(r, kit.feet), EQUIP_SLOTS.Feet);\n",
     "new": "\n",
     "tests": [
@@ -31,7 +31,7 @@
   },
   {
     "name": "C4b-gone-drawn",
-    "file": "src/world/cardRegulars.js",
+    "file": "src/world/card/cardRegulars.js",
     "old": "    if (s.kind !== 'patron' || s.gone) return;",
     "new": "    if (s.kind !== 'patron') return;",
     "tests": [
@@ -41,7 +41,7 @@
   },
   {
     "name": "C4b-standing",
-    "file": "src/world/cardRegulars.js",
+    "file": "src/world/card/cardRegulars.js",
     "old": "feet: chair.feet, yaw: chair.yaw, st: seatTopByte(chair.top) });",
     "new": "feet: chair.feet, yaw: chair.yaw, st: 0 });",
     "tests": [

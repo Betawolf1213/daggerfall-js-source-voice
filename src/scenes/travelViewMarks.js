@@ -3,7 +3,7 @@
 // settled names by value at construction, every live one (a `let` someone writes, a `const` made below) read at its
 // use as `host.<name>` - as the code read them where it was.
 import { bandLabel } from '../systems/travel/travelBands.js';
-import { dungeonTierLabel } from '../world/dungeonLabel.js';
+import { dungeonTierLabel } from '../world/dungeon/dungeonLabel.js';
 import { farDistanceText, PIXEL_KM } from '../systems/travel/travelFarPlaces.js';
 import { getPref } from '../systems/uiPrefs.js';
 import { isShipMark, travellerWorldOf } from '../systems/travellerMarks.js';

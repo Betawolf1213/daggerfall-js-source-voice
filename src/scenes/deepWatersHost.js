@@ -45,17 +45,17 @@
 // frame it spent more than a millisecond in.
 // ═══════════════════════════════════════════════════════════════════
 
-import { openDeepWaters, deepWatersLocationRects } from '../world/deepWatersClient.js';
-import { inFrame } from '../world/deepWatersBake.js';
+import { openDeepWaters, deepWatersLocationRects } from '../world/deepWater/deepWatersClient.js';
+import { inFrame } from '../world/deepWater/deepWatersBake.js';
 import { waterFrameOf } from '../world/etherWatersBake.js';   // ETHER-DEEP: a pixel's frame - the Bay's map, or the Eltheric Ocean's box
 import { modSetting, modSettingsGeneration, MOD_SETTINGS } from '../systems/modSettings.js';
-import { DeepWaterTileData } from '../world/deepWaterTileData.js';
-import { sampleMeshLocalY, HOLES_RESOLUTION, TILE_WORLD_SIZE } from '../world/deepWaterFloor.js';
+import { DeepWaterTileData } from '../world/deepWater/deepWaterTileData.js';
+import { sampleMeshLocalY, HOLES_RESOLUTION, TILE_WORLD_SIZE } from '../world/deepWater/deepWaterFloor.js';
 import { heightGridFromPositions } from '../world/oceanHoles.js';   // OH-B: CommitExternalMeshChanges' grid read-back
-import { DW_OCEAN_LOCAL_Y } from '../world/deepWatersPixel.js';
-import { mapDataHasWater, isLocalPointWater } from '../world/deepWaterClassification.js';
-import { sampleDepthMeters } from '../world/deepBathymetry.js';
-import { scaledSliderValue } from '../world/deepWaterLook.js';   // DW-E2: GetScaledSliderValue, one home
+import { DW_OCEAN_LOCAL_Y } from '../world/deepWater/deepWatersPixel.js';
+import { mapDataHasWater, isLocalPointWater } from '../world/deepWater/deepWaterClassification.js';
+import { sampleDepthMeters } from '../world/deepWater/deepBathymetry.js';
+import { scaledSliderValue } from '../world/deepWater/deepWaterLook.js';   // DW-E2: GetScaledSliderValue, one home
 import { POPULATE_RADIUS } from './deepWatersEncounters.js';   // DEEP-SHARE: the populate radius is the share's
 import { amGroupRollOwner } from '../systems/campEncounters.js';   // DEEP-SHARE: the camps' election
 import { onFloatingFrame } from '../player/collider.js';   // PERF-COL2 (AUDIT): the walls' bucket rides the floating origin

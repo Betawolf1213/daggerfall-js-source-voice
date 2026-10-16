@@ -640,7 +640,7 @@ export const SCALE_MAX = 14;
 /** ME-PAN fix: how much of the paper a drag may leave blank past the edge of what a sheet has drawn. */
 export const PAN_SLACK = 0.5;
 /** TAMRIEL1: a sheet whose map does not start at (0, 0) - the world sheet with the continent round the Bay
- *  (ui/tamrielInk.js; world/tamrielFrame.js tamrielFrameInBay) - hands the clamp `mapX0`/`mapY0`, the map's own
+ *  (ui/tamrielInk.js; world/tamriel/tamrielFrame.js tamrielFrameInBay) - hands the clamp `mapX0`/`mapY0`, the map's own
  *  top-left in its coordinates. Absent they are 0 and nothing moves. */
 export function clampView(view, { mapW, mapH, paperW, paperH, pan = null, prev = null, mapX0 = 0, mapY0 = 0 }) {
   const scaleMin = Math.min(paperW / mapW, paperH / mapH);

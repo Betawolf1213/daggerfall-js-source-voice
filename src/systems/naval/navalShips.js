@@ -7,7 +7,7 @@
 // the vendored prefabs themselves (the hull's MeshCollider, `vendor/come-sail-away/Models/`, cast at from outside and
 // from above at each station - the scratch probe the arc page records), a broadside's guns 0.9 m over the deck they
 // are mounted on, along the waist where that deck runs clear, and a hair outside the planking at that height; hull 2's
-// off Mac's galleon (world/galleonModel.js GALLEON_BATTERIES - AUDIT GN-G11): each broadside gun in the middle of its
+// off Mac's galleon (world/ships/galleonModel.js GALLEON_BATTERIES - AUDIT GN-G11): each broadside gun in the middle of its
 // own port, 1.16 m over her gun deck, its muzzle 0.09 m outside her planking. A bow chaser on the forecastle, a stern
 // gun over the transom. The numbers are in the boat ROOT's frame (Unity's: +x starboard, +y up, +z the
 // bow), where SpawnBoat stands the hull - the root sits on the waterline. The port side is the starboard side
@@ -137,7 +137,7 @@ export const HULL_BUILDS = Object.freeze([
     hullHp: tough(60), sailHp: tough(0), crew: 0, deck: 0.1, beam: 1.0, ram: false, bowZ: 2.94, aftZ: -2.14, halfWidth: 1.08, keel: -0.23, top: 0.78, sailWay: 1,
     rig: Object.freeze([]),
   }),
-  // SHIPS-2 (2026-10-07): hull 1 is Mac's Tiny Ship now (world/largeBoatModel.js) and every number here is hers, off her
+  // SHIPS-2 (2026-10-07): hull 1 is Mac's Tiny Ship now (world/ships/largeBoatModel.js) and every number here is hers, off her
   // own model (test/ships2_largeboat.test.js pins each to it): a swivel's muzzle at each of her six swivels on her
   // gunwale's cap and the one on the cap at her port bow (the galleon's chaser, its barrel's end); her box her hull's and
   // her stern rail's MeshCollider's bounds; her deck and her half beam inside her ceiling at it. HER RIG IS HER PLAN'S:
@@ -178,12 +178,12 @@ export const HULL_BUILDS = Object.freeze([
     ),
   }),
   // GALLEON (2026-10-01, Mac: "ensuring cannon fire shoots from the cannon holes properly"): hull 2 is Mac's galleon now
-  // (world/galleonModel.js) and every number here is hers, off her own model (test/galleon_model.test.js pins each to
+  // (world/ships/galleonModel.js) and every number here is hers, off her own model (test/galleon_model.test.js pins each to
   // it): a gun at each of her ten gunports, its muzzle a hair outside her planking at the port's middle - the ports
   // 1.56 to 2.93 m over the sea, her gun deck at 1.0829 - so a broadside leaves her through the holes it is fired from;
   // two chasers on swivels over her bow rail; the barrels over her stern under the castle. Her box is her hull's and
   // her castle's MeshCollider's bounds (GALLEON-2: her keel 4.64 m down on Mac's second export's deeper V). AUDIT GN-R5/
-  // G9: her rig is each of her five sails as it hangs set in any wind (world/galleonRig.js's own canvas) - a square sail
+  // G9: her rig is each of her five sails as it hangs set in any wind (world/ships/galleonRig.js's own canvas) - a square sail
   // with its yard and her gaff sail with its gaff on their booms, turning with them as the trim does (the boxes stood
   // still: at the auto-trim's 30 degrees a quarter of the fore topsail's canvas, a third of the main topsail's and 94% of
   // the gaff sail's stood outside every one, and all of the fore course's at any trim), the jib in three askew along its
@@ -216,7 +216,7 @@ export const HULL_BUILDS = Object.freeze([
     rig: rigOf([[-25, 17, 12.5], [25, 36.9, 17]]),
   }),
   // SHIPS-2 (2026-10-07, Mac: "implement both of these new ship placement models ... ensure it matches the love we gave
-  // the other new ship model"): hull 4 is Mac's carrack now (world/carrackModel.js) and every number here is hers, off
+  // the other new ship model"): hull 4 is Mac's carrack now (world/ships/carrackModel.js) and every number here is hers, off
   // her own model (test/ships2_carrack.test.js pins each to it), as hull 2's are the galleon's: a gun at each of her ten
   // gunports, its muzzle 9 cm outside her planking in the port - her ports 3.07 to 4.06 m over the sea, her guns on
   // platforms a step (0.38 m) over her gun deck's 1.9576 m, their axis 0.43 m over the sills - two chasers on swivels on her bow's

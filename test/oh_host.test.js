@@ -14,7 +14,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createOceanHoles, oceanHolesSettings } from '../src/scenes/oceanHolesHost.js';
 import { isPitPixel, placementFraction, getFloorPitDepth, MINIMUM_DEPTH } from '../src/world/oceanHoles.js';
-import { sampleMeshLocalY } from '../src/world/deepWaterFloor.js';
+import { sampleMeshLocalY } from '../src/world/deepWater/deepWaterFloor.js';
 import { MOD_SETTINGS } from '../src/systems/modSettings.js';
 
 const f32 = Math.fround;

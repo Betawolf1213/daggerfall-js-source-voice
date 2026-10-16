@@ -103,7 +103,7 @@
   },
   {
     "name": "AUDIT-GN2-PF7-the-trigger-at-the-hub",
-    "file": "src/world/galleonModel.js",
+    "file": "src/world/ships/galleonModel.js",
     "old": "export const DRIVE_TRIGGER_AT = Object.freeze([HELM.hub[0], HELM.hub[1], HELM.hub[2] + 0.25]);",
     "new": "export const DRIVE_TRIGGER_AT = Object.freeze([HELM.hub[0], HELM.hub[1], HELM.hub[2]]);",
     "tests": [
@@ -113,7 +113,7 @@
   },
   {
     "name": "AUDIT-GN2-PF7-the-trigger-off-the-wheel",
-    "file": "src/world/galleonModel.js",
+    "file": "src/world/ships/galleonModel.js",
     "old": "export const DRIVE_TRIGGER_AT = Object.freeze([HELM.hub[0], HELM.hub[1], HELM.hub[2] + 0.25]);",
     "new": "export const DRIVE_TRIGGER_AT = Object.freeze([HELM.hub[0], HELM.hub[1], HELM.hub[2] + 0.4]);",
     "tests": [
@@ -124,7 +124,7 @@
   },
   {
     "name": "AUDIT-GN2-PF8-hinged-mid-leaf",
-    "file": "src/world/galleonModel.js",
+    "file": "src/world/ships/galleonModel.js",
     "old": "  box(bench, TEX.door, [w / 2, h / 2, t / 2], [w / 2, h / 2, t / 2], { uvFace: (fi, k) => {",
     "new": "  box(bench, TEX.door, [w / 2, h / 2, 0], [w / 2, h / 2, t / 2], { uvFace: (fi, k) => {",
     "tests": [
@@ -134,7 +134,7 @@
   },
   {
     "name": "AUDIT-GN2-PF8-the-castle-foot-in-the-deck",
-    "file": "src/world/galleonModel.js",
+    "file": "src/world/ships/galleonModel.js",
     "old": "    const foot = Math.max(d.y0, floor) + 0.01;",
     "new": "    const foot = d.y0 + 0.01;",
     "tests": [
@@ -144,7 +144,7 @@
   },
   {
     "name": "AUDIT-GN2-PF8-the-shut-leaf-off-the-middle",
-    "file": "src/world/galleonModel.js",
+    "file": "src/world/ships/galleonModel.js",
     "old": "p: [-d.halfX + 0.02, foot, d.z - DOOR_THICK / 2]",
     "new": "p: [-d.halfX + 0.02, foot, d.z]",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "AUDIT-GN2-TS7-the-whole-stern-glows",
-    "file": "src/world/galleonArt.js",
+    "file": "src/world/ships/galleonArt.js",
     "old": "put(out, x, y, glassy ? [255, 186, 96] : [0, 0, 0]);",
     "new": "put(out, x, y, [255, 186, 96]);",
     "tests": [
@@ -164,7 +164,7 @@
   },
   {
     "name": "AUDIT-GN2-TS7-the-glint-dark",
-    "file": "src/world/galleonArt.js",
+    "file": "src/world/ships/galleonArt.js",
     "old": " || (c[0] === C.glassLit[0] && c[1] === C.glassLit[1]);",
     "new": ";",
     "tests": [
@@ -174,7 +174,7 @@
   },
   {
     "name": "AUDIT-GN2-TS8-the-foot-cap-inward",
-    "file": "src/world/galleonMesh.js",
+    "file": "src/world/ships/galleonMesh.js",
     "old": "  if (caps[0] && r0 > 0) cap(p0, r0, scl(w, -1));",
     "new": "  if (caps[0] && r0 > 0) cap(p0, r0, w);",
     "tests": [
@@ -184,7 +184,7 @@
   },
   {
     "name": "AUDIT-GN2-TS8-the-head-cap-inward",
-    "file": "src/world/galleonMesh.js",
+    "file": "src/world/ships/galleonMesh.js",
     "old": "  if (caps[1] && r1 > 0) cap(p1, r1, w);",
     "new": "  if (caps[1] && r1 > 0) cap(p1, r1, scl(w, -1));",
     "tests": [
@@ -194,7 +194,7 @@
   },
   {
     "name": "AUDIT-GN2-TS8-a-box-side-inward",
-    "file": "src/world/galleonMesh.js",
+    "file": "src/world/ships/galleonMesh.js",
     "old": "[scl(X, -1), [[-1, -1, 1], [-1, 1, 1], [-1, 1, -1], [-1, -1, -1]]]",
     "new": "[X, [[-1, -1, 1], [-1, 1, 1], [-1, 1, -1], [-1, -1, -1]]]",
     "tests": [
@@ -204,7 +204,7 @@
   },
   {
     "name": "AUDIT-GN2-TS12-corner-normals-left-behind",
-    "file": "src/world/galleonMesh.js",
+    "file": "src/world/ships/galleonMesh.js",
     "old": "if (normals) normals = [normals[0], normals[2], normals[1]]; ",
     "new": "",
     "tests": [
@@ -214,7 +214,7 @@
   },
   {
     "name": "AUDIT-GN2-TS12-port-side-mirrored",
-    "file": "src/world/galleonMesh.js",
+    "file": "src/world/ships/galleonMesh.js",
     "old": "u = n[0] >= 0 ? p[2] : -p[2];",
     "new": "u = p[2];",
     "tests": [
@@ -224,7 +224,7 @@
   },
   {
     "name": "AUDIT-GN2-TS12-stern-mirrored",
-    "file": "src/world/galleonMesh.js",
+    "file": "src/world/ships/galleonMesh.js",
     "old": "u = n[2] >= 0 ? -p[0] : p[0];",
     "new": "u = -p[0];",
     "tests": [

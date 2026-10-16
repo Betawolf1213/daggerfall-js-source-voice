@@ -18,7 +18,7 @@ import { keptOffArenaGround, ARENA_GROUND_M, ARENA_GROUND_QUESTS } from '../src/
 import { boutTeammates } from '../src/combat/friendlyFire.js';
 import { boutGate } from '../src/characters/enemyTargets.js';
 import { arenaHudModel } from '../src/ui/arenaHud.js';
-import { undercroftPopulation, deepFoesOf, undercroftHallNear, UNDERCROFT_DEEP_M, UNDERCROFT_BEASTS, UNDERCROFT_PEOPLE } from '../src/world/arenaUndercroft.js';
+import { undercroftPopulation, deepFoesOf, undercroftHallNear, UNDERCROFT_DEEP_M, UNDERCROFT_BEASTS, UNDERCROFT_PEOPLE } from '../src/world/arena/arenaUndercroft.js';
 import { spendAmmoFor, ARROW_TEMPLATE } from '../src/systems/inventory.js';
 import { startShotTally, stopShotTally, noteShot, noteShotRecoverable } from '../src/systems/shotTally.js';
 import { playerArrowHitFoe } from '../src/combat/arrowFlight.js';

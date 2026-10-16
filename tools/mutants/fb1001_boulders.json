@@ -1,7 +1,7 @@
 [
   {
     "name": "ROCK-FOOT-the-ground-unasked",
-    "file": "src/world/terrainNature.js",
+    "file": "src/world/terrain/terrainNature.js",
     "old": "  for (let i = 0; i < n; i++) if (above[i] >= 0) add(w[i * 3], w[i * 3 + 1], w[i * 3 + 2]);",
     "new": "  for (let i = 0; i < n; i++) add(w[i * 3], w[i * 3 + 1], w[i * 3 + 2]);",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "ROCK-FOOT-the-cut-at-the-ground-left-out",
-    "file": "src/world/terrainNature.js",
+    "file": "src/world/terrain/terrainNature.js",
     "old": "      if ((above[a] >= 0) === (above[b] >= 0)) continue;",
     "new": "      continue;",
     "tests": [

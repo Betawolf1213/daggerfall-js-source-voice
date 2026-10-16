@@ -9,9 +9,9 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { WoodsFile, MAP_WIDTH, MAP_HEIGHT } from '../src/formats/woodsFile.js';
-import { generateSamples, HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE } from '../src/world/terrainSampler.js';
+import { generateSamples, HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE } from '../src/world/terrain/terrainSampler.js';
 import { createLandforms, landformClimates, landformSites, hillsAt, hillsTopOf, HILLS_TOP, LANDFORM_KNEE, LANDFORM_CEILING, LANDFORM_DIALS, reliefLift, peakField, PEAK_MEAN, PEAK_MEAN_SHARP } from '../src/world/landforms.js';
-import { generatePixelTerrain, restrideGrid } from '../src/world/terrainGen.js';
+import { generatePixelTerrain, restrideGrid } from '../src/world/terrain/terrainGen.js';
 import { CLIMATES } from '../src/formats/mapsTables.js';
 import { syntheticWoodsBytes, network } from './landformWorld.mjs';
 
@@ -170,7 +170,7 @@ test('LANDFORM6: the climates ride every kernel - the worker keeps the posted ta
   const prevPost = globalThis.postMessage, prevOn = globalThis.onmessage;
   globalThis.postMessage = (msg) => posted.push(msg);
   try {
-    await import('../src/world/terrainGenWorker.js?landform6');
+    await import('../src/world/terrain/terrainGenWorker.js?landform6');
     globalThis.onmessage({ data: { t: 'init', woodsBytes: WOODS_BYTES.slice() } });
     globalThis.onmessage({ data: { t: 'landform-tables', sites: null, climates: t.slice() } });
     const job = { px: 401, py: 250, stride: 1, tilemap: new Uint8Array(128 * 128), climateType: CLIMATES.Desert, landform: true };

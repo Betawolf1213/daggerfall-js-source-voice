@@ -1,7 +1,7 @@
 [
   {
     "name": "SD25-HANG-the-skirt-hung-from-the-floor",
-    "file": "src/world/sdIslandModel.js",
+    "file": "src/world/superDungeon/sdIslandModel.js",
     "old": "N = SD_ISLAND_SIDES, top = isl.y + SD_HANG.top,",
     "new": "N = SD_ISLAND_SIDES, top = isl.y,",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "SD25-HANG-a-spire-top-through-the-cap",
-    "file": "src/world/sdIslandModel.js",
+    "file": "src/world/superDungeon/sdIslandModel.js",
     "old": "y: foot + 0.05 - s.len * t,",
     "new": "y: foot + 3 - s.len * t,",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "SD25-HANG-a-chain-anchor-up-through-the-floor",
-    "file": "src/world/sdIslandModel.js",
+    "file": "src/world/superDungeon/sdIslandModel.js",
     "old": "anchors.push([isl.x + Math.cos(a) * 0.75 * rb, foot + 0.2,",
     "new": "anchors.push([isl.x + Math.cos(a) * 0.75 * rb, foot + 3.2,",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "SD25-HANG-a-gear-rim-out-past-the-disc",
-    "file": "src/world/sdIslandModel.js",
+    "file": "src/world/superDungeon/sdIslandModel.js",
     "old": "const ox = cx + Math.cos(g.a) * R * 0.8,",
     "new": "const ox = cx + Math.cos(g.a) * (R * 0.8 + 6),",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "SD25-HANG-the-strata-over-half-the-depth",
-    "file": "src/world/sdIslandModel.js",
+    "file": "src/world/superDungeon/sdIslandModel.js",
     "old": "depth = -SD_HANG.top + SD_HANG.skirt + L0;",
     "new": "depth = -SD_HANG.top + SD_HANG.skirt + L0 * 0.5;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "SD25-HANG-a-tip-not-hazed",
-    "file": "src/world/sdIslandModel.js",
+    "file": "src/world/superDungeon/sdIslandModel.js",
     "old": "(i === SD_SPIRE.rings - 1 ? Math.max(SD_SPIRE.haze, vOf(p[1])) : vOf(p[1]))",
     "new": "vOf(p[1])",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "SD25-HANG-the-skirt-off-the-lip",
-    "file": "src/world/sdIslandModel.js",
+    "file": "src/world/superDungeon/sdIslandModel.js",
     "old": "const t0 = D(isl.x + Math.cos(a0) * isl.r, top,",
     "new": "const t0 = D(isl.x + Math.cos(a0) * isl.r * 0.98, top,",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "SD25-HANG-the-phones-spires-all-stood",
-    "file": "src/world/sdIslandModel.js",
+    "file": "src/world/superDungeon/sdIslandModel.js",
     "old": "for (let j = 0; j < outer && !lite; j++) {",
     "new": "for (let j = 0; j < outer; j++) {",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "SD25-HANG-a-ledge-facing-up",
-    "file": "src/world/sdIslandModel.js",
+    "file": "src/world/superDungeon/sdIslandModel.js",
     "old": "ctr = D(B.c.x, B.c.y + 50, B.c.z);",
     "new": "ctr = D(B.c.x, B.c.y - 50, B.c.z);",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "SD25-HANG-no-ledges",
-    "file": "src/world/sdIslandModel.js",
+    "file": "src/world/superDungeon/sdIslandModel.js",
     "old": "const ledge = i + 1 < rings.length - 1,",
     "new": "const ledge = false,",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "SD25-HANG-the-swing-about-the-island-centre",
-    "file": "src/world/sdIslandModel.js",
+    "file": "src/world/superDungeon/sdIslandModel.js",
     "old": "axle: Object.freeze({ p: Object.freeze(D(a[0], a[1], a[2])),",
     "new": "axle: Object.freeze({ p: Object.freeze(D(isl.x, a[1], isl.z)),",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "SD25-HANG-the-swing-never-alternating",
-    "file": "src/world/sdIslandModel.js",
+    "file": "src/world/superDungeon/sdIslandModel.js",
     "old": "return SD_CHAIN.swing * (s % 2 === 0 ? 1 : -1) * Math.cos(Math.PI * e);",
     "new": "return SD_CHAIN.swing * Math.cos(Math.PI * e);",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "SD25-HANG-the-links-never-turned",
-    "file": "src/world/sdIslandModel.js",
+    "file": "src/world/superDungeon/sdIslandModel.js",
     "old": "turned = n % 2 === 1;",
     "new": "turned = false;",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "SD25-HANG-a-follower-half-a-tooth-off",
-    "file": "src/world/sdWorksModel.js",
+    "file": "src/world/superDungeon/sdWorksModel.js",
     "old": "phase = b + Math.PI - (d.r * (d.phase - b) + SD_WORKS_PITCH / 2) / r;",
     "new": "phase = b + Math.PI - (d.r * (d.phase - b)) / r;",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "SD25-HANG-a-follower-turning-with-its-driver",
-    "file": "src/world/sdWorksModel.js",
+    "file": "src/world/superDungeon/sdWorksModel.js",
     "old": "w = (-d.w * d.r) / r;",
     "new": "w = (d.w * d.r) / r;",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "SD25-HANG-the-face-uv-on-the-tip-band",
-    "file": "src/world/sdWorksModel.js",
+    "file": "src/world/superDungeon/sdWorksModel.js",
     "old": "export const SD_WORKS_FACE_V = 0.14;",
     "new": "export const SD_WORKS_FACE_V = 0.04;",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "SD25-HANG-the-teeth-faces-unglinting",
-    "file": "src/world/sdWorksModel.js",
+    "file": "src/world/superDungeon/sdWorksModel.js",
     "old": "[0, tipV[0]], [1, tipV[0]], [1, tipV[1]], [0, tipV[1]], from);",
     "new": "uv(rg, g0), uv(rg, g1), uv(rt, t1), uv(rt, t0), from);",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "SD25-HANG-the-upper-driver-off-its-axle",
-    "file": "src/world/sdWorksModel.js",
+    "file": "src/world/superDungeon/sdWorksModel.js",
     "old": "x = a.x; z = a.z; w = a.w;",
     "new": "x = a.x + 2; z = a.z; w = a.w;",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "SD25-HANG-the-driver-two-teeth-a-tick",
-    "file": "src/world/sdWorksModel.js",
+    "file": "src/world/superDungeon/sdWorksModel.js",
     "old": "w = (2 * Math.PI) / s.teeth, phase = 0;",
     "new": "w = (4 * Math.PI) / s.teeth, phase = 0;",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "SD25-HANG-an-island-over-the-edge",
-    "file": "src/world/sdIslandModel.js",
+    "file": "src/world/superDungeon/sdIslandModel.js",
     "old": "[2.5, 300, -54, 5, 12]",
     "new": "[2.5, 300, -24, 5, 12]",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "SD25-HANG-the-set-turned-about-the-origin",
-    "file": "src/world/sdIslandModel.js",
+    "file": "src/world/superDungeon/sdIslandModel.js",
     "old": "pz = SD_REALM_ORIGIN[2] + SD_FAR_CENTRE[2];",
     "new": "pz = SD_REALM_ORIGIN[2];",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "SD25-HANG-the-works-face-glowing",
-    "file": "src/world/sdHangArt.js",
+    "file": "src/world/superDungeon/sdHangArt.js",
     "old": "putTexel(albedo, x, y, ramp(BLACKENED, 0.1 + 0.32 * broad(x, y) + 0.16 * (grain(x, y) - 0.5), x, y)); putTexel(emission, x, y, [0, 0, 0]);",
     "new": "putTexel(albedo, x, y, ramp(BLACKENED, 0.1 + 0.32 * broad(x, y) + 0.16 * (grain(x, y) - 0.5), x, y)); putTexel(emission, x, y, [4, 3, 1]);",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "SD25-HANG-the-tips-unlit",
-    "file": "src/world/sdHangArt.js",
+    "file": "src/world/superDungeon/sdHangArt.js",
     "old": "export const SD_WORKS_TIP_GLOW = 0.42;",
     "new": "export const SD_WORKS_TIP_GLOW = 0;",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "SD25-HANG-the-band-short-of-the-model",
-    "file": "src/world/sdHangArt.js",
+    "file": "src/world/superDungeon/sdHangArt.js",
     "old": "export const SD_WORKS_TIP_ROWS = 7;",
     "new": "export const SD_WORKS_TIP_ROWS = 5;",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "SD25-HANG-the-works-bright-brass",
-    "file": "src/world/sdHangArt.js",
+    "file": "src/world/superDungeon/sdHangArt.js",
     "old": "const BLACKENED = Object.freeze([Vo[1], Vo[2], Br[0], Br[1]]);",
     "new": "const BLACKENED = Object.freeze([Br[2], Br[3], Br[4], Br[5]]);",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "SD25-HANG-the-art-not-carried",
-    "file": "src/world/sdRealmArt.js",
+    "file": "src/world/superDungeon/sdRealmArt.js",
     "old": "[31, realmCobbleArt()], [32, realmEdgeArt()], [56, realmPillarArt()], ...hangArt(),",
     "new": "[31, realmCobbleArt()], [32, realmEdgeArt()], [56, realmPillarArt()],",
     "tests": [
@@ -343,7 +343,7 @@
   },
   {
     "name": "SD25-HANG-the-lip-gone",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "    f.quad(SD_REALM_ROOT_RECORD, C(x0, -SD_LIP, z0), C(x0, 0, z0),",
     "new": "    if (false) f.quad(SD_REALM_ROOT_RECORD, C(x0, -SD_LIP, z0), C(x0, 0, z0),",
     "tests": [
@@ -352,7 +352,7 @@
   },
   {
     "name": "SD25-HANG-the-lip-facing-in",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "C(x0, -SD_LIP, z0), C(x0, 0, z0), C(x1, 0, z1), C(x1, -SD_LIP, z1),",
     "new": "C(x1, -SD_LIP, z1), C(x1, 0, z1), C(x0, 0, z0), C(x0, -SD_LIP, z0),",
     "tests": [

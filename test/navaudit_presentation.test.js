@@ -487,7 +487,7 @@ test('AUDIT NAV1 (the presentation) her colours by her state: her faction\'s whi
   assert.equal(e.boat.FlagEmitter.isEmitting, true, 'taken: colours again -');
   assert.equal(e.boat.flagColor, null, '- the captor\'s orange (FlagMaterial\'s, the player\'s boats\' own)');
   // the Carrack's colours. PIN MOVED (SHIPS-2, 2026-10-07): Mac's carrack carries her own, as the galleon does
-  // (world/carrackModel.js: the galleon's FlagObject at her main topmast's truck, under her hull's node) - nothing grafted
+  // (world/ships/carrackModel.js: the galleon's FlagObject at her main topmast's truck, under her hull's node) - nothing grafted
   const c = place(h, 'pirateFlagship', [400, 0, 0], { seed: 0 });
   assert.ok(c.boat.FlagObject, 'a Carrack at sea flies her colours');
   assert.equal(c.boat.FlagObject.parent.name, 'NewCarrack', 'her own, under her hull - heeling with it');

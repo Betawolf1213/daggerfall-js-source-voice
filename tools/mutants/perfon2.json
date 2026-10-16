@@ -120,7 +120,7 @@
   },
   {
     "name": "PERF-LIGHTS-the-count-is-ignored-so-the-pools-stale-entries-are-selected-from",
-    "file": "src/world/cityLights.js",
+    "file": "src/world/city/cityLights.js",
     "old": "  const len = n < 0 ? lights.length : Math.min(n, lights.length);",
     "new": "  const len = lights.length;",
     "tests": [
@@ -129,7 +129,7 @@
   },
   {
     "name": "PERF-LIGHTS-the-default-stops-meaning-the-whole-array",
-    "file": "src/world/cityLights.js",
+    "file": "src/world/city/cityLights.js",
     "old": "export function nearestLights(lights, pos, max = 16, range = CITY_LIGHT_RANGE, colorOf = null, xzRange = 0, n = -1) {",
     "new": "export function nearestLights(lights, pos, max = 16, range = CITY_LIGHT_RANGE, colorOf = null, xzRange = 0, n = 0) {",
     "tests": [
@@ -138,7 +138,7 @@
   },
   {
     "name": "PERF-LIGHTS-the-host-mints-a-light-object-a-lantern-a-frame-again",
-    "file": "src/world/cityLights.js",
+    "file": "src/world/city/cityLights.js",
     "old": "      const e = pool[n] ?? (pool[n] = { x: 0, y: 0, z: 0 });",
     "new": "      const e = (pool[n] = { x: 0, y: 0, z: 0 });",
     "tests": [
@@ -239,7 +239,7 @@
   },
   {
     "name": "AUDIT-F2-the-short-range-array-goes-back-to-a-silent-NaN",
-    "file": "src/world/cityLights.js",
+    "file": "src/world/city/cityLights.js",
     "old": "    packLight(out, i, l, Number.isFinite(w) ? w : CITY_LIGHT_RANGE);",
     "new": "    packLight(out, i, l, w);",
     "tests": [
@@ -248,7 +248,7 @@
   },
   {
     "name": "AUDIT-F2-the-guard-overwrites-a-legitimate-zero-range",
-    "file": "src/world/cityLights.js",
+    "file": "src/world/city/cityLights.js",
     "old": "    packLight(out, i, l, Number.isFinite(w) ? w : CITY_LIGHT_RANGE);",
     "new": "    packLight(out, i, l, w || CITY_LIGHT_RANGE);",
     "tests": [

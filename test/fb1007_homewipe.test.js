@@ -15,7 +15,7 @@ import { emptyArenaScene, moveArenaRecords, ARENA_CRATE_KEY } from '../src/syste
 import { moveArenaHomes, homeSceneName } from '../src/systems/online/onlineHomes.js';
 import { createSceneCache, cacheScene, addPermanentScene, interiorSceneName, snapshotSceneCache, restoreSceneCache, restoreCachedScene } from '../src/systems/sceneCache.js';
 import { layoutsMatch } from '../src/systems/layoutPins.js';
-import { arenaRecordDisplaced, ARENA_LOCATION_KEY, ARENA_REGION } from '../src/world/arenaCity.js';
+import { arenaRecordDisplaced, ARENA_LOCATION_KEY, ARENA_REGION } from '../src/world/arena/arenaCity.js';
 import { createHouses } from '../src/systems/banking.js';
 import { makeBuildingKey } from '../src/systems/talk/talkTopics.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';

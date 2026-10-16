@@ -1,6 +1,6 @@
 // TAVERN-TABLE (2026-10-08, the owner: "Lets instead place a specific table in each inn. A new property specifficaly
 // used for the card table"; bible/11-Multiplayer/Tavern-Cards.md section 28): every tavern stands the card table's own
-// prop (world/cardTableProp.js, pure: its model and its painted felt and wood), on floor found from the entrance
+// prop (world/card/cardTableProp.js, pure: its model and its painted felt and wood), on floor found from the entrance
 // (world/placedCardTable.js, pure), as one of the room's own models and its one card table (scenes/interiorContext.js),
 // asked for by the interior host for a tavern (scenes/worldModes.js).
 import { test } from 'node:test';
@@ -10,18 +10,18 @@ import {
   placedTableSpot, PLACE_CELL, PLACE_GRID_OFF, PLACE_REACH_M, PLACE_FROM_DOOR_M, PLACE_RING_M, PLACE_BODY_R,
   PLACE_CLEAR_HEIGHTS, PLACE_STOREY_SLACK, PLACE_PROBE_M, PLACE_AVOID_DY,
 } from '../src/world/placedCardTable.js';
-import { SEAT_SPACING, cardTableSeats, seatFloorOk, SEAT_FLOOR_PROBE, tableFrame, seatSpots, SEAT_SURFACE_MAX } from '../src/world/cardTables.js';
+import { SEAT_SPACING, cardTableSeats, seatFloorOk, SEAT_FLOOR_PROBE, tableFrame, seatSpots, SEAT_SURFACE_MAX } from '../src/world/card/cardTables.js';
 import {
   cardTablePropModel, paintFelt, paintWood, texelNoise, CARD_TABLE_ARCHIVE, FELT_RECORD, WOOD_RECORD, CARD_TABLE_W, CARD_TABLE_D,
   CARD_TABLE_TOP, CARD_TABLE_SLAB, CARD_TABLE_RAIL, CARD_TABLE_FELT_LIFT, CARD_TABLE_LEG, CARD_TABLE_LEG_IN, WOOD_TILE_M,
   CARD_TABLE_TEX, FELT_RGB, WOOD_RGB, CARD_TABLE_BOX, STOOL_W, STOOL_TOP, STOOL_SEAT, STOOL_LEG, STOOL_LEG_IN,
-} from '../src/world/cardTableProp.js';
+} from '../src/world/card/cardTableProp.js';
 import { cardModel } from '../src/render/cardTableDraw.js';
 import { localAabb } from '../src/render/frustum.js';
 import { HOLDEM_SEATS_MAX } from '../src/net/cardLaw.js';
 import { SEAT_OUT, SEATED_EYE_HEIGHT, SEAT_TOP_DEFAULT, seatTopByte, seatTopOf } from '../src/player/seatPose.js';
-import { STACK_IN } from '../src/world/cardScene.js';
-import { CHIP_R } from '../src/world/cardMotion.js';
+import { STACK_IN } from '../src/world/card/cardScene.js';
+import { CHIP_R } from '../src/world/card/cardMotion.js';
 import { buildInteriorContext } from '../src/scenes/interiorContext.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

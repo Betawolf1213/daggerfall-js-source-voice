@@ -1,7 +1,7 @@
 [
   {
     "name": "SEA-LEVEL-off",
-    "file": "src/world/wodLocationLoader.js",
+    "file": "src/world/worldOfDaggerfall/wodLocationLoader.js",
     "old": "      if (a <= SEA_SAMPLE && avg > a && d > SEA_RAMP) continue;",
     "new": "      if (false) continue;",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "SEA-LEVEL-no-ramp",
-    "file": "src/world/wodLocationLoader.js",
+    "file": "src/world/worldOfDaggerfall/wodLocationLoader.js",
     "old": "      if (a <= SEA_SAMPLE && avg > a && d > SEA_RAMP) continue;",
     "new": "      if (a <= SEA_SAMPLE && avg > a && d > 0) continue;",
     "tests": [
@@ -20,7 +20,7 @@
   },
   {
     "name": "SEA-LEVEL-ramp-whole-pixel",
-    "file": "src/world/wodLocationLoader.js",
+    "file": "src/world/worldOfDaggerfall/wodLocationLoader.js",
     "old": "export const SEA_RAMP = 2;",
     "new": "export const SEA_RAMP = 1000;",
     "tests": [
@@ -29,7 +29,7 @@
   },
   {
     "name": "SEA-SAMPLE-under-the-sea",
-    "file": "src/world/wodLocationLoader.js",
+    "file": "src/world/worldOfDaggerfall/wodLocationLoader.js",
     "old": "export const SEA_SAMPLE = f32(SCALED_OCEAN_ELEVATION / MAX_TERRAIN_HEIGHT);",
     "new": "export const SEA_SAMPLE = f32(0.99 * SCALED_OCEAN_ELEVATION / MAX_TERRAIN_HEIGHT);",
     "tests": [

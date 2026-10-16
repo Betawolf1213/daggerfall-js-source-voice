@@ -81,7 +81,7 @@ export const HUB_FIND_ASK_MS = 1500;
 /** CHAT-FIND-HUB: a query that still stands in the box is asked again once its answer is this old (who is online moves). */
 export const HUB_FIND_FRESH_MS = 15_000;
 import { isLayered, LAYERS_MAX } from './wire.js';   // SCALE5d: a crowded place's layers
-import { layoutRoomKey } from '../world/interiorShared.js';   // WD3 (AUDIT WD3 B3): an interior's room is its layout's
+import { layoutRoomKey } from '../world/interior/interiorShared.js';   // WD3 (AUDIT WD3 B3): an interior's room is its layout's
 import { tabStorage } from '../systems/appStorage.js';   // the tab's own storage - the seam, never the browser's own (a PIN)
 import { REALM_CHARACTER_RE } from './identityToken.js';   // AUDIT LEGACY III O1: a wed frame's stamped realm character, by the token's own shape
 import { wrapAngle } from '../world/mat4.js';   // ONCRASH1: the port's one angle wrap, which cannot loop
@@ -275,7 +275,7 @@ export function roomKeyFor({ host, mode, mapId = null, regionIndex = -1, locatio
   const loc = id > 0 ? `m${id}` : (locationName && regionIndex >= 0 ? `${regionIndex}.${slug(locationName)}` : null);
   if (mode === 'dungeon') return loc ? `dungeon:${loc}${dungeonRoomTag(size)}` : null;   // SD-ONLINE: a re-laid dungeon's room is its layout's, `.m` or `.s` (wire.js WORLD_ROOM)
   const bk = Number.isFinite(buildingKey) ? buildingKey >>> 0 : 0;   // AUDIT WORLD6a B5: unsigned, as the id is - the memory's key (interiorLocationKey) spells it so, and the two must agree by construction
-  if (mode === 'interior') return loc && bk ? `interior:${loc}.${layoutRoomKey(bk, layout)}` : null;   // WD3 (AUDIT WD3 B3): the building's room in its town's layout (world/interiorShared.js)   // a door the directory cannot key (0) is no room, not a pool of them
+  if (mode === 'interior') return loc && bk ? `interior:${loc}.${layoutRoomKey(bk, layout)}` : null;   // WD3 (AUDIT WD3 B3): the building's room in its town's layout (world/interior/interiorShared.js)   // a door the directory cannot key (0) is no room, not a pool of them
   if (host === 'exterior') return loc ? `town:${loc}` : null;
   if (!mapPixel) return null;
   return worldRoom(mapPixel.x, mapPixel.y);

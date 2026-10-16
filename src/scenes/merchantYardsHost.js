@@ -4,7 +4,7 @@
 // standing in its collider, its horses and its keeper on the flats' axis, its wagons on show drawn as a parked wagon is,
 // the eye's boxes and their names, and the press - the trade (systems/merchantYards.js).
 //
-// WHERE: the host says (`sites`: each yard of every town built, its middle in the scene's x, z - world/merchantYardSites.js
+// WHERE: the host says (`sites`: each yard of every town built, its middle in the scene's x, z - world/merchantYards/merchantYardSites.js
 // placed it, carried by the host's own frame - its turn, its name and its keeper), and the ground there is the host's
 // (`groundAt`), read when a yard moves (a floating-origin recentre, across or up) and every YARD_GROUND_EVERY frames,
 // never every frame. A yard's collider bucket - its timber, its wagons' boxes, its horses' and its keeper's - is stood
@@ -43,9 +43,9 @@
 // Not a DFU member. Ledger A (MERCHANT-YARDS).
 import { YARD_KINDS, YARD_TEXT, YARD_ROWS, YARD_BENCH_ROW, CARPENTER_STEAL_TEXT, yardName, validYardKind, yardRowsFor } from '../systems/merchantYards.js';
 import { WAGON_KINDS } from '../systems/wagon/wagonKinds.js';
-import { YARD_FOOT } from '../world/merchantYardSites.js';
-import { buildYardModel, signBoxOf, yardPoints } from '../world/merchantYardModels.js';
-import { yardArt, YARD_ARCHIVE } from '../world/merchantYardArt.js';
+import { YARD_FOOT } from '../world/merchantYards/merchantYardSites.js';
+import { buildYardModel, signBoxOf, yardPoints } from '../world/merchantYards/merchantYardModels.js';
+import { yardArt, YARD_ARCHIVE } from '../world/merchantYards/merchantYardArt.js';
 import { dfLook, lookSeed } from '../world/dfLook.js';   // DF-LOOK: the yards' pictures in Daggerfall's colours
 import { PERSON_TEXTURES, PERSON_IDLE_RECORD, PERSON_IDLE_FPS } from '../characters/mobilePerson.js';
 import { mobileBillboardSize } from '../world/rmbFlats.js';

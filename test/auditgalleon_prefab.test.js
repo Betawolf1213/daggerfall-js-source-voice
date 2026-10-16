@@ -16,10 +16,10 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import * as GM from '../src/world/galleonModel.js';
-import * as GA from '../src/world/galleonArt.js';
-import { newell, norm } from '../src/world/galleonMesh.js';
-import * as RG from '../src/world/galleonRig.js';
+import * as GM from '../src/world/ships/galleonModel.js';
+import * as GA from '../src/world/ships/galleonArt.js';
+import { newell, norm } from '../src/world/ships/galleonMesh.js';
+import * as RG from '../src/world/ships/galleonRig.js';
 import { MODELS, scene, ctxFor } from './csaScene.mjs';
 import { HULL, hullBuild } from '../src/systems/naval/navalShips.js';
 import { instantiatePrefab } from '../src/world/prefabNode.js';
@@ -696,7 +696,7 @@ test('AUDIT GALLEON R8/R11: her gunports\' throats - sill, lintel and cheeks - w
 // ── R12: her texels ────────────────────────────────────────────────────────────────────────────────────────────────
 
 test('AUDIT GALLEON R12: her art\'s comment says her texels as she wears them - each figure the median, over its area, of the texel along u and v of every triangle she draws in that picture (her planking 3.1 cm square, her bottom 3.1 by 3.5, her side 4.4 by 4.5, her castle 4.1 by 5.2, her stern 4.3-4.4 by 5.2, her spars 3.1-3.3 along and 0.8-3.3 round, gilt and gratings 1.6, rope 0.2-0.4 round and 0.8 along, canvas 8-19 by 5-25, a shutter 1.4 by 2.4, a door 2.4 by 4.0) - and no longer says "3 to 5 cm", "square-pixelled", tiles stretched to keep the texel, or the canvas, the shutters and the door among the tiling pictures', () => {
-  const src = readFileSync(new URL('../src/world/galleonArt.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/world/ships/galleonArt.js', import.meta.url), 'utf8');
   for (const lie of [/a texel is 3 to 5 cm/, /Square-pixelled/i, /their tiles stretched to keep the texel/, /so a texel is the size it was\.\s*\*\//, /canvas, rope, gilt, the hatches' gratings, the\s*\/\/\s*gunport lids' red, a planked door/]) assert.doesNotMatch(src, lie);
   // each triangle's texel along u and v (cm: the metres a unit of u or v spans, over 64), with its area
   const S = [];
@@ -851,7 +851,7 @@ test('AUDIT GALLEON NITS: her measurements the module comment calls pinned are p
   near(M.knuckleY, Math.max(...h.filter((q) => Math.abs(q[0]) > 5.85).map((q) => q[1])), 1e-3, 'knuckleY: her widest corners');
   near(M.railCapY, ext('castleRail', 1), 1e-3, 'railCapY');
   near(M.hatchCoverUnderY, ext('hatchFore', 1, Math.min), 1e-3, 'hatchCoverUnderY');
-  const mesh = readFileSync(new URL('../src/world/galleonMesh.js', import.meta.url), 'utf8'), model = readFileSync(new URL('../src/world/galleonModel.js', import.meta.url), 'utf8');
+  const mesh = readFileSync(new URL('../src/world/ships/galleonMesh.js', import.meta.url), 'utf8'), model = readFileSync(new URL('../src/world/ships/galleonModel.js', import.meta.url), 'utf8');
   assert.doesNotMatch(mesh, /so the collider's mesh is a closed one/);
   assert.doesNotMatch(model, /return tiled\(TEX\.trim\);\s*\/\/ the stairwells' cut/);
   assert.doesNotMatch(model, /the ramp rose 4 cm through the top tread/);

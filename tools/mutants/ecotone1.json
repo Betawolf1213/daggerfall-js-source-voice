@@ -210,7 +210,7 @@
   },
   {
     "name": "ECOTONE1-archive-not-carried",
-    "file": "src/world/terrainNature.js",
+    "file": "src/world/terrain/terrainNature.js",
     "old": "    if (f) out.push({ ...f, archive });",
     "new": "    if (f) out.push(f);",
     "tests": [
@@ -219,7 +219,7 @@
   },
   {
     "name": "ECOTONE1-desert-scale-dropped",
-    "file": "src/world/terrainNature.js",
+    "file": "src/world/terrain/terrainNature.js",
     "old": "const chance = base * elevationScale * (climateType === CLIMATE_TYPE_DESERT ? 0.25 : 1.0);",
     "new": "const chance = base * elevationScale;",
     "tests": [
@@ -228,7 +228,7 @@
   },
   {
     "name": "ECOTONE1-desert-inset",
-    "file": "src/world/terrainNature.js",
+    "file": "src/world/terrain/terrainNature.js",
     "old": "return { record: 1 + Math.floor(tileDraw(wx, wz, 5) * 31), x: x * scale, y: heightAt(x, y) - steepness / SLOPE_SINK_RATIO, z: y * scale };",
     "new": "return { record: 1 + Math.floor(tileDraw(wx, wz, 5) * 31), x: (x + 0.5) * scale, y: heightAt(x, y) - steepness / SLOPE_SINK_RATIO, z: y * scale };",
     "tests": [
@@ -237,7 +237,7 @@
   },
   {
     "name": "ECOTONE1-woods-dice-the-climate's",
-    "file": "src/world/terrainNature.js",
+    "file": "src/world/terrain/terrainNature.js",
     "old": "    const roll = tileDraw(wx, wz, 0);",
     "new": "    const roll = tileDraw(wx + trees.length, wz, 0);",
     "tests": [

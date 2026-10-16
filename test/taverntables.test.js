@@ -11,8 +11,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { webcrypto } from 'node:crypto';
 import { placedTableSpot, TAVERN_CARD_TABLES, PLACE_RING_M } from '../src/world/placedCardTable.js';
-import { cardTableSeats, seatFloorOk, SEAT_FLOOR_PROBE, nearestFreeSeat, takenSeats } from '../src/world/cardTables.js';
-import { paintFelt, CARD_TABLE_ARCHIVE, FELT_RECORD, GOLD_FELT_RECORD, GOLD_FELT_RGB, FELT_RGB, CARD_TABLE_BOX } from '../src/world/cardTableProp.js';
+import { cardTableSeats, seatFloorOk, SEAT_FLOOR_PROBE, nearestFreeSeat, takenSeats } from '../src/world/card/cardTables.js';
+import { paintFelt, CARD_TABLE_ARCHIVE, FELT_RECORD, GOLD_FELT_RECORD, GOLD_FELT_RGB, FELT_RGB, CARD_TABLE_BOX } from '../src/world/card/cardTableProp.js';
 import { HOLDEM_GOLD_TABLE, holdemGoldTable, HOLDEM_TABLES_MAX } from '../src/net/holdemTable.js';
 import { HOLDEM_SEATS_MAX } from '../src/net/cardLaw.js';
 import { buildInteriorContext } from '../src/scenes/interiorContext.js';
@@ -23,13 +23,13 @@ import * as court from '../src/systems/court.js';
 import * as sess from '../src/systems/card/cardTableSession.js';
 import * as hudm from '../src/ui/cardTableHud.js';
 import { holdCursor } from '../src/player/pointerLock.js';
-import { regularsToStand, regularBark, BARK_MS } from '../src/world/cardRegulars.js';
+import { regularsToStand, regularBark, BARK_MS } from '../src/world/card/cardRegulars.js';
 import { fakeDoc } from './decorFakes.mjs';
 import { cardPackPrice, buyCardPack } from '../src/systems/card/cardSources.js';   // CARDS9: the house's packs at the table
 import { openIliacTableGame } from '../src/scenes/iliacTableGame.js';   // CARDS10: the other game at the table
 import { openGambitTableGame, gambitTableOn } from '../src/scenes/gambitTableGame.js';   // KG3: the third game at the table
 import { gambitBoardKey } from '../src/ui/gambitTableHud.js';   // KG3: the board's own keys, the cloth's listener's
-import { regularLook } from '../src/world/cardRegulars.js';
+import { regularLook } from '../src/world/card/cardRegulars.js';
 import { seatTopByte } from '../src/player/seatPose.js';
 import { iliacGrade } from '../src/systems/iliac/iliacPatrons.js';
 import { skillValue, SKILLS } from '../src/systems/skills.js';

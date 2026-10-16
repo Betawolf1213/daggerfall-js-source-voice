@@ -29,8 +29,8 @@ import { setForagingHost, createForagingItem } from '../src/systems/foraging/for
 import { FT } from '../src/systems/foraging/foragingLaw.js';
 import { CLIMATES, LOCATION_TYPES } from '../src/formats/mapsFile.js';
 import { trees, veins, boulders, utcDayOfMs } from '../src/net/nodeLaw.js';
-import { groundAt } from '../src/world/terrainNature.js';
-import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { groundAt } from '../src/world/terrain/terrainNature.js';
+import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 import { worldCoordToMapPixel, isInLocationRect, locationWorldRect, mapPixelToWorldCoords, SCENE_MAP_RATIO, WORLD_MAP_RMB_DIM } from '../src/world/streamingWorld.js';
 import { isPlayerInTown } from '../src/systems/nearbyObjects.js';
 

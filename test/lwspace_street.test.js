@@ -16,7 +16,7 @@ import { aloneStand, aloneStands, circleStands, circlesStands, SPACE_M, SPACE_FA
 import { LivingTown, FILE_M, FILE_MIN, DODGE_SIDES, DODGE_SETTLE_M } from '../src/systems/livingWorld/livingTown.js';
 import { ResidentWalker } from '../src/characters/residentWalker.js';
 import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
-import { NAV_CELL } from '../src/world/cityNavigation.js';
+import { NAV_CELL } from '../src/world/city/cityNavigation.js';
 import { DAY_MIN, isOutdoor } from '../src/systems/livingWorld/dayPlan.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
 import { skipReal, hostTown, cities } from './lwRealTown.mjs';

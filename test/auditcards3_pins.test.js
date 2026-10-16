@@ -9,11 +9,11 @@ import {
   newTable, publicView, sit, stand, actAt, tick, tableLook, validHoldemIn, validHoldemOut, HOLDEM_FIRST_MS, HOLDEM_NAME_MAX, stateDelta, STATE_KEYS,
 } from '../src/net/holdemTable.js';
 import { RemoteCardTable } from '../src/systems/card/cardRemoteTable.js';
-import { regularLook } from '../src/world/cardRegulars.js';
-import { onStack, inBetZone, heldMatrices, PEEK_RISE, STACK_GRAB_M } from '../src/world/cardHand.js';
-import { riffleAt, RIFFLE_S, RIFFLE_PART } from '../src/world/cardMotion.js';
-import { tablePlaces } from '../src/world/cardScene.js';
-import { tableFrame, cardTableSeats } from '../src/world/cardTables.js';
+import { regularLook } from '../src/world/card/cardRegulars.js';
+import { onStack, inBetZone, heldMatrices, PEEK_RISE, STACK_GRAB_M } from '../src/world/card/cardHand.js';
+import { riffleAt, RIFFLE_S, RIFFLE_PART } from '../src/world/card/cardMotion.js';
+import { tablePlaces } from '../src/world/card/cardScene.js';
+import { tableFrame, cardTableSeats } from '../src/world/card/cardTables.js';
 import { lookAt } from '../src/world/mat4.js';
 import { invert4 } from '../src/player/tapRay.js';
 
@@ -190,7 +190,7 @@ test('AUDIT CARDS-3 pins, the fixes\' own small seams: an old refusal cleared by
   assert.equal(freed, 0, 'clear keeps the dolls for the next stand');
   fam.destroy();
   assert.equal(freed, 1, 'destroy lets their textures go');
-  const { CardScene } = await import('../src/world/cardScene.js');
+  const { CardScene } = await import('../src/world/card/cardScene.js');
   const table = { aabb: { min: [10, 0, 20], max: [12, 0.8, 21] } };
   const seats = cardTableSeats(table, () => true);
   const scene = new CardScene({ places: tablePlaces(tableFrame(table), seats, [0, 1]), playerSeat: 0 });

@@ -13,7 +13,7 @@ import { WoodsFile } from '../src/formats/woodsFile.js';
 import {
   DeepWatersBake, BAY_FRAME, inFrame, floodSteps, classifyPixel, coarseCandidateBits, pixelWaterSampler, PIXEL_SEA, PIXEL_LAND, PIXEL_MIXED, BAKE_DISTANCE_CAP, BAKE_DISTANCE_SCALE_METERS,
   PLANE_KEEP_MAX, PLANE_KEEP_RADIUS,
-} from '../src/world/deepWatersBake.js';
+} from '../src/world/deepWater/deepWatersBake.js';
 import {
   EtherWatersBake, DeepWatersBakes, ETHER_FRAME, ETHER_ROW, etherPlaceRects, etherRectAt, worldBakes, waterFrameOf,
 } from '../src/world/etherWatersBake.js';
@@ -21,14 +21,14 @@ import {
   etherWoods, etherClimateAt, ETHER_BOX, ISLE_CELL_PX, CELLS_W, CELLS_H, VEIL_X, veilhaven, landfall, isleOfCell, etherCellOf, islesNear, inEther,
 } from '../src/world/ethericSea.js';
 import { etherTemplateOf } from '../src/world/etherPlaces.js';
-import { generateSamples } from '../src/world/terrainSampler.js';
-import { generateTileData, assignTiles } from '../src/world/terrainTiles.js';
-import { convertTilemap } from '../src/world/terrainSurface.js';
-import { buildDeepWatersPixel, DW_OCEAN_LOCAL_Y } from '../src/world/deepWatersPixel.js';
-import { DeepWaterTileData } from '../src/world/deepWaterTileData.js';
-import { sampleMeshLocalY, TILE_WORLD_SIZE } from '../src/world/deepWaterFloor.js';
-import { sampleDepthMeters } from '../src/world/deepBathymetry.js';
-import { loadDeepWatersBake } from '../src/world/deepWatersClient.js';
+import { generateSamples } from '../src/world/terrain/terrainSampler.js';
+import { generateTileData, assignTiles } from '../src/world/terrain/terrainTiles.js';
+import { convertTilemap } from '../src/world/terrain/terrainSurface.js';
+import { buildDeepWatersPixel, DW_OCEAN_LOCAL_Y } from '../src/world/deepWater/deepWatersPixel.js';
+import { DeepWaterTileData } from '../src/world/deepWater/deepWaterTileData.js';
+import { sampleMeshLocalY, TILE_WORLD_SIZE } from '../src/world/deepWater/deepWaterFloor.js';
+import { sampleDepthMeters } from '../src/world/deepWater/deepBathymetry.js';
+import { loadDeepWatersBake } from '../src/world/deepWater/deepWatersClient.js';
 import { createDeepWatersHost } from '../src/scenes/deepWatersHost.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -318,7 +318,7 @@ test('ETHER-DEEP: the client builds the Eltheric\'s bake beside the Bay\'s on th
   const listening = () => { const w = { terminate() {}, postMessage(m) { said = m; queueMicrotask(() => w.onmessage({ data: { t: 'error', message: 'stop here' } })); } }; return w; };
   await loadDeepWatersBake({ woods: ground, woodsBytes: new Uint8Array(4), rects: [], ether: { towns: [], havens: [], ruins: [] }, workerFactory: listening, store });
   assert.deepEqual(said.ether, { towns: [], havens: [], ruins: [] }, 'the worker\'s build carries the places\' rects');
-  const worker = src('src/world/deepWatersWorker.js');
+  const worker = src('src/world/deepWater/deepWatersWorker.js');
   assert.match(worker, /bake = worldBakes\(new DeepWatersBake\(\{ woods, global: g, locationRectAt \}\), \{ woods: m\.ether \? etherWoods\(woods\) : woods, ether: m\.ether \?\? null \}\);/, 'the worker composes the sea over its own reader');
 });
 

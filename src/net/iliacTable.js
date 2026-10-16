@@ -15,7 +15,7 @@
 // still sit (a rematch, as the next hand at Hold'em).
 //
 // TWO SEATS OF A TABLE'S CHAIRS. A table index is Hold'em's or Iliac Hand's, never both at once (the relay refuses the
-// other game's sit while one sits); the client names the chair it took (world/cardTables.js - the same room, the same
+// other game's sit while one sits); the client names the chair it took (world/card/cardTables.js - the same room, the same
 // chairs, on every client), so every eye maps a seat to one chair. Seat 0 sat first.
 //
 // RANKED (section 6.4, DECIDED: "a ladder"). A seat sat with a deck the account service vouched for (net/identityToken.js

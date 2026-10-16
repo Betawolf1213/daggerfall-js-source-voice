@@ -1,13 +1,13 @@
 // @ts-check
 // SD4b (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 6): A SUPER DUNGEON'S END -
-// THE RIFT AND THE RETURN, stood by the dungeon host (scenes/dungeonContext.js) where world/sdDungeon.js places them.
+// THE RIFT AND THE RETURN, stood by the dungeon host (scenes/dungeonContext.js) where world/superDungeon/sdDungeon.js places them.
 //
 //  - THE RIFT: SD-LOOK (2026-10-08, bible/11-Multiplayer/Super-Dungeons-Look.md section 1) - a brass astrolabe stood on its
-//    edge, its face square to its hall's long line (world/sdDungeon.js sdRiftFace): the crater, the plinth and its claws
-//    (world/sdRiftModel.js - the one part that casts), the outer gear ticking a tooth forward each second on the
-//    escapement (world/sdLook.js sdTick) on the realm's anchored clock - every screen ticks together - the hour-ring
+//    edge, its face square to its hall's long line (world/superDungeon/sdDungeon.js sdRiftFace): the crater, the plinth and its claws
+//    (world/superDungeon/sdRiftModel.js - the one part that casts), the outer gear ticking a tooth forward each second on the
+//    escapement (world/superDungeon/sdLook.js sdTick) on the realm's anchored clock - every screen ticks together - the hour-ring
 //    ratcheting an hour BACK on each toll of its bell, two studs a block counting how long its Hour stands, the iris whose
-//    APERTURE IS ITS STATE (world/sdDungeon.js riftLook - open, not yet, collapsing, closed, refused), three broken pieces
+//    APERTURE IS ITS STATE (world/superDungeon/sdDungeon.js riftLook - open, not yet, collapsing, closed, refused), three broken pieces
 //    of ring orbiting it; and through the iris the Shattered Hour's own sky, its light spilling down the hall and across
 //    the floor (render/sdRiftPass.js, render/sdHalo.js - the host draws them from `look`, `halos` and `lights`). Its
 //    meshes stand among the dungeon's dynamic draws (`stand({ dynamicDraws })`, as the Remnant's do), each that turns
@@ -28,15 +28,15 @@
 //
 // Not a DFU member. Ledger A (SUPER-DUNGEONS).
 
-import { SD_RETURN_SIZE, SD_RIFT_REACH_M, SD_RETURN_REACH_M, SD_END_TEXT, inSdPortal, SD_RIFT_OPEN_LOOK } from '../world/sdDungeon.js';
+import { SD_RETURN_SIZE, SD_RIFT_REACH_M, SD_RETURN_REACH_M, SD_END_TEXT, inSdPortal, SD_RIFT_OPEN_LOOK } from '../world/superDungeon/sdDungeon.js';
 import { startRiftBell, tollRiftBell, RIFT_BELL_SECONDS } from '../systems/superDungeon/sdRiftSound.js';
 import { RAY_DISTANCE, DEFAULT_ACTIVATION_DISTANCE } from '../player/activate.js';
-import { buildRiftStatic, buildRiftGear, buildHourRing, buildRiftStuds, irisModel, irisPositions, buildRiftShard, buildReturnModel, buildReturnHand, buildReturnParts, buildReturnPlate, returnSpringAt, SD_RETURN_PARTS, returnDialAt, riftCentreY, SD_RIFT_PARTS, SD_RIFT_STUDS, SD_RETURN_ARCH } from '../world/sdRiftModel.js';
-import { sdRiftArt, SD_RIFT_RECORD, SD_RIFT_PLATE_RECORD } from '../world/sdRiftArt.js';
-import { SD_REALM_ARCHIVE, SD_REALM_BRASS_RECORD, SD_REALM_COBBLE_RECORD, SD_REALM_EDGE_RECORD } from '../world/sdRealm.js';
-import { realmArt } from '../world/sdRealmArt.js';
-import { hallGlowArt, SD_GLOW_COLORS, SD_HALL_GLOW_RECORD } from '../world/sdHallArt.js';
-import { SD_TICK_EASE_S, SD_LIGHT } from '../world/sdLook.js';
+import { buildRiftStatic, buildRiftGear, buildHourRing, buildRiftStuds, irisModel, irisPositions, buildRiftShard, buildReturnModel, buildReturnHand, buildReturnParts, buildReturnPlate, returnSpringAt, SD_RETURN_PARTS, returnDialAt, riftCentreY, SD_RIFT_PARTS, SD_RIFT_STUDS, SD_RETURN_ARCH } from '../world/superDungeon/sdRiftModel.js';
+import { sdRiftArt, SD_RIFT_RECORD, SD_RIFT_PLATE_RECORD } from '../world/superDungeon/sdRiftArt.js';
+import { SD_REALM_ARCHIVE, SD_REALM_BRASS_RECORD, SD_REALM_COBBLE_RECORD, SD_REALM_EDGE_RECORD } from '../world/superDungeon/sdRealm.js';
+import { realmArt } from '../world/superDungeon/sdRealmArt.js';
+import { hallGlowArt, SD_GLOW_COLORS, SD_HALL_GLOW_RECORD } from '../world/superDungeon/sdHallArt.js';
+import { SD_TICK_EASE_S, SD_LIGHT } from '../world/superDungeon/sdLook.js';
 import { multiply } from '../world/mat4.js';
 
 /** SD10: the way home's words - its plaque, and what is said as it carries a player out of the Hour. */
@@ -47,7 +47,7 @@ export const SD_HOME_TEXT = Object.freeze({
   rises: 'The way home stands open.',   // AUDIT SD II (L6 F16): said as it rises (the fall's readout said where)
 });
 /** AUDIT SD II (L6 F16): how long the way home takes to rise out of the floor (ms) - the gate's portal's own
- *  (world/gateArena.js PORTAL_RISE_MS) - and how long after it began to rise it is still said and tolled (a page that
+ *  (world/gate/gateArena.js PORTAL_RISE_MS) - and how long after it began to rise it is still said and tolled (a page that
  *  comes later finds it standing, in silence). */
 export const SD_HOME_RISE_MS = 1500;
 export const SD_HOME_SAY_MS = SD_HOME_RISE_MS + 1000;
@@ -166,7 +166,7 @@ function standAtN(m, at, n, iLift, iYaw) {
  * `onRift()` answering false has not taken it (AUDIT SD III, H6: a step under way), and a walk-in stays armed.
  * SD5a: `riftTo` its plaque's row - the Shattered Hour's way back says where it leads. SD10: `retTitle` and `retTo` the
  * Return's (the Hour's way home says its own). AUDIT SD II (L6 F5): `riftCount()` the Rift's plaque's second row - how
- * long its Hour stands (world/sdDungeon.js sdRiftCount), or null. SD-LOOK: `look()` its state (world/sdDungeon.js
+ * long its Hour stands (world/superDungeon/sdDungeon.js sdRiftCount), or null. SD-LOOK: `look()` its state (world/superDungeon/sdDungeon.js
  * riftLook - open by default), `clock()` the realm's anchored seconds (every screen's gear ticks together; `now`'s without).
  * @param {{ renderer?: any, audio?: any, now?: () => number, onRift?: () => (boolean|null|void), onReturn?: () => void, riftTo?: string, retTitle?: string, retTo?: string, riftCount?: () => (string | null), look?: () => any, clock?: () => number }} [deps]
  */
@@ -436,7 +436,7 @@ export function createSdEnd({ renderer = null, audio = null, now = () => perform
 
   function frameRift(t, eye) {
     const L = look() ?? SD_RIFT_OPEN_LOOK, s = clock ? clock() : t / 1000;
-    // THE GEAR: a tooth forward each second on the escapement (world/sdLook.js sdTick's sum, inline - AUDIT SD II, L2 F9:
+    // THE GEAR: a tooth forward each second on the escapement (world/superDungeon/sdLook.js sdTick's sum, inline - AUDIT SD II, L2 F9:
     // a number handed back from a call is a number made) - twice a second in the collapse; a refusal jerks it back one
     const pitch = (Math.PI * 2) / SD_RIFT_PARTS.teeth, refused = (t - rift.refusedAt) / 1000;
     const jerk = refused >= 0 && refused < 0.3 ? -pitch * (1 - refused / 0.3) : 0;
@@ -557,7 +557,7 @@ const RETURN_DIAL = Object.freeze(returnDialAt(SD_RETURN_SIZE.h));
 /** ...and the steps up to it and to the window's middle, made once. */
 const RETURN_DIAL_T = setT(new Float32Array(16), RETURN_DIAL[0], RETURN_DIAL[1], RETURN_DIAL[2]);
 const RETURN_WINDOW_T = setT(new Float32Array(16), 0, SD_RETURN_SIZE.h / 2 - 0.02, 0);
-/** SD-LOOK S6: where the lancet's halves turn (world/sdRiftModel.js returnSpringAt). */
+/** SD-LOOK S6: where the lancet's halves turn (world/superDungeon/sdRiftModel.js returnSpringAt). */
 const RETURN_SPRING = Object.freeze(returnSpringAt(SD_RETURN_SIZE.w, SD_RETURN_SIZE.h));
 /** SD-LOOK: the Return's opening for its window (render/sdRiftPass.js archFan) - the arch's inner edge about the
  *  opening's middle, and the opening's half-size. */

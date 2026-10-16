@@ -2,9 +2,9 @@
 // WAGONS1 (2026-10-09, Mac, sending his three wagons: "Here are 3 new models that will need to be textured"): THE
 // WAGONS' OWN ART, MADE AT THE LOAD.
 //
-// world/carrackArt.js's law, for Mac's Wagon Cart, Open Wagon and Caravan (tools/bakeWagons.mjs): painted from numbers
+// world/ships/carrackArt.js's law, for Mac's Wagon Cart, Open Wagon and Caravan (tools/bakeWagons.mjs): painted from numbers
 // on fixed seeds under a pseudo-archive of their own (WAGON_ARCHIVE), every picture 64 x 64, the fleet's palette and
-// tools (world/galleonArt.js) - so a wagon on a quay and the ship beside it are one hand's work. Nothing here is a
+// tools (world/ships/galleonArt.js) - so a wagon on a quay and the ship beside it are one hand's work. Nothing here is a
 // render of game data (Port-Doctrine): every texel is a number below.
 //
 // THE PICTURES. A working wagon's: weathered oak sideboards nailed to their stakes, pine floorboards along the bed,
@@ -17,7 +17,7 @@
 // lays it on the rear face; scenes/caravanRoom.js is what it opens) and a painted roof of boards.
 //
 // Each picture is `{ width, height, data }`, RGBA top-down. Not a DFU member. Ledger A (WAGONS1).
-import { C, picture, put, get, mix, shade, paintNoise as noise, paintBand as band, planks, GALLEON_TEX_SIZE, ironArt } from './galleonArt.js';
+import { C, picture, put, get, mix, shade, paintNoise as noise, paintBand as band, planks, GALLEON_TEX_SIZE, ironArt } from './ships/galleonArt.js';
 import { mulberry32 } from '../combat/bloodArt.js';
 
 /** The wagons' pseudo-archive: past the large boat's 38171 (38151 collided once - largeBoatArt.js). */
@@ -30,7 +30,7 @@ export const TEX = Object.freeze({
   roomSide: 15, roomFront: 16, roomRear: 17, roomCeiling: 18, roomFloor: 19,   // WAGONS2: the caravan's room (world/caravanRoomModel.js)
   harness: 20,   // WAGONS3: the traces and the reins (systems/wagon/wagonRopes.js)
 });
-/** How far each tiling picture repeats (metres a tile, u then v - world/galleonMesh.js planarUv's); a livery's u alone
+/** How far each tiling picture repeats (metres a tile, u then v - world/ships/galleonMesh.js planarUv's); a livery's u alone
  *  (its v is its height, `BANDS`); 0 where the picture is laid whole on its face (a wheel's, an end's). */
 export const WAGON_TILE = Object.freeze({
   floor: [1.6, 1.6], side: [1.6, 1.6], inner: [1.6, 1.6], beam: [1.2, 1.2], bench: [1.2, 1.2], tyre: [1.2, 1.2], wheel: [0, 0],

@@ -22,7 +22,7 @@ import { scene } from './csaScene.mjs';
 import { sea, freshPool } from './navalSea.mjs';
 import * as ships from '../src/systems/naval/navalShips.js';
 const { HULL } = ships;
-import { MEASURED, LID_OPEN_DEG } from '../src/world/galleonModel.js';
+import { MEASURED, LID_OPEN_DEG } from '../src/world/ships/galleonModel.js';
 import { createGalleonGunDeck, RUN_OUT_X, RUN_IN_X, RUN_SPEED, RECOIL, KICK_S, HAUL_S, HOLD_S } from '../src/systems/naval/galleonGunDeck.js';
 import { quatRotate } from '../src/world/quat.js';
 import { setTimeScale, resetTimeScale } from '../src/systems/timeScale.js';

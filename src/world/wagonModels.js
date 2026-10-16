@@ -24,15 +24,15 @@
 // bottom). Hitched, a cart is borne level by the horse, so while a horse is in its shafts the presentation turns it
 // back about its axle (`hitchPitch`) - its bed level, its shafts at the horse's flank 0.7 m up.
 //
-// Each face wears its picture by `wagonFaceSkin` (world/largeBoatModel.js faceSkin's law): the sides' liveries banded on their
-// height, everything else tiled planar (world/galleonMesh.js planarUv), the wheels' faces and the caravan's ends laid
+// Each face wears its picture by `wagonFaceSkin` (world/ships/largeBoatModel.js faceSkin's law): the sides' liveries banded on their
+// height, everything else tiled planar (world/ships/galleonMesh.js planarUv), the wheels' faces and the caravan's ends laid
 // whole on their pictures - the cart's on its LEVEL frame (`cartLevel`), the caravan's sides from their middle
 // (`caravanSideU`). Not a DFU member. Ledger A (WAGONS1).
 import { WAGON_ARCHIVE, TEX, WAGON_TILE, BANDS, wagonArt, CARAVAN_SIDE_WINDOW_U } from './wagonArt.js';
 import { dfLook, lookSeed } from './dfLook.js';   // DF-LOOK: the icon's wagon in the colours the world's wears
 import { toColor32 } from '../formats/color32Order.js';
-import { MeshBench, prism, box, planarUv, sub, add, dot } from './galleonMesh.js';
-import { benchPart } from './galleonModel.js';
+import { MeshBench, prism, box, planarUv, sub, add, dot } from './ships/galleonMesh.js';
+import { benchPart } from './ships/galleonModel.js';
 import { pointsOf, boxOfPoints } from './shipKit.js';
 import { quatAngleAxis, quatRotate, quatMultiply } from './quat.js';
 import { NORMAL_GROUND_OFFSET } from '../systems/horse/horseCartLaw.js';
@@ -114,7 +114,7 @@ const endUv = (sign) => (p) => {
 };
 
 /** Which picture a face of a wagon's baked part wears, and how it lies on it: `{ rec, uv(p) }`, or `{ band, u(p) }`
- *  a face of a livery (world/galleonModel.js benchPart's skins). `kind` the wagon, `role` the part, `n` the face's
+ *  a face of a livery (world/ships/galleonModel.js benchPart's skins). `kind` the wagon, `role` the part, `n` the face's
  *  normal, `c` its centre, `pivot` / `R` a wheel's. WAGON-UV: the cart's faces laid on its level frame (`cartLevel` -
  *  its wheels as they are: they roll). */
 export function wagonFaceSkin(kind, role, n, c, pivot = null, R = 1) {

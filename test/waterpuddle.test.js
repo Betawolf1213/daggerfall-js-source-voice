@@ -6,7 +6,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { PUDDLE_RECORDS, WATER_COLOUR_TOLERANCE, MIN_PATCH_TEXELS, waterColours, markPuddleWater, cleanMask, turnFraction, puddleWetAt } from '../src/world/puddleMask.js';
-import { SHALLOW_WHOLE, SHALLOW_DRAWN, WATER_MASK_TABLE, waterCorners } from '../src/world/waterCorners.js';
+import { SHALLOW_WHOLE, SHALLOW_DRAWN, WATER_MASK_TABLE, waterCorners } from '../src/world/water/waterCorners.js';
 import { waterSurfaceFs } from '../src/render/waterSurface.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

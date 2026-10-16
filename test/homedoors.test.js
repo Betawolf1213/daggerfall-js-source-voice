@@ -18,7 +18,7 @@ import {
   DOORWAY_WIDTH_MAX, DOORWAY_NEAR_DOOR, DOORWAY_MARK_HIGH,
 } from '../src/systems/decor/decorDoorways.js';
 import { collectDecor, decorCatalogue, modelKind, DECOR_KINDS } from '../src/systems/decor/decorCatalogue.js';
-import { DOOR_MODEL_BASE_ID, DOOR_MODEL_COUNT } from '../src/world/interiorLayout.js';
+import { DOOR_MODEL_BASE_ID, DOOR_MODEL_COUNT } from '../src/world/interior/interiorLayout.js';
 import { createDecorRoom, decorKeyOf } from '../src/scenes/decorRoom.js';
 import { ActionSystem } from '../src/world/actionSystem.js';
 import { DECOR_DOOR_FINDING, DECOR_DOOR_NONE, decorDoorAimLine, DECOR_DOOR_MARK_AIMED, DECOR_DOOR_MARK_FREE, decorDoorMarkPixels } from '../src/scenes/decorTool.js';

@@ -2027,7 +2027,7 @@ record's (`01-Overview/Audit-Ships-of-the-Bay.md`).
 ## GALLEON (2026-10-01) - Mac's galleon, her guns out of her ports - OURS
 
 Hull 2 is Mac's own galleon now (`03-World/Come-Sail-Away.md` The new galleon; the Port-Ledger's GALLEON row), and the
-Small Ship's build is measured off her (`navalShips.js` HULL_BUILDS, `world/galleonModel.js` GALLEON_BATTERIES): five
+Small Ship's build is measured off her (`navalShips.js` HULL_BUILDS, `world/ships/galleonModel.js` GALLEON_BATTERIES): five
 long guns a side, a gun a port, each muzzle at its port's middle a hair outside her planking (5.95 m out, 2.24 m over
 the sea - her gun deck at 1.083), so a broadside leaves her through the holes it is fired from; two chain chasers on
 swivels over her bow rail (7.45 m); her barrels under her castle astern. Her box is her MeshCollider's bounds - her

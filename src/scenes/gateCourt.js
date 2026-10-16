@@ -10,7 +10,7 @@
 // is this machine's own (co-op's law - "an enemy's strike on a client is applied by that client", net/gateStrike.js),
 // and it lands through `strike` - the dungeon context's door (hurt, flash, cry), the same as any foe's blow.
 //
-// THE PARTS, each pure where it can be: the look (world/gateBoss.js bossAct/bossFrame/bossGlow/BOSS_CUES), the ground
+// THE PARTS, each pure where it can be: the look (world/gate/gateBoss.js bossAct/bossFrame/bossGlow/BOSS_CUES), the ground
 // (render/gateTelegraph.js telegraphShape and its pass), the verdict (net/gateStrike.js strikeVerdict), the bar
 // (ui/gateBossBar.js bossBarModel). This file is their driver: it holds the sprite's texture and batch, the attacks it
 // has already cued, landed and judged, and the host's doors.
@@ -19,8 +19,8 @@
 import { ATTACK_BY_ID, ATTACKS, COURT_CENTRE, COURTS, COURT_R, HIT_KINDS, POOL_TICK_MS, PHASE_NAMES, profileOf, nearestCourt, windupOf, CRYSTAL_R, CRYSTAL_H, inCourt, POSE_SLACK, RECKON_CLOSE_MS, WALKS, walkFormed, HOST_BLOWS, hostBlowUnder } from '../net/gateBrain.js';
 import { strikeVerdict, blowOf, strikeDamage, savedShare, landingPools, poolUnder, inAttack, chargeHead, segmentDistance } from '../net/gateStrike.js';
 import { GATE_BOSSES, gateBossOf, gateTimes, GATE_COLLAPSE_MS } from '../net/gateLaw.js';   // GATE-FBX: and when the court comes apart
-import { bossAct, bossFrame, bossGlow, bossPlace, bossHop, bossLookOf, bossStandIn, bossCue, BOSS_CUES, BOSS_STRIDE_M, GROWL_EVERY_MS, HURT_GAP_MS, HURT_SHARE, QUAKE_ON, THUD_AT_MS, WARD_COLOR, EMBER_COLOR, poolColor, emberColor, attackColor, crystalStandIn, crystalColor, groundStepCue, hostPulseColor, gateHitFlash, GATE_FLASH_SHARE, RELEASE_LEAD_MS, landShake, LANDING_LIGHT_Y, CORPSE_SCALE, WAKE_LEAD_MS, LOW_HEALTH } from '../world/gateBoss.js';
-import { courtToDungeon, portalDoor, PORTAL_AFTER_MS, PORTAL_RISE_MS, PORTAL_DROP, COURT_TEXT, WAY_IN_Z, WAY_IN_HOLD_MS, WAY_IN_NEAR_M, ARRIVE_Z, COURT_SILENT_MS, COURT_FRAME_GAP_MS, wayInStep, portalFade } from '../world/gateArena.js';
+import { bossAct, bossFrame, bossGlow, bossPlace, bossHop, bossLookOf, bossStandIn, bossCue, BOSS_CUES, BOSS_STRIDE_M, GROWL_EVERY_MS, HURT_GAP_MS, HURT_SHARE, QUAKE_ON, THUD_AT_MS, WARD_COLOR, EMBER_COLOR, poolColor, emberColor, attackColor, crystalStandIn, crystalColor, groundStepCue, hostPulseColor, gateHitFlash, GATE_FLASH_SHARE, RELEASE_LEAD_MS, landShake, LANDING_LIGHT_Y, CORPSE_SCALE, WAKE_LEAD_MS, LOW_HEALTH } from '../world/gate/gateBoss.js';
+import { courtToDungeon, portalDoor, PORTAL_AFTER_MS, PORTAL_RISE_MS, PORTAL_DROP, COURT_TEXT, WAY_IN_Z, WAY_IN_HOLD_MS, WAY_IN_NEAR_M, ARRIVE_Z, COURT_SILENT_MS, COURT_FRAME_GAP_MS, wayInStep, portalFade } from '../world/gate/gateArena.js';
 import { GateTelegraphRenderer, telegraphShape, markShape, poolShapes, telegraphEdge, TELEGRAPH_STYLE, TELEGRAPH_EDGE, TELEGRAPH_NOW_MS } from '../render/gateTelegraph.js';
 import { CourtCrystalRenderer, crystalGrowth, CRYSTAL_GROW_MS, CRYSTAL_SHATTER_MS, CRYSTAL_FLASH_MS, CRYSTALS_DRAW_MAX } from '../render/courtCrystals.js';   // WB9c: the crystals of Oblivion, drawn
 import { GateFxRenderer, fxBurstOf, meteorFall, FX_BURST_MS, FX_BURSTS_MAX, FX_KINDS, FX_LIGHT_MS } from '../render/gateFx.js';   // WB9e: his blows seen landing
@@ -29,7 +29,7 @@ import { setBatchHitFlash } from '../systems/hitFlash.js';   // WB13d: his body 
 import { tierColour } from '../render/spoilsGlow.js';   // WB9f: a piece's landing sparks in its tier's colour
 import { RARITIES } from '../systems/loot/lootRarity.js';
 import { GatePassRenderer, gateSpinRate } from '../render/gatePass.js';   // WBX2: the portal's fire is the gate's own
-import { gateArchProfile } from '../world/gateModel.js';
+import { gateArchProfile } from '../world/gate/gateModel.js';
 import { ONLINE_MINUTES_PER_MS, GATE_HEAL_ROWS_MAX, GATE_HEAL_WIRE_MAX } from '../net/wire.js';   // WBX7: a soul trap's rounds on the shared world's clock; GATE-HEAL: the heal word's bounds
 import { spoilsLevel } from './spoilsPool.js';   // AUDIT WBX S2: the spoils never rolled past the level the fight admitted
 import { bossBarModel, drawGateBossBar, BOSS_BAR_TEXT } from '../ui/gateBossBar.js';
@@ -73,7 +73,7 @@ export const courtSaySeconds = (text) => Math.max(COURT_READ_S[0], Math.min(COUR
 /** WB13e: a phase's turn - his roar comes this long after the bound's bark (they were one sound over the other). */
 export const ROAR_AFTER_MS = 600;
 /** WB13e: HIS FALL, AN EVENT - at the kill a burst of Dagon's own size, the court's light white for FALL_FLASH_MS and the
- *  camera shaken FALL_SHAKE; as his body meets the floor (world/gateBoss.js THUD_AT_MS) a column of embers, COLUMN_BURSTS
+ *  camera shaken FALL_SHAKE; as his body meets the floor (world/gate/gateBoss.js THUD_AT_MS) a column of embers, COLUMN_BURSTS
  *  bursts COLUMN_STEP_MS apart; over his spoils the card, FALL_CARD_MS. His wake is said only this late into it. */
 export const FALL_FLASH_MS = 400;
 export const FALL_SHAKE = 4;
@@ -81,7 +81,7 @@ export const COLUMN_BURSTS = 3;
 export const COLUMN_STEP_MS = 250;
 export const FALL_CARD_MS = 3000;
 export const WAKE_LATE_MS = 1000;
-/** WB13e: under his low health (world/gateBoss.js LOW_HEALTH) an ember's spark is shed this often. */
+/** WB13e: under his low health (world/gate/gateBoss.js LOW_HEALTH) an ember's spark is shed this often. */
 export const SPUTTER_EVERY_MS = 500;
 /** WB13e: the Wrath gathering - the court reddening over its wind-up, then white at its landing (FALL_FLASH_MS): its light
  *  this high over his court's heart, this far. */
@@ -122,7 +122,7 @@ export const COURT_ROUND_MS = Math.round(1 / ONLINE_MINUTES_PER_MS);
 export const markColorOf = (ember) => Object.freeze(ember.map((c) => Math.min(1, c * 1.1)));
 export const MARK_COLOR = markColorOf(EMBER_COLOR);
 /** WB9f: his spoils rest no nearer the court's edge than this (m) - the throw is softened until they do
- *  (world/gateSpew.js keepLaunch) - and the gold his chest bursts in as they leave it. */
+ *  (world/gate/gateSpew.js keepLaunch) - and the gold his chest bursts in as they leave it. */
 export const SPEW_RIM_M = 2;
 export const SPOILS_BURST_COLOR = Object.freeze([1, 0.78, 0.28]);
 /** WB9f: the court floor his spoils must come to rest on - the court he fell in, SPEW_RIM_M in from its edge, in the
@@ -131,7 +131,7 @@ export function spoilsKeep(x, z) {
   const C = COURTS[nearestCourt(x, z)], centre = courtToDungeon(C[0], 0, C[1]);
   return { centre, r: COURT_R - SPEW_RIM_M, floorY: centre[1] };
 }
-/** WB5: his body bursts this long into his fall, and the spoils leave it (world/gateBoss.js FALL_MS is the whole fall);
+/** WB5: his body bursts this long into his fall, and the spoils leave it (world/gate/gateBoss.js FALL_MS is the whole fall);
  *  a receipt not come this long after it never will. WB13e: after his body meets the floor (THUD_AT_MS), under the card. */
 export const SPEW_AT_MS = 1700;
 export const RECEIPT_WAIT_MS = 4000;
@@ -364,7 +364,7 @@ export function createGateCourt({
    *  done with it (broken or landed) - kept until the last shard has flown. The last one ended (never seen again as new),
    *  the stun last heard, the stand-in every crystal shares (made once a fight), and the pass. */
   let rk = null, rkDone = null, stunHeard = 0, crystalPass = null, crystalTried = false;
-  /** AUDIT WB11 W1: the crystals' stand-ins, one a crystal, each naming its own (world/gateBoss.js crystalStandIn) */
+  /** AUDIT WB11 W1: the crystals' stand-ins, one a crystal, each naming its own (world/gate/gateBoss.js crystalStandIn) */
   const crystalIns = [];
   const _targets = [], _crystalDraw = [], _crystalSlots = [], _crystalLights = [], _chest = [0, 0, 0];
   /** AUDIT WB9 (court F4): how far each walkway is laid this frame (net/gateBrain.js walkFormed) - refilled, never made */
@@ -437,7 +437,7 @@ export function createGateCourt({
 
   /** GATE-FBX (2026-10-09, Mac: "remove the portal that players walk through on the inside and just use a portal that
    *  opens and closes. Like at the end of the fight"): THE WAY IN - the gate's own fire at the bridge's foot, where WB3b's
-   *  membrane stood: whole as I step out of it, held WAY_IN_HOLD_MS from then and closing behind me (world/gateArena.js
+   *  membrane stood: whole as I step out of it, held WAY_IN_HOLD_MS from then and closing behind me (world/gate/gateArena.js
    *  wayInStep) - AUDIT GATE-FBX C4: from my arrival (courtWatch), however late the fight's first word comes; a word that
    *  comes after the hold finds it shut. Opened again for another stepping out of it (stepsIn). No door: it does not
    *  take anyone back. */
@@ -536,7 +536,7 @@ export function createGateCourt({
     if (A && !marked(landed, atk) && t >= atk.at) { setMark(landed, atk); if (t < atk.at + Math.max(A.active, 1) + 400) { sound(bossCue('land', A, P), s, t, atk); burstsOf(atk, A, P); feltLanding(s, t, A, atk); } }   // WB9e: and seen landing; WB13d: and felt
     if (A && !marked(quaked, atk) && t >= atk.at && QUAKE_ON.includes(A.key)) { setMark(quaked, atk); if (t < atk.at + Math.max(A.active, 1) + 400) sound(BOSS_CUES.quake, s, t, atk); }   // WB7: the ground's shock under a heavy landing
     if (s.phase > thunderPhase) { if (thunderPhase > 0) sound(BOSS_CUES.thunder, s, t, null); thunderPhase = s.phase; }   // WB7: thunder over his roar as a phase turns
-    // WB13e: HIS WAKE - as the opening ends (the relay's `op`): his roar, his flare (world/gateBoss.js bossGlow), his name
+    // WB13e: HIS WAKE - as the opening ends (the relay's `op`): his roar, his flare (world/gate/gateBoss.js bossGlow), his name
     if (!wakeHeard && (s.openUntil ?? 0) > 0 && t >= s.openUntil - WAKE_LEAD_MS) {
       wakeHeard = true;
       if (t < s.openUntil + WAKE_LATE_MS && !s.fell && s.wrath == null) {
@@ -655,7 +655,7 @@ export function createGateCourt({
       if (t < at + FALL_CARD_MS) beat = { kind: 'fall', at, until: at + FALL_CARD_MS, kicker: bossOf(s).name, main: BOSS_BAR_TEXT.fallen, sub: '' };
     }
   }
-  /** WB13e: UNDER HIS LOW HEALTH his ember sputters (world/gateBoss.js bossGlow) and sheds a spark every SPUTTER_EVERY_MS. */
+  /** WB13e: UNDER HIS LOW HEALTH his ember sputters (world/gate/gateBoss.js bossGlow) and sheds a spark every SPUTTER_EVERY_MS. */
   function sputterSparks(s, t, P) {
     if (s.fell || s.wrath != null || !(s.max > 0) || s.hp / s.max >= LOW_HEALTH || t - sputterAt < SPUTTER_EVERY_MS) return;
     sputterAt = t;
@@ -678,7 +678,7 @@ export function createGateCourt({
     corpse.record = rkey;
     corpse.size = { w, h };
   }
-  /** WB13d: A LANDING FELT - the camera shaken by how near it fell to my feet (world/gateBoss.js LAND_SHAKE: the nearest
+  /** WB13d: A LANDING FELT - the camera shaken by how near it fell to my feet (world/gate/gateBoss.js LAND_SHAKE: the nearest
    *  of its landings; one the whole arena feels, wherever I stand), as his blow on me shakes it. */
   function feltLanding(s, t, A, atk) {
     const f = feet();
@@ -934,7 +934,7 @@ export function createGateCourt({
     /**
      * WB4b: HIM AS A BODY MY BLOWS MEET, or null (no fight, or he has fallen): his feet in the dungeon's frame, his
      * facing, his height and radius (net/gateBrain.js - the relay measures a melee blow from the same body), whether
-     * his ward stands, and his stand-in for the formulas (world/gateBoss.js bossStandIn).
+     * his ward stands, and his stand-in for the formulas (world/gate/gateBoss.js bossStandIn).
      */
     target() {
       const s = link.state(), t = now();
@@ -964,7 +964,7 @@ export function createGateCourt({
     /**
      * WB9c: THE CRYSTALS OF OBLIVION AS BODIES MY BLOWS MEET - each standing one's number (the wire's `c`), its foot in the
      * dungeon's frame, its body (net/gateBrain.js CRYSTAL_R, CRYSTAL_H - the relay measures a melee blow to the same) and
-     * the stand-in a blow on it is computed against (world/gateBoss.js crystalStandIn); none outside a Reckoning, and
+     * the stand-in a blow on it is computed against (world/gate/gateBoss.js crystalStandIn); none outside a Reckoning, and
      * none still low in the stone. One list, refilled each frame (AUDIT WB D10's law) - read, never written.
      */
     crystalTargets() {
@@ -1006,7 +1006,7 @@ export function createGateCourt({
     /**
      * WB11c: HIS HOST AS BODIES MY BLOWS MEET - each one standing: its number (the wire's `i`), its feet in the dungeon's
      * frame, its body (net/gateBrain.js HOST_KINDS - the relay measures a melee blow to the same), its stand-in and its
-     * name (world/gateBoss.js hostStandIn); none but from the court he fights in (the relay takes no blow from elsewhere).
+     * name (world/gate/gateBoss.js hostStandIn); none but from the court he fights in (the relay takes no blow from elsewhere).
      * One list, refilled each frame - read, never written.
      */
     hostTargets() {
@@ -1035,7 +1035,7 @@ export function createGateCourt({
       for (const b of spoils?.batches() ?? NONE) _batches.push(b);
       return _batches;
     },
-    /** The glow on him and on the spoils, for the court's light channel (world/gateArena.js withCourtLights). */
+    /** The glow on him and on the spoils, for the court's light channel (world/gate/gateArena.js withCourtLights). */
     lights() {
       const s = link.state(), t = now(); const g = s && s.day !== null ? bossGlow(s, t, _glow) : null;   // LIGHT-ID: his one kept record
       _lights.length = 0;

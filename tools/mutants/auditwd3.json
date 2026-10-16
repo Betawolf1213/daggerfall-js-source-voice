@@ -248,7 +248,7 @@
   },
   {
     "name": "AWD3-ROOM-UNLAYERED",
-    "file": "src/world/interiorShared.js",
+    "file": "src/world/interior/interiorShared.js",
     "old": "  return buildingKey + tag * 0x1000000;",
     "new": "  return buildingKey;",
     "tests": [

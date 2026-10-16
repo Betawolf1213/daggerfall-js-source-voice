@@ -54,9 +54,9 @@ import {
   DeepWaterSwimState, forgedSwimWaterLineY, swimCheckY, surfaceAscentCeiling, presentationWaterLineForFog,
   worldYToBlockWaterLevel, blockWaterLevelToWorldY, NO_WATER_LEVEL, headClearOfSurface, headUnderwater, SHORE_GROUND_PROBE_HEIGHT, SHORE_GROUND_PROBE_DISTANCE, SHORE_GROUND_OCEAN_MARGIN,
   WATER_CONTACT_MINIMUM_DEPTH, SHORE_EXIT, SWIM_EXIT_CLEARANCE, SWIM_ENTER_CLEARANCE,
-} from '../world/deepWaterSwim.js';
+} from '../world/deepWater/deepWaterSwim.js';
 import { UnderwaterFog } from '../render/underwaterFog.js';
-import { underwaterFogDensityMax, underwaterFogColor } from '../world/deepWaterLook.js';
+import { underwaterFogDensityMax, underwaterFogColor } from '../world/deepWater/deepWaterLook.js';
 import { evaluateSwimmingSuppression, publishState, clearState } from '../systems/deepWater/deepWaterPlayer.js';
 import { OVER_ENCUMBERED_LIMIT } from '../player/motor.js';   // OCEAN-STUCK: LevitateMotor's own weight test (:83)
 import { ON_EXTERIOR_WATER } from '../player/exteriorSurface.js';

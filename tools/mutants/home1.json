@@ -352,7 +352,7 @@
   },
   {
     "name": "HOME1-the-bag-forgets-home",
-    "file": "src/world/interiorShared.js",
+    "file": "src/world/interior/interiorShared.js",
     "old": "owned: !!owned, home: !!home,",
     "new": "owned: !!owned, home: false,",
     "tests": [
@@ -363,7 +363,7 @@
   },
   {
     "name": "HOME1-a-homes-memory-names-its-cupboards",
-    "file": "src/world/interiorShared.js",
+    "file": "src/world/interior/interiorShared.js",
     "old": "loot: home ? [] : interiorLootRecords(ctx, [...seen], tooBig),",
     "new": "loot: interiorLootRecords(ctx, [...seen], tooBig),",
     "tests": [
@@ -374,7 +374,7 @@
   },
   {
     "name": "HOME1-a-peers-word-lands-on-the-chest",
-    "file": "src/world/interiorShared.js",
+    "file": "src/world/interior/interiorShared.js",
     "old": "  if (!home) applyInteriorLoot(ctx, shared.world.loot, { seen, openKey, today });",
     "new": "  applyInteriorLoot(ctx, shared.world.loot, { seen, openKey, today });",
     "tests": [
@@ -385,7 +385,7 @@
   },
   {
     "name": "HOME1-a-refused-act-names-a-cupboard",
-    "file": "src/world/interiorShared.js",
+    "file": "src/world/interior/interiorShared.js",
     "old": "const l = home ? [] : interiorLootRecords(ctx, keys, tooBig);",
     "new": "const l = interiorLootRecords(ctx, keys, tooBig);",
     "tests": [

@@ -9,14 +9,14 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { glslFunctions } from './glsl.mjs';
-import { clippedTerrainIndices, CLIP_SENTINEL, patchTilemapForClip } from '../src/world/deepWaterCap.js';
-import { buildTerrainGrid, buildTerrainIndices, TERRAIN_SKIRT_DEPTH, convertTilemap } from '../src/world/terrainSurface.js';
+import { clippedTerrainIndices, CLIP_SENTINEL, patchTilemapForClip } from '../src/world/deepWater/deepWaterCap.js';
+import { buildTerrainGrid, buildTerrainIndices, TERRAIN_SKIRT_DEPTH, convertTilemap } from '../src/world/terrain/terrainSurface.js';
 import { buildWaterIndices } from '../src/render/waterSurface.js';
-import { WATER_DRAW_MASK_TABLE } from '../src/world/waterCorners.js';
-import { HEIGHTMAP_DIMENSION } from '../src/world/terrainSampler.js';
+import { WATER_DRAW_MASK_TABLE } from '../src/world/water/waterCorners.js';
+import { HEIGHTMAP_DIMENSION } from '../src/world/terrain/terrainSampler.js';
 import { FOG_GLSL } from '../src/render/fogGlsl.js';
 import { TOP_FS, TOP_FAR_FS, FLOOR_FS, DECOR_FS, COLUMN_GLSL, DeepWatersRenderer } from '../src/render/deepWatersRender.js';
-import { SURFACE_TEXTURE_TILING } from '../src/world/deepWaterLook.js';
+import { SURFACE_TEXTURE_TILING } from '../src/world/deepWater/deepWaterLook.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const CELL = 6.4, EDGE = 128 * CELL;   // a tile, a pixel
@@ -262,6 +262,6 @@ test('DW-F: WATER1 reads the cap\'s TileMap - the carved sea and the repainted w
 test('DW-F: the far ground\'s clip is the index set the world draws, rebuilt at its own stride (pins)', () => {
   const world = rd('src/scenes/world.js');
   assert.match(world, /const idx = p\._dwBytes \? clippedTerrainIndices\(p\._dwBytes, p\._stride \?\? 1\) : null;/);
-  const cap = rd('src/world/deepWaterCap.js');
+  const cap = rd('src/world/deepWater/deepWaterCap.js');
   assert.match(cap, /const tiles = \[\(t\) => t, \(t\) => last \* dim \+ t, \(t\) => t \* dim, \(t\) => t \* dim \+ last\];/, 'south row 0, north row 127, west column 0, east column 127 - buildTerrainIndices\' own edge order');
 });

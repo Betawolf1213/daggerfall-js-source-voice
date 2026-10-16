@@ -42,7 +42,7 @@ import {
   exteriorWaterMethod, exteriorPathMethod, exteriorSurfaces, exteriorSwimLatch,
   SWIM_COVERAGE, feetWaterCoverage,   // MAC2
 } from '../src/player/exteriorSurface.js';
-import { createLookupTable } from '../src/world/terrainTiles.js';   // MAC2: a shore byte the producer mints
+import { createLookupTable } from '../src/world/terrain/terrainTiles.js';   // MAC2: a shore byte the producer mints
 import {
   UnderwaterFog, fogT, WATER_FOG_COLOR, WATER_MAP_COLOR,
   FOG_DENSITY_MIN, FOG_DENSITY_MAX, DUNGEON_FOG, applyFog,

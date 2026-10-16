@@ -38,7 +38,7 @@
 // polygon work; this is the bake for a SCENE OF PARTS rather than one mesh.
 // It does three things and nothing else, and leaves everything that is art
 // (which face wears which texture, how a texture lies on it, what a part is
-// hung from) to src/world/galleonModel.js, where a test can read it:
+// hung from) to src/world/ships/galleonModel.js, where a test can read it:
 //
 // 1. EACH OBJECT INTO THE BOAT'S FRAME. A Blender export carries its axis
 //    conversion on every object (Lcl Rotation -90 about X, Lcl Scaling 100,
@@ -110,7 +110,7 @@
 //    point and no triangle of its own. Where Mac drew three corners on one
 //    line (a gunport's sill, a lintel, the fold of her port inner planking,
 //    #76), Blender's fill can cut a triangle of no area along it: it is
-//    kept, as Blender keeps it, and draws nothing (world/galleonMesh.js
+//    kept, as Blender keeps it, and draws nothing (world/ships/galleonMesh.js
 //    MeshBench drops a triangle of no area). The polygons are kept as well,
 //    since a face's texture is chosen per polygon.
 //

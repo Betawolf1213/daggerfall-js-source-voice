@@ -22,7 +22,7 @@ import { herbKind } from '../src/scenes/herbHost.js';
 import { mineKind } from '../src/scenes/mineHost.js';
 import { veins, utcDayOfMs } from '../src/net/nodeLaw.js';
 import { BASKET_ACT } from '../src/net/professionLaw.js';
-import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 
 installForaging({ fetchBytes: async () => new Uint8Array(0) });
 

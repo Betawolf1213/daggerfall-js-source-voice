@@ -336,7 +336,7 @@ export function partyPlaces(trip, at, ring = null, lane = 0) {
  *   fights?: ReturnType<typeof import('./roadFights.js').createRoadFights> | null,
  *   slay?: (res: any, t: number, seen: boolean) => void,
  *   stands?: ReturnType<typeof import('./roadStands.js').createRoadStands> | null,
- *   teams?: ReturnType<typeof import('../world/roadTeams.js').createRoadTeams> | null,
+ *   teams?: ReturnType<typeof import('../world/road/roadTeams.js').createRoadTeams> | null,
  *   robbed?: (tripId: string) => (number | null), unheard?: (t: number) => any, heard?: (band: any) => any,
  * }} deps - `here` the player's native place (null: nowhere on the map - indoors, underground); `baseRate` the clock's
  *   minutes a real second at the walking pace's own rate (the rounds' and the lines' beat on the clock); `foeName` a

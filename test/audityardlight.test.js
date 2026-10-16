@@ -10,7 +10,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { yardLampOf, yardLampSlot, yardLampRows, YARD_LAMP, YARD_LAMPS_MAX, YARD_LAMP_RAISE } from '../src/scenes/homeYards.js';
-import { collectCityLights, CITY_LIGHT_RANGE } from '../src/world/cityLights.js';
+import { collectCityLights, CITY_LIGHT_RANGE } from '../src/world/city/cityLights.js';
 import { collectBlockFlats, BLOCK_FLATS_OFFSET_Y } from '../src/world/rmbFlats.js';
 import { GLOBAL_SCALE } from '../src/world/meshReader.js';
 import { yardWorld, yardPiece, sized } from './decorFakes.mjs';

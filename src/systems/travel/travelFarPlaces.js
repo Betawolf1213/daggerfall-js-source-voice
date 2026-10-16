@@ -22,7 +22,7 @@ export const TV_FAR_RANGE = 24;
 /** The most far places marked at once, the nearest first - the edge is a compass, not a gazetteer. */
 export const TV_FAR_MAX = 10;
 /** A map pixel's width in kilometres - MapsFile.WorldMapTerrainDim (32768) x GlobalScale, 819.2 m
- *  (world/terrainSampler.js, render/volumetricClouds.js PIXEL_METRES). */
+ *  (world/terrain/terrainSampler.js, render/volumetricClouds.js PIXEL_METRES). */
 export const PIXEL_KM = 0.8192;
 /** The settlements the edge speaks for. */
 export const TV_FAR_TYPES = Object.freeze(new Set([LOCATION_TYPES.TownCity, LOCATION_TYPES.TownHamlet, LOCATION_TYPES.TownVillage]));

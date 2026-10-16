@@ -31,7 +31,7 @@ import { paintIliacCard, paintIliacBack } from './iliacCardFaces.js';
 import { paintFace, RANK_KING } from './cardFaces.js';
 import { cardById } from '../net/iliacCards.js';
 import { FOE_CARDS } from '../systems/card/cardSources.js';
-import { CARD_W, CARD_L, CARD_T, ARC_HEIGHT } from '../world/cardMotion.js';
+import { CARD_W, CARD_L, CARD_T, ARC_HEIGHT } from '../world/card/cardMotion.js';
 import { toColor32 } from '../formats/color32Order.js';
 import {
   gambitCardYaw, GAMBIT_CARD_SHARE, GAMBIT_MAT_LIFT, GAMBIT_WALL_H, GAMBIT_PILLAR_H, GAMBIT_PILLAR_R, GAMBIT_WATER_DROP,

@@ -150,7 +150,7 @@ export function ladderTitle(L) {
 /** Every tier title a ladder has earned, lowest first. */
 export const ladderTitles = (L) => arenaLadderRestore(L).champs.map((c, i) => (c ? ARENA_TEXT.titles[i] : null)).filter(Boolean);
 
-// ── THE UNDERCROFT (ARENA-FIX 4; world/arenaUndercroft.js) ─────────────────────────────────────────────────
+// ── THE UNDERCROFT (ARENA-FIX 4; world/arena/arenaUndercroft.js) ─────────────────────────────────────────────────
 /**
  * THE TRAINING PIT'S BOUT: unranked - no purse, no step on the ladder, no crowd - against a sparring fighter of the
  * player's own tier (its first bout's opponent at its level: the Pit Master shows you what the next bout will ask). A

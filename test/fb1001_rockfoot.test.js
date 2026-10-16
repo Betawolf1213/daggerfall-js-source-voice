@@ -15,17 +15,17 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 
-import { rockFootprint, groundAt, insideRocks } from '../src/world/terrainNature.js';
+import { rockFootprint, groundAt, insideRocks } from '../src/world/terrain/terrainNature.js';
 import { standMineNodes, mineKind, ROCK_OFFSET, NODE_SPACING_M, FOOT_INSET_M } from '../src/scenes/mineHost.js';
 import { createGatherHost } from '../src/scenes/gatherHost.js';
 import { boulders, veins, nodeCount } from '../src/net/nodeLaw.js';
-import { objectMatrix } from '../src/world/wodLocationObjects.js';
-import { loadLocationPrefab } from '../src/world/wodLocationData.js';
-import { LocationSession, pickLocations, placeObjects, WOD_TERRAIN_HEIGHT_MAX } from '../src/world/wodLocationLoader.js';
-import { decodeRegionPack } from '../src/world/wodLocationPack.js';
+import { objectMatrix } from '../src/world/worldOfDaggerfall/wodLocationObjects.js';
+import { loadLocationPrefab } from '../src/world/worldOfDaggerfall/wodLocationData.js';
+import { LocationSession, pickLocations, placeObjects, WOD_TERRAIN_HEIGHT_MAX } from '../src/world/worldOfDaggerfall/wodLocationLoader.js';
+import { decodeRegionPack } from '../src/world/worldOfDaggerfall/wodLocationPack.js';
 import { transformedAabb } from '../src/render/frustum.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
-import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 
 const WOODS = CLIMATES.Woodlands, MOUNTAIN = CLIMATES.Mountain, GLENUMBRA = 59;
 const PX = 405, PY = 150, DAY = 20500;

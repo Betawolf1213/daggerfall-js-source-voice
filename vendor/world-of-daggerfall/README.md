@@ -51,7 +51,7 @@ Windmills of Daggerfall into this tree - confirmed by Mac 2026-09-23.**
   more than this whole vendor tree (37.5 MB) - for 227,938 instances of
   six integers and two strings each. The packs carry exactly what the
   mod's own reader takes out of them, in the order it takes it
-  (`src/world/wodLocationPack.js`), and `locations.json` names every
+  (`src/world/worldOfDaggerfall/wodLocationPack.js`), and `locations.json` names every
   file with its hash, so anyone holding the archive can run the tool
   and get the same packs byte for byte.
 - **The compiled bundle.** Nothing in it is anything but the text

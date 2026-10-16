@@ -14,7 +14,7 @@ import { treeKind, FALL_S, LOGS_RECORD, STUMP_RECORD } from '../src/scenes/treeH
 import { createGatherHost, aimAt } from '../src/scenes/gatherHost.js';
 import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { FT } from '../src/systems/foraging/foragingLaw.js';
-import { TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 import { sharedClassicMinutes } from '../src/net/wire.js';
 import { Renderer } from '../src/render/renderer.js';
 import { ShadowPass } from '../src/render/shadowPass.js';

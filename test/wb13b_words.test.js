@@ -9,7 +9,7 @@ import { GATE_ASPECTS, GATE_TRIALS } from '../src/net/gateMods.js';
 import { MARK_TIPS, MARKS_CARD_TEXT, marksCardModel } from '../src/ui/gateMarksView.js';
 import { COURT_STRIKE_TEXT, COURT_RECKON_TEXT, COURT_MARKS_TEXT, courtPhaseOrder, courtPhaseCard, COURT_WRATH_TEXT } from '../src/scenes/gateCourt.js';
 import { COURT_HOST_TEXT } from '../src/scenes/gateHost.js';
-import { COURT_TEXT } from '../src/world/gateArena.js';
+import { COURT_TEXT } from '../src/world/gate/gateArena.js';
 import { GATE_TEXT } from '../src/scenes/gatePool.js';
 import { GATE_NO_TEXT } from '../src/net/gateLink.js';
 import { GATE_CLAIM_TEXT } from '../src/net/gateClaims.js';

@@ -1,7 +1,7 @@
 [
   {
     "name": "the-first-pick-does-not-latch-the-pixel",
-    "file": "src/world/wodLocationLoader.js",
+    "file": "src/world/worldOfDaggerfall/wodLocationLoader.js",
     "old": "  if (flatten) st.hasLocation = true;\n",
     "new": "",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "the-bounds-lose-their-transpose",
-    "file": "src/world/wodLocationLoader.js",
+    "file": "src/world/worldOfDaggerfall/wodLocationLoader.js",
     "old": "  if ((tx + prefab.height > 127 || ty + prefab.width > 127)) return;",
     "new": "  if ((tx + prefab.width > 127 || ty + prefab.height > 127)) return;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "terrainX-zero-is-let-in",
-    "file": "src/world/wodLocationLoader.js",
+    "file": "src/world/worldOfDaggerfall/wodLocationLoader.js",
     "old": "if (tx <= 0 || ty <= 0 || (tx > 128 || ty > 128)) return;",
     "new": "if (tx < 0 || ty <= 0 || (tx > 128 || ty > 128)) return;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "a-type-0-no-longer-ends-the-call",
-    "file": "src/world/wodLocationLoader.js",
+    "file": "src/world/worldOfDaggerfall/wodLocationLoader.js",
     "old": "    if (st.hasLocation) {\n      if (t === 0) return st.out;",
     "new": "    if (st.hasLocation) {\n      if (t === 0) continue;",
     "tests": [
@@ -38,7 +38,7 @@
   },
   {
     "name": "the-mean-drops-its-inclusive-bound",
-    "file": "src/world/wodLocationLoader.js",
+    "file": "src/world/worldOfDaggerfall/wodLocationLoader.js",
     "old": "  for (let x = rect.x; x <= rect.x + rect.width; x++) {",
     "new": "  for (let x = rect.x; x < rect.x + rect.width; x++) {",
     "tests": [
@@ -47,7 +47,7 @@
   },
   {
     "name": "the-lerp-forgets-the-plus-one",
-    "file": "src/world/wodLocationLoader.js",
+    "file": "src/world/worldOfDaggerfall/wodLocationLoader.js",
     "old": "      let t = f32(1 / f32(d + 1));",
     "new": "      let t = f32(1 / f32(d + 2));",
     "tests": [
@@ -56,7 +56,7 @@
   },
   {
     "name": "the-flatten-touches-the-border",
-    "file": "src/world/wodLocationLoader.js",
+    "file": "src/world/worldOfDaggerfall/wodLocationLoader.js",
     "old": "  for (let x = 1; x <= 127; x++) {\n    for (let y = 1; y <= 127; y++) {",
     "new": "  for (let x = 0; x <= 128; x++) {\n    for (let y = 1; y <= 127; y++) {",
     "tests": [
@@ -65,7 +65,7 @@
   },
   {
     "name": "an-unsmoothed-pick-forgets-the-tiles-own-average",
-    "file": "src/world/wodLocationLoader.js",
+    "file": "src/world/worldOfDaggerfall/wodLocationLoader.js",
     "old": "  let average = initialAverage;",
     "new": "  let average = 0;",
     "tests": [
@@ -74,7 +74,7 @@
   },
   {
     "name": "the-kidnap-marker-is-any-357",
-    "file": "src/world/wodLocationObjects.js",
+    "file": "src/world/worldOfDaggerfall/wodLocationObjects.js",
     "old": "  if (arg[0] === '357' && arg[1] === '6') spawners",
     "new": "  if (arg[0] === '357') spawners",
     "tests": [
@@ -83,7 +83,7 @@
   },
   {
     "name": "the-markers-are-drawn",
-    "file": "src/world/wodLocationObjects.js",
+    "file": "src/world/worldOfDaggerfall/wodLocationObjects.js",
     "old": "    visible: spawners.length === 0 && archive !== WOD_EDITOR_ARCHIVE,",
     "new": "    visible: archive !== WOD_EDITOR_ARCHIVE,",
     "tests": [
@@ -92,7 +92,7 @@
   },
   {
     "name": "the-bowl-of-fire-is-dfus",
-    "file": "src/world/wodLocationObjects.js",
+    "file": "src/world/worldOfDaggerfall/wodLocationObjects.js",
     "old": "  [0, L(15, 1.2, c32(255, 147, 41))],",
     "new": "  [0, L(20.0, 1.1, [0.95, 0.91, 0.63])],",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "the-street-lantern-is-not-lifted",
-    "file": "src/world/wodLocationObjects.js",
+    "file": "src/world/worldOfDaggerfall/wodLocationObjects.js",
     "old": "[27, -0.02], [29, 'half'],",
     "new": "[27, -0.02],",
     "tests": [
@@ -110,7 +110,7 @@
   },
   {
     "name": "the-default-arm-is-the-prefab",
-    "file": "src/world/wodLocationObjects.js",
+    "file": "src/world/worldOfDaggerfall/wodLocationObjects.js",
     "old": "  return record >= 0 && record <= 29 ? L(PREFAB.range, PREFAB.intensity, null) : DEFAULT_ARM;",
     "new": "  return L(PREFAB.range, PREFAB.intensity, null);",
     "tests": [
@@ -119,7 +119,7 @@
   },
   {
     "name": "the-quaternion-is-not-normalized",
-    "file": "src/world/wodLocationObjects.js",
+    "file": "src/world/worldOfDaggerfall/wodLocationObjects.js",
     "old": "  if (n > 0) { x /= n; y /= n; z /= n; w /= n; } else { x = 0; y = 0; z = 0; w = 1; }\n  const xx",
     "new": "  const xx",
     "tests": [
@@ -164,7 +164,7 @@
   },
   {
     "name": "the-trees-ignore-the-site",
-    "file": "src/world/terrainGen.js",
+    "file": "src/world/terrain/terrainGen.js",
     "old": "    locationRect: wodResult?.locationRect ?? locationRect,",
     "new": "    locationRect,",
     "tests": [
@@ -173,7 +173,7 @@
   },
   {
     "name": "the-flatten-runs-before-the-tiles",
-    "file": "src/world/terrainGen.js",
+    "file": "src/world/terrain/terrainGen.js",
     "old": "  const tileData = generateTileData(classic ?? samples, px, py);",
     "new": "  if (wod && wod.picks.length) applyPicks(samples, wod.picks, 0);\n  const tileData = generateTileData(classic ?? samples, px, py);",
     "tests": [

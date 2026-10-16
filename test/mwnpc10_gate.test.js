@@ -11,8 +11,8 @@ import { rosterActor } from '../src/characters/rosterBodies.js';
 import { createGateCourt } from '../src/scenes/gateCourt.js';
 import { GATE_STATE_EMPTY } from '../src/net/gateLink.js';
 import { HOST, profileOf } from '../src/net/gateBrain.js';
-import { HOST_FALL_MS, BOSS_LOOKS } from '../src/world/gateBoss.js';
-import { courtToDungeon } from '../src/world/gateArena.js';
+import { HOST_FALL_MS, BOSS_LOOKS } from '../src/world/gate/gateBoss.js';
+import { courtToDungeon } from '../src/world/gate/gateArena.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const LEGION = Object.freeze(['burning', 'legion', 'echoing']);

@@ -5,10 +5,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { undercroftLocation, isArenaUndercroft, isUndercroftDoor, ARENA_BLOCK, UNDERCROFT_LOCATION_ID, UNDERCROFT_MAP_ID } from '../src/world/arenaCity.js';
+import { undercroftLocation, isArenaUndercroft, isUndercroftDoor, ARENA_BLOCK, UNDERCROFT_LOCATION_ID, UNDERCROFT_MAP_ID } from '../src/world/arena/arenaCity.js';
 import { DOOR_TYPE } from '../src/world/meshReader.js';
 import { LOCATION_TYPES, DUNGEON_TYPES } from '../src/formats/mapsFile.js';
-import { layoutDungeon } from '../src/world/dungeonLayout.js';
+import { layoutDungeon } from '../src/world/dungeon/dungeonLayout.js';
 import { dungeonStartDoorFor } from '../src/systems/save/save.js';
 import { HAS_ARENA2, bootDoor, classicModels } from './arena1Data.mjs';
 

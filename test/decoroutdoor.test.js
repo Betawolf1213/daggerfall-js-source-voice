@@ -14,7 +14,7 @@ import {
 } from '../src/systems/decor/decorCatalogue.js';
 import { createDecorScan, decorScanDeps } from '../src/systems/decor/decorScan.js';
 import { yardNatureFlat, isNaturePiece } from '../src/scenes/yardNature.js';
-import { TREE_RECORDS } from '../src/world/terrainNature.js';
+import { TREE_RECORDS } from '../src/world/terrain/terrainNature.js';
 import { applyClimate, SEASON } from '../src/world/climateSwaps.js';
 import { floraSwayOf } from '../src/systems/wind/windDrive.js';
 import { BLOCK_TYPES } from '../src/formats/blocksFile.js';

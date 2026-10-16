@@ -21,7 +21,7 @@ import {
 import { hasHorse, TRANSPORT_HORSE_TEMPLATE } from '../src/systems/inventorySession.js';
 import { positionPlayerToLocation, EXTRA_DISTANCE } from '../src/world/locationEntrance.js';
 import { RMB_SIDE } from '../src/world/locationLayout.js';
-import { TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 import { armBuildOptsOf } from '../src/combat/weaponRig.js';
 import { RACES } from '../src/systems/races.js';
 import { CLASS_CAREERS } from '../src/systems/chargen.js';

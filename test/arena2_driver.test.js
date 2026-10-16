@@ -10,7 +10,7 @@ import { createArenaBouts, YOU, CRIT_SHARE, LEAVE_AFTER_MS } from '../src/scenes
 import { newArenaLadder, nextLadderBout, exhibitionFor, BOUT_PURSE } from '../src/systems/arena/arenaLadder.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { ARENA_SONGS, ARENA_SCORE_SILENCE } from '../src/systems/arena/arenaScore.js';
-import { RING_R } from '../src/world/arenaFloor.js';
+import { RING_R } from '../src/world/arena/arenaFloor.js';
 
 const settle = () => new Promise((r) => setTimeout(r, 0));
 function rig({ kind = 'floor', foeHealth = 60, player = {} } = {}) {

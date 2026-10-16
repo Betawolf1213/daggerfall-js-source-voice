@@ -171,9 +171,9 @@ export function createTownSheet(deps = {}) {
       // under it cannot come to disagree about what the building is.
       out.push({ text, quest, x: ax, y: sy, key: b.buildingKey, quarter: quarterOfType(b.buildingType) });
     }
-    // ARENA-MAP: a block's LANDMARK (the Arena, world/arenaCity.js arenaTownLandmark) - always named, as the classic
+    // ARENA-MAP: a block's LANDMARK (the Arena, world/arena/arenaCity.js arenaTownLandmark) - always named, as the classic
     // window names it, at its place and in its quarter's ink (the ring under it is that quarter's byte). YARDS-FOUND: and
-    // its PLACES the same way - the town's yards standing in it (world/merchantYardMap.js yardTownBlocks), a shop's ink
+    // its PLACES the same way - the town's yards standing in it (world/merchantYards/merchantYardMap.js yardTownBlocks), a shop's ink
     for (const bl of deps.blocks ?? []) {
       for (const lm of [bl?.landmark, ...(bl?.places ?? [])]) {
         if (!lm?.name) continue;

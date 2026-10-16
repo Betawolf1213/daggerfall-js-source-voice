@@ -3,7 +3,7 @@
 // PAGE - the dungeon host's set for the Last Moment's arena in the Shattered Hour, as scenes/sdHall.js is for its Orrery.
 // The realm runs the fight (SD8b - net/sdRemnant.js its law); this shows what the realm says of it and carries my blows.
 //
-//   STOOD once (stand): the Remnant's body, the GOLD and SILVER Echoes' and the Reset's Hearts' (world/sdRemnantModel.js),
+//   STOOD once (stand): the Remnant's body, the GOLD and SILVER Echoes' and the Reset's Hearts' (world/superDungeon/sdRemnantModel.js),
 //     each a draw of its own among the dungeon's, hidden until the fight stands it. SD17: each body as its parts - its
 //     pelvis (the body's own draw, stood where it stands) and the six its rig turns (scenes/sdRemnantRig.js), after the
 //     Hearts - and the Volley's gears in flight.
@@ -16,7 +16,7 @@
 //   MY BLOWS (the gate's three seams, which the dungeon context asks in the Hour - scenes/dungeonContext.js): the Remnant
 //     as a body my blows meet (`target` - warded while it cannot be struck: asleep, or before its return), the Echoes as
 //     the host's bodies (`echoTargets`), the Hearts as the crystals' (`heartTargets`) - each with a stand-in for the
-//     formulas (world/gateBoss.js) - and the number each blow computes on this machine out to the realm (`hit`, `echoHit`,
+//     formulas (world/gate/gateBoss.js) - and the number each blow computes on this machine out to the realm (`hit`, `echoHit`,
 //     `heartHit`: whole points, ONE SEQUENCE A BLOW - the gate's AUDIT WB11 W3 - the relay's hand and purse deciding what
 //     lands). Only into a fight that counted me in.
 //
@@ -27,15 +27,15 @@ import { SD_ARENA, SD_REALM_ORIGIN, realmToDungeon } from '../net/sdBrain.js';
 import { SD_REM, SD_ECHO, SD_HEART, SD_REM_START, SD_BREAK_MS, SD_BLOWS, SD_BLOW_BY_ID, SD_BODY, SD_HEARTS_CLOSE_MS, SD_HEARTS, SD_STUN_MS, SD_PULSE_EVERY_MS, SD_ECHO_PAIR_MS, inArena, atkWindup, blowShape, sdProfileOf } from '../net/sdRemnant.js';
 import { HIT_KINDS, wrapYaw } from '../net/gateBrain.js';
 import { sdBodyAt, sdHeartsOf, sdHourOver, SD_FIGHT_EMPTY } from '../net/sdFightLink.js';
-import { SD_REALM_ARCHIVE, SD_REALM_BRASS_RECORD } from '../world/sdRealm.js';
-import { remnantArt, remnantLookArt, SD_REMNANT_ARCHIVE, SD_REMNANT_TELL_RECORD, SD_REMNANT_WHITE_RECORD, SD_REMNANT_HUSK_RECORD, SD_REMNANT_HAND_RECORD, SD_REMNANT_LAMP_RECORD, SD_REMNANT_GATHER_RECORD } from '../world/sdRemnantArt.js';
+import { SD_REALM_ARCHIVE, SD_REALM_BRASS_RECORD } from '../world/superDungeon/sdRealm.js';
+import { remnantArt, remnantLookArt, SD_REMNANT_ARCHIVE, SD_REMNANT_TELL_RECORD, SD_REMNANT_WHITE_RECORD, SD_REMNANT_HUSK_RECORD, SD_REMNANT_HAND_RECORD, SD_REMNANT_LAMP_RECORD, SD_REMNANT_GATHER_RECORD } from '../world/superDungeon/sdRemnantArt.js';
 import { ensureSdHallArt } from './sdHall.js';
-import { buildRemnantParts, buildHeartModel, buildGearModel, buildBackDialModel, buildDialHandModel, buildRibLampsModel, buildTornHeartModel, heartRecordOf, remnantMatrix, remnantScale, SD_REMNANT_BODY } from '../world/sdRemnantModel.js';
+import { buildRemnantParts, buildHeartModel, buildGearModel, buildBackDialModel, buildDialHandModel, buildRibLampsModel, buildTornHeartModel, heartRecordOf, remnantMatrix, remnantScale, SD_REMNANT_BODY } from '../world/superDungeon/sdRemnantModel.js';
 import { SD_ENDINGS } from '../net/sdMarks.js';
-import { sdTick, handToTwelve } from '../world/sdLook.js';
+import { sdTick, handToTwelve } from '../world/superDungeon/sdLook.js';
 import { SD_BLOW_COLOR } from './sdRemnantBlows.js';
 import { remnantRig, rigMatrices, restRig, sdGearsAt, sdGatherGearsAt, gearMatrix, gatherGearMatrix, gearFlightOf, sdKeptList, dialHandMatrix, dialFallMatrix, heartFallMatrix, SD_RIG_PARTS, SD_REM_HAND } from './sdRemnantRig.js';
-import { bossStandIn, crystalStandIn, hostStandIn } from '../world/gateBoss.js';
+import { bossStandIn, crystalStandIn, hostStandIn } from '../world/gate/gateBoss.js';
 
 /** The look the stand-ins wear for the formulas (characters/enemyBasics.js): an Iron Atronach's - a thing of metal. */
 export const SD_REMNANT_MOBILE = 36;
@@ -93,7 +93,7 @@ const _gears = sdKeptList();
 const _forming = sdKeptList();
 const _echoPose = { x: 0, z: 0, yw: 0, sink: 0, shown: false };
 const _heartPose = { x: 0, z: 0, yw: 0, sink: 0, shown: true };
-/** An Echo's scale beside the Remnant's (world/sdRemnantModel.js remnantScale), once. */
+/** An Echo's scale beside the Remnant's (world/superDungeon/sdRemnantModel.js remnantScale), once. */
 const ECHO_SCALE = remnantScale(true);
 /** A pose `{ x, z, yw, sink, shown }`, set in `out`. */
 const posed = (out, x, z, yw, sink, shown) => { out.x = x; out.z = z; out.yw = yw; out.sink = sink; out.shown = shown; return out; };
@@ -149,7 +149,7 @@ export function sdTellsAt(s, who, t, out = new Uint8Array(SD_TELLS.length)) {
   return out;
 }
 const _share = new Float64Array(SD_TELLS.length);
-/** THE BACK-DIAL'S HAND, by its look (world/sdRemnantArt.js SD_REMNANT_HAND_RECORD's): cold ticking, ember the stun, gold
+/** THE BACK-DIAL'S HAND, by its look (world/superDungeon/sdRemnantArt.js SD_REMNANT_HAND_RECORD's): cold ticking, ember the stun, gold
  *  or silver the fallen Echo's window, white the Reset. Its turns: the Hour-Hand spins it up SD_DIAL_TURNS.hand whole
  *  turns over its wind-up and sweep (so it ends where its tick stands); the Reset spins it back SD_DIAL_TURNS.reset
  *  turns to XII as it lands. */
@@ -166,7 +166,7 @@ const activeOf = (a) => { if (a !== _spanAtk) { _spanAtk = a; _spanMs = blowShap
 /**
  * WHERE BODY `who`'s DIAL HAND STANDS at `t` and how it looks, into `out` ([turn, look] - turn clockwise from XII as the
  * dial is seen from behind, look SD_DIAL_LOOK's index). The Hour's hands run BACK to twelve: at rest it ticks back a
- * minute each second on the escapement (world/sdLook.js sdTick); stunned, an ember hand runs the stun's 8 s back to XII;
+ * minute each second on the escapement (world/superDungeon/sdLook.js sdTick); stunned, an ember hand runs the stun's 8 s back to XII;
  * the Reset spins it back to XII as it lands, white; in the Break the living Echo's runs its fallen partner's window
  * (SD_ECHO_PAIR_MS, its marks' own) back to XII in the partner's metal - at XII the fallen rises; the Hour-Hand spins it
  * up. Past its fall it stands as it stood. Pure.

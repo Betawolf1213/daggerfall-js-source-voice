@@ -16,7 +16,7 @@ import { createGateOmen, insideGateRing, gateSceneXZ, omenTimeLine, openTimeLine
 import { readGateMark, gateMarkKey, gateRingKey, gateRingTexels, GATE_RING_BAND } from '../src/ui/gateMapMark.js';
 import { paintGateRing } from '../src/ui/inkMap.js';
 import { hash32, spawnsDungeon, WORLD_SALT } from '../src/world/spawnedDungeons.js';
-import { TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';
 import { CLIMATES, LOCATION_TYPES, REGION_NAMES } from '../src/formats/mapsFile.js';
 

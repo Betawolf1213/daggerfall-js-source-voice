@@ -7,7 +7,7 @@
 //
 // ONE DRIVER, TWO FLOORS. A bout stands on a STAGE the host hands in (`setStage`): the CITY's floor (the colosseum in
 // Daggerfall's cell 4,3 - scenes/world.js, the exterior's own foe pool) for an exhibition on the hour, or the floor's
-// INSTANCE (world/arenaFloor.js - the dungeon arm's own pool, scenes/worldModes.js) for a ladder bout or an exhibition
+// INSTANCE (world/arena/arenaFloor.js - the dungeon arm's own pool, scenes/worldModes.js) for a ladder bout or an exhibition
 // watched from the stands. A stage is `{ kind, centre(), spawn(mobile, feet, o), remove(foe), heightAt(x, z) }` in its
 // host's frame; the driver never asks which host it is in. A stage that goes (the door taken, the city left) takes its
 // bout with it, unsaid.
@@ -37,7 +37,7 @@ import { ARENA_TEXT } from '../systems/arena/arenaText.js';
 import { markQuiver, refundQuiver } from '../systems/arena/arenaQuiver.js';   // ARENA-ARROWS: the quiver comes back full from the sand
 import { startShotTally, stopShotTally } from '../systems/shotTally.js';   // ARENA-ARROWS: ...with what the bout loosed, no more
 import { arenaScoreFor } from '../systems/arena/arenaScore.js';
-import { crowdSeats, pickSeats, RING_R } from '../world/arenaFloor.js';
+import { crowdSeats, pickSeats, RING_R } from '../world/arena/arenaFloor.js';
 import { arenaHudModel } from '../ui/arenaHud.js';
 import { rollLeague, leagueAfterBout, laurelWorn, laurelBanner, LAUREL_FAVOUR } from '../systems/arena/arenaLeague.js';   // ARENA3: the banners, the laurel, the Records page
 import { mirrorOf, mirrorEvents, mirrorHealth, walkAt, walkDone } from '../net/arenaLink.js';
@@ -361,7 +361,7 @@ export function createArenaBouts(deps) {
   }
   /**
    * ARENA5: THE BANNERS THE FLOOR HANGS (Arena.md 3: "your banners on your side of the floor") for the bout asked for the
-   * floor's instance - the host asks while it lays the instance (scenes/worldModes.js enterArenaFloor, world/arenaFloor.js
+   * floor's instance - the host asks while it lays the instance (scenes/worldModes.js enterArenaFloor, world/arena/arenaFloor.js
    * arenaFloorBlock), after the bout was asked and before its stage stands. `{ west, east }`: side 0's banner and side
    * 1's, each 'red', 'blue' or null - a ladder bout mine on the west (the save's banner offline, the realm's online -
    * boutTeams' own law), an exhibition the Red against the Blue, a relay's bout each player's (mine the realm's, my

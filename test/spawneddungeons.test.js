@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { SPAWN_CHANCE, ANY_SPAWN_CHANCE, SALT_MAX, WORLD_SALT, hash32, spawnsDungeon, spawnedMapId, pickTemplate, synthesizeDungeonLocation, spawnTemplates, SPAWN_CLEARANCE_M, BLOCK_M, spawnClearance, spawnedLocationCentreLocal, dungeonSightLine } from '../src/world/spawnedDungeons.js';
-import { TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 import { isWorldRoom } from '../src/net/wire.js';
 import { getMapPixelID, longitudeLatitudeToMapPixel } from '../src/formats/mapsFile.js';
 

@@ -23,8 +23,8 @@ try {
   await page.goto(`http://localhost:${PORT}/mw-inspect.html`);
   const out = await page.evaluate(async ({ W, H, FRAMES }) => {
     const [{ Renderer, WORLD_FRAME }, m, el, ga, gart, gb, gboss, gfx, pr, dl, sp] = await Promise.all([
-      import('/src/render/renderer.js'), import('/src/world/mat4.js'), import('/src/render/enhancedLighting.js'), import('/src/world/gateArena.js'),
-      import('/src/world/gateArt.js'), import('/src/net/gateBrain.js'), import('/src/world/gateBoss.js'), import('/src/render/gateFx.js'),
+      import('/src/render/renderer.js'), import('/src/world/mat4.js'), import('/src/render/enhancedLighting.js'), import('/src/world/gate/gateArena.js'),
+      import('/src/world/gate/gateArt.js'), import('/src/net/gateBrain.js'), import('/src/world/gate/gateBoss.js'), import('/src/render/gateFx.js'),
       import('/src/net/peerRiders.js'), import('/src/render/deadlands.js'), import('/src/render/shadowPass.js'),
     ]);
     const C = gb.COURT_CENTRE;

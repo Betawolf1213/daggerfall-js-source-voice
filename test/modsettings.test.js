@@ -39,7 +39,7 @@ test('ROADS 24: the switches reach the kernel on both paths, and the Mods pane s
   assert.match(host, /if \(!basicRoadsOn\) \{[\s\S]{0,400}?terrainGen\.setRoads\(settlementsOf\(maps\), logRoads, roadSwitches\);/, 'OFF falls to the port\u2019s own network, never to no roads');
   assert.match(host, /setRoadsData\(\{ \.\.\.his, \.\.\.roadSwitches \}/, 'on his data');
   assert.match(host, /setRoads\(settlementsOf\(maps\), logRoads, roadSwitches\)/, 'and on the fallback');
-  const worker = readFileSync('src/world/terrainGenWorker.js', 'utf8');
+  const worker = readFileSync('src/world/terrain/terrainGenWorker.js', 'utf8');
   assert.match(worker, /\.\.\.\(m\.switches \?\? \{\}\)/, 'the worker attaches them to the built network');
   const menu = readFileSync('src/ui/enhancedMenu.js', 'utf8');
   // FT14: the Mods pane is gone - every vendored mod reaches the player as a TILE on the features
@@ -59,7 +59,7 @@ test('ROADS 24: the switches reach the kernel on both paths, and the Mods pane s
 // host logged ", smoothing off" on the exact path where smoothing still
 // ran. These three drive the wires instead of reading them.
 test('ROADS 24 / AUDIT 58 F3: setRoadsData carries `smooth` into the network this thread keeps', async () => {
-  const { TerrainGenClient } = await import('../src/world/terrainGenClient.js');
+  const { TerrainGenClient } = await import('../src/world/terrain/terrainGenClient.js');
   const net = () => ({ roads: new Uint8Array(8), tracks: new Uint8Array(8) });
   const client = new TerrainGenClient({ woods: null });   // no bytes -> no worker
   client.setRoadsData({ ...net(), smooth: false, water: false });
@@ -73,7 +73,7 @@ test('ROADS 24 / AUDIT 58 F3: setRoadsData carries `smooth` into the network thi
 });
 
 test('ROADS 24 / AUDIT 58 F3: the copy posted to the worker carries `smooth` too', async () => {
-  const { TerrainGenClient } = await import('../src/world/terrainGenClient.js');
+  const { TerrainGenClient } = await import('../src/world/terrain/terrainGenClient.js');
   const posted = [];
   const fake = { postMessage: (m) => posted.push(m), terminate() {} };
   const client = new TerrainGenClient({
@@ -98,7 +98,7 @@ test('ROADS 24 / AUDIT 58 F3: the worker’s his-data arm honours `smooth` - the
   const prevOn = globalThis.onmessage;
   globalThis.postMessage = (msg) => posted.push(msg);
   try {
-    await import('../src/world/terrainGenWorker.js');
+    await import('../src/world/terrain/terrainGenWorker.js');
     globalThis.onmessage({ data: { t: 'init', woodsBytes: syntheticWoods(MAP_WIDTH, MAP_HEIGHT) } });
     assert.notEqual(posted.at(-1)?.t, 'error', 'the synthetic WOODS loads');
     const px = 400, py = 200;
@@ -132,7 +132,7 @@ test('ROADS 24 / AUDIT 58 F3: the worker’s his-data arm honours `smooth` - the
 // death, a solo `generate()` - then smoothed with SmoothRoads off. This
 // drives the REAL client with a fake worker and reads the kernel's heights.
 test('ROADS 24 / AUDIT 58 F3: the worker\u2019s roads REPLY keeps the switches - the same-thread kernel\u2019s heights prove it', async () => {
-  const { TerrainGenClient } = await import('../src/world/terrainGenClient.js');
+  const { TerrainGenClient } = await import('../src/world/terrain/terrainGenClient.js');
   const { WoodsFile, MAP_WIDTH, MAP_HEIGHT } = await import('../src/formats/woodsFile.js');
   const bytes = syntheticWoods(MAP_WIDTH, MAP_HEIGHT);
   const px = 400, py = 200;

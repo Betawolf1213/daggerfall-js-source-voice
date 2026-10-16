@@ -103,7 +103,7 @@ The HONEST still-open list as of the re-verification:
    CLOSED.
 7. **CfaFile** (horse/cart FP sprites), **HeadBobber** (a settings
    toggle exists, no bobber), **DilateCoastalClimate**, ~~city gates
-   closing at night~~ SHIPPED (AUDIT 64 F14 - world/cityGate.js, both
+   closing at night~~ SHIPPED (AUDIT 64 F14 - world/city/cityGate.js, both
    exterior hosts), HUDActiveSpells + escorting faces, the
    transformed move-sound loop - the small-residue tail.
 

@@ -18,11 +18,11 @@ import { lightIdOf, relight, adoptLight, lightList, packLight, copyLights, light
 import { Renderer, WORLD_FRAME } from '../src/render/renderer.js';
 import { EL_LANE } from '../src/render/enhancedLighting.js';
 import { SHADOW_TUNING, SHADOW_POINT_CASTERS } from '../src/render/shadowPass.js';
-import { nearestLights, fillLanternPool } from '../src/world/cityLights.js';
+import { nearestLights, fillLanternPool } from '../src/world/city/cityLights.js';
 import { withPlayerLights } from '../src/scenes/magicCandle.js';
-import { withCourtLights, courtLights } from '../src/world/gateArena.js';
-import { realmLightsWith, realmLightsNear } from '../src/world/sdRealm.js';
-import { bossGlow } from '../src/world/gateBoss.js';
+import { withCourtLights, courtLights } from '../src/world/gate/gateArena.js';
+import { realmLightsWith, realmLightsNear } from '../src/world/superDungeon/sdRealm.js';
+import { bossGlow } from '../src/world/gate/gateBoss.js';
 import { GATE_STATE_EMPTY } from '../src/net/gateLink.js';
 import { courtShadowCounts, meanOf, worstOf, CASE_FRAMES } from '../tools/courtShadowProbe.mjs';
 
@@ -50,10 +50,10 @@ test('LIGHT-ID: THE ONE CONSTRUCTION SEAM - no light is written into a frame\'s 
   assert.deepEqual(hits, [], 'a light written into a list outside the seam');
   assert.match(rd('src/render/lightId.js'), /out\[i \* 4\] = l\.x; out\[i \* 4 \+ 1\] = l\.y; out\[i \* 4 \+ 2\] = l\.z; out\[i \* 4 \+ 3\] = range;\n\s+if \(out\.ids\) out\.ids\[i\] = lightIdOf\(l\);/, 'the seam writes the place and the identity side by side');
   for (const [file, re] of [
-    ['src/world/cityLights.js', /packLight\(out, i, l, Number\.isFinite\(w\) \? w : CITY_LIGHT_RANGE\);/],
+    ['src/world/city/cityLights.js', /packLight\(out, i, l, Number\.isFinite\(w\) \? w : CITY_LIGHT_RANGE\);/],
     ['src/scenes/magicCandle.js', /packLight\(out, i, l\);[\s\S]*copyLights\(out, live\.length, base, 0, keep \/ 4\);/],
-    ['src/world/gateArena.js', /packLight\(data, n \+ i, l\);/],
-    ['src/world/sdRealm.js', /packLight\(H\.data, i, l\);/],
+    ['src/world/gate/gateArena.js', /packLight\(data, n \+ i, l\);/],
+    ['src/world/superDungeon/sdRealm.js', /packLight\(H\.data, i, l\);/],
     ['src/render/renderer.js', /packLight\(out, 0, f\);/],
     ['src/tools/abyssLab.js', /packLight\(data, i, l\);/],
   ]) assert.match(rd(file), re, `${file}: through the seam`);

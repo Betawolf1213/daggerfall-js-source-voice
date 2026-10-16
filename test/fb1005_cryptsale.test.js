@@ -17,7 +17,7 @@ import { join } from 'node:path';
 import { tinyRmb } from './wd3Fakes.mjs';
 import { locationBuildings, buildingDataForDoor } from '../src/systems/talk/talkTopics.js';
 import { homeCandidate, homePurchasable } from '../src/systems/online/onlineHomes.js';
-import { hasInteriorModels, layoutInterior } from '../src/world/interiorLayout.js';
+import { hasInteriorModels, layoutInterior } from '../src/world/interior/interiorLayout.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 
 /** tinyRmb's two subrecords as a graveyard's: #0 a room with a model, #1 a room with none - both House5, no faction. */

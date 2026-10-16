@@ -287,14 +287,14 @@ async function realDungeon(which) {
   const { Arch3dFile } = await import('../src/formats/arch3dFile.js');
   const { dfMeshToModel } = await import('../src/world/meshReader.js');
   const { customModelFor, emptyModel } = await import('../src/world/customModels.js');
-  const { layoutDungeon } = await import('../src/world/dungeonLayout.js');
+  const { layoutDungeon } = await import('../src/world/dungeon/dungeonLayout.js');
   const { trs, multiply } = await import('../src/world/mat4.js');
   const { Collider } = await import('../src/player/collider.js');
   const { ActionSystem, classifyPlacementAction } = await import('../src/world/actionSystem.js');
   const { floorLanding } = await import('../src/player/enterExit.js');
   const { collectDungeonEnemies } = await import('../src/characters/dungeonEnemies.js');
   const sd = await import('../src/world/spawnedDungeons.js');
-  const { isMainStoryDungeon } = await import('../src/world/dungeonTextures.js');
+  const { isMainStoryDungeon } = await import('../src/world/dungeon/dungeonTextures.js');
   const { patchSeams } = await import('../src/world/arch3dSeams.js');
   const rd = (f) => new Uint8Array(readFileSync(join(ARENA2, f)));
   const maps = new MapsFile(); maps.load(rd('MAPS.BSA'), rd('CLIMATE.PAK'), rd('POLITIC.PAK'));

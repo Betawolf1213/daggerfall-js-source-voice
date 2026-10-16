@@ -18,12 +18,12 @@ import { BlocksFile } from '../formats/blocksFile.js';
 import { bindWorldDataBlocks } from '../formats/worldDataReplacement.js';   // RR3b
 import { loadModWorldData } from './modWorldData.js';   // RR3b
 import { DFPalette } from '../formats/dfPalette.js';
-import { INTERIOR_AMBIENT, INTERIOR_NIGHT_AMBIENT, INTERIOR_LIGHT_DIR } from '../world/interiorLights.js';
+import { INTERIOR_AMBIENT, INTERIOR_NIGHT_AMBIENT, INTERIOR_LIGHT_DIR } from '../world/interior/interiorLights.js';
 import { isNight } from '../world/worldClock.js';   // AUDIT 23 (C12)
 import { skyMinutes } from '../systems/worldTick.js';   // AUDIT 23 (C12); TIME1: the sky's night
-import { nearestLights } from '../world/cityLights.js';
+import { nearestLights } from '../world/city/cityLights.js';
 import { syncLightingLane, interiorLightColor, interiorGrade } from '../render/enhancedLighting.js';   // EL1; INTERIOR-DIM: a room's lamps and its grade
-import { INTERIOR_MARKER } from '../world/interiorLayout.js';
+import { INTERIOR_MARKER } from '../world/interior/interiorLayout.js';
 import { lookAt, perspective, mirrorProjectionX, UP_Y } from '../world/mat4.js';   // HANDEDNESS: the one mirror (mat4's law)
 import { fetchBytes, seasonOverride, ensureAudio } from './shared.js';
 import { INTERIOR_SEASON } from '../world/climateSwaps.js';   // A1: DaggerfallInterior.cs:51 - an interior is summer-skinned, always

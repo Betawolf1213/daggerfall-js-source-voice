@@ -8,7 +8,7 @@
 // the play"). Design: bible/11-Multiplayer/World-Bosses.md section 12.
 //
 //   WBX1 the one index type          render/renderer.js createMesh; the gate's, the court's and the land's builders
-//   WBX2 the portal home             scenes/gateCourt.js portalFrame, world/gateArena.js portalDoor, worldModes gateWayHome
+//   WBX2 the portal home             scenes/gateCourt.js portalFrame, world/gate/gateArena.js portalDoor, worldModes gateWayHome
 //   WBX3 the loot line               render/spoilsGlow.js, scenes/spoilsPool.js (the item's own sprite), ui/itemIconColor32.js
 //   WBX4 his damage and his mark     net/gateBrain.js `base`, net/gateStrike.js strikeDamage; render/gateTelegraph.js mark
 //   WBX5 the phases                  net/gateBrain.js PHASE_TURN, the leap, the meteor, the spokes, the burning ground
@@ -19,8 +19,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { Renderer } from '../src/render/renderer.js';
-import { buildGateModel, GATE_HEIGHT, ARCH_Y0 } from '../src/world/gateModel.js';
-import { buildCourtModel, courtToDungeon, portalDoor, PORTAL_AFTER_MS, PORTAL_RISE_MS, PORTAL_DROP, COURT_TEXT, EXIT_H, EXIT_HALF_W, courtDoorAabb, courtFloorTris, COURT_DOOR_DEPTH } from '../src/world/gateArena.js';
+import { buildGateModel, GATE_HEIGHT, ARCH_Y0 } from '../src/world/gate/gateModel.js';
+import { buildCourtModel, courtToDungeon, portalDoor, PORTAL_AFTER_MS, PORTAL_RISE_MS, PORTAL_DROP, COURT_TEXT, EXIT_H, EXIT_HALF_W, courtDoorAabb, courtFloorTris, COURT_DOOR_DEPTH } from '../src/world/gate/gateArena.js';
 import { doorWorldAabb } from '../src/player/enterExit.js';
 import { pickActivatableHit, RAY_DISTANCE, DOOR_ACTIVATION_DISTANCE } from '../src/player/activate.js';
 import { Collider } from '../src/player/collider.js';
@@ -33,7 +33,7 @@ import {
 } from '../src/net/gateBrain.js';
 import { inAttack, spokeLanes, landingPools, poolUnder, strikeDamage, blowOf, strikeVerdict } from '../src/net/gateStrike.js';
 import { telegraphShape, telegraphField, markShape, poolShapes, TELEGRAPH_KIND, TELEGRAPH_FS, BOSS_MARK_R, BOSS_MARK_CHEVRON_LEN, BOSS_MARK_CHEVRON_HALF_W } from '../src/render/gateTelegraph.js';
-import { bossPlace, bossHop, bossAct, bossStandIn, bossLookOf, LEAP_AIR_MS, LEAP_HEIGHT, ATTACK_COLORS, POOL_COLOR, WARD_COLOR, BOSS_CUES, QUAKE_ON } from '../src/world/gateBoss.js';
+import { bossPlace, bossHop, bossAct, bossStandIn, bossLookOf, LEAP_AIR_MS, LEAP_HEIGHT, ATTACK_COLORS, POOL_COLOR, WARD_COLOR, BOSS_CUES, QUAKE_ON } from '../src/world/gate/gateBoss.js';
 import { createGateCourt, courtPhaseCard, COURT_STRIKE_TEXT, MARK_COLOR, COURT_ROUND_MS } from '../src/scenes/gateCourt.js';
 import { GATE_STATE_EMPTY } from '../src/net/gateLink.js';
 import { bossBarModel, BOSS_BAR_TEXT } from '../src/ui/gateBossBar.js';

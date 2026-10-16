@@ -28,8 +28,8 @@ import { DYE_COLORS, DYE_TARGETS } from '../src/characters/dyes.js';
 import { smeltable } from '../src/ui/profPages.js';
 import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { FT } from '../src/systems/foraging/foragingLaw.js';
-import { groundAt } from '../src/world/terrainNature.js';
-import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { groundAt } from '../src/world/terrain/terrainNature.js';
+import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 import { DECOR_STATIONS, DECOR_STATION_FEES, DECOR_STATION_NAMES } from '../src/net/decorLaw.js';
 import { sharedClassicMinutes } from '../src/net/wire.js';
 import { utcDay } from '../src/net/marksLaw.js';
@@ -412,7 +412,7 @@ test('PROF2 hosts: the streaming world stands every kind through the one host, i
   assert.match(w, /if \(rockPick\(m\.pick\)\) \{ const foot = rockFootprint\(cpu\.positions, cpu\.indices, m\.matrix, samples\); if \(foot\) pixelRocks\.push\(foot\); \}/, 'a rock piece that stood - after the road\'s clearance; ROCK-FOOT: as it stands out of the ground');
   assert.match(w, /rocks: pixelRocks,/);
   assert.match(w, /const rockPick = \(i\) => WOD_ROCK_SITES\.includes\(wodPicks\[i\]\?\.name\);/);   // ROCK-SUNK: the rock sites one list, the shrub's exemption's too
-  assert.match(src('src/world/wodLocationObjects.js'), /export const WOD_ROCK_SITES = Object\.freeze\(\['Rocks', 'Mountains'\]\);/, 'the Rocks and Mountains layouts');
+  assert.match(src('src/world/worldOfDaggerfall/wodLocationObjects.js'), /export const WOD_ROCK_SITES = Object\.freeze\(\['Rocks', 'Mountains'\]\);/, 'the Rocks and Mountains layouts');
   assert.match(w, /if \(!townTalk\.overlayActive && act === 'Escape' && gatherHost\?\.cancel\(\)\) \{ e\.preventDefault\(\); e\.profActEnded = true; return true; \}/, 'Escape above the mode gate');
   assert.ok(w.indexOf("act === 'Escape' && gatherHost?.cancel()") < w.indexOf("if (!townTalk.overlayActive && (modes?.mode ?? 'exterior') === 'exterior') {"), 'before the exterior gate');
   assert.match(w, /nodes: professionMarks\(\),/);   // PROF7 moved it: a Tracker's animals beside a Prospector's veins; NODE-MARKS: every node beside them

@@ -17,8 +17,8 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as G from '../src/render/labGrass.js';   // a namespace, so a seam that is missing fails ITS pin and not the file
-import { surfaceHeightAt, TERRAIN_TILE_DIM } from '../src/world/terrainSurface.js';
-import { TERRAIN_SIZE, HEIGHTMAP_DIMENSION } from '../src/world/terrainSampler.js';
+import { surfaceHeightAt, TERRAIN_TILE_DIM } from '../src/world/terrain/terrainSurface.js';
+import { TERRAIN_SIZE, HEIGHTMAP_DIMENSION } from '../src/world/terrain/terrainSampler.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const WORLD = readFileSync(join(root, 'src/scenes/world.js'), 'utf8');

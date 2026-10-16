@@ -40,8 +40,8 @@ import { mineFlats, standDungeonVeins, standMineNodes, mineKind } from '../src/s
 import { utcDayOfMs, veins } from '../src/net/nodeLaw.js';
 import { shedChunks, stepChunk, chunkBox } from '../src/systems/gatherBlow.js';
 import { setBatchCrack } from '../src/systems/veinCrack.js';
-import { groundAt } from '../src/world/terrainNature.js';
-import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE, MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE } from '../src/world/terrainSampler.js';
+import { groundAt } from '../src/world/terrain/terrainNature.js';
+import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE, MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE } from '../src/world/terrain/terrainSampler.js';
 import { Renderer, WORLD_FRAME } from '../src/render/renderer.js';
 import { EL_LANE, EL_BB_FS, elDecode, elEncode } from '../src/render/enhancedLighting.js';
 import { perspective, lookAt, mirrorProjectionX } from '../src/world/mat4.js';

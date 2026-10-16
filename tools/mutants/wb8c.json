@@ -195,7 +195,7 @@
   },
   {
     "name": "WB8c-the-glow-at-the-old-chest",
-    "file": "src/world/gateBoss.js",
+    "file": "src/world/gate/gateBoss.js",
     "old": "  const [x, y, z] = courtToDungeon(cx, P.bossH * 0.55, cz);",
     "new": "  const [x, y, z] = courtToDungeon(cx, BOSS_H * 0.55, cz);",
     "tests": [
@@ -204,7 +204,7 @@
   },
   {
     "name": "WB8c-the-glow-the-table-s-colour",
-    "file": "src/world/gateBoss.js",
+    "file": "src/world/gate/gateBoss.js",
     "old": "    const color = attackColor(A, P) ?? ember;",
     "new": "    const color = ATTACK_COLORS[A.key] ?? ember;",
     "tests": [
@@ -213,7 +213,7 @@
   },
   {
     "name": "WB8c-the-ember-always-burning",
-    "file": "src/world/gateBoss.js",
+    "file": "src/world/gate/gateBoss.js",
     "old": "export const emberColor = (P) => ASPECT_COLORS[P?.aspect?.id]?.ember ?? EMBER_COLOR;",
     "new": "export const emberColor = (P) => EMBER_COLOR;",
     "tests": [
@@ -222,7 +222,7 @@
   },
   {
     "name": "WB8c-his-colours-unread",
-    "file": "src/world/gateBoss.js",
+    "file": "src/world/gate/gateBoss.js",
     "old": "export const attackColor = (A, P) => ASPECT_COLORS[P?.aspect?.id]?.[A.key] ?? ATTACK_COLORS[A.key];",
     "new": "export const attackColor = (A, P) => ATTACK_COLORS[A.key];",
     "tests": [
@@ -231,7 +231,7 @@
   },
   {
     "name": "WB8c-the-wrath-in-his-aspect-s-voice",
-    "file": "src/world/gateBoss.js",
+    "file": "src/world/gate/gateBoss.js",
     "old": "  if (!cue || isDagons(A) || !P?.atk?.[A.key]?.el",
     "new": "  if (!cue || !P?.atk?.[A.key]?.el",
     "tests": [
@@ -240,7 +240,7 @@
   },
   {
     "name": "WB8c-his-voice-unchanged",
-    "file": "src/world/gateBoss.js",
+    "file": "src/world/gate/gateBoss.js",
     "old": "  if (kind === 'windup' || kind === 'release') return { id: ASPECT_CUE_IDS[aspect],",
     "new": "  if (kind === 'windup' || kind === 'release') return { ...cue, id: cue.id,",
     "tests": [

@@ -173,7 +173,7 @@ export const MOD_SETTINGS = Object.freeze({
       // WOD-PEAKS (2026-10-09, the owner of the pyramid massifs in the Wrothgarian Mountains: "i actually would prefer
       // [them removed everywhere] BUT can you place more rounded not SUPER HUGE mountains?"): the port's own switch, off -
       // the mod's Mountains layouts are ARCH3D pebbles stretched by hundreds and thousands into faceted spires up to 1.4 km
-      // tall (world/wodRockUv.js). The rounded mountains the land stands instead are the landforms' (world/landforms.js
+      // tall (world/worldOfDaggerfall/wodRockUv.js). The rounded mountains the land stands instead are the landforms' (world/landforms.js
       // LANDFORM8). Online the room's (onlineLane.js): the layouts level the ground and stand collidable rock.
       Mountains: Object.freeze({
         default: false,

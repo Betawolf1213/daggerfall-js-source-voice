@@ -37,7 +37,7 @@ export const SD_ARENA_CELL_M = 0.08;
 /** How many of the Reset's numerals light in ember (the last). */
 export const SD_RESET_EMBER = 2;
 
-/** mulberry32 (world/sdPixelKit.js's). */
+/** mulberry32 (world/superDungeon/sdPixelKit.js's). */
 function rng(seed) {
   let a = seed >>> 0;
   return () => {

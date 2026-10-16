@@ -14,7 +14,7 @@
 // pends the crime system (they spawn and walk now).
 
 import { PERSON_TEXTURES, PERSON_FACE_RECORDS, NUM_PERSON_FACE_VARIANTS, GUARD_TEXTURE, MobilePerson } from '../../characters/mobilePerson.js';
-import { NAV_CELL } from '../../world/cityNavigation.js';
+import { NAV_CELL } from '../../world/city/cityNavigation.js';
 import { fullName, getNameBank, GENDERS } from '../../characters/nameHelper.js';
 
 export const POP_TICKS_PER_SECOND = 10;

@@ -1,6 +1,6 @@
 // CARDS3c (2026-10-08, bible/11-Multiplayer/Tavern-Cards.md section 34; section 3, DECIDED: the hand "can be peeked
 // (lifted at the corner) or squeezed ... a click on the cards checks, a push folds"): THE SQUEEZE, THE CLICK AND THE
-// PUSH (world/cardHand.js), and the host's wiring of them (scenes/worldModes.js cardPointerListen, cardDrawGame). Driven:
+// PUSH (world/card/cardHand.js), and the host's wiring of them (scenes/worldModes.js cardPointerListen, cardDrawGame). Driven:
 // a short still press is a click, a long one or one that wandered is no click; a drag up the screen more up than across
 // is a push, a sideways one is not; a pull down squeezes from past a click's slop to all the way, never further; a
 // squeezed card is the same rigid card, drawn along its own length (toward its foot since AUDIT CARDS-6 E22) and turned
@@ -10,7 +10,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { handGesture, squeezeOf, squeezeMatrix, CLICK_SLOP, CLICK_MS, PUSH_FOLD, SQUEEZE_PULL, SQUEEZE_RISE, SQUEEZE_TURN_DEG, heldMatrices } from '../src/world/cardHand.js';
+import { handGesture, squeezeOf, squeezeMatrix, CLICK_SLOP, CLICK_MS, PUSH_FOLD, SQUEEZE_PULL, SQUEEZE_RISE, SQUEEZE_TURN_DEG, heldMatrices } from '../src/world/card/cardHand.js';
 import { lookAt, trs } from '../src/world/mat4.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

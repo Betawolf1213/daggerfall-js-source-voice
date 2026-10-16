@@ -299,7 +299,7 @@ export function mintDecorId(rand = Math.random) {
 // lays - may be TAKEN OUT by the room's owner, and put back, free. A
 // piece is named by the layout itself: `m<placement>:<model>` for the
 // interior's prop placement at that index, `f<flat>:<archive>.<record>`
-// for its flat at that index (world/interiorLayout.js's two lists, in
+// for its flat at that index (world/interior/interiorLayout.js's two lists, in
 // the block's own order - the same room names the same pieces on every
 // visit and every client, as the automap's `int:<pi>` does), the model
 // or the picture riding in the name so a key can never name another

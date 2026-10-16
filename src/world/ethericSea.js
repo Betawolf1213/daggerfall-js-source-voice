@@ -42,7 +42,7 @@ import { CLIMATES, MAX_MAP_PIXEL_X, MAX_MAP_PIXEL_Y } from '../formats/mapsTable
 export const ETHER_BOX = Object.freeze({ x0: 64, x1: 8128, y0: -7680, y1: -2688 });
 /** ELTHERIC (2026-10-12, the owner: "Apparently the ocean is suppose to be eltheric not etheric"): THE SEA'S WORD, one
  *  home for every word a player reads of it - the lore's Eltheric Ocean, the name the world already gave the waters west
- *  of the Bay (world/tamrielGeography.js SEAS, the intro map's; pinned the same, test/eltheric.test.js). It was the
+ *  of the Bay (world/tamriel/tamrielGeography.js SEAS, the intro map's; pinned the same, test/eltheric.test.js). It was the
  *  "Etheric Sea", in fourteen literals across eight modules. */
 export const ETHER_WORD = 'Eltheric';
 /** What the world calls it - the loading screen, the Overworld's line, the chart; at a sentence's head, ETHER_SEA_TITLE. */
@@ -52,7 +52,7 @@ export const ETHER_SEA_TITLE = `The ${ETHER_WORD} Ocean`;
  *  (render/farRing.js RING_RADIUS and its rebuild's drift - 60 pixels) and every kernel window (two past a pixel, the
  *  cliffs' fade six) inside it. AUDIT CAPTAIN'S SEA G1: four drew the Bay's clamped row 0 on the Veil's horizon. */
 export const ETHER_MARGIN = 64;
-/** A map pixel's side (metres) - MapsFile's 32768 world units at 40 a metre (world/tamrielFrame.js KM_PER_PIXEL): net/gateLaw.js
+/** A map pixel's side (metres) - MapsFile's 32768 world units at 40 a metre (world/tamriel/tamrielFrame.js KM_PER_PIXEL): net/gateLaw.js
  *  PIXEL_M's, held here rather than imported so the terrain worker reads no net law (test/ethersea.test.js pins them equal). */
 const PIXEL_M = 819.2;
 /** A league: three miles, the sea's own measure (metres) - the captain's log's too (captainLedger.js reads it here). */
@@ -344,7 +344,7 @@ export function etherClimateAt(x, y) {
 
 /**
  * THE COMPOSITION: a WoodsFile with the Eltheric Ocean in it - a prototype child of the reader it is handed (the Bay's,
- * or the Bay's with the continent round it - world/tamrielGround.js groundWoods), so the range reads WoodsFile builds
+ * or the Bay's with the continent round it - world/tamriel/tamrielGround.js groundWoods), so the range reads WoodsFile builds
  * on these two answer the sea too and nothing else about the reader changes. Inside the law's box the sea's own; else
  * the reader's.
  * @param {any} woods

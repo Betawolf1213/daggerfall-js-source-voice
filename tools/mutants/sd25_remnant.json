@@ -1,7 +1,7 @@
 [
   {
     "name": "SD25-S8-the-blade-heating-from-its-tip",
-    "file": "src/world/sdRemnantArt.js",
+    "file": "src/world/superDungeon/sdRemnantArt.js",
     "old": "const a = (lx + 0.5) / w, from = 1 - SD_BLADE_MID;",
     "new": "const a = 1 - (lx + 0.5) / w, from = 1 - SD_BLADE_MID;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "SD25-S8-mid-lighting-the-whole-region",
-    "file": "src/world/sdRemnantArt.js",
+    "file": "src/world/superDungeon/sdRemnantArt.js",
     "old": "  return feature ? 1 : 0;\n}",
     "new": "  return 1;\n}",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "SD25-S8-a-region-in-another-blows-colour",
-    "file": "src/world/sdRemnantArt.js",
+    "file": "src/world/superDungeon/sdRemnantArt.js",
     "old": "export const SD_TELL_BLOW = Object.freeze({ sole: 'stomp',",
     "new": "export const SD_TELL_BLOW = Object.freeze({ sole: 'volley',",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "SD25-S8-the-cold-atlas-lit",
-    "file": "src/world/sdRemnantArt.js",
+    "file": "src/world/superDungeon/sdRemnantArt.js",
     "old": "  if (!(heat > 0)) return 0;\n  const feature",
     "new": "  if (heat < 0) return 0;\n  const feature",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "SD25-S8-the-blade-mapped-tip-to-root",
-    "file": "src/world/sdRemnantModel.js",
+    "file": "src/world/superDungeon/sdRemnantModel.js",
     "old": "[x - 1, B.armBot, -1], [x + 1, L.root, 1], 1)",
     "new": "[x - 1, L.root, -1], [x + 1, B.armBot, 1], 1)",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "SD25-S8-the-sole-on-the-sabatons-top",
-    "file": "src/world/sdRemnantModel.js",
+    "file": "src/world/superDungeon/sdRemnantModel.js",
     "old": "if (under && a === 4)",
     "new": "if (under && a === 0)",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "SD25-S8-the-hours-mirrored",
-    "file": "src/world/sdRemnantModel.js",
+    "file": "src/world/superDungeon/sdRemnantModel.js",
     "old": "const at = (a, r, z) => [Math.sin(a) * r, D.y + Math.cos(a) * r, z];",
     "new": "const at = (a, r, z) => [-Math.sin(a) * r, D.y + Math.cos(a) * r, z];",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "SD25-S8-the-hours-inward",
-    "file": "src/world/sdRemnantArt.js",
+    "file": "src/world/superDungeon/sdRemnantArt.js",
     "old": "putTexel(albedo, left + c, H - 6 - cy, step(M, 4))",
     "new": "putTexel(albedo, left + c, 3 + cy, step(M, 4))",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "SD25-S8-the-strip-lit-from-the-top",
-    "file": "src/world/sdRemnantArt.js",
+    "file": "src/world/superDungeon/sdRemnantArt.js",
     "old": "    if (k < n) {",
     "new": "    if (k >= 8 - n) {",
     "tests": [

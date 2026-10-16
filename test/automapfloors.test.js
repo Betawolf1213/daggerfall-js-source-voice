@@ -4,7 +4,7 @@
 //
 // A Daggerfall dungeon HAS NO FLOORS. The block record parses x and z
 // and no y (formats/mapsFile.js), every block is laid at y zero
-// (world/dungeonLayout.js: "Block (X, Z) sits at (X * RDBSide, 0, Z *
+// (world/dungeon/dungeonLayout.js: "Block (X, Z) sits at (X * RDBSide, 0, Z *
 // RDBSide)"), there is no `originY` anywhere in src/, and DFU's own
 // automap answers the question with a cut plane the player slides. So
 // the storeys are DERIVED, and these pins drive the derivation with

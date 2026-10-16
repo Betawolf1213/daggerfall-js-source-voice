@@ -34,7 +34,7 @@
 import { mergeNamedBuildings, blockBuildingCount, makeBuildingKey } from '../systems/talk/talkTopics.js';
 import { generateBuildingName, isResidence } from './buildingNames.js';
 import { GLOBAL_SCALE } from './meshReader.js';
-import { hasInteriorModels } from './interiorLayout.js';   // AUDIT FB1005 C2: the arena's move asks it too
+import { hasInteriorModels } from './interior/interiorLayout.js';   // AUDIT FB1005 C2: the arena's move asks it too
 // ONE HOME (the audit24 ratchet): BlocksFile.RMBDimension and
 // BlocksFile.RotationDivisor already live with the format that defines
 // them - this module reads them, it does not redeclare them.

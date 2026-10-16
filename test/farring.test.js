@@ -15,7 +15,7 @@ import {
   ringHeight, buildFarRingGrid, buildFarRingIndices, ringDisabled,
   FarRingRenderer, RING_RADIUS, RING_REBUILD_DRIFT,
 } from '../src/render/farRing.js';
-import { SCALED_OCEAN_ELEVATION, STREAMING_TERRAIN_SCALE, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { SCALED_OCEAN_ELEVATION, STREAMING_TERRAIN_SCALE, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 import { overworldTint, overworldHeight, BASE_HEIGHT_SCALE } from '../src/ui/overworldModel.js';
 
 const flatWorld = (byte) => ({

@@ -1,6 +1,6 @@
 // THE ABYSS LAB (SD-LAB, 2026-10-08, Mac: "I want to do a detailed pass on all the visuals for the inside of the Rift,
 // the portal that leads to the rift, mechanics, etc"). The Shattered Hour and the Rift drawn by the game's own renderer
-// and the Hour's own parts, with no game data - everything the Hour is, is made in code (world/sdRealm.js and its art,
+// and the Hour's own parts, with no game data - everything the Hour is, is made in code (world/superDungeon/sdRealm.js and its art,
 // render/sdSky.js, render/sdMotes.js, scenes/sdHall.js, scenes/sdSteps.js, scenes/sdRemnant.js, scenes/sdEnd.js). The
 // frame is the dungeon arm's for the realm (scenes/worldModes.js: the realm's trilight and key, its haze, its lamps,
 // the islands, the dynamic draws, the sky after the solid geometry, the flats, the motes) in the same calls, so what
@@ -30,7 +30,7 @@
 //   ?refuse=<stone>   my press on that stone refused by the realm (its word `w`): the bezel's ember
 //   ?snap&sa=<s since>   the Hour snapped back: the tabs blazing, the hands whirling, the rings a turn back
 //   ?concord=<share of the rings' swing, 0-1; 1 the whole sequence done> | ?cs=<s since the word>   the Concord at a moment
-//   ?law             the law's solids as wire over the hall (world/sdHall.js hallSolidTris): no stone's visual past 5 cm
+//   ?law             the law's solids as wire over the hall (world/superDungeon/sdHall.js hallSolidTris): no stone's visual past 5 cm
 //   SD-LOOK S8, the Brass Remnant (scenes/sdRemnant.js reads the same made fight): ?fight=stomp|hand|volley|pulse|reset&wt=<share
 //                    of its wind-up> its tell | stun&st=<s into its 8> the dial's ember hand | reset&hearts=<n>&broke=<k> the rib
 //                    lamps | fell&age=<s> the heart torn out, the dial rolling | break[&down=0|1&et=<s into the window>] the
@@ -39,7 +39,7 @@
 //                    the nadir's glow) | hang (from under the walk: the Orrery's strata spires, gear rims and chains) | hang-far
 //                    (from the Threshold's rim out over the void, the far islands in the haze); ?touch=on its phones'
 //                    tier (one spire a root, no far islands, two gears, still chains); ?law the realm's colliders too
-//                    (world/sdRealm.js realmColliderTris - the floors, pillars and lamp posts): no root, tooth or chain in them
+//                    (world/superDungeon/sdRealm.js realmColliderTris - the floors, pillars and lamp posts): no root, tooth or chain in them
 //   SD-LOOK S7, the arena's pillars (render/sdPillarPass.js, scenes/sdArenaWatch.js): views pillar (a capital from under
 //                    it), capitals (the far two from the near rim), arena-far; the dials' hands watch the made fight's
 //                    Remnant (or, with no ?fight, where it waits), the Echoes in ?fight=break, the way home in ?fight=fell;
@@ -53,7 +53,7 @@ import { applyFog, DUNGEON_FOG } from '../render/underwaterFog.js';
 import { skyGain } from '../render/deadlands.js';
 import { SdSkyRenderer, SD_SKY_STEPS, SD_SKY_MODE } from '../render/sdSky.js';
 import { SdMotesRenderer } from '../render/sdMotes.js';
-import { SD_HOUR_GRADE } from '../world/sdLook.js';
+import { SD_HOUR_GRADE } from '../world/superDungeon/sdLook.js';
 import { SdVeilRenderer, SD_VEIL_MODE } from '../render/sdVeil.js';
 import { SdArenaGlowRenderer, sdArenaGlowAt, sdHourClockOf } from '../render/sdArenaGlow.js';
 import { SdStompWallRenderer, sdStompWalls, sdStompWallRecords, SD_HOLD_WALL, sdHomeBeacon } from '../render/sdStompWall.js';
@@ -64,24 +64,24 @@ import { SD_ARENA_CENTRE, SD_TELEGRAPH_FLOOR } from '../scenes/sdRemnantBlows.js
 import { SD_BLOWS, SD_REM_START, SD_ECHO_SPOTS } from '../net/sdRemnant.js';
 import { SD_FIGHT_EMPTY } from '../net/sdFightLink.js';
 import { veilAt, VEIL_OPEN_S } from '../render/gateVeil.js';
-import { buildRealmModel, realmLighting, realmLightsWith, realmColliderTris, packRealmFaces, SD_REALM_ARCHIVE, SD_REALM_BRASS_RECORD, SD_REALM_FOG, SD_WAY_BACK_Z, SD_WAY_BACK_SIZE, SD_ARRIVE_Z, SD_THRESHOLD_RIM } from '../world/sdRealm.js';
-import { realmArt } from '../world/sdRealmArt.js';
-import { faces } from '../world/gateModel.js';
+import { buildRealmModel, realmLighting, realmLightsWith, realmColliderTris, packRealmFaces, SD_REALM_ARCHIVE, SD_REALM_BRASS_RECORD, SD_REALM_FOG, SD_WAY_BACK_Z, SD_WAY_BACK_SIZE, SD_ARRIVE_Z, SD_THRESHOLD_RIM } from '../world/superDungeon/sdRealm.js';
+import { realmArt } from '../world/superDungeon/sdRealmArt.js';
+import { faces } from '../world/gate/gateModel.js';
 import { createSdHall, sdStoneKey, SD_CONCORD_MS, SD_BRIDGE_LAY_MS } from '../scenes/sdHall.js';
-import { hallSolidTris, stoneFrame, SD_BANNER } from '../world/sdHall.js';
+import { hallSolidTris, stoneFrame, SD_BANNER } from '../world/superDungeon/sdHall.js';
 import { createSdSteps } from '../scenes/sdSteps.js';
 import { createSdFx } from '../scenes/sdFx.js';
-import { SD_STEPS_COURSE, SD_BEAT_CYCLE } from '../world/sdSteps.js';
+import { SD_STEPS_COURSE, SD_BEAT_CYCLE } from '../world/superDungeon/sdSteps.js';
 import { createSdRemnant } from '../scenes/sdRemnant.js';
 import { createSdEnd, SD_RETURN_KEY } from '../scenes/sdEnd.js';
 import { createSdHang } from '../scenes/sdHang.js';
-import { sdRiftFace, SD_RIFT_OPEN_LOOK, SD_RIFT_NOT_YET, SD_RIFT_CLOSED, SD_RIFT_REFUSED } from '../world/sdDungeon.js';
+import { sdRiftFace, SD_RIFT_OPEN_LOOK, SD_RIFT_NOT_YET, SD_RIFT_CLOSED, SD_RIFT_REFUSED } from '../world/superDungeon/sdDungeon.js';
 import { SdRiftRenderer } from '../render/sdRiftPass.js';
 import { SdHaloRenderer, SD_HALO_GAIN } from '../render/sdHalo.js';
 import { realmToDungeon, SD_ORRERY, SD_ARENA, SD_STONE_POS, orreryOf, orreryLit, orreryTurn } from '../net/sdBrain.js';
 import { sdMarksOf, SD_ENDINGS } from '../net/sdMarks.js';
-import { DUNGEON_AMBIENT } from '../world/dungeonLights.js';
-import { INTERIOR_LIGHT_DIR } from '../world/interiorLights.js';
+import { DUNGEON_AMBIENT } from '../world/dungeon/dungeonLights.js';
+import { INTERIOR_LIGHT_DIR } from '../world/interior/interiorLights.js';
 import { perspective, lookAt, identity, mirrorProjectionX } from '../world/mat4.js';
 import { lightList, packLight } from '../render/lightId.js';   // LIGHT-ID: the lab's lights into the list through the one seam
 
@@ -209,8 +209,8 @@ hall.stand({ dynamicDraws, collider: null });
     hall.frame(ms / 1000, null, null);
   }
 })();
-/** ?law: the hall's solids (the collider's, world/sdHall.js hallSolidTris) and (SD-LOOK S11) the realm's - its floors,
- *  pillars and lamp posts (world/sdRealm.js realmColliderTris; SD-LOOK S7: no pillar's dress past its square) - as one
+/** ?law: the hall's solids (the collider's, world/superDungeon/sdHall.js hallSolidTris) and (SD-LOOK S11) the realm's - its floors,
+ *  pillars and lamp posts (world/superDungeon/sdRealm.js realmColliderTris; SD-LOOK S7: no pillar's dress past its square) - as one
  *  mesh, drawn as wire over the frame. */
 const lawMesh = params.has('law') ? (() => {
   const hallTris = hallSolidTris(), realmTris = realmColliderTris(), tris = new Float32Array(hallTris.length + realmTris.length);

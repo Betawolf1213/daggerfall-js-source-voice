@@ -22,7 +22,7 @@ import { setRiseLine, MARK_SECONDS, RIPOSTE_SECONDS, _resetSigilSetsForTests } f
 import { AETHERIC_RECORDS, mintAetheric, validSetMarks, REGALIA_SET } from '../src/systems/aetheric.js';
 import { AFFIX_RANGES } from '../src/systems/loot/lootRarity.js';
 import { validFoeRecord, FOE_HEALTH_MAX } from '../src/net/wire.js';
-import { applyInteriorLoot, mintInteriorShared } from '../src/world/interiorShared.js';
+import { applyInteriorLoot, mintInteriorShared } from '../src/world/interior/interiorShared.js';
 import { LOOT_NEWER_TEXT } from '../src/systems/loot/loot.js';
 import { hurtPlayer } from '../src/characters/playerEntity.js';
 import { reportPlayerKill } from '../src/systems/playerKills.js';

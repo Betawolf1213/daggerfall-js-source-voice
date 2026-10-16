@@ -23,7 +23,7 @@ import { fillLine, HEARD_GREETINGS, ROUTED_NEWS, ROAD_NEWS, BAND_WARNINGS, ROAD_
 import { outlawBandName } from '../src/systems/livingWorld/outlaws.js';
 import { patronMinute } from '../src/net/patronLaw.js';
 import { skyMinutesPerMsAt, SKY_SEGMENTS } from '../src/net/skyLaw.js';
-import { NAV_CELL } from '../src/world/cityNavigation.js';
+import { NAV_CELL } from '../src/world/city/cityNavigation.js';
 
 const W = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
 const D = 50 * DAY_MIN;

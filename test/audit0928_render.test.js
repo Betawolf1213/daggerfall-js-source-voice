@@ -21,7 +21,7 @@ import { fileURLToPath } from 'node:url';
 import { Renderer, WORLD_FRAME } from '../src/render/renderer.js';
 import { EL_LANE, lanternColor } from '../src/render/enhancedLighting.js';
 import { SHADOW_DYNAMIC_HOLD } from '../src/render/shadowPass.js';
-import { fillLanternPool, nearestLights, rangesFor, capFadeColors, capFadePairs, CITY_LIGHT_COLOR } from '../src/world/cityLights.js';
+import { fillLanternPool, nearestLights, rangesFor, capFadeColors, capFadePairs, CITY_LIGHT_COLOR } from '../src/world/city/cityLights.js';
 import { withPlayerLights } from '../src/scenes/magicCandle.js';
 import { wodLightColors } from '../src/world/worldOfDaggerfall.js';
 import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';

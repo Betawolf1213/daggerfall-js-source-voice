@@ -64,7 +64,7 @@ port serves them:
   carried by `modelFromJson` as float32 and applied at every RMB layout
   site through `modelScaleVector` (`RMBLayout.GetModelScaleVector`, a zero
   read as 1) - exterior subrecord models and misc models
-  (`world/rmbLayout.js`) and interiors (`world/interiorLayout.js`,
+  (`world/rmbLayout.js`) and interiors (`world/interior/interiorLayout.js`,
   `DaggerfallInterior.cs:444`). A model scaled unevenly lights through its
   inverse transpose, as Unity lights it: `StaticBatchBuilder.add` computes
   one for any matrix whose columns are not one length

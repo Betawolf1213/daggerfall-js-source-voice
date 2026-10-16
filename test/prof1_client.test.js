@@ -27,8 +27,8 @@ import { foragingCustomItemsForGroup } from '../src/systems/foraging/foragingIns
 import { FORAGING_GROUP, TOOL_TEMPLATES, FORAGING_TEMPLATES, FT } from '../src/systems/foraging/foragingLaw.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { DEFAULT_BINDINGS, ACTION_GROUPS } from '../src/systems/inputActions.js';
-import { natureStandsAt } from '../src/world/terrainNature.js';
-import { HEIGHTMAP_DIMENSION } from '../src/world/terrainSampler.js';
+import { natureStandsAt } from '../src/world/terrain/terrainNature.js';
+import { HEIGHTMAP_DIMENSION } from '../src/world/terrain/terrainSampler.js';
 import { sharedClassicMinutes } from '../src/net/wire.js';
 import { utcDay } from '../src/net/marksLaw.js';
 

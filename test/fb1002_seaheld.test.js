@@ -14,16 +14,16 @@
 // Its SEA-SHOAL (a carved cell's ground read as its seafloor) was struck by the record's audit (2026-10-02b): Deep
 // Waters' real carve never carves a sea lifted over the line, so it read land still - the sea is kept at its source
 // now, the flatten's (SEA-LEVEL, test/fb1002b_sealevel.test.js).
-// Every pin runs the real modules: the sampler's sea (world/terrainSampler.js), Unity's SampleHeight
-// (world/terrainSurface.js), world.js's own csaTerrainOf, and Come Sail Away's runtime over the vendored hulls
+// Every pin runs the real modules: the sampler's sea (world/terrain/terrainSampler.js), Unity's SampleHeight
+// (world/terrain/terrainSurface.js), world.js's own csaTerrainOf, and Come Sail Away's runtime over the vendored hulls
 // (test/csaScene.mjs).
 // `01-Overview/Field-Bugs-2026-10-02.md`.
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import * as surface from '../src/world/terrainSurface.js';
-import { generateSamples, HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import * as surface from '../src/world/terrain/terrainSurface.js';
+import { generateSamples, HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 import { HULL_NAMES } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { scene } from './csaScene.mjs';
 

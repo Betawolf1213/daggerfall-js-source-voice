@@ -28,7 +28,7 @@ import { validSdOut } from '../src/net/wire.js';
 import { newRemnantFight, joinRemnant, remnantStateOf, SD_REM } from '../src/net/sdRemnant.js';
 import { SD_ARENA, realmToDungeon } from '../src/net/sdBrain.js';
 import { remnantPose } from '../src/scenes/sdRemnant.js';
-import { realmColliderTris } from '../src/world/sdRealm.js';
+import { realmColliderTris } from '../src/world/superDungeon/sdRealm.js';
 import { Collider } from '../src/player/collider.js';
 import { bossCardRoll } from '../src/systems/bossCards.js';   // CARDS9: the Remnant's card, the hoard's last draw
 

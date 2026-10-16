@@ -53,7 +53,7 @@ station standing inside a wagon.
 None of the files carries a texture, so the art is painted.
 `src/world/wagonArt.js` paints fifteen 64 x 64 pictures from numbers (twenty
 since WAGONS2 added the caravan's room - below), using the
-fleet's tools (`src/world/galleonArt.js`) under the pseudo-archive 38181:
+fleet's tools (`src/world/ships/galleonArt.js`) under the pseudo-archive 38181:
 
 - oak sideboards, pine floorboards, dark oak running gear;
 - iron tyres and seven-spoke wheel faces;

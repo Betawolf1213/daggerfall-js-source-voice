@@ -10,7 +10,7 @@ import {
   buildLighthouseModel, buildLighthouseFire, LIGHTHOUSE, LIGHTHOUSE_POINTS, GALLERY_Y, LANTERN_H, ARCH_CROWN, TOWER_SIDES,
 } from '../src/world/lighthouseModel.js';
 import { PORT_REC, PORT_HOW, PORT_ARCHIVE, PORT_PAINTERS, portFlameArt, portEmbersArt } from '../src/world/portArt.js';
-import { YARD_TILE_M } from '../src/world/merchantYardModels.js';
+import { YARD_TILE_M } from '../src/world/merchantYards/merchantYardModels.js';
 import { createPortHost, feetInPort, PORT_TEXT } from '../src/scenes/portHost.js';
 import { Collider } from '../src/player/collider.js';
 import { CROUCH_HEIGHT, CAPSULE_RADIUS } from '../src/player/motor.js';

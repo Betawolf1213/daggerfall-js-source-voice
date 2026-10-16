@@ -8,7 +8,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { paintRoads, TILE } from '../src/world/roadPainter.js';
+import { paintRoads, TILE } from '../src/world/road/roadPainter.js';
 
 const oracle = JSON.parse(readFileSync(new URL('./fixtures/roads-oracle.json', import.meta.url), 'utf8'));
 
@@ -52,7 +52,7 @@ test('AUDIT 51: our painter matches the mod\u2019s PaintPath byte for byte over 
 // corners from `10 * H + 63` - the smoother's own wrong base - so it
 // could not see the defect it was written for.
 test('AUDIT 51: the smoother is SmoothRoadsJob - road and water only, four corners, five-point mean, in place', async () => {
-  const { smoothRoadHeights, SMOOTHED_TILES } = await import('../src/world/roadPainter.js');
+  const { smoothRoadHeights, SMOOTHED_TILES } = await import('../src/world/road/roadPainter.js');
   assert.deepEqual([...SMOOTHED_TILES].sort((a, b) => a - b), [46, 0xff], 'road and water_temp, as his `tile == road || tile == water_temp`');
   const H = 129;
   const samples = new Float32Array(H * H); for (let i = 0; i < samples.length; i++) samples[i] = (i % 2) ? 50 : 30;
@@ -78,7 +78,7 @@ test('AUDIT 51: the smoother is SmoothRoadsJob - road and water only, four corne
   // both indices his: the tile read is the painter's (y*tDim + x, which
   // IS his Idx(x, y, tDim)) and the corner base is the sampler's
   // (x*hDim + y, which IS his Idx(y, x, hDim)).
-  const src = readFileSync(new URL('../src/world/roadPainter.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/world/road/roadPainter.js', import.meta.url), 'utf8');
   assert.match(src, /const tile = tilemap\[y \* tDim \+ x\];/, 'the tile is read at y*tDim + x - the painter\u2019s own layout, his Idx(x, y, tDim)');
   assert.match(src, /const idx = x \* hDim \+ y;/, 'and the corner base is the HEIGHTMAP\u2019s - his Idx(y, x, hDim), TerrainSampler.cs:123');
   assert.match(src, /NO DIVERGENCE\./, 'and the record says so');
@@ -92,7 +92,7 @@ test('AUDIT 51: the smoother is SmoothRoadsJob - road and water only, four corne
 // and skipped here. The rect is DFU's (xMax = xmax + extraClearance,
 // terrainTiles.js:"xMax: xmax + extraClearance"), so the boundary is a real tile column.
 test('MODS AUDIT: the smoother skips the rect as Rect.Contains does - min in, max OUT', async () => {
-  const { smoothRoadHeights } = await import('../src/world/roadPainter.js');
+  const { smoothRoadHeights } = await import('../src/world/road/roadPainter.js');
   const H = 129;
   const mk = () => { const s = new Float32Array(H * H); for (let i = 0; i < s.length; i++) s[i] = (i % 2) ? 50 : 30; return s; };
   const rect = { xMin: 60, xMax: 70, yMin: 60, yMax: 70 };
@@ -116,8 +116,8 @@ test('MODS AUDIT: the smoother skips the rect as Rect.Contains does - min in, ma
 // the other way round: the bed is untouched and a mirrored E-W strip
 // of open ground is blurred.
 test('AUDIT 58: a NORTH-SOUTH road smooths a north-south bed - the corner base is the heightmap\u2019s, not the tilemap\u2019s', async () => {
-  const { smoothRoadHeights, paintRoads, TILE: T } = await import('../src/world/roadPainter.js');
-  const { DIR } = await import('../src/world/roadNetwork.js');
+  const { smoothRoadHeights, paintRoads, TILE: T } = await import('../src/world/road/roadPainter.js');
+  const { DIR } = await import('../src/world/road/roadNetwork.js');
   const H = 129, TD = 128;
   const samples = new Float32Array(H * H); for (let i = 0; i < samples.length; i++) samples[i] = (i % 2) ? 50 : 30;
   const before = Float32Array.from(samples);

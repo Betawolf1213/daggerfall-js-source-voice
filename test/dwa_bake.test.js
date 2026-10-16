@@ -1,5 +1,5 @@
 // DW-A: Iliac Puddle No More's coastline bake, BUILT from the player's own
-// world (src/world/deepWatersBake.js) - the mod ships it as a 356 MB
+// world (src/world/deepWater/deepWatersBake.js) - the mod ships it as a 356 MB
 // derivative of WOODS.WLD, MAPS.BSA and BLOCKS.BSA, which cannot enter
 // the repo, so the port computes the same planes by the rules the file
 // proves. Pinned here:
@@ -23,15 +23,15 @@ import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { WoodsFile } from '../src/formats/woodsFile.js';
-import { generateSamples, SCALED_OCEAN_ELEVATION } from '../src/world/terrainSampler.js';
+import { generateSamples, SCALED_OCEAN_ELEVATION } from '../src/world/terrain/terrainSampler.js';
 import {
   WATER_THRESHOLD, EXTRA_NOISE_MAX, BAKE_SUB, BAKE_SUB_FINE, BAKE_DISTANCE_SCALE_METERS, BAKE_DISTANCE_CAP, BAKE_CELL_METERS,
   PIXEL_LAND, PIXEL_SEA, PIXEL_MIXED, classifyPixel, pixelHeightBounds, pixelWaterSampler, fineCellWater,
   coarseCandidateBits, fineMaskBits, fullWaterBits, buildGlobal, buildGlobalSteps, distanceBytes, DeepWatersBake,
   bakedSouthFraction, isValidMapPixel, settleRange,
-} from '../src/world/deepWatersBake.js';
-import { bakeCacheKey, cachedBake, fnv1a, rectsFingerprint, rectsLookup, BAKE_GENERATOR_VERSION } from '../src/world/deepWatersBakeCache.js';
-import { loadDeepWatersBake } from '../src/world/deepWatersClient.js';
+} from '../src/world/deepWater/deepWatersBake.js';
+import { bakeCacheKey, cachedBake, fnv1a, rectsFingerprint, rectsLookup, BAKE_GENERATOR_VERSION } from '../src/world/deepWater/deepWatersBakeCache.js';
+import { loadDeepWatersBake } from '../src/world/deepWater/deepWatersClient.js';
 
 const ARENA2 = process.env.ARENA2_PATH;
 const skipReal = !ARENA2 || !existsSync(ARENA2) ? 'ARENA2_PATH not set or missing - real-data validation skipped' : false;
@@ -490,7 +490,7 @@ test('DW-A: the client falls back to this thread - no Worker, a factory that thr
 async function realWorld() {
   const { MapsFile } = await import('../src/formats/mapsFile.js');
   const { buildMapDict } = await import('../src/systems/map/mapDirectory.js');
-  const { smoothLocationNeighbourhood } = await import('../src/world/terrainHelper.js');
+  const { smoothLocationNeighbourhood } = await import('../src/world/terrain/terrainHelper.js');
   const woods = new WoodsFile();
   woods.load(new Uint8Array(readFileSync(join(ARENA2, 'WOODS.WLD'))));
   const maps = new MapsFile();

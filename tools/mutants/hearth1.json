@@ -119,7 +119,7 @@
  },
  {
   "name": "HEARTH1-the-misc-block-flats-stop-carrying-the-record-so-half-a-towns-braziers-are-lanterns",
-  "file": "src/world/cityLights.js",
+  "file": "src/world/city/cityLights.js",
   "old": "      record: obj.textureRecord,\n      x: obj.xPos * GLOBAL_SCALE,",
   "new": "      x: obj.xPos * GLOBAL_SCALE,",
   "tests": [
@@ -128,7 +128,7 @@
  },
  {
   "name": "HEARTH1-the-subrecord-flats-stop-carrying-it-so-the-other-half-are",
-  "file": "src/world/cityLights.js",
+  "file": "src/world/city/cityLights.js",
   "old": "        record: obj.textureRecord,   // HEARTH1\n",
   "new": "",
   "tests": [
@@ -137,7 +137,7 @@
  },
  {
   "name": "HEARTH1-the-interior-collector-stops-carrying-it-so-no-tavern-has-a-hearth",
-  "file": "src/world/interiorLights.js",
+  "file": "src/world/interior/interiorLights.js",
   "old": "      record: f.record,   // HEARTH1",
   "new": "      // HEARTH1",
   "tests": [
@@ -264,7 +264,7 @@
  },
  {
   "name": "FIX-D-the-exterior-foot-is-the-flame-so-the-box-floats-a-sprite-high",
-  "file": "src/world/cityLights.js",
+  "file": "src/world/city/cityLights.js",
   "old": "      foot: -obj.yPos * GLOBAL_SCALE, w: size.w, h: size.h,\n",
   "new": "      foot: -obj.yPos * GLOBAL_SCALE + size.h, w: size.w, h: size.h,\n",
   "tests": [

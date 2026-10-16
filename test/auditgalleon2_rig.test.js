@@ -1,4 +1,4 @@
-// AUDIT GALLEON-2 (2026-10-03) - HER RIG'S ROPE, ITS BAKE, AND HER SAILS' POSES (world/galleonRig.js; systems/
+// AUDIT GALLEON-2 (2026-10-03) - HER RIG'S ROPE, ITS BAKE, AND HER SAILS' POSES (world/ships/galleonRig.js; systems/
 // comeSailAwayBoat.js's FixDeformations holder; scenes/comeSailAwayPool.js's bake). The second audit of Mac's galleon.
 // Every pin reads her AS BUILT on the runtime: the real pool's frame (FixDeformations' LateUpdate and the bake, at 60
 // frames a second) for her rope and her canvas's bakes; the real Animator on her placed prefab, and on the mod's own
@@ -117,7 +117,7 @@ test('AUDIT GALLEON-2 RG1: her running rope is baked every frame, so every brace
   if (!ropes.every((r) => r.fix.everyFrame === true)) bad.push('a rope of hers not baked every frame');
   if (!canvasesOf(boat).every((c) => !c.fix.everyFrame && c.fix.interval === 0.1)) bad.push('her canvas off the tenth');
   // SHIPS-2: the mod's own Carrack (test/navalSea.mjs modShipsPool - hull 4 as the game stands it when the new
-  // carrack's model will not load); Mac's carrack's holders are hers (world/carrackRig.js BAKE: the galleon's law)
+  // carrack's model will not load); Mac's carrack's holders are hers (world/ships/carrackRig.js BAKE: the galleon's law)
   const mod = await modShipsPool();
   try {
     const carrack = mod.pool.spawnNow(new Boat(HULL.Carrack, 0), { position: [400, 0, 0], rotation: [0, 0, 0, 1] });

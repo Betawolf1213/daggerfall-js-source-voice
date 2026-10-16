@@ -30,7 +30,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { mobileBillboardSize } from '../src/world/rmbFlats.js';
 import { MobilePerson } from '../src/characters/mobilePerson.js';
-import { CityNavigation } from '../src/world/cityNavigation.js';
+import { CityNavigation } from '../src/world/city/cityNavigation.js';
 import { createTownScratch, createPersonTextureKeys } from '../src/scenes/townScratch.js';
 
 const src = (f) => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');

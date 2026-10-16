@@ -36,7 +36,7 @@ the day the sixteen (`Field-Bugs-2026-09-26.md`) merged:
 N0B30Y15 (`vendor/dfu-quests/Quests/N0B30Y15.txt`) places its imp - a
 FLYING foe - at a QuestSpawn marker of a palace: `place foe _imp_ at
 _palace_`. A building's marker is its flat's BASE on the floor
-(`world/interiorLayout.js` - an RMB flat stands on its y; the people, the
+(`world/interior/interiorLayout.js` - an RMB flat stands on its y; the people, the
 quest items and the treasure piles all stand on theirs). The building's
 marker stand handed it to the pool as a sprite CENTRE - the dungeon's RDB
 convention, where a marker is the centre and a flyer's feet hang half its
@@ -94,9 +94,9 @@ Two more of the load's losses, found on the way and fixed with it:
 
 ## NATURE-GROUND: a location's trees and bushes stand on the ground (report 1)
 
-A location stands on its pixel's average height: its models, its flats, its people (`scenes/world.js` `locLocal`). The ground is flattened to that height only inside the location's rect (`world/terrainTiles.js` `setLocationTiles`: the tiles under record 56, plus two, three for a city). The band past the rect, out to the pixel's edge, is only EASED toward it (`blendLocationTerrain`). The block's ground scenery and nature flats - trees, bushes, rocks - are laid on every tile, band included, at the plane. Where the ground in the band fell away they hung over it, and where it rose they sank into it. That covers every small location, the ruins and graveyards included, and is worst at the online spawned dungeons, whose pixels were never smoothed. This is DFU's own layout (`RMBLayout.AddNatureFlats` reads no terrain). JAN1 met the same band for the walkers.
+A location stands on its pixel's average height: its models, its flats, its people (`scenes/world.js` `locLocal`). The ground is flattened to that height only inside the location's rect (`world/terrain/terrainTiles.js` `setLocationTiles`: the tiles under record 56, plus two, three for a city). The band past the rect, out to the pixel's edge, is only EASED toward it (`blendLocationTerrain`). The block's ground scenery and nature flats - trees, bushes, rocks - are laid on every tile, band included, at the plane. Where the ground in the band fell away they hung over it, and where it rose they sank into it. That covers every small location, the ruins and graveyards included, and is worst at the online spawned dungeons, whose pixels were never smoothed. This is DFU's own layout (`RMBLayout.AddNatureFlats` reads no terrain). JAN1 met the same band for the walkers.
 
-A nature flat of the block now stands on the DRAWN ground: the same surface the wilderness's own flats and the grass read (`world/terrainSurface.js` `groundOffPlane`, `buildPixelNow`). The plane is read as the Float32 sample the blend wrote, so inside the rect the lift is exactly 0 and nothing there moves. Everything else a block stands keeps the plane, since a lamp, a sign or an animal may stand on a model. A Ledger A row records the departure.
+A nature flat of the block now stands on the DRAWN ground: the same surface the wilderness's own flats and the grass read (`world/terrain/terrainSurface.js` `groundOffPlane`, `buildPixelNow`). The plane is read as the Float32 sample the blend wrote, so inside the rect the lift is exactly 0 and nothing there moves. Everything else a block stands keeps the plane, since a lamp, a sign or an animal may stand on a model. A Ledger A row records the departure.
 
 Not this: World of Daggerfall's ruins place some flats above the ground by the mod's own data (124 of 203 visible flats are authored with a height). Those stand where the mod puts them.
 

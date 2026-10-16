@@ -6,10 +6,10 @@
 // shadow maps are drawn INSIDE beginFrame (renderer.js _renderPasses, render/shadowPass.js), from the last frame's records
 // under this frame's lights, so what the boss's own lights and the crowd cost there never entered its numbers. This
 // counts it: the real Renderer and ShadowPass on a counting GL (counts, not milliseconds - no load moves them), the
-// Burning Court's own mesh as its static caster (world/gateArena.js buildCourtModel, through renderer.createMesh), the
-// court's own light composition (world/gateArena.js withCourtLights over courtLightsNear - the dungeon arm's, worldModes.js
+// Burning Court's own mesh as its static caster (world/gate/gateArena.js buildCourtModel, through renderer.createMesh), the
+// court's own light composition (world/gate/gateArena.js withCourtLights over courtLightsNear - the dungeon arm's, worldModes.js
 // `const _court = withCourtLights`), under everyLightCasts as that arm asks, Steady shadows (the default). His glow at his
-// chest (world/gateBoss.js GLOW_RANGE) in ONE kept record as the court keeps it (scenes/gateCourt.js `_glow`), a
+// chest (world/gate/gateBoss.js GLOW_RANGE) in ONE kept record as the court keeps it (scenes/gateCourt.js `_glow`), a
 // Hellfire's landing flashes (render/gateFx.js FX_KINDS.hellfire.light, for FX_LIGHT_MS) each its burst's record, and the
 // crowd's Morrowind bodies recorded as renderer.recordShadowBody records them, a new pose every frame (WB9h's budget
 // poses four of eight a frame, so the bodies in a light's reach change every frame either way), of BODY_CORNERS corners
@@ -23,8 +23,8 @@
 import { Renderer, WORLD_FRAME } from '../src/render/renderer.js';
 import { EL_LANE } from '../src/render/enhancedLighting.js';
 import { SHADOW_TUNING } from '../src/render/shadowPass.js';
-import { courtLightsNear, withCourtLights, courtToDungeon, buildCourtModel } from '../src/world/gateArena.js';
-import { GLOW_RANGE, LANDING_LIGHT_Y } from '../src/world/gateBoss.js';
+import { courtLightsNear, withCourtLights, courtToDungeon, buildCourtModel } from '../src/world/gate/gateArena.js';
+import { GLOW_RANGE, LANDING_LIGHT_Y } from '../src/world/gate/gateBoss.js';
 import { FX_KINDS, FX_LIGHT_MS } from '../src/render/gateFx.js';
 import { lookAt, perspective, mirrorProjectionX } from '../src/world/mat4.js';
 import { isMain } from './lib/isMain.mjs';

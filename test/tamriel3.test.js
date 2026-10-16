@@ -2,9 +2,9 @@
 //
 // Mac: "Can we fix the map? It doesnt look like the map thats in daggerfall." The continent is TRACED from
 // TMAP00I0.IMG and TAMRIEL2.IMG when the world boots (ui/tamrielTrace.js), the Bay's place on the picture FOUND by
-// laying its own land over the picture's (world/tamrielLand.js fitBayToPicture), and every conversion, the ink, the
-// ground and the raster follow the trace and the fit through two live homes (world/tamrielLand.js,
-// world/tamrielFrame.js). No file ships; the pins trace synthetic pictures and hold the law.
+// laying its own land over the picture's (world/tamriel/tamrielLand.js fitBayToPicture), and every conversion, the ink, the
+// ground and the raster follow the trace and the fit through two live homes (world/tamriel/tamrielLand.js,
+// world/tamriel/tamrielFrame.js). No file ships; the pins trace synthetic pictures and hold the law.
 import { test, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -13,17 +13,17 @@ import { pieces, traceTamrielPicture, paletteReader, preloadTamrielTrace, SPECK_
 import {
   PROVINCE_OF_ID, IMPERIAL_ID, seaDistanceField, setTamrielTrace, tamrielTrace, tamrielLandVersion,
   provinceKeyAt, coastDistanceAt, fitBayToPicture,
-} from '../src/world/tamrielLand.js';
+} from '../src/world/tamriel/tamrielLand.js';
 import {
   BAY_ORIGIN, PIXELS_PER_PICTURE_UNIT, PICTURE_W, PICTURE_H, BAY_W, BAY_H, setTamrielFit, tamrielFit, tamrielSize,
   bayToTamriel, tamrielToBay, pictureToBay, bayToPicture, tamrielFrameInBay, bayPictureRect,
-} from '../src/world/tamrielFrame.js';
-import { provinceAt, coastDistance, PROVINCES, CITIES, provinceByKey } from '../src/world/tamrielGeography.js';
-import { authoredHeightByte, tamrielHeightByte, tamrielClimateAt, dropGroundCache, groundCacheSize, SHORE_BYTE } from '../src/world/tamrielGround.js';
-import { rasterizeTamriel, PROVINCE_NONE } from '../src/world/tamrielRaster.js';
+} from '../src/world/tamriel/tamrielFrame.js';
+import { provinceAt, coastDistance, PROVINCES, CITIES, provinceByKey } from '../src/world/tamriel/tamrielGeography.js';
+import { authoredHeightByte, tamrielHeightByte, tamrielClimateAt, dropGroundCache, groundCacheSize, SHORE_BYTE } from '../src/world/tamriel/tamrielGround.js';
+import { rasterizeTamriel, PROVINCE_NONE } from '../src/world/tamriel/tamrielRaster.js';
 import { tracedChains, placeCity, buildTamrielInk, tamrielInkFor, CITY_SNAP_PX } from '../src/ui/tamrielInk.js';
 import { RACE_TEMPLATES } from '../src/systems/races.js';
-import { TerrainGenClient } from '../src/world/terrainGenClient.js';
+import { TerrainGenClient } from '../src/world/terrain/terrainGenClient.js';
 import { tamrielTraceOn } from '../src/scenes/shared.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
 
@@ -220,7 +220,7 @@ test('TAMRIEL3 fit: laying the Bay\'s land over the picture finds the offset and
   const edge = fitBayToPicture({ bayLand, trace, around: { ox: 300, oy: 100 }, span: 2, ppus: [18] });
   assert.equal(edge, null, 'no candidate fits on the picture there');
   assert.equal(fitBayToPicture({ bayLand, trace, around: { ox: 100, oy: 190 }, span: 2, ppus: [18] }), null);
-  const src = read('src/world/tamrielLand.js');
+  const src = read('src/world/tamriel/tamrielLand.js');
   // PIN MOVED (TAMRIEL4): the scales every quarter from 15 to 21 (FIT_PPUS) - the seam's best, 15.5, lay outside 16-21
   assert.match(src, /around = \{ ox: 46, oy: 52 \}, span = 24, ppus = FIT_PPUS \}/, 'the defaults round the authored place (862 / 18.75, 975 / 18.75)');
   assert.ok(Math.abs(BAY_ORIGIN.x / PIXELS_PER_PICTURE_UNIT - 46) < 0.1 && Math.abs(BAY_ORIGIN.y / PIXELS_PER_PICTURE_UNIT - 52) < 0.1);
@@ -390,9 +390,9 @@ test('TAMRIEL3 worker: setTamriel sets the trace and the fit on the host\'s modu
   const bare = new TerrainGenClient({ woods: { getHeightMapValue: () => 0 }, woodsBytes: null });
   bare.setTamriel({ trace, fit: { ox: 1, oy: 2, ppu: 18 } });
   assert.equal(tamrielFit().ox, 1, 'the fallback kernel\'s own state, no worker');
-  const worker = read('src/world/terrainGenWorker.js');
+  const worker = read('src/world/terrain/terrainGenWorker.js');
   assert.match(worker, /if \(m\.t === 'tamriel'\) \{ setTamrielTrace\(m\.trace \?\? null\); setTamrielFit\(m\.fit \?\? null\); dropGroundCache\(\); return; \}/);
-  const land = read('src/world/tamrielLand.js');
+  const land = read('src/world/tamriel/tamrielLand.js');
   for (const bad of ['document', 'globalThis.', 'fetch(', 'localStorage', 'getPref', 'ImgFile']) assert.ok(!land.includes(bad), `pure: no ${bad}`);
 });
 
@@ -409,7 +409,7 @@ test('TAMRIEL3 door: `?tamrieltrace=off` keeps the authored shape, and nothing e
 test('TAMRIEL3 host: the world host traces the two files after the travel art, fits the Bay by the one water law over the composed reads, installs both through the client, resets the stream\'s frame, and logs the fit; a missing file leaves the authored shape and says so; the held map\'s static key carries the version', () => {
   const src = read('src/scenes/world.js');
   assert.match(src, /import \{ preloadTamrielTrace \} from '\.\.\/ui\/tamrielTrace\.js';/);
-  assert.match(src, /import \{ fitBayToPicture \} from '\.\.\/world\/tamrielLand\.js';/);
+  assert.match(src, /import \{ fitBayToPicture \} from '\.\.\/world\/tamriel\/tamrielLand\.js';/);
   const i = src.indexOf('if (tamrielTraceOn()) {');
   assert.ok(i > 0);
   const block = src.slice(i, src.indexOf('preloadTravelControlArt({', i));
@@ -424,12 +424,12 @@ test('TAMRIEL3 host: the world host traces the two files after the travel art, f
   assert.ok(src.indexOf('preloadTravelMapArt(') < i, 'after the travel art');
   const held = read('src/ui/heldMap.js');
   assert.match(held, /tamrielLandVersion\(\),   \/\/ TAMRIEL3/, 'the sheet repaints when the trace lands');
-  const ground = read('src/world/tamrielGround.js');
+  const ground = read('src/world/tamriel/tamrielGround.js');
   assert.match(ground, /import \{ provinceKeyAt, coastDistanceAt \} from '\.\/tamrielLand\.js';/);
   assert.ok(!/\bprovinceAt\(|\bcoastDistance\(/.test(ground), 'the ground reads the land module, never the authored rings directly');
-  const raster = read('src/world/tamrielRaster.js');
+  const raster = read('src/world/tamriel/tamrielRaster.js');
   assert.match(raster, /import \{ provinceKeyAt \} from '\.\/tamrielLand\.js';/);
   assert.match(raster, /const \{ ox, oy \} = tamrielFit\(\);/);
-  const client = read('src/world/terrainGenClient.js');
+  const client = read('src/world/terrain/terrainGenClient.js');
   assert.match(client, /import \{ setTamrielTrace \} from '\.\/tamrielLand\.js';/);
 });

@@ -890,7 +890,7 @@ export function strangerHelm(g, x, y) {
 }
 /** LW12: a rumoured hideout's ring (px). */
 export const TV_HIDEOUT_R = 11;
-/** YARDS-FOUND: THE YARDS' MARK, by the emblem each yard's signboard paints (world/merchantYardArt.js) - the Wagon
+/** YARDS-FOUND: THE YARDS' MARK, by the emblem each yard's signboard paints (world/merchantYards/merchantYardArt.js) - the Wagon
  *  Yard's wheel (the carriage towns' own, a little smaller: OW-HUBS' wheelPath), the Stable's horseshoe with its opening
  *  up for luck and its nail holes - in `color` on the marks' black edge, about (x, y). */
 export const TV_YARD_R = 4.5;

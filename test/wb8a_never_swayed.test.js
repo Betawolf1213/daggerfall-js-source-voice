@@ -4,13 +4,13 @@
 // EnemySenses pacification, X11's seam for all three pools) never met him; his spell door took harmful families and a
 // Soul Trap alone; and the relay keeps no hostility. Yet his stand-in is a Daedra Lord's entity (mobile 31, the Daedra
 // group), which a Pacify Daedra MATCHES the moment anything routes a spell to it. Now it is his own word
-// (`pacifyImmune`, world/gateBoss.js bossStandIn) and every door that could sway anything refuses a target that says it:
+// (`pacifyImmune`, world/gate/gateBoss.js bossStandIn) and every door that could sway anything refuses a target that says it:
 // the language seam, the Pacify/Charm arm, the flag's door - and his own door answers a sway aimed at him in words.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { bossStandIn, bossLookOf, BOSS_SWAY_TEXT, BOSS_SWAY_TELL_MS } from '../src/world/gateBoss.js';
+import { bossStandIn, bossLookOf, BOSS_SWAY_TEXT, BOSS_SWAY_TELL_MS } from '../src/world/gate/gateBoss.js';
 import { applySpell, spellSways } from '../src/systems/effects.js';
 import { buildCustomSpell, blankEffectSettings } from '../src/systems/spell/spellMaker.js';
 import { tryLanguagePacification } from '../src/scenes/hostCombat.js';

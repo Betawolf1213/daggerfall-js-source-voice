@@ -557,11 +557,11 @@ level 0) were not changed either: nothing showed them as the square.
 
 ## UNDER-LOOK and UNDER-RAYS: the sea looks like water from under it (4, 5)
 
-**Why it read clear** (the mod's numbers at its sliders' defaults, `world/deepWaterLook.js`): a 66.5 m vision; ~2.7%
+**Why it read clear** (the mod's numbers at its sliders' defaults, `world/deepWater/deepWaterLook.js`): a 66.5 m vision; ~2.7%
 of the red absorbed a metre; a grey at 0.5 kept as (0.44, 0.47, 0.47) at 5 m; nothing at the eye; the world fog a
 thin neutral grey (0.02); the sun's key light untouched under the water. No caustic, no shaft anywhere in `src/`.
 
-**The fix** (`world/underwaterLook.js`, `render/deepWatersRender.js`, `world/deepWaterLook.js`, `scenes/world.js`):
+**The fix** (`world/underwater/underwaterLook.js`, `render/deepWatersRender.js`, `world/deepWater/deepWaterLook.js`, `scenes/world.js`):
 - THE MURK: the mod's vision distance times `UNDERWATER_MURK` (0.55) - `distanceFogUniforms`' new `murk` (1 is the
   mod, number for number), so the absorption and the scatter a metre, the bands and the sky's distance all follow and
   the sliders scale it as before.
@@ -938,7 +938,7 @@ ground a client stands on, the counters, the pad, the finger, and part four's ow
 | REFUSALS-LEARNED | 5 | nothing learned from `prof-account-cap`, `prof-deep-cap`, `prof-cap` or `stores-full`: every act after was offered ready, played and refused | the character's day and the Stores read the state again; the account's craft and its unvouched dungeon veins close until the UTC day turns, and the host says so (`net/profBook.js` closed; `gatherHost.js` planFor) |
 | RATE-KEPT | 5 | `prof-rate` ("Try again later") let the harvest go after the act | kept and asked again inside its ten minutes (`net/profBook.js` send) |
 | NODE-SPAN | 3; 2 | a node is found up its upright, base to aim point; a tree's is 1.2 m and its glow 3.4 m - a level look from two metres passed over it, a look up never found it, the saddle never; a patch glowed 1.3 m and was found 0.3 m up its centre | the upright runs to the glow's top where that stands higher (`gatherHost.js` findTarget) |
-| NODE-CLEAR | 2; 3 | VEIN-CLEAR kept veins out of the rock pieces; a patch or a tree could stand inside one, glowing, unreachable | a patch inside a piece stands nowhere, a tree claims the nearest flat outside every one (`world/terrainNature.js` insideRocks, one home; `herbHost.js`, `treeHost.js`) |
+| NODE-CLEAR | 2; 3 | VEIN-CLEAR kept veins out of the rock pieces; a patch or a tree could stand inside one, glowing, unreachable | a patch inside a piece stands nowhere, a tree claims the nearest flat outside every one (`world/terrain/terrainNature.js` insideRocks, one home; `herbHost.js`, `treeHost.js`) |
 | STEADY-SAID | 2 | the steady hand ends when E is let go, and its meter said "hold still" and no key: a tap of E ended it, nothing taken | the meter names the key E's start holds (the Sickle's Use holds it itself, and names none) (`herbHost.js`; `ui/profHud.js`) |
 | SEASONAL-EYE | 2 | Herbalism 100's Seasonal Eye chosen mid-session stood nothing again until the next state read or the day's turn - a winter day's patches named herbs the service did not roll | a change of it stands the pixels again (`gatherHost.js` tick) |
 | PAD-PULSE | 1; 3, 4 | the Plus pad's gesture swing re-draws its stroke every 0.4 s while RT is held, and each was a press: RT held felled a tree, caught every tug, mined a vein by itself - against ACT-TOUCH's own "a held press strikes once" | a stroke after the first is the hold's, marked, and no act's strike (`ui/gamepadInput.js`; `world.js`; `gatherHost.js` strike) |
@@ -1066,7 +1066,7 @@ prompt shows". And on a settlement's ground (a town, a farm, a temple, a tavern,
 city block round it) the prompt of a vein, a boulder, a patch or a tree said it was ready, and E or the tool's Use said
 "You cannot mine in a settlement!" (the act's own check, FORAGE0 14.3), every time; Hunting's and Fishing's plans ask it.
 
-**The fix.** ROCK-FOOT: a piece is carried as it stands out of the ground (`world/terrainNature.js` rockFootprint - its
+**The fix.** ROCK-FOOT: a piece is carried as it stands out of the ground (`world/terrain/terrainNature.js` rockFootprint - its
 mesh above the terrain, each vertex above it and each edge where it crosses it; none for a piece wholly under it); a
 node takes the nearest piece with a foot clear of every piece, the side facing its point first, then its others nearest
 that way (`scenes/mineHost.js` claim, footTargets); the boulders claim before the veins (a vein has the stone beside the
@@ -1306,7 +1306,7 @@ same - `LocationHelper.cs:1176` makes the classic mesh and nothing touches its m
 drawing the mod faithfully.
 
 **Asked** - retexture, cap their height, remove them, or leave them. Mac: *"Retexture them to be as detailed as
-possible"*. **Built** (`world/wodRockUv.js` wodRockUvs; `scenes/world.js`, the WoD loop): a piece stretched 4x or more on
+possible"*. **Built** (`world/worldOfDaggerfall/wodRockUv.js` wodRockUvs; `scenes/world.js`, the WoD loop): a piece stretched 4x or more on
 any axis is drawn with new UVs, plane by plane - each plane of the model unfolded isometrically through its own
 unscaled UV map, so every face of the scaled piece carries the texture at its pebble's own texel density and
 its rows along the edge they ran along (the spire's face: 74 texels a metre, where it carried 0.07), tiled REPEAT, each plane shifted by whole

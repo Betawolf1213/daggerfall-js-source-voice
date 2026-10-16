@@ -8,7 +8,7 @@
 // it."
 //
 // THE DOOR is one of Daggerfall's own: the five interior door models
-// DaggerfallInterior hangs (world/interiorLayout.js DOOR_MODEL_BASE_ID,
+// DaggerfallInterior hangs (world/interior/interiorLayout.js DOOR_MODEL_BASE_ID,
 // DOOR_MODEL_COUNT), read into the catalogue from the town blocks' own
 // door records (systems/decor/decorCatalogue.js), priced by size as any piece
 // is. Placed, it stands as an ACTION DOOR (world/actionSystem.js addDoor,
@@ -40,7 +40,7 @@
 // argument. Not a DFU member: Daggerfall Unity has no decorator. Ledger A.
 // ═══════════════════════════════════════════════════════════════════
 
-import { DOOR_MODEL_BASE_ID, DOOR_MODEL_COUNT } from '../../world/interiorLayout.js';
+import { DOOR_MODEL_BASE_ID, DOOR_MODEL_COUNT } from '../../world/interior/interiorLayout.js';
 import { DECOR_SCALE_MIN, DECOR_SCALE_MAX } from '../../net/decorLaw.js';
 
 /** The narrowest and the widest opening a door is hung in, metres. */

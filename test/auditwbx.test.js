@@ -16,13 +16,13 @@ import { mintReceipt, readReceipt, receiptValid, RECEIPT_TTL_S } from '../src/ne
 import { gateTimes, gateRoomKey } from '../src/net/gateLaw.js';
 import { SOCIAL_ROOM, GATE_BRAIN_V, gateReceiptKey, relaySupportsGateSpent, GATE_SPENT_RELAY_MIN, validGateIn } from '../src/net/wire.js';
 import { foldGate, GATE_STATE_EMPTY } from '../src/net/gateLink.js';
-import { bossPlace } from '../src/world/gateBoss.js';
+import { bossPlace } from '../src/world/gate/gateBoss.js';
 import { telegraphShape, telegraphField } from '../src/render/gateTelegraph.js';
 import { inAttack, chargeStrikes } from '../src/net/gateStrike.js';
 import { createSpoilsPool, spoilsStore, recoverSpoils, spoilsLevel, SPOILS_STORE_KEY, SPOILS_DAY_KEY, SPOILS_RECORD_V, spentKey } from '../src/scenes/spoilsPool.js';
 import { SPECIAL_ARTIFACT_HANDLERS, ARTIFACTS } from '../src/systems/artifactEffects.js';
 import { createGateCourt } from '../src/scenes/gateCourt.js';
-import { courtToDungeon } from '../src/world/gateArena.js';
+import { courtToDungeon } from '../src/world/gate/gateArena.js';
 import { fakeRooms } from './fakeRoom.mjs';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

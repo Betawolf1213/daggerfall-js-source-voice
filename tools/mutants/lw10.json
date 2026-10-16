@@ -127,7 +127,7 @@
   },
   {
     "name": "LW10-cap",
-    "file": "src/world/roadTeams.js",
+    "file": "src/world/road/roadTeams.js",
     "old": "export const WAGONS_DRAWN = 6;",
     "new": "export const WAGONS_DRAWN = 8;",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "LW10-box-standing",
-    "file": "src/world/roadTeams.js",
+    "file": "src/world/road/roadTeams.js",
     "old": "      if (!w.moving && ground && grow <= 1 && parts) {",
     "new": "      if (ground && grow <= 1 && parts) {",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "LW10-box-down",
-    "file": "src/world/roadTeams.js",
+    "file": "src/world/road/roadTeams.js",
     "old": "    for (const key of [...boxes.keys()]) if (!stand.has(key)) takeDown(key);",
     "new": "    // (boxes kept)",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "LW10-horse-free",
-    "file": "src/world/roadTeams.js",
+    "file": "src/world/road/roadTeams.js",
     "old": "    for (const key of [...horses.keys()]) if (!seen.has(key)) dropHorse(key);",
     "new": "    // (horses kept)",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "LW10-ground-offset",
-    "file": "src/world/roadTeams.js",
+    "file": "src/world/road/roadTeams.js",
     "old": "      const position = [w.feet[0], w.feet[1] + NORMAL_GROUND_OFFSET, w.feet[2]];",
     "new": "      const position = [w.feet[0], w.feet[1], w.feet[2]];",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "LW10-WAGONS1-kind",
-    "file": "src/world/roadTeams.js",
+    "file": "src/world/road/roadTeams.js",
     "old": "{ angle: w.angle }, w.grow, ROAD_WAGON_KIND, w.hitched)",
     "new": "{ angle: w.angle }, w.grow, undefined, w.hitched)",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "LW10-WAGONS1-parts",
-    "file": "src/world/roadTeams.js",
+    "file": "src/world/road/roadTeams.js",
     "old": "(pres?.partsOf ? pres.partsOf(ROAD_WAGON_KIND) : pres?.wagonParts?.())",
     "new": "(pres?.partsOf ? pres.partsOf() : pres?.wagonParts?.())",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "LW10-WAGONS1-turn",
-    "file": "src/world/roadTeams.js",
+    "file": "src/world/road/roadTeams.js",
     "old": "w.tier, { angle: w.angle }, w.grow,",
     "new": "w.tier, w.angle, w.grow,",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "LW10-WAGONS1-hitched",
-    "file": "src/world/roadTeams.js",
+    "file": "src/world/road/roadTeams.js",
     "old": "grow, hitched: w.hitched !== false });",
     "new": "grow, hitched: true });",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "LW10-WAGONS1-hitch",
-    "file": "src/world/roadTeams.js",
+    "file": "src/world/road/roadTeams.js",
     "old": "return Number.isFinite(m) && m > 0 ? m * NATIVE_PER_M : HITCH_N;",
     "new": "return HITCH_N;",
     "tests": [

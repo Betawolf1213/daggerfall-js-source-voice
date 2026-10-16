@@ -316,7 +316,7 @@ nothing is host-local but the routes into the watch's door (the arrows' kind, th
 
 ### 4.3 The ear
 
-The world boss's cue order (`world/gateBoss.js` `BOSS_CUES` and `hostCue`; `gateCourt.js cue`), each once a wind-up,
+The world boss's cue order (`world/gate/gateBoss.js` `BOSS_CUES` and `hostCue`; `gateCourt.js cue`), each once a wind-up,
 through `hostCombat.playEnemyClip` so DFU's hearing distance holds:
 
 - **WIND** at the start: the kind's `barkSound` at pitch 0.85; a class foe (muted by DFU's `ignoreHumanSounds`) a

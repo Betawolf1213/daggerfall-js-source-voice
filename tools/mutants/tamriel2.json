@@ -1,7 +1,7 @@
 [
   {
     "name": "TAMRIEL2-the-sea-stands-on-the-shore",
-    "file": "src/world/tamrielGround.js",
+    "file": "src/world/tamriel/tamrielGround.js",
     "old": "if (!provinceKeyAt(px, py)) return 0;",
     "new": "if (!provinceKeyAt(px, py)) return SHORE_BYTE;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "TAMRIEL2-the-plain-never-rises",
-    "file": "src/world/tamrielGround.js",
+    "file": "src/world/tamriel/tamrielGround.js",
     "old": "const inland = Math.min(1, coastDistanceAt(px, py) / PLAIN_REACH);",
     "new": "const inland = 0;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "TAMRIEL2-the-noise-takes-land-under-the-shore",
-    "file": "src/world/tamrielGround.js",
+    "file": "src/world/tamriel/tamrielGround.js",
     "old": "return Math.max(SHORE_BYTE, Math.min(255, Math.round(h)));",
     "new": "return Math.max(0, Math.min(255, Math.round(h)));",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "TAMRIEL2-the-edge-distance-forgets-the-south",
-    "file": "src/world/tamrielGround.js",
+    "file": "src/world/tamriel/tamrielGround.js",
     "old": "return Math.max(0, -x, x - (BAY_W - 1), -y, y - (BAY_H - 1));",
     "new": "return Math.max(0, -x, x - (BAY_W - 1), -y);",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "TAMRIEL2-the-cache-answers-the-wrong-pixel",
-    "file": "src/world/tamrielGround.js",
+    "file": "src/world/tamriel/tamrielGround.js",
     "old": "const cacheKey = (x, y) => (x + 8192) * 32768 + (y + 8192);",
     "new": "const cacheKey = (x, y) => (x + 8192) * 32768 + (y + 8193);",
     "tests": [
@@ -48,7 +48,7 @@
   },
   {
     "name": "TAMRIEL2-the-climate-past-the-bay-is-woodlands",
-    "file": "src/world/tamrielGround.js",
+    "file": "src/world/tamriel/tamrielGround.js",
     "old": "return key ? (provinceByKey(key)?.climate ?? CLIMATES.Woodlands) : CLIMATES.Ocean;",
     "new": "return key ? CLIMATES.Woodlands : CLIMATES.Ocean;",
     "tests": [
@@ -57,7 +57,7 @@
   },
   {
     "name": "TAMRIEL2-the-sea-wears-a-climate",
-    "file": "src/world/tamrielGround.js",
+    "file": "src/world/tamriel/tamrielGround.js",
     "old": "return key ? (provinceByKey(key)?.climate ?? CLIMATES.Woodlands) : CLIMATES.Ocean;",
     "new": "return key ? (provinceByKey(key)?.climate ?? CLIMATES.Woodlands) : CLIMATES.Woodlands;",
     "tests": [
@@ -66,7 +66,7 @@
   },
   {
     "name": "TAMRIEL2-the-seam-is-a-pixel-short",
-    "file": "src/world/tamrielGround.js",
+    "file": "src/world/tamriel/tamrielGround.js",
     "old": "export const SEAM_PX = 2;",
     "new": "export const SEAM_PX = 1;",
     "tests": [
@@ -75,7 +75,7 @@
   },
   {
     "name": "TAMRIEL2-the-seam-answers-the-authored-ground",
-    "file": "src/world/tamrielGround.js",
+    "file": "src/world/tamriel/tamrielGround.js",
     "old": "    if (d <= SEAM_PX) return woods.getHeightMapValue(x, y);\n    const edge",
     "new": "    const edge",
     "tests": [
@@ -84,7 +84,7 @@
   },
   {
     "name": "TAMRIEL2-the-blend-never-reaches-the-authored",
-    "file": "src/world/tamrielGround.js",
+    "file": "src/world/tamriel/tamrielGround.js",
     "old": "const t = Math.min(1, (d - SEAM_PX) / BLEND_PX);",
     "new": "const t = Math.min(0.5, (d - SEAM_PX) / BLEND_PX);",
     "tests": [
@@ -93,7 +93,7 @@
   },
   {
     "name": "TAMRIEL2-the-large-map-past-the-seam-is-the-clamp",
-    "file": "src/world/tamrielGround.js",
+    "file": "src/world/tamriel/tamrielGround.js",
     "old": "return bayEdgeDistance(x, y) <= SEAM_PX ? woods.getLargeMapData(x, y) : tamrielLargeMap(x, y);",
     "new": "return woods.getLargeMapData(x, y);",
     "tests": [
@@ -102,7 +102,7 @@
   },
   {
     "name": "TAMRIEL2-the-large-map-on-the-bay-is-the-continents",
-    "file": "src/world/tamrielGround.js",
+    "file": "src/world/tamriel/tamrielGround.js",
     "old": "return bayEdgeDistance(x, y) <= SEAM_PX ? woods.getLargeMapData(x, y) : tamrielLargeMap(x, y);",
     "new": "return bayEdgeDistance(x, y) < SEAM_PX ? woods.getLargeMapData(x, y) : tamrielLargeMap(x, y);",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "TAMRIEL2-a-copy-not-a-child",
-    "file": "src/world/tamrielGround.js",
+    "file": "src/world/tamriel/tamrielGround.js",
     "old": "const ground = Object.create(woods);",
     "new": "const ground = { ...woods };",
     "tests": [
@@ -120,7 +120,7 @@
   },
   {
     "name": "TAMRIEL2-the-climate-read-ignores-the-bay",
-    "file": "src/world/tamrielGround.js",
+    "file": "src/world/tamriel/tamrielGround.js",
     "old": "return (x, y) => (inBay(x, y) ? bayClimateIndex(x, y) : tamrielClimateAt(x, y));",
     "new": "return (x, y) => tamrielClimateAt(x, y);",
     "tests": [
@@ -174,7 +174,7 @@
   },
   {
     "name": "TAMRIEL2-the-client-never-tells-the-worker",
-    "file": "src/world/terrainGenClient.js",
+    "file": "src/world/terrain/terrainGenClient.js",
     "old": "this._tamriel = !!woods?.isTamrielGround;",
     "new": "this._tamriel = false;",
     "tests": [

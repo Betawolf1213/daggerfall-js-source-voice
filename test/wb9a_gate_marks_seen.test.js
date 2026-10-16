@@ -18,7 +18,7 @@ import {
   MARK_ICONS, MARK_TIPS, ASPECT_ELEMENT, MARKS_CARD_ARRIVE_MS, MARKS_CARD_FADE_MS, MARKS_CARD_TEXT, MARKS_CARD_CSS,
 } from '../src/ui/gateMarksView.js';
 import { GATE_ASPECTS, GATE_TRIALS } from '../src/net/gateMods.js';
-import { ASPECT_COLORS, EMBER_COLOR } from '../src/world/gateBoss.js';
+import { ASPECT_COLORS, EMBER_COLOR } from '../src/world/gate/gateBoss.js';
 import { bossBarModel, drawGateBossBar, destroyGateBossBar } from '../src/ui/gateBossBar.js';
 import { createGatePool } from '../src/scenes/gatePool.js';
 import { createGateCourt } from '../src/scenes/gateCourt.js';

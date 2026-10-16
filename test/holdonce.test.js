@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { parse } from 'acorn';
 import { isPrivateersHold, isStartDungeon, HOLD_ONCE_TEXT } from '../src/systems/startDungeon.js';
-import { PRIVATEERS_HOLD_MAP_ID, MAIN_STORY_DUNGEON_IDS } from '../src/world/dungeonTextures.js';
+import { PRIVATEERS_HOLD_MAP_ID, MAIN_STORY_DUNGEON_IDS } from '../src/world/dungeon/dungeonTextures.js';
 import { mapPixelToLongitudeLatitude } from '../src/formats/mapsFile.js';
 import { setValue } from '../src/systems/settings/settings.js';
 

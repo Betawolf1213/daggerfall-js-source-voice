@@ -1,7 +1,7 @@
 [
   {
     "name": "WB4b-the-daedra-lords-metal-kept",
-    "file": "src/world/gateBoss.js",
+    "file": "src/world/gate/gateBoss.js",
     "old": "  e.minMetalToHit = 0;",
     "new": "  e.minMetalToHit = ENEMY_BASICS[look.mobile].minMetalToHit;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "WB4b-his-own-armour-kept",
-    "file": "src/world/gateBoss.js",
+    "file": "src/world/gate/gateBoss.js",
     "old": "  e.armorValues = new Array(7).fill(BOSS_ARMOR);",
     "new": "  e.armorValues = new Array(7).fill(ENEMY_BASICS[look.mobile].armorValue * 5);",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "WB4b-the-reach-to-his-axis",
-    "file": "src/world/gateBoss.js",
+    "file": "src/world/gate/gateBoss.js",
     "old": "    dist: Math.max(0, Math.hypot(dx, y - eye[1], dz) - radius),",
     "new": "    dist: Math.hypot(dx, y - eye[1], dz),",
     "tests": [

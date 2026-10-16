@@ -13,10 +13,10 @@ import { createHash } from 'node:crypto';
 import {
   largeBoatPrefab, LARGE_BOAT_PREFAB_ID, LARGE_BOAT_HULL_NODE, MEASURED, HELM, STEP, RUDDER, SWIVELS, LARGE_BOAT_BATTERIES,
   ANCHOR_Z, LANTERNS, tillerEnd, largeBoatClips,
-} from '../src/world/largeBoatModel.js';
-import { PLANS, VARIANT_COUNT, sailKey, stayLines, LARGE_BOAT_RIG, MAST, FORESTAY_IN } from '../src/world/largeBoatRig.js';
-import { largeBoatArt, registerLargeBoatArt, _resetLargeBoatArt, LARGE_BOAT_ARCHIVE, TEX } from '../src/world/largeBoatArt.js';
-import { RUDDER_DEG } from '../src/world/galleonModel.js';
+} from '../src/world/ships/largeBoatModel.js';
+import { PLANS, VARIANT_COUNT, sailKey, stayLines, LARGE_BOAT_RIG, MAST, FORESTAY_IN } from '../src/world/ships/largeBoatRig.js';
+import { largeBoatArt, registerLargeBoatArt, _resetLargeBoatArt, LARGE_BOAT_ARCHIVE, TEX } from '../src/world/ships/largeBoatArt.js';
+import { RUDDER_DEG } from '../src/world/ships/galleonModel.js';
 import { loadComeSailAwayModels, CSA_MODEL_URLS, CARRACK_MODEL_URL, LARGE_BOAT_MODEL_URL, decodeMeshGeometry } from '../src/systems/comeSailAway/comeSailAwayModels.js';
 import { animatorOf, colliderBounds } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { HULL, HULL_BUILDS, MOD_LARGE_BOAT_BUILD, hullBuild, setShipStanding } from '../src/systems/naval/navalShips.js';

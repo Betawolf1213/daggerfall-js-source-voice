@@ -55,7 +55,7 @@
   },
   {
     "name": "SD26-F34-never-lower",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "  for (const lower of [false, true]) {",
     "new": "  for (const lower of [false]) {",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "SD26-F34-lower-first",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "  for (const lower of [false, true]) {",
     "new": "  for (const lower of [true, false]) {",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "SD26-F34-a-higher-floor-taken",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "(lower ? y - from[1] : Math.abs(y - from[1]))",
     "new": "(lower ? -1 : Math.abs(y - from[1]))",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "SD26-F35-the-foot-kept",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "  const riftClear = Math.min(SD_RIFT_REACH_M, rift.size / 4) + SD_LANDING_CLEAR_M;",
     "new": "  const riftClear = Infinity;",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "SD26-F35-inside-the-rifts-reach",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "  const riftClear = Math.min(SD_RIFT_REACH_M, rift.size / 4) + SD_LANDING_CLEAR_M;",
     "new": "  const riftClear = 0;",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "SD26-F35-no-margin",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "export const SD_LANDING_CLEAR_M = 0.4;",
     "new": "export const SD_LANDING_CLEAR_M = 0;",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "SD26-F35-the-near-ring-unasked",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "  for (const r of [SD_LANDING_PAST_M, SD_RETURN_REACH_M + SD_LANDING_CLEAR_M]) {",
     "new": "  for (const r of [SD_LANDING_PAST_M]) {",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "SD26-F36-unswept",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "  return { at, size: sdRiftSweep(at, fit, face, probe), face };",
     "new": "  return { at, size: fit, face };",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "SD26-F36-the-hover-unasked",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "export const SD_RIFT_TOP = riftCentreY(1) + 0.5;",
     "new": "export const SD_RIFT_TOP = 1;",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "SD26-F36-only-across",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "[0, 1, 2, 3, 5, 6, 7, 8].map((k) => (k * Math.PI) / 8)",
     "new": "[0, 8].map((k) => (k * Math.PI) / 8)",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "SD26-F36-the-lower-half-asked",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "[0, 1, 2, 3, 5, 6, 7, 8].map((k) => (k * Math.PI) / 8)",
     "new": "[-3, -2, -1, 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11].map((k) => (k * Math.PI) / 8)",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "SD26-F36-along-its-face",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "dir = [-face[2] * across, Math.sin(a), face[0] * across];",
     "new": "dir = [face[0] * across, Math.sin(a), face[2] * across];",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "SD26-F36-never-halved",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "export const SD_SWEEP_HALVINGS = 8;",
     "new": "export const SD_SWEEP_HALVINGS = 0;",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "SD26-F36-the-centre-on-the-floor",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "const R = size / 2, c = [at[0], at[1] + riftCentreY(size), at[2]];",
     "new": "const R = size / 2, c = [at[0], at[1] + R, at[2]];",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "SD26-F38-the-water-unasked",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "  if (inner.length) return dryFirst(inner);",
     "new": "  if (inner.length) return inner;",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "SD26-F38-the-markers-own-height",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "(floorOf ? floorOf(m) : m.y) < -level * GLOBAL_SCALE",
     "new": "m.y < -level * GLOBAL_SCALE",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "SD26-F38-every-wet-one-dropped",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "return dry.length ? dry : list; };",
     "new": "return dry; };",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "SD26-F38-the-surface-upside-down",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "(floorOf ? floorOf(m) : m.y) < -level * GLOBAL_SCALE",
     "new": "(floorOf ? floorOf(m) : m.y) < level * GLOBAL_SCALE",
     "tests": [

@@ -5,26 +5,26 @@
 // height (34.019 m at most), so it carved none of the lifted sea, and every node there still read land. The ship lay
 // beached at sea, her sails refused at every press ("Unable to raise sail. Boat is obstructed.") - her helm dead. Struck,
 // and the sea kept at its source:
-//   SEA-LEVEL    - the flatten (world/wodLocationLoader.js flattenForLocation) never raises the sea past SEA_RAMP
+//   SEA-LEVEL    - the flatten (world/worldOfDaggerfall/wodLocationLoader.js flattenForLocation) never raises the sea past SEA_RAMP
 //                  samples of the site's own ground: the site's ground is the mod's, a ramp down to the water within
 //                  SEA_RAMP, and past it the sea as the sampler left it - Deep Waters carves it, every node reads it,
 //                  and her sails go up at the key
 //   PLACE-AFLOAT - a water tile standing over the sea's line (a town's harbour basin at its ground's height) is no
 //                  water her nodes can read: placing her there is refused with a word, where she was placed and lay
 //                  beached from the first frame
-// Every pin runs the real modules: the sampler's sea (world/terrainSampler.js), the mod's flatten, Unity's
-// SampleHeight (world/terrainSurface.js), Deep Waters' hole mask (world/deepWaterFloor.js), world.js's own csaTerrainOf
+// Every pin runs the real modules: the sampler's sea (world/terrain/terrainSampler.js), the mod's flatten, Unity's
+// SampleHeight (world/terrain/terrainSurface.js), Deep Waters' hole mask (world/deepWater/deepWaterFloor.js), world.js's own csaTerrainOf
 // lifted from its source, and Come Sail Away's runtime over the vendored hulls (test/csaScene.mjs). Each is red on the
 // record's own code (e2466e2bd). `01-Overview/Field-Bugs-2026-10-02b.md`.
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import * as surface from '../src/world/terrainSurface.js';
-import { generateSamples, HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
-import { flattenForLocation, distanceFromRect, SEA_RAMP } from '../src/world/wodLocationLoader.js';
+import * as surface from '../src/world/terrain/terrainSurface.js';
+import { generateSamples, HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
+import { flattenForLocation, distanceFromRect, SEA_RAMP } from '../src/world/worldOfDaggerfall/wodLocationLoader.js';
 import { carvedFloorLocalY } from '../src/scenes/deepWatersHost.js';
-import { computeHoleMask, HOLES_RESOLUTION, VERTEX_GRID_SIZE } from '../src/world/deepWaterFloor.js';
+import { computeHoleMask, HOLES_RESOLUTION, VERTEX_GRID_SIZE } from '../src/world/deepWater/deepWaterFloor.js';
 import * as csa from '../src/systems/comeSailAway/comeSailAway.js';
 import { HULL_NAMES } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { scene } from './csaScene.mjs';

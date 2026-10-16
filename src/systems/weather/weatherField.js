@@ -38,7 +38,7 @@
 // the streaming world's metres (a pixel is TERRAIN_SIZE, 819.2, on a
 // side; x east, z north as the native z is). The hosts convert.
 
-import { TERRAIN_SIZE, WORLD_MAP_TERRAIN_DIM } from '../../world/terrainSampler.js';
+import { TERRAIN_SIZE, WORLD_MAP_TERRAIN_DIM } from '../../world/terrain/terrainSampler.js';
 import { MAX_MAP_PIXEL_Y, CLIMATES } from '../../formats/mapsFile.js';
 import { seededRng } from '../wind/wind.js';
 

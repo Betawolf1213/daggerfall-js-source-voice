@@ -3,7 +3,7 @@
 //
 // node holds the rig's law (test/sd17_body.test.js - the states, the joints kept, every blow moved); what node cannot
 // answer is what the body LOOKS like in each pose, and whether the beam's pass compiles, links and lights the frame. So:
-// the Remnant's own seven parts (world/sdRemnantModel.js buildRemnantParts) stood by the rig's own matrices
+// the Remnant's own seven parts (world/superDungeon/sdRemnantModel.js buildRemnantParts) stood by the rig's own matrices
 // (scenes/sdRemnantRig.js) in a plain lit pass, one pose a tile - and the Hour-Hand's beam (render/sdBeam.js) out of its
 // hand mid-sweep. Each pose must draw its body and differ from its rest; the beam must light the frame along its line.
 // SD_BODY_SHOT=<file.png> writes the tiles.
@@ -23,7 +23,7 @@ const ROWS = Math.ceil(POSES.length / COLS);
 const PAGE_NAME = 'sdbody-probe.tmp.html', PAGE_PATH = join(ROOT, 'tools', PAGE_NAME);
 
 const PAGE = `<!doctype html><html><body style="margin:0;background:#000"><canvas id=c width=${TW * COLS} height=${TH * ROWS}></canvas><script type=module>
-import { buildRemnantParts, SD_REMNANT_PARTS } from '/src/world/sdRemnantModel.js';
+import { buildRemnantParts, SD_REMNANT_PARTS } from '/src/world/superDungeon/sdRemnantModel.js';
 import { remnantRig, rigMatrices, arenaBase, sdBeamDraws, gearFlightOf, SD_WAKE_MS, SD_SLIP_EVERY_MS } from '/src/scenes/sdRemnantRig.js';
 import { SdBeamRenderer } from '/src/render/sdBeam.js';
 import { SD_BLOWS, SD_BODY } from '/src/net/sdRemnant.js';

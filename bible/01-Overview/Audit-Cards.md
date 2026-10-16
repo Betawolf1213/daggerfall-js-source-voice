@@ -12,7 +12,7 @@ THE VERIFIER IS READING), each told to reproduce every finding before it reporte
 | Lane | Over | How |
 |---|---|---|
 | A | `net/cardLaw.js`, `net/dice.js` | ~140k random hands against independent invariants and an independent evaluator (200k seven-card pairs), the rules case by case |
-| B | the seat in the interior host, `world/cardTables.js`, the census | every road the seat meets, read end to end |
+| B | the seat in the interior host, `world/card/cardTables.js`, the census | every road the seat meets, read end to end |
 | C | the wire, the sender, the peers, the relay versions | the frames, the relay's own checks, the live relay's `/health` |
 | D | the seated body's pose | solved on retail's biped at four yaws, three tops and five race scales |
 | E | the record and the pins | the mutants re-run in a copy of the tree, candidate mutants of its own |

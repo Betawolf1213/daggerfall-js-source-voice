@@ -15,7 +15,7 @@ import { loadQuestTables } from '../src/systems/quest/tables.js';
 import { QuestMachine, linkSiteOf } from '../src/systems/quest/machine.js';
 import { Scopes } from '../src/systems/quest/place.js';
 import { mapPixelToWorldCoord, mapPixelToLongitudeLatitude } from '../src/formats/mapsFile.js';
-import { MAIN_STORY_DUNGEON_IDS } from '../src/world/dungeonTextures.js';
+import { MAIN_STORY_DUNGEON_IDS } from '../src/world/dungeon/dungeonTextures.js';
 import { getPref, setPref } from '../src/systems/uiPrefs.js';
 
 const VENDOR = join(dirname(fileURLToPath(import.meta.url)), '..', 'vendor', 'dfu-quests');

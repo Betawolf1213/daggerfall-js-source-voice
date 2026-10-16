@@ -10,15 +10,15 @@ import {
   tileDecorationSeed, spacingCellKey, seededUnityRandom, rollDecorationPasses, decorationPassesForBiome, canPlaceDecoration,
   authoredVisualHeight, generateBillboardPositions, buildDecorationPositions, trimDecorationPositions, decorationCap, populateRadius,
   placeTileDecorations, clearEdgeBlackPixels, isTransparentPadding, seafloorClearance, BUBBLE_FALLBACK_VISUAL_HEIGHT,
-} from '../src/world/underwaterDecorations.js';
+} from '../src/world/underwater/underwaterDecorations.js';
 import { createUnderwaterDecorations, createDecorTextureSource, PROMOTE_BUDGET_MS, DECORATION_ARCHIVES } from '../src/scenes/deepWatersDecor.js';
 import { deepWatersDecorationSettings, createDeepWatersHost } from '../src/scenes/deepWatersHost.js';
-import { scaledSliderValue } from '../src/world/deepWaterLook.js';
+import { scaledSliderValue } from '../src/world/deepWater/deepWaterLook.js';
 import { DECOR_VS, DECOR_FS, FLOOR_FS, COLUMN_GLSL, DECORATION_COLOR, DECORATION_CUTOFF } from '../src/render/deepWatersRender.js';
-import { VERTEX_GRID_SIZE, TILE_WORLD_SIZE } from '../src/world/deepWaterFloor.js';
-import { HEIGHTMAP_DIMENSION } from '../src/world/terrainSampler.js';
-import { DW_OCEAN_LOCAL_Y } from '../src/world/deepWatersPixel.js';
-import { DW_WATER_THRESHOLD } from '../src/world/deepWaterClassification.js';
+import { VERTEX_GRID_SIZE, TILE_WORLD_SIZE } from '../src/world/deepWater/deepWaterFloor.js';
+import { HEIGHTMAP_DIMENSION } from '../src/world/terrain/terrainSampler.js';
+import { DW_OCEAN_LOCAL_Y } from '../src/world/deepWater/deepWatersPixel.js';
+import { DW_WATER_THRESHOLD } from '../src/world/deepWater/deepWaterClassification.js';
 import { lookAt } from '../src/world/mat4.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

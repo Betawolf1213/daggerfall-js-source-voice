@@ -5,8 +5,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { waterBedDepths, waterBedCarve, bedFields, waterBedOf, flatGrid, bedProfile, BED_DEPTH, BED_RAMP, TILE_UNITS, SHELF_CHAMFER, sheetDepthsOf } from '../src/world/waterBed.js';
-import { WATER_DRAW_MASK_TABLE, SHELF_SHEET_DEPTH } from '../src/world/waterCorners.js';
+import { waterBedDepths, waterBedCarve, bedFields, waterBedOf, flatGrid, bedProfile, BED_DEPTH, BED_RAMP, TILE_UNITS, SHELF_CHAMFER, sheetDepthsOf } from '../src/world/water/waterBed.js';
+import { WATER_DRAW_MASK_TABLE, SHELF_SHEET_DEPTH } from '../src/world/water/waterCorners.js';
 import { PUDDLE_RECORDS } from '../src/world/puddleMask.js';
 import { WATER_SURFACE_VS } from '../src/render/waterSurface.js';
 

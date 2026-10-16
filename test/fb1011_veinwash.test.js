@@ -14,7 +14,7 @@ import { createGatherHost } from '../src/scenes/gatherHost.js';
 import { METALS, ORES } from '../src/net/professionLaw.js';
 import { veins, utcDayOfMs } from '../src/net/nodeLaw.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
-import { TERRAIN_SIZE, HEIGHTMAP_DIMENSION } from '../src/world/terrainSampler.js';
+import { TERRAIN_SIZE, HEIGHTMAP_DIMENSION } from '../src/world/terrain/terrainSampler.js';
 
 const tick = () => new Promise((r) => setImmediate(r));
 /** The ores a vein can be: DFU's metals but Brass (smelted, never mined), and the new ores. */

@@ -13,7 +13,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as acorn from 'acorn';
-import * as DF from '../src/world/dungeonFires.js';
+import * as DF from '../src/world/dungeon/dungeonFires.js';
 import * as PROBE from '../tools/dungeonFireProbe.mjs';
 import { Collider } from '../src/player/collider.js';
 import { RDB_SIDE } from '../src/world/rdbLayout.js';
@@ -494,6 +494,6 @@ test('AUDIT REST II: the law stays one answer on every client - a real collider,
   assert.equal(plan.fires.length, 1, 'a 50 m hall holds one fire - the next must stand 80 m off');
   assert.deepEqual(DF.dungeonFirePlan({ blocks: structuredClone(blocks), probe: colliderFireProbe(col), seed: 99, existing: structuredClone(existing) }), plan);
   assert.deepEqual(DF.dungeonFirePlan({ blocks, probe: colliderFireProbe(col), seed: 99, existing: [...existing].reverse() }), plan);
-  const law = rd('src/world/dungeonFires.js').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
+  const law = rd('src/world/dungeon/dungeonFires.js').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
   assert.doesNotMatch(law, /Math\.(sin|cos|tan|atan2?|random|hypot)\(|Date\.|performance\./, 'only literals and plain arithmetic');
 });

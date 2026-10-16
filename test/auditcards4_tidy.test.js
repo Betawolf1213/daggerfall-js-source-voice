@@ -1,15 +1,15 @@
 // AUDIT CARDS-4 (2026-10-08, bible/01-Overview/Audit-Cards-4.md) lane D's mutants, killed: THE DECK ON THE CLOTH
-// (world/cardMotion.js gatherMotion, DECK_PLATES, DECK_CARDS; world/cardScene.js the pile and the gathered cards), THE
+// (world/card/cardMotion.js gatherMotion, DECK_PLATES, DECK_CARDS; world/card/cardScene.js the pile and the gathered cards), THE
 // DELTA LAW (net/holdemTable.js STATE_KEYS across a hand's end, validHoldemOut's delta refusals; cardRemoteTable.js a
 // delta's events), the words' shapes (validHoldemIn's stake and ack, validHoldemOut's cash-out), the table's queue
 // bound; the relay forgetting an emptied table's last frame and keeping one cash-out a stake; the device's recover
 // asking only this character's.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { gatherMotion, GATHER_S, GATHER_LIFT, DECK_PLATES, DECK_CARDS, RIFFLE_HALF, RIFFLE_S, riffleAt, CARD_T } from '../src/world/cardMotion.js';
+import { gatherMotion, GATHER_S, GATHER_LIFT, DECK_PLATES, DECK_CARDS, RIFFLE_HALF, RIFFLE_S, riffleAt, CARD_T } from '../src/world/card/cardMotion.js';
 import { DECK_SIZE } from '../src/net/cardLaw.js';
-import { CardScene, tablePlaces } from '../src/world/cardScene.js';
-import { cardTableSeats, tableFrame } from '../src/world/cardTables.js';
+import { CardScene, tablePlaces } from '../src/world/card/cardScene.js';
+import { cardTableSeats, tableFrame } from '../src/world/card/cardTables.js';
 import { newTable, sit, stand, tick, actAt, publicView, stateDelta, STATE_KEYS, validHoldemIn, validHoldemOut, HOLDEM_FIRST_MS, HOLDEM_CASHOUTS_MAX, HOLDEM_STAKE_MAX } from '../src/net/holdemTable.js';
 import { RemoteCardTable } from '../src/systems/card/cardRemoteTable.js';
 import { createCardStakes, CARD_STAKES_KEY } from '../src/net/cardStakes.js';

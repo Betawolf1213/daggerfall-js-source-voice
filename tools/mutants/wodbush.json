@@ -22,28 +22,28 @@
   },
   {
     "name": "WODBUSH-model-id",
-    "file": "src/world/wodLocationObjects.js",
+    "file": "src/world/worldOfDaggerfall/wodLocationObjects.js",
     "old": "export const WOD_BUSH_MODEL = 60610;",
     "new": "export const WOD_BUSH_MODEL = 60611;",
     "tests": ["test/wodbush.test.js"]
   },
   {
     "name": "WODBUSH-highest-ground",
-    "file": "src/world/terrainSurface.js",
+    "file": "src/world/terrain/terrainSurface.js",
     "old": "low = Math.min(low, surfaceHeightAt(heightmapData, x, z));",
     "new": "low = Math.max(low === Infinity ? -Infinity : low, surfaceHeightAt(heightmapData, x, z));",
     "tests": ["test/wodbush.test.js"]
   },
   {
     "name": "WODBUSH-no-sample-lines",
-    "file": "src/world/terrainSurface.js",
+    "file": "src/world/terrain/terrainSurface.js",
     "old": "    for (let g = Math.ceil(a / cell) * cell; g < b; g += cell) out.push(g);\n",
     "new": "",
     "tests": ["test/wodbush.test.js"]
   },
   {
     "name": "WODBUSH-off-the-pixel",
-    "file": "src/world/terrainSurface.js",
+    "file": "src/world/terrain/terrainSurface.js",
     "old": "const clamp = (v) => Math.max(0, Math.min(TERRAIN_SIZE, v));",
     "new": "const clamp = (v) => v;",
     "tests": ["test/wodbush.test.js"]

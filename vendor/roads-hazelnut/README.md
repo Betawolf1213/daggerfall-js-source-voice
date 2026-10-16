@@ -27,6 +27,6 @@ on 2026-09-08 and pinned by `test/vendorIntegrity.test.js`):
 - `riverData.bytes` 6b867c189be672874334557573d8c40598beb050277dd18f81a2c33b9b9ac8ab
 - `streamData.bytes` 567ebda53a121435f5c26c12c6141d2d596c54af82fe3a08109f25544cef349f
 
-The port's painter is a port of the mod's (`src/world/roadPainter.js`,
+The port's painter is a port of the mod's (`src/world/road/roadPainter.js`,
 tables and geometry read from `BasicRoadsTexturing.cs`), credited in
 `bible/03-World/Roads.md`. Thank you, Hazelnut.

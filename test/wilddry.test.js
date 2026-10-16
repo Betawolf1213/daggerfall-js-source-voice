@@ -7,7 +7,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { spawnGroundDry, spawnPlateauFloor, SPAWN_DRY_ELEVATION } from '../src/world/spawnedDungeons.js';
-import { sampleKernel, HEIGHTMAP_DIMENSION } from '../src/world/terrainSampler.js';
+import { sampleKernel, HEIGHTMAP_DIMENSION } from '../src/world/terrain/terrainSampler.js';
 
 const woodsOf = (byteAt, large = 0) => ({
   getHeightMapValue: byteAt,

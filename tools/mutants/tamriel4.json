@@ -36,14 +36,14 @@
   },
   {
     "name": "TAMRIEL4-the-fit-scores-no-seam",
-    "file": "src/world/tamrielLand.js",
+    "file": "src/world/tamriel/tamrielLand.js",
     "old": "        const value = seam / edge + (FIT_AREA_WEIGHT * score) / (cols * rows);",
     "new": "        const value = (FIT_AREA_WEIGHT * score) / (cols * rows);",
     "tests": ["test/tamriel4.test.js"]
   },
   {
     "name": "TAMRIEL4-the-fit-scores-no-inside",
-    "file": "src/world/tamrielLand.js",
+    "file": "src/world/tamriel/tamrielLand.js",
     "old": "export const FIT_AREA_WEIGHT = 0.25;",
     "new": "export const FIT_AREA_WEIGHT = 0;",
     "tests": ["test/tamriel4.test.js"]

@@ -26,7 +26,7 @@ import { MapsFile } from '../src/formats/mapsFile.js';
 import { BlocksFile } from '../src/formats/blocksFile.js';
 import { Arch3dFile } from '../src/formats/arch3dFile.js';
 import { dfMeshToModel } from '../src/world/meshReader.js';
-import { layoutDungeon } from '../src/world/dungeonLayout.js';
+import { layoutDungeon } from '../src/world/dungeon/dungeonLayout.js';
 import { multiply } from '../src/world/mat4.js';
 
 const ARENA2 = process.env.ARENA2_PATH;

@@ -24,9 +24,9 @@
 import { MOBILE_TYPES } from '../characters/mobileTypes.js';
 import { ENEMY_BASICS } from '../characters/enemyBasics.js';
 import { longitudeLatitudeToMapPixel, mapPixelToWorldCoord, getMapPixelID, WORLD_MAP_TILE_DIM, WORLD_MAP_RMB_DIM } from '../formats/mapsFile.js';
-import { getLocationTerrainTileOrigin } from './terrainTiles.js';
+import { getLocationTerrainTileOrigin } from './terrain/terrainTiles.js';
 import { TORCH_ARCHIVE, TORCH_RECORDS } from '../systems/soundClips.js';   // RDBLayout.IsTorchFlat
-import { scaledSliderValue } from './deepWaterLook.js';   // GetScaledSliderValue: the same member Iliac Puddle No More ships, one home
+import { scaledSliderValue } from './deepWater/deepWaterLook.js';   // GetScaledSliderValue: the same member Iliac Puddle No More ships, one home
 import { colorLerp } from '../systems/mathf.js';          // Color.Lerp
 import { dice100 } from '../combat/formulas.js';   // Dice100.SuccessRoll, one home
 import { clampArmorVariant } from '../systems/armorMaterials.js';   // ItemBuilder.SetVariant's clamps: CurrentVariant

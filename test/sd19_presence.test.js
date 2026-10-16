@@ -20,7 +20,7 @@ import { scanGatePixels } from '../src/systems/gate/gateSite.js';
 import { LOCATION_TYPES, CLIMATES } from '../src/formats/mapsFile.js';
 import { sdFirst, sdRise, sdFind, sdFell, sdGone, sdNameIn, SD_COLLAPSE_MS } from '../src/net/sdLaw.js';
 import { eventTimerRows, timerText } from '../src/systems/eventTimers.js';
-import { isMainStoryDungeon } from '../src/world/dungeonTextures.js';
+import { isMainStoryDungeon } from '../src/world/dungeon/dungeonTextures.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const near = (a, b, e = 1e-6) => a.length === b.length && a.every((v, i) => Math.abs(v - b[i]) <= e);

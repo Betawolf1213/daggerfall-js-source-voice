@@ -21,7 +21,7 @@ import { Place, SITE_TYPES } from '../src/systems/quest/place.js';
 import { Item } from '../src/systems/quest/item.js';
 import { PlaceItem } from '../src/systems/quest/actions.js';
 import { addQuestResourceObjects, markerScenePosition, sceneMarkerOf, sceneMarkerMover, rideSceneMarker, questStandBox } from '../src/systems/quest/sceneMount.js';
-import { layoutDungeon } from '../src/world/dungeonLayout.js';
+import { layoutDungeon } from '../src/world/dungeon/dungeonLayout.js';
 import { ACTION_FLAGS, TRIGGER_FLAGS, MOVE_ACTION_FLAGS } from '../src/world/rdbLayout.js';
 import { RDB_RESOURCE_TYPES } from '../src/formats/blocksFile.js';
 import { ActionSystem, sharedRecord, validActionRecord } from '../src/world/actionSystem.js';

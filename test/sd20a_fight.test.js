@@ -23,9 +23,9 @@ import {
 import { sdMarksOf, SD_OMENS } from '../src/net/sdMarks.js';
 import { sdBlowVerdict, SD_STRIKE_LATE_MS } from '../src/net/sdStrike.js';
 import { SD_ARENA, SD_REALM_ORIGIN, SD_FRAY_LASH, SD_PILLAR_H, realmToDungeon, dungeonToRealm } from '../src/net/sdBrain.js';
-import { realmArena, arenaHolds, SD_ARENA_FLOORS, SD_REALM_FLOORS } from '../src/world/sdRealm.js';
-import { SD_HALL_FLOORS } from '../src/world/sdHall.js';
-import { SD_STEPS_FLOORS, SD_CAST_BACK_LOSS } from '../src/world/sdSteps.js';
+import { realmArena, arenaHolds, SD_ARENA_FLOORS, SD_REALM_FLOORS } from '../src/world/superDungeon/sdRealm.js';
+import { SD_HALL_FLOORS } from '../src/world/superDungeon/sdHall.js';
+import { SD_STEPS_FLOORS, SD_CAST_BACK_LOSS } from '../src/world/superDungeon/sdSteps.js';
 import { CAPSULE_RADIUS } from '../src/player/motor.js';
 import { createSdFightLink } from '../src/net/sdFightLink.js';
 import { validSdOut } from '../src/net/wire.js';

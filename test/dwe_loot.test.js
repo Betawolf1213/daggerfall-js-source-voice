@@ -8,7 +8,7 @@ import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import * as L from '../src/world/underwaterLoot.js';
+import * as L from '../src/world/underwater/underwaterLoot.js';
 import { createUnderwaterLoot } from '../src/scenes/deepWatersLoot.js';
 import { createRandomReligiousItem, createRandomGem, createRandomJewellery, createRandomOfGroup, ITEM_GROUPS, generateRandomLoot, LOOT_MATRICES } from '../src/systems/loot/loot.js';
 import { createDroppedLoot } from '../src/scenes/droppedLoot.js';

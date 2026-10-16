@@ -1,7 +1,7 @@
 [
   {
     "name": "CM-flight-floor",
-    "file": "src/world/cardMotion.js",
+    "file": "src/world/card/cardMotion.js",
     "old": "const flight = Math.max(FLIGHT_MIN_S, (dist - slide) / FLIGHT_SPEED);",
     "new": "const flight = (dist - slide) / FLIGHT_SPEED;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "CM-slide-overshoots",
-    "file": "src/world/cardMotion.js",
+    "file": "src/world/card/cardMotion.js",
     "old": "const d = v0 * s - 0.5 * SLIDE_DECEL * s * s;",
     "new": "const d = v0 * s;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "CM-flipshift-wrong-way",
-    "file": "src/world/cardMotion.js",
+    "file": "src/world/card/cardMotion.js",
     "old": "return [to[0] - Math.cos(yaw) * CARD_W, to[1], to[2] + Math.sin(yaw) * CARD_W];",
     "new": "return [to[0] + Math.cos(yaw) * CARD_W, to[1], to[2] - Math.sin(yaw) * CARD_W];",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "CM-chip-column-max",
-    "file": "src/world/cardMotion.js",
+    "file": "src/world/card/cardMotion.js",
     "old": "export const CHIP_STACK_MAX = 20;",
     "new": "export const CHIP_STACK_MAX = 21;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "CS3-board-no-shift",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "to: flipShift(this._rest(this.places.board[i], i & 1), this.places.boardYaw)",
     "new": "to: this._rest(this.places.board[i], i & 1)",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "CS3-own-cards-edge",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "t0: m.t1 + TURN_DELAY, pivot: 'middle' })",
     "new": "t0: m.t1 + TURN_DELAY, pivot: 'edge' })",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "CS3-others-seen",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "card: mine ? holeOf(seat, r) : -1,",
     "new": "card: holeOf(seat, r),",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "CS3-pot-lost",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "if (h) { this.lastBets.set(i, bet); pot += h.total - h.bet; }",
     "new": "if (h) { this.lastBets.set(i, bet); }",
     "tests": [

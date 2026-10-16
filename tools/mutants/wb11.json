@@ -280,7 +280,7 @@
   },
   {
     "name": "WB11-the-rise-drawn-standing",
-    "file": "src/world/gateBoss.js",
+    "file": "src/world/gate/gateBoss.js",
     "old": "  if (since < riseMs) return { act: 'rise',",
     "new": "  if (false) return { act: 'rise',",
     "tests": [
@@ -289,7 +289,7 @@
   },
   {
     "name": "WB11-a-sapper-of-the-wrong-element",
-    "file": "src/world/gateBoss.js",
+    "file": "src/world/gate/gateBoss.js",
     "old": "  sapper: Object.freeze({ burning: 35, rime: 38, storm: 36, venom: 37 }),",
     "new": "  sapper: Object.freeze({ burning: 35, rime: 35, storm: 36, venom: 37 }),",
     "tests": [

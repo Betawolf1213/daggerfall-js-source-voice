@@ -20,8 +20,8 @@ import { multiply } from '../src/world/mat4.js';
 import { CAPSULE_RADIUS } from '../src/player/motor.js';
 import { hullBuild, HULL } from '../src/systems/naval/navalShips.js';
 import { MOBILE } from '../src/systems/naval/navalBoarding.js';
-import { MEASURED } from '../src/world/galleonModel.js';
-import { MEASURED as CARRACK_MEASURED } from '../src/world/carrackModel.js';
+import { MEASURED } from '../src/world/ships/galleonModel.js';
+import { MEASURED as CARRACK_MEASURED } from '../src/world/ships/carrackModel.js';
 import { MODELS, ctxFor } from './csaScene.mjs';
 import { sea, readyPool } from './navalSea.mjs';
 
@@ -437,7 +437,7 @@ test('AUDIT GALLEON D7 HER HATCHWAYS ARE NO DECK: a part of hers that opens and 
   assert.equal(d.walkable(0, -10.4), false, 'her castle\'s doorway no deck');
   // the Carrack's hatchways: no deck over them. PIN MOVED (SHIPS-2, 2026-10-07): the Carrack is Mac's carrack now - no
   // cargo doors over a hold (the mod's 4 x 5 m at 3.64), her two hatchways open companions down to her gun deck, each
-  // under a house of hers (world/carrackModel.js MEASURED)
+  // under a house of hers (world/ships/carrackModel.js MEASURED)
   const carrack = pool.deckOf(HULL.Carrack, 0);
   for (const h of [CARRACK_MEASURED.hatchAft, CARRACK_MEASURED.hatchFore]) {
     assert.deepEqual(cellsOf(carrack).filter((c) => Math.abs(c[0]) < h.halfX && c[2] > h.z0 && c[2] < h.z1).length, 0, `no cell over the Carrack's hatchway at ${h.z0}`);

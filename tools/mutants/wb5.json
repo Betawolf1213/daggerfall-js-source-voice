@@ -1,7 +1,7 @@
 [
   {
     "name": "WB5-all-at-once",
-    "file": "src/world/gateSpew.js",
+    "file": "src/world/gate/gateSpew.js",
     "old": "    out.push({ at: i * SPEW_GAP_MS,",
     "new": "    out.push({ at: 0,",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "WB5-toward-his-back",
-    "file": "src/world/gateSpew.js",
+    "file": "src/world/gate/gateSpew.js",
     "old": "    const a = bearing + (u * 2 - 1) * SPEW_SPREAD;",
     "new": "    const a = bearing + Math.PI + (u * 2 - 1) * SPEW_SPREAD;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "WB5-the-bounce-at-full-speed",
-    "file": "src/world/gateSpew.js",
+    "file": "src/world/gate/gateSpew.js",
     "old": "    p.speedCurrent *= SPEW_BOUNCE;",
     "new": "    p.speedCurrent *= 1;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "WB5-rest-never-reached",
-    "file": "src/world/gateSpew.js",
+    "file": "src/world/gate/gateSpew.js",
     "old": "    if (p.speedCurrent < p.speedStart * PROJECTILE.restFraction) { p.pos = point; p.rest = true; return 'rest'; }",
     "new": "    if (false) { p.pos = point; p.rest = true; return 'rest'; }",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "WB5-gravity-without-the-drag",
-    "file": "src/world/gateSpew.js",
+    "file": "src/world/gate/gateSpew.js",
     "old": "PROJECTILE.gravityAccel * SPEW_GRAVITY_DRAG * PROJECTILE_FIXED_DT",
     "new": "PROJECTILE.gravityAccel * PROJECTILE_FIXED_DT",
     "tests": [

@@ -1,13 +1,13 @@
 // @ts-check
 // SD-LOOK S11 (2026-10-09, the Abyss Dungeon's look; bible/11-Multiplayer/Super-Dungeons-Look.md section 6): THE HANG AND
 // THE WORKS ON THE PAGE - the dungeon host's set for what hangs under and around the Hour's islands, as scenes/sdHall.js is
-// for the Orrery's hall. Nothing here is law (no collider, no floor, no clamp - the islands' law is world/sdRealm.js's);
+// for the Orrery's hall. Nothing here is law (no collider, no floor, no clamp - the islands' law is world/superDungeon/sdRealm.js's);
 // every draw carries `noShadow` - the roots and the far islands cast nothing into the lamps' cubes, and nothing that turns
 // casts (LA-SHADOW3's everyLightCasts) - and a `stage` (the stage cull's tag: threshold, orrery, steps, arena; `sky` the far
 // islands, `works` the Works).
 //
-//   STOOD once (stand): the roots, one mesh a stage (world/sdIslandModel.js buildHangModel - skirts, strata spires, gear
-//     rims); the chains, one mesh an island; the far islands, one mesh; the Works, a mesh a gear (world/sdWorksModel.js).
+//   STOOD once (stand): the roots, one mesh a stage (world/superDungeon/sdIslandModel.js buildHangModel - skirts, strata spires, gear
+//     rims); the chains, one mesh an island; the far islands, one mesh; the Works, a mesh a gear (world/superDungeon/sdWorksModel.js).
 //   EACH FRAME (frame): the realm's anchored clock read once - the chains swung on the escapement's tick about the line
 //     through their anchors (chainSwing, chainMatrix), the Works turned a tooth a tick, neighbours opposite (worksMatrix),
 //     the far set turned once a sky period (render/sdSky.js SD_SKY_PERIOD). Every matrix written in place: a frame makes
@@ -16,9 +16,9 @@
 //     chains still (their draws stood at rest and never swung).
 //
 // Not a DFU member. Ledger A (SUPER-DUNGEONS).
-import { SD_HANG_ISLANDS, SD_HANG_STAGES, buildHangModel, buildChainModel, buildFarIslandsModel, chainSwing, chainMatrix, farIslandsMatrix } from '../world/sdIslandModel.js';
-import { SD_WORKS, SD_HANG_NOW, buildWorksGear, worksMatrix } from '../world/sdWorksModel.js';
-import { sdTick } from '../world/sdLook.js';
+import { SD_HANG_ISLANDS, SD_HANG_STAGES, buildHangModel, buildChainModel, buildFarIslandsModel, chainSwing, chainMatrix, farIslandsMatrix } from '../world/superDungeon/sdIslandModel.js';
+import { SD_WORKS, SD_HANG_NOW, buildWorksGear, worksMatrix } from '../world/superDungeon/sdWorksModel.js';
+import { sdTick } from '../world/superDungeon/sdLook.js';
 import { sdSkyClock, SD_SKY_PERIOD } from '../render/sdSky.js';
 import { isTouchDevice } from '../ui/touchDevice.js';
 import { identity } from '../world/mat4.js';

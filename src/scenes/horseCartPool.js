@@ -889,7 +889,7 @@ export function createHorseCartPool({
    *  whole (its box is not this one). */
   const teamVerdict = (f, cull) => (!cull || f.g > 1 ? DECOR_DRAW : cull(peerTeamBox(f.at, _teamBox)));
   /** PERF-WAGON (2026-10-10, Mac: "For carts, wagons, etc, we need culling"): ANY OTHER WAGON THIS POOL DRAWS - the road's
-   *  teams (world/roadTeams.js, LW10) - by the same verdict over the same box (teamVerdict): in view drawn, off screen in
+   *  teams (world/road/roadTeams.js, LW10) - by the same verdict over the same box (teamVerdict): in view drawn, off screen in
    *  a shadow's reach cast into the maps alone, else nothing; no test, or grown, drawn whole. drawWagon's own arguments
    *  after the test. Answers whether it was drawn on screen. */
   function drawWagonSeen(r, cull, texRemap, position, rotation, tier, turn, scale = 1, kind = myKind(), hitched = false, look = null) {
@@ -1792,7 +1792,7 @@ export function createHorseCartPool({
     get enabled() { return enabled; },
     get runtime() { return runtime; },
     // LW10 (bible/06-Systems/Living-World-II.md): the living world's teams draw with the pool's own pieces - its wagon's
-    // draw and its horse's pose, one home for both (ONE MEMBER, ONE EXPORT; world/roadTeams.js); WAGONS1 x LW10: a
+    // draw and its horse's pose, one home for both (ONE MEMBER, ONE EXPORT; world/road/roadTeams.js); WAGONS1 x LW10: a
     // wagon of a KIND - its parts (`partsOf`) and its hitch (`hitchOfKind`) - never the player's driven one (`hitchOf`)
     presentation: { wagonParts, horseArt, hitchOf: () => hitchOf(myKind()), onChanged: () => onChanged?.(), drawWagon, drawWagonSeen, poseHorse: poseHorseBatch, partsOf, hitchOfKind: hitchOf },   // PERF-WAGON: the road's teams by the one verdict
     phys,

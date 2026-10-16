@@ -83,7 +83,7 @@ test('SHORE-CAST: the world host asks the swim\'s own coverage at the cast - bea
 
 test('SHORE-CAST: a cast the gathering host drops - a window, a door, the helm, the pixel\'s edge - is ENDED, so the bank is no target after it (AUDIT FB1005 W2: the drop left it neither done nor cancelled, and the exemption kept the sand a cast)', async () => {
   const { createGatherHost } = await import('../src/scenes/gatherHost.js');
-  const { HEIGHTMAP_DIMENSION } = await import('../src/world/terrainSampler.js');
+  const { HEIGHTMAP_DIMENSION } = await import('../src/world/terrain/terrainSampler.js');
   const PX = 207, PY = 222;
   let active = true, held = true;
   const feet = [400, 0, 8];

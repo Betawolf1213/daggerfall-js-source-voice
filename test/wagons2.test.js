@@ -22,7 +22,7 @@ import { wagonGeometry, MEASURED, LIFT, rigGrowOf } from '../src/world/wagonMode
 import { caravanRoomBlock, CARAVAN_ROOM_MODEL_ID, roomToSaved, savedToRoom, turnCaravanScene, readCaravanRoom } from '../src/systems/caravanRoom.js';
 import { caravanRoomEntry, caravanRoomRecords, caravanRoomPictures, paintCaravanRoom, serveRoomModels, CARAVAN_LIVE_CHOICE } from '../src/scenes/caravanRoom.js';
 import { buildInteriorContext } from '../src/scenes/interiorContext.js';
-import { interiorLightProperties } from '../src/world/interiorLights.js';
+import { interiorLightProperties } from '../src/world/interior/interiorLights.js';
 import { billboardSize } from '../src/world/rmbFlats.js';
 import { createHorseCartPool, PUPPET_SEAT_REACH, PUPPET_SEAT_RISE, SEAT_GLUE_REACH, OUTSIDE_SKIP_REACH } from '../src/scenes/horseCartPool.js';
 import { hccWireRecord, validHccRecord, HCC_WIRE_KIND } from '../src/systems/horse/horseCartWire.js';

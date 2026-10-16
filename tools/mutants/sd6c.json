@@ -1,7 +1,7 @@
 [
   {
     "name": "SD6C-a-stone-turned-away",
-    "file": "src/world/sdHall.js",
+    "file": "src/world/superDungeon/sdHall.js",
     "old": "  const n = [-Math.sin(b), 0, -Math.cos(b)];\n  return { at: [p.x, 0, p.z], n, R: [-n[2], 0, n[0]] };",
     "new": "  const n = [Math.sin(b), 0, Math.cos(b)];\n  return { at: [p.x, 0, p.z], n, R: [-n[2], 0, n[0]] };",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "SD6C-the-right-the-left",
-    "file": "src/world/sdHall.js",
+    "file": "src/world/superDungeon/sdHall.js",
     "old": "  return { at: [p.x, 0, p.z], n, R: [-n[2], 0, n[0]] };",
     "new": "  return { at: [p.x, 0, p.z], n, R: [n[2], 0, -n[0]] };",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "SD6C-the-hands-turn-backwards",
-    "file": "src/world/sdHall.js",
+    "file": "src/world/superDungeon/sdHall.js",
     "old": "  const t = ((hour % 12) / 12) * Math.PI * 2, c = Math.cos(t), s = Math.sin(t);",
     "new": "  const t = -((hour % 12) / 12) * Math.PI * 2, c = Math.cos(t), s = Math.sin(t);",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "SD6C-a-mirrored-hand",
-    "file": "src/world/sdHall.js",
+    "file": "src/world/superDungeon/sdHall.js",
     "old": "   // its own +x: y x n\n  out[0] = x0; out[1] = x1; out[2] = x2;",
     "new": "   // its own +x: y x n\n  out[0] = -x0; out[1] = -x1; out[2] = -x2;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "SD6C-the-handles-swapped",
-    "file": "src/world/sdHall.js",
+    "file": "src/world/superDungeon/sdHall.js",
     "old": "export const handleFoot = (i, side) => stonePoint(i, side * (",
     "new": "export const handleFoot = (i, side) => stonePoint(i, -side * (",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "SD6C-the-lit-ring-at-the-wrong-hours",
-    "file": "src/world/sdHall.js",
+    "file": "src/world/superDungeon/sdHall.js",
     "old": "  const mid = deg((2 * k + 1) * 30), half = deg(halfHours * 30);",
     "new": "  const mid = deg(2 * k * 30), half = deg(halfHours * 30);",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "SD6C-the-fray-backwards",
-    "file": "src/world/sdHall.js",
+    "file": "src/world/superDungeon/sdHall.js",
     "old": "export const frayTabBearing = (k, count = SD_FRAY_RING.steps) => ((k + 0.5) / count) * Math.PI * 2;",
     "new": "export const frayTabBearing = (k, count = SD_FRAY_RING.steps) => -((k + 0.5) / count) * Math.PI * 2;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "SD6C-the-bridge-short-of-the-step",
-    "file": "src/world/sdHall.js",
+    "file": "src/world/superDungeon/sdHall.js",
     "old": "z1: SD_FIRST_STEP.z - SD_FIRST_STEP.r + 0.5,",
     "new": "z1: SD_FIRST_STEP.z - SD_FIRST_STEP.r - 0.5,",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "SD6C-the-step-no-floor",
-    "file": "src/world/sdHall.js",
+    "file": "src/world/superDungeon/sdHall.js",
     "old": "  Object.freeze({ kind: 'disc', ...SD_FIRST_STEP }),\n]);",
     "new": "]);",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "SD6C-a-plaque-on-the-walk",
-    "file": "src/world/sdHall.js",
+    "file": "src/world/superDungeon/sdHall.js",
     "old": "bearings: Object.freeze([200, 240, 300, 60, 120, 160])",
     "new": "bearings: Object.freeze([180, 240, 300, 60, 120, 160])",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "SD6C-a-stone-wearing-another's-sign",
-    "file": "src/world/sdHallArt.js",
+    "file": "src/world/superDungeon/sdHallArt.js",
     "old": "  const sign = SD_SIGNS[i], bone = i === 4, ink = bone ? Pa : Br;",
     "new": "  const sign = SD_SIGNS[i % 5], bone = i === 4, ink = bone ? Pa : Br;",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "SD6C-a-plaque-miscounted",
-    "file": "src/world/sdHallArt.js",
+    "file": "src/world/superDungeon/sdHallArt.js",
     "old": "  [[-0.4, -0.4], [0, 0], [0.4, 0.4]],",
     "new": "  [[-0.4, -0.4], [0.4, 0.4]],",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "SD6C-the-dial-without-its-twelfth",
-    "file": "src/world/sdHallArt.js",
+    "file": "src/world/superDungeon/sdHallArt.js",
     "old": "    if (r > (quarter ? 0.5 : 0.6) && r < 0.84 && off < (quarter ? 0.06 : 0.042))",
     "new": "    if (r > (quarter ? 0.5 : 0.6) && r < 0.84 && off < (quarter ? 0.06 : 0.042) && Math.round(hour) % 12 !== 0)",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "SD6C-a-glow-without-its-light",
-    "file": "src/world/sdHallArt.js",
+    "file": "src/world/superDungeon/sdHallArt.js",
     "old": "export function hallGlowArt(color) {\n  return lightArt(16, color);",
     "new": "export function hallGlowArt(color) {\n  return lightArt(16, color, 0);",
     "tests": [

@@ -14,9 +14,9 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 
-import * as GM from '../src/world/galleonModel.js';
-import * as GA from '../src/world/galleonArt.js';
-import { MeshBench, prism, box, planarUv, cross, sub, dot, norm, add, scl } from '../src/world/galleonMesh.js';
+import * as GM from '../src/world/ships/galleonModel.js';
+import * as GA from '../src/world/ships/galleonArt.js';
+import { MeshBench, prism, box, planarUv, cross, sub, dot, norm, add, scl } from '../src/world/ships/galleonMesh.js';
 import { comeSailAwayModels, loadComeSailAwayModels, CSA_MODEL_URLS } from '../src/systems/comeSailAway/comeSailAwayModels.js';
 import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';
 import { createDataPipeline } from '../src/scenes/dataPipeline.js';

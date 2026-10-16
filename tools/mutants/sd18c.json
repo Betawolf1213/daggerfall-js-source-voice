@@ -1,7 +1,7 @@
 [
   {
     "name": "SD18C-every-ending-one-light",
-    "file": "src/world/sdRemnantArt.js",
+    "file": "src/world/superDungeon/sdRemnantArt.js",
     "old": "Object.fromEntries(SD_ENDINGS.map((E, k) => [E.id, 25 + k]))",
     "new": "Object.fromEntries(SD_ENDINGS.map((E) => [E.id, 25]))",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "SD18C-no-own-light",
-    "file": "src/world/sdRemnantArt.js",
+    "file": "src/world/superDungeon/sdRemnantArt.js",
     "old": "  for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) { put(albedo, x, y, rgb); put(emission, x, y, rgb); }",
     "new": "  for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) { put(albedo, x, y, rgb); put(emission, x, y, [0, 0, 0]); }",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "SD18C-the-lights-never-uploaded",
-    "file": "src/world/sdRemnantArt.js",
+    "file": "src/world/superDungeon/sdRemnantArt.js",
     "old": ", ...SD_ENDINGS.map((E) => /** @type {[number, ReturnType<typeof echoMetalArt>]} */ ([SD_REMNANT_ENDING_RECORD[E.id], endingLightArt(E.light)]))];",
     "new": "];",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "SD18C-the-heart-green",
-    "file": "src/world/sdRemnantModel.js",
+    "file": "src/world/superDungeon/sdRemnantModel.js",
     "old": "  lathe(f, heartRecordOf(ending), 0, 0, [[0, H - R],",
     "new": "  lathe(f, SD_REMNANT_HEART_RECORD, 0, 0, [[0, H - R],",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "SD18C-the-eyes-gold",
-    "file": "src/world/sdRemnantModel.js",
+    "file": "src/world/superDungeon/sdRemnantModel.js",
     "old": "    f.quad(eyeRecordOf(ending), [ex - B.eyeW / 2, ey, ez],",
     "new": "    f.quad(SD_REMNANT_EYE_RECORD, [ex - B.eyeW / 2, ey, ez],",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "SD18C-the-hearts-green",
-    "file": "src/world/sdRemnantModel.js",
+    "file": "src/world/superDungeon/sdRemnantModel.js",
     "old": "  shard(f, heartRecordOf(ending), 0, 0, 0, SD_HEART.h * 0.35, SD_HEART.h, SD_HEART.r);",
     "new": "  shard(f, SD_REMNANT_HEART_RECORD, 0, 0, 0, SD_HEART.h * 0.35, SD_HEART.h, SD_HEART.r);",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "SD18C-the-parts-unlit",
-    "file": "src/world/sdRemnantModel.js",
+    "file": "src/world/superDungeon/sdRemnantModel.js",
     "old": "  emitRemnant(metal, (n) => fs[n], ending);",
     "new": "  emitRemnant(metal, (n) => fs[n]);",
     "tests": [

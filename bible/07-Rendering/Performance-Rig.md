@@ -666,7 +666,7 @@ every other shape keeps TELEGRAPH_REACH; and the count at a fighter's eye at 960
 **What its probe did not time: the shadow pass** (counted 2026-10-14). The rounds above time the telegraph and the crowd's
 draws after `beginFrame`; the shadow maps are drawn inside it (renderer.js `_renderPasses`), from the last frame's records
 under this frame's lights, so the court's own lights never entered them. `tools/courtShadowProbe.mjs` counts that pass:
-the real Renderer and ShadowPass on a counting GL, the court's own mesh, its light composition (`world/gateArena.js`
+the real Renderer and ShadowPass on a counting GL, the court's own mesh, its light composition (`world/gate/gateArena.js`
 withCourtLights over courtLightsNear, under everyLightCasts, as the dungeon arm composes it), Steady shadows, eight
 Morrowind bodies recorded about him with a new pose every frame (5,934 corners each). A frame, mean (worst), before
 LIGHT-ID and after it:

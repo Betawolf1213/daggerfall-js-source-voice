@@ -227,7 +227,7 @@ function fnv(k) {
   return h >>> 0;
 }
 /**
- * A STRANGER'S HORSE: the look a horse nobody owns wears - the road's teams (world/roadTeams.js) - off its own key, so
+ * A STRANGER'S HORSE: the look a horse nobody owns wears - the road's teams (world/road/roadTeams.js) - off its own key, so
  * it keeps it every frame and every client sees the same one: born by BIRTH_WEIGHTS on the key's hash, on one of
  * STRANGER_SEEDS seeds (a road shows many horses at once, and each look is its own dyed pictures). As a code.
  */

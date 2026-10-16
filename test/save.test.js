@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { snapshotPlayer, restorePlayer, SAVE_VERSION } from '../src/systems/save/save.js';
 import { routeKey } from '../src/ui/input.js';
-import { STREAMING_TERRAIN_SCALE } from '../src/world/terrainSampler.js';
+import { STREAMING_TERRAIN_SCALE } from '../src/world/terrain/terrainSampler.js';
 
 const mkEntity = () => ({
   name: 'Mac', gender: 'female', careerIndex: 4, level: 3, reflexes: 2,

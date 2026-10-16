@@ -12,8 +12,8 @@ import { SD_KEY, SD_REALM_KEY, SOCIAL_ROOM, PIXEL_UNITS, worldRoom, chatRegionRo
 import { sdRoomKey, sdFirst, sdRise, sdFind, sdFell, SD_NO_FALLEN, SD_NO_CLOSED, SD_NO_RIFT, SD_COLLAPSE_MS } from '../src/net/sdLaw.js';
 import { SD_ARENA, realmToDungeon } from '../src/net/sdBrain.js';
 import { PIXEL_M } from '../src/net/gateLaw.js';
-import { sdRiftWord, SD_FALLEN_KEY, SD_ENTERED_KEY, SD_ENTERED_MAX } from '../src/world/sdDungeon.js';
-import { SD_REALM_TEXT } from '../src/world/sdRealm.js';
+import { sdRiftWord, SD_FALLEN_KEY, SD_ENTERED_KEY, SD_ENTERED_MAX } from '../src/world/superDungeon/sdDungeon.js';
+import { SD_REALM_TEXT } from '../src/world/superDungeon/sdRealm.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const W = read('src/scenes/world.js');

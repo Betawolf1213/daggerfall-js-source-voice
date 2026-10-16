@@ -1,5 +1,5 @@
 // SD5a (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 7): THE SHATTERED HOUR - the
-// made level beyond a Hollow's Rift (world/sdRealm.js, world/sdRealmArt.js; its frame net/sdBrain.js) and its ways in and
+// made level beyond a Hollow's Rift (world/superDungeon/sdRealm.js, world/superDungeon/sdRealmArt.js; its frame net/sdBrain.js) and its ways in and
 // out. The Burning Court's law: the dungeon host with a level made in code - a made location, an empty block, the Hour's
 // own mesh, floors, edge, lamps, light and air - its room the relay's realm `sd:<s>`; the Court's refusals beside the
 // Court's own (rest, save, map, Mark, Recall, regeneration). In by the Rift (out of the Hollow, to its pixel, into the
@@ -15,17 +15,17 @@ import {
   SD_REALM_TEXT, SD_REALM_FLOORS, SD_REALM_FOG, SD_LAMP_COLOR, SD_LAMP_H, SD_ROOT_DEPTH, SD_LIP,
   SD_REALM_FLOOR_RECORD, SD_REALM_BRASS_RECORD, SD_REALM_ROOT_RECORD, SD_REALM_DIAL_RECORD, SD_REALM_ARENA_RECORD, SD_REALM_COBBLE_RECORD, SD_REALM_EDGE_RECORD, SD_REALM_PILLAR_RECORD,
   SD_REALM_TRILIGHT, SD_REALM_KEY_LIGHT, SD_DIAL_INLAY,
-} from '../src/world/sdRealm.js';
-import { SD_HALL_GLOW_RECORD } from '../src/world/sdHallArt.js';
-import { buildHangModel } from '../src/world/sdIslandModel.js';
-import { realmArt, SD_ART_SIZE, SD_DIAL_SIZE, SD_ROOT_ART_H } from '../src/world/sdRealmArt.js';
-import { gateArenaLocation, isGateArena, GATE_ARENA_LOCATION_ID, GATE_ARENA_BLOCK_INDEX } from '../src/world/gateArena.js';
-import { madeDungeon, dungeonTierLabel } from '../src/world/dungeonLabel.js';
+} from '../src/world/superDungeon/sdRealm.js';
+import { SD_HALL_GLOW_RECORD } from '../src/world/superDungeon/sdHallArt.js';
+import { buildHangModel } from '../src/world/superDungeon/sdIslandModel.js';
+import { realmArt, SD_ART_SIZE, SD_DIAL_SIZE, SD_ROOT_ART_H } from '../src/world/superDungeon/sdRealmArt.js';
+import { gateArenaLocation, isGateArena, GATE_ARENA_LOCATION_ID, GATE_ARENA_BLOCK_INDEX } from '../src/world/gate/gateArena.js';
+import { madeDungeon, dungeonTierLabel } from '../src/world/dungeon/dungeonLabel.js';
 import { sdRoomKey, SD_NO_CLOSED } from '../src/net/sdLaw.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const close = (a, b, eps = 1e-6) => Math.abs(a - b) <= eps;
-/** SD-LOOK S11: the Threshold's hang (world/sdIslandModel.js), the realm's frame. */
+/** SD-LOOK S11: the Threshold's hang (world/superDungeon/sdIslandModel.js), the realm's frame. */
 const hangVerts = () => { const m = buildHangModel('threshold'), out = []; for (let i = 0; i < m.positions.length; i += 3) out.push(dungeonToRealm(m.positions[i], m.positions[i + 1], m.positions[i + 2])); return out; };
 const HOLLOW = { key: '303,202', px: 303, py: 202, name: 'The Stopped Bell' };
 
@@ -98,7 +98,7 @@ test('SD5a the Hour\'s mesh: its five records and its lamps\' glow, of its own a
   const brass = verts(SD_REALM_BRASS_RECORD);
   assert.ok(brass.some((p) => close(p[1], SD_PILLAR_H) && close(Math.hypot(p[0] - SD_ARENA.x, p[2] - SD_ARENA.z), SD_PILLAR_R, 1.2)), 'the pillars\' tops');
   // PIN MOVED (SD-LOOK S11): the island keeps its torn lip, SD_LIP of stone under its rim; what hangs under it is the hang's
-  // (world/sdIslandModel.js - a noShadow mesh a stage, its main spire SD_ROOT_DEPTH under the Threshold: test/sd25_hang.test.js)
+  // (world/superDungeon/sdIslandModel.js - a noShadow mesh a stage, its main spire SD_ROOT_DEPTH under the Threshold: test/sd25_hang.test.js)
   for (const isl of [SD_THRESHOLD, SD_ORRERY, SD_ARENA]) assert.ok(verts(SD_REALM_ROOT_RECORD).filter((p) => close(p[1], -SD_LIP, 1e-4) && close(Math.hypot(p[0] - isl.x, p[2] - isl.z), isl.r, 1e-3)).length >= 48, 'each island\'s lip under its rim, all round');
   assert.ok(Math.min(...hangVerts().map((p) => p[1])) <= -SD_ROOT_DEPTH, 'the roots hang into the void');
   // the dial's uv: the whole image over the whole hall
@@ -166,7 +166,7 @@ test('SD5a the lamps and the light: the Threshold\'s four and the hall\'s and th
 
 test('SD5a the art: five textures made in code, the same every boot - the floor, brass, the roots, the Hour-dial over the whole hall and the arena\'s cracked brass; brass glows a little of its own (mutants: the dial\'s twelfth unlit)', () => {
   const art = realmArt();
-  assert.deepEqual(art.map(([r]) => r), [0, 1, 2, 3, 4, 31, 32, 56, 80, 81]);   // SD-LOOK (PIN MOVED): the Threshold's cobbles, the edge line's gold; PIN MOVED (SD-LOOK S7): the pillars' basalt; PIN MOVED (SD-LOOK S11): the Works' brass and the chains (world/sdHangArt.js)
+  assert.deepEqual(art.map(([r]) => r), [0, 1, 2, 3, 4, 31, 32, 56, 80, 81]);   // SD-LOOK (PIN MOVED): the Threshold's cobbles, the edge line's gold; PIN MOVED (SD-LOOK S7): the pillars' basalt; PIN MOVED (SD-LOOK S11): the Works' brass and the chains (world/superDungeon/sdHangArt.js)
   for (const [r, a] of art) {
     const S = r === 3 ? SD_DIAL_SIZE : r === 32 ? 8 : r === 81 ? 32 : SD_ART_SIZE, H = r === 2 ? SD_ROOT_ART_H : S;   // SD-LOOK (PIN MOVED): the root a strip, top to tip; S11: the chains' 32
     assert.equal(a.albedo.width, S); assert.equal(a.emission.width, S);
@@ -176,7 +176,7 @@ test('SD5a the art: five textures made in code, the same every boot - the floor,
   const brass = art[1][1].emission.colors;
   assert.ok(brass.some((v, i) => i % 4 === 0 && v > 0), 'brass glows');
   // SD-LOOK (PIN MOVED): the twelfth hour, toward the arena (+z), its mark the widest - brass laid in the floor now, not
-  // painted at 7 texels a metre (world/sdRealm.js SD_DIAL_INLAY): a point just off its middle is on it at twelve and off
+  // painted at 7 texels a metre (world/superDungeon/sdRealm.js SD_DIAL_INLAY): a point just off its middle is on it at twelve and off
   // it at three; the dial's art is quiet stone with no light of its own
   const dial = art[3][1];
   assert.equal(SD_DIAL_SIZE, 256);
@@ -312,6 +312,6 @@ test('SD5a the world host by source: the Rift\'s door; the doors out of the Hour
   // a room that will not have me: out before the Hollow's door with the relay's own words, once
   assert.match(w, /const sdFrame = \(\) => \{ try \{ sdHost\?\.frame\(\); \} catch \(e\) \{[^\n]*\} sdRealmFrame\(\); sdAloneFrame\(\); sdFightFrame\(\); sdBodyFrame\(\); sdVoiceFrame\(\); \};/);   // PIN MOVED (SD8c): the Remnant's fight after the realm's; AUDIT SD II (SD11d, PIN MOVED): and the Hour's voice last; SD-ALONE (PIN MOVED): the companions' word after the realm's own   // PIN MOVED (INT15): the Hour's body word's own step
   assert.match(w, /if \(_sdOut \|\| !online\?\.terminal \|\| !\(playerEntity\.health > 0\) \|\| modes\?\.deathUp\?\.\(\)\) return;\n\s+_sdOut = true;\n\s+gateVeil\?\.flash\('hourCast'\);[^\n]*\n\s+if \(modes\?\.unstuck\?\.\(\)\) sdSay\(\/\^The Hour \/\.test\(online\.error \?\? ''\) \? online\.error : SD_REALM_TEXT\.lost\);/);   // AUDIT SD II (SD11d, PIN MOVED): the Hour's brass veil, its voice
-  assert.match(read('src/world/dungeonLabel.js'), /export const madeDungeon = \(loc\) => isGateArena\(loc\) \|\| isArenaFloor\(loc\) \|\| isArenaUndercroft\(loc\) \|\| isSdRealm\(loc\);/);
+  assert.match(read('src/world/dungeon/dungeonLabel.js'), /export const madeDungeon = \(loc\) => isGateArena\(loc\) \|\| isArenaFloor\(loc\) \|\| isArenaUndercroft\(loc\) \|\| isSdRealm\(loc\);/);
   assert.match(read('bible/11-Multiplayer/Super-Dungeons.md'), /### SD5a - shipped 2026-10-07/);
 });

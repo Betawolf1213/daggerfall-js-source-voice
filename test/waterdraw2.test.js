@@ -8,10 +8,10 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { WATER_MASK_TABLE, WATER_DRAW_MASK_TABLE, ISLAND_DRAWN, CORNER_DRAWN, buildWaterMaskTable } from '../src/world/waterCorners.js';
+import { WATER_MASK_TABLE, WATER_DRAW_MASK_TABLE, ISLAND_DRAWN, CORNER_DRAWN, buildWaterMaskTable } from '../src/world/water/waterCorners.js';
 import { BlocksFile } from '../src/formats/blocksFile.js';
 import { dryPuddles, groundTileWet } from '../src/world/puddleDry.js';
-import { waterBedDepths } from '../src/world/waterBed.js';
+import { waterBedDepths } from '../src/world/water/waterBed.js';
 import { buildWaterIndices } from '../src/render/waterSurface.js';
 
 const ARENA2 = process.env.ARENA2_PATH;

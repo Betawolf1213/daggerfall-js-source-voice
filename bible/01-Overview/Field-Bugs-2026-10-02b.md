@@ -28,7 +28,7 @@ a Carrack there had all five nodes on land, and the sail key answered "Unable to
 sea, 0.4 of a heightmap step from reading land, is lifted over Come Sail Away's 34 m line and over Deep Waters' carve
 (34.019 m), its tiles still water. SEA-SHOAL read a carved seafloor there - and nothing was carved.
 
-**The fix (a departure).** `world/wodLocationLoader.js` `flattenForLocation`: a sample at the sampler's sea clamp
+**The fix (a departure).** `world/worldOfDaggerfall/wodLocationLoader.js` `flattenForLocation`: a sample at the sampler's sea clamp
 (SEA_SAMPLE) under the site's mean is left the sea past SEA_RAMP (2) samples of the site's rect; inside it the site's
 ground is the mod's, and within SEA_RAMP the mod's own lerp, a ramp down to the water. Land is levelled as the mod
 levels it. SEA-SHOAL's read in `csaTerrainOf` is reverted. After: the sea reads 33.994 m everywhere past the ramp, the

@@ -19,7 +19,7 @@
   },
   {
     "name": "SD25-a-light-re-valued",
-    "file": "src/world/sdLook.js",
+    "file": "src/world/superDungeon/sdLook.js",
     "old": "  mantella: Object.freeze([0.45, 1.0, 0.6]),",
     "new": "  mantella: Object.freeze([0.5, 1.0, 0.6]),",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "SD25-the-escapement-unheld",
-    "file": "src/world/sdLook.js",
+    "file": "src/world/superDungeon/sdLook.js",
     "old": "  const s = Math.floor(t), e = Math.min(1, (t - s) / SD_TICK_EASE_S);",
     "new": "  const s = Math.floor(t), e = t - s;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "SD25-a-blend-between-steps",
-    "file": "src/world/sdPixelKit.js",
+    "file": "src/world/superDungeon/sdPixelKit.js",
     "old": "  return [...r[f - i > bayer(x, y) ? i + 1 : i]];",
     "new": "  return r[i].map((v, k) => Math.round(v + (r[i + 1][k] - v) * (f - i)));",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "SD25-a-joint-lit",
-    "file": "src/world/sdRealmArt.js",
+    "file": "src/world/superDungeon/sdRealmArt.js",
     "old": "    if (fx < J || fy < J) { putTexel(albedo, x, y, step(B, 0)); continue; }",
     "new": "    if (fx < J || fy < J) { putTexel(albedo, x, y, step(B, 0)); putTexel(emission, x, y, scale(step(Br, 3), 0.18)); continue; }",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "SD25-brass-glowing-whole",
-    "file": "src/world/sdRealmArt.js",
+    "file": "src/world/superDungeon/sdRealmArt.js",
     "old": "    putTexel(albedo, x, y, ramp(Br, 0.2 + 0.55 * g, x, y));",
     "new": "    putTexel(albedo, x, y, ramp(Br, 0.2 + 0.55 * g, x, y)); putTexel(emission, x, y, scale(ramp(Br, 0.2 + 0.55 * g, x, y), 0.12));",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "SD25-the-street-off-its-palette",
-    "file": "src/world/sdRealmArt.js",
+    "file": "src/world/superDungeon/sdRealmArt.js",
     "old": "  quantize(albedo, paletteOf(Co, Br));\n",
     "new": "",
     "tests": [
@@ -75,7 +75,7 @@
   },
   {
     "name": "SD25-the-furnace-dark",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "  ground: Object.freeze([0.34, 0.2, 0.08]),",
     "new": "  ground: Object.freeze([0.12, 0.1, 0.07]),",
     "tests": [
@@ -102,7 +102,7 @@
   },
   {
     "name": "SD25-a-tooth-over-the-rim",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "export const SD_TOOTH_TOP = SD_RIM_H - 0.05;",
     "new": "export const SD_TOOTH_TOP = SD_RIM_H + 0.05;",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "SD25-the-compass-turned",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "len = k === 0 ? SD_COMPASS.north",
     "new": "len = k === 2 ? SD_COMPASS.north",
     "tests": [
@@ -120,7 +120,7 @@
   },
   {
     "name": "SD25-the-rim's-edge-line-gone",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "    quadFacing(f, SD_REALM_EDGE_RECORD, E(re, a0, ye), E(re, a1, ye), E(ro, a1, ye), E(ro, a0, ye), [0, 0], [1, 0], [1, 1], [0, 1], UP);\n",
     "new": "",
     "tests": [
@@ -129,7 +129,7 @@
   },
   {
     "name": "SD25-the-kerb's-edge-line-gone",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "      quadFacing(f, SD_REALM_EDGE_RECORD, P(xl, Y, true), P(xl, Y, false), P(xr, Y, false), P(xr, Y, true), [0, 0], [0, 1], [1, 1], [1, 0], UP);\n",
     "new": "",
     "tests": [
@@ -138,7 +138,7 @@
   },
   {
     "name": "SD25-the-arena-a-disc-again",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "{ bands: SD_ARENA_BANDS }",
     "new": "{}",
     "tests": [
@@ -165,7 +165,7 @@
   },
   {
     "name": "SD25-a-glyph-row",
-    "file": "src/world/sdSkyArt.js",
+    "file": "src/world/superDungeon/sdSkyArt.js",
     "old": "V: Object.freeze({ w: 5, rows: Object.freeze([17, 17, 17, 10, 10, 4, 4]) }),",
     "new": "V: Object.freeze({ w: 5, rows: Object.freeze([4, 4, 10, 10, 17, 17, 17]) }),",
     "tests": [
@@ -174,7 +174,7 @@
   },
   {
     "name": "SD25-a-numeral-misspelled",
-    "file": "src/world/sdSkyArt.js",
+    "file": "src/world/superDungeon/sdSkyArt.js",
     "old": "'III', 'IV', 'V',",
     "new": "'III', 'IIII', 'V',",
     "tests": [
@@ -201,7 +201,7 @@
   },
   {
     "name": "SD25-the-short-line",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "(reach[b] + reach[b + 4]) - (reach[a] + reach[a + 4]) || a - b",
     "new": "(reach[a] + reach[a + 4]) - (reach[b] + reach[b + 4]) || a - b",
     "tests": [
@@ -210,7 +210,7 @@
   },
   {
     "name": "SD25-the-pillar-unasked",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "    if (room >= size / 2 + SD_RIFT_AIR_M) return [...BEARINGS[k]];",
     "new": "    if (room >= 0) return [...BEARINGS[k]];",
     "tests": [
@@ -219,7 +219,7 @@
   },
   {
     "name": "SD25-the-collapse-uncounted",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": ", lit = Math.ceil(left * 24), c = COLLAPSE_LOOK;",
     "new": ", lit = 24, c = COLLAPSE_LOOK;",
     "tests": [
@@ -228,7 +228,7 @@
   },
   {
     "name": "SD25-a-newcomer-let-see-in",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "c.aperture = entered ? 1 / 3 + (2 / 3) * left : 0;",
     "new": "c.aperture = 1 / 3 + (2 / 3) * left;",
     "tests": [
@@ -237,7 +237,7 @@
   },
   {
     "name": "SD25-the-leaves-short-of-the-heart",
-    "file": "src/world/sdRiftModel.js",
+    "file": "src/world/superDungeon/sdRiftModel.js",
     "old": "const ro = P.iris1 * R, rv = a * ro * 0.97;",
     "new": "const ro = P.iris1 * R, rv = (0.1 + a) * ro * 0.88;",
     "tests": [
@@ -246,7 +246,7 @@
   },
   {
     "name": "SD25-wide-leaves-in-the-window",
-    "file": "src/world/sdRiftModel.js",
+    "file": "src/world/superDungeon/sdRiftModel.js",
     "old": "const ro = P.iris1 * R, rv = a * ro * 0.97;",
     "new": "const ro = P.iris1 * R, rv = a * ro * 0.8;",
     "tests": [
@@ -588,7 +588,7 @@
   },
   {
     "name": "SD25-the-blade-short-of-the-hand",
-    "file": "src/world/sdRemnantModel.js",
+    "file": "src/world/superDungeon/sdRemnantModel.js",
     "old": "[0, B.armBot], [-L.spadeW / 2,",
     "new": "[0, B.armBot + 0.2], [-L.spadeW / 2,",
     "tests": [
@@ -597,7 +597,7 @@
   },
   {
     "name": "SD25-a-bell-past-the-body",
-    "file": "src/world/sdRemnantModel.js",
+    "file": "src/world/superDungeon/sdRemnantModel.js",
     "old": "bell: Object.freeze({ x: 1.8, top: 6.78, mouth: 5.85, r: 0.6 }),",
     "new": "bell: Object.freeze({ x: 1.8, top: 6.78, mouth: 5.85, r: 0.75 }),",
     "tests": [
@@ -606,7 +606,7 @@
   },
   {
     "name": "SD25-the-crown-under-the-law",
-    "file": "src/world/sdRemnantModel.js",
+    "file": "src/world/superDungeon/sdRemnantModel.js",
     "old": "tipY = k % 2 ? K.crown.y + 0.12 : SD_REM.h;",
     "new": "tipY = k % 2 ? K.crown.y + 0.12 : SD_REM.h - 0.1;",
     "tests": [
@@ -670,7 +670,7 @@
   },
   {
     "name": "SD25-the-way-home-a-part-left-out",
-    "file": "src/world/sdRiftModel.js",
+    "file": "src/world/superDungeon/sdRiftModel.js",
     "old": "  emitReturn(w, h, (n) => fs[n]);",
     "new": "  emitReturn(w, h, (n) => (n === 'key' ? faces() : fs[n]));",
     "tests": [
@@ -796,7 +796,7 @@
   },
   {
     "name": "SD25-the-plate-record-all-alight",
-    "file": "src/world/sdRiftArt.js",
+    "file": "src/world/superDungeon/sdRiftArt.js",
     "old": "putTexel(plate.emission, x, y, texelAt(lit.emission, x, y)); }",
     "new": "putTexel(plate.emission, x, y, moon); }",
     "tests": [
@@ -823,7 +823,7 @@
   },
   {
     "name": "SD25-the-rift-cells-mirrored",
-    "file": "src/world/sdRiftModel.js",
+    "file": "src/world/superDungeon/sdRiftModel.js",
     "old": "(c[1] + t * c[3]) / SD_RIFT_ATLAS.size]; };",
     "new": "1 - (c[1] + t * c[3]) / SD_RIFT_ATLAS.size]; };",
     "tests": [

@@ -8,10 +8,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { generateSamples, ghostSampler } from '../src/world/terrainSampler.js';
-import { buildTerrainGrid } from '../src/world/terrainSurface.js';
-import * as TG from '../src/world/terrainGen.js';
-import { TerrainGenClient } from '../src/world/terrainGenClient.js';
+import { generateSamples, ghostSampler } from '../src/world/terrain/terrainSampler.js';
+import { buildTerrainGrid } from '../src/world/terrain/terrainSurface.js';
+import * as TG from '../src/world/terrain/terrainGen.js';
+import { TerrainGenClient } from '../src/world/terrain/terrainGenClient.js';
 import { WoodsFile, MAP_WIDTH, MAP_HEIGHT } from '../src/formats/woodsFile.js';
 
 const WORLD = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
@@ -48,7 +48,7 @@ test('PERF-EXT26: restrideGrid is the one grid law - the kernel builds its grid 
       assert.equal(bytes(got.normals), bytes(want.normals), `${px},${py} stride ${stride}: normals`);
     }
   }
-  const src = readFileSync(new URL('../src/world/terrainGen.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/world/terrain/terrainGen.js', import.meta.url), 'utf8');
   assert.match(src, /const grid = restrideGrid\(\{ woods, px, py, stride, samples, landforms, bed: bed \? tilemapBytes : null \}\);/, 'the build runs the same law (LANDFORM1-3: with the landforms it shaped the samples by)');   // PIN MOVED (AUDIT WATER-NEXT P1): and the bed with it
 });
 
@@ -57,7 +57,7 @@ test('PERF-EXT26: the REAL worker shell answers a grid job by its id, the bytes 
   const prevPost = globalThis.postMessage, prevOn = globalThis.onmessage;
   globalThis.postMessage = (msg, transfer) => posted.push({ msg, transfer });
   try {
-    await import('../src/world/terrainGenWorker.js');
+    await import('../src/world/terrain/terrainGenWorker.js');
     const samples = generateSamples(woods, 300, 180);
     globalThis.onmessage({ data: { t: 'grid', id: 7, px: 300, py: 180, stride: 1, samples } });
     assert.deepEqual([posted.at(-1).msg.t, posted.at(-1).msg.id], ['gridError', 7], 'before init: an error under the id, never the FIFO\'s');

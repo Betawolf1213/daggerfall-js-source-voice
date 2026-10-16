@@ -20,7 +20,7 @@ import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { weaponMaxDamage, WEAPONS } from '../src/characters/weapons.js';
 import { WEAPON_MATERIAL_MODIFIER } from '../src/combat/formulas.js';
 import { boutMarks } from '../src/systems/arena/arenaFighters.js';
-import { floorCentre, RING_R, ARRIVE } from '../src/world/arenaFloor.js';
+import { floorCentre, RING_R, ARRIVE } from '../src/world/arena/arenaFloor.js';
 import { TEAM_POINTS } from '../src/systems/arena/arenaLeague.js';
 import { ARENA_RATING_MIN, ARENA_RATING_MAX } from '../src/net/identityToken.js';
 import { ARENA_ELO_MIN, ARENA_ELO_MAX, ARENA_RING_R } from '../src/net/arenaLaw.js';

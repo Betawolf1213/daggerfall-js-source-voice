@@ -17,7 +17,7 @@
 // object of numbers and strings, so the checkpoint is the state itself.
 //
 // THE COURT'S FRAME. Metres, the court's centre at the origin, +z toward the south bridge the players arrive by
-// (world/gateArena.js stands the court so; the relay subtracts its centre from a pose before a body reaches this
+// (world/gate/gateArena.js stands the court so; the relay subtracts its centre from a pose before a body reaches this
 // file). A facing is `atan2(dx, dz)` - 0 looks south, at the door.
 //
 // THE FIGHT'S NUMBERS (bible section 5): each player's level CLAIM scales both what they bring (health) and what they
@@ -29,7 +29,7 @@ import { readGateMods, validGateMods, GATE_TRIALS } from './gateMods.js';   // W
 
 // ── the court and the body ─────────────────────────────────────────────
 /** Where the court's centre stands in the arena's own dungeon frame, metres: its one made block's middle
- *  (world/gateArena.js lays the block at the grid's origin, RDB_SIDE 51.2 across, the floor's top at y 0 - pinned
+ *  (world/gate/gateArena.js lays the block at the grid's origin, RDB_SIDE 51.2 across, the floor's top at y 0 - pinned
  *  equal). The relay subtracts it from a pose, so the brain reads every body in the court's frame. */
 export const COURT_CENTRE = Object.freeze([25.6, 0, 25.6]);
 /** The court's floor, metres: the ring the motor keeps a player inside (motor.arena), and the relay's bound on where a
@@ -68,7 +68,7 @@ export const inCourt = (x, z, k, pad = 0) => !!COURTS[k] && Math.hypot(x - COURT
  * reaching WALK_SINK_M into each floor it joins (no seam at either rim). LAID, not standing: from the word of the leap
  * that crosses it (the fight's `xa[k]`) its stones rise out of the fire from the court he leaves toward the one he leaps
  * to - the first WALK_LEAD_MS after the word, then on over WALK_FORM_MS - and it is floor as far as it has risen
- * (walkFormed; world/gateArena.js slabRise raises each stone whole before the floor reaches it). Walkway k joins court k
+ * (walkFormed; world/gate/gateArena.js slabRise raises each stone whole before the floor reaches it). Walkway k joins court k
  * to court k+1.
  */
 export const WALK_HALF_W = 3.2;
@@ -111,7 +111,7 @@ export function onFloor(x, z, xa, now, pad = 0) {
 }
 /**
  * WB9b: THE NEAREST POINT OF THE FLOOR (onFloor's, every part drawn in by `inset` - a body's own radius) to (x, z), or
- * null when (x, z) already stands on it: the motor's clamp in the court (world/gateArena.js courtArena), as the duel's
+ * null when (x, z) already stands on it: the motor's clamp in the court (world/gate/gateArena.js courtArena), as the duel's
  * ring clamps to its disc. Pure.
  */
 export function clampToFloor(x, z, xa, now, inset = 0) {
@@ -616,14 +616,14 @@ export function settleAt(f, now) {
   else if (!A && f.move) stepWalk(f, now);
 }
 
-/** WBX5: THE LEAP'S FLIGHT - he leaves the floor this long before it lands (world/gateBoss.js draws the arc). WB9b: the
+/** WBX5: THE LEAP'S FLIGHT - he leaves the floor this long before it lands (world/gate/gateBoss.js draws the arc). WB9b: the
  *  bound across the fire flies CROSS_AIR_MS. */
 export const LEAP_AIR_MS = 650;
 /** How long a leap of either kind is in the air. */
 export const airOf = (A) => (A === ATTACKS.cross ? CROSS_AIR_MS : LEAP_AIR_MS);
 /** Where a leap carries him at `now`, or null while he still stands on the floor: from where it began to where it lands
  *  over its last LEAP_AIR_MS, and there after. The ONE law of it - the beat's, the kill's (`settleAt`) and every
- *  screen's (world/gateBoss.js bossPlace). AUDIT WBX2 M5: the screens flew him while the relay held him at its start -
+ *  screen's (world/gate/gateBoss.js bossPlace). AUDIT WBX2 M5: the screens flew him while the relay held him at its start -
  *  a kill in the air stood him in two places, and a blow on him in the air was judged from where he had left. Pure. */
 export function leapAt(atk, now) {
   const e = atk?.tg?.[0], A = ATTACK_BY_ID[atk?.a];
@@ -1112,7 +1112,7 @@ export function applyCrystalHit(f, sub, c, d, r, pose, now, seq = null) {
  *   2 the WARD-BEARER - a Daedra: rises in each new court as he lands there; his ward holds while one stands, and it
  *     Pulses at whoever comes near
  * `r` its body's radius and `h` its height (a blow's reach is measured to its body, as to his), `speed` metres a second
- * (a player runs 7.6 - a runner always outruns them). Who each one IS by his aspect is the screen's (world/gateBoss.js
+ * (a player runs 7.6 - a runner always outruns them). Who each one IS by his aspect is the screen's (world/gate/gateBoss.js
  * HOST_LOOKS); the relay knows bodies, not faces.
  */
 export const HOST_KINDS = Object.freeze([

@@ -21,7 +21,7 @@ import {
   tryPickUnderwaterEnemy, isDungeonLightFixture, ABYSS_FOG_COLOR, ABYSS_AMBIENT_LIGHT, addBonusMagicLoot, upgradeLoot,
 } from '../src/world/oceanHoles.js';
 import { mapPixelToLongitudeLatitude, mapPixelToWorldCoord, worldCoordToMapPixel } from '../src/formats/mapsFile.js';
-import { enemyRoster } from '../src/world/underwaterEnemies.js';
+import { enemyRoster } from '../src/world/underwater/underwaterEnemies.js';
 import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
 import { SITE_TYPES } from '../src/systems/quest/place.js';
 import { createWeapon, weaponOfMaterial, armorOfMaterial } from '../src/combat/enemyEquipment.js';

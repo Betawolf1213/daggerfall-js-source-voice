@@ -17,8 +17,8 @@ import { readFileSync } from 'node:fs';
 import { ATTACKS, POOLS, SCAR_POOLS, POOL_TICK_MS, fightProfile } from '../src/net/gateBrain.js';
 import { strikeDamage, landingPools } from '../src/net/gateStrike.js';
 import { GATE_STATE_EMPTY } from '../src/net/gateLink.js';
-import { BOSS_CUES, BURNING, ASPECT_CUE_IDS, groundStepCue, poolColor, attackColor } from '../src/world/gateBoss.js';
-import { courtToDungeon } from '../src/world/gateArena.js';
+import { BOSS_CUES, BURNING, ASPECT_CUE_IDS, groundStepCue, poolColor, attackColor } from '../src/world/gate/gateBoss.js';
+import { courtToDungeon } from '../src/world/gate/gateArena.js';
 import { poolShapes, TELEGRAPH_STYLE, TELEGRAPH_FS, TELEGRAPH_POOL } from '../src/render/gateTelegraph.js';
 import { createGateCourt } from '../src/scenes/gateCourt.js';
 import {

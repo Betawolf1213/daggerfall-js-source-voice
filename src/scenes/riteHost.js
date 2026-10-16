@@ -6,7 +6,7 @@
 //
 // ITS FAITHFUL - the Summoner and six to eight of Dagon's Faithful (riteFaithfulOf) - chant at it until disturbed, and
 // one woken wakes them all (a camp's law, scenes/exteriorFoes.js). They are SHARED by the World of Daggerfall camps' law
-// (world/wodShared.js): the first player to come within reach springs them and owns them, every other sees the owner's
+// (world/worldOfDaggerfall/wodShared.js): the first player to come within reach springs them and owns them, every other sees the owner's
 // - one site, `px,py:rite.<day>`. Every screen knows the Summoner by his kind (a Sorcerer, RITE_SUMMONER_CAREER).
 //
 // AUDIT WB12d (C1, C2, C5): WHAT A CHARACTER SAW OF THEM IS THEIRS (systems/riteChest.js riteMemory, in the save) -
@@ -36,9 +36,9 @@
 import { riteLocalOf, riteFaithfulOf, riteStands, riteWindow, riteRosterFell, RITE_REACH_M, RITE_CAREERS, RITE_FAITHFUL_MAX, RITE_SUMMONER_CAREER, RITE_SUMMONER_HEALTH, RITE_WORD_MS } from '../net/gateRite.js';
 import { gateSpotLocal } from '../net/gateLaw.js';
 import { worldRoom, GATE_TOP_MAX } from '../net/wire.js';
-import { riteSiteId } from '../world/wodShared.js';
+import { riteSiteId } from '../world/worldOfDaggerfall/wodShared.js';
 import { buildRiteModel, riteLayout, RITE_BRAZIER_H, RITE_BRAZIER_R, RITE_SIGIL_R, RITE_ALTAR } from '../world/riteModel.js';
-import { gateArt, riteArt, GATE_ARCHIVE } from '../world/gateArt.js';
+import { gateArt, riteArt, GATE_ARCHIVE } from '../world/gate/gateArt.js';
 import { RiteSmokeRenderer, SMOKE_FADE_MIN } from '../render/riteSmoke.js';
 import { FlatAnim } from '../render/flatAnimation.js';
 import { GLOBAL_SCALE } from '../player/activate.js';

@@ -14,8 +14,8 @@
 
 import { mapPixelToLongitudeLatitude } from '../formats/mapsFile.js';
 import { MINUTES_PER_DAY } from '../systems/gameDate.js';   // TTL1: a day is the clock's own, never a second 1440
-import { TERRAIN_SIZE, HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, SCALED_BEACH_ELEVATION, sampleKernel } from './terrainSampler.js';   // SPAWNED-DUNGEONS3: a pixel is 819.2 metres on a side; SPAWN-SHORE: the ground a ruin is flattened to
-import { getLocationTerrainTileOrigin, WORLD_MAP_TILE_DIM, BEACH_JITTER } from './terrainTiles.js';   // SPAWNED-DUNGEONS3: where a location stands in its pixel
+import { TERRAIN_SIZE, HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, SCALED_BEACH_ELEVATION, sampleKernel } from './terrain/terrainSampler.js';   // SPAWNED-DUNGEONS3: a pixel is 819.2 metres on a side; SPAWN-SHORE: the ground a ruin is flattened to
+import { getLocationTerrainTileOrigin, WORLD_MAP_TILE_DIM, BEACH_JITTER } from './terrain/terrainTiles.js';   // SPAWNED-DUNGEONS3: where a location stands in its pixel
 import { dataPoint, PATH_KEYS } from '../systems/travel/travelPaths.js';   // SPAWN-ROADS: the network's own byte per pixel
 
 /** The chance a pixel holds a NORMAL spawned dungeon. */
@@ -184,7 +184,7 @@ export function synthesizeDungeonLocation(template, { salt, px, py, where = {}, 
 
 /**
  * The real locations a spawn may clone: a dungeon with blocks and an exterior, never a main-story one (`isMain`, by
- * MapId - world/dungeonTextures.js), and - to keep every spawned exterior as cheap as the smallest real ones - a
+ * MapId - world/dungeon/dungeonTextures.js), and - to keep every spawned exterior as cheap as the smallest real ones - a
  * one-block exterior when any exist.
  */
 export function spawnTemplates(locations, isMain = () => false) {

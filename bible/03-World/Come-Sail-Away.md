@@ -606,7 +606,7 @@ terrain's height (kMaxHeight): the flat sea is 579.105 steps, held as 579 -
 read land, so with the mod at its default no boat rowed (beached) or raised
 a sail ("Unable to raise sail. Boat is obstructed.") and the Overworld's
 crossing never launched. `scenes/world.js` `csaTerrainOf` reads
-`world/terrainSurface.js` `terrainSampleHeightAt` now: each corner as its
+`world/terrain/terrainSurface.js` `terrainSampleHeightAt` now: each corner as its
 step, the steps over the quad's two triangles (GetInterpolatedHeight, the
 drawn ground's own cut), the height a step times size.y over kMaxHeight.
 Declared: the port rounds a height to its step (Unity's own rounding is in
@@ -1827,7 +1827,7 @@ assignModBundle; RemoveBundle `removeBundleNamed`), a no-icon kind of
 `liveBundles`; and IsWaterWalking is read one way at every door that
 derived it (`isEntityWaterWalking`: the motor's flags, the dungeon's two
 reads). Iliac Puddle No More's swim already stands down on the bundle's
-name (`world/deepWaterSwim.js` isBoatEffectBundle).
+name (`world/deepWater/deepWaterSwim.js` isBoatEffectBundle).
 
 **Seen live** (a scratch probe in Daggerfall, sunny, midday, 800x450):
 the Small Ship's position box at 1.5 put up "According to my
@@ -2604,7 +2604,7 @@ triangles lie on corners he drew on one line (no area: the drawing drops them). 
 to the byte; `test/auditgalleon_bake.test.js` and `auditgalleon2_bake` hold the cut to Blender 5.1.1's, compiled
 from its own source (the first port was 5.0's fill and cut her #2 and #34 otherwise, at most 1 mm apart).
 
-**Her prefab** (`world/galleonModel.js galleonPrefab`) is Come Sail Away's data shape built on the bake and stands in
+**Her prefab** (`world/ships/galleonModel.js galleonPrefab`) is Come Sail Away's data shape built on the bake and stands in
 for prefab 112412 (`systems/comeSailAway/comeSailAwayModels.js`: her components after the mod's, her meshes decoded already, her
 clips and overrides beside its own), so the mod's own SpawnBoat walks her as it walks any hull - her `NewGalleon` hull
 node the boat's frame (her MeshCollider her planking and her castle's), her triggers, her lanterns, her crew's flats,
@@ -2621,7 +2621,7 @@ her sails, booms and rudder found by their names:
   (1.30) to the bow on every sight line - turned `WHEEL_TURNS` hard over each way and her rudder `RUDDER_DEG` on its
   post at her sternpost (P8: it pivoted 0.62 m inside her stern and swung through her planking), both by the mod's
   Rudder Wheel Controller's TurnAngle through her own ten clips.
-- **Her sails and ropes** (`world/galleonRig.js`) - a brigantine's five by the mod's own names, so its laws read them: a
+- **Her sails and ropes** (`world/ships/galleonRig.js`) - a brigantine's five by the mod's own names, so its laws read them: a
   fore course and a fore topsail and a main topsail (square, the two topsails small), a large main gaff sail and a large
   jib; on four booms pivoting on her masts' own axes (the mod's trim turns them), each canvas a grid skinned a bone a
   grid point, head row first, and baked as the mod bakes its own (FixDeformations), furled on its yard and set by the
@@ -2647,7 +2647,7 @@ her sails, booms and rudder found by their names:
   leaves (the shot field's muzzle, its index the port's) and is hauled out over `HAUL_S`, a gun fired before it is out
   stood out at its shot with its shutter snapped open (G2); `HOLD_S` past the last word the guns run in to load and the
   shutters close. Each port's throat wears its own planking (R8: it wore the shutter's picture, iron straps and all).
-- **Her texture** (`world/galleonArt.js`): twenty-three pictures, each 64 x 64 (GALLEON-2, below), painted at the
+- **Her texture** (`world/ships/galleonArt.js`): twenty-three pictures, each 64 x 64 (GALLEON-2, below), painted at the
   boats' preload from numbers alone (her archive asked and her glass's glow cut before any boat stands - AUDIT
   GN2-PF3; they had been painted at her first draw, a 100-440 ms stall) - the hull's painted livery and gilt bands, her bottom, her inner planking, her deck, the castle's
   panels, the stern gallery (its glass glowing by night through the pool's emission mask), spars, iron, canvas, rope,
@@ -2729,7 +2729,7 @@ strike her). Two pins took their probes deeper: AUDIT NAV2 F36's swimmer under h
 within a step of -4.6; it is asked at -5.4) and FIELD BUGS 2026-09-29's frozen fish (from 2.5 m down its ray stopped
 17 cm short of her bottom; it hangs at 3 m). Nothing else moved.
 
-**Her pictures at 64** (`world/galleonArt.js`, `GALLEON_TEX_SIZE`). Every picture is 64 x 64, Daggerfall's own texture's
+**Her pictures at 64** (`world/ships/galleonArt.js`, `GALLEON_TEX_SIZE`). Every picture is 64 x 64, Daggerfall's own texture's
 size. The tiling ones were that or smaller - the smaller are painted at 64: the spar's, the iron's and the gilt's tiles
 doubled with them (the same texel over a face, halved round a prism), the rope's left as it was (64 texels round, where
 it had 16), and the dark's (record 16) repainted as each port's throat, oxblood planks at [2, 2] (AUDIT GALLEON R8/R11:
@@ -2738,7 +2738,7 @@ lid) are painted at 64 over their face. The three liveries that ran one picture 
 256), the castle's and the stern's (64 x 128) - are painted as before and cut into 64-row slices by height (`BANDS`):
 the hull's side four slices of 2.9 m (`HULL_SIDE_Y0` down to -4.2 for her new forefoot), the castle's and the stern's
 two of 3.3 m, each slice a record of its own. Every face of a part a livery lies on is cut at its slices' heights,
-banded or not (`world/galleonModel.js slabs`, `bandPiece` - AUDIT GALLEON R14: cutting the banded faces alone left 28
+banded or not (`world/ships/galleonModel.js slabs`, `bandPiece` - AUDIT GALLEON R14: cutting the banded faces alone left 28
 T-junctions at her ports and wells), every piece on the slice that holds it with its v that height up the slice - so the
 bands run round her as they did, at the density they had (her side's texels 4.4 x 4.5 cm, the castle's 4.1 x 5.2); every
 face lit flat on its polygon's own normal, as Blender draws it (B1); the stern's glass glows through both its slices.
@@ -2810,7 +2810,7 @@ PORT_SHIPS`: each fetched beside the mod's five files, built once a process, its
 shared table; one that will not load or build leaves its hull the mod's own and says so once, every other ship as it
 would stand). The mod's own SpawnBoat walks each by name.
 
-- **The carrack** (`world/carrackModel.js`, her hull `NewCarrack`): her main deck at 7.81 m, her gun deck at 1.96 under
+- **The carrack** (`world/ships/carrackModel.js`, her hull `NewCarrack`): her main deck at 7.81 m, her gun deck at 1.96 under
   it; three houses on her deck (the middle one over her aft hatchway, its doorway a pair of leaves - the port on the
   mod's Door Controller, the starboard on its mirror's clips - so a boarder and a player go down her companion to her gun
   deck); ten gunports, each shutter fitted to its own side of her (`lidFitOf`: 13 rows from its hinge over her knuckle to
@@ -2824,21 +2824,21 @@ would stand). The mod's own SpawnBoat walks each by name.
   at 4.094 m its shank crossed her bow's swell under the water - 4.244 now); her rope ladders plumb from her entry port
   down her knuckle; her cargo on her gun deck; seven lanterns (her quarter's two poles and her taffrail's, a hanging one
   in her aft house, three on her beams) - so a carrack at sea is lit by night now (AUDIT WK-N4's `carriesLanterns`).
-- **Her rig** (`world/carrackRig.js`): a spritsail (small square), a fore course and a main course (large square), a main
+- **Her rig** (`world/ships/carrackRig.js`): a spritsail (small square), a fore course and a main course (large square), a main
   topsail and a lateen mizzen, by the mod's own names - its GetSailPower, its trim's arms and its first square sail read
   them as they read its carrack's; her fore and main shrouds on channels outside her rail (their feet led aft, so a
   course braced sharp clears them), no shrouds on her mizzen (her lateen sweeps them), her stays, her braces and sheets
   belayed on her rails. Every canvas at every Wind and stowed, the yards braced to the auto-trim's 45 and the lateen
   swung to 90 either way: nothing meets but where it is made fast (`test/shipSweep.mjs`, shared with the large boat; her
   lateen's halyard is led to her mizzen's masthead's face - to its axis it went into the mast half way up).
-- **The large boat** (`world/largeBoatModel.js`, her hull `NewLargeBoat`): her deck at 0.90 m, her gunwale's cap at 2.25;
+- **The large boat** (`world/ships/largeBoatModel.js`, her hull `NewLargeBoat`): her deck at 0.90 m, her gunwale's cap at 2.25;
   her rudder hung on her sternpost and turned about its rake (10.6 degrees), its tiller level over her stern rail to the
   helmsman's hand, him on a step at her stern (1.55) with her stern rail his guard rail; six swivels on her caps and one on
   the cap at her port bow (her stem is her bowsprit's heel: there it stood in the spar); the mod's anchor stowed on her
   foredeck inside her ceiling, its cargo forward of her mast, its tall lantern pole at her starboard bow (on her stem it
   stood through her forestay and her staysails) and the galleon's short one at her port quarter, each lantern hung
   outboard as the mod hangs its own.
-- **Her seven plans** (`world/largeBoatRig.js PLANS`): the mod's large boat's seven, each its sails by the mod's own names
+- **Her seven plans** (`world/ships/largeBoatRig.js PLANS`): the mod's large boat's seven, each its sails by the mod's own names
   in the mod's order, so the walk reads each plan as it read the mod's (`test/ships2_largeboat.test.js` walks both); the
   four larger set their upper canvas on a topmast over Mac's masthead. A sail's parts are keyed without its name's
   `Sail` (`sailKey`): the walk takes every node whose name holds it for a sail, and a yard, a brace or a belay named for
@@ -2846,7 +2846,7 @@ would stand). The mod's own SpawnBoat walks each by name.
   stay, the forestay set up on the bowsprit short of its end so the topmast stay comes down over it, the gaff topsail's
   luff clear of the masthead's cap, plan 5's large gaff with no peak halyard - a square topsail braced round sweeps any
   line from the topmast to its peak).
-- **Their pictures** (`world/carrackArt.js`, archive 38141; `world/largeBoatArt.js`, 38171 - it was 38151, the Shattered Hour's, AUDIT SD IV): painted at load from
+- **Their pictures** (`world/ships/carrackArt.js`, archive 38141; `world/ships/largeBoatArt.js`, 38171 - it was 38151, the Shattered Hour's, AUDIT SD IV): painted at load from
   numbers alone, each 64 x 64, the galleon's numbers for every picture the fleet shares and each ship's livery her own,
   cut into slices by height; the carrack's stern windows glow by night through the pool's emission mask
   (`scenes/comeSailAwayPool.js PORT_ART`).
@@ -2932,7 +2932,7 @@ making their keys' names for windows they were not showing. Measured, before and
 ## What was already waiting in the port
 
 - Iliac Puddle No More's swim stands down on a boat
-  (`world/deepWaterSwim.js` `isBoatEffectBundle`): the mod's effect bundle
+  (`world/deepWater/deepWaterSwim.js` `isBoatEffectBundle`): the mod's effect bundle
   is "I'm On A Boat", and that literal is in the assembly's heap.
 - Eye of the Beholder's boat camera (`CameraOverrideBoat.*`,
   `player/eotbCamera.js`) read a `sailing` state, and its

@@ -1623,7 +1623,7 @@ export function applySpell(spell, casterLevel, target, sinks, rolls = Math.rando
       const mt = target?.mobileType;
       if (mt == null) continue;                 // not an enemy: IsGroupMatch/IsEnemyClass both refuse
       // WB8a (2026-09-28, Mac: "Make the oblivion gate boss not be able to be pacified"): a target that cannot be swayed
-      // (world/gateBoss.js bossStandIn - the gate's Warden) refuses it before any roll: no chance, no save, no flag
+      // (world/gate/gateBoss.js bossStandIn - the gate's Warden) refuses it before any roll: no chance, no save, no flag
       if (target.pacifyImmune) { out.swayRefused = (out.swayRefused ?? 0) + 1; continue; }
       const matches = isCharmEffect(e)
         ? mt >= 128                             // IsClassEnemyId - Charm is enemy CLASSES only

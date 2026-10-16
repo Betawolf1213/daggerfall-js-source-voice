@@ -1,7 +1,7 @@
 [
   {
     "name": "CS-spacing",
-    "file": "src/world/cardTables.js",
+    "file": "src/world/card/cardTables.js",
     "old": "export const SEAT_SPACING = 0.75;",
     "new": "export const SEAT_SPACING = 0.7;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "CS-side-min-off",
-    "file": "src/world/cardTables.js",
+    "file": "src/world/card/cardTables.js",
     "old": "(len < SEAT_SIDE_MIN ? 0 :",
     "new": "(len <= SEAT_SIDE_MIN ? 0 :",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "CS-no-seat-min-one",
-    "file": "src/world/cardTables.js",
+    "file": "src/world/card/cardTables.js",
     "old": "Math.max(1, Math.floor(len / SEAT_SPACING))",
     "new": "Math.floor(len / SEAT_SPACING)",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "CS-seat-at-edge",
-    "file": "src/world/cardTables.js",
+    "file": "src/world/card/cardTables.js",
     "old": "at: (t) => [x1 + SEAT_OUT, z0 + t * (z1 - z0)], nx: -1, nz: 0 },",
     "new": "at: (t) => [x1, z0 + t * (z1 - z0)], nx: -1, nz: 0 },",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "CS-normal-outward",
-    "file": "src/world/cardTables.js",
+    "file": "src/world/card/cardTables.js",
     "old": "at: (t) => [x0 + t * (x1 - x0), z1 + SEAT_OUT], nx: 0, nz: -1 },",
     "new": "at: (t) => [x0 + t * (x1 - x0), z1 + SEAT_OUT], nx: 0, nz: 1 },",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "CS-seats-at-the-ends",
-    "file": "src/world/cardTables.js",
+    "file": "src/world/card/cardTables.js",
     "old": "const [lx, lz] = s.at((k + 0.5) / s.n);",
     "new": "const [lx, lz] = s.at(k / s.n);",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "CS-world-box-not-own",
-    "file": "src/world/cardTables.js",
+    "file": "src/world/card/cardTables.js",
     "old": "  const box = table.box ?? aabb;",
     "new": "  const box = aabb;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "CS-matrix-ignored",
-    "file": "src/world/cardTables.js",
+    "file": "src/world/card/cardTables.js",
     "old": "  const m = table.matrix ?? IDENTITY;",
     "new": "  const m = IDENTITY;",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "CS-floor-at-top",
-    "file": "src/world/cardTables.js",
+    "file": "src/world/card/cardTables.js",
     "old": "  const floorY = aabb.min[1], topY = aabb.max[1];",
     "new": "  const floorY = aabb.max[1], topY = aabb.max[1];",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "CS-standing-eye",
-    "file": "src/world/cardTables.js",
+    "file": "src/world/card/cardTables.js",
     "old": "const eye = [p[0], floorY + SEATED_EYE_HEIGHT, p[2]];",
     "new": "const eye = [p[0], floorY + 1.7, p[2]];",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "CS-probe-ignored",
-    "file": "src/world/cardTables.js",
+    "file": "src/world/card/cardTables.js",
     "old": "    if (!clear([midW[0], eye[1], midW[2]], eye)) continue;",
     "new": "",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "CS-probe-from-the-floor",
-    "file": "src/world/cardTables.js",
+    "file": "src/world/card/cardTables.js",
     "old": "if (!clear([midW[0], eye[1], midW[2]], eye)) continue;",
     "new": "if (!clear([midW[0], floorY, midW[2]], eye)) continue;",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "CS-turned-to-the-middle",
-    "file": "src/world/cardTables.js",
+    "file": "src/world/card/cardTables.js",
     "old": "      yaw: yawToward(p[0], p[2], q[0], q[2]),",
     "new": "      yaw: yawToward(p[0], p[2], midW[0], midW[2]),",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "CS-pitch-level",
-    "file": "src/world/cardTables.js",
+    "file": "src/world/card/cardTables.js",
     "old": "      pitch: Math.atan2(topY - eye[1], Math.hypot(midW[0] - eye[0], midW[2] - eye[2])),",
     "new": "      pitch: 0,",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "CS-top-of-floor",
-    "file": "src/world/cardTables.js",
+    "file": "src/world/card/cardTables.js",
     "old": "feet: [p[0], floorY, p[2]], top: topY - floorY, eye,",
     "new": "feet: [p[0], floorY, p[2]], top: topY, eye,",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "CS-yaw-backwards",
-    "file": "src/world/cardTables.js",
+    "file": "src/world/card/cardTables.js",
     "old": "export const yawToward = (x, z, tx, tz) => Math.atan2(tx - x, tz - z);",
     "new": "export const yawToward = (x, z, tx, tz) => Math.atan2(tz - z, tx - x);",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "CS-one-seat-a-table",
-    "file": "src/world/cardTables.js",
+    "file": "src/world/card/cardTables.js",
     "old": "if (kept.length < HOLDEM_SEATS_MIN) return [];",
     "new": "if (kept.length < 1) return [];",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "CS-no-cap",
-    "file": "src/world/cardTables.js",
+    "file": "src/world/card/cardTables.js",
     "old": "if (kept.length <= HOLDEM_SEATS_MAX) return kept;",
     "new": "return kept;",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "CS-cap-first-six",
-    "file": "src/world/cardTables.js",
+    "file": "src/world/card/cardTables.js",
     "old": "for (let k = 0; out.length < HOLDEM_SEATS_MAX; k++) for (const q of queues) if (q[k] && out.length < HOLDEM_SEATS_MAX) out.push(q[k]);",
     "new": "out.push(...kept.slice(0, HOLDEM_SEATS_MAX));",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "CS-taken-radius",
-    "file": "src/world/cardTables.js",
+    "file": "src/world/card/cardTables.js",
     "old": "export const SEAT_TAKEN_RADIUS = 0.3;",
     "new": "export const SEAT_TAKEN_RADIUS = 0.35;",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "CS-taken-by-height",
-    "file": "src/world/cardTables.js",
+    "file": "src/world/card/cardTables.js",
     "old": "feet.some((f) => Math.hypot(f[0] - s.x, f[2] - s.z) <= SEAT_TAKEN_RADIUS)",
     "new": "feet.some((f) => Math.hypot(f[0] - s.x, f[1], f[2] - s.z) <= SEAT_TAKEN_RADIUS)",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "CS-taken-ignored",
-    "file": "src/world/cardTables.js",
+    "file": "src/world/card/cardTables.js",
     "old": "    if (busy.has(i)) return;",
     "new": "",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "CS-farthest-seat",
-    "file": "src/world/cardTables.js",
+    "file": "src/world/card/cardTables.js",
     "old": "if (d < bestD) { best = i; bestD = d; }",
     "new": "if (!(d <= bestD) || best < 0) { best = i; bestD = d; }",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "CS-table-top-a-floor",
-    "file": "src/world/cardTables.js",
+    "file": "src/world/card/cardTables.js",
     "old": "down >= SEATED_EYE_HEIGHT - SEAT_SURFACE_MAX",
     "new": "down > SEATED_EYE_HEIGHT - SEAT_SURFACE_MAX",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "CS-drop-a-floor",
-    "file": "src/world/cardTables.js",
+    "file": "src/world/card/cardTables.js",
     "old": "&& down <= SEAT_FLOOR_PROBE;",
     "new": "&& down < SEAT_FLOOR_PROBE;",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "CS-jump-sits",
-    "file": "src/world/cardTables.js",
+    "file": "src/world/card/cardTables.js",
     "old": "|| mv?.right || jump",
     "new": "|| mv?.right",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "CS-stick-ignored",
-    "file": "src/world/cardTables.js",
+    "file": "src/world/card/cardTables.js",
     "old": "Math.hypot(Number(mv.analog.x) || 0, Number(mv.analog.y) || 0) > SEAT_STICK_LEAVE",
     "new": "false",
     "tests": [

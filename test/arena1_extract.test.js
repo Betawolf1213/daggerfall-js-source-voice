@@ -9,7 +9,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { daggerfallArenaAssets, PIECE_MODELS } from '../tools/daggerfallArenaExtract.mjs';
 import { openScene, decodeMesh, UCLASS } from '../tools/lib/unityScene.mjs';
-import { buildArenaModel } from '../src/world/arenaModel.js';
+import { buildArenaModel } from '../src/world/arena/arenaModel.js';
 import { HAS_ARENA2, ARENA2, ROOT, classicModels } from './arena1Data.mjs';
 
 const BUNDLE = process.env.DAGGERFALL_ARENA_DFMOD ?? '';

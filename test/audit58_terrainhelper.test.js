@@ -20,7 +20,7 @@ import { MapsFile, getMapPixelID, getWorldClimateSettings } from '../src/formats
 import {
   dilateCoastalClimate, smoothLocationNeighbourhood, terrainGradient,
   OCEAN_CLIMATE, SMOOTH_GRADIENT_THRESHOLD,
-} from '../src/world/terrainHelper.js';
+} from '../src/world/terrain/terrainHelper.js';
 
 /** An all-ocean CLIMATE.PAK with the named map pixels set to a climate. */
 function oceanMaps(land = []) {

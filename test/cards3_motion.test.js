@@ -10,10 +10,10 @@ import assert from 'node:assert/strict';
 import {
   CARD_W, CARD_L, CARD_T, DEAL_LIFT, FLIGHT_SPEED, FLIGHT_MIN_S, ARC_HEIGHT, SLIDE_DECEL, REST_JITTER, FLIP_S, CHIP_T, CHIP_STACK_MAX, PUSH_S, CHIP_VALUES,
   hashSeed, seedUnits, dealMotion, flipMotion, flipShift, chipStacks, chipDiscs, pushAt,
-} from '../src/world/cardMotion.js';
+} from '../src/world/card/cardMotion.js';
 import { cardMatrix } from '../src/render/cardTableDraw.js';
-import { tablePlaces, CardScene, HOLE_IN, BET_IN } from '../src/world/cardScene.js';
-import { tableFrame, cardTableSeats } from '../src/world/cardTables.js';
+import { tablePlaces, CardScene, HOLE_IN, BET_IN } from '../src/world/card/cardScene.js';
+import { tableFrame, cardTableSeats } from '../src/world/card/cardTables.js';
 import { SEAT_OUT } from '../src/player/seatPose.js';
 import { CardTableSession } from '../src/systems/card/cardTableSession.js';
 

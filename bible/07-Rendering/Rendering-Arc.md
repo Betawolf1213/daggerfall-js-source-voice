@@ -107,7 +107,7 @@ with that cycle. MAGEAA00 pins: 3 lights, the shared lantern cross-checks
 flat y -0.05 (offset -6) vs light y 0.2 (-Y + size.h 4) on real data.
 Daggerfall city: 155 lights; before/after diff pools 28k pixels on walls
 and cobbles - subtle in daylight, correct until night ambient drops.
-`src/world/cityLights.js`, pins in test/world.test.js.
+`src/world/city/cityLights.js`, pins in test/world.test.js.
 
 ## Milestone R4 - painted skies (SHIPPED)
 
@@ -195,7 +195,7 @@ the PlayerAmbientLight term only.
 
 ## Milestone R6 - dungeon lighting (SHIPPED)
 
-`src/world/dungeonLights.js` collects verbatim RDBLayout.AddLight
+`src/world/dungeon/dungeonLights.js` collects verbatim RDBLayout.AddLight
 lights: one per RDB object of resource type Light, at
 (X, -Y, Z) * GlobalScale, range = LightResource.Radius * GlobalScale *
 3. Properties from the DaggerfallLight [Dungeon] prefab (read via git
@@ -257,7 +257,7 @@ harmless at 10x10 and noted as-written.
 
 ## Milestone R8 - interior point lights (SHIPPED)
 
-`src/world/interiorLights.js` is verbatim DaggerfallInterior.AddLight:
+`src/world/interior/interiorLights.js` is verbatim DaggerfallInterior.AddLight:
 one light per archive-210 flat (AmbientLitInteriors default off), at
 the billboard CENTRE - interior AddFlat raises the transform half the
 scaled height above the flat position - plus the per-record vertical
@@ -284,7 +284,7 @@ The streaming world's ground now renders the way DFU ships it: a
 129x129 height grid per map pixel plus a 128x128 tilemap byte texture,
 decoded per-fragment by the verbatim Daggerfall/TilemapTextureArray
 law - tileIndex = data >> 2, transform = data & 3, four rotation
-matrices + translations. `src/world/terrainSurface.js` carries the
+matrices + translations. `src/world/terrain/terrainSurface.js` carries the
 data side: convertTilemap is TerrainHelper.UpdateTileMapDataJob 1:1
 ((byte)(tile * 4) + rotate + flip * 2, FF water sentinel back to
 record 0 - ConvertWaterTiles defaults true, all pinned); the grid

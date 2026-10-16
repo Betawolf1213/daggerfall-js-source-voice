@@ -398,7 +398,7 @@
   },
   {
     "name": "WOD6-onload-radius",
-    "file": "src/world/wodSpawner.js",
+    "file": "src/world/worldOfDaggerfall/wodSpawner.js",
     "old": "    if (dist <= WOD_STAND_DOWN_RADIUS) this.active = false;\n  }",
     "new": "    if (dist < 0) this.active = false;\n  }",
     "tests": [
@@ -407,7 +407,7 @@
   },
   {
     "name": "WOD6-onload-boundary",
-    "file": "src/world/wodSpawner.js",
+    "file": "src/world/worldOfDaggerfall/wodSpawner.js",
     "old": "    if (dist <= WOD_STAND_DOWN_RADIUS) this.active = false;\n  }",
     "new": "    if (dist < WOD_STAND_DOWN_RADIUS) this.active = false;\n  }",
     "tests": [

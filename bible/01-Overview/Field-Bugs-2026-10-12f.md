@@ -16,7 +16,7 @@ mattered checked again by running the real modules.
 - **A body's grant** (`scenes/exteriorFoes.js`, two real pools joined by nets, the item law registered as every host
   registers it): Mac asks Bob's machine for a body; Bob's modified grant `[a letter of credit at 1,000,000,000,000, a
   65,535 coin pile]` landed whole - purse 1,000 to 66,535, letters 0 to 1e12, "You take 2 items."
-- **A building's cupboard** (`world/interiorShared.js` applyInteriorLoot): one word landed a 9,000,000,000,000 letter
+- **A building's cupboard** (`world/interior/interiorShared.js` applyInteriorLoot): one word landed a 9,000,000,000,000 letter
   and 63 coin piles (4,128,705) in place, for whoever opened it next. A dungeon's and a building's word stays in the
   relay's memory thirty days (`WORLD_TTL_MS`), so one seeded container pays every later visitor.
 - **The door** (`systems/loot/loot.js` validLootItem, `systems/item/itemLaw.js` itemFindings): a letter at any value to
@@ -40,7 +40,7 @@ settles from the giver's record.
 
 - **Every list a peer hands over lands without one**, at every site SS3's `unbound` stood: a dungeon's container record
   and a body's items on the wire (`scenes/dungeonContext.js`), a building's container record
-  (`world/interiorShared.js`), a body's grant and a foe taken as its heir (`scenes/exteriorFoes.js`).
+  (`world/interior/interiorShared.js`), a body's grant and a foe taken as its heir (`scenes/exteriorFoes.js`).
 - **And no list this client says carries one**: a dungeon's record (`lootRecords`), a building's
   (`interiorLootRecords`), a foe handed to its heir; and the OWNER's grant (`grantCorpse`) keeps what never rides a
   peer's word on the body, its own - moved behind what may go, since the grant reserves from the pile's front by count
@@ -107,7 +107,7 @@ A developer's alone, as every review route.
 ## The four hosts
 
 - `scenes/world.js` - WIRED: the worn offer; its street's foe pool (the grant, the heir) through `exteriorFoes.js`.
-- `scenes/worldModes.js` (interiors) - WIRED: a building's containers through `world/interiorShared.js`; its foe pool
+- `scenes/worldModes.js` (interiors) - WIRED: a building's containers through `world/interior/interiorShared.js`; its foe pool
   through `exteriorFoes.js`; the classic pack's put through `ui/nativeInventory.js`.
 - `scenes/dungeonContext.js` - WIRED: its three sites (a record said, a record heard, a body on the wire).
 - `scenes/exterior.js` - NOT WIRED on purpose: the offline fixed city has no relay and no other player; its pack's put

@@ -15,10 +15,10 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { nearestLights } from '../src/world/cityLights.js';
+import { nearestLights } from '../src/world/city/cityLights.js';
 import {
   DUNGEON_LIGHT_BLOCK_RANGE, UNSCALED_BLOCK_RANGE,
-} from '../src/world/dungeonLights.js';
+} from '../src/world/dungeon/dungeonLights.js';
 import { GLOBAL_SCALE } from '../src/world/meshReader.js';
 import { StreamingWorldState, worldCoordToMapPixel } from '../src/world/streamingWorld.js';
 import {

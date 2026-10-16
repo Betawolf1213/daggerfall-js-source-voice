@@ -3,7 +3,7 @@
 // WORLD - UnderwaterDecorations.cs's work (the queue, the pending batches,
 // the markers, the suppression event) and UnderwaterDecorationBatchFactory
 // .cs's Spawn, over the port's pixels. The placement itself is
-// world/underwaterDecorations.js; the draw is render/deepWatersRender.js.
+// world/underwater/underwaterDecorations.js; the draw is render/deepWatersRender.js.
 //
 // A pixel's decorations are a group per texture, stood the three ways the
 // factory stands them:
@@ -34,7 +34,7 @@
 import {
   placeTileDecorations, decorationCap, populateRadius, usesArchiveAnimation, framesPerSecondOf, authoredVisualHeight, clearEdgeBlackPixels,
   DECORATION_SCALE_MIN, DECORATION_SCALE_MAX, TEXTURE_106_FPS,
-} from '../world/underwaterDecorations.js';
+} from '../world/underwater/underwaterDecorations.js';
 
 /** DeepWaterPromoteTiming's bar: no decoration work in a frame the promote work spent more than a millisecond in. */
 export const PROMOTE_BUDGET_MS = 1;

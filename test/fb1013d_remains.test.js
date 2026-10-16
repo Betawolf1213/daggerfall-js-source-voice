@@ -38,8 +38,8 @@ import { setItemFields, mintCondition } from '../src/systems/item/itemTemplates.
 import { setSilverFinder, silverFindAt, _resetSilverFindsForTests } from '../src/systems/silverFinds.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
 import { synthesizeDungeonLocation, WORLD_SALT } from '../src/world/spawnedDungeons.js';
-import { arenaFloorLocation } from '../src/world/arenaFloor.js';
-import { ARENA_REGION, ARENA_LOCATION, undercroftLocation } from '../src/world/arenaCity.js';
+import { arenaFloorLocation } from '../src/world/arena/arenaFloor.js';
+import { ARENA_REGION, ARENA_LOCATION, undercroftLocation } from '../src/world/arena/arenaCity.js';
 import { builtDungeonSize, generateMediumDungeon } from '../src/world/smallerDungeons.js';
 
 const rd = (f) => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');
@@ -295,7 +295,7 @@ test('AUDIT FB1013d O1: a MADE dungeon is no table row - every spawn of a region
 });
 
 test('AUDIT FB1013d B1: and the dungeon\'s own key and the size it was built at - the Arena\'s Undercroft is its city\'s row on its city\'s pixel, so a death there is no death in Castle Daggerfall nor one in the castle there; a dungeon built at another size (Smaller Dungeons) is another layout and stands none (mutants: the key unkept; the key unread; the size unkept; the size unread; a row without them read as none)', () => {
-  // Daggerfall, its castle the city's own row and key, and the Undercroft the city mints (world/arenaCity.js)
+  // Daggerfall, its castle the city's own row and key, and the Undercroft the city mints (world/arena/arenaCity.js)
   const daggerfallPx = { x: 207, y: 213 };
   const city = {
     name: 'Daggerfall', regionName: 'Daggerfall', regionIndex: ARENA_REGION, locationIndex: ARENA_LOCATION, politic: 0, climate: { worldClimate: 227, climateType: 2 },

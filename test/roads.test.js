@@ -3,8 +3,8 @@
 // for exactly this reason - and gated on the real one below.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { buildRoadNetwork, route, stamp, DIR, DIR_DELTA, MAP_W, MAP_H } from '../src/world/roadNetwork.js';
-import { paintRoads, classify, TILE } from '../src/world/roadPainter.js';
+import { buildRoadNetwork, route, stamp, DIR, DIR_DELTA, MAP_W, MAP_H } from '../src/world/road/roadNetwork.js';
+import { paintRoads, classify, TILE } from '../src/world/road/roadPainter.js';
 import { LOCATION_TYPES as LT } from '../src/formats/mapsFile.js';
 
 // A flat continent with a sea to the west and a ridge across the middle.
@@ -157,7 +157,7 @@ test('ROADS 2: classify - the centre of any arm wins over the edge of another', 
 });
 
 test('ROADS: the solo pipeline is byte-for-byte unchanged with no network', async () => {
-  const src = (await import('node:fs')).readFileSync('src/world/terrainGen.js', 'utf8');
+  const src = (await import('node:fs')).readFileSync('src/world/terrain/terrainGen.js', 'utf8');
   assert.match(src, /roads = null/, 'the seam defaults to no network');
   assert.match(src, /if \(roads\) \{/, 'and paints only when one is handed in');
 });
@@ -207,10 +207,10 @@ test('ROADS 3: every region\'s map table becomes settlements, a dead region cont
 
 test('ROADS 3: the network rides both terrain kernels and the world host builds it once', async () => {
   const fs = await import('node:fs');
-  const worker = fs.readFileSync('src/world/terrainGenWorker.js', 'utf8');
+  const worker = fs.readFileSync('src/world/terrain/terrainGenWorker.js', 'utf8');
   assert.match(worker, /m\.t === 'roads'/, 'the worker accepts the network');
   assert.match(worker, /generatePixelTerrain\(\{ \.\.\.m, woods, roads, sites, climates \}\)/, 'and hands it to the kernel on every job');   // LANDFORM4: beside the sites
-  const client = fs.readFileSync('src/world/terrainGenClient.js', 'utf8');
+  const client = fs.readFileSync('src/world/terrain/terrainGenClient.js', 'utf8');
   assert.match(client, /setRoads\(settlements, onStats = null, switches = null\)/, 'the client has the door (ROADS 24: the switches ride it)');
   assert.equal((client.match(/roads: this\._roads \?\? null/g) || []).length, 6,   // LANDFORM1-3: and the three paths a promotion's grid takes here - its ghost rows are cut along the same network
     'every same-thread path - direct, worker-error, and dying-worker drain - carries it');
@@ -227,7 +227,7 @@ test('ROADS 3: the network rides both terrain kernels and the world host builds 
 // three fixes UNPINNED, which is the vacuous shape this bible keeps
 // catching, so the audit's first product is these.
 test('AUDIT ROADS F1: a farm gets no track - it sits in the fields it works', async () => {
-  const { TRACK_TYPES, ROAD_TYPES } = await import('../src/world/roadNetwork.js');
+  const { TRACK_TYPES, ROAD_TYPES } = await import('../src/world/road/roadNetwork.js');
   assert.ok(!TRACK_TYPES.has(LT.HomeFarms), 'HomeFarms is the most numerous location type on the map');
   // ROADS 16: HomeWealthy is BACK - 74% of them sit on a Basic Roads
   // track, far above the 47% a random location gets from density alone.
@@ -262,7 +262,7 @@ test('AUDIT ROADS F6: two villages a mile apart share the last mile', () => {
 });
 
 test('AUDIT ROADS F3: the heuristic is scaled by the road discount, so A* still finds the merge', async () => {
-  const { route } = await import('../src/world/roadNetwork.js');
+  const { route } = await import('../src/world/road/roadNetwork.js');
   // An existing road runs E-W across y=120. A new route from (250,100)
   // to (250,140) crosses it; a route from (250,100) to (290,120)
   // should RIDE it - the discounted steps along the road are cheaper
@@ -278,7 +278,7 @@ test('AUDIT ROADS F3: the heuristic is scaled by the road discount, so A* still 
   // always, and on this fixture it does not - both h find the same 41
   // steps. So the behaviour above is a regression guard, not the proof.
   // The guarantee is pinned at the source: h carries the discount.
-  const src = (await import('node:fs')).readFileSync('src/world/roadNetwork.js', 'utf8');
+  const src = (await import('node:fs')).readFileSync('src/world/road/roadNetwork.js', 'utf8');
   assert.match(src, /Math\.hypot\(x - to\.x, y - to\.y\) \* d\.roadDiscount/,
     'h is scaled by the cheapest step, which is what admissibility requires');
 });
@@ -461,7 +461,7 @@ test('ROADS 9: a dead-end arm is capped, a through road is not, and a turn wears
 // One pass, read from the original heights, only the corners a path
 // tile touches. Off-road terrain does not move.
 test('ROADS 10: road corners are blurred, the rest of the terrain is untouched, and the switch is honoured', async () => {
-  const { smoothRoadHeights } = await import('../src/world/roadPainter.js');
+  const { smoothRoadHeights } = await import('../src/world/road/roadPainter.js');
   const H = 129, T = 128;
   // noisy ground: alternating high/low samples
   const mk = () => { const s = new Float32Array(H * H); for (let i = 0; i < s.length; i++) s[i] = (i % 2) ? 50 : 30; return s; };
@@ -488,7 +488,7 @@ test('ROADS 10: road corners are blurred, the rest of the terrain is untouched, 
   assert.equal(smoothRoadHeights(plain, new Uint8Array(T * T)), 0);
   assert.deepEqual(plain, copy);
   // the switch rides the network object, default on
-  const src = (await import('node:fs')).readFileSync('src/world/terrainGen.js', 'utf8');
+  const src = (await import('node:fs')).readFileSync('src/world/terrain/terrainGen.js', 'utf8');
   assert.match(src, /if \(roads\.smooth !== false\) smoothRoadHeights\(samples, tilemap, 129, hasLocation \? locationRect : null\);/, 'default on, off only when the network says so, and the rect skipped as the mod skips it');
 });
 
@@ -585,7 +585,7 @@ test('ROADS 14: a right angle costs more than two single-point bends, so the roa
   // and the place the shape is seen is the real-map run of
   // tools/roadsCalibrate.mjs printing our right-angle share beside his
   // 1.7%. The guarantee is pinned at the source:
-  const src = (await import('node:fs')).readFileSync('src/world/roadNetwork.js', 'utf8');
+  const src = (await import('node:fs')).readFileSync('src/world/road/roadNetwork.js', 'utf8');
   assert.match(src, /cost \+= t \* t \* d\.turnCost;/, 'the turn cost is squared in compass points');
 });
 
@@ -593,7 +593,7 @@ test('ROADS 14: a right angle costs more than two single-point bends, so the roa
 // Of 2,166 track dead-ends in Basic Roads, the median distance to a
 // road pixel is 0, the 95th percentile 9, the max 56. Ours reached 40.
 test('ROADS 15: track reach is the answer key\'s, and a far village gets no track', async () => {
-  const { ROAD_DIALS } = await import('../src/world/roadNetwork.js');
+  const { ROAD_DIALS } = await import('../src/world/road/roadNetwork.js');
   assert.ok(ROAD_DIALS.trackReach >= 9 && ROAD_DIALS.trackReach <= 20, `reach ${ROAD_DIALS.trackReach} sits at his 95th percentile, not four times it`);
   const locations = [
     { x: 200, y: 200, type: LT.TownCity }, { x: 260, y: 200, type: LT.TownHamlet },
@@ -632,7 +632,7 @@ test('ROADS 17: a road may not enter a town at a right angle to the road already
 
 // AUDIT 52 (was 49): the island skip and the merge, each pinned as what it is.
 test('AUDIT 52 A1: a pair on different landmasses is named unrouted without a search', async () => {
-  const { landComponents } = await import('../src/world/roadNetwork.js');
+  const { landComponents } = await import('../src/world/road/roadNetwork.js');
   const strait = (x) => x === 300;   // a one-pixel channel splits the map
   const comp = landComponents(strait);
   assert.ok(comp[100 * MAP_W + 200] !== comp[100 * MAP_W + 400], 'two components');
@@ -653,7 +653,7 @@ test('AUDIT 52 A2: the through-road merge is pinned at the source - no fixture c
   // the REAL map the merge is measurable and small: junctions 7.0% ->
   // 6.5%, 118 duplicate spur pixels removed. The hairpin and right-angle
   // win was the wide join's. The law stays, at the source.
-  const src = (await import('node:fs')).readFileSync('src/world/roadNetwork.js', 'utf8');
+  const src = (await import('node:fs')).readFileSync('src/world/road/roadNetwork.js', 'utf8');
   assert.match(src, /if \(mergeNear && cell !== sc && existing\[cy \* MAP_WIDTH \+ cx\] !== 0/, 'a road joins the road it meets within mergeNear of its town');
 });
 
@@ -687,7 +687,7 @@ test('ROADS 19: the cache key covers everything that shapes the network, and a m
 });
 
 test('ROADS 19: a job that arrives during the cache lookup waits for it - no chunk is ever roadless', async () => {
-  const src = (await import('node:fs')).readFileSync('src/world/terrainGenWorker.js', 'utf8');
+  const src = (await import('node:fs')).readFileSync('src/world/terrain/terrainGenWorker.js', 'utf8');
   assert.match(src, /if \(m\.t === 'job' && pendingRoads\) \{ pendingRoads\.then\(\(\) => handle\(m\)\); return; \}/,
     'a job behind the lookup queues on it, exactly as it queued behind the synchronous build');
   assert.match(src, /roadsCacheKey\(\{ settlements: m\.settlements, woodsLength: woods\._bytes\?\.byteLength \?\? 0 \}\)/, 'the worker keys on the list and the heightmap');
@@ -747,7 +747,7 @@ test('ROADS 21: the web\u2019s two real-map rules, pinned at the source with the
   // (his 0.0% and 2.4%); letting tracks CROSS track-grade pixels is what
   // lets a chain pass through a village at all (his: 84% of villages on
   // a track).
-  const src = (await import('node:fs')).readFileSync('src/world/roadNetwork.js', 'utf8');
+  const src = (await import('node:fs')).readFileSync('src/world/road/roadNetwork.js', 'utf8');
   assert.match(src, /for \(const t of trackNodes\) trackBlocked\[t\.y \* MAP_WIDTH \+ t\.x\] = 0;/, 'a track may cross a track-grade pixel');
   assert.match(src, /for \(const t of trackNodes\) trackTowns\[t\.y \* MAP_WIDTH \+ t\.x\] = 1;/, 'and a village is one of the web\u2019s towns');
   assert.match(src, /stopOn: paths, blocked: trackBlocked, towns: trackTowns,\s*\n\s*stopIf:/, 'links are entered wide and commit to B\u2019s side');
@@ -776,7 +776,7 @@ test('ROADS 22: Basic Roads loads byte-exact, refuses the wrong size, and falls 
   const fetch404 = async () => ({ ok: false });
   assert.equal(await loadModRoads(fetch404), null, 'a failed fetch is a null');
   assert.equal(await loadModRoads(undefined), null, 'no fetch at all is a null');
-  const worker = fs.readFileSync('src/world/terrainGenWorker.js', 'utf8');
+  const worker = fs.readFileSync('src/world/terrain/terrainGenWorker.js', 'utf8');
   // AUDIT 58 F3: `smooth` joins `water` on this arm - it was the one
   // switch the three rebuilds of the network object dropped, so the
   // Mods pane's SmoothRoads was inert on the path the game takes.
@@ -793,7 +793,7 @@ test('ROADS 22: Basic Roads loads byte-exact, refuses the wrong size, and falls 
 // ROADS 23: THE PAINTER IS A PORT - PaintPath table-driven, his slots,
 // his conditions, his order. Three things the old readings never had.
 test('ROADS 23: a neighbour\u2019s diagonal paints this pixel\u2019s corner tile', async () => {
-  const { pathCorners } = await import('../src/world/roadPainter.js');
+  const { pathCorners } = await import('../src/world/road/roadPainter.js');
   // pixel P at (10,10); its EAST neighbour carries a NW diagonal - the
   // line runs from E to N past P's north-east corner (127,127).
   const m = new Uint8Array(MAP_W * MAP_H);
@@ -840,11 +840,11 @@ test('ROADS 23: rivers paint water with a bank and streams narrow, only when wat
 // ── ROADS 25: THE FIRST PIXELS WERE PAINTED BEFORE THE NETWORK LANDED ──
 // Mac: "some roads are missing even though they show on the map."
 test('ROADS 25: a pixel says whether a network was present, and the host rebuilds the ones painted without one', async () => {
-  const { generatePixelTerrain } = await import('../src/world/terrainGen.js');
+  const { generatePixelTerrain } = await import('../src/world/terrain/terrainGen.js');
   const { readFileSync } = await import('node:fs');
   const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
   // The generator's own word: was a network there when this pixel was painted.
-  const gen = read('src/world/terrainGen.js');
+  const gen = read('src/world/terrain/terrainGen.js');
   assert.match(gen, /withRoads: !!roads,/);
   assert.equal(typeof generatePixelTerrain, 'function');
   const world = read('src/scenes/world.js');
@@ -870,7 +870,7 @@ test('ROADS 25: a pixel says whether a network was present, and the host rebuild
   assert.match(world, /if \(!withRoads && terrainGen\.hasRoads\) \{\s*\n\s*if \(!roadsRetry\) \{\s*\n\s*destroyPixel\(px, py, \{ collectLoose: false \}\);\s*\n\s*return buildPixelNow\(px, py, \{ roadsRetry: true \}\);\s*\n\s*\}\s*\n\s*console\.warn\([^\n]*kept as painted[^\n]*\);\s*\n\s*\}/);
   assert.match(world, /async function buildPixelNow\(px, py, \{ roadsRetry = false \} = \{\}\) \{/);
   assert.doesNotMatch(world, /terrainGen\.hasRoads\) \{ destroyPixel\(px, py, \{ collectLoose: false \}\); return; \}/, 'no path in the builder resolves the player\u2019s pixel to nothing');
-  assert.match(read('src/world/terrainGenClient.js'), /get hasRoads\(\) \{ return !!this\._roads \|\| !!this\._settlements; \}/);
+  assert.match(read('src/world/terrain/terrainGenClient.js'), /get hasRoads\(\) \{ return !!this\._roads \|\| !!this\._settlements; \}/);
   // The map was ALREADY rebuilt on arrival (ROADS 7); the terrain now is too.
   assert.match(read('bible/03-World/Roads.md'), /keys its grid cache on the network it was drawn with/);
 });

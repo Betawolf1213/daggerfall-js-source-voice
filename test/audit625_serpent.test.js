@@ -19,7 +19,7 @@ import { equipItem } from '../src/systems/equip.js';
 import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
-import { bossStandIn } from '../src/world/gateBoss.js';
+import { bossStandIn } from '../src/world/gate/gateBoss.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const stats = () => ({ strength: 50, intelligence: 50, willpower: 50, agility: 50, endurance: 50, personality: 50, speed: 50, luck: 50 });

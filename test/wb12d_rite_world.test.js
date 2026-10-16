@@ -16,8 +16,8 @@ import { riteLocalOf, riteFaithfulOf, RITE_REACH_M, RITE_WORD_MS, RITE_SUMMONER_
 import { gateTimes, gateSpotLocal, gateModsOf, gateBossOf, marksLine, GATE_COLLAPSE_MS } from '../src/net/gateLaw.js';
 import { worldRoom, validRiteOut, RITE_COUNT_MAX, RITE_BY_MAX } from '../src/net/wire.js';
 import { riteLayout, buildRiteModel, RITE_BRAZIERS, RITE_BRAZIER_R, RITE_BRAZIER_W, RITE_RING_R, RITE_TENT_R, RITE_SIGIL_LIFT, RITE_SIGIL_REACH, RITE_SIGIL_R, RITE_ALTAR } from '../src/world/riteModel.js';
-import { GATE_PLINTH_RECORD, GATE_STONE_RECORD, RITE_SIGIL_RECORD, GATE_ARCHIVE, GATE_SPINE_RECORD, GATE_RIM_RECORD } from '../src/world/gateModel.js';
-import { riteSigilArt, RITE_SIGIL_ART_SIZE } from '../src/world/gateArt.js';
+import { GATE_PLINTH_RECORD, GATE_STONE_RECORD, RITE_SIGIL_RECORD, GATE_ARCHIVE, GATE_SPINE_RECORD, GATE_RIM_RECORD } from '../src/world/gate/gateModel.js';
+import { riteSigilArt, RITE_SIGIL_ART_SIZE } from '../src/world/gate/gateArt.js';
 import { glslFunctions } from './glsl.mjs';
 import {
   RiteSmokeRenderer, SMOKE_VS, SMOKE_FS, SMOKE_SEGMENTS, SMOKE_ROWS, SMOKE_MAX, SMOKE_FADE_MIN, SMOKE_FOOT_R, SMOKE_HEIGHT_M, SMOKE_COLOR, SMOKE_FOG_FLOOR,
@@ -35,7 +35,7 @@ import { COURT_STRIKE_TEXT } from '../src/scenes/gateCourt.js';
 import { properName } from '../src/systems/champions.js';
 import { sayEnemyDied } from '../src/scenes/corpseMarker.js';
 import { activateMobileEnemy } from '../src/player/mobileEnemyActivate.js';
-import { isRiteSite, riteSiteId, WOD_SITE_RE } from '../src/world/wodShared.js';
+import { isRiteSite, riteSiteId, WOD_SITE_RE } from '../src/world/worldOfDaggerfall/wodShared.js';
 import { groupCamps } from '../src/world/campShared.js';
 import { OnlineSession } from '../src/net/online.js';
 import { RELAY_VERSION, RITE_HZ_MAX } from '../src/net/wire.js';

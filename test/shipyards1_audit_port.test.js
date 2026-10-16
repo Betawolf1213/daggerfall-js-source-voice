@@ -15,8 +15,8 @@ import { peopleOf, createPortHost, feetInPort, guardFor, GUARD_HEADROOM, beamPuf
 import { KEEPER_HALF, KEEPER_HEIGHT, yardToScene } from '../src/scenes/merchantYardsHost.js';
 import { DECOR_SHADOW } from '../src/scenes/decorRoom.js';
 import { townSeaOf, seaField, portSitesOn, portSpans, portPlaceRows, sceneToLocationXZ, siteToLocation, SEA_CELLS_MIN, LIGHT_APART_K, LIGHT_APART_CAP, LATERAL_K, FACE_K } from '../src/world/portSites.js';
-import { YARD_PAD_M, NO_ROAD_COST, FRONT_ROAD_CELLS } from '../src/world/merchantYardSites.js';
-import { NAV_CELL, NAV_CELLS_PER_BLOCK } from '../src/world/cityNavigation.js';
+import { YARD_PAD_M, NO_ROAD_COST, FRONT_ROAD_CELLS } from '../src/world/merchantYards/merchantYardSites.js';
+import { NAV_CELL, NAV_CELLS_PER_BLOCK } from '../src/world/city/cityNavigation.js';
 import { portTownByData, lettersOnMap, foundBuildingKey, portPlaceName } from '../src/systems/portPlaces.js';
 import { stairRefusal, stairFeetY, PORT_TEXT } from '../src/scenes/portHost.js';
 import { AnswerPipeline } from '../src/systems/answerPipeline.js';

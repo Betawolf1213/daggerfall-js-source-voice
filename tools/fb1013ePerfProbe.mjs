@@ -8,7 +8,7 @@
 // This runs the real renderer in Chromium (SwiftShader - software GL, whose time grows with the fragments and vertices
 // it shades, so it MEASURES overdraw; it is not a GPU, and its milliseconds are only relative) on scenes that need no
 // ARENA2:
-//   1. THE BURNING COURT at a fighter's eye - its own mesh and art (world/gateArena.js buildCourtModel, gateArt.js), lit
+//   1. THE BURNING COURT at a fighter's eye - its own mesh and art (world/gate/gateArena.js buildCourtModel, gateArt.js), lit
 //      and fogged as the court is, on the enhanced lighting lane - with the boss's real shapes from their real producers
 //      (render/gateTelegraph.js telegraphShape, poolShapes, markShape; scenes/gateHost.js hostShapes): each blow alone,
 //      the mark, the burning ground, his host, and whole AoE frames of them, a pass a shape in their order as the court
@@ -56,8 +56,8 @@ try {
   await page.goto(`http://localhost:${PORT}/mw-inspect.html`);
   const out = await page.evaluate(async ({ W, H, FRAMES, LANE, ONLY, BEFORE }) => {
     const [{ Renderer, WORLD_FRAME }, m, el, ga, gart, gt, gb, gh, hr, pr, dl, old] = await Promise.all([
-      import('/src/render/renderer.js'), import('/src/world/mat4.js'), import('/src/render/enhancedLighting.js'), import('/src/world/gateArena.js'),
-      import('/src/world/gateArt.js'), import('/src/render/gateTelegraph.js'), import('/src/net/gateBrain.js'), import('/src/scenes/gateHost.js'),
+      import('/src/render/renderer.js'), import('/src/world/mat4.js'), import('/src/render/enhancedLighting.js'), import('/src/world/gate/gateArena.js'),
+      import('/src/world/gate/gateArt.js'), import('/src/render/gateTelegraph.js'), import('/src/net/gateBrain.js'), import('/src/scenes/gateHost.js'),
       import('/src/world/horseRig.js'), import('/src/net/peerRiders.js'), import('/src/render/deadlands.js'), BEFORE ? import(`/${BEFORE}`) : null,
     ]);
     const cv = document.createElement('canvas');

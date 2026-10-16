@@ -1,7 +1,7 @@
 [
   {
     "name": "SD7B-the-top-turned-in",
-    "file": "src/world/sdStepsModel.js",
+    "file": "src/world/superDungeon/sdStepsModel.js",
     "old": "const TOP = [0, 3, 2, 1], UNDER = [4, 5, 6, 7];",
     "new": "const TOP = [0, 1, 2, 3], UNDER = [4, 5, 6, 7];",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "SD7B-a-side-turned-in",
-    "file": "src/world/sdStepsModel.js",
+    "file": "src/world/superDungeon/sdStepsModel.js",
     "old": "const SIDES = Object.freeze([[0, 1, 5, 4], [1, 2, 6, 5]",
     "new": "const SIDES = Object.freeze([[0, 4, 5, 1], [1, 2, 6, 5]",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "SD7B-a-riser-no-deeper-than-a-step",
-    "file": "src/world/sdStepsModel.js",
+    "file": "src/world/superDungeon/sdStepsModel.js",
     "old": "h: kind === 'riser' ? SD_RISER_H + SD_STEP_THICK : SD_STEP_THICK",
     "new": "h: SD_STEP_THICK",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "SD7B-the-wrong-wear",
-    "file": "src/world/sdStepsModel.js",
+    "file": "src/world/superDungeon/sdStepsModel.js",
     "old": "crumble: Object.freeze({ atlas: SD_STEPS_RECORD.crumble[0] }),",
     "new": "crumble: Object.freeze({ atlas: SD_STEPS_RECORD.riser }),",
     "tests": [
@@ -38,7 +38,7 @@
   },
   {
     "name": "SD7B-the-collider-wound-wrong",
-    "file": "src/world/sdStepsModel.js",
+    "file": "src/world/superDungeon/sdStepsModel.js",
     "old": "for (const [a, b, e, g] of [TOP, UNDER, ...SIDES]) indices.push(a, b, e, a, e, g);",
     "new": "for (const [a, b, e, g] of [TOP, UNDER, ...SIDES]) indices.push(a, e, b, a, g, e);",
     "tests": [
@@ -47,7 +47,7 @@
   },
   {
     "name": "SD7B-a-checkpoint-on-the-floor",
-    "file": "src/world/sdStepsModel.js",
+    "file": "src/world/superDungeon/sdStepsModel.js",
     "old": "SD_REALM_FLOOR_RECORD, { y: c.y });",
     "new": "SD_REALM_FLOOR_RECORD, {});",
     "tests": [
@@ -56,7 +56,7 @@
   },
   {
     "name": "SD7B-an-island-at-the-floor",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "const C = (x, y, z) => realmToDungeon(cx + x, y0 + y, cz + z);",
     "new": "const C = (x, y, z) => realmToDungeon(cx + x, y, cz + z);",
     "tests": [
@@ -65,7 +65,7 @@
   },
   {
     "name": "SD7B-the-cracks-unlit",
-    "file": "src/world/sdStepsArt.js",
+    "file": "src/world/superDungeon/sdStepsArt.js",
     "old": "return d < S.core ? scale(col, k)",
     "new": "return d < S.core ? BLACK",
     "tests": [
@@ -75,7 +75,7 @@
   },
   {
     "name": "SD7B-the-hub-alight",
-    "file": "src/world/sdStepsArt.js",
+    "file": "src/world/superDungeon/sdStepsArt.js",
     "old": "if (r < D.hub) return BLACK;   // the hub",
     "new": "if (r < D.hub) return scale(col, 1);   // the hub",
     "tests": [
@@ -248,7 +248,7 @@
   },
   {
     "name": "SD7B-the-band-narrowed",
-    "file": "src/world/sdSteps.js",
+    "file": "src/world/superDungeon/sdSteps.js",
     "old": "export const SD_STEPS_FREE_HALF_W = 40;",
     "new": "export const SD_STEPS_FREE_HALF_W = 4;",
     "tests": [
@@ -257,7 +257,7 @@
   },
   {
     "name": "SD7B-the-arena-left-off",
-    "file": "src/world/sdSteps.js",
+    "file": "src/world/superDungeon/sdSteps.js",
     "old": "  Object.freeze({ kind: 'disc', ...SD_ARENA }),\n",
     "new": "",
     "tests": [

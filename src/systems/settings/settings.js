@@ -106,7 +106,7 @@ export const LIVE = Object.freeze({
   // and :123 (CalcDaytimeAmbientLight's night colour).
   'GUI/QuestRumorWeight': 'src/systems/rumorMill.js',
   'GUI/DisableEnemyDeathAlert': 'src/scenes/corpseMarker.js',
-  'Enhancements/DungeonAmbientLightScale': 'src/world/dungeonLights.js',
+  'Enhancements/DungeonAmbientLightScale': 'src/world/dungeon/dungeonLights.js',
   'Enhancements/NightAmbientLightScale': 'src/scenes/world.js',
   // AUDIT 28 W2a: the arrow counter (DaggerfallHUD :270-292) - a
   // default-ON feature the port never drew. The setting is the FIRST
@@ -132,7 +132,7 @@ export const LIVE = Object.freeze({
   'Enhancements/AlternateRandomEnemySelection': 'src/characters/dungeonEnemies.js',
   // AUDIT 28 W3c: UseLocationDungeonTextureTable's fork (DaggerfallDungeon
   // :174-196): classic / by-climate / randomized, with the main-story gate.
-  'Video/RandomDungeonTextures': 'src/world/dungeonTextures.js',
+  'Video/RandomDungeonTextures': 'src/world/dungeon/dungeonTextures.js',
   // AUDIT 28 W4: MapsFile.UseSmallerDungeon (:776-797) + Quest.Start's
   // frozen stamp (Quest.cs:284) - the five-block plus for big dungeons.
   'Experimental/SmallerDungeons': 'src/world/smallerDungeons.js',

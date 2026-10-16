@@ -64,35 +64,35 @@
   },
   {
     "name": "WB13f-never-spent",
-    "file": "src/world/gateBoss.js",
+    "file": "src/world/gate/gateBoss.js",
     "old": "    if (SPENT_ON.includes(A.key) && now < atk.at + A.active + A.recover) return { act: 'spent',",
     "new": "    if (false) return { act: 'spent',",
     "tests": ["test/wb13f_rhythm.test.js", "test/wb4_gate_boss.test.js"]
   },
   {
     "name": "WB13f-spent-for-ever",
-    "file": "src/world/gateBoss.js",
+    "file": "src/world/gate/gateBoss.js",
     "old": "if (SPENT_ON.includes(A.key) && now < atk.at + A.active + A.recover) return",
     "new": "if (SPENT_ON.includes(A.key)) return",
     "tests": ["test/wb13f_rhythm.test.js", "test/wb4_gate_boss.test.js"]
   },
   {
     "name": "WB13f-spent-on-every-blow",
-    "file": "src/world/gateBoss.js",
+    "file": "src/world/gate/gateBoss.js",
     "old": "if (SPENT_ON.includes(A.key) && now < atk.at + A.active + A.recover) return",
     "new": "if (now < atk.at + A.active + A.recover) return",
     "tests": ["test/wb13f_rhythm.test.js"]
   },
   {
     "name": "WB13f-the-fire-swung",
-    "file": "src/world/gateBoss.js",
+    "file": "src/world/gate/gateBoss.js",
     "old": "act: 'spent', anims: PRIMARY_ATTACK_ANIMS, frame: cast ? CAST_LOOSE_FRAME : SPENT_FRAME,",
     "new": "act: 'spent', anims: PRIMARY_ATTACK_ANIMS, frame: SPENT_FRAME,",
     "tests": ["test/wb13f_rhythm.test.js"]
   },
   {
     "name": "WB13f-the-frame-not-the-swing-s-last",
-    "file": "src/world/gateBoss.js",
+    "file": "src/world/gate/gateBoss.js",
     "old": "export const SPENT_FRAME = 4;",
     "new": "export const SPENT_FRAME = 3;",
     "tests": ["test/wb13f_rhythm.test.js"]

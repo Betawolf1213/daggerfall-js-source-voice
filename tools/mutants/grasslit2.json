@@ -202,7 +202,7 @@
   },
   {
     "name": "GRASSLIT2-normal-diagonal",
-    "file": "src/world/terrainSurface.js",
+    "file": "src/world/terrain/terrainSurface.js",
     "old": "    const v = az >= ax ? n00 + az * (n01 - n00) + ax * (n11 - n01) : n00 + ax * (n10 - n00) + az * (n11 - n10);",
     "new": "    const v = ax >= az ? n00 + az * (n01 - n00) + ax * (n11 - n01) : n00 + ax * (n10 - n00) + az * (n11 - n10);",
     "tests": [
@@ -212,7 +212,7 @@
   },
   {
     "name": "GRASSLIT2-normal-unnormalised",
-    "file": "src/world/terrainSurface.js",
+    "file": "src/world/terrain/terrainSurface.js",
     "old": "  out[0] /= l; out[1] /= l; out[2] /= l;\n  return out;",
     "new": "  return out;",
     "tests": [
@@ -638,7 +638,7 @@
   },
   {
     "name": "AUDIT-GRASSLIT2-C-normal-no-lower-clamp",
-    "file": "src/world/terrainSurface.js",
+    "file": "src/world/terrain/terrainSurface.js",
     "old": "  const last = g - 2;\n  const qx = Math.max(0, Math.min(last, Math.floor(lx / quad)));\n  const qz = Math.max(0, Math.min(last, Math.floor(lz / quad)));",
     "new": "  const last = g - 2;\n  const qx = Math.min(last, Math.floor(lx / quad));\n  const qz = Math.min(last, Math.floor(lz / quad));",
     "tests": [

@@ -7,7 +7,7 @@ import {
   ActionSystem, classifyPlacementAction, EFFECT_ACTION_FLAGS,
 } from '../src/world/actionSystem.js';
 import { layoutRdbBlock, ACTION_FLAGS, TRIGGER_FLAGS } from '../src/world/rdbLayout.js';
-import { collectInteriorLights, INTERIOR_LIGHT_RANGE } from '../src/world/interiorLights.js';
+import { collectInteriorLights, INTERIOR_LIGHT_RANGE } from '../src/world/interior/interiorLights.js';
 import { attachInteriorDoorSounds } from '../src/scenes/interiorContext.js';
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { Task } from '../src/systems/quest/task.js';

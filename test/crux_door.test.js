@@ -16,7 +16,7 @@ import { readFileSync } from 'node:fs';
 import { layoutRdbBlock } from '../src/world/rdbLayout.js';
 import { dfMeshToModel, DOOR_TYPE } from '../src/world/meshReader.js';
 import { RDB_RESOURCE_TYPES } from '../src/formats/blocksFile.js';
-import { isDungeonExitDoor } from '../src/world/dungeonLayout.js';
+import { isDungeonExitDoor } from '../src/world/dungeon/dungeonLayout.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const quad = (x) => ({ points: [{ x, y: 0, z: 0, u: 0, v: 0 }, { x: x + 40, y: 0, z: 0, u: 0, v: 0 }, { x: x + 40, y: -80, z: 0, u: 0, v: 0 }, { x, y: -80, z: 0, u: 0, v: 0 }] });
@@ -52,8 +52,8 @@ test('CRUX-DOOR: the dungeon host takes a block\'s DungeonExit doors alone as it
   const loop = src.slice(src.indexOf('for (const door of b.layout.exitDoors)'), src.indexOf('exitDoors.push({ ...door, matrix: multiply(originMatrix, door.matrix) });'));
   assert.ok(loop.length > 0 && loop.length < 600, 'the copy loop was found');
   assert.match(loop, /if \(!isDungeonExitDoor\(door\)\) continue;/, 'a door that is not a DungeonExit is the model\'s, not a way out');
-  assert.match(src, /import \{ layoutDungeon, isDungeonExitDoor \} from '\.\.\/world\/dungeonLayout\.js';/);
+  assert.match(src, /import \{ layoutDungeon, isDungeonExitDoor \} from '\.\.\/world\/dungeon\/dungeonLayout\.js';/);
   // the overlap registry reads the one law too - no second literal
-  const dl = rd('src/world/dungeonLayout.js');
+  const dl = rd('src/world/dungeon/dungeonLayout.js');
   assert.equal((dl.match(/DOOR_TYPE\.DUNGEON_EXIT/g) ?? []).length, 1, 'isDungeonExitDoor is the one reading of the type');
 });

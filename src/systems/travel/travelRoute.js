@@ -5,7 +5,7 @@
 // Mac's call: a click on a town or a marker is reached BY THE ROADS. The
 // roads are Hazelnut's - Basic Roads' four arrays, one byte a map pixel,
 // a bit for each edge a path leaves through (systems/travel/travelPaths.js's
-// compass, world/roadNetwork.js's DIR, one law) - the very bytes Travel
+// compass, world/road/roadNetwork.js's DIR, one law) - the very bytes Travel
 // Options' own follow key walks. A step from pixel A to its neighbour B
 // is ON the road only when A's byte carries the edge toward B and B's
 // carries the edge back: two roads side by side are not one road.
@@ -17,7 +17,7 @@
 // town two pixels off across a field is walked to across the field, and
 // one six pixels off round a hill is reached by the road round it.
 //
-// NOT world/roadNetwork.js's route(): that one LAYS roads (it prices
+// NOT world/road/roadNetwork.js's route(): that one LAYS roads (it prices
 // climbing and prefers the roads it already laid), this one WALKS them,
 // and a third copy of either law is what AUDIT 68 exists to stop. Both
 // read DIR_DELTA, so the compass is still one table.
@@ -37,7 +37,7 @@
 // when the boat packs (`again`), else left where it landed. Without `sea`
 // the one layer is the law above, unchanged: the sea refused.
 // ═══════════════════════════════════════════════════════════════════
-import { DIR_DELTA, MAP_W, MAP_H } from '../../world/roadNetwork.js';
+import { DIR_DELTA, MAP_W, MAP_H } from '../../world/road/roadNetwork.js';
 
 /** What a step costs, by what it walks on. The open ground's 3.5 makes a road worth a detour of up to three and a half
  *  times its length - Travel Options' reckless (road) and cautious (open) multipliers are 1 and 0.8 by default, so the
@@ -57,7 +57,7 @@ const ASHORE = 0, AFLOAT = 1, LEFT = 2;
 /** OW-MOUNTAINS (2026-09-28, Mac: "Bumping into a mountain can cause insane lag and cause you to take character damage. You
  *  shouldnt be able to navigate mountains"): the open ground a journey never crosses - a pixel of the Mountain climate
  *  (MapsFile.Climates.Mountain), or a step whose ground rises or falls more than TV_STEEP_RISE between two pixels (the
- *  small heightmap's own units, world/roadNetwork.js's ROAD_DIALS scale). A road or a track goes where it goes: the
+ *  small heightmap's own units, world/road/roadNetwork.js's ROAD_DIALS scale). A road or a track goes where it goes: the
  *  roads were laid over the passes. */
 export const TV_MOUNTAIN_CLIMATE = 226;
 export const TV_STEEP_RISE = 16;

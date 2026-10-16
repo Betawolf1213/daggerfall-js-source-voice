@@ -52,9 +52,9 @@ import { mat4FromQuatPosScale, quatRotateInto } from '../world/quat.js';
 import { colliderPoses, boxColliderTriangles, invertAffine, BUILTIN_COLLIDER_MESHES } from '../world/prefabColliders.js';   // DECK-WALK: a hull's colliders at rest
 import { buildDeck } from '../systems/naval/navalDeck.js';   // DECK-WALK: her walkable deck
 import { hullBuild, setGalleonStanding, setShipStanding } from '../systems/naval/navalShips.js';   // AUDIT GN-G4: and hull 2's build follows the hull that stands (SHIPS-2: hull 4's and hull 1's)
-import { registerGalleonArt, GALLEON_ARCHIVE, galleonCut, galleonGlow, GALLEON_NIGHT } from '../world/galleonArt.js';   // GALLEON: the new galleon's own pictures, on the texture door before her meshes ask
-import { registerCarrackArt, CARRACK_ARCHIVE, carrackCut, carrackGlow, CARRACK_NIGHT } from '../world/carrackArt.js';   // SHIPS-2: and the new carrack's,
-import { registerLargeBoatArt, LARGE_BOAT_ARCHIVE } from '../world/largeBoatArt.js';   // and the new large boat's
+import { registerGalleonArt, GALLEON_ARCHIVE, galleonCut, galleonGlow, GALLEON_NIGHT } from '../world/ships/galleonArt.js';   // GALLEON: the new galleon's own pictures, on the texture door before her meshes ask
+import { registerCarrackArt, CARRACK_ARCHIVE, carrackCut, carrackGlow, CARRACK_NIGHT } from '../world/ships/carrackArt.js';   // SHIPS-2: and the new carrack's,
+import { registerLargeBoatArt, LARGE_BOAT_ARCHIVE } from '../world/ships/largeBoatArt.js';   // and the new large boat's
 import { toColor32 } from '../formats/color32Order.js';
 import { addVendorTextures } from '../systems/textureReplacement.js';
 import { adoptLight } from '../render/lightId.js';   // LIGHT-ID: a lantern's light named by its lantern
@@ -69,7 +69,7 @@ export const FLAG_DONOR_HULL = 2;
 /** SHIPS-2: THE PORT'S OWN SHIPS' PICTURES - each standing ship's archive, how it is put on the texture door, which
  *  of its records hold glass to see through (DF-LOOK, DF-ART II kept - Mac: "windows should always be see through" -
  *  uploaded cut-outs), each of those records' NIGHT TWIN and the twin's glow (DF-ART III kept - Mac, of the stern
- *  windows: "See-through by day, lit at night" - world/galleonArt.js NIGHT_RECORD_OFFSET; the glow cut while the world
+ *  windows: "See-through by day, lit at night" - world/ships/galleonArt.js NIGHT_RECORD_OFFSET; the glow cut while the world
  *  loads), by the models' key for the ship (systems/comeSailAway/comeSailAwayModels.js PORT_SHIPS). */
 export const PORT_ART = Object.freeze({
   galleon: Object.freeze({ archive: GALLEON_ARCHIVE, register: registerGalleonArt, cut: galleonCut, night: GALLEON_NIGHT, glow: galleonGlow }),
@@ -518,7 +518,7 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
   }
 
   /** FixDeformations.LateUpdate over one holder: the timer, and on its frame the bake written to the GPU. AUDIT GN2-RG1:
-   *  a holder `everyFrame` (the new galleon's running rope - world/galleonRig.js BAKE, read on by systems/
+   *  a holder `everyFrame` (the new galleon's running rope - world/ships/galleonRig.js BAKE, read on by systems/
    *  comeSailAwayBoat.js) bakes on every frame the game runs, never paused (the timer never counts then) - on the tenth
    *  of a second a rope from a swinging spar to her deck was drawn where both stood at its last bake, its end 1.2-1.7 m
    *  off its spar at the auto-trim's 100 degrees a second - and not again while its bones stand where they did at its

@@ -19,7 +19,7 @@ import { equipItem } from '../src/systems/equip.js';
 import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
-import { bossStandIn, bossLookOf } from '../src/world/gateBoss.js';
+import { bossStandIn, bossLookOf } from '../src/world/gate/gateBoss.js';
 
 const fresh = () => { _resetForTests(); setPref('lootRarity', true); LP._resetLootPowersForTests(); _resetSetPowersForTests(); setPlayerDoor(null); };
 const lcg = (seed) => () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return (seed >>> 8) / 0x800000; };

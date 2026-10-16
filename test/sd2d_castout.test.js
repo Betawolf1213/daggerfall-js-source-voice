@@ -12,7 +12,7 @@ import { createSdHost } from '../src/scenes/sdHost.js';
 import { sdCities, sdTemplates, findSdSite, pickSdTemplate, sdHollowLocation } from '../src/systems/superDungeon/sdSite.js';
 import { scanGatePixels } from '../src/systems/gate/gateSite.js';
 import { LOCATION_TYPES, CLIMATES, longitudeLatitudeToMapPixel } from '../src/formats/mapsFile.js';
-import { isMainStoryDungeon } from '../src/world/dungeonTextures.js';
+import { isMainStoryDungeon } from '../src/world/dungeon/dungeonTextures.js';
 import { sdFirst, sdRise, sdFind, sdFell, sdGone, SD_COLLAPSE_MS, SD_CAST_OUT_LINE } from '../src/net/sdLaw.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

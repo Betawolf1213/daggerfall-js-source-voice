@@ -5,7 +5,7 @@
 // ONE LAW for every surface that names a dungeon: 'super' for a Hollow (the Super dungeon - its location says so,
 // `superTier`), 'elite' for an Elite spawn (`elite`, world/spawnedDungeons.js synthesizeDungeonLocation), 'regular'
 // for every other dungeon - and null for a place with no dungeon at all. DUNGEON_TIER_TEXT is the words each surface
-// draws; tierPhrase the one phrase it draws them in, with the size beside them (world/dungeonLabel.js, which knows the
+// draws; tierPhrase the one phrase it draws them in, with the size beside them (world/dungeon/dungeonLabel.js, which knows the
 // size law and the places the port made, which are no dungeon to tier). The tiers only differ online (an Elite or a
 // Super dungeon stands nowhere else), so the surfaces say them online (`tierShown`); offline every dungeon is DFU's,
 // and its plaque stays the World Tooltips mod's own "To <name>".
@@ -19,7 +19,7 @@
 export const DUNGEON_TIERS = Object.freeze(['regular', 'elite', 'super']);
 /** Each tier's words - the plaque's title, the map's label, the entry line. */
 export const DUNGEON_TIER_TEXT = Object.freeze({ regular: 'Regular Dungeon', elite: 'Elite Dungeon', super: 'Abyss Dungeon' });   // ABYSS-NAME (2026-10-07, Mac: "lets rename Super Dungeons to Abyss Dungeons (Keep the code in tact, this is for player facing putposes)"): the tier the code calls `super` is the player's Abyss Dungeon
-/** The three sizes' words (world/dungeonLabel.js reads which, off the built dungeon's block count). */
+/** The three sizes' words (world/dungeon/dungeonLabel.js reads which, off the built dungeon's block count). */
 export const DUNGEON_SIZE_TEXT = Object.freeze({ small: 'Small', medium: 'Medium', large: 'Large' });
 
 /** The tier of a location's dungeon: 'super', 'elite' or 'regular' - or null when the place has no dungeon. */

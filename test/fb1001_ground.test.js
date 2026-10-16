@@ -38,7 +38,7 @@ import { createGatherHost } from '../src/scenes/gatherHost.js';
 import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { FT } from '../src/systems/foraging/foragingLaw.js';
 import { utcDay } from '../src/net/marksLaw.js';
-import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 
 const DAY = 86_400;
 const MOUNTAIN = 226, REGION = 6;   // the Ravennian Forest: no crown, no march - no signature slot to move the count

@@ -16,7 +16,7 @@ import { damageEquipment } from '../src/combat/formulas.js';
 import { pcaaoApplyConditionDamageThroughWeaponDamage, pcaaoApplyConditionDamageThroughUnarmedDamage } from '../src/combat/pcaao.js';
 import { BODY_PARTS } from '../src/systems/armorMaterials.js';
 import { mintCondition } from '../src/systems/item/itemTemplates.js';
-import { strokeFatigueCost } from '../src/world/deepWaterSwim.js';
+import { strokeFatigueCost } from '../src/world/deepWater/deepWaterSwim.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 
@@ -60,7 +60,7 @@ test('BALANCE1: the fatigue scale is on EXERTION alone - the minute\'s band, a j
   assert.match(rd('src/systems/roleplayRealism/rrInstall.js'), /const owed = cost \* FATIGUE_DRAIN_SCALE \+ \(entity\._rrFatigueCarry \?\? 0\);/, 'the overload, its fraction carried (rr1_realism drives it)');
   // the pre-merge audit (0927b F1): Enhanced Riding's charge is exertion too - 165 was left whole and on neither list
   assert.match(rd('src/systems/roleplayRealism/rrRidingHost.js'), /- Math\.trunc\(FATIGUE_LOSS\.Default \* RR_RIDING\.chargeFatigueMultiplier \* FATIGUE_DRAIN_SCALE\)\);/);
-  for (const f of ['src/systems/effects.js', 'src/systems/poisons.js', 'src/systems/diseases.js', 'src/systems/guild/guildServiceActions.js', 'src/systems/quest/actions.js', 'src/systems/survival/needs.js', 'src/world/deepWaterSwim.js']) {
+  for (const f of ['src/systems/effects.js', 'src/systems/poisons.js', 'src/systems/diseases.js', 'src/systems/guild/guildServiceActions.js', 'src/systems/quest/actions.js', 'src/systems/survival/needs.js', 'src/world/deepWater/deepWaterSwim.js']) {
     assert.doesNotMatch(rd(f), /FATIGUE_DRAIN_SCALE/, `${f}: not exertion, not scaled`);
   }
   assert.equal(strokeFatigueCost(6400), 160, 'the swim stroke is a burst bought on purpose, at the mod\'s price');

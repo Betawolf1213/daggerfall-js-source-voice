@@ -15,12 +15,12 @@ import { readFileSync } from 'node:fs';
 import { fishKind, castAt, castOverWater, CAST_OVER_WATER_M, CAST_RISE_M } from '../src/scenes/fishHost.js';
 import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { EYE_HEIGHT, SWIM_EYE_HEIGHT } from '../src/player/motor.js';
-import { SCALED_OCEAN_ELEVATION, STREAMING_TERRAIN_SCALE } from '../src/world/terrainSampler.js';
-import { DW_OCEAN_LOCAL_Y } from '../src/world/deepWatersPixel.js';
+import { SCALED_OCEAN_ELEVATION, STREAMING_TERRAIN_SCALE } from '../src/world/terrain/terrainSampler.js';
+import { DW_OCEAN_LOCAL_Y } from '../src/world/deepWater/deepWatersPixel.js';
 import { WATER_LEVEL } from '../src/systems/comeSailAway/comeSailAway.js';
-import { MEASURED as CARRACK } from '../src/world/carrackModel.js';
-import { MEASURED as GALLEON } from '../src/world/galleonModel.js';
-import { MEASURED as LARGE_BOAT } from '../src/world/largeBoatModel.js';
+import { MEASURED as CARRACK } from '../src/world/ships/carrackModel.js';
+import { MEASURED as GALLEON } from '../src/world/ships/galleonModel.js';
+import { MEASURED as LARGE_BOAT } from '../src/world/ships/largeBoatModel.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const NET = { items: [{ templateIndex: 1603, currentCondition: 50 }] };

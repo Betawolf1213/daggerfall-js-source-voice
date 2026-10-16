@@ -1,4 +1,4 @@
-// WATER-NEXT 2 - THE BED (world/waterBed.js): clear water must have something under it. The ground the eye sees is
+// WATER-NEXT 2 - THE BED (world/water/waterBed.js): clear water must have something under it. The ground the eye sees is
 // carved into a bowl under the water - the game's ground never moves - and the water's sheet keeps the grid as it
 // stood, the bed's depth under each vertex. The record: bible/07-Rendering/Water-Arc.md WATER-NEXT 2.
 import { test } from 'node:test';
@@ -6,9 +6,9 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { waterBedDepths, carveBed, waterBedOf, flatGrid, bedProfile, BED_DEPTH, BED_RAMP, TILE_UNITS } from '../src/world/waterBed.js';
-import { buildTerrainGrid } from '../src/world/terrainSurface.js';
-import { HEIGHTMAP_DIMENSION } from '../src/world/terrainSampler.js';
+import { waterBedDepths, carveBed, waterBedOf, flatGrid, bedProfile, BED_DEPTH, BED_RAMP, TILE_UNITS } from '../src/world/water/waterBed.js';
+import { buildTerrainGrid } from '../src/world/terrain/terrainSurface.js';
+import { HEIGHTMAP_DIMENSION } from '../src/world/terrain/terrainSampler.js';
 import { buildWaterIndices } from '../src/render/waterSurface.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');

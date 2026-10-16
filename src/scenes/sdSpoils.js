@@ -3,7 +3,7 @@
 // ON THE ARENA'S FLOOR - the court's burst (scenes/gateCourt.js burst) for the Last Moment. SD_SPEW_AT_MS into its fall
 // (the fight as the page holds it - net/sdFightLink.js), this fighter's spoils (systems/superDungeon/sdSpoils.js, off the receipt the
 // relay signed for them - net/sdReceipt.js `h1`) leave the cage of its chest toward them and come to rest on the arena's
-// floor, never off its edge into the void (world/gateSpew.js keepLaunch, SD_SPOILS_KEEP); a fighter the realm counted in
+// floor, never off its edge into the void (world/gate/gateSpew.js keepLaunch, SD_SPOILS_KEEP); a fighter the realm counted in
 // that has no receipt SD_RECEIPT_WAIT_MS into the fall is told so, once. The pool (scenes/spoilsPool.js, the Hour's own
 // keys) keeps them as rolled until a save holds them, the press takes them, and leaving the Hour gathers whatever is
 // still on the floor. A receipt that comes outside its realm is the host's to grant (scenes/world.js).
@@ -43,7 +43,7 @@ export function clearOfPillars(x, z, margin = SD_PILLAR_CLEAR_M) {
   }
   return [x, z];
 }
-/** The floor they are kept to (world/gateSpew.js keepLaunch's `{ centre, r, floorY }`): the arena's, in the dungeon's
+/** The floor they are kept to (world/gate/gateSpew.js keepLaunch's `{ centre, r, floorY }`): the arena's, in the dungeon's
  *  frame. */
 export const SD_SPOILS_KEEP = Object.freeze({ centre: Object.freeze(realmToDungeon(SD_ARENA.x, 0, SD_ARENA.z)), r: SD_ARENA.r - SD_SPEW_RIM_M, floorY: realmToDungeon(0, 0, 0)[1] });
 

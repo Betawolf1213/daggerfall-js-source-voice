@@ -34,7 +34,7 @@
 // Not a DFU member. Ledger A (WARDEN1).
 import { wardenStamp, validWardenStamp, stampFits, wardenWordOf, offlineDue, footprintRoadShare, landingsOf, strayOf, horseThrownWith, WARDEN_ROAD_SHARE, WARDEN_SAME_NATIVES, WARDEN_TEXT } from '../systems/wagon/wagonWarden.js';
 import { findTownPath, pathLine } from '../systems/livingWorld/townPaths.js';
-import { NAV_CELL } from '../world/cityNavigation.js';
+import { NAV_CELL } from '../world/city/cityNavigation.js';
 import { WAGON_MODE, HORSE_MODE } from '../systems/horse/horseCartLaw.js';
 import { mapPixelOfWire, cellRoomOfWire, parkSpotOf } from '../net/wire.js';
 

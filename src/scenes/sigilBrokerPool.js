@@ -19,7 +19,7 @@
 // on her is shut (the host's `gone`).
 //
 // HER BODY is the Daedra Seducer's mortal guise (EnemyBasics 29, TEXTURE.284 - the game has no Dremora sprite), its idle
-// records by the eight orientations (characters/mobileUnit.js IDLE_ANIMS, read through world/gateBoss.js bossFrame, the
+// records by the eight orientations (characters/mobileUnit.js IDLE_ANIMS, read through world/gate/gateBoss.js bossFrame, the
 // court's own reader), a billboard on the flats' axis. She faces the gate through her cage's door, and turns to a player
 // come within BROKER_NOTICE_M of her - at a walk's pace, never a snap.
 //
@@ -28,7 +28,7 @@
 // the window is ui/brokerWindow.js behind ui/brokerDoor.js; the sale is the host's (scenes/world.js), through the law.
 //
 // Not a DFU member. Ledger A (SET).
-import { bossFrame } from '../world/gateBoss.js';
+import { bossFrame } from '../world/gate/gateBoss.js';
 import { IDLE_ANIMS, IDLE_ANIM_SPEED } from '../characters/mobileUnit.js';
 import { ENEMY_BASICS } from '../characters/enemyBasics.js';
 import { mobileBillboardSize } from '../world/rmbFlats.js';
@@ -41,13 +41,13 @@ import {
   buildCageModel, buildCageDoor, cageHinge, CAGE_WALLS, CAGE_DOOR_WALL, CAGE_W, CAGE_D, CAGE_H, CAGE_CAP, CAGE_FOOT, CAGE_FOOT_UNDER, CAGE_POST,
   CAGE_SILL, CAGE_SILL_OVER, CAGE_SILL_MAX, CAGE_LEAF_W, CAGE_WALL_OUT, CAGE_DOOR_OPEN, CAGE_DOOR_MS,
 } from '../world/cageModel.js';
-import { gateArt, GATE_ARCHIVE } from '../world/gateArt.js';
+import { gateArt, GATE_ARCHIVE } from '../world/gate/gateArt.js';
 
 /** The mobile whose sprite she wears: the Daedra Seducer, in her mortal guise. */
 export const BROKER_MOBILE = 29;
 /** BROKER-CAGE: where her cage stands at the faithful's circle (metres, in the circle's frame - world/riteModel.js): this
  *  far from its heart, outside its braziers (RITE_BRAZIER_R 8.5) and inside the clearing the rock keeps off
- *  (world/gateClearance.js RITE_CLEAR_M 20), turned this far from its bearing to the gate - the gate's side, away from
+ *  (world/gate/gateClearance.js RITE_CLEAR_M 20), turned this far from its bearing to the gate - the gate's side, away from
  *  the casket's (+π/2); the faithful's ring (4.6), their tents and their fire (behind, 13-15) clear of it. */
 export const CAGE_R = 11.5;
 export const CAGE_TURN = -Math.PI / 3;
@@ -238,7 +238,7 @@ export function createSigilBroker({
   function drawBody() {
     if (!at || !body?.tex) return false;
     const eye = cam() ?? at.feet;
-    // the court's reader of an act (world/gateBoss.js bossFrame) - typed for his acts, read here for the one field set an
+    // the court's reader of an act (world/gate/gateBoss.js bossFrame) - typed for his acts, read here for the one field set an
     // idle act carries (its anims, its frame, its loop); `atk` and `t` are his alone and bossFrame never reads them
     act.frame = Math.floor((now() / 1000) * IDLE_ANIM_SPEED);
     const fr = bossFrame(act, yaw ?? at.rest, at.feet, eye, (rec) => body.tex.getFrameCount?.(rec) ?? 1);

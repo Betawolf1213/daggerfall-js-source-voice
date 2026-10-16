@@ -11,7 +11,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { exteriorSurfaces, exteriorSwimming, ON_EXTERIOR_WATER } from '../src/player/exteriorSurface.js';
 import { SWIM_EYE_HEIGHT } from '../src/player/motor.js';
-import { SHALLOW_WHOLE } from '../src/world/waterCorners.js';
+import { SHALLOW_WHOLE } from '../src/world/water/waterCorners.js';
 import { createDeepWatersPlayer } from '../src/scenes/deepWatersPlayer.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

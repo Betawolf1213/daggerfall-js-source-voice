@@ -16,11 +16,11 @@ import { SD_FIGHT_EMPTY, sdBodyAt } from '../src/net/sdFightLink.js';
 import {
   buildRealmModel, realmPillarTris, realmFloorTris, realmLampTris, realmColliderTris, realmLights, realmLightsWith, arenaLamp,
   SD_REALM_PILLAR_RECORD, SD_REALM_BRASS_RECORD, SD_LAMPS,
-} from '../src/world/sdRealm.js';
-import { realmArt, realmPillarArt } from '../src/world/sdRealmArt.js';
-import { pillarCentre, sdPillarDials, sdLanterns, SD_PILLAR_LOOK, SD_PILLAR_DIAL, SD_LANTERN, SD_PILLAR_FACES } from '../src/world/sdPillarModel.js';
-import { SD_RAMP } from '../src/world/sdLook.js';
-import { paletteOf, offPalette } from '../src/world/sdPixelKit.js';
+} from '../src/world/superDungeon/sdRealm.js';
+import { realmArt, realmPillarArt } from '../src/world/superDungeon/sdRealmArt.js';
+import { pillarCentre, sdPillarDials, sdLanterns, SD_PILLAR_LOOK, SD_PILLAR_DIAL, SD_LANTERN, SD_PILLAR_FACES } from '../src/world/superDungeon/sdPillarModel.js';
+import { SD_RAMP } from '../src/world/superDungeon/sdLook.js';
+import { paletteOf, offPalette } from '../src/world/superDungeon/sdPixelKit.js';
 import { SD_PILLAR_FS, SD_DIAL_TEXELS, SD_DIAL_PART, SD_DIAL_HAND, SD_DIAL_RINGS, SD_PILLAR_DIALS, SD_LANTERNS, SD_LANTERN_SPILLS, sdPillarPassGeometry } from '../src/render/sdPillarPass.js';
 import {
   sdPillarHandsAt, sdWatchedAt, handToward, sdLampDimAt, sdLampDimInto, sdPillarLookAt, sdPillarLook, sdArenaMarksAt, SD_RESET_DIM, SD_MARK_COLOR, SD_WATCH_HOME_Y,
@@ -28,7 +28,7 @@ import {
 import { SD_HEART_LIGHT } from '../src/scenes/sdRemnant.js';
 import { SD_BLOW_COLOR } from '../src/scenes/sdRemnantBlows.js';
 import { clearOfPillars } from '../src/scenes/sdSpoils.js';
-import { SD_REMNANT_BODY, remnantScale } from '../src/world/sdRemnantModel.js';
+import { SD_REMNANT_BODY, remnantScale } from '../src/world/superDungeon/sdRemnantModel.js';
 import { TELEGRAPH_KIND, BOSS_MARK_R, telegraphField } from '../src/render/gateTelegraph.js';
 import { BOSS_R } from '../src/net/gateBrain.js';
 import { Collider } from '../src/player/collider.js';
@@ -332,7 +332,7 @@ test('S7 THE HOSTS BY SOURCE: the world host draws the pillars\' watch in the ar
   assert.match(L, /realmTris = realmColliderTris\(\)/);
   for (const host of ['src/scenes/dungeonContext.js', 'src/scenes/exterior.js']) assert.doesNotMatch(read(host), /sdArenaWatch|sdPillarPass/, `${host}: flagged, not wired`);
   // the realm's model wears the dress, and its collider keeps the squares
-  const R = read('src/world/sdRealm.js');
+  const R = read('src/world/superDungeon/sdRealm.js');
   assert.match(R, /for \(let k = 0; k < 4; k\+\+\) pillarVisual\(f, k, PILLAR_RECORDS\);/);
   assert.match(R, /for \(let k = 0; k < 4; k\+\+\) for \(const \[a, b, c, d\] of pillarQuads\(k\)\) out\.push/);
 });
@@ -341,7 +341,7 @@ test('S7 THE ARENA\'S WATCH MAKES NOTHING - L2 F9\'s measure (a child with a 64 
   const url = (p) => JSON.stringify(pathToFileURL(join(ROOT, p)).href);
   const script = `
     const W = await import(${url('src/scenes/sdArenaWatch.js')});
-    const { realmLightsWith } = await import(${url('src/world/sdRealm.js')});
+    const { realmLightsWith } = await import(${url('src/world/superDungeon/sdRealm.js')});
     const { SD_FIGHT_EMPTY } = await import(${url('src/net/sdFightLink.js')});
     const { SD_BLOWS } = await import(${url('src/net/sdRemnant.js')});
     const { realmToDungeon } = await import(${url('src/net/sdBrain.js')});

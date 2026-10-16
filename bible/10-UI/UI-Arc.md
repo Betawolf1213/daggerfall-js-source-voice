@@ -16652,7 +16652,7 @@ Nothing in the interior light path is wrong, and the check was not a
 glance:
 
 - `AddLight`'s second switch (`DaggerfallInterior.cs:1034-1151`) is
-  transcribed cell for cell in `world/interiorLights.js`, re-read
+  transcribed cell for cell in `world/interior/interiorLights.js`, re-read
   against the live C# for this report. Every row matches, including the
   one that is BLUE: **record 8, the "Turkis lamp", is
   `Color(0.68, 1.0, 0.94)` in Daggerfall Unity** - turquoise is what

@@ -495,7 +495,7 @@
   },
   {
     "name": "ARENA2-FLOOR-Y",
-    "file": "src/world/arenaFloor.js",
+    "file": "src/world/arena/arenaFloor.js",
     "old": "type: 0x01, position: pos++, index: objects.length, xPos: o.XPos, yPos: o.YPos - PROPS_Y,",
     "new": "type: 0x01, position: pos++, index: objects.length, xPos: o.XPos, yPos: o.YPos,",
     "tests": [
@@ -504,7 +504,7 @@
   },
   {
     "name": "ARENA2-FLOOR-STAIR",
-    "file": "src/world/arenaFloor.js",
+    "file": "src/world/arena/arenaFloor.js",
     "old": "    if (id === 43600) continue;   // the undercroft's stair is the city's",
     "new": "",
     "tests": [
@@ -513,7 +513,7 @@
   },
   {
     "name": "ARENA2-FLOOR-LIGHTS",
-    "file": "src/world/arenaFloor.js",
+    "file": "src/world/arena/arenaFloor.js",
     "old": "      resources: res({ lightResource: { unknown1: 0, unknown2: 0, radius: FLAT_LIGHT_R[key] ?? 160 } }),",
     "new": "      resources: res({ lightResource: { unknown1: 0, unknown2: 0, radius: 0 } }),",
     "tests": [
@@ -522,7 +522,7 @@
   },
   {
     "name": "ARENA2-SEAT-ROOF",
-    "file": "src/world/arenaFloor.js",
+    "file": "src/world/arena/arenaFloor.js",
     "old": "      if (h < SEAT_UP_MIN || h > SEAT_UP_MAX) continue;",
     "new": "      if (h < SEAT_UP_MIN) continue;",
     "tests": [
@@ -531,7 +531,7 @@
   },
   {
     "name": "ARENA2-RING-R",
-    "file": "src/world/arenaFloor.js",
+    "file": "src/world/arena/arenaFloor.js",
     "old": "export const RING_R = 14;",
     "new": "export const RING_R = 17;",
     "tests": [

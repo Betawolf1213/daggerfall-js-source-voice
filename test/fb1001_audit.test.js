@@ -47,7 +47,7 @@ import { endOldLifeEffects } from '../src/systems/lycanthropy.js';
 import { cureAllAttributes } from '../src/systems/guild/guildServiceFlow.js';
 import { maxFatigue, liveStat } from '../src/systems/statMods.js';
 import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
-import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const WORLD = read('src/scenes/world.js');

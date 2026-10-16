@@ -55,7 +55,7 @@ Re-run at AUDIT PRE-MERGE 1003 on PR #545's head, without ARENA2: the same 35 de
 | B9 | - | The two switches' Features row said "Takes effect when the game next loads". But the switch is latched for the game, so an in-game Load keeps the towns the game started with, and offline the towns also need Replace Game Artwork. | Round 4: the row says "Takes effect when the game is next started (an in-game Load keeps the towns it started with). Offline it also needs Replace Game Artwork." |
 
 **Online homes and rooms** (`server-account/src/homes.js`, `server-account/src/index.js`, `src/net/accountClient.js`,
-`src/net/online.js`, `src/world/interiorShared.js`, `src/systems/online/onlineHomes.js`, `src/scenes/world.js`,
+`src/net/online.js`, `src/world/interior/interiorShared.js`, `src/systems/online/onlineHomes.js`, `src/scenes/world.js`,
 `src/scenes/worldModes.js`, `src/scenes/homeYards.js`; the pins in `test/wd3_online.test.js`)
 
 | ID | Sev | Finding | Fix |

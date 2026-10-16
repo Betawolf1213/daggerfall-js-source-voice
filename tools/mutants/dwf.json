@@ -1,7 +1,7 @@
 [
   {
     "name": "DW-F-skirt-whole",
-    "file": "src/world/deepWaterCap.js",
+    "file": "src/world/deepWater/deepWaterCap.js",
     "old": "        if (clipped) { dropped++; continue; }\n        const t0 = edge(i)",
     "new": "        const t0 = edge(i)",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "DW-F-skirt-rows-for-columns",
-    "file": "src/world/deepWaterCap.js",
+    "file": "src/world/deepWater/deepWaterCap.js",
     "old": "const tiles = [(t) => t, (t) => last * dim + t, (t) => t * dim, (t) => t * dim + last];",
     "new": "const tiles = [(t) => t * dim, (t) => t * dim + last, (t) => t, (t) => last * dim + t];",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "DW-F-skirt-south-row-inside",
-    "file": "src/world/deepWaterCap.js",
+    "file": "src/world/deepWater/deepWaterCap.js",
     "old": "const tiles = [(t) => t, ",
     "new": "const tiles = [(t) => dim + t, ",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "DW-F-skirt-null-before-the-skirt",
-    "file": "src/world/deepWaterCap.js",
+    "file": "src/world/deepWater/deepWaterCap.js",
     "old": "  if (stride > 1) {\n    const edges = [(i) => i,",
     "new": "  if (!dropped) return null;\n  if (stride > 1) {\n    const edges = [(i) => i,",
     "tests": [

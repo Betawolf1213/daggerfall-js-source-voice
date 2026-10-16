@@ -62,7 +62,7 @@ names the departure (TV1, 2026-09-28).
   (`Travel-Options.md` TO-FIELD: "The mod does not route along roads to a named
   destination and never did"). The pieces for a planner are in the tree:
   `ui/overworldModel.js traceChains` (1,508 road chains, 4,289 track chains) and
-  `world/roadNetwork.js route()` (a pixel-grid A* that refuses water and prices climbs).
+  `world/road/roadNetwork.js route()` (a pixel-grid A* that refuses water and prices climbs).
 - **The raised eye exists.** The render eye (`mwv.eye`) is already separate from
   `cam.pos` (`scenes/world.js`), and `cam.pos` is what streaming, the ±500 m vertical
   re-centre, the weather sample, rain, grass and the wind follow. The travel camera is a
@@ -328,7 +328,7 @@ change), and a plate's click is the same journey as a click on the town. No Trav
 the very bytes Travel Options' follow key walks - with a step ON the road only where both
 ends carry the edge; a road 1, a track 1.6, the open 3.5 (x sqrt 2 diagonally); the sea
 refused (roadsProducer's WATER_BYTE); a straight run on one kind of ground folded into one
-leg. It walks roads; `world/roadNetwork.js route()` lays them - two laws, one compass.
+leg. It walks roads; `world/road/roadNetwork.js route()` lays them - two laws, one compass.
 
 **The journeys are Travel Options'.** Two of the port's own (Ledger A, "THE TRAVEL VIEW'S
 JOURNEYS"), built from the mod's parts: `beginTravelAlongRoute` (each leg a pixel's middle,
@@ -1756,7 +1756,7 @@ the rock scaled by a million 83 km under it (`03-World/World-Of-Daggerfall.md`, 
   the faces, the giant's included (`test/audit_wod_branch.test.js`, `test/colliderkeys.test.js`, `test/ow_wod.test.js`).
   One entry a face however wide, so B1's memory law holds. The tree is built inside the pixel's build
   (`collider.settle`, 7 to 32 ms warm on the stand-in's 2,880 and 11,497 faces), never by a frame in play; a later mesh
-  raises it again on the query that needs it. And the road-clearance walk (`world/roadClearance.js boxNearPath`) asks
+  raises it again on the query that needs it. And the road-clearance walk (`world/road/roadClearance.js boxNearPath`) asks
   only the map's own pixels: the giant's box spans thousands of pixels each way, mostly off the map, and the walk took
   46 to 121 ms of main thread a mountain pixel's build.
 - **OW-WOD-PATH, the route through the massif (2).** The Overworld's planner (`systems/travel/travelRoute.js`) knew only the

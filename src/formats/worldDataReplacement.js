@@ -217,7 +217,7 @@ export function _resetWorldDataReplacement({ assets = true } = {}) {
 // The Arena of Daggerfall is not a layout mod and not a switch (bible/11-Multiplayer/Arena.md "How it is laid": "the
 // arena is not a switch, it is the city"), so its block and its edit of the city are served whatever AssetInjection,
 // a mod's switch or a save's pin says - and outside DFU's new-block sequence: a port block takes a FIXED index past
-// any BSA (world/gateArena.js's made block is the precedent), so the first block a mod's file names still takes
+// any BSA (world/gate/gateArena.js's made block is the precedent), so the first block a mod's file names still takes
 // BsaFile.Count (DFU's AssignBlockIndices, RR3b) and no pack's new block moves.
 const _portBlocks = new Map();   // name -> { index, json, block }
 /** A block of the port's own, by name, at a fixed index (>= 900000). */
@@ -569,7 +569,7 @@ function recordHeaderFromJson(h, name) {
   };
 }
 // WD3 (AUDIT WD3 P1): LocationDungeon.RecordElement is a public field DFU keeps (DFLocation.cs) and every dungeon
-// reader asks its header's LocationId (world/dungeonLayout.js, scenes/dungeonContext.js, systems/save/save.js) - a town
+// reader asks its header's LocationId (world/dungeon/dungeonLayout.js, scenes/dungeonContext.js, systems/save/save.js) - a town
 // with a dungeon (Castle Daggerfall, Sentinel, Wayrest under Beautiful Cities) carries it, and it is read here.
 function dungeonFromJson(d, name) {
   return {

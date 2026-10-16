@@ -136,8 +136,8 @@ import { dungeonMap3dOn, tamrielMapOn } from './mapSkin.js';   // EM3-3D: the so
 // continent inked round the Bay on the world sheet - the sheet's pan box grows to the whole frame, the home view stays
 // the Bay's own fit, and past that fit the sheet is on the continent (ui/tamrielInk.js; bible/03-World/Tamriel.md)
 import { tamrielInkFor, paintTamrielInk, tamrielPlaceAt, onContinent } from './tamrielInk.js';
-import { tamrielFrameInBay } from '../world/tamrielFrame.js';
-import { tamrielLandVersion } from '../world/tamrielLand.js';   // TAMRIEL3: the trace's version, in the static key
+import { tamrielFrameInBay } from '../world/tamriel/tamrielFrame.js';
+import { tamrielLandVersion } from '../world/tamriel/tamrielLand.js';   // TAMRIEL3: the trace's version, in the static key
 import { NOTE_MAX_CHARACTERS } from '../systems/automap/automap.js';
 /** PLUS-MAP: the 3D map's tool glyphs - line drawings in the button's own colour (currentColor). */
 const TOOL_SVG = (d) => `<svg class="hmtoolicon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square" stroke-linejoin="miter">${d}</svg>`;

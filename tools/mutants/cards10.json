@@ -580,7 +580,7 @@
   },
   {
     "name": "CARDS3c-slop",
-    "file": "src/world/cardHand.js",
+    "file": "src/world/card/cardHand.js",
     "old": "export const CLICK_SLOP = 0.012;",
     "new": "export const CLICK_SLOP = 0.05;",
     "tests": [
@@ -589,7 +589,7 @@
   },
   {
     "name": "CARDS3c-time",
-    "file": "src/world/cardHand.js",
+    "file": "src/world/card/cardHand.js",
     "old": "  if (Math.hypot(dx, dy) <= CLICK_SLOP && ms <= CLICK_MS) return 'click';",
     "new": "  if (Math.hypot(dx, dy) <= CLICK_SLOP) return 'click';",
     "tests": [
@@ -598,7 +598,7 @@
   },
   {
     "name": "CARDS3c-push-direction",
-    "file": "src/world/cardHand.js",
+    "file": "src/world/card/cardHand.js",
     "old": "  if (-dy >= PUSH_FOLD && -dy > Math.abs(dx)) return 'push';",
     "new": "  if (Math.hypot(dx, dy) >= PUSH_FOLD) return 'push';",
     "tests": [
@@ -607,7 +607,7 @@
   },
   {
     "name": "CARDS3c-squeeze-start",
-    "file": "src/world/cardHand.js",
+    "file": "src/world/card/cardHand.js",
     "old": "  return pull > CLICK_SLOP ? Math.min(1, (pull - CLICK_SLOP) / SQUEEZE_PULL) : null;",
     "new": "  return pull > 0 ? Math.min(1, pull / SQUEEZE_PULL) : null;",
     "tests": [
@@ -616,7 +616,7 @@
   },
   {
     "name": "CARDS3c-rise",
-    "file": "src/world/cardHand.js",
+    "file": "src/world/card/cardHand.js",
     "old": "  return multiply(m, trs(0, 0, -SQUEEZE_RISE * k, 0, SQUEEZE_TURN_DEG * k, 0));",
     "new": "  return multiply(m, trs(0, -SQUEEZE_RISE * k, 0, 0, SQUEEZE_TURN_DEG * k, 0));",
     "tests": [
@@ -625,7 +625,7 @@
   },
   {
     "name": "CARDS3c-turn",
-    "file": "src/world/cardHand.js",
+    "file": "src/world/card/cardHand.js",
     "old": "  return multiply(m, trs(0, 0, -SQUEEZE_RISE * k, 0, SQUEEZE_TURN_DEG * k, 0));",
     "new": "  return multiply(m, trs(0, 0, -SQUEEZE_RISE * k, 0, 0, 0));",
     "tests": [
@@ -634,7 +634,7 @@
   },
   {
     "name": "CARDS3c-clamp",
-    "file": "src/world/cardHand.js",
+    "file": "src/world/card/cardHand.js",
     "old": "  const k = Math.max(0, Math.min(1, s));\n  return multiply(m, trs(0, 0, -SQUEEZE_RISE",
     "new": "  const k = s;\n  return multiply(m, trs(0, 0, -SQUEEZE_RISE",
     "tests": [

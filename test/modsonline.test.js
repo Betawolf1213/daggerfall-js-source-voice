@@ -52,7 +52,7 @@ import { MOD_SETTINGS, modSetting, setModSetting, modSettingIfDeclared } from '.
 import { ONLINE_PLAYERS_OWN_MODS, ONLINE_ROOM_MOD_KEYS, onlineForcedModSetting, onlineForcedPref, ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/online/onlineLane.js';
 import { runSurvivalMinutes } from '../src/systems/survival/needs.js';   // MODS-ONLINE-3: the needs run, measured
 import { FEATURES } from '../src/systems/features.js';   // MODS-ONLINE-3: the rows a player sees as mods, whichever store carries them
-import { smoothRoadHeights, SMOOTHED_TILES, ROAD_TILES, RIVER_TILES, STREAM_TILES, TRACK_TILES } from '../src/world/roadPainter.js';
+import { smoothRoadHeights, SMOOTHED_TILES, ROAD_TILES, RIVER_TILES, STREAM_TILES, TRACK_TILES } from '../src/world/road/roadPainter.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rd = (f) => readFileSync(join(ROOT, f), 'utf8');
@@ -185,7 +185,7 @@ test('MODS-ONLINE-2 by source: the port resolves each freed mod where the actor 
 
   // And the one that is not a rule: the lane forces it, the terrain
   // reads it, and the smoother is the reason.
-  assert.match(rd('src/world/terrainGen.js'), /if \(roads\.smooth !== false\) smoothRoadHeights\(samples, tilemap, 129, hasLocation \? locationRect : null\);/,
+  assert.match(rd('src/world/terrain/terrainGen.js'), /if \(roads\.smooth !== false\) smoothRoadHeights\(samples, tilemap, 129, hasLocation \? locationRect : null\);/,
     'the smoothing is what SmoothRoads decides, and it writes the heights');
   assert.match(rd('src/scenes/world.js'), /const roadSwitches = \{ smooth: modSetting\('roads-hazelnut', 'SmoothRoads'\), water: modSetting\('roads-hazelnut', 'RiversAndStreams'\) \};/,
     'and the world reads it through modSetting, which is where the lane answers');

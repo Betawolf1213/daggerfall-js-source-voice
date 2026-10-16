@@ -32,7 +32,7 @@ is walked, travelled, streamed or picked.
    and only when the view reaches past the Bay's rectangle - one rectangle test while it does not. Measured in node:
    the build 13-15 ms once; a continent-wide static paint ~8 ms of canvas calls; on the Bay, zero calls.
 
-## The frame (`world/tamrielFrame.js`)
+## The frame (`world/tamriel/tamrielFrame.js`)
 
 | Constant | Value | Measured or authored |
 |---|---|---|
@@ -47,7 +47,7 @@ sheet's coordinates (the Bay at 0..1000, 0..500, the continent negative west and
 the box the sheet pans over; `inBay` is the data's ground. The two AUTHORED numbers are named in this file and nowhere
 else (`test/tamriel.test.js` sweeps for a second copy), so the probe's correction is one edit.
 
-## The geography (`world/tamrielGeography.js`)
+## The geography (`world/tamriel/tamrielGeography.js`)
 
 - **A vertex table and rings over it.** Every province is a ring (or rings - Vvardenfell, Sumurset and Auridon are
   rings of their own) of NAMED vertices; a border is the run two rings share, spelled in each. `classifyEdges` holds
@@ -101,7 +101,7 @@ else (`test/tamriel.test.js` sweeps for a second copy), so the probe's correctio
 - The switch is read ONCE at open (`this._tamriel`), the Features row's "takes effect the next time a map is opened".
   Off is the sheet as it was: contain on the Bay, the clamp at the Bay's edge, a hover beyond it silent.
 
-## The raster (`world/tamrielRaster.js`) - the later use
+## The raster (`world/tamriel/tamrielRaster.js`) - the later use
 
 Nothing in the game loop calls it. `rasterizeTamriel({ cell })` lays the continent out in the Bay's own three planes -
 WOODS' height byte (the sea 0, the shore SHORE_BYTE rising inland, a range lifted toward SNOW_BYTE by its gain, a
@@ -158,7 +158,7 @@ Mac, after the question of populating it: *"Lets worry about this later and only
 The streamed world goes on past the Bay's edge. Daggerfall grows every tile from two bytes a map pixel - WOODS.WLD's
 height and CLIMATE.PAK's climate - through DFU's own kernel, and the kernel asks for them through three reads of the
 WoodsFile (`getHeightMapValue`, `getHeightMapValuesRange1Dim`, `getLargeHeightMapValuesRange`) and one of the MapsFile
-(`getClimateIndex`). `world/tamrielGround.js` answers those reads for any pixel of the frame: the Bay's own on the Bay,
+(`getClimateIndex`). `world/tamriel/tamrielGround.js` answers those reads for any pixel of the frame: the Bay's own on the Bay,
 the authored continent's past it - its height by the one law the raster reads (the sea 0, the shore rising to the
 plain over PLAIN_REACH from the coast, a range lifted toward SNOW_BYTE by its gain, a lattice hash of ±2), its climate
 the province's (the Ocean's at sea), its large-map detail a lattice hash of small bytes. Nothing stands on it: no
@@ -230,7 +230,7 @@ the authored shape (no Features row: a door for a day the trace reads a picture 
   unclaimed region the flood never reached that touches a mask is the ninth province - the line's own pixels never
   part of it, so a pocket inside a mask (the Inner Sea) and a ring in the sea (the helmet) stay sea. The two files
   must share a grid, or the trace is null and the authored shape stands.
-- **The land module** (`world/tamrielLand.js`): the trace installed (`setTamrielTrace`), a chamfer 3-4 distance field
+- **The land module** (`world/tamriel/tamrielLand.js`): the trace installed (`setTamrielTrace`), a chamfer 3-4 distance field
   to the nearest sea made at install, a version that moves on every install (the ink's and the held map's static key
   read it), and the two reads everything else asks - `provinceKeyAt` (the trace's by id, the authored rings' else;
   null at sea and off the grid) and `coastDistanceAt` (the field, bilinear; the authored edges' else). PURE: typed
@@ -243,7 +243,7 @@ the authored shape (no Features row: a door for a day the trace reads a picture 
   smallest scale, which lays the most cells (the pin that found it: `test/tamriel3.test.js`). Deterministic; ~40M
   compares, once, after the travel art, off the boot's critical path. TAMRIEL4 scores the Bay's EDGE first and the
   inside beside it, at every quarter scale from 15 to 21 (below).
-- **The live frame** (`world/tamrielFrame.js`): BAY_ORIGIN and PIXELS_PER_PICTURE_UNIT are the DEFAULTS now; every
+- **The live frame** (`world/tamriel/tamrielFrame.js`): BAY_ORIGIN and PIXELS_PER_PICTURE_UNIT are the DEFAULTS now; every
   conversion reads `tamrielFit()` - the fit the host installs (`setTamrielFit`, null or a bad pair the defaults
   again) - and `tamrielSize()` the picture at the live scale. The raster, the ground, the ink and the held map's frame
   all move with it.
@@ -256,8 +256,8 @@ the authored shape (no Features row: a door for a day the trace reads a picture 
   the picture's land; a sea's name on the picture's land is dropped; the rivers stay authored (TAMRIEL4: not on the
   trace - the picture's own water is its rivers). The model reports
   `traced` and `version`, and `tamrielInkFor` rebuilds when the version moves.
-- **The ground and the raster** read the land module (`world/tamrielGround.js authoredHeightByte`,
-  `tamrielClimateAt`; `world/tamrielRaster.js` at the live scale) - so with the trace in, the streamed land past the
+- **The ground and the raster** read the land module (`world/tamriel/tamrielGround.js authoredHeightByte`,
+  `tamrielClimateAt`; `world/tamriel/tamrielRaster.js` at the live scale) - so with the trace in, the streamed land past the
   Bay is the picture's land, textured by the picker's province, and the sea where the picture paints sea.
 - **The worker** is handed the trace and the fit once, after the boot (`terrainGenClient.js setTamriel`: copies of
   the two arrays transferred, the fit beside them; the fallback kernel's own modules set the same way, the ground's
@@ -329,7 +329,7 @@ four faults, each a reading of the picture rather than the picture:
    cruder inlet than WOODS.WLD's: that fit left High Rock's and Hammerfell's painted west coasts 100-200 Bay pixels past
    the data's, and the shore the player follows out of the Bay ran off its edge into nothing (516 edge pixels of 3,000
    disagreeing). Inside the Bay the data is drawn, so what the fit owes the map is the JOIN. `fitBayToPicture`
-   (`world/tamrielLand.js`) scores THE SEAM FIRST: the Bay's edge cells (its own cells, four samples a cell and the
+   (`world/tamriel/tamrielLand.js`) scores THE SEAM FIRST: the Bay's edge cells (its own cells, four samples a cell and the
    majority, as before) against the picture's pixels just beyond them, the fraction agreeing, and the inside's fraction
    beside it at FIT_AREA_WEIGHT (0.25); the scales every quarter from 15 to 21 (FIT_PPUS - the seam's best lay outside
    TAMRIEL3's 16-21); a candidate keeps a pixel of picture round it. On the freeware data: (38, 57) x15.5, 190 of its

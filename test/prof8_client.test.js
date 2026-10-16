@@ -16,11 +16,11 @@ import { parseNodeKey, haulKey, utcDayOfMs, SCHOOL_R } from '../src/net/nodeLaw.
 import { FISH_ACT, tugWindow, PEARL, fishBand } from '../src/net/professionLaw.js';
 import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { PASSIVE_FISH_SPECIES } from '../src/world/passiveFish.js';
-import { climateToBiome } from '../src/world/underwaterDecorations.js';
+import { climateToBiome } from '../src/world/underwater/underwaterDecorations.js';
 import { createProfHud } from '../src/ui/profHud.js';
 import { accountRefusalText } from '../src/net/accountClient.js';
-import { WORLD_MAP_TILE_DIM } from '../src/world/terrainTiles.js';
-import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { WORLD_MAP_TILE_DIM } from '../src/world/terrain/terrainTiles.js';
+import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const WOODS = 231, OCEAN = 223;

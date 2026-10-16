@@ -69,7 +69,7 @@ export function fxBurstOf(A) {
   }
 }
 /** WB13d: the light a landing throws where it falls away from him - `light` [intensity, reach m] for FX_LIGHT_MS, fading
- *  (a landing at his own feet is his glow's: world/gateBoss.js bossGlow). */
+ *  (a landing at his own feet is his glow's: world/gate/gateBoss.js bossGlow). */
 export const FX_LIGHT_MS = 450;
 export const FX_KINDS = Object.freeze({
   slam: Object.freeze({ share: 0.75, power: 1, grit: true }),

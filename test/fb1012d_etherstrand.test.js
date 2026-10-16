@@ -20,7 +20,7 @@ import { knowShip, _resetFleetForTests } from '../src/systems/fleet.js';
 import { BOAT_ACTIONS, cargoModWords } from '../src/systems/comeSailAway/comeSailAway.js';
 import { inEther, landfall, VEIL_X } from '../src/world/ethericSea.js';
 import { crossingTarget } from '../src/systems/naval/etherCrossing.js';
-import { TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 
 const WORLD = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
 /** world.js's `veilApart` - the Fleet's side-of-the-Veil law - as the host hands it the Fleet's host. */

@@ -9,7 +9,7 @@ import { readFileSync } from 'node:fs';
 import { createSdRemnantVoice, SD_VOICE_CUES, SD_HURT_GAP_MS, SD_VOICE_AWAY_MS } from '../src/scenes/sdRemnantVoice.js';
 import { createSdRemnantBlows } from '../src/scenes/sdRemnantBlows.js';
 import { SD_BLOWS, SD_BODY } from '../src/net/sdRemnant.js';
-import { BOSS_CUES } from '../src/world/gateBoss.js';
+import { BOSS_CUES } from '../src/world/gate/gateBoss.js';
 import { AudioEngine } from '../src/systems/audio.js';
 import { SOUND } from '../src/systems/soundClips.js';
 import { SPELL_CAST_SOUND } from '../src/systems/enemySpells.js';

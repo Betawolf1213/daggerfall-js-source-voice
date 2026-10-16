@@ -1,9 +1,9 @@
 // CARP-YARD (2026-10-12, Mac: "Let's also redesign their buildings like we did with stables, etc", choosing a new
 // Carpenter's Yard whose workbench is a Carpentry station; bible/03-World/Merchant-Yards.md CARP-YARD). THE JOINERY - a
 // third yard on the Stables' and the Wagon Yards' machinery: its law (systems/merchantYards.js - the kind, its order after
-// the port's places, its key after theirs, its one row, the bench as a station), its place (world/merchantYardSites.js
-// craftYardSitesOn, scenes/world.js townPlacesFor), its timber and its pictures (world/merchantYardModels.js,
-// world/merchantYardArt.js), the pool's press and its bench (scenes/merchantYardsHost.js), the town's talk, its map and the
+// the port's places, its key after theirs, its one row, the bench as a station), its place (world/merchantYards/merchantYardSites.js
+// craftYardSitesOn, scenes/world.js townPlacesFor), its timber and its pictures (world/merchantYards/merchantYardModels.js,
+// world/merchantYards/merchantYardArt.js), the pool's press and its bench (scenes/merchantYardsHost.js), the town's talk, its map and the
 // Overworld's glyph, and the street's workbench the Stores page reads (scenes/world.js workbenchHere, ui/profPages.js).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -15,17 +15,17 @@ import {
 } from '../src/systems/merchantYards.js';
 import { FOUND_KIND_ORDER, PORT_PLACE_ORDER, foundBuildingKey } from '../src/systems/portPlaces.js';
 import { WORKBENCH_FEE } from '../src/net/professionLaw.js';
-import { yardGround, yardSitesOn, craftYardSitesOn, YARD_FOOT, YARD_GAP_M, YARD_PAD_M } from '../src/world/merchantYardSites.js';
-import { buildYardModel, buildCarpenterModel, CARPENTER_YARD, SIGN_BOARD, signBoxOf, yardPoints, benchBoxOf, YARD_SINK } from '../src/world/merchantYardModels.js';
-import { yardArt, yardSignArt, YARD_ARCHIVE, YARD_REC, signGlyph, SAW_BLADE, SIGN_EMBLEM } from '../src/world/merchantYardArt.js';
+import { yardGround, yardSitesOn, craftYardSitesOn, YARD_FOOT, YARD_GAP_M, YARD_PAD_M } from '../src/world/merchantYards/merchantYardSites.js';
+import { buildYardModel, buildCarpenterModel, CARPENTER_YARD, SIGN_BOARD, signBoxOf, yardPoints, benchBoxOf, YARD_SINK } from '../src/world/merchantYards/merchantYardModels.js';
+import { yardArt, yardSignArt, YARD_ARCHIVE, YARD_REC, signGlyph, SAW_BLADE, SIGN_EMBLEM } from '../src/world/merchantYards/merchantYardArt.js';
 import { createMerchantYards, yardToScene, YARD_REACH, YARD_BENCH_RISE } from '../src/scenes/merchantYardsHost.js';
-import { yardTownBlocks, YARD_MAP_BYTE } from '../src/world/merchantYardMap.js';
+import { yardTownBlocks, YARD_MAP_BYTE } from '../src/world/merchantYards/merchantYardMap.js';
 import { quarterOf } from '../src/ui/townQuarters.js';
 import { TopicTree, EN, QUESTION_TYPE } from '../src/systems/topicTree.js';
 import { yardGlyph, yardMarkKind } from '../src/ui/travelViewHud.js';
 import { markGroup, isYardMark } from '../src/systems/travel/travelViewFilters.js';
 import { CAPSULE_HEIGHT } from '../src/player/motor.js';
-import { NAV_CELL } from '../src/world/cityNavigation.js';
+import { NAV_CELL } from '../src/world/city/cityNavigation.js';
 import { ROAD_WEIGHT } from '../src/systems/gothwayBoards.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

@@ -50,7 +50,7 @@ import { createSheetSlot, stripScale, isSheet, stripHit, STRIP } from '../src/ui
 import { MAP_SHEETS } from '../src/systems/map/mapTabs.js';
 import { getPixelColorIndex } from '../src/ui/travelMapWindow.js';
 import { CLIMATES, LOCATION_TYPES, mapPixelToLongitudeLatitude } from '../src/formats/mapsFile.js';
-import { SCALED_OCEAN_ELEVATION } from '../src/world/terrainSampler.js';
+import { SCALED_OCEAN_ELEVATION } from '../src/world/terrain/terrainSampler.js';
 import {
   travelMapFilters, travelMapPopUpState, setTravelMapPopUpState,
   travelMapSaveData, resetTravelMapState,

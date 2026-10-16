@@ -10,7 +10,7 @@
   },
   {
     "name": "SD5A-the-court's-id",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "export const SD_REALM_LOCATION_ID = 0x7ffff200;",
     "new": "export const SD_REALM_LOCATION_ID = 0x7ffff000;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "SD5A-the-slot-unread",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "export const isSdRealm = (loc) => Number.isSafeInteger(loc?.sdRealm) && ",
     "new": "export const isSdRealm = (loc) => ",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "SD5A-the-marker-off-the-Threshold",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "  const [x, , z] = realmToDungeon(0, 0, SD_ARRIVE_Z);",
     "new": "  const [x, , z] = realmToDungeon(0, 0, 30);",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "SD5A-the-dial-off-the-hall",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "realmIsland(f, SD_ORRERY.x, SD_ORRERY.z, R, SD_REALM_DIAL_RECORD,",
     "new": "realmIsland(f, SD_ORRERY.x, SD_ORRERY.z, R, SD_REALM_FLOOR_RECORD,",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "SD5A-no-root",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "    f.quad(SD_REALM_ROOT_RECORD, C(x0, -SD_LIP, z0), C(x0, 0, z0),",
     "new": "    if (false) f.quad(SD_REALM_ROOT_RECORD, C(x0, -SD_LIP, z0), C(x0, 0, z0),",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "SD5A-a-floor-left-out",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "  disc(SD_THRESHOLD);\n  disc(SD_ORRERY);\n",
     "new": "  disc(SD_THRESHOLD);\n",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "SD5A-the-walk-unwalked",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "  Object.freeze({ kind: 'band', ...SD_WALK }),\n",
     "new": "",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "SD5A-the-inset-ignored",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "rr = Math.max(0, fl.r - inset);",
     "new": "rr = fl.r;",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "SD5A-the-lamps-outside-the-rims",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "0, cz + Math.sin(a) * (r - 1)]);",
     "new": "0, cz + Math.sin(a) * (r + 2)]);",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "SD5A-the-dial's-twelfth-unlit",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "twelfth: 0.035, hour: 0.02,",
     "new": "twelfth: 0.02, hour: 0.02,",
     "tests": [

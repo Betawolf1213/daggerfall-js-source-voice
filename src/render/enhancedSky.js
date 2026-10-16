@@ -43,7 +43,7 @@ import { dayFraction, daylightScale, isNight } from '../world/worldClock.js';
 import { lunarPhaseFractionsFromMinutes, LUNAR_PHASES } from '../systems/gameDate.js';   // CLK3: the dome takes the phase as a number on the clock
 import { buildProgram } from './glProgram.js';   // AUDIT 68 S17-gl-program-dup: the one compile and link
 import { DREAD_GLSL } from '../world/dreadSky.js';   // EVENT1: the live event's grade, the sky's last word
-import { SD_BRASS_GLSL } from '../world/sdBrassSky.js';   // AUDIT SD III (V8): the brass air's grade on the sky as on its haze
+import { SD_BRASS_GLSL } from '../world/superDungeon/sdBrassSky.js';   // AUDIT SD III (V8): the brass air's grade on the sky as on its haze
 
 const hex = (h) => [parseInt(h.slice(1, 3), 16) / 255, parseInt(h.slice(3, 5), 16) / 255, parseInt(h.slice(5, 7), 16) / 255];
 const mix3 = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
@@ -702,7 +702,7 @@ export class EnhancedSkyRenderer {
     this.fogMix = 0;
     /** EVENT1: the live event's grade over the dome, 0..1 (world/dreadSky.js) - the host's. */
     this.dread = 0;
-    /** AUDIT SD III (V8): the brass air's grade over it, 0..1 (world/sdBrassSky.js) - the host's. */
+    /** AUDIT SD III (V8): the brass air's grade over it, 0..1 (world/superDungeon/sdBrassSky.js) - the host's. */
     this.brass = 0;
     this.fogColor = new Float32Array([0.5, 0.5, 0.5]);
     this.clearColor = new Float32Array([0.66, 0.78, 0.92]);

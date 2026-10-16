@@ -59,7 +59,7 @@ import { appStorage } from '../appStorage.js';   // DA1: localStorage in a brows
 import { normalTribute } from '../../world/lefayMonument.js';   // LEFAY1: the flowers a character laid at Julian LeFay's monument
 import { characterIdOf, adoptLegacyCards, mintCharacterId } from '../characterId.js';   // CHARID1: a character is an id, not a name
 import { isOnlinePage } from '../online/onlineLane.js';   // ONLINE-DEATH-FIX: the page is online
-import { STREAMING_TERRAIN_SCALE } from '../../world/terrainSampler.js';   // TERRAIN-SCALE1: the scale every saved exterior height stands on
+import { STREAMING_TERRAIN_SCALE } from '../../world/terrain/terrainSampler.js';   // TERRAIN-SCALE1: the scale every saved exterior height stands on
 import { reviveForPlay } from '../deathRespawn.js';   // ONLINE-DEATH-FIX: the SAME half-health an online respawn leaves
 import { setLightSource } from '../lightSource.js';   // DISC7: the light in hand's one door
 import { renownHpOf, renownMpOf, offlineVitals } from '../renownLayer.js';   // RENOWN1: the online layer never reaches a save

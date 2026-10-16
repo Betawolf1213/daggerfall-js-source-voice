@@ -1,7 +1,7 @@
 // WOD7 (2026-09-23, Mac: "and all the enemies are synced online?" ... "yes dude") - WORLD OF DAGGERFALL'S CAMPS,
 // SHARED. The first player to spring a marker owns what it made: its foes ride that player's cell stream tagged
 // with the marker's site, every reader stands them under an allowance of their own and spends its own copy of the
-// marker, and two players who spring one marker at once are settled by id. The site law is world/wodShared.js; the
+// marker, and two players who spring one marker at once are settled by id. The site law is world/worldOfDaggerfall/wodShared.js; the
 // pool's two halves are scenes/exteriorFoes.js; the host's are scenes/world.js (sliced through the audit's rig).
 
 import './modsOff.js';
@@ -11,7 +11,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { wodSiteId, validSites, validSiteTags, yieldsTo, WOD_SITES_MAX, WOD_CAMP_PUPPETS_MAX, WOD_CLAIM_WINDOW_MS, WOD_AGE_MAX } from '../src/world/wodShared.js';
+import { wodSiteId, validSites, validSiteTags, yieldsTo, WOD_SITES_MAX, WOD_CAMP_PUPPETS_MAX, WOD_CLAIM_WINDOW_MS, WOD_AGE_MAX } from '../src/world/worldOfDaggerfall/wodShared.js';
 import { createExteriorFoes, MAX_ACTIVE_ENCOUNTER_FOES, ENCOUNTER_PUPPETS_MAX } from '../src/scenes/exteriorFoes.js';
 import { CELL_PUPPETS_MAX } from '../src/net/wire.js';
 import { isPeerTarget } from '../src/characters/enemyTargets.js';

@@ -17,12 +17,12 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { STREAMING_TERRAIN_SCALE, DEFAULT_TERRAIN_SCALE, MAX_TERRAIN_HEIGHT, HEIGHTMAP_DIMENSION, SCALED_OCEAN_ELEVATION } from '../src/world/terrainSampler.js';
-import { surfaceHeightAt, buildTerrainGrid } from '../src/world/terrainSurface.js';
-import { layoutNature } from '../src/world/terrainNature.js';
+import { STREAMING_TERRAIN_SCALE, DEFAULT_TERRAIN_SCALE, MAX_TERRAIN_HEIGHT, HEIGHTMAP_DIMENSION, SCALED_OCEAN_ELEVATION } from '../src/world/terrain/terrainSampler.js';
+import { surfaceHeightAt, buildTerrainGrid } from '../src/world/terrain/terrainSurface.js';
+import { layoutNature } from '../src/world/terrain/terrainNature.js';
 import { ringHeight } from '../src/render/farRing.js';
 import { overworldHeight, OVERWORLD_RELIEF } from '../src/ui/overworldModel.js';
-import { WOD_TERRAIN_HEIGHT_MAX } from '../src/world/wodLocationLoader.js';
+import { WOD_TERRAIN_HEIGHT_MAX } from '../src/world/worldOfDaggerfall/wodLocationLoader.js';
 import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { createSceneCache, cacheScene, restoreCachedScene, snapshotSceneCache, restoreSceneCache } from '../src/systems/sceneCache.js';
 import { makeAnchor } from '../src/systems/teleportAnchor.js';
@@ -36,7 +36,7 @@ const near = (a, b, eps = 1e-3) => assert.ok(Math.abs(a - b) <= eps, `${a} !~ ${
 test('TERRAIN-SCALE1: the game streams at the scene\'s 1.25 - TerrainHelper\'s 1.5 is the prefab\'s default, and the scene overrides it', () => {
   assert.equal(STREAMING_TERRAIN_SCALE, 1.25, 'DaggerfallUnityGame.unity: propertyPath TerrainScale, value 1.25 on the one StreamingWorld');
   assert.equal(DEFAULT_TERRAIN_SCALE, 1.5, 'TerrainHelper.defaultTerrainScale = 1.5f - still DFU\'s constant, and the scale of every save written before the stamp');
-  const src = rd('src/world/terrainSampler.js');
+  const src = rd('src/world/terrain/terrainSampler.js');
   assert.match(src, /DaggerfallUnityGame\.unity overrides the\n \*  StreamingWorld prefab instance's TerrainScale to 1\.25/, 'the citation rides the value');
   assert.equal(WOD_TERRAIN_HEIGHT_MAX, 1923.75, 'World of Daggerfall reads StreamingWorld.TerrainScale at run time - its author\'s commented 1539 * 1.25');
 });

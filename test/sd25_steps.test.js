@@ -1,31 +1,31 @@
 // SD25 S9 (2026-10-09, the Abyss Dungeon's look; bible/11-Multiplayer/Super-Dungeons-Look.md section 8): THE UNMOORED
-// STEPS, every step showing what it will do next - a draw atlas a kind (world/sdStepsArt.js), the Beat's clock-plate
+// STEPS, every step showing what it will do next - a draw atlas a kind (world/superDungeon/sdStepsArt.js), the Beat's clock-plate
 // frames, its falter and its dissolve, the Drift's pendulums, the risers' racks, the Crumble's crack stages and its chunks
-// that rewind (world/sdStepsModel.js, scenes/sdSteps.js), the waystones and the vane, the ghosts' pass
+// that rewind (world/superDungeon/sdStepsModel.js, scenes/sdSteps.js), the waystones and the vane, the ghosts' pass
 // (render/sdStepsPass.js - its shader run through test/glsl.mjs), and the cast-back's gold rewind (scenes/sdFx.js). The
-// law (world/sdSteps.js) is run from its own code: no picture is larger than it, none moves it.
+// law (world/superDungeon/sdSteps.js) is run from its own code: no picture is larger than it, none moves it.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { glslFunctions } from './glsl.mjs';
 import { realmToDungeon, SD_REALM_ORIGIN } from '../src/net/sdBrain.js';
-import { SD_REALM_ARCHIVE } from '../src/world/sdRealm.js';
-import { SD_HALL_ATLAS_RECORD, SD_HALL_ATLAS } from '../src/world/sdHallArt.js';
+import { SD_REALM_ARCHIVE } from '../src/world/superDungeon/sdRealm.js';
+import { SD_HALL_ATLAS_RECORD, SD_HALL_ATLAS } from '../src/world/superDungeon/sdHallArt.js';
 import { SD_ENDINGS } from '../src/net/sdMarks.js';
-import { SD_RAMP } from '../src/world/sdLook.js';
-import { offPalette, paletteOf } from '../src/world/sdPixelKit.js';
+import { SD_RAMP } from '../src/world/superDungeon/sdLook.js';
+import { offPalette, paletteOf } from '../src/world/superDungeon/sdPixelKit.js';
 import {
   SD_STEPS_COURSE, SD_CHECKPOINTS, SD_BEAT_CYCLE, SD_BEAT_SOLID, SD_BEAT_BLINK, SD_CRUMBLE_DELAY, SD_CRUMBLE_BACK, SD_CRUMBLE_FALL_G,
   SD_GUST_EVERY, SD_GUST_WARN, SD_STEP_THICK, SD_VOID_Y, stepAt, beatStands, gustAt,
-} from '../src/world/sdSteps.js';
+} from '../src/world/superDungeon/sdSteps.js';
 import {
   stepsArt, beatArt, crumbleArt, driftArt, riserArt, partsArt, beatHandAngle, beatTickLit, hourAngle, crackDistance, SD_STEPS_RECORD, SD_STEPS_ATLAS,
   SD_RISER_ATLAS, SD_STEPS_PALETTE, SD_BEAT_DIAL, SD_BEAT_EMBER_FRAME, SD_STEP_BEVEL, SD_CRACK_STAGES, SD_CRUMBLE_CRACKS, SD_STEPS_GLOW,
-} from '../src/world/sdStepsArt.js';
+} from '../src/world/superDungeon/sdStepsArt.js';
 import {
   SD_STEP_KINDS, SD_PENDULUM, SD_BEAT_DISSOLVE, SD_RACK, SD_VANE, SD_WAYSTONES, stepBox, stepTris, buildStepModel, buildBeatDissolve, buildPendulum,
   pendulumAngle, buildCrumbleChunks, buildVaneModel, vaneYawAt, stepEdges, buildWaystoneModel, SD_WAYSTONE,
-} from '../src/world/sdStepsModel.js';
+} from '../src/world/superDungeon/sdStepsModel.js';
 import { createSdSteps, sdStepKey, SD_STEPS_SOUNDS, SD_BEAT_FRAME_S, SD_BEAT_IN_S, SD_CHUNK, SD_CRUMBLE_SEEN, SD_BEAT_BLINK_HZ } from '../src/scenes/sdSteps.js';
 import { SD_GHOST, SD_GHOST_STEPS, SD_STEPS_PASS_VS, SD_STEPS_PASS_FS, sdGhostVertices } from '../src/render/sdStepsPass.js';
 import { createSdFx, sdCastBackSeen, SD_FX_REWIND, SD_FX_COLOR, SD_REWIND_SEEN } from '../src/scenes/sdFx.js';
@@ -51,7 +51,7 @@ const minY = (m) => { let y = Infinity; for (let k = 1; k < m.positions.length; 
 const recOf = (remap, base) => (remap ? Number([...remap.values()][0].split('_')[1]) : base);
 /** A texel's light (r + g + b) of an image at (x, y). */
 const lightAt = (img, x, y) => { const i = (y * img.width + x) * 4; return img.colors[i] + img.colors[i + 1] + img.colors[i + 2]; };
-/** A Beat top's texel holding (m, the plate's own: +x right, +z far) - world/sdStepsArt.js's own mapping, the chamfer round it. */
+/** A Beat top's texel holding (m, the plate's own: +x right, +z far) - world/superDungeon/sdStepsArt.js's own mapping, the chamfer round it. */
 const beatTexel = (mx, mz) => {
   const [x0, y0, w, h] = SD_STEPS_ATLAS.top, tw = 3 - 2 * SD_STEP_BEVEL, td = 2.6 - 2 * SD_STEP_BEVEL;
   return [x0 + Math.floor((mx / tw + 0.5) * w), y0 + Math.floor((mz / td + 0.5) * h)];

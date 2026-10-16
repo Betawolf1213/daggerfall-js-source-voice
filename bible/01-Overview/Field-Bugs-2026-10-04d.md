@@ -57,7 +57,7 @@ needed to camp again.
 The four hosts: `scenes/world.js` (its pack and hotbar place through `camps.placeItem`; its onChanged asks the full foes
 frame) and `scenes/exterior.js` (the same placeItem; no save, no room) wired; `scenes/dungeonContext.js` wired (its own
 pool and pack doors; its onChanged the act); `scenes/worldModes.js` unaffected (a building's placing is refused for being
-indoors before any strike). The dungeon's own campfires (`world/dungeonFires.js`) and the world's hearths (HEARTH1) are
+indoors before any strike). The dungeon's own campfires (`world/dungeon/dungeonFires.js`) and the world's hearths (HEARTH1) are
 not in the pool and are never struck. `test/fb1004d_campcap.test.js` (5: the law; the brick - four saved camps, a fifth
 placed, the oldest's gear home once; no item twice over nine placings at the cap; online - a cell peer, a dungeon host's
 memory, a joiner, a stale memory; the four hosts by source); `test/surv3_camps.test.js`'s cap pin re-aimed to the new

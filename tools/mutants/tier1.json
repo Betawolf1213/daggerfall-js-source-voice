@@ -41,7 +41,7 @@
   },
   {
     "name": "TIER1-five-blocks-read-medium",
-    "file": "src/world/dungeonLabel.js",
+    "file": "src/world/dungeon/dungeonLabel.js",
     "old": "  if (n <= SMALLER_DUNGEON_THRESHOLD) return 'small';",
     "new": "  if (n < SMALLER_DUNGEON_THRESHOLD) return 'small';",
     "tests": [
@@ -51,7 +51,7 @@
   },
   {
     "name": "TIER1-the-made-places-labelled",
-    "file": "src/world/dungeonLabel.js",
+    "file": "src/world/dungeon/dungeonLabel.js",
     "old": "  if (!tier || madeDungeon(loc)) return null;",
     "new": "  if (!tier) return null;",
     "tests": [
@@ -61,7 +61,7 @@
   },
   {
     "name": "TIER1-the-label-made-every-frame",
-    "file": "src/world/dungeonLabel.js",
+    "file": "src/world/dungeon/dungeonLabel.js",
     "old": "  if (kept) return kept;\n",
     "new": "",
     "tests": [

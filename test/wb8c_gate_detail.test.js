@@ -17,12 +17,12 @@ import { gateAspectOf } from '../src/net/gateMods.js';
 import { foldGate, GATE_STATE_EMPTY } from '../src/net/gateLink.js';
 import {
   attackColor, poolColor, emberColor, bossGlow, bossCue, ASPECT_COLORS, ATTACK_COLORS, POOL_COLOR, EMBER_COLOR, BOSS_CUES, ASPECT_CUE_IDS, THUNDER_ROLL,
-} from '../src/world/gateBoss.js';
+} from '../src/world/gate/gateBoss.js';
 import { telegraphShape, markShape, BOSS_MARK_R } from '../src/render/gateTelegraph.js';
 import { bossBarModel, drawGateBossBar, destroyGateBossBar } from '../src/ui/gateBossBar.js';
 import { aspectCss } from '../src/ui/gateMarksView.js';   // WB13c: his epithet's colour on the bar
 import { createGateCourt, COURT_STRIKE_TEXT, COURT_MARKS_TEXT, courtPhaseCard, MARK_COLOR, FED_LATE_MS } from '../src/scenes/gateCourt.js';
-import { courtToDungeon } from '../src/world/gateArena.js';
+import { courtToDungeon } from '../src/world/gate/gateArena.js';
 import { gateTip } from '../src/systems/gate/gateOmen.js';
 import { omenPost } from '../src/net/gateHerald.js';
 

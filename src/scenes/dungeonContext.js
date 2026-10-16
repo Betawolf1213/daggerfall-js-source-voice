@@ -19,13 +19,13 @@ import { combatStanding, dungeonShare, foeShare, progressionScaling, placeVetera
 import { effectiveLevel } from '../systems/mentorMode.js';   // SOFTCAP1
 import { quickslotHand } from '../ui/quickslotTags.js';   // DISC21-C: an empty quickslot press reads the hand   // PX30
 import { lycanthropeAttackVoice, lycanthropeMoveSound } from '../systems/lycanthropy.js';   // V4: the beast's attack voice; LM1: the 4-20s move-sound loop; DISC10-E L3: the inventory refusal moved INTO the window door
-import { layoutDungeon, isDungeonExitDoor } from '../world/dungeonLayout.js';
-import { isGateArena, COURT_TEXT } from '../world/gateArena.js';
-import { isArenaFloor } from '../world/arenaFloor.js';
-import { isArenaUndercroft } from '../world/arenaCity.js';   // ARENA-FIX 4: the fighters' hall
-import { undercroftPopulation, chainTag, deepFoesOf, undercroftHallNear } from '../world/arenaUndercroft.js';   // ARENA2: the arena floor's instance - what the sand will not allow
+import { layoutDungeon, isDungeonExitDoor } from '../world/dungeon/dungeonLayout.js';
+import { isGateArena, COURT_TEXT } from '../world/gate/gateArena.js';
+import { isArenaFloor } from '../world/arena/arenaFloor.js';
+import { isArenaUndercroft } from '../world/arena/arenaCity.js';   // ARENA-FIX 4: the fighters' hall
+import { undercroftPopulation, chainTag, deepFoesOf, undercroftHallNear } from '../world/arena/arenaUndercroft.js';   // ARENA2: the arena floor's instance - what the sand will not allow
 import { ARENA_TEXT } from '../systems/arena/arenaText.js';   // WB3b: the Burning Court - what the Deadlands will not allow
-import { dungeonFirePlan, colliderFireProbe, inFireWard, DUNGEON_FIRE_FLAT, fireLayoutInputs, isPalaceLayout } from '../world/dungeonFires.js';   // REST3: the dungeon's own campfires
+import { dungeonFirePlan, colliderFireProbe, inFireWard, DUNGEON_FIRE_FLAT, fireLayoutInputs, isPalaceLayout } from '../world/dungeon/dungeonFires.js';   // REST3: the dungeon's own campfires
 import { withFireMarks } from '../ui/nodeMarks.js';   // REST3: the campfires on the compass
 import { expandMacros } from '../systems/talk/talkSession.js';   // MACRO1: the global symbols every TEXT.RSC box passes through (MacroHelper)
 import { executeConsoleCommand } from '../systems/consoleCommands.js';   // E3: the probe door runs the real database
@@ -35,12 +35,12 @@ import { signalAutomapReset } from '../ui/automapWindow.js';   // A1: the M wind
 // EM3: the skin fork. The classic skin keeps DFU's 3D panel whole; the
 // enhanced one gets the held sheet with the dungeon's plan inked on it.
 import { createAutomapWindow, preloadAutomapArt, automapDoorReady } from '../ui/automapDoor.js';
-import { applyTextureTable } from '../world/dungeonTextures.js';
+import { applyTextureTable } from '../world/dungeon/dungeonTextures.js';
 import { createUseMagicItemWindow, noItemToActivateText } from '../ui/useMagicItemWindow.js';   // UI1: the U key's window
 import { cannotChangeIndoorsText } from '../ui/transportWindow.js';   // TR5: the indoors refusal
 import { smallerDungeonsStamp, needsStartWarp } from '../world/smallerDungeons.js';   // AUDIT 28 W4 / FT1: the save-time stamp and the load-time warp, one home
 import { remapSubMeshes } from '../world/texRemap.js';   // WM3: the one climate/dungeon remap seam
-import { collectDungeonLights, dungeonAmbientFor, DUNGEON_AMBIENT, SPECIAL_AREA_BLOCK } from '../world/dungeonLights.js';   // AUDIT 26 F183: the castle / special-area ambients
+import { collectDungeonLights, dungeonAmbientFor, DUNGEON_AMBIENT, SPECIAL_AREA_BLOCK } from '../world/dungeon/dungeonLights.js';   // AUDIT 26 F183: the castle / special-area ambients
 import { isHearthFlat } from '../systems/survival/hearth.js';   // HEARTH1: a bowl of fire down a corridor is a fire you can cook on
 import { CityLightAnimator, MINUTES_PER_DAY } from '../world/worldClock.js';
 import { billboardSize, mobileBillboardSize, centredBase, classicBillboardSize } from '../world/rmbFlats.js';
@@ -206,7 +206,7 @@ import { createRestWindow } from '../ui/restDoor.js';   // the enhanced/native f
 import { AmbientEffects, DUNGEON_AMBIENT_WAITS } from '../systems/ambientEffects.js';
 import { enemyWeightClassicUnits, weaponKnockbackSpeed, weaponKnockbackApplies, reportPlayerAttack } from '../combat/formulas.js';   // C15: + knockback; WB4b: a spell's number on the court's boss pops as a blow's does
 import { HIT_KINDS } from '../net/gateBrain.js';   // WB4b: a blow on the court's boss says its kind
-import { bossReach, BOSS_SWAY_TEXT, BOSS_SWAY_TELL_MS } from '../world/gateBoss.js';   // WB4b: a swing meets the court's boss at his skin; WB8a: and a sway meets his refusal
+import { bossReach, BOSS_SWAY_TEXT, BOSS_SWAY_TELL_MS } from '../world/gate/gateBoss.js';   // WB4b: a swing meets the court's boss at his skin; WB8a: and a sway meets his refusal
 import { playerMeleeCanHit } from '../combat/playerWeapon.js';   // PVPDUNGEON
 import { duelSpellOf } from '../combat/duelCombat.js';   // WB4b: the harmful families alone reach the court's boss, as they alone reach a duel opponent
 import { assignEnemySpells, SPELL_CAST_SOUND } from '../systems/enemySpells.js';
@@ -250,8 +250,8 @@ import { wildHallFoes } from '../systems/wild/wildDungeons.js';   // PVPDUNGEONS
 import { isWildRegion, applyWildFoe, wildLootOpts, wildPileMore, wildRingAt, wildMask, WILD_RINGS } from '../systems/wild/wildZone.js';   // WILD1: the open zone's dungeons (WILD2: by their ring)
 import { elitesAllowed, pickDungeonElites, promoteEliteFoe, grantEliteLoot, eliteGlow, setBatchEliteGlow, eliteSize, isEliteCorpse, markEliteCorpseBatch, eliteCorpseSize, ELITE_FOE_SIZE } from '../systems/eliteFoes.js';   // ELITE FOES: 3-4 champions in an Elite Dungeon
 import { ELITE_FOE_MULTIPLIER, ELITE_HEALTH_SCALE, ELITE_DAMAGE_SCALE, ELITE_LOOT_DROP_MULT, ELITE_LOOT_QUALITY_MULT } from '../world/spawnedDungeons.js';   // ELITE: an elite spawn's foe count and strength
-import { superFoeLevel, scaleSuperFoe, SUPER_ELITE_FOES, SUPER_LOOT_OPTS, SUPER_LOOT_DROP_MULT, SUPER_LOOT_QUALITY_MULT, sdEndMarks, sdRiftPlace, sdReturnPlace, sdLandingPlace } from '../world/sdDungeon.js';   // SD4a: a Super dungeon's difficulty; SD4b: its end's place
-import { dungeonEndOf } from '../world/dungeonEnd.js';   // SD4b: RVN7d's lair law, lifted - the lair's stand and a Super dungeon's end read one law
+import { superFoeLevel, scaleSuperFoe, SUPER_ELITE_FOES, SUPER_LOOT_OPTS, SUPER_LOOT_DROP_MULT, SUPER_LOOT_QUALITY_MULT, sdEndMarks, sdRiftPlace, sdReturnPlace, sdLandingPlace } from '../world/superDungeon/sdDungeon.js';   // SD4a: a Super dungeon's difficulty; SD4b: its end's place
+import { dungeonEndOf } from '../world/dungeon/dungeonEnd.js';   // SD4b: RVN7d's lair law, lifted - the lair's stand and a Super dungeon's end read one law
 import { createSdEnd, SD_HOME_TEXT } from './sdEnd.js';   // SD4b: a Super dungeon's Rift and Return; SD10: the Hour's way home
 import { createSdHall } from './sdHall.js';   // SD6c: the Orrery's hall in the Shattered Hour
 import { createSdSteps } from './sdSteps.js';   // SD7b: the Unmoored Steps in the Shattered Hour
@@ -259,7 +259,7 @@ import { createSdHang } from './sdHang.js';   // SD-LOOK S11: what hangs under t
 import { createSdRemnant } from './sdRemnant.js';   // SD8c: the Brass Remnant in the Shattered Hour
 import { sdMarksOf } from '../net/sdMarks.js';   // SD18c: its Hollow's Ending - the light it burns with
 import { SD_NO_RIFT } from '../net/sdLaw.js';   // SD4b: the Rift's word when nobody can answer it
-import { isSdRealm, SD_REALM_TEXT, SD_WAY_BACK_Z, SD_WAY_BACK_SIZE, SD_THRESHOLD_RIM } from '../world/sdRealm.js';   // SD5a: the Shattered Hour - a made place, its refusals, its way back
+import { isSdRealm, SD_REALM_TEXT, SD_WAY_BACK_Z, SD_WAY_BACK_SIZE, SD_THRESHOLD_RIM } from '../world/superDungeon/sdRealm.js';   // SD5a: the Shattered Hour - a made place, its refusals, its way back
 import { realmToDungeon } from '../net/sdBrain.js';   // SD5a: the realm's frame
 import { dungeonTier } from '../systems/dungeon/dungeonTier.js';   // SD4a: the location's tier, the one law (TIER1)
 import { ENEMY_BASICS, enemyDisplayName } from '../characters/enemyBasics.js';
@@ -462,7 +462,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   };
 
   const dungeon = layoutDungeon(dfLocation, blocks, getModelPre);
-  // ARENA-FIX 4: THE ARENA UNDERCROFT IS THE FIGHTERS' HALL (world/arenaUndercroft.js): its people, the training pit's
+  // ARENA-FIX 4: THE ARENA UNDERCROFT IS THE FIGHTERS' HALL (world/arena/arenaUndercroft.js): its people, the training pit's
   // dummy, the Hall of Champions' trophies and the beasts' chains stood at the layout's own markers, as flats of the
   // block they stand in (a copy of the layout - the laid block is shared); its beasts below, and no random foe in the
   // hall's reach (UNDERCROFT-DEEP, FIELD BUGS 2026-10-04e: the deep cellars past it stand the keep's own again)
@@ -1008,7 +1008,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     }
     for (const door of b.layout.exitDoors) {
       // CRUX-DOOR: the layout's list is every door face the block's models carry; only a DungeonExit door leaves
-      // (world/dungeonLayout.js isDungeonExitDoor, PlayerActivate.cs:649) - any other one is the model's, whose own
+      // (world/dungeon/dungeonLayout.js isDungeonExitDoor, PlayerActivate.cs:649) - any other one is the model's, whose own
       // action (a Teleport) answers the click
       if (!isDungeonExitDoor(door)) continue;
       // Exit-door matrices are model-local under the block origin.
@@ -1017,13 +1017,13 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   }
 
   // SD4a (bible/11-Multiplayer/Super-Dungeons.md section 5): A SUPER DUNGEON - a Hollow, by its location's word
-  // (systems/dungeon/dungeonTier.js) - is the port's hardest (world/sdDungeon.js): no fire of its own, its random foes rolled at
+  // (systems/dungeon/dungeonTier.js) - is the port's hardest (world/superDungeon/sdDungeon.js): no fire of its own, its random foes rolled at
   // the top band and built at its level, three at every marker as an Elite's, each x4 health and x2.5 damage, six
   // elites among them, and its loot +50%. Read once here; every arm below asks it.
   const _superTier = dungeonTier(dfLocation) === 'super';
   const _sdRealm = isSdRealm(dfLocation);   // SD5a: the Shattered Hour, read once - every arm below asks the flag
   // REST3 (2026-10-03, bible/06-Systems/Rest-Arc.md section 4; Mac: "Dungeon layouts now recieve multiple strategic
-  // placements for campfires"): THE DUNGEON'S OWN FIRES (world/dungeonFires.js). Placed here - after every block's
+  // placements for campfires"): THE DUNGEON'S OWN FIRES (world/dungeon/dungeonFires.js). Placed here - after every block's
   // geometry is in the collider, before the flats are batched and the lights' flicker is sized - so a placed fire is a
   // layout flat like any brazier: drawn and animated in the 210/1 batch, burning in the torches' loop, lit by a light of
   // its own (the camps' range), a light billboard to Improved Interior Lighting, and a hearth in `dungeonHearths` -
@@ -1033,7 +1033,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   // main's #545, AUDIT REST II). Permanent - never cold, never picked up - and a 15 m ward (_spawnEncounter).
   const firePlan = isGateArena(dfLocation) || isArenaFloor(dfLocation) ? null : dungeonFirePlan({
     blocks: dungeon.blocks,
-    probe: colliderFireProbe(collider),   // the rays, the law's own (world/dungeonFires.js) - the probe tool casts the same
+    probe: colliderFireProbe(collider),   // the rays, the law's own (world/dungeon/dungeonFires.js) - the probe tool casts the same
     ...fireLayoutInputs(dungeon.blocks, dungeonHearths),   // AUDIT REST-PARTY C6: the law's doors and fires, read as tools/dungeonFireProbe.mjs reads them
     seed: dfLocation?.dungeon?.recordElement?.header?.locationId ?? 0,
     elite: !!dfLocation?.elite,
@@ -1407,7 +1407,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   // ladder's grading of its kind, lootRarity.js DUNGEON_RARITY_TIER), read once at the build, every client alike; it
   // stands while the ladder does (read at each spawn) - the ladder off, DFU's own foes, as its champions and elites go
   // AUDIT BAL: never the port's own stages that wear a Crypt's type for want of one (the arena's floor, the gate's court,
-  // the Shattered Hour - world/arenaFloor.js, gateArena.js, sdRealm.js) - their fights are tuned, and their health the relay's
+  // the Shattered Hour - world/arena/arenaFloor.js, gateArena.js, sdRealm.js) - their fights are tuned, and their health the relay's
   const _placeVeteran = isGateArena(dfLocation) || isArenaFloor(dfLocation) || _sdRealm ? 0 : placeVeteran(dungeonRarityTier(dfLocation.mapTableData?.dungeonType));
   /** `puppet`: AUDIT BAL - another client's foe stands at this place too. The place is every client's (its tier, the
    *  ladder forced on online), so a puppet takes it - its blows on me as hard as on its owner; the owner's own standing
@@ -1851,7 +1851,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     if (!r) return null;
     const from = dungeon.enterMarker ?? dungeon.startMarker ?? null;
     const marks = (_layoutEnemies ?? []).filter((m) => Number.isFinite(m?.x) && Number.isFinite(m?.z));
-    const far = dungeonEndOf(from, marks);   // SD4b: the law lifted to world/dungeonEnd.js - a Super dungeon's Rift stands by it too
+    const far = dungeonEndOf(from, marks);   // SD4b: the law lifted to world/dungeon/dungeonEnd.js - a Super dungeon's Rift stands by it too
     if (!far) { releaseRevenantStand(r); return null; }
     const sp = spotAbout([far.x, far.y, far.z], 4) ?? { x: far.x, y: far.y, z: far.z };
     const so = revenantSpawnOptions(r, effectiveLevel(playerEntity));
@@ -1910,7 +1910,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   const portals = createPortalSet({ renderer, audio });   // COMPANION-PORTAL: this place's own, drawn with its foes
   // SD4b (bible/11-Multiplayer/Super-Dungeons.md section 6): A SUPER DUNGEON'S END - the Rift (to the Shattered Hour,
   // where its word admits) and the Return (to the way in, until the boss falls), stood the first frame I stand here at
-  // the end the lair's law finds (world/dungeonEnd.js), as wide as its hall lets them (world/sdDungeon.js) - the same on
+  // the end the lair's law finds (world/dungeon/dungeonEnd.js), as wide as its hall lets them (world/superDungeon/sdDungeon.js) - the same on
   // every client. Pressed, or walked into (scenes/sdEnd.js).
   const sdEndClock = () => opts.sdClock?.() ?? performance.now() / 1000;   // SD-LOOK: the realm's anchored seconds - every screen's gear ticks together
   const sdEnd = _superTier ? createSdEnd({ renderer, audio, onRift: () => sdRiftStep(), onReturn: () => sdReturnStep(), riftCount: () => sdEndWord()?.count ?? null, look: () => (opts.superRiftLook ? opts.superRiftLook(dfLocation?.sdSlot) : sdEndWord()?.look) ?? null, clock: sdEndClock })   // AUDIT SD II (L6 F5): its plaque counts its Hour; SD-LOOK: and its state is its look
@@ -3162,7 +3162,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     return true;
   });
   function hurtPlayer(dmg) {
-    // ARENA2: in my bout on the arena's sand (world/arenaFloor.js - the host's word) the blow that would kill leaves me at
+    // ARENA2: in my bout on the arena's sand (world/arena/arenaFloor.js - the host's word) the blow that would kill leaves me at
     // 1 and the bout hears I am down: playerEntity.hurtPlayer's `spare`, the duel's own floor
     hurtEntity(playerEntity, dmg, opts.playerSpare?.() ?? {});
   }
@@ -4284,7 +4284,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   // crystaline formations"). The outer host's word of them (`opts.gateCrystals` - scenes/gateCourt.js crystalTargets():
   // each standing crystal's number, where it stands, its body and its stand-in) as foe-shaped records, made each time
   // asked; none outside a Reckoning. As he is, they are NEVER in `foes`: a blow of mine that meets one is computed here by
-  // the game's own law against its stand-in (world/gateBoss.js crystalStandIn - unarmoured: a crystal does not dodge)
+  // the game's own law against its stand-in (world/gate/gateBoss.js crystalStandIn - unarmoured: a crystal does not dodge)
   // and its number goes out (`opts.onCrystalHit`), the relay's caps deciding what lands (net/gateBrain.js applyCrystalHit).
   function gateCrystalBodies() {
     const list = sdRemnant ? sdRemnant.heartTargets() : opts.gateCrystals?.() ?? null;   // SD8c: in the Hour, the Reset's Hearts
@@ -4327,7 +4327,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   // outer host's word of them (`opts.gateHost` - scenes/gateCourt.js hostTargets(): each one standing, its number, where
   // it stands, its body, its stand-in and its mobile) as foe-shaped records, made each time asked; none but under the
   // trial. As he and his crystals are, they are NEVER in `foes`: a blow of mine that meets one is computed here by the
-  // game's own law against its stand-in (world/gateBoss.js hostStandIn) and its number goes out (`opts.onHostHit`), the
+  // game's own law against its stand-in (world/gate/gateBoss.js hostStandIn) and its number goes out (`opts.onHostHit`), the
   // relay's caps deciding what lands (net/gateBrain.js applyHostHit). They bleed and sound as their own mobile does - their
   // blood laddered against their own whole (`bloodOf`: AUDIT WB11 W5 - the stand-in's health nothing can empty threw the
   // lowest rung at every blow).
@@ -4425,7 +4425,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
    *  point-centre law would ask a swing to reach 3 m into him), in view at the nearest point of him, the way to it
    *  clear. */
   function bossSight(eye, inViewFn, boss) {
-    const { point: p, dist } = bossReach(eye, boss.ai);   // world/gateBoss.js: the nearest point of his surface, and the reach to it
+    const { point: p, dist } = bossReach(eye, boss.ai);   // world/gate/gateBoss.js: the nearest point of his surface, and the reach to it
     const vx = p[0] - eye[0], vy = p[1] - eye[1], vz = p[2] - eye[2], ray = Math.hypot(vx, vy, vz), l = ray || 1;
     const hit = collider.raycast(eye, [vx / l, vy / l, vz / l], ray);
     return { dist, inView: inViewFn(p), losClear: !Number.isFinite(hit) || hit >= ray - 1e-3 };
@@ -4462,7 +4462,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   function spellOnBoss(sp, caster = null) {
     const boss = gateBossBody(), harm = duelSpellOf(sp);
     if (!boss) return false;
-    // WB8a: A SWAY ON HIM. A Pacify or a Charm in the spell is refused by his own word (world/gateBoss.js bossStandIn's
+    // WB8a: A SWAY ON HIM. A Pacify or a Charm in the spell is refused by his own word (world/gate/gateBoss.js bossStandIn's
     // pacifyImmune) and said so - the rest of the spell lands as it would; alone, the refusal is what met him
     const sways = spellSways(sp) && !!boss.entity.pacifyImmune;
     if (sways && Date.now() - swayToldAt >= BOSS_SWAY_TELL_MS) { swayToldAt = Date.now(); hudText.add(BOSS_SWAY_TEXT(boss.entity.name)); }

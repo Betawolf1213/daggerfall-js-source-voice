@@ -21,7 +21,7 @@ import { createRestDeps } from '../src/scenes/shared.js';
 import { buyItemPrice } from '../src/systems/tradeModes.js';
 import { stockShopShelf } from '../src/systems/shopStock.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
-import { fireCandidates } from '../src/world/dungeonFires.js';
+import { fireCandidates } from '../src/world/dungeon/dungeonFires.js';
 import { RDB_SIDE } from '../src/world/rdbLayout.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
@@ -150,7 +150,7 @@ test('AUDIT REST: the dungeon fires - no candidate in a palace\'s block; every m
   assert.equal(fireCandidates([block(false)]).length, 2);
   assert.equal(fireCandidates([block(true)]).length, 0);
   assert.equal(RDB_SIDE > 0, true);
-  assert.doesNotMatch(rd('src/world/dungeonFires.js').replace(/^\/\/.*$/gm, ''), /Math\.hypot\(/);
+  assert.doesNotMatch(rd('src/world/dungeon/dungeonFires.js').replace(/^\/\/.*$/gm, ''), /Math\.hypot\(/);
 });
 
 test('AUDIT REST: the words - "Rest with my party" says the night, /ready says there is no vote online, an Ember Jar\'s last night says its embers', () => {

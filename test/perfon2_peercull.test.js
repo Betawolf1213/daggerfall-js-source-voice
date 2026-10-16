@@ -162,7 +162,7 @@ test('PERF-CPU: markCpu leaves the GPU arm exactly as it was', () => {
 test('PERF-FLICKER: a lantern’s flicker cannot rebuild its shadow cube - the far plane is the light’s range rounded UP, and never inside it', async () => {
   const { shadowFarFor, SHADOW_FAR_QUANTUM } = await import('../src/render/shadowPass.js');
   const { CityLightAnimator } = await import('../src/world/worldClock.js');
-  const { CITY_LIGHT_RANGE } = await import('../src/world/cityLights.js');
+  const { CITY_LIGHT_RANGE } = await import('../src/world/city/cityLights.js');
   // NEVER INSIDE THE LANTERN'S REACH: a far plane short of the range would
   // clip a shadow before the light stops lighting.
   for (let r = 0.5; r < 60; r += 0.25) assert.ok(shadowFarFor(r) >= r, `far ${shadowFarFor(r)} >= range ${r}`);
@@ -190,7 +190,7 @@ test('PERF-FLICKER: a lantern’s flicker cannot rebuild its shadow cube - the f
 });
 
 test('PERF-LIGHTS: the night’s lanterns are a pool - the same selection, with nothing minted per lantern per frame', async () => {
-  const { nearestLights, fillLanternPool } = await import('../src/world/cityLights.js');
+  const { nearestLights, fillLanternPool } = await import('../src/world/city/cityLights.js');
   const rnd = (() => { let s = 7; return () => { s = (s * 1103515245 + 12345) & 0x7fffffff; return s / 0x7fffffff; }; })();
   for (let t = 0; t < 60; t++) {
     const n = (rnd() * 200) | 0;
@@ -273,7 +273,7 @@ test('PERF-CROWD2: the billboard PASS culls, so no host can forget to - and it c
 });
 
 test('AUDIT PERF-LIGHTS F2: a per-light range array shorter than the light list gives a real range, not a silent NaN', async () => {
-  const { nearestLights, CITY_LIGHT_RANGE } = await import('../src/world/cityLights.js');
+  const { nearestLights, CITY_LIGHT_RANGE } = await import('../src/world/city/cityLights.js');
   // PRE-EXISTING, found by the audit rather than caused by it: the world
   // host sizes its CityLightAnimator at 4096 lanterns and nothing checks
   // the light list against that. Past the end the range read `undefined`,

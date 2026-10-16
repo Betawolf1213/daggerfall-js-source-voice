@@ -1,7 +1,7 @@
 [
  {
   "name": "AUDITRESTPARTY-C2-the-entrance-fire-beside-a-brazier",
-  "file": "src/world/dungeonFires.js",
+  "file": "src/world/dungeon/dungeonFires.js",
   "old": "  const clear = pool.filter((c) => clearOf(c.pos, existing, DFIRE.entranceM));",
   "new": "  const clear = pool;",
   "tests": [
@@ -10,7 +10,7 @@
  },
  {
   "name": "AUDITRESTPARTY-C2-the-fallbacks-ask-nothing",
-  "file": "src/world/dungeonFires.js",
+  "file": "src/world/dungeon/dungeonFires.js",
   "old": "  const first = near(inReach.length ? inReach : clear.filter((c) => c.start)) ?? near(clear);",
   "new": "  const first = near(inReach.length ? inReach : pool.filter((c) => c.start)) ?? near(pool);",
   "tests": [
@@ -19,7 +19,7 @@
  },
  {
   "name": "AUDITRESTPARTY-C2-a-brazier-nearer-the-door-than-the-pick-is-not-the-doors",
-  "file": "src/world/dungeonFires.js",
+  "file": "src/world/dungeon/dungeonFires.js",
   "old": "  const reach = Math.max(SQ(DFIRE.entranceM), first ? d2(first.pos, from) : Infinity);",
   "new": "  const reach = SQ(DFIRE.entranceM);",
   "tests": [
@@ -28,7 +28,7 @@
  },
  {
   "name": "AUDITRESTPARTY-C5-a-brazier-by-the-door-is-one-more-than-N",
-  "file": "src/world/dungeonFires.js",
+  "file": "src/world/dungeon/dungeonFires.js",
   "old": "  const want = doorFire ? count - 1 : count;",
   "new": "  const want = count;",
   "tests": [
@@ -37,7 +37,7 @@
  },
  {
   "name": "AUDITRESTPARTY-C3-one-ray-reads-a-tread-as-a-floor",
-  "file": "src/world/dungeonFires.js",
+  "file": "src/world/dungeon/dungeonFires.js",
   "old": "    if (!levelRound(probe, pos)) continue;   // AUDIT REST-PARTY C3: no stair, no ramp, no ledge\n",
   "new": "",
   "tests": [
@@ -46,7 +46,7 @@
  },
  {
   "name": "AUDITRESTPARTY-C3-any-height-round-it-is-level",
-  "file": "src/world/dungeonFires.js",
+  "file": "src/world/dungeon/dungeonFires.js",
   "old": " || !(Math.abs(g.y - pos[1]) <= DFIRE.levelM)) return false;",
   "new": ") return false;",
   "tests": [
@@ -55,7 +55,7 @@
  },
  {
   "name": "AUDITRESTPARTY-C3-the-ring-takes-a-tilted-face",
-  "file": "src/world/dungeonFires.js",
+  "file": "src/world/dungeon/dungeonFires.js",
   "old": "    if (!g || !(g.ny > DFIRE.flatNy) || ",
   "new": "    if (!g || ",
   "tests": [
@@ -64,7 +64,7 @@
  },
  {
   "name": "AUDITRESTPARTY-C3-a-25-degree-slope-is-flat",
-  "file": "src/world/dungeonFires.js",
+  "file": "src/world/dungeon/dungeonFires.js",
   "old": "  flatNy: 0.99,",
   "new": "  flatNy: 0.9,",
   "tests": [
@@ -73,7 +73,7 @@
  },
  {
   "name": "AUDITRESTPARTY-C3-the-ring-shrinks-to-the-tread",
-  "file": "src/world/dungeonFires.js",
+  "file": "src/world/dungeon/dungeonFires.js",
   "old": "  levelR: 0.5,",
   "new": "  levelR: 0.05,",
   "tests": [
@@ -82,7 +82,7 @@
  },
  {
   "name": "AUDITRESTPARTY-C4-the-lift-is-a-floor",
-  "file": "src/world/dungeonFires.js",
+  "file": "src/world/dungeon/dungeonFires.js",
   "old": " && hit.key === DUNGEON_BUCKET ? { y: from[1] - hit.dist, ny: hit.normal[1] } : null;",
   "new": " ? { y: from[1] - hit.dist, ny: hit.normal[1] } : null;",
   "tests": [
@@ -91,7 +91,7 @@
  },
  {
   "name": "AUDITRESTPARTY-C4-the-floor-ray-reads-through-the-lift",
-  "file": "src/world/dungeonFires.js",
+  "file": "src/world/dungeon/dungeonFires.js",
   "old": "      const hit = collider.raycastHit(from, [0, -1, 0], DFIRE.floorM + 1);",
   "new": "      const hit = collider.raycastHit(from, [0, -1, 0], DFIRE.floorM + 1, ONLY_DUNGEON);",
   "tests": [
@@ -100,7 +100,7 @@
  },
  {
   "name": "AUDITRESTPARTY-C6-every-door-face-is-an-exit",
-  "file": "src/world/dungeonFires.js",
+  "file": "src/world/dungeon/dungeonFires.js",
   "old": "    ...(b?.layout?.exitDoors ?? []).filter(isDungeonExitDoor).map((d) => at(b, d)),",
   "new": "    ...(b?.layout?.exitDoors ?? []).map((d) => at(b, d)),",
   "tests": [
@@ -109,7 +109,7 @@
  },
  {
   "name": "AUDITRESTPARTY-C6-a-layout-fire-at-its-centre",
-  "file": "src/world/dungeonFires.js",
+  "file": "src/world/dungeon/dungeonFires.js",
   "old": ".map((h) => [h.x, h.lawFoot ?? h.foot ?? h.y, h.z]);",
   "new": ".map((h) => [h.x, h.y, h.z]);",
   "tests": [

@@ -8,9 +8,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { WoodsFile, MAP_WIDTH, MAP_HEIGHT } from '../src/formats/woodsFile.js';
-import { generateSamples, kernelTerms, HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, BASE_HEIGHT_SCALE, NOISE_MAP_SCALE } from '../src/world/terrainSampler.js';
+import { generateSamples, kernelTerms, HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, BASE_HEIGHT_SCALE, NOISE_MAP_SCALE } from '../src/world/terrain/terrainSampler.js';
 import { createLandforms, hillsAt, LANDFORM_DIALS, LANDFORM_KNEE } from '../src/world/landforms.js';
-import { DIR } from '../src/world/roadNetwork.js';
+import { DIR } from '../src/world/road/roadNetwork.js';
 import { syntheticWoodsBytes, network } from './landformWorld.mjs';
 
 const H = HEIGHTMAP_DIMENSION;

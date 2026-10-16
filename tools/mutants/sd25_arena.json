@@ -1,7 +1,7 @@
 [
   {
     "name": "SD25-S7-a-band-past-the-square",
-    "file": "src/world/sdPillarModel.js",
+    "file": "src/world/superDungeon/sdPillarModel.js",
     "old": "band: Object.freeze({ h: 0.2, w: 0.73 })",
     "new": "band: Object.freeze({ h: 0.2, w: 0.83 })",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "SD25-S7-the-cap-over-the-laws-top",
-    "file": "src/world/sdPillarModel.js",
+    "file": "src/world/superDungeon/sdPillarModel.js",
     "old": "cap: Object.freeze({ y1: SD_PILLAR_H, w: SD_PILLAR_W / 2 }),",
     "new": "cap: Object.freeze({ y1: SD_PILLAR_H + 0.2, w: SD_PILLAR_W / 2 }),",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "SD25-S7-the-plinth-in-from-the-square",
-    "file": "src/world/sdPillarModel.js",
+    "file": "src/world/superDungeon/sdPillarModel.js",
     "old": "plinth: Object.freeze({ y1: 0.45, w: SD_PILLAR_W / 2 }),",
     "new": "plinth: Object.freeze({ y1: 0.45, w: 0.7 }),",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "SD25-S7-a-prism-wound-in",
-    "file": "src/world/sdPillarModel.js",
+    "file": "src/world/superDungeon/sdPillarModel.js",
     "old": "    f.quad(rec, C(a, y0), C(a, y1), C(b, y1), C(b, y0), [u / tile, -y0 / tile], [u / tile, -y1 / tile], [(u + len) / tile, -y1 / tile], [(u + len) / tile, -y0 / tile]);",
     "new": "    f.quad(rec, C(b, y0), C(b, y1), C(a, y1), C(a, y0), [u / tile, -y0 / tile], [u / tile, -y1 / tile], [(u + len) / tile, -y1 / tile], [(u + len) / tile, -y0 / tile]);",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "SD25-S7-the-collider-to-the-shaft",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "  const px = SD_ARENA.x + Math.cos(a) * SD_PILLAR_R, pz = SD_ARENA.z + Math.sin(a) * SD_PILLAR_R, w = SD_PILLAR_W / 2;",
     "new": "  const px = SD_ARENA.x + Math.cos(a) * SD_PILLAR_R, pz = SD_ARENA.z + Math.sin(a) * SD_PILLAR_R, w = SD_PILLAR_W / 2 - 0.1;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "SD25-S7-the-stone-alight",
-    "file": "src/world/sdRealmArt.js",
+    "file": "src/world/superDungeon/sdRealmArt.js",
     "old": "  for (let row = 0; row < S / H; row++) for (let c = 0; c < 3; c++) bevel(albedo,",
     "new": "  for (let i = 0; i < emission.colors.length; i += 4) emission.colors[i] = 9;\n  for (let row = 0; row < S / H; row++) for (let c = 0; c < 3; c++) bevel(albedo,",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "SD25-S7-a-courses-joint-gone",
-    "file": "src/world/sdRealmArt.js",
+    "file": "src/world/superDungeon/sdRealmArt.js",
     "old": "    if (bx < J || by < J) { putTexel(albedo, x, y, step(B, 0)); continue; }",
     "new": "    if (bx < J) { putTexel(albedo, x, y, step(B, 0)); continue; }",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "SD25-S7-a-dial-past-the-square",
-    "file": "src/world/sdPillarModel.js",
+    "file": "src/world/superDungeon/sdPillarModel.js",
     "old": "export const SD_PILLAR_DIAL = Object.freeze({ y: 11.3, r: 0.66, lift: 0.01 });",
     "new": "export const SD_PILLAR_DIAL = Object.freeze({ y: 11.3, r: 0.66, lift: 0.05 });",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "SD25-S7-a-dial-facing-in",
-    "file": "src/world/sdPillarModel.js",
+    "file": "src/world/superDungeon/sdPillarModel.js",
     "old": "n: Object.freeze([nx, 0, nz])",
     "new": "n: Object.freeze([-nx, 0, -nz])",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "SD25-S7-the-cages-bars-on-the-diagonals",
-    "file": "src/world/sdPillarModel.js",
+    "file": "src/world/superDungeon/sdPillarModel.js",
     "old": "for (const [sx, sz] of [[1, 0], [0, 1], [-1, 0], [0, -1]]) prism(f, rec, px, pz, square(N.bar)",
     "new": "for (const [sx, sz] of [[1, 1], [-1, 1], [-1, -1], [1, -1]]) prism(f, rec, px, pz, square(N.bar)",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "SD25-S7-a-flame-out-of-its-cage",
-    "file": "src/world/sdPillarModel.js",
+    "file": "src/world/superDungeon/sdPillarModel.js",
     "old": "bar: 0.025, plate: 0.08, flameY: 12.86 });",
     "new": "bar: 0.025, plate: 0.08, flameY: 13.6 });",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "SD25-S7-every-lamp-dimmed",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "    const k = dk < 1 && q >= extra.length && arenaLamp(l) ? dk : 1;",
     "new": "    const k = dk < 1 && q >= extra.length ? dk : 1;",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "SD25-S7-the-hours-own-dimmed",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "    const k = dk < 1 && q >= extra.length && arenaLamp(l) ? dk : 1;",
     "new": "    const k = dk < 1 && arenaLamp(l) ? dk : 1;",
     "tests": [

@@ -6,7 +6,7 @@ import { dfMeshToModel, GLOBAL_SCALE } from '../src/world/meshReader.js';
 import { layoutRmbBlock, buildGroundTilemap, GROUND_OFFSET, GROUND_TILE_SIZE } from '../src/world/rmbLayout.js';
 import { layoutLocation, RMB_SIDE } from '../src/world/locationLayout.js';
 import { collectBlockFlats, scaledBillboardSize } from '../src/world/rmbFlats.js';
-import { collectCityLights, nearestLights, CITY_LIGHT_RANGE, CITY_LIGHT_INTENSITY, CITY_LIGHT_COLOR } from '../src/world/cityLights.js';
+import { collectCityLights, nearestLights, CITY_LIGHT_RANGE, CITY_LIGHT_INTENSITY, CITY_LIGHT_COLOR } from '../src/world/city/cityLights.js';
 import { MapsFile } from '../src/formats/mapsFile.js';
 import { trs, multiply, transformPoint, identity } from '../src/world/mat4.js';
 import { Arch3dFile } from '../src/formats/arch3dFile.js';
@@ -378,7 +378,7 @@ test('world: MAGEAA00 city lights pinned - both verbatim paths', { skip: skipRea
 
 test('world: R9 tilemap conversion - verbatim UpdateTileMapDataJob', async () => {
   const { convertTilemap, buildTerrainGrid, buildTerrainIndices } =
-    await import('../src/world/terrainSurface.js');
+    await import('../src/world/terrain/terrainSurface.js');
   // [flip, rotate, 6-bit record] -> [record << 2 | rotate | flip << 1],
   // FF water sentinel back to record 0 (ConvertWaterTiles default).
   const src = new Uint8Array([2, 66, 130, 194, 0xff, 0, 63, 55 | 64 | 128]);
@@ -390,7 +390,7 @@ test('world: R9 tilemap conversion - verbatim UpdateTileMapDataJob', async () =>
   // Grid shape + corner-height law match the retired quad path: corner
   // (x, z) samples data[x * hDim + z] * MAX_TERRAIN_HEIGHT * scale.
   const { HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE } =
-    await import('../src/world/terrainSampler.js');
+    await import('../src/world/terrain/terrainSampler.js');
   const hDim = HEIGHTMAP_DIMENSION;
   const samples = new Float32Array(hDim * hDim);
   samples[5 * hDim + 7] = 0.25; // sample(x=5, z=7)

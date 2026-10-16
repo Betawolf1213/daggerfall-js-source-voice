@@ -18,13 +18,13 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { planRoute, routeGround, BEYOND_CACHE_MAX } from '../src/systems/travel/travelRoute.js';
-import { DIR_DELTA } from '../src/world/roadNetwork.js';
+import { DIR_DELTA } from '../src/world/road/roadNetwork.js';
 import {
   WORLD_PIXEL_BOUND, worldPixelOk, POSE_BOUND, PIXEL_UNITS, validPose, parseClient, isCellRoom, worldRoom, cellHaloFor, inRange,
   validTravellerMark, validPartyPose, validDuelData, validParkData,
 } from '../src/net/wire.js';
 import { travellerMarkOf, travellerWorldOf, TRAV_FRACTION } from '../src/systems/travellerMarks.js';
-import { tamrielFrameInBay, setTamrielFit, BAY_ORIGIN, PIXELS_PER_PICTURE_UNIT } from '../src/world/tamrielFrame.js';
+import { tamrielFrameInBay, setTamrielFit, BAY_ORIGIN, PIXELS_PER_PICTURE_UNIT } from '../src/world/tamriel/tamrielFrame.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const bit = (dx, dy) => DIR_DELTA.find(([, x, y]) => x === dx && y === dy)[0];

@@ -18,7 +18,7 @@ import { ENEMY_BASICS } from '../characters/enemyBasics.js';
 import { KNIGHT_CITY_WATCH } from '../characters/mobileTypes.js';   // HALT-ONE: the Town Guard's hurt cry is no Halt
 import { stateAnims, HURT_ANIMS, HURT_ANIM_SPEED, PRIMARY_ATTACK_ANIM_SPEED } from '../characters/mobileUnit.js';
 import { mobileBillboardSize } from '../world/rmbFlats.js';
-import { bossFrame } from '../world/gateBoss.js';
+import { bossFrame } from '../world/gate/gateBoss.js';
 import { createPopulationLane } from '../characters/npcBodies.js'; import { rosterLook } from '../characters/foeBodies.js'; import { rosterActor } from '../characters/rosterBodies.js';   // MWNPC10: the siege's fighters in their Morrowind bodies
 
 /** Who each kind is: its mobile (its sprite and its sounds - enemyBasics.js), its name, how much taller it is drawn. The
@@ -44,7 +44,7 @@ export const SIEGE_NPC_STRIKE_MS = 600;
 
 /**
  * WHAT ONE OF THEM IS DOING at `now` (the relay's clock, as its state's): `act` one of fall, gone, windup, strike, flinch,
- * walk, idle; `anims` the table that shows it; `frame` and `loop` as world/gateBoss.js bossFrame takes them. Pure.
+ * walk, idle; `anims` the table that shows it; `frame` and `loop` as world/gate/gateBoss.js bossFrame takes them. Pure.
  * @param {any} n a SiegeNpc @param {number} now @param {{ mobile: number }} look
  */
 export function siegeNpcAct(n, now, look) {

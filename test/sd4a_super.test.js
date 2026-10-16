@@ -1,5 +1,5 @@
 // SD4a (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 5): THE SUPER DUNGEON'S
-// DIFFICULTY (world/sdDungeon.js) - the port's hardest. A Hollow is a Super dungeon by its location's word
+// DIFFICULTY (world/superDungeon/sdDungeon.js) - the port's hardest. A Hollow is a Super dungeon by its location's word
 // (systems/dungeon/dungeonTier.js), read once by the dungeon host: three foes at every enemy marker as an Elite's, each x4
 // health and x2.5 damage, its random foes rolled at the encounter tables' top band and a class foe built at the band's
 // level, six elite foes among them (each the Elite Dungeon's stack read the Super's way), loot +50% drop and quality on
@@ -10,7 +10,7 @@ import { readFileSync } from 'node:fs';
 import {
   SUPER_HEALTH_SCALE, SUPER_DAMAGE_SCALE, SUPER_FOE_LEVEL_MIN, SUPER_ELITE_FOES, SUPER_LOOT_DROP_MULT, SUPER_LOOT_QUALITY_MULT,
   SUPER_LOOT_OPTS, superFoeLevel, scaleSuperFoe,
-} from '../src/world/sdDungeon.js';
+} from '../src/world/superDungeon/sdDungeon.js';
 import { ELITE_FOE_MULTIPLIER, ELITE_HEALTH_SCALE, ELITE_DAMAGE_SCALE, ELITE_LOOT_DROP_MULT, ELITE_LOOT_QUALITY_MULT } from '../src/world/spawnedDungeons.js';
 import {
   promoteEliteFoe, pickDungeonElites, ELITE_FOE_SUPER_DUNGEON_HEALTH_MULT, ELITE_FOE_SUPER_DUNGEON_DAMAGE_MULT,
@@ -19,7 +19,7 @@ import {
 import { chooseRandomEnemyType, alternateRandomEnemyType, collectDungeonEnemies, expandEliteEnemies, makeSlotRng } from '../src/characters/dungeonEnemies.js';
 import { ENCOUNTER_TABLES } from '../src/characters/encounterTables.js';
 import { srand } from '../src/formats/dfRandom.js';
-import { dungeonFirePlan } from '../src/world/dungeonFires.js';
+import { dungeonFirePlan } from '../src/world/dungeon/dungeonFires.js';
 import { dungeonTier } from '../src/systems/dungeon/dungeonTier.js';
 import { applyChampion } from '../src/systems/champions.js';
 

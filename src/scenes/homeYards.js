@@ -45,7 +45,7 @@
 // "an outdoor lamp is the town's"), and nothing lit it as the town either, so
 // a lamp post placed outside stood dark beside the street's lit ones. Now a
 // TEXTURE.210 flat standing in a yard lights as Daggerfall lights every one
-// standing in a town block (RMBLayout.AddLight, world/cityLights.js): the
+// standing in a town block (RMBLayout.AddLight, world/city/cityLights.js): the
 // DaggerfallLight [City] at the flat's top, in the town lanterns' hours,
 // colour and flicker, ranked with the street's own (yardLampOf, `lamps`;
 // scenes/world.js). Nothing is stored and nothing is switched: a lamp placed
@@ -64,14 +64,14 @@ import { decorYardPieceOf, DECOR_YARD_CAP, decorYardHighOk, DECOR_YARD_HIGH_WHY 
 import { homeLookRecords } from '../world/homeLook.js';   // HOME-LOOK (AUDIT): the styles a roof's or a door's family holds
 import { onPathTile } from '../player/exteriorSurface.js';   // FB1001 ROAD-LOT: PlayerMotor.OnPathTile - Daggerfall's own road tiles
 import { RMB_TILE_SIDE } from '../world/locationEntrance.js';   // FB1001 ROAD-LOT: RMBLayout.RMBTileSide, a ground tile's side
-import { TERRAIN_TILE_DIM } from '../world/terrainSurface.js';
+import { TERRAIN_TILE_DIM } from '../world/terrain/terrainSurface.js';
 import { homeOutsideKept, homeYardWhere, homeCandidate } from '../systems/online/onlineHomes.js';   // GUILD-YARD: a hall's keepers keep its outside
 import { homeDecorShown } from '../net/homeVoteLaw.js';   // HOME-VOTE: a shunned home's yard stands for its insiders alone
 import { createYardNature, isNaturePiece, yardNatureFlat, yardTreeSet } from './yardNature.js';   // DECOR-OUTDOOR: a yard's trees and plants, in its town's season; DECOR-LPT: as Low Poly Trees' own
 import { remapSubMeshes } from '../world/texRemap.js';   // DECOR-OUTDOOR: a yard's models in its town's climate
 import { applyClimate } from '../world/climateSwaps.js';
 import { isNatureArchive, BLOCK_FLATS_OFFSET_Y } from '../world/rmbFlats.js';   // AUDIT YARD-LIGHT: and how far the town's flats stand below their lights
-import { LIGHTS_ARCHIVE, CITY_LIGHT_RANGE, CITY_LIGHT_INTENSITY, CITY_LIGHT_COLOR } from '../world/cityLights.js';   // YARD-LIGHT: the town's lantern
+import { LIGHTS_ARCHIVE, CITY_LIGHT_RANGE, CITY_LIGHT_INTENSITY, CITY_LIGHT_COLOR } from '../world/city/cityLights.js';   // YARD-LIGHT: the town's lantern
 import { GLOBAL_SCALE } from '../world/meshReader.js';
 import { transformedAabb } from '../render/frustum.js';   // FB1009 HOME-FOOT: a model's ground where its placement stands it
 import { adoptLight } from '../render/lightId.js';   // LIGHT-ID: a row named by its lamp

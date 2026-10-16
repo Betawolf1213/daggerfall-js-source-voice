@@ -19,7 +19,7 @@ by `tools/rmbrpHills.mjs`, nothing of it kept. Nothing here was seen in a browse
 
 ## CRYPT-SALE (1)
 
-`world/interiorLayout.js` (hasInteriorModels - AssignBlockData's refusal, DaggerfallInterior.cs:388-389, as a law the
+`world/interior/interiorLayout.js` (hasInteriorModels - AssignBlockData's refusal, DaggerfallInterior.cs:388-389, as a law the
 layout and the market both ask), `systems/talk/talkTopics.js` (locationBuildings and buildingDataForDoor stamp
 `hasInterior`), `systems/online/onlineHomes.js` (homePurchasable). Measured: of Daggerfall's own 11,458 building doors (the packs add no such room), ten rooms cannot be
 entered - six crypts (`GRVEAS05` #19, `GRVEAS09` #11, `GRVEAL09` #11, `GRVEAM09` #11, `GRVEAM05` #19, `GRVEAL05` #0, the

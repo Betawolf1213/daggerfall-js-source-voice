@@ -9,7 +9,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { emptyArenaScene, moveArenaRecords, ARENA_CRATE_KEY } from '../src/systems/arena/arenaMove.js';
-import { arenaRecordDisplaced, ARENA_LOCATION_KEY } from '../src/world/arenaCity.js';
+import { arenaRecordDisplaced, ARENA_LOCATION_KEY } from '../src/world/arena/arenaCity.js';
 import { createSceneCache, cacheScene, addPermanentScene, interiorSceneName, layoutSceneName, restoreCachedScene } from '../src/systems/sceneCache.js';
 import { createHouses } from '../src/systems/banking.js';
 import { makeBuildingKey } from '../src/systems/talk/talkTopics.js';

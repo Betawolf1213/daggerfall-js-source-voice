@@ -10,7 +10,7 @@ import { mintArenaReceipt } from '../src/net/arenaReceipt.js';
 import { verifyOrder } from '../src/net/identityToken.js';
 import { renownXpFor, RENOWN_XP_HOUR_MAX, renownRaidXp, renownQuestXp } from '../src/net/renown.js';
 import { arenaRenownXp, ARENA_RENOWN_TIER_LEVEL, ARENA_RENOWN_QUESTS, ARENA_RENOWN_REGION } from '../server-account/src/arena.js';
-import { ARENA_REGION } from '../src/world/arenaCity.js';
+import { ARENA_REGION } from '../src/world/arena/arenaCity.js';
 import { createArenaClaims, ARENA_CLAIMS_KEY, arenaKeptReceipt } from '../src/net/arenaClaims.js';
 import { accountArena, SESSION_KEY } from '../src/net/accountClient.js';
 import { importReceiptKey } from '../src/net/gateReceipt.js';

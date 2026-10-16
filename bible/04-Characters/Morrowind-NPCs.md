@@ -2484,7 +2484,7 @@ attached:
   the shared groups: a block's factionless figure, World of Daggerfall's
   people (184.22 and 184.18 on the Betony and Poor docks), and the
   captive, merchant or prisoner a WoD marker stands (357.6, 182.0, 184.31 -
-  `world/wodSpawner.js`). A batch shared by a group cannot give one
+  `world/worldOfDaggerfall/wodSpawner.js`). A batch shared by a group cannot give one
   person's place to a body.
 - A BOAT'S CREW. Come Sail Away's prefabs carry their people as
   billboards (`BillboardHelper-182_*`), the sea's ships' and the

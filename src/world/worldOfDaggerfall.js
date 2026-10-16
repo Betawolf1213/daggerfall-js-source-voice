@@ -38,12 +38,12 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { modSetting } from '../systems/modSettings.js';
-import { loadLocationPrefab, validateValue } from './wodLocationData.js';
-import { decodeRegionPack } from './wodLocationPack.js';
+import { loadLocationPrefab, validateValue } from './worldOfDaggerfall/wodLocationData.js';
+import { decodeRegionPack } from './worldOfDaggerfall/wodLocationPack.js';
 import {
   LocationSession, pickLocations, placeObjects, WOD_AWAKE_REGION, WOD_REFUSED_REGION,
-} from './wodLocationLoader.js';
-import { classifyObject, objectMatrix, objectNormalMatrix } from './wodLocationObjects.js';
+} from './worldOfDaggerfall/wodLocationLoader.js';
+import { classifyObject, objectMatrix, objectNormalMatrix } from './worldOfDaggerfall/wodLocationObjects.js';
 
 export const WOD_VENDOR = 'world-of-daggerfall';
 /** The mod's switch, read where the world mounts (the loader is built

@@ -63,7 +63,7 @@ display-flipped art against a distant screenshot and passed a flipped
 render - sprite-orientation checks must be close-up crops against the
 raw record art.
 
-`src/world/terrainNature.js` ports DefaultTerrainNature.LayoutNature:
+`src/world/terrain/terrainNature.js` ports DefaultTerrainNature.LayoutNature:
 location rects (when present) expand by natureClearance 4 and exclude
 scatter (Rect.Contains min-inclusive / max-exclusive); elevationScale =
 clamp(rawWoodsByte / 128, 0.4, 1.0), Desert climates quarter every
@@ -125,7 +125,7 @@ Random (MIT, open source - NOT a departure): CreateFromIndex(i) seeds
 with WangHash(i + 62), the constructor burns one NextState, xorshift
 13/17/5 returns the PRE-update state, NextFloat is the
 asfloat(0x3f800000 | state >> 9) - 1 bit trick. Pinned.
-`src/world/terrainTiles.js` ports DefaultTerrainTexturing +
+`src/world/terrain/terrainTiles.js` ports DefaultTerrainTexturing +
 TerrainHelper's location paths: generateTileData classifies the 129x129
 corner grid (water at/below ocean; beach dirt at/below beach +/- a
 byte-exact umRandom jitter in [-1.5, 1.5); else a lat/long perlin weight,
@@ -179,7 +179,7 @@ data at offset + 22, and GetLargeHeightMapValuesRange's interior-3x3 strip
 with inverted sample Y AND descending source map Y. Corpus pins: header
 closure (offsets fill 144..2000144 exactly, heightmap at 2001168), buffer
 sum 11699810 / max 255 / 20237 zeros, Daggerfall environs raw height 20.
-`src/world/terrainSampler.js` ports DefaultTerrainSampler +
+`src/world/terrain/terrainSampler.js` ports DefaultTerrainSampler +
 TerrainHelper.CubicInterpolator/GetNoise: 129x129 samples per map pixel,
 bicubic base (4x4 small window at mx-2,my-2, rows Y-inverted, x8) +
 bicubic feature noise (9x9 large window at mx-1,my, x4) + Perlin ground
@@ -217,12 +217,12 @@ flag/trigger guards, translation vectors negating x/z, rotation vectors /
 RotationDivisor, PositiveX..NegativeZ flag cases (duration 50, magnitude
 axisRaw * 8), LID/WHE rotation overrides, the TRP raw-axis-13 hack, and
 the flat-action axis = magnitude quirk; links key on obj.position and
-resolve next/prev. `src/world/dungeonTextures.js` +
+resolve next/prev. `src/world/dungeon/dungeonTextures.js` +
 `src/formats/dfRandom.js` port the classic texture table (LCG pinned
 against K&R rand; Privateer's Hold seed 50050 + Woodlands ->
 [23,22,19,22,20,368]); UVs keep original-archive sizes while pixels come
 from the remapped archive, verbatim SetDungeonTextures order.
-`src/world/dungeonLayout.js` ports DaggerfallDungeon: blocks at
+`src/world/dungeon/dungeonLayout.js` ports DaggerfallDungeon: blocks at
 (X, 0, Z) * RDBSide (51.2), start/enter markers from the starting block,
 RemoveOverlappingDoors (exit-centre seed in dungeon-root space without the
 block origin - benign, start block sits at 0,0 - then 1.4-tolerance
@@ -249,7 +249,7 @@ models (1712 building / 285 dungeon-enter / 2 exit).
 (size from the v0/v2 diagonal, thickness = max(width, depth), centre/normal
 kept in model space with the placement matrix riding along).
 
-`src/world/interiorLayout.js` ports DaggerfallInterior's geometry paths:
+`src/world/interior/interiorLayout.js` ports DaggerfallInterior's geometry paths:
 AddModels (prop type 3 keeps +Y unnegated then anchors to the model's lowest
 vertex Y; IsBadInteriorModel's 27-block repair table filters misplaced model
 31000), AddFlats (editor archive 199 kept as markers, hidden from render
@@ -359,7 +359,7 @@ The towns arc opens (Mac's lead handoff; the World arc hosts it -
 the exterior scene owns the system). DFU's PopulationManager /
 CityNavigation / MobilePersonMotor / MobilePersonBillboard, verbatim:
 
-- THE NAVGRID (world/cityNavigation.js): per RMB block the 64x64
+- THE NAVGRID (world/city/cityNavigation.js): per RMB block the 64x64
   AutoMapData carves walkable cells (nonzero = covered - a tree flat
   blocks its cell, verbatim raw bytes), weights from the ground
   tilemap (water 0 / stone 4 / dirt 6 / grass 12 / road 15 /
@@ -2387,7 +2387,7 @@ CityGate src/` returned nothing; the only trace of 446/447 was two mesh
 patch comments, which prove the port loads and draws both gate meshes
 and never swaps them.
 
-`src/world/cityGate.js` is the component; the constants and the
+`src/world/city/cityGate.js` is the component; the constants and the
 predicate live in `rmbLayout.js`, as the reference splits them. Two
 details the state machine turns on, and the lane took VERIFIER 1's
 reading over VERIFIER 2's on the first:

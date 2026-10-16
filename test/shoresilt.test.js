@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { SHORE_RECORDS, DRY_RECORDS, PUDDLE_RECORDS, shoreWaterColours, markShoreWater, markPuddleWater, carryPuddleMask, palettedSet } from '../src/world/puddleMask.js';
-import { WATER_DRAW_MASK_TABLE } from '../src/world/waterCorners.js';
+import { WATER_DRAW_MASK_TABLE } from '../src/world/water/waterCorners.js';
 import { WATER_BED_GLSL, waterBedMix, WET_MUD, WET_MUD_SHARE } from '../src/render/waterBedGlsl.js';
 
 const ARENA2 = process.env.ARENA2_PATH;

@@ -31,7 +31,7 @@ import { rectOf } from '../src/systems/travel/travelAutopilot.js';
 import { TravelControlUI } from '../src/ui/travelControlUI.js';
 import { planRoute, routeLegs, routeGround, joinPoint, routeDrawPoints, roadShare, crossesWater, dryLine, TV_MOUNTAIN_CLIMATE } from '../src/systems/travel/travelRoute.js';
 import { WATER_BYTE } from '../src/world/roadsProducer.js';
-import { DIR_DELTA } from '../src/world/roadNetwork.js';
+import { DIR_DELTA } from '../src/world/road/roadNetwork.js';
 import { worldCoordToMapPixel } from '../src/formats/mapsFile.js';
 import { TRAVEL_VIEW_TEXT, travelTripLine, travelWalkRate, TV_MOVE_ACTIONS } from '../src/scenes/travelView.js';
 import { createLoadGovernor, unbuiltAround } from '../src/systems/travel/travelGovernor.js';

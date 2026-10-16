@@ -66,7 +66,7 @@ over a desert pixel next door; a desert's tile is bare now.
 | `render/snowfallGlsl.js` | the shader: the vertex law, and the fragment's snow spliced into the ground's own fragment program |
 | `render/snowfallSurface.js` | the tiers on the GPU, uploaded as they change, drawn through the renderer's `drawSnow` |
 | `scenes/snowfallHost.js` | the runtime both exterior hosts build over the ground they draw: its tiles, a rebuilt tile replacing the old, the bodies, the save record, `snow_status` |
-| `world/terrainSurface.js` `surfaceNormalFromSamples`, `gridValueAt` | the drawn ground's normal off a pixel's samples at its stride; a grid's value (WATER-NEXT's bed) on the drawn triangle |
+| `world/terrain/terrainSurface.js` `surfaceNormalFromSamples`, `gridValueAt` | the drawn ground's normal off a pixel's samples at its stride; a grid's value (WATER-NEXT's bed) on the drawn triangle |
 
 PINNED AGAINST THE ASSEMBLY ITSELF: the session's C# reference compiles the
 mod's own sources (SnowpackState, SnowDepthRules, SnowCoverageData,

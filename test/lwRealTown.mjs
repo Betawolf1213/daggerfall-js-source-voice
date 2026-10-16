@@ -7,7 +7,7 @@
 // (tools/livingCrowdProbe.mjs). Read-only over the data; nothing is written.
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { CityNavigation, NAV_CELL } from '../src/world/cityNavigation.js';
+import { CityNavigation, NAV_CELL } from '../src/world/city/cityNavigation.js';
 import { MapsFile, getWorldClimateSettings, longitudeLatitudeToMapPixel, LOCATION_TYPES } from '../src/formats/mapsFile.js';
 import { BlocksFile } from '../src/formats/blocksFile.js';
 import { Arch3dFile } from '../src/formats/arch3dFile.js';

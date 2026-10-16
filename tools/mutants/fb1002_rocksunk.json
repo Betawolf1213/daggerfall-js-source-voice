@@ -1,7 +1,7 @@
 [
   {
     "name": "ROCKSUNK-rocks-grounded-again",
-    "file": "src/world/wodLocationObjects.js",
+    "file": "src/world/worldOfDaggerfall/wodLocationObjects.js",
     "old": "export const isWodShrub = (modelId, siteName) => modelId === WOD_BUSH_MODEL && !WOD_ROCK_SITES.includes(siteName);",
     "new": "export const isWodShrub = (modelId, siteName) => modelId === WOD_BUSH_MODEL;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "ROCKSUNK-mountains-forgotten",
-    "file": "src/world/wodLocationObjects.js",
+    "file": "src/world/worldOfDaggerfall/wodLocationObjects.js",
     "old": "export const WOD_ROCK_SITES = Object.freeze(['Rocks', 'Mountains']);",
     "new": "export const WOD_ROCK_SITES = Object.freeze(['Rocks']);",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "ROCKSUNK-any-model",
-    "file": "src/world/wodLocationObjects.js",
+    "file": "src/world/worldOfDaggerfall/wodLocationObjects.js",
     "old": "export const isWodShrub = (modelId, siteName) => modelId === WOD_BUSH_MODEL && !WOD_ROCK_SITES.includes(siteName);",
     "new": "export const isWodShrub = (modelId, siteName) => !WOD_ROCK_SITES.includes(siteName);",
     "tests": [

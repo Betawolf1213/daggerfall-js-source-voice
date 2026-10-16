@@ -19,8 +19,8 @@ import { buildProgram } from './glProgram.js';
 import { FOG_FACTOR_GLSL } from './labGrass.js';
 import { SD_SKY_PERIOD } from './sdSky.js';
 import { SD_REALM_ORIGIN, SD_ORRERY, SD_ARENA } from '../net/sdBrain.js';
-import { SD_FIRST_STEP } from '../world/sdHall.js';
-import { SD_COURSE_END } from '../world/sdSteps.js';
+import { SD_FIRST_STEP } from '../world/superDungeon/sdHall.js';
+import { SD_COURSE_END } from '../world/superDungeon/sdSteps.js';
 
 /** How many of each kind: the hall's dust, the void's sparks, the arena's motes, the shards' dust. */
 export const SD_MOTES = Object.freeze({ dust: 320, sparks: 360, hour: 300, shards: 240 });

@@ -14,7 +14,7 @@ import { openGambitTableGame } from '../src/scenes/gambitTableGame.js';
 import { createIliacClaims } from '../src/net/iliacClaims.js';
 import { newGambitTable, gambitSit, gambitReady, gambitTick, gambitPublicView, GAMBIT_FIRST_MS } from '../src/net/gambitTable.js';
 import { autoFill, KG_POINT_BUDGET, KG_MAX_UNITS, KG_ROSTER } from '../src/net/kingsGambit.js';
-import { CARD_TABLE_W, CARD_TABLE_D } from '../src/world/cardTableProp.js';
+import { CARD_TABLE_W, CARD_TABLE_D } from '../src/world/card/cardTableProp.js';
 import { _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
 import { xorshift } from '../tools/kgMeasure.mjs';
 import { fakeDoc, text } from './decorFakes.mjs';

@@ -141,7 +141,7 @@ departure (Ledger A, ARENA-TEAMS). Pins: `test/fb1004e_arena.test.js`.
 
 ## UNDERCROFT-DEEP (2)
 
-`world/arenaUndercroft.js` (UNDERCROFT_DEEP_M, `deep`, `near`, deepFoesOf, undercroftHallNear), `scenes/dungeonContext.js`
+`world/arena/arenaUndercroft.js` (UNDERCROFT_DEEP_M, `deep`, `near`, deepFoesOf, undercroftHallNear), `scenes/dungeonContext.js`
 (the chained beasts and the deep cellars' own foes; the rest gate). ARENA-FIX 4 made the undercroft the fighters' hall
 and left every other marker empty - "the deep cellars are quiet". Now the hall is kept and, a whole RDB block (51.2 m)
 from the stair and from every place the hall took, the layout's own random foe stands again at its marker - the

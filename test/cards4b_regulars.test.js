@@ -1,5 +1,5 @@
 // CARDS4b (2026-10-08, bible/11-Multiplayer/Tavern-Cards.md section 18): THE REGULARS AT THE TABLE. Driven: a
-// regular's look minted from the seed that names him (world/cardRegulars.js) - his region's people, a face, a tavern-goer's
+// regular's look minted from the seed that names him (world/card/cardRegulars.js) - his region's people, a face, a tavern-goer's
 // clothes from Daggerfall's templates in the slots they are worn in, the same every evening, a look the peer layers read;
 // the regulars stood in the chairs the cloth gives them, seated through the pose's own byte, none who left; what each
 // says for his play; the line's layers taking a seat (world/familyBodies.js); and by source, the hosts: the interior
@@ -8,7 +8,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { regularLook, regularsToStand, regularBark, REGULAR_CLOTHES, REGULAR_FACES, BARK_MS, REGULAR_HEAD_M } from '../src/world/cardRegulars.js';
+import { regularLook, regularsToStand, regularBark, REGULAR_CLOTHES, REGULAR_FACES, BARK_MS, REGULAR_HEAD_M } from '../src/world/card/cardRegulars.js';
 import { BANK_TYPES } from '../src/characters/nameHelper.js';
 import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
 import { seatTopByte } from '../src/player/seatPose.js';

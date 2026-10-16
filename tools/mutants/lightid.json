@@ -55,7 +55,7 @@
   },
   {
     "name": "LIGHT-ID-nearest-written-by-hand",
-    "file": "src/world/cityLights.js",
+    "file": "src/world/city/cityLights.js",
     "old": "    packLight(out, i, l, Number.isFinite(w) ? w : CITY_LIGHT_RANGE);",
     "new": "    out[i * 4] = l.x; out[i * 4 + 1] = l.y; out[i * 4 + 2] = l.z; out[i * 4 + 3] = Number.isFinite(w) ? w : CITY_LIGHT_RANGE;",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "LIGHT-ID-the-court-written-by-hand",
-    "file": "src/world/gateArena.js",
+    "file": "src/world/gate/gateArena.js",
     "old": "packLight(data, n + i, l);",
     "new": "data.set([l.x, l.y, l.z, l.range], (n + i) * 4);",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "LIGHT-ID-the-lantern-pool-keeps-its-slots-name",
-    "file": "src/world/cityLights.js",
+    "file": "src/world/city/cityLights.js",
     "old": "      adoptLight(e, l);   // LIGHT-ID",
     "new": "      void l;   // LIGHT-ID",
     "tests": [
@@ -227,7 +227,7 @@
   },
   {
     "name": "LIGHT-ID-bossGlow-out-ignored",
-    "file": "src/world/gateBoss.js",
+    "file": "src/world/gate/gateBoss.js",
     "old": "    const o = out ?? { x: 0, y: 0, z: 0, range: 0, color: [0, 0, 0] };",
     "new": "    const o = { x: 0, y: 0, z: 0, range: 0, color: [0, 0, 0] };",
     "tests": [

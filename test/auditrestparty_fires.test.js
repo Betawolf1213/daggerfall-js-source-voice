@@ -10,7 +10,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   DFIRE, chooseFires, placeDungeonFires, landCandidates, colliderFireProbe, fireLayoutInputs, fireCandidates,
-} from '../src/world/dungeonFires.js';
+} from '../src/world/dungeon/dungeonFires.js';
 import { hostFireCollider, layoutHearths, probeFires } from '../tools/dungeonFireProbe.mjs';
 import { Collider } from '../src/player/collider.js';
 import { RDB_SIDE, ACTION_FLAGS } from '../src/world/rdbLayout.js';

@@ -92,7 +92,7 @@ ceiling dark. An interior's clear colour is black (`render/renderer.js` INTERIOR
 monitor's black as that dark blue, so the dark is no sky: ceiling geometry is not drawn there. A building is drawn whole
 - its merged static batch and every unmerged placement, with no view cull (worldModes.js's interior frame) - so nothing
 culls a ceiling. The one way the port itself takes a piece out of a room is BASE-HIDE: in a room its owner may furnish
-(an online home, or the player's own house or ship) every PROP-typed placement (`world/interiorLayout.js`
+(an online home, or the player's own house or ship) every PROP-typed placement (`world/interior/interiorLayout.js`
 PROP_MODEL_TYPE, DaggerfallInterior's propModelType 3) is its own draw, and the owner may take any of them out, the
 whole room at once included (`scenes/decorBase.js`, `net/decorLaw.js` decorBaseModelKey: a key names its placement AND
 its model, so it can never name another layout's piece). If an interior lays a ceiling tile as a prop - the town mods'

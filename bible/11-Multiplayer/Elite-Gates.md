@@ -521,7 +521,7 @@ no DEATH-PENALTY runs, and what was banked stays banked. The Reliquaries are los
 
 ### 6.3 The arch
 
-The gate's own model, `buildGateModel` in `src/world/gateModel.js` (Mac's Blender bake), drawn at **0.62 scale**:
+The gate's own model, `buildGateModel` in `src/world/gate/gateModel.js` (Mac's Blender bake), drawn at **0.62 scale**:
 10.04 m tall and 4.79 m to each side.
 
 - **The skin**: Imperial white marble inlaid with gold, cracked through with the Warden's basalt.
@@ -536,7 +536,7 @@ The gate's own model, `buildGateModel` in `src/world/gateModel.js` (Mac's Blende
   should not outshine Dagon's.
 - **Rising and sinking**: it climbs out of the ground over `GATE_RISE_MS` (20 s) and sinks over `GATE_COLLAPSE_MS`
   (10 s).
-- **Its clearing**: `createGateClearSweep` (`src/world/gateClearance.js`) tracks one key today. EG9 widens it to a set
+- **Its clearing**: `createGateClearSweep` (`src/world/gate/gateClearance.js`) tracks one key today. EG9 widens it to a set
   of keys, the clock's gate and every standing arch, each keyed by its breach id.
 - **Where it stands**: at the opener's feet, ahead (the Portal Stone's `portalPlace`, `PORTAL_AHEAD` 2 m), facing the
   opener.
@@ -567,7 +567,7 @@ CALL):
 - **Answering** asks `/v1/eg/admit` for the order the portal is stepped through with.
 - **Admission never depends on place**: the room checks orders and the company, never where a member stood.
 - **Landing**: where each member answered is stored as their LANDING. A fall, the way home, the tear or the end lands
-  them there. The opener lands at the arch's site: `gateLandingFor` (`src/world/gateArena.js`) is widened to take an
+  them there. The opener lands at the arch's site: `gateLandingFor` (`src/world/gate/gateArena.js`) is widened to take an
   arch record (a site and a yaw), since today it takes only a gate's day.
 - **Late.** A member who answers after the open window reads: *The breach has closed behind <opener>'s company.*
 
@@ -897,12 +897,12 @@ the circle and the decrees. The Spire therefore has no lucky seeds: two companie
 weight, drawn differently. The budget is the measured knob of EG's tuning pass (EG21).
 
 **Where the law lives.** The relay draws halls too, so the span law must not pull client code into the relay bundle.
-Today `src/world/sdSteps.js`, which holds the platform clock (`stepAt`, `beatStands`), imports `src/world/sdHall.js`,
+Today `src/world/superDungeon/sdSteps.js`, which holds the platform clock (`stepAt`, `beatStands`), imports `src/world/superDungeon/sdHall.js`,
 and through it the Hour's art; the union floor's bearing search lives in `src/scenes/gateCourt.js`, which imports
 `render/`, `ui/` and `world/` modules. Neither is in `RELAY_GRAPH` (`test/relayversion.test.js`). So:
 
 - EG4 moves the platform clock (`stepAt`, `beatStands`, `beatBlinks`, `crumbleAfter`, `gustAt`) into
-  `net/egSpanLaw.js`, a leaf, and `src/world/sdSteps.js` re-exports it;
+  `net/egSpanLaw.js`, a leaf, and `src/world/superDungeon/sdSteps.js` re-exports it;
 - the fragments' law is another leaf beside it, `net/egFragLaw.js` (section 11.5);
 - EG8 moves the bearing search into `net/egFloor.js` and widens it there (THE UNION FLOOR, section 13.2);
   `src/scenes/gateCourt.js` imports it back for the arrow;
@@ -921,13 +921,13 @@ and through it the Hour's art; the union floor's bearing search lives in `src/sc
 
 ### 10.1 The course is the Steps' own record
 
-`src/world/sdSteps.js` lays the Unmoored Steps as a uniform array, `{i, kind, span, x, y, z, w, d, amp, period,
+`src/world/superDungeon/sdSteps.js` lays the Unmoored Steps as a uniform array, `{i, kind, span, x, y, z, w, d, amp, period,
 phase, beat}`, plus checkpoints `{x, y, z, r}` (the Spire's islands): exactly what a generator emits.
 
 - **Today** it is frozen at import (`layCourse`, `SD_STEPS_COURSE`). Its module-scope readers are `SD_GHOST_STEPS`
   (the pass's uniform count), `SD_WAYSTONES` and `SD_VANE`, `sdFx`'s `SD_REWIND_EDGES`, `sdIslandModel` and
   `abyssLab`. The motes read `SD_COURSE_END` lazily. At build time, `createSdSteps` (`src/scenes/sdSteps.js`, the
-  riders) and `src/world/sdStepsModel.js`'s check and breath builders (`buildChecksModel`, `checkFloorTris`,
+  riders) and `src/world/superDungeon/sdStepsModel.js`'s check and breath builders (`buildChecksModel`, `checkFloorTris`,
   `buildBreathModel`) read it too.
 - **EG4 turns it into data**:
   - `courseOf(courseSpec)` lays a course;
@@ -1236,8 +1236,8 @@ Two sources, one record:
    - **each fragment its own `.fbx`**. The gate's 8.6 MB whole-scene source (1,905 meshes) is the warning.
 
 **One kit of mesh tools.** Today every made level carries its own box, extrude and pack helpers (`packFaces` in
-`src/world/gateArena.js`, `packRealmFaces` and `quadFacing` in `src/world/sdRealm.js`, `away` in
-`src/world/sdIslandModel.js`, `facing` in `src/world/sdHall.js`). The fragments use one shared kit, `world/meshKit.js`:
+`src/world/gate/gateArena.js`, `packRealmFaces` and `quadFacing` in `src/world/superDungeon/sdRealm.js`, `away` in
+`src/world/superDungeon/sdIslandModel.js`, `facing` in `src/world/superDungeon/sdHall.js`). The fragments use one shared kit, `world/meshKit.js`:
 box, prism, extrude, lathe, sweep, and the pack into `createMesh`'s shape with Uint32 indices, writing straight into
 typed arrays so a hall can be built a slice at a time (THE SWAP, section 7). The court and the Hour may move onto it
 later; that is not required.
@@ -1576,7 +1576,7 @@ byte. The Spire's lords are written to it. The gate's brain already exports the 
   those runs by the fewest seconds to that last Redoubt. The seal lifts with each band's slice, and the herald says so.
   An endless mode never launches as a loop of one band.
 
-Bodies are Daggerfall's, drawn large, as Ruhn is (`BOSS_LOOKS` in `src/world/gateBoss.js`: a mobile and a scale). Each
+Bodies are Daggerfall's, drawn large, as Ruhn is (`BOSS_LOOKS` in `src/world/gate/gateBoss.js`: a mobile and a scale). Each
 lord's errand rules are given for *n* = 1, and its numbers keep the floors.
 
 #### The Broken Galleries
@@ -2703,7 +2703,7 @@ the merchant yard's 38221):
 **THE SPIRE DANGER EDGE.** Every Spire telegraph line is `TELEGRAPH_EDGE_DAGON` ([1.0, 0.24, 0.28], crimson), never
 `TELEGRAPH_EDGE` ([1.0, 0.36, 0.05], orange), which most lords' and every legion outline uses today (Dagon's Wrath and
 Reckoning, and the Remnant's Reset and End, already draw the crimson) and which the burning
-ground's `POOL_COLOR` shares (`src/world/gateBoss.js`). The pass blends additively, and orange over the Caverns' and the
+ground's `POOL_COLOR` shares (`src/world/gate/gateBoss.js`). The pass blends additively, and orange over the Caverns' and the
 Wellhead's emissive orange would vanish. Spire pools take the band's ramp, darkened, with a dashed rim, never
 `POOL_COLOR`.
 
@@ -2728,7 +2728,7 @@ protanopia filters.
 Every edge a member could fall from (a platform's rim, a floor's `open` edge, a magma channel's lip, a walkway's side)
 carries a gold line 2 px wide (3 px on phones), its luminance 0.3-0.45, emissive, kept by the fog as telegraphs are
 (section 25.6), never pulsing. Walls and parapets carry none. The Steps carry a gold line under each rim in their mesh
-(`SD_STEP_LINE`, `src/world/sdStepsArt.js`); the Spire's 2 px line reuses `sdStepsPass`'s line-quad technique (which
+(`SD_STEP_LINE`, `src/world/superDungeon/sdStepsArt.js`); the Spire's 2 px line reuses `sdStepsPass`'s line-quad technique (which
 today draws only the ghosts of gone steps) on every edge of every hall. In the Shade's near-black and under the
 mist, it is the only read.
 
@@ -3032,7 +3032,7 @@ wired or flagged.
   - the gate's constants (`BUCKET_*`, `PHASE_AT`, `SHIELD_MS`, `THREAT_*`, `ATTACKS`, `POOLS`) are imported, never
     copied;
   - `sdSeed`, `rimSpots` and `topWithMe` are exported once and imported (`hostTeamHpFor` already is);
-  - the platform clock moves to `net/egSpanLaw.js` once, and `src/world/sdSteps.js` re-exports it;
+  - the platform clock moves to `net/egSpanLaw.js` once, and `src/world/superDungeon/sdSteps.js` re-exports it;
   - `EG_ESCAPE_MPS` is computed from `runSpeed` at the escape build, never a literal;
   - the span law's copied motor numbers are held equal by a test;
   - one mesh kit (`world/meshKit.js`) and one registry of pseudo-archives (`world/pseudoArchives.js`).
@@ -3137,10 +3137,10 @@ it opened or moved, and where it departs from this page.
 The design, whole, before any code. Grounded in the shipped tree at `d9a3ced2`:
 
 - the gate's clock (`src/net/gateLaw.js`);
-- the made levels (`src/world/gateArena.js`, `src/world/sdRealm.js`);
+- the made levels (`src/world/gate/gateArena.js`, `src/world/superDungeon/sdRealm.js`);
 - the brains and their shared hand (`src/net/gateBrain.js`, `src/net/sdRemnant.js`);
 - the marks (`src/net/gateMods.js`, `src/net/sdMarks.js`);
-- the Steps (`src/world/sdSteps.js`) and the engine's envelope (`src/player/motor.js`, `src/player/parkour.js`);
+- the Steps (`src/world/superDungeon/sdSteps.js`) and the engine's envelope (`src/player/motor.js`, `src/player/parkour.js`);
 - the party (`PARTY_MAX` 8) and the hub's rosters;
 - the receipts and their claims, the boards (`server-account/src/arena.js`) and the Portal Stone.
 

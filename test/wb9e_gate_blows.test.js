@@ -24,8 +24,8 @@ import {
   GateFxRenderer, fxBurstOf, meteorFall, sparkAt, sparkSeed, FX_KINDS, FX_BURST_MS, FX_SPARKS, FX_BURSTS_MAX, METEOR_FALL_MS, METEOR_FROM_M, METEOR_DIR, METEOR_ELEV_DEG, FX_SPARK_VS,
 } from '../src/render/gateFx.js';
 import { createGateCourt } from '../src/scenes/gateCourt.js';
-import { courtToDungeon } from '../src/world/gateArena.js';
-import { attackColor } from '../src/world/gateBoss.js';
+import { courtToDungeon } from '../src/world/gate/gateArena.js';
+import { attackColor } from '../src/world/gate/gateBoss.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const W = (key, over = {}) => ({ i: 1, a: ATTACKS[key].id, at: 10000, x: 0, z: 0, yw: 0, tg: [], ...over });

@@ -250,7 +250,7 @@ export const POSE_CAST_ELEMENTS = 5;
 export const PIXEL_UNITS = 32768;
 /** TV-BEYOND (2026-10-09, the field: "if i bug the game outside of the bay i can become invisible to everyone and
  *  everyone becomes invisible to me" - "i relogged and im still invisible"): THE WORLD'S EDGE ON THE WIRE. TAMRIEL2
- *  streams the land past the Bay (world/tamrielFrame.js: the continent's 6000 x 3750 frame, the Bay's corner 862 x 975
+ *  streams the land past the Bay (world/tamriel/tamrielFrame.js: the continent's 6000 x 3750 frame, the Bay's corner 862 x 975
  *  into it at the authored fit, 16-21 pixels a picture unit as TAMRIEL3 reads the picture), and the wire's laws held
  *  the Bay: a pose past 1024 pixels refused (the relay closed the socket - every peer gone, and a relog stood there
  *  again), a cell west or north of the Bay no cell (a room no one's halo reached, and none reached out of it), a
@@ -966,7 +966,7 @@ export const isRegionRoom = (key) => isChatRoom(key) && String(key).startsWith(C
  *  is a Durable Object that keeps up to WORLD_FRAME_MAX for WORLD_TTL_MS - the Bay's dungeons are a bounded set,
  *  eighty free characters are not.
  *  AUDIT WORLD34 A1 (THE ROOT): the bound was eight digits, and a real MapTableData.MapId is a 32-bit integer -
- *  Privateer's Hold is 187853213, Daggerfall 1291010263 (world/dungeonTextures.js MAIN_STORY_DUNGEON_IDS) - so
+ *  Privateer's Hold is 187853213, Daggerfall 1291010263 (world/dungeon/dungeonTextures.js MAIN_STORY_DUNGEON_IDS) - so
  *  every real dungeon failed this law at BOTH ends, was joined all the same, relayed poses and nothing else, and
  *  every player kept stepping their own foes with no word said. Ten digits is the unsigned 32-bit bound. */
 //  WORLD6a (Mac, 2026-09-14: "Lets tackle #1 next"): AND A BUILDING - `interior:m<mapId>.<buildingKey>`, the room

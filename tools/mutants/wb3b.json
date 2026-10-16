@@ -1,7 +1,7 @@
 [
   {
     "name": "WB3b-the-marker-says-water",
-    "file": "src/world/gateArena.js",
+    "file": "src/world/gate/gateArena.js",
     "old": "flags: 0, magnitude: 0, soundIndex: 0, factionOrMobileId: 0,",
     "new": "flags: 0, magnitude: 0, soundIndex: 1, factionOrMobileId: 0,",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "WB3b-the-marker-says-castle",
-    "file": "src/world/gateArena.js",
+    "file": "src/world/gate/gateArena.js",
     "old": "flags: 0, magnitude: 0, soundIndex: 0, factionOrMobileId: 0,",
     "new": "flags: 0, magnitude: 1, soundIndex: 0, factionOrMobileId: 0,",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "WB3b-the-made-name-missed",
-    "file": "src/world/gateArena.js",
+    "file": "src/world/gate/gateArena.js",
     "old": "getBlockIndex: (name) => (name === GATE_ARENA_BLOCK ? GATE_ARENA_BLOCK_INDEX",
     "new": "getBlockIndex: (name) => (name === 'X' ? GATE_ARENA_BLOCK_INDEX",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "WB3b-the-marker-off-the-arrival",
-    "file": "src/world/gateArena.js",
+    "file": "src/world/gate/gateArena.js",
     "old": "  const [x, , z] = courtToDungeon(0, 0, ARRIVE_Z);",
     "new": "  const [x, , z] = courtToDungeon(0, 0, 0);",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "WB3b-a-real-location-read-as-the-court",
-    "file": "src/world/gateArena.js",
+    "file": "src/world/gate/gateArena.js",
     "old": "export const isGateArena = (loc) => Number.isSafeInteger(loc?.gate) && loc?.dungeon?.recordElement?.header?.locationId === GATE_ARENA_LOCATION_ID;",
     "new": "export const isGateArena = (loc) => Number.isSafeInteger(loc?.gate);",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "WB3b-a-flagstone-wound-down",
-    "file": "src/world/gateArena.js",
+    "file": "src/world/gate/gateArena.js",
     "old": "    f.tri(COURT_FLOOR_RECORD, c, p1, p0, uvFloor(c), uvFloor(p1), uvFloor(p0));",
     "new": "    f.tri(COURT_FLOOR_RECORD, c, p0, p1, uvFloor(c), uvFloor(p0), uvFloor(p1));",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "WB3b-a-spire-on-the-floor",
-    "file": "src/world/gateArena.js",
+    "file": "src/world/gate/gateArena.js",
     "old": "    const r = RIM_OUT + 1.5 + (i % 3) * 0.8;",
     "new": "    const r = 10 + (i % 3) * 0.8;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "WB3b-the-ring-off-his-reach",
-    "file": "src/world/gateArena.js",
+    "file": "src/world/gate/gateArena.js",
     "old": "  const RING_SIDES = 96, rr0 = BOSS_REACH_R - RUNE_HALF_W, rr1 = BOSS_REACH_R + RUNE_HALF_W, y = 0.02;",
     "new": "  const RING_SIDES = 96, rr0 = COURT_R - 3 - RUNE_HALF_W, rr1 = COURT_R - 3 + RUNE_HALF_W, y = 0.02;",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "WB3b-a-brazier-in-the-bridge",
-    "file": "src/world/gateArena.js",
+    "file": "src/world/gate/gateArena.js",
     "old": "    if (!clearOf(k, a, BRAZIER_CLEAR)) continue;\n    out.push(",
     "new": "    out.push(",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "WB3b-the-collider-half-a-disc",
-    "file": "src/world/gateArena.js",
+    "file": "src/world/gate/gateArena.js",
     "old": "    for (let k = 0; k < FLOOR_SIDES; k++) {\n      const a0 = (k / FLOOR_SIDES) * Math.PI * 2, a1 = ((k + 1) / FLOOR_SIDES) * Math.PI * 2;\n      out.push(",
     "new": "    for (let k = 0; k < FLOOR_SIDES / 2; k++) {\n      const a0 = (k / FLOOR_SIDES) * Math.PI * 2, a1 = ((k + 1) / FLOOR_SIDES) * Math.PI * 2;\n      out.push(",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "WB3b-the-landing-behind-the-gate",
-    "file": "src/world/gateArena.js",
+    "file": "src/world/gate/gateArena.js",
     "old": "  const x = t[0] + g.spot[0] + dx * out, z = t[2] + g.spot[1] + dz * out;",
     "new": "  const x = t[0] + g.spot[0] - dx * out, z = t[2] + g.spot[1] - dz * out;",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "WB3b-the-landing-off-the-ground-kept",
-    "file": "src/world/gateArena.js",
+    "file": "src/world/gate/gateArena.js",
     "old": "  return Number.isFinite(y) ? { pos: [x, y, z], normal: [dx, 0, dz] } : null;",
     "new": "  return { pos: [x, y, z], normal: [dx, 0, dz] };",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "WB3b-every-joint-burning",
-    "file": "src/world/gateArt.js",
+    "file": "src/world/gate/gateArt.js",
     "old": "      const hot = tone(x, y) > 0.7;",
     "new": "      const hot = tone(x, y) > 0;",
     "tests": [
@@ -289,7 +289,7 @@
   },
   {
     "name": "WB3b-the-braziers-carried",
-    "file": "src/world/gateArena.js",
+    "file": "src/world/gate/gateArena.js",
     "old": "  lights.forEach((l, i) => { packLight(data, n + i, l); colors.set(l.color, (n + i) * 3); });",
     "new": "  lights.forEach((l, i) => { packLight(data, n + i, l); colors.set(l.color, (n + i) * 3); carried[n + i] = 1; });",
     "tests": [
@@ -298,7 +298,7 @@
   },
   {
     "name": "WB3b-the-torchs-mask-dropped",
-    "file": "src/world/gateArena.js",
+    "file": "src/world/gate/gateArena.js",
     "old": "  if (lit.data.carried) carried.set(lit.data.carried.subarray(0, n));",
     "new": "  if (false) carried.set(lit.data.carried.subarray(0, n));",
     "tests": [

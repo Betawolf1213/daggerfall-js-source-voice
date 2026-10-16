@@ -22,8 +22,8 @@ import {
   smallerDungeonsStateNow, ONLINE_DUNGEON_SIZES, ONLINE_DUNGEON_SIZE_SALT, ONLINE_DUNGEONS_STATE, MEDIUM_DUNGEONS_STATE,
   SMALLER_DUNGEONS_STATE, MEDIUM_DUNGEON_THRESHOLD, SMALLER_DUNGEON_THRESHOLD, WORLD_DUNGEON_SIZES_PREF, worldDungeonSizesWanted,
 } from '../src/world/smallerDungeons.js';
-import { isMainStoryDungeon } from '../src/world/dungeonTextures.js';
-import { UNDERCROFT_LOCATION_ID } from '../src/world/arenaCity.js';
+import { isMainStoryDungeon } from '../src/world/dungeon/dungeonTextures.js';
+import { UNDERCROFT_LOCATION_ID } from '../src/world/arena/arenaCity.js';
 import { seededFirst } from '../src/systems/wind/wind.js';
 import { roomKeyFor, OnlineSession } from '../src/net/online.js';
 import { isWorldRoom, dungeonRoomTag, DUNGEON_ROOM_TAGS, roomOf, PIXEL_UNITS, WORLD_PREFIX } from '../src/net/wire.js';
@@ -39,7 +39,7 @@ const quiet = (fn) => { const info = console.info, warn = console.warn; console.
 const at = (px, pz) => ({ x: px * PIXEL_UNITS + 10, y: 0, z: pz * PIXEL_UNITS + 10, yaw: 0, pitch: 0, mv: 0 });
 const stored = (r) => { const meta = r.store.get('world:meta'); return meta ? JSON.parse(Array.from({ length: meta.chunks }, (_, i) => r.store.get('world:' + i)).join('')) : null; };
 
-const PRIVATEERS_HOLD = 187853213;   // a main-story keep (world/dungeonTextures.js MAIN_STORY_DUNGEON_IDS)
+const PRIVATEERS_HOLD = 187853213;   // a main-story keep (world/dungeon/dungeonTextures.js MAIN_STORY_DUNGEON_IDS)
 // three map ids the draw sends to each size (pinned below, so a changed salt or weight moves them loudly)
 const SMALL_ID = 700, MEDIUM_ID = 701, LARGE_ID = 704;
 const block = (name) => ({ blockName: name, x: 9, z: 9, isStartingBlock: false });

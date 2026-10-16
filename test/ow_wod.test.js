@@ -17,15 +17,15 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Collider, wideCandidates, wideRayCandidates } from '../src/player/collider.js';
-import { objectMatrix } from '../src/world/wodLocationObjects.js';
-import { loadLocationPrefab } from '../src/world/wodLocationData.js';
-import { WOD_TERRAIN_SIZE_MULTI, LocationSession } from '../src/world/wodLocationLoader.js';
-import { decodeRegionPack } from '../src/world/wodLocationPack.js';
+import { objectMatrix } from '../src/world/worldOfDaggerfall/wodLocationObjects.js';
+import { loadLocationPrefab } from '../src/world/worldOfDaggerfall/wodLocationData.js';
+import { WOD_TERRAIN_SIZE_MULTI, LocationSession } from '../src/world/worldOfDaggerfall/wodLocationLoader.js';
+import { decodeRegionPack } from '../src/world/worldOfDaggerfall/wodLocationPack.js';
 import { WodWorld, WOD_MOUNTAIN_PREFAB } from '../src/world/worldOfDaggerfall.js';
-import { boxNearPath } from '../src/world/roadClearance.js';
+import { boxNearPath } from '../src/world/road/roadClearance.js';
 import { planRoute, routeLegs, routeGround } from '../src/systems/travel/travelRoute.js';
 import { ringPassPoints, ringSideOf, locationRectsOf, RING_ORDER } from '../src/systems/travel/travelOptions.js';
-import { DIR_DELTA } from '../src/world/roadNetwork.js';
+import { DIR_DELTA } from '../src/world/road/roadNetwork.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const V = join(ROOT, 'vendor/world-of-daggerfall');
@@ -313,7 +313,7 @@ test('WOD-PEAKS: with the Mountains switch off (the default) a Mountains instanc
 });
 
 test('ROCK-SEAT: a rock field\'s piece set into the ground but hanging over ground that falls away under it is lowered until its foot is WOD_ROCK_SEAT_M under the lowest ground beneath it - one already in the ground, or resting on another\'s crown, keeps the mod\'s height, and none is raised', async () => {
-  const { rockSeatDrop, WOD_ROCK_SEAT_M } = await import('../src/world/wodLocationObjects.js');
+  const { rockSeatDrop, WOD_ROCK_SEAT_M } = await import('../src/world/worldOfDaggerfall/wodLocationObjects.js');
   assert.equal(WOD_ROCK_SEAT_M, 0.5);
   assert.equal(rockSeatDrop(100, 40), 0, 'its foot 60 under the lowest ground: in the ground, untouched');
   assert.equal(rockSeatDrop(100, 99.5), 0, 'exactly the seat under it: untouched');

@@ -11,7 +11,7 @@
 //   the relay       a blow on a crystal judged and its breaking fanned at once
 //   the link        net/gateLink.js - the crystals folded, kept broken through the stun, cleared by the next word
 //   the court       scenes/gateCourt.js - the crystals as targets, a blow's number out, the call, the shatter and the
-//                   stun said and heard, the draw list and the lights; world/gateBoss.js crystalStandIn
+//                   stun said and heard, the draw list and the lights; world/gate/gateBoss.js crystalStandIn
 //   the bar         ui/gateBossBar.js - what is left to break and how long; the stun; the next Reckoning's coming
 //   the draw        render/courtCrystals.js - the cluster, its growth, its pass
 //
@@ -30,8 +30,8 @@ import { strikeVerdict, blowOf } from '../src/net/gateStrike.js';
 import { validGateIn, validGateOut, GATE_CRYSTALS_MAX, GATE_BRAIN_V, GATE_KINDS, GATE_OUT_KINDS } from '../src/net/wire.js';
 import { foldGate, GATE_STATE_EMPTY } from '../src/net/gateLink.js';
 import { gateTimes, gateRoomKey } from '../src/net/gateLaw.js';
-import { crystalStandIn, crystalColor, bossLookOf, BOSS_CUES, CRYSTAL_ARMOR, CRYSTAL_NAME, STUN_COLOR, ATTACK_COLORS, bossAct, bossGlow, bossCue } from '../src/world/gateBoss.js';
-import { courtToDungeon } from '../src/world/gateArena.js';
+import { crystalStandIn, crystalColor, bossLookOf, BOSS_CUES, CRYSTAL_ARMOR, CRYSTAL_NAME, STUN_COLOR, ATTACK_COLORS, bossAct, bossGlow, bossCue } from '../src/world/gate/gateBoss.js';
+import { courtToDungeon } from '../src/world/gate/gateArena.js';
 import { createGateCourt, COURT_RECKON_TEXT, RECKON_LATE_MS, CRYSTAL_STRIKE_GROWN } from '../src/scenes/gateCourt.js';
 import { bossBarModel, BOSS_BAR_TEXT, destroyGateBossBar } from '../src/ui/gateBossBar.js';
 import { destroyGateMarksCard } from '../src/ui/gateMarksView.js';

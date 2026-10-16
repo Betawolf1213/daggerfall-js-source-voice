@@ -635,7 +635,7 @@
   },
   {
     "name": "roads-source-generated",
-    "file": "src/world/terrainGenClient.js",
+    "file": "src/world/terrain/terrainGenClient.js",
     "old": "    this._roadsSource = net.source ?? 'basic-roads';",
     "new": "    this._roadsSource = 'generated';",
     "tests": [

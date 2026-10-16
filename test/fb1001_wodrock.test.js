@@ -2,7 +2,7 @@
 // detailed as possible"). World of Daggerfall builds its massifs out of ARCH3D's pebbles scaled by hundreds and
 // thousands (WOD_Mountain_01r1's spire at (824,399): model 60716 at 398 x 1101 x 398), and the model's own UVs rode the
 // scale - one 64x64 repeat over 600 m to 2.6 km of face, 0.03 to 0.5 texels a metre against the pebble's 12 to 150.
-// world/wodRockUv.js unfolds each plane of a piece stretched 4x or more at its pebble's own texel density; the piece
+// world/worldOfDaggerfall/wodRockUv.js unfolds each plane of a piece stretched 4x or more at its pebble's own texel density; the piece
 // stands where it stood, as tall, colliding as before. Pinned on a made pebble (no game data): the density and the
 // texture's orientation on every face, the planes' seams, the whole-repeat shift, a vertex two planes share, a mirror,
 // the unit-scale piece byte for byte through the static batch, and the host's one call. With ARENA2_PATH, the real
@@ -12,8 +12,8 @@ import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { wodRockUvs, pieceStretch, WOD_ROCK_STRETCH_MIN } from '../src/world/wodRockUv.js';
-import { objectMatrix } from '../src/world/wodLocationObjects.js';
+import { wodRockUvs, pieceStretch, WOD_ROCK_STRETCH_MIN } from '../src/world/worldOfDaggerfall/wodRockUv.js';
+import { objectMatrix } from '../src/world/worldOfDaggerfall/wodLocationObjects.js';
 import { StaticBatchBuilder } from '../src/render/staticBatch.js';
 
 const ARENA2 = process.env.ARENA2_PATH;
@@ -170,7 +170,7 @@ test('FB1001-WODROCK: a mirrored piece (a negative scale) keeps the density too'
 
 test('FB1001-WODROCK: the streaming host re-maps each WoD piece as it reads its model - one call, the mod\'s loop alone', () => {
   const w = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
-  assert.match(w, /^import [^\n]*; import \{ wodRockUvs \} from '\.\.\/world\/wodRockUv\.js';/m);
+  assert.match(w, /^import [^\n]*; import \{ wodRockUvs \} from '\.\.\/world\/worldOfDaggerfall\/wodRockUv\.js';/m);
   // the piece's model is read through it, before its box, its batch and its collider: the batch draws the new UVs,
   // and the box and the collider read the same positions and indices (a dfMeshToModel pebble's own arrays - below)
   assert.match(w, /for \(const m of place\.models\) \{\n\s*const gpu = await getGpuMesh\(m\.modelId\);\n[^\n]*\n\s*const cpu = wodRockUvs\(cpuModels\.get\(m\.modelId\), m\.matrix, m\.modelId\);/);
@@ -189,7 +189,7 @@ test('FB1001-WODROCK: the real spire - WOD_Mountain_01r1 object 7 (60716 at 398 
   const { Arch3dFile } = await import('../src/formats/arch3dFile.js');
   const { TextureFile } = await import('../src/formats/textureFile.js');
   const { dfMeshToModel } = await import('../src/world/meshReader.js');
-  const { loadLocationPrefab } = await import('../src/world/wodLocationData.js');
+  const { loadLocationPrefab } = await import('../src/world/worldOfDaggerfall/wodLocationData.js');
   const arch = new Arch3dFile();
   arch.load(new Uint8Array(readFileSync(join(ARENA2, 'ARCH3D.BSA'))));
   const t = new TextureFile();

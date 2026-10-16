@@ -93,7 +93,7 @@ test('CAMP-SIGHT: wilderness camps see 60 m; every other foe (WoD sites, dungeon
     const si = src.indexOf('const _standCampEncounter = (hit, feet) => {');
     assert.ok(src.slice(si, src.indexOf('\n  };', si)).includes('f.ai.sightRadius = CAMP_SIGHT_RADIUS'), `${f}: inside _standCampEncounter`);
   }
-  assert.doesNotMatch(read('src/world/wodSpawner.js'), /sightRadius/, 'the WoD location spawner is untouched');
+  assert.doesNotMatch(read('src/world/worldOfDaggerfall/wodSpawner.js'), /sightRadius/, 'the WoD location spawner is untouched');
 });
 
 test('CAMP-TRAVEL: no camp rolls while a Travel Options journey is running', async () => {

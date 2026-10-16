@@ -6,7 +6,7 @@
 // its centre. Now the upright runs to the top of the node's glow where that stands higher.
 // NODE-CLEAR. VEIN-CLEAR kept the veins out of the rock pieces; a patch or a tree stood inside one, glowing, on the compass,
 // where no look reached it. Now a patch inside a piece stands nowhere and a tree claims the nearest flat outside every one
-// (world/terrainNature.js insideRocks, one home).
+// (world/terrain/terrainNature.js insideRocks, one home).
 // STEADY-SAID. The steady hand ends when E is let go, and its meter said "hold still" and nothing of the key: a tap of E
 // at a patch ended the act with nothing taken. Now the meter names the key (the Sickle's Use holds it itself, and says none).
 // SEASONAL-EYE. Herbalism 100's Seasonal Eye changes what stands; chosen mid-session it stood nothing again until the next
@@ -28,10 +28,10 @@ import { createForagingItem, setForagingHost } from '../src/systems/foraging/for
 import { FT } from '../src/systems/foraging/foragingLaw.js';
 import { createHerbAct } from '../src/systems/herbAct.js';
 import { createProfHud } from '../src/ui/profHud.js';
-import { insideRocks, natureStandsAt } from '../src/world/terrainNature.js';
+import { insideRocks, natureStandsAt } from '../src/world/terrain/terrainNature.js';
 import { CLIMATES, LOCATION_TYPES } from '../src/formats/mapsFile.js';
-import { WORLD_MAP_TILE_DIM } from '../src/world/terrainTiles.js';
-import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { WORLD_MAP_TILE_DIM } from '../src/world/terrain/terrainTiles.js';
+import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 
 const WORLD = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
 const WOODS = CLIMATES.Woodlands, GLENUMBRA = 59;

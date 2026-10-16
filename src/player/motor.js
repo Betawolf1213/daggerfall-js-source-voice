@@ -336,7 +336,7 @@ import { TRANSPORT_MODES, isRiding, rideBaseFor, canRunUnlessRiding, rideWalks }
 import { timeScale } from '../systems/timeScale.js';   // TO1: Unity's Time.fixedDeltaTime rides Time.timeScale (see update())
 import { CLIMB_MOVE_KINDS, CLIMB_MOVE_RISE_MAX, CLIMB_MOVE_TIME_MAX } from '../net/wire.js';   // CLIMB6: a move on the wire, its kinds and bounds the wire's
 import { clampToRing } from '../net/duelSession.js';   // AUDIT DUEL1 D4: the ring's one clamp
-import { MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE } from '../world/terrainSampler.js';   // FALL-KEPT: the world's tallest drop bounds a carried fall
+import { MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE } from '../world/terrain/terrainSampler.js';   // FALL-KEPT: the world's tallest drop bounds a carried fall
 
 /** PlayerSpeedChanger.GetWalkSpeed, verbatim (audit 2026-08-16e F1):
  *  drag = 0.5 x (100 - max(30, LiveSpeed)) rides the WALK base only -
@@ -1139,7 +1139,7 @@ export class PlayerMotor {
     // rise taken away; the duel's and the gate's rings name none, and their height is never touched
     if (Number.isFinite(a.ceilAbove) && this.pos[1] > c[1] + a.ceilAbove) { this.pos[1] = c[1] + a.ceilAbove; if (this.velY > 0) this.velY = 0; }
     // WB9b: an arena with a clamp of its own - the gate's three courts and the walkways laid between them
-    // (world/gateArena.js courtArena, net/gateBrain.js clampToFloor - the relay's law of the floor)
+    // (world/gate/gateArena.js courtArena, net/gateBrain.js clampToFloor - the relay's law of the floor)
     if (typeof a.clamp === 'function') { this._putBack(a.clamp(this.pos, CAPSULE_RADIUS)); return; }
     // AUDIT DUEL1 D4: THE ONE CLAMP (net/duelSession.js clampToRing), the geometry the duel's own pins drive
     const to = clampToRing(this.pos, c, a.radius, CAPSULE_RADIUS);

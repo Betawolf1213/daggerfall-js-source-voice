@@ -61,8 +61,8 @@ FIXED, at the root of each:
 After: the same 30 days, the same 3,271 cargoes, every one for a port on the sea.
 
 THE LINE DRAWN. The berth's reach is a map pixel, and the map can promise a ship there only where a sea pixel lies
-within it. Measured against the terrain (DFU's kernel as the port runs it - `world/terrainSampler.js` generateSamples,
-`world/terrainTiles.js` generateTileData - which Deep Waters carves only where it put water): 111 of the 113 have water
+within it. Measured against the terrain (DFU's kernel as the port runs it - `world/terrain/terrainSampler.js` generateSamples,
+`world/terrain/terrainTiles.js` generateTileData - which Deep Waters carves only where it put water): 111 of the 113 have water
 within a pixel. The two that do not, Kaluhbia and Whitewych Commons, face a one-pixel pond the map marks as sea and the
 kernel smooths away - the one water law's own reading, left as it stands. Sentinel and Wayrest stand two pixels off the
 sea and the kernel puts water within a pixel of both (683 m and 1,074 m off their footprints); Daggerfall's is 1.5 km

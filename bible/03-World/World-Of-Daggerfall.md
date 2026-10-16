@@ -242,7 +242,7 @@ flat, by its ARCHIVE STRING:
 ## The spawn points (WOD3)
 
 `LocationEnemySpawner` is a state machine over one number, the
-player's distance, and is ported as one (`world/wodSpawner.js`):
+player's distance, and is ported as one (`world/worldOfDaggerfall/wodSpawner.js`):
 `tick(dist)` is one Unity frame for one marker.
 
 - **Start spends, Update springs.** A marker the player is within 300
@@ -333,7 +333,7 @@ commented-out HUD text. The fast-travel cleanup is never subscribed, and
 the crashed ship and the labyrinth blocks are commented out.) The
 component's Start is the whole camp, built in the block's frame under
 an "Extra_Detail" child at its origin, and ported as data
-(`world/wodPrivateersHold.js`, pinned line for line against the
+(`world/worldOfDaggerfall/wodPrivateersHold.js`, pinned line for line against the
 vendored C#):
 
 - **33 models**, each `CreateDaggerfallMeshGameObject` (the mesh and its
@@ -518,7 +518,7 @@ and every one dies.
   (`TerrainHelper.defaultTerrainScale`) is only its default, and the
   port had read it: every hill stood a fifth taller than DFU's. Every
   height the streamed world draws, collides with or stands things on
-  now reads `STREAMING_TERRAIN_SCALE` (`world/terrainSampler.js`): the
+  now reads `STREAMING_TERRAIN_SCALE` (`world/terrain/terrainSampler.js`): the
   terrain, the nature layout, the far ring, the grass, the overworld
   model and this mod's sites (1923.75, the author's own constant).
 - **Saves written on 1.5 still land.** `SAVE_VERSION` does not move.
@@ -595,7 +595,7 @@ client of a room stood the same sites (the list is the room's), but each
 ran its own markers, so a camp sprang once per player and each fought a
 private copy (the AUDIT BRANCH's M1 had kept those foes home because
 they spent a peer's puppet slots). Now THE FIRST PLAYER TO SPRING A
-MARKER OWNS WHAT IT MADE (`world/wodShared.js`):
+MARKER OWNS WHAT IT MADE (`world/worldOfDaggerfall/wodShared.js`):
 - **A marker's site** is the key every client shares without a word:
   the map pixel (one layout stands to a pixel - every shipped pack
   checked) and the marker's objectID, with its index among the pixel's
@@ -650,7 +650,7 @@ peer's springs never forgotten; and the stale paragraph above. Pinned in `test/w
   region under the player is announced (`OnRegionIndexChanged` is heard
   on every crossing, and again at each build, where the list is read), every
   announced folder lands, the pick is taken. The smoothing arms run IN
-  the kernel (`world/terrainGen.js`), after the tiles are assigned and
+  the kernel (`world/terrain/terrainGen.js`), after the tiles are assigned and
   before the grid and the nature - the order `OnPromoteTerrainData`
   holds in DFU - and the averages ride back. The objects stand after the
   location block, pixel-local, so `destroyPixel` takes them with the
@@ -722,20 +722,20 @@ then differ from the room's for the rest of the page.
 
 ## Where it lives in the port
 
-- `src/world/wodLocationData.js` - `LocationData.cs` and the reading
+- `src/world/worldOfDaggerfall/wodLocationData.js` - `LocationData.cs` and the reading
   half of `LocationHelper.cs`: the shapes, the two XML loaders, .NET's
   `TryParse`, `ValidateValue`, NTFS name order.
-- `src/world/wodLocationPack.js` - one region folder as one pack.
-- `src/world/wodLocationLoader.js` - `LocationLoader.cs`: the session
+- `src/world/worldOfDaggerfall/wodLocationPack.js` - one region folder as one pack.
+- `src/world/worldOfDaggerfall/wodLocationLoader.js` - `LocationLoader.cs`: the session
   list, the pick, the flatten, the object positions.
-- `src/world/wodLocationObjects.js` - `LoadObject` and its helpers as
+- `src/world/worldOfDaggerfall/wodLocationObjects.js` - `LoadObject` and its helpers as
   data: the archive-string arms, the mod's `AddLight`, the transform.
 - `src/world/worldOfDaggerfall.js` - the page's one loader: Awake, the
   region events in order, the room's list, the placements.
-- `src/world/wodSpawner.js` - `LocationEnemySpawner.cs`: Start, Update
+- `src/world/worldOfDaggerfall/wodSpawner.js` - `LocationEnemySpawner.cs`: Start, Update
   and the five arms as one machine.
 - `src/world/groundAlign.js` - GameObjectHelper's two ground aligns.
-- `src/world/wodPrivateersHold.js` - `DungeonExterior.cs` and
+- `src/world/worldOfDaggerfall/wodPrivateersHold.js` - `DungeonExterior.cs` and
   `PrivateersHold.cs`: the block's name, Start's camp as data, its rolls.
 - `src/world/roadsProducer.js` `basicRoadsPathsPoint` - the question the
   loader asks Basic Roads.
@@ -748,7 +748,7 @@ site off a pixel whose own byte carries a road or track (LocationLoader.cs:146-1
 and nothing more - but the shipped layouts reach far past their pixel: the
 mountains ~1.9 km from the site, the large rock fields ~500 m, and 41,349 of the
 114,087 sites the lists stand spill into the next pixel, where its road runs.
-`world/roadClearance.js` asks the FOOTPRINT against the painted network (every
+`world/road/roadClearance.js` asks the FOOTPRINT against the painted network (every
 path a band from its pixel's centre to the edge or corner its compass bit names,
 half a path width either side) in the site's pixel and every pixel it reaches.
 A camp, fort, shrine, ruin, cave or nature spot is refused whole at its pick (a
@@ -775,7 +775,7 @@ fire is out of reach (the rock's collider takes the press's ray and the body
 first), so nobody fought and the gate stood its whole schedule.
 
 The gate does not move; the rock yields, ROADS-CLEAR's shape
-(`world/gateClearance.js`, read by `scenes/world.js`):
+(`world/gate/gateClearance.js`, read by `scenes/world.js`):
 - a camp, fort, shrine, ruin, cave or nature spot whose objects (grown by the
   road test's 8 m site margin) reach the gate's 24 m clearing is refused at its
   pick, after the road test - a `continue`, so a later instance may take the

@@ -11,13 +11,13 @@
 // that ceiling and the player's level, which no Lock of theirs could have cast.
 //
 // Driven through the real ActionSystem (its activate, its spell door verbs, applyRemote, collectSaveData and
-// restoreSaveData), the real building memory (world/interiorShared.js) and the real hover plaque.
+// restoreSaveData), the real building memory (world/interior/interiorShared.js) and the real hover plaque.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { ActionSystem, lockCeiling, ACTION_LOCK_VALUE, MAGIC_LOCK_THRESHOLD } from '../src/world/actionSystem.js';
 import { ACTION_FLAGS } from '../src/world/rdbLayout.js';
-import { mintInteriorShared, composeInteriorShared, applyInteriorShared, interiorLocationKey } from '../src/world/interiorShared.js';
+import { mintInteriorShared, composeInteriorShared, applyInteriorShared, interiorLocationKey } from '../src/world/interior/interiorShared.js';
 import { actionObjectName } from '../src/systems/worldTooltips.js';
 import { codeOnly } from './codeOnly.mjs';
 

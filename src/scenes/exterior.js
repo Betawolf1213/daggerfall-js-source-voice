@@ -10,11 +10,11 @@ import { effectiveLevel } from '../systems/mentorMode.js';   // SOFTCAP2: mentor
 import { dfmodGroundLayers } from '../systems/dfmodTextures.js';   // GROUND1: an attached mod's terrain tile set
 import { getFloat } from '../systems/settings/settings.js';   // AUDIT 28 W1: NightAmbientLightScale
 import { markPuddleWater, carryPuddleMask } from '../world/puddleMask.js';   // WATER-PUDDLE: the puddle is the art's
-import { dilateCoastalClimate } from '../world/terrainHelper.js';   // AUDIT C&C (lens T): ReadyCheck's coastal repair, as the streaming host runs it
+import { dilateCoastalClimate } from '../world/terrain/terrainHelper.js';   // AUDIT C&C (lens T): ReadyCheck's coastal repair, as the streaming host runs it
 import { WORLD_FRAME } from '../render/renderer.js';   // AUDIT-EL F5
 import { windmillsOn } from '../world/windmills.js';   // WM3: the Windmills pack's switch
 import { wodOn, wodLightColors } from '../world/worldOfDaggerfall.js';   // WOD4: the mod's switch and its per-light colours
-import { PRIVATEERS_HOLD_BLOCK, HOLD_MODELS, HOLD_FLATS, holdModelMatrix, holdFireLights, rollHoldFoes } from '../world/wodPrivateersHold.js';   // WOD4: the camp at Privateer's Hold
+import { PRIVATEERS_HOLD_BLOCK, HOLD_MODELS, HOLD_FLATS, holdModelMatrix, holdFireLights, rollHoldFoes } from '../world/worldOfDaggerfall/wodPrivateersHold.js';   // WOD4: the camp at Privateer's Hold
 import { frameBegin, frameEnd, frameAbort } from '../systems/frameClock.js';   // PERF1: the frame's script time; AUDIT-WH2 L1-F4: and the door an early return takes
 import { frameCapSkip } from '../systems/frameCap.js';   // FPS-CAP1: DFU's TargetFrameRate - a held frame re-arms before the clock and the input frame
 import { deliverOwedShots } from '../ui/screenshot.js';   // SHOT1: a PrintScreen shot is read at this host's frame foot, after its last draw
@@ -33,12 +33,12 @@ import { DFPalette } from '../formats/dfPalette.js';
 import { MapsFile, longitudeLatitudeToMapPixel, REGION_RACES, LOCATION_TYPES, REGION_NAMES } from '../formats/mapsFile.js';   // QX1: GetRaceOfCurrentRegion   // AUDIT 58: LOCATION_TYPES for the graveyard ambient arm
 import { isPlayerInTown } from '../systems/nearbyObjects.js';   // PlayerGPS.IsPlayerInTown, both optional flags
 import { giveOffer } from '../ui/pendingOffer.js';   // AUDIT 58: DaggerfallUI.GiveOffer, the rung in front of the rest press
-import { convertTilemap, isOutdoorWaterTile } from '../world/terrainSurface.js';   // FD1: PlayerTileMapIndex == 0
+import { convertTilemap, isOutdoorWaterTile } from '../world/terrain/terrainSurface.js';   // FD1: PlayerTileMapIndex == 0
 import { waterUniforms, tilemapRectHasWater, waterSwitchOn, buildWaterIndices } from '../render/waterSurface.js';   // WATER1: the enhanced water surface over the town's ground; WATER-AUDIT: asked over the real extent
-import { waterBedOf, flatGrid } from '../world/waterBed.js';   // WATER-NEXT 2: the town's grid and the bed under its water
-import { createRipples, createRippleStir, RIPPLE_SPAN, RIPPLE_CELLS } from '../world/waterRipples.js';   // AUDIT WATER-NEXT m12: the rings round a wading player, the streaming world's own stir
+import { waterBedOf, flatGrid } from '../world/water/waterBed.js';   // WATER-NEXT 2: the town's grid and the bed under its water
+import { createRipples, createRippleStir, RIPPLE_SPAN, RIPPLE_CELLS } from '../world/water/waterRipples.js';   // AUDIT WATER-NEXT m12: the rings round a wading player, the streaming world's own stir
 import { GROUND_OFFSET, GROUND_TILE_DIM } from '../world/rmbLayout.js';
-import { GROUND_RECORD_LIMIT } from '../world/terrainTiles.js';   // AUDIT WATER-NEXT m8: MeshReader.cs:487's marker, one home
+import { GROUND_RECORD_LIMIT } from '../world/terrain/terrainTiles.js';   // AUDIT WATER-NEXT m8: MeshReader.cs:487's marker, one home
 import { climbRigInput } from '../player/climbPose.js';   // CLIMB6: the body's limbs on the climb
 import { PlayerMotor, startRestGroundedCheck, motionBagOf, CAPSULE_RADIUS } from '../player/motor.js';   // the rest gate's grounded input, one home; WW2: the one motion bag
 import { exteriorSurfaces, downProbe, rayDistanceFor, ON_EXTERIOR_WATER, exteriorSwimming } from '../player/exteriorSurface.js';   // ROAD-B (b3): PlayerMotor's three exterior surface methods; OT1: IsPlayerSwimming above ground
@@ -80,7 +80,7 @@ import { setDefaultEnchantCtx } from '../systems/enchantments.js';   // AUDIT 58
 import { createEnchantCtx, standLooseFoe, LOOSE_FOE_PLACE_ATTEMPTS } from './hostEnchant.js';   // FS1 (wave D): the ONE ctx body + SD1's loose-foe placement
 import { windowEmissionRGB } from '../render/windowEmission.js';
 import { realWindowsMode, clockFogColor } from '../render/realWindows.js';   // RW1: the rooms behind the glass, and the street a building's glass looks out on
-import { CITY_LIGHT_COLOR, CITY_LIGHT_RANGE, LIGHTS_ARCHIVE, collectCityLights, nearestLights } from '../world/cityLights.js';
+import { CITY_LIGHT_COLOR, CITY_LIGHT_RANGE, LIGHTS_ARCHIVE, collectCityLights, nearestLights } from '../world/city/cityLights.js';
 import { isHearthFlat } from '../systems/survival/hearth.js';   // HEARTH1: which of those lanterns is a fire you could cook on
 import { syncLightingLane, lanternColor } from '../render/enhancedLighting.js';   // EL1
 import { withPlayerLights } from './magicCandle.js';   // X11/T1: the lights the PLAYER carries
@@ -118,7 +118,7 @@ import { isLocalPlayerTarget } from '../characters/enemyTargets.js';   // HCC: C
 import { SeasonHelper, archivePrefix as seasonPrefixOf } from '../systems/seasonsIliacBay.js';   // SIB1: Seasons of the Iliac Bay's SeasonHelper; WINDFALL1: and its atlases' prefixes, which Windfall's own tables key on
 import { loadSeasonsTextures, seasonsInstalled } from '../systems/seasonsIliacBayAssets.js';   // SIB1: its textures, from the player's own copy of the mod
 import { isBulletinBoard, isCityGate, CITY_GATE_OPEN_MODEL_ID, CITY_GATE_CLOSED_MODEL_ID } from '../world/rmbLayout.js';   // RMBLayout.cs:1013-1017 - the one model id a town sign wears; :1007-1011 - the two a city gate wears
-import { makeCityGate, updateCityGate } from '../world/cityGate.js';   // AUDIT 64 F14: DaggerfallCityGate
+import { makeCityGate, updateCityGate } from '../world/city/cityGate.js';   // AUDIT 64 F14: DaggerfallCityGate
 import { staticBuildingBox, staticBuildingWorldAabb } from '../world/staticBuildings.js';   // AUDIT 64 F11: RMBLayout's StaticBuilding array
 import { collectExteriorNpcs, exteriorNpcRecord } from '../characters/exteriorNpcs.js';
 import { createStandingHorses, isStandingHorseFlat } from '../world/standingHorses.js';   // STAND-HORSE: the location's town horses as the 3D horse
@@ -129,7 +129,7 @@ import { audio } from '../systems/audio.js';
 import { AmbientEffects, EXTERIOR_AMBIENT_WAITS, presetForExterior } from '../systems/ambientEffects.js';
 import { createWeatherFront, blendTerms, soundWeather, fallTerms } from '../systems/weather/weatherFront.js';   // WX2: the front reaches the ground; RAIN-SPRINKLE: the look of what falls
 import { createAnimalAmbience } from '../systems/animalAmbience.js';   // A4
-import { CityNavigation } from '../world/cityNavigation.js';   // T1 towns
+import { CityNavigation } from '../world/city/cityNavigation.js';   // T1 towns
 import { TownPopulation } from '../systems/town/townPopulation.js';
 import { GUARD_TEXTURE, MobilePerson, PERSON_TEXTURES, personWantsToStop, walkerRace } from '../characters/mobilePerson.js';
 import { createTownTalk, rayPersonDistance, nearestPerson } from './townTalk.js';   // T3b   // AUDIT 63 F33 (review): the townsfolk's own pick distance, the enemy arm's rival
@@ -254,7 +254,7 @@ import { createCoverIndex, isCoverFlat, coverProxies } from '../ai/cover.js';   
 import { createLowPolyTrees } from '../systems/lowPolyTreesAssets.js';   // LPT1: Low Poly Trees - the host's one door (as world.js)
 import { LPT_SCALE_MAX, buildTreeSet } from '../world/lowPolyTrees.js'; import { naturePicture } from '../world/naturePicture.js';   // LPT1; AUDIT 05b A12: which picture a nature flat stands as, every host's one choice
 import { spherePlanes } from '../render/bounds.js';   // LPT1 (AUDIT LPT B4): the near trees' sphere test reads normalised planes
-import { isTreeRecord } from '../world/terrainNature.js';   // AUDIT TACT B2: a tree is a trunk and a crown
+import { isTreeRecord } from '../world/terrain/terrainNature.js';   // AUDIT TACT B2: a tree is a trunk and a crown
 import { noteLocalPlayer, tacticsNow, tickTactics } from '../ai/tactics.js';   // TACT2/TACT4; AUDIT TACT: the clock's tick
 import { foeFrameDt } from '../characters/enemyMotor.js';   // AUDIT TACT: the foes' own step, for the brain's clock
 import { drawableBlows, registerBlowDodgedListener } from '../ai/foeBlows.js';   // TACT4; AUDIT ARENA-LADDER: a dodge told
@@ -265,8 +265,8 @@ import { HeatHazeRenderer } from '../render/heatHaze.js';   // HAZE1: Heat Haze'
 import { createHeatHaze, hazeFrameSettings } from '../systems/heatHaze.js';   // HAZE1: Heat Haze's law (demifiend000, vendor/heat-haze/)
 import { createWindfallHost } from './windfallHost.js';   // WINDFALL1: Windfall (demifiend000, vendor/windfall/) - world.js's twin
 import { createSnowfallHost, settlementsIn } from './snowfallHost.js';   // SNOWFALL1: Snowfall (demifiend000, vendor/snowfall/) - world.js's twin
-import { getLocationTerrainTileOrigin } from '../world/terrainTiles.js';   // SNOWFALL1: the town's tiles in its map pixel, where the streamed world lays them
-import { gridValueAt } from '../world/terrainSurface.js';   // SNOWFALL1: the bed carved under the town's water, off the snow's ground
+import { getLocationTerrainTileOrigin } from '../world/terrain/terrainTiles.js';   // SNOWFALL1: the town's tiles in its map pixel, where the streamed world lays them
+import { gridValueAt } from '../world/terrain/terrainSurface.js';   // SNOWFALL1: the bed carved under the town's water, off the snow's ground
 import { BODY_CAPSULE_RADIUS } from '../systems/spellcast.js';   // SNOWFALL1: a foe's controller, as its track's width reads it
 import { windfallResponse } from '../systems/windfall.js';   // WINDFALL1: a flora batch's share of the mod's lean
 import { createWindAudio, windSoundOn } from '../systems/wind/windAudio.js';   // WIND3: the wind, heard
@@ -277,7 +277,7 @@ import { createDistantStorms, thunderSourceAt, THUNDER_SOURCE_M } from '../syste
 import { createStormLights } from '../systems/lightning.js';   // BOLT: the strikes themselves (world.js's twin note)
 import { LightningBoltsRenderer } from '../render/lightningBolts.js';   // BOLT: the channels, drawn
 import { fieldOfPixelLocal, pixelLocalOfField } from '../systems/weather/weatherField.js';
-import { TERRAIN_SIZE } from '../world/terrainSampler.js';   // AUDIT WEATHER3 R3: a pixel's centre, the place the indoor sample reads   // WEATHER2b: this host's pixel-local frame to the field's metres, and back
+import { TERRAIN_SIZE } from '../world/terrain/terrainSampler.js';   // AUDIT WEATHER3 R3: a pixel's centre, the place the indoor sample reads   // WEATHER2b: this host's pixel-local frame to the field's metres, and back
 import { cellOfField } from '../render/volumetricClouds.js';   // WEATHER2c: the field's cells as the clouds' cells
 import { SEASON } from '../world/climateSwaps.js';
 import { addGold, goldAmount, totalGoldAmount, deductGold, deductGoldPieces, setCrimeCommitted, legalRepOf, changeLegalRep, CRIMES } from '../systems/court.js';   // U10 probe surface; V4: the one crime setter; QX1: the quest layer's gold, legal-rep and crime doors
@@ -320,18 +320,18 @@ import { generateBuildingName } from '../world/buildingNames.js';   // QX1/IH1: 
 import { createQuestBridge, tokensToRows } from './questBridge.js';   // QX1: THE QUEST MACHINE, in the fixed-city host
 import { QuestAudioSource } from '../systems/audio.js';   // QX1/E6: PlaySound's ONE source per machine
 import { WORLD_CONTEXT, makeAnchor, teleportPlan, ANCHOR_MUST_BE_SET } from '../systems/teleportAnchor.js';   // TP2/A10: the Recall anchor's law - shape, IsSameInterior, the plan, and the 4001 record id
-import { STREAMING_TERRAIN_SCALE } from '../world/terrainSampler.js';   // TERRAIN-SCALE1: the anchor's stamp
+import { STREAMING_TERRAIN_SCALE } from '../world/terrain/terrainSampler.js';   // TERRAIN-SCALE1: the anchor's stamp
 import { locationWorldRect } from '../world/streamingWorld.js';   // TP2: the native frame this host's origin stands at
 import { GLOBAL_SCALE, DOOR_TYPE } from '../world/meshReader.js';   // TP2: scene units <-> native world units; ARENA1: the undercroft's stair
 import { isClimateFreeModel, NO_CLIMATE_REMAP } from '../world/customModels.js';   // ARENA1: the colosseum wears its own pictures
-import { isUndercroftDoor, isArenaCity, undercroftLocation, ARENA_BLOCK, ARENA_GATE_PEOPLE, arenaTownLandmark } from '../world/arenaCity.js';   // ARENA1: the undercroft below the city; ARENA-FIX 12: the colosseum's block and its Herald; ARENA-MAP: its name on the town map
+import { isUndercroftDoor, isArenaCity, undercroftLocation, ARENA_BLOCK, ARENA_GATE_PEOPLE, arenaTownLandmark } from '../world/arena/arenaCity.js';   // ARENA1: the undercroft below the city; ARENA-FIX 12: the colosseum's block and its Herald; ARENA-MAP: its name on the town map
 import { createArenaBouts } from './arenaBouts.js';   // ARENA-FIX 12: THE FOUR HOSTS - the bout driver on this host too
 import { createArenaSound } from '../systems/arena/arenaSound.js';
 import { drawArenaHud } from '../ui/arenaHud.js';
 import { createArenaGate, nearArenaGate } from './arenaGate.js';   // ARENA3: the recruiters (and the bookmaker) at the gate; ARENA4b: the Herald's choice and the pause door's banner too
 import { exhibitionFor, nextLadderBout, arenaLadderRestore, practiceBout } from '../systems/arena/arenaLadder.js';
 import { arenaReplaysRestore } from '../systems/arena/arenaReplay.js';   // ARENA5: your ladder replay
-import { cityFloorCentre } from '../world/arenaFloor.js';
+import { cityFloorCentre } from '../world/arena/arenaFloor.js';
 import { setPlayerBout, inBout } from '../characters/enemyTargets.js';   // AUDIT ARENA-LADDER A2: a fighter on the sand is its bout's
 import { ARENA_TEXT } from '../systems/arena/arenaText.js';   // AUDIT ARENA-LADDER A5: the bout's refusal
 import { keptOffArenaGround, ARENA_GROUND_M } from '../systems/arena/arenaGround.js';   // CURSE-OFF-SAND: the curse's dead keep off the arena's grounds
@@ -779,7 +779,7 @@ export async function bootExterior(canvas, renderer, params, status) {
             // interior is summer-skinned in the depths of Evening Star.
             climateBase, season: INTERIOR_SEASON, dfLocation, group: 'loc',
           });
-          // ARENA1: the colosseum's stair goes down to the undercroft (world/arenaCity.js), its own record and exit group
+          // ARENA1: the colosseum's stair goes down to the undercroft (world/arena/arenaCity.js), its own record and exit group
           const last = buildingDoors[buildingDoors.length - 1];
           if (isUndercroftDoor(last, DOOR_TYPE.DUNGEON_ENTRANCE) && isArenaCity(dfLocation)) Object.assign(last, { dfLocation: (undercroft ??= undercroftLocation(dfLocation)), group: 'undercroft' });
         }
@@ -821,7 +821,7 @@ export async function bootExterior(canvas, renderer, params, status) {
     for (let ty = 0; ty < GROUND_TILE_DIM; ty++) {
       for (let tx = 0; tx < GROUND_TILE_DIM; tx++) {
         const tile = srcTiles[tx][GROUND_TILE_DIM - 1 - ty];
-        const raw = tile.textureRecord >= GROUND_RECORD_LIMIT   // AUDIT WATER-NEXT m8: the marker's one home (world/terrainTiles.js)
+        const raw = tile.textureRecord >= GROUND_RECORD_LIMIT   // AUDIT WATER-NEXT m8: the marker's one home (world/terrain/terrainTiles.js)
           ? 2   // record 2 * 4 = 8, grass (MeshReader.cs:487)
           : (tile.tileBitfield === 0 ? 0xff : tile.tileBitfield);
         locationTilemap[(b.x * GROUND_TILE_DIM + tx) +
@@ -899,7 +899,7 @@ export async function bootExterior(canvas, renderer, params, status) {
     lefaySpot = lefaySpotOf(loc, { camp: { block: PRIVATEERS_HOLD_BLOCK, models: HOLD_MODELS }, exit: lefayExitOf(dungeonEntranceLanding(buildingDoors.filter((e) => e.door.doorType === DOOR_TYPE.DUNGEON_ENTRANCE).map((e) => e.door))) });
     if (!lefaySpot) console.warn('[lefay] no open ground for the monument outside Privateer\'s Hold');   // AUDIT FIVE-ASKS B8: never silent
   }
-  // WOD4: THE CAMP AT PRIVATEER'S HOLD (world/wodPrivateersHold.js),
+  // WOD4: THE CAMP AT PRIVATEER'S HOLD (world/worldOfDaggerfall/wodPrivateersHold.js),
   // world.js's stand in this host's location frame: the models with the
   // location's climate (DaggerfallLocation re-skins every mesh under its
   // blocks), drawn and collided; the flats CENTRED where Start sets them;
@@ -995,7 +995,7 @@ export async function bootExterior(canvas, renderer, params, status) {
   const waterOn = waterSwitchOn()   // FT6: the one composition (render/waterSurface.js)
     && tilemapRectHasWater(tilemapBytes, tilemapDim, loc.width * GROUND_TILE_DIM, loc.height * GROUND_TILE_DIM);   // the padding past the town is zero, and zero is water
   // WATER-NEXT 2: with the water on, DFU's one flat ground quad is laid as a grid of its tiles so a bed can be carved
-  // under the town's ponds and moats (world/waterBed.js - the eye's alone: this host's feet read the tilemap and the
+  // under the town's ponds and moats (world/water/waterBed.js - the eye's alone: this host's feet read the tilemap and the
   // flat ground, never the grid), and the water takes its own sheet over the grid as it stood
   renderer.waterBed = waterOn;   // WATER-NEXT 2: the ground under the enhanced water is a bed (render/waterBedGlsl.js)
   renderer.waterSimple = getPref('waterQuality') === 'simple';   // WATER-NEXT: the Water quality row
@@ -3452,7 +3452,7 @@ export async function bootExterior(canvas, renderer, params, status) {
         locationName: shownLocation,   // L10N3e: the title, as shown - the key is locationId
         locationId: locId,
         gridW: loc.width, gridH: loc.height,
-        blocks: loc.blocks.map((bl) => ({ x: bl.x, y: bl.y, autoMap: bl.dfBlock?.rmbBlock?.fldHeader?.autoMapData, landmark: arenaTownLandmark(bl.dfBlock) })),   // ARENA-MAP: the Arena's name (world/arenaCity.js)
+        blocks: loc.blocks.map((bl) => ({ x: bl.x, y: bl.y, autoMap: bl.dfBlock?.rmbBlock?.fldHeader?.autoMapData, landmark: arenaTownLandmark(bl.dfBlock) })),   // ARENA-MAP: the Arena's name (world/arena/arenaCity.js)
         playerPos: () => (walkMode ? [...player.pos] : [...cam.pos]),
         // this host lays the location at the map pixel's own origin, so
         // the location frame IS the tile frame DFU's modulo needs

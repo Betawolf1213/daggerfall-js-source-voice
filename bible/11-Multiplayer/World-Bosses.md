@@ -178,7 +178,7 @@ been missed at least once, and an arena that needs combat, spells, the HUD, the 
 and a way out is a host's whole job. So the arena is a DUNGEON - the dungeon host (`buildDungeonContext`) with a
 level made in code:
 
-- **A made location**, `gateArenaLocation(day)` (`world/gateArena.js`, the shape `synthesizeDungeonLocation` makes
+- **A made location**, `gateArenaLocation(day)` (`world/gate/gateArena.js`, the shape `synthesizeDungeonLocation` makes
   for spawned dungeons): one starting block, a map id no real place has, and a flag the room key and the exits read
   (`gate: day`).
 - **An empty block.** `layoutDungeon` reads a block by name from the blocks file and throws on a name it does not
@@ -386,7 +386,7 @@ while the gate is open. After it seals, the fallen watch from outside.
 
 ### His voice and his music (WB7, 2026-09-25, Mac: "Proper boss audio during the boss fight")
 
-**His body, heard** (`scenes/gateCourt.js`, the cues in `world/gateBoss.js BOSS_CUES`): beside WB4's voice - the bark at
+**His body, heard** (`scenes/gateCourt.js`, the cues in `world/gate/gateBoss.js BOSS_CUES`): beside WB4's voice - the bark at
 each word, the blow at each landing, the fire's cast and burning, the roar at a phase and the cry at his fall - a STEP
 at his feet each BOSS_STRIDE_M of his walk or his charge, a body's fall pitched down to his weight; a GROWL now and then
 between his attacks (every 7 to 13 s, never while he strikes); a GRUNT when a share of his health goes (no closer than
@@ -747,7 +747,7 @@ inside the rock geometry from world of daggerfall"*. The record is `01-Overview/
   14:42:30, wrath 14:52:30), which the map's countdown-less label confirms; every drawer derives the phase from the clock,
   and nothing keeps a gate past its collapse. The rock kept anyone from the fire, so no kill ended it early and it stood
   its whole schedule saying nothing.
-- **GATE-CLEAR** (`world/gateClearance.js`): the gate's spot stays the clock's and the map files'; World of Daggerfall's
+- **GATE-CLEAR** (`world/gate/gateClearance.js`): the gate's spot stays the clock's and the map files'; World of Daggerfall's
   rock yields - a whole site reaching 24 m of the gate's foot is refused at its pick, any other piece whose mesh box
   reaches it is not stood - for the gate the clock is about, the pixels a turn changes built again between builds.
 - **GATE-COLLAPSE** (Mac: *"Count down to collapse"*): the sealed hours count down - `gateCountdown`'s `closed` arm,
@@ -811,7 +811,7 @@ give him unique and different modifers on every 2 hour spawn."
 No path swayed him before this, but only by accident: he is in no foe pool, so the language roll (DFU's EnemySenses
 pacification) never met him; his spell door took harmful families and a Soul Trap alone; and the relay keeps no
 hostility. Yet his stand-in is a Daedra Lord's entity (mobile 31, the Daedra group), which a Pacify Daedra matches the
-moment anything routes a spell to it. Now it is his own word - `pacifyImmune` on the stand-in (`world/gateBoss.js
+moment anything routes a spell to it. Now it is his own word - `pacifyImmune` on the stand-in (`world/gate/gateBoss.js
 bossStandIn`) - and every door that could sway anything refuses a target that says it: the language seam
 (`scenes/hostCombat.js tryLanguagePacification`, the edge consumed, no tongue asked), the Pacify/Charm arm
 (`systems/effects.js`, no chance rolled, counted as `swayRefused`) and the flag's door (`scenes/hostMagic.js`). A sway
@@ -944,7 +944,7 @@ fought in its own: at a phase's turn (PHASE_TURN) he **bounds across the fire** 
 air, CROSS_HEIGHT 22 m at the top of the arc, a 7 m disc where he lands - the leap's weight - heard across all three
 courts) to the next court's heart, under a ward that holds through the bound (CROSS_WARD_MAX_MS). The bound's word lays
 a **walkway**: 25 slabs of the court's own flagstones and basalt rising stone by stone out of the sea of fire from the
-court he left (`world/gateArena.js walkSlabs`, `slabRise`, `slabMatrix`), each whole before the laid floor reaches it
+court he left (`world/gate/gateArena.js walkSlabs`, `slabRise`, `slabMatrix`), each whole before the laid floor reaches it
 (WALK_LEAD_MS 1 s, then WALK_FORM_MS 4 s end to end; WALK_HALF_W 3.2 m either side). There he **waits** under his ward
 for a living challenger to cross into his court (at most CROSS_WAIT_MAX_MS, 30 s), then holds his own ward more
 (SHIELD_MS - Unyielding's 6 s) while the phase's signature is cast from its heart. He chooses, aims at and waits for
@@ -952,7 +952,7 @@ the fighters standing in his court alone; a fighter left behind is not before hi
 
 ONE LAW OF THE FLOOR, BOTH ENDS (`onFloor`, `clampToFloor`): the first court always; a walkway as far as it is laid; a
 court past a walkway laid whole. The relay refuses a blow from off it (a pose's slack beyond), and the motor keeps a
-player on it (`world/gateArena.js courtArena` - one arena a frame, its crossings and the relay's clock refilled;
+player on it (`world/gate/gateArena.js courtArena` - one arena a frame, its crossings and the relay's clock refilled;
 `player/motor.js _putBack` takes the airborne momentum off the floor away, off a walkway's side as off a rim). The
 collider carries every disc and every deck; the motor is what says how much is laid.
 
@@ -988,7 +988,7 @@ gate's midnight overtakes a Reckoning and a stun alike.
 On every screen (`scenes/gateCourt.js`): the call said as they rise ("Dagon's Reckoning! Shatter all 5 crystals of
 Oblivion before it lands!" - to a fighter come in late through the wind-up too, with what is left), each one heard
 grinding up out of the stone; each a body the swing, the shaft and the spell meet by its surface as they meet him
-(`scenes/dungeonContext.js gateCrystalBodies` - never in `foes`; its stand-in `world/gateBoss.js crystalStandIn`,
+(`scenes/dungeonContext.js gateCrystalBodies` - never in `foes`; its stand-in `world/gate/gateBoss.js crystalStandIn`,
 unarmoured and dodging nothing) once grown half out of the stone; a blow flashes it and rings the glass at once, its
 number out; each broken said by name ("Ann shatters a crystal - 2 remain.") with its crash; the stun said and heard
 ("The Reckoning breaks! Valkynaz Ruhn is stunned - strike now!"); an unbroken Reckoning bursts every crystal still
@@ -1006,7 +1006,7 @@ alike). The law of the bite is WBX5's (a tick after the step in - a step through
 is that it SAYS itself (`ui/gateGroundView.js`): the screen's rim glows in the ground's colour while I stand in it
 (breathing), flares at each bite, and his elemental blows flare it in their own colour as they land on me; the ground's
 name and "step out!" stand under the crosshair while I am in it; and the step in hisses at my feet at once
-(`world/gateBoss.js groundStepCue` - the burning ground's hiss, or his aspect's element's cast). DFU's red flash stays a
+(`world/gate/gateBoss.js groundStepCue` - the burning ground's hiss, or his aspect's element's cast). DFU's red flash stays a
 blow's alone (spell damage never flashed - `ui/damageFlash.js`). The pools seethe in his ground's own grain.
 
 ### His blows heavier, read and seen (WB9e)
@@ -1025,7 +1025,7 @@ behind it.
 
 ### His spoils spread and handled (WB9f)
 
-THE THROW (`world/gateSpew.js`): WB5 threw each piece on a bearing of its own roll inside 0.9 radians of the player's, at
+THE THROW (`world/gate/gateSpew.js`): WB5 threw each piece on a bearing of its own roll inside 0.9 radians of the player's, at
 7-10.5 m/s, so five pieces could leave on one line and land in one heap. Each piece now takes its own SLOT of a fan 1.6
 radians either side (SPEW_SPREAD - a half-disc toward the player, never behind him), the slots dealt out in the seed's
 order and each piece jittered inside its own, never within SPEW_SLOT_MARGIN of its edges (`spewLaunches`), thrown at
@@ -1416,7 +1416,7 @@ reload (GATE-RELOAD's words). The bump redeploys the relay and drops every conne
 
 - **The fold** (`net/gateLink.js`): the host as the court holds it - each one's spot, walk, health and blow in flight,
   and the last few gone (how, and by whom) for the court to play out; cleared at his fall and the Wrath.
-- **The bodies** (`world/gateBoss.js HOST_LOOKS`, `hostAct`, `hostStandIn`): Daggerfall's own sprites at their own size
+- **The bodies** (`world/gate/gateBoss.js HOST_LOOKS`, `hostAct`, `hostStandIn`): Daggerfall's own sprites at their own size
   (an Imp hovers), on their own walk, attack, hurt and idle tables (the Seducer on her winged form's), each a body my
   swing, my shaft and my spell meet by its surface as they meet him (`scenes/dungeonContext.js gateHostBodies`, the
   magic host's `hostMarks`) - never in `foes`. Every metal bites; their armour is a knight's in plate, as his is.
@@ -1785,7 +1785,7 @@ and name until it is emptied, and wears *Opened* after.
   stand tried again after 5 s; the casket seeds within 40 m. The ground under the circle is read every 15 frames, and
   the stone and the sigil are made again when it moves (a pixel built finer). The sigil is drawn for an eye within
   250 m. (`world/riteModel.js`: the sigil riding the land's highs, its points never further apart than twice its reach;
-  six braziers, the altar and the casket, sunk at their lowest corners; `world/gateArt.js riteSigilArt`.)
+  six braziers, the altar and the casket, sunk at their lowest corners; `world/gate/gateArt.js riteSigilArt`.)
 - `render/riteSmoke.js`: the pillar, 340 m tall and leaning the same way every day (no wind is read). Its foot is the
   altar fire's width; its billows grow as they climb and the biggest bulge its outline; it is lit as the frame is, the
   fire glowing in its first metres. It fades in over 8 s from the omen and thins over 30 s after the opening. Far off
@@ -2255,7 +2255,7 @@ What changes beyond the wording:
 - A blow into his ward shows *Warded* in the ward's gold, never a number.
 - His elemental blows shake the camera as his physical ones do and still never flash (`ui/damageFlash.js`
   shakePlayerDamage).
-- His landings shake it by how near they fall (`world/gateBoss.js` LAND_SHAKE):
+- His landings shake it by how near they fall (`world/gate/gateBoss.js` LAND_SHAKE):
   - Slam and Leap: 2.5, fading to nothing at 12 m.
   - The bound: 4, to 25 m.
   - The Meteor: 3.5, to 15 m.
@@ -2374,7 +2374,7 @@ telegraphs. Now:
   from the roster in the court comes once the player is out.
 - The party panel draws no card for them in the court (`partyCompanions`).
 - The court says so once as a fighter steps in with any at their side - *"Your companions cannot follow you into the
-  Deadlands."* (`world/gateArena.js COURT_TEXT.noCompanions`, the refusals' shape) - once the step's fire has opened
+  Deadlands."* (`world/gate/gateArena.js COURT_TEXT.noCompanions`, the refusals' shape) - once the step's fire has opened
   (`courtAloneFrame`, in the gate's frame after the court's own): never through the door, under the fire or under a
   window, and owed again in the next court.
 - The Shattered Hour keeps the same law since SD-ALONE (`Super-Dungeons.md` section 16): no companion through its Rift.
@@ -2448,7 +2448,7 @@ beacon, the light, the clearing and the court's fire keep their sense. The sourc
 `src/assets/gate/oblivionGate.json` re-bakes from it to the byte; both are on `test/doctrine.test.js`'s published
 assets allowlist.
 
-**The stone** (`world/gateModel.js`). `buildGateModel` lays the bake's triangles as baked (Blender 5.1's own cut,
+**The stone** (`world/gate/gateModel.js`). `buildGateModel` lays the bake's triangles as baked (Blender 5.1's own cut,
 `fillFace`), flat-shaded, and runs each foot's sole GATE_FOOT_SINK (1.2 m) on under the ground on walls of its own, as
 WB2's plinth sank its foot - a slope never shows light under a foot. GATE_HEIGHT and GATE_HALF_W (7.73 m, the spines'
 points) are read off the bake; each spine's faces are a Spike of the model's `parts`, the rest Stone. WB2's horns,
@@ -2457,7 +2457,7 @@ builders.
 
 **The texturing.** The FBX embeds no texture - its materials are Blender's default grey, and its two materials split the
 left pillar from the right (a copy), not the stone from the spines. So every face is laid on the port's own art
-(`world/gateArt.js`, 64 texels, the gate's pseudo-archive), every emission uploaded WHITE - the fire its own colour,
+(`world/gate/gateArt.js`, 64 texels, the gate's pseudo-archive), every emission uploaded WHITE - the fire its own colour,
 never the window light's tint (AUDIT SD II L2 F3's law):
 
 - THE STONE wears WB2's cracked basalt, PROJECTED along the axis each triangle's own face looks down most (`gateFaceUv`,
@@ -2491,14 +2491,14 @@ sunk soles (`render/gatePass.js FIRE_FOOT_Y`, GATE_FOOT_SINK under the ground, t
 across the arch the ground cuts it. WB2's root-band clamp is gone with the plinth.
 
 **A body sealed in** (AUDIT WBX W1's law, `scenes/gatePool.js inGateRoot`): asked of the stone itself - its closed
-pieces (`world/gateModel.js gateSolids`: the lintel, each pillar on its sunk feet, each spine capped at its root;
+pieces (`world/gate/gateModel.js gateSolids`: the lintel, each pillar on its sunk feet, each spine capped at its root;
 `insideGateStone`, a ray's parity a piece at a time - the collider takes the gate as one part, and the open cones flip
 it) at the capsule's axis (`SEALED_AT`: its foot's sphere, its middle and its head's, `player/motor.js`) - wherever the
 stone stands, high in a pillar and in the lintel too; the threshold to its edge and the ground before a foot free.
 **The rise**: sunk whole before it rises - its crown RISE_SLACK_M (0.3 m) under the ground at the middle, and the ground
 at the lintel's two ends asked too, so on a slope across the arch its downhill end never stands out before it begins.
 
-**The court's fire** (`world/gateArena.js`, `scenes/gateCourt.js`, `render/gatePass.js`):
+**The court's fire** (`world/gate/gateArena.js`, `scenes/gateCourt.js`, `render/gatePass.js`):
 
 - THE BRIDGE'S MEMBRANE IS GONE - its two posts, its lintel, its sheet of fire (and its art, `courtMembraneArt`,
   record 3 of the court's archive) and its exit door (`courtExitDoor`). The court lays no door of its own
@@ -2603,7 +2603,7 @@ page's ring band is a whole pixel (0.75 left as few as four texels). No relay ch
 this container has no ARENA2 and no relay session; the site's real-data behaviour (which provinces qualify, how many
 pixels each offers) is the first thing to look at on a live omen.
 
-**WB2 (2026-09-25) - the gate.** `world/gateModel.js` and `world/gateArt.js` (the stone and its art, all made in code -
+**WB2 (2026-09-25) - the gate.** `world/gate/gateModel.js` and `world/gate/gateArt.js` (the stone and its art, all made in code -
 two ridged horns rising 16 m from a stepped plinth, spines down their backs, claws gripping the step, lesser spires
 round the rim clear of the ways in, basalt split by veins of fire and a ring of runes under the threshold),
 `render/gatePass.js` (the fire in the arch - an ember sealed, a blaze open, masked to the opening measured off the
@@ -2633,12 +2633,12 @@ mutants `tools/mutants/wb3.json` (60 dead). The arena place (WB3b) is next; unti
 answers "not yet".
 
 **WB3b (2026-09-25) - the Burning Court.** The gate's door opens at a relay that runs its room (world113; world110 on its branch): walking
-through the fire enters the court - the dungeon host's own arm with a level made in code (`world/gateArena.js`), not
+through the fire enters the court - the dungeon host's own arm with a level made in code (`world/gate/gateArena.js`), not
 a fifth host. A made location and a blocks file answering one made block holding nothing but its start marker, laid
 by the port's own `layoutDungeon`; the court stood into the built context before the marker is read - a 48 m floor of
 black flagstones (a few joints glowing) on a spire of rock over a sea of fire, the rune ring 16 m out, spires and five
 braziers round the edge, the broken bridge the players came by and the way home's membrane at the floor's edge (the
-level's one exit door, so the exit's own ray, ladder and wagon word take it; the plaque says *The way back to Tamriel*) - with its own art (`world/gateArt.js`), its floor on the collider, the
+level's one exit door, so the exit's own ray, ladder and wagon word take it; the plaque says *The way back to Tamriel*) - with its own art (`world/gate/gateArt.js`), its floor on the collider, the
 Deadlands' red fog over a far shell of sky (the dungeon host's clear colour left alone) and the braziers' own light
 (after the player's own lights, the torch's mask kept). The room is `gate:<day>`; the level claim goes out
 once per welcome; the relay's words land in `net/gateLink.js`, which the world's gate reads for its collapse and the
@@ -2653,7 +2653,7 @@ relay, where the arrival, the fog and the braziers' light are the first look. Th
 
 **WB4a (2026-09-25) - the boss fights back.** Valkynaz Ruhn stands in the court where the relay says - his walk carried
 between its words, the charge carried down its lane and held at its end as the brain holds him - in the Daedra
-Lord's own sprite at three times its size (`world/gateBoss.js`): a wind-up holds the attack clip's first frame and,
+Lord's own sprite at three times its size (`world/gate/gateBoss.js`): a wind-up holds the attack clip's first frame and,
 from half way, its second (the raise), and the landing plays the rest at the clip's own ten a second; the charge runs
 on the walk's frames; a blow of mine makes him flinch but never breaks a wind-up; at his fall the hurt frames play
 slowly and he is gone (the spoils spill there - WB5). A light at his chest rides the court's channel beside the
@@ -2675,7 +2675,7 @@ checks); the sprite not yet seen with ARENA2 and a live relay. The player's blow
 
 **WB4b (2026-09-25) - the boss is fought.** A swing, a shaft or a harmful spell that meets him is computed on the
 striker's machine by the game's own law - the same resolveHit and calculateAttackDamage a foe's blow runs, the one
-player-arrow law, applySpell's own magnitudes - against his stand-in (`world/gateBoss.js bossStandIn`: his own mobile's
+player-arrow law, applySpell's own magnitudes - against his stand-in (`world/gate/gateBoss.js bossStandIn`: his own mobile's
 entity, every metal biting where a Daedra Lord's needs Mithril, a knight's armour where his is a wall: a level-1 iron
 longsword lands more than half its swings for about nine, a level-20 blade nearly all), and its number goes to the
 court's room as the `hit` frame (`scenes/gateCourt.js hit` - whole points, a sequence of its own, the kind), where the
@@ -2691,7 +2691,7 @@ chest toward them one at a time (`scenes/gateCourt.js`): rolled off the seed of 
 (`systems/gate/gateSpoils.js` - gold by the level, three pieces by the game's own makers laddered by Loot Rarity's own
 `applyRarity`: one Rare or better, a tenth of the time Legendary, and two Magic or better by a boss's chances, each
 with SetItem's condition and KNOWN - the name the floor says is the pack's; and the Sigil Stone, the gate's trophy, worth
-five thousand), flying the thrown torch's own flight (`world/gateSpew.js` -
+five thousand), flying the thrown torch's own flight (`world/gate/gateSpew.js` -
 gravity by the torch's drag, the bounce at its bounciness, rest under a fifth of the throw: a few metres off him in
 about a second), each clattering where it lands in the treasure flat the seed dresses it in (`scenes/spoilsPool.js`).
 At rest each stands in a beam of its tier's colour over a halo (`render/spoilsGlow.js`) - blue, gold, orange, the
@@ -2790,7 +2790,7 @@ own, its law reversed); mutants `tools/mutants/auditwb_world.json` (20 dead, 1 e
 **AUDIT WB - the court's half (2026-09-25).** B1-B7 above: `scenes/gateCourt.js` (an attack's number and moment, no
 body after the Wrath, the late cry), `net/gateLink.js` (`onRefused`), `scenes/worldModes.js` (the door asked again after
 the fire, no step, way home or pending exit for the dead), `scenes/world.js` (the dead cast out alive, a refused `in`
-and a closed socket taking the player out, the door's refusal), `world/gateArena.js` (`COURT_TEXT.lost`). Pins
+and a closed socket taking the player out, the door's refusal), `world/gate/gateArena.js` (`COURT_TEXT.lost`). Pins
 `test/auditwb_court.test.js` (7); re-aimed: WB3b's door window, WB6c's door, way-home and flash pins, AUDIT 28 W2c's and
 DISC21-B's pending-exit line, five mutant records of WB4, WB6c and WB7 (the marks' new shape, the door's new line);
 mutants `tools/mutants/auditwb_court.json` (18 dead).
@@ -2817,7 +2817,7 @@ device keeps the old verdict), `scenes/gateCourt.js` (the burst's account), `sce
 songs `seamless`), `systems/music.js` (`fadeOut`), `systems/song/songPlayer.js` (the seamless loop), `scenes/gateCourt.js`
 (the grunt's count, the lists refilled), `ui/gateVeil.js` (`frameDrawn`, `warm`, the flash drawn at once),
 `render/deadlands.js` (`anchoredClock`, the falls' two layers, `RIDGES_TOP`), `scenes/spoilsPool.js` and
-`world/gateArena.js` (nothing made for an empty floor, the braziers' lights once), `scenes/worldModes.js` (the court's
+`world/gate/gateArena.js` (nothing made for an empty floor, the braziers' lights once), `scenes/worldModes.js` (the court's
 equator one array), `scenes/world.js` (the score's fade, the veil told and warmed, the clock, the court's hooks). Pins
 `test/auditwb_sound.test.js` (10); re-aimed: WB2's pool-frame seam, WB6a's lighting and backdrop seams, WB6b's clock
 and life seams, WB7's score seam, two WB6c mutant records; mutants `tools/mutants/auditwb_sound.json` (24 dead). The
@@ -2828,10 +2828,10 @@ With this the audit's confirmed findings are all fixed - 7 of the world's, 7 of 
 spoils' and claims', 9 of the look and the sound - each pinned and mutated.
 
 **WBX (2026-09-26) - after the first fights.** Section 12 above, whole: `render/renderer.js` (the one index type),
-`world/gateModel.js`, `world/gateArena.js`, `world/deadlandsLand.js` (32-bit indices; `portalDoor`, `PORTAL_AFTER_MS`),
+`world/gate/gateModel.js`, `world/gate/gateArena.js`, `world/deadlandsLand.js` (32-bit indices; `portalDoor`, `PORTAL_AFTER_MS`),
 `scenes/gateCourt.js` (the portal, the mark, the burning ground and its bite, the turn said, the soul trap kept and
 rolled), `scenes/spoilsPool.js` and `ui/itemIconColor32.js` (each piece its own picture, the take after rest),
-`render/spoilsGlow.js` (the line), `render/gateTelegraph.js` (the spokes, the mark, the pools), `world/gateBoss.js` (the
+`render/spoilsGlow.js` (the line), `render/gateTelegraph.js` (the spokes, the mark, the pools), `world/gate/gateBoss.js` (the
 leap's flight and hop, the new cues and colours, the stand-in's `spareGear` and mobile), `net/gateBrain.js` (`base`,
 `POOLS`, the three attacks, `PHASE_NAMES`, `PHASE_TURN`), `net/gateStrike.js` (`spokeLanes`, `landingPools`,
 `poolUnder`, `strikeDamage`'s base), `ui/gateBossBar.js` (the phase's name), `systems/courtRules.js` with
@@ -2875,7 +2875,7 @@ the gate's red strikes) and heard through the real player (the probe's loudness 
 
 **AUDIT WBX2 (2026-09-26) - before the merge.** Section 12's last table: `scenes/world.js` (the spoils pool made online or
 not, M1), `net/gateBrain.js` (`standsAt` and the kept `idle` fraction, M2; `leapAt` and `LEAP_AIR_MS`, the beat asking
-`settleAt`, M5/M8), `world/gateBoss.js` (`bossPlace` on `leapAt`), `server/src/index.js` (the spent word kept in the
+`settleAt`, M5/M8), `world/gate/gateBoss.js` (`bossPlace` on `leapAt`), `server/src/index.js` (the spent word kept in the
 copy's place, M3; a court fighter's copy held from their hellos, M4; one read for the sweep's cursors, M9),
 `net/wire.js` (`GATE_HERE_HOLD_MS`), `scenes/spoilsPool.js` (`spentBy`, M6) and `scenes/gatePool.js` (M7). RELAY_VERSION
 world116 still - re-hashed in place, never deployed. Pins `test/auditwbx2.test.js` (8); re-aimed: AUDIT WB A4's kept copy
@@ -2910,7 +2910,7 @@ fighters stand. A dungeon door's press box (`player/enterExit.js doorWorldAabb`)
 4.9 m across for the court's two ways - and a press from inside a box counts only where a collider surface meets the ray
 in it (`player/activate.js`, CASTLE1), which a sheet of fire has not: from 0.6 to 2.4 m before the portal, and 1.5 m
 before the bridge's membrane, looking at it, a press did nothing. The court's doors carry `court: true` now and are
-pressed in their fire's own box (`world/gateArena.js courtDoorAabb`: the opening's width and height, 0.3 m either side of
+pressed in their fire's own box (`world/gate/gateArena.js courtDoorAabb`: the opening's width and height, 0.3 m either side of
 its plane) - from 0.6 m to the door's reach, looking at it; looking away, nothing; past the reach, "too far". The WBX2
 walk test's `home` could never fill (the court takes no way home), so the court's press is now driven end to end: the
 court's real floor collider, its targets as `worldModes.js` builds them, and `pickActivatableHit`. And from the same
@@ -2919,7 +2919,7 @@ after an ejection (`gateCourt.leave` -> `spoils.gather`), offline nothing did un
 offline ejection now leaves the court too (`world.js`). Pinned: `test/wbx_gate_fixes.test.js` (the press),
 `test/ss1_stones.test.js` (the offline gather); `tools/mutants/auditss.json`.
 
-**WB8 (2026-09-28) - never swayed, and marked.** Section 13 above, whole: `world/gateBoss.js` (his `pacifyImmune`, his
+**WB8 (2026-09-28) - never swayed, and marked.** Section 13 above, whole: `world/gate/gateBoss.js` (his `pacifyImmune`, his
 refusal's words, his aspect's colours and voice), `systems/effects.js`, `scenes/hostCombat.js`, `scenes/hostMagic.js`,
 `scenes/dungeonContext.js` (the doors that sway anything refuse him; his door refuses in words; his elements land
 unflashed in their casts), `net/gateMods.js` (the marks' tables), `net/gateLaw.js` (the cycle, the marks' line),
@@ -2950,7 +2950,7 @@ it (`wb3_gate_room`, `wb8c_gate_detail` - its Rime-Wrought Colossal and Unyieldi
 `discordgates`, `eventtip`). **WB11b** - `net/gateBrain.js` (HOST_KINDS and HOST_BLOWS, the waves, the walks, the
 blows, the drinking, the bearers' wait, the crumbling, `applyHostHit`, the state's `lg`, the chart's `a`; the profile's
 `legion`), `net/wire.js` (the six words, GATE_HOST_MAX, the brain's law 5, RELAY_VERSION world138 - world140 at the merge), `server/src/index.js`.
-**WB11c** - `net/gateLink.js` (the fold), `net/gateStrike.js` (`hostVerdict`, `hostTelegraphAt`), `world/gateBoss.js` (the
+**WB11c** - `net/gateLink.js` (the fold), `net/gateStrike.js` (`hostVerdict`, `hostTelegraphAt`), `world/gate/gateBoss.js` (the
 looks, the acts, the fall, the cues, the stand-in), `scenes/gateHost.js` (new: the court's host), `scenes/gateCourt.js`,
 `scenes/dungeonContext.js`, `scenes/hostMagic.js`, `scenes/worldModes.js`, `scenes/world.js`, `ui/gateBossBar.js`,
 `ui/gateMarksView.js`, `ui/gateDamageChart.js` (the host's column - the chart's DOM pins in `gateux_gate` took its empty

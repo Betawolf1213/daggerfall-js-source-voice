@@ -894,7 +894,7 @@ Three causes in the town, each fixed and pinned (`test/lwstand_street.test.js`, 
 dead); the audit the same day (the last item) re-cut how a stand is found.
 
 - **The street** (`places.js` `streetGeometry`, STAND_REACH_M). The street net's cells - a building's footprint and the
-  water are none (`world/cityNavigation.js`), nor is the grid's outside - and a body the square of STAND_REACH_M
+  water are none (`world/city/cityNavigation.js`), nor is the grid's outside - and a body the square of STAND_REACH_M
   (0.4 m) about its middle. A body stands where the square overlaps no cell off the net (`holds`); a straight way holds
   it where the square swept along it overlaps none (`clear`, and `reach`: how far along the way it does) - the off-net
   cells grown by the reach, against the way. Exact, so any part of a way the street holds it holds too. Pure in the

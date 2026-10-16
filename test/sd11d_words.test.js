@@ -20,7 +20,7 @@ import { SD_CLAIM_TEXT } from '../src/net/sdClaims.js';
 import { SD_MARK_TIPS } from '../src/ui/sdMarksView.js';
 import { createSdRemnantBlows, SD_BLOWS_TEXT, SD_BLOW_CUES, SD_HEART_LATE_MS } from '../src/scenes/sdRemnantBlows.js';
 import { arenaToDungeon } from '../src/scenes/sdRemnant.js';
-import { BOSS_CUES, FIRE_CAST_ID } from '../src/world/gateBoss.js';
+import { BOSS_CUES, FIRE_CAST_ID } from '../src/world/gate/gateBoss.js';
 import { remnantBarModel, sdBarNear, SD_BAR_TEXT, SD_ECHO_RISE_NEAR_MS } from '../src/ui/sdRemnantBar.js';
 import { damageChartModel, DAMAGE_CHART_TEXT, DAMAGE_CHART_DELAY_MS, DAMAGE_CHART_CSS } from '../src/ui/gateDamageChart.js';
 import { createGateVeil, VEIL_CUES, VEIL_BRASS_CUES, VEIL_THEMES, VEIL_OPEN_WAIT_TICKS } from '../src/ui/gateVeil.js';
@@ -31,14 +31,14 @@ import { createSdHost, sdCollapseLine, sdFadeDue, sdFadeReadout, SD_FADE_WARN_MS
 import { sdFirst, sdRise, sdFind, sdFell, sdNameIn, sdFoundLine, sdFellLine, sdFadeLine, SD_CAST_OUT_LINE, SD_NO_CLOSED, SD_NO_FULL, SD_NO_RIFT, SD_COLLAPSE_MS } from '../src/net/sdLaw.js';
 import { SD_HALL_TEXT, SD_HALL_SOUNDS } from '../src/scenes/sdHall.js';
 import { SD_STEPS_TEXT } from '../src/scenes/sdSteps.js';
-import { SD_REALM_TEXT } from '../src/world/sdRealm.js';
+import { SD_REALM_TEXT } from '../src/world/superDungeon/sdRealm.js';
 import { SD_HOME_TEXT } from '../src/scenes/sdEnd.js';
 import { SD_SPOILS_TEXT } from '../src/systems/superDungeon/sdSpoils.js';
 import { staticDoorName } from '../src/systems/worldTooltips.js';
 import { sdCities, sdTemplates } from '../src/systems/superDungeon/sdSite.js';
 import { scanGatePixels } from '../src/systems/gate/gateSite.js';
 import { LOCATION_TYPES, CLIMATES } from '../src/formats/mapsFile.js';
-import { isMainStoryDungeon } from '../src/world/dungeonTextures.js';
+import { isMainStoryDungeon } from '../src/world/dungeon/dungeonTextures.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const W = read('src/scenes/world.js');

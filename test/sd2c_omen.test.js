@@ -21,7 +21,7 @@ import { createSdHost } from '../src/scenes/sdHost.js';
 import { sdCities, sdTemplates, findSdSite, pixelOfLoc } from '../src/systems/superDungeon/sdSite.js';
 import { scanGatePixels } from '../src/systems/gate/gateSite.js';
 import { LOCATION_TYPES, CLIMATES } from '../src/formats/mapsFile.js';
-import { isMainStoryDungeon } from '../src/world/dungeonTextures.js';
+import { isMainStoryDungeon } from '../src/world/dungeon/dungeonTextures.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const M = 60_000, H = 3_600_000, T0 = 1_800_000_000_000;

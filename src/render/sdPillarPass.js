@@ -1,18 +1,18 @@
 // @ts-check
 // SD-LOOK S7 (2026-10-09, bible/11-Multiplayer/Super-Dungeons-Look.md section 9): THE PILLARS' WATCH - one foreign pass
-// over the arena's four clock-towers (world/sdPillarModel.js), drawn by the world host with the arena's reads:
+// over the arena's four clock-towers (world/superDungeon/sdPillarModel.js), drawn by the world host with the arena's reads:
 //
 //   THE DIALS - a small clock on each face of each capital (sixteen), laid a hair out of the stone on the pixel law's
 //     cells (SD_DIAL_TEXELS a radius): a dark enamel face, a brass bezel lit from the top-left, twelve ticks (the
 //     quarters broad) and ONE HAND, which TURNS TO POINT AT THE REMNANT - they watch it (scenes/sdArenaWatch.js
 //     sdPillarHandsAt: where it stands, seen on each face's own plane, on the escapement). Lit by the lantern over them
 //     (the ambient rung), never by the scene: they read across the arena in the void's dark. Red when the Hour ends.
-//   THE LANTERNS - the flame in each lantern stage's brass cage (world/sdPillarModel.js SD_LANTERN): a gold core and its
+//   THE LANTERNS - the flame in each lantern stage's brass cage (world/superDungeon/sdPillarModel.js SD_LANTERN): a gold core and its
 //     glow posterized in four steps, camera-facing, the cage's bars and the stage's posts in front of it (depth-tested).
 //     The glow is the classic set's bloom (SD_HALO_GAIN's law: 1 on the classic set, half on the lane, which blooms it
 //     too). Its light on its own housing - the hood's underside over it, the cornice's top under it - laid on them here,
 //     posterized in three steps. A light to see, not one that lights the world: the Hour's lamps keep their count
-//     (world/sdRealm.js SD_LAMPS).
+//     (world/superDungeon/sdRealm.js SD_LAMPS).
 //   THE RESET'S DIMMING - dials and flames together by `dim` (scenes/sdArenaWatch.js sdLampDimInto, the arena's lamps'
 //     own factor), so the Hearts are the brightest things in the world.
 //
@@ -21,7 +21,7 @@
 import { buildProgram } from './glProgram.js';
 import { FOG_FACTOR_GLSL } from './labGrass.js';
 import { BAYER_GLSL, SD_PIXEL_GLSL } from './orderedDither.js';
-import { sdPillarDials, sdLanterns, SD_PILLAR_DIAL, SD_PILLAR_LOOK, SD_LANTERN } from '../world/sdPillarModel.js';
+import { sdPillarDials, sdLanterns, SD_PILLAR_DIAL, SD_PILLAR_LOOK, SD_LANTERN } from '../world/superDungeon/sdPillarModel.js';
 
 /** A dial's radius in the pixel law's cells (its stone's own 32 texels a metre, SD_PILLAR_DIAL.r across). */
 export const SD_DIAL_TEXELS = Math.round(SD_PILLAR_DIAL.r * 32);

@@ -1,7 +1,7 @@
 [
   {
     "name": "AUDIT-GALLEON-2-RG1-every-rope-on-the-tenth-at-the-rig",
-    "file": "src/world/galleonRig.js",
+    "file": "src/world/ships/galleonRig.js",
     "old": "rope: Object.freeze({ everyFrame: true })",
     "new": "rope: Object.freeze({ everyFrame: false })",
     "tests": [
@@ -81,7 +81,7 @@
   },
   {
     "name": "AUDIT-GALLEON-2-RG2-the-course-sheets-under-the-hull",
-    "file": "src/world/galleonRig.js",
+    "file": "src/world/ships/galleonRig.js",
     "old": "sail.children.push(running(`ForeCourseSheet",
     "new": "kids.push(running(`ForeCourseSheet",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "AUDIT-GALLEON-2-RG2-the-jib-sheets-under-the-hull",
-    "file": "src/world/galleonRig.js",
+    "file": "src/world/ships/galleonRig.js",
     "old": "jib.sail.children.push(running(`JibSheet",
     "new": "kids.push(running(`JibSheet",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "AUDIT-GALLEON-2-RG2-the-rope-out-of-its-frame",
-    "file": "src/world/galleonRig.js",
+    "file": "src/world/ships/galleonRig.js",
     "old": "const geometry = ropeGeometry(sub(a.world, at), sub(b.world, at), 0.028);",
     "new": "const geometry = ropeGeometry(a.world, b.world, 0.028);",
     "tests": [
@@ -121,7 +121,7 @@
   },
   {
     "name": "AUDIT-GALLEON-2-RG9-her-canvases-on-one-phase",
-    "file": "src/world/galleonRig.js",
+    "file": "src/world/ships/galleonRig.js",
     "old": "canvasTimer: (k) => Math.fround(k * FIX_DEFORMATIONS_INTERVAL / SAILS.length)",
     "new": "canvasTimer: (k) => Math.fround(0 * k)",
     "tests": [
@@ -141,7 +141,7 @@
   },
   {
     "name": "AUDIT-GALLEON-2-TS6-square-aback-and-full-swapped",
-    "file": "src/world/galleonRig.js",
+    "file": "src/world/ships/galleonRig.js",
     "old": "left: squareSailPose(s, d, m.r, 'aback'),\n      center: squareSailPose(s, d, m.r, 'center'), right: squareSailPose(s, d, m.r, 'full'),",
     "new": "left: squareSailPose(s, d, m.r, 'full'),\n      center: squareSailPose(s, d, m.r, 'center'), right: squareSailPose(s, d, m.r, 'aback'),",
     "tests": [
@@ -151,7 +151,7 @@
   },
   {
     "name": "AUDIT-GALLEON-2-TS6-gaff-sides-swapped",
-    "file": "src/world/galleonRig.js",
+    "file": "src/world/ships/galleonRig.js",
     "old": "left: gaffSailPose(g, mm.r, 'port'), center: gaffSailPose(g, mm.r, 'center'), right: gaffSailPose(g, mm.r, 'starboard')",
     "new": "left: gaffSailPose(g, mm.r, 'starboard'), center: gaffSailPose(g, mm.r, 'center'), right: gaffSailPose(g, mm.r, 'port')",
     "tests": [
@@ -161,7 +161,7 @@
   },
   {
     "name": "AUDIT-GALLEON-2-TS6-jib-sides-swapped",
-    "file": "src/world/galleonRig.js",
+    "file": "src/world/ships/galleonRig.js",
     "old": "left: jibPose('port'), centerLeft: jibPose('port', 0.5), center: jibPose('center'), centerRight: jibPose('starboard', 0.5), right: jibPose('starboard')",
     "new": "left: jibPose('starboard'), centerLeft: jibPose('starboard', 0.5), center: jibPose('center'), centerRight: jibPose('port', 0.5), right: jibPose('port')",
     "tests": [
@@ -171,7 +171,7 @@
   },
   {
     "name": "AUDIT-GALLEON-2-TS6-jib-halves-full",
-    "file": "src/world/galleonRig.js",
+    "file": "src/world/ships/galleonRig.js",
     "old": "['Center Left', poses.centerLeft], ['Center', poses.center], ['Center Right', poses.centerRight]",
     "new": "['Center Left', poses.left], ['Center', poses.center], ['Center Right', poses.right]",
     "tests": [

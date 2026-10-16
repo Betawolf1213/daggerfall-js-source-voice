@@ -55,7 +55,7 @@
   },
   {
     "name": "GATE-FBX-a-face-turned-over",
-    "file": "src/world/gateModel.js",
+    "file": "src/world/gate/gateModel.js",
     "old": "    for (const ids of trisOf[k]) out.push({ k, piece, kind: 'stone', tri: ids.map(corner) });",
     "new": "    for (const ids of trisOf[k]) out.push({ k, piece, kind: 'stone', tri: [...ids].reverse().map(corner) });",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "GATE-FBX-the-soles-left-on-the-ground",
-    "file": "src/world/gateModel.js",
+    "file": "src/world/gate/gateModel.js",
     "old": "    if (poly.every((v) => Math.abs(corner(v)[1]) < 1e-3)) {",
     "new": "    if (false) {",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "GATE-FBX-a-sole-wall-wound-inward",
-    "file": "src/world/gateModel.js",
+    "file": "src/world/gate/gateModel.js",
     "old": "        out.push({ k, piece, kind: 'wall', tri: [a, b, down(b)] }, { k, piece, kind: 'wall', tri: [a, down(b), down(a)] });",
     "new": "        out.push({ k, piece, kind: 'wall', tri: [a, down(b), b] }, { k, piece, kind: 'wall', tri: [a, down(a), down(b)] });",
     "tests": [
@@ -83,7 +83,7 @@
   },
   {
     "name": "GATE-FBX-a-spine-not-a-cone",
-    "file": "src/world/gateModel.js",
+    "file": "src/world/gate/gateModel.js",
     "old": "    const tip = part.polygons[ks[0]].find((v) => ks.every((k) => part.polygons[k].includes(v)));",
     "new": "    const tip = part.polygons[ks[0]].find((v) => ks.some((k) => part.polygons[k].includes(v)));",
     "tests": [
@@ -92,7 +92,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-P7-the-reach-read-off-z",
-    "file": "src/world/gateModel.js",
+    "file": "src/world/gate/gateModel.js",
     "old": "export const GATE_HALF_W = PART.positions.reduce((m, v, i) => (i % 3 === 0 ?",
     "new": "export const GATE_HALF_W = PART.positions.reduce((m, v, i) => (i % 3 === 2 ?",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-P8-the-spines-stone",
-    "file": "src/world/gateModel.js",
+    "file": "src/world/gate/gateModel.js",
     "old": "      f.as(GATE_PART.Spike);\n",
     "new": "      f.as(GATE_PART.Stone);\n",
     "tests": [
@@ -110,7 +110,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-G2-the-bands-least",
-    "file": "src/world/gateModel.js",
+    "file": "src/world/gate/gateModel.js",
     "old": "  for (let k = 0; k < ARCH_PROFILE_N; k++) out[k] = gateClearAt(P, at(k));",
     "new": "  for (let k = 0; k < ARCH_PROFILE_N; k++) out[k] = Math.min(gateClearAt(P, at(k - 1)), gateClearAt(P, at(k)), gateClearAt(P, at(k + 1)));",
     "tests": [
@@ -119,7 +119,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-G2-the-fire-over-the-stone",
-    "file": "src/world/gateModel.js",
+    "file": "src/world/gate/gateModel.js",
     "old": "    if (over > 0) { out[k] = Math.max(0, out[k] - over); out[k + 1] = Math.max(0, out[k + 1] - over); }",
     "new": "    if (false) {}",
     "tests": [
@@ -128,7 +128,7 @@
   },
   {
     "name": "GATE-FBX-the-arch-top-the-crown",
-    "file": "src/world/gateModel.js",
+    "file": "src/world/gate/gateModel.js",
     "old": "  let top = Infinity;\n  const T = part.triangles;\n  for (let t = 0; t < T.length; t += 3) {\n    const [a, b, c] = [at(T[t]), at(T[t + 1]), at(T[t + 2])];\n    // (0, 0) inside the triangle seen from above: the same side of all three edges\n    const side = (p, q) => (q[0] - p[0]) * (0 - p[2]) - (q[2] - p[2]) * (0 - p[0]);\n    const s1 = side(a, b), s2 = side(b, c), s3 = side(c, a);\n    if (!((s1 >= 0 && s2 >= 0 && s3 >= 0) || (s1 <= 0 && s2 <= 0 && s3 <= 0))) continue;\n    const y = (s2 * a[1] + s3 * b[1] + s1 * c[1]) / (s1 + s2 + s3);\n    if (y > 0.5 && y < top) top = y;",
     "new": "  let top = -Infinity;\n  const T = part.triangles;\n  for (let t = 0; t < T.length; t += 3) {\n    const [a, b, c] = [at(T[t]), at(T[t + 1]), at(T[t + 2])];\n    // (0, 0) inside the triangle seen from above: the same side of all three edges\n    const side = (p, q) => (q[0] - p[0]) * (0 - p[2]) - (q[2] - p[2]) * (0 - p[0]);\n    const s1 = side(a, b), s2 = side(b, c), s3 = side(c, a);\n    if (!((s1 >= 0 && s2 >= 0 && s3 >= 0) || (s1 <= 0 && s2 <= 0 && s3 <= 0))) continue;\n    const y = (s2 * a[1] + s3 * b[1] + s1 * c[1]) / (s1 + s2 + s3);\n    if (y > 0.5 && y > top) top = y;",
     "tests": [
@@ -137,7 +137,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-G8-the-floor-taken-for-the-top",
-    "file": "src/world/gateModel.js",
+    "file": "src/world/gate/gateModel.js",
     "old": "    if (y > 0.5 && y < top) top = y;",
     "new": "    if (y < top) top = y;",
     "tests": [
@@ -146,7 +146,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-G8-no-stone-handed-on",
-    "file": "src/world/gateModel.js",
+    "file": "src/world/gate/gateModel.js",
     "old": "  if (!Number.isFinite(top)) throw new Error('the gate has no stone over its threshold - no opening to hang the fire in');\n",
     "new": "",
     "tests": [
@@ -155,7 +155,7 @@
   },
   {
     "name": "GATE-FBX-the-rim-on-the-outside",
-    "file": "src/world/gateModel.js",
+    "file": "src/world/gate/gateModel.js",
     "old": "  if (n[0] * Math.sign(c[0]) < -0.5 && Math.abs(n[2]) < 0.5) return true;",
     "new": "  if (n[0] * Math.sign(c[0]) > 0.5 && Math.abs(n[2]) < 0.5) return true;",
     "tests": [
@@ -164,7 +164,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-G1-the-rim-on-the-flanks",
-    "file": "src/world/gateModel.js",
+    "file": "src/world/gate/gateModel.js",
     "old": "  if (!(Math.abs(c[0]) < GATE_OPEN_HALF_W + RIM_REACH_M)) return false;\n  if (n[0] * Math.sign(c[0]) < -0.5 && Math.abs(n[2]) < 0.5) return true;",
     "new": "  if (n[0] * Math.sign(c[0]) < -0.5) return true;",
     "tests": [
@@ -173,7 +173,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-G1-the-rim-unbounded",
-    "file": "src/world/gateModel.js",
+    "file": "src/world/gate/gateModel.js",
     "old": "  if (!(Math.abs(c[0]) < GATE_OPEN_HALF_W + RIM_REACH_M)) return false;\n",
     "new": "",
     "tests": [
@@ -182,7 +182,7 @@
   },
   {
     "name": "GATE-FBX-the-veins-across",
-    "file": "src/world/gateModel.js",
+    "file": "src/world/gate/gateModel.js",
     "old": "  if (ax >= az) return [p[2] / GATE_TILE_M, p[1] / GATE_TILE_M];",
     "new": "  if (ax >= az) return [p[1] / GATE_TILE_M, p[2] / GATE_TILE_M];",
     "tests": [
@@ -191,7 +191,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-P6-the-tops-v-up",
-    "file": "src/world/gateModel.js",
+    "file": "src/world/gate/gateModel.js",
     "old": "  if (ay >= ax && ay >= az) return [p[0] / GATE_TILE_M, p[2] / GATE_TILE_M];",
     "new": "  if (ay >= ax && ay >= az) return [p[0] / GATE_TILE_M, p[1] / GATE_TILE_M];",
     "tests": [
@@ -200,7 +200,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-P6-an-x-face-u-along-x",
-    "file": "src/world/gateModel.js",
+    "file": "src/world/gate/gateModel.js",
     "old": "  if (ax >= az) return [p[2] / GATE_TILE_M, p[1] / GATE_TILE_M];",
     "new": "  if (ax >= az) return [p[0] / GATE_TILE_M, p[1] / GATE_TILE_M];",
     "tests": [
@@ -209,7 +209,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-G3-a-face-laid-by-its-quad",
-    "file": "src/world/gateModel.js",
+    "file": "src/world/gate/gateModel.js",
     "old": "    const n = norm(cross(sub(b, a), sub(c, a)));   // AUDIT GATE-FBX G3: the triangle's own",
     "new": "    const q = PART.polygons[k].map(corner), n = kind === 'stone' ? norm(cross(sub(q[1], q[0]), sub(q[2], q[0]))) : norm(cross(sub(b, a), sub(c, a)));",
     "tests": [
@@ -218,7 +218,7 @@
   },
   {
     "name": "GATE-FBX-the-spine-laid-point-to-root",
-    "file": "src/world/gateModel.js",
+    "file": "src/world/gate/gateModel.js",
     "old": "      const uvOf = (v) => (v === tip ? [0.5, 1] : v === roots[0] ? [0, 0] : [1, 0]);",
     "new": "      const uvOf = (v) => (v === tip ? [0.5, 0] : v === roots[0] ? [0, 1] : [1, 1]);",
     "tests": [
@@ -227,7 +227,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-P6-a-spines-root-one-corner",
-    "file": "src/world/gateModel.js",
+    "file": "src/world/gate/gateModel.js",
     "old": "      const uvOf = (v) => (v === tip ? [0.5, 1] : v === roots[0] ? [0, 0] : [1, 0]);",
     "new": "      const uvOf = (v) => (v === tip ? [0.5, 1] : [0, 0]);",
     "tests": [
@@ -236,7 +236,7 @@
   },
   {
     "name": "GATE-FBX-the-rim-cold",
-    "file": "src/world/gateArt.js",
+    "file": "src/world/gate/gateArt.js",
     "old": "    emission.colors.set(mix([0, 0, 0], RIM_EMBER, RIM_SMOULDER), i);",
     "new": "    emission.colors.set([0, 0, 0], i);",
     "tests": [
@@ -245,7 +245,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-G4-the-smoulder-unseen",
-    "file": "src/world/gateArt.js",
+    "file": "src/world/gate/gateArt.js",
     "old": "    emission.colors.set(mix([0, 0, 0], RIM_EMBER, RIM_SMOULDER), i);",
     "new": "    emission.colors.set(mix([0, 0, 0], RIM_EMBER, RIM_BANK * 0.2), i);",
     "tests": [
@@ -254,7 +254,7 @@
   },
   {
     "name": "GATE-FBX-the-spine-burning-from-its-root",
-    "file": "src/world/gateArt.js",
+    "file": "src/world/gate/gateArt.js",
     "old": "    if (v >= SPINE_HEAT_FROM) {",
     "new": "    if (v >= 0) {",
     "tests": [
@@ -281,7 +281,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-E1-a-spine-left-open",
-    "file": "src/world/gateModel.js",
+    "file": "src/world/gate/gateModel.js",
     "old": "    byPiece.get(pieceOf[polygons[0]]).push(...roots.flatMap((v) => corner(v)));\n",
     "new": "",
     "tests": [
@@ -362,7 +362,7 @@
   },
   {
     "name": "GATE-FBX-the-way-in-never-closing",
-    "file": "src/world/gateArena.js",
+    "file": "src/world/gate/gateArena.js",
     "old": "  return held ? Math.min(1, o + dt / WAY_IN_OPEN_MS) : Math.max(0, o - dt / PORTAL_CLOSE_MS);",
     "new": "  return held ? Math.min(1, o + dt / WAY_IN_OPEN_MS) : o;",
     "tests": [
@@ -371,7 +371,7 @@
   },
   {
     "name": "GATE-FBX-the-way-home-never-closing",
-    "file": "src/world/gateArena.js",
+    "file": "src/world/gate/gateArena.js",
     "old": "  return Math.min(rise, close);",
     "new": "  return rise;",
     "tests": [

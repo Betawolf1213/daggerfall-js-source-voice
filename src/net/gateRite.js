@@ -12,7 +12,7 @@ import { GATE_SALT, gateHash, gateRoll, gateSpotLocal, gateYaw, gateTimes, isGat
 /** The circle stands this far from the arch, metres (its banner's 60 never reached). */
 export const RITE_MIN_M = 90;
 export const RITE_MAX_M = 180;
-/** ...and never within this many degrees of the gate's two ways in (its own ±z - the rim spires' rule, world/gateModel.js). */
+/** ...and never within this many degrees of the gate's two ways in (its own ±z - the rim spires' rule, world/gate/gateModel.js). */
 export const RITE_OFF_APPROACH_DEG = 50;
 /** A word is believed from a pose this near the circle, metres - a fight with the faithful drifts. */
 export const RITE_REACH_M = 60;

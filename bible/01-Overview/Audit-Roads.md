@@ -4,7 +4,7 @@ SUPERSEDED BEFORE IT WAS ACTIONED. This audit ran against the port's
 own road generator (systems/roads.js, roadBake.js, roadTravel.js,
 world/roadTiles.js). By the time it landed, main had already replaced
 that system whole - ROADS 22, Hazelnut's Basic Roads vendored with
-permission (vendor/roads-hazelnut/, the src/world/roadNetwork.js /
+permission (vendor/roads-hazelnut/, the src/world/road/roadNetwork.js /
 roadPainter.js / roadsProducer.js / roadsCache.js set). Every module
 below marked RETIRED is gone from the tree; the findings stand as the
 record of what the old generator got wrong, and the one lesson that

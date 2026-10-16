@@ -29,7 +29,7 @@ import { crownOf } from '../src/systems/naval/navalShips.js';
 import { boardFor, deliveryPort, SITE_PX } from '../src/systems/naval/harbourBoard.js';
 import { chartSite } from '../src/systems/naval/treasureCharts.js';
 import { layoutLocation } from '../src/world/locationLayout.js';
-import { NAV_CELLS_PER_BLOCK, tileWeight } from '../src/world/cityNavigation.js';
+import { NAV_CELLS_PER_BLOCK, tileWeight } from '../src/world/city/cityNavigation.js';
 
 const W = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
 

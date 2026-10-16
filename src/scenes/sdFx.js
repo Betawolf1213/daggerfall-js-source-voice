@@ -2,7 +2,7 @@
 // SD16 (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 10 and section 16's SD16;
 // Mac: "The detail needs to exceed that of the oblivion gates"): THE BLOWS SEEN - the Hour's landings, turns and fall
 // as bursts of sparks, the camera shaken and the floor lit. The Warden's court throws 12 kinds of burst, shakes the
-// camera under 7 of his landings and lights his (render/gateFx.js, world/gateBoss.js LAND_SHAKE); the Hour threw none.
+// camera under 7 of his landings and lights his (render/gateFx.js, world/gate/gateBoss.js LAND_SHAKE); the Hour threw none.
 //
 //   THE BURSTS (`SD_FX_KINDS`, 17 kinds, drawn by the gate's own spark pass - render/gateFx.js GateFxRenderer, its
 //     kinds and colours the Hour's): the Stomp's landing at its feet and its ring's dust thrown up as it rolls; the
@@ -22,10 +22,10 @@
 // up from under its rim) and converge on me, white-hot as they arrive, its light swelling to them (`SD_FX_REWIND`, a kind
 // of its own beside the blows' - time runs back inside the Hour). No veil, the words as they were (scenes/world.js
 // sdCastBack). Seen from my own feet: fallen to the void's floor one frame, standing on a checkpoint's landing the next
-// (world/sdSteps.js castBackTo - nothing else moves a body so), so no host is asked.
+// (world/superDungeon/sdSteps.js castBackTo - nothing else moves a body so), so no host is asked.
 import { SD_ARENA, SD_THRESHOLD, SD_REALM_ORIGIN, realmToDungeon, dungeonToRealm } from '../net/sdBrain.js';
-import { SD_WAY_BACK_Z } from '../world/sdRealm.js';
-import { SD_CHECKPOINTS, SD_VOID_Y } from '../world/sdSteps.js';
+import { SD_WAY_BACK_Z } from '../world/superDungeon/sdRealm.js';
+import { SD_CHECKPOINTS, SD_VOID_Y } from '../world/superDungeon/sdSteps.js';
 import { SD_BLOW_BY_ID, SD_BLOWS, SD_BODY, SD_REM, SD_ECHO, SD_ARENA_SLACK, stompFrontAt, handAngleAt, inArena } from '../net/sdRemnant.js';
 import { sdBodyAt } from '../net/sdFightLink.js';
 import { GateFxRenderer, FX_BURST_MS, FX_BURSTS_MAX, FX_LIGHT_MS } from '../render/gateFx.js';

@@ -19,7 +19,7 @@ import { createGambitMotion } from '../src/world/gambitMotion.js';
 import { autoFill, reachable, KG_POINT_BUDGET } from '../src/net/kingsGambit.js';
 import { GAMBIT_RESULT_MS } from '../src/systems/gambit/gambitTableSession.js';
 import { stakeRefusal } from '../src/ui/gambitTableWords.js';
-import { CARD_TABLE_W, CARD_TABLE_D } from '../src/world/cardTableProp.js';
+import { CARD_TABLE_W, CARD_TABLE_D } from '../src/world/card/cardTableProp.js';
 import { _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
 import { xorshift } from '../tools/kgMeasure.mjs';
 import { fakeDoc, text } from './decorFakes.mjs';

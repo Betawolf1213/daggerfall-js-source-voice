@@ -25,7 +25,7 @@ import { equipItem, isEquipped } from '../src/systems/equip.js';
 import { isDeclaredItemField } from '../src/systems/item/itemFields.js';
 import { validLootItem } from '../src/systems/loot/loot.js';
 import { itemLongName } from '../src/systems/item/itemInfo.js';
-import { applyInteriorLoot, interiorLootRecords } from '../src/world/interiorShared.js';
+import { applyInteriorLoot, interiorLootRecords } from '../src/world/interior/interiorShared.js';
 import { SMALL_CART_TEMPLATE } from '../src/systems/inventorySession.js';
 import { isLocked, setLocked, lockRefuses, lockedText } from '../src/systems/item/itemLock.js';
 import { tradeRefusal, createTradePack } from '../src/systems/tradePack.js';

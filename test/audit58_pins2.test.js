@@ -41,11 +41,11 @@ import assert from 'node:assert/strict';
 import {
   HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, DEFAULT_TERRAIN_SCALE,
   BASE_HEIGHT_SCALE, SCALED_OCEAN_ELEVATION, SCALED_BEACH_ELEVATION,
-} from '../src/world/terrainSampler.js';
+} from '../src/world/terrain/terrainSampler.js';
 import { SPECIAL_INFECTION_CHANCE, onMonsterHit, inflictDisease } from '../src/systems/diseases.js';
 import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
 import { INFECTION, startInfection, runInfections, setInfectionHost } from '../src/systems/infection.js';
-import { CityNavigation } from '../src/world/cityNavigation.js';
+import { CityNavigation } from '../src/world/city/cityNavigation.js';
 import { MobilePerson, TILE_DOWNGRADE_CHANCE, RANDOM_CHANGE_CHANCE } from '../src/characters/mobilePerson.js';
 import { effectCost } from '../src/systems/spellcost.js';
 import {

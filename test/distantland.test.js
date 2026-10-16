@@ -12,10 +12,10 @@ import {
   HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE, TERRAIN_SIZE,
   SCALED_OCEAN_ELEVATION, cubicInterpolator, getNoise,
   generateSamples, sampleKernel, ghostSampler,
-} from '../src/world/terrainSampler.js';
+} from '../src/world/terrain/terrainSampler.js';
 import {
   buildTerrainGrid, buildTerrainIndices, TERRAIN_SKIRT_DEPTH,
-} from '../src/world/terrainSurface.js';
+} from '../src/world/terrain/terrainSurface.js';
 import { FOG_SETTINGS, scaleFogForDistance } from '../src/world/weather.js';
 
 const hDim = HEIGHTMAP_DIMENSION;
@@ -245,7 +245,7 @@ test('EV4: the wiring - fog seam, far ring, restride, and the per-set index buff
   // it too (terrainGen.js restrideGrid) - on the terrain worker when one
   // is up, on this thread when not.
   assert.ok(world.includes('restrideGrid({ woods, px: p.px, py: p.py, stride, samples: p.samples, landform, roads: terrainGen.roads(), sites: _landformSites, climates: _landformClimates, bed: waterOn ? bedBytesOf(p) : null })'), 'the restride reads the neighbor pixels (LANDFORM1-3: shaped as the build shaped them; LANDFORM4/6: the same sites and climates)');   // PIN MOVED (AUDIT WATER-NEXT P1): and carves the bed with the grid
-  assert.ok(readFileSync('src/world/terrainGen.js', 'utf8').includes('ghostSampler(woods, px, py, HEIGHTMAP_DIMENSION, lf)'),
+  assert.ok(readFileSync('src/world/terrain/terrainGen.js', 'utf8').includes('ghostSampler(woods, px, py, HEIGHTMAP_DIMENSION, lf)'),
     'the kernel reads them for every build');
   // the renderer keeps one shared buffer PER index set, not one total
   const renderer = readFileSync('src/render/renderer.js', 'utf8');

@@ -38,7 +38,7 @@ are ports by their data stand them, and the harbour board's ports are the same 1
 PORTS). A seat's members' harbour (`hasPortFor`) is one guild's word, so it stands no shipyard: every client stands the
 same one.
 
-**The ground** is the yards' (`world/merchantYardSites.js` `townGroundOf`): the town's navgrid on the enhanced lane's
+**The ground** is the yards' (`world/merchantYards/merchantYardSites.js` `townGroundOf`): the town's navgrid on the enhanced lane's
 water table, its buildings `BUILDING_CLEAR_M` off, its props, flats, palace blocks and the monument - with the Stable and
 the Wagon Yard already closed on it, `YARD_GAP_M` round each. The yards are placed by their own two steps, as they
 always were (`townGroundOf`, then `yardSitesOn`), and the port's places go on what they left (`scenes/world.js`
@@ -320,7 +320,7 @@ piece's body out of the gangway's lane, the lanterns' light where the berth lies
   book never sounds). The rows are `world/portSites.js` `portPlaceRows`'s, the berth's point `sceneToLocationXZ`'s, a port
   by its data `systems/portPlaces.js` `portTownByData`'s and on the open sea `world/portSites.js` `portTownOnSea`'s
   (INLAND-PORTS) - each executed by the tests, never read off world.js (L6-10).
-- **The town maps** (`world/merchantYardMap.js` `yardTownBlocks`, `ui/townMapDoor.js`): the shipyard's ground in a
+- **The town maps** (`world/merchantYards/merchantYardMap.js` `yardTownBlocks`, `ui/townMapDoor.js`): the shipyard's ground in a
   shop's byte, the lighthouse's in a house's (`PORT_MAP_TYPE`), each lettered by its own name. The docks lie out on the
   water past the town's blocks, which is all a town map draws.
 - **The Overworld** (`scenes/portHost.js` and `scenes/quayPool.js` `overworldMarks`, `ui/travelViewHud.js`

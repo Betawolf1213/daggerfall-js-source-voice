@@ -83,7 +83,7 @@
   },
   {
     "name": "GATE-CLEAR-north-is-the-row-below",
-    "file": "src/world/gateClearance.js",
+    "file": "src/world/gate/gateClearance.js",
     "old": "(py - clear.py) * PIXEL_M + clear.z]",
     "new": "(clear.py - py) * PIXEL_M + clear.z]",
     "tests": [
@@ -92,7 +92,7 @@
   },
   {
     "name": "GATE-CLEAR-the-margin-ignored",
-    "file": "src/world/gateClearance.js",
+    "file": "src/world/gate/gateClearance.js",
     "old": "  if (boxNear(gx, gz, x0, z0, x1, z1, GATE_CLEAR_M + margin)) return true;",
     "new": "  if (boxNear(gx, gz, x0, z0, x1, z1, GATE_CLEAR_M)) return true;",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "GATE-CLEAR-a-square-clearing",
-    "file": "src/world/gateClearance.js",
+    "file": "src/world/gate/gateClearance.js",
     "old": "  return dx * dx + dz * dz <= r * r;",
     "new": "  return Math.max(dx, dz) <= r;",
     "tests": [
@@ -110,7 +110,7 @@
   },
   {
     "name": "GATE-CLEAR-a-rock-field-refused-whole",
-    "file": "src/world/gateClearance.js",
+    "file": "src/world/gate/gateClearance.js",
     "old": "  if (!clear || wodPiecewise(prefabName)) return true;",
     "new": "  if (!clear) return true;",
     "tests": [
@@ -119,7 +119,7 @@
   },
   {
     "name": "GATE-CLEAR-the-site-margin-dropped",
-    "file": "src/world/gateClearance.js",
+    "file": "src/world/gate/gateClearance.js",
     "old": "rect.y * tileMetres + o.pos.z, WOD_SITE_OBJECT_RADIUS_M)) return false;",
     "new": "rect.y * tileMetres + o.pos.z, 0)) return false;",
     "tests": [
@@ -128,7 +128,7 @@
   },
   {
     "name": "GATE-CLEAR-a-refused-site-not-remembered",
-    "file": "src/world/gateClearance.js",
+    "file": "src/world/gate/gateClearance.js",
     "old": "{ ledger.refused = true; return false; }",
     "new": "{ return false; }",
     "tests": [
@@ -137,7 +137,7 @@
   },
   {
     "name": "GATE-CLEAR-a-whole-site-left-out-of-the-reach",
-    "file": "src/world/gateClearance.js",
+    "file": "src/world/gate/gateClearance.js",
     "old": "        ledger.reach.push(x, z, x, z, WOD_SITE_OBJECT_RADIUS_M);\n",
     "new": "",
     "tests": [
@@ -146,7 +146,7 @@
   },
   {
     "name": "GATE-CLEAR-the-old-clearing's-cost-forgotten-at-the-turn",
-    "file": "src/world/gateClearance.js",
+    "file": "src/world/gate/gateClearance.js",
     "old": "if (p.gateRefused || reachNearGate(p.wodReach, clear, p.px, p.py)) again.push(p);",
     "new": "if (reachNearGate(p.wodReach, clear, p.px, p.py)) again.push(p);",
     "tests": [
@@ -155,7 +155,7 @@
   },
   {
     "name": "GATE-CLEAR-never-marked-current",
-    "file": "src/world/gateClearance.js",
+    "file": "src/world/gate/gateClearance.js",
     "old": "        else p.gateClearKey = key;",
     "new": "        // gone",
     "tests": [
@@ -164,7 +164,7 @@
   },
   {
     "name": "GATE-CLEAR-a-publish-across-the-turn-ignored",
-    "file": "src/world/gateClearance.js",
+    "file": "src/world/gate/gateClearance.js",
     "old": "    published(k, key) { if ((key ?? null) !== swept) due.add(k); },",
     "new": "    published(k, key) { },",
     "tests": [
@@ -173,7 +173,7 @@
   },
   {
     "name": "GATE-CLEAR-the-turn-asks-nobody",
-    "file": "src/world/gateClearance.js",
+    "file": "src/world/gate/gateClearance.js",
     "old": "if (key !== swept) { swept = key; for (const k of built.keys()) due.add(k); }",
     "new": "if (key !== swept) { swept = key; }",
     "tests": [
@@ -182,7 +182,7 @@
   },
   {
     "name": "GATE-CLEAR-the-reach-read-a-stride-short",
-    "file": "src/world/gateClearance.js",
+    "file": "src/world/gate/gateClearance.js",
     "old": "  for (let i = 0; i + GATE_REACH_STRIDE <= reach.length; i += GATE_REACH_STRIDE) {",
     "new": "  for (let i = 0; i + GATE_REACH_STRIDE <= reach.length; i += 4) {",
     "tests": [
@@ -191,7 +191,7 @@
   },
   {
     "name": "GATE-CLEAR-one-key-for-every-day",
-    "file": "src/world/gateClearance.js",
+    "file": "src/world/gate/gateClearance.js",
     "old": "key: `${site.day}:${site.px},${site.py}`",
     "new": "key: `${site.px},${site.py}`",
     "tests": [
@@ -200,7 +200,7 @@
   },
   {
     "name": "GATE-CLEAR-a-plinth's-clearing",
-    "file": "src/world/gateClearance.js",
+    "file": "src/world/gate/gateClearance.js",
     "old": "export const GATE_CLEAR_M = 24;",
     "new": "export const GATE_CLEAR_M = 12;",
     "tests": [

@@ -1,7 +1,7 @@
 // @ts-check
 // WB2 (2026-09-25, Mac: "A gate model would be spawned with a timer that leads to a completely different area"):
 // THE GATE THE WORLD HOST STANDS - the pool on the runtime pools' shape (scenes/camps.js, scenes/horseCartPool.js):
-// the stone (world/gateModel.js, uploaded once with its own art - world/gateArt.js), the fire and the beacon
+// the stone (world/gate/gateModel.js, uploaded once with its own art - world/gate/gateArt.js), the fire and the beacon
 // (render/gatePass.js), its collider, its light, the eye's box and its names, the countdown over the screen, and
 // the door into the arena. Design: bible/11-Multiplayer/World-Bosses.md section 3.
 //
@@ -26,8 +26,8 @@
 // wire's relaySupportsGate, WB3), and nothing else happens.
 //
 // Not a DFU member. Ledger A (WB).
-import { buildGateModel, gateArchProfile, insideGateStone, GATE_ARCHIVE, GATE_HEIGHT, GATE_HALF_W, PORTAL_CENTRE_Y, ARCH_Y0, ARCH_Y1, ARCH_PROFILE_N } from '../world/gateModel.js';
-import { gateArt } from '../world/gateArt.js';
+import { buildGateModel, gateArchProfile, insideGateStone, GATE_ARCHIVE, GATE_HEIGHT, GATE_HALF_W, PORTAL_CENTRE_Y, ARCH_Y0, ARCH_Y1, ARCH_PROFILE_N } from '../world/gate/gateModel.js';
+import { gateArt } from '../world/gate/gateArt.js';
 import { GatePassRenderer, gateSpinRate } from '../render/gatePass.js';
 import { gateSceneXZ } from '../systems/gate/gateOmen.js';
 import { gateYaw, gatePhase, gateCountdown, countdownText, countdownWords, gateModsOf, gateBossOf, GATE_RISE_MS, GATE_COLLAPSE_MS } from '../net/gateLaw.js';
@@ -125,7 +125,7 @@ export function fireBox(place, profile, halfW = null) {
 /** AUDIT WBX W1 (2026-09-26, Mac: "Do a comprehensive audit on everything so far"): A BODY SEALED IN THE STONE - the
  *  stone rises for GATE_RISE_MS with no collider, and stands whole on it in one frame: a capsule inside the stone's shell
  *  was held there by the shell's own push, out of reach of the fire, and /unstuck answers nothing outdoors. AUDIT GATE-FBX
- *  E1/E2: asked of the stone itself now (world/gateModel.js insideGateStone, its closed pieces) at the capsule's axis -
+ *  E1/E2: asked of the stone itself now (world/gate/gateModel.js insideGateStone, its closed pieces) at the capsule's axis -
  *  its foot's sphere, its middle and its head's sphere (player/motor.js: 1.8 m, CAPSULE_RADIUS) - as high as the stone
  *  stands. The ellipse WB2's horns took, refitted to Mac's feet, held 2.8 m and no higher: a body on a hillside in a
  *  pillar, or held up in one as it rose, was sealed in until the collapse; and it took the threshold's free edge and

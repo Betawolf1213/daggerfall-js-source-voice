@@ -1,5 +1,5 @@
 // WB4b (2026-09-25, Mac: "a large boss arena with an oversized enemy"): THE BOSS IS FOUGHT, DRIVEN. The entity a blow on
-// him is computed against (world/gateBoss.js bossStandIn - the game's own formula, measured: a level-1 iron longsword
+// him is computed against (world/gate/gateBoss.js bossStandIn - the game's own formula, measured: a level-1 iron longsword
 // lands about half its swings, a level-20 blade nearly all); where a swing meets him (bossReach - his skin, not his
 // middle); the spell engine's helpers for a body that states its own radius (systems/spellcast.js - the touch swept
 // down its aim, the blast and the missile against his whole body, a foe measured as it always was); the court's doors
@@ -10,7 +10,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { bossStandIn, bossReach, bossLookOf, bossAct, BOSS_ARMOR, BOSS_LOOKS } from '../src/world/gateBoss.js';
+import { bossStandIn, bossReach, bossLookOf, bossAct, BOSS_ARMOR, BOSS_LOOKS } from '../src/world/gate/gateBoss.js';
 import { calculateAttackDamage } from '../src/combat/formulas.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { pickTouchTarget, sweepFoes, missileHitsFoe, TOUCH_RANGE, TOUCH_SPHERE_CAST_RADIUS } from '../src/systems/spellcast.js';
@@ -18,7 +18,7 @@ import { createGateCourt } from '../src/scenes/gateCourt.js';
 import { GATE_STATE_EMPTY } from '../src/net/gateLink.js';
 import { validGateIn } from '../src/net/wire.js';
 import { newFight, joinFight, applyHit, BOSS_H, BOSS_R, HIT_KINDS, MELEE_REACH } from '../src/net/gateBrain.js';
-import { courtToDungeon } from '../src/world/gateArena.js';
+import { courtToDungeon } from '../src/world/gate/gateArena.js';
 import { WEAPON_REACH } from '../src/combat/playerWeapon.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

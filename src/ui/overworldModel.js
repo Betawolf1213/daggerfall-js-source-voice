@@ -37,7 +37,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { CLIMATES, getPixelFromPixelID } from '../formats/mapsFile.js';
-import { SCALED_OCEAN_ELEVATION, BASE_HEIGHT_SCALE, STREAMING_TERRAIN_SCALE } from '../world/terrainSampler.js';   // AUDIT EV F-DOC7: one home for the byte*8 base term
+import { SCALED_OCEAN_ELEVATION, BASE_HEIGHT_SCALE, STREAMING_TERRAIN_SCALE } from '../world/terrain/terrainSampler.js';   // AUDIT EV F-DOC7: one home for the byte*8 base term
 import { getPixelColorIndex, checkLocationDiscovered } from './travelMapWindow.js';
 
 // One map pixel = one scene unit; the streamed world's sign convention

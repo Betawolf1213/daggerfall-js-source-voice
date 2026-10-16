@@ -75,7 +75,7 @@ test('BOOT2: the entry\'s static reach touches neither hub and stays under the c
   // RW1 (2026-10-09): 73 - the real windows' block in both mesh programs (render/realWindows.js: the GLSL FS and
   // EL_MESH_FS are built from as the renderer loads) and the rooms' art it paints from (world/windowRoomArt.js, a leaf).
   // realWindows.js reads only what is already on the path (the prefs, the skin, the page's query) beside the art; the
-  // interior glass rule and its climate tables were split out to world/interiorGlass.js to stay off it. The ceiling moves
+  // interior glass rule and its climate tables were split out to world/interior/interiorGlass.js to stay off it. The ceiling moves
   // to 73.
   // MWNPC1 (2026-10-09, met at the MW-NPC arc's merge of main, 2026-10-10): 74 - the GPU skin's palette shape
   // (render/skinPalette.js: the entries a row and the unit, which CHAR_SKIN_VS is built from as the renderer loads, and

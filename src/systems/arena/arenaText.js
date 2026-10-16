@@ -64,7 +64,7 @@ export const ARENA_TEXT = F({
     changed: 'Your home changed during the move. It will move next time you play online.',
   }),
 
-  /** ARENA-FIX 2: THE GATE'S PEOPLE BY THEIR OFFICE (world/arenaCity.js ARENA_GATE_PEOPLE `role`) - the name on the
+  /** ARENA-FIX 2: THE GATE'S PEOPLE BY THEIR OFFICE (world/arena/arenaCity.js ARENA_GATE_PEOPLE `role`) - the name on the
    *  hover plaque, in "You see ..." and in the talk window, never a name drawn from the city's bank: a crier, a
    *  banner's recruiter and a bookmaker are known at the gate by what they do. */
   gateNames: F({
@@ -223,7 +223,7 @@ export const ARENA_TEXT = F({
   /** A beast's billing ("The Grizzly Bear of the Wrothgarian Mountains"). */
   beast: (kind, from) => `The ${kind} of ${from}`,
 
-  // ── THE UNDERCROFT - THE FIGHTERS' HALL (ARENA-FIX 4; world/arenaUndercroft.js) ─────────────────────────────
+  // ── THE UNDERCROFT - THE FIGHTERS' HALL (ARENA-FIX 4; world/arena/arenaUndercroft.js) ─────────────────────────────
   undercroft: F({
     /** Its name - over the stair down ("To The Arena Undercroft") and wherever the place is named. */
     name: 'The Arena Undercroft',
@@ -258,7 +258,7 @@ export const ARENA_TEXT = F({
     hallNotYou: 'Your name is not cut here yet.',
     hallTheirs: 'The Grand Champions of the Arena:',
     hallTheir: (year, who, banner) => `3E ${year} - ${who}, for ${banner}`,
-    /** ARENA5: the plaque wall (world/arenaPlaques.js) - a plaque's name on the hover plaque, and what its press reads
+    /** ARENA5: the plaque wall (world/arena/arenaPlaques.js) - a plaque's name on the hover plaque, and what its press reads
      *  (`banner` the banner's name inside a sentence, or empty; `season` its words); a plaque with no name cut in it says
      *  the stone's own `hallNone`. */
     plaqueTitle: (name) => `${name}, Grand Champion`,

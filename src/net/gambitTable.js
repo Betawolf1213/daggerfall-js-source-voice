@@ -9,7 +9,7 @@
 // finishTurn), and keeps the law's state here; a command is the law's, refused in the law's own word when it is not.
 //
 // TWO SEATS OF A TABLE'S CHAIRS. A table index is one game's at a time (the relay refuses another game's sit while one
-// sits - 'other game'); the client names the chair it took (world/cardTables.js), so every eye maps a seat to one chair.
+// sits - 'other game'); the client names the chair it took (world/card/cardTables.js), so every eye maps a seat to one chair.
 // Seat 0 sat first and is the law's HOST - side 0, its king's row the board's foot at its chair; seat 1 is the guest.
 //
 // THE ARMIES AT READY (the mod's ARMY at Ready). A seated player builds an army on the client and says it at Ready; the

@@ -10,12 +10,12 @@ import {
   PORT_FOOT, SEA_CELLS_MIN, FACE_K, LIGHT_APART_CAP, portSpans, townSeaOf, seaBearing, seaField, backMiddle, frontMiddle, portSite, portSitesOn,
   siteToLocation,
 } from '../src/world/portSites.js';
-import { YARD_PAD_M, YARD_TURNS } from '../src/world/merchantYardSites.js';
-import { NAV_CELL, NAV_CELLS_PER_BLOCK } from '../src/world/cityNavigation.js';
+import { YARD_PAD_M, YARD_TURNS } from '../src/world/merchantYards/merchantYardSites.js';
+import { NAV_CELL, NAV_CELLS_PER_BLOCK } from '../src/world/city/cityNavigation.js';
 import { buildShipyardModel, SHIPYARD, shipsSignBox, hullBox, noticesBox, crewSignBox } from '../src/world/shipyardModel.js';
 import { buildLighthouseModel, LIGHTHOUSE, LIGHTHOUSE_POINTS, GALLERY_Y, guardBand, doorBox, hatchBox, lanternBox, towerR } from '../src/world/lighthouseModel.js';
 import { portArt, portSignArt, PORT_ARCHIVE, PORT_REC } from '../src/world/portArt.js';
-import { YARD_ARCHIVE, YARD_REC } from '../src/world/merchantYardArt.js';
+import { YARD_ARCHIVE, YARD_REC } from '../src/world/merchantYards/merchantYardArt.js';
 import {
   createPortHost, folkOf, peopleOf, feetInPort, beamPuffs, PORT_REACH, PORT_MARK_LIFT, LAMP_RANGE, OFFICE_LAMP_RANGE, BEAM_PUFFS, BEAM_PERIOD_S,
   BEAM_SEEN_M, SHIPYARD_ROWS, CREW_ROWS, CLIMB_ROWS, DOWN_ROWS, PORT_TEXT,

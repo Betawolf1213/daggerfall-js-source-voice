@@ -3,15 +3,15 @@
 // mod's distance fog left a pixel at the eye untouched and took ~2% of its red a metre, over a 66.5 m vision; nothing
 // tinted the water body and nothing lit it. The port's look over it: the fog's vision times UNDERWATER_MURK, the
 // water body over every pixel (red taken first, less kept and less added deeper and by night), and the sun's shafts
-// - refracted at the surface, lit through a drifting pattern of the surface's focus. world/underwaterLook.js's laws,
+// - refracted at the surface, lit through a drifting pattern of the surface's focus. world/underwater/underwaterLook.js's laws,
 // the pass's own fragment program run in JS (test/glsl.mjs), and the world host's wiring.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   underwaterLookUniforms, refractedSun, UNDERWATER_MURK, WATER_REFRACTION, BODY_KEEP, BODY_KEEP_DEEP, SHAFT_FADE_M, SHAFT_REACH_M,
-} from '../src/world/underwaterLook.js';
-import { distanceFogUniforms, lookSettings, underwaterVisionDistance } from '../src/world/deepWaterLook.js';
+} from '../src/world/underwater/underwaterLook.js';
+import { distanceFogUniforms, lookSettings, underwaterVisionDistance } from '../src/world/deepWater/deepWaterLook.js';
 import { UNDER_LOOK_FS, SKY_FOG_VS } from '../src/render/deepWatersRender.js';
 import { glslFunctions } from './glsl.mjs';
 

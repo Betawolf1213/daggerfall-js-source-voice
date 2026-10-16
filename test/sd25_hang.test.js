@@ -1,6 +1,6 @@
 // SD25 S11 (2026-10-09, the Abyss Dungeon's look; bible/11-Multiplayer/Super-Dungeons-Look.md section 6): THE HANG AND THE
 // WORKS - what hangs under and around the Hour's islands: strata spires, gear rims and chains under each island
-// (world/sdIslandModel.js), the far islands, the Works far below (world/sdWorksModel.js), stood and moved by scenes/sdHang.js.
+// (world/superDungeon/sdIslandModel.js), the far islands, the Works far below (world/superDungeon/sdWorksModel.js), stood and moved by scenes/sdHang.js.
 // Every law here is run from its own code; none of it is a collider, and every draw is noShadow.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -12,18 +12,18 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import {
   SD_HANG, SD_SPIRE, SD_CHAIN, SD_HANG_ISLANDS, SD_HANG_STAGES, SD_CHAIN_RECORD, SD_FAR_ISLANDS, SD_FAR_CENTRE,
   hangPlan, buildHangModel, buildChainModel, buildFarIslandsModel, chainSwing, chainMatrix, farIslandsMatrix, spireDepth,
-} from '../src/world/sdIslandModel.js';
-import { SD_WORKS, SD_HANG_NOW, SD_WORKS_RECORD, SD_WORKS_TIP_V, SD_WORKS_FACE_V, SD_WORKS_PITCH, SD_WORKS_TOOTH, buildWorksGear, worksMatrix, worksAngle } from '../src/world/sdWorksModel.js';
-import { worksArt, chainArt, hangArt, SD_WORKS_TIP_ROWS, SD_WORKS_TIP_GLOW } from '../src/world/sdHangArt.js';
+} from '../src/world/superDungeon/sdIslandModel.js';
+import { SD_WORKS, SD_HANG_NOW, SD_WORKS_RECORD, SD_WORKS_TIP_V, SD_WORKS_FACE_V, SD_WORKS_PITCH, SD_WORKS_TOOTH, buildWorksGear, worksMatrix, worksAngle } from '../src/world/superDungeon/sdWorksModel.js';
+import { worksArt, chainArt, hangArt, SD_WORKS_TIP_ROWS, SD_WORKS_TIP_GLOW } from '../src/world/superDungeon/sdHangArt.js';
 import { createSdHang, SD_FAR_TURNS } from '../src/scenes/sdHang.js';
-import { buildRealmModel, SD_REALM_ROOT_RECORD, SD_REALM_BRASS_RECORD, SD_ISLAND_SIDES, SD_ROOT_DEPTH, SD_LIP, SD_REALM_FLOORS } from '../src/world/sdRealm.js';
-import { realmArt } from '../src/world/sdRealmArt.js';
-import { SD_HALL_FLOORS } from '../src/world/sdHall.js';
-import { SD_CHECKPOINTS, SD_STEPS_COURSE, SD_STEP_THICK } from '../src/world/sdSteps.js';
+import { buildRealmModel, SD_REALM_ROOT_RECORD, SD_REALM_BRASS_RECORD, SD_ISLAND_SIDES, SD_ROOT_DEPTH, SD_LIP, SD_REALM_FLOORS } from '../src/world/superDungeon/sdRealm.js';
+import { realmArt } from '../src/world/superDungeon/sdRealmArt.js';
+import { SD_HALL_FLOORS } from '../src/world/superDungeon/sdHall.js';
+import { SD_CHECKPOINTS, SD_STEPS_COURSE, SD_STEP_THICK } from '../src/world/superDungeon/sdSteps.js';
 import { SD_THRESHOLD, SD_ORRERY, SD_ARENA, SD_REALM_ORIGIN, dungeonToRealm } from '../src/net/sdBrain.js';
 import { SD_SKY_PAINT_FS, SD_SKY_PERIOD, SD_FURNACE } from '../src/render/sdSky.js';
-import { SD_RAMP, sdTick } from '../src/world/sdLook.js';
-import { offPalette, paletteOf } from '../src/world/sdPixelKit.js';
+import { SD_RAMP, sdTick } from '../src/world/superDungeon/sdLook.js';
+import { offPalette, paletteOf } from '../src/world/superDungeon/sdPixelKit.js';
 import { glslFunctions } from './glsl.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');

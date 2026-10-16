@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url';
 
 import { StaticBatchBuilder } from '../src/render/staticBatch.js';
 import { createDroppedLoot } from '../src/scenes/droppedLoot.js';
-import { objectMatrix, objectNormalMatrix } from '../src/world/wodLocationObjects.js';
+import { objectMatrix, objectNormalMatrix } from '../src/world/worldOfDaggerfall/wodLocationObjects.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rd = (p) => readFileSync(join(ROOT, p), 'utf8');

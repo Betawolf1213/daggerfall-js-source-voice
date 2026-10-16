@@ -16,17 +16,17 @@ import { fileURLToPath } from 'node:url';
 import {
   LocationSession, pickLocations, flattenForLocation, distanceFromRect, applyPicks, placeObjects,
   WOD_TERRAIN_SIZE_MULTI, WOD_TERRAIN_HEIGHT_MAX, WOD_OCEAN_REGIONS,
-} from '../src/world/wodLocationLoader.js';
+} from '../src/world/worldOfDaggerfall/wodLocationLoader.js';
 import {
   classifyObject, wodLightProperties, wodLightPosition, objectMatrix, objectNormalMatrix, WOD_SPAWN_TYPE, WOD_ENEMY_ID,
-} from '../src/world/wodLocationObjects.js';
+} from '../src/world/worldOfDaggerfall/wodLocationObjects.js';
 import { WodWorld, wodLightColors } from '../src/world/worldOfDaggerfall.js';
-import { validateValue } from '../src/world/wodLocationData.js';
-import { interiorLightProperties } from '../src/world/interiorLights.js';
+import { validateValue } from '../src/world/worldOfDaggerfall/wodLocationData.js';
+import { interiorLightProperties } from '../src/world/interior/interiorLights.js';
 import { basicRoadsPathsPoint } from '../src/world/roadsProducer.js';
-import { generatePixelTerrain } from '../src/world/terrainGen.js';
-import { HEIGHTMAP_DIMENSION, generateSamples } from '../src/world/terrainSampler.js';
-import { generateTileData } from '../src/world/terrainTiles.js';
+import { generatePixelTerrain } from '../src/world/terrain/terrainGen.js';
+import { HEIGHTMAP_DIMENSION, generateSamples } from '../src/world/terrain/terrainSampler.js';
+import { generateTileData } from '../src/world/terrain/terrainTiles.js';
 import { StaticBatchBuilder } from '../src/render/staticBatch.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -411,5 +411,5 @@ test('WOD2: THE FOUR HOSTS - world.js streams terrain and is wired; exterior.js,
     assert.doesNotMatch(rd(f), /openWodWorld|wodLocationLoader/, `${f} has no terrain to stand a wilderness site on`);
   }
   assert.match(rd('bible/03-World/World-Of-Daggerfall.md'), /THE FOUR HOSTS/);
-  assert.match(rd('src/world/terrainGenWorker.js'), /generatePixelTerrain\(\{ \.\.\.m, woods, roads, sites, climates \}\)/, 'the job crosses whole, so `wod` reaches the worker');
+  assert.match(rd('src/world/terrain/terrainGenWorker.js'), /generatePixelTerrain\(\{ \.\.\.m, woods, roads, sites, climates \}\)/, 'the job crosses whole, so `wod` reaches the worker');
 });

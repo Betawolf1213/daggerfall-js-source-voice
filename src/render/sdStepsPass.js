@@ -1,7 +1,7 @@
 // @ts-check
 // SD-LOOK S9 (2026-10-09, bible/11-Multiplayer/Super-Dungeons-Look.md section 8): THE STEPS' GHOSTS - one additive draw
 // for the whole course: a gone Beat plate, and a Crumble pin my own foot broke, hang as a thin gold outline exactly
-// where the law will stand them again (the law's own box at the law's own anchored time - world/sdStepsModel.js
+// where the law will stand them again (the law's own box at the law's own anchored time - world/superDungeon/sdStepsModel.js
 // stepEdges), each with its hand running back to XII as the return comes, brightening over its last moments.
 //
 // Lines as screen-width quads, SD_GHOST.px wide (gateTelegraph.js telegraphLineW's law - wider on a short screen), never
@@ -15,9 +15,9 @@ import { buildProgram } from './glProgram.js';
 import { FOG_FACTOR_GLSL } from './labGrass.js';
 import { BAYER_GLSL, SD_PIXEL_GLSL } from './orderedDither.js';
 import { telegraphLineW } from './gateTelegraph.js';
-import { SD_LIGHT } from '../world/sdLook.js';
-import { SD_STEPS_COURSE } from '../world/sdSteps.js';
-import { stepEdges } from '../world/sdStepsModel.js';
+import { SD_LIGHT } from '../world/superDungeon/sdLook.js';
+import { SD_STEPS_COURSE } from '../world/superDungeon/sdSteps.js';
+import { stepEdges } from '../world/superDungeon/sdStepsModel.js';
 
 /** The ghosts: their width (px), the hand's reach and lift over the top (m), their gold, their light at rest and at
  *  the return (L3), and how long before the return it brightens (s - a Beat plate's; a Crumble pin's over its rewind). */

@@ -15,7 +15,7 @@ import {
   generateMediumDungeon, generateSmallerDungeon, smallerDungeonsStamp, needsStartWarp, dungeonSizeFor,
 } from '../src/world/smallerDungeons.js';
 import { setSeed, randomRange } from '../src/formats/dfRandom.js';
-import { isMainStoryDungeon } from '../src/world/dungeonTextures.js';
+import { isMainStoryDungeon } from '../src/world/dungeon/dungeonTextures.js';
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { Place, SITE_TYPES } from '../src/systems/quest/place.js';
 import { loadQuestTables } from '../src/systems/quest/tables.js';

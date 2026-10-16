@@ -41,7 +41,7 @@ Bay can reach.
 FIXED, at the root:
 
 - THE OPEN SEA (`portSites.js:"export function openSeaOf(isWater, width, height) {"`): the one water law's pixels flooded
-  eight-way from the map's border - the flood Deep Waters' bake makes of the sea (`world/deepWatersBake.js` COARSE: "the
+  eight-way from the map's border - the flood Deep Waters' bake makes of the sea (`world/deepWater/deepWatersBake.js` COARSE: "the
   8-connected flood of candidates from the map's border - one component in the file, every inland lake left out"), a
   map pixel at a time. On the real map: one body of 179,926 pixels; the 81 lakes and ponds none of it. The host floods
   it once, the first time a town that is a port by its data asks (`world.js:"_openSea ??= openSeaOf(seaPixel, MAP_WIDTH, MAP_HEIGHT);"`,

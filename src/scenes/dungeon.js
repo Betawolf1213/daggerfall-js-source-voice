@@ -38,10 +38,10 @@ import { bindWorldDataBlocks } from '../formats/worldDataReplacement.js';   // R
 import { loadModWorldData } from './modWorldData.js';   // RR3b
 import { DFPalette } from '../formats/dfPalette.js';
 import { MapsFile } from '../formats/mapsFile.js';
-import { DUNGEON_AMBIENT, DUNGEON_LIGHT_COLOR, DUNGEON_LIGHT_BLOCK_RANGE } from '../world/dungeonLights.js';   // A10: the block-range cut
+import { DUNGEON_AMBIENT, DUNGEON_LIGHT_COLOR, DUNGEON_LIGHT_BLOCK_RANGE } from '../world/dungeon/dungeonLights.js';   // A10: the block-range cut
 import { syncLightingLane, lanternColor, dungeonAmbient, dungeonTrilight, dungeonFog } from '../render/enhancedLighting.js';   // EL1; EL4: the dark; AUDIT-EL F6: the fog with it
-import { INTERIOR_LIGHT_DIR } from '../world/interiorLights.js';
-import { nearestLights, capFadeColors } from '../world/cityLights.js';   // LA-AUDIT A5: the dungeon's cap fades
+import { INTERIOR_LIGHT_DIR } from '../world/interior/interiorLights.js';
+import { nearestLights, capFadeColors } from '../world/city/cityLights.js';   // LA-AUDIT A5: the dungeon's cap fades
 import { withPlayerLights } from './magicCandle.js';   // X11/T1
 import { playerTorchLight } from '../systems/playerTorch.js';   // T1
 import { thunderlockMuzzleLight } from '../systems/thunderlock.js';   // FIELD-GUN13: the muzzle flash is a light the player carries, the torch's own shape
@@ -92,7 +92,7 @@ import { windowEmissionRGB } from '../render/windowEmission.js';   // AUDIT 26 F
 import { installConsoleProbe } from '../systems/consoleCommands.js';   // E3: the console's door
 import { createSwimMovement } from './deepWatersSwimMove.js';   // DW-D: Iliac Puddle No More's swim movement - the dungeon's water too (IsAnySwimming)
 import { deepWatersOn, deepWatersSwimSettings } from './deepWatersHost.js';
-import { loadGraceActive as dwLoadGraceActive } from '../world/deepWaterRuntime.js';
+import { loadGraceActive as dwLoadGraceActive } from '../world/deepWater/deepWaterRuntime.js';
 
 // Water surface: the classic water tile (R11), drawn by the context's
 // own frame function since WATER-D1 - its colour (DUNGEON_WATER_COLOR)

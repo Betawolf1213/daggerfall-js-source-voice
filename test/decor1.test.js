@@ -26,7 +26,7 @@ import { localAabb, transformedAabb } from '../src/render/frustum.js';
 import { RAY_DISTANCE, DEFAULT_ACTIVATION_DISTANCE } from '../src/player/activate.js';
 import { billboardSize } from '../src/world/rmbFlats.js';
 import { FlatAnimator } from '../src/render/flatAnimation.js';
-import { collectInteriorLights } from '../src/world/interiorLights.js';
+import { collectInteriorLights } from '../src/world/interior/interiorLights.js';
 import { createSceneCache, cacheScene, restoreCachedScene, snapshotSceneCache, restoreSceneCache } from '../src/systems/sceneCache.js';
 import { r2, seatRealm, realmJoinAt } from './realmSeat.mjs';   // AUDIT REALM2 S2: a house and a piece are a realm character's
 import { ACCEPTED } from '../src/net/legalLaw.js';   // TERMS1: a request that makes an account carries the versions ticked

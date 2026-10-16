@@ -2,7 +2,7 @@
 // UnderwaterDistanceFogEffect.cs, jet082) - the port's per-fragment copy
 // against the mod's own fragment program, transcribed below line for line
 // (its GLCore read-back, u_xlat for u_xlat), over the material values the
-// C# hands it. The CPU half (world/deepWaterLook.js), the GLSL every world
+// C# hands it. The CPU half (world/deepWater/deepWaterLook.js), the GLSL every world
 // program takes (render/fogGlsl.js, run through test/glsl.mjs) and the
 // sky's two-pass blend (render/deepWatersRender.js) must each give the
 // post effect's colour for the same pixel.
@@ -14,7 +14,7 @@ import { FOG_GLSL } from '../src/render/fogGlsl.js';
 import { SKY_FOG_FS, DeepWatersRenderer } from '../src/render/deepWatersRender.js';
 import {
   distanceFogUniforms, distanceFogAt, distanceFogRayLength, horizonAmbientColor, underwaterFogColor,
-} from '../src/world/deepWaterLook.js';
+} from '../src/world/deepWater/deepWaterLook.js';
 import { perspective, lookAt, mirrorProjectionX, multiply } from '../src/world/mat4.js';
 import { createDeepWatersPlayer } from '../src/scenes/deepWatersPlayer.js';
 import { Renderer } from '../src/render/renderer.js';

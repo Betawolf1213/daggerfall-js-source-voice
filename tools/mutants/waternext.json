@@ -1,7 +1,7 @@
 [
   {
     "name": "BED-one-vote-enough",
-    "file": "src/world/waterBed.js",
+    "file": "src/world/water/waterBed.js",
     "old": "      if (south && west && !(table[bytes[rowS + cx - 1]] & 8)) continue;",
     "new": "      if (south && west && (table[bytes[rowS + cx - 1]] & 8)) { wet[vz * gx + vx] = 1; any = true; continue; }",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "BED-the-edge-a-bank",
-    "file": "src/world/waterBed.js",
+    "file": "src/world/water/waterBed.js",
     "old": "      if (!((south || north) && (west || east))) continue;   // a tile past the map's edge is no vote - and no tile, no vertex",
     "new": "      if (!(south && north && west && east)) continue;   // a tile past the map's edge is no vote - and no tile, no vertex",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "BED-no-diagonal",
-    "file": "src/world/waterBed.js",
+    "file": "src/world/water/waterBed.js",
     "old": "        if (x > 0 && d[i - gx - 1] + 4 < v) v = d[i - gx - 1] + 4;",
     "new": "        if (x > 0 && d[i - gx - 1] + 99 < v) v = d[i - gx - 1] + 99;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "BED-ease-out-again",
-    "file": "src/world/waterBed.js",
+    "file": "src/world/water/waterBed.js",
     "old": "export const bedProfile = (t) => { const c = Math.min(1, Math.max(0, t)); return c * c * (3 - 2 * c); };",
     "new": "export const bedProfile = (t) => { const c = Math.min(1, Math.max(0, t)); return c * (2 - c); };",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "BED-unbounded",
-    "file": "src/world/waterBed.js",
+    "file": "src/world/water/waterBed.js",
     "old": "export const bedProfile = (t) => { const c = Math.min(1, Math.max(0, t));",
     "new": "export const bedProfile = (t) => { const c = Math.max(0, t);",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "BED-carve-in-place",
-    "file": "src/world/waterBed.js",
+    "file": "src/world/water/waterBed.js",
     "old": "  const p = positions.slice(), nm = normals.slice();",
     "new": "  const p = positions, nm = normals;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "BED-normals-flat",
-    "file": "src/world/waterBed.js",
+    "file": "src/world/water/waterBed.js",
     "old": "      nm[i * 3] = nx / l; nm[i * 3 + 1] = 1 / l; nm[i * 3 + 2] = nz / l;",
     "new": "      void l;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "BED-skirt-left",
-    "file": "src/world/waterBed.js",
+    "file": "src/world/water/waterBed.js",
     "old": "    for (const edge of edges) for (let i = 0; i < gx; i++, o++) p[o * 3 + 1] -= depths[edge(i)];",
     "new": "    for (const edge of edges) for (let i = 0; i < gx; i++, o++) void edge;",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "RIPPLE-stir-lifts",
-    "file": "src/world/waterRipples.js",
+    "file": "src/world/water/waterRipples.js",
     "old": "        cur[idx(gx, gz)] -= strength * 0.5 * (1 + Math.cos(Math.PI * d));",
     "new": "        cur[idx(gx, gz)] += strength * 0.5 * (1 + Math.cos(Math.PI * d));",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "RIPPLE-no-damping",
-    "file": "src/world/waterRipples.js",
+    "file": "src/world/water/waterRipples.js",
     "old": "          const v = ((cur[i - 1] + cur[i + 1] + cur[i - cells] + cur[i + cells]) * 0.5 - prev[i]) * damping;",
     "new": "          const v = ((cur[i - 1] + cur[i + 1] + cur[i - cells] + cur[i + cells]) * 0.5 - prev[i]);",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "RIPPLE-no-cap",
-    "file": "src/world/waterRipples.js",
+    "file": "src/world/water/waterRipples.js",
     "old": "    acc = Math.min(acc + Math.max(0, dt), 4 / hz);",
     "new": "    acc = acc + Math.max(0, dt);",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "RIPPLE-contents-left",
-    "file": "src/world/waterRipples.js",
+    "file": "src/world/water/waterRipples.js",
     "old": "    slide(cur, dx, dz); slide(prev, dx, dz);",
     "new": "    ",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "RIPPLE-bias",
-    "file": "src/world/waterRipples.js",
+    "file": "src/world/water/waterRipples.js",
     "old": "      for (let i = 0; i < n; i++) bytes[i] = Math.max(1, Math.min(255, Math.round(128 + cur[i] / RIPPLE_SCALE)));",
     "new": "      for (let i = 0; i < n; i++) bytes[i] = Math.max(1, Math.min(255, Math.round(127 + cur[i] / RIPPLE_SCALE)));",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "RIPPLE-speed-ignored",
-    "file": "src/world/waterRipples.js",
+    "file": "src/world/water/waterRipples.js",
     "old": "export const stirOf = (speed, swimming) => (swimming ? 0.035 : 0.02) + Math.min(speed, 8) * 0.012;",
     "new": "export const stirOf = (speed, swimming) => (swimming ? 0.035 : 0.02);",
     "tests": [

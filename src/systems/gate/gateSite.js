@@ -7,7 +7,7 @@
 //
 //   - it is LAND: neither the Ocean climate nor a height byte at or under the sea (ui/overworldModel.js isWaterPixel's
 //     one law - AUDIT WB C1: the climate alone is not a coast's truth, because the boot spreads land climates two
-//     pixels into the sea (world/terrainHelper.js dilateCoastalClimate, StreamingWorld.ReadyCheck's repair), and the
+//     pixels into the sea (world/terrain/terrainHelper.js dilateCoastalClimate, StreamingWorld.ReadyCheck's repair), and the
 //     height bytes are not spread);
 //   - NO LOCATION stands on it or on any of its eight neighbours (a gate does not open in a hamlet's orchard);
 //   - it is REACHABLE: a town a traveller can fast-travel to (a city, a hamlet or a village) stands GATE_TOWN_MIN_PX
@@ -24,7 +24,7 @@
 //
 // Not a DFU member. Ledger A (WB).
 import { CLIMATES, LOCATION_TYPES, REGION_NAMES } from '../../formats/mapsFile.js';
-import { BASE_HEIGHT_SCALE, SCALED_OCEAN_ELEVATION } from '../../world/terrainSampler.js';
+import { BASE_HEIGHT_SCALE, SCALED_OCEAN_ELEVATION } from '../../world/terrain/terrainSampler.js';
 import { spawnsDungeon, WORLD_SALT } from '../../world/spawnedDungeons.js';
 import { pickGateRegion, pickGatePixel, gateSpotLocal, omenRing } from '../../net/gateLaw.js';
 import { WILD_REGION } from '../wild/wildZone.js';   // PVPDUNGEONS: no world event in the open zone

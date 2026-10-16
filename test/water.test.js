@@ -11,13 +11,13 @@ import { fileURLToPath } from 'node:url';
 import {
   tilemapRectHasWater, buildWaterIndices, windStrength01, waterUniforms, WATER_SURFACE_VS, waterSurfaceFs, WATER_LIFT, WATER_TINT, WATER_F0, SHORE_SOFTNESS, WATER_SCROLL_TILES_PER_SEC, DEFAULT_SKY_ZENITH, DEFAULT_SKY_HORIZON,
 } from '../src/render/waterSurface.js';
-import { WATER_MASK_TABLE, buildWaterMaskTable, packWaterMask, waterCorners, waterCoverage, SHALLOW_WHOLE, SHORE_FAMILIES } from '../src/world/waterCorners.js';
+import { WATER_MASK_TABLE, buildWaterMaskTable, packWaterMask, waterCorners, waterCoverage, SHALLOW_WHOLE, SHORE_FAMILIES } from '../src/world/water/waterCorners.js';
 import { onShallowWaterTile } from '../src/player/exteriorSurface.js';
-import { createLookupTable, assignTiles } from '../src/world/terrainTiles.js';
-import { convertTilemap, buildTerrainGrid, buildTerrainIndices } from '../src/world/terrainSurface.js';
-import { STREAM_TILES, RIVER_TILES } from '../src/world/roadPainter.js';
-import { HEIGHTMAP_DIMENSION } from '../src/world/terrainSampler.js';
-import { convertTile, WATER_TILE_INDEX } from '../src/world/terrainSurface.js';
+import { createLookupTable, assignTiles } from '../src/world/terrain/terrainTiles.js';
+import { convertTilemap, buildTerrainGrid, buildTerrainIndices } from '../src/world/terrain/terrainSurface.js';
+import { STREAM_TILES, RIVER_TILES } from '../src/world/road/roadPainter.js';
+import { HEIGHTMAP_DIMENSION } from '../src/world/terrain/terrainSampler.js';
+import { convertTile, WATER_TILE_INDEX } from '../src/world/terrain/terrainSurface.js';
 import { WIND_ROW_CALM, WIND_ROW_SPAN } from '../src/systems/wind/wind.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -202,7 +202,7 @@ test('WATER1: the renderer - one program, the deck\'s shadow key, and a draw sta
   assert.match(r, /import \{ WATER_SURFACE_VS, waterSurfaceFs \} from '\.\/waterSurface\.js';/);
   // WATER-NEXT 2: the pass is three bodies - the list's, the frame block both waters take, the rows' draw state
   const part = (head) => { const at = r.slice(r.indexOf(head)); return at.slice(0, at.indexOf('\n  }\n')); };
-  assert.match(r, /import \{ packWaterMask, WATER_DRAW_MASK_TABLE \} from '\.\.\/world\/waterCorners\.js';/, 'MAC2: the corner table\'s one home is the world leaf the player\'s feet share - WATER-DRAW1: and the PASS takes the draw\'s half of it, not the feet\'s');
+  assert.match(r, /import \{ packWaterMask, WATER_DRAW_MASK_TABLE \} from '\.\.\/world\/water\/waterCorners\.js';/, 'MAC2: the corner table\'s one home is the world leaf the player\'s feet share - WATER-DRAW1: and the PASS takes the draw\'s half of it, not the feet\'s');
   assert.match(r, /this\.waterSurfaceProgram = this\._buildProgram\(WATER_SURFACE_VS, waterSurfaceFs\(CLOUD_SHADOW_GLSL\)\);/, 'the same block the terrain interpolates');
   assert.match(r, /cloud: \[u\('uCloudShadowMap'\), u\('uCloudShadowRect'\)\],/, 'VC4\'s recorded gap, closed (EL7: in the one uniform table both water programs take)');
   assert.match(r, /this\._csLoc\.water = this\._ws\.cloud;/);

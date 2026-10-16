@@ -20,10 +20,10 @@ import { FactionFile, FACTION_TYPES } from '../src/formats/factionFile.js';
 import { readSpellsStd, spellsByIndexMap } from '../src/formats/spellsStd.js';
 import { RULER_TITLES, rulerTitle, generateBuildingName, BUILDING_TYPES }
   from '../src/world/buildingNames.js';
-import { collectCityLights } from '../src/world/cityLights.js';
+import { collectCityLights } from '../src/world/city/cityLights.js';
 import { scaledBillboardSize } from '../src/world/rmbFlats.js';
 import { buildGroundTilemap } from '../src/world/rmbLayout.js';
-import { convertTilemap } from '../src/world/terrainSurface.js';
+import { convertTilemap } from '../src/world/terrain/terrainSurface.js';
 import { buildDaySkyPanorama, buildNightSkyPanorama, buildFallbackSkyPanorama }
   from '../src/render/skyRenderer.js';
 import { layoutLocation } from '../src/world/locationLayout.js';

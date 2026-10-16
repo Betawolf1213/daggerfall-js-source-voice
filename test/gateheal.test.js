@@ -26,7 +26,7 @@ import { validGateIn, validGateOut, GATE_KINDS, GATE_HEAL_ROWS_MAX, GATE_HEAL_WI
 import { gateTimes, gateRoomKey } from '../src/net/gateLaw.js';
 import { GATE_STATE_EMPTY } from '../src/net/gateLink.js';
 import { createGateCourt, HEAL_SEND_MS } from '../src/scenes/gateCourt.js';
-import { courtToDungeon } from '../src/world/gateArena.js';
+import { courtToDungeon } from '../src/world/gate/gateArena.js';
 import { damageChartModel, drawGateDamageChart, DAMAGE_CHART_TEXT, DAMAGE_CHART_DELAY_MS, DAMAGE_CHART_CSS } from '../src/ui/gateDamageChart.js';
 import { destroyGateBossBar } from '../src/ui/gateBossBar.js';
 import { destroyGateMarksCard } from '../src/ui/gateMarksView.js';

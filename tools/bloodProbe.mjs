@@ -42,7 +42,7 @@ await page.goto(`${BASE}/gun-proto.html`, { waitUntil: 'domcontentloaded' });
 const out = await page.evaluate(async () => {
   const { Renderer } = await import('/src/render/renderer.js');
   const { createHitEffects, BLOOD_ARCHIVE } = await import('/src/scenes/hitEffects.js');
-  const { DUNGEON_AMBIENT } = await import('/src/world/dungeonLights.js');
+  const { DUNGEON_AMBIENT } = await import('/src/world/dungeon/dungeonLights.js');
 
   const canvas = document.createElement('canvas');
   canvas.width = 128; canvas.height = 128;

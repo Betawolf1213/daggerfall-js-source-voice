@@ -218,7 +218,7 @@ test('ROAD-B B4: the dungeon host supplies the hack\'s three ambient reads', () 
 test('ROAD-B B4 (real data): both foyer LoadIDs resolve to locked Castle Daggerfall doors', { skip: skipReal }, async () => {
   const { BlocksFile } = await import('../src/formats/blocksFile.js');
   const { MapsFile } = await import('../src/formats/mapsFile.js');
-  const { layoutDungeon } = await import('../src/world/dungeonLayout.js');
+  const { layoutDungeon } = await import('../src/world/dungeon/dungeonLayout.js');
 
   const blocks = new BlocksFile();
   blocks.load(new Uint8Array(readFileSync(join(ARENA2, 'BLOCKS.BSA'))));

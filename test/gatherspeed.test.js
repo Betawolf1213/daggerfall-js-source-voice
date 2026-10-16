@@ -29,7 +29,7 @@ import { herbKind } from '../src/scenes/herbHost.js';
 import { createGatherHost, aimAt } from '../src/scenes/gatherHost.js';
 import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { FT } from '../src/systems/foraging/foragingLaw.js';
-import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 import { createMarketBook } from '../src/net/marketBook.js';
 import { createMarketTab } from '../src/ui/marketTab.js';
 

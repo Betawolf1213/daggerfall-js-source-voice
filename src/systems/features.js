@@ -850,7 +850,7 @@ export const FEATURES = Object.freeze([
   // TAMRIEL1 (2026-10-08, Mac: "building the entirety of tamriel that connects accurately to Daggerfall. Not actually
   // traversalable but used and connected as a gigantic map ... seen by players ingame"): the held map's world sheet
   // zooms out past the Bay onto the whole continent, authored in the same hand (ui/tamrielInk.js,
-  // world/tamrielGeography.js, bible/03-World/Tamriel.md). Read where the window is built (ui/mapSkin.js
+  // world/tamriel/tamrielGeography.js, bible/03-World/Tamriel.md). Read where the window is built (ui/mapSkin.js
   // tamrielMapOn), so a change takes the next map opened; `?tamriel=off` is the kill door.
   Object.freeze({
     id: 'tamriel-map',
@@ -863,7 +863,7 @@ export const FEATURES = Object.freeze([
     control: Object.freeze({ store: 'prefs', key: 'tamrielMap', initial: true, online: 'player' }),
   }),
   // TAMRIEL2 (2026-10-08, Mac: "only implement the land mass"): the streamed world goes on past the Bay's edge over the
-  // authored continent - its ground, its climate's textures and trees, nothing built on it (world/tamrielGround.js;
+  // authored continent - its ground, its climate's textures and trees, nothing built on it (world/tamriel/tamrielGround.js;
   // scenes/shared.js tamrielLandOn, read once as the world mounts). `?tamrielland=off` the kill door.
   Object.freeze({
     id: 'tamriel-land',
@@ -893,7 +893,7 @@ export const FEATURES = Object.freeze([
   }),
   // FOREST1 (2026-10-01, the Discord's "Real Forests" thread): REAL
   // FORESTS - the wilderness's trees gathered into woods with open land
-  // between them, in place of DFU's even scatter (world/terrainNature.js
+  // between them, in place of DFU's even scatter (world/terrain/terrainNature.js
   // layoutForests). FORCED ON ONLINE: the woods are where Logging's trees
   // stand (scenes/treeHost.js standTrees), so a room has one forest.
   // `?forests=off` the kill door; scenes/shared.js realForestsOn composes it.
@@ -925,7 +925,7 @@ export const FEATURES = Object.freeze([
   }),
   // VERGE1 (2026-10-07, Mac: "Making sure objects, like trees, avoid pathways and roads. Currently they slightly
   // overlap"): THE VERGE - a wilderness flat stands only where nothing of it reaches over a road or a track: the disc of
-  // its widest picture, a Low Poly tree's crown among them, against the painted network (world/roadVerge.js). FORCED ON
+  // its widest picture, a Low Poly tree's crown among them, against the painted network (world/road/roadVerge.js). FORCED ON
   // ONLINE: where the wild's flats stand is the room's ground - Logging's trees, the herbs, the veins. `?verges=off` the
   // kill door, offline; scenes/shared.js roadVergesOn composes it.
   Object.freeze({

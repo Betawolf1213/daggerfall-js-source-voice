@@ -2,7 +2,7 @@
 // layout, so the landforms are pinned with no game data. One home for test/landform.test.js and AUDIT LANDFORMS'
 // pins (test/auditlandforms.test.js).
 import { MAP_WIDTH, MAP_HEIGHT } from '../src/formats/woodsFile.js';
-import { DIR } from '../src/world/roadNetwork.js';
+import { DIR } from '../src/world/road/roadNetwork.js';
 
 /** A WOODS.WLD the real reader loads: the sea west of x = 100, land rising east, one mountain at (400, 250) up to the
  *  7-bit top, and four large-map cells taken in turn so the large heightmap is not one value everywhere. */

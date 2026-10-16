@@ -2,7 +2,7 @@
 // ═══════════════════════════════════════════════════════════════════
 // DW-E5 (2026-09-26): ILIAC PUDDLE NO MORE'S SUNKEN LOOT IN THE STREAMED
 // WORLD (jet082, 1.2.2) - UnderwaterLootSpawner.cs's pulse over the
-// port's world. The laws are world/underwaterLoot.js; what a pile, a
+// port's world. The laws are world/underwater/underwaterLoot.js; what a pile, a
 // batch of rubble and a guard ARE in the world is the host's.
 //
 // THE PULSE, every frame (DeepWaters.Update, last): heavy work allowed, a
@@ -36,8 +36,8 @@
 // load or a teleport destroys them all (OnTransientReset).
 // ═══════════════════════════════════════════════════════════════════
 
-import { TransientObjectTracker } from '../world/deepWaterTransients.js';
-import { isOutsideImmediateView } from '../world/underwaterEnemies.js';
+import { TransientObjectTracker } from '../world/deepWater/deepWaterTransients.js';
+import { isOutsideImmediateView } from '../world/underwater/underwaterEnemies.js';
 import {
   LOOT_PULSE_DISTANCE, MIN_PULSE_INTERVAL_SECONDS, FAILED_PULSE_RETRY_SECONDS, DESPAWN_DISTANCE, SHORE_LOOT_PULSE_MULTIPLIER,
   NEARBY_WATER_PROBE_DIRECTIONS, NEARBY_WATER_GATE_CHECK_INTERVAL, NEARBY_WATER_MINIMUM_DEPTH, DEEP_WATER_PULSE_DEPTH,
@@ -47,8 +47,8 @@ import {
   resolveSeafloorAt, isDeepEnoughForWreck, pickClusterLootSpot, pickClusterDebrisPoint, pickLooseDebrisPoint, clusterDebrisCount,
   rollClusterTreasureCount, rollClusterItemCount, rollLooseDebrisCount, pickTreasurePileRecord, pickRubbleRecord,
   pickRubbleRecordExcept, pickRandomItemKind, pruneLiveClusters,
-} from '../world/underwaterLoot.js';
-import { pickRingDistance } from '../world/underwaterEnemies.js';
+} from '../world/underwater/underwaterLoot.js';
+import { pickRingDistance } from '../world/underwater/underwaterEnemies.js';
 
 /**
  * @typedef {{destroyed(): boolean, position(): number[], destroy(): void}} Transient

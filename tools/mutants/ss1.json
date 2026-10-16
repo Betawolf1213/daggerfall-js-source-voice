@@ -227,7 +227,7 @@
   },
   {
     "name": "SS3-a-buildings-container-lands-a-bound-piece",
-    "file": "src/world/interiorShared.js",
+    "file": "src/world/interior/interiorShared.js",
     "old": "    const items = peerHanded(validLootList(rec.r));",
     "new": "    const items = validLootList(rec.r);",
     "tests": [

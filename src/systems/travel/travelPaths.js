@@ -17,10 +17,10 @@
 // reads the same bytes out of the same four vendored arrays
 // (world/roadsProducer.js MOD_ROADS, vendor/roads-hazelnut/), so the
 // mod's data and the port's are one thing and this compass is shared:
-// world/roadNetwork.js DIR carries the identical eight values, and
+// world/road/roadNetwork.js DIR carries the identical eight values, and
 // `sameCompass` below is the pin that says so out loud.
 
-import { DIR as NETWORK_DIR, MAP_W, MAP_H } from '../../world/roadNetwork.js';
+import { DIR as NETWORK_DIR, MAP_W, MAP_H } from '../../world/road/roadNetwork.js';
 
 /** TravelOptionsMod.cs:73-75 - the four path arrays, in the mod's own
  *  index order (and Basic Roads' own: it answers `getPathData` by it). */
@@ -55,7 +55,7 @@ export function sameCompass() {
 /** TravelOptionsMod.cs:86-92 - the map pixel's world units and the
  *  bands inside it. MPworldUnits is MapsFile.WorldMapTerrainDim (the
  *  port's streamingWorld NATIVE_PIXEL); TSize is a terrain TILE
- *  (WorldMapTileDim 128 of them across a pixel, world/terrainTiles.js),
+ *  (WorldMapTileDim 128 of them across a pixel, world/terrain/terrainTiles.js),
  *  and a path is two tiles wide. */
 export const MP_WORLD_UNITS = 32768;
 export const HALF_MP_WORLD_UNITS = MP_WORLD_UNITS / 2;      // 16384

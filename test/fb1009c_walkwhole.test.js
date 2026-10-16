@@ -13,7 +13,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { placedTableSpot, PLACE_GRID_OFF, PLACE_CELL, PLACE_LANE_CELLS } from '../src/world/placedCardTable.js';
-import { cardTablePropModel, CARD_TABLE_BOX } from '../src/world/cardTableProp.js';
+import { cardTablePropModel, CARD_TABLE_BOX } from '../src/world/card/cardTableProp.js';
 import { trs, transformPoint } from '../src/world/mat4.js';
 import { CAPSULE_RADIUS } from '../src/player/motor.js';
 

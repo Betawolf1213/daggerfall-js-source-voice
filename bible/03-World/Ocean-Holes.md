@@ -40,7 +40,7 @@ ApplySettings reads them (`scenes/oceanHolesHost.js` `oceanHolesSettings`):
 | DungeonVisualDarkness | the abyss's fog 85% of the way to its colour | clamped (OH-E) |
 
 GetScaledSliderValue is Iliac Puddle No More's own member, the same
-formula; the port has one home for it (`world/deepWaterLook.js`
+formula; the port has one home for it (`world/deepWater/deepWaterLook.js`
 `scaledSliderValue`, re-exported). A change to any of the first five
 re-cuts every loaded floor (RefreshLoadedPits, forced); the two abyss dials
 do not. Online, `Enabled`, `PitSpawnRate` and `SeafloorHoleSize` are the

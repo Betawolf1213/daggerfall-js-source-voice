@@ -8,7 +8,7 @@
 //   ARENA2_PATH=<...> node tools/townQuestMarkers.mjs --classic                 and measure Daggerfall's own BLOCKS.BSA
 //
 // Every building interior the two vendored town packs lay out - each pack's RMB blocks, rebuilt over the player's own
-// BLOCKS.BSA as the world-data door rebuilds them - is laid out by world/interiorLayout.js over the models the port's
+// BLOCKS.BSA as the world-data door rebuilds them - is laid out by world/interior/interiorLayout.js over the models the port's
 // pipeline builds for it (scenes/dataPipeline.js buildGpuMesh: the town stand-ins and the alias beds, Kamer's
 // machinery, the seams patched, the rest out of the player's ARCH3D), and every quest marker in it (editor flats 199.11,
 // a spawn, and 199.18, an item) is measured against that geometry by the two tests the town-mods audit used:
@@ -117,7 +117,7 @@ export async function openTownData(arena2) {
 /** The triangles of a laid-out interior: [ax,ay,az, bx,by,bz, cx,cy,cz, nx,ny,nz] each, the normal turned to the
  *  mesh's own stored normal (the face the model shows). */
 export async function interiorTriangles(getModel, dfBlock, blockIndex, recordIndex) {
-  const { layoutInterior } = await import('../src/world/interiorLayout.js');
+  const { layoutInterior } = await import('../src/world/interior/interiorLayout.js');
   const warn = console.warn; console.warn = () => {};
   let layout;
   try { layout = layoutInterior(dfBlock, blockIndex, recordIndex, getModel); } finally { console.warn = warn; }

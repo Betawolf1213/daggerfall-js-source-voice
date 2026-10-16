@@ -13,7 +13,7 @@ VERIFIER IS READING), each told to reproduce every finding before it reported it
 |---|---|---|
 | A | `net/cardLaw.js`, `systems/card/cardPatrons.js`, `systems/card/cardTableSession.js` | 100k random hands with up to five folds out of turn against an independent payout reference; 97k patron decisions through the law; equity against exact enumeration; 1,500 seeded evenings with the player leaving at every moment |
 | B | the interior host's card block, the panel, the gold, the cursor | the block sliced from `worldModes.js` and RUN over the real session, gold helpers, cursor hold and panel; Chromium at 360 px |
-| C | `world/cardMotion.js`, `world/cardScene.js`, `render/cardTableDraw.js` | the session and the scene at 60 fps over 40 seeds (219k frames): chips counted every frame, cards tracked frame to frame; the lab probe's screenshots |
+| C | `world/card/cardMotion.js`, `world/card/cardScene.js`, `render/cardTableDraw.js` | the session and the scene at 60 fps over 40 seeds (219k frames): chips counted every frame, cards tracked frame to frame; the lab probe's screenshots |
 | D | the seat, the body, the wire, the relay record, the merge | every first-audit fix re-verified on the snapshot; `git merge-tree` against main |
 | E | the record and the pins | doc against code; 48 candidate mutants of its own on CARDS3/CARDS4 |
 | F | design against build, play | every DECIDED item of sections 1-5 and 7; 7,830 headless evenings under eleven player policies at the three stakes; the panel in Chromium |

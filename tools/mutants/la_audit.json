@@ -91,7 +91,7 @@
   },
   {
     "name": "LA-AUDIT-A5-1-the-pairs-own-colours-dropped",
-    "file": "src/world/cityLights.js",
+    "file": "src/world/city/cityLights.js",
     "old": "    const c = i * stride;",
     "new": "    const c = 0;",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "LA-AUDIT-F2-1-the-pool-never-grows",
-    "file": "src/world/cityLights.js",
+    "file": "src/world/city/cityLights.js",
     "old": "    ranges = rangesFor(ranges, n + p.lights.length + m);\n",
     "new": "",
     "tests": [

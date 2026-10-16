@@ -31,7 +31,7 @@ import { LookFilter, pitchFloor, PITCH_FLOOR, setPitchFloorProvider } from '../s
 import { createMountRig } from '../src/player/mountRig.js';
 import { NATIVE_SCREEN_HEIGHT, SCALE_FACTOR_X } from '../src/systems/riding.js';
 import { TownPopulation } from '../src/systems/town/townPopulation.js';
-import { CityNavigation } from '../src/world/cityNavigation.js';
+import { CityNavigation } from '../src/world/city/cityNavigation.js';
 import { buildRefinedTrainingFlow, spliceSkillName } from '../src/ui/guildServiceWindows.js';
 import { MB_BUTTONS } from '../src/ui/messageBox.js';
 import { GUILDS } from '../src/systems/guild/guilds.js';

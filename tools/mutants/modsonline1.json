@@ -88,7 +88,7 @@
   },
   {
     "name": "the-smoother-stops-looking-at-the-road-bed",
-    "file": "src/world/roadPainter.js",
+    "file": "src/world/road/roadPainter.js",
     "old": "      if (tile !== 46 && tile !== 0xff) continue;",
     "new": "      if (tile !== 0xff) continue;",
     "tests": [

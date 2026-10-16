@@ -4,7 +4,7 @@
 //
 // One law (systems/dungeon/dungeonTier.js, a leaf): 'super' for a Hollow, 'elite' for an Elite spawn, 'regular' for every
 // other dungeon, null for a place with none. Its words are what every surface draws, online - where the tiers differ -
-// and the size word is the BUILT dungeon's, by its block count, as the room builds it online (world/dungeonLabel.js,
+// and the size word is the BUILT dungeon's, by its block count, as the room builds it online (world/dungeon/dungeonLabel.js,
 // which gives no label to a place the port made: the court, the arena's floor, its undercroft). The surfaces: the
 // mouth's plaque, the held map's label and I box (test/heldmap.test.js drives them), the overworld's plates, the
 // sight line, and one line on entering. Offline the plaque keeps the World Tooltips mod's own "To <name>".
@@ -14,10 +14,10 @@ import { readFileSync } from 'node:fs';
 import {
   DUNGEON_TIERS, DUNGEON_TIER_TEXT, DUNGEON_SIZE_TEXT, dungeonTier, dungeonTierText, tierShown, tierPhrase,
 } from '../src/systems/dungeon/dungeonTier.js';
-import { dungeonSizeClass, dungeonSizeOnline, dungeonTierLabel, madeDungeon } from '../src/world/dungeonLabel.js';
-import { GATE_ARENA_LOCATION_ID } from '../src/world/gateArena.js';
-import { ARENA_FLOOR_LOCATION_ID } from '../src/world/arenaFloor.js';
-import { UNDERCROFT_LOCATION_ID } from '../src/world/arenaCity.js';
+import { dungeonSizeClass, dungeonSizeOnline, dungeonTierLabel, madeDungeon } from '../src/world/dungeon/dungeonLabel.js';
+import { GATE_ARENA_LOCATION_ID } from '../src/world/gate/gateArena.js';
+import { ARENA_FLOOR_LOCATION_ID } from '../src/world/arena/arenaFloor.js';
+import { UNDERCROFT_LOCATION_ID } from '../src/world/arena/arenaCity.js';
 import { dungeonSightLine } from '../src/world/spawnedDungeons.js';
 import { onlineDungeonSize, dungeonLocationFor } from '../src/world/smallerDungeons.js';
 import { synthesizeDungeonLocation } from '../src/world/spawnedDungeons.js';

@@ -231,7 +231,7 @@ test('a model missing from ARCH3D costs the placement, never the building', () =
   // `?? []` guards the value, not the receiver. So pressing E on that
   // door did nothing at all, for ever, with a raw TypeError in the
   // console instead of the doctrine's loud warn.
-  const layout = readFileSync(new URL('../src/world/interiorLayout.js', import.meta.url), 'utf8');
+  const layout = readFileSync(new URL('../src/world/interior/interiorLayout.js', import.meta.url), 'utf8');
   assert.match(layout, /if \(!model\) \{[\s\S]*?continue;/, 'the layout drops a placement it has no model for');
   // WM3 MOVED THE LOOP, NOT THE LAW. The four copies of the climate/
   // dungeon remap became one seam (src/world/texRemap.js), so the two

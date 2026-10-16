@@ -20,13 +20,13 @@ import { rigBoxesOf, sailsShown } from '../src/scenes/navalHost.js';
 import { segmentBoxEntry } from '../src/systems/naval/navalBallistics.js';
 import { animatorOf } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { stowSail } from '../src/systems/comeSailAway/comeSailAway.js';
-import { sampleDepthMeters } from '../src/world/deepBathymetry.js';
+import { sampleDepthMeters } from '../src/world/deepWater/deepBathymetry.js';
 import { sea } from './navalSea.mjs';
 import { scene } from './csaScene.mjs';
 
 const WORLD = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
 const { findHarbour, createWaterGrid, footprintClear } = LIFE;
-/** Iliac Puddle No More's carved shelf (world/deepBathymetry.js, the mod's default depth) off a straight coast - land at
+/** Iliac Puddle No More's carved shelf (world/deepWater/deepBathymetry.js, the mod's default depth) off a straight coast - land at
  *  x <= 0 - at `k`'s place along its noise; and world.js navalIsWater's law over it: a floor her draft under the sea. */
 const shelf = (k) => (x, z) => (x <= 0 ? -1 : sampleDepthMeters(431_000 + k * 3170 + x, 212_000 + k * 1930 + z, 165, x, null));
 const lawOver = (depth) => (x, z, hull = 0) => { const d = depth(x, z); return d > 0 && d > (hull < 0 ? 0.05 : LIFE.draftOf(hull)); };

@@ -469,7 +469,7 @@ function dropOwnHorse() {
 
 /** COATS3D: the 3D horse rig while the world's horses are 3D - the Morrowind body is the one on screen (the player's
  *  own lane: never the sprite lane's, whose riders and horses are its own pictures) and the rig is up; else null, and
- *  every horse stands as its billboard. The pool's and the road's horses (scenes/horseCartPool.js, world/roadTeams.js)
+ *  every horse stands as its billboard. The pool's and the road's horses (scenes/horseCartPool.js, world/road/roadTeams.js)
  *  ask it each frame. */
 export function mwViewHorseRig() {
   return horseRig?.ready() && !eotbLane() && fpArm.canThirdPerson() ? horseRig : null;

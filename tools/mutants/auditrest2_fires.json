@@ -48,7 +48,7 @@
   },
   {
     "name": "AUDITREST2-F2-a-palace-wing-gets-fires",
-    "file": "src/world/dungeonFires.js",
+    "file": "src/world/dungeon/dungeonFires.js",
     "old": "  if (isPalaceLayout(blocks)) return 0;\n",
     "new": "",
     "tests": [
@@ -57,7 +57,7 @@
   },
   {
     "name": "AUDITREST2-F2-only-a-castle-at-the-door-is-a-palace",
-    "file": "src/world/dungeonFires.js",
+    "file": "src/world/dungeon/dungeonFires.js",
     "old": "export const isPalaceLayout = (blocks) => (blocks ?? []).some((b) => !!b?.layout?.castleBlock);",
     "new": "export const isPalaceLayout = (blocks) => !!blocks?.[0]?.layout?.castleBlock;",
     "tests": [
@@ -75,7 +75,7 @@
   },
   {
     "name": "AUDITREST2-F3-a-fire-on-its-marker",
-    "file": "src/world/dungeonFires.js",
+    "file": "src/world/dungeon/dungeonFires.js",
     "old": "    if (!c?.marker) { out.push({ c, at: c.pos }); continue; }",
     "new": "    { out.push({ c, at: c.pos }); continue; }",
     "tests": [
@@ -84,7 +84,7 @@
   },
   {
     "name": "AUDITREST2-F3-a-fire-beside-a-pile",
-    "file": "src/world/dungeonFires.js",
+    "file": "src/world/dungeon/dungeonFires.js",
     "old": "    if (items.some((m) => SQ(m[0] - pos[0]) + SQ(m[2] - pos[2]) < SQ(DFIRE.itemM) && Math.abs(m[1] - pos[1]) < DFIRE.storeyM)) continue;",
     "new": "",
     "tests": [
@@ -93,7 +93,7 @@
   },
   {
     "name": "AUDITREST2-F3-a-pile-a-storey-up-clears-this-floor",
-    "file": "src/world/dungeonFires.js",
+    "file": "src/world/dungeon/dungeonFires.js",
     "old": " && Math.abs(m[1] - pos[1]) < DFIRE.storeyM)) continue;   // AUDIT REST II F3",
     "new": ")) continue;   // AUDIT REST II F3",
     "tests": [
@@ -102,7 +102,7 @@
   },
   {
     "name": "AUDITREST2-F3-the-clearance-shrinks",
-    "file": "src/world/dungeonFires.js",
+    "file": "src/world/dungeon/dungeonFires.js",
     "old": "  itemM: 1.5,",
     "new": "  itemM: 1,",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "AUDITREST2-F3-the-ring-shrinks",
-    "file": "src/world/dungeonFires.js",
+    "file": "src/world/dungeon/dungeonFires.js",
     "old": "  ringM: 2,",
     "new": "  ringM: 1.6,",
     "tests": [
@@ -120,7 +120,7 @@
   },
   {
     "name": "AUDITREST2-F3-every-spot-of-the-ring-kept",
-    "file": "src/world/dungeonFires.js",
+    "file": "src/world/dungeon/dungeonFires.js",
     "old": "    if (c === landed) continue;\n",
     "new": "",
     "tests": [
@@ -129,7 +129,7 @@
   },
   {
     "name": "AUDITREST2-F3-the-ring-in-another-order",
-    "file": "src/world/dungeonFires.js",
+    "file": "src/world/dungeon/dungeonFires.js",
     "old": "return Object.freeze([[r, 0], [-r, 0], [0, r], [0, -r], [d, d]",
     "new": "return Object.freeze([[-r, 0], [r, 0], [0, r], [0, -r], [d, d]",
     "tests": [
@@ -138,7 +138,7 @@
   },
   {
     "name": "AUDITREST2-F4-a-roof-is-a-floor",
-    "file": "src/world/dungeonFires.js",
+    "file": "src/world/dungeon/dungeonFires.js",
     "old": "hit.normal && !hit.back && hit.key === DUNGEON_BUCKET",
     "new": "hit.normal && hit.key === DUNGEON_BUCKET",
     "tests": [
@@ -165,7 +165,7 @@
   },
   {
     "name": "AUDITREST2-F4-no-second-ring",
-    "file": "src/world/dungeonFires.js",
+    "file": "src/world/dungeon/dungeonFires.js",
     "old": "const LEVEL_RINGS = Object.freeze([...ringOf(DFIRE.levelR), ...ringOf(DFIRE.reachR)]);",
     "new": "const LEVEL_RINGS = Object.freeze([...ringOf(DFIRE.levelR)]);",
     "tests": [
@@ -174,7 +174,7 @@
   },
   {
     "name": "AUDITREST2-F4-the-second-ring-shrinks",
-    "file": "src/world/dungeonFires.js",
+    "file": "src/world/dungeon/dungeonFires.js",
     "old": "  reachR: 1.4,",
     "new": "  reachR: 0.9,",
     "tests": [
@@ -183,7 +183,7 @@
   },
   {
     "name": "AUDITREST2-F5-the-door-fire-unreported",
-    "file": "src/world/dungeonFires.js",
+    "file": "src/world/dungeon/dungeonFires.js",
     "old": "  const adopted = doorFire ? nearestOf(existing, from) : null;",
     "new": "  const adopted = null;",
     "tests": [
@@ -192,7 +192,7 @@
   },
   {
     "name": "AUDITREST2-F5-the-farther-brazier",
-    "file": "src/world/dungeonFires.js",
+    "file": "src/world/dungeon/dungeonFires.js",
     "old": "  return a < b || (a === b && (q[0] < best[0] ||",
     "new": "  return a > b || (a === b && (q[0] < best[0] ||",
     "tests": [
@@ -201,7 +201,7 @@
   },
   {
     "name": "AUDITREST2-F5-the-tie-to-the-list",
-    "file": "src/world/dungeonFires.js",
+    "file": "src/world/dungeon/dungeonFires.js",
     "old": "  return a < b || (a === b && (q[0] < best[0] ||",
     "new": "  return a < b || (false && (q[0] < best[0] ||",
     "tests": [
@@ -237,7 +237,7 @@
   },
   {
     "name": "AUDITREST2-F7-the-door-at-its-origin",
-    "file": "src/world/dungeonFires.js",
+    "file": "src/world/dungeon/dungeonFires.js",
     "old": "    const p = d.centre ? transformPoint(d.matrix, d.centre.x, d.centre.y, d.centre.z) : [d.matrix[12], d.matrix[13], d.matrix[14]];",
     "new": "    const p = [d.matrix[12], d.matrix[13], d.matrix[14]];",
     "tests": [
@@ -312,7 +312,7 @@
   },
   {
     "name": "AUDITREST2-the-room-rays-by-sine",
-    "file": "src/world/dungeonFires.js",
+    "file": "src/world/dungeon/dungeonFires.js",
     "old": "const ROOM_RAYS = ringOf(1);",
     "new": "const ROOM_RAYS = Object.freeze(Array.from({ length: 8 }, (_, k) => [Math.sin((k * Math.PI) / 4), Math.cos((k * Math.PI) / 4)]));",
     "tests": [

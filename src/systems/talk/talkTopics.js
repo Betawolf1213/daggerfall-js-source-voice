@@ -34,7 +34,7 @@ import { RMB_SIDE } from '../../world/locationLayout.js';
 import { directionHintString } from './talk.js';   // wave 27: one compass law
 import { staticNpcData, isChildNPCData } from '../../characters/staticNpc.js';   // QP1: the one SetLayoutData law
 import { collectInteriorPeople } from '../../characters/interiorPeople.js';   // QP1: the one people mapper
-import { hasInteriorModels } from '../../world/interiorLayout.js';   // FIELD BUGS 2026-10-05 CRYPT-SALE: a room that cannot be laid out is not for sale
+import { hasInteriorModels } from '../../world/interior/interiorLayout.js';   // FIELD BUGS 2026-10-05 CRYPT-SALE: a room that cannot be laid out is not for sale
 import { buildingSummaries } from '../../world/buildingSummaries.js';   // D9: GetBuildingList's own per-block building walk (RMBLayout.GetBuildingData)
 import { localizedTable } from '../textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
 
@@ -153,7 +153,7 @@ export function mergeNamedBuildings(exteriorBuildings, blocks, { locationIndex =
   return drawNamedBuildings(exteriorBuildings, blocks, { locationIndex }).out;
 }
 /** ARENA1: the same draw, answering besides each block instance's merged list the location entries it DREW and kept
- *  (a draw a building replacement handed back is not among them) - world/arenaCity.js strips exactly the entries the
+ *  (a draw a building replacement handed back is not among them) - world/arena/arenaCity.js strips exactly the entries the
  *  cell the arena takes drew, so every other building keeps the entry it always drew. */
 export function drawNamedBuildings(exteriorBuildings, blocks, { locationIndex = 0 } = {}) {
   const drawnBy = new Map();   // block -> [the location's BuildingData objects it drew]

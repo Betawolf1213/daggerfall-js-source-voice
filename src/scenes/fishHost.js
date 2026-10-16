@@ -38,10 +38,10 @@ import { liveStat, maxFatigue } from '../systems/statMods.js';
 import { getPref } from '../systems/uiPrefs.js';
 import { PASSIVE_FISH_SPECIES, pickSpecies } from '../world/passiveFish.js';
 import { templateByIndex } from '../systems/item/itemTemplates.js';
-import { groundAt } from '../world/terrainNature.js';
-import { isOutdoorWaterTile } from '../world/terrainSurface.js';
-import { WORLD_MAP_TILE_DIM } from '../world/terrainTiles.js';
-import { TERRAIN_SIZE } from '../world/terrainSampler.js';
+import { groundAt } from '../world/terrain/terrainNature.js';
+import { isOutdoorWaterTile } from '../world/terrain/terrainSurface.js';
+import { WORLD_MAP_TILE_DIM } from '../world/terrain/terrainTiles.js';
+import { TERRAIN_SIZE } from '../world/terrain/terrainSampler.js';
 import { sceneCompassWord } from '../systems/compassWords.js';   // AUDIT DELVE C8: the eight ways, one home
 
 /** The cast stands this far ahead of the look (m), and is reached from this far. */
@@ -56,7 +56,7 @@ export const CAST_RISE_M = 4.5;
  *  high ground under Daggerfall; and "I couldn't get it off my screen when on my ship"): SHORE-CAST asked whether the
  *  cast's point is over water in the ground's plane alone, so a cliff over the sea, or a deck, stood "Open Water" at any
  *  height and at any look. The cast's point stands no higher than this over the water's surface under it: the
- *  carrack's main deck is the highest a ship carries (world/carrackModel.js MEASURED.mainDeckY, 7.81 m over her
+ *  carrack's main deck is the highest a ship carries (world/ships/carrackModel.js MEASURED.mainDeckY, 7.81 m over her
  *  waterline), and from it, the eye 1.7 m up (player/motor.js EYE_HEIGHT), a look straight down stands the cast
  *  CAST_RISE_M under the eye - 5.01 m over the sea; half a metre more rides her swell. So every deck fishes looking down
  *  over the side, and a level look from a ship's high deck, or any look from a cliff, does not; at the water's edge a

@@ -10,15 +10,15 @@ import {
   DW_WATER_THRESHOLD, DW_CARVE_THRESHOLD, DW_VISUAL_THRESHOLD, heightSample, tileSample, tileValueContainsWater,
   mapDataHasWater, mapDataFullySubmerged, isLocalPointWater, cellContainsWaterTile, isLocalPointPureWaterTile,
   isCellVisuallyWet, heightmapCellBelowThreshold,
-} from '../src/world/deepWaterClassification.js';
-import { sampleDepthMeters, climateBaseDepth, climateBandSignal, resolveUserMaxDepth, depthBand01, SHELF_MIN_DEPTH } from '../src/world/deepBathymetry.js';
-import { DeepWaterTileData, LOCAL_WATER_FALLBACK_DISTANCE_METERS } from '../src/world/deepWaterTileData.js';
+} from '../src/world/deepWater/deepWaterClassification.js';
+import { sampleDepthMeters, climateBaseDepth, climateBandSignal, resolveUserMaxDepth, depthBand01, SHELF_MIN_DEPTH } from '../src/world/deepWater/deepBathymetry.js';
+import { DeepWaterTileData, LOCAL_WATER_FALLBACK_DISTANCE_METERS } from '../src/world/deepWater/deepWaterTileData.js';
 import {
   computeHoleMask, buildFloorMesh, sampleMeshLocalY, sampleMeshLocalYAndSlope, isFloorQuadWater, VERTEX_GRID_SIZE, createVertexColor, OCEAN_THRESHOLD,
-} from '../src/world/deepWaterFloor.js';
-import { CLIP_SENTINEL, isClippedWaterTileData, patchTilemapForClip, shouldHidePureOceanCap, capDecision } from '../src/world/deepWaterCap.js';
-import { buildSurfaceMesh, shouldHaveSurface, SURFACE_RENDER_Y_OFFSET } from '../src/world/deepWaterSurface.js';
-import { convertTilemap } from '../src/world/terrainSurface.js';
+} from '../src/world/deepWater/deepWaterFloor.js';
+import { CLIP_SENTINEL, isClippedWaterTileData, patchTilemapForClip, shouldHidePureOceanCap, capDecision } from '../src/world/deepWater/deepWaterCap.js';
+import { buildSurfaceMesh, shouldHaveSurface, SURFACE_RENDER_Y_OFFSET } from '../src/world/deepWater/deepWaterSurface.js';
+import { convertTilemap } from '../src/world/terrain/terrainSurface.js';
 
 const f32 = Math.fround;
 const SEA = f32(f32(27.2) / 1539);          // a sample clamped to the sea

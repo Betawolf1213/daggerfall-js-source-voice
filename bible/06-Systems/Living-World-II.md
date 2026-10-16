@@ -321,7 +321,7 @@ Mac: "actual caravans utilizing horses and wagons".
 - **THE CARGO** (`cargoOf`, the tiers CARGO_DEFINITIONS shows): full (90) on the way out; home, sold (50) or bought
   (75) by the trip's seed; a quarter (25) once robbed (LW11's `robbed`, the character's own).
 
-### 3.3 Drawn (`world/roadTeams.js`, `scenes/livingRoads.js`, `scenes/horseCartPool.js`)
+### 3.3 Drawn (`world/road/roadTeams.js`, `scenes/livingRoads.js`, `scenes/horseCartPool.js`)
 
 - **ONE MEMBER, ONE EXPORT.** The pool's own wagon draw and horse pose are handed out through its `presentation`
   (`drawWagon`, `poseHorse`) beside its `wagonParts` and `horseArt`. The living world's teams draw with them, and the

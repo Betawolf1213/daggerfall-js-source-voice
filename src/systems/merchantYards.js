@@ -10,10 +10,10 @@
 // and its stablemaster, and a WAGON YARD, a wagonwright's yard with a cart and its two wagons drawn up to be seen. They
 // are not buildings: Daggerfall's towns are its own fixed blocks, every building in them already a home, a shop or a
 // hall, and a yard takes none of them - no building record, no deed, no quest place. Where each stands is the town's
-// own open ground (world/merchantYardSites.js); what it looks like is the port's own (world/merchantYardModels.js,
-// world/merchantYardArt.js); the host stands both (scenes/merchantYardsHost.js). YARDS-FOUND: it is found as a shop is -
+// own open ground (world/merchantYards/merchantYardSites.js); what it looks like is the port's own (world/merchantYards/merchantYardModels.js,
+// world/merchantYards/merchantYardArt.js); the host stands both (scenes/merchantYardsHost.js). YARDS-FOUND: it is found as a shop is -
 // a row of the town's talk directory under a key no Daggerfall building can hold (`yardDirectoryRows`), its ground and
-// its name on the town map (world/merchantYardMap.js), a mark on the Overworld (the host's `overworldMarks`).
+// its name on the town map (world/merchantYards/merchantYardMap.js), a mark on the Overworld (the host's `overworldMarks`).
 //
 // THE TRADE (here): the Stable sells the Horse and buys one back; the Wagon Yard sells the Small Cart, the Open Wagon
 // and the Caravan (systems/wagon/wagonKinds.js) and buys any of them back - a loaded wagon refused at the counter as
@@ -233,7 +233,7 @@ export const YARD_TALK_GROUPS = Object.freeze({ stable: 'Stables', transport: 'W
 /**
  * YARDS-FOUND: a town's yards as rows of its talk directory - the shape systems/talk/talkTopics.js buildBuildingDirectory
  * mints (`name`, `buildingType`, `factionId`, `quality`, `position` in the location's frame, `buildingKey`), and `yard`
- * its kind. `sites` the host's (world/merchantYardSites.js yardSite's, the keeper beside each - scenes/world.js
+ * its kind. `sites` the host's (world/merchantYards/merchantYardSites.js yardSite's, the keeper beside each - scenes/world.js
  * merchantYardSitesFor); none, or none a kind the law knows, is no row. Pure; a fresh list.
  * @param {Array<any>|null|undefined} sites
  */

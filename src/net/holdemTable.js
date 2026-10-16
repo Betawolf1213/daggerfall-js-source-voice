@@ -8,7 +8,7 @@
 // a seat that does not act in HOLDEM_CLOCK_MS is checked if it can be, folded if not (cardLaw timeoutAction); a seat
 // whose player leaves is folded out of turn (cardLaw foldSeat) and stood up at the hand's end.
 //
-// A TABLE'S SEATS ARE ITS CHAIRS. The client names the chair it took (world/cardTables.js cardTableSeats - the same
+// A TABLE'S SEATS ARE ITS CHAIRS. The client names the chair it took (world/card/cardTables.js cardTableSeats - the same
 // room, the same chairs, on every client), so the seat a frame names is a chair every eye at the table maps alike, and
 // the hand's `seed` (drawn here) is the cloth's - the room sees one picture (section 3).
 //

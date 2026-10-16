@@ -1108,10 +1108,10 @@ export class ExteriorAutomapWindow {
         text, name, tip: processGrammar(name), scale, buildingKey: b.buildingKey, isResidence: !!b.isResidence,
       });
     }
-    // ARENA-MAP: a block's LANDMARK - a named place that is no building of the list (the Arena, world/arenaCity.js
+    // ARENA-MAP: a block's LANDMARK - a named place that is no building of the list (the Arena, world/arena/arenaCity.js
     // arenaTownLandmark) - lettered by this same plate law, always: no door discovers it, no record renames it
     // (_renameAt). The arena's own departure (Ledger A, its ARENA1 row). YARDS-FOUND: and its PLACES by the same law -
-    // the town's Stable and Wagon Yard standing in it (world/merchantYardMap.js yardTownBlocks)
+    // the town's Stable and Wagon Yard standing in it (world/merchantYards/merchantYardMap.js yardTownBlocks)
     for (const bl of this.deps.blocks ?? []) {
       for (const lm of [bl?.landmark, ...(bl?.places ?? [])]) {
         if (!lm?.name) continue;

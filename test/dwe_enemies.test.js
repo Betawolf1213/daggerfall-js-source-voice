@@ -12,7 +12,7 @@ import {
   DEPTH_AQUATIC_TABLE, RARE_TYPES, BOSS_TYPES, TREASURE_GUARD_TEAM, enemyRoster, depthBandWeight, pickAquaticForDepth,
   pickEnemyForDepth, mustSpawnOnFloor, resolveSpawnColumn, pickEnemyPosition, alignFloorEnemyY, scaledEnemyAttemptsPerPixel,
   rollCount, rollTreasureGuardCount, pickRingDistance, isBehindPlayerHeading, isOutsideImmediateView, spawnRevealDistance,
-} from '../src/world/underwaterEnemies.js';
+} from '../src/world/underwater/underwaterEnemies.js';
 import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';
 import { createEnemySpawner, createEncounterPulse, trySpawnTreasureGuards, ENEMY_ATTEMPTS_PER_PIXEL_PER_TICK } from '../src/scenes/deepWatersEncounters.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';

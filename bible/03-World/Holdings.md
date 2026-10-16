@@ -389,7 +389,7 @@ and her orders' answers; with none aboard, her first hand aboard as before.
 `systems/comeSailAway/comeSailAway.js` (SummonBoat, LayUpBoat, laidUpHold, the book's seams, the refits' reads),
 `systems/comeSailAway/comeSailAwayWire.js`, `scenes/navalHost.js` (fleetStatus, repairAway, refitBoat, freeBerth, the refits' reads),
 `scenes/world.js`, `scenes/exterior.js`, `scenes/worldModes.js`, `ui/enhancedMenu.js`, `ui/enhancedFrame.js`; the quays'
-in `systems/naval/shipLife.js` (`alongside`), `systems/comeSailAway/comeSailAway.js` (`warp`), `world/deepWaterFloor.js`
+in `systems/naval/shipLife.js` (`alongside`), `systems/comeSailAway/comeSailAway.js` (`warp`), `world/deepWater/deepWaterFloor.js`
 (`SHORE_TERRAIN_FIT_METERS`, exported for JETTY_MAX) and `scenes/navalHost.js` (the book read, the docking, the
 gangways).
 

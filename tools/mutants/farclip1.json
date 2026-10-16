@@ -28,7 +28,7 @@
   },
   {
     "name": "FAR-CLIP1-the-byte-moved-into-the-conversions-range",
-    "file": "src/world/terrainSurface.js",
+    "file": "src/world/terrain/terrainSurface.js",
     "old": "export const CLIP_SENTINEL = 255;",
     "new": "export const CLIP_SENTINEL = 254;",
     "tests": [
@@ -226,8 +226,8 @@
   },
   {
     "name": "FAR-CLIP1-the-cap-writes-its-own-byte",
-    "file": "src/world/deepWaterCap.js",
-    "old": "import { CLIP_SENTINEL } from './terrainSurface.js';   // FAR-CLIP1: the byte's one home, the TileMap format's module - the renderer reads it there too\n",
+    "file": "src/world/deepWater/deepWaterCap.js",
+    "old": "import { CLIP_SENTINEL } from '../terrain/terrainSurface.js';   // FAR-CLIP1: the byte's one home, the TileMap format's module - the renderer reads it there too\n",
     "new": "const CLIP_SENTINEL = 255;\n",
     "tests": [
       "test/farclip1.test.js"
@@ -236,7 +236,7 @@
   {
     "name": "FAR-CLIP1-the-renderer-writes-its-own-byte",
     "file": "src/render/renderer.js",
-    "old": "import { CLIP_SENTINEL } from '../world/terrainSurface.js';   // FAR-CLIP1: the byte the terrain's clip variant discards - the TileMap format's module, already in this file's closure (waterCorners.js)\n",
+    "old": "import { CLIP_SENTINEL } from '../world/terrain/terrainSurface.js';   // FAR-CLIP1: the byte the terrain's clip variant discards - the TileMap format's module, already in this file's closure (waterCorners.js)\n",
     "new": "const CLIP_SENTINEL = 255;\n",
     "tests": [
       "test/farclip1.test.js"

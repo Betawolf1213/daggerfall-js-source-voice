@@ -1,21 +1,21 @@
 // SD4b (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 6): A SUPER DUNGEON'S END -
-// THE RIFT AND THE RETURN. The end is the enemy or start marker farthest from the entrance (world/dungeonEnd.js, RVN7d's
+// THE RIFT AND THE RETURN. The end is the enemy or start marker farthest from the entrance (world/dungeon/dungeonEnd.js, RVN7d's
 // lair law lifted so both read one law); the Rift - a ring of brass light about a black-gold membrane, its bell heard
-// under water - stands there as wide as its hall lets it (world/sdDungeon.js), the Return of pale light beside it until
+// under water - stands there as wide as its hall lets it (world/superDungeon/sdDungeon.js), the Return of pale light beside it until
 // the boss falls (scenes/sdEnd.js). Pressed or walked into: the Rift asks its own word off the hub's record (through to
 // the Shattered Hour where it admits and the realm's door takes you, else its refusal); the Return carries you to the way in.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { dungeonEndOf } from '../src/world/dungeonEnd.js';
+import { dungeonEndOf } from '../src/world/dungeon/dungeonEnd.js';
 import {
   sdEndMarks, sdRiftFit, sdRiftPlace, sdReturnPlace, sdRiftWord, sdReturnStands, inSdPortal,
   SD_RIFT_SIZE_M, SD_RIFT_MIN_M, SD_RIFT_AIR_M, SD_RETURN_GAP_M, SD_RETURN_SIZE, SD_RIFT_REACH_M, SD_RETURN_REACH_M, SD_END_TEXT, SD_RIFT_TOP,
-} from '../src/world/sdDungeon.js';
+} from '../src/world/superDungeon/sdDungeon.js';
 import { createSdEnd, ensureSdEndArt, SD_RIFT_KEY, SD_RETURN_KEY, SD_RIFT_PRESS_M } from '../src/scenes/sdEnd.js';
-import { sdRiftArt, SD_RIFT_RECORD, SD_RIFT_ATLAS, SD_RIFT_PLATE_RECORD } from '../src/world/sdRiftArt.js';   // SD-LOOK: the astrolabe's art (its billboard frames retired)
-import { riftCentreY } from '../src/world/sdRiftModel.js';
-import { SD_REALM_ARCHIVE } from '../src/world/sdRealm.js';
+import { sdRiftArt, SD_RIFT_RECORD, SD_RIFT_ATLAS, SD_RIFT_PLATE_RECORD } from '../src/world/superDungeon/sdRiftArt.js';   // SD-LOOK: the astrolabe's art (its billboard frames retired)
+import { riftCentreY } from '../src/world/superDungeon/sdRiftModel.js';
+import { SD_REALM_ARCHIVE } from '../src/world/superDungeon/sdRealm.js';
 import { buildRiftBell, startRiftBell, RIFT_BELL_KEY, RIFT_BELL_RATE, RIFT_BELL_SECONDS, RIFT_BELL_RMS, RIFT_BELL_RECORDS, RIFT_BELL_LOWPASS_HZ, RIFT_BELL_RANGE } from '../src/systems/superDungeon/sdRiftSound.js';
 import { rms } from '../src/systems/arena/arenaSound.js';
 import { sdFirst, sdRise, sdFind, sdFell, sdGone, SD_COLLAPSE_MS, SD_NO_RIFT, SD_NO_CLOSED } from '../src/net/sdLaw.js';

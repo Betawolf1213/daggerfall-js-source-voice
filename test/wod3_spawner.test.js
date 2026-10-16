@@ -12,10 +12,10 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { WodSpawner, WOD_SPAWN_RADIUS, WOD_STAND_DOWN_RADIUS, WOD_LOOT_LOCATION_INDEX, WOD_LOOT_ALIGN, FOE_MALE_CHANCE } from '../src/world/wodSpawner.js';
+import { WodSpawner, WOD_SPAWN_RADIUS, WOD_STAND_DOWN_RADIUS, WOD_LOOT_LOCATION_INDEX, WOD_LOOT_ALIGN, FOE_MALE_CHANCE } from '../src/world/worldOfDaggerfall/wodSpawner.js';
 import { alignBillboardToGround, alignControllerToGround } from '../src/world/groundAlign.js';
 import { enemyControllerHeight } from '../src/characters/enemyAnchor.js';
-import { WOD_SPAWN_TYPE, WOD_ENEMY_ID } from '../src/world/wodLocationObjects.js';
+import { WOD_SPAWN_TYPE, WOD_ENEMY_ID } from '../src/world/worldOfDaggerfall/wodLocationObjects.js';
 import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
 import { DUNGEON_LOOT_KEYS } from '../src/systems/loot/loot.js';
 

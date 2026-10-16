@@ -1,7 +1,7 @@
 // @ts-check
 // SD14a (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 10 and section 16's SD14a;
 // Mac: "The detail needs to exceed that of the oblivion gates"): THE BRASS REMNANT'S VOICE - its body and its Echoes
-// heard. The Warden speaks in 48 cues (world/gateBoss.js BOSS_CUES); the Remnant had its blows' wind-ups and landings
+// heard. The Warden speaks in 48 cues (world/gate/gateBoss.js BOSS_CUES); the Remnant had its blows' wind-ups and landings
 // and its fall's thud (scenes/sdRemnantBlows.js SD_BLOW_CUES) and nothing of its body: no step, no wake, no turn of its
 // phases, no Echo rising or broken, no stun, no loss. Here, read off the fight this page holds each frame:
 //
@@ -26,7 +26,7 @@
 import { SD_ARENA, realmToDungeon, dungeonToRealm } from '../net/sdBrain.js';
 import { SD_BLOW_BY_ID, SD_BLOWS, SD_BODY } from '../net/sdRemnant.js';
 import { sdBodyAt, sdEndAgain } from '../net/sdFightLink.js';
-import { BODY_FALL, THUNDER_ROLL, SWING_LOW, CRYSTAL_CLIPS } from '../world/gateBoss.js';
+import { BODY_FALL, THUNDER_ROLL, SWING_LOW, CRYSTAL_CLIPS } from '../world/gate/gateBoss.js';
 
 /** The Iron Atronach's voice (characters/enemyBasics.js row 36: moveSound, barkSound, attackSound). */
 export const SD_IRON = Object.freeze({ move: 222, bark: 223, attack: 224 });

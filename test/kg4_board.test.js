@@ -25,7 +25,7 @@ import {
   gambitFxUv, gambitFxCell, GAMBIT_FX_KEYS, GAMBIT_GLYPHS, GAMBIT_REMAP_HURT, GAMBIT_REMAP_GLOW, GAMBIT_ARCHIVE, GAMBIT_ATLAS,
   GAMBIT_ATLAS_HURT, GAMBIT_ATLAS_GLOW, GAMBIT_FX, gambitCellUv, gambitAtlasCell, createGambitTableDraw, standKey,
 } from '../src/render/gambitTableDraw.js';
-import { CARD_W } from '../src/world/cardMotion.js';
+import { CARD_W } from '../src/world/card/cardMotion.js';
 import { perspective, mirrorProjectionX, lookAt } from '../src/world/mat4.js';
 import { projectToScreen } from '../src/player/tapRay.js';
 import { xorshift } from '../tools/kgMeasure.mjs';

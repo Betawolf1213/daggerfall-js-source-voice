@@ -10,7 +10,7 @@ import { join } from 'node:path';
 
 import { ETHER_WORD, ETHER_SEA_NAME, ETHER_SEA_TITLE } from '../src/world/ethericSea.js';
 import { ETHER_REGION_NAME } from '../src/world/etherPlaces.js';
-import { SEAS } from '../src/world/tamrielGeography.js';
+import { SEAS } from '../src/world/tamriel/tamrielGeography.js';
 import { crossingRows, crossingWords } from '../src/systems/naval/etherCrossing.js';
 import { logLines, newLog, TRADE_WORD, TRADE_WORDS } from '../src/systems/naval/captainLedger.js';
 import { etherOfficeText } from '../src/ui/navalYardWindow.js';
@@ -46,7 +46,7 @@ test('ELTHERIC: no code names the sea "Etheric" any more, and the word is writte
     });
   }
   assert.deepEqual(stale, [], 'the old name in no code');
-  assert.deepEqual([...new Set(spelt)].sort(), ['src/world/ethericSea.js', 'src/world/tamrielGeography.js'], 'the word spelt in its one home and the map\'s table alone');
+  assert.deepEqual([...new Set(spelt)].sort(), ['src/world/ethericSea.js', 'src/world/tamriel/tamrielGeography.js'], 'the word spelt in its one home and the map\'s table alone');
 });
 
 test('ELTHERIC: the chart\'s title wraps on a narrow screen - its longer name was cut on a phone held upright (measured in Chromium, tools/etherChartProbe.mjs; mutant: the rule dropped)', () => {

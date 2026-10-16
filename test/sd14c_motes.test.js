@@ -17,9 +17,9 @@ import {
 import { lifeVertices } from '../src/render/deadlands.js';
 import { SD_SKY_PERIOD } from '../src/render/sdSky.js';
 import { SD_ORRERY, SD_ARENA, SD_REALM_ORIGIN } from '../src/net/sdBrain.js';
-import { SD_FIRST_STEP } from '../src/world/sdHall.js';
+import { SD_FIRST_STEP } from '../src/world/superDungeon/sdHall.js';
 import { mirrorProjectionX, perspective, lookAt, multiply } from '../src/world/mat4.js';
-import { SD_COURSE_END } from '../src/world/sdSteps.js';
+import { SD_COURSE_END } from '../src/world/superDungeon/sdSteps.js';
 
 const W = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
 const V = sdMoteVertices();

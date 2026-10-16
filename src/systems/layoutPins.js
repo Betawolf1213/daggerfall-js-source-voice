@@ -59,7 +59,7 @@ let _typeOf = () => null;               // a location key -> its MapTable Locati
 let _pins = new Map();                  // locationKey -> { out:Set, in:Set, stamp, why }
 let _heldBack = new Set();              // QUEST-AUDIT II PIN-SLEEP: locationKeys whose pin this session could not honour
 let _missingVendors = new Set();        // AUDIT QA2: the layout mods switched on whose packs did not load this session
-let _displaced = () => false;           // ARENA1: a record whose building the port itself took away (world/arenaCity.js)
+let _displaced = () => false;           // ARENA1: a record whose building the port itself took away (world/arena/arenaCity.js)
 
 /** The hosts' half: which layout mods are loaded for the game (the latch) and their versions (the world-data loader,
  *  scenes/modWorldData.js), and where a town is (the world host, which holds the map). Each is kept until replaced. */

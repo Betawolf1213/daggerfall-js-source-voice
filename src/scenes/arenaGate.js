@@ -30,7 +30,7 @@ import { exhibitionFor } from '../systems/arena/arenaLadder.js';
 import { fighterIdentity } from '../systems/arena/arenaFighters.js';
 import { totalGoldAmount, deductGold, addGold } from '../systems/court.js';
 import { arenaBoard, hallLinesOnline, hallPlaques } from '../systems/arena/arenaBoard.js';
-import { PLAQUE_MAX } from '../world/arenaPlaques.js';   // ARENA5: the wall's cap
+import { PLAQUE_MAX } from '../world/arena/arenaPlaques.js';   // ARENA5: the wall's cap
 import { arenaReplaysRestore } from '../systems/arena/arenaReplay.js';   // ARENA5: your ladder replay
 import { nextLadderBout, arenaLadderRestore } from '../systems/arena/arenaLadder.js';
 import { FIGHT_HEALTH_MIN } from '../systems/arena/arenaHerald.js';
@@ -43,7 +43,7 @@ export const AT_GATE_M = 60;
 /** Whether feet stand at the gate: within AT_GATE_M of the Herald's place (`herald` null - no gate here). */
 export const nearArenaGate = (feet, herald) => !!feet && !!herald && Math.hypot(feet[0] - herald[0], feet[2] - herald[2]) <= AT_GATE_M;
 
-/** The recruiters by their office (world/arenaCity.js ARENA_GATE_PEOPLE `role`) and the banner each keeps. */
+/** The recruiters by their office (world/arena/arenaCity.js ARENA_GATE_PEOPLE `role`) and the banner each keeps. */
 export const RECRUITER_BANNER = Object.freeze({ redRecruiter: 'red', blueRecruiter: 'blue' });
 
 /**
@@ -199,7 +199,7 @@ export function createArenaGate(deps) {
     else void Promise.resolve(on.fetchBoard?.() ?? null).then(show, () => show(null));
     return true;
   }
-  /** ARENA5: THE HALL'S PLAQUES (world/arenaPlaques.js, both hosts' `arenaHallPlaques` - scenes/worldModes.js hangs the
+  /** ARENA5: THE HALL'S PLAQUES (world/arena/arenaPlaques.js, both hosts' `arenaHallPlaques` - scenes/worldModes.js hangs the
    *  wall): offline this save's Grand Champions, online the realm's (the board the window last fetched; asked when it is
    *  not in, and until it comes the wall stands bare - never the save's names as the realm's). systems/arena/arenaBoard.js
    *  hallPlaques' `[{ name, banner, season }]`. */

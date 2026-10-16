@@ -1643,7 +1643,7 @@ test('FIELD-GUN20: a missile or effect sprite is CENTRED on its position - the b
   assert.match(hm, /m\.batch = renderer\.createBillboardBatch\(archive, 0, size, \[centredBase\(m\.firePos, size\)\]\);/, 'the world hosts\' spell missile');
   // THE OTHER HALF OF THE LAW: a block's flats keep AlignToBase - they sit ON their base, and never take this
   assert.doesNotMatch(readFileSync('src/world/rmbFlats.js', 'utf8').slice(readFileSync('src/world/rmbFlats.js', 'utf8').indexOf('export function collectBlockFlats')), /centredBase\(/, 'collectBlockFlats places at the base');
-  for (const f of ['src/world/rdbLayout.js', 'src/world/interiorLayout.js', 'src/scenes/world.js', 'src/scenes/exterior.js']) {
+  for (const f of ['src/world/rdbLayout.js', 'src/world/interior/interiorLayout.js', 'src/scenes/world.js', 'src/scenes/exterior.js']) {
     // WOD3/WOD4: World of Daggerfall's own flats - the captive a kidnap marker stands and the camp at
     // Privateer's Hold - are CreateDaggerfallBillboardGameObject with NO AlignToBase, so they are centred;
     // those lines, and nothing else a world host stands

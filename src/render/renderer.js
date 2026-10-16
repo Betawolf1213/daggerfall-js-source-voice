@@ -21,7 +21,7 @@ import { buildProgram } from './glProgram.js';   // AUDIT 68 S17-gl-program-dup:
 import { realWindowsGlsl, RW_MAIN_DERIVS, RW_MAIN_CUTOUT, RW_MAIN_GLASS, RW_MAIN_ROOM, GLASS_NONE, GLASS_EXTERIOR, GLASS_INTERIOR, winModeFor, roomLightFor, sphereNdcRect, cropProjection, viewTargetSize, viewSkyFrom, viewRays, VIEW_BG_VS, VIEW_BG_FS, VIEW_PANES_MAX, VIEW_PANE_UNIT, VIEW_PANE_VS, VIEW_PANE_FS } from './realWindows.js';   // RW1: the real windows - the rooms, the glass, the view out
 import { MESH_ALPHA_GLSL, samplerParams, samplerKey } from './meshAlpha.js';   // POI-2: a translucent mesh draw, and a texture's own wrap and filter
 import { frameTarget, setFrameTarget } from './renderTarget.js';   // RW1: the view out's pass hands the frame target back as it found it (EL4's restore)
-import { CLIP_SENTINEL } from '../world/terrainSurface.js';   // FAR-CLIP1: the byte the terrain's clip variant discards - the TileMap format's module, already in this file's closure (waterCorners.js)
+import { CLIP_SENTINEL } from '../world/terrain/terrainSurface.js';   // FAR-CLIP1: the byte the terrain's clip variant discards - the TileMap format's module, already in this file's closure (waterCorners.js)
 /** AUDIT TECH-FX: the screen offset before any is set - one, frozen (Renderer `screenOffset`). */
 const NO_SCREEN_OFFSET = Object.freeze([0, 0]);
 
@@ -1102,9 +1102,9 @@ void main() {
 // variant available, so the sea-level water cap stays visible on mixed
 // land/water map pixels".
 //
-// The port's mark is the byte CLIP_SENTINEL (world/terrainSurface.js).
+// The port's mark is the byte CLIP_SENTINEL (world/terrain/terrainSurface.js).
 // DW-C left a clipped tile's QUAD out of the pixel's index set instead
-// (world/deepWaterCap.js clippedTerrainIndices) - the discard exactly while
+// (world/deepWater/deepWaterCap.js clippedTerrainIndices) - the discard exactly while
 // a tile is a quad, at stride 1. EV4's far ground draws at stride 4,
 // sixteen tiles a quad, and kept every quad not clipped whole; no terrain
 // program tested the byte, so a kept quad drew its clipped tiles as tile
@@ -1541,7 +1541,7 @@ import { WATER_MAP_COLOR } from './underwaterFog.js';
 import { WATER_SURFACE_VS, waterSurfaceFs } from './waterSurface.js';   // WATER1: the enhanced water pass over the terrain grid
 import { WATER_LAYER_UNITS, WATER_SCENE_UNIT, WATER_SCENE_DEPTH_UNIT, NO_BED_DEPTH, WATER_RIPPLE_UNIT } from './waterSurface.js';   // FIELD BUGS 2026-09-29 (the sea) #4: WATER1's offset is the sea's surface film's
 import { WATER_BED_GLSL, waterBedMix } from './waterBedGlsl.js';   // WATER-NEXT 2: the ground under the water is a bed
-import { packWaterMask, WATER_DRAW_MASK_TABLE } from '../world/waterCorners.js';   // MAC2: the corner table's one home; WATER-DRAW1: the PASS takes the draw's table, not the feet's
+import { packWaterMask, WATER_DRAW_MASK_TABLE } from '../world/water/waterCorners.js';   // MAC2: the corner table's one home; WATER-DRAW1: the PASS takes the draw's table, not the feet's
 import { pageParam } from '../systems/pageQuery.js';   // PERF-URL: the page's query, parsed once a search
 import { SKIN_PAL_ROW, SKIN_PALETTE_UNIT } from './skinPalette.js';   // MWNPC1: the GPU skin's palette shape
 import { lightIdsOf, lightList, packLight } from './lightId.js';   // LIGHT-ID: each light's identity, lifted off its list for the shadow pass (and the flash packed through the seam)
@@ -1829,7 +1829,7 @@ export class Renderer {
     this._fogDensity = 0;
     this._fogRange = new Float32Array([0, 1]);
     // DW-C: Iliac Puddle No More's distance fog - fogGlsl.js uDwFog, five vec4s
-    // (world/deepWaterLook.js distanceFogUniforms). A FRAME's, as the cloud
+    // (world/deepWater/deepWaterLook.js distanceFogUniforms). A FRAME's, as the cloud
     // deck is: beginFrame clears it and the exterior host sets it after.
     this._dwFog = new Float32Array(20);
     this._seaHaze = new Float32Array(2);   // FAR-SEA1: the hold and the sea's height (setSeaHaze)
@@ -6072,7 +6072,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
   }
 
   /** DW-C: Iliac Puddle No More's distance fog for this frame - the twenty
-   *  floats world/deepWaterLook.js distanceFogUniforms packs, or null for
+   *  floats world/deepWater/deepWaterLook.js distanceFogUniforms packs, or null for
    *  none. After beginFrame, which clears it: it is a frame's.
    *
    *  LA-COST6 (2026-09-27, found by the audit of Mac's "a deep audit on the enhanced lighting system"): UNDER THE SEA,
@@ -6831,7 +6831,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
   }
 
   /** WATER-NEXT 2: THE WATER'S SHEET - the water pass's own surface: the grid AS IT STOOD before its bed was carved
-   *  (world/waterBed.js; `positions`, uploaded here), the bed's depth under each vertex on attribute 1 (`depths`), and
+   *  (world/water/waterBed.js; `positions`, uploaded here), the bed's depth under each vertex on attribute 1 (`depths`), and
    *  the water quads (`indices`). Without a bed (`positions` null: no vertex of the grid is under water - a one-tile
    *  stream) it rides the terrain's own position buffer and attribute 1 is the constant NO_BED_DEPTH: the water lies
    *  on the ground as WATER1's did, shallow. destroyWaterSurface frees what it owns. */
@@ -6880,7 +6880,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     return this._underWater;
   }
 
-  /** WATER-NEXT 4: THE RIPPLE FIELD the water reads this frame - world/waterRipples.js's (its `bytes`, `origin`,
+  /** WATER-NEXT 4: THE RIPPLE FIELD the water reads this frame - world/water/waterRipples.js's (its `bytes`, `origin`,
    *  `version`), or null for none. The host hands it over each frame; the texture is written only when the field moved. */
   setWaterRipples(field, span = 48, cells = 96) {
     this._ripples = field ?? null;   // AUDIT WATER-NEXT P4: the field itself, a frame's handing no object
@@ -7558,7 +7558,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
   _drawWaterRows(L, rows, n) {
     this._close2D();   // PERF-2D: every draw hands the baseline back first (a no-op after the callers' own)
     const gl = this.gl;
-    gl.vertexAttrib1f(1, -NO_BED_DEPTH);   // a sheet without a bed: attribute 1 is a shallow constant (createWaterSheet) - AUDIT WATER-NEXT H2: negative, no bed under it (world/waterCorners.js SHEET_NO_BED)
+    gl.vertexAttrib1f(1, -NO_BED_DEPTH);   // a sheet without a bed: attribute 1 is a shallow constant (createWaterSheet) - AUDIT WATER-NEXT H2: negative, no bed under it (world/water/waterCorners.js SHEET_NO_BED)
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     gl.depthMask(false);
@@ -7613,7 +7613,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
   }
 
   /**
-   * WATER-NEXT 2: THE OPEN SEA - Iliac Puddle No More's surface sheets (world/deepWaterSurface.js) drawn as water by
+   * WATER-NEXT 2: THE OPEN SEA - Iliac Puddle No More's surface sheets (world/deepWater/deepWaterSurface.js) drawn as water by
    * the water's own program (`uOpen`: no tilemap, no bed - its depth is the scene copy's, the floor it carved), in the
    * mod's own place in the frame (its Transparent queue). `list` the mod's surfaces ({h: {surface: {vao, count}},
    * model}), `liftY` its height over the pixel, `color` the mod's tint, `arrayTex` the ground tile array whose water

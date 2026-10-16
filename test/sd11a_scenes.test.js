@@ -21,13 +21,13 @@ import {
   buildRealmModel, realmColliderTris, realmLights, realmLampFeet, realmLampTris, realmLighting, realmLightsNear, realmLightsWith, SD_LIGHTS_CAP, walkNearZ, walkFarZ,
   SD_REALM_FLOOR_RECORD, SD_REALM_BRASS_RECORD, SD_REALM_ROOT_RECORD, SD_REALM_DIAL_RECORD, SD_REALM_COBBLE_RECORD, SD_ISLAND_SIDES, SD_RIM_W, SD_RIM_H,
   SD_KERB_W, SD_KERB_H, SD_LAMP_H, SD_LAMP_HEAD, SD_LAMP_POST_W,
-} from '../src/world/sdRealm.js';
-import { withCourtLights } from '../src/world/gateArena.js';
+} from '../src/world/superDungeon/sdRealm.js';
+import { withCourtLights } from '../src/world/gate/gateArena.js';
 import {
   stoneFrame, stonePoint, plaqueFrame, handleBox, handMatrix, beforeStone, buildHallModel, buildHandModel, hallSolidTris,
   SD_STONE_SIZE, SD_DIAL, SD_EMBLEM, SD_HAND, SD_PLAQUE,
-} from '../src/world/sdHall.js';
-import { SD_HALL_ATLAS, SD_HALL_ATLAS_RECORD, SD_HALL_GLOW_RECORD } from '../src/world/sdHallArt.js';
+} from '../src/world/superDungeon/sdHall.js';
+import { SD_HALL_ATLAS, SD_HALL_ATLAS_RECORD, SD_HALL_GLOW_RECORD } from '../src/world/superDungeon/sdHallArt.js';
 import { createSdHall, ensureSdHallArt, sdStoneKey, SD_HALL_TEXT } from '../src/scenes/sdHall.js';
 import { createSdSteps, ensureSdStepsArt, sdStepKey, SD_CHECKS_KEY } from '../src/scenes/sdSteps.js';
 import { createSdRemnant, ensureSdRemnantArt, SD_GEAR_DRAWS, SD_DECOR_DRAWS } from '../src/scenes/sdRemnant.js';
@@ -36,8 +36,8 @@ import { SD_HEARTS } from '../src/net/sdRemnant.js';
 import { createSdEnd, SD_RIFT_KEY } from '../src/scenes/sdEnd.js';
 import { SD_FIGHT_EMPTY } from '../src/net/sdFightLink.js';
 import { sdAnyInFlight, sdBlowsInFlight } from '../src/scenes/sdRemnantBlows.js';
-import { SD_STEPS_COURSE, SD_CHECKPOINTS, SD_COURSE_END, SD_GUST_EVERY, SD_GUST_WARN, SD_GUST_FOR, gustAt, breathSeen, spanAt } from '../src/world/sdSteps.js';
-import { SD_BREATH, stepTris } from '../src/world/sdStepsModel.js';
+import { SD_STEPS_COURSE, SD_CHECKPOINTS, SD_COURSE_END, SD_GUST_EVERY, SD_GUST_WARN, SD_GUST_FOR, gustAt, breathSeen, spanAt } from '../src/world/superDungeon/sdSteps.js';
+import { SD_BREATH, stepTris } from '../src/world/superDungeon/sdStepsModel.js';
 import { SD_SKY_PAINT_FS, SD_SKY_SHARDS, SD_SHARD_TOP, SD_CLOCK_FACE, SD_CLOCK_RING_W, SD_CLOCK_TOP, SD_SKY_PERIOD, CLOCK_BASIS, sdSkyBasisInto } from '../src/render/sdSky.js';
 import { skyBasis, DEAD_NOISE_GLSL } from '../src/render/deadlands.js';
 import { AURA_FS } from '../src/render/auraRing.js';
@@ -411,8 +411,8 @@ test('AUDIT SD II L2 F9: THE HOUR\'S FRAME MAKES NOTHING - measured in a child w
     const { createSdRemnant } = await import(${url('src/scenes/sdRemnant.js')});
     const { createSdEnd } = await import(${url('src/scenes/sdEnd.js')});
     const { createSdRemnantBlows } = await import(${url('src/scenes/sdRemnantBlows.js')});
-    const { realmLighting, realmLightsWith } = await import(${url('src/world/sdRealm.js')});
-    const { SD_STEPS_COURSE } = await import(${url('src/world/sdSteps.js')});
+    const { realmLighting, realmLightsWith } = await import(${url('src/world/superDungeon/sdRealm.js')});
+    const { SD_STEPS_COURSE } = await import(${url('src/world/superDungeon/sdSteps.js')});
     const { sdSkyBasisInto } = await import(${url('src/render/sdSky.js')});
     const { realmToDungeon } = await import(${url('src/net/sdBrain.js')});
     const { SD_FIGHT_EMPTY } = await import(${url('src/net/sdFightLink.js')});
@@ -468,7 +468,7 @@ test('AUDIT SD II L2 F9: THE HOUR\'S FRAME MAKES NOTHING - measured in a child w
   for (const [path, b] of Object.entries(m)) if (path !== 'control') assert.ok(b < 2, `${path}: ${b.toFixed(2)} bytes a frame (the control ${m.control.toFixed(2)})`);
 });
 
-test('AUDIT SD II L2 F9: THE SAME LIGHTS AND THE SAME SKY, made in place - realmLightsWith is world/gateArena.js withCourtLights\' composition (the arm\'s own lights, then the spoils\', then the lamps nearest the eye: their places, ranges, colours and carried mask) whatever the counts, its arrays grown when a frame wants more and one set of views a count; the hall\'s and the End\'s lists one each; sdSkyBasisInto is render/deadlands.js skyBasis\'s reading, and the sky\'s pass reads it into its own; the blows\' driver idle exactly when no blow is in flight (mutants: the views made each frame; an Echo\'s blow or the Hour\'s never in flight)', () => {
+test('AUDIT SD II L2 F9: THE SAME LIGHTS AND THE SAME SKY, made in place - realmLightsWith is world/gate/gateArena.js withCourtLights\' composition (the arm\'s own lights, then the spoils\', then the lamps nearest the eye: their places, ranges, colours and carried mask) whatever the counts, its arrays grown when a frame wants more and one set of views a count; the hall\'s and the End\'s lists one each; sdSkyBasisInto is render/deadlands.js skyBasis\'s reading, and the sky\'s pass reads it into its own; the blows\' driver idle exactly when no blow is in flight (mutants: the views made each frame; an Echo\'s blow or the Hour\'s never in flight)', () => {
   const litOf = (n) => {
     /** @type {Float32Array & { carried?: Uint8Array }} */
     const data = Float32Array.from({ length: n * 4 }, (_, i) => i * 0.5 + 1);

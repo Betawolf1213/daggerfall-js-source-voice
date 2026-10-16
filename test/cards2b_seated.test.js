@@ -21,7 +21,7 @@ import { validPose, poseChanged, POSE_SEAT_TOP_MAX } from '../src/net/wire.js';
 import { lerpPose } from '../src/net/online.js';
 import { peerCamera, seatFor } from '../src/net/peerBodies.js';
 import { peerMoving } from '../src/net/peerClimb.js';
-import { cardTableSeats } from '../src/world/cardTables.js';
+import { cardTableSeats } from '../src/world/card/cardTables.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const r3 = (v) => Math.round(v * 1000) / 1000;

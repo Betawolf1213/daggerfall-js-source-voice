@@ -555,7 +555,7 @@ rings over a body carrying a Rare, so it rings at every champion's fall.
 on foot - and its attack roll (`attackRollPasses`) passes likelier. The table says what it does. The Thorned answers
 any blow of mine that lands (a bare hand's too), not a weapon's alone - the strike tail's own law.
 
-**Along the way.** LOOT6's `pickRecord` shared its name with `world/underwaterDecorations.js`'s, past audit24's
+**Along the way.** LOOT6's `pickRecord` shared its name with `world/underwater/underwaterDecorations.js`'s, past audit24's
 one-home ratchet: renamed `pickLegendary`. WORLD8's pile pin read LOOT6's family. The relay's version pins re-chained
 ("LOOT7 moved it on last (world138 ...); KEPT-KILL moved it on (world137 ..."), soc1.json's S38 and BOUNTY1 B4.
 

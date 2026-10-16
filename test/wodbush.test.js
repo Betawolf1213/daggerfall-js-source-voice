@@ -7,10 +7,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { lowestGroundUnder, surfaceHeightAt, GROUND_UNDER_INSET } from '../src/world/terrainSurface.js';
-import { flattenForLocation, WOD_TERRAIN_HEIGHT_MAX } from '../src/world/wodLocationLoader.js';
-import { WOD_BUSH_MODEL } from '../src/world/wodLocationObjects.js';
-import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { lowestGroundUnder, surfaceHeightAt, GROUND_UNDER_INSET } from '../src/world/terrain/terrainSurface.js';
+import { flattenForLocation, WOD_TERRAIN_HEIGHT_MAX } from '../src/world/worldOfDaggerfall/wodLocationLoader.js';
+import { WOD_BUSH_MODEL } from '../src/world/worldOfDaggerfall/wodLocationObjects.js';
+import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const H = HEIGHTMAP_DIMENSION;

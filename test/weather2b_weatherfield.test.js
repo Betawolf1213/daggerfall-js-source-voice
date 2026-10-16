@@ -19,7 +19,7 @@ import {
 } from '../src/systems/weather/weatherSim.js';
 import { createWindModel, frontFactor, FRONT_LEAD_MIN, CROSS_LEAD_MIN } from '../src/systems/wind/wind.js';
 import { CLIMATES, MAX_MAP_PIXEL_Y } from '../src/formats/mapsFile.js';
-import { TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 import { FEATURES } from '../src/systems/features.js';
 import { PREF_DEFAULTS, setPref } from '../src/systems/uiPrefs.js';
 import { setUiSkin, uiSkin } from '../src/systems/uiSkin.js';

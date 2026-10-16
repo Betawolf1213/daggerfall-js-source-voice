@@ -13,7 +13,7 @@
 //     eight dithered bands from the black overhead to the brass haze that meets the fog; stars, single crisp texels,
 //     the brightest with four-point glints; the aurorae, banded curtains with rays, posterized to four steps; the
 //     clock-face of stars - a dense rim, sixty minute dots, its twelve hours in Roman numerals plotted in stars, the six
-//     Endings as constellations on its inner ring (world/sdSkyArt.js - the stones' own signs), the Hollow's own burning
+//     Endings as constellations on its inner ring (world/superDungeon/sdSkyArt.js - the stones' own signs), the Hollow's own burning
 //     in its light; six of the Bay's cities hanging upside down, black with warm windows; the mist below the horizon
 //     deepening to black, and the furnace glowing at the nadir.
 //   THE FETCH - one triangle at the far plane (the Deadlands' law, render/deadlands.js), each pixel one tap of the map
@@ -35,8 +35,8 @@ import { buildProgram } from './glProgram.js';
 import { DEAD_NOISE_GLSL } from './deadlands.js';
 import { BAYER_GLSL, SD_PIXEL_GLSL } from './orderedDither.js';
 import { createRenderTarget, withTarget } from './renderTarget.js';
-import { sdSkySigns, SD_SKY_SIGN_GRID, SD_GLYPHS, SD_HOUR_NUMERALS, numeralWidth } from '../world/sdSkyArt.js';
-import { SD_TICK_EASE_S } from '../world/sdLook.js';
+import { sdSkySigns, SD_SKY_SIGN_GRID, SD_GLYPHS, SD_HOUR_NUMERALS, numeralWidth } from '../world/superDungeon/sdSkyArt.js';
+import { SD_TICK_EASE_S } from '../world/superDungeon/sdLook.js';
 
 /** Every rate is whole cycles over this many seconds; the clock is handed wrapped to it. */
 export const SD_SKY_PERIOD = 720;
@@ -65,7 +65,7 @@ export const SD_SHARD_CLEAR = 0.05;
 export const SD_SHARD_TOP = SD_CLOCK_TOP + SD_SHARD_CLEAR + Math.max(...SD_SKY_SHARDS.map((s) => s.depth));
 export const SD_AURORA = Object.freeze({ low: 0.62, high: 1.3, turns: 3 });
 /** SD-LOOK S11: THE FURNACE at the nadir - it rises from `from` radians under the horizon to its full glow at `full`:
- *  the band the course looks down through onto the Works (world/sdWorksModel.js), so they stand black against it. */
+ *  the band the course looks down through onto the Works (world/superDungeon/sdWorksModel.js), so they stand black against it. */
 export const SD_FURNACE = Object.freeze({ from: 0.6, full: 1.3 });
 /** SD-LOOK: the map's side (texels), and the steps the pixel law posterizes its brightness to on the lane and the classic set. */
 export const SD_SKY_MAP = 512;
@@ -215,7 +215,7 @@ float skyline5(float u, float v) {
 }
 `;
 
-/** The numerals as the paint draws them (world/sdSkyArt.js's glyphs, the cells of `numeralCell`): `numeralLit(h, cx,
+/** The numerals as the paint draws them (world/superDungeon/sdSkyArt.js's glyphs, the cells of `numeralCell`): `numeralLit(h, cx,
  *  cy)` - hour h (0 the twelfth), cell cx from the numeral's left, cy from its top row. The veil's dial reads them too
  *  (render/sdVeil.js). */
 export const SD_NUMERAL_GLSL = `const int GLYPH_I[7] = int[7](${SD_GLYPHS.I.rows.join(', ')});
@@ -255,7 +255,7 @@ export const SD_SKY_PAINT_FS = HEAD + `in vec2 vUv;
 uniform float uTime;      // the realm's seconds, wrapped to the period
 uniform vec3 uHaze;       // the frame's fog colour - the horizon meets it
 uniform float uSteps;     // the pixel law's steps (SD_SKY_STEPS)
-uniform sampler2D uSigns; // the six signs (world/sdSkyArt.js sdSkySigns)
+uniform sampler2D uSigns; // the six signs (world/superDungeon/sdSkyArt.js sdSkySigns)
 uniform vec3 uEnding;     // the Hollow's own Ending's light
 uniform float uEndingIdx; // its sign (-1: none)
 out vec4 o;
@@ -381,7 +381,7 @@ const vec3 SKY_HAND = vec3(1.0, 0.84, 0.5);
 const vec3 SKY_SECOND = vec3(0.86, 0.9, 1.0);
 const vec3 SKY_RED = vec3(1.0, 0.32, 0.26);
 ${SD_OCT_GLSL}${SD_CLOCK_GLSL}
-// the escapement (world/sdLook.js sdTick): whole each second, eased over its first ${SD_TICK_EASE_S} s and held
+// the escapement (world/superDungeon/sdLook.js sdTick): whole each second, eased over its first ${SD_TICK_EASE_S} s and held
 float skyTick(float t) { float s = floor(t), e = min(1.0, (t - s) / ${SD_TICK_EASE_S.toFixed(2)}); return s + e * e * (3.0 - 2.0 * e); }
 float skySeg(vec2 p, vec2 a, vec2 b, float w) {
   vec2 pa = p - a, ba = b - a; float t = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);

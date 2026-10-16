@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 import { WINDMILL_INTERIOR } from '../src/world/windmillInterior.js';
 import { attachWindmillRecord } from '../src/world/rmbLayout.js';
-import { layoutInterior } from '../src/world/interiorLayout.js';
+import { layoutInterior } from '../src/world/interior/interiorLayout.js';
 
 // WM2g - THE MILL HAS AN INSIDE.
 //
@@ -108,7 +108,7 @@ test('MAC-BUG1: an interior with no door of its own gets one at its enter marker
   // seven mills share the one interior.
   const { DOOR_TYPE } = await import('../src/world/meshReader.js');
   const { interiorLanding, doorWorldPosition } = await import('../src/player/enterExit.js');
-  const { INTERIOR_MARKER } = await import('../src/world/interiorLayout.js');
+  const { INTERIOR_MARKER } = await import('../src/world/interior/interiorLayout.js');
 
   const block = {
     name: 'FARMAA00.RMB', index: 704,

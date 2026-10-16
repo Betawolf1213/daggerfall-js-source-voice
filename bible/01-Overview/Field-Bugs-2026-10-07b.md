@@ -17,7 +17,7 @@ DFU-distributed freeware set, outside the tree): the towers were measured and dr
 
 ## TOWER-FLOORS (1)
 
-`world/interiorLayout.js` FLOOR_MODEL_TYPE, STOREY, floorModelStoreysUnder, lowestY. The towers are `CUSTAA05.RMB`
+`world/interior/interiorLayout.js` FLOOR_MODEL_TYPE, STOREY, floorModelStoreysUnder, lowestY. The towers are `CUSTAA05.RMB`
 (BLOCKS.BSA 60) records #0 and #1, Daggerfall's cell (5,6) in the classic layout and Beautiful Cities' alike (the mod
 ships no CUSTAA05): exterior model 522, 17.9 m, a street door at its foot and a door to the castle's walls at 14 m; an
 interior of 100 models - 69 room shells and stairs over five storeys, 31 pieces of furniture.

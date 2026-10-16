@@ -94,7 +94,7 @@ test('CSA-A: the assembly names every section and every key it reads - and never
     }
   }
   for (const k of UNREAD) assert.match(DEF.keys[k].description, /never reads it/, `${k} says so`);
-  // what Deep Waters' swim already waits for (world/deepWaterSwim.js isBoatEffectBundle)
+  // what Deep Waters' swim already waits for (world/deepWater/deepWaterSwim.js isBoatEffectBundle)
   assert.ok(heap.has('I\'m On A Boat'), 'the boat\'s effect bundle is named as Iliac Puddle No More looks for it');
 });
 

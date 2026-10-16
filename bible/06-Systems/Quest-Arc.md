@@ -6302,7 +6302,7 @@ port's layout builds the same list (`world/rdbLayout.js`), and the dungeon host 
 player outside, `:640`, and a building door's TransitionExterior finds no interior, `:634`), and only an exit door
 gets a collider (`DaggerfallStaticDoors.cs:44-66`), so in DFU the click falls through to the model's own action -
 the Crux's Teleport, which the port has (`world/actionSystem.js`). Here the padded door box took the ray first and
-threw the player onto the sea pixel outside. `world/dungeonLayout.js isDungeonExitDoor` is the one reading of the
+threw the player onto the sea pixel outside. `world/dungeon/dungeonLayout.js isDungeonExitDoor` is the one reading of the
 type (the overlap registry reads it too), and the host keeps a block's DungeonExit doors alone; the court's and the
 portal's made doors join after, as before. The facing on entry and the wagon's near-exit test read the same list,
 so both follow DFU's filter now (`PlayerEnterExit.cs:937`, `DaggerfallInventoryWindow.cs:1114`).
@@ -6532,7 +6532,7 @@ strongholds to the classic start; and online `_S.02_`'s 3-13 days are a short wa
 the only path. Repair could not help: it puts back what a marker lost, and his marker had lost nothing.
 
 - **The draw** (`systems/quest/place.js _collectDungeonIndicesOfType`): a dungeon of the main story
-  (`world/dungeonTextures.js isMainStoryDungeon`, DFU's fourteen) is never a random quest's - the declared type's
+  (`world/dungeon/dungeonTextures.js isMainStoryDungeon`, DFU's fourteen) is never a random quest's - the declared type's
   draw and the any-dungeon retry alike. The main story's own Places name them `permanent` and never pass there. A
   DEPARTURE (Port-Ledger A), the precedent `oceanHoles.js` and the spawned dungeons' "the main story's own dungeons
   are never cloned".

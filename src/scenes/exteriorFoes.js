@@ -88,7 +88,7 @@ import { flashPlayerDamage } from '../ui/damageFlash.js';   // AUDIT 24 (wave 39
 import { puppetLead } from './puppetLead.js';   // DESYNC-ZERO: a moving puppet leads its last word
 import { bindQuestFoeHost, isPrivateQuestFoe, placeFoeEnv, entityOccupancy } from './questFoeHost.js';   // B1: quest foes ride this pool; CURSE-SYNC: a world quest's ride as the world's; RVN6: a band placed about its master
 import { placeFoeFreely } from '../systems/quest/sceneMount.js';   // RVN6: PlaceFoeFreely's ring, a camp member's law
-import { validSites, validSiteTags, isRiteSite, WOD_CAMP_PUPPETS_MAX, WOD_SITES_MAX, WOD_AGE_MAX } from '../world/wodShared.js';   // WOD7: a World of Daggerfall camp's foes, shared
+import { validSites, validSiteTags, isRiteSite, WOD_CAMP_PUPPETS_MAX, WOD_SITES_MAX, WOD_AGE_MAX } from '../world/worldOfDaggerfall/wodShared.js';   // WOD7: a World of Daggerfall camp's foes, shared
 import { validRaidTags, validAlliedIds, RAID_PUPPETS_MAX } from '../world/raidShared.js';   // RAID2: a town's raid, shared
 import { isShipmate } from '../combat/friendlyFire.js';   // SHIPMATES: my crew named on the wire, and never the swing's
 import { campTagsOf, validCampTags } from '../world/campShared.js';   // OW6: a camp rides tagged, and an heir takes it as a camp

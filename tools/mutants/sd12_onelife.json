@@ -46,7 +46,7 @@
   },
   {
     "name": "SD12-ONELIFE-the-fallen-let-through",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "  if (fallen) return SD_NO_FALLEN;\n",
     "new": "",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "SD12-ONELIFE-one-memory-for-both",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "export const SD_FALLEN_KEY = 'sd12.fallen';",
     "new": "export const SD_FALLEN_KEY = SD_ENTERED_KEY;",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "SD12-ONELIFE-a-forgiving-death",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "casts you out for good. You wake",
     "new": "casts you out. You wake",
     "tests": [

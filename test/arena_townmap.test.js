@@ -1,5 +1,5 @@
 // ARENA-MAP (2026-10-03, the owner, live: "Arena doesn't show on town map") - THE ARENA ON THE TOWN MAP
-// (`world/arenaCity.js` arenaAutoMap / arenaTownLandmark, `ui/exteriorAutomapWindow.js` buildPlates,
+// (`world/arena/arenaCity.js` arenaAutoMap / arenaTownLandmark, `ui/exteriorAutomapWindow.js` buildPlates,
 // `ui/townSheet.js` named, the two exterior hosts' `blocks`). Both town maps draw a cell off its block's own automap
 // bytes, and Kamer's bowl is byte 117 - BuildingTypes.Special1 + 1, "never displayed on automap" - so cell (4,3) of
 // Daggerfall read as empty street; and the colosseum is no building of the list, so no name stood on it. Each pin is red
@@ -10,10 +10,10 @@ import { readFileSync } from 'node:fs';
 import {
   installArena, _resetArena, arenaAutoMap, arenaTownLandmark, arenaColosseumAt, ARENA_BLOCK, ARENA_BLOCK_INDEX,
   ARENA_MAP_BYTE, ARENA_MAP_NAME,
-} from '../src/world/arenaCity.js';
-import { SAND_R } from '../src/world/arenaFloor.js';
+} from '../src/world/arena/arenaCity.js';
+import { SAND_R } from '../src/world/arena/arenaFloor.js';
 import { getDFBlockReplacementData } from '../src/formats/worldDataReplacement.js';
-import { CityNavigation } from '../src/world/cityNavigation.js';
+import { CityNavigation } from '../src/world/city/cityNavigation.js';
 import { quarterOf, isShowAllByte } from '../src/ui/townQuarters.js';
 import { townBytes, townReader, quarterChains, sheetY, BLOCK_PX } from '../src/ui/inkTown.js';
 import { boundarySegments, linkSegments } from '../src/ui/inkMap.js';
@@ -131,7 +131,7 @@ test('ARENA-MAP: the name - "Arena" at the colosseum\'s place on both maps, alwa
 test('ARENA-MAP: both exterior hosts hand the landmark on the town map\'s block rows; the interior and dungeon hosts open no town map', () => {
   for (const host of ['src/scenes/world.js', 'src/scenes/exterior.js']) {
     const s = read(host);
-    assert.match(s, /import \{[^}]*\barenaTownLandmark\b[^}]*\} from '\.\.\/world\/arenaCity\.js';/, `${host} imports it`);
+    assert.match(s, /import \{[^}]*\barenaTownLandmark\b[^}]*\} from '\.\.\/world\/arena\/arenaCity\.js';/, `${host} imports it`);
     assert.match(s, /blocks: (?:b\.locBlocks|loc\.blocks)\.map\(\(bl\) => \(\{ x: bl\.x, y: bl\.y, autoMap: bl\.dfBlock\?\.rmbBlock\?\.fldHeader\?\.autoMapData, landmark: arenaTownLandmark\(bl\.dfBlock\) \}\)\),/, `${host}'s town map rows`);
   }
   for (const host of ['src/scenes/worldModes.js', 'src/scenes/dungeonContext.js']) assert.doesNotMatch(read(host), /createTownMapWindow/, `${host} opens no town map`);

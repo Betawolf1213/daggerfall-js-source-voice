@@ -145,7 +145,7 @@ export function eliteRng(seed) {
  * THE DUNGEON'S PICK (normal dungeons: 0 or 1, see below): which records of the dungeon's (already expanded) foe list are elites - 3 or 4 of them,
  * never an ally or a passive foe, the same on every client (seeded by `key`, the dungeon's location id). Marks them
  * `eliteFoe: true` in place and answers how many. SD4a: `count` a number of the caller's own - a Super dungeon's
- * SUPER_ELITE_FOES (world/sdDungeon.js).
+ * SUPER_ELITE_FOES (world/superDungeon/sdDungeon.js).
  */
 export function pickDungeonElites(enemies, key, { elite = true, count = null, classLevel = Infinity } = {}) {
   if (!Array.isArray(enemies) || !enemies.length) return 0;

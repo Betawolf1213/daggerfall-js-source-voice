@@ -10,7 +10,7 @@ import { readFileSync } from 'node:fs';
 import {
   DFIRE, DUNGEON_FIRE_FLAT, dungeonFireCount, fireCandidates, landCandidates, chooseFires, placeDungeonFires, dungeonStart,
   enemyMarks, isBorderBlock, inFireWard, colliderFireProbe,
-} from '../src/world/dungeonFires.js';
+} from '../src/world/dungeon/dungeonFires.js';
 import { Collider } from '../src/player/collider.js';
 import { RDB_SIDE } from '../src/world/rdbLayout.js';
 import { FIRE_FLAT } from '../src/systems/survival/camp.js';

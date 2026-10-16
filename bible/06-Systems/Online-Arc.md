@@ -1760,7 +1760,7 @@ Thirteen findings fixed, five recorded and not paid.
 `/^dungeon:m\d{1,8}$/`, ONE HOME at both ends - admitted eight digits
 of map id, and a real `MapTableData.MapId` is a 32-bit integer:
 Privateer's Hold is **187853213**, Daggerfall 1291010263, Wayrest
-630439035 (the port's own table, `world/dungeonTextures.js`
+630439035 (the port's own table, `world/dungeon/dungeonTextures.js`
 MAIN_STORY_DUNGEON_IDS, DFU's `IsMainStoryDungeon` verbatim). So every
 real dungeon minted a key the law refused, at the client and at the
 relay alike; the room was joined all the same (a key is a key), the
@@ -2557,7 +2557,7 @@ from a survey of every piece of mutable world state outside a dungeon
   predicate - the memory, the acts, `sendWorld`/`sendAct`/`onAct`,
   the relay's own admission - follows without a second switch; the
   relay MUST BE REDEPLOYED (`RELAY_VERSION` `world6`).
-- **The pure half** (`src/world/interiorShared.js`): the memory
+- **The pure half** (`src/world/interior/interiorShared.js`): the memory
   mirrors the dungeon's and is subtracted the same way - the action
   records' SHARED half (`sharedRecord`, AUDIT WORLD3 B1), projected
   before they land (`validActionRecord`, A2/WORLD34 C2) and RESTORED
@@ -8725,7 +8725,7 @@ M1's spent slots) and spends its own copy of each marker named (not one whose ca
 race goes to the first spring - the list carries each marker's age - and inside five seconds to the smaller id; the
 loser takes its camp down, a foe still building included. A camp foe hunts the peers. The treasure stays its springer's; a camp leaves with
 its owner; the relay remembers no marker. No wire or relay change: the tags ride the foes frame beside `c` and are
-checked at the reader (`world/wodShared.js`). The full record is `03-World/World-Of-Daggerfall.md` WOD7. Pins:
+checked at the reader (`world/worldOfDaggerfall/wodShared.js`). The full record is `03-World/World-Of-Daggerfall.md` WOD7. Pins:
 `test/wod7_sharedcamps.test.js`; mutants `tools/mutants/wod7.json`.
 
 ## AUDIT ATTACH (2026-09-23, found by INSPECT1's measurement of the attachment its card meter would ride) - a socket's meters leave its attachment, world102
@@ -8847,7 +8847,7 @@ join the bundle. The client half so far is the session's (`gateOk`, `sendGate`, 
 ## WB3b (2026-09-25, Mac: "a gate of oblivion which takes place in a large boss arena") - the Burning Court; see 11-Multiplayer/World-Bosses.md
 
 The gate's door opens now: at a relay that runs a gate's boss room (world113; world110 on its branch), walking through the fire enters the
-Burning Court - the dungeon host's own arm with a level made in code (`world/gateArena.js`), not a fifth host. Its
+Burning Court - the dungeon host's own arm with a level made in code (`world/gate/gateArena.js`), not a fifth host. Its
 room is the gate's `gate:<day>`; the level claim goes out once per welcome; the court's words land in
 `net/gateLink.js`, which the world's gate reads for its collapse and the chat for the kill line. A death there is cast
 out before the gate, the day's end or going offline ends the court the same way, and the map, the rest, the save and
@@ -9491,7 +9491,7 @@ took: three town homes a character, no upkeep.
   no one.
 - **The room.** An online home keeps its relay room (an owned offline house or a ship keeps none, as before), so its
   owner and their guests stand in it together and its doors are shared - but the room carries NO LOOT
-  (`world/interiorShared.js`, the bag's `home`): its memory names no cupboard, a peer's word about one never lands
+  (`world/interior/interiorShared.js`, the bag's `home`): its memory names no cupboard, a peer's word about one never lands
   (a word about `container:3` would have overwritten the owner's chest, and then been published back as the room's),
   and a refused act's records name none.
 - **Quests** (`systems/quest/place.js`, a departure: Daggerfall has one player): no quest stands in a player's home -
@@ -10000,7 +10000,7 @@ home's alone - they are about other players.
 ### HOME-DOORS - a door hung in a doorway, and every doorway marked
 
 - **The door** is one of Daggerfall's own: the five interior door models DaggerfallInterior hangs (AddActionDoors'
-  9000 + the record's index of five - `world/interiorLayout.js` DOOR_MODEL_BASE_ID, DOOR_MODEL_COUNT, now exported
+  9000 + the record's index of five - `world/interior/interiorLayout.js` DOOR_MODEL_BASE_ID, DOOR_MODEL_COUNT, now exported
   once), read into the catalogue from the town blocks' own door records (`systems/decor/decorCatalogue.js` collectDecor -
   kind "Doors", named "Door N"), priced by size as any piece. The account service keeps it as the piece it is (a model
   id and a place): nothing on the service knows a door from a chair.
@@ -10418,7 +10418,7 @@ lighting isnt shown lantern light anymore?"
   it as the town either: a lamp post placed in a yard stood dark beside the street's lit ones, while the yard's
   catalogue said "gives light" of every lamp.
 - **The law: an outdoor lamp IS the town's.** Daggerfall lights every TEXTURE.210 flat standing in a town block
-  (RMBLayout.AddLight - `world/cityLights.js` collectCityLights), so a yard's lights too (`scenes/homeYards.js`
+  (RMBLayout.AddLight - `world/city/cityLights.js` collectCityLights), so a yard's lights too (`scenes/homeYards.js`
   yardLampOf): the town's lantern (YARD_LAMP - DaggerfallLight [City]: range 18, intensity 1, white - the law's numbers;
   the frame lights it as it lights the street's, below), hung where the town hangs its own - the flat's drawn top and
   the 0.15 m the town's billboards are sunk by and their lights are not (YARD_LAMP_RAISE: `world/rmbFlats.js`
@@ -12905,7 +12905,7 @@ Mac: "lets finish the build work" - two more of the Seats arc's NOT YETs (Seats-
   it); the holder's banners hang at more anchors measured where the pixel is built (festivalBannerAnchors: two beside
   each tavern's door, a pennant over each bounty board, at most 6; `scenes/seatBanners.js` createSeatBanners); and a
   lantern burns before every banner the town flies, in the street's lantern pool (festivalLanternsOf,
-  `world/cityLights.js` fillLanternPool's `extra`), lit dusk to dawn and flickering on the slots after the pixel's own.
+  `world/city/cityLights.js` fillLanternPool's `extra`), lit dusk to dawn and flickering on the slots after the pixel's own.
 - **Audited** (2026-10-02): the seats' list was read only at the session's start and a town's arrival, so a Festival (or a
   Curfew) outlived its week for a player who stayed in town past the Turning, and one that became law was never staged.
   A list read in an earlier seat week is now expired (`net/townSeatBook.js` read), and the book's frame tick (redTick,
@@ -15625,7 +15625,7 @@ the one funnel every dungeon entry takes (the door, startInDungeon's Recall, que
 the abyss, the undercroft, the arena floor) - refuses the Hold online before its gate (no hub's word, no build) and
 says so: "You cannot go back into Privateer's Hold." (`systems/startDungeon.js` HOLD_ONCE_TEXT).
 
-- The Hold is known by its map id - `systems/startDungeon.js` isPrivateersHold, `world/dungeonTextures.js`
+- The Hold is known by its map id - `systems/startDungeon.js` isPrivateersHold, `world/dungeon/dungeonTextures.js`
   PRIVATEERS_HOLD_MAP_ID (187853213, DaggerfallDungeon.IsMainStoryDungeon's first; MAIN_STORY_DUNGEON_IDS reads the
   same constant) - never the configured start cell, a setting that would otherwise open the real Hold.
 - What still enters: the new game's start (`scenes/world.js`, the classic start's `startInDungeon({ holdOpen: true })`),

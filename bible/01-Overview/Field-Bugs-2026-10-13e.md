@@ -26,7 +26,7 @@ is a Ledger A row.
 ## SPELL-LOCK: a Lock spell's lock is its caster's, and no peer's word locks a door past its own data (4)
 
 `src/world/actionSystem.js` lockCeiling, lockLands, restoreSaveData's `remote` and `level`, applyRemote;
-`src/world/interiorShared.js` applyInteriorShared; `src/scenes/dungeonContext.js` applyWorld; `src/scenes/worldModes.js`
+`src/world/interior/interiorShared.js` applyInteriorShared; `src/scenes/dungeonContext.js` applyWorld; `src/scenes/worldModes.js`
 the building's cached copy.
 
 FOUND. Nothing in the port locks a building's inner door: interiorContext adds its doors with no starting lock, as
@@ -339,7 +339,7 @@ draws neither). The reporter's machine and settings.
 
 THE SHADOW PASS, COUNTED AFTER (2026-10-14). The probe timed the telegraph and the crowd after `beginFrame`; the shadow
 maps are drawn inside it. `tools/courtShadowProbe.mjs` counts them: a still court draws none, but his glow and every
-landing flash are composed as lamps (`world/gateArena.js` withCourtLights marks none carried), so while he walked among
+landing flash are composed as lamps (`world/gate/gateArena.js` withCourtLights marks none carried), so while he walked among
 a crowd 12 cube faces, 6 lo faces and 6 copies a frame were drawn for his glow alone, and a Hellfire landing on five
 draws 36 faces a frame (66 at worst) over its 27 lit frames and the two after, replaying the bodies about him (0.43M
 corners a frame). Composed carried they would cost nothing and cast no shadow; Mac kept the shadows and asked for the

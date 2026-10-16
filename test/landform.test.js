@@ -9,11 +9,11 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { WoodsFile, MAP_WIDTH, MAP_HEIGHT } from '../src/formats/woodsFile.js';
-import { generateSamples, ghostSampler, sampleKernel, kernelTerms, HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE, DEFAULT_TERRAIN_SCALE, SCALED_OCEAN_ELEVATION } from '../src/world/terrainSampler.js';
+import { generateSamples, ghostSampler, sampleKernel, kernelTerms, HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE, DEFAULT_TERRAIN_SCALE, SCALED_OCEAN_ELEVATION } from '../src/world/terrain/terrainSampler.js';
 import { createLandforms, reliefLift, reliefByteHeight, landformLift, hillsAt, LANDFORM_KNEE, LANDFORM_FLOOR, LANDFORM_DIALS, LANDFORM_CEILING, HILLS_TOP } from '../src/world/landforms.js';
-import { generateTileData, BEACH_JITTER } from '../src/world/terrainTiles.js';
-import { generatePixelTerrain, restrideGrid } from '../src/world/terrainGen.js';
-import { DIR } from '../src/world/roadNetwork.js';
+import { generateTileData, BEACH_JITTER } from '../src/world/terrain/terrainTiles.js';
+import { generatePixelTerrain, restrideGrid } from '../src/world/terrain/terrainGen.js';
+import { DIR } from '../src/world/road/roadNetwork.js';
 import { syntheticWoodsBytes, network } from './landformWorld.mjs';   // the synthetic world, one home (AUDIT LANDFORMS)
 import { ringHeight, buildFarRingGrid } from '../src/render/farRing.js';
 import { landformsOn } from '../src/scenes/shared.js';
@@ -384,11 +384,11 @@ test('LANDFORM1-3: the host reads the row once, cuts every pixel and every promo
   assert.match(WORLD, /const today = was === STREAMING_TERRAIN_SCALE && !landform;/, 'the quickload');
   assert.match(WORLD, /const rows = savedScale === STREAMING_TERRAIN_SCALE && !landform \? outer : outer\.map/, 'the camps left outside');
   assert.match(WORLD, /return restandHeight\(y, x, z, was\); \};   \/\/ LANDFORM1: the row's lift put back on\n    droppedLoot\.restoreWorld\(arrived/, 'the exterior scene cache');
-  const tg = src('src/world/terrainGen.js');
+  const tg = src('src/world/terrain/terrainGen.js');
   // AUDIT LANDFORMS D3 MOVED THIS PIN: the same pass writes DFU's own samples beside, for a location's tiles
   assert.match(tg, /const landforms = landform \? createLandforms\(\{ woods, roads, sites, climates \}\) : null;\n(?:  \/\/[^\n]*\n)*  const classic = landforms && hasLocation \? new Float32Array\(HEIGHTMAP_DIMENSION \* HEIGHTMAP_DIMENSION\) : null;\n  const samples = generateSamples\(woods, px, py, HEIGHTMAP_DIMENSION, landforms, classic\);/, 'the kernel cuts along the network the painter paints');
   assert.match(tg, /const lf = landforms \?\? \(landform \? createLandforms\(\{ woods, roads, sites, climates \}\) : null\);/, 'and a promotion\'s ghost rows along the same');
-  assert.match(src('src/world/terrainGenWorker.js'), /if \(m\.t === 'grid' && m\.landform && pendingRoads\) \{ pendingRoads\.then\(\(\) => handle\(m\)\); return; \}/, 'a landforms promotion waits for the network its pixel was cut along');
+  assert.match(src('src/world/terrain/terrainGenWorker.js'), /if \(m\.t === 'grid' && m\.landform && pendingRoads\) \{ pendingRoads\.then\(\(\) => handle\(m\)\); return; \}/, 'a landforms promotion waits for the network its pixel was cut along');
 });
 
 test('LANDFORM1-3: the worker cuts what this thread cuts - a job and a promotion, byte for byte', async () => {
@@ -396,7 +396,7 @@ test('LANDFORM1-3: the worker cuts what this thread cuts - a job and a promotion
   const prevPost = globalThis.postMessage, prevOn = globalThis.onmessage;
   globalThis.postMessage = (msg) => posted.push(msg);
   try {
-    await import('../src/world/terrainGenWorker.js?landform');
+    await import('../src/world/terrain/terrainGenWorker.js?landform');
     globalThis.onmessage({ data: { t: 'init', woodsBytes: WOODS_BYTES.slice() } });
     const copy = (n) => ({ roads: n.roads.slice(), tracks: n.tracks.slice(), rivers: n.rivers.slice(), streams: n.streams.slice(), water: n.water, smooth: n.smooth });
     globalThis.onmessage({ data: { t: 'roads', net: copy(NET) } });

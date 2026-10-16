@@ -1,5 +1,5 @@
 // WB5 (2026-09-25, Mac: "On death the boss would physically spew out per player loot and bounce (sort of how dropping a
-// torch works) and have a sort of rarity glow attached to it"): THE SPOILS, DRIVEN. The spew (world/gateSpew.js - each
+// torch works) and have a sort of rarity glow attached to it"): THE SPOILS, DRIVEN. The spew (world/gate/gateSpew.js - each
 // piece's launch out of his chest toward the player's side, one at a time, and the thrown torch's own flight: gravity
 // by its drag, the bounce off the struck face at its bounciness, rest under a fifth of the throw); the glow
 // (render/spoilsGlow.js - Loot Rarity's own colours, a beam by tier over a halo, the pass on the duel wall's law); the
@@ -8,7 +8,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { spewLaunches, spewPiece, stepSpew, flySpew, SPEW_GAP_MS, SPEW_SPREAD, SPEW_SPEED, SPEW_BOUNCE, SPEW_GRAVITY_DRAG, SPEW_FLIGHT_MAX_S } from '../src/world/gateSpew.js';
+import { spewLaunches, spewPiece, stepSpew, flySpew, SPEW_GAP_MS, SPEW_SPREAD, SPEW_SPEED, SPEW_BOUNCE, SPEW_GRAVITY_DRAG, SPEW_FLIGHT_MAX_S } from '../src/world/gate/gateSpew.js';
 import { PROJECTILE, PROJECTILE_FIXED_DT } from '../src/scenes/droppedTorches.js';
 import { seededRng } from '../src/systems/wind/wind.js';
 import {
@@ -29,7 +29,7 @@ import { RANDOM_TREASURE_ICONS, validLootItem } from '../src/systems/loot/loot.j
 import { createGateCourt, SPEW_AT_MS, RECEIPT_WAIT_MS, COURT_STRIKE_TEXT } from '../src/scenes/gateCourt.js';
 import { GATE_STATE_EMPTY } from '../src/net/gateLink.js';
 import { mintReceipt } from '../src/net/gateReceipt.js';
-import { courtToDungeon, COURT_TEXT } from '../src/world/gateArena.js';
+import { courtToDungeon, COURT_TEXT } from '../src/world/gate/gateArena.js';
 import { readFileSync } from 'node:fs';
 
 /** A floor at y 0, as the collider's ray answers it. */

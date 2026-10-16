@@ -1,9 +1,9 @@
 // @ts-check
 // SD17 (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 10 and section 16's SD17;
 // Mac: "The detail needs to exceed that of the oblivion gates"): THE BODY MOVED - the Brass Remnant and its Echoes
-// stood as seven parts (two legs, the torso with its cage and heart, the head, two arms - world/sdRemnantModel.js
+// stood as seven parts (two legs, the torso with its cage and heart, the head, two arms - world/superDungeon/sdRemnantModel.js
 // buildRemnantParts), each turned about its own joint by a pure law of the fight this page holds; the Volley's gears in
-// flight and the Hour-Hand's beam in the air. The Warden is a sprite of 10 states (world/gateBoss.js); the Remnant stood
+// flight and the Hour-Hand's beam in the air. The Warden is a sprite of 10 states (world/gate/gateBoss.js); the Remnant stood
 // rigid in every one of its blows.
 //
 //   THE STATES (`SD_REM_STATES`, 18): dormant before its wake (bowed), its wake (rising, arms flung wide), still
@@ -25,7 +25,7 @@
 import { SD_ARENA, SD_REALM_ORIGIN } from '../net/sdBrain.js';
 import { SD_BLOW_BY_ID, SD_BLOWS, SD_BODY, SD_REM, SD_ECHO, SD_BREAK_MS, atkWindup, blowShape, behindPillar } from '../net/sdRemnant.js';
 import { sdBodyAt } from '../net/sdFightLink.js';
-import { SD_REMNANT_BODY, SD_REMNANT_DIAL } from '../world/sdRemnantModel.js';
+import { SD_REMNANT_BODY, SD_REMNANT_DIAL } from '../world/superDungeon/sdRemnantModel.js';
 import { SD_STRIDE_M, SD_ECHO_STRIDE_M, SD_SLIP_FRAC, SD_RELEASE_MS } from './sdRemnantVoice.js';
 
 /** The rig's eighteen states, as `remnantRig` names the one that leads. */
@@ -33,7 +33,7 @@ export const SD_REM_STATES = Object.freeze([
   'dormant', 'wake', 'still', 'walk', 'stompRaise', 'stompLand', 'handRaise', 'handSweep', 'volleyGather', 'volleyThrow',
   'pulse', 'resetRaise', 'resetSlam', 'end', 'stunned', 'rising', 'slip', 'fallen',
 ]);
-/** The parts turned, in the order the scene stands them (world/sdRemnantModel.js SD_REMNANT_PARTS after the pelvis, which
+/** The parts turned, in the order the scene stands them (world/superDungeon/sdRemnantModel.js SD_REMNANT_PARTS after the pelvis, which
  *  stands where the body does): its right leg (at -x - it faces +z), its left, the torso, the head, its right arm, its
  *  left. */
 export const SD_RIG_PARTS = Object.freeze(['legR', 'legL', 'torso', 'head', 'armR', 'armL']);
@@ -449,7 +449,7 @@ export function sdBeamDraws(s, t, out = null) {
   return list;
 }
 
-// ── SD-LOOK S8: the decor's matrices (world/sdRemnantModel.js's back-dial, its hand, the heart torn out) ─────────────
+// ── SD-LOOK S8: the decor's matrices (world/superDungeon/sdRemnantModel.js's back-dial, its hand, the heart torn out) ─────────────
 const DIAL = SD_REMNANT_DIAL;
 /** THE FALL'S DECOR (Super-Dungeons-Look.md section 10): the back-dial breaks free - drops off the back (`pop` metres
  *  back over its first half-second) under `g`, landing on its rim, and rolls toward the body's right `roll` metres,

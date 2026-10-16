@@ -4,8 +4,8 @@ import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { dfMeshToModel, GLOBAL_SCALE, DOOR_TYPE } from '../src/world/meshReader.js';
 import { getStaticDoors } from '../src/world/staticDoors.js';
-import { layoutInterior, isBadInteriorModel, INTERIOR_MARKER } from '../src/world/interiorLayout.js';
-import { collectInteriorLights } from '../src/world/interiorLights.js';
+import { layoutInterior, isBadInteriorModel, INTERIOR_MARKER } from '../src/world/interior/interiorLayout.js';
+import { collectInteriorLights } from '../src/world/interior/interiorLights.js';
 import { Arch3dFile } from '../src/formats/arch3dFile.js';
 import { BlocksFile } from '../src/formats/blocksFile.js';
 
@@ -272,7 +272,7 @@ test('interior: full corpus - every building interior lays out clean', { skip: s
 
 test('interior: R8 point lights - offsets and MAGEAA00 pins', { skip: skipReal }, async () => {
   const { collectInteriorLights, INTERIOR_AMBIENT, INTERIOR_LIGHT_RANGE } =
-    await import('../src/world/interiorLights.js');
+    await import('../src/world/interior/interiorLights.js');
   // Offset law on synthetic flats: base + h/2 + per-record offset;
   // 14/15 use +h/2 and 21 uses +h/2.4; unknown records add 0.
   const size = () => ({ w: 1, h: 2 });

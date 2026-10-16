@@ -53,7 +53,7 @@ it is protectable:
 
 ## ROADS 1 - the network (2026-09-01)
 
-`world/roadNetwork.js`, PURE: it takes the settlement list and two
+`world/road/roadNetwork.js`, PURE: it takes the settlement list and two
 samplers and returns the two mask arrays, which is what lets it be
 pinned on a synthetic map in a container with no game data.
 
@@ -90,7 +90,7 @@ worse-judged at first. That is iteration on our own thing.
 
 ## ROADS 2 - the painter (2026-09-01)
 
-`world/roadPainter.js`, written from the design rather than ported.
+`world/road/roadPainter.js`, written from the design rather than ported.
 Row 0 of a pixel's tilemap is SOUTH and row 127 NORTH (terrainSampler
 :150-151, "y=0 of py equals y=128 of py+1"), so N paints up in y. Roads
 are tile 46 over any ground, with 47 (dirt) or 55 (grass) as the edge;
@@ -686,7 +686,7 @@ The water half of the same report - *"some textures not taking the water
 tile"* - is GRASS-WET1, in `07-Rendering/Rendering.md`: the water-grass
 shore records a stream writes over grass (20-22, 49) are mostly-grass by
 texel count, so they passed `grassRecordsOf` and blades grew up out of
-the water. That one needed no new data: `world/waterCorners.js` already
+the water. That one needed no new data: `world/water/waterCorners.js` already
 owns the question, and the placer asks it now.
 
 ## LANDFORM2/3 - the roads and rivers cut into the land (2026-10-06)
@@ -728,7 +728,7 @@ they slightly overlap"*.
 Every placer of the wild's flats asked ONE TILE - the one the flat's root
 stands on - and never how wide the thing standing there was:
 
-- DFU's scatter (`world/terrainNature.js` `dfuScatter`, Real forests off,
+- DFU's scatter (`world/terrain/terrainNature.js` `dfuScatter`, Real forests off,
   and every desert) roots each flat on its tile's south-west CORNER, so on
   a road's east and north sides the root is the road's edge and half the
   picture hangs over it;
@@ -739,7 +739,7 @@ stands on - and never how wide the thing standing there was:
   8.5, 8.96, 9.25, 10.88, 11.14, 5.8, 5.52 m), more at the tree's own
   scale (0.6-1.4).
 
-**The law** (`world/roadVerge.js`): a wild flat stands only where the DISC
+**The law** (`world/road/roadVerge.js`): a wild flat stands only where the DISC
 of its reach touches no road or track.
 
 - The road is Basic Roads' band - two tiles, 6.4 m either side of the line
@@ -825,7 +825,7 @@ paved ring Basic Roads lays round it ("Paint roads around locations").
 Nothing asked the streets either: they are the location's own tiles, not the
 network's band.
 
-**The law** (`world/roadVerge.js`): every Low Poly tree is DRAWN no wider than
+**The law** (`world/road/roadVerge.js`): every Low Poly tree is DRAWN no wider than
 the room its root has. A scale, never a move - the trunk, its collider and
 cover, Logging's tree and the room's ground stay where DFU stands the flat,
 and the mod draws the tree smaller, as it draws it at all, on the player's

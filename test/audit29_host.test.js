@@ -19,7 +19,7 @@ import { createGatherHost, aimAt, NODE_AIM_DEG } from '../src/scenes/gatherHost.
 import { herbKind } from '../src/scenes/herbHost.js';
 import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { FT } from '../src/systems/foraging/foragingLaw.js';
-import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const noWait = () => Promise.resolve();

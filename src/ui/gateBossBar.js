@@ -23,11 +23,11 @@
 import { ATTACK_BY_ID, ATTACKS, PHASE_AT, profileOf, HOST, isDagons } from '../net/gateBrain.js';
 import { telegraphAt } from '../net/gateStrike.js';
 import { countdownText } from '../net/gateLaw.js';
-import { attackColor, crystalColor, STUN_COLOR, WARD_COLOR } from '../world/gateBoss.js';
+import { attackColor, crystalColor, STUN_COLOR, WARD_COLOR } from '../world/gate/gateBoss.js';
 import { GATE_RING_CSS } from './gateMapMark.js';
 import { marksViewOf, markIconHtml } from './gateMarksView.js';   // WB9a: the night's marks under his health, each its sign and name
 import { stepGhost } from './barLoss.js';   // WB13c: the trailing damage segment, the vitals' own
-import { LOW_HEALTH } from '../world/gateBoss.js';   // WB13e: the bar pulses under his low health
+import { LOW_HEALTH } from '../world/gate/gateBoss.js';   // WB13e: the bar pulses under his low health
 import { injectEnhancedFonts } from './enhancedStyle.js';   // WB13c: the classic face, loaded by the gate's own screens
 
 /** Where it stands: under the compass strip, centred (the gate banner's place - the two never show together: the

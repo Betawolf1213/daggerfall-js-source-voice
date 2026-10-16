@@ -669,7 +669,7 @@ const PUBLIC_ALLOWLIST = new Map([
   // FBX is the source; tools/bakeGalleon.mjs re-makes galleon.json from it
   // (its parts in the boat's frame, triangulated), and
   // test/galleon_model.test.js holds the bake to the bytes. Her pictures
-  // carry no file at all: world/galleonArt.js paints them at load, from
+  // carry no file at all: world/ships/galleonArt.js paints them at load, from
   // nothing but numbers - no ARENA2 pixel.
   ['src/assets/galleon/source/New_Ship.fbx', "SUPPLIED - Mac's Blender export of the new galleon (2026-10-01; his second, New_Ship_Even_EVEN_newer.fbx, over it 2026-10-02), committed so galleon.json is a DERIVATION the gate can re-run"],
   ['src/assets/galleon/galleon.json', 'SUPPLIED - New_Ship.fbx baked to the boat\'s frame by tools/bakeGalleon.mjs; geometry only, no ARENA2 or Come Sail Away data'],
@@ -677,14 +677,14 @@ const PUBLIC_ALLOWLIST = new Map([
   // supplied as three Blender exports - New_Ship_2.fbx, New_Ship_2_Shutter.fbx and Tiny_Ship.fbx, the newest holding
   // both ships and the shutter in their places, so it alone is committed. tools/bakeCarrack.mjs and
   // tools/bakeLargeBoat.mjs re-make their JSON from it (tools/shipBake.mjs), and test/ships2_bake.test.js holds both
-  // to the bytes. Their pictures carry no file: world/carrackArt.js and world/largeBoatArt.js paint them at load.
+  // to the bytes. Their pictures carry no file: world/ships/carrackArt.js and world/ships/largeBoatArt.js paint them at load.
   ['src/assets/ships/source/Tiny_Ship.fbx', "SUPPLIED - Mac's Blender export of the new carrack and the new large boat in one scene (2026-10-07; the newest of the three he sent), committed so carrack.json and largeBoat.json are DERIVATIONS the gate can re-run"],
   ['src/assets/ships/carrack.json', 'SUPPLIED - Tiny_Ship.fbx\'s carrack baked to the boat\'s frame by tools/bakeCarrack.mjs; geometry only, no ARENA2 or Come Sail Away data'],
   ['src/assets/ships/largeBoat.json', 'SUPPLIED - Tiny_Ship.fbx\'s large boat baked to the boat\'s frame by tools/bakeLargeBoat.mjs; geometry only, no ARENA2 or Come Sail Away data'],  ['src/assets/sunbaby/todd.jpg', 'SUPPLIED - a photograph of Todd Howard that Mac supplied for the sun baby event (SUNBABY3, 2026-10-04), cropped to the face and recompressed by ImageMagick; no ARENA2 pixel in it - a third-party photo, not the port own art, kept at his explicit request'],
   // GATE-FBX (2026-10-09, Mac: "replace the oblivion gate model with this handcrafted model which also needs texturing"):
   // MAC'S OBLIVION GATE, supplied as one Blender export of his whole "Oblivion Models" scene - the gate one object of
   // it, committed whole as the ships' scenes are. tools/bakeGate.mjs re-makes the JSON from it (tools/shipBake.mjs), and
-  // test/gatefbx.test.js holds it to the bytes. Its pictures carry no file: world/gateArt.js paints them at load.
+  // test/gatefbx.test.js holds it to the bytes. Its pictures carry no file: world/gate/gateArt.js paints them at load.
   ['src/assets/gate/source/Oblivion_Gate.fbx', "SUPPLIED - Mac's Blender export of his Oblivion models' scene, the gate (Cube.1688) among them (2026-10-09), committed so oblivionGate.json is a DERIVATION the gate can re-run"],
   ['src/assets/gate/oblivionGate.json', 'SUPPLIED - Oblivion_Gate.fbx\'s gate baked to the gate\'s frame by tools/bakeGate.mjs; geometry only, no ARENA2 data'],
   // WAGONS1 (2026-10-09, Mac: "Here are 3 new models that will need to be textured"): MAC'S THREE WAGONS, supplied as
@@ -1056,7 +1056,7 @@ test('doctrine: .gitignore still blocks the game data it claims to block', () =>
 // DEPARTURE; the gate then scanned only that token, so the OTHER half of F7's
 // finding - "a `src/` site cites Ledger A and no row on that page names the
 // file" - went on recurring in silence. Seventeen files were in exactly that
-// state at HEAD: `characters/dungeonEnemies.js`, `world/dungeonTextures.js`,
+// state at HEAD: `characters/dungeonEnemies.js`, `world/dungeon/dungeonTextures.js`,
 // `player/cameraRecoiler.js`, `player/moveScanner.js`, `scenes/menu.js`,
 // `systems/repairService.js`, `systems/riding.js`, seven of
 // `systems/quest/*` (clock, foe, message, parser, person, quest, questLists),

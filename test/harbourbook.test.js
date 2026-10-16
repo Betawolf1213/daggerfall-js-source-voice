@@ -9,8 +9,8 @@ import { readFileSync } from 'node:fs';
 import { createHarbourBook, HARBOUR_RETRY_S } from '../src/systems/naval/harbourBook.js';
 import { findHarbour, draftOf } from '../src/systems/naval/shipLife.js';
 import { planQuay, JETTY_MAX, JETTY_BEACH, DRY_M } from '../src/systems/naval/quays.js';
-import { SHORE_TERRAIN_FIT_METERS } from '../src/world/deepWaterFloor.js';
-import { sampleDepthMeters } from '../src/world/deepBathymetry.js';
+import { SHORE_TERRAIN_FIT_METERS } from '../src/world/deepWater/deepWaterFloor.js';
+import { sampleDepthMeters } from '../src/world/deepWater/deepBathymetry.js';
 import { sea } from './navalSea.mjs';
 
 const read = (f) => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');

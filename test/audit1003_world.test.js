@@ -15,11 +15,11 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { Collider } from '../src/player/collider.js';
 import { PlayerMotor, FIXED_DT } from '../src/player/motor.js';
-import { installArena, _resetArena, arenaDrawnModel, arenaGroundTiles, ARENA_PAVING } from '../src/world/arenaCity.js';
-import * as AF from '../src/world/arenaFloor.js';
-import { ARENA_MODEL_ID, buildArenaModel, sealArenaSeams } from '../src/world/arenaModel.js';
-import * as AM from '../src/world/arenaModel.js';
-import { layoutDungeon } from '../src/world/dungeonLayout.js';
+import { installArena, _resetArena, arenaDrawnModel, arenaGroundTiles, ARENA_PAVING } from '../src/world/arena/arenaCity.js';
+import * as AF from '../src/world/arena/arenaFloor.js';
+import { ARENA_MODEL_ID, buildArenaModel, sealArenaSeams } from '../src/world/arena/arenaModel.js';
+import * as AM from '../src/world/arena/arenaModel.js';
+import { layoutDungeon } from '../src/world/dungeon/dungeonLayout.js';
 import { customModelFor, emptyModel, registerCustomModel, _resetCustomModels } from '../src/world/customModels.js';
 import * as CM from '../src/world/customModels.js';
 import { trs, multiply } from '../src/world/mat4.js';
@@ -27,7 +27,7 @@ import { GROUND_OFFSET } from '../src/world/rmbLayout.js';
 import { getModelMatrix } from '../src/world/rdbLayout.js';
 import { createArenaBouts } from '../src/scenes/arenaBouts.js';
 import { exhibitionFor } from '../src/systems/arena/arenaLadder.js';
-import { applyTextureTable } from '../src/world/dungeonTextures.js';
+import { applyTextureTable } from '../src/world/dungeon/dungeonTextures.js';
 import { remapSubMeshes } from '../src/world/texRemap.js';
 import { keyResolver } from '../src/render/staticBatch.js';
 import { castleEntranceOf } from '../src/systems/siegeField.js';
@@ -40,7 +40,7 @@ let _drawn = null;
 const drawnColosseum = () => (_drawn ??= arenaDrawnModel(buildArenaModel(IDX, BIN, () => null)));
 const still = { forward: 0, strafe: 0, run: false, jump: false, up: false, down: false };
 
-/** THE MADE LEVEL'S COLLIDER, laid as scenes/dungeonContext.js lays it: world/dungeonLayout.js over the made blocks file,
+/** THE MADE LEVEL'S COLLIDER, laid as scenes/dungeonContext.js lays it: world/dungeon/dungeonLayout.js over the made blocks file,
  *  every placement's model out of the registry installArena fills (the pipeline's door, world/customModels.js), each
  *  added to one 'dungeon' bucket over no terrain at all. */
 async function madeLevel(kind = 'watch') {
@@ -194,7 +194,7 @@ test('AUDIT PRE-MERGE 1003 W5: on the colosseum every seat stands on level groun
   const blk = AF.arenaFloorBlock('watch');
   const obj = blk.rdbBlock.objectRootList[0].rdbObjects.find((o) => o.type === 1 && blk.rdbBlock.modelReferenceList[o.resources.modelResource.modelIndex].modelIdNum === ARENA_MODEL_ID);
   const M = getModelMatrix(obj);   // where the made block stands it (world/rdbLayout.js)
-  // the drawn faces and the ramps the collider alone stands on (world/arenaModel.js withStairRamps), in buckets of their own
+  // the drawn faces and the ramps the collider alone stands on (world/arena/arenaModel.js withStairRamps), in buckets of their own
   const col = new Collider(() => -Infinity);
   col.addMesh('drawn', model.positions, model.indices.slice(0, model.colliderOnlyFrom), M);
   col.addMesh('ramp', model.positions, model.indices.slice(model.colliderOnlyFrom), M);

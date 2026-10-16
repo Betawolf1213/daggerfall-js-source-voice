@@ -27,9 +27,9 @@ import { arenaToDungeon } from '../src/scenes/sdRemnant.js';
 import { createSdBeats, sdGroundModel, sdWakeText, SD_BEAT_TEXT } from '../src/scenes/sdArenaRead.js';
 import { remnantBarModel } from '../src/ui/sdRemnantBar.js';
 import { createSdHall } from '../src/scenes/sdHall.js';
-import { stonePoint } from '../src/world/sdHall.js';
-import { SD_HALL_GLOW_RECORD } from '../src/world/sdHallArt.js';
-import { SD_REALM_BRASS_RECORD } from '../src/world/sdRealm.js';
+import { stonePoint } from '../src/world/superDungeon/sdHall.js';
+import { SD_HALL_GLOW_RECORD } from '../src/world/superDungeon/sdHallArt.js';
+import { SD_REALM_BRASS_RECORD } from '../src/world/superDungeon/sdRealm.js';
 import { TELEGRAPH_STYLE, TELEGRAPH_EDGE_DAGON } from '../src/render/gateTelegraph.js';
 
 const T0 = 1_800_000_000_000;

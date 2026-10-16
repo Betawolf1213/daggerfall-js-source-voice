@@ -17,8 +17,8 @@ import {
 import { motherlodeKey, MOTHERLODE_STRIKERS } from '../src/net/motherlodeLaw.js';
 import { standMotherlodes, mineKind } from '../src/scenes/mineHost.js';
 import { guildDeedsText } from '../src/ui/socialPanel.js';
-import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
-import { WORLD_MAP_TILE_DIM } from '../src/world/terrainTiles.js';
+import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
+import { WORLD_MAP_TILE_DIM } from '../src/world/terrain/terrainTiles.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const { subtle } = globalThis.crypto;

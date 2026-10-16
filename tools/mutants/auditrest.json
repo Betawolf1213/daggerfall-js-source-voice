@@ -189,7 +189,7 @@
  },
  {
   "name": "AUDITREST-a-palace-gets-fires",
-  "file": "src/world/dungeonFires.js",
+  "file": "src/world/dungeon/dungeonFires.js",
   "old": "    if (!lay || lay.castleBlock) return;",
   "new": "    if (!lay) return;",
   "tests": [

@@ -101,7 +101,7 @@
   },
   {
     "name": "LANDFORM6-worker-drops-the-climates",
-    "file": "src/world/terrainGenWorker.js",
+    "file": "src/world/terrain/terrainGenWorker.js",
     "old": "    if (m.t === 'landform-tables') { sites = m.sites ?? null; climates = m.climates ?? null; return; }",
     "new": "    if (m.t === 'landform-tables') { sites = m.sites ?? null; return; }",
     "tests": [
@@ -110,7 +110,7 @@
   },
   {
     "name": "LANDFORM6-job-on-no-climates",
-    "file": "src/world/terrainGen.js",
+    "file": "src/world/terrain/terrainGen.js",
     "old": "  const landforms = landform ? createLandforms({ woods, roads, sites, climates }) : null;",
     "new": "  const landforms = landform ? createLandforms({ woods, roads, sites }) : null;",
     "tests": [

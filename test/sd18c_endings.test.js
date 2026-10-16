@@ -1,14 +1,14 @@
 // SD18c (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 10 and section 16's SD18c;
 // Mac: "The detail needs to exceed that of the oblivion gates"): THE ENDING'S LIGHT AND WORD - a Hollow's Remnant, its
-// Echoes and its Reset's Hearts burn with the light of the Ending it keeps (world/sdRemnantArt.js, records 25-30: its
+// Echoes and its Reset's Hearts burn with the light of the Ending it keeps (world/superDungeon/sdRemnantArt.js, records 25-30: its
 // colour and as much again its own light), its Hearts' and its stun's sparks in it; the taverns tell the omen its Ending
 // sends, and its card on the held map says which Ending it keeps.
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { SD_REMNANT_ENDING_RECORD, endingLightArt, remnantArt, SD_ENDING_ART_SIZE, SD_REMNANT_GOLD_RECORD } from '../src/world/sdRemnantArt.js';
-import { buildRemnantParts, buildRemnantModel, buildHeartModel, heartRecordOf, eyeRecordOf, SD_REMNANT_HEART_RECORD, SD_REMNANT_EYE_RECORD } from '../src/world/sdRemnantModel.js';
+import { SD_REMNANT_ENDING_RECORD, endingLightArt, remnantArt, SD_ENDING_ART_SIZE, SD_REMNANT_GOLD_RECORD } from '../src/world/superDungeon/sdRemnantArt.js';
+import { buildRemnantParts, buildRemnantModel, buildHeartModel, heartRecordOf, eyeRecordOf, SD_REMNANT_HEART_RECORD, SD_REMNANT_EYE_RECORD } from '../src/world/superDungeon/sdRemnantModel.js';
 import { SD_ENDINGS, sdMarksOf, sdEndingOf } from '../src/net/sdMarks.js';
 import { createSdRemnant } from '../src/scenes/sdRemnant.js';
 import { createSdFx, sdHeartColorOf, SD_FX_COLOR, SD_FX_KINDS } from '../src/scenes/sdFx.js';

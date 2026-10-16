@@ -18,8 +18,8 @@ import { fileURLToPath } from 'node:url';
 import {
   loadLocationInstance, loadLocationPrefab, validateValue, ntfsCompare,
   tryParseInt32, tryParseSingle, parseXml, newLocationInstance, newLocationObject,
-} from '../src/world/wodLocationData.js';
-import { encodeRegionPack, decodeRegionPack, WOD_PACK_COLUMNS } from '../src/world/wodLocationPack.js';
+} from '../src/world/worldOfDaggerfall/wodLocationData.js';
+import { encodeRegionPack, decodeRegionPack, WOD_PACK_COLUMNS } from '../src/world/worldOfDaggerfall/wodLocationPack.js';
 import { readRegionFolder, WOD_BUNDLE_ASSETS } from '../tools/worldOfDaggerfallAssets.mjs';
 import { MOD_SETTINGS } from '../src/systems/modSettings.js';
 import { FEATURES } from '../src/systems/features.js';

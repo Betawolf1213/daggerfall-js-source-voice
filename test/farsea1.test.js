@@ -19,7 +19,7 @@ import { classicShadowLane } from '../src/render/classicShadowLane.js';
 import { waterSurfaceFs, waterUniforms, WATER_F0, WATER_LIFT, WATER_TINT, SWELL_GALE } from '../src/render/waterSurface.js';
 import { FOG_GLSL } from '../src/render/fogGlsl.js';
 import { Renderer, WORLD_FRAME } from '../src/render/renderer.js';
-import { TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 import { perspective, mirrorProjectionX } from '../src/world/mat4.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
 

@@ -10,7 +10,7 @@ import { readFileSync } from 'node:fs';
 import {
   SEAT_SPACING, SEAT_SIDE_MIN, SEAT_SURFACE_MAX, SEAT_TAKEN_RADIUS,
   seatSpots, cardTableSeats, nearestFreeSeat, takenSeats, seatFloorOk, leavesSeat, yawToward,
-} from '../src/world/cardTables.js';
+} from '../src/world/card/cardTables.js';
 import { SEATED_EYE_HEIGHT, SEAT_OUT } from '../src/player/seatPose.js';
 import { trs } from '../src/world/mat4.js';
 

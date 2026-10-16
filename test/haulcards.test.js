@@ -25,7 +25,7 @@ import { createGatherHost, aimAt, storesWhereLine } from '../src/scenes/gatherHo
 import { createToastQueue } from '../src/ui/profHud.js';
 import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { FT } from '../src/systems/foraging/foragingLaw.js';
-import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 import { sharedClassicMinutes } from '../src/net/wire.js';
 import { LOOT_RARITY_KEY } from '../src/systems/loot/lootRarity.js';
 import { setPref, PREF_DEFAULTS } from '../src/systems/uiPrefs.js';

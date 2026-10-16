@@ -43,7 +43,7 @@ the target is freed. World.js walks VIEW_RINGS = 1 ring of pixels.
 ## Which interior texels are glass, and the door for a room that is not ARENA2's
 An exterior window record drawn inside a building is glass (DFU lays interiors out with the same table under
 WindowStyle.Disabled). A building interior set's WINDOW WALL - record 2, read against its twin wall, record 1 - has
-its panes declared glass by the pipeline's last arm (`world/interiorGlass.js` `interiorGlassMask`, after the
+its panes declared glass by the pipeline's last arm (`world/interior/interiorGlass.js` `interiorGlassMask`, after the
 auto-emissive arm; a pack's picture of it too, cut by the classic mask): the rule, read off a real ARENA2, is GLASS-ALL
 below. A context that is not ARENA2's has two doors:
 `renderer.uploadTexture(archive, record, color32, { cutout: true })` - every solid pass discards the texels under half
@@ -175,7 +175,7 @@ differs from its twin) painted in the palette's blue run, 96-109 (the sky's blue
 with); where a window carries no glass, the opening's fill (a farm's and a village's hole in a desert wall, 222 and
 223; the castles' arched opening, 86, and arrow slit, 216); and the glass index wherever it stands.
 
-The rule (`world/interiorGlass.js` windowGlassTexels, one home - the pipeline and the scan tool ask it): a texel is
+The rule (`world/interior/interiorGlass.js` windowGlassTexels, one home - the pipeline and the scan tool ask it): a texel is
 glass when it is the glass index, or new against the twin, in the ramp and in dense new art (80% of the 5 x 5 square
 about it - a twin wall differs from its window wall by a speckle of noise, and 428's wall panels are painted in the
 same blues); then only the panes are kept - a texel with three glass neighbours, joined across lead three texels wide,

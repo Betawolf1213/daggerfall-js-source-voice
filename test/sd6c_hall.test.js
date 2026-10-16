@@ -1,5 +1,5 @@
 // SD6c (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 8): THE ORRERY'S HALL ON THE
-// PAGE - world/sdHall.js (where its parts stand, the meshes they are), world/sdHallArt.js (what they wear),
+// PAGE - world/superDungeon/sdHall.js (where its parts stand, the meshes they are), world/superDungeon/sdHallArt.js (what they wear),
 // scenes/sdHall.js (the dungeon host's set: stood, heard, turned, pressed), and the hosts' wiring - the turn sent, the
 // realm's word read, the snap's lash on whoever stands in the hall, the edge widened by the Concord.
 import { test } from 'node:test';
@@ -10,17 +10,17 @@ import {
   dungeonToRealm, inOrreryHall, sdHourWord,
 } from '../src/net/sdBrain.js';
 import { SD_REALM_ORIGIN } from '../src/net/sdBrain.js';
-import { SD_REALM_FLOORS, realmClamp, SD_REALM_ARCHIVE } from '../src/world/sdRealm.js';
+import { SD_REALM_FLOORS, realmClamp, SD_REALM_ARCHIVE } from '../src/world/superDungeon/sdRealm.js';
 import {
   stoneFrame, stonePoint, plaqueFrame, handleFoot, handleBox, plaqueBox, handMatrix, dialCentre, buildHallModel, buildHandModel,
   buildLitModel, buildFrayModel, buildBridgeModel, hallFloorTris, hallSolidTris, SD_STONE_SIZE, SD_DIAL, SD_HAND, SD_HANDLE, SD_PLAQUE, SD_LIT_RING,
   SD_FRAY_RING, SD_BRIDGE, SD_FIRST_STEP, SD_HALL_FLOORS,
-} from '../src/world/sdHall.js';
+} from '../src/world/superDungeon/sdHall.js';
 import {
   hallArt, hallAtlasArt, hallGlowArt, atlasUv, SD_SIGNS, SD_PIPS, SD_HALL_ATLAS, SD_HALL_ATLAS_RECORD, SD_HALL_GLOW_RECORD, SD_GLOW_COLORS,
-} from '../src/world/sdHallArt.js';
+} from '../src/world/superDungeon/sdHallArt.js';
 import { createSdHall, sdStoneKey, sdPlaqueKey, SD_HALL_TEXT, SD_HALL_SOUNDS, SD_HAND_RATE, SD_FRAY_FULL_MS, SD_BRIDGE_LAY_MS, SD_CONCORD_MS } from '../src/scenes/sdHall.js';
-import { SD_BRIDGE_PLATES } from '../src/world/sdHall.js';
+import { SD_BRIDGE_PLATES } from '../src/world/superDungeon/sdHall.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const near = (a, b, e = 1e-6) => a.every((v, i) => Math.abs(v - b[i]) < e);

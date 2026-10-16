@@ -10,14 +10,14 @@ import { readFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { ALLOC_CHILD_ARGS } from './allocChild.mjs';
 import { pathToFileURL } from 'node:url';
-import { realmArt } from '../src/world/sdRealmArt.js';
-import { hallArt } from '../src/world/sdHallArt.js';
-import { stepsArt } from '../src/world/sdStepsArt.js';
-import { remnantArt } from '../src/world/sdRemnantArt.js';
-import { sdRiftArt } from '../src/world/sdRiftArt.js';
+import { realmArt } from '../src/world/superDungeon/sdRealmArt.js';
+import { hallArt } from '../src/world/superDungeon/sdHallArt.js';
+import { stepsArt } from '../src/world/superDungeon/sdStepsArt.js';
+import { remnantArt } from '../src/world/superDungeon/sdRemnantArt.js';
+import { sdRiftArt } from '../src/world/superDungeon/sdRiftArt.js';
 import { Collider } from '../src/player/collider.js';
 import { ActionSystem } from '../src/world/actionSystem.js';
-import { sdRiftPlace, sdReturnPlace, sdLandingPlace } from '../src/world/sdDungeon.js';
+import { sdRiftPlace, sdReturnPlace, sdLandingPlace } from '../src/world/superDungeon/sdDungeon.js';
 import { floorLanding } from '../src/player/enterExit.js';
 import { trs } from '../src/world/mat4.js';
 import { glslFunctions } from './glsl.mjs';
@@ -25,9 +25,9 @@ import { GateFxRenderer, FX_SPARK_VS, FX_SPARKS, FX_BURST_MS, sparkAt } from '..
 import { createSdFx, SD_FX_KINDS, SD_FX_EDGE, SD_FX_FLOOR_Y, SD_RING_DUST } from '../src/scenes/sdFx.js';
 import { SD_ARENA, SD_STONES, realmToDungeon, dungeonToRealm } from '../src/net/sdBrain.js';
 import { SD_BLOWS, SD_BODY, SD_REM } from '../src/net/sdRemnant.js';
-import { buildRealmModel, realmLampFeet, SD_LAMP_H, SD_LAMP_HEAD, SD_REALM_BRASS_RECORD } from '../src/world/sdRealm.js';
-import { buildHallModel, stoneFrame, SD_STONE_SIZE } from '../src/world/sdHall.js';
-import { SD_HALL_GLOW_RECORD } from '../src/world/sdHallArt.js';
+import { buildRealmModel, realmLampFeet, SD_LAMP_H, SD_LAMP_HEAD, SD_REALM_BRASS_RECORD } from '../src/world/superDungeon/sdRealm.js';
+import { buildHallModel, stoneFrame, SD_STONE_SIZE } from '../src/world/superDungeon/sdHall.js';
+import { SD_HALL_GLOW_RECORD } from '../src/world/superDungeon/sdHallArt.js';
 import { sdCities, sdTemplates } from '../src/systems/superDungeon/sdSite.js';
 import { hubClaim } from '../src/systems/region/regionHubs.js';
 import { LOCATION_TYPES } from '../src/formats/mapsFile.js';
@@ -227,7 +227,7 @@ test('AUDIT SD IV (R5): THE ARM\'S HOUR FOG AND TRILIGHT MAKE NOTHING, on both l
     const got = {}, renderer = { lightingLane: lane ? {} : null, setLighting: (a, s, c, tri) => { got.equator = [...a]; got.tri = JSON.parse(JSON.stringify(tri)); }, setMoonlight() {}, setFog: (...a) => { got.fog = [...a.slice(0, 4), [...a[4]]]; }, setSceneGrade() {} };
     return { renderer, got };
   };
-  return Promise.all(['src/world/sdRealm.js', 'src/render/enhancedLighting.js', 'src/render/underwaterFog.js'].map((p) => import(url(p)))).then(([R, EL, UF]) => {
+  return Promise.all(['src/world/superDungeon/sdRealm.js', 'src/render/enhancedLighting.js', 'src/render/underwaterFog.js'].map((p) => import(url(p)))).then(([R, EL, UF]) => {
     for (const lane of [false, true]) {
       const { renderer, got } = run(lane);
       new Function('renderer', 'isSdRealm', 'dungeonLoc', 'realmLighting', 'dungeonTrilight', 'dungeonFog', 'applyFog', 'SD_REALM_FOG', 'SD_HOUR_GRADE', `${kept}\n${lighting}\n${fog}`)(renderer, () => true, {}, R.realmLighting, EL.dungeonTrilight, EL.dungeonFog, UF.applyFog, R.SD_REALM_FOG, {});
@@ -241,7 +241,7 @@ test('AUDIT SD IV (R5): THE ARM\'S HOUR FOG AND TRILIGHT MAKE NOTHING, on both l
     // site's: a lane's frames measured after the other's run on code the other taught, and box what it never saw)
     for (const lane of [false, true]) {
       const script = `
-      const R = await import(${JSON.stringify(url('src/world/sdRealm.js'))});
+      const R = await import(${JSON.stringify(url('src/world/superDungeon/sdRealm.js'))});
       const EL = await import(${JSON.stringify(url('src/render/enhancedLighting.js'))});
       const UF = await import(${JSON.stringify(url('src/render/underwaterFog.js'))});
       const realmLighting = R.realmLighting, SD_REALM_FOG = R.SD_REALM_FOG, dungeonTrilight = EL.dungeonTrilight, dungeonFog = EL.dungeonFog, applyFog = UF.applyFog;
@@ -294,8 +294,8 @@ test('AUDIT SD IV (S2): THE HOLLOW\'S CITIES AND TEMPLATES ARE MAPS.BSA\'S - the
   }
 });
 
-import { LARGE_BOAT_ARCHIVE } from '../src/world/largeBoatArt.js';
-import { SD_REALM_ARCHIVE } from '../src/world/sdRealm.js';
+import { LARGE_BOAT_ARCHIVE } from '../src/world/ships/largeBoatArt.js';
+import { SD_REALM_ARCHIVE } from '../src/world/superDungeon/sdRealm.js';
 import { PI_ICON_ARCHIVE } from '../src/scenes/physicalItemsLayer.js';
 
 test('AUDIT SD IV (R6) ONE ARCHIVE, ONE OWNER: the large boat\'s pictures went up under the Shattered Hour\'s own pseudo-archive (38151) - a picture is kept by archive and record, so after a large boat the Hour\'s floors and the Rift\'s brass could wear the boat\'s (and the boat the Hour\'s); now each its own number (mutants: the boat back on the Hour\'s)', () => {

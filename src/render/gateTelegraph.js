@@ -37,7 +37,7 @@ import { FOG_FACTOR_GLSL } from './labGrass.js';
 import { buildProgram } from './glProgram.js';
 import { ATTACK_BY_ID, ATTACKS, BOSS_R, COURT_CENTRE, COURT_R, COURTS, BASE_PROFILE, windupOf, nearestCourt, isDagons, WALKS, WALK_HALF_W } from '../net/gateBrain.js';
 import { telegraphAt } from '../net/gateStrike.js';
-import { attackColor } from '../world/gateBoss.js';
+import { attackColor } from '../world/gate/gateBoss.js';
 
 /** The shapes, as the shader's `uKind` says them. WBX5: the Spokes of Dagon's lanes; WBX4: his mark. */
 export const TELEGRAPH_KIND = Object.freeze({ cone: 0, disc: 1, discs: 2, lane: 3, ring: 4, all: 5, spokes: 6, mark: 7 });

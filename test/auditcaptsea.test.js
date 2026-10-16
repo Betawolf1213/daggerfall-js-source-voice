@@ -476,7 +476,7 @@ test('AUDIT CAPTAIN\'S SEA G3: the landforms\' lands past the Bay\'s table answe
   const { hillsAt, landformClimates } = await import('../src/world/landforms.js');
   const { veilhaven, isleOfCell } = await import('../src/world/ethericSea.js');
   const { CLIMATES } = await import('../src/formats/mapsTables.js');
-  const { HEIGHTMAP_DIMENSION } = await import('../src/world/terrainSampler.js');
+  const { HEIGHTMAP_DIMENSION } = await import('../src/world/terrain/terrainSampler.js');
   const a = landformClimates(() => CLIMATES.Mountain), b = landformClimates(() => CLIMATES.Mountain);
   b[999] = CLIMATES.Desert;   // the Bay's corner pixel, (999, 0)
   let wild = null; for (let cx = 700; cx < 800 && !wild; cx++) for (let cy = 240; cy < 260 && !wild; cy++) { const i = isleOfCell(cx, cy); if (i?.kind === 'wild' && i.peak >= 30) wild = i; }
@@ -549,7 +549,7 @@ test('AUDIT CAPTAIN\'S SEA G12/D21/G11/G13: no compass point for no offset; a ha
 test('AUDIT CAPTAIN\'S SEA H1/P2: every port isle has a harbour - its town whole on dry ground, its shore sounded within ETHER_HARBOUR_REACH through the kernel\'s own ground (an isle of two kilometres put the water past any harbour\'s reach, and no quay stood at any port of the sea) (mutants: the port\'s size, its land\'s centre, the reach)', async () => {
   const E = await import('../src/world/ethericSea.js');
   const { WoodsFile } = await import('../src/formats/woodsFile.js');
-  const { generateSamples, MAX_TERRAIN_HEIGHT, SCALED_OCEAN_ELEVATION, HEIGHTMAP_DIMENSION: D } = await import('../src/world/terrainSampler.js');
+  const { generateSamples, MAX_TERRAIN_HEIGHT, SCALED_OCEAN_ELEVATION, HEIGHTMAP_DIMENSION: D } = await import('../src/world/terrain/terrainSampler.js');
   const { findHarbour, HARBOUR_REACH } = await import('../src/systems/naval/shipLife.js');
   const { locationWorldRect } = await import('../src/world/streamingWorld.js');
   const sea0 = Object.create(WoodsFile.prototype); sea0.getHeightMapValue = () => 0; sea0.getLargeMapData = () => Array.from({ length: 5 }, () => new Uint8Array(5));

@@ -235,7 +235,7 @@
   },
   {
     "name": "AUDITLWII2-R11-cap",
-    "file": "src/world/roadTeams.js",
+    "file": "src/world/road/roadTeams.js",
     "old": "      if (capped(h.key)) continue;\n",
     "new": "",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "AUDITLWII2-R11-pack",
-    "file": "src/world/roadTeams.js",
+    "file": "src/world/road/roadTeams.js",
     "old": "return w !== key && listed.has(w) && !drawnW.has(w);",
     "new": "return w !== key && !drawnW.has(w);",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "AUDITLWII2-P17-LW10P-nearest-sort",
-    "file": "src/world/roadTeams.js",
+    "file": "src/world/road/roadTeams.js",
     "old": "    const near = [...wagonList].sort((a, b) => a.distM - b.distM).slice(0, WAGONS_DRAWN);",
     "new": "    const near = [...wagonList].slice(0, WAGONS_DRAWN);",
     "tests": [

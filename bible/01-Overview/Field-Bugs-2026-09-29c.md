@@ -54,7 +54,7 @@ open sea it was the port's. Corrected in place there.
 It is the trap WATER1 (2026-09-08) found in the tile job: a comparison the reference holds because of how it stores a
 number (there float32, here Unity's 16-bit heightmap) and a double misses.
 
-**The fix.** `world/terrainSurface.js` `terrainSampleHeightAt`: Terrain.SampleHeight at the precision Unity holds a
+**The fix.** `world/terrain/terrainSurface.js` `terrainSampleHeightAt`: Terrain.SampleHeight at the precision Unity holds a
 heightmap in - each corner as its step (`unityHeightmapStep`, `UNITY_HEIGHTMAP_MAX_HEIGHT` 32766), the steps
 interpolated over the quad's two triangles (GetInterpolatedHeight, cut on the drawn ground's own diagonal), the height a
 step times size.y over kMaxHeight, in floats. `csaTerrainOf`'s `sampleHeight` reads it; the terrain's clamp to its

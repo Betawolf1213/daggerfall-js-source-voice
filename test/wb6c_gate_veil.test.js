@@ -13,7 +13,7 @@ import {
   VEIL_RAG_TONGUE, VEIL_SOFT, VEIL_HEAT,
 } from '../src/render/gateVeil.js';
 import { createGateVeil, VEIL_CSS, VEIL_OPEN_WAIT_TICKS, VEIL_CUES } from '../src/ui/gateVeil.js';
-import { FIRE_CAST_ID } from '../src/world/gateBoss.js';
+import { FIRE_CAST_ID } from '../src/world/gate/gateBoss.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 

@@ -100,7 +100,7 @@
   },
   {
     "name": "SD21-other-words",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "  noCompanions: 'Your companions cannot follow you through the Rift.',",
     "new": "  noCompanions: 'Your companions cannot follow you into the Deadlands.',",
     "tests": [

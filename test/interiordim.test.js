@@ -12,7 +12,7 @@ import {
   EL_INTERIOR_LIGHT_SCALE, EL_INTERIOR_GRADE, EL_FLAME_COLOR, interiorLightColor, interiorGrade, lanternColor, elDecode,
 } from '../src/render/enhancedLighting.js';
 import { AirPass, AIR_BLOOM_STRENGTH, AIR_VIGNETTE, AIR_CONTRAST, AIR_ADAPT_MAX } from '../src/render/airPass.js';
-import { interiorLightProperties, INTERIOR_LIGHT_COLOR } from '../src/world/interiorLights.js';
+import { interiorLightProperties, INTERIOR_LIGHT_COLOR } from '../src/world/interior/interiorLights.js';
 
 const rd = (p) => readFileSync(p, 'utf8');
 const r4 = (a) => [...a].map((v) => +v.toFixed(4));

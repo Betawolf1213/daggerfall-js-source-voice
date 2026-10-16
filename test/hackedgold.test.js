@@ -24,7 +24,7 @@ import { validLootItem, validLootList, LOOT_STACK_MAX } from '../src/systems/loo
 import { itemFindings, worthCeiling, GOLD_INT_MAX, CLASSIC_VALUE_MAX } from '../src/systems/item/itemLaw.js';   // and the law registers itself, and its ceiling, with the wire
 import { characterFindings } from '../server-account/src/judge.js';
 import { isLetterOfCredit, neverPeerHanded, peerHanded, letterRefusesPut, letterPutText } from '../src/systems/peerWord.js';
-import { applyInteriorLoot, interiorLootRecords } from '../src/world/interiorShared.js';
+import { applyInteriorLoot, interiorLootRecords } from '../src/world/interior/interiorShared.js';
 import { letterOfCredit, goldStack } from '../src/systems/inventory.js';
 import { creditAmount } from '../src/systems/court.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
@@ -138,7 +138,7 @@ test('HACKED-GOLD the dungeon\'s words and a foe\'s heir: every site a peer\'s l
   assert.match(xf, /const items = h \? peerHanded\(validLootList\(f\.entity\?\.items \?\? \[\]\)\) : null;/, 'a foe handed to its heir');
   assert.match(xf, /const items = peerHanded\(validLootList\(r\.it\)\);/, 'a foe taken as its heir');
   assert.match(xf, /const grant = peerHanded\(validLootList\(data\.grant\)\);/, 'a grant');
-  for (const f of ['src/scenes/dungeonContext.js', 'src/scenes/exteriorFoes.js', 'src/world/interiorShared.js']) assert.doesNotMatch(read(f), /\bunbound\(/, `${f}: no list a peer hands over is read by SS3's narrower filter alone`);
+  for (const f of ['src/scenes/dungeonContext.js', 'src/scenes/exteriorFoes.js', 'src/world/interior/interiorShared.js']) assert.doesNotMatch(read(f), /\bunbound\(/, `${f}: no list a peer hands over is read by SS3's narrower filter alone`);
 });
 
 test('HACKED-GOLD a peer\'s price is held under the law\'s ceiling - a dagger priced at nine million lands at its ceiling, an honest one as it came; a letter\'s worth and a boat\'s records are no price, and stand; never under the floor (mutants: the ceiling unregistered; the ceiling unread; the identity records capped)', () => {

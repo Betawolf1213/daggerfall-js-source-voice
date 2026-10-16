@@ -220,7 +220,7 @@ rays). A dungeon's fires are permanent, never cold, never picked up.
 
 ### 4.1 Inputs (all already built per dungeon)
 
-- the block grid (`src/world/dungeonLayout.js` `layoutDungeon`: origin per block, the starting block flag, the block
+- the block grid (`src/world/dungeon/dungeonLayout.js` `layoutDungeon`: origin per block, the starting block flag, the block
   names - B for borders),
 - each block's markers (`src/world/rdbLayout.js` `layoutRdbBlock`): start (199.10), enter (199.8), random and fixed
   enemies (199.15/16), random treasure (199.19), quest spawn and item (199.11/18), fixed treasure (216); the water
@@ -613,7 +613,7 @@ Mac: "Go" - every recommendation of section 15 taken. Slices REST1-REST6 and RES
 - **REST2 - the Campfire** (`src/systems/survival/camp.js`, `src/scenes/camps.js`, `src/systems/survival/items.js`): as
   section 3 - the Pawn Shop's 0-2 and the online half price for a Campfire and Firewood came with AUDIT REST
   (`shopStock.js`, `tradeModes.js`); the port's taverns keep no shelf, so a tavern sells none.
-- **REST3 - dungeon fires** (`src/world/dungeonFires.js`; `tools/dungeonFireProbe.mjs` for the real dungeons, which
+- **REST3 - dungeon fires** (`src/world/dungeon/dungeonFires.js`; `tools/dungeonFireProbe.mjs` for the real dungeons, which
   this tree's container cannot read - run it with ARENA2_PATH). As section 4, with these readings: N counts the
   non-border blocks (a border block is a cap of rock, not a room); a 6 m height band stands in for 4.2's storey
   (`automapFloors.js` derives its storeys off the draw, after the fires must stand); no dungeon in the port is sealed,

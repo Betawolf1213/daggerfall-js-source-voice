@@ -1,7 +1,7 @@
 [
   {
     "name": "SD25-S9-a-ramp-left-out",
-    "file": "src/world/sdStepsArt.js",
+    "file": "src/world/superDungeon/sdStepsArt.js",
     "old": "const PALETTE = paletteOf(Ba, Br, Vg, Vo, Bz);",
     "new": "const PALETTE = paletteOf(Ba, Br, Vg, Vo);",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "SD25-S9-the-drift-deck-alight",
-    "file": "src/world/sdStepsArt.js",
+    "file": "src/world/superDungeon/sdStepsArt.js",
     "old": "for (const ex of [5, 58]) fill(albedo,",
     "new": "for (const ex of [5, 58]) fill(emission,",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "SD25-S9-the-riser-lip-no-brighter",
-    "file": "src/world/sdStepsArt.js",
+    "file": "src/world/superDungeon/sdStepsArt.js",
     "old": "paintRim(albedo, emission, A, GOLD, SD_STEPS_GLOW.lip);",
     "new": "paintRim(albedo, emission, A, GOLD, SD_STEPS_GLOW.line);",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "SD25-S9-the-hand-running-forward",
-    "file": "src/world/sdStepsArt.js",
+    "file": "src/world/superDungeon/sdStepsArt.js",
     "old": "export const beatHandAngle = (k) => ((12 - k) / 12) * Math.PI * 2;",
     "new": "export const beatHandAngle = (k) => (k / 12) * Math.PI * 2;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "SD25-S9-the-ember-a-frame-early",
-    "file": "src/world/sdStepsArt.js",
+    "file": "src/world/superDungeon/sdStepsArt.js",
     "old": "export const SD_BEAT_EMBER_FRAME = 10;",
     "new": "export const SD_BEAT_EMBER_FRAME = 9;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "SD25-S9-the-falter-unfaltered",
-    "file": "src/world/sdStepsArt.js",
+    "file": "src/world/superDungeon/sdStepsArt.js",
     "old": "f = faltered ? SD_STEPS_GLOW.falter / SD_STEPS_GLOW.tick : 1;",
     "new": "f = 1;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "SD25-S9-the-ticks-behind-the-hand-lit",
-    "file": "src/world/sdStepsArt.js",
+    "file": "src/world/superDungeon/sdStepsArt.js",
     "old": "export const beatTickLit = (k, h) => h >= 1 && h < 12 - k;",
     "new": "export const beatTickLit = (k, h) => h >= 1 && h > 12 - k;",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "SD25-S9-a-stage-keeping-all",
-    "file": "src/world/sdStepsModel.js",
+    "file": "src/world/superDungeon/sdStepsModel.js",
     "old": "keep: (face, iu, iv) => BAYER4[(((iv + face * 3) & 3) << 2) | ((iu + face * 5) & 3)] < keep",
     "new": "keep: () => true",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "SD25-S9-the-lean-not-asin",
-    "file": "src/world/sdStepsModel.js",
+    "file": "src/world/superDungeon/sdStepsModel.js",
     "old": "Math.asin(Math.max(-1, Math.min(1, dx / SD_PENDULUM.len)))",
     "new": "Math.atan(Math.max(-1, Math.min(1, dx / SD_PENDULUM.len)))",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "SD25-S9-the-rack-proud-of-the-box",
-    "file": "src/world/sdStepsModel.js",
+    "file": "src/world/superDungeon/sdStepsModel.js",
     "old": "const z1 = -d / 2 + SD_RACK.out, z0 = -d / 2,",
     "new": "const z1 = -d / 2 + SD_RACK.out, z0 = -d / 2 - SD_RACK.out,",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "SD25-S9-the-face-not-set-back",
-    "file": "src/world/sdStepsModel.js",
+    "file": "src/world/superDungeon/sdStepsModel.js",
     "old": "bevelledBox(f, rec, SD_RISER_ATLAS, box, { z0: SD_RACK.out });",
     "new": "bevelledBox(f, rec, SD_RISER_ATLAS, box, { z0: 0 });",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "SD25-S9-the-vane-against-the-push",
-    "file": "src/world/sdStepsModel.js",
+    "file": "src/world/superDungeon/sdStepsModel.js",
     "old": "const dir = gustAt(n * SD_GUST_EVERY + SD_GUST_FOR / 2, _vaneGust).push > 0 ? 1 : -1;",
     "new": "const dir = gustAt(n * SD_GUST_EVERY + SD_GUST_FOR / 2, _vaneGust).push < 0 ? 1 : -1;",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "SD25-S9-the-vane-not-swinging-back",
-    "file": "src/world/sdStepsModel.js",
+    "file": "src/world/superDungeon/sdStepsModel.js",
     "old": "io[1] = dir * (Math.PI / 2) * (u < span ? w : 1 - w);",
     "new": "io[1] = dir * (Math.PI / 2) * (u < span ? w : 0);",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "SD25-S9-the-fin-plain",
-    "file": "src/world/sdStepsModel.js",
+    "file": "src/world/superDungeon/sdStepsModel.js",
     "old": "const fr = E ? SD_HALL_ATLAS_RECORD : rec,",
     "new": "const fr = rec,",
     "tests": [
@@ -370,7 +370,7 @@
   },
   {
     "name": "SD25-S9-the-rune-upside-down",
-    "file": "src/world/sdStepsModel.js",
+    "file": "src/world/superDungeon/sdStepsModel.js",
     "old": "[c[0], c[3]], [c[2], c[3]], [c[2], c[1]], [c[0], c[1]]);   // its rune drawn y up",
     "new": "[c[0], c[1]], [c[2], c[1]], [c[2], c[3]], [c[0], c[3]]);   // its rune drawn y up",
     "tests": [

@@ -217,7 +217,7 @@ names none is a build from before the town mods, and is refused (426
 for the town's layout counts against no hour's claims, and the client asks the
 layouts again at most once in `HOME_LAYOUTS_WAIT_MS`. A building's online ROOM
 is its layout's: the layout mods serving its town ride in the room key's high
-bits (`world/interiorShared.js` `layoutRoomKey` - Daggerfall's own town keeps
+bits (`world/interior/interiorShared.js` `layoutRoomKey` - Daggerfall's own town keeps
 the rooms it always had), so two players whose towns stand in two layouts never
 share a room, and a relay memory from before the mods lands on no other
 building.

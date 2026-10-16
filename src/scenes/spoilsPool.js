@@ -2,7 +2,7 @@
 // WB5 (2026-09-25, Mac: "On death the boss would physically spew out per player loot and bounce (sort of how dropping a
 // torch works) and have a sort of rarity glow attached to it"): THE SPOILS ON THE COURT'S FLOOR - one player's share of a
 // fallen boss (systems/gate/gateSpoils.js rollSpoils, off the relay's receipt), spewed out of his chest piece by piece
-// (world/gateSpew.js - the thrown torch's own flight), each landing with the torch's own clatter, and at rest standing
+// (world/gate/gateSpew.js - the thrown torch's own flight), each landing with the torch's own clatter, and at rest standing
 // in its tier's beam (render/spoilsGlow.js) with a Rare-or-better's light and chime. Pressed, a piece goes into the
 // pack (GATE-UX: no longer walked over - below); leaving the court gathers whatever is still on the floor. Design:
 // bible/11-Multiplayer/World-Bosses.md section 7.
@@ -58,7 +58,7 @@
 //
 // WB9f (2026-09-30, Mac: "Improve the loot drops that emit on his death and have them spread out more. The player should
 // be able to inspect and pick up the ground item, not just walk over it"): THE SPOILS, SPREAD AND HANDLED. The burst
-// throws each piece its own slot of a wider fan, kept on the court's floor (world/gateSpew.js keepLaunch, off the
+// throws each piece its own slot of a wider fan, kept on the court's floor (world/gate/gateSpew.js keepLaunch, off the
 // court's `keep` the burst hands in); and a resting piece is an ACTIVATION TARGET - `spoil:<i>` for an item (a pile of
 // one, so the plaque lists it with its tier and, under quick loot's stats, what it is), `spoilGold:<i>` for the gold -
 // that the press takes into the pack (`pick`), the hosts' ladder naming it (`nameOf`) and the plaque reading it
@@ -73,7 +73,7 @@
 // Not a DFU member. Ledger A (WB).
 import { rollSpoils, nameEmbers, sigilStone } from '../systems/gate/gateSpoils.js';
 import { seededRng } from '../systems/wind/wind.js';
-import { spewLaunches, spewPiece, flySpew, keepLaunch, floorRayAt } from '../world/gateSpew.js';
+import { spewLaunches, spewPiece, flySpew, keepLaunch, floorRayAt } from '../world/gate/gateSpew.js';
 import { SpoilsGlowRenderer, tierColour } from '../render/spoilsGlow.js';   // WBX3: the loot line
 import { RARITIES } from '../systems/loot/lootRarity.js';
 import { RANDOM_TREASURE_ARCHIVE, RANDOM_TREASURE_ICONS, validLootItem } from '../systems/loot/loot.js';
@@ -429,7 +429,7 @@ export function createSpoilsPool({
      * THE BURST: the spoils of `day` for this player (the receipt's `seed`, the player's `level`) leave his chest `at`
      * (the dungeon's frame) toward `bearing` (the angle from him to the player). Once a day, on this device: a day
      * already spent is nothing. The pieces as rolled go into the device's record the moment they leave him.
-     * WB9f: `keep` the court's floor they must come to rest on (`{ centre, r, floorY }` - world/gateSpew.js keepLaunch).
+     * WB9f: `keep` the court's floor they must come to rest on (`{ centre, r, floorY }` - world/gate/gateSpew.js keepLaunch).
      * SD9e: `roll` answers the pieces instead, as the grant's does (the Brass Remnant's - systems/superDungeon/sdSpoils.js sdSpoilsList).
      */
     /** AUDIT SD II (L5 F4): the spent words still owed said again (the host's, while its hub link stands) - each on its

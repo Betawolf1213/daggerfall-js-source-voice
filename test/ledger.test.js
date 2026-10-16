@@ -371,7 +371,7 @@ test('AUDIT 58 F5 ledger: the RE-INTEGRATED road system has its own section A ro
   // plausible for a whole wave.
   assert.equal(citedLines.at(0), '  (basicRoadsOn ? loadModRoads() : Promise.resolve(null)).then((his) => {', 'the cite does not start at the wiring statement');
   assert.equal(citedLines.at(-1), '  });', 'the cite does not end at the block\u2019s close');
-  assert.match(rootFile('src/world/terrainGen.js'), /paintRoads\(tileData, tilemap/, 'the paint is in the shared kernel');
+  assert.match(rootFile('src/world/terrain/terrainGen.js'), /paintRoads\(tileData, tilemap/, 'the paint is in the shared kernel');
   const travel = rootFile('src/systems/travel/travel.js');
   assert.ok(!/roadAt\(|path\.roadAt|byRoad/.test(travel), 'travel.js is still the verbatim port - the road term and its two deps stayed gone');
   assert.doesNotMatch(rootFile('src/ui/heldMap.js'), /byRoad: /, 'AUDIT-MAP2: the permanent false went with the relief map\'s route line - the held map\'s trip carries no road term at all');

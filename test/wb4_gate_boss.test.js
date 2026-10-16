@@ -1,7 +1,7 @@
 // WB4a (2026-09-25, Mac: "a large boss arena with an oversized enemy with telegraphed attacks (like wind ups, etc)"):
 // THE BOSS FIGHTS YOU, DRIVEN. The strike's law on the struck player's own machine (net/gateStrike.js - each shape
 // against a point, the charge swept between frames, the verdict decided at the landing and never late, the share of
-// one's own health, fire through the saving throw and the Wrath through nothing); his look (world/gateBoss.js - the
+// one's own health, fire through the saving throw and the Wrath through nothing); his look (world/gate/gateBoss.js - the
 // wind-up's held frames, the landing's played ones, the run, the walk, the flinch, the fall; the frame an eye sees; the
 // glow; his voice); the telegraph (render/gateTelegraph.js - the shader's own reading held to the strike's law point
 // for point, its shape over time, its pass); the bar (ui/gateBossBar.js); the court's driver (scenes/gateCourt.js -
@@ -18,7 +18,7 @@ import {
 import {
   bossAct, bossFrame, bossGlow, bossPlace, bossLookOf, BOSS_LOOKS, BOSS_CUES, ATTACK_COLORS, WARD_COLOR, EMBER_COLOR, FALL_MS, FLINCH_MS,
   GLOW_UP, GLOW_RANGE, RUN_ANIM_SPEED, FIRE_CAST_ID, BURNING,
-} from '../src/world/gateBoss.js';
+} from '../src/world/gate/gateBoss.js';
 import {
   telegraphShape, telegraphField, telegraphQuad, telegraphQuadOver, GateTelegraphRenderer, TELEGRAPH_KIND, TELEGRAPH_FS, TELEGRAPH_VS, TELEGRAPH_POINTS_MAX,
   TELEGRAPH_FADE_IN_MS, TELEGRAPH_FLASH_MS, TELEGRAPH_MARGIN,
@@ -26,7 +26,7 @@ import {
 import { bossBarModel, drawGateBossBar, destroyGateBossBar, BOSS_BAR_TEXT, WRATH_WARN_MS } from '../src/ui/gateBossBar.js';
 import { createGateCourt, bossOf, COURT_STRIKE_TEXT, ROAR_AFTER_MS } from '../src/scenes/gateCourt.js';
 import { GATE_STATE_EMPTY } from '../src/net/gateLink.js';
-import { courtToDungeon } from '../src/world/gateArena.js';
+import { courtToDungeon } from '../src/world/gate/gateArena.js';
 import { gateBossOf } from '../src/net/gateLaw.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { PRIMARY_ATTACK_ANIMS, MOVE_ANIMS, HURT_ANIMS, IDLE_ANIMS, mobileOrientation } from '../src/characters/mobileUnit.js';

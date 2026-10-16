@@ -26,7 +26,7 @@ import { createHorseCartPool } from '../src/scenes/horseCartPool.js';
 import { WAGON_MODE, HORSE_MODE, INTERIOR_ACCESS, WAGON_MODEL_ID } from '../src/systems/horse/horseCartLaw.js';
 import { createWardenShows, WARDEN_HEAD } from '../src/scenes/wagonWardenShow.js';
 import { createWagonWarden, wardenTownIn, WARDEN_SHOW_REACH } from '../src/scenes/wagonWardenHost.js';
-import { NAV_CELL } from '../src/world/cityNavigation.js';
+import { NAV_CELL } from '../src/world/city/cityNavigation.js';
 import { PERSON_GUARD_IDLE_RECORD } from '../src/characters/mobilePerson.js';
 import { mobileBillboardSize } from '../src/world/rmbFlats.js';
 import { caravanRecordOf, caravanStands } from '../src/net/caravanVisitLink.js';

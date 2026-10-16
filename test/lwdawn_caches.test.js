@@ -16,7 +16,7 @@ import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
 import { DAY_MIN, DAY_START_MIN } from '../src/systems/livingWorld/dayPlan.js';
 import { HARBOUR_RING } from '../src/systems/livingWorld/places.js';
-import { NAV_CELL } from '../src/world/cityNavigation.js';
+import { NAV_CELL } from '../src/world/city/cityNavigation.js';
 
 const RATE = CLASSIC_MINUTES_PER_SECOND;
 const DAY = 100;

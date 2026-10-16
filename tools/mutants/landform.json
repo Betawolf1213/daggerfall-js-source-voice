@@ -182,7 +182,7 @@
   },
   {
     "name": "LANDFORM-kernel-ceiling",
-    "file": "src/world/terrainSampler.js",
+    "file": "src/world/terrain/terrainSampler.js",
     "old": "return Math.max(0, shape(x, y, h, baseHeight * BASE_HEIGHT_SCALE, ground) / MAX_TERRAIN_HEIGHT);",
     "new": "return Math.min(1, Math.max(0, shape(x, y, h, baseHeight * BASE_HEIGHT_SCALE, ground) / MAX_TERRAIN_HEIGHT));",
     "tests": [
@@ -191,7 +191,7 @@
   },
   {
     "name": "LANDFORM-kernel-low-with-noise",
-    "file": "src/world/terrainSampler.js",
+    "file": "src/world/terrain/terrainSampler.js",
     "old": "shape(x, y, h, baseHeight * BASE_HEIGHT_SCALE, ground)",
     "new": "shape(x, y, h, baseHeight * BASE_HEIGHT_SCALE + noiseHeight * NOISE_MAP_SCALE, ground)",
     "tests": [
@@ -200,7 +200,7 @@
   },
   {
     "name": "LANDFORM-ghost-rows-raw",
-    "file": "src/world/terrainSampler.js",
+    "file": "src/world/terrain/terrainSampler.js",
     "old": "if (!k) kernels.set(key, k = sampleKernel(woods, mapPixelX + dx, mapPixelY + dy, hDim, true, landform));",
     "new": "if (!k) kernels.set(key, k = sampleKernel(woods, mapPixelX + dx, mapPixelY + dy, hDim, true, null));",
     "tests": [
@@ -209,7 +209,7 @@
   },
   {
     "name": "LANDFORM-build-ghost-rows-raw",
-    "file": "src/world/terrainGen.js",
+    "file": "src/world/terrain/terrainGen.js",
     "old": "const grid = restrideGrid({ woods, px, py, stride, samples, landforms, bed: bed ? tilemapBytes : null });",
     "new": "const grid = restrideGrid({ woods, px, py, stride, samples, bed: bed ? tilemapBytes : null });",
     "tests": [
@@ -218,7 +218,7 @@
   },
   {
     "name": "LANDFORM-job-uncut",
-    "file": "src/world/terrainGen.js",
+    "file": "src/world/terrain/terrainGen.js",
     "old": "  const landforms = landform ? createLandforms({ woods, roads, sites, climates }) : null;\n  // AUDIT LANDFORMS D3",
     "new": "  const landforms = landform ? createLandforms({ woods, sites, climates }) : null;\n  // AUDIT LANDFORMS D3",
     "tests": [
@@ -227,7 +227,7 @@
   },
   {
     "name": "LANDFORM-worker-grid-no-network",
-    "file": "src/world/terrainGenWorker.js",
+    "file": "src/world/terrain/terrainGenWorker.js",
     "old": "const { positions, normals, bed } = restrideGrid({ ...m, woods, roads, sites, climates });",
     "new": "const { positions, normals, bed } = restrideGrid({ ...m, woods, sites, climates });",
     "tests": [
@@ -299,7 +299,7 @@
   },
   {
     "name": "LANDFORM-ceiling-shaper-takes-the-raw-kernel",
-    "file": "src/world/terrainSampler.js",
+    "file": "src/world/terrain/terrainSampler.js",
     "old": "const h = scaledHeight < MAX_TERRAIN_HEIGHT ? scaledHeight : MAX_TERRAIN_HEIGHT;",
     "new": "const h = scaledHeight;",
     "tests": [

@@ -20,7 +20,7 @@
 //     FESTIVAL_BANNERS_MAX, measured where the pixel is built.
 //   THE LANTERNS: one hung before every banner the town flies (its seat
 //     anchors and the Festival's), in the street's own lantern pool
-//     (world/cityLights.js fillLanternPool) - lit with the town's lamps
+//     (world/city/cityLights.js fillLanternPool) - lit with the town's lamps
 //     at dusk, flickering on their own slots, chosen nearest as they are.
 //
 // Online alone. Four hosts: world.js WIRED (the streets); worldModes.js

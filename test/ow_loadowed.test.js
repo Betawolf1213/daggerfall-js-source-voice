@@ -18,7 +18,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { StreamingWorldState, worldCoordToMapPixel } from '../src/world/streamingWorld.js';
-import { TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 import { createLoadGovernor, unbuiltAround, TV_GOV_CLEAR_S } from '../src/systems/travel/travelGovernor.js';
 import { threatCap, foePaced } from '../src/systems/travel/travelThreat.js';
 import { foeHostile, foeAlerted } from '../src/systems/encounters.js';

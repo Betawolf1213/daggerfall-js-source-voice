@@ -7,7 +7,7 @@
 // ObjectType 13 anywhere else, are put at their centre (YPos -63, half the shell's 126). DFU places type 5 like any
 // model (DaggerfallInterior.cs:433-436), so each shell stood half a shell (1.58 m) under its storey: the furniture,
 // lights and markers 1.58 m over the floor the player walks, the two-storey stair 3.2 m under its own, the room's door
-// 1.6 m under the street's. world/interiorLayout.js stands an ObjectType 5 model on its lowest vertex, as a prop is
+// 1.6 m under the street's. world/interior/interiorLayout.js stands an ObjectType 5 model on its lowest vertex, as a prop is
 // stood. (AUDIT FB1007b F1/T1: two more records hold such models - House2 rooms of blocks no location places, whose
 // hall 28703 is written off the convention and left as written.)
 //
@@ -17,7 +17,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { layoutInterior, isBadInteriorModel, FLOOR_MODEL_TYPE, PROP_MODEL_TYPE } from '../src/world/interiorLayout.js';
+import { layoutInterior, isBadInteriorModel, FLOOR_MODEL_TYPE, PROP_MODEL_TYPE } from '../src/world/interior/interiorLayout.js';
 import { getStaticDoors } from '../src/world/staticDoors.js';
 import { identity } from '../src/world/mat4.js';
 import { GLOBAL_SCALE, DOOR_TYPE, dfMeshToModel } from '../src/world/meshReader.js';

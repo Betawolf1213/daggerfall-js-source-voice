@@ -17,7 +17,7 @@ import {
 import { gateTimes, gateSpotLocal } from '../src/net/gateLaw.js';
 import { riteLocalOf, RITE_GRACE_MS } from '../src/net/gateRite.js';
 import { riteLayout, RITE_BRAZIER_R, RITE_BRAZIER_W, RITE_TENT_R } from '../src/world/riteModel.js';
-import { RITE_CLEAR_M } from '../src/world/gateClearance.js';
+import { RITE_CLEAR_M } from '../src/world/gate/gateClearance.js';
 import { CAGE_W, CAGE_D, CAGE_H, CAGE_WALL_OUT, CAGE_DOOR_OPEN, CAGE_DOOR_MS, CAGE_FOOT, CAGE_FOOT_UNDER, CAGE_POST, CAGE_SILL, CAGE_SILL_OVER, CAGE_LEAF_W, cageHinge } from '../src/world/cageModel.js';
 import { raceActivation, raceWinner } from '../src/player/activationRace.js';
 import { pickActivatableHit, RAY_DISTANCE, STATIC_NPC_ACTIVATION_DISTANCE } from '../src/player/activate.js';

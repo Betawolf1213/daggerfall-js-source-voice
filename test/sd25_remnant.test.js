@@ -12,11 +12,11 @@ import {
   remnantTellArt, remnantDialArt, remnantLampArt, remnantLookArt, remnantArt, tellLit, SD_REMNANT_ARCHIVE, SD_REMNANT_TELL_RECORD, SD_REMNANT_WHITE_RECORD,
   SD_REMNANT_HUSK_RECORD, SD_REMNANT_DIAL_RECORD, SD_REMNANT_HAND_RECORD, SD_REMNANT_LAMP_RECORD, SD_REMNANT_RIM_RECORD, SD_TELL_REGION, SD_TELL_ART_SIZE,
   SD_TELL_BLOW, SD_TELL_GLOW, SD_BLADE_MID, SD_DIAL_ART, SD_LAMP_ART, SD_DIAL_RIM_GLOW, SD_REMNANT_GATHER_RECORD, SD_GATHER_GLOW, echoMetalArt,
-} from '../src/world/sdRemnantArt.js';
+} from '../src/world/superDungeon/sdRemnantArt.js';
 import {
   buildRemnantParts, buildBackDialModel, buildDialHandModel, buildRibLampsModel, buildTornHeartModel, ribLampAt, heartRecordOf, remnantMatrix,
   SD_REMNANT_DIAL, SD_REMNANT_BODY, SD_REMNANT_KIT, SD_REMNANT_PARTS,
-} from '../src/world/sdRemnantModel.js';
+} from '../src/world/superDungeon/sdRemnantModel.js';
 import {
   createSdRemnant, ensureSdRemnantArt, sdTellsAt, sdDialHandAt, sdRibLampsLit, SD_TELLS, SD_TELL_HEAT, SD_TELL_AFTER_MS, SD_DIAL_LOOK, SD_DIAL_TURNS,
   SD_GEAR_DRAWS, SD_DECOR_DRAWS,
@@ -25,11 +25,11 @@ import { dialHandMatrix, dialFallMatrix, heartFallMatrix, gearFlightOf, mul4, sd
 import { SD_BLOW_COLOR } from '../src/scenes/sdRemnantBlows.js';
 import { SD_BLOWS, SD_BODY, SD_HEARTS, SD_STUN_MS, SD_ECHO_PAIR_MS, SD_REM_START, windupFor } from '../src/net/sdRemnant.js';
 import { SD_FIGHT_EMPTY } from '../src/net/sdFightLink.js';
-import { SD_REALM_ARCHIVE, SD_REALM_BRASS_RECORD } from '../src/world/sdRealm.js';
-import { realmBrassArt, realmArt } from '../src/world/sdRealmArt.js';
+import { SD_REALM_ARCHIVE, SD_REALM_BRASS_RECORD } from '../src/world/superDungeon/sdRealm.js';
+import { realmBrassArt, realmArt } from '../src/world/superDungeon/sdRealmArt.js';
 import { SD_ENDINGS } from '../src/net/sdMarks.js';
-import { sdTick } from '../src/world/sdLook.js';
-import { numeralCell, numeralWidth, SD_HOUR_NUMERALS } from '../src/world/sdSkyArt.js';
+import { sdTick } from '../src/world/superDungeon/sdLook.js';
+import { numeralCell, numeralWidth, SD_HOUR_NUMERALS } from '../src/world/superDungeon/sdSkyArt.js';
 import { perspective, lookAt, mirrorProjectionX } from '../src/world/mat4.js';
 import { SD_ARENA, SD_REALM_ORIGIN } from '../src/net/sdBrain.js';
 
@@ -66,7 +66,7 @@ const key = (a, r) => `${a}_${r}`;
 
 // ── the tell atlas ─────────────────────────────────────────────────────────────────────────────────────────────────
 
-test('SD-LOOK S8 THE TELL ATLAS (world/sdRemnantArt.js): one a metal a heat, in the Remnant\'s own archive (never the Hour\'s 38151, whose records section 7 names); its four regions apart and inside it; cold it is the metal its neighbours wear - the Hour\'s brass texel for texel off its features, an Echo\'s gilt or silver - with no light past theirs; mid lights each region\'s features in its OWN blow\'s colour (SD_BLOW_COLOR, handed in), the blade\'s ROOT half alone, its front dithered; hot the whole region, its features the core at full colour; nothing outside a region ever lit (mutants: the blade heating from its tip; mid lighting the whole region; a region in another blow\'s colour; the cold atlas lit)', () => {
+test('SD-LOOK S8 THE TELL ATLAS (world/superDungeon/sdRemnantArt.js): one a metal a heat, in the Remnant\'s own archive (never the Hour\'s 38151, whose records section 7 names); its four regions apart and inside it; cold it is the metal its neighbours wear - the Hour\'s brass texel for texel off its features, an Echo\'s gilt or silver - with no light past theirs; mid lights each region\'s features in its OWN blow\'s colour (SD_BLOW_COLOR, handed in), the blade\'s ROOT half alone, its front dithered; hot the whole region, its features the core at full colour; nothing outside a region ever lit (mutants: the blade heating from its tip; mid lighting the whole region; a region in another blow\'s colour; the cold atlas lit)', () => {
   assert.notEqual(SD_REMNANT_ARCHIVE, SD_REALM_ARCHIVE);
   const S = SD_TELL_ART_SIZE, R = Object.values(SD_TELL_REGION);
   for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) assert.ok(R.filter((r) => inRegion(r, x, y)).length <= 1, 'the regions apart');
@@ -103,7 +103,7 @@ test('SD-LOOK S8 THE TELL ATLAS (world/sdRemnantArt.js): one a metal a heat, in 
   assert.equal(x0 + y0 >= 0, true);
 });
 
-test('SD-LOOK S8 THE TELLS\' FACES (world/sdRemnantModel.js): the sabaton\'s UNDERSIDE samples the sole\'s region, the Hour-Hand\'s blade the blade\'s - root at its right, tip at its left, whichever face - the fist and its knuckles the fist\'s, the eight ribs the ribs\'; nothing else of the body samples the atlas; each metal its own atlas; a record from 100 the Remnant\'s archive, the rest the Hour\'s (mutants: the blade mapped tip to root; the sole on the sabaton\'s top)', () => {
+test('SD-LOOK S8 THE TELLS\' FACES (world/superDungeon/sdRemnantModel.js): the sabaton\'s UNDERSIDE samples the sole\'s region, the Hour-Hand\'s blade the blade\'s - root at its right, tip at its left, whichever face - the fist and its knuckles the fist\'s, the eight ribs the ribs\'; nothing else of the body samples the atlas; each metal its own atlas; a record from 100 the Remnant\'s archive, the rest the Hour\'s (mutants: the blade mapped tip to root; the sole on the sabaton\'s top)', () => {
   for (const metal of ['brass', 'gold', 'silver']) {
     const P = buildRemnantParts(metal), tell = SD_REMNANT_TELL_RECORD[metal][0];
     const by = Object.fromEntries(SD_REMNANT_PARTS.map((n, i) => [n, P[i]]));
@@ -233,7 +233,7 @@ test('SD-LOOK S8 THE VOLLEY\'S GEARS FORM IN ITS HANDS (sdGatherGearsAt; the str
 
 // ── the back-dial ──────────────────────────────────────────────────────────────────────────────────────────────────
 
-test('SD-LOOK S8 THE BACK-DIAL (world/sdRemnantModel.js): behind the shoulders, clear of the body\'s back, its teeth\'s tips at the law\'s radius, wholly above 2 m (nothing under 2 m past the law), its hours on its back face (facing -z) - u once round CLOCKWISE from XII as that face is seen, +x the screen\'s right from behind through the camera\'s one mirror (world/mat4.js); the hours the sky\'s own glyphs, tops outward; its teeth\'s fronts the rim line (the ambient rung) so from the front its rim haloes the head (mutants: the hours mirrored; the hours inward)', () => {
+test('SD-LOOK S8 THE BACK-DIAL (world/superDungeon/sdRemnantModel.js): behind the shoulders, clear of the body\'s back, its teeth\'s tips at the law\'s radius, wholly above 2 m (nothing under 2 m past the law), its hours on its back face (facing -z) - u once round CLOCKWISE from XII as that face is seen, +x the screen\'s right from behind through the camera\'s one mirror (world/mat4.js); the hours the sky\'s own glyphs, tops outward; its teeth\'s fronts the rim line (the ambient rung) so from the front its rim haloes the head (mutants: the hours mirrored; the hours inward)', () => {
   const D = SD_REMNANT_DIAL;
   for (const metal of ['brass', 'gold', 'silver']) {
     const m = buildBackDialModel(metal), V = vertsOf(m);
@@ -433,7 +433,7 @@ test('SD-LOOK S8 THE FIGHT\'S FRAME MAKES NOTHING (AUDIT SD II L2 F9\'s measure)
   const script = `
     const { createSdRemnant, sdTellsAt, sdDialHandAt, sdRibLampsLit } = await import(${url('src/scenes/sdRemnant.js')});
     const { dialHandMatrix, dialFallMatrix, heartFallMatrix } = await import(${url('src/scenes/sdRemnantRig.js')});
-    const { remnantMatrix } = await import(${url('src/world/sdRemnantModel.js')});
+    const { remnantMatrix } = await import(${url('src/world/superDungeon/sdRemnantModel.js')});
     const { SD_FIGHT_EMPTY } = await import(${url('src/net/sdFightLink.js')});
     const { SD_BLOWS } = await import(${url('src/net/sdRemnant.js')});
     const renderer = { createMesh: () => ({}), destroyMesh() {}, uploadTexture() {}, uploadEmissionTexture() {} };

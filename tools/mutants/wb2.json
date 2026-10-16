@@ -1,7 +1,7 @@
 [
   {
     "name": "WB2-a-spike-wound-inward",
-    "file": "src/world/gateModel.js",
+    "file": "src/world/gate/gateModel.js",
     "old": "    if (n[0] * mid[0] + n[1] * mid[1] + n[2] * mid[2] >= 0) f.tri(GATE_STONE_RECORD, a, c, tip,",
     "new": "    if (n[0] * mid[0] + n[1] * mid[1] + n[2] * mid[2] < 0) f.tri(GATE_STONE_RECORD, a, c, tip,",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "WB2-the-fire-over-the-stone",
-    "file": "src/world/gateModel.js",
+    "file": "src/world/gate/gateModel.js",
     "old": "out[k] = Number.isFinite(out[k]) ? Math.max(0, out[k] - margin) : 0;",
     "new": "out[k] = Number.isFinite(out[k]) ? Math.max(0, out[k] + margin) : 0;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "WB2-a-wall-of-fire",
-    "file": "src/world/gateArt.js",
+    "file": "src/world/gate/gateArt.js",
     "old": "export const GATE_VEINS = 4;",
     "new": "export const GATE_VEINS = 40;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "WB2-the-veins-never-burn",
-    "file": "src/world/gateArt.js",
+    "file": "src/world/gate/gateArt.js",
     "old": "    if (heart[i]) { put(albedo, x, y, VEIN_HEART); put(emission, x, y, VEIN_HEART); }",
     "new": "    if (heart[i]) { put(albedo, x, y, VEIN_HEART); put(emission, x, y, [0, 0, 0]); }",
     "tests": [

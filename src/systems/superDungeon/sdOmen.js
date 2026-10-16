@@ -103,9 +103,9 @@ export function sdAirDusk(minute) {
 }
 /** THE BRASS AIR'S WEIGHT, 0..SD_AIR.max: the column's light (sdOmenLight), the distance's and the hour's. Pure. */
 export const sdAirWeight = (light, d, minute) => SD_AIR.max * clamp01(light) * sdAirNear(d) * sdAirDusk(minute);
-/** The brass the haze leans to by its own brightness, and the grade toward it - world/sdBrassSky.js since AUDIT SD III
+/** The brass the haze leans to by its own brightness, and the grade toward it - world/superDungeon/sdBrassSky.js since AUDIT SD III
  *  (V8), whose GLSL grades the sky the same. */
-export { SD_BRASS_RAMP, sdBrassGrade } from '../../world/sdBrassSky.js';
+export { SD_BRASS_RAMP, sdBrassGrade } from '../../world/superDungeon/sdBrassSky.js';
 /** The light under it - each channel toward SD_BRASS_TINT by `w`; a fresh Float32Array (the renderer's light) - `rgb`
  *  itself where there is no brass and it is one already (AUDIT SD III, V15: none made every outdoor frame for nothing).
  *  Pure. */

@@ -91,7 +91,7 @@
   },
   {
     "name": "WB4-the-raise-held-from-the-word",
-    "file": "src/world/gateBoss.js",
+    "file": "src/world/gate/gateBoss.js",
     "old": "frame: cast ? CAST_RAISE_FRAME : tel.t < 0.5 ? 0 : 1,",
     "new": "frame: cast ? CAST_RAISE_FRAME : 1,",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "WB4-the-charge-left-at-its-start",
-    "file": "src/world/gateBoss.js",
+    "file": "src/world/gate/gateBoss.js",
     "old": "  if (atk && ATTACK_BY_ID[atk.a] === ATTACKS.charge && now >= atk.at) {",
     "new": "  if (false) {",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "WB4-the-flinch-over-a-windup",
-    "file": "src/world/gateBoss.js",
+    "file": "src/world/gate/gateBoss.js",
     "old": "  if (A) {\n    const tel = telegraphAt(atk, s.phase, now);\n    // WBX5: the leap in the air",
     "new": "  if (A && !(now - hurtAt >= 0 && now - hurtAt < FLINCH_MS)) {\n    const tel = telegraphAt(atk, s.phase, now);\n    // WBX5: the leap in the air",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "WB4-the-loop-not-wrapped",
-    "file": "src/world/gateBoss.js",
+    "file": "src/world/gate/gateBoss.js",
     "old": "const frame = act.loop ? ((act.frame % n) + n) % n :",
     "new": "const frame = act.loop ? act.frame :",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "WB4-the-held-frame-past-the-record",
-    "file": "src/world/gateBoss.js",
+    "file": "src/world/gate/gateBoss.js",
     "old": "Math.max(0, Math.min(n - 1, act.frame))",
     "new": "Math.max(0, act.frame)",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "WB4-the-glow-flat-through-the-windup",
-    "file": "src/world/gateBoss.js",
+    "file": "src/world/gate/gateBoss.js",
     "old": "return lit(color, 0.35 + 1.25 * tel.t * tel.t, GLOW_RANGE.windup);",
     "new": "return lit(color, 1, GLOW_RANGE.windup);",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "WB4-the-wards-gold-never-shown",
-    "file": "src/world/gateBoss.js",
+    "file": "src/world/gate/gateBoss.js",
     "old": "  if (now < s.shieldUntil) return lit(WARD_COLOR,",
     "new": "  if (false) return lit(WARD_COLOR,",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "WB4-a-cue-off-his-own-voice",
-    "file": "src/world/gateBoss.js",
+    "file": "src/world/gate/gateBoss.js",
     "old": "    cleave: voice(B.barkSound, 0.96),",
     "new": "    cleave: voice(B.moveSound, 0.96),",
     "tests": [

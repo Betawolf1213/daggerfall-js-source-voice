@@ -24,7 +24,7 @@ import {
 } from '../src/systems/online/onlineHomes.js';
 import { interiorSceneName } from '../src/systems/sceneCache.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
-import { mintInteriorShared, composeInteriorShared, applyInteriorShared, interiorActionRecords, interiorLocationKey } from '../src/world/interiorShared.js';
+import { mintInteriorShared, composeInteriorShared, applyInteriorShared, interiorActionRecords, interiorLocationKey } from '../src/world/interior/interiorShared.js';
 import { BankWindow, BANK_RECTS, BANK_PANEL_X, BANK_PANEL_Y } from '../src/ui/bankWindow.js';
 import { createBankAccounts, housePrice } from '../src/systems/banking.js';
 import { buildingDataForDoor, locationBuildings } from '../src/systems/talk/talkTopics.js';

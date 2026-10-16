@@ -28,7 +28,7 @@
   },
   {
     "name": "DW-FA-seafloor-ordered",
-    "file": "src/world/underwaterLoot.js",
+    "file": "src/world/underwater/underwaterLoot.js",
     "old": "column.depth < SEAFLOOR_Y_CLEARANCE) return null;",
     "new": "!(column.depth >= SEAFLOOR_Y_CLEARANCE)) return null;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "DW-FA-seafloor-sea-ordered",
-    "file": "src/world/underwaterLoot.js",
+    "file": "src/world/underwater/underwaterLoot.js",
     "old": "  if (column.oceanY - column.renderedSeafloorY < SEAFLOOR_Y_CLEARANCE) return null;",
     "new": "  if (!(column.oceanY - column.renderedSeafloorY >= SEAFLOOR_Y_CLEARANCE)) return null;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "DW-FA-wreck-ordered",
-    "file": "src/world/underwaterLoot.js",
+    "file": "src/world/underwater/underwaterLoot.js",
     "old": "!!column && column.depth >= f32(Math.max(1, waterDepth) * WRECK_MINIMUM_DEPTH_FRACTION);",
     "new": "!!column && !(column.depth < f32(Math.max(1, waterDepth) * WRECK_MINIMUM_DEPTH_FRACTION));",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "DW-FA-fog-ahead-ordered",
-    "file": "src/world/underwaterLoot.js",
+    "file": "src/world/underwater/underwaterLoot.js",
     "old": "  if (reveal >= maxDistance) return null;",
     "new": "  if (!(reveal < maxDistance)) return null;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "DW-FA-cluster-rate-ordered",
-    "file": "src/world/underwaterLoot.js",
+    "file": "src/world/underwater/underwaterLoot.js",
     "old": "  if (rate <= 0) return false;",
     "new": "  if (!(rate > 0)) return false;",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "DW-FA-surfacelook-ignores-latch",
-    "file": "src/world/deepWaterLook.js",
+    "file": "src/world/deepWater/deepWaterLook.js",
     "old": "    fogColor: undersideFogColor ?? fog,",
     "new": "    fogColor: fog,",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "DW-FA-load-off-the-clock",
-    "file": "src/world/deepWaterRuntime.js",
+    "file": "src/world/deepWater/deepWaterRuntime.js",
     "old": "export function canRunLightRuntimeWork(playing) { return !!playing && !loadInProgress; }",
     "new": "export function canRunLightRuntimeWork(playing) { return !!playing && resumeAt !== Infinity; }",
     "tests": [

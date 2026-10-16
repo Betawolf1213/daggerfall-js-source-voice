@@ -19,14 +19,14 @@ import { MobileUnit } from '../src/characters/mobileUnit.js';
 import { enemyHierarchyOrder } from '../src/characters/dungeonEnemies.js';
 import { createOceanHolesAbyss } from '../src/scenes/oceanHolesAbyss.js';
 import { mapPixelToLongitudeLatitude, mapPixelToWorldCoord, worldCoordToMapPixel } from '../src/formats/mapsFile.js';
-import { enemyRoster } from '../src/world/underwaterEnemies.js';
+import { enemyRoster } from '../src/world/underwater/underwaterEnemies.js';
 import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
 import { ABYSS_MAGIC_LIGHT_SCALE } from '../src/world/oceanHoles.js';
 import { withPlayerLights, CANDLE } from '../src/scenes/magicCandle.js';
 import { peerTorchLight, torchPoseByte } from '../src/systems/playerTorch.js';
 import { effectiveLevel } from '../src/systems/mentorMode.js';   // SOFTCAP2: the mentor's level the spawn sites read (a free name there, the module's own import)
 import { applyChampion } from '../src/systems/champions.js';   // LOOT7: applyEliteScaling stands a layout champion (a free name there, the module's own import)
-import { inFireWard } from '../src/world/dungeonFires.js';   // REST3: the spawn's ward (a free name there, the module's own import)
+import { inFireWard } from '../src/world/dungeon/dungeonFires.js';   // REST3: the spawn's ward (a free name there, the module's own import)
 import { freeLodgedFeet } from '../src/characters/foeSpacing.js';   // FIELD BUGS 2026-10-04d CRATE-FREE: the build's stand (a free name there, the module's own import)
 import { auraWingLights } from '../src/render/auraRing.js';   // SERAPH-WINGS: peerTorchLights' tail
 import { foeSeed, applyWireLook } from '../src/characters/foeBodies.js';   // AUDIT MW-NPC II K3: the dungeon context's look seed, in the mounted scope

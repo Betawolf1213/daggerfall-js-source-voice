@@ -10,7 +10,7 @@
   },
   {
     "name": "WBX1-the-gate-on-sixteen-bits",
-    "file": "src/world/gateModel.js",
+    "file": "src/world/gate/gateModel.js",
     "old": "  const indices = new Uint32Array(count);",
     "new": "  const indices = new Uint16Array(count);",
     "tests": [
@@ -176,7 +176,7 @@
   },
   {
     "name": "WBX6-the-stand-in-unflagged",
-    "file": "src/world/gateBoss.js",
+    "file": "src/world/gate/gateBoss.js",
     "old": "  e.spareGear = true;",
     "new": "  e.spareGear = false;",
     "tests": [

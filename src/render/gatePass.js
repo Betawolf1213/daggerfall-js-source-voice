@@ -1,9 +1,9 @@
 // @ts-check
 // WB2 (2026-09-25, Mac: "A gate model would be spawned with a timer that leads to a completely different area"):
-// THE GATE'S FIRE AND ITS BEACON, DRAWN - the two things the stone (world/gateModel.js) cannot be.
+// THE GATE'S FIRE AND ITS BEACON, DRAWN - the two things the stone (world/gate/gateModel.js) cannot be.
 //
 // THE MEMBRANE. The portal between the pillars: a slow vortex of fire, masked to the arch's own opening
-// (world/gateModel.js gateArchProfile - measured off the built mesh, so it fits the stone whatever its numbers
+// (world/gate/gateModel.js gateArchProfile - measured off the built mesh, so it fits the stone whatever its numbers
 // become), bright at its rim where it meets the stone. SEALED it is an ember - dim, slow, half seen through; OPEN
 // it blazes and turns fast and hides what stands behind it. Blended PREMULTIPLIED (ONE, ONE_MINUS_SRC_ALPHA): its
 // alpha is how much of the world behind it it hides, and its colour may run past that alpha, so it GLOWS as well as
@@ -21,7 +21,7 @@
 // Not a DFU member. Ledger A (WB).
 import { FOG_FACTOR_GLSL } from './labGrass.js';
 import { buildProgram } from './glProgram.js';
-import { ARCH_PROFILE_N, ARCH_Y0, ARCH_Y1, PORTAL_CENTRE_Y, GATE_FOOT_SINK } from '../world/gateModel.js';
+import { ARCH_PROFILE_N, ARCH_Y0, ARCH_Y1, PORTAL_CENTRE_Y, GATE_FOOT_SINK } from '../world/gate/gateModel.js';
 
 /** Every rate below is whole cycles over this many seconds; the clock is handed wrapped to it. */
 export const GATE_CLOCK_PERIOD = 120;
@@ -35,7 +35,7 @@ export const MEMBRANE_ALPHA_SEALED = 0.35;
 export const MEMBRANE_ALPHA_OPEN = 0.92;
 /** The membrane's widest half-width, for its quad (the mask narrows it to the arch). */
 export const MEMBRANE_HALF_W = 5;
-/** AUDIT GATE-FBX E5: the fire's foot - down between the feet's sunk soles (world/gateModel.js GATE_FOOT_SINK), where
+/** AUDIT GATE-FBX E5: the fire's foot - down between the feet's sunk soles (world/gate/gateModel.js GATE_FOOT_SINK), where
  *  the opening's first width holds, so on a slope across the arch the ground cuts it and no light shows under it: from
  *  the gate's own ground (ARCH_Y0) it floated 0.23 m over the downhill ground at 10 degrees. */
 export const FIRE_FOOT_Y = ARCH_Y0 - GATE_FOOT_SINK;
@@ -52,7 +52,7 @@ export const BEACON_SEGMENTS = 24;
 /** How the column widens with distance - radius per metre away: some four pixels across on a 700-pixel view at the
  *  game's field of view, whatever the distance. */
 export const BEACON_WIDEN = 0.006;
-/** The column leaves the gate this far above its foot - in its lintel, over the opening (world/gateModel.js ARCH_Y1), so it
+/** The column leaves the gate this far above its foot - in its lintel, over the opening (world/gate/gateModel.js ARCH_Y1), so it
  *  never stands behind the fire; its ring stands out of the lintel's faces there, but its light rises from nothing over
  *  the twelve metres above (BEACON_FS) and is under a thirtieth of itself at the crown. */
 export const BEACON_START_M = 15;

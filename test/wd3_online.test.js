@@ -171,7 +171,7 @@ test('WD3 online, the room: both switches are the room\'s (forced on - two playe
 
 test('WD3 online, a building\'s room is its layout\'s (AUDIT WD3 B3) - the layout mods serving its town ride in the room key\'s high bits, so two players whose town stands in two layouts never share a room (its doors, chests and memory), a memory kept from before the mods lands on no other building, and Daggerfall\'s own town keeps the rooms it always had; the room, its memory and the scene agree', async () => {
   const { roomKeyFor } = await import('../src/net/online.js');
-  const { interiorLocationKey, layoutRoomKey } = await import('../src/world/interiorShared.js');
+  const { interiorLocationKey, layoutRoomKey } = await import('../src/world/interior/interiorShared.js');
   const { isWorldRoom } = await import('../src/net/wire.js');
   const bk = 0x70711;   // the largest key a town of 8 x 8 blocks of 32 records makes is under 2^19
   assert.equal(layoutRoomKey(bk, null), bk);

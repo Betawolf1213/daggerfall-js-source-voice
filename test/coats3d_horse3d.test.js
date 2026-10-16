@@ -15,7 +15,7 @@ import {
   horsePaletteShape, horsePoseScratch, writeHorsePalette, horseSkinStream, horseHide, horseTexelMap, startTexelMap, TEXEL_GUTTER, TEXEL_MAP_STEPS, rgbaMips,
 } from '../src/world/horseModel.js';
 import { createHorseRig, horseRigFor, HORSE3D_LOOKS_KEPT, DYE_ROWS, HORSE_SEAT, HORSE_SEAT_BONE, LOOK_ASK_STALE, outOfView } from '../src/world/horseRig.js';
-import { createRoadTeams } from '../src/world/roadTeams.js';
+import { createRoadTeams } from '../src/world/road/roadTeams.js';
 import { createPeerRiders } from '../src/net/peerRiders.js';
 import { createEotbBody, HORSE_PRELOAD_A_FRAME } from '../src/player/eotbBody.js';
 import { horseLookCode, recolorHorse, recolorHorseTexels, dyeHorseTexelRows, texelPlanes, PLANE_SHARPNESS, LEG_BANDS, WHITE_FLOOR_3D, isCoatPixel } from '../src/systems/horse/horseCoats.js';
@@ -422,7 +422,7 @@ test('COATS3D by source: the view keeps the saddle and lifts RIDE-POV astride; t
   assert.match(pool, /if \(rig\?\.ready\(\)\) \{ pose3dTeam\(rig, owner, team, conceal, _dt3d\); dropTeamBatches\(owner, 0\); return; \}/, 'the pool\'s team 3D, no billboard');
   assert.match(pool, /rig\.step\(e\.horse, \{ feet: h\.position, yaw, speed: e\.speed, dt, look: lookOfOwner\(owner\) \}\);/, 'in its owner\'s look');
   assert.match(rd('src/world/wagonModels.js'), /horses3d: \(\) => mwViewHorseRig\(\),/, 'both hosts, through the one construction seam');
-  assert.match(rd('src/world/roadTeams.js'), /rig\.step\(s\.h3, \{ feet: h\.feet, yaw: h\.yaw, speed: h\.moving \? h\.speed : 0, dt, look: s\.look \}\);/, 'the road\'s strangers in their looks');
+  assert.match(rd('src/world/road/roadTeams.js'), /rig\.step\(s\.h3, \{ feet: h\.feet, yaw: h\.yaw, speed: h\.moving \? h\.speed : 0, dt, look: s\.look \}\);/, 'the road\'s strangers in their looks');
 });
 
 test('COATS3D the mips: each level the 2x2 mean, its colour by its alpha - a card\'s cut edge does not darken', () => {

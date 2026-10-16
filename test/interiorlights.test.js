@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {
   interiorLightProperties, collectInteriorLights,
   INTERIOR_LIGHT_RANGE, INTERIOR_LIGHT_INTENSITY, INTERIOR_LIGHT_COLOR,
-} from '../src/world/interiorLights.js';
+} from '../src/world/interior/interiorLights.js';
 
 // DaggerfallInterior.AddLight's SECOND per-record switch
 // (DaggerfallInterior.cs:1034-1151, "adjust properties of light

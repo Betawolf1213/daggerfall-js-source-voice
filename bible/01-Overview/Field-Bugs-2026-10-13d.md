@@ -105,7 +105,7 @@ and its list opened on that spot. Inside, the GPS is the dungeon's own pixel (`p
 streamer's, which a load and a Recall stand at the dungeon's; Ocean Holes' abyss its template's - the save's and the
 anchor's law), and every row has kept it since LEGACY1 - the map's ring reads it. The row still counts beside it: the
 Arena's floor stands on Daggerfall's pixel, whose castle is the city's own row. And neither tells the Arena's Undercroft
-from Castle Daggerfall - `world/arenaCity.js undercroftLocation` wears its city's row on its city's pixel - so the place
+from Castle Daggerfall - `world/arena/arenaCity.js undercroftLocation` wears its city's row on its city's pixel - so the place
 keeps the dungeon's own key now (`dungeonCtx.locationKey()`, `dungeon:<locationId>`: its save's and its room's), and the
 size it was BUILT at (`smallerDungeons.js builtDungeonSize`: Smaller Dungeons lays a five- or eight-block plus of the
 location's own blocks, drawn on its map id - another layout, where the fallen's floor position is some other room or

@@ -91,7 +91,7 @@
   },
   {
     "name": "DFLOOK-the-ships-painted",
-    "file": "src/world/galleonArt.js",
+    "file": "src/world/ships/galleonArt.js",
     "old": "    build: async () => { const p = built(record); return p && dfLook(p, lookSeed(archive, dayOf.get(record) ?? record)); },",
     "new": "    build: async () => { const p = built(record); return p && (void dfLook, void lookSeed, p); },",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "DFLOOK-a-twin-its-own-grain",
-    "file": "src/world/galleonArt.js",
+    "file": "src/world/ships/galleonArt.js",
     "old": "dfLook(p, lookSeed(archive, dayOf.get(record) ?? record))",
     "new": "dfLook(p, lookSeed(archive, record))",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "DFLOOK-the-glass-left-whole",
-    "file": "src/world/galleonArt.js",
+    "file": "src/world/ships/galleonArt.js",
     "old": "  for (let i = 0; i < data.length; i += 4) if (glow.data[i] > 0) data[i + 3] = 0;",
     "new": "  for (let i = 0; i < data.length; i += 4) if (glow.data[i] > 0) data[i + 3] = 255;",
     "tests": [
@@ -191,7 +191,7 @@
   },
   {
     "name": "DFLOOK-the-twin-cut",
-    "file": "src/world/galleonArt.js",
+    "file": "src/world/ships/galleonArt.js",
     "old": "    if (dayOf.has(record)) return art(dayOf.get(record));",
     "new": "    if (dayOf.has(record)) return cutGlass(art(dayOf.get(record)), glow(dayOf.get(record)));",
     "tests": [
@@ -201,7 +201,7 @@
   },
   {
     "name": "DFLOOK-the-twin-unglowing",
-    "file": "src/world/galleonArt.js",
+    "file": "src/world/ships/galleonArt.js",
     "old": "  const k = BANDS.sternWindows.recs.indexOf(record >= NIGHT_RECORD_OFFSET ? record - NIGHT_RECORD_OFFSET : record);",
     "new": "  const k = BANDS.sternWindows.recs.indexOf(record);",
     "tests": [
@@ -285,7 +285,7 @@
   },
   {
     "name": "DFLOOK-the-carrack-uncut",
-    "file": "src/world/carrackArt.js",
+    "file": "src/world/ships/carrackArt.js",
     "old": "export const carrackCut = (record) => Object.hasOwn(CARRACK_NIGHT, record);",
     "new": "export const carrackCut = (record) => (void CARRACK_NIGHT, void record, false);",
     "tests": [
@@ -294,7 +294,7 @@
   },
   {
     "name": "DFLOOK-the-carrack-unlit",
-    "file": "src/world/carrackArt.js",
+    "file": "src/world/ships/carrackArt.js",
     "old": "export const CARRACK_NIGHT = Object.freeze(Object.fromEntries(BANDS.transom.recs.map((r) => [r, r + NIGHT_RECORD_OFFSET])));",
     "new": "export const CARRACK_NIGHT = Object.freeze({});",
     "tests": [

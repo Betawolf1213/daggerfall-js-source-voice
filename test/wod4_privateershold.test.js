@@ -2,7 +2,7 @@
 //
 // DungeonExterior finds "DaggerfallBlock [CUSTAA30.RMB]" every frame and
 // PrivateersHold.Start builds the camp in the block's frame. The table in
-// world/wodPrivateersHold.js is that Start as data, so the first pins
+// world/worldOfDaggerfall/wodPrivateersHold.js is that Start as data, so the first pins
 // READ THE VENDORED C# - every live CreateDaggerfallMeshGameObject, its
 // localPosition and its Rotate; every billboard and its FireLight; every
 // foe - and hold the table to it, in order, as floats. Then the rolls
@@ -18,8 +18,8 @@ import { fileURLToPath } from 'node:url';
 import {
   PRIVATEERS_HOLD_BLOCK, HOLD_MODELS, HOLD_FLATS, HOLD_FIRE_LIGHT, HOLD_FOES,
   holdModelMatrix, holdFireLights, rollHoldFoes,
-} from '../src/world/wodPrivateersHold.js';
-import { FOE_MALE_CHANCE } from '../src/world/wodSpawner.js';
+} from '../src/world/worldOfDaggerfall/wodPrivateersHold.js';
+import { FOE_MALE_CHANCE } from '../src/world/worldOfDaggerfall/wodSpawner.js';
 import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');

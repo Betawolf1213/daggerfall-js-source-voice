@@ -174,7 +174,7 @@ digests). `07-Rendering/Performance-Priority.md` PERF-HIDE has the measure.
   `RIDER_LOOKS_KEPT` (12) riders' looks, the one longest undrawn is let go.
 - **The town watch's throw** (`scenes/wagonWardenShow.js`): the carried team
   in its owner's look, off the pool's `teamSnapshot`.
-- **The road's strangers** (`world/roadTeams.js`): a horse nobody owns wears
+- **The road's strangers** (`world/road/roadTeams.js`): a horse nobody owns wears
   `strangerHorseLook(key)` - born by `BIRTH_WEIGHTS` on its trip's key, on one of
   `STRANGER_SEEDS` (16) seeds, so the road shares a few dyed sets between many
   horses and every client sees the same horse in the same look.
@@ -329,7 +329,7 @@ the player's horse is let go, so a remount never gallops in place on the gait it
   pulling - is a 3D horse in its owner's look, drawn in the body pass (draw3d) in place of its billboard. A concealed
   owner's horses are drawn translucent after the opaque world (drawVeiled3d, beside the concealed peers' bodies): a
   veiled picture blends with no depth of its own, and the world drawn after it would paint it out.
-- **The road's teams** (`world/roadTeams.js`): likewise, each stranger's horse in its own look.
+- **The road's teams** (`world/road/roadTeams.js`): likewise, each stranger's horse in its own look.
 - **The horses that stand** (STAND-HORSE, 2026-10-12, the owner: "Some models arent affected when morrowind is
   attached, like static NPCs, static horses, etc" - `04-Characters/Morrowind-NPCs.md` section 28): Daggerfall's own
   town horses (TEXTURE.201 records 0 and 1, a block's or a World of Daggerfall site's flats - `scenes/world.js`,

@@ -88,7 +88,7 @@ Mutants: `tools/mutants/audit0928_online.json` 34, `audit0928_save.json` 31,
 | N1, N3, N6, N8 | low | Laws with no pin that could fail: the worker path's anchor union; the landing ring, the walkable filter, ANCHOR_Y_TOLERANCE, the cache key's union hash and SOUP_AGENT's 0.7 m gap; the gated bake built its models without main's patchSeams; three of FIELD-CONSOLE1's four answered lines. | Each pinned, red first (`inVendoredSet` exported for the vendored set's key form; PERF-2D's warning names its opener; the read-back canvases' willReadFrequently). |
 | N10 | low | Three triage commits claimed 23 mutation checks and committed none. | Committed in `arena2triage.json`. |
 
-**Ocean Holes** (`world/deepWaterFloor.js`, `scenes/oceanHolesHost.js`, `scenes/world.js`, `world/underwaterDecorations.js`)
+**Ocean Holes** (`world/deepWater/deepWaterFloor.js`, `scenes/oceanHolesHost.js`, `scenes/world.js`, `world/underwater/underwaterDecorations.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|

@@ -209,7 +209,7 @@
   },
   {
     "name": "AUDWB-D10-the-braziers-made-again",
-    "file": "src/world/gateArena.js",
+    "file": "src/world/gate/gateArena.js",
     "old": "export const courtLights = () => (_courtLights ??= ",
     "new": "export const courtLights = () => (",
     "tests": [

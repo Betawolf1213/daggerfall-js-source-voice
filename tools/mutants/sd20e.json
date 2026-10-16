@@ -154,7 +154,7 @@
   },
   {
     "name": "SD20E-T6-a-count-of-its-own",
-    "file": "src/world/sdDungeon.js",
+    "file": "src/world/superDungeon/sdDungeon.js",
     "old": "return SD_COUNT_TEXT.fades(timerText(rec.until - now));",
     "new": "return SD_COUNT_TEXT.fades(`${Math.floor((rec.until - now) / 3_600_000)}h ${String(Math.ceil(((rec.until - now) % 3_600_000) / 60_000)).padStart(2, '0')}m`);",
     "tests": [
@@ -289,7 +289,7 @@
   },
   {
     "name": "SD20E-T15-the-way-back-the-hollows",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "wayBack: 'To the Abyss Dungeon',",
     "new": "wayBack: 'To the Hollow',",
     "tests": [

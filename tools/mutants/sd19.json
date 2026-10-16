@@ -64,7 +64,7 @@
   },
   {
     "name": "SD19-the-grade-one-brass",
-    "file": "src/world/sdBrassSky.js",
+    "file": "src/world/superDungeon/sdBrassSky.js",
     "old": "const [a, b, f] = l < s1.at ? [s0.color, s1.color, clamp01((l - s0.at) / (s1.at - s0.at))] : [s1.color, s2.color, clamp01((l - s1.at) / (s2.at - s1.at))];",
     "new": "const [a, b, f] = [s1.color, s1.color, 0];",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "SD19-the-grade-unweighted",
-    "file": "src/world/sdBrassSky.js",
+    "file": "src/world/superDungeon/sdBrassSky.js",
     "old": "  return [0, 1, 2].map((i) => rgb[i] + (a[i] + (b[i] - a[i]) * f - rgb[i]) * k);",
     "new": "  return [0, 1, 2].map((i) => a[i] + (b[i] - a[i]) * f);",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "SD19-the-grade-in-place",
-    "file": "src/world/sdBrassSky.js",
+    "file": "src/world/superDungeon/sdBrassSky.js",
     "old": "  if (k === 0) return [rgb[0], rgb[1], rgb[2]];",
     "new": "  if (k === 0) return rgb;",
     "tests": [

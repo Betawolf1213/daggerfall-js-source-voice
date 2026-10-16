@@ -37,7 +37,7 @@ import {
   nodeGlowVertices, NodeGlowRenderer, createNodeGlowPass,
 } from '../src/render/nodeGlow.js';
 import { glslFunctions } from './glsl.mjs';
-import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const noWait = () => Promise.resolve();

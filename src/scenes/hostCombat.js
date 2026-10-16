@@ -785,7 +785,7 @@ const NO_CUES = Object.freeze([]);   // AUDIT TELL U9: what a foe with nothing t
 let _windupAtMe = null;
 export function setWindupAtMeListener(fn) { _windupAtMe = typeof fn === 'function' ? fn : null; }
 /**
- * A telegraphed blow's three cues, in the world boss's order (world/gateBoss.js BOSS_CUES), each once, through the
+ * A telegraphed blow's three cues, in the world boss's order (world/gate/gateBoss.js BOSS_CUES), each once, through the
  * foes' own device settings (playEnemyClip's: a metre above the feet, linear to the attract radius by `hearing`):
  *   WIND as it winds up - the kind's bark at TELL.WIND_PITCH (a person, whom DFU keeps mute, a low swing instead);
  *   RELEASE TELL.RELEASE_LEAD before its landing - the low swing at TELL.RELEASE_PITCH;

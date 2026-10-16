@@ -8,7 +8,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { ATTACKS, ATTACK_BY_ID, attacksFor, REPEAT_MAX, REPEAT_WALK_MS, newFight, joinFight, stepBrain, OPENING_MS, BASE_PROFILE } from '../src/net/gateBrain.js';
 import { GATE_STATE_EMPTY } from '../src/net/gateLink.js';
-import { bossAct, SPENT_ON, SPENT_FRAME, CAST_LOOSE_FRAME } from '../src/world/gateBoss.js';
+import { bossAct, SPENT_ON, SPENT_FRAME, CAST_LOOSE_FRAME } from '../src/world/gate/gateBoss.js';
 
 const W = (key, over = {}) => ({ i: 1, a: ATTACKS[key].id, at: 10000, x: 0, z: 0, yw: 0, tg: [], ...over });
 const state = (over = {}) => ({ ...GATE_STATE_EMPTY, day: 700, boss: 'ruhn', hp: 900, max: 1000, fighters: 3, wrathAt: 10_000_000, ...over });

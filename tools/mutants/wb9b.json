@@ -128,7 +128,7 @@
   },
   {
     "name": "WB9b-a-slab-still-rising-under-a-foot",
-    "file": "src/world/gateArena.js",
+    "file": "src/world/gate/gateArena.js",
     "old": "const done = at + WALK_LEAD_MS + (slab.j / slab.n) * WALK_FORM_MS",
     "new": "const done = at + WALK_LEAD_MS + ((slab.j + 1) / slab.n) * WALK_FORM_MS",
     "tests": [
@@ -137,7 +137,7 @@
   },
   {
     "name": "WB9b-a-slab-up-before-the-word",
-    "file": "src/world/gateArena.js",
+    "file": "src/world/gate/gateArena.js",
     "old": "from = Math.max(at, done - SLAB_RISE_MS);",
     "new": "from = done - SLAB_RISE_MS;",
     "tests": [
@@ -146,7 +146,7 @@
   },
   {
     "name": "WB9b-the-bound-drawn-on-the-ground",
-    "file": "src/world/gateBoss.js",
+    "file": "src/world/gate/gateBoss.js",
     "old": "  if (A !== ATTACKS.leap && A !== ATTACKS.cross) return 0;",
     "new": "  if (A !== ATTACKS.leap) return 0;",
     "tests": [

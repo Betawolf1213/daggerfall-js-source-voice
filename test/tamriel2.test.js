@@ -1,7 +1,7 @@
 // TAMRIEL2 (2026-10-08, bible/03-World/Tamriel.md) - THE LAND MASS BEYOND THE BAY, pinned.
 //
 // Mac: "Lets worry about this later and only implement the land mass." The streamed world goes on past the Bay's
-// edge over the authored continent (world/tamrielGround.js): the ground law, the composition of the Bay's reader
+// edge over the authored continent (world/tamriel/tamrielGround.js): the ground law, the composition of the Bay's reader
 // with the continent round it, the seam that keeps the Bay to the byte, the frame the stream grows to
 // (world/streamingWorld.js streams), the far ring's bytes past the map, the worker's own composition, the switch and
 // its row, and the host's seams - held by source, since the host is driven by no stub.
@@ -13,15 +13,15 @@ import {
   SHORE_BYTE, INLAND_BYTE, SNOW_BYTE, PLAIN_REACH, SEAM_PX, BLEND_PX, GROUND_CACHE_MAX,
   groundHash, authoredHeightByte, bayEdgeDistance, tamrielHeightByte, tamrielClimateAt, tamrielLargeMap,
   groundWoods, groundClimateIndex, groundCacheSize, dropGroundCache,
-} from '../src/world/tamrielGround.js';
-import { rasterizeTamriel, PROVINCE_NONE } from '../src/world/tamrielRaster.js';
-import { MOUNTAIN_RANGES, coastDistance, rangeLift, coastEdges, provinceAt, provinceByKey } from '../src/world/tamrielGeography.js';
-import { BAY_W, BAY_H, PIXELS_PER_PICTURE_UNIT, tamrielFrameInBay, bayToPicture } from '../src/world/tamrielFrame.js';
-import { generateSamples, kernelTerms, HEIGHTMAP_DIMENSION } from '../src/world/terrainSampler.js';
-import { generatePixelTerrain } from '../src/world/terrainGen.js';
+} from '../src/world/tamriel/tamrielGround.js';
+import { rasterizeTamriel, PROVINCE_NONE } from '../src/world/tamriel/tamrielRaster.js';
+import { MOUNTAIN_RANGES, coastDistance, rangeLift, coastEdges, provinceAt, provinceByKey } from '../src/world/tamriel/tamrielGeography.js';
+import { BAY_W, BAY_H, PIXELS_PER_PICTURE_UNIT, tamrielFrameInBay, bayToPicture } from '../src/world/tamriel/tamrielFrame.js';
+import { generateSamples, kernelTerms, HEIGHTMAP_DIMENSION } from '../src/world/terrain/terrainSampler.js';
+import { generatePixelTerrain } from '../src/world/terrain/terrainGen.js';
 import { StreamingWorldState } from '../src/world/streamingWorld.js';
 import { buildFarRingGrid } from '../src/render/farRing.js';
-import { TerrainGenClient } from '../src/world/terrainGenClient.js';
+import { TerrainGenClient } from '../src/world/terrain/terrainGenClient.js';
 import { MAP_WIDTH, MAP_HEIGHT } from '../src/formats/woodsFile.js';
 import { CLIMATES, getWorldClimateSettings } from '../src/formats/mapsFile.js';
 import { SNOWLINE_BYTE } from '../src/ui/overworldModel.js';
@@ -229,10 +229,10 @@ test('TAMRIEL2 worker: the client says the reader has the continent round it off
   const plain = new TerrainGenClient({ woods: stubWoods(), woodsBytes: new Uint8Array(16), workerFactory: () => ({ postMessage: (m) => posted.push(m), terminate() {} }) });
   assert.equal(posted[posted.length - 1].tamriel, false, 'a bare reader says so');
   assert.ok(plain);
-  const worker = read('src/world/terrainGenWorker.js');
+  const worker = read('src/world/terrain/terrainGenWorker.js');
   assert.match(worker, /import \{ groundWoods, dropGroundCache \} from '\.\/tamrielGround\.js';/);   // TAMRIEL3: and the cache dropped when the trace lands
   assert.match(worker, /woods = m\.tamriel \? groundWoods\(w\) : w;/, 'composed on init, as the host composes');
-  const ground = read('src/world/tamrielGround.js');
+  const ground = read('src/world/tamriel/tamrielGround.js');
   for (const bad of ['document', 'globalThis.', 'fetch(', 'localStorage', 'getPref']) assert.ok(!ground.includes(bad), `pure: no ${bad}`);
 });
 
@@ -291,9 +291,9 @@ test('TAMRIEL2-WORKER: every module the terrain worker reaches, at any depth, li
       walk(parts.join('/'));
     }
   };
-  walk('src/world/terrainGenWorker.js');
+  walk('src/world/terrain/terrainGenWorker.js');
   const outside = [...seen].filter((f) => !/^src\/(world|formats)\//.test(f));
   assert.deepEqual(outside, [], `the worker reaches ${outside.join(', ')}`);
-  assert.ok(seen.has('src/world/tamrielGround.js') && seen.has('src/world/tamrielGeography.js') && seen.has('src/world/segment.js'), 'the ground, through the pure homes');
+  assert.ok(seen.has('src/world/tamriel/tamrielGround.js') && seen.has('src/world/tamriel/tamrielGeography.js') && seen.has('src/world/segment.js'), 'the ground, through the pure homes');
   assert.ok(seen.size > 20 && seen.size < 60, `${seen.size} modules`);
 });

@@ -16,8 +16,8 @@ import { fileURLToPath } from 'node:url';
 import { MobileUnit } from '../src/characters/mobileUnit.js';
 import { srand, rand } from '../src/formats/dfRandom.js';
 import { LightningPlayer } from '../src/world/weather.js';
-import { layoutNature } from '../src/world/terrainNature.js';
-import { HEIGHTMAP_DIMENSION } from '../src/world/terrainSampler.js';
+import { layoutNature } from '../src/world/terrain/terrainNature.js';
+import { HEIGHTMAP_DIMENSION } from '../src/world/terrain/terrainSampler.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (p) => readFileSync(join(ROOT, 'src', p), 'utf8');

@@ -14,7 +14,7 @@
 // and a LIGHTHOUSE, the lightkeeper's. Its DOCKS are the harbour's quays, found off the terrain (systems/naval/quays.js).
 // Like the yards they are not buildings: no building record, no deed, no quest place; each is found by a row of the
 // town's directory under a key no Daggerfall building can hold (`foundBuildingKey`), its ground and its name on the town
-// maps (world/merchantYardMap.js), and a mark on the Overworld (scenes/portHost.js).
+// maps (world/merchantYards/merchantYardMap.js), and a mark on the Overworld (scenes/portHost.js).
 //
 // WHO KEEPS THEM: a person of the town's own people, named on the region's bank off a seed of the town's map id and the
 // place's own salt (systems/merchantYards.js townKeeper - the yards' one draw), so every client meets the same

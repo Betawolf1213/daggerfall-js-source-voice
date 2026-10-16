@@ -2,14 +2,14 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { paintRoads, TILE, TRACK_TILES } from '../src/world/roadPainter.js';
-import { generatePixelTerrain } from '../src/world/terrainGen.js';
-import { createLookupTable } from '../src/world/terrainTiles.js';
-import { waterCorners, WATER_MASK_TABLE } from '../src/world/waterCorners.js';
+import { paintRoads, TILE, TRACK_TILES } from '../src/world/road/roadPainter.js';
+import { generatePixelTerrain } from '../src/world/terrain/terrainGen.js';
+import { createLookupTable } from '../src/world/terrain/terrainTiles.js';
+import { waterCorners, WATER_MASK_TABLE } from '../src/world/water/waterCorners.js';
 import { buildWaterIndices, tilemapRectHasWater } from '../src/render/waterSurface.js';
 import { discSlotCount, cellKey, createGrassField, GRASS_CELL, LAB_GRASS } from '../src/render/labGrass.js';
 import { grassRecordsOf } from '../src/render/labGrass.js';
-import { DIR } from '../src/world/roadNetwork.js';
+import { DIR } from '../src/world/road/roadNetwork.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 
@@ -83,7 +83,7 @@ test('GRASS-PATH1: the mask is null on a roadless pixel and the painter is uncha
   paintRoads(tileData, tilemap, 0, DIR.E | DIR.W, null, 129, {});             // no mask
   paintRoads(tileData, bare, 0, DIR.E | DIR.W, null, 129, { paths: new Uint8Array(128 * 128) });
   assert.deepEqual([...tilemap], [...bare], 'the tilemap the painter writes does not depend on the mask');
-  const gen = read('src/world/terrainGen.js');
+  const gen = read('src/world/terrain/terrainGen.js');
   assert.match(gen, /let paths = null;/, 'no network, no mask');
   // AUDIT: anchored to the RETURN. The loose match this replaces also hit
   // the line that hands the mask to paintRoads, so a mutant that returned
@@ -91,7 +91,7 @@ test('GRASS-PATH1: the mask is null on a roadless pixel and the painter is uncha
   // sailed straight past it.
   assert.match(gen, /tilemapBytes, avg, nature,\n\s+paths,/, 'the mask rides the kernel’s answer OUT, not just in');
   assert.equal(typeof generatePixelTerrain, 'function');
-  const worker = read('src/world/terrainGenWorker.js');
+  const worker = read('src/world/terrain/terrainGenWorker.js');
   assert.match(worker, /if \(out\.paths\) transfer\.push\(out\.paths\.buffer\);/, 'transferred when present, never when null');
 });
 
@@ -99,7 +99,7 @@ test('GRASS-PATH1 / GRASS-WET1: the host keeps no blade on a painted tile or a t
   const w = read('src/scenes/world.js');
   assert.match(w, /if \(p\.paths\?\.\[ti\]\) return null;/, 'a painted tile grows nothing');
   assert.match(w, /if \(waterCorners\(byte, WATER_DRAW_MASK_TABLE\)\) \{\n\s+const puddle = [^\n]*\n\s+if \(!puddle \|\| [^\n]*\) return null;\n\s+\}/, 'nor does a tile with any corner in water - save a puddle record\'s dry ground (WATER-PUDDLE, test/waterpuddle.test.js)');
-  assert.match(w, /import \{ waterCorners, WATER_DRAW_MASK_TABLE \} from '\.\.\/world\/waterCorners\.js';/, 'from the one table that owns the question');
+  assert.match(w, /import \{ waterCorners, WATER_DRAW_MASK_TABLE \} from '\.\.\/world\/water\/waterCorners\.js';/, 'from the one table that owns the question');
   assert.match(w, /^\s+paths,\s+\/\/ GRASS-PATH1/m, 'the mask rides the built pixel');
 });
 
@@ -269,7 +269,7 @@ test('PERF11: the online frame builds the owner list once, not twice', () => {
 });
 
 test('WATER-DRAW1: the draw and the feet ask different questions, and only the draw’s table moved', async () => {
-  const { WATER_MASK_TABLE, WATER_DRAW_MASK_TABLE, SHALLOW_DRAWN, SHALLOW_WHOLE, ISLAND_DRAWN, CORNER_DRAWN, SHORE_FAMILIES, buildWaterMaskTable } = await import('../src/world/waterCorners.js');
+  const { WATER_MASK_TABLE, WATER_DRAW_MASK_TABLE, SHALLOW_DRAWN, SHALLOW_WHOLE, ISLAND_DRAWN, CORNER_DRAWN, SHORE_FAMILIES, buildWaterMaskTable } = await import('../src/world/water/waterCorners.js');
   // The LAW's table is byte-for-byte what it was: the player swims where
   // PlayerMotor.OnShallowWaterTile says and nowhere else.
   assert.deepEqual([...WATER_MASK_TABLE], [...buildWaterMaskTable()], 'the feet’s table is the default build');
@@ -306,8 +306,8 @@ test('WATER-DRAW1: the draw and the feet ask different questions, and only the d
   const pass = read('src/render/waterSurface.js');
   assert.doesNotMatch(pass.replace(/WATER_DRAW_MASK_TABLE/g, ''), /WATER_MASK_TABLE|buildWaterMaskTable/, 'and nothing in the pass reaches for the feet’s table by any spelling');
   assert.match(read('src/render/renderer.js'), /packWaterMask\(WATER_DRAW_MASK_TABLE\)/, 'and so does the shader’s uniform');
-  assert.match(read('src/player/exteriorSurface.js'), /import \{ waterCorners, waterCoverage \} from '\.\.\/world\/waterCorners\.js';/, 'the feet keep the default, which is the law’s');
-  assert.match(read('src/world/cityNavigation.js'), /WATER_MASK_TABLE\[\(record << 2\) \| t\]/, 'and so does the town’s navigation');
+  assert.match(read('src/player/exteriorSurface.js'), /import \{ waterCorners, waterCoverage \} from '\.\.\/world\/water\/waterCorners\.js';/, 'the feet keep the default, which is the law’s');
+  assert.match(read('src/world/city/cityNavigation.js'), /WATER_MASK_TABLE\[\(record << 2\) \| t\]/, 'and so does the town’s navigation');
   // the grass asks the EYE's question - a blade in a puddle is a picture
   assert.match(read('src/scenes/world.js'), /if \(waterCorners\(byte, WATER_DRAW_MASK_TABLE\)\) \{\n\s+const puddle = /);
 });

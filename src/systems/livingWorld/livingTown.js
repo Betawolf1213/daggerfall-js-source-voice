@@ -49,7 +49,7 @@ import { townCensus, isHome, watchShiftSize } from './census.js';
 import { dayPlan, entryAt, isOutdoor, walkMinutes, DAY_START_MIN, DAY_MIN, GUILD_DAY_OFFSETS } from './dayPlan.js';
 import { townClassOf, stillRoleOf, stillFlatOf } from './looks.js';
 import { BUILDING_TYPES } from '../../world/buildingNames.js';
-import { NAV_CELL } from '../../world/cityNavigation.js';   // LW-DAWN: a berth's cell
+import { NAV_CELL } from '../../world/city/cityNavigation.js';   // LW-DAWN: a berth's cell
 import { createPathBook, pointOnLine } from './townPaths.js';
 import { spotCircles, spotRound, circleLine, circlesStands, aloneStand, aloneStands, ROUND_S, GATHER_BEAT_S, lineMinutes, ALONE_FAR_M, SPACE_M } from './meetups.js';
 import { spotIncidents, stirLine, stirLoud, smallVoice, gateWord } from './stir.js';

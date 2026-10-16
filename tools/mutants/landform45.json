@@ -73,7 +73,7 @@
   },
   {
     "name": "LANDFORM4-footprint-no-clearance",
-    "file": "src/world/terrainTiles.js",
+    "file": "src/world/terrain/terrainTiles.js",
     "old": "  const c = dfLocation.mapTableData.locationType === LOCATION_TYPE_TOWN_CITY ? 3 : 2;",
     "new": "  const c = 0;",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "LANDFORM4-worker-drops-the-sites",
-    "file": "src/world/terrainGenWorker.js",
+    "file": "src/world/terrain/terrainGenWorker.js",
     "old": "    if (m.t === 'landform-tables') { sites = m.sites ?? null; climates = m.climates ?? null; return; }",
     "new": "    if (m.t === 'landform-tables') { climates = m.climates ?? null; return; }",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "LANDFORM4-worker-grid-unpulled",
-    "file": "src/world/terrainGenWorker.js",
+    "file": "src/world/terrain/terrainGenWorker.js",
     "old": "    const { positions, normals, bed } = restrideGrid({ ...m, woods, roads, sites, climates });",
     "new": "    const { positions, normals, bed } = restrideGrid({ ...m, woods, roads, climates });",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "LANDFORM4-client-keeps-them-to-itself",
-    "file": "src/world/terrainGenClient.js",
+    "file": "src/world/terrain/terrainGenClient.js",
     "old": "    this._worker.postMessage({ t: 'landform-tables', sites: s, climates: c }, [s, c].filter(Boolean).map((a) => a.buffer));",
     "new": "    void s; void c;",
     "tests": [

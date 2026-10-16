@@ -13,9 +13,9 @@ import assert from 'node:assert/strict';
 import { CardTableSession, seatPatrons } from '../src/systems/card/cardTableSession.js';
 import {
   CARD_W, CARD_L, CARD_T, CHIP_R, CHIP_T, YAW_JITTER, REST_JITTER, chipDiscs, dealMotion, hashSeed,
-} from '../src/world/cardMotion.js';
-import { tablePlaces, CardScene, BOARD_GAP, POT_ACROSS, CHIP_CLEAR, STACK_IN, STACK_SIDE } from '../src/world/cardScene.js';
-import { tableFrame, cardTableSeats } from '../src/world/cardTables.js';
+} from '../src/world/card/cardMotion.js';
+import { tablePlaces, CardScene, BOARD_GAP, POT_ACROSS, CHIP_CLEAR, STACK_IN, STACK_SIDE } from '../src/world/card/cardScene.js';
+import { tableFrame, cardTableSeats } from '../src/world/card/cardTables.js';
 import { SEAT_OUT } from '../src/player/seatPose.js';
 import { cardModel, chipModel, cellUv, atlasCell, chipCell, CELL_STOCK } from '../src/render/cardTableDraw.js';
 

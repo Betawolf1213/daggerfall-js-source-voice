@@ -28,7 +28,7 @@ import { createSdRemnant, remnantOpenAt } from '../src/scenes/sdRemnant.js';
 import { sdTelegraphShapes } from '../src/scenes/sdRemnantBlows.js';
 import { remnantBarModel, SD_BAR_TEXT } from '../src/ui/sdRemnantBar.js';
 import { TELEGRAPH_KIND } from '../src/render/gateTelegraph.js';
-import { SD_STEPS_COURSE } from '../src/world/sdSteps.js';
+import { SD_STEPS_COURSE } from '../src/world/superDungeon/sdSteps.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const T0 = 1_800_000_000_000;
@@ -345,5 +345,5 @@ test('SD11e THE WORDS AND THE COMMENTS (L4 C4, C5, C6; the docs lens): the mirro
   assert.match(site, /SD_GREAT_CITIES cities by that same claim/);
   assert.match(law, /how many fought it \(`n` - every seat its fight took/);
   assert.equal(law.includes('how many earned it'), false);
-  assert.match(read('src/world/sdSteps.js'), /by the checkpoints' near edges/, 'C3 was SD11a\'s');
+  assert.match(read('src/world/superDungeon/sdSteps.js'), /by the checkpoints' near edges/, 'C3 was SD11a\'s');
 });

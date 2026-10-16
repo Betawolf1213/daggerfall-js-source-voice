@@ -136,7 +136,7 @@ export const pulsePct = (n) => pulseStepPct(SD_PULSE_STEP, n);
 export const SD_ENDS_MS = 15 * 60_000;
 export const SD_END_EVERY_MS = 2000;
 export const SD_END_PCT = 0.99;
-/** The arena's four brass pillars in its frame (world/sdRealm.js stands them: on the diagonals, SD_PILLAR_R out), each a
+/** The arena's four brass pillars in its frame (world/superDungeon/sdRealm.js stands them: on the diagonals, SD_PILLAR_R out), each a
  *  square SD_PILLAR_W across - the Hour-Hand's shade. */
 export const SD_PILLARS = Object.freeze([0, 1, 2, 3].map((k) => { const a = Math.PI / 4 + (k * Math.PI) / 2; return Object.freeze([Math.cos(a) * SD_PILLAR_R, Math.sin(a) * SD_PILLAR_R]); }));
 

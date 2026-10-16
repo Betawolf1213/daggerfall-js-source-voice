@@ -1,4 +1,4 @@
-// ARENA2 (2026-10-02): THE FLOOR'S INSTANCE (world/arenaFloor.js) - the colosseum stood on its own as a made dungeon
+// ARENA2 (2026-10-02): THE FLOOR'S INSTANCE (world/arena/arenaFloor.js) - the colosseum stood on its own as a made dungeon
 // level (the Burning Court's law: no fifth host): the made location, the made block carried out of ARENADAG.RMB (every
 // model in its place against every other, the light flats as flats and as the dungeon's lights, the undercroft's stair
 // and the gate's people left in the city), the start marker by the bout's kind, the blocks file answering one name
@@ -10,9 +10,9 @@ import {
   arenaFloorLocation, isArenaFloor, arenaFloorBlock, arenaFloorBlocks, arenaExitDoors, floorCentre, floorPoint, arenaRing,
   crowdSeats, pickSeats, ARENA_FLOOR_BLOCK, ARENA_FLOOR_BLOCK_INDEX, ARENA_FLOOR_LOCATION_ID, RING_R, SAND_R, SAND_Y_MODEL,
   TERRACE_UP, SEAT_UP_MIN, SEAT_UP_MAX, SEAT_R_MIN, ARRIVE, WAYS_OUT, ARENA_EXIT_W, ARENA_EXIT_H, ARENA_GROUND_MODEL,
-} from '../src/world/arenaFloor.js';
-import { GATE_ARENA_BLOCK_INDEX, GATE_ARENA_LOCATION_ID } from '../src/world/gateArena.js';
-import { ARENA_BLOCK_INDEX } from '../src/world/arenaCity.js';
+} from '../src/world/arena/arenaFloor.js';
+import { GATE_ARENA_BLOCK_INDEX, GATE_ARENA_LOCATION_ID } from '../src/world/gate/gateArena.js';
+import { ARENA_BLOCK_INDEX } from '../src/world/arena/arenaCity.js';
 import { getModelMatrix, layoutRdbBlock } from '../src/world/rdbLayout.js';
 import { seededRng } from '../src/systems/arena/arenaLadder.js';
 import { RING_SLACK_M } from '../src/systems/arena/arenaBout.js';

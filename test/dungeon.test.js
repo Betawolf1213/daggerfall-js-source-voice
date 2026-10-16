@@ -3,11 +3,11 @@ import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { srand, rand } from '../src/formats/dfRandom.js';
-import { randomTextureTableClassic, applyTextureTable, DEFAULT_TEXTURE_TABLE, dungeonTextureTable, randomTextureTableAlternate, isMainStoryDungeon, ALTERNATE_VALID_ARCHIVES } from '../src/world/dungeonTextures.js';
+import { randomTextureTableClassic, applyTextureTable, DEFAULT_TEXTURE_TABLE, dungeonTextureTable, randomTextureTableAlternate, isMainStoryDungeon, ALTERNATE_VALID_ARCHIVES } from '../src/world/dungeon/dungeonTextures.js';
 import { setValue, resetToDefaults, LIVE } from '../src/systems/settings/settings.js';
 import { layoutRdbBlock, getModelMatrix, isActionDoor, ACTION_FLAGS, TRIGGER_FLAGS, RDB_SIDE } from '../src/world/rdbLayout.js';
-import { collectDungeonLights } from '../src/world/dungeonLights.js';
-import { layoutDungeon } from '../src/world/dungeonLayout.js';
+import { collectDungeonLights } from '../src/world/dungeon/dungeonLights.js';
+import { layoutDungeon } from '../src/world/dungeon/dungeonLayout.js';
 import { dfMeshToModel, GLOBAL_SCALE, DOOR_TYPE } from '../src/world/meshReader.js';
 import { transformPoint } from '../src/world/mat4.js';
 import { Arch3dFile } from '../src/formats/arch3dFile.js';
@@ -413,7 +413,7 @@ test('dungeon: RDB corpus - every block lays out clean, resource closure holds',
 
 test('dungeon: R6 point lights - verbatim RDB Light collection', { skip: skipReal }, async () => {
   const { collectDungeonLights, DUNGEON_AMBIENT, DUNGEON_LIGHT_COLOR } =
-    await import('../src/world/dungeonLights.js');
+    await import('../src/world/dungeon/dungeonLights.js');
   const { blocks, maps, getModel } = loadReal();
   // Single block pin.
   const blk = blocks.getBlock(blocks.getBlockIndex('S0000040.RDB'));
@@ -450,7 +450,7 @@ test('dungeon: per-light flicker ranges stay in [start - 1, start]', async () =>
 test('dungeon: R7 water planes - corpus and location pins', { skip: skipReal }, async () => {
   const { blocks, maps, getModel } = loadReal();
   // Corpus: 32 of 187 RDB blocks carry a start-marker water level.
-  const { collectDungeonLights } = await import('../src/world/dungeonLights.js');
+  const { collectDungeonLights } = await import('../src/world/dungeon/dungeonLights.js');
   let watered = 0;
   let total = 0;
   let lightObjects = 0;
@@ -558,8 +558,8 @@ test('AUDIT 28 W3c: RandomDungeonTextures - the five modes, the main-story gate,
   setValue('Video', 'RandomDungeonTextures', 9);
   assert.deepEqual(dungeonTextureTable({ ...args, mapId: 77 }), dungeonTextureTable({ ...args, mapId: 77, mode: 4 }), 'clamped to 4');
   resetToDefaults();
-  assert.equal(LIVE['Video/RandomDungeonTextures'], 'src/world/dungeonTextures.js');
+  assert.equal(LIVE['Video/RandomDungeonTextures'], 'src/world/dungeon/dungeonTextures.js');
   // And the layout goes through the fork, with the RAW MapId.
-  const layout = readFileSync(new URL('../src/world/dungeonLayout.js', import.meta.url), 'utf8');
+  const layout = readFileSync(new URL('../src/world/dungeon/dungeonLayout.js', import.meta.url), 'utf8');
   assert.match(layout, /dungeonTextureTable\(\{\s*\n\s*locationId: dfLocation\.dungeon\.recordElement\.header\.locationId,\s*\n\s*mapId: dfLocation\.mapTableData\?\.mapId \?\? 0,/);
 });

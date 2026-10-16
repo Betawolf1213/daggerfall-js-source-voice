@@ -6,8 +6,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-import { decodeArenaModel } from '../src/world/arenaModel.js';
-import { arenaBlockJson, ARENA_GATE_PEOPLE, ARENA_BLOCK, UNDERCROFT_LOCATION_ID } from '../src/world/arenaCity.js';
+import { decodeArenaModel } from '../src/world/arena/arenaModel.js';
+import { arenaBlockJson, ARENA_GATE_PEOPLE, ARENA_BLOCK, UNDERCROFT_LOCATION_ID } from '../src/world/arena/arenaCity.js';
 import { NPC_FLAT_ARCHIVES } from '../src/world/rdbLayout.js';
 import { lenientJson, jsonRows } from '../tools/daggerfallArenaExtract.mjs';
 

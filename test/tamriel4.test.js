@@ -13,14 +13,14 @@ import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { traceTamrielPicture, closeBorderLines, fillSpecks, HOLE_PX, pieces, paletteReader } from '../src/ui/tamrielTrace.js';
-import { fitBayToPicture, FIT_PPUS, FIT_AREA_WEIGHT, setTamrielTrace, PROVINCE_OF_ID } from '../src/world/tamrielLand.js';
-import { setTamrielFit, bayToPicture, BAY_W, BAY_H } from '../src/world/tamrielFrame.js';
+import { fitBayToPicture, FIT_PPUS, FIT_AREA_WEIGHT, setTamrielTrace, PROVINCE_OF_ID } from '../src/world/tamriel/tamrielLand.js';
+import { setTamrielFit, bayToPicture, BAY_W, BAY_H } from '../src/world/tamriel/tamrielFrame.js';
 import {
   contourSegments, chaikinCapped, dropEdgeRuns, tracedChains, buildTamrielInk, STITCH_REACH, SMOOTH_PASSES, COAST_SIMPLIFY_PX,
   COAST_CUT_PX, BORDER_SNAP_PX,
 } from '../src/ui/tamrielInk.js';
 import { linkSegments } from '../src/ui/inkMap.js';
-import { RIVERS } from '../src/world/tamrielGeography.js';
+import { RIVERS } from '../src/world/tamriel/tamrielGeography.js';
 
 const ARENA2 = process.env.ARENA2_PATH;
 const HAVE_ARENA2 = !!ARENA2 && ['TMAP00I0.IMG', 'TAMRIEL2.IMG', 'MAP.PAL', 'WOODS.WLD', 'MAPS.BSA', 'CLIMATE.PAK'].every((f) => existsSync(join(ARENA2, f)));

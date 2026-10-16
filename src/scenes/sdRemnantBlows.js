@@ -27,7 +27,7 @@ import { sdBodyAt, sdEndAgain, SD_HEARTS_KEY } from '../net/sdFightLink.js';
 import { sdBlowVerdict, sdVolleyPools, sdPoolUnder } from '../net/sdStrike.js';
 import { GateTelegraphRenderer, TELEGRAPH_KIND, TELEGRAPH_EDGE, TELEGRAPH_EDGE_DAGON, TELEGRAPH_STYLE, TELEGRAPH_POOL, TELEGRAPH_FLASH_MS, TELEGRAPH_POINTS_MAX } from '../render/gateTelegraph.js';
 import { damageChartModel, drawGateDamageChart, DAMAGE_CHART_DELAY_MS, DAMAGE_CHART_MS } from '../ui/gateDamageChart.js';
-import { BODY_FALL, BURNING, THUNDER_ROLL, SWING_LOW, CRYSTAL_CLIPS, BOSS_CUES } from '../world/gateBoss.js';
+import { BODY_FALL, BURNING, THUNDER_ROLL, SWING_LOW, CRYSTAL_CLIPS, BOSS_CUES } from '../world/gate/gateBoss.js';
 import { SD_VOICE_AWAY_MS } from './sdRemnantVoice.js';
 
 /** Each blow's colour on the floor (linear rgb) - the brass's for its own, the Mantella's green for the Hour's, red for
@@ -291,7 +291,7 @@ export function createSdRemnantBlows({ gl = null, audio = null, link, feet = () 
     burnAt = t;
     land(p.el ? SD_ELEMENT_GROUND[p.el] : SD_BLOWS_TEXT.burning, p.pct, p.base, false, p.el ?? null);
   }
-  /** AUDIT SD II (L6 F7): THE HEARTS HEARD - the gate's crystals' own cues (world/gateBoss.js BOSS_CUES), each where its
+  /** AUDIT SD II (L6 F7): THE HEARTS HEARD - the gate's crystals' own cues (world/gate/gateBoss.js BOSS_CUES), each where its
    *  Heart stands: their rise with the Reset's call (heard live alone - SD_HEART_LATE_MS), a blow on one, and one broken
    *  (its shatter, and the ring after it). They rose, took blows and broke in silence. */
   let heartsOf = null;

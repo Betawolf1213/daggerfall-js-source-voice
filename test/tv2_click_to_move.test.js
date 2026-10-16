@@ -21,7 +21,7 @@ import { mapPixelWorldOrigin, MID_LO, P_SIZE } from '../src/systems/travel/trave
 import { rectOf } from '../src/systems/travel/travelAutopilot.js';
 import { TravelControlUI } from '../src/ui/travelControlUI.js';
 import { modSetting } from '../src/systems/modSettings.js';
-import { DIR, DIR_DELTA } from '../src/world/roadNetwork.js';
+import { DIR, DIR_DELTA } from '../src/world/road/roadNetwork.js';
 import { createTravelView, TRAVEL_VIEW_TEXT, travelTripLine } from '../src/scenes/travelView.js';
 import { routePath } from '../src/ui/travelViewHud.js';
 import { forwardOf, TV_RISE_S } from '../src/player/travelCamera.js';

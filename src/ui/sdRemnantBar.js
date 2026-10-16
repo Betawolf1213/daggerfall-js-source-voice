@@ -16,7 +16,7 @@ import { SD_ARENA } from '../net/sdBrain.js';
 import { sdBlowDone, sdHourOver } from '../net/sdFightLink.js';
 import { countdownText } from '../net/gateLaw.js';
 import { FELL_HOLD_MS, FELL_FADE_MS } from './gateBossBar.js';
-import { LOW_HEALTH } from '../world/gateBoss.js';
+import { LOW_HEALTH } from '../world/gate/gateBoss.js';
 
 /** The blows' colours on the bar (css) - the brass's for its own, the Mantella's green for the Hour's, the stun's pale. */
 export const SD_BAR_CSS = Object.freeze({

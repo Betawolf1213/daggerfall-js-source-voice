@@ -22,8 +22,8 @@ import { herbKind } from '../src/scenes/herbHost.js';
 import { mineKind } from '../src/scenes/mineHost.js';
 import { treeKind } from '../src/scenes/treeHost.js';
 import { trees, veins, boulders, utcDayOfMs } from '../src/net/nodeLaw.js';
-import { groundAt } from '../src/world/terrainNature.js';
-import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { groundAt } from '../src/world/terrain/terrainNature.js';
+import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 import { GROUND_WHERE, GROUND_WHERE_WORDS } from '../src/net/professionLaw.js';
 
 const WOODS = CLIMATES.Woodlands, GLENUMBRA = 59;

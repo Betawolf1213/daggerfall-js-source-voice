@@ -100,7 +100,7 @@
   },
   {
     "name": "HACKED-GOLD-a-buildings-record-heard-with-a-letter",
-    "file": "src/world/interiorShared.js",
+    "file": "src/world/interior/interiorShared.js",
     "old": "    const items = peerHanded(validLootList(rec.r));",
     "new": "    const items = validLootList(rec.r);",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "HACKED-GOLD-a-buildings-record-said-with-a-letter",
-    "file": "src/world/interiorShared.js",
+    "file": "src/world/interior/interiorShared.js",
     "old": "r: peerHanded(t.items).map((it) => ({ ...it })),",
     "new": "r: t.items.map((it) => ({ ...it })),",
     "tests": [

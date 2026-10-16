@@ -2,7 +2,7 @@
 // into each other") - BLENDED CLIMATES: where map pixels of two climates meet, one wandering, patchy border (world/
 // ecotone.js) in place of the pixel's straight edge - the ground's tile sets sampled across it in both terrain programs
 // (render/ecotoneGlsl.js, renderer.drawTerrain's `eco`), the wild's flats laid by the climate that owns each tile
-// (world/terrainNature.js), the grass grown by the ground under it (scenes/world.js).
+// (world/terrain/terrainNature.js), the grass grown by the ground under it (scenes/world.js).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -12,8 +12,8 @@ import { ECOTONE, ECOTONE_REACH, ecoHash, ecoNoise, ecoShare, ecoOrigin, ecotone
 import { ecotoneGlsl, ECO_UNITS } from '../src/render/ecotoneGlsl.js';
 import * as RENDER from '../src/render/renderer.js';
 import { EL_TERRAIN_FS } from '../src/render/enhancedLighting.js';
-import { layoutNature, TREE_RECORDS, isTreeRecord } from '../src/world/terrainNature.js';
-import { HEIGHTMAP_DIMENSION } from '../src/world/terrainSampler.js';
+import { layoutNature, TREE_RECORDS, isTreeRecord } from '../src/world/terrain/terrainNature.js';
+import { HEIGHTMAP_DIMENSION } from '../src/world/terrain/terrainSampler.js';
 import { floraSwayOf } from '../src/systems/wind/windDrive.js';
 import { climateBlendOn } from '../src/scenes/shared.js';
 import { FEATURES, checkFeature } from '../src/systems/features.js';
@@ -326,7 +326,7 @@ test('ECOTONE1: the world host - the 3x3 read once a build; the kernel handed th
   assert.equal((w.match(/climateBlendOn\(/g) ?? []).length, 1);
   assert.match(w, /const near = ecotones \? climates3x3\(px, py, climate\) : null;/);
   assert.match(w, /ecotone: natureBorder,/);
-  assert.match(read('src/world/terrainGen.js'), /ecotone,   \/\/ ECOTONE1/);
+  assert.match(read('src/world/terrain/terrainGen.js'), /ecotone,   \/\/ ECOTONE1/);
   assert.match(w, /const loadGroundSet = async \(groundArchive, hold\) => \{\n\s+hold\.tileArray\(groundArchive\); const groundTex = await getTexture\(groundArchive\);/, 'the one home, held for the pixel');
   assert.match(w, /await loadGroundSet\(groundArchive, pipeline\);/);
   assert.match(w, /for \(const a of archives\) await loadGroundSet\(a, pipeline\);/);

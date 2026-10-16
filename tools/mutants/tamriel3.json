@@ -118,7 +118,7 @@
   },
   {
     "name": "TAMRIEL3-the-distance-field-is-the-chamfer-unscaled",
-    "file": "src/world/tamrielLand.js",
+    "file": "src/world/tamriel/tamrielLand.js",
     "old": "for (let i = 0; i < d.length; i++) d[i] = d[i] >= BIG ? 0 : d[i] / 3;",
     "new": "for (let i = 0; i < d.length; i++) d[i] = d[i] >= BIG ? 0 : d[i];",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "TAMRIEL3-the-backward-pass-forgets-the-diagonal",
-    "file": "src/world/tamrielLand.js",
+    "file": "src/world/tamriel/tamrielLand.js",
     "old": "if (y < h - 1) { b = Math.min(b, d[i + w] + 3); if (x < w - 1) b = Math.min(b, d[i + w + 1] + 4); if (x > 0) b = Math.min(b, d[i + w - 1] + 4); }",
     "new": "if (y < h - 1) { b = Math.min(b, d[i + w] + 3); }",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "TAMRIEL3-a-malformed-trace-is-installed",
-    "file": "src/world/tamrielLand.js",
+    "file": "src/world/tamriel/tamrielLand.js",
     "old": "if (!trace || !trace.land || !trace.province || trace.w * trace.h !== trace.land.length) { _trace = null; _version++; return; }",
     "new": "if (!trace || !trace.land || !trace.province) { _trace = null; _version++; return; }",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "TAMRIEL3-the-version-stands-still",
-    "file": "src/world/tamrielLand.js",
+    "file": "src/world/tamriel/tamrielLand.js",
     "old": "  _version++;\n}",
     "new": "}",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "TAMRIEL3-the-sea-has-a-province",
-    "file": "src/world/tamrielLand.js",
+    "file": "src/world/tamriel/tamrielLand.js",
     "old": "return _trace.land[i] ? (PROVINCE_OF_ID[_trace.province[i]] ?? null) : null;",
     "new": "return PROVINCE_OF_ID[_trace.province[i]] ?? null;",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "TAMRIEL3-off-the-grid-is-a-province",
-    "file": "src/world/tamrielLand.js",
+    "file": "src/world/tamriel/tamrielLand.js",
     "old": "if (x < 0 || y < 0 || x >= _trace.w || y >= _trace.h) return null;",
     "new": "if (x < 0 || y < 0) return null;",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "TAMRIEL3-the-distance-reads-the-nearest-pixel-not-bilinear",
-    "file": "src/world/tamrielLand.js",
+    "file": "src/world/tamriel/tamrielLand.js",
     "old": "const fx = cx - x0, fy = cy - y0;",
     "new": "const fx = 0, fy = 0;",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "TAMRIEL3-the-fit-samples-one-corner-a-cell",
-    "file": "src/world/tamrielLand.js",
+    "file": "src/world/tamriel/tamrielLand.js",
     "old": "mask[j * cols + i] = n >= 2 ? 1 : 0;",
     "new": "mask[j * cols + i] = n >= 4 ? 1 : 0;",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "TAMRIEL3-the-fit-wins-on-count",
-    "file": "src/world/tamrielLand.js",
+    "file": "src/world/tamriel/tamrielLand.js",
     "old": "        const value = seam / edge + (FIT_AREA_WEIGHT * score) / (cols * rows);",
     "new": "        const value = seam / edge + FIT_AREA_WEIGHT * score;",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "TAMRIEL3-the-fit-scores-a-candidate-off-the-picture",
-    "file": "src/world/tamrielLand.js",
+    "file": "src/world/tamriel/tamrielLand.js",
     "old": "if (ox < 1 || ox + cols + 1 > w) continue;",
     "new": "if (ox < 1) continue;",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "TAMRIEL3-the-fit-forgets-the-scale",
-    "file": "src/world/tamrielLand.js",
+    "file": "src/world/tamriel/tamrielLand.js",
     "old": "for (const ppu of ppus) {",
     "new": "for (const ppu of ppus.slice(0, 1)) {",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "TAMRIEL3-a-bad-fit-is-taken",
-    "file": "src/world/tamrielFrame.js",
+    "file": "src/world/tamriel/tamrielFrame.js",
     "old": "_fit = fit && Number.isFinite(fit.ox) && Number.isFinite(fit.oy) && fit.ppu > 0",
     "new": "_fit = fit",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "TAMRIEL3-the-size-forgets-the-fit",
-    "file": "src/world/tamrielFrame.js",
+    "file": "src/world/tamriel/tamrielFrame.js",
     "old": "export const tamrielSize = () => ({ w: PICTURE_W * _fit.ppu, h: PICTURE_H * _fit.ppu });",
     "new": "export const tamrielSize = () => ({ w: PICTURE_W * PIXELS_PER_PICTURE_UNIT, h: PICTURE_H * PIXELS_PER_PICTURE_UNIT });",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "TAMRIEL3-picture-to-bay-forgets-the-fit",
-    "file": "src/world/tamrielFrame.js",
+    "file": "src/world/tamriel/tamrielFrame.js",
     "old": "return [px * _fit.ppu - _fit.ox, py * _fit.ppu - _fit.oy];",
     "new": "return [px * PIXELS_PER_PICTURE_UNIT - _fit.ox, py * PIXELS_PER_PICTURE_UNIT - _fit.oy];",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "TAMRIEL3-bay-to-picture-forgets-the-origin",
-    "file": "src/world/tamrielFrame.js",
+    "file": "src/world/tamriel/tamrielFrame.js",
     "old": "return [(x + _fit.ox) / _fit.ppu, (y + _fit.oy) / _fit.ppu];",
     "new": "return [(x + BAY_ORIGIN.x) / _fit.ppu, (y + BAY_ORIGIN.y) / _fit.ppu];",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "TAMRIEL3-the-ground-reads-the-authored-rings",
-    "file": "src/world/tamrielGround.js",
+    "file": "src/world/tamriel/tamrielGround.js",
     "old": "if (!provinceKeyAt(px, py)) return 0;",
     "new": "if (false) return 0;",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "TAMRIEL3-the-climate-ignores-the-trace",
-    "file": "src/world/tamrielGround.js",
+    "file": "src/world/tamriel/tamrielGround.js",
     "old": "const key = provinceKeyAt(px, py);\n  return key ? (provinceByKey(key)?.climate ?? CLIMATES.Woodlands) : CLIMATES.Ocean;",
     "new": "const key = provinceKeyAt(px, py);\n  return key ? CLIMATES.Woodlands : CLIMATES.Ocean;",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "TAMRIEL3-the-raster-forgets-the-live-scale",
-    "file": "src/world/tamrielRaster.js",
+    "file": "src/world/tamriel/tamrielRaster.js",
     "old": "const unit = tamrielFit().ppu / cell;   // cells a picture unit",
     "new": "const unit = 18.75 / cell;   // cells a picture unit",
     "tests": [
@@ -370,7 +370,7 @@
   },
   {
     "name": "TAMRIEL3-the-client-keeps-the-cache",
-    "file": "src/world/terrainGenClient.js",
+    "file": "src/world/terrain/terrainGenClient.js",
     "old": "    setTamrielFit(fit);\n    dropGroundCache();",
     "new": "    setTamrielFit(fit);",
     "tests": [
@@ -379,7 +379,7 @@
   },
   {
     "name": "TAMRIEL3-the-client-posts-the-host-arrays",
-    "file": "src/world/terrainGenClient.js",
+    "file": "src/world/terrain/terrainGenClient.js",
     "old": "const t = trace ? { w: trace.w, h: trace.h, land: trace.land.slice(), province: trace.province.slice() } : null;",
     "new": "const t = trace ? { w: trace.w, h: trace.h, land: trace.land, province: trace.province } : null;",
     "tests": [
@@ -388,7 +388,7 @@
   },
   {
     "name": "TAMRIEL3-the-worker-keeps-its-cache",
-    "file": "src/world/terrainGenWorker.js",
+    "file": "src/world/terrain/terrainGenWorker.js",
     "old": "if (m.t === 'tamriel') { setTamrielTrace(m.trace ?? null); setTamrielFit(m.fit ?? null); dropGroundCache(); return; }",
     "new": "if (m.t === 'tamriel') { setTamrielTrace(m.trace ?? null); setTamrielFit(m.fit ?? null); return; }",
     "tests": [

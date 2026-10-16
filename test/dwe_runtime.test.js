@@ -10,8 +10,8 @@ import {
   onTransientReset, setPostTransitionRefresh, canRunLightRuntimeWork, canRunHeavyRuntimeWork, loadGraceActive,
   canMutateTerrainData, pumpDeepWaterRuntime, postTransitionRefreshPending, resetDeepWaterRuntime,
   LOAD_GRACE_SECONDS, LOCATION_LOAD_STUCK_SECONDS,
-} from '../src/world/deepWaterRuntime.js';
-import { TransientObjectTracker } from '../src/world/deepWaterTransients.js';
+} from '../src/world/deepWater/deepWaterRuntime.js';
+import { TransientObjectTracker } from '../src/world/deepWater/deepWaterTransients.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 

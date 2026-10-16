@@ -14,17 +14,17 @@ flat sheet of water a hand deep over a flat seabed; the mod carves it out.
 
 | slice | what | the port's modules |
 |---|---|---|
-| DW-A | THE COASTLINE: for every map pixel, how far each cell lies from the shore and which cells are sea (the mod's 356 MB `DistanceBake`) | `world/deepWatersBake.js`, `world/deepWatersBakeCache.js`, `world/deepWatersClient.js`, `world/deepWatersWorker.js` |
-| DW-B | THE FLOOR: the per-pixel tile data (the biome, the local edge), the bathymetry (`DeepBathymetry.SampleDepthMeters` - the edge distance's shelf, the climate's base depth, the noise), the floor mesh and its walls, the cap that hides a pure-ocean pixel's ground and clips a coastal pixel's water tiles, the surfaces | `world/deepWatersPixel.js`, `world/deepWaterTileData.js`, `world/deepBathymetry.js`, `world/deepWaterClassification.js`, `world/deepWaterFloor.js`, `world/deepWaterCap.js`, `world/deepWaterSurface.js`, `scenes/deepWatersHost.js` |
-| DW-C | THE LOOK: the seafloor's and the surfaces' own programs (read back to GLSL uniform for uniform), the scene tint, the underwater distance fog, the horizon under the water | `render/deepWatersRender.js`, `world/deepWaterLook.js`, `render/fogGlsl.js` (`uDwFog`) |
-| DW-D | THE SWIMMER: the swim driver in its two phases around the motor, the swim movement (the multiplier, the stroke, the floor clamp), the load grace, the public player API, the ear under the water, the breath | `scenes/deepWatersPlayer.js`, `scenes/deepWatersSwimMove.js`, `world/deepWaterSwim.js`, `world/deepWaterRuntime.js`, `systems/deepWater/deepWaterPlayer.js` |
-| DW-E1 | THE RUNTIME'S OTHER HALF: the transient reset a load or a teleport sends every spawner, the post-transition refresh, the light and heavy work gates, the tracker a spawner keeps what it stood in | `world/deepWaterRuntime.js`, `world/deepWaterTransients.js` |
-| DW-E2 | THE DECORATIONS: the weed, coral, rock and dead sea life of the seafloor - the catalog, the per-pixel placement, the work's pacing, the three ways a batch stands, the edge clean, the program | `world/underwaterDecorations.js`, `scenes/deepWatersDecor.js`, `render/deepWatersRender.js` (`DECOR_VS`/`DECOR_FS`, `COLUMN_GLSL`) |
+| DW-A | THE COASTLINE: for every map pixel, how far each cell lies from the shore and which cells are sea (the mod's 356 MB `DistanceBake`) | `world/deepWater/deepWatersBake.js`, `world/deepWater/deepWatersBakeCache.js`, `world/deepWater/deepWatersClient.js`, `world/deepWater/deepWatersWorker.js` |
+| DW-B | THE FLOOR: the per-pixel tile data (the biome, the local edge), the bathymetry (`DeepBathymetry.SampleDepthMeters` - the edge distance's shelf, the climate's base depth, the noise), the floor mesh and its walls, the cap that hides a pure-ocean pixel's ground and clips a coastal pixel's water tiles, the surfaces | `world/deepWater/deepWatersPixel.js`, `world/deepWater/deepWaterTileData.js`, `world/deepWater/deepBathymetry.js`, `world/deepWater/deepWaterClassification.js`, `world/deepWater/deepWaterFloor.js`, `world/deepWater/deepWaterCap.js`, `world/deepWater/deepWaterSurface.js`, `scenes/deepWatersHost.js` |
+| DW-C | THE LOOK: the seafloor's and the surfaces' own programs (read back to GLSL uniform for uniform), the scene tint, the underwater distance fog, the horizon under the water | `render/deepWatersRender.js`, `world/deepWater/deepWaterLook.js`, `render/fogGlsl.js` (`uDwFog`) |
+| DW-D | THE SWIMMER: the swim driver in its two phases around the motor, the swim movement (the multiplier, the stroke, the floor clamp), the load grace, the public player API, the ear under the water, the breath | `scenes/deepWatersPlayer.js`, `scenes/deepWatersSwimMove.js`, `world/deepWater/deepWaterSwim.js`, `world/deepWater/deepWaterRuntime.js`, `systems/deepWater/deepWaterPlayer.js` |
+| DW-E1 | THE RUNTIME'S OTHER HALF: the transient reset a load or a teleport sends every spawner, the post-transition refresh, the light and heavy work gates, the tracker a spawner keeps what it stood in | `world/deepWater/deepWaterRuntime.js`, `world/deepWater/deepWaterTransients.js` |
+| DW-E2 | THE DECORATIONS: the weed, coral, rock and dead sea life of the seafloor - the catalog, the per-pixel placement, the work's pacing, the three ways a batch stands, the edge clean, the program | `world/underwater/underwaterDecorations.js`, `scenes/deepWatersDecor.js`, `render/deepWatersRender.js` (`DECOR_VS`/`DECOR_FS`, `COLUMN_GLSL`) |
 | DW-E3 | THE FISH: the seven species and their items, the school, the fish's laws, the encounter pulse and the fish's spawner, the fish as loot, the icons, the draw | `world/passiveFish.js`, `scenes/deepWatersEncounters.js`, `scenes/deepWatersFish.js`, `systems/deepWater/deepWatersFishItems.js`, `render/deepWatersRender.js` (`streamDecorations`), `tools/iliacPuddleAssets.mjs` |
-| DW-E4 | THE DEEP'S FOES: the depth table, the rare and the boss rosters, the column and the place, the foes' lane on the pulse, the treasure guards, the one water level every foe's WaterMove reads | `world/underwaterEnemies.js`, `scenes/deepWatersEncounters.js` (`createEnemySpawner`, `trySpawnTreasureGuards`), `scenes/exteriorFoes.js` (`transformY`, `team`, `transient`, `managed`, `waterLevelY`) |
-| DW-E5 | THE SUNKEN LOOT: the pulse and its gate, the stray piles and their rubble, the wrecks - their rubble, their piles, their guards - FillRandomItem's seven kinds, the tracker and the reset; the pile a RandomTreasure container in the decorations' underwater material | `world/underwaterLoot.js`, `scenes/deepWatersLoot.js`, `scenes/droppedLoot.js` (`drawn`, `owner`, `removePile`), `scenes/deepWatersDecor.js` (`filter`, `stand`), `systems/loot/loot.js` (`createRandomReligiousItem`, `createRandomGem`, `createRandomJewellery`) |
-| DW-F | THE CLOSE: the sea at a distance - the far ground's skirt out of the carved sea, the world's fog on the top and its column share, WATER1 off the clipped tiles - and the audit pass over the whole mod (the flats' column share, the pausing window, the execution order, the save-load reset, the dungeon splash, the latched fog colour, the load flag, the guards' terrain, the loot's camera, the texture cache, the arrow's draw) | `world/deepWaterCap.js` (`clippedTerrainIndices`), `render/deepWatersRender.js` (`TOP_FS`, `TOP_FAR_FS`, `_frameUniforms`), `render/columnGlsl.js`, `render/renderer.js` and `render/enhancedLighting.js` (the flats' share), `scenes/deepWatersPlayer.js` (`saveLoad`), `world/deepWaterRuntime.js` (the load flag), `scenes/world.js` |
-| FAR-CLIP1 | THE CLIP IS A PROGRAM (2026-09-28, a player's report): the terrain's clip variant - the mod's per-texel discard - draws every pixel whose TileMap the cap patched, so the far ground's part-clipped quads no longer draw the carved sea's tiles as road art; the index set is the cull | `render/renderer.js` (`terrainClipFs`, `_ensureTerrainClip`, `_terrainVariant`, `drawTerrain`'s `clip`, `prepareTerrainClip`), `world/terrainSurface.js` (`CLIP_SENTINEL`), `scenes/world.js`, `world/deepWaterCap.js` |
+| DW-E4 | THE DEEP'S FOES: the depth table, the rare and the boss rosters, the column and the place, the foes' lane on the pulse, the treasure guards, the one water level every foe's WaterMove reads | `world/underwater/underwaterEnemies.js`, `scenes/deepWatersEncounters.js` (`createEnemySpawner`, `trySpawnTreasureGuards`), `scenes/exteriorFoes.js` (`transformY`, `team`, `transient`, `managed`, `waterLevelY`) |
+| DW-E5 | THE SUNKEN LOOT: the pulse and its gate, the stray piles and their rubble, the wrecks - their rubble, their piles, their guards - FillRandomItem's seven kinds, the tracker and the reset; the pile a RandomTreasure container in the decorations' underwater material | `world/underwater/underwaterLoot.js`, `scenes/deepWatersLoot.js`, `scenes/droppedLoot.js` (`drawn`, `owner`, `removePile`), `scenes/deepWatersDecor.js` (`filter`, `stand`), `systems/loot/loot.js` (`createRandomReligiousItem`, `createRandomGem`, `createRandomJewellery`) |
+| DW-F | THE CLOSE: the sea at a distance - the far ground's skirt out of the carved sea, the world's fog on the top and its column share, WATER1 off the clipped tiles - and the audit pass over the whole mod (the flats' column share, the pausing window, the execution order, the save-load reset, the dungeon splash, the latched fog colour, the load flag, the guards' terrain, the loot's camera, the texture cache, the arrow's draw) | `world/deepWater/deepWaterCap.js` (`clippedTerrainIndices`), `render/deepWatersRender.js` (`TOP_FS`, `TOP_FAR_FS`, `_frameUniforms`), `render/columnGlsl.js`, `render/renderer.js` and `render/enhancedLighting.js` (the flats' share), `scenes/deepWatersPlayer.js` (`saveLoad`), `world/deepWater/deepWaterRuntime.js` (the load flag), `scenes/world.js` |
+| FAR-CLIP1 | THE CLIP IS A PROGRAM (2026-09-28, a player's report): the terrain's clip variant - the mod's per-texel discard - draws every pixel whose TileMap the cap patched, so the far ground's part-clipped quads no longer draw the carved sea's tiles as road art; the index set is the cull | `render/renderer.js` (`terrainClipFs`, `_ensureTerrainClip`, `_terrainVariant`, `drawTerrain`'s `clip`, `prepareTerrainClip`), `world/terrain/terrainSurface.js` (`CLIP_SENTINEL`), `scenes/world.js`, `world/deepWater/deepWaterCap.js` |
 
 ## The coastline is rebuilt, not carried (DW-A)
 
@@ -82,7 +82,7 @@ the step rests on the ground beneath it, never metres over it.
 the mod indexes it `[z, x]` - the row from fracZ, as it indexes the
 heights - so every tile it reads is the tile TRANSPOSED across the pixel's
 diagonal. The port keeps the mod's reads exactly
-(`world/deepWaterClassification.js`): where they land differently from the
+(`world/deepWater/deepWaterClassification.js`): where they land differently from the
 heights, the only thing they add is a water-surface quad at sea level under
 ground that stands above it, which nothing sees.
 
@@ -102,7 +102,7 @@ is the mod's times `UNDERWATER_MURK` (0.55), and while the presentation is
 under, one full-screen pass after the last world pass lays the water body
 over the frame (red taken first, darker with depth and by night) and the
 sun's shafts - refracted at the surface, lit through a drifting pattern of
-its focus (`world/underwaterLook.js`, `render/deepWatersRender.js`
+its focus (`world/underwater/underwaterLook.js`, `render/deepWatersRender.js`
 `drawUnderwaterLook`). And what falls is hidden by the water over the eye,
 not by a swim (PUDDLE-RAIN: DW-D's UpdateWeatherParticles hid it from a
 body sunk in a puddle with its eye in the air).
@@ -189,7 +189,7 @@ motor (`beforeMove` / `afterMove`):
   grace, no terrain pass running) runs the decorations' RefreshPlayerArea.
 - **The work gates**: light work while the game plays (no window over it)
   and no load is in progress; heavy work also waits out the grace's clock.
-- **The tracker** (`world/deepWaterTransients.js`, TransientObjectTracker):
+- **The tracker** (`world/deepWater/deepWaterTransients.js`, TransientObjectTracker):
   the list a spawner keeps of what it stood - Clear (each destroyed now),
   Release (each handed to the encounter pulse's destroy queue), Prune (the
   dead dropped, the far destroyed, then the farthest until the cap).
@@ -544,7 +544,7 @@ ground was right.
   `LOD_STRIDE`, `LOD_NEAR`), sixteen tiles a quad, and a quad went only
   when all sixteen were clipped: every part-clipped quad stood, and so did
   a skirt segment over a part-clipped edge. No terrain program tested the
-  clip's byte - `world/deepWaterCap.js`'s header said every one did
+  clip's byte - `world/deepWater/deepWaterCap.js`'s header said every one did
   (`renderer.js`, `enhancedLighting.js`, `shadowPass.js`), and
   `git log -S` finds none that ever did - so `TERRAIN_FS` and
   `EL_TERRAIN_FS` read 255 as tile layer 63, which GL clamps to the ground
@@ -573,7 +573,7 @@ ground was right.
   asked for (`_ensureTerrainClip`), and `drawTerrain`'s `clip` draws with
   it (`_terrainVariant` installs the set again with it: every table
   through the one home, every block forgotten, as at any install). The
-  byte, `CLIP_SENTINEL`, lives in `world/terrainSurface.js`, the TileMap
+  byte, `CLIP_SENTINEL`, lives in `world/terrain/terrainSurface.js`, the TileMap
   format's module, which the renderer already reads - the cap re-exports
   it, and the entry's static reach stays within BOOT2's sixty files.
   `scenes/world.js`: a pixel whose TileMap the cap patched (`_dwBytes`)

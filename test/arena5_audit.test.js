@@ -3,7 +3,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { useSmallerDungeon, dungeonLocationFor } from '../src/world/smallerDungeons.js';
-import { undercroftLocation, isArenaUndercroft } from '../src/world/arenaCity.js';
+import { undercroftLocation, isArenaUndercroft } from '../src/world/arena/arenaCity.js';
 import { LOCATION_TYPES } from '../src/formats/mapsFile.js';
 
 /** Daggerfall's city as far as the undercroft's record reads it. */

@@ -18,8 +18,8 @@ import {
 import { waterSurfaceFs, WATER_TINT, WATER_F0, SHORE_SOFTNESS, WATER_ABSORB } from '../src/render/waterSurface.js';
 import { CLOUD_SHADOW_GLSL } from '../src/render/cloudShadow.js';
 import { EL_FAR_RING_FS, EL_EXPOSURE } from '../src/render/enhancedLighting.js';
-import { WATER_DRAW_MASK_TABLE, packWaterMask } from '../src/world/waterCorners.js';
-import { TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { WATER_DRAW_MASK_TABLE, packWaterMask } from '../src/world/water/waterCorners.js';
+import { TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 
 const rd = (p) => readFileSync(p, 'utf8');
 const SEA_Y = ringHeight(0);

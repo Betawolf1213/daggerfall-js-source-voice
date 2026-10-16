@@ -11,7 +11,7 @@ import { createExteriorFoes, siteFoeSpawn, carrySiteFoe, CAMP_CULL_DISTANCE } fr
 import { createRiteHost, RITE_ORPHAN_MS, RITE_SPRING_M, RITE_SIGHT_M, RITE_ALERT_M, RITE_TEXT } from '../src/scenes/riteHost.js';
 import { riteLocalOf, riteFaithfulOf, RITE_SUMMONER_CAREER, RITE_SUMMONER_HEALTH } from '../src/net/gateRite.js';
 import { gateTimes } from '../src/net/gateLaw.js';
-import { riteSiteId, wodSiteId, yieldsTo } from '../src/world/wodShared.js';
+import { riteSiteId, wodSiteId, yieldsTo } from '../src/world/worldOfDaggerfall/wodShared.js';
 import { renownStruckAt } from '../src/net/renownTracker.js';
 import { restoreModSaveRecords, modSaveRecords } from '../src/systems/modSaveData.js';
 import { RITE_DAY_SAVE_VENDOR } from '../src/systems/riteChest.js';

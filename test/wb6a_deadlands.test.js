@@ -14,7 +14,7 @@ import {
   SIGIL_TOWER, LESSER_TOWERS, VORTEX_ELEV, VORTEX_TURNS, VORTEX_INFLOW_TURNS, CLOUD_LOOP_TURNS, SEA_LOOP_TURNS,
   BEAM_CLIMB_TURNS, SPINE_TURNS, SEA_PULSE_TURNS, FALL_TURNS, FLASH_SLOT_S, FLASH_S, COURT_TRILIGHT, COURT_KEY_LIGHT, RIDGES,
 } from '../src/render/deadlands.js';
-import { LAVA_Y, COURT_FOG } from '../src/world/gateArena.js';
+import { LAVA_Y, COURT_FOG } from '../src/world/gate/gateArena.js';
 import { COURT_R } from '../src/net/gateBrain.js';
 import { perspective, lookAt } from '../src/world/mat4.js';
 

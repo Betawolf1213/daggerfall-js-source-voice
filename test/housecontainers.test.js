@@ -13,7 +13,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { layoutInterior } from '../src/world/interiorLayout.js';
+import { layoutInterior } from '../src/world/interior/interiorLayout.js';
 import { GLOBAL_SCALE } from '../src/world/meshReader.js';
 import { PRIVATE_PROPERTY_TEXT_ID } from '../src/systems/shopStock.js';
 

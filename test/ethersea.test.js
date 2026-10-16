@@ -19,14 +19,14 @@ import { WoodsFile } from '../src/formats/woodsFile.js';
 import { isWaterPixel } from '../src/ui/overworldModel.js';
 import { POSE_BOUND, WORLD_PIXEL_BOUND, PIXEL_UNITS } from '../src/net/wire.js';
 import { PIXEL_M as GATE_PIXEL_M } from '../src/net/gateLaw.js';
-import { setTamrielFit, tamrielFrameInBay } from '../src/world/tamrielFrame.js';
+import { setTamrielFit, tamrielFrameInBay } from '../src/world/tamriel/tamrielFrame.js';
 import { StreamingWorldState } from '../src/world/streamingWorld.js';
 import { spawnPlateauFloor, SPAWN_DRY_ELEVATION } from '../src/world/spawnedDungeons.js';
-import { generateSamples, MAX_TERRAIN_HEIGHT, SCALED_OCEAN_ELEVATION, HEIGHTMAP_DIMENSION } from '../src/world/terrainSampler.js';
+import { generateSamples, MAX_TERRAIN_HEIGHT, SCALED_OCEAN_ELEVATION, HEIGHTMAP_DIMENSION } from '../src/world/terrain/terrainSampler.js';
 import { GOODS } from '../src/systems/naval/tradeGoods.js';
 import { LEAGUE_M as LEDGER_LEAGUE_M } from '../src/systems/naval/captainLedger.js';
 import { buildFarRingGrid } from '../src/render/farRing.js';
-import { TerrainGenClient } from '../src/world/terrainGenClient.js';
+import { TerrainGenClient } from '../src/world/terrain/terrainGenClient.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 /** A stub reader: the open sea everywhere (byte 0, no detail) - the Eltheric Ocean composed over it. */
@@ -310,7 +310,7 @@ test('ETHER-SEA by source: the host composes the sea over the ground between the
   assert.ok(between.indexOf('woods = groundWoods(woods);') < between.indexOf('woods = etherWoods(woods);'), 'over the continent\'s ground');
   // PIN MOVED (AUDIT CAPTAIN'S SEA G4/G9): the continent's past the map wherever it stands, the sea's in its law, the Bay edge's clamp else
   assert.match(src, /climatePast: tamrielLand \? \(x, y\) => maps\.getClimateIndex\(x, y\)\n\s+: etherSea \? \(x, y\) => maps\.getClimateIndex\(\.\.\.\(inEtherLaw\(x, y\) \? \[x, y\] : \[Math\.max\(0, Math\.min\(MAP_WIDTH - 1, x\)\), Math\.max\(0, Math\.min\(MAP_HEIGHT - 1, y\)\)\]\)\) : null,/);
-  const worker = read('src/world/terrainGenWorker.js');
+  const worker = read('src/world/terrain/terrainGenWorker.js');
   assert.match(worker, /import \{ etherWoods \} from '\.\/ethericSea\.js';/);
   assert.match(worker, /if \(m\.ether\) woods = etherWoods\(woods\);/);
   const sea = read('src/world/ethericSea.js');

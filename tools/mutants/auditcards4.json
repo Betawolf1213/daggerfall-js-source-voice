@@ -1409,7 +1409,7 @@
   },
   {
     "name": "AC4-D4-gather-no-lift",
-    "file": "src/world/cardMotion.js",
+    "file": "src/world/card/cardMotion.js",
     "old": "lerp(from.pos[1], to[1], u) + GATHER_LIFT * 4 * u * (1 - u)",
     "new": "lerp(from.pos[1], to[1], u)",
     "tests": [
@@ -1444,7 +1444,7 @@
   },
   {
     "name": "AC4-D4-gather-stays-face",
-    "file": "src/world/cardMotion.js",
+    "file": "src/world/card/cardMotion.js",
     "old": "roll: lerp(from.roll, Math.PI, u), moving: t < t1",
     "new": "roll: from.roll, moving: t < t1",
     "tests": [
@@ -1479,7 +1479,7 @@
   },
   {
     "name": "AC4-D4-gather-keeps-yaw",
-    "file": "src/world/cardMotion.js",
+    "file": "src/world/card/cardMotion.js",
     "old": "yaw: lerp(from.yaw, yaw, u), roll: lerp(from.roll, Math.PI, u)",
     "new": "yaw: from.yaw, roll: lerp(from.roll, Math.PI, u)",
     "tests": [
@@ -1514,7 +1514,7 @@
   },
   {
     "name": "AC4-D4-gather-instant",
-    "file": "src/world/cardMotion.js",
+    "file": "src/world/card/cardMotion.js",
     "old": "  const t1 = t0 + GATHER_S;\n  return {\n    t0, t1, rest: to.slice(),",
     "new": "  const t1 = t0;\n  return {\n    t0, t1, rest: to.slice(),",
     "tests": [
@@ -1549,7 +1549,7 @@
   },
   {
     "name": "AC4-D4-gather-half-way",
-    "file": "src/world/cardMotion.js",
+    "file": "src/world/card/cardMotion.js",
     "old": "      const u = smooth((t - t0) / GATHER_S);",
     "new": "      const u = smooth((t - t0) / (GATHER_S * 2));",
     "tests": [
@@ -1584,7 +1584,7 @@
   },
   {
     "name": "AC4-D4-gather-always-moving",
-    "file": "src/world/cardMotion.js",
+    "file": "src/world/card/cardMotion.js",
     "old": "roll: lerp(from.roll, Math.PI, u), moving: t < t1 };",
     "new": "roll: lerp(from.roll, Math.PI, u), moving: true };",
     "tests": [
@@ -1619,7 +1619,7 @@
   },
   {
     "name": "AC4-D4-deck-plates-12",
-    "file": "src/world/cardMotion.js",
+    "file": "src/world/card/cardMotion.js",
     "old": "export const DECK_PLATES = 16;",
     "new": "export const DECK_PLATES = 12;",
     "tests": [
@@ -1654,7 +1654,7 @@
   },
   {
     "name": "AC4-D4-deck-cards-40",
-    "file": "src/world/cardMotion.js",
+    "file": "src/world/card/cardMotion.js",
     "old": "export const DECK_CARDS = 52;",
     "new": "export const DECK_CARDS = 40;",
     "tests": [
@@ -1689,7 +1689,7 @@
   },
   {
     "name": "AC4-D4-gather-long",
-    "file": "src/world/cardMotion.js",
+    "file": "src/world/card/cardMotion.js",
     "old": "export const GATHER_S = 0.8;",
     "new": "export const GATHER_S = 2.4;",
     "tests": [
@@ -1726,7 +1726,7 @@
   },
   {
     "name": "AC4-D4-gathered-into-deck",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "to: this._rest(deckAt, DECK_PLATES + i * 0.1)",
     "new": "to: this._rest(deckAt, 0)",
     "tests": [
@@ -1761,7 +1761,7 @@
   },
   {
     "name": "AC4-D4-first-hand-gathers",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "      const gather = this.cards.length ? GATHER_S : 0;",
     "new": "      const gather = GATHER_S;",
     "tests": [
@@ -1796,7 +1796,7 @@
   },
   {
     "name": "AC4-D4-old-dealer-deck",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "      const deckAt = this.places.seats[e.button].deck, deckYaw",
     "new": "      const deckAt = this.places.seats[this.dealer].deck, deckYaw",
     "tests": [
@@ -1831,7 +1831,7 @@
   },
   {
     "name": "AC4-D4-deck-hidden-gathering",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "!(t >= this.riffle?.t0 && t < this.deck.upTo)",
     "new": "!(t < this.deck.upTo)",
     "tests": [
@@ -1868,7 +1868,7 @@
   },
   {
     "name": "AC4-D4-pile-thins-on-settle",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "c.seat !== -4 && t > c.motions[0].t0).length;",
     "new": "c.seat !== -4 && t > c.motions[c.motions.length - 1].t1).length;",
     "tests": [
@@ -1903,7 +1903,7 @@
   },
   {
     "name": "AC4-D4-pile-counts-gathered",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "const thrown = this.cards.filter((c) => c.seat !== -4 && t > c.motions[0].t0).length;",
     "new": "const thrown = this.cards.filter((c) => t > c.motions[0].t0).length;",
     "tests": [
@@ -1938,7 +1938,7 @@
   },
   {
     "name": "AC4-D4-pile-flat",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "pos: this._rest(this.deck.at, k), yaw: this.deck.yaw",
     "new": "pos: this._rest(this.deck.at, 0), yaw: this.deck.yaw",
     "tests": [
@@ -1973,7 +1973,7 @@
   },
   {
     "name": "AC4-D4-pile-face-up",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "yaw: this.deck.yaw, roll: Math.PI, id:",
     "new": "yaw: this.deck.yaw, roll: 0, id:",
     "tests": [
@@ -2008,7 +2008,7 @@
   },
   {
     "name": "AC4-D4-pile-unsettled",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "seat: -5, settled: true",
     "new": "seat: -5, settled: false",
     "tests": [
@@ -2043,7 +2043,7 @@
   },
   {
     "name": "AC4-D4-gathered-keep-seat",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "id: `g${e.hand}:${i}`, seat: -4, motions:",
     "new": "id: `g${e.hand}:${i}`, seat: c.seat, motions:",
     "tests": [
@@ -2078,7 +2078,7 @@
   },
   {
     "name": "AC4-D4-gathered-keep-id",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "id: `g${e.hand}:${i}`, seat: -4,",
     "new": "id: c.id, seat: -4,",
     "tests": [
@@ -2113,7 +2113,7 @@
   },
   {
     "name": "AC4-D4-pile-at-old-place",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "this.deck = { at: deckAt, yaw: deckYaw,",
     "new": "this.deck = { at: this.deck?.at ?? deckAt, yaw: deckYaw,",
     "tests": [

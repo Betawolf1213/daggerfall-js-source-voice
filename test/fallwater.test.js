@@ -35,7 +35,7 @@ import { fileURLToPath } from 'node:url';
 
 import {
   convertTile, convertTilemap, playerTileMapIndex, isOutdoorWaterTile, WATER_TILE_INDEX,
-} from '../src/world/terrainSurface.js';
+} from '../src/world/terrain/terrainSurface.js';
 import { applyFallLanding } from '../src/scenes/shared.js';
 import { FALL_DAMAGE_THRESHOLD } from '../src/player/motor.js';   // the constants' one home
 import { dfuFile } from './dfuRoot.mjs';   // PY1: DFU_PATH, then the in-tree sparse clone

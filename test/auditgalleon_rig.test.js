@@ -17,8 +17,8 @@ import { readFileSync } from 'node:fs';
 
 import { MODELS, scene } from './csaScene.mjs';
 import { sea } from './navalSea.mjs';
-import { GALLEON_PREFAB_ID } from '../src/world/galleonModel.js';
-import { TEX } from '../src/world/galleonArt.js';
+import { GALLEON_PREFAB_ID } from '../src/world/ships/galleonModel.js';
+import { TEX } from '../src/world/ships/galleonArt.js';
 import { HULL, HULL_BUILDS, hullBuild } from '../src/systems/naval/navalShips.js';
 import { rigBoxesOf } from '../src/scenes/navalHost.js';
 import { stowSail } from '../src/systems/comeSailAway/comeSailAway.js';   // AUDIT GALLEON-2 RG3: her canvas set, where her rig's boxes stand

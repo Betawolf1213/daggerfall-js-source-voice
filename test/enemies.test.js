@@ -13,7 +13,7 @@ import {
 import { BlocksFile } from '../src/formats/blocksFile.js';
 import { MapsFile } from '../src/formats/mapsFile.js';
 import { Arch3dFile } from '../src/formats/arch3dFile.js';
-import { layoutDungeon } from '../src/world/dungeonLayout.js';
+import { layoutDungeon } from '../src/world/dungeon/dungeonLayout.js';
 import { dfMeshToModel } from '../src/world/meshReader.js';
 
 const ARENA2 = process.env.ARENA2_PATH;

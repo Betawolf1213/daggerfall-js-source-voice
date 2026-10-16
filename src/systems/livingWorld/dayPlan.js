@@ -25,7 +25,7 @@
 // AWAY: a window the roads hold the resident (trips.js) is handed in and the day bends round it - geared at home (an
 // armed traveller), walked out to the exit facing the road, away, walked home after; every walk to or from an away
 // window ARMED (LW0 decision 5 - the host draws the class sprite).
-import { NAV_CELL } from '../../world/cityNavigation.js';
+import { NAV_CELL } from '../../world/city/cityNavigation.js';
 import { BUILDING_TYPES } from '../../world/buildingNames.js';
 import { lwRng, lwSeed, rollInt, pickOf } from './seed.js';
 import { hasShopJob, WATCH_COMPANIES } from './census.js';

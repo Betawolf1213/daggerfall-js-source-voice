@@ -315,7 +315,7 @@ test('TO1: the shipped defaults reach the game through the store', async () => {
 test('TO1: the compass is Basic Roads\' own, and the port\'s road network uses the same eight bits', () => {
   assert.deepEqual([N, NE, E, SE, S, SW, W, NW], [128, 64, 32, 16, 8, 4, 2, 1]);
   assert.deepEqual([...DIRECTIONS], [128, 64, 32, 16, 8, 4, 2, 1]);
-  assert.ok(sameCompass(), 'world/roadNetwork.js DIR carries the identical values - which is what lets his arrays drop in');
+  assert.ok(sameCompass(), 'world/road/roadNetwork.js DIR carries the identical values - which is what lets his arrays drop in');
   assert.deepEqual(PATH_KEYS, ['roads', 'tracks', 'rivers', 'streams']);
   assert.equal(MP_WORLD_UNITS, 32768);
   assert.equal(T_SIZE, 256, 'one terrain tile of the 128 across a map pixel');
@@ -1271,7 +1271,7 @@ test('TO1: the wiring - one construction, the fork on the popup\'s word, the pan
   // THE COMPATIBILITY CHECK Mac asked for: following is handed HIS network alone
   assert.match(w, /roads: \(\) => \{ const net = terrainGen\.roads\(\); return net\?\.source === 'basic-roads' \? net : null; \},/,
     'the port\'s own generated network is never followed');
-  const client = read('src/world/terrainGenClient.js');
+  const client = read('src/world/terrain/terrainGenClient.js');
   assert.equal((client.match(/source: this\._roadsSource/g) || []).length, 3, 'the source rides every rebuild of the network object');
   assert.match(client, /this\._roadsSource = net\.source \?\? 'basic-roads';/);
   assert.match(client, /this\._roadsSource = 'generated';/);
@@ -1659,7 +1659,7 @@ test('AUDIT-TO1 B1/B2/B3: the location rects come off the BUILT terrain, and the
   assert.match(w, /raiseOnEncounterEvent: \(\) => \{ travelOptions\?\.onEncounter\(\); modes\?\.raiseOnEncounterEvent\?\.\(\); \},/, 'GameManager.OnEncounter');
   assert.match(w, /if \(travelOptions && dfLocation\) \{\n\s*const here = playerTravelPixel\(\);\n\s*if \(px === here\.x && py === here\.y\) travelOptions\.initLocationRects\(here\);/, 'StreamingWorld.OnUpdateLocationGameObject - BOOT-TDZ2: the mod asked first, the pixel read once');
   // the tile rect the C# reads is the terrain's own, extraClearance included
-  const t = read('src/world/terrainTiles.js');
+  const t = read('src/world/terrain/terrainTiles.js');
   assert.match(t, /const extraClearance = dfLocation\.mapTableData\.locationType === LOCATION_TYPE_TOWN_CITY \? 3 : 2;/);
 });
 

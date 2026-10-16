@@ -49,7 +49,7 @@ saw "Small Cart" and the cart's picture in the cell, while the world drew, drove
 asks. The Mount cell is unmoved.
 
 Two other readings were checked and are not this. The living world's merchant parties draw the Small Cart by design
-(`world/roadTeams.js` ROAD_WAGON_KIND, Living-World-II.md section 3.3). A peer's parked Caravan comes back as the Small
+(`world/road/roadTeams.js` ROAD_WAGON_KIND, Living-World-II.md section 3.3). A peer's parked Caravan comes back as the Small
 Cart from a relay older than world187 (Wagons.md). The reporter can be asked which wagon it was, but the cell was wrong
 either way. Pinned by `test/fb1011b_cartslot.test.js` (3); `tools/mutants/fb1011b.json`.
 

@@ -25,7 +25,7 @@ import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { assignStartingGear } from '../src/systems/startingGear.js';
 import { seedStartingEquipment } from '../src/systems/equip.js';
 import { StreamingWorldState } from '../src/world/streamingWorld.js';
-import { TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
 import { RACES } from '../src/systems/races.js';
 import { renownFoeStruck, renownFoeDied } from '../src/net/renownTracker.js';   // RENOWN1: the kill door's stamps, in the harness's scope

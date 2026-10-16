@@ -12,8 +12,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { wodRockUvs, WOD_ROCK_MODELS, WOD_ROCK_PEBBLE_MIN, WOD_ROCK_STRETCH_MIN, WOD_ROCK_MAX_REPEATS_PER_M } from '../src/world/wodRockUv.js';
-import { objectMatrix } from '../src/world/wodLocationObjects.js';
+import { wodRockUvs, WOD_ROCK_MODELS, WOD_ROCK_PEBBLE_MIN, WOD_ROCK_STRETCH_MIN, WOD_ROCK_MAX_REPEATS_PER_M } from '../src/world/worldOfDaggerfall/wodRockUv.js';
+import { objectMatrix } from '../src/world/worldOfDaggerfall/wodLocationObjects.js';
 
 const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
 const ang = (a, b) => Math.acos(Math.min(1, Math.abs(a[0] * b[0] + a[1] * b[1] + a[2] * b[2]) / Math.hypot(...a) / Math.hypot(...b))) * 180 / Math.PI;

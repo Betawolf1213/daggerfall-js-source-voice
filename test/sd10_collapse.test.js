@@ -8,11 +8,11 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createSdHost, sdCollapseDue, sdCollapseLine, SD_COLLAPSE_WARN_MS } from '../src/scenes/sdHost.js';
 import { createSdEnd, SD_HOME_TEXT, SD_RETURN_KEY, SD_RIFT_KEY } from '../src/scenes/sdEnd.js';
-import { SD_END_TEXT, SD_RETURN_SIZE } from '../src/world/sdDungeon.js';
+import { SD_END_TEXT, SD_RETURN_SIZE } from '../src/world/superDungeon/sdDungeon.js';
 import { sdCities, sdTemplates } from '../src/systems/superDungeon/sdSite.js';
 import { scanGatePixels } from '../src/systems/gate/gateSite.js';
 import { LOCATION_TYPES, CLIMATES } from '../src/formats/mapsFile.js';
-import { isMainStoryDungeon } from '../src/world/dungeonTextures.js';
+import { isMainStoryDungeon } from '../src/world/dungeon/dungeonTextures.js';
 import { sdFirst, sdRise, sdFind, sdFell, sdGone, SD_COLLAPSE_MS } from '../src/net/sdLaw.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

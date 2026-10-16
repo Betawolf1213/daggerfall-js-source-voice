@@ -46,7 +46,7 @@ frame, more than the Animators' own steps it fed (13-175 us). The probe's heap: 
 by every node hung (`setParent`, and so every instance built) and every component added, and by nothing else; the stamp
 `world/prefabColliders.js` already keeps a tree's colliders by (AUDIT NAV1 #12). A tree's Animators change only with its
 shape: the one place a runtime is attached is `importCustomGameobject`, as an instance is built and before it is hung
-under its parent - and the rigs that push children or components directly (`world/largeBoatRig.js`, `galleonRig.js`,
+under its parent - and the rigs that push children or components directly (`world/ships/largeBoatRig.js`, `galleonRig.js`,
 `carrackRig.js`, `shipKit.js`) build prefab TEMPLATES, before any instance. The same Animators in the same order, by
 identity. In the live game the stamp stood (7,022 across the measured frames of every fleet arm), so the list is taken
 once a boat. The draws did not move (1,130-1,132 a frame in every arm). The naval host already kept its ships' lists (`b.animators ??=`); it now reads the same kept list.

@@ -61,7 +61,7 @@ import { DITHER_GLSL, BAYER_MEAN } from './orderedDither.js';   // PS2: the port
 import { MATERIAL_DEFAULTS, TEXTURE_SLOTS, TEXTURE_IMPORTS, SLOT_DEFAULT_TEXEL, srgbToLinear } from '../systems/dynamicSkies/dynamicSkies.js';
 import { buildProgram } from './glProgram.js';   // AUDIT 68 S17-gl-program-dup: the one compile and link
 import { DREAD_GLSL } from '../world/dreadSky.js';   // EVENT1: the live event's grade, the sky's last word
-import { SD_BRASS_GLSL } from '../world/sdBrassSky.js';   // AUDIT SD III (V8): the brass air's grade on the sky as on its haze
+import { SD_BRASS_GLSL } from '../world/superDungeon/sdBrassSky.js';   // AUDIT SD III (V8): the brass air's grade on the sky as on its haze
 
 /** Which material properties are COLOURS (SetColor -> linearised at
  *  upload under linear colour space). Every other vec4 is SetVector. */
@@ -803,7 +803,7 @@ export class DynamicSkiesRenderer {
     this.textures = new Map();
     /** EVENT1: the live event's grade over the dome, 0..1 (world/dreadSky.js) - the host's. */
     this.dread = 0;
-    /** AUDIT SD III (V8): the brass air's grade over it, 0..1 (world/sdBrassSky.js) - the host's. */
+    /** AUDIT SD III (V8): the brass air's grade over it, 0..1 (world/superDungeon/sdBrassSky.js) - the host's. */
     this.brass = 0;
     this.bandDither = true;                            // PS3: the ordered dither over the mod's own colour reduction; false is its raw ceil, 1:1
     this.cloudsExternal = false;                       // DS2: the volumetric clouds are drawn over this pass - its two cloud sheets stand down (the dome's cloudsExternal, one pass over)

@@ -9,7 +9,7 @@
 // Pure: `sdMarksViewOf` and `sdMarksCardModel` are the pins' door. Not a DFU member. Ledger A (SUPER-DUNGEONS).
 import { sdEndingOf, sdOmensOf, validSdMarks, sdMarksOf } from '../net/sdMarks.js';
 import { SD_STONES, realmToDungeon } from '../net/sdBrain.js';
-import { stonePoint, SD_DIAL } from '../world/sdHall.js';   // AUDIT SD III (V3): the light before the stone's face
+import { stonePoint, SD_DIAL } from '../world/superDungeon/sdHall.js';   // AUDIT SD III (V3): the light before the stone's face
 
 /** THE SIGNS - one path each on a 24-unit box (`fill` a solid sign; the rest stroked). */
 export const SD_MARK_ICONS = Object.freeze({
@@ -81,7 +81,7 @@ export function sdMarksViewOf(mk) {
 /** SD18b: THE ENDING'S STONE LIT in the Orrery's hall - the stone its Hollow keeps glowing in its light, breathing on the
  *  hall's clock (`t` seconds): `{ x, y, z, range, color }` in the dungeon's frame, for the Hour's light channel; null for a
  *  slot with no Ending. Pure. AUDIT SD III (V3): the light stands `out` before the stone's face at its dial's height
- *  (world/sdHall.js stonePoint) - it stood at the slab's own foot-centre 2.4 m up, inside the solid stone, a hand's
+ *  (world/superDungeon/sdHall.js stonePoint) - it stood at the slab's own foot-centre 2.4 m up, inside the solid stone, a hand's
  *  breadth under its cap: the face it was to light was the one place it never reached. */
 export const SD_STONE_LIGHT = Object.freeze({ up: SD_DIAL.y, out: 0.6, range: 9, gain: 1.8, breathe: 0.15, hz: 0.25 });
 /** Each stone's light's place, the dungeon's frame, and each slot's Ending and stone - found once (AUDIT SD III, V5: the

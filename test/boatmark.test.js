@@ -26,7 +26,7 @@ import { PARTY_GREEN_CSS } from '../src/net/social.js';
 import { SHIP_MARK_CSS } from '../src/ui/enhancedHud.js';
 import { GATE_RING_CSS } from '../src/ui/gateMapMark.js';
 import { StreamingWorldState } from '../src/world/streamingWorld.js';
-import { TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const TS = TERRAIN_SIZE;

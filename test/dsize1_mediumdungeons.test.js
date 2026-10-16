@@ -26,7 +26,7 @@ import {
   generateSmallerDungeon, isMediumDungeon, isSmallerDungeon, smallerDungeonsStamp, needsStartWarp, dungeonLocationFor,
   adoptLinkedDungeonSize,
 } from '../src/world/smallerDungeons.js';
-import { isMainStoryDungeon } from '../src/world/dungeonTextures.js';
+import { isMainStoryDungeon } from '../src/world/dungeon/dungeonTextures.js';
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { Place } from '../src/systems/quest/place.js';
 import { loadQuestTables } from '../src/systems/quest/tables.js';

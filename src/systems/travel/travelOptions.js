@@ -297,7 +297,7 @@ export function locBorderCornerRects(locationRect, locationBorderRect) {
 /** OW-TOWN-RING (2026-09-29, Mac: "Pathing doesnt follow the road around cities"): A ROUTE THROUGH A TOWN'S PIXEL WALKS
  *  ITS BORDER RING. Basic Roads' bytes meet at the hub of a location's pixel - a road "through" a town is two edge bits
  *  joined at the pixel middle, inside the walls - while the painter stops those arms at the town and paves the ring
- *  round it (world/roadPainter.js, "paint roads around locations"). The mod never walks a road into a town either: a
+ *  round it (world/road/roadPainter.js, "paint roads around locations"). The mod never walks a road into a town either: a
  *  followed leg into a location pixel is aimed at its BORDER rect (BeginPathTravel :700) and the follow key then walks
  *  the ring corner to corner (CircumnavigateLocation :753-797). This is that walk for a planned route, which knows both
  *  roads: in on the side the route arrives from, round the ring the shorter way (a corner at a time, the mod's own
@@ -695,7 +695,7 @@ export function createTravelOptions(deps = {}) {
   /** RATE-LAW (2026-10-04, Mac: "Roads now travel at x100 and non roads at x60"): IS THE JOURNEY ON A ROAD? A planned
    *  route's leg says by its kind - a road or a track (ROAD_LEG_KINDS) - and the walk back to the road after a stop
    *  (AUDIT OW3 J3's `join`) is the open ground's (the last stretch to a spot, and a route of no legs, the host's lanes); the follow key walks a road or a track by definition, and a town's
-   *  ring is paved (world/roadPainter.js); the mod's straight journeys - to a place or to bare coordinates - ask the
+   *  ring is paved (world/road/roadPainter.js); the mod's straight journeys - to a place or to bare coordinates - ask the
    *  host what the traveller stands on (`deps.onRoad`, the network's own lanes), so a straight line that runs along a
    *  road runs at the road's rate while it does. */
   function journeyOnRoad() {

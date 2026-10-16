@@ -12,7 +12,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { StreamingWorldState } from '../src/world/streamingWorld.js';
-import { TERRAIN_SIZE, HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE } from '../src/world/terrainSampler.js';
+import { TERRAIN_SIZE, HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE } from '../src/world/terrain/terrainSampler.js';
 import { floorLanding } from '../src/player/enterExit.js';
 import { Collider } from '../src/player/collider.js';
 import { PlayerMotor } from '../src/player/motor.js';

@@ -48,8 +48,8 @@ import { pickDungeonElites, ELITE_FOE_MIN_LEVEL } from '../src/systems/eliteFoes
 import { rollSearchElite } from '../src/systems/searchables.js';
 import { combatStanding, foeShare } from '../src/systems/skillSoftcap.js';
 import { lootRarityOn } from '../src/systems/loot/lootRarity.js';
-import { isGateArena, GATE_ARENA_LOCATION_ID } from '../src/world/gateArena.js';
-import { isArenaFloor, ARENA_FLOOR_LOCATION_ID } from '../src/world/arenaFloor.js';
+import { isGateArena, GATE_ARENA_LOCATION_ID } from '../src/world/gate/gateArena.js';
+import { isArenaFloor, ARENA_FLOOR_LOCATION_ID } from '../src/world/arena/arenaFloor.js';
 import { withDom } from './invdrag.mjs';
 import * as acorn from 'acorn';
 import { ROOM_LOOT_OFF } from './roomLootOff.mjs';   // PARTY-LOOT: the room's seams with no room

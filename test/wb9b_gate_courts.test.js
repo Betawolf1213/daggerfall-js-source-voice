@@ -8,7 +8,7 @@
 //                      blow may come from and the motor's on where a player may walk, one law at both ends
 //   the brain           PHASE_TURN's bound, the wait (CROSS_WAIT_MAX_MS), his court (`court`), the crossings (`xa`)
 //   the wire and link   the state's `ct` and `xa`; a bound's word lays its walkway on every screen at once (crossLaid)
-//   the screen          the motor's clamp (world/gateArena.js courtArena), the slabs rising (slabRise, slabMatrix), the
+//   the screen          the motor's clamp (world/gate/gateArena.js courtArena), the slabs rising (slabRise, slabMatrix), the
 //                       telegraph over the court it lands in, the braziers nearest first, the land clear of the floor
 //
 // Design: bible/11-Multiplayer/World-Bosses.md section 14 (WB9b).
@@ -27,8 +27,8 @@ import { foldGate, crossLaid, GATE_STATE_EMPTY } from '../src/net/gateLink.js';
 import {
   courtArena, courtToDungeon, walkSlabs, slabRise, slabMatrix, buildWalkSlabModel, courtLights, courtLightsNear, courtOpenings,
   courtSpireAxes, courtBraziers, SLAB_LEN_M, SLAB_RISE_MS, LAVA_Y,
-} from '../src/world/gateArena.js';
-import { bossPlace, bossHop, bossAct, CROSS_HEIGHT, BOSS_CUES, QUAKE_ON, ATTACK_COLORS } from '../src/world/gateBoss.js';
+} from '../src/world/gate/gateArena.js';
+import { bossPlace, bossHop, bossAct, CROSS_HEIGHT, BOSS_CUES, QUAKE_ON, ATTACK_COLORS } from '../src/world/gate/gateBoss.js';
 import { telegraphShape, GateTelegraphRenderer } from '../src/render/gateTelegraph.js';
 import { deadlandsIslands, floorGap, LAND_CLEAR_M } from '../src/world/deadlandsLand.js';
 import { PlayerMotor } from '../src/player/motor.js';

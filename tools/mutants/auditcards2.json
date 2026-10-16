@@ -343,7 +343,7 @@
   },
   {
     "name": "E-scene-street-no-push",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "    if (e.t === 'street') {\n      this._pushBets(t);",
     "new": "    if (e.t === 'street') {",
     "tests": [
@@ -362,7 +362,7 @@
   },
   {
     "name": "E-scene-coming-ignored",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "const stack = (h ? h.stack : s.stack) - coming - (carried",
     "new": "const stack = (h ? h.stack : s.stack) - (carried",
     "tests": [
@@ -381,7 +381,7 @@
   },
   {
     "name": "E-scene-boardyaw",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "boardYaw: frame.axisYaw + Math.PI / 2,",
     "new": "boardYaw: frame.axisYaw,",
     "tests": [
@@ -400,7 +400,7 @@
   },
   {
     "name": "E-scene-stack-side",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "stack: inward(STACK_IN, STACK_SIDE),",
     "new": "stack: inward(STACK_IN, 0),",
     "tests": [
@@ -419,7 +419,7 @@
   },
   {
     "name": "E-scene-dealer-from-player",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "const from = this.places.seats[e.button].deal;",
     "new": "const from = this.places.seats[this.playerSeat].deal;",
     "tests": [
@@ -438,7 +438,7 @@
   },
   {
     "name": "E-scene-street-dealer",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "      const from = this.places.seats[this.dealer].deal;",
     "new": "      const from = this.places.seats[0].deal;",
     "tests": [
@@ -457,7 +457,7 @@
   },
   {
     "name": "E-scene-muck-not-flagged",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "        c.seat = -3;",
     "new": "",
     "tests": [
@@ -476,7 +476,7 @@
   },
   {
     "name": "E-scene-burn-layer",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "to: this._rest(this.places.burn, this.cards.filter((c) => c.seat === -2).length)",
     "new": "to: this._rest(this.places.burn)",
     "tests": [
@@ -495,7 +495,7 @@
   },
   {
     "name": "E-motion-slide-half",
-    "file": "src/world/cardMotion.js",
+    "file": "src/world/card/cardMotion.js",
     "old": "const slide = Math.min(dist * 0.5, SLIDE_MIN + js * SLIDE_SPREAD);",
     "new": "const slide = SLIDE_MIN + js * SLIDE_SPREAD;",
     "tests": [
@@ -514,7 +514,7 @@
   },
   {
     "name": "E-motion-yaw-jitter-off",
-    "file": "src/world/cardMotion.js",
+    "file": "src/world/card/cardMotion.js",
     "old": "const yawRest = yaw + (jx - jz) * YAW_JITTER;",
     "new": "const yawRest = yaw;",
     "tests": [
@@ -799,7 +799,7 @@
   },
   {
     "name": "E-scene-pot-push-now",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "      const at = Math.max(t0, this.busyUntil, t + PUSH_S) + POT_BEAT;",
     "new": "      const at = t;",
     "tests": [
@@ -818,7 +818,7 @@
   },
   {
     "name": "E-scene-pot-while-sliding",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "shares.filter((p) => t < p.t0).reduce((a, p) => a + p.amount, 0) - sliding : pot - sliding;",
     "new": "shares.reduce((a, p) => a + p.amount, 0) - sliding : pot - sliding;",
     "tests": [
@@ -1597,7 +1597,7 @@
   },
   {
     "name": "A2-fold-from-rest",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "        const at = this._poseOf(c, t);\n        c.motions.push(dealMotion({ from: at.pos,",
     "new": "        const at = this._restOf(c);\n        c.motions.push(dealMotion({ from: at.pos,",
     "tests": [
@@ -1616,7 +1616,7 @@
   },
   {
     "name": "A2-fold-held",
-    "file": "src/world/cardMotion.js",
+    "file": "src/world/card/cardMotion.js",
     "old": "      const lying = fromYaw !== undefined;",
     "new": "      const lying = false;",
     "tests": [
@@ -1635,7 +1635,7 @@
   },
   {
     "name": "A2-closer-unnoted",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "    if (e.t === 'act' && e.paid > 0) this.lastBets.set(e.seat, (this.lastBets.get(e.seat) ?? 0) + e.paid);",
     "new": "    if (e.t === 'act' && e.paid > 0) void 0;",
     "tests": [
@@ -1654,7 +1654,7 @@
   },
   {
     "name": "A2-streets-together",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "      const t0 = Math.max(t, this.busyUntil);\n      const from = this.places.seats[this.dealer].deal;",
     "new": "      const t0 = t;\n      const from = this.places.seats[this.dealer].deal;",
     "tests": [
@@ -1673,7 +1673,7 @@
   },
   {
     "name": "A2-board-one-plane",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "this._rest(this.places.board[i], i & 1)",
     "new": "this._rest(this.places.board[i])",
     "tests": [
@@ -1692,7 +1692,7 @@
   },
   {
     "name": "A2-burn-close",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "    burn: at(-(BOARD_SLOTS / 2 + 1) * BOARD_GAP, 0),",
     "new": "    burn: at(-((BOARD_SLOTS + 1) / 2) * BOARD_GAP, 0),",
     "tests": [
@@ -1711,7 +1711,7 @@
   },
   {
     "name": "A2-stack-centred",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "        chips.push(...chipDiscs(stack, place.stack, place.yaw, true));",
     "new": "        chips.push(...chipDiscs(stack, place.stack, place.yaw));",
     "tests": [
@@ -1730,7 +1730,7 @@
   },
   {
     "name": "A2-places-unfit",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "    const fit = Math.max(PLACE_FIT_MIN, Math.min(1, (room - clear) / BET_IN));",
     "new": "    const fit = 1;",
     "tests": [
@@ -1749,7 +1749,7 @@
   },
   {
     "name": "A2-flip-wrong-edge",
-    "file": "src/world/cardMotion.js",
+    "file": "src/world/card/cardMotion.js",
     "old": "roll: edge ? fromRoll - a : fromRoll + a,",
     "new": "roll: fromRoll + a,",
     "tests": [
@@ -1768,7 +1768,7 @@
   },
   {
     "name": "A2-flip-own-yaw",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "t0: m.t1 + TURN_DELAY, acrossYaw: this.places.boardYaw });",
     "new": "t0: m.t1 + TURN_DELAY });",
     "tests": [
@@ -1787,7 +1787,7 @@
   },
   {
     "name": "A2-scoop-flat",
-    "file": "src/world/cardScene.js",
+    "file": "src/world/card/cardScene.js",
     "old": "p.potShare ? SCOOP_LIFT : 0",
     "new": "0",
     "tests": [

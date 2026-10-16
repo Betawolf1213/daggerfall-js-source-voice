@@ -19,7 +19,7 @@
 // Not a DFU member: Daggerfall Unity has no card games. Ledger A row (TAVERN CARDS).
 import { newHand, act, foldSeat, legalActions, viewFor, shuffleDeck, HOLDEM_SEATS_MIN, HOLDEM_SEATS_MAX } from '../../net/cardLaw.js';
 import { patronDecision, unit, PATRON_TEMPERS } from './cardPatrons.js';
-import { DEAL_STAGGER, THROW_LAND_S, FLIP_S, RIFFLE_S, GATHER_S } from '../../world/cardMotion.js';
+import { DEAL_STAGGER, THROW_LAND_S, FLIP_S, RIFFLE_S, GATHER_S } from '../../world/card/cardMotion.js';
 
 /** MEASURE (CARDS4): a patron's thought before he acts, and its spread - a table with a rhythm. */
 export const THINK_MS = 900;

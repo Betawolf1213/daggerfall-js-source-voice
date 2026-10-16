@@ -8,11 +8,11 @@ import { readFileSync } from 'node:fs';
 import * as acorn from 'acorn';
 
 import { WoodsFile, MAP_WIDTH, MAP_HEIGHT } from '../src/formats/woodsFile.js';
-import { generateSamples, sampleKernel, kernelTerms, HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE, SCALED_OCEAN_ELEVATION, SCALED_BEACH_ELEVATION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { generateSamples, sampleKernel, kernelTerms, HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE, SCALED_OCEAN_ELEVATION, SCALED_BEACH_ELEVATION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 import { createLandforms, reliefLift, landformLift, landformLiftField, cliffFadeAt, LANDFORM_DIALS, LANDFORM_KNEE, LANDFORM_FLOOR } from '../src/world/landforms.js';
-import { generatePixelTerrain, restrideGrid } from '../src/world/terrainGen.js';
-import { waterCorners, WATER_DRAW_MASK_TABLE } from '../src/world/waterCorners.js';
-import { DIR, DIR_DELTA } from '../src/world/roadNetwork.js';
+import { generatePixelTerrain, restrideGrid } from '../src/world/terrain/terrainGen.js';
+import { waterCorners, WATER_DRAW_MASK_TABLE } from '../src/world/water/waterCorners.js';
+import { DIR, DIR_DELTA } from '../src/world/road/roadNetwork.js';
 import { retryModRoads, loadModRoads, MOD_ROADS, MOD_ROADS_RETRY_MAX, MOD_ROADS_FETCH_TIMEOUT_MS } from '../src/world/roadsProducer.js';
 import { ringHeight, buildFarRingGrid } from '../src/render/farRing.js';
 import { StreamingWorldState } from '../src/world/streamingWorld.js';
@@ -22,8 +22,8 @@ import { Collider } from '../src/player/collider.js';
 import { _setTimeScaleForTest, TRAVEL_ROAD_RATE } from '../src/systems/timeScale.js';
 import { TRANSPORT_MODES } from '../src/systems/transport.js';
 import { createDroppedLoot } from '../src/scenes/droppedLoot.js';
-import { natureStandsAt, layoutNature, groundAt } from '../src/world/terrainNature.js';
-import { sampleHeight, blendLocationTerrain, calcAvgMaxHeight, generateTileData } from '../src/world/terrainTiles.js';
+import { natureStandsAt, layoutNature, groundAt } from '../src/world/terrain/terrainNature.js';
+import { sampleHeight, blendLocationTerrain, calcAvgMaxHeight, generateTileData } from '../src/world/terrain/terrainTiles.js';
 
 const H = HEIGHTMAP_DIMENSION;
 const UNIT = MAX_TERRAIN_HEIGHT;
@@ -386,7 +386,7 @@ test('AUDIT LANDFORMS D3: the landforms move the ground, never a tile - a coasta
     assert.ok(shapedHere.some((v, i) => v !== plain[i]), `${qx},${qy}: beside the shaped ones`);
   }
   // a pixel with no location keeps one pass and one array (the shaped samples' own tiles are DFU's - LANDFORM1's knee)
-  assert.match(src('src/world/terrainGen.js'), /const classic = landforms && hasLocation \? new Float32Array/);
+  assert.match(src('src/world/terrain/terrainGen.js'), /const classic = landforms && hasLocation \? new Float32Array/);
 });
 
 // ---- C3, C4: online --------------------------------------------------------------------------------------------------------
@@ -659,7 +659,7 @@ test('AUDIT LANDFORMS D9: a landforms promotion waits for the network in flight,
   const prevPost = globalThis.postMessage, prevOn = globalThis.onmessage;
   globalThis.postMessage = (msg) => posted.push(msg);
   try {
-    await import('../src/world/terrainGenWorker.js?auditlandforms');
+    await import('../src/world/terrain/terrainGenWorker.js?auditlandforms');
     globalThis.onmessage({ data: { t: 'init', woodsBytes: WOODS_BYTES.slice() } });
     globalThis.onmessage({ data: { t: 'roads', settlements: [], switches: {} } });   // a build in flight: pendingRoads
     const samples = generateSamples(woods, 300, 250, H, null);

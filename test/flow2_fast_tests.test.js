@@ -1,6 +1,6 @@
 // FLOW2 (2026-09-26, Mac: "is there a way to really ensure we have a faster workflow with the same standards?"): THE
 // TWO SLOWEST TESTS, FAST - BY MAKING THE GAME'S OWN CODE FAST, THE SAME ANSWERS. ROADS-CLEAR's whole-world sweep spent
-// 130 s inside world/wodLocationLoader.js pickLocations - the mod's AddLocation loop, verbatim, scanning all 227,938
+// 130 s inside world/worldOfDaggerfall/wodLocationLoader.js pickLocations - the mod's AddLocation loop, verbatim, scanning all 227,938
 // instances for each of 146,446 pixels (a tile load in the game paid the same 228k-entry pass); WEATHER3a's calibration
 // gate spent ~100 s in the weather map re-reading the same noise, drawing shapes for candidates it threw away, and in the
 // collector. Now: the loop walks the tile's own pixel (LocationSession.pixelIndex) with every decision the scan makes -
@@ -13,8 +13,8 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { LocationSession, pickLocations, pickLocationsScan, WOD_OCEAN_REGIONS } from '../src/world/wodLocationLoader.js';
-import { decodeRegionPack } from '../src/world/wodLocationPack.js';
+import { LocationSession, pickLocations, pickLocationsScan, WOD_OCEAN_REGIONS } from '../src/world/worldOfDaggerfall/wodLocationLoader.js';
+import { decodeRegionPack } from '../src/world/worldOfDaggerfall/wodLocationPack.js';
 import { seededRng, seededFirst } from '../src/systems/wind/wind.js';
 import { windAt, windPath, weatherAt, systemsNear, resetWeatherMap } from '../src/systems/weather/weatherMap.js';
 

@@ -441,7 +441,7 @@ The GRIM pass arrived as a drop-in cut from main at #733 (`fadd7bda`); each file
 main's head, so nothing main had moved since was reverted (BAL4's `enhancedAI` default, PERF-HUD1's one sweep clock).
 Four gates the drop-in's own tree did not pass were met here:
 - **ONE DFU MEMBER, ONE EXPORT** (`test/audit24_onehome.test.js`): `grimoireArt.js` exported a `bayer` nothing called
-  (the 4 x 4 dither `world/sdPixelKit.js` already exports) - deleted; and its `toNative`, the 3x crop brought back to
+  (the 4 x 4 dither `world/superDungeon/sdPixelKit.js` already exports) - deleted; and its `toNative`, the 3x crop brought back to
   the game's grid, shared a name with `mouseControlsWindow.js`'s rect offset - renamed `toGameGrid`.
 - **THE HUD STAYS LIGHT** (`test/guide3_herald.test.js`, `test/guide4_tracker.test.js`): SND2 is wired through
   `main.js`'s data gate (above), never a data module named in the click's.

@@ -23,8 +23,8 @@ import { FISHING_HOW } from '../src/ui/profPages.js';
 import { trees, veins, boulders, nodeKey, utcDayOfMs } from '../src/net/nodeLaw.js';
 import { sharedClassicMinutes } from '../src/net/wire.js';
 import { utcDay } from '../src/net/marksLaw.js';
-import { groundAt } from '../src/world/terrainNature.js';
-import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { groundAt } from '../src/world/terrain/terrainNature.js';
+import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 import { standService, T0 } from './accountDb.mjs';
 
 const WOODS = CLIMATES.Woodlands, GLENUMBRA = 59;

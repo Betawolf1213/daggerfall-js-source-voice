@@ -12,20 +12,20 @@ import { readFileSync } from 'node:fs';
 import {
   SD_NO_MARK, sdEndMarks, sdRiftPlace, sdReturnPlace, sdLandingPlace, SD_RETURN_GAP_M, SD_RIFT_MIN_M, SD_RIFT_REACH_M, SD_RETURN_REACH_M, SD_STEP_M,
   SD_LANDING_PAST_M, SD_LANDING_CLEAR_M, sdRiftFit, sdRiftSweep, SD_RIFT_SIZE_M, SD_RIFT_AIR_M,
-} from '../src/world/sdDungeon.js';
-import { SD_REALM_TEXT } from '../src/world/sdRealm.js';
+} from '../src/world/superDungeon/sdDungeon.js';
+import { SD_REALM_TEXT } from '../src/world/superDungeon/sdRealm.js';
 import { createSdEnd, SD_STEP_GAP_MS, SD_STEP_JUMP_M, SD_RIFT_KEY, SD_RIFT_PRESS_M } from '../src/scenes/sdEnd.js';
-import { riftCentreY } from '../src/world/sdRiftModel.js';
+import { riftCentreY } from '../src/world/superDungeon/sdRiftModel.js';
 import { pickActivatableHit, RAY_DISTANCE } from '../src/player/activate.js';
 import { sdCities, findSdSite, sdTemplates } from '../src/systems/superDungeon/sdSite.js';
 import { scanGatePixels, gateScanner } from '../src/systems/gate/gateSite.js';
 import { createSdHost } from '../src/scenes/sdHost.js';
-import { isMainStoryDungeon } from '../src/world/dungeonTextures.js';
+import { isMainStoryDungeon } from '../src/world/dungeon/dungeonTextures.js';
 import { LOCATION_TYPES } from '../src/formats/mapsFile.js';
 import { createSpawnGround, WORLD_SALT } from '../src/world/spawnedDungeons.js';
 import { sdRoll, sdRise, sdFirst } from '../src/net/sdLaw.js';
 import { collectDungeonEnemies } from '../src/characters/dungeonEnemies.js';
-import { dungeonEndOf } from '../src/world/dungeonEnd.js';
+import { dungeonEndOf } from '../src/world/dungeon/dungeonEnd.js';
 import { RDB_SIDE } from '../src/world/rdbLayout.js';
 import { getStaticDoors } from '../src/world/staticDoors.js';
 import { DOOR_TYPE } from '../src/world/meshReader.js';
@@ -155,7 +155,7 @@ function intoBox(o, d, b) {
   }
   return t0 > 1e-9 ? t0 : Infinity;
 }
-/** A hall the end's laws ask (world/sdDungeon.js SdProbe): x0..x1, z0..z1, its floor `floorAt(x, z)` (null outside), its
+/** A hall the end's laws ask (world/superDungeon/sdDungeon.js SdProbe): x0..x1, z0..z1, its floor `floorAt(x, z)` (null outside), its
  *  ceiling at `h`; `solids` boxes the rays meet; `slope` a ramp's floor (y = slope * (x - 10)) the rays meet too. */
 function probeHall({ x0 = 0, x1 = 20, z0 = 0, z1 = 20, h = 8, floorAt = () => 0, solids = [], slope = 0 } = {}) {
   return {

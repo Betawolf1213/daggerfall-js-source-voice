@@ -1,7 +1,7 @@
 // ARENA1 (2026-10-02): A HOUSE THE ARENA TOOK, MOVED - ONCE, OFFLINE. Mac, 2026-10-02: "Move them to a new house."
 //
 // GEMSAL03 (Daggerfall's cell 4,3) stood fifteen houses and a house of the Academics; the arena's block stands none
-// (world/arenaCity.js). A deed whose building key names a building of that cell names nothing now, so at the first
+// (world/arena/arenaCity.js). A deed whose building key names a building of that cell names nothing now, so at the first
 // load that stands the arena the deed is moved: to an unowned house of the same type elsewhere in Daggerfall (any
 // house when none of its type is free), never one another record holds or an active quest's, chosen by the house
 // market's own generator (systems/banking.js housesForSale: xorshift32) seeded by the city's map id and the old key
@@ -33,9 +33,9 @@
 // carries the row (server-account/src/homes.js arenaMoveHome) and the client empties the old scene by `emptyArenaScene`
 // (systems/online/onlineHomes.js moveArenaHomes).] Every other record keyed to the cell (a rented room, a repair
 // ticket, a quest site, an inside save, a Recall anchor) needs no move: layoutPins.recordStands answers false for it
-// (world/arenaCity.js arenaRecordDisplaced) and each system's own law for a building that is not there takes it.
+// (world/arena/arenaCity.js arenaRecordDisplaced) and each system's own law for a building that is not there takes it.
 
-import { inArenaCell, arenaRecordDisplaced, ARENA_REGION } from '../../world/arenaCity.js';
+import { inArenaCell, arenaRecordDisplaced, ARENA_REGION } from '../../world/arena/arenaCity.js';
 import { interiorSceneName, cacheScene, containsPermanentScene, addPermanentScene, removePermanentScene } from '../sceneCache.js';
 import { stampLayout } from '../layoutPins.js';   // FIELD BUGS 2026-10-07 CRATE-LAYOUT: the new house's record, in the layout it was picked in
 import { isResidence } from '../../world/buildingNames.js';

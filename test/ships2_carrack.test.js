@@ -13,10 +13,10 @@ import { createHash } from 'node:crypto';
 import {
   carrackPrefab, carrackClips, CARRACK_PREFAB_ID, CARRACK_HULL_NODE, MEASURED, HELM, DRIVE_TRIGGER_AT, GUN, LID, LID_SILL_ROW,
   CARRACK_BATTERIES, ANCHOR, sideAt, lidFitOf, ropeLadderGeometry,
-} from '../src/world/carrackModel.js';
-import { SAILS, CARRACK_RIG } from '../src/world/carrackRig.js';
-import { carrackArt, carrackGlow, carrackCut, CARRACK_NIGHT, registerCarrackArt, _resetCarrackArt, CARRACK_ARCHIVE, TEX, BANDS } from '../src/world/carrackArt.js';
-import { RUDDER_DEG } from '../src/world/galleonModel.js';
+} from '../src/world/ships/carrackModel.js';
+import { SAILS, CARRACK_RIG } from '../src/world/ships/carrackRig.js';
+import { carrackArt, carrackGlow, carrackCut, CARRACK_NIGHT, registerCarrackArt, _resetCarrackArt, CARRACK_ARCHIVE, TEX, BANDS } from '../src/world/ships/carrackArt.js';
+import { RUDDER_DEG } from '../src/world/ships/galleonModel.js';
 import { createGalleonGunDeck } from '../src/systems/naval/galleonGunDeck.js';
 import { DECK_STEP } from '../src/systems/naval/navalDeck.js';
 import { animatorOf, colliderBounds } from '../src/systems/comeSailAway/comeSailAwayBoat.js';

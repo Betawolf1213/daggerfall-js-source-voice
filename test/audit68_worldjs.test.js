@@ -176,7 +176,7 @@ test('AUDIT 68 S22-ship-disembark-compensation: boarded after a highland recente
   const ship = await import('../src/systems/ship.js');
   const { StreamingWorldState } = await import('../src/world/streamingWorld.js');
   const { SHIP_TYPES, shipCoords } = await import('../src/systems/banking.js');
-  const { STREAMING_TERRAIN_SCALE } = await import('../src/world/terrainSampler.js');
+  const { STREAMING_TERRAIN_SCALE } = await import('../src/world/terrain/terrainSampler.js');
   // boardOrDisembark's own decision half, lifted: the transition and the landing it hands the teleport
   const arm = lift(WORLD, '    const here = playerTravelPixel();\n    const t = shipTransition(playerEntity, {', ' : null;\n');
   // PIN MOVED (AUDIT ETHER-OW C2-3, test/audit_etherow.test.js): the board asks the Veil before it is taken - the Bay's
@@ -249,7 +249,7 @@ test('AUDIT 68 S22-teleport-reentry: F11 during a fast travel\'s build is refuse
 // ---- S22: a failed road network is not a known one, and the retry keeps what it painted ----
 
 test('AUDIT 68 S22-roads-retry-crash: a network that failed to build is not "known" on either path, and the retry arm keeps the pixel it painted', async () => {
-  const { TerrainGenClient } = await import('../src/world/terrainGenClient.js');
+  const { TerrainGenClient } = await import('../src/world/terrain/terrainGenClient.js');
   const warn = console.warn;
   console.warn = () => {};
   try {

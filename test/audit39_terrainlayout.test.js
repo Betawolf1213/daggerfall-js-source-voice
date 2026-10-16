@@ -18,7 +18,7 @@ import { fileURLToPath } from 'node:url';
 
 import { exteriorAmbient, daylightScale } from '../src/world/worldClock.js';
 import { skyOffsetForWeather, weatherRng } from '../src/world/weather.js';
-import { TerrainGenClient } from '../src/world/terrainGenClient.js';
+import { TerrainGenClient } from '../src/world/terrain/terrainGenClient.js';
 import { StreamingWorldState, TERRAIN_DISTANCE } from '../src/world/streamingWorld.js';
 import { layoutRmbBlock } from '../src/world/rmbLayout.js';
 import { blockBuildingCount } from '../src/systems/talk/talkTopics.js';

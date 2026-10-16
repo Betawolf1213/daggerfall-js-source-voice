@@ -9,7 +9,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { pathFreePixel, spawnsDungeon, WORLD_SALT } from '../src/world/spawnedDungeons.js';
-import { MAP_W, MAP_H } from '../src/world/roadNetwork.js';
+import { MAP_W, MAP_H } from '../src/world/road/roadNetwork.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rd = (p) => readFileSync(join(ROOT, p), 'utf8');

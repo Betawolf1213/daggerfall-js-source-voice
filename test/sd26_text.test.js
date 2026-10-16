@@ -34,7 +34,7 @@ import { SD_MARK_TIPS } from '../src/ui/sdMarksView.js';
 import { sdCities, sdTemplates } from '../src/systems/superDungeon/sdSite.js';
 import { scanGatePixels } from '../src/systems/gate/gateSite.js';
 import { LOCATION_TYPES, CLIMATES } from '../src/formats/mapsFile.js';
-import { isMainStoryDungeon } from '../src/world/dungeonTextures.js';
+import { isMainStoryDungeon } from '../src/world/dungeon/dungeonTextures.js';
 import { createSdHall, SD_HALL_TEXT } from '../src/scenes/sdHall.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

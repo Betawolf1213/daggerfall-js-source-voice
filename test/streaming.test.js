@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import {
   StreamingWorldState, worldCoordToMapPixel, mapPixelToWorldCoords, TERRAIN_DISTANCE,
 } from '../src/world/streamingWorld.js';
-import { TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 
 function approx(actual, expected, eps = 1e-6) {
   assert.ok(Math.abs(actual - expected) < eps, `${actual} !~ ${expected}`);

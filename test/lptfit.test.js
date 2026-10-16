@@ -2,18 +2,18 @@
 // THE WHOLE TREE FITS ITS ROOM. VERGE1 kept the WILD flats' reach off the road band; a location's own trees (a town's,
 // a farm's, a tavern's RMB blocks) were never asked, nor the location's streets, nor the paved ring Basic Roads lays
 // round a town - and Low Poly Trees stands a 5-15 m crown on each. Every Low Poly tree is drawn no wider than the room
-// its root has from the pixel's path tiles (world/roadVerge.js pathTileMask, tileRoom) and the network's band
+// its root has from the pixel's path tiles (world/road/roadVerge.js pathTileMask, tileRoom) and the network's band
 // (roadRoom): lptFitCap, under the tree's own variety, never under LPT_FIT_FLOOR. A scale, never a move. The fixtures
 // are the producers': the painter's own tilemap and mask (roadPainter.js paintRoads), the marching squares' lookup
 // (terrainTiles.js), the baked crowns (lptCrowns.js), the set the frame draws (lowPolyTrees.js buildTreeSet).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { pathTileMask, tileRoom, lptFitCap, LPT_FIT_FLOOR, TILE_M, PATH_HALF_M } from '../src/world/roadVerge.js';
+import { pathTileMask, tileRoom, lptFitCap, LPT_FIT_FLOOR, TILE_M, PATH_HALF_M } from '../src/world/road/roadVerge.js';
 import { LPT_CROWNS } from '../src/world/lptCrowns.js';
-import { paintRoads, TILE } from '../src/world/roadPainter.js';
-import { createLookupTable } from '../src/world/terrainTiles.js';
-import { DIR, MAP_W } from '../src/world/roadNetwork.js';
+import { paintRoads, TILE } from '../src/world/road/roadPainter.js';
+import { createLookupTable } from '../src/world/terrain/terrainTiles.js';
+import { DIR, MAP_W } from '../src/world/road/roadNetwork.js';
 import { buildTreeSet, lptVariety, LPT_SET_FLOATS, LPT_SCALE_MAX } from '../src/world/lowPolyTrees.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

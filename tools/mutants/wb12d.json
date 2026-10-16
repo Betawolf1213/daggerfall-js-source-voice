@@ -1512,7 +1512,7 @@
   },
   {
     "name": "AUDIT-WB12d-rock-through-the-altar",
-    "file": "src/world/gateClearance.js",
+    "file": "src/world/gate/gateClearance.js",
     "old": "  return boxNear(cx, cz, x0, z0, x1, z1, RITE_CLEAR_M + margin);",
     "new": "  return false;",
     "tests": [
@@ -1521,7 +1521,7 @@
   },
   {
     "name": "AUDIT-WB12d-the-circle-s-frame-turned",
-    "file": "src/world/gateClearance.js",
+    "file": "src/world/gate/gateClearance.js",
     "old": "(py - clear.py) * PIXEL_M + clear.rz];",
     "new": "(clear.py - py) * PIXEL_M + clear.rz];",
     "tests": [
@@ -1694,7 +1694,7 @@
   },
   {
     "name": "AUDIT-WB12d-the-day-less-site",
-    "file": "src/world/wodShared.js",
+    "file": "src/world/worldOfDaggerfall/wodShared.js",
     "old": "export const riteSiteId = (px, py, day) => `${px},${py}:rite.${day}`;",
     "new": "export const riteSiteId = (px, py) => `${px},${py}:rite.0`;",
     "tests": [
@@ -1866,7 +1866,7 @@
   },
   {
     "name": "AUDIT-WB12d-the-sigil-on-the-plinth",
-    "file": "src/world/gateModel.js",
+    "file": "src/world/gate/gateModel.js",
     "old": "export const RITE_SIGIL_RECORD = 2;",
     "new": "export const RITE_SIGIL_RECORD = 1;",
     "tests": [
@@ -1875,7 +1875,7 @@
   },
   {
     "name": "AUDIT-WB12d-the-plinth-wears-the-sigil",
-    "file": "src/world/gateArt.js",
+    "file": "src/world/gate/gateArt.js",
     "old": "export const riteArt = () => [[RITE_SIGIL_RECORD, riteSigilArt()]];",
     "new": "export const riteArt = () => [[GATE_PLINTH_RECORD, riteSigilArt()]];",
     "tests": [
@@ -2001,7 +2001,7 @@
   },
   {
     "name": "AUDIT-WB12d-a-square-tile",
-    "file": "src/world/gateArt.js",
+    "file": "src/world/gate/gateArt.js",
     "old": "put(albedo, x, y, CHAR, 0); put(emission, x, y, [0, 0, 0], 0); continue;",
     "new": "put(albedo, x, y, CHAR); put(emission, x, y, [0, 0, 0]); continue;",
     "tests": [
@@ -2010,7 +2010,7 @@
   },
   {
     "name": "AUDIT-WB12d-a-smooth-rim",
-    "file": "src/world/gateArt.js",
+    "file": "src/world/gate/gateArt.js",
     "old": "if (d > 0.9 + 0.16 * (edge(x, y, S) - 0.5))",
     "new": "if (d > 0.9)",
     "tests": [
@@ -2019,7 +2019,7 @@
   },
   {
     "name": "AUDIT-WB12d-the-star-turned-from-the-gate",
-    "file": "src/world/gateArt.js",
+    "file": "src/world/gate/gateArt.js",
     "old": "const a = Math.PI / 2 + (i / 7) * 2 * Math.PI;",
     "new": "const a = -Math.PI / 2 + (i / 7) * 2 * Math.PI;",
     "tests": [
@@ -2028,7 +2028,7 @@
   },
   {
     "name": "AUDIT-WB12d-the-cuts-cold",
-    "file": "src/world/gateArt.js",
+    "file": "src/world/gate/gateArt.js",
     "old": "put(albedo, px, py, BURNT); put(emission, px, py, glow(1));",
     "new": "put(albedo, px, py, BURNT); put(emission, px, py, glow(0));",
     "tests": [
@@ -2560,7 +2560,7 @@
   },
   {
     "name": "AUDIT-WB12d-T-wod-rite-site-refused",
-    "file": "src/world/wodShared.js",
+    "file": "src/world/worldOfDaggerfall/wodShared.js",
     "old": "|hold|rite\\.\\d{1,9})$/;",
     "new": "|hold)$/;",
     "tests": [

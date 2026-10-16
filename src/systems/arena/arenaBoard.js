@@ -453,7 +453,7 @@ export function hallLinesOnline(board, name) {
 }
 
 /**
- * ARENA5: THE HALL'S PLAQUES (world/arenaPlaques.js - the wall in the undercroft): one a Grand Champion, the newest first,
+ * ARENA5: THE HALL'S PLAQUES (world/arena/arenaPlaques.js - the wall in the undercroft): one a Grand Champion, the newest first,
  * at most `max`. Offline this save's (Arena.md 1: "every Grand Champion this save") - its own (the player, the banner the
  * title was won under, the season it was taken in: the league's `grandAt`) among the banners' fighters who took the title
  * (systems/arena/arenaLeague.js rosterGrandChampions - their name and home, their banner, their season), by season; online

@@ -9,7 +9,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { SD_REALM_TEXT } from '../src/world/sdRealm.js';
+import { SD_REALM_TEXT } from '../src/world/superDungeon/sdRealm.js';
 import { createCrewAshore } from '../src/scenes/crewAshore.js';
 import { createCompanions } from '../src/systems/naval/crewCompanions.js';
 

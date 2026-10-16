@@ -33,8 +33,8 @@ record was merged into the other; they are two different audits that
 briefly shared a name.
 
 **Why the findings are numbered from F3.** The tree cites `AUDIT 58 F3`,
-`F4` and `F5` by number **37 times across 14 files** - `src/world/terrainGenClient.js:"rides his data too."`,
-`src/world/terrainGenWorker.js:"rides his data on"`, `src/world/terrainHelper.js:"AUDIT 58 F4 — TERRAINHELPER'S"`,
+`F4` and `F5` by number **37 times across 14 files** - `src/world/terrain/terrainGenClient.js:"rides his data too."`,
+`src/world/terrain/terrainGenWorker.js:"rides his data on"`, `src/world/terrain/terrainHelper.js:"AUDIT 58 F4 — TERRAINHELPER'S"`,
 `src/world/roadsCache.js:"for the height CONTENT"`, `src/scenes/world.js:"import { buildMapDict"`,
 `src/formats/woodsFile.js:"AUDIT 58 F4: write"`, `test/modsettings.test.js`,
 `test/audit58_terrainhelper.test.js`, `test/ledger.test.js:"Ledger cites the gamepad note at inputActions.js:${cite"`,
@@ -53,7 +53,7 @@ renumber kept the numbers rather than re-cutting fifteen citations, so:
 - **F4** - `TerrainHelper.DilateCoastalClimate` and
   `SmoothLocationNeighbourhood` had no port at all. Both are runtime data
   repairs DFU runs once at `StreamingWorld.ReadyCheck`
-  (`StreamingWorld.cs:1676-1685`); `src/world/terrainHelper.js` is now a
+  (`StreamingWorld.cs:1676-1685`); `src/world/terrain/terrainHelper.js` is now a
   digit-for-digit translation of `TerrainHelper.cs:383-441` and `:443-479`
   (ocean climate 223, two passes, gradient threshold 20, the 3x3 mean
   under C#'s truncating `(byte)` cast), and the review then found that it
@@ -143,7 +143,7 @@ confirmed, 21 refuted.**
 
 **The road height smoother wrote the transposed heightmap index.** The
 port's heightmap is x-major with z fastest - `data[x * hDim + y]`
-(`src/world/terrainSampler.js:"data[x * hDim + y] ="`, DFU's `JobA.Idx(y, x, hDim)` at
+(`src/world/terrain/terrainSampler.js:"data[x * hDim + y] ="`, DFU's `JobA.Idx(y, x, hDim)` at
 `TerrainSampler.cs:123`) - and every consumer in the tree obeys it.
 `smoothRoadHeights` read its tile correctly at `tilemap[y * tDim + x]` and
 then wrote the four corner samples from `y * hDim + x`, the mirror. A
@@ -153,7 +153,7 @@ the audit's sharpest terrain finding is the record beside it -
 **`Audit-51.md` recorded a departure for exactly this transposition and
 recorded it on the wrong index**, on the tile read, where `y*tDim + x` IS
 the mod's own `Idx(x, y, tDim)` and there was nothing to correct. The
-correction is at `src/world/roadPainter.js:"const tile = tilemap"` now, with the layout
+correction is at `src/world/road/roadPainter.js:"const tile = tilemap"` now, with the layout
 spelled out at `:273-281`, and the Audit-51 row says so.
 
 F3, F4 and F5 above are the rest of this band.

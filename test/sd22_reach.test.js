@@ -1,10 +1,10 @@
 // SD-REACH (2026-10-08, the Super Dungeons arc; the Discord, of an Abyss Dungeon's Rift: "In a place with absolutely no
 // connection to the other blocks... was this done on purpose?"): THE RIFT WHERE A WALK REACHES. A Super dungeon's end is
-// the candidate marker farthest from its way in (world/dungeonEnd.js dungeonEndOf, RVN7d's law), and SD4b's candidates
+// the candidate marker farthest from its way in (world/dungeon/dungeonEnd.js dungeonEndOf, RVN7d's law), and SD4b's candidates
 // counted every block's START markers - which DFU reads off the starting block alone (FindMarkers) and whose first
 // carries its block's water level and castle flag (SetRDBResourceData), set down wherever its maker put the data - and
 // the BORDER blocks, the caps that ring a layout, so the farthest point all but always stood in one. Now the candidates
-// are the enemy markers of the layout's interior blocks first (world/sdDungeon.js sdEndMarks), every enemy marker
+// are the enemy markers of the layout's interior blocks first (world/superDungeon/sdDungeon.js sdEndMarks), every enemy marker
 // with none there, and the start markers only with no enemy marker at all. AND SD-LAND (the same thread: "it first warped
 // me in a room I ve never seen before but suddenly I am flying"): the way out of a dungeon lands before its door - and a
 // Hollow's door is gone with it at its end - so with no door found it answered nothing and the player stayed at the
@@ -15,8 +15,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { sdEndMarks, SD_BORDER_BLOCK_RE } from '../src/world/sdDungeon.js';
-import { dungeonEndOf } from '../src/world/dungeonEnd.js';
+import { sdEndMarks, SD_BORDER_BLOCK_RE } from '../src/world/superDungeon/sdDungeon.js';
+import { dungeonEndOf } from '../src/world/dungeon/dungeonEnd.js';
 import { RDB_SIDE } from '../src/world/rdbLayout.js';
 
 const S = RDB_SIDE;
@@ -69,7 +69,7 @@ test('SD-REACH the host unchanged: the end asked from the way in over the layout
   const D = readFileSync(new URL('../src/scenes/dungeonContext.js', import.meta.url), 'utf8');
   // PIN MOVED (AUDIT SD IV F38): and the floor under each candidate (test/sd26_dungeon.test.js)
   assert.match(D, /const end = dungeonEndOf\(dungeon\.enterMarker \?\? dungeon\.startMarker \?\? null, sdEndMarks\(_layoutEnemies, dungeon\.blocks, \(m\) => floorLanding\(collider, \[m\.x, m\.y \+ 0\.2, m\.z\]\)\[1\]\)\);/);
-  const L = readFileSync(new URL('../src/world/dungeonLayout.js', import.meta.url), 'utf8');
+  const L = readFileSync(new URL('../src/world/dungeon/dungeonLayout.js', import.meta.url), 'utf8');
   assert.match(L, /blocks\.push\(\{\n\s*name: block\.blockName,\n\s*originX,\n\s*originZ,/);
 });
 

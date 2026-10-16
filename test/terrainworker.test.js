@@ -10,12 +10,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { generateSamples, ghostSampler } from '../src/world/terrainSampler.js';
-import { buildTerrainGrid, convertTilemap } from '../src/world/terrainSurface.js';
-import { assignTiles, blendLocationTerrain, calcAvgMaxHeight, generateTileData } from '../src/world/terrainTiles.js';
-import { layoutNature } from '../src/world/terrainNature.js';
-import { generatePixelTerrain } from '../src/world/terrainGen.js';
-import { TerrainGenClient, terrainThreadDisabled } from '../src/world/terrainGenClient.js';
+import { generateSamples, ghostSampler } from '../src/world/terrain/terrainSampler.js';
+import { buildTerrainGrid, convertTilemap } from '../src/world/terrain/terrainSurface.js';
+import { assignTiles, blendLocationTerrain, calcAvgMaxHeight, generateTileData } from '../src/world/terrain/terrainTiles.js';
+import { layoutNature } from '../src/world/terrain/terrainNature.js';
+import { generatePixelTerrain } from '../src/world/terrain/terrainGen.js';
+import { TerrainGenClient, terrainThreadDisabled } from '../src/world/terrain/terrainGenClient.js';
 
 // The distantland fake woods (the real reader's orientations - the
 // large heightmap's y DESCENDS), grown the third method layoutNature's
@@ -213,7 +213,7 @@ test('EV7 AUDIT F-DOC1: the REAL shell executes - both error arms answer through
   const prevOn = globalThis.onmessage;
   globalThis.postMessage = (msg) => posted.push(msg);
   try {
-    await import('../src/world/terrainGenWorker.js');
+    await import('../src/world/terrain/terrainGenWorker.js');
     assert.equal(typeof globalThis.onmessage, 'function', 'the module is the message loop');
     globalThis.onmessage({ data: { t: 'job', px: 1, py: 2 } });
     assert.equal(posted.at(-1).t, 'error');
@@ -232,7 +232,7 @@ test('EV7 AUDIT F-DOC1: the REAL shell executes - both error arms answer through
 });
 
 test('EV7: the worker shell imports only pure modules and spells the Worker URL the Vite way', () => {
-  const shell = readFileSync('src/world/terrainGenWorker.js', 'utf8');
+  const shell = readFileSync('src/world/terrain/terrainGenWorker.js', 'utf8');
   const imports = [...shell.matchAll(/from '([^']+)'/g)].map((m) => m[1]).sort();
   // AUDIT ROADS F2: the road producer joins the graph so the network is
   // BUILT in the worker rather than shipped to it. It is pure - the
@@ -256,7 +256,7 @@ test('EV7: the worker shell imports only pure modules and spells the Worker URL 
   assert.ok(shell.includes('generatePixelTerrain({ ...m, woods, roads, sites, climates })'), 'the job forwards whole');   // LANDFORM4/6: the worker's sites and climates beside its network
   // the client spells the constructor the way Vite's static analysis
   // bundles (eslint.config.js's RA1 note: never globalThis.Worker)
-  const client = readFileSync('src/world/terrainGenClient.js', 'utf8');
+  const client = readFileSync('src/world/terrain/terrainGenClient.js', 'utf8');
   assert.ok(client.includes("new Worker(new URL('./terrainGenWorker.js', import.meta.url), { type: 'module' })"));
 });
 

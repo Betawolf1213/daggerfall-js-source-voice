@@ -9,16 +9,16 @@ import { readFileSync } from 'node:fs';
 import {
   waterBedDepths, sheetDepthsOf, flatGrid, bedHalo, bedNearEdge, carveBed, bedProfile,
   BED_DEPTH, BED_RAMP, TILE_UNITS, NO_BED_DEPTH, SHEET_NO_BED, BED_HALO_TILES,
-} from '../src/world/waterBed.js';
-import { gridBed } from '../src/world/terrainGen.js';
-import { generateTileData, assignTiles, tileDataAt, marchTile, createLookupTable, GROUND_RECORD_LIMIT } from '../src/world/terrainTiles.js';
-import { convertTilemap, CLIP_SENTINEL } from '../src/world/terrainSurface.js';
-import { WATER_DRAW_MASK_TABLE, packWaterMask } from '../src/world/waterCorners.js';
-import { SCALED_OCEAN_ELEVATION, MAX_TERRAIN_HEIGHT, HEIGHTMAP_DIMENSION } from '../src/world/terrainSampler.js';
+} from '../src/world/water/waterBed.js';
+import { gridBed } from '../src/world/terrain/terrainGen.js';
+import { generateTileData, assignTiles, tileDataAt, marchTile, createLookupTable, GROUND_RECORD_LIMIT } from '../src/world/terrain/terrainTiles.js';
+import { convertTilemap, CLIP_SENTINEL } from '../src/world/terrain/terrainSurface.js';
+import { WATER_DRAW_MASK_TABLE, packWaterMask } from '../src/world/water/waterCorners.js';
+import { SCALED_OCEAN_ELEVATION, MAX_TERRAIN_HEIGHT, HEIGHTMAP_DIMENSION } from '../src/world/terrain/terrainSampler.js';
 import {
   createRipples, createRippleStir, stirOf, RIPPLE_CELLS, RIPPLE_SPAN, RIPPLE_HZ, RIPPLE_DAMPING, RIPPLE_SCALE,
   STIR_PERIOD, BOAT_STIR, BOAT_WAKE_SPEED,
-} from '../src/world/waterRipples.js';
+} from '../src/world/water/waterRipples.js';
 import {
   waterSurfaceFs, WATER_SURFACE_VS, waterUniforms, SWELL_TRAINS, SWELL_CALM, SWELL_GALE, SWELL_DEPTH, SWELL_REACH,
   WATER_ABSORB, REFRACT_STRENGTH, FOAM_DEPTH, FOAM_RUNUP, CREST_SLOPE, OPEN_PATH, WATER_TINT, WATER_F0, SHORE_SOFTNESS,
@@ -84,7 +84,7 @@ test('AUDIT WATER-NEXT P1: the bed is the kernel\'s - carved with the grid by re
     }
   }
   // the kernel's one grid law carries it; the answer's shape is the host's
-  const k = rd('src/world/terrainGen.js');
+  const k = rd('src/world/terrain/terrainGen.js');
   assert.match(k, /const halo = bed && stride === 1 && bedNearEdge\(bed\) \? bedHalo\(ghost, px, py\) : null;\n\s*return \{ positions: grid\.positions, normals: grid\.normals, bed: bed \? gridBed\(grid, bed, stride, halo\) : null \};/);
   assert.match(k, /const grid = restrideGrid\(\{ woods, px, py, stride, samples, landforms, bed: bed \? tilemapBytes : null \}\);/, 'the build\'s grid carves by its own TileMap');
   const g = flatGrid(128, 128, 0);
@@ -93,9 +93,9 @@ test('AUDIT WATER-NEXT P1: the bed is the kernel\'s - carved with the grid by re
   assert.ok(kb.depths.every((d) => d === BED_DEPTH) && kb.sheetDepths.every((d) => d === BED_DEPTH), 'open water with no bank is deep everywhere');
   assert.equal(kb.positions[1], -BED_DEPTH, 'the carved ground'); assert.equal(g.positions[1], 0, 'the grid as it stood');
   assert.equal(gridBed(g, new Uint8Array(128 * 128).fill(DRY), 1), null, 'no water, no bed');
-  const wk = rd('src/world/terrainGenWorker.js');
+  const wk = rd('src/world/terrain/terrainGenWorker.js');
   assert.equal((wk.match(/bed\.depths\.buffer, (?:out\.)?bed\.sheetDepths\.buffer, (?:out\.)?bed\.positions\.buffer, (?:out\.)?bed\.normals\.buffer/g) || []).length, 2, 'both replies transfer the bed - none copied across the wire');
-  assert.match(rd('src/world/terrainGenClient.js'), /g\.resolve\(\{ positions: m\.positions, normals: m\.normals, bed: m\.bed \?\? null \}\);/, 'the promotion\'s answer keeps it');
+  assert.match(rd('src/world/terrain/terrainGenClient.js'), /g\.resolve\(\{ positions: m\.positions, normals: m\.normals, bed: m\.bed \?\? null \}\);/, 'the promotion\'s answer keeps it');
   const w = rd('src/scenes/world.js');
   assert.doesNotMatch(w, /waterBedOf\(/, 'the streaming host carves nothing on its own thread');
   assert.match(w, /bed: waterOn,   \/\/ AUDIT WATER-NEXT P1/, 'the build asks the kernel');
@@ -170,7 +170,7 @@ test('AUDIT WATER-NEXT F2: a seam\'s vertex is carved alike on both sides - the 
   // the neighbour's corner is its own: its index's jitter and its latitude
   assert.equal(tileDataAt(SCALED_OCEAN_ELEVATION, 3, 5, 10, 10), 0, 'water by its height alone');
   assert.equal(BED_HALO_TILES, 4, 'the ramp\'s three tiles and the vote\'s one');
-  const k = rd('src/world/waterBed.js');
+  const k = rd('src/world/water/waterBed.js');
   assert.match(k, /v = tileDataAt\(sampleHeight\(Math\.fround\(ghost\(x, z\)\)\), x - dx \* side, z \+ dz \* side, px \+ dx, py \+ dz\);/);
   assert.match(k, /const dz = tz < 0 \? 1 : tz >= side \? -1 : 0;/, 'the map\'s Y runs south (terrainSampler.js ghostSampler)');
   // the march is AssignTilesJob's (TerrainHelper's): the shape the four corners' low bits, the ring their sum over four
@@ -319,7 +319,7 @@ test('AUDIT WATER-NEXT M1/G13/P2: a field with live rings slides with the eye an
   assert.deepEqual([...q.packed], [...q.origin], 'packed again at the new corner');
   const rr = rd('src/render/renderer.js');
   assert.match(rr, /gl\.uniform3f\(L\.rippleRect, r\.packed\[0\], r\.packed\[1\], this\._rippleSpan\);/);
-  const src = rd('src/world/waterRipples.js');
+  const src = rd('src/world/water/waterRipples.js');
   assert.match(src, /origin\[0\] = ox; origin\[1\] = oz;\n[^\n]*\n[^\n]*\n\s*if \(!live\) return true;/, 'asleep, the slide is the origin alone');
   assert.match(src, /for \(let z = 1; z < cells - 1; z\+\+\) \{\n\s*const sz = z \+ dz;/, 'the slide writes the inside only');
 });

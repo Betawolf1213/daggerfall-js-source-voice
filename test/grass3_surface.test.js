@@ -16,8 +16,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { buildTerrainGrid, buildTerrainIndices, surfaceHeightAt } from '../src/world/terrainSurface.js';
-import { HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { buildTerrainGrid, buildTerrainIndices, surfaceHeightAt } from '../src/world/terrain/terrainSurface.js';
+import { HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 
 const hDim = HEIGHTMAP_DIMENSION;
 const CELL = TERRAIN_SIZE / (hDim - 1);

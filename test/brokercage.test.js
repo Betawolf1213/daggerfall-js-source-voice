@@ -16,7 +16,7 @@ import { riteMemory, riteSeen } from '../src/systems/riteChest.js';
 import { restoreModSaveRecords } from '../src/systems/modSaveData.js';
 import { createGateOmen } from '../src/systems/gate/gateOmen.js';
 import { buildCageModel, buildCageDoor, cageHinge, CAGE_WALLS, CAGE_DOOR_WALL, CAGE_W, CAGE_D, CAGE_H, CAGE_FOOT, CAGE_BAR, CAGE_DOOR_W, CAGE_BEAM, CAGE_CAP, CAGE_LEAF_W, CAGE_SILL, CAGE_SILL_MAX, CAGE_WALL_OUT } from '../src/world/cageModel.js';
-import { GATE_ARCHIVE, GATE_STONE_RECORD, GATE_PLINTH_RECORD } from '../src/world/gateModel.js';
+import { GATE_ARCHIVE, GATE_STONE_RECORD, GATE_PLINTH_RECORD } from '../src/world/gate/gateModel.js';
 import { Collider } from '../src/player/collider.js';
 import { CAPSULE_RADIUS } from '../src/player/motor.js';
 import { trs } from '../src/world/mat4.js';

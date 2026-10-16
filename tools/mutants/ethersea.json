@@ -424,7 +424,7 @@
   },
   {
     "name": "SEA-client-unsaid",
-    "file": "src/world/terrainGenClient.js",
+    "file": "src/world/terrain/terrainGenClient.js",
     "old": "    this._ether = !!woods?.isEtherGround;",
     "new": "    this._ether = false;",
     "tests": [
@@ -433,7 +433,7 @@
   },
   {
     "name": "SEA-worker-uncomposed",
-    "file": "src/world/terrainGenWorker.js",
+    "file": "src/world/terrain/terrainGenWorker.js",
     "old": "      if (m.ether) woods = etherWoods(woods);",
     "new": "      if (false) woods = etherWoods(woods);",
     "tests": [

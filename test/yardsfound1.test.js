@@ -2,19 +2,19 @@
 // "Ensure these locations appear when talking to NPCs"; bible/03-World/Merchant-Yards.md YARDS-FOUND). THE YARDS FOUND
 // AS A SHOP IS: rows of the town's talk directory under a key no building holds (systems/merchantYards.js
 // yardDirectoryRows), their own groups on the Where-is page (systems/topicTree.js), answered as a building is (the
-// compass, the knowledge roll, the map's mark); their ground and their names on both town maps (world/merchantYardMap.js
+// compass, the knowledge roll, the map's mark); their ground and their names on both town maps (world/merchantYards/merchantYardMap.js
 // yardTownBlocks, ui/townMapDoor.js, ui/exteriorAutomapWindow.js, ui/townSheet.js); and their marks on the Overworld
 // (scenes/merchantYardsHost.js overworldMarks, ui/travelViewHud.js yardGlyph, systems/travel/travelViewFilters.js). Every site
-// here is the producer's own (world/merchantYardSites.js yardSitesOn, the host's keeper beside it).
+// here is the producer's own (world/merchantYards/merchantYardSites.js yardSitesOn, the host's keeper beside it).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   YARD_KIND_ORDER, YARD_QUALITY, YARD_KEY_BASE, YARD_TALK_GROUPS, yardBuildingKey, yardDirectoryRows, yardKeeper, yardName,
 } from '../src/systems/merchantYards.js';
-import { yardGround, yardSitesOn } from '../src/world/merchantYardSites.js';
-import { yardTownBlocks, YARD_MAP_BYTE, YARD_MAP_TYPE, YARD_MAP_BLOCK_M } from '../src/world/merchantYardMap.js';
-import { CityNavigation, NAV_CELL } from '../src/world/cityNavigation.js';
+import { yardGround, yardSitesOn } from '../src/world/merchantYards/merchantYardSites.js';
+import { yardTownBlocks, YARD_MAP_BYTE, YARD_MAP_TYPE, YARD_MAP_BLOCK_M } from '../src/world/merchantYards/merchantYardMap.js';
+import { CityNavigation, NAV_CELL } from '../src/world/city/cityNavigation.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { ROAD_WEIGHT } from '../src/systems/gothwayBoards.js';
 import { BUILDING_KEY_0, makeBuildingKey } from '../src/systems/talk/talkTopics.js';

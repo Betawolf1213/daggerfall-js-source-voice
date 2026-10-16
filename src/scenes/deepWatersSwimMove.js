@@ -17,7 +17,7 @@
 //     pixel when the correction is 2.5 m or less (ClampAboveRenderedSeafloor).
 // ═══════════════════════════════════════════════════════════════════
 
-import { STROKE, strokeTempoScale, strokeFatigueCost, strokeDirection, strokeVelocity } from '../world/deepWaterSwim.js';
+import { STROKE, strokeTempoScale, strokeFatigueCost, strokeDirection, strokeVelocity } from '../world/deepWater/deepWaterSwim.js';
 import { maxFatigue } from '../systems/statMods.js';
 import { EXACT_SWEEP_MAX } from '../player/collider.js';   // AUDIT DISC28 MO-3: the longest motion one move() sweeps exactly
 

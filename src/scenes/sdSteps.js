@@ -4,7 +4,7 @@
 // not the relay's: every screen moves them on the realm's anchored clock (scenes/world.js deadlandsSeconds - the relay's
 // time), so every player sees the same step in the same place; what a foot breaks is its own.
 //
-//   STOOD once (stand): one mesh a kind of step (world/sdStepsModel.js), and for each step a draw and a collider bucket
+//   STOOD once (stand): one mesh a kind of step (world/superDungeon/sdStepsModel.js), and for each step a draw and a collider bucket
 //     - a MOVER's, its translation read at every query, so a step moves and its triangles never do - and the
 //     checkpoints B and C, drawn and floored.
 //   RIDDEN each frame BEFORE THE MOTOR (ride - the outer host asks it beside the action movers' ride): every step stood
@@ -19,14 +19,14 @@
 //     what it costs.
 //
 // SD-LOOK S9 (2026-10-09, bible/11-Multiplayer/Super-Dungeons-Look.md section 8): EVERY STEP SHOWS WHAT IT WILL DO NEXT,
-// from across the void, before the jump. The law (world/sdSteps.js - its solids and its timing) is untouched; every
+// from across the void, before the jump. The law (world/superDungeon/sdSteps.js - its solids and its timing) is untouched; every
 // picture stands inside its step's box, and every part that moves casts nothing (`noShadow`).
 //   THE DRIFT hangs from pendulums: two rods up SD_PENDULUM.len to a gear, leaning with the law's own swing
 //     (pendulumAngle) - the gear rocks with them - so a swing's period and phase read before the jump.
-//   THE BEAT is a clock-plate: its frame (a draw's texRemap - world/sdStepsArt.js's twelve) its hand's place on the way
+//   THE BEAT is a clock-plate: its frame (a draw's texRemap - world/superDungeon/sdStepsArt.js's twelve) its hand's place on the way
 //     back to XII across its solid 2.4 s; in its last 0.4 s the hand in the ember, its light faltering once at
 //     SD_BEAT_BLINK_HZ (the falter frame - the flash law, S0's) while it dissolves out through the ordered dither (its
-//     cells, world/sdStepsModel.js buildBeatDissolve - the draw's mesh a stage a tenth of a second), dithering back in
+//     cells, world/superDungeon/sdStepsModel.js buildBeatDissolve - the draw's mesh a stage a tenth of a second), dithering back in
 //     over SD_BEAT_IN_S; gone, its GHOST hangs where it will return, its hand still running back (render/sdStepsPass.js).
 //   THE CRUMBLE, mine: its cracks flaring in three stages across the shake (SD_STEPS_RECORD.crumble) while grit pours
 //     from it; then its four chunks fall (drop, drift, tumble) while its ghost counts the return; in the last
@@ -34,18 +34,18 @@
 //     The law's return still decides: the chunks are only where the time says.
 //   THE WAYSTONES on A, B and C: the one my cast-back would stand me on lit gold, the others dark - one at a time.
 //   THE VANE on C (the Hollow's Ending's sign on its fin) swings to point the coming gust's push a second before it,
-//     with a clack (world/sdStepsModel.js vaneYawAt).
+//     with a clack (world/superDungeon/sdStepsModel.js vaneYawAt).
 //   THE GHOSTS, one pass a frame for the whole course (drawPass - the world host's Hour pass draws it).
 //
 // Not a DFU member. Ledger A (SUPER-DUNGEONS).
 import { realmToDungeon, SD_REALM_ORIGIN } from '../net/sdBrain.js';
-import { SD_STEPS_COURSE, SD_BEAT_HALF, SD_BEAT_CYCLE, SD_BEAT_SOLID, SD_BEAT_BLINK, SD_CRUMBLE_DELAY, SD_CRUMBLE_BACK, SD_CRUMBLE_FALL_G, SD_GUST_EVERY, stepAt, beatStands, beatBlinks, crumbleAfter, gustAt, breathSeen, inBreath, inVoid, spanAt, castBackTo } from '../world/sdSteps.js';
+import { SD_STEPS_COURSE, SD_BEAT_HALF, SD_BEAT_CYCLE, SD_BEAT_SOLID, SD_BEAT_BLINK, SD_CRUMBLE_DELAY, SD_CRUMBLE_BACK, SD_CRUMBLE_FALL_G, SD_GUST_EVERY, stepAt, beatStands, beatBlinks, crumbleAfter, gustAt, breathSeen, inBreath, inVoid, spanAt, castBackTo } from '../world/superDungeon/sdSteps.js';
 import {
   SD_STEP_KINDS, SD_BREATH, SD_PENDULUM, SD_BEAT_DISSOLVE, SD_GRIT, SD_WAYSTONES, SD_VANE, buildStepModel, stepTris, buildChecksModel, checkFloorTris, buildBreathModel,
   buildBeatDissolve, buildPendulum, pendulumAngle, buildCrumbleChunks, buildGritModel, buildWaystoneModel, buildVaneModel, vaneYawInto,
-} from '../world/sdStepsModel.js';
-import { stepsArt, SD_STEPS_RECORD } from '../world/sdStepsArt.js';
-import { SD_REALM_ARCHIVE } from '../world/sdRealm.js';
+} from '../world/superDungeon/sdStepsModel.js';
+import { stepsArt, SD_STEPS_RECORD } from '../world/superDungeon/sdStepsArt.js';
+import { SD_REALM_ARCHIVE } from '../world/superDungeon/sdRealm.js';
 import { identity } from '../world/mat4.js';
 import { SdStepsPass, SD_GHOST_STEPS, SD_GHOST } from '../render/sdStepsPass.js';
 import { SD_SKY_STEPS } from '../render/sdSky.js';
@@ -239,7 +239,7 @@ export function createSdSteps({ renderer = null, audio = null, ending = null, li
       if (st.pend) driftLook(st);
     } else if (s.kind === 'beat') {
       solid = beatStands(s, t);
-      // SD-FLASH: the falter from the warning's own start (world/sdSteps.js beatWarned's sum, inline - AUDIT SD II L2 F9: a
+      // SD-FLASH: the falter from the warning's own start (world/superDungeon/sdSteps.js beatWarned's sum, inline - AUDIT SD II L2 F9: a
       // double handed back from a call is a number made). SD-LOOK S9: the falter is the plate's LIGHT (its falter frame),
       // never the plate - a step that holds stays seen; its going is the dissolve's
       const warned = (((t - s.beat) % SD_BEAT_CYCLE) + SD_BEAT_CYCLE) % SD_BEAT_CYCLE - (SD_BEAT_SOLID - SD_BEAT_BLINK);

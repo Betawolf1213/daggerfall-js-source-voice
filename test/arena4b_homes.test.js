@@ -9,7 +9,7 @@ import { standService, T0 } from './accountDb.mjs';
 import { seatRealm, realmAt } from './realmSeat.mjs';
 import { HOME_MOVE_CARRIED } from '../server-account/src/homes.js';
 import { HOME_ARENA_MAP_ID, HOME_ARENA_CELL, homeInArenaCell, RENT_ANCHOR_MOVED } from '../src/net/homeLaw.js';
-import { ARENA_CELL, inArenaCell } from '../src/world/arenaCity.js';
+import { ARENA_CELL, inArenaCell } from '../src/world/arena/arenaCity.js';
 import { CASTLE_DAGGERFALL_MAP_ID } from '../src/world/actionSystem.js';
 import { guildHallOwner } from '../src/net/hallLaw.js';
 
@@ -48,7 +48,7 @@ async function stood() {
 
 test('ARENA4b the arena\'s cell is one law at both ends: Daggerfall\'s map id and cell (4,3) read off the raw key, pinned to the city\'s own; the rows\' columns all carried (mutants: the cell\'s y read as x; a key outside the shape admitted; a column dropped from the carry)', async () => {
   assert.equal(HOME_ARENA_MAP_ID, CASTLE_DAGGERFALL_MAP_ID, 'Daggerfall\'s map id, the city\'s own');
-  assert.deepEqual([...HOME_ARENA_CELL], [...ARENA_CELL], 'the arena\'s cell, world/arenaCity.js\'s');
+  assert.deepEqual([...HOME_ARENA_CELL], [...ARENA_CELL], 'the arena\'s cell, world/arena/arenaCity.js\'s');
   for (const k of [OLD, key(4, 3, 0) || 1, key(4, 3, 255), NEW, key(3, 4, 5), key(4, 2, 5), key(5, 3, 5)]) {
     assert.equal(homeInArenaCell(DF, k), inArenaCell(k), `the service reads ${k.toString(16)} as the city reads it`);
   }

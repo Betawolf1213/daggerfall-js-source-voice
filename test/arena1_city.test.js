@@ -1,4 +1,4 @@
-// ARENA1 (2026-10-02): THE ARENA IN DAGGERFALL'S CELL (4,3) - src/world/arenaCity.js on the world-data door. Mac:
+// ARENA1 (2026-10-02): THE ARENA IN DAGGERFALL'S CELL (4,3) - src/world/arena/arenaCity.js on the world-data door. Mac:
 // "a centerpoint that fits in the middle of Daggerfall city". Every read of the city (MAPS.BSA's, Beautiful Cities',
 // a pinned town's, the door shut) names ARENADAG.RMB at (4,3) and its building list loses exactly what the old block's
 // named buildings drew - so every other building keeps its name, its faction and its quality. The port's block stands
@@ -6,7 +6,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { standArenaInLocation, ARENA_BLOCK, ARENA_BLOCK_INDEX, ARENA_CELL, inArenaCell, isArenaCity, installArena, _resetArena } from '../src/world/arenaCity.js';
+import { standArenaInLocation, ARENA_BLOCK, ARENA_BLOCK_INDEX, ARENA_CELL, inArenaCell, isArenaCity, installArena, _resetArena } from '../src/world/arena/arenaCity.js';
 import { drawNamedBuildings, mergeNamedBuildings, makeBuildingKey } from '../src/systems/talk/talkTopics.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { registerPortBlock, getNewDFBlockIndex, getNewDFBlockName, getDFBlockReplacementData, editLocation, registerLocationEdit, installWorldDataReplacement, _resetWorldDataReplacement, bindWorldDataBlocks } from '../src/formats/worldDataReplacement.js';

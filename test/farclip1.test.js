@@ -22,11 +22,11 @@ import { glslFunctions, GlslDiscard } from './glsl.mjs';
 // the modules FAR-CLIP1 adds exports to are read as namespaces: a named import of an export a tree lacks fails every
 // test in the file at link time, for that one reason and not the law each test holds
 import * as RENDER from '../src/render/renderer.js';
-import * as SURFACE from '../src/world/terrainSurface.js';
+import * as SURFACE from '../src/world/terrain/terrainSurface.js';
 import { EL_LANE, EL_TERRAIN_FS } from '../src/render/enhancedLighting.js';
-import { CLIP_SENTINEL, patchTilemapForClip, clippedTerrainIndices } from '../src/world/deepWaterCap.js';
-import { generateSamples, HEIGHTMAP_DIMENSION } from '../src/world/terrainSampler.js';
-import { generateTileData, assignTiles } from '../src/world/terrainTiles.js';
+import { CLIP_SENTINEL, patchTilemapForClip, clippedTerrainIndices } from '../src/world/deepWater/deepWaterCap.js';
+import { generateSamples, HEIGHTMAP_DIMENSION } from '../src/world/terrain/terrainSampler.js';
+import { generateTileData, assignTiles } from '../src/world/terrain/terrainTiles.js';
 
 const { Renderer } = RENDER;
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -144,7 +144,7 @@ test('FAR-CLIP1: the program the renderer binds for a pixel the cap patched - ei
   }
   assert.equal(SURFACE.CLIP_SENTINEL, 255, 'the mod\'s (255, 0, 255, 0) mark as the port\'s R8UI byte, at the TileMap format\'s own module');
   assert.ok(!Array.from({ length: 256 }, (_, t) => SURFACE.convertTile(t)).includes(SURFACE.CLIP_SENTINEL), '...a byte the conversion writes for no raw tile at all');
-  assert.equal(CLIP_SENTINEL, SURFACE.CLIP_SENTINEL, 'the cap writes the byte the program discards: one home, world/deepWaterCap.js re-exports it');
+  assert.equal(CLIP_SENTINEL, SURFACE.CLIP_SENTINEL, 'the cap writes the byte the program discards: one home, world/deepWater/deepWaterCap.js re-exports it');
   for (const { name, plain, clip } of lanes) assert.equal(clip, terrainClipFs(plain), `${name}: the renderer's clip program is terrainClipFs of the lane's own terrain program`);
   assert.throws(() => terrainClipFs('void main() {}'), /gradient/, 'a program with no gradient line has nowhere the clip may go');
   assert.throws(() => terrainClipFs(`${lanes[0].plain}\nvec2 gy = ROT[t] * dFdy(unwrapped);\n`), /gradient/, 'nor one with two');
@@ -298,10 +298,10 @@ test('FAR-CLIP1: the world draws a pixel whose TileMap the cap patched with the 
   const q = [{ n: 'near patched', _dwBytes: new Uint8Array(1) }, { n: 'near' }, { n: 'mid patched', _dwBytes: new Uint8Array(1) }, { n: 'mid', _dwBytes: null }, { n: 'far' }];
   assert.deepEqual(q.sort(dwClipLast).map((p) => p.n), ['near', 'mid', 'far', 'near patched', 'mid patched'], 'the patched pixels after the rest, near first within each: one swap of program a frame');
   assert.match(w, /latchModLoaded\(DEEP_WATERS_VENDOR, !!dwRender\);[^\n]*\n\s+if \(dwRender\) renderer\.prepareTerrainClip\(\);/, 'the mod\'s mount builds the clip program, beside its own');
-  const cap = rd('src/world/deepWaterCap.js');
+  const cap = rd('src/world/deepWater/deepWaterCap.js');
   assert.match(cap, /^import \{ CLIP_SENTINEL \} from '\.\/terrainSurface\.js';/m, 'the cap takes the byte from the TileMap format\'s module');
   assert.doesNotMatch(cap, /CLIP_SENTINEL = /, '...and never writes it down itself');
-  assert.match(rd('src/render/renderer.js'), /^import \{ CLIP_SENTINEL \} from '\.\.\/world\/terrainSurface\.js';/m, 'the renderer\'s clip variant reads it there too');
+  assert.match(rd('src/render/renderer.js'), /^import \{ CLIP_SENTINEL \} from '\.\.\/world\/terrain\/terrainSurface\.js';/m, 'the renderer\'s clip variant reads it there too');
   // THE FOUR HOSTS: the fixed city runs no Deep Waters host and draws its ground plain; the interiors and the dungeon draw no terrain
   const e = rd('src/scenes/exterior.js');
   assert.match(e, /renderer\.drawTerrain\(groundSurface, identityMatrix,\n\s+renderer\.tileArrays\.get\(groundArchive\), tilemapTex, 6\.4\);/);

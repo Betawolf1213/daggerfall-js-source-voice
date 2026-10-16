@@ -1024,7 +1024,7 @@ export function seatArrivalNews(seat) {
   return parts.length ? parts.join(' ') : null;
 }
 
-/** A World of Daggerfall camp's id (src/world/wodShared.js wodSiteId: "px,py:objectID[.n]", or Privateer's Hold's
+/** A World of Daggerfall camp's id (src/world/worldOfDaggerfall/wodShared.js wodSiteId: "px,py:objectID[.n]", or Privateer's Hold's
  *  "px,py:hold") - its map pixel, or null. */
 export function bountySitePixel(site) {
   const m = /^(\d{1,3}),(\d{1,3}):(?:\d{1,10}(?:\.\d{1,3})?|hold)$/.exec(typeof site === 'string' ? site : '');

@@ -1,7 +1,7 @@
 [
   {
     "name": "WB8a-the-warden-says-nothing",
-    "file": "src/world/gateBoss.js",
+    "file": "src/world/gate/gateBoss.js",
     "old": "  e.pacifyImmune = true;\n  return e;",
     "new": "  return e;",
     "tests": [
@@ -102,7 +102,7 @@
   },
   {
     "name": "WB8a-the-refusal-said-constantly",
-    "file": "src/world/gateBoss.js",
+    "file": "src/world/gate/gateBoss.js",
     "old": "export const BOSS_SWAY_TELL_MS = 4000;",
     "new": "export const BOSS_SWAY_TELL_MS = 0;",
     "tests": [

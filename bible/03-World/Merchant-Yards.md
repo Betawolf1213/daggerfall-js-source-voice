@@ -19,10 +19,10 @@ over a copy - YARDS-FOUND, below) - and the whole of it is a departure, Ledger A
 **Which towns.** Every city and town - MAPS.BSA's `TownCity` and `TownHamlet` (`systems/merchantYards.js`
 `isYardTown`; `systems/travel/travelOptions.js` names them "city" and "town"). No village, farm, manor, temple or dungeon.
 
-**The ground** (`world/merchantYardSites.js`). The town's own navgrid (`world/cityNavigation.js`, DFU's CityNavigation
+**The ground** (`world/merchantYards/merchantYardSites.js`). The town's own navgrid (`world/city/cityNavigation.js`, DFU's CityNavigation
 carve: every automap byte a building, a tree or a lamp draws is closed, the water with it), always on the enhanced
 lane's water table as LEFAY1's monument reads it, and over it what the town's blocks put in a yard's way
-(`world/merchantYardSites.js` `yardMeasuresOf`, handed its measures by `scenes/world.js` `townPlacesFor`):
+(`world/merchantYards/merchantYardSites.js` `yardMeasuresOf`, handed its measures by `scenes/world.js` `townPlacesFor`):
 
 - every **building**'s box (its ARCH3D size, `staticBuildingBox`, no mesh built; a registered model's own geometry -
   `placedModelBox`) kept `BUILDING_CLEAR_M` (6 m) away -
@@ -34,7 +34,7 @@ lane's water table as LEFAY1's monument reads it, and over it what the town's bl
   (`fieldRect`); every **flat** (a tree, a lamp, a sign, a person, and the editor's markers - a traveller's start
   marker, a quest's) `FLAT_CLEAR_M` (0.8 m) round its foot;
 - a **palace's block** left whole (no yard in a castle's court - a palace read off the block's real buildings,
-  `talkTopics.js` `blockBuildingCount`), the **colosseum's** block too (`world/arenaCity.js` `ARENA_BLOCK` - its model
+  `talkTopics.js` `blockBuildingCount`), the **colosseum's** block too (`world/arena/arenaCity.js` `ARENA_BLOCK` - its model
   is built over the player's own, so it is never measured here), and LEFAY1's **monument** its own ground
   (`MONUMENT_KEEP_M`) - kept for a town that stands it; since HOLD-MONUMENT (2026-10-14) it stands outside Privateer's
   Hold, which has no yard, so no town's yards read it now. Gothway Garden's yards (a hamlet's) may stand in the 8 m the
@@ -59,8 +59,8 @@ yard over a house, a road or a lot.
 
 ## What stands
 
-Both are the port's own geometry (`world/merchantYardModels.js`, every face wound outward, the collider the same
-triangles) in the port's own art, made at boot under the pseudo-archive 38221 (`world/merchantYardArt.js`): weathered
+Both are the port's own geometry (`world/merchantYards/merchantYardModels.js`, every face wound outward, the collider the same
+triangles) in the port's own art, made at boot under the pseudo-archive 38221 (`world/merchantYards/merchantYardArt.js`): weathered
 fence timber, shed boards, split cedar shingles, straw, trodden earth, packed gravel, trough water, iron. Nothing of
 Daggerfall's is read for either.
 
@@ -217,7 +217,7 @@ place in YARD_KIND_ORDER - past every building's key (under 1 << 19 in the large
   directory (`systems/talk/talk.js` buildingCompassDirection), and "Let me just mark %loc here on your map" discovers it by
   its key (`systems/answerPipeline.js` markKeySubjectLocationOnMap).
 
-**The town map** (`world/merchantYardMap.js` yardTownBlocks, laid once at `ui/townMapDoor.js` createTownMapWindow for
+**The town map** (`world/merchantYards/merchantYardMap.js` yardTownBlocks, laid once at `ui/townMapDoor.js` createTownMapWindow for
 whichever map the skin wears). The Arena's own law (ARENA-MAP), taken for the yards:
 
 - every cell of a yard's ground is drawn in YARD_MAP_BYTE - the General Store's byte, the counter that sold the horse
@@ -246,7 +246,7 @@ Pins: `test/yardsfound1.test.js`. Mutants: `tools/mutants/yardsfound1.json`. Not
 ## Beside the port's places (SHIPYARDS, 2026-10-11)
 
 A port town's shipyard and lighthouse (`03-World/Shipyards.md`) stand on the ground the yards leave: the yards are
-placed by their own two steps, as they always were (`world/merchantYardSites.js` `townGroundOf`, then `yardSitesOn` -
+placed by their own two steps, as they always were (`world/merchantYards/merchantYardSites.js` `townGroundOf`, then `yardSitesOn` -
 `yardSitesOf` is the two), and the port's places on what is left (`scenes/world.js` `townPlacesFor`, one memo a town).
 The keeper's draw and the name's are one home for both (`systems/merchantYards.js` `townKeeper`, `namedAfter`), and the
 found places' one order is `systems/portPlaces.js` `FOUND_KIND_ORDER` - the yards' two first, so the Stable and the
@@ -275,14 +275,14 @@ Its one row is the bench (`YARD_BENCH_ROW`, `yardRowsFor`). Steal takes nothing,
 
 **Placed last, keyed last.** The Stable and the Wagon Yard are placed first, as they always were (`YARD_KIND_ORDER`
 unchanged). A port town's shipyard and lighthouse go on what they leave. Then the joinery goes on what is left
-(`CRAFT_YARD_ORDER`, `world/merchantYardSites.js` `craftYardSitesOn`, called after `portSitesOn` in `scenes/world.js`
+(`CRAFT_YARD_ORDER`, `world/merchantYards/merchantYardSites.js` `craftYardSitesOn`, called after `portSitesOn` in `scenes/world.js`
 townPlacesFor). So no town's existing place moves, and a town too full for it stands none. Its ground is
 `YARD_FOOT.carpenter`, 14 m by 12. Its talk-directory key is `YARD_KEY_BASE + 6` (`YARD_KEY_SLOT`), its place in
 `systems/portPlaces.js` FOUND_KIND_ORDER after the port's four. So no key a save's discovery holds now names another
 place. On the Where-is page its group is "Carpenters", after the port's groups.
 
-**What stands** (`world/merchantYardModels.js` `buildCarpenterModel`, `CARPENTER_YARD`). It wears the yards' own
-pictures (`world/merchantYardArt.js`) and four new ones: the JOINERY board, `shavings`, `bark` and `endgrain`
+**What stands** (`world/merchantYards/merchantYardModels.js` `buildCarpenterModel`, `CARPENTER_YARD`). It wears the yards' own
+pictures (`world/merchantYards/merchantYardArt.js`) and four new ones: the JOINERY board, `shavings`, `bark` and `endgrain`
 (records 10-13; the floor is `shavings`, not `sawdust`, because the port's art already keeps a `sawdust` of its own
 under another record):
 

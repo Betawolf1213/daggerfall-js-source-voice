@@ -13,7 +13,7 @@ distance at which overworld enemies slow the user down"*.
 ## WOD-BUSH: World of Daggerfall's shrubs stand on the ground (1)
 
 World of Daggerfall stands every object of a site at the site's average height plus the author's own height
-(`LocationLoader.cs:232-252`, `world/wodLocationLoader.js` `placeObjects`). It levels the ground to that average only
+(`LocationLoader.cs:232-252`, `world/worldOfDaggerfall/wodLocationLoader.js` `placeObjects`). It levels the ground to that average only
 inside the prefab's rect; past it, every sample is lerped toward it by `1 / (distance + 1)` - half one sample out, a
 third two out (`flattenForLocation`). The camps ring their sites with one shrub model, 60610 - 45 of its 202
 placements, every bandit camp among them, never inside the rect - in that band, at heights the author read off the
@@ -22,7 +22,7 @@ away past its rect, the shrubs hung in the air; where it rises, they sank. DFU d
 the terrain after the flatten.
 
 The shrub now stands on the DRAWN ground: its mesh's foot (its transformed box's bottom) goes to the lowest ground under
-the middle half of its footprint (`world/terrainSurface.js` `lowestGroundUnder`, `scenes/world.js` `buildPixelNow`),
+the middle half of its footprint (`world/terrain/terrainSurface.js` `lowestGroundUnder`, `scenes/world.js` `buildPixelNow`),
 read at the footprint's corners, its centre lines and every sample line that crosses it, so no quad under it is
 skipped, and held to the pixel (the neighbour's ground is not this pixel's to read). The middle half, because a shrub's
 foot is its middle: the whole box would bury a wide one deep on a slope for corners that are empty air. The matrix
@@ -35,7 +35,7 @@ camps carry no nature-archive flat at all), not off ARCH3D, which this container
 GPU. The rock fields build their outcrops of the same model - its other 157 placements, boulders scaled 5.6 to 95 and
 set into the piles - and as first shipped this stood those too, as shards up to 377 m tall round every rock field.
 ROCK-SUNK (`Field-Bugs-2026-10-02.md`) stands the shrub alone: a site the mod names 'Rocks' or 'Mountains' keeps the
-mod's height (`world/wodLocationObjects.js` `isWodShrub`).
+mod's height (`world/worldOfDaggerfall/wodLocationObjects.js` `isWodShrub`).
 
 `test/wodbush.test.js` (5); `tools/mutants/wodbush.json` 7, 7 dead.
 

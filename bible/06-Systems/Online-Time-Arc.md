@@ -240,7 +240,7 @@ Nothing in this table changes. It is listed so the census has its other half.
 | The day a loot find is dated | `lootCodex.js` |
 | Bounty boards: the day's postings, a taken bounty's lapse | `systems/bounty/bountyBoard.js`, `scenes/bountyHost.js` |
 | Rumours' lifetimes | `systems/rumorMill.js`, swept from `regionPower.js` |
-| Spawned dungeons' lifetimes, the shared interiors' loot day | `world/spawnedDungeons.js`, `world/interiorShared.js` |
+| Spawned dungeons' lifetimes, the shared interiors' loot day | `world/spawnedDungeons.js`, `world/interior/interiorShared.js` |
 | The gates' income: receipts, spoils, the Sigil Broker's prices, the account service's `gate_kills` | `net/gateLink.js`, `net/gateClaims.js`, `scenes/spoilsPool.js`, `systems/sigil/sigilBroker.js`, `server-account` |
 | The day's generators, and the music's daily playlist seed | `worldTick.js` (`DAY_SALT`), the hosts' `gameDaysNow` |
 | The naval day: notoriety's decay, the port's grog, today's departures, the traffic seed | `world.js` (the naval `where`), `scenes/navalHost.js`, `systems/naval/` |

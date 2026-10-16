@@ -1,7 +1,7 @@
 [
   {
     "name": "ARENA1-CELL-X",
-    "file": "src/world/arenaCity.js",
+    "file": "src/world/arena/arenaCity.js",
     "old": "export const ARENA_CELL = Object.freeze([4, 3]);",
     "new": "export const ARENA_CELL = Object.freeze([3, 3]);",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "ARENA1-INCELL-Y",
-    "file": "src/world/arenaCity.js",
+    "file": "src/world/arena/arenaCity.js",
     "old": "(buildingKey >> 16) === ARENA_CELL[0] && ((buildingKey >> 8) & 0xff) === ARENA_CELL[1]",
     "new": "(buildingKey >> 16) === ARENA_CELL[0] && ((buildingKey >> 8) & 0xff) >= ARENA_CELL[1]",
     "tests": [
@@ -20,7 +20,7 @@
   },
   {
     "name": "ARENA1-STRIP-NONE",
-    "file": "src/world/arenaCity.js",
+    "file": "src/world/arena/arenaCity.js",
     "old": "  const strip = new Set(drawn.get(cell) ?? []);",
     "new": "  const strip = new Set();",
     "tests": [
@@ -29,7 +29,7 @@
   },
   {
     "name": "ARENA1-COUNT-STALE",
-    "file": "src/world/arenaCity.js",
+    "file": "src/world/arena/arenaCity.js",
     "old": "  dfLocation.exterior.buildingCount = dfLocation.exterior.buildings.length;",
     "new": "",
     "tests": [
@@ -38,7 +38,7 @@
   },
   {
     "name": "ARENA1-NO-BLOCKS-EDITS",
-    "file": "src/world/arenaCity.js",
+    "file": "src/world/arena/arenaCity.js",
     "old": "if (!ed?.blockNames || !Array.isArray(dfLocation.exterior.buildings) || !blocksFile) return null;",
     "new": "if (!ed?.blockNames || !Array.isArray(dfLocation.exterior.buildings)) return null;",
     "tests": [
@@ -47,7 +47,7 @@
   },
   {
     "name": "ARENA1-EDIT-TWICE",
-    "file": "src/world/arenaCity.js",
+    "file": "src/world/arena/arenaCity.js",
     "old": "  if (ed.blockNames[at] === ARENA_BLOCK) return { block: ARENA_BLOCK, stripped: 0, already: true };",
     "new": "",
     "tests": [
@@ -92,7 +92,7 @@
   },
   {
     "name": "ARENA1-PIECE-TURN",
-    "file": "src/world/arenaModel.js",
+    "file": "src/world/arena/arenaModel.js",
     "old": "    case 1: return [-z, y, x];",
     "new": "    case 1: return [z, y, -x];",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "ARENA1-PIECE-MIRROR-WINDING",
-    "file": "src/world/arenaModel.js",
+    "file": "src/world/arena/arenaModel.js",
     "old": "      if (mirrored) corners.reverse();",
     "new": "",
     "tests": [
@@ -110,7 +110,7 @@
   },
   {
     "name": "ARENA1-PIECE-RETEXTURE",
-    "file": "src/world/arenaModel.js",
+    "file": "src/world/arena/arenaModel.js",
     "old": "      const to = piece.retexture?.[t] ?? [sm.textureArchive, sm.textureRecord];",
     "new": "      const to = [sm.textureArchive, sm.textureRecord];",
     "tests": [
@@ -119,7 +119,7 @@
   },
   {
     "name": "ARENA1-COMPOSE-OFFSET",
-    "file": "src/world/arenaModel.js",
+    "file": "src/world/arena/arenaModel.js",
     "old": "      for (let i = 0; i < r.count; i++) indices[at++] = src[r.start + i] + r.v0;",
     "new": "      for (let i = 0; i < r.count; i++) indices[at++] = src[r.start + i];",
     "tests": [
@@ -137,7 +137,7 @@
   },
   {
     "name": "ARENA1-UNDERCROFT-MAPID",
-    "file": "src/world/arenaCity.js",
+    "file": "src/world/arena/arenaCity.js",
     "old": "    mapTableData: { ...city.mapTableData, mapId: UNDERCROFT_MAP_ID,",
     "new": "    mapTableData: { ...city.mapTableData,",
     "tests": [
@@ -146,7 +146,7 @@
   },
   {
     "name": "ARENA1-UNDERCROFT-START",
-    "file": "src/world/arenaCity.js",
+    "file": "src/world/arena/arenaCity.js",
     "old": "        x: b.X, z: b.Z, isStartingBlock: !!b.IsStartingBlock, blockName: b.BlockName,",
     "new": "        x: b.X, z: b.Z, isStartingBlock: false, blockName: b.BlockName,",
     "tests": [
@@ -155,7 +155,7 @@
   },
   {
     "name": "ARENA1-STAIR-ANY-BLOCK",
-    "file": "src/world/arenaCity.js",
+    "file": "src/world/arena/arenaCity.js",
     "old": "export const isUndercroftDoor = (e, dungeonEntranceType) => e?.dfBlock?.name === ARENA_BLOCK && e?.door?.doorType === dungeonEntranceType;",
     "new": "export const isUndercroftDoor = (e, dungeonEntranceType) => e?.door?.doorType === dungeonEntranceType;",
     "tests": [
@@ -210,7 +210,7 @@
   },
   {
     "name": "ARENA1-HERALD-ANYONE",
-    "file": "src/world/arenaCity.js",
+    "file": "src/world/arena/arenaCity.js",
     "old": "  return ARENA_GATE_PEOPLE.find((p) => p.position === pn.position && p.archive === pn.textureArchive && p.record === pn.textureRecord) ?? null;",
     "new": "  return ARENA_GATE_PEOPLE.find((p) => p.position === pn.position) ?? null;",
     "tests": [
@@ -219,7 +219,7 @@
   },
   {
     "name": "ARENA1-GATE-NO-FACTION",
-    "file": "src/world/arenaCity.js",
+    "file": "src/world/arena/arenaCity.js",
     "old": "TextureArchive: p.archive, TextureRecord: p.record, FactionID: p.faction, Flags: 0 })),",
     "new": "TextureArchive: p.archive, TextureRecord: p.record, FactionID: 0, Flags: 0 })),",
     "tests": [
@@ -228,7 +228,7 @@
   },
   {
     "name": "ARENA1-DISPLACED-ANY-TOWN",
-    "file": "src/world/arenaCity.js",
+    "file": "src/world/arena/arenaCity.js",
     "old": "  !!rec && inArenaCell(rec.buildingKey) && keyOfMapId(rec.mapId ?? rec.mapID) === ARENA_LOCATION_KEY;",
     "new": "  !!rec && inArenaCell(rec.buildingKey);",
     "tests": [

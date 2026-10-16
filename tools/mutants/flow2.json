@@ -1,7 +1,7 @@
 [
   {
     "name": "FLOW2-a-type0-between-unread",
-    "file": "src/world/wodLocationLoader.js",
+    "file": "src/world/worldOfDaggerfall/wodLocationLoader.js",
     "old": "    if ((st.hasLocation || st.ocean) && type0Between(idx.type0, prev, i)) return st.out;\n",
     "new": "",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "FLOW2-the-last-own-taken-for-between",
-    "file": "src/world/wodLocationLoader.js",
+    "file": "src/world/worldOfDaggerfall/wodLocationLoader.js",
     "old": "if (t0[mid] <= a) lo = mid + 1; else hi = mid;",
     "new": "if (t0[mid] < a) lo = mid + 1; else hi = mid;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "FLOW2-the-index-past-an-append",
-    "file": "src/world/wodLocationLoader.js",
+    "file": "src/world/worldOfDaggerfall/wodLocationLoader.js",
     "old": "    if (this._pix && this._pixCount === this.count) return this._pix;",
     "new": "    if (this._pix) return this._pix;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "FLOW2-the-right-edge-aliased",
-    "file": "src/world/wodLocationLoader.js",
+    "file": "src/world/worldOfDaggerfall/wodLocationLoader.js",
     "old": "x < PIX_W && y < PIX_H",
     "new": "x <= PIX_W && y < PIX_H",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "FLOW2-the-walk-off-its-pixel",
-    "file": "src/world/wodLocationLoader.js",
+    "file": "src/world/worldOfDaggerfall/wodLocationLoader.js",
     "old": "  for (let i = idx.first[p]; i >= 0; i = idx.next[i]) {",
     "new": "  for (let i = idx.first[p]; i >= 0; i = -1) {",
     "tests": [

@@ -66,7 +66,7 @@ for the finding's reason (`test/audit1003_server.test.js` 11, `_bouts` 9, `_onli
 | O9 | low | A TAB THAT LOST THE SEAT KEPT THE ARENA. `leaveSeat` left the hall, city and verdict links standing: the tab stayed queued, was shown the offer, and on the other tab's yes closed its window and entered the floor offline (the one-seat rule). | `arenaOnline.leaveAll()` from `leaveSeat`; `of` and `go` are ignored while not live. |
 | O10 | low | A displaced home's move was marked read (`arenaSeen`) when its save was handed over, not when it landed: a refused PUT kept the full old scene in the record with the move read - the case ARENA4b's order exists for. | `onlineCheckpointLanded` returns the PUT's answer; `arenaSeen` only after it is ok. |
 
-**The arena in the world** (`src/world/arenaFloor.js`, `src/world/arenaModel.js`, `src/world/arenaCity.js`,
+**The arena in the world** (`src/world/arena/arenaFloor.js`, `src/world/arena/arenaModel.js`, `src/world/arena/arenaCity.js`,
 `src/world/customModels.js`, `src/scenes/dungeonContext.js`, `src/scenes/dataPipeline.js`, `src/scenes/world.js`,
 `src/scenes/worldModes.js`, `src/scenes/dungeon.js`, `src/scenes/arenaBouts.js`; the pins in
 `test/audit1003_world.test.js`)

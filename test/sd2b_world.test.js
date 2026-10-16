@@ -13,7 +13,7 @@ import { scanGatePixels } from '../src/systems/gate/gateSite.js';
 import { LOCATION_TYPES, CLIMATES } from '../src/formats/mapsFile.js';
 import { sdFirst, sdRise, sdFind, sdFell, sdGone, SD_FOUND_NEAR_M, SD_FOUND_RESEND_MS, SD_LIFETIME_MS, SD_COLLAPSE_MS, sdFoundLine } from '../src/net/sdLaw.js';
 import { worldRoom } from '../src/net/wire.js';
-import { isMainStoryDungeon } from '../src/world/dungeonTextures.js';
+import { isMainStoryDungeon } from '../src/world/dungeon/dungeonTextures.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const T = LOCATION_TYPES;

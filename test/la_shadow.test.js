@@ -26,7 +26,7 @@ import {
   heldShadowFar, casterWord,
 } from '../src/render/shadowPass.js';
 import { CityLightAnimator, sunDirection } from '../src/world/worldClock.js';
-import { lanternSlot, nearestLights, capFadeColors, LIGHT_CAP_FADE, fillLanternPool } from '../src/world/cityLights.js';
+import { lanternSlot, nearestLights, capFadeColors, LIGHT_CAP_FADE, fillLanternPool } from '../src/world/city/cityLights.js';
 import { transformPoint } from '../src/world/mat4.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

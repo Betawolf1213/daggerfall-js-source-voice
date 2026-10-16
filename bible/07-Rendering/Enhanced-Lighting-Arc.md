@@ -2150,7 +2150,7 @@ on again; antiflicker keeps EMPTY-HOLD's constant alone, and its four CACHE-OFF 
 to 0.027 in linear, and the dark between the lamps already sat about where the screenshot's does. Two things lifted the
 room:
 - **The lamps.** AddLight's second switch gives a building's lamp an intensity that the hosts multiply into its colour
-  (`world/interiorLights.js` interiorLightProperties), and the lane decodes that product as a colour. A lantern's 1.4
+  (`world/interior/interiorLights.js` interiorLightProperties), and the lane decodes that product as a colour. A lantern's 1.4
   (records 24-27, `[1, 0.98, 0.64]`) decodes to 2.16 in linear, about 3.5 times the street's lantern (lanternColor at the
   city's 1, the ~1900 K flame). Every lamp's range (15 for most) covers a tavern, so a room of four lanterns was lit
   flat from wall to wall, with no pools.
@@ -2252,7 +2252,7 @@ identities (an anonymous base, none). A pool that refills in order names each en
 (`adoptLight` - the street's lanterns, the World of Daggerfall lights and boats, the quays, the yards, the Hour's
 lights, a ship's), a record re-made each frame for a light that lives on adopts its source's (a thrown torch, a camp,
 the gate's and the spoils' lights), and a record reused for another light is `relight`ed (the court's and the Hour's
-burst slots). His glow is one kept record (`world/gateBoss.js` bossGlow's `out`, `scenes/gateCourt.js` `_glow`). The
+burst slots). His glow is one kept record (`world/gate/gateBoss.js` bossGlow's `out`, `scenes/gateCourt.js` `_glow`). The
 renderer lifts the identities with the list (`src/render/renderer.js:"ids: this._pointIds,"`), shifts them under the
 storm's flash and keeps them through a snapshot. A list with no ids - a raw vec4 array - names no light, and the pass
 is what it was. `test/lightid.test.js` sweeps src/ for a light written into a list anywhere else.

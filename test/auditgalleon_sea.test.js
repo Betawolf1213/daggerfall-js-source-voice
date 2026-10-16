@@ -20,7 +20,7 @@ import { createSeaShip, stepCaptain, windShare, WIND_RATED, CHASE_MARGIN, __boar
 import { HULL, hullBuild, classById } from '../src/systems/naval/navalShips.js';
 import { createComeSailAwayPool, NIGHT_REMAP } from '../src/scenes/comeSailAwayPool.js';
 import { Boat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
-import { GALLEON_ARCHIVE, GALLEON_TEX_SIZE, TEX, BANDS, GALLEON_NIGHT, _resetGalleonArt } from '../src/world/galleonArt.js';
+import { GALLEON_ARCHIVE, GALLEON_TEX_SIZE, TEX, BANDS, GALLEON_NIGHT, _resetGalleonArt } from '../src/world/ships/galleonArt.js';
 import { isVendorArchive, vendorRecordCount, clearVendorTextures, preloadTextureArchive } from '../src/systems/textureReplacement.js';
 import { findHarbour, createWaterGrid, stepErrand, STALL_S, DETOUR_M, ARRIVE_EASE_M, ARRIVE_SAILS } from '../src/systems/naval/shipLife.js';
 

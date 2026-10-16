@@ -8,28 +8,28 @@
   },
   {
     "name": "AUDIT-WATER-NEXT-P1-votes-reordered",
-    "file": "src/world/waterBed.js",
+    "file": "src/world/water/waterBed.js",
     "old": "      if (south && west && !(table[bytes[rowS + cx - 1]] & 8)) continue;",
     "new": "      if (south && west && !(table[bytes[rowS + cx - 1]] & 4)) continue;",
     "tests": ["test/audit_waternext.test.js"]
   },
   {
     "name": "AUDIT-WATER-NEXT-P1-chamfer-diagonal",
-    "file": "src/world/waterBed.js",
+    "file": "src/world/water/waterBed.js",
     "old": "        if (x < gx - 1 && d[i - gx + 1] + 4 < v) v = d[i - gx + 1] + 4;",
     "new": "        if (x < gx - 1 && d[i - gx + 1] + 3 < v) v = d[i - gx + 1] + 3;",
     "tests": ["test/audit_waternext.test.js"]
   },
   {
     "name": "AUDIT-WATER-NEXT-P1-worker-copies-the-bed",
-    "file": "src/world/terrainGenWorker.js",
+    "file": "src/world/terrain/terrainGenWorker.js",
     "old": "    if (out.bed) transfer.push(out.bed.depths.buffer, out.bed.sheetDepths.buffer, out.bed.positions.buffer, out.bed.normals.buffer, ...(out.bed.halo ? [out.bed.halo.bits.buffer] : []));",
     "new": "",
     "tests": ["test/audit_waternext.test.js"]
   },
   {
     "name": "AUDIT-WATER-NEXT-P1-kernel-no-bed",
-    "file": "src/world/terrainGen.js",
+    "file": "src/world/terrain/terrainGen.js",
     "old": "const grid = restrideGrid({ woods, px, py, stride, samples, landforms, bed: bed ? tilemapBytes : null });",
     "new": "const grid = restrideGrid({ woods, px, py, stride, samples, landforms, bed: null });",
     "tests": ["test/audit_waternext.test.js"]
@@ -57,35 +57,35 @@
   },
   {
     "name": "AUDIT-WATER-NEXT-F2-no-halo",
-    "file": "src/world/terrainGen.js",
+    "file": "src/world/terrain/terrainGen.js",
     "old": "  const halo = bed && stride === 1 && bedNearEdge(bed) ? bedHalo(ghost, px, py) : null;",
     "new": "  const halo = null;",
     "tests": ["test/audit_waternext.test.js"]
   },
   {
     "name": "AUDIT-WATER-NEXT-F2-neighbours-jitter-by-this-index",
-    "file": "src/world/waterBed.js",
+    "file": "src/world/water/waterBed.js",
     "old": "x - dx * side, z + dz * side, px + dx, py + dz);",
     "new": "x, z, px + dx, py + dz);",
     "tests": ["test/audit_waternext.test.js"]
   },
   {
     "name": "AUDIT-WATER-NEXT-F2-north-for-south",
-    "file": "src/world/waterBed.js",
+    "file": "src/world/water/waterBed.js",
     "old": "    const dz = tz < 0 ? 1 : tz >= side ? -1 : 0;",
     "new": "    const dz = tz < 0 ? -1 : tz >= side ? 1 : 0;",
     "tests": ["test/audit_waternext.test.js"]
   },
   {
     "name": "AUDIT-WATER-NEXT-F2-edge-scan-stops-mid-row",
-    "file": "src/world/waterBed.js",
+    "file": "src/world/water/waterBed.js",
     "old": "      if (!band && x === reach) x = side - reach;   // the row's middle is no edge's",
     "new": "      if (!band && x === reach) break;   // the row's middle is no edge's",
     "tests": ["test/audit_waternext.test.js"]
   },
   {
     "name": "AUDIT-WATER-NEXT-H2-stream-the-carves-zero",
-    "file": "src/world/waterBed.js",
+    "file": "src/world/water/waterBed.js",
     "old": "      out[i] = bank ? 0 : SHEET_NO_BED;",
     "new": "      out[i] = 0;",
     "tests": ["test/audit_waternext.test.js"]
@@ -169,7 +169,7 @@
   },
   {
     "name": "AUDIT-WATER-NEXT-M1-the-slide-onto-the-edge",
-    "file": "src/world/waterRipples.js",
+    "file": "src/world/water/waterRipples.js",
     "old": "    for (let z = 1; z < cells - 1; z++) {\n      const sz = z + dz;",
     "new": "    for (let z = 0; z < cells; z++) {\n      const sz = z + dz;",
     "tests": ["test/audit_waternext.test.js"]
@@ -183,21 +183,21 @@
   },
   {
     "name": "AUDIT-WATER-NEXT-G13-packed-never-moves",
-    "file": "src/world/waterRipples.js",
+    "file": "src/world/water/waterRipples.js",
     "old": "      packed[0] = origin[0]; packed[1] = origin[1];",
     "new": "",
     "tests": ["test/audit_waternext.test.js"]
   },
   {
     "name": "AUDIT-WATER-NEXT-P2-asleep-slide",
-    "file": "src/world/waterRipples.js",
+    "file": "src/world/water/waterRipples.js",
     "old": "    if (!live) return true;",
     "new": "    if (false) return true;",
     "tests": ["test/audit_waternext.test.js"]
   },
   {
     "name": "AUDIT-WATER-NEXT-P3-a-moored-hull-stirs",
-    "file": "src/world/waterRipples.js",
+    "file": "src/world/water/waterRipples.js",
     "old": "      if (emit && speed >= minSpeed) field.disturb(",
     "new": "      if (emit) field.disturb(",
     "tests": ["test/audit_waternext.test.js"]
@@ -211,7 +211,7 @@
   },
   {
     "name": "AUDIT-WATER-NEXT-P3-wake-speed",
-    "file": "src/world/waterRipples.js",
+    "file": "src/world/water/waterRipples.js",
     "old": "export const BOAT_WAKE_SPEED = 0.25;",
     "new": "export const BOAT_WAKE_SPEED = 0.5;",
     "tests": ["test/audit_waternext.test.js"]
@@ -260,7 +260,7 @@
   },
   {
     "name": "AUDIT-WATER-NEXT-m7-damping",
-    "file": "src/world/waterRipples.js",
+    "file": "src/world/water/waterRipples.js",
     "old": "export const RIPPLE_DAMPING = 0.975;",
     "new": "export const RIPPLE_DAMPING = 0.985;",
     "tests": ["test/audit_waternext.test.js"]
@@ -274,7 +274,7 @@
   },
   {
     "name": "AUDIT-WATER-NEXT-F2-march-tile-ring",
-    "file": "src/world/terrainTiles.js",
+    "file": "src/world/terrain/terrainTiles.js",
     "old": "  const ring = (b0 + b1 + b2 + b3) >> 2;",
     "new": "  const ring = (b0 + b1 + b2 + b3) >> 3;",
     "tests": ["test/audit_waternext.test.js"]

@@ -59,7 +59,7 @@ test('AUDIT 59 F1: the nav worker is spelled the way Vite bundles it - the liter
     'the real worker takes the literal spelling');
   // the same rule the terrain worker is pinned to, so the two cannot
   // drift apart
-  assert.ok(read('src/world/terrainGenClient.js').includes("new Worker(new URL('./terrainGenWorker.js', import.meta.url), { type: 'module' })"));
+  assert.ok(read('src/world/terrain/terrainGenClient.js').includes("new Worker(new URL('./terrainGenWorker.js', import.meta.url), { type: 'module' })"));
   // a test double still comes in through WorkerCtor, and does NOT carry
   // a second `new URL(...)` for Vite to emit as a stray asset
   assert.match(client, /WorkerCtor === globalThis\.Worker\s*\n\s*\? new Worker\(new URL\('\.\/navWorker\.js', import\.meta\.url\), \{ type: 'module' \}\)\s*\n\s*: new WorkerCtor\('\.\/navWorker\.js', \{ type: 'module' \}\);/);

@@ -16,16 +16,16 @@ import * as court from '../src/systems/court.js';
 import * as sess from '../src/systems/card/cardTableSession.js';
 import * as hudm from '../src/ui/cardTableHud.js';
 import { holdCursor, cursorHeld } from '../src/player/pointerLock.js';
-import { nearestFreeSeat, takenSeats } from '../src/world/cardTables.js';
+import { nearestFreeSeat, takenSeats } from '../src/world/card/cardTables.js';
 import { HAND_NAMES } from '../src/net/cardLaw.js';
-import { regularsToStand, regularBark, BARK_MS } from '../src/world/cardRegulars.js';
+import { regularsToStand, regularBark, BARK_MS } from '../src/world/card/cardRegulars.js';
 import { RemoteCardTable } from '../src/systems/card/cardRemoteTable.js';
 import { isCardPack } from '../src/systems/iliac/iliacItems.js';
 import { cardPackPrice, buyCardPack } from '../src/systems/card/cardSources.js';   // CARDS9: the house's packs at the table
 import { openIliacTableGame } from '../src/scenes/iliacTableGame.js';   // CARDS10: the other game at the table
 import { openGambitTableGame, gambitTableOn } from '../src/scenes/gambitTableGame.js';   // KG3: the third game at the table
 import { gambitBoardKey } from '../src/ui/gambitTableHud.js';   // KG3: the board's own keys, the cloth's listener's
-import { regularLook } from '../src/world/cardRegulars.js';
+import { regularLook } from '../src/world/card/cardRegulars.js';
 import { seatTopByte } from '../src/player/seatPose.js';
 import { iliacGrade } from '../src/systems/iliac/iliacPatrons.js';
 import { skillValue, SKILLS } from '../src/systems/skills.js';

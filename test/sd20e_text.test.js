@@ -23,11 +23,11 @@ import { SD_PHASE_NAMES, SD_ECHO_PAIR_MS } from '../src/net/sdRemnant.js';
 import { SD_ENDINGS, SD_OMENS, sdMarksOf } from '../src/net/sdMarks.js';
 import { SD_FIGHT_TEXT } from '../src/net/sdFightLink.js';
 import { sdBreakSub } from '../src/scenes/sdArenaRead.js';
-import { sdRiftCount, SD_COUNT_TEXT } from '../src/world/sdDungeon.js';
+import { sdRiftCount, SD_COUNT_TEXT } from '../src/world/superDungeon/sdDungeon.js';
 import { timerText } from '../src/systems/eventTimers.js';
 import { sdCollapseLine, sdFadeReadout } from '../src/scenes/sdHost.js';
 import { SD_HOME_TEXT } from '../src/scenes/sdEnd.js';
-import { SD_REALM_TEXT } from '../src/world/sdRealm.js';
+import { SD_REALM_TEXT } from '../src/world/superDungeon/sdRealm.js';
 import { FEATURES } from '../src/systems/features.js';
 import { HeldMapWindow } from '../src/ui/heldMap.js';
 import { toPaper, GATE_RING_MIN_PX } from '../src/ui/inkMap.js';
@@ -134,7 +134,7 @@ test('SD20e ONE COUNT OF TIME (T6): the Rift\'s plaque counts in the Timers\' ow
   assert.equal(sdRiftCount(r, r.s, r.until - 46.2 * H), 'Fades in 1d 22h');
   const k = sdFell(sdFind(r, T0, 'Mara'), T0 + 2 * M, { top: 'Mara', n: 2 });
   assert.equal(sdRiftCount(k, k.s, k.fellAt + 29_000), SD_COUNT_TEXT.collapses(timerText(SD_COLLAPSE_MS - 29_000)));
-  assert.doesNotMatch(read('src/world/sdDungeon.js'), /sdLongCount|countdownText/, 'no second count');
+  assert.doesNotMatch(read('src/world/superDungeon/sdDungeon.js'), /sdLongCount|countdownText/, 'no second count');
 });
 
 // ── T7: the ring's card on the held map ──────────────────────────────

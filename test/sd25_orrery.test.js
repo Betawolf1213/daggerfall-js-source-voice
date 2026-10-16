@@ -1,6 +1,6 @@
 // SD25 S10 (2026-10-09, the Abyss Dungeon's look; bible/11-Multiplayer/Super-Dungeons-Look.md section 7): THE ORRERY OF
-// ENDINGS REBUILT - the stones in the Daggerfall manner inside the law's shapes (world/sdHall.js), the hall's atlas through
-// the paint box (world/sdHallArt.js), the orrery overhead in mode A (world/sdOrreryModel.js), and the set that moves them
+// ENDINGS REBUILT - the stones in the Daggerfall manner inside the law's shapes (world/superDungeon/sdHall.js), the hall's atlas through
+// the paint box (world/superDungeon/sdHallArt.js), the orrery overhead in mode A (world/superDungeon/sdOrreryModel.js), and the set that moves them
 // (scenes/sdHall.js): crown gears that move only with their own hands, bezels that settle gold and burn ember on a refusal,
 // frozen banners, the dial's rise and fall, the fray's tabs, the Concord's sequence and its plated bridge. Every law is the
 // Orrery's own (net/sdBrain.js), run from its own code; the lab's knobs from its own text.
@@ -16,23 +16,23 @@ import {
   buildBridgeModel, buildBridgePlateModel, plateMatrix, bridgePlateSpan, dialFloorQuads, numeralStrokes, frayTabBearing,
   SD_STONE_SIZE, SD_HANDLE, SD_PLAQUE, SD_LAW_MARGIN, SD_CROWN_GEAR, SD_BANNER, SD_BANNER_VERTS, SD_NUMERALS, SD_INNER_BEZEL, SD_LIT_RING,
   SD_FRAY_RING, SD_FRAY_TAB, SD_BRIDGE, SD_BRIDGE_PLATES, SD_BAND,
-} from '../src/world/sdHall.js';
+} from '../src/world/superDungeon/sdHall.js';
 import {
   hallArt, hallAtlasArt, hallGemArt, hallBandArt, hallBridgeArt, gemGlow, SD_HALL_ATLAS, SD_HALL_ATLAS_RECORD, SD_BANNER_RAMPS, SD_GEM_RAMP,
   SD_HALL_GLOW_RECORD, SD_HALL_GEM_RECORD, SD_HALL_FLASH_RECORD, SD_HALL_EMBER_DIM_RECORD, SD_GLOW_COLORS, SD_RELIEF_EDGE_GLOW, SD_PIPS,
-} from '../src/world/sdHallArt.js';
+} from '../src/world/superDungeon/sdHallArt.js';
 import {
   buildOrbitRing, buildOrreryHub, ringHang, ringPose, ringMatrix, ringRadius, ringTicks, hubMatrix, SD_ORRERY_RINGS, SD_ORRERY_HUB,
   SD_RING_TICK_S, SD_RING_TICK_DEG, SD_RING_SHIVER, SD_RING_SHIVER_HZ, SD_RING_SNAP_S, SD_RING_CONCORD_S, SD_ORRERY_MODE_B,
-} from '../src/world/sdOrreryModel.js';
+} from '../src/world/superDungeon/sdOrreryModel.js';
 import {
   createSdHall, sdStoneKey, SD_HALL_SOUNDS, SD_HALL_REMAP, SD_CONCORD_MS, SD_BRIDGE_LAY_MS, SD_BEZEL_MS, SD_DIAL_FLASH_MS, SD_DIAL_DIM_MS,
   SD_FRAY_PULSE_HZ, SD_FRAY_FULL_MS, SD_GEM_LIGHT, SD_HAND_RATE, SD_RING_LITE_SEGS, SD_BANNER_LITE_KEYS,
 } from '../src/scenes/sdHall.js';
-import { SD_RAMP, SD_LIGHT } from '../src/world/sdLook.js';
-import { offPalette, paletteOf } from '../src/world/sdPixelKit.js';
-import { SD_REALM_BRASS_RECORD } from '../src/world/sdRealm.js';
-import { SD_GLYPHS, SD_HOUR_NUMERALS } from '../src/world/sdSkyArt.js';
+import { SD_RAMP, SD_LIGHT } from '../src/world/superDungeon/sdLook.js';
+import { offPalette, paletteOf } from '../src/world/superDungeon/sdPixelKit.js';
+import { SD_REALM_BRASS_RECORD } from '../src/world/superDungeon/sdRealm.js';
+import { SD_GLYPHS, SD_HOUR_NUMERALS } from '../src/world/superDungeon/sdSkyArt.js';
 import { TELEGRAPH_THROB_MAX_HZ } from '../src/render/gateTelegraph.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

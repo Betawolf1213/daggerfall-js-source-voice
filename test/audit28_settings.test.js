@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { setValue, resetToDefaults, LIVE, tierOf } from '../src/systems/settings/settings.js';
 import { RumorMill } from '../src/systems/rumorMill.js';
 import { sayEnemyDied } from '../src/scenes/corpseMarker.js';
-import { dungeonAmbientFor, DUNGEON_AMBIENT, CASTLE_AMBIENT, SPECIAL_AREA_AMBIENT } from '../src/world/dungeonLights.js';
+import { dungeonAmbientFor, DUNGEON_AMBIENT, CASTLE_AMBIENT, SPECIAL_AREA_AMBIENT } from '../src/world/dungeon/dungeonLights.js';
 
 // AUDIT 28 - WAVE 1: SETTINGS DFU READS THAT THE PORT ANSWERED WITH THE
 // DEFAULT (2026-08-30).
@@ -28,7 +28,7 @@ const read = (p) => readFileSync(join(root, p), 'utf8');
 test('AUDIT 28 W1: the four keys are LIVE, at the module that reads them', () => {
   assert.equal(LIVE['GUI/QuestRumorWeight'], 'src/systems/rumorMill.js');
   assert.equal(LIVE['GUI/DisableEnemyDeathAlert'], 'src/scenes/corpseMarker.js');
-  assert.equal(LIVE['Enhancements/DungeonAmbientLightScale'], 'src/world/dungeonLights.js');
+  assert.equal(LIVE['Enhancements/DungeonAmbientLightScale'], 'src/world/dungeon/dungeonLights.js');
   assert.equal(LIVE['Enhancements/NightAmbientLightScale'], 'src/scenes/world.js');
   for (const k of Object.keys(LIVE)) assert.equal(tierOf(k), 'live', k);
 });
@@ -101,7 +101,7 @@ test('AUDIT 28 W1: the settings this wave found are the ones whose consumer name
   for (const [file, key, reader] of [
     ['src/systems/rumorMill.js', 'QuestRumorWeight', /getInt\('GUI', 'QuestRumorWeight', 1, 100\)/],
     ['src/scenes/corpseMarker.js', 'DisableEnemyDeathAlert', /getBool\('GUI', 'DisableEnemyDeathAlert'\)/],
-    ['src/world/dungeonLights.js', 'DungeonAmbientLightScale', /getFloat\('Enhancements', 'DungeonAmbientLightScale', 0, 1\)/],
+    ['src/world/dungeon/dungeonLights.js', 'DungeonAmbientLightScale', /getFloat\('Enhancements', 'DungeonAmbientLightScale', 0, 1\)/],
   ]) {
     const s = read(file);
     assert.match(s, new RegExp(key), `${file} no longer names ${key}`);

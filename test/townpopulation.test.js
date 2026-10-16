@@ -3,7 +3,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { CityNavigation, NAV_CELL, NAV_CELLS_PER_BLOCK, tileWeight } from '../src/world/cityNavigation.js';
+import { CityNavigation, NAV_CELL, NAV_CELLS_PER_BLOCK, tileWeight } from '../src/world/city/cityNavigation.js';
 import { MobilePerson, PERSON_TEXTURES, GUARD_TEXTURE, PERSON_MOVE_SPEED, PERSON_IDLE_DISTANCE, PERSON_IDLE_RECORD, personWantsToStop } from '../src/characters/mobilePerson.js';
 import { areEnemiesNearby } from '../src/systems/encounters.js';   // the ONE home for GameManager.AreEnemiesNearby
 import { TownPopulation, maxPopulationFor, POP_RECYCLE_DISTANCE, POP_SPAWN_RANGE_OUTSIDE_RECT } from '../src/systems/town/townPopulation.js';

@@ -310,7 +310,7 @@
   },
   {
     "name": "SNOWFALL1-normal-difference-reversed",
-    "file": "src/world/terrainSurface.js",
+    "file": "src/world/terrain/terrainSurface.js",
     "old": "    const nx = _snAt(heightmapData, x - stride, z) * lift - _snAt(heightmapData, x + stride, z) * lift;",
     "new": "    const nx = _snAt(heightmapData, x + stride, z) * lift - _snAt(heightmapData, x - stride, z) * lift;",
     "tests": [
@@ -319,7 +319,7 @@
   },
   {
     "name": "SNOWFALL1-grid-value-other-diagonal",
-    "file": "src/world/terrainSurface.js",
+    "file": "src/world/terrain/terrainSurface.js",
     "old": "  return az >= ax ? v00 + az * (v01 - v00) + ax * (v11 - v01) : v00 + ax * (v10 - v00) + az * (v11 - v10);",
     "new": "  return az >= ax ? v00 + az * (v01 - v00) + ax * (v10 - v00) : v00 + ax * (v10 - v00) + az * (v11 - v10);",
     "tests": [

@@ -12,7 +12,7 @@
 // player's own rides: a dropped pile, a treasure roll, an owned house or
 // ship's storage. THE LAW EXECUTES: the wire at both ends; the real Room
 // keeping a building's memory and handing it to the next joiner, and still
-// ignoring a town's; the pure half (world/interiorShared.js) composing,
+// ignoring a town's; the pure half (world/interior/interiorShared.js) composing,
 // projecting and landing on a bare context; and the hosts by source.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -23,7 +23,7 @@ import { relayVersionAtLeast } from './relayVersion.mjs';
 import { roomKeyFor } from '../src/net/online.js';
 import { BUILDING_KEY_0, makeBuildingKey } from '../src/systems/talk/talkTopics.js';
 import { LOOT_LIST_MAX } from '../src/systems/loot/loot.js';
-import { interiorLocationKey, interiorLootKeyOf, interiorLootTarget, interiorLootRecords, applyInteriorLoot, composeInteriorShared, applyInteriorShared, interiorActionRecords } from '../src/world/interiorShared.js';
+import { interiorLocationKey, interiorLootKeyOf, interiorLootTarget, interiorLootRecords, applyInteriorLoot, composeInteriorShared, applyInteriorShared, interiorActionRecords } from '../src/world/interior/interiorShared.js';
 import { fakeRoom } from './fakeRoom.mjs';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');

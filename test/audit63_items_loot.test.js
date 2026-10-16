@@ -26,7 +26,7 @@ import { classicItemFromRecord, classicItemsAndSpells } from '../src/systems/cla
 import { createDroppedLoot, droppedLootHooks } from '../src/scenes/droppedLoot.js';
 import { seedInteriorTreasure } from '../src/scenes/interiorContext.js';
 import { CONTAINER_IMAGES } from '../src/ui/targetIconPanel.js';
-import { INTERIOR_MARKER } from '../src/world/interiorLayout.js';
+import { INTERIOR_MARKER } from '../src/world/interior/interiorLayout.js';
 import { THIEVES_GUILD_FACTION_ID, DARK_BROTHERHOOD_FACTION_ID } from '../src/systems/crimeGuilds.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 

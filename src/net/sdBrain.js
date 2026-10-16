@@ -1,6 +1,6 @@
 // @ts-check
 // SD5 (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 7): THE SHATTERED HOUR'S FRAME
-// - where its stages stand, the one place both the client's made level (world/sdRealm.js) and the relay's judgements
+// - where its stages stand, the one place both the client's made level (world/superDungeon/sdRealm.js) and the relay's judgements
 // (the Orrery's reach, SD6; the Brass Remnant's arena, SD8) read them; and the Orrery's law (SD6a, below) - its stones,
 // gearing, riddles and turns, drawn from the slot alike on the relay and every client. Pure, no imports: the relay's
 // bundle may take it whole.
@@ -16,7 +16,7 @@
 //   | THE LAST MOMENT        | a disc at z 246, radius 26  | the boss's arena, four brass pillars (SD8) - z 220-272  |
 //
 // SD7a: the Steps' span runs to z 220 and the arena stands at z 246 (z 190 and 220 before): the course the engine can
-// jump (world/sdSteps.js) is 145 m long.
+// jump (world/superDungeon/sdSteps.js) is 145 m long.
 //
 // Not a DFU member. Ledger A (SUPER-DUNGEONS).
 import { sdMarksLaw, sdMarksOf } from './sdMarks.js';   // SD18a: a Hollow's marks - a leaf, so the relay's bundle takes it

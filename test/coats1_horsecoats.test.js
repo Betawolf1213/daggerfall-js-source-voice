@@ -402,7 +402,7 @@ test('COATS1 the road\'s strangers: a horse keeps the look its key gives it - bo
   for (let i = 0; i < 3000; i++) { const l = horseLookOfCode(strangerHorseLook(`trip${i}:h0`)); coats.add(l.coat); patterns.add(l.pattern); seeds.add(l.seed); }
   assert.equal(coats.size, 7); assert.equal(patterns.size, 5);
   assert.deepEqual([...seeds].sort((a, b) => a - b), Array.from({ length: STRANGER_SEEDS }, (_, i) => i + 1), 'a few seeds, so the road shares its dyed pictures');
-  const src = readFileSync(new URL('../src/world/roadTeams.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/world/road/roadTeams.js', import.meta.url), 'utf8');
   assert.match(src, /look: strangerHorseLook\(h\.key\)/, 'the road\'s horse is given its look off its key');
   assert.match(src, /pres\.poseHorse\(s\.batch, eye, \{[^}]*\}, 1, s\.look\)/, 'and posed in it');
 });

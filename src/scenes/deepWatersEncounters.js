@@ -6,7 +6,7 @@
 // fish lives and is placed by are world/passiveFish.js; what a fish IS in
 // the world (its picture, its loot, its click) is the host's `makeFish`.
 // DW-E4 (the same day): the foes' lane - UnderwaterEnemySpawner.cs's host
-// half beside the fish's, its laws world/underwaterEnemies.js, the foe
+// half beside the fish's, its laws world/underwater/underwaterEnemies.js, the foe
 // itself the host's `spawnEnemy` (the exterior pool's spawnFoe).
 //
 // THE PULSE, every frame: a dozen of the queued destroys; five of the
@@ -35,17 +35,17 @@
 // foe that dies keeps its count until its pixel's group leaves.
 // ═══════════════════════════════════════════════════════════════════
 
-import { TransientObjectTracker } from '../world/deepWaterTransients.js';
+import { TransientObjectTracker } from '../world/deepWater/deepWaterTransients.js';
 import {
   PassiveFishSchool, pickSpecies, resolveFishPosition, pickSchoolmatePosition, schoolRadius, scaledAttemptsPerPixel,
   rangeInt, rangeFloat, MAX_PENDING_FISH_SPAWNS_PER_FRAME, MAX_LIVE_FISH_LIMIT,
 } from '../world/passiveFish.js';
-import { TILE_WORLD_SIZE } from '../world/deepWaterFloor.js';
+import { TILE_WORLD_SIZE } from '../world/deepWater/deepWaterFloor.js';
 import {
   resolveSpawnColumn, pickEnemyForDepth, pickEnemyPosition, pickTreasureGuardType, scaledEnemyAttemptsPerPixel, rollTreasureGuardCount,
   pickRingDistance, isOutsideImmediateView, MAX_PENDING_ENEMY_SPAWNS_PER_FRAME, TREASURE_GUARD_DISTANCE, TREASURE_GUARD_BOSS_CHANCE,
   TREASURE_GUARD_TEAM, SPAWN_VIEWPORT_MARGIN,
-} from '../world/underwaterEnemies.js';
+} from '../world/underwater/underwaterEnemies.js';
 
 export const TICK_INTERVAL = 0.1;
 export const POPULATE_RADIUS = 200;

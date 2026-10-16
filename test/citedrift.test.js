@@ -319,7 +319,7 @@ test('CD1: Ledger A row TB1 exists, in section A, STRUCK by the classic-modals c
   // and the dungeon-seed bullet, which is the same shape one row up.
   const seed = lines(LEDGER).find((l) => /THE DUNGEON SEED IS THE LocationId/.test(l));
   assert.ok(seed, 'the dungeon-seed approval lost its name');
-  for (const f of ['src/characters/dungeonEnemies.js', 'src/world/dungeonTextures.js']) {
+  for (const f of ['src/characters/dungeonEnemies.js', 'src/world/dungeon/dungeonTextures.js']) {
     assert.ok(seed.includes(f), `the dungeon-seed bullet does not name ${f}`);
   }
 

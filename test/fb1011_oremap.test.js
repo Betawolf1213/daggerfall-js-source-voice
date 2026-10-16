@@ -17,7 +17,7 @@ import { CLIMATES } from '../src/formats/mapsFile.js';
 import { REGION_NAMES } from '../src/formats/mapsTables.js';
 import { createGatherHost } from '../src/scenes/gatherHost.js';
 import { mineKind } from '../src/scenes/mineHost.js';
-import { TERRAIN_SIZE, HEIGHTMAP_DIMENSION } from '../src/world/terrainSampler.js';
+import { TERRAIN_SIZE, HEIGHTMAP_DIMENSION } from '../src/world/terrain/terrainSampler.js';
 import { MINING_GROUND_LINE } from '../src/ui/profPages.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

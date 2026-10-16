@@ -21,7 +21,7 @@ looked for (`lefaySpotOf`'s `exit` and `camp`): THE WAY OUT OF THE HOLD (AUDIT F
 character climbing out of the dungeon is stood on (`player/enterExit.js` `dungeonEntranceLanding` over the block's own
 dungeon-entrance door, measured by both exterior hosts as they stand it - `lefayExitOf`), closed `MONUMENT_LANDING_M`
 (3.2 m) either side of the line from `MONUMENT_DOOR_BACK_M` (4 m) behind it, the doorway, to `MONUMENT_WALK_M` (8 m)
-ahead of it, the walk out - and World of Daggerfall's camp round the Hold (`world/wodPrivateersHold.js` `HOLD_MODELS`,
+ahead of it, the walk out - and World of Daggerfall's camp round the Hold (`world/worldOfDaggerfall/wodPrivateersHold.js` `HOLD_MODELS`,
 handed in by both exterior hosts; its ruins `MONUMENT_RUIN_KEEP_M`, 8 m, the rest `MONUMENT_CAMP_KEEP_M`, 4 m), closed
 whether the mod stands the camp or not, so a client with it off stands the monument where one with it on does. The
 search starts at the exit landing (`lefaySpot`'s `from`), so it stands beside the walk out - the first thing a new
@@ -31,7 +31,7 @@ arrival never stands on it, B1), its landing closed, and with no marker to the g
 in the console (B8). The Hold is no town (locationType 4, no wandering people): there is no people's navgrid to carve, and
 `carveLefay` stays for one that has. LEFAY1's law, which follows, is otherwise unchanged: the spot is the open ground
 nearest that start, read off the location's own navgrid
-(`world/cityNavigation.js`, DFU's CityNavigation carve: every automap byte a building, a tree or a lamp draws is closed,
+(`world/city/cityNavigation.js`, DFU's CityNavigation carve: every automap byte a building, a tree or a lamp draws is closed,
 and the water with it): the nearest cell whose every cell centred within `MONUMENT_CLEAR_M` (5.8 m) of it is open - open
 ground to 5.6 m from its middle at the least, past the flowers' ring at its foot, and a ring of open cells round the
 people's carve (below) to walk round it by - each road cell under it
@@ -45,7 +45,7 @@ disc (`carveLefay`) - so they walk round it, a walker's sprite clear of the flow
 0.4 m below the ground so a gentle slope never shows light under it), a marble pedestal (its base moulding, its die and
 its cornice), a bronze plaque proud of each face of the die, and a marble obelisk to 6.4 m tipped in gilt to 6.95 m
 (`buildLefayModel`). Every face is wound outward (the world pass culls the back). Its pictures are the port's own, made
-at boot from noise under the pseudo-archive 38211 (`world/lefayArt.js`, `world/gateArt.js`'s law): granite, marble,
+at boot from noise under the pseudo-archive 38211 (`world/lefayArt.js`, `world/gate/gateArt.js`'s law): granite, marble,
 gilt, plain bronze, and the plaque - bronze, bevelled, with the inscription cut into it in square capitals:
 
     JULIAN LEFAY

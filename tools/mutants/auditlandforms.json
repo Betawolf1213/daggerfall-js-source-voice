@@ -574,7 +574,7 @@
   },
   {
     "name": "AUDIT-LANDFORMS-D-promotion-ghosts-uncut",
-    "file": "src/world/terrainGen.js",
+    "file": "src/world/terrain/terrainGen.js",
     "old": "const lf = landforms ?? (landform ? createLandforms({ woods, roads, sites, climates }) : null);",
     "new": "const lf = landforms ?? (landform ? createLandforms({ woods, sites, climates }) : null);",
     "tests": [
@@ -586,7 +586,7 @@
   },
   {
     "name": "AUDIT-LANDFORMS-D-worker-wait-after-the-answer",
-    "file": "src/world/terrainGenWorker.js",
+    "file": "src/world/terrain/terrainGenWorker.js",
     "old": "    if (m.t === 'grid' && m.landform && pendingRoads) { pendingRoads.then(() => handle(m)); return; }\n    if (m.t === 'grid') { answerGrid(m); return; }",
     "new": "    if (m.t === 'grid') { answerGrid(m); return; }\n    if (m.t === 'grid' && m.landform && pendingRoads) { pendingRoads.then(() => handle(m)); return; }",
     "tests": [
@@ -598,7 +598,7 @@
   },
   {
     "name": "AUDIT-LANDFORMS-D-client-fallback-grid-uncut",
-    "file": "src/world/terrainGenClient.js",
+    "file": "src/world/terrain/terrainGenClient.js",
     "old": "if (!this._worker) return Promise.resolve(restrideGrid({ woods: this._woods, roads: this._roads ?? null, sites: this._sites, climates: this._climates, ...job }));",
     "new": "if (!this._worker) return Promise.resolve(restrideGrid({ woods: this._woods, sites: this._sites, climates: this._climates, ...job }));",
     "tests": [
@@ -620,7 +620,7 @@
   },
   {
     "name": "AUDIT-LANDFORMS-D-kernel-hands-no-ground-noise",
-    "file": "src/world/terrainSampler.js",
+    "file": "src/world/terrain/terrainSampler.js",
     "old": "return Math.max(0, shape(x, y, h, baseHeight * BASE_HEIGHT_SCALE, ground) / MAX_TERRAIN_HEIGHT);",
     "new": "return Math.max(0, shape(x, y, h, baseHeight * BASE_HEIGHT_SCALE, 0) / MAX_TERRAIN_HEIGHT);",
     "tests": [
@@ -630,7 +630,7 @@
   },
   {
     "name": "AUDIT-LANDFORMS-D-kernel-no-zero-floor",
-    "file": "src/world/terrainSampler.js",
+    "file": "src/world/terrain/terrainSampler.js",
     "old": "return Math.max(0, shape(x, y, h, baseHeight * BASE_HEIGHT_SCALE, ground) / MAX_TERRAIN_HEIGHT);",
     "new": "return (shape(x, y, h, baseHeight * BASE_HEIGHT_SCALE, ground) / MAX_TERRAIN_HEIGHT);",
     "tests": [
@@ -879,7 +879,7 @@
   },
   {
     "name": "AUDIT-LANDFORMS-D3-tiles-off-the-shaped-blend",
-    "file": "src/world/terrainGen.js",
+    "file": "src/world/terrain/terrainGen.js",
     "old": "const tileData = generateTileData(classic ?? samples, px, py);",
     "new": "const tileData = generateTileData(samples, px, py);",
     "tests": [
@@ -889,7 +889,7 @@
   },
   {
     "name": "AUDIT-LANDFORMS-D3-classic-never-written",
-    "file": "src/world/terrainSampler.js",
+    "file": "src/world/terrain/terrainSampler.js",
     "old": "        if (classic) classic[x * hDim + y] = h / MAX_TERRAIN_HEIGHT;",
     "new": "        if (classic) classic[x * hDim + y] = h;",
     "tests": [
@@ -899,7 +899,7 @@
   },
   {
     "name": "AUDIT-LANDFORMS-D3-classic-unblended",
-    "file": "src/world/terrainGen.js",
+    "file": "src/world/terrain/terrainGen.js",
     "old": "    if (classic) blendLocationTerrain(classic, calcAvgMaxHeight(classic)[0], locationRect);\n",
     "new": "\n",
     "tests": [
@@ -909,7 +909,7 @@
   },
   {
     "name": "AUDIT-LANDFORMS-D3-classic-blended-to-the-shaped-mean",
-    "file": "src/world/terrainGen.js",
+    "file": "src/world/terrain/terrainGen.js",
     "old": "if (classic) blendLocationTerrain(classic, calcAvgMaxHeight(classic)[0], locationRect);",
     "new": "if (classic) blendLocationTerrain(classic, avg, locationRect);",
     "tests": [
@@ -1368,7 +1368,7 @@
   },
   {
     "name": "AUDIT-LANDFORMS-II-H2-gathering-asks-the-shaped",
-    "file": "src/world/terrainNature.js",
+    "file": "src/world/terrain/terrainNature.js",
     "old": "if (sampleHeight((beach ?? heightmapData)[hy + hx * hDim]) < SCALED_BEACH_ELEVATION) return null;   // AUDIT LANDFORMS II H2",
     "new": "if (sampleHeight(heightmapData[hy + hx * hDim]) < SCALED_BEACH_ELEVATION) return null;   // AUDIT LANDFORMS II H2",
     "tests": [
@@ -1377,7 +1377,7 @@
   },
   {
     "name": "AUDIT-LANDFORMS-II-H2-scatter-asks-the-shaped",
-    "file": "src/world/terrainNature.js",
+    "file": "src/world/terrain/terrainNature.js",
     "old": "      const height = sampleHeight((opts.beach ?? heightmapData)[hy + hx * hDim]);",
     "new": "      const height = sampleHeight(heightmapData[hy + hx * hDim]);",
     "tests": [
@@ -1386,7 +1386,7 @@
   },
   {
     "name": "AUDIT-LANDFORMS-II-H2-woods-ask-the-shaped",
-    "file": "src/world/terrainNature.js",
+    "file": "src/world/terrain/terrainNature.js",
     "old": "    if (sampleHeight((opts.beach ?? heightmapData)[hy + hx * hDim]) < SCALED_BEACH_ELEVATION) return null;   // AUDIT LANDFORMS II H2\n\n    const wood",
     "new": "    if (sampleHeight(heightmapData[hy + hx * hDim]) < SCALED_BEACH_ELEVATION) return null;   // AUDIT LANDFORMS II H2\n\n    const wood",
     "tests": [
@@ -1395,7 +1395,7 @@
   },
   {
     "name": "AUDIT-LANDFORMS-II-H2-border-asks-the-shaped",
-    "file": "src/world/terrainNature.js",
+    "file": "src/world/terrain/terrainNature.js",
     "old": "    if (sampleHeight((opts.beach ?? heightmapData)[hy + hx * hDim]) < SCALED_BEACH_ELEVATION) return null;   // AUDIT LANDFORMS II H2\n    return { record:",
     "new": "    if (sampleHeight(heightmapData[hy + hx * hDim]) < SCALED_BEACH_ELEVATION) return null;   // AUDIT LANDFORMS II H2\n    return { record:",
     "tests": [
@@ -1404,7 +1404,7 @@
   },
   {
     "name": "AUDIT-LANDFORMS-II-H2-nature-handed-none",
-    "file": "src/world/terrainGen.js",
+    "file": "src/world/terrain/terrainGen.js",
     "old": "    beach: classic,\n  });",
     "new": "    beach: null,\n  });",
     "tests": [
@@ -1413,7 +1413,7 @@
   },
   {
     "name": "AUDIT-LANDFORMS-II-H2-job-returns-none",
-    "file": "src/world/terrainGen.js",
+    "file": "src/world/terrain/terrainGen.js",
     "old": "    beach: classic,   // AUDIT LANDFORMS II H2: DFU's own blend in a location's pixel (null else)",
     "new": "    beach: null,   // AUDIT LANDFORMS II H2: DFU's own blend in a location's pixel (null else)",
     "tests": [
@@ -1422,7 +1422,7 @@
   },
   {
     "name": "AUDIT-LANDFORMS-II-H2-blend-unsmoothed",
-    "file": "src/world/terrainGen.js",
+    "file": "src/world/terrain/terrainGen.js",
     "old": "    if (roads.smooth !== false && classic) smoothRoadHeights(classic, tilemap, 129, locationRect);",
     "new": "",
     "tests": [
@@ -1431,7 +1431,7 @@
   },
   {
     "name": "AUDIT-LANDFORMS-II-H2-site-unlevelled",
-    "file": "src/world/terrainGen.js",
+    "file": "src/world/terrain/terrainGen.js",
     "old": "  if (classic && wodResult) applyPicks(classic, wod.picks);",
     "new": "  if (false) applyPicks(classic, wod.picks);",
     "tests": [
@@ -1440,7 +1440,7 @@
   },
   {
     "name": "AUDIT-LANDFORMS-II-H3-nature-on-dfu",
-    "file": "src/world/terrainGen.js",
+    "file": "src/world/terrain/terrainGen.js",
     "old": "  const nature = layoutNature(samples, tilemap, {",
     "new": "  const nature = layoutNature(classic ?? samples, tilemap, {",
     "tests": [

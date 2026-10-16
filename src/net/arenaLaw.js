@@ -389,7 +389,7 @@ export function arenaBlowCap({ r, w = -1, m = 0, wa = null }) {
 }
 
 // ── THE FLOOR ─────────────────────────────────────────────────────────────────────────────────
-/** The floor's centre in the made level's frame (world/arenaFloor.js floorCentre, pinned) - the frame a bout room's poses
+/** The floor's centre in the made level's frame (world/arena/arenaFloor.js floorCentre, pinned) - the frame a bout room's poses
  *  are in - and the ring (RING_R). */
 export const ARENA_FLOOR_CENTRE = Object.freeze([50.625, 0.245, 42.975]);
 export const ARENA_RING_R = 14;

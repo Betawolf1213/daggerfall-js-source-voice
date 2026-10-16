@@ -298,7 +298,7 @@
   },
   {
     "name": "SD17-the-pelvis-in-the-torso",
-    "file": "src/world/sdRemnantModel.js",
+    "file": "src/world/superDungeon/sdRemnantModel.js",
     "old": "  lathe(f, W.joint, 0, 0, [[0, B.legH], [1.18, B.legH],",
     "new": "  lathe(into('torso'), W.joint, 0, 0, [[0, B.legH], [1.18, B.legH],",
     "tests": [
@@ -307,7 +307,7 @@
   },
   {
     "name": "SD17-the-legs-swapped",
-    "file": "src/world/sdRemnantModel.js",
+    "file": "src/world/superDungeon/sdRemnantModel.js",
     "old": "    const f = into(s > 0 ? 'legR' : 'legL'), x = s * B.legX;",
     "new": "    const f = into(s > 0 ? 'legL' : 'legR'), x = s * B.legX;",
     "tests": [
@@ -316,7 +316,7 @@
   },
   {
     "name": "SD17-the-gear-one-sided",
-    "file": "src/world/sdRemnantModel.js",
+    "file": "src/world/superDungeon/sdRemnantModel.js",
     "old": "const both = (a, b, c, d) => { f.quad(rec, a, b, c, d, [0, 0], [1, 0], [1, 1], [0, 1]); f.quad(rec, d, c, b, a, [0, 1], [1, 1], [1, 0], [0, 0]); };",
     "new": "const both = (a, b, c, d) => { f.quad(rec, a, b, c, d, [0, 0], [1, 0], [1, 1], [0, 1]); };",
     "tests": [

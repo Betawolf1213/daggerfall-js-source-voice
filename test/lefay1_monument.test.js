@@ -17,12 +17,12 @@ import {
 import { lefayArt, lefayPlaqueArt, LEFAY_GLYPHS, lefayGlyph, lineWidth, PLAQUE_SCALES, LEFAY_PLAQUE_W, LEFAY_PLAQUE_H, GLYPH_H } from '../src/world/lefayArt.js';
 import { createLefayMonument, bodyTrapped, LEFAY_REACH, TOSS_HAND_DROP } from '../src/scenes/lefayMonumentHost.js';
 import { CAPSULE_RADIUS, CAPSULE_HEIGHT } from '../src/player/motor.js';
-import { CityNavigation, NAV_CELL, HALF_CELL } from '../src/world/cityNavigation.js';
+import { CityNavigation, NAV_CELL, HALF_CELL } from '../src/world/city/cityNavigation.js';
 import { THROWN_FLOWERS } from '../src/systems/arena/arenaCrowd.js';
 import { REGION_NAMES } from '../src/formats/mapsTables.js';
 import { STATIC_NPC_ACTIVATION_DISTANCE, RAY_DISTANCE } from '../src/player/activate.js';
 import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
-import { PRIVATEERS_HOLD_BLOCK, HOLD_MODELS } from '../src/world/wodPrivateersHold.js';
+import { PRIVATEERS_HOLD_BLOCK, HOLD_MODELS } from '../src/world/worldOfDaggerfall/wodPrivateersHold.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (f) => readFileSync(join(root, f), 'utf8');

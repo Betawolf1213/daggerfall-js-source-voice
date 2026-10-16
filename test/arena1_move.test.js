@@ -7,7 +7,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { arenaHouseFor, moveArenaRecords } from '../src/systems/arena/arenaMove.js';
-import { arenaRecordDisplaced, arenaGatePersonOf, ARENA_GATE_PEOPLE, ARENA_LOCATION_KEY } from '../src/world/arenaCity.js';
+import { arenaRecordDisplaced, arenaGatePersonOf, ARENA_GATE_PEOPLE, ARENA_LOCATION_KEY } from '../src/world/arena/arenaCity.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { createSceneCache, cacheScene, addPermanentScene, interiorSceneName, layoutSceneName } from '../src/systems/sceneCache.js';
 import { configureLayoutPins, recordStands, _resetLayoutPins } from '../src/systems/layoutPins.js';

@@ -15,8 +15,8 @@ import {
   grassLit, LabGrassRenderer, heightFloor, heightSpan, GRASS_CELL_LIGHTS, grassMeanStep,
 } from '../src/render/labGrass.js';
 import { elDecode, elDecode3, elDecodeN, elEncode, elTonemapRGB, elAttenuation, EL_EXPOSURE, EL_GLSL, EL_ATTEN_GLSL, EL_MAX_LIGHTS, EL_TERRAIN_FS } from '../src/render/enhancedLighting.js';
-import { buildTerrainGrid, buildTerrainIndices, surfaceNormalAt } from '../src/world/terrainSurface.js';
-import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { buildTerrainGrid, buildTerrainIndices, surfaceNormalAt } from '../src/world/terrain/terrainSurface.js';
+import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 import { packAdapt, unpackAdapt } from '../src/render/airPass.js';
 import { SHADOW_POINT_CASTERS } from '../src/render/shadowPass.js';
 import { glslFunctions } from './glsl.mjs';

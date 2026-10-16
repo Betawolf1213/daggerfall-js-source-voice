@@ -78,14 +78,14 @@
   },
   {
     "name": "ROCKSEAT-raises",
-    "file": "src/world/wodLocationObjects.js",
+    "file": "src/world/worldOfDaggerfall/wodLocationObjects.js",
     "old": "bottom > ground - WOD_ROCK_SEAT_M ? ground - WOD_ROCK_SEAT_M - bottom : 0);",
     "new": "true ? ground - WOD_ROCK_SEAT_M - bottom : 0);",
     "tests": ["test/ow_wod.test.js"]
   },
   {
     "name": "ROCKSEAT-no-seat",
-    "file": "src/world/wodLocationObjects.js",
+    "file": "src/world/worldOfDaggerfall/wodLocationObjects.js",
     "old": "export const WOD_ROCK_SEAT_M = 0.5;",
     "new": "export const WOD_ROCK_SEAT_M = 0;",
     "tests": ["test/ow_wod.test.js"]

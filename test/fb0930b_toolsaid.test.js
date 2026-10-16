@@ -43,7 +43,7 @@ import { CHOP_ACT, FISH_ACT, HERB_ACT } from '../src/net/professionLaw.js';
 import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { resolveHover } from '../src/systems/worldHover.js';
 import { foldQuickLoot, plaqueStep, plaqueActionFor } from '../src/systems/quickLoot.js';
-import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 
 const heard = [];
 registerPresenter({ hudText: (l) => { heard.push(l); return true; }, popupMessage: (l) => { heard.push(`POPUP ${l}`); return true; }, priority: 99 });

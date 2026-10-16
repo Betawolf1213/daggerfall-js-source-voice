@@ -5,10 +5,10 @@
 //
 //   THE BAKE          tools/bakeGate.mjs over tools/shipBake.mjs: the one object of Mac's scene, re-made to the byte,
 //                     through the port's handedness mirror
-//   THE SOLIDS        world/gateModel.js gateSolids / insideGateStone, scenes/gatePool.js inGateRoot - a body sealed in
+//   THE SOLIDS        world/gate/gateModel.js gateSolids / insideGateStone, scenes/gatePool.js inGateRoot - a body sealed in
 //                     the stone as it stands whole
 //   THE RISE          scenes/gatePool.js gatePlacement - sunk whole before it rises, on a slope too
-//   THE COURT'S FIRE  world/gateArena.js wayInStep / portalFade, scenes/gateCourt.js the way in (my arrival, another's
+//   THE COURT'S FIRE  world/gate/gateArena.js wayInStep / portalFade, scenes/gateCourt.js the way in (my arrival, another's
 //                     step out of it), the way home, the court gone silent, render/gatePass.js fireOnly and its foot
 // The stone itself, its art and its opening: test/wb2_gate.test.js.
 import { test } from 'node:test';
@@ -19,15 +19,15 @@ import { createHash } from 'node:crypto';
 import { bakeGate, assertAlone, toGate, SOURCE_FBX, OUT, OBJECT, FRAME } from '../tools/bakeGate.mjs';
 import { bakeJson, sceneObjects } from '../tools/shipBake.mjs';
 import { readFbx } from '../tools/fbxRead.mjs';
-import { buildGateModel, gateSolids, gateSpines, insideGateStone, GATE_HEIGHT, GATE_HALF_W, GATE_FOOT_SINK, ARCH_Y0, ARCH_Y1 } from '../src/world/gateModel.js';
+import { buildGateModel, gateSolids, gateSpines, insideGateStone, GATE_HEIGHT, GATE_HALF_W, GATE_FOOT_SINK, ARCH_Y0, ARCH_Y1 } from '../src/world/gate/gateModel.js';
 import { inGateRoot, gatePlacement, SEALED_AT, RISE_SLACK_M } from '../src/scenes/gatePool.js';
 import {
   courtToDungeon, wayInStep, portalFade, PORTAL_AFTER_MS, PORTAL_RISE_MS, PORTAL_CLOSE_MS, PORTAL_DROP, WAY_IN_Z, WAY_IN_HOLD_MS,
   WAY_IN_OPEN_MS, WAY_IN_NEAR_M, ARRIVE_Z, COURT_SILENT_MS, COURT_FRAME_GAP_MS, COURT_TEXT,
-} from '../src/world/gateArena.js';
+} from '../src/world/gate/gateArena.js';
 import { createGateCourt } from '../src/scenes/gateCourt.js';
 import { GatePassRenderer, membraneVertices, MEMBRANE_FS, FIRE_FOOT_Y } from '../src/render/gatePass.js';
-import { gateArt, GATE_ARCHIVE } from '../src/world/gateArt.js';
+import { gateArt, GATE_ARCHIVE } from '../src/world/gate/gateArt.js';
 import { CAPSULE_RADIUS } from '../src/player/motor.js';
 import { GATE_STATE_EMPTY } from '../src/net/gateLink.js';
 import { gateTimes, GATE_COLLAPSE_MS } from '../src/net/gateLaw.js';

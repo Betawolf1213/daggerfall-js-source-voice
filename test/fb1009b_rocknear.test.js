@@ -10,11 +10,11 @@
 // `01-Overview/Field-Bugs-2026-10-09b.md`.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { groundAt, insideRocks } from '../src/world/terrainNature.js';
+import { groundAt, insideRocks } from '../src/world/terrain/terrainNature.js';
 import { standMotherlodes, standMineNodes, mineKind } from '../src/scenes/mineHost.js';
 import { createGatherHost } from '../src/scenes/gatherHost.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
-import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 
 const T = TERRAIN_SIZE;
 const WOODS = CLIMATES.Woodlands, MOUNTAIN = CLIMATES.Mountain, GLENUMBRA = 59;

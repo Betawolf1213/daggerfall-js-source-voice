@@ -1,11 +1,11 @@
-// ARENA1 (2026-10-02): THE COLOSSEUM REBUILT (src/world/arenaModel.js) - Kamer's half out of the vendored binary, the
+// ARENA1 (2026-10-02): THE COLOSSEUM REBUILT (src/world/arena/arenaModel.js) - Kamer's half out of the vendored binary, the
 // undercroft's pieces out of the player's ARCH3D, one model; registered as 864102 climate-free, its pieces' pictures
 // loaded before the build (src/world/customModels.js, src/scenes/dataPipeline.js); drawn by its own table and given
 // its collider in the two hosts that stand towns (src/scenes/world.js, src/scenes/exterior.js).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { pieceTransform, arenaPieceModel, composeArenaModel, buildArenaModel, decodeArenaModel, ARENA_MODEL_ID, PIECE_TURNS } from '../src/world/arenaModel.js';
+import { pieceTransform, arenaPieceModel, composeArenaModel, buildArenaModel, decodeArenaModel, ARENA_MODEL_ID, PIECE_TURNS } from '../src/world/arena/arenaModel.js';
 import { registerCustomModel, customModelFor, isClimateFreeModel, customModelNeeds, _resetCustomModels, NO_CLIMATE_REMAP } from '../src/world/customModels.js';
 import { HAS_ARENA2, classicModels, vendorBytes } from './arena1Data.mjs';
 

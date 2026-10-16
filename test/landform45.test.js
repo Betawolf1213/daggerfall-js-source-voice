@@ -8,11 +8,11 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { WoodsFile, MAP_WIDTH } from '../src/formats/woodsFile.js';
-import { generateSamples, sampleKernel, HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE } from '../src/world/terrainSampler.js';
+import { generateSamples, sampleKernel, HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE } from '../src/world/terrain/terrainSampler.js';
 import { createLandforms, landformSites, hillsAt, hillsTopOf, LANDFORM_KNEE, LANDFORM_FLOOR, LANDFORM_DIALS } from '../src/world/landforms.js';
 import { CLIMATES } from '../src/formats/mapsTables.js';
-import { generatePixelTerrain, restrideGrid } from '../src/world/terrainGen.js';
-import { locationFootprintRect, getLocationTerrainTileOrigin } from '../src/world/terrainTiles.js';
+import { generatePixelTerrain, restrideGrid } from '../src/world/terrain/terrainGen.js';
+import { locationFootprintRect, getLocationTerrainTileOrigin } from '../src/world/terrain/terrainTiles.js';
 import { syntheticWoodsBytes, network } from './landformWorld.mjs';
 
 const H = HEIGHTMAP_DIMENSION;
@@ -208,7 +208,7 @@ test('LANDFORM4: the sites ride every kernel - the worker keeps the ones the cli
   const prevPost = globalThis.postMessage, prevOn = globalThis.onmessage;
   globalThis.postMessage = (msg) => posted.push(msg);
   try {
-    await import('../src/world/terrainGenWorker.js?landform45');
+    await import('../src/world/terrain/terrainGenWorker.js?landform45');
     globalThis.onmessage({ data: { t: 'init', woodsBytes: UPLAND_BYTES.slice() } });
     globalThis.onmessage({ data: { t: 'landform-tables', sites: SITES.slice(), climates: null } });
     const t = TOWNS[0];
@@ -223,7 +223,7 @@ test('LANDFORM4: the sites ride every kernel - the worker keeps the ones the cli
     const grid = posted.findLast((m) => m.t === 'grid');
     assert.deepEqual([...grid.normals], [...restrideGrid({ woods: upland, px: t.px + 1, py: t.py, stride: 4, samples: here.samples, landform: true, sites: SITES }).normals], 'a promotion\'s ghost rows too');
   } finally { globalThis.postMessage = prevPost; globalThis.onmessage = prevOn; }
-  const client = src('src/world/terrainGenClient.js');
+  const client = src('src/world/terrain/terrainGenClient.js');
   assert.equal((client.match(/roads: this\._roads \?\? null, sites: this\._sites, climates: this\._climates, /g) ?? []).length, 6, 'every same-thread kernel the client runs takes them');
   assert.match(client, /this\._worker\.postMessage\(\{ t: 'landform-tables', sites: s, climates: c \}, \[s, c\]\.filter\(Boolean\)\.map\(\(a\) => a\.buffer\)\);/, 'the worker gets copies');
   const world = src('src/scenes/world.js');

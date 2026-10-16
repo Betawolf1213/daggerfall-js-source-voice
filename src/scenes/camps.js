@@ -498,7 +498,7 @@ export function createCamps({
     // REST2: and the plaque's rows - the loot plaque's list of actions (systems/worldHover.js resolveHover), the camp
     // menu's own keys as the ids, so the lit row is what a press does (activate's `lit`)
     if (key.startsWith('hearth:')) {
-      const title = hearths?.()?.[Number(key.slice(7))]?.placed ? 'Campfire' : 'Fire';   // REST3: a dungeon's placed fire is a Campfire (world/dungeonFires.js)
+      const title = hearths?.()?.[Number(key.slice(7))]?.placed ? 'Campfire' : 'Fire';   // REST3: a dungeon's placed fire is a Campfire (world/dungeon/dungeonFires.js)
       return usable() ? { title, actions: HEARTH_ROWS.map((r) => ({ id: r.key, label: r.text })) } : { title };
     }
     const c = forKey(key);

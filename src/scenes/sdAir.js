@@ -32,7 +32,7 @@ import { airSourceAt, AIR_BACKLOG_S } from './deadlandsAir.js';
 import { THUNDER_SOURCE_M } from '../systems/distantStorms.js';
 import { SD_SKY_PERIOD } from '../render/sdSky.js';
 import { SD_ARENA, SD_ORRERY, SD_REALM_ORIGIN, realmToDungeon } from '../net/sdBrain.js';
-import { spanAt } from '../world/sdSteps.js';
+import { spanAt } from '../world/superDungeon/sdSteps.js';
 
 /** DAGGER.SND's own: the Orrery's clunk (Parry6), the gears' grind, the ship's bell. */
 const CLUNK = 433, GRIND = 68, BELL = 107;

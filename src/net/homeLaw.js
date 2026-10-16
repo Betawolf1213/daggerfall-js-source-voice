@@ -196,7 +196,7 @@ export function homeLayoutsMatch(a, b) {
 //
 // Mac (ARENA1): "Move them to a new house". The Arena of Daggerfall
 // stands in Daggerfall's cell (4,3) in every layout of the city
-// (world/arenaCity.js), so no building has a key there: an online home
+// (world/arena/arenaCity.js), so no building has a key there: an online home
 // keyed there names nothing. The OWNER'S CLIENT picks its new house by
 // the offline move's own rule (systems/arena/arenaMove.js arenaHomeFor - the
 // service holds no town's records) and posts it; the service checks the
@@ -207,10 +207,10 @@ export function homeLayoutsMatch(a, b) {
 
 /** Daggerfall's map id, unsigned (world/actionSystem.js CASTLE_DAGGERFALL_MAP_ID - the city's, pinned equal). */
 export const HOME_ARENA_MAP_ID = 1291010263;
-/** The arena's cell of Daggerfall's grid (world/arenaCity.js ARENA_CELL, pinned equal): `[blockX, blockY]`. */
+/** The arena's cell of Daggerfall's grid (world/arena/arenaCity.js ARENA_CELL, pinned equal): `[blockX, blockY]`. */
 export const HOME_ARENA_CELL = Object.freeze([4, 3]);
 /** Whether a building key of a town names a building of the arena's cell - read off the RAW key, as the tables keep it
- *  and as world/arenaCity.js inArenaCell reads it (`key >> 16` the block's x, `(key >> 8) & 255` its y). */
+ *  and as world/arena/arenaCity.js inArenaCell reads it (`key >> 16` the block's x, `(key >> 8) & 255` its y). */
 export const homeInArenaCell = (mapId, key) => mapId === HOME_ARENA_MAP_ID && homeBuildingKeyOk(key)
   && (key >> 16) === HOME_ARENA_CELL[0] && ((key >> 8) & 0xff) === HOME_ARENA_CELL[1];
 /** A ROOM'S POINT CARRIED BY THE MOVE: the anchor column's text for a running tenancy the move carried to the new house

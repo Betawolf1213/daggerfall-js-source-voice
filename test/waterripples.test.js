@@ -1,4 +1,4 @@
-// WATER-NEXT 4 - THE RIPPLES (world/waterRipples.js): the water answers what moves in it - a damped wave equation
+// WATER-NEXT 4 - THE RIPPLES (world/water/waterRipples.js): the water answers what moves in it - a damped wave equation
 // round the camera, stirred at a body's feet, stepped at a fixed rate, sliding with the eye a cell at a time. The
 // record: bible/07-Rendering/Water-Arc.md WATER-NEXT 4.
 import { test } from 'node:test';
@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createRipples, stirOf, RIPPLE_CELLS, RIPPLE_SPAN, RIPPLE_HZ, RIPPLE_SCALE } from '../src/world/waterRipples.js';
+import { createRipples, stirOf, RIPPLE_CELLS, RIPPLE_SPAN, RIPPLE_HZ, RIPPLE_SCALE } from '../src/world/water/waterRipples.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(ROOT, p), 'utf8');

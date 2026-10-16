@@ -47,7 +47,7 @@ test('HOTFIX 1003f: with the voices, the cheer, the boo and the bed are the voic
 });
 
 test('HOTFIX 1003i: the stands\' rail - a watcher on the terrace is held out of the sand\'s circle (a jump down stops at its edge), the sand\'s own never held, the host free; wired after the bout\'s ring (mutants: no rail; the rail on the sand; the host held)', async () => {
-  const { standsRail, SAND_R, STANDS_RAIL_UP, TERRACE_UP } = await import('../src/world/arenaFloor.js');
+  const { standsRail, SAND_R, STANDS_RAIL_UP, TERRACE_UP } = await import('../src/world/arena/arenaFloor.js');
   const c = [100, 50, 200];
   const rail = standsRail(c, c[1] + TERRACE_UP);
   assert.ok(rail, 'a watcher on the terrace is railed');

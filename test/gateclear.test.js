@@ -1,7 +1,7 @@
 // GATE-CLEAR (2026-09-28, Mac: "the gate can spawn inside the rock geometry from world of daggerfall"; the field, on
 // Discord: "gate under the rock didnt go away stayed there") - World of Daggerfall's rock keeps off the Oblivion Gate.
 // The gate's spot is the clock's and the map files' alone (every client rolls it alike), and the mod stands a site on
-// 114,087 of the pixels the gate may take; nothing kept the two apart. world/gateClearance.js is the law, ROADS-CLEAR's
+// 114,087 of the pixels the gate may take; nothing kept the two apart. world/gate/gateClearance.js is the law, ROADS-CLEAR's
 // shape: a whole site reaching the clearing is refused at its pick, any other piece reaching it is not stood, and the
 // streamer's sweep builds a pixel again when the gate the clock is about turns.
 import { test } from 'node:test';
@@ -13,19 +13,19 @@ import { fileURLToPath } from 'node:url';
 import {
   gateClearFor, gatePointIn, ritePointIn, boxNearGate, pointNearGate, wodSiteOffGate, gateSiteTest, reachNearGate, createGateClearSweep,
   GATE_CLEAR_M, WOD_FLAT_GATE_CLEAR_M, GATE_REACH_STRIDE, RITE_CLEAR_M,
-} from '../src/world/gateClearance.js';
+} from '../src/world/gate/gateClearance.js';
 import { riteLocalOf } from '../src/net/gateRite.js';
 import { RITE_TENT_R, RITE_BRAZIER_R, RITE_FIRE_R } from '../src/world/riteModel.js';
-import { wodPiecewise, WOD_SITE_OBJECT_RADIUS_M } from '../src/world/roadClearance.js';
+import { wodPiecewise, WOD_SITE_OBJECT_RADIUS_M } from '../src/world/road/roadClearance.js';
 import { PIXEL_M, gateSpotLocal, GATE_SPOT_SPREAD_M } from '../src/net/gateLaw.js';
-import { GATE_HALF_W } from '../src/world/gateModel.js';
-import { GATE_LANDING_M } from '../src/world/gateArena.js';
+import { GATE_HALF_W } from '../src/world/gate/gateModel.js';
+import { GATE_LANDING_M } from '../src/world/gate/gateArena.js';
 import { CAGE_R, BROKER_BOX_HX, BROKER_BOX_HZ } from '../src/scenes/sigilBrokerPool.js';   // BROKER-CAGE: she stands caged at the faithful's circle
-import { LocationSession, pickLocations } from '../src/world/wodLocationLoader.js';
-import { decodeRegionPack } from '../src/world/wodLocationPack.js';
-import { loadLocationPrefab } from '../src/world/wodLocationData.js';
+import { LocationSession, pickLocations } from '../src/world/worldOfDaggerfall/wodLocationLoader.js';
+import { decodeRegionPack } from '../src/world/worldOfDaggerfall/wodLocationPack.js';
+import { loadLocationPrefab } from '../src/world/worldOfDaggerfall/wodLocationData.js';
 import { pathsDataPoint } from '../src/systems/travel/travelPaths.js';
-import { wodSiteClear } from '../src/world/roadClearance.js';
+import { wodSiteClear } from '../src/world/road/roadClearance.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rd = (p) => readFileSync(join(ROOT, p), 'utf8');

@@ -2,11 +2,11 @@
 // a slice at a time. SD-FLASH (S0): the Beat step's warning blinks under the project's flash ceiling.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { SD_STEPS_COURSE, SD_BEAT_SOLID, SD_BEAT_BLINK, beatWarned } from '../src/world/sdSteps.js';
+import { SD_STEPS_COURSE, SD_BEAT_SOLID, SD_BEAT_BLINK, beatWarned } from '../src/world/superDungeon/sdSteps.js';
 import { createSdSteps, SD_BEAT_BLINK_HZ } from '../src/scenes/sdSteps.js';
 import { TELEGRAPH_THROB_MAX_HZ } from '../src/render/gateTelegraph.js';
-import { SD_STEPS_RECORD as SD_STEPS_RECORD_S0 } from '../src/world/sdStepsArt.js';
-import { SD_REALM_ARCHIVE as SD_REALM_ARCHIVE_S0 } from '../src/world/sdRealm.js';
+import { SD_STEPS_RECORD as SD_STEPS_RECORD_S0 } from '../src/world/superDungeon/sdStepsArt.js';
+import { SD_REALM_ARCHIVE as SD_REALM_ARCHIVE_S0 } from '../src/world/superDungeon/sdRealm.js';
 
 /** A realm second on a whole Beat cycle (sd7b's). */
 const T0 = 1_800_000_000 - (1_800_000_000 % 36);
@@ -43,19 +43,19 @@ test('SD-FLASH: a Beat step\'s warning falters at most three times a second (TEL
 // ---------------------------------------------------------------------------------------------------------------------
 // S1 - THE GRADE, THE LIGHT AND THE FLOORS: the amber soup ended.
 // ---------------------------------------------------------------------------------------------------------------------
-import { SD_RAMP, SD_LIGHT, SD_HOUR_GRADE, SD_TICK_EASE_S, sdTick, handToTwelve } from '../src/world/sdLook.js';
-import { offPalette, paletteOf, ramp, quantize, image, putTexel } from '../src/world/sdPixelKit.js';
+import { SD_RAMP, SD_LIGHT, SD_HOUR_GRADE, SD_TICK_EASE_S, sdTick, handToTwelve } from '../src/world/superDungeon/sdLook.js';
+import { offPalette, paletteOf, ramp, quantize, image, putTexel } from '../src/world/superDungeon/sdPixelKit.js';
 import {
   realmFloorArt, realmBrassArt, realmRootArt, realmArenaArt, realmCobbleArt, realmEdgeArt, SD_BRASS_EDGE_GLOW, SD_EDGE_GLOW,
-} from '../src/world/sdRealmArt.js';
+} from '../src/world/superDungeon/sdRealmArt.js';
 import {
   buildRealmModel, SD_REALM_TRILIGHT, SD_REALM_KEY_LIGHT, SD_REALM_FOG, SD_LAMP_COLOR, SD_REALM_BRASS_RECORD, SD_REALM_EDGE_RECORD,
   SD_REALM_ARENA_RECORD, SD_REALM_COBBLE_RECORD, SD_ISLAND_SIDES, SD_RIM_H, SD_TOOTH_TOP, SD_TOOTH_OUT, SD_TOOTH_PITCH, SD_ARENA_BANDS,
   SD_COMPASS, SD_ARRIVE_Z, SD_INLAY_H, realmClamp,
-} from '../src/world/sdRealm.js';
+} from '../src/world/superDungeon/sdRealm.js';
 import { SD_THRESHOLD, SD_ORRERY, SD_ARENA, SD_WALK, dungeonToRealm, realmToDungeon } from '../src/net/sdBrain.js';
 import { SD_FX_COLOR } from '../src/scenes/sdFx.js';
-import { SD_GLOW_COLORS } from '../src/world/sdHallArt.js';
+import { SD_GLOW_COLORS } from '../src/world/superDungeon/sdHallArt.js';
 import { SD_BEAM_CORE } from '../src/render/sdBeam.js';
 import { TURNING_STEP_S, turningWheelAngle, TURNING_HZ } from '../src/render/auraRing.js';
 import { AirPass, AIR_ADAPT_KEY, AIR_ADAPT_MAX, AIR_BLOOM_STRENGTH, AIR_VIGNETTE, AIR_CONTRAST } from '../src/render/airPass.js';
@@ -186,8 +186,8 @@ import {
   octEncode, octDecode, SD_OCT_GLSL, SD_SKY_PAINT_FS, SD_SKY_FS, SD_SKY_FETCH_GLSL, SD_CLOCK_FACE, SD_CLOCK_TOP, SD_SHARD_TOP,
   SD_SKY_SHARDS, SD_SKY_MAP, SD_SKY_STEPS, SD_SKY_MODE, CLOCK_BASIS,
 } from '../src/render/sdSky.js';
-import { numeralCell, numeralWidth, SD_HOUR_NUMERALS, sdSkySigns, SD_SKY_SIGN_GRID } from '../src/world/sdSkyArt.js';
-import { SD_SIGNS } from '../src/world/sdHallArt.js';
+import { numeralCell, numeralWidth, SD_HOUR_NUMERALS, sdSkySigns, SD_SKY_SIGN_GRID } from '../src/world/superDungeon/sdSkyArt.js';
+import { SD_SIGNS } from '../src/world/superDungeon/sdHallArt.js';
 
 test('SD-LOOK THE SKY MAP: the octahedral map\'s two ways round (a direction to its place and back, the shaders\' own and the JS pinned equal), every texel about Daggerfall\'s own sky density (pi/512 a pixel); the face lowered - centre at 0.20, 0.34 across - every city still wholly over it (mutants: a fold turned; the face high again)', () => {
   const f = glslFunctions(SD_OCT_GLSL);
@@ -207,7 +207,7 @@ test('SD-LOOK THE SKY MAP: the octahedral map\'s two ways round (a direction to 
   for (const s of SD_SKY_SHARDS) assert.ok(SD_SHARD_TOP - s.depth > SD_CLOCK_TOP, `${s.name} over the face`);
 });
 
-test('SD-LOOK THE FACE IN STARS: its twelve hours written in Roman numerals plotted in stars - the paint\'s glyph table the very cells world/sdSkyArt.js numeralCell lights, every hour, every cell; the six Endings\' signs sampled into the strip it reads as constellations (mutants: a glyph\'s row; a numeral misspelled)', () => {
+test('SD-LOOK THE FACE IN STARS: its twelve hours written in Roman numerals plotted in stars - the paint\'s glyph table the very cells world/superDungeon/sdSkyArt.js numeralCell lights, every hour, every cell; the six Endings\' signs sampled into the strip it reads as constellations (mutants: a glyph\'s row; a numeral misspelled)', () => {
   const f = glslFunctions(SD_SKY_PAINT_FS, { uTime: 0, uHaze: [0.2, 0.15, 0.07], uSteps: 10, uEnding: [0, 0, 0], uEndingIdx: -1, vUv: [0.5, 0.5], texelFetch: () => [0, 0, 0, 0] });
   assert.deepEqual(SD_HOUR_NUMERALS, ['XII', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI']);
   for (let h = 0; h < 12; h++) {
@@ -246,8 +246,8 @@ test('SD-LOOK THE PAINT IS PIXEL ART: every texel it paints posterized to the pi
 // ---------------------------------------------------------------------------------------------------------------------
 // S4 - THE RIFT AND THE RETURN: the astrolabe and its window.
 // ---------------------------------------------------------------------------------------------------------------------
-import { sdRiftFace, riftLook, SD_RIFT_OPEN_LOOK, SD_RIFT_NOT_YET, SD_RIFT_CLOSED, SD_RIFT_REFUSED, SD_RIFT_PROBE_M } from '../src/world/sdDungeon.js';
-import { irisPositions, SD_RIFT_PARTS, riftCentreY } from '../src/world/sdRiftModel.js';
+import { sdRiftFace, riftLook, SD_RIFT_OPEN_LOOK, SD_RIFT_NOT_YET, SD_RIFT_CLOSED, SD_RIFT_REFUSED, SD_RIFT_PROBE_M } from '../src/world/superDungeon/sdDungeon.js';
+import { irisPositions, SD_RIFT_PARTS, riftCentreY } from '../src/world/superDungeon/sdRiftModel.js';
 import { createSdEnd } from '../src/scenes/sdEnd.js';
 import { SD_WINDOW_FS, SD_FLOOR_FS } from '../src/render/sdRiftPass.js';
 import { sdRise, sdFind, sdFell, SD_COLLAPSE_MS } from '../src/net/sdLaw.js';
@@ -671,7 +671,7 @@ test('SD-LOOK THE HOLD IS SEEN (S7): the hold\'s curtain the same wall in gold, 
 // ---------------------------------------------------------------------------------------------------------------------
 // S8 - THE BRASS REMNANT: its body in plates, its heart a light.
 // ---------------------------------------------------------------------------------------------------------------------
-import { buildRemnantParts as remParts, buildRemnantModel as remModel, SD_REMNANT_KIT, SD_REMNANT_BODY as REM_B, SD_REMNANT_PARTS as REM_PARTS } from '../src/world/sdRemnantModel.js';
+import { buildRemnantParts as remParts, buildRemnantModel as remModel, SD_REMNANT_KIT, SD_REMNANT_BODY as REM_B, SD_REMNANT_PARTS as REM_PARTS } from '../src/world/superDungeon/sdRemnantModel.js';
 import { SD_REM as REM_LAW } from '../src/net/sdRemnant.js';
 import { SD_REM_HAND } from '../src/scenes/sdRemnantRig.js';
 import { createSdRemnant, sdHeartBeat, SD_HEART_LIGHT } from '../src/scenes/sdRemnant.js';
@@ -735,9 +735,9 @@ test('SD-LOOK THE HEART IS THE FIGHT\'S METRONOME (S8): its light in its Ending\
 // ---------------------------------------------------------------------------------------------------------------------
 // S6 - THE WAY HOME: assembling, at its size, its beacon.
 // ---------------------------------------------------------------------------------------------------------------------
-import { buildReturnParts, buildReturnModel, SD_RETURN_PARTS, returnSpringAt } from '../src/world/sdRiftModel.js';
+import { buildReturnParts, buildReturnModel, SD_RETURN_PARTS, returnSpringAt } from '../src/world/superDungeon/sdRiftModel.js';
 import { SD_HOME_SCALE, SD_HOME_ASSEMBLY, SD_HOME_RISE_MS, SD_RIFT_LIGHT } from '../src/scenes/sdEnd.js';
-import { SD_RETURN_SIZE } from '../src/world/sdDungeon.js';
+import { SD_RETURN_SIZE } from '../src/world/superDungeon/sdDungeon.js';
 import { sdHomeBeacon, SD_HOME_BEACON } from '../src/render/sdStompWall.js';
 
 test('SD-LOOK THE WAY HOME ASSEMBLES (S6): the Return in five parts - every face of the whole, once - its jambs rising out of the floor, the lancet\'s halves swinging in about their springings, its keystone\'s clock dropping last; whole once it stands (the parts gone, the whole drawn); in the Hour at half again its size and pressed where it stands at that size; the Hollow\'s Return as ever (mutants: a part left out of the whole; the halves never swinging; the keystone never dropping; the way home at the Hollow\'s size; the press box at the old size)', () => {
@@ -803,8 +803,8 @@ test('SD-LOOK THE WAY HOME\'S BEACON (S6): while the way home assembles, the col
   assert.match(W, /sdHomeBeacon\(sdHomeAge\(\) - SD_HOME_RISE_MS, _sdBeacon\[0\], SD_RETURN_SIZE\.h \* SD_HOME_SCALE\)/, 'over the way home, from its top');
 });
 
-import { sdRiftArt, SD_RIFT_PLATE_RECORD, SD_RIFT_ATLAS, SD_RIFT_RECORD } from '../src/world/sdRiftArt.js';
-import { buildReturnPlate, SD_RETURN_PLATE } from '../src/world/sdRiftModel.js';
+import { sdRiftArt, SD_RIFT_PLATE_RECORD, SD_RIFT_ATLAS, SD_RIFT_RECORD } from '../src/world/superDungeon/sdRiftArt.js';
+import { buildReturnPlate, SD_RETURN_PLATE } from '../src/world/superDungeon/sdRiftModel.js';
 import { SD_PLATE_HOLD_MS, SD_RETURN_KEY } from '../src/scenes/sdEnd.js';
 test('SD-LOOK THE HAND-PLATE (S6): a silver plate on the Return\'s sill, the hand engraved in it - before the opening, low, tilted back to one standing before it; its own record alight in its hand alone (moon-white), the plate a draw that swaps to it while the activation ray finds the Return (the namer asks each frame) and goes dark a frame\'s gap after; hidden while the way home assembles; nothing that casts; every cell of the Rift\'s and the Return\'s read at its own rows (mutants: never alight; alight always; the whole atlas alight; cast; the cells mirrored)', () => {
   const art = new Map(sdRiftArt()), A = SD_RIFT_ATLAS, S = A.size, H = A.hand;
@@ -847,7 +847,7 @@ test('SD-LOOK THE HAND-PLATE (S6): a silver plate on the Return\'s sill, the han
 import { createSdFx, SD_FX_EXHALE, SD_EXHALE_AT } from '../src/scenes/sdFx.js';
 import { SD_EXHALE_MS } from '../src/scenes/sdEnd.js';
 import { realmToDungeon as r2d, SD_ARENA as ARENA } from '../src/net/sdBrain.js';
-import { SD_WAY_BACK_Z as WB_Z } from '../src/world/sdRealm.js';
+import { SD_WAY_BACK_Z as WB_Z } from '../src/world/superDungeon/sdRealm.js';
 test('SD-LOOK THE ARRIVAL EXHALE (S6): my first frame in the Hour on the Threshold breathes brass sparks from the way back\'s face (resting on the Threshold, falling past its rim) and turns its ring once, forward, eased over SD_EXHALE_MS - once an arrival, never while I stay, again after I leave and come back, never for feet first seen elsewhere; the hosts carry it; never under the veil, and after any frame out of the Hour (AUDIT SD V S5, L5) (mutants: never exhaling; every frame; the ring never turning; the hosts unwired; under the veil; the latch kept)', () => {
   let t = 10_000, f = null, told = 0;
   const fx = createSdFx({ link: { state: () => null, now: () => t }, feet: () => f, arrived: () => { told++; } });

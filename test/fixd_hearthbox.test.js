@@ -14,8 +14,8 @@ import { readFileSync } from 'node:fs';
 import { hearthAabb, collectHearths } from '../src/systems/survival/hearth.js';
 import { pickActivatableHit } from '../src/player/activate.js';
 import { raceWinner } from '../src/player/activationRace.js';
-import { collectCityLights } from '../src/world/cityLights.js';
-import { collectInteriorLights } from '../src/world/interiorLights.js';
+import { collectCityLights } from '../src/world/city/cityLights.js';
+import { collectInteriorLights } from '../src/world/interior/interiorLights.js';
 import { createCamps } from '../src/scenes/camps.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

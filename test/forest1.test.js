@@ -1,6 +1,6 @@
 // FOREST1 (2026-10-01, the Discord's "Real Forests" thread) - REAL FORESTS:
 // the wilderness's trees gathered into woods with open land between them
-// (world/terrainNature.js layoutForests), behind the Features row
+// (world/terrain/terrainNature.js layoutForests), behind the Features row
 // `realForests`. Off - and on a desert - DFU's scatter is untouched.
 
 import { test } from 'node:test';
@@ -9,12 +9,12 @@ import { readFileSync } from 'node:fs';
 
 import {
   layoutNature, forestCover, forestAt, forestField, placesPull, tileDraw, groundAt, FOREST, TREE_RECORDS, isTreeRecord,
-} from '../src/world/terrainNature.js';
+} from '../src/world/terrain/terrainNature.js';
 import { standTrees } from '../src/scenes/treeHost.js';
-import { wodSiteFootprint } from '../src/world/roadClearance.js';
+import { wodSiteFootprint } from '../src/world/road/roadClearance.js';
 import { TREE_RECORDS as HOST_TREE_RECORDS, isTreeRecord as hostIsTreeRecord } from '../src/scenes/treeHost.js';
-import { generatePixelTerrain } from '../src/world/terrainGen.js';
-import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { generatePixelTerrain } from '../src/world/terrain/terrainGen.js';
+import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 import { realForestsOn, FOREST_HIDDEN_LOCATION_TYPES } from '../src/scenes/shared.js';
 import { FEATURES, checkFeature } from '../src/systems/features.js';
 import { setPref, PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
@@ -278,7 +278,7 @@ test('FOREST1: the kernel carries the switch - the location and every World of D
   const dungeon = generatePixelTerrain({ ...job, tilemap: new Uint8Array(128 * 128), locationRect: loc, hasLocation: true, forests: { archive: 504, hidden: true } });
   const town = generatePixelTerrain({ ...job, tilemap: new Uint8Array(128 * 128), locationRect: loc, hasLocation: true, forests: { archive: 504, hidden: false } });
   assert.ok(ring(dungeon.nature) > 4 * Math.max(1, ring(town.nature)), `woods round a dungeon (${ring(dungeon.nature)}), fields round a town (${ring(town.nature)})`);
-  assert.ok(src('world/terrainGen.js').includes('...(wod?.picks ?? []).filter((p) => p.hide !== false).map(({ rect: r, bounds: b }) => (b'),
+  assert.ok(src('world/terrain/terrainGen.js').includes('...(wod?.picks ?? []).filter((p) => p.hide !== false).map(({ rect: r, bounds: b }) => (b'),
     'every site, not only the loader\'s last rect, and never scenery');
 });
 

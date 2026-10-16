@@ -1,5 +1,5 @@
 // SD7a (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 9): THE UNMOORED STEPS' LAW
-// (world/sdSteps.js) - the course from the Orrery's first step to the Last Moment's arena: the Drift, the Beat and the
+// (world/superDungeon/sdSteps.js) - the course from the Orrery's first step to the Last Moment's arena: the Drift, the Beat and the
 // Crumble, their checkpoints, how each step moves on the realm's clock, the Warp's breath, and the void's cast-back.
 // Its fairness is pinned to the engine's own numbers (player/motor.js, player/parkour.js), not to the design's.
 import { test } from 'node:test';
@@ -9,9 +9,9 @@ import {
   SD_BEAT_CYCLE, SD_BEAT_SOLID, SD_BEAT_HALF, SD_BEAT_BLINK, SD_CRUMBLE_DELAY, SD_CRUMBLE_BACK, SD_CRUMBLE_FALL_G,
   SD_GUST_EVERY, SD_GUST_FOR, SD_GUST_SPEED, SD_GUST_WARN, stepAt, beatStands, beatBlinks, crumbleAfter, gustAt, inBreath,
   inVoid, castBackTo, spanAt,
-} from '../src/world/sdSteps.js';
+} from '../src/world/superDungeon/sdSteps.js';
 import { SD_ARENA, SD_STEPS } from '../src/net/sdBrain.js';
-import { SD_FIRST_STEP } from '../src/world/sdHall.js';
+import { SD_FIRST_STEP } from '../src/world/superDungeon/sdHall.js';
 import { runSpeed, JUMP_SPEED, GRAVITY, JUMP_FWD_BOOST, CAPSULE_RADIUS, FALL_DAMAGE_THRESHOLD } from '../src/player/motor.js';
 import { wallRunHeight, PARKOUR_REACH_MIN } from '../src/player/parkour.js';
 

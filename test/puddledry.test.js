@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url';
 import { BlocksFile } from '../src/formats/blocksFile.js';
 import { dryPuddles, groundTileWet } from '../src/world/puddleDry.js';
 import { PUDDLE_RECORDS } from '../src/world/puddleMask.js';
-import { SHALLOW_WHOLE, SHALLOW_DRAWN } from '../src/world/waterCorners.js';
+import { SHALLOW_WHOLE, SHALLOW_DRAWN } from '../src/world/water/waterCorners.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(ROOT, p), 'utf8');
@@ -103,7 +103,7 @@ test('PUDDLE-DRY one door: getBlock serves BLOCKS.BSA\'s block and a world-data 
   const classic = src.slice(src.indexOf('  readClassicBlock(block) {'), src.indexOf('  /** Discard a block from memory. */'));
   assert.doesNotMatch(classic, /dry/, 'the diff base is the file\'s');
   // no reader of the ground keeps a puddle law of its own
-  for (const f of ['src/world/terrainTiles.js', 'src/scenes/exterior.js', 'src/world/rmbLayout.js', 'src/world/cityNavigation.js']) {
+  for (const f of ['src/world/terrain/terrainTiles.js', 'src/scenes/exterior.js', 'src/world/rmbLayout.js', 'src/world/city/cityNavigation.js']) {
     assert.doesNotMatch(read(f), /dryPuddles|PUDDLE_RECORDS/, `${f} reads the served ground`);
   }
 });

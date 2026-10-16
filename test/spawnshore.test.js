@@ -7,8 +7,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { createSpawnGround, spawnPlateauFloor, SPAWN_DRY_ELEVATION } from '../src/world/spawnedDungeons.js';
-import { generateSamples, sampleKernel, MAX_TERRAIN_HEIGHT, SCALED_BEACH_ELEVATION, SCALED_OCEAN_ELEVATION } from '../src/world/terrainSampler.js';
-import { calcAvgMaxHeight, BEACH_JITTER } from '../src/world/terrainTiles.js';
+import { generateSamples, sampleKernel, MAX_TERRAIN_HEIGHT, SCALED_BEACH_ELEVATION, SCALED_OCEAN_ELEVATION } from '../src/world/terrain/terrainSampler.js';
+import { calcAvgMaxHeight, BEACH_JITTER } from '../src/world/terrain/terrainTiles.js';
 
 /** A WoodsFile's three-method surface over a byte-per-pixel function; the large map flat at `large`. */
 const woodsOf = (byteAt, large = 0) => ({

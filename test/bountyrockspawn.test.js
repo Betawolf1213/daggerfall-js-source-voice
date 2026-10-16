@@ -7,13 +7,13 @@ import { Collider } from '../src/player/collider.js';
 import { placeFoeEnv, entityOccupancy } from '../src/scenes/questFoeHost.js';
 import { placeFoeFreely } from '../src/systems/quest/sceneMount.js';
 import { campAnchorSpot, PACK_SPACING, PACK_ALERT_RADIUS, CAMP_SIGHT_RADIUS } from '../src/systems/campEncounters.js';
-import { CAMP_ROAD_CLEAR_M } from '../src/world/roadClearance.js';
+import { CAMP_ROAD_CLEAR_M } from '../src/world/road/roadClearance.js';
 import { LOOSE_FOE_PLACE_ATTEMPTS } from '../src/scenes/hostEnchant.js';
 import { Arch3dFile } from '../src/formats/arch3dFile.js';
 import { dfMeshToModel } from '../src/world/meshReader.js';
-import { loadLocationPrefab } from '../src/world/wodLocationData.js';
-import { objectMatrix } from '../src/world/wodLocationObjects.js';
-import { rockFootprint } from '../src/world/terrainNature.js';
+import { loadLocationPrefab } from '../src/world/worldOfDaggerfall/wodLocationData.js';
+import { objectMatrix } from '../src/world/worldOfDaggerfall/wodLocationObjects.js';
+import { rockFootprint } from '../src/world/terrain/terrainNature.js';
 import { createBountyHost, BOUNTY_RETRY_S } from '../src/scenes/bountyHost.js';
 
 const world = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');

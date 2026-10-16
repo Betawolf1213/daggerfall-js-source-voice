@@ -11,7 +11,7 @@ import {
 } from '../src/systems/livingWorld/trips.js';
 import { CAMP_SHARE } from '../src/systems/livingWorld/trouble.js';
 import { createLivingRoads, campGroups, passingPairs, walkingAt, PASS_N } from '../src/scenes/livingRoads.js';
-import { createRoadTeams, WAGONS_DRAWN } from '../src/world/roadTeams.js';
+import { createRoadTeams, WAGONS_DRAWN } from '../src/world/road/roadTeams.js';
 import { trainOf, teamOf, WAGON_TAIL_N, CAMP_PARK_N } from '../src/systems/livingWorld/wagons.js';
 import { companiesOf, namedIn, headOf, holyDayOf } from '../src/systems/livingWorld/companies.js';
 import { stopsOf, routeOf, clearedOf } from '../src/systems/livingWorld/deepRoute.js';

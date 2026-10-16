@@ -54,7 +54,7 @@ test('FT11: dungeon wall style - the one choice, its five modes the settings law
   assert.equal(f.effect, 'Takes effect on the next dungeon you enter.');
   assert.deepEqual(checkFeature(f), []);
   // the law the note describes (DaggerfallDungeon.cs:174-196): main-story dungeons stay classic unless the mode is 2 or 4
-  assert.match(read('src/world/dungeonTextures.js'), /if \(isMainStoryDungeon\(mapId\) && mode !== 2 && mode !== 4\) \{/);
+  assert.match(read('src/world/dungeon/dungeonTextures.js'), /if \(isMainStoryDungeon\(mapId\) && mode !== 2 && mode !== 4\) \{/);
 });
 
 test('FT11: the port reads each key where DFU reads it', () => {
@@ -63,7 +63,7 @@ test('FT11: the port reads each key where DFU reads it', () => {
   assert.match(read('src/combat/playerWeapon.js'), /bowSwitching = getBool\('Enhancements', 'BowLeftHandWithSwitching'\),/);
   assert.match(read('src/characters/equipTable.js'), /bowLeftHand = getBool\('Enhancements', 'BowLeftHandWithSwitching'\)/, 'the hands an item takes');
   assert.match(read('src/scenes/questBridge.js'), /get guildQuestListBox\(\) \{ return getBool\('Enhancements', 'GuildQuestListBox'\); \},/, 'a getter - read at the offer');
-  assert.match(read('src/world/dungeonTextures.js'), /mode = getInt\('Video', 'RandomDungeonTextures', 0, 4\) \} = \{\}\) \{/);
+  assert.match(read('src/world/dungeon/dungeonTextures.js'), /mode = getInt\('Video', 'RandomDungeonTextures', 0, 4\) \} = \{\}\) \{/);
   // and the dials are NOT rows - a dial is a setting
   for (const key of ['Enhancements/LoiterLimitInHours', 'Enhancements/DungeonAmbientLightScale', 'Enhancements/NightAmbientLightScale', 'Enhancements/PlayerTorchLightScale']) {
     assert.equal(featureForControl('settings', key), null, `${key} stays in Settings`);

@@ -1,7 +1,7 @@
 [
   {
     "name": "WOD7-larger-id-wins",
-    "file": "src/world/wodShared.js",
+    "file": "src/world/worldOfDaggerfall/wodShared.js",
     "old": "  if (Math.abs(myAge - theirAge) <= WOD_CLAIM_WINDOW_MS) return theirs < mine;",
     "new": "  if (Math.abs(myAge - theirAge) <= WOD_CLAIM_WINDOW_MS) return theirs > mine;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "WOD7-no-claim-window",
-    "file": "src/world/wodShared.js",
+    "file": "src/world/worldOfDaggerfall/wodShared.js",
     "old": "  if (Math.abs(myAge - theirAge) <= WOD_CLAIM_WINDOW_MS) return theirs < mine;\n  return theirAge > myAge;",
     "new": "  return theirs < mine;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "WOD7-self-yields",
-    "file": "src/world/wodShared.js",
+    "file": "src/world/worldOfDaggerfall/wodShared.js",
     "old": "mine === theirs) return false;",
     "new": "false) return false;",
     "tests": [
@@ -30,7 +30,7 @@
   },
   {
     "name": "WOD7-sites-unbounded",
-    "file": "src/world/wodShared.js",
+    "file": "src/world/worldOfDaggerfall/wodShared.js",
     "old": "    if (out.length >= WOD_SITES_MAX) break;\n    if (!Array.isArray(e) || e.length !== 2) continue;",
     "new": "    if (!Array.isArray(e) || e.length !== 2) continue;",
     "tests": [
@@ -39,7 +39,7 @@
   },
   {
     "name": "WOD7-sites-duplicated",
-    "file": "src/world/wodShared.js",
+    "file": "src/world/worldOfDaggerfall/wodShared.js",
     "old": " || seen.has(s) || !Number.isFinite(age)) continue;",
     "new": " || !Number.isFinite(age)) continue;",
     "tests": [
@@ -48,7 +48,7 @@
   },
   {
     "name": "WOD7-tags-unchecked",
-    "file": "src/world/wodShared.js",
+    "file": "src/world/worldOfDaggerfall/wodShared.js",
     "old": "if (Number.isInteger(i) && i >= 0 && typeof s === 'string' && WOD_SITE_RE.test(s)) out.set(i, s);",
     "new": "out.set(i, s);",
     "tests": [
@@ -222,7 +222,7 @@
   },
   {
     "name": "WOD7-younger-spring-wins",
-    "file": "src/world/wodShared.js",
+    "file": "src/world/worldOfDaggerfall/wodShared.js",
     "old": "  return theirAge > myAge;",
     "new": "  return theirAge < myAge;",
     "tests": [
@@ -231,7 +231,7 @@
   },
   {
     "name": "WOD7-unheard-age-decides",
-    "file": "src/world/wodShared.js",
+    "file": "src/world/worldOfDaggerfall/wodShared.js",
     "old": "  if (!Number.isFinite(theirAge) || !Number.isFinite(myAge)) return false;\n",
     "new": "",
     "tests": [
@@ -240,7 +240,7 @@
   },
   {
     "name": "WOD7-age-unclamped",
-    "file": "src/world/wodShared.js",
+    "file": "src/world/worldOfDaggerfall/wodShared.js",
     "old": "    out.push([s, Math.max(0, Math.min(WOD_AGE_MAX, age))]);",
     "new": "    out.push([s, age]);",
     "tests": [

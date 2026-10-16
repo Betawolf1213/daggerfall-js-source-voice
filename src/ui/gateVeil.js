@@ -20,7 +20,7 @@
 import { audio as defaultAudio } from '../systems/audio.js';
 import { SOUND } from '../systems/soundClips.js';
 import { GateVeilRenderer, veilAt, VEIL_CLOSE_S, VEIL_OPEN_S, VEIL_HOLD_MAX_S, VEIL_FRONT_IN, VEIL_FRONT_OUT } from '../render/gateVeil.js';
-import { FIRE_CAST_ID } from '../world/gateBoss.js';
+import { FIRE_CAST_ID } from '../world/gate/gateBoss.js';
 import { loseGlContext, onPageGone } from '../render/glRelease.js';   // GL-LEAK: its context let go with it, and as the page goes
 import { SdVeilRenderer, SD_VEIL_MODE, sdVeilQuarters } from '../render/sdVeil.js';
 import { midiNote } from '../systems/gate/gateScore.js';

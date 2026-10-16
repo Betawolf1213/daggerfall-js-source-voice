@@ -43,7 +43,7 @@ than 50 m deep (as deep as 346 m). Standing them on their lowest corner raised 8
 than 100 m (as much as 510), each then standing its whole height, up to 377 m, out of a pile meant to bury most of it.
 WOD-BUSH reached main with #513 at 21:50 (UTC-4) on 2026-10-01; the thread is from the same night.
 
-**The fix** (`world/wodLocationObjects.js` `isWodShrub`, `WOD_ROCK_SITES`; `scenes/world.js`, the WoD loop): only the
+**The fix** (`world/worldOfDaggerfall/wodLocationObjects.js` `isWodShrub`, `WOD_ROCK_SITES`; `scenes/world.js`, the WoD loop): only the
 shrub is stood - a 60610 of a site the mod names 'Rocks' or 'Mountains' keeps the mod's height, as every other rock
 piece does. The mod's own site names part the layouts exactly (every 'Rocks' or 'Mountains' instance stands a
 `WOD_Rocks_` or `WOD_Mountain_` layout, and no other instance does), and Mining's rock pieces (PROF2's `rockPick`) read

@@ -52,7 +52,7 @@ mesh reaches further than its centre).
 
 The gate does not move: its spot is a function of the day and the map files alone, so every client rolls the same one
 (GATE-SEEN), where the mod's sites land with region packs fetched at their own pace. So the ROCK yields, ROADS-CLEAR's
-shape (`world/gateClearance.js`):
+shape (`world/gate/gateClearance.js`):
 
 - **the clearing**: 24 m about the gate's foot - its plinth (8.2) and horns, the way home's landing (10), the Broker's
   post (~12.4), and the room to walk round them;

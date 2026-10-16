@@ -1,22 +1,22 @@
 // VERGE1 (2026-10-07, Mac: "Making sure objects, like trees, avoid pathways and roads. Currently they slightly
 // overlap") - CLEAR ROADSIDES: a wilderness flat stands only where the disc of its widest picture - its classic
 // picture's half width, or the crown Low Poly Trees stands for it at the tree's own scale - touches no road or track
-// (world/roadVerge.js); the herbs and the veins on the stone keep their glow off them; World of Daggerfall's flats count
+// (world/road/roadVerge.js); the herbs and the veins on the stone keep their glow off them; World of Daggerfall's flats count
 // their pictures; and the painter's path mask names a track laid over dirt (AUDIT FOREST1 F8, which never held).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { roadRoom, vergeClear, lptCrownOf, natureReach, PATH_HALF_M } from '../src/world/roadVerge.js';
+import { roadRoom, vergeClear, lptCrownOf, natureReach, PATH_HALF_M } from '../src/world/road/roadVerge.js';
 import { LPT_CROWNS } from '../src/world/lptCrowns.js';
 import { bakeLptCrowns, lptCrowns } from '../tools/bakeLptCrowns.mjs';
 import { lptVariety } from '../src/world/lowPolyTrees.js';
-import { MAP_W, MAP_H, DIR } from '../src/world/roadNetwork.js';
+import { MAP_W, MAP_H, DIR } from '../src/world/road/roadNetwork.js';
 import { N, S, E, NE } from '../src/systems/travel/travelPaths.js';
-import { boxNearPath, UNITS_PER_METRE } from '../src/world/roadClearance.js';
-import { paintRoads, TILE } from '../src/world/roadPainter.js';
-import { layoutNature, natureStandsAt } from '../src/world/terrainNature.js';
-import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { boxNearPath, UNITS_PER_METRE } from '../src/world/road/roadClearance.js';
+import { paintRoads, TILE } from '../src/world/road/roadPainter.js';
+import { layoutNature, natureStandsAt } from '../src/world/terrain/terrainNature.js';
+import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 import { standPatches, PATCH_MARK } from '../src/scenes/herbHost.js';
 import { standMineNodes, standMotherlodes, MINE_MARKS, MOTHERLODE_MARK } from '../src/scenes/mineHost.js';
 import { herbPatches } from '../src/net/nodeLaw.js';

@@ -12,8 +12,8 @@ import { GATE_STATE_EMPTY, foldGate } from '../src/net/gateLink.js';
 import { validGateOut } from '../src/net/wire.js';
 import {
   bossAct, bossGlow, BOSS_CUES, GLOW_RANGE, FALL_MS, THUD_AT_MS, FALL_SINK_M, CORPSE_SCALE, WAKE_LEAD_MS, WAKE_FLARE_MS, LOW_HEALTH, sputter, emberColor,
-} from '../src/world/gateBoss.js';
-import { courtToDungeon } from '../src/world/gateArena.js';
+} from '../src/world/gate/gateBoss.js';
+import { courtToDungeon } from '../src/world/gate/gateArena.js';
 import {
   createGateCourt, courtPhaseCard, courtSaySeconds, COURT_READ_S, COURT_WRATH_TEXT, WRATH_WARN_AT_MS, ROAR_AFTER_MS, SPEW_AT_MS, FALL_CARD_MS,
   FALL_FLASH_MS, FALL_SHAKE, COLUMN_BURSTS, COLUMN_STEP_MS, WAKE_LATE_MS, SPUTTER_EVERY_MS, WRATH_LIGHT_RANGE,

@@ -12,8 +12,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as producer from '../src/world/roadsProducer.js';
-import { paintRoads, pathCorners, TILE } from '../src/world/roadPainter.js';
-import { MAP_W, DIR_DELTA } from '../src/world/roadNetwork.js';
+import { paintRoads, pathCorners, TILE } from '../src/world/road/roadPainter.js';
+import { MAP_W, DIR_DELTA } from '../src/world/road/roadNetwork.js';
 
 const { loadModRoads, MOD_ROADS } = producer;
 const raw = (k) => new Uint8Array(readFileSync(new URL(MOD_ROADS[k])));

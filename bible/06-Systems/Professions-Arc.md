@@ -88,8 +88,8 @@ src/net/nodeLaw.js (the nodes). Appendix B lists them in one place.
 | Repair | `src/systems/repairService.js` | Repair kits (Smithing) |
 | Climates & Calories | `src/systems/survival/` - camps, the Skillet, cooking at fires and hearths, foraging, corpse meat; templates 530-541 (Camping Equipment, Rations, Apple, Orange, Bread, Raw Fish, Cooked Fish, Meat, Raw Meat, Waterskin, Skillet, Campfire Kit) | Cooking's ground; Hunting's butchery |
 | Deep Waters fish | templates 9001-9007 (Longnose Butterflyfish, Largemouth Bass, Canary Rockfish, Crucian Carp, Mackerel, White Zebra Angelfish, Juvenile Finulon), each with its waters (`PASSIVE_FISH_SPECIES`, `src/world/passiveFish.js`: Tropical, Temperate, Swamp, Desert, OpenOcean, Cold) | Fishing's haul (the species named; the Stores keep Raw Fish, 5.2) |
-| World of Daggerfall | 209,436 rock-field prefabs among 227,938 (`03-World/World-Of-Daggerfall.md`); WOD7's shared camps (`src/world/wodShared.js`) | Mining's anchors; bounties |
-| Terrain nature | `src/world/terrainNature.js` | Logging's and Herbalism's anchors |
+| World of Daggerfall | 209,436 rock-field prefabs among 227,938 (`03-World/World-Of-Daggerfall.md`); WOD7's shared camps (`src/world/worldOfDaggerfall/wodShared.js`) | Mining's anchors; bounties |
+| Terrain nature | `src/world/terrain/terrainNature.js` | Logging's and Herbalism's anchors |
 | Climates | `mapsFile.js`: Ocean, Desert, Desert2, Mountain, Rainforest, Swamp, Subtropical, MountainWoods, Woodlands, HauntedWoodlands | Every native table (section 4) |
 | Dyes | `src/systems/item/itemDye.js` | Outfitting |
 | Bulletin boards | `BULLETIN_BOARD_MODEL_ID` (`src/world/rmbLayout.js`), `src/systems/bulletinBoard.js` (ROAD A9) | The Notice Board (10.1) |
@@ -402,7 +402,7 @@ DECIDED (Mac: "tree chopping, picking up ingredients, fishing, etc. Active playe
 
 **What the net brings up** (Fishing): the species is Deep Waters' for the water (FACT, `PASSIVE_FISH_SPECIES`:
 Tropical, Temperate, Swamp, Desert, OpenOcean, Cold), the pixel's climate choosing the waters by Deep Waters' own
-`climateToBiome` (`src/world/underwaterDecorations.js`, imported, not re-typed); the sea adds a **Pearl** (DFU 77) in 1
+`climateToBiome` (`src/world/underwater/underwaterDecorations.js`, imported, not re-typed); the sea adds a **Pearl** (DFU 77) in 1
 haul of 50 (Pearl Diver x3) and a **Slaughterfish** in 1 of 100 - the heaviest haul - which yields Slaughterfish
 Scales. **The haul lands in the Stores as Raw Fish** - one material, tier 1, 1 Mark - the species named in the toast
 ("+2 Largemouth Bass, as Raw Fish"). Withdrawn to the pack, Raw Fish becomes the template Foraging's own code would
@@ -2088,7 +2088,7 @@ Mac's instruction - "make the decisions ... This is your baby"), and what was fo
   `PINE_WOOD`); an unconfirmed Rainforest or Subtropical pixel stands its Pine and nothing past it - still no Teak on
   anyone's word. The Court's writ table names that Pine. The Mountain and Mountain Woods are untouched.
 - **Where a tree stands** (section 6: "a tree flat for a tree"). FACT: the streaming world lays out Daggerfall's own
-  nature flats per pixel from a seeded roll (`world/terrainNature.js` layoutNature - every client the same forest), one
+  nature flats per pixel from a seeded roll (`world/terrain/terrainNature.js` layoutNature - every client the same forest), one
   merged billboard batch per (archive, record) (`scenes/world.js`), and nothing kept which flat was a tree. FACT: World
   of Daggerfall names the nature records (`vendor/world-of-daggerfall/Scripts/LocationHelper.cs` billboards: 504's trees
   12-18, 25 and 30, its trunks 19-20, its logs 31; each climate archive's own), and a winter archive is its summer

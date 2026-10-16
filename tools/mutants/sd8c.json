@@ -388,7 +388,7 @@
   },
   {
     "name": "SD8C-the-pillars-left-off",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "  out.set(pillars, floors.length);\n",
     "new": "",
     "tests": [
@@ -397,7 +397,7 @@
   },
   {
     "name": "SD8C-a-pillar-out-of-its-square",
-    "file": "src/world/sdRealm.js",
+    "file": "src/world/superDungeon/sdRealm.js",
     "old": "  const px = SD_ARENA.x + Math.cos(a) * SD_PILLAR_R, pz = SD_ARENA.z + Math.sin(a) * SD_PILLAR_R, w = SD_PILLAR_W / 2;",
     "new": "  const px = SD_ARENA.x + Math.cos(a) * SD_PILLAR_R, pz = SD_ARENA.z + Math.sin(a) * SD_PILLAR_R, w = SD_PILLAR_W;",
     "tests": [

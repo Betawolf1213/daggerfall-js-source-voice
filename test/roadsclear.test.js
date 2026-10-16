@@ -2,19 +2,19 @@
 // sites and pieces, and the wilderness camps, stand off the painted road network. The mod's own test
 // (LocationLoader.cs:146-151) asks only the site's own pixel for a road or track; the shipped layouts reach far
 // past it (mountains ~1.9 km, large rock fields ~500 m: 41,349 of 114,087 sites spill into the next pixel), and a
-// camp is pitched wherever its ring lands. world/roadClearance.js asks the footprint instead.
+// camp is pitched wherever its ring lands. world/road/roadClearance.js asks the footprint instead.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { segmentHitsRect, boxNearPath, pointNearPath, wodSiteClear, wodPiecewise, PATH_HALF_WIDTH, UNITS_PER_METRE, WOD_PIECE_ROAD_CLEAR } from '../src/world/roadClearance.js';
+import { segmentHitsRect, boxNearPath, pointNearPath, wodSiteClear, wodPiecewise, PATH_HALF_WIDTH, UNITS_PER_METRE, WOD_PIECE_ROAD_CLEAR } from '../src/world/road/roadClearance.js';
 import { playerOnPath, pathsDataPoint, N, E, S, W, NE, MP_WORLD_UNITS, HALF_MP_WORLD_UNITS } from '../src/systems/travel/travelPaths.js';
-import { MAP_W, MAP_H } from '../src/world/roadNetwork.js';
-import { LocationSession, pickLocations } from '../src/world/wodLocationLoader.js';
-import { decodeRegionPack } from '../src/world/wodLocationPack.js';
-import { loadLocationPrefab } from '../src/world/wodLocationData.js';
+import { MAP_W, MAP_H } from '../src/world/road/roadNetwork.js';
+import { LocationSession, pickLocations } from '../src/world/worldOfDaggerfall/wodLocationLoader.js';
+import { decodeRegionPack } from '../src/world/worldOfDaggerfall/wodLocationPack.js';
+import { loadLocationPrefab } from '../src/world/worldOfDaggerfall/wodLocationData.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rd = (p) => readFileSync(join(ROOT, p), 'utf8');

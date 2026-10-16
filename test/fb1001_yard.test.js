@@ -22,7 +22,7 @@ import { DECAL_FLOATS } from '../src/combat/bloodDecals.js';
 import { Collider } from '../src/player/collider.js';
 import { accountDecor, SESSION_KEY } from '../src/net/accountClient.js';
 import { RMB_TILE_SIDE } from '../src/world/locationEntrance.js';
-import { DIR } from '../src/world/roadNetwork.js';
+import { DIR } from '../src/world/road/roadNetwork.js';
 import { standService, sessionStorageOf, T0 } from './accountDb.mjs';
 import { realmAt } from './realmSeat.mjs';
 import { fakeDoc, fakeWin, fakeBlocks, rmb, TOWN, settle, ACTIONS } from './decorFakes.mjs';

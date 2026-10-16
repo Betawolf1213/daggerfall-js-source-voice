@@ -75,7 +75,7 @@ the gathering nodes' door (`natureStandsAt`, the herb and mine hosts) ask it:
 ## ONE FUNCTION OF WORLD POSITION, INSIDE THE KERNEL
 
 The shaper rides `sampleKernel`'s new `landform` argument
-(`world/terrainSampler.js`), so every reader of the kernel takes the same
+(`world/terrain/terrainSampler.js`), so every reader of the kernel takes the same
 ground: the pixel's own samples, the ghost rows its edge normals read (EV4), a
 promotion's restride (PERF-EXT26, on the worker or this thread), the gate's
 beacon (GATE-SEEN, `gateGroundAt`). Nothing the shaper reads is a pixel's own:
@@ -891,7 +891,7 @@ Roads network, in scratch, with the slice's own functions:
   row on is Mac's call (AUDIT LANDFORMS A2). Moot since 2026-10-08: the owner retired
   OW-MOUNTAINS in the Wrothgarian zone's merge (MOUNTAINS WALKABLE - openStepBlocked
   refuses no step, `11-Multiplayer/Wild-Zone.md` section 19).
-- Come Sail Away's `Terrain.SampleHeight` (world/terrainSurface.js
+- Come Sail Away's `Terrain.SampleHeight` (world/terrain/terrainSurface.js
   `unityHeightmapStep`) still caps the ground at DFU's 1,923.75 m, the one
   reader that keeps a ceiling at 1; 0.85% of land samples stand over it, where
   no boat goes (AUDIT LANDFORMS N1).

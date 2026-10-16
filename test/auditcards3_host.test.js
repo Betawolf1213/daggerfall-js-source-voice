@@ -6,9 +6,9 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fakeDoc } from './decorFakes.mjs';
 import { createCardTableHud } from '../src/ui/cardTableHud.js';
-import { CardScene, tablePlaces } from '../src/world/cardScene.js';
-import { tableFrame, cardTableSeats } from '../src/world/cardTables.js';
-import { PUSH_S } from '../src/world/cardMotion.js';
+import { CardScene, tablePlaces } from '../src/world/card/cardScene.js';
+import { tableFrame, cardTableSeats } from '../src/world/card/cardTables.js';
+import { PUSH_S } from '../src/world/card/cardMotion.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 
@@ -58,7 +58,7 @@ test('AUDIT CARDS-3 E-N5 and D11: a friendly game\'s chips refuse no save; the c
   assert.match(wm, /cardOnlineFrame,   \/\/ CARDS5: the relay's card table's frames \(world\.js online\.onHoldem\)\n\s*\/\*\* CARDS2b: the seat the pose says/);
   const w = read('src/scenes/world.js');
   assert.match(w, /from '\.\.\/systems\/livingWorld\/livingTown\.js';   \/\/ LW2: the living world's streets/);
-  assert.match(w, /from '\.\.\/world\/cardRegulars\.js';   \/\/ CARDS4b: a seated regular's line over his head\n/);
+  assert.match(w, /from '\.\.\/world\/card\/cardRegulars\.js';   \/\/ CARDS4b: a seated regular's line over his head\n/);
   const online = read('src/net/online.js');
   assert.match(online, /rate, or no open socket\. \*\/\n\s*sendRoll\(spec/, 'sendRoll\'s doc over sendRoll');
 });

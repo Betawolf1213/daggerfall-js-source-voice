@@ -54,7 +54,7 @@
 // `sampleHeight(worldPosition)` (Terrain.SampleHeight: the height over the
 // terrain's own y, at the precision Unity's 16-bit heightmap holds it - the
 // node law's line is the sea's own height, which only that precision puts the
-// flat sea under: FIELD-CSA2, world/terrainSurface.js terrainSampleHeightAt).
+// flat sea under: FIELD-CSA2, world/terrain/terrainSurface.js terrainSampleHeightAt).
 // The host hands the same object for the same pixel every time, so `==` on it
 // is Unity's.
 //
@@ -154,7 +154,7 @@ import { quatEuler } from '../../world/unityAnimator.js';
 import { quatLookRotation, quatRotate, quatAngleAxis, quatMultiply, quatSlerp } from '../../world/quat.js';
 import { transferAll, canHoldAmount } from '../inventory.js';
 import { BOAT_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE, mintBoatItem, boatItemName, boatItemMessage, mintDeed } from './comeSailAwayItems.js';   // CSA-H: the two items; SHIP-PACK: a ship's deed given back
-import { NO_WATER_LEVEL } from '../../world/deepWaterSwim.js';
+import { NO_WATER_LEVEL } from '../../world/deepWater/deepWaterSwim.js';
 import { invertAffine } from '../../world/prefabColliders.js';
 import { buildWaveMesh, stepWaveFrame, waveFrameTimeOf, isDayHour, WAVE_FRAME_COUNT, WAVE_SCALE } from './comeSailAwayWaves.js';
 import { monthNames } from '../gameDate.js';   // CSA-I: WorldTime.Now.MonthName, a marker's label (L10N3d: in the player's language, as DFU's GetMonthName reads it)
@@ -3263,7 +3263,7 @@ export function createComeSailAwayRuntime(deps) {
 /** PackedCargoes' key: the item's UID as the save writes it (a JSON object's key is a string). */
 const cargoKey = (uid) => String(uid);
 /** CSA-I: the bundle StartWaterwalking assigns (5983) - Iliac Puddle No More's swim knows it by name
- *  (world/deepWaterSwim.js isBoatEffectBundle) - its one effect's key (WaterWalkingSilent.EffectKey), and the other
+ *  (world/deepWater/deepWaterSwim.js isBoatEffectBundle) - its one effect's key (WaterWalkingSilent.EffectKey), and the other
  *  bundle EndWaterwalking takes off (6021). */
 export const BOAT_EFFECT_BUNDLE = "I'm On A Boat";
 /** CSA-J: the component as Unity's Object.ToString() names it in the receiver's error - Init's GameObject, named for

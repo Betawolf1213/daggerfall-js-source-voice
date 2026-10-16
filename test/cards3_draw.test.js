@@ -10,7 +10,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { parseCard } from '../src/net/cardLaw.js';
-import { CARD_W, CARD_L, CARD_T, CHIP_R, CHIP_T, CHIP_VALUES } from '../src/world/cardMotion.js';
+import { CARD_W, CARD_L, CARD_T, CHIP_R, CHIP_T, CHIP_VALUES } from '../src/world/card/cardMotion.js';
 import {
   CARD_ARCHIVE, CARD_RECORD, CARD_CELL_W, CARD_CELL_H, ATLAS_W, ATLAS_H, CELL_BACK, CELL_STOCK, CHIP_SIDES,
   atlasCell, chipCell, cellUv, cardModel, chipModel, cardMatrix, createCardTableDraw,

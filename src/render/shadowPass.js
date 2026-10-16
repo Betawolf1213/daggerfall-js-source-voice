@@ -275,7 +275,7 @@ export const SHADOW_POINT_BIAS = 0.04;
 /** The reserved texture units (CLOUD_SHADOW_UNIT is 15). */
 export const SHADOW_SUN_UNIT = 13;
 export const SHADOW_POINT_UNIT = 14;
-/** EL6: Daggerfall's lights archive (world/cityLights.js LIGHTS_ARCHIVE) - the
+/** EL6: Daggerfall's lights archive (world/city/cityLights.js LIGHTS_ARCHIVE) - the
  *  torch, campfire, candle and lantern flats. THEY ARE THE LANTERNS: a flame
  *  flat drawn from its own light's position is the nearest occluder in every
  *  direction and shadowed a wedge of the room ("some shadows, like the

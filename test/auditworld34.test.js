@@ -27,7 +27,7 @@ import { isWorldRoom, roomOf, WORLD_MIN_MS, PIXEL_UNITS, CLOSE_POLICY } from '..
 import * as relay from '../server/src/relay.js';
 import { RELAY_VERSION } from '../src/net/wire.js';   // LOCALDEV1: the worker entry exports handlers alone
 import { roomKeyFor, OnlineSession } from '../src/net/online.js';
-import { MAIN_STORY_DUNGEON_IDS, isMainStoryDungeon } from '../src/world/dungeonTextures.js';
+import { MAIN_STORY_DUNGEON_IDS, isMainStoryDungeon } from '../src/world/dungeon/dungeonTextures.js';
 import { useSmallerDungeon, dungeonSizeFor, onlineDungeonSize, SMALLER_DUNGEONS_STATE } from '../src/world/smallerDungeons.js';
 import { fakeRoom } from './fakeRoom.mjs';
 import { fakeSocketClass } from './fakeSocket.mjs';

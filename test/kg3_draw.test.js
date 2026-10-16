@@ -12,10 +12,10 @@ import {
   GAMBIT_ATLAS_KEYS, GAMBIT_ATLAS_COLS, GAMBIT_CELL_W, GAMBIT_CELL_H, GAMBIT_ATLAS_W, GAMBIT_ATLAS_H, GAMBIT_CARD_SHARE, GAMBIT_INKS,
   gambitAtlasCell, gambitCellUv, pieceAtlasKey, matModel, paintGambitMat, createGambitTableDraw, GAMBIT_ARCHIVE,
 } from '../src/render/gambitTableDraw.js';
-import { CARD_TABLE_W, CARD_TABLE_D, CARD_TABLE_RAIL } from '../src/world/cardTableProp.js';
+import { CARD_TABLE_W, CARD_TABLE_D, CARD_TABLE_RAIL } from '../src/world/card/cardTableProp.js';
 import { KG_COLS, KG_ROWS, KG_ROSTER, KG_TILE, autoFill, KG_POINT_BUDGET } from '../src/net/kingsGambit.js';
 import { GAMBIT_TIERS, dealRegular } from '../src/systems/gambit/gambitPatrons.js';
-import { CARD_W } from '../src/world/cardMotion.js';
+import { CARD_W } from '../src/world/card/cardMotion.js';
 import { xorshift } from '../tools/kgMeasure.mjs';
 
 const near = (a, b, eps = 1e-9) => Math.abs(a - b) < eps;

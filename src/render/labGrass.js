@@ -637,7 +637,7 @@ export const GRASSLIT_VS_EDITS = Object.freeze([
     from: '  vec4 aInst = vec4(uCellFrame.xy + aPA.xy * uCellSize,\n',
     to: '  // GRASS-LIT2: THE HEIGHT LANE\'S SIXTEEN BITS - the height\'s high six, then the ground normal\'s x and z, five each\n'
       + '  // (codes 0..30, 15 the level, stored XOR 15 so a zero word - a pad, a cleared slot - is level; writeSlot): the terrain\'s\n'
-      + '  // own normal under the root (world/terrainSurface.js surfaceNormalAt)\n'
+      + '  // own normal under the root (world/terrain/terrainSurface.js surfaceNormalAt)\n'
       + '  uint hw = uint(aPA.w * 65535.0 + 0.5);\n'
       + `  vec2 slope = (vec2(float(((hw >> 5u) & 31u) ^ ${GRASS_SLOPE_STEPS}u), float((hw & 31u) ^ ${GRASS_SLOPE_STEPS}u)) - ${GRASS_SLOPE_STEPS.toFixed(1)}) * ${GRASS_SLOPE_SPAN / GRASS_SLOPE_STEPS};   // AUDIT A3: stored ^ 15, so a zero word is level\n`
       + '  vec3 gN = vec3(slope.x, sqrt(max(1.0 - dot(slope, slope), 0.0)), slope.y);\n'

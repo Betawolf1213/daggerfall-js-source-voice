@@ -19,7 +19,7 @@ import { BAYER_GLSL, BAYER_MEAN, DITHER_GLSL } from '../src/render/orderedDither
 import { SHADOW_LIGHT_FLATS, SHADOW_POINT_CASTERS } from '../src/render/shadowPass.js';
 import { EL_LANE, EL_MESH_FS, EL_BB_FS, EL_TERRAIN_FS, EL_CHAR_FS, EL_FAR_RING_FS } from '../src/render/enhancedLighting.js';
 import { Renderer, WORLD_FRAME } from '../src/render/renderer.js';
-import { LIGHTS_ARCHIVE } from '../src/world/cityLights.js';
+import { LIGHTS_ARCHIVE } from '../src/world/city/cityLights.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(root, p), 'utf8');

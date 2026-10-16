@@ -7,7 +7,7 @@ import { perlinNoise } from '../src/world/perlin.js';
 import {
   cubicInterpolator, getNoise, generateSamples,
   HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, SCALED_OCEAN_ELEVATION, TERRAIN_SIZE,
-} from '../src/world/terrainSampler.js';
+} from '../src/world/terrain/terrainSampler.js';
 
 const ARENA2 = process.env.ARENA2_PATH;
 const skipReal = !ARENA2 || !existsSync(ARENA2)
@@ -187,7 +187,7 @@ test('terrain: umRandom matches Unity.Mathematics semantics', async () => {
 });
 
 test('terrain: marching-squares lookup and tile assignment', async () => {
-  const { createLookupTable, assignTiles } = await import('../src/world/terrainTiles.js');
+  const { createLookupTable, assignTiles } = await import('../src/world/terrain/terrainTiles.js');
   const table = createLookupTable();
   // Base tiles: uniform interiors land on plain records.
   assert.equal(table[0], 0);                 // all-water
@@ -214,7 +214,7 @@ test('terrain: marching-squares lookup and tile assignment', async () => {
 
 test('terrain: blend flattening and location tile origin', async () => {
   const { blendLocationTerrain, getLocationTerrainTileOrigin, bilinearInterpolator } =
-    await import('../src/world/terrainTiles.js');
+    await import('../src/world/terrain/terrainTiles.js');
   // Bilinear corner form used for blend-space strength.
   approx(bilinearInterpolator(0, 0, 0, 1, 0.5, 0.5), 0.25);
 
@@ -239,7 +239,7 @@ test('terrain: Daggerfall city on terrain - integration pins', { skip: skipReal 
   const { BlocksFile } = await import('../src/formats/blocksFile.js');
   const MF = await import('../src/formats/mapsFile.js');
   const { setLocationTiles, calcAvgMaxHeight, blendLocationTerrain, generateTileData, assignTiles } =
-    await import('../src/world/terrainTiles.js');
+    await import('../src/world/terrain/terrainTiles.js');
   const blocks = new BlocksFile();
   blocks.load(new Uint8Array(readFileSync(join(ARENA2, 'BLOCKS.BSA'))));
   const maps = new MF.MapsFile();
@@ -296,7 +296,7 @@ test('terrain: Daggerfall city on terrain - integration pins', { skip: skipReal 
 test('terrain: full location corpus - all 15251 stamp clean, rects stay interior', { skip: skipReal }, async () => {
   const { BlocksFile } = await import('../src/formats/blocksFile.js');
   const MF = await import('../src/formats/mapsFile.js');
-  const { setLocationTiles } = await import('../src/world/terrainTiles.js');
+  const { setLocationTiles } = await import('../src/world/terrain/terrainTiles.js');
   const blocks = new BlocksFile();
   blocks.load(new Uint8Array(readFileSync(join(ARENA2, 'BLOCKS.BSA'))));
   const maps = new MF.MapsFile();
@@ -347,7 +347,7 @@ test('terrain: full location corpus - all 15251 stamp clean, rects stay interior
 // ---------------------------------------------------------------------------
 
 test('terrain: makeTerrainKey and nextIntRange semantics', async () => {
-  const { makeTerrainKey } = await import('../src/world/terrainNature.js');
+  const { makeTerrainKey } = await import('../src/world/terrain/terrainNature.js');
   const { UMRandom } = await import('../src/formats/umRandom.js');
   // Verbatim ((short)y << 16) + (short)x, signed wrap included.
   assert.equal(makeTerrainKey(207, 213), 13959375);
@@ -363,7 +363,7 @@ test('terrain: makeTerrainKey and nextIntRange semantics', async () => {
 });
 
 test('terrain: nature scatter rules - rect, beach, tile classes, slope sink', async () => {
-  const { layoutNature } = await import('../src/world/terrainNature.js');
+  const { layoutNature } = await import('../src/world/terrain/terrainNature.js');
   const hDim = HEIGHTMAP_DIMENSION;
   // Flat land well above the beach: normalized 0.1 -> 192.375 world raw (1539 * 1.25, the game scene's TerrainScale - TERRAIN-SCALE1).
   const flat = new Float32Array(hDim * hDim).fill(0.1);
@@ -409,8 +409,8 @@ test('terrain: nature on Daggerfall environs - integration pins', { skip: skipRe
   const { BlocksFile } = await import('../src/formats/blocksFile.js');
   const MF = await import('../src/formats/mapsFile.js');
   const { setLocationTiles, calcAvgMaxHeight, blendLocationTerrain, generateTileData, assignTiles } =
-    await import('../src/world/terrainTiles.js');
-  const { layoutNature } = await import('../src/world/terrainNature.js');
+    await import('../src/world/terrain/terrainTiles.js');
+  const { layoutNature } = await import('../src/world/terrain/terrainNature.js');
   const blocks = new BlocksFile();
   blocks.load(new Uint8Array(readFileSync(join(ARENA2, 'BLOCKS.BSA'))));
   const maps = new MF.MapsFile();
@@ -466,7 +466,7 @@ test('WATER1: a sea clamped to the ocean elevation is WATER through generateTile
   // 27.2f. Every clamped sea sample fell through to the beach band, so
   // an open ocean was 16641 dirt corners and not one water tile -
   // found by the water lab's first render, where the sea was sand.
-  const { generateTileData } = await import('../src/world/terrainTiles.js');
+  const { generateTileData } = await import('../src/world/terrain/terrainTiles.js');
   const sea = new Float32Array(HEIGHTMAP_DIMENSION * HEIGHTMAP_DIMENSION).fill(SCALED_OCEAN_ELEVATION / MAX_TERRAIN_HEIGHT);
   assert.ok(sea[0] * MAX_TERRAIN_HEIGHT > SCALED_OCEAN_ELEVATION, 'the double product overshoots the threshold - the trap this pins');
   const td = generateTileData(sea, 500, 250);
@@ -481,7 +481,7 @@ test('WATER1: a sea clamped to the ocean elevation is WATER through generateTile
   let water2 = 0;
   for (const v of td2) if (v === 0) water2++;
   assert.equal(water2, 0, 'a step above the sea is land');
-  const src = readFileSync(new URL('../src/world/terrainTiles.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/world/terrain/terrainTiles.js', import.meta.url), 'utf8');
   // LW-DRY: the arithmetic one home, the tile job's and the living world's dry ground's (world/dryGround.js) - PIN MOVED
   assert.match(src, /export const sampleHeight = \(sample\) => Math\.fround\(sample \* MAX_TERRAIN_HEIGHT\);/, 'the height is the reference\'s float');
   assert.match(src, /export const isWaterHeight = \(height\) => height <= SCALED_OCEAN_ELEVATION;/, 'against the reference\'s float threshold');
@@ -490,7 +490,7 @@ test('WATER1: a sea clamped to the ocean elevation is WATER through generateTile
   assert.match(src, /tileData\[index\] = tileDataAt\(sampleHeight\(heightmapData\[hy \+ hx \* hDim\]\), x, y, mapPixelX, mapPixelY\);/, 'the tile job\'s own');
   assert.match(src, /export function tileDataAt\(height, x, y, mapPixelX, mapPixelY\) \{\n\s*if \(isWaterHeight\(height\)\) return WATER;/, 'the corner\'s water, first');
   // AUDIT LW-DRY: the nature scatter's three beach reads go through the one home - the product written out nowhere else
-  const nature = readFileSync(new URL('../src/world/terrainNature.js', import.meta.url), 'utf8');
+  const nature = readFileSync(new URL('../src/world/terrain/terrainNature.js', import.meta.url), 'utf8');
   // PIN MOVED (AUDIT LANDFORMS II H2): the beach line asked of DFU's own blend where the terrain job hands one (a location's
   // pixel with the Landforms row on, `beach`), the samples' own else - the same four reads through the one home
   assert.equal((nature.match(/sampleHeight\(\((?:opts\.)?beach \?\? heightmapData\)\[hy \+ hx \* hDim\]\)/g) || []).length, 4, 'the scatter reads the sample\'s height as the tile job does (ECOTONE1: and the border tile\'s DFU law, dfuTiles, the fourth)');

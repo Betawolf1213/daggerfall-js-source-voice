@@ -10,7 +10,7 @@
   },
   {
     "name": "AUDIT-SS-the-fires-box-too-deep",
-    "file": "src/world/gateArena.js",
+    "file": "src/world/gate/gateArena.js",
     "old": "export const COURT_DOOR_DEPTH = 0.3;",
     "new": "export const COURT_DOOR_DEPTH = 2.45;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "AUDIT-SS-the-portal-not-the-courts",
-    "file": "src/world/gateArena.js",
+    "file": "src/world/gate/gateArena.js",
     "old": "    normal: { x: 0, y: 0, z: 1 },\n    court: true,",
     "new": "    normal: { x: 0, y: 0, z: 1 },",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "AUDIT-SS-a-buildings-record-carries-a-bound-piece",
-    "file": "src/world/interiorShared.js",
+    "file": "src/world/interior/interiorShared.js",
     "old": "r: peerHanded(t.items).map((it) => ({ ...it })),",
     "new": "r: t.items.map((it) => ({ ...it })),",
     "tests": [

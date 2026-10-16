@@ -11,12 +11,12 @@ import { WoodsFile, MAP_WIDTH, MAP_HEIGHT } from '../src/formats/woodsFile.js';
 import { MapsFile } from '../src/formats/mapsFile.js';
 import { worldDataDoor, setWorldDataDoor } from '../src/formats/worldDataDoor.js';
 import { CLIMATES } from '../src/formats/mapsTables.js';
-import { generateSamples, kernelTerms, HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE, BASE_HEIGHT_SCALE, NOISE_MAP_SCALE } from '../src/world/terrainSampler.js';
+import { generateSamples, kernelTerms, HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE, BASE_HEIGHT_SCALE, NOISE_MAP_SCALE } from '../src/world/terrain/terrainSampler.js';
 import { createLandforms, landformSites, hillsAt, cosPi, sinPi, expNeg, LANDFORM_KNEE, LANDFORM_FLOOR, LANDFORM_DIALS } from '../src/world/landforms.js';
-import { locationFootprintRect } from '../src/world/terrainTiles.js';
-import { generatePixelTerrain } from '../src/world/terrainGen.js';
-import { TerrainGenClient } from '../src/world/terrainGenClient.js';
-import { DIR } from '../src/world/roadNetwork.js';
+import { locationFootprintRect } from '../src/world/terrain/terrainTiles.js';
+import { generatePixelTerrain } from '../src/world/terrain/terrainGen.js';
+import { TerrainGenClient } from '../src/world/terrain/terrainGenClient.js';
+import { DIR } from '../src/world/road/roadNetwork.js';
 import { syntheticWoodsBytes, network } from './landformWorld.mjs';
 
 const H = HEIGHTMAP_DIMENSION;
@@ -314,7 +314,7 @@ test('AUDIT LANDFORMS III A7: a land\'s climate is read off its pixel at the sha
 });
 
 /** the ground's own sources - the kernel, the landforms, the jobs that run them, a town's tiles and blend */
-const GROUND = ['src/world/terrainSampler.js', 'src/world/landforms.js', 'src/world/terrainGen.js', 'src/world/terrainTiles.js'];
+const GROUND = ['src/world/terrain/terrainSampler.js', 'src/world/landforms.js', 'src/world/terrain/terrainGen.js', 'src/world/terrain/terrainTiles.js'];
 const ENGINE_OWN = new Set(['sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'atan2', 'sinh', 'cosh', 'tanh', 'asinh', 'acosh', 'atanh', 'exp', 'expm1', 'log', 'log1p', 'log2', 'log10', 'pow', 'cbrt', 'hypot']);
 const walk = (n, f) => { if (!n || typeof n.type !== 'string') return; f(n); for (const k of Object.keys(n)) { const v = n[k]; if (Array.isArray(v)) v.forEach((c) => walk(c, f)); else if (v && typeof v.type === 'string') walk(v, f); } };
 

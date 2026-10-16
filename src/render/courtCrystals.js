@@ -133,7 +133,7 @@ export const CRYSTAL_FS = HEAD + `in vec3 vNrm;
 in vec3 vLocal;
 in vec3 vWorld;
 uniform vec3 uEye;
-uniform vec3 uColor;    // his aspect's colour (world/gateBoss.js crystalColor)
+uniform vec3 uColor;    // his aspect's colour (world/gate/gateBoss.js crystalColor)
 uniform float uHp;      // its health's share, 0..1
 uniform float uFlash;   // struck: 1 at the blow, falling
 uniform float uSeed;

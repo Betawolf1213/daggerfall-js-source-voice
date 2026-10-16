@@ -19,7 +19,7 @@ import {
 } from '../src/scenes/mineHost.js';
 import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { FT } from '../src/systems/foraging/foragingLaw.js';
-import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 import { REFUSALS } from '../src/net/accountClient.js';
 import { createMarksBook } from '../src/net/marksBook.js';
 

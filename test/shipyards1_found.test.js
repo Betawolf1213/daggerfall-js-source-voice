@@ -1,7 +1,7 @@
 // SHIPYARDS-FOUND (2026-10-11, Mac: "Everything should show on the map/overworld and be able to be asked by NPCs"): A
 // PORT'S PLACES FOUND AS THE YARDS ARE - rows of the town's talk directory (systems/portPlaces.js portDirectoryRows),
 // their groups on the Where-is page after the yards' (systems/topicTree.js over FOUND_KIND_ORDER), answered as a building
-// is (the compass, the map's mark); the shipyard and the lighthouse on both town maps (world/merchantYardMap.js
+// is (the compass, the map's mark); the shipyard and the lighthouse on both town maps (world/merchantYards/merchantYardMap.js
 // yardTownBlocks, ui/townMapDoor.js); the shipyard, the lighthouse and the docks on the Overworld (scenes/portHost.js,
 // scenes/quayPool.js overworldMarks, ui/travelViewHud.js portGlyph); and the four hosts' wiring. Design:
 // bible/03-World/Shipyards.md.
@@ -10,9 +10,9 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { PORT_PLACE_ORDER, PORT_PLACES, portDirectoryRows, portKeeper, portPlaceName, foundBuildingKey, FOUND_TALK_GROUPS } from '../src/systems/portPlaces.js';
 import { yardDirectoryRows, yardKeeper, YARD_KIND_ORDER, YARD_TALK_GROUPS } from '../src/systems/merchantYards.js';
-import { yardGround, yardSitesOn } from '../src/world/merchantYardSites.js';
+import { yardGround, yardSitesOn } from '../src/world/merchantYards/merchantYardSites.js';
 import { portSitesOn, seaField } from '../src/world/portSites.js';
-import { yardTownBlocks, PORT_MAP_TYPE, YARD_MAP_TYPE, YARD_MAP_BLOCK_M } from '../src/world/merchantYardMap.js';
+import { yardTownBlocks, PORT_MAP_TYPE, YARD_MAP_TYPE, YARD_MAP_BLOCK_M } from '../src/world/merchantYards/merchantYardMap.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { ROAD_WEIGHT } from '../src/systems/gothwayBoards.js';
 import { makeBuildingKey } from '../src/systems/talk/talkTopics.js';

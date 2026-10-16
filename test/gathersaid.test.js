@@ -26,7 +26,7 @@ import {
 import { createToastQueue, PROF_TOASTS_MAX } from '../src/ui/profHud.js';
 import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { FT } from '../src/systems/foraging/foragingLaw.js';
-import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 import { sharedClassicMinutes } from '../src/net/wire.js';
 import { accountRefusalText } from '../src/net/accountClient.js';
 

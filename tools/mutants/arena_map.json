@@ -1,7 +1,7 @@
 [
   {
     "name": "ARENAMAP-BOWL-UNRECOLOURED",
-    "file": "src/world/arenaCity.js",
+    "file": "src/world/arena/arenaCity.js",
     "old": "  const fld = { ...rmb.FldHeader, AutoMapData: arenaAutoMap(rmb.FldHeader.AutoMapData, rmb) };",
     "new": "  const fld = rmb.FldHeader;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "ARENAMAP-SAND-FILLED",
-    "file": "src/world/arenaCity.js",
+    "file": "src/world/arena/arenaCity.js",
     "old": "    return inBox && x * x + z * z > SAND_R * SAND_R ? ARENA_MAP_BYTE : v;",
     "new": "    return inBox ? ARENA_MAP_BYTE : v;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "ARENAMAP-STRAY-DRAWN",
-    "file": "src/world/arenaCity.js",
+    "file": "src/world/arena/arenaCity.js",
     "old": "    const inBox = Math.abs(x - box.center[0])",
     "new": "    const inBox = true || Math.abs(x - box.center[0])",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "ARENAMAP-ROWS-UNFLIPPED",
-    "file": "src/world/arenaCity.js",
+    "file": "src/world/arena/arenaCity.js",
     "old": "z = (63 - Math.floor(i / 64) + 0.5) * MAP_PX - cz;",
     "new": "z = (Math.floor(i / 64) + 0.5) * MAP_PX - cz;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "ARENAMAP-A-SHOP-BYTE",
-    "file": "src/world/arenaCity.js",
+    "file": "src/world/arena/arenaCity.js",
     "old": "export const ARENA_MAP_BYTE = BUILDING_TYPES.GuildHall + 1;",
     "new": "export const ARENA_MAP_BYTE = BUILDING_TYPES.GuildHall;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "ARENAMAP-LANDMARK-ON-ANY-BLOCK",
-    "file": "src/world/arenaCity.js",
+    "file": "src/world/arena/arenaCity.js",
     "old": "export const arenaTownLandmark = (dfBlock) => (dfBlock?.name === ARENA_BLOCK",
     "new": "export const arenaTownLandmark = (dfBlock) => (dfBlock",
     "tests": [

@@ -183,7 +183,7 @@ finding a law of 4 made against one - a piece found on a site that shipped ahead
 (the Dai-Katana is the Akaviri's own), and Dragonfire is Akatosh's - the fire that sealed the gates - so it burns Daedra
 alone and none of them resists it (a fire-immune Daedra takes it whole: no element's share is taken). **AUDIT B1:** as
 first built it only BURST on the Daedra about a struck one, through the player door's foe records - and the gate's
-court, its Warden, his crystals and his host are the relay's bodies, no record of any door (`world/gateArena.js`, an
+court, its Warden, his crystals and his host are the relay's bodies, no record of any door (`world/gate/gateArena.js`, an
 empty dungeon; `dungeonContext.js` keeps them out of `foes`), as an Elite Gate's legion will be: in the fights it is
 named for it did nothing (twenty real blows of it on the Warden's stand-in, no burst). Now the STRUCK Daedra burns
 too, as Many Endings' echo strikes again (`lootPowers.js` `dragonfire` -> `again`): through its record where the world

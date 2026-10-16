@@ -19,7 +19,7 @@ import { mintReceipt, RECEIPT_TTL_S } from '../src/net/gateReceipt.js';
 import { gateTimes } from '../src/net/gateLaw.js';
 import { SOCIAL_ROOM, gateReceiptKey, GATE_HERE_HOLD_MS } from '../src/net/wire.js';
 import { foldGate, GATE_STATE_EMPTY } from '../src/net/gateLink.js';
-import { bossPlace } from '../src/world/gateBoss.js';
+import { bossPlace } from '../src/world/gate/gateBoss.js';
 import { createSpoilsPool, spoilsStore, SPOILS_DAY_KEY, spentKey } from '../src/scenes/spoilsPool.js';
 import { fakeRooms } from './fakeRoom.mjs';
 
@@ -163,7 +163,7 @@ test('AUDIT WBX2 M5/M8 the leap is ONE law: the beat flies him through the air a
   // one copy of the rule: the beat asks the kill's
   const brain = read('src/net/gateBrain.js');
   assert.match(brain, /if \(f\.atk\) \{\n {4}settleAt\(f, now\);/);
-  assert.match(read('src/world/gateBoss.js'), /const leap = atk \? leapAt\(atk, now\) : null;/);
+  assert.match(read('src/world/gate/gateBoss.js'), /const leap = atk \? leapAt\(atk, now\) : null;/);
 });
 
 test('AUDIT WBX2 M6 an older build\'s mark for anyone still refuses the spoils here, but only this account\'s own spend is said to the hub - said for another it made their receipt forgotten on every device (mutants: the word for any mark)', () => {

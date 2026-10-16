@@ -11,9 +11,9 @@ import { readFileSync } from 'node:fs';
 import {
   arenaStairRuns, arenaStairRamps, withStairRamps, nosingHull, sealArenaSeams, buildArenaModel, composeArenaModel,
   STAIR_RISER_MAX, RAMP_BELOW, RAMP_LIFT, T_EPS, SINK_M,
-} from '../src/world/arenaModel.js';
-import { arenaGroundTiles, arenaBlockJson, ARENA_PAVING, ARENA_PLAZA_FLATS, ARENA_PLAZA_MODELS, arenaGatePersonName, ARENA_GATE_PEOPLE, arenaDrawnModel } from '../src/world/arenaCity.js';
-import { undercroftPopulation, chainTag, PIT_MASTER, HALL_KEEPER, UNDERCROFT_PEOPLE, UNDERCROFT_BEASTS, UNDERCROFT_FACTION, PIT_DUMMY, HALL_BRAZIER } from '../src/world/arenaUndercroft.js';
+} from '../src/world/arena/arenaModel.js';
+import { arenaGroundTiles, arenaBlockJson, ARENA_PAVING, ARENA_PLAZA_FLATS, ARENA_PLAZA_MODELS, arenaGatePersonName, ARENA_GATE_PEOPLE, arenaDrawnModel } from '../src/world/arena/arenaCity.js';
+import { undercroftPopulation, chainTag, PIT_MASTER, HALL_KEEPER, UNDERCROFT_PEOPLE, UNDERCROFT_BEASTS, UNDERCROFT_FACTION, PIT_DUMMY, HALL_BRAZIER } from '../src/world/arena/arenaUndercroft.js';
 import { boutGate } from '../src/characters/enemyTargets.js';
 import { practiceBout, hallOfChampions, newArenaLadder, LADDER_TIERS } from '../src/systems/arena/arenaLadder.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';

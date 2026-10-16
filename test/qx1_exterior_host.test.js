@@ -35,7 +35,7 @@ import { readFileSync } from 'node:fs';
 import { WORLD_CONTEXT, makeAnchor, teleportPlan, ANCHOR_MUST_BE_SET } from '../src/systems/teleportAnchor.js';
 import { locationWorldRect } from '../src/world/streamingWorld.js';
 import { GLOBAL_SCALE } from '../src/world/meshReader.js';
-import { STREAMING_TERRAIN_SCALE } from '../src/world/terrainSampler.js';
+import { STREAMING_TERRAIN_SCALE } from '../src/world/terrain/terrainSampler.js';
 import { GROUND_OFFSET } from '../src/world/rmbLayout.js';
 import { ActionTextBox } from '../src/ui/actionText.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';   // AUDIT ARENA-LADDER A5: the bout's refusal of a Recall

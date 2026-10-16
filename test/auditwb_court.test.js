@@ -9,8 +9,8 @@ import { readFileSync } from 'node:fs';
 import { ATTACKS } from '../src/net/gateBrain.js';
 import { createGateCourt, FALL_CRY_LATE_MS } from '../src/scenes/gateCourt.js';
 import { createGateLink, GATE_STATE_EMPTY, GATE_NO_TEXT } from '../src/net/gateLink.js';
-import { courtToDungeon, COURT_TEXT } from '../src/world/gateArena.js';
-import { BOSS_CUES, THUD_AT_MS } from '../src/world/gateBoss.js';
+import { courtToDungeon, COURT_TEXT } from '../src/world/gate/gateArena.js';
+import { BOSS_CUES, THUD_AT_MS } from '../src/world/gate/gateBoss.js';
 import { destroyGateBossBar } from '../src/ui/gateBossBar.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

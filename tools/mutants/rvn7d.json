@@ -172,7 +172,7 @@
   },
   {
     "name": "RVN7d-the-nearest",
-    "file": "src/world/dungeonEnd.js",
+    "file": "src/world/dungeon/dungeonEnd.js",
     "old": "  return list.reduce((a, m) => (d(m) > d(a) ? m : a));",
     "new": "  return list.reduce((a, m) => (d(m) < d(a) ? m : a));",
     "tests": [

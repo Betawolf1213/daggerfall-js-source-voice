@@ -7,10 +7,10 @@ oceans/rivers/ponds of daggerfall."** Ledger section A, row WATER1.
 
 Water is record 0 of the terrain tileset. Every producer of the
 128x128 tilemap writes it the same way: the ocean by height
-(`world/terrainTiles.js` `generateTileData`, the sampler having clamped
+(`world/terrain/terrainTiles.js` `generateTileData`, the sampler having clamped
 the sea flat at `SCALED_OCEAN_ELEVATION`), the shoreline by marching
 squares (`assignTiles` and `createLookupTable`, DFU's `AssignTilesJob`),
-rivers and streams by the road painter (`world/roadPainter.js`, the
+rivers and streams by the road painter (`world/road/roadPainter.js`, the
 same records with the same rotate and flip bits), and a town's ponds
 and moats by the RMB's own ground tiles (a zero tile stored as the
 `0xFF` sentinel and converted back). And the terrain pass draws it
@@ -77,7 +77,7 @@ puddle did not read as water); record 9 is not in DFU's list and keeps
 the classic tile. The coverage inside a tile is the bilinear blend of its four
 corners - the diagonal the shore tile's own art follows - feathered by
 `SHORE_SOFTNESS` and discarded past the feather. MAC2 (2026-09-11)
-lifted the table into `world/waterCorners.js`, a leaf the render pass
+lifted the table into `world/water/waterCorners.js`, a leaf the render pass
 and the player's feet share: the exterior surface model reads the same
 corners at the feet's fraction, and where the coverage is at or past
 the shader's 0.5 diagonal the player SWIMS - Mac's departure over
@@ -163,7 +163,7 @@ and against the double 27.2 the compare failed for every clamped sea
 sample. Every sea corner fell through to the beach band, and every
 ocean tile this port ever drew was dirt. The height is rounded to
 float32 and compared against float32 thresholds now, which is the
-arithmetic the reference does (`world/terrainTiles.js`; pinned ungated
+arithmetic the reference does (`world/terrain/terrainTiles.js`; pinned ungated
 in `test/terrain.test.js`). The audit's lane B then took the rest of
 the class: the beach jitter is float32 per operation as
 `Unity.Mathematics.Random.NextFloat(min, max)` is (the double form
@@ -373,7 +373,7 @@ carries it.
 all the water textures that are on land, and its not traced well, just
 square. Water is also still way too see through."** Three faults, one
 cause. WATER1 decided what is water by CORNER: a 256-entry table
-(`world/waterCorners.js`) names which corners of a record stand in
+(`world/water/waterCorners.js`) names which corners of a record stand in
 water and the shader blends the four. So every shore was a straight
 diagonal or a straight edge (the square tracing), and a record whose
 water reaches no corner - the puddle in the middle of a dirt tile, the
@@ -513,7 +513,7 @@ records in the corner table (`SHALLOW_WHOLE`: the docks, moats and
 puddles drawn whole - "some puddle areas don't register as water");
 and MAC2's law that the player swims where the surface is drawn
 (`player/exteriorSurface.js` reads the same corner table; Ledger A
-row). The corner table's one home is still `world/waterCorners.js`.
+row). The corner table's one home is still `world/water/waterCorners.js`.
 
 **What went.** `render/waterBasin.js` and `world/waterArt.js` are
 deleted; the water surface rides the terrain's own buffers again
@@ -535,7 +535,7 @@ wants a shot from the real game before it lands, not a probe number.
 **Mac, from live play: "NPCs arent water aware and will walk into
 it."** They were not, and the reason is that the port is *correct*.
 
-`world/cityNavigation.js` is DFU's `CityNavigation.cs` character for
+`world/city/cityNavigation.js` is DFU's `CityNavigation.cs` character for
 character, and its `GetTileWeight` gives weight 0 - never walk - to
 seven ground records, read straight off DFU's `TileTypes` enum:
 
@@ -561,7 +561,7 @@ codebase calls them water in one file and ground in the other.
 **The departure, enhanced lane only**, under WATER1's one switch
 (`waterSwitchOn()`, `enhancedWater`, `?water=off`): the enhanced arm
 of `tileWeight` asks the port's **own** water table -
-`WATER_MASK_TABLE` in `world/waterCorners.js`, the same table
+`WATER_MASK_TABLE` in `world/water/waterCorners.js`, the same table
 `render/waterSurface.js` draws from and `player/exteriorSurface.js`
 swims the player by. `WATER_RECORDS_ENHANCED` is **derived** from it
 at module load (every record with any water corner under any of its
@@ -592,7 +592,7 @@ Ledger A row: WATER1, extended.
 towns some textures are still the old square panels instead of our
 new animated water" - is *not* this. The terrain-water chain was read
 end to end and is sound: the 0xFF location-zero sentinel converts back
-to record 0 (`world/terrainSurface.js`, `convertTile`), the conversion
+to record 0 (`world/terrain/terrainSurface.js`, `convertTile`), the conversion
 happens before the stamp and not after, and the enhanced pass's record
 set is a strict superset of DFU's. The remaining hypothesis is that
 the panels are not terrain at all but RMB **model or flat** geometry -
@@ -631,7 +631,7 @@ you see.
 **Two tables now, and the split is the point.** `WATER_MASK_TABLE` is
 unchanged and is the LAW's: what the player swims in
 (`player/exteriorSurface.js`) and what a town's own navigation refuses to
-walk (`world/cityNavigation.js`) are DFU's answers and stay verbatim —
+walk (`world/city/cityNavigation.js`) are DFU's answers and stay verbatim —
 adding record 9 there would have changed the physics to fix a picture.
 `WATER_DRAW_MASK_TABLE` is the ENHANCED PASS's: the law's table plus
 `SHALLOW_DRAWN`. The pass, the shader's packed uniform, the water lab and
@@ -650,7 +650,7 @@ on that line.
 
 **The second half of the report stands as written and is NOT a bug.**
 "Sometimes water tiles will be on their own as 1 tile" is DFU's own,
-recorded at `world/terrainSurface.js:"- 0 for the 0xFF"`: `setLocationTiles` stores a
+recorded at `world/terrain/terrainSurface.js:"- 0 for the 0xFF"`: `setLocationTiles` stores a
 town ground tile that encodes as zero as the 0xFF sentinel, `convertTile`
 restores it to record 0, and record 0 IS water — so a town tile that
 happened to encode as zero reads as a one-tile pond to every consumer.
@@ -930,7 +930,7 @@ lane draws the new water, its blend arm). Every step was judged on shots of the 
 (`tools/waterLookProbe.mjs`, Daggerfall's moat and Sentinel's palace pool and harbour, headless on SwiftShader with
 the player's own ARENA2 - the renders stay out of the tree), THE REVERT's lesson.
 
-**The bed** (`world/waterBed.js`). A grid vertex is wet when every tile meeting it calls that corner water (the
+**The bed** (`world/water/waterBed.js`). A grid vertex is wet when every tile meeting it calls that corner water (the
 draw's corner table; a tile past the map's edge is no vote, so a river is not dammed at a pixel's seam); its distance
 to the bank is a 3-4 chamfer; its depth a smoothstep to `BED_DEPTH` (4) over `BED_RAMP` (19.2, three tiles). The
 first cut eased OUT (steep off the bank) and the real moat showed why not: a tile from the bank was already 2.2 deep
@@ -1004,7 +1004,7 @@ written into the depth a hand over the sea - were what the clear water then show
 
 ## WATER-NEXT 4 - THE RIPPLES (2026-10-07)
 
-`world/waterRipples.js`: a damped wave equation (`RIPPLE_DAMPING` 0.975 a step) on a 96-cell grid 48 units across
+`world/water/waterRipples.js`: a damped wave equation (`RIPPLE_DAMPING` 0.975 a step) on a 96-cell grid 48 units across
 round the camera, stepped at a fixed 30 Hz (a stalled frame runs four steps at most), sliding with the eye a whole
 cell at a time so a wake stays where it was left, its edge still water, asleep when still. Stirred where a body
 moves in the water (`stirOf`: a still swimmer's bob, a wader's wake growing with speed to a cap) - the player, by the
@@ -1057,7 +1057,7 @@ round a white island: *"Is there a reason these fucking patches still remain aft
 
 **The reason.** The squares are record 19 (water round an island of grass) and record 4 (round dirt; 29 is the stone
 one) - snow islands in winter. Neither is a marching shape nor in DFU's `OnShallowWaterTile` list, so the corner table
-(`world/waterCorners.js`) gave them no water corner - and every water law of the day asks that table. PUDDLE-DRY's
+(`world/water/waterCorners.js`) gave them no water corner - and every water law of the day asks that table. PUDDLE-DRY's
 census never counted them; WATER-NEXT's bed would not carve under them, its silt left them their painted water, its
 sheet stopped at their edges and its foam ringed them. The pond was the new water and the island tile in it DFU's
 painted tile, flat. Reproduced in the real game: Daggerfall city in winter (`tools/waterLookProbe.mjs`,
@@ -1128,7 +1128,7 @@ FIELD BUGS 2026-10-08, SylviaBun: *"an option to disable Enhanced Water would be
 brings back Daggerfall's flat tile and the Deep Waters sea's own scrolling texture was out of reach where the reporter
 plays. It is `online: 'player'` now - OL-LIGHT's shape (`enhanced-lighting`): the water is what THIS screen draws. No
 wire field, relay law or shared roll reads it; swimming and feet read `WATER_MASK_TABLE` either way; its one other
-reader, the townsfolk's path weights (`world/cityNavigation.js tileWeight`), is this page's alone (the townsfolk ride no
+reader, the townsfolk's path weights (`world/city/cityNavigation.js tileWeight`), is this page's alone (the townsfolk ride no
 wire). Off takes effect when the world next loads, as it always did. `water-quality`'s Simple stays the cheaper middle.
 
 Not settled here, recorded for Mac: the falling frame rate itself was not profiled. The investigation found no leak in
@@ -1307,7 +1307,7 @@ sheet's edge the ground had already fallen half the wet vertex's depth: the wate
 the slope, and from the bank the eye looked under the sheet at the carved ground beneath it. Ponds, moats, rivers and
 streams - every inland shore; the sea's coast is Deep Waters' floor.
 
-**The law** (`world/waterBed.js` `SHELF_CHAMFER`, `bedFields`, `waterBedCarve`). Every tile the sheet has an edge in
+**The law** (`world/water/waterBed.js` `SHELF_CHAMFER`, `bedFields`, `waterBedCarve`). Every tile the sheet has an edge in
 has a corner its own table calls dry - and that corner is a dry vertex - or is a puddle record. So the ground is carved
 only past one cell (the 3-4 chamfer's 3 and 4, a diagonal included) from the bank, and never at a vertex touching a
 puddle tile; the carve's profile starts there and still reaches `BED_DEPTH` in open water. The SHEET keeps the bed's own

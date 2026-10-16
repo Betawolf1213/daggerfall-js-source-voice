@@ -91,7 +91,7 @@
   },
   {
     "name": "SPELL-LOCK-the-building-memory-is-own",
-    "file": "src/world/interiorShared.js",
+    "file": "src/world/interior/interiorShared.js",
     "old": "ctx.actions?.restoreSaveData?.(acts, { remote: true });",
     "new": "ctx.actions?.restoreSaveData?.(acts);",
     "tests": [

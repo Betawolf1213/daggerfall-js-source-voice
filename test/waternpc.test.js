@@ -28,8 +28,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { tileWeight, WATER_RECORDS_CLASSIC, WATER_RECORDS_ENHANCED, CityNavigation } from '../src/world/cityNavigation.js';
-import { WATER_MASK_TABLE } from '../src/world/waterCorners.js';
+import { tileWeight, WATER_RECORDS_CLASSIC, WATER_RECORDS_ENHANCED, CityNavigation } from '../src/world/city/cityNavigation.js';
+import { WATER_MASK_TABLE } from '../src/world/water/waterCorners.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 

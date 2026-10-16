@@ -145,7 +145,7 @@
   },
   {
     "name": "SETS-M2-unreadable-forgotten",
-    "file": "src/world/interiorShared.js",
+    "file": "src/world/interior/interiorShared.js",
     "old": "    if (!items) { if (unreadable && interiorLootTarget(ctx, canon)) { seen.add(canon); unreadable.add(canon); } continue; }",
     "new": "    if (!items) continue;",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "SETS-M2-never-cleared",
-    "file": "src/world/interiorShared.js",
+    "file": "src/world/interior/interiorShared.js",
     "old": "    unreadable?.delete(canon);\n",
     "new": "",
     "tests": [

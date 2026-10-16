@@ -1,7 +1,7 @@
 [
   {
     "name": "FB1007B-TOWER-FLOORS-REVERTED",
-    "file": "src/world/interiorLayout.js",
+    "file": "src/world/interior/interiorLayout.js",
     "old": "    } else if (obj.objectType === FLOOR_MODEL_TYPE) {",
     "new": "    } else if (false) {",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "FB1007B-FLOOR-NOT-STOOD",
-    "file": "src/world/interiorLayout.js",
+    "file": "src/world/interior/interiorLayout.js",
     "old": "      py = -obj.yPos * GLOBAL_SCALE + -lowestY(model);",
     "new": "      py = -obj.yPos * GLOBAL_SCALE;",
     "tests": [
@@ -20,7 +20,7 @@
   },
   {
     "name": "FB1007B-FLOOR-TYPE-THIRTEEN",
-    "file": "src/world/interiorLayout.js",
+    "file": "src/world/interior/interiorLayout.js",
     "old": "export const FLOOR_MODEL_TYPE = 5;",
     "new": "export const FLOOR_MODEL_TYPE = 13;",
     "tests": [
@@ -29,7 +29,7 @@
   },
   {
     "name": "FB1007B-LOWEST-IS-HIGHEST",
-    "file": "src/world/interiorLayout.js",
+    "file": "src/world/interior/interiorLayout.js",
     "old": "    if (verts[i] < bottomY) bottomY = verts[i];",
     "new": "    if (verts[i] > bottomY) bottomY = verts[i];",
     "tests": [

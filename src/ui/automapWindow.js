@@ -147,7 +147,7 @@ import {
   tryAddOrEditUserNote, tryRemoveUserNote, setUserNote, NOTE_MAX_CHARACTERS, NOTE_WIDTH_OVERRIDE,
   automapDebugTeleportMode,
 } from '../systems/automap/automap.js';
-import { RDB_SIDE } from '../world/dungeonLayout.js';
+import { RDB_SIDE } from '../world/dungeon/dungeonLayout.js';
 import { AUTOMAP_PANEL_NATIVE_RECT, AUTOMAP_MODE } from '../render/renderer.js';   // c2/S2: the bracket's rect; c2/S6: the six presentations
 import {
   nativeMetrics, loadImg, drawImg, drawImgCrop, drawRect, shadowText,

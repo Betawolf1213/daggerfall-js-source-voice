@@ -12,7 +12,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { multiply, trs, identity, UP_Y } from '../src/world/mat4.js';
-import { nearestLights } from '../src/world/cityLights.js';
+import { nearestLights } from '../src/world/city/cityLights.js';
 import { Renderer } from '../src/render/renderer.js';
 import { BODY } from '../src/world/windmillMesh.js';   // the frozen bake the field crash drew
 import { StreamingWorldState } from '../src/world/streamingWorld.js';

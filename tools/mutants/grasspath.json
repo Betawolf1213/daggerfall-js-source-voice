@@ -1,7 +1,7 @@
 [
  {
   "name": "GRASS-PATH1-the-painter-writes-but-does-not-mark",
-  "file": "src/world/roadPainter.js",
+  "file": "src/world/road/roadPainter.js",
   "old": "  if (ctx.paths) ctx.paths[ctx.i] = 1;   // GRASS-PATH1\n  return true;\n}",
   "new": "  return true;\n}",
   "tests": [
@@ -10,7 +10,7 @@
  },
  {
   "name": "GRASS-PATH1-the-rect-fill-around-a-location-is-not-marked",
-  "file": "src/world/roadPainter.js",
+  "file": "src/world/road/roadPainter.js",
   "old": "    ctx.tilemap[ctx.i] = 46;\n    if (ctx.paths) ctx.paths[ctx.i] = 1;   // GRASS-PATH1",
   "new": "    ctx.tilemap[ctx.i] = 46;",
   "tests": [
@@ -19,7 +19,7 @@
  },
  {
   "name": "GRASS-PATH1-the-rivers-bare-water-join-is-not-marked",
-  "file": "src/world/roadPainter.js",
+  "file": "src/world/road/roadPainter.js",
   "old": "  const water = () => { ctx.tilemap[ctx.i] = 0xff; if (ctx.paths) ctx.paths[ctx.i] = 1; };   // GRASS-PATH1",
   "new": "  const water = () => { ctx.tilemap[ctx.i] = 0xff; };",
   "tests": [
@@ -30,7 +30,7 @@
  },
  {
   "name": "GRASS-PATH1-every-tile-is-marked-whether-the-painter-wrote-it-or-not",
-  "file": "src/world/roadPainter.js",
+  "file": "src/world/road/roadPainter.js",
   "old": "      ctx.i = i; ctx.x = x; ctx.y = y; ctx.ground = ground;",
   "new": "      ctx.i = i; ctx.x = x; ctx.y = y; ctx.ground = ground;\n      if (paths) paths[i] = 1;",
   "tests": [
@@ -39,7 +39,7 @@
  },
  {
   "name": "GRASS-PATH1-the-mask-never-leaves-the-kernel",
-  "file": "src/world/terrainGen.js",
+  "file": "src/world/terrain/terrainGen.js",
   "old": "    paths,   // GRASS-PATH1: null when no network was present, as `withRoads` says",
   "new": "    paths: null,",
   "tests": [
@@ -75,7 +75,7 @@
  },
  {
   "name": "WATER-DRAW1-the-draw-list-is-emptied-so-the-fix-reverts-silently",
-  "file": "src/world/waterCorners.js",
+  "file": "src/world/water/waterCorners.js",
   "old": "export const SHALLOW_DRAWN = Object.freeze([9]);",
   "new": "export const SHALLOW_DRAWN = Object.freeze([]);",
   "tests": [
@@ -85,7 +85,7 @@
  },
  {
   "name": "WATER-DRAW1-the-drawn-records-leak-into-the-LAWs-table-so-the-player-swims-on-them",
-  "file": "src/world/waterCorners.js",
+  "file": "src/world/water/waterCorners.js",
   "old": "export const WATER_MASK_TABLE = buildWaterMaskTable();",
   "new": "export const WATER_MASK_TABLE = buildWaterMaskTable(true);",
   "tests": [

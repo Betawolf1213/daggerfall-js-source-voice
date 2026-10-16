@@ -334,7 +334,7 @@
   },
   {
     "name": "GATEALONE-words",
-    "file": "src/world/gateArena.js",
+    "file": "src/world/gate/gateArena.js",
     "old": "noCompanions: 'Your companions cannot follow you into the Deadlands.',",
     "new": "noCompanions: 'Your companions wait outside.',",
     "tests": [

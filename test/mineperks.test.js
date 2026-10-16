@@ -21,7 +21,7 @@ import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { CLIMATES, LOCATION_TYPES } from '../src/formats/mapsFile.js';
 import { CLIMATES as C } from '../src/formats/mapsTables.js';
 import { vein, veins, veinSlots, boulders, nodeKey, dveinKey, utcDayOfMs, UNCONFIRMED_VEIN_TIER } from '../src/net/nodeLaw.js';
-import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 import { nodeMarkCss, MOTHERLODE_MARK_CSS } from '../src/ui/nodeMarks.js';
 import { SURVEYOR, specOk, specOf, SPECIALISATIONS, DEEP_DELVER_MULT, minedMaterial, xpForRank } from '../src/net/professionLaw.js';
 import { veinYield } from '../src/net/nodeLaw.js';

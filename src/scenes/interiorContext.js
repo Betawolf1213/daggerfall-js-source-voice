@@ -18,10 +18,10 @@
 
 import { IIL_FIREPLACE_MODELS } from '../systems/improvedInteriorLighting.js';   // IIL1
 import { FlatAnimator, armFlatAnim } from '../render/flatAnimation.js';   // FA1: the flats that move
-import { layoutInterior, INTERIOR_MARKER, PROP_MODEL_TYPE } from '../world/interiorLayout.js';
+import { layoutInterior, INTERIOR_MARKER, PROP_MODEL_TYPE } from '../world/interior/interiorLayout.js';
 import { multiply, transformPoint, identity } from '../world/mat4.js';
 import { StaticBatchBuilder, keyResolver } from '../render/staticBatch.js';   // PERF6: the room's static models as one mesh
-import { collectInteriorLights } from '../world/interiorLights.js';
+import { collectInteriorLights } from '../world/interior/interiorLights.js';
 import { applyClimate } from '../world/climateSwaps.js';
 import { remapSubMeshes, markRemapLaw } from '../world/texRemap.js';   // WM3: the one climate/dungeon remap seam; AUDIT MENU-ORDER C3: a table named by its law
 import { unityMaterialName } from '../systems/immersiveFootsteps.js';   // IF1: MaterialReader's material name, for the mod's floor walk
@@ -34,7 +34,7 @@ import { isHouseContainerModel } from '../systems/containers.js';
 import { isShopShelfModel } from '../systems/shopStock.js';   // E2
 import { isBedModel } from '../systems/roleplayRealism/rrRealism.js';   // RR1: the three bed models a click may rest on
 import { placedTableSpot, TAVERN_CARD_TABLES } from '../world/placedCardTable.js';   // TAVERN-TABLE: where a tavern's card table stands; TAVERN-TABLES: and how many
-import { cardTablePropModel, paintFelt, paintWood, CARD_TABLE_BOX, CARD_TABLE_ARCHIVE, FELT_RECORD, WOOD_RECORD, FELT_RGB, GOLD_FELT_RECORD, GOLD_FELT_RGB } from '../world/cardTableProp.js';   // TAVERN-TABLE: the card table's own prop; TAVERN-TABLES: the gold table's red felt
+import { cardTablePropModel, paintFelt, paintWood, CARD_TABLE_BOX, CARD_TABLE_ARCHIVE, FELT_RECORD, WOOD_RECORD, FELT_RGB, GOLD_FELT_RECORD, GOLD_FELT_RGB } from '../world/card/cardTableProp.js';   // TAVERN-TABLE: the card table's own prop; TAVERN-TABLES: the gold table's red felt
 import { holdemGoldTable } from '../net/holdemTable.js';   // TAVERN-TABLES: which of them plays for gold - the relay's own index
 import { classicModelIdOf } from '../world/customModels.js';   // WD3: an alias is its classic model to the beds' test
 import { LADDER_MODEL_ID, doorWorldPosition } from '../player/enterExit.js';   // TAVERN-TABLE: a static door's place, for the card table to keep clear of
@@ -327,7 +327,7 @@ export async function buildInteriorContext(deps, dfBlock, blockIndex, recordInde
   // Library/Guild/Temple bookshelves route at activation (BS1), and
   // the OWNED-house arm lands below (HC1).
   const shelves = [];
-  const tables = [];   // CARDS2: the room's card tables (world/cardTables.js) - TAVERN-TABLE: the props a tavern stands (below; TAVERN-TABLES: the chips table, then the gold); the host seats them
+  const tables = [];   // CARDS2: the room's card tables (world/card/cardTables.js) - TAVERN-TABLE: the props a tavern stands (below; TAVERN-TABLES: the chips table, then the gold); the host seats them
   const beds = [];   // RR1: models 41000-41002 (RoleplayRealism.cs:126-128), listed always, activated under bedSleeping
   const chairs = [];   // SIT1 (world/chairSeat.js): the chairs, benches and thrones a player sits on - by model id, whatever its ObjectType
   // IF1: the combined mesh's materials, as Immersive Footsteps reads them
@@ -503,7 +503,7 @@ export async function buildInteriorContext(deps, dfBlock, blockIndex, recordInde
     dynamicDraws.push({ gpu, object: actions.addDoor(cpu, parent(d.matrix)) });
   }
 
-  // TAVERN-TABLE (world/cardTableProp.js, world/placedCardTable.js; the owner: "Lets instead place a specific table in
+  // TAVERN-TABLE (world/card/cardTableProp.js, world/placedCardTable.js; the owner: "Lets instead place a specific table in
   // each inn. A new property specifficaly used for the card table"): THE TAVERN'S CARD TABLE, ITS OWN PROP, where the host
   // asks for one (`opts.placeCardTable` - a tavern, scenes/worldModes.js). Its floor is found from the room's FIRST enter
   // marker - the record's, not the door walked through, so every client stands it in the same place - with the room's

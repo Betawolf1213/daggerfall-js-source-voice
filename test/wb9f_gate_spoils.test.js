@@ -1,6 +1,6 @@
 // WB9f (2026-09-30, Mac: "Improve the loot drops that emit on his death and have them spread out more. The player should
 // be able to inspect and pick up the ground item, not just walk over it"): HIS SPOILS, SPREAD AND HANDLED, DRIVEN. The
-// throw (world/gateSpew.js - a slot of a wider fan a piece, harder, and each launch kept on the court's floor); the floor
+// throw (world/gate/gateSpew.js - a slot of a wider fan a piece, harder, and each launch kept on the court's floor); the floor
 // (scenes/spoilsPool.js - a resting piece an activation target, named, listed and taken by the press, its rest told);
 // the court (scenes/gateCourt.js - the floor it keeps them on, the gold out of his chest, each landing's sparks); the
 // seams (the court's targets and words, the press's rung, the plaque's list, the world host's hooks) by source.
@@ -10,7 +10,7 @@ import { readFileSync } from 'node:fs';
 
 import {
   spewLaunches, spewPiece, stepSpew, restOf, floorRayAt, keepLaunch, SPEW_SPREAD, SPEW_SPEED, SPEW_SLOT_MARGIN, SPEW_KEEP_TRIES, SPEW_KEEP_EASE, SPEW_FLIGHT_MAX_S,
-} from '../src/world/gateSpew.js';
+} from '../src/world/gate/gateSpew.js';
 import { PROJECTILE_FIXED_DT } from '../src/scenes/droppedTorches.js';
 import { seededRng } from '../src/systems/wind/wind.js';
 import { createSpoilsPool, spoilsList, SPOILS_TEXT, SPOIL_KEY, SPOIL_GOLD_KEY, SPOIL_BOX_HALF_M, SPOIL_BOX_MIN_H } from '../src/scenes/spoilsPool.js';
@@ -23,7 +23,7 @@ import { tierColour } from '../src/render/spoilsGlow.js';
 import { GATE_STATE_EMPTY } from '../src/net/gateLink.js';
 import { mintReceipt } from '../src/net/gateReceipt.js';
 import { COURTS, COURT_R } from '../src/net/gateBrain.js';
-import { courtToDungeon } from '../src/world/gateArena.js';
+import { courtToDungeon } from '../src/world/gate/gateArena.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const flat = floorRayAt(0);

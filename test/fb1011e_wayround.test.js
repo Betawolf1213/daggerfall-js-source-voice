@@ -16,7 +16,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { placedTableSpot, PLACE_ROUND_CELLS, PLACE_CELL, PLACE_LANE_CELLS } from '../src/world/placedCardTable.js';
-import { cardTablePropModel, CARD_TABLE_BOX } from '../src/world/cardTableProp.js';
+import { cardTablePropModel, CARD_TABLE_BOX } from '../src/world/card/cardTableProp.js';
 import { trs, transformPoint } from '../src/world/mat4.js';
 import { CAPSULE_RADIUS } from '../src/player/motor.js';
 
@@ -169,7 +169,7 @@ test('WAY-ROUND with ARENA2: every tavern the towns lay, with the town packs and
   const { buildInteriorContext } = await import('../src/scenes/interiorContext.js');
   const { buildingSummaries } = await import('../src/world/buildingSummaries.js');
   const { isTavern } = await import('../src/world/buildingNames.js');
-  const { INTERIOR_MARKER } = await import('../src/world/interiorLayout.js');
+  const { INTERIOR_MARKER } = await import('../src/world/interior/interiorLayout.js');
   const { worldAabb } = await import('../src/player/activate.js');
   const saved = [console.warn, console.log];
   console.warn = console.log = () => {};

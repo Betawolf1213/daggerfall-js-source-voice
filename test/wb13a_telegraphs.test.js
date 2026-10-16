@@ -12,7 +12,7 @@ import {
 } from '../src/render/gateTelegraph.js';
 import { ATTACKS, ATTACK_BY_ID, COURT_R, COURTS, BOSS_REACH_R, HOST, HOST_BLOWS, BASE_PROFILE, fightProfile, windupOf, isDagons } from '../src/net/gateBrain.js';
 import { inAttack } from '../src/net/gateStrike.js';
-import { attackColor } from '../src/world/gateBoss.js';
+import { attackColor } from '../src/world/gate/gateBoss.js';
 import { hostShapes } from '../src/scenes/gateHost.js';
 import { perilAt, wayOut, screenBearing, PERIL_RIM_M } from '../src/scenes/gateCourt.js';
 import { groundViewModel, GROUND_VIEW_TEXT, PERIL_EDGE, PERIL_EDGE_NOW, PERIL_ARROW_STEP } from '../src/ui/gateGroundView.js';

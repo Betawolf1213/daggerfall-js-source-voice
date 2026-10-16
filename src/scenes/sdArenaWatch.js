@@ -3,7 +3,7 @@
 // arena shows of where the Remnant stands, pure over the page's fight state (net/sdFightLink.js) and the relay's clock,
 // so every page draws the same:
 //
-//   THE WATCHING HANDS (`sdPillarHandsAt`) - each clock on each capital (world/sdPillarModel.js sdPillarDials) turns its
+//   THE WATCHING HANDS (`sdPillarHandsAt`) - each clock on each capital (world/superDungeon/sdPillarModel.js sdPillarDials) turns its
 //     one hand to point at the Remnant's heart as seen on the dial's own plane: they watch it. On the escapement (world/
 //     sdLook.js sdTick): each anchored second the hands take where it stood at that second, eased over the first quarter
 //     and held - the machine ticks; the Remnant moves smoothly (smooth motion is danger). Outside time each pillar watches
@@ -14,16 +14,16 @@
 //     body's metal. Laid by the Hour's telegraph pass (scenes/sdRemnantBlows.js, its `bodyMarks`).
 //   THE RESET'S DIMMING (`sdLampDimInto`) - the arena's lamps and lanterns dim to SD_RESET_DIM.to through the Reset's
 //     wind-up, so its Hearts are the brightest things in the world, and come back at its landing or the stun that ends
-//     it (world/sdRealm.js realmLightsWith's `dim`; render/sdPillarPass.js).
+//     it (world/superDungeon/sdRealm.js realmLightsWith's `dim`; render/sdPillarPass.js).
 //
 // Kept records, Float64Array scratch: a frame makes nothing (AUDIT SD II, L2 F9). Not a DFU member. Ledger A
 // (SUPER-DUNGEONS).
 import { SD_ARENA, SD_REALM_ORIGIN } from '../net/sdBrain.js';
 import { SD_BLOWS, SD_REM, SD_ECHO } from '../net/sdRemnant.js';
 import { markShape } from '../render/gateTelegraph.js';
-import { sdPillarDials, pillarCentre } from '../world/sdPillarModel.js';
-import { SD_REMNANT_BODY, remnantScale } from '../world/sdRemnantModel.js';
-import { sdTick } from '../world/sdLook.js';
+import { sdPillarDials, pillarCentre } from '../world/superDungeon/sdPillarModel.js';
+import { SD_REMNANT_BODY, remnantScale } from '../world/superDungeon/sdRemnantModel.js';
+import { sdTick } from '../world/superDungeon/sdLook.js';
 import { remnantPose, echoPose, SD_HEART_LIGHT, SD_KNEEL_M } from './sdRemnant.js';
 import { SD_BLOW_COLOR } from './sdRemnantBlows.js';
 import { clearOfPillars } from './sdSpoils.js';
@@ -106,7 +106,7 @@ function handsAt(s, at, a, seen) {
   }
 }
 /**
- * THE WATCHING HANDS at `t` (ms, the relay's clock) of fight `s`, into `out` (16 floats, dial 4k + j - world/sdPillarModel.js
+ * THE WATCHING HANDS at `t` (ms, the relay's clock) of fight `s`, into `out` (16 floats, dial 4k + j - world/superDungeon/sdPillarModel.js
  * sdPillarDials' order): on the escapement - at each anchored second each hand turns from what its pillar watched the
  * second before to what it watches at this one, eased over the tick's first quarter (sdTick) and held. Nothing to watch:
  * XII. Pure over `s` and `t`; the two seconds' hands kept until either moves (once a second - the frame passes no time it

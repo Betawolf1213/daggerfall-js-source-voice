@@ -13,13 +13,13 @@ import { bakeGalleon, galleonJson, toBoat, SOURCE_FBX, OUT, FRAME, ROLES } from 
 import {
   galleonPrefab, GALLEON_PREFAB_ID, GALLEON_HULL_NODE, MEASURED, HELM, GUN, GALLEON_BATTERIES, HATCH_OPEN_DEG, LID_OPEN_DEG,
   WHEEL_TURNS, RUDDER_DEG, faceSkin, companionGeometry, DRIVE_TRIGGER_AT,
-} from '../src/world/galleonModel.js';
-import { SAILS } from '../src/world/galleonRig.js';
+} from '../src/world/ships/galleonModel.js';
+import { SAILS } from '../src/world/ships/galleonRig.js';
 import {
   galleonArt, galleonGlow, galleonCut, GALLEON_NIGHT, registerGalleonArt, _resetGalleonArt, GALLEON_ARCHIVE, TEX, BANDS, GALLEON_TEX_SIZE,
   hullSideLivery, castleLivery, sternWindowsLivery,
-} from '../src/world/galleonArt.js';
-import { newell, norm } from '../src/world/galleonMesh.js';
+} from '../src/world/ships/galleonArt.js';
+import { newell, norm } from '../src/world/ships/galleonMesh.js';
 import { createGalleonGunDeck, recoilAt, HOLD_S, RUN_IN_X, RUN_OUT_X, RECOIL, KICK_S, HAUL_S } from '../src/systems/naval/galleonGunDeck.js';
 import { loadComeSailAwayModels, CSA_MODEL_URLS, GALLEON_MODEL_URL } from '../src/systems/comeSailAway/comeSailAwayModels.js';
 import { animatorOf, colliderBounds } from '../src/systems/comeSailAway/comeSailAwayBoat.js';

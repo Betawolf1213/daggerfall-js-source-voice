@@ -1,9 +1,9 @@
 // CARDS3b (2026-10-08, bible/11-Multiplayer/Tavern-Cards.md section 19): THE HAND IN THE SEAT'S VIEW, THE CHIPS UNDER
-// THE MOUSE, THE RIFFLE. Driven: the held hand's matrices (world/cardHand.js) - each card's face turned to the eye and its
+// THE MOUSE, THE RIFFLE. Driven: the held hand's matrices (world/card/cardHand.js) - each card's face turned to the eye and its
 // top up, before the eye and below it, fanned, the screen's right-hand card in front, leaning back held and coming up and
 // apart when peeked; the cursor's ray met with the cloth; a press on the player's own stack, the betting ground before
 // his cards, the bet a drag carries (the slider's raise clamped to the law, else the call, else nothing); the dealer's
-// riffle (world/cardMotion.js) - two halves parting and falling one card from each in turn into one pile, on the cloth,
+// riffle (world/card/cardMotion.js) - two halves parting and falling one card from each in turn into one pile, on the cloth,
 // only while it runs; the cloth's scene riffling before it deals and saying whose each card is and whether it rests; the
 // evening's first patron waiting the riffle out; the draw taking a held card's own matrix; and by source, the host - the
 // held two drawn from the view, the press on the stack or the hand taken at the capture phase before the seat's stand,
@@ -13,10 +13,10 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   heldMatrices, heldLift, blendMatrix, HELD_EASE_S, tablePoint, onStack, onTable, inBetZone, dragBet, HELD_LIFT_MAX, HELD_PANEL_GAP_PX, FACE_THE_EYE, HELD_AT, HELD_LEAN_DEG, PEEK_LEAN_DEG, HELD_GAP, PEEK_GAP, STACK_GRAB_M,
-} from '../src/world/cardHand.js';
-import { riffleAt, RIFFLE_S, RIFFLE_HALF, RIFFLE_PART, CARD_T, GATHER_S, DECK_PLATES } from '../src/world/cardMotion.js';
-import { tablePlaces, CardScene } from '../src/world/cardScene.js';
-import { tableFrame, cardTableSeats } from '../src/world/cardTables.js';
+} from '../src/world/card/cardHand.js';
+import { riffleAt, RIFFLE_S, RIFFLE_HALF, RIFFLE_PART, CARD_T, GATHER_S, DECK_PLATES } from '../src/world/card/cardMotion.js';
+import { tablePlaces, CardScene } from '../src/world/card/cardScene.js';
+import { tableFrame, cardTableSeats } from '../src/world/card/cardTables.js';
 import { lookAt, trs } from '../src/world/mat4.js';
 import { CardTableSession, settleMs } from '../src/systems/card/cardTableSession.js';
 import { createCardTableDraw } from '../src/render/cardTableDraw.js';

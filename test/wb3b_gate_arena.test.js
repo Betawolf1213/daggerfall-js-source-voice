@@ -1,6 +1,6 @@
 // WB3b (2026-09-25, Mac: "A gate model would be spawned with a timer that leads to a completely different area, a gate
 // of oblivion which takes place in a large boss arena"): THE BURNING COURT, DRIVEN. The made level through the port's
-// own dungeon layout (world/gateArena.js - a location and a blocks file answering one made block, laid by the real
+// own dungeon layout (world/gate/gateArena.js - a location and a blocks file answering one made block, laid by the real
 // layoutDungeon and layoutRdbBlock); the court's geometry (a clear floor facing up, the rune ring the boss keeps
 // inside, the lava under it all, the braziers clear of the bridge and after the player's own lights - GATE-FBX: and no
 // door of its own, the bridge's membrane gone - the ring the motor keeps a player in); the way home's landing before the gate; the court's art; the client's link to the fight
@@ -15,12 +15,12 @@ import {
   withCourtLights, courtRing, courtToDungeon, gateLandingFor, COURT_ARCHIVE, COURT_FLOOR_RECORD, COURT_RUNE_RECORD, COURT_LAVA_RECORD,
   GATE_ARENA_BLOCK, GATE_ARENA_BLOCK_INDEX, GATE_ARENA_LOCATION_ID, GATE_BLOCK_SIDE, ARRIVE_Z,
   RUNE_HALF_W, LAVA_Y, COURT_FOG, BRAZIER_COLOR, BRAZIER_RANGE, GATE_LANDING_M, COURT_TEXT,
-} from '../src/world/gateArena.js';
-import { GATE_ARCHIVE } from '../src/world/gateModel.js';
+} from '../src/world/gate/gateArena.js';
+import { GATE_ARCHIVE } from '../src/world/gate/gateModel.js';
 import { withPlayerLights } from '../src/scenes/magicCandle.js';
-import { courtArt, courtFloorArt, courtLavaArt, courtRuneArt, GATE_ART_SIZE } from '../src/world/gateArt.js';
+import { courtArt, courtFloorArt, courtLavaArt, courtRuneArt, GATE_ART_SIZE } from '../src/world/gate/gateArt.js';
 import { COURT_CENTRE, COURT_R, BOSS_REACH_R, COURTS, WALKS, WALK_HALF_W, nearestCourt } from '../src/net/gateBrain.js';
-import { layoutDungeon } from '../src/world/dungeonLayout.js';
+import { layoutDungeon } from '../src/world/dungeon/dungeonLayout.js';
 import { RDB_SIDE } from '../src/world/rdbLayout.js';
 import { roomKeyFor } from '../src/net/online.js';
 import { isWorldRoom, validGateOut } from '../src/net/wire.js';

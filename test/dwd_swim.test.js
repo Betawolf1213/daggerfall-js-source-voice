@@ -30,14 +30,14 @@ import {
   swimCheckY, headUnderwater, headClearOfSurface, worldYToBlockWaterLevel, blockWaterLevelToWorldY, NO_WATER_LEVEL,
   forgedSwimWaterLineY, surfaceAscentCeiling, presentationWaterLineForFog, DeepWaterSwimState, strokeTempoScale,
   strokeFatigueCost, strokeDirection, strokeVelocity, isBoatEffectBundle, SwimSoundOdometer, STROKE, SHORE_EXIT,
-} from '../src/world/deepWaterSwim.js';
+} from '../src/world/deepWater/deepWaterSwim.js';
 import {
   deepWaterPlayer, publishState, clearState, flushStateChange, evaluateSwimmingSuppression, setColumnSource,
 } from '../src/systems/deepWater/deepWaterPlayer.js';
 import {
   loadGraceActive, loadStarted, loadFinished, teleported, locationLoadBegan, locationLoadEnded, resetDeepWaterRuntime,
   LOAD_GRACE_SECONDS, LOCATION_LOAD_STUCK_SECONDS,
-} from '../src/world/deepWaterRuntime.js';
+} from '../src/world/deepWater/deepWaterRuntime.js';
 import { breathStep, setWaterBreathingRule, isWaterBreathing } from '../src/systems/breath.js';
 import { maxFatigue } from '../src/systems/statMods.js';
 import { AudioEngine } from '../src/systems/audio.js';

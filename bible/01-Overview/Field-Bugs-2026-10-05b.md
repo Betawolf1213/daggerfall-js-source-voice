@@ -134,7 +134,7 @@ cart or lamp post, and none of the trees, bushes, flowers and rocks of the clima
   the climate's nature. A street's person is a person (Vendors, under Show Nudity). Found only in a street, a piece is
   "Outdoors" - but a light, a crate, a person, as the game files them.
 - **The nature.** Every climate's set (its SUMMER archive - `formats/mapsFile.js` CLIMATE_NATURE, now exported once) and
-  every record Daggerfall stands of it, 1 to 31 (the wilderness lays them all, `world/terrainNature.js` layoutNature;
+  every record Daggerfall stands of it, 1 to 31 (the wilderness lays them all, `world/terrain/terrainNature.js` layoutNature;
   record 0 is a marker), joined whole (`addDecorNature`, the scan's `nature` - its hosts' constructor says so). "Trees
   and plants": a tree of its set's TREE_RECORDS is a "Tree", any other a "Plant", each numbered among its own set.
 - **Where they stand.** The street's and the nature's pieces are a yard's alone; a yard is offered the nature of its own

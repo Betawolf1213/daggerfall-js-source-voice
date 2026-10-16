@@ -14,7 +14,7 @@ import { missileArchive } from '../src/systems/spellcast.js';
 import {
   DUNGEON_AMBIENT, CASTLE_AMBIENT, SPECIAL_AREA_AMBIENT,
   SPECIAL_AREA_BLOCK, dungeonAmbientFor,
-} from '../src/world/dungeonLights.js';
+} from '../src/world/dungeon/dungeonLights.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (f) => readFileSync(join(root, f), 'utf8');

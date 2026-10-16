@@ -12,7 +12,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { HEARTH_ARCHIVE, HEARTH_RECORDS, HEARTH_NEAR, isHearthFlat, collectHearths, nearestHearth, hearthNear, hearthAabb } from '../src/systems/survival/hearth.js';
 import { BY_FIRE_REACH, FIRE_FLAT, CAMP_REACH, CAMP_TEXT } from '../src/systems/survival/camp.js';
-import { interiorLightProperties } from '../src/world/interiorLights.js';
+import { interiorLightProperties } from '../src/world/interior/interiorLights.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 
@@ -84,11 +84,11 @@ test('HEARTH1: the streaming cut-off clears every question the pool is asked', (
 });
 
 test('HEARTH1: the two light collectors carry the record, which is the only thing that tells a brazier from a lantern', () => {
-  const city = read('src/world/cityLights.js');
+  const city = read('src/world/city/cityLights.js');
   // BOTH arms - the misc flats and the subrecord flats. One without the
   // other is a town whose braziers are fires on one side of the street.
   assert.equal((city.match(/record: obj\.textureRecord/g) ?? []).length, 2, 'the misc arm and the subrecord arm both carry it');
-  assert.match(read('src/world/interiorLights.js'), /record: f\.record,/, 'and the interior collector');
+  assert.match(read('src/world/interior/interiorLights.js'), /record: f\.record,/, 'and the interior collector');
 });
 
 test('HEARTH1: all four hosts answer with their own fires - THE FOUR HOSTS RULE', () => {
@@ -275,10 +275,10 @@ test('AUDIT HEARTH1 F3: the three hosts measure a hearth\u2019s height different
   // each right about where the FLAME is. FIX-D: so the eye's box is not
   // hung off the flame at all. Each collector hands the sprite's base
   // in its own convention, beside the light it already placed.
-  assert.match(read('src/world/cityLights.js'), /y: -obj\.yPos \* GLOBAL_SCALE \+ size\.h,/, 'the exterior pair: the light at the TOP of the flat');
-  assert.match(read('src/world/cityLights.js'), /foot: -obj\.yPos \* GLOBAL_SCALE, w: size\.w, h: size\.h,/, '...and the flat standing on -yPos');
-  assert.match(read('src/world/interiorLights.js'), /y: f\.y \+ h \/ 2 \+ offset,/, 'the interior: the centre, plus a per-record offset');
-  assert.match(read('src/world/interiorLights.js'), /foot: f\.y, w, h,/, '...and the flat standing on its y');
+  assert.match(read('src/world/city/cityLights.js'), /y: -obj\.yPos \* GLOBAL_SCALE \+ size\.h,/, 'the exterior pair: the light at the TOP of the flat');
+  assert.match(read('src/world/city/cityLights.js'), /foot: -obj\.yPos \* GLOBAL_SCALE, w: size\.w, h: size\.h,/, '...and the flat standing on -yPos');
+  assert.match(read('src/world/interior/interiorLights.js'), /y: f\.y \+ h \/ 2 \+ offset,/, 'the interior: the centre, plus a per-record offset');
+  assert.match(read('src/world/interior/interiorLights.js'), /foot: f\.y, w, h,/, '...and the flat standing on its y');
   assert.match(read('src/scenes/dungeonContext.js'), /const based = centers\.map\(\(p\) => Object\.assign\(\[p\[0\], p\[1\] - size\.h \/ 2, p\[2\]\], \{ noCover: !!p\.noCover \}\)\);/, 'a dungeon flat\u2019s stored y is its CENTRE - its own batch shifts down to find the base');
   assert.match(read('src/scenes/dungeonContext.js'), /foot: size \? f\.y - size\.h \/ 2 : undefined/, '...and the hearth takes the same half-height down');
   assert.match(read('src/systems/survival/hearth.js'), /AUDIT HEARTH1 F3 - WHERE A HEARTH IS, VERTICALLY/, 'and the law says so');

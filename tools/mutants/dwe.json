@@ -1,7 +1,7 @@
 [
   {
     "name": "DW-E1-light-work-while-not-playing",
-    "file": "src/world/deepWaterRuntime.js",
+    "file": "src/world/deepWater/deepWaterRuntime.js",
     "old": "export function canRunLightRuntimeWork(playing) { return !!playing && !loadInProgress; }",
     "new": "export function canRunLightRuntimeWork(playing) { return !loadInProgress; }",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "DW-E1-landed-load-leaves-no-refresh",
-    "file": "src/world/deepWaterRuntime.js",
+    "file": "src/world/deepWater/deepWaterRuntime.js",
     "old": "export function loadFinished(realSeconds) { loadInProgress = false; resumeAt = realSeconds + LOAD_GRACE_SECONDS; refreshPending = true; }",
     "new": "export function loadFinished(realSeconds) { loadInProgress = false; resumeAt = realSeconds + LOAD_GRACE_SECONDS; }",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "DW-E1-refresh-during-a-terrain-pass",
-    "file": "src/world/deepWaterRuntime.js",
+    "file": "src/world/deepWater/deepWaterRuntime.js",
     "old": "export function canMutateTerrainData(realSeconds, playing) { return !loadGraceActive(realSeconds, playing) && !terrainUpdating; }",
     "new": "export function canMutateTerrainData(realSeconds, playing) { return !loadGraceActive(realSeconds, playing); }",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "DW-E1-reset-keeps-the-location-count",
-    "file": "src/world/deepWaterRuntime.js",
+    "file": "src/world/deepWater/deepWaterRuntime.js",
     "old": "function resetTransition(at, pending) {\n  locationLoads = 0;\n",
     "new": "function resetTransition(at, pending) {\n",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "DW-E1-prune-counts-height",
-    "file": "src/world/deepWaterTransients.js",
+    "file": "src/world/deepWater/deepWaterTransients.js",
     "old": "      const dx = p[0] - playerPos[0], dz = p[2] - playerPos[2];\n      return dx * dx + dz * dz;",
     "new": "      const dx = p[0] - playerPos[0], dz = p[2] - playerPos[2], dy = p[1] - playerPos[1];\n      return dx * dx + dz * dz + dy * dy;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "DW-E1-prune-cap-takes-the-nearest",
-    "file": "src/world/deepWaterTransients.js",
+    "file": "src/world/deepWater/deepWaterTransients.js",
     "old": "        if (d > farSq) { farSq = d; far = i; }",
     "new": "        if (farSq < 0 || d < farSq) { farSq = d; far = i; }",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "DW-E1-clear-destroys-the-dead-again",
-    "file": "src/world/deepWaterTransients.js",
+    "file": "src/world/deepWater/deepWaterTransients.js",
     "old": "      if (o && !o.destroyed()) o.destroy();\n    }\n    this.objects.length = 0;\n  }\n\n  /**\n   * Release",
     "new": "      if (o) o.destroy();\n    }\n    this.objects.length = 0;\n  }\n\n  /**\n   * Release",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "DW-E2-open-ocean-weight",
-    "file": "src/world/underwaterDecorations.js",
+    "file": "src/world/underwater/underwaterDecorations.js",
     "old": "  add(l, R(106, 2), 12); add(l, R(106, 3), 10);",
     "new": "  add(l, R(106, 2), 11); add(l, R(106, 3), 10);",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "DW-E2-swamp-is-temperate",
-    "file": "src/world/underwaterDecorations.js",
+    "file": "src/world/underwater/underwaterDecorations.js",
     "old": "    case 228: return WATER_BIOME.Swamp;",
     "new": "    case 228: return WATER_BIOME.Temperate;",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "DW-E2-animation-stops-at-5",
-    "file": "src/world/underwaterDecorations.js",
+    "file": "src/world/underwater/underwaterDecorations.js",
     "old": "export const usesArchiveAnimation = (rec) => rec.archive === 106 && rec.record >= 2 && rec.record <= 6;",
     "new": "export const usesArchiveAnimation = (rec) => rec.archive === 106 && rec.record >= 2 && rec.record < 6;",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "DW-E2-seed-without-int32-wrap",
-    "file": "src/world/underwaterDecorations.js",
+    "file": "src/world/underwater/underwaterDecorations.js",
     "old": "export const tileDecorationSeed = (x, y) => Math.imul(x, 73856093) ^ Math.imul(y, 19349663);",
     "new": "export const tileDecorationSeed = (x, y) => (x * 73856093) ^ (y * 19349663);",
     "tests": [
@@ -102,7 +102,7 @@
   },
   {
     "name": "DW-E2-pass-roll-inclusive",
-    "file": "src/world/underwaterDecorations.js",
+    "file": "src/world/underwater/underwaterDecorations.js",
     "old": "  if (rng.value() < f32(num - n)) n++;",
     "new": "  if (rng.value() <= f32(num - n)) n++;",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "DW-E2-open-ocean-passes-rounded",
-    "file": "src/world/underwaterDecorations.js",
+    "file": "src/world/underwater/underwaterDecorations.js",
     "old": "    case WATER_BIOME.OpenOcean: return Math.ceil(f32(passes * f32(1.35)));",
     "new": "    case WATER_BIOME.OpenOcean: return Math.round(f32(passes * f32(1.35)));",
     "tests": [
@@ -120,7 +120,7 @@
   },
   {
     "name": "DW-E2-spacing-inclusive",
-    "file": "src/world/underwaterDecorations.js",
+    "file": "src/world/underwater/underwaterDecorations.js",
     "old": "        if (dx * dx + dz * dz < minSq) return false;",
     "new": "        if (dx * dx + dz * dz <= minSq) return false;",
     "tests": [
@@ -129,7 +129,7 @@
   },
   {
     "name": "DW-E2-shallower-floor",
-    "file": "src/world/underwaterDecorations.js",
+    "file": "src/world/underwater/underwaterDecorations.js",
     "old": "export const MINIMUM_SEAFLOOR_DEPTH = 8;",
     "new": "export const MINIMUM_SEAFLOOR_DEPTH = 7;",
     "tests": [
@@ -138,7 +138,7 @@
   },
   {
     "name": "DW-E2-steeper-slope",
-    "file": "src/world/underwaterDecorations.js",
+    "file": "src/world/underwater/underwaterDecorations.js",
     "old": "export const MAX_DECORATION_SLOPE_DEGREES = 35;",
     "new": "export const MAX_DECORATION_SLOPE_DEGREES = 37;",
     "tests": [
@@ -147,7 +147,7 @@
   },
   {
     "name": "DW-E2-no-surface-clearance",
-    "file": "src/world/underwaterDecorations.js",
+    "file": "src/world/underwater/underwaterDecorations.js",
     "old": "      if (y >= oceanLocalY || f32(y + vh) > f32(oceanLocalY - SURFACE_DECORATION_CLEARANCE)) continue;",
     "new": "      if (y >= oceanLocalY || f32(y + vh) > oceanLocalY) continue;",
     "tests": [
@@ -156,7 +156,7 @@
   },
   {
     "name": "DW-E2-height-tested-at-1x",
-    "file": "src/world/underwaterDecorations.js",
+    "file": "src/world/underwater/underwaterDecorations.js",
     "old": "      const vh = f32(authored * Math.max(0.01, DECORATION_SCALE_MAX));",
     "new": "      const vh = authored;",
     "tests": [
@@ -165,7 +165,7 @@
   },
   {
     "name": "DW-E2-animated-clearance-as-still",
-    "file": "src/world/underwaterDecorations.js",
+    "file": "src/world/underwater/underwaterDecorations.js",
     "old": "export const seafloorClearance = (rec) => (usesArchiveAnimation(rec) ? ANIMATED_DECORATION_SEAFLOOR_CLEARANCE : DECORATION_SEAFLOOR_CLEARANCE);",
     "new": "export const seafloorClearance = (rec) => DECORATION_SEAFLOOR_CLEARANCE;",
     "tests": [
@@ -174,7 +174,7 @@
   },
   {
     "name": "DW-E2-shuffle-range-short",
-    "file": "src/world/underwaterDecorations.js",
+    "file": "src/world/underwater/underwaterDecorations.js",
     "old": "    const k = rng.range(0, i + 1);",
     "new": "    const k = rng.range(0, i);",
     "tests": [
@@ -183,7 +183,7 @@
   },
   {
     "name": "DW-E2-no-pass-is-an-empty-list",
-    "file": "src/world/underwaterDecorations.js",
+    "file": "src/world/underwater/underwaterDecorations.js",
     "old": "  if (passes <= 0) return null;",
     "new": "  if (passes <= 0) return [];",
     "tests": [
@@ -192,7 +192,7 @@
   },
   {
     "name": "DW-E2-padding-alpha-bar",
-    "file": "src/world/underwaterDecorations.js",
+    "file": "src/world/underwater/underwaterDecorations.js",
     "old": "  if (data[i + 3] < 16) return true;",
     "new": "  if (data[i + 3] < 15) return true;",
     "tests": [
@@ -201,7 +201,7 @@
   },
   {
     "name": "DW-E2-padding-black-bar",
-    "file": "src/world/underwaterDecorations.js",
+    "file": "src/world/underwater/underwaterDecorations.js",
     "old": "  return data[i] <= 12 && data[i + 1] <= 12 && data[i + 2] <= 12;",
     "new": "  return data[i] <= 11 && data[i + 1] <= 12 && data[i + 2] <= 12;",
     "tests": [
@@ -210,7 +210,7 @@
   },
   {
     "name": "DW-E2-fallback-for-105",
-    "file": "src/world/underwaterDecorations.js",
+    "file": "src/world/underwater/underwaterDecorations.js",
     "old": "    else if (rec.archive === 106) h = BUBBLE_FALLBACK_VISUAL_HEIGHT;",
     "new": "    else if (rec.archive === 105) h = BUBBLE_FALLBACK_VISUAL_HEIGHT;",
     "tests": [
@@ -1092,7 +1092,7 @@
   },
   {
     "name": "DW-E4-slaughterfish-weight",
-    "file": "src/world/underwaterEnemies.js",
+    "file": "src/world/underwater/underwaterEnemies.js",
     "old": "[MOBILE.Slaughterfish, 60, 0, 0.7]",
     "new": "[MOBILE.Slaughterfish, 55, 0, 0.7]",
     "tests": [
@@ -1101,7 +1101,7 @@
   },
   {
     "name": "DW-E4-lich-band",
-    "file": "src/world/underwaterEnemies.js",
+    "file": "src/world/underwater/underwaterEnemies.js",
     "old": "[MOBILE.Lich, 2, 0.85, 1]",
     "new": "[MOBILE.Lich, 2, 0.8, 1]",
     "tests": [
@@ -1110,7 +1110,7 @@
   },
   {
     "name": "DW-E4-rare-roster",
-    "file": "src/world/underwaterEnemies.js",
+    "file": "src/world/underwater/underwaterEnemies.js",
     "old": "export const RARE_TYPES = Object.freeze([MOBILE.Ghost, MOBILE.SkeletalWarrior,",
     "new": "export const RARE_TYPES = Object.freeze([MOBILE.SkeletalWarrior, MOBILE.Ghost,",
     "tests": [
@@ -1119,7 +1119,7 @@
   },
   {
     "name": "DW-E4-guard-team",
-    "file": "src/world/underwaterEnemies.js",
+    "file": "src/world/underwater/underwaterEnemies.js",
     "old": "export const TREASURE_GUARD_TEAM = 'Undead';",
     "new": "export const TREASURE_GUARD_TEAM = 'Aquatic';",
     "tests": [
@@ -1128,7 +1128,7 @@
   },
   {
     "name": "DW-E4-roster-order",
-    "file": "src/world/underwaterEnemies.js",
+    "file": "src/world/underwater/underwaterEnemies.js",
     "old": "for (const t of [...DEPTH_AQUATIC_TABLE.map((e) => e.type), ...RARE_TYPES, ...BOSS_TYPES])",
     "new": "for (const t of [...DEPTH_AQUATIC_TABLE.map((e) => e.type), ...BOSS_TYPES, ...RARE_TYPES])",
     "tests": [
@@ -1139,7 +1139,7 @@
   },
   {
     "name": "DW-E4-band-softness",
-    "file": "src/world/underwaterEnemies.js",
+    "file": "src/world/underwater/underwaterEnemies.js",
     "old": "return f32(e.weight * clamp01(f32(1 - f32(off / f32(DEPTH_EDGE_SOFTNESS)))));",
     "new": "return f32(e.weight * clamp01(f32(1 - f32(off / f32(0.2)))));",
     "tests": [
@@ -1148,7 +1148,7 @@
   },
   {
     "name": "DW-E4-nothing-weighs",
-    "file": "src/world/underwaterEnemies.js",
+    "file": "src/world/underwater/underwaterEnemies.js",
     "old": "if (total <= 0) return MOBILE.Slaughterfish;",
     "new": "if (total <= 0) return MOBILE.Dreugh;",
     "tests": [
@@ -1159,7 +1159,7 @@
   },
   {
     "name": "DW-E4-boss-chance",
-    "file": "src/world/underwaterEnemies.js",
+    "file": "src/world/underwater/underwaterEnemies.js",
     "old": "export const BOSS_SPAWN_CHANCE = 0.01;",
     "new": "export const BOSS_SPAWN_CHANCE = 0.02;",
     "tests": [
@@ -1168,7 +1168,7 @@
   },
   {
     "name": "DW-E4-boss-depth",
-    "file": "src/world/underwaterEnemies.js",
+    "file": "src/world/underwater/underwaterEnemies.js",
     "old": "export const BOSS_MIN_DEPTH_FRACTION = 0.6;",
     "new": "export const BOSS_MIN_DEPTH_FRACTION = 0.5;",
     "tests": [
@@ -1177,7 +1177,7 @@
   },
   {
     "name": "DW-E4-boss-draw-everywhere",
-    "file": "src/world/underwaterEnemies.js",
+    "file": "src/world/underwater/underwaterEnemies.js",
     "old": "if (depthFraction >= BOSS_MIN_DEPTH_FRACTION && roll() < BOSS_SPAWN_CHANCE) return pickBoss(roll);",
     "new": "if (roll() < BOSS_SPAWN_CHANCE && depthFraction >= BOSS_MIN_DEPTH_FRACTION) return pickBoss(roll);",
     "tests": [
@@ -1186,7 +1186,7 @@
   },
   {
     "name": "DW-E4-nymph-swims",
-    "file": "src/world/underwaterEnemies.js",
+    "file": "src/world/underwater/underwaterEnemies.js",
     "old": "const FLOOR_TYPES = new Set([MOBILE.Zombie, MOBILE.SkeletalWarrior, MOBILE.IceAtronach, MOBILE.Nymph,",
     "new": "const FLOOR_TYPES = new Set([MOBILE.Zombie, MOBILE.SkeletalWarrior, MOBILE.IceAtronach,",
     "tests": [
@@ -1195,7 +1195,7 @@
   },
   {
     "name": "DW-E4-floor-clearance",
-    "file": "src/world/underwaterEnemies.js",
+    "file": "src/world/underwater/underwaterEnemies.js",
     "old": "export const ENEMY_SEAFLOOR_CLEARANCE = 2.5;",
     "new": "export const ENEMY_SEAFLOOR_CLEARANCE = 2;",
     "tests": [
@@ -1204,7 +1204,7 @@
   },
   {
     "name": "DW-E4-surface-clearance",
-    "file": "src/world/underwaterEnemies.js",
+    "file": "src/world/underwater/underwaterEnemies.js",
     "old": "export const ENEMY_SURFACE_CLEARANCE = 3;",
     "new": "export const ENEMY_SURFACE_CLEARANCE = 2.5;",
     "tests": [
@@ -1213,7 +1213,7 @@
   },
   {
     "name": "DW-E4-min-column",
-    "file": "src/world/underwaterEnemies.js",
+    "file": "src/world/underwater/underwaterEnemies.js",
     "old": "export const MINIMUM_COLUMN_DEPTH = 4;",
     "new": "export const MINIMUM_COLUMN_DEPTH = 3;",
     "tests": [
@@ -1222,7 +1222,7 @@
   },
   {
     "name": "DW-E4-floor-foe-lift",
-    "file": "src/world/underwaterEnemies.js",
+    "file": "src/world/underwater/underwaterEnemies.js",
     "old": "export const FLOOR_ENEMY_SEAFLOOR_CLEARANCE = 0.5;",
     "new": "export const FLOOR_ENEMY_SEAFLOOR_CLEARANCE = 0.4;",
     "tests": [
@@ -1231,7 +1231,7 @@
   },
   {
     "name": "DW-E4-lean-start",
-    "file": "src/world/underwaterEnemies.js",
+    "file": "src/world/underwater/underwaterEnemies.js",
     "old": "export const DEEP_SWIMMER_FLOOR_BIAS_START = 0.55;",
     "new": "export const DEEP_SWIMMER_FLOOR_BIAS_START = 0.6;",
     "tests": [
@@ -1240,7 +1240,7 @@
   },
   {
     "name": "DW-E4-lean-band",
-    "file": "src/world/underwaterEnemies.js",
+    "file": "src/world/underwater/underwaterEnemies.js",
     "old": "export const DEEP_SWIMMER_FLOOR_BAND_TOP = 0.35;",
     "new": "export const DEEP_SWIMMER_FLOOR_BAND_TOP = 0.3;",
     "tests": [
@@ -1249,7 +1249,7 @@
   },
   {
     "name": "DW-E4-floor-drop",
-    "file": "src/world/underwaterEnemies.js",
+    "file": "src/world/underwater/underwaterEnemies.js",
     "old": "export const alignFloorEnemyY = (y, controllerHeight) => y - FLOOR_ENEMY_SEAFLOOR_CLEARANCE + controllerHeight * 0.52;",
     "new": "export const alignFloorEnemyY = (y, controllerHeight) => y - FLOOR_ENEMY_SEAFLOOR_CLEARANCE + controllerHeight * 0.5;",
     "tests": [
@@ -1258,7 +1258,7 @@
   },
   {
     "name": "DW-E4-attempts",
-    "file": "src/world/underwaterEnemies.js",
+    "file": "src/world/underwater/underwaterEnemies.js",
     "old": "export const ENEMY_ATTEMPTS_PER_PIXEL = 96;",
     "new": "export const ENEMY_ATTEMPTS_PER_PIXEL = 90;",
     "tests": [
@@ -1267,7 +1267,7 @@
   },
   {
     "name": "DW-E4-roll-count-fraction",
-    "file": "src/world/underwaterEnemies.js",
+    "file": "src/world/underwater/underwaterEnemies.js",
     "old": "  if (roll() < scaledCount - n) n++;\n",
     "new": "  if (roll() <= scaledCount - n) n++;\n",
     "tests": [
@@ -1276,7 +1276,7 @@
   },
   {
     "name": "DW-E4-guard-frequency",
-    "file": "src/world/underwaterEnemies.js",
+    "file": "src/world/underwater/underwaterEnemies.js",
     "old": "export const ENEMY_FREQUENCY_FOR_MAX_TREASURE_GUARDS = 0.6;",
     "new": "export const ENEMY_FREQUENCY_FOR_MAX_TREASURE_GUARDS = 0.5;",
     "tests": [
@@ -1285,7 +1285,7 @@
   },
   {
     "name": "DW-E4-ring-linear",
-    "file": "src/world/underwaterEnemies.js",
+    "file": "src/world/underwater/underwaterEnemies.js",
     "old": "  return Math.sqrt(f32(a + f32(f32(b - a) * f32(roll()))));",
     "new": "  return min + (max - min) * roll();",
     "tests": [
@@ -1294,7 +1294,7 @@
   },
   {
     "name": "DW-E4-behind-radius",
-    "file": "src/world/underwaterEnemies.js",
+    "file": "src/world/underwater/underwaterEnemies.js",
     "old": "  if (dx * dx + dz * dz < 144) return false;",
     "new": "  if (dx * dx + dz * dz < 100) return false;",
     "tests": [
@@ -1303,7 +1303,7 @@
   },
   {
     "name": "DW-E4-behind-in-view",
-    "file": "src/world/underwaterEnemies.js",
+    "file": "src/world/underwater/underwaterEnemies.js",
     "old": "  if (isBehindPlayerHeading(p, playerPos, view.forward)) return false;",
     "new": "  if (isBehindPlayerHeading(p, playerPos, view.forward)) return true;",
     "tests": [
@@ -1312,7 +1312,7 @@
   },
   {
     "name": "DW-E4-reveal-ignored",
-    "file": "src/world/underwaterEnemies.js",
+    "file": "src/world/underwater/underwaterEnemies.js",
     "old": "return flatSq > view.revealDistance * view.revealDistance;",
     "new": "return true;",
     "tests": [
@@ -1321,7 +1321,7 @@
   },
   {
     "name": "DW-E4-top-margin",
-    "file": "src/world/underwaterEnemies.js",
+    "file": "src/world/underwater/underwaterEnemies.js",
     "old": "if (!(v[0] < -margin) && !(v[0] > 1 + margin) && !(v[1] < -margin)) return v[1] > 1 + margin;",
     "new": "if (!(v[0] < -margin) && !(v[0] > 1 + margin) && !(v[1] < -margin)) return false;",
     "tests": [
@@ -1330,7 +1330,7 @@
   },
   {
     "name": "DW-E4-reveal-speed",
-    "file": "src/world/underwaterEnemies.js",
+    "file": "src/world/underwater/underwaterEnemies.js",
     "old": "export const spawnRevealDistance = (vision, velocity) => vision + Math.hypot(velocity[0], velocity[2]) * 2;",
     "new": "export const spawnRevealDistance = (vision, velocity) => vision + Math.hypot(velocity[0], velocity[1], velocity[2]) * 2;",
     "tests": [
@@ -1339,7 +1339,7 @@
   },
   {
     "name": "DW-E4-two-a-frame",
-    "file": "src/world/underwaterEnemies.js",
+    "file": "src/world/underwater/underwaterEnemies.js",
     "old": "export const MAX_PENDING_ENEMY_SPAWNS_PER_FRAME = 1;",
     "new": "export const MAX_PENDING_ENEMY_SPAWNS_PER_FRAME = 2;",
     "tests": [
@@ -1402,7 +1402,7 @@
   },
   {
     "name": "DW-E4-guard-boss-chance",
-    "file": "src/world/underwaterEnemies.js",
+    "file": "src/world/underwater/underwaterEnemies.js",
     "old": "export const TREASURE_GUARD_BOSS_CHANCE = 0.02;",
     "new": "export const TREASURE_GUARD_BOSS_CHANCE = 0.05;",
     "tests": [

@@ -15,7 +15,7 @@ import { createProfBook } from '../src/net/profBook.js';
 import { veins, trees, utcDayOfMs } from '../src/net/nodeLaw.js';
 import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { FT } from '../src/systems/foraging/foragingLaw.js';
-import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 
 /** A dice that answers its numbers in turn, round and round. */
 export const dice = (...seq) => { let i = 0; return () => seq[i++ % seq.length]; };

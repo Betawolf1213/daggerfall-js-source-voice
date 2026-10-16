@@ -1,7 +1,7 @@
 [
   {
     "name": "WB9f-the-slots-unshuffled",
-    "file": "src/world/gateSpew.js",
+    "file": "src/world/gate/gateSpew.js",
     "old": "  for (let i = n - 1; i > 0; i--) { const j = Math.floor(rolls() * (i + 1)); const t = slots[i]; slots[i] = slots[j]; slots[j] = t; }",
     "new": "  for (let i = n - 1; i > 0; i--) { rolls(); }",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "WB9f-the-slot-margin-gone",
-    "file": "src/world/gateSpew.js",
+    "file": "src/world/gate/gateSpew.js",
     "old": "(slots[i] + SPEW_SLOT_MARGIN + rolls() * (1 - 2 * SPEW_SLOT_MARGIN)) / n",
     "new": "(slots[i] + rolls()) / n",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "WB9f-the-old-spread",
-    "file": "src/world/gateSpew.js",
+    "file": "src/world/gate/gateSpew.js",
     "old": "export const SPEW_SPREAD = 1.6;",
     "new": "export const SPEW_SPREAD = 0.9;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "WB9f-every-piece-on-its-own-roll",
-    "file": "src/world/gateSpew.js",
+    "file": "src/world/gate/gateSpew.js",
     "old": "    const u = n > 1 ? (slots[i] + SPEW_SLOT_MARGIN + rolls() * (1 - 2 * SPEW_SLOT_MARGIN)) / n : rolls();",
     "new": "    const u = rolls();",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "WB9f-the-keep-ignored",
-    "file": "src/world/gateSpew.js",
+    "file": "src/world/gate/gateSpew.js",
     "old": "  if (inside(launch)) return launch;",
     "new": "  return launch;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "WB9f-the-ease-never-applied",
-    "file": "src/world/gateSpew.js",
+    "file": "src/world/gate/gateSpew.js",
     "old": "    speed *= SPEW_KEEP_EASE;",
     "new": "    speed *= 1;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "WB9f-the-fallback-left-off-the-edge",
-    "file": "src/world/gateSpew.js",
+    "file": "src/world/gate/gateSpew.js",
     "old": "  return { at: launch.at, dir: [(dx / h) * run, launch.dir[1], (dz / h) * run], speed };",
     "new": "  return { at: launch.at, dir: launch.dir, speed };",
     "tests": [

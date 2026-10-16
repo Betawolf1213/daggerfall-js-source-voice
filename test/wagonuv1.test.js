@@ -10,8 +10,8 @@ import { readFileSync } from 'node:fs';
 
 import { wagonArt, TEX, WAGON_TILE, CARAVAN_SIDE_WINDOW, CARAVAN_SKIRT_Y, CARAVAN_CORNICE_Y, SIDE_Y0, SIDE_Y1, sideRow } from '../src/world/wagonArt.js';
 import { wagonGeometry, buildBakedWagonParts, pitchedPoint, MEASURED, LIFT } from '../src/world/wagonModels.js';
-import { planarUv } from '../src/world/galleonMesh.js';
-import { C } from '../src/world/galleonArt.js';
+import { planarUv } from '../src/world/ships/galleonMesh.js';
+import { C } from '../src/world/ships/galleonArt.js';
 
 const bakeOf = (kind) => JSON.parse(readFileSync(new URL(`../src/assets/wagons/${kind}.json`, import.meta.url), 'utf8'));
 const keyOf = (rec) => Object.keys(TEX).find((k) => TEX[k] === rec);

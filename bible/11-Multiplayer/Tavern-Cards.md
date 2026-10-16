@@ -262,7 +262,7 @@ or deals yet; the relay (CARDS5) and the patrons (CARDS4) will read it.
 
 Mac: **"Continue"**.
 
-- **The table** (`src/world/cardTables.js`, pure). A card table is a table model a tavern already stands - no placed
+- **The table** (`src/world/card/cardTables.js`, pure). A card table is a table model a tavern already stands - no placed
   prop. FLAGGED: `CARD_TABLE_MODELS` holds the ONE id the tree can name as a table, 41130 ("Table" in the vendored
   World of Daggerfall's `LocationHelper.cs` model list; 41100 is a chair there, though two of our tests' fixtures call
   it a table). This container carries no ARENA2, so the tavern blocks' other tables could not be measured. The census
@@ -291,7 +291,7 @@ Mac: **"Continue"**.
   survivor was a finite guard the upper bound already made, and it was deleted rather than pinned.
 - **Ledger:** section A row TAVERN CARDS, narrowed to say CARDS2 landed and CARDS2b is open (CARDS2b landed after
   it; section 12). Superseded since: TAVERN-TABLE (section 28) retired the one id and the census - the card table is a
-  prop of its own, and the FLAGGED sentence above is gone from `world/cardTables.js`; the seated eye is 1.22 m (CARDS2b, the seated head's), the seats stand 0.35 m
+  prop of its own, and the FLAGGED sentence above is gone from `world/card/cardTables.js`; the seated eye is 1.22 m (CARDS2b, the seated head's), the seats stand 0.35 m
   out, square to their side and round the table's own box, and "the nearest free seat" counts the others' (AUDIT
   CARDS, section 13).
 
@@ -405,11 +405,11 @@ the house's regulars until you stand, go broke or empty the table.
 The same ask. Section 3's physics, closed-form in time so a slow or skipped frame lands on the same pose, seeded so a
 table's throws are its own.
 
-- **The motion** (`src/world/cardMotion.js`, pure). A throw from the dealer's hand (`DEAL_LIFT` over the top) on an
+- **The motion** (`src/world/card/cardMotion.js`, pure). A throw from the dealer's hand (`DEAL_LIFT` over the top) on an
   arc (`ARC_HEIGHT`) at `FLIGHT_SPEED`, never quicker than `FLIGHT_MIN_S`, spinning; a slide under the cloth's
   `SLIDE_DECEL` that stops EXACTLY on its rest with no speed left; a flip over the long edge (`FLIP_S`) or at its middle;
   chips stacked greedily from `CHIP_VALUES` in columns of `CHIP_STACK_MAX`, pushed over `PUSH_S`.
-- **The scene** (`src/world/cardScene.js`, pure). `tablePlaces` lays each seat's hole cards, bet and stack, the board
+- **The scene** (`src/world/card/cardScene.js`, pure). `tablePlaces` lays each seat's hole cards, bet and stack, the board
   along the long side, the burn at its head, the muck and the pot either side; `CardScene` turns the session's events
   into motions - the deal round from the dealer's left, the player's own two turned up where they lie, the board thrown
   face down and turned over its edge, a fold to the muck, a showdown's hands turned and the pot pushed to its winner -
@@ -503,7 +503,7 @@ holds every card.
 
 The same ask. CARDS4's regulars were names on the panel; now they sit at the table.
 
-- **Their bodies** (`src/world/cardRegulars.js`): each regular's look minted from the seed that names him (the town, the
+- **Their bodies** (`src/world/card/cardRegulars.js`): each regular's look minted from the seed that names him (the town, the
   building, the order - CARDS4's namer, which now answers its seeds too): his region's people (the name bank's race), a
   face, and a tavern-goer's clothes from Daggerfall's own templates in the slots they are worn in (`REGULAR_CLOTHES` - a
   shirt or tunic, trousers or a skirt, or a gown; shoes or boots). The interior host hands world.js its regulars every
@@ -519,7 +519,7 @@ The same ask. CARDS4's regulars were names on the panel; now they sit at the tab
 
 The same ask; section 3's DECIDED hand and chips.
 
-- **The held hand** (`src/world/cardHand.js`): the player's two, once landed and turned on the cloth, are drawn held
+- **The held hand** (`src/world/card/cardHand.js`): the player's two, once landed and turned on the cloth, are drawn held
   before the eye (`heldMatrices` - the camera's own frame composed), low and a little right of the middle, fanned with the
   screen's right-hand card in front, leaning back the shy way; PEEKED - the cursor over them, or a press held on them -
   they come up toward the eye and spread (`PEEK_RATE` easing). Seen in the lab (`?cam=seat&peek=1`) and checked by the
@@ -598,7 +598,7 @@ Iliac Bay's kingdoms as the suits, and their royals for the courts with the crow
 
 Mac: **"#2 and cleanup"** - AUDIT CARDS-3's recorded-not-built, done beside CARDS6.
 
-- **The deck is one thing on the cloth** (`world/cardScene.js`, `world/cardMotion.js` `gatherMotion`, `GATHER_S`): a new
+- **The deck is one thing on the cloth** (`world/card/cardScene.js`, `world/card/cardMotion.js` `gatherMotion`, `GATHER_S`): a new
   hand no longer wipes the cloth - the last hand's cards are swept face down to the new dealer's deck place (any still
   on their way from the hand before simply join it), and only then does he riffle; between the riffle and the hand's
   end the squared deck lies there (`DECK_PLATES` for a whole deck), thinning card by card as it is dealt. The session's
@@ -814,9 +814,9 @@ A new property specifficaly used for the card table"**.
 - **The departure.** Section 2 decided no placed prop: a card table was a table Daggerfall already stood, and only 41130
   was nameable (section 11), so a tavern might have none. Now every tavern (`isTavern`) stands one card table of its
   own, and it is the ONLY card table: the interior context lists no model of Daggerfall's (the census tool,
-  `tools/cardTableCensus.mjs`, DELETED, and `CARD_TABLE_MODELS` went with the question - the flag in `world/cardTables.js` is
+  `tools/cardTableCensus.mjs`, DELETED, and `CARD_TABLE_MODELS` went with the question - the flag in `world/card/cardTables.js` is
   retired).
-- **The prop** (`world/cardTableProp.js`, pure). A poker table, 1.5 by 1 m: a wooden top 6 cm thick at 0.8 m (the
+- **The prop** (`world/card/cardTableProp.js`, pure). A poker table, 1.5 by 1 m: a wooden top 6 cm thick at 0.8 m (the
   seated pose's own table, `SEAT_TOP_DEFAULT`) on four 7 cm legs 10 cm in from the corners, the felt inlaid a 4 cm rail
   in, 2 mm proud, so the felt is the table's top and the cards lie on it; and a stool at each of its six seats, 0.48 m
   high, under the seated hips (AUDIT TAVERN-TABLE, section 29, set the top, the rail and the stools). The TABLE's own
@@ -961,7 +961,7 @@ Told the cause, the owner: **"Two tables per tavern"** - one always for gold (re
   says so in the console; the gold flag (`tables[i].gold`) is the law's own index (`holdemGoldTable(tables.length)`),
   so the room and the relay can never name two different gold tables. Each table its own mesh and key (`int:` the next
   placement index past the record's own, in turn); the wood uploaded once, a felt each.
-- **THE GOLD TABLE'S FELT IS RED** (`world/cardTableProp.js` `GOLD_FELT_RECORD`, `GOLD_FELT_RGB`; `paintFelt(rgb)`,
+- **THE GOLD TABLE'S FELT IS RED** (`world/card/cardTableProp.js` `GOLD_FELT_RECORD`, `GOLD_FELT_RGB`; `paintFelt(rgb)`,
   `cardTablePropModel({ felt })`) - the chips table's green beside it, told apart at a glance. `cards.html?gold` lays
   the lab's table red.
 - **THE HOST** (`scenes/worldModes.js` `cardTableGold`, `cardGoldBarred`). Online, the gold table seats a realm
@@ -1148,7 +1148,7 @@ The same ask: section 8's last open lines.
   m); from its own side, its near end or anyone standing, it shows from the shins up, a standing figure cut off by the
   floor (AUDIT CARDS-6 E16 - "behind the table, which hide them" was true from the far side alone; no sprite has a better
   pose). My own needs none: seated, my view is the seat's, first person (section 12).
-- **THE SQUEEZE, THE CLICK AND THE PUSH** (`world/cardHand.js`; section 3, DECIDED). A press on the held hand peeks it,
+- **THE SQUEEZE, THE CLICK AND THE PUSH** (`world/card/cardHand.js`; section 3, DECIDED). A press on the held hand peeks it,
   as before; pulled DOWN the screen while held it SQUEEZES - the front card drawn toward its foot off the other, with
   the finger (AUDIT CARDS-6 E22: it was drawn up the screen against the pull), and turned (`squeezeMatrix`), as far as
   the pull (`SQUEEZE_PULL`); on an upright phone the hand is held farther off and nearer the middle, inside both edges

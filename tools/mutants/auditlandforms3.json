@@ -240,7 +240,7 @@
   },
   {
     "name": "AUDIT-LANDFORMS-III-C6-client-hands-its-own",
-    "file": "src/world/terrainGenClient.js",
+    "file": "src/world/terrain/terrainGenClient.js",
     "old": "    const s = sites ? sites.slice() : null, c = climates ? climates.slice() : null;",
     "new": "    const s = sites, c = climates;",
     "tests": [

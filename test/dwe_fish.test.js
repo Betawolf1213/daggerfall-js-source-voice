@@ -10,7 +10,7 @@ import {
   PassiveFishSchool, PassiveFish, vector3Slerp, reflect3, pickFishY, resolveFishPosition, pickSchoolmatePosition, schoolRadius,
   scaledAttemptsPerPixel, restoreIconAspect, isFishTemplateIndex, speciesOfTemplate, fishBillboardSize,
 } from '../src/world/passiveFish.js';
-import { WATER_BIOME } from '../src/world/underwaterDecorations.js';
+import { WATER_BIOME } from '../src/world/underwater/underwaterDecorations.js';
 import { createFishSpawner, createEncounterPulse, nearestEdgeDistanceSq } from '../src/scenes/deepWatersEncounters.js';
 
 const f32 = Math.fround;

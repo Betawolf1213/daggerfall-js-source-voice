@@ -95,7 +95,7 @@ the Hall of Champions - a plaque wall naming every Grand Champion this save (off
 cell off its block's own 64 x 64 automap bytes and name only the buildings of the location's list. Kamer's automap
 draws the bowl in byte 117 - BuildingTypes.Special1 + 1, "never displayed on automap" (the classic window shows it in
 its Extra and All views alone, the enhanced sheet never) - and the colosseum is no building, so the cell read as empty
-street with no name. The block served now carries `arenaAutoMap` (`world/arenaCity.js`): the bowl's pixels inside the
+street with no name. The block served now carries `arenaAutoMap` (`world/arena/arenaCity.js`): the bowl's pixels inside the
 colosseum's own box and off its sand take a guild hall's byte, so both maps draw the walls and the stands as they draw
 the guilds and temples (the temple quarter's colour), a ring round the sand - which keeps Kamer's 117, an open court as
 a temple's courtyard is. The navgrid asks nonzero alone, so nothing walks differently. And the block's row on the town
@@ -132,7 +132,7 @@ the tiers. Four kinds:
 | **Spectate** | anyone | the stands of an instance or the city floor | exhibitions, your ladder replay | any live bout, from the Arena window's list |
 
 **An instance of the floor.** As the Oblivion Gate's Burning Court is a made dungeon level, an arena bout is a made
-level: the colosseum, its tiers and its crowd, built on its own (`world/arenaFloor.js`), entered from the gate and
+level: the colosseum, its tiers and its crowd, built on its own (`world/arena/arenaFloor.js`), entered from the gate and
 left to the gate - so two bouts never share a floor, the city cell never fills with fights, and an online bout is
 its own relay room (`arena:<id>` - built as `arena:b<id>`, and the hour's exhibition `arena:x<hour>`, ARENA4/ARENA4b).
 
@@ -270,7 +270,7 @@ names, banners, health; your stamina), the **crowd meter**, the **timer**, the H
 ## ARENA1 record (2026-10-02) - SHIPPED
 
 **What stands.** Daggerfall's cell (4,3) is **ARENADAG.RMB** in every read of the city - MAPS.BSA's, Beautiful
-Cities', a pinned town's, and with Replace Game Artwork off (`src/world/arenaCity.js`; the door's new `editLocation`
+Cities', a pinned town's, and with Replace Game Artwork off (`src/world/arena/arenaCity.js`; the door's new `editLocation`
 seam, run by `MapsFile.getLocation` after the location is read with its indices set, never by `readClassicLocation`,
 which a pack's edit is taken against). The block is the port's own, served by `registerPortBlock` behind no switch at
 the fixed index **900100** (the gate court's 900000 is the precedent), so DFU's new-block sequence - the first mod
@@ -284,7 +284,7 @@ stores; its sixteen houses draw nothing), the city's 647 buildings to **628** (1
 to **547**, **all 547 unchanged**. Both: LocationId 50026, the castle 50027 (16 blocks), MapId unchanged, the Palace
 (faction 201) standing.
 
-**The model** (`src/world/arenaModel.js`, `vendor/daggerfall-arena/`, `tools/daggerfallArenaExtract.mjs`): Kamer's
+**The model** (`src/world/arena/arenaModel.js`, `vendor/daggerfall-arena/`, `tools/daggerfallArenaExtract.mjs`): Kamer's
 4,773 triangles carried; **365** that are copies of Daggerfall's dungeon models left out and rebuilt from the player's
 ARCH3D as **18 placements** of 8 models (62209, 63000, 63004, 63007, 63024, 63028, 63035, 72006; 13 whole, 39
 triangles under another of Daggerfall's pictures as Kamer gave them). Rebuilt and merged it is the bundle's mesh again,
@@ -384,7 +384,7 @@ from the gates as the Herald cries them]. Exhibition fighters are not hostile
 reports a swing that connects nothing yet - the judges' third count is live only where a host says so (recorded).
 [SUPERSEDED at ARENA-FIX 9/10: the misses are heard and the crit is the formula's own roll - the record below.]
 
-**The floor's instance** (`src/world/arenaFloor.js`, the Burning Court's law: a made DUNGEON level, no fifth host).
+**The floor's instance** (`src/world/arena/arenaFloor.js`, the Burning Court's law: a made DUNGEON level, no fifth host).
 ARENADAG.RMB's 118 misc models carried into a made RDB block at `(X, Y + 4, Z + 4096)` (so each lands where the RMB put
 it; the undercroft's 43600 stair and the gate's people stay in the city), its 29 light flats as flats (centred by their
 measured half heights) and as dungeon Light objects, a start marker by kind - the ladder fighter on their mark on the sand
@@ -465,7 +465,7 @@ A visual QA pass over ARENA1 and ARENA2 in the browser (the `?exterior&shot&play
 and the ARENA2 builder's own open items. Every item fixed and pinned (`test/arena_fix.test.js`, 20 tests; the arena1/arena2
 suites updated where the law moved); mutants `tools/mutants/arenafix.json` (43, all dead).
 
-1. **The stairs walk** (`world/arenaModel.js withStairRamps`). The gate courtyard's flight up to the ring failed: its foot
+1. **The stairs walk** (`world/arena/arenaModel.js withStairRamps`). The gate courtyard's flight up to the ring failed: its foot
    stands 0.62 m over the courtyard's ground (the mesh floats 0.22 m over the city's terrain - past stepOffset 0.5) and its
    risers are 0.37 m on 0.40 m treads, so the capsule caught their lips and the enhanced climb took the stair for a wall.
    Every stair run of 864102 is read off its faces (`arenaStairRuns`: vertical faces 0.1-0.48 m high, chained one on
@@ -486,7 +486,7 @@ suites updated where the law moved); mutants `tools/mutants/arenafix.json` (43, 
    ARMRAL02's (west), CUSTAA02's (east) and LIBRAL03's (south) streets meet the walls: Daggerfall's street lamps (210:29)
    either side of each street's end, benches (41105/41106) along the walls, the arena's stores by the south towers
    (41832, 41822), a signpost (212:6) where the streets come in. Looked at from all four streets and from the air.
-4. **The undercroft is the fighters' hall** (`world/arenaUndercroft.js`, `dungeonContext.js`, `worldModes.js`). Its stair
+4. **The undercroft is the fighters' hall** (`world/arena/arenaUndercroft.js`, `dungeonContext.js`, `worldModes.js`). Its stair
    names it ("To The Arena Undercroft"); its record's name is "The Arena Undercroft" (the header keeps Kamer's for the
    record's identity). No random foe stands at its 343 markers (it had stood a HumanStronghold's table) and no rest is
    broken there [NARROWED at FIELD BUGS 2026-10-04e UNDERCROFT-DEEP: so within the hall's reach; the deep cellars past it
@@ -806,11 +806,11 @@ What the audit found it closed - ARENA4's online gaps in ARENA4b (the record abo
   half of the tiers side 0's and the east side 1's (`systems/arena/arenaCrowd.js crowdHalfOf`/`crowdHalves`, `CROWD_WASH` - red
   [1, 0.8, 0.74], blue [0.78, 0.86, 1]), split only when a half has a banner (the save's offline, the realm's online; an
   exhibition red against blue). The hangings: on a bannered side, Kamer's ring banners at least 6 m from the middle line
-  take the banner's cloth at his own hang points (`world/arenaFloor.js hangingModel`, `ARENA_BANNER_MODEL` red 42557,
+  take the banner's cloth at his own hang points (`world/arena/arenaFloor.js hangingModel`, `ARENA_BANNER_MODEL` red 42557,
   blue 42558 - the latter World of Daggerfall's "Banner_Blue_Large"; the red is the large banner beside it, UNSEEN), nine a
   side; the bout asked for the floor names its banners (`arenaBouts.js floorBanners`).
 - **The Hall of Champions' plaque wall** (section 1). A row of plaques on the wall by the Keeper, found as `crownHallPlan`
-  finds its wall (`world/arenaPlaques.js hallPlaquePlan`: the nearest of eight ways to a wall at 1.65 m within 7 m, 1 m
+  finds its wall (`world/arena/arenaPlaques.js hallPlaquePlan`: the nearest of eight ways to a wall at 1.65 m within 7 m, 1 m
   apart, centred on her, doorways and corners skipped, at most ten, left to right as you face them), two models of
   Daggerfall's own dark frame-back wood (864110 a champion's, carrying one of its framed pictures; 864111 bare), each
   click a `plaque:` target reading its champion (name, banner, season, "Grand Champion") or the Keeper's "No name is cut

@@ -9,7 +9,7 @@
 import { DecisionBoxWindow } from '../ui/decisionBox.js';   // REST-WARN2: the Plus decision box
 import { isGothwayGarden, gothwayNorthSpots } from '../systems/gothwayBoards.js';
 import { wildGiantsAt, WILD_GIANT_STAND_M, WILD_GIANT_RESPAWN_MS } from '../systems/wild/wildGiants.js';   // ZONE-GIANTS   // GOTHWAY-BOARDS: at the north entrance
-import { NAV_CELL } from '../world/cityNavigation.js';
+import { NAV_CELL } from '../world/city/cityNavigation.js';
 import { pixelKeyText } from '../world/pixelKeys.js';   // PIXEL-KEYS: a built pixel's key text made once   // GOTHWAY-NORTH: the walk grid's cell
 import { BULLETIN_BOARD_MODEL_ID } from '../world/rmbLayout.js';   // GOTHWAY-BOARDS: the board's own model
 import { restAilmentLines } from '../systems/rest/restWarning.js';   // REST-WARN
@@ -24,11 +24,11 @@ import { FlatAnimator, armFlatAnim } from '../render/flatAnimation.js';   // FA1
 import { WORLD_FRAME } from '../render/renderer.js';   // AUDIT-EL F5
 import { windmillsOn } from '../world/windmills.js';   // WM3: the Windmills pack's switch
 import { openWodWorld, wodOn, wodLightColors } from '../world/worldOfDaggerfall.js';   // WOD2: World of Daggerfall's loader, one per page
-import { wodLightPosition, wodLightProperties, isWodShrub, WOD_ROCK_SITES, rockSeatDrop } from '../world/wodLocationObjects.js'; import { wodRockUvs } from '../world/wodRockUv.js';   // WOD2: the mod's own AddLight; WOD-BUSH: its shrub, stood on the ground (ROCK-SUNK: never a rock field's boulder); FB1001-WODROCK: a stretched rock piece's faces at its pebble's texel density (on this line, so no cite below it moves)
-import { WodSpawner, WOD_LOOT_LOCATION_INDEX, WOD_LOOT_ALIGN } from '../world/wodSpawner.js';   // WOD3: LocationEnemySpawner
-import { wodSiteId, yieldsTo } from '../world/wodShared.js';   // WOD7: a camp's marker, shared online
+import { wodLightPosition, wodLightProperties, isWodShrub, WOD_ROCK_SITES, rockSeatDrop } from '../world/worldOfDaggerfall/wodLocationObjects.js'; import { wodRockUvs } from '../world/worldOfDaggerfall/wodRockUv.js';   // WOD2: the mod's own AddLight; WOD-BUSH: its shrub, stood on the ground (ROCK-SUNK: never a rock field's boulder); FB1001-WODROCK: a stretched rock piece's faces at its pebble's texel density (on this line, so no cite below it moves)
+import { WodSpawner, WOD_LOOT_LOCATION_INDEX, WOD_LOOT_ALIGN } from '../world/worldOfDaggerfall/wodSpawner.js';   // WOD3: LocationEnemySpawner
+import { wodSiteId, yieldsTo } from '../world/worldOfDaggerfall/wodShared.js';   // WOD7: a camp's marker, shared online
 import { alignBillboardToGround, alignControllerToGround } from '../world/groundAlign.js';   // WOD3: SpawnLoot's drop; CSA-D: BoardBoat's AlignControllerToGround
-import { PRIVATEERS_HOLD_BLOCK, HOLD_MODELS, HOLD_FLATS, holdModelMatrix, holdFireLights, rollHoldFoes } from '../world/wodPrivateersHold.js';   // WOD4: the camp at Privateer's Hold
+import { PRIVATEERS_HOLD_BLOCK, HOLD_MODELS, HOLD_FLATS, holdModelMatrix, holdFireLights, rollHoldFoes } from '../world/worldOfDaggerfall/wodPrivateersHold.js';   // WOD4: the camp at Privateer's Hold
 import { rollLootRarity, pileSource, dungeonRarityTier, dungeonFamily, stampWonWeapons } from '../systems/loot/lootRarity.js';   // WOD3: LR1 over the camps' piles; SIGIL1: their weapons' sigils
 import { revenantToReturn, revenantSpawnOptions, revenantPresence, takeRevenantNotice, revenantSay, releaseRevenantStand, revenantRecord, revenantMomentEvent, revenantRumor, revenantMapMarks, revenantHuntEntries, revenantTakes, revenantFelled, revenantFelledEvent, revenantRoutSweep, revenantRoutedEvent, revenantWarnEvent, revenantBetrayEvent, forgetLastSlew, killerOf as revenantKillerOf, inheritRevenant } from '../systems/revenant/revenant.js';   // REVENANT: who comes back, and what the player is told
 import { endPlayerFights, playerHarmMark } from '../systems/harmMark.js';   // RVN10 (bible/12-Enhanced-AI/Feud-Arc.md 21.2): a respawn's jump is no flight
@@ -41,7 +41,7 @@ import { attachGamepad, GLASS_PAD_ZOOM } from '../ui/gamepadInput.js';   // GP1:
 import { BlocksFile } from '../formats/blocksFile.js';
 import { bindWorldDataBlocks } from '../formats/worldDataReplacement.js';   // RR3b
 import { isClimateFreeModel, NO_CLIMATE_REMAP, customModelFor, hasCustomModel, customModelNeeds, classicModelIdOf } from '../world/customModels.js';   // ARENA1: RuntimeMaterials' ApplyClimate 0 - the colosseum wears its own pictures; AUDIT MERCHANT-YARDS G1: the yards measure the registered models
-import { isUndercroftDoor, undercroftLocation, isArenaUndercroft, isArenaCity, inArenaCell, ARENA_REGION, ARENA_LOCATION, ARENA_BLOCK, ARENA_GATE_PEOPLE, arenaTownLandmark } from '../world/arenaCity.js';   // ARENA1: the undercroft's stair and its record, the city's cell; ARENA2: the colosseum's block in a built pixel, the Herald's place; ARENA-MAP: its name on the town map
+import { isUndercroftDoor, undercroftLocation, isArenaUndercroft, isArenaCity, inArenaCell, ARENA_REGION, ARENA_LOCATION, ARENA_BLOCK, ARENA_GATE_PEOPLE, arenaTownLandmark } from '../world/arena/arenaCity.js';   // ARENA1: the undercroft's stair and its record, the city's cell; ARENA2: the colosseum's block in a built pixel, the Herald's place; ARENA-MAP: its name on the town map
 import { isFurnishing } from '../systems/decor/decorFurnish.js';   // ARENA2: a moved house's furniture back among the furnishings
 import { createArenaBouts } from './arenaBouts.js';   // ARENA2: the bout on this screen - its law over real bodies, its crowd, its HUD
 import { createArenaSound } from '../systems/arena/arenaSound.js';   // ARENA2: the crowd, heard - built from DAGGER.SND's own voices
@@ -56,9 +56,9 @@ import { createArenaOnline } from './arenaOnline.js';   // ARENA4: the arena onl
 import { arenaFloorRoomOf } from '../net/arenaLaw.js';   // ARENA4: a bout's room (ARENA4b: or the hour's exhibition's)
 import { accountArena, accountIliac, iliacRefusalText, onHomeOrders, accountGambit } from '../net/accountClient.js';   // ARENA4: the arena's records on the account service; CARDS10: Iliac Hand's season board; AUDIT CARDS-6 E14: and its refusals' own words
 import { fighterIdentity } from '../systems/arena/arenaFighters.js';   // ARENA4: the relay's fighters billed by the bout's seed
-import { bossStandIn } from '../world/gateBoss.js';   // ARENA4: my opponent's stand-in for the formulas
+import { bossStandIn } from '../world/gate/gateBoss.js';   // ARENA4: my opponent's stand-in for the formulas
 import { closeArenaDoor, arenaDoorOpen } from '../ui/arenaDoor.js'; import { createArenaSessionButton } from '../ui/arenaSessionButton.js';   // HOTFIX 1003f: the session's button on the screen   // ARENA4: the window goes when a bout calls
-import { cityFloorCentre, standsRail, SAND_R } from '../world/arenaFloor.js';   // ARENA2: the city floor's sand, in its block's frame
+import { cityFloorCentre, standsRail, SAND_R } from '../world/arena/arenaFloor.js';   // ARENA2: the city floor's sand, in its block's frame
 import { ARENA_TEXT } from '../systems/arena/arenaText.js';   // ARENA1: the Daggerfall Bank's letter
 import { moveArenaRecords, arenaHomeFor, emptyArenaScene } from '../systems/arena/arenaMove.js';   // ARENA1: a deed whose house the arena took, moved once; ARENA4b: and an online home, by its owner's client
 import { loadModWorldData, ensureWorldDataPack, worldDataPacksMissing } from './modWorldData.js';   // RR3b; WD3: a pack a save's pins let in
@@ -71,14 +71,14 @@ import { settlementsOf, loadModRoads, retryModRoads, basicRoadsPathsPoint, WATER
 import { modSetting, modSettingsOf, modSettingsGeneration, MOD_SETTINGS, latchModLoaded } from '../systems/modSettings.js';   // ROADS 24; HCC: the mod's eight switches; CSA-D: a mod's title for the load's failure line; AUDIT PRE-MERGE 0928 S4: the next-load mods latched at mount
 import { hasPortFor, hasPort, setSeatHarbours, PORT_LOCATION_IDS, maskMapId } from '../systems/travel/travelPorts.js';   // AUDIT-RR2 G22: Travel Options' port list for RR's ship gate; SEAT2b part two: a members' Harbour among them (hasPortFor)
 import { WoodsFile, MAP_WIDTH, MAP_HEIGHT } from '../formats/woodsFile.js';
-import { buildTerrainIndices, isOutdoorWaterTile, TERRAIN_TILE_DIM, TERRAIN_SKIRT_DEPTH, surfaceHeightAt, surfaceNormalAt, surfaceNormalFromSamples, gridValueAt, groundOffPlane, terrainSampleHeightAt, lowestGroundUnder } from '../world/terrainSurface.js';   // GRASS-LIT2: the ground's normal under a blade; SNOWFALL1: and a pixel's that keeps none
+import { buildTerrainIndices, isOutdoorWaterTile, TERRAIN_TILE_DIM, TERRAIN_SKIRT_DEPTH, surfaceHeightAt, surfaceNormalAt, surfaceNormalFromSamples, gridValueAt, groundOffPlane, terrainSampleHeightAt, lowestGroundUnder } from '../world/terrain/terrainSurface.js';   // GRASS-LIT2: the ground's normal under a blade; SNOWFALL1: and a pixel's that keeps none
 import { waterUniforms, buildWaterIndices, waterSwitchOn } from '../render/waterSurface.js';   // WATER1: the enhanced water surface over the pixel's own grid; WATER-AUDIT: its own index set
-import { bedFields, sheetDepthsOf } from '../world/waterBed.js';   // WATER-NEXT 2: the bed under the water, carved for the eye alone (AUDIT WATER-NEXT H1: the cap's re-carve asks its depths)
-import { createRipples, createRippleStir, RIPPLE_SPAN, RIPPLE_CELLS, BOAT_STIR, BOAT_WAKE_SPEED } from '../world/waterRipples.js';   // WATER-NEXT 4: the rings and wakes
-import { waterCorners, WATER_DRAW_MASK_TABLE } from '../world/waterCorners.js';   // GRASS-WET1: the one table that says which of a tile's corners stand in water - the DRAW's, because a blade in a puddle is a picture, not a physics
+import { bedFields, sheetDepthsOf } from '../world/water/waterBed.js';   // WATER-NEXT 2: the bed under the water, carved for the eye alone (AUDIT WATER-NEXT H1: the cap's re-carve asks its depths)
+import { createRipples, createRippleStir, RIPPLE_SPAN, RIPPLE_CELLS, BOAT_STIR, BOAT_WAKE_SPEED } from '../world/water/waterRipples.js';   // WATER-NEXT 4: the rings and wakes
+import { waterCorners, WATER_DRAW_MASK_TABLE } from '../world/water/waterCorners.js';   // GRASS-WET1: the one table that says which of a tile's corners stand in water - the DRAW's, because a blade in a puddle is a picture, not a physics
 import { windowEmissionRGB } from '../render/windowEmission.js';
 import { realWindowsMode, VIEW_RINGS, clockFogColor } from '../render/realWindows.js';   // RW1: the rooms behind the glass, and the street a building's glass looks out on
-import { CITY_LIGHT_COLOR, CITY_LIGHT_RANGE, LIGHTS_ARCHIVE, collectCityLights, nearestLights, capFadeColors, capFadePairs, fillLanternPool, rangesFor } from '../world/cityLights.js';
+import { CITY_LIGHT_COLOR, CITY_LIGHT_RANGE, LIGHTS_ARCHIVE, collectCityLights, nearestLights, capFadeColors, capFadePairs, fillLanternPool, rangesFor } from '../world/city/cityLights.js';
 import { adoptLight } from '../render/lightId.js';   // LIGHT-ID: a pooled light named by the light it stands for
 import { isHearthFlat, HEARTH_NEAR } from '../systems/survival/hearth.js';   // HEARTH1: which of those lanterns is a fire you could cook on, and how far one can matter
 import { withPlayerLights } from './magicCandle.js';   // X11/T1: the lights the PLAYER carries
@@ -100,7 +100,7 @@ import { loadSeasonsTextures, seasonsInstalled } from '../systems/seasonsIliacBa
 import { createSeasonReskin } from '../world/seasonReskin.js';
 import { farFlatVisibleAt } from '../world/flatDistance.js';   // MAC1: the far rings draw the trees and the flats that move, and nothing small   // ROAD-H H3: which pixels a season re-skin rebuilds - RefreshLoadedNatureBatches' per-batch decision, per KEY
 import { isBulletinBoard, isCityGate, CITY_GATE_OPEN_MODEL_ID, CITY_GATE_CLOSED_MODEL_ID } from '../world/rmbLayout.js';   // RMBLayout.cs:1013-1017 - the one model id a town sign wears; :1007-1011 - the two a city gate wears
-import { makeCityGate, updateCityGate } from '../world/cityGate.js';   // AUDIT 64 F14: DaggerfallCityGate
+import { makeCityGate, updateCityGate } from '../world/city/cityGate.js';   // AUDIT 64 F14: DaggerfallCityGate
 import { staticBuildingBox, staticBuildingWorldAabb } from '../world/staticBuildings.js';   // AUDIT 64 F11: RMBLayout's StaticBuilding array
 import { targetAimPoint, missileAimDirection, isLocalPlayerTarget, PLAYER_TARGET } from '../characters/enemyTargets.js';   // AUDIT WORLD6b-iii(a) C3: the ONE aim law for an enemy missile (the peer's transform, mine otherwise); HCC: CollectThreats' `senses.Target == player`
 import { collectExteriorNpcs, exteriorNpcRecord, setupExteriorQuestStaticNpcs } from '../characters/exteriorNpcs.js';   // C2 / AUDIT 26: RMBLayout's street StaticNPCs; E3: their quest pass
@@ -113,10 +113,10 @@ import { registerTravelMapConsoleCommands } from '../ui/travelMapWindow.js';   /
 // people do rather than a second copy of it.
 import { makeInteriorPersonHost as makeStaticNpcHost } from './interiorContext.js';
 import { createAnimalAmbience } from '../systems/animalAmbience.js';   // A4
-import { CityNavigation } from '../world/cityNavigation.js';   // T2 towns
+import { CityNavigation } from '../world/city/cityNavigation.js';   // T2 towns
 import { TownPopulation } from '../systems/town/townPopulation.js';
 import { LivingTown, LINE_HEAD_M as LIVING_HEAD_M } from '../systems/livingWorld/livingTown.js';   // LW2: the living world's streets - residents with days, where DFU's pool stood
-import { REGULAR_HEAD_M as CARD_REGULAR_HEAD_M } from '../world/cardRegulars.js';   // CARDS4b: a seated regular's line over his head
+import { REGULAR_HEAD_M as CARD_REGULAR_HEAD_M } from '../world/card/cardRegulars.js';   // CARDS4b: a seated regular's line over his head
 import { livingWorldOn } from '../systems/livingWorld/livingSwitch.js';
 import { makeQuarry } from '../systems/livingWorld/quarry.js';   // WATCH-PROTECTS: a townsperson as a monster's quarry
 import { knownCriminal } from '../systems/standing.js';   // WATCH-KNOWS: the living watch's word by the law - one whose face it knows
@@ -133,7 +133,7 @@ import { foeWord } from '../systems/livingWorld/lines.js';   // LW4: a foe's wor
 import { portPackets, berthOf, sailorAt, crewsAshore } from '../systems/livingWorld/portCrews.js';   // LW5: the Bay's sailors
 import { createWayBook } from '../systems/livingWorld/ways.js';   // LW3: the travellers' ways, planned by the living world itself
 import { createLivingRoads } from './livingRoads.js';   // LW3: the parties on the road near the player
-import { createRoadTeams } from '../world/roadTeams.js';   // LW10: their horses and wagons
+import { createRoadTeams } from '../world/road/roadTeams.js';   // LW10: their horses and wagons
 import { createCaravanHost, travellerOf, tripOfId } from './caravanHost.js';   // LW11: the caravan's door
 import { createHideouts, createHideoutBook, bandChest, BAND_KEEP_M } from './hideouts.js';   // LW12: a band's hideout, stood
 import { patronWords } from '../systems/livingWorld/patrons.js';   // LW15: a patron named (the town deals them - LivingTown patronOfSale)
@@ -223,7 +223,7 @@ import { MEMBERSHIP_STATUS } from '../systems/quest/questLists.js';   // V2d: th
 import { prepareQuestShare, prepareShareData, shareSignature, receiveSharedQuest, SHARE_REFUSAL_TEXT, shareRefusalText, sayShareRefusal } from '../systems/quest/questShare.js';   // QUEST1: the chronicle's own Share button, and the party frame it answers
 import { careerSunAverse } from '../systems/passiveSpecials.js';   // AUDIT 64 F20: Career.DamageFromSunlight, the arrival clamp's second arm - HOOD-CAREER: under a bare head
 import { buildMapDict, locationSummaryAt as travelLocationSummaryAt } from '../systems/map/mapDirectory.js';   // W1: ContentReader's map dict; TO1: the junction map's own reads
-import { dilateCoastalClimate, smoothLocationNeighbourhood } from '../world/terrainHelper.js';   // AUDIT 58 F4
+import { dilateCoastalClimate, smoothLocationNeighbourhood } from '../world/terrain/terrainHelper.js';   // AUDIT 58 F4
 import { stampResidenceQuestNames, registerExteriorAutomapConsoleCommands } from '../ui/exteriorAutomapWindow.js';   // D5: the quest-residence plate name; E3: ExteriorAutoMapConsoleCommands
 // EM4: the skin fork. The classic skin keeps DFU's rotating town map
 // whole; the enhanced one gets the held sheet with the town's plan
@@ -274,7 +274,7 @@ import { createNoticeOverlay, closeNoticeDoor, noticeDoorOpen } from '../ui/noti
 import { createProfBook } from '../net/profBook.js';   // PROF1: this character's professions - its Stores, its day, its harvests kept until answered
 import { createMotherlodeBook } from '../net/motherlodeBook.js';   // PROF2b: the day's Motherlodes - read, warned of, their Watch receipts kept
 import { createProfHud } from '../ui/profHud.js';   // PROF1: the prompt, the act's meter, the toasts, the day's chip, the rank's banner
-import { createGatherHost } from './gatherHost.js'; import { rockFootprint } from '../world/terrainNature.js';   // PROF1/PROF2: the gathering professions in the streaming world - the nodes, the target, the act
+import { createGatherHost } from './gatherHost.js'; import { rockFootprint } from '../world/terrain/terrainNature.js';   // PROF1/PROF2: the gathering professions in the streaming world - the nodes, the target, the act
 import { herbKind } from './herbHost.js';   // PROF1: Herbalism's patches, a kind in it
 import { mineKind } from './mineHost.js'; import { nodeCompassPoints } from '../ui/nodeMarks.js'; import { createNodeGlowPass } from '../render/nodeGlow.js';   // PROF2: Mining's veins and Quarrying's boulders, a kind in it; NODE-MARKS: every profession's nodes on the compass in its colour, and lit where they stand
 import { treeKind, isTreeRecord, FOREST_STAMP } from './treeHost.js';   // PROF4: Logging's trees - the forest's own - a kind in it; LPT1: the felled trees' count, the near 3D trees' regather
@@ -283,16 +283,16 @@ import { LPT_SCALE_MAX, lptVariety, buildTreeSet } from '../world/lowPolyTrees.j
 import { realForestsOn, FOREST_HIDDEN_LOCATION_TYPES, roadVergesOn, climateBlendOn } from './shared.js';   // FOREST1: the Real forests switch, and the places the woods hide; VERGE1: the clear roadsides' switch; ECOTONE1: the blended climates'
 import { landformsOn, tamrielLandOn, tamrielTraceOn, etherSeaOn, etherCrossOutOn } from './shared.js';   // LANDFORM1-3: the Landforms switch; TAMRIEL2: the land beyond the Bay's; TAMRIEL3: the trace's door; ETHER-SEA: the Eltheric Ocean's
 import { preloadTamrielTrace } from '../ui/tamrielTrace.js';   // TAMRIEL3: Daggerfall's own map of Tamriel, off the player's two files
-import { fitBayToPicture } from '../world/tamrielLand.js';   // TAMRIEL3: where the Bay stands on it
-import { groundWoods, groundClimateIndex } from '../world/tamrielGround.js';   // TAMRIEL2: the continent's ground round the Bay, for the kernels and the far ring
+import { fitBayToPicture } from '../world/tamriel/tamrielLand.js';   // TAMRIEL3: where the Bay stands on it
+import { groundWoods, groundClimateIndex } from '../world/tamriel/tamrielGround.js';   // TAMRIEL2: the continent's ground round the Bay, for the kernels and the far ring
 import { etherWoods, etherClimateIndex, etherPoliticIndex, etherFrame, inEther, inEtherLaw, onBayOrEther, isleAt, islesNear, veilhaven, ETHER_HARBOUR_REACH, ETHER_SEA_NAME, ETHER_SEA_TITLE, CROSS_X, CROSS_LAND_PX, etherLight, ETHER_KEY_TINT } from '../world/ethericSea.js';   // ETHER-SEA: the Eltheric Ocean's ground and its box
 import { etherTemplates, etherTemplateOf, synthesizeEtherLocation, etherPlaceIsle, etherPlaceRows, ETHER_REGION, ETHER_REGION_NAME } from '../world/etherPlaces.js';   // ETHER-PLACES: the isles' towns and ruins; ETHER-OW: their pixels and far rows, the Overworld's
-import { tamrielFrameInBay, inBay as onTheBay } from '../world/tamrielFrame.js';   // TAMRIEL2: the frame the world streams over, and the Bay's own ground
+import { tamrielFrameInBay, inBay as onTheBay } from '../world/tamriel/tamrielFrame.js';   // TAMRIEL2: the frame the world streams over, and the Bay's own ground
 import { createLandforms, landformLiftField, landformSites, landformClimates, cliffFadeAt } from '../world/landforms.js';   // LANDFORM1-3: the shaped ground, and what it lifts a point by; AUDIT LANDFORMS II I1: the lift's fade beside the sea
-import { vergeClear, natureReach, pathTileMask, lptFitCap } from '../world/roadVerge.js';   // VERGE1: a wild flat's footprint off the roads; LPT-FIT: every Low Poly tree's crown off them
+import { vergeClear, natureReach, pathTileMask, lptFitCap } from '../world/road/roadVerge.js';   // VERGE1: a wild flat's footprint off the roads; LPT-FIT: every Low Poly tree's crown off them
 import { LPT_CROWNS } from '../world/lptCrowns.js';   // LPT-FIT: the drawn prototype's crown, turned (its radial reach)
-import { ecotoneOwner, ecoOrigin } from '../world/ecotone.js'; import { MAP_W, MAP_H } from '../world/roadNetwork.js';   // ECOTONE1: a border point's owner, the pixel's lattice origin, the map's edges
-import { insideRocks, forestAt } from '../world/terrainNature.js';   // FOREST1 (AUDIT F1): a wood's flats keep out of the rock pieces; GRASS-LIT2: the shot hook's woods
+import { ecotoneOwner, ecoOrigin } from '../world/ecotone.js'; import { MAP_W, MAP_H } from '../world/road/roadNetwork.js';   // ECOTONE1: a border point's owner, the pixel's lattice origin, the map's edges
+import { insideRocks, forestAt } from '../world/terrain/terrainNature.js';   // FOREST1 (AUDIT F1): a wood's flats keep out of the rock pieces; GRASS-LIT2: the shot hook's woods
 import { huntKind, createBodyStamps, bodiesHere, trackerMarks } from './huntHost.js';   // PROF7: Hunting's bodies - a kind in it, the kills that stamp them, a Tracker's marks; INDOOR-SKIN: the pool by the mode
 import { fishKind } from './fishHost.js';   // PROF8: Fishing's casts and schools - a kind in it
 import { utcDayOfMs } from '../net/nodeLaw.js';   // PROF8: a haul's UTC day
@@ -313,7 +313,7 @@ import { createWardenShows } from './wagonWardenShow.js';   // WARDEN1: the town
 import { createWagonWarden, wardenTownIn } from './wagonWardenHost.js';   // WARDEN1: the town watch - my wagon's stamp, the cell's words, the offline clock; AUDIT WARDEN1 D3: the town under a point, one pure home
 import { createWildEscrowHost } from './wildEscrowHost.js';   // PVP-ESCROW: the two-phase handoff's two sides, out of bootWorld (HOST-SPLIT)
 import { WARDEN_VENDOR, isWardenTown } from '../systems/wagon/wagonWarden.js';   // WARDEN1: the stamp's save slot, and the towns a watch keeps
-import { townGroundOf, yardSitesOn, craftYardSitesOn, carveYards, MONUMENT_KEEP_M, yardMeasuresOf, placedModelBox } from '../world/merchantYardSites.js';   // MERCHANT-YARDS: where they stand off the town's layout, and the people's navgrid carved round them
+import { townGroundOf, yardSitesOn, craftYardSitesOn, carveYards, MONUMENT_KEEP_M, yardMeasuresOf, placedModelBox } from '../world/merchantYards/merchantYardSites.js';   // MERCHANT-YARDS: where they stand off the town's layout, and the people's navgrid carved round them
 import { isYardTown, yardKeeper, ALL_YARD_KINDS, YARD_BENCH } from '../systems/merchantYards.js';   // MERCHANT-YARDS: the towns that stand them, who keeps them, the town's people
 import { isPortTown, isPortTownType, portKeeper, portPlaceName, PORT_SITE_ORDER } from '../systems/portPlaces.js';   // SHIPYARDS: the port towns, their keepers and their places' names; FIELD BUGS 2026-10-13c PORT-TOWNS: the harbour board's ports are its towns
 import { townSeaOf, seaBearing, seaField, portSitesOn, portPlaceRows, sceneToLocationXZ, openSeaOf, seaBears, portTownOnSea } from '../world/portSites.js';   // SHIPYARDS: where a port town's shipyard and lighthouse stand - its seaward ground; FIELD BUGS 2026-10-14 INLAND-PORTS: and which towns the open sea bears on
@@ -352,7 +352,7 @@ import { createSdHost } from './sdHost.js';   // SD2b: the Hollow in the world -
 import { sdOmenSeen, sdNoticeCard, SD_COMPASS_M, sdAirWeight, sdBrassLight, sdBannerText, SD_BANNER_M } from '../systems/superDungeon/sdOmen.js';   // SD2c: the Hollow seen and heard of - its column, its note, its compass's reach
 import { SdOmenPassRenderer } from '../render/sdOmenPass.js';   // SD2c: the Hollow's omen, the gate's beacon in brass
 import { SD_CAST_OUT_LINE, sdRoomKey, isSdRoom, sdPhase } from '../net/sdLaw.js';   // SD2d: a Hollow's end said to whoever it casts out; SD5a: the Hour's room; SD9e: a receipt from my realm's
-import { isSdRealm, realmArena, SD_REALM_TEXT, SD_REALM_FOG, SD_REALM_FLOORS, SD_ARENA_FLOORS, arenaHolds } from '../world/sdRealm.js';   // SD5a: the Shattered Hour - its edge, its refusals
+import { isSdRealm, realmArena, SD_REALM_TEXT, SD_REALM_FOG, SD_REALM_FLOORS, SD_ARENA_FLOORS, arenaHolds } from '../world/superDungeon/sdRealm.js';   // SD5a: the Shattered Hour - its edge, its refusals
 import { SdSkyRenderer, SD_SKY_STEPS } from '../render/sdSky.js';   // SD5b: the Hour's sky
 import { SdArenaGlowRenderer, sdArenaGlowAt, sdHourClockOf } from '../render/sdArenaGlow.js';   // SD-LOOK S7: the arena's floor reads the clock, and the sky's word for the fight
 import { SdStompWallRenderer, sdStompWalls, sdStompWallRecords, SD_HOLD_WALL, sdHomeBeacon } from '../render/sdStompWall.js';   // SD-LOOK S7: the Stomp's wall, the hold's curtain
@@ -360,14 +360,14 @@ import { SdPillarPassRenderer } from '../render/sdPillarPass.js';   // SD-LOOK S
 import { sdPillarLook, sdPillarLookAt, sdArenaMarksAt, sdLampDimInto } from './sdArenaWatch.js';   // SD-LOOK S7: the arena watches the Remnant - its hands, its mark, the Reset's dimming
 import { SdRiftRenderer } from '../render/sdRiftPass.js';   // SD-LOOK: the Rift's window into the Hour, its floor light, the Return's window home
 import { SdHaloRenderer, SD_HALO_GAIN } from '../render/sdHalo.js';   // SD-LOOK: their hearts' halos
-import { SD_HALL_FLOORS } from '../world/sdHall.js';   // SD6c: the bridge and the first step, the Concord's floors
+import { SD_HALL_FLOORS } from '../world/superDungeon/sdHall.js';   // SD6c: the bridge and the first step, the Concord's floors
 import { SD_HALL_TEXT, SD_HALL_SOUNDS } from './sdHall.js';   // SD6c: the snap's line; SD9d: the hall's clunk and toll, the Brass's powers' sounds
-import { SD_STEPS_FLOORS, SD_CAST_BACK_LOSS } from '../world/sdSteps.js';   // SD7b: the Steps' band and the arena, the Concord's floors too; what the void costs
+import { SD_STEPS_FLOORS, SD_CAST_BACK_LOSS } from '../world/superDungeon/sdSteps.js';   // SD7b: the Steps' band and the arena, the Concord's floors too; what the void costs
 import { SD_STEPS_TEXT } from './sdSteps.js';   // SD7b: the cast-back's line
 import { inOrreryHall, dungeonToRealm as sdDungeonToRealm, SD_FRAY_LASH, SD_ARENA, realmToDungeon as sdRealmToDungeon, SD_TURN_WAIT_LINE } from '../net/sdBrain.js';   // SD6c: the snap's lash, on whoever stands in the hall; SD10: the arena, where the way home stands; AUDIT SD II (L7 H2): a turn the stones refused
 import { SD_REM_SINK_MS } from './sdRemnant.js';   // SD10: the way home rises once the Remnant's body has sunk
 import { SD_HOME_TEXT, SD_HOME_SAY_MS, SD_HOME_RISE_MS, SD_HOME_SCALE } from './sdEnd.js';   // SD10: the way home's words; AUDIT SD II (L6 F16): said as it rises
-import { sdRiftWord, sdReturnStands, sdRiftCount, riftLook, SD_ENTERED_KEY, SD_ENTERED_MAX, SD_FALLEN_KEY, SD_NO_MARK, SD_RETURN_SIZE } from '../world/sdDungeon.js';   // SD4b: a Super dungeon's Rift and Return, off the hub's record
+import { sdRiftWord, sdReturnStands, sdRiftCount, riftLook, SD_ENTERED_KEY, SD_ENTERED_MAX, SD_FALLEN_KEY, SD_NO_MARK, SD_RETURN_SIZE } from '../world/superDungeon/sdDungeon.js';   // SD4b: a Super dungeon's Rift and Return, off the hub's record
 import { sdCities, sdTemplates } from '../systems/superDungeon/sdSite.js';   // SD2b: the Hollow's cities and templates, over the game's own rows
 import { RANDOM_TREASURE_ARCHIVE } from '../systems/loot/lootDataTables.js';   // WB12d: the casket's pile, undrawn
 import { createSigilBroker } from './sigilBrokerPool.js';   // SET7: the Sigil Broker - her body, her box and name, her press; BROKER-CAGE: caged at the faithful's circle
@@ -422,14 +422,14 @@ import { gateScoreSongs, createCourtScore, GATE_SONGS, SCORE_SILENCE } from '../
 import { sdScoreSongs, createHourScore, sdScorePlace, SD_SCORE_SILENCE } from '../systems/superDungeon/sdScore.js';   // SD13: the Hour's own score
 import { createSpoilsPool, spoilsStore, recoverSpoils, spoilsLevel, SPOILS_TEXT, SPOILS_SPENT_RESEND_MS } from './spoilsPool.js';
 import { breachBookFor, BREACH_BOOK_TEXT } from '../systems/breachBook.js';   // WB12c: the first ember brings the Guild's book
-import { bossPlace } from '../world/gateBoss.js';   // AUDIT WBX F3: where he fell - a charge's head, a leap's flight - frozen by the link's fold   // WB5: a fallen boss's spoils, spewed, glowing and taken
+import { bossPlace } from '../world/gate/gateBoss.js';   // AUDIT WBX F3: where he fell - a charge's head, a leap's flight - frozen by the link's fold   // WB5: a fallen boss's spoils, spewed, glowing and taken
 import { itemIconColor32 } from '../ui/itemIconColor32.js';   // WBX3: a spoil's own picture on the court's floor
 import { setCourtRules } from '../systems/courtRules.js';   // WBX6: the court's laws, switched by the frame
 import { gateRoomKey, isGateRoom, gateBossOf, gateTimes, gateAdmits, gateAt, GATE_COLLAPSE_MS } from '../net/gateLaw.js';   // WB3b: the court's room, and its day's end
 import { createGateCrowd, gateCrowdMax } from '../net/gateCrowd.js';   // GATE-CROWD: a gate's court draws the nearest of a crowd
 import { createPeerRange, peerRangeOf } from '../net/peerRange.js';   // PEER-RANGE: the others drawn out to the distance on the Other players card
-import { gateLandingFor, courtRing, courtArena, courtToDungeon, courtBraziers, COURT_TEXT, COURT_FOG, LAVA_Y } from '../world/gateArena.js';   // WB3b: the Burning Court's way home, its ring and its words   // WB2: the gate's countdown over the screen, near it
-import { isMainStoryDungeon } from '../world/dungeonTextures.js';   // SPAWNED-DUNGEONS1: the main story's own dungeons are never cloned
+import { gateLandingFor, courtRing, courtArena, courtToDungeon, courtBraziers, COURT_TEXT, COURT_FOG, LAVA_Y } from '../world/gate/gateArena.js';   // WB3b: the Burning Court's way home, its ring and its words   // WB2: the gate's countdown over the screen, near it
+import { isMainStoryDungeon } from '../world/dungeon/dungeonTextures.js';   // SPAWNED-DUNGEONS1: the main story's own dungeons are never cloned
 import { nearestSafeLocation, nearestSafeLocationAnywhere, respawnFlavorText, reviveForPlay, undergroundWakeSpot, undergroundWakeText } from '../systems/deathRespawn.js';   // D-ONLINE1: online, a death respawns instead of ending the run   // X-slice; the rest refusal raises the alert and asks the RESTING variant, the townsfolk idle the STRICT one; the catch-up loop's watch arm
 import { snapshotPlayer, restorePlayer, resolvePendingSpells, composeSessionState, restoreSessionState, dungeonPixelFor } from '../systems/save/save.js';   // P-slice: the above-ground quicksave; B4: the ONE quest+talk composer
 import { saveSlot, loadSlot, quickLoadSlot, mostRecentRestorable, QUICK_SAVE_NAME, saveKeysOfCharacter, saveInfoOf, requestScreenshot, capturePendingScreenshot, exitAutosaveNames, enumerateSaves, onSlotSaved, onSlotLoaded, slotLoaded } from '../systems/save/saveSlots.js';   // SAV4: the quicksave is a SLOT named QuickSave (SaveLoadManager.QuickSave/QuickLoad); SS1: the shot arms at save and lands at frame end   // ONLINE-AUTOSAVE1: saveKeysOfCharacter/saveInfoOf - every slot this character already has, kept in sync on an online exit too
@@ -562,8 +562,8 @@ import { hasActiveEffect, applySpell } from '../systems/effects.js';   // PEERLI
 import { combatVisualsOn, peerDraw } from '../systems/combatVisuals.js';   // INVIS-LOOK: a concealed peer, drawn as the enhanced lane draws a concealed foe
 import { isEntityWaterWalking, assignModBundle, removeBundleNamed, WATER_WALKING_SILENT_KIND } from '../systems/effects.js';   // CSA-I: the boat's water walk
 import { ANIMALS_ARCHIVE, ANIMAL_SOUND_BY_RECORD } from '../systems/soundClips.js';
-import { boxNearPath, pointNearPath, wodSiteClear, wodPiecewise, wodSiteFootprint, UNITS_PER_METRE, WOD_PIECE_ROAD_CLEAR, CAMP_ROAD_CLEAR_M } from '../world/roadClearance.js';   // FOREST1: and which picks are sites, and a site's footprint   // ROADS-CLEAR: WoD sites and pieces, and the camps, off the painted roads
-import { gateClearFor, gateSiteTest, boxNearGate, pointNearGate, createGateClearSweep, WOD_FLAT_GATE_CLEAR_M } from '../world/gateClearance.js';   // GATE-CLEAR: WoD's rock off the day's Oblivion Gate
+import { boxNearPath, pointNearPath, wodSiteClear, wodPiecewise, wodSiteFootprint, UNITS_PER_METRE, WOD_PIECE_ROAD_CLEAR, CAMP_ROAD_CLEAR_M } from '../world/road/roadClearance.js';   // FOREST1: and which picks are sites, and a site's footprint   // ROADS-CLEAR: WoD sites and pieces, and the camps, off the painted roads
+import { gateClearFor, gateSiteTest, boxNearGate, pointNearGate, createGateClearSweep, WOD_FLAT_GATE_CLEAR_M } from '../world/gate/gateClearance.js';   // GATE-CLEAR: WoD's rock off the day's Oblivion Gate
 import { raidMapMarks } from '../ui/eventMapMarks.js';   // EVENT-TIP: the towns under attack, on the held map
 import { StreamingWorldState, TerrainSlots, worldCoordToMapPixel, locationWorldRect, isInLocationRect, mapPixelToWorldCoords, SCENE_MAP_RATIO, nearestFirstFrom } from '../world/streamingWorld.js';   // HCC: StreamingWorld.SceneMapRatio; AUDIT BRANCH (WoD) L1-3: DFU's terrain array; AUDIT 68 S22: the load list's one order
 import { horseNameTooltip } from '../ui/horseNameTooltip.js';   // AUDIT HCC U6: the mod's HUD label, both skins
@@ -696,16 +696,16 @@ import { riddenHorseLook, birthHorses } from '../systems/horse/horseCoats.js';  
 import { giveNavalItems } from '../systems/naval/navalTransfer.js';
 import { InputMessageBoxWindow } from '../ui/inputMessageBox.js';   // HCC: the horse's name (DaggerfallInputMessageBox)
 import { getBool, getInt, getFloat } from '../systems/settings/settings.js';   // U31: StartCellX/Y + StartInDungeon, the classic start's own three keys   // F-slice: worldCoordToMapPixel for the travel start pixel
-import { STREAMING_TERRAIN_SCALE, DEFAULT_TERRAIN_SCALE, HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, TERRAIN_SIZE, SCALED_OCEAN_ELEVATION, sampleKernel } from '../world/terrainSampler.js';   // GR1: the sea plane, so no blade stands in water
-import { restrideGrid, gridBed } from '../world/terrainGen.js';   // PERF-EXT26: the restride's grid - the kernel's own law (EV4's ghost rows), on the worker or here
-import { getLocationTerrainTileOrigin, setLocationTiles } from '../world/terrainTiles.js';
+import { STREAMING_TERRAIN_SCALE, DEFAULT_TERRAIN_SCALE, HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, TERRAIN_SIZE, SCALED_OCEAN_ELEVATION, sampleKernel } from '../world/terrain/terrainSampler.js';   // GR1: the sea plane, so no blade stands in water
+import { restrideGrid, gridBed } from '../world/terrain/terrainGen.js';   // PERF-EXT26: the restride's grid - the kernel's own law (EV4's ghost rows), on the worker or here
+import { getLocationTerrainTileOrigin, setLocationTiles } from '../world/terrain/terrainTiles.js';
 // The start-marker arm (StreamingWorld's PositionPlayerToLocation), the
 // law and its two location-type reads. AUDIT 64 F18/F19: DFU reaches it
 // from FIVE sites, not one, and FOUR of them are here - the court
 // release, the ship's boarding, the guild teleport and fast travel.
 import { locationArrivalLanding, locationStartMarkers } from '../world/locationEntrance.js';
 import { preloadPrisonScreenArt, preloadCourtScreenArt } from '../ui/prisonScreen.js';   // PRIS00I0 - the serving-time screen   // ROAD-B B5: CORT01I0 - the courtroom the trial is pushed over
-import { TerrainGenClient } from '../world/terrainGenClient.js';   // EV7: the pixel kernel, off the main thread (samples/blend/tiles/grid/nature moved whole to terrainGen.js)
+import { TerrainGenClient } from '../world/terrain/terrainGenClient.js';   // EV7: the pixel kernel, off the main thread (samples/blend/tiles/grid/nature moved whole to terrainGen.js)
 import { getPref, setPref } from '../systems/uiPrefs.js';
 import { createCoverIndex, isCoverFlat, coverProxy, coverProxies, FELLED } from '../ai/cover.js';   // TACT1: billboards are cover; LPT1: a felled tree stands no 3D tree
 import { techniqueMarksNow, techniqueHudChips, offsetTechniques, TECHNIQUE_ACTION } from '../combat/techniques.js';   // TECH1 (bible/05-Combat/Weapon-Techniques.md): the player's marks on the ground, the HUD's chip, the recentre's shift
@@ -788,7 +788,7 @@ import { chapterSeasonLines } from '../net/chapterEvents.js';   // CHAP6c: a cha
 import { setHudRenown } from '../ui/hudRenown.js';   // RENOWN4: my own Renown and its bar, under the vitals
 import { pickRegionHubs, hubAtMapId, hubArrivalLine, hubClaim } from '../systems/region/regionHubs.js';   // HUB1: every region's main city, its hub; SD2b: a populated place's claim (the Hollow's cities)
 import { dungeonTier, tierPhrase } from '../systems/dungeon/dungeonTier.js';   // TIER1: a dungeon's tier, said online...
-import { dungeonTierLabel } from '../world/dungeonLabel.js';   // ...with its size, never over a place the port made
+import { dungeonTierLabel } from '../world/dungeon/dungeonLabel.js';   // ...with its size, never over a place the port made
 import { deriveTownSeats, seatAtMapId } from '../systems/town/townSeats.js';   // SEAT1a: every palace a seat, the three capitals crowns
 import { createTownSeatBook, parseSeatCommand, parseSiegeCommand } from '../net/townSeatBook.js';   // SEAT1a: the seats open, confirmed, witnessed   // VOID: a moderator's /siege void
 import { seatTipOf } from '../net/townSeatLaw.js';   // SEAT-TIP: a seat's card on the Overworld's plate
@@ -1051,27 +1051,27 @@ import { rrFortProximityLines, rrMasterArmorerDiscovery } from '../systems/rolep
 import { getBuildingVariant, setLastLocationKeyTo, makeLocationKey } from '../systems/worldDataVariants.js';   // RR3: the shop variant the quest set
 import { createDeepWatersHost, deepWatersOn, DEEP_WATERS_VENDOR, deepWatersDecorationSettings, deepWatersFishSettings, deepWatersEnemySettings, deepWatersLootSettings, deepWatersEnemySettingsNear, standsTheDeep, DEEP_SHARE_RADIUS } from './deepWatersHost.js';   // DW-B: Iliac Puddle No More (jet082) - the deep bay
 import { DeepWatersRenderer, surfaceScrollAt, DECORATION_CUTOFF } from '../render/deepWatersRender.js';   // DW-C: its seafloor and its surface; DW-E5: the billboard's cut-out the sunken piles keep
-import { clippedTerrainIndices } from '../world/deepWaterCap.js';   // DW-C: the clip's cull, out of the ground's own index set (FAR-CLIP1: the rest is the clip program's)
-import { underwaterLookUniforms, UNDERWATER_MURK, SHAFT_REACH_M } from '../world/underwaterLook.js';   // UNDER-LOOK, UNDER-RAYS (FIELD BUGS 2026-10-01 #4, #5)
-import { lookSettings, surfaceLook, underwaterFogColor, sceneTint, seafloorTexture, seafloorTextureStrength, seafloorPalette, seafloorAmbientBoost, daylightFactor, SURFACE_TEXTURE, horizonAmbientColor, distanceFogUniforms, underwaterVisionDistance, topSurfaceOpaqueFadeEnd } from '../world/deepWaterLook.js';   // DW-C
-import { SURFACE_RENDER_Y_OFFSET } from '../world/deepWaterSurface.js';   // DW-C: the surface stands 3 cm over the sea
+import { clippedTerrainIndices } from '../world/deepWater/deepWaterCap.js';   // DW-C: the clip's cull, out of the ground's own index set (FAR-CLIP1: the rest is the clip program's)
+import { underwaterLookUniforms, UNDERWATER_MURK, SHAFT_REACH_M } from '../world/underwater/underwaterLook.js';   // UNDER-LOOK, UNDER-RAYS (FIELD BUGS 2026-10-01 #4, #5)
+import { lookSettings, surfaceLook, underwaterFogColor, sceneTint, seafloorTexture, seafloorTextureStrength, seafloorPalette, seafloorAmbientBoost, daylightFactor, SURFACE_TEXTURE, horizonAmbientColor, distanceFogUniforms, underwaterVisionDistance, topSurfaceOpaqueFadeEnd } from '../world/deepWater/deepWaterLook.js';   // DW-C
+import { SURFACE_RENDER_Y_OFFSET } from '../world/deepWater/deepWaterSurface.js';   // DW-C: the surface stands 3 cm over the sea
 import { createDeepWatersPlayer } from './deepWatersPlayer.js';   // DW-D: the swimmer in the carved sea
-import { SwimSoundOdometer, SWIM_SOUND_CLIP, SWIM_SOUND_VOLUME, UNDERWATER_CUTOFF_HZ, isBoatEffectBundle } from '../world/deepWaterSwim.js';   // DW-D: UnderwaterPresentationEffects' ear; IsBoatEffectBundle
+import { SwimSoundOdometer, SWIM_SOUND_CLIP, SWIM_SOUND_VOLUME, UNDERWATER_CUTOFF_HZ, isBoatEffectBundle } from '../world/deepWater/deepWaterSwim.js';   // DW-D: UnderwaterPresentationEffects' ear; IsBoatEffectBundle
 import { createSwimMovement } from './deepWatersSwimMove.js';   // DW-D: OutdoorSwimMovementController
 import { setColumnSource as dwSetColumnSource, flushStateChange as dwFlushStateChange } from '../systems/deepWater/deepWaterPlayer.js';   // DW-D: the mod's public player API
-import { loadGraceActive, teleported as dwTeleported, loadStarted as dwLoadStarted, loadFinished as dwLoadFinished, locationLoadBegan as dwLocationLoadBegan, locationLoadEnded as dwLocationLoadEnded, terrainUpdateBegan as dwTerrainUpdateBegan, terrainUpdateEnded as dwTerrainUpdateEnded, pumpDeepWaterRuntime, canRunLightRuntimeWork, canRunHeavyRuntimeWork, canMutateTerrainData as dwCanMutateTerrainData, onTransientReset, setPostTransitionRefresh } from '../world/deepWaterRuntime.js';
+import { loadGraceActive, teleported as dwTeleported, loadStarted as dwLoadStarted, loadFinished as dwLoadFinished, locationLoadBegan as dwLocationLoadBegan, locationLoadEnded as dwLocationLoadEnded, terrainUpdateBegan as dwTerrainUpdateBegan, terrainUpdateEnded as dwTerrainUpdateEnded, pumpDeepWaterRuntime, canRunLightRuntimeWork, canRunHeavyRuntimeWork, canMutateTerrainData as dwCanMutateTerrainData, onTransientReset, setPostTransitionRefresh } from '../world/deepWater/deepWaterRuntime.js';
 import { createUnderwaterDecorations, createDecorTextureSource } from './deepWatersDecor.js';
 import { createOceanHoles, oceanHolesOn } from './oceanHolesHost.js';   // OH-B: There's a Hole in the Bottom of the Ocean (jet082) - the pits in the carved sea
 import { OceanHolesRenderer } from '../render/oceanHolesRender.js';   // OH-C: its discs and its miasma
 import { createMiasma, miasmaReach } from '../world/oceanHolesMiasma.js';
 import { SURFACE_INNER_COLOR, FLOOR_INNER_COLOR, placementFraction, OCEAN_HOLES_VENDOR, addBonusMagicLoot, upgradeLoot } from '../world/oceanHoles.js';
 import { createOceanHolesAbyss } from './oceanHolesAbyss.js';   // OH-D: the abyss - the pit's way down, its dungeon, its way back up
-import { DUNGEON_AMBIENT } from '../world/dungeonLights.js';   // OH-E: PlayerAmbientLight.DungeonAmbientLight, what the abyss darkens
-import { TILE_WORLD_SIZE_F32 } from '../world/deepWaterFloor.js';   // OH-D: RestoreOceanPosition's terrainData.size (AUDIT PRE-MERGE 0928 H4: a float)
+import { DUNGEON_AMBIENT } from '../world/dungeon/dungeonLights.js';   // OH-E: PlayerAmbientLight.DungeonAmbientLight, what the abyss darkens
+import { TILE_WORLD_SIZE_F32 } from '../world/deepWater/deepWaterFloor.js';   // OH-D: RestoreOceanPosition's terrainData.size (AUDIT PRE-MERGE 0928 H4: a float)
 import { createDeepWatersFish, createFishPictures, FISH_KEY_PREFIX } from './deepWatersFish.js';   // DW-E3: the fish
 import { createEnemySpawner, ENEMY_ATTEMPTS_PER_PIXEL_PER_TICK, trySpawnTreasureGuards } from './deepWatersEncounters.js';   // DW-E4: the deep's foes; DW-E5: and the wrecks' guards
 import { createUnderwaterLoot } from './deepWatersLoot.js';   // DW-E5: the sunken loot
-import { TREASURE_PILE_ARCHIVE, RUBBLE_RECORDS, centroidLocal } from '../world/underwaterLoot.js';   // DW-E5: the pile's picture, the rubble, the anchor
+import { TREASURE_PILE_ARCHIVE, RUBBLE_RECORDS, centroidLocal } from '../world/underwater/underwaterLoot.js';   // DW-E5: the pile's picture, the rubble, the anchor
 import { createRandomReligiousItem, createRandomJewellery, createRandomGem, createRandomPotion, createRandomClothing, createRandomWeapon, createRandomArmor } from '../systems/loot/loot.js';   // DW-E5: FillRandomItem's seven ItemBuilder calls
 import { createRegularMagicItem, getMagicItemTemplates, lootMatrix, tableLootSpawned } from '../systems/loot/loot.js';   // OH-E: CreateRandomMagicItem, GetMatrix, LootTables.OnLootSpawned
 import { enemyLootSpawned } from '../characters/enemyEntity.js';   // OH-E: EnemyEntity.OnLootSpawned
@@ -1080,11 +1080,11 @@ import { setItemFields, mintCondition, isAmmunition } from '../systems/item/item
 import { registerItemUseHandler } from '../systems/item/itemTemplates.js';   // CSA-H: the boat items' UseItem on the item-use door
 import { mintBoatItem, mintShelfBoatUids, assignVariantsToShopItems, cargoLootTarget, BOAT_PARTS_TEMPLATE as CSA_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE as CSA_DEED_TEMPLATE } from '../systems/comeSailAway/comeSailAwayItems.js';   // CSA-H: the two items, their shelf
 import { ListPickerWindow, listPickerArtLoaded } from '../ui/listPicker.js';   // CSA-H: the boat's variant picker
-import { mustSpawnOnFloor, alignFloorEnemyY, spawnRevealDistance, enemyRoster } from '../world/underwaterEnemies.js';   // DW-E4: where the mod sets a foe's transform; DW-E5: SpawnRevealDistance
+import { mustSpawnOnFloor, alignFloorEnemyY, spawnRevealDistance, enemyRoster } from '../world/underwater/underwaterEnemies.js';   // DW-E4: where the mod sets a foe's transform; DW-E5: SpawnRevealDistance
 import { markPuddleWater, carryPuddleMask, puddleWetAt, PUDDLE_RECORDS } from '../world/puddleMask.js';   // WATER-PUDDLE: the puddle is the art's
 import { rayUprightCapsule } from '../world/passiveFish.js';   // DW-E3: a fish's probe meets the player's capsule
 import { installDeepWatersFishIcons, createFishItem, normalizeFishItems, fishPictureUrl, fishIconArchive } from '../systems/deepWater/deepWatersFishItems.js';   // DW-E3: the fish as items
-import { clearEdgeBlackPixels } from '../world/underwaterDecorations.js';   // DW-E3: a fish's picture, edge-cleaned   // DW-E2: the seafloor's decorations   // DW-D: DeepWaterRuntime's load grace
+import { clearEdgeBlackPixels } from '../world/underwater/underwaterDecorations.js';   // DW-E3: a fish's picture, edge-cleaned   // DW-E2: the seafloor's decorations   // DW-D: DeepWaterRuntime's load grace
 import { carvedFloorLocalY } from './deepWatersHost.js';   // DW-D: the shore probes see no terrain over a carved cell
 import { etherPlaceRects } from '../world/etherWatersBake.js';   // ETHER-DEEP: the Eltheric Ocean's places' rects, for its own bake
 import { breathStep, setWaterBreathingRule } from '../systems/breath.js';   // DW-D: the dungeon's breath law, on the open sea; ApplyArgonianInfiniteBreath
@@ -1375,7 +1375,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   woods.syncHeightMapBytes();
   console.log(`[terrain] ${dilated} coastal ocean pixel(s) dilated, ${smoothedLocations} location neighbourhood(s) smoothed`);
   // TAMRIEL2 (Mac: "only implement the land mass"): THE GROUND BEYOND THE BAY - read once, as the world mounts. The
-  // reader `woods` becomes the Bay's own with the continent round it (world/tamrielGround.js: the Bay to the byte, the
+  // reader `woods` becomes the Bay's own with the continent round it (world/tamriel/tamrielGround.js: the Bay to the byte, the
   // seam band the clamp's own, the authored land past it) - the kernels (this thread's fallback and the worker's, which
   // composes its own copy the same way), the far ring and every other reader see one reader; the stream's frame grows
   // to the continent's; the climate read answers the province's past the Bay (the Bay's own, after its coastal
@@ -1503,7 +1503,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // loads the room's list instead (worldOfDaggerfall.js says why). A
   // failure here costs the world its camps, never the stream.
   const wod = wodOn() ? openWodWorld({ online: params.has('online') }) : null;
-  // FOREST1: REAL FORESTS (world/terrainNature.js layoutForests) - read
+  // FOREST1: REAL FORESTS (world/terrain/terrainNature.js layoutForests) - read
   // once, as the world mounts: every pixel of a world stands one forest,
   // and a flip of the row reaches the next world.
   const forests = realForestsOn();
@@ -1518,7 +1518,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   /** LANDFORM1-3: this thread's landforms - the gate's beacon (gateGroundAt) and a record's frame (landformLiftAt)
    *  read them, over the network this thread holds: the same arrays the worker cuts along; LANDFORM4: and its sites. */
   const landformsHere = () => (landform ? createLandforms({ woods, roads: terrainGen.roads(), sites: _landformSites, climates: _landformClimates }) : null);
-  // VERGE1: CLEAR ROADSIDES (world/roadVerge.js) - read once, as the world mounts, as the forests are: where the wild's
+  // VERGE1: CLEAR ROADSIDES (world/road/roadVerge.js) - read once, as the world mounts, as the forests are: where the wild's
   // flats stand is one law for a world, and a flip of the row reaches the next.
   const verges = roadVergesOn();
   // ECOTONE1: BLENDED CLIMATES (world/ecotone.js) - read once, as the world mounts: the border a pixel's ground, grass and
@@ -1594,7 +1594,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     return net?.source === 'basic-roads' ? basicRoadsPathsPoint(net, x, y) : 0;
   };
   // GATE-CLEAR (2026-09-28, Mac: "the gate can spawn inside the rock geometry from world of daggerfall"): the mod's rock
-  // keeps off the Oblivion Gate's clearing (world/gateClearance.js). `_gateClearNow` is the gate's own section's, far
+  // keeps off the Oblivion Gate's clearing (world/gate/gateClearance.js). `_gateClearNow` is the gate's own section's, far
   // below and online alone - the clearing of the gate the clock is about, null until the site's scan is done. Each build
   // reads it once, at its pick. When it turns (the last gate's collapse hands the clock to the next), the sweep asks every
   // built pixel again, between builds (the late sweep's shape) - the old clearing's rock back, the new one's gone - and a
@@ -2789,12 +2789,12 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const waterOn = waterSwitchOn();   // FT6: the one composition (render/waterSurface.js)
   renderer.waterBed = waterOn;   // WATER-NEXT 2: the ground under the enhanced water is a bed (render/waterBedGlsl.js)
   renderer.waterSimple = getPref('waterQuality') === 'simple';   // WATER-NEXT: the Water quality row - Simple takes no copy and no ripples
-  // WATER-NEXT 4: the ripple field round the camera - the rings and wakes of what moves in the water (world/waterRipples.js)
+  // WATER-NEXT 4: the ripple field round the camera - the rings and wakes of what moves in the water (world/water/waterRipples.js)
   const ripples = waterOn && !renderer.waterSimple ? createRippleStir(createRipples()) : null;   // AUDIT WATER-NEXT m12: the hosts' one stir
   let _rippleOnWater = false;   // the player's feet in exterior water this frame (the footsteps' own answer)
   /** WATER-NEXT 4: one step of the ripple field - recentred on the eye, stirred by the player in the water and by every
    *  boat afloat under way, stepped at its fixed rate, and handed to the renderer for this frame's water. AUDIT
-   *  WATER-NEXT P3/m12: the hosts' one stir (world/waterRipples.js createRippleStir) on the frame's clock - no closure
+   *  WATER-NEXT P3/m12: the hosts' one stir (world/water/waterRipples.js createRippleStir) on the frame's clock - no closure
    *  or array a frame - and a hull stirs only under way (BOAT_WAKE_SPEED). */
   function stirRipples(dt, nowMs) {
     if (!ripples) return;
@@ -3658,7 +3658,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (!dict) return null;   // never before the faction table: asked again
     return personLook(pn, staticNpcData(pn, { getFaction: (id) => dict.get(id) ?? null, raceOfCurrentRegion: () => REGION_RACES[_questRegionIndex()] + 1 }), dict.get(pn.factionID) ?? null);
   };
-  /** CARDS4b: THE REGULARS AT THE CARD TABLE (world/cardRegulars.js) - stood by the interior host each frame on layers of
+  /** CARDS4b: THE REGULARS AT THE CARD TABLE (world/card/cardRegulars.js) - stood by the interior host each frame on layers of
    *  their own, seated through the pose's `st` as a seated peer is; what they say, over their heads. */
   let cardRegularBodies = null, _cardBarks = [];
   const makeFamilyBodies = () => createFamilyBodies({
@@ -4097,7 +4097,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (!b) archAabbs.set(id, b = localAabb(positions));
     return b;
   };
-  /** MERCHANT-YARDS: A TOWN'S TWO YARDS (world/merchantYardSites.js) - off a layout laid out the same on every lane
+  /** MERCHANT-YARDS: A TOWN'S TWO YARDS (world/merchantYards/merchantYardSites.js) - off a layout laid out the same on every lane
    *  (the enhanced skin's, the mills stood: a classic client measures the ground an enhanced one sees, so both stand a
    *  yard on one spot; the build's own `loc` where it is that layout), every model measured by its box (no mesh built),
    *  every flat by its foot, a palace's block left whole, the monument's ground kept. Each site in the location's frame,
@@ -4119,7 +4119,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  inland left out); past the Veil, the Eltheric Ocean's water round its isles (the ether's own ground - each isle a
    *  hill of land in open water, ethericSea.js isleByte); past the map's edge, only where the land beyond the Bay stands
    *  (AUDIT CAPTAIN'S SEA B10, the harbour's sites' law, moved here: else nothing streams there) - the continent's sea,
-   *  its land a province's and no lake in it (world/tamrielGround.js authoredHeightByte). The one set the port towns, the
+   *  its land a province's and no lake in it (world/tamriel/tamrielGround.js authoredHeightByte). The one set the port towns, the
    *  harbour board's ports and the harbour office's sites, cargoes and charts ask. */
   let _openSea = null;
   const openSea = (x, y) => {
@@ -4269,7 +4269,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // from the moment such an arrival begins (the port builds the exterior over several frames of it); the first frame
   // inside ends the arrival, and a landing outside instead drops the hold.
   let _wodInside = false;
-  // WOD7: SHARED CAMPS (world/wodShared.js). `_wodSprung` - the markers I sprang (site -> when), on my full foes
+  // WOD7: SHARED CAMPS (world/worldOfDaggerfall/wodShared.js). `_wodSprung` - the markers I sprang (site -> when), on my full foes
   // frames; `_wodPeerSprung` - the ones a peer sprang, which mine never spring again. Offline nothing is recorded:
   // no frame goes out and none comes in.
   const _wodSprung = new Map();
@@ -5146,7 +5146,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  it should meet, and the gap between them was open. */
   function bedBytesOf(p) { return p._dwBytes ?? p.tilemapBytes; }
   /** AUDIT WATER-NEXT H1 (2026-10-07): A REPAINTED TILE IS GROUND. The cap repaints a water tile that stands above the
-   *  sea with the ground beside it (world/deepWaterCap.js) - and the bed had been carved by the pixel's own TileMap at
+   *  sea with the ground beside it (world/deepWater/deepWaterCap.js) - and the bed had been carved by the pixel's own TileMap at
    *  the build, so every such tile was a pit four units deep, of grass or sand, with no water over it (Iliac Puddle No
    *  More is on by default: a river's mouth on a coast). When the cap's TileMap moves the bed, the ground is carved again
    *  from the grid as it stood (`_bed.sheet` and `_bed.normals`); the clip and the water's sheet are re-made after it by
@@ -5224,7 +5224,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   /** DW-C: the frame's look and its distance fog, after beginFrame (which clears the fog - it is a frame's). */
   function beginDeepWatersFrame(minute) {
     const f = _dwFrame = dwFrameLook(minute);
-    if (f.underwater) renderer.setWaterFog(distanceFogUniforms(f.s, { daylight: f.daylight, cameraY: f.camY, oceanY: _dwFogP.oceanY, murk: UNDERWATER_MURK }, _dwFogU));   // UNDER-LOOK: the port's murk (world/underwaterLook.js)
+    if (f.underwater) renderer.setWaterFog(distanceFogUniforms(f.s, { daylight: f.daylight, cameraY: f.camY, oceanY: _dwFogP.oceanY, murk: UNDERWATER_MURK }, _dwFogU));   // UNDER-LOOK: the port's murk (world/underwater/underwaterLook.js)
     // DW-F: the column's frame for the flats - on while the top is drawn over the sea, as the floor's (dwColumnFrame)
     const cf = dwColumnFrame(f);
     _dwColumnNow = cf.columnOn && cf.surfaceTexture ? { seaY: cf.seaY, topColor: cf.topColor, topVision: cf.topVision, surfaceScroll: cf.surfaceScroll, surfaceTexture: cf.surfaceTexture, origin: state.pixelTranslation(state.current.x, state.current.y, _dwColumnOrigin) } : null;
@@ -5804,7 +5804,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // GATE-CLEAR: the gate's clearing this build keeps its rock off - read ONCE, here, and held to by its placements
     // below (the gate's day can turn while it builds; the sweep asks a pixel that published on a stale one again)
     const gateClear = _gateClearNow();
-    const gateLedger = { refused: false, reach: [] };   // what the clearing cost this pixel, and what it stood (world/gateClearance.js)
+    const gateLedger = { refused: false, reach: [] };   // what the clearing cost this pixel, and what it stood (world/gate/gateClearance.js)
     const gateSite = gateSiteTest(gateClear, px, py, gateLedger);
     if (wod && onTheBay(px, py) && await wodOpened) {   // AUDIT CAPTAIN'S SEA G8: the mod's sites are the Bay's - its pick never run off it (off the map its pixel walk is a whole-list scan, 1.3 ms a pixel, thrown away)
       // AUDIT BRANCH (WoD) M2: the mod's decision can cost this pixel its site, never the pixel - a throw out of the
@@ -5819,7 +5819,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
           // location alone: -1 on a pixel without one.
           mapRegionIndex: dfLocation ? dfLocation.regionIndex : -1,
           worldHeight: woods.getHeightMapValue(px, py),
-        }, wodPathsPoint, (name, prefab, rect) => wodSiteClear(terrainGen.roads(), px, py, name, prefab, rect) && gateSite(name, prefab, rect));   // ROADS-CLEAR: a camp, fort, shrine or ruin whose pieces reach a road is not stood (world/roadClearance.js); GATE-CLEAR: nor one reaching the Oblivion Gate's clearing
+        }, wodPathsPoint, (name, prefab, rect) => wodSiteClear(terrainGen.roads(), px, py, name, prefab, rect) && gateSite(name, prefab, rect));   // ROADS-CLEAR: a camp, fort, shrine or ruin whose pieces reach a road is not stood (world/road/roadClearance.js); GATE-CLEAR: nor one reaching the Oblivion Gate's clearing
         if (picks.length && onTheBay(px, py)) wodPicks = picks;   // TAMRIEL2: the mod's sites are the Bay's
       } catch (e) {
         console.warn(`[wod] pixel ${key}: the loader failed here, and the pixel stands without its site: ${e?.message ?? e}`);
@@ -5893,7 +5893,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         origin: Int32Array.of(ox, oz, 1),
       };
     }
-    // WATER-NEXT 2 (world/waterBed.js): the ground the eye sees carved into a bed under the water - the game's ground
+    // WATER-NEXT 2 (world/water/waterBed.js): the ground the eye sees carved into a bed under the water - the game's ground
     // (heightAt, the samples) never moves - and the water's own sheet, the grid as it stood with the bed's depth.
     // AUDIT WATER-NEXT P1: carved by the kernel on the worker (terrainGen.js restrideGrid), not on this thread
     const bed = hostBed({ positions, normals }, carved);
@@ -6435,7 +6435,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     }
 
     // WOD2: AddLocation's OBJECT loop (LocationLoader.cs:232-252) through
-    // LoadObject (world/wodLocationObjects.js): the models with their
+    // LoadObject (world/worldOfDaggerfall/wodLocationObjects.js): the models with their
     // colliders, the visible flats base-anchored where AlignToBase leaves
     // them, the mod's own lights, the animals' calls - pixel-local like
     // everything here, so destroyPixel takes them with the pixel (the C#
@@ -6456,7 +6456,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       for (const m of place.models) {
         const gpu = await getGpuMesh(m.modelId);
         if (!gpu) continue;   // a model ARCH3D does not carry stands empty in DFU (no mesh, no collider)
-        const cpu = wodRockUvs(cpuModels.get(m.modelId), m.matrix, m.modelId);   // FB1001-WODROCK (Mac: "Retexture them to be as detailed as possible"): a piece stretched 4x or more draws its planes unfolded at its pebble's own texel density (world/wodRockUv.js) - new UVs only, its positions and indices the model's own arrays; a camp or a house is the same object
+        const cpu = wodRockUvs(cpuModels.get(m.modelId), m.matrix, m.modelId);   // FB1001-WODROCK (Mac: "Retexture them to be as detailed as possible"): a piece stretched 4x or more draws its planes unfolded at its pebble's own texel density (world/worldOfDaggerfall/wodRockUv.js) - new UVs only, its positions and indices the model's own arrays; a camp or a house is the same object
         const box = transformedAabb(archAabb(m.modelId, cpu.positions), m.matrix);
         // WOD-BUSH (2026-10-01, Mac: "World of daggerfall bush props float above the ground in bandit camps"): the
         // layouts' shrub stands on the DRAWN ground. The mod stands every object on the site's average plus the
@@ -6464,11 +6464,11 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         // it is eased toward it (flattenForLocation), and the shrubs ring the site in that band, at heights the
         // author read off the ground of the one place they were laid out. They hung over ground falling away (DFU's
         // too). Its mesh's foot goes to the lowest ground under the middle of its footprint, collider and all.
-        if (isWodShrub(m.modelId, wodPicks[m.pick]?.name)) {   // ROCK-SUNK (2026-10-02, the field: "Insane glitched geometry over at Hadus"): the rock fields build their outcrops of the same model - boulders scaled 5.6 to 95, set into the piles on purpose - and standing those on their lowest corner raised shards hundreds of metres into the sky round Hadus; a Rocks or Mountains site keeps the mod's height (world/wodLocationObjects.js isWodShrub)
+        if (isWodShrub(m.modelId, wodPicks[m.pick]?.name)) {   // ROCK-SUNK (2026-10-02, the field: "Insane glitched geometry over at Hadus"): the rock fields build their outcrops of the same model - boulders scaled 5.6 to 95, set into the piles on purpose - and standing those on their lowest corner raised shards hundreds of metres into the sky round Hadus; a Rocks or Mountains site keeps the mod's height (world/worldOfDaggerfall/wodLocationObjects.js isWodShrub)
           const dy = lowestGroundUnder(samples, box) - box[1];
           m.matrix[13] += dy; box[1] += dy; box[4] += dy;
         }
-        // ROCK-SEAT (world/wodLocationObjects.js rockSeatDrop): a rock field's piece hanging over ground that falls away
+        // ROCK-SEAT (world/worldOfDaggerfall/wodLocationObjects.js rockSeatDrop): a rock field's piece hanging over ground that falls away
         // under it is lowered into the ground - its open underside never stands in the air; one in the ground stays put
         // - and only a piece SET into it (its foot under the ground at its middle): one the mod rests on another's crown keeps its height
         if (rockPick(m.pick) && box[1] < surfaceHeightAt(samples, Math.max(0, Math.min(TERRAIN_SIZE, (box[0] + box[3]) / 2)), Math.max(0, Math.min(TERRAIN_SIZE, (box[2] + box[5]) / 2)))) { const dy = rockSeatDrop(lowestGroundUnder(samples, box), box[1]); if (dy < 0) { m.matrix[13] += dy; box[1] += dy; box[4] += dy; } }
@@ -6477,7 +6477,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         // fields and mountains lose the pieces over the road and keep the rest; a whole site was asked at its pick.
         if (boxNearPath(_roadsNow, px, py, box[0] * UNITS_PER_METRE, box[2] * UNITS_PER_METRE, box[3] * UNITS_PER_METRE, box[5] * UNITS_PER_METRE, WOD_PIECE_ROAD_CLEAR)) { _wodOffRoad++; continue; }
         // GATE-CLEAR (2026-09-28, Mac: "the gate can spawn inside the rock geometry from world of daggerfall"): nor one
-        // whose box reaches the Oblivion Gate's clearing (world/gateClearance.js) - a gate risen inside a boulder is out
+        // whose box reaches the Oblivion Gate's clearing (world/gate/gateClearance.js) - a gate risen inside a boulder is out
         // of reach of the press and the step. What stands goes in the reach, for the next gate's sweep to ask.
         if (boxNearGate(gateClear, px, py, box[0], box[2], box[3], box[5])) { gateLedger.refused = true; _wodOffGate++; continue; }
         gateLedger.reach.push(box[0], box[2], box[3], box[5], 0);
@@ -6554,14 +6554,14 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       if (forests && insideRocks(pixelRocks, f.x, f.z)) continue;
       // ECOTONE1: a border's flat is its own climate's - the summer archive the kernel names, worn in the season's set
       const base = f.archive ?? climate.natureArchive, archive = f.archive == null ? natureArchive : getNatureArchive(f.archive, season);
-      // VERGE1: and none reaches over a road or a track - the disc of its widest picture (world/roadVerge.js)
+      // VERGE1: and none reaches over a road or a track - the disc of its widest picture (world/road/roadVerge.js)
       if (vergeNet && !vergeClear(vergeNet, px, py, f.x, f.z, natureReach(vergeHalf.get(base)[f.record] ?? 0, base, f.record, px, py, f.x, f.z))) { vergeOff++; continue; }
       if (archive !== natureArchive) borderNature.set(archive, base);
       const i = addFlat(archive, f.record, f.x, f.y, f.z);
       if (lowPolyTrees) wildFlats.add(`${archive}_${f.record}#${i}`);   // LPT1
       if (isTreeRecord(base, f.record)) pixelTrees.push({ id: pixelTrees.length, group: `${archive}_${f.record}`, i, x: f.x, y: f.y, z: f.z, wood: f.wood ?? 0, base, archive });   // FOREST1: how wooded its tile is - Logging's trees stand in the woods; ECOTONE1: and whose climate it is (its stump)
     }
-    // WOD4: THE CAMP AT PRIVATEER'S HOLD (world/wodPrivateersHold.js).
+    // WOD4: THE CAMP AT PRIVATEER'S HOLD (world/worldOfDaggerfall/wodPrivateersHold.js).
     // DungeonExterior finds the block by name and PrivateersHold.Start
     // builds the camp in the block's frame: the models with their
     // colliders, the flats CENTRED where Start sets them, a FireLight over
@@ -6645,7 +6645,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         const scales = new Float32Array(centers.length), wild = new Uint8Array(centers.length);
         // LPT-FIT (Mac: "roads still show on roads and pathways. You're not taking the entire model into account"):
         // under clear roadsides every tree here - a location's as well as the wild's - is drawn no wider than the room
-        // its root has from the pixel's roads, tracks and streets (world/roadVerge.js lptFitCap): its crown, turned
+        // its root has from the pixel's roads, tracks and streets (world/road/roadVerge.js lptFitCap): its crown, turned
         const crown = verges ? (LPT_CROWNS[lpt.key] ?? 0) : 0;
         if (crown > 0 && !lptPathMask) lptPathMask = pathTileMask(tilemap, paths);
         const fit = crown > 0 ? new Float32Array(centers.length) : null;
@@ -7791,7 +7791,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  entered - the camp roll's frame - is still the old pixel's, and it
    *  says nothing about where the group is put 14-26 units away. */
   /** ROADS-CLEAR (2026-09-25, Mac: "Camps ... shouldnt be placed on roads"): is a scene position within `radiusM`
-   *  metres of a road or track's painted band (world/roadClearance.js), in its pixel or the next? False until the
+   *  metres of a road or track's painted band (world/road/roadClearance.js), in its pixel or the next? False until the
    *  network lands - a camp rolled that early stands where it rolled. */
   const _nearRoad = (pos, radiusM) => {
     const net = terrainGen.roads();
@@ -8032,7 +8032,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     .catch((e) => console.warn('[travelmap] classic travel map art unavailable:', e?.message ?? e));
   // TAMRIEL3 (Mac: "It doesnt look like the map thats in daggerfall"): THE CONTINENT OFF THE PLAYER'S OWN PICTURE.
   // TMAP00I0 and TAMRIEL2 traced to a land and a province mask (ui/tamrielTrace.js), the Bay's place and scale on the
-  // picture FIT by laying its own land over the picture's (world/tamrielLand.js fitBayToPicture), and both installed in
+  // picture FIT by laying its own land over the picture's (world/tamriel/tamrielLand.js fitBayToPicture), and both installed in
   // the land module and the frame for every reader - the held map's ink, the ground beyond the Bay on this thread and
   // on the worker (terrainGen.setTamriel), the stream's frame. Until it lands the authored shape stands; a missing
   // file leaves it standing and says so. `?tamrieltrace=off` the door.
@@ -11381,7 +11381,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       points.push({ x: at.x, y: at.y, text: l.text, name: livingRelations.known(id) ? firstNameOf(l.person.nameNPC) : null, who: key, kind: 'talk', distance: d });
     }
   }
-  /** CARDS4b: the card table's regulars' lines (world/cardRegulars.js regularBark) as the crew layer's points - over each
+  /** CARDS4b: the card table's regulars' lines (world/card/cardRegulars.js regularBark) as the crew layer's points - over each
    *  seated head, within the crew's range, in front of the eye. */
   function cardBarkPoints(proj, view, eye, w, h, rect) {
     const points = [];
@@ -15763,7 +15763,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (ov instanceof DeathScreen) { ov.restoreView(); townTalk.closeOverlay(ov); }
     else modes?.clearDeath?.();
   }
-  /** WB3b: the player stood before the gate outside, turned away from it (world/gateArena.js gateLandingFor) - the way
+  /** WB3b: the player stood before the gate outside, turned away from it (world/gate/gateArena.js gateLandingFor) - the way
    *  home's landing, for a death cast out of the court and a court that came apart. False off the built ground. */
   function landBeforeGate(g) {
     const l = gateLandingFor(g, { pixelTranslation: (px, py) => state.pixelTranslation(px, py), heightAt: (x, z) => heightAt(x, z) });
@@ -17727,7 +17727,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  Declared, not a const: the map's doors say through it from closures (BOOT-TDZ). */
   function tvSay(line, seconds = HUD_TEXT_POP_DELAY) { townTalk.say(line, seconds * Math.max(1, worldTimeScale())); }
   /** TIER1 (Super-Dungeons.md section 12): ONE LINE ON ENTERING A DUNGEON, ONLINE - its tier and the size the room built
-   *  it at ("Elite Dungeon, Small"), the dungeon's own word (world/dungeonLabel.js); none over a place the port made.
+   *  it at ("Elite Dungeon, Small"), the dungeon's own word (world/dungeon/dungeonLabel.js); none over a place the port made.
    *  The page's flag, not `onlineOn`: a load into a dungeon can stand before that is declared (questWorld's reason). */
   function dungeonTierSay() {
     if (!params.has('online')) return;
@@ -18209,7 +18209,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       locationName: shownLocation,   // L10N3e: the title, as shown - the key is locationId
       locationId: locId,
       gridW: dfLoc.exterior.exteriorData.width, gridH: dfLoc.exterior.exteriorData.height,
-      blocks: b.locBlocks.map((bl) => ({ x: bl.x, y: bl.y, autoMap: bl.dfBlock?.rmbBlock?.fldHeader?.autoMapData, landmark: arenaTownLandmark(bl.dfBlock) })),   // ARENA-MAP: the Arena's name (world/arenaCity.js)
+      blocks: b.locBlocks.map((bl) => ({ x: bl.x, y: bl.y, autoMap: bl.dfBlock?.rmbBlock?.fldHeader?.autoMapData, landmark: arenaTownLandmark(bl.dfBlock) })),   // ARENA-MAP: the Arena's name (world/arena/arenaCity.js)
       yards: b.merchantYards ?? null,   // YARDS-FOUND: the town's Stable and Wagon Yard on the map - their ground and their names (ui/townMapDoor.js)
       ports: b.portSites ?? null,   // SHIPYARDS-FOUND: a port town's shipyard and lighthouse on it the same way
       playerPos: () => local,
@@ -19911,7 +19911,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     return _ohGpsLoc.loc;
   };
   /** ARENA1: a door's location and its exit group. The arena's 43600 stair is the undercroft's door - its own record
-   *  (world/arenaCity.js undercroftLocation, one per city record) and its own group, so the way home out of the castle
+   *  (world/arena/arenaCity.js undercroftLocation, one per city record) and its own group, so the way home out of the castle
    *  never lands at the stair and the undercroft's never at the castle's doors. */
   const _undercrofts = new WeakMap();
   function arenaDoorTarget(e) {
@@ -25373,7 +25373,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     riteBroken: (day, s) => !!riteHost?.isBroken(day, s?.px, s?.py),   // AUDIT WB12d (C8): the hub's word came first - its order is no order
     riteReady: () => !!online?.riteOk,   // AUDIT WB12d (L5): a relay that keeps the rite
   }) : null;
-  /** GATE-CLEAR: THE CLEARING World of Daggerfall keeps its rock off (world/gateClearance.js, the streamer's sweep far
+  /** GATE-CLEAR: THE CLEARING World of Daggerfall keeps its rock off (world/gate/gateClearance.js, the streamer's sweep far
    *  above) - the site of the gate the clock is about (net/gateLaw.js gateAt: from the last gate's collapse to this
    *  one's), the omen's own roll, so every client clears the same ground and the land is clear long before the omen
    *  names it. Nothing until the site's scan is done (it begins once the relay's clock is read); the day then read off
@@ -25897,7 +25897,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     };
   };
   /** AUDIT SD: the Hollows' slots whose Hour I went through - during its collapse the Rift admits me again
-   *  (world/sdDungeon.js sdRiftWord's `entered`; the realm keeps me as it does - SD4b, section 6). AUDIT SD II (L6 F17):
+   *  (world/superDungeon/sdDungeon.js sdRiftWord's `entered`; the realm keeps me as it does - SD4b, section 6). AUDIT SD II (L6 F17):
    *  kept on the device, the last few slots (SD_ENTERED_KEY) - a reload forgot it, and the Rift said "The Hour has
    *  closed." to a fighter its realm would have admitted. */
   const _sdEntered = sdSlotsKept(SD_ENTERED_KEY);
@@ -35974,7 +35974,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
         // writes 10/11/12/51 - the SAME records the natural dirt-grass
         // marching squares write - so the record cannot tell a path from
         // a field's edge and the placer grew a lawn straight down every
-        // track. The painter knows, and now says (world/roadPainter.js).
+        // track. The painter knows, and now says (world/road/roadPainter.js).
         if (p.paths?.[ti]) return null;
         // WOD2: and not across a World of Daggerfall site - DFU keeps its
         // nature off the loader's locationRect, and the grass is this
@@ -35990,7 +35990,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
         // write are mostly-grass by texel count, so grassRecordsOf takes
         // them and blades grew out of the water - a green mottled patch
         // in the middle of a pond, which is the water tile not reading
-        // as water. The corner table (world/waterCorners.js) is the one
+        // as water. The corner table (world/water/waterCorners.js) is the one
         // law for that question; the water pass and the player's feet
         // already read it, and now the grass does too.
         // WATER-PUDDLE (2026-09-25): a puddle record is wet only where
@@ -36237,7 +36237,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     });
     arrows.draw(renderer);
     // UNDER-LOOK and UNDER-RAYS (FIELD BUGS 2026-10-01 #4, #5): under the sea, the water body and the sun's shafts over
-    // every pixel the world drew - after the last world pass, before the weapon and the HUD (world/underwaterLook.js)
+    // every pixel the world drew - after the last world pass, before the weapon and the HUD (world/underwater/underwaterLook.js)
     if (deepWaters && dwRender && _dwFogP?.under && _dwFrame) {
       dwRender.drawUnderwaterLook(underwaterLookUniforms({ depth: _dwFogP.oceanY - cam.pos[1], daylight: _dwFrame.daylight, toSun: sunDirection(minute), sunColor: renderer._sunColor, sunScale: renderer._sunScale }, _underLook), _dwFogP.oceanY, SHAFT_REACH_M, now / 1000);
       renderer.markForeignPass();

@@ -22,9 +22,9 @@ import {
   ROAR_SLOT_S, PLOP_SLOT_S, THUNDER_CRACK_NEAR_M, CLIP_ROAR,
 } from '../src/scenes/deadlandsAir.js';
 import { SPEED_OF_SOUND, THUNDER_SOURCE_M } from '../src/systems/distantStorms.js';
-import { courtToDungeon, courtBraziers, LAVA_Y, ARRIVE_Z, RIM_OUT, SPIRES, GATE_BLOCK_SIDE } from '../src/world/gateArena.js';
-import { GATE_ARCHIVE } from '../src/world/gateModel.js';
-import { COURT_ARCHIVE } from '../src/world/gateArena.js';
+import { courtToDungeon, courtBraziers, LAVA_Y, ARRIVE_Z, RIM_OUT, SPIRES, GATE_BLOCK_SIDE } from '../src/world/gate/gateArena.js';
+import { GATE_ARCHIVE } from '../src/world/gate/gateModel.js';
+import { COURT_ARCHIVE } from '../src/world/gate/gateArena.js';
 import { COURT_R, COURTS, nearestCourt } from '../src/net/gateBrain.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -39,7 +39,7 @@ function* courtVerts(model, m = null) {
     yield [x - C[0], y - C[1], z - C[2]];
   }
 }
-/** The court's rim spires as world/gateArena.js buildCourtModel stands them: axis and the square base's corner reach.
+/** The court's rim spires as world/gate/gateArena.js buildCourtModel stands them: axis and the square base's corner reach.
  *  WB9b: court `c`'s (every place a spire may stand - its walkways' mouths cleared of some, never added to). */
 function courtSpires(c = 0) {
   const out = [];

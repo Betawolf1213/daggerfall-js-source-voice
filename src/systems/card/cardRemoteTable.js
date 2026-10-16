@@ -3,7 +3,7 @@
 // pure, DOM-free. The relay deals and runs the table (net/holdemTable.js); this folds its frames - the room's events
 // and the table as it stands, my own hole cards, my turn - into the very shapes the offline evening offers
 // (systems/card/cardTableSession.js view(), legal(), drain()), so the panel (ui/cardTableHud.js) and the cloth
-// (world/cardScene.js) read the one or the other alike. A seat is a CHAIR (the relay's own law): `seats` runs over the
+// (world/card/cardScene.js) read the one or the other alike. A seat is a CHAIR (the relay's own law): `seats` runs over the
 // table's chairs, an empty one `kind: 'empty'`, mine `kind: 'player'`, another player's `kind: 'peer'`.
 //
 // THE CLOCKS. Every frame carries the relay's `now`; an event's `at` is the relay's too. Each is moved onto this

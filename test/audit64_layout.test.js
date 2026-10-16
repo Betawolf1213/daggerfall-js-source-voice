@@ -19,10 +19,10 @@ import { fileURLToPath } from 'node:url';
 import { GLOBAL_SCALE } from '../src/world/meshReader.js';
 import { staticBuildingBox, staticBuildingWorldAabb, staticBuildingsHasHit } from '../src/world/staticBuildings.js';
 import { isCityGate, CITY_GATE_OPEN_MODEL_ID, CITY_GATE_CLOSED_MODEL_ID } from '../src/world/rmbLayout.js';
-import { makeCityGate, updateCityGate } from '../src/world/cityGate.js';
+import { makeCityGate, updateCityGate } from '../src/world/city/cityGate.js';
 import { collectBlockFlats, EDITOR_FLATS_ARCHIVE } from '../src/world/rmbFlats.js';
 import { isNpcFlat, NPC_FLAT_ARCHIVES } from '../src/world/rdbLayout.js';
-import { layoutInterior, INTERIOR_MARKER, PROP_MODEL_TYPE } from '../src/world/interiorLayout.js';
+import { layoutInterior, INTERIOR_MARKER, PROP_MODEL_TYPE } from '../src/world/interior/interiorLayout.js';
 import { trs } from '../src/world/mat4.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -406,7 +406,7 @@ test('OL5: the shared world never lets a town gate shut, and a gate laid CLOSED 
 });
 
 test('OL5: the gate law is the COMPONENT\'s, and its default is the shared clock', () => {
-  const law = readFileSync(new URL('../src/world/cityGate.js', import.meta.url), 'utf8');
+  const law = readFileSync(new URL('../src/world/city/cityGate.js', import.meta.url), 'utf8');
   // AUDIT ALL O1's finding, paid here before it can bite: the predicate is the
   // shared clock, not the URL, and the production default is PINNED - OL4
   // shipped this same parameter unpinned and the audit had to come back for it.

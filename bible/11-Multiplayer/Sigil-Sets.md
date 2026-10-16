@@ -749,7 +749,7 @@ the classic pack could put a stone in one, and refuses now. Every refusal speaks
 cannot be dropped or traded." (`boundText`), and the card says "Bound - it cannot be dropped or traded." And whatever
 build sent it, a list a peer hands over lands without a bound piece (`unbound`): a body's grant
 (`exteriorFoes.js`), a dungeon's container records and a body's items on the wire (`dungeonContext.js`), a building's
-container records (`world/interiorShared.js applyInteriorLoot`). A stone still sells over a counter (SS4 closed it).
+container records (`world/interior/interiorShared.js applyInteriorLoot`). A stone still sells over a counter (SS4 closed it).
 
 In the same change, from the players (a Discord report relayed by Mac): the way home where the Warden falls is pressed,
 never walked through - `World-Bosses.md` SS3.

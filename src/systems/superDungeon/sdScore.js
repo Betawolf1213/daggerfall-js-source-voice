@@ -47,7 +47,7 @@
 
 import { midiNote, SCORE_TPQ, SCORE_STING_LEAD_MS } from '../gate/gateScore.js';
 import { SD_ARENA } from '../../net/sdBrain.js';
-import { SD_FIRST_STEP } from '../../world/sdHall.js';
+import { SD_FIRST_STEP } from '../../world/superDungeon/sdHall.js';
 import { SD_BAR_NEAR_M } from '../../ui/sdRemnantBar.js';
 
 /** The songs' names - their own, beside MIDI.BSA's and the Warden's. */

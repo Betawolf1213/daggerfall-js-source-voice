@@ -14,7 +14,7 @@ import { travellerRoster } from '../src/systems/livingWorld/census.js';
 import { ResidentWalker } from '../src/characters/residentWalker.js';
 import { DAY_MIN } from '../src/systems/livingWorld/dayPlan.js';
 import { CALENDAR_MPM } from '../src/systems/livingWorld/trips.js';
-import { NAV_CELL } from '../src/world/cityNavigation.js';
+import { NAV_CELL } from '../src/world/city/cityNavigation.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const port = (id) => ({ id, name: `P${id}`, px: id, py: 0, region: 1 });

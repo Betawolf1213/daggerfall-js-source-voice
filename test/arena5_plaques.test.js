@@ -1,6 +1,6 @@
 // ARENA5 (2026-10-03): THE HALL OF CHAMPIONS' PLAQUE WALL, DRIVEN (bible/11-Multiplayer/Arena.md 1: "the Hall of Champions
 // - a plaque wall naming every Grand Champion this save (offline) or this realm (online)"). The row measured about the
-// Keeper in a room's collider (world/arenaPlaques.js hallPlaquePlan - the nearest wall, a plaque where that wall stands and
+// Keeper in a room's collider (world/arena/arenaPlaques.js hallPlaquePlan - the nearest wall, a plaque where that wall stands and
 // nothing between her and it, left to right as one faces it, capped); the plaque's two boards (plaqueModel - Daggerfall's
 // framed picture on the dark wood of its paintings' backs, the bare board) on the model door; the names (systems/arena/arenaBoard.js
 // hallPlaques - the save's own Grand Champion among the banners' by season offline, the realm's hall online) through the
@@ -12,7 +12,7 @@ import { readFileSync } from 'node:fs';
 import {
   hallPlaquePlan, plaqueModel, registerArenaPlaques, _resetArenaPlaques, PLAQUE_MODEL, PLAQUE_BARE_MODEL, PLAQUE_MAX, PLAQUE_GAP_M, PLAQUE_UP_M,
   PLAQUE_OFF_M, PLAQUE_PICTURE, PLAQUE_WOOD,
-} from '../src/world/arenaPlaques.js';
+} from '../src/world/arena/arenaPlaques.js';
 import { customModelFor, _resetCustomModels } from '../src/world/customModels.js';
 import { hallPlaques } from '../src/systems/arena/arenaBoard.js';
 import * as LG from '../src/systems/arena/arenaLeague.js';
@@ -114,7 +114,7 @@ test('ARENA5 the plaques themselves: a board of the dark wood Daggerfall backs i
   registerArenaPlaques();
   assert.deepEqual(tex(customModelFor(PLAQUE_MODEL)), tex(cut));
   assert.deepEqual(tex(customModelFor(PLAQUE_BARE_MODEL)), tex(bare));
-  assert.match(read('src/world/arenaCity.js'), /registerArenaPlaques\(\);/, 'installArena registers them with the colosseum');
+  assert.match(read('src/world/arena/arenaCity.js'), /registerArenaPlaques\(\);/, 'installArena registers them with the colosseum');
   _resetCustomModels(); _resetArenaPlaques();
 });
 

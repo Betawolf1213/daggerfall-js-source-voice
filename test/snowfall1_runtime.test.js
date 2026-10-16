@@ -15,8 +15,8 @@ import { SNOW_VS, snowTerrainFs, SNOW_ATTR, SNOW_UNITS } from '../src/render/sno
 import { EL_LANE } from '../src/render/enhancedLighting.js';
 import { classicShadowLane } from '../src/render/classicShadowLane.js';
 import { setModSetting, modSetting } from '../src/systems/modSettings.js';
-import { buildTerrainGrid, surfaceNormalAt, surfaceNormalFromSamples, gridValueAt } from '../src/world/terrainSurface.js';
-import { HEIGHTMAP_DIMENSION } from '../src/world/terrainSampler.js';
+import { buildTerrainGrid, surfaceNormalAt, surfaceNormalFromSamples, gridValueAt } from '../src/world/terrain/terrainSurface.js';
+import { HEIGHTMAP_DIMENSION } from '../src/world/terrain/terrainSampler.js';
 
 const MASKS = [103, 303, 403].map((a) => new Uint8Array(readFileSync(new URL(`../public/art/snowfall/snow_surface_masks_${a}.bytes`, import.meta.url))));
 const SIZE = 819.2;

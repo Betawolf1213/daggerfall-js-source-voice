@@ -25,21 +25,21 @@ import {
   applyFallLanding, NetRandom, applyNightStars, STAR_CHANCE, STAR_COLOR_INDICES,
   outdoorFogColor, RAINY_FOG_DENSITY, skyFrameForWeatherTime,
 } from '../src/scenes/shared.js';
-import { GROUND_RECORD_LIMIT } from '../src/world/terrainTiles.js';   // AUDIT WATER-NEXT m8
+import { GROUND_RECORD_LIMIT } from '../src/world/terrain/terrainTiles.js';   // AUDIT WATER-NEXT m8
 import { KEEP } from '../src/scenes/dataSource.js';
 import { PlayerMotor, walkSpeed, FALL_DAMAGE_THRESHOLD, FALL_HP_PER_METRE } from '../src/player/motor.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { SOUND } from '../src/systems/soundClips.js';
 import { FOG_SETTINGS } from '../src/world/weather.js';
 import { skyFrameForTime } from '../src/world/worldClock.js';
-import { convertTilemap } from '../src/world/terrainSurface.js';
+import { convertTilemap } from '../src/world/terrain/terrainSurface.js';
 import { ArrowFlight } from '../src/combat/arrowFlight.js';
 import { biogFileName } from '../src/formats/biogFile.js';
 import { BlocksFile } from '../src/formats/blocksFile.js';
 import { MapsFile } from '../src/formats/mapsFile.js';
 import { Arch3dFile } from '../src/formats/arch3dFile.js';
 import { dfMeshToModel } from '../src/world/meshReader.js';
-import { layoutInterior } from '../src/world/interiorLayout.js';
+import { layoutInterior } from '../src/world/interior/interiorLayout.js';
 import { ImgFile } from '../src/formats/imgFile.js';
 import { DFPalette } from '../src/formats/dfPalette.js';
 
@@ -596,7 +596,7 @@ test('audit18 hosts: a random ground marker resets to RECORD 8, not to BYTE 8', 
   assert.equal(convertTilemap(new Uint8Array([2]))[0], 8, 'byte 2 decodes to grass record 8');
   assert.equal(convertTilemap(new Uint8Array([8]))[0], 32, 'byte 8 decodes to record 32 - a different texture');
   const s = src('src/scenes/exterior.js');
-  // PIN MOVED (AUDIT WATER-NEXT m8): the 56 is world/terrainTiles.js GROUND_RECORD_LIMIT's, its one home
+  // PIN MOVED (AUDIT WATER-NEXT m8): the 56 is world/terrain/terrainTiles.js GROUND_RECORD_LIMIT's, its one home
   assert.match(s, /tile\.textureRecord >= GROUND_RECORD_LIMIT[^\n]*\n\s*\? 2\b/,
     'the exterior host writes the raw record 8 into pre-conversion tilemap space');
   assert.doesNotMatch(s, /tile\.textureRecord >= GROUND_RECORD_LIMIT[^\n]*\n\s*\? 8\b/);

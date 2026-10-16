@@ -172,7 +172,7 @@
  },
  {
   "name": "FESTIVAL-STAGE-fill-without",
-  "file": "src/world/cityLights.js",
+  "file": "src/world/city/cityLights.js",
   "old": "    const more = extra ? extra(p) : null;",
   "new": "    const more = null;",
   "tests": [

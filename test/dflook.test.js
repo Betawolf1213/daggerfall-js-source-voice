@@ -21,7 +21,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { DF_GRAIN, dfLook, dfLookOn, lookSeed, nearestIndex, oklab, setDfLookPalette } from '../src/world/dfLook.js';
 import { createDataPipeline } from '../src/scenes/dataPipeline.js';
-import { registerGalleonArt, galleonArt, _resetGalleonArt, GALLEON_ARCHIVE, GALLEON_NIGHT, TEX } from '../src/world/galleonArt.js';
+import { registerGalleonArt, galleonArt, _resetGalleonArt, GALLEON_ARCHIVE, GALLEON_NIGHT, TEX } from '../src/world/ships/galleonArt.js';
 import { townPictureEntries, TOWN_PICTURES, TOWN_PICTURE_ARCHIVE } from '../src/world/townPictures.js';
 import { paintCaravanRoom, caravanRoomPictures } from '../src/scenes/caravanRoom.js';
 import { WAGON_ARCHIVE, LOOK_RECORD_STRIDE } from '../src/world/wagonArt.js';

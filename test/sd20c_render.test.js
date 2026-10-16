@@ -28,9 +28,9 @@ import { SdBeamRenderer, SD_BEAM_VS, SD_BEAM_FS, SD_BEAM_W, SD_BEAM_MAX, SD_BEAM
 import { SD_SKY_VS, SD_SKY_FS, SD_SKY_PAINT_FS } from '../src/render/sdSky.js';
 import { createSdRemnant, remnantPose, echoPose, sdTurnToward, SD_TURN_RATE, SD_REM_SINK_MS, SD_ECHO_SINK_MS } from '../src/scenes/sdRemnant.js';
 import { createSdRemnantBlows } from '../src/scenes/sdRemnantBlows.js';
-import { SD_BRASS_GLSL, SD_BRASS_RAMP, sdBrassGrade } from '../src/world/sdBrassSky.js';
+import { SD_BRASS_GLSL, SD_BRASS_RAMP, sdBrassGrade } from '../src/world/superDungeon/sdBrassSky.js';
 import { sdBrassLight, SD_BRASS_TINT } from '../src/systems/superDungeon/sdOmen.js';
-import { realmLightsWith, SD_LIGHTS_CAP } from '../src/world/sdRealm.js';
+import { realmLightsWith, SD_LIGHTS_CAP } from '../src/world/superDungeon/sdRealm.js';
 import { wrapYaw } from '../src/net/gateBrain.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -188,7 +188,7 @@ test('SD20c THE GEARS FLY ON EDGE ALONG THEIR FLIGHT (V12): each gear stood in i
   assert.match(read('src/scenes/sdRemnant.js'), /gearMatrix\(q\.x, q\.y, q\.z, q\.spin, d\.object\.matrix, q\.yaw\); d\.hidden = false;/);
 });
 
-test('SD20c THE BRASS AIR\'S GRADE ON THE SKY IS ITS HAZE\'S (V8): world/sdBrassSky.js\'s GLSL is its JS - generated from the same stops and weights, run here on the code the GPU runs and equal to sdBrassGrade over the colours a sky shows and every weight; each of the four passes that draw the sky (the classic, the enhanced, the dynamic, the clouds\' composite) includes it, grades its final colour by its own uBrass after the dread\'s, and uploads the weight the controller sets - the fogged land met the sky a step apart at the skyline (15/-4/-34 a clear noon); the water\'s sky graded as the sky over it (mutants: the sky ungraded; the ramp drifted)', () => {
+test('SD20c THE BRASS AIR\'S GRADE ON THE SKY IS ITS HAZE\'S (V8): world/superDungeon/sdBrassSky.js\'s GLSL is its JS - generated from the same stops and weights, run here on the code the GPU runs and equal to sdBrassGrade over the colours a sky shows and every weight; each of the four passes that draw the sky (the classic, the enhanced, the dynamic, the clouds\' composite) includes it, grades its final colour by its own uBrass after the dread\'s, and uploads the weight the controller sets - the fogged land met the sky a step apart at the skyline (15/-4/-34 a clear noon); the water\'s sky graded as the sky over it (mutants: the sky ungraded; the ramp drifted)', () => {
   const brassGrade = glslFunctions(SD_BRASS_GLSL).brassGrade;
   const skies = [[0.62, 0.74, 0.92], [0.35, 0.38, 0.42], [0.95, 0.55, 0.3], [0.05, 0.06, 0.1], [0.5, 0.5, 0.5], [0.9, 0.92, 0.95], [0.2, 0.45, 0.8]];
   for (const c of skies) {
@@ -206,7 +206,7 @@ test('SD20c THE BRASS AIR\'S GRADE ON THE SKY IS ITS HAZE\'S (V8): world/sdBrass
   };
   for (const [p, last] of Object.entries(passes)) {
     const src = read(p);
-    assert.match(src, /import \{ SD_BRASS_GLSL \} from '\.\.\/world\/sdBrassSky\.js';/, p);
+    assert.match(src, /import \{ SD_BRASS_GLSL \} from '\.\.\/world\/superDungeon\/sdBrassSky\.js';/, p);
     assert.match(src, /\nuniform float uBrass;[^\n]*\n[\s\S]*?\$\{SD_BRASS_GLSL\}/, `${p}: its uniform and the grade`);
     assert.match(src, last, `${p}: its final colour graded after the dread's`);
     assert.match(src, /this\.brass = 0;/, `${p}: none until it is said`);
@@ -390,7 +390,7 @@ test('SD20c A FRAME OF THE FIGHT MAKES NEXT TO NOTHING (V5) - measured in a chil
     const { SdBeamRenderer } = await import(${url('src/render/sdBeam.js')});
     const { sdEndingStoneLight } = await import(${url('src/ui/sdMarksView.js')});
     const { sdPerilAt } = await import(${url('src/scenes/sdArenaRead.js')});
-    const { realmLightsWith } = await import(${url('src/world/sdRealm.js')});
+    const { realmLightsWith } = await import(${url('src/world/superDungeon/sdRealm.js')});
     const { sdBodyAt } = await import(${url('src/net/sdFightLink.js')});
     const { SD_BLOWS, SD_BODY, keepInArena, behindPillar, inArena } = await import(${url('src/net/sdRemnant.js')});
     const { sdMarksOf } = await import(${url('src/net/sdMarks.js')});

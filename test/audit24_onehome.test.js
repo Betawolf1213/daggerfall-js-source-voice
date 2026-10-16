@@ -62,11 +62,11 @@ const HOMONYMS = new Map([
   ['ARENA_BEASTS', "the game's set of beast mobiles vs the relay's beast bodies by mobile (their keys pinned equal by arena4_client)"],
   ['seasonOf', "a town seat's season from a week and its zero vs the arena's eight-week season from a day"],
   ['stateWord', "a relay bout's state on the wire (net/arenaBrain.js) vs a bounty row's state in its window's words (ui/bountyWindow.js)"],
-  // SHIPS-2: the port's ships each carry their own measures under one name - the galleon's (world/galleonModel.js,
+  // SHIPS-2: the port's ships each carry their own measures under one name - the galleon's (world/ships/galleonModel.js,
   // galleonRig.js, galleonArt.js), the carrack's (carrackModel.js, carrackRig.js, carrackArt.js) and the large boat's
   // (largeBoatModel.js, largeBoatRig.js, largeBoatArt.js): three ships, three things each, read as `ship.MEASURED`.
   // None is a DFU member. And the prefab builders' node maker (world/shipKit.js) is not the walk's node finder.
-  ...['TEX', 'BANDS', 'MEASURED', 'HELM', 'DRIVE_TRIGGER_AT', 'LID', 'GUN', 'ANCHOR', 'SAILS', 'ropeLadderGeometry', 'stayLines'].map((name) => [name, "each ship of the port's own (world/galleonModel.js, carrackModel.js, largeBoatModel.js and their rigs and art)"]),
+  ...['TEX', 'BANDS', 'MEASURED', 'HELM', 'DRIVE_TRIGGER_AT', 'LID', 'GUN', 'ANCHOR', 'SAILS', 'ropeLadderGeometry', 'stayLines'].map((name) => [name, "each ship of the port's own (world/ships/galleonModel.js, carrackModel.js, largeBoatModel.js and their rigs and art)"]),
   ['nodeOf', "a prefab builder's new node (world/shipKit.js) vs the walk's node by name under a parent (systems/comeSailAway/comeSailAwayBoat.js)"],
 ]);
 

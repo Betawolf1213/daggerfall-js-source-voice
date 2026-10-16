@@ -11,7 +11,7 @@
 //   the relay       a blow on one of his host judged as it comes, its fall said to the court at once
 //   the link        net/gateLink.js - the host folded, the gone kept for the court to play out
 //   the court       scenes/gateHost.js through scenes/gateCourt.js - bodies, blows judged on me, words, the targets
-//   the look        world/gateBoss.js hostLookOf, hostAct, hostCue, hostStandIn
+//   the look        world/gate/gateBoss.js hostLookOf, hostAct, hostCue, hostStandIn
 //   the bar         ui/gateBossBar.js - the Ward-Bearers standing, his host counted
 //   the plumbing    the dungeon context's swing, shaft and spell; the magic host's marks; the world host's doors
 //
@@ -33,8 +33,8 @@ import { validGateIn, validGateOut, GATE_HOST_MAX, GATE_HOST_KINDS, GATE_HOST_GO
 import { foldGate, GATE_STATE_EMPTY, HOST_GONE_KEPT } from '../src/net/gateLink.js';
 import { hostVerdict, hostTelegraphAt, STRIKE_LATE_MS } from '../src/net/gateStrike.js';
 import { gateTimes, gateRoomKey } from '../src/net/gateLaw.js';
-import { hostLookOf, hostAct, hostFallAct, hostCue, hostStandIn, HOST_LOOKS, HOST_FALL_MS, BOSS_ARMOR, WARD_COLOR } from '../src/world/gateBoss.js';
-import { courtToDungeon } from '../src/world/gateArena.js';
+import { hostLookOf, hostAct, hostFallAct, hostCue, hostStandIn, HOST_LOOKS, HOST_FALL_MS, BOSS_ARMOR, WARD_COLOR } from '../src/world/gate/gateBoss.js';
+import { courtToDungeon } from '../src/world/gate/gateArena.js';
 import { createGateCourt } from '../src/scenes/gateCourt.js';
 import { COURT_HOST_TEXT, hostShapes, HOST_SHAPES_MAX } from '../src/scenes/gateHost.js';
 import { bossBarModel, BOSS_BAR_TEXT, destroyGateBossBar } from '../src/ui/gateBossBar.js';

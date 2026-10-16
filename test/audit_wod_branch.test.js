@@ -14,15 +14,15 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { Collider } from '../src/player/collider.js';
-import { objectMatrix } from '../src/world/wodLocationObjects.js';
-import { loadLocationPrefab } from '../src/world/wodLocationData.js';
+import { objectMatrix } from '../src/world/worldOfDaggerfall/wodLocationObjects.js';
+import { loadLocationPrefab } from '../src/world/worldOfDaggerfall/wodLocationData.js';
 import { WodWorld, fetchPackBytes, WOD_RETRY_MAX } from '../src/world/worldOfDaggerfall.js';
 import { StreamingWorldState, TerrainSlots, MAX_TERRAIN_ARRAY, nearestFirstFrom } from '../src/world/streamingWorld.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
 import { createDroppedLoot } from '../src/scenes/droppedLoot.js';
-import { WodSpawner, WOD_LOOT_LOCATION_INDEX, WOD_LOOT_ALIGN } from '../src/world/wodSpawner.js';
-import { wodSiteId, yieldsTo } from '../src/world/wodShared.js';
-import { WOD_SPAWN_TYPE } from '../src/world/wodLocationObjects.js';
+import { WodSpawner, WOD_LOOT_LOCATION_INDEX, WOD_LOOT_ALIGN } from '../src/world/worldOfDaggerfall/wodSpawner.js';
+import { wodSiteId, yieldsTo } from '../src/world/worldOfDaggerfall/wodShared.js';
+import { WOD_SPAWN_TYPE } from '../src/world/worldOfDaggerfall/wodLocationObjects.js';
 import { alignBillboardToGround } from '../src/world/groundAlign.js';
 import { CELL_PUPPETS_MAX } from '../src/net/wire.js';
 import { isPeerTarget } from '../src/characters/enemyTargets.js';
@@ -672,13 +672,13 @@ test('AUDIT BRANCH (WoD) n: the numbers the docs state are the numbers the tree 
   const xml = loc.regions.reduce((a, r) => a + r.files.reduce((b, f) => b + f[1], 0), 0);
   assert.equal(xml, 61000862, 'the XML the packs replace');
   assert.match(rd('vendor/world-of-daggerfall/README.md'), /They are 61\.0 MB of XML/);
-  assert.match(rd('src/world/wodLocationPack.js'), /61\.0 MB/);
+  assert.match(rd('src/world/worldOfDaggerfall/wodLocationPack.js'), /61\.0 MB/);
   assert.doesNotMatch(rd('src/ui/credits.js'), /stood at 227,938 places/, 'the lists NAME 227,938 places; one site stands to a pixel');
   const dirs = readdirSync(join(ROOT, 'vendor'), { withFileTypes: true }).filter((d) => d.isDirectory()).length;
   const reg = rd('bible/01-Overview/Mod-Registry.md');
   const open = reg.split('\n').filter((l) => /^\| `[^`]+` \|/.test(l) && /RECORD OPEN/.test(l)).length;
   assert.match(reg, new RegExp(`\`vendor/\` holds ${dirs} directories and ${open} of their READMEs`), `the registry counts ${dirs} and ${open}`);
-  assert.match(rd('src/world/wodLocationLoader.js'), /Four pieces, each pure:/);
+  assert.match(rd('src/world/worldOfDaggerfall/wodLocationLoader.js'), /Four pieces, each pure:/);
 });
 
 test('AUDIT BRANCH (WoD) n: the asset tool writes each TextAsset\'s own bytes - the decoded text drops a byte-order mark', () => {

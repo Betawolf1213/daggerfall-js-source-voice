@@ -18,7 +18,7 @@
 //     into about forty pieces that spin and fall away, revealing where you land.
 //   REDUCED MOTION - nothing spins, nothing shatters: the face holds still and an ordered dither wipes it.
 //
-// Every pixel posterized to six levels through the ordered dither, in the Hour's palette (world/sdLook.js); the canvas
+// Every pixel posterized to six levels through the ordered dither, in the Hour's palette (world/superDungeon/sdLook.js); the canvas
 // is a third of the device's pixels (ui/gateVeil.js), drawn pixelated. Output premultiplied. Not a DFU member. Ledger A
 // (SUPER-DUNGEONS).
 import { buildProgram } from './glProgram.js';

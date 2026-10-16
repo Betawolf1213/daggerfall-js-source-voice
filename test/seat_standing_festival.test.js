@@ -10,7 +10,7 @@
 // FESTIVAL-STAGE: while a Festival rules at a town, its streets hear the tavern's music (scenes/shared.js
 // createMusicDirector, scenes/seatFestival.js festivalEnvironment), its holder's banners hang at its taverns' doors and
 // over its bounty boards too (festivalBannerAnchors, seatBanners.js createSeatBanners), and a lantern burns before every
-// banner it flies (festivalLanternsOf, world/cityLights.js fillLanternPool) - off the seats' list alone.
+// banner it flies (festivalLanternsOf, world/city/cityLights.js fillLanternPool) - off the seats' list alone.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -23,7 +23,7 @@ import {
 } from '../src/scenes/seatFestival.js';
 import { createSeatBanners } from '../src/scenes/seatBanners.js';
 import { hallBannerAnchors, BANNER_REFRESH_MS } from '../src/scenes/hallBanners.js';
-import { fillLanternPool } from '../src/world/cityLights.js';
+import { fillLanternPool } from '../src/world/city/cityLights.js';
 import { createMusicDirector } from '../src/scenes/shared.js';
 import { LOCATION_TYPES, TAVERN_SONGS, MUSIC_ENV } from '../src/systems/song/songManager.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';

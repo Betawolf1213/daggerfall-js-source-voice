@@ -20,7 +20,7 @@ import { standService, T0 } from './accountDb.mjs';
 import { seatRealm } from './realmSeat.mjs';
 import { autoFill, reachable, KG_POINT_BUDGET, KG_TILE } from '../src/net/kingsGambit.js';
 import { openGambitTableGame } from '../src/scenes/gambitTableGame.js';
-import { CARD_TABLE_W, CARD_TABLE_D } from '../src/world/cardTableProp.js';
+import { CARD_TABLE_W, CARD_TABLE_D } from '../src/world/card/cardTableProp.js';
 import { xorshift } from '../tools/kgMeasure.mjs';
 import { fakeDoc } from './decorFakes.mjs';
 import { fakeRoom } from './fakeRoom.mjs';

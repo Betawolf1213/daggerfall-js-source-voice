@@ -27,7 +27,7 @@ import { roomKeyFor, OnlineSession } from '../src/net/online.js';
 import { validLootItem, validLootList } from '../src/systems/loot/loot.js';
 import { itemBaseValue, templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { needsRestock } from '../src/systems/shopStock.js';
-import { mintInteriorShared, composeInteriorShared, applyInteriorShared, applyInteriorLoot, interiorLocationKey } from '../src/world/interiorShared.js';
+import { mintInteriorShared, composeInteriorShared, applyInteriorShared, applyInteriorLoot, interiorLocationKey } from '../src/world/interior/interiorShared.js';
 import { fakeRoom } from './fakeRoom.mjs';
 import { fakeSocketClass } from './fakeSocket.mjs';
 
@@ -121,7 +121,7 @@ test('AUDIT WORLD6a B3/B4/B5: the law admits exactly what the game names (no zer
 test('AUDIT WORLD6a B7: the memory\'s stamp is twelve base-36 digits and a dash, always, at both contexts', () => {
   for (let i = 0; i < 200; i++) assert.match(mintSharedStamp(), /^[0-9a-z]+-[0-9a-z]{8}$/);
   assert.match(rd('src/scenes/dungeonContext.js'), /const _sharedStamp = mintSharedStamp\(\);/);
-  assert.match(rd('src/world/interiorShared.js'), /stamp: mintSharedStamp\(\)/);
+  assert.match(rd('src/world/interior/interiorShared.js'), /stamp: mintSharedStamp\(\)/);
   assert.equal(relay.mintSharedStamp, mintSharedStamp);
 });
 

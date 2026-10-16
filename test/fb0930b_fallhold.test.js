@@ -29,7 +29,7 @@ import { Collider } from '../src/player/collider.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
 import { createCityGuards } from '../src/scenes/cityGuards.js';
 import { areEnemiesNearby } from '../src/systems/encounters.js';
-import { TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 import { setPref } from '../src/systems/uiPrefs.js';   // BAL4: the switch this file's pins assumed
 import { tickTactics, resetTactics } from '../src/ai/tactics.js';   // AUDIT BAL: the brain's clock, ticked as the hosts tick it
 

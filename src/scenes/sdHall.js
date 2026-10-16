@@ -3,7 +3,7 @@
 // PAGE - the dungeon host's set for the Shattered Hour's puzzle, as scenes/sdEnd.js is for its Rift. The realm judges
 // every turn (SD6b); this stands the hall and shows what the realm says of it.
 //
-//   STOOD once (stand): the hall's standing parts (world/sdHall.js - the six stones, the lecterns, the dial's floor, the
+//   STOOD once (stand): the hall's standing parts (world/superDungeon/sdHall.js - the six stones, the lecterns, the dial's floor, the
 //     first step), a hand on each dial, the bridge (hidden until the Concord), and the bridge's and the step's floors for
 //     the collider (the edge keeps a body off them until the Concord - the outer host widens it then) with the stones and
 //     plaques solid.
@@ -28,7 +28,7 @@
 //   THE DIAL - a rise lifts its plates and flashes the whole inner ring once ("nearer"), a fall dims it with a clunk; the
 //     gem's light is the count (how many, never which); the fray's tabs flip up a turn, the last eight pulse at 2 Hz, and
 //     at the snap they blaze white and drop.
-//   THE RINGS IN MODE A (world/sdOrreryModel.js) - the decor's tick, the shiver past three quarters, a whole turn back on
+//   THE RINGS IN MODE A (world/superDungeon/sdOrreryModel.js) - the decor's tick, the shiver past three quarters, a whole turn back on
 //     the snap, one plane at the Concord: never a stone's hour, never a turn. No arcs from a stone to its partners.
 //   THE CONCORD - the banners stream, the rings swing flat and lock with a tock as the gem flares and its band runs from
 //     the hub to the rim, then the bridge's twelve plates flip into place from the rim out (SD_CONCORD_MS). Each step a
@@ -36,16 +36,16 @@
 //
 // Not a DFU member. Ledger A (SUPER-DUNGEONS).
 import { orreryOf, SD_ORRERY, SD_STONES, SD_STONE_SETTLE_MS, SD_FRAY_MAX, stoneInReach, dungeonToRealm, realmToDungeon, sdHour, sdHourWord } from '../net/sdBrain.js';
-import { SD_REALM_ARCHIVE, SD_REALM_BRASS_RECORD } from '../world/sdRealm.js';
-import { hallArt, gemGlow, SD_HALL_GLOW_RECORD, SD_HALL_GOLD_DIM_RECORD, SD_HALL_EMBER_DIM_RECORD, SD_HALL_GEM_RECORD, SD_HALL_FLASH_RECORD, SD_FLASH_COLOR } from '../world/sdHallArt.js';
+import { SD_REALM_ARCHIVE, SD_REALM_BRASS_RECORD } from '../world/superDungeon/sdRealm.js';
+import { hallArt, gemGlow, SD_HALL_GLOW_RECORD, SD_HALL_GOLD_DIM_RECORD, SD_HALL_EMBER_DIM_RECORD, SD_HALL_GEM_RECORD, SD_HALL_FLASH_RECORD, SD_FLASH_COLOR } from '../world/superDungeon/sdHallArt.js';
 import {
   buildHallModel, buildHandModel, buildLitModel, buildFrayModel, buildBridgeModel, buildBridgePlateModel, buildBezelModel, buildCrownGearModel,
   buildBannerModel, buildBandModel, bannerPose, bandMatrix, plateMatrix, crownGearMatrix, hallFloorTris, hallSolidTris, handMatrix, handleBox, plaqueBox,
   dialCentre, beforeStone, stonePoint, SD_LIT_RECORD, SD_PLAQUE, SD_FRAY_RING, SD_BRIDGE_PLATES, SD_BANNER, SD_BANNER_VERTS, SD_DIAL, SD_BEZEL, SD_STONE_SIZE,
-} from '../world/sdHall.js';
-import { buildOrbitRing, buildOrreryHub, ringHang, ringPoseInto, ringMatrix, hubMatrix, ringTicks, gemCentre, SD_RING_SNAP_S, SD_ORRERY_RINGS } from '../world/sdOrreryModel.js';
+} from '../world/superDungeon/sdHall.js';
+import { buildOrbitRing, buildOrreryHub, ringHang, ringPoseInto, ringMatrix, hubMatrix, ringTicks, gemCentre, SD_RING_SNAP_S, SD_ORRERY_RINGS } from '../world/superDungeon/sdOrreryModel.js';
 import { isTouchDevice } from '../ui/touchDevice.js';
-import { SD_LIGHT } from '../world/sdLook.js';
+import { SD_LIGHT } from '../world/superDungeon/sdLook.js';
 import { identity } from '../world/mat4.js';
 import { RAY_DISTANCE, DEFAULT_ACTIVATION_DISTANCE } from '../player/activate.js';
 

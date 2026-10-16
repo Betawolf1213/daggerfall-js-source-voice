@@ -27,7 +27,7 @@ import { assignModBundle, isEntityWaterWalking, WATER_WALKING_SILENT_KIND, effec
 import { assignShipToPlayer, ownsShip, sellShip, SHIP_TYPES } from '../src/systems/banking.js';
 import { createOceanHolesAbyss } from '../src/scenes/oceanHolesAbyss.js';
 import { mapPixelToLongitudeLatitude, mapPixelToWorldCoord, worldCoordToMapPixel } from '../src/formats/mapsFile.js';
-import { enemyRoster } from '../src/world/underwaterEnemies.js';
+import { enemyRoster } from '../src/world/underwater/underwaterEnemies.js';
 
 const DIR = new URL('../vendor/come-sail-away/Models/', import.meta.url);
 const json = (f) => JSON.parse(readFileSync(new URL(f, DIR), 'utf8'));

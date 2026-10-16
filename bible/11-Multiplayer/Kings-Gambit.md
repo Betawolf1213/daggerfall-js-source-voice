@@ -355,7 +355,7 @@ structure ours.
 
 - DECIDED: the board is laid on the table's felt. FACT: the felt is 1.42 by 0.92 m inside its rail
   (`cardTableProp.js:"export const CARD_TABLE_RAIL = 0.04;"`, with CARD_TABLE_W 1.5 and CARD_TABLE_D 1), and the prop's
-  chairs stand two to a long side, 0.375 m either side of its middle, and one at each end (`world/cardTables.js`
+  chairs stand two to a long side, 0.375 m either side of its middle, and one at each end (`world/card/cardTables.js`
   seatSpots).
 - DECIDED (AUDIT KG C1): laid ALONG THE TABLE'S OWN AXES, square to the felt's edges, as Hold'em's board lies
   (`cardTables.js` tableFrame's axisYaw), its foot - the host's king's row - at the edge nearest the host's chair: from a
@@ -375,7 +375,7 @@ structure ours.
 - Hazards: the mod's drawn effects (`DrawHazard` - what the shipped mod shows when its particles fail, and near enough
   what its blobs show when they do not): fire's base and three flickering flames, spikes' six spikes, poison's rising
   bubbles, a warning's pulsing outline and "!".
-- THE PRESS IS A CELL: a press on the cloth reads the table point under it (`world/cardHand.js` tablePoint, CARDS3b) as a
+- THE PRESS IS A CELL: a press on the cloth reads the table point under it (`world/card/cardHand.js` tablePoint, CARDS3b) as a
   cell - the mod's OnCellClicked: select one's own piece, move to a lit cell, attack a ringed foe; the panel holds the
   rest. CARDS-TOUCH holds: a seated finger is the table's (`Tavern-Cards.md` section 31). Under a finger a press snaps to
   the nearest piece or lit cell and stages before it spends, and the keys and the pad reach every cell (section 14.3;
@@ -1116,7 +1116,7 @@ The four blocks of PLAIN-UI a (`10-UI/Plain-Words.md`), on every stage, in this 
 - Every word a player reads goes through `t(key, en, args)` under `cards.kingsGambit.*`, read when it is shown, never at
   a module's load (`tools/l10n/ROUTE-BRIEF.md`); one sentence one pattern, plurals by ICU, never fragments glued. The new
   modules hold no hard-coded prose (the ratchet holds a new file at 0) and the files they touch hold their counts:
-  `ui/cardTableHud.js` (80 at KG3), `ui/iliacTableHud.js` (63), `world/cardRegulars.js` (10), `systems/modSettings.js`
+  `ui/cardTableHud.js` (80 at KG3), `ui/iliacTableHud.js` (63), `world/card/cardRegulars.js` (10), `systems/modSettings.js`
   (243), `systems/tutorialCatalogue.js` (219), and at KG3 `ui/credits.js` (86), `systems/features.js` (135),
   `scenes/worldModes.js` (84) and `scenes/world.js` (350). Every key ships its drafts in the thirteen whole languages
   (L10N6's rule; the twelve drafting owe them - 16.5).

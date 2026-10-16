@@ -3,7 +3,7 @@
 // THE FLOOR, and THE RETURN'S WINDOW HOME - one foreign pass (the gate membrane's law, render/gatePass.js: depth-tested,
 // never written, fogged, both faces, every rate whole over its wrapped clock), drawn by the dungeon arm after the flats.
 //
-//   THE WINDOW - a disc in the ring's plane between the iris's leaves (world/sdRiftModel.js: the leaves shut it from both
+//   THE WINDOW - a disc in the ring's plane between the iris's leaves (world/superDungeon/sdRiftModel.js: the leaves shut it from both
 //     sides by depth, so the aperture IS the state and leaves and window always agree). Each fragment snaps to a grid of
 //     SD_WINDOW_CELLS across (chunky as the wall's texels) and looks down the eye's own ray through its point - true
 //     parallax - turned into the ring's frame, so looking straight in from its front looks toward the Hour's +z where its
@@ -78,7 +78,7 @@ uniform float uSteps;
 ${FOG_UNIFORMS}out vec4 o;
 ${SD_SKY_FETCH_GLSL}${DEAD_NOISE_GLSL}${BAYER_GLSL}${SD_PIXEL_GLSL}${FOG_FACTOR_GLSL}
 const vec3 GOLD = vec3(1.0, 0.78, 0.4);
-const vec3 HOUR_AIR = vec3(0.2, 0.15, 0.07);   // the Hour's own haze (world/sdRealm.js SD_REALM_FOG) - its air seen through
+const vec3 HOUR_AIR = vec3(0.2, 0.15, 0.07);   // the Hour's own haze (world/superDungeon/sdRealm.js SD_REALM_FOG) - its air seen through
 const vec3 LIP = vec3(1.0, 0.92, 0.62);
 const vec3 EMBER = vec3(1.0, 0.376, 0.157);
 // the window's ray at its point g (-1..1 across): a step through ripples it from its point, inward; then the eye's own ray

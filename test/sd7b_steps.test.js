@@ -1,5 +1,5 @@
 // SD7b (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 9): THE UNMOORED STEPS ON THE
-// PAGE - world/sdStepsModel.js (the meshes and the colliders the steps are), world/sdStepsArt.js (what they wear),
+// PAGE - world/superDungeon/sdStepsModel.js (the meshes and the colliders the steps are), world/superDungeon/sdStepsArt.js (what they wear),
 // scenes/sdSteps.js (the dungeon host's set: stood, moved on the realm's clock, ridden before the motor), and the hosts'
 // wiring - the ride beside the movers', the cast-back, the edge let go over the Steps, Levitate warded in the Hour. And
 // the engine itself, run: the real motor on the real collider carried by a swinging step, crossing the widest gap at the
@@ -8,16 +8,16 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { realmToDungeon, SD_ARENA } from '../src/net/sdBrain.js';
-import { SD_REALM_FLOORS, realmClamp, SD_REALM_ARCHIVE, SD_ISLAND_SIDES } from '../src/world/sdRealm.js';
-import { SD_HALL_FLOORS } from '../src/world/sdHall.js';
-import { SD_HALL_GLOW_RECORD } from '../src/world/sdHallArt.js';
+import { SD_REALM_FLOORS, realmClamp, SD_REALM_ARCHIVE, SD_ISLAND_SIDES } from '../src/world/superDungeon/sdRealm.js';
+import { SD_HALL_FLOORS } from '../src/world/superDungeon/sdHall.js';
+import { SD_HALL_GLOW_RECORD } from '../src/world/superDungeon/sdHallArt.js';
 import {
   SD_STEPS_COURSE, SD_CHECKPOINTS, SD_STEPS_FREE, SD_STEPS_FLOORS, SD_STEPS_FREE_HALF_W, SD_STEP_THICK, SD_RISER_H,
   SD_CRUMBLE_DELAY, SD_CRUMBLE_BACK, SD_CRUMBLE_FALL_G, SD_BEAT_CYCLE, SD_BEAT_HALF, SD_CAST_BACK_LOSS, SD_DRIFT_SIZE,
   SD_BEAT_SIZE, SD_CRUMBLE_SIZE, stepAt, beatStands, beatBlinks,
-} from '../src/world/sdSteps.js';
-import { SD_STEP_KINDS, SD_STEP_WEAR, SD_RACK, stepBox, buildStepModel, stepTris, buildChecksModel, checkFloorTris } from '../src/world/sdStepsModel.js';
-import { stepsArt, crackedArt, beatArt, SD_STEPS_CRACKED_RECORD, SD_STEPS_BEAT_RECORD, SD_STEPS_ATLAS, SD_STEPS_RECORD } from '../src/world/sdStepsArt.js';
+} from '../src/world/superDungeon/sdSteps.js';
+import { SD_STEP_KINDS, SD_STEP_WEAR, SD_RACK, stepBox, buildStepModel, stepTris, buildChecksModel, checkFloorTris } from '../src/world/superDungeon/sdStepsModel.js';
+import { stepsArt, crackedArt, beatArt, SD_STEPS_CRACKED_RECORD, SD_STEPS_BEAT_RECORD, SD_STEPS_ATLAS, SD_STEPS_RECORD } from '../src/world/superDungeon/sdStepsArt.js';
 import {
   createSdSteps, sdStepKey, SD_CHECKS_KEY, SD_STEPS_TEXT, SD_STEPS_SOUNDS, SD_STEP_GONE_Y, SD_CRUMBLE_SHAKE,
 } from '../src/scenes/sdSteps.js';
@@ -117,7 +117,7 @@ test('SD7b THE STEPS, MADE: each kind a box in its own frame, its top the origin
 });
 
 test('SD7b THE ART: the pictures after the hall\'s - the Crumble\'s cracked stone, its cracks alight and the rest dark; the Beat\'s brass plate, its rim alight and its hub dark - the same pixels every time (mutants: the cracks unlit; the hub alight)', () => {
-  // PIN MOVED (SD-LOOK S9): an atlas a kind (world/sdStepsArt.js SD_STEPS_ATLAS - top, side, the rim's line, the chamfer,
+  // PIN MOVED (SD-LOOK S9): an atlas a kind (world/superDungeon/sdStepsArt.js SD_STEPS_ATLAS - top, side, the rim's line, the chamfer,
   // the underside), the Beat's twelve frames and its falter, the Crumble's rest and three stages, the parts lit and dark
   const art = stepsArt(), R = SD_STEPS_RECORD;
   assert.deepEqual(art.map(([r]) => r), [R.crumble[0], R.beat[0], R.drift, R.riser, ...R.beat.slice(1), R.falter, ...R.crumble.slice(1), R.parts, R.partsDark]);

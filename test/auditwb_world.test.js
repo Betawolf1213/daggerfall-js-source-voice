@@ -15,7 +15,7 @@ import {
   GatePassRenderer, MEMBRANE_FS, MEMBRANE_TURN_SEALED_HZ, MEMBRANE_TURN_OPEN_HZ, gateSpinRate, gateSpinAt,
 } from '../src/render/gatePass.js';
 import { createGatePool } from '../src/scenes/gatePool.js';
-import { gateArchProfile } from '../src/world/gateModel.js';
+import { gateArchProfile } from '../src/world/gate/gateModel.js';
 import { CLIMATES, LOCATION_TYPES } from '../src/formats/mapsFile.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

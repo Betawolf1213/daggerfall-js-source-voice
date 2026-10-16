@@ -21,7 +21,7 @@ import { newSurvival } from '../src/systems/survival/needs.js';
 import { applyCustoms, customsLines } from '../src/systems/realmCustoms.js';
 import { createRestDeps } from '../src/scenes/shared.js';
 import { actAtChannelEnd, NIGHT_HOURS } from '../src/systems/rest/restAct.js';
-import { fireLayoutInputs } from '../src/world/dungeonFires.js';
+import { fireLayoutInputs } from '../src/world/dungeon/dungeonFires.js';
 import { resolveConsumable, clearQuickslots, setHotbarSlot, hotbarEntryForItem, hotbarPress } from '../src/systems/quickslots.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');

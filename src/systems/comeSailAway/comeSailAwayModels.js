@@ -58,9 +58,9 @@
 // and one with more draws its last submesh again with each extra one -
 // Unity's rule.
 
-import { galleonPrefab, GALLEON_PREFAB_ID } from '../../world/galleonModel.js';   // GALLEON: Mac's ship stands in for hull 2
-import { carrackPrefab, CARRACK_PREFAB_ID } from '../../world/carrackModel.js';   // SHIPS-2: and his carrack for hull 4,
-import { largeBoatPrefab, LARGE_BOAT_PREFAB_ID } from '../../world/largeBoatModel.js';   // his Tiny Ship for hull 1
+import { galleonPrefab, GALLEON_PREFAB_ID } from '../../world/ships/galleonModel.js';   // GALLEON: Mac's ship stands in for hull 2
+import { carrackPrefab, CARRACK_PREFAB_ID } from '../../world/ships/carrackModel.js';   // SHIPS-2: and his carrack for hull 4,
+import { largeBoatPrefab, LARGE_BOAT_PREFAB_ID } from '../../world/ships/largeBoatModel.js';   // his Tiny Ship for hull 1
 
 /** Where the extractor's files are served (a pin reads them off the disk). */
 export const CSA_MODEL_URLS = Object.freeze({
@@ -154,7 +154,7 @@ export async function loadComeSailAwayModels(fetchFn = globalThis.fetch, urls = 
  * The files as the port reads them. `geometry(key)` decodes a mesh once.
  *
  * GALLEON (2026-10-01): with `galleon` (src/assets/galleon/galleon.json) the new galleon STANDS IN FOR HULL 2 - prefab
- * 112412 is her tree (world/galleonModel.js galleonPrefab), her components join the shared table after the mod's, her
+ * 112412 is her tree (world/ships/galleonModel.js galleonPrefab), her components join the shared table after the mod's, her
  * meshes answer `geometry` (decoded already - she is built, not extracted) and `meshes` their boxes, and her clips and
  * overrides join the mod's animation. Without it every file reads as the mod shipped it (the mod's own pins read that).
  * SHIPS-2 (2026-10-07): with `carrack` the new carrack stands in for hull 4 (prefab 112414) and with `largeBoat` the new

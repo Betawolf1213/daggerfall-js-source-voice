@@ -21,7 +21,7 @@
 //
 // Not a DFU member. Ledger A (WB).
 import { readGateMods } from '../net/gateMods.js';
-import { ASPECT_COLORS, EMBER_COLOR } from '../world/gateBoss.js';
+import { ASPECT_COLORS, EMBER_COLOR } from '../world/gate/gateBoss.js';
 import { injectEnhancedFonts } from './enhancedStyle.js';   // WB13c: the classic face, loaded by the gate's own screens
 
 /** The element each aspect's blows carry, as a player names it. */
@@ -48,7 +48,7 @@ export const MARK_TIPS = Object.freeze({
 });
 
 const hex = (c) => `#${c.map((v) => Math.round(Math.max(0, Math.min(1, v)) * 255).toString(16).padStart(2, '0')).join('')}`;
-/** An aspect's colour on the screen: his ember under it (world/gateBoss.js - the court's own fire for the Burning). */
+/** An aspect's colour on the screen: his ember under it (world/gate/gateBoss.js - the court's own fire for the Burning). */
 export const aspectCss = (id) => hex(ASPECT_COLORS[id]?.ember ?? EMBER_COLOR);
 
 /**

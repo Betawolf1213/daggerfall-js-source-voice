@@ -6804,7 +6804,7 @@ archive's record 0 as its picture (`:891-897` - `clothingArchive, 0`
 literally, no icon roll and not the 216 archive a player's own pile
 takes) and fills it with `LootTables.GenerateLoot(loot, (int)PlayerGPS
 .CurrentLocationType)` (`:899`). The port parsed the marker type -
-`INTERIOR_MARKER.TREASURE` at `world/interiorLayout.js` - and `grep -rn
+`INTERIOR_MARKER.TREASURE` at `world/interior/interiorLayout.js` - and `grep -rn
 INTERIOR_MARKER src/` returned five readers, every one of them testing
 REST or ENTER. The constant had no reader anywhere, so every tavern and
 both guild halls were missing the free pile DFU places in them.
@@ -7531,7 +7531,7 @@ The port's `fastTravelTo` passed `{ arriveMinutes }` and nothing else, so
 came out null, and the arrival fell to the last resort in the core -
 `[TERRAIN_SIZE / 2, dest.centerHeight + compensation + 2, TERRAIN_SIZE / 2]`.
 `TerrainHelper.GetLocationTerrainTileOrigin` centres a location in its
-terrain tile (`world/terrainTiles.js` carries it verbatim), so the tile
+terrain tile (`world/terrain/terrainTiles.js` carries it verbatim), so the tile
 centre IS the town centre: the ordinary way to move in this game put the
 player down inside the block grid, keeping the departure facing, with
 `floorLanding`'s downward ray free to take a rooftop as the first hit -

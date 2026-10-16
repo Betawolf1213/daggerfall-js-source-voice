@@ -15,7 +15,7 @@ import { readFileSync } from 'node:fs';
 import { getStaticDoors } from '../src/world/staticDoors.js';
 import { DOOR_TYPE } from '../src/world/meshReader.js';
 import { dungeonEntranceLanding, doorWorldPosition, repositionFeetY } from '../src/player/enterExit.js';
-import { TERRAIN_SIZE } from '../src/world/terrainSampler.js';
+import { TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 
 const W = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
 const WM = readFileSync(new URL('../src/scenes/worldModes.js', import.meta.url), 'utf8');

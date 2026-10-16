@@ -13,8 +13,8 @@ import { LOCATION_TYPES, CLIMATES } from '../src/formats/mapsFile.js';
 import { sdRoll, sdNameOf, sdRise, sdFirst } from '../src/net/sdLaw.js';
 import { spawnedMapId, SALT_MAX, WORLD_SALT } from '../src/world/spawnedDungeons.js';
 import { dungeonTier } from '../src/systems/dungeon/dungeonTier.js';
-import { dungeonTierLabel } from '../src/world/dungeonLabel.js';
-import { isMainStoryDungeon } from '../src/world/dungeonTextures.js';
+import { dungeonTierLabel } from '../src/world/dungeon/dungeonLabel.js';
+import { isMainStoryDungeon } from '../src/world/dungeon/dungeonTextures.js';
 
 const T = LOCATION_TYPES;
 /** A settlement or a dungeon as the hosts read one: a region, a table index, a map row, an exterior. */

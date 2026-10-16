@@ -428,7 +428,7 @@
  },
  {
   "name": "AUDITRESTPARTY-C7-the-modded-foot",
-  "file": "src/world/dungeonFires.js",
+  "file": "src/world/dungeon/dungeonFires.js",
   "old": "[h.x, h.lawFoot ?? h.foot ?? h.y, h.z]",
   "new": "[h.x, h.foot ?? h.y, h.z]",
   "tests": [

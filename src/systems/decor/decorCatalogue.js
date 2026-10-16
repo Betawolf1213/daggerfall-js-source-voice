@@ -10,7 +10,7 @@
 //
 // THE SOURCE is BLOCKS.BSA's own town blocks (RMB): every building
 // interior's PROP models - the object type Daggerfall lays out as a
-// room's furniture (world/interiorLayout.js PROP_MODEL_TYPE) - and its
+// room's furniture (world/interior/interiorLayout.js PROP_MODEL_TYPE) - and its
 // flats, the editor's markers (TEXTURE.199) excepted. DECOR-DUNGEON
 // (FIELD BUGS 2026-10-05b, the owner: "a lot of missing decor items",
 // asked which, the dungeons' furnishings among them): and its dungeon
@@ -45,7 +45,7 @@
 // measures each piece's size (the price is by size, net/decorLaw.js).
 // ═══════════════════════════════════════════════════════════════════
 
-import { PROP_MODEL_TYPE, DOOR_MODEL_BASE_ID, DOOR_MODEL_COUNT } from '../../world/interiorLayout.js';
+import { PROP_MODEL_TYPE, DOOR_MODEL_BASE_ID, DOOR_MODEL_COUNT } from '../../world/interior/interiorLayout.js';
 import { isDoorModel } from './decorDoorways.js';   // HOME-DOORS
 import { EDITOR_FLATS_ARCHIVE, isNatureArchive } from '../../world/rmbFlats.js';
 import { LADDER_MODEL_ID } from '../../player/enterExit.js';
@@ -53,12 +53,12 @@ import { BED_MODELS } from '../roleplayRealism/rrRealism.js';
 import { isHouseContainerModel } from '../containers.js';
 import { isShopShelfModel } from '../shopStock.js';
 import { HOUSE_CONTAINER_NAMES } from '../worldTooltips.js';
-import { interiorLightProperties } from '../../world/interiorLights.js';
+import { interiorLightProperties } from '../../world/interior/interiorLights.js';
 import { decorPrice } from '../../net/decorLaw.js';
 import { localizedStrings } from '../textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
 import { BULLETIN_BOARD_MODEL_ID, WINDMILL_MODEL_ID, isCityGate } from '../../world/rmbLayout.js';   // GUILD1e: the hall's board is Daggerfall's own; DECOR-OUTDOOR: the mill and the gates are no street pieces
 import { CLIMATE_NATURE } from '../../formats/mapsFile.js';   // DECOR-OUTDOOR: the climates' nature sets
-import { isTreeRecord } from '../../world/terrainNature.js';
+import { isTreeRecord } from '../../world/terrain/terrainNature.js';
 import { isNudeFlat, showNudity } from '../../characters/nudeFlats.js';   // NUDE-DECOR: no nude figure offered while Show Nudity is off
 import { rdbObjects, rdbModelActs, isActionDoor, isNpcFlat } from '../../world/rdbLayout.js';   // DECOR-DUNGEON: the dungeon's own walk, its acting and its doors
 import { RDB_RESOURCE_TYPES } from '../../formats/blocksFile.js';
@@ -84,7 +84,7 @@ const KIND_ONE = Object.freeze({
  *  them for the inventory's drop icons; 210 is the lights, 216 the treasure piles). Any other is a decoration. */
 const FLAT_ARCHIVE_KIND = Object.freeze({ 204: 'clothing', 205: 'boxes', 207: 'arms', 209: 'books', 210: 'light', 211: 'misc', 216: 'treasure' });
 export const LIGHTS_ARCHIVE = 210;
-/** TEXTURE.210's records as Daggerfall Unity's own light table names them (world/interiorLights.js). */
+/** TEXTURE.210's records as Daggerfall Unity's own light table names them (world/interior/interiorLights.js). */
 const LIGHT_NAMES = Object.freeze({
   0: 'Bowl with fire', 2: 'Skull candle', 3: 'Candle', 4: 'Candle with base', 5: 'Candleholder with three candles',
   6: 'Skull torch', 8: 'Turquoise lamp', 9: 'Chandelier with candles', 11: 'Candle in lamp', 13: 'Round lamp',

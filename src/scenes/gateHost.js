@@ -11,7 +11,7 @@
 // of mine on one of them (`hit` - the wire's `ahit`, the relay's caps deciding what lands). The court's driver
 // (scenes/gateCourt.js) runs this each frame and hands its bodies, lights and shapes on with its own.
 //
-// THE PARTS, pure where they can be: who each one is and what it is doing (world/gateBoss.js hostLookOf, hostAct,
+// THE PARTS, pure where they can be: who each one is and what it is doing (world/gate/gateBoss.js hostLookOf, hostAct,
 // hostFallAct, hostCue), where it stands (net/gateBrain.js hostAt), its blow's verdict and clock (net/gateStrike.js
 // hostVerdict, hostTelegraphAt), the shapes (`hostShapes`). This file holds the sprites' textures and batches and what it
 // has already cued, judged and said.
@@ -19,9 +19,9 @@
 // Not a DFU member. Ledger A (WB11).
 import { HOST, HOST_KINDS, HOST_BLOWS, COURT_CENTRE, ATTACKS, hostAt, hostBlowUnder, nearestCourt } from '../net/gateBrain.js';
 import { hostVerdict, hostTelegraphAt } from '../net/gateStrike.js';
-import { hostLookOf, hostAct, hostFallAct, hostStandIn, hostCue, bossFrame, bossPlace, HOST_BITE_COLOR, hostPulseColor, emberColor, WARD_COLOR, BOSS_CUES, gateHitFlash } from '../world/gateBoss.js';
+import { hostLookOf, hostAct, hostFallAct, hostStandIn, hostCue, bossFrame, bossPlace, HOST_BITE_COLOR, hostPulseColor, emberColor, WARD_COLOR, BOSS_CUES, gateHitFlash } from '../world/gate/gateBoss.js';
 import { setBatchHitFlash } from '../systems/hitFlash.js';   // WB13d: a body of his host struck flashes, as he does
-import { courtToDungeon } from '../world/gateArena.js';
+import { courtToDungeon } from '../world/gate/gateArena.js';
 import { TELEGRAPH_KIND, TELEGRAPH_STYLE, TELEGRAPH_FLASH_MS, TELEGRAPH_EDGE, TELEGRAPH_POOL } from '../render/gateTelegraph.js';
 import { ENEMY_BASICS } from '../characters/enemyBasics.js';
 import { mobileBillboardSize } from '../world/rmbFlats.js';

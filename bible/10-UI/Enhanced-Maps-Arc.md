@@ -75,7 +75,7 @@ whichever tab that place offers, and the tabs do the rest.
 There is no floor field to read, and the arc checked rather than
 assumed: the `DungeonBlock` record parses x and z and no y
 (`formats/mapsFile.js`), every block is laid at y zero
-(`world/dungeonLayout.js`: *"Block (X, Z) sits at (X \* RDBSide, 0, Z
+(`world/dungeon/dungeonLayout.js`: *"Block (X, Z) sits at (X \* RDBSide, 0, Z
 \* RDBSide)"*), `originY` appears nowhere in `src/`, and inside a block
 the object roots are a 2D grid of models at whatever height they sit
 at. DFU answers the question with a cut plane the player slides, which
