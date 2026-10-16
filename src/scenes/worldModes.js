@@ -180,6 +180,7 @@ import { hudScale } from '../ui/hud.js';
 import { containerTextureRecord } from '../systems/containers.js';
 import { dungeonStartDoorFor } from '../systems/save.js';   // CASTLE1: the load's door is the saved dungeon's own
 import { composeNamer, composeContents } from '../systems/worldHover.js';   // INTERIOR-BODIES: the interior stands itemised bodies now, so its contents reader is a LADDER like the other three hosts' rather than one prefix
+import { interiorHeldPreview } from '../systems/containerPreview.js';   // CONTAINER-PEEK: a cupboard's plaque lists what it already holds
 import { raceWinner } from '../player/activationRace.js';   // WORLD-HOVER: the race's WINNER, so the plaque names what the press would open
 import { worldHoverFrame, hideWorldPlaque, destroyWorldPlaque, worldPlaqueOn } from '../ui/worldPlaque.js';   // WORLD-HOVER: the one seam each host calls, and the hide door for the branches that return above it
 import { quickLootTake, quickLootSpend, plaqueActionFor } from '../systems/quickLoot.js'; import { showPickups } from '../ui/pickupFeed.js';   // QUICK-LOOT B4: the take, through the window's own door; HOME2: the verb the plaque lit over a door; PICKUP-FEED: what a take moved, as cards (the take's `took`)
@@ -11533,6 +11534,11 @@ export function createWorldModes(host) {
           (key) => (typeof key === 'string' && key.startsWith('droppedLoot:') ? (interiorDropped.contents?.(key) ?? null) : null),
           (key) => interiorFoes?.hoverContents?.(key) ?? null,
           (key) => interiorGuards?.hoverContents?.(key) ?? null,
+          // CONTAINER-PEEK: a house container and a placed chest, read-only - null until the list exists, so the plaque stays a name
+          (key) => interiorHeldPreview(key, {
+            containers: interiorCtx?.containers, pieceOf: (id) => interiorDecor.pieceOf(id), itemsOf: (id) => interiorDecor.itemsOf(id),
+            owned: ownsThisInterior(), shut: !!(interiorHome && !interiorHome.own) || !!privateVisitRoom || caravanGuestHere(), hall: hallMemberHere(), today: stockedToday(),
+          }),
         ]),
       });
       const _detected = detectFeed.tick(dt);

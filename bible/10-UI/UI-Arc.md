@@ -18028,6 +18028,21 @@ What the ladder says, every arm driven by a pin:
   (Dresser) both read 3 under `% 100`, which is why the groundwork
   slice made the container record store the model and derive the
   texture record at its one reader.
+- **CONTAINER-PEEK (2026-10-16).** World Tooltips names a Chest and
+  stops. The plaque now lists what a house container, or a placed
+  storage piece, already holds — the same rows a pile draws — when that
+  list exists: the player's own cupboard, and a stranger's cupboard
+  stocked today.
+  An unstocked cupboard, one due to restock, somebody else's home and a
+  hall's furniture stay a name, so the plaque never says Empty over a
+  roll that has not happened. The rows are a glance: nothing is lit, and
+  the wheel and the take keys stay with the camera
+  (`worldHover.js:"export const PREVIEW_KEYS = Object.freeze(['container:', 'decor:']);"`,
+  `quickLoot.js:"const take = frame?.kind === 'items' && !frame.preview;"`).
+  The press is unchanged: the private-property question, the storage
+  window, and the stocking itself still happen on the click. DFU does
+  not list a cupboard. Pins `test/containerpreview.test.js`, and the
+  CONTAINER-PEEK cases in `test/worldhover.test.js` and `test/quickloot.test.js`.
 - a pile of exactly one named by that item with its stack count; a
   corpse by who it was; a door by its lock level when locked; a static
   door by where it goes, its lock, and the closed-shop sentence from
