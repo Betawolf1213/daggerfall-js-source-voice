@@ -82,6 +82,7 @@ const SIDE_M = 0.55;          // the landing aimed this far inside a piece's sid
 const COURSE_MAX_S = 240;
 const ROUTE_MAX_S = 480;      // THE ASCENT: a routed hall's road, plate to door (THE ROOMS bound a way at 300 s at the span build)
 const WINDOW_LOOK_S = 1.5;    // how far into a window the pilot looks for the moment its two tops line up
+const REPLAN_MAX = 4;         // how often a course's pairs may be planned again, the pilot late to its run-up
 const LATE_S = 0.2;           // a landing looked ahead from comes this late, at the near edge (a gap's widest is caught by the edge)
 /** The pieces that stand still (and may be stepped down onto): a plain step, a ledge, a Drop's landing, a Gust's or a
  *  Vent's, a Bone bridge, a Crumble. */
@@ -335,10 +336,11 @@ function pilotOf(S, spec, road, t0, trace = null) {
    *  9): a span link's course, whose way to it and on from it are the route's own links (THE FORK's bridges among them). */
   const crossPairs = (list, routed = false) => {
     pairs = list; ahead = new Map(); standSince = t; standLane = -1;
+    let again = false, replans = 0;   // a pair planned again (the pilot late to its run-up), and how often this course
     for (let pi = 0; pi < pairs.length; pi++) {
       const pair = pairs[pi], { a, b } = pair, at = b ? b.i : a ? `${a.i}>ground` : 'ground';
       // the Low Road's first launch: across the fork's bridge to its island first
-      if (!routed && road === 1 && spec.fork && (b ?? a)?.road === 1 && (pi === 0 || ((pairs[pi - 1].b ?? pairs[pi - 1].a)?.road ?? 0) === 0)) {
+      if (!again && !routed && road === 1 && spec.fork && (b ?? a)?.road === 1 && (pi === 0 || ((pairs[pi - 1].b ?? pairs[pi - 1].a)?.road ?? 0) === 0)) {
         // the fork's island's middle, then the bridge - AUDIT EG V (spec law 8): over the still ground's gaps (a passage on the way to
         // the fork leaves its far floor 2-2.6 m short of the island, as every passage leaves the island after it)
         const err = crossGround(spec.fork.x, spec.fork.z - 3) ?? walkTo(spec.fork.lowX, spec.fork.z - 3);
@@ -379,13 +381,20 @@ function pilotOf(S, spec, road, t0, trace = null) {
       while (t < go0) { const e2 = walkTo(gx, gz, rel, go0); if (e2) return fail(at, `${e2} while waiting`); if (t < go0 && frame(still())) return fail(at, 'fell while waiting'); }
       // two Rails' travels may meet across the gap: what slides under me on the way to the edge is stood on, not jumped past
       const onB = () => !!b && m.grounded && (m.groundKey === egStepKey(h, b.i) || !!m.groundKey?.startsWith(`${egStepKey(h, b.i)}:`));
-      let jumped = false, across = false;
+      // a pilot late to its run-up (the sweep, a LAW 9 hall of band 3: started 0.5 m back, it jumped 0.32 m short of the edge
+      // at its moment and fell) never jumps short of the edge, as a player would not: it runs on and jumps there while the
+      // solver's launch from the edge still lands, and plans the pair again from where it stands once it no longer does
+      let jumped = false, across = false, late = false;
+      again = false;
       for (let k = 0; k < 90 && !jumped && !across; k++) {
-        const p = me(), go = !off && (p.z >= lzAt(t) - EDGE_M || t >= tau + 0.03);
+        const p = me(), edge = p.z >= lzAt(t) - EDGE_M;
+        if (!off && !edge && t >= tau + 0.03 && !lands(pair, t)) { late = true; break; }
+        const go = !off && edge;
         if (frame(still({ forward: 1, run: off !== 'walk', jump: go, up: go }), Math.atan2(xt + (b ? egPieceAt(b, T).dx - ob.dx : 0) - p.x, zLand - p.z))) return fail(at, 'fell before the launch');
         jumped = go || (!!off && !m.grounded);
         across = !jumped && onB();
       }
+      if (late) { if (++replans > REPLAN_MAX) return fail(at, 'late to every launch'); again = true; pi--; continue; }
       if (!jumped && !across) return fail(at, off ? 'never ran off the edge' : 'never reached the edge');
       // the flight, and the landing
       let landed = across;
