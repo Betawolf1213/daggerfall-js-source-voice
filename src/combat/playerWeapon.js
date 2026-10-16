@@ -22,7 +22,7 @@
 // keeps facing bookkeeping on foes.
 
 import {
-  createWeaponMachine, machineAttack, machineStep, gestureDirection,
+  createWeaponMachine, machineAttack, machineStep, gestureDirection, strikeTicks, getMeleeWeaponAnimTime,
   MAX_GESTURE_SECONDS, BOW_DRAWN_HOLD_FRAME, machineCancelBowDraw, THUNDERLOCK_NUM_FRAMES, CLASSIC_UPDATE_INTERVAL,
   blowSchedule,   // MW-PACE1: the strike just begun, timed - what the Morrowind arm fits its blow into
 } from '../characters/weaponStates.js';
@@ -37,7 +37,7 @@ import { isShieldTemplate } from '../systems/armorMaterials.js';   // a12: Updat
 import { equipDelayFor } from '../systems/equip.js';               // a12: ToggleHand's EquipDelayTimes[GroupIndex]
 import { getBool, getFloat, getInt } from '../systems/settings.js';   // AUDIT 28 W2b: MeleeAttackFriendlyProtection; W11: WeaponAttackThreshold, WeaponSwingMode
 import { blowReaches, blowMult, scaleBlowDamage, playerBody } from './techniqueBlow.js';   // TECH1: a technique's blow - its shape and its weight, a leaf
-import { HANDS_MODE, handsModeOf, strikeHandOf, twoHanded, offHandToHit, offHandDamage, strikeTempo, DUAL } from './handsLaw.js';   // TWO-HANDS: which hand strikes, and what the off hand costs
+import { HANDS_MODE, handsModeOf, strikeHandOf, twoHanded, offHandToHit, OFF_HAND_BLOW, offHandBurden, offHandHold, DUAL } from './handsLaw.js';   // TWO-HANDS: which hand strikes, and what the off hand costs
 import { getItemHands } from '../systems/equip.js';   // TWO-HANDS: a hand's item as the law reads it (one-handed or not)
 import { readSwing } from './swingLaw.js';   // TWO-HANDS: the striking weapon's weight and the Strength, for the off hand's burden
 import { liveStat } from '../systems/statMods.js';   // TWO-HANDS: the off hand's sureness reads the live Agility
@@ -300,6 +300,7 @@ export class PlayerWeapon {
     this.strike = null;
     this._lastHand = null;
     this._lastEnd = -Infinity;
+    this._burdenCarry = 0;   // AUDIT 2: the fraction of a tick the off hand's last blow owed its burden, paid on its next (handsLaw.js offHandHold)
     this.sheathed = true;   // classic starts sheathed; Z readies (WeaponManager.Sheathed)
     this.lastDrawMs = 0;   // PCO1: the last bow shot's weaponAnimTime (_bowAnimTimeMs)
     // TECH1 (bible/05-Combat/Weapon-Techniques.md): the swing in flight is a technique's - its blow (combat/techniqueBlow.js:
@@ -395,11 +396,14 @@ export class PlayerWeapon {
   handItem(hand) { return (hand === 'L' ? this.currentLeftHandWeapon : this.currentRightHandWeapon) ?? null; }
   /** TWO-HANDS (AUDIT): the strike in flight is the OFF hand's - the blow a player-vs-player arm rolls carries the off
    *  hand's terms as resolveHit's does (combat/duelCombat.js resolveDuelStrike `off`). */
-  get offStrike() { return !!(twoHanded(this.handsMode) && this.strike && this.machine.state !== 'Idle' && this.strike.off); }
+  get offStrike() { return !!(this.handsMode === HANDS_MODE.Dual && this.strike && this.machine.state !== 'Idle' && this.strike.off); }
   /** TWO-HANDS (AUDIT): the weapon AT REST - the lead hand's with both hands up, else the weapon in use. What the HUD's
    *  diamond and a technique read, so neither flickers to the off hand's item for its blows (the weapon in use is the
    *  striking hand's mid-blow - its art, its skill, its swing). */
   get restingWeapon() { return twoHanded(this.handsMode) && !this.weapon?.werecreatureClaws ? this.handItem(this.leadHand) : this.weapon; }
+  /** TWO-HANDS (AUDIT 2): the blow in flight AS A BLOW - the off hand's OFF_HAND_BLOW.blowWeight, every other 1: what the
+   *  hosts' tally counts a swing as (scenes/hostCombat.js tallySwingSkills), as the formula counts its riders. */
+  get blowWeight() { return this.offStrike ? OFF_HAND_BLOW.blowWeight : 1; }
   /** TWO-HANDS: the strike in flight, or null - `{ hand, flurry, off }`. */
   get strikeInFlight() { return this.machine.state !== 'Idle' ? this.strike : null; }
 
@@ -419,24 +423,28 @@ export class PlayerWeapon {
     // TWO-HANDS (AUDIT): a flurry's blow is thrown from the raised hand - it starts FLURRY_FROM_FRAME frames into its
     // swing (handsLaw.js DUAL: quickness in frames, never in a tick's time, so it is the same at every frame rate)
     if (s.flurry) this.machine.frame = DUAL.FLURRY_FROM_FRAME;
+    // TWO-HANDS (AUDIT 2): the off hand's burden, in whole ticks held at its swing's end (handsLaw.js offHandHold) - read
+    // off the striking weapon and the Strength as SWING-LAW reads them, on the tick this swing runs at
+    if (this.offStrike) {
+      const ctx = this.animCtx?.() ?? null;
+      const w = ctx ? readSwing(ctx) : null;
+      if (w) {
+        const tick = this.machine.tick ?? getMeleeWeaponAnimTime(this.liveSpeed, ctx);
+        const owed = offHandHold({ burden: offHandBurden(w.weight, w.strength), ticks: strikeTicks(this.machine), tick, carry: this._burdenCarry });
+        this.machine.hold = owed.hold; this._burdenCarry = owed.carry;
+      }
+    }
     return true;
   }
 
   /**
    * TWO-HANDS: THE SWING'S CTX - what GetMeleeWeaponAnimTime is asked with (AUDIT-RR F1's { entity, weaponType,
    * usingRightHand }, the C#'s player, weaponType, weaponHands): the hand in use, so a mod that reads the weapon reads the
-   * striking one, and `tempo` - the off hand's burden on its strike's frames (handsLaw.js strikeTempo), which SWING-LAW
-   * multiplies in under its own floor. No tempo on any strike that is not the off hand's, so every single-weapon, fist
-   * and lead swing is asked exactly as before (a flurry's quickness is in its frames: _attack's FLURRY_FROM_FRAME).
+   * striking one. Nothing else: a tick's time is the weapon's whatever the hand (AUDIT 2) - a flurry's quickness is in
+   * its frames (_attack's FLURRY_FROM_FRAME) and the off hand's burden in whole ticks held at its end (_attack's hold).
    */
   swingCtx(entity) {
-    const ctx = { entity, weaponType: weaponTypeForItem(this.weapon), usingRightHand: this.activeHand === 'R' };
-    const s = this.strikeInFlight;
-    if (entity && s && s.off) {
-      const w = readSwing(ctx);
-      ctx.tempo = strikeTempo({ off: true, weight: w?.weight ?? 0, strength: w?.strength ?? 50 });
-    }
-    return ctx;
+    return { entity, weaponType: weaponTypeForItem(this.weapon), usingRightHand: this.activeHand === 'R' };
   }
 
   /**
@@ -500,7 +508,9 @@ export class PlayerWeapon {
       if (this.currentLeftHandWeapon) switchDelay += equipDelayFor(this.currentLeftHandWeapon) - 500;
       if (switchDelay > 0 && entity) entity.equipCountdown = (entity.equipCountdown ?? 0) + switchDelay / BOW_SWITCH_DIVISOR;
     }
-    if (apply) this.applyWeapon();
+    // AUDIT 2: re-applied as ApplyWeapon does it - the racial arm first (WeaponManager.cs:735-739): the beast's claws stay
+    // the weapon in use, one hand, so a transformed lycanthrope's H says DFU's line, not the fists'
+    if (apply) this.applyWeapon(this.weapon?.werecreatureClaws ? this.weapon : null);
     return message;
   }
 
@@ -773,11 +783,11 @@ export class PlayerWeapon {
     // TWO-HANDS (combat/handsLaw.js DUAL): THE OFF HAND'S BLOW - in a pair, the hand that is not the lead strikes less
     // surely (a to-hit term by the live Agility, on the swing's own channel) and less hard (a share of the rolled damage,
     // a miss staying a miss). The lead's blow, every single weapon's and every fist's are DFU's own.
-    const off = !!this.strikeInFlight?.off;
+    const off = this.offStrike;   // AUDIT 2: the one predicate every arm reads (the duel's, the wild's, this)
     const offToHit = off ? offHandToHit(playerCombat ? liveStat(playerCombat, 'agility') : 50) : 0;
     const strike = (foe) => {
       const opts = playerAttackOptions(this.strikingWeapon, this.machine.state, backstabOf(foe), rolls);
-      if (off) { opts.toHitMod += offToHit; opts.blowShare = offHandDamage; }   // TWO-HANDS (AUDIT): the share inside the formula, ahead of every report
+      if (off) { opts.toHitMod += offToHit; Object.assign(opts, OFF_HAND_BLOW); }   // TWO-HANDS (AUDIT): the share inside the formula, ahead of every report; AUDIT 2: and the blow's weight
       if (techOn(foe) && Number.isFinite(tb.toHit)) opts.toHitMod += tb.toHit;   // the technique's own term beside the swing's
       const rolled = calculateAttackDamage(playerCombat, foe.entity, {
         ...opts, say,   // DISC10-E L2: the hand's item, never the claws marker

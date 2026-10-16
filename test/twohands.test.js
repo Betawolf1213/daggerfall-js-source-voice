@@ -9,9 +9,9 @@ import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   HANDS_MODE, DUAL_TYPES, dualEligible, handsModeOf, twoHanded, otherHand, strikeHandOf, FLURRY_WINDOW,
-  mirrorStrike, mirrorRect, MIRROR_UV, handOnLeft, DUAL, offHandToHit, offHandBurden, strikeTempo, offHandDamage,
+  mirrorStrike, mirrorRect, MIRROR_UV, handOnLeft, DUAL, offHandToHit, offHandBurden, offHandHold, offHandDamage, OFF_HAND_BLOW,
   GUARD, guardStep, guardOffset, RUN_STEP_M, RUN_PUMP, runPhaseStep, runHandsWanted, pumpOf, runWeightStep, easeTo,
-  RUN_3D, pumpTarget3D, MELEE_PAINTED_ARM, strikePicture, runPhaseOfBob,
+  RUN_3D, pumpTarget3D, MELEE_PAINTED_ARM, strikePicture, runPhaseOfBob, runHandsKept,
 } from '../src/combat/handsLaw.js';
 import { PlayerWeapon, handDesc } from '../src/combat/playerWeapon.js';
 import { createWeaponRig } from '../src/combat/weaponRig.js';
@@ -19,17 +19,28 @@ import { WEAPON_TYPES, weaponTypeForItem, WEAPON_FILE, getWeaponAnims, STATE_IND
 import { CifRciFile } from '../src/formats/cifRciFile.js';
 import { ITEM_HANDS } from '../src/characters/equipTable.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
+import { templateByIndex } from '../src/systems/itemTemplates.js';
 import { WALK_STEP_INTERVAL } from '../src/systems/footsteps.js';
-import { getMeleeWeaponAnimTime, swingFrameSeconds, SWING_FRAME_MIN, SWING_FRAME_MAX, swingHeft } from '../src/characters/weaponStates.js';
+import { getMeleeWeaponAnimTime, swingFrameSeconds, SWING_FRAME_MAX, swingHeft, createWeaponMachine, machineAttack, machineStep, blowSchedule } from '../src/characters/weaponStates.js';
 import { resetToDefaults, setValue } from '../src/systems/settings.js';
 import { _resetModSettings, setModSetting, MOD_SETTINGS as MOD_KEYS } from '../src/systems/modSettings.js';
-import { registerFormulaOverride, setPlayerAttackHook, registerPlayerStrikeListener } from '../src/combat/formulas.js';
+import { registerFormulaOverride, setPlayerAttackHook, registerPlayerStrikeListener, calculateAttackDamage } from '../src/combat/formulas.js';
+import { installPcaao } from '../src/combat/pcaao.js';
+import { modsOff } from './modsOff.js';
+import { ENCHANTMENT_TYPES } from '../src/systems/enchantments.js';
+import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { SKILLS } from '../src/systems/skills.js';
+import { tallySwingSkills } from '../src/scenes/hostCombat.js';
 import { resolveDuelStrike, duelAttackerOf, duelWeaponOf, duelStandIn } from '../src/combat/duelCombat.js';
 import { registerMeleeWeaponAnimTime } from '../src/characters/weaponStates.js';
 import { HeadBobber } from '../src/player/headBobber.js';
 import { motionBagOf } from '../src/player/motor.js';
 import { techniqueItem } from '../src/combat/techniques.js';
 import { createTwoHands } from '../src/combat/twoHands.js';
+import { createWeaponWidget } from '../src/combat/weaponWidget.js';
+import { fpArm } from '../src/combat/fpArm.js';
+import { withDom } from './invdrag.mjs';
+import { mountEnhancedInventory } from '../src/ui/enhancedInventory.js';
 import { Renderer } from '../src/render/renderer.js';
 import { glowRingDraws, glowPad } from '../src/render/weaponGlowGlsl.js';
 import { drawRigSpriteBox } from '../src/render/characterSprite.js';
@@ -139,9 +150,19 @@ test('TWO-HANDS law: THE BALANCE - the pair is tempo, not twice the damage: the 
   assert.ok(Math.abs(offHandBurden(4.5, 50) - swingHeft(6.75, 50) / swingHeft(4.5, 50)) < 1e-12);
   assert.ok(offHandBurden(4.5, 50) > 1.08 && offHandBurden(4.5, 50) < 1.12, 'a longsword a tenth');
   assert.ok(offHandBurden(4.5, 90) < offHandBurden(4.5, 50), 'a strong arm feels it less');
-  assert.equal(strikeTempo({}), 1, 'a strike that is not the off hand\'s: untouched');
-  assert.equal(strikeTempo({ off: true, weight: 0.5 }), 1);
-  assert.equal(strikeTempo({ off: true, weight: 4.5, strength: 50 }), offHandBurden(4.5, 50));
+  // AUDIT 2: THE BURDEN IN WHOLE TICKS, held at the blow's end, the fraction carried to the next
+  assert.deepEqual(offHandHold({}), { hold: 0, carry: 0 }, 'no burden, nothing held');
+  assert.deepEqual(offHandHold({ burden: 1, ticks: 4, tick: 0.2, carry: 0.25 }), { hold: 0, carry: 0.25 }, 'a dagger owes nothing new; the carry waits');
+  const h1 = offHandHold({ burden: 1.1, ticks: 4, tick: 0.2 });
+  assert.ok(h1.hold === 0 && Math.abs(h1.carry - 0.4) < 1e-9, `0.4 of a tick owed, none held yet (${JSON.stringify(h1)})`);
+  const h3 = [0, 1, 2].reduce((c) => offHandHold({ burden: 1.1, ticks: 4, tick: 0.2, carry: c.carry }), { carry: 0 });
+  assert.ok(h3.hold === 1 && Math.abs(h3.carry - 0.2) < 1e-9, `the third blow holds one: 3 x 0.4 = 1.2 (${JSON.stringify(h3)})`);
+  let paid = 0, carry = 0;
+  for (let n = 0; n < 1000; n++) { const h = offHandHold({ burden: offHandBurden(4.5, 50), ticks: 4, tick: 0.2, carry }); paid += h.hold; carry = h.carry; }
+  assert.ok(Math.abs(paid + carry - 1000 * 4 * (offHandBurden(4.5, 50) - 1)) < 1e-6, 'over a fight the burden is paid exactly');
+  assert.deepEqual(offHandHold({ burden: 1.3, ticks: 5, tick: SWING_FRAME_MAX }), { hold: 0, carry: 0 }, 'no blow a tick slower than SWING-LAW\'s slowest');
+  const capped = offHandHold({ burden: 1.3, ticks: 10, tick: SWING_FRAME_MAX / 1.1 });
+  assert.ok(capped.hold === 1 && capped.carry < 1e-9, `held to the slowest frame: 10 ticks owe one, not three (${JSON.stringify(capped)})`);
   // THE MEASUREMENT, through the real machine (it steps a frame at a time and drops each tick's remainder - DFU's
   // coroutine): a held button, one dagger against two, the record's 65% model on the off hand's own terms
   const run = (right, left, dt) => {
@@ -161,6 +182,14 @@ test('TWO-HANDS law: THE BALANCE - the pair is tempo, not twice the damage: the 
     assert.ok(swings > 1.22 && swings < 1.28, `${fps} fps: a quarter more swings (${swings.toFixed(3)}) - DFU's fatigue a swing, a quarter more a second`);
     assert.ok(edge > 1.06 && edge < 1.11, `${fps} fps: about 9% more damage a second (${edge.toFixed(3)}), whatever the frame rate`);
   }
+  // AUDIT 2: A HEAVY OFF WEAPON'S BURDEN IS THE SAME AT EVERY FRAME RATE - paid in whole ticks held at its blows' end
+  // (offHandHold), where the first audit's factor on the tick's time made a longsword pair x1.165 at 30 fps and x1.204 at
+  // 60. A held exchange is lead, off, lead, off: 4 ticks, then 4 and the burden's (b - 1) x 4
+  const b = offHandBurden(templateByIndex(120).baseWeight, 50);
+  assert.ok(b > 1.05, `a longsword is felt in the off hand (${b})`);
+  const want = 5 / (4 + 2 * (b - 1));
+  const rates = [30, 60, 144, 1000].map((fps) => run(LONGSWORD, weapon(120, 'b'), 1 / fps).n / run(LONGSWORD, null, 1 / fps).n);
+  for (const r of rates) assert.ok(Math.abs(r - want) < 0.006, `x${r.toFixed(4)} as often as one longsword, the ticks' own x${want.toFixed(4)}, at 30, 60, 144 and 1000 fps: ${rates.map((x) => x.toFixed(4))}`);
 });
 
 test('TWO-HANDS law: the guard, the run - the guard\'s follower eased in fast and out slower, its offset toward the middle and down; one stroke a step on the footstep interval, the pump\'s place, the run\'s gate and its weight', () => {
@@ -177,9 +206,13 @@ test('TWO-HANDS law: the guard, the run - the guard\'s follower eased in fast an
   assert.deepEqual(guardOffset(0.5, 'left', { height: 86 }), [0, GUARD.LOWER * 86 * 0.5], 'a katana\'s, half way, never in: its cut side stays on the view\'s edge');
   assert.ok(GUARD.LOWER * 86 > GUARD.DOWN, 'a weapon dips past the fists\' nine pixels - the tuck did not read on a weapon');
   assert.ok(GUARD.LOWER <= 0.15, 'slightly: the dagger\'s hand stays in the view');
-  const b = guardOffset(0, 'right', { time: 0.25 / GUARD.BOUNCE_HZ, bounce: 1, hand: 'R' })[1];
-  const bl = guardOffset(0, 'right', { time: 0.25 / GUARD.BOUNCE_HZ, bounce: 1, hand: 'L' })[1];
-  assert.ok(Math.abs(b - GUARD.BOUNCE_PX) < 1e-9 && Math.abs(bl + GUARD.BOUNCE_PX) < 1e-9, 'the fists bounce out of step');
+  // the fists' bounce, out of step - and (AUDIT 2) ONLY EVER DOWN: a sine about the rest lifted each cut wrist off the
+  // view's bottom edge for half its beat
+  const b = guardOffset(0, 'right', { time: 0.5 / GUARD.BOUNCE_HZ, bounce: 1, hand: 'R' })[1];
+  const bl = guardOffset(0, 'right', { time: 0.5 / GUARD.BOUNCE_HZ, bounce: 1, hand: 'L' })[1];
+  assert.ok(Math.abs(b - 2 * GUARD.BOUNCE_PX) < 1e-9 && Math.abs(bl) < 1e-9, `the fists bounce out of step: the right at its lowest as the left is at rest (${b}, ${bl})`);
+  for (let k = 0; k < 64; k++) for (const hand of ['R', 'L']) assert.ok(guardOffset(0, 'left', { time: k / 64 / GUARD.BOUNCE_HZ, bounce: 1, hand })[1] >= 0, 'never above the rest');
+  assert.deepEqual({ ...GUARD }, { IN: 10, DOWN: 9, LOWER: 0.12, IN_TAU: 0.05, OUT_TAU: 0.14, BOUNCE_PX: 1.6, BOUNCE_HZ: 1.15 }, 'the record\'s numbers (L5: each could change unseen)');
   // one step is PI of the stride, and the arms swing one stroke a step
   assert.ok(Math.abs(runPhaseStep(0, RUN_STEP_M, 1) - Math.PI) < 1e-9);
   assert.equal(runPhaseStep(1, 7, -1), 1, 'no backward time');
@@ -196,6 +229,7 @@ test('TWO-HANDS law: the guard, the run - the guard\'s follower eased in fast an
   assert.ok(Math.abs(mid.s - Math.pow(0.5, RUN_PUMP.SHAPE)) < 1e-9 && mid.s > 0.5, 'the stroke drives (|sin|^SHAPE)');
   assert.equal(mid.frame, RUN_PUMP.ARM_FRAMES[Math.floor(mid.s * RUN_PUMP.ARM_FRAMES.length)], 'the frame by how far up the stroke is');
   for (let k = 0; k < 64; k++) assert.ok(pumpOf(k * Math.PI / 32, 'R').dy >= 0, 'never up: the pump only lowers a sprite');
+  assert.deepEqual({ ...RUN_PUMP, ARM_FRAMES: [...RUN_PUMP.ARM_FRAMES] }, { ARM_STATE: 'StrikeDownRight', ARM_FRAMES: [1, 2, 3], DROP: 1.05, IN: 0.06, OUT: 0.03, SHAPE: 0.7, SWAP: 0.5, IN_TAU: 0.12, OUT_TAU: 0.16, PUNCH_TAU: 0.04, MIN_SPEED: 1.0, CATCH: 0.5, AIR_GRACE: 0.6 }, 'the record\'s numbers (AUDIT 2, L5: each could change unseen)');
   const want = { running: true, grounded: true, speed: RUN_PUMP.MIN_SPEED, emptyHands: true };
   assert.equal(runHandsWanted(want), true);
   for (const [k, v] of [['running', false], ['standing', true], ['grounded', false], ['crouching', true], ['riding', true], ['swimming', true], ['climbing', true], ['emptyHands', false], ['attacking', true], ['speed', RUN_PUMP.MIN_SPEED - 0.01]]) {
@@ -213,30 +247,57 @@ test('TWO-HANDS law: the guard, the run - the guard\'s follower eased in fast an
 
 // ---- THE SWING AND THE BLOW --------------------------------------------------------------------------------------------
 
-test('TWO-HANDS the swing: a strike\'s own tempo rides SWING-LAW\'s answer under its bounds - a flurry quicker, the floor still the floor, a ctx without one untouched, and DFU\'s line (no wielder) never asked', () => {
+test('TWO-HANDS the swing (AUDIT 2): a tick\'s time is the weapon\'s whatever the hand - nothing a ctx carries scales SWING-LAW\'s answer; an off-hand blow\'s burden is whole ticks HELD on its last frame, after its hit, and the schedule the Morrowind arm fits says so', () => {
   const entity = { stats: { speed: 50, strength: 50 }, equip: { slots: {} } };
   const base = getMeleeWeaponAnimTime(50, { entity, weaponType: WEAPON_TYPES.Melee });
   assert.equal(base, swingFrameSeconds(50, { handling: 0.9 }));
-  assert.ok(Math.abs(getMeleeWeaponAnimTime(50, { entity, weaponType: WEAPON_TYPES.Melee, tempo: 0.75 }) - base * 0.75) < 1e-12);
-  assert.equal(getMeleeWeaponAnimTime(50, { entity, weaponType: WEAPON_TYPES.Melee, tempo: 1 }), base);
-  assert.equal(getMeleeWeaponAnimTime(100, { entity: { ...entity, stats: { speed: 100, strength: 50 } }, weaponType: WEAPON_TYPES.Melee, tempo: 0.1 }), SWING_FRAME_MIN, 'no pair swings quicker than one weapon can');
-  assert.equal(getMeleeWeaponAnimTime(0, { entity, weaponType: WEAPON_TYPES.Battleaxe, tempo: 9 }), SWING_FRAME_MAX, 'nor slower');
-  assert.equal(getMeleeWeaponAnimTime(50, { tempo: 0.5 }), (3 * (115 - 50)) / 980, 'a foe\'s machine: DFU\'s line, no tempo');
-  assert.equal(getMeleeWeaponAnimTime(50, { entity, weaponType: WEAPON_TYPES.Melee, tempo: NaN }), base);
+  assert.equal(getMeleeWeaponAnimTime(50, { entity, weaponType: WEAPON_TYPES.Melee, tempo: 1.5 }), base, 'the first audit\'s ctx.tempo is gone: it rounded to a different frame at every frame rate');
+  assert.equal(getMeleeWeaponAnimTime(50, { tempo: 1.5 }), (3 * (115 - 50)) / 980, 'a foe\'s machine: DFU\'s line');
+  // THE HOLD: on the last frame, one tick a resume, after the hit - the hit lands where DFU's does
+  const walk = (hold) => {
+    const m = createWeaponMachine(false);
+    machineAttack(m, 'StrikeDown');
+    m.hold = hold;
+    const sched = blowSchedule(m, 50, null, 0);
+    const seen = [];
+    for (let i = 0; i < 20 && m.state !== 'Idle'; i++) { const ev = machineStep(m, 0.25, 50, null); seen.push(ev.includes('hit') ? `${m.frame}!` : String(m.frame)); }
+    return { seen: seen.join(' '), ticks: Math.round(sched.seconds / sched.step), hitAt: Math.round(sched.hitAt / sched.step) };
+  };
+  assert.deepEqual(walk(0), { seen: '1 2! 3 4 0', ticks: 5, hitAt: 2 }, 'DFU\'s five ticks');
+  assert.deepEqual(walk(2), { seen: '1 2! 3 4 4 4 0', ticks: 7, hitAt: 2 }, 'two held on the last frame; the hit and the schedule\'s hit unmoved, its end two ticks on');
+  const fresh = createWeaponMachine(false);
+  fresh.hold = 3; machineAttack(fresh, 'StrikeDown');
+  assert.equal(fresh.hold, 0, 'every strike begins owing nothing - only its caller sets a hold');
+  // THROUGH PLAYERWEAPON: the lead holds nothing; the off hand's longsword holds its burden's whole ticks, carrying the rest
+  const pw = new PlayerWeapon({});
+  const he = { stats: { speed: 50, strength: 50 }, equip: { slots: { [EQUIP_SLOTS.RightHand]: KATANA, [EQUIP_SLOTS.LeftHand]: LONGSWORD } } };
+  pw.updateHands(KATANA, LONGSWORD); pw.applyWeapon(); pw.animCtx = () => pw.swingCtx(he);
+  const b = offHandBurden(templateByIndex(120).baseWeight, 50);
+  let offBlows = 0, held = 0;
+  for (let n = 0; n < 40; n++) {
+    assert.ok(pw.clickAttack(() => 0.5));
+    if (pw.strike.off) { offBlows++; held += pw.machine.hold; } else assert.equal(pw.machine.hold, 0, 'the lead\'s blow holds nothing');
+    assert.equal(pw.swingCtx(he).tempo, undefined, 'the ctx carries no factor');
+    for (let i = 0; i < 600 && pw.machine.state !== 'Idle'; i++) pw.update(1 / 60);
+    pw.applyWeapon();
+  }
+  assert.equal(offBlows, 20);
+  assert.ok(Math.abs(held + pw._burdenCarry - offBlows * (5 - DUAL.FLURRY_FROM_FRAME) * (b - 1)) < 1e-9, `the burden paid exactly: ${held} ticks held + ${pw._burdenCarry.toFixed(3)} carried over ${offBlows} blows at x${b.toFixed(4)}`);
+  assert.ok(held >= 1, 'and paid: a longsword in the off hand is felt');
 });
 
-test('TWO-HANDS PlayerWeapon: the mode off the caches, the strike\'s hand off the law, the weapon in use the striking hand\'s for the strike and the lead\'s again after it, and the swing\'s ctx carrying its tempo', () => {
+test('TWO-HANDS PlayerWeapon: the mode off the caches, the strike\'s hand off the law, the weapon in use the striking hand\'s for the strike and the lead\'s again after it, the swing\'s ctx naming the striking hand, and the off hand\'s burden held in ticks', () => {
   const pw = new PlayerWeapon({});
   pw.updateHands(KATANA, DAGGER); pw.applyWeapon();
   assert.equal(pw.handsMode, HANDS_MODE.Dual);
   assert.equal(pw.weapon, KATANA, 'at rest: the lead\'s');
   const entity = { stats: { speed: 50, strength: 50 }, equip: { slots: { [EQUIP_SLOTS.RightHand]: KATANA, [EQUIP_SLOTS.LeftHand]: DAGGER } } };
   pw.animCtx = () => pw.swingCtx(entity);
-  const hands = [], weapons = [], tempos = [], starts = [];
+  const hands = [], weapons = [], holds = [], starts = [];
   for (let n = 0; n < 4; n++) {
     assert.ok(pw.clickAttack(() => 0.5), `strike ${n}`);
     hands.push(pw.strike.hand); weapons.push(pw.weapon.name);
-    tempos.push(pw.swingCtx(entity).tempo ?? 1); starts.push(pw.machine.frame);
+    holds.push(pw.machine.hold); starts.push(pw.machine.frame);
     assert.equal(pw.swingCtx(entity).usingRightHand, pw.strike.hand === 'R', 'the ctx names the striking hand (RR reads its weapon)');
     for (let i = 0; i < 600 && pw.machine.state !== 'Idle'; i++) pw.update(1 / 60);
     assert.equal(pw.machine.state, 'Idle');
@@ -246,7 +307,7 @@ test('TWO-HANDS PlayerWeapon: the mode off the caches, the strike\'s hand off th
   assert.deepEqual(hands, ['R', 'L', 'R', 'L'], 'the exchange alternates');
   assert.deepEqual(weapons, ['Katana', 'Dagger', 'Katana', 'Dagger'], 'the weapon in use is the striking hand\'s');
   assert.deepEqual(starts, [0, DUAL.FLURRY_FROM_FRAME, DUAL.FLURRY_FROM_FRAME, DUAL.FLURRY_FROM_FRAME], 'the opening from the first frame, every answer from the raised hand');
-  assert.deepEqual(tempos, [1, 1, 1, 1], 'no factor on any tick\'s time: a dagger in the off hand feels no burden, and the lead never does');
+  assert.deepEqual(holds, [0, 0, 0, 0], 'nothing held: a dagger in the off hand feels no burden, and the lead never does');
   // the Morrowind arm's pacing reads the strike from the frame it stands on (weaponStates.js blowSchedule)
   const pw2 = new PlayerWeapon({});
   pw2.updateHands(KATANA, DAGGER); pw2.applyWeapon(); pw2.animCtx = () => pw2.swingCtx(entity);
@@ -276,8 +337,8 @@ test('TWO-HANDS PlayerWeapon: the mode off the caches, the strike\'s hand off th
   assert.deepEqual(pw.strike, { hand: 'R', flurry: true, off: true }, 'the old lead now answers, as the off hand');
   pw.toggleHand({ apply: true });
   for (let i = 0; i < 600 && pw.machine.state !== 'Idle'; i++) pw.update(1 / 60);
-  // THE TEMPO UNDER A MOD'S ANSWER (AUDIT: Roleplay & Realism: Items' weaponBalance answers every swing in the game):
-  // the off hand's burden rides whatever answered, and nothing else does
+  // THE BURDEN UNDER A MOD'S ANSWER (AUDIT: Roleplay & Realism: Items' weaponBalance answers every swing in the game;
+  // AUDIT 2: in ticks of whatever answered): the mod's tick is every blow's, and the off hand's burden is held in it
   const heavy = new PlayerWeapon({});
   const he = { stats: { speed: 50, strength: 50 }, equip: { slots: { [EQUIP_SLOTS.RightHand]: KATANA, [EQUIP_SLOTS.LeftHand]: LONGSWORD } } };
   heavy.updateHands(KATANA, LONGSWORD); heavy.applyWeapon(); heavy.animCtx = () => heavy.swingCtx(he);
@@ -287,11 +348,12 @@ test('TWO-HANDS PlayerWeapon: the mode off the caches, the strike\'s hand off th
     assert.equal(getMeleeWeaponAnimTime(50, heavy.swingCtx(he)), 0.2, 'the lead: the mod\'s answer');
     for (let i = 0; i < 600 && heavy.machine.state !== 'Idle'; i++) heavy.update(1 / 60);
     heavy.applyWeapon(); heavy.clickAttack(() => 0.5);
-    const k = heavy.swingCtx(he).tempo;
-    assert.ok(heavy.strike.off && k > 1.05, `the off hand's longsword is felt (${k})`);
-    assert.ok(Math.abs(getMeleeWeaponAnimTime(50, heavy.swingCtx(he)) - 0.2 * k) < 1e-12, 'its burden on the mod\'s answer');
+    const b = offHandBurden(templateByIndex(120).baseWeight, 50);
+    assert.ok(heavy.strike.off && b > 1.05, `the off hand's longsword is felt (${b})`);
+    assert.equal(getMeleeWeaponAnimTime(50, heavy.swingCtx(he)), 0.2, 'the off hand: the mod\'s answer too');
+    assert.ok(Math.abs(heavy.machine.hold + heavy._burdenCarry - 4 * (b - 1)) < 1e-9, 'its burden owed in the mod\'s ticks');
   } finally { registerMeleeWeaponAnimTime(null); }
-  // the fists: alternate, no tempo, no off
+  // the fists: alternate, nothing held, no off
   const f = new PlayerWeapon({});
   f.updateHands(null, null); f.applyWeapon();
   assert.equal(f.handsMode, HANDS_MODE.Fists);
@@ -299,10 +361,10 @@ test('TWO-HANDS PlayerWeapon: the mode off the caches, the strike\'s hand off th
   const seen = [];
   for (let n = 0; n < 3; n++) {
     f.clickAttack(() => 0.5);
-    seen.push([f.strike.hand, f.strike.flurry, f.strike.off, f.swingCtx(fe).tempo ?? 1]);
+    seen.push([f.strike.hand, f.strike.flurry, f.strike.off, f.machine.hold]);
     for (let i = 0; i < 600 && f.machine.state !== 'Idle'; i++) f.update(1 / 60);
   }
-  assert.deepEqual(seen, [['R', false, false, 1], ['L', false, false, 1], ['R', false, false, 1]]);
+  assert.deepEqual(seen, [['R', false, false, 0], ['L', false, false, 0], ['R', false, false, 0]]);
   // THE RESTING WEAPON (AUDIT: the HUD and a technique read it): the lead's through the off hand's blow
   const rw = new PlayerWeapon({});
   rw.updateHands(KATANA, DAGGER); rw.applyWeapon();
@@ -415,6 +477,111 @@ test('TWO-HANDS PlayerWeapon: THE OFF HAND\'S BLOW through the real formula - it
   }
 });
 
+test('TWO-HANDS (AUDIT 2): THE OFF HAND\'S BLOW IS 0.8 OF A BLOW IN EVERYTHING IT COUNTS - its weapon\'s Strikes enchantments and a power\'s per-blow charge set off that share of the time (one roll), the skills it trains that share of a use; its share laid ahead of PCAAO\'s own wear at the shipped defaults; its sureness by the LIVE Agility, against a foe and a player alike; and the beast\'s H is DFU\'s', () => {
+  assert.deepEqual({ ...OFF_HAND_BLOW }, { blowShare: offHandDamage, blowWeight: DUAL.OFF_DAMAGE }, 'one home for the player\'s swing and a blow between players');
+  const player = () => ({ isPlayer: true, level: 1, skills: new Array(35).fill(30), skillUses: new Array(35).fill(0), armor: 0, stats: { strength: 75, agility: 50, luck: 50, speed: 50, endurance: 50, willpower: 50, intelligence: 50, personality: 50 } });
+  const skeleton = () => ({ isPlayer: false, careerIndex: 0, mobileType: MOBILE_TYPES.SkeletalWarrior, health: 300, maxHealth: 300, armor: 0, skills: 30, minMetalToHit: -1, stats: { strength: 50, agility: 50, luck: 50 } });
+  // POTENT VS UNDEAD's +5 (a Strikes payload) and the strike listeners' `blow`, on rolls a whole blow and the off hand's
+  const potent = () => ({ ...KATANA, currentCondition: 1000, maxCondition: 1000, enchantments: [{ type: ENCHANTMENT_TYPES.PotentVs, param: 0 }] });
+  const heard = [];
+  registerPlayerStrikeListener('twohands-weight', (a, t, d, w, info) => heard.push(info.blow));
+  try {
+    let fewer = 0, landed = 0, lightLanded = 0, wholeLanded = 0;
+    for (let k = 0; k < 100; k++) {
+      const roll = () => (k + 0.5) / 100;
+      const whole = calculateAttackDamage(player(), skeleton(), { weapon: potent(), toHitMod: 1000, rolls: roll });
+      const weighed = calculateAttackDamage(player(), skeleton(), { weapon: potent(), toHitMod: 1000, rolls: roll, blowWeight: DUAL.OFF_DAMAGE });
+      if (!(whole > 0)) continue;
+      landed++;
+      assert.equal(whole - weighed, roll() < DUAL.OFF_DAMAGE ? 0 : 5, `roll ${k}: Potent Vs on ${DUAL.OFF_DAMAGE} of the rolls`);
+      if (weighed < whole) fewer++;
+      if (weighed > 0) { if (roll() < DUAL.OFF_DAMAGE) wholeLanded++; else lightLanded++; }
+    }
+    assert.ok(landed >= 90 && fewer >= 15, `a fifth of the off hand's blows set off no Strikes payload (${fewer} of ${landed})`);
+    assert.equal(heard.filter((b) => b === false).length, lightLanded, 'and the strike listeners are told the same blows do not count whole');
+    assert.equal(heard.filter((b) => b === true).length, landed + wholeLanded, 'every other landed blow - every whole one - does');
+  } finally { registerPlayerStrikeListener('twohands-weight', null); }
+  // ...and the player's swing hands it on: on a roll past the share, the lead's blow counts whole and the off hand's not
+  const told = [];
+  registerPlayerStrikeListener('twohands-weight', (a, t, d, w, info) => told.push(info.blow));
+  registerFormulaOverride('adjustWeaponHitChanceMod', (attacker, target, mod) => mod + 1000);
+  try {
+    for (const off of [false, true]) {
+      const p = new PlayerWeapon({});
+      p.updateHands(KATANA, DAGGER); p.applyWeapon();
+      p.machine.state = 'StrikeLeft'; p.strike = { hand: off ? 'L' : 'R', flurry: off, off }; p.weapon = KATANA;
+      p.resolveHit([{ entity: skeleton(), ai: { feet: [0, 0, 1] } }], player(), () => ({ dist: 1, inView: true, losClear: true }), () => 0.9);
+    }
+    assert.deepEqual(told, [true, false], 'the lead\'s blow whole; the off hand\'s, on a roll of 0.9, not');
+  } finally { registerPlayerStrikeListener('twohands-weight', null); registerFormulaOverride('adjustWeaponHitChanceMod', null); }
+  // THE TALLY: a whole swing a use; the off hand's 0.8 of one, the fraction carried on the player
+  const tp = player();
+  for (let n = 0; n < 10; n++) tallySwingSkills(tp, KATANA, DUAL.OFF_DAMAGE);
+  assert.deepEqual([tp.skillUses[SKILLS.LongBlade], tp.skillUses[SKILLS.CriticalStrike]], [8, 8], 'ten off-hand blows train eight uses');
+  tallySwingSkills(tp, KATANA);
+  assert.equal(tp.skillUses[SKILLS.LongBlade], 9, 'a whole swing always one');
+  const pw = new PlayerWeapon({});
+  pw.updateHands(KATANA, DAGGER); pw.applyWeapon();
+  pw.clickAttack(() => 0.5);
+  assert.equal(pw.blowWeight, 1, 'the lead\'s blow weighs one');
+  for (let i = 0; i < 600 && pw.machine.state !== 'Idle'; i++) pw.update(1 / 60);
+  pw.applyWeapon(); pw.clickAttack(() => 0.5);
+  assert.ok(pw.offStrike && pw.blowWeight === DUAL.OFF_DAMAGE, 'the off hand\'s, its share');
+  // every melee tally a host makes hands the swing's weight on (a bow's never strikes off: DFU's line); techniques are the lead's
+  for (const [file, rig, n] of [['worldModes', 'interiorWeapon.playerWeapon', 2], ['dungeonContext', 'playerWeapon', 2], ['world', 'weaponRig.playerWeapon', 3], ['exterior', 'weaponRig.playerWeapon', 2], ['cityGuards', 'playerWeapon', 1]]) {
+    const text = rd(`src/scenes/${file}.js`);
+    const weighed = text.split(`tallySwingSkills(playerEntity, ${rig}.weapon, ${rig}.blowWeight)`).length - 1;
+    assert.equal(weighed, n, `${file}: every melee tally weighed (${weighed} of ${n})`);
+    assert.equal((text.match(/tallySwingSkills\(/g) ?? []).length - weighed, file === 'world' || file === 'exterior' ? 1 : 0, `${file}: and only the bow's unweighed`);
+  }
+  // PCAAO AT THE SHIPPED DEFAULTS (its core rolls every blow): the off hand's share is laid ahead of its own wear, once
+  _resetModSettings(); installPcaao();
+  try {
+    let both = 0;
+    for (let k = 0; k < 100; k++) {
+      const roll = () => (k + 0.5) / 100;
+      const one = (opts) => {
+        const w = { ...KATANA, currentCondition: 1000, maxCondition: 1000 };
+        let wear = null, told = null;
+        registerFormulaOverride('applyConditionDamageThroughPhysicalHit', (item, owner, d) => { if (item === w) wear = d; return undefined; });
+        setPlayerAttackHook((n) => { told = n.damage; });
+        try { return { ret: calculateAttackDamage(player(), skeleton(), { weapon: w, toHitMod: 1000, rolls: roll, ...opts }), told, wear }; }
+        finally { setPlayerAttackHook(null); registerFormulaOverride('applyConditionDamageThroughPhysicalHit', null); }
+      };
+      const whole = one({}), off = one(OFF_HAND_BLOW);
+      if (!(whole.ret > 0 && off.ret > 0)) continue;
+      both++;
+      assert.equal(off.ret, offHandDamage(whole.ret), `roll ${k}: shared once`);
+      assert.equal(off.told, off.ret, 'the HUD the blow that landed');
+      if (whole.wear != null) assert.equal(off.wear, off.ret, `roll ${k}: the wear by the blow that landed (${off.wear} of ${whole.wear})`);
+    }
+    assert.ok(both >= 80, `on ${both} rolls`);
+  } finally { modsOff(); installPcaao(); }
+  // THE LIVE AGILITY: a fever's +40 is the off hand's sureness against a foe, and the sheet's own Agility between players
+  const mods = [];
+  registerFormulaOverride('adjustWeaponHitChanceMod', (attacker, target, mod) => { mods.push(mod); return undefined; });
+  try {
+    const sure = { ...player(), activeEffects: [{ kind: 'disease', statMods: { agility: 40 } }] };
+    for (const off of [false, true]) {
+      const p = new PlayerWeapon({});
+      p.updateHands(KATANA, DAGGER); p.applyWeapon();
+      p.machine.state = 'StrikeLeft'; p.strike = { hand: off ? 'L' : 'R', flurry: off, off }; p.weapon = KATANA;
+      p.resolveHit([{ entity: skeleton(), ai: { feet: [0, 0, 1] } }], sure, () => ({ dist: 1, inView: true, losClear: true }), () => 0.5);
+    }
+    assert.equal(mods[1] - mods[0], offHandToHit(90), 'Agility 50 on the sheet, 90 live: the live one');
+    mods.length = 0;
+    const agile = { ...player(), stats: { ...player().stats, agility: 90 } };
+    for (const off of [false, true]) resolveDuelStrike({ by: 'melee', a: duelAttackerOf(agile, KATANA), w: duelWeaponOf(KATANA), sw: 'StrikeLeft', ...(off ? { off: true } : {}) }, duelStandIn(), { rolls: () => 0.5 });
+    assert.equal(mods[1] - mods[0], offHandToHit(90), 'between players: the striker\'s own Agility');
+  } finally { registerFormulaOverride('adjustWeaponHitChanceMod', null); }
+  // THE BEAST'S H (L4): a transformed lycanthrope's claws stay the weapon in use - one hand, DFU's line
+  const claws = { name: 'claws', werecreatureClaws: true };
+  const beast = new PlayerWeapon({});
+  beast.updateHands(null, null); beast.applyWeapon(claws);
+  assert.equal(beast.toggleHand({ bowSwitching: false }), 'Using weapon in left hand.');
+  assert.deepEqual([beast.weapon, beast.handsMode], [claws, HANDS_MODE.Single], 'the claws, one hand - never the fists');
+});
+
 // ---- THE SPRITE LANE, THROUGH A REAL RIG -------------------------------------------------------------------------------
 
 /** A WEAPON CIF: the "wielding" image every non-bow file opens with, then the anim records (record 0 the idle). */
@@ -452,10 +619,10 @@ async function rigWith({ right = null, left = null, widget = false, run = false,
   const renderer = { uploadTexture: (_k, name) => name, drawScreenQuad: (tex, rect, uv) => quads.push({ tex, rect, uv }) };
   const canvas = { width: 320, height: 200, clientWidth: 320, clientHeight: 200 };
   const entity = { items: [], lightSource: light, equip: { slots: { [EQUIP_SLOTS.RightHand]: right, [EQUIP_SLOTS.LeftHand]: left } }, stats: { speed: 50, strength: 50, agility: 50 }, ...entityExtra };
-  const cam = { z: 0, run, walk, bobTimer: null, climbing: false };
+  const cam = { z: 0, run, walk, bobTimer: null, climbing: false, grounded: true };
   const r = createWeaponRig({ renderer, canvas, entity, audio: { playOneShot() {} }, palette: { get: () => ({ r: 0, g: 0, b: 0 }) }, say: (l) => said.push(l),
     fetchBytes: async () => MELEE, ...(spellArmed ? { spellArmed } : {}),
-    camera: () => ({ pos: [0, 1.7, cam.z], yaw: 0, pitch: 0, climbing: cam.climbing, move: { grounded: true, running: cam.run, standing: !cam.run && !cam.walk, bobTimer: cam.bobTimer } }) });
+    camera: () => ({ pos: [0, 1.7, cam.z], yaw: 0, pitch: 0, climbing: cam.climbing, move: { grounded: cam.grounded, running: cam.run, standing: !cam.run && !cam.walk, bobTimer: cam.bobTimer } }) });
   if (!sheathed) r.toggleSheath();
   for (let i = 0; i < 20; i++) { r.frame(DT); r.draw(); await tick(); }
   const frame = async ({ held = false, move = 0 } = {}) => {
@@ -532,7 +699,8 @@ test('TWO-HANDS rig, the guard: the hand that is not striking draws toward the m
   const back = await frame();
   for (const hand of ['R', 'L']) {
     const b = back.find((x) => shownArm(x) === hand).rect;
-    assert.ok(Math.abs(b.x - restOf[hand].x) < 1 && Math.abs(b.y - restOf[hand].y) < 2.5, `${hand} back to its rest`);
+    // PIN MOVED (TWO-HANDS AUDIT 2): the bounce only lowers a fist, by up to twice BOUNCE_PX (it swung about the rest)
+    assert.ok(Math.abs(b.x - restOf[hand].x) < 1 && Math.abs(b.y - restOf[hand].y) <= 2 * GUARD.BOUNCE_PX + 0.5, `${hand} back to its rest: ${b.y} from ${restOf[hand].y}`);
   }
 });
 
@@ -648,7 +816,7 @@ test('TWO-HANDS rig, the running hands: running with nothing in either hand - dr
   }
 });
 
-test('TWO-HANDS rig, the running hands, AUDITED: THE ARM IS THE ART\'S OWN - the rising punch\'s frames, the foot on the view\'s edge, never lifted, the rest down and out before the arm comes up (one art a hand a frame), the top of the stroke in toward the middle; the sheathed run up from below the view, ON THE HEAD BOB\'S CLOCK (its timer, every frame); a hand TAKEN mid-run (a spell readied, a weapon, the beast, a light a lane draws) ends the run at once and never a frame of fists over it; a lantern at the waist takes no hand; no bounce in a walk', async () => {
+test('TWO-HANDS rig, the running hands, AUDITED: THE ARM IS THE ART\'S OWN - the rising punch\'s frames, the foot on the view\'s edge, never lifted, the rest down and out before the arm comes up (one art a hand a frame), the top of the stroke in toward the middle; the sheathed run up from below the view, ON THE HEAD BOB\'S CLOCK (its timer, every frame); a hand TAKEN mid-run (a weapon, the beast) yields the run at once to the picture that takes it, and with nothing in its place (a spell readied with no hands drawn, a swap\'s pause) eases it out - never a frame of fists over a picture, never an empty one; a lantern at the waist takes no hand; no bounce in a walk', async () => {
   // THE RUNNING ARM IS THE ART'S OWN (Mac: "theres no arm portion of the sprite, so it looks like floating hands"): the
   // run draws the rising punch's frames (record 5), each with its FOOT ON THE VIEW'S BOTTOM EDGE or below - never lifted;
   // the fists' rest goes down out of the view first and the arm comes up from under it, one art a hand a frame
@@ -697,30 +865,67 @@ test('TWO-HANDS rig, the running hands, AUDITED: THE ARM IS THE ART\'S OWN - the
   for (let i = 0; i < 200; i++) await b.frame({ move: 7 });
   assert.ok(b.r.twoHands.running);
   assert.ok(Math.abs(b.r.twoHands.state.run.phase - runPhaseOfBob(bobber.timer)) < 1e-12, 'the pump\'s phase is the bob\'s, a quarter turn behind - the right arm forward as the left foot is planted');
-  // a hand TAKEN mid-run: the run ends at once
+  // TWO-HANDS AUDIT 2 (L2 F5, L3 M3): FOLLOWED, NEVER JUMPED WITH - a one-frame stop mid-run, and the bob's timer resets to
+  // PI as the run resumes (HeadBobber's end transition): the pump catches it up within RUN_PUMP.CATCH of its own stride
+  // (handsLaw.js runPhaseFollow, the 3D arms' law too) - the first cut took the reset whole and swapped the arms in a
+  // frame (227 px of 600)
+  const bobWalk = 7 * DT * Math.PI / RUN_STEP_M, bobStepOf = (p0, p1) => p1 - p0 - 2 * Math.PI * Math.round((p1 - p0) / (2 * Math.PI));
+  for (let i = 0; i < 120 && Math.abs(bobber.timer - 1.5 * Math.PI) > 0.2; i++) await b.frame({ move: 7 });
+  await b.frame({ move: 0 });
+  const stutter = [];
+  for (let i = 0; i < 90; i++) { const p0 = b.r.twoHands.state.run.phase; await b.frame({ move: 7 }); stutter.push(bobStepOf(p0, b.r.twoHands.state.run.phase)); }
+  assert.ok(stutter.every((d) => d >= bobWalk * (1 - RUN_PUMP.CATCH) - 1e-9 && d <= bobWalk * (1 + RUN_PUMP.CATCH) + 1e-9), `the stutter-step: every frame within the stride's tempo +-CATCH (${stutter.slice(0, 4).map((d) => d.toFixed(3))}; a stride's step ${bobWalk.toFixed(3)})`);
+  assert.ok(Math.abs(b.r.twoHands.state.run.phase - runPhaseOfBob(bobber.timer)) < 1e-12, 'and back ON the bob\'s phase');
+  // ...a run's first frame takes the bob's phase at once: nothing of the pump is drawn yet, nothing to carry
+  const freshBob = new HeadBobber();
+  const cr = await rigWith({ run: true, sheathed: true, bobber: freshBob });
+  let firstPhase = null;
+  for (let i = 0; i < 12 && firstPhase == null; i++) { await cr.frame({ move: 7 }); if (cr.r.twoHands.state.run.w > 0) firstPhase = cr.r.twoHands.state.run.phase; }
+  assert.equal(firstPhase, runPhaseOfBob(freshBob.timer), 'the run\'s first frame: on the bob at once');
+  // TWO-HANDS AUDIT 2 (L5): HEAD BOBBING OFF, THE PUMP KEEPS ITS OWN STRIDE - the bob hands no clock (headBobber.js `out`:
+  // null), so the stride walks at the speed, one step a frame - never held to a bob that is not walking
+  const bobOff = await rigWith({ run: true, sheathed: true, bobber: new HeadBobber() });
+  setValue('Controls', 'HeadBobbing', false);
+  try {
+    for (let i = 0; i < 60; i++) await bobOff.frame({ move: 7 });
+    const offSteps = [];
+    for (let i = 0; i < 30; i++) { const p0 = bobOff.r.twoHands.state.run.phase; await bobOff.frame({ move: 7 }); offSteps.push(bobStepOf(p0, bobOff.r.twoHands.state.run.phase)); }
+    assert.ok(bobOff.r.twoHands.running && offSteps.every((d) => Math.abs(d - bobWalk) < 1e-9), `head bobbing off: the stride's own step a frame (${offSteps.slice(0, 3).map((d) => d.toFixed(4))}, a step ${bobWalk.toFixed(4)})`);
+  } finally { setValue('Controls', 'HeadBobbing', true); }
+  // A HAND TAKEN MID-RUN (PIN MOVED, TWO-HANDS AUDIT 2 - the first audit ended the run at once, which emptied the view
+  // in a frame where nothing took the hands' place): the run yields AT ONCE to a picture that takes the hands, and with
+  // nothing in their place eases out under the view - never an empty frame
+  const armsOf = (q) => q.filter((x) => x.rec === '5');   // the running arm: WEAPON10's rising punch (RUN_PUMP.ARM_STATE)
+  const easesOut = async (t, take, why, over = true) => {
+    for (let i = 0; i < 60; i++) await t.frame({ move: 7 });
+    const before = armsOf(await t.frame({ move: 7 }));
+    assert.equal(before.length, 2, `${why}: both arms up first`);
+    take();
+    const after = armsOf(await t.frame({ move: 7 }));
+    assert.equal(after.length, 2, `${why}: the arms still drawn the frame after - nothing took their place`);
+    let gone = -1;
+    for (let i = 0; i < 120 && gone < 0; i++) if (!(await t.frame({ move: 7 })).length) gone = i;   // nothing else draws here
+    assert.ok(gone > 3 && gone < 90, `${why}: eased out under the view in ${gone} frames`);
+    // (below the swap the fists' rest takes the run's place, lowered - nothing of it while the hands are put away)
+    if (!over) return;
+    for (let i = 0; i < 60 && t.r.twoHands.running; i++) await t.frame({ move: 7 });
+    assert.equal(t.r.twoHands.running, false, `${why}: and over`);
+  };
   let armed = false;
-  const sp = await rigWith({ run: true, spellArmed: () => armed });
-  for (let i = 0; i < 60; i++) await sp.frame({ move: 7 });
-  assert.ok(sp.r.twoHands.running);
-  armed = true;
-  await sp.frame({ move: 7 });
-  assert.equal(sp.r.twoHands.running, false, 'a spell readied mid-run: the run is over the same frame');
+  await easesOut(await rigWith({ run: true, spellArmed: () => armed }), () => { armed = true; }, 'a spell readied mid-run, no hands drawn for it');
+  const swap = await rigWith({ run: true });
+  await easesOut(swap, () => { swap.entity.equipCountdown = 500; }, 'a swap under way', false);   // ms, DFU's own unit
+  for (let i = 0; i < 90; i++) await swap.frame({ move: 7 });
+  assert.ok(swap.r.twoHands.running && armsOf(await swap.frame({ move: 7 })).length === 2, 'the swap over and the hands still empty: the arms run again');
   const wolf = await rigWith({ run: true });
   for (let i = 0; i < 60; i++) await wolf.frame({ move: 7 });
   wolf.entity.activeEffects = [{ kind: 'racialOverride', racial: 'lycanthropy', isTransformed: true }];
-  await wolf.frame({ move: 7 });
-  assert.equal(wolf.r.twoHands.running, false, 'the beast\'s turn mid-run: no human fists');
-  const swap = await rigWith({ run: true });
-  for (let i = 0; i < 60; i++) await swap.frame({ move: 7 });
-  swap.entity.equipCountdown = 500;   // ms, DFU's own unit
-  await swap.frame({ move: 7 });
-  assert.equal(swap.r.twoHands.running, false, 'a swap under way: the hands are the swap\'s');
+  assert.equal(armsOf(await wolf.frame({ move: 7 })).length, 0, 'the beast\'s turn mid-run: its claws at once, no human arm');
   const katana = await rigWith({ run: true });
   for (let i = 0; i < 60; i++) await katana.frame({ move: 7 });
   katana.entity.equip.slots[EQUIP_SLOTS.RightHand] = KATANA;
   const q = await katana.frame({ move: 7 });
-  assert.equal(katana.r.twoHands.running, false);
-  assert.ok(q.every((x) => !String(x.tex).includes('WEAPON10')), 'and no fist drawn in its frame');
+  assert.ok(q.every((x) => !String(x.tex).includes('WEAPON10')), 'a weapon drawn mid-run: no fist or arm drawn in its frame');
   // a lantern at the waist takes no hand (HT-WAIST): both fists, and the running hands
   setModSetting('handheld-torches', 'Handling.LanternsAtWaist', true);
   const waist = await rigWith({ run: true, light: { templateIndex: 248 } });
@@ -782,16 +987,29 @@ test('TWO-HANDS rig, AUDITED: a fist and a shield is DFU\'s one hand (the shield
     if (s?.hand === 'R' && w.r.playerWeapon.machine.frame >= 2) tucked = qq.find((x) => x.rec === '0' && shownArm(x) === 'L')?.rect ?? null;
   }
   assert.ok(tucked && tucked.x > L.rect.x + GUARD.IN * 0.4, `the left clone tucks in toward the middle under the right's blow: ${JSON.stringify([tucked, L.rect])}`);
-  // BOTH HANDS SWAY TOGETHER (AUDIT: the left's Bob and Inertia were mirrored with it): walking, the two move one way
+  // THE SWAY, TWO RULES (PIN MOVED, TWO-HANDS AUDIT 2 - the first audit swayed both hands one way, Bob too, which sent
+  // the left hand's cut outer side into the view on every step): BOB GOES OUTWARD, as the mod's own mirrored sprite
+  // takes it - walking, the two hands swing apart and together, the left the right's exact mirror on every frame (so
+  // its outer side does what the mod's own right hand's does, never more)...
   const sway = await rigWith({ widget: true, walk: true });
-  let prev = null, same = 0, opposite = 0;
+  let prev = null, same = 0, opposite = 0, unmirrored = 0;
   for (let i = 0; i < 150; i++) {
     const qq = await sway.frame({ move: 3 });
     const r = qq.find((x) => !x.mirrored)?.rect, l = qq.find((x) => x.mirrored)?.rect;
     if (r && l && prev) { const dr = r.x - prev.r.x, dl = l.x - prev.l.x; if (Math.abs(dr) > 0.05 && Math.abs(dl) > 0.05) { if (Math.sign(dr) === Math.sign(dl)) same++; else opposite++; } }
+    if (r && l && Math.abs(l.x - (320 - r.x - r.w)) > 0.05) unmirrored++;
     if (r && l) prev = { r, l };
   }
-  assert.ok(same > 20 && opposite === 0, `the two hands sway as one body (${same} together, ${opposite} apart)`);
+  assert.ok(opposite > 20 && same === 0, `Bob: each hand out from the middle as the other (${opposite} apart, ${same} together)`);
+  assert.equal(unmirrored, 0, 'the left hand the right\'s mirror on every frame of the walk');
+  // ...and INERTIA KEEPS THE SCREEN'S DIRECTION: both hands lag the look as one body (the mod pre-signs it for a flipped
+  // sprite) - the left clone's rect before its mirror, by each delta alone
+  const ww = createWeaponWidget({ hidden: true });
+  ww._w.weaponPosition = { x: 200, y: 100, w: 100, h: 100 };
+  const at = (bob, inertia) => { ww._w.swayDx = { bob, inertia }; ww._w.position = [bob + inertia, 0]; return { mine: ww.pairRect(false).x, glass: ww.pairRect(true).x }; };
+  const still = at(0, 0), bobbed = at(5, 0), lagged = at(0, 5);
+  assert.deepEqual([bobbed.mine - still.mine, -(bobbed.glass - still.glass)], [5, -5], 'Bob: +5 on the right hand, -5 on the left once mirrored (outward both)');
+  assert.deepEqual([lagged.mine - still.mine, -(lagged.glass - still.glass)], [5, 5], 'Inertia: +5 on both, once mirrored');
   // THE PAIR DISSOLVES MID-WIND-UP (AUDIT): the left clone does not wind up forever - a torch lit (Handheld Torches on)
   const stuck = await rigWith({ widget: true });
   for (let i = 0; i < 600; i++) {
@@ -910,13 +1128,113 @@ test('TWO-HANDS (ARENA2): THE CUT STAYS OFF THE SCREEN, measured on the shipped 
   assert.deepEqual(uncut, ['WEAPON05.CIF'], 'every one-handed weapon\'s idle is cut at its outer side but the plain mace\'s - a tuck in drew the cut');
 });
 
+test('TWO-HANDS rig (AUDIT 2): THE SPRITE LANE, AUDITED AGAIN - the guard never moves a striking picture; the two Weapon Widget clones keep one clock; a punch off the running arm winds up from below; the run kept through a hop; the Morrowind arm\'s hands through one door (the pack\'s too); the left clone at rest through single-hand play; a pair\'s clones never flipped; the fists\' bounce gone in a strike', async () => {
+  // THE GUARD IS THE RESTING HAND'S: every strike frame of either hand is drawn where the opening blow drew it (the
+  // synthetic art is one CIF for every weapon), never lowered by a guard it is easing out of
+  const pr = await rigWith({ right: KATANA, left: DAGGER });
+  const seenAt = new Map();
+  let moved = 0, strikes = 0;
+  for (let i = 0; i < 240; i++) {
+    for (const x of await pr.frame({ held: true })) {
+      if (x.rec === '0') continue;
+      strikes++;
+      const key = `${String(x.tex).split(':').slice(-2).join(':')}:${x.mirrored}`;
+      if (!seenAt.has(key)) seenAt.set(key, x.rect.y); else if (Math.abs(seenAt.get(key) - x.rect.y) > 0.01) moved++;
+    }
+  }
+  assert.ok(strikes > 60 && moved === 0, `no strike frame moved by the guard (${moved} of ${strikes})`);
+  // THE BOUNCE IS GONE IN A STRIKE (L5): the fists held at it, the bounce eased away
+  const fb = await rigWith({});
+  for (let i = 0; i < 90; i++) await fb.frame();
+  assert.ok(fb.r.twoHands.state.bounce > 0.9, 'alive at rest');
+  for (let i = 0; i < 90; i++) await fb.frame({ held: true });
+  assert.ok(fb.r.twoHands.state.bounce < 0.1, `gone in a strike (${fb.r.twoHands.state.bounce})`);
+  // THE LEFT CLONE AT REST THROUGH SINGLE-HAND PLAY (L4: it was stepped at boot and loaded the left hand's art), and
+  // ON THE RIGHT CLONE'S CLOCK when the hands become a pair (it woke seconds behind: the hands bobbed out of step)
+  const one = await rigWith({ right: KATANA, widget: true, walk: true });
+  for (let i = 0; i < 200; i++) await one.frame({ move: 3 });
+  assert.equal(one.r.twoHands.offWidget._w.time, 0, 'never stepped while one hand is in use');
+  // ...born at rest out of sight - and shown on its very first frame (a game loaded with a pair up) it stands at its place
+  const born = (shown) => { const ww = createWeaponWidget({ hidden: true }); ww.lateUpdate(1 / 60, { shown, motion: {}, look: [0, 0] }); return ww._w.offsetCurrent; };
+  assert.deepEqual([born(true), born(false)], [[0, 0], [2, 2]]);
+  assert.ok(one.r.twoHands.offWidget.settledHidden);
+  one.entity.equip.slots[EQUIP_SLOTS.LeftHand] = weapon(121, 'Katana B');   // a matched pair: one placement, mirrored
+  for (let i = 0; i < 90; i++) await one.frame({ move: 3 });
+  assert.equal(one.r.twoHands.offWidget._w.time, one.r.widget._w.time, 'stepped on the right clone\'s clock');
+  let unmirrored = 0, both = 0;
+  for (let i = 0; i < 90; i++) {
+    const q = await one.frame({ move: 3 });
+    const r = q.find((x) => !x.mirrored)?.rect, l = q.find((x) => x.mirrored)?.rect;
+    if (r && l) { both++; if (Math.abs(l.x - (320 - r.x - r.w)) > 0.05) unmirrored++; }
+  }
+  assert.ok(both > 60 && unmirrored === 0, `after the single-hand stretch the hands bob as each other's mirror (${unmirrored} of ${both} apart)`);
+  // A PAIR'S CLONES ARE NEVER FLIPPED (L5: only the classic sprite was driven left-handed) - by Handedness or Ambidexterity
+  const lh = await (async () => { const o = await rigWith({ right: KATANA, left: DAGGER, widget: true }); setValue('Controls', 'Handedness', 1); return o; })();
+  for (let i = 0; i < 30; i++) await lh.frame();
+  assert.deepEqual([lh.r.widget.flipHorizontal, lh.r.twoHands.offWidget.flipHorizontal], [false, false], 'drawn as right hands, the mirror the rig\'s');
+  resetToDefaults();
+  // A PUNCH OFF THE RUNNING ARM winds up from below the view (L2: the Weapon Widget's Idle wind-up drew the fists' rest in
+  // sight, where no fist stood, and sank it) - never a rested fist above the arm's foot before its strike frames
+  const pun = await rigWith({ run: true, widget: true });
+  for (let i = 0; i < 60; i++) await pun.frame({ move: 7 });
+  const restY = (await (await rigWith({ widget: true })).frame()).find((x) => x.rec === '0')?.rect.y;
+  let punched = null, risen = 0;
+  for (let i = 0; i < 40; i++) {
+    const q = await pun.frame({ move: 7, held: i === 0 });
+    const s = pun.r.playerWeapon.strikeInFlight;
+    if (s && !punched) punched = s.hand;
+    if (!punched) continue;
+    const idle = q.filter((x) => x.rec === '0' && shownArm(x) === punched);
+    if (idle.some((x) => x.rect.y < restY + x.rect.h * 0.5)) risen++;
+    if (q.some((x) => x.rec !== '0' && x.rec !== '5' && shownArm(x) === punched)) break;   // its strike frames: done
+  }
+  assert.ok(punched, 'a punch thrown on the run');
+  assert.equal(risen, 0, 'its wind-up never stood the fist at its rest');
+  // THE RUN KEPT THROUGH A HOP (L2: a jump swapped arms, fists, fists, arms in under a second) - and ended by a fall
+  const hop = await rigWith({ run: true });
+  for (let i = 0; i < 60; i++) await hop.frame({ move: 7 });
+  hop.cam.grounded = false;
+  let fists = 0;
+  for (let i = 0; i < 24; i++) { const q = await hop.frame({ move: 7 }); if (q.some((x) => x.rec === '0')) fists++; }   // 0.4 s aloft
+  hop.cam.grounded = true;
+  assert.equal(fists, 0, 'no fists through a hop');
+  assert.equal((await hop.frame({ move: 7 })).filter((x) => x.rec === '5').length, 2, 'the arms still running on landing');
+  assert.equal(runHandsKept({ wanted: false, aloft: true, wasWanted: true, airSeconds: RUN_PUMP.AIR_GRACE + 0.01 }), false, 'a fall ends it');
+  assert.equal(runHandsKept({ wanted: false, aloft: true, wasWanted: false, airSeconds: 0 }), false, 'a jump from standing starts none');
+  assert.equal(runHandsKept({ wanted: false, aloft: false, wasWanted: true, airSeconds: 0 }), false, 'on the ground, the run\'s own answer');
+  // THE MORROWIND ARM'S HANDS THROUGH ONE DOOR (L4: the pack kept its own one-hand read - a left-led pair held the left
+  // weapon in both hands while the window was up)
+  const calls = [];
+  const saved = { setWeapon: fpArm.setWeapon, setOffWeapon: fpArm.setOffWeapon, setHands: fpArm.setHands };
+  const door = await rigWith({ right: KATANA, left: DAGGER });
+  try {
+    fpArm.setWeapon = (w) => { calls.push(['setWeapon', w?.name ?? null]); return true; };
+    fpArm.setOffWeapon = (w) => calls.push(['setOffWeapon', w?.name ?? null]);
+    fpArm.setHands = (h) => calls.push(['setHands', h.mode, h.lead]);
+    door.r.playerWeapon.usingRightHand = false;   // a left-led pair
+    door.r.handArm();
+    assert.deepEqual(calls, [['setWeapon', 'Katana'], ['setHands', HANDS_MODE.Dual, 'L'], ['setOffWeapon', 'Dagger']], 'the right hand\'s item in the right, the left\'s in the left, the lead beside');
+    let asked = 0;
+    withDom((dom) => {
+      const host = dom.mk('div'); dom.body.append(host);
+      const e = { isPlayer: true, items: [KATANA, DAGGER], stats: {}, level: 1, career: {}, activeEffects: [], spells: [], equip: { slots: { [EQUIP_SLOTS.RightHand]: KATANA, [EQUIP_SLOTS.LeftHand]: DAGGER } } };
+      const view = mountEnhancedInventory(host, { entity: e, items: () => e.items, onExit: () => {}, fpArm: { ...fpArm, setWorn() {}, figure: () => null, subscribe: () => () => {} }, usingRightHand: () => false, handArm: () => { asked++; } });
+      view.unmount();
+    });
+    assert.ok(asked > 0, 'the pack asks the rig\'s door');
+  } finally { Object.assign(fpArm, saved); }
+  for (const host of ['src/scenes/world.js', 'src/scenes/exterior.js', 'src/scenes/dungeonContext.js']) assert.match(rd(host), /handArm: \(\) => [^\n]*\.handArm\?\.\(\)/, `${host} hands the pack the rig's door`);
+});
+
 test('TWO-HANDS rig, by source: the two-hands branch is the classic body\'s own (after the climb\'s return, before the arm\'s seam, never behind the held map) and the one-hand ladder below it is untouched; the hosts carry none of it', () => {
   const rig = rd('src/combat/weaponRig.js');
-  const branch = rig.indexOf('if (c && !eotbHidesWeapon() && !fpArm.active() && !sheetWindowUp() && (runHands || (pairUp() && shown()))) {');
+  const branch = rig.indexOf('if (c && !eotbHidesWeapon() && !fpArm.active() && !sheetWindowUp() && (runDrawn || (pairUp() && shown()))) {');   // PIN MOVED (AUDIT 2): the run as drawn this frame
   assert.ok(branch > 0, 'the branch, under the lanes\' vetoes');
   assert.ok(branch > rig.indexOf('if (!armsClimb && (_climbLower >= CLIMB_LOWER_GONE'), 'below the climb\'s lowering');
   assert.ok(branch < rig.indexOf('_armDrewLast = !eotbHidesWeapon() && fpArm.active();'), 'above the arm\'s seam');
   assert.match(rig, /const runHands = !!c && twoHands\.running && !fpArm\.active\(\) && !eotbHidesWeapon\(\) && !sheetWindowUp\(\);/);
+  // AUDIT 2: and never over another picture in the hands - the run yields to it at once
+  assert.match(rig, /const runDrawn = runHands && \(handsEmpty\(\) \|\| !\(shown\(\) \|\| torchOnly \|\| !!shieldRect \|\| gunSliding \|\| spellHandsDrawn\)\);/);
   assert.match(rig, /finally \{ widget\.endOfFrame\(\); twoHands\.offWidget\.endOfFrame\(\); shield\.endOfFrame\(\); \}/);
   assert.match(rig, /playerWeapon\.leftBusy = lightInHand\(\);[^\n]*\n\s*playerWeapon\.applyWeapon\(claws\);/, 'the light\'s hand decided before the mode');
   for (const host of ['src/scenes/world.js', 'src/scenes/exterior.js', 'src/scenes/worldModes.js', 'src/scenes/dungeonContext.js']) {
@@ -933,6 +1251,17 @@ test('TWO-HANDS rig, by source: the two-hands branch is the classic body\'s own 
   assert.match(world, /\.\.\.\(weaponRig\.playerWeapon\.offStrike \? \{ off: true \} : \{\}\) \}, duelStandIn\(\)\);$/m, 'and the siege\'s works');
   assert.equal((world.match(/resolveDuelStrike\(\{[^\n]*\.\.\.\(off \? \{ off \} : \{\}\) \}, duelStandIn\(\)\)/g) ?? []).length, 3, 'each strike-out hands it to the roll');
   assert.match(rd('src/scenes/dungeonContext.js'), /opts\.wildStrike\(best, playerWeapon\.strikingWeapon, playerWeapon\.machine\?\.state, \{ off: playerWeapon\.offStrike \}\)/, 'the dungeon\'s own rig too');
+  // AUDIT 2: AND THE RELAY BETWEEN THEM - the streamed world's dungeon (worldModes.js builds its context, the only live
+  // builder) hands the dungeon's `{ off }` on to the host's door, which had dropped it: the arrows' own source, chained
+  // as the game chains them
+  const relayText = rd('src/scenes/worldModes.js').match(/wildStrike: (\([^)]*\) => !!host\.wildStrike\?\.\([^)]*\)),/)?.[1];
+  const doorText = rd('src/scenes/world.js').match(/wildStrike: (\(id, weapon, swing, o\) => wildStrikeOut\(id, 'melee', weapon, swing, 0, o\)),/)?.[1];
+  assert.ok(relayText && doorText, 'the relay and the door, found');
+  const sent = [];
+  const door = new Function('wildStrikeOut', `return ${doorText};`)((to, by, weapon, swing, drawMs = 0, { off = false } = {}) => { sent.push(off); return true; });
+  const relay = new Function('host', `return ${relayText};`)({ wildStrike: door });
+  assert.equal(relay('peer', null, 'StrikeDown', { off: true }), true);
+  assert.deepEqual(sent, [true], `the off-hand blow reaches the host's door as the off hand's (${relayText})`);
   // the classic sprite's placement is FPSWeapon's, shared by the second hand
   const fps = rd('src/combat/fpsWeapon.js');
   // the record rides the quad (WEAPON-GLOW1's outline is measured in its own pixels), the draw's two lines main's own

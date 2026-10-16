@@ -581,7 +581,7 @@ export function damageEquipment(attacker, target, damage, weapon, struckBodyPart
   }
 }
 
-export function calculateAttackDamage(attacker, target, { weapon = null, damageMod = 0, toHitMod = 0, backstabChance = 0, weaponAnimTime = 0, rolls = Math.random, dfRand = rand, onMonsterHit = null, onInflictPoison = null, say = null, enchantCtx = null, playerReflexes = null, unaware = false, blowInfo = null, blowShare = null } = {}) {
+export function calculateAttackDamage(attacker, target, { weapon = null, damageMod = 0, toHitMod = 0, backstabChance = 0, weaponAnimTime = 0, rolls = Math.random, dfRand = rand, onMonsterHit = null, onInflictPoison = null, say = null, enchantCtx = null, playerReflexes = null, unaware = false, blowInfo = null, blowShare = null, blowWeight = 1 } = {}) {
   if (!attacker || !target) return 0;
   // SOFTCAP1: THE FOE THIS BLOW WAS TRADED WITH, remembered on the player
   // for the tallies that follow it (hit or miss - a swing at a tough foe is
@@ -621,15 +621,16 @@ export function calculateAttackDamage(attacker, target, { weapon = null, damageM
   // WIDGET-RECOIL (FIELD BUGS 2026-10-03, SlipperyPeasant: "I think the recoil module isnt working either"): a core
   // that rolls its own part hands it back (`onStruck`) - PCAAO's, on by default, rolled one the tail never saw, so the
   // struck hook said -1 on every blow and the Shield Widget's "Attack On Shield" Recoil (its default) never fired
-  const overridden = core ? core(attacker, target, { weapon, damageMod, toHitMod, backstabChance, weaponAnimTime, rolls, dfRand, onMonsterHit, onInflictPoison, say, playerReflexes, notes, onStruck: (part) => (struckPart = part), unaware }) : undefined;
+  const overridden = core ? core(attacker, target, { weapon, damageMod, toHitMod, backstabChance, weaponAnimTime, rolls, dfRand, onMonsterHit, onInflictPoison, say, playerReflexes, notes, onStruck: (part) => (struckPart = part), unaware, blowShare }) : undefined;
   let damage = 0;
   // TWO-HANDS (AUDIT, bible/05-Combat/Two-Hands.md): THE BLOW'S SHARE - the off hand's (handsLaw.js offHandDamage), a
   // function of the rolled damage - laid where the blow is rolled, before anything reads it: in the stock core ahead of
   // the equipment's wear, after a mod's core; so the HUD, the strike listeners (a leech, an echo), the Strikes payloads
-  // and the report all see the blow that landed, never the whole roll. Null for every other blow.
+  // and the report all see the blow that landed, never the whole roll. Null for every other blow. (AUDIT 2: a core that
+  // takes the share itself - PCAAO's, ahead of its own wear - says so, `notes.shared`, and is not shared twice.)
   const shared = (d) => (blowShare && d > 0 ? blowShare(d) : d);
   if (overridden !== undefined) {
-    damage = shared(overridden);
+    damage = notes.shared ? overridden : shared(overridden);
   } else {
   if (weapon && (target.minMetalToHit ?? -1) > weapon.material) {
     // L-slice (AUDIT 23 combat-16): FormulaHelper.cs:576-583 - a
@@ -802,7 +803,12 @@ export function calculateAttackDamage(attacker, target, { weapon = null, damageM
   // admits at zero is HealthLeech's use-stamp. The payloads can
   // modulate the damage (PotentVs +5, LowDamageVs -5) and the total
   // clamps at 0 inside the dispatcher.
-  if (weapon && isEnchantedItem(weapon) && (attacker.isPlayer || damage > 0)) {
+  // TWO-HANDS (AUDIT 2, bible/05-Combat/Two-Hands.md): THE BLOW'S WEIGHT - an off-hand blow is DUAL.OFF_DAMAGE of a blow
+  // (handsLaw.js OFF_HAND_BLOW) for what a blow sets off at its own rate rather than its damage's: on one roll it counts
+  // whole that share of the time, and otherwise sets off neither the weapon's Strikes payloads below (Cast When Strikes'
+  // spell, Potent Vs' five) nor a power's per-blow charge (the strike listeners' `blow`). Every other blow is whole.
+  const whole = !(blowWeight < 1) || rolls() < blowWeight;
+  if (weapon && isEnchantedItem(weapon) && (attacker.isPlayer || damage > 0) && whole) {
     damage = doItemEnchantmentPayloads(PAYLOAD.Strikes, weapon, {
       entity: attacker, target, damage,
       // AUDIT 39: null, not 0 - no caller passes an enchantCtx here, and
@@ -846,7 +852,7 @@ export function calculateAttackDamage(attacker, target, { weapon = null, damageM
   // core's crits, materials and armour, which PCAAO's apply after the blow modifiers), so a power that shares the blow
   // (Ruhn's Cleave) shares what landed, never the number before the struck foe's own armour took its part
   if (attacker.isPlayer && !attacker.peer && !target.isPlayer && damage > 0) {
-    const info = { backstab: notes.backstab };   // RVN1: and whether it was a backstab (the fight's ledger, systems/feudLedger.js)
+    const info = { backstab: notes.backstab, blow: whole };   // RVN1: and whether it was a backstab (the fight's ledger, systems/feudLedger.js); AUDIT 2: whether it counts whole for a per-blow charge
     for (const fn of _playerStrikeListeners.values()) { try { fn(attacker, target, damage, weapon, info); } catch { /* a set is not the blow's problem */ } }
   }
   return report(damage);

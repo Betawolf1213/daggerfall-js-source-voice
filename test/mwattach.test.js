@@ -299,7 +299,10 @@ test('MW-D19: the rig hands the worn item to the arm every frame, in machine ord
     /fpArm\.setWeapon\(armItem, \{ hasAmmo: hasAmmoFor\(entity\?\.items, armItem\), ammoCount: ammoCountFor\(entity\?\.items, armItem\) \}\);/,   // WS1: the quiver's count rides the same read; THUNDERLOCK: asked OF THE WEAPON, since a gun spends pellets
     'the swap seam reads the same worn item the sprite does, ammo included');
   const sheatheAt = rig.indexOf('fpArm.setSheathed(');
-  const swapAt = rig.indexOf('fpArm.setWeapon(');
+  // PIN MOVED (TWO-HANDS AUDIT 2, bible/05-Combat/Two-Hands.md): the swap is the arm's hands' one door (handArm, which the
+  // enhanced pack asks too) - the frame's call to it stands where the swap stood; the swap's own line is pinned above
+  const swapAt = rig.indexOf('const { armItem, offItem } = handArm();');
+  assert.ok(rig.indexOf('fpArm.setWeapon(armItem,') > rig.indexOf('function handArm('), 'the swap inside the door');
   const tickAt = rig.indexOf('fpArm.update(dt)');
   assert.ok(sheatheAt >= 0 && sheatheAt < swapAt, 'sheathe state before the swap');
   assert.ok(swapAt < tickAt, 'and the swap before the tick');

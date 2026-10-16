@@ -2550,7 +2550,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       },
       entity: playerEntity,
       icons: { getTexture, uploadRecord, textures: renderer.textures },
-      openCharSheet: () => { const w = api.makeCharSheet(); if (w) activeOverlay = w; },   // MAC-C: the pack's other window key crosses over rather than doing nothing - the same door the sheet's own Items button takes back the other way
+      openCharSheet: () => { const w = api.makeCharSheet(); if (w) activeOverlay = w; }, handArm: () => weaponRig.handArm?.(),   // TWO-HANDS (AUDIT 2): the pack's figure's two hands through the rig's door. MAC-C: the pack's other window key crosses over rather than doing nothing - the same door the sheet's own Items button takes back the other way
       ...useHooks,   // U53: the one bag
       // G5: a DROPPED pile hands DaggerfallLoot's whole identity
       // (playerOwned + TextureArchive/TextureRecord + position); an RDB
@@ -7582,7 +7582,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
           // arm (`!hitEnemy && WeaponType != Bow` is false for a bow),
           // so Archery AND CriticalStrike count a use per loose.
           drainFatigue(SWING_FATIGUE_COST);
-          tallySwingSkills(playerEntity, playerWeapon.weapon);
+          tallySwingSkills(playerEntity, playerWeapon.weapon, playerWeapon.blowWeight);
           continue;
         }
         const hitEnemy = resolvePlayerHit(eye, inView, playerFeet, [-aimed[2], -aimed[6], -aimed[10]]);
@@ -7591,7 +7591,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
         // ported as a constant and applied by nobody, and
         // CriticalStrike was tallied nowhere in the port at all.
         drainFatigue(SWING_FATIGUE_COST);
-        if (hitEnemy) tallySwingSkills(playerEntity, playerWeapon.weapon);
+        if (hitEnemy) tallySwingSkills(playerEntity, playerWeapon.weapon, playerWeapon.blowWeight);
         // AUDIT 23 (C9) - WeaponManager.cs:423-424: the swing sound
         // fires at the HIT FRAME of a swing that hit no enemy (never
         // at strike entry, where the rig used to play it).

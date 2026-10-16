@@ -14093,7 +14093,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     entity: playerEntity,
     icons: { getTexture, uploadRecord, textures: renderer.textures },
     rows: (id, pick) => townTalk.lines(id, pick),   // U25: the real item info + use text (TEXT.RSC)
-    usingRightHand: () => (modes?.liveArm?.()?.rig ?? weaponRig).playerWeapon.usingRightHand,   // DISC12: the pack's figure holds the hand in USE - the live rig's, the pose's own read
+    usingRightHand: () => (modes?.liveArm?.()?.rig ?? weaponRig).playerWeapon.usingRightHand, handArm: () => (modes?.liveArm?.()?.rig ?? weaponRig).handArm?.(),   // DISC12: the pack's figure holds the hand in USE - the live rig's, the pose's own read; TWO-HANDS (AUDIT 2): both of a pair, through its door
     openCharSheet: () => { if (charSheetDoorReady()) townTalk.showOverlay(makeCharSheetWindow()); },   // MAC-C: the pack's other window key crosses over rather than doing nothing - the same door the sheet's own Items button takes back the other way
     ...useHooks,   // U53: the one bag (revealMap, drinkPotion, getQuest)
     nowMinute: () => Math.floor(playerTicker.ownMinutes),
@@ -36311,17 +36311,17 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
         // DUEL1: my duel opponent first - a swing that reaches them is theirs (their client resolves it: net/duelSession.js),
         // tallied as a connect, and no pool, civilian or door hears it
         if (duelMeleeHit(cam.pos, makeInView(proj, view, multiply))) {
-          tallySwingSkills(playerEntity, weaponRig.playerWeapon.weapon);
+          tallySwingSkills(playerEntity, weaponRig.playerWeapon.weapon, weaponRig.playerWeapon.blowWeight);
           surfacePlayer();
         } else if (!cityGuards.resolvePlayerHit(weaponRig.playerWeapon, cam.pos, lookFwd, player.pos, makeInView(proj, view, multiply), guardHitSound, { swing })) {
           // X-slice: encounter foes resolve after the watch, before civilians
           if (exteriorFoes.resolvePlayerHit(weaponRig.playerWeapon, cam.pos, lookFwd, player.pos, makeInView(proj, view, multiply), guardHitSound, { swing })) {
-            tallySwingSkills(playerEntity, weaponRig.playerWeapon.weapon);
+            tallySwingSkills(playerEntity, weaponRig.playerWeapon.weapon, weaponRig.playerWeapon.blowWeight);
             surfacePlayer();
           } else
           cityGuards.resolveCivilianHit(weaponRig.playerWeapon, cam.pos, lookFwd, player.pos, livingStruckPool(_guardPool()),
             { onMurder: () => _crimeResponse(), onHitSound: guardHitSound, swing }).then((r) => {
-            if (r?.carriedHit) tallySwingSkills(playerEntity, weaponRig.playerWeapon.weapon);
+            if (r?.carriedHit) tallySwingSkills(playerEntity, weaponRig.playerWeapon.weapon, weaponRig.playerWeapon.blowWeight);
             if (r?.crime) surfacePlayer();
             else if (!r?.spared && livingStrikeRoad(cam.pos, lookFwd)) surfacePlayer();   // LW7: a traveller on the road, struck down
             // ROAD-B: WeaponManager.WeaponEnvDamage (:474-477) - a

@@ -77,7 +77,7 @@ Severity: **Blocker** breaks the feature or its balance for everyone; **Major** 
 
 ## Pinned
 
-`test/twohands.test.js` (20) - every FIXED finding of L1, L2, L4 and L5 above, by execution through the real machine,
+`test/twohands.test.js` (21 - AUDIT 2, L5 m7: this read 20 after the WEAPON-GLOW1 merge added one) - every FIXED finding of L1, L2, L4 and L5 above, by execution through the real machine,
 formula, rig and Weapon Widget; `test/twohands_mw.test.js` (23) - L3's, on the retail biped and the fixture arm, with
 `tools/mutants/twohands_mw.json` (40, dead) and the twelve `twohands.json` records aimed into the Morrowind lane
 re-run on its fixed code. Mutants: `tools/mutants/twohands.json` (122, 39 of them the audit's `TWOHANDS-AUDIT-*`: each
@@ -90,3 +90,55 @@ weapon), `ww2_idlebob` WW2 (the motion bag's `bobTimer`); for L3, `climb6`, `fpa
 `auditcc_pvp.json` (four), `climb4.json`, `duel.json`, and six of `twohands.json`'s own. Two `twohands.json` records
 whose source L3 rewrote (`TWOHANDS-mirror-one-reflection`, `TWOHANDS-arm-off-weapon-any-node`) moved to
 `twohands_mw.json`, re-aimed.
+
+## Round 2 (2026-10-16, Mac: "Can we do a comprehensive audit and ensure perfect. Also how is this balanced to not be overpowered?")
+
+Five cold lanes again, on the merged head the first round left (3e5a8ca9, main's WEAPON-GLOW1 in it), each an
+adversarial reader told to prove a finding by running it: L1 the law and the balance (the real machine at 30/60/144/1000
+fps and the real formula, mods off and at their shipped defaults, 600 s full-loop sims of fatigue, skill tallies, wear
+and procs); L2 the sprite lane over the shipped ARENA2 art (every texture's alpha kept, every drawn quad's opaque edge
+texels tested against the view, 100 pairs in four modes, every screen shape); L3 the Morrowind lane on the retail biped
+and a first-person arm built on it; L4 the integration (37 single-hand scenarios x 1100 frames through a real rig on
+base, main and head; 1653 test files on the head); L5 the record, the pins and the process (each suite 23 times, scratch
+mutants of the record's claims). What it changed is written into Two-Hands.md, each change marked AUDIT 2.
+
+| Finding | Severity | What | Verdict |
+|---|---|---|---|
+| L1 B1 / L4 M1 / L5 M1 | BLOCKER | The streamed world's dungeon - the only live dungeon path - handed an off-hand blow on a fair player through `worldModes.js`'s `wildStrike: (id, w, sw) =>`, which dropped `{ off }`: every such blow landed whole (x1.53). The first round's pin read the dungeon's call and the host's door, never the relay between | FIXED: the relay hands it on; pinned by running the three arrows' own source, chained |
+| L1 M2 / L5 m3 | MAJOR | The off hand's burden was still a factor on its tick (`ctx.tempo`), which the machine rounds to a whole frame differently at every frame rate: a battle-axe pair x1.11 as often as one axe at 30 fps and x1.20 at 1000, a longsword pair's damage x0.96-1.05. "About 9% at any frame rate" held only for light pairs | FIXED: the burden is whole ticks held on the off hand's last frame after its hit, the fraction carried (`offHandHold`, `m.hold`); measured, a longsword pair x1.034-1.041 at 30-1000 fps, a dagger pair x1.078-1.088; pinned at four frame rates |
+| L1 M1 | MAJOR | Everything a blow sets off at its own rate came a quarter faster with the pair's blows while its damage came 9%: Cast When Strikes x1.17-1.25 a second, Potent Vs' flat five, Conduit's mana, Flow's and the Undertow's stacks, the Serpent's Coil | FIXED: the off hand's blow is 0.8 of a blow (`OFF_HAND_BLOW.blowWeight`): one roll gates its Strikes payloads and tells the strike listeners (`info.blow`), whose per-blow charges take only a whole blow |
+| L1 m3 | MINOR | A swing's skill tally came a quarter faster too (x1.25 a second) | FIXED: an off-hand swing tallies 0.8 of a use, carried (`tallySwingSkills`' weight, every melee tally a host makes): x1.07-1.12 a second, the same per kill |
+| L1 m2 / L5 M2 | MAJOR | Under PCAAO's core - on by default, every blow's - the gear wore by the whole roll (194 of 194 landed blows) while the HUD showed the share: the share was laid after the core had worn the gear | FIXED: the share is handed into the core, which lays it ahead of its own wear and says so (`notes.shared`); pinned at the shipped defaults |
+| L1 m1 | MINOR | Two predicates for "the off hand's blow" (`offStrike` and `resolveHit`'s own) | FIXED: one, `offStrike` |
+| L1 m4, m5 | MINOR | "No swing quicker than SWING-LAW's floor" read as five ticks (a flurry's blow is four); the balance's ranges unqualified by build | FIXED: the record restated |
+| L2 F1 | MAJOR | A flurry's blow began with its hand still lowered by the guard it was easing out of: blades, mace heads and flail balls DFU runs off the top sliced flat up to 57 px down the view on every second blow (370 exposures over 100 pairs with the Weapon Widget, 200 without) | FIXED: the guard never moves a striking picture; 0 exposures |
+| L2 F2 | MAJOR | The first round's "both hands sway as one body" turned the Weapon Widget's Bob about with Inertia, and Bob is the mod's one-way swing: the left hand's cut outer side came up to 38 px into the view on 225 of 240 walking frames (the mod's own left-handed weapon: none) | FIXED: two rules - Bob outward (the left the right's exact mirror), Inertia in the screen's direction; 0.0 px |
+| L2 F3 | MAJOR | The left clone, resting through single-hand play, woke on its own clock seconds behind the right's: the hands bobbed up to 38 px out of step | FIXED: it keeps the right clone's clock (`clockOf`); 0 px |
+| L2 F4 | MAJOR | The fists' guard bounce, a sine about the rest, lifted each cut wrist off the view's bottom edge on 166 of 360 standing frames (4.8 px at 600 tall, 11.5 at 1440) | FIXED: the bounce only lowers; 0 of 360 |
+| L2 F5 / L3 M3 | MAJOR | A stop of a frame or a few on the run (the head bob resets its timer to PI when movement resumes within 0.5 s) swapped the arms in one frame, up to 227 px of 600 - on both lanes | FIXED: the stride follows the bob's phase with a bounded catch-up (`runPhaseFollow`), one law for both lanes |
+| L2 F6 | MAJOR | With the Weapon Widget a punch thrown on the run turned the running arm into the fists' rest in sight, which sank; the punch frames 0.4 s later | FIXED: its clone winds up from below the view (`fromBelow`) |
+| L2 F7 | MINOR | A jump on the run swapped arms, fists, fists, arms in under a second | FIXED: the run kept through a hop of up to 0.6 s (`runHandsKept`), both lanes |
+| L2 F8 | MINOR | With nothing taking the hands' place (a spell readied with its hands off, a swap's pause) the arms vanished in a frame - the first round's "a hand taken ends the run at once" | FIXED: the run eases out, and yields at once only to a picture that takes the hands (`runDrawn`) |
+| L4 m1 | MINOR | The enhanced pack handed the Morrowind figure its own one-hand read: a left-led pair held the left weapon in both hands while the window was up, a pair made in it showed on close | FIXED: one door for the arm's hands (`handArm`), asked by the frame and the pack |
+| L4 m2 | MINOR | A transformed lycanthrope's H re-applied without the claws: the fists' mode and the pair's lead line, where main says DFU's | FIXED: H re-applies the racial arm first (ApplyWeapon's order) |
+| L4 m4 | MINOR | The Fighting tutorial's new point dropped what H does with one weapon | FIXED: "H swaps hands, or picks the lead when both hands fight" |
+| L4 m5 | MINOR | The left clone was born in view and stepped at every boot, fetching the left hand's art for a single weapon | FIXED: born at rest out of sight (`hidden`); standing at its place when shown on its first frame |
+| L5 m1, m2 | MINOR | Documented behaviours no pin could fail (the pair's clone and Handedness, the left clone's stepping, the bounce in a strike, the off hand's live Agility both ways, head bobbing off, GUARD's and RUN_PUMP's numbers, ...) | FIXED: a driven pin and a mutant each |
+| L5 m4-m8, NITs | MINOR | Patch notes promising pairs the item table cannot make (flails, warhammers and battle axes take both hands); a stale Active-Arcs line and test count; two dated cites rewritten that no gate asked for; a mutant's stale name; units and counts | FIXED: restated, the two cites restored, the mutant renamed |
+
+### Open for the owner
+
+- **A Features switch (L4 m3).** All off's promise is "Every mod and enhancement goes to Off": a pair is a choice made
+  by equipping two weapons (the precedent of a row-less feature, Eltheric-Ocean.md), but both fists up and the running
+  hands change bare-handed play for everyone and stay on under All off. Left to the owner.
+
+### Pinned (round 2)
+
+`test/twohands.test.js` (23) - every FIXED finding of L1, L2, L4 and L5 above by execution (the balance at four frame
+rates through the real machine; the formula's weight, PCAAO at its shipped defaults; the relay's own source; the real
+rig and Weapon Widget for the sprite lane), with the loot and set suites' per-blow charges (`loot5_powers`,
+`gilded2_world`, `audit625_serpent`). Mutants: `tools/mutants/twohands.json` (172: 33 `TWOHANDS-AUDIT2-*` and 19
+`TWOHANDS-SPRITE2-*`), every one dead. PIN MOVED (AUDIT 2): `audit18_hosts_dungeon`, `interiorfoes`, `duel_combat` (the
+tally's weight), `set2_seams` (the core handed the share), `auditrr` (the swing's ctx carries no factor),
+`wear_vanilla` (PCAAO's wear through the share), `mwattach`, `mwtorch`, `werewolf1` (the arm's hands through `handArm`).
+

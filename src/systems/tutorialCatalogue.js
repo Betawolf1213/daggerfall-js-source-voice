@@ -110,7 +110,7 @@ export const TUTORIALS = Object.freeze([
       'Missing a lot means low skill or a weapon too weak for the target. You can always run.',
     ],
     points: [
-      'Two weapons or two fists both fight; {SwitchHand} picks the lead.',
+      '{SwitchHand} swaps hands, or picks the lead when both hands fight.',
       'Some weapons have a technique on {WeaponTechnique}, at a cost in fatigue and a cooldown.',
     ],
   }),

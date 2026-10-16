@@ -16,7 +16,7 @@
 // arms' (combat/fpArm.js) - and the swing's (combat/playerWeapon.js), so one law says which hand strikes and what it
 // costs, whichever picture is on the screen.
 
-import { swingHeft } from '../characters/weaponStates.js';   // SWING-LAW's heft, the one home for a weapon's weight against a Strength
+import { swingHeft, SWING_FRAME_MAX } from '../characters/weaponStates.js';   // SWING-LAW's heft, the one home for a weapon's weight against a Strength, and its slowest frame
 
 /** How the two hands are held. `single` is DFU's: one hand fights (the used hand, H switches it) and the other holds a
  *  shield, a bow's other end, nothing, or a weapon waiting for H. `fists` is both hands empty - both fists up. `dual` is
@@ -155,17 +155,20 @@ export function strikePicture(hand, state, { leftHanded = false, painted = () =>
  * it covers) and gets the exchange: the other hand is cocked while one strikes, so a flurry's blow is thrown from a raised
  * hand - and the off hand is the weaker and the less sure one. Every number here is a term on DFU's own: the lead hand's
  * blow is DFU's exactly (CalculateAttackDamage, the swing modifiers, the skill tallied by the weapon in that hand), the
- * off hand's blow is DFU's with the off-hand terms, and no swing comes quicker than SWING-LAW's floor (SWING_FRAME_MIN).
+ * off hand's blow is DFU's with the off-hand terms, and no tick comes quicker than SWING-LAW's floor (SWING_FRAME_MIN) -
+ * a flurry's blow is four of them at the floor (AUDIT 2: "no swing quicker" read as five).
  *
  * THE QUICKNESS IS IN FRAMES, NOT SECONDS (AUDIT): the machine steps a swing's frames one tick at a time and drops each
  * tick's remainder at the frame it lands on (DFU's coroutine - weaponStates.js machineStep), so a factor on the tick's
  * time rounds away to a different answer at every frame rate. A flurry's blow instead STARTS FLURRY_FROM_FRAME frames
- * into its swing - four ticks of five, the hit a tick sooner - which is 0.8 of one weapon's time at ANY frame rate.
+ * into its swing - four ticks of five, the hit a tick sooner - which is 0.8 of one weapon's time at ANY frame rate; and
+ * (AUDIT 2) the off weapon's burden is whole ticks held at its blows' end (offHandHold), never a factor on the tick.
  *
  * Measured through the machine and the formula, not on paper (bible/05-Combat/Two-Hands.md "The balance"): a held button
- * swings 1.25 times as often as one weapon; a matched pair lands about 9% more damage a second than one of its weapons
- * at any frame rate and Speed, for a quarter more fatigue a second (DFU's per-swing cost) and the shield. A lighter off
- * weapon trades its damage for quickness; a heavy one in the off hand is felt (OFF_WEIGHT).
+ * swings 1.25 times as often as one light weapon; a matched pair lands about 9% more damage a second than one of its
+ * weapons when they are light and about 4% when heavy (a longsword pair: the off arm's burden), at any frame rate and
+ * Speed, for a quarter more fatigue a second (DFU's per-swing cost) and the shield. A lighter off weapon trades its
+ * damage for quickness. And (AUDIT 2) the off hand's blow is OFF_DAMAGE of a blow in all it counts (OFF_HAND_BLOW).
  */
 export const DUAL = Object.freeze({
   /** A flurry's blow starts this many frames into its swing - the hand already raised (either hand, once the exchange
@@ -197,11 +200,19 @@ export function offHandBurden(weightKg, strength) {
   return swingHeft((weightKg || 0) * DUAL.OFF_WEIGHT, strength) / swingHeft(weightKg || 0, strength);
 }
 
-/** The factor on a strike's frame time (SWING-LAW's `ctx.tempo`): the off hand's burden. 1 for every strike that is not
- *  the off hand's - every single-weapon, every fist and every lead strike. (A flurry's quickness is in its frames -
- *  FLURRY_FROM_FRAME - never its time.) */
-export function strikeTempo({ off = false, weight = 0, strength = 50 } = {}) {
-  return off ? offHandBurden(weight, strength) : 1;
+/** THE BURDEN IS PAID IN WHOLE TICKS (AUDIT 2: a factor on a tick's time - the first audit's `ctx.tempo` - rounded to a
+ *  different whole frame at every frame rate: a pair of battle axes swung x1.11 as often as one at 30 fps and x1.20 at
+ *  1000). An off-hand blow of `ticks` ticks owes (burden - 1) x ticks more; it is held at the END of its swing - the
+ *  heavier follow-through, after the hit - in whole ticks of the swing's own, and the fraction is carried to the hand's
+ *  next blow, so over a fight the burden is paid exactly at any frame rate, as the flurry's quickness is (in ticks, not a
+ *  tick's time). No blow averages a tick slower than SWING-LAW's slowest (SWING_FRAME_MAX, or its own tick when a mod
+ *  answers slower). `tick` is the swing's tick in seconds.
+ *  @returns {{ hold: number, carry: number }} the ticks to hold, and the fraction owed to the next blow */
+export function offHandHold({ burden = 1, ticks = 0, tick = 0, carry = 0 } = {}) {
+  const most = tick > 0 ? Math.max(1, SWING_FRAME_MAX / tick) : 1;
+  const owed = Math.max(0, (Math.min(burden, most) - 1) * ticks) + Math.max(0, carry || 0);
+  const hold = Math.floor(owed + 1e-9);
+  return { hold, carry: Math.max(0, owed - hold) };
 }
 
 /** The off hand's damage: the rolled damage at OFF_DAMAGE, a miss (0) staying a miss and a landed blow at least 1. */
@@ -209,6 +220,12 @@ export function offHandDamage(damage) {
   if (!(damage > 0)) return damage;
   return Math.max(1, Math.round(damage * DUAL.OFF_DAMAGE));
 }
+
+/** THE OFF HAND'S BLOW as the formula takes it (formulas.js calculateAttackDamage), one home for the player's swing and a
+ *  blow between players: its share of the damage, and (AUDIT 2) its WEIGHT as a blow - OFF_DAMAGE of one for what a blow
+ *  sets off at its own rate rather than its damage's (the weapon's Strikes enchantments, a power's per-blow charge), so a
+ *  pair sets those off as often a second as its damage edge allows, not its blow rate. */
+export const OFF_HAND_BLOW = Object.freeze({ blowShare: offHandDamage, blowWeight: DUAL.OFF_DAMAGE });
 
 // ---- THE GUARD (the hand that is not striking) ----------------------------------------------------------------------
 
@@ -247,11 +264,13 @@ export function guardStep(g, otherStriking, dt) {
 /** The guard's offset in design pixels for a hand at weight `g` drawn on `side` ('right'|'left'): x toward the middle,
  *  y down - a fist's IN and DOWN, or a weapon's LOWER of its drawn `height` (design pixels) when one is handed, straight
  *  down (its cut side stays on the view's edge). And the fists' bounce at `time` seconds, out of step between the hands,
- *  faded by `bounce` (0..1). */
+ *  faded by `bounce` (0..1) - ONLY EVER DOWN (AUDIT 2: a sine about the rest lifted each fist's cut wrist off the view's
+ *  bottom edge for half its beat - the floating hands again; RUN_PUMP's rule): from the rest to 2 x BOUNCE_PX below it
+ *  and back, the same travel. */
 export function guardOffset(g, side, { time = 0, bounce = 0, hand = 'R', height = null } = {}) {
   const toMid = side === 'left' ? 1 : -1;
   const phase = hand === 'L' ? Math.PI : 0;
-  const b = bounce > 0 ? Math.sin(time * 2 * Math.PI * GUARD.BOUNCE_HZ + phase) * GUARD.BOUNCE_PX * bounce : 0;
+  const b = bounce > 0 ? (1 - Math.cos(time * 2 * Math.PI * GUARD.BOUNCE_HZ + phase)) * GUARD.BOUNCE_PX * bounce : 0;
   const weapon = Number.isFinite(height);
   const down = weapon ? GUARD.LOWER * /** @type {number} */ (height) : GUARD.DOWN;
   return [weapon ? 0 : toMid * GUARD.IN * g, down * g + b];
@@ -285,7 +304,12 @@ export const RUN_STEP_M = 2.5;
  *               never changes in sight;
  *   IN_TAU/OUT_TAU - the hands up as the run begins and away as it ends (CLIMB-HANDS' presence, ClimbPose IN/OUT);
  *   PUNCH_TAU - away at once for a punch thrown on the run (the punch is the fist's own strike);
- *   MIN_SPEED - metres a second over the ground before a run is a run (a run key held standing is not).
+ *   MIN_SPEED - metres a second over the ground before a run is a run (a run key held standing is not);
+ *   CATCH     - how far off its own walk the stride's tempo may run while it keeps step with the head bob (runPhaseFollow):
+ *               half again as fast, or half as fast, never backward;
+ *   AIR_GRACE - seconds a run stays a run through a hop off the ground (runHandsKept: AUDIT 2 - a jump on the run swapped
+ *               the arms for the fists and back, four art changes in under a second; the head bob holds its own timer in
+ *               the air).
  */
 export const RUN_PUMP = Object.freeze({
   ARM_STATE: 'StrikeDownRight',
@@ -299,6 +323,8 @@ export const RUN_PUMP = Object.freeze({
   OUT_TAU: 0.16,
   PUNCH_TAU: 0.04,
   MIN_SPEED: 1.0,
+  CATCH: 0.5,
+  AIR_GRACE: 0.6,
 });
 
 /** THE STRIDE ON THE HEAD BOB'S CLOCK (AUDIT): the pump's phase from HeadBobber's own timer - which sways the eye over the
@@ -306,11 +332,45 @@ export const RUN_PUMP = Object.freeze({
  *  left foot is planted: the phase a quarter turn behind the timer. */
 export const runPhaseOfBob = (timer) => timer - Math.PI / 2;
 
+/** The stride's own step: the phase `speed` m/s walks in `dt` - PI a RUN_STEP_M, never backward. */
+const strideStep = (speed, dt) => Math.max(0, speed || 0) * Math.max(0, dt) * Math.PI / RUN_STEP_M;
+
 /** The stride's phase after running `speed` m/s for `dt`: PI a step, as HeadBobber's timer - the fallback with head
  *  bobbing off, when there is no bob to keep step with. */
 export function runPhaseStep(phase, speed, dt) {
-  const p = phase + Math.max(0, speed || 0) * Math.max(0, dt) * Math.PI / RUN_STEP_M;
+  const p = phase + strideStep(speed, dt);
   return p % (2 * Math.PI);
+}
+
+/**
+ * THE STRIDE KEEPS THE BOB'S STEP AND NEVER JUMPS (TWO-HANDS AUDIT 2, L2 F5 / L3 M3) - the pump's phase this frame, both
+ * lanes' (twoHands.js, fpArm.js): `bob` the head bob's phase (runPhaseOfBob of its timer), null with head bobbing off -
+ * then the speed's own walk (runPhaseStep). HeadBobber's clock is not continuous (player/headBobber.js, getNewPos as
+ * DFU has it): a run resumed inside its 0.5 s end transition sets the timer to PI, a stop unwinds it, a settled stop
+ * sets it to PI again, and it wraps at 2 PI - and a phase taken as it stands swapped the arms in one frame (a stop
+ * of one frame mid-run: 227 px of the sprite's 600, 0.4 rad on the 3D picture). So a frame's step is the bob's own while
+ * that is within CATCH of the stride's walk at `speed` - every frame of a steady run (the bob walks velocity x
+ * WalkStepInterval / 2 a second, the stride PI a RUN_STEP_M: half a percent apart), so the hands stand ON the bob's
+ * phase - and otherwise the walk sped up or slowed down by CATCH toward it, the shorter way round: a reset is caught up
+ * over a few strokes, never in a frame and never backward. `fresh` - nothing of the pump is drawn (its weight 0): the
+ * bob's phase at once.
+ */
+export function runPhaseFollow(phase, bob, speed, dt, fresh = false) {
+  if (!Number.isFinite(bob)) return runPhaseStep(phase, speed, dt);
+  if (fresh || !Number.isFinite(phase)) return bob;
+  const walk = strideStep(speed, dt);
+  const lo = walk * (1 - RUN_PUMP.CATCH), hi = walk * (1 + RUN_PUMP.CATCH);
+  const turn = 2 * Math.PI;
+  const off = bob - phase - turn * Math.round((bob - phase) / turn);   // the bob's lead, the shorter way round
+  if (off >= lo && off <= hi) return bob;
+  return (phase + Math.min(hi, Math.max(lo, off))) % turn;
+}
+
+/** The run KEPT through a hop (AUDIT 2): wanted on the ground (`wanted`, runHandsWanted's answer), or aloft for no longer
+ *  than AIR_GRACE when it was wanted the frame before and would be on the ground (`aloft`: runHandsWanted's answer with
+ *  the feet down). The rig keeps `airSeconds`, the time off the ground; one answer for both lanes. */
+export function runHandsKept({ wanted = false, aloft = false, wasWanted = false, airSeconds = 0 } = {}) {
+  return !!wanted || (!!aloft && !!wasWanted && airSeconds <= RUN_PUMP.AIR_GRACE);
 }
 
 /** The hands want to run: the body runs on its feet (DFU's run - PlayerMotor's isRunning; not standing, not crouched,

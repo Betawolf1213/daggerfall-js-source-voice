@@ -37,7 +37,7 @@ import { createWeaponWidget } from './weaponWidget.js';
 import { fpsWeaponQuad, getWeaponAnims, STATE_INDEX, WEAPON_TYPES, NATIVE_W, NATIVE_H } from './fpsWeapon.js';
 import {
   HANDS_MODE, twoHanded, otherHand, mirrorRect, MIRROR_UV, handOnLeft, MELEE_PAINTED_ARM, strikePicture,
-  guardStep, guardOffset, easeTo, runPhaseStep, runPhaseOfBob, pumpOf, runWeightStep, RUN_PUMP,
+  guardStep, guardOffset, easeTo, runPhaseFollow, runPhaseOfBob, pumpOf, runWeightStep, RUN_PUMP,
 } from './handsLaw.js';
 
 /** The fists' guard bounce comes and goes over this (the guard alive at rest, gone in a strike or a walk). */
@@ -54,11 +54,12 @@ const MELEE_ANIMS = getWeaponAnims(WEAPON_TYPES.Melee);
  */
 export function createTwoHands({ audio = null, envHit = null, missEffect = null, settings } = {}) {
   /** The left hand's clone. Never flipped by Handedness: a pair's hand is drawn as a right hand and mirrored whole. */
-  const offWidget = createWeaponWidget({ audio, envHit, missEffect, settings, handedness: () => false });
+  const offWidget = createWeaponWidget({ audio, envHit, missEffect, settings, handedness: () => false, hidden: true });   // AUDIT 2: born resting out of sight - single-hand play never steps it
   const st = {
     mode: HANDS_MODE.Single, machine: null, strikeHand: null, leftHanded: false, time: 0,
     guard: { R: 0, L: 0 }, bounce: 0,
     run: { w: 0, phase: 0, wanted: false },
+    fromBelow: null,   // AUDIT 2: the hand whose punch was thrown off the running arm (fromBelow)
   };
 
   /** The side the hands' art paints a state's record from (handsLaw.js MELEE_PAINTED_ARM) - by DFU's state index (a
@@ -92,13 +93,18 @@ export function createTwoHands({ audio = null, envHit = null, missEffect = null,
   /**
    * The frame (the rig's LateUpdate block, after the machine's step):
    *   mode, machine, strike (the strike in flight - PlayerWeapon.strikeInFlight - or null), leftHanded;
-   *   run: { wanted, punching, speed, taken } - runHandsWanted's answer, a strike in flight, metres a second over the
-   *     ground, and a hand no longer empty (AUDIT: the run ends at once);
+   *   run: { wanted, punching, speed, bob } - the run's answer (runHandsKept), a strike in flight, metres a second over
+   *     the ground, the head bob's timer. A hand taken mid-run lets the run go as any end does - eased out - and the draw
+   *     yields it at once to whatever picture takes the hands (AUDIT 2: the rig's seam, `running`);
    *   standing - the body still (the fists' guard bounces only standing).
    */
   function step(dt, { mode = HANDS_MODE.Single, machine = null, strike = null, leftHanded = false, run = null, standing = false } = {}) {
     const d = Math.max(0, Math.min(0.1, dt || 0));
     st.mode = mode; st.machine = machine; st.leftHanded = !!leftHanded;
+    // AUDIT 2: a punch thrown off the running ARM (the run at or past its swap) - its Weapon Widget clone winds up from
+    // below the view (fromBelow), where the arm went, never from the fists' rest it was not standing at
+    if (strike?.hand && strike.hand !== st.strikeHand) st.fromBelow = st.run.w >= RUN_PUMP.SWAP ? strike.hand : null;
+    else if (!strike) st.fromBelow = null;
     st.strikeHand = strike?.hand ?? null;
     st.time += d;
     const two = twoHanded(mode);
@@ -106,24 +112,29 @@ export function createTwoHands({ audio = null, envHit = null, missEffect = null,
     st.bounce = easeTo(st.bounce, mode === HANDS_MODE.Fists && !st.strikeHand && standing ? 1 : 0, BOUNCE_TAU, d);
     const r = run ?? {};
     st.run.wanted = !!r.wanted;
-    if (st.run.wanted || st.run.w > 0) st.run.phase = Number.isFinite(r.bob) ? runPhaseOfBob(r.bob) : runPhaseStep(st.run.phase, r.speed ?? 0, d);   // AUDIT: on the bob's clock
+    // AUDIT: on the bob's clock; AUDIT 2: following it, never jumping with it (handsLaw.js runPhaseFollow - the 3D arms' law)
+    if (st.run.wanted || st.run.w > 0) st.run.phase = runPhaseFollow(st.run.phase, Number.isFinite(r.bob) ? runPhaseOfBob(r.bob) : null, r.speed ?? 0, d, !(st.run.w > 0));
     st.run.w = runWeightStep(st.run.w, st.run.wanted, !!r.punching, d);
-    // AUDIT: a hand TAKEN mid-run (a weapon, a shield, a light, a spell, a tool, the beast) ends the run at once - the
-    // fade is for a run that ends with the hands still empty; anything that takes them owns the seam from its frame
-    if (r.taken || (!st.run.wanted && st.run.w < 1e-3)) st.run.w = 0;
+    // AUDIT 2: a hand TAKEN mid-run eases the run out as any end does; the first audit ended it at once, which emptied
+    // the view in a frame where nothing took the hands' place (a spell readied with its hands off, a swap's pause). The
+    // seam yields the run at once to a picture that does take them (weaponRig.js `runHands`), so it never holds one
+    if (!st.run.wanted && st.run.w < 1e-3) st.run.w = 0;
   }
 
   /** The guard's offset for a hand in canvas pixels, ON THE SCREEN - toward the middle from the hand's own side, and
    *  down, and the fists' bounce. Laid on the picture after its mirror (a hand's picture may be its own arm as painted
    *  or the other's in the mirror - the painted arm, strikePicture - so the side is the hand's, never the picture's).
-   *  `h` is the picture's drawn height: a pair's weapon lowers by its share of it (GUARD.LOWER). */
-  function nudge(hand, canvas, h = null) {
+   *  `h` is the picture's drawn height: a pair's weapon lowers by its share of it (GUARD.LOWER). THE GUARD IS THE RESTING
+   *  HAND'S (AUDIT 2): a `striking` picture is never moved - a flurry's blow began with its hand still lowered from the
+   *  guard it was easing out of, which sliced a blade's or a flail's top flat inside the view on every second blow. */
+  function nudge(hand, canvas, h = null, striking = false) {
+    if (striking) return [0, 0];
     const height = st.mode === HANDS_MODE.Dual && Number.isFinite(h) ? /** @type {number} */ (h) * NATIVE_H / canvas.height : null;
     const [gx, gy] = guardOffset(st.guard[hand], handOnLeft(hand, st.leftHanded) ? 'left' : 'right', { time: st.time, bounce: st.bounce, hand, height });
     return [gx * canvas.width / NATIVE_W, gy * canvas.height / NATIVE_H];
   }
   /** The same offset laid BEFORE a mirror (a widget clone's transform runs ahead of its mirror): x turned about. */
-  const nudgeBefore = (hand, canvas, mirror, h = null) => { const [dx, dy] = nudge(hand, canvas, h); return [mirror ? -dx : dx, dy]; };
+  const nudgeBefore = (hand, canvas, mirror, h = null, striking = false) => { const [dx, dy] = nudge(hand, canvas, h, striking); return [mirror ? -dx : dx, dy]; };
   const moved = (r, [dx, dy]) => ({ ...r, x: r.x + dx, y: r.y + dy });
 
   /** The two hands in the order they are drawn: the one striking last, over the other. */
@@ -138,7 +149,7 @@ export function createTwoHands({ audio = null, envHit = null, missEffect = null,
     const q = fpsWeaponQuad(canvas, art, v.state, v.frame, { flipHorizontal: false, offsetHeight });
     if (!q) return null;
     const mirror = mirrorOf(hand, painted(v.state));
-    const rect = moved(mirror ? mirrorRect(q.rect, canvas.width) : q.rect, nudge(hand, canvas, q.rect.h));
+    const rect = moved(mirror ? mirrorRect(q.rect, canvas.width) : q.rect, nudge(hand, canvas, q.rect.h, v.state !== 'Idle'));
     const uv = mirror ? MIRROR_UV : q.uv;
     renderer.drawScreenQuad(q.tex, rect, uv, tint ?? undefined);
     // WEAPON-GLOW1 (bible/05-Combat/Weapon-Glow.md): this hand's own weapon's element, its outline over its own picture -
@@ -152,17 +163,18 @@ export function createTwoHands({ audio = null, envHit = null, missEffect = null,
    * is the right hand's clone (the rig's), used with the left's own while the Weapon Widget is on; a clone with nothing to
    * draw (its art still loading) falls through to the classic sprite for that hand, as the one hand's seam does (WW4).
    * `artFor(hand)` answers a hand's classic art, `glowFor(hand)` its weapon's element (WEAPON-GLOW1 - a widget clone is
-   * handed its own in its frame). True when it owned the seam.
+   * handed its own in its frame). `running` the seam's word that the running hands are drawn this frame (it yields them
+   * to any picture that takes the hands). True when it owned the seam.
    */
-  function drawPair(renderer, canvas, { widget = null, widgetOn = false, artFor, glowFor = () => null, shown = true, tint = null, offsetHeight = 0 } = {}) {
+  function drawPair(renderer, canvas, { widget = null, widgetOn = false, artFor, glowFor = () => null, shown = true, tint = null, offsetHeight = 0, running = st.run.w > 0 } = {}) {
     if (!renderer || !canvas || !twoHanded(st.mode)) return false;
     // the running hands own the fists (drawRun, before this) - all but a punch thrown on the run, drawn here over them
-    const running = st.run.w > 0;
     for (const hand of drawOrder()) {
       if (running && hand !== st.strikeHand) continue;
       const clone = hand === 'R' ? widget : offWidget;
-      const mirror = mirrorOf(hand, paintedAt(clone?.state ?? 0));   // the record the clone draws - it plays its strike a frame behind the machine
-      if (widgetOn && clone?.draw(renderer, canvas, tint, { transform: (r) => moved(r, nudgeBefore(hand, canvas, mirror, r.h)), mirror })) continue;
+      const shows = clone?.state ?? 0;   // the record the clone draws - it plays its strike a frame behind the machine
+      const mirror = mirrorOf(hand, paintedAt(shows));
+      if (widgetOn && clone?.draw(renderer, canvas, tint, { transform: (r) => moved(r, nudgeBefore(hand, canvas, mirror, r.h, shows !== 0)), mirror })) continue;
       if (shown) drawClassicHand(renderer, canvas, hand, artFor(hand), { tint, offsetHeight, glow: glowFor(hand) });
     }
     return true;
@@ -230,6 +242,8 @@ export function createTwoHands({ audio = null, envHit = null, missEffect = null,
 
   return {
     step, drawPair, drawRun, restRect, view: (hand) => views[hand], offWidget,
+    /** AUDIT 2: the hand's punch was thrown off the running arm - its clone winds up from below the view. */
+    fromBelow: (hand) => st.fromBelow === hand,
     /** The running hands are on the screen (or on their way off it). */
     get running() { return st.run.w > 0; },
     /** The pins' read of the state. */

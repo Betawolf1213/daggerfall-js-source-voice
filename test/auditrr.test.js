@@ -56,9 +56,10 @@ test('AUDIT-RR F1: the swing clock hands the rig\'s { entity, weaponType, usingR
   assert.match(rd('src/combat/playerWeapon.js'), /machineStep\(this\.machine, dt, this\.liveSpeed, this\.animCtx\?\.\(\) \?\? null\)/);
   // PIN MOVED (TWO-HANDS, bible/05-Combat/Two-Hands.md): the rig's thunk is PlayerWeapon's swingCtx - the same three
   // fields off the hand in use (the striking hand while a strike of both hands is in flight, else the used hand, so one
-  // hand in use is asked exactly as before), and a strike's tempo where the dual law gives it one
+  // hand in use is asked exactly as before) - and (PIN MOVED, TWO-HANDS AUDIT 2) nothing else: the off hand's burden is
+  // whole ticks the machine holds, never a factor a ctx carries
   assert.match(rd('src/combat/weaponRig.js'), /playerWeapon\.animCtx = \(\) => playerWeapon\.swingCtx\(entity\);/);
-  assert.match(rd('src/combat/playerWeapon.js'), /const ctx = \{ entity, weaponType: weaponTypeForItem\(this\.weapon\), usingRightHand: this\.activeHand === 'R' \};/);
+  assert.match(rd('src/combat/playerWeapon.js'), /return \{ entity, weaponType: weaponTypeForItem\(this\.weapon\), usingRightHand: this\.activeHand === 'R' \};/);
   assert.equal(typeof CLASSIC_FRAME_UPDATE, 'number');
 });
 
