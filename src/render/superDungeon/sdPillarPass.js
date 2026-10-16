@@ -18,10 +18,10 @@
 //
 // Premultiplied (the enamel darkens the stone; the light adds), depth-tested and never written, fogged. One static
 // buffer made once, one draw; a frame sets uniforms alone. Not a DFU member. Ledger A (SUPER-DUNGEONS).
-import { buildProgram } from './glProgram.js';
-import { FOG_FACTOR_GLSL } from './labGrass.js';
-import { BAYER_GLSL, SD_PIXEL_GLSL } from './orderedDither.js';
-import { sdPillarDials, sdLanterns, SD_PILLAR_DIAL, SD_PILLAR_LOOK, SD_LANTERN } from '../world/superDungeon/sdPillarModel.js';
+import { buildProgram } from '../glProgram.js';
+import { FOG_FACTOR_GLSL } from '../labGrass.js';
+import { BAYER_GLSL, SD_PIXEL_GLSL } from '../orderedDither.js';
+import { sdPillarDials, sdLanterns, SD_PILLAR_DIAL, SD_PILLAR_LOOK, SD_LANTERN } from '../../world/superDungeon/sdPillarModel.js';
 
 /** A dial's radius in the pixel law's cells (its stone's own 32 texels a metre, SD_PILLAR_DIAL.r across). */
 export const SD_DIAL_TEXELS = Math.round(SD_PILLAR_DIAL.r * 32);

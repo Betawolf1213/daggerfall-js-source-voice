@@ -30,7 +30,7 @@ its deepest - a trodden track, a road, a town's lesser depth - the mark stands t
 never under it. A frame that draws no snow lifts nothing: the travel view, an interior, a dungeon, summer. THE FOUR
 HOSTS: `scenes/world.js` and `scenes/exterior.js` draw the snow (before their telegraphs, pinned) and are wired through
 the renderer; `scenes/worldModes.js` (interiors) and `scenes/dungeonContext.js` draw none, and their marks lie as they
-always lay. The world boss's court pass (`render/gateTelegraph.js`) is not touched: the court is the gate's own realm,
+always lay. The world boss's court pass (`render/gate/gateTelegraph.js`) is not touched: the court is the gate's own realm,
 where no snow falls.
 
 THE SWITCH THE PLAYER LOOKED FOR is there, and was: Settings > Graphics > "Sky, water & weather" > "Snowfall by

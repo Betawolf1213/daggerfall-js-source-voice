@@ -38,7 +38,7 @@ import { SD_FIGHT_EMPTY } from '../src/net/superDungeon/sdFightLink.js';
 import { sdAnyInFlight, sdBlowsInFlight } from '../src/scenes/superDungeon/sdRemnantBlows.js';
 import { SD_STEPS_COURSE, SD_CHECKPOINTS, SD_COURSE_END, SD_GUST_EVERY, SD_GUST_WARN, SD_GUST_FOR, gustAt, breathSeen, spanAt } from '../src/world/superDungeon/sdSteps.js';
 import { SD_BREATH, stepTris } from '../src/world/superDungeon/sdStepsModel.js';
-import { SD_SKY_PAINT_FS, SD_SKY_SHARDS, SD_SHARD_TOP, SD_CLOCK_FACE, SD_CLOCK_RING_W, SD_CLOCK_TOP, SD_SKY_PERIOD, CLOCK_BASIS, sdSkyBasisInto } from '../src/render/sdSky.js';
+import { SD_SKY_PAINT_FS, SD_SKY_SHARDS, SD_SHARD_TOP, SD_CLOCK_FACE, SD_CLOCK_RING_W, SD_CLOCK_TOP, SD_SKY_PERIOD, CLOCK_BASIS, sdSkyBasisInto } from '../src/render/superDungeon/sdSky.js';
 import { skyBasis, DEAD_NOISE_GLSL } from '../src/render/deadlands.js';
 import { AURA_FS } from '../src/render/auraRing.js';
 import { SHADOW_POINT_NEAR } from '../src/render/shadowPass.js';
@@ -304,7 +304,7 @@ test('AUDIT SD II L2 F6: EVERY FACE TURNED OUT - both kerbs\' tops face up (the 
 
 /** The sky's own functions, run (test/glsl.mjs) - every pow answered NaN for a negative base, as D3D's does (GLSL ES
  *  leaves it undefined). */
-const skyRun = (t = 100) => glslFunctions(SD_SKY_PAINT_FS.replace(/\bpow\(/g, 'spow(').replace('precision highp float;\n', 'precision highp float;\nfloat spow(float x, float y) { return x < 0.0 ? 0.0 / 0.0 : pow(x, y); }\n'), { uTime: t, uHaze: [0.2, 0.15, 0.07], uSteps: 10, uEnding: [0, 0, 0], uEndingIdx: -1, vUv: [0.5, 0.5], texelFetch: () => [0, 0, 0, 0] });   // SD-LOOK (PIN MOVED): the sky's laws are its paint's now (render/sdSky.js SD_SKY_PAINT_FS)
+const skyRun = (t = 100) => glslFunctions(SD_SKY_PAINT_FS.replace(/\bpow\(/g, 'spow(').replace('precision highp float;\n', 'precision highp float;\nfloat spow(float x, float y) { return x < 0.0 ? 0.0 / 0.0 : pow(x, y); }\n'), { uTime: t, uHaze: [0.2, 0.15, 0.07], uSteps: 10, uEnding: [0, 0, 0], uEndingIdx: -1, vUv: [0.5, 0.5], texelFetch: () => [0, 0, 0, 0] });   // SD-LOOK (PIN MOVED): the sky's laws are its paint's now (render/superDungeon/sdSky.js SD_SKY_PAINT_FS)
 
 test('AUDIT SD II L2 F7: THE AURORAE WHOLE ROUND - their curtain\'s noise read round a circle, as the Deadlands\' ridges are: either side of the azimuth\'s leap from PI to -PI (toward -z) the curtain is one, at every height of the band and every drift - it read the raw azimuth and was cut there by a hard seam (mutants: the raw azimuth)', () => {
   const f = skyRun();
@@ -413,7 +413,7 @@ test('AUDIT SD II L2 F9: THE HOUR\'S FRAME MAKES NOTHING - measured in a child w
     const { createSdRemnantBlows } = await import(${url('src/scenes/superDungeon/sdRemnantBlows.js')});
     const { realmLighting, realmLightsWith } = await import(${url('src/world/superDungeon/sdRealm.js')});
     const { SD_STEPS_COURSE } = await import(${url('src/world/superDungeon/sdSteps.js')});
-    const { sdSkyBasisInto } = await import(${url('src/render/sdSky.js')});
+    const { sdSkyBasisInto } = await import(${url('src/render/superDungeon/sdSky.js')});
     const { realmToDungeon } = await import(${url('src/net/superDungeon/sdBrain.js')});
     const { SD_FIGHT_EMPTY } = await import(${url('src/net/superDungeon/sdFightLink.js')});
     const { Collider } = await import(${url('src/player/collider.js')});
@@ -503,7 +503,7 @@ test('AUDIT SD II L2 F9: THE SAME LIGHTS AND THE SAME SKY, made in place - realm
     assert.equal(got, into);
     for (const key of ['right', 'up', 'fwd', 'lens']) assert.ok(near(got[key], Float32Array.from(want[key])), key);
   }
-  assert.match(read('src/render/sdSky.js'), /const gl = this\.gl, U = this\.u, b = sdSkyBasisInto\(view, proj, this\._b\);/, 'the pass\'s frame reads it into its own');
+  assert.match(read('src/render/superDungeon/sdSky.js'), /const gl = this\.gl, U = this\.u, b = sdSkyBasisInto\(view, proj, this\._b\);/, 'the pass\'s frame reads it into its own');
   // the blows' driver idles only when sdBlowsInFlight would hand it nothing
   const atk = { i: 1, a: 1, at: 0 }, rem = { x: 0, z: 8, yw: 0, mv: null, atk: null }, ec = (a0, a1, h = 50) => [{ h, atk: a0 }, { h, atk: a1 }];
   for (const s of [SD_FIGHT_EMPTY, { ...SD_FIGHT_EMPTY, fi: 1 }, { ...SD_FIGHT_EMPTY, fi: 1, rem: { ...rem, atk } }, { ...SD_FIGHT_EMPTY, fi: 1, clk: atk },

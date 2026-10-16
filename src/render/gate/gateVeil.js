@@ -14,7 +14,7 @@
 // Output premultiplied: the layer's canvas is composited over the game's by the page (ui/gate/gateVeil.js holds the canvas,
 // its loop and its sounds; this module is the law and the shader, and imports nothing of the DOM).
 // Not a DFU member. Ledger A (WB).
-import { buildProgram } from './glProgram.js';
+import { buildProgram } from '../glProgram.js';
 
 /** How long the fire takes to close over the screen, and to open off it (seconds). */
 export const VEIL_CLOSE_S = 1.2;

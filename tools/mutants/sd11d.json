@@ -588,7 +588,7 @@
   },
   {
     "name": "SD11D-the-theme-never-set",
-    "file": "src/render/gateVeil.js",
+    "file": "src/render/gate/gateVeil.js",
     "old": "    gl.uniform1f(this.u.uTheme, theme);\n",
     "new": "",
     "tests": [
@@ -597,7 +597,7 @@
   },
   {
     "name": "SD11D-the-throat-a-pow",
-    "file": "src/render/gateVeil.js",
+    "file": "src/render/gate/gateVeil.js",
     "old": "exp(-(r - 0.3) * (r - 0.3) * 30.25)",
     "new": "exp(-pow((r - 0.3) * 5.5, 2.0))",
     "tests": [
@@ -606,7 +606,7 @@
   },
   {
     "name": "SD11D-the-lip-a-pow",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "exp(-(uT - s) * (uT - s) * 144.0)",
     "new": "exp(-pow((uT - s) * 12.0, 2.0))",
     "tests": [

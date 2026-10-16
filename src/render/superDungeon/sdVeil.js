@@ -1,12 +1,12 @@
 // @ts-check
 // SD-LOOK (2026-10-08, bible/11-Multiplayer/Super-Dungeons-Look.md section 3): THE STEP THROUGH THE HOUR - the Shattered
-// Hour's own veil, chosen by theme in ui/gate/gateVeil.js beside Dagon's fire (render/gateVeil.js keeps its program and its
+// Hour's own veil, chosen by theme in ui/gate/gateVeil.js beside Dagon's fire (render/gate/gateVeil.js keeps its program and its
 // law: `veilAt` times this one too). One triangle over the veil's own canvas, as the fire's.
 //
 //   INTO THE HOUR - twelve heavy brass blades sweep in from the screen's edges, pivoting on the point where the Rift
 //     stood on the screen (`uCentre`), closing like the Rift's own iris: engraved with minute ticks, a rivet at each
 //     pivot, gold light along each leading edge, gold pouring through the gaps. Shut, the iris is a dial - its twelve
-//     seams the hours, its Roman numerals the sky's own (render/sdSky.js SD_NUMERAL_GLSL) - and a spade hand sweeps
+//     seams the hours, its Roman numerals the sky's own (render/superDungeon/sdSky.js SD_NUMERAL_GLSL) - and a spade hand sweeps
 //     BACKWARDS from XII (`sdVeilHand`); past its first turn the Dragon Break: six gold and silver ghost hands at
 //     slightly different speeds, and a crack across the face. Opening, the face breaks along its cracks into shards
 //     that fall outward as the blades spin back off the screen.
@@ -21,8 +21,8 @@
 // Every pixel posterized to six levels through the ordered dither, in the Hour's palette (world/superDungeon/sdLook.js); the canvas
 // is a third of the device's pixels (ui/gate/gateVeil.js), drawn pixelated. Output premultiplied. Not a DFU member. Ledger A
 // (SUPER-DUNGEONS).
-import { buildProgram } from './glProgram.js';
-import { BAYER_GLSL } from './orderedDither.js';
+import { buildProgram } from '../glProgram.js';
+import { BAYER_GLSL } from '../orderedDither.js';
 import { SD_NUMERAL_GLSL } from './sdSky.js';
 
 /** The veil's modes: into the Hour, out by the way back (or the Return), out by the way home, forced out. */
@@ -64,7 +64,7 @@ export const SD_VEIL_FS = `#version 300 es
 precision highp float;
 uniform vec2 uRes;       // the canvas, pixels
 uniform float uTime;     // seconds since the veil began
-uniform float uCover;    // how much of the screen the blades have taken (render/gateVeil.js veilAt)
+uniform float uCover;    // how much of the screen the blades have taken (render/gate/gateVeil.js veilAt)
 uniform float uShut;     // seconds the veil has stood shut (the hand's clock; 0 before)
 uniform float uOpening;  // 0..1 through its opening (0 before)
 uniform vec2 uCentre;    // the Rift on the screen, screen radii (the corners at 1)

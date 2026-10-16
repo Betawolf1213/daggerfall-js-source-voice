@@ -330,7 +330,7 @@ through `hostCombat.playEnemyClip` so DFU's hearing distance holds:
 ### 4.4 The ground
 
 - The mark keeps its law (`render/foeTelegraph.js`, the shapes pinned to `inBlow` point for point) and takes the world
-  boss's readable style (`render/gateTelegraph.js`): a 2-px line with a dark keyline (screen-space `fwidth`), the fill
+  boss's readable style (`render/gate/gateTelegraph.js`): a 2-px line with a dark keyline (screen-space `fwidth`), the fill
   growing through the wind-up, a brighten in the last 0.2 s, a white-hot landing fading out. The styling moves into an
   import-free GLSL leaf that the foe's pass composes (OPEN 20 asks whether the boss's pass adopts it too);
   `gateTelegraph.js` imports the boss's brain, so it is never imported whole.

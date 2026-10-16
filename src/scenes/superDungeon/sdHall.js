@@ -365,7 +365,7 @@ export function createSdHall({ renderer = null, audio = null, s, now = () => per
       _light.color[0] = SD_LIGHT.mantella[0] * k; _light.color[1] = SD_LIGHT.mantella[1] * k; _light.color[2] = SD_LIGHT.mantella[2] * k;
       return _lights;
     },
-    /** SD-LOOK S10: the halos the frame adds (render/sdHalo.js) - the gem's core, and a settling bezel's gold. */
+    /** SD-LOOK S10: the halos the frame adds (render/superDungeon/sdHalo.js) - the gem's core, and a settling bezel's gold. */
     halos() {
       _halos.length = 0;
       if (!draws || !o) return _halos;

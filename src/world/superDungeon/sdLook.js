@@ -37,7 +37,7 @@ export const SD_RAMP = Object.freeze({
  *  GOLD the machine is live (on what you stand on, it holds); MANTELLA the Hour's soul, what the fight turns on; EMBER
  *  about to fail; MOON the way out, and only the way out; RED refused, or the End; MOMENT a beat lands. Their homes:
  *  world/superDungeon/sdRealm.js SD_LAMP_COLOR, scenes/superDungeon/sdFx.js SD_FX_COLOR (mantella, pale, end), world/superDungeon/sdHallArt.js SD_GLOW_COLORS.fray
- *  (sRGB there), render/sdBeam.js SD_BEAM_CORE. */
+ *  (sRGB there), render/superDungeon/sdBeam.js SD_BEAM_CORE. */
 export const SD_LIGHT = Object.freeze({
   gold: Object.freeze([1.0, 0.78, 0.4]),
   mantella: Object.freeze([0.45, 1.0, 0.6]),

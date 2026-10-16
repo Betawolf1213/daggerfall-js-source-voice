@@ -22,7 +22,7 @@ import { hostVerdict, hostTelegraphAt } from '../../net/gate/gateStrike.js';
 import { hostLookOf, hostAct, hostFallAct, hostStandIn, hostCue, bossFrame, bossPlace, HOST_BITE_COLOR, hostPulseColor, emberColor, WARD_COLOR, BOSS_CUES, gateHitFlash } from '../../world/gate/gateBoss.js';
 import { setBatchHitFlash } from '../../systems/hitFlash.js';   // WB13d: a body of his host struck flashes, as he does
 import { courtToDungeon } from '../../world/gate/gateArena.js';
-import { TELEGRAPH_KIND, TELEGRAPH_STYLE, TELEGRAPH_FLASH_MS, TELEGRAPH_EDGE, TELEGRAPH_POOL } from '../../render/gateTelegraph.js';
+import { TELEGRAPH_KIND, TELEGRAPH_STYLE, TELEGRAPH_FLASH_MS, TELEGRAPH_EDGE, TELEGRAPH_POOL } from '../../render/gate/gateTelegraph.js';
 import { ENEMY_BASICS } from '../../characters/enemy/enemyBasics.js';
 import { mobileBillboardSize } from '../../world/rmbFlats.js';
 import { creatureLook } from '../../characters/creatureBodies.js'; import { rosterActor } from '../../characters/rosterBodies.js';   // MWNPC10: his host in its Morrowind bodies
@@ -62,7 +62,7 @@ export const HOST_LANE_CLOCK_MS = 60_000;
 const SHAPE_SLOTS = new WeakMap();
 
 /**
- * THE SHAPES OF HIS HOST on the floor at `now`, in the telegraph pass's own shape (render/gateTelegraph.js - the court's
+ * THE SHAPES OF HIS HOST on the floor at `now`, in the telegraph pass's own shape (render/gate/gateTelegraph.js - the court's
  * frame): each blow in flight its disc, wound up as his are (the line whole from the word, the fill, the flash at its
  * landing - WB13a: in the same danger edge as his); while his ward holds, each Ward-Bearer's tether to him in the ward's
  * gold; each Sapper's path to him in his ember - WB13a: dashes flowing to him (they were drawn as burning ground). Blows

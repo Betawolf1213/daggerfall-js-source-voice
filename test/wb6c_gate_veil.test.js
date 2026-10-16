@@ -11,7 +11,7 @@ import { readFileSync } from 'node:fs';
 import {
   veilAt, GATE_VEIL_FS, VEIL_CLOSE_S, VEIL_OPEN_S, VEIL_HOLD_MAX_S, VEIL_FRONT_OUT, VEIL_FRONT_IN, VEIL_RAG_BODY,
   VEIL_RAG_TONGUE, VEIL_SOFT, VEIL_HEAT,
-} from '../src/render/gateVeil.js';
+} from '../src/render/gate/gateVeil.js';
 import { createGateVeil, VEIL_CSS, VEIL_OPEN_WAIT_TICKS, VEIL_CUES } from '../src/ui/gate/gateVeil.js';
 import { FIRE_CAST_ID } from '../src/world/gate/gateBoss.js';
 

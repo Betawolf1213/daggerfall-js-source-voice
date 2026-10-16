@@ -21,7 +21,7 @@
 //     floor - stopped at a pillar's face, as the law shades what stands behind one.
 //
 // Pure: the scene (scenes/superDungeon/sdRemnant.js) stands the parts by `rigMatrices`, the gears by `gearMatrix`, and the world's
-// pass draws the beams (render/sdBeam.js). Not a DFU member. Ledger A (SUPER-DUNGEONS).
+// pass draws the beams (render/superDungeon/sdBeam.js). Not a DFU member. Ledger A (SUPER-DUNGEONS).
 import { SD_ARENA, SD_REALM_ORIGIN } from '../../net/superDungeon/sdBrain.js';
 import { SD_BLOW_BY_ID, SD_BLOWS, SD_BODY, SD_REM, SD_ECHO, SD_BREAK_MS, atkWindup, blowShape, behindPillar } from '../../net/superDungeon/sdRemnant.js';
 import { sdBodyAt } from '../../net/superDungeon/sdFightLink.js';
@@ -435,7 +435,7 @@ export const SD_BEAM_FADE_MS = Object.freeze([120, 220]);
 function toDungeon(out, p) { out[0] = SD_REALM_ORIGIN[0] + SD_ARENA.x + p[0]; out[1] = SD_REALM_ORIGIN[1] + p[1]; out[2] = SD_REALM_ORIGIN[2] + SD_ARENA.z + p[2]; return out; }
 const newDraw = () => ({ a: [0, 0, 0], b: [0, 0, 0], f0: [0, 0, 0], f1: [0, 0, 0], w: 0, alpha: 0 });
 const _beamsAt = sdKeptList();
-/** THE BEAMS AS THE PASS DRAWS THEM (render/sdBeam.js): `{ a, b, f0, f1, w, alpha }` in the DUNGEON's frame - into `out`
+/** THE BEAMS AS THE PASS DRAWS THEM (render/superDungeon/sdBeam.js): `{ a, b, f0, f1, w, alpha }` in the DUNGEON's frame - into `out`
  *  (an sdKeptList) when one is given. Pure. */
 export function sdBeamDraws(s, t, out = null) {
   if (out) out.length = 0;

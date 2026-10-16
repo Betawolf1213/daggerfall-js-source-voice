@@ -18,7 +18,7 @@ import { RAY_DISTANCE, TREASURE_ACTIVATION_DISTANCE } from '../src/player/activa
 import { RARITIES } from '../src/systems/loot/lootRarity.js';
 import { ITEMISED_KEYS, keyItemises, resolveHover } from '../src/systems/worldHover.js';
 import { createGateCourt, spoilsKeep, SPEW_RIM_M, SPOILS_BURST_COLOR, SPEW_AT_MS } from '../src/scenes/gate/gateCourt.js';
-import { FX_KINDS, sparkAt, FX_SPARK_VS } from '../src/render/gateFx.js';
+import { FX_KINDS, sparkAt, FX_SPARK_VS } from '../src/render/gate/gateFx.js';
 import { tierColour } from '../src/render/spoilsGlow.js';
 import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import { mintReceipt } from '../src/net/gate/gateReceipt.js';

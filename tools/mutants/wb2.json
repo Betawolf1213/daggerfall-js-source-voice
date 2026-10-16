@@ -37,7 +37,7 @@
   },
   {
     "name": "WB2-the-fire-added-not-covering",
-    "file": "src/render/gatePass.js",
+    "file": "src/render/gate/gatePass.js",
     "old": "    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);",
     "new": "    gl.blendFunc(gl.ONE, gl.ONE);",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "WB2-the-fire-writes-depth",
-    "file": "src/render/gatePass.js",
+    "file": "src/render/gate/gatePass.js",
     "old": "    gl.blendFunc(gl.ONE, gl.ONE);\n    gl.bindVertexArray(this.column.vao);",
     "new": "    gl.blendFunc(gl.ONE, gl.ONE);\n    gl.depthMask(true);\n    gl.bindVertexArray(this.column.vao);",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "WB2-a-faded-gate-drawn",
-    "file": "src/render/gatePass.js",
+    "file": "src/render/gate/gatePass.js",
     "old": "&& Number.isFinite(g.yaw) && g.fade > 0.001).slice(0, GATE_PASS_MAX);",
     "new": "&& Number.isFinite(g.yaw) && g.fade >= 0).slice(0, GATE_PASS_MAX);",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "WB2-the-gates-uncapped",
-    "file": "src/render/gatePass.js",
+    "file": "src/render/gate/gatePass.js",
     "old": "&& Number.isFinite(g.yaw) && g.fade > 0.001).slice(0, GATE_PASS_MAX);",
     "new": "&& Number.isFinite(g.yaw) && g.fade > 0.001);",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "WB2-the-beacon-a-hair-far-off",
-    "file": "src/render/gatePass.js",
+    "file": "src/render/gate/gatePass.js",
     "old": "  float rad = max(uRadius, length(uEye.xz - uOrigin.xz) * ${BEACON_WIDEN.toFixed(4)});",
     "new": "  float rad = uRadius;",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "WB2-the-vortex-off-its-clock",
-    "file": "src/render/gatePass.js",
+    "file": "src/render/gate/gatePass.js",
     "old": "export const MEMBRANE_TURN_OPEN_HZ = 0.25;",
     "new": "export const MEMBRANE_TURN_OPEN_HZ = 0.26;",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "WB2-the-arch-never-handed",
-    "file": "src/render/gatePass.js",
+    "file": "src/render/gate/gatePass.js",
     "old": "    gl.uniform1fv(this.mu.uProfile, this.profile);\n",
     "new": "",
     "tests": [

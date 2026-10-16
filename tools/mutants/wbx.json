@@ -75,7 +75,7 @@
   },
   {
     "name": "WBX4-the-chevron-behind-him",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "      const fx = Math.sin(sh.yaw), fz = Math.cos(sh.yaw), along = rx * fx + rz * fz, side = rx * fz - rz * fx;",
     "new": "      const fx = -Math.sin(sh.yaw), fz = -Math.cos(sh.yaw), along = rx * fx + rz * fz, side = rx * fz - rz * fx;",
     "tests": [

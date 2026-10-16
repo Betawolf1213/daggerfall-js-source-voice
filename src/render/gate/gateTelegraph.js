@@ -33,11 +33,11 @@
 // it was, byte for byte (bible/07-Rendering/Performance-Rig.md AOE-PERF).
 //
 // Not a DFU member. Ledger A (WB).
-import { FOG_FACTOR_GLSL } from './labGrass.js';
-import { buildProgram } from './glProgram.js';
-import { ATTACK_BY_ID, ATTACKS, BOSS_R, COURT_CENTRE, COURT_R, COURTS, BASE_PROFILE, windupOf, nearestCourt, isDagons, WALKS, WALK_HALF_W } from '../net/gate/gateBrain.js';
-import { telegraphAt } from '../net/gate/gateStrike.js';
-import { attackColor } from '../world/gate/gateBoss.js';
+import { FOG_FACTOR_GLSL } from '../labGrass.js';
+import { buildProgram } from '../glProgram.js';
+import { ATTACK_BY_ID, ATTACKS, BOSS_R, COURT_CENTRE, COURT_R, COURTS, BASE_PROFILE, windupOf, nearestCourt, isDagons, WALKS, WALK_HALF_W } from '../../net/gate/gateBrain.js';
+import { telegraphAt } from '../../net/gate/gateStrike.js';
+import { attackColor } from '../../world/gate/gateBoss.js';
 
 /** The shapes, as the shader's `uKind` says them. WBX5: the Spokes of Dagon's lanes; WBX4: his mark. */
 export const TELEGRAPH_KIND = Object.freeze({ cone: 0, disc: 1, discs: 2, lane: 3, ring: 4, all: 5, spokes: 6, mark: 7 });
@@ -113,7 +113,7 @@ const DEG = Math.PI / 180;
  * own size, the colour his aspect gives it - so the ground still shows exactly what lands. WB13a: `edge` its line's
  * colour, `runS` the charge's run (its landing follows his head down the lane).
  * @param {{a: number, at: number, x: number, z: number, yw: number, tg: number[][]}|null} atk @param {number} phase @param {number} now
- * @param {ReturnType<typeof import('../net/gate/gateBrain.js').fightProfile>} [P]
+ * @param {ReturnType<typeof import('../../net/gate/gateBrain.js').fightProfile>} [P]
  */
 export function telegraphShape(atk, phase, now, P = BASE_PROFILE) {
   /** @type {any} an attack of any shape - the fields its shape does not have read as none */

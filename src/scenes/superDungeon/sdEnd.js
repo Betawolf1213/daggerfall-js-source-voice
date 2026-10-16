@@ -9,7 +9,7 @@
 //    ratcheting an hour BACK on each toll of its bell, two studs a block counting how long its Hour stands, the iris whose
 //    APERTURE IS ITS STATE (world/superDungeon/sdDungeon.js riftLook - open, not yet, collapsing, closed, refused), three broken pieces
 //    of ring orbiting it; and through the iris the Shattered Hour's own sky, its light spilling down the hall and across
-//    the floor (render/sdRiftPass.js, render/sdHalo.js - the host draws them from `look`, `halos` and `lights`). Its
+//    the floor (render/superDungeon/sdRiftPass.js, render/superDungeon/sdHalo.js - the host draws them from `look`, `halos` and `lights`). Its
 //    meshes stand among the dungeon's dynamic draws (`stand({ dynamicDraws })`, as the Remnant's do), each that turns
 //    `noShadow` - nothing that moves rebuilds a shadow's cube (LA-SHADOW3's everyLightCasts). Its sound is a bell heard
 //    under water (systems/superDungeon/sdRiftSound.js), looped where it stands.
@@ -249,7 +249,7 @@ export function createSdEnd({ renderer = null, audio = null, now = () => perform
         radii: new Float32Array(8), tolls: 0, revealAt: -Infinity, revealed: false, revealAskAt: 0,
         refusedAt: -Infinity, steppedAt: -Infinity, exhaleAt: -Infinity, ring0: 0, ripple: [0, 0, 0, 9], light: [0, 0, 0],
         // SD-LOOK S6 (Super-Dungeons-Look.md section 4): THE WAY BACK, the same astrolabe seen from the Hour's side - its
-        // window the Hollow's hall behind it (render/sdRiftPass.js, interior-mapped), its rings turning FORWARD, back into
+        // window the Hollow's hall behind it (render/superDungeon/sdRiftPass.js, interior-mapped), its rings turning FORWARD, back into
         // time, its light the moon's (the Hour's one cool light on arrival)
         hollow: hollow ? { floor: riftCentreY(size) } : null, turn: hollow ? -1 : 1,
       };
@@ -343,7 +343,7 @@ export function createSdEnd({ renderer = null, audio = null, now = () => perform
     },
     /** SD-LOOK: no billboards stand for them now (their meshes are among the dynamic draws) - kept for the hosts that ask. */
     batches: () => NONE,
-    /** SD-LOOK: what the pass draws (render/sdRiftPass.js): the Rift's window and floor light, the Return's window home -
+    /** SD-LOOK: what the pass draws (render/superDungeon/sdRiftPass.js): the Rift's window and floor light, the Return's window home -
      *  `sky` { map, seconds, gain, clock } the Hour's painted sky, `hour` the world's hour (the Return's), or null. */
     look(eye, sky, hour = 12) {
       if (!rift && !ret) return null;
@@ -375,7 +375,7 @@ export function createSdEnd({ renderer = null, audio = null, now = () => perform
       }
       return out;
     },
-    /** SD-LOOK: the halos the frame adds (render/sdHalo.js) - the Rift's heart, the Return's keystone. */
+    /** SD-LOOK: the halos the frame adds (render/superDungeon/sdHalo.js) - the Rift's heart, the Return's keystone. */
     halos() {
       let n = 0;   // AUDIT SD V (P1): filled in place - a list's length set to nought lets its store go, and the next push makes one
       const t = now();
@@ -559,7 +559,7 @@ const RETURN_DIAL_T = setT(new Float32Array(16), RETURN_DIAL[0], RETURN_DIAL[1],
 const RETURN_WINDOW_T = setT(new Float32Array(16), 0, SD_RETURN_SIZE.h / 2 - 0.02, 0);
 /** SD-LOOK S6: where the lancet's halves turn (world/superDungeon/sdRiftModel.js returnSpringAt). */
 const RETURN_SPRING = Object.freeze(returnSpringAt(SD_RETURN_SIZE.w, SD_RETURN_SIZE.h));
-/** SD-LOOK: the Return's opening for its window (render/sdRiftPass.js archFan) - the arch's inner edge about the
+/** SD-LOOK: the Return's opening for its window (render/superDungeon/sdRiftPass.js archFan) - the arch's inner edge about the
  *  opening's middle, and the opening's half-size. */
 const RETURN_HALF = Object.freeze([SD_RETURN_SIZE.w / 2, SD_RETURN_SIZE.h / 2]);
 const RETURN_OUTLINE = Object.freeze((() => {

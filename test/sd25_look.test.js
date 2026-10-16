@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { SD_STEPS_COURSE, SD_BEAT_SOLID, SD_BEAT_BLINK, beatWarned } from '../src/world/superDungeon/sdSteps.js';
 import { createSdSteps, SD_BEAT_BLINK_HZ } from '../src/scenes/superDungeon/sdSteps.js';
-import { TELEGRAPH_THROB_MAX_HZ } from '../src/render/gateTelegraph.js';
+import { TELEGRAPH_THROB_MAX_HZ } from '../src/render/gate/gateTelegraph.js';
 import { SD_STEPS_RECORD as SD_STEPS_RECORD_S0 } from '../src/world/superDungeon/sdStepsArt.js';
 import { SD_REALM_ARCHIVE as SD_REALM_ARCHIVE_S0 } from '../src/world/superDungeon/sdRealm.js';
 
@@ -56,7 +56,7 @@ import {
 import { SD_THRESHOLD, SD_ORRERY, SD_ARENA, SD_WALK, dungeonToRealm, realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { SD_FX_COLOR } from '../src/scenes/superDungeon/sdFx.js';
 import { SD_GLOW_COLORS } from '../src/world/superDungeon/sdHallArt.js';
-import { SD_BEAM_CORE } from '../src/render/sdBeam.js';
+import { SD_BEAM_CORE } from '../src/render/superDungeon/sdBeam.js';
 import { TURNING_STEP_S, turningWheelAngle, TURNING_HZ } from '../src/render/auraRing.js';
 import { AirPass, AIR_ADAPT_KEY, AIR_ADAPT_MAX, AIR_BLOOM_STRENGTH, AIR_VIGNETTE, AIR_CONTRAST } from '../src/render/airPass.js';
 import { readFileSync } from 'node:fs';
@@ -185,7 +185,7 @@ import { glslFunctions } from './glsl.mjs';
 import {
   octEncode, octDecode, SD_OCT_GLSL, SD_SKY_PAINT_FS, SD_SKY_FS, SD_SKY_FETCH_GLSL, SD_CLOCK_FACE, SD_CLOCK_TOP, SD_SHARD_TOP,
   SD_SKY_SHARDS, SD_SKY_MAP, SD_SKY_STEPS, SD_SKY_MODE, CLOCK_BASIS,
-} from '../src/render/sdSky.js';
+} from '../src/render/superDungeon/sdSky.js';
 import { numeralCell, numeralWidth, SD_HOUR_NUMERALS, sdSkySigns, SD_SKY_SIGN_GRID } from '../src/world/superDungeon/sdSkyArt.js';
 import { SD_SIGNS } from '../src/world/superDungeon/sdHallArt.js';
 
@@ -249,7 +249,7 @@ test('SD-LOOK THE PAINT IS PIXEL ART: every texel it paints posterized to the pi
 import { sdRiftFace, riftLook, SD_RIFT_OPEN_LOOK, SD_RIFT_NOT_YET, SD_RIFT_CLOSED, SD_RIFT_REFUSED, SD_RIFT_PROBE_M } from '../src/world/superDungeon/sdDungeon.js';
 import { irisPositions, SD_RIFT_PARTS, riftCentreY } from '../src/world/superDungeon/sdRiftModel.js';
 import { createSdEnd } from '../src/scenes/superDungeon/sdEnd.js';
-import { SD_WINDOW_FS, SD_FLOOR_FS } from '../src/render/sdRiftPass.js';
+import { SD_WINDOW_FS, SD_FLOOR_FS } from '../src/render/superDungeon/sdRiftPass.js';
 import { sdRise, sdFind, sdFell, SD_COLLAPSE_MS } from '../src/net/superDungeon/sdLaw.js';
 
 /** A box hall the collider answers: x0..x1, z0..z1, floor 0, ceiling h; `pillar` { x, z, half } a square column. */
@@ -354,9 +354,9 @@ test('SD-LOOK THE WINDOW: the Hour\'s own painted sky through the iris (the fetc
 // ---------------------------------------------------------------------------------------------------------------------
 // S5 - THE STEP THROUGH THE HOUR: the Hour's own veil.
 // ---------------------------------------------------------------------------------------------------------------------
-import { SD_VEIL_FS, SD_VEIL_MODE, SD_VEIL_TURN_S, SD_VEIL_SLOW_AFTER_S, sdVeilHand, sdVeilQuarters } from '../src/render/sdVeil.js';
+import { SD_VEIL_FS, SD_VEIL_MODE, SD_VEIL_TURN_S, SD_VEIL_SLOW_AFTER_S, sdVeilHand, sdVeilQuarters } from '../src/render/superDungeon/sdVeil.js';
 import { createGateVeil, VEIL_THEMES, VEIL_HOUR_CUES, VEIL_HOUR_HOLD_S, VEIL_HOUR_SCALE, VEIL_SCALE, VEIL_CENTRE_MAX, VEIL_OPEN_WAIT_TICKS } from '../src/ui/gate/gateVeil.js';
-import { VEIL_CLOSE_S } from '../src/render/gateVeil.js';
+import { VEIL_CLOSE_S } from '../src/render/gate/gateVeil.js';
 import { HOUR_CHIME, HOUR_CHIME_MENDED } from '../src/systems/superDungeon/sdScore.js';
 import { midiNote } from '../src/systems/gate/gateScore.js';
 
@@ -537,10 +537,10 @@ test('SD-LOOK THE VEIL CLOSES ON THE RIFT (S5): the world host hands the veil wh
 // ---------------------------------------------------------------------------------------------------------------------
 // S7 - THE ARENA'S READS: the floor tells the clock's blows.
 // ---------------------------------------------------------------------------------------------------------------------
-import { SD_FISSURES, SD_FLOOD, SD_ARENA_NUMERALS, SD_ARENA_CELL_M, SD_RESET_EMBER, SD_ARENA_GLOW_FS, sdFissurePaths, sdFissureField, sdArenaGlowAt, sdHourClockOf } from '../src/render/sdArenaGlow.js';
+import { SD_FISSURES, SD_FLOOD, SD_ARENA_NUMERALS, SD_ARENA_CELL_M, SD_RESET_EMBER, SD_ARENA_GLOW_FS, sdFissurePaths, sdFissureField, sdArenaGlowAt, sdHourClockOf } from '../src/render/superDungeon/sdArenaGlow.js';
 import { SD_ARENA as SD_ARENA_AT } from '../src/net/superDungeon/sdBrain.js';
 import { SD_BLOWS } from '../src/net/superDungeon/sdRemnant.js';
-import { SD_SKY_MODE as SKY_MODE } from '../src/render/sdSky.js';
+import { SD_SKY_MODE as SKY_MODE } from '../src/render/superDungeon/sdSky.js';
 
 const glowMemo = () => ({ flood: -1, floodK: 0, reset: -1, end: 0, pulseAt: -Infinity });
 const fightAt = (t, o = {}) => ({ fi: 1, op: t - 300_000, ends: t + 600_000, ph: 1, rem: { atk: null }, ec: [], clk: null, su: -Infinity, fell: null, lost: null, ...o });
@@ -628,7 +628,7 @@ test('SD-LOOK THE RIM\'S NUMERALS COUNT THE RESET (S7, the shader): I lights fir
   assert.ok(flood(4) < 0.3, 'past the front: dark still (the core\'s faint green)');
 });
 
-import { SD_STOMP_WALL, SD_STOMP_WALL_FS, sdStompWalls, sdStompWallRecords, sdStompWallVertices } from '../src/render/sdStompWall.js';
+import { SD_STOMP_WALL, SD_STOMP_WALL_FS, sdStompWalls, sdStompWallRecords, sdStompWallVertices } from '../src/render/superDungeon/sdStompWall.js';
 import { stompRingAt } from '../src/net/superDungeon/sdRemnant.js';
 
 test('SD-LOOK THE STOMP\'S RING STANDS AS A WALL (S7): while a Stomp rolls - the Remnant\'s and each living Echo\'s - a wall stands at the very front the law strikes (stompRingAt), fading over its roll\'s last fifth; none before it lands or after; a fallen Echo stands none; banded light rising to a bright lip; the strip closed all round (mutants: a fallen Echo\'s wall; never fading; the lip dropped)', () => {
@@ -653,7 +653,7 @@ test('SD-LOOK THE STOMP\'S RING STANDS AS A WALL (S7): while a Stomp rolls - the
   assert.ok(v.includes(0) && v.includes(1), 'all round');
 });
 
-import { SdStompWallRenderer, SD_HOLD_WALL, SD_HOLD_CURTAIN } from '../src/render/sdStompWall.js';
+import { SdStompWallRenderer, SD_HOLD_WALL, SD_HOLD_CURTAIN } from '../src/render/superDungeon/sdStompWall.js';
 
 test('SD-LOOK THE HOLD IS SEEN (S7): the hold\'s curtain the same wall in gold, taller, a hair outside the arena\'s rim - each wall drawn at its own height and colour, the Stomp\'s at its own (mutants: the height ignored; every wall in the Stomp\'s brass)', () => {
   assert.ok(SD_HOLD_WALL.r > SD_ARENA_AT.r && SD_HOLD_WALL.r < SD_ARENA_AT.r + 0.5, 'a hair outside the rim');
@@ -738,7 +738,7 @@ test('SD-LOOK THE HEART IS THE FIGHT\'S METRONOME (S8): its light in its Ending\
 import { buildReturnParts, buildReturnModel, SD_RETURN_PARTS, returnSpringAt } from '../src/world/superDungeon/sdRiftModel.js';
 import { SD_HOME_SCALE, SD_HOME_ASSEMBLY, SD_HOME_RISE_MS, SD_RIFT_LIGHT } from '../src/scenes/superDungeon/sdEnd.js';
 import { SD_RETURN_SIZE } from '../src/world/superDungeon/sdDungeon.js';
-import { sdHomeBeacon, SD_HOME_BEACON } from '../src/render/sdStompWall.js';
+import { sdHomeBeacon, SD_HOME_BEACON } from '../src/render/superDungeon/sdStompWall.js';
 
 test('SD-LOOK THE WAY HOME ASSEMBLES (S6): the Return in five parts - every face of the whole, once - its jambs rising out of the floor, the lancet\'s halves swinging in about their springings, its keystone\'s clock dropping last; whole once it stands (the parts gone, the whole drawn); in the Hour at half again its size and pressed where it stands at that size; the Hollow\'s Return as ever (mutants: a part left out of the whole; the halves never swinging; the keystone never dropping; the way home at the Hollow\'s size; the press box at the old size)', () => {
   const w = SD_RETURN_SIZE.w, h = SD_RETURN_SIZE.h, parts = buildReturnParts(w, h), whole = buildReturnModel(w, h);

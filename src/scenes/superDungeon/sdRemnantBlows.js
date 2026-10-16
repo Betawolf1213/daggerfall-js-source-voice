@@ -5,7 +5,7 @@
 // net/superDungeon/sdStrike.js), and it lands through `strike` - the dungeon context's door (the hurt, the flash, the cry).
 //
 //   SEEN: every blow in flight - the Remnant's, each Echo's, the Hour's own - on the arena's floor as it winds up and
-//     lands (sdTelegraphShapes - the gate's telegraph pass over the arena, render/gateTelegraph.js): the Stomp's disc and
+//     lands (sdTelegraphShapes - the gate's telegraph pass over the arena, render/gate/gateTelegraph.js): the Stomp's disc and
 //     then its ring rolling out; the Hour-Hand's half-circle as it gathers with its beam standing where it begins, then
 //     the beam sweeping; the Gear Volley's marks; the Hour's own over the whole floor; the Volley's brass burning where
 //     it fell. SD-LOOK S7: and under them, always, each standing body's mark - a ring and a chevron where it faces (the
@@ -25,7 +25,7 @@ import { POOL_TICK_MS } from '../../net/gate/gateBrain.js';
 import { strikeDamage, savedShare } from '../../net/gate/gateStrike.js';
 import { sdBodyAt, sdEndAgain, SD_HEARTS_KEY } from '../../net/superDungeon/sdFightLink.js';
 import { sdBlowVerdict, sdVolleyPools, sdPoolUnder } from '../../net/superDungeon/sdStrike.js';
-import { GateTelegraphRenderer, TELEGRAPH_KIND, TELEGRAPH_EDGE, TELEGRAPH_EDGE_DAGON, TELEGRAPH_STYLE, TELEGRAPH_POOL, TELEGRAPH_FLASH_MS, TELEGRAPH_POINTS_MAX } from '../../render/gateTelegraph.js';
+import { GateTelegraphRenderer, TELEGRAPH_KIND, TELEGRAPH_EDGE, TELEGRAPH_EDGE_DAGON, TELEGRAPH_STYLE, TELEGRAPH_POOL, TELEGRAPH_FLASH_MS, TELEGRAPH_POINTS_MAX } from '../../render/gate/gateTelegraph.js';
 import { damageChartModel, drawGateDamageChart, DAMAGE_CHART_DELAY_MS, DAMAGE_CHART_MS } from '../../ui/gate/gateDamageChart.js';
 import { BODY_FALL, BURNING, THUNDER_ROLL, SWING_LOW, CRYSTAL_CLIPS, BOSS_CUES } from '../../world/gate/gateBoss.js';
 import { SD_VOICE_AWAY_MS } from './sdRemnantVoice.js';
@@ -36,7 +36,7 @@ export const SD_BLOW_COLOR = Object.freeze({
   stomp: Object.freeze([1.0, 0.7, 0.26]), hand: Object.freeze([1.0, 0.86, 0.5]), volley: Object.freeze([1.0, 0.52, 0.26]),
   pulse: Object.freeze([0.45, 1.0, 0.6]), reset: Object.freeze([0.6, 1.0, 0.82]), end: Object.freeze([1.0, 0.32, 0.26]),
 });
-/** Each blow's grain (render/gateTelegraph.js TELEGRAPH_STYLE): its weight for the brass's, light's crackle for the Hand
+/** Each blow's grain (render/gate/gateTelegraph.js TELEGRAPH_STYLE): its weight for the brass's, light's crackle for the Hand
  *  and the Pulse, Dagon's own for the Reset and the End. */
 export const SD_BLOW_STYLE = Object.freeze({
   stomp: TELEGRAPH_STYLE.weight, hand: TELEGRAPH_STYLE.shock, volley: TELEGRAPH_STYLE.weight,
@@ -45,7 +45,7 @@ export const SD_BLOW_STYLE = Object.freeze({
 /** The brass burning where the Volley fell. */
 export const SD_POOL_COLOR = Object.freeze([1.0, 0.45, 0.16]);
 /** SD18b: AN ENDING'S ELEMENT ON THE FLOOR (net/superDungeon/sdMarks.js) - its colour (the brass burning, frozen, charged, venomed or
- *  soul-lit), its ground's grain (render/gateTelegraph.js TELEGRAPH_STYLE - the gate's own aspects' grains; magic the
+ *  soul-lit), its ground's grain (render/gate/gateTelegraph.js TELEGRAPH_STYLE - the gate's own aspects' grains; magic the
  *  light's crackle), its ground's name, and how far its own blows' colours lean to it (they keep their own, to be told
  *  apart). */
 export const SD_ELEMENT_COLOR = Object.freeze({

@@ -163,7 +163,7 @@
   },
   {
     "name": "SD25-HANG-the-furnace-narrowed",
-    "file": "src/render/sdSky.js",
+    "file": "src/render/superDungeon/sdSky.js",
     "old": "export const SD_FURNACE = Object.freeze({ from: 0.6, full: 1.3 });",
     "new": "export const SD_FURNACE = Object.freeze({ from: 0.95, full: 1.55 });",
     "tests": [

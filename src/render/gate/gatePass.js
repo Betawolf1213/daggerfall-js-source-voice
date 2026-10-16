@@ -19,9 +19,9 @@
 // every skin - online is the enhanced lane, but a pass that will not build costs the gate its fire, never the game.
 //
 // Not a DFU member. Ledger A (WB).
-import { FOG_FACTOR_GLSL } from './labGrass.js';
-import { buildProgram } from './glProgram.js';
-import { ARCH_PROFILE_N, ARCH_Y0, ARCH_Y1, PORTAL_CENTRE_Y, GATE_FOOT_SINK } from '../world/gate/gateModel.js';
+import { FOG_FACTOR_GLSL } from '../labGrass.js';
+import { buildProgram } from '../glProgram.js';
+import { ARCH_PROFILE_N, ARCH_Y0, ARCH_Y1, PORTAL_CENTRE_Y, GATE_FOOT_SINK } from '../../world/gate/gateModel.js';
 
 /** Every rate below is whole cycles over this many seconds; the clock is handed wrapped to it. */
 export const GATE_CLOCK_PERIOD = 120;

@@ -691,5 +691,20 @@
   ["src/combat/gunViewmodel.js","src/combat/gun/gunViewmodel.js"],
   ["src/combat/techniqueBlow.js","src/combat/technique/techniqueBlow.js"],
   ["src/combat/techniqueFx.js","src/combat/technique/techniqueFx.js"],
-  ["src/combat/techniqueRoster.js","src/combat/technique/techniqueRoster.js"]
+  ["src/combat/techniqueRoster.js","src/combat/technique/techniqueRoster.js"],
+  ["src/render/sdArenaGlow.js","src/render/superDungeon/sdArenaGlow.js"],
+  ["src/render/sdBeam.js","src/render/superDungeon/sdBeam.js"],
+  ["src/render/sdHalo.js","src/render/superDungeon/sdHalo.js"],
+  ["src/render/sdMotes.js","src/render/superDungeon/sdMotes.js"],
+  ["src/render/sdOmenPass.js","src/render/superDungeon/sdOmenPass.js"],
+  ["src/render/sdPillarPass.js","src/render/superDungeon/sdPillarPass.js"],
+  ["src/render/sdRiftPass.js","src/render/superDungeon/sdRiftPass.js"],
+  ["src/render/sdSky.js","src/render/superDungeon/sdSky.js"],
+  ["src/render/sdStepsPass.js","src/render/superDungeon/sdStepsPass.js"],
+  ["src/render/sdStompWall.js","src/render/superDungeon/sdStompWall.js"],
+  ["src/render/sdVeil.js","src/render/superDungeon/sdVeil.js"],
+  ["src/render/gateFx.js","src/render/gate/gateFx.js"],
+  ["src/render/gatePass.js","src/render/gate/gatePass.js"],
+  ["src/render/gateTelegraph.js","src/render/gate/gateTelegraph.js"],
+  ["src/render/gateVeil.js","src/render/gate/gateVeil.js"]
 ]

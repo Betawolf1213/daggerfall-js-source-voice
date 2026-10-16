@@ -121,7 +121,7 @@ export function buildRiftStuds(size, lit = SD_RIFT_STUDS, ember = 0) {
 
 /** THE IRIS at `aperture` (0 shut, 1 wide): eight leaves in the ring's plane, each the annular sector from the octagon its
  *  inner edges make (radius `aperture` x the hour-ring's lip) out to SD_RIFT_PARTS.iris1, turned as it closes - its
- *  front a hair before the middle and its back a hair behind (the window, render/sdRiftPass.js, is drawn in the middle:
+ *  front a hair before the middle and its back a hair behind (the window, render/superDungeon/sdRiftPass.js, is drawn in the middle:
  *  the leaves shut it from both sides by depth, so leaves and window always agree). Positions and normals for
  *  renderer.updateMeshVertices: the same count at every aperture. The first call (`irisModel`) makes the mesh. */
 export const SD_IRIS_LEAVES = 8;

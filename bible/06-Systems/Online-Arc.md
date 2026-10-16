@@ -8907,7 +8907,7 @@ nothing on the wire.
 ## WB6c (2026-09-25, Mac: "the transition and the arena needs to be an oblivion masterpiece") - the step through; see 11-Multiplayer/World-Bosses.md
 
 The gate's door and the court's way home are taken in fire - a vortex of flame closing over the screen, burning while
-the place beyond is built, opening onto it (`render/gateVeil.js`, `ui/gate/gateVeil.js`); a court taken by force flashes.
+the place beyond is built, opening onto it (`render/gate/gateVeil.js`, `ui/gate/gateVeil.js`); a court taken by force flashes.
 Online alone, as the gate is; client only; nothing on the wire.
 
 ## WB7 (2026-09-25, Mac: "Proper boss audio during the boss fight") - his voice and his music; see 11-Multiplayer/World-Bosses.md

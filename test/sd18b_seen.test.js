@@ -30,7 +30,7 @@ import { createSdHall } from '../src/scenes/superDungeon/sdHall.js';
 import { stonePoint } from '../src/world/superDungeon/sdHall.js';
 import { SD_HALL_GLOW_RECORD } from '../src/world/superDungeon/sdHallArt.js';
 import { SD_REALM_BRASS_RECORD } from '../src/world/superDungeon/sdRealm.js';
-import { TELEGRAPH_STYLE, TELEGRAPH_EDGE_DAGON } from '../src/render/gateTelegraph.js';
+import { TELEGRAPH_STYLE, TELEGRAPH_EDGE_DAGON } from '../src/render/gate/gateTelegraph.js';
 
 const T0 = 1_800_000_000_000;
 const W = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');

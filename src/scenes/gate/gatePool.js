@@ -2,7 +2,7 @@
 // WB2 (2026-09-25, Mac: "A gate model would be spawned with a timer that leads to a completely different area"):
 // THE GATE THE WORLD HOST STANDS - the pool on the runtime pools' shape (scenes/camps.js, scenes/horseCartPool.js):
 // the stone (world/gate/gateModel.js, uploaded once with its own art - world/gate/gateArt.js), the fire and the beacon
-// (render/gatePass.js), its collider, its light, the eye's box and its names, the countdown over the screen, and
+// (render/gate/gatePass.js), its collider, its light, the eye's box and its names, the countdown over the screen, and
 // the door into the arena. Design: bible/11-Multiplayer/World-Bosses.md section 3.
 //
 // NOTHING HERE IS SAVED OR SENT. Where and when a gate stands is the clock's (net/gate/gateLaw.js) over the map files
@@ -28,7 +28,7 @@
 // Not a DFU member. Ledger A (WB).
 import { buildGateModel, gateArchProfile, insideGateStone, GATE_ARCHIVE, GATE_HEIGHT, GATE_HALF_W, PORTAL_CENTRE_Y, ARCH_Y0, ARCH_Y1, ARCH_PROFILE_N } from '../../world/gate/gateModel.js';
 import { gateArt } from '../../world/gate/gateArt.js';
-import { GatePassRenderer, gateSpinRate } from '../../render/gatePass.js';
+import { GatePassRenderer, gateSpinRate } from '../../render/gate/gatePass.js';
 import { gateSceneXZ } from '../../systems/gate/gateOmen.js';
 import { gateYaw, gatePhase, gateCountdown, countdownText, countdownWords, gateModsOf, gateBossOf, GATE_RISE_MS, GATE_COLLAPSE_MS } from '../../net/gate/gateLaw.js';
 import { marksCardModel } from '../../ui/gate/gateMarksView.js';   // WB9a: tonight's marks, over the screen before the gate is entered

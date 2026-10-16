@@ -2,15 +2,15 @@
 // SD2c (2026-10-06, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 4): THE HOLLOW'S OMEN,
 // DRAWN - a column of brass-gold light straight up over a Super dungeon's pixel from the moment it rises, seen from
 // SD_OMEN_PX map pixels round (systems/superDungeon/sdOmen.js). It is the gate's beacon in its own colours: the gate's column - its
-// shaders and its geometry, exported by render/gatePass.js - built again here under this pass's own program, so the
+// shaders and its geometry, exported by render/gate/gatePass.js - built again here under this pass's own program, so the
 // gate's module is not touched (SERPENT1's rule, Sea-Serpent.md: the gate's bytes stay as their pins hold them). ADDED
 // onto the frame (ONE, ONE), both faces, fogged by the frame's own fog but never below the gate's floor of its light, so
 // a Hollow kilometres off still stands on the horizon. No depth written, depth tested.
 //
 // Not a DFU member. Ledger A (SUPER-DUNGEONS).
-import { BEACON_VS, BEACON_FS, BEACON_RADIUS_M, beaconVertices, gateClock } from './gatePass.js';
-import { buildProgram } from './glProgram.js';
-import { multiply } from '../world/mat4.js';
+import { BEACON_VS, BEACON_FS, BEACON_RADIUS_M, beaconVertices, gateClock } from '../gate/gatePass.js';
+import { buildProgram } from '../glProgram.js';
+import { multiply } from '../../world/mat4.js';
 
 /** Its light, display-encoded as the gate's beacon's is (gatePass.js BEACON_COLOR): brass, gold at its heart - the
  *  gate's red never, so a column on the horizon says which it is. */

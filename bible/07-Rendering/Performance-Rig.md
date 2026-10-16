@@ -633,7 +633,7 @@ whole floor does). Two kinds were laid over ground they never draw on at any pix
 its chevron's tip, for a ring, the floor inside it and a chevron - no glow, no keyline, no wave) and his host's paths and
 tethers (the box about a lane's whole run from the rim, for a lane 0.7 m wide that writes nothing past itself).
 
-**What changed** (`render/gateTelegraph.js`): his mark's quad is its own ground (`telegraphMarkReach`: its ring's reach,
+**What changed** (`render/gate/gateTelegraph.js`): his mark's quad is its own ground (`telegraphMarkReach`: its ring's reach,
 its chevron's base and its tip, a hair past), and a path's or a tether's is its own strip (`telegraphStrip`, the
 walkways' quad laid along it by the vertex stage, `uStrip`). Every other shape keeps TELEGRAPH_REACH: a blow's glow,
 keyline and wave reach as far as the pixel is large (at a far grazing pixel past 4 m), and burning ground's rim as far

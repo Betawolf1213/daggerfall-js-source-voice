@@ -20,7 +20,7 @@
 //     (render/deadlands.js). GATE-FBX (2026-10-09, Mac: "remove the portal that players walk through on the inside and
 //     just use a portal that opens and closes. Like at the end of the fight"): THE BRIDGE'S MEMBRANE IS GONE - its two
 //     posts, its lintel, its sheet of fire and its exit door. The court's portals are the gate's own fire, opening and
-//     closing (scenes/gate/gateCourt.js, render/gatePass.js): THE WAY IN at the bridge's foot (WAY_IN_Z), open as a fighter
+//     closing (scenes/gate/gateCourt.js, render/gate/gatePass.js): THE WAY IN at the bridge's foot (WAY_IN_Z), open as a fighter
 //     steps out of it and closing behind them (`wayInStep`), and THE WAY HOME where he fell (`portalDoor`, WBX2's),
 //     closing as the court comes apart (`portalFade`). Between the two there is no way out but death and the Wrath.
 //
@@ -490,7 +490,7 @@ export function buildWalkSlabModel() {
 /**
  * WBX2 (2026-09-26, Mac: "The oblivion portal on the inside should spawn inside at the end of the fight. Currently
  * there's no way to leave after ending"): THE WAY HOME, TORN OPEN WHERE HE FELL. Once his body is gone (world/gate/gateBoss.js
- * FALL_MS and a breath - PORTAL_AFTER_MS after his fall) the gate's own fire (render/gatePass.js, the arch's opening and
+ * FALL_MS and a breath - PORTAL_AFTER_MS after his fall) the gate's own fire (render/gate/gatePass.js, the arch's opening and
  * its beacon, without the stone - no pillar rises over the spoils) stands on the floor where he fell and rises over
  * PORTAL_RISE_MS; pressing it is the way home (scenes/worldModes.js gateWayHome, through the court's exit doors). SS3
  * (2026-09-27, "Oblivion gate exit on touch prevents looting"): it is never walked through - it stands where his spoils

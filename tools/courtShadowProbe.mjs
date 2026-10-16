@@ -10,7 +10,7 @@
 // court's own light composition (world/gate/gateArena.js withCourtLights over courtLightsNear - the dungeon arm's, worldModes.js
 // `const _court = withCourtLights`), under everyLightCasts as that arm asks, Steady shadows (the default). His glow at his
 // chest (world/gate/gateBoss.js GLOW_RANGE) in ONE kept record as the court keeps it (scenes/gate/gateCourt.js `_glow`), a
-// Hellfire's landing flashes (render/gateFx.js FX_KINDS.hellfire.light, for FX_LIGHT_MS) each its burst's record, and the
+// Hellfire's landing flashes (render/gate/gateFx.js FX_KINDS.hellfire.light, for FX_LIGHT_MS) each its burst's record, and the
 // crowd's Morrowind bodies recorded as renderer.recordShadowBody records them, a new pose every frame (WB9h's budget
 // poses four of eight a frame, so the bodies in a light's reach change every frame either way), of BODY_CORNERS corners
 // (the committed horse's, the AOE-PERF crowd's stand-in).
@@ -25,7 +25,7 @@ import { EL_LANE } from '../src/render/enhancedLighting.js';
 import { SHADOW_TUNING } from '../src/render/shadowPass.js';
 import { courtLightsNear, withCourtLights, courtToDungeon, buildCourtModel } from '../src/world/gate/gateArena.js';
 import { GLOW_RANGE, LANDING_LIGHT_Y } from '../src/world/gate/gateBoss.js';
-import { FX_KINDS, FX_LIGHT_MS } from '../src/render/gateFx.js';
+import { FX_KINDS, FX_LIGHT_MS } from '../src/render/gate/gateFx.js';
 import { lookAt, perspective, mirrorProjectionX } from '../src/world/mat4.js';
 import { isMain } from './lib/isMain.mjs';
 

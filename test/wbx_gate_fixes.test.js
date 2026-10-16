@@ -10,7 +10,7 @@
 //   WBX1 the one index type          render/renderer.js createMesh; the gate's, the court's and the land's builders
 //   WBX2 the portal home             scenes/gate/gateCourt.js portalFrame, world/gate/gateArena.js portalDoor, worldModes gateWayHome
 //   WBX3 the loot line               render/spoilsGlow.js, scenes/spoilsPool.js (the item's own sprite), ui/item/itemIconColor32.js
-//   WBX4 his damage and his mark     net/gate/gateBrain.js `base`, net/gate/gateStrike.js strikeDamage; render/gateTelegraph.js mark
+//   WBX4 his damage and his mark     net/gate/gateBrain.js `base`, net/gate/gateStrike.js strikeDamage; render/gate/gateTelegraph.js mark
 //   WBX5 the phases                  net/gate/gateBrain.js PHASE_TURN, the leap, the meteor, the spokes, the burning ground
 //   WBX6 no regeneration, no wear    systems/courtRules.js; combat/formulas.js damageEquipment and the stand-in's spareGear
 //   WBX7 the soul trap               scenes/hostMagic.js, scenes/dungeonContext.js spellOnBoss, the court's roll at his fall
@@ -32,7 +32,7 @@ import {
   windupOf, wrapYaw, PHASE_AT,
 } from '../src/net/gate/gateBrain.js';
 import { inAttack, spokeLanes, landingPools, poolUnder, strikeDamage, blowOf, strikeVerdict } from '../src/net/gate/gateStrike.js';
-import { telegraphShape, telegraphField, markShape, poolShapes, TELEGRAPH_KIND, TELEGRAPH_FS, BOSS_MARK_R, BOSS_MARK_CHEVRON_LEN, BOSS_MARK_CHEVRON_HALF_W } from '../src/render/gateTelegraph.js';
+import { telegraphShape, telegraphField, markShape, poolShapes, TELEGRAPH_KIND, TELEGRAPH_FS, BOSS_MARK_R, BOSS_MARK_CHEVRON_LEN, BOSS_MARK_CHEVRON_HALF_W } from '../src/render/gate/gateTelegraph.js';
 import { bossPlace, bossHop, bossAct, bossStandIn, bossLookOf, LEAP_AIR_MS, LEAP_HEIGHT, ATTACK_COLORS, POOL_COLOR, WARD_COLOR, BOSS_CUES, QUAKE_ON } from '../src/world/gate/gateBoss.js';
 import { createGateCourt, courtPhaseCard, COURT_STRIKE_TEXT, MARK_COLOR, COURT_ROUND_MS } from '../src/scenes/gate/gateCourt.js';
 import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';

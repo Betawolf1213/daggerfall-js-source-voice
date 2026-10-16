@@ -28,7 +28,7 @@ overdoing it"*. His calls, asked the same day:
   the dungeon's, the street guards', the exterior encounters' and the interior watch's are separate pools, so a guard and
   a bandit stand in each other. The navmesh's `syncNavObstacles` and RVO `avoidHeading` are ported and called nowhere
   (the arc's 4b). Nothing keeps a foe out of a doorway.
-- **Telegraphs exist for the world boss alone** (`net/gate/gateBrain.js`, `net/gate/gateStrike.js`, `render/gateTelegraph.js`):
+- **Telegraphs exist for the world boss alone** (`net/gate/gateBrain.js`, `net/gate/gateStrike.js`, `render/gate/gateTelegraph.js`):
   shaped wind-ups resolved by where the feet stand at the landing. Ordinary foes swing on DFU's clock, with no tell.
 
 ## The design: four slices, each behind the Enhanced AI switch

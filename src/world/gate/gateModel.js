@@ -6,7 +6,7 @@
 // texturing"): MAC'S OWN GATE, baked out of his Blender scene (src/assets/gate/oblivionGate.json, tools/bakeGate.mjs) -
 // two pillars of black volcanic stone on clawed feet, a lintel flaring over them, the opening's top corners cut in, three
 // spines down each pillar's outside. WB2's gate, two horns swept along a cubic over a stepped plinth in code, is gone
-// with it. The portal hangs between the pillars (the membrane is a pass of its own - render/gatePass.js - never this
+// with it. The portal hangs between the pillars (the membrane is a pass of its own - render/gate/gatePass.js - never this
 // mesh), fitted to the opening as the stone stands (`gateArchProfile`, sliced off this mesh).
 //
 // THE TEXTURING. The bake carries none - Mac's materials are Blender's default grey - so every face is laid on the
@@ -125,7 +125,7 @@ export function spike(f, b, w, tip) {
   }
 }
 
-/** How many heights the arch's opening is measured at - the membrane's mask (render/gatePass.js uProfile). */
+/** How many heights the arch's opening is measured at - the membrane's mask (render/gate/gatePass.js uProfile). */
 export const ARCH_PROFILE_N = 24;
 /** The opening's bottom: the ground - the feet's inner edges meet it. */
 export const ARCH_Y0 = 0;
@@ -153,7 +153,7 @@ export function gateArchTop(part = PART) {
 }
 export const ARCH_Y1 = gateArchTop();
 /** The portal's centre: half-way up the opening (the fire's light and its vortex turn about it - the beacon is measured
- *  from the gate's foot, render/gatePass.js BEACON_START_M). */
+ *  from the gate's foot, render/gate/gatePass.js BEACON_START_M). */
 export const PORTAL_CENTRE_Y = (ARCH_Y0 + ARCH_Y1) / 2;
 
 /**
@@ -292,7 +292,7 @@ export function buildGateModel() {
  * the pillars, less `margin`, never below zero - the stone's own clear at each height (gateClearAt; inside the opening
  * by a millimetre at its two ends, where the soles and the lintel's underside lie IN those planes). GATE-FBX: SLICED,
  * where WB2's read the horns' vertices in bands - Mac's gate has 72 corners, and most heights have none. The pass draws
- * the fire as the line between two heights (render/gatePass.js uProfile), and where the stone narrows between them and
+ * the fire as the line between two heights (render/gate/gatePass.js uProfile), and where the stone narrows between them and
  * widens again - the cut corners' tips, 13.08 m up - that line runs into it (0.27 m, sampled bare), so at every corner's
  * height between two the line is measured against the stone, and both lowered by what it overruns. AUDIT GATE-FBX G2:
  * each height took the least clear over both its bands, and the fire stood up to 1.15 m short of the stone - a see-through

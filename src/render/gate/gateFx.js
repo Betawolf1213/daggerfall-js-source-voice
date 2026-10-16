@@ -1,6 +1,6 @@
 // @ts-check
 // WB9e (2026-09-30, Mac: "Further improve his effects ... Increase boss damage, further improve his telegraphs"): HIS
-// BLOWS, SEEN LANDING. The telegraph says where a blow will fall (render/gateTelegraph.js); this pass is the fall itself:
+// BLOWS, SEEN LANDING. The telegraph says where a blow will fall (render/gate/gateTelegraph.js); this pass is the fall itself:
 //
 //   - THE BURST: every landing throws sparks out of the stone where it lands - his weight's grit and embers, his fire's
 //     flame, his aspect's frost, lightning or venom in their colours - flying out and up, falling, cooling from white-hot
@@ -24,9 +24,9 @@
 // flight, in JS) are the pins' doors.
 //
 // Not a DFU member. Ledger A (WB).
-import { FOG_FACTOR_GLSL } from './labGrass.js';
-import { buildProgram } from './glProgram.js';
-import { ATTACK_BY_ID, ATTACKS } from '../net/gate/gateBrain.js';
+import { FOG_FACTOR_GLSL } from '../labGrass.js';
+import { buildProgram } from '../glProgram.js';
+import { ATTACK_BY_ID, ATTACKS } from '../../net/gate/gateBrain.js';
 
 /** A burst's sparks fly this long (ms); the most sparks one burst throws; the most bursts drawn at once. */
 export const FX_BURST_MS = 1100;

@@ -10,9 +10,9 @@
 // ARENA2:
 //   1. THE BURNING COURT at a fighter's eye - its own mesh and art (world/gate/gateArena.js buildCourtModel, gateArt.js), lit
 //      and fogged as the court is, on the enhanced lighting lane - with the boss's real shapes from their real producers
-//      (render/gateTelegraph.js telegraphShape, poolShapes, markShape; scenes/gate/gateHost.js hostShapes): each blow alone,
+//      (render/gate/gateTelegraph.js telegraphShape, poolShapes, markShape; scenes/gate/gateHost.js hostShapes): each blow alone,
 //      the mark, the burning ground, his host, and whole AoE frames of them, a pass a shape in their order as the court
-//      draws them - and, with `--before <module>` (a copy of render/gateTelegraph.js as it stood before AOE-PERF), as
+//      draws them - and, with `--before <module>` (a copy of render/gate/gateTelegraph.js as it stood before AOE-PERF), as
 //      that module drew them, in the same rounds.
 //   2. THE LOOK (with `--before`) - his mark, his host and the AoE frames drawn both ways on the classic lane (straight
 //      onto the canvas) and read back whole, against a CONTROL: the old pass against itself with the camera moved a
@@ -57,7 +57,7 @@ try {
   const out = await page.evaluate(async ({ W, H, FRAMES, LANE, ONLY, BEFORE }) => {
     const [{ Renderer, WORLD_FRAME }, m, el, ga, gart, gt, gb, gh, hr, pr, dl, old] = await Promise.all([
       import('/src/render/renderer.js'), import('/src/world/mat4.js'), import('/src/render/enhancedLighting.js'), import('/src/world/gate/gateArena.js'),
-      import('/src/world/gate/gateArt.js'), import('/src/render/gateTelegraph.js'), import('/src/net/gate/gateBrain.js'), import('/src/scenes/gate/gateHost.js'),
+      import('/src/world/gate/gateArt.js'), import('/src/render/gate/gateTelegraph.js'), import('/src/net/gate/gateBrain.js'), import('/src/scenes/gate/gateHost.js'),
       import('/src/world/horseRig.js'), import('/src/net/peer/peerRiders.js'), import('/src/render/deadlands.js'), BEFORE ? import(`/${BEFORE}`) : null,
     ]);
     const cv = document.createElement('canvas');

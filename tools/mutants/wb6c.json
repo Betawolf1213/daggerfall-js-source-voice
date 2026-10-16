@@ -1,35 +1,35 @@
 [
   {
     "name": "WB6c-the-corners-never-clear",
-    "file": "src/render/gateVeil.js",
+    "file": "src/render/gate/gateVeil.js",
     "old": "export const VEIL_FRONT_OUT = 1.4;",
     "new": "export const VEIL_FRONT_OUT = 1.1;",
     "tests": ["test/wb6c_gate_veil.test.js"]
   },
   {
     "name": "WB6c-the-centre-never-taken",
-    "file": "src/render/gateVeil.js",
+    "file": "src/render/gate/gateVeil.js",
     "old": "export const VEIL_FRONT_IN = -0.55;",
     "new": "export const VEIL_FRONT_IN = -0.2;",
     "tests": ["test/wb6c_gate_veil.test.js"]
   },
   {
     "name": "WB6c-the-opening-from-the-wrong-end",
-    "file": "src/render/gateVeil.js",
+    "file": "src/render/gate/gateVeil.js",
     "old": "    front = f0 + (VEIL_FRONT_OUT - f0) * (1 - (1 - u) ** 2.2);",
     "new": "    front = VEIL_FRONT_OUT - (VEIL_FRONT_OUT - f0) * (1 - (1 - u) ** 2.2);",
     "tests": ["test/wb6c_gate_veil.test.js"]
   },
   {
     "name": "WB6c-the-fire-dawdling-in",
-    "file": "src/render/gateVeil.js",
+    "file": "src/render/gate/gateVeil.js",
     "old": "    front = VEIL_FRONT_OUT - span * u ** 1.6;",
     "new": "    front = VEIL_FRONT_OUT - span * u ** 0.6;",
     "tests": ["test/wb6c_gate_veil.test.js"]
   },
   {
     "name": "WB6c-the-shaders-raggedness-not-the-laws",
-    "file": "src/render/gateVeil.js",
+    "file": "src/render/gate/gateVeil.js",
     "old": "  float edge = uFront + (f1 - 0.5) * ${VEIL_RAG_BODY.toFixed(2)} +",
     "new": "  float edge = uFront + (f1 - 0.5) * 0.9 +",
     "tests": ["test/wb6c_gate_veil.test.js"]

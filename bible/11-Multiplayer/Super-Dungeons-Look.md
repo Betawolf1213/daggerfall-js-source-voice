@@ -146,7 +146,7 @@ Only L3 and L4 may bloom. Nothing on L1 or L2 exceeds 0.5.
    - `d.culled`: the stage cull below. It is separate from `d.hidden`, which stays the law's (gone steps, hidden bodies).
 3. **The stage cull.** Every realm draw is tagged `threshold`, `orrery`, `steps` or `arena`. The static realm mesh is split per stage. Once a frame, each stage's bounding sphere is tested against `render/frustum.js` `frustumPlanes`. The sphere is the stage's radius plus 12 m (a lamp's range) plus 6 m. The stage holding the eye is never culled. A culled stage sets `d.culled` on its draws. Today the arm issues about 110 realm mesh draws wherever you stand; inside one stage that drops to 30-60.
 4. **`renderer.setSceneGrade({ adaptKey, adaptMax, bloom, vignette, contrast })`.** It writes `AirPass.adaptParams[1..3]` and `AirPass.grade` for the frame, and every frame that does not call it gets the defaults back (`AIR_ADAPT_KEY` 0.18 and `AIR_ADAPT_MAX` 1.8; `AIR_BLOOM_STRENGTH` 0.6, `AIR_VIGNETTE` 0.28, `AIR_CONTRAST` 1.04). **The Hour uses key 0.12, max 1.15, bloom 0.8, vignette 0.34, contrast 1.08.** It does nothing on classic. The Hollow keeps the defaults: it is a Daggerfall dungeon.
-5. **`render/sdHalo.js`** (new foreign pass). Up to 64 camera-facing additive quads in one dynamic VBO (8 KB a frame), with the falloff posterized to 4 steps, depth-tested, no depth write, fogged by `FOG_FACTOR_GLSL`. It is the classic set's bloom for lantern cores, the Rift's core, the way-out lights, the Remnant's eyes, heart and blade tip. Gain is 1.0 on classic and 0.5 on the lane, so bloom does not double it.
+5. **`render/superDungeon/sdHalo.js`** (new foreign pass). Up to 64 camera-facing additive quads in one dynamic VBO (8 KB a frame), with the falloff posterized to 4 steps, depth-tested, no depth write, fogged by `FOG_FACTOR_GLSL`. It is the classic set's bloom for lantern cores, the Rift's core, the way-out lights, the Remnant's eyes, heart and blade tip. Gain is 1.0 on classic and 0.5 on the lane, so bloom does not double it.
 6. **The lite tier.** One flag, `ui/touch/touchDevice.js` `isTouchDevice` (or a low GPU tier), read by every piece's phone column.
 7. **The lab** (`src/tools/abyssLab.js`). It gains state knobs for every read:
    - `?rift=open|notyet|collapse|closed|refused`, `&left=`, `?riftSize=`
@@ -251,7 +251,7 @@ About 1.6k triangles in all.
 
 **State.** `riftLook(word, phase, entered, fallen, count, now)` is pure, in `world/superDungeon/sdDungeon.js`. It reads only what the page already holds (`sdRiftWord`, `sdPhase`, entered, fallen, `sdRiftCount`) and returns `{ aperture, tickHz, studs, studTone, tone, light }`. `sdEnd` eases the aperture over 0.6 s whenever it changes.
 
-**The portal pass.** `render/sdRiftPass.js` (new) follows the gate membrane's law (`render/gatePass.js`): premultiplied `ONE, ONE_MINUS_SRC_ALPHA`, depth-tested, no depth write, fogged, both faces, every rate a whole number of cycles over its wrapped clock. It has two draws:
+**The portal pass.** `render/superDungeon/sdRiftPass.js` (new) follows the gate membrane's law (`render/gate/gatePass.js`): premultiplied `ONE, ONE_MINUS_SRC_ALPHA`, depth-tested, no depth write, fogged, both faces, every rate a whole number of cycles over its wrapped clock. It has two draws:
 
 - **(a) The window.** A 48-triangle fan at 0.86 of the radius, 1 cm behind the leaves' plane. In the fragment:
   1. Snap the disc's uv to a 128-cell grid.
@@ -268,7 +268,7 @@ About 1.6k triangles in all.
   - **36 tooth spokes turned with the gear**: a gobo drawn on the floor, not a shadow.
   - Pulsed outward on each toll.
 
-The core is one quad in `render/sdHalo.js`.
+The core is one quad in `render/superDungeon/sdHalo.js`.
 
 **The sky map in the Hollow.** When `sdEnd` stands a Rift in a Super Hollow, `render/sdSkyMap.js` paints the Hour's map over idle frames, one quadrant a frame after the level's own warm. It refreshes one quadrant every 4 frames, and only while the window's bounding sphere is on screen. **The same texture is handed to the realm at the step**, so the Hour's sky is already painted when you arrive. `sdSkyMap` owns it and frees it when the player leaves both the Hollow and the Hour (EVERY ALLOCATION HAS AN OWNER).
 
@@ -279,7 +279,7 @@ The core is one quad in `render/sdHalo.js`.
 - It enters the light list through a new `sdEnd.lights()` in `dungeonContext.js`'s mode lights.
 - **Casting.** The dungeon arm calls `everyLightCasts()`, so every light keeps a cube. Only the static draw (crater, plinth, claws) casts. It never moves, so SC1's cache builds it once. The gear, hour-ring, iris, studs and shards are `noShadow`, so nothing that turns rebuilds a cube every frame.
 
-**Motes.** `render/sdMotes.js` gains kinds with an origin (`SD_MOTE_*` are realm-only today). The rift kind is 48 frozen specks within 4 m (no velocity) plus 72 inflowing on a sphere of 3 times the size, spiralling into the window and dying at it. One draw.
+**Motes.** `render/superDungeon/sdMotes.js` gains kinds with an origin (`SD_MOTE_*` are realm-only today). The rift kind is 48 frozen specks within 4 m (no velocity) plus 72 inflowing on a sphere of 3 times the size, spiralling into the window and dying at it. One draw.
 
 **The reveal.** One collider ray, eye to ring centre, every 250 ms until it fires, once a visit.
 
@@ -293,7 +293,7 @@ The core is one quad in `render/sdHalo.js`.
 |---|---|
 | `world/superDungeon/sdRiftModel.js` | `src/scenes/superDungeon/sdEnd.js` (stand into `dynamicDraws`; retire `riftFrame` and the billboards; `lights()`; `pulse(kind)`; read `riftLook`) |
 | `world/superDungeon/sdRiftArt.js` | `src/world/superDungeon/sdDungeon.js` (`sdRiftFace`, `face` in `sdRiftPlace`, `sdReturnPlace` by face, `riftLook`) |
-| `render/sdRiftPass.js` | `src/render/sdMotes.js` (kinds with an origin), `src/scenes/dungeonContext.js`, `src/scenes/worldModes.js` (`drawSdRift`), `src/scenes/world.js` (pass construction), `test/sd4b_rift.test.js` (`riftFrame` pins retired, new ones written) |
+| `render/superDungeon/sdRiftPass.js` | `src/render/superDungeon/sdMotes.js` (kinds with an origin), `src/scenes/dungeonContext.js`, `src/scenes/worldModes.js` (`drawSdRift`), `src/scenes/world.js` (pass construction), `test/sd4b_rift.test.js` (`riftFrame` pins retired, new ones written) |
 | `render/sdSkyMap.js` (piece 5) | `src/tools/abyssLab.js` |
 
 ### Cost
@@ -351,7 +351,7 @@ Its cool silver light makes a second, colder pool on the floor beside the Rift's
   - The sky comes from **the game clock**, the hour the world host's sky reads, not the realm's anchored clock: a day, dusk or night ramp by hour, posterized and dithered.
   - Clouds are two sheets of value noise snapped to the window's grid.
   - At night: the star hash plus Masser `[0.85,0.3,0.25]` (0.07 rad) and Secunda `[0.85,0.86,0.9]` (0.04 rad) at fixed directions.
-  - The skyline is the sky's own skyline GLSL, exported from `render/sdSky.js` as `SD_SKYLINE_GLSL` and drawn right way up. The city is chosen by the Hollow's region: Daggerfall's towers, Sentinel's domes, Wayrest's bridge, or a generic Bay town.
+  - The skyline is the sky's own skyline GLSL, exported from `render/superDungeon/sdSky.js` as `SD_SKYLINE_GLSL` and drawn right way up. The city is chosen by the Hollow's region: Daggerfall's towers, Sentinel's domes, Wayrest's bridge, or a generic Bay town.
   - `uFade` drives the going out.
 - **Light.** Moon light `[0.85,0.9,1.0]` x 0.6, range 4.5, on both lanes. Motes: 16 rising, in the Rift's mote draw.
 - **Going out.** `returnOut()` sets `outAt`, and `targets()` drops the key at once, so the law is never delayed. `uFade` runs 0 to 1 over 1.5 s with the light. Then a 1 s translate down: the floor's depth hides what has sunk, with no clip plane. A `gateFx` grit burst, then the draws are freed. `clear()` frees at once, even mid-animation.
@@ -359,9 +359,9 @@ Its cool silver light makes a second, colder pool on the floor beside the Rift's
 
 ### Files and new modules
 
-- `world/superDungeon/sdRiftModel.js`, `world/superDungeon/sdRiftArt.js`, `render/sdRiftPass.js` (mode `bay`)
+- `world/superDungeon/sdRiftModel.js`, `world/superDungeon/sdRiftArt.js`, `render/superDungeon/sdRiftPass.js` (mode `bay`)
 - `src/scenes/superDungeon/sdEnd.js`, `src/world/superDungeon/sdDungeon.js` (`sdReturnPlace`)
-- `src/render/sdSky.js` (export `SD_SKYLINE_GLSL`), `src/scenes/dungeonContext.js` (region to city)
+- `src/render/superDungeon/sdSky.js` (export `SD_SKYLINE_GLSL`), `src/scenes/dungeonContext.js` (region to city)
 
 ### Cost
 
@@ -410,7 +410,7 @@ One cloud sheet; skyline without windows.
 
 ### How it is built
 
-- **Program.** `render/sdVeil.js` is a new program, chosen by theme inside `render/gateVeil.js`'s `GateVeilRenderer`, built lazily and also in `warm()`'s idle build. **The fire program and its pins are untouched.** The existing `brass` theme stays as the fallback if the new program fails to build.
+- **Program.** `render/superDungeon/sdVeil.js` is a new program, chosen by theme inside `render/gate/gateVeil.js`'s `GateVeilRenderer`, built lazily and also in `warm()`'s idle build. **The fire program and its pins are untouched.** The existing `brass` theme stays as the fallback if the new program fails to build.
 - **Timing.** `veilAt` is reused as is:
   - The aperture comes from the front: `open = (front − VEIL_FRONT_IN) / (VEIL_FRONT_OUT − VEIL_FRONT_IN)`.
   - `cover` is the closure; `heat` is the hand's speed.
@@ -432,8 +432,8 @@ One cloud sheet; skyline without windows.
 
 ### Files and new modules
 
-- **New:** `render/sdVeil.js`
-- **Changed:** `src/render/gateVeil.js` (theme dispatch), `src/ui/gate/gateVeil.js` (themes, canvas, cues, centre), `src/systems/superDungeon/sdScore.js` (export the quarters; hold the Hour cue until the open), `src/scenes/world.js`, `src/scenes/dungeonContext.js`, `src/scenes/superDungeon/sdFx.js` (the rewind burst)
+- **New:** `render/superDungeon/sdVeil.js`
+- **Changed:** `src/render/gate/gateVeil.js` (theme dispatch), `src/ui/gate/gateVeil.js` (themes, canvas, cues, centre), `src/systems/superDungeon/sdScore.js` (export the quarters; hold the Hour cue until the open), `src/scenes/world.js`, `src/scenes/dungeonContext.js`, `src/scenes/superDungeon/sdFx.js` (the rewind burst)
 - **Tests:** the veil's new theme pins; the fire's left as they are
 
 ### Cost
@@ -507,7 +507,7 @@ The other parts:
 - `sdEnd.standReturn` builds the arch in 4 parts plus the keystone hand (`sdRiftModel.js` splits `buildReturnModel`). The parts animate on matrices over `SD_HOME_RISE_MS` with a 120 ms stagger, then merge into the one arch draw.
 - Every stage is timed from `s.fell.at` and `sdHomeAge` (pure), so a page that arrives late finds it standing with its beacon already settled.
 - The column is the existing `sdFx` home and column kinds.
-- **The beacon** is `render/sdOmenPass.js`'s column at 40 m, then 6 m. The column gains a colour uniform (`SD_OMEN_COLOR` is fixed today) and stands 1.2 m wide in silver, dimmer and thinner than the spoils' gold lines.
+- **The beacon** is `render/superDungeon/sdOmenPass.js`'s column at 40 m, then 6 m. The column gains a colour uniform (`SD_OMEN_COLOR` is fixed today) and stands 1.2 m wide in silver, dimmer and thinner than the spoils' gold lines.
 - **The hand-plate:** a sub-mesh swapped by `d.texRemap` while `sdEnd.hoverName` answers its key.
 - **The motes:** an attractor uniform on the arena kind.
 - **Light:** moon, range 6, first in the realm's light sort, so it is never dropped.
@@ -516,9 +516,9 @@ The other parts:
 
 ### Files and new modules
 
-- `src/scenes/superDungeon/sdEnd.js`, `world/superDungeon/sdRiftModel.js` (the Return in parts), `render/sdRiftPass.js` (modes `hollow` and `bay`)
+- `src/scenes/superDungeon/sdEnd.js`, `world/superDungeon/sdRiftModel.js` (the Return in parts), `render/superDungeon/sdRiftPass.js` (modes `hollow` and `bay`)
 - `src/world/superDungeon/sdRealm.js` (the dais; the way back's light), `src/scenes/superDungeon/sdFx.js` (`wayBack`)
-- `src/render/sdOmenPass.js` (colour and height uniforms), `src/render/sdMotes.js` (attractor)
+- `src/render/superDungeon/sdOmenPass.js` (colour and height uniforms), `src/render/superDungeon/sdMotes.js` (attractor)
 - `src/scenes/world.js` (the beacon in `drawSdTelegraph`; a peer's arrival)
 
 ### Cost
@@ -624,7 +624,7 @@ A painted sky you could believe was made in Deluxe Paint in 1996, but alive.
 ### Files and new modules
 
 - **New:** `render/sdSkyMap.js`, `world/superDungeon/sdSkyArt.js`, `world/sdShardsModel.js`
-- **Changed:** `src/render/sdSky.js` (paint and fetch stages, `SD_SKY_FETCH_GLSL`, `SD_SKYLINE_GLSL`, the new `SD_CLOCK_FACE`, `uClock`), `src/scenes/world.js` (`drawSdSky` gets the phase), `src/scenes/worldModes.js` (paint before `beginFrame`; shards in the realm's draws), `src/scenes/dungeonContext.js` (the map handed from the Hollow to the realm)
+- **Changed:** `src/render/superDungeon/sdSky.js` (paint and fetch stages, `SD_SKY_FETCH_GLSL`, `SD_SKYLINE_GLSL`, the new `SD_CLOCK_FACE`, `uClock`), `src/scenes/world.js` (`drawSdSky` gets the phase), `src/scenes/worldModes.js` (paint before `beginFrame`; shards in the realm's draws), `src/scenes/dungeonContext.js` (the map handed from the Hollow to the realm)
 - **Tests:** `test/sd5b_sky.test.js` and `test/sd23_sky.test.js` re-pinned (`CLOCK_BASIS`, `SD_SHARD_TOP`, whole turns over the period, the face kept clear)
 
 ### Cost
@@ -831,7 +831,7 @@ Joints are dark. **There is no neon grid.**
   - The Concord eases every tilt to 0, idempotently, so a page arriving after it stands the rings flat with no choreography (the hall's "first word" rule).
 - **The gem:** 7 glow records (16x16, count 0-6) swapped by `texRemap`, plus a point light (Mantella, range 14, intensity `max(0.2, count/6)`) in `host.sdRealmLights`.
 
-**The Concord's band:** `render/sdBeam.js` with `uFlat` 1, Mantella running into gold, from the hub to the rim over 1.0 s.
+**The Concord's band:** `render/superDungeon/sdBeam.js` with `uFlat` 1, Mantella running into gold, from the hub to the rim over 1.0 s.
 
 **The bridge:** `buildBridgeModel` becomes 12 plates in one mesh. Per-plate hinge matrices come from `bridgeLayMatrix`'s k, staggered over `SD_BRIDGE_LAY_MS`, and fold back into the one bridge draw once laid.
 
@@ -842,7 +842,7 @@ Joints are dark. **There is no neon grid.**
 ### Files and new modules
 
 - **New:** `world/superDungeon/sdOrreryModel.js`
-- **Changed:** `src/world/superDungeon/sdHall.js`, `src/world/superDungeon/sdHallArt.js` (atlas through the kit; `SD_SIGNS` unchanged), `src/scenes/superDungeon/sdHall.js` (crown gears, bezels, banners, rings and gem, fray, snap, Concord, bridge plates), `src/scenes/superDungeon/sdFx.js` (`turn`), `src/render/sdMotes.js` (dust jitter uniform), `src/render/sdBeam.js` (reused), `src/world/superDungeon/sdRealm.js` (Orrery lamps 8 to 4), `src/tools/abyssLab.js`
+- **Changed:** `src/world/superDungeon/sdHall.js`, `src/world/superDungeon/sdHallArt.js` (atlas through the kit; `SD_SIGNS` unchanged), `src/scenes/superDungeon/sdHall.js` (crown gears, bezels, banners, rings and gem, fray, snap, Concord, bridge plates), `src/scenes/superDungeon/sdFx.js` (`turn`), `src/render/superDungeon/sdMotes.js` (dust jitter uniform), `src/render/superDungeon/sdBeam.js` (reused), `src/world/superDungeon/sdRealm.js` (Orrery lamps 8 to 4), `src/tools/abyssLab.js`
 - **Tests:** `test/sd6c_hall.test.js` and `test/sd6b_hall.test.js` (art and shape pins retired and rewritten)
 
 ### Cost
@@ -933,7 +933,7 @@ Every step shows what it will do next, from across the void, before you jump.
 - In the last 0.6 s of `SD_CRUMBLE_BACK` the same motion runs backwards, eased out. **The law's return at 5 s still decides.**
 - The grit is the `sdFx` slip kind at the touch.
 
-**The ghost pass.** `render/sdStepsPass.js` (new) draws the whole course in **one additive draw**:
+**The ghost pass.** `render/superDungeon/sdStepsPass.js` (new) draws the whole course in **one additive draw**:
 
 - The ghost outlines of gone Beat plates and of my gone Crumble pins, drawn as screen-width line quads 2 px wide (`telegraphLineW`'s law, wider on short screens; **never `GL_LINES`**, which WebGL caps at 1 px), each with its hand.
 - A static VBO of 25 boxes' edge quads, plus uniform arrays `uStep[25]` (x, y, z, kind) and `uState[25]` (phase, alpha, timer share, mine), written in place (AUDIT SD II L2 F9's law).
@@ -947,8 +947,8 @@ Every step shows what it will do next, from across the void, before you jump.
 
 ### Files and new modules
 
-- **New:** `render/sdStepsPass.js`
-- **Changed:** `src/world/superDungeon/sdStepsModel.js` (bevelled steps, pendulum, rack, chunks, waystones, vane), `src/world/superDungeon/sdStepsArt.js` (kind atlases, beat frames, crack stages), `src/scenes/superDungeon/sdSteps.js` (`SD_BEAT_BLINK_HZ`, frames, dissolve, chunks and rewind, vane, waystones, the pass), `src/scenes/worldModes.js` (the loop fields), `src/scenes/world.js` (the pass in `drawSdTelegraph`), `src/render/sdMotes.js` (`uWind`), `src/scenes/superDungeon/sdFx.js`
+- **New:** `render/superDungeon/sdStepsPass.js`
+- **Changed:** `src/world/superDungeon/sdStepsModel.js` (bevelled steps, pendulum, rack, chunks, waystones, vane), `src/world/superDungeon/sdStepsArt.js` (kind atlases, beat frames, crack stages), `src/scenes/superDungeon/sdSteps.js` (`SD_BEAT_BLINK_HZ`, frames, dissolve, chunks and rewind, vane, waystones, the pass), `src/scenes/worldModes.js` (the loop fields), `src/scenes/world.js` (the pass in `drawSdTelegraph`), `src/render/superDungeon/sdMotes.js` (`uWind`), `src/scenes/superDungeon/sdFx.js`
 - **Tests:** `test/sd7b_steps.test.js`
 
 ### Cost
@@ -1019,7 +1019,7 @@ Every step shows what it will do next, from across the void, before you jump.
 - **`realmFloorTris` keeps the flat disc:** the collider is unchanged.
 - The 64-px Voronoi `realmArenaArt` is retired.
 
-**Arena light.** `render/sdArenaGlow.js` (new) is **one premultiplied draw**: a flat disc 0.015 m over the floor, plus 12 numeral quads, plus up to 2 sigil quads (piece 10).
+**Arena light.** `render/superDungeon/sdArenaGlow.js` (new) is **one premultiplied draw**: a flat disc 0.015 m over the floor, plus 12 numeral quads, plus up to 2 sigil quads (piece 10).
 
 - **The fissures' distance field is baked once into a 128x128 R8 texture** (16 KB), so the fragment does one tap, not a segment loop.
 - At rest it darkens the crack lines and adds a faint green core.
@@ -1034,7 +1034,7 @@ Every step shows what it will do next, from across the void, before you jump.
 - **Capital hands:** 4 draws, yawed each frame toward the body's pose.
 - **Lanterns:** gold, range 12, at the capitals. **These 4 replace 4 of the 8 rim lamps**, so the light count does not change.
 
-**The Stomp wall:** `render/sdBeam.js` gains a ring mode, a 64-segment cylinder strip at `stompRingAt`'s radius (the very front the law strikes), additive, fogged, posterized in bands with a bright top lip. The gate telegraph's floor ring stays under it. **`SD_BEAM_MAX` is not raised for the Hearts**; they use the crystal pass (piece 10).
+**The Stomp wall:** `render/superDungeon/sdBeam.js` gains a ring mode, a 64-segment cylinder strip at `stompRingAt`'s radius (the very front the law strikes), additive, fogged, posterized in bands with a bright top lip. The gate telegraph's floor ring stays under it. **`SD_BEAM_MAX` is not raised for the Hearts**; they use the crystal pass (piece 10).
 
 **The mark:** `TELEGRAPH_KIND.mark` (WBX4's) laid by `scenes/superDungeon/sdRemnantBlows.js` under the Remnant and each Echo, in the body's metal.
 
@@ -1046,8 +1046,8 @@ Every step shows what it will do next, from across the void, before you jump.
 
 ### Files and new modules
 
-- **New:** `render/sdArenaGlow.js`
-- **Changed:** `src/world/superDungeon/sdRealm.js` (bands, rim, pillars' visual, lanterns, lamps 8 to 4 plus 4), `src/world/superDungeon/sdRealmArt.js` (bronze plate, pillar face), `src/render/sdBeam.js` (ring mode), `src/render/duelWall.js` (colour uniform), `src/scenes/superDungeon/sdRemnantBlows.js` (flood and Reset envelopes, the mark, the Stomp wall, the dimming), `src/scenes/superDungeon/sdRemnant.js` (capital hands), `src/scenes/world.js` (`drawSdTelegraph` wiring), `src/tools/abyssLab.js`
+- **New:** `render/superDungeon/sdArenaGlow.js`
+- **Changed:** `src/world/superDungeon/sdRealm.js` (bands, rim, pillars' visual, lanterns, lamps 8 to 4 plus 4), `src/world/superDungeon/sdRealmArt.js` (bronze plate, pillar face), `src/render/superDungeon/sdBeam.js` (ring mode), `src/render/duelWall.js` (colour uniform), `src/scenes/superDungeon/sdRemnantBlows.js` (flood and Reset envelopes, the mark, the Stomp wall, the dimming), `src/scenes/superDungeon/sdRemnant.js` (capital hands), `src/scenes/world.js` (`drawSdTelegraph` wiring), `src/tools/abyssLab.js`
 - **Tests:** `test/sd8c_remnant_page.test.js`, `test/sd15_read.test.js`, `test/sd20c_render.test.js`
 
 ### Cost

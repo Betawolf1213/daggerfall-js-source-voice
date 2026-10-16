@@ -357,7 +357,7 @@ Two causes in the code, and two things that are the design:
   ground the pixel will be built from (the terrain sampler's own kernel over
   WOODS.WLD, `scenes/world.js` gateGroundAt): no stone, collider, light or
   door until the pixel is built (`scenes/gate/gatePool.js`,
-  `render/gatePass.js`).
+  `render/gate/gatePass.js`).
 - **Two clients could roll two spots.** The site scan read every location
   row, and Replace Game Artwork appends a mod's locations on the clients
   that have it on - Roleplay & Realism's Northrock Fort. Its neighbourhood

@@ -15,8 +15,8 @@ import { ALLOC_CHILD_ARGS } from './allocChild.mjs';
 import { pathToFileURL } from 'node:url';
 import { createSdEnd } from '../src/scenes/superDungeon/sdEnd.js';
 import { RIFT_BELL_RECORDS } from '../src/systems/superDungeon/sdRiftSound.js';
-import { sdHourClockOf, sdArenaGlowAt } from '../src/render/sdArenaGlow.js';
-import { SD_SKY_MODE } from '../src/render/sdSky.js';
+import { sdHourClockOf, sdArenaGlowAt } from '../src/render/superDungeon/sdArenaGlow.js';
+import { SD_SKY_MODE } from '../src/render/superDungeon/sdSky.js';
 import { SD_FIGHT_EMPTY } from '../src/net/superDungeon/sdFightLink.js';
 import { SD_THRESHOLD, realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { SD_THRESHOLD_RIM, SD_WAY_BACK_Z, SD_WAY_BACK_SIZE } from '../src/world/superDungeon/sdRealm.js';
@@ -101,8 +101,8 @@ test('AUDIT SD V (P1-P4, P6): THE HOLLOW\'S AND THE HOUR\'S FRAMES MAKE NOTHING 
   const url = (p) => JSON.stringify(pathToFileURL(join(ROOT, p)).href);
   const script = `
     const { createSdEnd } = await import(${url('src/scenes/superDungeon/sdEnd.js')});
-    const { SdSkyMap, SD_SKY_STEPS } = await import(${url('src/render/sdSky.js')});
-    const { SdHaloRenderer } = await import(${url('src/render/sdHalo.js')});
+    const { SdSkyMap, SD_SKY_STEPS } = await import(${url('src/render/superDungeon/sdSky.js')});
+    const { SdHaloRenderer } = await import(${url('src/render/superDungeon/sdHalo.js')});
     const { handMatrix } = await import(${url('src/world/superDungeon/sdHall.js')});
     const { createSdAir } = await import(${url('src/scenes/superDungeon/sdAir.js')});
     const { realmToDungeon } = await import(${url('src/net/superDungeon/sdBrain.js')});

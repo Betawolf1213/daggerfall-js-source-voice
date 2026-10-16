@@ -11,13 +11,13 @@
 // F9). Posterized through the ordered dither (SD_PIXEL_GLSL), depth-tested and never written, fogged as the world is.
 //
 // A foreign pass: it owns its program and its state; the host marks it. Not a DFU member. Ledger A (SUPER-DUNGEONS).
-import { buildProgram } from './glProgram.js';
-import { FOG_FACTOR_GLSL } from './labGrass.js';
-import { BAYER_GLSL, SD_PIXEL_GLSL } from './orderedDither.js';
-import { telegraphLineW } from './gateTelegraph.js';
-import { SD_LIGHT } from '../world/superDungeon/sdLook.js';
-import { SD_STEPS_COURSE } from '../world/superDungeon/sdSteps.js';
-import { stepEdges } from '../world/superDungeon/sdStepsModel.js';
+import { buildProgram } from '../glProgram.js';
+import { FOG_FACTOR_GLSL } from '../labGrass.js';
+import { BAYER_GLSL, SD_PIXEL_GLSL } from '../orderedDither.js';
+import { telegraphLineW } from '../gate/gateTelegraph.js';
+import { SD_LIGHT } from '../../world/superDungeon/sdLook.js';
+import { SD_STEPS_COURSE } from '../../world/superDungeon/sdSteps.js';
+import { stepEdges } from '../../world/superDungeon/sdStepsModel.js';
 
 /** The ghosts: their width (px), the hand's reach and lift over the top (m), their gold, their light at rest and at
  *  the return (L3), and how long before the return it brightens (s - a Beat plate's; a Crumble pin's over its rewind). */

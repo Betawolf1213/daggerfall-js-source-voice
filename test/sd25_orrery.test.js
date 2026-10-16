@@ -33,7 +33,7 @@ import { SD_RAMP, SD_LIGHT } from '../src/world/superDungeon/sdLook.js';
 import { offPalette, paletteOf } from '../src/world/superDungeon/sdPixelKit.js';
 import { SD_REALM_BRASS_RECORD } from '../src/world/superDungeon/sdRealm.js';
 import { SD_GLYPHS, SD_HOUR_NUMERALS } from '../src/world/superDungeon/sdSkyArt.js';
-import { TELEGRAPH_THROB_MAX_HZ } from '../src/render/gateTelegraph.js';
+import { TELEGRAPH_THROB_MAX_HZ } from '../src/render/gate/gateTelegraph.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];

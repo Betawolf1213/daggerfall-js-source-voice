@@ -22,7 +22,7 @@ import { titleCardModel, drawGateTitleCard, destroyGateTitleCard, TITLE_IN_MS, T
 import { bossBarModel, drawGateBossBar, destroyGateBossBar, BOSS_BAR_TEXT, BOSS_BAR_CSS } from '../src/ui/gate/gateBossBar.js';
 import { destroyGateMarksCard } from '../src/ui/gate/gateMarksView.js';
 import { destroyGateGround } from '../src/ui/gate/gateGroundView.js';
-import { FX_KINDS } from '../src/render/gateFx.js';
+import { FX_KINDS } from '../src/render/gate/gateFx.js';
 import { profileOf } from '../src/net/gate/gateBrain.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

@@ -10,9 +10,9 @@
 // passed over the heads of the bodies the law struck, a third of its width.
 //
 // Not a DFU member. Ledger A (SUPER-DUNGEONS).
-import { FOG_FACTOR_GLSL } from './labGrass.js';
-import { buildProgram } from './glProgram.js';
-import { duelClock } from './duelWall.js';
+import { FOG_FACTOR_GLSL } from '../labGrass.js';
+import { buildProgram } from '../glProgram.js';
+import { duelClock } from '../duelWall.js';
 
 /** The most beams a frame draws (the Remnant's, and the two Echoes' paired sweep). */
 export const SD_BEAM_MAX = 3;

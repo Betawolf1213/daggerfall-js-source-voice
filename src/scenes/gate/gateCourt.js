@@ -11,7 +11,7 @@
 // and it lands through `strike` - the dungeon context's door (hurt, flash, cry), the same as any foe's blow.
 //
 // THE PARTS, each pure where it can be: the look (world/gate/gateBoss.js bossAct/bossFrame/bossGlow/BOSS_CUES), the ground
-// (render/gateTelegraph.js telegraphShape and its pass), the verdict (net/gate/gateStrike.js strikeVerdict), the bar
+// (render/gate/gateTelegraph.js telegraphShape and its pass), the verdict (net/gate/gateStrike.js strikeVerdict), the bar
 // (ui/gate/gateBossBar.js bossBarModel). This file is their driver: it holds the sprite's texture and batch, the attacks it
 // has already cued, landed and judged, and the host's doors.
 //
@@ -21,14 +21,14 @@ import { strikeVerdict, blowOf, strikeDamage, savedShare, landingPools, poolUnde
 import { GATE_BOSSES, gateBossOf, gateTimes, GATE_COLLAPSE_MS } from '../../net/gate/gateLaw.js';   // GATE-FBX: and when the court comes apart
 import { bossAct, bossFrame, bossGlow, bossPlace, bossHop, bossLookOf, bossStandIn, bossCue, BOSS_CUES, BOSS_STRIDE_M, GROWL_EVERY_MS, HURT_GAP_MS, HURT_SHARE, QUAKE_ON, THUD_AT_MS, WARD_COLOR, EMBER_COLOR, poolColor, emberColor, attackColor, crystalStandIn, crystalColor, groundStepCue, hostPulseColor, gateHitFlash, GATE_FLASH_SHARE, RELEASE_LEAD_MS, landShake, LANDING_LIGHT_Y, CORPSE_SCALE, WAKE_LEAD_MS, LOW_HEALTH } from '../../world/gate/gateBoss.js';
 import { courtToDungeon, portalDoor, PORTAL_AFTER_MS, PORTAL_RISE_MS, PORTAL_DROP, COURT_TEXT, WAY_IN_Z, WAY_IN_HOLD_MS, WAY_IN_NEAR_M, ARRIVE_Z, COURT_SILENT_MS, COURT_FRAME_GAP_MS, wayInStep, portalFade } from '../../world/gate/gateArena.js';
-import { GateTelegraphRenderer, telegraphShape, markShape, poolShapes, telegraphEdge, TELEGRAPH_STYLE, TELEGRAPH_EDGE, TELEGRAPH_NOW_MS } from '../../render/gateTelegraph.js';
+import { GateTelegraphRenderer, telegraphShape, markShape, poolShapes, telegraphEdge, TELEGRAPH_STYLE, TELEGRAPH_EDGE, TELEGRAPH_NOW_MS } from '../../render/gate/gateTelegraph.js';
 import { CourtCrystalRenderer, crystalGrowth, CRYSTAL_GROW_MS, CRYSTAL_SHATTER_MS, CRYSTAL_FLASH_MS, CRYSTALS_DRAW_MAX } from '../../render/courtCrystals.js';   // WB9c: the crystals of Oblivion, drawn
-import { GateFxRenderer, fxBurstOf, meteorFall, FX_BURST_MS, FX_BURSTS_MAX, FX_KINDS, FX_LIGHT_MS } from '../../render/gateFx.js';   // WB9e: his blows seen landing
+import { GateFxRenderer, fxBurstOf, meteorFall, FX_BURST_MS, FX_BURSTS_MAX, FX_KINDS, FX_LIGHT_MS } from '../../render/gate/gateFx.js';   // WB9e: his blows seen landing
 import { relight } from '../../render/lightId.js';   // LIGHT-ID: a burst's slot handed to the next burst - its flash another light
 import { setBatchHitFlash } from '../../systems/hitFlash.js';   // WB13d: his body struck flashes, as every foe's does
 import { tierColour } from '../../render/spoilsGlow.js';   // WB9f: a piece's landing sparks in its tier's colour
 import { RARITIES } from '../../systems/loot/lootRarity.js';
-import { GatePassRenderer, gateSpinRate } from '../../render/gatePass.js';   // WBX2: the portal's fire is the gate's own
+import { GatePassRenderer, gateSpinRate } from '../../render/gate/gatePass.js';   // WBX2: the portal's fire is the gate's own
 import { gateArchProfile } from '../../world/gate/gateModel.js';
 import { ONLINE_MINUTES_PER_MS, GATE_HEAL_ROWS_MAX, GATE_HEAL_WIRE_MAX } from '../../net/wire.js';   // WBX7: a soul trap's rounds on the shared world's clock; GATE-HEAL: the heal word's bounds
 import { spoilsLevel } from '../spoilsPool.js';   // AUDIT WBX S2: the spoils never rolled past the level the fight admitted
@@ -619,7 +619,7 @@ export function createGateCourt({
     }
   }
 
-  /** WB9e: THE BURSTS A LANDING THROWS (render/gateFx.js fxBurstOf) - at his feet for his own (the slam, the nova,
+  /** WB9e: THE BURSTS A LANDING THROWS (render/gate/gateFx.js fxBurstOf) - at his feet for his own (the slam, the nova,
    *  Dagon's), where it lands for a leap, a bound or a meteor, under each mark for Hellfire - from its moment on the
    *  relay's clock, in its colour under his profile; a slot reused, the oldest given up past FX_BURSTS_MAX. */
   /** A burst at `p` (the dungeon's frame) from `at0` (the relay's clock) - a slot reused, the oldest given up past

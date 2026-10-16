@@ -2,7 +2,7 @@
 // STEPS, every step showing what it will do next - a draw atlas a kind (world/superDungeon/sdStepsArt.js), the Beat's clock-plate
 // frames, its falter and its dissolve, the Drift's pendulums, the risers' racks, the Crumble's crack stages and its chunks
 // that rewind (world/superDungeon/sdStepsModel.js, scenes/superDungeon/sdSteps.js), the waystones and the vane, the ghosts' pass
-// (render/sdStepsPass.js - its shader run through test/glsl.mjs), and the cast-back's gold rewind (scenes/superDungeon/sdFx.js). The
+// (render/superDungeon/sdStepsPass.js - its shader run through test/glsl.mjs), and the cast-back's gold rewind (scenes/superDungeon/sdFx.js). The
 // law (world/superDungeon/sdSteps.js) is run from its own code: no picture is larger than it, none moves it.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -27,10 +27,10 @@ import {
   pendulumAngle, buildCrumbleChunks, buildVaneModel, vaneYawAt, stepEdges, buildWaystoneModel, SD_WAYSTONE,
 } from '../src/world/superDungeon/sdStepsModel.js';
 import { createSdSteps, sdStepKey, SD_STEPS_SOUNDS, SD_BEAT_FRAME_S, SD_BEAT_IN_S, SD_CHUNK, SD_CRUMBLE_SEEN, SD_BEAT_BLINK_HZ } from '../src/scenes/superDungeon/sdSteps.js';
-import { SD_GHOST, SD_GHOST_STEPS, SD_STEPS_PASS_VS, SD_STEPS_PASS_FS, sdGhostVertices } from '../src/render/sdStepsPass.js';
+import { SD_GHOST, SD_GHOST_STEPS, SD_STEPS_PASS_VS, SD_STEPS_PASS_FS, sdGhostVertices } from '../src/render/superDungeon/sdStepsPass.js';
 import { createSdFx, sdCastBackSeen, SD_FX_REWIND, SD_FX_COLOR, SD_REWIND_SEEN } from '../src/scenes/superDungeon/sdFx.js';
-import { FX_BURST_MS, FX_LIGHT_MS } from '../src/render/gateFx.js';
-import { TELEGRAPH_THROB_MAX_HZ } from '../src/render/gateTelegraph.js';
+import { FX_BURST_MS, FX_LIGHT_MS } from '../src/render/gate/gateFx.js';
+import { TELEGRAPH_THROB_MAX_HZ } from '../src/render/gate/gateTelegraph.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 /** A realm second on a whole Beat cycle and a whole pair of gusts (sd7b's). */
@@ -389,7 +389,7 @@ test('S9 THE GHOSTS\' PASS: one buffer of every ghostable step\'s twelve edges a
     for (let e = 0; e < 12; e++) { const o = ((g * 13 + e) * 6) * F; assert.deepEqual([...v.subarray(o, o + 6)].map((q) => Math.fround(q)), [...edges[e][0], ...edges[e][1]].map((q) => Math.fround(q)), `ghost ${g} edge ${e}: the law's box`); }
     assert.equal(v[((g * 13 + 12) * 6) * F + 9], 1, 'then its hand');
   }
-  assert.ok(!/gl\.LINES|drawElements\(gl\.LINE/.test(read('src/render/sdStepsPass.js')), 'never GL_LINES');
+  assert.ok(!/gl\.LINES|drawElements\(gl\.LINE/.test(read('src/render/superDungeon/sdStepsPass.js')), 'never GL_LINES');
   const I = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
   const step = Array.from({ length: N }, () => [0, 0, 0, 0]), state = Array.from({ length: N }, () => [0, 0, 0, 0]);
   step[0] = [0, 0, 0.5, 0]; state[0] = [1, 0.25, 1, 0];

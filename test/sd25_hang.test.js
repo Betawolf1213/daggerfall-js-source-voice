@@ -21,7 +21,7 @@ import { realmArt } from '../src/world/superDungeon/sdRealmArt.js';
 import { SD_HALL_FLOORS } from '../src/world/superDungeon/sdHall.js';
 import { SD_CHECKPOINTS, SD_STEPS_COURSE, SD_STEP_THICK } from '../src/world/superDungeon/sdSteps.js';
 import { SD_THRESHOLD, SD_ORRERY, SD_ARENA, SD_REALM_ORIGIN, dungeonToRealm } from '../src/net/superDungeon/sdBrain.js';
-import { SD_SKY_PAINT_FS, SD_SKY_PERIOD, SD_FURNACE } from '../src/render/sdSky.js';
+import { SD_SKY_PAINT_FS, SD_SKY_PERIOD, SD_FURNACE } from '../src/render/superDungeon/sdSky.js';
 import { SD_RAMP, sdTick } from '../src/world/superDungeon/sdLook.js';
 import { offPalette, paletteOf } from '../src/world/superDungeon/sdPixelKit.js';
 import { glslFunctions } from './glsl.mjs';
@@ -185,7 +185,7 @@ test('SD-LOOK S11 THE CHAINS: SD_CHAIN.links 4-sided links from each anchor, alt
   }
 });
 
-test('SD-LOOK S11 THE WORKS: four gears 40-80 m across, their faces 240-280 m down under the course; meshed neighbours turn opposite ways (a gear on another\'s axle with it), their pitch circles touching and their teeth in each other\'s gaps at every moment; a tooth a tick on the escapement; the phones\' two; only a tooth\'s tip samples the record\'s tip band; from every point of the course every gear is seen down through the furnace (render/sdSky.js SD_FURNACE, the paint shader\'s own) and inside the dungeon arm\'s 500 m far plane (mutants: a follower half a tooth off; a follower turning with its driver; the face uv reaching the tip band; the furnace narrowed)', () => {
+test('SD-LOOK S11 THE WORKS: four gears 40-80 m across, their faces 240-280 m down under the course; meshed neighbours turn opposite ways (a gear on another\'s axle with it), their pitch circles touching and their teeth in each other\'s gaps at every moment; a tooth a tick on the escapement; the phones\' two; only a tooth\'s tip samples the record\'s tip band; from every point of the course every gear is seen down through the furnace (render/superDungeon/sdSky.js SD_FURNACE, the paint shader\'s own) and inside the dungeon arm\'s 500 m far plane (mutants: a follower half a tooth off; a follower turning with its driver; the face uv reaching the tip band; the furnace narrowed)', () => {
   assert.equal(SD_WORKS.length, 4);
   assert.deepEqual(SD_WORKS.filter((g) => g.lite).length, 2, 'the phones: two gears');
   for (const g of SD_WORKS) {

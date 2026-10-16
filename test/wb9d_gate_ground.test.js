@@ -7,7 +7,7 @@
 //
 //   the view       ui/gate/gateGroundView.js groundViewModel, drawGateGround
 //   the court      scenes/gate/gateCourt.js burn/land - the ground's name and colour, the bite's moment and colour, the hiss
-//   the ground     net/gate/gateBrain.js POOLS, SCAR_POOLS; render/gateTelegraph.js poolShapes in the ground's own grain
+//   the ground     net/gate/gateBrain.js POOLS, SCAR_POOLS; render/gate/gateTelegraph.js poolShapes in the ground's own grain
 //
 // Design: bible/11-Multiplayer/World-Bosses.md section 14 (WB9d).
 import { test } from 'node:test';
@@ -19,7 +19,7 @@ import { strikeDamage, landingPools } from '../src/net/gate/gateStrike.js';
 import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import { BOSS_CUES, BURNING, ASPECT_CUE_IDS, groundStepCue, poolColor, attackColor } from '../src/world/gate/gateBoss.js';
 import { courtToDungeon } from '../src/world/gate/gateArena.js';
-import { poolShapes, TELEGRAPH_STYLE, TELEGRAPH_FS, TELEGRAPH_POOL } from '../src/render/gateTelegraph.js';
+import { poolShapes, TELEGRAPH_STYLE, TELEGRAPH_FS, TELEGRAPH_POOL } from '../src/render/gate/gateTelegraph.js';
 import { createGateCourt } from '../src/scenes/gate/gateCourt.js';
 import {
   groundViewModel, drawGateGround, destroyGateGround, GROUND_BITE_MS, GROUND_EDGE_IN, GROUND_EDGE_BITE, GROUND_EDGE_STEP, GROUND_VIEW_TEXT, GROUND_VIEW_CSS,

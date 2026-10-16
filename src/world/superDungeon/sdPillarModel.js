@@ -4,7 +4,7 @@
 // every face of them INSIDE THE LAW'S SQUARE (world/superDungeon/sdRealm.js pillarQuads - the collider and the Hour-Hand's shade,
 // net/superDungeon/sdRemnant.js behindPillar; "no visual larger than the law"): a plinth flush with it, a chamfered shaft in from it
 // with three brass bands and a conduit in each chamfer, a brass collar and a stepped capital, the CLOCK STAGE - a small
-// clock on each face, its hand watching the Remnant (render/sdPillarPass.js draws the dials and the hands) - a brass
+// clock on each face, its hand watching the Remnant (render/superDungeon/sdPillarPass.js draws the dials and the hands) - a brass
 // cornice, the LANTERN - a brass cage open on every side, turned a quarter of a right angle so no bar stands between its
 // flame (the pass's) and the arena's heart, the pillar's diagonal - carrying the brass hood and cap, flat at the square's
 // own top, where a body standing on it stands.

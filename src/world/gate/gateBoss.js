@@ -28,7 +28,7 @@ import { ENEMY_BASICS } from '../../characters/enemy/enemyBasics.js';
 import { makeEnemyEntity } from '../../characters/enemy/enemyEntity.js';
 import { courtToDungeon } from './gateArena.js';
 import { hitFlashStrength } from '../../systems/hitFlash.js';   // WB13d: his body struck flashes on the game's own curve
-import { fxBurstOf } from '../../render/gateFx.js';   // WB13d: a landing whose burst carries its own light lights there, not him
+import { fxBurstOf } from '../../render/gate/gateFx.js';   // WB13d: a landing whose burst carries its own light lights there, not him
 
 /** Each boss's look, by its id (net/gate/gateLaw.js GATE_BOSSES): the mobile whose sprite he wears, and how many times its
  *  size he stands (BOSS_H is the body the blows are measured against - three Daedra Lords tall). */
@@ -163,7 +163,7 @@ export const CRYSTAL_COLOR = Object.freeze([1.0, 0.18, 0.34]);
 export const STUN_COLOR = Object.freeze([0.62, 0.7, 1.0]);
 export const WARD_COLOR = Object.freeze([1.0, 0.86, 0.5]);
 export const EMBER_COLOR = Object.freeze([0.9, 0.32, 0.1]);
-/** WBX5: the burning ground's colour on the floor (render/gateTelegraph.js draws each pool as a filled disc). */
+/** WBX5: the burning ground's colour on the floor (render/gate/gateTelegraph.js draws each pool as a filled disc). */
 export const POOL_COLOR = Object.freeze([1.0, 0.36, 0.05]);
 /**
  * WB8b: HIS ASPECT, SEEN - the colours his elemental blows, his ground and his ember take under each aspect but his
@@ -283,7 +283,7 @@ export const GLOW_RANGE = Object.freeze({ ember: 7, windup: 12, landing: 18 });
  * landing, gold while the ward stands, a low ember otherwise; null when he is gone. WB8b: at his own chest (Colossal's
  * stands higher) and in his aspect's colours. WB13d: the landing's flare on the floor where it lands, LANDING_LIGHT_Y
  * over it - at his feet for his own; a landing that falls away from him (its burst carries its own light,
- * render/gateFx.js FX_KINDS) leaves his ember.
+ * render/gate/gateFx.js FX_KINDS) leaves his ember.
  * LIGHT-ID (2026-10-14): `out`, a kept record, is refilled in place and answered (the court's own - his glow is ONE light
  * that follows him, and the shadow pass knows it moved by the record: render/lightId.js); none, a new record.
  */
@@ -339,7 +339,7 @@ export const CRYSTAL_CLIPS = Object.freeze({ rise: 68, hit: 433, shatter: 342 })
 export const THUNDER_ROLL = 350;   // systems/ambientEffects.js AMBIENT_SOUNDS.storm's ThunderRoll (WB7)
 export const FIRE_CAST_ID = 352;   // systems/enemySpells.js SPELL_CAST_SOUND[0], the fire's
 export const SWING_LOW = 105;   // systems/soundClips.js SOUND.SwingLowPitch - WB13d: a great blade loosed
-/** WB13d: THE RELEASE - this long before each landing, a sound of its coming (render/gateTelegraph.js's last-moment
+/** WB13d: THE RELEASE - this long before each landing, a sound of its coming (render/gate/gateTelegraph.js's last-moment
  *  burn, heard): the wind-up's bark says what, the release says now. */
 export const RELEASE_LEAD_MS = 350;
 const fireLoosed = (volume, reach, at = 'him') => Object.freeze({ id: FIRE_CAST_ID, pitch: 1.1, volume, reach, at });

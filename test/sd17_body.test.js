@@ -1,6 +1,6 @@
 // SD17 (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 10 and section 16's SD17;
 // Mac: "The detail needs to exceed that of the oblivion gates"): THE BODY MOVED (scenes/superDungeon/sdRemnantRig.js,
-// world/superDungeon/sdRemnantModel.js buildRemnantParts, render/sdBeam.js) - the Brass Remnant and its Echoes in seven parts, six of
+// world/superDungeon/sdRemnantModel.js buildRemnantParts, render/superDungeon/sdBeam.js) - the Brass Remnant and its Echoes in seven parts, six of
 // them turned about their joints by a pure law of the fight: eighteen states to the Warden's sprite's ten, every blow
 // moved; the parts whole at rest, every joint kept where it is; the walk in step with the voice's strides; the Hand
 // pointing down the beam's bearing as it sweeps; the Stomp's leg raised; the Reset's hands over its head; the Volley's
@@ -19,7 +19,7 @@ import { createSdRemnant, SD_GEAR_DRAWS, SD_DECOR_DRAWS } from '../src/scenes/su
 import { SD_BLOWS, SD_BODY, SD_REM, SD_ECHO, SD_HEARTS, SD_PILLARS, SD_BREAK_MS, windupFor, behindPillar } from '../src/net/superDungeon/sdRemnant.js';
 import { SD_STRIDE_M, SD_ECHO_STRIDE_M, SD_RELEASE_MS, SD_SLIP_FRAC } from '../src/scenes/superDungeon/sdRemnantVoice.js';
 import { SD_ARENA, realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
-import { SdBeamRenderer, SD_BEAM_VS, SD_BEAM_FS, SD_BEAM_MAX, sdBeamVertices } from '../src/render/sdBeam.js';
+import { SdBeamRenderer, SD_BEAM_VS, SD_BEAM_FS, SD_BEAM_MAX, sdBeamVertices } from '../src/render/superDungeon/sdBeam.js';
 
 const T0 = 1_800_000_000_000;
 const W = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
@@ -260,7 +260,7 @@ test('SD17 THE SCENE AND THE WORLD: the parts stood after the Hearts and turned 
   assert.equal(sdBeamVertices().length, 8 * 12);
   assert.match(SD_BEAM_VS, /vec3 across = cross\(along, toEye\);/);
   assert.match(SD_BEAM_FS, /fogFactorAt\(vWorld\)/);
-  const src = readFileSync(new URL('../src/render/sdBeam.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/render/superDungeon/sdBeam.js', import.meta.url), 'utf8');
   assert.match(src, /gl\.blendFunc\(gl\.ONE, gl\.ONE\);\n\s+gl\.depthMask\(false\);/);
   assert.equal(typeof SdBeamRenderer, 'function');
   // the world

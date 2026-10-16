@@ -100,7 +100,7 @@
   },
   {
     "name": "SD25-S7-the-hand-the-wrong-way-round",
-    "file": "src/render/sdPillarPass.js",
+    "file": "src/render/superDungeon/sdPillarPass.js",
     "old": "vec2 dir = vec2(sin(a), cos(a)), side = vec2(cos(a), -sin(a));",
     "new": "vec2 dir = vec2(cos(a), sin(a)), side = vec2(sin(a), -cos(a));",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "SD25-S7-no-spade",
-    "file": "src/render/sdPillarPass.js",
+    "file": "src/render/superDungeon/sdPillarPass.js",
     "old": "if (spade >= 0.0 && spade <= 1.0 && off <= ",
     "new": "if (spade >= 9.0 && spade <= 1.0 && off <= ",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "SD25-S7-the-quarters-thin",
-    "file": "src/render/sdPillarPass.js",
+    "file": "src/render/superDungeon/sdPillarPass.js",
     "old": "float w = mod(h, 3.0) < 0.5 ?",
     "new": "float w = mod(h, 3.0) < -0.5 ?",
     "tests": [

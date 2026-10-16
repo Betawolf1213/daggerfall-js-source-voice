@@ -31,12 +31,12 @@
 //
 // Colours are display-encoded (the lit lane's frame image), scaled by `gain` with the realm's fog (render/deadlands.js
 // skyGain's law) at the fetch. Not a DFU member. Ledger A (SUPER-DUNGEONS).
-import { buildProgram } from './glProgram.js';
-import { DEAD_NOISE_GLSL } from './deadlands.js';
-import { BAYER_GLSL, SD_PIXEL_GLSL } from './orderedDither.js';
-import { createRenderTarget, withTarget } from './renderTarget.js';
-import { sdSkySigns, SD_SKY_SIGN_GRID, SD_GLYPHS, SD_HOUR_NUMERALS, numeralWidth } from '../world/superDungeon/sdSkyArt.js';
-import { SD_TICK_EASE_S } from '../world/superDungeon/sdLook.js';
+import { buildProgram } from '../glProgram.js';
+import { DEAD_NOISE_GLSL } from '../deadlands.js';
+import { BAYER_GLSL, SD_PIXEL_GLSL } from '../orderedDither.js';
+import { createRenderTarget, withTarget } from '../renderTarget.js';
+import { sdSkySigns, SD_SKY_SIGN_GRID, SD_GLYPHS, SD_HOUR_NUMERALS, numeralWidth } from '../../world/superDungeon/sdSkyArt.js';
+import { SD_TICK_EASE_S } from '../../world/superDungeon/sdLook.js';
 
 /** Every rate is whole cycles over this many seconds; the clock is handed wrapped to it. */
 export const SD_SKY_PERIOD = 720;
@@ -217,7 +217,7 @@ float skyline5(float u, float v) {
 
 /** The numerals as the paint draws them (world/superDungeon/sdSkyArt.js's glyphs, the cells of `numeralCell`): `numeralLit(h, cx,
  *  cy)` - hour h (0 the twelfth), cell cx from the numeral's left, cy from its top row. The veil's dial reads them too
- *  (render/sdVeil.js). */
+ *  (render/superDungeon/sdVeil.js). */
 export const SD_NUMERAL_GLSL = `const int GLYPH_I[7] = int[7](${SD_GLYPHS.I.rows.join(', ')});
 const int GLYPH_V[7] = int[7](${SD_GLYPHS.V.rows.join(', ')});
 const int GLYPH_X[7] = int[7](${SD_GLYPHS.X.rows.join(', ')});
@@ -368,7 +368,7 @@ ${skylineDraw}
 }`;
 
 /** THE FETCH - one tap of the map along a ray, and the live hands over it, snapped to its texels. `sdSkyAt(d)` - the
- *  sky's colour (display-encoded, at the gain) along d. The sky's pass and the Rift's window (render/sdRiftPass.js) read
+ *  sky's colour (display-encoded, at the gain) along d. The sky's pass and the Rift's window (render/superDungeon/sdRiftPass.js) read
  *  the one function. Uniforms: uSkyMap, uTime (wrapped), uGain, uClock (SD_SKY_MODE, a0, a1, lit numerals). */
 export const SD_SKY_FETCH_GLSL = `uniform sampler2D uSkyMap;
 uniform float uTime;

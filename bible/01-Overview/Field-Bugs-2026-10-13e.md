@@ -306,7 +306,7 @@ restore-order pin). No pin moved.
 
 ## AOE-PERF: the boss's circles shaded ground they never draw on (7)
 
-`src/render/gateTelegraph.js` telegraphMarkReach, telegraphStrip, the vertex stage's `uStrip`; `tools/fb1013ePerfProbe.mjs`.
+`src/render/gate/gateTelegraph.js` telegraphMarkReach, telegraphStrip, the vertex stage's `uStrip`; `tools/fb1013ePerfProbe.mjs`.
 
 MEASURED FIRST (a recording GL in Node found the CPU's side small - the passes make no buffer, program or texture a frame
 and stall nothing - so the cost had to be measured where it is spent): `tools/fb1013ePerfProbe.mjs` runs the real

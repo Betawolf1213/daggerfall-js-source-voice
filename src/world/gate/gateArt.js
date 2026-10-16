@@ -283,7 +283,7 @@ export const riteArt = () => [[RITE_SIGIL_RECORD, riteSigilArt()]];
 //   rune     - the ring the boss never crosses: a dark band cut with glyphs that burn (it tiles along the ring, u)
 //   lava     - the sea of fire under the court and the braziers' beds: a crust of black over bright moving heat
 // Each with its emission twin, as the gate's own art. GATE-FBX: the bridge's membrane and its swirl are gone - the court's
-// portals are the gate's own fire (render/gatePass.js).
+// portals are the gate's own fire (render/gate/gatePass.js).
 
 /** The court's floor: flagstones laid by a jittered grid, their mortar glowing where it is deepest. */
 export function courtFloorArt(seed = 0x0c07) {

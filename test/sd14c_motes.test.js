@@ -1,5 +1,5 @@
 // SD14c (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 7 and section 16's SD14c;
-// Mac: "The detail needs to exceed that of the oblivion gates"): THE HOUR'S MOTES (render/sdMotes.js) - over a thousand
+// Mac: "The detail needs to exceed that of the oblivion gates"): THE HOUR'S MOTES (render/superDungeon/sdMotes.js) - over a thousand
 // where the Deadlands carry 896: the hall's brass dust turning with the Orrery, the void's sparks rising under the
 // Steps and gone by a body's height, the Hour's gold-green motes orbiting the arena against the clock, the shards' dust
 // falling out of the sky. Their law (sdMoteAt) keeps each kind in its place, whole over the sky's period, every jump at
@@ -13,9 +13,9 @@ import { glslFunctions } from './glsl.mjs';
 import {
   sdMoteVertices, sdMoteAt, sdMotePx, SdMotesRenderer, SD_MOTES, SD_MOTES_TOTAL, SD_MOTE_TURNS, SD_MOTE_HALL, SD_MOTE_VOID, SD_MOTE_ARENA,
   SD_MOTE_SKY, SD_MOTE_MIN_PX, SD_MOTES_VS, SD_MOTES_FS,
-} from '../src/render/sdMotes.js';
+} from '../src/render/superDungeon/sdMotes.js';
 import { lifeVertices } from '../src/render/deadlands.js';
-import { SD_SKY_PERIOD } from '../src/render/sdSky.js';
+import { SD_SKY_PERIOD } from '../src/render/superDungeon/sdSky.js';
 import { SD_ORRERY, SD_ARENA, SD_REALM_ORIGIN } from '../src/net/superDungeon/sdBrain.js';
 import { SD_FIRST_STEP } from '../src/world/superDungeon/sdHall.js';
 import { mirrorProjectionX, perspective, lookAt, multiply } from '../src/world/mat4.js';

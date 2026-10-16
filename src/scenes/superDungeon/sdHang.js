@@ -10,7 +10,7 @@
 //     rims); the chains, one mesh an island; the far islands, one mesh; the Works, a mesh a gear (world/superDungeon/sdWorksModel.js).
 //   EACH FRAME (frame): the realm's anchored clock read once - the chains swung on the escapement's tick about the line
 //     through their anchors (chainSwing, chainMatrix), the Works turned a tooth a tick, neighbours opposite (worksMatrix),
-//     the far set turned once a sky period (render/sdSky.js SD_SKY_PERIOD). Every matrix written in place: a frame makes
+//     the far set turned once a sky period (render/superDungeon/sdSky.js SD_SKY_PERIOD). Every matrix written in place: a frame makes
 //     nothing (AUDIT SD II L2 F9).
 //   THE PHONES' TIER (`lite`, ui/touch/touchDevice.js isTouchDevice): one spire a root, no far islands, two Works gears, the
 //     chains still (their draws stood at rest and never swung).
@@ -19,7 +19,7 @@
 import { SD_HANG_ISLANDS, SD_HANG_STAGES, buildHangModel, buildChainModel, buildFarIslandsModel, chainSwing, chainMatrix, farIslandsMatrix } from '../../world/superDungeon/sdIslandModel.js';
 import { SD_WORKS, SD_HANG_NOW, buildWorksGear, worksMatrix } from '../../world/superDungeon/sdWorksModel.js';
 import { sdTick } from '../../world/superDungeon/sdLook.js';
-import { sdSkyClock, SD_SKY_PERIOD } from '../../render/sdSky.js';
+import { sdSkyClock, SD_SKY_PERIOD } from '../../render/superDungeon/sdSky.js';
 import { isTouchDevice } from '../../ui/touch/touchDevice.js';
 import { identity } from '../../world/mat4.js';
 

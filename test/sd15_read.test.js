@@ -19,7 +19,7 @@ import { SD_ARENA } from '../src/net/superDungeon/sdBrain.js';
 import { SD_BLOW_COLOR, createSdRemnantBlows } from '../src/scenes/superDungeon/sdRemnantBlows.js';
 import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { GROUND_VIEW_TEXT } from '../src/ui/gate/gateGroundView.js';
-import { TELEGRAPH_NOW_MS } from '../src/render/gateTelegraph.js';
+import { TELEGRAPH_NOW_MS } from '../src/render/gate/gateTelegraph.js';
 
 const W = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
 const T = 1_800_000_000_000;

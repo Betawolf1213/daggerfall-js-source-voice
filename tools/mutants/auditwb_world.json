@@ -131,7 +131,7 @@
   },
   {
     "name": "AUDWB-C2-the-fog-to-black",
-    "file": "src/render/gatePass.js",
+    "file": "src/render/gate/gatePass.js",
     "old": "  o = vec4(mix(uFogColor * alpha, col * glow, f) * uFade, alpha * uFade);",
     "new": "  o = vec4(col * glow * f * uFade, alpha * uFade);",
     "tests": [
@@ -140,7 +140,7 @@
   },
   {
     "name": "AUDWB-C2-no-fog-colour-handed",
-    "file": "src/render/gatePass.js",
+    "file": "src/render/gate/gatePass.js",
     "old": "    gl.uniform3fv(this.mu.uFogColor, fog?.color ?? NO_FOG_COLOR);",
     "new": "    gl.uniform3fv(this.mu.uFogColor, NO_FOG_COLOR);",
     "tests": [
@@ -149,7 +149,7 @@
   },
   {
     "name": "AUDWB-C6-the-spin-by-the-clock",
-    "file": "src/render/gatePass.js",
+    "file": "src/render/gate/gatePass.js",
     "old": "      gl.uniform1f(this.mu.uSpin, Number.isFinite(g.spin) ? g.spin : gateSpinAt(t, g.open ?? 0));",
     "new": "      gl.uniform1f(this.mu.uSpin, gateSpinAt(t, g.open ?? 0));",
     "tests": [
@@ -158,7 +158,7 @@
   },
   {
     "name": "AUDWB-C6-the-rate-unclamped",
-    "file": "src/render/gatePass.js",
+    "file": "src/render/gate/gatePass.js",
     "old": "export const gateSpinRate = (open) => MEMBRANE_TURN_SEALED_HZ + (MEMBRANE_TURN_OPEN_HZ - MEMBRANE_TURN_SEALED_HZ) * Math.max(0, Math.min(1, open));",
     "new": "export const gateSpinRate = (open) => MEMBRANE_TURN_SEALED_HZ + (MEMBRANE_TURN_OPEN_HZ - MEMBRANE_TURN_SEALED_HZ) * open;",
     "tests": [

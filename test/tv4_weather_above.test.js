@@ -210,7 +210,7 @@ test('AUDIT DEEP R-1: EVERY fogged program under the travel view measures its fo
   assert.match(w, /dt, eye: travelView\?\.eye \?\? player\.pos, poseAgeMs:/);
   assert.match(w, /camPos: renderer\._camPos, focus: renderer\._focus \}\)\) renderer\.markForeignPass\(\);   \/\/ AUDIT DEEP R-1/, 'the gate handed it');
   // the gate's own upload, driven: a fake GL hears the focus it was handed, and w 0 without one
-  const { GatePassRenderer } = await import('../src/render/gatePass.js');
+  const { GatePassRenderer } = await import('../src/render/gate/gatePass.js');
   {
     const heard = [];
     const fake = { gl: { uniform1i() {}, uniform1f() {}, uniform2fv() {}, uniform3fv() {}, uniform4fv: (l, v) => heard.push([l, [...v]]) } };

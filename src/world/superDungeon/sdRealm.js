@@ -14,7 +14,7 @@
 //     Moment's arena and its four pillars - each an island hanging in the void on a root of dark stone; the port's own
 //     geometry and art (pseudo-archive SD_REALM_ARCHIVE, `realmArt`), its floors to the collider (`realmFloorTris`; SD8c:
 //     its pillars too, `realmPillarTris` - `realmColliderTris` the two), its lamps to the light list (`realmLights`), its
-//     edges to the motor (`realmClamp`). Its sky is no mesh: render/sdSky.js paints it.
+//     edges to the motor (`realmClamp`). Its sky is no mesh: render/superDungeon/sdSky.js paints it.
 //
 // THE FRAME is net/superDungeon/sdBrain.js's (SD_REALM_ORIGIN and the stages): metres, the dungeon's own, every floor's top at y 0,
 // laid along +z. The players arrive on the Threshold facing +z - the Orrery ahead, the Rift home at their backs.
@@ -90,7 +90,7 @@ export const SD_ARENA_BANDS = 8;
 /** The walk's brass kerbs: their width and height. */
 export const SD_KERB_W = 0.25;
 export const SD_KERB_H = 0.15;
-/** The void's air: a thin brass haze the sky's horizon meets (render/sdSky.js). */
+/** The void's air: a thin brass haze the sky's horizon meets (render/superDungeon/sdSky.js). */
 export const SD_REALM_FOG = Object.freeze({ mode: 'exp', density: 0.0045, color: Object.freeze([0.2, 0.15, 0.07]) });
 /** The lamps on the rims: their colour, their reach, and how many stand round each stage. */
 export const SD_LAMP_COLOR = Object.freeze([1.0, 0.78, 0.4]);

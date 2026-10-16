@@ -18,7 +18,7 @@ import {
   createSdRemnantBlows, sdTelegraphShapes, sdPoolShapes, sdBlowsInFlight, SD_BLOW_COLOR, SD_BLOWS_TEXT, SD_BLOW_CUES, SD_TELEGRAPH_FLOOR, SD_ARENA_CENTRE,
 } from '../src/scenes/superDungeon/sdRemnantBlows.js';
 import { arenaToDungeon } from '../src/scenes/superDungeon/sdRemnant.js';
-import { GateTelegraphRenderer, TELEGRAPH_KIND, TELEGRAPH_EDGE, TELEGRAPH_EDGE_DAGON, TELEGRAPH_FLASH_MS, TELEGRAPH_MARGIN, TELEGRAPH_POOL, telegraphQuadOver } from '../src/render/gateTelegraph.js';
+import { GateTelegraphRenderer, TELEGRAPH_KIND, TELEGRAPH_EDGE, TELEGRAPH_EDGE_DAGON, TELEGRAPH_FLASH_MS, TELEGRAPH_MARGIN, TELEGRAPH_POOL, telegraphQuadOver } from '../src/render/gate/gateTelegraph.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const near = (a, b, e = 1e-6) => Math.abs(a - b) <= e;

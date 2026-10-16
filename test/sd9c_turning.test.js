@@ -73,7 +73,7 @@ test('SD9c THE LOOK\'S LAW: the seventh kind, added whole (no shade, no mesh, no
   assert.ok(Math.abs(turningWheelAngle(AURA_CLOCK_PERIOD) + 2 * TAU) < 1e-9, 'two turns over the clock: whole at the wrap');
   // AUDIT SD II (L2 F13 - PIN MOVED): BACK AS THE EYE SEES IT, never the math sign. Through the game's own camera
   // (world/mat4.js lookAt and its one mirror) a mark on the ground's dial - at (cos a, sin a) of (x, z) about the feet -
-  // turns ANTICLOCKWISE on the screen, as the Hour's sky's hands do (render/sdSky.js: sin(back), cos(back) of (azimuth,
+  // turns ANTICLOCKWISE on the screen, as the Hour's sky's hands do (render/superDungeon/sdSky.js: sin(back), cos(back) of (azimuth,
   // elevation), back falling); this pin read turningDialAngle < 0, and the dial turned clockwise - forward - on the screen
   const vp = multiply(mirrorProjectionX(perspective(Math.PI / 3, 1.6, 0.05, 500)), lookAt([0, 1.7, -1.2], [0, 0, 0], [0, 1, 0]));
   const onScreen = (p) => { const w = vp[3] * p[0] + vp[7] * p[1] + vp[11] * p[2] + vp[15]; return [(vp[0] * p[0] + vp[4] * p[1] + vp[8] * p[2] + vp[12]) / w, (vp[1] * p[0] + vp[5] * p[1] + vp[9] * p[2] + vp[13]) / w]; };

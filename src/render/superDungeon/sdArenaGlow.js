@@ -8,22 +8,22 @@
 //     texture: one tap a fragment), dark, the Mantella barely alight deep in them. ON EVERY MANTELLA PULSE, AT ITS
 //     LANDING, they flood green from the centre outward (SD_FLOOD.front_s) and fade (SD_FLOOD.fade_s) - the Hour's
 //     heartbeat felt through the floor.
-//   THE RIM'S NUMERALS - twelve Roman numerals round the rim (the sky's own glyphs, render/sdSky.js SD_NUMERAL_GLSL),
+//   THE RIM'S NUMERALS - twelve Roman numerals round the rim (the sky's own glyphs, render/superDungeon/sdSky.js SD_NUMERAL_GLSL),
 //     foot to the boss, so a raid can call "to IX!"; at rest a brass glint. THE RESET IS COUNTED ON THEM: over its
 //     wind-up they light one by one in its soul-white, the last two in ember, and when XII lights it lands.
 //   THE HOUR ENDS - every fissure and numeral red.
 //
 // What it reads of the fight is `sdArenaGlowAt` (pure over the page's fight state - net/superDungeon/sdFightLink.js - and the clock):
 // the Pulse's landing (kept: the clock's blow is replaced by the next), the Reset's wind-up, the End. The same word for
-// the Hour's sky (`sdHourClockOf`, render/sdSky.js uClock): the hands sweep to XII with the numerals.
+// the Hour's sky (`sdHourClockOf`, render/superDungeon/sdSky.js uClock): the hands sweep to XII with the numerals.
 //
 // Not a DFU member. Ledger A (SUPER-DUNGEONS).
-import { buildProgram } from './glProgram.js';
-import { FOG_FACTOR_GLSL } from './labGrass.js';
-import { BAYER_GLSL, SD_PIXEL_GLSL } from './orderedDither.js';
+import { buildProgram } from '../glProgram.js';
+import { FOG_FACTOR_GLSL } from '../labGrass.js';
+import { BAYER_GLSL, SD_PIXEL_GLSL } from '../orderedDither.js';
 import { SD_NUMERAL_GLSL, SD_SKY_MODE } from './sdSky.js';
-import { SD_ARENA } from '../net/superDungeon/sdBrain.js';
-import { SD_BLOWS } from '../net/superDungeon/sdRemnant.js';
+import { SD_ARENA } from '../../net/superDungeon/sdBrain.js';
+import { SD_BLOWS } from '../../net/superDungeon/sdRemnant.js';
 
 /** The fissures: how many, their reach (m from the boss: from, to), the jag of their runs (m), and the field's texels a
  *  side and its reach (m - the field saturates past it). */
@@ -108,7 +108,7 @@ export function sdArenaGlowAt(s, t, memo) {
   return memo;
 }
 /**
- * THE HOUR'S SKY'S WORD FOR THE FIGHT (render/sdSky.js uClock) at `t` of `s`, into `out` (4 floats): the End, the
+ * THE HOUR'S SKY'S WORD FOR THE FIGHT (render/superDungeon/sdSky.js uClock) at `t` of `s`, into `out` (4 floats): the End, the
  * Reset's hands sweeping to XII (its share of the wind-up), the Dragon Break while the Echoes stand, or the living
  * fight's share of its Hour burnt and whether its last minute has come; none once it has fallen.
  */

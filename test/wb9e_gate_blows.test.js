@@ -3,11 +3,11 @@
 //
 //   the weight       net/gate/gateBrain.js ATTACKS - every share and base raised by about a third over WBX4's; two heavy
 //                    landings end anyone who has not healed between them; still every one escaped by moving
-//   the telegraph    render/gateTelegraph.js - an edge that reads from anywhere (its width in screen space), a FUSE
+//   the telegraph    render/gate/gateTelegraph.js - an edge that reads from anywhere (its width in screen space), a FUSE
 //                    burning down its rim as the wind-up runs, the fill throbbing faster as the landing nears, the last
 //                    moment burning at a landing's brightness, the grain of what lands (fire, frost, storm, venom, his
 //                    weight, Dagon's), and a shockwave thrown out past its edge as it lands
-//   the landing      render/gateFx.js - sparks out of the stone where it lands, and the meteor seen falling
+//   the landing      render/gate/gateFx.js - sparks out of the stone where it lands, and the meteor seen falling
 //
 // Design: bible/11-Multiplayer/World-Bosses.md section 14 (WB9e).
 import { test } from 'node:test';
@@ -19,10 +19,10 @@ import { strikeDamage } from '../src/net/gate/gateStrike.js';
 import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import {
   telegraphShape, telegraphStyle, poolShapes, GateTelegraphRenderer, TELEGRAPH_STYLE, TELEGRAPH_FS, TELEGRAPH_WAVE_MPS, TELEGRAPH_WAVE_MS, TELEGRAPH_NOW_MS,
-} from '../src/render/gateTelegraph.js';
+} from '../src/render/gate/gateTelegraph.js';
 import {
   GateFxRenderer, fxBurstOf, meteorFall, sparkAt, sparkSeed, FX_KINDS, FX_BURST_MS, FX_SPARKS, FX_BURSTS_MAX, METEOR_FALL_MS, METEOR_FROM_M, METEOR_DIR, METEOR_ELEV_DEG, FX_SPARK_VS,
-} from '../src/render/gateFx.js';
+} from '../src/render/gate/gateFx.js';
 import { createGateCourt } from '../src/scenes/gate/gateCourt.js';
 import { courtToDungeon } from '../src/world/gate/gateArena.js';
 import { attackColor } from '../src/world/gate/gateBoss.js';

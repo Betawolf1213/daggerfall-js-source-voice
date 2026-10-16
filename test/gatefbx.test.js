@@ -9,7 +9,7 @@
 //                     the stone as it stands whole
 //   THE RISE          scenes/gate/gatePool.js gatePlacement - sunk whole before it rises, on a slope too
 //   THE COURT'S FIRE  world/gate/gateArena.js wayInStep / portalFade, scenes/gate/gateCourt.js the way in (my arrival, another's
-//                     step out of it), the way home, the court gone silent, render/gatePass.js fireOnly and its foot
+//                     step out of it), the way home, the court gone silent, render/gate/gatePass.js fireOnly and its foot
 // The stone itself, its art and its opening: test/wb2_gate.test.js.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -26,7 +26,7 @@ import {
   WAY_IN_OPEN_MS, WAY_IN_NEAR_M, ARRIVE_Z, COURT_SILENT_MS, COURT_FRAME_GAP_MS, COURT_TEXT,
 } from '../src/world/gate/gateArena.js';
 import { createGateCourt } from '../src/scenes/gate/gateCourt.js';
-import { GatePassRenderer, membraneVertices, MEMBRANE_FS, FIRE_FOOT_Y } from '../src/render/gatePass.js';
+import { GatePassRenderer, membraneVertices, MEMBRANE_FS, FIRE_FOOT_Y } from '../src/render/gate/gatePass.js';
 import { gateArt, GATE_ARCHIVE } from '../src/world/gate/gateArt.js';
 import { CAPSULE_RADIUS } from '../src/player/motor.js';
 import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';

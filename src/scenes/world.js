@@ -350,16 +350,16 @@ import { createGatePool, GATE_TEXT } from './gate/gatePool.js';   // WB2: the ga
 import { createRiteHost, RITE_TEXT } from './riteHost.js';   // WB12d: the faithful's rite - its circle, its smoke, its faithful, its word and its chest
 import { createSdHost } from './superDungeon/sdHost.js';   // SD2b: the Hollow in the world - the hub's record in, the Hollow stood at its pixel, the find, the lines
 import { sdOmenSeen, sdNoticeCard, SD_COMPASS_M, sdAirWeight, sdBrassLight, sdBannerText, SD_BANNER_M } from '../systems/superDungeon/sdOmen.js';   // SD2c: the Hollow seen and heard of - its column, its note, its compass's reach
-import { SdOmenPassRenderer } from '../render/sdOmenPass.js';   // SD2c: the Hollow's omen, the gate's beacon in brass
+import { SdOmenPassRenderer } from '../render/superDungeon/sdOmenPass.js';   // SD2c: the Hollow's omen, the gate's beacon in brass
 import { SD_CAST_OUT_LINE, sdRoomKey, isSdRoom, sdPhase } from '../net/superDungeon/sdLaw.js';   // SD2d: a Hollow's end said to whoever it casts out; SD5a: the Hour's room; SD9e: a receipt from my realm's
 import { isSdRealm, realmArena, SD_REALM_TEXT, SD_REALM_FOG, SD_REALM_FLOORS, SD_ARENA_FLOORS, arenaHolds } from '../world/superDungeon/sdRealm.js';   // SD5a: the Shattered Hour - its edge, its refusals
-import { SdSkyRenderer, SD_SKY_STEPS } from '../render/sdSky.js';   // SD5b: the Hour's sky
-import { SdArenaGlowRenderer, sdArenaGlowAt, sdHourClockOf } from '../render/sdArenaGlow.js';   // SD-LOOK S7: the arena's floor reads the clock, and the sky's word for the fight
-import { SdStompWallRenderer, sdStompWalls, sdStompWallRecords, SD_HOLD_WALL, sdHomeBeacon } from '../render/sdStompWall.js';   // SD-LOOK S7: the Stomp's wall, the hold's curtain
-import { SdPillarPassRenderer } from '../render/sdPillarPass.js';   // SD-LOOK S7: the pillars' dials, their watching hands, their lanterns
+import { SdSkyRenderer, SD_SKY_STEPS } from '../render/superDungeon/sdSky.js';   // SD5b: the Hour's sky
+import { SdArenaGlowRenderer, sdArenaGlowAt, sdHourClockOf } from '../render/superDungeon/sdArenaGlow.js';   // SD-LOOK S7: the arena's floor reads the clock, and the sky's word for the fight
+import { SdStompWallRenderer, sdStompWalls, sdStompWallRecords, SD_HOLD_WALL, sdHomeBeacon } from '../render/superDungeon/sdStompWall.js';   // SD-LOOK S7: the Stomp's wall, the hold's curtain
+import { SdPillarPassRenderer } from '../render/superDungeon/sdPillarPass.js';   // SD-LOOK S7: the pillars' dials, their watching hands, their lanterns
 import { sdPillarLook, sdPillarLookAt, sdArenaMarksAt, sdLampDimInto } from './superDungeon/sdArenaWatch.js';   // SD-LOOK S7: the arena watches the Remnant - its hands, its mark, the Reset's dimming
-import { SdRiftRenderer } from '../render/sdRiftPass.js';   // SD-LOOK: the Rift's window into the Hour, its floor light, the Return's window home
-import { SdHaloRenderer, SD_HALO_GAIN } from '../render/sdHalo.js';   // SD-LOOK: their hearts' halos
+import { SdRiftRenderer } from '../render/superDungeon/sdRiftPass.js';   // SD-LOOK: the Rift's window into the Hour, its floor light, the Return's window home
+import { SdHaloRenderer, SD_HALO_GAIN } from '../render/superDungeon/sdHalo.js';   // SD-LOOK: their hearts' halos
 import { SD_HALL_FLOORS } from '../world/superDungeon/sdHall.js';   // SD6c: the bridge and the first step, the Concord's floors
 import { SD_HALL_TEXT, SD_HALL_SOUNDS } from './superDungeon/sdHall.js';   // SD6c: the snap's line; SD9d: the hall's clunk and toll, the Brass's powers' sounds
 import { SD_STEPS_FLOORS, SD_CAST_BACK_LOSS } from '../world/superDungeon/sdSteps.js';   // SD7b: the Steps' band and the arena, the Concord's floors too; what the void costs
@@ -391,7 +391,7 @@ import { createSdFightLink } from '../net/superDungeon/sdFightLink.js';   // SD8
 import { createSdRemnantBlows } from './superDungeon/sdRemnantBlows.js';   // SD8d: its blows on me - seen, heard, judged on my feet
 import { createSdRemnantVoice } from './superDungeon/sdRemnantVoice.js';   // SD14a: its body and its Echoes heard
 import { createSdAir } from './superDungeon/sdAir.js';   // SD14b: the Hour's air - its beds and its far events
-import { SdMotesRenderer } from '../render/sdMotes.js';   // SD14c: the Hour's motes
+import { SdMotesRenderer } from '../render/superDungeon/sdMotes.js';   // SD14c: the Hour's motes
 import { sdPerilAt, sdGroundModel, createSdBeats } from './superDungeon/sdArenaRead.js';   // SD15: the arena read - in it, and the fight's beats
 import { createSdFx } from './superDungeon/sdFx.js';   // SD16: the blows seen - bursts, shakes and lights
 import { sdBeamDraws, sdKeptList } from './superDungeon/sdRemnantRig.js';   // SD17: the Hour-Hand's beam in the air
@@ -399,7 +399,7 @@ import { sdBeamDraws, sdKeptList } from './superDungeon/sdRemnantRig.js';   // S
 const _sdBeamDraws = sdKeptList(), NO_SD_BEAMS = Object.freeze([]);
 import { sdMarksCardModel, sdEndingStoneLight } from '../ui/superDungeon/sdMarksView.js';   // SD18b: the Hour's marks as a fighter steps in, and its Ending's stone lit
 import { sdMarksOf, sdEndingOf, SD_ENDINGS } from '../net/superDungeon/sdMarks.js';   // SD18b: a Hollow's marks by its slot
-import { SdBeamRenderer } from '../render/sdBeam.js';
+import { SdBeamRenderer } from '../render/superDungeon/sdBeam.js';
 import { drawSdTitleCard } from '../ui/superDungeon/sdTitleCard.js';   // SD15: the Hour's own card
 import { titleCardModel } from '../ui/gate/gateTitleCard.js';   // SD15: the card's pure model, the Warden's
 import { remnantBarModel, sdBarNear } from '../ui/superDungeon/sdRemnantBar.js';   // SD8c: the Brass Remnant's bar, the gate's in brass
@@ -25791,7 +25791,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (_sdSkyPass === undefined) { try { _sdSkyPass = new SdSkyRenderer(renderer.gl); } catch (e) { console.warn('[sd] the Hour\'s sky could not be built', e); _sdSkyPass = null; } }
     return _sdSkyPass;
   };
-  /** SD-LOOK: the Rift's pass and the halos (render/sdRiftPass.js, render/sdHalo.js) - made the first time a Super dungeon's
+  /** SD-LOOK: the Rift's pass and the halos (render/superDungeon/sdRiftPass.js, render/superDungeon/sdHalo.js) - made the first time a Super dungeon's
    *  end is drawn, null where a context cannot (its meshes stand regardless). */
   let _sdRiftPass, _sdHaloPass;
   const sdRiftPassOf = () => {
@@ -25820,13 +25820,13 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   /** AUDIT SD V (P1): the Hollow's sky haze and the Rift window's sky record, kept (drawSdRift made both every frame). */
   const _sdHollowHaze = Object.freeze({ color: SD_REALM_FOG.color });
   const _sdRiftSky = { map: null, seconds: 0, gain: 1, clock: null };
-  /** SD17: the Hour-Hand's beam (render/sdBeam.js) - made the first time one sweeps, null where a context cannot. */
+  /** SD17: the Hour-Hand's beam (render/superDungeon/sdBeam.js) - made the first time one sweeps, null where a context cannot. */
   let _sdBeamPass;
   const sdBeamPassOf = () => {
     if (_sdBeamPass === undefined) { try { _sdBeamPass = new SdBeamRenderer(renderer.gl); } catch (e) { console.warn('[sd] the Hour-Hand\'s beam could not be built', e); _sdBeamPass = null; } }
     return _sdBeamPass;
   };
-  /** SD14c: the Hour's motes (render/sdMotes.js) - made the first time the Hour is drawn, null where a context cannot. */
+  /** SD14c: the Hour's motes (render/superDungeon/sdMotes.js) - made the first time the Hour is drawn, null where a context cannot. */
   let _sdMotesPass;
   const sdMotesPassOf = () => {
     if (_sdMotesPass === undefined) { try { _sdMotesPass = new SdMotesRenderer(renderer.gl); } catch (e) { console.warn('[sd] the Hour\'s motes could not be built', e); _sdMotesPass = null; } }
@@ -25920,7 +25920,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     return riftLook(sdHost.record(), s, Date.now() + _sharedOffsetMs, _sdSeen);
   };
   /** SD-LOOK (Super-Dungeons-Look.md section 3): WHERE THE HOUR'S VEIL CLOSES - the Rift's window (or the Return's)
-   *  on the screen each frame it is drawn, in screen radii (the corners at 1 - render/sdVeil.js uCentre), handed to the
+   *  on the screen each frame it is drawn, in screen radii (the corners at 1 - render/superDungeon/sdVeil.js uCentre), handed to the
    *  veil (ui/gate/gateVeil.js aim): its blades pivot on it. With no allocation (AUDIT SD II L2 F9): the model's place through
    *  the view and the projection, by hand. */
   function sdVeilAim(proj, view, m) {
@@ -26096,12 +26096,12 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   /** AUDIT SD III (V5): the Hour's light channel's kept list and its stone's kept light (sdRealmLights) - filled in place. */
   const NO_SD_LIGHTS = Object.freeze([]), _sdHourLights = [], _sdStoneLight = { x: 0, y: 0, z: 0, range: 0, color: [0, 0, 0], stone: -1 };
   /** SD-LOOK S7 (Super-Dungeons-Look.md section 9): THE ARENA'S READS, in the Hour's telegraph pass - its floor telling
-   *  the clock's blows (render/sdArenaGlow.js), the Stomp's walls and, while it holds me, the hold's curtain
-   *  (render/sdStompWall.js) - built once, lazily (a failure costs the reads, never the game), off the fight this page
+   *  the clock's blows (render/superDungeon/sdArenaGlow.js), the Stomp's walls and, while it holds me, the hold's curtain
+   *  (render/superDungeon/sdStompWall.js) - built once, lazily (a failure costs the reads, never the game), off the fight this page
    *  holds; and the sky's word for the same fight (`uClock`). Nothing made a frame. SD-LOOK S9: and the Steps' read - their
    *  ghosts where a Beat plate or my Crumble pin will return (scenes/superDungeon/sdSteps.js drawPass, the dungeon host's door).
    *  SD-LOOK S7: and the pillars' watch - their dials' hands on the Remnant, their lanterns, the Reset's dimming
-   *  (render/sdPillarPass.js, scenes/superDungeon/sdArenaWatch.js). */
+   *  (render/superDungeon/sdPillarPass.js, scenes/superDungeon/sdArenaWatch.js). */
   let _sdGlowPass = null, _sdWallPass = null, _sdPillarPass = null, _sdReadsBroken = false;
   const _sdPillarLook = sdPillarLook(), _sdLampDim = new Float64Array(1);
   const _sdGlowMemo = { flood: -1, floodK: 0, reset: -1, end: 0, pulseAt: -Infinity }, _sdWalls = sdStompWallRecords(), SD_HELD_WALLS = Object.freeze([SD_HOLD_WALL]);
@@ -26130,7 +26130,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     }
     return drew || ghosts;
   }
-  /** The sky's word for the fight this page holds (render/sdSky.js uClock), or none. */
+  /** The sky's word for the fight this page holds (render/superDungeon/sdSky.js uClock), or none. */
   const sdSkyClockNow = () => (sdFightLink ? sdHourClockOf(sdFightLink.state(), sdFightLink.now(), _sdSkyClock) : null);
   /** SD16 (Super-Dungeons.md section 10): ITS BLOWS SEEN (scenes/superDungeon/sdFx.js) - each landing and turn a burst of sparks on the
    *  gate's own spark pass, the camera shaken by how near it fell, the floor lit. Online alone, beside the link. */
@@ -26235,7 +26235,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   /** The hall's word for the realm I stand in, or null; and whether its Concord holds (the edge widens with it). */
   const sdHallWord = () => (_sdHall && _sdHall.s === modes?.sdRealmSlot?.() ? _sdHall : null);
   const sdConcordHere = () => !!sdHallWord()?.ok && modes?.dungeonCtx?.sdHallBridgeLaid?.() !== false;   // AUDIT SD V (L2): and its bridge drawn - the floor never stands under nothing
-  /** SD2c: THE HOLLOW'S OMEN (render/sdOmenPass.js) - a column of brass-gold light over a Super dungeon's pixel from its
+  /** SD2c: THE HOLLOW'S OMEN (render/superDungeon/sdOmenPass.js) - a column of brass-gold light over a Super dungeon's pixel from its
    *  rise to its end (sdHost omen: the record's own light), seen from SD_OMEN_PX map pixels round, outside alone. Its foot
    *  is the built ground under the Hollow's centre, or on a pixel not built yet the terrain sampler's own kernel there
    *  (GATE-SEEN's law, its own memo - a slot's pixel never moves). The pass is built the first time a column stands. */
@@ -30420,7 +30420,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       const d = deadlandsPass();
       if (d?.draw(proj, view, _courtSea, deadlandsSeconds(), courtFogNow(), skyGain(renderer._fogColor, COURT_FOG.color))) renderer.markForeignPass();
     },
-    // SD5b (Super-Dungeons.md section 7): THE HOUR'S SKY (render/sdSky.js) - after the realm's solid geometry, before its
+    // SD5b (Super-Dungeons.md section 7): THE HOUR'S SKY (render/superDungeon/sdSky.js) - after the realm's solid geometry, before its
     // flats, on the realm's anchored clock (the Deadlands' own, anchored to the relay's - every screen one moment), in its
     // haze and at its light's gain (skyGain over the realm's fog)
     drawSdSky: ({ proj, view }) => {
@@ -30453,9 +30453,9 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       if (told || lived) renderer.markForeignPass();
     },
     // SD8d: the Brass Remnant's blows on the arena's floor, in the dungeon arm's world pass - fogged as the floor is; SD9e:
-    // and its spoils' loot lines, in the same pass; SD14c: and the Hour's motes (render/sdMotes.js), in its fog and its sky's light;
+    // and its spoils' loot lines, in the same pass; SD14c: and the Hour's motes (render/superDungeon/sdMotes.js), in its fog and its sky's light;
     // SD16: and its blows' sparks (scenes/superDungeon/sdFx.js, the gate's spark pass) on the fight's clock; SD17: and the Hour-Hand's
-    // beam (render/sdBeam.js) out of its pointing hand
+    // beam (render/superDungeon/sdBeam.js) out of its pointing hand
     drawSdTelegraph: ({ proj, view, eye }) => { const t = performance.now() / 1000, fog = courtFogNow(); const blows = !!sdBlows?.drawPass(proj, view, eye, t, fog), lines = !!sdSpoilsPool?.drawPass(proj, view, eye, t, fog); const motes = !!sdMotesPassOf()?.draw(proj, view, deadlandsSeconds(), fog, skyGain(renderer._fogColor, SD_REALM_FOG.color), renderer.worldViewportPx?.[3]); const sparks = !!(sdFx && sdFightLink && sdFx.draw(renderer.gl, proj, view, eye, sdFightLink.now(), fog, renderer.worldViewportPx?.[3])); const beams = sdFightLink ? sdBeamDraws(sdFightLink.state(), sdFightLink.now(), _sdBeamDraws) : NO_SD_BEAMS; const beam = beams.length > 0 && !!sdBeamPassOf()?.draw(beams, proj, view, eye, t, fog); const reads = drawSdArenaReads(proj, view, fog); if (blows || lines || motes || sparks || beam || reads) renderer.markForeignPass(); },   // SD-LOOK S7: and the arena's reads
     deadlandsSeconds: () => deadlandsSeconds(),   // WB6b: the court's flash and the shards' drift keep the sky's clock
     staffTeleportHeld: () => staffTeleportHeld,

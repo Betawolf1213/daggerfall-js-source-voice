@@ -1,6 +1,6 @@
 // @ts-check
 // WB6c (2026-09-25, Mac: "the transition and the arena needs to be an oblivion masterpiece"): THE GATE'S VEIL ON THE
-// PAGE - the canvas the step through an Oblivion gate is drawn on (render/gateVeil.js: the law and the fire), its loop,
+// PAGE - the canvas the step through an Oblivion gate is drawn on (render/gate/gateVeil.js: the law and the fire), its loop,
 // and its sounds. Design: bible/11-Multiplayer/World-Bosses.md section 4 ("The step through").
 //
 // A CANVAS OF ITS OWN, over the game's, made the first time a gate is stepped through and kept: the fire needs nothing
@@ -19,10 +19,10 @@
 // Not a DFU member. Ledger A (WB).
 import { audio as defaultAudio } from '../../systems/audio.js';
 import { SOUND } from '../../systems/soundClips.js';
-import { GateVeilRenderer, veilAt, VEIL_CLOSE_S, VEIL_OPEN_S, VEIL_HOLD_MAX_S, VEIL_FRONT_IN, VEIL_FRONT_OUT } from '../../render/gateVeil.js';
+import { GateVeilRenderer, veilAt, VEIL_CLOSE_S, VEIL_OPEN_S, VEIL_HOLD_MAX_S, VEIL_FRONT_IN, VEIL_FRONT_OUT } from '../../render/gate/gateVeil.js';
 import { FIRE_CAST_ID } from '../../world/gate/gateBoss.js';
 import { loseGlContext, onPageGone } from '../../render/glRelease.js';   // GL-LEAK: its context let go with it, and as the page goes
-import { SdVeilRenderer, SD_VEIL_MODE, sdVeilQuarters } from '../../render/sdVeil.js';
+import { SdVeilRenderer, SD_VEIL_MODE, sdVeilQuarters } from '../../render/superDungeon/sdVeil.js';
 import { midiNote } from '../../systems/gate/gateScore.js';
 import { HOUR_CHIME, HOUR_CHIME_MENDED } from '../../systems/superDungeon/sdScore.js';
 
@@ -41,7 +41,7 @@ export const VEIL_CUES = Object.freeze({
 });
 /** AUDIT SD II (L6 F8): THE SHATTERED HOUR'S VEIL - every step into and out of the Hour was Dagon's fire and its roar
  *  (Mac, of the Hour: "not oblivion, something different"): the same whirl in brass, the Mantella's green its eye
- *  (render/gateVeil.js `uTheme`); as it closes, the Orrery's toll (the ship's bell, low) over the Warp's deep wind; as it
+ *  (render/gate/gateVeil.js `uTheme`); as it closes, the Orrery's toll (the ship's bell, low) over the Warp's deep wind; as it
  *  opens, a gear's clunk and the Concord's chime (scenes/superDungeon/sdHall.js SD_HALL_SOUNDS). The fire's stays the default. */
 export const VEIL_THEMES = Object.freeze({ fire: 0, brass: 1, hourIn: 2, hourBack: 3, hourHome: 4, hourCast: 5 });
 export const VEIL_BRASS_CUES = Object.freeze({
@@ -50,7 +50,7 @@ export const VEIL_BRASS_CUES = Object.freeze({
 });
 const themeOf = (name) => VEIL_THEMES[name] ?? VEIL_THEMES.fire;
 /** SD-LOOK (2026-10-08, bible/11-Multiplayer/Super-Dungeons-Look.md section 3): THE HOUR'S OWN VEIL - the Hour's four
- *  themes drawn by render/sdVeil.js (twelve brass blades closing on the Rift into a dial; the brass whirl stays for a
+ *  themes drawn by render/superDungeon/sdVeil.js (twelve brass blades closing on the Rift into a dial; the brass whirl stays for a
  *  caller that names 'brass'), each its mode there. Its canvas a third of the device's pixels, drawn pixelated - the
  *  Hour's pixel art. */
 export const VEIL_HOUR_MODE = Object.freeze({ [VEIL_THEMES.hourIn]: SD_VEIL_MODE.in, [VEIL_THEMES.hourBack]: SD_VEIL_MODE.back, [VEIL_THEMES.hourHome]: SD_VEIL_MODE.home, [VEIL_THEMES.hourCast]: SD_VEIL_MODE.cast });

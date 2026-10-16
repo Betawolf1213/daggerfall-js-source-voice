@@ -163,7 +163,7 @@
   },
   {
     "name": "WB4-the-readings-cone-without-his-body",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "const inside = d <= sh.r && (d <= sh.body || ang <= sh.halfArc);",
     "new": "const inside = d <= sh.r && ang <= sh.halfArc;",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "WB4-the-discs-drawn-about-him",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "(A.aim === 'self' ? TELEGRAPH_KIND.disc : TELEGRAPH_KIND.discs)",
     "new": "(true ? TELEGRAPH_KIND.disc : TELEGRAPH_KIND.discs)",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "WB4-the-flash-kept",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "  if (tel.since >= span + TELEGRAPH_FLASH_MS) return null;",
     "new": "  if (false) return null;",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "WB4-the-shaders-cone-without-his-body",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "    inside = d <= uR && (d <= uBody || ang <= uHalfArc);",
     "new": "    inside = d <= uR && ang <= uHalfArc;",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "WB4-the-depth-written",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "    gl.depthMask(false);\n",
     "new": "    gl.depthMask(true);\n",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "WB4-the-offset-left-on",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "    gl.disable(gl.POLYGON_OFFSET_FILL); gl.polygonOffset(0, 0);",
     "new": "    gl.polygonOffset(0, 0);",
     "tests": [

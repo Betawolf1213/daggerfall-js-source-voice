@@ -191,7 +191,7 @@
   },
   {
     "name": "AUDIT-WB9-the-cone-edge-jumping",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "    edge = abs(min(sector, d - uBody));",
     "new": "    edge = min(ang <= uHalfArc ? abs(d - uR) : 1e3, d > uBody && d <= uR ? abs(ang - uHalfArc) * d : 1e3);",
     "tests": [
@@ -200,7 +200,7 @@
   },
   {
     "name": "AUDIT-WB9-the-throb-three-times-too-fast",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "  float hz = 1.5 + 0.5 * T2;",
     "new": "  float hz = 1.5 + 1.5 * T2;",
     "tests": [
@@ -209,7 +209,7 @@
   },
   {
     "name": "AUDIT-WB9-no-walkway-drawn",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "    if (Array.isArray(walks) && shape.kind !== TELEGRAPH_KIND.mark) {",
     "new": "    if (false) {",
     "tests": [
@@ -218,7 +218,7 @@
   },
   {
     "name": "AUDIT-WB9-the-mark-on-the-walkways",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "    if (Array.isArray(walks) && shape.kind !== TELEGRAPH_KIND.mark) {",
     "new": "    if (Array.isArray(walks)) {",
     "tests": [
@@ -227,7 +227,7 @@
   },
   {
     "name": "AUDIT-WB9-the-far-walkway-for-the-middle-court",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "(one && w.k !== k0 && w.k !== k0 - 1)",
     "new": "(one && w.k !== k0)",
     "tests": [
@@ -236,7 +236,7 @@
   },
   {
     "name": "AUDIT-WB9-the-courts-drawn-twice-under-a-walkway",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "  bool clipOut = uOnWalk == 0 ? c > uFloorR : (length(vCourt - uWalkC0) <= uFloorR || length(vCourt - uWalkC1) <= uFloorR);",
     "new": "  bool clipOut = uOnWalk == 0 ? c > uFloorR : false;",
     "tests": [

@@ -155,7 +155,7 @@
   },
   {
     "name": "WB9b-the-telegraph-over-the-court-he-leaves",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "  const at = A.aim === 'point' && marks.length ? marks[0] : [atk.x, atk.z];",
     "new": "  const at = [atk.x, atk.z];",
     "tests": [

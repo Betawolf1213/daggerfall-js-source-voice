@@ -308,7 +308,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-E5-the-masks-foot-at-the-ground",
-    "file": "src/render/gatePass.js",
+    "file": "src/render/gate/gatePass.js",
     "old": "  if (vLocal.y < ${FIRE_FOOT_Y.toFixed(4)} ||",
     "new": "  if (vLocal.y < ${ARCH_Y0.toFixed(4)} ||",
     "tests": [
@@ -317,7 +317,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-E5-the-quads-foot-at-the-ground",
-    "file": "src/render/gatePass.js",
+    "file": "src/render/gate/gatePass.js",
     "old": "  const x0 = -MEMBRANE_HALF_W, x1 = MEMBRANE_HALF_W, y0 = FIRE_FOOT_Y, y1 = ARCH_Y1;",
     "new": "  const x0 = -MEMBRANE_HALF_W, x1 = MEMBRANE_HALF_W, y0 = ARCH_Y0, y1 = ARCH_Y1;",
     "tests": [
@@ -326,7 +326,7 @@
   },
   {
     "name": "GATE-FBX-the-way-in-a-beacon",
-    "file": "src/render/gatePass.js",
+    "file": "src/render/gate/gatePass.js",
     "old": "      if (g.fireOnly) continue;   // GATE-FBX: the court's way in - its fire alone\n",
     "new": "",
     "tests": [

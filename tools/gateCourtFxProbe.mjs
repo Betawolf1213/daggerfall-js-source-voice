@@ -24,7 +24,7 @@ const PAGE = `<!doctype html><html><body style="margin:0;background:#000"><canva
 import { buildCourtModel, courtToDungeon } from '/src/world/gate/gateArena.js';
 import { courtArt, gateArt } from '/src/world/gate/gateArt.js';
 import { CourtCrystalRenderer } from '/src/render/courtCrystals.js';
-import { GateFxRenderer, FX_KINDS, meteorFall } from '/src/render/gateFx.js';
+import { GateFxRenderer, FX_KINDS, meteorFall } from '/src/render/gate/gateFx.js';
 import { ATTACKS, CRYSTAL_H } from '/src/net/gate/gateBrain.js';
 const m = buildCourtModel();
 const gl = document.getElementById('c').getContext('webgl2', { alpha: false, preserveDrawingBuffer: true });

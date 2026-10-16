@@ -228,7 +228,7 @@
   },
   {
     "name": "WB13d-the-old-63-degrees",
-    "file": "src/render/gateFx.js",
+    "file": "src/render/gate/gateFx.js",
     "old": "export const METEOR_ELEV_DEG = 35;",
     "new": "export const METEOR_ELEV_DEG = 63;",
     "tests": [
@@ -238,7 +238,7 @@
   },
   {
     "name": "WB13d-the-old-1100-ms",
-    "file": "src/render/gateFx.js",
+    "file": "src/render/gate/gateFx.js",
     "old": "export const METEOR_FALL_MS = 1700;",
     "new": "export const METEOR_FALL_MS = 1100;",
     "tests": [

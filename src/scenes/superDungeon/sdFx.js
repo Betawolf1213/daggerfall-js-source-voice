@@ -2,9 +2,9 @@
 // SD16 (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 10 and section 16's SD16;
 // Mac: "The detail needs to exceed that of the oblivion gates"): THE BLOWS SEEN - the Hour's landings, turns and fall
 // as bursts of sparks, the camera shaken and the floor lit. The Warden's court throws 12 kinds of burst, shakes the
-// camera under 7 of his landings and lights his (render/gateFx.js, world/gate/gateBoss.js LAND_SHAKE); the Hour threw none.
+// camera under 7 of his landings and lights his (render/gate/gateFx.js, world/gate/gateBoss.js LAND_SHAKE); the Hour threw none.
 //
-//   THE BURSTS (`SD_FX_KINDS`, 17 kinds, drawn by the gate's own spark pass - render/gateFx.js GateFxRenderer, its
+//   THE BURSTS (`SD_FX_KINDS`, 17 kinds, drawn by the gate's own spark pass - render/gate/gateFx.js GateFxRenderer, its
 //     kinds and colours the Hour's): the Stomp's landing at its feet and its ring's dust thrown up as it rolls; the
 //     Hour-Hand's light out of its chest; the Volley's gears where each lands; the Pulse, the Reset and the End over the
 //     arena's heart in the Mantella's green, its white and red; each Echo risen and broken, in gold or silver; each
@@ -28,7 +28,7 @@ import { SD_WAY_BACK_Z } from '../../world/superDungeon/sdRealm.js';
 import { SD_CHECKPOINTS, SD_VOID_Y } from '../../world/superDungeon/sdSteps.js';
 import { SD_BLOW_BY_ID, SD_BLOWS, SD_BODY, SD_REM, SD_ECHO, SD_ARENA_SLACK, stompFrontAt, handAngleAt, inArena } from '../../net/superDungeon/sdRemnant.js';
 import { sdBodyAt } from '../../net/superDungeon/sdFightLink.js';
-import { GateFxRenderer, FX_BURST_MS, FX_BURSTS_MAX, FX_LIGHT_MS } from '../../render/gateFx.js';
+import { GateFxRenderer, FX_BURST_MS, FX_BURSTS_MAX, FX_LIGHT_MS } from '../../render/gate/gateFx.js';
 import { SD_REM_SINK_MS } from './sdRemnant.js';
 import { SD_SLIP_FRAC } from './sdRemnantVoice.js';
 import { clearOfPillars } from './sdSpoils.js';
@@ -89,13 +89,13 @@ export const SD_FX_COLUMN = Object.freeze({ n: 3, at: 1500, step: 250 });
 export const SD_FX_FLASH_MS = 400;
 /** The Stomp's ring throws its dust at this many points, this long into its roll. */
 export const SD_RING_DUST = Object.freeze({ n: 6, after: 400 });
-/** AUDIT SD III (V1): THE ARENA'S FLOOR, the dungeon's frame - where every burst's sparks come to rest (render/gateFx.js
+/** AUDIT SD III (V1): THE ARENA'S FLOOR, the dungeon's frame - where every burst's sparks come to rest (render/gate/gateFx.js
  *  `floor`). None was ever said, and the gate's pass rests a burst's sparks at its own height when none is: eleven of the
  *  seventeen kinds - the Pulse's, the Hearts', an Echo's, the stun's, the fall's - piled their spent sparks on an unseen
  *  pane 1.2-4.4 m in the air. */
 export const SD_FX_FLOOR_Y = realmToDungeon(SD_ARENA.x, 0, SD_ARENA.z)[1];
 /** AUDIT SD IV (R3): AND WHERE IT ENDS - its centre (the dungeon's x, z) and its rim (SD_ARENA.r, where the blows' floor
- *  marking is clipped, render/gateTelegraph.js): the gate's pass rested a spark that ran past it on air over the void. */
+ *  marking is clipped, render/gate/gateTelegraph.js): the gate's pass rested a spark that ran past it on air over the void. */
 export const SD_FX_EDGE = Object.freeze([realmToDungeon(SD_ARENA.x, 0, SD_ARENA.z)[0], realmToDungeon(SD_ARENA.x, 0, SD_ARENA.z)[2], SD_ARENA.r]);
 /** The fall's white-gold flash: six metres over the arena's heart (the dungeon's frame). */
 const FLASH_AT = Object.freeze(realmToDungeon(SD_ARENA.x, 6, SD_ARENA.z));

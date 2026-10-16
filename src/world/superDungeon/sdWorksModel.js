@@ -4,7 +4,7 @@
 // 240-280 m down under the course's middle, meshed in two pairs on two layers (the upper pair's driver on the lower
 // pair's follower's axle, as a clock's train is built), neighbours turning opposite ways on the escapement's tick
 // (world/superDungeon/sdLook.js sdTick), dim glints at their tooth tips (the Works' record lights its tip band alone, the ambient
-// rung), black against the furnace glowing at the nadir (render/sdSky.js). You see them between the islands, and you
+// rung), black against the furnace glowing at the nadir (render/superDungeon/sdSky.js). You see them between the islands, and you
 // see them come up at you as you fall.
 //
 // And the gear the Hour's works are cut from (`layGear`): a toothed rim, a hub and spokes, laid in any frame - the Works'

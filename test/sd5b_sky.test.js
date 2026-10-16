@@ -1,12 +1,12 @@
 // SD5b (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 7): THE SHATTERED HOUR'S SKY
-// (render/sdSky.js) - painted as the Deadlands' is: a void of brass light and stars, slow aurorae, three of the Bay's
+// (render/superDungeon/sdSky.js) - painted as the Deadlands' is: a void of brass light and stars, slow aurorae, three of the Bay's
 // skylines hanging upside down and drifting round, and a clock-face of stars over the arena whose hands run backwards;
 // every rate whole cycles over its period on the realm's anchored clock, so every screen shows one moment and the sky
 // never jumps. (Its GLSL was compiled and linked in Chromium's WebGL2 when it was written; these pin its laws.)
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { SdSkyRenderer, SD_SKY_VS, SD_SKY_FS, SD_SKY_PAINT_FS, SD_SKY_PERIOD, sdSkyClock, SD_CLOCK_FACE, SD_SKY_SHARDS, SD_SHARD_TOP, SD_AURORA } from '../src/render/sdSky.js';
+import { SdSkyRenderer, SD_SKY_VS, SD_SKY_FS, SD_SKY_PAINT_FS, SD_SKY_PERIOD, sdSkyClock, SD_CLOCK_FACE, SD_SKY_SHARDS, SD_SHARD_TOP, SD_AURORA } from '../src/render/superDungeon/sdSky.js';
 import { DEAD_NOISE_GLSL } from '../src/render/deadlands.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

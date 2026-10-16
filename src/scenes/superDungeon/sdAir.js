@@ -16,7 +16,7 @@
 //   THE ARENA'S GEARS - the grind, low, laid over itself the same way, turning under the arena's floor where the
 //     Remnant waits.
 // THE EVENTS, pure of everything but the clock (`sdAirEvents`), each in a slot of its own seconds, whole over the sky's
-//   period (render/sdSky.js SD_SKY_PERIOD), a seeded share of them sounding: a BELL tolled far off, a GEAR falling
+//   period (render/superDungeon/sdSky.js SD_SKY_PERIOD), a seeded share of them sounding: a BELL tolled far off, a GEAR falling
 //   into the void below, the void's MOAN rising from under the Steps, the SHARDS of the endings grinding in the sky
 //   overhead - each from a stand-in in its own quarter, far, held at its bearing as the player turns (the Deadlands'
 //   law, scenes/deadlandsAir.js airSourceAt).
@@ -30,7 +30,7 @@ import { SAMPLE_RATE as SND_RATE } from '../../formats/sndFile.js';
 import { addVoice, lowpassLoop, level, rms } from '../../systems/arena/arenaSound.js';
 import { airSourceAt, AIR_BACKLOG_S } from '../deadlandsAir.js';
 import { THUNDER_SOURCE_M } from '../../systems/distantStorms.js';
-import { SD_SKY_PERIOD } from '../../render/sdSky.js';
+import { SD_SKY_PERIOD } from '../../render/superDungeon/sdSky.js';
 import { SD_ARENA, SD_ORRERY, SD_REALM_ORIGIN, realmToDungeon } from '../../net/superDungeon/sdBrain.js';
 import { spanAt } from '../../world/superDungeon/sdSteps.js';
 

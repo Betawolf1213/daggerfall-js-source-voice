@@ -8,7 +8,7 @@
 //
 // Not a DFU member. Ledger A (SUPER-DUNGEONS).
 
-/** The ring's ink and the fill under it - the omen's brass (render/sdOmenPass.js SD_OMEN_COLOR), apart from the gate's
+/** The ring's ink and the fill under it - the omen's brass (render/superDungeon/sdOmenPass.js SD_OMEN_COLOR), apart from the gate's
  *  red, the serpent's sea-green, the party's green and every dot. */
 export const SD_RING_MAP_CSS = '#e8b24a';
 export const SD_FILL_CSS = 'rgba(232, 178, 74, 0.16)';

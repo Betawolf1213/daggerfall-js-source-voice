@@ -181,7 +181,7 @@
   },
   {
     "name": "AUDIT-DEEP-R1-gate-fogs-from-the-eye",
-    "file": "src/render/gatePass.js",
+    "file": "src/render/gate/gatePass.js",
     "old": "    if (U.uFocus) gl.uniform4fv(U.uFocus, fog?.focus ?? NO_FOCUS);   // AUDIT DEEP R-1: under the travel view the fog is the traveller's (fogGlsl.js FOCUS_GLSL)\n",
     "new": "",
     "tests": [

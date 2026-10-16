@@ -27,7 +27,7 @@
 //     back to XII across its solid 2.4 s; in its last 0.4 s the hand in the ember, its light faltering once at
 //     SD_BEAT_BLINK_HZ (the falter frame - the flash law, S0's) while it dissolves out through the ordered dither (its
 //     cells, world/superDungeon/sdStepsModel.js buildBeatDissolve - the draw's mesh a stage a tenth of a second), dithering back in
-//     over SD_BEAT_IN_S; gone, its GHOST hangs where it will return, its hand still running back (render/sdStepsPass.js).
+//     over SD_BEAT_IN_S; gone, its GHOST hangs where it will return, its hand still running back (render/superDungeon/sdStepsPass.js).
 //   THE CRUMBLE, mine: its cracks flaring in three stages across the shake (SD_STEPS_RECORD.crumble) while grit pours
 //     from it; then its four chunks fall (drop, drift, tumble) while its ghost counts the return; in the last
 //     SD_CHUNK.rewind of it the chunks fly back up out of the void, eased out, and click together - a shudder, whole.
@@ -47,8 +47,8 @@ import {
 import { stepsArt, SD_STEPS_RECORD } from '../../world/superDungeon/sdStepsArt.js';
 import { SD_REALM_ARCHIVE } from '../../world/superDungeon/sdRealm.js';
 import { identity } from '../../world/mat4.js';
-import { SdStepsPass, SD_GHOST_STEPS, SD_GHOST } from '../../render/sdStepsPass.js';
-import { SD_SKY_STEPS } from '../../render/sdSky.js';
+import { SdStepsPass, SD_GHOST_STEPS, SD_GHOST } from '../../render/superDungeon/sdStepsPass.js';
+import { SD_SKY_STEPS } from '../../render/superDungeon/sdSky.js';
 import { isTouchDevice } from '../../ui/touch/touchDevice.js';
 
 /** The Steps' words. */
@@ -141,7 +141,7 @@ const hide = (d) => { if (d && !d.hidden) { d.object.matrix.fill(0); d.hidden = 
 export function createSdSteps({ renderer = null, audio = null, ending = null, lite = isTouchDevice() } = {}) {
   /** Each step: the law's record, its bucket's key and place (`T`, the dungeon's frame - the collider reads it at every
    *  query) and last frame's (`was`), whether it stands solid now and stood so then, its draw, and the realm's second my
-   *  foot first stood on it (a Crumble step's - null untouched). SD-LOOK S9: its ghost's slot (render/sdStepsPass.js; -1
+   *  foot first stood on it (a Crumble step's - null untouched). SD-LOOK S9: its ghost's slot (render/superDungeon/sdStepsPass.js; -1
    *  none), its pendulum's draw (the Drift's), its chunks' and its grit's draws and when it was last whole again (the
    *  Crumble's). */
   const steps = SD_STEPS_COURSE.map((s) => ({ s, key: sdStepKey(s.i), T: [0, SD_STEP_GONE_Y, 0], was: [0, SD_STEP_GONE_Y, 0], solid: false, wasSolid: false, draw: null, touched: null, ghost: SD_GHOST_STEPS.indexOf(s), pend: null, chunks: null, grit: null, back: -Infinity }));
@@ -156,7 +156,7 @@ export function createSdSteps({ renderer = null, audio = null, ending = null, li
    *  the span my feet last stood in (a checkpoint's included), where the void casts me back to. */
   let breathMesh = null, breathDraw = null, lastSpan = -1;
   /** SD-LOOK S9: the Beat's dissolve stages, the pendulum's, the chunks' (and their ways), the grit's, the waystones' and
-   *  the vane's meshes; the waystones' and the vane's draws; the ghosts' places and states (render/sdStepsPass.js's two
+   *  the vane's meshes; the waystones' and the vane's draws; the ghosts' places and states (render/superDungeon/sdStepsPass.js's two
    *  uniform arrays, written in place) and their pass. */
   /** @type {any[]} */
   let dissolve = [], chunkMeshes = [];
@@ -385,7 +385,7 @@ export function createSdSteps({ renderer = null, audio = null, ending = null, li
       return null;
     },
     /** SD-LOOK S9: THE GHOSTS - the gone Beat plates and my gone Crumble pins outlined where they will return (one additive
-     *  draw, render/sdStepsPass.js, made the first time), in `fog`. Answers whether it drew (the host marks a foreign pass). */
+     *  draw, render/superDungeon/sdStepsPass.js, made the first time), in `fog`. Answers whether it drew (the host marks a foreign pass). */
     drawPass(proj, view, fog = null) {
       if (!draws || !renderer?.gl) return false;
       if (!passTried) { passTried = true; try { pass = new SdStepsPass(renderer.gl); } catch (e) { console.warn('[sd] the Steps\' ghosts would not build', e?.message ?? e); pass = null; } }

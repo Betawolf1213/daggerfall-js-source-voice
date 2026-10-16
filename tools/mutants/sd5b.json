@@ -1,7 +1,7 @@
 [
   {
     "name": "SD5B-the-hands-run-forwards",
-    "file": "src/render/sdSky.js",
+    "file": "src/render/superDungeon/sdSky.js",
     "old": "float hourA = -SKY_TAU * ${f4(SD_CLOCK_FACE.hourTurns)} * tk / SKY_PERIOD, minA = -SKY_TAU",
     "new": "float hourA = SKY_TAU * ${f4(SD_CLOCK_FACE.hourTurns)} * tk / SKY_PERIOD, minA = SKY_TAU",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "SD5B-the-minute-hand-the-hour's",
-    "file": "src/render/sdSky.js",
+    "file": "src/render/superDungeon/sdSky.js",
     "old": "export const SD_CLOCK_FACE = Object.freeze({ az: 0, elev: 0.2, r: 0.34, hourTurns: 1, minuteTurns: 12 });",
     "new": "export const SD_CLOCK_FACE = Object.freeze({ az: 0, elev: 0.2, r: 0.34, hourTurns: 1, minuteTurns: 1 });",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "SD5B-a-shard-not-whole-cycles",
-    "file": "src/render/sdSky.js",
+    "file": "src/render/superDungeon/sdSky.js",
     "old": "  Object.freeze({ name: 'wayrest', az: 3.05, halfW: 0.5, depth: 0.22, turns: 2 }),",
     "new": "  Object.freeze({ name: 'wayrest', az: 3.05, halfW: 0.5, depth: 0.22, turns: 2.5 }),",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "SD5B-a-shard-over-the-clock",
-    "file": "src/render/sdSky.js",
+    "file": "src/render/superDungeon/sdSky.js",
     "old": "  Object.freeze({ name: 'daggerfall', az: 2.2, halfW: 0.42, depth: 0.32, turns: 1 }),",
     "new": "  Object.freeze({ name: 'daggerfall', az: 0.5, halfW: 0.42, depth: 0.32, turns: 1 }),",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "SD5B-the-shards-all-one-way",
-    "file": "src/render/sdSky.js",
+    "file": "src/render/superDungeon/sdSky.js",
     "old": "  Object.freeze({ name: 'sentinel', az: -2.1, halfW: 0.38, depth: 0.26, turns: -1 }),",
     "new": "  Object.freeze({ name: 'sentinel', az: -2.1, halfW: 0.38, depth: 0.26, turns: 1 }),",
     "tests": [
@@ -48,7 +48,7 @@
   },
   {
     "name": "SD5B-the-aurorae-off-the-period",
-    "file": "src/render/sdSky.js",
+    "file": "src/render/superDungeon/sdSky.js",
     "old": "    float drift = ${f4(SD_AURORA.turns)} * TAU * uTime / PERIOD;",
     "new": "    float drift = ${f4(SD_AURORA.turns)} * TAU * uTime / 600.0;",
     "tests": [
@@ -57,7 +57,7 @@
   },
   {
     "name": "SD5B-azimuth-from-x",
-    "file": "src/render/sdSky.js",
+    "file": "src/render/superDungeon/sdSky.js",
     "old": "  float az = atan(d.x, d.z);",
     "new": "  float az = atan(d.z, d.x);",
     "tests": [
@@ -66,7 +66,7 @@
   },
   {
     "name": "SD5B-the-sky-off-the-far-plane",
-    "file": "src/render/sdSky.js",
+    "file": "src/render/superDungeon/sdSky.js",
     "old": "  gl_Position = vec4(aPos, 1.0, 1.0); }`;",
     "new": "  gl_Position = vec4(aPos, 0.999, 1.0); }`;",
     "tests": [
@@ -75,7 +75,7 @@
   },
   {
     "name": "SD5B-the-clock-handed-unwrapped",
-    "file": "src/render/sdSky.js",
+    "file": "src/render/superDungeon/sdSky.js",
     "old": "    gl.uniform1f(U.uTime, sdSkyClock(seconds));\n    gl.uniform3fv(U.uHaze, fog?.color ?? NO_HAZE);",
     "new": "    gl.uniform1f(U.uTime, seconds);\n    gl.uniform3fv(U.uHaze, fog?.color ?? NO_HAZE);",
     "tests": [
@@ -84,7 +84,7 @@
   },
   {
     "name": "SD5B-the-haze-not-the-frame's",
-    "file": "src/render/sdSky.js",
+    "file": "src/render/superDungeon/sdSky.js",
     "old": "    gl.uniform3fv(U.uHaze, fog?.color ?? NO_HAZE);",
     "new": "    gl.uniform3fv(U.uHaze, NO_HAZE);",
     "tests": [
@@ -93,7 +93,7 @@
   },
   {
     "name": "SD5B-the-gain-dropped",
-    "file": "src/render/sdSky.js",
+    "file": "src/render/superDungeon/sdSky.js",
     "old": "    gl.uniform1f(U.uGain, gain);",
     "new": "    gl.uniform1f(U.uGain, 1);",
     "tests": [
@@ -102,7 +102,7 @@
   },
   {
     "name": "SD5B-depth-written",
-    "file": "src/render/sdSky.js",
+    "file": "src/render/superDungeon/sdSky.js",
     "old": "    gl.depthMask(false);",
     "new": "    gl.depthMask(true);",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "SD5B-the-compare-left-at-LEQUAL",
-    "file": "src/render/sdSky.js",
+    "file": "src/render/superDungeon/sdSky.js",
     "old": "    gl.depthFunc(gl.LESS);\n",
     "new": "",
     "tests": [
@@ -120,7 +120,7 @@
   },
   {
     "name": "SD5B-the-depth-write-not-handed-back",
-    "file": "src/render/sdSky.js",
+    "file": "src/render/superDungeon/sdSky.js",
     "old": "    gl.depthMask(true);\n",
     "new": "",
     "tests": [
@@ -129,7 +129,7 @@
   },
   {
     "name": "SD5B-culling-not-handed-back",
-    "file": "src/render/sdSky.js",
+    "file": "src/render/superDungeon/sdSky.js",
     "old": "    gl.enable(gl.CULL_FACE);\n    this.drawn = true;",
     "new": "    this.drawn = true;",
     "tests": [
@@ -138,7 +138,7 @@
   },
   {
     "name": "SD5B-blended",
-    "file": "src/render/sdSky.js",
+    "file": "src/render/superDungeon/sdSky.js",
     "old": "    gl.disable(gl.BLEND);\n",
     "new": "",
     "tests": [
@@ -147,7 +147,7 @@
   },
   {
     "name": "SD5B-the-draw-unrecorded",
-    "file": "src/render/sdSky.js",
+    "file": "src/render/superDungeon/sdSky.js",
     "old": "    this.drawn = true;\n    return true;",
     "new": "    return true;",
     "tests": [

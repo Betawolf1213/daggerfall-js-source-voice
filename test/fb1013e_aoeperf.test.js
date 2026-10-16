@@ -20,7 +20,7 @@ import { glslFunctions, GlslDiscard } from './glsl.mjs';
 import {
   GateTelegraphRenderer, TELEGRAPH_FS, TELEGRAPH_VS, TELEGRAPH_KIND, TELEGRAPH_POOL, TELEGRAPH_POINTS_MAX, TELEGRAPH_REACH, TELEGRAPH_EDGE, TELEGRAPH_LIFT,
   TELEGRAPH_WALK_QUAD, TELEGRAPH_MARK_RING, telegraphShape, markShape, poolShapes, telegraphBounds, telegraphQuadOver, telegraphStrip, telegraphMarkReach,
-} from '../src/render/gateTelegraph.js';
+} from '../src/render/gate/gateTelegraph.js';
 import { ATTACKS, COURTS, COURT_R, COURT_CENTRE, BASE_PROFILE, POOLS, HOST, BOSS_R, windupOf, fightProfile } from '../src/net/gate/gateBrain.js';
 import { hostShapes } from '../src/scenes/gate/gateHost.js';
 import { lookAt, perspective, mirrorProjectionX, multiply } from '../src/world/mat4.js';
@@ -43,7 +43,7 @@ function recordingGl() {
 }
 const lastUniform = (calls, name) => calls.filter((c) => c[0].startsWith('uniform') && c[1] === name).at(-1)?.slice(2);
 
-// ── the producers' shapes: an AoE frame of the Burning Court (render/gateTelegraph.js, scenes/gate/gateHost.js) ─────────────
+// ── the producers' shapes: an AoE frame of the Burning Court (render/gate/gateTelegraph.js, scenes/gate/gateHost.js) ─────────────
 const P = BASE_PROFILE, NOW = 1_000_000;
 const FIGHTERS = [[3, 8], [-6, 6], [8, -2], [-9, -5], [1, -11], [12, 6], [-13, 2], [5, 14], [-4, -15], [10, -10]];
 const atkOf = (key, phase, share, over = {}) => { const A = ATTACKS[key]; const w = windupOf(A, phase); return { i: 1, a: A.id, at: NOW + w * (1 - share), x: 0, z: 0, yw: 0, tg: [], ...over }; };

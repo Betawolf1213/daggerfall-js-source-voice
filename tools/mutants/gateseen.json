@@ -64,7 +64,7 @@
   },
   {
     "name": "GATESEEN-the-far-fire",
-    "file": "src/render/gatePass.js",
+    "file": "src/render/gate/gatePass.js",
     "old": "      if (g.beaconOnly) continue;   // GATE-SEEN: a gate on a pixel not built yet is its beacon alone - no fire floating over the far ground\n",
     "new": "",
     "tests": [

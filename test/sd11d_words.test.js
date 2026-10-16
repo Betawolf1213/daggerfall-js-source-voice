@@ -24,8 +24,8 @@ import { BOSS_CUES, FIRE_CAST_ID } from '../src/world/gate/gateBoss.js';
 import { remnantBarModel, sdBarNear, SD_BAR_TEXT, SD_ECHO_RISE_NEAR_MS } from '../src/ui/superDungeon/sdRemnantBar.js';
 import { damageChartModel, DAMAGE_CHART_TEXT, DAMAGE_CHART_DELAY_MS, DAMAGE_CHART_CSS } from '../src/ui/gate/gateDamageChart.js';
 import { createGateVeil, VEIL_CUES, VEIL_BRASS_CUES, VEIL_THEMES, VEIL_OPEN_WAIT_TICKS } from '../src/ui/gate/gateVeil.js';
-import { GATE_VEIL_FS } from '../src/render/gateVeil.js';
-import { TELEGRAPH_FS } from '../src/render/gateTelegraph.js';
+import { GATE_VEIL_FS } from '../src/render/gate/gateVeil.js';
+import { TELEGRAPH_FS } from '../src/render/gate/gateTelegraph.js';
 import { SOUND } from '../src/systems/soundClips.js';
 import { createSdHost, sdCollapseLine, sdFadeDue, sdFadeReadout, SD_FADE_WARN_MS } from '../src/scenes/superDungeon/sdHost.js';
 import { sdFirst, sdRise, sdFind, sdFell, sdNameIn, sdFoundLine, sdFellLine, sdFadeLine, SD_CAST_OUT_LINE, SD_NO_CLOSED, SD_NO_FULL, SD_NO_RIFT, SD_COLLAPSE_MS } from '../src/net/superDungeon/sdLaw.js';
@@ -447,7 +447,7 @@ test('SD11d THE HOUR\'S OWN VEIL (L6 F8; Mac, of the Hour: "not oblivion, someth
   for (const fire of ['vec3(0.98, 0.3, 0.03)', 'vec3(1.0, 0.72, 0.34)', 'vec3(1.0, 0.84, 0.56)', 'vec3(1.0, 0.76, 0.38)']) assert.ok(GATE_VEIL_FS.includes(`mix(${fire}, `), `the fire's ${fire} first, the brass mixed over it`);
   // every way through the Hour asks it
   const WM = read('src/scenes/worldModes.js');
-  // PIN MOVED (SD-LOOK S5, Super-Dungeons-Look.md section 3): the Hour's own veil (render/sdVeil.js) - in through its
+  // PIN MOVED (SD-LOOK S5, Super-Dungeons-Look.md section 3): the Hour's own veil (render/superDungeon/sdVeil.js) - in through its
   // blades closing on the Rift, back in silver, home mended, forced out shattered; the brass whirl stays a theme
   assert.match(WM, /async function stepThroughFire\(go, look = 'fire', opts = undefined\) \{[\s\S]{0,200}if \(veil\) await veil\.cover\(look, opts\);/);
   assert.equal((W.match(/\}, 'hourIn'\);/g) ?? []).length, 1, 'the Rift\'s step in');

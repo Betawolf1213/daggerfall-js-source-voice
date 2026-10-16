@@ -17,7 +17,7 @@ import { gateTimes, gateRoomKey } from '../src/net/gate/gateLaw.js';
 import { SOCIAL_ROOM, GATE_BRAIN_V, gateReceiptKey, relaySupportsGateSpent, GATE_SPENT_RELAY_MIN, validGateIn } from '../src/net/wire.js';
 import { foldGate, GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import { bossPlace } from '../src/world/gate/gateBoss.js';
-import { telegraphShape, telegraphField } from '../src/render/gateTelegraph.js';
+import { telegraphShape, telegraphField } from '../src/render/gate/gateTelegraph.js';
 import { inAttack, chargeStrikes } from '../src/net/gate/gateStrike.js';
 import { createSpoilsPool, spoilsStore, recoverSpoils, spoilsLevel, SPOILS_STORE_KEY, SPOILS_DAY_KEY, SPOILS_RECORD_V, spentKey } from '../src/scenes/spoilsPool.js';
 import { SPECIAL_ARTIFACT_HANDLERS, ARTIFACTS } from '../src/systems/artifactEffects.js';

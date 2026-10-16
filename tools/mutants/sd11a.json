@@ -193,7 +193,7 @@
   },
   {
     "name": "SD11A-L2F7-the-raw-azimuth",
-    "file": "src/render/sdSky.js",
+    "file": "src/render/superDungeon/sdSky.js",
     "old": "  return sin(az * 3.0 + dfbm(vec2(cos(az), sin(az)) * (0.7 + 2.0 * e) + vec2(cos(drift), sin(drift)) * 0.7, 4) * 4.0 + drift);",
     "new": "  return sin(az * 3.0 + dfbm(vec2(az * 1.3, e * 2.0) + vec2(cos(drift), sin(drift)) * 0.7, 4) * 4.0 + drift);",
     "tests": [
@@ -394,7 +394,7 @@
   },
   {
     "name": "SD11A-L2F9-the-sky-basis-made",
-    "file": "src/render/sdSky.js",
+    "file": "src/render/superDungeon/sdSky.js",
     "old": "b = sdSkyBasisInto(view, proj, this._b);",
     "new": "b = sdSkyBasisInto(view, proj, { right: [0, 0, 0], up: [0, 0, 0], fwd: [0, 0, 0], lens: [0, 0, 0, 0] });",
     "tests": [
@@ -508,7 +508,7 @@
   },
   {
     "name": "SD11A-L2F12-the-arch-a-pow",
-    "file": "src/render/sdSky.js",
+    "file": "src/render/superDungeon/sdSky.js",
     "old": "  float curve = 0.14 + 0.36 * arch * arch;",
     "new": "  float curve = 0.14 + 0.36 * pow(arch, 2.0);",
     "tests": [
@@ -569,7 +569,7 @@
   },
   {
     "name": "SD11A-L2F15-the-face-in-raw-azimuth",
-    "file": "src/render/sdSky.js",
+    "file": "src/render/superDungeon/sdSky.js",
     "old": "  return t * (acos(clamp(dot(d, FACE_CENTRE), -1.0, 1.0)) / max(length(t), 1e-6)) / ${f6(SD_CLOCK_FACE.r)};",
     "new": "  return vec2(atan(d.x, d.z) - ${f6(SD_CLOCK_FACE.az)}, asin(clamp(d.y, -1.0, 1.0)) - ${f6(SD_CLOCK_FACE.elev)}) / ${f6(SD_CLOCK_FACE.r)};",
     "tests": [
@@ -579,7 +579,7 @@
   },
   {
     "name": "SD11A-L2F15-the-shards-hung-low",
-    "file": "src/render/sdSky.js",
+    "file": "src/render/superDungeon/sdSky.js",
     "old": "export const SD_SHARD_TOP = SD_CLOCK_TOP + SD_SHARD_CLEAR + Math.max(...SD_SKY_SHARDS.map((s) => s.depth));",
     "new": "export const SD_SHARD_TOP = 0.7;",
     "tests": [

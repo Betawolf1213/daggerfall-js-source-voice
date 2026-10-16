@@ -9,18 +9,18 @@
 //     and held - the machine ticks; the Remnant moves smoothly (smooth motion is danger). Outside time each pillar watches
 //     the Echo standing nearest it; once it has fallen, the way home rising where it fell (scenes/superDungeon/sdSpoils.js
 //     clearOfPillars - the world host's own place). Nothing to watch: the hands at XII.
-//   THE MARK (`sdArenaMarksAt`) - the Warden's WBX4 mark the Remnant never had (render/gateTelegraph.js markShape): a ring
+//   THE MARK (`sdArenaMarksAt`) - the Warden's WBX4 mark the Remnant never had (render/gate/gateTelegraph.js markShape): a ring
 //     about its feet and a chevron where it faces, always while it stands; smaller under each Echo standing, each in its
 //     body's metal. Laid by the Hour's telegraph pass (scenes/superDungeon/sdRemnantBlows.js, its `bodyMarks`).
 //   THE RESET'S DIMMING (`sdLampDimInto`) - the arena's lamps and lanterns dim to SD_RESET_DIM.to through the Reset's
 //     wind-up, so its Hearts are the brightest things in the world, and come back at its landing or the stun that ends
-//     it (world/superDungeon/sdRealm.js realmLightsWith's `dim`; render/sdPillarPass.js).
+//     it (world/superDungeon/sdRealm.js realmLightsWith's `dim`; render/superDungeon/sdPillarPass.js).
 //
 // Kept records, Float64Array scratch: a frame makes nothing (AUDIT SD II, L2 F9). Not a DFU member. Ledger A
 // (SUPER-DUNGEONS).
 import { SD_ARENA, SD_REALM_ORIGIN } from '../../net/superDungeon/sdBrain.js';
 import { SD_BLOWS, SD_REM, SD_ECHO } from '../../net/superDungeon/sdRemnant.js';
-import { markShape } from '../../render/gateTelegraph.js';
+import { markShape } from '../../render/gate/gateTelegraph.js';
 import { sdPillarDials, pillarCentre } from '../../world/superDungeon/sdPillarModel.js';
 import { SD_REMNANT_BODY, remnantScale } from '../../world/superDungeon/sdRemnantModel.js';
 import { sdTick } from '../../world/superDungeon/sdLook.js';
@@ -157,8 +157,8 @@ const _dim = new Float64Array(1);
 export const sdLampDimAt = (s, t) => sdLampDimInto(s, t, _dim)[0];
 
 /**
- * THE PILLARS' LOOK at `t` of `s`, into `look` (sdPillarLook's - render/sdPillarPass.js's): the hands, the dimming
- * (`k[0]`), and whether the Hour ends (`k[1]` - `glow`, render/sdArenaGlow.js sdArenaGlowAt's word, the numerals' own
+ * THE PILLARS' LOOK at `t` of `s`, into `look` (sdPillarLook's - render/superDungeon/sdPillarPass.js's): the hands, the dimming
+ * (`k[0]`), and whether the Hour ends (`k[1]` - `glow`, render/superDungeon/sdArenaGlow.js sdArenaGlowAt's word, the numerals' own
  * red). Pure.
  */
 export function sdPillarLookAt(s, t, look, glow = null) {

@@ -29,7 +29,7 @@ import {
   courtSpireAxes, courtBraziers, SLAB_LEN_M, SLAB_RISE_MS, LAVA_Y,
 } from '../src/world/gate/gateArena.js';
 import { bossPlace, bossHop, bossAct, CROSS_HEIGHT, BOSS_CUES, QUAKE_ON, ATTACK_COLORS } from '../src/world/gate/gateBoss.js';
-import { telegraphShape, GateTelegraphRenderer } from '../src/render/gateTelegraph.js';
+import { telegraphShape, GateTelegraphRenderer } from '../src/render/gate/gateTelegraph.js';
 import { deadlandsIslands, floorGap, LAND_CLEAR_M } from '../src/world/deadlandsLand.js';
 import { PlayerMotor } from '../src/player/motor.js';
 

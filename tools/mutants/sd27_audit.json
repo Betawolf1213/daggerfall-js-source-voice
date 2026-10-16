@@ -19,7 +19,7 @@
   },
   {
     "name": "SD27-S1-the-sky-blind-to-the-empty-fight",
-    "file": "src/render/sdArenaGlow.js",
+    "file": "src/render/superDungeon/sdArenaGlow.js",
     "old": "if (!s || !(s.fi > 0) || s.fell || !(t >= s.op)) return out;",
     "new": "if (!s || s.fell || !(t >= s.op)) return out;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "SD27-S1-the-floor-blind-to-the-empty-fight",
-    "file": "src/render/sdArenaGlow.js",
+    "file": "src/render/superDungeon/sdArenaGlow.js",
     "old": "if (!s || !(s.fi > 0) || s.fell) return memo;",
     "new": "if (!s || s.fell) return memo;",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "SD27-P4-the-skys-key-a-string",
-    "file": "src/render/sdSky.js",
+    "file": "src/render/superDungeon/sdSky.js",
     "old": "    this._all = all;\n",
     "new": "    this._all = all; this._key = `${steps}|${idx}|${light?.join(',') ?? ''}|${haze?.join?.(',') ?? ''}`;\n",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "SD27-P6-the-halos-corners-made",
-    "file": "src/render/sdHalo.js",
+    "file": "src/render/superDungeon/sdHalo.js",
     "old": "for (let c = 0; c < 12; c += 2) { d[o++] = h.at[0]; d[o++] = h.at[1]; d[o++] = h.at[2]; d[o++] = CORNERS[c]; d[o++] = CORNERS[c + 1];",
     "new": "for (const C of [[-1, -1], [1, -1], [1, 1], [-1, -1], [1, 1], [-1, 1]]) { d[o++] = h.at[0]; d[o++] = h.at[1]; d[o++] = h.at[2]; d[o++] = C[0]; d[o++] = C[1];",
     "tests": [

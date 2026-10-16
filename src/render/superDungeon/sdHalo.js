@@ -7,9 +7,9 @@
 //
 // A foreign pass: it owns its program and its state, and the host marks it (renderer.markForeignPass). Not a DFU member.
 // Ledger A (SUPER-DUNGEONS).
-import { buildProgram } from './glProgram.js';
-import { FOG_FACTOR_GLSL } from './labGrass.js';
-import { BAYER_GLSL } from './orderedDither.js';
+import { buildProgram } from '../glProgram.js';
+import { FOG_FACTOR_GLSL } from '../labGrass.js';
+import { BAYER_GLSL } from '../orderedDither.js';
 
 export const SD_HALO_MAX = 64;
 /** The halo's gain on the classic set and on the lane. */

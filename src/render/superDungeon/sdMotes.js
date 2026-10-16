@@ -15,12 +15,12 @@
 // Every mote is a pure function of its seeded draws and the Hour's clock (the sky's: world.js deadlandsSeconds, wrapped
 // at SD_SKY_PERIOD - every rate a whole number of turns over it), so every screen sees the same air at the same moment.
 // `sdMoteAt` is the shader's own law in JS, for the tests. Not a DFU member. Ledger A (SUPER-DUNGEONS).
-import { buildProgram } from './glProgram.js';
-import { FOG_FACTOR_GLSL } from './labGrass.js';
+import { buildProgram } from '../glProgram.js';
+import { FOG_FACTOR_GLSL } from '../labGrass.js';
 import { SD_SKY_PERIOD } from './sdSky.js';
-import { SD_REALM_ORIGIN, SD_ORRERY, SD_ARENA } from '../net/superDungeon/sdBrain.js';
-import { SD_FIRST_STEP } from '../world/superDungeon/sdHall.js';
-import { SD_COURSE_END } from '../world/superDungeon/sdSteps.js';
+import { SD_REALM_ORIGIN, SD_ORRERY, SD_ARENA } from '../../net/superDungeon/sdBrain.js';
+import { SD_FIRST_STEP } from '../../world/superDungeon/sdHall.js';
+import { SD_COURSE_END } from '../../world/superDungeon/sdSteps.js';
 
 /** How many of each kind: the hall's dust, the void's sparks, the arena's motes, the shards' dust. */
 export const SD_MOTES = Object.freeze({ dust: 320, sparks: 360, hour: 300, shards: 240 });

@@ -37,7 +37,7 @@
   },
   {
     "name": "SD20C-V2-the-band-never-drawn",
-    "file": "src/render/sdBeam.js",
+    "file": "src/render/superDungeon/sdBeam.js",
     "old": "      if (point3(g.f0) && point3(g.f1) && g.w > 0) {",
     "new": "      if (false) {",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "SD20C-V2-the-band-at-the-ribbons-width",
-    "file": "src/render/sdBeam.js",
+    "file": "src/render/superDungeon/sdBeam.js",
     "old": "        gl.uniform2f(U.uW, g.w, g.w);",
     "new": "        gl.uniform2f(U.uW, SD_BEAM_W[0], SD_BEAM_W[1]);",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "SD20C-V2-the-band-turned-to-the-eye",
-    "file": "src/render/sdBeam.js",
+    "file": "src/render/superDungeon/sdBeam.js",
     "old": "  if (uFlat == 1) across = vec3(along.z, 0.0, -along.x);   // the band: level across the floor\n",
     "new": "",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "SD20C-V2-the-band-narrowed-by-the-eye",
-    "file": "src/render/sdBeam.js",
+    "file": "src/render/superDungeon/sdBeam.js",
     "old": "  float w = uFlat == 1 ? mix(uW.x, uW.y, aP.y) : max(mix(uW.x, uW.y, aP.y), length(toEye) * uMinRad);",
     "new": "  float w = max(mix(uW.x, uW.y, aP.y), length(toEye) * uMinRad);",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "SD20C-V2-precisions-differ",
-    "file": "src/render/sdBeam.js",
+    "file": "src/render/superDungeon/sdBeam.js",
     "old": "uniform highp int uFlat;",
     "new": "uniform int uFlat;",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "SD20C-V14-the-beams-end-reversed",
-    "file": "src/render/sdBeam.js",
+    "file": "src/render/superDungeon/sdBeam.js",
     "old": "  float ends = smoothstep(0.0, 0.015, y) * (1.0 - smoothstep(0.985, 1.0, y));",
     "new": "  float ends = smoothstep(0.0, 0.015, y) * smoothstep(1.0, 0.985, y);",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "SD20C-V14-the-clock-ring-reversed",
-    "file": "src/render/sdSky.js",
+    "file": "src/render/superDungeon/sdSky.js",
     "old": "float r = length(p), seen = smoothstep(-0.06, 0.02, e);",
     "new": "float r = length(p), seen = smoothstep(0.02, -0.06, e);",
     "tests": [
@@ -451,7 +451,7 @@
   },
   {
     "name": "SD20C-V14-the-veils-sparks-reversed",
-    "file": "src/render/gateVeil.js",
+    "file": "src/render/gate/gateVeil.js",
     "old": "(1.0 - smoothstep(0.15, 0.5, abs(fract(sc.x) - 0.5)))",
     "new": "smoothstep(0.5, 0.15, abs(fract(sc.x) - 0.5))",
     "tests": [

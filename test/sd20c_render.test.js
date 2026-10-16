@@ -24,8 +24,8 @@ import { SD_ARENA, SD_PILLAR_W, realmToDungeon } from '../src/net/superDungeon/s
 import { sdBodyAt } from '../src/net/superDungeon/sdFightLink.js';
 import { handSweepOf, handSweepHas, sdWayOut, sdPerilAt } from '../src/scenes/superDungeon/sdArenaRead.js';
 import { sdGearsAt, gearMatrix, sdBeamDraws, sdBeamsAt, sdKeptList } from '../src/scenes/superDungeon/sdRemnantRig.js';
-import { SdBeamRenderer, SD_BEAM_VS, SD_BEAM_FS, SD_BEAM_W, SD_BEAM_MAX, SD_BEAM_MIN_RAD } from '../src/render/sdBeam.js';
-import { SD_SKY_VS, SD_SKY_FS, SD_SKY_PAINT_FS } from '../src/render/sdSky.js';
+import { SdBeamRenderer, SD_BEAM_VS, SD_BEAM_FS, SD_BEAM_W, SD_BEAM_MAX, SD_BEAM_MIN_RAD } from '../src/render/superDungeon/sdBeam.js';
+import { SD_SKY_VS, SD_SKY_FS, SD_SKY_PAINT_FS } from '../src/render/superDungeon/sdSky.js';
 import { createSdRemnant, remnantPose, echoPose, sdTurnToward, SD_TURN_RATE, SD_REM_SINK_MS, SD_ECHO_SINK_MS } from '../src/scenes/superDungeon/sdRemnant.js';
 import { createSdRemnantBlows } from '../src/scenes/superDungeon/sdRemnantBlows.js';
 import { SD_BRASS_GLSL, SD_BRASS_RAMP, sdBrassGrade } from '../src/world/superDungeon/sdBrassSky.js';
@@ -68,7 +68,7 @@ test('SD20c THE SPARKS COME TO REST ON THE ARENA\'S FLOOR (V1): every burst the 
     assert.ok(b.at[1] - b.floor > 1, 'thrown from over it');
   }
   // the gate's pass: a burst's sparks rest on its floor when it says one - at its own height when it does not
-  assert.match(read('src/render/gateFx.js'), /gl\.uniform1f\(S\.uFloor, Number\.isFinite\(b\.floor\) \? b\.floor : b\.at\[1\]\);/);
+  assert.match(read('src/render/gate/gateFx.js'), /gl\.uniform1f\(S\.uFloor, Number\.isFinite\(b\.floor\) \? b\.floor : b\.at\[1\]\);/);
 });
 
 test('SD20c THE WHOLE ARENA\'S SHAKES ARE THE ARENA\'S (V4): the Pulse, the Reset, the End - blows that strike the whole arena and nobody off it - shake only a camera whose feet stand on it (its rim\'s slack the law\'s, SD_ARENA_SLACK); in the Hall or on the Steps, nothing; a blow with a reach still shakes by how near it fell, wherever I stand (mutant: felt anywhere in the Hour)', () => {
@@ -129,7 +129,7 @@ test('SD20c THE HOUR-HAND\'S BAND ON THE FLOOR (V2): each beam drawn twice - the
   const far = [lay([-1, 0.5], 0, [400, 2, 16]), lay([1, 0.5], 0, [400, 2, 16])];
   assert.ok(Math.hypot(far[1][0] - far[0][0], far[1][1] - far[0][1], far[1][2] - far[0][2]) > 1.075 + 0.1, 'the ribbon widened for a far eye (its min-angle) - the band never');
   // its int uniform: highp in the fragment stage as the vertex stage's default - a uniform's precision is one across
-  // the program, or it does not link (render/sdBeam.js, found by tools/sdBodyProbe.mjs)
+  // the program, or it does not link (render/superDungeon/sdBeam.js, found by tools/sdBodyProbe.mjs)
   assert.match(SD_BEAM_VS, /\nuniform int uFlat;/);
   assert.match(SD_BEAM_FS, /\nuniform highp int uFlat;/);
 });
@@ -387,7 +387,7 @@ test('SD20c A FRAME OF THE FIGHT MAKES NEXT TO NOTHING (V5) - measured in a chil
     const { createSdFx } = await import(${url('src/scenes/superDungeon/sdFx.js')});
     const { createSdRemnant } = await import(${url('src/scenes/superDungeon/sdRemnant.js')});
     const { sdGearsAt, sdBeamDraws, sdKeptList } = await import(${url('src/scenes/superDungeon/sdRemnantRig.js')});
-    const { SdBeamRenderer } = await import(${url('src/render/sdBeam.js')});
+    const { SdBeamRenderer } = await import(${url('src/render/superDungeon/sdBeam.js')});
     const { sdEndingStoneLight } = await import(${url('src/ui/superDungeon/sdMarksView.js')});
     const { sdPerilAt } = await import(${url('src/scenes/superDungeon/sdArenaRead.js')});
     const { realmLightsWith } = await import(${url('src/world/superDungeon/sdRealm.js')});

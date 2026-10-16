@@ -1,7 +1,7 @@
 // THE ABYSS LAB (SD-LAB, 2026-10-08, Mac: "I want to do a detailed pass on all the visuals for the inside of the Rift,
 // the portal that leads to the rift, mechanics, etc"). The Shattered Hour and the Rift drawn by the game's own renderer
 // and the Hour's own parts, with no game data - everything the Hour is, is made in code (world/superDungeon/sdRealm.js and its art,
-// render/sdSky.js, render/sdMotes.js, scenes/superDungeon/sdHall.js, scenes/superDungeon/sdSteps.js, scenes/superDungeon/sdRemnant.js, scenes/superDungeon/sdEnd.js). The
+// render/superDungeon/sdSky.js, render/superDungeon/sdMotes.js, scenes/superDungeon/sdHall.js, scenes/superDungeon/sdSteps.js, scenes/superDungeon/sdRemnant.js, scenes/superDungeon/sdEnd.js). The
 // frame is the dungeon arm's for the realm (scenes/worldModes.js: the realm's trilight and key, its haze, its lamps,
 // the islands, the dynamic draws, the sky after the solid geometry, the flats, the motes) in the same calls, so what
 // this page shows is what a player in the Hour sees - and the Hollow scene stands the Rift and the Return in a made
@@ -13,9 +13,9 @@
 //   ?x=&y=&z=&yaw=&pitch=   an exact eye (the dungeon's frame, metres; degrees)
 //   ?rx=&ry=&rz=     an exact eye in the realm's frame
 //   ?fight=fell&age=<s> (the way home assembling) | held (the hold's curtain) | stomp&st=<s since its landing> | pulse&pt=<s since its landing> | reset&rt=<s of 8> | end | break | live&ft=<share>   the fight's clock as
-//                    the arena's floor and the sky read it (render/sdArenaGlow.js), from a made fight state
+//                    the arena's floor and the sky read it (render/superDungeon/sdArenaGlow.js), from a made fight state
 //   ?veil=in|back|home|cast&vp=closing|shut|opening&vs=<seconds into it>&vshut=<seconds it stood shut>&vx=&vy=  the
-//                    Hour's veil over the frame (render/sdVeil.js), still at that moment; &reduce its reduced motion
+//                    Hour's veil over the frame (render/superDungeon/sdVeil.js), still at that moment; &reduce its reduced motion
 //   ?plate           the Returns' hand-plates alight, as when the activation ray finds them (SD-LOOK S6)
 //   ?arrive=<s since> the way back's exhale as one arrives: its brass burst and its ring's one turn (SD-LOOK S6)
 //   SD-LOOK S9, the Steps: ?view=pendulums|beat|beat-far|gust|crumble   their cameras; ?beat=<s into the first Beat
@@ -40,7 +40,7 @@
 //                    (from the Threshold's rim out over the void, the far islands in the haze); ?touch=on its phones'
 //                    tier (one spire a root, no far islands, two gears, still chains); ?law the realm's colliders too
 //                    (world/superDungeon/sdRealm.js realmColliderTris - the floors, pillars and lamp posts): no root, tooth or chain in them
-//   SD-LOOK S7, the arena's pillars (render/sdPillarPass.js, scenes/superDungeon/sdArenaWatch.js): views pillar (a capital from under
+//   SD-LOOK S7, the arena's pillars (render/superDungeon/sdPillarPass.js, scenes/superDungeon/sdArenaWatch.js): views pillar (a capital from under
 //                    it), capitals (the far two from the near rim), arena-far; the dials' hands watch the made fight's
 //                    Remnant (or, with no ?fight, where it waits), the Echoes in ?fight=break, the way home in ?fight=fell;
 //                    ?fight=reset&rt=<s> the lamps' and lanterns' dimming; ?fight=end the dials red; the bodies' marks on
@@ -51,19 +51,19 @@ import { Renderer, WORLD_FRAME, INTERIOR_CLEAR } from '../render/renderer.js';
 import { EL_LANE, dungeonFog, dungeonTrilight, dungeonAmbient, exposureFor } from '../render/enhancedLighting.js';
 import { applyFog, DUNGEON_FOG } from '../render/underwaterFog.js';
 import { skyGain } from '../render/deadlands.js';
-import { SdSkyRenderer, SD_SKY_STEPS, SD_SKY_MODE } from '../render/sdSky.js';
-import { SdMotesRenderer } from '../render/sdMotes.js';
+import { SdSkyRenderer, SD_SKY_STEPS, SD_SKY_MODE } from '../render/superDungeon/sdSky.js';
+import { SdMotesRenderer } from '../render/superDungeon/sdMotes.js';
 import { SD_HOUR_GRADE } from '../world/superDungeon/sdLook.js';
-import { SdVeilRenderer, SD_VEIL_MODE } from '../render/sdVeil.js';
-import { SdArenaGlowRenderer, sdArenaGlowAt, sdHourClockOf } from '../render/sdArenaGlow.js';
-import { SdStompWallRenderer, sdStompWalls, sdStompWallRecords, SD_HOLD_WALL, sdHomeBeacon } from '../render/sdStompWall.js';
-import { SdPillarPassRenderer } from '../render/sdPillarPass.js';   // SD-LOOK S7: the pillars' dials, their watching hands, the lanterns
+import { SdVeilRenderer, SD_VEIL_MODE } from '../render/superDungeon/sdVeil.js';
+import { SdArenaGlowRenderer, sdArenaGlowAt, sdHourClockOf } from '../render/superDungeon/sdArenaGlow.js';
+import { SdStompWallRenderer, sdStompWalls, sdStompWallRecords, SD_HOLD_WALL, sdHomeBeacon } from '../render/superDungeon/sdStompWall.js';
+import { SdPillarPassRenderer } from '../render/superDungeon/sdPillarPass.js';   // SD-LOOK S7: the pillars' dials, their watching hands, the lanterns
 import { sdPillarLookAt, sdPillarLook, sdArenaMarksAt, sdLampDimInto } from '../scenes/superDungeon/sdArenaWatch.js';
-import { GateTelegraphRenderer } from '../render/gateTelegraph.js';
+import { GateTelegraphRenderer } from '../render/gate/gateTelegraph.js';
 import { SD_ARENA_CENTRE, SD_TELEGRAPH_FLOOR } from '../scenes/superDungeon/sdRemnantBlows.js';
 import { SD_BLOWS, SD_REM_START, SD_ECHO_SPOTS } from '../net/superDungeon/sdRemnant.js';
 import { SD_FIGHT_EMPTY } from '../net/superDungeon/sdFightLink.js';
-import { veilAt, VEIL_OPEN_S } from '../render/gateVeil.js';
+import { veilAt, VEIL_OPEN_S } from '../render/gate/gateVeil.js';
 import { buildRealmModel, realmLighting, realmLightsWith, realmColliderTris, packRealmFaces, SD_REALM_ARCHIVE, SD_REALM_BRASS_RECORD, SD_REALM_FOG, SD_WAY_BACK_Z, SD_WAY_BACK_SIZE, SD_ARRIVE_Z, SD_THRESHOLD_RIM } from '../world/superDungeon/sdRealm.js';
 import { realmArt } from '../world/superDungeon/sdRealmArt.js';
 import { faces } from '../world/gate/gateModel.js';
@@ -76,8 +76,8 @@ import { createSdRemnant } from '../scenes/superDungeon/sdRemnant.js';
 import { createSdEnd, SD_RETURN_KEY } from '../scenes/superDungeon/sdEnd.js';
 import { createSdHang } from '../scenes/superDungeon/sdHang.js';
 import { sdRiftFace, SD_RIFT_OPEN_LOOK, SD_RIFT_NOT_YET, SD_RIFT_CLOSED, SD_RIFT_REFUSED } from '../world/superDungeon/sdDungeon.js';
-import { SdRiftRenderer } from '../render/sdRiftPass.js';
-import { SdHaloRenderer, SD_HALO_GAIN } from '../render/sdHalo.js';
+import { SdRiftRenderer } from '../render/superDungeon/sdRiftPass.js';
+import { SdHaloRenderer, SD_HALO_GAIN } from '../render/superDungeon/sdHalo.js';
 import { realmToDungeon, SD_ORRERY, SD_ARENA, SD_STONE_POS, orreryOf, orreryLit, orreryTurn } from '../net/superDungeon/sdBrain.js';
 import { sdMarksOf, SD_ENDINGS } from '../net/superDungeon/sdMarks.js';
 import { DUNGEON_AMBIENT } from '../world/dungeon/dungeonLights.js';

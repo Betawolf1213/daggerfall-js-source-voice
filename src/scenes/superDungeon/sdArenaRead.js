@@ -19,7 +19,7 @@
 import { SD_ARENA } from '../../net/superDungeon/sdBrain.js';
 import { SD_BLOW_BY_ID, SD_BLOWS, SD_BODY, SD_PILLARS, atkWindup, blowShape, sdProfileOf, stompFrontAt, SD_ECHO_PAIR_MS } from '../../net/superDungeon/sdRemnant.js';
 import { SD_PILLAR_W } from '../../net/superDungeon/sdBrain.js';
-import { TELEGRAPH_NOW_MS } from '../../render/gateTelegraph.js';
+import { TELEGRAPH_NOW_MS } from '../../render/gate/gateTelegraph.js';
 import { screenBearing } from '../gate/gateCourt.js';
 import { SD_ELEMENT_COLOR, SD_ELEMENT_GROUND, sdTint } from './sdRemnantBlows.js';
 import { sdEndingOf } from '../../net/superDungeon/sdMarks.js';

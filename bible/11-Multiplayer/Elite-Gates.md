@@ -525,7 +525,7 @@ The gate's own model, `buildGateModel` in `src/world/gate/gateModel.js` (Mac's B
 10.04 m tall and 4.79 m to each side.
 
 - **The skin**: Imperial white marble inlaid with gold, cracked through with the Warden's basalt.
-- **The pass** (`src/render/gatePass.js`) compiles the membrane's colours and the arch's heights into its shader, and
+- **The pass** (`src/render/gate/gatePass.js`) compiles the membrane's colours and the arch's heights into its shader, and
   the beacon's column with them: it runs `BEACON_HEIGHT_M` (1200) from `BEACON_BELOW_M` (400) under the foot, so it
   stands 800 m over the ground, its light starting at `BEACON_START_M` (15). Its colour is the uniform `uColor`, set
   once a frame from `BEACON_COLOR` before the loop over the gates, and its `draw()` takes at most `GATE_PASS_MAX` (2)
@@ -1259,7 +1259,7 @@ audit39. Everything else is painted in code into the band's archives (section 25
 ### 11.7 Fighting in a fragment
 
 - **Fight floors.** Blows land only on flat **fight floors** (`floors[].fight`), each a polygon at one height.
-  - Today the telegraph pass (`src/render/gateTelegraph.js`) draws each shape on one plane at one height:
+  - Today the telegraph pass (`src/render/gate/gateTelegraph.js`) draws each shape on one plane at one height:
     `TELEGRAPH_LIFT` (0.05 m) over the court frame's origin (`centre`). A shape on a higher ledge hides under it; on a
     lower one it floats.
   - EG6b widens it: each fight floor is triangulated once (a static buffer). For each shape and each floor it touches,
@@ -2734,7 +2734,7 @@ mist, it is the only read.
 
 ### 25.4 The telegraph pass, THE TELEGRAPH BUDGET, THE QUIET COMPANY
 
-**The pass** (`src/render/gateTelegraph.js`) draws one shape a call. The Burning Court already draws several a frame:
+**The pass** (`src/render/gate/gateTelegraph.js`) draws one shape a call. The Burning Court already draws several a frame:
 its pools, his mark, his blow, and up to `HOST_SHAPES_MAX` (8) host shapes (`src/scenes/gate/gateHost.js`), cut in array
 order. A Ward-Bearer's tether is drawn today as a lane in the path pool (`TELEGRAPH_KIND.lane`, `HOST_PATH_HALF_W`
 0.35, `TELEGRAPH_POOL.path`). The Spire adds three kinds to `TELEGRAPH_KIND`, each a seam whose default draws the
@@ -3195,7 +3195,7 @@ They are grounded in:
 
 - the gate's and the ships' bakes (`tools/bakeGate.mjs`, `tools/shipBake.mjs`, `tools/fbxMesh.mjs`);
 - the collider (`src/player/collider.js`);
-- the telegraph pass, and how flat it is (`src/render/gateTelegraph.js`);
+- the telegraph pass, and how flat it is (`src/render/gate/gateTelegraph.js`);
 - `deepIn`'s margin (`src/net/bossBody.js`);
 - the cameras (`src/player/mwCamera.js`, `src/player/eotbCamera.js`);
 - the light caps;

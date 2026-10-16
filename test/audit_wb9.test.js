@@ -14,7 +14,7 @@ import { foldGate, crossLaid, GATE_STATE_EMPTY } from '../src/net/gate/gateLink.
 import { validGateOut } from '../src/net/wire.js';
 import { createGateCourt, COURT_RECKON_TEXT, spoilsKeep, bossOf } from '../src/scenes/gate/gateCourt.js';
 import { courtToDungeon, courtFloorTris } from '../src/world/gate/gateArena.js';
-import { TELEGRAPH_FS, TELEGRAPH_KIND, TELEGRAPH_WALK_QUAD, TELEGRAPH_THROB_MAX_HZ, GateTelegraphRenderer, telegraphShape, telegraphField, poolShapes } from '../src/render/gateTelegraph.js';
+import { TELEGRAPH_FS, TELEGRAPH_KIND, TELEGRAPH_WALK_QUAD, TELEGRAPH_THROB_MAX_HZ, GateTelegraphRenderer, telegraphShape, telegraphField, poolShapes } from '../src/render/gate/gateTelegraph.js';
 import { glslFunctions, GlslDiscard } from './glsl.mjs';
 import { Collider } from '../src/player/collider.js';
 import { createSpoilsPool } from '../src/scenes/spoilsPool.js';

@@ -55,7 +55,7 @@
   },
   {
     "name": "SD26-R3-the-edge-never-handed",
-    "file": "src/render/gateFx.js",
+    "file": "src/render/gate/gateFx.js",
     "old": "      gl.uniform3f(S.uEdge, b.edge ? b.edge[0] : 0, b.edge ? b.edge[1] : 0, b.edge ? b.edge[2] : 0);",
     "new": "      gl.uniform3f(S.uEdge, 0, 0, 0);",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "SD26-R3-the-shader-rests-past-it",
-    "file": "src/render/gateFx.js",
+    "file": "src/render/gate/gateFx.js",
     "old": "  if (uEdge.z > 0.0) {",
     "new": "  if (false) {",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "SD26-R3-slid-off-on-air",
-    "file": "src/render/gateFx.js",
+    "file": "src/render/gate/gateFx.js",
     "old": "upv * t - g * t * t : rest - g * (t - tc) * (t - tc));",
     "new": "upv * t - g * t * t : rest);",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "SD26-R3-the-mirror-edgeless",
-    "file": "src/render/gateFx.js",
+    "file": "src/render/gate/gateFx.js",
     "old": "  if (edge && edge[2] > 0) {",
     "new": "  if (false) {",
     "tests": [

@@ -27,7 +27,7 @@ import { runSpeed, JUMP_SPEED, GRAVITY, CAPSULE_RADIUS } from '../src/player/mot
 import { createSdRemnant, remnantOpenAt } from '../src/scenes/superDungeon/sdRemnant.js';
 import { sdTelegraphShapes } from '../src/scenes/superDungeon/sdRemnantBlows.js';
 import { remnantBarModel, SD_BAR_TEXT } from '../src/ui/superDungeon/sdRemnantBar.js';
-import { TELEGRAPH_KIND } from '../src/render/gateTelegraph.js';
+import { TELEGRAPH_KIND } from '../src/render/gate/gateTelegraph.js';
 import { SD_STEPS_COURSE } from '../src/world/superDungeon/sdSteps.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -292,7 +292,7 @@ test('SD11e THE HAND SHOWS ITS WAY AS IT GATHERS (L4 F10): its wind-up\'s half-c
     assert.ok(near(lane.end[0], 1 + Math.sin(a) * H.len) && near(lane.end[1], 2 + Math.cos(a) * H.len), `sw ${sw}: the beam at the edge it starts from`);
   }
   assert.deepEqual(sdTelegraphShapes(blow(H, at, { sw: 1 }), SD_BODY.remnant, 1, at + 100).map((s) => s.kind), [TELEGRAPH_KIND.lane], 'sweeping: the beam alone');
-  assert.equal(read('src/render/gateTelegraph.js').includes('AUDIT SD II (L4'), false, 'the gate\'s pass is its own');
+  assert.equal(read('src/render/gate/gateTelegraph.js').includes('AUDIT SD II (L4'), false, 'the gate\'s pass is its own');
 });
 
 test('SD11e THE HAND\'S RANGE IS ITS BEAM\'S (L4 C1): it was chosen for a target 40 m past its body, and its beam reaches 34 from its chest - a target 34-42 m off was swept by a beam that never reached it; now its range past its body is the beam\'s length less the body (mutants: the range 40)', () => {

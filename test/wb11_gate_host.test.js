@@ -41,7 +41,7 @@ import { bossBarModel, BOSS_BAR_TEXT, destroyGateBossBar } from '../src/ui/gate/
 import { destroyGateMarksCard, MARK_TIPS, MARK_ICONS } from '../src/ui/gate/gateMarksView.js';
 import { destroyGateGround } from '../src/ui/gate/gateGroundView.js';
 import { damageChartModel, DAMAGE_CHART_DELAY_MS, DAMAGE_CHART_TEXT } from '../src/ui/gate/gateDamageChart.js';
-import { TELEGRAPH_KIND } from '../src/render/gateTelegraph.js';
+import { TELEGRAPH_KIND } from '../src/render/gate/gateTelegraph.js';
 import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { fakeRooms } from './fakeRoom.mjs';
 

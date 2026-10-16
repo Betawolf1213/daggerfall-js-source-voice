@@ -18,7 +18,7 @@ import { foldGate, GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import {
   attackColor, poolColor, emberColor, bossGlow, bossCue, ASPECT_COLORS, ATTACK_COLORS, POOL_COLOR, EMBER_COLOR, BOSS_CUES, ASPECT_CUE_IDS, THUNDER_ROLL,
 } from '../src/world/gate/gateBoss.js';
-import { telegraphShape, markShape, BOSS_MARK_R } from '../src/render/gateTelegraph.js';
+import { telegraphShape, markShape, BOSS_MARK_R } from '../src/render/gate/gateTelegraph.js';
 import { bossBarModel, drawGateBossBar, destroyGateBossBar } from '../src/ui/gate/gateBossBar.js';
 import { aspectCss } from '../src/ui/gate/gateMarksView.js';   // WB13c: his epithet's colour on the bar
 import { createGateCourt, COURT_STRIKE_TEXT, COURT_MARKS_TEXT, courtPhaseCard, MARK_COLOR, FED_LATE_MS } from '../src/scenes/gate/gateCourt.js';

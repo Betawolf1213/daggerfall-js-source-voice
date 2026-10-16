@@ -13,7 +13,7 @@ const marks = (day) => marksLine({ boss: 'Valkynaz Ruhn', md: gateModsOf(day) })
 import { gateScanner, scanGatePixels, findGateSite } from '../src/systems/gate/gateSite.js';
 import {
   GatePassRenderer, MEMBRANE_FS, MEMBRANE_TURN_SEALED_HZ, MEMBRANE_TURN_OPEN_HZ, gateSpinRate, gateSpinAt,
-} from '../src/render/gatePass.js';
+} from '../src/render/gate/gatePass.js';
 import { createGatePool } from '../src/scenes/gate/gatePool.js';
 import { gateArchProfile } from '../src/world/gate/gateModel.js';
 import { CLIMATES, LOCATION_TYPES } from '../src/formats/mapsFile.js';

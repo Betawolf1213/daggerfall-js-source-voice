@@ -1,13 +1,13 @@
 // @ts-check
 // SD-LOOK (2026-10-08, bible/11-Multiplayer/Super-Dungeons-Look.md sections 1 and 2): THE RIFT'S WINDOW AND ITS LIGHT ON
-// THE FLOOR, and THE RETURN'S WINDOW HOME - one foreign pass (the gate membrane's law, render/gatePass.js: depth-tested,
+// THE FLOOR, and THE RETURN'S WINDOW HOME - one foreign pass (the gate membrane's law, render/gate/gatePass.js: depth-tested,
 // never written, fogged, both faces, every rate whole over its wrapped clock), drawn by the dungeon arm after the flats.
 //
 //   THE WINDOW - a disc in the ring's plane between the iris's leaves (world/superDungeon/sdRiftModel.js: the leaves shut it from both
 //     sides by depth, so the aperture IS the state and leaves and window always agree). Each fragment snaps to a grid of
 //     SD_WINDOW_CELLS across (chunky as the wall's texels) and looks down the eye's own ray through its point - true
 //     parallax - turned into the ring's frame, so looking straight in from its front looks toward the Hour's +z where its
-//     clock hangs: one tap of the Hour's own painted sky (render/sdSky.js SD_SKY_FETCH_GLSL - the very map the Hour
+//     clock hangs: one tap of the Hour's own painted sky (render/superDungeon/sdSky.js SD_SKY_FETCH_GLSL - the very map the Hour
 //     draws, hands and all). Gold filaments drag inward from the rim in a slow spiral and meet the brass at a white-gold
 //     lip; a refusal clouds it to ember; a step through ripples it from the point of entry.
 //   THE FLOOR LIGHT - a flat disc a hair over the floor about its foot, added on: its edge the hall's own (eight radii
@@ -23,10 +23,10 @@
 //     the city the Hollow rose by, right way up, a few windows warm. It goes out by clouding over from the top.
 //
 // Not a DFU member. Ledger A (SUPER-DUNGEONS).
-import { buildProgram } from './glProgram.js';
-import { FOG_FACTOR_GLSL } from './labGrass.js';
-import { BAYER_GLSL, SD_PIXEL_GLSL } from './orderedDither.js';
-import { DEAD_NOISE_GLSL } from './deadlands.js';
+import { buildProgram } from '../glProgram.js';
+import { FOG_FACTOR_GLSL } from '../labGrass.js';
+import { BAYER_GLSL, SD_PIXEL_GLSL } from '../orderedDither.js';
+import { DEAD_NOISE_GLSL } from '../deadlands.js';
 import { SD_SKY_FETCH_GLSL, SD_SKYLINE_GLSL, sdSkyClock } from './sdSky.js';
 
 /** The window's grid across its disc; the floor light's cell (m); the disc's and the floor's triangles. */

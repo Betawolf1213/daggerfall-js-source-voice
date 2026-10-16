@@ -21,7 +21,7 @@ import { realmArt, realmPillarArt } from '../src/world/superDungeon/sdRealmArt.j
 import { pillarCentre, sdPillarDials, sdLanterns, SD_PILLAR_LOOK, SD_PILLAR_DIAL, SD_LANTERN, SD_PILLAR_FACES } from '../src/world/superDungeon/sdPillarModel.js';
 import { SD_RAMP } from '../src/world/superDungeon/sdLook.js';
 import { paletteOf, offPalette } from '../src/world/superDungeon/sdPixelKit.js';
-import { SD_PILLAR_FS, SD_DIAL_TEXELS, SD_DIAL_PART, SD_DIAL_HAND, SD_DIAL_RINGS, SD_PILLAR_DIALS, SD_LANTERNS, SD_LANTERN_SPILLS, sdPillarPassGeometry } from '../src/render/sdPillarPass.js';
+import { SD_PILLAR_FS, SD_DIAL_TEXELS, SD_DIAL_PART, SD_DIAL_HAND, SD_DIAL_RINGS, SD_PILLAR_DIALS, SD_LANTERNS, SD_LANTERN_SPILLS, sdPillarPassGeometry } from '../src/render/superDungeon/sdPillarPass.js';
 import {
   sdPillarHandsAt, sdWatchedAt, handToward, sdLampDimAt, sdLampDimInto, sdPillarLookAt, sdPillarLook, sdArenaMarksAt, SD_RESET_DIM, SD_MARK_COLOR, SD_WATCH_HOME_Y,
 } from '../src/scenes/superDungeon/sdArenaWatch.js';
@@ -29,7 +29,7 @@ import { SD_HEART_LIGHT } from '../src/scenes/superDungeon/sdRemnant.js';
 import { SD_BLOW_COLOR } from '../src/scenes/superDungeon/sdRemnantBlows.js';
 import { clearOfPillars } from '../src/scenes/superDungeon/sdSpoils.js';
 import { SD_REMNANT_BODY, remnantScale } from '../src/world/superDungeon/sdRemnantModel.js';
-import { TELEGRAPH_KIND, BOSS_MARK_R, telegraphField } from '../src/render/gateTelegraph.js';
+import { TELEGRAPH_KIND, BOSS_MARK_R, telegraphField } from '../src/render/gate/gateTelegraph.js';
 import { BOSS_R } from '../src/net/gate/gateBrain.js';
 import { Collider } from '../src/player/collider.js';
 import { identity } from '../src/world/mat4.js';

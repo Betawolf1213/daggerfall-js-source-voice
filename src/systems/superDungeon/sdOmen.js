@@ -3,7 +3,7 @@
 // Super-Dungeons.md section 4): THE HOLLOW SEEN AND HEARD OF - what the world shows one player of a Super dungeon.
 //
 // BEFORE IT IS FOUND IT IS A FIND: no ring, no compass mark, no row - a column of brass-gold light over its pixel, seen
-// from SD_OMEN_PX map pixels round (the gate's beacon pass, its colours its own: render/sdOmenPass.js), and a word in
+// from SD_OMEN_PX map pixels round (the gate's beacon pass, its colours its own: render/superDungeon/sdOmenPass.js), and a word in
 // the taverns of the city it stands by. ONCE FOUND IT IS NEWS, until it is gone: a ring on the held map, a mark on the
 // compass inside SD_COMPASS_M of its door, a row in the Timers window (systems/eventTimers.js) and a note under the red
 // seal on every notice board.
