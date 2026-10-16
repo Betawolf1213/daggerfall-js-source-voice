@@ -1,7 +1,7 @@
 // @ts-check
 // BOUNTY-FARM (2026-09-28, Mac: "can you spawn some farmhouses there it says the granary is overrun? the thing is how
 // do those farmhouses despawn again"): A FARM ON A FARM BOUNTY'S PIXEL - the world host's props pool, on the gate's
-// and the camps' shape (scenes/gatePool.js, scenes/camps.js): models through the host's pipeline, a collider bucket of
+// and the camps' shape (scenes/gate/gatePool.js, scenes/camps.js): models through the host's pipeline, a collider bucket of
 // its own, drawn in the host's world pass.
 //
 // WHAT STANDS: a real farmstead - every model of the first RMB block of one of the game's eight nearest HomeFarms

@@ -8,7 +8,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { rosterActor } from '../src/characters/rosterBodies.js';
-import { createGateCourt } from '../src/scenes/gateCourt.js';
+import { createGateCourt } from '../src/scenes/gate/gateCourt.js';
 import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import { HOST, profileOf } from '../src/net/gate/gateBrain.js';
 import { HOST_FALL_MS, BOSS_LOOKS } from '../src/world/gate/gateBoss.js';

@@ -56,7 +56,7 @@
   },
   {
     "name": "STACK-CAP-court-trap-stacks",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "      if (trapMark && t < trapMark.until) trapMark.until = Math.max(trapMark.until, t + rounds * COURT_ROUND_MS);",
     "new": "      if (trapMark && t < trapMark.until) trapMark.until += rounds * COURT_ROUND_MS;",
     "tests": [

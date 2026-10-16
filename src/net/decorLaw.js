@@ -142,7 +142,7 @@ export function decorFlatMirrored(piece) {
  * archive (RDBLayout.NPCFlatArchives; the catalogue's Vendors), never one's own item - is placed, moved and drawn at
  * scale 1: the placer takes no size step for it (systems/decor/decorPlacer.js), the bar offers none (ui/decorPanel.js), the
  * service refuses one written at another (decorScaleOk - server-account/src/decor.js), and one grown or shrunk before
- * this stands at its own size for every visitor (decorDrawnScale - scenes/decorRoom.js), its record kept as it was paid.
+ * this stands at its own size for every visitor (decorDrawnScale - scenes/decor/decorRoom.js), its record kept as it was paid.
  */
 export function decorIsFigure(piece) {
   return !!piece && piece.model == null && !piece.item && Array.isArray(piece.flat) && isNpcFlat(piece.flat[0]);

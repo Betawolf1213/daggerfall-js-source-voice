@@ -16,7 +16,7 @@ import { placeAt, handDeath, roadHits, fateHits, deathCounted, turnKey, HAZARD }
 import { handsOn, membersAt, newsOf, remainsNear, awayOf, partyAt, placeCycle, CALENDAR_MPM, NEWS_DAYS } from '../src/systems/livingWorld/trips.js';
 import { newsScript, SLAIN_NEWS, DIED_NEWS, HELPED_NEWS, ROAD_NEWS, fillLine } from '../src/systems/livingWorld/lines.js';
 import { circleLine, circleSlots, slotSpoken, exchangeScript } from '../src/systems/livingWorld/meetups.js';   // LW-TALK: PIN MOVED - the news told in an exchange
-import { createLivingRoads } from '../src/scenes/livingRoads.js';
+import { createLivingRoads } from '../src/scenes/livingWorld/livingRoads.js';
 import { DAY_MIN } from '../src/systems/livingWorld/dayPlan.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
 

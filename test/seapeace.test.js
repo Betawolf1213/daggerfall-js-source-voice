@@ -18,7 +18,7 @@ import {
   createNavalDirector, encounterClasses, encounterRng, ENCOUNTER_CHANCE, ENCOUNTER_GAP, ENCOUNTERS, FIRST_ROLL_S, SPAWN_RING, SPAWN_CLEAR,
   DENSITY, weightedPick,
 } from '../src/systems/naval/navalDirector.js';
-import { PRIZE_TAKE_S, PRIZE_COST, NEWS_RANGE, HOSTILE_NEAR_M } from '../src/scenes/navalHost.js';
+import { PRIZE_TAKE_S, PRIZE_COST, NEWS_RANGE, HOSTILE_NEAR_M } from '../src/scenes/naval/navalHost.js';
 import { navalHitData } from '../src/systems/naval/navalWire.js';
 import { hash32 } from '../src/world/spawnedDungeons.js';
 import { mulberry32 } from '../src/combat/bloodArt.js';

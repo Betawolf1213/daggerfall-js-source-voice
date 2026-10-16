@@ -73,7 +73,7 @@
   },
   {
     "name": "WB8c-the-court-asks-fire-s-throw",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    if (so.saved) dmg = savedShare(dmg, save(e, so.el));",
     "new": "    if (so.saved) dmg = savedShare(dmg, save(e));",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "WB8c-the-resist-said-as-fire",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    if (dmg <= 0) { say(COURT_STRIKE_TEXT.resisted(so.name)); return; }",
     "new": "    if (dmg <= 0) { say(COURT_STRIKE_TEXT.resisted('Hellfire')); return; }",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "WB8c-the-court-lays-no-scar",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    if (A && P.atk[A.key].pool && !marked(pooled, atk) && t >= atk.at) {",
     "new": "    if (A && 'pool' in A && !marked(pooled, atk) && t >= atk.at) {",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "WB8c-the-ground-bites-as-fire",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    const el = p.el ?? 'fire';   // WB8b",
     "new": "    const el = 'fire';   // WB8b",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "WB8c-the-marks-said-every-frame",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    if (!marksSaid) { marksSaid = true; if (P.md",
     "new": "    if (!marksSaid) { if (P.md",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "WB8c-an-unmarked-warden-speaks",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "if (P.md && !s.fell && s.wrath == null) marksAt = t; }",
     "new": "if (!s.fell && s.wrath == null) marksAt = t; }",
     "tests": [
@@ -130,7 +130,7 @@
   },
   {
     "name": "WB8c-a-stale-feeding-said",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "if (t - s.fed.at <= FED_LATE_MS) { say(COURT_MARKS_TEXT.fed(bossOf(s).name, s.fed.ns));",
     "new": "if (true) { say(COURT_MARKS_TEXT.fed(bossOf(s).name, s.fed.ns));",
     "tests": [
@@ -139,7 +139,7 @@
   },
   {
     "name": "WB8c-a-feeding-said-every-frame",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "{ fedHeard = s.fed.at; if (t - s.fed.at <= FED_LATE_MS)",
     "new": "{ if (t - s.fed.at <= FED_LATE_MS)",
     "tests": [
@@ -148,7 +148,7 @@
   },
   {
     "name": "WB8c-the-turn-s-card-the-first-turn-s",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "const c = courtPhaseCard(s.phase); if (c) beat = { kind: 'phase'",
     "new": "const c = courtPhaseCard(2); if (c) beat = { kind: 'phase'",
     "tests": [
@@ -159,7 +159,7 @@
   },
   {
     "name": "WB8c-my-blows-meet-the-old-body",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "height: P.bossH, radius: P.bossR, warded:",
     "new": "height: P.bossH, radius: 1.8, warded:",
     "tests": [
@@ -168,7 +168,7 @@
   },
   {
     "name": "WB8c-the-sprite-its-old-size",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    const w = sz.w * body.scale * P.size, h = sz.h * body.scale * P.size;",
     "new": "    const w = sz.w * body.scale, h = sz.h * body.scale;",
     "tests": [
@@ -177,7 +177,7 @@
   },
   {
     "name": "WB8c-the-mark-the-burning-ember",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "markEmber = ember === EMBER_COLOR ? MARK_COLOR : markColorOf(ember);",
     "new": "markEmber = MARK_COLOR;",
     "tests": [
@@ -186,7 +186,7 @@
   },
   {
     "name": "WB8c-the-mark-about-the-old-body",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "_mark = markShape([0, 0], 0, markEmber, P.bossR); }",
     "new": "_mark = markShape([0, 0], 0, markEmber); }",
     "tests": [

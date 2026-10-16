@@ -81,7 +81,7 @@
   },
   {
     "name": "DECOR-FIGURE-bar-untold",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      sized: decorEntrySized(p.entry),   // DECOR-FIGURE: no Smaller or Bigger for one of Daggerfall's people\n",
     "new": "",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "DECOR-FIGURE-shrunk-charged",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "  return decorIsFigure(was) && priced.pay > 0 ? { pay: 0, refund: 0, paid: was.paid } : priced;",
     "new": "  return priced;",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "DECOR-FIGURE-grown-refund-kept",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "decorIsFigure(was) && priced.pay > 0 ?",
     "new": "decorIsFigure(was) ?",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "DECOR-FIGURE-footprint-recorded",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    const s = decorDrawnScale(piece);   // AUDIT DECOR-FIGURE C2",
     "new": "    const s = piece.scale ?? 1;   // AUDIT DECOR-FIGURE C2",
     "tests": [
@@ -121,7 +121,7 @@
   },
   {
     "name": "DECOR-FIGURE-room-draws-record",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "        const k = decorDrawnScale(piece);",
     "new": "        const k = piece.scale;",
     "tests": [

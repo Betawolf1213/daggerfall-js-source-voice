@@ -14,7 +14,7 @@ import {
   rollCount, rollTreasureGuardCount, pickRingDistance, isBehindPlayerHeading, isOutsideImmediateView, spawnRevealDistance,
 } from '../src/world/underwater/underwaterEnemies.js';
 import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';
-import { createEnemySpawner, createEncounterPulse, trySpawnTreasureGuards, ENEMY_ATTEMPTS_PER_PIXEL_PER_TICK } from '../src/scenes/deepWatersEncounters.js';
+import { createEnemySpawner, createEncounterPulse, trySpawnTreasureGuards, ENEMY_ATTEMPTS_PER_PIXEL_PER_TICK } from '../src/scenes/deepWater/deepWatersEncounters.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
 import { enemyControllerHeight, idleSpriteHeight } from '../src/characters/enemyAnchor.js';
 
@@ -287,7 +287,7 @@ test('DW-E4: the world host - the foes\' lane on the pulse, four attempts; a foe
   assert.match(w, /f\.ai\.makeEnemyHostileToAttacker\?\.\(PLAYER_TARGET, walkMode \? \[\.\.\.player\.pos\] : null\);/, 'ConfigureSpawnedEnemy: MakeEnemyHostileToAttacker(the player)');
   assert.match(w, /if \(o\.gone\) \{ exteriorFoes\.removeFoe\(f\); return; \}/, 'released while it stood: removed as it lands');
   assert.match(w, /waterLevelY: \(\) => dwPlayer\?\.waterLevelY \?\? null,/);
-  const h = rd('src/scenes/deepWatersHost.js');
+  const h = rd('src/scenes/deepWater/deepWatersHost.js');
   assert.match(h, /on: get\('General\.SpawnUnderwaterEnemies'\) === true,\n\s+frequency: scaledSliderValue\(get\('General\.EnemyFrequency'\), 0\.5\),\n\s+maxLive: Math\.max\(0, Math\.trunc\(Number\(get\('General\.MaxLiveEnemies'\)\)\)\),/);
   const x = rd('src/scenes/exteriorFoes.js');
   assert.match(x, /waterSurfaceY: waterLevelY \? \(\) => waterLevelY\(\) : null,/);

@@ -1,5 +1,5 @@
 // SD14a (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 10 and section 16's SD14a;
-// Mac: "The detail needs to exceed that of the oblivion gates"): THE BRASS REMNANT'S VOICE (scenes/sdRemnantVoice.js) -
+// Mac: "The detail needs to exceed that of the oblivion gates"): THE BRASS REMNANT'S VOICE (scenes/superDungeon/sdRemnantVoice.js) -
 // its body and its Echoes heard off the fight this page holds. A fight first seen is taken as it stands; its wake and
 // its fall heard live alone; its turns to the Dragon Break and the Last Moment; out of time and back; stunned and up
 // again; a grunt for each share of its health lost, spaced, and a heal moving the count; the gears slipping once under
@@ -15,8 +15,8 @@ import { readFileSync } from 'node:fs';
 import {
   createSdRemnantVoice, SD_VOICE_CUES, SD_IRON, SD_STRIDE_M, SD_ECHO_STRIDE_M, SD_GROWL_MS, SD_GROWL_MORE_MS, SD_HURT_GAP_MS,
   SD_RELEASE_MS, SD_TURN_LATE_MS, SD_SLIP_FRAC, SD_STING_M,
-} from '../src/scenes/sdRemnantVoice.js';
-import { SD_BLOW_CUES } from '../src/scenes/sdRemnantBlows.js';
+} from '../src/scenes/superDungeon/sdRemnantVoice.js';
+import { SD_BLOW_CUES } from '../src/scenes/superDungeon/sdRemnantBlows.js';
 import { SD_BLOWS } from '../src/net/superDungeon/sdRemnant.js';
 import { SD_ARENA, realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';

@@ -34,7 +34,7 @@
 // Mathematics' xorshift (formats/umRandom.js) with the same seed - the
 // same placement on every visit to a pixel, different concrete positions.
 // The mod's unseeded draws at spawn time (a replacement's random scale, a
-// batch's random start frame) are the host's (scenes/deepWatersDecor.js).
+// batch's random start frame) are the host's (scenes/deepWater/deepWatersDecor.js).
 // ═══════════════════════════════════════════════════════════════════
 
 import { UMRandom } from '../../formats/umRandom.js';
@@ -169,7 +169,7 @@ export const MAX_DECORATIONS_PER_TILE_HARD_CAP = 2304;
 export const SAMPLE_STRIDE = 3;
 export const MINIMUM_DECORATION_SPACING = 5;
 export const MINIMUM_SEAFLOOR_DEPTH = 8;
-export const DECORATION_SEAFLOOR_CLEARANCE = 0.25;            // SeafloorClearance (the swimmer's is another: scenes/deepWatersSwimMove.js)
+export const DECORATION_SEAFLOOR_CLEARANCE = 0.25;            // SeafloorClearance (the swimmer's is another: scenes/deepWater/deepWatersSwimMove.js)
 export const ANIMATED_DECORATION_SEAFLOOR_CLEARANCE = 0.75;   // AnimatedSeafloorClearance
 export const SURFACE_DECORATION_CLEARANCE = 0.5;
 export const MAX_DECORATION_SLOPE_DEGREES = 35;

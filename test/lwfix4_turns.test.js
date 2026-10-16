@@ -16,7 +16,7 @@ import { createRelations } from '../src/systems/livingWorld/relations.js';
 import { createRoadFights, ENDED_MAX } from '../src/scenes/roadFights.js';
 import { createRoadStands } from '../src/scenes/roadStands.js';
 import { createDungeonDivers } from '../src/scenes/dungeonDivers.js';
-import { createLivingRoads, ROADS_TOWNS_PER_FRAME, ROADS_VIEW_PX } from '../src/scenes/livingRoads.js';
+import { createLivingRoads, ROADS_TOWNS_PER_FRAME, ROADS_VIEW_PX } from '../src/scenes/livingWorld/livingRoads.js';
 import { DAY_MIN } from '../src/systems/livingWorld/dayPlan.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

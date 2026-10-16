@@ -14,7 +14,7 @@ import { idleSpriteHeight } from '../src/characters/enemyAnchor.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const IMP = 1;
-/** A quest resource's behaviour, as far as the pool's binding asks (scenes/questFoeHost.js bindQuestFoeHost). */
+/** A quest resource's behaviour, as far as the pool's binding asks (scenes/quest/questFoeHost.js bindQuestFoeHost). */
 const behaviour = () => ({ bindHost() {}, start() {} });
 const stubTex = { getSize: () => ({ width: 64, height: 120 }), getScale: () => ({ width: 0, height: 0 }), recordCount: 8, getFrameCount: () => 1 };
 const pool = () => createExteriorFoes({

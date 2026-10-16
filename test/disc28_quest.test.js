@@ -29,7 +29,7 @@ import { receiveSharedQuest, prepareQuestShare, prepareShareData, shareSignature
 import { mapPixelToWorldCoord } from '../src/formats/mapsFile.js';
 import { buildingIsUnlocked } from '../src/systems/buildingLocks.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
-import { sharedQuestFoe } from '../src/scenes/questFoeHost.js';
+import { sharedQuestFoe } from '../src/scenes/quest/questFoeHost.js';
 
 const VENDOR = join(dirname(fileURLToPath(import.meta.url)), '..', 'vendor', 'dfu-quests');
 const read = (p) => readFileSync(p, 'utf8').replace(/^﻿/, '');

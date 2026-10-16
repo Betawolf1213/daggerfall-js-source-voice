@@ -8374,7 +8374,7 @@ once and is not the piece's own price (`paid`), so nothing of it comes back when
 its room sold, and the account service's sale arithmetic (decorSaleBack) is untouched. DECOR_STATION_SERVICES names
 the guild service each craft opens: the potion maker, the spell maker and the item maker.
 
-**THE PANEL AND THE TOOL** (`ui/decorPanel.js` decorStationWords, `scenes/decorTool.js` setStation). In the room
+**THE PANEL AND THE TOOL** (`ui/decorPanel.js` decorStationWords, `scenes/decor/decorTool.js` setStation). In the room
 view, "Station: Alchemy >" cycles the craft offered, free, and follows a newly chosen piece's own craft. "Make station
 - 50,000 gold" (or "Unmake station (nothing back)") acts on it through the panel's one change door (`onToggle`,
 `station:<craft>`):
@@ -9613,7 +9613,7 @@ applied, the client's door and the deploy, the catalogue and its filters.
 **DECOR1c - the placed pieces in the room** (a room whose record holds pieces now stands them; placing them is
 DECOR1d's panel).
 
-- **Standing** (`src/scenes/decorRoom.js`, one pool per room, held by the building host `src/scenes/worldModes.js`
+- **Standing** (`src/scenes/decor/decorRoom.js`, one pool per room, held by the building host `src/scenes/worldModes.js`
   and emptied with the room at all three of its teardowns). A model stands with its origin at the building's origin
   plus its place, turned by yaw, pitch and roll, and scaled. It is its own collider bucket and its own eye target
   under one key, `decor:<id>`, so the ray is decided by the piece's own triangles, at the reach of the room's own
@@ -9660,7 +9660,7 @@ and back, and the host's wiring. `tools/mutants/decor1.json` (54, DECOR1a's 32 a
   automap's, and copied into the panel's own canvas, the panel over the game being opaque), a flat as its own
   picture (asked for as its row comes into view, never hundreds at once) - with its price and, when it cannot be placed, why: the gold short, the room full (200), or its size
   still being read.
-- **Placing** (`src/scenes/decorTool.js`, `src/systems/decor/decorPlacer.js`). Place closes the panel and flies the
+- **Placing** (`src/scenes/decor/decorTool.js`, `src/systems/decor/decorPlacer.js`). Place closes the panel and flies the
   camera. Every key press is the decorator's while it flies, read as the action it is bound to (the controls
   registry's, so a rebinding holds), and none reaches the body, so the body stands still and nothing else fires
   under a placement; a key's release still reaches the game, so a key held into the flight is let go of. The walk
@@ -9693,7 +9693,7 @@ document, the tool over fakes of the host's seams, and the host's wiring by sour
   it gives light, and the half a removal gives back. A piece chosen shows four changes - Move, Light (saying
   whether it is lit), Holds things (saying whether it does) and Remove. The panel opens again on whichever tab it
   was left on.
-- **Move** (`src/scenes/decorTool.js`). The same free camera as a placement, starting from the piece's own turn and
+- **Move** (`src/scenes/decor/decorTool.js`). The same free camera as a placement, starting from the piece's own turn and
   scale; the ghost is the piece itself, and the eye looks through the piece's own collider, so a piece nudged where
   it stands never lands on top of itself. Moving and turning are free; resized, it costs the difference when grown
   and gives half the difference back when shrunk (the law's `decorRescale`). The bar says "Moving <piece>" and
@@ -9747,7 +9747,7 @@ Three parts: DECOR2a the player's own things in a room, DECOR2b the furnisher, D
   again. In the room's list it says it is yours, and its fourth change is "Take down": back into the pack, whole.
   Moved, turned or resized it stays free; it never holds things.
 - **The thing itself** is the save's the whole time it stands: the room keeps it by the piece's id
-  (`scenes/decorRoom.js`) and the scene carries it (`systems/sceneCache.js` decorOwn), as what a storage piece holds
+  (`scenes/decor/decorRoom.js`) and the scene carries it (`systems/sceneCache.js` decorOwn), as what a storage piece holds
   is kept. The piece is only how the room shows it. So an online home's piece carries no free text: `item` is the
   game's own numbers for which item it is - its template, group, material, variant, artifact and message
   (`src/net/decorLaw.js` decorItemOf) - which the account service keeps beside what the piece is
@@ -9817,7 +9817,7 @@ records re-aimed.
   surface, the grid snaps it across the surface and never off it, and the owner's lift moves it up the surface. It
   hangs two centimetres off the surface - the blood marks' own hair. With no surface in reach, the bar says to look at
   a wall. Moved, it keeps its spin.
-- **Drawn flat, not turned to the eye** (`src/scenes/decorRoom.js`). A mount is the one flat that never turns to the
+- **Drawn flat, not turned to the eye** (`src/scenes/decor/decorRoom.js`). A mount is the one flat that never turns to the
   eye: one quad, centred at its place and framed by its turn (`decorLaw.js` decorMountFrame - the frame's right is its
   viewer's right, so the picture never reads mirrored), drawn on the blood marks' own decal pass (a quad lying on a
   surface, lit by that surface's light, its clear texels cut out), after the room's solid models. Its picture is
@@ -9829,7 +9829,7 @@ records re-aimed.
   switch on, the texel taken as the colour, no film, no relief (`tools/bloodProbe.mjs`'s WEAPON-MOUNT rows, both sets).
 - **The picture it hangs as** (2026-09-26, Mac over the house: "long blade is right", "others are daedric but show
   steel", "changes after placment", "disapeared", and "Morrowind models if activated should show"). Three fixes, one
-  door (`src/scenes/decorRoom.js` loadMountPicture - the room and the ghost both ask it, so the ghost is what stands):
+  door (`src/scenes/decor/decorRoom.js` loadMountPicture - the room and the ghost both ask it, so the ghost is what stands):
   - DYE-ICON: the pack's classic picture is dyed by its metal now, as GetItemImage's classic arm is (ItemHelper.cs
     :463-478; `05-Combat/Diverse-Weapons.md` DYE-ICON) - the port drew every metal as the base picture, pack and wall
     alike. The swatch rides the mount's numbers (`decorItems.js` decorMountDyeTarget), an artifact's never dyed - one
@@ -9970,9 +9970,9 @@ flying forward 0.1 m under a ceiling) - cosmetic.
 
 What Daggerfall furnished the room with is no longer fixed. A furnishable room - an online home (anyone's), the
 player's house, the ship - stands its prop models and flats one by one (`scenes/interiorContext.js`, the pool
-`scenes/decorBase.js`), each named by the layout (`net/decorLaw.js`: `m<placement>:<model>`,
+`scenes/decor/decorBase.js`), each named by the layout (`net/decorLaw.js`: `m<placement>:<model>`,
 `f<flat>:<archive>.<record>`), so the owner can take any piece out and put it back, free, from the panel's "Built in"
-view (`ui/decorPanel.js`, `scenes/decorTool.js setBase`). A piece out is out whole - draw, collider bucket, light,
+view (`ui/decorPanel.js`, `scenes/decor/decorTool.js setBase`). A piece out is out whole - draw, collider bucket, light,
 target - and one that holds anything never goes. The list of what is out is the room's scene offline (the save) and
 the account service's online (`home_hidden`, migration 0015; `06-Systems/Accounts-And-Cloud-Saves-Arc.md`), written
 whole by the owner first and stood once the service has it; the room every visitor walks into is the one its owner
@@ -10004,7 +10004,7 @@ home's alone - they are about other players.
   once), read into the catalogue from the town blocks' own door records (`systems/decor/decorCatalogue.js` collectDecor -
   kind "Doors", named "Door N"), priced by size as any piece. The account service keeps it as the piece it is (a model
   id and a place): nothing on the service knows a door from a chair.
-- **Placed, it is one of the room's own action doors** (`scenes/decorRoom.js` hands a door piece to the host's
+- **Placed, it is one of the room's own action doors** (`scenes/decor/decorRoom.js` hands a door piece to the host's
   `doors` hooks; `scenes/worldModes.js` decorDoorHooks calls `world/actionSystem.js` addDoor with the piece's id as its
   position key - `act:decor:<id>`, the same key on every client and every visit). So it swings open and shut on
   Interact, blocks while shut, is drawn and ticked with the room's doors, named as a door on the hover, saved with them
@@ -10017,7 +10017,7 @@ home's alone - they are about other players.
   through, each jamb the first step either side that meets the wall - the same wall, going on past both jambs, no
   deeper than a wall is thick (1.2 m). Its middle is between the jambs and in the wall's thickness, on its floor, under
   its lintel (1.8 m at the least), 0.6 to 2.4 m wide. A passage is none (it narrows for its whole length); the gap
-  between two cupboards is none (the finder reads the room's SHELL alone - `scenes/decorBase.js` INTERIOR_SHELL_BUCKET,
+  between two cupboards is none (the finder reads the room's SHELL alone - `scenes/decor/decorBase.js` INTERIOR_SHELL_BUCKET,
   now named once); an opening a door already stands in is taken - one of the room's own (their hinges, open or shut) or
   a placed one.
 - **The easy element**: while a door is placed, every free doorway is MARKED on the decal pass - a bright frame round a
@@ -10059,7 +10059,7 @@ home's alone - they are about other players.
   price asked again before it is paid (`systems/homeRent.js` rentHomeRoom - the purse pays at once and gets it back on
   a refusal). A tenant's plaque lists their own room to renew; walking in, they are told their days left, and may rest
   there (the rest window's `houseOwned`). A tenant is still a visitor: the cupboards stay shut, no drops, no spells.
-- **The owner** (the decorator's "Rooms to rent" tab, `ui/decorPanel.js`, `scenes/decorTool.js` rentView/rentAct,
+- **The owner** (the decorator's "Rooms to rent" tab, `ui/decorPanel.js`, `scenes/decor/decorTool.js` rentView/rentAct,
   through `worldModes.js` decorRentDoor): each room the house's walls part it into, beside the offer whose point stands
   in it (`homeRent.js` rentRoomsView - matched by place, never by number, since the room finder numbers afresh), a price
   stepped by -100/-10/+10/+100 and offered by the room's own point, "Stop offering", and "Collect rent: N gold". A house
@@ -10126,10 +10126,10 @@ home's alone - they are about other players.
   its own cap and law (a yard piece moved stays a yard's); the room's list and cap are the room's own; the town's yards
   are read together at `/v1/homes/yards`, by any session.
 - **Standing** (`homeYards.js` createHomeYards): the town's yards read with the town (believed a minute, as its homes
-  are), each yard stood in its pixel as a room's pieces stand in its room (`scenes/decorRoom.js`, one pool a yard) - its
+  are), each yard stood in its pixel as a room's pieces stand in its room (`scenes/decor/decorRoom.js`, one pool a yard) - its
   own collider buckets on the world's collider, drawn in the world's mesh and billboard passes - and stood again where
   it stands when the world recentres; a pixel streamed out takes its yards down.
-- **The decorator outside**: the same tool (`scenes/decorTool.js`), opened by "Decorate" while the owner stands on
+- **The decorator outside**: the same tool (`scenes/decor/decorTool.js`), opened by "Decorate" while the owner stands on
   their own lot (or two metres off it) outdoors, afoot. The panel is a yard's - "Catalogue", "In this yard", "Exterior"
   (HOME-LOOK); no doors in its catalogue; no light, holding or craft buttons. The free camera flies from the eye and
   meets the ground (`Collider.surfaceHit`); the flight takes the stick and the eye from the body; a write goes to the
@@ -10165,11 +10165,11 @@ HOME-VOTE II (below).
   BLOCKS.BSA's people records stand in those archives alone - `test/people.test.js`), inside and in a yard alike. ONE
   LAW, the archive: the placer (`systems/decor/decorPlacer.js` decorEntrySized), the room's draw and the service all ask it.
   The placer takes no size step for one: placed at 1, and a figure grown or shrunk before is brought back to 1 when it
-  is moved - one grown gives its half back as any shrink does, one shrunk pays nothing (`scenes/decorTool.js`
+  is moved - one grown gives its half back as any shrink does, one shrunk pays nothing (`scenes/decor/decorTool.js`
   decorEditPrice: it stands at that size for everyone already). The bar hides Smaller and Bigger for it and its keys
-  line names no Size key (`ui/decorPanel.js` createDecorBar `sized`, told by `scenes/decorTool.js`); the - and = keys
+  line names no Size key (`ui/decorPanel.js` createDecorBar `sized`, told by `scenes/decor/decorTool.js`); the - and = keys
   do nothing. Every client draws a figure at its own size whatever its record says (decorDrawnScale -
-  `scenes/decorRoom.js`, the room's pool and every yard's), and a turn asks the lot for the ground it is drawn on
+  `scenes/decor/decorRoom.js`, the room's pool and every yard's), and a turn asks the lot for the ground it is drawn on
   (decorTool.js footprintOf). The service refuses a figure placed at another size, or moved to one (decorScaleOk -
   `server-account/src/decor.js` placeDecor, `bad-decor`, and moveDecor, `decor-figure` - II C2: its own words, for a
   stale copy's turn of a figure brought back to 1 on another device), and never takes an own item said beside a
@@ -10426,7 +10426,7 @@ lighting isnt shown lantern light anymore?"
   L6). Any other piece gives none.
   Nothing is stored and nothing is switched: the piece still carries no light of its own, the service and its law are
   untouched, and a lamp placed before this lights as it stands.
-- **Standing.** The room's own machinery carries it (`scenes/decorRoom.js` `lampOf` - a host's law over the light a
+- **Standing.** The room's own machinery carries it (`scenes/decor/decorRoom.js` `lampOf` - a host's law over the light a
   piece gives, in place of the piece's own; a room passes none and gives the light its pieces carry, as ever): a yard's
   lamp is mounted into the yard's own list once its picture stands, moved in place with a recentre (restand, FB1001
   YARD-RECENTRE), and taken down with its piece or its pixel. `lamps()` answers each yard's first YARD_LAMPS_MAX (8)
@@ -10462,7 +10462,7 @@ mutants of the 42 other lists aimed at decorRoom.js, homeYards.js, decorTool.js 
   flat among them lit: sixty lamps round one lot lit its ground nine times as bright as the brightest ground any
   Daggerfall town block lights, and near the yard they took the classic set's sixteen from the street. Measured over
   BLOCKS.BSA, the densest of its 920 town blocks stands eight (GRVEAL01, GRVEAS01, GRVEAM01, CUSTAA02, CUSTAA04); 340
-  stand none. FIXED (`scenes/homeYards.js` YARD_LAMPS_MAX, `scenes/decorRoom.js` pushLights): a yard lights its first
+  stand none. FIXED (`scenes/homeYards.js` YARD_LAMPS_MAX, `scenes/decor/decorRoom.js` pushLights): a yard lights its first
   eight lamps in the order its pieces stand; a ninth stands unlit, and lights when one before it is taken down.
 - **LOW - L2: a far yard's lamps went out at once.** (A) `lamps()` cut a yard past YARD_DRAW_M (300 m) of its origin
   from the eye - the model draw's own cull - so a walk away put a yard's lamps out together in one frame, unfaded,
@@ -10523,7 +10523,7 @@ placed turned in place, never picked up).
   or moved, a piece must stand within the bound. acct86.
 - **DECOR-TURN.** The panel's "In this room" (and "In this yard") view has Turn left and Turn right beside Move
   (`ui/decorPanel.js`): the chosen piece turned DECOR_TURN_STEP (15 degrees) about its upright where it stands - a hung
-  one spun on its wall, as its placing turns it - free, the panel staying up (`scenes/decorTool.js` turnPlaced). It is a
+  one spun on its wall, as its placing turns it - free, the panel staying up (`scenes/decor/decorTool.js` turnPlaced). It is a
   move of its turn alone: it turns at once, and an online home's piece is written once its presses settle
   (DECOR_TURN_SETTLE_MS - AUDIT YARD-HEIGHT Y1, below); a picture standing on its own faces the other way (Y6). A yard's piece turned onto the house, a road or another's
   ground is refused in the lot's own words, as its placing would be. A door is turned by its doorway (Move), never
@@ -10540,7 +10540,7 @@ with repros against the committed tree - Y5 to Y8. FOUND, each fixed and pinned 
   each press to the account service at once - a move is four statements on its database (the hour's count, the owner,
   the row, the write) and one of the hour's DECOR_OPS_MAX (600) - so a piece turned half round was twelve writes, on the
   database the yards had overloaded that morning (YARD-SHED); and the piece turned only when the answer came. FIXED
-  (`scenes/decorTool.js` turnPlaced, writeTurn): the piece turns at once, as the press is made, and an online home's is
+  (`scenes/decor/decorTool.js` turnPlaced, writeTurn): the piece turns at once, as the press is made, and an online home's is
   written once its presses settle - DECOR_TURN_SETTLE_MS (400 ms) after the last, that press's wait alone writing; a
   press while a write is answered is written after it, once. The write is the turn owed on the piece as it then stands,
   so a light put out meanwhile (written at once, as ever) is never written back on; refused, the turn alone is undone -
@@ -10558,7 +10558,7 @@ with repros against the committed tree - Y5 to Y8. FOUND, each fixed and pinned 
   from being in flight together: a Turn pressed while "Make station" was answered sent the piece without its craft, and
   landing second, the service's plain move wrote the station out - the 50,000 gold kept, nothing back (the cold read's
   repro: the row and the client's piece both stationless, the purse 50,000 down). A light and a turn the same. FIXED
-  (`scenes/decorTool.js` pieceWrite): one write of a piece at a time - a turn, a light, a hold, a station, a move and a
+  (`scenes/decor/decorTool.js` pieceWrite): one write of a piece at a time - a turn, a light, a hold, a station, a move and a
   removal each wait for the piece's write before it and read the piece as it then stands; a move writes the piece's
   turn itself, so a turn owed from the panel is written no more once the move stands.
 - **LOW - Y6: a picture turned showed nothing for six presses.** A flat standing on its own is a billboard - it shows
@@ -12667,7 +12667,7 @@ re-aimed by content.
 2026-10-02, Mac: "Please do" (the palace as the holder's guild hall). Seats-Arc 7.2. Law (`src/net/townSeatLaw.js`
 SEAT_HALL_DECOR_CAP, SEAT_HALL_CLEAR_M, seatHallOf, SEAT_HALL_TEXT), the service (`server-account/src/decor.js` - the seat
 store; `server-account/src/index.js` - the seats' switch; migration `0065_seat_hall.sql`) and the client
-(`src/net/accountClient.js` accountDecor's `seat`, `src/scenes/decorTool.js` charterWhyNot, `src/scenes/worldModes.js`
+(`src/net/accountClient.js` accountDecor's `seat`, `src/scenes/decor/decorTool.js` charterWhyNot, `src/scenes/worldModes.js`
 interiorSeatHall, `src/scenes/world.js` seatHall). `acct61` (one deploy with SEAT2b part two). Behind SEATS_OPEN.
 
 - **The hall** (7.2: "the palace interior is the holder's guild hall. The court stays where DFU stands it"): a palace
@@ -12950,7 +12950,7 @@ Warm Ashes ship raid each fought their own thirteen pirates that only they could
 lock stands for everything but this (Multiplayer.md): a quest is still a copy each and the quest engine is untouched.
 
 - **Which foes ride.** A quest foe rides the cell's stream while its quest is kept in step with the party
-  (`machine.sharedQuestNames`) and its player is partied (`scenes/questFoeHost.js questShareTag`); the frame names it
+  (`machine.sharedQuestNames`) and its player is partied (`scenes/quest/questFoeHost.js questShareTag`); the frame names it
   in `qf` - [record number, quest name, foe symbol]. Every other quest foe stays its player's own, as before. Past the
   frame's 64 records a shared quest's foes ride first and the deep's last.
 - **Who sees them.** A reader stands them only for an owner in its party (`social.isPartyPeer`), under their own
@@ -12987,7 +12987,7 @@ waves had counted as placed while the host stood them, was left with a quest it 
   a stranger.
 - **A sudden one** (an owner the cell's prune sweeps - a lost connection, a closed tab): the one party member the law
   names takes each of its live quest foes - it stands within 100 m of the foe and no party member there has a lower id
-  (`scenes/questFoeHost.js adoptsOrphanQuestFoe`, every member's view naming the same one); the rest let them go and see
+  (`scenes/quest/questFoeHost.js adoptsOrphanQuestFoe`, every member's view naming the same one); the rest let them go and see
   them again on the taker's stream. A plain foe still goes with its owner, as before (AUDIT CONTRIB's reason stands:
   survivors deciding for themselves took one foe twice).
 - **Either way the foe becomes the taker's quest's** (`exteriorFoes.js adopt`): bound through a behaviour over the
@@ -13148,7 +13148,7 @@ world, so a kill there with no linked copy in the room counted nowhere, and the 
 marker. Now the heir says it: a kept foe at zero health says its fall once (`keptKillTick`, both pools), the heir's party
 pose carries it for five minutes (`qk` - quest, Foe symbol, the foe's stream number; net/wire.js validPartyPose,
 RELAY_VERSION world137), and every member's linked copy counts the injury and the kill, wherever that member stands
-(`scenes/questFoeHost.js creditKeptKills`). A linked member in the room who saw the puppet fall counted it already: the
+(`scenes/quest/questFoeHost.js creditKeptKills`). A linked member in the room who saw the puppet fall counted it already: the
 puppet's death names its owner and number, and both doors ask one ledger (`KeptKillLedger`), so the kill counts once.
 A relay before world136 strips the field and nothing changes. The record and the report it answered:
 `01-Overview/Field-Bugs-2026-10-01.md`. Pinned: `test/keptkill.test.js` (7).
@@ -13289,7 +13289,7 @@ task counts them. Each player runs a copy, and a quest's foe rode nowhere (Multi
 opens it only for a quest the party shared, and a main quest is refused at the share gates) - so every player in the
 streets fought a haunting nobody else saw.
 
-- **The law** (`scenes/questFoeHost.js`): `WORLD_QUESTS` (S0000977 alone) are no player's story. `isWorldQuestFoe`
+- **The law** (`scenes/quest/questFoeHost.js`): `WORLD_QUESTS` (S0000977 alone) are no player's story. `isWorldQuestFoe`
   reads the quest's name off the foe's own behaviour (the quest it resolved, else by its uid), case-insensitive as
   IsProtectedQuest reads its list; `isPrivateQuestFoe` - a quest foe that is not a world quest's - is the one word the
   stream's gates read.
@@ -13412,7 +13412,7 @@ armour is its Morrowind picture (MW-MOUNT), but only what the item map could rea
 Roleplay & Realism Items' two weapons and twelve pieces of armour (`formats/mwFirstPerson.js` MOD_WEAPON_TO_MW,
 `formats/mwItemMap.js` MOD_ARMOR_ROWS - by the classic row of each one's shape, worn by the Morrowind body too, a
 helm-shaped piece hiding the hair); and one's own thing set down - a garment - which stands as its Morrowind picture on
-the billboard pass (`scenes/decorRoom.js` MW_STAND_ARCHIVE, its ghost with it) where it stood as the classic pile of
+the billboard pass (`scenes/decor/decorRoom.js` MW_STAND_ARCHIVE, its ghost with it) where it stood as the classic pile of
 cloth. The census counts the mod's templates. `test/mwassign.test.js`.
 
 **DECOR-ROOMS ("For a house with multiple connects, add room switching tabs").** The decorator's flight starts at the
@@ -13423,7 +13423,7 @@ where the rise is a step and nothing stands between them at waist height - a wal
 what the flight cannot pass. A house of two rooms or more gets a tab a room (`ui/decorPanel.js`): the eye's own room
 chosen first; the room's placed pieces and own furniture listed (and "Take all out" / "Put all back" meaning the
 room's all); and the next flight begins over the chosen room's floor, a piece moved from its own room
-(`scenes/decorTool.js` flightStart). `player/collider.js` gained `bounds()`. `test/decorrooms.test.js`.
+(`scenes/decor/decorTool.js` flightStart). `player/collider.js` gained `bounds()`. `test/decorrooms.test.js`.
 
 ## CSA-J ONLINE (2026-09-28) - a sailor's boats stand in the cell
 
@@ -13437,7 +13437,7 @@ it - DECLARED (36) on the mod's Port-Ledger row - under HCC-ONLINE's law and no 
   every full frame, and between them whenever the word moved (`scenes/world.js` csaWord); the mod off, one `null`.
 - **The door** (`validCsaRecord`): shape, POSE_BOUND / POSE_Y_BOUND, a known hull and variant, a quaternion within
   0.5..2 renormalised, the bits and two flags. A junk word drops the owner's whole record.
-- **The owner law** (`scenes/comeSailAwayPeers.js` applyOwner / sweepOwners / clearPeers): an owner's word replaces
+- **The owner law** (`scenes/comeSailAway/comeSailAwayPeers.js` applyOwner / sweepOwners / clearPeers): an owner's word replaces
   theirs alone and never mine; gone from the room or quiet past FOES_STALE_MS, their boats go with their puppets; a
   clear (a transition, a fast travel, a room change) takes every peer's; a viewer with the mod off stands nothing.
 - **The landing**: each boat built as SpawnBoat builds one into the pool's PEER list - drawn, baked and lit as a
@@ -13459,11 +13459,11 @@ field by field (`validPose`), so nothing rides there:
 
 - **The way**: `sa`'s `m`, a place for each of `b`'s - the boat at the helm's velocity through the wire frame and its
   turn, on the real clock at the owner's time scale; only while a boat is under way, so a moored fleet's record is the
-  one an older reader reads. Readers lead the boat along it (`scenes/comeSailAwayPeers.js`, capped at 0.6 s).
+  one an older reader reads. Readers lead the boat along it (`scenes/comeSailAway/comeSailAwayPeers.js`, capped at 0.6 s).
 - **Aboard**: `ab` on the passenger's own frame - `[owner, place, x, y, z]`, their feet in that boat's own frame to
   the centimetre; a word when it changes and on every full frame, null aboard nothing; the boats' owner law (gone,
   stale, a clear). Every reader - the boat's owner among them - stands the passenger on its own copy of that boat
-  (`scenes/comeSailAwayAboard.js` glue over `online.drawable()`), a frame ahead as it will be drawn.
+  (`scenes/comeSailAway/comeSailAwayAboard.js` glue over `online.drawable()`), a frame ahead as it will be drawn.
 - **Physics stays each client's**: another's boat stands in every player's collider as their own boats do, aboard it or
   not (FIELD BUGS 2026-10-01b: PR-WAGON1's law set aside for boats), the deck carrying whoever stands on it by its move; the owner's pack refuses while any `ab` stands on the boat.
 

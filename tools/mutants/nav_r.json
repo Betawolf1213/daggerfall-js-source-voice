@@ -100,7 +100,7 @@
   },
   {
     "name": "NAV-R-the-chase-unsaid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      return { pos: e.ship.pos, chase: chasesMe(e) };",
     "new": "      return { pos: e.ship.pos, chase: false };",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "NAV-R-the-slip-unspent",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const slipped = e.raider.chased && e.ship.mode === 'cruise';",
     "new": "const slipped = false;",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "NAV-R-no-sheering-off",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (sheer) sheerOff(e);\n",
     "new": "",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "NAV-R-the-sinking-unspent",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (slipped || e.ship.boarded || boarding?.shipId === e.id || e.ship.damage.state !== SHIP_STATES.afloat) spendRaider(e, slipped);",
     "new": "if (slipped || e.ship.boarded || boarding?.shipId === e.id) spendRaider(e, slipped);",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "NAV-R-the-director-takes-her",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "boarding?.shipId === e.id || !!e.raider || !!e.liner || !!e.takenBy",
     "new": "boarding?.shipId === e.id || !!e.liner || !!e.takenBy",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "NAV-R-a-second-copy-stood",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (!e.owner && e.raider) stood.set(e.raider.id, { pos: e.ship.pos, engaged: raiderBusy(e), boarding: boarding?.shipId === e.id });",
     "new": "      if (!e.owner && e.raider) { /* unread */ }",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "MERGE-OW6-the-hold-unpassed-to-the-plan",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const plan = raiderPlan({ raiders: list, me, myId: myId(), stood, peers, spent, held });",
     "new": "const plan = raiderPlan({ raiders: list, me, myId: myId(), stood, peers, spent });",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "MERGE-OW6-a-spent-one-held",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (!e.owner && e.raider && !e.raider.spent) out.push({ id: e.raider.id, pos: e.ship.pos });",
     "new": "if (!e.owner && e.raider) out.push({ id: e.raider.id, pos: e.ship.pos });",
     "tests": [
@@ -283,7 +283,7 @@
   },
   {
     "name": "MERGE-NAVH-the-lookout-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "reach: chasing ? HOSTILE_NEAR_M : Math.max(HOSTILE_NEAR_M, lookoutOf(e.ship)), chasing,",
     "new": "reach: HOSTILE_NEAR_M, chasing,",
     "tests": [
@@ -292,7 +292,7 @@
   },
   {
     "name": "MERGE-NAVH-a-friend-a-threat",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (!hostileToMe(e, me)) continue;\n      const chasing = chasesMe(e);\n",
     "new": "      const chasing = chasesMe(e);\n",
     "tests": [
@@ -301,7 +301,7 @@
   },
   {
     "name": "MERGE-NAVH-the-chase-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      const chasing = chasesMe(e);\n      out.push({ pos: e.ship.pos, reach:",
     "new": "      const chasing = false;\n      out.push({ pos: e.ship.pos, reach:",
     "tests": [

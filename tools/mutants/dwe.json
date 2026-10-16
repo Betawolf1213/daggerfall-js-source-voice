@@ -219,7 +219,7 @@
   },
   {
     "name": "DW-E2-promote-budget-inclusive",
-    "file": "src/scenes/deepWatersDecor.js",
+    "file": "src/scenes/deepWater/deepWatersDecor.js",
     "old": "      if (!canRunHeavy() || promoteMs() > PROMOTE_BUDGET_MS || processPendingBatch()) return;",
     "new": "      if (!canRunHeavy() || promoteMs() >= PROMOTE_BUDGET_MS + 0.02 || processPendingBatch()) return;",
     "tests": [
@@ -228,7 +228,7 @@
   },
   {
     "name": "DW-E2-player-tile-not-preserved",
-    "file": "src/scenes/deepWatersDecor.js",
+    "file": "src/scenes/deepWater/deepWatersDecor.js",
     "old": "    return batches.has(entry);\n  }",
     "new": "    return false;\n  }",
     "tests": [
@@ -237,7 +237,7 @@
   },
   {
     "name": "DW-E2-two-pixels-a-frame",
-    "file": "src/scenes/deepWatersDecor.js",
+    "file": "src/scenes/deepWater/deepWatersDecor.js",
     "old": "      while (workQueue.length > 0 && placed < 1) {",
     "new": "      while (workQueue.length > 0 && placed < 2) {",
     "tests": [
@@ -246,7 +246,7 @@
   },
   {
     "name": "DW-E2-animated-replacement-lifted",
-    "file": "src/scenes/deepWatersDecor.js",
+    "file": "src/scenes/deepWater/deepWatersDecor.js",
     "old": "          .billboards.push({ centre: [p.local[0], p.local[1], p.local[2]], width: w, height: h, start: 0 });",
     "new": "          .billboards.push({ centre: [p.local[0], p.local[1] + h * 0.5, p.local[2]], width: w, height: h, start: 0 });",
     "tests": [
@@ -255,7 +255,7 @@
   },
   {
     "name": "DW-E2-no-random-start-frame",
-    "file": "src/scenes/deepWatersDecor.js",
+    "file": "src/scenes/deepWater/deepWatersDecor.js",
     "old": "start: Math.floor(roll() * frames) });",
     "new": "start: 0 });",
     "tests": [
@@ -264,7 +264,7 @@
   },
   {
     "name": "DW-E2-suppression-ignored",
-    "file": "src/scenes/deepWatersDecor.js",
+    "file": "src/scenes/deepWater/deepWatersDecor.js",
     "old": "      if (drop) positions.splice(i, 1);",
     "new": "      if (drop && false) positions.splice(i, 1);",
     "tests": [
@@ -327,7 +327,7 @@
   },
   {
     "name": "DW-E2-animated-frames-cleaned",
-    "file": "src/scenes/deepWatersDecor.js",
+    "file": "src/scenes/deepWater/deepWatersDecor.js",
     "old": "    if (kind !== 'animated') for (const img of out) clearEdgeBlackPixels(img);   // GetEdgeCleanedTexture",
     "new": "    for (const img of out) clearEdgeBlackPixels(img);   // GetEdgeCleanedTexture",
     "tests": [
@@ -336,7 +336,7 @@
   },
   {
     "name": "DW-E2-animated-replacement-batch-facing",
-    "file": "src/scenes/deepWatersDecor.js",
+    "file": "src/scenes/deepWater/deepWatersDecor.js",
     "old": "Math.max(1, Math.round(TEXTURE_106_FPS)), 1)",
     "new": "Math.max(1, Math.round(TEXTURE_106_FPS)), 0)",
     "tests": [
@@ -354,7 +354,7 @@
   },
   {
     "name": "DW-E2-refresh-build-timed",
-    "file": "src/scenes/deepWatersHost.js",
+    "file": "src/scenes/deepWater/deepWatersHost.js",
     "old": "        if (!disposed && isCurrent(entry)) apply(entry, r, timed);",
     "new": "        if (!disposed && isCurrent(entry)) apply(entry, r, true);",
     "tests": [
@@ -363,7 +363,7 @@
   },
   {
     "name": "DW-E2-near-promote-timed",
-    "file": "src/scenes/deepWatersHost.js",
+    "file": "src/scenes/deepWater/deepWatersHost.js",
     "old": "      if (result !== undefined) apply(entry, result);",
     "new": "      if (result !== undefined) apply(entry, result, true);",
     "tests": [
@@ -372,7 +372,7 @@
   },
   {
     "name": "DW-E2-deferred-promote-untimed",
-    "file": "src/scenes/deepWatersHost.js",
+    "file": "src/scenes/deepWater/deepWatersHost.js",
     "old": "      const timed = promoteDeferred.delete(entry);",
     "new": "      const timed = (promoteDeferred.delete(entry), false);",
     "tests": [
@@ -759,7 +759,7 @@
   },
   {
     "name": "DW-E3-cap-over-limit",
-    "file": "src/scenes/deepWatersEncounters.js",
+    "file": "src/scenes/deepWater/deepWatersEncounters.js",
     "old": "const cap = () => settings().maxLive;",
     "new": "const cap = () => settings().maxLive + 1;",
     "tests": [
@@ -768,7 +768,7 @@
   },
   {
     "name": "DW-E3-release-keeps-count",
-    "file": "src/scenes/deepWatersEncounters.js",
+    "file": "src/scenes/deepWater/deepWatersEncounters.js",
     "old": "        liveCount = Math.max(0, liveCount - g.liveOrPending);\n        g.fish.release(queueDestroy);",
     "new": "        g.fish.release(queueDestroy);",
     "tests": [
@@ -777,7 +777,7 @@
   },
   {
     "name": "DW-E3-departed-spawn-stands",
-    "file": "src/scenes/deepWatersEncounters.js",
+    "file": "src/scenes/deepWater/deepWatersEncounters.js",
     "old": "        if (!r.group?.active) continue;\n        const fish = makeFish(",
     "new": "        const fish = makeFish(",
     "tests": [
@@ -786,7 +786,7 @@
   },
   {
     "name": "DW-E3-attempts-per-tick",
-    "file": "src/scenes/deepWatersEncounters.js",
+    "file": "src/scenes/deepWater/deepWatersEncounters.js",
     "old": "export const FISH_ATTEMPTS_PER_PIXEL_PER_TICK = 2;",
     "new": "export const FISH_ATTEMPTS_PER_PIXEL_PER_TICK = 3;",
     "tests": [
@@ -795,7 +795,7 @@
   },
   {
     "name": "DW-E3-populate-radius",
-    "file": "src/scenes/deepWatersEncounters.js",
+    "file": "src/scenes/deepWater/deepWatersEncounters.js",
     "old": "export const POPULATE_RADIUS = 200;",
     "new": "export const POPULATE_RADIUS = 260;",
     "tests": [
@@ -804,7 +804,7 @@
   },
   {
     "name": "DW-E3-despawn-radius",
-    "file": "src/scenes/deepWatersEncounters.js",
+    "file": "src/scenes/deepWater/deepWatersEncounters.js",
     "old": "export const DESPAWN_RADIUS = 300;",
     "new": "export const DESPAWN_RADIUS = 240;",
     "tests": [
@@ -813,7 +813,7 @@
   },
   {
     "name": "DW-E3-disable-grace",
-    "file": "src/scenes/deepWatersEncounters.js",
+    "file": "src/scenes/deepWater/deepWatersEncounters.js",
     "old": "export const DISABLE_CLEAR_GRACE_SECONDS = 2;",
     "new": "export const DISABLE_CLEAR_GRACE_SECONDS = 1;",
     "tests": [
@@ -822,7 +822,7 @@
   },
   {
     "name": "DW-E3-tick-interval",
-    "file": "src/scenes/deepWatersEncounters.js",
+    "file": "src/scenes/deepWater/deepWatersEncounters.js",
     "old": "export const TICK_INTERVAL = 0.1;",
     "new": "export const TICK_INTERVAL = 0.05;",
     "tests": [
@@ -831,7 +831,7 @@
   },
   {
     "name": "DW-E3-destroys-a-frame",
-    "file": "src/scenes/deepWatersEncounters.js",
+    "file": "src/scenes/deepWater/deepWatersEncounters.js",
     "old": "export const MAX_PENDING_DESTROYS_PER_FRAME = 12;",
     "new": "export const MAX_PENDING_DESTROYS_PER_FRAME = 15;",
     "tests": [
@@ -840,7 +840,7 @@
   },
   {
     "name": "DW-E3-heavy-gate-keeps",
-    "file": "src/scenes/deepWatersEncounters.js",
+    "file": "src/scenes/deepWater/deepWatersEncounters.js",
     "old": "if (!canRunHeavy()) { clearEverything(); return; }",
     "new": "if (!canRunHeavy()) { return; }",
     "tests": [
@@ -849,7 +849,7 @@
   },
   {
     "name": "DW-E3-nearest-edge",
-    "file": "src/scenes/deepWatersEncounters.js",
+    "file": "src/scenes/deepWater/deepWatersEncounters.js",
     "old": "const dz = Math.max(originZ - p[2], 0, p[2] - (originZ + size));",
     "new": "const dz = Math.max(originZ - p[2], 0);",
     "tests": [
@@ -858,7 +858,7 @@
   },
   {
     "name": "DW-E3-dry-populated",
-    "file": "src/scenes/deepWatersEncounters.js",
+    "file": "src/scenes/deepWater/deepWatersEncounters.js",
     "old": "if (d <= POPULATE_RADIUS * POPULATE_RADIUS && isWaterPixel(e))",
     "new": "if (d <= POPULATE_RADIUS * POPULATE_RADIUS)",
     "tests": [
@@ -867,7 +867,7 @@
   },
   {
     "name": "DW-E3-spawns-after-tick",
-    "file": "src/scenes/deepWatersEncounters.js",
+    "file": "src/scenes/deepWater/deepWatersEncounters.js",
     "old": "      pumpPendingDestroys();\n      for (const [, l] of lanes) l.spawner.pumpPendingSpawns();\n      if (f.time < nextTickTime) return;",
     "new": "      pumpPendingDestroys();\n      if (f.time < nextTickTime) { for (const [, l] of lanes) l.spawner.pumpPendingSpawns(); return; }",
     "tests": [
@@ -876,7 +876,7 @@
   },
   {
     "name": "DW-E3-box-depth",
-    "file": "src/scenes/deepWatersFish.js",
+    "file": "src/scenes/deepWater/deepWatersFish.js",
     "old": "export const fishBoxDepth = (w) => Math.max(0.35, w * 0.25);",
     "new": "export const fishBoxDepth = (w) => Math.max(0.35, w * 0.3);",
     "tests": [
@@ -885,7 +885,7 @@
   },
   {
     "name": "DW-E3-reach",
-    "file": "src/scenes/deepWatersFish.js",
+    "file": "src/scenes/deepWater/deepWatersFish.js",
     "old": "distance: RAY_DISTANCE, reach: TREASURE_ACTIVATION_DISTANCE, noSurface: true,",
     "new": "distance: RAY_DISTANCE, reach: RAY_DISTANCE, noSurface: true,",
     "tests": [
@@ -894,7 +894,7 @@
   },
   {
     "name": "DW-E3-cutoff",
-    "file": "src/scenes/deepWatersFish.js",
+    "file": "src/scenes/deepWater/deepWatersFish.js",
     "old": "export const FISH_CUTOFF = 0.1;",
     "new": "export const FISH_CUTOFF = 0.5;",
     "tests": [
@@ -903,7 +903,7 @@
   },
   {
     "name": "DW-E3-shift-leaves-school",
-    "file": "src/scenes/deepWatersFish.js",
+    "file": "src/scenes/deepWater/deepWatersFish.js",
     "old": "      for (const s of schools) for (let i = 0; i < 3; i++) s.center[i] += offset[i];\n",
     "new": "",
     "tests": [
@@ -912,7 +912,7 @@
   },
   {
     "name": "DW-E3-emptied-fish-stays",
-    "file": "src/scenes/deepWatersFish.js",
+    "file": "src/scenes/deepWater/deepWatersFish.js",
     "old": "        if (!o.fish.managedUpdate(f)) remove(o);   // its loot emptied: Object.Destroy",
     "new": "        o.fish.managedUpdate(f);",
     "tests": [
@@ -921,7 +921,7 @@
   },
   {
     "name": "DW-E3-height-range",
-    "file": "src/scenes/deepWatersFish.js",
+    "file": "src/scenes/deepWater/deepWatersFish.js",
     "old": "const height = species.billboardHeight * rangeFloat(species.minHeightMultiplier, species.maxHeightMultiplier, roll);",
     "new": "const height = species.billboardHeight;",
     "tests": [
@@ -930,7 +930,7 @@
   },
   {
     "name": "DW-E3-facing",
-    "file": "src/scenes/deepWatersFish.js",
+    "file": "src/scenes/deepWater/deepWatersFish.js",
     "old": "g = { texture: tex, fps: 0, born: 0, facing: 2, cutoff: FISH_CUTOFF, billboards: [] };",
     "new": "g = { texture: tex, fps: 0, born: 0, facing: 1, cutoff: FISH_CUTOFF, billboards: [] };",
     "tests": [
@@ -939,7 +939,7 @@
   },
   {
     "name": "DW-E3-pictures-unclean",
-    "file": "src/scenes/deepWatersFish.js",
+    "file": "src/scenes/deepWater/deepWatersFish.js",
     "old": "        clean(frame);\n",
     "new": "",
     "tests": [
@@ -948,7 +948,7 @@
   },
   {
     "name": "DW-E3-pictures-top-down",
-    "file": "src/scenes/deepWatersFish.js",
+    "file": "src/scenes/deepWater/deepWatersFish.js",
     "old": "rows.set(img.data.subarray((img.height - 1 - y) * img.width * 4, (img.height - y) * img.width * 4), y * img.width * 4);",
     "new": "rows.set(img.data.subarray(y * img.width * 4, (y + 1) * img.width * 4), y * img.width * 4);",
     "tests": [
@@ -957,7 +957,7 @@
   },
   {
     "name": "DW-E3-no-picture-spawnable",
-    "file": "src/scenes/deepWatersFish.js",
+    "file": "src/scenes/deepWater/deepWatersFish.js",
     "old": "filter((s) => s.spawnWeight > 0 && textures.has(s)),",
     "new": "filter((s) => s.spawnWeight > 0),",
     "tests": [
@@ -1065,7 +1065,7 @@
   },
   {
     "name": "DW-E3-destroyed-queued",
-    "file": "src/scenes/deepWatersEncounters.js",
+    "file": "src/scenes/deepWater/deepWatersEncounters.js",
     "old": "    if (!live(o)) return;\n    o.hide?.();",
     "new": "    if (!o) return;\n    o.hide?.();",
     "tests": [
@@ -1074,7 +1074,7 @@
   },
   {
     "name": "DW-E3-destroyed-destroyed-again",
-    "file": "src/scenes/deepWatersEncounters.js",
+    "file": "src/scenes/deepWater/deepWatersEncounters.js",
     "old": "    while (n-- > 0 && pendingDestroys.length) {\n      const o = pendingDestroys.shift();\n      if (live(o)) o.destroy?.();",
     "new": "    while (n-- > 0 && pendingDestroys.length) {\n      const o = pendingDestroys.shift();\n      o?.destroy?.();",
     "tests": [
@@ -1348,7 +1348,7 @@
   },
   {
     "name": "DW-E4-four-a-tick",
-    "file": "src/scenes/deepWatersEncounters.js",
+    "file": "src/scenes/deepWater/deepWatersEncounters.js",
     "old": "export const ENEMY_ATTEMPTS_PER_PIXEL_PER_TICK = 4;",
     "new": "export const ENEMY_ATTEMPTS_PER_PIXEL_PER_TICK = 3;",
     "tests": [
@@ -1357,7 +1357,7 @@
   },
   {
     "name": "DW-E4-cap-ignored",
-    "file": "src/scenes/deepWatersEncounters.js",
+    "file": "src/scenes/deepWater/deepWatersEncounters.js",
     "old": "        if (liveCount >= cap) { g.attemptsRemaining = 0; break; }\n        budget.n--;\n        g.attemptsRemaining--;\n        const x = origin[0] + f.roll() * TILE_WORLD_SIZE;\n        const z = origin[2] + f.roll() * TILE_WORLD_SIZE;\n        const c = resolveSpawnColumn",
     "new": "        budget.n--;\n        g.attemptsRemaining--;\n        const x = origin[0] + f.roll() * TILE_WORLD_SIZE;\n        const z = origin[2] + f.roll() * TILE_WORLD_SIZE;\n        const c = resolveSpawnColumn",
     "tests": [
@@ -1366,7 +1366,7 @@
   },
   {
     "name": "DW-E4-give-back-twice",
-    "file": "src/scenes/deepWatersEncounters.js",
+    "file": "src/scenes/deepWater/deepWatersEncounters.js",
     "old": "          if (!counted || !g.active) return;",
     "new": "          if (!g.active) return;",
     "tests": [
@@ -1375,7 +1375,7 @@
   },
   {
     "name": "DW-E4-give-back-after-release",
-    "file": "src/scenes/deepWatersEncounters.js",
+    "file": "src/scenes/deepWater/deepWatersEncounters.js",
     "old": "          if (!counted || !g.active) return;",
     "new": "          if (!counted) return;",
     "tests": [
@@ -1384,7 +1384,7 @@
   },
   {
     "name": "DW-E4-release-keeps-count",
-    "file": "src/scenes/deepWatersEncounters.js",
+    "file": "src/scenes/deepWater/deepWatersEncounters.js",
     "old": "        liveCount = Math.max(0, liveCount - g.liveOrPending);\n        g.enemies.release(queueDestroy);",
     "new": "        g.enemies.release(queueDestroy);",
     "tests": [
@@ -1393,7 +1393,7 @@
   },
   {
     "name": "DW-E4-switch-ignored",
-    "file": "src/scenes/deepWatersEncounters.js",
+    "file": "src/scenes/deepWater/deepWatersEncounters.js",
     "old": "canPopulate: () => { const s = settings(); return !!s.on && s.frequency > 0; },",
     "new": "canPopulate: () => { const s = settings(); return s.frequency > 0; },",
     "tests": [
@@ -1411,7 +1411,7 @@
   },
   {
     "name": "DW-E4-guard-no-min-boss",
-    "file": "src/scenes/deepWatersEncounters.js",
+    "file": "src/scenes/deepWater/deepWatersEncounters.js",
     "old": "  if (boss) count = Math.max(1, count);\n",
     "new": "\n",
     "tests": [
@@ -1420,7 +1420,7 @@
   },
   {
     "name": "DW-E4-guard-tries",
-    "file": "src/scenes/deepWatersEncounters.js",
+    "file": "src/scenes/deepWater/deepWatersEncounters.js",
     "old": "while (spawned < count && tries < 8 * count + 15) {",
     "new": "while (spawned < count && tries < 8 * count + 10) {",
     "tests": [
@@ -1429,7 +1429,7 @@
   },
   {
     "name": "DW-E4-guard-no-fallback",
-    "file": "src/scenes/deepWatersEncounters.js",
+    "file": "src/scenes/deepWater/deepWatersEncounters.js",
     "old": "  if (spawned === 0) {\n    const s = stand(centre[0], centre[2]);",
     "new": "  if (spawned < 0) {\n    const s = stand(centre[0], centre[2]);",
     "tests": [
@@ -1438,7 +1438,7 @@
   },
   {
     "name": "DW-E4-guard-boss-each",
-    "file": "src/scenes/deepWatersEncounters.js",
+    "file": "src/scenes/deepWater/deepWatersEncounters.js",
     "old": "    if (boss && !bossSpawned) bossSpawned = true;\n",
     "new": "\n",
     "tests": [
@@ -1447,7 +1447,7 @@
   },
   {
     "name": "DW-E4-guard-heavy-gate",
-    "file": "src/scenes/deepWatersEncounters.js",
+    "file": "src/scenes/deepWater/deepWatersEncounters.js",
     "old": "  if (!settings.on || !canRunHeavy || !playerPos) return 0;",
     "new": "  if (!settings.on || !playerPos) return 0;",
     "tests": [
@@ -1528,7 +1528,7 @@
   },
   {
     "name": "DW-E4-settings-midpoint",
-    "file": "src/scenes/deepWatersHost.js",
+    "file": "src/scenes/deepWater/deepWatersHost.js",
     "old": "    frequency: scaledSliderValue(get('General.EnemyFrequency'), 0.5),",
     "new": "    frequency: scaledSliderValue(get('General.EnemyFrequency'), 3),",
     "tests": [
@@ -1555,7 +1555,7 @@
   },
   {
     "name": "DW-E4-departed-spawn-stands",
-    "file": "src/scenes/deepWatersEncounters.js",
+    "file": "src/scenes/deepWater/deepWatersEncounters.js",
     "old": "        if (!r.group?.active) continue;\n        const g = r.group;",
     "new": "        const g = r.group;",
     "tests": [

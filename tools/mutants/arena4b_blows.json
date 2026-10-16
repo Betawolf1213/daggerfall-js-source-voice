@@ -109,7 +109,7 @@
   },
   {
     "name": "ARENA4b-BLOW-CLAIM-NO-SEQ",
-    "file": "src/scenes/arenaOnline.js",
+    "file": "src/scenes/arena/arenaOnline.js",
     "old": "...(Number.isInteger(q) ? { q } : {}) });",
     "new": "...({}) });",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "ARENA4b-BLOW-STANDS-STRIKE",
-    "file": "src/scenes/arenaOnline.js",
+    "file": "src/scenes/arena/arenaOnline.js",
     "old": "    if (bout?.kind === 'watch') return false;   // ARENA4b: the stands strike nobody - the relay would junk the word\n",
     "new": "",
     "tests": [

@@ -1,7 +1,7 @@
 [
   {
     "name": "SD10-a-mark-twice",
-    "file": "src/scenes/sdHost.js",
+    "file": "src/scenes/superDungeon/sdHost.js",
     "old": "  for (const m of SD_COLLAPSE_WARN_MS) if (left <= m) due = m;\n  return due < said ? due : null;",
     "new": "  for (const m of SD_COLLAPSE_WARN_MS) if (left <= m) due = m;\n  return due <= said ? due : null;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "SD10-a-passed-mark",
-    "file": "src/scenes/sdHost.js",
+    "file": "src/scenes/superDungeon/sdHost.js",
     "old": "  for (const m of SD_COLLAPSE_WARN_MS) if (left <= m) due = m;",
     "new": "  for (const m of SD_COLLAPSE_WARN_MS) if (left < m + 5000) due = m;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "SD10-said-when-out",
-    "file": "src/scenes/sdHost.js",
+    "file": "src/scenes/superDungeon/sdHost.js",
     "old": "  if (!(left > 0)) return null;\n  let due = SD_COLLAPSE_MS;",
     "new": "  let due = SD_COLLAPSE_MS;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "SD10-the-minute-lost",
-    "file": "src/scenes/sdHost.js",
+    "file": "src/scenes/superDungeon/sdHost.js",
     "old": "export const SD_COLLAPSE_WARN_MS = Object.freeze([60_000, 30_000, 10_000]);",
     "new": "export const SD_COLLAPSE_WARN_MS = Object.freeze([30_000, 10_000]);",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "SD10-the-way-home-unsaid",
-    "file": "src/scenes/sdHost.js",
+    "file": "src/scenes/superDungeon/sdHost.js",
     "old": "`The Hour collapses in ${t}. The way home opens where the Remnant fell.`",
     "new": "`The Hour collapses in ${t}.`",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "SD10-the-hours-words-in-the-hollow",
-    "file": "src/scenes/sdHost.js",
+    "file": "src/scenes/superDungeon/sdHost.js",
     "old": "  if (hour) return first ?",
     "new": "  if (true) return first ?",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "SD10-never-told",
-    "file": "src/scenes/sdHost.js",
+    "file": "src/scenes/superDungeon/sdHost.js",
     "old": "      if (due != null) { const first = warned.s !== rec.s; warned = { s: rec.s, at: due }; warn(sdCollapseLine(left, { hour: inHour(), first })); }",
     "new": "      if (due != null) { const first = warned.s !== rec.s; warned = { s: rec.s, at: due }; }",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "SD10-told-outside",
-    "file": "src/scenes/sdHost.js",
+    "file": "src/scenes/superDungeon/sdHost.js",
     "old": "&& rec.fellAt != null && inside(stood.loc)) {",
     "new": "&& rec.fellAt != null) {",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "SD10-told-every-frame",
-    "file": "src/scenes/sdHost.js",
+    "file": "src/scenes/superDungeon/sdHost.js",
     "old": "warned = { s: rec.s, at: due };",
     "new": "warned = { s: rec.s, at: Infinity };",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "SD10-the-returns-words-in-the-hour",
-    "file": "src/scenes/sdEnd.js",
+    "file": "src/scenes/superDungeon/sdEnd.js",
     "old": "      if (key === SD_RETURN_KEY && ret) { ret.hoverAt = now(); return { title: retTitle, subs: [retTo] }; }",
     "new": "      if (key === SD_RETURN_KEY && ret) { ret.hoverAt = now(); return { title: SD_END_TEXT.ret, subs: [SD_END_TEXT.retTo] }; }",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "SD10-stood-twice",
-    "file": "src/scenes/sdEnd.js",
+    "file": "src/scenes/superDungeon/sdEnd.js",
     "old": "      if (ret || !at) return false;",
     "new": "      if (!at) return false;",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "SD10-carried-off-where-it-rises",
-    "file": "src/scenes/sdEnd.js",
+    "file": "src/scenes/superDungeon/sdEnd.js",
     "old": "      ret = { ...standRet(at, yaw, scale ?? (rift?.hollow ? SD_HOME_SCALE : 1), ago < SD_HOME_RISE_MS), risesAt: now() - ago, pressed: true, up: false, lift: 0 };\n      wasRet = null;\n",
     "new": "      ret = { ...standRet(at, yaw, scale ?? (rift?.hollow ? SD_HOME_SCALE : 1), ago < SD_HOME_RISE_MS), risesAt: now() - ago, pressed: true, up: false, lift: 0 };\n",
     "tests": [

@@ -14,7 +14,7 @@ import { gateScanner, scanGatePixels, findGateSite } from '../src/systems/gate/g
 import {
   GatePassRenderer, MEMBRANE_FS, MEMBRANE_TURN_SEALED_HZ, MEMBRANE_TURN_OPEN_HZ, gateSpinRate, gateSpinAt,
 } from '../src/render/gatePass.js';
-import { createGatePool } from '../src/scenes/gatePool.js';
+import { createGatePool } from '../src/scenes/gate/gatePool.js';
 import { gateArchProfile } from '../src/world/gate/gateModel.js';
 import { CLIMATES, LOCATION_TYPES } from '../src/formats/mapsFile.js';
 
@@ -255,7 +255,7 @@ test('AUDIT WB C7 what a frame pays for: the stone\'s matrix only when it moves,
   assert.equal(pool.stands(), false, 'no GL, no pass: nothing for the host to build arguments for');
   const world = read('src/scenes/world.js');
   assert.match(world, /if \(gatePool\?\.stands\(\) && gatePool\.drawPass\(proj, view, new Float32Array\(mwv\.eye\), now \/ 1000,/);
-  const src = read('src/scenes/gatePool.js');
+  const src = read('src/scenes/gate/gatePool.js');
   assert.match(src, /if \(k !== _matKey\) \{ _matKey = k; _mat = trs\(/);
   assert.match(src, /aabb: fireBox\(place, profile, fireHalfW\)/);
 });

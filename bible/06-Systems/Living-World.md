@@ -201,7 +201,7 @@ the trample (`retire`), the probes.
 
 ## LW3 - the roads (2026-10-04)
 
-`systems/livingWorld/trips.js`, pure; `scenes/livingRoads.js` and `world/travellerSprites.js`, the host's.
+`systems/livingWorld/trips.js`, pure; `scenes/livingWorld/livingRoads.js` and `world/travellerSprites.js`, the host's.
 
 - **The travellers.** The census's roster off the MAPS row gains the PEDLAR (every town one, one more each six blocks,
   to six): the small places' own traffic. Merchants, adventurers, pilgrims, couriers and pedlars travel; sellswords
@@ -266,7 +266,7 @@ the trample (`retire`), the probes.
 ## LW4 - trouble on the road (2026-10-04)
 
 `systems/livingWorld/lives.js` and `trouble.js`, pure; `trips.js` carries them; the host composes them
-(`scenes/world.js`), the roads' layer shows them (`scenes/livingRoads.js`), the town tells them.
+(`scenes/world.js`), the roads' layer shows them (`scenes/livingWorld/livingRoads.js`), the town tells them.
 
 - **The lives** (`lives.js`). Each traveller's PLACE rolls its fate once a cycle - its own cycle, a sellsword's its
   contract merchant's (`trips.js placeCycle`) - against its job's `HAZARD` (a merchant 0.006, a sellsword 0.01, an
@@ -437,7 +437,7 @@ index (`scenes/world.js`).
 
 ## LW6b - the fallen in the deep (2026-10-05)
 
-`trips.js` (`fallenIn`, `DEEP_REMAINS_MIN`), `relations.js` (`MARK_KINDS`: `laid`), `scenes/deepRemains.js`
+`trips.js` (`fallenIn`, `DEEP_REMAINS_MIN`), `relations.js` (`MARK_KINDS`: `laid`), `scenes/livingWorld/deepRemains.js`
 (`createDeepRemains`, `restAt`, `DEEP_NOTICE_M`, `DEEP_LAY_M`), `dungeonDivers.js stood`, the dungeon's resting places and
 pile (`dungeonContext.js` `restingSpots`, `layRemains`, `pileNear`) and the host's step (`scenes/world.js
 livingRemainsStep`). Mac: "You can find them dungeon diving ... explore a dynamic world" - a company that never came up
@@ -498,7 +498,7 @@ Mac: "make friends or enemies" - a kindness is talked of, as a deed is.
 ## LW7 - the deeds (2026-10-05)
 
 `relations.js` (the hand deaths, a word's tone), `lives.js` (`handDeath`, `roadHits`), `trips.js handsOn`, `lines.js`
-(`SLAIN_NEWS`, `DIED_NEWS`, `HELPED_NEWS`), pure; `livingTown.js` and `scenes/livingRoads.js` (the deeds), the host's
+(`SLAIN_NEWS`, `DIED_NEWS`, `HELPED_NEWS`), pure; `livingTown.js` and `scenes/livingWorld/livingRoads.js` (the deeds), the host's
 seams (`scenes/world.js`, `scenes/townTalk.js`). Mac: "make friends or enemies".
 
 - **A hand's death** (`relations.js HAND_KINDS`). A resident the player STRUCK DOWN (`slain`) and one who died fighting
@@ -590,7 +590,7 @@ People section), `ui/chronicleDoor.js` (the `people` door), the host's (`scenes/
 
 ## LW8 - the doors open (2026-10-05)
 
-`livingTown.js insideAt`; `scenes/livingIndoors.js` (`createLivingIndoors`, `soundRoom`); the building mode's two hooks
+`livingTown.js insideAt`; `scenes/livingWorld/livingIndoors.js` (`createLivingIndoors`, `soundRoom`); the building mode's two hooks
 (`scenes/worldModes.js`: the press, the billboard pass) and the host's layer (`scenes/world.js`). Mac: NPCs "dynamically
 all have tasks ... perform activities" - LW2 shut the door behind a resident; this stands what is behind it.
 
@@ -623,7 +623,7 @@ all have tasks ... perform activities" - LW2 shut the door behind a resident; th
 
 ## LW8b - the room's talk (2026-10-05)
 
-`scenes/livingIndoors.js` (`tablesOf`, `TABLE_M`, `TABLE_MAX`; the layer's tables, circles, words and `speech`),
+`scenes/livingWorld/livingIndoors.js` (`tablesOf`, `TABLE_M`, `TABLE_MAX`; the layer's tables, circles, words and `speech`),
 `lines.js` (`ROOM_TALKS`, `roomKindOf`, `pickScript`'s `room`), `meetups.js circleLine`'s `room`, the LivingTown's doors for
 a room (`livingTown.js` `lineCtx`, `talkBeat`, `typeOf`, `greetingFor`), the building mode's HUD pass
 (`scenes/worldModes.js` `host.livingSpeech`) and the host's layer (`scenes/world.js livingRoomLines`). Mac: NPCs "have
@@ -656,7 +656,7 @@ conversations with each other ... much like the crew on board ships" - LW8 stood
 
 ## LW8c - the room astir (2026-10-05)
 
-`scenes/livingIndoors.js` (`stirPlace`, `INDOOR_STIR_S`, `INDOOR_WALK_M`, `INDOOR_WALK_SPEED`; the layer's stirring and walks).
+`scenes/livingWorld/livingIndoors.js` (`stirPlace`, `INDOOR_STIR_S`, `INDOOR_WALK_M`, `INDOOR_WALK_SPEED`; the layer's stirring and walks).
 Mac: NPCs "perform activities" - the room's residents no longer stand where they came in all evening.
 
 - **Who stirs**: one in no TALKING circle (a quiet one may get up), once their own wait is up - `INDOOR_STIR_S`, 30 to 90
@@ -699,7 +699,7 @@ defects; each is fixed and pinned (`test/lwfix1_review.test.js`, `tools/mutants/
 A second read (an agent auditing every member the living world's host reads off another module, each finding verified
 before the fix) found three more; each is fixed and pinned (`test/lwfix2_watch.test.js`, `tools/mutants/lwfix2.json`).
 
-- **The turned watch** (`scenes/livingWatch.js watchStep`). A struck watchman's guard, cut down, was ended through
+- **The turned watch** (`scenes/livingWorld/livingWatch.js watchStep`). A struck watchman's guard, cut down, was ended through
   `town.slay(...)`, a method no LivingTown has (`slay` is the host's option): a TypeError the moment he fell, in the
   frame with no catch - the world's loop stopped. Now the town's whole deed, `slain` (the hand's turn at that minute,
   his household turned, the witnesses' crime at the place he was struck).
@@ -1043,7 +1043,7 @@ call for call.
 Mac: "improve the guards" - and every bug the investigation found in the watch fixed before the merge. Four, each at
 its root; the classic lane's DFU watch is untouched but for the race (DFU's own order restored in both lanes).
 
-- **A false slain** (`scenes/livingWatch.js`). The turned watch read ANY `dead` guard as a kill - and the crime
+- **A false slain** (`scenes/livingWorld/livingWatch.js`). The turned watch read ANY `dead` guard as a kill - and the crime
   watch walking off when the crime clears is `dead` with no body (`cityGuards.js`, DFU's despawn), as is a watchman
   run off by a beast or taken by a spell. So striking a watchman and paying the fine slew him by the player's hand:
   the palace household turned against the player and every witness counted a crime (`walkAwaySlain`, the
@@ -1192,7 +1192,7 @@ street and the rooms, and ranked what the player saw.
 - **Every reader deals alike.** The deal is the plans': one taken off this street alone (the trample) or struck down
   here is dealt and left out after - their partner to their own counsel, the spot's other circles as every reader has
   them (the first cut dealt the street's own, and one gone re-paired the whole spot on that reader, round after round).
-- **The rooms** (`scenes/livingIndoors.js`). A table's company meets from the minute it sat down as it is (see LW8b);
+- **The rooms** (`scenes/livingWorld/livingIndoors.js`). A table's company meets from the minute it sat down as it is (see LW8b);
   one who comes while an exchange is on waits for its last line; its people stay put while an exchange is on and
   through their first round together (one in a quiet circle got up mid-talk; a temple's two parted the moment their
   talk ended, one three-line talk in three quarters of an hour).
@@ -1207,7 +1207,7 @@ street and the rooms, and ranked what the player saw.
   half the time: "The baker's bread is getting smaller." opened a fifth of the town's talk, "Hauled stone since dawn."
   a sixth); the morning's, the day's, the evening's and the night's pools wide enough that no opener is three in a
   hundred of a day's. A third line that undid its question is the asker's comeback now.
-- **The road's parties** (`scenes/livingRoads.js`) talk in exchanges from their round's start (nobody gathers: a party
+- **The road's parties** (`scenes/livingWorld/livingRoads.js`) talk in exchanges from their round's start (nobody gathers: a party
   walks together).
 - **The four hosts.** `scenes/world.js` - WIRED (the street's town; the towns of the road for {place}).
   `scenes/worldModes.js` - WIRED (the rooms, through `livingIndoors.js`). `scenes/exterior.js` - FLAGGED as LW2 has it:
@@ -1562,7 +1562,7 @@ nearest their home (their own or the next), and they had no breakfast.
   stay at home); they sup at their own tavern in the evening (a visitor's and an adventurer's evening there), till 20-60
   minutes before bed at the latest, and go up to their room till bed; asleep there. The staff - the innkeeper and the
   servers, who live where they work - are no lodgers.
-- **The rooms** (`livingTown.js lodgersAt`; `scenes/livingIndoors.js bedsOf`, `bedStand`, BED_STEP_M, BED_FAN,
+- **The rooms** (`livingTown.js lodgersAt`; `scenes/livingWorld/livingIndoors.js bedsOf`, `bedStand`, BED_STEP_M, BED_FAN,
   BED_LEVEL_M, BED_DROP_M). A tavern's lodgers today are its visitors and a packet's hands lodged there (`_lodging`) and
   those of the town whose home is its door, its staff aside, in the order of their ids - no other building has any (a
   house's household is its own). Its beds (its Rest markers - RentRoom's own list) are dealt to them: each, in that order,
@@ -1807,7 +1807,7 @@ causes, each fixed at its root, and the one risk the first fix made, closed (`te
   three evenings in four), so a town of one tavern has 23-32 in it at once of an evening: the room stands what its floor
   holds of them, the first by their ids, as LW8 stood its twelve. AUDIT LW-ROOMS recorded more (`Audit-LW-Rooms.md`):
   the wait at the next place where home is too far (C2), one in view holding every arrival (B7), the room's talk (B6).
-- **The four hosts.** LW-ROOMS is the living town's plan and the room's layer (`dayPlan.js`, `scenes/livingIndoors.js`;
+- **The four hosts.** LW-ROOMS is the living town's plan and the room's layer (`dayPlan.js`, `scenes/livingWorld/livingIndoors.js`;
   AUDIT LW-ROOMS: `world/actionSystem.js`'s doors measured shut): `scenes/worldModes.js` - WIRED through the host as LW8
   has it (the building's collider, its landing and ways in, its beds: no change - its scene restore still swings the
   doors, which the measure no longer reads); `scenes/world.js` - runs the layer and the plans it lays, and AUDIT LW-ROOMS
@@ -2020,7 +2020,7 @@ ways only through world.js.
 
 ## PLAIN-UI - the regard on the talk panel (2026-10-12)
 
-A player: "Where's the UI for relationship in the talk window?" The enhanced talk panel shows a living resident's regard under their name - the standing in the People page's words, a bar from -100 to +100 and the number - and, on a press, what it is and what moves it (`src/systems/livingWorld/people.js` `regardBadge`; the card the body's own door's - `src/systems/livingWorld/livingTown.js` `regardCard` on the street, the indoor door's at home, `src/scenes/livingRoads.js` `regardCard` on the road and below, AUDIT PLAIN-UI C2). The classic face is DFU's window and draws none. The record: `10-UI/Plain-Words.md`.
+A player: "Where's the UI for relationship in the talk window?" The enhanced talk panel shows a living resident's regard under their name - the standing in the People page's words, a bar from -100 to +100 and the number - and, on a press, what it is and what moves it (`src/systems/livingWorld/people.js` `regardBadge`; the card the body's own door's - `src/systems/livingWorld/livingTown.js` `regardCard` on the street, the indoor door's at home, `src/scenes/livingWorld/livingRoads.js` `regardCard` on the road and below, AUDIT PLAIN-UI C2). The classic face is DFU's window and draws none. The record: `10-UI/Plain-Words.md`.
 
 ## TONE-TASTE - a tone counts as it was taken (2026-10-15)
 

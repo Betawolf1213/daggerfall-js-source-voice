@@ -1260,14 +1260,14 @@ traced to SerializablePlayer (the Q4-v wiring row).
 ## Q4-v - THE HOST BRIDGE (SHIPPED 2026-08-21)
 
 The machine goes LIVE in the hosts - the arc's last slice. One new
-module owns the wiring (`scenes/questBridge.js`): it builds the
+module owns the wiring (`scenes/quest/questBridge.js`): it builds the
 QuestMachine over the world seam the host composes, the
 QuestListsManager over the vendored pack, the offer flow and the
 PlayerNotebook, and hands the scenes a small verb set - tick with the
 frame, click an NPC, open the Quests service, mount a scene's quest
 resources, snapshot/restore the whole envelope. Everything in it is
 PURE WIRING over the pinned Q1-Q4 law modules, node-testable with a
-mock ctx; `scenes/questData.js` is the browser half of the data seams
+mock ctx; `scenes/quest/questData.js` is the browser half of the data seams
 (vite raw-glob over vendor/dfu-quests, preloaded once so the machine's
 reads stay synchronous - node tests feed fs instead and never import
 it).
@@ -5173,7 +5173,7 @@ Wiring: machine hooks gain setPlayerCrime, getGoldPieces,
 deductGoldPieces, raiseTime, spawnCityGuards, makeEnemiesHostile,
 clearEnemies, getQuest-by-uid; questWorld gains currentWeatherKey
 and currentClimateIndex; world.js mounts every door (the bridge ctx
-passthroughs in scenes/questBridge.js).
+passthroughs in scenes/quest/questBridge.js).
 
 Pins: 10 in `test/questactions5.test.js`, on the questremainder
 harness - and the harness taught its own law twice: bare QBN lines
@@ -6582,7 +6582,7 @@ as it was. A DEPARTURE (Port-Ledger A), the port's own.
   deadline ran down while it was set aside; its site links stand again by Place; a scene it stands in mounts its
   people, things and foes the next time it is built (or at once, where its things were only put out of sight). It does
   not rejoin the party's step: Share it again.
-- **The journal** (`scenes/questBridge.js`): the one walk files a quest set aside in `shelved` (its clock as it stopped),
+- **The journal** (`scenes/quest/questBridge.js`): the one walk files a quest set aside in `shelved` (its clock as it stopped),
   the rail under ABANDONED (`ui/quest/questRail.js`), and the pause window's Quests tab draws Abandon quest (twice, BOUNTY1's
   arming) where the bridge allows it (`journalClean.canAbandon`) and Reclaim quest (once) on an abandoned one, saying
   what happened (`shelfRefusalText`). The doors ride `journalClean`, so all four hosts' pause windows carry them -
@@ -6721,7 +6721,7 @@ point ... its just droping the spawn location in general instead of find a spot"
   The whole dungeon keeps DFU's enumeration. A target already standing in a cap is laid again at the dungeon's next
   mount by QUEST-VOID's net (`questRepair.js relayBuiltDungeon`); the bounty lair prefers interior spawn spots too
   (`dungeonQuestSpawnSpots`). A departure (Port-Ledger A, QUEST-CAPS).
-- **QUEST-BACKFACE** (`scenes/questFoeHost.js` `placeFoeEnv`): Unity's raycast never hits a mesh collider's back face, and
+- **QUEST-BACKFACE** (`scenes/quest/questFoeHost.js` `placeFoeEnv`): Unity's raycast never hits a mesh collider's back face, and
   the port's collider is two-sided. A placement ring ray that slipped out through a seam took its open-area point in the
   rock, and the floor probe there struck the top of a hall's ceiling - a back face - so CreateFoe, an encounter or a
   summon stood on it, outside every hall. A back-face hit on the dungeon's own geometry (its `dungeon` bucket) is passed
@@ -6744,7 +6744,7 @@ touches a quest whose own state says its foe is dead.
   error-terminated quest goes (`removeQuest`: its quest items leave the pack, its site links, topics and questors go;
   no reputation and no journal entry - it did not end), and the new one starts at once and runs its first step on the
   machine's next tick. A shared copy leaves the party's step first, so the tombstone does not file it as a finished
-  share. Refused, each in words (`scenes/questBridge.js` `restartRefusalText`): a quest gone, ending or set aside
+  share. Refused, each in words (`scenes/quest/questBridge.js` `restartRefusalText`): a quest gone, ending or set aside
   (reclaim it first); the world's own (`PROTECTED_QUESTS`); one with a questor - its parse would bind whoever the
   player clicked last (abandon it and ask its questor again); one another quest's `run quest` waits on (the parent
   would read the restart as a failure); a sea raid. S0000018 restarted waits its thirty days for Medora's vision again
@@ -6756,7 +6756,7 @@ touches a quest whose own state says its foe is dead.
   shown under the quests, the tracker following the new copy. Every word of it is the text core's (L10N4 - the
   chronicle's `chronicle.quests.restart*`, the pause tab's and the bridge's `pause.journal.restart*`, its refusals
   among them), drafted in the thirteen whole languages.
-- **THE FIELD FINDING - A KILL CREDITED BY NAME IS A COUNT, NEVER A DEATH** (`scenes/questFoeHost.js` `countsByName`).
+- **THE FIELD FINDING - A KILL CREDITED BY NAME IS A COUNT, NEVER A DEATH** (`scenes/quest/questFoeHost.js` `countsByName`).
   DESYNC-ZERO's `partyQuestFoe` counted a party member's quest-foe kill on ANY copy of the same quest this player held,
   by name. The main story is never shared, so every member on S0000018 holds their own mummy in their own crypt (a
   `remote dungeon0`), with their own Dust on it: a member's mummy killed counted mine dead (`killCount` 1 of 1), the

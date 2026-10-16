@@ -1,7 +1,7 @@
 [
   {
     "name": "WB13d-no-flash",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    setBatchHitFlash(batch, s.fell ? 0 : gateHitFlash(hurtAt, courtFlashAt, t));\n",
     "new": "",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "WB13d-a-sliver-flashing",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "hpFlashSeen - s.hp >= s.max * GATE_FLASH_SHARE",
     "new": "hpFlashSeen - s.hp > 0",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "WB13d-a-flash-on-his-falling-body",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "setBatchHitFlash(batch, s.fell ? 0 : gateHitFlash(",
     "new": "setBatchHitFlash(batch, gateHitFlash(",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "WB13d-the-host-never-flashing",
-    "file": "src/scenes/gateHost.js",
+    "file": "src/scenes/gate/gateHost.js",
     "old": "    setBatchHitFlash(b.batch, gateHitFlash(b.hurtAt, b.courtAt ?? -Infinity, t));\n",
     "new": "",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "WB13d-the-host-court-unseen",
-    "file": "src/scenes/gateHost.js",
+    "file": "src/scenes/gate/gateHost.js",
     "old": "        if (a.h < b.hp) b.courtAt = t;   // WB13d: the court's blow on it, seen\n",
     "new": "",
     "tests": [
@@ -120,7 +120,7 @@
   },
   {
     "name": "WB13d-the-landing-unfelt",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "burstsOf(atk, A, P); feltLanding(s, t, A, atk); }",
     "new": "burstsOf(atk, A, P); }",
     "tests": [
@@ -129,7 +129,7 @@
   },
   {
     "name": "WB13d-the-meteor-felt-at-him",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "const away = A.aim === 'players' ? atk.tg ?? NONE : A === ATTACKS.meteor ? (atk.tg?.length ? [atk.tg[0]] : NONE) : null;",
     "new": "const away = null;",
     "tests": [
@@ -156,7 +156,7 @@
   },
   {
     "name": "WB13d-a-light-that-never-fades",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "if (!L0 || !(age >= 0) || age >= FX_LIGHT_MS) continue;",
     "new": "if (!L0 || !(age >= 0)) continue;",
     "tests": [
@@ -165,7 +165,7 @@
   },
   {
     "name": "WB13d-no-release",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "{ setMark(released, atk); if (t < atk.at) sound(bossCue('release', A, P), s, t, atk); }",
     "new": "{ setMark(released, atk); }",
     "tests": [
@@ -174,7 +174,7 @@
   },
   {
     "name": "WB13d-a-release-every-frame",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "if (A && !marked(released, atk) && t >= atk.at - RELEASE_LEAD_MS) { setMark(released, atk);",
     "new": "if (A && t >= atk.at - RELEASE_LEAD_MS) { setMark(released, atk);",
     "tests": [

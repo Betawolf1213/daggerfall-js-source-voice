@@ -13,7 +13,7 @@ import { readFileSync } from 'node:fs';
 import { crowdDrawn, createGateCrowd, gateCrowdMax, GATE_CROWD_TIERS, GATE_CROWD_DEFAULT, GATE_CROWD_HOLD_M } from '../src/net/gate/gateCrowd.js';
 import { PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
 import { COURT_TEXT } from '../src/world/gate/gateArena.js';
-import { courtSaySeconds } from '../src/scenes/gateCourt.js';
+import { courtSaySeconds } from '../src/scenes/gate/gateCourt.js';
 import { createCrewAshore } from '../src/scenes/crewAshore.js';
 import { createCompanions } from '../src/systems/naval/crewCompanions.js';
 

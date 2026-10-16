@@ -316,7 +316,7 @@
  },
  {
   "name": "MWNPC10c-roads-host-mute",
-  "file": "src/scenes/livingRoads.js",
+  "file": "src/scenes/livingWorld/livingRoads.js",
   "old": "    drawBodies(canvas, proj, view, eye, dt) { deps.sprites.drawBodies?.(canvas, proj, view, eye, dt); },",
   "new": "    drawBodies() {},",
   "tests": [
@@ -325,7 +325,7 @@
  },
  {
   "name": "MWNPC10c-indoors-host-mute",
-  "file": "src/scenes/livingIndoors.js",
+  "file": "src/scenes/livingWorld/livingIndoors.js",
   "old": "    drawBodies(canvas, proj, view, eye, dt) { deps.sprites.drawBodies?.(canvas, proj, view, eye, dt); },",
   "new": "    drawBodies() {},",
   "tests": [

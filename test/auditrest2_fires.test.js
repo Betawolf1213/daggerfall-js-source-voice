@@ -21,7 +21,7 @@ import { DOOR_TYPE, dfMeshToModel } from '../src/world/meshReader.js';
 import { patchSeams } from '../src/world/arch3dSeams.js';
 import { doorWorldPosition } from '../src/player/enterExit.js';
 import { multiply, trs } from '../src/world/mat4.js';
-import { placeFoeEnv, entityOccupancy } from '../src/scenes/questFoeHost.js';
+import { placeFoeEnv, entityOccupancy } from '../src/scenes/quest/questFoeHost.js';
 import { placeFoeFreely, PLACE_FOE_DEFAULTS } from '../src/systems/quest/sceneMount.js';
 import { SPAWNER_ARMS } from '../src/systems/encounters.js';
 import { runRestNight, ambushNight } from '../src/systems/rest/restAct.js';

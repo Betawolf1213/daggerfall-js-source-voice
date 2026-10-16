@@ -461,7 +461,7 @@
   },
   {
     "name": "LD-NC-sea-work-dropped",
-    "file": "src/scenes/navalCrew.js",
+    "file": "src/scenes/naval/navalCrew.js",
     "old": "ship.work = Number.isFinite(w.work) ? w.work : 0;",
     "new": "ship.work = 0;",
     "tests": [

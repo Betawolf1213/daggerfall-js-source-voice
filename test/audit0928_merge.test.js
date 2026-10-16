@@ -30,7 +30,7 @@ import { inFireWard } from '../src/world/dungeon/dungeonFires.js';   // REST3: t
 import { freeLodgedFeet } from '../src/characters/foeSpacing.js';   // FIELD BUGS 2026-10-04d CRATE-FREE: the build's stand (a free name there, the module's own import)
 import { auraWingLights } from '../src/render/auraRing.js';   // SERAPH-WINGS: peerTorchLights' tail
 import { foeSeed, applyWireLook } from '../src/characters/foeBodies.js';   // AUDIT MW-NPC II K3: the dungeon context's look seed, in the mounted scope
-import { partyOnlyQuestShare } from '../src/scenes/questFoeHost.js';   // QUEST-OWNER: the dungeon's quest seam, narrowed to the party (ownShare)
+import { partyOnlyQuestShare } from '../src/scenes/quest/questFoeHost.js';   // QUEST-OWNER: the dungeon's quest seam, narrowed to the party (ownShare)
 import { adoptLight } from '../src/render/lightId.js';   // LIGHT-ID: the dungeon's light copies adopt their lights
 import { ROOM_LOOT_OFF } from './roomLootOff.mjs';   // PARTY-LOOT: the room's seams with no room
 

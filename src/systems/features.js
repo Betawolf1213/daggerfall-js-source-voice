@@ -1629,7 +1629,7 @@ export const FEATURES = Object.freeze([
   // NAV (2026-09-28, Mac: "proper naval combat with a huge reference to assassins creed black flag ... directly integrate
   // into online mode"): THE SEA FIGHT (bible/03-World/Naval-Combat.md) - the port's own, on Come Sail Away's hulls, so
   // it stands nothing without that mod. ONE SWITCH, FORCED ON ONLINE: the ships at sea are the room's world (one player
-  // stands the sea for everyone near - scenes/navalHost.js), and a room where one player sees the pirate boarding another
+  // stands the sea for everyone near - scenes/naval/navalHost.js), and a room where one player sees the pirate boarding another
   // and the other does not is two worlds. The rest is each player's own: the traffic the sea they stand is filled with,
   // whether pirates grapple THEIR boat, and whether THEIR voyage's beaten raiders leave a hold to plunder.
   Object.freeze({

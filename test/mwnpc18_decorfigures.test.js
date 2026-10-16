@@ -3,14 +3,14 @@
 // set down one of Daggerfall's people (net/decorLaw.js decorIsFigure); every room's own people stood in bodies and the
 // placed ones kept their pictures, because no census looked at a decor room. Now each is read for a look off its
 // picture - its sex FLATS.CFG's, its role FLATS.CFG's caption's, its race the region's, its seed its piece's id
-// (characters/peopleBodies.js figureLook) - and offered on its host's people lane (scenes/decorRoom.js
+// (characters/peopleBodies.js figureLook) - and offered on its host's people lane (scenes/decor/decorRoom.js
 // offerDecorFigures): the rooms' (worldModes.js) and the yards' (world.js, through homeYards.js).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { figureLook, figureRole, DAEDRA_PRINCES_ARCHIVE, FIGURE_ROLE_WORDS } from '../src/characters/peopleBodies.js';
-import { offerDecorFigures } from '../src/scenes/decorRoom.js';
+import { offerDecorFigures } from '../src/scenes/decor/decorRoom.js';
 import { wornByRole, WARDROBE_ROLES } from '../src/characters/wardrobe.js';
 import { decorIsFigure } from '../src/net/decorLaw.js';
 
@@ -88,7 +88,7 @@ test('MWNPC18b figureRole: the caption\'s words to a role, the first that matche
 });
 
 test('MWNPC18c offerDecorFigures, through a real decor room: each figure with a look offered on the lane at its piece\'s base - the room\'s origin and its place in it, never its batch\'s origin (a room\'s batch is minted with none; a restand() writes only its step there) - after a recentre where it stands now, and made again over a lane that moved it; turned to the eye; one without draws its picture (its cast-only cleared); the lane off offers none (AUDIT MWNPC16-18 D1: the batch\'s origin was read - a TypeError every frame a placed figure stood with bodies on, or a body a whole room off after a recentre. Mutants: the offer skipped; the castOnly left; the place in the room dropped; the base made once)', async () => {
-  const { createDecorRoom } = await import('../src/scenes/decorRoom.js');
+  const { createDecorRoom } = await import('../src/scenes/decor/decorRoom.js');
   const settle = () => new Promise((res) => setImmediate(res));
   const o = [10, 0, 10];
   const made = [];
@@ -151,19 +151,19 @@ test('MWNPC18c offerDecorFigures, through a real decor room: each figure with a 
 test('MWNPC18e EVERY HOST THAT DRAWS DAGGERFALL\'S PEOPLE stands them in bodies (it offers them to a people lane) or keeps their pictures, and says why - a new host of people fails here until it does one or the other (AUDIT MWNPC16-18 D5: Come Sail Away\'s crews were neither, under section 26\'s "blind spot, closed")', () => {
   // a host draws a person through nudeFlats.js drawnFlat (NUDE-FLATS: every person's picture asks it); Come Sail Away's
   // crews are its prefabs' BillboardHelper people (nudedecor.test.js holds them to the table)
-  const hosts = walk('src').filter((p) => p !== 'src/characters/nudeFlats.js' && /\bdrawnFlat\(/.test(rd(p).replace(/^\s*\/\/.*$/gm, ''))).concat('src/scenes/comeSailAwayPool.js').sort();
+  const hosts = walk('src').filter((p) => p !== 'src/characters/nudeFlats.js' && /\bdrawnFlat\(/.test(rd(p).replace(/^\s*\/\/.*$/gm, ''))).concat('src/scenes/comeSailAway/comeSailAwayPool.js').sort();
   const BODIES = {
-    'src/scenes/decorRoom.js': 'offerDecorFigures(',   // the placed figures, for its hosts (section 26)
+    'src/scenes/decor/decorRoom.js': 'offerDecorFigures(',   // the placed figures, for its hosts (section 26)
     'src/scenes/dungeonContext.js': '_peopleLane.offer(personActor(',
     'src/scenes/exterior.js': 'standPeople.offer(personActor(',
     'src/scenes/world.js': 'streetPeople.offer(personActor(',
     'src/scenes/worldModes.js': 'peopleBodies.offer(personActor(',
   };
   const PICTURES = {
-    'src/scenes/arenaBouts.js': 'the arena\'s seated crowd - up to 420 flats (section 4)',
-    'src/scenes/decorTool.js': 'the decorator\'s ghost - a picture being placed, not a person standing',
+    'src/scenes/arena/arenaBouts.js': 'the arena\'s seated crowd - up to 420 flats (section 4)',
+    'src/scenes/decor/decorTool.js': 'the decorator\'s ghost - a picture being placed, not a person standing',
     'src/scenes/interiorContext.js': 'a building\'s people, stood as flats here and offered by its host (worldModes.js)',
-    'src/scenes/comeSailAwayPool.js': 'a ship\'s crew (the prefabs\' BillboardHelper people) - NOT HERE, section 27',
+    'src/scenes/comeSailAway/comeSailAwayPool.js': 'a ship\'s crew (the prefabs\' BillboardHelper people) - NOT HERE, section 27',
   };
   assert.deepEqual(hosts, [...Object.keys(BODIES), ...Object.keys(PICTURES)].sort(), 'every host that draws a person, named once');
   for (const [f, call] of Object.entries(BODIES)) assert.ok(rd(f).includes(call), `${f} offers its people`);
@@ -173,7 +173,7 @@ test('MWNPC18e EVERY HOST THAT DRAWS DAGGERFALL\'S PEOPLE stands them in bodies 
 test('MWNPC18d EVERY DECOR ROOM\'S FIGURES ARE OFFERED - the rooms\' on the interior host\'s people lane, the yards\' on the street\'s, before the bodies draw; a new host of decor rooms fails here until it does the same (the census never saw a decor room: its people are flats, not mobiles)', () => {
   const hosts = walk('src').filter((p) => /[=(,]\s*createDecorRoom\(/.test(rd(p))).sort();   // a call, not its definition
   assert.deepEqual(hosts, ['src/scenes/homeYards.js', 'src/scenes/worldModes.js'], 'the hosts that stand decor rooms');
-  assert.match(rd('src/scenes/decorRoom.js'), /const figures = \(\) => \{ figOut\.length = 0; for \(const e of figs\) if \(e\.batch\) figOut\.push\(e\); return figOut; \};/);
+  assert.match(rd('src/scenes/decor/decorRoom.js'), /const figures = \(\) => \{ figOut\.length = 0; for \(const e of figs\) if \(e\.batch\) figOut\.push\(e\); return figOut; \};/);
   const modes = rd('src/scenes/worldModes.js'), world = rd('src/scenes/world.js');
   const o = modes.indexOf('offerDecorFigures(interiorDecor.figures(), peopleBodies, _peopleOn, figureCtx, mwv.eye, dt);');
   assert.ok(o > 0 && o < modes.indexOf('    peopleBodies.draw(canvas, proj, view, mwv.eye, dt);'), 'a room\'s, before its people draw');

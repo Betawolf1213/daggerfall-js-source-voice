@@ -1,7 +1,7 @@
 [
   {
     "name": "CREW-MUSTER-my-crew-at-the-helms-range-alone",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const e = boardable(boat); if (e) { toward = e.ship.pos; way = 'board'; } }",
     "new": "const e = boardable(boat, { anySpeed: true }); if (e) { toward = e.ship.pos; way = 'board'; } }",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "CREW-MUSTER-my-boarding-told-the-repel",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const e = boardable(boat); if (e) { toward = e.ship.pos; way = 'board'; } }",
     "new": "const e = boardable(boat); if (e) { toward = e.ship.pos; way = 'repel'; } }",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "CREW-MUSTER-a-ship-closing-on-me-told-the-boarding",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (toward) way = 'repel';   // CREW-MUSTER: she comes over our rail",
     "new": "if (toward) way = 'board';   // CREW-MUSTER: she comes over our rail",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "CREW-MUSTER-her-board-course-told-the-repel",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (pos) { toward = Number.isFinite(yaw) ? abeam(e, pos, yaw) : pos; way = 'board'; }",
     "new": "if (pos) { toward = Number.isFinite(yaw) ? abeam(e, pos, yaw) : pos; way = 'repel'; }",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "CREW-MUSTER-her-crew-at-the-helms-range-alone",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (helm ? boardingGap(helm, e) != null : footReach(e, from)) {",
     "new": "if (helm ? boardingGap(helm, e, { anySpeed: true }) != null : footReach(e, from)) {",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "CREW-MUSTER-her-crew-never-at-my-feet",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (helm ? boardingGap(helm, e) != null : footReach(e, from)) {",
     "new": "if (helm ? boardingGap(helm, e) != null : false) {",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "CREW-MUSTER-her-crew-told-the-boarding",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "toward = helm ? abeam(e, from, yawOfRot(helm.GameObject.rotation)) : from; way = 'repel'; }",
     "new": "toward = helm ? abeam(e, from, yawOfRot(helm.GameObject.rotation)) : from; way = 'board'; }",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "CREW-MUSTER-the-boarding-reach-blind-to-the-way",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (!anySpeed && Math.hypot(pose.velocity[0], pose.velocity[2]) > BOARD_SPEED) return null;",
     "new": "",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "CREW-MUSTER-the-crew-host-drops-the-way",
-    "file": "src/scenes/navalCrew.js",
+    "file": "src/scenes/naval/navalCrew.js",
     "old": "ship.way = ship.toward ? w.way ?? null : null;",
     "new": "ship.way = null;",
     "tests": [

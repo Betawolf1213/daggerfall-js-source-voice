@@ -46,7 +46,7 @@
  },
  {
   "name": "MWNPC10a-host-unmatched-bodied",
-  "file": "src/scenes/gateHost.js",
+  "file": "src/scenes/gate/gateHost.js",
   "old": "const look = b.shown && b.batch ? creatureLook({ mobileType: b.look.mobile }) : null;",
   "new": "const look = b.shown && b.batch ? { creature: ['any'] } : null;",
   "tests": [
@@ -55,7 +55,7 @@
  },
  {
   "name": "MWNPC10a-host-falling-unoffered",
-  "file": "src/scenes/gateHost.js",
+  "file": "src/scenes/gate/gateHost.js",
   "old": "      for (const b of falling.values()) one(b, true);\n",
   "new": "",
   "tests": [
@@ -64,7 +64,7 @@
  },
  {
   "name": "MWNPC10a-host-fallen-alive",
-  "file": "src/scenes/gateHost.js",
+  "file": "src/scenes/gate/gateHost.js",
   "old": "dead: dead ? 1 + ((b.i | 0) % 3) : 0 }), b.batch,",
   "new": "dead: 0 }), b.batch,",
   "tests": [
@@ -73,7 +73,7 @@
  },
  {
   "name": "MWNPC10a-host-hit-unseen",
-  "file": "src/scenes/gateHost.js",
+  "file": "src/scenes/gate/gateHost.js",
   "old": "hitKey: dead ? null : Math.max(b.hurtAt ?? -Infinity, b.courtAt ?? -Infinity),",
   "new": "hitKey: null,",
   "tests": [
@@ -82,7 +82,7 @@
  },
  {
   "name": "MWNPC10a-host-never-swings",
-  "file": "src/scenes/gateHost.js",
+  "file": "src/scenes/gate/gateHost.js",
   "old": "swingKey: dead ? null : b.wound,",
   "new": "swingKey: null,",
   "tests": [
@@ -91,7 +91,7 @@
  },
  {
   "name": "MWNPC10a-boss-life-size",
-  "file": "src/scenes/gateCourt.js",
+  "file": "src/scenes/gate/gateCourt.js",
   "old": "scale: (body.scale ?? 1) * (profileOf(s).size ?? 1) }), shown,",
   "new": "scale: 1 }), shown,",
   "tests": [
@@ -100,7 +100,7 @@
  },
  {
   "name": "MWNPC10a-boss-unoffered",
-  "file": "src/scenes/gateCourt.js",
+  "file": "src/scenes/gate/gateCourt.js",
   "old": "          bodiesLane.offer(rosterActor(bossRec, { id: 'boss',",
   "new": "          void (rosterActor(bossRec, { id: 'boss',",
   "tests": [
@@ -109,7 +109,7 @@
  },
  {
   "name": "MWNPC10a-host-unasked",
-  "file": "src/scenes/gateCourt.js",
+  "file": "src/scenes/gate/gateCourt.js",
   "old": "        host.offerBodies(bodiesLane);\n",
   "new": "",
   "tests": [
@@ -118,7 +118,7 @@
  },
  {
   "name": "MWNPC10a-bodies-undrawn",
-  "file": "src/scenes/gateCourt.js",
+  "file": "src/scenes/gate/gateCourt.js",
   "old": "      bodiesLane.draw(canvas, proj, view, eye, dt);\n    },",
   "new": "    },",
   "tests": [
@@ -127,7 +127,7 @@
  },
  {
   "name": "MWNPC10a-lane-kept",
-  "file": "src/scenes/gateCourt.js",
+  "file": "src/scenes/gate/gateCourt.js",
   "old": "      bodiesLane.destroy();   // MWNPC10: and the bodies\n",
   "new": "",
   "tests": [

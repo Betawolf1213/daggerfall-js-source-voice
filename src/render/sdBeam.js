@@ -5,7 +5,7 @@
 // wall's law, render/duelWall.js: fixed geometry placed by uniforms, no depth written, tested against the depth the world
 // wrote, fogged, its rates whole cycles over the wrapped clock). A bright core and a soft glow across it, brightest at
 // the hand, light running out along it toward the floor, its far end flaring where it strikes. The floor's telegraph is
-// SD8d's (scenes/sdRemnantBlows.js); this is the blow itself. AUDIT SD III (V2): and THE BAND IT SWEEPS - the same light
+// SD8d's (scenes/superDungeon/sdRemnantBlows.js); this is the blow itself. AUDIT SD III (V2): and THE BAND IT SWEEPS - the same light
 // laid flat on the floor (`uFlat`) from its body's rim to its reach, the law's width across, its rims bright: the ribbon
 // passed over the heads of the bodies the law struck, a third of its width.
 //

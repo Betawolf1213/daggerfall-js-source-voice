@@ -1,6 +1,6 @@
 // SD6c (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 8): THE ORRERY'S HALL ON THE
 // PAGE - world/superDungeon/sdHall.js (where its parts stand, the meshes they are), world/superDungeon/sdHallArt.js (what they wear),
-// scenes/sdHall.js (the dungeon host's set: stood, heard, turned, pressed), and the hosts' wiring - the turn sent, the
+// scenes/superDungeon/sdHall.js (the dungeon host's set: stood, heard, turned, pressed), and the hosts' wiring - the turn sent, the
 // realm's word read, the snap's lash on whoever stands in the hall, the edge widened by the Concord.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -19,7 +19,7 @@ import {
 import {
   hallArt, hallAtlasArt, hallGlowArt, atlasUv, SD_SIGNS, SD_PIPS, SD_HALL_ATLAS, SD_HALL_ATLAS_RECORD, SD_HALL_GLOW_RECORD, SD_GLOW_COLORS,
 } from '../src/world/superDungeon/sdHallArt.js';
-import { createSdHall, sdStoneKey, sdPlaqueKey, SD_HALL_TEXT, SD_HALL_SOUNDS, SD_HAND_RATE, SD_FRAY_FULL_MS, SD_BRIDGE_LAY_MS, SD_CONCORD_MS } from '../src/scenes/sdHall.js';
+import { createSdHall, sdStoneKey, sdPlaqueKey, SD_HALL_TEXT, SD_HALL_SOUNDS, SD_HAND_RATE, SD_FRAY_FULL_MS, SD_BRIDGE_LAY_MS, SD_CONCORD_MS } from '../src/scenes/superDungeon/sdHall.js';
 import { SD_BRIDGE_PLATES } from '../src/world/superDungeon/sdHall.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

@@ -1,7 +1,7 @@
 // BASE-HIDE (2026-09-26, Mac: "Remove bought houses decor - the base game decor isnt easy to decorate around when u
 // want more in depth house"): what Daggerfall furnished a room with - its prop models and its flats - the room's owner
 // may TAKE OUT and put back, free. A furnishable room (an online home, anyone's; the player's house or ship) stands its
-// own furniture piece by piece so one piece can go (scenes/decorBase.js); the list of what is out is the save's offline
+// own furniture piece by piece so one piece can go (scenes/decor/decorBase.js); the list of what is out is the save's offline
 // and the account service's online (migration 0015), and a sale brings the furniture back. The law, the room's pool,
 // the service over the real Worker and node:sqlite, the scene cache, the tool, the panel's "Built in" view, and the
 // build's and the host's wiring by source.
@@ -13,7 +13,7 @@ import worker from '../server-account/src/index.js';
 import { ROUTES } from '../server-account/src/service.js';
 import { _resetKeyForTests } from '../server-account/src/signing.js';
 import { DECOR_BASE_KEY_RE, DECOR_HIDDEN_CAP, decorBaseModelKey, decorBaseFlatKey, decorBaseWhat, decorHiddenOf } from '../src/net/decorLaw.js';
-import { createBaseRoom, baseBucketOf } from '../src/scenes/decorBase.js';
+import { createBaseRoom, baseBucketOf } from '../src/scenes/decor/decorBase.js';
 import { createSceneCache, cacheScene, restoreCachedScene, clearSceneHidden, interiorSceneName } from '../src/systems/sceneCache.js';
 import { accountDecor, SESSION_KEY } from '../src/net/accountClient.js';
 import { createDecorPanel, decorBaseSub, DECOR_HOLDS_LINE, DECOR_BASE_EMPTY } from '../src/ui/decorPanel.js';

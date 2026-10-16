@@ -167,7 +167,7 @@
   },
   {
     "name": "AUDWB-C6-the-pool-spins-by-its-clock",
-    "file": "src/scenes/gatePool.js",
+    "file": "src/scenes/gate/gatePool.js",
     "old": "      spin = (spin + gateSpinRate(open) * Math.max(0, dt)) % 1;",
     "new": "      spin = gateSpinRate(open) * (now() / 1000) % 1;",
     "tests": [
@@ -176,7 +176,7 @@
   },
   {
     "name": "AUDWB-C7-a-new-empty-list-a-frame",
-    "file": "src/scenes/gatePool.js",
+    "file": "src/scenes/gate/gatePool.js",
     "old": "      if (!place || place.coarse || place.fade <= 0) return NO_GATE;",
     "new": "      if (!place || place.coarse || place.fade <= 0) return [];",
     "tests": [
@@ -185,7 +185,7 @@
   },
   {
     "name": "AUDWB-C7-stands-without-a-pass",
-    "file": "src/scenes/gatePool.js",
+    "file": "src/scenes/gate/gatePool.js",
     "old": "    stands: () => !!place && !!pass,",
     "new": "    stands: () => !!place,",
     "tests": [

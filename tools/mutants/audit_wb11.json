@@ -29,7 +29,7 @@
   },
   {
     "name": "AUDIT-WB11-W1-one-stand-in-a-look",
-    "file": "src/scenes/gateHost.js",
+    "file": "src/scenes/gate/gateHost.js",
     "old": "entity: hostStandIn(b.look, a.i),",
     "new": "entity: hostStandIn(b.look),",
     "tests": [
@@ -119,7 +119,7 @@
   },
   {
     "name": "AUDIT-WB11-W3-the-court-two-sequences",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "send: sendHost, blowQ: (who) => blowQ(who),",
     "new": "send: sendHost,",
     "tests": [
@@ -128,7 +128,7 @@
   },
   {
     "name": "AUDIT-WB11-W3-a-frame-not-ending-the-blow",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "      blowMet.clear();   // AUDIT WB11 W3: a frame ends my blow\n",
     "new": "",
     "tests": [
@@ -146,7 +146,7 @@
   },
   {
     "name": "AUDIT-WB11-W4-the-sink-not-followed",
-    "file": "src/scenes/gateHost.js",
+    "file": "src/scenes/gate/gateHost.js",
     "old": "T.feet[1] = COURT_CENTRE[1] + b.look.hover - act.sink;",
     "new": "T.feet[1] = COURT_CENTRE[1] + b.look.hover;",
     "tests": [
@@ -175,7 +175,7 @@
   },
   {
     "name": "AUDIT-WB11-W5-the-whole-off-the-target",
-    "file": "src/scenes/gateHost.js",
+    "file": "src/scenes/gate/gateHost.js",
     "old": "name: b.look.name, m: a.m });",
     "new": "name: b.look.name });",
     "tests": [
@@ -229,7 +229,7 @@
   },
   {
     "name": "AUDIT-WB11-C4-the-line-over-the-wrath",
-    "file": "src/scenes/gateHost.js",
+    "file": "src/scenes/gate/gateHost.js",
     "old": " && !wrathGathers && ",
     "new": " && ",
     "tests": [
@@ -274,7 +274,7 @@
   },
   {
     "name": "AUDIT-WB11-C2-the-fall-at-yaw-0",
-    "file": "src/scenes/gateHost.js",
+    "file": "src/scenes/gate/gateHost.js",
     "old": "draw(b, act, b.g.x, b.g.z, b.yaw ?? 0, t);",
     "new": "draw(b, act, b.g.x, b.g.z, 0, t);",
     "tests": [
@@ -283,7 +283,7 @@
   },
   {
     "name": "AUDIT-WB11-C3-the-count-once-a-frame",
-    "file": "src/scenes/gateHost.js",
+    "file": "src/scenes/gate/gateHost.js",
     "old": "        if (g.k === HOST.bearer && g.w === 0) bearersLeft--;\n",
     "new": "",
     "tests": [
@@ -301,7 +301,7 @@
   },
   {
     "name": "AUDIT-WB11-C6-the-epoch-seconds",
-    "file": "src/scenes/gateHost.js",
+    "file": "src/scenes/gate/gateHost.js",
     "old": "const seethe = (now % HOST_LANE_CLOCK_MS) / 1000;",
     "new": "const seethe = now / 1000;",
     "tests": [
@@ -310,7 +310,7 @@
   },
   {
     "name": "AUDIT-WB11-C8-a-new-shape-a-frame",
-    "file": "src/scenes/gateHost.js",
+    "file": "src/scenes/gate/gateHost.js",
     "old": "const sh = (slots[out.length] ??= {",
     "new": "const sh = ({",
     "tests": [
@@ -355,7 +355,7 @@
   },
   {
     "name": "AUDIT-WB11-D1-breaks-said",
-    "file": "src/scenes/gateHost.js",
+    "file": "src/scenes/gate/gateHost.js",
     "old": ": 'The last Ward-Bearer falls. His ward is failing!'),",
     "new": ": 'The last Ward-Bearer falls. His ward breaks!'),",
     "tests": [
@@ -446,7 +446,7 @@
   },
   {
     "name": "AUDIT-WB11-D7-the-bearers-rising-unsaid",
-    "file": "src/scenes/gateHost.js",
+    "file": "src/scenes/gate/gateHost.js",
     "old": ": COURT_HOST_TEXT.bearers());",
     "new": ": '');",
     "tests": [
@@ -455,7 +455,7 @@
   },
   {
     "name": "AUDIT-WB11-D7-the-crumbling-unsaid",
-    "file": "src/scenes/gateHost.js",
+    "file": "src/scenes/gate/gateHost.js",
     "old": "crumbleSaid.add(g.at); say(COURT_HOST_TEXT.crumbled); }",
     "new": "crumbleSaid.add(g.at); }",
     "tests": [

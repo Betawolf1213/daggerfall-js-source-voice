@@ -214,7 +214,7 @@ test('WAGONS4 THE ROW AND THE HOSTS: a Features row beside horse care (its tiers
   assert.match(w, /const upkeepWagonWent = hccOn\(\) \? !!hccRuntimeOn\(\)\?\.wagonGoesOnJourney\?\.\(\) : hasTransport\(TRANSPORT_SMALL_CART\);/);
   assert.match(w, /playerTicker\.advance\(computed\.minutes\);\n\s*if \(upkeepWagonWent\) upkeep\.journey\(travelDays\(computed\.minutes\)\);/, 'the journey\'s days on the wagon that went');
   assert.match(w, /thrown: \(\) => upkeep\.thrown\(\),/);
-  assert.match(rd('src/scenes/wagonWardenHost.js'), /notify\(\[WARDEN_TEXT\.thrown\(town\), WARDEN_TEXT\.fetch\]\);\n\s*thrown\(\);/);
+  assert.match(rd('src/scenes/wagon/wagonWardenHost.js'), /notify\(\[WARDEN_TEXT\.thrown\(town\), WARDEN_TEXT\.fetch\]\);\n\s*thrown\(\);/);
   // the item law: wear is condition alone - a marked wagon's value never falls under its kind's floor
   const worn = wagon('caravan', 0);
   assert.equal(worn.value, WAGON_KINDS.caravan.value);

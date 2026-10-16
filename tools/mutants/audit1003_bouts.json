@@ -1,7 +1,7 @@
 [
   {
     "name": "AUDIT1003-B1-LAW-ON-THE-REAL-CLOCK",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    const C = cur;\n    const t = clockOf(C);",
     "new": "    const C = cur;\n    const t = now();",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "AUDIT1003-B1-NOTHING-HELD",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    if (Number.isFinite(lastReal)) heldMs += real - lastReal - Math.max(0, Number(dt) || 0) * 1000;",
     "new": "",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "AUDIT1003-B1-ONLY-A-PAUSE-HELD",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    if (Number.isFinite(lastReal)) heldMs += real - lastReal - Math.max(0, Number(dt) || 0) * 1000;",
     "new": "    if (Number.isFinite(lastReal) && !(dt > 0)) heldMs += real - lastReal;",
     "tests": [
@@ -31,7 +31,7 @@
   },
   {
     "name": "AUDIT1003-B1-BLOW-ON-THE-REAL-CLOCK",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    if (!C?.b) return;\n    const t = lawNow();   // AUDIT PRE-MERGE 1003 B1",
     "new": "    if (!C?.b) return;\n    const t = now();",
     "tests": [
@@ -41,7 +41,7 @@
   },
   {
     "name": "AUDIT1003-B1-FLOOR-ON-THE-REAL-CLOCK",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    boutFell(C.b, fid, lawNow());   // AUDIT PRE-MERGE 1003 B1",
     "new": "    boutFell(C.b, fid, now());",
     "tests": [
@@ -51,7 +51,7 @@
   },
   {
     "name": "AUDIT1003-B2-OUTSIDE-BLOW-KEPT",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    if (fromPlayer && C && !C.ladder && foe?.entity) { foe.entity.health = Math.min(foe.entity.maxHealth ?? foe.entity.health, foe.entity.health + dmg); return; }\n",
     "new": "",
     "tests": [
@@ -61,7 +61,7 @@
   },
   {
     "name": "AUDIT1003-B2-MY-OWN-BOUT-TOO",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    if (fromPlayer && C && !C.ladder && foe?.entity) {",
     "new": "    if (fromPlayer && C && foe?.entity) {",
     "tests": [
@@ -72,7 +72,7 @@
   },
   {
     "name": "AUDIT1003-B3-LEFT-UNTOLD",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    if (C.ex && !C.relay && C.b && !boutBefore(C.b) && !Number.isFinite(C.verdictAt)) deps.exhibitionVerdict?.(C.ex.hour, C.b.result ? C.b.result.side : BOUT_LEFT);\n",
     "new": "",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "AUDIT1003-B3-LEFT-A-DRAW",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "C.b.result ? C.b.result.side : BOUT_LEFT);",
     "new": "C.b.result ? C.b.result.side : null);",
     "tests": [
@@ -92,7 +92,7 @@
   },
   {
     "name": "AUDIT1003-B3-RESULT-UNREAD",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "C.b.result ? C.b.result.side : BOUT_LEFT);",
     "new": "BOUT_LEFT);",
     "tests": [
@@ -102,7 +102,7 @@
   },
   {
     "name": "AUDIT1003-B3-LEFT-BEFORE-THE-WORD",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    if (C.ex && !C.relay && C.b && !boutBefore(C.b) && !Number.isFinite(C.verdictAt))",
     "new": "    if (C.ex && !C.relay && C.b && !Number.isFinite(C.verdictAt))",
     "tests": [
@@ -112,7 +112,7 @@
   },
   {
     "name": "AUDIT1003-B3-TOLD-TWICE",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    if (C.ex && !C.relay && C.b && !boutBefore(C.b) && !Number.isFinite(C.verdictAt))",
     "new": "    if (C.ex && !C.relay && C.b && !boutBefore(C.b))",
     "tests": [
@@ -132,7 +132,7 @@
   },
   {
     "name": "AUDIT1003-B3-WATCH-NEVER-REFUSED",
-    "file": "src/scenes/arenaGate.js",
+    "file": "src/scenes/arena/arenaGate.js",
     "old": "    return (begun() && liveHour() === hour) || bookSaw(league().book, hour) ? ARENA_TEXT.herald.watchSeen : null;",
     "new": "    return null;",
     "tests": [
@@ -142,7 +142,7 @@
   },
   {
     "name": "AUDIT1003-B3-WATCH-FORGETS-THE-VERDICT",
-    "file": "src/scenes/arenaGate.js",
+    "file": "src/scenes/arena/arenaGate.js",
     "old": "    return (begun() && liveHour() === hour) || bookSaw(league().book, hour) ? ARENA_TEXT.herald.watchSeen : null;",
     "new": "    return begun() && liveHour() === hour ? ARENA_TEXT.herald.watchSeen : null;",
     "tests": [
@@ -152,7 +152,7 @@
   },
   {
     "name": "AUDIT1003-B3-WATCH-FORGETS-THE-WORD",
-    "file": "src/scenes/arenaGate.js",
+    "file": "src/scenes/arena/arenaGate.js",
     "old": "    return (begun() && liveHour() === hour) || bookSaw(league().book, hour) ? ARENA_TEXT.herald.watchSeen : null;",
     "new": "    return bookSaw(league().book, hour) ? ARENA_TEXT.herald.watchSeen : null;",
     "tests": [
@@ -162,7 +162,7 @@
   },
   {
     "name": "AUDIT1003-B3-WINDOW-WATCH-UNASKED",
-    "file": "src/scenes/arenaGate.js",
+    "file": "src/scenes/arena/arenaGate.js",
     "old": "      if (seen) return { ok: false, text: seen };\n",
     "new": "",
     "tests": [
@@ -292,7 +292,7 @@
   },
   {
     "name": "AUDIT1003-B5-SPARE-IN-THE-FIGHT-ONLY",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    if (!C?.ladder || !C.b || boutBefore(C.b) || C.b.phase === 'done') return null;",
     "new": "    if (!C?.ladder || !C.b || C.b.phase !== 'fight') return null;",
     "tests": [
@@ -302,7 +302,7 @@
   },
   {
     "name": "AUDIT1003-B5-SPARE-NOT-WHEN-OUT",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    if (!C?.ladder || !C.b || boutBefore(C.b) || C.b.phase === 'done') return null;",
     "new": "    if (!C?.ladder || !C.b || boutBefore(C.b) || C.b.phase === 'done' || C.playerTag?.out) return null;",
     "tests": [
@@ -312,7 +312,7 @@
   },
   {
     "name": "AUDIT1003-B5-SPARE-PAST-DONE",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    if (!C?.ladder || !C.b || boutBefore(C.b) || C.b.phase === 'done') return null;",
     "new": "    if (!C?.ladder || !C.b || boutBefore(C.b)) return null;",
     "tests": [
@@ -322,7 +322,7 @@
   },
   {
     "name": "AUDIT1003-B6-HALF-BUILT-CROWD-LEAKED",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "      if (cur !== C) { for (const x of batches) r.destroyBillboardBatch?.(x.batch); return; }",
     "new": "      if (cur !== C) return;",
     "tests": [

@@ -25,7 +25,7 @@ import * as CM from '../src/world/customModels.js';
 import { trs, multiply } from '../src/world/mat4.js';
 import { GROUND_OFFSET } from '../src/world/rmbLayout.js';
 import { getModelMatrix } from '../src/world/rdbLayout.js';
-import { createArenaBouts } from '../src/scenes/arenaBouts.js';
+import { createArenaBouts } from '../src/scenes/arena/arenaBouts.js';
 import { exhibitionFor } from '../src/systems/arena/arenaLadder.js';
 import { applyTextureTable } from '../src/world/dungeon/dungeonTextures.js';
 import { remapSubMeshes } from '../src/world/texRemap.js';
@@ -140,7 +140,7 @@ test('AUDIT PRE-MERGE 1003 W2: the relay\'s hour watched in the instance hangs t
   const off = mk();
   off.ask({ where: 'floor', kind: 'exhibition', ex });
   assert.deepEqual(off.floorBanners(), { west: 'red', east: 'blue' }, 'offline: this screen\'s exhibition');
-  // online: scenes/arenaOnline.js goTo's ask for the hour's bout from the stands (ARENA4b) - `relayEx`, no `relay`, no `kind`
+  // online: scenes/arena/arenaOnline.js goTo's ask for the hour's bout from the stands (ARENA4b) - `relayEx`, no `relay`, no `kind`
   const on = mk();
   on.ask({ where: 'floor', relayEx: { o: `x${ex.hour}`, ex } });
   assert.deepEqual(on.floorBanners(), { west: 'red', east: 'blue' }, 'online: the relay\'s - startExhibitionRelay\'s Red against Blue');

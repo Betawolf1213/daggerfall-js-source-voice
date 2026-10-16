@@ -19,7 +19,7 @@ import { PLAYER_TARGET } from '../src/characters/enemyTargets.js';
 import { Collider } from '../src/player/collider.js';
 import { createTownWatch, runTownWatchFrame, TOWN_WATCH_STAND_DOWN_SECONDS } from '../src/systems/town/townWatch.js';
 import { popAllowChange, POP_VISIBLE_RANGE } from '../src/systems/town/townPopulation.js';
-import { watchStep } from '../src/scenes/livingWatch.js';
+import { watchStep } from '../src/scenes/livingWorld/livingWatch.js';
 import { setRaidingPartiesHost, raidFrame, restoreRaidSaveData, _resetRaidingParties, _raidRuntime, RAIDING_PARTIES_VENDOR } from '../src/systems/raidingParties.js';
 import { setModSetting } from '../src/systems/modSettings.js';
 import { setSharedClock } from '../src/systems/worldTick.js';

@@ -214,7 +214,7 @@ import { ARENA_PUPPET_OWNER } from '../net/arena/arenaLaw.js';   // ARENA4: the 
 import { calculateCastCost } from '../systems/spellcost.js';
 import { snapshotPlayer, restorePlayer, composeSessionState, restoreSessionState , copyEffectEntry } from '../systems/save/save.js';   // B4: the ONE quest+talk composer
 import { saveSlot, loadSlot, quickLoadSlot, QUICK_SAVE_NAME, requestScreenshot, slotLoaded } from '../systems/save/saveSlots.js';   // SAV4: the quicksave is a SLOT named QuickSave; SS1: the shot arms here, the HOST loop delivers it
-import { bindQuestFoeHost, placeFoeEnv, entityOccupancy, partyOnlyQuestShare } from './questFoeHost.js';   // QUEST-OWNER: a quest's foe underground is its owner's party's alone
+import { bindQuestFoeHost, placeFoeEnv, entityOccupancy, partyOnlyQuestShare } from './quest/questFoeHost.js';   // QUEST-OWNER: a quest's foe underground is its owner's party's alone
 import { puppetLead } from './puppetLead.js';   // DESYNC-ZERO: a moving puppet leads its last word
 import { validQuestTags, questMarkerYields, QUEST_PUPPETS_MAX, validLooseSeqs, companionNames } from './exteriorFoes.js';   // QUEST-PARTY phase 3c: the party's quest words and the marker's law, one home   // B1: quest foes ride this pool   // RE1: the placement ring's env over this host's collider
 import { placeFoeFreely, PLACE_FOE_DEFAULTS, sceneMarkerMover } from '../systems/quest/sceneMount.js';   // RE1: FoeSpawner.PlaceFoeFreely, the one home; AUDIT III E1: its numbers, a joiner's spot held to them; TOTEM-CAGE: GetDaggerfallMarker's motion
@@ -252,11 +252,11 @@ import { elitesAllowed, pickDungeonElites, promoteEliteFoe, grantEliteLoot, elit
 import { ELITE_FOE_MULTIPLIER, ELITE_HEALTH_SCALE, ELITE_DAMAGE_SCALE, ELITE_LOOT_DROP_MULT, ELITE_LOOT_QUALITY_MULT } from '../world/spawnedDungeons.js';   // ELITE: an elite spawn's foe count and strength
 import { superFoeLevel, scaleSuperFoe, SUPER_ELITE_FOES, SUPER_LOOT_OPTS, SUPER_LOOT_DROP_MULT, SUPER_LOOT_QUALITY_MULT, sdEndMarks, sdRiftPlace, sdReturnPlace, sdLandingPlace } from '../world/superDungeon/sdDungeon.js';   // SD4a: a Super dungeon's difficulty; SD4b: its end's place
 import { dungeonEndOf } from '../world/dungeon/dungeonEnd.js';   // SD4b: RVN7d's lair law, lifted - the lair's stand and a Super dungeon's end read one law
-import { createSdEnd, SD_HOME_TEXT } from './sdEnd.js';   // SD4b: a Super dungeon's Rift and Return; SD10: the Hour's way home
-import { createSdHall } from './sdHall.js';   // SD6c: the Orrery's hall in the Shattered Hour
-import { createSdSteps } from './sdSteps.js';   // SD7b: the Unmoored Steps in the Shattered Hour
-import { createSdHang } from './sdHang.js';   // SD-LOOK S11: what hangs under the Hour's islands, the far islands, the Works
-import { createSdRemnant } from './sdRemnant.js';   // SD8c: the Brass Remnant in the Shattered Hour
+import { createSdEnd, SD_HOME_TEXT } from './superDungeon/sdEnd.js';   // SD4b: a Super dungeon's Rift and Return; SD10: the Hour's way home
+import { createSdHall } from './superDungeon/sdHall.js';   // SD6c: the Orrery's hall in the Shattered Hour
+import { createSdSteps } from './superDungeon/sdSteps.js';   // SD7b: the Unmoored Steps in the Shattered Hour
+import { createSdHang } from './superDungeon/sdHang.js';   // SD-LOOK S11: what hangs under the Hour's islands, the far islands, the Works
+import { createSdRemnant } from './superDungeon/sdRemnant.js';   // SD8c: the Brass Remnant in the Shattered Hour
 import { sdMarksOf } from '../net/superDungeon/sdMarks.js';   // SD18c: its Hollow's Ending - the light it burns with
 import { SD_NO_RIFT } from '../net/superDungeon/sdLaw.js';   // SD4b: the Rift's word when nobody can answer it
 import { isSdRealm, SD_REALM_TEXT, SD_WAY_BACK_Z, SD_WAY_BACK_SIZE, SD_THRESHOLD_RIM } from '../world/superDungeon/sdRealm.js';   // SD5a: the Shattered Hour - a made place, its refusals, its way back
@@ -1757,7 +1757,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   async function spawnLooseFoe(mobileType, position, { gender = null, yawRad = null, allied = false, questSpawn = false, loadID = null, level = null, bout = null, eliteFoe = false, revenant = null, lairStand = false, turned = false } = {}) {   // RVN7d: a revenant (its record), found in its lair
     // AUDIT OH-F C3/C4: the alliance and the quest mark ride the build's record - DFU sets both before OnEnemySpawn
     // is raised (GameObjectHelper.cs:1286-1294's QuestSpawn, SetupDemoEnemy.cs:85-86's team), and a rebuild keeps them
-    // ARENA2: a bout fighter (scenes/arenaBouts.js) at its tier's `level`, carrying its `bout` from its first frame -
+    // ARENA2: a bout fighter (scenes/arena/arenaBouts.js) at its tier's `level`, carrying its `bout` from its first frame -
     // no loot (nobody dies on the sand to drop it), and never the room's (the instance is one player's)
     const e = { mobileType, gender, x: position[0], y: position[1], z: position[2], spawnDistanceType: 0, ...(allied ? { allied: true } : {}), ...(questSpawn ? { questSpawn: true } : {}), ...(loadID != null ? { loadID } : {}), ...(Number.isFinite(level) ? { level } : {}), ...(eliteFoe ? { eliteFoe: true } : {}), ...(revenant ? { revenant, lairStand: !!lairStand, ...(turned ? { turned: true } : {}) } : {}) };   // RVN11c: a betrayer turned where it stood   // SEARCH1: a searched grave's elite - applyEliteScaling and grantEliteLoot read the record's mark; RVN7d: a revenant's record
     const f = await buildFoeAt(e, false);
@@ -1911,7 +1911,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   // SD4b (bible/11-Multiplayer/Super-Dungeons.md section 6): A SUPER DUNGEON'S END - the Rift (to the Shattered Hour,
   // where its word admits) and the Return (to the way in, until the boss falls), stood the first frame I stand here at
   // the end the lair's law finds (world/dungeon/dungeonEnd.js), as wide as its hall lets them (world/superDungeon/sdDungeon.js) - the same on
-  // every client. Pressed, or walked into (scenes/sdEnd.js).
+  // every client. Pressed, or walked into (scenes/superDungeon/sdEnd.js).
   const sdEndClock = () => opts.sdClock?.() ?? performance.now() / 1000;   // SD-LOOK: the realm's anchored seconds - every screen's gear ticks together
   const sdEnd = _superTier ? createSdEnd({ renderer, audio, onRift: () => sdRiftStep(), onReturn: () => sdReturnStep(), riftCount: () => sdEndWord()?.count ?? null, look: () => (opts.superRiftLook ? opts.superRiftLook(dfLocation?.sdSlot) : sdEndWord()?.look) ?? null, clock: sdEndClock })   // AUDIT SD II (L6 F5): its plaque counts its Hour; SD-LOOK: and its state is its look
     : _sdRealm ? createSdEnd({ renderer, audio, riftTo: SD_REALM_TEXT.wayBack, onRift: () => opts.sdWayBack?.(), onReturn: () => opts.sdWayHome?.(), retTitle: SD_HOME_TEXT.title, retTo: SD_HOME_TEXT.to, clock: sdEndClock }) : null;   // SD5a: the Shattered Hour's way back - the same Rift, at its Threshold's back; SD10: and its way home, the Return's light where the Remnant fell
@@ -1923,7 +1923,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   noteFirstUse(isGateArena(dfLocation) ? 'oblivion-gate' : isArenaFloor(dfLocation) ? 'arena' : _superTier || _sdRealm ? 'abyss'
     : (Number(dfLocation?.mapTableData?.mapId) >>> 0) >= 0x60000000 ? 'ocean-holes'
       : isStartDungeon(dfLocation) ? null : 'dungeons', { after: SCENE_CHANGE_TUTORIAL_MS });
-  // SD6c (Super-Dungeons.md section 8): THE ORRERY'S HALL in the Shattered Hour (scenes/sdHall.js) - its stones,
+  // SD6c (Super-Dungeons.md section 8): THE ORRERY'S HALL in the Shattered Hour (scenes/superDungeon/sdHall.js) - its stones,
   // plaques, dial and bridge, stood the first frame I stand here; a handle's turn sent through the outer host (the realm
   // judges it), the realm's word on the hall read from it every frame
   const sdHall = _sdRealm ? createSdHall({ renderer, audio, s: dfLocation.sdRealm, clock: sdEndClock, onTurn: (i, a) => !!opts.sdTurn?.(i, a), say: (t) => { if (!opts.sdSay?.(t)) setMidScreenText(t); } }) : null;   // AUDIT SD II (SD11d): through the Hour's voice; SD-LOOK S10: its orrery's decor on the realm's anchored seconds
@@ -1943,7 +1943,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     if (playerFeet && !_sdHallStood) { _sdHallStood = true; sdHall.stand({ dynamicDraws, collider }); }
     sdHall.frame(dt, playerFeet ?? null, opts.sdHallWord?.() ?? null);
   }
-  // SD7b (Super-Dungeons.md section 9): THE UNMOORED STEPS in the Shattered Hour (scenes/sdSteps.js) - the course's steps,
+  // SD7b (Super-Dungeons.md section 9): THE UNMOORED STEPS in the Shattered Hour (scenes/superDungeon/sdSteps.js) - the course's steps,
   // stood the first frame the outer host asks, each moved on the realm's clock (the outer host's) and ridden BEFORE the
   // motor: the outer host asks every frame, beside the action movers' ride, and stands a body the void took back
   const sdSteps = _sdRealm ? createSdSteps({ ending: sdMarksOf(dfLocation.sdRealm)[0], renderer, audio }) : null;   // SD-LOOK S9: its Hollow's Ending on the vane
@@ -1954,13 +1954,13 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     if (!_sdStepsStood) { _sdStepsStood = true; sdSteps.stand({ dynamicDraws, collider }); }
     return sdSteps.ride(opts.sdClock?.() ?? performance.now() / 1000, dt, body, live);
   }
-  // SD8c (Super-Dungeons.md section 10): THE BRASS REMNANT in the Shattered Hour (scenes/sdRemnant.js) - the Remnant, its
+  // SD8c (Super-Dungeons.md section 10): THE BRASS REMNANT in the Shattered Hour (scenes/superDungeon/sdRemnant.js) - the Remnant, its
   // Echoes and the Reset's Hearts, stood the first frame I stand here and placed every frame where the realm's fight (the
   // outer host's link) says; my `in` said through the outer host as I stand in the arena; and in the Hour it is the gate's
   // three seams below (gateBossBody, gateHostBodies, gateCrystalBodies) - my blows on it out to the realm, not the court
   const sdRemnant = _sdRealm ? createSdRemnant({ renderer, link: () => opts.sdFight?.() ?? null, sendIn: () => !!opts.sdFightIn?.(), sendBlow: (k, f) => !!opts.sdBlow?.(k, f), alive: () => playerEntity.health > 0, ending: sdMarksOf(dfLocation.sdRealm)[0] }) : null;
   let _sdRemnantStood = false;
-  // SD-LOOK S11 (Super-Dungeons-Look.md section 6): THE HANG in the Shattered Hour (scenes/sdHang.js) - the islands' strata
+  // SD-LOOK S11 (Super-Dungeons-Look.md section 6): THE HANG in the Shattered Hour (scenes/superDungeon/sdHang.js) - the islands' strata
   // spires, gear rims and chains, the far islands, the Works - stood the first frame the Hour is posed, swung and turned
   // on the realm's anchored seconds; all noShadow, none of it law
   const sdHang = _sdRealm ? createSdHang({ renderer, clock: sdEndClock }) : null;
@@ -4265,7 +4265,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   }
   // ═══ WB4b: THE BURNING COURT'S BOSS, MET ═══════════════════════════════════════════════════════════════════════
   // (2026-09-25, Mac: "a large boss arena with an oversized enemy"). The outer host's word of him (`opts.gateBoss` -
-  // scenes/gateCourt.js target(): where he stands, his height and radius, his ward, his stand-in entity for the
+  // scenes/gate/gateCourt.js target(): where he stands, his height and radius, his ward, his stand-in entity for the
   // formulas) as a foe-shaped record, made each time it is asked; null outside the court. He is NEVER in `foes`: nothing
   // here moves, ticks, kills or loots him - the relay runs him (net/gate/gateBrain.js) - so every blow of mine that meets him
   // is computed here by the game's own law and its number goes out (`opts.onBossHit`), the relay's caps deciding what
@@ -4281,7 +4281,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   }
   // ═══ WB9c: THE CRYSTALS OF OBLIVION, MET ════════════════════════════════════════════════════════════════════════
   // (2026-09-30, Mac: "a detailed wipe mechanic on the final phase that should require players to destroy oblivion
-  // crystaline formations"). The outer host's word of them (`opts.gateCrystals` - scenes/gateCourt.js crystalTargets():
+  // crystaline formations"). The outer host's word of them (`opts.gateCrystals` - scenes/gate/gateCourt.js crystalTargets():
   // each standing crystal's number, where it stands, its body and its stand-in) as foe-shaped records, made each time
   // asked; none outside a Reckoning. As he is, they are NEVER in `foes`: a blow of mine that meets one is computed here by
   // the game's own law against its stand-in (world/gate/gateBoss.js crystalStandIn - unarmoured: a crystal does not dodge)
@@ -4298,7 +4298,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   }
   /** A blow's number on a crystal, out to the relay through the court's door; answers whether it went. */
   const landOnCrystal = (cr, damage, r) => { damage += takeOwed(cr.entity); return sdRemnant ? sdRemnant.heartHit({ c: cr.crystal, d: damage, r }) : !!opts.onCrystalHit?.({ c: cr.crystal, d: damage, r }); };   // SD8c: a Heart's, to the realm; OPEN-HAND: and the follow-up the blow owes
-  /** A swing of mine that met a crystal: the glass rings (the court voices it - scenes/gateCourt.js), the number out. */
+  /** A swing of mine that met a crystal: the glass rings (the court voices it - scenes/gate/gateCourt.js), the number out. */
   function swingOnCrystal(cr, damage) {
     if (damage > 0) landOnCrystal(cr, damage, HIT_KINDS.Melee);
     playerWeaponHitEntity(playerEntity, cr.entity, { mobileType: null });
@@ -4324,7 +4324,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   }
   // ═══ WB11c: HIS HOST, MET ═════════════════════════════════════════════════════════════════════════════════════════
   // (2026-10-01, Mac: "1. All three ... 4. Trial rotation" - the Legion-Lord's Harriers, Sappers and Ward-Bearers). The
-  // outer host's word of them (`opts.gateHost` - scenes/gateCourt.js hostTargets(): each one standing, its number, where
+  // outer host's word of them (`opts.gateHost` - scenes/gate/gateCourt.js hostTargets(): each one standing, its number, where
   // it stands, its body, its stand-in and its mobile) as foe-shaped records, made each time asked; none but under the
   // trial. As he and his crystals are, they are NEVER in `foes`: a blow of mine that meets one is computed here by the
   // game's own law against its stand-in (world/gate/gateBoss.js hostStandIn) and its number goes out (`opts.onHostHit`), the
@@ -4469,7 +4469,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // WBX7 (2026-09-26, Swololo on Discord: "soul trap didnt seem to work"): A SOUL TRAP ON HIM. The trap is laid on his
     // stand-in by the one door every spell lands through (applySpell - its rounds, its chance frozen at the cast by my
     // level, his save against a new trap, "Trap active."), and handed to the court, which keeps it on the fight's clock:
-    // he is the relay's to kill, so the kill's roll is the court's, at his fall (scenes/gateCourt.js). The stand-in
+    // he is the relay's to kill, so the kill's roll is the court's, at his fall (scenes/gate/gateCourt.js). The stand-in
     // forgets it at once, as it forgets every lasting family.
     const trapFx = (sp.effects ?? []).filter((e) => e && isSoulTrapEffect(e));
     let laid = false;
@@ -6680,7 +6680,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // AUDIT 68 S19-damagefoe-dead-reentry: a corpse takes no blow. EnemyDeath runs once; the round sinks tick on
     // after the killing tick inside one window, and each re-ran the whole death arm (trap, chime, OnEnemyDeath).
     if (foe.dead || (fromPlayer && !peer && foe.companion != null)) return;   // CREW-COMPANIONS: and my companion takes no blow of mine (exteriorFoes' AUDIT NAV2 F55 gate) - it turned him
-    const bout = foe.entity?.bout ?? null;   // ARENA2: a fighter on the arena floor's sand (scenes/arenaBouts.js)
+    const bout = foe.entity?.bout ?? null;   // ARENA2: a fighter on the arena floor's sand (scenes/arena/arenaBouts.js)
     if (fromPlayer && !peer && !bout) renownFoeStruck(foe);   // RENOWN1: MY blow - a joiner's too, before the divert sends it to the host; ARENA2: no renown on the sand
     if (foe.yielded || foe.executing || foe.sparing || foe.leaving || foe.roaring) return;   // REVENANT-FATE: a beaten revenant takes no blow - its fate is the player's choice (RVN3: nor one tearing away; RVN4: nor one roaring)
     // AUDIT PSCALE1 DOORS-1: a KILL is not a blow - a Disintegrate, a stat drained to zero (the sinks' `whole`), the
@@ -6700,7 +6700,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // sends nothing (B5: its index is another foe's on the host).
     // QUEST-PARTY phase 3c: a party member's quest foe stood here (the room's own lane) - the blow is its OWNER's to
     // apply, whoever hosts the room: out as a hit marked `own`, named by the owner's number, the relay routing it to `to`
-    // ARENA4: one of the relay's fighters on its sand (scenes/arenaBouts.js stands it as a puppet of the relay) - my
+    // ARENA4: one of the relay's fighters on its sand (scenes/arena/arenaBouts.js stands it as a puppet of the relay) - my
     // blow's number goes to the bout's referee, which holds its health and decides what lands
     if (foe._ownFrom === ARENA_PUPPET_OWNER) {
       // ARENA4b: a swing's or a shaft's sequence (a cleave through two of them is one blow); a spell's - its damage comes
@@ -7429,7 +7429,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       // under those) and the outer host's street slot (opts.breathHeld), which held the motor while the lungs ran on.
       breathTick(opts.breathHeld?.() ? 0 : dt, playerFeet, playerHeight);
       const _surf = waterSurfaceYAt(playerFeet[0], playerFeet[2]);
-      if (!isGateArena(dfLocation) && !isArenaFloor(dfLocation) && !_sdRealm) sceneAmbience.update(dt, {   // ARENA2: no drip nor dungeon door on the open sand - the crowd is its air (scenes/arenaBouts.js)   // WB6b: the court has its own air (scenes/deadlandsAir.js) - no drip, no door, no bird in the Deadlands
+      if (!isGateArena(dfLocation) && !isArenaFloor(dfLocation) && !_sdRealm) sceneAmbience.update(dt, {   // ARENA2: no drip nor dungeon door on the open sand - the crowd is its air (scenes/arena/arenaBouts.js)   // WB6b: the court has its own air (scenes/deadlandsAir.js) - no drip, no door, no bird in the Deadlands
         playerPos: [playerFeet[0], playerFeet[1] + playerHeight / 2, playerFeet[2]],   // the controller center (DFU transform.position)
         waterSurfaceY: _surf,
         submerged: _surf != null && playerFeet[1] + playerHeight / 2 + 76 * 0.025 - 0.95 < _surf,
@@ -9070,7 +9070,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
         openSpellbook: () => { const w = makeSpellbookWindow(); if (w) activeOverlay = w; return !!w; },
         openCharSheet: () => { const w = api.makeCharSheet(); if (w) activeOverlay = w; },   // MAC-C: the pack's other window key crosses over rather than doing nothing - the same door the sheet's own Items button takes back the other way
         openChronicle: opts.questBridge ? () => { const w = makeJournalWindow('notebook'); if (w) activeOverlay = w; return !!w; } : undefined,
-        // ARENA3: the Arena window, once a banner is worn - the world host's maker (scenes/arenaGate.js), in this slot
+        // ARENA3: the Arena window, once a banner is worn - the world host's maker (scenes/arena/arenaGate.js), in this slot
         openArena: opts.makeArenaWindow ? () => { const w = opts.makeArenaWindow('team'); if (w) activeOverlay = w; return !!w; } : undefined,
         arenaJoined: () => !!opts.arenaJoined?.(),
         // PX17c: the dungeon HAS the bridge (opts.questBridge feeds
@@ -9081,7 +9081,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
         // MAC-K2: the walk is the BRIDGE's now - see questBridge.js.
         questLog: () => opts.questBridge?.questLog() ?? { active: [], finished: [] },
         repairQuests: () => opts.questBridge?.repair?.() ?? null,   // QREPAIR
-        journalClean: () => opts.questBridge?.journalClean ?? null,   // JOURNAL-CLEAN: the Quests tab's remove / clear archive / hide / unhide (scenes/questBridge.js journalClean)
+        journalClean: () => opts.questBridge?.journalClean ?? null,   // JOURNAL-CLEAN: the Quests tab's remove / clear archive / hide / unhide (scenes/quest/questBridge.js journalClean)
         // GUIDE2: the Quests tab's WHERE, the outer host's questions (no map here, so no way there)
         canFindPlace: opts.questCanFindPlace,
         currentLocationName: opts.questLocationName,
@@ -9768,7 +9768,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       return true;
     },
     locationKey: () => _locationKey,
-    /** WB4: a blow the Burning Court's boss landed on the player (scenes/gateCourt.js - the verdict is this machine's):
+    /** WB4: a blow the Burning Court's boss landed on the player (scenes/gate/gateCourt.js - the verdict is this machine's):
      *  through the one door any foe's blow takes (resolveFoeMelee) with its three signs - the hit's sound, the flash,
      *  the cry - and fire's burning in the hit's place, unflashed (DFU's spell damage does not flash, ui/damageFlash.js).
      *  WB8b: his aspect's frost, lightning and venom as his fire - unflashed, each in its element's own cast

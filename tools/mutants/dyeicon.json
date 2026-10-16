@@ -145,7 +145,7 @@
   },
   {
     "name": "MOUNT-LAZY-the-preload-dropped",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "    await preloadTextureRecord(a, r, 0, 'Albedo', dye);\n",
     "new": "",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "MOUNT-LAZY-the-dye-dropped-from-the-preload",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "await preloadTextureRecord(a, r, 0, 'Albedo', dye);",
     "new": "await preloadTextureRecord(a, r, 0, 'Albedo');",
     "tests": [

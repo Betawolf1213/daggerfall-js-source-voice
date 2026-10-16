@@ -78,42 +78,42 @@
   },
   {
     "name": "WB7-steps-while-he-stands",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "      if (strideRun >= BOSS_STRIDE_M) { strideRun %= BOSS_STRIDE_M; sound(BOSS_CUES.step, s, t, null); }",
     "new": "      sound(BOSS_CUES.step, s, t, null);",
     "tests": ["test/wb7_boss_audio.test.js"]
   },
   {
     "name": "WB7-a-growl-mid-strike",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    else if (striking) growlAt = Math.max(growlAt, t + 3000);\n",
     "new": "",
     "tests": ["test/wb7_boss_audio.test.js"]
   },
   {
     "name": "WB7-a-grunt-for-every-point",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "hpHeard - s.hp >= s.max * HURT_SHARE && t - gruntAt >= HURT_GAP_MS",
     "new": "hpHeard - s.hp > 0",
     "tests": ["test/wb7_boss_audio.test.js"]
   },
   {
     "name": "WB7-every-landing-quaking",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "t >= atk.at && QUAKE_ON.includes(A.key)) { setMark(quaked, atk);",
     "new": "t >= atk.at) { setMark(quaked, atk);",
     "tests": ["test/wb7_boss_audio.test.js"]
   },
   {
     "name": "WB7-the-thunder-on-first-sight",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "if (thunderPhase > 0) sound(BOSS_CUES.thunder, s, t, null);",
     "new": "sound(BOSS_CUES.thunder, s, t, null);",
     "tests": ["test/wb7_boss_audio.test.js"]
   },
   {
     "name": "WB7-the-thud-twice",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "      if (!thudCued && t >= s.fell.at + THUD_AT_MS) { thudCued = true;",
     "new": "      if (t >= s.fell.at + THUD_AT_MS) { thudCued = true;",
     "tests": ["test/wb7_boss_audio.test.js"]

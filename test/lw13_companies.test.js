@@ -18,7 +18,7 @@ import {
 import { travellerRoster } from '../src/systems/livingWorld/census.js';
 import { lwRng } from '../src/systems/livingWorld/seed.js';
 import { getHolidayId, holidayRegion } from '../src/systems/holidays.js';
-import { partyLabel, partyPlaces } from '../src/scenes/livingRoads.js';
+import { partyLabel, partyPlaces } from '../src/scenes/livingWorld/livingRoads.js';
 import { COMPANY_GREETINGS, fillLine } from '../src/systems/livingWorld/lines.js';
 import { peoplePage } from '../src/systems/livingWorld/people.js';
 import { createRelations } from '../src/systems/livingWorld/relations.js';
@@ -273,7 +273,7 @@ test('LW13 seen: a company in file by role (warriors, thieves, mages), its mark 
   assert.equal(partyLabel(trip, '', 'Orcs'), 'The Lantern Company beset by Orcs');
   assert.equal(partyLabel({ ...trip, to: null }), 'The Lantern Company');
   for (const pool of Object.values(COMPANY_GREETINGS)) for (const l of pool) assert.ok(fillLine(l, { company: 'The Lantern Company', player: 'Bo' }).includes('The Lantern Company'));
-  const roads = readFileSync(new URL('../src/scenes/livingRoads.js', import.meta.url), 'utf8');
+  const roads = readFileSync(new URL('../src/scenes/livingWorld/livingRoads.js', import.meta.url), 'utf8');
   assert.match(roads, /const word = company\?\.head\?\.id \?\? m\.res\.id;/);
   assert.match(roads, /const s = rel\.standing\(companyAt\(id, deps\.clock\(\)\)\?\.head\?\.id \?\? id, dayOf\(deps\.clock\(\)\)\);/);
   assert.match(roads, /return p \? \{ name: p\.trip\.company\.name, head: headOf\(membersAt\(p\.trip, t\)\) \} : hiredAt\(id, t\);/);   // PIN MOVED (AUDIT LW-II-2 R8): one of no company walking its own trip - a company hired on a train (hiredAt)

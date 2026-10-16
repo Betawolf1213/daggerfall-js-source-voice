@@ -9,7 +9,7 @@ import { readFileSync } from 'node:fs';
 import { Boat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { raycastColliders } from '../src/world/prefabColliders.js';
 import { quatEuler } from '../src/world/unityAnimator.js';
-import { createComeSailAwayAboard, deckPose, helmWord, localOf, worldOf } from '../src/scenes/comeSailAwayAboard.js';
+import { createComeSailAwayAboard, deckPose, helmWord, localOf, worldOf } from '../src/scenes/comeSailAway/comeSailAwayAboard.js';
 import { PeerBodies } from '../src/net/peer/peerBodies.js';
 import { readyPool } from './navalSea.mjs';
 

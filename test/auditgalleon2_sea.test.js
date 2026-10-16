@@ -16,7 +16,7 @@ import { readFileSync } from 'node:fs';
 import * as LIFE from '../src/systems/naval/shipLife.js';
 import * as AI from '../src/systems/naval/navalAI.js';
 import { HULL, HULL_BUILDS, hullBuild, setGalleonStanding, batteryOf } from '../src/systems/naval/navalShips.js';
-import { rigBoxesOf, sailsShown } from '../src/scenes/navalHost.js';
+import { rigBoxesOf, sailsShown } from '../src/scenes/naval/navalHost.js';
 import { segmentBoxEntry } from '../src/systems/naval/navalBallistics.js';
 import { animatorOf } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { stowSail } from '../src/systems/comeSailAway/comeSailAway.js';

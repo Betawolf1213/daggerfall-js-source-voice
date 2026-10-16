@@ -1,6 +1,6 @@
 // ETHER-STRAND (FIELD BUGS 2026-10-12b, the bug-reports channel: "Unable to sail any ship after leaving a fleet ship in
 // the Etheric Ocean and returning to Iliac Bay"). The report's sequence, through the real modules: Come Sail Away's
-// runtime over the vendored hulls (test/csaScene.mjs), the sea's host (scenes/navalHost.js - every seam the helm reads
+// runtime over the vendored hulls (test/csaScene.mjs), the sea's host (scenes/naval/navalHost.js - every seam the helm reads
 // of it: wayScale, sailRefused, brake, warp, drift, gale, postsWay), the Fleet's host (scenes/fleetHost.js - refit and
 // the Summon) and world.js's own `veilApart` line, lifted from the source. Out across the Veil at the Carrack's helm,
 // the helm left there and the captain gone east on foot, a second boat placed in the Veil and sailed home through it -
@@ -14,7 +14,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { scene } from './csaScene.mjs';
 import { readyPool } from './navalSea.mjs';
-import { createNavalHost } from '../src/scenes/navalHost.js';
+import { createNavalHost } from '../src/scenes/naval/navalHost.js';
 import { createFleetHost } from '../src/scenes/fleetHost.js';
 import { knowShip, _resetFleetForTests } from '../src/systems/fleet.js';
 import { BOAT_ACTIONS, cargoModWords } from '../src/systems/comeSailAway/comeSailAway.js';

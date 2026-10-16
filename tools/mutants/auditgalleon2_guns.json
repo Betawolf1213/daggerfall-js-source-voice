@@ -47,7 +47,7 @@
   },
   {
     "name": "AUDIT-GN2-GN3-her-lay-on-my-sea-clock",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (self?.laid?.length && realClock - self.real <= PEER_LAY_S) for (const side of self.laid)",
     "new": "if (self?.laid?.length && clock - self.at <= PEER_LAY_S) for (const side of self.laid)",
     "tests": [
@@ -56,7 +56,7 @@
   },
   {
     "name": "AUDIT-GN2-GN3-real-clock-scaled",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "realClock += Math.max(0, dt) / timeScale();",
     "new": "realClock += Math.max(0, dt);",
     "tests": [
@@ -65,7 +65,7 @@
   },
   {
     "name": "AUDIT-GN2-GN4-her-word-pose",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const drawn = boat?.GameObject, back =",
     "new": "const drawn = null, back =",
     "tests": [
@@ -74,7 +74,7 @@
   },
   {
     "name": "AUDIT-GN2-GN4-drawn-not-set-back",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "drawn.position.map((x, k) => x - v.vel[k] * back)",
     "new": "drawn.position.map((x) => x)",
     "tests": [
@@ -83,7 +83,7 @@
   },
   {
     "name": "AUDIT-GN2-GN4-her-word-heading",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "rotation: drawn ? drawn.rotation : quatOfYaw(v.yaw), velocity: v.vel",
     "new": "rotation: quatOfYaw(v.yaw), velocity: v.vel",
     "tests": [
@@ -92,7 +92,7 @@
   },
   {
     "name": "AUDIT-GN2-GN5-the-sea-cleared-leaves-her-laid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    galleonGuns.clear();   // AUDIT GN2-GN5",
     "new": "    // AUDIT GN2-GN5",
     "tests": [
@@ -137,7 +137,7 @@
   },
   {
     "name": "AUDIT-GN2-TS2-no-run-out-lay",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      for (const side of e.ship.runOut?.keys?.() ?? []) if (side === 'starboard' || side === 'port') galleonGuns.lay(e.boat, side, clock);\n",
     "new": "",
     "tests": [
@@ -146,7 +146,7 @@
   },
   {
     "name": "AUDIT-GN2-TS2-sea-ships-unstepped",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      decks.push(e.boat);\n",
     "new": "",
     "tests": [
@@ -157,7 +157,7 @@
   },
   {
     "name": "AUDIT-GN2-TS2-sea-shooter-no-boat",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    return sea.get(id)?.boat ?? null;\n",
     "new": "    return null;\n",
     "tests": [
@@ -166,7 +166,7 @@
   },
   {
     "name": "AUDIT-GN2-TS3-captain-balls-upright",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const launches = volleyLaunches(heeled(solution, pose, boatOfShooter(shooter)), seed, { skill, carry: pose.velocity, weight });",
     "new": "const launches = volleyLaunches(heeled(solution, pose, isMine(shooter) ? boatOfShooter(shooter) : null), seed, { skill, carry: pose.velocity, weight });",
     "tests": [

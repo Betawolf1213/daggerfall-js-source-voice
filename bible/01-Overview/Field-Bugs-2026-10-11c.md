@@ -73,7 +73,7 @@ of the CSA-on arm's garbage, and a few hundredths of a millisecond.
 ## What is left
 
 Boats that STAND - the player's own on this pixel, other players' near, the sea's ships - still cost their pool's frame
-(`scenes/comeSailAwayPool.js` `frame`: the walk's records, the flats, the lanterns) and its draw (each mesh's key and the
+(`scenes/comeSailAway/comeSailAwayPool.js` `frame`: the walk's records, the flats, the lanterns) and its draw (each mesh's key and the
 still-batch's list made again a frame), PERF-SAILS1/2's and AUDIT NAV1 #13's ground, and their Animators' steps; the
 measured share is in the last row above. Not touched here: it is a change to the still batch's pins and not this report's
 town, which stands no boat. Online, the forced three (Iliac Puddle No More, the Ocean Holes, Detailed Ships) cost what the

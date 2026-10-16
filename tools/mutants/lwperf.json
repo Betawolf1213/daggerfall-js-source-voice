@@ -227,7 +227,7 @@
   },
   {
     "name": "LW-PERF-roads-slice",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "    sweepOn(t, jumped ? Infinity : ROADS_TOWNS_PER_FRAME);",
     "new": "    sweepOn(t, Infinity);",
     "tests": [
@@ -236,7 +236,7 @@
   },
   {
     "name": "LW-PERF-roads-jump",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "    const jumped = !readAt || Math.max(Math.abs(px - readAt[0]), Math.abs(py - readAt[1])) > ROADS_JUMP_PX;",
     "new": "    const jumped = !readAt;",
     "tests": [
@@ -245,7 +245,7 @@
   },
   {
     "name": "LW-PERF-roads-swap",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "i: 0, px, py, parties: [], remains: [] };",
     "new": "i: 0, px, py, parties, remains };",
     "tests": [
@@ -254,7 +254,7 @@
   },
   {
     "name": "LW-PERF-roads-clear",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "timer = Infinity; sweep = null; readAt = null; strikes.clear();",
     "new": "timer = Infinity; sweep = null; strikes.clear();",
     "tests": [
@@ -263,7 +263,7 @@
   },
   {
     "name": "LW-PERF-roads-slay",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "      timer = ROADS_TICK_S; sweep = null; readAt = null;",
     "new": "      timer = ROADS_TICK_S;",
     "tests": [

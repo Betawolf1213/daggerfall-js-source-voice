@@ -576,7 +576,7 @@
   },
   {
     "name": "LW7-road-slay-unmade",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "      deps.slay?.(res, t, true);",
     "new": "      void 0;",
     "tests": [
@@ -585,7 +585,7 @@
   },
   {
     "name": "LW7-road-unseen",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "      deps.slay?.(res, t, true);",
     "new": "      deps.slay?.(res, t, false);",
     "tests": [
@@ -594,7 +594,7 @@
   },
   {
     "name": "LW7-road-party-spared",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "      for (const m of p ? membersAt(p.trip, t) : []) if (m.id !== res.id) rel?.note(m.id, 'slain', dayOf(t));",
     "new": "      void p;",
     "tests": [
@@ -603,7 +603,7 @@
   },
   {
     "name": "LW7-road-self-noted",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "      for (const m of p ? membersAt(p.trip, t) : []) if (m.id !== res.id) rel?.note(m.id, 'slain', dayOf(t));",
     "new": "      for (const m of p ? membersAt(p.trip, t) : []) rel?.note(m.id, 'slain', dayOf(t));",
     "tests": [
@@ -612,7 +612,7 @@
   },
   {
     "name": "LW7-road-no-refresh",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "      timer = ROADS_TICK_S;",
     "new": "      void 0;",
     "tests": [
@@ -621,7 +621,7 @@
   },
   {
     "name": "LW7-road-tone-swapped",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "      const kind = taste > 0 ? 'polite' : taste < 0 ? 'insulted' : null;",
     "new": "      const kind = taste < 0 ? 'polite' : taste > 0 ? 'insulted' : null;",
     "tests": [
@@ -630,7 +630,7 @@
   },
   {
     "name": "LW7-empty-mark",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "      if (!members.length) continue;   // LW7: nobody left of it on the road",
     "new": "      void 0;   // LW7: nobody left of it on the road",
     "tests": [
@@ -795,7 +795,7 @@
   },
   {
     "name": "LW7-host-watch-untracked",
-    "file": "src/scenes/livingWatch.js",
+    "file": "src/scenes/livingWorld/livingWatch.js",
     "old": "    if (!g?.livingFrom || g.livingFollowed) continue;",
     "new": "    if (!g?.livingFrom || g.livingFollowed || true) continue;",
     "tests": [

@@ -8,7 +8,7 @@
 // the wreck's depth, the cluster's own spots, the debris round a pile and
 // a wreck, and FillRandomItem's seven kinds. The host half - the pulse,
 // the tracker, the pile stood, its batches of rubble, the guards - is
-// scenes/deepWatersLoot.js.
+// scenes/deepWater/deepWatersLoot.js.
 //
 // THE DRAWS are the unseeded UnityEngine.Random and ride the host's
 // injectable roll (Port-Ledger A, the engine-PRNG rule), in the order the

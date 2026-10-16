@@ -194,7 +194,7 @@
   },
   {
     "name": "SCH-fallen-unsaid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        for (const h of fell) deps.say?.(`${h.name}, ${h.role}, has fallen.`, 4);",
     "new": "",
     "tests": [
@@ -203,7 +203,7 @@
   },
   {
     "name": "SCH-loss-unfelt",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (lost > 1e-9 && b.crewed) c.event('handLost', lost / CREW_PER_HAND);",
     "new": "",
     "tests": [
@@ -212,7 +212,7 @@
   },
   {
     "name": "SCH-win-unfelt",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (by === myId()) crewEvent(boatInPlay() ?? myBoat(), 'win');   // SHIP-CREW: she struck to us",
     "new": "",
     "tests": [
@@ -221,7 +221,7 @@
   },
   {
     "name": "SCH-grog-unfelt",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (id === 'grog') { st.crew.event('grog'); st.crew.drankGrog(where().day ?? null); }",
     "new": "      if (id === 'grog') { st.crew.drankGrog(where().day ?? null); }",
     "tests": [
@@ -231,7 +231,7 @@
   },
   {
     "name": "SCH-stores-unspent",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      while (s.credit < -1e-9 && deps.stores?.spend?.(b)) s.credit += STORE_POINTS;",
     "new": "      while (s.credit < -1e-9) s.credit += STORE_POINTS;",
     "tests": [
@@ -241,7 +241,7 @@
   },
   {
     "name": "SCH-the-pace-under-fire-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "(underFire ? SEA_REPAIR_UNDER_FIRE : 1)",
     "new": "1",
     "tests": [
@@ -250,7 +250,7 @@
   },
   {
     "name": "SCH-refusal-unsaid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      else if (st.credit <= 1e-9 && (deps.stores?.count?.(boat) ?? 0) <= 0) said = `${who}We've no carpenter's stores aboard, Captain.`;",
     "new": "",
     "tests": [
@@ -259,7 +259,7 @@
   },
   {
     "name": "SCH-done-unsaid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (!wantsRepair(s.damage)) { s.crew.give(CREW_ORDERS.stand); deps.say?.(`${mate ? `${mate}: ` : ''}Repairs done, Captain. She's sound.`, 4); }",
     "new": "    if (!wantsRepair(s.damage)) { s.crew.give(CREW_ORDERS.stand); }",
     "tests": [
@@ -268,7 +268,7 @@
   },
   {
     "name": "SCH-spent-unsaid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "else if (spent) { s.crew.give(CREW_ORDERS.stand); deps.say?.(`${mate ? `${mate}: ` : ''}The carpenter's stores are spent, Captain.`, 4); }",
     "new": "else if (spent) { s.crew.give(CREW_ORDERS.stand); }",
     "tests": [
@@ -277,7 +277,7 @@
   },
   {
     "name": "SCH-save-mates-dropped",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "{ ...savedRecord(st.damage, st.hull, st.credit), barrels: st.guns.barrels, mates: st.crew.snapshot() };",
     "new": "{ ...savedRecord(st.damage, st.hull, st.credit), barrels: st.guns.barrels };",
     "tests": [
@@ -286,7 +286,7 @@
   },
   {
     "name": "SCH-mend-unscaled",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "scale: b.crewed ? mendScaleOf(s.crew.morale) * (s.worth?.mend ?? 1) : 1 });",
     "new": "scale: b.crewed ? 1 * (s.worth?.mend ?? 1) : 1 });",
     "tests": [

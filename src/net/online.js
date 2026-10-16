@@ -3050,7 +3050,7 @@ export class OnlineSession {
       if (g) this._deliver('wref', () => this.onWildRef?.(g, room));
     } else if (m.t === 'arena') {
       // ARENA4: the arena's hall or a bout's room - on my own room's socket (the hall link is a socket of its own),
-      // projected by the wire's own law; what it means is the arena's to decide (scenes/arenaOnline.js)
+      // projected by the wire's own law; what it means is the arena's to decide (scenes/arena/arenaOnline.js)
       if (!primary) return;
       const w = readArenaOut(m);
       if (w) this._deliver('arena', () => this.onArena?.(w, room));

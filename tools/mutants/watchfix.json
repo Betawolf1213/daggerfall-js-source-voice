@@ -91,7 +91,7 @@
   },
   {
     "name": "WATCH-FIX-dead-is-a-kill",
-    "file": "src/scenes/livingWatch.js",
+    "file": "src/scenes/livingWorld/livingWatch.js",
     "old": "    if (g.dead && g.corpse && w.res.guard) {",
     "new": "    if (g.dead && w.res.guard) {",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "WATCH-FIX-displaced-slain",
-    "file": "src/scenes/livingWatch.js",
+    "file": "src/scenes/livingWorld/livingWatch.js",
     "old": "    if (g.dead && g.corpse && w.res.guard) {",
     "new": "    if (g.dead && g.corpse) {",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "WATCH-FIX-killed-as-slain",
-    "file": "src/scenes/livingWatch.js",
+    "file": "src/scenes/livingWorld/livingWatch.js",
     "old": "      else w.town.killed(person);",
     "new": "      else w.town.slain(person);",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "WATCH-FIX-never-back",
-    "file": "src/scenes/livingWatch.js",
+    "file": "src/scenes/livingWorld/livingWatch.js",
     "old": "    } else w.town.back(w.res);",
     "new": "    }",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "WATCH-FIX-never-lent",
-    "file": "src/scenes/livingWatch.js",
+    "file": "src/scenes/livingWorld/livingWatch.js",
     "old": "    if (!w.lent && w.res && w.town) { w.town.lend(w.res); w.lent = true; }",
     "new": "    if (!w.lent && w.res && w.town) { w.lent = true; }",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "WATCH-FIX-resolve-unread",
-    "file": "src/scenes/livingWatch.js",
+    "file": "src/scenes/livingWorld/livingWatch.js",
     "old": "    if (!w.res || !w.town) { const got = resolve(w.from.id); if (got) { w.res = got.res; w.town = got.town; } }",
     "new": "    void resolve;",
     "tests": [

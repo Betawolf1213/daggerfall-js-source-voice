@@ -50,7 +50,7 @@
   { "name": "STAND-FLAT-location-grouped", "file": "src/scenes/exterior.js",
     "old": "      if (!_people.has(flat) && isStandFlat(flat.archive, flat.record)) locStandFlats.push(", "new": "      if (false) locStandFlats.push(",
     "tests": ["test/standflats.test.js"] },
-  { "name": "STAND-FLAT-crew-unnamed", "file": "src/scenes/comeSailAwayPool.js",
+  { "name": "STAND-FLAT-crew-unnamed", "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "          if (isNpcFlat(bb.Summary.Archive)) crew.set(n,", "new": "          if (false) crew.set(n,",
     "tests": ["test/standflats.test.js"] }
 ]

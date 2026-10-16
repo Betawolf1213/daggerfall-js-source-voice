@@ -6,7 +6,7 @@
 // over a recording lane. Pure and synthetic: no game data.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createLivingRoads, corpseLook } from '../src/scenes/livingRoads.js';
+import { createLivingRoads, corpseLook } from '../src/scenes/livingWorld/livingRoads.js';
 import { createTravellerSprites } from '../src/world/travellerSprites.js';
 import { travellerRoster } from '../src/systems/livingWorld/census.js';
 import { townTrips, partyAt, CALENDAR_MPM } from '../src/systems/livingWorld/trips.js';

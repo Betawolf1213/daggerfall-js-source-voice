@@ -2,7 +2,7 @@
 // SD8c (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 10): THE BRASS REMNANT, MADE -
 // what the Warp kept of the Numidium, and its Echoes, and the Reset's Hearts: meshes in their OWN frames (feet at the
 // origin, facing +z, y up - a facing of 0 is +z, as net/superDungeon/sdRemnant.js's `yw` is), stood on the page by a matrix
-// (remnantMatrix) at each body's place, facing and size. Pure: the scene (scenes/sdRemnant.js) uploads and stands them.
+// (remnantMatrix) at each body's place, facing and size. Pure: the scene (scenes/superDungeon/sdRemnant.js) uploads and stands them.
 //
 //   THE REMNANT - a brass colossus four times a man's height: two legs, a hip, a chest that is an open CAGE of brass bars
 //     about a heart of shattered soul-gem light (the Mantella's echo, its green), shoulders, two arms and a head with eyes
@@ -17,7 +17,7 @@ import { SD_REMNANT_GOLD_RECORD, SD_REMNANT_SILVER_RECORD, SD_REMNANT_ENDING_REC
 import { SD_REM, SD_ECHO, SD_HEART } from '../../net/superDungeon/sdRemnant.js';
 
 /** Its parts, its own frame, at the Remnant's own height (an Echo is scaled to its own - remnantScale). The joints the rig
- *  turns about are read off these (scenes/sdRemnantRig.js SD_RIG_JOINTS): the hips at legH, the waist over the hip's
+ *  turns about are read off these (scenes/superDungeon/sdRemnantRig.js SD_RIG_JOINTS): the hips at legH, the waist over the hip's
  *  band, the neck over the cage and the shoulders. SD-LOOK: what stands between them is the rebuilt body's (section 10). */
 export const SD_REMNANT_BODY = Object.freeze({
   legX: 0.85, legW: 0.95, legD: 1.05, legH: 3.0,
@@ -86,7 +86,7 @@ function shard(f, rec, cx, cz, lo, wy, hi, r) {
 }
 
 /** SD17: the parts a body is stood as: its pelvis (the hip - never turned, stood where the body stands), then the six
- *  scenes/sdRemnantRig.js SD_RIG_PARTS turns - its right leg (at -x: it faces +z), its left, the torso (the cage, the
+ *  scenes/superDungeon/sdRemnantRig.js SD_RIG_PARTS turns - its right leg (at -x: it faces +z), its left, the torso (the cage, the
  *  heart, the shoulders), the head and its eyes, its right arm, its left. */
 export const SD_REMNANT_PARTS = Object.freeze(['pelvis', 'legR', 'legL', 'torso', 'head', 'armR', 'armL']);
 /** SD18c: the light a body's heart and eyes burn with - its Hollow's Ending's (world/superDungeon/sdRemnantArt.js), else the Mantella's
@@ -326,7 +326,7 @@ export function buildRemnantParts(metal = 'brass', ending = null) {
   return SD_REMNANT_PARTS.map((n) => packRemnantFaces(fs[n]));
 }
 
-// ── SD-LOOK S8: the decor - drawn by the scene on the torso's matrix (scenes/sdRemnantRig.js), never rig parts ───────
+// ── SD-LOOK S8: the decor - drawn by the scene on the torso's matrix (scenes/superDungeon/sdRemnantRig.js), never rig parts ───────
 /** THE BACK-DIAL of a body in `metal`, in its own frame: a toothed rim at the law's radius (its tips the rim line), the
  *  chapter ring (its back face - toward -z, seen from behind - the twelve hours, u once round clockwise from XII as that
  *  face is seen: +x is the screen's right from behind, through the camera's one mirror - world/mat4.js), four spokes in

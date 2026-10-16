@@ -27,7 +27,7 @@ import { fileURLToPath } from 'node:url';
 
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { resetUid, ensureUidAtLeast } from '../src/systems/quest/quest.js';
-import { createQuestBridge } from '../src/scenes/questBridge.js';
+import { createQuestBridge } from '../src/scenes/quest/questBridge.js';
 import { makeWorld, seededRolls } from './guideWorld.mjs';   // the crafted world, the tables loaded
 import { getSeed, srand } from '../src/formats/dfRandom.js';
 import { quietLines } from '../src/ui/quest/questLens.js';
@@ -452,7 +452,7 @@ test('GUIDE3 ONE CALL, EVERY HOST - drawHud draws the herald on its one call, OU
   const call = hud.indexOf('\n  drawQuestHerald({ hidden: cursorActive || !hudRenderEnabled(), dt });\n');   // its own statement, at the body's level
   const gate = hud.indexOf("if (isEnhanced() && typeof document !== 'undefined') {\n    drawLevelNotices(");
   assert.ok(call > 0 && gate > call, 'drawHud draws the herald, before (outside) the enhanced gate');
-  const bridge = rd('src/scenes/questBridge.js');
+  const bridge = rd('src/scenes/quest/questBridge.js');
   assert.match(bridge, /machine\.tick\(\);\n\s*updateTimer = 0;\n\s*news\(\);\n\s*return true;/, 'the news is heard after the machine\'s tick, on the tick that fired');
   assert.match(bridge, /const herald = heraldOn\(\), follow = followOn\(\);\n[\s\S]*?\n\s*if \(!herald && !follow\) \{ lookedLast = false; return; \}\n[\s\S]*?\n\s*try \{\n\s*const seen = lens\.look\(ctx\.questWhere \?\? \{\}\);/,
     'the gate stands before the look: no face listening, no look (GUIDE4 made the tracker a face, GUIDE5 the marks; AUDIT GUIDE T2 named the pair followOn)');
@@ -468,7 +468,7 @@ test('GUIDE3 ONE CALL, EVERY HOST - drawHud draws the herald on its one call, OU
   assert.equal(PREF_DEFAULTS[HERALD_PREF], true, 'RF4: the shelf derives the default from the row');
   // one home each
   assert.match(rd('src/ui/quest/questHerald.js'), /import \{ entryOpening, timeLeftWords, QUEST_URGENT_SECONDS \} from '\.\/questRail\.js';/, 'the opening, the time left and the day: the rail\'s, one home each (GUIDE5 gave the phrase its home; AUDIT GUIDE H7 the day)');
-  for (const f of ['src/ui/quest/questHerald.js', 'src/ui/quest/questLens.js', 'src/scenes/questBridge.js', 'src/ui/hud/hud.js']) {
+  for (const f of ['src/ui/quest/questHerald.js', 'src/ui/quest/questLens.js', 'src/scenes/quest/questBridge.js', 'src/ui/hud/hud.js']) {
     assert.doesNotMatch(rd(f), /DAY_NAMES|MONTH_NAMES/, `${f} keeps no copy of the date header`);
   }
   // THE HUD STAYS LIGHT. drawHud imports the herald, and the first full run of this slice met the cycle that makes

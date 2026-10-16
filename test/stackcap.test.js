@@ -111,7 +111,7 @@ test('STACK-CAP sweep: nothing in src/ adds to an entry\'s roundsRemaining, and 
     lines.forEach((l, i) => { if (/\broundsRemaining\s*(\+=|=\s*[\w.?]*roundsRemaining\s*\+)/.test(l) && !/^\s*(\/\/|\*)/.test(l)) hits.push(`${p.slice(ROOT.length + 1)}:${i + 1}`); });
   }
   assert.deepEqual(hits, [], 'a door that stacks rounds');
-  const court = readFileSync(join(ROOT, 'src/scenes/gateCourt.js'), 'utf8');
+  const court = readFileSync(join(ROOT, 'src/scenes/gate/gateCourt.js'), 'utf8');
   assert.match(court, /if \(trapMark && t < trapMark\.until\) trapMark\.until = Math\.max\(trapMark\.until, t \+ rounds \* COURT_ROUND_MS\);/);
   assert.doesNotMatch(court, /trapMark\.until \+=/);
   const torches = readFileSync(join(ROOT, 'src/scenes/droppedTorches.js'), 'utf8');

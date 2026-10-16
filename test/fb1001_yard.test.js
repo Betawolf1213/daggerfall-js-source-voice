@@ -1,6 +1,6 @@
 // FIELD BUGS 2026-10-01 - HOME-YARD: "Decorating the exterior is bugged for houses." and "Exterior placement bounds
 // shouldnt touch roads/pathways". Every pin walks the REAL yard: scenes/homeYards.js createHomeYards over the real
-// decorator (scenes/decorTool.js, ui/decorPanel.js), the real pool (scenes/decorRoom.js), the real Collider
+// decorator (scenes/decor/decorTool.js, ui/decorPanel.js), the real pool (scenes/decor/decorRoom.js), the real Collider
 // (player/collider.js) and the real account service (the Worker over node:sqlite, test/accountDb.mjs) through the real
 // client (net/accountClient.js accountDecor) - in a town of the producers' own (test/fb1001Town.mjs: the real layout,
 // setLocationTiles and terrain kernel, the road painter's mask with it).
@@ -17,7 +17,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as homeYards from '../src/scenes/homeYards.js';
-import * as decorTool from '../src/scenes/decorTool.js';
+import * as decorTool from '../src/scenes/decor/decorTool.js';
 import { DECAL_FLOATS } from '../src/combat/bloodDecals.js';
 import { Collider } from '../src/player/collider.js';
 import { accountDecor, SESSION_KEY } from '../src/net/accountClient.js';
@@ -341,7 +341,7 @@ test('FB1001 YARD-RECENTRE: the host\'s recentre stands every yard where the shi
   const b = r.collider._buckets.get(`decor:${id}`);
   assert.ok(Math.abs((b.min[0] + b.max[0]) / 2 - frameX()) < 1e-3, 'and it is solid there');
   // a flat stands again in place too - its picture's place, moved once however often it is asked
-  const { createDecorRoom } = await import('../src/scenes/decorRoom.js');
+  const { createDecorRoom } = await import('../src/scenes/decor/decorRoom.js');
   const o = [10, 0, 10];
   const made = [];
   const room = createDecorRoom({

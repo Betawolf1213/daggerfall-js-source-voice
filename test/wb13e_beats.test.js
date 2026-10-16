@@ -17,7 +17,7 @@ import { courtToDungeon } from '../src/world/gate/gateArena.js';
 import {
   createGateCourt, courtPhaseCard, courtSaySeconds, COURT_READ_S, COURT_WRATH_TEXT, WRATH_WARN_AT_MS, ROAR_AFTER_MS, SPEW_AT_MS, FALL_CARD_MS,
   FALL_FLASH_MS, FALL_SHAKE, COLUMN_BURSTS, COLUMN_STEP_MS, WAKE_LATE_MS, SPUTTER_EVERY_MS, WRATH_LIGHT_RANGE,
-} from '../src/scenes/gateCourt.js';
+} from '../src/scenes/gate/gateCourt.js';
 import { titleCardModel, drawGateTitleCard, destroyGateTitleCard, TITLE_IN_MS, TITLE_OUT_MS, TITLE_HOLD_MS, TITLE_CARD_CSS } from '../src/ui/gate/gateTitleCard.js';
 import { bossBarModel, drawGateBossBar, destroyGateBossBar, BOSS_BAR_TEXT, BOSS_BAR_CSS } from '../src/ui/gate/gateBossBar.js';
 import { destroyGateMarksCard } from '../src/ui/gate/gateMarksView.js';
@@ -126,7 +126,7 @@ test('WB13e the card: in over TITLE_IN_MS, out over TITLE_OUT_MS; one node writt
   drawGateTitleCard(titleCardModel(beat, 1600), { doc, hidden: true });
   assert.equal(root.style.display, 'none');
   destroyGateTitleCard();
-  assert.match(read('src/scenes/gateCourt.js'), /drawGateTitleCard\(titleCardModel\(beat, t\), \{ hidden: hudHidden\(\) \|\| veiled\(\) \}\);/);
+  assert.match(read('src/scenes/gate/gateCourt.js'), /drawGateTitleCard\(titleCardModel\(beat, t\), \{ hidden: hudHidden\(\) \|\| veiled\(\) \}\);/);
   assert.match(TITLE_CARD_CSS, /\.wb-title-card \{ position: fixed; left: 50%; top: 34%;/);
   assert.match(TITLE_CARD_CSS, /pointer-events: none;/);
 });

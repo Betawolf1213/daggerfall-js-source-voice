@@ -21,7 +21,7 @@ section 15) is the same day's pass on Destruction; nothing is changed for it her
 
 ## SHOP-RATS: a shop's quest foes are placed (1)
 
-`src/scenes/questFoeHost.js` placeRoomQuestFoe, roomMarkerSpot, ROOM_RING_MISSES, ROOM_NEAR_RING;
+`src/scenes/quest/questFoeHost.js` placeRoomQuestFoe, roomMarkerSpot, ROOM_RING_MISSES, ROOM_NEAR_RING;
 `src/scenes/worldModes.js` tryPlaceInteriorQuestFoe.
 
 FOUND. The Fighters Guild's rat quests are M0B00Y15 ("Hunt for Giant Rodents") and M0C00Y14 ("A Rat Infestation"):
@@ -64,7 +64,7 @@ casts with whatever key they give it. test/fb1012g_keepclick.test.js (2); a Port
 ## HOLD-KEPT: a home's storage is never laid on the wrong chest or kept out of reach (3)
 
 `src/scenes/chestRecords.js` chestIdentity, matchChests, CHEST_MATCH_REACH; `src/scenes/worldModes.js`
-currentSceneState, restoreInteriorScene, decorSetDownHeld, loadHomeDecor's stand; `src/scenes/decorRoom.js`
+currentSceneState, restoreInteriorScene, decorSetDownHeld, loadHomeDecor's stand; `src/scenes/decor/decorRoom.js`
 takeUnserved.
 
 FOUND. What a placed storage piece holds lives in the owner's save, keyed by the piece's id; the pieces live on the

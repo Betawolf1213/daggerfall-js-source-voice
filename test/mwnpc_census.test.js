@@ -24,10 +24,10 @@ const WIRED = Object.freeze([
   'src/scenes/dungeonContext.js',  // MWNPC5b, 8b: the dungeon's foes and people
   'src/scenes/exterior.js',        // MWNPC5c, 8c: the standalone location's foes and people
   'src/scenes/exteriorFoes.js',    // MWNPC5c: the encounter pool (both instances)
-  'src/scenes/gateCourt.js',       // MWNPC10a: the gate's boss
-  'src/scenes/gateHost.js',        // MWNPC10a: his host
+  'src/scenes/gate/gateCourt.js',       // MWNPC10a: the gate's boss
+  'src/scenes/gate/gateHost.js',        // MWNPC10a: his host
   'src/scenes/merchantYardsHost.js', // AUDIT MW-NPC II P1: the yards' keepers (main's MERCHANT-YARDS)
-  'src/scenes/navalCrew.js',       // MWNPC10b: the crews
+  'src/scenes/naval/navalCrew.js',       // MWNPC10b: the crews
   'src/scenes/portHost.js',        // SHIPYARDS: the shipyards' and lighthouses' people, as the yards' keepers
   'src/scenes/siegeNpcs.js',       // MWNPC10b: the siege
   'src/scenes/world.js',           // MWNPC7: the street's walkers (and the peers' PeerBodies)
@@ -41,7 +41,7 @@ const DECLARED = Object.freeze({
   'src/characters/enemyAnchor.js': 'a size for a foe\'s anchor - it draws nothing',
   'src/world/rmbFlats.js': 'mobileBillboardSize\'s own home - it draws nothing',
   'src/characters/residentWalker.js': 'the walker itself - its hosts draw it (world.js, travellerSprites.js)',
-  'src/scenes/wagonWardenShow.js': 'WARDEN1\'s thrower - a guard of the watch in the city guards\' picture with a wagon riding over its head (Mac: "lift the wagon/horse on top of their sprite"); a body has no lift to stand it in, and the watch\'s own guards stand in bodies (cityGuards.js)',
+  'src/scenes/wagon/wagonWardenShow.js': 'WARDEN1\'s thrower - a guard of the watch in the city guards\' picture with a wagon riding over its head (Mac: "lift the wagon/horse on top of their sprite"); a body has no lift to stand it in, and the watch\'s own guards stand in bodies (cityGuards.js)',
 });
 
 test('MWNPC-CENSUS every source that draws a living actor\'s sprite stands it in a body or is declared with its reason', () => {

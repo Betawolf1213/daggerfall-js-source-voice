@@ -27,8 +27,8 @@ import { WAGON_MODE, HORSE_MODE } from '../src/systems/horse/horseCartLaw.js';
 import {
   createWardenShows, showTimes, arcPoint, flightSeconds, arcPeak, tumbleTurns, lineOf, WARDEN_APPROACH_MAX, WARDEN_GUARD_SPEED,
   WARDEN_LIFT_S, WARDEN_TURN_S, WARDEN_PAUSE_S, WARDEN_LEAVE_MIN, WARDEN_HEAD,
-} from '../src/scenes/wagonWardenShow.js';
-import { createWagonWarden, WARDEN_SHOW_REACH } from '../src/scenes/wagonWardenHost.js';
+} from '../src/scenes/wagon/wagonWardenShow.js';
+import { createWagonWarden, WARDEN_SHOW_REACH } from '../src/scenes/wagon/wagonWardenHost.js';
 import { NAV_CELL } from '../src/world/city/cityNavigation.js';
 import { mapPixelOfWire } from '../src/net/wire.js';
 import { GUARD_TEXTURE, PERSON_GUARD_IDLE_RECORD } from '../src/characters/mobilePerson.js';

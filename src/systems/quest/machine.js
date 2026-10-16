@@ -78,7 +78,7 @@
 // MapsFile/BlocksFile instances and player state; absent = headless,
 // every Place PENDS its site (a flag - AUDIT-QUEST F1 measured that as
 // silence: 262 of 265 vendored quests start headless saying nothing) and
-// the corpus gate stands. scenes/questBridge.js reports the absent seam
+// the corpus gate stands. scenes/quest/questBridge.js reports the absent seam
 // at construction, which is what "loudly" was always meant to be):
 //   maps                       - the MapsFile instance (getRegion /
 //                                getLocation / getRmbBlockName /
@@ -326,7 +326,7 @@ export function mintShareId() {
 }
 export const PROTECTED_QUESTS = Object.freeze(['S0000999', 'S0000977', '_BRISIEN']);
 /** IsProtectedQuest's name test, one home (AUDIT CURSE-SYNC, the review's reuse finding): `name` in `list`,
- *  case-insensitive as C#'s. scenes/questFoeHost.js's WORLD_QUESTS reads the same test. */
+ *  case-insensitive as C#'s. scenes/quest/questFoeHost.js's WORLD_QUESTS reads the same test. */
 export const questNameIn = (list, name) => { const n = (name ?? '').toLowerCase(); return list.some((x) => x.toLowerCase() === n); };
 const isProtectedQuest = (quest) => questNameIn(PROTECTED_QUESTS, quest.questName);
 /** QUEST-SHELF (its audit): a partner's envelope never carries a shelf - THE ENVELOPE IS NOT TRUSTED (AUDIT DROPS A1), and
@@ -1856,7 +1856,7 @@ export class QuestMachine {
 
   /** QUEST-HOME: THE PLAYER STANDS INSIDE town `mapId`'s building `buildingKey` - every incomplete quest's site there is
    *  REACHED, for good (`siteDetails.reached`, saved with the site): what the player found in it is never moved
-   *  (Place.repickHomedSite). The interior mount's (scenes/questBridge.js mountScene). Answers how many were new. */
+   *  (Place.repickHomedSite). The interior mount's (scenes/quest/questBridge.js mountScene). Answers how many were new. */
   noteSiteReached(mapId, buildingKey) {
     if (!(buildingKey > 0)) return 0;
     let n = 0;

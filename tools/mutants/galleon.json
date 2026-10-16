@@ -47,7 +47,7 @@
   },
   {
     "name": "GALLEON-lay-unwired",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if ((side === 'starboard' || side === 'port') && myBoatState(boat).guns.ready(side)) galleonGuns.lay(boat, side, clock);\n",
     "new": "",
     "tests": [
@@ -56,7 +56,7 @@
   },
   {
     "name": "GALLEON-fired-unwired",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (gb) galleonGuns.fired(gb, e.side, e.index ?? 0, clock);",
     "new": "if (gb) galleonGuns.lay(gb, e.side, clock);",
     "tests": [

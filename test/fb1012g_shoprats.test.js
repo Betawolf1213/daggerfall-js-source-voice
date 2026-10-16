@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { Collider } from '../src/player/collider.js';
 import { placeFoeFreely, PLACE_FOE_DEFAULTS } from '../src/systems/quest/sceneMount.js';
-import { placeFoeEnv, entityOccupancy, placeRoomQuestFoe, roomMarkerSpot, ROOM_RING_MISSES, ROOM_NEAR_RING } from '../src/scenes/questFoeHost.js';
+import { placeFoeEnv, entityOccupancy, placeRoomQuestFoe, roomMarkerSpot, ROOM_RING_MISSES, ROOM_NEAR_RING } from '../src/scenes/quest/questFoeHost.js';
 
 const I = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 function box(x0, y0, z0, x1, y1, z1) {

@@ -1,8 +1,8 @@
 // SD25 S9 (2026-10-09, the Abyss Dungeon's look; bible/11-Multiplayer/Super-Dungeons-Look.md section 8): THE UNMOORED
 // STEPS, every step showing what it will do next - a draw atlas a kind (world/superDungeon/sdStepsArt.js), the Beat's clock-plate
 // frames, its falter and its dissolve, the Drift's pendulums, the risers' racks, the Crumble's crack stages and its chunks
-// that rewind (world/superDungeon/sdStepsModel.js, scenes/sdSteps.js), the waystones and the vane, the ghosts' pass
-// (render/sdStepsPass.js - its shader run through test/glsl.mjs), and the cast-back's gold rewind (scenes/sdFx.js). The
+// that rewind (world/superDungeon/sdStepsModel.js, scenes/superDungeon/sdSteps.js), the waystones and the vane, the ghosts' pass
+// (render/sdStepsPass.js - its shader run through test/glsl.mjs), and the cast-back's gold rewind (scenes/superDungeon/sdFx.js). The
 // law (world/superDungeon/sdSteps.js) is run from its own code: no picture is larger than it, none moves it.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -26,9 +26,9 @@ import {
   SD_STEP_KINDS, SD_PENDULUM, SD_BEAT_DISSOLVE, SD_RACK, SD_VANE, SD_WAYSTONES, stepBox, stepTris, buildStepModel, buildBeatDissolve, buildPendulum,
   pendulumAngle, buildCrumbleChunks, buildVaneModel, vaneYawAt, stepEdges, buildWaystoneModel, SD_WAYSTONE,
 } from '../src/world/superDungeon/sdStepsModel.js';
-import { createSdSteps, sdStepKey, SD_STEPS_SOUNDS, SD_BEAT_FRAME_S, SD_BEAT_IN_S, SD_CHUNK, SD_CRUMBLE_SEEN, SD_BEAT_BLINK_HZ } from '../src/scenes/sdSteps.js';
+import { createSdSteps, sdStepKey, SD_STEPS_SOUNDS, SD_BEAT_FRAME_S, SD_BEAT_IN_S, SD_CHUNK, SD_CRUMBLE_SEEN, SD_BEAT_BLINK_HZ } from '../src/scenes/superDungeon/sdSteps.js';
 import { SD_GHOST, SD_GHOST_STEPS, SD_STEPS_PASS_VS, SD_STEPS_PASS_FS, sdGhostVertices } from '../src/render/sdStepsPass.js';
-import { createSdFx, sdCastBackSeen, SD_FX_REWIND, SD_FX_COLOR, SD_REWIND_SEEN } from '../src/scenes/sdFx.js';
+import { createSdFx, sdCastBackSeen, SD_FX_REWIND, SD_FX_COLOR, SD_REWIND_SEEN } from '../src/scenes/superDungeon/sdFx.js';
 import { FX_BURST_MS, FX_LIGHT_MS } from '../src/render/gateFx.js';
 import { TELEGRAPH_THROB_MAX_HZ } from '../src/render/gateTelegraph.js';
 

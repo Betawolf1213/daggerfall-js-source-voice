@@ -7,7 +7,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { sea } from './navalSea.mjs';
-import { FAR_WATCH_M, FAR_LIFE_EVERY, FRAME_STEP_S, watchesFar } from '../src/scenes/navalHost.js';
+import { FAR_WATCH_M, FAR_LIFE_EVERY, FRAME_STEP_S, watchesFar } from '../src/scenes/naval/navalHost.js';
 import { SHIP_STATES } from '../src/systems/naval/navalDamage.js';
 
 const DT = 0.01;

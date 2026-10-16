@@ -20,7 +20,7 @@
   },
   {
     "name": "AUDIT-GUIDE-H1-clocks-not-walked",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "            clocks.push({ name: r.symbol?.name ?? '', seconds: left });",
     "new": "            /* no clocks */",
     "tests": [
@@ -30,7 +30,7 @@
   },
   {
     "name": "AUDIT-GUIDE-O2-the-load-keeps-the-news",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "      questHerald.clear();   // AUDIT GUIDE O2",
     "new": "      /* kept */   // AUDIT GUIDE O2",
     "tests": [
@@ -39,7 +39,7 @@
   },
   {
     "name": "AUDIT-GUIDE-L4-hears-outside-the-try",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "    try {\n      const seen = lens.look(ctx.questWhere ?? {});\n      if (follow) questTracker.hear(seen);\n      if (herald) questHerald.hear(seen);\n    } catch (err) { warnNewsOnce(err); }",
     "new": "    let seen;\n    try { seen = lens.look(ctx.questWhere ?? {}); } catch (err) { warnNewsOnce(err); return; }\n    if (follow) questTracker.hear(seen);\n    if (herald) questHerald.hear(seen);",
     "tests": [
@@ -75,7 +75,7 @@
   },
   {
     "name": "AUDIT-GUIDE-L8-the-gap-diffed",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "    if (!lookedLast) lens.reset();",
     "new": "    /* no baseline */",
     "tests": [
@@ -84,7 +84,7 @@
   },
   {
     "name": "AUDIT-GUIDE-H11-the-first-tick-dropped",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "      if (herald) questHerald.hear(seen);",
     "new": "      if (herald && news.heard) questHerald.hear(seen);\n      news.heard = herald;",
     "tests": [
@@ -93,7 +93,7 @@
   },
   {
     "name": "AUDIT-GUIDE-T3-a-gone-quest-kept",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "    if (questTracker.pinned != null) {",
     "new": "    if (false) {",
     "tests": [
@@ -102,7 +102,7 @@
   },
   {
     "name": "AUDIT-GUIDE-T3-a-finished-quest-kept",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "      if (!q || q.questComplete || isShelved(q)) questTracker.pinned = null;",
     "new": "      if (!q || isShelved(q)) questTracker.pinned = null;",
     "tests": [
@@ -230,7 +230,7 @@
   },
   {
     "name": "AUDIT-GUIDE-L6-the-hourly-read-dropped",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "    if (textHour !== hour) { if (textHour != null) lens.rereadText(); textHour = hour; }",
     "new": "    if (textHour !== hour) { textHour = hour; }",
     "tests": [

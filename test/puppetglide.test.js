@@ -3,12 +3,12 @@
 // little late or early - a relay's 50-400 ms - moved the point she eased to by her way times the difference: a galley
 // at 4 m/s was drawn at up to 10, lurching each word and stepping astern. At a steady latency she was smooth, which is
 // all test/navalRoom.mjs had ever sent. Now, under way, she sails on at her word's way along her own heading and the gap
-// is taken up at PUPPET_CATCH, capped (scenes/navalHost.js). Two real hosts over the pool, a relay of their own that
+// is taken up at PUPPET_CATCH, capped (scenes/naval/navalHost.js). Two real hosts over the pool, a relay of their own that
 // keeps the word's order (a socket's) and jitters its latency. Red on the record's code (42e50765).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { sea, freshPool } from './navalSea.mjs';
-import { PUPPET_CATCH, PUPPET_CATCH_MPS, PUPPET_CATCH_SHARE, PREDICT_MAX_S } from '../src/scenes/navalHost.js';
+import { PUPPET_CATCH, PUPPET_CATCH_MPS, PUPPET_CATCH_SHARE, PREDICT_MAX_S } from '../src/scenes/naval/navalHost.js';
 
 /** A stander `a` and a watcher `b`; `a`'s word every 0.2 s (FOES_MS), each `lo`..`hi` s late but never before the last. */
 async function pair({ lo, hi, seed = 11 }) {

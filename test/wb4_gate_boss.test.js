@@ -4,7 +4,7 @@
 // one's own health, fire through the saving throw and the Wrath through nothing); his look (world/gate/gateBoss.js - the
 // wind-up's held frames, the landing's played ones, the run, the walk, the flinch, the fall; the frame an eye sees; the
 // glow; his voice); the telegraph (render/gateTelegraph.js - the shader's own reading held to the strike's law point
-// for point, its shape over time, its pass); the bar (ui/gate/gateBossBar.js); the court's driver (scenes/gateCourt.js -
+// for point, its shape over time, its pass); the bar (ui/gate/gateBossBar.js); the court's driver (scenes/gate/gateCourt.js -
 // each attack judged once, cued at its word and its landing, his body at three times its size, put away out of the
 // court); and the seams in the world host, the dungeon arm and the dungeon context, by source.
 import { test } from 'node:test';
@@ -24,7 +24,7 @@ import {
   TELEGRAPH_FADE_IN_MS, TELEGRAPH_FLASH_MS, TELEGRAPH_MARGIN,
 } from '../src/render/gateTelegraph.js';
 import { bossBarModel, drawGateBossBar, destroyGateBossBar, BOSS_BAR_TEXT, WRATH_WARN_MS } from '../src/ui/gate/gateBossBar.js';
-import { createGateCourt, bossOf, COURT_STRIKE_TEXT, ROAR_AFTER_MS } from '../src/scenes/gateCourt.js';
+import { createGateCourt, bossOf, COURT_STRIKE_TEXT, ROAR_AFTER_MS } from '../src/scenes/gate/gateCourt.js';
 import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import { courtToDungeon } from '../src/world/gate/gateArena.js';
 import { gateBossOf } from '../src/net/gate/gateLaw.js';

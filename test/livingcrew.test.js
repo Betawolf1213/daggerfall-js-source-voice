@@ -5,9 +5,9 @@
 //   THE CREW (systems/naval/crewLife.js) - who stands on a deck (a ship's muster, a player's hands' mix), where (her own
 //   flats' places: a walker on her deck, a station off it), and their work: walking her deck, two men at their talk, a
 //   word now and then, the chanty, the guns (a hurry and the battle's words) and a grapple's muster at the rail.
-//   THE HOST (scenes/navalCrew.js) - the crews near the eye as DFU's mobile units on her deck, carried by her mesh node,
+//   THE HOST (scenes/naval/navalCrew.js) - the crews near the eye as DFU's mobile units on her deck, carried by her mesh node,
 //   the mod's people flats standing down for them (never the rowers below), taken off her deck for a fight.
-//   SEAMLESS BOARDING (scenes/navalHost.js beginFight) - her muster fights where her crew stands, the player lands across
+//   SEAMLESS BOARDING (scenes/naval/navalHost.js beginFight) - her muster fights where her crew stands, the player lands across
 //   from where he stood, my hands are my own crew and land at her rail across from my ship; a repel's party is her own
 //   men (never her captain), over my rail across from her, and my hands stand to where they stand.
 //   THE WORDS (ui/naval/navalHud.js drawCrewLines) and the world's wiring (scenes/world.js).
@@ -21,7 +21,7 @@ import {
   createCrewLife, crewRoster, crewCount, playerCrewCount, deckExtentZ, sung,
   CREW_SHOWN, PLAYER_CREW, CREW_TALKS, CHANTIES, CREW_BLURBS, CREW_BLURB_S, CREW_LINE_S, CREW_HURRY, CREW_WALK, CREW_BLOCKED_S,
 } from '../src/systems/naval/crewLife.js';
-import { createNavalCrew, peopleFlatsOf, mainLevel, CREW_RANGE, CREW_KEEP } from '../src/scenes/navalCrew.js';
+import { createNavalCrew, peopleFlatsOf, mainLevel, CREW_RANGE, CREW_KEEP } from '../src/scenes/naval/navalCrew.js';
 import { buildDeck, intoDeck, outOfDeck, DECK_STEP, DECK_HEADROOM } from '../src/systems/naval/navalDeck.js';
 import { boxColliderTriangles } from '../src/world/prefabColliders.js';
 import { musterOf, MOBILE, CREW_PER_HAND, GRAPPLE_S, HAND } from '../src/systems/naval/navalBoarding.js';
@@ -403,5 +403,5 @@ test('LIVING CREW THE WORLD by source: the crews stepped before the people are d
   assert.match(WORLD, /seed = _crewSeed\(boat\.peerKey \?\? ''\);/);
   assert.match(WORLD, /crewOf: \(boat, n, opts\) => navalCrew\.takeByBoat\(boat, n, opts\),\n\s+landing: \(boat, feet\) => navalDeckLanding\(boat, feet\),\n\s+railSpots: \(boat, toward, n\) => navalRailSpots\(boat, toward, n\),/);
   assert.match(WORLD, /allied: side === 'ally', team: side === 'ally' \? null : team, \.\.\.\(gender \? \{ gender \} : \{\}\) \}\)/, 'a crewman stood as himself');
-  assert.match(readFileSync(new URL('../src/scenes/comeSailAwayPeers.js', import.meta.url), 'utf8'), /if \(boat\) \{ boat\.peerKey = `\$\{owner\}:\$\{i\}`;/);
+  assert.match(readFileSync(new URL('../src/scenes/comeSailAway/comeSailAwayPeers.js', import.meta.url), 'utf8'), /if \(boat\) \{ boat\.peerKey = `\$\{owner\}:\$\{i\}`;/);
 });

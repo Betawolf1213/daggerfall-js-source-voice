@@ -55,7 +55,7 @@
   },
   {
     "name": "WB9e-bursts-at-his-feet-for-a-meteor",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    else if (A.aim === 'point') { const p = atk.tg?.[0]; if (p) add(p[0], p[1]); }",
     "new": "    else if (A.aim === 'point') add(atk.x, atk.z);",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "WB9e-a-burst-a-frame",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    _fxLive.length = 0;",
     "new": "",
     "tests": [

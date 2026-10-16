@@ -145,7 +145,7 @@
  },
  {
   "name": "MWNPC10b-crew-facing-lost",
-  "file": "src/scenes/navalCrew.js",
+  "file": "src/scenes/naval/navalCrew.js",
   "old": "        s.yaw = Math.atan2(_dir[0], _dir[2]);   // MWNPC10: kept - his body faces it\n",
   "new": "",
   "tests": [
@@ -154,7 +154,7 @@
  },
  {
   "name": "MWNPC10b-crew-blows-uncounted",
-  "file": "src/scenes/navalCrew.js",
+  "file": "src/scenes/naval/navalCrew.js",
   "old": "        if (member.swing && !s.swinging) s.swings++;   // MWNPC10: each swing begun, one blow\n",
   "new": "",
   "tests": [
@@ -163,7 +163,7 @@
  },
  {
   "name": "MWNPC10b-crew-unveiled",
-  "file": "src/scenes/navalCrew.js",
+  "file": "src/scenes/naval/navalCrew.js",
   "old": "{ id: s.id, look, feet: s.origin, yaw: s.yaw, moving: !!m.moving, swingKey: s.swings || null }), s.batch, ship.boat.conceal ?? null);",
   "new": "{ id: s.id, look, feet: s.origin, yaw: s.yaw, moving: !!m.moving, swingKey: s.swings || null }), s.batch, null);",
   "tests": [
@@ -172,7 +172,7 @@
  },
  {
   "name": "MWNPC10b-crew-below-bodied",
-  "file": "src/scenes/navalCrew.js",
+  "file": "src/scenes/naval/navalCrew.js",
   "old": "        if (!s?.batch || !s.unit || m.below) continue;",
   "new": "        if (!s?.batch || !s.unit) continue;",
   "tests": [
@@ -181,7 +181,7 @@
  },
  {
   "name": "MWNPC10b-crew-one-look",
-  "file": "src/scenes/navalCrew.js",
+  "file": "src/scenes/naval/navalCrew.js",
   "old": "seed: Math.imul((ship.seed | 0) + i, 0x9e3779b1) >>> 0 });",
   "new": "seed: 0 });",
   "tests": [
@@ -190,7 +190,7 @@
  },
  {
   "name": "MWNPC10b-crew-lane-kept",
-  "file": "src/scenes/navalCrew.js",
+  "file": "src/scenes/naval/navalCrew.js",
   "old": "clear() { for (const ship of ships.values()) standDown(ship); ships.clear(); bodiesLane.destroy(); },",
   "new": "clear() { for (const ship of ships.values()) standDown(ship); ships.clear(); },",
   "tests": [
@@ -199,7 +199,7 @@
  },
  {
   "name": "MWNPC10b-crew-veiled-undrawn",
-  "file": "src/scenes/navalCrew.js",
+  "file": "src/scenes/naval/navalCrew.js",
   "old": "    drawVeiledBodies() { bodiesLane.drawVeiled(); },",
   "new": "    drawVeiledBodies() {},",
   "tests": [

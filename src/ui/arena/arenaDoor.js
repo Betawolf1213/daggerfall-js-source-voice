@@ -4,7 +4,7 @@
 // (ui/enhanced/enhancedChunk.js), in a host of its own, wrapped in the generic overlay shape every host's frame already drives -
 // `done` once it is shut, `dispose` to shut it, the keyboard and the pointer the window's own; registered with the
 // overlay stack, so the QuickDial key puts it away as it does every enhanced window. Opened by the Herald, the banners'
-// recruiters and the bookmaker at the gate (scenes/arenaGate.js), and by the pause window's Arena door once a banner is
+// recruiters and the bookmaker at the gate (scenes/arena/arenaGate.js), and by the pause window's Arena door once a banner is
 // worn. A page with no document answers null. One stands at a time.
 import { mountEnhancedChunk } from '../enhanced/enhancedChunk.js';
 import { registerOverlay } from '../enhanced/enhancedOverlays.js';
@@ -61,7 +61,7 @@ export function createArenaOverlay(deps) {
     hover() { /* its own :hover */ },
     // AUDIT PRE-MERGE 1003 U1: "a press repaints it" was the whole of it - online the window's model moves with no press
     // (the board in, the hall open, the queue heard, an offer and its 20-second clock), and the hall's socket is kept
-    // only while the window asks for it (scenes/arenaOnline.js model -> wantHall): an idle window lost its hall under it
+    // only while the window asks for it (scenes/arena/arenaOnline.js model -> wantHall): an idle window lost its hall under it
     // after HALL_IDLE_MS. Once a second of the host's frame the window asks its model again - drawn only when it moved
     // (ui/arena/arenaWindow.js refresh), the focus and the scroll kept (U2)
     tick(dt = 0) {

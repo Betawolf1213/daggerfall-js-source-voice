@@ -174,12 +174,12 @@ item has left its collection, `systems/comeSailAway/comeSailAway.js` `holdsItem`
 boat standing in the world
 is laid up first by the mod's own law (`LayUpBoat`) - she leaves the water as a ship sent away does; her parts leave the
 pack; her cabin is let go as a sold house's room is (`scenes/worldModes.js` `cabinSold`); her title and record leave the
-ledger (`forgetShip`), her hurts and crew the sea fight's state (`scenes/navalHost.js` `forgetBoat`), her empty hold's
+ledger (`forgetShip`), her hurts and crew the sea fight's state (`scenes/naval/navalHost.js` `forgetBoat`), her empty hold's
 entry Come Sail Away's (`forgetHold`); the offer is credited - past the purse's carrying, as a letter of credit, as the
 counters pay (`sellProceeds`, L1-3: a galley's price was 160 kg of coin).
 
 **Shipwright** and **Refits.** The shipwright's own work on a ship at hand - at this port, at the helm here, or laid up
-(`AT_HAND`) - his model the sea fight's (`scenes/navalHost.js` `yardModelOf`: her hull, her canvas, her hands by the
+(`AT_HAND`) - his model the sea fight's (`scenes/naval/navalHost.js` `yardModelOf`: her hull, her canvas, her hands by the
 head, her powder and provisions), and her four refit lines (`scenes/fleetHost.js` `offer`, `systems/fleet.js`). A ship
 chosen on one page is chosen on the others.
 
@@ -196,7 +196,7 @@ fill her. A sailor already serving a ship of the player's is not on the roster -
 hand (`hall`), never by his name (AUDIT SHIPYARDS L2-9: a name hid another man); a ship already carrying a hand of his
 name refuses him in its own words.
 
-**Signing on** (`enlistPlan`, `scenes/navalHost.js` `enlistHand`). A crewed ship at hand is chosen; a recruit takes a
+**Signing on** (`enlistPlan`, `scenes/naval/navalHost.js` `enlistHand`). A crewed ship at hand is chosen; a recruit takes a
 place on her deck - her crew raised to the share that stands one more named hand (`playerCrewCount`), never past her
 whole, mustered without a state (`navalDamage.js` `muster`: a wreck stays a wreck - AUDIT SHIPYARDS L2-5). His CHARGE is
 his fee, or the men his place raises her by at the shipwright's price if that is more (`hireCharge`, L2-2: a hire raised

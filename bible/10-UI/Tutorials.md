@@ -8,12 +8,12 @@ needs to be comprehensive."*
 ## What it replaced
 
 A new character started DFU's `_TUTOR__` quest (`vendor/dfu-quests/Quests/_TUTOR__.txt`, through
-`scenes/questBridge.js` GAME_START_QUESTS - StartGameBehaviour.cs:445-447): a Yes/No prompt and seventeen pages on quest
+`scenes/quest/questBridge.js` GAME_START_QUESTS - StartGameBehaviour.cs:445-447): a Yes/No prompt and seventeen pages on quest
 clocks, in Privateer's Hold and the first city, about DFU's own controls and nothing the port has added since. It named
 the old game on its first page.
 
 It is no longer started. What it did besides its pages is kept: every way out of it - finished, or No on any page - ran
-its `_no_` task, `start quest 977 977`, the curse on the old capital's streets (a world quest, `scenes/questFoeHost.js`
+its `_no_` task, `start quest 977 977`, the curse on the old capital's streets (a world quest, `scenes/quest/questFoeHost.js`
 WORLD_QUESTS). So GAME_START_QUESTS is now `['S0000977', '_BRISIEN']`: the curse starts where the tutorial stood, as it
 did for a player who said No to its first page. A save from before TUT1 still inside `_TUTOR__` leaves it at the load
 (`retireDfuTutorial`, called after the machine is restored): the quest is removed - no notebook entry, it had nothing to

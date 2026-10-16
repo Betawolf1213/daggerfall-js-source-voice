@@ -10,7 +10,7 @@
 //                 she is bound - moored at, leaving, patrolling off or bound for a harbour by its town's name, a lane's
 //                 packet bound for her next port or lying off it (SEA-LANES), a relief coming to my aid; the card's
 //                 state line says the same after her stance
-// The host's own model (scenes/navalHost.js tagsModel, targetCardOf) through real frames over Come Sail Away's pool
+// The host's own model (scenes/naval/navalHost.js tagsModel, targetCardOf) through real frames over Come Sail Away's pool
 // (test/navalSea.mjs), and the HUD's own text and DOM (ui/naval/navalHud.js). Each is red on the record's code (168bf2587).
 // `03-World/Naval-Combat.md` (NAV-F).
 import { byClass } from './chargenDom.mjs';

@@ -84,7 +84,7 @@
   },
   {
     "name": "DECORLPT-ghost-classic",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      const hosted = Promise.resolve(deps.flatPicture?.(entry.flat) ?? null).catch(() => null);",
     "new": "      const hosted = Promise.resolve(null);",
     "tests": [
@@ -93,7 +93,7 @@
   },
   {
     "name": "DECORLPT-ghost-mirrored",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "          p.mirrors = own.mirrors !== false;   // a tree turns in earnest - its picture never mirrors",
     "new": "          p.mirrors = true;",
     "tests": [
@@ -102,7 +102,7 @@
   },
   {
     "name": "DECORLPT-ghost-held",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    p?.release?.();   // DECOR-LPT: what the host's picture held (a tree's far picture)\n",
     "new": "",
     "tests": [
@@ -120,7 +120,7 @@
   },
   {
     "name": "DECORLPT-late-unshifted",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "      if (d[0] || d[1] || d[2]) { const b = got.batch.origin ?? [0, 0, 0]; got.batch.origin = [b[0] + d[0], b[1] + d[1], b[2] + d[2]]; }",
     "new": "",
     "tests": [
@@ -130,7 +130,7 @@
   },
   {
     "name": "DECORLPT-ghost-leaks",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      const tex = Promise.resolve().then(() => deps.getTexture?.(ga)).catch(() => null);",
     "new": "      const tex = Promise.resolve().then(() => deps.getTexture?.(ga));",
     "tests": [

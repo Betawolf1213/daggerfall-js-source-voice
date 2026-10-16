@@ -1,7 +1,7 @@
 [
   {
     "name": "LW8b-table-m",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "export const TABLE_M = 2.2;",
     "new": "export const TABLE_M = 2.7;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "LW8b-table-max",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "export const TABLE_MAX = 3;",
     "new": "export const TABLE_MAX = 4;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "LW8b-every-one",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "      if (!table.every((k) => apart(j, k) <= TABLE_M && sees(j, k))) continue;",
     "new": "      void 0;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "LW8b-nearest-first",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": ".sort((a, b) => apart(i, a) - apart(i, b) || a - b);",
     "new": ";",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "LW8b-ties",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "apart(i, a) - apart(i, b) || a - b);",
     "new": "apart(i, a) - apart(i, b) || b - a);",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "LW8b-deal",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "  for (const i of order) {",
     "new": "  for (const i of [...order].sort((a, b) => a - b)) {",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "LW8b-one-table",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "      table.push(j);\n      at[j] = tables.length;",
     "new": "      table.push(j);",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "LW8b-opener-mark",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "    const table = [i];\n    at[i] = tables.length;",
     "new": "    const table = [i];",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "LW8b-fill-deal",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "order: groups.flat(), tableOf, beds, holds };",
     "new": "order: dealOf(b.key, spots.length), tableOf, beds, holds };",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "LW8b-facing-mates",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "        const toward = mates.length > 1",
     "new": "        const toward = false",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "LW8b-facing-self",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "        const toward = mates.length > 1",
     "new": "        const toward = mates.length > 0",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "LW8b-circle-whole",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "        if (!co || co.ids !== ids) {",
     "new": "        if (!co) {",
     "tests": [
@@ -110,7 +110,7 @@
   },
   {
     "name": "LW8b-circle-key",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "dealCircles(`in:${b.key}:${ti}:${co.since}`,",
     "new": "dealCircles(`in:${b.key}`,",
     "tests": [
@@ -120,7 +120,7 @@
   },
   {
     "name": "LW8b-no-circles",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "        if (!beat || at.length < 2) { company.delete(ti); continue; }",
     "new": "        if (true) { company.delete(ti); continue; }",
     "tests": [
@@ -130,7 +130,7 @@
   },
   {
     "name": "LW8b-round-beat",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "        const round = Math.max(0, Math.floor((t - co.since) / beat.roundMin));",
     "new": "        const round = Math.max(0, Math.floor((t - co.since) / beat.lineMin));",
     "tests": [
@@ -140,7 +140,7 @@
   },
   {
     "name": "LW8b-room-unread",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "        const ctx = { ...b.town.lineCtx(t), room: roomKindOf(b.town.typeOf(b.key)) };",
     "new": "        const ctx = { ...b.town.lineCtx(t), room: null };",
     "tests": [
@@ -149,7 +149,7 @@
   },
   {
     "name": "LW8b-line-beat",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "circleLine(c, t, beat.lineMin, ctx, scripts)",
     "new": "circleLine(c, t, beat.lineMin * 2, ctx, scripts)",
     "tests": [
@@ -159,7 +159,7 @@
   },
   {
     "name": "LW8b-reach",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "return seat && Math.hypot(seat.pos[0] - eye[0], seat.pos[2] - eye[2]) <= LINE_RANGE ? seat : null;",
     "new": "return seat ?? null;",
     "tests": [
@@ -168,7 +168,7 @@
   },
   {
     "name": "LW8b-greet-circle",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "        if (inCircle.has(id) || dist > GREET_RANGE ||",
     "new": "        if (dist > GREET_RANGE ||",
     "tests": [
@@ -178,7 +178,7 @@
   },
   {
     "name": "LW8b-greet-range",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "        if (inCircle.has(id) || dist > GREET_RANGE ||",
     "new": "        if (inCircle.has(id) ||",
     "tests": [
@@ -188,7 +188,7 @@
   },
   {
     "name": "LW8b-greet-rest",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "        if (last && t >= last.t && t - last.t < GREET_REST_MIN && (last.said || !stopped)) continue;",
     "new": "        void 0;",
     "tests": [
@@ -198,7 +198,7 @@
   },
   {
     "name": "LW8b-greet-stand",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "words.set(id, { text, until: realNow + GREET_S });",
     "new": "words.set(id, { text, until: realNow + GREET_S * 3 });",
     "tests": [
@@ -207,7 +207,7 @@
   },
   {
     "name": "LW8b-greet-expiry",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "        if (!(w.until > realNow)) { words.delete(id); continue; }",
     "new": "        void 0;",
     "tests": [
@@ -216,7 +216,7 @@
   },
   {
     "name": "LW8b-greet-asked",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "        const text = b.town.greetingFor?.(s.res, t, stopped) ?? null;",
     "new": "        const text = null;",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "LW8b-greet-stopped",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "        const text = b.town.greetingFor?.(s.res, t, stopped) ?? null;",
     "new": "        const text = b.town.greetingFor?.(s.res, t, true) ?? null;",
     "tests": [

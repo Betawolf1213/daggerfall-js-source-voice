@@ -133,7 +133,7 @@ test('audit26 F185/F187: the action record drops the counter and keeps the pick 
 // every note and filed quest of the session on an old envelope.
 // ---------------------------------------------------------------
 test('audit26 F102: a quest envelope without a notebook leaves the live notes standing', () => {
-  const s = rd('src/scenes/questBridge.js');
+  const s = rd('src/scenes/quest/questBridge.js');
   assert.match(s, /if \(data\.notebook\) notebook\.restoreSaveData\(data\.notebook\);/);
   assert.doesNotMatch(s, /data\.notebook \?\? \{ notebookEntries: \[\], finishedQuestEntries: \[\] \}/,
     'the empty-block substitute is gone');

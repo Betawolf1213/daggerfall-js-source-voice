@@ -19,9 +19,9 @@ import {
 } from '../src/systems/decor/decorDoorways.js';
 import { collectDecor, decorCatalogue, modelKind, DECOR_KINDS } from '../src/systems/decor/decorCatalogue.js';
 import { DOOR_MODEL_BASE_ID, DOOR_MODEL_COUNT } from '../src/world/interior/interiorLayout.js';
-import { createDecorRoom, decorKeyOf } from '../src/scenes/decorRoom.js';
+import { createDecorRoom, decorKeyOf } from '../src/scenes/decor/decorRoom.js';
 import { ActionSystem } from '../src/world/actionSystem.js';
-import { DECOR_DOOR_FINDING, DECOR_DOOR_NONE, decorDoorAimLine, DECOR_DOOR_MARK_AIMED, DECOR_DOOR_MARK_FREE, decorDoorMarkPixels } from '../src/scenes/decorTool.js';
+import { DECOR_DOOR_FINDING, DECOR_DOOR_NONE, decorDoorAimLine, DECOR_DOOR_MARK_AIMED, DECOR_DOOR_MARK_FREE, decorDoorMarkPixels } from '../src/scenes/decor/decorTool.js';
 import { DECOR_SCALE_MAX } from '../src/net/decorLaw.js';
 import { toolRig, placeFrom, rmb, settle, near, all } from './decorFakes.mjs';
 
@@ -417,7 +417,7 @@ test('HOME-DOORS the mark\'s picture is a bright frame round a faint fill; the h
   assert.match(wm, /doorsHere: \(\) => decorBuiltInDoors\(\), walls: \{ only: \[INTERIOR_SHELL_BUCKET\] \}/);
   assert.match(wm, /!String\(o\.key\)\.startsWith\('act:decor:'\)/, 'the placed doors aside - the decorator counts those itself');
   // the shell's bucket named where the decorator reads it is the one the build stands the shell in
-  assert.equal((await import('../src/scenes/decorBase.js')).INTERIOR_SHELL_BUCKET, 'interior');
+  assert.equal((await import('../src/scenes/decor/decorBase.js')).INTERIOR_SHELL_BUCKET, 'interior');
   assert.match(src('src/scenes/interiorContext.js'), /collider\.addMesh\(baseKey \? baseBucketOf\(baseKey\) : 'interior', cpu\.positions/);
 });
 

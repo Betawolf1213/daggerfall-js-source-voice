@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { Collider } from '../src/player/collider.js';
-import { placeFoeEnv, entityOccupancy } from '../src/scenes/questFoeHost.js';
+import { placeFoeEnv, entityOccupancy } from '../src/scenes/quest/questFoeHost.js';
 import { placeFoeFreely } from '../src/systems/quest/sceneMount.js';
 import { campAnchorSpot, PACK_SPACING, PACK_ALERT_RADIUS, CAMP_SIGHT_RADIUS } from '../src/systems/campEncounters.js';
 import { CAMP_ROAD_CLEAR_M } from '../src/world/road/roadClearance.js';

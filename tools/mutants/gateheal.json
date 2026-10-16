@@ -146,7 +146,7 @@
   },
   {
     "name": "GATE-HEAL-owed-after-the-fall",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "const healLive = (s) => !!s && s.day !== null && !s.fell && s.wrath == null;",
     "new": "const healLive = (s) => !!s && s.day !== null && s.wrath == null;",
     "tests": [
@@ -155,7 +155,7 @@
   },
   {
     "name": "GATE-HEAL-owed-under-the-wrath",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "const healLive = (s) => !!s && s.day !== null && !s.fell && s.wrath == null;",
     "new": "const healLive = (s) => !!s && s.day !== null && !s.fell;",
     "tests": [
@@ -164,7 +164,7 @@
   },
   {
     "name": "GATE-HEAL-owed-outside-a-fight",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "const healLive = (s) => !!s && s.day !== null && !s.fell && s.wrath == null;",
     "new": "const healLive = (s) => !!s && !s.fell && s.wrath == null;",
     "tests": [
@@ -173,7 +173,7 @@
   },
   {
     "name": "GATE-HEAL-a-word-every-frame",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "if (healOwed.size && t - healSentAt >= HEAL_SEND_MS) sendOwed(t);",
     "new": "if (healOwed.size) sendOwed(t);",
     "tests": [
@@ -182,7 +182,7 @@
   },
   {
     "name": "GATE-HEAL-the-rows-uncapped",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "if (n >= 1 && h.length < GATE_HEAL_ROWS_MAX) h.push(",
     "new": "if (n >= 1) h.push(",
     "tests": [
@@ -191,7 +191,7 @@
   },
   {
     "name": "GATE-HEAL-a-row-past-the-wires-bound",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "h.push([by, Math.min(Math.floor(n), GATE_HEAL_WIRE_MAX)]);",
     "new": "h.push([by, Math.floor(n)]);",
     "tests": [
@@ -200,7 +200,7 @@
   },
   {
     "name": "GATE-HEAL-the-fractions-dropped",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "if (left > 0) healOwed.set(by, left); else healOwed.delete(by);",
     "new": "healOwed.delete(by);",
     "tests": [
@@ -209,7 +209,7 @@
   },
   {
     "name": "GATE-HEAL-the-leave-forgetting",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "      if (healOwed.size) sendOwed(now());   // GATE-HEAL",
     "new": "      void healOwed;   // GATE-HEAL",
     "tests": [

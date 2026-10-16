@@ -38,8 +38,8 @@ import { DAY_MIN, DAY_START_MIN } from '../src/systems/livingWorld/dayPlan.js';
 import { planRoute } from '../src/systems/travel/travelRoute.js';
 import { diversAt, fallenIn, CALENDAR_MPM, NATIVE_PER_M, NATIVE_PIXEL, partiesNear, townTrips, visitorsOf, newsOf, NEWS_DAYS, TRIP_REACH_PX } from '../src/systems/livingWorld/trips.js';
 import { carriedNews } from '../src/systems/livingWorld/carried.js';   // LW16
-import { createLivingRoads } from '../src/scenes/livingRoads.js';
-import { createLivingIndoors } from '../src/scenes/livingIndoors.js';
+import { createLivingRoads } from '../src/scenes/livingWorld/livingRoads.js';
+import { createLivingIndoors } from '../src/scenes/livingWorld/livingIndoors.js';
 import { createRelations } from '../src/systems/livingWorld/relations.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { ROUND_S, lineMinutes } from '../src/systems/livingWorld/meetups.js';

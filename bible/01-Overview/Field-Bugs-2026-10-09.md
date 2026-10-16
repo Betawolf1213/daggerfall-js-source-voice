@@ -132,7 +132,7 @@ PRE-MERGE 0928 O1; the peek had no such guard). Uncaught, it was the red console
 
 `poseAhead` now reads the word's place first and answers null when the word names no boat there, or a boat of another
 hull (a word that reordered her boats) - the host's own fallback, the boat's pose as it stands, carries the passenger
-for that one frame, and the frame's realign matches the word as before (`scenes/comeSailAwayPeers.js`
+for that one frame, and the frame's realign matches the word as before (`scenes/comeSailAway/comeSailAwayPeers.js`
 `poseAhead`). `test/csa_together.test.js` (+1) drops a boat and changes a hull between frames and fails, with the
 reported error, without the guard; `tools/mutants/csa_together.json` +2 (the missing place, the other hull), and the
 `CSAK-peers-peek-late` record re-aimed at the guarded line.

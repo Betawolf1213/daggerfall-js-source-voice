@@ -4,7 +4,7 @@
 // where the siege's field says they stand, doing what it says they do: each Daggerfall's own sprite at its own size
 // (a guard the City Watch, the rebels a Rogue, a Barbarian and a Thief by turns, the Captain a Warrior drawn a fifth
 // taller), walking, winding up and landing its blow, flinching, falling. The gate host's driver's way
-// (scenes/gateHost.js), in the town's own frame; never in `foes` - its bodies are the siege's arms' targets (scenes/
+// (scenes/gate/gateHost.js), in the town's own frame; never in `foes` - its bodies are the siege's arms' targets (scenes/
 // world.js), and every blow on one is the referee's (net/siege/siegeSession.js).
 //
 // ONE SOURCE: the siege's state (net/siege/siegeLink.js `npcs`, the field's frames folded). Nothing here is sent. PURE where it

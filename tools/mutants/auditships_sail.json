@@ -64,7 +64,7 @@
   },
   {
     "name": "AUDIT-SHIPS-A3-the-fixed-brake",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "export const heaveToDecel = (v) => Math.min(CSA_BRAKE_MAX, Math.max(HEAVE_TO_DECEL, (v * v - BOARD_SPEED * BOARD_SPEED) / (2 * HEAVE_TO_M)));",
     "new": "export const heaveToDecel = (v) => HEAVE_TO_DECEL + 0 * v;",
     "tests": [
@@ -74,7 +74,7 @@
   },
   {
     "name": "AUDIT-SHIPS-A3-the-host-brake-fixed",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const brake = () => (enabled && heaveTo && myBoat() ? heaveTo.decel : 0);",
     "new": "const brake = () => (enabled && heaveTo && myBoat() ? HEAVE_TO_DECEL : 0);",
     "tests": [
@@ -83,7 +83,7 @@
   },
   {
     "name": "AUDIT-SHIPS-A3-her-way-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (fast) { startHeaveTo(fast, boat); return true; }",
     "new": "if (fast) { startHeaveTo(fast); return true; }",
     "tests": [
@@ -195,7 +195,7 @@
   },
   {
     "name": "AUDIT-SHIPS-A7-the-fixed-snap",
-    "file": "src/scenes/comeSailAwayPeers.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPeers.js",
     "old": "export const peerSnapM = (v) => Math.max(CSA_PEER_SNAP_M, Math.hypot(v?.[0] ?? 0, v?.[2] ?? 0) * CSA_PEER_SNAP_S);",
     "new": "export const peerSnapM = (v) => CSA_PEER_SNAP_M;",
     "tests": [
@@ -204,7 +204,7 @@
   },
   {
     "name": "AUDIT-SHIPS-A7-the-ease-fixed",
-    "file": "src/scenes/comeSailAwayPeers.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPeers.js",
     "old": "const snap = peerSnapM(sceneWay(w, toScene));",
     "new": "const snap = CSA_PEER_SNAP_M;",
     "tests": [
@@ -213,7 +213,7 @@
   },
   {
     "name": "AUDIT-SHIPS-A7-a-passenger-dropped",
-    "file": "src/scenes/comeSailAwayPeers.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPeers.js",
     "old": "> peerSnapM(sceneWay(l.boats[i], l.toScene)) ** 2) continue;",
     "new": "> CSA_PEER_SNAP_M * CSA_PEER_SNAP_M) continue;",
     "tests": [

@@ -163,7 +163,7 @@
   },
   {
     "name": "DECK-WALK-bake-root-frame",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "      const m = frame ? multiply(frame, world, new Float32Array(16)) : world;",
     "new": "      const m = world;",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "DECK-WALK-muster-team-dropped",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "{}), team: crewTeamOf(entry.ship.cls), boat: entry.boat, ...(c ? { gender: c.gender } : {}) };",
     "new": "{}), boat: entry.boat, ...(c ? { gender: c.gender } : {}) };",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "DECK-WALK-muster-deck-dropped",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "{}), team: crewTeamOf(entry.ship.cls), boat: entry.boat, ...(c ? { gender: c.gender } : {}) };",
     "new": "{}), team: crewTeamOf(entry.ship.cls), ...(c ? { gender: c.gender } : {}) };",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "DECK-WALK-hands-deck-dropped",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "'ally', { boat: entry.boat, ...(mine[i] ? { gender: mine[i].gender } : {}) });",
     "new": "'ally', { ...(mine[i] ? { gender: mine[i].gender } : {}) });",
     "tests": [
@@ -280,7 +280,7 @@
   },
   {
     "name": "DECK-WALK-repel-team-dropped",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "'enemy', { team: crewTeamOf(entry.ship.cls), boat, ...(party[i] ? { gender: party[i].gender } : {}) });",
     "new": "'enemy', { boat, ...(party[i] ? { gender: party[i].gender } : {}) });",
     "tests": [
@@ -289,7 +289,7 @@
   },
   {
     "name": "DECK-WALK-repel-deck-dropped",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "'enemy', { team: crewTeamOf(entry.ship.cls), boat, ...(party[i] ? { gender: party[i].gender } : {}) });",
     "new": "'enemy', { team: crewTeamOf(entry.ship.cls), ...(party[i] ? { gender: party[i].gender } : {}) });",
     "tests": [
@@ -298,7 +298,7 @@
   },
   {
     "name": "DECK-WALK-repel-hands-off-deck",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "'ally', { boat, ...(mine[i] ? { gender: mine[i].gender } : {}) });",
     "new": "'ally', { ...(mine[i] ? { gender: mine[i].gender } : {}) });",
     "tests": [

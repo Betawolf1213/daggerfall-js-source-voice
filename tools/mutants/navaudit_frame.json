@@ -271,7 +271,7 @@
   },
   {
     "name": "NAVF-cull-frustum-unasked",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "        if (!sphereInPlanes(_cullPlanes, sp[0], sp[1], sp[2], sp[3])) {",
     "new": "        if (false) {",
     "tests": [
@@ -280,7 +280,7 @@
   },
   {
     "name": "NAVF-cull-shadow-dropped",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "          if (r.shadowReach?.(box)) r.recordShadowMesh?.(gpu, m, texRemap);\n",
     "new": "",
     "tests": [
@@ -289,7 +289,7 @@
   },
   {
     "name": "NAVF-cull-pixel-turned",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "        if (pxPerM > 0 && 2 * sp[3] * pxPerM < CULL_DETAIL_PX * Math.hypot(",
     "new": "        if (pxPerM > 0 && 2 * sp[3] * pxPerM > CULL_DETAIL_PX * Math.hypot(",
     "tests": [
@@ -298,7 +298,7 @@
   },
   {
     "name": "NAVF-still-merged-early",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "      if (rec.calm >= STILL_FRAMES) calm.push(c);",
     "new": "      calm.push(c);",
     "tests": [
@@ -307,7 +307,7 @@
   },
   {
     "name": "NAVF-still-mover-kept",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "      else { rec.snap = chainSnap(c.chain); rec.calm = 0; }",
     "new": "      else { rec.snap = chainSnap(c.chain); }",
     "tests": [
@@ -316,7 +316,7 @@
   },
   {
     "name": "NAVF-still-batch-at-part",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "      if (batch && frame) one(batch.mesh, frame);",
     "new": "      if (batch && frame) one(batch.mesh, still[0].m);",
     "tests": [
@@ -325,7 +325,7 @@
   },
   {
     "name": "NAVF-still-drawn-twice",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "      for (const c of still) if (!batch || !frame || !batch.nodes.has(c.node)) one(c.gpu, made(c.rec));",
     "new": "      for (const c of still) one(c.gpu, made(c.rec));",
     "tests": [
@@ -334,7 +334,7 @@
   },
   {
     "name": "NAVF-still-left-behind",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "    if (st?.mesh) renderer?.destroyMesh?.(st.mesh);\n    stills.delete(boat);",
     "new": "    stills.delete(boat);",
     "tests": [
@@ -343,7 +343,7 @@
   },
   {
     "name": "NAVF-still-wrong-frame",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "      for (const node of c.chain) rel = multiply(rel, mat4FromQuatPosScale(node.localRotation, node.localPosition, node.localScale, _local));\n",
     "new": "",
     "tests": [

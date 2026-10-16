@@ -415,7 +415,7 @@ export const ARENA_ATTEMPTS_KEEP_S = 7 * 86400;
  * AUDIT ARENA-LADDER: AN ATTEMPT AT THE ACCOUNT'S NEXT LADDER BOUT - its ticket (16 hex), which the relay opens the bout
  * for and signs into its receipt (`z`). Every attempt still open is FORFEIT first: its loss row written now (`forfeit`),
  * its tier's run broken - so a bout lost and never carried here is lost all the same, and one walked away from is too.
- * The client carries every receipt it holds before it asks (scenes/arenaOnline.js), so a win it fought is counted, not
+ * The client carries every receipt it holds before it asks (scenes/arena/arenaOnline.js), so a win it fought is counted, not
  * forfeit. `tier`/`bout` must be the account's next (`order` and the ladder otherwise - a device behind the climb).
  * A guest's attempt is minted and forfeit alike, and nothing of it is kept as a row (a guest's bouts are not counted).
  */

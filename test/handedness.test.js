@@ -21,7 +21,7 @@ import { fileURLToPath } from 'node:url';
 import { perspective, mirrorProjectionX, lookAt, multiply } from '../src/world/mat4.js';
 import { Collider } from '../src/player/collider.js';
 import { EnemyAI } from '../src/characters/enemyMotor.js';
-import { placeFoeEnv } from '../src/scenes/questFoeHost.js';
+import { placeFoeEnv } from '../src/scenes/quest/questFoeHost.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(ROOT, p), 'utf8');

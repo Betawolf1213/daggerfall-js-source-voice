@@ -17,7 +17,7 @@
 //                 for her voyage
 //   the world   - hands the host every packet of the lanes about the player each LANE_LIST_MS (AUDIT BAY A19), by the
 //                 map's own ports, water and climate, at the shared clock
-// The pure law (systems/naval/seaLanes.js) over a coast of its own; the real host (scenes/navalHost.js liners) through
+// The pure law (systems/naval/seaLanes.js) over a coast of its own; the real host (scenes/naval/navalHost.js liners) through
 // real frames over Come Sail Away's pool (test/navalSea.mjs); world.js's feed lifted from its source and run. Each is
 // red on the record's code (168bf2587). `03-World/Naval-Combat.md` (SEA-LANES).
 import './modsOff.js';
@@ -30,7 +30,7 @@ import {
 } from '../src/systems/naval/seaLanes.js';
 import { HULL, classById, classFor } from '../src/systems/naval/navalShips.js';
 import { NATIVE_PIXEL, nativeOfPixel, pixelOfNative } from '../src/systems/seaRaiders.js';
-import { LINER_STAND_M, LINER_DROP_M, LINERS_MAX, LINER_LOOKAHEAD_M, LINER_PORT_M, SHIP_FADE_S } from '../src/scenes/navalHost.js';
+import { LINER_STAND_M, LINER_DROP_M, LINERS_MAX, LINER_LOOKAHEAD_M, LINER_PORT_M, SHIP_FADE_S } from '../src/scenes/naval/navalHost.js';
 import { DENSITY } from '../src/systems/naval/navalDirector.js';
 import { SHIP_STATES } from '../src/systems/naval/navalDamage.js';
 import { findHarbour, alongside } from '../src/systems/naval/shipLife.js';

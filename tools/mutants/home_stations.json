@@ -37,7 +37,7 @@
   },
   {
     "name": "HOME-STATIONS-licence-unpaid",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    if (!act && fee > 0) deps.wallet().pay(fee);\n",
     "new": "",
     "tests": [
@@ -47,7 +47,7 @@
   },
   {
     "name": "HOME-STATIONS-paid-short",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    if (fee > (deps.wallet?.().gold ?? 0)) { deps.say?.(decorStationGoldLine(want)); return false; }\n",
     "new": "",
     "tests": [
@@ -56,7 +56,7 @@
   },
   {
     "name": "HOME-STATIONS-paid-for-a-dropped-craft",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    if ((stood.station ?? null) !== want) { deps.say?.(DECOR_STATION_UNKEPT); return false; }",
     "new": "    if (false) { deps.say?.(DECOR_STATION_UNKEPT); return false; }",
     "tests": [
@@ -65,7 +65,7 @@
   },
   {
     "name": "HOME-STATIONS-refund-on-unmaking",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    if (!act && fee > 0) deps.wallet().pay(fee);",
     "new": "    if (!act && fee > 0) deps.wallet().pay(fee); else deps.wallet().credit?.(DECOR_STATION_FEES[piece.station] / 2);",
     "tests": [

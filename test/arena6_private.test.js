@@ -5,7 +5,7 @@
 // account): A PRIVATE SESSION, `arena:p<code>`. The relay over fake sockets and fake objects (test/fakeRoom.mjs) - the
 // Worker's door, the session opened, joined, picked, its casual bout refereed with equal health and kept in its results,
 // voided, a member removed, the host's absence and the session's ends, the seat cap, the hall's list; the wire both ways;
-// the client over the real modules (scenes/arenaOnline.js driving scenes/arenaBouts.js's relay mirror on a real Room);
+// the client over the real modules (scenes/arena/arenaOnline.js driving scenes/arena/arenaBouts.js's relay mirror on a real Room);
 // the window's model (systems/arena/arenaBoard.js sessionCard and arenaBoard - the window itself is mounted in
 // test/audit1003b_ui.test.js); and the hosts' seams. Design: bible/11-Multiplayer/Arena.md,
 // the ARENA6 record.
@@ -367,8 +367,8 @@ test('ARENA6 the wire: a session word in is projected and junk refused - only it
 
 // ═══ THE CLIENT ═══════════════════════════════════════════════════════════════════════════════════════════════════════
 
-import { createArenaOnline } from '../src/scenes/arenaOnline.js';
-import { createArenaBouts } from '../src/scenes/arenaBouts.js';
+import { createArenaOnline } from '../src/scenes/arena/arenaOnline.js';
+import { createArenaBouts } from '../src/scenes/arena/arenaBouts.js';
 import { sessionCard, arenaBoard } from '../src/systems/arena/arenaBoard.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 
@@ -503,7 +503,7 @@ test('ARENA6 the client\'s refusals and the card out of a session: a guest\'s Ho
 
 test('ARENA6 the hosts\' seams, by source: the online half is handed the instance\'s mark and its way out; the floor\'s host moves a session\'s fighter by the made level\'s own arrival points and leaves by its gates\' own way; the pause menu\'s Arena door opens on the session\'s page while one is stood in (mutants: a seam unwired)', () => {
   const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
-  const world = rd('src/scenes/world.js'), modes = rd('src/scenes/worldModes.js'), gate = rd('src/scenes/arenaGate.js');
+  const world = rd('src/scenes/world.js'), modes = rd('src/scenes/worldModes.js'), gate = rd('src/scenes/arena/arenaGate.js');
   assert.match(world, /standOnMark: \(kind\) => modes\?\.standOnArenaMark\?\.\(kind\) \?\? false,/);
   assert.match(world, /leaveFloor: \(\) => modes\?\.leaveArenaFloor\?\.\(\) \?\? false,/);
   assert.match(world, /arenaJoined: \(\) => arenaGate\.joined\(\) \|\| !!arenaOnline\?\.inSession\?\.\(\),/);

@@ -30,7 +30,7 @@ import { trs } from '../src/world/mat4.js';
 import { Collider } from '../src/player/collider.js';
 import { raycastColliders, BUILTIN_COLLIDER_MESHES } from '../src/world/prefabColliders.js';
 import { createQuayPool, QUAY_RETRY_S } from '../src/scenes/quayPool.js';
-import { hullBoxOf } from '../src/scenes/navalHost.js';
+import { hullBoxOf } from '../src/scenes/naval/navalHost.js';
 import { whereWords } from '../src/ui/fleetPage.js';
 
 const read = (f) => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');
@@ -159,7 +159,7 @@ test('AUDIT HOLDINGS F8: a claim that failed forgets her record with her title; 
   titleDeed(mintDeed(2, 0, 660, 1));
   forgetShip(660);
   assert.deepEqual([fleetShip(660), titleOf(660)], [null, null]);
-  const host = read('src/scenes/navalHost.js'), world = read('src/scenes/world.js'), modes = read('src/scenes/worldModes.js');
+  const host = read('src/scenes/naval/navalHost.js'), world = read('src/scenes/world.js'), modes = read('src/scenes/worldModes.js');
   assert.match(host, /if \(!boat\) \{ const list = pack\(\), i = list\.indexOf\(deed\); if \(i >= 0\) list\.splice\(i, 1\); deps\.board\?\.forgetDeed\?\.\(deed\); return false; \}/);
   assert.match(world, /nearPort: \(\) => !!csaRuntime\.IsNearPort\(csaPortRange\(\)\),/);
   assert.match(world, /const csaPortRange = \(\) => \{ try \{ return Number\(modSetting\(COME_SAIL_AWAY_VENDOR, 'Controls\.PortLocationSearchRange'\) \?\? 3\) \| 0; \} catch \{ return 3; \} \};/);

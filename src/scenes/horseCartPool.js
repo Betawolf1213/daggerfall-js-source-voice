@@ -20,7 +20,7 @@
 //          bakedWagon(kind) -> Promise<bake> | null (WAGONS1: Mac's wagon of that kind, src/assets/wagons/*.json - the
 //          hosts' fetch; absent, the classic model 41214 stands for every kind, as before WAGONS1),
 //          enterCaravan() (WAGONS1: my parked caravan's "Step inside" row - scenes/caravanRoom.js; absent, no row),
-//          riders (WAGONS1: the seats in the back - scenes/wagonRiders.js: { passengers(), go(), declined() - my word's
+//          riders (WAGONS1: the seats in the back - scenes/wagon/wagonRiders.js: { passengers(), go(), declined() - my word's
 //          `ps`, `go` and `pn`; acts(owner, kind, kept) -> plaque rows over another player's wagon; press(owner, id, distance);
 //          sitsIn(peer, owner, seat) - FINAL AUDIT: whether that peer's own word seats them there }),
 //          wagonEntry() -> { entry, guild } | null (WAGONS2-VISIT: who may enter my caravan - the word's `we` and `wg`),
@@ -97,7 +97,7 @@ import { readWagonLook, wagonLookOfCode, WAGON_OUTSIDE_LOOKS, CARAVAN_INSIDE_LOO
 import { validWagonKind, wagonHitchOf, WAGON_KINDS, wagonHorsesOf } from '../systems/wagon/wagonKinds.js';
 import { CARAVAN_TEXT } from '../systems/caravanRoom.js';
 import { recolorHorse, horseLookCode, horseLookOfCode, lookSuffix } from '../systems/horse/horseCoats.js';   // COATS1: the horses' looks, dyed as they upload
-import { DECOR_DRAW, DECOR_SHADOW, DECOR_SKIP, castOnly } from './decorRoom.js';   // PERF-TEAMS: the host's view verdict (world.js yardCull), as the merchant yards' wagons take it; PERF-WAGON: and the one maps-alone renderer
+import { DECOR_DRAW, DECOR_SHADOW, DECOR_SKIP, castOnly } from './decor/decorRoom.js';   // PERF-TEAMS: the host's view verdict (world.js yardCull), as the merchant yards' wagons take it; PERF-WAGON: and the one maps-alone renderer
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
 
 /** The horse art's archive key and record names on the renderer's texture map: `hcc_h<view>` a standing view,
@@ -333,7 +333,7 @@ export function createHorseCartPool({
   let _keptSeq = 0;
   let _lastKey = '';
   // WARDEN1 (systems/wagon/wagonWarden.js): the teams the town watch is carrying - '' mine, a peer's key - drawn by its show
-  // (scenes/wagonWardenShow.js) and not here: no wagon, no horse it carries, no harness, no box for the ray or my
+  // (scenes/wagon/wagonWardenShow.js) and not here: no wagon, no horse it carries, no harness, no box for the ray or my
   // collider, no seat to ride. AUDIT WARDEN1: counted (two shows over one key - a peer's live word - each set it down
   // only once both have), and `lone` whether a lone horse beside it is carried too (one following its owner, or left
   // further off, is not: drawn as it stands - C2). owner -> { n, lone }
@@ -1766,7 +1766,7 @@ export function createHorseCartPool({
     /** AUDIT (the pre-merge audit, I-B): the host's word on each other player's look - 'hidden' (INVIS-NET's classic
      *  lane), a concealed visual (INVIS-LOOK), or null - so a concealed owner's team is concealed with it. */
     setPeerLook(fn) { peerLook = typeof fn === 'function' ? fn : null; },
-    /** WARDEN1 (scenes/wagonWardenHost.js): the host's watch fields for my park word's anchor - { ly, tw?, rd? } or null. */
+    /** WARDEN1 (scenes/wagon/wagonWardenHost.js): the host's watch fields for my park word's anchor - { ly, tw?, rd? } or null. */
     setWardenWord(fn) { wardenWord = typeof fn === 'function' ? fn : null; },
     /** WARDEN1: an owner's team ('' mine, a peer's key - keptOwner for a kept one) carried by the town watch, or set down. */
     holdTeam(owner, on, lone = true) {

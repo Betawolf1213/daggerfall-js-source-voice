@@ -244,7 +244,7 @@
   },
   {
     "name": "NC-sleepers-drawn",
-    "file": "src/scenes/navalCrew.js",
+    "file": "src/scenes/naval/navalCrew.js",
     "old": "if (s?.batch && s.unit && !m.below) out.push(s.batch);",
     "new": "if (s?.batch && s.unit) out.push(s.batch);",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "NC-sleepers-posed",
-    "file": "src/scenes/navalCrew.js",
+    "file": "src/scenes/naval/navalCrew.js",
     "old": "if (member.below || !s.unit || !s.batch) continue;",
     "new": "if (!s.unit || !s.batch) continue;",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "NC-no-attack",
-    "file": "src/scenes/navalCrew.js",
+    "file": "src/scenes/naval/navalCrew.js",
     "old": "_motion.striking = !!member.swing;",
     "new": "_motion.striking = false;",
     "tests": [
@@ -352,7 +352,7 @@
   },
   {
     "name": "H-every-ship-lit",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const lit = shipLit(e);\n",
     "new": "    const lit = !!where().cityLights;\n",
     "tests": [
@@ -361,7 +361,7 @@
   },
   {
     "name": "H-contacts-unlit",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "yaw: e.ship.yaw, hull: e.ship.hull, ship: e.ship, lit: shipLit(e) });",
     "new": "yaw: e.ship.yaw, hull: e.ship.hull, ship: e.ship });",
     "tests": [
@@ -370,7 +370,7 @@
   },
   {
     "name": "H-my-lanterns-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "lit: !!boat.LightOn && carriesLanterns(boat, boat.hull),",
     "new": "lit: carriesLanterns(boat, boat.hull),",
     "tests": [
@@ -379,7 +379,7 @@
   },
   {
     "name": "H-night-untold",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const night = !!where().night;   // SHIP-WATCH: the dark hours",
     "new": "    const night = false;   // SHIP-WATCH: the dark hours",
     "tests": [
@@ -388,7 +388,7 @@
   },
   {
     "name": "H-hail-night-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "d > nightSight(SAIL_HO_RANGE * sight, { night, lit: showsLight(e) })",
     "new": "d > SAIL_HO_RANGE * sight",
     "tests": [
@@ -397,7 +397,7 @@
   },
   {
     "name": "H-cry-never-handed",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (deck?.crewed) hailCalls.set(",
     "new": "if (false) hailCalls.set(",
     "tests": [
@@ -406,7 +406,7 @@
   },
   {
     "name": "H-cry-every-frame",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (call) hailCalls.delete(boat);\n",
     "new": "",
     "tests": [
@@ -415,7 +415,7 @@
   },
   {
     "name": "H-work-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const work = boat.crewed && st.crew.order === CREW_ORDERS.repair ? 1 : workOf(st.damage);",
     "new": "const work = 0;",
     "tests": [
@@ -424,7 +424,7 @@
   },
   {
     "name": "H-lamps-by-day",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (!where().cityLights) return;\n    const eye = deps.look?.()?.origin ?? deps.feet();\n    const boats = [];",
     "new": "    const eye = deps.look?.()?.origin ?? deps.feet();\n    const boats = [];",
     "tests": [
@@ -433,7 +433,7 @@
   },
   {
     "name": "H-no-lamps",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    lampsInto(particles);",
     "new": "    void lampsInto;",
     "tests": [
@@ -442,7 +442,7 @@
   },
   {
     "name": "H-dark-lamps",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (e.boat?.LightOn && (e.fade ?? 1) >= FADE_FLATS) boats.push(e.boat);",
     "new": "if (e.boat && (e.fade ?? 1) >= FADE_FLATS) boats.push(e.boat);",
     "tests": [
@@ -451,7 +451,7 @@
   },
   {
     "name": "H-near-lamps",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        if (d <= LAMP_NEAR_M) continue;\n",
     "new": "",
     "tests": [
@@ -460,7 +460,7 @@
   },
   {
     "name": "H-sea-work-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "work: st === SHIP_STATES.afloat ? workOf(e.ship.damage) : 0 });",
     "new": "work: 0 });",
     "tests": [

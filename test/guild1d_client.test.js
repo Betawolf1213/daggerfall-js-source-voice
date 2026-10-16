@@ -384,6 +384,6 @@ test('GUILD1d wired: the building host - the hall\'s rows and its buy, the chest
   assert.ok(w.indexOf('const hung = bannersHung();') < w.indexOf('    drawVeiledPeerBodies();   // INVIS-LOOK'), 'before every glow (AUDIT GUILD1d R3; SEAT1a: the seats\' banners with the halls\')');
   assert.match(w, /openStores: \(\) => socialPanel\?\.openGuild\?\.\('vault'\) === true,/);   // PIN MOVED (GUILD2b): the chest opens the vault's page
   assert.match(w, /onHall: \(mapId\) => \{ onlineHomes\?\.ensure\?\.\(mapId, \{ force: true \}\); \},/);
-  const dt = src('src/scenes/decorTool.js');
+  const dt = src('src/scenes/decor/decorTool.js');
   assert.match(dt, /own: r\?\.hall \? \[\] : ownEntries\(\),/);
 });

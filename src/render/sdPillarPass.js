@@ -4,7 +4,7 @@
 //
 //   THE DIALS - a small clock on each face of each capital (sixteen), laid a hair out of the stone on the pixel law's
 //     cells (SD_DIAL_TEXELS a radius): a dark enamel face, a brass bezel lit from the top-left, twelve ticks (the
-//     quarters broad) and ONE HAND, which TURNS TO POINT AT THE REMNANT - they watch it (scenes/sdArenaWatch.js
+//     quarters broad) and ONE HAND, which TURNS TO POINT AT THE REMNANT - they watch it (scenes/superDungeon/sdArenaWatch.js
 //     sdPillarHandsAt: where it stands, seen on each face's own plane, on the escapement). Lit by the lantern over them
 //     (the ambient rung), never by the scene: they read across the arena in the void's dark. Red when the Hour ends.
 //   THE LANTERNS - the flame in each lantern stage's brass cage (world/superDungeon/sdPillarModel.js SD_LANTERN): a gold core and its
@@ -13,7 +13,7 @@
 //     too). Its light on its own housing - the hood's underside over it, the cornice's top under it - laid on them here,
 //     posterized in three steps. A light to see, not one that lights the world: the Hour's lamps keep their count
 //     (world/superDungeon/sdRealm.js SD_LAMPS).
-//   THE RESET'S DIMMING - dials and flames together by `dim` (scenes/sdArenaWatch.js sdLampDimInto, the arena's lamps'
+//   THE RESET'S DIMMING - dials and flames together by `dim` (scenes/superDungeon/sdArenaWatch.js sdLampDimInto, the arena's lamps'
 //     own factor), so the Hearts are the brightest things in the world.
 //
 // Premultiplied (the enamel darkens the stone; the light adds), depth-tested and never written, fogged. One static
@@ -178,7 +178,7 @@ export class SdPillarPassRenderer {
     gl.enableVertexAttribArray(2); gl.vertexAttribPointer(2, 1, gl.FLOAT, false, 24, 20);
     gl.bindVertexArray(null);
   }
-  /** Draw the dials and the flames as `look` says (`{ hands, k: [dim, end] }` - scenes/sdArenaWatch.js's kept record),
+  /** Draw the dials and the flames as `look` says (`{ hands, k: [dim, end] }` - scenes/superDungeon/sdArenaWatch.js's kept record),
    *  in `fog`, at the pixel law's `steps`, the flames' glow at `gain`. Answers whether it drew. */
   draw(proj, view, look, fog = null, steps = 10, gain = 1) {
     const gl = this.gl, U = this.u;

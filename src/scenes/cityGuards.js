@@ -101,7 +101,7 @@ import { enemyDisplayName } from '../characters/enemyBasics.js';   // the port's
 import { bloodCentre } from './hitEffects.js';   // AUDIT 24 (wave 39): EnemyBlood.ShowBloodSplash
 import { bloodHit, LETHAL_HIT } from '../combat/bloodDecals.js';   // BLOOD1b: the blow, in the shape the mark's ladder reads
 import { EnemySoundSource, acuteHearingMultiplier, WatchVoice, ATTRACT_RADIUS, OCCLUDED_VOLUME_SCALE } from '../characters/enemySounds.js';   // AUDIT 24 (wave 41): EnemySounds.cs, one home; HALT-ONE: the watch's one voice
-import { placeFoeEnv, entityOccupancy } from './questFoeHost.js';   // D9: FoeSpawner.PlaceFoeFreely's env, over THIS pool's collider
+import { placeFoeEnv, entityOccupancy } from './quest/questFoeHost.js';   // D9: FoeSpawner.PlaceFoeFreely's env, over THIS pool's collider
 import { placeFoeFreely } from '../systems/quest/sceneMount.js';   // D9: PlayerEntity.cs:687 spawns through FoeSpawner like everything else
 import { SPAWNER_ARMS } from '../systems/encounters.js';   // the CreateFoeSpawner call-site table - cityGuards is one of its rows
 import { popAllowChange, POP_VISIBLE_RANGE } from '../systems/town/townPopulation.js';   // WATCH-LEAVES: a defender walking off goes only where a walker may
@@ -294,7 +294,7 @@ export function createCityGuards({ renderer, collider, fetchBytes, getTexture, u
    *  the same street in that window - a second crime's, the minute's sweep, a swing, the town watch's summons - turned the
    *  same walker again: two watchmen from one. So a walker is CLAIMED across the await, and one its host says is off the
    *  street already (`live()` false: a pool read before another arm took it) is never turned. The guard stood MARKS whom
-   *  it stands for (`livingFrom` - the living world's resident, its identity as it was turned: scenes/livingWatch.js
+   *  it stands for (`livingFrom` - the living world's resident, its identity as it was turned: scenes/livingWorld/livingWatch.js
    *  follows it). Answers the guard, or null (refused, or the world it was posted to is gone - the walker then stays). */
   async function turnNpc(p, attackerFeet, opts = undefined) {
     const who = p.person ?? p;
@@ -957,7 +957,7 @@ export function createCityGuards({ renderer, collider, fetchBytes, getTexture, u
       if (fromPlayer && !peer) reportPlayerKill(g.entity, { kind: 'melee' });   // SET2: MY blow killed him (a set's "each kill")
       g.corpse = true;   // G3: only a KILLED guard is lootable (walk-aways vanish with their items)
       releaseGuardBatch(g);
-      g.killedBy = peer ? 'peer' : fromPlayer ? 'player' : 'other';   // WATCH-FIX: whose hand - the player's own blow (DFU's `source == Player`, :203) is the living world's deed; any other its loss (scenes/livingWatch.js)
+      g.killedBy = peer ? 'peer' : fromPlayer ? 'player' : 'other';   // WATCH-FIX: whose hand - the player's own blow (DFU's `source == Player`, :203) is the living world's deed; any other its loss (scenes/livingWorld/livingWatch.js)
       // EnemyDeath:131-136 - the clear gates on `senses.Target ==
       // PlayerEntityBehaviour`, which MT-ii makes observable.
       if (isPlayerTarget(g.ai?.target) && g.ai?.detected) setEnemyAlert(playerEntity, false);
@@ -1846,7 +1846,7 @@ export function createCityGuards({ renderer, collider, fetchBytes, getTexture, u
         items: (g.entity.items ?? []).map((it) => ({ ...it })),
         activeEffects: (g.entity.activeEffects ?? []).map(copyEffectEntry),
         hostile: g.ai.isHostile !== false,
-        ...(typeof g.livingFrom?.id === 'string' ? { living: g.livingFrom.id } : {}),   // WATCH-FIX: the resident he stands for, by id - a load finds him again (scenes/livingWatch.js)
+        ...(typeof g.livingFrom?.id === 'string' ? { living: g.livingFrom.id } : {}),   // WATCH-FIX: the resident he stands for, by id - a load finds him again (scenes/livingWorld/livingWatch.js)
       };
     });
   }

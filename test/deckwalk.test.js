@@ -18,7 +18,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 import { buildDeck, deckOf as deckGrid, intoDeck, outOfDeck, mainLevel, DECK_CELL, DECK_STEP, DECK_HEADROOM, DECK_INSET } from '../src/systems/naval/navalDeck.js';
-import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';
+import { createComeSailAwayPool } from '../src/scenes/comeSailAway/comeSailAwayPool.js';
 import { Boat, spawnBoat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { raycastColliders, boxColliderTriangles } from '../src/world/prefabColliders.js';
 import { MODELS, ctxFor } from './csaScene.mjs';

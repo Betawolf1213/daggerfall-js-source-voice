@@ -170,7 +170,7 @@ export function createBountyHost(deps) {
     canShare: (id) => !!social()?.inParty && ledger.held.some((h) => h.id === id && !h.shared),
   });
   const line = (text) => ({ formatting: 'text', text });
-  /** My bounties as the quest log's active quests (scenes/questBridge.js questLog's own shape): filed as side quests,
+  /** My bounties as the quest log's active quests (scenes/quest/questBridge.js questLog's own shape): filed as side quests,
    *  the notice as the entry, the kills, the place and the purse under it, and the time left as the quest's clock. */
   function questLogEntries() {
     const now = deps.now();

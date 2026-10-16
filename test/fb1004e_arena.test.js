@@ -10,7 +10,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { loadQuestTables } from '../src/systems/quest/tables.js';
 
-import { createArenaBouts } from '../src/scenes/arenaBouts.js';
+import { createArenaBouts } from '../src/scenes/arena/arenaBouts.js';
 import { newArenaLadder, nextLadderBout } from '../src/systems/arena/arenaLadder.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { markQuiver, refundQuiver, QUIVER_TEMPLATES } from '../src/systems/arena/arenaQuiver.js';
@@ -135,7 +135,7 @@ test('ARENA-ARROWS driven: a bout dismissed before its healers stops its tally -
   for (let i = 0; i < 200 && r.A.bout()?.phase !== 'fight'; i++) r.step(100);
   assert.equal(r.A.bout().phase, 'fight');
   for (let i = 0; i < 3; i++) spendAmmoFor(r.P.items, null);
-  r.A.dismiss();   // a session's let-go: the bout first (scenes/arenaOnline.js letGoPriv)...
+  r.A.dismiss();   // a session's let-go: the bout first (scenes/arena/arenaOnline.js letGoPriv)...
   for (let i = 0; i < 4; i++) spendAmmoFor(r.P.items, null);   // ...shots after it are no bout's
   assert.equal(r.A.refundQuiver(), 3, '...then the healers: the three the bout loosed');
   assert.equal(realArrows(r.P.items), 16);

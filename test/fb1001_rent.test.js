@@ -2,7 +2,7 @@
 // tenant: the account service's rooms and rent (server-account/src/rent.js through the real Worker over node:sqlite,
 // every migration applied), the client's door to it (net/accountClient.js accountHomes), the town's registry
 // (systems/online/onlineHomes.js createOnlineHomes), the rent and the owner's rooms (systems/homeRent.js), a realm act
-// (systems/realmSaves.js realmGoldAct), the owner's decorator and its panel (scenes/decorTool.js, ui/decorPanel.js) over
+// (systems/realmSaves.js realmGoldAct), the owner's decorator and its panel (scenes/decor/decorTool.js, ui/decorPanel.js) over
 // the room finder's real rooms, and the rest's law (systems/rest/restSession.js canRest over interiorRestPlace). Six faults:
 //   RENT-REST    a tenant could not rest in the home they rent - "You have not rented a room here."
 //   RENT-RENEW   the renewal window offered days the service always refuses (`rent-long`), paid from the purse first
@@ -27,7 +27,7 @@ import { canRest, interiorRestPlace, HAVE_NOT_RENTED_ROOM } from '../src/systems
 import { createSceneCache, addPermanentScene, containsPermanentScene, interiorSceneName } from '../src/systems/sceneCache.js';
 import { homeSceneName } from '../src/systems/online/onlineHomes.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
-import * as DT from '../src/scenes/decorTool.js';
+import * as DT from '../src/scenes/decor/decorTool.js';
 import { DECOR_RENT_FINDING, DECOR_RENT_ONE_ROOM } from '../src/ui/decorPanel.js';
 import { toolRig, settle, all, text } from './decorFakes.mjs';
 import { Collider } from '../src/player/collider.js';

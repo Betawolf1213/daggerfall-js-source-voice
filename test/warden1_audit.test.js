@@ -24,13 +24,13 @@ import {
 import { ROAD_WEIGHT } from '../src/systems/gothwayBoards.js';
 import { createHorseCartPool } from '../src/scenes/horseCartPool.js';
 import { WAGON_MODE, HORSE_MODE, INTERIOR_ACCESS, WAGON_MODEL_ID } from '../src/systems/horse/horseCartLaw.js';
-import { createWardenShows, WARDEN_HEAD } from '../src/scenes/wagonWardenShow.js';
-import { createWagonWarden, wardenTownIn, WARDEN_SHOW_REACH } from '../src/scenes/wagonWardenHost.js';
+import { createWardenShows, WARDEN_HEAD } from '../src/scenes/wagon/wagonWardenShow.js';
+import { createWagonWarden, wardenTownIn, WARDEN_SHOW_REACH } from '../src/scenes/wagon/wagonWardenHost.js';
 import { NAV_CELL } from '../src/world/city/cityNavigation.js';
 import { PERSON_GUARD_IDLE_RECORD } from '../src/characters/mobilePerson.js';
 import { mobileBillboardSize } from '../src/world/rmbFlats.js';
 import { caravanRecordOf, caravanStands } from '../src/net/caravanVisitLink.js';
-import { createWagonRiders, RIDE_ROW } from '../src/scenes/wagonRiders.js';
+import { createWagonRiders, RIDE_ROW } from '../src/scenes/wagon/wagonRiders.js';
 import { RIDE_TEXT } from '../src/systems/wagon/wagonSeats.js';
 import { makeWorld } from './hccWorld.mjs';
 import { syntheticWagon41214 } from './hccModel.mjs';
@@ -572,7 +572,7 @@ test('AUDIT WARDEN1 hosts: world.js hands the host its switches - the eye, the s
   const pool = w.indexOf('    hccTick(dt, now);\n    // WAGONS3 (Mac: "sit on the wagon itself');
   assert.ok(watch > 0 && pool > watch && pool - watch < 400, 'the watch framed just before the pool\'s step');
   assert.equal(w.split("wardenShows?.frame(cam.pos)").length - 1, 1, 'once a frame');
-  assert.match(rd('src/scenes/wagonRiders.js'), /if \(r\.held && ride\.seat != null\) \{ getDown\(RIDE_TEXT\.lifted\); return; \}/);
+  assert.match(rd('src/scenes/wagon/wagonRiders.js'), /if \(r\.held && ride\.seat != null\) \{ getDown\(RIDE_TEXT\.lifted\); return; \}/);
   const link = rd('src/net/caravanVisitLink.js');
   assert.match(link, /link\.onParks = \(r, list\) => \{ if \(r === cell\) judge\(caravanRecordOf\(/, 'R9: the welcome\'s list judged where it landed');
   assert.match(link, /link\.onPark = \(r, e\) => \{ if \(r === cell && e\?\.k === visit\?\.k\) judge\(caravanRecordOf\(e\)\); \};/, 'and every word after');

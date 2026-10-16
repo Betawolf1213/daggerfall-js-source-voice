@@ -10,7 +10,7 @@
 //      (boardingGap) or feet that could go over her rail (footReach).
 //   2. ITS WORDS ARE ITS SIDE OF THE BOARDING: the crew going over cries the boarding's (CREW_BLURBS.board), the crew
 //      being boarded the repel's (CREW_BLURBS.repel) - the host says which (`way`), the grapple by its kind.
-// The real naval host over Come Sail Away's real pool (test/navalSea.mjs), the real crew host (scenes/navalCrew.js) and
+// The real naval host over Come Sail Away's real pool (test/navalSea.mjs), the real crew host (scenes/naval/navalCrew.js) and
 // scenes/world.js's navalCrewFrame lifted from its own text, as test/auditnav2_crew.test.js stands them.
 import './modsOff.js';
 import { test } from 'node:test';
@@ -20,7 +20,7 @@ import { readFileSync } from 'node:fs';
 import { asleepHour } from '../src/systems/naval/shipWatch.js';
 import { hourOf } from '../src/world/worldClock.js';
 import { crewRoster, crewCount, CREW_BLURBS } from '../src/systems/naval/crewLife.js';
-import { createNavalCrew, CREW_RANGE, CREW_KEEP } from '../src/scenes/navalCrew.js';
+import { createNavalCrew, CREW_RANGE, CREW_KEEP } from '../src/scenes/naval/navalCrew.js';
 import { intoDeck } from '../src/systems/naval/navalDeck.js';
 import { GRAPPLE_S, BOARD_SPEED } from '../src/systems/naval/navalBoarding.js';
 import { hullBuild } from '../src/systems/naval/navalShips.js';

@@ -24,10 +24,10 @@ import { paletteOf, offPalette } from '../src/world/superDungeon/sdPixelKit.js';
 import { SD_PILLAR_FS, SD_DIAL_TEXELS, SD_DIAL_PART, SD_DIAL_HAND, SD_DIAL_RINGS, SD_PILLAR_DIALS, SD_LANTERNS, SD_LANTERN_SPILLS, sdPillarPassGeometry } from '../src/render/sdPillarPass.js';
 import {
   sdPillarHandsAt, sdWatchedAt, handToward, sdLampDimAt, sdLampDimInto, sdPillarLookAt, sdPillarLook, sdArenaMarksAt, SD_RESET_DIM, SD_MARK_COLOR, SD_WATCH_HOME_Y,
-} from '../src/scenes/sdArenaWatch.js';
-import { SD_HEART_LIGHT } from '../src/scenes/sdRemnant.js';
-import { SD_BLOW_COLOR } from '../src/scenes/sdRemnantBlows.js';
-import { clearOfPillars } from '../src/scenes/sdSpoils.js';
+} from '../src/scenes/superDungeon/sdArenaWatch.js';
+import { SD_HEART_LIGHT } from '../src/scenes/superDungeon/sdRemnant.js';
+import { SD_BLOW_COLOR } from '../src/scenes/superDungeon/sdRemnantBlows.js';
+import { clearOfPillars } from '../src/scenes/superDungeon/sdSpoils.js';
 import { SD_REMNANT_BODY, remnantScale } from '../src/world/superDungeon/sdRemnantModel.js';
 import { TELEGRAPH_KIND, BOSS_MARK_R, telegraphField } from '../src/render/gateTelegraph.js';
 import { BOSS_R } from '../src/net/gate/gateBrain.js';
@@ -209,7 +209,7 @@ test('S7 THE WATCHING HANDS: every dial\'s hand points at the Remnant\'s heart a
   const br = live({ ph: 2, ec });
   sdPillarHandsAt(br, T0 + 500, out);
   pointsAt(out, (d) => { const [cx] = pillarCentre(d.k); const E = ec[cx > SD_ARENA.x ? 1 : 0]; return heart(E.x, E.z, SD_REMNANT_BODY.heartY * remnantScale(true)); }, 'the nearest Echo');
-  // fallen: the way home's place (scenes/sdSpoils.js clearOfPillars - the world host's sdHomeAt), its window's middle
+  // fallen: the way home's place (scenes/superDungeon/sdSpoils.js clearOfPillars - the world host's sdHomeAt), its window's middle
   const fx = SD_PILLAR_R * Math.SQRT1_2 + 0.3, fell = live({ fell: { at: T0 - 20_000, top: [], n: 0 }, rem: { x: fx, z: fx, yw: 0, mv: null, atk: null } });
   const [hx, hz] = clearOfPillars(fx, fx);
   assert.ok(Math.hypot(hx - fx, hz - fx) > 0.5, 'a fall inside a square is put clear of it');
@@ -320,7 +320,7 @@ test('S7 THE HOSTS BY SOURCE: the world host draws the pillars\' watch in the ar
   assert.match(W, /sdLampDim: \(\) => \(sdFightLink \? sdLampDimInto\(sdFightLink\.state\(\), sdFightLink\.now\(\), _sdLampDim\) : null\),/);
   const M = read('src/scenes/worldModes.js');
   assert.match(M, /realmLightsWith\(_dgLit, host\.sdRealmLights\?\.\(\) \?\? NO_LIGHTS, cam\.pos, host\.sdLampDim\?\.\(\) \?\? null\)/);
-  const B = read('src/scenes/sdRemnantBlows.js');
+  const B = read('src/scenes/superDungeon/sdRemnantBlows.js');
   assert.match(B, /const under = bodyMarks\(\);\n\s+if \(!shapes\.length && !under\.length\) return false;/);
   assert.match(B, /for \(let i = 0; i < under\.length; i\+\+\) \{ pass\.draw\(under\[i\], [^\n]*\n\s+for \(const sh of shapes\) \{ pass\.draw\(sh,/);
   const L = read('src/tools/abyssLab.js');
@@ -340,7 +340,7 @@ test('S7 THE HOSTS BY SOURCE: the world host draws the pillars\' watch in the ar
 test('S7 THE ARENA\'S WATCH MAKES NOTHING - L2 F9\'s measure (a child with a 64 MB young space, the least of six windows, against a control that must show): the watching hands over a walking Remnant and over the Dragon Break, the dimming through a Reset, the marks, the pass\'s look, the lights dimmed - none past 2 bytes a frame (mutants: the hands\' target made a frame; the look\'s dimming made a frame; the marks\' list made a frame)', () => {
   const url = (p) => JSON.stringify(pathToFileURL(join(ROOT, p)).href);
   const script = `
-    const W = await import(${url('src/scenes/sdArenaWatch.js')});
+    const W = await import(${url('src/scenes/superDungeon/sdArenaWatch.js')});
     const { realmLightsWith } = await import(${url('src/world/superDungeon/sdRealm.js')});
     const { SD_FIGHT_EMPTY } = await import(${url('src/net/superDungeon/sdFightLink.js')});
     const { SD_BLOWS } = await import(${url('src/net/superDungeon/sdRemnant.js')});

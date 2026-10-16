@@ -11,13 +11,13 @@ import { readFileSync } from 'node:fs';
 import { NIGHT_DARK_SIGHT, NIGHT_LIT_SIGHT } from '../src/systems/naval/shipWatch.js';
 import { createSeaShip, stepCaptain, WIND_RATED, HEAR_S, FLEE_RANGE, RUN_ON_S, ENGAGE_RANGE } from '../src/systems/naval/navalAI.js';
 import { HULL } from '../src/systems/naval/navalShips.js';
-import { HOSTILE_NEAR_M } from '../src/scenes/navalHost.js';
+import { HOSTILE_NEAR_M } from '../src/scenes/naval/navalHost.js';
 import { Boat, setLights } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { sea, readyPool, modShipsPool } from './navalSea.mjs';
 import { room } from './navalRoom.mjs';
 
 const WORLD = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
-const HOST = readFileSync(new URL('../src/scenes/navalHost.js', import.meta.url), 'utf8');
+const HOST = readFileSync(new URL('../src/scenes/naval/navalHost.js', import.meta.url), 'utf8');
 const NIGHT = { cityLights: true, night: true };
 const open = () => true;
 const contactOf = (s, o = {}) => ({ id: s.id, kind: 'ship', faction: s.cls.faction, pos: s.pos, vel: [0, 0, 0], speed: 0, yaw: s.yaw, hull: s.hull, ship: s, ...o });

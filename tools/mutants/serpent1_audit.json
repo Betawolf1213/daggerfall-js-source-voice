@@ -941,7 +941,7 @@
   },
   {
     "name": "AUDIT-SERPENT-L2-tally",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (segmentOfTarget(e.target) != null) { t.hits++; t.ended++; }",
     "new": "if (segmentOfTarget(e.target) != null) { t.ended++; }",
     "tests": [
@@ -950,7 +950,7 @@
   },
   {
     "name": "AUDIT-SERPENT-B6-brace",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const k = st.guns.braced ? BRACE_TAKEN : 1;",
     "new": "const k = 1;",
     "tests": [
@@ -959,7 +959,7 @@
   },
   {
     "name": "AUDIT-SERPENT-T4-aim-lead",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const v = best.e ? velocityOf(best.e.ship) : best.v;",
     "new": "const v = best.e ? velocityOf(best.e.ship) : [0, 0, 0];",
     "tests": [
@@ -968,7 +968,7 @@
   },
   {
     "name": "AUDIT-SERPENT-T4-strikes-lead",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "ships.push({ e: SERPENT_AIM, v: t.v ?? [0, 0, 0]",
     "new": "ships.push({ e: SERPENT_AIM, v: [0, 0, 0]",
     "tests": [

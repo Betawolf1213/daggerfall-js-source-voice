@@ -267,7 +267,7 @@ Greaves of the Unmade Stride, Boots of the Unmoored Step, The Gear-Face (Round S
 | 6 | **The Hour Turns** - a blow that would kill you does not: you are left at 1 and that share of your health returns at once; then it must recover. A death save, as Unbroken is - a fall's death is turned back too - and never worn with the Bulwark (six and six is past nine places) | 15% -> 25%; recovers 90 -> 60 s |
 
 The Hour Turns heals through the one heal a power gives (`systems/playerHeal.js`). The HUD's chip shows its recovery.
-Their sounds are the Orrery hall's (`scenes/sdHall.js`): Gearward the hall's gear, The Hour Turns its low bell.
+Their sounds are the Orrery hall's (`scenes/superDungeon/sdHall.js`): Gearward the hall's gear, The Hour Turns its low bell.
 
 ## 7. The Sigil Broker - Sigil Stones buy the day's stock (SET7)
 
@@ -325,7 +325,7 @@ gold - a stone's only worth is at its own vendor.
   no struck tail) - but one power answers it (AUDIT SD): its own set's Gearward, which would otherwise never meet the
   fight that drops it. A body's own blow - the Stomp, the Hand, the Volley, the Remnant's or an Echo's; never the Hour's
   unresisted magic over the whole floor (the Pulse, the Reset, the End), never the burning brass - is marked as a world
-  boss's as it lands (`scenes/sdRemnantBlows.js` `bodysBlow` -> `setBossStruck`), taken by the damage door as it
+  boss's as it lands (`scenes/superDungeon/sdRemnantBlows.js` `bodysBlow` -> `setBossStruck`), taken by the damage door as it
   opens, and read by Gearward alone: Spite, the Wrath, Riposte, Blood for Blood and Shed Skin hear no foe in it, and the
   loot's blow listeners none. The Warden's court marks nothing (its bytes are the gate's).
 - AUDIT SETS M2: a client older than RAID4b cannot read a raid set's sigil. A room's container word it cannot read is

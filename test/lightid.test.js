@@ -71,17 +71,17 @@ test('LIGHT-ID: THE POOLS THAT REFILL IN ORDER NAME EACH ENTRY BY THE LIGHT IT S
   assert.match(world, /e\.wodRange = l\.range; e\.wodColor = l\.color;\n\s+adoptLight\(e, l\);[^\n]*\n[\s\S]*?e\.wodRange = l\.range; e\.wodColor = l\.color;\n\s+adoptLight\(e, l\);/, 'the World of Daggerfall lights and the boats\' lanterns in the pool');
   assert.match(world, /csaLit\.push\(adoptLight\(\{ x: l\.x, y: l\.y, z: l\.z, range: l\.range, color: CITY_LIGHT_COLOR_F32 \}, l\)\)/, 'a quay\'s lantern, copied each frame');
   assert.match(rd('src/scenes/homeYards.js'), /e\.x = l\.x; e\.y = l\.y; e\.z = l\.z;\n\s+adoptLight\(e, l\);/, 'the yards\' rows');
-  const fx = rd('src/scenes/sdFx.js');
+  const fx = rd('src/scenes/superDungeon/sdFx.js');
   assert.match(fx, /o\.color\[2\] = b;\n\s+adoptLight\(o, src\);/, 'the Hour\'s pooled lights, each its burst\'s');
   assert.match(fx, /else \{ b\.edge = SD_FX_EDGE; relight\(b\); \}/, 'a burst slot reused is another light');
-  const court = rd('src/scenes/gateCourt.js');
+  const court = rd('src/scenes/gate/gateCourt.js');
   assert.match(court, /bossGlow\(s, t, _glow\)/, 'his glow, one kept record');
   assert.match(court, /else if \(b\.light\) relight\(b\.light\);/, 'a burst slot reused: its flash another light');
   assert.match(court, /const L = \(b\.light \?\?= \{ x: 0, y: 0, z: 0, range: 0, color: \[0, 0, 0\] \}\)/, 'each burst its own flash');
-  for (const [file, src] of [['src/scenes/droppedTorches.js', 'd'], ['src/scenes/droppedTorches.js', 'p'], ['src/scenes/droppedTorches.js', 'fl'], ['src/scenes/camps.js', 'c.rec'], ['src/scenes/gatePool.js', 'place'], ['src/scenes/spoilsPool.js', 'f']]) {
+  for (const [file, src] of [['src/scenes/droppedTorches.js', 'd'], ['src/scenes/droppedTorches.js', 'p'], ['src/scenes/droppedTorches.js', 'fl'], ['src/scenes/camps.js', 'c.rec'], ['src/scenes/gate/gatePool.js', 'place'], ['src/scenes/spoilsPool.js', 'f']]) {
     assert.ok(new RegExp(`adoptLight\\(\\{ x: [^\\n]*\\}, ${src.replace('.', '\\.')}\\)`).test(rd(file)), `${file}: a frame's record named by ${src}`);
   }
-  assert.match(rd('src/scenes/comeSailAwayPool.js'), /map\(\(\{ _d, _src, \.\.\.l \}\) => adoptLight\(l, _src\)\)/, 'a ship\'s lantern, as she sails');
+  assert.match(rd('src/scenes/comeSailAway/comeSailAwayPool.js'), /map\(\(\{ _d, _src, \.\.\.l \}\) => adoptLight\(l, _src\)\)/, 'a ship\'s lantern, as she sails');
   const modes = rd('src/scenes/worldModes.js');
   assert.match(modes, /const _dgTint = \(l\) => \(l && !l\.aura \? adoptLight\(\{ \.\.\.l, color: [^\n]*\}, l\) : l\);/, 'the dungeon\'s flame tint, a copy a frame');
   assert.match(modes, /const abyssCandle = \(l, abyss\) => \(l && abyss \? adoptLight\(\{ \.\.\.l, range: [^\n]*\}, l\) : l\);/, 'the abyss\'s candle, a copy a frame');

@@ -37,7 +37,7 @@
   },
   {
     "name": "SD27-S2-the-way-back-revealed",
-    "file": "src/scenes/sdEnd.js",
+    "file": "src/scenes/superDungeon/sdEnd.js",
     "old": "if (!rift.hollow && !rift.revealed && eye &&",
     "new": "if (!rift.revealed && eye &&",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "SD27-L2-the-bridge-walkable-before-drawn",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "get bridgeLaid() { return ok && laid; },",
     "new": "get bridgeLaid() { return ok; },",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "SD27-S5-under-the-veil",
-    "file": "src/scenes/sdFx.js",
+    "file": "src/scenes/superDungeon/sdFx.js",
     "old": "if (!here && ready()) {",
     "new": "if (!here) {",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "SD27-L5-the-latch-kept",
-    "file": "src/scenes/sdFx.js",
+    "file": "src/scenes/superDungeon/sdFx.js",
     "old": "away() { here = false; wasY = NaN; },",
     "new": "away() {},",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "SD27-P1-the-look-made-a-frame",
-    "file": "src/scenes/sdEnd.js",
+    "file": "src/scenes/superDungeon/sdEnd.js",
     "old": "      const out = _look;\n",
     "new": "      const out = { window: null, floor: null, bay: null };\n",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "SD27-P1-the-halos-let-go",
-    "file": "src/scenes/sdEnd.js",
+    "file": "src/scenes/superDungeon/sdEnd.js",
     "old": "      let n = 0;   // AUDIT SD V (P1): filled in place - a list's length set to nought lets its store go, and the next push makes one\n",
     "new": "      let n = 0; _halos.length = 0;\n",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "SD27-P3-the-air-asked-a-frame",
-    "file": "src/scenes/sdAir.js",
+    "file": "src/scenes/superDungeon/sdAir.js",
     "old": "const E = periodEvents(), P = SD_SKY_PERIOD,",
     "new": "const E = sdAirEvents(0, SD_SKY_PERIOD), P = SD_SKY_PERIOD,",
     "tests": [

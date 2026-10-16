@@ -85,7 +85,7 @@
   },
   {
     "name": "SD7B-a-bucket-that-does-not-move",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "collider?.addMesh?.(st.key, positions, indices, identity(), () => st.T);",
     "new": "collider?.addMesh?.(st.key, positions, indices, identity());",
     "tests": [
@@ -94,7 +94,7 @@
   },
   {
     "name": "SD7B-a-gone-step-still-solid",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "else st.T[1] = SD_STEP_GONE_Y;",
     "new": "else st.T[1] = y;",
     "tests": [
@@ -103,7 +103,7 @@
   },
   {
     "name": "SD7B-no-blink",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "const falter = beatBlinks(s, t) && Math.floor(warned * 2 * SD_BEAT_BLINK_HZ) % 2 === 1;",
     "new": "const falter = false;",
     "tests": [
@@ -113,7 +113,7 @@
   },
   {
     "name": "SD7B-the-swing-not-followed",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "    stepAt(s, t, _at);",
     "new": "    _at[0] = s.x; _at[1] = s.y; _at[2] = s.z;",
     "tests": [
@@ -122,7 +122,7 @@
   },
   {
     "name": "SD7B-no-carry",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "if (dx || dy || dz) body.carryBy?.(dx, dy, dz);",
     "new": "if (false) body.carryBy?.(dx, dy, dz);",
     "tests": [
@@ -131,7 +131,7 @@
   },
   {
     "name": "SD7B-carried-by-a-vanish",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "if (on && on.solid && on.wasSolid) {",
     "new": "if (on) {",
     "tests": [
@@ -140,7 +140,7 @@
   },
   {
     "name": "SD7B-the-touch-under-a-window",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "if (on && live && on.s.kind === 'crumble' && on.touched == null) {",
     "new": "if (on && on.s.kind === 'crumble' && on.touched == null) {",
     "tests": [
@@ -149,7 +149,7 @@
   },
   {
     "name": "SD7B-no-shudder",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "if (c.shaking) { sx = SD_CRUMBLE_SHAKE",
     "new": "if (false) { sx = SD_CRUMBLE_SHAKE",
     "tests": [
@@ -158,7 +158,7 @@
   },
   {
     "name": "SD7B-never-back",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "if (!(since >= 0 && since < SD_CRUMBLE_DELAY + SD_CRUMBLE_BACK)) { st.touched = null; since = -1; }",
     "new": "if (since < 0) { st.touched = null; since = -1; }",
     "tests": [
@@ -167,7 +167,7 @@
   },
   {
     "name": "SD7B-the-breath-over-the-Beat",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "if (g.push && inBreath(rz) && dt > 0)",
     "new": "if (g.push && spanAt(rz) >= 1 && dt > 0)",
     "tests": [
@@ -176,7 +176,7 @@
   },
   {
     "name": "SD7B-the-breath-always-snapped",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "body.height, !!body.grounded && !body.jumping);",
     "new": "body.height, true);",
     "tests": [
@@ -185,7 +185,7 @@
   },
   {
     "name": "SD7B-a-hitch-a-gale",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "g.push * Math.min(dt, BREATH_DT_MAX)",
     "new": "g.push * dt",
     "tests": [
@@ -194,7 +194,7 @@
   },
   {
     "name": "SD7B-the-wind-every-frame",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "if (g.warn && span === 2 && lastWarned !== gust) {",
     "new": "if (g.warn && span === 2) {",
     "tests": [
@@ -203,7 +203,7 @@
   },
   {
     "name": "SD7B-the-wind-everywhere",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "if (g.warn && span === 2 && lastWarned",
     "new": "if (g.warn && span >= 0 && lastWarned",
     "tests": [
@@ -212,7 +212,7 @@
   },
   {
     "name": "SD7B-no-tick",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "if (lastTick != null && b !== lastTick) play(SD_STEPS_SOUNDS.tick, 0.35, 1.6);",
     "new": "if (false) play(SD_STEPS_SOUNDS.tick, 0.35, 1.6);",
     "tests": [
@@ -221,7 +221,7 @@
   },
   {
     "name": "SD7B-every-fall-to-A",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "return realmToDungeon(...castBackTo(lastSpan));",
     "new": "return realmToDungeon(...castBackTo(0));",
     "tests": [
@@ -230,7 +230,7 @@
   },
   {
     "name": "SD7B-the-void-before-the-first-step",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "if (inVoid(ry)) {",
     "new": "if (inVoid(ry) && spanAt(rz) >= 0) {",
     "tests": [
@@ -239,7 +239,7 @@
   },
   {
     "name": "SD7B-the-void-under-a-window",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "if (!live || !body?.pos) return null;",
     "new": "if (!body?.pos) return null;",
     "tests": [

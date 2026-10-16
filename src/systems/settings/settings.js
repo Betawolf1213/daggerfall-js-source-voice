@@ -203,8 +203,8 @@ export const LIVE = Object.freeze({
   // nothing: adult quests were filtered out whatever ChildGuard said,
   // the guild list-box arm was unreachable, and the journal's clocks
   // never counted down.
-  'ChildGuard/PlayerNudity': 'src/scenes/questBridge.js',
-  'Enhancements/GuildQuestListBox': 'src/scenes/questBridge.js',
+  'ChildGuard/PlayerNudity': 'src/scenes/quest/questBridge.js',
+  'Enhancements/GuildQuestListBox': 'src/scenes/quest/questBridge.js',
   'GUI/ShowQuestJournalClocksAsCountdown': 'src/scenes/world.js',
   // A1: the dungeon automap - the LRU prune reads the remembered-
   // dungeon count; the window reads the slice, micro-map and colour

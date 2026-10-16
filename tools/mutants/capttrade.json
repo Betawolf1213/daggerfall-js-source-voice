@@ -316,7 +316,7 @@
   },
   {
     "name": "HOST-chart-ungiven",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "deps.board?.giveItems?.([chart], boatInPlay() ?? null, { force: true });",
     "new": "void chart;",
     "tests": [
@@ -325,7 +325,7 @@
   },
   {
     "name": "HOST-cache-one-lot",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    for (let i = 0; i < CACHE_LOTS; i++) for (const it of deps.hold?.(STRONGBOX_KEY, STRONGBOX_RARITY_TIER) ?? []) items.push(it);",
     "new": "    for (const it of deps.hold?.(STRONGBOX_KEY, STRONGBOX_RARITY_TIER) ?? []) items.push(it);",
     "tests": [
@@ -334,7 +334,7 @@
   },
   {
     "name": "HOST-cache-unraised",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const gold = deps.captain?.raiseCache?.(e.lot.slice(SITE_LOT.length)) ?? 0;",
     "new": "    const gold = 0;",
     "tests": [
@@ -343,7 +343,7 @@
   },
   {
     "name": "HOST-cache-unstood",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      } else if ((site.kind === 'salvage' || site.kind === 'cache' || site.kind === 'strand') && site.n > 0) {",
     "new": "      } else if ((site.kind === 'salvage' || site.kind === 'strand') && site.n > 0) {",
     "tests": [

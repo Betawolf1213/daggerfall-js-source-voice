@@ -1,7 +1,7 @@
 // QUAYS (2026-10-03, Mac: "Completely revamp port towns with actual piers and docking ports. I want these places to feel
 // alive and connected with the oceans of daggerfall, along with having them appear when sailing and close to a port") -
 // the port's quays off a harbour's berths (systems/naval/quays.js), their model (world/quayModel.js), the pool that
-// stands them (scenes/quayPool.js), the docking and the gangways (scenes/navalHost.js), Come Sail Away's warp seam and
+// stands them (scenes/quayPool.js), the docking and the gangways (scenes/naval/navalHost.js), Come Sail Away's warp seam and
 // the world's wiring. bible/03-World/Holdings.md section 7.
 import './modsOff.js';
 import { test } from 'node:test';

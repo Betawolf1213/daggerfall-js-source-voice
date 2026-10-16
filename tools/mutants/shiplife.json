@@ -201,7 +201,7 @@
   },
   {
     "name": "SHIPLIFE-HOST-every-client-rolls",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (d > HARBOUR_STAND || !rollsHarbour(h.harbour.mouth)) continue;",
     "new": "      if (d > HARBOUR_STAND) continue;",
     "tests": [
@@ -211,7 +211,7 @@
   },
   {
     "name": "SHIPLIFE-HOST-moored-kept-far",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        if (rolled.has(h.harbour)) for (const e of [...sea.values()]) if (!e.owner && e.fromHarbour === h.key && e.ship.errand?.kind === 'moored') retire(e);   // SHIP-FADE",
     "new": "        if (false) for (const e of [...sea.values()]) if (!e.owner && e.fromHarbour === h.key && e.ship.errand?.kind === 'moored') retire(e);   // SHIP-FADE",
     "tests": [
@@ -221,7 +221,7 @@
   },
   {
     "name": "SHIPLIFE-HOST-sailed-stood-again",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (e.fromHarbour && s.errand?.kind !== 'moored') { departedOf(e.fromHarbour, where().day ?? 0).add(s.seed); e.fromHarbour = null; }",
     "new": "      if (e.fromHarbour && s.errand?.kind !== 'moored') { e.fromHarbour = null; }",
     "tests": [
@@ -231,7 +231,7 @@
   },
   {
     "name": "SHIPLIFE-HOST-no-errand-at-launch",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        if (e && !out.spawn.hunter && !out.spawn.encounter && !out.spawn.relief) e.ship.errand = errandHere(e.ship);",
     "new": "        if (false) e.ship.errand = errandHere(e.ship);",
     "tests": [
@@ -240,7 +240,7 @@
   },
   {
     "name": "SHIPLIFE-HOST-errands-far-from-port",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    return hs.length ? errandFor({",
     "new": "    return true ? errandFor({",
     "tests": [
@@ -249,7 +249,7 @@
   },
   {
     "name": "SHIPLIFE-HOST-adopted-errandless",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    e.ship.errand = e.liner ? laneErrand(errandHere(e.ship)) : errandHere(e.ship);\n    if (e.ship.errand?.kind === 'moored')",
     "new": "    if (e.ship.errand?.kind === 'moored')",
     "tests": [
@@ -268,7 +268,7 @@
   },
   {
     "name": "SHIPLIFE-HOST-way-left-behind",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      offsetErrand(e.ship.errand, o);   // SHIP-LIFE: her way and where it leads",
     "new": "      // offsetErrand(e.ship.errand, o);",
     "tests": [

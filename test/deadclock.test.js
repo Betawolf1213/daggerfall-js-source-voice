@@ -52,6 +52,6 @@ test('DEAD-CLOCK: an `until ... performed` waiting on a clock makes it a deadlin
 });
 
 test('DEAD-CLOCK by source: the journal\'s "Time remains" counts only a clock that counts', () => {
-  const b = rd('src/scenes/questBridge.js');
+  const b = rd('src/scenes/quest/questBridge.js');
   assert.match(b, /if \(r\.clockEnabled && !r\.clockFinished && Number\.isFinite\(r\.remainingTimeInSeconds\) && clockCounts\(q, r\)\) \{/);
 });

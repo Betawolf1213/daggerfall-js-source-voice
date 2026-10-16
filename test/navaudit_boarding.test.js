@@ -13,7 +13,7 @@ import { raidQuestWon, raidQuestRetreated, raidQuestOf, handsOf, HAND, GRAPPLE_S
 import { WA_RAID_QUESTS, WA_SEA_REGION, LeaveShip } from '../src/systems/warmAshesShips.js';
 import { SPARE_S } from '../src/systems/naval/navalAI.js';
 import { crownOf, classById } from '../src/systems/naval/navalShips.js';
-import { RAIDER_SHEER_M, STRUCK_GRACE_S, DECK_SPOTS, SWIMMER } from '../src/scenes/navalHost.js';
+import { RAIDER_SHEER_M, STRUCK_GRACE_S, DECK_SPOTS, SWIMMER } from '../src/scenes/naval/navalHost.js';
 import { navalHudText, drawNavalHud, destroyNavalHud } from '../src/ui/naval/navalHud.js';
 import { choiceOffer, choiceEffect, CHOICES, PAPERS_NOTORIETY, PIRATE_PAPERS_TITLE } from '../src/systems/naval/navalPlunder.js';
 import { SHIP_STATES, STRUCK_AT } from '../src/systems/naval/navalDamage.js';
@@ -415,7 +415,7 @@ test('AUDIT NAV1 (B14) NO SAVE MID-FIGHT: a boarding under way, or the player on
   for (const f of enemies) f.dead = true;
   h.run(0.2);
   assert.equal(h.host.boarding, null, 'taken');
-  const box = h.host._sea.get(e.id).boat && (await import('../src/scenes/navalHost.js')).hullBoxOf(e.boat, h.pool.models);
+  const box = h.host._sea.get(e.id).boat && (await import('../src/scenes/naval/navalHost.js')).hullBoxOf(e.boat, h.pool.models);
   h.view.feet = [box.c[0], box.c[1] + box.h[1], box.c[2]];   // on her deck
   assert.equal(h.host.saveRefused(), true, 'her deck, the prize window open over it');
   h.view.feet = [0, 0, -400];

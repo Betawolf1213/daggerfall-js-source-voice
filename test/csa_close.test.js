@@ -422,7 +422,7 @@ test('CSA-J (the audit): a new game keeps Start\'s rolled wind - DFU calls nothi
 });
 
 test('CSA-J (the audit): a SpawnBoat that throws half way leaves its half-built hull standing in the pool, as the C#\'s GameObject stays in the scene', async () => {
-  const { createComeSailAwayPool } = await import('../src/scenes/comeSailAwayPool.js');
+  const { createComeSailAwayPool } = await import('../src/scenes/comeSailAway/comeSailAwayPool.js');
   const { Boat } = await import('../src/systems/comeSailAway/comeSailAwayBoat.js');
   const { fileURLToPath } = await import('node:url');
   const fileFetch = async (url) => { const bytes = readFileSync(fileURLToPath(url)); return { ok: true, json: async () => JSON.parse(bytes.toString('utf8')), arrayBuffer: async () => bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.length) }; };

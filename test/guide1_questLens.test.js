@@ -22,7 +22,7 @@ import { fileURLToPath } from 'node:url';
 
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { resetUid, ensureUidAtLeast } from '../src/systems/quest/quest.js';
-import { createQuestBridge } from '../src/scenes/questBridge.js';
+import { createQuestBridge } from '../src/scenes/quest/questBridge.js';
 import { REGION_TEMPLES } from '../src/formats/mapsFile.js';
 import { REGION, RI, makeWorld, seededRolls } from './guideWorld.mjs';   // the crafted world, the tables loaded
 import { getSeed, setSeed, srand } from '../src/formats/dfRandom.js';
@@ -399,7 +399,7 @@ test('GUIDE1 ONE WALK, ONE HOME - the classic logbook takes GetLastPlaceMentione
   for (const host of ['src/scenes/world.js', 'src/scenes/exterior.js', 'src/scenes/worldModes.js', 'src/scenes/dungeonContext.js']) {
     assert.doesNotMatch(rd(host), /new QuestLens\b/, `${host} builds no lens of its own`);
   }
-  assert.equal((rd('src/scenes/questBridge.js').match(/new QuestLens\(/g) ?? []).length, 1);
+  assert.equal((rd('src/scenes/quest/questBridge.js').match(/new QuestLens\(/g) ?? []).length, 1);
 
   const dialogs = [];
   const m = new QuestMachine({ nowSeconds: () => 0, world: makeWorld(), addDialog: (...a) => dialogs.push(a[1]) });

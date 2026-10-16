@@ -11,8 +11,8 @@ import {
   authoredVisualHeight, generateBillboardPositions, buildDecorationPositions, trimDecorationPositions, decorationCap, populateRadius,
   placeTileDecorations, clearEdgeBlackPixels, isTransparentPadding, seafloorClearance, BUBBLE_FALLBACK_VISUAL_HEIGHT,
 } from '../src/world/underwater/underwaterDecorations.js';
-import { createUnderwaterDecorations, createDecorTextureSource, PROMOTE_BUDGET_MS, DECORATION_ARCHIVES } from '../src/scenes/deepWatersDecor.js';
-import { deepWatersDecorationSettings, createDeepWatersHost } from '../src/scenes/deepWatersHost.js';
+import { createUnderwaterDecorations, createDecorTextureSource, PROMOTE_BUDGET_MS, DECORATION_ARCHIVES } from '../src/scenes/deepWater/deepWatersDecor.js';
+import { deepWatersDecorationSettings, createDeepWatersHost } from '../src/scenes/deepWater/deepWatersHost.js';
 import { scaledSliderValue } from '../src/world/deepWater/deepWaterLook.js';
 import { DECOR_VS, DECOR_FS, FLOOR_FS, COLUMN_GLSL, DECORATION_COLOR, DECORATION_CUTOFF } from '../src/render/deepWatersRender.js';
 import { VERTEX_GRID_SIZE, TILE_WORLD_SIZE } from '../src/world/deepWater/deepWaterFloor.js';
@@ -342,7 +342,7 @@ test('DW-E2: the factory\'s three ways - the archive batch (the record\'s size, 
     assert.equal(bb.fps, 5, 'FramesPerSecond = max(1, round(5))');
     assert.equal(bb.centre[1], f32(floorY + 0.75), 'its CENTRE on the point (the animated clearance, 0.75)');
   }
-  const src = rd('src/scenes/deepWatersDecor.js');
+  const src = rd('src/scenes/deepWater/deepWatersDecor.js');
   assert.match(src, /\.billboards\.push\(\{ centre: \[p\.local\[0\], p\.local\[1\], p\.local\[2\]\], width: w, height: h, start: 0 \}\);/, 'the animated replacement: its centre on the point');
   assert.match(src, /group\(`\$\{rec\.archive\}_\$\{rec\.record\}#r`[\s\S]{0,200}centre: \[p\.local\[0\], p\.local\[1\] \+ h \* 0\.5, p\.local\[2\]\]/, 'the material batch: its base on the point');
   assert.match(src, /start: Math\.floor\(roll\(\) \* frames\)/, 'RandomStartFrame: Random.Range(0, frameCount)');

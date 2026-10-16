@@ -181,7 +181,7 @@
   },
   {
     "name": "ARENA-LADDER-spawn-elite-dropped",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "{ level: f.spec.level, elite: !!f.spec.elite,",
     "new": "{ level: f.spec.level,",
     "tests": [
@@ -301,7 +301,7 @@
   },
   {
     "name": "ARENA-LADDER-gone-a-fall",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "if (!C.ex && !boutFighter(C.b, YOU)?.out) { voidBout(C); return; } boutFell(C.b, fid, t);",
     "new": "boutFell(C.b, fid, t);",
     "tests": [
@@ -321,7 +321,7 @@
   },
   {
     "name": "ARENA-LADDER-out-striker-counted",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    if (boutFighter(C.b, from)?.out) { if (foe?.entity) foe.entity.health = Math.min(foe.entity.maxHealth ?? foe.entity.health, foe.entity.health + dmg); return; }\n",
     "new": "",
     "tests": [
@@ -331,7 +331,7 @@
   },
   {
     "name": "ARENA-LADDER-told-striker-unread",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    if (told && lawNow() - told.at <= RESOLUTION_MS && !boutFighter(C.b, told.from)?.out) return told.from;\n",
     "new": "",
     "tests": [
@@ -471,7 +471,7 @@
   },
   {
     "name": "ARENA-LADDER-client-no-flush",
-    "file": "src/scenes/arenaOnline.js",
+    "file": "src/scenes/arena/arenaOnline.js",
     "old": "    try { await claims.flush(); await claims.idle?.(); } catch { /* carried again later */ }\n",
     "new": "",
     "tests": [
@@ -481,7 +481,7 @@
   },
   {
     "name": "ARENA-LADDER-client-in-unticketed",
-    "file": "src/scenes/arenaOnline.js",
+    "file": "src/scenes/arena/arenaOnline.js",
     "old": "      else if (!bout.sent && (bout.kind !== 'pve' || bout.ticket)) {",
     "new": "      else if (!bout.sent) {",
     "tests": [
@@ -491,7 +491,7 @@
   },
   {
     "name": "ARENA-LADDER-client-fail-silent",
-    "file": "src/scenes/arenaOnline.js",
+    "file": "src/scenes/arena/arenaOnline.js",
     "old": "    say(r && !r.ok && (r.error === 'order' || r.error === 'ladder-needs-account') ? accountRefusalText(r.error) : O.ticketFail);\n    endBout();",
     "new": "    endBout();",
     "tests": [
@@ -521,7 +521,7 @@
   },
   {
     "name": "ARENA-LADDER-ceiling-unnamed",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "radius: cur.ring ?? RING_R, ...(kitBout(cur) ? { ceilAbove: SAND_CEILING_M } : {}) });",
     "new": "radius: cur.ring ?? RING_R });",
     "tests": [
@@ -641,7 +641,7 @@
   },
   {
     "name": "ARENA-LADDER-2-client-guest-asked",
-    "file": "src/scenes/arenaOnline.js",
+    "file": "src/scenes/arena/arenaOnline.js",
     "old": "    if (deps.guest?.()) return { ok: false, text: O.guestLadder };",
     "new": "",
     "tests": [
@@ -651,7 +651,7 @@
   },
   {
     "name": "ARENA-LADDER-2-ticket-before-floor",
-    "file": "src/scenes/arenaOnline.js",
+    "file": "src/scenes/arena/arenaOnline.js",
     "old": "    void Promise.resolve(go).then((ok) => { if (ok && bout === b) return askTicket(b); return null; });",
     "new": "    void Promise.resolve(go); void askTicket(b);",
     "tests": [
@@ -661,7 +661,7 @@
   },
   {
     "name": "ARENA-LADDER-2-room-unsent",
-    "file": "src/scenes/arenaOnline.js",
+    "file": "src/scenes/arena/arenaOnline.js",
     "old": "deps.account.attempt?.(b.tier, b.bout, b.o)",
     "new": "deps.account.attempt?.(b.tier, b.bout)",
     "tests": [
@@ -671,7 +671,7 @@
   },
   {
     "name": "ARENA-LADDER-2-board-unasked",
-    "file": "src/scenes/arenaOnline.js",
+    "file": "src/scenes/arena/arenaOnline.js",
     "old": "    if (r && !r.ok && r.error === 'order') askBoard(true);\n",
     "new": "",
     "tests": [
@@ -681,7 +681,7 @@
   },
   {
     "name": "ARENA-LADDER-2-kept-unread",
-    "file": "src/scenes/arenaOnline.js",
+    "file": "src/scenes/arena/arenaOnline.js",
     "old": "    if (claims.ladderKept?.()) { say(O.stillRecording); endBout(); return; }\n",
     "new": "",
     "tests": [
@@ -701,7 +701,7 @@
   },
   {
     "name": "ARENA-LADDER-2-immunity-unset",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "foe.entity.items = []; foe.entity.pacifyImmune = true; }",
     "new": "foe.entity.items = []; }",
     "tests": [
@@ -801,7 +801,7 @@
   },
   {
     "name": "ARENA-LADDER-2-clock-unread",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    return Number.isFinite(w.at) ? Math.max(t, Math.min(t + wind, w.at - (C.clock.off ?? 0))) : t + wind;",
     "new": "    return t + wind;",
     "tests": [
@@ -811,7 +811,7 @@
   },
   {
     "name": "ARENA-LADDER-2-swing-at-word",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "if (foe?._pup) { if (!w.s) foe._pup.strike = 'melee';",
     "new": "if (foe?._pup) { foe._pup.strike = 'melee';",
     "tests": [
@@ -821,7 +821,7 @@
   },
   {
     "name": "ARENA-LADDER-2-elite-unsent",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "elite: C.relay.kind === 'pve' && !!C.relay.next?.champion,",
     "new": "elite: false,",
     "tests": [
@@ -841,7 +841,7 @@
   },
   {
     "name": "ARENA-LADDER-2-void-after-out",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "if (!C.ex && !boutFighter(C.b, YOU)?.out) { voidBout",
     "new": "if (!C.ex) { voidBout",
     "tests": [

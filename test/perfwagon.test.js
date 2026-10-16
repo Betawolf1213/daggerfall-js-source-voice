@@ -14,7 +14,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { sphereAabb } from '../src/render/frustum.js';
 import { boundsOf } from '../src/render/bounds.js';
-import { drawSeen, castOnly, DECOR_DRAW, DECOR_SHADOW, DECOR_SKIP } from '../src/scenes/decorRoom.js';
+import { drawSeen, castOnly, DECOR_DRAW, DECOR_SHADOW, DECOR_SKIP } from '../src/scenes/decor/decorRoom.js';
 import { createHorseCartPool, peerTeamBox } from '../src/scenes/horseCartPool.js';
 import { createRoadTeams, ROAD_WAGON_KIND } from '../src/world/road/roadTeams.js';
 import { makeWorld } from './hccWorld.mjs';
@@ -108,7 +108,7 @@ test('PERF-WAGON the road\'s teams (LW10): each wagon asked PERF-TEAMS\' verdict
   assert.equal(g.teams.draw(g.r, null, () => { gAsked++; return DECOR_SKIP; }), 1);
   assert.equal(gAsked, 0, 'a grown wagon is not PERF-TEAMS\' box');
   // the roads' layer hands the host's test on to the teams
-  assert.ok(rd('src/scenes/livingRoads.js').includes('    drawTeams: (r, cull = null) => deps.teams?.draw(r, null, cull) ?? 0,'), 'the roads\' layer passes the test to its teams');
+  assert.ok(rd('src/scenes/livingWorld/livingRoads.js').includes('    drawTeams: (r, cull = null) => deps.teams?.draw(r, null, cull) ?? 0,'), 'the roads\' layer passes the test to its teams');
 });
 
 /** The fake flat world's runtime, drawn by a real pool of Mac's `kind` on the measuring renderer. */

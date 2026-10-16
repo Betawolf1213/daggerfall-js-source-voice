@@ -113,7 +113,7 @@
   },
   {
     "name": "PERF-COL2-q-the-walls-unmarked",
-    "file": "src/scenes/deepWatersHost.js",
+    "file": "src/scenes/deepWater/deepWatersHost.js",
     "old": "floatingFrame ? onFloatingFrame(floatingFrame(), t) : t);",
     "new": "t);",
     "tests": ["test/perfcol2.test.js"]

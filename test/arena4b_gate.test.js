@@ -1,5 +1,5 @@
 // ARENA4b (2026-10-03): THE GATE AND THE CLIMB ONLINE, DRIVEN - the account is the law while the arena online is live:
-// the recruiters read and write the ACCOUNT's banner (scenes/arenaGate.js recruiterChoiceOnline / recruiter, scenes/
+// the recruiters read and write the ACCOUNT's banner (scenes/arena/arenaGate.js recruiterChoiceOnline / recruiter, scenes/
 // arenaOnline.js team - the service's own words when it refuses, the save's league untouched), the Herald's choice reads
 // the account's climb and banner (arenaGate.heraldChoice, both hosts' Herald), Fight waits for the account's climb and a
 // ladder purse is paid only for the bout the account was owed (arenaOnline.fightLadder / climb / owe, the claims'
@@ -8,9 +8,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createArenaGate, recruiterChoiceOnline } from '../src/scenes/arenaGate.js';
-import { createArenaOnline, CLIMB_WAIT_MS } from '../src/scenes/arenaOnline.js';
-import { createArenaBouts } from '../src/scenes/arenaBouts.js';
+import { createArenaGate, recruiterChoiceOnline } from '../src/scenes/arena/arenaGate.js';
+import { createArenaOnline, CLIMB_WAIT_MS } from '../src/scenes/arena/arenaOnline.js';
+import { createArenaBouts } from '../src/scenes/arena/arenaBouts.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { arenaLadderOf, ARENA_FLOOR_CENTRE } from '../src/net/arena/arenaLaw.js';
 import { mintArenaReceipt } from '../src/net/arena/arenaReceipt.js';

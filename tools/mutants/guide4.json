@@ -226,7 +226,7 @@
   },
   {
     "name": "GUIDE4-off-keeps-the-follow",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "    if (!follow && (questTracker.views.length || questTracker.follow != null)) questTracker.forget();\n",
     "new": "",
     "tests": [
@@ -335,7 +335,7 @@
   },
   {
     "name": "GUIDE4-tracker-not-fed",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "    if (follow) questTracker.hear(seen);\n",
     "new": "",
     "tests": [
@@ -344,7 +344,7 @@
   },
   {
     "name": "GUIDE4-baseline-withheld",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "      if (follow) questTracker.hear(seen);",
     "new": "      if (follow && seen.events.length) questTracker.hear(seen);",
     "tests": [
@@ -353,7 +353,7 @@
   },
   {
     "name": "GUIDE4-questions-not-asked",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "      const seen = lens.look(ctx.questWhere ?? {});",
     "new": "      const seen = lens.look({});",
     "tests": [
@@ -362,7 +362,7 @@
   },
   {
     "name": "GUIDE4-load-keeps-the-follow-bridge",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "      questTracker.forget();   // GUIDE4: ...nor what the last game's card followed (the tracked quest is the save's own record)\n",
     "new": "",
     "tests": [

@@ -16,7 +16,7 @@ import {
   distanceFogUniforms, distanceFogAt, distanceFogRayLength, horizonAmbientColor, underwaterFogColor,
 } from '../src/world/deepWater/deepWaterLook.js';
 import { perspective, lookAt, mirrorProjectionX, multiply } from '../src/world/mat4.js';
-import { createDeepWatersPlayer } from '../src/scenes/deepWatersPlayer.js';
+import { createDeepWatersPlayer } from '../src/scenes/deepWater/deepWatersPlayer.js';
 import { Renderer } from '../src/render/renderer.js';
 
 const clamp01 = (v) => Math.min(1, Math.max(0, v));

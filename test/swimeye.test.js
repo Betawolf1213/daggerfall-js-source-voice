@@ -33,6 +33,6 @@ test('SWIM-EYE CLEAR OF THE GROUND THROUGH THE BOUNCE: the real bobber swimming 
   assert.ok(near > 0 && fov > 0, 'the lens read');
   const reach = Math.hypot(near, near * Math.tan(fov / 2));   // the near plane's lowest point under the eye, over every pitch (no roll)
   assert.ok(eyeLow - reach > 0.05, `the near plane over the ground at the dip's foot: ${(eyeLow - reach).toFixed(3)} m`);
-  const band = Number(/f\.camera\[1\] <= oceanY \+ ([\d.]+)\) return \{ under: true/.exec(read('src/scenes/deepWatersPlayer.js'))?.[1]);
+  const band = Number(/f\.camera\[1\] <= oceanY \+ ([\d.]+)\) return \{ under: true/.exec(read('src/scenes/deepWater/deepWatersPlayer.js'))?.[1]);
   assert.ok(band > 0 && eyeLow > band, `over Deep Waters' underwater band (${band}): ${eyeLow.toFixed(3)}`);
 });

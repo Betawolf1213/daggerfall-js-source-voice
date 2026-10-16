@@ -210,7 +210,7 @@
   },
   {
     "name": "DECOR2a-the-record-shared",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "for (const [id, item] of own) out[id] = { ...item };",
     "new": "for (const [id, item] of own) out[id] = item;",
     "tests": [
@@ -219,7 +219,7 @@
   },
   {
     "name": "DECOR2a-taken-twice",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "    const item = own.get(id) ?? null;\n    own.delete(id);",
     "new": "    const item = own.get(id) ?? null;",
     "tests": [
@@ -228,7 +228,7 @@
   },
   {
     "name": "DECOR2a-the-teardown-keeps-them",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "  function destroyAll() { set([]); held = new Map(); own = new Map(); kept = []; }",
     "new": "  function destroyAll() { set([]); held = new Map(); kept = []; }",
     "tests": [
@@ -237,7 +237,7 @@
   },
   {
     "name": "DECOR2a-a-bad-record-kept",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "if (item && typeof item === 'object') own.set(id, { ...item });",
     "new": "own.set(id, item);",
     "tests": [
@@ -354,7 +354,7 @@
   },
   {
     "name": "DECOR2a-gold-asked-for-ones-own",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    const free = entry.kind === 'own';",
     "new": "    const free = false;",
     "tests": [
@@ -363,7 +363,7 @@
   },
   {
     "name": "DECOR2a-the-item-left-in-the-pack",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      const moved = deps.packTake?.(item);\n      if (!moved) { await undo(); return false; }",
     "new": "      const moved = item;\n      if (!moved) { await undo(); return false; }",
     "tests": [
@@ -372,7 +372,7 @@
   },
   {
     "name": "DECOR2a-the-record-unkept",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      pool.keepOwn(stood.id, moved);",
     "new": "      void moved;",
     "tests": [
@@ -381,7 +381,7 @@
   },
   {
     "name": "DECOR2a-the-thing-not-given-back",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    if (item) deps.packGive?.(item);",
     "new": "    void item;",
     "tests": [
@@ -390,7 +390,7 @@
   },
   {
     "name": "DECOR2a-a-resize-charged",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "  if (was?.item) return { pay: 0, refund: 0, paid: 0 };\n",
     "new": "",
     "tests": [
@@ -399,7 +399,7 @@
   },
   {
     "name": "DECOR2a-the-bar-not-free",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": ": p.free ? 'free' : null,",
     "new": ": null,",
     "tests": [
@@ -408,7 +408,7 @@
   },
   {
     "name": "DECOR2a-its-going-unsaid",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    if (p.free && !deps.packHas?.(p.entry.own)) return p.entry.furnishing ? 'It is no longer among your things.' : 'It is no longer in your pack.';   // DECOR2a (DECOR2b: furniture)\n",
     "new": "",
     "tests": [
@@ -417,7 +417,7 @@
   },
   {
     "name": "DECOR2a-the-undo-skipped",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "if (deps.visit?.() !== visit || !deps.packHas?.(item)) { await undo(); return false; }",
     "new": "if (deps.visit?.() !== visit || !deps.packHas?.(item)) { return false; }",
     "tests": [
@@ -426,7 +426,7 @@
   },
   {
     "name": "DECOR2a-a-refusal-taking-it",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "?? 'It could not be set down.', at: now() }; return false; }",
     "new": "?? 'It could not be set down.', at: now() }; }",
     "tests": [
@@ -435,7 +435,7 @@
   },
   {
     "name": "DECOR2a-a-refused-taking-down-given-back",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "?? 'It could not be taken down.'); return false; }",
     "new": "?? 'It could not be taken down.'); }",
     "tests": [
@@ -444,7 +444,7 @@
   },
   {
     "name": "DECOR2a-a-name-unkept",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "return (kept ? itemLongName(kept) : null) || decorItemName(piece.item) || DECOR_KINDS.decor;",
     "new": "return decorItemName(piece.item) || DECOR_KINDS.decor;",
     "tests": [
@@ -525,7 +525,7 @@
   },
   {
     "name": "DECOR2a-rows-keyed-by-place",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "if (c.entry) out.push({ ...c.entry, key: `own:${c.id}`, count: n });",
     "new": "if (c.entry) out.push({ ...c.entry, key: `own:${i}`, count: n });",
     "tests": [

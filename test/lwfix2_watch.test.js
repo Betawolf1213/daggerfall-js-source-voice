@@ -13,7 +13,7 @@ import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
 import { DAY_MIN } from '../src/systems/livingWorld/dayPlan.js';
 import { createRelations, EVENTS } from '../src/systems/livingWorld/relations.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
-import { watchStep, WATCH_WAIT } from '../src/scenes/livingWatch.js';
+import { watchStep, WATCH_WAIT } from '../src/scenes/livingWorld/livingWatch.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const TOWN = Object.freeze({ mapId: 12345, blocks: 9, region: 17, people: 3, port: false });

@@ -496,7 +496,7 @@
   },
   {
     "name": "HOST-site-reach",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (Math.max(Math.abs(site.px - w.px), Math.abs(site.py - w.py)) > SITE_REACH_PX) continue;",
     "new": "      if (Math.max(Math.abs(site.px - w.px), Math.abs(site.py - w.py)) > SITE_REACH_PX + 1) continue;",
     "tests": [
@@ -505,7 +505,7 @@
   },
   {
     "name": "HOST-quarry-restood",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        if (was === 'ended' || (was && sea.has(was))) continue;",
     "new": "        if (was === 'ended') continue;",
     "tests": [
@@ -514,7 +514,7 @@
   },
   {
     "name": "HOST-quarry-unmarked",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    e.bounty = site.id; e.plain = true; e.ship.temper = TEMPERS.bold;",
     "new": "    e.plain = true; e.ship.temper = TEMPERS.bold;",
     "tests": [
@@ -523,7 +523,7 @@
   },
   {
     "name": "HOST-quarry-wary",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    e.bounty = site.id; e.plain = true; e.ship.temper = TEMPERS.bold;",
     "new": "    e.bounty = site.id; e.plain = true;",
     "tests": [
@@ -532,7 +532,7 @@
   },
   {
     "name": "HOST-casks-short",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "pos: wet ? [x, deps.seaY(), z] : [c[0], deps.seaY(), c[2]], lot: SITE_LOT + site.id, from: 'merchantGalleon', life: SITE_CASK_LIFE });",
     "new": "pos: wet ? [x, deps.seaY(), z] : [c[0], deps.seaY(), c[2]], lot: SITE_LOT + site.id, from: 'merchantGalleon' });",
     "tests": [
@@ -541,7 +541,7 @@
   },
   {
     "name": "HOST-haul-unsaid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      deps.captain?.event?.({ type: 'haul', site: e.lot.slice(SITE_LOT.length) });\n",
     "new": "",
     "tests": [
@@ -550,7 +550,7 @@
   },
   {
     "name": "HOST-end-unsaid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (act === 'sink' || act === 'board') cap.event?.({ type: 'end', act, faction: s.cls.faction, crown, bounty: entry.bounty ?? null });",
     "new": "    if (act === 'sink') cap.event?.({ type: 'end', act, faction: s.cls.faction, crown, bounty: null });",
     "tests": [
@@ -559,7 +559,7 @@
   },
   {
     "name": "HOST-berth-unsaid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (boat && w.port && yardHere(boat)) deps.captain?.event?.({ type: 'berth', port: w.port.key, boat: boat.uid ?? null });",
     "new": "    if (false) deps.captain?.event?.({ type: 'berth', port: w.port.key, boat: boat.uid ?? null });",
     "tests": [

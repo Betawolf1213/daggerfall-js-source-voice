@@ -229,7 +229,7 @@
   },
   {
     "name": "FLEET-hull-refit-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    return Number.isFinite(k) && k > 1 ? { ...b, hullHp: Math.round(b.hullHp * k), sailHp: Math.round(b.sailHp * k) } : b;",
     "new": "    return b;",
     "tests": [
@@ -238,7 +238,7 @@
   },
   {
     "name": "FLEET-guns-refit-on-barrels",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (byMe && e.type !== 'blast') gunsRefit(hurt, e.shooter);",
     "new": "    if (byMe) gunsRefit(hurt, e.shooter);",
     "tests": [
@@ -247,7 +247,7 @@
   },
   {
     "name": "FLEET-away-no-free-mending",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    d.repair({ hull: free.hull, sail: free.sail, crew: 0 }, { refloat: FIELD_REFLOAT });",
     "new": "    void free;",
     "tests": [
@@ -256,7 +256,7 @@
   },
   {
     "name": "FLEET-away-unpaid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const r = seaRepair(d, 1e9, { crewed: true, crewShare: 1, budget: st.credit + stores * STORE_POINTS });",
     "new": "    const r = seaRepair(d, 1e9, { crewed: true, crewShare: 1, budget: Infinity });",
     "tests": [
@@ -265,7 +265,7 @@
   },
   {
     "name": "FLEET-refit-heals-her",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    pendingBoats.set(boat.uid, { ...savedRecord(st.damage, st.hull, 0), barrels: st.guns.barrels, mates: st.crew.snapshot() });",
     "new": "    void savedRecord;",
     "tests": [
@@ -274,7 +274,7 @@
   },
   {
     "name": "FLEET-berth-taken-by-mine",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        if (!berthFree(h.key, i) || myBoats().some(",
     "new": "        if (!berthFree(h.key, i) || [].some(",
     "tests": [
@@ -400,7 +400,7 @@
   },
   {
     "name": "CR-mate-the-first-aboard",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    return (aboard.find((h) => h.role === FIRST_MATE) ?? aboard[0])?.name ?? null;",
     "new": "    return aboard[0]?.name ?? null;",
     "tests": [
@@ -409,7 +409,7 @@
   },
   {
     "name": "CR-roles-unsent",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      const roles = boat.crewed ? st.crew.hands.map((h) => h.role) : null;",
     "new": "      const roles = null;",
     "tests": [

@@ -5,10 +5,10 @@
 //
 //   THE BAKE          tools/bakeGate.mjs over tools/shipBake.mjs: the one object of Mac's scene, re-made to the byte,
 //                     through the port's handedness mirror
-//   THE SOLIDS        world/gate/gateModel.js gateSolids / insideGateStone, scenes/gatePool.js inGateRoot - a body sealed in
+//   THE SOLIDS        world/gate/gateModel.js gateSolids / insideGateStone, scenes/gate/gatePool.js inGateRoot - a body sealed in
 //                     the stone as it stands whole
-//   THE RISE          scenes/gatePool.js gatePlacement - sunk whole before it rises, on a slope too
-//   THE COURT'S FIRE  world/gate/gateArena.js wayInStep / portalFade, scenes/gateCourt.js the way in (my arrival, another's
+//   THE RISE          scenes/gate/gatePool.js gatePlacement - sunk whole before it rises, on a slope too
+//   THE COURT'S FIRE  world/gate/gateArena.js wayInStep / portalFade, scenes/gate/gateCourt.js the way in (my arrival, another's
 //                     step out of it), the way home, the court gone silent, render/gatePass.js fireOnly and its foot
 // The stone itself, its art and its opening: test/wb2_gate.test.js.
 import { test } from 'node:test';
@@ -20,12 +20,12 @@ import { bakeGate, assertAlone, toGate, SOURCE_FBX, OUT, OBJECT, FRAME } from '.
 import { bakeJson, sceneObjects } from '../tools/shipBake.mjs';
 import { readFbx } from '../tools/fbxRead.mjs';
 import { buildGateModel, gateSolids, gateSpines, insideGateStone, GATE_HEIGHT, GATE_HALF_W, GATE_FOOT_SINK, ARCH_Y0, ARCH_Y1 } from '../src/world/gate/gateModel.js';
-import { inGateRoot, gatePlacement, SEALED_AT, RISE_SLACK_M } from '../src/scenes/gatePool.js';
+import { inGateRoot, gatePlacement, SEALED_AT, RISE_SLACK_M } from '../src/scenes/gate/gatePool.js';
 import {
   courtToDungeon, wayInStep, portalFade, PORTAL_AFTER_MS, PORTAL_RISE_MS, PORTAL_CLOSE_MS, PORTAL_DROP, WAY_IN_Z, WAY_IN_HOLD_MS,
   WAY_IN_OPEN_MS, WAY_IN_NEAR_M, ARRIVE_Z, COURT_SILENT_MS, COURT_FRAME_GAP_MS, COURT_TEXT,
 } from '../src/world/gate/gateArena.js';
-import { createGateCourt } from '../src/scenes/gateCourt.js';
+import { createGateCourt } from '../src/scenes/gate/gateCourt.js';
 import { GatePassRenderer, membraneVertices, MEMBRANE_FS, FIRE_FOOT_Y } from '../src/render/gatePass.js';
 import { gateArt, GATE_ARCHIVE } from '../src/world/gate/gateArt.js';
 import { CAPSULE_RADIUS } from '../src/player/motor.js';
@@ -374,7 +374,7 @@ test('AUDIT GATE-FBX E5 the fire\'s foot: down between the feet\'s sunk soles (G
 
 test('AUDIT GATE-FBX G4 the stone\'s glow is its own colour: every upload of a gate\'s or its court\'s emission (the street\'s gate, the court\'s, the rite\'s, the broker\'s) hands it WHITE - never tinted by the window light of the night or the dungeon arm\'s day (AUDIT SD II L2 F3\'s law) (mutants: the street gate\'s emission tinted)', () => {
   const sites = [];
-  for (const f of ['src/scenes/gatePool.js', 'src/scenes/worldModes.js', 'src/scenes/riteHost.js', 'src/scenes/sigilBrokerPool.js']) {
+  for (const f of ['src/scenes/gate/gatePool.js', 'src/scenes/worldModes.js', 'src/scenes/riteHost.js', 'src/scenes/sigilBrokerPool.js']) {
     for (const m of read(f).matchAll(/uploadEmissionTexture\?\.\((GATE_ARCHIVE|COURT_ARCHIVE), rec, art\.emission(, \{ white: true \})?\)/g)) sites.push([f, m[1], !!m[2]]);
   }
   assert.equal(sites.length, 5, 'the five uploads');

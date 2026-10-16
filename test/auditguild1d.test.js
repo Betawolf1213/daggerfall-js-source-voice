@@ -264,7 +264,7 @@ test('AUDIT GUILD1d A1-A9: members rest (the online bed its own permanence), use
   const v0 = homes.version();
   homes.bump();
   assert.equal(homes.version(), v0 + 1);
-  const dt = src('src/scenes/decorTool.js');
+  const dt = src('src/scenes/decor/decorTool.js');
   assert.match(dt, /back = r\.hall \? 0 : decorRefund\(paid\);/, 'A4 the removal');
   assert.match(dt, /if \(price\.refund > 0 && !r\.hall\) deps\.wallet\(\)\.credit\?\.\(price\.refund\);/, 'A4 the shrink');
   assert.match(dt, /hall: !!r\?\.hall,/);

@@ -11,7 +11,7 @@
   },
   {
     "name": "HARBOUR-BOOK-host-sounds-the-worlds",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (ownBook) harbours.step(clock);",
     "new": "    harbours.step(clock);",
     "tests": [
@@ -20,7 +20,7 @@
   },
   {
     "name": "HARBOUR-BOOK-host-moves-the-worlds",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (ownBook) harbours.offsetAll(o);",
     "new": "    harbours.offsetAll(o);",
     "tests": [
@@ -29,7 +29,7 @@
   },
   {
     "name": "HARBOUR-BOOK-host-empties-the-worlds",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (ownBook) harbours.clear();",
     "new": "    harbours.clear();",
     "tests": [
@@ -38,7 +38,7 @@
   },
   {
     "name": "HARBOUR-BOOK-roll-kept-past-the-clear",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    rolled = new WeakSet(); grids = new Map();",
     "new": "    grids = new Map();",
     "tests": [
@@ -47,7 +47,7 @@
   },
   {
     "name": "HARBOUR-BOOK-own-book-never-stepped",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const ownBook = !deps.harbourBook;",
     "new": "const ownBook = false;",
     "tests": [

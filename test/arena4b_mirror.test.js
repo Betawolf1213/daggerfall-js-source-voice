@@ -1,16 +1,16 @@
 // ARENA4b (2026-10-03, bible/11-Multiplayer/Arena.md 2: "Exhibition - online: yes - the relay runs it, every client sees
 // one bout"): THE RELAY'S EXHIBITION ON THE CLIENT, DRIVEN - the bout driver standing the relay's bout as the hour's on
-// the city's sand (scenes/arenaBouts.js startExhibitionRelay / exhibitionWord: the relay's frame on the city's, the
+// the city's sand (scenes/arena/arenaBouts.js startExhibitionRelay / exhibitionWord: the relay's frame on the city's, the
 // exterior's own bodies walked by their motor, the swing off the attack's count, the Red against the Blue, the call, the
-// purse's bark, the verdict to the bookmaker, the HUD by the distance), the host's glue (scenes/arenaOnline.js: the
+// purse's bark, the verdict to the bookmaker, the HUD by the distance), the host's glue (scenes/arena/arenaOnline.js: the
 // city's spectator socket, the Herald's Watch and the window's list into the room, the verdict heard or asked), the
-// bookmaker settling by the relay's verdict (scenes/arenaGate.js settle), and the hosts' wiring (by source).
+// bookmaker settling by the relay's verdict (scenes/arena/arenaGate.js settle), and the hosts' wiring (by source).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createArenaBouts, CITY_SNAP_M, CROWD_STAYS_MS, LEAVE_AFTER_MS } from '../src/scenes/arenaBouts.js';
-import { createArenaOnline } from '../src/scenes/arenaOnline.js';
-import { createArenaGate } from '../src/scenes/arenaGate.js';
+import { createArenaBouts, CITY_SNAP_M, CROWD_STAYS_MS, LEAVE_AFTER_MS } from '../src/scenes/arena/arenaBouts.js';
+import { createArenaOnline } from '../src/scenes/arena/arenaOnline.js';
+import { createArenaGate } from '../src/scenes/arena/arenaGate.js';
 import { exhibitionFor, exhibitionBoutId, EXHIBITION_KEPT_HOURS } from '../src/net/arena/arenaExhibition.js';
 import { ARENA_FLOOR_CENTRE, arenaExhibitionRoom } from '../src/net/arena/arenaLaw.js';
 import { verdictOfWord } from '../src/net/arena/arenaLink.js';

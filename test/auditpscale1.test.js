@@ -23,7 +23,7 @@ import { ARTIFACTS, SPECIAL_ARTIFACT_HANDLERS, onPlayerStruckByEnemy, registerFo
 import { ENCHANTMENT_TYPES as T } from '../src/formats/magicDef.js';
 import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
 import { killIfAnyLiveStatZero } from '../src/systems/statMods.js';
-import { isPrivateQuestFoe } from '../src/scenes/questFoeHost.js';   // CURSE-SYNC: the handover's word for a quest's foe
+import { isPrivateQuestFoe } from '../src/scenes/quest/questFoeHost.js';   // CURSE-SYNC: the handover's word for a quest's foe
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const strip = (s) => s.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/\/\/[^\n]*/g, ' ');

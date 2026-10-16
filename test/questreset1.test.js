@@ -13,9 +13,9 @@ import { fileURLToPath } from 'node:url';
 
 import { loadQuestTables } from '../src/systems/quest/tables.js';
 import { QuestMachine } from '../src/systems/quest/machine.js';
-import { restartRefusalText, shelfRefusalText } from '../src/scenes/questBridge.js';
+import { restartRefusalText, shelfRefusalText } from '../src/scenes/quest/questBridge.js';
 import { mountEnhancedChronicle } from '../src/ui/enhanced/enhancedChronicle.js';
-import { partyQuestFoe, countsByName } from '../src/scenes/questFoeHost.js';
+import { partyQuestFoe, countsByName } from '../src/scenes/quest/questFoeHost.js';
 import { mapPixelToWorldCoord, mapPixelToLongitudeLatitude } from '../src/formats/mapsFile.js';
 
 const VENDOR = join(dirname(fileURLToPath(import.meta.url)), '..', 'vendor', 'dfu-quests');
@@ -144,7 +144,7 @@ test('QUEST-RESET the bridge\'s words: every refusal says why in its own words; 
     assert.notEqual(restartRefusalText(reason), restartRefusalText('nope'), reason);
   }
   assert.equal(restartRefusalText('raid'), shelfRefusalText('raid'), 'a raid refuses both the same way');
-  const bridge = src('src/scenes/questBridge.js');
+  const bridge = src('src/scenes/quest/questBridge.js');
   assert.match(bridge, /restart\(id\) \{\n\s+const r = machine\.restartQuest\(Number\(id\), \{ refuse: refuseRaid \}\);/);
   assert.match(bridge, /canRestart: \(id\) => machine\.restartRefusal\(Number\(id\), \{ refuse: refuseRaid \}\) === null,/);
   const menu = src('src/ui/enhanced/enhancedMenu.js');

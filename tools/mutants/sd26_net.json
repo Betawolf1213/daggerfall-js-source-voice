@@ -82,7 +82,7 @@
   },
   {
     "name": "SD26-5-driver-owes-nothing",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "      owedBlows(s, t, t0);   // AUDIT SD IV (5)",
     "new": "      void owedBlows;   // AUDIT SD IV (5)",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "SD26-5-never-paid",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "      if (marks.get(o.atk.i)?.done) link.paid(o.atk.i);\n",
     "new": "",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "SD26-5-struck-dead",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "      if (!(e.health > 0)) return;\n      if (t < o.atk.at) continue;",
     "new": "      if (t < o.atk.at) continue;",
     "tests": [

@@ -4,7 +4,7 @@
 // every one inside a building on the ground floor's spots), and their evening's tavern was the nearer of the two
 // nearest home, theirs or the next. Now they breakfast in the common room after waking and sup there in the evening, and
 // go up to their room before bed (dayPlan.js isLodger, LODGE_BREAKFAST_MIN, LODGE_UP_MIN); the tavern's beds are dealt to
-// its lodgers (livingTown.js lodgersAt, scenes/livingIndoors.js bedsOf), never the bed of the room the player rents, and
+// its lodgers (livingTown.js lodgersAt, scenes/livingWorld/livingIndoors.js bedsOf), never the bed of the room the player rents, and
 // one up in their room is seen by it (bedStand). The town is the synthetic one (test/lwTown.mjs); the room a mock
 // collider.
 import test from 'node:test';
@@ -15,7 +15,7 @@ import { townPlaces } from '../src/systems/livingWorld/places.js';
 import { townCensus } from '../src/systems/livingWorld/census.js';
 import { dayPlan, isLodger, favourites, LODGE_BREAKFAST_MIN, LODGE_UP_MIN, DAY_MIN } from '../src/systems/livingWorld/dayPlan.js';
 import { LivingTown } from '../src/systems/livingWorld/livingTown.js';
-import { createLivingIndoors, bedStand, bedsOf, BED_STEP_M, BED_FAN, INDOOR_TICK_S } from '../src/scenes/livingIndoors.js';
+import { createLivingIndoors, bedStand, bedsOf, BED_STEP_M, BED_FAN, INDOOR_TICK_S } from '../src/scenes/livingWorld/livingIndoors.js';
 import { BUILDING_TYPES as B } from '../src/world/buildingNames.js';
 import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';

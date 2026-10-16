@@ -3,7 +3,7 @@
 // THE LAST MOMENT'S FIGHT - the realm's words (net/wire.js validSdOut's fight kinds) folded into one state, as
 // net/gate/gateLink.js folds a gate's: the Remnant's health and phase, where each body stands and walks (the Remnant, and in
 // the Dragon Break the GOLD and SILVER Echoes), the blow each has in flight and the Hour's own, the Reset's Hearts, the
-// stun, the fall and the loss. The arena's set draws from it (scenes/sdRemnant.js), the bar reads it (ui/superDungeon/sdRemnantBar.js).
+// stun, the fall and the loss. The arena's set draws from it (scenes/superDungeon/sdRemnant.js), the bar reads it (ui/superDungeon/sdRemnantBar.js).
 //
 // PURE in its fold (`foldSdFight`): a state and a word in, the next state out. The link around it keeps the state, says
 // the fight's turns in words once each, and keeps MY PLACE IN IT: the realm counts me in only when it answers my `in`
@@ -46,7 +46,7 @@ export const SD_IN_RETRY_MS = 2000;
 export const SD_FIGHT_HEARD_MS = 3 * STATE_SEND_MS;
 
 /** AUDIT SD II (L6 F7, SD11d): the Reset's Hearts' thread - its call and each Heart broken say it anew (the page's voice,
- *  scenes/sdVoice.js `key`): the newer count takes the older's place, never queued behind it. */
+ *  scenes/superDungeon/sdVoice.js `key`): the newer count takes the older's place, never queued behind it. */
 export const SD_HEARTS_KEY = 'hearts';
 /** The realm's refusals (net/wire.js SD_NO_WORDS) as the player reads them; and the fight's turns, said once each. */
 export const SD_FIGHT_TEXT = Object.freeze({
@@ -205,7 +205,7 @@ export function createSdFightLink({ now, say = () => {}, onRefused = () => {} })
    *  to the next `st` past its clear, a Reset's to the Remnant's next blow or walk - and a hidden tab draws no frame to
    *  judge it in that time: a few seconds of Ctrl+Tab across a landing escaped 75% or 70% of everyone's health, no save
    *  (SD20a F3 open again). Each one heard while the realm counts me is kept by its number until the page judges it
-   *  (scenes/sdRemnantBlows.js, `paid`), save what the law took out of flight before it landed: a Reset broken by its
+   *  (scenes/superDungeon/sdRemnantBlows.js, `paid`), save what the law took out of flight before it landed: a Reset broken by its
    *  stun or called off by the End's word, a blow landing past the fall or the loss, the last fight's.
    *  @type {Array<{b: number, atk: any}>} */
   let owed = [];
@@ -251,7 +251,7 @@ export function createSdFightLink({ now, say = () => {}, onRefused = () => {} })
     now: () => now(),
     /** Whether the realm has counted me in the fight it is fighting - a blow of mine may go out. */
     joined: () => state.fi > 0 && mine === state.fi && !state.lost && !state.fell && !sdHourOver(state, now()),   // AUDIT SD II (L4 F3): its End by the clock
-    /** SD9e: whether the realm counted me in the fight it holds - fallen or not (its spoils' word, scenes/sdSpoils.js). */
+    /** SD9e: whether the realm counted me in the fight it holds - fallen or not (its spoils' word, scenes/superDungeon/sdSpoils.js). */
     counted: () => state.fi > 0 && mine === state.fi,
     /**
      * Whether my `in` is due at `t`, standing alive in the arena: not counted in a fight still to fight (none heard, a

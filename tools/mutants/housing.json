@@ -102,7 +102,7 @@
   },
   {
     "name": "HOME-DOORS-the-hand-off",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "        if (decorIsDoor(piece) && doors && m.cpu?.positions && m.cpu?.indices) {",
     "new": "        if (false) {",
     "tests": [
@@ -120,7 +120,7 @@
   },
   {
     "name": "HOME-DOORS-the-taken-doorway-offered",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    return decorDoorwaysFree(list, [...(deps.doorsHere?.() ?? []), ...placed]);",
     "new": "    return decorDoorwaysFree(list, [...placed]);",
     "tests": [
@@ -129,7 +129,7 @@
   },
   {
     "name": "HOME-DOORS-the-fit-skipped",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    const fit = aimed && m ? decorDoorFit(aimed, m.box, p.flip) : null;",
     "new": "    const fit = null;",
     "tests": [
@@ -138,7 +138,7 @@
   },
   {
     "name": "HOME-DOORS-the-rooms-kept",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "  function forgetRooms(keepDoorways = false) {\n    rooms = null;\n    roomsFor = null;\n",
     "new": "  function forgetRooms(keepDoorways = false) {\n",
     "tests": [
@@ -450,7 +450,7 @@
   },
   {
     "name": "HOME-RENT-the-offer-by-the-finders-number",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "        res = await door.offer({ room: row.number, anchor, price });",
     "new": "        res = await door.offer({ room: row.id, anchor, price });",
     "tests": [
@@ -531,7 +531,7 @@
   },
   {
     "name": "HOME-DOORS-a-door-made-a-light",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    if (decorIsDoor(piece) && (what === 'light' || what === 'storage' || (typeof what === 'string' && what.startsWith('station:')))) return false;",
     "new": "    if (false) return false;",
     "tests": [
@@ -549,7 +549,7 @@
   },
   {
     "name": "HOME-DOORS-the-placed-doors-walled-in",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    if (skip.length) {\n      const sig = skip.join('|');",
     "new": "    if (false) {\n      const sig = skip.join('|');",
     "tests": [

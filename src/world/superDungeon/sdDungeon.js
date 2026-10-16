@@ -260,7 +260,7 @@ export const SD_SWEEP_HALVINGS = 8;
  * line - the first of a tie - and its face lies along it; unless a ray along the ring's own plane, at half its height, falls short of half
  * its size and its air (a pillar the chest rays did not see), when the next pair is taken. Answers the face's direction
  * [x, 0, z] - the same on every client (the law's rays, the law's order). The walk-in does not move (inSdPortal's
- * cylinder is round); the press turns with it (scenes/sdEnd.js riftPress - AUDIT SD IV F33).
+ * cylinder is round); the press turns with it (scenes/superDungeon/sdEnd.js riftPress - AUDIT SD IV F33).
  * @param {number[]} at
  * @param {number} size
  * @param {SdProbe} probe
@@ -303,7 +303,7 @@ export function riftLook(rec, s, now, { entered = false, fallen = false } = {}) 
   if (ph === 'risen') return SD_RIFT_NOT_YET;
   if (ph === 'fell') {
     const left = Math.max(0, Math.min(1, (rec.fellAt + SD_COLLAPSE_MS - now) / SD_COLLAPSE_MS)), lit = Math.ceil(left * 24), c = COLLAPSE_LOOK;
-    // AUDIT SD V (P1): one kept record, filled - a look is read the frame it is asked (scenes/sdEnd.js), never kept
+    // AUDIT SD V (P1): one kept record, filled - a look is read the frame it is asked (scenes/superDungeon/sdEnd.js), never kept
     c.aperture = entered ? 1 / 3 + (2 / 3) * left : 0; c.studs = lit; c.ember = 24 - lit; c.tone = entered ? 'gold' : 'ember'; c.light = entered ? 0.5 + 0.5 * left : 0.3;
     return c;
   }

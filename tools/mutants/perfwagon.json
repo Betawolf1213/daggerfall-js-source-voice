@@ -19,7 +19,7 @@
   },
   {
     "name": "PERF-WAGON-c-the-verdict-unread",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "  const seen = cull && box ? cull(box) : DECOR_DRAW;",
     "new": "  const seen = DECOR_DRAW;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "PERF-WAGON-d-the-cast-arm-drawn",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "  (seen === DECOR_SHADOW ? castOnly(r) : r).drawMesh(mesh, m, remap, o);",
     "new": "  (seen === DECOR_SHADOW ? r : r).drawMesh(mesh, m, remap, o);",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "PERF-WAGON-e-the-skip-drawn",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "  if (seen === DECOR_SKIP) return false;\n  (seen === DECOR_SHADOW",
     "new": "  (seen === DECOR_SHADOW",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "PERF-WAGON-f-a-cast-counted",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "  (seen === DECOR_SHADOW ? castOnly(r) : r).drawMesh(mesh, m, remap, o);\n  return seen === DECOR_DRAW;",
     "new": "  (seen === DECOR_SHADOW ? castOnly(r) : r).drawMesh(mesh, m, remap, o);\n  return true;",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "PERF-WAGON-j-the-roads-hand-no-test",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "deps.teams?.draw(r, null, cull) ?? 0,",
     "new": "deps.teams?.draw(r, null, null) ?? 0,",
     "tests": [

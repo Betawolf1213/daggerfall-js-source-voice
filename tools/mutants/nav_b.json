@@ -137,7 +137,7 @@
   },
   {
     "name": "NAV-B-a-batch-a-move",
-    "file": "src/scenes/navalFlames.js",
+    "file": "src/scenes/naval/navalFlames.js",
     "old": "        move(p) { f.pos[0] = p[0]; f.pos[1] = p[1]; f.pos[2] = p[2]; },",
     "new": "        move(p) { f.pos = [...p]; },",
     "tests": [
@@ -146,7 +146,7 @@
   },
   {
     "name": "NAV-B-a-retired-flame-burning",
-    "file": "src/scenes/navalFlames.js",
+    "file": "src/scenes/naval/navalFlames.js",
     "old": "        retire() { f.dead = true; unmount(f); live.delete(f); },",
     "new": "        retire() { f.dead = true; live.delete(f); },",
     "tests": [
@@ -155,7 +155,7 @@
   },
   {
     "name": "NAV-B-the-flame-scale",
-    "file": "src/scenes/navalFlames.js",
+    "file": "src/scenes/naval/navalFlames.js",
     "old": "      art = { count, size: { w: size.width * GLOBAL_SCALE * FLAME_SCALE, h: size.height * GLOBAL_SCALE * FLAME_SCALE } };",
     "new": "      art = { count, size: { w: size.width * GLOBAL_SCALE, h: size.height * GLOBAL_SCALE } };",
     "tests": [
@@ -182,7 +182,7 @@
   },
   {
     "name": "NAV-B-her-colours-struck",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "          e.boat.flagColor = NAVAL_FACTIONS[e.ship.cls?.faction]?.flag ?? null;",
     "new": "          e.boat.flagColor = null;",
     "tests": [

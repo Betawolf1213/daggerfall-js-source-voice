@@ -1,14 +1,14 @@
 [
   {
     "name": "WEAPONMOUNT-the-room-draws-a-film",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "(r?.drawDecalPicture ?? r?.drawDecals)?.call(r, e.mount.batch, e.mount.tex);",
     "new": "r?.drawDecals?.(e.mount.batch, e.mount.tex);",
     "tests": ["test/weaponmount.test.js"]
   },
   {
     "name": "WEAPONMOUNT-the-ghost-draws-a-film",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "(r?.drawDecalPicture ?? r?.drawDecals)?.call(r, p.decal, p.art.tex);",
     "new": "r?.drawDecals?.(p.decal, p.art.tex);",
     "tests": ["test/weaponmount.test.js"]

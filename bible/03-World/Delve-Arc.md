@@ -188,7 +188,7 @@ DFU's draw for draw. What the move would strand, held:
 - **A running quest** at a medium size (the medium stamp 3 or the world's sizes, 4) whose markers were chosen on the
   old layout: at every load, online and off, after `relayOnlineDungeons`, its dungeon Places are compared with the
   dungeon its world builds now and enumerated again where they differ, its placements put back, its stamp untouched
-  (`systems/quest/questRepair.js relayMovedLayouts`, wired in `scenes/questBridge.js` restore; the two re-lays share one
+  (`systems/quest/questRepair.js relayMovedLayouts`, wired in `scenes/quest/questBridge.js` restore; the two re-lays share one
   body, `relayDungeonPlaces`). DFU's stamps are left alone: neither of their builds moved.
 - **Online**, OPEN for Mac: the room is named by the size, not the draw (`dungeon:m<id>.m`), so a moved dungeon's room
   memory written before this build - kept up to thirty days after the room last drains - is the old layout's, read by

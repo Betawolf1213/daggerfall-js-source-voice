@@ -10,7 +10,7 @@ import { readFileSync } from 'node:fs';
 
 import { SHIP_TOUGHNESS, PLAYER_CREW_TOUGHNESS, playerBatteryWeight, shipBatteryWeight, setShipStanding, setGalleonStanding, hullBuild, MOD_SMALL_SHIP_BUILD, GUNS, HULL, SHIP_CLASSES, batteryOf, classById } from '../src/systems/naval/navalShips.js';
 import { ballMen, playerMen, shotDamage, createShipDamage, HOLED_BONUS, WATERLINE_BAND } from '../src/systems/naval/navalDamage.js';
-import { ramMen, RAM_A_MAN } from '../src/scenes/navalHost.js';
+import { ramMen, RAM_A_MAN } from '../src/scenes/naval/navalHost.js';
 import { fightingPower, classPower, strikeTime, hitShare, layMin, rangeOfHull, TURN_PER_VOLLEY } from '../src/systems/naval/navalAI.js';
 import { volleyLaunches, reloadSeconds } from '../src/systems/naval/navalGunnery.js';
 import { createShotField } from '../src/systems/naval/navalShots.js';
@@ -147,7 +147,7 @@ test('GALLEON-WEIGHT the captains\' reckoning: a player\'s galleon makes a ship 
 });
 
 test('CREW-HOLD and GALLEON-WEIGHT on the host, by source: a captain\'s ball on my boat takes her men as a player\'s crew stands them and strikes with its weight; a galley\'s ram on my boat; the serpent\'s blow through playerMen; my volley and a peer\'s own boat\'s carry the weight, a captain\'s none (SHIPS-2: but a captain\'s carrack\'s, the mod\'s seven); my boat\'s measure a player\'s (mutants: each seam)', () => {
-  const n = src('scenes/navalHost.js');
+  const n = src('scenes/naval/navalHost.js');
   assert.match(n, /const hurt = shotDamage\(gun, zone, \{ braced: st\.guns\.braced, roll: random\(\), tough: PLAYER_CREW_TOUGHNESS, weight: e\.weight \}\);/, 'a ball on my boat');
   assert.match(n, /const hurt = shotDamage\(gun, zone, \{ roll: random\(\), weight: e\.weight \}\);/, 'a ball on a captain\'s ship: her men a captain\'s');
   assert.match(n, /hull: gun\.hull \* \(e\.weight \?\? 1\) \* \(0\.85 \+ 0\.3 \* random\(\)\)/, 'a ball in the serpent');

@@ -2,7 +2,7 @@
 // be able to inspect and pick up the ground item, not just walk over it"): HIS SPOILS, SPREAD AND HANDLED, DRIVEN. The
 // throw (world/gate/gateSpew.js - a slot of a wider fan a piece, harder, and each launch kept on the court's floor); the floor
 // (scenes/spoilsPool.js - a resting piece an activation target, named, listed and taken by the press, its rest told);
-// the court (scenes/gateCourt.js - the floor it keeps them on, the gold out of his chest, each landing's sparks); the
+// the court (scenes/gate/gateCourt.js - the floor it keeps them on, the gold out of his chest, each landing's sparks); the
 // seams (the court's targets and words, the press's rung, the plaque's list, the world host's hooks) by source.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -17,7 +17,7 @@ import { createSpoilsPool, spoilsList, SPOILS_TEXT, SPOIL_KEY, SPOIL_GOLD_KEY, S
 import { RAY_DISTANCE, TREASURE_ACTIVATION_DISTANCE } from '../src/player/activate.js';
 import { RARITIES } from '../src/systems/loot/lootRarity.js';
 import { ITEMISED_KEYS, keyItemises, resolveHover } from '../src/systems/worldHover.js';
-import { createGateCourt, spoilsKeep, SPEW_RIM_M, SPOILS_BURST_COLOR, SPEW_AT_MS } from '../src/scenes/gateCourt.js';
+import { createGateCourt, spoilsKeep, SPEW_RIM_M, SPOILS_BURST_COLOR, SPEW_AT_MS } from '../src/scenes/gate/gateCourt.js';
 import { FX_KINDS, sparkAt, FX_SPARK_VS } from '../src/render/gateFx.js';
 import { tierColour } from '../src/render/spoilsGlow.js';
 import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
@@ -258,7 +258,7 @@ test('WB9f the seams, by source: the court stands the spoils and their words whe
   assert.match(w, /takeSpoil: \(key\) => !!floorPool\(\)\?\.pick\(key\),/);
   assert.match(w, /const floorPool = \(\) => \(modes\?\.sdRealmSlot\?\.\(\) != null \? sdSpoilsPool : spoilsPool\);/, 'the court\'s pool anywhere but the Hour');
   assert.match(w, /itemName: \(item\) => lootPileName\(\[item\]\),/);
-  const gc = read('src/scenes/gateCourt.js');
+  const gc = read('src/scenes/gate/gateCourt.js');
   assert.match(gc, /spoils\?\.frame\(onSpoilRest\);/);
   assert.match(gc, /acct: claims\.s, keep, claims \}\)\) \{/);   // WB12d: and its rite
 });

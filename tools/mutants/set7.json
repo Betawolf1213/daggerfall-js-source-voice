@@ -501,7 +501,7 @@
   },
   {
     "name": "SET7-the-gate-plaque-a-bare-string",
-    "file": "src/scenes/gatePool.js",
+    "file": "src/scenes/gate/gatePool.js",
     "old": "      return { title: GATE_TEXT.name, subs: words ? [...(cd.to === 'collapse' ? ['Sealed'] : []), words[0].toUpperCase() + words.slice(1)] : [] };",
     "new": "      return words ? `${GATE_TEXT.name} (${words})` : GATE_TEXT.name;",
     "tests": [

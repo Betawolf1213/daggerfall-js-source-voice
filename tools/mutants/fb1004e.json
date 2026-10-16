@@ -361,7 +361,7 @@
   },
   {
     "name": "ARENAARROWS-the-tally-left-running",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "const shots = stopShotTally() ?? new Map();",
     "new": "const shots = new Map();",
     "tests": [
@@ -371,7 +371,7 @@
   },
   {
     "name": "ARENAARROWS-the-dismissed-quiver-dropped",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "if (quiver.C === C) quiver.shots = shots; else quiver = null;",
     "new": "quiver = null;",
     "tests": [
@@ -381,7 +381,7 @@
   },
   {
     "name": "ARENAARROWS-no-mark-at-the-bout",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    if (ladder) { deps.setPlayerBout?.(cur.playerTag); markMine(cur); }",
     "new": "    if (ladder) { deps.setPlayerBout?.(cur.playerTag); }",
     "tests": [
@@ -391,7 +391,7 @@
   },
   {
     "name": "ARENAARROWS-no-refund-at-the-heal",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    if (C.ladder) { deps.heal?.(); deps.say?.(ARENA_TEXT.healed); refundMine(C); restoreSandHeld(P); C.lastHealth",
     "new": "    if (C.ladder) { deps.heal?.(); deps.say?.(ARENA_TEXT.healed); restoreSandHeld(P); C.lastHealth",
     "tests": [

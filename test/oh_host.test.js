@@ -320,7 +320,7 @@ test('OH-B ApplySettings off the declared keys: the midpoint\'s values, as the C
 });
 
 test('OH-B Iliac Puddle No More\'s half of the API: OnSeafloorBuilt before OnFloorRefreshed, the commit reads the grid back, RefreshLoadedTile goes to the front', () => {
-  const src = readFileSync(new URL('../src/scenes/deepWatersHost.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/scenes/deepWater/deepWatersHost.js', import.meta.url), 'utf8');
   assert.match(src, /onSeafloorBuilt\?\.\(entry\);[^\n]*\n\s*onFloorRefreshed\?\.\(entry\);/, 'the built event first');
   assert.match(src, /heightGridFromPositions\(s\.floor\.positions, s\.floor\.vertexLocalY\);\s*\n\s*standWalls\(entry, s\);\s*\n\s*if \(s\.gpu\) gpu\?\.updateFloor\?\.\(s\.gpu, s\.floor\);/);
   assert.match(src, /const d = urgent\.has\(k\) \? -1 : chebyshev/, 'an urgent refresh is taken before the nearest');
@@ -332,7 +332,7 @@ test('OH-B Iliac Puddle No More\'s half of the API: OnSeafloorBuilt before OnFlo
 });
 
 test('OH-B RefreshLoadedTile through the sea\'s own host: nothing while the terrain may not be mutated, a current floor kept unless forced, the refresh built before a nearer pixel, and the built event before the refreshed one', async () => {
-  const { createDeepWatersHost } = await import('../src/scenes/deepWatersHost.js');
+  const { createDeepWatersHost } = await import('../src/scenes/deepWater/deepWatersHost.js');
   const pixel = (px, py) => ({ px, py, samples: new Float32Array(4), tilemap: new Uint8Array(4), tilemapBytes: new Uint8Array(4) });
   const floor = () => ({ positions: new Float32Array(9), indices: new Uint32Array(0), floorGridIndexCount: 0, vertexLocalY: new Float32Array(4225) });
   const built = new Map();

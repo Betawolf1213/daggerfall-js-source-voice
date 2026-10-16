@@ -137,7 +137,7 @@
   },
   {
     "name": "DECOR1d-the-strafe-mirrored",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "  const v = [f[0] * forward + Math.cos(yaw) * strafe, f[1] * forward + rise, f[2] * forward - Math.sin(yaw) * strafe];",
     "new": "  const v = [f[0] * forward - Math.cos(yaw) * strafe, f[1] * forward + rise, f[2] * forward + Math.sin(yaw) * strafe];",
     "tests": [
@@ -146,7 +146,7 @@
   },
   {
     "name": "DECOR1d-the-leash-unread",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "  if (dl <= DECOR_FLY_LEASH) return next;",
     "new": "  return next;",
     "tests": [
@@ -155,7 +155,7 @@
   },
   {
     "name": "DECOR1d-a-diagonal-faster",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "  const k = (speed * dt) / Math.max(1, len);",
     "new": "  const k = speed * dt;",
     "tests": [
@@ -164,7 +164,7 @@
   },
   {
     "name": "DECOR1d-an-unlocked-press-placing",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    if (!deps.locked?.()) return;   // the press that takes the pointer back",
     "new": "    if (false) return;   // the press that takes the pointer back",
     "tests": [
@@ -173,7 +173,7 @@
   },
   {
     "name": "DECOR1d-a-window-not-suspending",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    placing.suspended = overlayUp;",
     "new": "    placing.suspended = false;",
     "tests": [
@@ -182,7 +182,7 @@
   },
   {
     "name": "DECOR1d-paying-on-a-refusal",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "character: deps.character?.(), piece });\n        if (!res?.ok) { p.refused = { text: deps.refusal?.(res?.error) ?? 'The piece could not be placed.', at: now() }; return false; }",
     "new": "character: deps.character?.(), piece });\n        if (!res?.ok) { p.refused = { text: deps.refusal?.(res?.error) ?? 'The piece could not be placed.', at: now() }; deps.wallet().pay(price); return false; }",
     "tests": [
@@ -191,7 +191,7 @@
   },
   {
     "name": "DECOR1d-the-short-piece-left-standing",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "          await deps.homeDecor.remove?.({ mapId: r.mapId, buildingKey: r.buildingKey, character: deps.character?.(), id: piece.id });\n",
     "new": "",
     "tests": [
@@ -200,7 +200,7 @@
   },
   {
     "name": "DECOR1d-a-left-room-stood-in",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "        wallet.pay(price);\n        if (deps.visit?.() === visit) standRound(",
     "new": "        wallet.pay(price);\n        standRound(",
     "tests": [
@@ -209,7 +209,7 @@
   },
   {
     "name": "DECOR1d-offline-placed-unpaid",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "        deps.wallet().pay(price);\n        standRound(p, piece);",
     "new": "        standRound(p, piece);",
     "tests": [
@@ -218,7 +218,7 @@
   },
   {
     "name": "DECOR1d-the-cap-unread-on-commit",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "gold: deps.wallet().gold, count: pool.size(), cap: capHere(r), yard: !!r?.yard, hall: !!r?.hall })) return false;",
     "new": "gold: deps.wallet().gold, count: 0, cap: capHere(r), yard: !!r?.yard, hall: !!r?.hall })) return false;",
     "tests": [
@@ -227,7 +227,7 @@
   },
   {
     "name": "DECOR1d-the-eye-unled",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    if (placing && !placing.suspended) cam.pos = [...placing.fly];",
     "new": "    if (false) cam.pos = [...placing.fly];",
     "tests": [
@@ -236,7 +236,7 @@
   },
   {
     "name": "DECOR1d-the-flat-ghost-unmoved",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      p.batch.origin = [origin[0] + p.piece.pos[0], origin[1] + p.piece.pos[1], origin[2] + p.piece.pos[2]];\n",
     "new": "",
     "tests": [
@@ -245,7 +245,7 @@
   },
   {
     "name": "DECOR1d-the-preview-in-the-wrong-box",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    const rect = { x: (box.left - c.left) * sx, y: (box.top - c.top) * sy, w: box.width * sx, h: box.height * sy };",
     "new": "    const rect = { x: box.left - c.left, y: box.top - c.top, w: box.width, h: box.height };",
     "tests": [
@@ -254,7 +254,7 @@
   },
   {
     "name": "DECOR1d-the-preview-not-copied",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      try { ctx.drawImage(deps.canvas, rect.x, rect.y, rect.w, rect.h, 0, 0, pw, ph); } catch { /* a lost context copies nothing */ }",
     "new": "      void ctx;",
     "tests": [
@@ -263,7 +263,7 @@
   },
   {
     "name": "DECOR1d-the-cursor-left-free",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    deps.cursorOff?.();   // a cursor freed",
     "new": "    void 0;   // a cursor freed",
     "tests": [
@@ -272,7 +272,7 @@
   },
   {
     "name": "DECOR1d-the-names-never-filled",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    for (const e of s.entries()) deps.names?.set(e.key, e.name);",
     "new": "    void s;",
     "tests": [
@@ -317,7 +317,7 @@
   },
   {
     "name": "DECOR1d-a-release-kept-from-the-host",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    const act = deps.actionOf?.(e) ?? null;\n    if (act) flyHeld.delete(act);",
     "new": "    const act = deps.actionOf?.(e) ?? null;\n    e.stopImmediatePropagation?.();\n    if (act) flyHeld.delete(act);",
     "tests": [
@@ -326,7 +326,7 @@
   },
   {
     "name": "DECOR1d-a-flight-key-never-let-go",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    if (act) flyHeld.delete(act);",
     "new": "    void act;",
     "tests": [
@@ -335,7 +335,7 @@
   },
   {
     "name": "DECOR1d-the-grid-toggling-on-repeat",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    else if (free === 'grid' && once) placing?.placer?.toggleSnap();",
     "new": "    else if (free === 'grid') placing?.placer?.toggleSnap();",
     "tests": [
@@ -344,7 +344,7 @@
   },
   {
     "name": "DECOR1d-a-turn-read-raw",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      case 'TurnLeft': turn(e, -1); return;",
     "new": "      case 'TurnLeft': return;",
     "tests": [

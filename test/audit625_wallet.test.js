@@ -27,7 +27,7 @@ test('AUDIT 625 W1: the decorate panel never sets the wallet out - a piece set d
   const wallet = mintWallet();
   assert.equal(decorStandOf(wallet), null, 'it stands as nothing');
   assert.equal(decorMountOf(wallet), null, 'nor hangs');
-  assert.equal(decorOwnEntry(wallet, 0), null, 'so the panel lists no row for it (scenes/decorTool.js ownEntries reads this door alone)');
+  assert.equal(decorOwnEntry(wallet, 0), null, 'so the panel lists no row for it (scenes/decor/decorTool.js ownEntries reads this door alone)');
   assert.equal(decorStandOf({ group: 'UselessItems2', templateIndex: BAG_TEMPLATE }), null, 'the Materials Bag, as ever');
   // a pack-only piece is refused by its ROW, whatever its picture: the rule is the row's `packOnly`, read at the stand
   assert.match(src('src/systems/decor/decorItems.js'), /if \(isBagItem\(item\) \|\| isPackOnly\(item\)\) return null;/);

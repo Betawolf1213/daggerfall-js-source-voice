@@ -24,7 +24,7 @@ import { fileURLToPath } from 'node:url';
 
 import './chargenDom.mjs';   // the minimal DOM - globals (the journal faces mount on it)
 import { resetUid, ensureUidAtLeast } from '../src/systems/quest/quest.js';
-import { createQuestBridge } from '../src/scenes/questBridge.js';
+import { createQuestBridge } from '../src/scenes/quest/questBridge.js';
 import { REGION, makeWorld, seededRolls } from './guideWorld.mjs';
 import { getSeed, srand } from '../src/formats/dfRandom.js';
 import { entryOpening, remainWords } from '../src/ui/quest/questRail.js';
@@ -516,7 +516,7 @@ test('GUIDE4 ONE CALL, EVERY HOST - drawHud draws the card on its one call, outs
   const call = hud.indexOf('\n  drawQuestTracker({ hidden: cursorActive || !hudRenderEnabled() });');
   const gate = hud.indexOf("if (isEnhanced() && typeof document !== 'undefined') {\n    drawLevelNotices(");
   assert.ok(call > 0 && gate > call, 'drawHud draws the card before (outside) the enhanced gate');
-  const bridge = rd('src/scenes/questBridge.js');
+  const bridge = rd('src/scenes/quest/questBridge.js');
   assert.match(bridge, /const seen = lens\.look\(ctx\.questWhere \?\? \{\}\);\n\s*if \(follow\) questTracker\.hear\(seen\);\n\s*if \(herald\) questHerald\.hear\(seen\);/, 'every look reaches the tracker\'s model while a face follows, the baseline too (AUDIT GUIDE L4: inside the try now; H11: the herald\'s baseline is the lens\'s)');
   assert.match(bridge, /if \(!follow && \(questTracker\.views\.length \|\| questTracker\.follow != null\)\) questTracker\.forget\(\);/, 'no face following: the bridge forgets what was followed');
   assert.match(bridge, /lens\.reset\(\);[^\n]*\n\s*questTracker\.forget\(\);/, 'a load forgets what the last game followed');

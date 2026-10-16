@@ -1,7 +1,7 @@
 // @ts-check
 // SET7 (2026-09-26, Sigil Sets - bible/11-Multiplayer/Sigil-Sets.md section 7; Mac: "Sigil stones become a currency to
 // trade for daily reset sigil items at a new NPC vendor that stands outside the oblivion gate"): THE SIGIL BROKER, WHERE
-// SHE STANDS - the pool on the runtime pools' shape (scenes/camps.js, scenes/gatePool.js): her body, the eye's box and
+// SHE STANDS - the pool on the runtime pools' shape (scenes/camps.js, scenes/gate/gatePool.js): her body, the eye's box and
 // her name, and the press on her.
 //
 // BROKER-CAGE (2026-10-02, Mac: "she should be present at the site in a jailed gate, and the gate opens after all the

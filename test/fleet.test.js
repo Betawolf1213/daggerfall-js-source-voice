@@ -8,7 +8,7 @@
 // The ledger (systems/fleet.js: the titles' book, the name's law, the refits' costs and effects, the bank's claim, the
 // save); Come Sail Away over the book (systems/comeSailAway/comeSailAway.js: a deed found there, a ship's parts placed spending her
 // parts and keeping her title, SummonBoat, LayUpBoat - the real runtime over test/csaScene.mjs); the refits where the
-// helm and the sea read them; the sea fight's away repairs, refit and berth (scenes/navalHost.js - test/navalSea.mjs);
+// helm and the sea read them; the sea fight's away repairs, refit and berth (scenes/naval/navalHost.js - test/navalSea.mjs);
 // the host half (scenes/fleetHost.js - where she is, every refusal, every act); the names on the boats' word
 // (systems/comeSailAway/comeSailAwayWire.js `n`); the page (ui/fleetPage.js); the purchase and the prize into the book.
 import './modsOff.js';
@@ -319,7 +319,7 @@ test('FLEET her Hull refit on her hull\'s and canvas\'s whole (myBoatState\'s bu
   const st = s.host.fleetStatus(s.boat);
   assert.deepEqual([st.maxHull, st.maxSail], [Math.round(hullBuild(2).hullHp * 1.3), Math.round(hullBuild(2).sailHp * 1.3)]);
   assert.equal(st.maxCrew, hullBuild(2).crew, 'her crew her build\'s');
-  const src = read('src/scenes/navalHost.js');
+  const src = read('src/scenes/naval/navalHost.js');
   assert.match(src, /if \(byMe && e\.type !== 'blast'\) gunsRefit\(hurt, e\.shooter\);/);
   assert.match(src, /const uid = Number\(String\(shooter\)\.slice\(MY_BOAT\.length \+ 1\)\);/);
   assert.match(src, /if \(Number\.isFinite\(hurt\.hull\)\) hurt\.hull \*= k;\n    if \(Number\.isFinite\(hurt\.sail\)\) hurt\.sail \*= k;/);
@@ -378,7 +378,7 @@ test('FLEET REPAIRS MADE AWAY: her hands mend her free to FIELD_MEND_CAP of each
 });
 
 test('FLEET the berth a summoned ship is brought to: the free berth of a known harbour nearest the player - none taken by a ship of the sea or a boat of mine - on the sea\'s top, her bow along it; none known, none (source pins over the harbour\'s own law)', () => {
-  const src = read('src/scenes/navalHost.js');
+  const src = read('src/scenes/naval/navalHost.js');
   const at = src.indexOf('  function freeBerth(hull = HULL.Carrack) {');   // PIN MOVED (QUAYS): her hull asked
   assert.ok(at >= 0, 'freeBerth found');
   const body = src.slice(at, src.indexOf('\n  }\n', at));
@@ -648,7 +648,7 @@ test('FLEET a deed bought goes to the book at the counter, never the pack - stam
   assert.match(world, /registerModSaveData\(FLEET_SAVE_VENDOR, fleetSaveSlot\);/);
   assert.ok(world.indexOf('let fleetHost = null;') < world.indexOf('const csaRuntime = csaOn() ? createComeSailAwayRuntime({'), 'declared before the boats read their refits through it');
   // the prize's words
-  const host = read('src/scenes/navalHost.js');
+  const host = read('src/scenes/naval/navalHost.js');
   assert.match(host, /her title is in your Fleet ledger \(Holdings\)/);
   void HULL_PRICES;
 });

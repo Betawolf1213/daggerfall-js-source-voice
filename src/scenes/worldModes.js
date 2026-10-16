@@ -74,7 +74,7 @@ import { wagonLoadedHeld } from '../systems/tradePack.js';   // WAGONS2 (AUDIT):
 import { caravanPaintRows } from '../systems/wagon/wagonLooks.js';   // WAGONS2: the caravan's inside, painted from the decorator
 import { caravanDecorDoc, readCaravanDecor, readCaravanHidden } from '../systems/caravanVisit.js';   // WAGONS2-VISIT: what a caravan's owner placed, said to its room and stood for its visitor
 import { caravanKeyOf } from '../net/privateInterior.js';   // WAGONS2-VISIT: a caravan's own room
-import { INTERIOR_SHELL_BUCKET } from './decorBase.js';   // HOME-DOORS: a doorway is an opening in the shell's walls   // AUDIT 63 F22: AddFlats' RandomTreasure arm lives with the walk that finds its markers
+import { INTERIOR_SHELL_BUCKET } from './decor/decorBase.js';   // HOME-DOORS: a doorway is an opening in the shell's walls   // AUDIT 63 F22: AddFlats' RandomTreasure arm lives with the walk that finds its markers
 import { advanceMachinery, mountMachineryChild, machineryChildPos, MILL_SOUND } from '../world/windmills.js';   // WM4b: the machinery's moving parts; WM4c: its hum
 import { buildDungeonContext } from './dungeonContext.js';
 import { ambushNight } from '../systems/rest/restAct.js';   // AUDIT REST II P3: a quest's CreateFoe reaches the act's night, window or none
@@ -306,7 +306,7 @@ import { applyTransfer } from '../systems/item/itemTransfer.js';   // DECOR2a: o
 import { decorItemName, decorOwnBackLine } from '../systems/decor/decorItems.js';   // DECOR2a: an own item's piece named from its numbers
 import { isFurnishing, furnishingDeliveredLine, ownBackLines } from '../systems/decor/decorFurnish.js';   // DECOR2b: furniture delivered, never carried
 import { goldAmount, totalGoldAmount, deductGold, addGold, payUndoable, setCrimeCommitted, CRIMES } from '../systems/court.js';   // PT1: the ONE crime write (V4's SuppressCrime gate rides it)
-// Q4-v: the quest layer's host wiring. The BRIDGE (scenes/questBridge.js)
+// Q4-v: the quest layer's host wiring. The BRIDGE (scenes/quest/questBridge.js)
 // is created by the outer host (world.js) and rides in; this machine owns
 // the interior half - the click stamp, the Quests service arm, the scene
 // mount adapter and the modal tick.
@@ -379,9 +379,9 @@ import { FORGE_FEE, WORKBENCH_FEE, LOOM_FEE, MASON_FEE, COOK_FIRE, JEWEL_FEE, AL
 const DECOR_STATION_NOT_READY = 'The station is not ready yet - try again in a moment.';
 /** AUDIT HOME-STATIONS S7: a maker's refusal whose TEXT.RSC record did not answer. */
 const DECOR_STATION_REFUSED = 'You cannot use the station right now.';
-import { createDecorRoom, decorIdOfKey, askDecorList, offerDecorFigures } from './decorRoom.js';   // MWNPC18: a placed figure in its body
+import { createDecorRoom, decorIdOfKey, askDecorList, offerDecorFigures } from './decor/decorRoom.js';   // MWNPC18: a placed figure in its body
 // DECOR1d: the decorator itself - the button, the panel, the free camera - and what its catalogue scan reads
-import { createDecorTool } from './decorTool.js';
+import { createDecorTool } from './decor/decorTool.js';
 import { decorScanDeps } from '../systems/decor/decorScan.js';   // DECOR-DUNGEON: the scan's deps, one constructor for both hosts
 import { GLOBAL_SCALE } from '../world/meshReader.js';
 import { loadIcon } from '../ui/textureCanvas.js';
@@ -433,12 +433,12 @@ import { createPotion, getMagicItemTemplates, LOOT_NEWER_TEXT, shownSpellName } 
 import { SITE_TYPES } from '../systems/quest/place.js';
 import { placeFoeFreely, questStandBox, rideSceneMarker, markerScenePosition, siteMarkerSpots, standSpot, MARKER_FLOOR_REACH } from '../systems/quest/sceneMount.js';   // B1: CreateFoe's raycast ring, finally called; TOTEM-CAGE: a stand's box where it IS; QUEST-MARKERS: the building's backstop
 import { chestIdentity, matchChests } from './chestRecords.js';   // HOLD-KEPT: a house chest's record by which chest it is
-import { placeFoeEnv, placeRoomQuestFoe, entityOccupancy, questFoeGender, reviveQuestBehaviour as reviveQuestBehaviourFromSave, heldSpots, holdSpotWhile, restandMendedQuestFoe } from './questFoeHost.js';   // B1 (PlaceFoeFreely reads the fieldOfView import below)   // AUDIT 63 F24: SerializableEnemy.cs:206-217 re-adds the component on restore
+import { placeFoeEnv, placeRoomQuestFoe, entityOccupancy, questFoeGender, reviveQuestBehaviour as reviveQuestBehaviourFromSave, heldSpots, holdSpotWhile, restandMendedQuestFoe } from './quest/questFoeHost.js';   // B1 (PlaceFoeFreely reads the fieldOfView import below)   // AUDIT 63 F24: SerializableEnemy.cs:206-217 re-adds the component on restore
 import { standLooseFoe } from './hostEnchant.js';   // ROAD-G G1: SoulBound's break release / the Sanguine Rose, inside a building
 import { ENEMY_BASICS, enemyDisplayName } from '../characters/enemyBasics.js';   // MERGE: FinalizeFoe's Flying lift reads the behaviour flag // WORLD-HOVER H2: GetLocalizedEnemyName - Entity.Name for a live one (.cs:310)
 import { openDoorsStep, foeFrameDt } from '../characters/enemyMotor.js';   // AUDIT 63 F42: EnemyMotor.OpenDoors (EnemyMotor.cs:1424-1442), which lives in the motor and runs wherever an enemy does
 import { billboardSize } from '../world/rmbFlats.js';
-import { positionHash, staticNpcData } from './questBridge.js';   // B7: the guild popup's TALK builds display data without re-registering the click
+import { positionHash, staticNpcData } from './quest/questBridge.js';   // B7: the guild popup's TALK builds display data without re-registering the click
 import { staticBuildingsHasHit } from '../world/staticBuildings.js';   // AUDIT 64 F11: DaggerfallStaticBuildings.HasHit
 import { staticNpcName, staticNpcShownName, getNameBankOfRegion, isChildNPCData } from '../characters/staticNpc.js';   // wave 24: StaticNPC.DisplayName; L10N3e: and as it is shown
 import { portraitIndexFromStaticNPCBillboard } from '../systems/npcSession.js';   // ROAD-D D10: GetPortraitIndexFromStaticNPCBillboard
@@ -452,8 +452,8 @@ import { chairSeatOf, chairProbeOver, CHAIR_KIND, CHAIR_FLOOR_STEP } from '../wo
 import { isLampKeeper, lampLines, LAMP_TEXT, createLampTitle } from '../systems/lampKeeper.js';   // LAMP-KEEPER II: a shop's keeper standing as the lamp, its words and its title
 import { announceHonour } from '../ui/lootBanner.js';   // LAMP-KEEPER II: I Love Lamp, as a loot banner
 import { setRrHostSeams } from '../systems/roleplayRealism/rrInstall.js';   // RR1: the host's foe-spawner seam for the underworld guilds' squad
-import { createSwimMovement } from './deepWatersSwimMove.js';   // DW-D: Iliac Puddle No More's swim movement - the dungeon's water too (IsAnySwimming)
-import { deepWatersOn, deepWatersSwimSettings } from './deepWatersHost.js';
+import { createSwimMovement } from './deepWater/deepWatersSwimMove.js';   // DW-D: Iliac Puddle No More's swim movement - the dungeon's water too (IsAnySwimming)
+import { deepWatersOn, deepWatersSwimSettings } from './deepWater/deepWatersHost.js';
 import { loadGraceActive as dwLoadGraceActive } from '../world/deepWater/deepWaterRuntime.js';
 import { localizedText, formatText, getLocalizedLocationName, getLocalizedFactionName, getLocalizedItemName, t } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language; L10N3e: and the names shown
 import { livingWorldOn } from '../systems/livingWorld/livingSwitch.js';   // HALT-ONE: the living watch's lane, for a watch called into a building
@@ -1755,7 +1755,7 @@ export function createWorldModes(host) {
   // BLOOD1a: an interior bleeds too, and the ring is its own binding
   // (HARD1: the splash pool is a hand-off and must not own GL).
   const interiorBloodMarks = createBloodMarks({ renderer, collider: () => player.collider, settings: bloodDecalDeps });
-  // DECOR1c: THE PIECES A ROOM'S OWNER PLACED (scenes/decorRoom.js) - an online home's from the account service (every
+  // DECOR1c: THE PIECES A ROOM'S OWNER PLACED (scenes/decor/decorRoom.js) - an online home's from the account service (every
   // visitor sees the room its owner furnished), the offline house's and ship's from the save; their own colliders and
   // eye targets (`decor:<id>`), their lights among the room's own, and what the storage pieces hold always the owner's
   // save's. One pool, emptied with the room at all three teardowns, as the torches and the piles are.
@@ -1798,7 +1798,7 @@ export function createWorldModes(host) {
   let _decorListed = -1;   // DECOR-SHELL: the visit whose online home's list has stood (AUDIT DECOR-SHELL 2) - no decorating before it
   /** @type {Map<string, string>} the catalogue's names by piece key, once the decorator has read the catalogue (DECOR1d) */
   const decorNames = new Map();
-  // DECOR1d: THE DECORATOR (scenes/decorTool.js) - Mac: "A UI element that can be clicked to open the decorate panel.
+  // DECOR1d: THE DECORATOR (scenes/decor/decorTool.js) - Mac: "A UI element that can be clicked to open the decorate panel.
   // Allows free cam mode for placement and an intuitive scrolling menu with filters". The button stands in a room the
   // player may decorate, the panel sits in this host's own overlay slot (so it pauses the room and frees the pointer as
   // every window does), and a placement flies the camera while the body stands still.
@@ -4349,15 +4349,15 @@ export function createWorldModes(host) {
     // ARENA2: his CHOICE now (systems/arena/arenaHerald.js - watch, fight, the fighters' hall, leave), the host's; a host with no
     // arena driver (the standalone city - scenes/exterior.js) keeps ARENA1's notice
     if (!info && arenaGatePersonOf(pn)?.role === 'herald') { if (!host.arenaHerald?.()) townTalk?.showOverlay?.(new ActionTextBox([...ARENA_TEXT.heraldNotice])); return; }
-    // ARENA3: THE BANNERS' RECRUITERS - each his banner's choice (scenes/arenaGate.js: join, quit, the Arena window); a host
+    // ARENA3: THE BANNERS' RECRUITERS - each his banner's choice (scenes/arena/arenaGate.js: join, quit, the Arena window); a host
     // with no gate of its own lets them talk as the city's people do
     const gateRole = info ? null : arenaGatePersonOf(pn)?.role;
     if ((gateRole === 'redRecruiter' || gateRole === 'blueRecruiter') && host.arenaRecruiter?.(gateRole)) return;
-    if (gateRole === 'bookmaker' && host.arenaBookmaker?.()) return;   // ARENA3: the bookmaker's stall (scenes/arenaGate.js)
+    if (gateRole === 'bookmaker' && host.arenaBookmaker?.()) return;   // ARENA3: the bookmaker's stall (scenes/arena/arenaGate.js)
     // ARENA-FIX 4: THE FIGHTERS' HALL - the Pit Master offers the training pit, the Keeper of the Hall reads its wall
     if (!info && pn?.lamp) { lampChoice(pn); return; }   // LAMP-KEEPER II: the lamp's own words, its shop, and its title
     if (!info && pn?.arenaRole === 'pitMaster') { pitMasterChoice(); return; }
-    if (!info && pn?.arenaRole === 'hallKeeper' && host.arenaHall?.()) return;   // ARENA4b: online she reads the realm's wall (scenes/arenaGate.js hall)
+    if (!info && pn?.arenaRole === 'hallKeeper' && host.arenaHall?.()) return;   // ARENA4b: online she reads the realm's wall (scenes/arena/arenaGate.js hall)
     if (!info && pn?.arenaRole === 'hallKeeper') { townTalk?.showOverlay?.(new ActionTextBox(hallOfChampions(playerEntity.arenaLadder, playerEntity.name || 'You', rosterGrandChampions(playerEntity.arenaLeague, Math.floor(worldMinutes()))))); return; }   // ARENA3: and the banners' Grand Champions this save has seen
     Promise.resolve(townTalk?.ensureFactions?.())
       .then(() => (info ? presentNpcInfo(pn) : openStaticNpc(pn))).catch(() => {});
@@ -5251,7 +5251,7 @@ export function createWorldModes(host) {
     arenaWall = { ctx, loc, plaques, gpu: { cut, bare }, names: host.arenaHallPlaques?.() ?? [], namesAt: performance.now() };
   }
   const arenaWallLive = () => (arenaWall && arenaWall.ctx === dungeonCtx && arenaWall.loc === dungeonLoc ? arenaWall : null);
-  /** The champions the wall names now (scenes/arenaGate.js plaques - the save's offline, the realm's online), read again
+  /** The champions the wall names now (scenes/arena/arenaGate.js plaques - the save's offline, the realm's online), read again
    *  when stale or `fresh` (a press reads the wall as it stands). */
   function arenaWallNames(w, fresh = false) {
     const t = performance.now();
@@ -8307,7 +8307,7 @@ export function createWorldModes(host) {
     }
     townTalk?.say?.(rentDoneLine(room.room, days));
   }
-  /** HOME-RENT: THE OWNER'S ROOMS in the decorator (scenes/decorTool.js `rent`) - read, offered, withdrawn and the rent
+  /** HOME-RENT: THE OWNER'S ROOMS in the decorator (scenes/decor/decorTool.js `rent`) - read, offered, withdrawn and the rent
    *  collected through the service's door, the collection on the owner's record as a rent is on the tenant's. */
   const decorRentDoor = () => {
     const api = host.homesApi;
@@ -8664,7 +8664,7 @@ export function createWorldModes(host) {
       // HOME1: online, the service's list decides wherever it names the building - my home's furniture is storage, a
       // stranger's home's is not mine; elsewhere Daggerfall's own deed.
       const houseOwned = !!restore?.privateRoom || !!hit.sailingCabin || (!!building && (home ? home.own : houseOwnedAt(building, building.buildingKey)));
-      // BASE-HIDE: a room its owner may furnish stands its own furniture piece by piece (scenes/decorBase.js) - an online
+      // BASE-HIDE: a room its owner may furnish stands its own furniture piece by piece (scenes/decor/decorBase.js) - an online
       // home, anyone's (the room its owner cleared is the room every visitor walks into), or the player's house or ship
       const baseEditable = !!home || houseOwned || (building?.buildingType === BUILDING_TYPES.Ship && ownsShip(playerEntity));
       // P8: parent the interior at the entered building's world matrix
@@ -8722,7 +8722,7 @@ export function createWorldModes(host) {
       // throw here used to leak the whole build on EVERY E-press at
       // such a door (the callers only log it). Free it first.
       if (!landing) { abandonContext(ctx); throw new Error('no interior landing'); }
-      // AUDIT-E1/E4 (the living world's rooms, scenes/livingIndoors.js): the room's own answers, kept with it - whether it
+      // AUDIT-E1/E4 (the living world's rooms, scenes/livingWorld/livingIndoors.js): the room's own answers, kept with it - whether it
       // is a player's own (DFU's AddPeople stands nobody in a house the player owns; HOME1's homes and the private rooms
       // likewise), and where it is laid out from: the landing of the building's FIRST door (its block's own order),
       // whichever door was taken - laid out from the player's feet, a load made upstairs, another door or a peer laid it
@@ -9285,7 +9285,7 @@ export function createWorldModes(host) {
    *  marker. startInDungeon passes true for StartDungeonInterior. */
   /** WB3b: THE GATE'S DOOR. The Burning Court (world/gate/gateArena.js) is this host's dungeon arm with a level made in
    *  code: a made location, a blocks file answering one made block, the court stood into the built context before
-   *  its start marker is read (standCourt). `g` is the gate walked into (scenes/gatePool.js enter); the host says the
+   *  its start marker is read (standCourt). `g` is the gate walked into (scenes/gate/gatePool.js enter); the host says the
    *  climate and region at its pixel. Online alone - the gate is. */
   async function enterGateArena(g) {
     if (mode !== 'exterior' || !g || !Number.isSafeInteger(g.day)) return false;
@@ -9326,7 +9326,7 @@ export function createWorldModes(host) {
     if (mode !== 'exterior' || !(playerEntity.health > 0)) return false;
     const city = host.arenaCity?.() ?? null;
     const dfLocation = arenaFloorLocation({ kind, city, bout });   // ARENA4: `bout` the relay's bout - the instance is its room
-    // ARENA5: the bout's banners hung on its sides' halves (scenes/arenaBouts.js floorBanners)
+    // ARENA5: the bout's banners hung on its sides' halves (scenes/arena/arenaBouts.js floorBanners)
     // AUDIT PRE-MERGE 1003b C7: where this floor was entered from - its way out lands before the Herald (arenaLanding),
     // and the Herald stands only where Daggerfall's colosseum is streamed in: a private session joined in Wayrest came
     // out at the floor's own coordinates read in Wayrest's frame. The place the player stood is its way back then
@@ -9369,7 +9369,7 @@ export function createWorldModes(host) {
     for (const d of arenaExitDoors()) ctx.exitDoors.push(d);
     ctx.addActivationNamer((key) => (typeof key === 'string' && key.startsWith('exit:') ? { title: ARENA_TEXT.wayOut } : null));
   }
-  /** ARENA2: THE INSTANCE AS A STAGE (scenes/arenaBouts.js) - the sand's centre in the dungeon's frame, the fighters
+  /** ARENA2: THE INSTANCE AS A STAGE (scenes/arena/arenaBouts.js) - the sand's centre in the dungeon's frame, the fighters
    *  through the context's own loose stands (at their tier's level, their bout tag on them from the first frame), the
    *  ground under a seat asked of the context's collider. Null outside the instance. */
   let _arenaStage = null, _arenaStageCtx = null;
@@ -9387,7 +9387,7 @@ export function createWorldModes(host) {
     };
     return _arenaStage;
   }
-  /** ARENA-FIX 4: THE TRAINING PIT AS A STAGE (scenes/arenaBouts.js) - in the undercroft, its pit's marker
+  /** ARENA-FIX 4: THE TRAINING PIT AS A STAGE (scenes/arena/arenaBouts.js) - in the undercroft, its pit's marker
    *  (world/arena/arenaUndercroft.js undercroftPopulation) the centre of a small ring and no gates (the sparring fighter
    *  stands on its mark), the fighter through the context's own loose stands. Null anywhere else. */
   let _pitStage = null, _pitStageCtx = null;
@@ -9446,7 +9446,7 @@ export function createWorldModes(host) {
   }
   /** WB6c: THE WAY HOME out of the court - through the fire, as the way in was: the dungeon's exit taken at the top of the
    *  frame after the veil has closed (F-A5's deferral), for a player alive in a court still standing. WBX2: the door of
-   *  the portal that rises where he fell (scenes/gateCourt.js) - GATE-FBX: the court's only one, the bridge's membrane gone. */
+   *  the portal that rises where he fell (scenes/gate/gateCourt.js) - GATE-FBX: the court's only one, the bridge's membrane gone. */
   function gateWayHome() {
     if (mode !== 'dungeon' || !isGateArena(dungeonLoc)) return false;
     stepThroughFire(async () => { if (mode === 'dungeon' && isGateArena(dungeonLoc) && aliveUnder()) pendingDungeonExit = true; return true; });
@@ -9489,7 +9489,7 @@ export function createWorldModes(host) {
   const _hourTri = { sky: [0, 0, 0], equator: [0, 0, 0], ground: [0, 0, 0] };
   /** WB3b: the court stood into a built context, before the start marker is read: its mesh among the context's own
    *  draws, its floor on the collider (the spawn lands on it), and the way home's name - GATE-FBX: on the portal that
-   *  rises where he fell, the court's one door (scenes/gateCourt.js lays it into the exit doors; the exit family's ray,
+   *  rises where he fell, the court's one door (scenes/gate/gateCourt.js lays it into the exit doors; the exit family's ray,
    *  ladder and wagon word take it - no family of its own). */
   function standCourt(ctx) {
     if (!_courtMesh && renderer?.createMesh) {
@@ -9522,11 +9522,11 @@ export function createWorldModes(host) {
   }
   /** SD5a: THE SHATTERED HOUR stood into its built context (world/superDungeon/sdRealm.js), the court's way - its art made once a
    *  session (world/superDungeon/sdRealmArt.js), its mesh among the context's draws, its floors on the collider (the spawn lands on
-   *  them). Its way back is the context's own Rift (scenes/sdEnd.js, at the Threshold's back); its lamps ride the frame's
+   *  them). Its way back is the context's own Rift (scenes/superDungeon/sdEnd.js, at the Threshold's back); its lamps ride the frame's
    *  lights (the dungeon arm). */
   let _realmMesh = null;
   const REALM_BUCKET = 'sd:realm';
-  /** SD7b: A BODY THE HOUR CASTS BACK (the Unmoored Steps' void - scenes/sdSteps.js) stood on its span's checkpoint, the
+  /** SD7b: A BODY THE HOUR CASTS BACK (the Unmoored Steps' void - scenes/superDungeon/sdSteps.js) stood on its span's checkpoint, the
    *  action teleport's way (its settle, the eye with it), and the outer host told - the health it costs, its line. */
   function sdCastBack(at) {
     player.freezeMotor = TELEPORT_FREEZE_S;
@@ -12413,7 +12413,7 @@ export function createWorldModes(host) {
     questMessages: () => host.pauseQuestMessages?.() ?? [],
     questLog: () => host.pauseQuestLog?.() ?? { active: [], finished: [] },
     repairQuests: () => host.repairQuests?.() ?? null,   // QREPAIR: the host's own bridge
-    journalClean: () => host.journalClean?.() ?? null,   // JOURNAL-CLEAN: the Quests tab's remove / clear archive / hide / unhide (scenes/questBridge.js journalClean), off the host's bridge
+    journalClean: () => host.journalClean?.() ?? null,   // JOURNAL-CLEAN: the Quests tab's remove / clear archive / hide / unhide (scenes/quest/questBridge.js journalClean), off the host's bridge
     // GUIDE2: the Quests tab's WHERE, off the world host's two questions (world.js questCanFindPlace /
     // questLocationName). NO way there: indoors DFU's own map door refuses (IsPlayerInside), so a building's journal
     // says where and hands no door that could only say no.
@@ -13291,7 +13291,7 @@ export function createWorldModes(host) {
     removeDungeonQuestResources: () => { teardownDungeonQuestFlats(); dungeonCtx?.abyss?.removeQuestFoes?.(); },
     /** WB3b: the day of the gate whose court the player stands in, or null. */
     gateArenaDay: () => (mode === 'dungeon' && isGateArena(dungeonLoc) ? dungeonLoc.gate : null),
-    /** WB3b: the gate the player walked in by (scenes/gatePool.js enter's record), while they stand in its court. */
+    /** WB3b: the gate the player walked in by (scenes/gate/gatePool.js enter's record), while they stand in its court. */
     gateArenaGate: () => (mode === 'dungeon' && isGateArena(dungeonLoc) ? dungeonReturn?.gate ?? null : null),
     /** MAC6 #1: a dungeon save's second half, once startInDungeon has
      *  built the dungeon the save was taken in: the same position

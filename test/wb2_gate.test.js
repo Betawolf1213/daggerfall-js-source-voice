@@ -1,6 +1,6 @@
 // WB2 (2026-09-25, Mac: "A gate model would be spawned with a timer that leads to a completely different area, a gate
 // of oblivion"): THE GATE IN THE WORLD - its stone (world/gate/gateModel.js), its art (world/gate/gateArt.js), its fire and beacon
-// (render/gatePass.js), the pool the world host stands it with (scenes/gatePool.js), the banner, the activation race
+// (render/gatePass.js), the pool the world host stands it with (scenes/gate/gatePool.js), the banner, the activation race
 // and the world host's seams. Design: bible/11-Multiplayer/World-Bosses.md section 3.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -15,7 +15,7 @@ import {
   GatePassRenderer, GATE_CLOCK_PERIOD, gateClock, MEMBRANE_TURN_SEALED_HZ, MEMBRANE_TURN_OPEN_HZ, MEMBRANE_FLOW_HZ, BEACON_CLIMB_HZ,
   GATE_PASS_MAX, MEMBRANE_VS, MEMBRANE_FS, BEACON_VS, BEACON_FS, BEACON_START_M, BEACON_WIDEN, membraneVertices, beaconVertices,
 } from '../src/render/gatePass.js';
-import { createGatePool, gatePlacement, gateLocal, openingHalfWidth, fireBox, GATE_BUCKET, GATE_TEXT, GATE_SAY_MS, GATE_BANNER_M } from '../src/scenes/gatePool.js';
+import { createGatePool, gatePlacement, gateLocal, openingHalfWidth, fireBox, GATE_BUCKET, GATE_TEXT, GATE_SAY_MS, GATE_BANNER_M } from '../src/scenes/gate/gatePool.js';
 import { raceActivation, raceWinner } from '../src/player/activationRace.js';
 import { gateTimes, gateYaw, countdownText, GATE_RISE_MS, GATE_COLLAPSE_MS } from '../src/net/gate/gateLaw.js';
 import { trs } from '../src/world/mat4.js';

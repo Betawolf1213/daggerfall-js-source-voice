@@ -263,7 +263,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-G4-the-street-gate-tinted",
-    "file": "src/scenes/gatePool.js",
+    "file": "src/scenes/gate/gatePool.js",
     "old": "        renderer.uploadEmissionTexture?.(GATE_ARCHIVE, rec, art.emission, { white: true });",
     "new": "        renderer.uploadEmissionTexture?.(GATE_ARCHIVE, rec, art.emission);",
     "tests": [
@@ -272,7 +272,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-E1-the-stone-asked-to-2.8-m",
-    "file": "src/scenes/gatePool.js",
+    "file": "src/scenes/gate/gatePool.js",
     "old": "  return SEALED_AT.some((h) => insideGateStone([lx, ly + h, lz]));",
     "new": "  return ly < 2.8 && SEALED_AT.some((h) => insideGateStone([lx, ly + h, lz]));",
     "tests": [
@@ -290,7 +290,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-E3-the-ends-unasked",
-    "file": "src/scenes/gatePool.js",
+    "file": "src/scenes/gate/gatePool.js",
     "old": "  if (rise < 1 && !coarse) for (const e of [-GATE_HALF_W, GATE_HALF_W]) {",
     "new": "  if (false) for (const e of [-GATE_HALF_W, GATE_HALF_W]) {",
     "tests": [
@@ -299,7 +299,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-E3-flush-with-the-ground",
-    "file": "src/scenes/gatePool.js",
+    "file": "src/scenes/gate/gatePool.js",
     "old": "  let sunk = GATE_HEIGHT + RISE_SLACK_M;",
     "new": "  let sunk = GATE_HEIGHT;",
     "tests": [
@@ -335,7 +335,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-P1-no-pass-for-the-way-in",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    if (wayIn > 0 || (s.fell && t >= s.fell.at + PORTAL_AFTER_MS)) firePass(dt);",
     "new": "    if (s.fell && t >= s.fell.at + PORTAL_AFTER_MS) firePass(dt);",
     "tests": [
@@ -344,7 +344,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-P1-the-fires-never-cleared",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "      _fires.length = 0;\n",
     "new": "",
     "tests": [
@@ -353,7 +353,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-P1-the-way-in-handed-a-beacon",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "  const _wayIn = { origin: courtToDungeon(0, -PORTAL_DROP, WAY_IN_Z), yaw: 0, open: 1, fade: 0, spin: 0, fireOnly: true };",
     "new": "  const _wayIn = { origin: courtToDungeon(0, -PORTAL_DROP, WAY_IN_Z), yaw: 0, open: 1, fade: 0, spin: 0 };",
     "tests": [
@@ -380,7 +380,7 @@
   },
   {
     "name": "GATE-FBX-the-court-ignores-its-end",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "      fade: portalFade(t, s.fell.at, gateTimes(s.day).wrathAt + GATE_COLLAPSE_MS) };",
     "new": "      fade: portalFade(t, s.fell.at, Infinity) };",
     "tests": [
@@ -389,7 +389,7 @@
   },
   {
     "name": "GATE-FBX-open-under-the-veil",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    if (arrivedAt === null) { if (veiled()) return; arrivedAt = t; wordAt = t; }",
     "new": "    if (arrivedAt === null) { arrivedAt = t; wordAt = t; }",
     "tests": [
@@ -398,7 +398,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-C4-the-hold-from-the-first-word",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "wayInHeld = Math.max(wayInHeld, arrivedAt + WAY_IN_HOLD_MS);",
     "new": "wayInHeld = Math.max(wayInHeld, t + WAY_IN_HOLD_MS);",
     "tests": [
@@ -407,7 +407,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-C4-a-late-word-flashing-it",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "if (t < wayInHeld) wayIn = 1; }",
     "new": "wayIn = 1; }",
     "tests": [
@@ -416,7 +416,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-C3-the-first-look-opening-it",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "        if (!peersPrimed || _peersWere.has(d.id)) continue;",
     "new": "        if (_peersWere.has(d.id)) continue;",
     "tests": [
@@ -425,7 +425,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-C3-the-far-one-opening-it",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "        if (p && Math.hypot(p[0] - ARRIVAL[0], p[2] - ARRIVAL[2]) <= WAY_IN_NEAR_M) wayInHeld",
     "new": "        if (p) wayInHeld",
     "tests": [
@@ -434,7 +434,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-C3-a-returner-never-seen-stepping-in",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "      [_peersWere, _peersNow] = [_peersNow, _peersWere];",
     "new": "      for (const id of _peersNow) _peersWere.add(id);",
     "tests": [
@@ -452,7 +452,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-C1-the-silence-never-counted",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    return frameAt - wordAt > COURT_SILENT_MS;",
     "new": "    return false;",
     "tests": [
@@ -461,7 +461,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-C1-the-sleeping-screen-counted",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    if (frameAt !== null && t - frameAt > COURT_FRAME_GAP_MS) wordAt = t;\n",
     "new": "",
     "tests": [
@@ -470,7 +470,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-C1-words-unheard",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    if (s && s.day !== null && s.heardAt !== heardSeen) { heardSeen = s.heardAt; wordAt = t; }",
     "new": "",
     "tests": [
@@ -479,7 +479,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-C1-a-fallen-court-silent",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    if (s && s.day !== null && (s.fell || s.wrath != null)) return false;",
     "new": "",
     "tests": [
@@ -506,7 +506,7 @@
   },
   {
     "name": "AUDIT-GATE-FBX-C5-the-door-after-the-fights-steps",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "      portalFrame(s, t, Number.isFinite(prevT) ? Math.max(0, t - prevT) / 1000 : 0);   // WBX2: the way home, once he has fallen\n      const P = profileOf(s);   // WB8b: the fight's marks, as law - the relay's word of them\n      judge(s, t, P);\n      judgeTrap(s);   // WBX7: a soul trap of mine on him, rolled at his fall\n      burn(s, t, P);   // WBX5: the ground his landings left burning\n      cue(s, t, P);\n      crystals(s, t, P);   // WB9c: the Reckoning's crystals - seen, struck, broken, drawn\n      host.frame(s, t, P, bossOf(s).name);   // WB11c: his host - seen, heard, struck, its blows judged on me\n      fallEvent(s, t, P);   // WB13e: his fall, an event\n      sputterSparks(s, t, P);   // WB13e: his ember sputtering under his low health\n      fxFrame(s, t, P);   // WB9e: the sparks of his landings and the meteor's fall\n      drawBody(s, t, P);\n      burst(s, t);\n      spoils?.frame(onSpoilRest);   // WB9f: each piece's landing sparks\n",
     "new": "      const P = profileOf(s);   // WB8b: the fight's marks, as law - the relay's word of them\n      judge(s, t, P);\n      judgeTrap(s);   // WBX7: a soul trap of mine on him, rolled at his fall\n      burn(s, t, P);   // WBX5: the ground his landings left burning\n      cue(s, t, P);\n      crystals(s, t, P);   // WB9c: the Reckoning's crystals - seen, struck, broken, drawn\n      host.frame(s, t, P, bossOf(s).name);   // WB11c: his host - seen, heard, struck, its blows judged on me\n      fallEvent(s, t, P);   // WB13e: his fall, an event\n      sputterSparks(s, t, P);   // WB13e: his ember sputtering under his low health\n      fxFrame(s, t, P);   // WB9e: the sparks of his landings and the meteor's fall\n      drawBody(s, t, P);\n      burst(s, t);\n      spoils?.frame(onSpoilRest);   // WB9f: each piece's landing sparks\n      portalFrame(s, t, Number.isFinite(prevT) ? Math.max(0, t - prevT) / 1000 : 0);   // WBX2: the way home, once he has fallen\n",
     "tests": [

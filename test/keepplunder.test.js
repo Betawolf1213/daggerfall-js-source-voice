@@ -1,13 +1,13 @@
 // KEEP-PLUNDER and KEEP-BOATS (2026-09-30, Mac: ship ownership "less punishing" - "Keep boats & cargo"). The sea is
 // never a save's, and a transition or a fast travel empties it: a prize whose hold was not yet emptied and the casks of
-// the ships I sank went with it. Before it goes, my crew stows them (scenes/navalHost.js stowPlunder). And a boat
+// the ships I sank went with it. Before it goes, my crew stows them (scenes/naval/navalHost.js stowPlunder). And a boat
 // placed in a dungeon is kept, hold and all, when the player leaves it (the mod's PersistentDungeonBoats, shipped on).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { sea } from './navalSea.mjs';
 import { GRAPPLE_S } from '../src/systems/naval/navalBoarding.js';
-import { STRUCK_GRACE_S } from '../src/scenes/navalHost.js';
+import { STRUCK_GRACE_S } from '../src/scenes/naval/navalHost.js';
 import { SHIP_STATES } from '../src/systems/naval/navalDamage.js';
 import { navalHitData, NAVAL_HIT_MAX } from '../src/systems/naval/navalWire.js';
 import { MOD_SETTINGS } from '../src/systems/modSettings.js';

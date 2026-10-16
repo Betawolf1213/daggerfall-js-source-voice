@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { livingMap, partiesOver } from './lwRoads.mjs';
 import { createRoadFights, LIVE_M, LIVE_KEEP_M, FOE_STAND_M, LIVE_GRACE_MIN } from '../src/scenes/roadFights.js';
-import { createLivingRoads } from '../src/scenes/livingRoads.js';
+import { createLivingRoads } from '../src/scenes/livingWorld/livingRoads.js';
 import { createRelations } from '../src/systems/livingWorld/relations.js';
 import { partyAt, membersAt, CALENDAR_MPM } from '../src/systems/livingWorld/trips.js';
 import { DAY_MIN } from '../src/systems/livingWorld/dayPlan.js';
@@ -162,7 +162,7 @@ test('LW4b the end is what happens: an ally cut down FELL; every foe dead, the f
   assert.match(w, /owner: \(feet\) => amGroupRollOwner\(online\?\.id \?\? null, player\.feetAt\(\), \(peersNear\(\) \?\? \[\]\)\.filter\(\(p\) => Math\.hypot\(p\.feet\[0\] - feet\[0\], p\.feet\[2\] - feet\[2\]\) <= LIVE_M\), Infinity\),/, 'AUDIT-B5: the fight\'s own election');
   assert.match(w, /ready: \(\) => !!walkMode && !!playerSpawned && !_loading && !modes\?\.transitioning && _mode\(\) === 'exterior' && !playerAfloat\(\),/);
   assert.match(w, /return turnKey\(place, placeCycle\(place, roster, Math\.floor\(trip\.outT0 \/ 1440\), livingScale\(\)\)\);/);
-  assert.match(rd('src/scenes/livingRoads.js'), /clear\(\) \{ deps\.sprites\.clear\(\); deps\.teams\?\.clear\(\); deps\.fights\?\.clear\(\);/);   // LW10: PIN MOVED - the teams cleared beside
+  assert.match(rd('src/scenes/livingWorld/livingRoads.js'), /clear\(\) \{ deps\.sprites\.clear\(\); deps\.teams\?\.clear\(\); deps\.fights\?\.clear\(\);/);   // LW10: PIN MOVED - the teams cleared beside
 });
 
 test('AUDIT LW-III KILLED, NOT GONE: a fight\'s bodies the pool let go without a blow (its relevance cull: dead, no corpse) are neither a fall nor a win - no ally a death at the player\'s side, no fight won, no fated spared; one killed (dead with a corpse, or executed) is (mutants: the ally\'s kill, the foes\' kill, the lost)', async () => {

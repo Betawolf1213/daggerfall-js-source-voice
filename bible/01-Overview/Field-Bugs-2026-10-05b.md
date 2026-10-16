@@ -29,7 +29,7 @@ after and never learned the rule:
 - **The decorator** (HOME-VENDOR, 2026-10-03). The catalogue's Vendors are every person Daggerfall stands in a room
   (`systems/decor/decorCatalogue.js` collectDecor reads the rooms' `blockPeopleRecords`) - the Temple of Kynareth's pair, the
   houses' and taverns' nude figures among them. The catalogue OFFERED them whatever the setting said, a placed one stood
-  in the room as itself (`scenes/decorRoom.js` put), flew as itself when moved (`scenes/decorTool.js` the ghost) and
+  in the room as itself (`scenes/decor/decorRoom.js` put), flew as itself when moved (`scenes/decor/decorTool.js` the ghost) and
   showed as itself in the panel's lists (its thumbnails) - in every house, ship, online home, yard and hall, and to
   every visitor of a home whose owner placed one.
 - **The Arena's tiers** (ARENA2). The crowd's own table (`systems/arena/arenaCrowd.js` CROWD_PEOPLE) seats 182.48 ("blond
@@ -46,7 +46,7 @@ after and never learned the rule:
   panel keeps its pictures for the session, so a setting turned off after the figure's own picture was drawn went on
   showing it in "In this room". The piece itself is unchanged - its key, name, price and station: a trader is still a
   trader, as NUDE-FLATS keeps a person's identity.
-- **The crowd** (`scenes/arenaBouts.js` buildCrowd): a seat draws its picture through `drawnFlat`.
+- **The crowd** (`scenes/arena/arenaBouts.js` buildCrowd): a seat draws its picture through `drawnFlat`.
 - **The sweep** (`test/nudedecor.test.js`). A rule each new host must remember is the rule the next one forgets (THE ONE
   CONSTRUCTION SEAM's lesson), so every file of `src/` that batches a billboard is NAMED in the test: a person host
   imports `nudeFlats.js` and asks `drawnFlat`; any other says what it draws instead (blood, loot, torches, foes and
@@ -141,7 +141,7 @@ cart or lamp post, and none of the trees, bushes, flowers and rocks of the clima
   climate (`room.natureBase`, the set its pixel names) - none where it knows none. The names of every earlier place
   stand as they were (DECOR_FROM: the rooms, the dungeons, then the street, then the nature).
 
-**The yard** (`scenes/homeYards.js`, `scenes/yardNature.js`, `scenes/decorRoom.js`'s two new doors):
+**The yard** (`scenes/homeYards.js`, `scenes/yardNature.js`, `scenes/decor/decorRoom.js`'s two new doors):
 
 - **Its town's climate.** A yard's models were drawn with the pixel's climate table, which holds only the swaps of the
   models the town itself stood: a fence the town never stood drew in another climate's wood. A yard's model now writes

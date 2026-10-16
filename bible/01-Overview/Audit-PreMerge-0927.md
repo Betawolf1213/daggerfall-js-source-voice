@@ -42,7 +42,7 @@ mutation-proven (`tools/mutants/auditqp.json` 38, `auditown.json` 7, `auditpace.
 | O4 | low | A frame nested deeper than stringify takes (JSON.parse accepts it) threw out of the socket's handler with the budget spent. | `fanOut` catches it: junk. |
 | O5 | low | Two test titles claimed more than they held. | own1 now drives a host hearing an own blow, and a cell's own frame without the prefix. |
 
-**The sea and the pacing** (`scenes/world.js`, `scenes/deepWatersHost.js`, `scenes/deepWatersEncounters.js`, the three foe pools)
+**The sea and the pacing** (`scenes/world.js`, `scenes/deepWater/deepWatersHost.js`, `scenes/deepWater/deepWatersEncounters.js`, the three foe pools)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|

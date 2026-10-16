@@ -244,7 +244,7 @@
   },
   {
     "name": "SD19-host-marks-unsaid",
-    "file": "src/scenes/sdHost.js",
+    "file": "src/scenes/superDungeon/sdHost.js",
     "old": "const m = sdMarksLine({ name: h?.loc?.name, s: o.rec.s }); if (m) say(m); }",
     "new": "}",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "SD19-host-hour-while-risen",
-    "file": "src/scenes/sdHost.js",
+    "file": "src/scenes/superDungeon/sdHost.js",
     "old": "    if (phase === 'found' && rec && hourSaidS !== rec.s &&",
     "new": "    if ((phase === 'found' || phase === 'risen') && rec && hourSaidS !== rec.s &&",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "SD19-host-hour-any-time",
-    "file": "src/scenes/sdHost.js",
+    "file": "src/scenes/superDungeon/sdHost.js",
     "old": "rec.until > t && rec.until - t <= SD_HOUR_LEFT_MS) {",
     "new": "rec.until > t) {",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "SD19-host-hour-every-frame",
-    "file": "src/scenes/sdHost.js",
+    "file": "src/scenes/superDungeon/sdHost.js",
     "old": "{ hourSaidS = rec.s; say(sdHourLine(",
     "new": "{ say(sdHourLine(",
     "tests": [
@@ -280,7 +280,7 @@
   },
   {
     "name": "SD19-host-hour-unplaced",
-    "file": "src/scenes/sdHost.js",
+    "file": "src/scenes/superDungeon/sdHost.js",
     "old": "      if (hh || (memo && memo.s === rec.s && memo.none)) { hourSaidS = rec.s;",
     "new": "      { hourSaidS = rec.s;",
     "tests": [

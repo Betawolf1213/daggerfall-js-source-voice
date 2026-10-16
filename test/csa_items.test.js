@@ -332,7 +332,7 @@ test('CSA-H: the host\'s seams - the two use handlers on the item-use door (the 
   assert.match(w, /registerContainerLootHandler\(COME_SAIL_AWAY_VENDOR, \(a\) => \{ if \(a\.containerType === LOOT_CONTAINER_TYPES\.ShopShelves\) csaShelfStocked\(a\.items\); \}\);/);
   assert.equal((m.match(/shelfLootSpawned\(stockShopShelf\(\{ buildingType: b\.buildingType, quality: b\.quality \}, playerEntity(?:, \{ shelfIndex: i \})?\), b\)/g) ?? []).length, 2, 'both shelf doors (AUDIT ECON P1: the shelf hands its index)');
   assert.match(m, /mountWindow: \(win\) => mountSpellWindow\(win\),\s*closeWindow: \(win\) => closeSpellWindow\(win\),/);
-  const pool = src('scenes/comeSailAwayPool.js');
+  const pool = src('scenes/comeSailAway/comeSailAwayPool.js');
   assert.match(pool, /function setVariant\(boat, variant\) \{\s*setBoatVariant\(boat, variant, \{ models,/);
 });
 

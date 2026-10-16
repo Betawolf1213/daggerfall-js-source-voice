@@ -20,7 +20,7 @@ WAQ_SHIP_SMALLRAID (`vendor/warm-ashes-ships/Quests/`) musters the ship's crew w
 `daily from 00:00 to 24:00` task. The team landed. The infighting flag never did: `ChangeFoeInfighting`
 (`systems/quest/actions.js`) wrote `inst.behaviour`, and the hosts' instance walk (`questFoeInstances`, world.js /
 exterior.js / worldModes.js `liveQuestFoes`) answers foe RECORDS, which keep the QuestResourceBehaviour as
-`questBehaviour` (`scenes/questFoeHost.js bindQuestFoeHost`; `behaviour` is the name only on a spawn handle). The
+`questBehaviour` (`scenes/quest/questFoeHost.js bindQuestFoeHost`; `behaviour` is the name only on a spawn handle). The
 write was skipped and the action completed anyway, silently. So every quest foe stayed one that targets only the player
 and that nobody may target (EnemySenses.GetTargets :806-807, :814-815, the port's `enemyTargets.js getTargets`): the
 crew stood idle, and the raiders fought the player alone. Every host was affected, and every quest using the action.
@@ -71,7 +71,7 @@ same), and a swimmer too, as the lone roll's gate does.
 ## QUEST-WAVE: a wave placed in one tick sees its own stands in flight (report 3)
 
 Every quest placement arm (the street's and the city's, the interior's and the dungeon's) holds the spot it chose until
-its stand lands (`scenes/questFoeHost.js heldSpots` / `holdSpotWhile`), and asks the held spots beside the pool - so a
+its stand lands (`scenes/quest/questFoeHost.js heldSpots` / `holdSpotWhile`), and asks the held spots beside the pool - so a
 spot that is taken refuses the next foe of the same tick, which waits a tick, as CreateFoe's does. On a deck every ray
 meets a rail and every spot of a tick falls in the same two small slivers: measured, thirteen placed at once stood with
 24 to 43 pairs inside each other; now two to four stand per tick and none overlap, the rest following as the first move
@@ -120,7 +120,7 @@ quest's box held every foe; WINFOE1 (`06-Systems/Systems-Arc.md`) let the pools 
 `say 1013` box held the player and the quest machine while the thirteen raiders it announced came on. Offline, a quest
 box that is open and the window on top of its slot hands the pools a zero frame again: the street's encounter pool and
 watch and the town's answer (world.js, exterior.js), and the interior pool and indoor watch through the mode machine's
-bag (`host.questBoxHoldsFoes`). The rule is one function, `scenes/questFoeHost.js questBoxHoldsFoes`. A rest window
+bag (`host.questBoxHoldsFoes`). The rule is one function, `scenes/quest/questFoeHost.js questBoxHoldsFoes`. A rest window
 keeps WINFOE1 (a foe still walks up and breaks a rest), and a rest under a box resumes with the foes when it closes;
 the dungeon already held its foes under any window. Online nothing is held: the room keeps one clock for everyone.
 
@@ -155,7 +155,7 @@ together saw two different seas, and each stood a whole cap. Now:
 
 - **One deep a group.** The players within the mod's populate radius (200 m) of each other stand ONE deep - the lowest
   id among them, the camps' own election (`systems/campEncounters.js amGroupRollOwner`, through
-  `scenes/deepWatersHost.js standsTheDeep`). Only that player's spawner populates a pixel (world.js, the lane's
+  `scenes/deepWater/deepWatersHost.js standsTheDeep`). Only that player's spawner populates a pixel (world.js, the lane's
   attempts); a player that near it is inside a pixel it populates. Offline, or alone, a player stands its own.
 - **No foe vanishes mid-fight.** A player who stops being the one populates no new pixel; what it stood stays until it
   dies or its pixel is left, as the mod releases it anyway.

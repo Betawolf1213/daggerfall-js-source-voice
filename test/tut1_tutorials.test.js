@@ -5,7 +5,7 @@
 // The catalogue's rules (systems/tutorialCatalogue.js), the read list on the prefs shelf (systems/tutorials.js), the
 // trigger and its popup line (ui/tutorialPopup.js) driven through fake seams, the seams themselves swept both ways
 // (every popping page has a seam; every seam names a page), the menu's Tutorials tab and section, the four hosts'
-// registration, and the DFU tutorial's retirement (scenes/questBridge.js).
+// registration, and the DFU tutorial's retirement (scenes/quest/questBridge.js).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
@@ -25,7 +25,7 @@ import {
   TutorialBox, SHOW_DELAY_MS, RETRY_MS, SCENE_CHANGE_TUTORIAL_MS, INPUT_GRACE_MS, WATCH_MS, boundKeyName, keyWord,
 } from '../src/ui/tutorialPopup.js';
 import { tutorialsMatching } from '../src/ui/tutorialsPane.js';
-import { GAME_START_QUESTS, retireDfuTutorial } from '../src/scenes/questBridge.js';
+import { GAME_START_QUESTS, retireDfuTutorial } from '../src/scenes/quest/questBridge.js';
 import { registerPresenter, windowHeld, _resetNotifyForTests } from '../src/systems/notify.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -528,5 +528,5 @@ test('TUT1: a save still in DFU\'s tutorial leaves it at the load, and starts th
   assert.deepEqual(retireDfuTutorial(done), { retired: 0, started: false });
   assert.deepEqual(done.removed, []);
   assert.deepEqual(retireDfuTutorial(null), { retired: 0, started: false });
-  assert.match(read('src/scenes/questBridge.js'), /relayMovedLayouts\(machine, [^\n]*\n\s+retireDfuTutorial\(machine\);/, 'at the load, once the machine is restored and its dungeons laid');
+  assert.match(read('src/scenes/quest/questBridge.js'), /relayMovedLayouts\(machine, [^\n]*\n\s+retireDfuTutorial\(machine\);/, 'at the load, once the machine is restored and its dungeons laid');
 });

@@ -2,7 +2,7 @@
 // SD-LOOK S10 (2026-10-09, the Abyss Dungeon's look; bible/11-Multiplayer/Super-Dungeons-Look.md section 7): THE ORRERY
 // OVERHEAD - six great brass rings nested about an axle that hangs from the dark over the hall's dial, each carrying its
 // Ending's medallion, and at the axle's foot, 7 m over the dial's centre, the Mantella soul-gem whose light is the dial's
-// count. Pure: the meshes in their own frames and the matrices that hang them (scenes/sdHall.js stands and moves them).
+// count. Pure: the meshes in their own frames and the matrices that hang them (scenes/superDungeon/sdHall.js stands and moves them).
 //
 // MODE A, the law-safe default (Mac's ruling taken at its default; Super-Dungeons.md section 8: "the gearing is not shown;
 // it is learned by turning"): the rings hang still at their own tilts and tick together once every SD_RING_TICK_S as

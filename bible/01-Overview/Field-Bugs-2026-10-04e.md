@@ -80,7 +80,7 @@ down, Y on the slot in hand, the crossbar API's place, the hand let go with the 
 
 `systems/arena/arenaQuiver.js` (new: QUIVER_TEMPLATES, markQuiver, refundQuiver), `systems/shotTally.js` (new, a leaf: the
 shots a bout loosed), `systems/inventory.js` (spendAmmoFor notes a real round's shot), `combat/arrowFlight.js`
-(playerArrowHitFoe notes a shaft lodged where it can be looted), `scenes/arenaBouts.js` (`markMine` where a bout sets
+(playerArrowHitFoe notes a shaft lodged where it can be looted), `scenes/arena/arenaBouts.js` (`markMine` where a bout sets
 my bout tag - a ladder or practice bout and a relay's; `refundMine` with that bout's healers; `refundQuiver` on the
 driver's face), `scenes/world.js` (a private session's bout let go before its healers - `letGoPriv`'s heal - pays
 too), `systems/arena/arenaText.js` (`ammoBack`). The quiver is counted as I step into a bout: every ammunition inventory.js

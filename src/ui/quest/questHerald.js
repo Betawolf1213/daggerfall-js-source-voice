@@ -29,7 +29,7 @@
 // no DOM, no clock of its own - and the draw hands its frame to
 // drawEnhancedToasts each HUD frame, as ui/hud/hudText.js hands PopupText's.
 //
-// WHO FEEDS IT. The quest bridge (scenes/questBridge.js), after each
+// WHO FEEDS IT. The quest bridge (scenes/quest/questBridge.js), after each
 // machine tick: one lens look a tick, and only while the herald is
 // listening - so a player who never hears it never pays for the look.
 //

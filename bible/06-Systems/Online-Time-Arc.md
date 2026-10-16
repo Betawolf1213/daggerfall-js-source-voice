@@ -224,7 +224,7 @@ Nothing in this table changes. It is listed so the census has its other half.
 
 | What | Where |
 |---|---|
-| Gates: the day, the phases, the arena's window, the court's | `net/gate/gateLaw.js`, `server/src/index.js`, `scenes/gateCourt.js` |
+| Gates: the day, the phases, the arena's window, the court's | `net/gate/gateLaw.js`, `server/src/index.js`, `scenes/gate/gateCourt.js` |
 | Raids: the day, the window, the map's marks | `net/raid/raidLaw.js`, `server/src/index.js`, `world.js` |
 | The overworld's rows and how long they are kept | `net/overworldLaw.js`, `server/src/index.js` |
 | Prices: the day's index and its flags | `worldTick.js` (`setWorldPriceSource`, `runDayChange`'s world half) |
@@ -243,7 +243,7 @@ Nothing in this table changes. It is listed so the census has its other half.
 | Spawned dungeons' lifetimes, the shared interiors' loot day | `world/spawnedDungeons.js`, `world/interior/interiorShared.js` |
 | The gates' income: receipts, spoils, the Sigil Broker's prices, the account service's `gate_kills` | `net/gate/gateLink.js`, `net/gate/gateClaims.js`, `scenes/spoilsPool.js`, `systems/sigil/sigilBroker.js`, `server-account` |
 | The day's generators, and the music's daily playlist seed | `worldTick.js` (`DAY_SALT`), the hosts' `gameDaysNow` |
-| The naval day: notoriety's decay, the port's grog, today's departures, the traffic seed | `world.js` (the naval `where`), `scenes/navalHost.js`, `systems/naval/` |
+| The naval day: notoriety's decay, the port's grog, today's departures, the traffic seed | `world.js` (the naval `where`), `scenes/naval/navalHost.js`, `systems/naval/` |
 | The captain's day: a port's board and exchange, the Eltheric strands' regrowth, the legends' rise (CAPT-BOARD, ETHER-SEA, 2026-10-11) | `world.js` (the harbour office's and the Eltheric host's `day`), `scenes/harbourOffice.js`, `scenes/etherHost.js` |
 | The minute a character joins online at | `ui/enhanced/enhancedMenu.js` (`onlineCopyOf`) |
 
@@ -409,7 +409,7 @@ night is a raise, which 6.3c charges nothing. So 6.3b's reading comes back for i
 - **Online a delay lands on the short wait** (`Clock.waitsShort`): its remainder is cut once to `ONLINE_DELAY_SECONDS`
   (24 minutes of the character's clock) and then charged as 6.3c charges any clock - the lived step, never a raise -
   so it lands after about two real minutes of play, and a night spends none of it. Its `=x_` count reads "a few"; the
-  journal walk (`scenes/questBridge.js questLog`) skips it, so no surface counts a letter down.
+  journal walk (`scenes/quest/questBridge.js questLog`) skips it, so no surface counts a letter down.
 - **Online a deadline is 6.3c's, untouched**: played world time, DFU's end (armed at nothing, it fires at once, as
   offline - 6.3b's T7 guard went with the freeze); its count, "Time remains", the rail and the herald's urgency stand.
 - **The crime-guild letter** is due 24 of the character's minutes after the tally (`crimeGuilds.js`
@@ -488,7 +488,7 @@ does online: "Short real wait"; asked whether the bounties, the curse quests and
   character's clock, about two real minutes of play at 12:1) and charged as any clock (WORLD7's played step, raised
   time whole).
 - **The words**: a clock's `=x_` day count reads "a few" online ("within a few days"); the journal walk
-  (`scenes/questBridge.js questLog`) reads no clock online, so no surface shows "Time remains" or herald's urgency;
+  (`scenes/quest/questBridge.js questLog`) reads no clock online, so no surface shows "Time remains" or herald's urgency;
   the Online pane says so.
 - **The rest**: a quest letter waits for town but not the sky's morning (GivePc); a taken bounty never lapses and
   shows no time left (`scenes/bountyHost.js`); the curse quests roll every 24 of the character's minutes while their

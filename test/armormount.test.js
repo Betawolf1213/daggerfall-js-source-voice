@@ -10,7 +10,7 @@ import { decorIsMount, decorWhatOf, DECOR_ARMOR_GROUP } from '../src/net/decorLa
 import { decorMountOf, decorStandOf, decorOwnEntry, decorMountDye } from '../src/systems/decor/decorItems.js';
 import { inventoryItemImage, ITEM_TEMPLATES } from '../src/systems/item/itemTemplates.js';
 import { itemDyeColor } from '../src/systems/item/itemDye.js';
-import { createDecorRoom } from '../src/scenes/decorRoom.js';
+import { createDecorRoom } from '../src/scenes/decor/decorRoom.js';
 import { settle } from './decorFakes.mjs';
 
 // Daggerfall's ItemGroups.Armor: Cuirass .. Tower_Shield, templates 102-112

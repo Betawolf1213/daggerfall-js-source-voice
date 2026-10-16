@@ -14,12 +14,12 @@ import {
   SD_LANDING_PAST_M, SD_LANDING_CLEAR_M, sdRiftFit, sdRiftSweep, SD_RIFT_SIZE_M, SD_RIFT_AIR_M,
 } from '../src/world/superDungeon/sdDungeon.js';
 import { SD_REALM_TEXT } from '../src/world/superDungeon/sdRealm.js';
-import { createSdEnd, SD_STEP_GAP_MS, SD_STEP_JUMP_M, SD_RIFT_KEY, SD_RIFT_PRESS_M } from '../src/scenes/sdEnd.js';
+import { createSdEnd, SD_STEP_GAP_MS, SD_STEP_JUMP_M, SD_RIFT_KEY, SD_RIFT_PRESS_M } from '../src/scenes/superDungeon/sdEnd.js';
 import { riftCentreY } from '../src/world/superDungeon/sdRiftModel.js';
 import { pickActivatableHit, RAY_DISTANCE } from '../src/player/activate.js';
 import { sdCities, findSdSite, sdTemplates } from '../src/systems/superDungeon/sdSite.js';
 import { scanGatePixels, gateScanner } from '../src/systems/gate/gateSite.js';
-import { createSdHost } from '../src/scenes/sdHost.js';
+import { createSdHost } from '../src/scenes/superDungeon/sdHost.js';
 import { isMainStoryDungeon } from '../src/world/dungeon/dungeonTextures.js';
 import { LOCATION_TYPES } from '../src/formats/mapsFile.js';
 import { createSpawnGround, WORLD_SALT } from '../src/world/spawnedDungeons.js';
@@ -340,7 +340,7 @@ test('SD26 A HOLLOW STANDS ON DRY GROUND (AUDIT SD IV F37): every spawned dungeo
   assert.equal(findSdSite({ s: 3, r: 0 }, scan2, [city], () => false), null, 'none dry: no site');
   // the world host hands the spawns' own test through
   assert.match(W, /\n {4}ground: \(px, py\) => _spawnGround\(px, py\),/);
-  assert.match(read('src/scenes/sdHost.js'), /findSdSite\(r, sc, cities\(r\.r\), ground\)/);
+  assert.match(read('src/scenes/superDungeon/sdHost.js'), /findSdSite\(r, sc, cities\(r\.r\), ground\)/);
 });
 
 // ── F38: the end out of the water ─────────────────────────────────────

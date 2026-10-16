@@ -21,7 +21,7 @@ import { serpentTimes, serpentAdmits, serpentCountdown, serpentPhase, SERPENT_BR
 import { shoveOf, shipHurt, crushHurt, SERPENT_THROW_X, SERPENT_CANVAS_X } from '../src/systems/serpent/serpentStrike.js';
 import { createSerpentLink } from '../src/net/serpent/serpentLink.js';
 import { createSerpentHost, SERPENT_GALE, SERPENT_NEAR_M, GALE_LINE } from '../src/scenes/serpentHost.js';
-import { bumperDrift, flatHull, BUMPER_M, BUMPER_GAIN, BUMPER_V_MAX } from '../src/scenes/navalHost.js';
+import { bumperDrift, flatHull, BUMPER_M, BUMPER_GAIN, BUMPER_V_MAX } from '../src/scenes/naval/navalHost.js';
 import { ArrowFlight } from '../src/combat/arrowFlight.js';
 import { mintSerpentReceipt, readSerpentReceipt } from '../src/net/serpent/serpentReceipt.js';
 import { validSerpentIn, validSerpentOut, SOCIAL_ROOM, SERPENT_RC_PREFIX } from '../src/net/wire.js';
@@ -214,7 +214,7 @@ test('SERPENT4 the ships\' bumpers ("ships need some kind of larger invisible bo
   assert.equal(bumperDrift(me, [flatHull([beam + 2 * BUMPER_M + 1, 0, 0], 0, HULL.SmallShip)]), null, 'apart: nothing');
   const deep = bumperDrift(me, [flatHull([0.5, 0, 0], 0, HULL.SmallShip), flatHull([1, 0, 0], 0, HULL.SmallShip)]);
   near(Math.hypot(deep[0], deep[2]), BUMPER_V_MAX, 1e-9, 'never past its cap');
-  const naval = src('scenes/navalHost.js');
+  const naval = src('scenes/naval/navalHost.js');
   assert.ok(naval.includes('drift: (boat) => (enabled ? withBumpers(boat, deps.serpent?.drift?.(boat) ?? null) : null)'));
   assert.ok(/function withBumpers\(boat, d\) \{\n {4}if \(!deps\.serpent\?\.near\?\.\(\)\) return d;/.test(naval), 'in its waters alone');
 });

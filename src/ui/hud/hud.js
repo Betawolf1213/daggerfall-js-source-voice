@@ -691,7 +691,7 @@ export function drawHud(renderer, canvas, art, vitals, heading01, dt = 0,
       quest: quest ?? null,   // GUIDE5: the tracker's quest's place, scene XZ, on the street - the compass's quest mark
       wayOut: wayOut ?? null,   // WAYOUT1: underground, the way out along the walked trail, scene XZ (systems/wayOut.js)
       party: party ?? null,   // COMPASS-PARTY: the party's points (ui/partyMapMarks.js partyCompassPoints)
-      ships: ships ?? null,   // AUDIT NAV1 (the helm): the sea's ships (scenes/navalHost.js compassShips)
+      ships: ships ?? null,   // AUDIT NAV1 (the helm): the sea's ships (scenes/naval/navalHost.js compassShips)
       nodes: nodes ?? null,   // NODE-MARKS: the professions' nodes, each in its profession's colour (ui/nodeMarks.js nodeCompassPoints)
       boats: boats ?? null,   // BOAT-MARK: my boats, scene XZ (ui/boatMarks.js boatCompassPoints)
       // QS3: the quickslot diamond dims its main cell when the weapon
@@ -885,7 +885,7 @@ export function drawPartyCompassMarks(renderer, points, playerXZ, heading01, { b
 /** AUDIT NAV1 (the helm - the audit: "there are no ship bearings on the compass", the target card only within 6 degrees
  *  of the crosshair): the sea's ships on the classic compass - the Detect marker's triangle turned UP (a hull's bow, and
  *  never the party's or a Detect's), its row over the box's top edge and its bearing law (compassMarkerLerp, clamped),
- *  in SHIP_MARK_COLORS by what she is to me. `ships` are `{ x, z, kind }` in scene XZ (scenes/navalHost.js
+ *  in SHIP_MARK_COLORS by what she is to me. `ships` are `{ x, z, kind }` in scene XZ (scenes/naval/navalHost.js
  *  compassShips). Answers how many it drew. */
 export const SHIP_MARK_COLORS = Object.freeze({
   hostile: Object.freeze([0.93, 0.34, 0.27, 1]), ship: Object.freeze([0.92, 0.88, 0.76, 1]), struck: Object.freeze([0.56, 0.56, 0.56, 1]),

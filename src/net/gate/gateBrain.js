@@ -199,7 +199,7 @@ export const PHASE3_WINDUP = 0.8;
  *  fire and reach (Hellfire and the Meteor leave the floor burning, the Flame Nova, the Crushing Leap at whoever stands
  *  far off); Dagon's Champion adds the Spokes of Dagon - four lanes of fire from his feet, and then the four between
  *  them. Not faster: Mac, of a player's ask for mechanics half again as fast, "I dont think making mechanics faster is
- *  the play". The names are the bar's (ui/gate/gateBossBar.js) and the turn's words (scenes/gateCourt.js). */
+ *  the play". The names are the bar's (ui/gate/gateBossBar.js) and the turn's words (scenes/gate/gateCourt.js). */
 export const PHASE_NAMES = Object.freeze(['The Warden', 'The Burning Court', "Dagon's Champion"]);
 
 // ── the attacks ────────────────────────────────────────────────────────

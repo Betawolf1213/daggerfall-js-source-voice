@@ -21,7 +21,7 @@ import { loadComeSailAwayModels, CSA_MODEL_URLS, CARRACK_MODEL_URL, LARGE_BOAT_M
 import { animatorOf, colliderBounds } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { HULL, HULL_BUILDS, MOD_LARGE_BOAT_BUILD, hullBuild, setShipStanding } from '../src/systems/naval/navalShips.js';
 import { gangwaySide, gangwayFoot, GANGWAY_SIDE, MOD_LARGE_BOAT_GANGWAY } from '../src/systems/naval/quays.js';
-import { rigBoxesOf } from '../src/scenes/navalHost.js';
+import { rigBoxesOf } from '../src/scenes/naval/navalHost.js';
 import { quatRotate, mat4FromQuatPosScale, quatAngleAxis } from '../src/world/quat.js';
 import { multiply } from '../src/world/mat4.js';
 import { pathHash } from '../src/world/unityAnimator.js';

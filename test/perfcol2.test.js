@@ -158,7 +158,7 @@ test('PERF-COL2: the world host marks every streamed pixel\'s bucket as riding i
   // AUDIT: the two hosts that lay a pixel's bucket of their own are handed the frame, and mark with it
   assert.ok(w.includes('    collider, pixelTranslation: (px, py, o) => state.pixelTranslation(px, py, o), floatingFrame: () => state,'), 'Deep Waters handed the frame');
   assert.ok(w.includes('    pixelTranslation: (px, py) => state.pixelTranslation(px, py), floatingFrame: () => state,'), 'the bounty farms handed the frame');
-  const dw = readFileSync(new URL('../src/scenes/deepWatersHost.js', import.meta.url), 'utf8');
+  const dw = readFileSync(new URL('../src/scenes/deepWater/deepWatersHost.js', import.meta.url), 'utf8');
   assert.ok(dw.includes('collider.addMesh(state.bucket, state.floor.positions, wall, IDENTITY, floatingFrame ? onFloatingFrame(floatingFrame(), t) : t);'), 'the walls\' bucket marked');
   assert.equal(dw.split('collider.addMesh(').length - 1, 1, 'the walls are the host\'s one bucket');
   const bf = readFileSync(new URL('../src/scenes/bountyFarms.js', import.meta.url), 'utf8');

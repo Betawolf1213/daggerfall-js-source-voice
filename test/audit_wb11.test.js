@@ -11,10 +11,10 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as GB from '../src/net/gate/gateBrain.js';
 import * as GL from '../src/net/gate/gateLink.js';
-import * as GH from '../src/scenes/gateHost.js';
+import * as GH from '../src/scenes/gate/gateHost.js';
 import * as GBoss from '../src/world/gate/gateBoss.js';
 import * as W from '../src/net/wire.js';
-import { createGateCourt } from '../src/scenes/gateCourt.js';
+import { createGateCourt } from '../src/scenes/gate/gateCourt.js';
 import { courtToDungeon } from '../src/world/gate/gateArena.js';
 import { createEnchantCtx } from '../src/scenes/hostEnchant.js';
 import { setDefaultEnchantCtx, ENCHANTMENT_TYPES as ET, PAYLOAD, doItemEnchantmentPayloads } from '../src/systems/enchantments.js';
@@ -44,7 +44,7 @@ function fightOf(n = 4, lv = 30, md = LEGION) {
 const hostOf = (over = {}) => ({ n: 0, ads: [], harryAt: 0, sapAt: 0, fed: 0, wardCt: -1, hSent: '', hSentAt: 0, ...over });
 const body = (o) => ({ i: 1, k: HOST.harrier, h: 1000, m: 1000, x: 0, z: 0, mv: null, atk: null, tg: null, tgAt: 0, up: 0, next: 0, ...o });
 
-/** The court and its host driver over a link the test writes (scenes/gateCourt.js), a sprite of every record if asked. */
+/** The court and its host driver over a link the test writes (scenes/gate/gateCourt.js), a sprite of every record if asked. */
 function rig({ feet = [0, 0, 4], textured = false, eye = [0, 1.7, -10] } = {}) {
   const link = { st: GL.GATE_STATE_EMPTY, state() { return this.st; } };
   const clock = { t: 0 };

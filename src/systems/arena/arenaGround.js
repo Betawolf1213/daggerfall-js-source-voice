@@ -1,6 +1,6 @@
 // @ts-check
 // CURSE-OFF-SAND (FIELD BUGS 2026-10-04e, Discord: "The ghosts outside are bothersome (I know they're story related)").
-// The Curse of Daggerfall (S0000977, a world quest - scenes/questFoeHost.js WORLD_QUESTS) tries a wraith every 21
+// The Curse of Daggerfall (S0000977, a world quest - scenes/quest/questFoeHost.js WORLD_QUESTS) tries a wraith every 21
 // minutes and a ghost every 31 from 19:00 to 05:00 while the player is in the city, each stood on a ring 5-20 m round
 // them (CreateFoe's own placement). The hour's exhibitions run until 21:00 and a ladder bout at any hour, so the curse's
 // dead came for the player at the gate, in the stands and between bouts - and indoors, on the floor's instance and in

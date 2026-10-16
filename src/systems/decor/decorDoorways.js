@@ -12,7 +12,7 @@
 // DOOR_MODEL_COUNT), read into the catalogue from the town blocks' own
 // door records (systems/decor/decorCatalogue.js), priced by size as any piece
 // is. Placed, it stands as an ACTION DOOR (world/actionSystem.js addDoor,
-// keyed `act:decor:<id>` - scenes/decorRoom.js hands it to the host): it
+// keyed `act:decor:<id>` - scenes/decor/decorRoom.js hands it to the host): it
 // swings open and shut, blocks while shut, is saved and is shared with
 // whoever stands in the room, exactly as the room's own doors are. The
 // account service keeps it as the piece it is (a model id, a place), so

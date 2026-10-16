@@ -1,12 +1,12 @@
 // PEER-HULL-RANGE (2026-10-11) - ANOTHER'S SHIP FAR OFF STANDS NO HULL HERE. Every peer in the room says their sea in
 // their word, so a client held every player's ships wherever they sailed, and Come Sail Away's pool walked and baked
-// each one every frame - 30-40 hulls, most of them 80-700 km off, a third of the main thread (scenes/navalHost.js
+// each one every frame - 30-40 hulls, most of them 80-700 km off, a third of the main thread (scenes/naval/navalHost.js
 // PEER_HULL_NEAR_M). Her record is kept as ever; only her hull waits for the eye to come near. The sea of
 // test/navalSea.mjs, on foot at the origin.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { sea } from './navalSea.mjs';
-import { PEER_HULL_NEAR_M, PEER_HULL_FAR_M } from '../src/scenes/navalHost.js';
+import { PEER_HULL_NEAR_M, PEER_HULL_FAR_M } from '../src/scenes/naval/navalHost.js';
 import { navalWireRecord } from '../src/systems/naval/navalWire.js';
 
 const said = (n, pos, seed) => navalWireRecord({ ships: [{ n, classId: 'merchantGalleon', variant: 0, pos, yaw: 0, speed: 0, sails: 1, hull: 1, sail: 1, crew: 1, state: 'afloat', heel: 0, seed, fire: false }] }).s[0];

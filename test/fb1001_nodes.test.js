@@ -12,7 +12,7 @@
 // SEASONAL-EYE. Herbalism 100's Seasonal Eye changes what stands; chosen mid-session it stood nothing again until the next
 // state read or the day's turn, and the patches named herbs the service did not roll. Now a change of it stands them again.
 // NAVAL-E. At sea the net's cast stands in the look, and E cast it where the readout said "E: board her"; now the street
-// asks the sea first (scenes/navalHost.js takesActivate). The real gathering host and its kinds over a stood pixel
+// asks the sea first (scenes/naval/navalHost.js takesActivate). The real gathering host and its kinds over a stood pixel
 // (test/fb1001_mining.test.js's), the real meter, and the street's gate lifted from the world host (test/auditnav2_helm's).
 import './chargenDom.mjs';
 import { test } from 'node:test';

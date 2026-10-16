@@ -16,7 +16,7 @@ import { MAGES_GUILD, FIGHTERS_GUILD, DAY_MIN, isOutdoor } from '../src/systems/
 import { LivingTown } from '../src/systems/livingWorld/livingTown.js';
 import { ResidentWalker } from '../src/characters/residentWalker.js';
 import { createTravellerSprites, classLookOf } from '../src/world/travellerSprites.js';
-import { createLivingIndoors } from '../src/scenes/livingIndoors.js';
+import { createLivingIndoors } from '../src/scenes/livingWorld/livingIndoors.js';
 import { NPC_FLAT_ARCHIVES } from '../src/world/rdbLayout.js';
 import { FlatsFile, flatCensored } from '../src/formats/flatsFile.js';
 import { TextureFile } from '../src/formats/textureFile.js';

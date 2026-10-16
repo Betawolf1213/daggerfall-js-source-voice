@@ -21,7 +21,7 @@ export const FIGHT_HEALTH_MIN = 0.5;
  * (systems/arena/arenaLeague.js) - he names the banner you fight under, and the laurel when you wear it.
  * ARENA5: `replays` how many of the save's ladder bouts the records keep (systems/arena/arenaReplay.js) - the last one is
  * offered to watch again ("R - Watch your last bout again").
- * AUDIT PRE-MERGE 1003 B3: `fought` the hour's bout has had its word on this screen (scenes/arenaGate.js watchRefusal) -
+ * AUDIT PRE-MERGE 1003 B3: `fought` the hour's bout has had its word on this screen (scenes/arena/arenaGate.js watchRefusal) -
  * Watch is not offered: it would dismiss that bout and fight the hour again from its call, both fighters whole.
  * @param {{ gameMinutes: number, cityBout?: { a: string, b: string } | null, ladder?: any, healthShare?: number, window?: boolean, league?: any, replays?: number, fought?: boolean }} o
  */

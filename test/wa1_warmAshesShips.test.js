@@ -123,7 +123,7 @@ test('WA1 the quests: the shipped text byte for byte (CRLF as shipped), the list
   assert.ok(!registeredQuestLists().includes(WA_QUEST_LIST), 'the list stands behind the switch, as a loaded mod\'s does');
   _resetModSettings(); _resetQuestLists(); _resetWarmAshesShips(); _resetModSaveData();
   // the pack loader globs the mod's folder beside Roleplay & Realism's
-  assert.match(read('src/scenes/questData.js'), /import\.meta\.glob\('\.\.\/\.\.\/vendor\/warm-ashes-ships\/Quests\/\*\.txt'/);
+  assert.match(read('src/scenes/quest/questData.js'), /import\.meta\.glob\('\.\.\/\.\.\/vendor\/warm-ashes-ships\/Quests\/\*\.txt'/);
 });
 
 test('WA1 the six variant patches: the author\'s edit of each ship block, the classic ship subrecords he copied carried as COPY ops', () => {

@@ -18,7 +18,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadQuestTables } from '../src/systems/quest/tables.js';
 import { QuestMachine } from '../src/systems/quest/machine.js';
-import { mintQuestFoeWave, bindQuestFoeHost } from '../src/scenes/questFoeHost.js';
+import { mintQuestFoeWave, bindQuestFoeHost } from '../src/scenes/quest/questFoeHost.js';
 import { AmbientEffects, AMBIENT_RAIN_LOOP, AMBIENT_CRICKETS_LOOP, INDOOR_RAIN_GAIN, CRICKET_CHORUS } from '../src/systems/ambientEffects.js';
 import { createHandheldTorches, readTorchSettings, HANDHELD_TORCHES_VENDOR, CLIPS } from '../src/systems/handheldTorches.js';
 import { MOD_SETTINGS } from '../src/systems/modSettings.js';

@@ -141,7 +141,7 @@
   },
   {
     "name": "AUDIT-GALLEON-R5-the-boom-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const q = b.boom != null ? boat.Booms?.[b.boom]?.localRotation : null;",
     "new": "    const q = null;",
     "tests": [
@@ -151,7 +151,7 @@
   },
   {
     "name": "AUDIT-GALLEON-R5-the-pivot-dropped",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const turn = multiply(mat4FromQuatPos(q, P), mat4FromQuatPos([0, 0, 0, 1], [-P[0], -P[1], -P[2]]), new Float32Array(16));",
     "new": "    const turn = mat4FromQuatPos(q, [0, 0, 0]);",
     "tests": [
@@ -161,7 +161,7 @@
   },
   {
     "name": "AUDIT-GALLEON-R5-the-jibs-boxes-square",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (b.obb) return orientedBox(multiply(m, mat4FromQuatPos(quatAngleAxis(b.obb.pitch, [1, 0, 0]), at(b.obb.c)), new Float32Array(16)), [0, 0, 0], b.obb.h);\n",
     "new": "",
     "tests": [
@@ -171,7 +171,7 @@
   },
   {
     "name": "AUDIT-GALLEON-R5-the-jibs-boxes-pitched-the-wrong-way",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "quatAngleAxis(b.obb.pitch, [1, 0, 0])",
     "new": "quatAngleAxis(-b.obb.pitch, [1, 0, 0])",
     "tests": [

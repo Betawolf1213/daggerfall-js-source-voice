@@ -8,8 +8,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createSdVoice, SD_VOICE_RANK, SD_VOICE_WAIT_MS } from '../src/scenes/sdVoice.js';
-import { courtSaySeconds } from '../src/scenes/gateCourt.js';
+import { createSdVoice, SD_VOICE_RANK, SD_VOICE_WAIT_MS } from '../src/scenes/superDungeon/sdVoice.js';
+import { courtSaySeconds } from '../src/scenes/gate/gateCourt.js';
 import { createSdFightLink, SD_FIGHT_TEXT, SD_HEARTS_KEY } from '../src/net/superDungeon/sdFightLink.js';
 import { SD_BLOWS, SD_BODY, SD_ECHO_PAIR_MS, newRemnantFight, joinRemnant, remnantStateOf } from '../src/net/superDungeon/sdRemnant.js';
 import { validSdOut } from '../src/net/wire.js';
@@ -18,8 +18,8 @@ import { SD_ENDINGS, sdEndingOf, sdMarksOf } from '../src/net/superDungeon/sdMar
 import { sdMarksLine, sdHourLine } from '../src/systems/superDungeon/sdOmen.js';
 import { SD_CLAIM_TEXT } from '../src/net/superDungeon/sdClaims.js';
 import { SD_MARK_TIPS } from '../src/ui/superDungeon/sdMarksView.js';
-import { createSdRemnantBlows, SD_BLOWS_TEXT, SD_BLOW_CUES, SD_HEART_LATE_MS } from '../src/scenes/sdRemnantBlows.js';
-import { arenaToDungeon } from '../src/scenes/sdRemnant.js';
+import { createSdRemnantBlows, SD_BLOWS_TEXT, SD_BLOW_CUES, SD_HEART_LATE_MS } from '../src/scenes/superDungeon/sdRemnantBlows.js';
+import { arenaToDungeon } from '../src/scenes/superDungeon/sdRemnant.js';
 import { BOSS_CUES, FIRE_CAST_ID } from '../src/world/gate/gateBoss.js';
 import { remnantBarModel, sdBarNear, SD_BAR_TEXT, SD_ECHO_RISE_NEAR_MS } from '../src/ui/superDungeon/sdRemnantBar.js';
 import { damageChartModel, DAMAGE_CHART_TEXT, DAMAGE_CHART_DELAY_MS, DAMAGE_CHART_CSS } from '../src/ui/gate/gateDamageChart.js';
@@ -27,12 +27,12 @@ import { createGateVeil, VEIL_CUES, VEIL_BRASS_CUES, VEIL_THEMES, VEIL_OPEN_WAIT
 import { GATE_VEIL_FS } from '../src/render/gateVeil.js';
 import { TELEGRAPH_FS } from '../src/render/gateTelegraph.js';
 import { SOUND } from '../src/systems/soundClips.js';
-import { createSdHost, sdCollapseLine, sdFadeDue, sdFadeReadout, SD_FADE_WARN_MS } from '../src/scenes/sdHost.js';
+import { createSdHost, sdCollapseLine, sdFadeDue, sdFadeReadout, SD_FADE_WARN_MS } from '../src/scenes/superDungeon/sdHost.js';
 import { sdFirst, sdRise, sdFind, sdFell, sdNameIn, sdFoundLine, sdFellLine, sdFadeLine, SD_CAST_OUT_LINE, SD_NO_CLOSED, SD_NO_FULL, SD_NO_RIFT, SD_COLLAPSE_MS } from '../src/net/superDungeon/sdLaw.js';
-import { SD_HALL_TEXT, SD_HALL_SOUNDS } from '../src/scenes/sdHall.js';
-import { SD_STEPS_TEXT } from '../src/scenes/sdSteps.js';
+import { SD_HALL_TEXT, SD_HALL_SOUNDS } from '../src/scenes/superDungeon/sdHall.js';
+import { SD_STEPS_TEXT } from '../src/scenes/superDungeon/sdSteps.js';
 import { SD_REALM_TEXT } from '../src/world/superDungeon/sdRealm.js';
-import { SD_HOME_TEXT } from '../src/scenes/sdEnd.js';
+import { SD_HOME_TEXT } from '../src/scenes/superDungeon/sdEnd.js';
 import { SD_SPOILS_TEXT } from '../src/systems/superDungeon/sdSpoils.js';
 import { staticDoorName } from '../src/systems/worldTooltips.js';
 import { sdCities, sdTemplates } from '../src/systems/superDungeon/sdSite.js';
@@ -158,7 +158,7 @@ test('SD11d THE HOSTS SAY THROUGH THE VOICE, from the world host\'s own text: it
   frame(); frame();
   assert.deepEqual(log, ['frame', 'frame'], 'in the Hour: framed');
   slot = null; frame(); frame();
-  assert.deepEqual(log, ['frame', 'frame', 'leave', 'frame', 'frame'], 'out: let go once');   // AUDIT SD III (H5, PIN MOVED): what waits for the Hour let go - its turns still said (scenes/sdVoice.js leave)
+  assert.deepEqual(log, ['frame', 'frame', 'leave', 'frame', 'frame'], 'out: let go once');   // AUDIT SD III (H5, PIN MOVED): what waits for the Hour let go - its turns still said (scenes/superDungeon/sdVoice.js leave)
 });
 
 // ── the bar (L6 F1, F6, F10) ───────────────────────────────────────────
@@ -393,7 +393,7 @@ test('SD11d THE FIGHT\'S LINES NEAR ITS ARENA (L6 F15), run from the world host\
   assert.deepEqual(said[2], [SD_BLOWS_TEXT.fell, 0, null], 'its fall: to the whole Hour');
   slot = null; pos = realmToDungeon(SD_ARENA.x, 0, SD_ARENA.z);
   assert.equal(near(), false, 'out of the Hour: no arena');
-  assert.match(read('src/scenes/sdRemnantBlows.js'), /say\(SD_BLOWS_TEXT\.fell, true\);/, 'the fall says itself to everyone');
+  assert.match(read('src/scenes/superDungeon/sdRemnantBlows.js'), /say\(SD_BLOWS_TEXT\.fell, true\);/, 'the fall says itself to everyone');
 });
 
 // ── the veil (L6 F8) ──────────────────────────────────────────────────
@@ -473,7 +473,7 @@ test('SD11d THE CHART IN BRASS (L6 F11): the Remnant\'s damage chart heads its c
   assert.equal(damageChartModel(fell, { ...when, theme: 'brass" onclick' }).theme, null);
   assert.match(DAMAGE_CHART_CSS, /\.wb-dmg-chart\.wb-dmg-brass \{/);
   assert.match(read('src/ui/gate/gateDamageChart.js'), /\$\{model\.theme \? ` wb-dmg-\$\{model\.theme\}` : ''\}/);
-  assert.match(read('src/scenes/sdRemnantBlows.js'), /damageChartModel\(chartFell, \{ boss: SD_BLOWS_TEXT\.boss, me: me\(\), since: chartAt, now: t, crystals: SD_BLOWS_TEXT\.hearts, theme: 'brass' \}\)/);
+  assert.match(read('src/scenes/superDungeon/sdRemnantBlows.js'), /damageChartModel\(chartFell, \{ boss: SD_BLOWS_TEXT\.boss, me: me\(\), since: chartAt, now: t, crystals: SD_BLOWS_TEXT\.hearts, theme: 'brass' \}\)/);
 });
 
 // ── the words (L6 F20, F21) ────────────────────────────────────────────

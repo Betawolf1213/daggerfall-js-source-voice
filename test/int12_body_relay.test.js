@@ -354,7 +354,7 @@ test('INT15 THE CLIENT: a session notes a relay that counts (`bossOk`, off its w
   const Sock = fakeSocketClass();
   const s = new OnlineSession({ url: 'ws://x', WebSocketImpl: Sock });
   assert.equal(s.bossOk, false, 'nothing said before a relay says it counts');
-  const world = rd('src/scenes/world.js'), court = rd('src/scenes/gateCourt.js'), host = rd('src/scenes/serpentHost.js'), online = rd('src/net/online.js');
+  const world = rd('src/scenes/world.js'), court = rd('src/scenes/gate/gateCourt.js'), host = rd('src/scenes/serpentHost.js'), online = rd('src/net/online.js');
   assert.match(online, /if \(primary\) this\.bossOk = relaySupportsBossRef\(relayV\);/);
   assert.match(world, /sendBody: \(v\) => !!online\?\.bossOk && !!online\?\.sendGate\?\.\(\{ k: 'vt', v \}\)/);
   assert.match(court, /if \(alive && healLive\(s\) && e\?\.maxHealth > 0\) sayBody\(e\.health \/ e\.maxHealth, t\);/);

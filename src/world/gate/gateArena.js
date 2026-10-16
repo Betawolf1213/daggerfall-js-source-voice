@@ -20,7 +20,7 @@
 //     (render/deadlands.js). GATE-FBX (2026-10-09, Mac: "remove the portal that players walk through on the inside and
 //     just use a portal that opens and closes. Like at the end of the fight"): THE BRIDGE'S MEMBRANE IS GONE - its two
 //     posts, its lintel, its sheet of fire and its exit door. The court's portals are the gate's own fire, opening and
-//     closing (scenes/gateCourt.js, render/gatePass.js): THE WAY IN at the bridge's foot (WAY_IN_Z), open as a fighter
+//     closing (scenes/gate/gateCourt.js, render/gatePass.js): THE WAY IN at the bridge's foot (WAY_IN_Z), open as a fighter
 //     steps out of it and closing behind them (`wayInStep`), and THE WAY HOME where he fell (`portalDoor`, WBX2's),
 //     closing as the court comes apart (`portalFade`). Between the two there is no way out but death and the Wrath.
 //
@@ -244,7 +244,7 @@ function standCourtPiece(f, k, STONE) {
 /**
  * THE COURTS, WHOLE: renderer.createMesh's model shape in the DUNGEON's frame - WB9b: the three courts (each standCourtPiece),
  * and the first court's own: the broken bridge the players came by (GATE-FBX: and no membrane at its foot - the way in is
- * the gate's fire, scenes/gateCourt.js). Sub-meshes by (archive, record): the court's own three and the gate's stone. The
+ * the gate's fire, scenes/gate/gateCourt.js). Sub-meshes by (archive, record): the court's own three and the gate's stone. The
  * walkways between the courts are not this mesh - their slabs rise on their own (buildWalkSlabModel, walkSlabs).
  */
 export function buildCourtModel() {
@@ -557,7 +557,7 @@ export const GATE_LANDING_M = 10;
  * to (sin yaw, cos yaw)), turned away from it - `{ pos, normal }`, a door landing's own shape (player/enterExit.js
  * dungeonEntranceLanding), in the scene's frame NOW: the gate's pixel's translation plus its spot (systems/gate/gateOmen.js
  * gateSceneXZ's own sum), so a recentre since the player went in moves it with the world. Null off the built ground.
- * @param {{day: number, px: number, py: number, spot: number[]}} g the gate walked into (scenes/gatePool.js enter)
+ * @param {{day: number, px: number, py: number, spot: number[]}} g the gate walked into (scenes/gate/gatePool.js enter)
  * @param {{pixelTranslation: (px: number, py: number) => number[], heightAt: (x: number, z: number) => number}} at
  */
 export function gateLandingFor(g, { pixelTranslation, heightAt }, out = GATE_LANDING_M) {

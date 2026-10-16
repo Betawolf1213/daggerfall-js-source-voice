@@ -31,7 +31,7 @@
   },
   {
     "name": "YARD-RANGE-comparison",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "  return half >= d * minAngle;",
     "new": "  return half > d * minAngle * 1.5;",
     "tests": [

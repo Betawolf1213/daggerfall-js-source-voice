@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { openBout, joinBout, stepBout, poseOf, refBlow } from '../src/net/arena/arenaBrain.js';
 import { ARENA_HIT, ARENA_HIT_HZ_MAX, ARENA_SPELLS_IN, ARENA_SPELL_MAX, ARENA_TICK_MS, ARENA_FLOOR_CENTRE } from '../src/net/arena/arenaLaw.js';
-import { createArenaOnline } from '../src/scenes/arenaOnline.js';
+import { createArenaOnline } from '../src/scenes/arena/arenaOnline.js';
 import { boutLive } from '../src/systems/arena/arenaBout.js';
 
 const C = ARENA_FLOOR_CENTRE;

@@ -15,7 +15,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { Collider } from '../src/player/collider.js';
 import { PlayerMotor, CAPSULE_RADIUS } from '../src/player/motor.js';
-import { createSwimMovement } from '../src/scenes/deepWatersSwimMove.js';
+import { createSwimMovement } from '../src/scenes/deepWater/deepWatersSwimMove.js';
 
 const I = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 function quad(y, flip) {

@@ -127,7 +127,7 @@
   },
   {
     "name": "WB9f-the-court-keeps-nothing",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "at, bearing, acct: claims.s, keep, claims })) {",
     "new": "at, bearing, acct: claims.s, claims })) {",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "WB9f-the-gold-burst-gone",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "      addBurst(at, t, FX_KINDS.spoils, SPOILS_BURST_COLOR, keep.floorY);   // WB9f: his chest bursts in gold as they leave it",
     "new": "",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "WB9f-the-landing-sparks-gone",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "      spoils?.frame(onSpoilRest);   // WB9f: each piece's landing sparks",
     "new": "      spoils?.frame();",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "WB9f-every-landing-the-same",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    addBurst(pos, now(), rare ? FX_KINDS.spoilRestRare : FX_KINDS.spoilRest, tierColour(tier));",
     "new": "    addBurst(pos, now(), FX_KINDS.spoilRest, tierColour(tier));",
     "tests": [

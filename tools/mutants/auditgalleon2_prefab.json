@@ -1,7 +1,7 @@
 [
   {
     "name": "AUDIT-GN2-PF3-her-pictures-at-her-first-draw",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "        try { await pipeline.getTexture(art.archive); for (const n of Object.values(art.night)) art.glow(n); }",
     "new": "        try { for (const n of Object.values(art.night)) art.glow(n); }",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "AUDIT-GN2-PF3-her-glow-at-her-first-draw",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "await pipeline.getTexture(art.archive); for (const n of Object.values(art.night)) art.glow(n); }",
     "new": "await pipeline.getTexture(art.archive); }",
     "tests": [
@@ -83,7 +83,7 @@
   },
   {
     "name": "AUDIT-GN2-PF5-her-archive-never-marked",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "        pipeline?.markClassicArt?.(art.archive);\n",
     "new": "",
     "tests": [
@@ -93,7 +93,7 @@
   },
   {
     "name": "AUDIT-GN2-PF5-her-glow-a-replacement",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "{ replacement: !pipeline.isClassicArt?.(archive) }",
     "new": "{ replacement: true }",
     "tests": [

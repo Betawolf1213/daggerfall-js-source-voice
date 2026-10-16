@@ -14,7 +14,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { mintQuestFoeWave, bindQuestFoeHost, placeFoeEnv, entityOccupancy, questFoeGender } from '../src/scenes/questFoeHost.js';
+import { mintQuestFoeWave, bindQuestFoeHost, placeFoeEnv, entityOccupancy, questFoeGender } from '../src/scenes/quest/questFoeHost.js';
 import { placeFoeFreely } from '../src/systems/quest/sceneMount.js';
 import { GENDERS } from '../src/characters/nameHelper.js';
 

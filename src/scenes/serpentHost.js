@@ -8,7 +8,7 @@
 //
 // THE WORLD HOST IS ITS ONE HOST (THE FOUR HOSTS RULE): scenes/world.js wires it; scenes/worldModes.js (a building),
 // scenes/dungeonContext.js (a dungeon) and scenes/exterior.js (the ?exterior bench - no relay, no naval host) have no sea
-// a ship sails, so no serpent; the naval host (scenes/navalHost.js) gives it the shots and the boat at
+// a ship sails, so no serpent; the naval host (scenes/naval/navalHost.js) gives it the shots and the boat at
 // my helm, Come Sail Away gives it the warp and drift seams the coil and the whirl take her by. Every seam it reaches
 // is in `deps`, so the whole of it runs in Node under the tests:
 //

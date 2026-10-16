@@ -2,7 +2,7 @@
 // Allows free cam mode for placement and an intuitive scrolling menu with filters"; decor "Gold per placement", priced
 // "By size"; online and offline, "kept in the save"): THE DECORATOR. The catalogue read out of the game's own blocks a
 // few at a time (systems/decor/decorScan.js), where a new piece stands (systems/decor/decorPlacer.js), the three surfaces
-// (ui/decorPanel.js) driven headless over a fake document, the tool that joins them (scenes/decorTool.js) over fakes of
+// (ui/decorPanel.js) driven headless over a fake document, the tool that joins them (scenes/decor/decorTool.js) over fakes of
 // the host's seams, and the host's wiring by source. `06-Systems/Online-Arc.md` DECOR1.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -15,9 +15,9 @@ import { createDecorButton, createDecorPanel, createDecorBar, decorWhyNot, decor
 import {
   flyStep, eyePoint, lookDir, DECOR_FLY_LEASH, DECOR_FLOAT_AT, DECOR_EYE_REACH, DECOR_FLY_SPEED, DECOR_FLY_FAST,
   DECOR_FLY_ACTIONS, DECOR_REFUSAL_MS,
-} from '../src/scenes/decorTool.js';
+} from '../src/scenes/decor/decorTool.js';
 import { DECOR_CAP, DECOR_SCALE_MAX, DECOR_SCALE_MIN, decorPrice } from '../src/net/decorLaw.js';
-import { decorMatrix } from '../src/scenes/decorRoom.js';
+import { decorMatrix } from '../src/scenes/decor/decorRoom.js';
 
 import {
   settle, near, rmb, TOWN, DUNGEON, fakeBlocks, fakeDoc, fakeWin, all, one, text, chipNamed, catalogue, panelRig, rows, toolRig, placeFrom,

@@ -28,7 +28,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { QUEST_CTX_CONTRACT, QUEST_CTX_OPTIONAL_BY_DESIGN, reportUnwiredSeams } from '../src/scenes/questBridge.js';
+import { QUEST_CTX_CONTRACT, QUEST_CTX_OPTIONAL_BY_DESIGN, reportUnwiredSeams } from '../src/scenes/quest/questBridge.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(root, p), 'utf8');
@@ -70,7 +70,7 @@ function wiredBy(path) {
 test('AUDIT-QUEST: the contract IS the bridge\'s own usage, both ways', () => {
   // A hand-kept contract list would be F3 again in a new place, so it is
   // re-derived from the bridge's source here on every run.
-  const body = decomment(read('src/scenes/questBridge.js'));
+  const body = decomment(read('src/scenes/quest/questBridge.js'));
   const used = new Set([...body.matchAll(/\bctx\??\.([A-Za-z_$][\w$]*)/g)].map((m) => m[1]));
   const listed = new Set(QUEST_CTX_CONTRACT);
   assert.deepEqual([...used].filter((k) => !listed.has(k)).sort(), [],

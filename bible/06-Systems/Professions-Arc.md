@@ -1727,7 +1727,7 @@ what was found (FACT):
   setting): every act plain. Reduced motion is the system's own (FACT: the port has no setting of its own - every window
   reads `prefers-reduced-motion`); under it the meters are still bars.
 - **The act choice key** (8): `ActChoice`, the Controls page's Professions group, default the up arrow (FACT: every
-  letter and digit is bound, and `-`, `=` and `/` are the decorator's own keys - `scenes/decorTool.js` DECOR_FREE_KEYS -
+  letter and digit is bound, and `-`, `=` and `/` are the decorator's own keys - `scenes/decor/decorTool.js` DECOR_FREE_KEYS -
   so the sweep that holds every raw key to its action, `test/inputmap.test.js` I2, refused `=`; it shipped on `;` until
   the merge of main, whose Come Sail Away took `;` for its lantern first (CSA-D) - the up arrow is read by no action in
   play).

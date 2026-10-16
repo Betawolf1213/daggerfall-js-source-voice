@@ -321,7 +321,7 @@
   },
   {
     "name": "LW-TALK-room-no-first-round",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "          const on = t - co.since < beat.roundMin || exchangeAt(c, t, beat.lineMin) != null;",
     "new": "          const on = exchangeAt(c, t, beat.lineMin) != null;",
     "tests": [
@@ -330,7 +330,7 @@
   },
   {
     "name": "LW-TALK-room-mid-talk",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "          const on = t - co.since < beat.roundMin || exchangeAt(c, t, beat.lineMin) != null;",
     "new": "          const on = t - co.since < beat.roundMin;",
     "tests": [
@@ -339,7 +339,7 @@
   },
   {
     "name": "LW-TALK-room-street-round",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "since: was ? was.s + SLOT_LINES * beat.lineMin : t,",
     "new": "since: was ? was.s + SLOT_LINES * beat.lineMin : 0,",
     "tests": [
@@ -348,7 +348,7 @@
   },
   {
     "name": "LW-TALK-room-stopped",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "        const stopped = still && dist <= PERSON_IDLE_DISTANCE;",
     "new": "        const stopped = false;",
     "tests": [

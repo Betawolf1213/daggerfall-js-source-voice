@@ -186,7 +186,7 @@ A mount is a picture now. `renderer.drawDecalPicture` is the same pass with
 its switch on for that one draw (`uPicture`), and both programs then take the
 texel as the colour: the classic straight, the lane decoded as every lane
 texel is, with no film and no relief. The room's mounts and the placement
-ghost use it (`scenes/decorRoom.js`, `scenes/decorTool.js`); the blood marks
+ghost use it (`scenes/decor/decorRoom.js`, `scenes/decor/decorTool.js`); the blood marks
 never do. The probe's WEAPON-MOUNT rows: green comes back green on both sets
 (54,250,76 classic; 36,169,50 lane).
 
@@ -315,7 +315,7 @@ forever there, stays. Reproduced in `test/dwd_swim.test.js`'s harness: the
 swimmer stood at the wall's foot, pushing, indefinitely.
 
 The exit now takes a swimmer the weight holds under, from wherever it
-stands (`scenes/deepWatersPlayer.js`): push at the coast and it lifts you
+stands (`scenes/deepWater/deepWatersPlayer.js`): push at the coast and it lifts you
 onto the shore. A light swimmer is unchanged - it swims up to leave, as
 the mod asks. If the report was something else (a cliff coast with no
 walkable landing, a boat), it is still open, and the reporter's place
@@ -356,7 +356,7 @@ Two causes in the code, and two things that are the design:
   them. A gate on a pixel not built yet now stands its BEACON alone, on the
   ground the pixel will be built from (the terrain sampler's own kernel over
   WOODS.WLD, `scenes/world.js` gateGroundAt): no stone, collider, light or
-  door until the pixel is built (`scenes/gatePool.js`,
+  door until the pixel is built (`scenes/gate/gatePool.js`,
   `render/gatePass.js`).
 - **Two clients could roll two spots.** The site scan read every location
   row, and Replace Game Artwork appends a mod's locations on the clients
@@ -456,7 +456,7 @@ and the base furniture was hard to decorate around.
 A room its owner may furnish - an online home (anyone's: every visitor
 stands the room its owner cleared), the player's house, the ship - now
 stands its own furniture PIECE BY PIECE (`scenes/interiorContext.js`,
-`scenes/decorBase.js`): each prop model its own draw (never the merge)
+`scenes/decor/decorBase.js`): each prop model its own draw (never the merge)
 and collider bucket, each flat its own batch and light. The ladder and
 the mill's machinery are the building's workings and stay. Every other
 room is built as before. A piece is named by the layout

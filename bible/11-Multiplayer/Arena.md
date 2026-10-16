@@ -361,7 +361,7 @@ health in one blow, or driven under the line), comeback (once low at 35%, drawn 
 stall), flee (outside the line inside the slack 1.5 s), yield, fall, ringout, timeout, end, verdict, heal, done. The purse:
 favour -1..1 raises it by up to half or cuts it by up to a quarter.
 
-**The fighters** (`src/scenes/arenaBouts.js` the driver, `src/systems/arena/arenaFighters.js` who they are). Daggerfall's
+**The fighters** (`src/scenes/arena/arenaBouts.js` the driver, `src/systems/arena/arenaFighters.js` who they are). Daggerfall's
 own class enemies and monsters, a name drawn by DFU's NameHelper over the bank of their home (High Rock's Bretons,
 Hammerfell's Redguards, Skyrim's Nords, ... Orsinium's orcs on the monster bank) on DFRandom seeded by the bout and put
 back as it stood, an epithet and the town, all from the seed. THE BOUT TEAM is a seam beside `campId` in
@@ -562,7 +562,7 @@ each climbing the same ten tiers one bout every 7 to 20 days by a talent against
 measured over 3E 405-410, a Grand Champion in some seasons and none in most, the banners' totals ~800 at the close and a
 few dozen apart, so a whole ladder climbed in a season (67 points) can turn it. The roster is the leaderboards' field, the banners' points and the Hall's names.
 
-**The gate** (`src/scenes/arenaGate.js`, one home for both hosts that stand the colosseum - world.js and exterior.js;
+**The gate** (`src/scenes/arena/arenaGate.js`, one home for both hosts that stand the colosseum - world.js and exterior.js;
 worldModes.js finds the person by office): the Red and Blue Banners' recruiters (`recruiterChoice` - the pitch, the
 season's day and standing, join / quit / the Arena window / leave, every refusal a line; joining opens the window on its
 Team page), and the bookmaker. The Herald's choice carries "A - The Arena window" (the ARENA2 pin moved, its reason in
@@ -675,7 +675,7 @@ fighters alone, and every watcher stood in an empty arena).
 
 **The client** (`src/net/arena/arenaLink.js` the hall's fold and the mirror of a relay's bout in the bout law's own shape;
 `src/net/arena/arenaClaims.js` the receipts carried - kept a week, offered for the signed-in account alone, retried every five
-minutes; `src/scenes/arenaOnline.js` the host's glue; `src/scenes/arenaBouts.js startRelay`/`relayWord` - the relay's
+minutes; `src/scenes/arena/arenaOnline.js` the host's glue; `src/scenes/arena/arenaBouts.js startRelay`/`relayWord` - the relay's
 bout stood on the floor's instance as puppets, the Herald and the HUD driven from its events, my health the relay's, my
 yield and misses told; `src/systems/arena/arenaBoard.js` the window online - the Bouts page's live bouts with Watch, Find a
 match, Leave the queue, Accept/Decline on a 20 s clock, the rating and rank chips, the Rules page's "The realm").
@@ -697,8 +697,8 @@ same hour. Its room is `arena:x<hour>` (the game hours since the epoch, `floor(s
 admits an hour from 25 back to one ahead. The first watcher inside its window (08:00-21:00, the first 20 game minutes)
 opens it (`openBout({ kind: 'ex' })`); a fighter's `in` never does. Its `st` names the sides Red and Blue, both the
 relay's AI; no receipt is owed; it is kept two real hours (a game day) after its verdict, so a late ask hears the result.
-On the client (`scenes/arenaOnline.js` `exhibitions`, `watchCity`, `watchExhibition`, `exhibitionVerdict`;
-`scenes/arenaBouts.js startExhibitionRelay`/`exhibitionWord`/`cityBodiesFrame`): online with a relay that runs it, the
+On the client (`scenes/arena/arenaOnline.js` `exhibitions`, `watchCity`, `watchExhibition`, `exhibitionVerdict`;
+`scenes/arena/arenaBouts.js startExhibitionRelay`/`exhibitionWord`/`cityBodiesFrame`): online with a relay that runs it, the
 city floor's bout is the relay's, mirrored on the exterior's own bodies while the player stands within 150 m; the Herald's
 Watch and the Bouts page's list take the instance as its room; the bookmaker settles by the relay's verdict
 (`arenaGate.js settle`), and by the house's record only for an hour the relay ran no bout in. Offline, on an older relay
@@ -951,8 +951,8 @@ keeps the seat or the place on the sand it held (1003b R5).
   the gate keeps it) or its life out, `ARENA_PRIVATE_LIFE_MS` (8 h) (`ended`; `privateSessionOver`, armed on the room's
   alarm). Every member's screen leaves the floor's instance on the word.
 
-**The client** (`scenes/arenaOnline.js` `enterSession` / `sessionTick` / `sessionState` / `sessionAct`;
-`systems/arena/arenaBoard.js sessionCard`; `ui/arena/arenaWindow.js`; `scenes/arenaGate.js` routes the `priv*` presses). The Arena
+**The client** (`scenes/arena/arenaOnline.js` `enterSession` / `sessionTick` / `sessionState` / `sessionAct`;
+`systems/arena/arenaBoard.js sessionCard`; `ui/arena/arenaWindow.js`; `scenes/arena/arenaGate.js` routes the `priv*` presses). The Arena
 window's Bouts tab carries a **Private session** card - first on the page while in one (1003b U6), spanning it (U1):
 out of one, *Host a session* (a registered account's) and a labelled code box with *Join* (and *Rejoin session <code>*
 for a session this screen stepped out of - C8 - with the last word the session said, a wrong code's included - U3/U8);

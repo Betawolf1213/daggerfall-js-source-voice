@@ -217,7 +217,7 @@ test('audit24: the three quest settings are LIVE reads, not hardcoded falses', a
   // tier map's own both-ways gate now covers them; this pins the
   // BEHAVIOUR the tier map cannot see.
   const { setValue, _resetForTests } = await import('../src/systems/settings/settings.js');
-  const bridge = read('src/scenes/questBridge.js');
+  const bridge = read('src/scenes/quest/questBridge.js');
   assert.match(bridge, /get playerNudity\(\) \{ return getBool\('ChildGuard', 'PlayerNudity'\); \}/,
     'a GETTER, because C# reads the setting at the point of use');
   assert.match(bridge, /get guildQuestListBox\(\) \{ return getBool\('Enhancements', 'GuildQuestListBox'\); \}/);

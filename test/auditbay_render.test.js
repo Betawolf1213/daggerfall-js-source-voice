@@ -14,12 +14,12 @@ import * as SHADOW from '../src/render/shadowPass.js';
 import { Renderer, WORLD_FRAME } from '../src/render/renderer.js';
 import { EL_LANE } from '../src/render/enhancedLighting.js';
 import { DISSOLVE_GLSL, BAYER_GLSL } from '../src/render/orderedDither.js';
-import { createComeSailAwayPool, FADE_FLATS } from '../src/scenes/comeSailAwayPool.js';
+import { createComeSailAwayPool, FADE_FLATS } from '../src/scenes/comeSailAway/comeSailAwayPool.js';
 import { Boat, setLights } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
-import { createNavalFlames } from '../src/scenes/navalFlames.js';
+import { createNavalFlames } from '../src/scenes/naval/navalFlames.js';
 import { navalWireRecord } from '../src/systems/naval/navalWire.js';
 import { NAVAL_HUD_CSS } from '../src/ui/naval/navalHud.js';
-import { SHIP_FADE_S } from '../src/scenes/navalHost.js';
+import { SHIP_FADE_S } from '../src/scenes/naval/navalHost.js';
 import { HULL } from '../src/systems/naval/navalShips.js';
 
 const WORLD = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');

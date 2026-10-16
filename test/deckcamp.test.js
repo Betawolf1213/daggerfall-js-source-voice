@@ -214,7 +214,7 @@ test('DECK-CAMP THE WORLD\'S WIRING by source: the pool handed the boats; the bo
   assert.match(w, /return ref\?\.peer && csaPeers\.hasBoat\(ref\.peer, ref\.uid\) \? \{ hidden: true \} : \{ gone: true \};/);
   const rideAt = w.indexOf("if (_mode() === 'exterior') camps.ride(dt);"), quaysAt = w.indexOf('try { quays?.frame(); }');
   assert.ok(rideAt > 0 && rideAt < quaysAt && quaysAt < w.indexOf('quays?.draw(renderer);'), 'after she moved, before the lights and the world pass');
-  assert.match(read('src/scenes/comeSailAwayPeers.js'), /hasBoat: \(owner, uid\) => !!live\.get\(owner\)\?\.boats\?\.some\(\(b\) => b\.uid === uid\),/);
+  assert.match(read('src/scenes/comeSailAway/comeSailAwayPeers.js'), /hasBoat: \(owner, uid\) => !!live\.get\(owner\)\?\.boats\?\.some\(\(b\) => b\.uid === uid\),/);
   for (const f of ['src/scenes/exterior.js', 'src/scenes/dungeonContext.js']) assert.ok(!/campDeck|deck: \{ at:/.test(read(f)), `${f}: no deck`);
 });
 

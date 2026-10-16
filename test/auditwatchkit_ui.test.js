@@ -30,7 +30,7 @@ import { SocialState } from '../src/net/social.js';
 import { liquidWealthOf, liquidWorthOf, stashedItemLists, customsAllowance } from '../src/net/realm/realmGoldLaw.js';
 import { applyCustoms } from '../src/systems/realmCustoms.js';
 import { firstSaveRefusal } from '../server-account/src/realm.js';
-import { NAVAL_SAVE_VENDOR } from '../src/scenes/navalHost.js';
+import { NAVAL_SAVE_VENDOR } from '../src/scenes/naval/navalHost.js';
 import { COME_SAIL_AWAY_VENDOR } from '../src/systems/comeSailAway/comeSailAway.js';
 import { goldStack, letterOfCredit } from '../src/systems/inventory.js';
 import { setItemFields } from '../src/systems/item/itemTemplates.js';

@@ -1139,7 +1139,7 @@ the time a blow met them; a NaN or a held value counts nothing).
 
 ### 15a. The gate's boss and his host (SHIPPED 2026-10-09)
 
-- THE COURT'S LANE (`scenes/gateCourt.js` drawBodies, a 'gate'
+- THE COURT'S LANE (`scenes/gate/gateCourt.js` drawBodies, a 'gate'
   population lane of its own). Him: offered while his sprite stands, on
   his billboard - walking or running as his act says, his blow a swing as
   the relay's attack changes, struck a recoil (his hurt and the court's
@@ -1147,7 +1147,7 @@ the time a blow met them; a NaN or a held value counts nothing).
   fight's size, through the lane's new per-actor `scale` (PeerBodies
   draws a body that many times its size about its feet - drawThird's
   `grow` - and heads it that much higher). Fallen, dead, on his corpse's
-  flat. His host (`scenes/gateHost.js` offerBodies): each shown body its
+  flat. His host (`scenes/gate/gateHost.js` offerBodies): each shown body its
   creature off its mobile, standing or falling (dead), on its own
   billboard; one its mobile has no match for (the Flesh Atronach - and,
   since AUDIT MW-NPC D4, the Imp) keeps its sprite. The dungeon pass (worldModes.js) draws them before the
@@ -1190,7 +1190,7 @@ grow, INVISLOOK's camera record).
   man, as his sprite is (the lane's per-actor `scale`). The world draws
   them beside the street's people, before the flats their batches ride;
   the origin's move carries them; leave lets the lane go.
-- THE CREWS (`scenes/navalCrew.js` drawBodies, a 'crew' lane). Each hand
+- THE CREWS (`scenes/naval/navalCrew.js` drawBodies, a 'crew' lane). Each hand
   on her deck his class's look off her seed and his place in her roster,
   at his sprite's feet and his world facing (kept off the frame's
   heading), each swing at his work begun one blow, concealed with her
@@ -1212,8 +1212,8 @@ through `clothesUnder`), one rewritten (MWNPC5b-face-one).
 ### 15c. The living world's people - the roads' parties and the residents indoors (SHIPPED 2026-10-10)
 
 Both draw through one host, `world/travellerSprites.js` (the roads'
-parties, their foes and their fallen - scenes/livingRoads.js; the
-residents the day has inside a building - scenes/livingIndoors.js, the
+parties, their foes and their fallen - scenes/livingWorld/livingRoads.js; the
+residents the day has inside a building - scenes/livingWorld/livingIndoors.js, the
 line's own members already the family's bodies, LEGACY7), so its lane
 stands them all - a lane of each instance's own: 'roads', 'room'. This
 also takes the living residents indoors that MWNPC7's row handed to
@@ -2161,7 +2161,7 @@ figure is a flat - nothing named a decor room.
   (StaticNPC's child pairs), the Daedra Princes' archive (TEXTURE.175 - Azura
   is no person in clothes) and a figure no row sexes keep their pictures.
   FLATS.CFG not read yet is asked again, never cached as a picture.
-- OFFERED (`scenes/decorRoom.js` figures, offerDecorFigures) on the host's
+- OFFERED (`scenes/decor/decorRoom.js` figures, offerDecorFigures) on the host's
   people lane before its bodies draw, at its piece's base (the room's origin
   and its place in it - AMENDED BY THE AUDIT, section 27 D1: this read the
   batch's origin, which a room's batch never has), turned to the eye at a
@@ -2237,7 +2237,7 @@ THE FIGURES (D).
   arrays, to find the few that are people. A room keeps its figures as they
   are put and taken down, into one list; the yards into one.
 - D5. Come Sail Away's crews (her prefabs' BillboardHelper people, drawn by
-  `scenes/comeSailAwayPool.js`) stood in no body and nothing said so, under
+  `scenes/comeSailAway/comeSailAwayPool.js`) stood in no body and nothing said so, under
   section 26's "blind spot, closed". They keep their pictures (NOT HERE,
   below), and 18e sweeps every host that draws one of Daggerfall's people:
   each offers them to a people lane, or is named with the reason it keeps
@@ -2488,7 +2488,7 @@ attached:
   person's place to a body.
 - A BOAT'S CREW. Come Sail Away's prefabs carry their people as
   billboards (`BillboardHelper-182_*`), the sea's ships' and the
-  player's boats' alike (`scenes/comeSailAwayPool.js` syncFlats).
+  player's boats' alike (`scenes/comeSailAway/comeSailAwayPool.js` syncFlats).
 - THE STANDING HORSES. COATS3D gave the 3D horse to every horse that moves
   (`06-Systems/Horse-Coats.md`): the rider's, the peers', the pool's, the
   road's teams. The ones that only stand kept their sprites: Daggerfall's
@@ -2554,7 +2554,7 @@ NOT HERE, AND WHY.
 - A child, a vampire's people, a Daedra Prince (TEXTURE.175) and a flat
   FLATS.CFG names no sex for keep their sprites (figureLook, sections 13a
   and 26). The arena crowd stays flats (section 4).
-- The town watch's carried team (`scenes/wagonWardenShow.js`) stays
+- The town watch's carried team (`scenes/wagon/wagonWardenShow.js`) stays
   FLAGGED (COATS3D: a throw of a few seconds).
 - THE RANGE IS THE LANE'S. A standing person stands in a body only inside
   the tier's range: 30 m at Near (the default) and 60 m at All, the

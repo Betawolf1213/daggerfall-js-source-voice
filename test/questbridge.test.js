@@ -19,7 +19,7 @@ import { loadQuestTables } from '../src/systems/quest/tables.js';
 import {
   positionHash, staticNpcData, SATISFY_QUEST_BY_LEVEL_GROUPS,
   offerGuildSurface, tokensToRows, createQuestBridge, layoutNpcData,
-} from '../src/scenes/questBridge.js';
+} from '../src/scenes/quest/questBridge.js';
 import { ZERO_NPC_DATA, NPC_CONTEXT } from '../src/characters/staticNpc.js';
 import { TICKS_PER_SECOND, QUEST_MESSAGES } from '../src/systems/quest/machine.js';
 import { FAIL_QUEST_FLAVOUR_ID } from '../src/systems/quest/offerFlow.js';
@@ -305,7 +305,7 @@ test('offerGuildQuest: buildingFactionId defaults to 0 - the variant groups home
 });
 
 test('the vendored pack answers the bridge data contract from disk (the questData shape)', () => {
-  // The same seams scenes/questData.js serves in the browser, fs-backed
+  // The same seams scenes/quest/questData.js serves in the browser, fs-backed
   // here: QuestList-Classic exists and __A0C00Y00 parses to lines.
   const pack = {
     readListTable: (name) => { try { return read(join(VENDOR, 'Tables', `QuestList-${name}.txt`)); } catch { return null; } },
@@ -550,7 +550,7 @@ test('MAC-K2: the bridge’s questLog is the ONE walk - and it is the arithmetic
   // The walk is read off the shipped module and driven, rather than
   // retyped here - the bridge's own factory needs a world's worth of
   // deps, and what is under test is these thirty lines.
-  const src = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '../src/scenes/questBridge.js'), 'utf8');
+  const src = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '../src/scenes/quest/questBridge.js'), 'utf8');
   const body = src.slice(src.indexOf('    questLog() {'), src.indexOf('\n    },', src.indexOf('    questLog() {')) + 6);
   assert.ok(body.includes('remainingTimeInSeconds'), 'the slice really is the walk');
   const questLog = new Function('machine', 'notebook', 'clockCounts',   // DEAD-CLOCK: whether a clock's end changes anything

@@ -37,7 +37,7 @@
   },
   {
     "name": "AUDIT-GN-T4b-her-pictures-never-registered",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "        art.register(addVendorTextures);\n",
     "new": "",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "AUDIT-GN-T4b-her-glass-never-glows",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "    const glow = artOf(archive).glow(night);",
     "new": "    const glow = null;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "AUDIT-GN-T4b-her-glow-not-a-replacement",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "toColor32(glow), { replacement: !pipeline.isClassicArt?.(archive) });",
     "new": "toColor32(glow));",
     "tests": [

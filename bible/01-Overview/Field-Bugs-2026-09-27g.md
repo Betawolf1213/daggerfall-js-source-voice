@@ -71,7 +71,7 @@ one item map could read, which was DFU's own weapons and armour. Three kinds sto
   the classic item of its shape (`formats/mwFirstPerson.js` MOD_WEAPON_TO_MW, `formats/mwItemMap.js` MOD_ARMOR_ROWS;
   a vambrace asks for a bracer, one side), worn too, and the census counts them.
 - One's own garment set down stood as the classic pile of cloth (TEXTURE.204) though the item has a Morrowind record.
-  It stands as its Morrowind picture on the billboard pass now, its ghost with it (`scenes/decorRoom.js`
+  It stands as its Morrowind picture on the billboard pass now, its ghost with it (`scenes/decor/decorRoom.js`
   MW_STAND_ARCHIVE); a thing with no Morrowind record, and everything without a build, stands as its world picture.
 
 `test/mwassign.test.js` (4). Chain armour other than the cuirass and greaves stays as the item map recorded it:

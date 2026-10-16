@@ -8,7 +8,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { sea } from './navalSea.mjs';
-import { PEER_HULL_NEAR_M, PEER_HULL_FAR_M, hullKept } from '../src/scenes/navalHost.js';
+import { PEER_HULL_NEAR_M, PEER_HULL_FAR_M, hullKept } from '../src/scenes/naval/navalHost.js';
 import { navalWireRecord } from '../src/systems/naval/navalWire.js';
 import { SHIP_STATES } from '../src/systems/naval/navalDamage.js';
 

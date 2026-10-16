@@ -5,7 +5,7 @@
 // Daedric dagger in the pack, on the hotbar and hung on a wall was the plain one. ChangeDye has no Unchanged arm - 18
 // (Unchanged = Chain = Silver) is the SILVER table on a metal, so a silver blade and a chain hauberk are dyed too.
 //
-// MOUNT-LAZY: the hung picture's own door (scenes/decorRoom.js loadMountArt) asked the upload before the record's
+// MOUNT-LAZY: the hung picture's own door (scenes/decor/decorRoom.js loadMountArt) asked the upload before the record's
 // replacement was decoded - a lazy one (Diverse Weapons' metals, Roleplay Realism Items' archives) is never decoded by
 // the archive's preload, so a mount hung before any list drew its record stood as the classic picture, or as nothing
 // where the mod's picture is the only one ("disapeared"), and the ghost was not what stood ("changes after placment").
@@ -25,7 +25,7 @@ import { TextureFile } from '../src/formats/textureFile.js';
 import { createDataPipeline } from '../src/scenes/dataPipeline.js';
 import { addVendorTextures, clearVendorTextures, preloadTextureRecord } from '../src/systems/textureReplacement.js';
 import { decorMountDye, decorMountDyeTarget, decorMountItem, decorMountOf, decorDescriptorOf, decorItemName } from '../src/systems/decor/decorItems.js';
-import { loadMountArt, createDecorRoom } from '../src/scenes/decorRoom.js';
+import { loadMountArt, createDecorRoom } from '../src/scenes/decor/decorRoom.js';
 import { installRoleplayRealismItems } from '../src/systems/roleplayRealismItems/rriInstall.js';
 import { color32Bytes } from '../src/render/renderer.js';
 import { loadIcon, requestIcon } from '../src/ui/textureCanvas.js';
@@ -177,8 +177,8 @@ test('DYE-ICON: every icon door asks with the swatch - the GL lists, the enhance
   assert.match(src('src/ui/enhanced/enhancedHotbar.js'), /requestFittedIcon\(image\.archive, image\.record, \{ box: fit\.box, dpr: fit\.dpr, dye: image\.dye, dyeTarget: image\.dyeTarget, onReady:/);
   assert.match(src('src/ui/enhanced/enhancedHud.js'), /requestFittedIcon\(image\.archive, image\.record, \{ box, dpr, dye: image\.dye, dyeTarget: image\.dyeTarget, onReady:/);
   assert.match(src('src/scenes/worldModes.js'), /iconUrl: \(a, r, dye = null, dyeTarget = null\) => loadIcon\(a, r, \{ scale: 1, dye, dyeTarget \}\)/);
-  assert.match(src('src/scenes/decorTool.js'), /deps\.iconUrl\?\.\(entry\.icon\.archive, entry\.icon\.record, entry\.icon\.dye \?\? null, entry\.icon\.dyeTarget \?\? null\)/);
-  assert.match(src('src/scenes/decorRoom.js'), /loadMountArt\(deps, flat\[0\], flat\[1\], decorMountDye\(d\), decorMountDyeTarget\(d\)\)/);
+  assert.match(src('src/scenes/decor/decorTool.js'), /deps\.iconUrl\?\.\(entry\.icon\.archive, entry\.icon\.record, entry\.icon\.dye \?\? null, entry\.icon\.dyeTarget \?\? null\)/);
+  assert.match(src('src/scenes/decor/decorRoom.js'), /loadMountArt\(deps, flat\[0\], flat\[1\], decorMountDye\(d\), decorMountDyeTarget\(d\)\)/);
 });
 
 // ── MOUNT-LAZY: the hung picture's door decodes its record first ──────
@@ -210,7 +210,7 @@ test('MOUNT-LAZY: a mount of a picture only the mod has (Roleplay Realism Items\
 });
 
 test('MOUNT-LAZY: the door awaits the record\'s decode by the dye before it uploads (source)', () => {
-  const s = src('src/scenes/decorRoom.js');
+  const s = src('src/scenes/decor/decorRoom.js');
   const body = s.slice(s.indexOf('export function loadMountArt('), s.indexOf('export function loadMwMountArt('));
   assert.ok(body.indexOf('await preloadTextureRecord(a, r, 0, \'Albedo\', dye);') > 0, 'the record, by its dye');
   assert.ok(body.indexOf('await preloadTextureRecord(') < body.indexOf('uploadRecord?.('), 'before the upload');

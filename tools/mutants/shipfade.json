@@ -1,7 +1,7 @@
 [
   {
     "name": "FADE-born-whole",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "lost: false, sinkUnder: null, colours: null, fade: 0, retiring: false };",
     "new": "lost: false, sinkUnder: null, colours: null, fade: 1, retiring: false };",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "FADE-never-stepped",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    for (const e of [...sea.values()]) fadeStep(e, total);   // SHIP-FADE\n",
     "new": "",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "FADE-twice-as-fast",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const k = dt / SHIP_FADE_S;",
     "new": "    const k = (2 * dt) / SHIP_FADE_S;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "FADE-boat-unshared",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (entry.boat) entry.boat.fade = entry.fade;",
     "new": "    if (false) entry.boat.fade = entry.fade;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "FADE-retire-drops-at-once",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "  function retire(entry) {\n    entry.retiring = true;\n  }",
     "new": "  function retire(entry) {\n    drop(entry);\n  }",
     "tests": [
@@ -47,7 +47,7 @@
   },
   {
     "name": "FADE-faded-never-dropped",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (entry.retiring && entry.fade <= 0) drop(entry);",
     "new": "    if (false) drop(entry);",
     "tests": [
@@ -56,7 +56,7 @@
   },
   {
     "name": "FADE-fight-ignored",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (entry.retiring && !entry.owner && ((s.damage.state === SHIP_STATES.afloat && (s.mode === 'engage' || s.mode === 'board')) || boarding?.shipId === entry.id)) entry.retiring = false;",
     "new": "if (false) entry.retiring = false;",
     "tests": [
@@ -65,7 +65,7 @@
   },
   {
     "name": "FADE-peers-kept-fighting",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (entry.retiring && !entry.owner && ((s.damage.state",
     "new": "if (entry.retiring && ((s.damage.state",
     "tests": [
@@ -74,7 +74,7 @@
   },
   {
     "name": "FADE-director-drops-at-once",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      for (const id of out.despawn) { const e = sea.get(id); if (e) retire(e); }",
     "new": "      for (const id of out.despawn) { const e = sea.get(id); if (e) drop(e); }",
     "tests": [
@@ -84,7 +84,7 @@
   },
   {
     "name": "FADE-raider-yielded-fades",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (held.has(id)) { drop(e); continue; }   // yielded into a peer's copy of her",
     "new": "      if (held.has(id)) { retire(e); continue; }   // yielded into a peer's copy of her",
     "tests": [
@@ -93,7 +93,7 @@
   },
   {
     "name": "FADE-raider-drops-at-once",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      retire(e);   // SHIP-FADE: she sails on out of sight\n    }\n    for (const e of sea.values()) if (!e.owner && e.raider && !plan.drop.includes",
     "new": "      drop(e);   // SHIP-FADE: she sails on out of sight\n    }\n    for (const e of sea.values()) if (!e.owner && e.raider && !plan.drop.includes",
     "tests": [
@@ -103,7 +103,7 @@
   },
   {
     "name": "FADE-raider-back-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (!e.owner && e.raider && !plan.drop.includes(e.raider.id)) { e.handOn = null; e.retiring = false; }",
     "new": "if (!e.owner && e.raider && !plan.drop.includes(e.raider.id)) { e.handOn = null; }",
     "tests": [
@@ -112,7 +112,7 @@
   },
   {
     "name": "FADE-harbour-back-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        if (back) { back.retiring = false; continue; }",
     "new": "        if (false) { back.retiring = false; continue; }",
     "tests": [
@@ -121,7 +121,7 @@
   },
   {
     "name": "FADE-word-again-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      e.retiring = false;   // SHIP-FADE: said again - she stays\n",
     "new": "",
     "tests": [
@@ -130,7 +130,7 @@
   },
   {
     "name": "FADE-tag-whole",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        fade: e.fade ?? 1,   // SHIP-FADE: her tag comes and goes with her",
     "new": "        fade: 1,   // SHIP-FADE: her tag comes and goes with her",
     "tests": [
@@ -139,7 +139,7 @@
   },
   {
     "name": "POOL-dissolve-unasked",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "      if (fade < 1) r.setDissolve?.(fade);",
     "new": "      if (false) r.setDissolve?.(fade);",
     "tests": [
@@ -148,7 +148,7 @@
   },
   {
     "name": "POOL-dissolve-left-on",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "      if (fade < 1) r.setDissolve?.(1);",
     "new": "      if (false) r.setDissolve?.(1);",
     "tests": [
@@ -157,7 +157,7 @@
   },
   {
     "name": "POOL-faded-drawn",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "      if (fade <= 0) continue;",
     "new": "      if (false) continue;",
     "tests": [
@@ -166,7 +166,7 @@
   },
   {
     "name": "POOL-flats-kept",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "      if ((boat.fade ?? 1) < FADE_FLATS) continue;   // SHIP-FADE: a ship half faded stands no flat",
     "new": "      if (false) continue;   // SHIP-FADE: a ship half faded stands no flat",
     "tests": [

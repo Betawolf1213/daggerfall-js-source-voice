@@ -3,7 +3,7 @@
 // cart and be transported across daggerfall"; asked, "Players and companions"): THE SEATS IN THE BACK - THE LAW.
 //
 // The Open Wagon has four seats in its bed (world/wagonModels.js seatsFor - two a side along its back half, each facing
-// across it). They are its OWNER's to give: another player ASKS for one and the owner answers (scenes/wagonRiders.js),
+// across it). They are its OWNER's to give: another player ASKS for one and the owner answers (scenes/wagon/wagonRiders.js),
 // and the owner's companions take what the players have not while the owner drives (a companion rides only while the
 // wagon goes with its owner - the team trailing behind the owner's cart or following them; parked, they step down and
 // walk at heel again). Each seat holds one; a player's seat is theirs until they get down, so companions take the free

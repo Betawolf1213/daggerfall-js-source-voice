@@ -119,7 +119,7 @@
   },
   {
     "name": "REST8-the-walk-reads-delays",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "          if (r.waitsShort) continue;   // REST8",
     "new": "          if (false) continue;   // REST8",
     "tests": [
@@ -128,7 +128,7 @@
   },
   {
     "name": "REST8-TIMEFREE-walk-back",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "          if (r.waitsShort) continue;   // REST8",
     "new": "          if (r.waitsShort || q.hooks?.sharedClock?.()) continue;   // REST8",
     "tests": [

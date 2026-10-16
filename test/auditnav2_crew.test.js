@@ -7,9 +7,9 @@
 //   the muster dealt fore to aft (F40) along her main deck's rail (F62, F40 after F34's raised decks), no two men on one
 //   spot and a walker yielding to a walker (F41), the mood under the guns and struck (F46), the chanty's edges (F47), the
 //   walks' edges (F48), a station taken onto her deck (F35), a Bard among any two (F51).
-//   THE HOST (scenes/navalCrew.js) over a stand-in renderer: a re-keyed ship and a hold let go (F6), a crew grown back and
+//   THE HOST (scenes/naval/navalCrew.js) over a stand-in renderer: a re-keyed ship and a hold let go (F6), a crew grown back and
 //   emptied (F42), a concealed owner's crew (F50), first sight's cost (F58), no garbage a crewman (F59).
-//   THE SEA (scenes/navalHost.js crewShips/myCrew) and THE WORLD (scenes/world.js navalCrewFrame, lifted from its own
+//   THE SEA (scenes/naval/navalHost.js crewShips/myCrew) and THE WORLD (scenes/world.js navalCrewFrame, lifted from its own
 //   text): the muster called at boarding range in the real flows (F40), a ship going down (F45), a struck crew (F46),
 //   one crew for every player in a room (F9), the arc off (F52), a window over the world (F53), the room's re-key (F6), a
 //   Warm Ashes raid on my deck (F43).
@@ -21,14 +21,14 @@ import { readFileSync } from 'node:fs';
 import { asleepHour } from '../src/systems/naval/shipWatch.js';   // SHIP-WATCH: the crews' night
 import { hourOf } from '../src/world/worldClock.js';
 import * as crewLife from '../src/systems/naval/crewLife.js';
-import * as navalCrewMod from '../src/scenes/navalCrew.js';
+import * as navalCrewMod from '../src/scenes/naval/navalCrew.js';
 import { buildDeck, intoDeck, DECK_STEP } from '../src/systems/naval/navalDeck.js';
 import { boxColliderTriangles } from '../src/world/prefabColliders.js';
 import { MOBILE, GRAPPLE_S, HANDS_MAX } from '../src/systems/naval/navalBoarding.js';
 import { classById, hullBuild } from '../src/systems/naval/navalShips.js';
 import { SHIP_STATES } from '../src/systems/naval/navalDamage.js';
 import { Boat, spawnBoat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
-import { OWNER_SWEEP_S } from '../src/scenes/navalHost.js';
+import { OWNER_SWEEP_S } from '../src/scenes/naval/navalHost.js';
 import { ctxFor } from './csaScene.mjs';
 import { sea, readyPool } from './navalSea.mjs';
 import { room } from './navalRoom.mjs';
@@ -841,7 +841,7 @@ test('AUDIT NAV2 F59 NO GARBAGE A CREWMAN: a sprite\'s size is written through -
   assert.equal(asked.get(walker).moving, true, 'a walker asked walking');
   assert.ok(ship.life.members.filter((m) => m !== walker && !m.moving).every((m) => asked.get(m).moving === false), 'a man standing asked standing');
   assert.equal(new Set([...asked.values()].map((x) => x.motion)).size, 1, 'one motion object');
-  const src = SRC('src/scenes/navalCrew.js');
+  const src = SRC('src/scenes/naval/navalCrew.js');
   assert.match(src, /createPersonTextureKeys\(\)/, 'the texture key memoised (PERF-TOWN1\'s)');
   assert.doesNotMatch(src, /s\.unit\.update\(dt, \{ moving: member\.moving \}/, 'no {moving} a crewman a frame');
   assert.doesNotMatch(src, /s\.batch\.size = \{/, 'no {w,h} a crewman a frame');

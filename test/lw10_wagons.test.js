@@ -15,7 +15,7 @@ import { createRoadTeams, WAGONS_DRAWN, wagonBucket, ROAD_WAGON_KIND } from '../
 import { createHorseCartPool } from '../src/scenes/horseCartPool.js';
 import { wayAt, laneAt, wayOf, NATIVE_PER_M, NATIVE_PIXEL, partyAt, townTrips, membersAt, CALENDAR_MPM } from '../src/systems/livingWorld/trips.js';
 import { HITCHED_HORSE_LOCAL_Z, wheelRotationDegrees, wrapWheelAngle, NORMAL_GROUND_OFFSET } from '../src/systems/horse/horseCartLaw.js';
-import { createLivingRoads, roadLanes, CAMP_RING_N } from '../src/scenes/livingRoads.js';
+import { createLivingRoads, roadLanes, CAMP_RING_N } from '../src/scenes/livingWorld/livingRoads.js';
 import { synthMap } from './lwRoads.mjs';
 import { createRelations } from '../src/systems/livingWorld/relations.js';
 import { travellerRoster } from '../src/systems/livingWorld/census.js';
@@ -292,7 +292,7 @@ test('WAGONS1 x LW10: the living world\'s wagon is the Small Cart whatever the p
   assert.equal(w.hitched, true);
   assert.ok(Math.abs(trainOf(trip, at, [leader], 1).wagons[0].x - wayAt(way, 30000 - LEAD_N - HITCH_N).x) < 1e-6, 'unsaid, the mod\'s');
   assert.equal(campTeam(trip, 0, 0, 100, 1).wagons[0].hitched, false);
-  const host = readFileSync(new URL('../src/scenes/livingRoads.js', import.meta.url), 'utf8');
+  const host = readFileSync(new URL('../src/scenes/livingWorld/livingRoads.js', import.meta.url), 'utf8');
   // PIN MOVED (AUDIT LW-III): the drawn wagon's hitch read once a frame, the train in its lane
   assert.match(host, /const hitchN = deps\.teams\?\.hitchN\?\.\(\);/);
   assert.match(host, /const train = trainOf\(trip, at, members, t, hitchN, lanes\.get\(p\.trip\.id\) \?\? LANE_N\);/);

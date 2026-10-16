@@ -64,7 +64,7 @@
   },
   {
     "name": "DEADCLOCK-the-line-counts-every-clock",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": " && clockCounts(q, r)) {   // DEAD-CLOCK",
     "new": ") {   // DEAD-CLOCK",
     "tests": [

@@ -18,7 +18,7 @@ import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { WEAPONS_ENUM as W } from '../src/combat/enemyEquipment.js';
 import { createTravellerSprites } from '../src/world/travellerSprites.js';
 import { familyRoomSprites } from '../src/world/familyBodies.js';
-import { corpseLook } from '../src/scenes/livingRoads.js';
+import { corpseLook } from '../src/scenes/livingWorld/livingRoads.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const settle = () => new Promise((r) => setTimeout(r, 0));
@@ -164,7 +164,7 @@ test('MWNPC10c-4 the room\'s sprites hand their bodies on (the line\'s are the f
   assert.ok(w.includes('drawLivingBodies: (canvas, proj, view, eye, dt) => { livingIndoors?.drawBodies(canvas, proj, view, eye, dt); },'));
   assert.ok(w.includes('livingRoads?.offsetBodies(r.offset);'));
   ordered(rd('src/scenes/worldModes.js'), ['host.drawLivingBodies?.(canvas, proj, view, mwv.eye, dt);', 'renderer.drawBillboards([...interiorCtx.billboardBatches,', 'const livingInside = host.livingBillboards?.() ?? [];'], 'the room\'s before the building\'s pass');
-  assert.ok(rd('src/scenes/livingRoads.js').includes('drawBodies(canvas, proj, view, eye, dt) { deps.sprites.drawBodies?.(canvas, proj, view, eye, dt); },'));
-  assert.ok(rd('src/scenes/livingRoads.js').includes('offsetBodies(o) { deps.sprites.offsetBodies?.(o); },'));
-  assert.ok(rd('src/scenes/livingIndoors.js').includes('drawBodies(canvas, proj, view, eye, dt) { deps.sprites.drawBodies?.(canvas, proj, view, eye, dt); },'));
+  assert.ok(rd('src/scenes/livingWorld/livingRoads.js').includes('drawBodies(canvas, proj, view, eye, dt) { deps.sprites.drawBodies?.(canvas, proj, view, eye, dt); },'));
+  assert.ok(rd('src/scenes/livingWorld/livingRoads.js').includes('offsetBodies(o) { deps.sprites.offsetBodies?.(o); },'));
+  assert.ok(rd('src/scenes/livingWorld/livingIndoors.js').includes('drawBodies(canvas, proj, view, eye, dt) { deps.sprites.drawBodies?.(canvas, proj, view, eye, dt); },'));
 });

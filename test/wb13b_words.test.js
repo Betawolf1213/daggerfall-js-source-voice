@@ -7,10 +7,10 @@ import { readFileSync } from 'node:fs';
 import { riseLine, wrathLine, marksLine } from '../src/net/gate/gateLaw.js';
 import { GATE_ASPECTS, GATE_TRIALS } from '../src/net/gate/gateMods.js';
 import { MARK_TIPS, MARKS_CARD_TEXT, marksCardModel } from '../src/ui/gate/gateMarksView.js';
-import { COURT_STRIKE_TEXT, COURT_RECKON_TEXT, COURT_MARKS_TEXT, courtPhaseOrder, courtPhaseCard, COURT_WRATH_TEXT } from '../src/scenes/gateCourt.js';
-import { COURT_HOST_TEXT } from '../src/scenes/gateHost.js';
+import { COURT_STRIKE_TEXT, COURT_RECKON_TEXT, COURT_MARKS_TEXT, courtPhaseOrder, courtPhaseCard, COURT_WRATH_TEXT } from '../src/scenes/gate/gateCourt.js';
+import { COURT_HOST_TEXT } from '../src/scenes/gate/gateHost.js';
 import { COURT_TEXT } from '../src/world/gate/gateArena.js';
-import { GATE_TEXT } from '../src/scenes/gatePool.js';
+import { GATE_TEXT } from '../src/scenes/gate/gatePool.js';
 import { GATE_NO_TEXT } from '../src/net/gate/gateLink.js';
 import { GATE_CLAIM_TEXT } from '../src/net/gate/gateClaims.js';
 import { MARKS_TEXT } from '../src/net/marksBook.js';
@@ -98,7 +98,7 @@ test('WB13b nothing said on stepping into the court - the marks\' card stands at
   assert.equal(MARKS_CARD_TEXT.gate('Valkynaz Ruhn', 'the Burning'), MARKS_CARD_TEXT.arrive('Valkynaz Ruhn', 'the Burning'));
   const md = ['venom', 'grudge', 'echoing'];
   assert.equal(marksCardModel(md, { name: 'Valkynaz Ruhn' }, { mode: 'gate' }).sub, marksCardModel(md, { name: 'Valkynaz Ruhn' }, { mode: 'arrive', since: 0, now: 1000 }).sub);
-  const gc = read('src/scenes/gateCourt.js');
+  const gc = read('src/scenes/gate/gateCourt.js');
   assert.match(gc, /if \(!marksSaid\) \{ marksSaid = true; if \(P\.md && !s\.fell && s\.wrath == null\) marksAt = t; \}/);
 });
 

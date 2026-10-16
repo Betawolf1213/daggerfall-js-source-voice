@@ -23,7 +23,7 @@ import { yardOffer, yardAll, YARD_PRICE, YARD_DISCOUNT_MAX } from '../src/system
 import { createNavalDirector } from '../src/systems/naval/navalDirector.js';
 import { HULL_PRICES } from '../src/systems/comeSailAway/comeSailAwayHulls.js';
 import { officeText, mountNavalYardWindow } from '../src/ui/naval/navalYardWindow.js';
-import { SITE_LOT, SITE_CASK_LIFE } from '../src/scenes/navalHost.js';
+import { SITE_LOT, SITE_CASK_LIFE } from '../src/scenes/naval/navalHost.js';
 import { classById } from '../src/systems/naval/navalShips.js';
 import { sea } from './navalSea.mjs';
 
@@ -345,7 +345,7 @@ test('CAPT-BOARD at sea: a bounty\'s quarry stood within SITE_REACH_PX of her wa
   s.run(0.3);
   assert.ok(events.some((e) => e.type === 'haul' && e.site === 's1'), 'the haul the contract\'s');
   assert.ok(s.log.say.includes('You haul a cask of the wreck\'s cargo aboard.'));
-  const host = rd('src/scenes/navalHost.js');
+  const host = rd('src/scenes/naval/navalHost.js');
   // PIN MOVED (AUDIT CAPTAIN'S SEA L6): and her seed with it - each ship counted once
   assert.match(host, /if \(was < KNOW\.studied && e\.known >= KNOW\.studied && held > 0 && !struck\) deps\.captain\?\.event\?\.\(\{ type: 'study', crown: watersCrown\(\), seed: e\.ship\.seed \}\);/);
   assert.match(host, /if \(wrecked && !s\.wasWrecked\) \{ c\.event\('wrecked'\); deps\.captain\?\.event\?\.\(\{ type: 'wrecked', boat: b\.uid \?\? null \}\); \}/);

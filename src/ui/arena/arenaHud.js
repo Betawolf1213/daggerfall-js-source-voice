@@ -18,12 +18,12 @@
 //
 // ARENA3: THE BANNERS' MARKS - each fighter of a banner wears its pennant before the name (`data-team` red | blue, the
 // `.arena-team` mark, its colour the sheet's): mine in a ladder bout when I fight under one, and an exhibition's two
-// fighters, the Red Banner's against the Blue's (scenes/arenaBouts.js boutTeams). The house's fighters wear none.
+// fighters, the Red Banner's against the Blue's (scenes/arena/arenaBouts.js boutTeams). The house's fighters wear none.
 //
 // ARENA4b: THE STANDS' TWO PRESSES (Mac, 2026-10-02: "During fights, the crowd is present and can cheer/boo you") - a
-// spectator in the stands of a relay's bout (scenes/arenaBouts.js startRelay, `me` '') may Cheer or Boo: two touch-sized
+// spectator in the stands of a relay's bout (scenes/arena/arenaBouts.js startRelay, `me` '') may Cheer or Boo: two touch-sized
 // presses under the plate and two keys (STANDS_KEYS - the + and - keys, which no game action holds), each the host's
-// door (`drawArenaHud`'s `cheer`), shut while the relay's allowance runs (the model's `stands.ready`, scenes/arenaBouts.js
+// door (`drawArenaHud`'s `cheer`), shut while the relay's allowance runs (the model's `stands.ready`, scenes/arena/arenaBouts.js
 // CHEER_GAP_MS). The one part of the HUD that takes a press, and only while I watch: its row its own (`.arena-stands`,
 // pointer-events its buttons' alone, a press swallowed so it is never a swing), the readout under it still hidden from a
 // screen reader while the presses are not; the keys heard only while the row stands, never in a field nor with a
@@ -329,7 +329,7 @@ function writeRows(list, rows, was) {
 }
 
 /** Draw the HUD for a model (null hides it); `hidden` the HUD's own hide, `touch` a touch screen's sizes. ARENA4b:
- *  `cheer` the stands' door (`(dir) => boolean`, 1 cheer, -1 boo - scenes/arenaBouts.js), the presses drawn while the
+ *  `cheer` the stands' door (`(dir) => boolean`, 1 cheer, -1 boo - scenes/arena/arenaBouts.js), the presses drawn while the
  *  model carries `stands` and a door is handed. */
 export function drawArenaHud(model, { hidden = false, touch = false, doc = globalThis.document, cheer = null } = {}) {
   const want = !hidden && !!model;

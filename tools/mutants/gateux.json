@@ -238,7 +238,7 @@
   },
   {
     "name": "GATEUX-chart-over-the-veil",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "since: chartAt, now: t }) : null, { hidden: hudHidden() || veiled() });",
     "new": "since: chartAt, now: t }) : null, { hidden: hudHidden() });",
     "tests": [
@@ -247,7 +247,7 @@
   },
   {
     "name": "GATEUX-chart-left-up",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "      drawGateDamageChart(null);   // GATE-UX\n",
     "new": "",
     "tests": [
@@ -256,7 +256,7 @@
   },
   {
     "name": "GATEUX-chart-never-drawn",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "      if (s.fell && chartAt === null) chartAt = t;\n",
     "new": "",
     "tests": [

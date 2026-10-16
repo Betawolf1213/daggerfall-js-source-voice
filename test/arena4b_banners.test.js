@@ -13,7 +13,7 @@ import {
 } from '../src/net/arena/arenaLaw.js';
 import { openBout, liveEntry } from '../src/net/arena/arenaBrain.js';
 import { exhibitionFor, exhibitionBoutId } from '../src/net/arena/arenaExhibition.js';
-import { createArenaOnline } from '../src/scenes/arenaOnline.js';
+import { createArenaOnline } from '../src/scenes/arena/arenaOnline.js';
 import { arenaLadderOf } from '../src/net/arena/arenaLaw.js';
 import { fighterIdentity } from '../src/systems/arena/arenaFighters.js';
 

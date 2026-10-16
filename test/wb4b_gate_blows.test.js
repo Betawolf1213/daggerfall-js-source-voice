@@ -3,7 +3,7 @@
 // lands about half its swings, a level-20 blade nearly all); where a swing meets him (bossReach - his skin, not his
 // middle); the spell engine's helpers for a body that states its own radius (systems/spellcast.js - the touch swept
 // down its aim, the blast and the missile against his whole body, a foe measured as it always was); the court's doors
-// (scenes/gateCourt.js target and hit - the blow's number out as the wire's frame, the ward turning it, the flinch) and
+// (scenes/gate/gateCourt.js target and hit - the blow's number out as the wire's frame, the ward turning it, the flinch) and
 // the relay's side of the same frame (net/wire.js validGateIn, net/gate/gateBrain.js applyHit); and the seams in the dungeon
 // context, the spell engine, the dungeon arm and the world host, by source.
 import { test } from 'node:test';
@@ -14,7 +14,7 @@ import { bossStandIn, bossReach, bossLookOf, bossAct, BOSS_ARMOR, BOSS_LOOKS } f
 import { calculateAttackDamage } from '../src/combat/formulas.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { pickTouchTarget, sweepFoes, missileHitsFoe, TOUCH_RANGE, TOUCH_SPHERE_CAST_RADIUS } from '../src/systems/spellcast.js';
-import { createGateCourt } from '../src/scenes/gateCourt.js';
+import { createGateCourt } from '../src/scenes/gate/gateCourt.js';
 import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import { validGateIn } from '../src/net/wire.js';
 import { newFight, joinFight, applyHit, BOSS_H, BOSS_R, HIT_KINDS, MELEE_REACH } from '../src/net/gate/gateBrain.js';
@@ -116,7 +116,7 @@ test('WB4b the court\'s doors: him as a body while he stands (his feet, his heig
 
 test('WB4b the seams, by source: the dungeon context meets him as a foe-shaped body its swing, its shafts and its spells all reach - by his skin, his whole body, his own radius - and sends every number through the court\'s door; the spell engine reaches him at every site a duel opponent is reached; the dungeon arm and the world host carry the two doors (mutants: each seam removed)', () => {
   const dc = read('src/scenes/dungeonContext.js');
-  // PIN MOVED (SD8c): in the Shattered Hour the seam is the Brass Remnant's (scenes/sdRemnant.js), the court's elsewhere
+  // PIN MOVED (SD8c): in the Shattered Hour the seam is the Brass Remnant's (scenes/superDungeon/sdRemnant.js), the court's elsewhere
   assert.match(dc, /function gateBossBody\(\) \{\n\s*const b = sdRemnant \? sdRemnant\.target\(\) : opts\.gateBoss\?\.\(\) \?\? null;/);
   assert.match(dc, /const boss = gateBossBody\(\);\n\s*if \(boss\) \{ boss\._backFacing = foeDeps\.isBackFacing\(boss\.ai\.yaw, boss\.ai\.feet, playerFeet\); live\.push\(boss\); \}\n\s*const canSee = \(f\) => \{\n\s*if \(f === boss\) return bossSight\(eye, inViewFn, boss\);/, 'the swing sees him by his skin');
   assert.match(dc, /if \(foe === boss\) \{ hitEnemy = true; swingOnBoss\(boss, damage, lookDir\); continue; \}/);

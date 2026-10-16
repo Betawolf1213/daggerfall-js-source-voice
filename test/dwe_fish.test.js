@@ -11,7 +11,7 @@ import {
   scaledAttemptsPerPixel, restoreIconAspect, isFishTemplateIndex, speciesOfTemplate, fishBillboardSize,
 } from '../src/world/passiveFish.js';
 import { WATER_BIOME } from '../src/world/underwater/underwaterDecorations.js';
-import { createFishSpawner, createEncounterPulse, nearestEdgeDistanceSq } from '../src/scenes/deepWatersEncounters.js';
+import { createFishSpawner, createEncounterPulse, nearestEdgeDistanceSq } from '../src/scenes/deepWater/deepWatersEncounters.js';
 
 const f32 = Math.fround;
 const seq = (vals) => { let i = 0; return () => vals[i++ % vals.length]; };
@@ -311,7 +311,7 @@ import { readFileSync } from 'node:fs';
 import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { preloadTextureRecord, decodedTextureTopDown, setTextureDeriveContext, isVendorArchive } from '../src/systems/textureReplacement.js';
 import { DEEP_WATERS_FISH_TEMPLATES, createFishItem, normalizeFishItems, installDeepWatersFishIcons, fishIconArchive, FISH_GROUP } from '../src/systems/deepWater/deepWatersFishItems.js';
-import { createDeepWatersFish, createFishPictures, fishBoxDepth, FISH_CUTOFF } from '../src/scenes/deepWatersFish.js';
+import { createDeepWatersFish, createFishPictures, fishBoxDepth, FISH_CUTOFF } from '../src/scenes/deepWater/deepWatersFish.js';
 import { rayUprightCapsule } from '../src/world/passiveFish.js';
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 

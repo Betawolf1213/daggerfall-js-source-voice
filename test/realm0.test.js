@@ -362,7 +362,7 @@ test('REALM P0.4: a party\'s shared quest pays its gold in the party\'s shares, 
   assert.deepEqual(paid, [500], 'a party of two: half the purse');
   // by source: the host's party answers
   assert.match(src('src/scenes/world.js'), /partySize: \(\) => social\?\.party\?\.members\?\.length \?\? 1,/);
-  assert.match(src('src/scenes/questBridge.js'), /partySize: \(\) => ctx\.partySize\?\.\(\) \?\? 1,/);
+  assert.match(src('src/scenes/quest/questBridge.js'), /partySize: \(\) => ctx\.partySize\?\.\(\) \?\? 1,/);
 });
 
 test('REALM P0.5: a checkpoint is written online, spawned, in the seat and out of a duel - every two real minutes', () => {

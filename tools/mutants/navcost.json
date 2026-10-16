@@ -15,28 +15,28 @@
   },
   {
     "name": "NC-no-hulls-met",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        if (dx * dx + dz * dz > reach * reach) continue;",
     "new": "        continue;",
     "tests": ["test/navcost.test.js"]
   },
   {
     "name": "NC-reach-short",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "reach = 2 * (a.hl + a.hw + b.hl + b.hw)",
     "new": "reach = 0.01 * (a.hl + a.hw + b.hl + b.hw)",
     "tests": ["test/navcost.test.js"]
   },
   {
     "name": "NC-shoved-flat-kept",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      x.flat = null;\n",
     "new": "",
     "tests": ["test/navcost.test.js"]
   },
   {
     "name": "NC-no-cull",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        if (dx * dx + dz * dz > reach * reach) continue;",
     "new": "        if (false) continue;",
     "tests": ["test/navcost.test.js"],

@@ -8,7 +8,7 @@ import { scene } from './csaScene.mjs';
 import { BOAT_ACTIONS, CSA_BRAKE_MAX } from '../src/systems/comeSailAway/comeSailAway.js';
 import { csaWireRecord, validCsaRecord, CSA_WIRE_SPEED_MAX } from '../src/systems/comeSailAway/comeSailAwayWire.js';
 import { HELM_WAY, sailFreeGain } from '../src/systems/helmWay.js';
-import { heaveToDecel, heaveToRun, HEAVE_TO_M, HEAVE_TO_S } from '../src/scenes/navalHost.js';
+import { heaveToDecel, heaveToRun, HEAVE_TO_M, HEAVE_TO_S } from '../src/scenes/naval/navalHost.js';
 import { BOARD_SPEED } from '../src/systems/naval/navalBoarding.js';
 import { HULL } from '../src/systems/naval/navalShips.js';
 import { SCENE_MAP_RATIO } from '../src/world/streamingWorld.js';

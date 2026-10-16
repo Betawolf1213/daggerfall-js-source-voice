@@ -8,7 +8,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createSdHost } from '../src/scenes/sdHost.js';
+import { createSdHost } from '../src/scenes/superDungeon/sdHost.js';
 import { sdCities, sdTemplates, findSdSite, pickSdTemplate, sdHollowLocation } from '../src/systems/superDungeon/sdSite.js';
 import { scanGatePixels } from '../src/systems/gate/gateSite.js';
 import { LOCATION_TYPES, CLIMATES, longitudeLatitudeToMapPixel } from '../src/formats/mapsFile.js';

@@ -3,7 +3,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { SD_STEPS_COURSE, SD_BEAT_SOLID, SD_BEAT_BLINK, beatWarned } from '../src/world/superDungeon/sdSteps.js';
-import { createSdSteps, SD_BEAT_BLINK_HZ } from '../src/scenes/sdSteps.js';
+import { createSdSteps, SD_BEAT_BLINK_HZ } from '../src/scenes/superDungeon/sdSteps.js';
 import { TELEGRAPH_THROB_MAX_HZ } from '../src/render/gateTelegraph.js';
 import { SD_STEPS_RECORD as SD_STEPS_RECORD_S0 } from '../src/world/superDungeon/sdStepsArt.js';
 import { SD_REALM_ARCHIVE as SD_REALM_ARCHIVE_S0 } from '../src/world/superDungeon/sdRealm.js';
@@ -54,7 +54,7 @@ import {
   SD_COMPASS, SD_ARRIVE_Z, SD_INLAY_H, realmClamp,
 } from '../src/world/superDungeon/sdRealm.js';
 import { SD_THRESHOLD, SD_ORRERY, SD_ARENA, SD_WALK, dungeonToRealm, realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
-import { SD_FX_COLOR } from '../src/scenes/sdFx.js';
+import { SD_FX_COLOR } from '../src/scenes/superDungeon/sdFx.js';
 import { SD_GLOW_COLORS } from '../src/world/superDungeon/sdHallArt.js';
 import { SD_BEAM_CORE } from '../src/render/sdBeam.js';
 import { TURNING_STEP_S, turningWheelAngle, TURNING_HZ } from '../src/render/auraRing.js';
@@ -248,7 +248,7 @@ test('SD-LOOK THE PAINT IS PIXEL ART: every texel it paints posterized to the pi
 // ---------------------------------------------------------------------------------------------------------------------
 import { sdRiftFace, riftLook, SD_RIFT_OPEN_LOOK, SD_RIFT_NOT_YET, SD_RIFT_CLOSED, SD_RIFT_REFUSED, SD_RIFT_PROBE_M } from '../src/world/superDungeon/sdDungeon.js';
 import { irisPositions, SD_RIFT_PARTS, riftCentreY } from '../src/world/superDungeon/sdRiftModel.js';
-import { createSdEnd } from '../src/scenes/sdEnd.js';
+import { createSdEnd } from '../src/scenes/superDungeon/sdEnd.js';
 import { SD_WINDOW_FS, SD_FLOOR_FS } from '../src/render/sdRiftPass.js';
 import { sdRise, sdFind, sdFell, SD_COLLAPSE_MS } from '../src/net/superDungeon/sdLaw.js';
 
@@ -673,8 +673,8 @@ test('SD-LOOK THE HOLD IS SEEN (S7): the hold\'s curtain the same wall in gold, 
 // ---------------------------------------------------------------------------------------------------------------------
 import { buildRemnantParts as remParts, buildRemnantModel as remModel, SD_REMNANT_KIT, SD_REMNANT_BODY as REM_B, SD_REMNANT_PARTS as REM_PARTS } from '../src/world/superDungeon/sdRemnantModel.js';
 import { SD_REM as REM_LAW } from '../src/net/superDungeon/sdRemnant.js';
-import { SD_REM_HAND } from '../src/scenes/sdRemnantRig.js';
-import { createSdRemnant, sdHeartBeat, SD_HEART_LIGHT } from '../src/scenes/sdRemnant.js';
+import { SD_REM_HAND } from '../src/scenes/superDungeon/sdRemnantRig.js';
+import { createSdRemnant, sdHeartBeat, SD_HEART_LIGHT } from '../src/scenes/superDungeon/sdRemnant.js';
 import { SD_ENDINGS as ENDINGS } from '../src/net/superDungeon/sdMarks.js';
 
 const vertsOf = (m) => Array.from({ length: m.positions.length / 3 }, (_, i) => [m.positions[i * 3], m.positions[i * 3 + 1], m.positions[i * 3 + 2]]);
@@ -736,7 +736,7 @@ test('SD-LOOK THE HEART IS THE FIGHT\'S METRONOME (S8): its light in its Ending\
 // S6 - THE WAY HOME: assembling, at its size, its beacon.
 // ---------------------------------------------------------------------------------------------------------------------
 import { buildReturnParts, buildReturnModel, SD_RETURN_PARTS, returnSpringAt } from '../src/world/superDungeon/sdRiftModel.js';
-import { SD_HOME_SCALE, SD_HOME_ASSEMBLY, SD_HOME_RISE_MS, SD_RIFT_LIGHT } from '../src/scenes/sdEnd.js';
+import { SD_HOME_SCALE, SD_HOME_ASSEMBLY, SD_HOME_RISE_MS, SD_RIFT_LIGHT } from '../src/scenes/superDungeon/sdEnd.js';
 import { SD_RETURN_SIZE } from '../src/world/superDungeon/sdDungeon.js';
 import { sdHomeBeacon, SD_HOME_BEACON } from '../src/render/sdStompWall.js';
 
@@ -805,7 +805,7 @@ test('SD-LOOK THE WAY HOME\'S BEACON (S6): while the way home assembles, the col
 
 import { sdRiftArt, SD_RIFT_PLATE_RECORD, SD_RIFT_ATLAS, SD_RIFT_RECORD } from '../src/world/superDungeon/sdRiftArt.js';
 import { buildReturnPlate, SD_RETURN_PLATE } from '../src/world/superDungeon/sdRiftModel.js';
-import { SD_PLATE_HOLD_MS, SD_RETURN_KEY } from '../src/scenes/sdEnd.js';
+import { SD_PLATE_HOLD_MS, SD_RETURN_KEY } from '../src/scenes/superDungeon/sdEnd.js';
 test('SD-LOOK THE HAND-PLATE (S6): a silver plate on the Return\'s sill, the hand engraved in it - before the opening, low, tilted back to one standing before it; its own record alight in its hand alone (moon-white), the plate a draw that swaps to it while the activation ray finds the Return (the namer asks each frame) and goes dark a frame\'s gap after; hidden while the way home assembles; nothing that casts; every cell of the Rift\'s and the Return\'s read at its own rows (mutants: never alight; alight always; the whole atlas alight; cast; the cells mirrored)', () => {
   const art = new Map(sdRiftArt()), A = SD_RIFT_ATLAS, S = A.size, H = A.hand;
   const litIn = (img, [x0, y0, w, h]) => { let n = 0; for (let y = y0; y < y0 + h; y++) for (let x = x0; x < x0 + w; x++) if (img.colors[(y * S + x) * 4 + 2] > 0) n++; return n; };
@@ -844,8 +844,8 @@ test('SD-LOOK THE HAND-PLATE (S6): a silver plate on the Return\'s sill, the han
   assert.equal(p2.hidden, false);
 });
 
-import { createSdFx, SD_FX_EXHALE, SD_EXHALE_AT } from '../src/scenes/sdFx.js';
-import { SD_EXHALE_MS } from '../src/scenes/sdEnd.js';
+import { createSdFx, SD_FX_EXHALE, SD_EXHALE_AT } from '../src/scenes/superDungeon/sdFx.js';
+import { SD_EXHALE_MS } from '../src/scenes/superDungeon/sdEnd.js';
 import { realmToDungeon as r2d, SD_ARENA as ARENA } from '../src/net/superDungeon/sdBrain.js';
 import { SD_WAY_BACK_Z as WB_Z } from '../src/world/superDungeon/sdRealm.js';
 test('SD-LOOK THE ARRIVAL EXHALE (S6): my first frame in the Hour on the Threshold breathes brass sparks from the way back\'s face (resting on the Threshold, falling past its rim) and turns its ring once, forward, eased over SD_EXHALE_MS - once an arrival, never while I stay, again after I leave and come back, never for feet first seen elsewhere; the hosts carry it; never under the veil, and after any frame out of the Hour (AUDIT SD V S5, L5) (mutants: never exhaling; every frame; the ring never turning; the hosts unwired; under the veil; the latch kept)', () => {

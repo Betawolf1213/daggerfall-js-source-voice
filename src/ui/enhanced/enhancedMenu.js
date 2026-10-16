@@ -2909,7 +2909,7 @@ export const skipStartVideoNote = () => t('menu.skipVideo.note', SKIP_START_VIDE
 
 /** QREPAIR (2026-09-24, Mac: "Add a quest refresh option to settings" - "Repair active quests"): THE GAME CATEGORY'S
  *  PORT ROW. The repair runs over a game in play, so its door is the PAUSE's settings (the host hands
- *  `hooks.repairQuests`, scenes/questBridge.js repair); on the front door the row is drawn, greyed, and says where it
+ *  `hooks.repairQuests`, scenes/quest/questBridge.js repair); on the front door the row is drawn, greyed, and says where it
  *  lives - nothing hidden. The confirm is the one sheet every destructive-looking press here takes (`ask`), and the
  *  repair's own line replaces the row's note until the menu is mounted again. */
 let questRepairSaid = null;
@@ -4794,7 +4794,7 @@ function pauseStats(body) {
   const doors = statsSec === 'master' ? [] : [   // SOFTCAP6: the Master Skills page carries none of the sheet's doors
     [t('pause.door.pack', 'Pack'), hooks.openPack], [t('pause.door.spellbook', 'Spellbook'), hooks.openSpellbook], [t('pause.door.chronicle', 'Chronicle'), hooks.openChronicle],
     // ARENA3: THE ARENA WINDOW, once a banner is worn (bible/11-Multiplayer/Arena.md 5 - "from the pause menu's Arena entry
-    // once you have joined"): the host's arm (scenes/arenaGate.js windowOverlay, shown in its own slot)
+    // once you have joined"): the host's arm (scenes/arena/arenaGate.js windowOverlay, shown in its own slot)
     [t('pause.door.arena', 'Arena'), hooks.arenaJoined?.() ? hooks.openArena : undefined],
   ].filter(([, fn]) => typeof fn === 'function');
   if (doors.length) {
@@ -5392,7 +5392,7 @@ function pauseQuests(body) {
   const { active, finished, hidden } = questRail(log);
   const shelved = shelvedRail(log);   // QUEST-SHELF: and the quests set aside
   // JOURNAL-CLEAN (2026-09-30, Discord: "Should there be a way to clean both finished and unfinished quests from your
-  // journal for a cleaner look?"): the host's tidy-ups (scenes/questBridge.js journalClean - remove / clear the
+  // journal for a cleaner look?"): the host's tidy-ups (scenes/quest/questBridge.js journalClean - remove / clear the
   // archive, hide / unhide an active quest). A host that hands none draws no buttons rather than buttons that do
   // nothing.
   const clean = hooks.journalClean?.() ?? null;
@@ -5553,7 +5553,7 @@ function pauseQuests(body) {
       const acts = el('div', 'px-qacts');
       acts.style.cssText = 'display:flex;gap:8px;justify-content:flex-end;margin:6px 0 8px';
       // QUEST-SHELF: a running quest ABANDONS - twice, BOUNTY1's arming (its clocks stop and its questor is free the moment
-      // it goes) - where the quest may be set aside (scenes/questBridge.js canAbandon); one set aside RECLAIMS in one press
+      // it goes) - where the quest may be set aside (scenes/quest/questBridge.js canAbandon); one set aside RECLAIMS in one press
       if (isShelvedRow && sel.id != null && clean.reclaim) {
         const rc = el('button', 'act', 'Reclaim quest');
         // its audit: the selection follows the quest only where it went - a refusal is said under the quest it refused
@@ -5573,7 +5573,7 @@ function pauseQuests(body) {
         acts.append(ab);
       }
       // QUEST-RESET (LostMyLeg: "an option that can fully reset a quest"): a running quest RESTARTS from its first step -
-      // twice, the same arming - where it may be (scenes/questBridge.js canRestart); the selection follows its new copy
+      // twice, the same arming - where it may be (scenes/quest/questBridge.js canRestart); the selection follows its new copy
       if (!isShelvedRow && sel.entries && sel.id != null && clean.restart && clean.canRestart?.(sel.id)) {
         const armed = journalCleanArmed === `rs:${sel.id}`;
         const rs = el('button', 'act', armed ? t('pause.journal.restartArmed', 'Click again to restart') : t('pause.journal.restart', 'Restart quest'));

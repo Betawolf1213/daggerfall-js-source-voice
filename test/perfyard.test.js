@@ -11,7 +11,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createDecorRoom, decorCullVerdict, DECOR_DRAW, DECOR_SHADOW, DECOR_SKIP } from '../src/scenes/decorRoom.js';
+import { createDecorRoom, decorCullVerdict, DECOR_DRAW, DECOR_SHADOW, DECOR_SKIP } from '../src/scenes/decor/decorRoom.js';
 import { spherePlanes } from '../src/render/bounds.js';
 import { lookAt, multiply, perspective, mirrorProjectionX } from '../src/world/mat4.js';
 

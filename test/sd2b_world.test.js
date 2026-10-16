@@ -1,5 +1,5 @@
 // SD2b (2026-10-05, Mac: "Super dungeons are random finds on the world map, and spawn where population is at its most.
-// Only one can be active at a time."): THE HOLLOW IN THE WORLD (scenes/sdHost.js) - the hub's record in, the Hollow it
+// Only one can be active at a time."): THE HOLLOW IN THE WORLD (scenes/superDungeon/sdHost.js) - the hub's record in, the Hollow it
 // names found over this client's own map files and stood at its pixel while its phase stands, the find said at its door
 // until the hub's word moves it, and the chat's lines for the moves everyone online hears. bible/11-Multiplayer/
 // Super-Dungeons.md sections 2-4.
@@ -7,7 +7,7 @@ import { sdMarksLine } from '../src/systems/superDungeon/sdOmen.js';   // SD19 (
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createSdHost, SD_LINE_WAIT_MS } from '../src/scenes/sdHost.js';
+import { createSdHost, SD_LINE_WAIT_MS } from '../src/scenes/superDungeon/sdHost.js';
 import { sdCities, findSdSite, sdTemplates } from '../src/systems/superDungeon/sdSite.js';
 import { scanGatePixels } from '../src/systems/gate/gateSite.js';
 import { LOCATION_TYPES, CLIMATES } from '../src/formats/mapsFile.js';

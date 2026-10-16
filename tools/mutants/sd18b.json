@@ -100,7 +100,7 @@
   },
   {
     "name": "SD18B-the-wake-the-table's",
-    "file": "src/scenes/sdArenaRead.js",
+    "file": "src/scenes/superDungeon/sdArenaRead.js",
     "old": "show('wake', s.op, sdWakeText(s.mk));",
     "new": "show('wake', s.op, SD_BEAT_TEXT.wake);",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "SD18B-the-ground-plain",
-    "file": "src/scenes/sdArenaRead.js",
+    "file": "src/scenes/superDungeon/sdArenaRead.js",
     "old": "ground: (el && SD_ELEMENT_GROUND[el]) || SD_BURNING_GROUND,",
     "new": "ground: SD_BURNING_GROUND,",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "SD18B-untinted",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "    color: sdTint(A.key, S.el), style:",
     "new": "    color: SD_BLOW_COLOR[A.key], style:",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "SD18B-the-tint-whole",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "  if (!c) { c = Object.freeze(base.map((v, i) => v + (E[i] - v) * SD_TINT_LEAN)); _tints.set(k, c); }",
     "new": "  if (!c) { c = E; _tints.set(k, c); }",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "SD18B-the-pool-fire",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "color: SD_ELEMENT_COLOR[g[0].el] ?? SD_POOL_COLOR, style: SD_ELEMENT_STYLE[g[0].el] ?? TELEGRAPH_STYLE.fire,",
     "new": "color: SD_POOL_COLOR, style: TELEGRAPH_STYLE.fire,",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "SD18B-unsaved",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "    strike(el ? savedShare(dmg, save(e, el)) : dmg, el ? { name, el } : { name });",
     "new": "    strike(dmg, el ? { name, el } : { name });",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "SD18B-unelemented",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "    strike(el ? savedShare(dmg, save(e, el)) : dmg, el ? { name, el } : { name });",
     "new": "    strike(el ? savedShare(dmg, save(e, el)) : dmg, { name });",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "SD18B-the-hit's-element-dropped",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "    for (const h of v.hits) land(A.name, h.pct, h.base, bodysBlow(A), h.el ?? null);",
     "new": "    for (const h of v.hits) land(A.name, h.pct, h.base, bodysBlow(A), null);",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "SD18B-the-brass-unnamed",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "    land(p.el ? SD_ELEMENT_GROUND[p.el] : SD_BLOWS_TEXT.burning, p.pct, p.base, false, p.el ?? null);",
     "new": "    land(SD_BLOWS_TEXT.burning, p.pct, p.base, false, p.el ?? null);",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "SD18B-the-arc-forty-eight",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "const tabs = o?.fray ?? SD_FRAY_MAX,",
     "new": "const tabs = SD_FRAY_MAX,",
     "tests": [

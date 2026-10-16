@@ -145,7 +145,7 @@
   },
   {
     "name": "ED-host-bay-gate",
-    "file": "src/scenes/deepWatersHost.js",
+    "file": "src/scenes/deepWater/deepWatersHost.js",
     "old": "    if (!inFrame(waterFrameOf(pixel.px, pixel.py, ether), pixel.px, pixel.py) || isDry(pixel)) return Promise.resolve(null);",
     "new": "    if (!inFrame(waterFrameOf(pixel.px, pixel.py, null), pixel.px, pixel.py) || isDry(pixel)) return Promise.resolve(null);",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "ED-host-any-pixel",
-    "file": "src/scenes/deepWatersHost.js",
+    "file": "src/scenes/deepWater/deepWatersHost.js",
     "old": "    if (!inFrame(waterFrameOf(pixel.px, pixel.py, ether), pixel.px, pixel.py) || isDry(pixel)) return Promise.resolve(null);",
     "new": "    if (isDry(pixel)) return Promise.resolve(null);",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "ED-host-bay-climates",
-    "file": "src/scenes/deepWatersHost.js",
+    "file": "src/scenes/deepWater/deepWatersHost.js",
     "old": "  const climateIn = (px, py) => { const f = waterFrameOf(px, py, ether);",
     "new": "  const climateIn = (px, py) => { const f = waterFrameOf(px, py, null);",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "ED-host-unsaid",
-    "file": "src/scenes/deepWatersHost.js",
+    "file": "src/scenes/deepWater/deepWatersHost.js",
     "old": "rects: deepWatersLocationRects(woods, locations, maps, blocks), ether });",
     "new": "rects: deepWatersLocationRects(woods, locations, maps, blocks) });",
     "tests": [

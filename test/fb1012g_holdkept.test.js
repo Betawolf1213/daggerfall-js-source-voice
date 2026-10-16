@@ -10,7 +10,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { chestIdentity, matchChests, CHEST_MATCH_REACH } from '../src/scenes/chestRecords.js';
-import { createDecorRoom } from '../src/scenes/decorRoom.js';
+import { createDecorRoom } from '../src/scenes/decor/decorRoom.js';
 import { trs } from '../src/world/mat4.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

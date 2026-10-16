@@ -144,7 +144,7 @@ test('HARBOUR-BOOK THE WORLD\'S WIRING: one book made off the port near the play
   assert.ok(offAt > 0 && offAt < navalOffAt && navalOffAt < quaysOffAt, 'moved before the sea and the quays read it');
   assert.match(w, /const navalTransition = \(\) => \{ harbourBook\.clear\(\); navalClear\(\); withdrawCrossing\(\); \};/);   // PIN MOVED (AUDIT CAPTAIN'S SEA X2): and the crossing's question taken back
   for (const host of ['src/scenes/exterior.js', 'src/scenes/worldModes.js', 'src/scenes/dungeonContext.js']) assert.ok(!read(host).includes('createHarbourBook'), `${host}: no harbours`);
-  const n = read('src/scenes/navalHost.js');
+  const n = read('src/scenes/naval/navalHost.js');
   assert.match(n, /const ownBook = !deps\.harbourBook;\n  const harbours = deps\.harbourBook \?\? createHarbourBook\(/);
   assert.match(n, /if \(ownBook\) harbours\.step\(clock\);/);
   assert.match(n, /if \(ownBook\) harbours\.offsetAll\(o\);/);

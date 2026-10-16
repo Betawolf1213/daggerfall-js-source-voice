@@ -100,7 +100,7 @@
   },
   {
     "name": "SD20D-A2-every-strike-whole",
-    "file": "src/scenes/sdRemnantVoice.js",
+    "file": "src/scenes/superDungeon/sdRemnantVoice.js",
     "old": "sound(sdEndAgain(a, s) ? SD_VOICE_CUES.knell : SD_VOICE_CUES.release[A.key], where);",
     "new": "sound(SD_VOICE_CUES.release[A.key], where);",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "SD20D-A2-the-roll-again",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "if (t < atk.at && !again) {",
     "new": "if (t < atk.at) {",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "SD20D-A2-the-fire-again",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "        if (!again) sound(SD_BLOW_CUES.land[A.key], s, b, atk, t);",
     "new": "        sound(SD_BLOW_CUES.land[A.key], s, b, atk, t);",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "SD20D-A2-a-growl-under-the-knell",
-    "file": "src/scenes/sdRemnantVoice.js",
+    "file": "src/scenes/superDungeon/sdRemnantVoice.js",
     "old": "!striking && !(s.ended > 0) && t >= k.growlAt",
     "new": "!striking && t >= k.growlAt",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "SD20D-A6-the-away-heard",
-    "file": "src/scenes/sdRemnantVoice.js",
+    "file": "src/scenes/superDungeon/sdRemnantVoice.js",
     "old": "      if (!(t - k.t <= SD_VOICE_AWAY_MS)) { k = seen(s, t); return; }\n",
     "new": "",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "SD20D-A6-every-hitch-silent",
-    "file": "src/scenes/sdRemnantVoice.js",
+    "file": "src/scenes/superDungeon/sdRemnantVoice.js",
     "old": "export const SD_VOICE_AWAY_MS = 4000;",
     "new": "export const SD_VOICE_AWAY_MS = 1000;",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "SD20D-A12-the-taken-unheard",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "else if (taken) play(BOSS_CUES.crystalRing, heartsOf.p[k]);",
     "new": "else if (taken) void 0;",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "SD20D-A12-the-taken-shattered",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "else if (taken) play(BOSS_CUES.crystalRing, heartsOf.p[k]);",
     "new": "else if (taken) play(BOSS_CUES.crystalBreak, heartsOf.p[k]);",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "SD20D-A12-a-late-ring",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "const taken = !stunned && t - (heartsOf.called + SD_BLOWS.reset.windup) < SD_HEART_LATE_MS;",
     "new": "const taken = !stunned;",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "SD20D-A3-the-one-moan",
-    "file": "src/scenes/sdAir.js",
+    "file": "src/scenes/superDungeon/sdAir.js",
     "old": "engine.setBed(SD_AIR_VOID.loop, SD_AIR_VOID.clip,",
     "new": "engine.setBed(SD_AIR_VOID.loop, SD_AIR_VOID.voice,",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "SD20D-A11-built-every-frame",
-    "file": "src/scenes/sdAir.js",
+    "file": "src/scenes/superDungeon/sdAir.js",
     "old": "      if (!built) {",
     "new": "      if (true) {",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "SD20D-A9-the-beats-pitch",
-    "file": "src/scenes/sdAir.js",
+    "file": "src/scenes/superDungeon/sdAir.js",
     "old": "export const SD_WORKS_TICK = Object.freeze([0.8, 0.6]);",
     "new": "export const SD_WORKS_TICK = Object.freeze([1.6, 1.2]);",
     "tests": [
@@ -280,7 +280,7 @@
   },
   {
     "name": "SD20D-A9-never-ducked",
-    "file": "src/scenes/sdAir.js",
+    "file": "src/scenes/superDungeon/sdAir.js",
     "old": "(spanAt(ear[2] - SD_REALM_ORIGIN[2]) === 1 ? SD_AIR_WORKS.duck : 1)",
     "new": "1",
     "tests": [
@@ -289,7 +289,7 @@
   },
   {
     "name": "SD20D-A9-stepped",
-    "file": "src/scenes/sdAir.js",
+    "file": "src/scenes/superDungeon/sdAir.js",
     "old": "* Math.min(1, dt * 3);",
     "new": "* 1;",
     "tests": [
@@ -298,7 +298,7 @@
   },
   {
     "name": "SD20D-A7-asked-once",
-    "file": "src/scenes/sdEnd.js",
+    "file": "src/scenes/superDungeon/sdEnd.js",
     "old": "      if (rift && !bell && audio && t - bellAskedAt >= SD_BELL_ASK_MS) {",
     "new": "      if (false) {",
     "tests": [
@@ -316,7 +316,7 @@
   },
   {
     "name": "SD20D-A7-cut",
-    "file": "src/scenes/sdEnd.js",
+    "file": "src/scenes/superDungeon/sdEnd.js",
     "old": "try { if (bell?.fadeStop) bell.fadeStop(); else bell?.stop?.(); }",
     "new": "try { bell?.stop?.(); }",
     "tests": [

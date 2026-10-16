@@ -1,7 +1,7 @@
 [
   {
     "name": "AUDIT-NAV2-F6-rekeyed-crew-not-moved",
-    "file": "src/scenes/navalCrew.js",
+    "file": "src/scenes/naval/navalCrew.js",
     "old": "if (ship.boat === w.boat && !want.has(key)) { ships.delete(key); ship.key = w.key; ships.set(w.key, ship); break; }",
     "new": "if (false) { ships.delete(key); ship.key = w.key; ships.set(w.key, ship); break; }",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "AUDIT-NAV2-F6-held-never-let-go",
-    "file": "src/scenes/navalCrew.js",
+    "file": "src/scenes/naval/navalCrew.js",
     "old": "if (ship && (ship.boat !== w.boat || ship.held && !w.hold)) {",
     "new": "if (ship && ship.boat !== w.boat) {",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "AUDIT-NAV2-F40-host-keeps-no-toward",
-    "file": "src/scenes/navalCrew.js",
+    "file": "src/scenes/naval/navalCrew.js",
     "old": "Math.hypot(w.toward[0] - at[0], w.toward[2] - at[2]) <= CREW_MUSTER_M ? w.toward : null;",
     "new": "false ? w.toward : null;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "AUDIT-NAV2-F40-range-unread",
-    "file": "src/scenes/navalCrew.js",
+    "file": "src/scenes/naval/navalCrew.js",
     "old": "Math.hypot(w.toward[0] - at[0], w.toward[2] - at[2]) <= CREW_MUSTER_M ? w.toward : null;",
     "new": "true ? w.toward : null;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "AUDIT-NAV2-F40-boarder-calls-no-muster",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (pos) { toward = Number.isFinite(yaw) ? abeam(e, pos, yaw) : pos; way = 'board'; }",
     "new": "if (pos) { toward = null; way = 'board'; }",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "AUDIT-NAV2-F40-boarder-musters-toward-her-mark-as-it-lies",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (pos) { toward = Number.isFinite(yaw) ? abeam(e, pos, yaw) : pos; way = 'board'; }",
     "new": "if (pos) { toward = pos; way = 'board'; }",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "AUDIT-NAV2-F40-berth-side-the-wrong-rail",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const s = (Math.cos(e.ship.yaw - yaw) >= 0 ? -lie : lie) * dist2d(e.ship.pos, pos);",
     "new": "const s = (Math.cos(e.ship.yaw - yaw) >= 0 ? lie : -lie) * dist2d(e.ship.pos, pos);",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "AUDIT-NAV2-F40-my-crew-deaf-to-a-boarder",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (boat === boatInPlay()) { toward = e.ship.pos; break; }",
     "new": "if (boat === boatInPlay()) break;",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "AUDIT-NAV2-F40-struck-ship-deaf-to-my-reach",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (helm ? boardingGap(helm, e) != null : footReach(e, from)) { toward = helm ? abeam(e, from, yawOfRot(helm.GameObject.rotation)) : from; way = 'repel'; }",
     "new": "if (false) { toward = from; way = 'repel'; }",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "AUDIT-NAV2-F40-my-crew-deaf-to-my-reach",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const e = boardable(boat); if (e) { toward = e.ship.pos; way = 'board'; } }",
     "new": "const e = null; if (e) { toward = e.ship.pos; way = 'board'; } }",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "AUDIT-NAV2-F42-never-grows-back",
-    "file": "src/scenes/navalCrew.js",
+    "file": "src/scenes/naval/navalCrew.js",
     "old": "else if (!w.hold && ship.life.standing() < w.count) {",
     "new": "else if (false) {",
     "tests": [
@@ -200,7 +200,7 @@
   },
   {
     "name": "AUDIT-NAV2-F42-grown-men-unseen",
-    "file": "src/scenes/navalCrew.js",
+    "file": "src/scenes/naval/navalCrew.js",
     "old": "for (const m of ship.life.members) if (!m.gone && !ship.sprites.get(m)) ship.sprites.set(m, sprite(m));",
     "new": "for (const m of []) ship.sprites.set(m, sprite(m));",
     "tests": [
@@ -228,7 +228,7 @@
   },
   {
     "name": "AUDIT-NAV2-F45-sinking-ship-dropped",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "st !== SHIP_STATES.prize && st !== SHIP_STATES.sinking)) continue;",
     "new": "st !== SHIP_STATES.prize)) continue;",
     "tests": [
@@ -247,7 +247,7 @@
   },
   {
     "name": "AUDIT-NAV2-F46-host-says-no-colours",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "battle, struck: st !== SHIP_STATES.afloat, hold, toward, work:",
     "new": "battle, struck: false, hold, toward, work:",
     "tests": [
@@ -302,7 +302,7 @@
   },
   {
     "name": "AUDIT-NAV2-F46-host-struck-unkept",
-    "file": "src/scenes/navalCrew.js",
+    "file": "src/scenes/naval/navalCrew.js",
     "old": "ship.struck = !!w.struck;",
     "new": "ship.struck = false;",
     "tests": [
@@ -365,7 +365,7 @@
   },
   {
     "name": "AUDIT-NAV2-F50-crew-unconcealed",
-    "file": "src/scenes/navalCrew.js",
+    "file": "src/scenes/naval/navalCrew.js",
     "old": "s.batch.conceal = ship.boat.conceal ?? null;",
     "new": "s.batch.conceal = null;",
     "tests": [
@@ -411,7 +411,7 @@
   },
   {
     "name": "AUDIT-NAV2-F58-flats-walked-again",
-    "file": "src/scenes/navalCrew.js",
+    "file": "src/scenes/naval/navalCrew.js",
     "old": "if (memo && memo.variant === boat.variant) return memo.list;",
     "new": "if (memo && false) return memo.list;",
     "tests": [
@@ -420,7 +420,7 @@
   },
   {
     "name": "AUDIT-NAV2-F58-flats-kept-past-a-refit",
-    "file": "src/scenes/navalCrew.js",
+    "file": "src/scenes/naval/navalCrew.js",
     "old": "if (memo && memo.variant === boat.variant) return memo.list;",
     "new": "if (memo) return memo.list;",
     "tests": [
@@ -429,7 +429,7 @@
   },
   {
     "name": "AUDIT-NAV2-F59-size-minted-a-frame",
-    "file": "src/scenes/navalCrew.js",
+    "file": "src/scenes/naval/navalCrew.js",
     "old": "const bs = s.batch.size ??= { w: 0, h: 0 };",
     "new": "const bs = s.batch.size = { w: 0, h: 0 };",
     "tests": [
@@ -438,7 +438,7 @@
   },
   {
     "name": "AUDIT-NAV2-F59-texture-key-not-the-uploaders",
-    "file": "src/scenes/navalCrew.js",
+    "file": "src/scenes/naval/navalCrew.js",
     "old": "textureKey(s.archive, out.record, out.frame)",
     "new": "textureKey(s.archive, out.frame, out.record)",
     "tests": [
@@ -447,7 +447,7 @@
   },
   {
     "name": "AUDIT-NAV2-F59-motion-minted-a-frame",
-    "file": "src/scenes/navalCrew.js",
+    "file": "src/scenes/naval/navalCrew.js",
     "old": "const out = s.unit.update(dt, _motion,",
     "new": "const out = s.unit.update(dt, { moving: member.moving },",
     "tests": [
@@ -456,7 +456,7 @@
   },
   {
     "name": "AUDIT-NAV2-F59-motion-unwritten",
-    "file": "src/scenes/navalCrew.js",
+    "file": "src/scenes/naval/navalCrew.js",
     "old": "        _motion.moving = member.moving;\n",
     "new": "",
     "tests": [

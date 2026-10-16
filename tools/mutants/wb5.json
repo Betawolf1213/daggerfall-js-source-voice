@@ -120,7 +120,7 @@
   },
   {
     "name": "WB5-the-spew-off-another-seed",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    if (spoils.spew({ day: s.day, seed: claims.c,",
     "new": "    if (spoils.spew({ day: s.day, seed: s.day,",
     "tests": [
@@ -129,7 +129,7 @@
   },
   {
     "name": "WB5-no-burst",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "      burst(s, t);\n",
     "new": "      void burst;\n",
     "tests": [
@@ -138,7 +138,7 @@
   },
   {
     "name": "WB5-the-gather-forgotten",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "      spoils?.gather();",
     "new": "      void spoils;",
     "tests": [

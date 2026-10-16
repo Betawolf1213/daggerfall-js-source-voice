@@ -5,11 +5,11 @@
 //   THE LAWS (systems/naval/shipWatch.js) - the sleeping hours and the watch, the night's sight by a ship's lanterns,
 //   who runs dark, the far lanterns as points of light.
 //   THE CREW (systems/naval/crewLife.js) - turned in to the hatch and below but the watch, every hand up at a fight's
-//   call or the morning; the lookout at the bow; work and chores, swung at; and the host (scenes/navalCrew.js) drawing
+//   call or the morning; the lookout at the bow; work and chores, swung at; and the host (scenes/naval/navalCrew.js) drawing
 //   none below and the swing as the class's attack.
 //   THE CAPTAINS (navalAI.js, shipLife.js) - a dark ship seen close, a lit one far, a ship firing seen by her flashes; a
 //   merchantman waiting at her berth for the morning; a pirate lurking nearer the mouth by night.
-//   THE HOST (scenes/navalHost.js) - the lanterns lit or doused, the contacts' lights, the lookout's cry by night's law
+//   THE HOST (scenes/naval/navalHost.js) - the lanterns lit or doused, the contacts' lights, the lookout's cry by night's law
 //   and handed to my crew once, their work off their hurts, the far lamps drawn; and the world's wiring.
 import './modsOff.js';
 import { test } from 'node:test';
@@ -21,7 +21,7 @@ import {
   SLEEP_FROM_HOUR, SLEEP_TO_HOUR, NIGHT_LIT_SIGHT, NIGHT_DARK_SIGHT, LAMP_NEAR_M, LAMP_FADE_M, LAMP_MIN_M, LAMP_ANGLE, LAMP_MAX,
 } from '../src/systems/naval/shipWatch.js';
 import { createCrewLife, crewRoster, CREW_BLURBS, ALL_HANDS, WORK_S, LOOKOUT_BACK } from '../src/systems/naval/crewLife.js';
-import { createNavalCrew } from '../src/scenes/navalCrew.js';
+import { createNavalCrew } from '../src/scenes/naval/navalCrew.js';
 import { buildDeck } from '../src/systems/naval/navalDeck.js';
 import { boxColliderTriangles } from '../src/world/prefabColliders.js';
 import { MOBILE } from '../src/systems/naval/navalBoarding.js';
@@ -29,13 +29,13 @@ import { classById, HULL } from '../src/systems/naval/navalShips.js';
 import { createSeaShip, stepCaptain, WIND_RATED, ENGAGE_RANGE, GUNS_SEEN_S, FLEE_RANGE } from '../src/systems/naval/navalAI.js';
 import { findHarbour, createWaterGrid, errandFor, stepErrand, LURK_R, NIGHT_LURK_K } from '../src/systems/naval/shipLife.js';
 import { SHIP_STATES } from '../src/systems/naval/navalDamage.js';
-import { SAIL_HO_RANGE, SHIP_FADE_S } from '../src/scenes/navalHost.js';
+import { SAIL_HO_RANGE, SHIP_FADE_S } from '../src/scenes/naval/navalHost.js';
 import { CREW_ORDERS } from '../src/systems/naval/shipCrew.js';
 import { setLights } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { sea } from './navalSea.mjs';
 
 const WORLD = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
-const HOST = readFileSync(new URL('../src/scenes/navalHost.js', import.meta.url), 'utf8');
+const HOST = readFileSync(new URL('../src/scenes/naval/navalHost.js', import.meta.url), 'utf8');
 
 /** A plain deck: a flat 8 m by 24 m at 2 m (her frame) with a mast amidships (livingcrew.test.js's). */
 const plainDeck = () => buildDeck([
@@ -210,7 +210,7 @@ test('SHIP-WATCH AT WORK: what a fight left to mend sets most of the idle crew t
   assert.equal(busy.members.filter((m) => m.state === 'work').length, 0, 'to the guns');
   assert.ok(WORK_S[0] > 0 && WORK_S[1] > WORK_S[0]);
   // the host: the swing is the attack, the sleepers undrawn
-  const NAV = readFileSync(new URL('../src/scenes/navalCrew.js', import.meta.url), 'utf8');
+  const NAV = readFileSync(new URL('../src/scenes/naval/navalCrew.js', import.meta.url), 'utf8');
   assert.match(NAV, /_motion\.striking = !!member\.swing;/);
   assert.match(NAV, /if \(member\.below \|\| !s\.unit \|\| !s\.batch\) continue;/);
   assert.match(NAV, /if \(s\?\.batch && s\.unit && !m\.below\) out\.push\(s\.batch\);/);

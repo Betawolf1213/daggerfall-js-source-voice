@@ -1,7 +1,7 @@
 [
   {
     "name": "GLIDE-eased-as-before",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (e.orphan != null || e.ship.damage.state !== SHIP_STATES.afloat || !((tgt.speed ?? 0) > 0)) {   // lying still",
     "new": "      if (true) {   // lying still",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "GLIDE-catch-uncapped",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "(PUPPET_CATCH_MPS + PUPPET_CATCH_SHARE * v) * d) / off;",
     "new": "Infinity) / off;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "GLIDE-no-glide",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      const v = clock - (tgt.at ?? clock) < PREDICT_MAX_S ? tgt.speed : 0;",
     "new": "      const v = 0;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "GLIDE-catch-never-taken",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (off > 1e-9) {\n        const take",
     "new": "      if (false) {\n        const take",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "GLIDE-sails-on-a-quiet-word",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      const v = clock - (tgt.at ?? clock) < PREDICT_MAX_S ? tgt.speed : 0;",
     "new": "      const v = tgt.speed;",
     "tests": [

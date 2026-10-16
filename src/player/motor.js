@@ -439,7 +439,7 @@ export class PlayerMotor {
   constructor(collider, stats = { speed: 50, running: 30, swimming: 30 }, { jumpBoost = null, enhancedJumping = null, climbing = null, carriedWeight = null, parkour = null, travelling = null } = {}) {
     this.collider = collider;
     this.stats = stats;
-    /** @type {number[]|null} WAGONS2: where the body is DRAWN instead of its capsule (bodyFeetAt) - a seat of a wagon drawn grown under the Overworld (scenes/wagonRiders.js drawAt); null, the capsule's own */
+    /** @type {number[]|null} WAGONS2: where the body is DRAWN instead of its capsule (bodyFeetAt) - a seat of a wagon drawn grown under the Overworld (scenes/wagon/wagonRiders.js drawAt); null, the capsule's own */
     this.drawFeet = null;
     /** @type {number|null} WAGONS3: the way the body is DRAWN facing instead (bodyYawFor) - a wagon's bench, the way it is driven (scenes/world.js); null, the body's own */
     this.drawYaw = null;

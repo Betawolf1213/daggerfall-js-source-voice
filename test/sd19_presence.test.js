@@ -14,7 +14,7 @@ import {
 } from '../src/systems/superDungeon/sdOmen.js';
 import { sdMarksCardModel, sdMarksViewOf, SD_MARKS_ARRIVE_MS } from '../src/ui/superDungeon/sdMarksView.js';
 import { sdMarksOf, sdEndingOf, sdOmensOf } from '../src/net/superDungeon/sdMarks.js';
-import { createSdHost } from '../src/scenes/sdHost.js';
+import { createSdHost } from '../src/scenes/superDungeon/sdHost.js';
 import { sdCities, findSdSite, sdTemplates } from '../src/systems/superDungeon/sdSite.js';
 import { scanGatePixels } from '../src/systems/gate/gateSite.js';
 import { LOCATION_TYPES, CLIMATES } from '../src/formats/mapsFile.js';
@@ -201,7 +201,7 @@ test('SD19 THE WORDS: its marks said with its find - its Ending, its signature a
   h3.heard({ k: 'ev', ...found });
   h3.frame();
   assert.deepEqual(s3.lines, [], 'its place not yet known');
-  const H = read('src/scenes/sdHost.js');
+  const H = read('src/scenes/superDungeon/sdHost.js');
   assert.match(H, /if \(hh \|\| \(memo && memo\.s === rec\.s && memo\.none\)\) \{ hourSaidS = rec\.s; say\(sdHourLine\(\{ name: hh\?\.loc\?\.name, near: hh\?\.site\?\.cityName \|\| '', region: regionName\(rec\.r\) \|\| '' \}\)\); \}/, 'with no Hollow: the region\'s');   // AUDIT SD III (T19, PIN MOVED): said as a region
 });
 

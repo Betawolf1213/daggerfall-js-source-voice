@@ -10,7 +10,7 @@
   },
   {
     "name": "AUDITYL-cap-unread",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "      if (n >= max) break;\n",
     "new": "",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "AUDITYL-cap-order",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "    for (const e of standing.values()) {\n      if (n >= max) break;",
     "new": "    for (const e of [...standing.values()].reverse()) {\n      if (n >= max) break;",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "AUDITYL-recentre-y",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "      if (e.light) { e.light.x += d[0]; e.light.y += d[1]; e.light.z += d[2]; }",
     "new": "      if (e.light) { e.light.x += d[0]; e.light.z += d[2]; }",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "AUDITYL-recentre-z",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "      if (e.light) { e.light.x += d[0]; e.light.y += d[1]; e.light.z += d[2]; }",
     "new": "      if (e.light) { e.light.x += d[0]; e.light.y += d[1]; }",
     "tests": [

@@ -217,7 +217,7 @@
   },
   {
     "name": "LW-LOOKS-court",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "      const court = b.town.typeOf?.(b.key) === BUILDING_TYPES.Palace;",
     "new": "      const court = true;",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "LW-LOOKS-court-way-in",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "      const court = b.town.typeOf?.(b.key) === BUILDING_TYPES.Palace;",
     "new": "      arriving = false; const court = b.town.typeOf?.(b.key) === BUILDING_TYPES.Palace;",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "LW-LOOKS-courtier",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "court && s.res.job === 'courtier' && s.bed < 0",
     "new": "court && s.bed < 0",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "LW-LOOKS-court-circle",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": " && !s.walk && !inCircle.has(id) ? stillFlatOf(s.res, 'court') : null;",
     "new": " && !s.walk ? stillFlatOf(s.res, 'court') : null;",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "LW-LOOKS-court-unseen",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "        if (!want || unseen(placeOf(s))) s.flat = want;",
     "new": "        s.flat = want;",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "LW-LOOKS-court-drawn",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": ", flat: s.flat ?? null });\n      }\n      deps.sprites.sync(list,",
     "new": " });\n      }\n      deps.sprites.sync(list,",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "LW-LOOKS-indoor-class",
-    "file": "src/scenes/livingIndoors.js",
+    "file": "src/scenes/livingWorld/livingIndoors.js",
     "old": "        stood.set(res.id, { res: { ...res, cls: townClassOf(res) }, spot, bed: -1,",
     "new": "        stood.set(res.id, { res: { ...res, cls: null }, spot, bed: -1,",
     "tests": [

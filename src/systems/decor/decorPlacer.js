@@ -7,7 +7,7 @@
 // turn, the lift, the scale, the grid - and the one piece of arithmetic
 // it exists for: a surface point the free camera's eye meets, turned
 // into the piece record the law takes (net/decorLaw.js) and the room
-// stands (scenes/decorRoom.js).
+// stands (scenes/decor/decorRoom.js).
 //
 // A MODEL is lifted by its own bottom: its origin is not its base (a
 // Daggerfall model's origin sits wherever its maker put it -
@@ -76,7 +76,7 @@ const DEG = 180 / Math.PI;
  *  decorIsFigure: a flat of a person's archive - the catalogue's Vendors, every one of them (BLOCKS.BSA's people records
  *  stand in those archives alone - test/people.test.js), or a person's flat however it was reached). AUDIT DECOR-FIGURE
  *  C3: by the archive alone, as the room draws one and the service writes one - the catalogue's kind, which neither of
- *  them reads, was a second law. The placer's and the bar's buttons' (scenes/decorTool.js) one question. */
+ *  them reads, was a second law. The placer's and the bar's buttons' (scenes/decor/decorTool.js) one question. */
 export const decorEntrySized = (entry) => !decorIsFigure(entry);
 
 /**

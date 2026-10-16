@@ -4,8 +4,8 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { createNavalHost } from '../src/scenes/navalHost.js';
-import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';
+import { createNavalHost } from '../src/scenes/naval/navalHost.js';
+import { createComeSailAwayPool } from '../src/scenes/comeSailAway/comeSailAwayPool.js';
 import { Boat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 
 const fileFetch = async (url) => {

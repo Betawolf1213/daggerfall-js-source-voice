@@ -4,7 +4,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { Collider } from '../src/player/collider.js';
-import { placeFoeEnv } from '../src/scenes/questFoeHost.js';
+import { placeFoeEnv } from '../src/scenes/quest/questFoeHost.js';
 import { placeFoeFreely } from '../src/systems/quest/sceneMount.js';
 
 const I4 = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];

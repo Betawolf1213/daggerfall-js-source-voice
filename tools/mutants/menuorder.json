@@ -577,7 +577,7 @@
   },
   {
     "name": "MENUORDER-host-model-unasked",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "        return entry.model != null ? modelPicture(entry.model) : null;   // MENU-ORDER: a model's own, drawn small",
     "new": "        return null;",
     "tests": [
@@ -586,7 +586,7 @@
   },
   {
     "name": "MENUORDER-thumbs-every-ask-at-once",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    for (let i = 0; i < thumbAsks.length && drawn < DECOR_THUMBS_A_FRAME;) {",
     "new": "    for (let i = 0; i < thumbAsks.length;) {",
     "tests": [
@@ -613,7 +613,7 @@
   },
   {
     "name": "MENUORDER-thumb-other-room-drawn",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      if (!sameLaw(ask.remap, texRemap) || now() - ask.asked > DECOR_THUMB_WAIT_MS) { thumbAsks.splice(i, 1); ask.resolve(null); continue; }",
     "new": "      if (now() - ask.asked > DECOR_THUMB_WAIT_MS) { thumbAsks.splice(i, 1); ask.resolve(null); continue; }",
     "tests": [
@@ -622,7 +622,7 @@
   },
   {
     "name": "MENUORDER-thumb-never-given-up",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      if (!sameLaw(ask.remap, texRemap) || now() - ask.asked > DECOR_THUMB_WAIT_MS) { thumbAsks.splice(i, 1); ask.resolve(null); continue; }",
     "new": "      if (!sameLaw(ask.remap, texRemap)) { thumbAsks.splice(i, 1); ask.resolve(null); continue; }",
     "tests": [
@@ -631,7 +631,7 @@
   },
   {
     "name": "MENUORDER-thumb-out-of-law",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      if (!m || !inLaw(m.gpu, texRemap)) { i++; continue; }",
     "new": "      if (!m) { i++; continue; }",
     "tests": [
@@ -640,7 +640,7 @@
   },
   {
     "name": "MENUORDER-thumb-key-roomless",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "        if (entry.model != null && !entry.flat && !entry.icon) return `${entry.key}~${remapTag()}`;",
     "new": "        if (entry.model != null && !entry.flat && !entry.icon) return entry.key;",
     "tests": [
@@ -649,7 +649,7 @@
   },
   {
     "name": "MENUORDER-thumb-remap-unkept",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    remapNow = texRemap;\n",
     "new": "",
     "tests": [
@@ -658,7 +658,7 @@
   },
   {
     "name": "MENUORDER-thumbs-undrawn",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    drawThumbs(texRemap);   // MENU-ORDER",
     "new": "    // drawThumbs(texRemap);   // MENU-ORDER",
     "tests": [
@@ -667,7 +667,7 @@
   },
   {
     "name": "MENUORDER-thumb-camera-level",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "export const DECOR_THUMB_LOOK_DOWN = 0.35;",
     "new": "export const DECOR_THUMB_LOOK_DOWN = 0;",
     "tests": [
@@ -676,7 +676,7 @@
   },
   {
     "name": "MENUORDER-thumb-camera-uncentred",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "trs(-(x0 + x1) / 2, -(y0 + y1) / 2, -(z0 + z1) / 2, 0, 0, 0));\n  return { proj, view, model };",
     "new": "trs(-(x0 + x1) / 2, 0, -(z0 + z1) / 2, 0, 0, 0));\n  return { proj, view, model };",
     "tests": [
@@ -775,7 +775,7 @@
   },
   {
     "name": "MENUORDER-portrait-sails-unbaked",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "        holderAsks.set(c, (holderAsks.get(c) ?? 0) + 1);\n        lateUpdateHolder(c, node, 1);\n",
     "new": "        holderAsks.set(c, (holderAsks.get(c) ?? 0) + 1);\n",
     "tests": [
@@ -784,7 +784,7 @@
   },
   {
     "name": "MENUORDER-portrait-unwaited",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "      if (!gpu) { waiting = true; continue; }\n      const m = w.mats[i];",
     "new": "      if (!gpu) continue;\n      const m = w.mats[i];",
     "tests": [
@@ -793,7 +793,7 @@
   },
   {
     "name": "MENUORDER-portrait-built-each-ask",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "      portraitBoats.set(hull, b);\n",
     "new": "",
     "tests": [
@@ -802,7 +802,7 @@
   },
   {
     "name": "MENUORDER-portrait-on-the-water",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "      b = new Boat(hull, 0);\n      spawnBoat(b, ",
     "new": "      b = new Boat(hull, 0);\n      peerBoats.push(b);\n      spawnBoat(b, ",
     "tests": [
@@ -901,7 +901,7 @@
   },
   {
     "name": "AUDITMO-R4-pinned-door",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    if (!deps.thumbHold) return modelFor(id);\n    const kept",
     "new": "    return modelFor(id);\n    const kept",
     "tests": [
@@ -910,7 +910,7 @@
   },
   {
     "name": "AUDITMO-R4-never-let-go",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    thumbHold.release?.();\n",
     "new": "",
     "tests": [
@@ -937,7 +937,7 @@
   },
   {
     "name": "AUDITMO-R7-tile-small",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "export const DECOR_THUMB_PX = 152;",
     "new": "export const DECOR_THUMB_PX = 128;",
     "tests": [
@@ -955,7 +955,7 @@
   },
   {
     "name": "AUDITMO-C1-closed-panel-ages",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    if (!panel?.isOpen() || !renderer?.panelFrame) { holdThumbs(texRemap); return false; }",
     "new": "    if (!panel?.isOpen() || !renderer?.panelFrame) return false;",
     "tests": [
@@ -973,7 +973,7 @@
   },
   {
     "name": "AUDITMO-C3-law-unread",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    const law = remapLawOf(remapNow);\n    if (law) return law;\n",
     "new": "",
     "tests": [

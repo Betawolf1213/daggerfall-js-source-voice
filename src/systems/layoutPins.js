@@ -7,7 +7,7 @@
 // stands - DFU's building key, (block x << 16) + (block y << 8) + record (systems/talk/talkTopics.js) - so every record a
 // save keeps by building key would wake up in another building:
 //   - the house you bought (banking's deed) and everything you did to it: the decor placed in its frame, the built-in
-//     furniture taken out by name, the chests filled by index, its yard (systems/sceneCache.js, scenes/decorTool.js);
+//     furniture taken out by name, the chests filled by index, its yard (systems/sceneCache.js, scenes/decor/decorTool.js);
 //   - a room rented at an inn (systems/tavern.js), a quest's building and the markers its people stand on
 //     (systems/quest/place.js), an item left at a smith (systems/repairService.js), a Recall anchor set indoors.
 // DFU itself would let them wake in the wrong building; a port that promised not to regress house customisation

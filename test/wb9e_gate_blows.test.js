@@ -23,7 +23,7 @@ import {
 import {
   GateFxRenderer, fxBurstOf, meteorFall, sparkAt, sparkSeed, FX_KINDS, FX_BURST_MS, FX_SPARKS, FX_BURSTS_MAX, METEOR_FALL_MS, METEOR_FROM_M, METEOR_DIR, METEOR_ELEV_DEG, FX_SPARK_VS,
 } from '../src/render/gateFx.js';
-import { createGateCourt } from '../src/scenes/gateCourt.js';
+import { createGateCourt } from '../src/scenes/gate/gateCourt.js';
 import { courtToDungeon } from '../src/world/gate/gateArena.js';
 import { attackColor } from '../src/world/gate/gateBoss.js';
 
@@ -158,7 +158,7 @@ test('WB9e the court throws them: each landing its bursts at its own moment (his
   assert.deepEqual(calls.slice(-3).map((c) => c[0]), ['enable', 'depthMask', 'disable'], 'the state put back');
   assert.equal(calls.filter((c) => c[0] === 'drawArrays' && c[1] === 0).length, FX_BURSTS_MAX, 'a draw of points a burst');
   assert.equal(calls.find((c) => c[0] === 'drawArrays' && c[1] === 0)[3], Math.round(FX_SPARKS * FX_KINDS.slam.share));
-  const gc = read('src/scenes/gateCourt.js');
+  const gc = read('src/scenes/gate/gateCourt.js');
   const tel = gc.indexOf('if (shape) { pass.draw(shape'), fxAt = gc.indexOf('fxPass.draw(_fxLive, meteorNow, proj, view, eye, seconds, fog);');
   assert.ok(tel > 0 && fxAt > tel, 'over the telegraph');
   assert.ok(COURTS.length === 3 && ATTACK_BY_ID.length === 11);

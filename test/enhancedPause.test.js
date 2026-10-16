@@ -455,8 +455,8 @@ test('PX22: the timer PX5 designed is still there, and only when there is one', 
   // borrows", asserting the count was exactly 2. Four copies of one
   // walk across three files, each with a sentence explaining why its
   // copy was fine. The chronicle's Quests section made a FIFTH reader
-  // and the whole thing collapsed into `scenes/questBridge.js`.
-  const bridge = read('src/scenes/questBridge.js');
+  // and the whole thing collapsed into `scenes/quest/questBridge.js`.
+  const bridge = read('src/scenes/quest/questBridge.js');
   assert.match(bridge, /if \(r\.clockEnabled && !r\.clockFinished && Number\.isFinite\(r\.remainingTimeInSeconds\) && clockCounts\(q, r\)\)/);   // DEAD-CLOCK re-aim: a clock that counts
   // PIN MOVED (QUEST-SHELF, 2026-10-08): a quest set aside shows its clock as it stopped - no time counts while it is away
   assert.match(bridge, /const left = isShelved\(q\) \? r\.remainingTimeInSeconds : r\.liveRemainingSeconds\(q\);/, 'QT-LIVE1: the remainder as of NOW, off the clock\'s own arithmetic');

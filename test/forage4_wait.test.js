@@ -16,7 +16,7 @@ import { createForagingWait, waitLine, saneWait, FORAGING_WAIT_MAX_SECONDS, WAIT
 import { RaiseTime, questActionsExtensionTemplates } from '../src/systems/quest/questActionsExtension.js';
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { loadQuestTables } from '../src/systems/quest/tables.js';
-import { QUEST_CTX_CONTRACT } from '../src/scenes/questBridge.js';
+import { QUEST_CTX_CONTRACT } from '../src/scenes/quest/questBridge.js';
 import { FATIGUE_MULTIPLIER } from '../src/systems/statMods.js';
 // ENH-NOTICE3: the wait page is a parchment of its own and rides the enhanced notice panel
 import { enhancedNoticeKeys, destroyEnhancedNotice, ENHANCED_NOTICE_ID } from '../src/ui/enhanced/enhancedNotice.js';

@@ -18,7 +18,7 @@ import { eventsInWindow } from '../src/systems/song/songPlayer.js';
 import { MusicService } from '../src/systems/music.js';
 import { ATTACKS } from '../src/net/gate/gateBrain.js';
 import { BOSS_CUES, BOSS_STRIDE_M, GROWL_EVERY_MS, HURT_GAP_MS, HURT_SHARE, QUAKE_ON, THUD_AT_MS, FALL_MS } from '../src/world/gate/gateBoss.js';
-import { createGateCourt, ROAR_AFTER_MS } from '../src/scenes/gateCourt.js';
+import { createGateCourt, ROAR_AFTER_MS } from '../src/scenes/gate/gateCourt.js';
 import { destroyGateBossBar } from '../src/ui/gate/gateBossBar.js';
 import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import { courtToDungeon } from '../src/world/gate/gateArena.js';

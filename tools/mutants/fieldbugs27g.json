@@ -217,7 +217,7 @@
   },
   {
     "name": "MW-ASSIGN-stand-classic",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "      const mw = decorStandsOwn(piece) ? standArtOf(piece.item) : Promise.resolve(null);",
     "new": "      const mw = Promise.resolve(null);",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "MW-ASSIGN-stand-kept",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "    for (const k of wasStand) renderer?.releaseTexture?.(MW_STAND_ARCHIVE, k);\n",
     "new": "",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "DECOR-FLIP-room-unflipped",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "entry.batch = renderer.createBillboardBatch(da, dr, drawn, [[at[0] + piece.pos[0], at[1] + piece.pos[1], at[2] + piece.pos[2]]]);",
     "new": "entry.batch = renderer.createBillboardBatch(da, dr, entry.size, [[at[0] + piece.pos[0], at[1] + piece.pos[1], at[2] + piece.pos[2]]]);",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "DECOR-FLIP-ghost-unflipped",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": " * (p.mirrors !== false && decorFlatMirrored(p.piece) ? -1 : 1), h: p.flatSize.h * sc };",
     "new": ", h: p.flatSize.h * sc };",
     "tests": [
@@ -316,7 +316,7 @@
   },
   {
     "name": "DECOR-ROOMS-flight-at-eye",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    return want && (!here || here.id !== want.id) ? [...want.eye] : eye;",
     "new": "    return eye;",
     "tests": [
@@ -343,7 +343,7 @@
   },
   {
     "name": "DECOR-ROOMS-never-stepped",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      ensureRooms().step();   // DECOR-ROOMS: a few rays a frame until the house's rooms are found\n",
     "new": "",
     "tests": [

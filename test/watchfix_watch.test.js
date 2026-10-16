@@ -17,7 +17,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createCityGuards, MAX_ACTIVE_GUARD_SPAWNS } from '../src/scenes/cityGuards.js';
-import { watchStep, WATCH_WAIT } from '../src/scenes/livingWatch.js';
+import { watchStep, WATCH_WAIT } from '../src/scenes/livingWorld/livingWatch.js';
 import { synthTown } from './lwTown.mjs';
 import { LivingTown } from '../src/systems/livingWorld/livingTown.js';
 import { ResidentWalker } from '../src/characters/residentWalker.js';

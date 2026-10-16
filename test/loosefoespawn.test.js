@@ -26,7 +26,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { placeFoeFreely, PLACE_FOE_DEFAULTS } from '../src/systems/quest/sceneMount.js';
-import { placeFoeEnv } from '../src/scenes/questFoeHost.js';
+import { placeFoeEnv } from '../src/scenes/quest/questFoeHost.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const read = (rel) => readFileSync(join(HERE, '..', rel), 'utf8');

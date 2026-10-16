@@ -13,7 +13,7 @@ import {
   LANDING_LIGHT_Y, LAND_SHAKE, landShake, RELEASE_LEAD_MS, ASPECT_CUE_IDS, FIRE_CAST_ID, BODY_FALL, SWING_LOW, emberColor, attackColor,
 } from '../src/world/gate/gateBoss.js';
 import { courtToDungeon } from '../src/world/gate/gateArena.js';
-import { createGateCourt } from '../src/scenes/gateCourt.js';
+import { createGateCourt } from '../src/scenes/gate/gateCourt.js';
 import { meteorFall, FX_KINDS, FX_LIGHT_MS, METEOR_FALL_MS, METEOR_ELEV_DEG, METEOR_FROM_M } from '../src/render/gateFx.js';
 import { HIT_FLASH_PEAK, HIT_FLASH_S } from '../src/systems/hitFlash.js';
 import { numberFor } from '../src/ui/hitNumbers.js';

@@ -211,7 +211,7 @@
   },
   {
     "name": "DFLOOK-the-night-remap-dropped",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "    if (cityLights) texRemap = nightRemapOf(texRemap);",
     "new": "    if (cityLights) void nightRemapOf;",
     "tests": [
@@ -220,7 +220,7 @@
   },
   {
     "name": "DFLOOK-worn-by-day",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "    if (cityLights) texRemap = nightRemapOf(texRemap);",
     "new": "    if (!cityLights) texRemap = nightRemapOf(texRemap);",
     "tests": [
@@ -229,7 +229,7 @@
   },
   {
     "name": "DFLOOK-a-host's-remap-lost",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "  if (!texRemap?.size) return NIGHT_REMAP;",
     "new": "  if (texRemap?.size || !texRemap?.size) return NIGHT_REMAP;",
     "tests": [
@@ -238,7 +238,7 @@
   },
   {
     "name": "DFLOOK-a-new-remap-each-night",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "  if (!m) { m = new Map([...NIGHT_REMAP, ...texRemap]); _nightRemaps.set(texRemap, m); }",
     "new": "  { m = new Map([...NIGHT_REMAP, ...texRemap]); _nightRemaps.set(texRemap, m); }",
     "tests": [
@@ -247,7 +247,7 @@
   },
   {
     "name": "DFLOOK-the-glass-uploaded-whole",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "    pipeline.uploadRecord(archive, record, { opaque: true, cutout: cutOf(archive, record) });",
     "new": "    pipeline.uploadRecord(archive, record, { opaque: true, cutout: false && cutOf(archive, record) });",
     "tests": [
@@ -257,7 +257,7 @@
   },
   {
     "name": "DFLOOK-the-twin-unuploaded",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "    pipeline.uploadRecord(archive, night, { opaque: true });",
     "new": "    void night;",
     "tests": [
@@ -266,7 +266,7 @@
   },
   {
     "name": "DFLOOK-the-twin's-glow-unuploaded",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "    if (glow) renderer?.uploadEmissionTexture?.(archive, night,",
     "new": "    if (!glow) renderer?.uploadEmissionTexture?.(archive, night,",
     "tests": [

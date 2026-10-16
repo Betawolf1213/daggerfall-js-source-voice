@@ -426,7 +426,7 @@ constructor(collider, { damagePlayer = null, drainMagicka = null, castSpell = nu
     this._links = new Map();  // `${ns}:${position}` -> object (the chain graph)
     this._doorCount = 0;
     // HOME-DOORS (AUDIT): a placed door's record that came before its door - a save's, the room's memory's or a peer's,
-    // read while the door was still being hung (its model is fetched, scenes/decorRoom.js) - kept by its key until the
+    // read while the door was still being hung (its model is fetched, scenes/decor/decorRoom.js) - kept by its key until the
     // door is added, and written with the scene's records meanwhile, so a visit that never hung it keeps its state
     this._early = new Map();
     this._damagePlayer = damagePlayer;
@@ -859,7 +859,7 @@ constructor(collider, { damagePlayer = null, drainMagicka = null, castSpell = nu
     this._early.set(rec.key, rec);
   }
 
-  /** HOME-DOORS (2026-09-30): a door taken back out - one an owner hung in a doorway (scenes/decorRoom.js), moved or
+  /** HOME-DOORS (2026-09-30): a door taken back out - one an owner hung in a doorway (scenes/decor/decorRoom.js), moved or
    *  removed. Not a DFU member (Daggerfall's doors are never taken down): the object, its place in the chain graph and
    *  its collider bucket go, open or shut. Answers whether there was one. */
   removeDoor(key) {
@@ -1476,7 +1476,7 @@ constructor(collider, { damagePlayer = null, drainMagicka = null, castSpell = nu
     }
   }
 
-  /** AUDIT LW-ROOMS (scenes/livingIndoors.js): `fn`'s answer with every
+  /** AUDIT LW-ROOMS (scenes/livingWorld/livingIndoors.js): `fn`'s answer with every
    *  door shut as the build hung it - each solid at its base, where a
    *  door open (its bucket gone: _settleDoorBucket) or carried off by its
    *  Move is no wall - and each bucket after as its live swing has it.

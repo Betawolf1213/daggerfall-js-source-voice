@@ -104,7 +104,7 @@
   },
   {
     "name": "AUDIT-GALLEON-D3-feet-own-cell",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "DECK_REACH_M : CAPSULE_RADIUS);",
     "new": "DECK_REACH_M : 0);",
     "tests": [
@@ -114,7 +114,7 @@
   },
   {
     "name": "AUDIT-GALLEON-D3-twice-a-body",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "DECK_REACH_M : CAPSULE_RADIUS);",
     "new": "DECK_REACH_M : 2 * CAPSULE_RADIUS);",
     "tests": [
@@ -194,7 +194,7 @@
   },
   {
     "name": "AUDIT-GALLEON-D7-unmarked",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "      meshes.push({ positions: out, indices: g.indices, moves: opens(node) });",
     "new": "      meshes.push({ positions: out, indices: g.indices });",
     "tests": [
@@ -203,7 +203,7 @@
   },
   {
     "name": "AUDIT-GALLEON-D7-every-door-out",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "      if (c.m_IsTrigger || c.m_Enabled === false) continue;",
     "new": "      if (c.m_IsTrigger || c.m_Enabled === false || opens(node)) continue;",
     "tests": [

@@ -64,7 +64,7 @@
   },
   {
     "name": "YARDLIGHT-room-law-lost",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "    const law = lampOf ? lampOf(piece, entry.size) : { light: piece.light, lift };",
     "new": "    const law = { light: piece.light, lift };",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "YARDLIGHT-own-light-asked",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "    const law = lampOf ? lampOf(piece, entry.size) : { light: piece.light, lift };",
     "new": "    const law = lampOf ? (lampOf(piece, entry.size) ?? { light: piece.light, lift }) : { light: piece.light, lift };",
     "tests": [
@@ -83,7 +83,7 @@
   },
   {
     "name": "YARDLIGHT-lift-ignored",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "      x: o[0] + piece.pos[0], y: o[1] + piece.pos[1] + law.lift, z: o[2] + piece.pos[2],",
     "new": "      x: o[0] + piece.pos[0], y: o[1] + piece.pos[1] + lift, z: o[2] + piece.pos[2],",
     "tests": [
@@ -92,7 +92,7 @@
   },
   {
     "name": "YARDLIGHT-lamp-left-behind",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "      if (e.light) { e.light.x += d[0]; e.light.y += d[1]; e.light.z += d[2]; }\n",
     "new": "",
     "tests": [

@@ -390,7 +390,7 @@
   },
   {
     "name": "NAV1G-the-trade-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (!stray && (!striker || !kindred(striker, s))) provoke(s, by, clock);",
     "new": "    if (!stray) provoke(s, by, clock);",
     "tests": [
@@ -399,7 +399,7 @@
   },
   {
     "name": "NAV1G-the-lawful-pair-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "  const kindred = (a, b) => a.cls.faction === b.cls.faction || (!!NAVAL_FACTIONS[a.cls.faction]?.lawful && !!NAVAL_FACTIONS[b.cls.faction]?.lawful);",
     "new": "  const kindred = (a, b) => a.cls.faction === b.cls.faction;",
     "tests": [
@@ -408,7 +408,7 @@
   },
   {
     "name": "NAV1G-the-grace-dropped",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const floor = entry.struck && entry.struck.by === by && clock - entry.struck.at <= STRUCK_GRACE_S ? 1 : 0;",
     "new": "    const floor = 0;",
     "tests": [
@@ -417,7 +417,7 @@
   },
   {
     "name": "NAV1G-fire-on-every-zone",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const fire = e.type === 'blast' ? 'barrel' : zone === 'hull' && random() < FIRE_CHANCE;",
     "new": "    const fire = e.type === 'blast' ? 'barrel' : random() < FIRE_CHANCE;",
     "tests": [
@@ -426,7 +426,7 @@
   },
   {
     "name": "NAV1G-the-warning-not-through-the-flight",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    let best = inbound.length ? { name: inbound[0].name, side: inbound[0].side, t: 0 } : null;",
     "new": "    let best = null;",
     "tests": [
@@ -435,7 +435,7 @@
   },
   {
     "name": "NAV1G-every-run-out-warns",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      for (const [side, since] of s.runOut) {\n        if (!bearsOn(s, side, p)) continue;",
     "new": "      for (const [side, since] of s.runOut) {",
     "tests": [
@@ -444,7 +444,7 @@
   },
   {
     "name": "NAV1G-the-tell-unheard",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    sound(NAVAL_SFX.runout, mid, 1);",
     "new": "    void mid;",
     "tests": [
@@ -453,7 +453,7 @@
   },
   {
     "name": "NAV1G-the-glint-mirrored",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      for (const m of bat.muzzles) effects.glint(toWorld(pose, m), k, d);",
     "new": "      for (const m of bat.muzzles) effects.glint(toWorld(pose, [-m[0], m[1], m[2]]), k, d);",
     "tests": [
@@ -462,7 +462,7 @@
   },
   {
     "name": "NAV1G-the-bits-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        const on = (w.runOut & (1 << i)) !== 0;",
     "new": "        const on = false;",
     "tests": [
@@ -471,7 +471,7 @@
   },
   {
     "name": "NAV1G-the-tally-early",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (t.ended >= t.balls) {",
     "new": "    if (t.ended >= t.balls - 1) {",
     "tests": [
@@ -480,7 +480,7 @@
   },
   {
     "name": "NAV1G-a-miss-a-hit",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    } else if (e.type === 'splash' || e.type === 'land' || e.type === 'gone') t.ended++;",
     "new": "    } else if (e.type === 'splash' || e.type === 'land' || e.type === 'gone') { t.ended++; t.hits++; }",
     "tests": [

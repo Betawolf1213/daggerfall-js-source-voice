@@ -174,7 +174,7 @@
   },
   {
     "name": "WB9c-the-call-every-frame",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    if (X && X.c.length && !sameCx(rk, X) && !(rkDone",
     "new": "    if (X && X.c.length && !(rkDone",
     "tests": [
@@ -183,7 +183,7 @@
   },
   {
     "name": "WB9c-a-target-still-in-the-stone",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    if (!rk.ended && grow >= CRYSTAL_STRIKE_GROWN && !(rk.landAt",
     "new": "    if (!rk.ended && !(rk.landAt",
     "tests": [
@@ -192,7 +192,7 @@
   },
   {
     "name": "WB9c-the-number-unrounded",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "      if ((rk.landAt !== null && t >= rk.landAt - RECKON_CLOSE_MS) || !fromHisCourt(s, t)) return false;   // AUDIT WB9 (brain F1, F2)\n      const dmg = Math.round(d);",
     "new": "      if ((rk.landAt !== null && t >= rk.landAt - RECKON_CLOSE_MS) || !fromHisCourt(s, t)) return false;   // AUDIT WB9 (brain F1, F2)\n      const dmg = d;",
     "tests": [
@@ -201,7 +201,7 @@
   },
   {
     "name": "WB9c-a-breaker-unsaid",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    say(COURT_RECKON_TEXT.shattered(who, left));",
     "new": "",
     "tests": [
@@ -210,7 +210,7 @@
   },
   {
     "name": "WB9c-a-stale-reckoning-grown-again",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "        rkDone = { i: rk.i, x0: rk.x0, z0: rk.z0 };",
     "new": "",
     "tests": [
@@ -219,7 +219,7 @@
   },
   {
     "name": "WB9c-the-beam-into-the-floor",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "_chest[1] = COURT_CENTRE[1] + P.bossH * 0.62;",
     "new": "_chest[1] = COURT_CENTRE[1];",
     "tests": [
@@ -228,7 +228,7 @@
   },
   {
     "name": "WB9c-a-light-for-a-broken-one",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "        if (!(d.broke < 0) || !(d.grow > 0.05)) continue;",
     "new": "        if (!(d.grow > 0.05)) continue;",
     "tests": [

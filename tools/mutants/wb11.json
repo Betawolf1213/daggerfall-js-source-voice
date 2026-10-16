@@ -235,7 +235,7 @@
   },
   {
     "name": "WB11-a-stale-wave-said",
-    "file": "src/scenes/gateHost.js",
+    "file": "src/scenes/gate/gateHost.js",
     "old": "if (Number.isFinite(a.rose) && t - a.rose <= HOST_LATE_MS && !s.fell && s.wrath == null) {",
     "new": "if (!s.fell && s.wrath == null) {",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "WB11-a-blow-landed-outside-its-disc",
-    "file": "src/scenes/gateHost.js",
+    "file": "src/scenes/gate/gateHost.js",
     "old": "if (v !== 'wait') { b.judged = at; if (v === 'hit') land(hostBlowUnder(a.k, P)); }",
     "new": "if (v !== 'wait') { b.judged = at; land(hostBlowUnder(a.k, P)); }",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "WB11-a-body-never-put-away",
-    "file": "src/scenes/gateHost.js",
+    "file": "src/scenes/gate/gateHost.js",
     "old": "if (act.act === 'gone') { destroyBatch(b); falling.delete(key); continue; }",
     "new": "if (act.act === 'gone') { falling.delete(key); continue; }",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "WB11-the-tether-after-the-ward",
-    "file": "src/scenes/gateHost.js",
+    "file": "src/scenes/gate/gateHost.js",
     "old": "  if (now < s.shieldUntil) for (const a of ads) {",
     "new": "  if (true) for (const a of ads) {",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "WB11-targets-from-anywhere",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "!s.lg || !fromHisCourt(s, t) ? NONE : host.targets();",
     "new": "!s.lg ? NONE : host.targets();",
     "tests": [

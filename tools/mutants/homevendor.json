@@ -248,7 +248,7 @@
   {
     "name": "HOMEVENDOR-a-trader-sold-offline",
     "note": "WAGONS2 (FINAL AUDIT, PIN MOVED): re-aimed by content - a hired trader is offered and sold in a home alone (a caravan's or a ship's had it paid for, never working).",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    if (want === VENDOR_STATION && (r?.kind !== 'home' || !forgeOffered())) { deps.say?.(VENDOR_COLD_LINE); return false; }",
     "new": "    void VENDOR_COLD_LINE;",
     "tests": [

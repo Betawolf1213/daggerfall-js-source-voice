@@ -496,7 +496,7 @@ test('PROF10 wiring: the jeweller\'s bench a Pawn Shop\'s or a Gem Store\'s (ope
   const p = src('src/ui/professions/profPages.js');
   assert.match(p, /\['fire', \(d\) => drawCookFire\(d, rerender, kit\)\],   \/\/ PROF9\n\s*\['jeweller', \(d\) => drawJewellerBench\(d, rerender, kit\)\],   \/\/ PROF10/);   // PIN MOVED (MENU-ORDER): the stations a list of tiles
   assert.match(src('src/ui/enhanced/enhancedPlusStyle.js'), /\.prof-heatbar\.prof-facetbar \{/);
-  assert.match(src('src/scenes/decorTool.js'), /if \(PROF_STATIONS\.includes\(want\) && !forgeOffered\(\)\) \{ deps\.say\?\.\(stationColdLine\(want\)\); return false; \}/, 'the jeweller\'s bench sold where the bench works, as the forge');
+  assert.match(src('src/scenes/decor/decorTool.js'), /if \(PROF_STATIONS\.includes\(want\) && !forgeOffered\(\)\) \{ deps\.say\?\.\(stationColdLine\(want\)\); return false; \}/, 'the jeweller\'s bench sold where the bench works, as the forge');
   // INT1 (PIN MOVED): the template read through `lookup` - templateByIndex by default, the item law's own on the service
   assert.match(src('src/systems/enchanting.js'), /export function itemEnchantmentPower\(item, lookup = templateByIndex\) \{[^]*?const basePower = craftedJewelPoints\(item\) \?\? lookup\(item\.templateIndex\)\?\.enchantmentPoints \?\? 0;/);
 });

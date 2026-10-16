@@ -28,7 +28,7 @@
   },
   {
     "name": "FBSEA-1-the-bob-not-undone",
-    "file": "src/scenes/comeSailAwayAboard.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayAboard.js",
     "old": "    if (c !== boat.MeshObject) q = quatMultiply(q, c.localRotation);",
     "new": "    q = quatMultiply(q, c.localRotation);",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "FBSEA-1-the-whole-height",
-    "file": "src/scenes/comeSailAwayAboard.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayAboard.js",
     "old": "l[1] -= (Number.isFinite(height) && height > 0 ? height : 1.8) / 2;",
     "new": "l[1] -= (Number.isFinite(height) && height > 0 ? height : 1.8);",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "FBSEA-1-the-bob-unapplied",
-    "file": "src/scenes/comeSailAwayAboard.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayAboard.js",
     "old": "  const Q = quatMultiply(quatMultiply(q, bob), [-q[0], -q[1], -q[2], q[3]]);",
     "new": "  const Q = [0, 0, 0, 1];",
     "tests": [

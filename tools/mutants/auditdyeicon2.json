@@ -1,7 +1,7 @@
 [
   {
     "name": "AUDIT2-DYE-ICON-1-the-ghost-past-the-room",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "const ask = pool.mountPicture?.(entry.flat, entry.item)\n      ?? loadMountPicture(",
     "new": "const ask = loadMountPicture(",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "AUDIT2-DYE-ICON-1-the-ghost-not-told",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "const offRefresh = pool?.onRefresh?.(() => refreshGhost()) ?? null;",
     "new": "const offRefresh = null;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "AUDIT2-DYE-ICON-1-the-room-tells-no-one",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "    for (const fn of [...borrowers]) fn();",
     "new": "",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "AUDIT2-DYE-ICON-1-the-old-picture-drawn-on",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    placing.art = null;\n    askGhostArt(placing);",
     "new": "    askGhostArt(placing);",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "AUDIT2-DYE-ICON-1-an-older-answer-hung",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "if (placing !== p || p.ask !== ask || !art) return;",
     "new": "if (placing !== p || !art) return;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "AUDIT2-DYE-ICON-1-the-room's-door-past-its-keys",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "const mountPicture = (flat, item) => artOf({ flat, item });",
     "new": "const mountPicture = (flat, item) => loadMountPicture({ getTexture, uploadRecord, renderer, mwPicture }, flat, item);",
     "tests": [

@@ -27,7 +27,7 @@ import { mapPixelToWorldCoord } from '../src/formats/mapsFile.js';
 import { OnlineSession } from '../src/net/online.js';
 import { CHAT_WORLD_ROOM } from '../src/net/wire.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
-import { questShareTag, sharedQuestFoe, questPrivateTag, partyQuestFoe, questBehaviourFor, adoptsOrphanQuestFoe, partnerStandsQuestFoes, mintQuestFoeWave, KeptKillLedger } from '../src/scenes/questFoeHost.js';
+import { questShareTag, sharedQuestFoe, questPrivateTag, partyQuestFoe, questBehaviourFor, adoptsOrphanQuestFoe, partnerStandsQuestFoes, mintQuestFoeWave, KeptKillLedger } from '../src/scenes/quest/questFoeHost.js';
 import { fakeSocketClass } from './fakeSocket.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');

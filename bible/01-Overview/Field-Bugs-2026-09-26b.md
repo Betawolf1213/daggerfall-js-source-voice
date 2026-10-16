@@ -72,7 +72,7 @@ The port's part is the time. The journal's "Time remains" counts down the tighte
 
 Between the trance and the punishment, the line counted the leftover down, so the time seemed to reset twice.
 
-The line now counts only a clock whose end can change something (`systems/quest/clock.js clockCounts`): the task a finished clock sets (its own name) acts, or a `when` reads it, or an `until ... performed` waits on it. An action the registry could not read counts as an action (`scenes/questBridge.js questLog`).
+The line now counts only a clock whose end can change something (`systems/quest/clock.js clockCounts`): the task a finished clock sets (its own name) acts, or a `when` reads it, or an `until ... performed` waits on it. An action the registry could not read counts as an action (`scenes/quest/questBridge.js questLog`).
 
 Open: online, the punishment's seven days are game days PLAYED. The shared clock lets no rest and no travel skip them, so it is about fourteen real hours, with the waves themselves spent after about four. Whether to shorten it online, as Guard the Guild's watch was, is Mac's call. [ANSWERED by REST8 (2026-10-03, `06-Systems/Online-Time-Arc.md` 6.3d): `_S.09_` reads as a delay, and online a delay takes the short wait - about two real minutes of play. Found still marked open by WAITS (2026-10-07, `06-Systems/Online-Waits.md`) and checked against the parsed script.]
 

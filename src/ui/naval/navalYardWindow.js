@@ -1,6 +1,6 @@
 // @ts-check
 // AUDIT NAV1 (2026-09-29, the helm - Mac: "This task is to be extremely detailed, authentic and easy to use") - THE
-// SHIPWRIGHT'S WINDOW: a port's yard, at the helm lying to his quay (scenes/navalHost.js yardHere). The helm audit's
+// SHIPWRIGHT'S WINDOW: a port's yard, at the helm lying to his quay (scenes/naval/navalHost.js yardHere). The helm audit's
 // first finding was that none stood - a hurt boat stayed hurt, a wreck a wreck. Black Flag's harbour master, in
 // Daggerfall's words and the stone-and-brass kit: what she wants, what each costs, and the presses that pay for it.
 //

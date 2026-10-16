@@ -246,7 +246,7 @@
   },
   {
     "name": "LW3-file-ahead",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "    const s = /** @type {number} */ (at.s) + (back ? 1 : -1) * i * FILE_GAP_N;   // behind the leader, the way they walk",
     "new": "    const s = /** @type {number} */ (at.s) + (back ? -1 : 1) * i * FILE_GAP_N;   // behind the leader, the way they walk",
     "tests": [
@@ -255,7 +255,7 @@
   },
   {
     "name": "LW3-file-one-side",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "    const side = i === 0 ? 0 : (i % 2 ? 1 : -1) * FILE_SIDE_N;",
     "new": "    const side = i === 0 ? 0 : FILE_SIDE_N;",
     "tests": [
@@ -264,7 +264,7 @@
   },
   {
     "name": "LW3-ring-facing",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "      out.push({ res: trip.party[i], x, z, yaw: Math.atan2(/** @type {number} */ (at.x) - x, /** @type {number} */ (at.z) - z), moving: false });",
     "new": "      out.push({ res: trip.party[i], x, z, yaw: 0, moving: false });",
     "tests": [
@@ -273,7 +273,7 @@
   },
   {
     "name": "LW3-play-reach",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "    const reach = overworld ? TRAVELLER_FAR_M + 60 : ROADS_PLAY_M;",
     "new": "    const reach = overworld ? TRAVELLER_FAR_M + 60 : ROADS_PLAY_M * 40;",
     "tests": [
@@ -282,7 +282,7 @@
   },
   {
     "name": "LW3-stranger-known",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "        : known ? pools.known : pools.stranger;",
     "new": "        : pools.known;",
     "tests": [
@@ -291,7 +291,7 @@
   },
   {
     "name": "LW3-caravan-unmarked",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "        kind: `${p.trip.kind === 'merchant' ? 'wayfarer caravan' : 'wayfarer'}${beset ? ' fight' : ''}`, trip: p.trip });",
     "new": "        kind: `wayfarer${beset ? ' fight' : ''}`, trip: p.trip });",
     "tests": [
@@ -300,7 +300,7 @@
   },
   {
     "name": "LW3-caught-unnoted",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "      deps.relations?.()?.note(id, 'crime', dayOf(deps.clock()));",
     "new": "      deps.relations?.()?.note(id, 'talk', dayOf(deps.clock()));",
     "tests": [
@@ -309,7 +309,7 @@
   },
   {
     "name": "LW3-enemy-talks-on-road",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "      return s === 'enemy' || s === 'hostile' ? fillLine(LIVING_REFUSAL, { a: firstNameOf(person.nameNPC) }) : null;",
     "new": "      return s === 'hostile' ? fillLine(LIVING_REFUSAL, { a: firstNameOf(person.nameNPC) }) : null;",
     "tests": [

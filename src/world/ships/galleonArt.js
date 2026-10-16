@@ -3,7 +3,7 @@
 //
 // Mac's export names two pictures (Wood.png and floorboards.png) and carries neither, and a ship wears more than two
 // woods. So she is painted here, from noise, as the boats' preload asks for her archive (AUDIT GN2-PF3: it was her first
-// mesh's ask, at her first draw - scenes/comeSailAwayPool.js preload) - combat/bloodArt.js's law and world/gate/gateArt.js's:
+// mesh's ask, at her first draw - scenes/comeSailAway/comeSailAwayPool.js preload) - combat/bloodArt.js's law and world/gate/gateArt.js's:
 // pixels and numbers, no renderer and no GL in this file, an atlas of the port's own under a pseudo-archive far above
 // any classic one (GALLEON_ARCHIVE). Deterministic, on fixed seeds, so every client's galleon is the same ship.
 // AUDIT GN-R12: HER TEXELS, AS SHE WEARS THEM (each picture's median over the area of every mesh she draws that wears it,
@@ -490,7 +490,7 @@ export function galleonArt() {
 /** DF-LOOK, DF-ART II and III kept (Mac: "windows should always be see through"; then, of the ships' stern windows,
  *  "See-through by day, lit at night"): a window record's NIGHT TWIN is this far past it - the same painted window, its
  *  glass whole, its glow its emission - the record a ship's gallery is drawn as while the lanterns are lit
- *  (scenes/comeSailAwayPool.js NIGHT_REMAP). By day the record itself is drawn, its glass a hole (`cutGlass`), and the
+ *  (scenes/comeSailAway/comeSailAwayPool.js NIGHT_REMAP). By day the record itself is drawn, its glass a hole (`cutGlass`), and the
  *  eye sees into her great cabin. A hole draws nothing, its glow included, so the glass can't be open and lit at once. */
 export const NIGHT_RECORD_OFFSET = 100;
 /** Her see-through records' night twins: each slice of her stern gallery's. */
@@ -540,7 +540,7 @@ let _registered = false;
 /**
  * Once: every picture on the texture door as a STAND-IN of GALLEON_ARCHIVE (no TEXTURE file is it), built when the
  * archive is first asked for (the pool's preload asks - AUDIT GN2-PF3) - so the boats' own upload path
- * (scenes/comeSailAwayPool.js meshFor: getTexture, then uploadRecord) draws her as it draws every hull, and a loose
+ * (scenes/comeSailAway/comeSailAwayPool.js meshFor: getTexture, then uploadRecord) draws her as it draws every hull, and a loose
  * pack's `38131_<record>-0.png` would override a picture as it overrides any record. `addVendorTextures` is handed in
  * (systems/textureReplacement.js's), keeping this file free of the texture door's imports. Returns how many were
  * registered (0 the second time).

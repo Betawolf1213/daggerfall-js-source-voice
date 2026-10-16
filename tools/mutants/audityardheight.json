@@ -1,7 +1,7 @@
 [
   {
     "name": "AUDIT-Y1-no-wait",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    later(() => { writeTurn(piece.id, n); }, DECOR_TURN_SETTLE_MS);\n",
     "new": "    later(() => { writeTurn(piece.id, n); }, 0);\n",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "AUDIT-Y1-every-timer-writes",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      if (!t || t.n !== n) return;   // a later press's own wait writes it - or a move wrote it\n",
     "new": "      if (!t) return;   // a later press's own wait writes it - or a move wrote it\n",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "AUDIT-Y1-presses-during-lost",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      t.held = stood;\n      if (t.n !== n) return;   // pressed meanwhile: that press's own wait writes it\n      turnsOwed.delete(id);\n",
     "new": "      t.held = stood;\n      turnsOwed.delete(id);\n",
     "tests": [
@@ -31,7 +31,7 @@
   },
   {
     "name": "AUDIT-Y1-written-from-the-press",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      const want = decorPieceOf({ ...(standing() ?? t.held), rot: t.rot });\n",
     "new": "      const want = decorPieceOf({ ...t.held, rot: t.rot });\n",
     "tests": [
@@ -41,7 +41,7 @@
   },
   {
     "name": "AUDIT-Y1-refusal-undoes-all",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "        if (now) pool.put(decorPieceOf({ ...now, rot: t.held.rot }) ?? t.held);   // refused: turned back as it was\n",
     "new": "        if (now) pool.put(t.held);   // refused: turned back as it was\n",
     "tests": [
@@ -51,7 +51,7 @@
   },
   {
     "name": "AUDIT-Y1-refusal-stands",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "        if (now) pool.put(decorPieceOf({ ...now, rot: t.held.rot }) ?? t.held);   // refused: turned back as it was\n",
     "new": "",
     "tests": [
@@ -61,7 +61,7 @@
   },
   {
     "name": "AUDIT-Y2-removed-written",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      if (deps.visit?.() === t.visit && !standing()) { turnsOwed.delete(id); return; }   // removed meanwhile\n",
     "new": "",
     "tests": [
@@ -71,7 +71,7 @@
   },
   {
     "name": "AUDIT-Y5-turn-unqueued",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "  function writeTurn(id, n) {\n    return pieceWrite(id, async () => {",
     "new": "  function writeTurn(id, n) {\n    return (async (fn) => fn())(async () => {",
     "tests": [
@@ -81,7 +81,7 @@
   },
   {
     "name": "AUDIT-Y5-light-unqueued",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    // AUDIT Y5: after the piece's write before it, on the piece as it then stands\n    return pieceWrite(piece.id, async () => {",
     "new": "    // AUDIT Y5: after the piece's write before it, on the piece as it then stands\n    return (async (fn) => fn())(async () => {",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "AUDIT-Y5-removal-unqueued",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "  function removePiece(piece) { return pieceWrite(piece.id, () => removeNow(piece)); }",
     "new": "  function removePiece(piece) { return removeNow(piece); }",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "AUDIT-Y5-move-leaves-the-turn",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "        turnsOwed.delete(was.id);\n        if (deps.visit?.() === visit) pool.put(stood);\n",
     "new": "        if (deps.visit?.() === visit) pool.put(stood);\n",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "AUDIT-Y6-picture-stepped",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "? Math.sign(deg) * 180 : deg;",
     "new": "? deg : deg;",
     "tests": [
@@ -121,7 +121,7 @@
   },
   {
     "name": "AUDIT-Y6-tree-flipped",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    const by = cur.model == null && axis === 0 && !isNatureArchive(cur.flat?.[0]) ? Math.sign(deg) * 180 : deg;",
     "new": "    const by = cur.model == null && axis === 0 ? Math.sign(deg) * 180 : deg;",
     "tests": [

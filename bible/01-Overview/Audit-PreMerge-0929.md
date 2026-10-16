@@ -65,7 +65,7 @@ for the finding's reason, and mutation-proven: `tools/mutants/audit0929_terms.js
 | S6 | low | The reader asked for the hand through `equipTableOf`, which grows an empty equip table on a body that has none - a reader that wrote. A rig whose body had none (a suite's, a probe's) had its hand emptied by its own syncWorn the next frame, and the unsheathe went silent: the rig's shieldItem names the same trap. The rig suite found it once S5 put the reader in every rig. | The reader reads the table the way syncWorn does (`entity.equip?.slots`) and writes nothing. |
 | S2, S4 | low | The handling table said "Dagger (and the tanto)" (DFU draws the tanto as a long blade) and that a staff "sweeps a little quicker" (every staff is two-handed: quicker than the other two-handers, not than a sword); the record's saber row gave 0.83 s mods off at Strength 50 (0.92 there - 0.83 from 56 up), and the PR's warhammer row left out the Strength. | The words corrected. |
 
-**WB8** (`src/net/gate/gateBrain.js`, `src/net/gate/gateMods.js`, `src/net/wire.js`, `src/net/gate/gateLink.js`, `src/scenes/gateCourt.js`,
+**WB8** (`src/net/gate/gateBrain.js`, `src/net/gate/gateMods.js`, `src/net/wire.js`, `src/net/gate/gateLink.js`, `src/scenes/gate/gateCourt.js`,
 `src/ui/gate/gateBossBar.js`, `src/systems/gate/gateOmen.js`, `src/net/gate/gateLaw.js`; the pins in `test/audit0929_gate.test.js`,
 `test/wb8b_gate_marks.test.js`, `test/wb8c_gate_detail.test.js`)
 

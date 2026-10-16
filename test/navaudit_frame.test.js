@@ -2,7 +2,7 @@
 // port's own machinery carries it - a mover's bucket in the world's collider (player/collider.js), a tree's colliders
 // indexed and asked bounds first (world/prefabColliders.js), a node's matrix kept while it reads the same
 // (world/prefabNode.js), the world's sync carrying a boat's buckets (scenes/world.js csaSyncColliders), the boats culled
-// and their still parts merged (scenes/comeSailAwayPool.js), the effects on one sheet (render/navalRender.js), what
+// and their still parts merged (scenes/comeSailAway/comeSailAwayPool.js), the effects on one sheet (render/navalRender.js), what
 // the particle budget lets go first (systems/naval/navalEffects.js), and the sea's word made once a tick.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -16,7 +16,7 @@ import {
 import { PrefabNode, prefabShapeStamp } from '../src/world/prefabNode.js';
 import { multiply } from '../src/world/mat4.js';
 import { mat4FromQuatPosScale, quatMultiply } from '../src/world/quat.js';
-import { createComeSailAwayPool, STILL_FRAMES, STILL_MIN } from '../src/scenes/comeSailAwayPool.js';
+import { createComeSailAwayPool, STILL_FRAMES, STILL_MIN } from '../src/scenes/comeSailAway/comeSailAwayPool.js';
 import { Boat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { boundsOf } from '../src/render/bounds.js';
 import { lookAt, perspective } from '../src/world/mat4.js';

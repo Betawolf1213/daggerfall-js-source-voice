@@ -22,7 +22,7 @@ import { floorLanding } from '../src/player/enterExit.js';
 import { trs } from '../src/world/mat4.js';
 import { glslFunctions } from './glsl.mjs';
 import { GateFxRenderer, FX_SPARK_VS, FX_SPARKS, FX_BURST_MS, sparkAt } from '../src/render/gateFx.js';
-import { createSdFx, SD_FX_KINDS, SD_FX_EDGE, SD_FX_FLOOR_Y, SD_RING_DUST } from '../src/scenes/sdFx.js';
+import { createSdFx, SD_FX_KINDS, SD_FX_EDGE, SD_FX_FLOOR_Y, SD_RING_DUST } from '../src/scenes/superDungeon/sdFx.js';
 import { SD_ARENA, SD_STONES, realmToDungeon, dungeonToRealm } from '../src/net/superDungeon/sdBrain.js';
 import { SD_BLOWS, SD_BODY, SD_REM } from '../src/net/superDungeon/sdRemnant.js';
 import { buildRealmModel, realmLampFeet, SD_LAMP_H, SD_LAMP_HEAD, SD_REALM_BRASS_RECORD } from '../src/world/superDungeon/sdRealm.js';

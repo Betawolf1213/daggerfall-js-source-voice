@@ -19,7 +19,7 @@ import { LivingTown } from '../src/systems/livingWorld/livingTown.js';
 import { ResidentWalker } from '../src/characters/residentWalker.js';
 import { createTravellerSprites, classLookOf, TRAVELLER_FAR_M } from '../src/world/travellerSprites.js';
 import { BAND_SPRITE_FAR_M } from '../src/world/bandSprites.js';
-import { createLivingRoads, partyPlaces, partyLabel, FILE_GAP_N, FILE_SIDE_N, CAMP_RING_N, ROADS_PLAY_M, ROAD_GREET_M } from '../src/scenes/livingRoads.js';
+import { createLivingRoads, partyPlaces, partyLabel, FILE_GAP_N, FILE_SIDE_N, CAMP_RING_N, ROADS_PLAY_M, ROAD_GREET_M } from '../src/scenes/livingWorld/livingRoads.js';
 import { createRelations } from '../src/systems/livingWorld/relations.js';
 import { ROAD_GREETINGS, ROAD_TALKS, CAMP_TALKS, pickScript } from '../src/systems/livingWorld/lines.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';

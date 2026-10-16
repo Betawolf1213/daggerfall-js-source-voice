@@ -22,11 +22,11 @@ import { validSdOut } from '../src/net/wire.js';
 import { strikeDamage, savedShare } from '../src/net/gate/gateStrike.js';
 import {
   createSdRemnantBlows, sdTint, sdTelegraphShapes, sdPoolShapes, SD_BLOW_COLOR, SD_ELEMENT_COLOR, SD_ELEMENT_STYLE, SD_ELEMENT_GROUND, SD_TINT_LEAN, SD_POOL_COLOR,
-} from '../src/scenes/sdRemnantBlows.js';
-import { arenaToDungeon } from '../src/scenes/sdRemnant.js';
-import { createSdBeats, sdGroundModel, sdWakeText, SD_BEAT_TEXT } from '../src/scenes/sdArenaRead.js';
+} from '../src/scenes/superDungeon/sdRemnantBlows.js';
+import { arenaToDungeon } from '../src/scenes/superDungeon/sdRemnant.js';
+import { createSdBeats, sdGroundModel, sdWakeText, SD_BEAT_TEXT } from '../src/scenes/superDungeon/sdArenaRead.js';
 import { remnantBarModel } from '../src/ui/superDungeon/sdRemnantBar.js';
-import { createSdHall } from '../src/scenes/sdHall.js';
+import { createSdHall } from '../src/scenes/superDungeon/sdHall.js';
 import { stonePoint } from '../src/world/superDungeon/sdHall.js';
 import { SD_HALL_GLOW_RECORD } from '../src/world/superDungeon/sdHallArt.js';
 import { SD_REALM_BRASS_RECORD } from '../src/world/superDungeon/sdRealm.js';

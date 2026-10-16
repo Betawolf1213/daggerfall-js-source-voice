@@ -18,7 +18,7 @@ import * as GM from '../src/world/ships/galleonModel.js';
 import * as GA from '../src/world/ships/galleonArt.js';
 import { MeshBench, prism, box, planarUv, cross, sub, dot, norm, add, scl } from '../src/world/ships/galleonMesh.js';
 import { comeSailAwayModels, loadComeSailAwayModels, CSA_MODEL_URLS } from '../src/systems/comeSailAway/comeSailAwayModels.js';
-import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';
+import { createComeSailAwayPool } from '../src/scenes/comeSailAway/comeSailAwayPool.js';
 import { createDataPipeline } from '../src/scenes/dataPipeline.js';
 import { Renderer } from '../src/render/renderer.js';
 import { Boat, boatAnimators, animatorOf } from '../src/systems/comeSailAway/comeSailAwayBoat.js';

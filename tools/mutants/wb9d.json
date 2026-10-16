@@ -46,7 +46,7 @@
   },
   {
     "name": "WB9d-no-hiss",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    if (!inFire && t - outAt >= POOL_TICK_MS) sound(groundStepCue(P), s, t, null, f);",
     "new": "",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "WB9d-the-bite-unflared",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "      biteAt = t; biteColor = groundColor;",
     "new": "      biteColor = groundColor;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "WB9d-every-blow-flaring",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    if (so.el) { biteAt = now();",
     "new": "    if (true) { biteAt = now();",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "WB9d-the-pools-in-the-fires-grain-under-the-rime",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "poolShapes(pools, t, poolColor(P), TELEGRAPH_STYLE[P.el] ?? TELEGRAPH_STYLE.fire)",
     "new": "poolShapes(pools, t, poolColor(P), TELEGRAPH_STYLE.fire)",
     "tests": [

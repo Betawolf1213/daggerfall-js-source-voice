@@ -1,7 +1,7 @@
 // LW6b (2026-10-05, bible/06-Systems/Living-World.md "LW6b", Mac: "You can find them dungeon diving ... explore a
 // dynamic world"): THE FALLEN IN THE DEEP - the dead of a dive left in its dungeon to be found: the deep's word of them
 // (trips.js fallenIn), the character's mark of what was laid (relations.js `laid`), the layer that lays them where the
-// dungeon's own foes stand and tells the player whose they are (scenes/deepRemains.js), the divers' word of who they
+// dungeon's own foes stand and tells the player whose they are (scenes/livingWorld/deepRemains.js), the divers' word of who they
 // stood, and the dungeon's and the streaming host's parts by source. On the synthetic map's dungeons and mock decks.
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -9,7 +9,7 @@ import { readFileSync } from 'node:fs';
 import { livingMap, partiesOver } from './lwRoads.mjs';
 import { fallenIn, CALENDAR_MPM, DEEP_REMAINS_MIN } from '../src/systems/livingWorld/trips.js';
 import { createRelations, TURN_KINDS, MARK_KINDS } from '../src/systems/livingWorld/relations.js';
-import { createDeepRemains, restAt, DEEP_NOTICE_M, DEEP_LAY_M } from '../src/scenes/deepRemains.js';
+import { createDeepRemains, restAt, DEEP_NOTICE_M, DEEP_LAY_M } from '../src/scenes/livingWorld/deepRemains.js';
 import { createDungeonDivers } from '../src/scenes/dungeonDivers.js';
 import { DAY_MIN } from '../src/systems/livingWorld/dayPlan.js';
 

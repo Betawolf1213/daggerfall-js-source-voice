@@ -23,7 +23,7 @@ import { DAY_MIN } from '../src/systems/livingWorld/dayPlan.js';
 import { lwRoll, lwRng, lwSeed } from '../src/systems/livingWorld/seed.js';
 import { seededRng } from '../src/systems/wind/wind.js';
 import { LivingTown } from '../src/systems/livingWorld/livingTown.js';
-import { createLivingRoads, fightPlaces, foePlaces, corpseLook, partyLabel, FIGHT_RING_N, FOE_RING_N, STRIKE_S } from '../src/scenes/livingRoads.js';
+import { createLivingRoads, fightPlaces, foePlaces, corpseLook, partyLabel, FIGHT_RING_N, FOE_RING_N, STRIKE_S } from '../src/scenes/livingWorld/livingRoads.js';
 import { createTravellerSprites } from '../src/world/travellerSprites.js';
 import { rollGroupComposition } from '../src/systems/campEncounters.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';

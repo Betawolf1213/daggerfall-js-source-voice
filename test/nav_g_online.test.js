@@ -14,8 +14,8 @@ import { SHIP_CLASSES, classById } from '../src/systems/naval/navalShips.js';
 import { LOT_KEYS } from '../src/systems/naval/navalPlunder.js';
 import { HULL_VARIANT_COUNTS, Boat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { POSE_BOUND, POSE_Y_BOUND } from '../src/net/wire.js';
-import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';
-import { createComeSailAwayPeers } from '../src/scenes/comeSailAwayPeers.js';
+import { createComeSailAwayPool } from '../src/scenes/comeSailAway/comeSailAwayPool.js';
+import { createComeSailAwayPeers } from '../src/scenes/comeSailAway/comeSailAwayPeers.js';
 
 const src = (p) => readFileSync(new URL(`../src/${p}`, import.meta.url), 'utf8');
 
@@ -205,7 +205,7 @@ test('NAV-H the other players\' boats at their helms are the sea\'s contacts: wh
   peers.frame(0.1);
   assert.deepEqual(peers.helmBoats(), [], 'her word withdrawn');
   // a sea ship stands in the pool beside the others - drawn, never mine, and torn down with the rest
-  const sea = pool.spawnSeaNow(new Boat(2, 0));   // the naval host's own call (scenes/navalHost.js)
+  const sea = pool.spawnSeaNow(new Boat(2, 0));   // the naval host's own call (scenes/naval/navalHost.js)
   assert.ok(sea?.GameObject, 'built as SpawnBoat builds one');
   assert.deepEqual(pool.seaBoats, [sea]);
   assert.equal(pool.boats.includes(sea), false, 'never one of MY boats - no helm is taken on her');

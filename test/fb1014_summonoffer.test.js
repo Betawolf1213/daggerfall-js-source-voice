@@ -18,7 +18,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadTables, rmbBlock, rdbBlock, town, dungeon, worldOf, mark, SPAWN, ITEM } from './fb1004dTowns.mjs';
-import { createQuestBridge } from '../src/scenes/questBridge.js';
+import { createQuestBridge } from '../src/scenes/quest/questBridge.js';
 import { FACTION_TYPES } from '../src/formats/factionFile.js';
 import { DAEDRA, SHEOGORATH_INDEX, attemptSummoning, noQuestText } from '../src/systems/daedraSummoning.js';
 import { FACTION_FLAGS, ensureFactionRep, getFlag } from '../src/systems/faction/factionRep.js';

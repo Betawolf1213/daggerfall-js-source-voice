@@ -68,7 +68,7 @@ export function createFamilyBodies({ dolls, bodies = null }) {
 }
 
 /**
- * A ROOM'S SPRITES WITH THE LINE IN ITS OWN BODY (scenes/livingIndoors.js's `sprites`): one of the line with a look is
+ * A ROOM'S SPRITES WITH THE LINE IN ITS OWN BODY (scenes/livingWorld/livingIndoors.js's `sprites`): one of the line with a look is
  * stood in `family` and keeps a talk seat of its own here (the room's own shape: `nameNPC`, `personFaceRecordId`,
  * `_talkSeed`, `living`); everyone else goes to the room's own sprites (world/travellerSprites.js) as before.
  * @param {any} sprites - the room's createTravellerSprites @param {ReturnType<typeof createFamilyBodies>} family

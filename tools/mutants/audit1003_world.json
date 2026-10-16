@@ -92,7 +92,7 @@
   },
   {
     "name": "AUDIT1003-W2-RELAY-EX",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    if (p.relayEx) return { west: 'red', east: 'blue' };",
     "new": "",
     "tests": [

@@ -100,7 +100,7 @@ const SITES = [
   ['src/scenes/exterior.js', 'const lines = plainLines(townTalk.lines(id));', 'plain', { ids: [20, 32] }],
   ['src/scenes/exterior.js', 'expandMessageBoxTokens(townTalk.recordTokens(id)', 'walk'],
   // ── questBridge.js / shared.js ──
-  ['src/scenes/questBridge.js', "case 'fail': return [{ rows: rows?.(step.textId)", 'plain', { ids: [600] }],
+  ['src/scenes/quest/questBridge.js', "case 'fail': return [{ rows: rows?.(step.textId)", 'plain', { ids: [600] }],
   ['src/scenes/shared.js', 'announceMastery(id', 'walk'],
   ['src/scenes/shared.js', 'const lines = plainLines(textAt?.(id));', 'plain', { ids: [401] }],
   ['src/scenes/shared.js', 'endLines: (id) => plainLines(rest.endLines?.(id)),', 'plain', { ids: REST_BOXES }],

@@ -83,7 +83,7 @@ function resultOf(b, side, how) {
 /**
  * THE RELAY'S EVENTS on the mirror: each moved onto this screen's clock, the mirror moved as the law moved the relay's
  * bout (its phase, the fight's start and end, a fighter out, a blow's tallies), and handed back to be HEARD (the crowd,
- * the Herald, the verdict - scenes/arenaBouts.js `hear`). `clock` `{ off }` the offset, learned from each. Pure but for
+ * the Herald, the verdict - scenes/arena/arenaBouts.js `hear`). `clock` `{ off }` the offset, learned from each. Pure but for
  * the mirror and the clock it is handed.
  * @param {any} M a mirror (mirrorOf) @param {any[]} events @param {number} now @param {{ off: number|null }} clock
  */
@@ -135,7 +135,7 @@ export const walkDone = (mv, now, off = 0) => !mv || !(mv.v > 0) || (Math.max(0,
 
 /** ARENA4b: THE VERDICT A RELAY'S WORD SAYS of its bout - a whole `st`'s result, or an `ev` word's end or verdict - as
  *  `{ side }` (0 / 1, null a draw), or null when the word says none. The bookmaker settles an exhibition's wager by it
- *  (scenes/arenaOnline.js exhibitionVerdict). Pure. */
+ *  (scenes/arena/arenaOnline.js exhibitionVerdict). Pure. */
 export function verdictOfWord(w) {
   if (w?.k === 'st') return w.res ? { side: w.res.side ?? null } : null;
   if (w?.k === 'ev') { const e = (w.e ?? []).find((x) => x.k === 'end' || x.k === 'verdict'); return e ? { side: e.side ?? null } : null; }

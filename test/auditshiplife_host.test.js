@@ -1,12 +1,12 @@
 // AUDIT SHIP-LIFE (2026-09-30, the pre-merge audit of PR #478) - the naval host's lens: the harbours and their moored
-// ships online and across the sea's comings and goings (scenes/navalHost.js harbourFrame). The real hosts, alone
+// ships online and across the sea's comings and goings (scenes/naval/navalHost.js harbourFrame). The real hosts, alone
 // (test/navalSea.mjs) and two in a room (test/navalRoom.mjs).
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { sea } from './navalSea.mjs';
 import { room } from './navalRoom.mjs';
-import { OWNER_SWEEP_S, HARBOUR_RETRY_S, HARBOUR_LEAVE, SHIP_FADE_S } from '../src/scenes/navalHost.js';
+import { OWNER_SWEEP_S, HARBOUR_RETRY_S, HARBOUR_LEAVE, SHIP_FADE_S } from '../src/scenes/naval/navalHost.js';
 
 const coast = (x, z) => !(z > 200 || (x > 300 && x < 400 && z > -300));
 const PORT = { key: 'port:1', rect: { minX: -100, maxX: 100, minZ: 220, maxZ: 420 } };

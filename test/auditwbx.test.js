@@ -21,7 +21,7 @@ import { telegraphShape, telegraphField } from '../src/render/gateTelegraph.js';
 import { inAttack, chargeStrikes } from '../src/net/gate/gateStrike.js';
 import { createSpoilsPool, spoilsStore, recoverSpoils, spoilsLevel, SPOILS_STORE_KEY, SPOILS_DAY_KEY, SPOILS_RECORD_V, spentKey } from '../src/scenes/spoilsPool.js';
 import { SPECIAL_ARTIFACT_HANDLERS, ARTIFACTS } from '../src/systems/artifactEffects.js';
-import { createGateCourt } from '../src/scenes/gateCourt.js';
+import { createGateCourt } from '../src/scenes/gate/gateCourt.js';
 import { courtToDungeon } from '../src/world/gate/gateArena.js';
 import { fakeRooms } from './fakeRoom.mjs';
 
@@ -272,7 +272,7 @@ test('AUDIT WBX F6/F9 the court: my trap on him is said while it runs (a recast 
   const leap = { i: 2, a: ATTACKS.leap.id, at: 10_000, x: 0, z: -12, yw: 0, tg: [[0, 12]] };
   g.link.st = { ...st, atk: leap, x: 0, z: -12 };
   for (let t = 9000; t <= 10_000; t += 16) { g.clock.t = t; g.c.frame(); }
-  assert.match(read('src/scenes/gateCourt.js'), /if \(bossHop\(s, t\) > 0\) \{ stepFrom = null; strideRun = 0; \}/);
+  assert.match(read('src/scenes/gate/gateCourt.js'), /if \(bossHop\(s, t\) > 0\) \{ stepFrom = null; strideRun = 0; \}/);
 });
 
 test('AUDIT WBX F5 a Soul Trap reaches him at range and bursting, not by touch alone: the missile may meet him when its spell is a duel\'s or a trap, and so may its blast (mutants: the missile\'s duel word alone)', () => {
@@ -285,7 +285,7 @@ test('AUDIT WBX F5 a Soul Trap reaches him at range and bursting, not by touch a
 // ═══ W: THE GATE IN THE WORLD, AND ITS MUSIC ═════════════════════════════════════════════════════════════════════════
 
 test('AUDIT WBX W1/W6 a player standing in the stone the moment it comes up whole is set down before the gate, not sealed in it - GATE-FBX: in a foot, under its overhang, high in a pillar or in the lintel; the threshold, its free edge, the ground before a foot and about the gate, and the opening over a head are left alone; the fire\'s box is made when the gate\'s place moves, not every frame the hover asks (mutants: the roots\' check removed; the box made every frame; the box left where the gate stood)', async () => {
-  const { createGatePool, inGateRoot } = await import('../src/scenes/gatePool.js');
+  const { createGatePool, inGateRoot } = await import('../src/scenes/gate/gatePool.js');
   const { gateTimes: times } = await import('../src/net/gate/gateLaw.js');
   const place = { origin: [100, 5, 200], yaw: 0.7 };
   const at = (lx, ly, lz) => { const c = Math.cos(place.yaw), s = Math.sin(place.yaw); return [place.origin[0] + c * lx + s * lz, place.origin[1] + ly, place.origin[2] - s * lx + c * lz]; };

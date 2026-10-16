@@ -1,7 +1,7 @@
 // SD8d (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 10): THE BRASS REMNANT'S BLOWS
 // ON ME - each judged on my own machine (net/superDungeon/sdStrike.js: the Stomp's disc and its ring, jumped; the Hour-Hand outrun or
 // shaded by a pillar; the Gear Volley's discs and its burning brass; the Hour's own), shown on the arena's floor (the gate's
-// telegraph pass over another floor), heard, and its fall (scenes/sdRemnantBlows.js), wired into the hosts.
+// telegraph pass over another floor), heard, and its fall (scenes/superDungeon/sdRemnantBlows.js), wired into the hosts.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -16,8 +16,8 @@ import { POOL_TICK_MS, COURT_R } from '../src/net/gate/gateBrain.js';
 import { strikeDamage, STRIKE_LATE_MS } from '../src/net/gate/gateStrike.js';
 import {
   createSdRemnantBlows, sdTelegraphShapes, sdPoolShapes, sdBlowsInFlight, SD_BLOW_COLOR, SD_BLOWS_TEXT, SD_BLOW_CUES, SD_TELEGRAPH_FLOOR, SD_ARENA_CENTRE,
-} from '../src/scenes/sdRemnantBlows.js';
-import { arenaToDungeon } from '../src/scenes/sdRemnant.js';
+} from '../src/scenes/superDungeon/sdRemnantBlows.js';
+import { arenaToDungeon } from '../src/scenes/superDungeon/sdRemnant.js';
 import { GateTelegraphRenderer, TELEGRAPH_KIND, TELEGRAPH_EDGE, TELEGRAPH_EDGE_DAGON, TELEGRAPH_FLASH_MS, TELEGRAPH_MARGIN, TELEGRAPH_POOL, telegraphQuadOver } from '../src/render/gateTelegraph.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

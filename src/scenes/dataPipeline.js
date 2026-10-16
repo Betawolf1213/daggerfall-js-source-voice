@@ -159,7 +159,7 @@ export function createDataPipeline({ renderer, arch, palette, fetch = fetchBytes
   // AUDIT GN2-PF5: THE ARCHIVES WHOSE STAND-INS ARE CLASSIC ART - the port's own pictures standing where a TEXTURE file
   // would (the new galleon's 38131: a hull's planking, as ARENA2's is every other hull's), uploaded as a classic record
   // is, so Retro Mode's no-mip cap reaches them. Every other stand-in is a mod's picture, TryImportTexture's, never
-  // capped. Marked by whoever registers them (scenes/comeSailAwayPool.js); a pack's picture over one is taken as its own.
+  // capped. Marked by whoever registers them (scenes/comeSailAway/comeSailAwayPool.js); a pack's picture over one is taken as its own.
   const classicArt = new Set();
   const markClassicArt = (archive) => { classicArt.add(Number(archive)); };
   const isClassicArt = (archive) => classicArt.has(Number(archive));

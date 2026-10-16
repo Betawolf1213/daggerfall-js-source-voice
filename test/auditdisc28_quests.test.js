@@ -31,7 +31,7 @@ import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { OnlineSession } from '../src/net/online.js';
 import { CHAT_WORLD_ROOM } from '../src/net/wire.js';
 import { createExteriorFoes, QUEST_PUPPETS_MAX } from '../src/scenes/exteriorFoes.js';
-import { questShareTag, sharedQuestFoe, questPrivateTag, partyQuestFoe, questBehaviourFor, adoptsOrphanQuestFoe } from '../src/scenes/questFoeHost.js';
+import { questShareTag, sharedQuestFoe, questPrivateTag, partyQuestFoe, questBehaviourFor, adoptsOrphanQuestFoe } from '../src/scenes/quest/questFoeHost.js';
 import { ExteriorAutomapWindow, stampResidenceQuestNames } from '../src/ui/exteriorAutomapWindow.js';
 import { buildingSummaries } from '../src/world/buildingSummaries.js';
 import { fakeSocketClass } from './fakeSocket.mjs';

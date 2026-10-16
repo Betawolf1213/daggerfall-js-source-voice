@@ -47,7 +47,7 @@ turned under her and she came about for home short of her port (A22).
 that brought her there - for the place ahead she was steered at (`LANE_LEAD_S`, gone), and `seeds`, her place's last
 LANE_LINEAGE (24) voyages', hers first; `region`, her home port's. `pursue(leg, x, z, ahead)`: the point `ahead` on
 along the leg from the point of it nearest her, any segment, a run carried round a corner, clamped at the end, and the
-leg's remainder from there (`left`). `scenes/navalHost.js liners`: each ship in my sea known by her seeds - mine
+leg's remainder from there (`left`). `scenes/naval/navalHost.js liners`: each ship in my sea known by her seeds - mine
 steered, a peer's read on her tag; every player's own packets at the shared sea's traffic; the last open berth; a
 packet stood named by her lane's region; the stand barred by her voyage's ship anywhere in my sea or her place's of an
 earlier voyage afloat; let go past LINER_DROP_M only - out of the list (her lineage past) she is the sea's as any ship
@@ -118,8 +118,8 @@ the depth maps drew her whole.
 reads the kept share as the shadow's strength); `recordMesh`'s `cut` (the renderer's `1 - dissolve`, drawn and
 off-screen records alike), never a cache's; the replay draws a cut record with the cutting program, its cut uploaded
 once a record a replay - a whole one's the plain depth program, nothing uploaded, so the frame's cost is LA-COST1's.
-Under FADE_FLATS: `scenes/comeSailAwayPool.js lights` lists none of hers; `navalHost.js lampsInto` draws no lamp of
-hers; `poseShip` stands her flames down (`scenes/navalFlames.js show`, a flame's batch left out of the flats' axis),
+Under FADE_FLATS: `scenes/comeSailAway/comeSailAwayPool.js lights` lists none of hers; `navalHost.js lampsInto` draws no lamp of
+hers; `poseShip` stands her flames down (`scenes/naval/navalFlames.js show`, a flame's batch left out of the flats' axis),
 raises no embers, smoke or founder; `lights` lights no glow of hers; `world.js csaParticleLists` draws none of her
 particles.
 

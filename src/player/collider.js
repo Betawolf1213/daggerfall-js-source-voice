@@ -1437,7 +1437,7 @@ export class Collider {
     // ground-ness and whether any ceiling-ish contact happened.
     // AUDIT DECOR-SHELL 1: `skip`, a Set of bucket keys the sphere
     // passes through - the ray's own filter, for the decorator's flying
-    // eye (scenes/decorTool.js flyClip), which looks through a piece
+    // eye (scenes/decor/decorTool.js flyClip), which looks through a piece
     // being moved. Null (every body) is the resolve exactly as it was.
     // SH1 (2026-09-12, Mac: "you can immediately walk over things (like
     // interior tables, tree trunks, etc)"): `standCeil` is the highest

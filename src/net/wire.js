@@ -2919,7 +2919,7 @@ export function validPartyPose(p) {
   // KEPT-KILL (2026-10-01, Mac: "If someone kills a quest target regardless of relation then it should ping the quest
   //   for the players involved regardless"; world137): `qk`, the quest foes I held on a partner's word (an heir whose
   //   copy holds no such quest - AUDIT DISC28 QS-J's `_keptTag`) that died in my world lately - each {q: the quest's
-  //   name, s: its Foe's symbol, i: the foe's number on my stream}, at most KEPT_KILL_POSE_MAX (scenes/questFoeHost.js
+  //   name, s: its Foe's symbol, i: the foe's number on my stream}, at most KEPT_KILL_POSE_MAX (scenes/quest/questFoeHost.js
   //   KeptKillLedger). A row out of its law is dropped, and none is omitted. A relay before it strips the field: the
   //   kill counts on no copy that did not see it, as before.
   if (Array.isArray(p.qk)) {
@@ -4376,7 +4376,7 @@ export const bodyWordGate = (bucket, nowMs) => tokenGate(bucket, nowMs, BODY_WOR
 export const bodyWordRelayGate = (bucket, nowMs) => tokenGate(bucket, nowMs, BODY_WORD_HZ_MAX, BODY_WORD_HZ_MAX + 4);
 export const gateGate = (bucket, nowMs) => tokenGate(bucket, nowMs, GATE_HZ_MAX);
 /** The first relay that runs a gate's boss room. An older one CLOSES the socket on the frame (the cast arm's law), and
- *  holds no fight - so the gate's door answers "not yet" at it (scenes/gatePool.js ready). */
+ *  holds no fight - so the gate's door answers "not yet" at it (scenes/gate/gatePool.js ready). */
 export const GATE_RELAY_MIN = 113;   // world110 on its branch; main's EVENT1, RENOWN1 and PARTY-TRAVEL took world110-112, none of which holds a fight
 export const relaySupportsGate = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= GATE_RELAY_MIN; };
 /** ARENA4: the arena frames' own bucket - blows at the referee's ARENA_HIT_HZ_MAX (4), a swing's bodies under one `q`, the

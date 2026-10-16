@@ -13,7 +13,7 @@ import { ACCEL, DECEL, OARS_TURN, SWEEP_TURN, WIND_RATED, createSeaShip, maxTurn
 import { createShipDamage, SHIP_STATES, STRUCK_AT } from '../src/systems/naval/navalDamage.js';
 import { HULL } from '../src/systems/naval/navalShips.js';
 import { NAVAL_DEG } from '../src/systems/naval/navalBallistics.js';
-import { HEAVE_TO_DECEL } from '../src/scenes/navalHost.js';
+import { HEAVE_TO_DECEL } from '../src/scenes/naval/navalHost.js';
 import { FEATURES } from '../src/systems/features.js';
 import { scene } from './csaScene.mjs';
 

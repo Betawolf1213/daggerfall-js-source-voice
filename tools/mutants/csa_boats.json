@@ -405,7 +405,7 @@
   },
   {
     "name": "CSA-B-pool-walks-inactive",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "      if (c.activeSelf) stack.push([c, multiply(m, c.localMatrix(), new Float32Array(16))]);",
     "new": "      stack.push([c, multiply(m, c.localMatrix(), new Float32Array(16))]);",
     "tests": [
@@ -414,7 +414,7 @@
   },
   {
     "name": "CSA-B-daggerfall-light-first-frame-silent",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "if (dl.lastCityLightsFlag == null) dl.lastCityLightsFlag = !cityLightsOn;",
     "new": "if (dl.lastCityLightsFlag == null) dl.lastCityLightsFlag = cityLightsOn;",
     "tests": [
@@ -423,7 +423,7 @@
   },
   {
     "name": "CSA-B-handler-reach-counts-height",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "light.enabled = !(Math.hypot(p[0] - playerPosition[0], p[2] - playerPosition[2]) > LANTERN_HANDLER_REACH);",
     "new": "light.enabled = !(Math.hypot(p[0] - playerPosition[0], p[1] - playerPosition[1], p[2] - playerPosition[2]) > LANTERN_HANDLER_REACH);",
     "tests": [
@@ -432,7 +432,7 @@
   },
   {
     "name": "CSA-B-flat-emission-never-off",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "b.emissionOff = !!(r.emissionColor && r.emissionColor[0] === 0 && r.emissionColor[1] === 0 && r.emissionColor[2] === 0);",
     "new": "b.emissionOff = false;",
     "tests": [
@@ -441,7 +441,7 @@
   },
   {
     "name": "CSA-B-flat-stood-on-its-centre",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "b.origin[0] = m[12]; b.origin[1] = m[13] - b.size.h / 2; b.origin[2] = m[14];",
     "new": "b.origin[0] = m[12]; b.origin[1] = m[13]; b.origin[2] = m[14];",
     "tests": [
@@ -450,7 +450,7 @@
   },
   {
     "name": "CSA-B-mesh-textures-cutout",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "    pipeline.uploadRecord(archive, record, { opaque: true, cutout: cutOf(archive, record) });",
     "new": "    pipeline.uploadRecord(archive, record, { cutout: cutOf(archive, record) });",
     "tests": [
@@ -459,7 +459,7 @@
   },
   {
     "name": "CSA-B-lights-uncapped",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "return out.slice(0, CSA_LIGHTS_MAX).map(",
     "new": "return out.map(",
     "tests": [
@@ -468,7 +468,7 @@
   },
   {
     "name": "CSA-B-lights-unsorted",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "  out.sort((a, b) => a._d - b._d);\n",
     "new": "",
     "tests": [

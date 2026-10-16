@@ -11,7 +11,7 @@ import { hallOfChampions, newArenaLadder, ladderAfter, nextLadderBout, LADDER_TI
 import * as LG from '../src/systems/arena/arenaLeague.js';
 import * as AB from '../src/systems/arena/arenaBoard.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
-import { createArenaBouts } from '../src/scenes/arenaBouts.js';
+import { createArenaBouts } from '../src/scenes/arena/arenaBouts.js';
 import { heraldChoice } from '../src/systems/arena/arenaHerald.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';
 

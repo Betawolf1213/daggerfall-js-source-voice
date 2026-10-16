@@ -55,7 +55,7 @@
   },
   {
     "name": "MARKET-AUDIT2-decor-change-credit",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      reserve: pay > 0 ? walletReserve(wallet, pay).reserve : null,",
     "new": "      reserve: pay > 0 ? () => { wallet.pay(pay); return () => wallet.credit?.(pay); } : null,",
     "tests": [

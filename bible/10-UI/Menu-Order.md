@@ -97,7 +97,7 @@ where a picture cannot say it (a price, a name).
     stay on it (U4). A press in flight (an insignia being bought) stays `disabled`: it has nothing to say.
   - **A model's own picture in its tile.** The panel asks for a model's picture as it asks for a flat's (when its tile
     comes into view; `modelPicture`, `ui/decorPanel.js` - the catalogue's, a placed piece's and a built-in one's), and
-    shows it over its kind's glyph, which stands until it lands. The host (`scenes/decorTool.js` `drawThumbs`) draws a few
+    shows it over its kind's glyph, which stands until it lands. The host (`scenes/decor/decorTool.js` `drawThumbs`) draws a few
     a frame (`DECOR_THUMBS_A_FRAME`) at the preview's own turn of the frame: the model loaded through a hold of the
     panel's own and let go with it (AUDIT MENU-ORDER R4), drawn in the host's law (AUDIT 05b A5), in the room's own
     textures (a picture is kept under the law its room's table was built in - its climate and season, `markRemapLaw`: a
@@ -107,7 +107,7 @@ where a picture cannot say it (a price, a name).
     seen a quarter turned from a little above. An ask ages only while the panel stands (C1); one for a model that never
     comes is let go after `DECOR_THUMB_WAIT_MS`, and its tile keeps the glyph.
   - **A ship's own picture.** The boat pool builds each hull once, standing at the origin and never on the water, its
-    sails baked as they stand (`scenes/comeSailAwayPool.js` `portrait`): her parts - every mesh the pool's own draw
+    sails baked as they stand (`scenes/comeSailAway/comeSailAwayPool.js` `portrait`): her parts - every mesh the pool's own draw
     would draw for her, at its own matrix - and her box. `scenes/shipPortraits.js` (new) draws her one a frame at the
     world's frame's end (world.js, beside the yard decorator's preview, after the frame is shown and its shots are
     taken - AUDIT MENU-ORDER R2), under the shipmaster's window, from off her beam and a little above, at 480x240 (R7),
@@ -119,7 +119,7 @@ where a picture cannot say it (a price, a name).
     clearance.
 
 THE FOUR HOSTS (Home.md, 17e): the decorator, the counter and the pages are each one surface every host opens through
-its one door (`scenes/decorTool.js`, `ui/tradeDoor.js`, the pause menu's pages). MENU-ORDER e's pictures are handed by
+its one door (`scenes/decor/decorTool.js`, `ui/tradeDoor.js`, the pause menu's pages). MENU-ORDER e's pictures are handed by
 the providers that stand them: `src/scenes/world.js` WIRED - the Stores page's (`setProfessionsPages`), the board's
 market and traders (`showNoticeWindow`'s `market`, `vendorBoardHost`), a trader's stall (`openHomeVendorWindow`) and the
 Vendor page's (`setVendorPage`), the only places those providers are built; `src/scenes/worldModes.js` (the interiors), `src/scenes/dungeonContext.js` and

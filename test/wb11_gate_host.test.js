@@ -10,7 +10,7 @@
 //   the wire        `ahit`; `ad`, `amv`, `aatk`, `ah`, `adie`; the state's `lg`; the chart row's `a`; the brain's law 5
 //   the relay       a blow on one of his host judged as it comes, its fall said to the court at once
 //   the link        net/gate/gateLink.js - the host folded, the gone kept for the court to play out
-//   the court       scenes/gateHost.js through scenes/gateCourt.js - bodies, blows judged on me, words, the targets
+//   the court       scenes/gate/gateHost.js through scenes/gate/gateCourt.js - bodies, blows judged on me, words, the targets
 //   the look        world/gate/gateBoss.js hostLookOf, hostAct, hostCue, hostStandIn
 //   the bar         ui/gate/gateBossBar.js - the Ward-Bearers standing, his host counted
 //   the plumbing    the dungeon context's swing, shaft and spell; the magic host's marks; the world host's doors
@@ -35,8 +35,8 @@ import { hostVerdict, hostTelegraphAt, STRIKE_LATE_MS } from '../src/net/gate/ga
 import { gateTimes, gateRoomKey } from '../src/net/gate/gateLaw.js';
 import { hostLookOf, hostAct, hostFallAct, hostCue, hostStandIn, HOST_LOOKS, HOST_FALL_MS, BOSS_ARMOR, WARD_COLOR } from '../src/world/gate/gateBoss.js';
 import { courtToDungeon } from '../src/world/gate/gateArena.js';
-import { createGateCourt } from '../src/scenes/gateCourt.js';
-import { COURT_HOST_TEXT, hostShapes, HOST_SHAPES_MAX } from '../src/scenes/gateHost.js';
+import { createGateCourt } from '../src/scenes/gate/gateCourt.js';
+import { COURT_HOST_TEXT, hostShapes, HOST_SHAPES_MAX } from '../src/scenes/gate/gateHost.js';
 import { bossBarModel, BOSS_BAR_TEXT, destroyGateBossBar } from '../src/ui/gate/gateBossBar.js';
 import { destroyGateMarksCard, MARK_TIPS, MARK_ICONS } from '../src/ui/gate/gateMarksView.js';
 import { destroyGateGround } from '../src/ui/gate/gateGroundView.js';

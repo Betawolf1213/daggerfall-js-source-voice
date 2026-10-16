@@ -218,7 +218,7 @@
   },
   {
     "name": "NAV-C-a-sea-ship-mine",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "    seaBoats.push(boat);\n    return boat;",
     "new": "    boats.push(boat);\n    return boat;",
     "tests": [

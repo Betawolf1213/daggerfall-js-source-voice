@@ -55,7 +55,7 @@
   },
   {
     "name": "AUDWB-D3-a-grunt-a-word",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "{ gruntAt = t; hpHeard = s.hp; sound(BOSS_CUES.hurt, s, t, null); }",
     "new": "{ gruntAt = t; hpHeard = s.hp; sound(BOSS_CUES.hurt, s, t, null); } hpHeard = s.hp;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "AUDWB-D3-a-heal-counted-as-loss-kept",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    if (hpHeard === null || s.hp > hpHeard) hpHeard = s.hp;",
     "new": "    if (hpHeard === null) hpHeard = s.hp;",
     "tests": [
@@ -191,7 +191,7 @@
   },
   {
     "name": "AUDWB-D10-a-new-list-a-frame",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "      _lights.length = 0;",
     "new": "      const _lights = [];",
     "tests": [

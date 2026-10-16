@@ -28,7 +28,7 @@ import { exhibitionFor } from '../src/net/arena/arenaExhibition.js';
 import { wallMsForClassicMinutes, sharedClassicMinutes } from '../src/net/wire.js';
 import { COUNT_MS, callMs } from '../src/systems/arena/arenaBout.js';
 import { _resetArenaCache } from '../server-account/src/arena.js';
-import { createArenaOnline } from '../src/scenes/arenaOnline.js';
+import { createArenaOnline } from '../src/scenes/arena/arenaOnline.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 
 const { subtle } = globalThis.crypto;

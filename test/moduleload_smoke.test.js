@@ -32,7 +32,7 @@ const walk = (d, out = []) => {
 /** The known-unimportable TWELVE, with the reason each is excluded. */
 export const NOT_IMPORTABLE = Object.freeze({
   'src/main.js': 'addEventListener/document at module scope',   // BOOT1: it used to reject at LINK time, through world.js's import.meta.glob - the hosts are behind doors now, its body runs, and the crash listeners at its module scope are what node lacks
-  'src/scenes/questData.js': 'import.meta.glob',
+  'src/scenes/quest/questData.js': 'import.meta.glob',
   'src/scenes/world.js': 'import.meta.glob',
   'src/tools/enhancedChargen.js': 'document at module scope',
   'src/tools/enhancedMenu.js': 'document at module scope',

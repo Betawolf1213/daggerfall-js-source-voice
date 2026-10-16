@@ -7,7 +7,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createDecorRoom } from '../src/scenes/decorRoom.js';
+import { createDecorRoom } from '../src/scenes/decor/decorRoom.js';
 import { settle } from './decorFakes.mjs';
 import { Renderer } from '../src/render/renderer.js';
 
@@ -66,8 +66,8 @@ test('WEAPON-MOUNT: both decal programs draw a picture\'s texel as its colour - 
 });
 
 test('WEAPON-MOUNT: the placement ghost is the picture it will hang as, and only the decorator\'s mounts take the door', () => {
-  assert.match(rd('src/scenes/decorTool.js'), /\(r\?\.drawDecalPicture \?\? r\?\.drawDecals\)\?\.call\(r, p\.decal, p\.art\.tex\);/);
-  assert.match(rd('src/scenes/decorRoom.js'), /\(r\?\.drawDecalPicture \?\? r\?\.drawDecals\)\?\.call\(r, e\.mount\.batch, e\.mount\.tex\);/);
+  assert.match(rd('src/scenes/decor/decorTool.js'), /\(r\?\.drawDecalPicture \?\? r\?\.drawDecals\)\?\.call\(r, p\.decal, p\.art\.tex\);/);
+  assert.match(rd('src/scenes/decor/decorRoom.js'), /\(r\?\.drawDecalPicture \?\? r\?\.drawDecals\)\?\.call\(r, e\.mount\.batch, e\.mount\.tex\);/);
   for (const f of ['src/combat/bloodMarks.js', 'src/combat/bloodDecals.js']) {
     assert.doesNotMatch(rd(f), /drawDecalPicture/, `${f}: a blood mark is a film`);
   }

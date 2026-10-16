@@ -7,9 +7,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';
-import { createComeSailAwayPeers } from '../src/scenes/comeSailAwayPeers.js';
-import { createComeSailAwayAboard, localOf } from '../src/scenes/comeSailAwayAboard.js';
+import { createComeSailAwayPool } from '../src/scenes/comeSailAway/comeSailAwayPool.js';
+import { createComeSailAwayPeers } from '../src/scenes/comeSailAway/comeSailAwayPeers.js';
+import { createComeSailAwayAboard, localOf } from '../src/scenes/comeSailAway/comeSailAwayAboard.js';
 import { Boat, HULL_NAMES } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { boardPlaceOf } from '../src/systems/comeSailAway/comeSailAway.js';
 import { colliderPoses, invertAffine, boxColliderTriangles, raycastColliders, BUILTIN_COLLIDER_MESHES } from '../src/world/prefabColliders.js';
@@ -112,9 +112,9 @@ const poseOf = (boat) => ({ position: [...boat.GameObject.position], rotation: [
 
 
 import { alignControllerToGround } from '../src/world/groundAlign.js';
-import { CSA_ABOARD_GRACE } from '../src/scenes/comeSailAwayAboard.js';
-import { createDeepWatersPlayer } from '../src/scenes/deepWatersPlayer.js';
-import { createSwimMovement } from '../src/scenes/deepWatersSwimMove.js';
+import { CSA_ABOARD_GRACE } from '../src/scenes/comeSailAway/comeSailAwayAboard.js';
+import { createDeepWatersPlayer } from '../src/scenes/deepWater/deepWatersPlayer.js';
+import { createSwimMovement } from '../src/scenes/deepWater/deepWatersSwimMove.js';
 import { applyMotorEffectFlags } from '../src/scenes/shared.js';
 import { exteriorSwimming } from '../src/player/exteriorSurface.js';
 import { flushStateChange } from '../src/systems/deepWater/deepWaterPlayer.js';

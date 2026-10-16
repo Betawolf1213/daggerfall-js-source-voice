@@ -11,7 +11,7 @@ import {
 } from '../src/systems/naval/navalDirector.js';
 import { createSeaShip, stepCaptain, fightsAny, BOLD_SHARE, GRAPPLE_STILL_S, AID_PRIORITY, NAVY_HUNTS, ENGAGE_RANGE, TEMPERS } from '../src/systems/naval/navalAI.js';
 import { RAIDER_SHIPS_MAX } from '../src/systems/naval/navalRaiders.js';
-import { hullBoxOf, RELIEF_NEAR_M, RELIEF_REACHED_M, ALLY_STRAY_SHARE } from '../src/scenes/navalHost.js';
+import { hullBoxOf, RELIEF_NEAR_M, RELIEF_REACHED_M, ALLY_STRAY_SHARE } from '../src/scenes/naval/navalHost.js';
 import { navalHitData } from '../src/systems/naval/navalWire.js';
 import { classById } from '../src/systems/naval/navalShips.js';
 import { NOTORIETY } from '../src/systems/naval/navalLaw.js';

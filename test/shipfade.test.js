@@ -5,9 +5,9 @@
 // the world over SHIP_FADE_S and goes out of it over SHIP_FADE_S - she sails on, dissolving (the renderer's ordered
 // dither, a fragment kept where the screen's 4x4 threshold stands under her share), her crew and lanterns going first
 // (FADE_FLATS), her tag with her - and is dropped once she has gone; one fired on as she fades comes about and stays. A
-// ship sunk, taken or yielded into a peer's copy goes as she always went. The real host (scenes/navalHost.js) through
+// ship sunk, taken or yielded into a peer's copy goes as she always went. The real host (scenes/naval/navalHost.js) through
 // real frames over Come Sail Away's pool (test/navalSea.mjs, test/navalRoom.mjs), the pool's own draw and flats
-// (scenes/comeSailAwayPool.js), the renderer's own setDissolve and shader (render/renderer.js). Each is red on the
+// (scenes/comeSailAway/comeSailAwayPool.js), the renderer's own setDissolve and shader (render/renderer.js). Each is red on the
 // record's code (168bf2587). `03-World/Naval-Combat.md` (SHIP-FADE).
 import './modsOff.js';
 import { byClass } from './chargenDom.mjs';
@@ -16,8 +16,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { sea, knowAll } from './navalSea.mjs';
-import { SHIP_FADE_S, HARBOUR_LEAVE } from '../src/scenes/navalHost.js';
-import { createComeSailAwayPool, FADE_FLATS } from '../src/scenes/comeSailAwayPool.js';
+import { SHIP_FADE_S, HARBOUR_LEAVE } from '../src/scenes/naval/navalHost.js';
+import { createComeSailAwayPool, FADE_FLATS } from '../src/scenes/comeSailAway/comeSailAwayPool.js';
 import { Boat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { Renderer } from '../src/render/renderer.js';
 import { DISSOLVE_GLSL } from '../src/render/orderedDither.js';

@@ -28,7 +28,7 @@
   },
   {
     "name": "BASEHIDE-a-holder-taken-out",
-    "file": "src/scenes/decorBase.js",
+    "file": "src/scenes/decor/decorBase.js",
     "old": "    if (!p || p.hidden || holds(p)) return false;",
     "new": "    if (!p || p.hidden) return false;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "BASEHIDE-out-but-solid",
-    "file": "src/scenes/decorBase.js",
+    "file": "src/scenes/decor/decorBase.js",
     "old": "    if (p.draw) { drop(drawList, p.draw); collider?.removeBucket?.(baseBucketOf(key)); }",
     "new": "    if (p.draw) { drop(drawList, p.draw); }",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "BASEHIDE-out-but-lit",
-    "file": "src/scenes/decorBase.js",
+    "file": "src/scenes/decor/decorBase.js",
     "old": "    if (p.light) drop(lights(), p.light);",
     "new": "",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "BASEHIDE-out-but-a-target",
-    "file": "src/scenes/decorBase.js",
+    "file": "src/scenes/decor/decorBase.js",
     "old": "    if (p.furniture) p.furniture.hidden = true;",
     "new": "",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "BASEHIDE-back-but-a-ghost",
-    "file": "src/scenes/decorBase.js",
+    "file": "src/scenes/decor/decorBase.js",
     "old": "      if (p.cpu?.positions && p.cpu?.indices) collider?.addMesh?.(baseBucketOf(key), p.cpu.positions, p.cpu.indices, p.matrix);\n",
     "new": "",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "BASEHIDE-a-strange-name-lost",
-    "file": "src/scenes/decorBase.js",
+    "file": "src/scenes/decor/decorBase.js",
     "old": "      for (const k of set) if (!pieces.has(k)) stray.add(k);",
     "new": "",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "BASEHIDE-the-list-forgets-strays",
-    "file": "src/scenes/decorBase.js",
+    "file": "src/scenes/decor/decorBase.js",
     "old": "      const out = new Set(stray);",
     "new": "      const out = new Set();",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "BASEHIDE-the-home-never-asked",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    if (r.kind === 'home') {\n      const res = await deps.homeDecor?.hidden?.(",
     "new": "    if (false) {\n      const res = await deps.homeDecor?.hidden?.(",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "BASEHIDE-a-refusal-stood",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      if (!res?.ok) { deps.say?.(deps.refusal?.(res?.error) ?? 'The room could not be changed.'); return false; }\n",
     "new": "",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "BASEHIDE-a-left-room-changed",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    if (deps.visit?.() !== visit) return false;\n    for (const k of moving) { if (out) b.hide(k); else b.show(k); }",
     "new": "    for (const k of moving) { if (out) b.hide(k); else b.show(k); }",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "BASEHIDE-the-tool-takes-a-holder",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "return p && p.hidden !== out && !(out && p.holds); });",
     "new": "return p && p.hidden !== out; });",
     "tests": [

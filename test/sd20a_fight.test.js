@@ -29,9 +29,9 @@ import { SD_STEPS_FLOORS, SD_CAST_BACK_LOSS } from '../src/world/superDungeon/sd
 import { CAPSULE_RADIUS } from '../src/player/motor.js';
 import { createSdFightLink } from '../src/net/superDungeon/sdFightLink.js';
 import { validSdOut } from '../src/net/wire.js';
-import { createSdRemnantBlows } from '../src/scenes/sdRemnantBlows.js';
-import { sdPerilAt } from '../src/scenes/sdArenaRead.js';
-import { arenaToDungeon } from '../src/scenes/sdRemnant.js';
+import { createSdRemnantBlows } from '../src/scenes/superDungeon/sdRemnantBlows.js';
+import { sdPerilAt } from '../src/scenes/superDungeon/sdArenaRead.js';
+import { arenaToDungeon } from '../src/scenes/superDungeon/sdRemnant.js';
 import { hurtPlayer, setDeathPresenter, setAvoidDeathHook } from '../src/characters/playerEntity.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

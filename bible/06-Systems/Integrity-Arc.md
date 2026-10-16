@@ -668,7 +668,7 @@ and fought on a ghost.
 ### INT15 - the clients
 
 Each fight's client says its body at most every BODY_SAY_MS (250), at once when it moves a thousandth, every
-BODY_SAY_KEEP_MS (3 s) however still (bodySayer): the court's (`scenes/gateCourt.js` sendBody) while it stands alive in
+BODY_SAY_KEEP_MS (3 s) however still (bodySayer): the court's (`scenes/gate/gateCourt.js` sendBody) while it stands alive in
 a fight that lives, the Hour's through its realm's socket while the fight answered it, the serpent's host her hull
 through her cell. Only to a relay that counts (`BOSS_REF_RELAY_MIN` 188 - an older one's words know no `vt`) - 6b: the
 relay of the socket the word leaves on (`net/online.js` _bodySend; her cell may be a halo's, its relay its own), on a

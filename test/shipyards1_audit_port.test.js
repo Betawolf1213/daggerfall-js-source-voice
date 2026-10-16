@@ -13,7 +13,7 @@ import { buildLighthouseModel, buildLighthouseFire, LIGHTHOUSE, LIGHTHOUSE_POINT
 import { PORT_REC, PORT_PAINTERS, PORT_ARCHIVE } from '../src/world/portArt.js';
 import { peopleOf, createPortHost, feetInPort, guardFor, GUARD_HEADROOM, beamPuffs, nearFade, BEAM_PUFFS, BEAM_NEAR_FADE, BEAM_PERIOD_S, OFFICE_LAMP_RANGE } from '../src/scenes/portHost.js';
 import { KEEPER_HALF, KEEPER_HEIGHT, yardToScene } from '../src/scenes/merchantYardsHost.js';
-import { DECOR_SHADOW } from '../src/scenes/decorRoom.js';
+import { DECOR_SHADOW } from '../src/scenes/decor/decorRoom.js';
 import { townSeaOf, seaField, portSitesOn, portSpans, portPlaceRows, sceneToLocationXZ, siteToLocation, SEA_CELLS_MIN, LIGHT_APART_K, LIGHT_APART_CAP, LATERAL_K, FACE_K } from '../src/world/portSites.js';
 import { YARD_PAD_M, NO_ROAD_COST, FRONT_ROAD_CELLS } from '../src/world/merchantYards/merchantYardSites.js';
 import { NAV_CELL, NAV_CELLS_PER_BLOCK } from '../src/world/city/cityNavigation.js';

@@ -18,7 +18,7 @@ import { SHIP_STATES, STRUCK_AT } from '../src/systems/naval/navalDamage.js';
 import { NAVAL_DEG } from '../src/systems/naval/navalBallistics.js';
 import { DESPAWN_BEYOND, encounterClasses } from '../src/systems/naval/navalDirector.js';
 import { mulberry32 } from '../src/combat/bloodArt.js';
-import { HOSTILE_NEAR_M, RAM_SPEED, SHIP_FADE_S } from '../src/scenes/navalHost.js';
+import { HOSTILE_NEAR_M, RAM_SPEED, SHIP_FADE_S } from '../src/scenes/naval/navalHost.js';
 import { FIELD_QUIET_S } from '../src/systems/naval/navalYard.js';
 import { HANDLING } from '../src/systems/comeSailAway/comeSailAway.js';
 import { sailFreeGain } from '../src/systems/helmWay.js';

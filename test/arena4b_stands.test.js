@@ -1,8 +1,8 @@
 // ARENA4b (2026-10-03): THE STANDS AND THE BANNERS ON A RELAY'S SAND, DRIVEN - the spectator's two presses on the bout's HUD
 // (ui/arena/arenaHud.js: the model, the DOM, the keys, the allowance), my cheer or boo down a watched bout's room over the real
-// relay (scenes/arenaBouts.js cheer, scenes/arenaOnline.js send.cheer, server/src/index.js over test/fakeRoom.mjs) and my own
+// relay (scenes/arena/arenaBouts.js cheer, scenes/arena/arenaOnline.js send.cheer, server/src/index.js over test/fakeRoom.mjs) and my own
 // crowd moved at once without hearing my echo twice, and the realm's banners and laurel on a relay's sand and on this
-// screen's floor (scenes/arenaBouts.js setRealm / relayBanners / laurelFavour, scenes/arenaOnline.js realm). Mac,
+// screen's floor (scenes/arena/arenaBouts.js setRealm / relayBanners / laurelFavour, scenes/arena/arenaOnline.js realm). Mac,
 // 2026-10-02: "During fights, the crowd is present and can cheer/boo you".
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -10,8 +10,8 @@ import { arenaHudModel, drawArenaHud, destroyArenaHud, STANDS_KEYS, ARENA_HUD_CS
 import { newBout, boutTick, boutAtMarks, callMs, COUNT_MS } from '../src/systems/arena/arenaBout.js';
 import { newCrowd, SHOUT_PUSH } from '../src/systems/arena/arenaCrowd.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
-import { createArenaBouts, CHEER_GAP_MS } from '../src/scenes/arenaBouts.js';
-import { createArenaOnline } from '../src/scenes/arenaOnline.js';
+import { createArenaBouts, CHEER_GAP_MS } from '../src/scenes/arena/arenaBouts.js';
+import { createArenaOnline } from '../src/scenes/arena/arenaOnline.js';
 import { ARENA_HALL, arenaBoutRoom, ARENA_FLOOR_CENTRE, ARENA_CHEER_MS, arenaLadderOf } from '../src/net/arena/arenaLaw.js';
 import { LAUREL_FAVOUR } from '../src/systems/arena/arenaLeague.js';
 import { exhibitionFor } from '../src/systems/arena/arenaLadder.js';

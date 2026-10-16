@@ -91,7 +91,7 @@
   },
   {
     "name": "SD26-R3-dust-past-the-rim-kept",
-    "file": "src/scenes/sdFx.js",
+    "file": "src/scenes/superDungeon/sdFx.js",
     "old": "        if (Math.hypot(x, z) <= SD_ARENA.r) add(where(x, 0.1, z),",
     "new": "        add(where(x, 0.1, z),",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "SD26-R3-the-hours-bursts-edgeless",
-    "file": "src/scenes/sdFx.js",
+    "file": "src/scenes/superDungeon/sdFx.js",
     "old": "floor: NaN, edge: SD_FX_EDGE };",
     "new": "floor: NaN, edge: null };",
     "tests": [

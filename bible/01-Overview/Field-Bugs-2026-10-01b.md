@@ -19,11 +19,11 @@ walked through her and ran on 40 m, where my own of the same hull stops him 3.45
 met no mainmast; a body set down on her deck fell into it.
 
 **Why.** CSA-K (13cf2088b, 2026-09-28) stood her colliders only for the one aboard her, and boarded only by her ladder or
-a drop onto her deck (`scenes/comeSailAwayAboard.js` frame: `ground == null`). It never worked; nothing recent broke it.
+a drop onto her deck (`scenes/comeSailAway/comeSailAwayAboard.js` frame: `ground == null`). It never worked; nothing recent broke it.
 
 **The fix** (Mac's word sets PR-WAGON1's law aside for boats; a wagon's stands). `scenes/world.js` csaSyncColliders
 stands every peer's boat that stands beside my boats and the sea's ships, aboard her or not, on the street alone; the
-helm's sweep meets her as it meets a boat of mine. `scenes/comeSailAwayAboard.js` boards by the module's own `on`:
+helm's sweep meets her as it meets a boat of mine. `scenes/comeSailAway/comeSailAwayAboard.js` boards by the module's own `on`:
 standing on her colliders is aboard her, so her deck carries whoever stands on it as she sails (CSA-K's carry). THE
 FOUR HOSTS: world.js wired; worldModes.js and dungeonContext.js stand no one's boat; exterior.js has no peers. No relay
 or wire change.

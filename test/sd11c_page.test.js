@@ -15,7 +15,7 @@ import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createSdHost } from '../src/scenes/sdHost.js';
+import { createSdHost } from '../src/scenes/superDungeon/sdHost.js';
 import { sdCities, sdTemplates } from '../src/systems/superDungeon/sdSite.js';
 import { scanGatePixels } from '../src/systems/gate/gateSite.js';
 import { LOCATION_TYPES, CLIMATES } from '../src/formats/mapsFile.js';
@@ -36,7 +36,7 @@ import {
 } from '../src/net/superDungeon/sdRemnant.js';
 import { HIT_KINDS, dpsRef } from '../src/net/gate/gateBrain.js';
 import { SD_FIGHT_EMPTY, SD_FIGHT_TEXT, foldSdFight, createSdFightLink, sdBodyAt, sdBlowDone, sdHeartsOf } from '../src/net/superDungeon/sdFightLink.js';
-import { sdBlowsInFlight } from '../src/scenes/sdRemnantBlows.js';
+import { sdBlowsInFlight } from '../src/scenes/superDungeon/sdRemnantBlows.js';
 import { SD_BAR_TEXT } from '../src/ui/superDungeon/sdRemnantBar.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
 import * as LR from '../src/systems/loot/lootRarity.js';

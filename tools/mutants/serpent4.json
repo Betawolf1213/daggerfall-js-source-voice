@@ -192,7 +192,7 @@
   },
   {
     "name": "SERPENT4-the-bumper-the-hulls-own-size",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const grow = (h) => ({ ...h, hl: h.hl + BUMPER_M, hw: h.hw + BUMPER_M });",
     "new": "const grow = (h) => h;",
     "tests": [
@@ -201,7 +201,7 @@
   },
   {
     "name": "SERPENT4-the-bumper-pushing-into-her",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (push) { vx += push[0] * BUMPER_GAIN; vz += push[1] * BUMPER_GAIN; }",
     "new": "if (push) { vx -= push[0] * BUMPER_GAIN; vz -= push[1] * BUMPER_GAIN; }",
     "tests": [
@@ -210,7 +210,7 @@
   },
   {
     "name": "SERPENT4-the-bumper-uncapped",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const k = v > BUMPER_V_MAX ? BUMPER_V_MAX / v : 1;",
     "new": "const k = 1;",
     "tests": [
@@ -219,7 +219,7 @@
   },
   {
     "name": "SERPENT4-bumpers-everywhere",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (!deps.serpent?.near?.()) return d;\n    const pose = boatPose(boat);",
     "new": "    const pose = boatPose(boat);",
     "tests": [

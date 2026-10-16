@@ -42,7 +42,7 @@ export const VEIL_CUES = Object.freeze({
 /** AUDIT SD II (L6 F8): THE SHATTERED HOUR'S VEIL - every step into and out of the Hour was Dagon's fire and its roar
  *  (Mac, of the Hour: "not oblivion, something different"): the same whirl in brass, the Mantella's green its eye
  *  (render/gateVeil.js `uTheme`); as it closes, the Orrery's toll (the ship's bell, low) over the Warp's deep wind; as it
- *  opens, a gear's clunk and the Concord's chime (scenes/sdHall.js SD_HALL_SOUNDS). The fire's stays the default. */
+ *  opens, a gear's clunk and the Concord's chime (scenes/superDungeon/sdHall.js SD_HALL_SOUNDS). The fire's stays the default. */
 export const VEIL_THEMES = Object.freeze({ fire: 0, brass: 1, hourIn: 2, hourBack: 3, hourHome: 4, hourCast: 5 });
 export const VEIL_BRASS_CUES = Object.freeze({
   close: Object.freeze([Object.freeze({ clip: 107, volume: 1.0, pitch: 0.5 }), Object.freeze({ clip: SOUND.AmbientWindMoanDeep, volume: 0.9, pitch: 0.45 })]),

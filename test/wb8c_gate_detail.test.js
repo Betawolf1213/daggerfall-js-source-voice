@@ -21,7 +21,7 @@ import {
 import { telegraphShape, markShape, BOSS_MARK_R } from '../src/render/gateTelegraph.js';
 import { bossBarModel, drawGateBossBar, destroyGateBossBar } from '../src/ui/gate/gateBossBar.js';
 import { aspectCss } from '../src/ui/gate/gateMarksView.js';   // WB13c: his epithet's colour on the bar
-import { createGateCourt, COURT_STRIKE_TEXT, COURT_MARKS_TEXT, courtPhaseCard, MARK_COLOR, FED_LATE_MS } from '../src/scenes/gateCourt.js';
+import { createGateCourt, COURT_STRIKE_TEXT, COURT_MARKS_TEXT, courtPhaseCard, MARK_COLOR, FED_LATE_MS } from '../src/scenes/gate/gateCourt.js';
 import { courtToDungeon } from '../src/world/gate/gateArena.js';
 import { gateTip } from '../src/systems/gate/gateOmen.js';
 import { omenPost } from '../src/net/gate/gateHerald.js';
@@ -275,7 +275,7 @@ test('WB8c the seams, by source: the relay births each fight on the day\'s marks
   assert.match(w, /save: \(e, el = 'fire'\) => \{ const w = GATE_SAVES\[el\] \?\? GATE_SAVES\.fire; return savingThrow\(w\[0\], w\[1\], e\); \},/);
   const dc = read('src/scenes/dungeonContext.js');
   assert.match(dc, /const GATE_STRIKE_CAST = Object\.freeze\(\{ frost: SPELL_CAST_SOUND\[1\], poison: SPELL_CAST_SOUND\[2\], shock: SPELL_CAST_SOUND\[3\], magic: SPELL_CAST_SOUND\[4\] \}\);/);   // SD18b (PIN MOVED): the Underking's magic beside them
-  const gc = read('src/scenes/gateCourt.js');
+  const gc = read('src/scenes/gate/gateCourt.js');
   assert.match(gc, /const P = profileOf\(s\);   \/\/ WB8b: the fight's marks, as law/);
   assert.match(gc, /judge\(s, t, P\);/); assert.match(gc, /burn\(s, t, P\);/); assert.match(gc, /cue\(s, t, P\);/); assert.match(gc, /drawBody\(s, t, P\);/);
   assert.match(gc, /shape = s\.fell \? null : telegraphShape\(s\.atk, s\.phase, t, P\);/);

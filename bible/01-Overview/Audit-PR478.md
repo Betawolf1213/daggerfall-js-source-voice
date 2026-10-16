@@ -26,7 +26,7 @@ merge lost nothing of main's (every both-sides file re-merged digits-stripped ma
 | A4 | Medium | **Lurking places and patrol rings lay on the land** - 78 of 200 lurking places, half the rings' chords. | The lurking place a bearing the water from the mouth reaches; ring points the water from the hub reaches; a chord the land lies across goes by the hub (`ringOver`). |
 | A5 | Medium | **A town on an isthmus lost its harbour, or kept berths the mouth could not reach.** Shores facing apart cancel the berths' mean normal. | Below `MOUTH_AGREE` the mouth lies off the nearest berth's own normal; a berth that cannot reach the mouth through the water is dropped. |
 
-### The harbours online (`scenes/navalHost.js`)
+### The harbours online (`scenes/naval/navalHost.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|

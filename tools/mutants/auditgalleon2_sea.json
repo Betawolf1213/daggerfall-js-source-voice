@@ -118,7 +118,7 @@
   },
   {
     "name": "AUDIT-GN2-RG3-every-box-whatever-the-sails",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "  return rig.filter((box) => plan(box) && (/** @type {any} */ (box).sail == null || hangs(/** @type {any} */ (box).sail))).map((box) => {",
     "new": "  return rig.filter((box) => plan(box)).map((box) => {",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "AUDIT-GN2-RG3-a-furled-sail-keeps-its-box",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "return !s || (s.activeSelf && !animatorOf(s)?.GetBool('Stowed')); };",
     "new": "return !s || s.activeSelf; };",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "AUDIT-GN2-RG3-a-hidden-sail-keeps-its-box",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "return !s || (s.activeSelf && !animatorOf(s)?.GetBool('Stowed')); };",
     "new": "return !s || !animatorOf(s)?.GetBool('Stowed'); };",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "AUDIT-GN2-RG4-by-the-nodes-again",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "  if (grid.length < 2) return sail.worldMatrix()[13];",
     "new": "  return sail.worldMatrix()[13];",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "AUDIT-GN2-RG4-a-root-bone-read-as-canvas",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "  if (grid.length < 2) return sail.worldMatrix()[13];",
     "new": "  if (grid.length < 1) return sail.worldMatrix()[13];",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "AUDIT-GN2-RG4-the-lowest-first",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": ".map((n) => [n, canvasHeight(n)]).sort((p, q) => q[1] - p[1]).map(([n]) => n);",
     "new": ".map((n) => [n, canvasHeight(n)]).sort((p, q) => p[1] - q[1]).map(([n]) => n);",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "AUDIT-GN2-RG6-every-wind-to-starboard",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      a.SetFloat('Wind', set ? sailSide(b, sail, w) * Math.min(1, wl) : 0);",
     "new": "      a.SetFloat('Wind', set ? Math.min(1, wl) : 0);",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "AUDIT-GN2-RG6-the-lateen-signed-as-a-gaff",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "  if (boat.SailsLateen?.includes(sail)) return a > 0 ? -1 : 1;",
     "new": "  if (boat.SailsLateen?.includes(sail)) return a > 0 ? 1 : -1;",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "AUDIT-GN2-RG6-the-gaff-blown-to-windward",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "  if (boat.SailsGaff?.includes(sail)) return a >= 0 ? 1 : -1;",
     "new": "  if (boat.SailsGaff?.includes(sail)) return a >= 0 ? -1 : 1;",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "AUDIT-GN2-RG6-the-jib-blown-to-windward",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "  if (boat.SailsGaff?.includes(sail)) return a >= 0 ? 1 : -1;\n  return a > 0 ? 1 : -1;\n}",
     "new": "  if (boat.SailsGaff?.includes(sail)) return a >= 0 ? 1 : -1;\n  return a > 0 ? -1 : 1;\n}",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "AUDIT-GN2-RG6-square-canvas-laid-aback",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "function sailSide(boat, sail, w) {\n  if (boat.SailsSquare?.includes(sail)) return 1;\n",
     "new": "function sailSide(boat, sail, w) {\n",
     "tests": [

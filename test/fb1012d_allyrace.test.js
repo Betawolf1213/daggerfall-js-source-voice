@@ -162,7 +162,7 @@ test('FB1012d ALLY-RACE THE ONE SEAM AND THE FOUR HOSTS: every companion body is
   const ashore = rd('src/scenes/crewAshore.js');
   assert.match(ashore, /rec\.companion = k;\n\s*rec\.person = companionPerson\(c\);/, 'the layer stamps his person as it names him');
   // the sweep: no other module writes a person onto a record
-  const writers = ['src/scenes/world.js', 'src/scenes/worldModes.js', 'src/scenes/dungeonContext.js', 'src/scenes/exterior.js', 'src/scenes/exteriorFoes.js', 'src/scenes/cityGuards.js', 'src/scenes/navalCrew.js', 'src/scenes/crewAshore.js']
+  const writers = ['src/scenes/world.js', 'src/scenes/worldModes.js', 'src/scenes/dungeonContext.js', 'src/scenes/exterior.js', 'src/scenes/exteriorFoes.js', 'src/scenes/cityGuards.js', 'src/scenes/naval/navalCrew.js', 'src/scenes/crewAshore.js']
     .filter((p) => /\b(?:rec|f|nf|foe)\.person\s*=/.test(rd(p)));
   assert.deepEqual(writers, ['src/scenes/crewAshore.js'], 'one stamp, the layer\'s');
   const w = rd('src/scenes/world.js');

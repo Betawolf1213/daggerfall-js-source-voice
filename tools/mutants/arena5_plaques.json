@@ -109,7 +109,7 @@
   },
   {
     "name": "ARENA5-GATE-PLAQUES-OFFLINE",
-    "file": "src/scenes/arenaGate.js",
+    "file": "src/scenes/arena/arenaGate.js",
     "old": "    if (!on) return hallPlaques({ ladder: P.arenaLadder, league: P.arenaLeague, gameMinutes: gm(), name: P.name ?? '', max: PLAQUE_MAX });",
     "new": "    if (!on) return [];",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "ARENA5-GATE-PLAQUES-WAIT",
-    "file": "src/scenes/arenaGate.js",
+    "file": "src/scenes/arena/arenaGate.js",
     "old": "    return b ? hallPlaques({ board: b, max: PLAQUE_MAX }) : [];",
     "new": "    return hallPlaques(b ? { board: b, max: PLAQUE_MAX } : { ladder: P.arenaLadder, league: P.arenaLeague, gameMinutes: gm(), name: P.name ?? '', max: PLAQUE_MAX });",
     "tests": [

@@ -90,7 +90,7 @@ test('MWNPC10b-3 the crews: each hand on her deck offered his class\'s look off 
   const { readyPool } = await import('./navalSea.mjs');
   const { ctxFor } = await import('./csaScene.mjs');
   const { Boat, spawnBoat } = await import('../src/systems/comeSailAway/comeSailAwayBoat.js');
-  const { createNavalCrew } = await import('../src/scenes/navalCrew.js');
+  const { createNavalCrew } = await import('../src/scenes/naval/navalCrew.js');
   const { crewRoster } = await import('../src/systems/naval/crewLife.js');
   const { classById } = await import('../src/systems/naval/navalShips.js');
   const pool = await readyPool();

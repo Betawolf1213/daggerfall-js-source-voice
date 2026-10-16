@@ -298,7 +298,7 @@
   },
   {
     "name": "LW13-file",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "  const file = trip.company ? byRole(trip.party) : trip.party;",
     "new": "  const file = trip.party;",
     "tests": [
@@ -307,7 +307,7 @@
   },
   {
     "name": "LW13-label",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "  if (trip.company) return beset ? `${trip.company.name} beset by ${beset}` : to ? `${trip.company.name}, to ${to}` : trip.company.name;   // LW13: a company by its name\n",
     "new": "",
     "tests": [
@@ -316,7 +316,7 @@
   },
   {
     "name": "LW13-word",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "      const word = company?.head?.id ?? m.res.id;",
     "new": "      const word = m.res.id;",
     "tests": [
@@ -325,7 +325,7 @@
   },
   {
     "name": "LW13-refuse",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "const s = rel.standing(companyAt(id, deps.clock())?.head?.id ?? id, dayOf(deps.clock()));",
     "new": "const s = rel.standing(id, dayOf(deps.clock()));",
     "tests": [

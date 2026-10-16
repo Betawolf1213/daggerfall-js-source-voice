@@ -18,7 +18,7 @@ import { RRI_CLASSES } from '../src/systems/roleplayRealismItems/rriItems.js';
 import { WEAPONS, WEAPON_MATERIALS } from '../src/characters/weapons.js';
 import { THUNDERLOCK_TEMPLATE } from '../src/characters/thunderlockIds.js';
 import { createFpArm, fpSkeletonPath, FP_CLIP_PATH } from '../src/combat/fpArm.js';
-import { createDecorRoom, MW_STAND_ARCHIVE, decorStandsOwn } from '../src/scenes/decorRoom.js';
+import { createDecorRoom, MW_STAND_ARCHIVE, decorStandsOwn } from '../src/scenes/decor/decorRoom.js';
 import { ITEM_GROUP_NAME_BY_CLASS } from '../src/systems/loot/loot.js';
 
 const f = (n) => new Uint8Array(readFileSync(new URL(`./fixtures/mw/${n}`, import.meta.url)));

@@ -413,7 +413,7 @@
   },
   {
     "name": "AUDIT-S1-ghost-without-craft",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": ", station: editing.station ?? null }",
     "new": " }",
     "tests": [
@@ -431,7 +431,7 @@
   },
   {
     "name": "AUDIT-S2-no-guard",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    return pieceWrite(piece.id, () => stationNow(r, piece, want));\n",
     "new": "    return stationNow(r, piece, want);\n",
     "tests": [
@@ -441,7 +441,7 @@
   },
   {
     "name": "AUDIT-S2-rollback-unsaid",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    deps.say?.(DECOR_STATION_GOLD_WENT);\n",
     "new": "",
     "tests": [

@@ -1,5 +1,5 @@
 // SD17 (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 10 and section 16's SD17;
-// Mac: "The detail needs to exceed that of the oblivion gates"): THE BODY MOVED (scenes/sdRemnantRig.js,
+// Mac: "The detail needs to exceed that of the oblivion gates"): THE BODY MOVED (scenes/superDungeon/sdRemnantRig.js,
 // world/superDungeon/sdRemnantModel.js buildRemnantParts, render/sdBeam.js) - the Brass Remnant and its Echoes in seven parts, six of
 // them turned about their joints by a pure law of the fight: eighteen states to the Warden's sprite's ten, every blow
 // moved; the parts whole at rest, every joint kept where it is; the walk in step with the voice's strides; the Hand
@@ -13,11 +13,11 @@ import { readFileSync } from 'node:fs';
 import {
   remnantRig, rigMatrices, restRig, arenaBase, apply4, handAt, sdGearsAt, sdBeamsAt, sdBeamDraws, beamReach, gearFlightOf,
   SD_REM_STATES, SD_RIG_PARTS, SD_RIG_JOINTS, SD_REM_HAND, SD_WAKE_MS, SD_SLIP_EVERY_MS, SD_GEAR_ARC_M, SD_BEAM_FLOOR_Y, SD_BEAM_DROP_M, SD_BEAM_FADE_MS, LEAN, TWIST, NOD,
-} from '../src/scenes/sdRemnantRig.js';
+} from '../src/scenes/superDungeon/sdRemnantRig.js';
 import { buildRemnantParts, buildRemnantModel, buildGearModel, SD_REMNANT_PARTS, SD_REMNANT_BODY, SD_GEAR, remnantMatrix } from '../src/world/superDungeon/sdRemnantModel.js';
-import { createSdRemnant, SD_GEAR_DRAWS, SD_DECOR_DRAWS } from '../src/scenes/sdRemnant.js';
+import { createSdRemnant, SD_GEAR_DRAWS, SD_DECOR_DRAWS } from '../src/scenes/superDungeon/sdRemnant.js';
 import { SD_BLOWS, SD_BODY, SD_REM, SD_ECHO, SD_HEARTS, SD_PILLARS, SD_BREAK_MS, windupFor, behindPillar } from '../src/net/superDungeon/sdRemnant.js';
-import { SD_STRIDE_M, SD_ECHO_STRIDE_M, SD_RELEASE_MS, SD_SLIP_FRAC } from '../src/scenes/sdRemnantVoice.js';
+import { SD_STRIDE_M, SD_ECHO_STRIDE_M, SD_RELEASE_MS, SD_SLIP_FRAC } from '../src/scenes/superDungeon/sdRemnantVoice.js';
 import { SD_ARENA, realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { SdBeamRenderer, SD_BEAM_VS, SD_BEAM_FS, SD_BEAM_MAX, sdBeamVertices } from '../src/render/sdBeam.js';
 

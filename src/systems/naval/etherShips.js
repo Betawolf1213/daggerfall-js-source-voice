@@ -1,7 +1,7 @@
 // @ts-check
 // ETHER-SHIPS (2026-10-11, the owner: "The etheric sea is a infinite procedural oceanscape with procedural islands with
 // towns, dungeons, exotic resources, deadly legendary ships"; bible/03-World/Eltheric-Ocean.md ETHER-SHIPS, ETHER-LEGENDS) -
-// THE ELTHERIC OCEAN'S SHIPS. Pure: the naval host and its director read them (scenes/navalHost.js, navalDirector.js).
+// THE ELTHERIC OCEAN'S SHIPS. Pure: the naval host and its director read them (scenes/naval/navalHost.js, navalDirector.js).
 //
 // ITS TRAFFIC: corsairs and the isles' traders - the Bay's own classes under the Eltheric Ocean's names (`etherShipNames`,
 // her captain the Bay's own law's) and the Isles' colours on a trader, the black flag on a corsair; no crown's navy sails

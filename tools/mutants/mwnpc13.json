@@ -91,7 +91,7 @@
  },
  {
   "name": "MWNPC13-roads-host-mute",
-  "file": "src/scenes/livingRoads.js",
+  "file": "src/scenes/livingWorld/livingRoads.js",
   "old": "    drawVeiledBodies() { deps.sprites.drawVeiledBodies?.(); },",
   "new": "    drawVeiledBodies() {},",
   "tests": [

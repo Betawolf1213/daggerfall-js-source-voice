@@ -228,7 +228,7 @@
   },
   {
     "name": "CC-host-gunner",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "reloadScaleOf(st.crew.morale, st.crew.order) * st.worth.reload : 1) });",
     "new": "reloadScaleOf(st.crew.morale, st.crew.order) : 1) });",
     "tests": [
@@ -237,7 +237,7 @@
   },
   {
     "name": "CC-host-posts-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "s.worth = b.crewed ? crewWorth(c.hands, ashoreNames(b)) : NO_WORTH;",
     "new": "s.worth = NO_WORTH;",
     "tests": [
@@ -246,7 +246,7 @@
   },
   {
     "name": "CC-host-cook",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "atSea: !where().nearPort, wear: s.worth.wear });",
     "new": "atSea: !where().nearPort });",
     "tests": [
@@ -255,7 +255,7 @@
   },
   {
     "name": "CC-host-carpenter-repair",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "mendScaleOf(s.crew.morale) * (s.worth?.mend ?? 1) : 1) * (underFire",
     "new": "mendScaleOf(s.crew.morale) : 1) * (underFire",
     "tests": [
@@ -264,7 +264,7 @@
   },
   {
     "name": "CC-host-carpenter-mend",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "scale: b.crewed ? mendScaleOf(s.crew.morale) * (s.worth?.mend ?? 1) : 1 });",
     "new": "scale: b.crewed ? mendScaleOf(s.crew.morale) : 1 });",
     "tests": [
@@ -273,7 +273,7 @@
   },
   {
     "name": "CC-host-mate",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "return Math.max(1, Math.min(base + 1 + mate, base + handsBonusOf(st.crew.morale, st.crew.order) + mate, Math.max(base + 1, men)));",
     "new": "return Math.max(1, Math.min(base + 1, base + handsBonusOf(st.crew.morale, st.crew.order), Math.max(base + 1, men)));",
     "tests": [
@@ -282,7 +282,7 @@
   },
   {
     "name": "CC-host-lookout",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "nightSight(SAIL_HO_RANGE * sight, { night, lit: showsLight(e) })",
     "new": "nightSight(SAIL_HO_RANGE, { night, lit: showsLight(e) })",
     "tests": [
@@ -291,7 +291,7 @@
   },
   {
     "name": "CC-host-postsway-crewless",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (!enabled || !boat?.crewed) return 1;\n    const st = boat.uid",
     "new": "if (!enabled) return 1;\n    const st = boat.uid",
     "tests": [

@@ -172,7 +172,7 @@
   },
   {
     "name": "LW10-clear-teams",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "    clear() { deps.sprites.clear(); deps.teams?.clear();",
     "new": "    clear() { deps.sprites.clear();",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "LW10-roads-train",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "        if (hasTeam && !at.camp) {",
     "new": "        if (false) {",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "LW10-AUDIT-F3-park",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "            for (const h of parked.horses) horses.push({ ...h, speed: 0 });\n            wagons.push(...parked.wagons);",
     "new": "",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "LW10-AUDIT-F3-train-people",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "places = fight ? fightPlaces(p.trip, at, members) : train.people;",
     "new": "places = fight ? fightPlaces(p.trip, at, members) : partyPlaces(members === p.trip.party ? p.trip : { ...p.trip, party: members }, at, null);",
     "tests": [
@@ -289,7 +289,7 @@
   },
   {
     "name": "LW10-WAGONS1-roads-hitch",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "    const hitchN = deps.teams?.hitchN?.();",
     "new": "    const hitchN = undefined;",
     "tests": [
@@ -298,7 +298,7 @@
   },
   {
     "name": "LW10-WAGONS1-roads-hitched",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "s: w.s, hitched: w.hitched, distM: near(w) })),",
     "new": "s: w.s, distM: near(w) })),",
     "tests": [

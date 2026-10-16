@@ -24,7 +24,7 @@
 // the look (the float keys lean it 0.65 up or down), eased out over its
 // duration, at a tempo the swim multiplier sets.
 //
-// Pure: the host (scenes/deepWatersHost.js) answers the columns and the
+// Pure: the host (scenes/deepWater/deepWatersHost.js) answers the columns and the
 // ground, the world frame applies the answers.
 // ═══════════════════════════════════════════════════════════════════
 

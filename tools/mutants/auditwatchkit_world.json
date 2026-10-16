@@ -145,7 +145,7 @@
   },
   {
     "name": "WK-P5-force-unasked",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "giveItems?.(rest, null, { force: true })",
     "new": "giveItems?.(rest, null)",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "WK-P5-leftovers-dropped",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const mine = rest.length ? deps.board?.giveItems?.(rest, null, { force: true }) ?? null : null;",
     "new": "const mine = null;",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "WK-P5-said-hold",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const where = !rest.length ? 'in the hold' : rest.length === items.length ? 'in your pack' : 'in the hold and your pack';",
     "new": "const where = 'in the hold';",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "WK-P5-over-unsaid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "${mine?.over ? ' - more than you can carry' : ''}",
     "new": "${''}",
     "tests": [

@@ -1,7 +1,7 @@
 [
   {
     "name": "SD2D-never-cast-out",
-    "file": "src/scenes/sdHost.js",
+    "file": "src/scenes/superDungeon/sdHost.js",
     "old": "      else if (again(stood.s)) { asked = true; ask(stood.s, stood.key); }\n",
     "new": "",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "SD2D-cast-out-every-frame",
-    "file": "src/scenes/sdHost.js",
+    "file": "src/scenes/superDungeon/sdHost.js",
     "old": "      else if (again(stood.s)) { asked = true; ask(stood.s, stood.key); }",
     "new": "      else { asked = true; ask(stood.s, stood.key); }",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "SD2D-cast-out-while-it-stands",
-    "file": "src/scenes/sdHost.js",
+    "file": "src/scenes/superDungeon/sdHost.js",
     "old": "    if (stood && (!h || h.s !== stood.s)) {\n      if (!inside(stood.loc))",
     "new": "    if (stood) {\n      if (!inside(stood.loc))",
     "tests": [

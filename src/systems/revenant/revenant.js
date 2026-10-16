@@ -1092,7 +1092,7 @@ export function revenantMapMarks() {
   if (!revenantOn()) return [];
   return livingRevenants().filter((r) => r.lair && r.lairKnown).map((r) => ({ cx: r.lair.px + 0.5, cy: r.lair.py + 0.5, r: LAIR_RING_R, label: r.given ?? r.name, id: r.id }));
 }
-/** RVN7c (18.3): THE HUNTS, IN THE QUEST LOG - each lair heard of as an active side quest (scenes/questBridge.js
+/** RVN7c (18.3): THE HUNTS, IN THE QUEST LOG - each lair heard of as an active side quest (scenes/quest/questBridge.js
  *  questLog's shape, BOUNTY1's precedent): "Hunt: Grushnak the Butcher", the way there from `here` (my map pixel), no
  *  clock. Its Abandon (systems/huntJournal.js) forgets the lair. */
 export function revenantHuntEntries(here = null) {

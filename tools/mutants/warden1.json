@@ -415,7 +415,7 @@
   },
   {
     "name": "WARDEN-show-never-lands",
-    "file": "src/scenes/wagonWardenShow.js",
+    "file": "src/scenes/wagon/wagonWardenShow.js",
     "old": "          if (s.held) { releaseTeam(s); sound('land',",
     "new": "          if (false) { releaseTeam(s); sound('land',",
     "tests": [
@@ -424,7 +424,7 @@
   },
   {
     "name": "WARDEN-show-no-turn",
-    "file": "src/scenes/wagonWardenShow.js",
+    "file": "src/scenes/wagon/wagonWardenShow.js",
     "old": "export const tumbleTurns = (/** @type {number} */ fly) => Math.max(1, Math.round(fly * WARDEN_TUMBLE));",
     "new": "export const tumbleTurns = (/** @type {number} */ fly) => Math.round(fly * WARDEN_TUMBLE);",
     "tests": [
@@ -433,7 +433,7 @@
   },
   {
     "name": "WARDEN-show-guard-vanishes",
-    "file": "src/scenes/wagonWardenShow.js",
+    "file": "src/scenes/wagon/wagonWardenShow.js",
     "old": "gone: leave + Math.max(WARDEN_LEAVE_MIN, approach) };",
     "new": "gone: leave + WARDEN_LEAVE_MIN };",
     "tests": [
@@ -442,7 +442,7 @@
   },
   {
     "name": "WARDEN-show-guard-leaks",
-    "file": "src/scenes/wagonWardenShow.js",
+    "file": "src/scenes/wagon/wagonWardenShow.js",
     "old": "    if (s.guardBatch) renderer?.destroyBillboardBatch?.(s.guardBatch);\n    for (const h of s.horses) if (h.batch) renderer?.destroyBillboardBatch?.(h.batch);\n    if (s.held)",
     "new": "    for (const h of s.horses) if (h.batch) renderer?.destroyBillboardBatch?.(h.batch);\n    if (s.held)",
     "tests": [
@@ -451,7 +451,7 @@
   },
   {
     "name": "WARDEN-show-teardown-holds",
-    "file": "src/scenes/wagonWardenShow.js",
+    "file": "src/scenes/wagon/wagonWardenShow.js",
     "old": "    if (s.held) { for (const o of s.owners) hold(o, false); s.held = false; }\n    shows.delete(s.key);",
     "new": "    shows.delete(s.key);",
     "tests": [
@@ -460,7 +460,7 @@
   },
   {
     "name": "WARDEN-show-twice",
-    "file": "src/scenes/wagonWardenShow.js",
+    "file": "src/scenes/wagon/wagonWardenShow.js",
     "old": "      if (!key || shows.has(key) || !snap?.kind",
     "new": "      if (!key || !snap?.kind",
     "tests": [
@@ -469,7 +469,7 @@
   },
   {
     "name": "WARDEN-show-starts-blind",
-    "file": "src/scenes/wagonWardenShow.js",
+    "file": "src/scenes/wagon/wagonWardenShow.js",
     "old": "          if (guardArt() === null && tn - s.asked < SHOW_ART_WAIT) {",
     "new": "          if (false) {",
     "tests": [
@@ -478,7 +478,7 @@
   },
   {
     "name": "WARDEN-show-not-overhead",
-    "file": "src/scenes/wagonWardenShow.js",
+    "file": "src/scenes/wagon/wagonWardenShow.js",
     "old": "  const overHead = (s, G, rot) => vsub([G[0], G[1] + s.head, G[2]], quatRotate(rot, s.floor));",
     "new": "  const overHead = (s, G, rot) => vsub([G[0], G[1], G[2]], quatRotate(rot, s.floor));",
     "tests": [
@@ -487,7 +487,7 @@
   },
   {
     "name": "WARDEN-show-arc-flat",
-    "file": "src/scenes/wagonWardenShow.js",
+    "file": "src/scenes/wagon/wagonWardenShow.js",
     "old": "  out[1] = from[1] * u + to[1] * t + Math.sin(Math.PI * t) * peak;",
     "new": "  out[1] = from[1] * u + to[1] * t;",
     "tests": [
@@ -496,7 +496,7 @@
   },
   {
     "name": "WARDEN-offline-online-too",
-    "file": "src/scenes/wagonWardenHost.js",
+    "file": "src/scenes/wagon/wagonWardenHost.js",
     "old": "      if (!online() && offlineDue(stamp, a, wallNow())) throwMine(a, stamp.ly);",
     "new": "      if (offlineDue(stamp, a, wallNow())) throwMine(a, stamp.ly);",
     "tests": [
@@ -505,7 +505,7 @@
   },
   {
     "name": "WARDEN-reader-throw-twice",
-    "file": "src/scenes/wagonWardenHost.js",
+    "file": "src/scenes/wagon/wagonWardenHost.js",
     "old": "      for (const x of hcc.kept?.values?.() ?? []) if (x.k === e.k && x.y === e.y) return false;   // said already\n",
     "new": "",
     "tests": [
@@ -514,7 +514,7 @@
   },
   {
     "name": "WARDEN-stamp-road-blind",
-    "file": "src/scenes/wagonWardenHost.js",
+    "file": "src/scenes/wagon/wagonWardenHost.js",
     "old": "share >= WARDEN_ROAD_SHARE,",
     "new": "share > 1,",
     "tests": [
@@ -523,7 +523,7 @@
   },
   {
     "name": "WARDEN-stamp-unbuilt",
-    "file": "src/scenes/wagonWardenHost.js",
+    "file": "src/scenes/wagon/wagonWardenHost.js",
     "old": "    if (t === undefined) return undefined;\n",
     "new": "    if (t === undefined) return wardenStamp(a, now);\n",
     "tests": [
@@ -532,7 +532,7 @@
   },
   {
     "name": "WARDEN-owner-untold-client",
-    "file": "src/scenes/wagonWardenHost.js",
+    "file": "src/scenes/wagon/wagonWardenHost.js",
     "old": "    notify([WARDEN_TEXT.thrown(town), WARDEN_TEXT.fetch]);\n",
     "new": "",
     "tests": [
@@ -541,7 +541,7 @@
   },
   {
     "name": "WARDEN-reader-live-unheld",
-    "file": "src/scenes/wagonWardenHost.js",
+    "file": "src/scenes/wagon/wagonWardenHost.js",
     "old": "const [snap, owners] = onSpot(live, spot) ? [live, [e.id, kept]]",
     "new": "const [snap, owners] = onSpot(live, spot) ? [live, [kept]]",
     "tests": [

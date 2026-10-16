@@ -217,7 +217,7 @@
   },
   {
     "name": "GUIDE3-news-before-the-tick",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "    machine.tick();\n    updateTimer = 0;\n    news();",
     "new": "    news();\n    machine.tick();\n    updateTimer = 0;",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "GUIDE3-look-between-ticks",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "    if (updateTimer < 1 / TICKS_PER_SECOND) return false;\n    machine.tick();",
     "new": "    if (updateTimer < 1 / TICKS_PER_SECOND) { news(); return false; }\n    machine.tick();",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "GUIDE3-baseline-heard",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "    if (!lookedLast) lens.reset();",
     "new": "    /* the backlog heard */",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "GUIDE3-look-before-the-gate",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "    if (!herald && !follow) { lookedLast = false; return; }",
     "new": "    lens.look();\n    if (!herald && !follow) { lookedLast = false; return; }",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "GUIDE3-listening-kept-off",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "    if (!herald && !follow) { lookedLast = false; return; }",
     "new": "    if (!herald && !follow) return;",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "GUIDE3-catch-dropped",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "    } catch (err) { warnNewsOnce(err); }\n  }",
     "new": "    } catch (err) { throw err; }\n  }",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "GUIDE3-warning-a-tick",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "    if (newsWarned) return;\n",
     "new": "",
     "tests": [

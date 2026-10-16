@@ -118,7 +118,7 @@
   },
   {
     "name": "AUDIT-PLAINUI-C2-roads-card-off-the-head",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "      return { regard: rel.regard(whom, day), standing: rel.standing(whom, day) };",
     "new": "      return null;",
     "tests": [

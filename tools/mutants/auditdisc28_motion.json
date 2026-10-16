@@ -46,7 +46,7 @@
   },
   {
     "name": "AUDIT-DISC28-MO3-the-stroke-in-one-move",
-    "file": "src/scenes/deepWatersSwimMove.js",
+    "file": "src/scenes/deepWater/deepWatersSwimMove.js",
     "old": "  const n = Number.isFinite(m) ? Math.min(STROKE_PIECES_MAX, Math.max(1, Math.ceil(m / EXACT_SWEEP_MAX))) : 1;",
     "new": "  const n = 1;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "AUDIT-DISC28-MO3-one-piece-at-most",
-    "file": "src/scenes/deepWatersSwimMove.js",
+    "file": "src/scenes/deepWater/deepWatersSwimMove.js",
     "old": "const STROKE_PIECES_MAX = 8;",
     "new": "const STROKE_PIECES_MAX = 1;",
     "tests": [

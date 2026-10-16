@@ -190,7 +190,7 @@
   },
   {
     "name": "SD2C-the-next-slots-light",
-    "file": "src/scenes/sdHost.js",
+    "file": "src/scenes/superDungeon/sdHost.js",
     "old": "      const h = stood && memo && memo.s === stood.s && rec?.s === stood.s ? memo : null;",
     "new": "      const h = stood && memo ? memo : null;",
     "tests": [

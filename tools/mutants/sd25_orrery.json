@@ -73,7 +73,7 @@
   },
   {
     "name": "SD25-S10-the-gear-ahead-of-its-hand",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "crownGearMatrix(i, shown[i], gears[i].object.matrix)",
     "new": "crownGearMatrix(i, want[i], gears[i].object.matrix)",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "SD25-S10-a-ring-on-its-stone's-hour",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "ringPoseInto(k, hang, ringState, pose); ringMatrix(",
     "new": "ringPoseInto(k, hang, ringState, pose); pose[0] += shown[k] * Math.PI / 6; ringMatrix(",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "SD25-S10-gold-through-the-whole-settling",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "export const SD_BEZEL_MS = Object.freeze({ gold: 0.65,",
     "new": "export const SD_BEZEL_MS = Object.freeze({ gold: 1,",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "SD25-S10-the-ember-on-every-stone",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "emberUntil[pressedStone] = now() + SD_BEZEL_MS.ember;",
     "new": "emberUntil.fill(now() + SD_BEZEL_MS.ember);",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "SD25-S10-the-ember-with-no-press-of-mine",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "w.w === 1 && pressedStone >= 0 && now() - pressedAt < SD_BEZEL_MS.mine)",
     "new": "w.w === 1 && pressedStone >= 0)",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "SD25-S10-the-flash-on-a-fall",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "if (!first && !w.x && w.lit > lit) flashUntil",
     "new": "if (!first && !w.x && w.lit !== lit) flashUntil",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "SD25-S10-the-dim-gone",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "dimUntil = now() + SD_DIAL_DIM_MS;",
     "new": "dimUntil = now();",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "SD25-S10-the-pulse-at-four",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "export const SD_FRAY_PULSE_HZ = 2;",
     "new": "export const SD_FRAY_PULSE_HZ = 4;",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "SD25-S10-the-warning-a-tab-early",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "const warn = !blaze && f >= tabs - 8;",
     "new": "const warn = !blaze && f >= tabs - 9;",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "SD25-S10-the-tock-twice",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "if (!tocked && ms >= SD_CONCORD_MS.rings) { tocked = true; play(",
     "new": "if (ms >= SD_CONCORD_MS.rings) { tocked = true; play(",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "SD25-S10-the-wind-unending",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "if (ms >= SD_BANNER.wind * 1000) bannerLive = false;",
     "new": "if (ms >= SD_BANNER.wind * 100000) bannerLive = false;",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "SD25-S10-the-first-word-choreographed",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "if (first) concordWhole();",
     "new": "if (first && false) concordWhole();",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "SD25-S10-the-plates-from-the-far-end",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "const kj = (kb - (j * 0.6) / (n - 1)) / 0.4;",
     "new": "const kj = (kb - ((n - 1 - j) * 0.6) / (n - 1)) / 0.4;",
     "tests": [
@@ -289,7 +289,7 @@
   },
   {
     "name": "SD25-S10-the-hands-casting",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "({ gpu, object: { matrix }, noShadow: true, texRemap: null, hidden })",
     "new": "({ gpu, object: { matrix }, noShadow: false, texRemap: null, hidden })",
     "tests": [
@@ -334,7 +334,7 @@
   },
   {
     "name": "SD25-S10-the-phone's-wind-a-frame-at-a-time",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "if (!lite || key !== bannerKey)",
     "new": "if (true || key !== bannerKey)",
     "tests": [
@@ -343,7 +343,7 @@
   },
   {
     "name": "SD25-S10-the-phone's-rings-in-48",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "buildOrbitRing(k, lite ? SD_RING_LITE_SEGS : SD_ORRERY_RINGS.segs)",
     "new": "buildOrbitRing(k, SD_ORRERY_RINGS.segs)",
     "tests": [

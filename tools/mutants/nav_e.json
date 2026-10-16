@@ -47,7 +47,7 @@
   },
   {
     "name": "NAV-E-the-host-range-dropped",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const o = { ...navalSoundRange(key), ...opts };",
     "new": "    const o = { ...opts };",
     "tests": [

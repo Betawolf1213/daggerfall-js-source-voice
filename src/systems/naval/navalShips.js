@@ -80,7 +80,7 @@ export const SIDE_DIR = Object.freeze({ starboard: Object.freeze([1, 0, 0]), por
  * of the boat's Booms, Come Sail Away's walk order) turns it about its `pivot` (that boom's mast's axis) by the boom's
  * own rotation, so it goes where the trim swings its canvas; `obb` is the box itself where it lies askew (`c` its middle,
  * `h` its half sizes along its own axes, the root's pitched `pitch` degrees about x), `[min, max]` then its bounds.
- * scenes/navalHost.js rigBoxesOf stands each in the world; a ball through one tears canvas and flies on
+ * scenes/naval/navalHost.js rigBoxesOf stands each in the world; a ball through one tears canvas and flies on
  * (systems/naval/navalShots.js). The rowboat carries none; the Large Galley's yard is 53 m end to end, but a box that
  * wide would be mostly air, so hers stops at the canvas's own 50. AUDIT NAV2 F28: `sailWay` is the prefab's sail
  * acceleration modifier (Come Sail Away's modifierMoveAccelerationSail) - the rate her way comes and goes under sail

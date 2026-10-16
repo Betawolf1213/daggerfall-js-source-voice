@@ -127,7 +127,7 @@
   },
   {
     "name": "SD6C-the-first-word-turned-to",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "    if (first) for (let i = 0; i < want.length; i++) { shown[i] = want[i]; if (hands[i]) handMatrix(i, shown[i], hands[i].object.matrix); }",
     "new": "",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "SD6C-the-long-way-round",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "const way = (from, to) => ((((to - from) % 12) + 18) % 12) - 6;",
     "new": "const way = (from, to) => to - from;",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "SD6C-the-bridge-laid-early",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "object: { matrix: ok ? identity() : new Float32Array(ZERO) }",
     "new": "object: { matrix: identity() }",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "SD6C-the-bridge-never-laid",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "      else { concordAt = now(); concordDone = false; tocked = false; bannerLive = !!bannerMesh; bannerKey = -1; laid = false; }",
     "new": "      else { concordAt = now(); concordDone = true; tocked = false; bannerLive = !!bannerMesh; bannerKey = -1; laid = false; }",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "SD6C-the-Concord-silent",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "      if (!first) { play(SD_HALL_SOUNDS.chime, dialCentre(0), 1, 1); say(SD_HALL_TEXT.concord); }",
     "new": "      if (!first) { }",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "SD6C-the-partners-unheard",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "      for (let j = 0; j < SD_STONES.length; j++) if (j !== w.i && o.gear[w.i][j] !== 0) play(",
     "new": "      for (let j = 0; j < 0; j++) if (j !== w.i && o.gear[w.i][j] !== 0) play(",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "SD6C-another-realm's-word-heard",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "      if (w && w !== word && o && w.s === s && Array.isArray(w.st)) { word = w; hear(w); }",
     "new": "      if (w && w !== word && o && Array.isArray(w.st)) { word = w; hear(w); }",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "SD6C-the-floors-unstood",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "      try { collider?.addMesh?.('sd:hall', tris, idx, identity()); }",
     "new": "      try { void tris; }",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "SD6C-a-turn-from-across-the-hall",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "      if (!at || !stoneInReach(i, at[0], at[2])) { say(SD_HALL_TEXT.closer); return true; }",
     "new": "      if (!at) { say(SD_HALL_TEXT.closer); return true; }",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "SD6C-a-turn-in-the-settling",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "      if (now() - lastTurn[i] < SD_STONE_SETTLE_MS) return true;",
     "new": "",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "SD6C-turns-after-the-Concord",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "      if (ok) { say(SD_HALL_TEXT.still); return true; }\n",
     "new": "",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "SD6C-the-handles-the-other-way",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "const i = Number(st[1]), a = st[2] === 'f' ? 1 : -1;",
     "new": "const i = Number(st[1]), a = st[2] === 'f' ? -1 : 1;",
     "tests": [

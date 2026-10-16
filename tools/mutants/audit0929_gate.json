@@ -61,7 +61,7 @@
   },
   {
     "name": "AUDIT0929-W1-3-the-names-joined-wrong",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    return `${boss} feeds on the souls of ${ns.slice(0, -1).join(', ')} and ${ns[ns.length - 1]}.`;",
     "new": "    return `${boss} feeds on the souls of ${ns.join(', ')}.`;",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "AUDIT0929-W2-3-a-stale-feeding-said",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "if (t - s.fed.at <= FED_LATE_MS) {",
     "new": "if (true) {",
     "tests": [

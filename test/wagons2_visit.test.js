@@ -501,7 +501,7 @@ test('WAGONS2-VISIT THE INTERIOR HOST\'S ROOM: a visitor is a caravan\'s guest o
     interiorDecor: { set: (p) => stood.push(p), list: () => stood.at(-1) ?? [] },
     readCaravanHidden,
   };
-  const outs = [];   // WAGONS2-BASE: the room's own pieces set out (scenes/decorBase.js setHidden), as the host sets them
+  const outs = [];   // WAGONS2-BASE: the room's own pieces set out (scenes/decor/decorBase.js setHidden), as the host sets them
   scope.interiorCtx = { base: { setHidden: (k) => outs.push(k), hidden: () => ['f3:210.22'] } };
   const make = new Function(...Object.keys(scope), `let _caravanVisit = null;
     const caravanGuestHere = ${lift('src/scenes/worldModes.js', 'caravanGuestHere')};

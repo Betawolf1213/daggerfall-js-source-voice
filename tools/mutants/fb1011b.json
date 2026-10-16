@@ -1,7 +1,7 @@
 [
   {
     "name": "CAMPFIRE-the-fire-someone",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "distM, talk: false, flat: FIRE_FLAT, body: false });",
     "new": "distM, talk: false, flat: FIRE_FLAT });",
     "tests": [

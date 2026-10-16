@@ -1,6 +1,6 @@
 // ARENA3 (2026-10-02, Mac: "Joining a team comes with it's own enhanced UI where you can view your ranking and even player
 // leaderboards"; "All UI elements and text must be enhanced UI plus"): THE ARENA WINDOW (systems/arena/arenaBoard.js the model,
-// ui/arena/arenaWindow.js the window, ui/arena/arenaDoor.js its door, scenes/arenaGate.js its presses). Pinned here: every page's
+// ui/arena/arenaWindow.js the window, ui/arena/arenaDoor.js its door, scenes/arena/arenaGate.js its presses). Pinned here: every page's
 // model - Bouts (the hour's exhibition or the next, the Red's against the Blue's with records and prices, Watch and
 // Wager and why not; the players' bouts said online; the ladder's next with Fight and why not; what the bookmaker owes),
 // Ladder (ten tiers, cleared, here, ahead, the next marked, the purses and titles), Team (unjoined: both banners and
@@ -21,7 +21,7 @@ import { heraldChoice } from '../src/systems/arena/arenaHerald.js';
 import { withDom } from './invdrag.mjs';
 import { mountArenaWindow, arenaSkinCss } from '../src/ui/arena/arenaWindow.js';
 import { createArenaOverlay } from '../src/ui/arena/arenaDoor.js';
-import { createArenaGate, nearArenaGate, AT_GATE_M } from '../src/scenes/arenaGate.js';
+import { createArenaGate, nearArenaGate, AT_GATE_M } from '../src/scenes/arena/arenaGate.js';
 import { FRAME_ROLES } from '../src/ui/enhanced/enhancedFrame.js';
 import { ARENA_WINDOW_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';
@@ -321,7 +321,7 @@ test('ARENA3 the door, the gate\'s presses at the gate only, the Herald\'s and t
     const S = rd(f);
     assert.match(S, /else if \(a === 'window'\) arenaGate\.openWindow\('bouts'\);/, f);
     assert.match(S, /heraldAct: \(a\) => arenaHeraldAct\(a\), atGate: \(\) => \(modes\?\.mode \?\? 'exterior'\) === 'exterior' && nearArenaGate\(player\.pos, arenaHeraldAt\(\)\),/, f);
-    // ARENA4b: the banner worn is the gate's word (scenes/arenaGate.js joined - the save's league offline, the account's online)
+    // ARENA4b: the banner worn is the gate's word (scenes/arena/arenaGate.js joined - the save's league offline, the account's online)
     // ARENA6: the world host's door opens on a private session's page while one is stood in (the exterior host has no online half)
     const door = f === 'src/scenes/world.js'
       ? /openArena: \(\) => arenaGate\.openWindow\(arenaOnline\?\.inSession\?\.\(\) \? 'bouts' : 'team'\), arenaJoined: \(\) => arenaGate\.joined\(\) \|\| !!arenaOnline\?\.inSession\?\.\(\),/

@@ -26,7 +26,7 @@ and the questions the reporter is owed are written below.
 
 ## CAMP-FIRE: a road camp's fire is its flame, never one of the fallen (5)
 
-`scenes/livingRoads.js`, `world/travellerSprites.js` drawBodies. The roads' layer (LW9) hands the traveller sprites a
+`scenes/livingWorld/livingRoads.js`, `world/travellerSprites.js` drawBodies. The roads' layer (LW9) hands the traveller sprites a
 lit camp's fire as an entry like a person's: `{ res: { id: 'fire:<trip>', name: '' }, talk: false, flat: FIRE_FLAT }`.
 MWNPC10c's Morrowind lane stands a body for every entry on the ground and draws it dead where it is "a flat no one talks
 to" - the road's fallen are exactly that (`corpseLook`). So with the Morrowind bodies on, every camp's fire stood as a

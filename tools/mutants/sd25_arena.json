@@ -127,7 +127,7 @@
   },
   {
     "name": "SD25-S7-the-hands-on-now",
-    "file": "src/scenes/sdArenaWatch.js",
+    "file": "src/scenes/superDungeon/sdArenaWatch.js",
     "old": "    handsAt(s, sec * 1000, _a1, _seen1);",
     "new": "    handsAt(s, t, _a1, _seen1);",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "SD25-S7-the-hands-unticked",
-    "file": "src/scenes/sdArenaWatch.js",
+    "file": "src/scenes/superDungeon/sdArenaWatch.js",
     "old": "  const e = sdTick(t / 1000) - sec;",
     "new": "  const e = 1;",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "SD25-S7-the-right-turned-over",
-    "file": "src/scenes/sdArenaWatch.js",
+    "file": "src/scenes/superDungeon/sdArenaWatch.js",
     "old": "Math.atan2((at[0] - d.at[0]) * d.right[0] + (at[2] - d.at[2]) * d.right[2], at[1] - d.at[1])",
     "new": "Math.atan2(-((at[0] - d.at[0]) * d.right[0] + (at[2] - d.at[2]) * d.right[2]), at[1] - d.at[1])",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "SD25-S7-the-first-echo-never-the-nearest",
-    "file": "src/scenes/sdArenaWatch.js",
+    "file": "src/scenes/superDungeon/sdArenaWatch.js",
     "old": "    if (d < best) { best = d; e0 = e; }",
     "new": "    if (e0 < 0) { best = d; e0 = e; }",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "SD25-S7-its-heart-at-the-floor",
-    "file": "src/scenes/sdArenaWatch.js",
+    "file": "src/scenes/superDungeon/sdArenaWatch.js",
     "old": "W.one[1] = AY + SD_REMNANT_BODY.heartY - p.sink;",
     "new": "W.one[1] = AY - p.sink;",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "SD25-S7-the-way-home-at-the-fall-unmoved",
-    "file": "src/scenes/sdArenaWatch.js",
+    "file": "src/scenes/superDungeon/sdArenaWatch.js",
     "old": "const [x, z] = clearOfPillars(s.rem.x, s.rem.z);",
     "new": "const [x, z] = [s.rem.x, s.rem.z];",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "SD25-S7-no-ease-in",
-    "file": "src/scenes/sdArenaWatch.js",
+    "file": "src/scenes/superDungeon/sdArenaWatch.js",
     "old": "if (t - called < DIM_IN) { u = (t - called) / DIM_IN; by = DIM_TO - 1; }",
     "new": "if (t - called < 0) { u = (t - called) / DIM_IN; by = DIM_TO - 1; }",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "SD25-S7-the-landing-not-bringing-them-back",
-    "file": "src/scenes/sdArenaWatch.js",
+    "file": "src/scenes/superDungeon/sdArenaWatch.js",
     "old": "    else if (t - at < DIM_OUT) { u = (t - at) / DIM_OUT; from = DIM_TO; by = 1 - DIM_TO; }",
     "new": "    else { out[0] = DIM_TO; return out; }",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "SD25-S7-the-stun-not-bringing-them-back",
-    "file": "src/scenes/sdArenaWatch.js",
+    "file": "src/scenes/superDungeon/sdArenaWatch.js",
     "old": "  if (s.su > t && s.stunAt > 0) { if (t - s.stunAt < DIM_OUT) { u = (t - s.stunAt) / DIM_OUT; from = DIM_TO; by = 1 - DIM_TO; } }",
     "new": "  if (s.su > t && s.stunAt > 0) { out[0] = DIM_TO; return out; }",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "SD25-S7-the-echoes-metals-swapped",
-    "file": "src/scenes/sdArenaWatch.js",
+    "file": "src/scenes/superDungeon/sdArenaWatch.js",
     "old": "markShape([0, 0], 0, SD_MARK_COLOR.echoes[0], SD_ECHO.r), markShape([0, 0], 0, SD_MARK_COLOR.echoes[1], SD_ECHO.r)",
     "new": "markShape([0, 0], 0, SD_MARK_COLOR.echoes[1], SD_ECHO.r), markShape([0, 0], 0, SD_MARK_COLOR.echoes[0], SD_ECHO.r)",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "SD25-S7-a-mark-under-a-fallen-echo",
-    "file": "src/scenes/sdArenaWatch.js",
+    "file": "src/scenes/superDungeon/sdArenaWatch.js",
     "old": "      if (!(s.ec?.[e]?.h > 0)) continue;",
     "new": "      if (!s.ec?.[e]) continue;",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "SD25-S7-the-remnant-marked-outside-time",
-    "file": "src/scenes/sdArenaWatch.js",
+    "file": "src/scenes/superDungeon/sdArenaWatch.js",
     "old": "    if (onFloor(p)) { const m = _marks[0];",
     "new": "    if (onFloor(p) || s.ph === 2) { const m = _marks[0];",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "SD25-S7-its-facing-unset",
-    "file": "src/scenes/sdArenaWatch.js",
+    "file": "src/scenes/superDungeon/sdArenaWatch.js",
     "old": "    if (onFloor(p)) { const m = _marks[0]; m.origin[0] = p.x; m.origin[1] = p.z; m.yaw = p.yw; _picked[n++] = m; }",
     "new": "    if (onFloor(p)) { const m = _marks[0]; m.origin[0] = p.x; m.origin[1] = p.z; _picked[n++] = m; }",
     "tests": [
@@ -289,7 +289,7 @@
   },
   {
     "name": "SD25-S7-the-marks-under-nothing",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "      for (let i = 0; i < under.length; i++) { pass.draw(under[i],",
     "new": "      for (let i = 0; i < 0; i++) { pass.draw(under[i],",
     "tests": [
@@ -298,7 +298,7 @@
   },
   {
     "name": "SD25-S7-the-hands-target-made-a-frame",
-    "file": "src/scenes/sdArenaWatch.js",
+    "file": "src/scenes/superDungeon/sdArenaWatch.js",
     "old": "  if (s !== _handsOf || sec !== _handsSec) {",
     "new": "  if (true) {",
     "tests": [
@@ -307,7 +307,7 @@
   },
   {
     "name": "SD25-S7-the-looks-dimming-made-a-frame",
-    "file": "src/scenes/sdArenaWatch.js",
+    "file": "src/scenes/superDungeon/sdArenaWatch.js",
     "old": "  sdLampDimInto(s, t, look.k);\n",
     "new": "  look.k = Float64Array.of(sdLampDimAt(s, t), 0);\n",
     "tests": [
@@ -316,7 +316,7 @@
   },
   {
     "name": "SD25-S7-the-marks-list-made-a-frame",
-    "file": "src/scenes/sdArenaWatch.js",
+    "file": "src/scenes/superDungeon/sdArenaWatch.js",
     "old": "  return list;\n}",
     "new": "  return list.slice(0, n);\n}",
     "tests": [

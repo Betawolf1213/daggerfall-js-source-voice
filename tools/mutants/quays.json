@@ -402,7 +402,7 @@
   },
   {
     "name": "QUAY-host-berth-free-of-mine",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    return !(b && boatAtBerth(b, null));   // QUAYS: nor a boat of mine or another player's lying at it - none moors into her",
     "new": "    return true;",
     "tests": [
@@ -411,7 +411,7 @@
   },
   {
     "name": "QUAY-host-sailing-by-takes-berth",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (Math.hypot(v[0], v[2]) < BERTH_WAY) return true;",
     "new": "      return true;",
     "tests": [
@@ -420,7 +420,7 @@
   },
   {
     "name": "QUAY-host-dock-moored",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (r && r.harbour === key && r.berth === i && r.kind === 'moored') return false;\n      if (e.ship.damage.state",
     "new": "      if (e.ship.damage.state",
     "tests": [
@@ -429,7 +429,7 @@
   },
   {
     "name": "QUAY-host-warp-under-sail",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (!enabled || !pose || !struck || oars || boarding || Math.hypot(pose.velocity[0], pose.velocity[2]) > DOCK_WAY || hostileNearMe()) { warping = null; return null; }",
     "new": "    if (!enabled || !pose || oars || boarding || Math.hypot(pose.velocity[0], pose.velocity[2]) > DOCK_WAY || hostileNearMe()) { warping = null; return null; }",
     "tests": [
@@ -438,7 +438,7 @@
   },
   {
     "name": "QUAY-host-warp-at-the-oars",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (!enabled || !pose || !struck || oars || boarding || Math.hypot(pose.velocity[0], pose.velocity[2]) > DOCK_WAY || hostileNearMe()) { warping = null; return null; }",
     "new": "    if (!enabled || !pose || !struck || boarding || Math.hypot(pose.velocity[0], pose.velocity[2]) > DOCK_WAY || hostileNearMe()) { warping = null; return null; }",
     "tests": [
@@ -447,7 +447,7 @@
   },
   {
     "name": "QUAY-host-warp-at-speed",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (!enabled || !pose || !struck || oars || boarding || Math.hypot(pose.velocity[0], pose.velocity[2]) > DOCK_WAY || hostileNearMe()) { warping = null; return null; }",
     "new": "    if (!enabled || !pose || !struck || oars || boarding || hostileNearMe()) { warping = null; return null; }",
     "tests": [
@@ -456,7 +456,7 @@
   },
   {
     "name": "QUAY-host-not-put-off",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      putOff(dock.key, dock.index);\n",
     "new": "",
     "tests": [
@@ -465,7 +465,7 @@
   },
   {
     "name": "QUAY-host-said-every-step",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (warping?.k !== k) {\n      warping = { k, fast: madeFast({ pos: pose.position, yaw }, dock) };",
     "new": "    if (true) {\n      warping = { k, fast: madeFast({ pos: pose.position, yaw }, dock) };",
     "tests": [
@@ -474,7 +474,7 @@
   },
   {
     "name": "QUAY-host-never-fast",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      warping.fast = true;\n      deps.say?.(`Made fast at ${portWords(dock.name)}.`, 3);",
     "new": "      warping.fast = true;",
     "tests": [
@@ -483,7 +483,7 @@
   },
   {
     "name": "QUAY-host-docked-anywhere",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (!d || !madeFast({ pos: p, yaw }, d)) return null;",
     "new": "    if (!d) return null;",
     "tests": [
@@ -492,7 +492,7 @@
   },
   {
     "name": "QUAY-host-fleet-not-told",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (at != null) { deps.dockedPort(b, at); continue; }",
     "new": "      if (at != null) { continue; }",
     "tests": [
@@ -502,7 +502,7 @@
   },
   {
     "name": "QUAY-host-gangway-foot-at-the-berth",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const [fx, fz] = quayToScene(frame, f.x, hz);",
     "new": "    const [fx, fz] = quayToScene(frame, 0, hz);",
     "tests": [
@@ -512,7 +512,7 @@
   },
   {
     "name": "QUAY-host-gangway-any-look",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const facing = (dir) => !lf || lf[0] * dir[0] + lf[2] * dir[1] >= GANGWAY_FACING;",
     "new": "    const facing = () => true;",
     "tests": [
@@ -522,7 +522,7 @@
   },
   {
     "name": "QUAY-host-gangway-ashore-anywhere",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        if (Math.hypot(g.deckAt[0] - feet[0], g.deckAt[2] - feet[2]) <= GANGWAY_ASHORE && facing(g.landward)) return { ...g, way: 'ashore' };",
     "new": "        if (facing(g.landward)) return { ...g, way: 'ashore' };",
     "tests": [
@@ -532,7 +532,7 @@
   },
   {
     "name": "QUAY-host-gangway-not-taken",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (!e) { const g = boatTrigger ? null : gangwayInReach(); return g ? takeGangway(g) : false; }",
     "new": "    if (!e) return false;",
     "tests": [
@@ -542,7 +542,7 @@
   },
   {
     "name": "QUAY-host-gangway-press-not-said",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    return !!(boardableOnFoot() || (!boatTrigger && gangwayInReach()));",
     "new": "    return !!boardableOnFoot();",
     "tests": [
@@ -552,7 +552,7 @@
   },
   {
     "name": "QUAY-host-ashore-in-the-sea",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      deps.board?.placePlayer?.([...g.ashore], Math.atan2(g.landward[0], g.landward[1]));",
     "new": "      deps.board?.placePlayer?.([g.ashore[0], deps.seaY(), g.ashore[2]], Math.atan2(g.landward[0], g.landward[1]));",
     "tests": [
@@ -562,7 +562,7 @@
   },
   {
     "name": "QUAY-host-hint-every-frame",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (k && k !== gangwaySaid) deps.say?.(",
     "new": "    if (k) deps.say?.(",
     "tests": [
@@ -571,7 +571,7 @@
   },
   {
     "name": "QUAY-host-summon-at-the-point",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        if (d < bestD) { const at = alongside(b, hull, h.harbour.hull); bestD = d;",
     "new": "        if (d < bestD) { const at = b.pos; bestD = d;",
     "tests": [

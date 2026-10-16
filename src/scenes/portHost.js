@@ -73,7 +73,7 @@ import { trs } from '../world/mat4.js';
 import { yardToScene, yardBoxToScene, KEEPER_HALF, KEEPER_HEIGHT } from './merchantYardsHost.js';
 import { boxTriangles } from './horseCartPool.js';
 import { localAabb, transformedAabb } from '../render/frustum.js';
-import { DECOR_DRAW, DECOR_SHADOW, DECOR_SKIP, castOnly } from './decorRoom.js';
+import { DECOR_DRAW, DECOR_SHADOW, DECOR_SKIP, castOnly } from './decor/decorRoom.js';
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the lighthouse's page, at the first climb
 
 /** The ground under a place is read again every this many frames. */

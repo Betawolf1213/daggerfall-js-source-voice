@@ -16,9 +16,9 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { fakeRooms } from './fakeRoom.mjs';
-import { createArenaOnline } from '../src/scenes/arenaOnline.js';
-import { createArenaBouts } from '../src/scenes/arenaBouts.js';
-import { createArenaGate } from '../src/scenes/arenaGate.js';
+import { createArenaOnline } from '../src/scenes/arena/arenaOnline.js';
+import { createArenaBouts } from '../src/scenes/arena/arenaBouts.js';
+import { createArenaGate } from '../src/scenes/arena/arenaGate.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { ARENA_HALL, ARENA_FLOOR_CENTRE, ARENA_TICK_MS, arenaBoutRoom, arenaExhibitionRoom, validArenaIn, isArenaRoom } from '../src/net/arena/arenaLaw.js';
 import { readArenaOut, wallMsForClassicMinutes } from '../src/net/wire.js';

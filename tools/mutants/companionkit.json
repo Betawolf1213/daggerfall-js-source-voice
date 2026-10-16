@@ -240,7 +240,7 @@
   },
   {
     "name": "CK-sendback-pack-left",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      stowPack(boat.uid, pack, name);\n      return 'back';",
     "new": "      return 'back';",
     "tests": [
@@ -249,7 +249,7 @@
   },
   {
     "name": "CK-knock-pack-dropped",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (c.items?.length) stowPack(c.boat, c.items.splice(0), c.name);   // COMPANION-KIT: and his pack with him\n",
     "new": "",
     "tests": [
@@ -258,7 +258,7 @@
   },
   {
     "name": "CK-stow-no-hold",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const rest = boat ? deps.board?.giveItems?.(items, boat)?.left ?? [] : items;",
     "new": "const rest = boat ? deps.board?.giveItems?.(items, null)?.left ?? [] : items;",
     "tests": [

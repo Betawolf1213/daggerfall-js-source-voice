@@ -46,7 +46,7 @@
  },
  {
   "name": "MWNPC18-offer-skipped",
-  "file": "src/scenes/decorRoom.js",
+  "file": "src/scenes/decor/decorRoom.js",
   "old": "    lane.offer(personActor(e, look, f, eye, dt), e.batch);\n",
   "new": "",
   "tests": [
@@ -55,7 +55,7 @@
  },
  {
   "name": "MWNPC18-cast-only-left",
-  "file": "src/scenes/decorRoom.js",
+  "file": "src/scenes/decor/decorRoom.js",
   "old": "    if (!look) { e.batch.castOnly = false; continue; }",
   "new": "    if (!look) continue;",
   "tests": [
@@ -82,7 +82,7 @@
  },
  {
   "name": "MWNPC18-place-dropped",
-  "file": "src/scenes/decorRoom.js",
+  "file": "src/scenes/decor/decorRoom.js",
   "old": "    f[0] = e.o[0] + e.piece.pos[0]; f[1] = e.o[1] + e.piece.pos[1]; f[2] = e.o[2] + e.piece.pos[2];",
   "new": "    f[0] = e.o[0]; f[1] = e.o[1]; f[2] = e.o[2];",
   "tests": [
@@ -91,7 +91,7 @@
  },
  {
   "name": "MWNPC18-base-made-once",
-  "file": "src/scenes/decorRoom.js",
+  "file": "src/scenes/decor/decorRoom.js",
   "old": "    f[0] = e.o[0] + e.piece.pos[0]; f[1] = e.o[1] + e.piece.pos[1]; f[2] = e.o[2] + e.piece.pos[2];",
   "new": "    if (!e._mwFeetMade && (e._mwFeetMade = true)) { f[0] = e.o[0] + e.piece.pos[0]; f[1] = e.o[1] + e.piece.pos[1]; f[2] = e.o[2] + e.piece.pos[2]; }",
   "tests": [
@@ -127,7 +127,7 @@
  },
  {
   "name": "MWNPC18-figure-kept-after-down",
-  "file": "src/scenes/decorRoom.js",
+  "file": "src/scenes/decor/decorRoom.js",
   "old": "    figs.delete(entry);   // MWNPC18\n",
   "new": "",
   "tests": [
@@ -138,7 +138,7 @@
  },
  {
   "name": "MWNPC18-every-piece-a-figure",
-  "file": "src/scenes/decorRoom.js",
+  "file": "src/scenes/decor/decorRoom.js",
   "old": "    if (decorIsFigure(piece)) figs.add(entry);",
   "new": "    figs.add(entry);",
   "tests": [

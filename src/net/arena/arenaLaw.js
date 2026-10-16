@@ -431,7 +431,7 @@ export const ARENA_KINDS = Object.freeze(['pvp', 'pve', 'ex']);
 /** ARENA4b: the largest game hour an exhibition's word names (the room key's nine digits). */
 export const ARENA_HOUR_MAX = 999_999_999;
 /** ARENA4b: a finished exhibition's room keeps its verdict this long - a game day on the shared clock (two real hours),
- *  so the bookmaker of a screen that left before the verdict can still ask it (scenes/arenaOnline.js exhibitionVerdict). */
+ *  so the bookmaker of a screen that left before the verdict can still ask it (scenes/arena/arenaOnline.js exhibitionVerdict). */
 export const ARENA_EX_KEEP_MS = 2 * 3600_000;
 
 // ── ARENA6: A PRIVATE SESSION ─────────────────────────────────────────────────────────────────

@@ -60,7 +60,7 @@ export const PRESS_SHARE = 0.6;
 export const FLOTSAM_OF = 0.5;
 /**
  * SHIP-CLAIM (2026-10-01, Mac: "Claim captured prizes - Keep a ship you take by boarding as your own boat") - HER
- * PAPERS: a prize claimed is the captor's own boat on a Come Sail Away deed (scenes/navalHost.js claimPrize), and the
+ * PAPERS: a prize claimed is the captor's own boat on a Come Sail Away deed (scenes/naval/navalHost.js claimPrize), and the
  * deed is worth PRIZE_DEED_SHARE of what her hull's deed costs on the shelf (comeSailAwayBoat.js HULL_PRICES) - a taken
  * ship is no bought one, and a full-price deed would make every pirate a fortune to sell.
  */

@@ -82,7 +82,7 @@
   },
   {
     "name": "AUDIT-GN-G3-peer-never-laid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (self?.laid?.length && realClock - self.real <= PEER_LAY_S) for (const side of self.laid)",
     "new": "if (false) for (const side of self.laid)",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "AUDIT-GN-G3-peer-laid-for-ever",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (self?.laid?.length && realClock - self.real <= PEER_LAY_S) for (const side of self.laid)",
     "new": "if (self?.laid?.length) for (const side of self.laid)",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "AUDIT-GN-G3-word-without-my-lay",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "casks, spent: spentSaid, laid }, toWire);",
     "new": "casks, spent: spentSaid }, toWire);",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "AUDIT-GN-G3-her-lay-not-kept",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "boat: rec.boat, laid: rec.laid });",
     "new": "boat: rec.boat });",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "AUDIT-GN-G4-the-pool-never-says",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "setGalleonStanding(m.galleon); ",
     "new": "",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "AUDIT-GN-G5-muzzles-upright",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (!mo || !root || !up || !solution?.muzzles?.length) return solution;",
     "new": "    return solution;",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "AUDIT-GN-G5-heel-through-her-hull-as-drawn",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      const o = quatRotate(pose.rotation, root.inverseTransformPoint(up.transformPoint([h[0] + lp[0], h[1] + lp[1], h[2] + lp[2]])));\n      return [pose.position[0] + o[0], pose.position[1] + o[1], pose.position[2] + o[2]];",
     "new": "      return up.transformPoint([h[0] + lp[0], h[1] + lp[1], h[2] + lp[2]]);",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "AUDIT-GN-G5-heel-skipping-the-node-between",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      const p = up.inverseTransformPoint(root.transformPoint(r));",
     "new": "      const p = r;",
     "tests": [
@@ -165,7 +165,7 @@
   },
   {
     "name": "AUDIT-GN-G5-peer-volley-upright",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const launches = volleyLaunches(heeled(solution, pose, boat), v.seed,",
     "new": "const launches = volleyLaunches(solution, v.seed,",
     "tests": [
@@ -192,7 +192,7 @@
   },
   {
     "name": "AUDIT-GN-G8-reloading-laid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if ((side === 'starboard' || side === 'port') && myBoatState(boat).guns.ready(side)) galleonGuns.lay(boat, side, clock);",
     "new": "if (side === 'starboard' || side === 'port') galleonGuns.lay(boat, side, clock);",
     "tests": [

@@ -181,7 +181,7 @@
   },
   {
     "name": "LW4b-roads-draw-allies",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "          if (allies?.has(m.res.id)) continue;",
     "new": "          if (false) continue;",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "LW4b-roads-draw-live-foes",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "        if (fight && !live && !peerLive) {",
     "new": "        if (fight && !peerLive) {",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "LW4b-roads-draw-peer-foes",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "        const peerLive = fight && !live && !!fights && !overworld && fights.peerStands(",
     "new": "        const peerLive = fight && !live && !!fights && !overworld && false && fights.peerStands(",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "LW4b-roads-fights-kept",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "    clear() { deps.sprites.clear(); deps.teams?.clear(); deps.fights?.clear();",
     "new": "    clear() { deps.sprites.clear(); deps.teams?.clear();",
     "tests": [

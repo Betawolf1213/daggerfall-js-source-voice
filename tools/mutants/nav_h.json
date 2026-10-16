@@ -1,7 +1,7 @@
 [
   {
     "name": "NAV-H-the-release-never-fires",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    fire({ shooter: myBoatId(boat), wireShooter: -1, hull: boat.hull, pose, solution, skill: crewSkill(boat, st) });\n    st.guns.fired(side);",
     "new": "    st.guns.fired(side);",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "NAV-H-the-reload-skipped",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    st.guns.fired(side);   // AUDIT NAV1 (the presentation): each gun kicks as it goes (onShot), not the release once\n",
     "new": "",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "NAV-H-the-brace-ignored",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      s.guns.braced = b === boat && braceHeld;",
     "new": "      s.guns.braced = false;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "NAV-H-the-swing-eaten-at-a-rowboat",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (!armed(boat)) { aiming = false; return false; }",
     "new": "    if (!armed(boat)) { aiming = false; return true; }",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "NAV-H-guns-where-none-are",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    get atGuns() { return enabled && armed(myBoat()); },",
     "new": "    get atGuns() { return enabled && !!myBoat(); },",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "NAV-H-every-ball-a-charge",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (entry.charged.has(act)) return;\n",
     "new": "",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "NAV-H-the-sink-never-charged",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (!down(was) && down(dmg.state) && clock - (e.myBlowAt ?? -Infinity) <= SINK_CREDIT_S) chargePlayer('sink', e);",
     "new": "",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "NAV-H-the-sink-charged-forever",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "clock - (e.myBlowAt ?? -Infinity) <= SINK_CREDIT_S) chargePlayer('sink', e);",
     "new": "e.myBlowAt > -Infinity) chargePlayer('sink', e);",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "NAV-H-my-blow-landed-twice",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      return;\n    }\n    strike(target, hurt, byMe ? myId() : e.shooter, undefined, stray);",
     "new": "    }\n    strike(target, hurt, byMe ? myId() : e.shooter, undefined, stray);",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "NAV-H-the-haul-skipped",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (!boat) boarding.t = Infinity;",
     "new": "    boarding.t = Infinity;",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "NAV-H-the-captain-last",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      const all = [muster.captain, ...muster.men];",
     "new": "      const all = [...muster.men, muster.captain];",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "NAV-H-the-prize-never-offered",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    endBoarding();   // the hands go home over the rail; her dead lie on her deck (entry.deck)\n    openPrize(entry);",
     "new": "    endBoarding();   // the hands go home over the rail; her dead lie on her deck (entry.deck)",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "NAV-H-the-raid-never-started",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      const quest = deps.board?.startRaid?.(raidQuestOf(entry.ship.cls));",
     "new": "      const quest = null;",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "NAV-H-the-gate-sailing-home",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (entry) winBoarding(b, entry); else endBoarding();\n      return 'naval';",
     "new": "      if (entry) winBoarding(b, entry); else endBoarding();\n      return 'proceed';",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "NAV-H-the-voyage-never-waiting",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (prizeRaid?.quest === quest) return prizeRaid.state === 'done' ? 'proceed' : 'wait';",
     "new": "    if (prizeRaid?.quest === quest) return 'proceed';",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "NAV-H-the-raids-forgotten",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "day: lastDecayDay, raids: [...raidUids], party:",
     "new": "day: lastDecayDay, raids: [], party:",
     "tests": [
@@ -146,7 +146,7 @@
   },
   {
     "name": "NAV-H-a-boat-keyed-by-nothing",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (!Number.isSafeInteger(key) || key <= 0 || !rec || typeof rec !== 'object') continue;",
     "new": "      if (!rec || typeof rec !== 'object') continue;",
     "tests": [
@@ -155,7 +155,7 @@
   },
   {
     "name": "NAV-H-the-traffic-on-land",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const onWater = !!boat || deps.isWater(deps.feet()[0], deps.feet()[2], 0);",
     "new": "    const onWater = true;",
     "tests": [
@@ -164,7 +164,7 @@
   },
   {
     "name": "NAV-H-the-build-never-done",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    buildOne();\n    const eye = deps.look?.()?.origin ?? deps.feet();",
     "new": "    const eye = deps.look?.()?.origin ?? deps.feet();",
     "tests": [
@@ -173,7 +173,7 @@
   },
   {
     "name": "NAV-H-a-peers-blow-ignored",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    strike(entry, hurt, from, true, strayOnAlly(entry, hurt, from));   // a player's blow - SEA-EASE: a stray on an aid weighed as mine",
     "new": "",
     "tests": [
@@ -182,7 +182,7 @@
   },
   {
     "name": "NAV-H-a-departed-owner-stays",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (!alive?.has?.(o) || clock - last > staleS) releaseOwner(o);",
     "new": "      if (clock - last > staleS) releaseOwner(o);",
     "tests": [
@@ -191,7 +191,7 @@
   },
   {
     "name": "NAV-H-a-volley-seen-twice",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (seen.has(v.id)) continue;",
     "new": "",
     "tests": [
@@ -200,7 +200,7 @@
   },
   {
     "name": "NAV-H-the-stander-launching-for-all",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    standing = amGroupRollOwner(id, deps.feet(), near, HARBOUR_STAND * 2);",
     "new": "    standing = true;",
     "tests": [

@@ -16,13 +16,13 @@ import { scene } from './csaScene.mjs';
 import { WATER_LEVEL, BOAT_ACTIONS } from '../src/systems/comeSailAway/comeSailAway.js';
 import { HELM_WAY, SAIL_FREE, SAIL_FREE_GAINS, sailFreeGain } from '../src/systems/helmWay.js';
 import { createSeaHelm, seaHelmStep, seaHelmReach, seaHelmLook, headingOf, squareOnly, SEA_HELM } from '../src/systems/seaHelm.js';
-import { heaveToDecel, HEAVE_TO_DECEL, HEAVE_TO_M, HEAVE_TO_S } from '../src/scenes/navalHost.js';
+import { heaveToDecel, HEAVE_TO_DECEL, HEAVE_TO_M, HEAVE_TO_S } from '../src/scenes/naval/navalHost.js';
 import { BOARD_SPEED } from '../src/systems/naval/navalBoarding.js';
 import { HULL } from '../src/systems/naval/navalShips.js';
 import { quatRotate } from '../src/world/quat.js';
 import { helmButtons } from '../src/ui/enhanced/enhancedHelm.js';
-import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';
-import { createComeSailAwayPeers, CSA_PEER_SNAP_M, CSA_PEER_SNAP_S, peerSnapM } from '../src/scenes/comeSailAwayPeers.js';
+import { createComeSailAwayPool } from '../src/scenes/comeSailAway/comeSailAwayPool.js';
+import { createComeSailAwayPeers, CSA_PEER_SNAP_M, CSA_PEER_SNAP_S, peerSnapM } from '../src/scenes/comeSailAway/comeSailAwayPeers.js';
 
 const WORLD = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
 const near = (a, b, eps, msg = '') => assert.ok(Math.abs(a - b) <= eps, `${msg} ${a} vs ${b} (±${eps})`);

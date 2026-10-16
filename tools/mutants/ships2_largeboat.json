@@ -201,7 +201,7 @@
   },
   {
     "name": "SHIPS2-L-every-plans-boxes-stood",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const plan = (box) => /** @type {any} */ (box).variant == null ||",
     "new": "const plan = (box) => true ||",
     "tests": [

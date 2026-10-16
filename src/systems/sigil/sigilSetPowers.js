@@ -390,7 +390,7 @@ let _pending = null;
 /** AUDIT SD: A WORLD BOSS'S BLOW. The Brass Remnant strikes through the court's door, never the attack formula's struck
  *  tail, so its blows carry no foe's mark - no reach power answers a world boss (Sigil-Sets.md section 8). The one
  *  power its own set brings to the fight it drops in, Gearward, reads this mark of its own instead: the Remnant's
- *  driver marks a body's own blow as it lands (scenes/sdRemnantBlows.js bodysBlow - never the Hour's magic, never the
+ *  driver marks a body's own blow as it lands (scenes/superDungeon/sdRemnantBlows.js bodysBlow - never the Hour's magic, never the
  *  burning brass); nothing else reads it. */
 let _bossBlowAt = -Infinity, _pendingBoss = false;
 export function setBossStruck() { _bossBlowAt = _now(); }

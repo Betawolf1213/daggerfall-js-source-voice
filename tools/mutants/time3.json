@@ -523,7 +523,7 @@
   },
   {
     "name": "TIME3-the-bridge-drops-the-sky",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "    skySeconds: () => ctx.skySeconds?.() ?? null,",
     "new": "    skySeconds: () => null,",
     "tests": [
@@ -532,7 +532,7 @@
   },
   {
     "name": "TIME3-the-lens-rereads-on-one-hour",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "|${Math.floor((ctx.skySeconds?.() ?? 0) / 3600)}`;",
     "new": "`;",
     "tests": [

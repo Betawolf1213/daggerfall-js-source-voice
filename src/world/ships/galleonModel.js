@@ -76,7 +76,7 @@ export const WELL_RAMP_NY = Object.freeze([0.75, 0.9]);
 /** The helm: the wheel's hub (on the castle's roof, inside its low parapet), and where the helmsman stands - far
  *  enough behind it, and the wheel low enough, that the eye at the helm looks over it to the bow.
  *  AUDIT GN-P1: `stand` is DrivePosition, and Come Sail Away pins the player's capsule CENTRE to it (scenes/world.js
- *  csaSetPlayerPosition: pinFeet(c.y - height/2); scenes/comeSailAwayAboard.js helmWord: "the feet, half a height
+ *  csaSetPlayerPosition: pinFeet(c.y - height/2); scenes/comeSailAway/comeSailAwayAboard.js helmWord: "the feet, half a height
  *  under") - so it stands CAPSULE_HEIGHT/2 over her roof, as every hull of the mod's stands its own over its deck (its
  *  galleon 0.982, carrack 0.943, trireme 1.383, skiff 1.102, dinghy 0.704). It stood ON the roof: her helmsman's feet
  *  0.9 m under it, through it into the great cabin, his eye (11.818) under the wheel's hub and all 28 of the bow's
@@ -775,7 +775,7 @@ export function galleonPrefab(bake, csa) {
 
   // ── Mac's model ──
   // the castle, its rail and its parapet draw on their own nodes and stand in the HULL's collider (below): the hull's
-  // box is the shots' target (scenes/navalHost.js hullBoxOf - her MeshCollider's bounds), and a ball into her castle
+  // box is the shots' target (scenes/naval/navalHost.js hullBoxOf - her MeshCollider's bounds), and a ball into her castle
   // strikes her as one into her side does
   for (const [role, name] of [['castle', 'Castle'], ['castleParapet', 'CastleParapet'], ['castleRail', 'CastleRail']]) kids.push(meshNode(name, `galleon:${role}`, bakedPartGeometry(part(role))));
   // AUDIT GN-CROWSNEST: Mac drew his main mast open at its head and his crow's nest's floor one-sided, its bowl open

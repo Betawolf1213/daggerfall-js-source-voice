@@ -4,7 +4,7 @@
 // light SD_STOMP_WALL.h tall, not a line on the floor: it reads "jump this". A cylinder strip of SD_STOMP_WALL.segs sides
 // about the Stomp's centre at the front's radius, ADDED onto the frame (the beam's law, render/sdBeam.js: fixed geometry
 // placed by uniforms, no depth written, tested against the world's, fogged), its light posterized in bands rising to a
-// bright top lip, fading as the roll ends. The gate telegraph's floor ring stays under it (scenes/sdRemnantBlows.js).
+// bright top lip, fading as the roll ends. The gate telegraph's floor ring stays under it (scenes/superDungeon/sdRemnantBlows.js).
 //
 // THE HOLD (section 9) is the same wall in gold, SD_HOLD_CURTAIN.h tall, at the arena's rim: while a player joined to a
 // living fight stands in it (net/superDungeon/sdBrain.js arenaHolds), "you are held here" is seen, not found by walking into it.

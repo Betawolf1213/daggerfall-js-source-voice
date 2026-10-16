@@ -1,7 +1,7 @@
 [
   {
     "name": "PERF-YARD-a-the-shadow-arm-dropped",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "  return reaches(box) ? DECOR_SHADOW : DECOR_SKIP;",
     "new": "  return DECOR_SKIP;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "PERF-YARD-b-every-box-drawn",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "  if (!aabbOutside(planes, box)) return DECOR_DRAW;",
     "new": "  if (planes) return DECOR_DRAW;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "PERF-YARD-c-the-verdict-unread",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "      const seen = cull && e.box ? cull(e.wbox ??= transformedAabb(e.box, e.matrix)) : DECOR_DRAW;",
     "new": "      const seen = DECOR_DRAW;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "PERF-YARD-d-the-cast-arm-drawn",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "      if (seen === DECOR_SHADOW) { r?.recordShadowMesh?.(e.gpu, e.matrix, texRemap); continue; }",
     "new": "",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "PERF-YARD-e-the-world-box-kept-from-where-it-stood",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "      e.wbox = null;   // PERF-YARD: its box in the world, made again where it stands now\n",
     "new": "",
     "tests": [
@@ -83,7 +83,7 @@
   },
   {
     "name": "PERF-YARD-j-the-box-guard-dropped",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "const seen = cull && e.box ? cull(",
     "new": "const seen = cull ? cull(",
     "tests": [
@@ -114,7 +114,7 @@
   },
   {
     "name": "PERF-YARD-n-a-no-shadow-part-cast",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "{ if (!o?.noShadow) r.recordShadowMesh?.(mesh, m, remap); }",
     "new": "{ r.recordShadowMesh?.(mesh, m, remap); }",
     "tests": ["test/perfyard.test.js"]

@@ -1,6 +1,6 @@
 // SD11f (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 16's AUDIT SD II, sections
 // 5, 6 and 11) - THE ARC'S SECOND AUDIT, ITS SCENES' LAST FINDINGS AND ITS DOCS, each fix as it stands
-// (scenes/sdEnd.js, systems/superDungeon/sdRiftSound.js, world/superDungeon/sdDungeon.js, render/auraRing.js, the hosts). The way home is pressed,
+// (scenes/superDungeon/sdEnd.js, systems/superDungeon/sdRiftSound.js, world/superDungeon/sdDungeon.js, render/auraRing.js, the hosts). The way home is pressed,
 // never walked into - it stands where the spoils land (L6 F9, the gate's SS3); it rises out of the floor with the Rift's
 // bell tolled once, a fourth higher, and the Hour says it stands open - said and tolled as it rises, never to a page
 // that comes later (L6 F16); the Hollow's Rift counts its Hour on its plaque - the fade by the hour and its last hour by
@@ -11,13 +11,13 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { createSdEnd, SD_HOME_TEXT, SD_HOME_RISE_MS, SD_HOME_SAY_MS, SD_HOME_ASSEMBLY, SD_RETURN_KEY, SD_RIFT_KEY } from '../src/scenes/sdEnd.js';
+import { createSdEnd, SD_HOME_TEXT, SD_HOME_RISE_MS, SD_HOME_SAY_MS, SD_HOME_ASSEMBLY, SD_RETURN_KEY, SD_RIFT_KEY } from '../src/scenes/superDungeon/sdEnd.js';
 import { tollRiftBell, SD_HOME_TOLL, RIFT_BELL_KEY, RIFT_BELL_RECORDS } from '../src/systems/superDungeon/sdRiftSound.js';
 import { sdRiftCount, SD_RETURN_SIZE, SD_END_TEXT } from '../src/world/superDungeon/sdDungeon.js';   // AUDIT SD III (T6, PIN MOVED): no long count of its own - the Timers' words
 import { sdRise, sdFirst, sdFind, sdFell, SD_COLLAPSE_MS } from '../src/net/superDungeon/sdLaw.js';
 import { SD_ARENA, realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
-import { SD_REM_SINK_MS } from '../src/scenes/sdRemnant.js';
-import { clearOfPillars } from '../src/scenes/sdSpoils.js';
+import { SD_REM_SINK_MS } from '../src/scenes/superDungeon/sdRemnant.js';
+import { clearOfPillars } from '../src/scenes/superDungeon/sdSpoils.js';
 import { sdTemplates } from '../src/systems/superDungeon/sdSite.js';
 import { isMainStoryDungeon } from '../src/world/dungeon/dungeonTextures.js';
 import { ELITE_FOE_MULTIPLIER } from '../src/world/spawnedDungeons.js';

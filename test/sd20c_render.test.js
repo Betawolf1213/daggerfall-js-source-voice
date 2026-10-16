@@ -15,19 +15,19 @@ import { ALLOC_CHILD_ARGS } from './allocChild.mjs';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import { join, dirname } from 'node:path';
 import { glslFunctions } from './glsl.mjs';
-import { createSdFx, SD_FX_KINDS, SD_FX_FLOOR_Y, SD_SHAKE } from '../src/scenes/sdFx.js';
+import { createSdFx, SD_FX_KINDS, SD_FX_FLOOR_Y, SD_SHAKE } from '../src/scenes/superDungeon/sdFx.js';
 import {
   SD_BLOWS, SD_BODY, SD_ARENA_SLACK, SD_PILLARS, SD_REM, SD_ECHO, SD_REM_START, SD_BREAK_MS,
   handSwept, behindPillar, keepInArena, inArena, blowShape,
 } from '../src/net/superDungeon/sdRemnant.js';
 import { SD_ARENA, SD_PILLAR_W, realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { sdBodyAt } from '../src/net/superDungeon/sdFightLink.js';
-import { handSweepOf, handSweepHas, sdWayOut, sdPerilAt } from '../src/scenes/sdArenaRead.js';
-import { sdGearsAt, gearMatrix, sdBeamDraws, sdBeamsAt, sdKeptList } from '../src/scenes/sdRemnantRig.js';
+import { handSweepOf, handSweepHas, sdWayOut, sdPerilAt } from '../src/scenes/superDungeon/sdArenaRead.js';
+import { sdGearsAt, gearMatrix, sdBeamDraws, sdBeamsAt, sdKeptList } from '../src/scenes/superDungeon/sdRemnantRig.js';
 import { SdBeamRenderer, SD_BEAM_VS, SD_BEAM_FS, SD_BEAM_W, SD_BEAM_MAX, SD_BEAM_MIN_RAD } from '../src/render/sdBeam.js';
 import { SD_SKY_VS, SD_SKY_FS, SD_SKY_PAINT_FS } from '../src/render/sdSky.js';
-import { createSdRemnant, remnantPose, echoPose, sdTurnToward, SD_TURN_RATE, SD_REM_SINK_MS, SD_ECHO_SINK_MS } from '../src/scenes/sdRemnant.js';
-import { createSdRemnantBlows } from '../src/scenes/sdRemnantBlows.js';
+import { createSdRemnant, remnantPose, echoPose, sdTurnToward, SD_TURN_RATE, SD_REM_SINK_MS, SD_ECHO_SINK_MS } from '../src/scenes/superDungeon/sdRemnant.js';
+import { createSdRemnantBlows } from '../src/scenes/superDungeon/sdRemnantBlows.js';
 import { SD_BRASS_GLSL, SD_BRASS_RAMP, sdBrassGrade } from '../src/world/superDungeon/sdBrassSky.js';
 import { sdBrassLight, SD_BRASS_TINT } from '../src/systems/superDungeon/sdOmen.js';
 import { realmLightsWith, SD_LIGHTS_CAP } from '../src/world/superDungeon/sdRealm.js';
@@ -43,7 +43,7 @@ const at = (x, y, z) => realmToDungeon(SD_ARENA.x + x, y, SD_ARENA.z + z);
 const blow = (A, i, landAt, more = {}) => ({ k: 'atk', b: SD_BODY.remnant, i, a: A.id, at: landAt, x: 0, z: 0, yw: 0, tg: [], ...more });
 /** A fight, its Remnant at (0, 0) facing +z, awake a minute. */
 const fight = (over = {}) => ({ fi: 2, ph: 1, op: T0 - 60_000, ou: 0, su: 0, h: 1000, m: 1000, rem: { x: 0, z: 0, yw: 0, mv: null, atk: null }, ec: null, clk: null, cx: null, fell: null, lost: 0, ...over });
-/** The blows seen (scenes/sdFx.js) on a fight the test turns, a clock it moves, a camera that shakes; my feet in the
+/** The blows seen (scenes/superDungeon/sdFx.js) on a fight the test turns, a clock it moves, a camera that shakes; my feet in the
  *  arena's frame (null: out of the Hour). */
 function rig(over = {}) {
   let t = T0, feet = null;
@@ -185,7 +185,7 @@ test('SD20c THE GEARS FLY ON EDGE ALONG THEIR FLIGHT (V12): each gear stood in i
     const a = top(0), b = top(0.01);
     assert.ok(near(a[1], 1, 1e-9) && (b[0] - a[0]) * fwd[0] + (b[2] - a[2]) * fwd[1] > 0.009, 'unspun, it stands upright, and its top rolls forward as it spins');
   }
-  assert.match(read('src/scenes/sdRemnant.js'), /gearMatrix\(q\.x, q\.y, q\.z, q\.spin, d\.object\.matrix, q\.yaw\); d\.hidden = false;/);
+  assert.match(read('src/scenes/superDungeon/sdRemnant.js'), /gearMatrix\(q\.x, q\.y, q\.z, q\.spin, d\.object\.matrix, q\.yaw\); d\.hidden = false;/);
 });
 
 test('SD20c THE BRASS AIR\'S GRADE ON THE SKY IS ITS HAZE\'S (V8): world/superDungeon/sdBrassSky.js\'s GLSL is its JS - generated from the same stops and weights, run here on the code the GPU runs and equal to sdBrassGrade over the colours a sky shows and every weight; each of the four passes that draw the sky (the classic, the enhanced, the dynamic, the clouds\' composite) includes it, grades its final colour by its own uBrass after the dread\'s, and uploads the weight the controller sets - the fogged land met the sky a step apart at the skyline (15/-4/-34 a clear noon); the water\'s sky graded as the sky over it (mutants: the sky ungraded; the ramp drifted)', () => {
@@ -384,12 +384,12 @@ test('SD20c THE SAME LAW IN PLAIN NUMBERS (V5): the arena\'s read walks its own 
 test('SD20c A FRAME OF THE FIGHT MAKES NEXT TO NOTHING (V5) - measured in a child with a 64 MB young space (the least of six windows): the blows seen (a living fight\'s frame, its lights), the Ending\'s stone light, the set (three bodies walking, the Hearts, a Volley\'s gears in flight), the gears, the beam and its pass, the arena read with a blow over my feet (the Hand\'s sweep, the Stomp\'s disc, a Volley\'s mark - its way out asked), the Hour\'s lines past the cap, a walking body, the arena\'s keep, the pillars, the floor; each under its bound, against a control of three numbers into a fresh list a frame, which must show - they made 0.2-32 KB a frame (mutants: each kept list, scratch and walk given up)', () => {
   const url = (p) => JSON.stringify(pathToFileURL(join(ROOT, p)).href);
   const script = `
-    const { createSdFx } = await import(${url('src/scenes/sdFx.js')});
-    const { createSdRemnant } = await import(${url('src/scenes/sdRemnant.js')});
-    const { sdGearsAt, sdBeamDraws, sdKeptList } = await import(${url('src/scenes/sdRemnantRig.js')});
+    const { createSdFx } = await import(${url('src/scenes/superDungeon/sdFx.js')});
+    const { createSdRemnant } = await import(${url('src/scenes/superDungeon/sdRemnant.js')});
+    const { sdGearsAt, sdBeamDraws, sdKeptList } = await import(${url('src/scenes/superDungeon/sdRemnantRig.js')});
     const { SdBeamRenderer } = await import(${url('src/render/sdBeam.js')});
     const { sdEndingStoneLight } = await import(${url('src/ui/superDungeon/sdMarksView.js')});
-    const { sdPerilAt } = await import(${url('src/scenes/sdArenaRead.js')});
+    const { sdPerilAt } = await import(${url('src/scenes/superDungeon/sdArenaRead.js')});
     const { realmLightsWith } = await import(${url('src/world/superDungeon/sdRealm.js')});
     const { sdBodyAt } = await import(${url('src/net/superDungeon/sdFightLink.js')});
     const { SD_BLOWS, SD_BODY, keepInArena, behindPillar, inArena } = await import(${url('src/net/superDungeon/sdRemnant.js')});

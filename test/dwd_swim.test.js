@@ -24,8 +24,8 @@ import { PlayerMotor, afloatMessageStep, CANNOT_FLOAT_TEXT, CANNOT_FLOAT_HUD_SEC
 import { Collider } from '../src/player/collider.js';
 import { applyMotorEffectFlags } from '../src/scenes/shared.js';
 import { exteriorSwimming } from '../src/player/exteriorSurface.js';
-import { createDeepWatersPlayer, UNCROUCH_AFTER_EXIT_SECONDS, FRAME_SPIKE_SECONDS } from '../src/scenes/deepWatersPlayer.js';
-import { createSwimMovement, clampAboveSeafloor } from '../src/scenes/deepWatersSwimMove.js';
+import { createDeepWatersPlayer, UNCROUCH_AFTER_EXIT_SECONDS, FRAME_SPIKE_SECONDS } from '../src/scenes/deepWater/deepWatersPlayer.js';
+import { createSwimMovement, clampAboveSeafloor } from '../src/scenes/deepWater/deepWatersSwimMove.js';
 import {
   swimCheckY, headUnderwater, headClearOfSurface, worldYToBlockWaterLevel, blockWaterLevelToWorldY, NO_WATER_LEVEL,
   forgedSwimWaterLineY, surfaceAscentCeiling, presentationWaterLineForFog, DeepWaterSwimState, strokeTempoScale,

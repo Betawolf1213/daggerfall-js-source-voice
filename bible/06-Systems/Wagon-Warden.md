@@ -71,7 +71,7 @@ starts its clock again).
 `tw` and `rd` and throws nothing; the client sends them to any relay. **NOT YET DEPLOYED - its deploy drops every
 player once.**
 
-## The client (`systems/wagon/wagonWarden.js`, `scenes/wagonWardenHost.js`)
+## The client (`systems/wagon/wagonWarden.js`, `scenes/wagon/wagonWardenHost.js`)
 
 **The stamp.** Every frame the save's parked wagon is read (the HCC runtime's view); a wagon parked somewhere new is
 stamped once the ground under it is built (`townAt` - the streaming host's built town under the anchor, its map id and
@@ -103,7 +103,7 @@ came.
 as the player steps out). A town holds nobody else's team
 offline, so there is no crowd. Online the cell alone throws; a relay before `world191` throws nothing.
 
-## The throw, played (`scenes/wagonWardenShow.js`)
+## The throw, played (`scenes/wagon/wagonWardenShow.js`)
 
 A guard of the town's watch - the city guards' own picture (`GUARD_TEXTURE`, its walk wheel and its idle record) -
 jogs (`WARDEN_GUARD_SPEED`, 3.2 m/s) up to the team along the town's streets (`findTownPath` over the walk grid, from

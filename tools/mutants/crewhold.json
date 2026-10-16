@@ -41,7 +41,7 @@
   },
   {
     "name": "CREW-HOLD-ram-tough",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "export const ramMen = (dealt, roll, tough) => ballMen(dealt / RAM_A_MAN, roll, tough);",
     "new": "export const ramMen = (dealt, roll, tough) => ballMen(dealt / RAM_A_MAN, roll);",
     "tests": [
@@ -51,7 +51,7 @@
   },
   {
     "name": "CREW-HOLD-landHit-mine",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "roll: random(), tough: PLAYER_CREW_TOUGHNESS, weight: e.weight });",
     "new": "roll: random(), weight: e.weight });",
     "tests": [
@@ -61,7 +61,7 @@
   },
   {
     "name": "CREW-HOLD-serpent-men",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const men = playerMen(hurt.crew ?? 0, random());",
     "new": "const men = hurt.crew ?? 0;",
     "tests": [
@@ -151,7 +151,7 @@
   },
   {
     "name": "GALLEON-WEIGHT-my-volley",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const weight = shipBatteryWeight(hull, solution.side, isMine(shooter));",
     "new": "const weight = 1;",
     "tests": [

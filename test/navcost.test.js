@@ -7,7 +7,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createSeaShip, stepCaptain, WIND_RATED } from '../src/systems/naval/navalAI.js';
-import { flatHull, hullOverlap } from '../src/scenes/navalHost.js';
+import { flatHull, hullOverlap } from '../src/scenes/naval/navalHost.js';
 import { seeded, sea } from './navalSea.mjs';
 
 const world = (o = {}) => ({ now: 0, dt: 0.1, seaY: 0, wind: [0, 0, WIND_RATED], isWater: () => true, contacts: [], random: () => 0.5, ...o });

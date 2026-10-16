@@ -37,7 +37,7 @@
   },
   {
     "name": "SD26-T2-a-cut-line-lost",
-    "file": "src/scenes/sdVoice.js",
+    "file": "src/scenes/superDungeon/sdVoice.js",
     "old": "        if (standing && r < standing.rank && (k === null || standing.key !== k)) back(standing, t);\n",
     "new": "",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "SD26-T2-the-cut-behind-its-rank",
-    "file": "src/scenes/sdVoice.js",
+    "file": "src/scenes/superDungeon/sdVoice.js",
     "old": "    while (i < waiting.length && waiting[i].rank < w.rank) i++;",
     "new": "    while (i < waiting.length && waiting[i].rank <= w.rank) i++;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "SD26-T2-a-line-nearly-read-again",
-    "file": "src/scenes/sdVoice.js",
+    "file": "src/scenes/superDungeon/sdVoice.js",
     "old": "    if (w.until - t < SD_VOICE_READ_MS || waiting.some",
     "new": "    if (waiting.some",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "SD26-T2-the-threads-word-back",
-    "file": "src/scenes/sdVoice.js",
+    "file": "src/scenes/superDungeon/sdVoice.js",
     "old": "if (standing && r < standing.rank && (k === null || standing.key !== k)) back(standing, t);",
     "new": "if (standing && r < standing.rank) back(standing, t);",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "SD26-T2-the-wait-not-begun-anew",
-    "file": "src/scenes/sdVoice.js",
+    "file": "src/scenes/superDungeon/sdVoice.js",
     "old": "    waiting.splice(i, 0, { text: w.text, rank: w.rank, at: t, key: w.key });",
     "new": "    waiting.splice(i, 0, { text: w.text, rank: w.rank, at: t - 4000, key: w.key });",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "SD26-T3-the-window-unread",
-    "file": "src/scenes/sdVoice.js",
+    "file": "src/scenes/superDungeon/sdVoice.js",
     "old": "    if (covered()) { coveredAt ??= t; return; }",
     "new": "    if (false) { coveredAt ??= t; return; }",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "SD26-T3-the-standing-clock-run-on",
-    "file": "src/scenes/sdVoice.js",
+    "file": "src/scenes/superDungeon/sdVoice.js",
     "old": "      if (standing) standing.until += t - coveredAt;\n",
     "new": "",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "SD26-T3-the-turns-waits-aged",
-    "file": "src/scenes/sdVoice.js",
+    "file": "src/scenes/superDungeon/sdVoice.js",
     "old": "      for (const w of waiting) if (w.rank !== SD_VOICE_RANK.readout) w.at += t - Math.max(coveredAt, w.at);\n",
     "new": "",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "SD26-T3-a-readout-kept-past-its-moment",
-    "file": "src/scenes/sdVoice.js",
+    "file": "src/scenes/superDungeon/sdVoice.js",
     "old": "      for (const w of waiting) if (w.rank !== SD_VOICE_RANK.readout) w.at +=",
     "new": "      for (const w of waiting) if (true) w.at +=",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "SD26-T3-the-turn-under-it-queued",
-    "file": "src/scenes/sdVoice.js",
+    "file": "src/scenes/superDungeon/sdVoice.js",
     "old": "      if (standing && waiting.length && waiting[0].rank < standing.rank) { back(standing, t); standing = null; }",
     "new": "      void 0;",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "SD26-T3-a-line-written-under-it",
-    "file": "src/scenes/sdVoice.js",
+    "file": "src/scenes/superDungeon/sdVoice.js",
     "old": "      if (coveredAt === null && (!standing ||",
     "new": "      if ((!standing ||",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "SD26-T7-the-hour-before-the-find",
-    "file": "src/scenes/sdHost.js",
+    "file": "src/scenes/superDungeon/sdHost.js",
     "old": "    sayOwed(t);\n    // SD19: A FOUND HOLLOW'S LAST HOUR, said to the realm once (its place known - or the world offering none: the region's name)\n    if (phase === 'found' && rec && hourSaidS !== rec.s && Number.isFinite(rec.until) && rec.until > t && rec.until - t <= SD_HOUR_LEFT_MS) {\n      const hh = hollowOf(rec);\n      if (hh || (memo && memo.s === rec.s && memo.none)) { hourSaidS = rec.s; say(sdHourLine({ name: hh?.loc?.name, near: hh?.site?.cityName || '', region: regionName(rec.r) || '' })); }\n    }\n",
     "new": "    // SD19: A FOUND HOLLOW'S LAST HOUR, said to the realm once (its place known - or the world offering none: the region's name)\n    if (phase === 'found' && rec && hourSaidS !== rec.s && Number.isFinite(rec.until) && rec.until > t && rec.until - t <= SD_HOUR_LEFT_MS) {\n      const hh = hollowOf(rec);\n      if (hh || (memo && memo.s === rec.s && memo.none)) { hourSaidS = rec.s; say(sdHourLine({ name: hh?.loc?.name, near: hh?.site?.cityName || '', region: regionName(rec.r) || '' })); }\n    }\n    sayOwed(t);\n",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "SD26-T8-the-turn-offered-after-the-concord",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "ok ? SD_HALL_TEXT.held : st[2] === 'f'",
     "new": "st[2] === 'f'",
     "tests": [

@@ -2,7 +2,7 @@
 // THE FLEET'S HOST HALF (HOLDINGS, 2026-10-03 - bible/03-World/Holdings.md). The Fleet page (ui/fleetPage.js) reads a
 // model and asks acts; this builds the one and carries out the other over the world host's runtimes - Come Sail Away's
 // boats (the mod's own laws: SummonBoat, LayUpBoat, StartPlacing over the Fleet's book), the sea fight's state of each
-// (scenes/navalHost.js fleetStatus, repairAway, refitBoat, the yard, the berths), and the ledger (systems/fleet.js).
+// (scenes/naval/navalHost.js fleetStatus, repairAway, refitBoat, the yard, the berths), and the ledger (systems/fleet.js).
 // Built by scenes/world.js, the one host that stands Come Sail Away; the page is taken down with it.
 //
 //   deps = {

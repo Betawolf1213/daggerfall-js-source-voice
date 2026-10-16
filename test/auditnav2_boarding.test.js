@@ -10,7 +10,7 @@ import { readFileSync } from 'node:fs';
 import { sea } from './navalSea.mjs';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
 import { isShipmate } from '../src/combat/friendlyFire.js';
-import { DECK_SPOTS } from '../src/scenes/navalHost.js';
+import { DECK_SPOTS } from '../src/scenes/naval/navalHost.js';
 import { GRAPPLE_S, CREW_PER_HAND, MOBILE } from '../src/systems/naval/navalBoarding.js';
 import { SHIP_STATES } from '../src/systems/naval/navalDamage.js';
 

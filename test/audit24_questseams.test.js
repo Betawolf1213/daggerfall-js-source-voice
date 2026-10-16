@@ -133,7 +133,7 @@ const CTX_PENDING = new Map([
  *  TK-iv and nothing called it, so an offered townsperson never left
  *  npcsWithWork and was re-offered the same quest for ever. */
 function bridgeCtxSeams() {
-  return new Set([...read('src/scenes/questBridge.js').matchAll(/\bctx\.(\w+)/g)].map((m) => m[1]));
+  return new Set([...read('src/scenes/quest/questBridge.js').matchAll(/\bctx\.(\w+)/g)].map((m) => m[1]));
 }
 
 function bridgeCtxSupplied() {
@@ -425,7 +425,7 @@ test('audit24: a NEW CHARACTER starts the two hard-coded quests, main quest incl
   // that list is EMPTY, so a new character started no quests at all
   // and the MAIN QUEST never began. Both files are vendored; neither
   // had ever been parsed.
-  const { GAME_START_QUESTS, createQuestBridge } = await import('../src/scenes/questBridge.js');
+  const { GAME_START_QUESTS, createQuestBridge } = await import('../src/scenes/quest/questBridge.js');
   const { loadQuestTables } = await import('../src/systems/quest/tables.js');
   const { readFileSync, readdirSync, existsSync } = await import('node:fs');
 

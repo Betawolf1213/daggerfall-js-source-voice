@@ -19,7 +19,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { loadQuestTables } from '../src/systems/quest/tables.js';
-import { createQuestBridge } from '../src/scenes/questBridge.js';
+import { createQuestBridge } from '../src/scenes/quest/questBridge.js';
 import { QUEST_MESSAGES } from '../src/systems/quest/machine.js';
 import { GETTING_QUESTS_1, GETTING_QUESTS_2 } from '../src/systems/quest/offerFlow.js';
 import { GUILD_GROUPS } from '../src/formats/factionFile.js';
@@ -171,7 +171,7 @@ test('GQL1e every step kind offerFlow.js can answer is a case in offerBoxes (der
   const kinds = new Set([...flow.matchAll(/\bkind: '(\w+)'/g)].map((m) => m[1]));
   assert.ok(kinds.size >= 6, `the flow's kinds: ${[...kinds].join(', ')}`);
   for (const k of ['gettingQuests', 'pickQuest', 'offer', 'fail', 'accepted', 'refused', 'close']) assert.ok(kinds.has(k), k);
-  const bridge = src('src/scenes/questBridge.js');
+  const bridge = src('src/scenes/quest/questBridge.js');
   const at = bridge.indexOf('    offerBoxes(step, rows) {');
   assert.ok(at > 0);
   const body = bridge.slice(at, bridge.indexOf('\n    },\n', at));

@@ -524,5 +524,5 @@ test('PROF11 wiring: the mason\'s bench a General Store\'s (open for trade) or a
   // PIN MOVED (CRAFT4): the loom's Temper beside it, then the bench
   assert.match(p, /\['loom', \(d\) => drawLoom\(d, rerender, kit\)\],   \/\/ PROF7\n\s*\['temper-loom', \(d\) => drawTemper\(d, rerender, kit, 'loom'\)\],   \/\/ CRAFT4: the tailor's\n\s*\['mason', \(d\) => drawMasonBench\(d, rerender, kit\)\],   \/\/ PROF11/);   // PIN MOVED (MENU-ORDER)
   assert.match(src('src/ui/enhanced/enhancedPlusStyle.js'), /\.prof-chisel-line\.marked \{[^}]*double/, 'the marked line a shape as well as a colour (5.1)');
-  assert.match(src('src/scenes/decorTool.js'), /if \(PROF_STATIONS\.includes\(want\) && !forgeOffered\(\)\) \{ deps\.say\?\.\(stationColdLine\(want\)\); return false; \}/, 'the mason\'s bench sold where the bench works, as the forge');
+  assert.match(src('src/scenes/decor/decorTool.js'), /if \(PROF_STATIONS\.includes\(want\) && !forgeOffered\(\)\) \{ deps\.say\?\.\(stationColdLine\(want\)\); return false; \}/, 'the mason\'s bench sold where the bench works, as the forge');
 });

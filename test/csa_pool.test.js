@@ -1,4 +1,4 @@
-// CSA-B (2026-09-27) - COME SAIL AWAY'S BOATS DRAWN (scenes/comeSailAwayPool.js):
+// CSA-B (2026-09-27) - COME SAIL AWAY'S BOATS DRAWN (scenes/comeSailAway/comeSailAwayPool.js):
 // the pool over a recording renderer and a stand-in pipeline - what a built
 // hull hands the world pass (every active, switched-on renderer that wears a
 // Daggerfall texture, never the water mask), the sails' FixDeformations bakes
@@ -9,7 +9,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { createComeSailAwayPool, activeObjects, lanternLightUpdate, vertexBox, LANTERN_HANDLER_REACH, CSA_LIGHTS_MAX } from '../src/scenes/comeSailAwayPool.js';
+import { createComeSailAwayPool, activeObjects, lanternLightUpdate, vertexBox, LANTERN_HANDLER_REACH, CSA_LIGHTS_MAX } from '../src/scenes/comeSailAway/comeSailAwayPool.js';
 import { Boat, setLights } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { CSA_MODEL_URLS, CARRACK_MODEL_URL, LARGE_BOAT_MODEL_URL } from '../src/systems/comeSailAway/comeSailAwayModels.js';
 import { setShipStanding } from '../src/systems/naval/navalShips.js';

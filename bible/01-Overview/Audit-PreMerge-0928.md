@@ -30,7 +30,7 @@ Mutants: `tools/mutants/audit0928_online.json` 34, `audit0928_save.json` 31,
 `navbake.json` 17), `audit0928_oh.json` 10 - all dead. `arena2triage.json` gains the triage's 23 records (4 die here,
 19 against the player's own data, each with its `why`; the list's three older records die here too).
 
-**Online and the wire** (`systems/comeSailAway/comeSailAwayWire.js`, `systems/comeSailAway/comeSailAwayBoat.js`, `scenes/comeSailAwayPeers.js`, `scenes/comeSailAwayPool.js`, `scenes/world.js`, `scenes/dungeonContext.js`, `scenes/worldModes.js`)
+**Online and the wire** (`systems/comeSailAway/comeSailAwayWire.js`, `systems/comeSailAway/comeSailAwayBoat.js`, `scenes/comeSailAway/comeSailAwayPeers.js`, `scenes/comeSailAway/comeSailAwayPool.js`, `scenes/world.js`, `scenes/dungeonContext.js`, `scenes/worldModes.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|

@@ -3,7 +3,7 @@
 // THE FURNISHER. The law's furniture on a model (net/decorLaw.js), the furnisher's pieces and how each stands
 // (systems/decor/decorFurnish.js), the Furniture Store's stock (systems/shopStock.js), the shop screens' carry gate and their
 // steal (ui/native/nativeTrade.js driven, ui/enhanced/enhancedTrade.js by source), the save's deliveries (systems/save/save.js), the panel's
-// look view (ui/decorPanel.js), the tool setting furniture down as its look and taking it back (scenes/decorTool.js),
+// look view (ui/decorPanel.js), the tool setting furniture down as its look and taking it back (scenes/decor/decorTool.js),
 // and the host's wiring by source. The service's half is pinned with the service (decor1.test.js).
 // `06-Systems/Online-Arc.md` DECOR2.
 import { test } from 'node:test';
@@ -25,7 +25,7 @@ import { decorCatalogue, collectDecor } from '../src/systems/decor/decorCatalogu
 import {
   createDecorPanel, decorFurnishLine, decorBackTo, decorPlacedSub, decorRowSub, DECOR_LOOK_BUTTON, DECOR_LOOK_LINE,
 } from '../src/ui/decorPanel.js';
-import { decorLookEntry } from '../src/scenes/decorTool.js';
+import { decorLookEntry } from '../src/scenes/decor/decorTool.js';
 import { itemLine } from '../src/ui/enhanced/enhancedInventory.js';
 import { settle, fakeDoc, fakeWin, all, one, catalogue, rows, rmb, toolRig } from './decorFakes.mjs';
 

@@ -81,7 +81,7 @@
   },
   {
     "name": "DECOR-TURN-axis",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    const axis = decorIsMount(cur) ? 2 : 0;   // DECOR2c: a hung one's turn is its spin on the surface",
     "new": "    const axis = decorIsMount(cur) ? 2 : 1;   // DECOR2c: a hung one's turn is its spin on the surface",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "DECOR-TURN-unwrapped",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "(i === axis ? wrapTurn(Math.round((v + by) * 10) / 10) : v)",
     "new": "(i === axis ? Math.round((v + by) * 10) / 10 : v)",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "DECOR-TURN-lot-unasked",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    if (why) { deps.say?.(why); return false; }\n    pool.put(next);",
     "new": "    if (why && false) { deps.say?.(why); return false; }\n    pool.put(next);",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "DECOR-TURN-unwired",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      onTurn: (piece, dir) => { turnPlaced(piece, dir * DECOR_TURN_STEP); },   // DECOR-TURN\n",
     "new": "",
     "tests": [
@@ -121,7 +121,7 @@
   },
   {
     "name": "DECOR-TURN-write-skipped",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    later(() => { writeTurn(piece.id, n); }, DECOR_TURN_SETTLE_MS);\n",
     "new": "",
     "tests": [
@@ -131,7 +131,7 @@
   },
   {
     "name": "DECOR-TURN-shown-late",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    if (why) { deps.say?.(why); return false; }\n    pool.put(next);\n",
     "new": "    if (why) { deps.say?.(why); return false; }\n",
     "tests": [

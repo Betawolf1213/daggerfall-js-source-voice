@@ -172,7 +172,7 @@
   },
   {
     "name": "HOST-flats-left-up",
-    "file": "src/scenes/navalCrew.js",
+    "file": "src/scenes/naval/navalCrew.js",
     "old": "      for (const f of flats) { f.was = f.renderer.m_Enabled; f.renderer.m_Enabled = false; }",
     "new": "      for (const f of flats) { f.was = f.renderer.m_Enabled; }",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "HOST-rowers-taken",
-    "file": "src/scenes/navalCrew.js",
+    "file": "src/scenes/naval/navalCrew.js",
     "old": "peopleFlatsOf(w.boat).filter((f) => f.feet[1] >= main - DECK_STEP);",
     "new": "peopleFlatsOf(w.boat);",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "HOST-carry-by-the-root",
-    "file": "src/scenes/navalCrew.js",
+    "file": "src/scenes/naval/navalCrew.js",
     "old": "      const m = ship.boat.MeshObject?.worldMatrix?.();\n      if (!m) continue;",
     "new": "      const m = ship.boat.GameObject?.worldMatrix?.();\n      if (!m) continue;",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "HOST-flats-never-back",
-    "file": "src/scenes/navalCrew.js",
+    "file": "src/scenes/naval/navalCrew.js",
     "old": "    for (const f of ship.flats) f.renderer.m_Enabled = f.was;   // the mod's flats stand again\n",
     "new": "",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "HOST-take-in-her-frame",
-    "file": "src/scenes/navalCrew.js",
+    "file": "src/scenes/naval/navalCrew.js",
     "old": "      const feet = m ? outOfDeck(m, t.pos) : [...t.pos];",
     "new": "      const feet = [...t.pos];",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "HOST-hold-unread",
-    "file": "src/scenes/navalCrew.js",
+    "file": "src/scenes/naval/navalCrew.js",
     "old": "      if (w.hold && !ship.held) { ship.held = true; ship.life.take(Infinity); }",
     "new": "      if (false) { ship.held = true; ship.life.take(Infinity); }",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "HOST-count-unread",
-    "file": "src/scenes/navalCrew.js",
+    "file": "src/scenes/naval/navalCrew.js",
     "old": "      else if (!w.hold && ship.life.standing() > w.count) ship.life.trim(w.count);",
     "new": "      else if (false) ship.life.trim(w.count);",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "HOST-reset-unread",
-    "file": "src/scenes/navalCrew.js",
+    "file": "src/scenes/naval/navalCrew.js",
     "old": "    reset(key) { const ship = ships.get(key); if (ship) { standDown(ship); ships.delete(key); } },",
     "new": "    reset() {},",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "SEAM-crew-places-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        const spot = c && free(c.feet) ? claim([c.feet, c.yaw]) : pick(deal);",
     "new": "        const spot = pick(deal);",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "SEAM-landing-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      deps.board?.placePlayer?.((landing ?? first)[0], (landing ?? first)[1]);",
     "new": "      deps.board?.placePlayer?.(first[0], first[1]);",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "SEAM-hands-a-warrior",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        const handle = deps.board?.spawnFoe?.(mine[i]?.mobile ?? HAND, spot[0], spot[1], 'ally', { boat: entry.boat,",
     "new": "        const handle = deps.board?.spawnFoe?.(HAND, spot[0], spot[1], 'ally', { boat: entry.boat,",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "SEAM-hands-rail-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        const spot = pick(rail, deal);",
     "new": "        const spot = pick(deal);",
     "tests": [
@@ -280,7 +280,7 @@
   },
   {
     "name": "SEAM-captain-sent-over",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const party = deps.board?.crewOf?.(entry.boat, n, { from: 1 }) ?? [];",
     "new": "    const party = deps.board?.crewOf?.(entry.boat, n) ?? [];",
     "tests": [
@@ -289,7 +289,7 @@
   },
   {
     "name": "SEAM-repel-rail-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      const spot = pick(rail, deal);\n      if (!spot) break;\n      const handle = deps.board?.spawnFoe?.(party[i]",
     "new": "      const spot = pick(deal);\n      if (!spot) break;\n      const handle = deps.board?.spawnFoe?.(party[i]",
     "tests": [
@@ -298,7 +298,7 @@
   },
   {
     "name": "SEAM-repel-hands-moved",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      const spot = mine[i] && free(mine[i].feet) ? claim([mine[i].feet, mine[i].yaw]) : pick(deal);",
     "new": "      const spot = pick(deal);",
     "tests": [
@@ -307,7 +307,7 @@
   },
   {
     "name": "SEAM-prize-unheld",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        const hold = st === SHIP_STATES.prize || (mine ?",
     "new": "        const hold = (mine ?",
     "tests": [
@@ -316,7 +316,7 @@
   },
   {
     "name": "SEAM-battle-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        const battle = st === SHIP_STATES.afloat && e.ship.mode !== 'cruise';",
     "new": "        const battle = false;",
     "tests": [
@@ -478,9 +478,9 @@
   },
   {
     "name": "PEERS-key-unstamped",
-    "file": "src/scenes/comeSailAwayPeers.js",
-    "old": "        if (boat) { boat.peerKey = `${owner}:${i}`; boat.uid = w.uid ?? 0; }   // LIVING CREW: whose, and which - her crew's seed (scenes/navalCrew.js)",
-    "new": "        if (boat) { boat.uid = w.uid ?? 0; }   // LIVING CREW: whose, and which - her crew's seed (scenes/navalCrew.js)",
+    "file": "src/scenes/comeSailAway/comeSailAwayPeers.js",
+    "old": "        if (boat) { boat.peerKey = `${owner}:${i}`; boat.uid = w.uid ?? 0; }   // LIVING CREW: whose, and which - her crew's seed (scenes/naval/navalCrew.js)",
+    "new": "        if (boat) { boat.uid = w.uid ?? 0; }   // LIVING CREW: whose, and which - her crew's seed (scenes/naval/navalCrew.js)",
     "tests": [
       "test/livingcrew.test.js"
     ]

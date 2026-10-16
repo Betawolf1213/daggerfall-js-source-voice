@@ -4,7 +4,7 @@
 // - Off stands none of them at all), one's own always; a yard's flats are cut by that distance as its models are (they
 // had no cut: every standing yard's every flat, the whole streamed grid's); a piece too small to see is skipped
 // (decorRoom.js decorPieceSeen); and the half-second sync no longer writes out every piece of every town to learn nothing
-// changed. Every pin walks the REAL yard: scenes/homeYards.js createHomeYards over the real pool (scenes/decorRoom.js).
+// changed. Every pin walks the REAL yard: scenes/homeYards.js createHomeYards over the real pool (scenes/decor/decorRoom.js).
 // Each pin failed on the build before it. tools/mutants/yardrange.json.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -12,7 +12,7 @@ import { readFileSync } from 'node:fs';
 
 import { createHomeYards, YARD_MIN_ANGLE, YARD_DRAW_M } from '../src/scenes/homeYards.js';
 import { YARD_RANGE_TIERS, YARD_RANGE_DEFAULT, yardRangeOf } from '../src/net/yardRange.js';
-import { decorPieceSeen, decorBoxSeen } from '../src/scenes/decorRoom.js';
+import { decorPieceSeen, decorBoxSeen } from '../src/scenes/decor/decorRoom.js';
 import { PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
 import { fakeDoc, fakeWin, settle } from './decorFakes.mjs';
 

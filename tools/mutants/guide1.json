@@ -246,7 +246,7 @@
   },
   {
     "name": "GUIDE1-restore-keeps-the-lens",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "      lens.reset();   // GUIDE1: a loaded game is not news",
     "new": "      void lens;",
     "tests": [
@@ -255,7 +255,7 @@
   },
   {
     "name": "GUIDE1-ended-always-paid",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "success: !!q.questSuccess });",
     "new": "success: true });",
     "tests": [
@@ -265,7 +265,7 @@
   },
   {
     "name": "GUIDE1-steps-keep-a-gone-message",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "          if (!message) continue;\n          messages.push(message);",
     "new": "          if (!message) { steps.push({ stepID: le.stepID, messageID: le.messageID, time: le.time ?? null }); continue; }\n          messages.push(message);",
     "tests": [

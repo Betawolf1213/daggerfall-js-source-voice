@@ -23,7 +23,7 @@ import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';
 import { arenaLadderOf } from '../src/net/arena/arenaLaw.js';
 import { mountArenaWindow } from '../src/ui/arena/arenaWindow.js';
 import * as Door from '../src/ui/arena/arenaDoor.js';
-import { createArenaOnline, HALL_IDLE_MS } from '../src/scenes/arenaOnline.js';
+import { createArenaOnline, HALL_IDLE_MS } from '../src/scenes/arena/arenaOnline.js';
 import { arenaHudModel, drawArenaHud, destroyArenaHud, ARENA_HUD_CSS, ARENA_HUD_WIDTH } from '../src/ui/arena/arenaHud.js';
 import { newBout, boutTick, boutAtMarks, boutHealth, callMs, COUNT_MS } from '../src/systems/arena/arenaBout.js';
 import { newCrowd } from '../src/systems/arena/arenaCrowd.js';

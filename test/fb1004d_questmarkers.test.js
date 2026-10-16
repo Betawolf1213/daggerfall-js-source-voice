@@ -27,7 +27,7 @@ import { join } from 'node:path';
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { SITE_TYPES, MARKER_TYPES } from '../src/systems/quest/place.js';
 import { CURATED_QUEST_MARKERS, curatedMarkerSpot, mendedFoeSpot } from '../src/systems/quest/markerCuration.js';
-import { restandMendedQuestFoe, SEALED_SAVE_REACH_M, SEALED_SAVE_LEVEL_M } from '../src/scenes/questFoeHost.js';
+import { restandMendedQuestFoe, SEALED_SAVE_REACH_M, SEALED_SAVE_LEVEL_M } from '../src/scenes/quest/questFoeHost.js';
 import { addQuestResourceObjects, markerScenePosition, siteMarkerSpots, standSpot, MARKER_FLOOR_REACH } from '../src/systems/quest/sceneMount.js';
 import { registerWorldDataAsset, _resetWorldDataReplacement, installWorldDataReplacement, buildingDataFromJson } from '../src/formats/worldDataReplacement.js';
 import { ROW_CODECS } from '../src/formats/worldDataPack.js';

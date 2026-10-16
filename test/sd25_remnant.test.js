@@ -20,9 +20,9 @@ import {
 import {
   createSdRemnant, ensureSdRemnantArt, sdTellsAt, sdDialHandAt, sdRibLampsLit, SD_TELLS, SD_TELL_HEAT, SD_TELL_AFTER_MS, SD_DIAL_LOOK, SD_DIAL_TURNS,
   SD_GEAR_DRAWS, SD_DECOR_DRAWS,
-} from '../src/scenes/sdRemnant.js';
-import { dialHandMatrix, dialFallMatrix, heartFallMatrix, gearFlightOf, mul4, sdGatherGearsAt, SD_FALL_DECOR, SD_RIG_PARTS, SD_REM_HAND } from '../src/scenes/sdRemnantRig.js';
-import { SD_BLOW_COLOR } from '../src/scenes/sdRemnantBlows.js';
+} from '../src/scenes/superDungeon/sdRemnant.js';
+import { dialHandMatrix, dialFallMatrix, heartFallMatrix, gearFlightOf, mul4, sdGatherGearsAt, SD_FALL_DECOR, SD_RIG_PARTS, SD_REM_HAND } from '../src/scenes/superDungeon/sdRemnantRig.js';
+import { SD_BLOW_COLOR } from '../src/scenes/superDungeon/sdRemnantBlows.js';
 import { SD_BLOWS, SD_BODY, SD_HEARTS, SD_STUN_MS, SD_ECHO_PAIR_MS, SD_REM_START, windupFor } from '../src/net/superDungeon/sdRemnant.js';
 import { SD_FIGHT_EMPTY } from '../src/net/superDungeon/sdFightLink.js';
 import { SD_REALM_ARCHIVE, SD_REALM_BRASS_RECORD } from '../src/world/superDungeon/sdRealm.js';
@@ -431,8 +431,8 @@ test('SD-LOOK S8 NOTHING THAT TURNS CASTS: every decor draw (the dials, their ha
 test('SD-LOOK S8 THE FIGHT\'S FRAME MAKES NOTHING (AUDIT SD II L2 F9\'s measure): through a Stomp winding up, the Hour-Hand\'s sweep, a Pulse, a stun, a Reset with its Hearts, the Break\'s window, an Echo\'s Stomp and the fall, each body\'s tells, its dial\'s hand, the lamps\' count and the decor\'s matrices; the heart\'s light in each (its list filled in place - a list set to nought let its store go, 280 bytes a frame); the whole frame stunned and in the window - none past 2 bytes a frame against a control that must show (mutants: the tells\' scratch given up for a fresh one; the light\'s list emptied and pushed)', () => {
   const url = (p) => JSON.stringify(pathToFileURL(join(ROOT, p)).href);
   const script = `
-    const { createSdRemnant, sdTellsAt, sdDialHandAt, sdRibLampsLit } = await import(${url('src/scenes/sdRemnant.js')});
-    const { dialHandMatrix, dialFallMatrix, heartFallMatrix } = await import(${url('src/scenes/sdRemnantRig.js')});
+    const { createSdRemnant, sdTellsAt, sdDialHandAt, sdRibLampsLit } = await import(${url('src/scenes/superDungeon/sdRemnant.js')});
+    const { dialHandMatrix, dialFallMatrix, heartFallMatrix } = await import(${url('src/scenes/superDungeon/sdRemnantRig.js')});
     const { remnantMatrix } = await import(${url('src/world/superDungeon/sdRemnantModel.js')});
     const { SD_FIGHT_EMPTY } = await import(${url('src/net/superDungeon/sdFightLink.js')});
     const { SD_BLOWS } = await import(${url('src/net/superDungeon/sdRemnant.js')});

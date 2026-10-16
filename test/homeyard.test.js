@@ -15,7 +15,7 @@ import {
 import { standService, T0 } from './accountDb.mjs';
 import { decorWhyNot } from '../src/ui/decorPanel.js';
 import { toolRig, fakeDoc, fakeWin, fakeBlocks, rmb, TOWN, settle } from './decorFakes.mjs';
-import { DECOR_LOT_MARKS } from '../src/scenes/decorTool.js';   // FB1001 ROAD-LOT (PIN MOVED): the lot's edge is marked in as many bands as it has sides
+import { DECOR_LOT_MARKS } from '../src/scenes/decor/decorTool.js';   // FB1001 ROAD-LOT (PIN MOVED): the lot's edge is marked in as many bands as it has sides
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const piece = (over = {}) => ({ id: 'yard1', model: 41000, flat: null, pos: [8, 0, 2], rot: [0, 0, 0], scale: 1, light: null, storage: false, paid: 120, ...over });

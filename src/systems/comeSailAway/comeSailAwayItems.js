@@ -73,7 +73,7 @@ export const boatItemMessage = (hull, variant) => hull * 10 + variant;
  * SHIP-CLAIM (2026-10-01, the port's own - bible/03-World/Naval-Combat.md SHIP-CLAIM): A DEED TO ONE HULL AND VARIANT,
  * minted as the shelf mints a deed - ItemBuilder.CreateItem (`mintBoatItem`, the host's UID) given the deed arm's
  * message and name (AssignVariantsToShopItems: `hull * 10 + variant`, "Deed to Small Ship 'I'") - at `value` gold: a
- * prize claimed at sea (scenes/navalHost.js claimPrize; her value navalPlunder.js prizeDeedValue). Its weight is the
+ * prize claimed at sea (scenes/naval/navalHost.js claimPrize; her value navalPlunder.js prizeDeedValue). Its weight is the
  * row's half kilogram, as every deed's. A hull or variant the C#'s arrays would throw on throws here too.
  */
 export function mintDeed(hull, variant, uid, value) {

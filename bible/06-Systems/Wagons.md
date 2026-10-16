@@ -131,7 +131,7 @@ is level and its shafts sit at the horse's flank.
 
 ## The seats in the back (the Open Wagon)
 
-`src/systems/wagon/wagonSeats.js` is the law and `src/scenes/wagonRiders.js` runs
+`src/systems/wagon/wagonSeats.js` is the law and `src/scenes/wagon/wagonRiders.js` runs
 both ends of it on the world host.
 
 **A player rides by asking.**
@@ -919,7 +919,7 @@ that others don't still see it."
 **The fault.** The caravan's room is a block of its own
 (`src/systems/caravanRoom.js` caravanRoomBlock), its lantern one of its flats,
 hung from the peak with its light (`CARAVAN_LANTERN`). The decorator takes
-out a room's own pieces through the base room (`src/scenes/decorBase.js`:
+out a room's own pieces through the base room (`src/scenes/decor/decorBase.js`:
 hide drops a flat's batch and its light together), and the owner's list of
 what is out was kept in the owner's save alone: an online home's room hands
 its `hidden` list to everyone from the account service, but a caravan's

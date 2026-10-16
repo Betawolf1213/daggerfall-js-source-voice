@@ -116,7 +116,7 @@ export const FURL_R = 0.13;
 /**
  * AUDIT GN2-RG1/RG9: HOW HER SKINNED RENDERERS BAKE - a `BakeCadence` on the renderer's node, which Come Sail Away's walk
  * reads onto its FixDeformations holder (systems/comeSailAway/comeSailAwayBoat.js; the mod's own boats carry none: a tenth of a second
- * from nought, as the C# times them). Her running rope every frame (`everyFrame`: scenes/comeSailAwayPool.js, never
+ * from nought, as the C# times them). Her running rope every frame (`everyFrame`: scenes/comeSailAway/comeSailAwayPool.js, never
  * while the game is paused, nor again while its bones stand where they did at its last bake); each canvas on the mod's
  * tenth of a second from its own `timer` - the k-th sail's k fifths of the interval - so her five bake on frames of
  * their own (her five canvases and eleven ropes baked on one frame together: 277-279 us at once).

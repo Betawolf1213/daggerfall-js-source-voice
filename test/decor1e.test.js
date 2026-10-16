@@ -2,7 +2,7 @@
 // to open the decorate panel. Allows free cam mode for placement and an intuitive scrolling menu with filters", and
 // "kept in the save" offline): THE ROOM'S OWN PIECES. The panel's "In this room" view (ui/decorPanel.js); a placed
 // piece moved by the free camera, lit or put out, made to hold things or not, removed for half its cost
-// (scenes/decorTool.js) - offline into the room's pool, online through the account service first; the sale that takes
+// (scenes/decor/decorTool.js) - offline into the room's pool, online through the account service first; the sale that takes
 // a room's pieces with it (the client's registry, the scene's record, the host's hooks); and the touch screen's
 // flight - the stick, the bar's Fly up and Fly down, no tap or swipe under it (the tool, worldModes.js, world.js). The
 // service's own sum is pinned with the service (decor1.test.js). `06-Systems/Online-Arc.md` DECOR1e.
@@ -12,7 +12,7 @@ import { readFileSync } from 'node:fs';
 import { createDecorPanel, DECOR_HOLDS_LINE, decorPlacedSub, decorRefundText } from '../src/ui/decorPanel.js';
 import {
   stickMove, decorEditPrice, decorEditText, DECOR_DEFAULT_LIGHT, DECOR_FLY_SPEED, DECOR_EYE_REACH, eyePoint,
-} from '../src/scenes/decorTool.js';
+} from '../src/scenes/decor/decorTool.js';
 import { DECOR_CAP, decorPrice, decorRefund, decorSaleBack, decorLightOf } from '../src/net/decorLaw.js';
 import { createOnlineHomes, sellOnlineHome, homeRefund, homeSoldLine, homeSaleLines } from '../src/systems/online/onlineHomes.js';
 import { createSceneCache, cacheScene, takeSceneDecor } from '../src/systems/sceneCache.js';

@@ -1,7 +1,7 @@
 // @ts-check
 // RVN7c (bible/12-Enhanced-AI/Feud-Arc.md 18.3): A REVENANT'S HUNT IN THE QUEST LOG, AND ITS ONE PRESS THERE.
 //
-// A revenant whose lair the player has heard of rides the quest log every journal face reads (scenes/questBridge.js
+// A revenant whose lair the player has heard of rides the quest log every journal face reads (scenes/quest/questBridge.js
 // questLog, wrapped by the world host - scenes/world.js) as an active side quest whose id is `hunt:<revenant id>` -
 // BOUNTY1's precedent (systems/bounty/bountyJournal.js). The faces (the pause window's Quests tab, ui/enhanced/enhancedMenu.js; the
 // chronicle, ui/enhanced/enhancedChronicle.js) are lazy chunks, so the revenant store registers its door here once and the

@@ -4,7 +4,7 @@
 // filters", and "kept in the save" offline): A PIECE OF DECOR. The law both ends read (net/decorLaw.js), the account
 // service's store of an online home's pieces driven through the real Worker over node:sqlite with every migration
 // applied (server-account/src/decor.js), the client's door to it, and the deploy's wiring; DECOR1c: the pieces standing
-// in a room (scenes/decorRoom.js), the scene that keeps them, and the host that stands them (worldModes.js).
+// in a room (scenes/decor/decorRoom.js), the scene that keeps them, and the host that stands them (worldModes.js).
 // `06-Systems/Online-Arc.md` DECOR1.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -20,7 +20,7 @@ import {
 } from '../src/net/decorLaw.js';
 import { accountDecor, REFUSALS, SESSION_KEY } from '../src/net/accountClient.js';
 import { collectDecor, decorCatalogue, filterDecor, decorSize, decorKey, modelKind, flatKind, DECOR_KINDS } from '../src/systems/decor/decorCatalogue.js';
-import { createDecorRoom, decorMatrix, decorKeyOf, decorIdOfKey, decorLightLift, DECOR_REACH } from '../src/scenes/decorRoom.js';
+import { createDecorRoom, decorMatrix, decorKeyOf, decorIdOfKey, decorLightLift, DECOR_REACH } from '../src/scenes/decor/decorRoom.js';
 import { trs } from '../src/world/mat4.js';
 import { localAabb, transformedAabb } from '../src/render/frustum.js';
 import { RAY_DISTANCE, DEFAULT_ACTIVATION_DISTANCE } from '../src/player/activate.js';

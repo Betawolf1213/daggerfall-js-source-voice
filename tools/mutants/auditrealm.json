@@ -331,7 +331,7 @@
   },
   {
     "name": "AUDIT-REALM-a-repeated-placement-paid-twice",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "          apply: (/** @type {any} */ a) => { if (a.data?.repeat) paid.back(); },\n",
     "new": "",
     "tests": [
@@ -340,7 +340,7 @@
   },
   {
     "name": "AUDIT-REALM-L1F3-the-shrink-client-half",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      apply: refund > 0 ? (/** @type {any} */ a) => { const g = Number(a.data?.gold) || 0; if (g > 0) deps.wallet().credit?.(g); } : null,",
     "new": "      apply: refund > 0 ? () => deps.wallet().credit?.(refund) : null,",
     "tests": [
@@ -349,7 +349,7 @@
   },
   {
     "name": "AUDIT-REALM-L1F3-the-shrink-guesses",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      needsAnswer: refund > 0,\n",
     "new": "",
     "tests": [
@@ -358,7 +358,7 @@
   },
   {
     "name": "AUDIT-REALM-L1F3-the-removal-client-half",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "          back = Math.max(0, Number(a.data?.gold) || 0);",
     "new": "          back = decorRefund(decorPieceOf(a.data?.piece)?.paid ?? paid);",
     "tests": [
@@ -367,7 +367,7 @@
   },
   {
     "name": "AUDIT-REALM-L1F3-the-removal-guesses",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "        needsAnswer: true,\n        apply: (/** @type {any} */ a) => {\n          back",
     "new": "        apply: (/** @type {any} */ a) => {\n          back",
     "tests": [

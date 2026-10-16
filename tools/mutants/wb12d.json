@@ -1665,7 +1665,7 @@
   },
   {
     "name": "AUDIT-WB12d-the-rite-s-ember-spoils",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "say(claims.x === 'rite' ? COURT_STRIKE_TEXT.spilledRite() : COURT_STRIKE_TEXT.spilled());",
     "new": "say(COURT_STRIKE_TEXT.spilled());",
     "tests": [

@@ -6,7 +6,7 @@
 // arm (test/ether_deep.test.js); this pin is a host told nothing of it, which holds the box with the continent.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createDeepWatersHost } from '../src/scenes/deepWatersHost.js';
+import { createDeepWatersHost } from '../src/scenes/deepWater/deepWatersHost.js';
 import { landfall } from '../src/world/ethericSea.js';
 
 const pixel = (px, py) => ({ px, py, samples: new Float32Array(4), tilemap: new Uint8Array(4), tilemapBytes: new Uint8Array(4) });

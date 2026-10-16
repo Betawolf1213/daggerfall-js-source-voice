@@ -3,7 +3,7 @@
 // (test/lwTown.mjs) and the synthetic hall on the port's own collider (test/lwRoom.mjs).
 //   - THE TAVERN'S DAY: the people the plans put in a town's tavern (livingTown.js insideAt), the most at once before
 //     noon, at noon, in the afternoon and in the evening, over five days; and its stays of four hours and more.
-//   - THE ROOM: the hall sounded from its way in (scenes/livingIndoors.js soundRoom) - its places, the farthest from the
+//   - THE ROOM: the hall sounded from its way in (scenes/livingWorld/livingIndoors.js soundRoom) - its places, the farthest from the
 //     way in, the sounding's cost - and twelve the day has inside, stood and left astir ten real minutes: the biggest
 //     crowd (people within CROWD_M of one another, chained), the nearest other, the distance from the way in.
 //
@@ -16,7 +16,7 @@ import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
 import { DAY_MIN } from '../src/systems/livingWorld/dayPlan.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
-import { createLivingIndoors, soundRoom, CROWD_M } from '../src/scenes/livingIndoors.js';
+import { createLivingIndoors, soundRoom, CROWD_M } from '../src/scenes/livingWorld/livingIndoors.js';
 import { createRelations } from '../src/systems/livingWorld/relations.js';
 import { lineMinutes, ROUND_S } from '../src/systems/livingWorld/meetups.js';
 import { isMain } from './lib/isMain.mjs';

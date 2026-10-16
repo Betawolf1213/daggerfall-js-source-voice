@@ -21,7 +21,7 @@
 // them - unturned (systems/caravanRoom.js turnCaravanScene) - and only as many as fit the small frame
 // (CARAVAN_DECOR_BYTES). Nothing a piece holds rides it: a visitor sees the pieces, never what the storage keeps.
 // WAGONS2-BASE (2026-10-12, from play: "it keeps the overhead lighting for visitors ... if it's taken out ... that
-// others don't still see it"): beside them, `h`, the room's own pieces its owner took out (scenes/decorBase.js's keys -
+// others don't still see it"): beside them, `h`, the room's own pieces its owner took out (scenes/decor/decorBase.js's keys -
 // the lantern and its light among them), as an online home's room hands out its `hidden` list; an older document
 // carries none, and an older client reads past it.
 //
@@ -90,7 +90,7 @@ const caravanHiddenOf = (raw) => [...new Set((Array.isArray(raw) ? raw : []).fil
 
 /** THE ROOM'S DOCUMENT: `pieces` (as the save keeps them - unturned) through the decor law, in their order, as many as
  *  fit CARAVAN_DECOR_BYTES (and DECOR_CAP); a piece the law refuses is left out. `hidden` (WAGONS2-BASE), the room's own
- *  pieces taken out (scenes/decorBase.js hidden()), rides as `h` - counted first, a key a dozen bytes and the room's
+ *  pieces taken out (scenes/decor/decorBase.js hidden()), rides as `h` - counted first, a key a dozen bytes and the room's
  *  own pieces few, so the lantern taken out is never the word that does not fit. */
 export function caravanDecorDoc(pieces, hidden = []) {
   const p = [];

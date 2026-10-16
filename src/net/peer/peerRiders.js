@@ -468,7 +468,7 @@ export function createPeerWalkers({ renderer = null, urlFor = eotbSpriteUrl, dec
     }
     const l = r.lantern ?? (r.lantern = createSpriteLantern());
     // the pace off the drawn feet, eased (a jump resets it), and last frame's feet kept - copied, never held. FIELD BUGS
-    // 2026-09-29 (the sea) #1: a walker stood on a deck (the glue's `deck`, scenes/comeSailAwayAboard.js) paces by
+    // 2026-09-29 (the sea) #1: a walker stood on a deck (the glue's `deck`, scenes/comeSailAway/comeSailAwayAboard.js) paces by
     // their place on it - the deck's own way is no stride - and a change of deck (or onto one, or off) starts afresh
     const on = pose.deckKey ?? null, at = on ? pose.deck : feet;
     r.pace = stepPeerPace(r.pace, r.paceKey === on ? r.paceFeet : null, at, dt);

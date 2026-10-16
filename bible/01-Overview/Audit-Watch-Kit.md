@@ -33,7 +33,7 @@ service bundles: see The deploy.
 | W9 | Minor | A hand the guns took while he was below kept `below`: mended back, he was counted but never drawn until the next 05:00. | `trim` clears it. |
 | W10 | Minor | SHIP-CREW names one hand Lookout, but SHIP-WATCH's lookout ignored roles: the Bosun kept the bow and cried "Sail ho!" over the head of the card's Lookout. | Her card's Lookout keeps her bow whenever he can (`ctx.lookout`, from the host's `myCrew`); the one who kept it for him leaves it - never two at her bow. |
 
-## The sea by night (`scenes/navalHost.js`, `systems/naval/navalAI.js`, `world.js where()`)
+## The sea by night (`scenes/naval/navalHost.js`, `systems/naval/navalAI.js`, `world.js where()`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|

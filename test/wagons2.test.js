@@ -30,7 +30,7 @@ import { validParkData, PARK_WAGON_LOOK_MAX } from '../src/net/wire.js';
 import { stableProviderFor } from '../src/ui/holdingsPages.js';
 import { createDecorPanel } from '../src/ui/decorPanel.js';
 import { toolRig, fakeDoc, fakeWin, all, one } from './decorFakes.mjs';
-import { createWagonRiders, RIDE_LOST_GRACE_MS, GET_DOWN_REACH } from '../src/scenes/wagonRiders.js';
+import { createWagonRiders, RIDE_LOST_GRACE_MS, GET_DOWN_REACH } from '../src/scenes/wagon/wagonRiders.js';
 import { RIDE_TEXT } from '../src/systems/wagon/wagonSeats.js';
 import { packTradeRefusal, createTradePack, createMarketGoods, WAGON_LOADED_TRADE_TEXT, WAGON_LOADED_MARKET_WORDS } from '../src/systems/tradePack.js';
 import { GuildBook } from '../src/net/guild/guildBook.js';

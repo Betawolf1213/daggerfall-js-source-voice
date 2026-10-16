@@ -14,7 +14,7 @@ import { hallAstir } from '../tools/livingRoomProbe.mjs';
 import {
   createLivingIndoors, soundRoom, stirPlace, faceOf, inView, inSight, spreadTables,
   CROWD_M, INDOOR_CLEAR_M, INDOOR_SEEN_M, INDOOR_APART_M, INDOOR_TICK_S, OPEN_M, TABLE_GAP_M,
-} from '../src/scenes/livingIndoors.js';
+} from '../src/scenes/livingWorld/livingIndoors.js';
 import { DAY_MIN } from '../src/systems/livingWorld/dayPlan.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { createRelations } from '../src/systems/livingWorld/relations.js';

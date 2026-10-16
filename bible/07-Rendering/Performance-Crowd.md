@@ -163,7 +163,7 @@ own selection and the hand lights a few hundredths. Come Sail Away's boats - a p
 
 ## PERF-SAILS1 + PERF-SAILS2 — a ship's objects made again only where one moved, and only when read
 
-`csaPoolFrame` runs the pool's `frame` (scenes/comeSailAwayPool.js): one walk a frame of every drawn boat's active
+`csaPoolFrame` runs the pool's `frame` (scenes/comeSailAway/comeSailAwayPool.js): one walk a frame of every drawn boat's active
 objects (AUDIT PRE-MERGE 0928 R5), the sails' bakes, the lanterns, the flats. A ship is hundreds of objects - the five
 hulls' prefabs, twelve ships 7,384 - and the walk made every one's world matrix again every frame (a quaternion's
 matrix and a product a node) though all but her sails, booms, flags and oars stand as they stood. `tools/csaBench.mjs`

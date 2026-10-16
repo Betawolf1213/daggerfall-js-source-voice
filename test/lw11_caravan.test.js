@@ -19,7 +19,7 @@ import { troubleOf, troubledTrip } from '../src/systems/livingWorld/trouble.js';
 import { DAY_MIN } from '../src/systems/livingWorld/dayPlan.js';
 import { townTrips, partyAt, whenWalked, handsOn, CALENDAR_MPM, NATIVE_PER_M, NATIVE_PIXEL, WALK_FROM_H, WALK_TO_H } from '../src/systems/livingWorld/trips.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
-import { partyLabel } from '../src/scenes/livingRoads.js';
+import { partyLabel } from '../src/scenes/livingWorld/livingRoads.js';
 import { CRIMES } from '../src/systems/crimes.js';
 
 const O = () => ({ mpm: CALENDAR_MPM, memo: new Map() });
@@ -470,7 +470,7 @@ test('LW11 the host\'s wiring: the road\'s trade window (its counter\'s discount
   assert.equal(partyLabel({ kind: 'merchant', party: [1], to: { name: 'Far' }, robbed: true }), 'Caravan to Far (robbed)');
   assert.equal(partyLabel({ kind: 'pedlar', party: [1], robbed: true }), 'Pedlar (robbed)');
   assert.equal(partyLabel({ kind: 'merchant', party: [1], to: { name: 'Far' }, robbed: true }, '', 'Orcs'), 'Caravan beset by Orcs');
-  const roads = readFileSync(new URL('../src/scenes/livingRoads.js', import.meta.url), 'utf8');
+  const roads = readFileSync(new URL('../src/scenes/livingWorld/livingRoads.js', import.meta.url), 'utf8');
   assert.match(roads, /label: partyLabel\(\{ \.\.\.p\.trip, party: members, robbed: deps\.robbed\?\.\(p\.trip\.id\) != null \}, '', beset\),/);
   assert.match(roads, /const trip = deps\.robbed\?\.\(p\.trip\.id\) != null \? \{ \.\.\.p\.trip, robbed: \{ t: /);
 });

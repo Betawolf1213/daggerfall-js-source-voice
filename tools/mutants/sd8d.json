@@ -91,7 +91,7 @@
   },
   {
     "name": "SD8D-pools-unlaid",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "        if (A === SD_BLOWS.volley) pools.push(...sdVolleyPools(atk));\n",
     "new": "",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "SD8D-first-bite-at-once",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "      if (t - outAt >= POOL_TICK_MS) { const f = feet(); if (f) play(SD_BLOW_CUES.pool, f); burnAt = t; return; }",
     "new": "      if (t - outAt >= POOL_TICK_MS) { burnAt = -Infinity; }",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "SD8D-the-reset-unsaid",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "if (A === SD_BLOWS.reset) say(SD_BLOWS_TEXT.reset(s.cx?.c?.length ?? 0), false, SD_HEARTS_KEY);",
     "new": "if (false) say(SD_BLOWS_TEXT.reset(0));",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "SD8D-the-end-said-every-blow",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "    if (A === SD_BLOWS.end && endSaid !== s.fi && t < atk.at) { endSaid = s.fi; say(SD_BLOWS_TEXT.end); }",
     "new": "    if (A === SD_BLOWS.end && t < atk.at) { say(SD_BLOWS_TEXT.end); }",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "SD8D-the-dead-struck",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "      const f = feet(), e = player(), alive = !!f && !!e && e.health > 0;",
     "new": "      const f = feet(), e = player(), alive = !!f && !!e;",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "SD8D-the-fall-said-twice",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "    if (s.fell && fellFi !== s.fi) {",
     "new": "    if (s.fell) {",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "SD8D-no-landing-heard",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "        if (!again) sound(SD_BLOW_CUES.land[A.key], s, b, atk, t);\n",
     "new": "",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "SD8D-a-blow-struck-twice",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "    m.seen = v.seen;\n",
     "new": "",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "SD8D-a-strike-without-its-base",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "    const dmg = strikeDamage(pct, e.maxHealth, base);",
     "new": "    const dmg = strikeDamage(pct, e.maxHealth, 0);",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "SD8D-the-chart-never",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "      chartAt = t; chartFell = s.fell;",
     "new": "      chartFell = s.fell;",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "SD8D-the-ring-left-at-its-start",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "r0: Math.max(0, front - A.width / 2), r1: front + A.width / 2, t: 1 }));",
     "new": "r0: Math.max(0, A.r - A.width / 2), r1: A.r + A.width / 2, t: 1 }));",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "SD8D-the-beam-not-turning",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "      const a = handAngleAt(atk, now);",
     "new": "      const a = handAngleAt(atk, now) == null ? null : atk.yw;",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "SD8D-the-windup-share-wrong",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "    t: w > 0 ? clamp01(since / w) : 1,",
     "new": "    t: 1,",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "SD8D-the-echo-not-faster",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "  const w = atkWindup(atk, A, phase, b), since = now - (atk.at - w),",
     "new": "  const w = A.windup, since = now - (atk.at - w),",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "SD8D-dagons-edge-lost",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "edge: A === SD_BLOWS.reset || A === SD_BLOWS.end ? TELEGRAPH_EDGE_DAGON : TELEGRAPH_EDGE,",
     "new": "edge: TELEGRAPH_EDGE,",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "SD8D-the-wind-up-unheard",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "    if (!m.cued) { m.cued = true; if (t < atk.at && !again) { sound(SD_BLOW_CUES.windup[A.key], s, b, atk, t);",
     "new": "    if (!m.cued) { m.cued = true; if (t < atk.at && !again) { void 0;",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "SD8D-the-pools-never-drawn",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "      for (const p of sdPoolShapes(pools, t)) out.push(p);\n",
     "new": "",
     "tests": [

@@ -199,7 +199,7 @@ test('QREPAIR the door, by source: every host\'s pause hands repairQuests off it
   assert.match(x, /return discoverLocation\(l\.mapTableData\.mapId, \{ regionName: l\.regionName, locationName: l\.name \}\);/);
   assert.match(rd('src/scenes/dungeonContext.js'), /repairQuests: \(\) => opts\.questBridge\?\.repair\?\.\(\) \?\? null,/, 'the dungeon');
   assert.match(rd('src/scenes/worldModes.js'), /repairQuests: \(\) => host\.repairQuests\?\.\(\) \?\? null,/, 'the interior pause');
-  const qb = rd('src/scenes/questBridge.js');
+  const qb = rd('src/scenes/quest/questBridge.js');
   assert.match(qb, /repair\(\) \{\n\s+const world = ctx\.world \?\? null;\n\s+return repairActiveQuests\(machine, \{/);
   assert.match(qb, /mountCurrentSite: \(\) => world\?\.mountCurrentSiteQuestResources\?\.\(\),/);
   const menu = rd('src/ui/enhanced/enhancedMenu.js');

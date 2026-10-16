@@ -103,7 +103,7 @@ test('SEA-HUNT: one predicate for "afloat" - a helm, a boat\'s own deck, another
   assert.match(WORLD, /const playerAfloat = \(\) => !!csaRuntime\?\.isSailing\?\.\(\) \|\| \(playerEntity\.activeEffects \?\? \[\]\)\.some\(\(e\) => isBoatEffectBundle\(e\?\.bundleName\)\)\n\s+\|\| !!csaAboard\.aboard\?\.boat \|\| !!naval\?\.aboard\?\.\(\) \|\| \(walkMode && playerSpawned && !!player\.isPlayerSwimming\);/);
   assert.match(WORLD, /&& !travelOptions\?\.isTravelActive && !\(walkMode && player\.isPlayerSwimming\) && !playerAfloat\(\),/, 'a bounty\'s trail and pack');
   assert.match(WORLD, /const aboard = playerAfloat\(\);/, 'a wilderness band\'s chase');
-  assert.match(src('src/scenes/navalHost.js'), /aboard: \(\) => aboardShip\(\),/);
+  assert.match(src('src/scenes/naval/navalHost.js'), /aboard: \(\) => aboardShip\(\),/);
 });
 
 test('SEA-HUNT: the naval host\'s aboard - at the helm aboard, off every ship not (the same law SEA-PEACE reads)', async () => {

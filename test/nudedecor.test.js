@@ -6,8 +6,8 @@
 // pinned the five hosts of its day by source; the two made after it never learned the rule.
 //
 // Pinned here, each through its real producer: the offer (systems/decor/decorCatalogue.js decorRoomEntries over the real
-// catalogue), the room (scenes/decorRoom.js), the decorator's ghost and pictures (scenes/decorTool.js over the real
-// panel), the crowd (scenes/arenaBouts.js buildCrowd over a fake stage) - and THE SWEEP: every file of src/ that batches a
+// catalogue), the room (scenes/decor/decorRoom.js), the decorator's ghost and pictures (scenes/decor/decorTool.js over the real
+// panel), the crowd (scenes/arena/arenaBouts.js buildCrowd over a fake stage) - and THE SWEEP: every file of src/ that batches a
 // billboard is named below, a person host asks drawnFlat and any other says why it draws no person, so the next host
 // fails here the day it lands instead of on a stream.
 import { test } from 'node:test';
@@ -15,10 +15,10 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { NUDE_FLAT_STAND_INS, isNudeFlat } from '../src/characters/nudeFlats.js';
 import { collectDecor, decorCatalogue, decorRoomEntries } from '../src/systems/decor/decorCatalogue.js';
-import { createDecorRoom } from '../src/scenes/decorRoom.js';
+import { createDecorRoom } from '../src/scenes/decor/decorRoom.js';
 import { billboardSize } from '../src/world/rmbFlats.js';
 import { setValue, resetToDefaults } from '../src/systems/settings/settings.js';
-import { createArenaBouts } from '../src/scenes/arenaBouts.js';
+import { createArenaBouts } from '../src/scenes/arena/arenaBouts.js';
 import { CROWD_PEOPLE } from '../src/systems/arena/arenaCrowd.js';
 import { newArenaLadder, nextLadderBout } from '../src/systems/arena/arenaLadder.js';
 import * as LG from '../src/systems/arena/arenaLeague.js';
@@ -135,7 +135,7 @@ test('NUDE-DECOR the decorator: a figure placed while Show Nudity was on shows i
 });
 
 const arenaAt = (day, hour = 12) => (405 * 360 + day) * MINUTES_PER_DAY + hour * 60;
-/** The bout's crowd as the driver batches it (scenes/arenaBouts.js buildCrowd), over a stage whose tiers stand 8 m up. */
+/** The bout's crowd as the driver batches it (scenes/arena/arenaBouts.js buildCrowd), over a stage whose tiers stand 8 m up. */
 async function crowdPictures() {
   const made = [];
   const P = { name: 'Hero', health: 100, maxHealth: 100, arenaLadder: newArenaLadder(), arenaLeague: LG.newArenaLeague() };
@@ -172,9 +172,9 @@ function walk(dir, out = []) {
 }
 /** THE HOSTS THAT DRAW PEOPLE: each asks drawnFlat for the picture it draws. */
 const PERSON_HOSTS = Object.freeze([
-  'src/scenes/arenaBouts.js',       // the tiers' seated crowd (NUDE-HOSTS)
-  'src/scenes/decorRoom.js',        // a room's or a yard's placed pieces - Vendors among them (NUDE-DECOR)
-  'src/scenes/decorTool.js',        // the decorator's ghost and its pictures (NUDE-DECOR)
+  'src/scenes/arena/arenaBouts.js',       // the tiers' seated crowd (NUDE-HOSTS)
+  'src/scenes/decor/decorRoom.js',        // a room's or a yard's placed pieces - Vendors among them (NUDE-DECOR)
+  'src/scenes/decor/decorTool.js',        // the decorator's ghost and its pictures (NUDE-DECOR)
   'src/scenes/dungeonContext.js',   // NUDE-FLATS: an RDB figure
   'src/scenes/exterior.js',         // NUDE-FLATS: the one-location host's flats and street people
   'src/scenes/interiorContext.js',  // NUDE-FLATS: a building's people
@@ -191,13 +191,13 @@ const NO_PERSON = Object.freeze({
   'src/render/renderer.js': 'the method itself',
   'src/scenes/camps.js': 'a camp\'s fire',
   'src/scenes/cityGuards.js': 'the watch as mobile units',
-  'src/scenes/comeSailAwayPool.js': 'the vendored prefabs\' billboards - its people none of the table\'s (pinned below)',
+  'src/scenes/comeSailAway/comeSailAwayPool.js': 'the vendored prefabs\' billboards - its people none of the table\'s (pinned below)',
   'src/scenes/corpseMarker.js': 'a foe\'s corpse',
   'src/scenes/droppedLoot.js': 'loot piles',
   'src/scenes/droppedTorches.js': 'torches',
   'src/scenes/exteriorFoes.js': 'foes as mobile units',
-  'src/scenes/gateCourt.js': 'the gate boss as a mobile unit, and his corpse',
-  'src/scenes/gateHost.js': 'the boss\'s host as mobile units',
+  'src/scenes/gate/gateCourt.js': 'the gate boss as a mobile unit, and his corpse',
+  'src/scenes/gate/gateHost.js': 'the boss\'s host as mobile units',
   'src/scenes/gatherHost.js': 'gathering nodes',
   'src/scenes/hideouts.js': 'a band\'s camp fire (its people are the encounter pool\'s own)',   // LW12
   'src/scenes/hitEffects.js': 'hit splashes',
@@ -206,9 +206,9 @@ const NO_PERSON = Object.freeze({
   'src/scenes/lefayMonumentHost.js': 'flowers thrown at Julian LeFay\'s monument (TEXTURE.254\'s roses)',   // LEFAY1
   'src/scenes/magicCandle.js': 'the Light effect\'s candle',
   'src/scenes/merchantYardsHost.js': 'a yard\'s keeper as a walker (PERSON_TEXTURES, never the table\'s flats) and the Stable\'s horses',   // MERCHANT-YARDS
-  'src/scenes/wagonWardenShow.js': 'the town watch\'s guard as a walker (GUARD_TEXTURE, the city guards\' own picture - never the table\'s flats) and the horses it carries',   // WARDEN1
-  'src/scenes/navalCrew.js': 'crews as mobile units',
-  'src/scenes/navalFlames.js': 'a ship\'s flames',
+  'src/scenes/wagon/wagonWardenShow.js': 'the town watch\'s guard as a walker (GUARD_TEXTURE, the city guards\' own picture - never the table\'s flats) and the horses it carries',   // WARDEN1
+  'src/scenes/naval/navalCrew.js': 'crews as mobile units',
+  'src/scenes/naval/navalFlames.js': 'a ship\'s flames',
   'src/scenes/portalFx.js': 'a portal',
   'src/scenes/portHost.js': 'a port\'s shipmaster, crewmaster, sailors, shipwrights and lightkeeper as walkers (PERSON_TEXTURES, never the table\'s flats)',   // SHIPYARDS
   'src/scenes/riteHost.js': 'a rite\'s fire',

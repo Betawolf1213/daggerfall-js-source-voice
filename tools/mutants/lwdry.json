@@ -203,7 +203,7 @@
   },
   {
     "name": "LW-DRY-halted-in-file",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "  if (at.camp || at.halt) {",
     "new": "  if (at.camp) {",
     "tests": [

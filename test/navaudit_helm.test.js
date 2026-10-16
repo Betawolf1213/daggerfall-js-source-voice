@@ -12,7 +12,7 @@ import { HULL, batteryOf, hullBuild } from '../src/systems/naval/navalShips.js';
 import { SHIP_STATES, BRACE_TAKEN, BARE_POLES, WRECKED_OARS, STRUCK_AT } from '../src/systems/naval/navalDamage.js';
 import { BOARD_RANGE, BOARD_SPEED } from '../src/systems/naval/navalBoarding.js';
 import { NAVAL_DEG, shotPosition, segmentBoxEntry } from '../src/systems/naval/navalBallistics.js';
-import { hullBoxOf, rigBoxesOf, AIM_CAM_OUT, AIM_CAM_UP, AIM_CAM_AFT, AIM_CAM_TAU, AIM_CAM_CLEAR, RAM_REACH, RAM_MEMORY_S, RAM_DAMAGE, RAM_RECOIL, BOW_RECOIL, GALLEY_RAM, RAM_SPEED, RAM_COOLDOWN_S, HEAVE_TO_DECEL, HEAVE_TO_S, HEAVE_TO_M, heaveToDecel, heaveToRun, COMPASS_SHIP_RANGE, PLAYER_SKILL, PLAYER_SKILL_THIN } from '../src/scenes/navalHost.js';
+import { hullBoxOf, rigBoxesOf, AIM_CAM_OUT, AIM_CAM_UP, AIM_CAM_AFT, AIM_CAM_TAU, AIM_CAM_CLEAR, RAM_REACH, RAM_MEMORY_S, RAM_DAMAGE, RAM_RECOIL, BOW_RECOIL, GALLEY_RAM, RAM_SPEED, RAM_COOLDOWN_S, HEAVE_TO_DECEL, HEAVE_TO_S, HEAVE_TO_M, heaveToDecel, heaveToRun, COMPASS_SHIP_RANGE, PLAYER_SKILL, PLAYER_SKILL_THIN } from '../src/scenes/naval/navalHost.js';
 import { CSA_BRAKE_MAX } from '../src/systems/comeSailAway/comeSailAway.js';
 import { drawShipCompassMarks, SHIP_MARK_COLORS, compassMarkerLerp, DETECT_MARKER_W, DETECT_MARKER_H } from '../src/ui/hud/hud.js';
 import { navalHudText, drawNavalHud, destroyNavalHud, navalTouchBrace, NAVAL_BRACE_H, NAVAL_HUD_CSS } from '../src/ui/naval/navalHud.js';

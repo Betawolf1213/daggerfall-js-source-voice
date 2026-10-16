@@ -8,7 +8,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { decorFlatMirrored } from '../src/net/decorLaw.js';
-import { createDecorRoom } from '../src/scenes/decorRoom.js';
+import { createDecorRoom } from '../src/scenes/decor/decorRoom.js';
 import { settle, toolRig, placeFrom } from './decorFakes.mjs';
 import { decorBarKeys } from '../src/ui/decorPanel.js';
 

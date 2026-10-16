@@ -16,7 +16,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { staticNpcData, staticNpcName, positionHash } from '../src/characters/staticNpc.js';
-import * as BRIDGE from '../src/scenes/questBridge.js';
+import * as BRIDGE from '../src/scenes/quest/questBridge.js';
 import { GENDERS, getNameBank, fullName } from '../src/characters/nameHelper.js';
 import { srand } from '../src/formats/dfRandom.js';
 

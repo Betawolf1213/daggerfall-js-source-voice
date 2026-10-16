@@ -33,7 +33,7 @@ import { FlatAnim } from '../render/flatAnimation.js';
 import { trs, multiply, wrapAngle } from '../world/mat4.js';
 import { intoDeck, outOfDeck } from '../systems/naval/navalDeck.js';   // DECK-CAMP: a camp on a boat's deck rides her frame
 import { localAabb, transformedAabb } from '../render/frustum.js';
-import { drawSeen } from './decorRoom.js';   // PERF-WAGON: a tent by the street's view test
+import { drawSeen } from './decor/decorRoom.js';   // PERF-WAGON: a tent by the street's view test
 import { ListPickerWindow } from '../ui/listPicker.js';
 import { survivalOn } from '../systems/survival/switch.js';   // AUDIT SURV-TIERS: Off keeps what stands and uses none of it (shown, below); SURV-OFFSIGHT: it sees another's (seen)
 import {

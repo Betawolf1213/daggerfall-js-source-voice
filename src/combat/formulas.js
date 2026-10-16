@@ -608,7 +608,7 @@ export function calculateAttackDamage(attacker, target, { weapon = null, damageM
       try { _playerAttackHook({ ...notes, damage, attacker, target, weapon }); } catch { /* a HUD is not the formula's problem */ }
     }
     // ARENA-FIX 9/10: every resolution, whoever swung - the arena's judges count the misses and its crowd hears the
-    // critical strikes (scenes/arenaBouts.js attackResolved)
+    // critical strikes (scenes/arena/arenaBouts.js attackResolved)
     if (_resolutionListeners.size) for (const fn of _resolutionListeners.values()) { try { fn({ ...notes, damage, attacker, target, weapon }); } catch { /* a listener is not the blow's problem */ } }
     return damage;
   };

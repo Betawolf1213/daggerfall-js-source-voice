@@ -1,5 +1,5 @@
 // AUDIT WATCH-KIT (2026-10-01, Mac: "Just want to audit this to make sure it's perfection") - LENS W, THE CREW'S LIFE
-// ABOARD: SHIP-WATCH's crew (systems/naval/crewLife.js) and its host (scenes/navalCrew.js), with lens D's D5 and its
+// ABOARD: SHIP-WATCH's crew (systems/naval/crewLife.js) and its host (scenes/naval/navalCrew.js), with lens D's D5 and its
 // safety net on the same two files. Every pin drives the real modules and fails on the code as it stood:
 //
 //   WK-W1  her lookout keeps her bow by day too - asked at every step from her first, another the step he is gone (never
@@ -20,7 +20,7 @@ import assert from 'node:assert/strict';
 
 import { createCrewLife, crewRoster, crewCount, deckExtentZ, CREW_BLURBS, CREW_TALKS, ALL_HANDS, LOOKOUT_BACK, CREW_LINE_S, CREW_HURRY } from '../src/systems/naval/crewLife.js';
 import { watchCount } from '../src/systems/naval/shipWatch.js';
-import { createNavalCrew, peopleFlatsOf } from '../src/scenes/navalCrew.js';
+import { createNavalCrew, peopleFlatsOf } from '../src/scenes/naval/navalCrew.js';
 import { buildDeck, mainLevel, DECK_STEP } from '../src/systems/naval/navalDeck.js';
 import { boxColliderTriangles } from '../src/world/prefabColliders.js';
 import { MOBILE } from '../src/systems/naval/navalBoarding.js';

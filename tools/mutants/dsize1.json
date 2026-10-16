@@ -225,7 +225,7 @@
   },
   {
     "name": "AUDIT-DELVE-E1-the-load-unwired",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "      if (isOnlinePage()) relayOnlineDungeons(machine, ",
     "new": "      if (false) relayOnlineDungeons(machine, ",
     "tests": [

@@ -507,7 +507,7 @@ test('TIME3 by source - THE FOUR HOSTS RULE: world.js and exterior.js hand the m
   const session = rd('src/systems/rest/restSession.js');
   assert.match(session, /\n\s*this\.deps\.tickQuests\?\.\(\);/);
   assert.equal(/sharedMinutes\?\.\(\)\)\) this\.deps\.tickQuests/.test(session), false, 'RESTX2\'s online stand-down is gone');
-  const bridge = rd('src/scenes/questBridge.js');
+  const bridge = rd('src/scenes/quest/questBridge.js');
   for (const k of ['skySeconds', 'worldSeconds', 'raisedSeconds']) assert.match(bridge, new RegExp(`${k}: \\(\\) => ctx\\.${k}\\?\\.\\(\\) \\?\\? null,`), `the bridge carries ${k}`);
   assert.match(bridge, /const hour = `\$\{Math\.floor\(\(ctx\.classicSeconds\?\.\(\) \?\? 0\) \/ 3600\)\}\|\$\{Math\.floor\(\(ctx\.skySeconds\?\.\(\) \?\? 0\) \/ 3600\)\}`;/, 'the lens rereads on either clock\'s hour');
   assert.match(rd('src/systems/save/save.js'), /quest: questBlockOnOwnClock\(snap\) \?\? null,/, 'the load moves a pre-TIME3 online save\'s countdowns');

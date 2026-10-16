@@ -12,7 +12,7 @@
 //
 // Pure: renderer.createMesh's model shape, the realm's own archive (world/superDungeon/sdRealm.js packRealmFaces); each gear in its own
 // frame (its axle +y, its top face up), stood and turned by `worksMatrix`. Nothing here is law: no gear is a collider,
-// every one far below every floor, and each draw `noShadow` (scenes/sdHang.js) - nothing that turns casts.
+// every one far below every floor, and each draw `noShadow` (scenes/superDungeon/sdHang.js) - nothing that turns casts.
 //
 // Not a DFU member. Ledger A (SUPER-DUNGEONS).
 import { faces } from '../gate/gateModel.js';
@@ -77,7 +77,7 @@ function layTrain(spec) {
 
 /** A gear's bearing after `ticks` of the escapement (sdTick's seconds): its first tooth's, plus its turn a tick. */
 export const worksAngle = (g, ticks) => g.phase + g.w * ticks;
-/** THE HANG'S MOMENT (scenes/sdHang.js): one kept Float64Array a frame - the escapement's ticks, the chains' swing, the far
+/** THE HANG'S MOMENT (scenes/superDungeon/sdHang.js): one kept Float64Array a frame - the escapement's ticks, the chains' swing, the far
  *  set's turn - each matrix reading its own from it (AUDIT SD II L2 F9: a number made in a frame and handed to a call that
  *  is not inlined is boxed, 16 bytes a frame; world/superDungeon/sdOrreryModel.js ringPoseInto's way). */
 export const SD_HANG_NOW = Object.freeze({ ticks: 0, swing: 1, far: 2 });

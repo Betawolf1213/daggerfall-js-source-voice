@@ -118,7 +118,7 @@
   },
   {
     "name": "DECOR1e-the-stick-unread",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    const stick = stickMove(deps.stick?.() ?? null);",
     "new": "    const stick = null;",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "DECOR1e-forward-and-sideways-crossed",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "  return a ? { forward: unit(a.y), strafe: unit(a.x) } : null;",
     "new": "  return a ? { forward: unit(a.x), strafe: unit(a.y) } : null;",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "DECOR1e-the-throw-unbounded",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "  const unit = (v) => (Number.isFinite(v) ? Math.max(-1, Math.min(1, v)) : 0);",
     "new": "  const unit = (v) => (Number.isFinite(v) ? v : 0);",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "DECOR1e-the-bar-hold-unread",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "(held('Crouch') ? 1 : 0) + p.rise))",
     "new": "(held('Crouch') ? 1 : 0)))",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "DECOR1e-the-move-from-the-default-turn",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      if (m) p.placer = createDecorPlacer(p.entry, { radius: p.radius, box: m.box, from: p.editing, free: p.free });",
     "new": "      if (m) p.placer = createDecorPlacer(p.entry, { radius: p.radius, box: m.box, from: null, free: p.free });",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "DECOR1e-a-move-a-new-piece",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "id: editing ? editing.id : mintDecorId()",
     "new": "id: mintDecorId()",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "DECOR1e-a-move-paid-in-full",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    if (p.editing) return commitMove(p, r);",
     "new": "    if (false) return commitMove(p, r);",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "DECOR1e-the-resize-unpaid",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      if (price.pay > 0) deps.wallet().pay(price.pay);",
     "new": "      if (false) deps.wallet().pay(price.pay);",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "DECOR1e-the-shrink-not-given-back",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      if (price.refund > 0 && !r.hall) deps.wallet().credit?.(price.refund);",
     "new": "      if (false) deps.wallet().credit?.(price.refund);",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "DECOR1e-the-eye-stopped-by-the-piece",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    const skips = [...(p.editing ? [decorKeyOf(p.editing.id)] : []), ...p.inside.map((c) => c.key)];",
     "new": "    const skips = [...p.inside.map((c) => c.key)];",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "DECOR1e-the-eye-filter-dropped",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "collider.raycastHit(eye, dir, DECOR_EYE_REACH, skip ? { skip } : null)",
     "new": "collider.raycastHit(eye, dir, DECOR_EYE_REACH, null)",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "DECOR1e-the-bar-whole-price",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "priceText: edit ? decorEditText(edit) : p.free ? 'free' : null,",
     "new": "priceText: p.free ? 'free' : null,",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "DECOR1e-the-shrink-said-as-a-cost",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "refund > 0 ? `${refund} gold back`",
     "new": "refund > 0 ? `${refund} gold`",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "DECOR1e-the-move-unnamed",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "name: p.editing ? `Moving ${p.entry.name}` : p.entry.name",
     "new": "name: p.entry.name",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "DECOR1e-an-unread-piece-unmovable",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "?? (editing ? editing.paid / (DECOR_PRICE_PER_METRE * editing.scale) : null)",
     "new": "?? null",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "DECOR1e-the-lamp-for-every-piece",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "(own ?? DECOR_DEFAULT_LIGHT)",
     "new": "(DECOR_DEFAULT_LIGHT)",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "DECOR1e-removing-a-full-piece",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    if (!r || pool.holdsAny?.(piece.id)) return false;",
     "new": "    if (!r) return false;",
     "tests": [
@@ -280,7 +280,7 @@
   },
   {
     "name": "DECOR1e-unholding-a-full-piece",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "        if (cur.storage && pool.holdsAny?.(cur.id)) return false;",
     "new": "        if (false) return false;",
     "tests": [
@@ -290,7 +290,7 @@
   },
   {
     "name": "DECOR1e-the-removal-refund-whole",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      back = r.hall ? 0 : decorRefund(paid);   // AUDIT GUILD1d A4: a hall's half is the treasury's, never the purse's\n      if (back > 0) deps.wallet?.().credit?.(back);\n    }",
     "new": "      back = r.hall ? 0 : paid;   // AUDIT GUILD1d A4: a hall's half is the treasury's, never the purse's\n      if (back > 0) deps.wallet?.().credit?.(back);\n    }",
     "tests": [
@@ -299,7 +299,7 @@
   },
   {
     "name": "DECOR1e-the-removal-unstood",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    if (deps.visit?.() === visit) pool.remove(piece.id);",
     "new": "    if (false) pool.remove(piece.id);",
     "tests": [
@@ -308,7 +308,7 @@
   },
   {
     "name": "DECOR1e-the-write-skipped",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    if (r.kind !== 'home') return piece;",
     "new": "    if (r) return piece;",
     "tests": [
@@ -317,7 +317,7 @@
   },
   {
     "name": "DECOR1e-the-old-place-never-written-back",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "            await writeChange(r, was);\n            return false;",
     "new": "            return false;",
     "tests": [
@@ -327,7 +327,7 @@
   },
   {
     "name": "DECOR1e-the-local-cost-refunded",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      paid = decorPieceOf(res.data?.piece)?.paid ?? paid;",
     "new": "      paid = paid ?? decorPieceOf(res.data?.piece)?.paid;",
     "tests": [
@@ -336,7 +336,7 @@
   },
   {
     "name": "DECOR1e-a-refused-removal-taken",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "'The piece could not be removed.'); return false; }\n        paid = decorPieceOf(res.data?.piece)?.paid ?? paid;",
     "new": "'The piece could not be removed.'); }\n        paid = decorPieceOf(res.data?.piece)?.paid ?? paid;",
     "tests": [
@@ -345,7 +345,7 @@
   },
   {
     "name": "DECOR1e-short-before-the-write-asked",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    if (price.pay > (deps.wallet?.().gold ?? 0)) return false;   // the bar says why\n    p.busy = true;\n    const next",
     "new": "    if (false) return false;   // the bar says why\n    p.busy = true;\n    const next",
     "tests": [
@@ -354,7 +354,7 @@
   },
   {
     "name": "DECOR1e-a-late-move-standing",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "          if (price.refund > 0 && !r.hall) deps.wallet().credit?.(price.refund);   // AUDIT GUILD1d A4: a hall's half is the treasury's, the service's\n        }\n        turnsOwed.delete(was.id);\n        if (deps.visit?.() === visit) pool.put(stood);",
     "new": "          if (price.refund > 0 && !r.hall) deps.wallet().credit?.(price.refund);   // AUDIT GUILD1d A4: a hall's half is the treasury's, the service's\n        }\n        turnsOwed.delete(was.id);\n        pool.put(stood);",
     "tests": [

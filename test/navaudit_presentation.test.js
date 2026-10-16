@@ -9,7 +9,7 @@ import { readFileSync } from 'node:fs';
 import { sea, seeded, modShipsPool, knowAll } from './navalSea.mjs';
 import { sparsOf, FLAME_AWASH, BLAST_SHAKE, NEAR_BOOM_M, FAR_FADE_M, FAR_MATCH, GUN_PITCH_JITTER, GUN_GAIN_JITTER_DB, HIT_CONFIRM_REF_M, HIT_BURST_MAX, GUN_KICK, NEAR_LIFE_M, FAR_LIFE_EVERY,
   NAVAL_TAG_RANGE, NAVAL_TAG_NEAR, NAVAL_TAG_MAX, TAG_LIFT, SAIL_HO_RANGE, SAIL_HO_GAP_S, SAIL_HO_CHECK_S, bearingWords, withArticle,
-  SMOKE_FROM, SMOKE_SPAN, DAMAGE_LIST_FROM, DAMAGE_LIST_MAX, DAMAGE_LIST_EASE_S, TIMBER_PER_HIT, sailsShown, lineOver } from '../src/scenes/navalHost.js';
+  SMOKE_FROM, SMOKE_SPAN, DAMAGE_LIST_FROM, DAMAGE_LIST_MAX, DAMAGE_LIST_EASE_S, TIMBER_PER_HIT, sailsShown, lineOver } from '../src/scenes/naval/navalHost.js';
 import { createNavalEffects, TIMBER_LIFE, SMOLDER_RATE } from '../src/systems/naval/navalEffects.js';
 import { drawNavalTags, tagState, tagAlpha, TAG_FADE_FROM, TAG_FADE_TO } from '../src/ui/naval/navalHud.js';
 import { NAVY_HUNTS } from '../src/systems/naval/navalAI.js';
@@ -23,7 +23,7 @@ import { HELM_CSS } from '../src/ui/enhanced/enhancedHelm.js';
 import { ONLINE_DRESS_CSS, STONE_DIM } from '../src/ui/enhanced/enhancedPlusStyle.js';
 import { NAVAL_PLUNDER_CSS } from '../src/ui/naval/navalPlunderWindow.js';
 import { byClass } from './chargenDom.mjs';
-import { FLAG_DONOR_HULL } from '../src/scenes/comeSailAwayPool.js';
+import { FLAG_DONOR_HULL } from '../src/scenes/comeSailAway/comeSailAwayPool.js';
 import { Boat, meshLocalBounds, worldBounds } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { createShipDamage, sinkAngles, sinkDepth, SHIP_STATES, SINK_SECONDS, SINK_LIST, SINK_PITCH, SINK_CLEAR } from '../src/systems/naval/navalDamage.js';
 import { hullBuild, NAVAL_FACTIONS } from '../src/systems/naval/navalShips.js';
@@ -791,7 +791,7 @@ test('AUDIT NAV1 (the presentation) THE SKINS AND THE WORDS: the kit\'s face on 
   assert.match(HELM_CSS, /\.helmpanel\.touch \.helmpanel-bar \{ top: calc\(8px \+ env\(safe-area-inset-top, 0px\)\); left: calc\(50% \+ 56px \+ \(env\(safe-area-inset-left, 0px\) - env\(safe-area-inset-right, 0px\)\) \/ 2\);\n\s+max-width: calc\(100vw - 144px - env\(safe-area-inset-left, 0px\) - env\(safe-area-inset-right, 0px\)\); \}/);
   assert.equal(144, 72 + 48 + 8 + 16, 'the menu\'s press, air, and the right margin');
   assert.equal(56, (72 + 48 + 8 - 16) / 2, 'centred in what is left');
-  const host = readFileSync(new URL('../src/scenes/navalHost.js', import.meta.url), 'utf8');
+  const host = readFileSync(new URL('../src/scenes/naval/navalHost.js', import.meta.url), 'utf8');
   assert.ok(host.includes("`Grappling hooks! ${entry.ship.names?.name ? `${entry.ship.names.name} is` : 'The pirates are'} coming alongside - repel boarders!`"));
 });
 
@@ -850,7 +850,7 @@ test('AUDIT NAV1 (the presentation) THE ARCS AS LINES (#4): each ball\'s arc ARC
   const off = 2 * ARC_DASH_SPEED;
   assert.ok(Math.abs(d[3] - (0 - off) / ARC_DASH_M) < 1e-5 && Math.abs(d[NAVAL_STRIDE + 3] - (seg - off) / ARC_DASH_M) < 1e-5, 'u by the metres flown');
   assert.ok(Math.abs(d[6 * NAVAL_STRIDE + 3] - (seg - off) / ARC_DASH_M) < 1e-5, 'continuous into the next segment');
-  const host = readFileSync(new URL('../src/scenes/navalHost.js', import.meta.url), 'utf8');
+  const host = readFileSync(new URL('../src/scenes/naval/navalHost.js', import.meta.url), 'utf8');
   // PIN MOVED (SHIP-WATCH): the particles carry the far ships' lamps too, laid into the effects' list first
   // PIN MOVED (SALVAGE): the floaters a wreck's wreckage marked among them
   assert.match(host, /const particles = effects\.drawList\(\);\n\s*lampsInto\(particles\);[^\n]*\n\s*return \{ particles, balls: shots\.balls\(\), floaters: shots\.floaters\(\)\.map\(\(f\) => \(isSalvage\(f\.lot\) \? \{ \.\.\.f, wreck: true \} : f\)\), aim: aimDraw, time: clock \};/);

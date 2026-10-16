@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 
 import './chargenDom.mjs';   // the minimal DOM - globals (the journal faces mount on it)
 import { resetUid, ensureUidAtLeast } from '../src/systems/quest/quest.js';
-import { createQuestBridge } from '../src/scenes/questBridge.js';
+import { createQuestBridge } from '../src/scenes/quest/questBridge.js';
 import { makeWorld, seededRolls } from './guideWorld.mjs';
 import { setPref } from '../src/systems/uiPrefs.js';
 import { QuestLens } from '../src/ui/quest/questLens.js';

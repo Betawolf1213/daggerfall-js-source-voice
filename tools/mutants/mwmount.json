@@ -82,7 +82,7 @@
   },
   {
     "name": "MW-MOUNT-the-rows-unflipped",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "renderer?.uploadTexture?.(archive, pic.key, toColor32(pic.image), { mips: false, variant: '' })",
     "new": "renderer?.uploadTexture?.(archive, pic.key, { width: pic.image.width, height: pic.image.height, colors: pic.image.data }, { mips: false, variant: '' })",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "MW-MOUNT-the-size-the-pixels",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "return tex ? { tex, w: pic.w, h: pic.h, key: pic.key } : null;",
     "new": "return tex ? { tex, w: pic.image.width, h: pic.image.height, key: pic.key } : null;",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "MW-MOUNT-a-throw-escaping",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "    return tex ? { tex, w: pic.w, h: pic.h, key: pic.key } : null;   // MW-ASSIGN: the key, for a billboard's own\n  }).catch(() => null);",
     "new": "    return tex ? { tex, w: pic.w, h: pic.h, key: pic.key } : null;   // MW-ASSIGN: the key, for a billboard's own\n  });",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "MW-MOUNT-the-classic-first",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "  return loadMwMountArt(deps, decorMountItem(d))\n    .then((mw) => mw ?? loadMountArt(deps, flat[0], flat[1], decorMountDye(d), decorMountDyeTarget(d)));",
     "new": "  return loadMountArt(deps, flat[0], flat[1], decorMountDye(d), decorMountDyeTarget(d))\n    .then((c) => c ?? loadMwMountArt(deps, decorMountItem(d)));",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "MW-MOUNT-the-item-unnamed",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "return loadMwMountArt(deps, decorMountItem(d))",
     "new": "return loadMwMountArt(deps, d)",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "MW-MOUNT-no-fallback",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": ".then((mw) => mw ?? loadMountArt(deps, flat[0], flat[1], decorMountDye(d), decorMountDyeTarget(d)));",
     "new": ".then((mw) => mw);",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "MW-MOUNT-the-refresh-a-no-op",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "    arts.clear();\n    stands.clear();\n    for (const e of [...standing.values()]) if (decorIsMount(e.piece) || decorStandsOwn(e.piece)) put(e.piece);\n",
     "new": "",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "MW-MOUNT-the-old-picture-cached",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "    arts.clear();\n    stands.clear();\n",
     "new": "    stands.clear();\n",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "MW-MOUNT-a-non-mount-re-put",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "for (const e of [...standing.values()]) if (decorIsMount(e.piece) || decorStandsOwn(e.piece)) put(e.piece);",
     "new": "for (const e of [...standing.values()]) put(e.piece);",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "MW-MOUNT-the-ghost-classic",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "renderer, mwPicture: deps.mwPicture }, entry.flat, entry.item)",
     "new": "renderer }, entry.flat, entry.item)",
     "tests": [

@@ -1,7 +1,7 @@
 [
   {
     "name": "AUDIT-NAV2-F8-reports-left-where-the-world-was",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    for (const g of gunfire) { g.pos[0] += o[0]; g.pos[1] += o[1]; g.pos[2] += o[2]; }",
     "new": "",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "AUDIT-NAV2-F8-reports-kept-across-the-clear",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    gunfire = [];   // AUDIT NAV2 F8",
     "new": "    // AUDIT NAV2 F8",
     "tests": [
@@ -137,7 +137,7 @@
   },
   {
     "name": "AUDIT-NAV2-F23-a-struck-ships-last-word-read-as-a-fight",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "engaged: (afloat && (e.ship.mode === 'engage' || e.ship.mode === 'board'))",
     "new": "engaged: (e.ship.mode === 'engage' || e.ship.mode === 'board')",
     "tests": [
@@ -276,7 +276,7 @@
   },
   {
     "name": "AUDIT-NAV2-F26-the-ram-unbounded",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        strike(t, { hull: Math.min(dealt, room), sail: 0, crew: ramMen(dealt, random()) }, e.id);",
     "new": "        strike(t, { hull: dealt, sail: 0, crew: ramMen(dealt, random()) }, e.id);",
     "tests": [
@@ -285,7 +285,7 @@
   },
   {
     "name": "AUDIT-NAV2-F27-flight-not-counted",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      const chased = new Set(ships.filter((y) => y.engaged && !y.theirs).map((y) => sea.get(y.id)?.ship.target));",
     "new": "      const chased = new Set(ships.filter((y) => y.engaged && !y.theirs && y.afloat === false).map((y) => sea.get(y.id)?.ship.target));",
     "tests": [
@@ -312,7 +312,7 @@
   },
   {
     "name": "AUDIT-NAV2-F29-the-quiet-read-by-where-I-stand",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const hostile = hostileNearBoat(b, s);\n      crewStep",
     "new": "const hostile = hostileNearMe();\n      crewStep",
     "tests": [

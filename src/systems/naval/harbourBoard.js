@@ -9,7 +9,7 @@
 // dawn. Five kinds, each ending in something the sea already does:
 //
 //   bounty    a named pirate preying on the crown's shipping, last seen SITE_PX map pixels off the port: she is stood
-//             when the captain sails within SITE_REACH_PX of her waters (scenes/navalHost.js THE SITES); sunk or
+//             when the captain sails within SITE_REACH_PX of her waters (scenes/naval/navalHost.js THE SITES); sunk or
 //             taken by the captain's hand, the bounty is paid
 //   hunt      CONTRACT_NEED.hunt pirate ships ended - sunk or taken - in the crown's waters
 //   delivery  a cargo carried to another port's harbourmaster by her term (a day for every DELIVERY_PX_DAY map pixels

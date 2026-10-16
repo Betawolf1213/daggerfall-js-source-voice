@@ -64,7 +64,7 @@
   },
   {
     "name": "VERMIN-defer-on-presence",
-    "file": "src/scenes/questFoeHost.js",
+    "file": "src/scenes/quest/questFoeHost.js",
     "old": "    if (dx * dx + dz * dz <= radius * radius) return sharerFoeStands({ foes, sharer, questName, symbol, accountOfPeer });\n",
     "new": "    if (dx * dx + dz * dz <= radius * radius) return true;\n",
     "tests": [
@@ -75,7 +75,7 @@
   },
   {
     "name": "VERMIN-body-defers",
-    "file": "src/scenes/questFoeHost.js",
+    "file": "src/scenes/quest/questFoeHost.js",
     "old": "    if (f.dead) continue;   // a body stands no wave",
     "new": "    if (false) continue;   // a body stands no wave",
     "tests": [
@@ -86,7 +86,7 @@
   },
   {
     "name": "VERMIN-any-foe-defers",
-    "file": "src/scenes/questFoeHost.js",
+    "file": "src/scenes/quest/questFoeHost.js",
     "old": "    if (!tag || tag.q !== questName || tag.s !== symbol) continue;\n",
     "new": "    if (!tag || tag.q !== questName) continue;\n",
     "tests": [
@@ -97,7 +97,7 @@
   },
   {
     "name": "VERMIN-any-quest-defers",
-    "file": "src/scenes/questFoeHost.js",
+    "file": "src/scenes/quest/questFoeHost.js",
     "old": "    if (!tag || tag.q !== questName || tag.s !== symbol) continue;\n",
     "new": "    if (!tag || tag.s !== symbol) continue;\n",
     "tests": [
@@ -108,7 +108,7 @@
   },
   {
     "name": "VERMIN-untagged-defers",
-    "file": "src/scenes/questFoeHost.js",
+    "file": "src/scenes/quest/questFoeHost.js",
     "old": "    if (!tag || tag.q !== questName || tag.s !== symbol) continue;\n",
     "new": "    if (tag && (tag.q !== questName || tag.s !== symbol)) continue;\n",
     "tests": [
@@ -119,7 +119,7 @@
   },
   {
     "name": "VERMIN-anyones-foe-defers",
-    "file": "src/scenes/questFoeHost.js",
+    "file": "src/scenes/quest/questFoeHost.js",
     "old": "    if (accountOfPeer(f.puppet ?? f._ownFrom) === sharer) return true;\n",
     "new": "    return true;\n",
     "tests": [
@@ -130,7 +130,7 @@
   },
   {
     "name": "VERMIN-dungeon-owner-unread",
-    "file": "src/scenes/questFoeHost.js",
+    "file": "src/scenes/quest/questFoeHost.js",
     "old": "    if (accountOfPeer(f.puppet ?? f._ownFrom) === sharer) return true;\n",
     "new": "    if (accountOfPeer(f.puppet) === sharer) return true;\n",
     "tests": [

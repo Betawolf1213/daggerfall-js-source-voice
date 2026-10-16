@@ -15,7 +15,7 @@ import { multiply } from '../src/world/mat4.js';
 import { CAPSULE_RADIUS } from '../src/player/motor.js';
 import { MELEE_DISTANCE } from '../src/characters/enemyMotor.js';
 import * as ships from '../src/systems/naval/navalShips.js';
-import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';
+import { createComeSailAwayPool } from '../src/scenes/comeSailAway/comeSailAwayPool.js';
 import { MODELS, ctxFor, modCtxFor } from './csaScene.mjs';
 import { sea, readyPool, modShipsPool } from './navalSea.mjs';
 

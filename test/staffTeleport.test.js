@@ -6,7 +6,7 @@ import { validStaffDestination, validStaffTeleportIn, validStaffTeleportOut, sta
 import { parseClient, SOCIAL_ROOM, RELAY_VERSION } from '../src/net/wire.js';
 import { OnlineSession } from '../src/net/online.js';
 import { StreamingWorldState } from '../src/world/streamingWorld.js';
-import { deckPose, localOf, worldOf } from '../src/scenes/comeSailAwayAboard.js';
+import { deckPose, localOf, worldOf } from '../src/scenes/comeSailAway/comeSailAwayAboard.js';
 import { fakeRoom } from './fakeRoom.mjs';
 import { fakeSocketClass } from './fakeSocket.mjs';
 import { Collider } from '../src/player/collider.js';

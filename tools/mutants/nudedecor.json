@@ -20,7 +20,7 @@
   },
   {
     "name": "NUDEDECOR-room-born",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "      const [a, r] = drawnFlat(piece.flat[0], piece.flat[1]);",
     "new": "      const [a, r] = piece.flat;",
     "tests": [
@@ -29,7 +29,7 @@
   },
   {
     "name": "NUDEDECOR-tool-drawn-born",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "  const drawnHere = (flat) => drawnFlat(...(deps.flatAs?.(flat) ?? flat));",
     "new": "  const drawnHere = (flat) => (deps.flatAs?.(flat) ?? flat);",
     "tests": [
@@ -38,7 +38,7 @@
   },
   {
     "name": "NUDEDECOR-ghost-born",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      const [ga, gr] = drawnHere(entry.flat);   // NUDE-DECOR: a figure moved shows the stand-in the room stands it as; DECOR-OUTDOOR: a tree, its season",
     "new": "      const [ga, gr] = entry.flat;",
     "tests": [
@@ -47,7 +47,7 @@
   },
   {
     "name": "NUDEDECOR-thumb-born",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "        if (entry.flat) return deps.iconUrl?.(...drawnHere(entry.flat)) ?? null;   // NUDE-DECOR, DECOR-OUTDOOR: the picture it stands as",
     "new": "        if (entry.flat) return deps.iconUrl?.(entry.flat[0], entry.flat[1]) ?? null;",
     "tests": [
@@ -56,7 +56,7 @@
   },
   {
     "name": "NUDEDECOR-thumb-key-entry",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "        return drawn && drawn !== entry.flat.join('.') ? `${entry.key}>${drawn}` : entry.key;",
     "new": "        return entry.key;",
     "tests": [
@@ -83,7 +83,7 @@
   },
   {
     "name": "NUDEHOSTS-arena-born",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "      const [archive, record] = drawnFlat(s.archive, s.record);",
     "new": "      const [archive, record] = [s.archive, s.record];",
     "tests": [

@@ -39,7 +39,7 @@ for the finding's reason (`test/audit1003_server.test.js` 11, `_bouts` 9, `_onli
 | S7 | low | THE OFFER'S ID WAS THE BOUT'S ROOM. Both of a pair hear the offer's id before either says yes; one stood a ladder bout in `arena:b<offer id>`, the hall's open was refused, both were told `busy` and paired again - for ever. | The bout's room is minted at the go (`arenaId()`), never the offer's id. |
 | S8 | low | THE ARENA'S HONOURS WERE WORN NOWHERE BUT THE CARD. A Grand Champion's letters and notices showed no title, the season's first no laurel (`letters.js`, `board.js` read their badges without ARENA_HONOUR_PATHS). | `withArenaHonoursAll` lays them on the rows the inbox and the board read. |
 
-**The bout engine and the book** (`src/scenes/arenaBouts.js`, `src/systems/arena/arenaBook.js`, `src/scenes/arenaGate.js`,
+**The bout engine and the book** (`src/scenes/arena/arenaBouts.js`, `src/systems/arena/arenaBook.js`, `src/scenes/arena/arenaGate.js`,
 `src/systems/arena/arenaHerald.js`, `src/systems/arena/arenaText.js`; the pins in `test/audit1003_bouts.test.js`)
 
 | ID | Sev | Finding | Fix |
@@ -51,8 +51,8 @@ for the finding's reason (`test/audit1003_server.test.js` 11, `_bouts` 9, `_onli
 | B5 | med | THE SPARE LAPSED AT THE YIELD. The spare that holds the player at 1 was given only in the fight: from a yield or a fall to the healers (and the rest of a Grand Melee after a fall) an arrow in flight, a spell or a poison round killed the player on the sand. | Held from the word to `done`; `boutFell` itself refuses a bout that is over or a fighter already out. |
 | B6, W3 | low | A bout dismissed while its crowd's pictures loaded left the batches already made undestroyed (up to ~100 VAOs and 200 buffers a time). | They are destroyed where the loop returns. |
 
-**The online half** (`src/scenes/arenaOnline.js`, `src/net/arena/arenaBrain.js`, `src/scenes/arenaGate.js`,
-`src/scenes/arenaBouts.js`, `src/scenes/world.js`, `src/systems/online/onlineHomes.js`; the pins in
+**The online half** (`src/scenes/arena/arenaOnline.js`, `src/net/arena/arenaBrain.js`, `src/scenes/arena/arenaGate.js`,
+`src/scenes/arena/arenaBouts.js`, `src/scenes/world.js`, `src/systems/online/onlineHomes.js`; the pins in
 `test/audit1003_online.test.js`)
 
 | ID | Sev | Finding | Fix |
@@ -68,7 +68,7 @@ for the finding's reason (`test/audit1003_server.test.js` 11, `_bouts` 9, `_onli
 
 **The arena in the world** (`src/world/arena/arenaFloor.js`, `src/world/arena/arenaModel.js`, `src/world/arena/arenaCity.js`,
 `src/world/customModels.js`, `src/scenes/dungeonContext.js`, `src/scenes/dataPipeline.js`, `src/scenes/world.js`,
-`src/scenes/worldModes.js`, `src/scenes/dungeon.js`, `src/scenes/arenaBouts.js`; the pins in
+`src/scenes/worldModes.js`, `src/scenes/dungeon.js`, `src/scenes/arena/arenaBouts.js`; the pins in
 `test/audit1003_world.test.js`)
 
 | ID | Sev | Finding | Fix |
@@ -247,7 +247,7 @@ comment.
 | R7, S10 | low | THE KEEP WAS SPENT BEFORE IT BEGAN - counted from the result, the healers' seven seconds outran its five; the record said "past the healers". | Counted from the bout's first finished beat (`doneAt`). |
 | S9 | low | BOTH FIGHTERS GONE TOGETHER HANDED THE BLUE A FORFEIT WIN (the Red counted out first). | Both players of a players' bout gone is no contest: void, `no contest`, nothing kept (a ladder's one player gone is still its forfeit). |
 
-**The client** (`src/scenes/arenaOnline.js`, `arenaBouts.js`, `worldModes.js`, `world.js`)
+**The client** (`src/scenes/arena/arenaOnline.js`, `arenaBouts.js`, `worldModes.js`, `world.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|

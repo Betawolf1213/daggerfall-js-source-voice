@@ -17,7 +17,7 @@ import { undercroftPopulation, chainTag, PIT_MASTER, HALL_KEEPER, UNDERCROFT_PEO
 import { boutGate } from '../src/characters/enemyTargets.js';
 import { practiceBout, hallOfChampions, newArenaLadder, LADDER_TIERS } from '../src/systems/arena/arenaLadder.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
-import { createArenaBouts, YOU, CROWD_SCALE, WALK_PACE, CRIT_SHARE } from '../src/scenes/arenaBouts.js';
+import { createArenaBouts, YOU, CROWD_SCALE, WALK_PACE, CRIT_SHARE } from '../src/scenes/arena/arenaBouts.js';
 import { arenaHudModel } from '../src/ui/arena/arenaHud.js';
 import { CROWD_PEOPLE } from '../src/systems/arena/arenaCrowd.js';
 import { EnemyAI, WALK_ARRIVE_M } from '../src/characters/enemyMotor.js';
@@ -412,7 +412,7 @@ test('ARENA-FIX 13: the court\'s nobles of TEXTURE.185 seated at TEXTURE.183\'s 
   const nobles = CROWD_PEOPLE.nobles.filter(([a]) => a === 185).map(([, r]) => r);
   assert.deepEqual(nobles, [0, 1, 5, 6, 7, 8], 'the lords and ladies - not the guards nor the knight');
   // the driver sizes them by it: the same picture at +128 and at the crowd's scale
-  const B = rd('src/scenes/arenaBouts.js');
+  const B = rd('src/scenes/arena/arenaBouts.js');
   assert.match(B, /const size = sizeOf\(tex, g\.record, CROWD_SCALE\[g\.archive\]\);/);
   const h = (px, k) => (px + Math.trunc(px * (k / 256))) * 0.025;
   assert.ok(h(159, 128) > 5.9 && h(159, CROWD_SCALE[185]) <= 2.0);

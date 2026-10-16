@@ -8,7 +8,7 @@
 //     own colour first, then his two trials) - read at a glance, all fight long (ui/gate/gateBossBar.js draws the row from
 //     `marksViewOf`).
 //   - THE MARKS' CARD, a popup over the screen: near the gate before it is entered (while it stands, from the omen's
-//     ground - scenes/gatePool.js), and as a fighter steps into the court, before he moves (net/gate/gateBrain.js OPENING_MS
+//     ground - scenes/gate/gatePool.js), and as a fighter steps into the court, before he moves (net/gate/gateBrain.js OPENING_MS
 //     is the time to read it). Each mark with its sign, its line, and how to meet it. GATE-UX: never over the middle of
 //     the screen - to the side in both places (MARKS_CARD_CSS).
 //

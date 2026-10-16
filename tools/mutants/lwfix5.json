@@ -34,7 +34,7 @@
   },
   {
     "name": "LW-FIX5-marked-on-laying",
-    "file": "src/scenes/deepRemains.js",
+    "file": "src/scenes/livingWorld/deepRemains.js",
     "old": "          here.set(r.key, { pile, n: deps.count?.(pile) ?? 0 });",
     "new": "          here.set(r.key, { pile, n: deps.count?.(pile) ?? 0 }); deps.mark(r.key);",
     "tests": [
@@ -45,7 +45,7 @@
   },
   {
     "name": "LW-FIX5-count-unread",
-    "file": "src/scenes/deepRemains.js",
+    "file": "src/scenes/livingWorld/deepRemains.js",
     "old": "(!deps.there(at) || (deps.count?.(h.pile) ?? h.n) < h.n)",
     "new": "(!deps.there(at) || false)",
     "tests": [
@@ -56,7 +56,7 @@
   },
   {
     "name": "LW-FIX5-gone-unread",
-    "file": "src/scenes/deepRemains.js",
+    "file": "src/scenes/livingWorld/deepRemains.js",
     "old": "(!deps.there(at) || (deps.count?.(h.pile) ?? h.n) < h.n)",
     "new": "((deps.count?.(h.pile) ?? h.n) < h.n)",
     "tests": [
@@ -67,7 +67,7 @@
   },
   {
     "name": "LW-FIX5-visit-unforgotten",
-    "file": "src/scenes/deepRemains.js",
+    "file": "src/scenes/livingWorld/deepRemains.js",
     "old": "    clear() { told.clear(); here.clear(); arriving = true; },",
     "new": "    clear() { told.clear(); arriving = true; },",
     "tests": [
@@ -78,7 +78,7 @@
   },
   {
     "name": "LW-FIX5-key-unpassed",
-    "file": "src/scenes/deepRemains.js",
+    "file": "src/scenes/livingWorld/deepRemains.js",
     "old": "          const pile = deps.lay(r.res, at, r.key);",
     "new": "          const pile = deps.lay(r.res, at);",
     "tests": [
@@ -133,7 +133,7 @@
   },
   {
     "name": "LW-FIX5-watch-dead-found",
-    "file": "src/scenes/livingWatch.js",
+    "file": "src/scenes/livingWorld/livingWatch.js",
     "old": "    g.livingFollowed = true;   // followed once, whatever its end - a body lying in the list is never a second deed",
     "new": "    void 0;   // followed once, whatever its end - a body lying in the list is never a second deed",
     "tests": [

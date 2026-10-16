@@ -454,7 +454,7 @@
   },
   {
     "name": "LW4-ring-facing-in",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "    out.push({ res: members[i], x, z, yaw: Math.atan2(x - /** @type {number} */ (at.x), z - /** @type {number} */ (at.z)), moving: false });",
     "new": "    out.push({ res: members[i], x, z, yaw: Math.atan2(/** @type {number} */ (at.x) - x, /** @type {number} */ (at.z) - z), moving: false });",
     "tests": [
@@ -463,7 +463,7 @@
   },
   {
     "name": "LW4-unarmed-on-the-ring",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "    const r = members[i].cls != null ? FIGHT_RING_N : FIGHT_RING_N * 0.4;   // the unarmed in the middle",
     "new": "    const r = FIGHT_RING_N;   // the unarmed in the middle",
     "tests": [
@@ -472,7 +472,7 @@
   },
   {
     "name": "LW4-foes-talkable",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "striking: strikesNow(f.key), talk: false });",
     "new": "striking: strikesNow(f.key) });",
     "tests": [
@@ -481,7 +481,7 @@
   },
   {
     "name": "LW4-strike-every-frame",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "    if (realNow < next) return false;",
     "new": "    if (false) return false;",
     "tests": [
@@ -490,7 +490,7 @@
   },
   {
     "name": "LW4-mark-unbeset",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "kind: `${p.trip.kind === 'merchant' ? 'wayfarer caravan' : 'wayfarer'}${beset ? ' fight' : ''}`",
     "new": "kind: `${p.trip.kind === 'merchant' ? 'wayfarer caravan' : 'wayfarer'}`",
     "tests": [

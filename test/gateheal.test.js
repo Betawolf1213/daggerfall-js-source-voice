@@ -9,7 +9,7 @@
 //   the wire      `heal` ([[by, n], ...] - each caster's peer id); a chart row's `hl`; the relay's door
 //   the relay     a heal credited to the caster by the peer id its socket says - never to the one healed
 //   the session   no `heal` to a relay that would junk it
-//   the court     scenes/gateCourt.js - another's heal by the ally-cast door, the word out; my own healing no one's
+//   the court     scenes/gate/gateCourt.js - another's heal by the ally-cast door, the word out; my own healing no one's
 //   the chart     ui/gate/gateDamageChart.js - the Healed column, wide and narrow
 //   the plumbing  scenes/world.js - the ally-cast door tells the court; the court's word goes out as `heal`
 //
@@ -25,7 +25,7 @@ import {
 import { validGateIn, validGateOut, GATE_KINDS, GATE_HEAL_ROWS_MAX, GATE_HEAL_WIRE_MAX, GATE_HEAL_RELAY_MIN, relaySupportsGateHeal, GATE_BRAIN_V, RELAY_VERSION } from '../src/net/wire.js';
 import { gateTimes, gateRoomKey } from '../src/net/gate/gateLaw.js';
 import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
-import { createGateCourt, HEAL_SEND_MS } from '../src/scenes/gateCourt.js';
+import { createGateCourt, HEAL_SEND_MS } from '../src/scenes/gate/gateCourt.js';
 import { courtToDungeon } from '../src/world/gate/gateArena.js';
 import { damageChartModel, drawGateDamageChart, DAMAGE_CHART_TEXT, DAMAGE_CHART_DELAY_MS, DAMAGE_CHART_CSS } from '../src/ui/gate/gateDamageChart.js';
 import { destroyGateBossBar } from '../src/ui/gate/gateBossBar.js';

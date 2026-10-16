@@ -111,7 +111,7 @@ Mutation list: `tools/mutants/fb1002c.json` - 28 mutants over every fix above, 2
 
 ## PUPPET-GLIDE (FIELD BUGS 2026-10-02d)
 
-The Discord, the same day: *"Ai ships move very janky and quick"* (the reporter could not say where). `scenes/navalHost.js`
+The Discord, the same day: *"Ai ships move very janky and quick"* (the reporter could not say where). `scenes/naval/navalHost.js`
 (the others' ships, PUPPET_CATCH, PUPPET_CATCH_MPS, PUPPET_CATCH_SHARE). **Measured first.** The captains' own sim is
 smooth and frame-rate blind: a galley, a cutter, a brig and a sloop at 60 Hz, 144 Hz and 8-40 ms frames drew no jump, no
 turn reversal and 0.002 m/s of speed jitter a frame; a harbour's traffic over fifteen minutes (arriving, berthing,

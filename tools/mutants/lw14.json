@@ -355,7 +355,7 @@
   },
   {
     "name": "LW14-remains-place",
-    "file": "src/scenes/deepRemains.js",
+    "file": "src/scenes/livingWorld/deepRemains.js",
     "old": "        const at = deps.placeOf?.(r) ?? (spots.length ? spots[restAt(r.key, spots.length)] : null);",
     "new": "        const at = spots.length ? spots[restAt(r.key, spots.length)] : null;",
     "tests": [
@@ -511,7 +511,7 @@
   },
   {
     "name": "LW14-AUDIT-D13-no-spots",
-    "file": "src/scenes/deepRemains.js",
+    "file": "src/scenes/livingWorld/deepRemains.js",
     "old": "        if (!at) continue;   // AUDIT LW-II D13",
     "new": "        if (!at && false) continue;   // AUDIT LW-II D13",
     "tests": [

@@ -278,7 +278,7 @@ test('AUDIT 58: GiveOffer is a RUNG in both ladders - after the prevented messag
   assert.ok(travel.includes('if (giveOffer()) return false;'),   // GUIDE2: the door answers whether a map opened
     'and ABOVE the racial fast-travel block');
   // the bridge IS DaggerfallUI's one subscription
-  assert.match(src('scenes/questBridge.js'), /onOfferPending: \(givePc\) => noteOfferPending\(givePc\)/);
+  assert.match(src('scenes/quest/questBridge.js'), /onOfferPending: \(givePc\) => noteOfferPending\(givePc\)/);
   assert.match(src('systems/quest/actions.js'), /hooks\?\.onOfferPending\?\.\(this\);/);
 });
 

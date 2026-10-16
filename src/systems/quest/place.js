@@ -194,7 +194,7 @@ export class Place extends QuestResource {
     this.sitePending = true;   // no world seam -> the binding PENDS. AUDIT-QUEST F1: this line used to say
                                // it pended "LOUDLY"; setting a boolean is the definition of quiet, and 262
                                // of the 265 vendored quests started headless with nothing in the log at all.
-                               // The flag is the record; scenes/questBridge.js's construction report is the
+                               // The flag is the record; scenes/quest/questBridge.js's construction report is the
                                // noise, and it names the seam that was never wired.
     if (line !== null) this.setResource(line);
   }

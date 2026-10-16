@@ -13,7 +13,7 @@ mod's IL, so no `[IL]` citation points into any assembly and the arc carries no 
 carries its row instead. It stands on three things the port already had:
 
 - **Come Sail Away's hulls** (`03-World/Come-Sail-Away.md`): the player's boats are the ones that carry guns, and the
-  sea's ships are built on the same five prefabs (`scenes/comeSailAwayPool.js` `spawnSeaNow`: drawn, baked and lit as
+  sea's ships are built on the same five prefabs (`scenes/comeSailAway/comeSailAwayPool.js` `spawnSeaNow`: drawn, baked and lit as
   a boat of the player's, in the pool's own SEA list - never `boats`, so no helm is taken on one and no deed places
   one). With the mod off there is no sea fight (`world.js navalOn`).
 - **Warm Ashes - Ships' quests** (`03-World/Warm-Ashes-Ships.md`): the pirate quest system Mac named. A crewed boat a
@@ -27,17 +27,17 @@ carries its row instead. It stands on three things the port already had:
 | slice | what | modules |
 |---|---|---|
 | NAV-A | THE GUNS: closed-form ballistics, the batteries each hull carries, the aim from the look, the reload, the brace; what a ball does to a ship (hull, sails, crew, fire, the waterline) and the states a ship goes through | `systems/naval/navalBallistics.js`, `navalShips.js` (HULL_BUILDS, GUNS), `navalGunnery.js`, `navalDamage.js`, `navalShots.js` |
-| NAV-B | THE PICTURE: the naval pass (smoke, muzzle flame, spray, splinters, the founder's foam, the balls in flight, the aim's arcs and splash zone), the deck fires on Daggerfall's own fire flat, a sea ship's colours on her flag; and the root fix of Come Sail Away's soft drop (below) | `systems/naval/navalEffects.js`, `render/navalRender.js`, `scenes/navalFlames.js`, `render/comeSailAwayRender.js` (flagRuns, softParticleTexture) |
-| NAV-C | THE SHIPS OF THE ILIAC BAY: nine classes in three trades, their names and captains off the region's name bank, the crowns their navies serve; the captains' seamanship; the traffic | `systems/naval/navalShips.js` (SHIP_CLASSES, CROWNS), `navalAI.js`, `navalDirector.js`, `scenes/comeSailAwayPool.js` (seaBoats, spawnSeaNow) |
+| NAV-B | THE PICTURE: the naval pass (smoke, muzzle flame, spray, splinters, the founder's foam, the balls in flight, the aim's arcs and splash zone), the deck fires on Daggerfall's own fire flat, a sea ship's colours on her flag; and the root fix of Come Sail Away's soft drop (below) | `systems/naval/navalEffects.js`, `render/navalRender.js`, `scenes/naval/navalFlames.js`, `render/comeSailAwayRender.js` (flagRuns, softParticleTexture) |
+| NAV-C | THE SHIPS OF THE ILIAC BAY: nine classes in three trades, their names and captains off the region's name bank, the crowns their navies serve; the captains' seamanship; the traffic | `systems/naval/navalShips.js` (SHIP_CLASSES, CROWNS), `navalAI.js`, `navalDirector.js`, `scenes/comeSailAway/comeSailAwayPool.js` (seaBoats, spawnSeaNow) |
 | NAV-D | BOARDING, PLUNDER, THE LAW AND THE QUESTS: grapples, musters, the prize window's model, holds and flotsam, notoriety and the crowns' law, Warm Ashes' raids started and gated | `systems/naval/navalBoarding.js`, `navalPlunder.js`, `navalLaw.js`, `systems/warmAshesShips.js` (the gate) |
 | NAV-E | THE SOUNDS: six synthesised clips baked to DAGGER.SND's own format (a seventh and an eighth, the run-out and the ready, with AUDIT NAV1), and the distances every naval sound carries | `tools/navalSfx.mjs`, `tools/sfxSynth.mjs`, `systems/naval/navalSounds.js`, `public/sfx/naval-*.wav` |
 | NAV-F | THE UI, ENHANCED PLUS: the helm's readout (ship plate, battery rose, aim, target card) and the plunder window, in the stone-and-brass kit on either skin | `ui/naval/navalHud.js`, `ui/naval/navalPlunderDoor.js`, `ui/naval/navalPlunderWindow.js`, `ui/enhanced/enhancedFrame.js` (FRAME_ROLES, scopeRules) |
-| NAV-G | ONLINE: one player stands the sea for everyone near; the ships, volleys and barrels ride the foes frame; a blow on another's ship goes to its owner; a boarding claims the ship | `systems/naval/navalWire.js`, `scenes/exteriorFoes.js` (setOnNaval), `scenes/comeSailAwayPeers.js` (helmBoats) |
-| NAV-H | THE HOST: the sea fight stood in the streaming world - the frame, the input, the activation, the draw, the lights, the origin, the colliders, the save, the transitions, the quests, the settings | `scenes/navalHost.js`, `scenes/world.js` (the NAV-H block) |
-| AUDIT NAV1 | THE DEEP AUDIT (2026-09-29): six lenses measured the arc against Black Flag on its own harnesses; the captains' seamanship rebuilt (below), the hulls kept apart, a galley's ram, the sea on the world's clock; THE GUNS - the captains' gunnery and the run-out that tells a broadside is coming, the rig a target, fire, the prize kept a prize, the readout's warning and tally | `systems/naval/navalAI.js`, `navalShips.js` (the hulls' extents and rigs, the classes' pace, the carriages), `navalDirector.js` (the berths), `navalDamage.js`, `navalShots.js`, `navalGunnery.js`, `navalWire.js` (the run-out's bits, a barrel's fire), `navalSounds.js` and `tools/navalSfx.mjs` (the run-out), `navalEffects.js` (the glint, the shreds), `scenes/navalHost.js` (`stepSea`, `separateHulls`, `checkShipRams`, `strike`, the tell and the tally), `ui/naval/navalHud.js` (the warning, the tally), `scenes/comeSailAwayPeers.js` (helmBoats' hull and heading); THE HELM - the aim a look lays and its red, the broadside camera, the brace, the ram, her hurts in her handling, the shipwright and the mending at sea: `navalGunnery.js` (lookReach), `navalYard.js`, `systems/comeSailAway/comeSailAway.js` (wayScale, sailRefused), `render/navalRender.js` (the posts, the strikes, the tones), `ui/naval/navalYardWindow.js`, `ui/naval/navalPlunderDoor.js` (one door for both windows) |
-| NAV-R | WARM ASHES' RAIDERS AS SHIPS (merged OWS3): a raider near the player at sea stood as a pirate of her seed's own class and name, sailing her seeded course until her lookout sights a boat, then fighting and boarding as any pirate; spent for her life; one copy between two players | `systems/naval/navalRaiders.js`, `scenes/navalHost.js` (`raiders`, `raiderShipOf`), `systems/naval/navalAI.js` (`sight`, `course`), `scenes/world.js` (`raidShips`, the marks) |
-| AUDIT NAV2 | THE SECOND PASS'S DEEP AUDIT (2026-09-30, Mac: "Let's do a deep comprehensive audit on everything developed thus far"): seven lenses over SEA-PEACE, HELM-KEYS, DECK-FIELD, HELM-WAY, DECK-WALK, SHIPMATES and LIVING CREW and the merges that carried them - sixty-two findings, each pinned red first, fixed and mutation-proven: the captain's temper and a boat's hands on the word, a boarding shared with the room, the stern chase, the way round land, the dead zone, a fighting power the duels bear out (Mac's call), the helm's handling and its advice, a shipmate no mark, a deck of every level, the crew at a boarding at hand (`01-Overview/Audit-NAV2.md`) | `systems/naval/navalWire.js` (`k`, `m`), `navalAI.js` (`strikeTime`, `odds`, `layMin`, `routeTo`), `navalDeck.js` (levels, pieces, `mainLevel`), `crewLife.js`, `scenes/navalHost.js`, `scenes/navalCrew.js`, `scenes/world.js`, `systems/comeSailAway/comeSailAway.js`, `systems/helmWay.js`, `player/mobileEnemyActivate.js`, `scenes/hostEnchant.js`, `characters/enemyCasting.js` |
-| SHIP-LIFE | SHIPS THAT BERTH AND GO SOMEWHERE (Mac's item 1, slice E): a port's harbour found off the terrain, its berths and mouth; a bounded A* over the water; the errands - moored, depart, voyage, arrive, patrol, lurk - drawn off a ship's seed; the harbour roll of moored ships, the port's and the day's | `systems/naval/shipLife.js`, `navalAI.js` (the cruise branch's errand, `moor`), `navalDirector.js` (`berthed`), `scenes/navalHost.js` (`harbourFrame`, the errands' door), `scenes/world.js` (`navalHarbourNear`) |
+| NAV-G | ONLINE: one player stands the sea for everyone near; the ships, volleys and barrels ride the foes frame; a blow on another's ship goes to its owner; a boarding claims the ship | `systems/naval/navalWire.js`, `scenes/exteriorFoes.js` (setOnNaval), `scenes/comeSailAway/comeSailAwayPeers.js` (helmBoats) |
+| NAV-H | THE HOST: the sea fight stood in the streaming world - the frame, the input, the activation, the draw, the lights, the origin, the colliders, the save, the transitions, the quests, the settings | `scenes/naval/navalHost.js`, `scenes/world.js` (the NAV-H block) |
+| AUDIT NAV1 | THE DEEP AUDIT (2026-09-29): six lenses measured the arc against Black Flag on its own harnesses; the captains' seamanship rebuilt (below), the hulls kept apart, a galley's ram, the sea on the world's clock; THE GUNS - the captains' gunnery and the run-out that tells a broadside is coming, the rig a target, fire, the prize kept a prize, the readout's warning and tally | `systems/naval/navalAI.js`, `navalShips.js` (the hulls' extents and rigs, the classes' pace, the carriages), `navalDirector.js` (the berths), `navalDamage.js`, `navalShots.js`, `navalGunnery.js`, `navalWire.js` (the run-out's bits, a barrel's fire), `navalSounds.js` and `tools/navalSfx.mjs` (the run-out), `navalEffects.js` (the glint, the shreds), `scenes/naval/navalHost.js` (`stepSea`, `separateHulls`, `checkShipRams`, `strike`, the tell and the tally), `ui/naval/navalHud.js` (the warning, the tally), `scenes/comeSailAway/comeSailAwayPeers.js` (helmBoats' hull and heading); THE HELM - the aim a look lays and its red, the broadside camera, the brace, the ram, her hurts in her handling, the shipwright and the mending at sea: `navalGunnery.js` (lookReach), `navalYard.js`, `systems/comeSailAway/comeSailAway.js` (wayScale, sailRefused), `render/navalRender.js` (the posts, the strikes, the tones), `ui/naval/navalYardWindow.js`, `ui/naval/navalPlunderDoor.js` (one door for both windows) |
+| NAV-R | WARM ASHES' RAIDERS AS SHIPS (merged OWS3): a raider near the player at sea stood as a pirate of her seed's own class and name, sailing her seeded course until her lookout sights a boat, then fighting and boarding as any pirate; spent for her life; one copy between two players | `systems/naval/navalRaiders.js`, `scenes/naval/navalHost.js` (`raiders`, `raiderShipOf`), `systems/naval/navalAI.js` (`sight`, `course`), `scenes/world.js` (`raidShips`, the marks) |
+| AUDIT NAV2 | THE SECOND PASS'S DEEP AUDIT (2026-09-30, Mac: "Let's do a deep comprehensive audit on everything developed thus far"): seven lenses over SEA-PEACE, HELM-KEYS, DECK-FIELD, HELM-WAY, DECK-WALK, SHIPMATES and LIVING CREW and the merges that carried them - sixty-two findings, each pinned red first, fixed and mutation-proven: the captain's temper and a boat's hands on the word, a boarding shared with the room, the stern chase, the way round land, the dead zone, a fighting power the duels bear out (Mac's call), the helm's handling and its advice, a shipmate no mark, a deck of every level, the crew at a boarding at hand (`01-Overview/Audit-NAV2.md`) | `systems/naval/navalWire.js` (`k`, `m`), `navalAI.js` (`strikeTime`, `odds`, `layMin`, `routeTo`), `navalDeck.js` (levels, pieces, `mainLevel`), `crewLife.js`, `scenes/naval/navalHost.js`, `scenes/naval/navalCrew.js`, `scenes/world.js`, `systems/comeSailAway/comeSailAway.js`, `systems/helmWay.js`, `player/mobileEnemyActivate.js`, `scenes/hostEnchant.js`, `characters/enemyCasting.js` |
+| SHIP-LIFE | SHIPS THAT BERTH AND GO SOMEWHERE (Mac's item 1, slice E): a port's harbour found off the terrain, its berths and mouth; a bounded A* over the water; the errands - moored, depart, voyage, arrive, patrol, lurk - drawn off a ship's seed; the harbour roll of moored ships, the port's and the day's | `systems/naval/shipLife.js`, `navalAI.js` (the cruise branch's errand, `moor`), `navalDirector.js` (`berthed`), `scenes/naval/navalHost.js` (`harbourFrame`, the errands' door), `scenes/world.js` (`navalHarbourNear`) |
 
 ## How it plays
 
@@ -285,7 +285,7 @@ hauls it into its hold.
 Mac, of main's Overworld raiders (OWS3, `bible/06-Systems/Travel-View.md`): "Definitely want them to appear as ships".
 OWS3 sails one raider a cell a life on the Overworld (`systems/seaRaiders.js`: seeded, so every player sees the same
 sail at the same minute), and drew none in play - alongside, the mod's raid carried the player onto a borrowed ship.
-With the sea fight on, a raider IS a pirate of the sea (`systems/naval/navalRaiders.js`, `scenes/navalHost.js`
+With the sea fight on, a raider IS a pirate of the sea (`systems/naval/navalRaiders.js`, `scenes/naval/navalHost.js`
 `raiders`):
 
 - **Stood near the player at sea.** Each TV_RAID_LIST_MS the Overworld's frame hands the naval host the raiders about
@@ -1165,7 +1165,7 @@ with crew naturally getting into position and fighting enemies".
   song, no talk, a few surrender lines (F46: 5 to 13 talk lines under the guns a run, and 2856 frames of chanty and
   "Gold, lads" after she struck). A song dropped waits CHANTY_S for the next, and her leader takes no talk while he
   sings (F47: the next began 0.03 s later).
-- **THE HOST** (`scenes/navalCrew.js`): within CREW_RANGE of the eye (kept to CREW_KEEP) her crew stands as DFU's own
+- **THE HOST** (`scenes/naval/navalCrew.js`): within CREW_RANGE of the eye (kept to CREW_KEEP) her crew stands as DFU's own
   mobile units (the classes' sprites, idle and walking, turned to the eye - `MobileUnit`), carried by her mesh node, and
   the mod's people flats on and above her deck stand down in their places (their renderer off - the pool's flats pass
   skips them; a galley's rowers below never touched); past it they stand again. The lines over their heads go to the
@@ -1187,7 +1187,7 @@ with crew naturally getting into position and fighting enemies".
   still); a concealed owner's crew wears his look (F50). A deck's main level is sorted once and a hull's flats walked
   once a rig (F58: at every crew's first sight), and a crewman's frame makes nothing new but his unit's own answer (F59:
   about 550 bytes a crewman a frame - a `{moving}`, two key strings, a `{w,h}`).
-- **SEAMLESS BOARDING** (`scenes/navalHost.js beginFight`, the world's doors `crewOf`, `landing`, `railSpots`): I land on
+- **SEAMLESS BOARDING** (`scenes/naval/navalHost.js beginFight`, the world's doors `crewOf`, `landing`, `railSpots`): I land on
   her deck across from where I stood (her point nearest me), never her middle; her muster fights where her crew stands -
   each man his class, his sex and his place, the rest up from below at her spots; my hands are my own crew, off my deck
   and landed at her rail across from my ship. A repel: her party is her own men - never her captain - over my rail
@@ -1268,7 +1268,7 @@ Pins: `test/shiplife.test.js` (11). Mutants: `tools/mutants/shiplife.json` (32).
 ## KEEP-PLUNDER and KEEP-BOATS (2026-09-30) - nothing of the player's goes with the sea
 
 Mac: ship ownership *"less punishing"*, and of the choices put to him, *"Keep boats & cargo"*. The sea is never a
-save's, and a transition, a jump or a fast travel empties it (`scenes/navalHost.js clear`). Two things the player had
+save's, and a transition, a jump or a fast travel empties it (`scenes/naval/navalHost.js clear`). Two things the player had
 won went with it: a prize's hold not yet emptied, and the casks of the ships the player sank.
 - **The crew stows them first** (`stowPlunder`). A prize's hold goes into the boat that took her through the prize
   window's own `takeInto`; if her captor no longer stands in the world it goes to the helm's boat, else into the pack
@@ -1561,7 +1561,7 @@ the world's wiring); AUDIT WATCH-KIT's `test/auditwatchkit_crew.test.js` and `au
 
 Mac: *"Also, too many ships are appearing. Friendly AI should help the player in combat. The sea is too dangerous right
 now"*. All of it the port's own, over NAV-C's traffic and SEA-PEACE's tempers (`systems/naval/navalDirector.js`,
-`navalAI.js`, `navalRaiders.js`, `scenes/navalHost.js`).
+`navalAI.js`, `navalRaiders.js`, `scenes/naval/navalHost.js`).
 
 - **Fewer ships.** The densities keep one, two or four ships near a player (`DENSITY` few, some, many - they kept two,
   three and five), rolled for every `SPAWN_EVERY` (60-140 s, was 30-65) and the first `FIRST_ROLL_S` (30 s, was 12)
@@ -1706,7 +1706,7 @@ tags and card, SHIP-LIFE's harbours and NAV-R's shared clock.
   Phrygias") (2 : 5 : 5 : 4 : 4). Three thousand seeds name over 2,100 merchantmen, 1,800 pirates and 600 of each
   crown's. A name in the possessive takes no article. On its own stream (`SHIP_NAME_SALT`): her captain, drawn after one
   draw of the ship's stream as ever, is the captain she always had; a peer's copy - her seed and waters - bears her name.
-- **SHIP-STANCE** (`scenes/navalHost.js stanceOf`, the tags' and the card's one reading). A ship flying a lawful flag
+- **SHIP-STANCE** (`scenes/naval/navalHost.js stanceOf`, the tags' and the card's one reading). A ship flying a lawful flag
   (a merchantman, a crown's ship), afloat and not hostile to me (`navalAI.js hostile`: she would take me, a crown hunts
   me by my notoriety, or a blow of mine within PROVOKED_S) is FRIENDLY: her tag's bar green (`CREW_GREEN`, the
   party's), her card's hull green and its state "Friendly" in green. Provoked, hunting me or struck she is not - a
@@ -1733,7 +1733,7 @@ tags and card, SHIP-LIFE's harbours and NAV-R's shared clock.
   hostile, then the nearest, a tag whose box (read off its words, the 11px face's advances measured in Chromium) would
   come within TAG_CLEAR (3 px) of one laid is not drawn that frame, and one left out needs TAG_HOLD (8 px) more to come
   back. `test/shipclutter.test.js`.
-- **SHIP-FADE** (`navalHost.js retire`, `fadeStep`; `scenes/comeSailAwayPool.js`; `render/orderedDither.js
+- **SHIP-FADE** (`navalHost.js retire`, `fadeStep`; `scenes/comeSailAway/comeSailAwayPool.js`; `render/orderedDither.js
   DISSOLVE_GLSL`, `render/renderer.js setDissolve`, `render/enhancedLighting.js EL_MESH_FS`). A
   ship let go by her range was dropped where she sailed - the director's past DESPAWN_BEYOND, a raider past
   RAIDER_DROP_M, a harbour's moored ships the moment the port was left, a peer's ship out of their word - and every ship
@@ -1755,7 +1755,7 @@ tags and card, SHIP-LIFE's harbours and NAV-R's shared clock.
   pass's own `dissolveCut` over the map's texels; a record carries the renderer's `cut`, is never a cache's, and is
   drawn with the cutting program, its cut uploaded once a record a replay - a whole one's the plain program, nothing
   uploaded); and under FADE_FLATS her lanterns' light and far lamps (A13), her deck fires (a flame is a flat:
-  `scenes/navalFlames.js show`), embers, smoke, founder and burning glow, and her wake, splashes and colours (A14).
+  `scenes/naval/navalFlames.js show`), embers, smoke, founder and burning glow, and her wake, splashes and colours (A14).
 - **SEA-LANES** (`systems/naval/seaLanes.js`, pure; `navalHost.js liners`, `steerLiner`; `world.js laneShips`).
   THE LANES: every port town of Travel Options' list with the ocean's water (never a lake's) within ROADSTEAD_PX (3)
   of it - its ROADSTEAD, the nearest such pixel, ring by ring - runs lanes to its LANE_NEIGHBOURS (2) nearest such
@@ -2046,7 +2046,7 @@ and runs its guns out; each gun kicks RECOIL inboard as its own ball leaves (`mu
 hauled out over HAUL_S, and a gun fired before it is out - a quick click, a word read late - stands out at its shot with
 its shutter snapped open (AUDIT GN-G2): a ball leaves only through an open port, from her port as she heels (AUDIT
 GN-G5). HOLD_S past the last word they run in to load and the shutters close. Each side's shutters are their own mesh
-and clip, the port side's the starboard's mirrored (AUDIT GN-G1). `scenes/navalHost.js gunDeckOf` reads it.
+and clip, the port side's the starboard's mirrored (AUDIT GN-G1). `scenes/naval/navalHost.js gunDeckOf` reads it.
 
 **What five guns moved.** Every hull-2 class (the pirate brig, the merchant galleon, the navy cutter) is a sixth lighter
 at the guns. The pins that stood on the six moved to the five's truth: a wary brig outguns no sound armed boat of the
@@ -2101,7 +2101,7 @@ Chromium's SwiftShader - WebGL2 in software - and read off its pixels; the tags'
 ## The sea serpent's seams (SERPENT1, 2026-10-04)
 
 Mac: "A new world event that requires players with a ship to meet up and take on a large scale sea serpent in the
-ocean." The fight is `11-Multiplayer/Sea-Serpent.md`. What it asks of this host (`scenes/navalHost.js` `deps.serpent`,
+ocean." The fight is `11-Multiplayer/Sea-Serpent.md`. What it asks of this host (`scenes/naval/navalHost.js` `deps.serpent`,
 read at a frame, never at the build):
 
 - **A target kind.** Its segments above the sea join the shots' targets as `serpent:<segment>` oriented boxes. Every

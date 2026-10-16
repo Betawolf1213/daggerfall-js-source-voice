@@ -22,7 +22,7 @@
 //                                  along her ports and the trucks' rumble are the rest)
 //   the TALLY (under the aim)      AUDIT NAV1: your last volley's count once its last ball is down - how many struck,
 //                                  how many below her waterline, how many through her rigging
-// Every part's words are its model's (scenes/navalHost.js hudModel); `navalHudText` is pure, and the pins read it.
+// Every part's words are its model's (scenes/naval/navalHost.js hudModel); `navalHudText` is pure, and the pins read it.
 //
 // THE DRESS. The plate and the card play the kit's `panel` role and the plunder window's presses its `button`,
 // `primary` and `warn` (ui/enhanced/enhancedFrame.js FRAME_ROLES) - on Enhanced Plus the kit is already on the page; on the

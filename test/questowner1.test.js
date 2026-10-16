@@ -2,12 +2,12 @@
 // questowners party so he gets credit, same for the main quest", then "Yes quest monsters always owner and its party"):
 // everywhere - underground, in a building, in the open air - a quest's foe - a side quest's or the main
 // quest's, whose dungeons are fixed and so shared by every player on that step - stands, is struck and hunts for its
-// owner's party alone (scenes/questFoeHost.js partyOnlyQuestShare over the world host's seam, the dungeon's ownShare).
+// owner's party alone (scenes/quest/questFoeHost.js partyOnlyQuestShare over the world host's seam, the dungeon's ownShare).
 // The own-lane harnesses (questparty3c, summonsync, keptkill, pscaleown, audit0928_merge) run through it too.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { partyOnlyQuestShare, questPrivateTag } from '../src/scenes/questFoeHost.js';
+import { partyOnlyQuestShare, questPrivateTag } from '../src/scenes/quest/questFoeHost.js';
 
 const PARTY = new Set(['amy-0002']);
 /** The world host's seam as DESYNC-ZERO left it (world.js questShareSeam): every quest foe for everyone. */

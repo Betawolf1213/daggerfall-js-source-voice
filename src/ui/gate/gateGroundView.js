@@ -53,7 +53,7 @@ const rgbOf = (c) => `${Math.round(clamp01(c[0]) * 255)}, ${Math.round(clamp01(c
  * What the rim and the warning say now, or null (nothing to feel). `inside` whether I stand in his ground now, `ground`
  * its name (his aspect's - net/gate/gateMods.js `ground`), `color` its colour ([r, g, b] 0..1 - world/gate/gateBoss.js poolColor);
  * `biteAt` when the last bite or elemental blow landed on me (the court's clock), `biteColor` its colour. WB13a: `peril`
- * a blow still to land on my feet (scenes/gateCourt.js perilAt - its name, its wind-up's share `t`, whether it is in its
+ * a blow still to land on my feet (scenes/gate/gateCourt.js perilAt - its name, its wind-up's share `t`, whether it is in its
  * last moment `now`, its line's colour, the way out's bearing on the screen `arrow` in degrees, 0 ahead): it takes the
  * rim's colour and the warning over the ground's. Pure.
  * @param {{ inside?: boolean, ground?: string, color?: ReadonlyArray<number>|null, biteAt?: number, biteColor?: ReadonlyArray<number>|null, now: number,

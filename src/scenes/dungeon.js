@@ -90,8 +90,8 @@ import { fieldOfView } from '../ui/viewSettings.js';   // MENU: Video/FieldOfVie
 import { carriedWeight } from '../systems/inventory.js';   // F027 / E4: PlayerEntity.CarriedWeight, the gold counter's term and all
 import { windowEmissionRGB } from '../render/windowEmission.js';   // AUDIT 26 F001/F002: WindowStyle per host (DaggerfallInterior.cs:473/:517/:1270 vs GetMaterial's Day default)
 import { installConsoleProbe } from '../systems/consoleCommands.js';   // E3: the console's door
-import { createSwimMovement } from './deepWatersSwimMove.js';   // DW-D: Iliac Puddle No More's swim movement - the dungeon's water too (IsAnySwimming)
-import { deepWatersOn, deepWatersSwimSettings } from './deepWatersHost.js';
+import { createSwimMovement } from './deepWater/deepWatersSwimMove.js';   // DW-D: Iliac Puddle No More's swim movement - the dungeon's water too (IsAnySwimming)
+import { deepWatersOn, deepWatersSwimSettings } from './deepWater/deepWatersHost.js';
 import { loadGraceActive as dwLoadGraceActive } from '../world/deepWater/deepWaterRuntime.js';
 
 // Water surface: the classic water tile (R11), drawn by the context's

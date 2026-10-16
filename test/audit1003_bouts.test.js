@@ -14,8 +14,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { createArenaBouts, YOU } from '../src/scenes/arenaBouts.js';
-import { createArenaGate } from '../src/scenes/arenaGate.js';
+import { createArenaBouts, YOU } from '../src/scenes/arena/arenaBouts.js';
+import { createArenaGate } from '../src/scenes/arena/arenaGate.js';
 import { newArenaLadder, nextLadderBout, exhibitionFor } from '../src/systems/arena/arenaLadder.js';
 import { boutFighter, STALL_MS, BOUT_LIMIT_MS, END_HOLD_MS } from '../src/systems/arena/arenaBout.js';
 import * as BK from '../src/systems/arena/arenaBook.js';

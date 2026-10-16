@@ -90,7 +90,7 @@ import { applyClimate, getTerrainGroundArchive, getNatureArchive, climateSeasonF
 import { RMB_SIDE, layoutLocation, hasCustomLocationPosition } from '../world/locationLayout.js';
 import { lookAt, multiply, perspective, mirrorProjectionX, transformPoint, trs, UP_Y } from '../world/mat4.js';   // HANDEDNESS: the one mirror (mat4's law)
 import { frustumPlanes, aabbOutside, localAabb, transformedAabb, flatBatchAabb, cullDisabled } from '../render/frustum.js';   // EV3: the frustum
-import { decorCullVerdict, DECOR_DRAW } from './decorRoom.js';   // PERF-WAGON: the street's verdict on a cart's, a wagon's and a tent's box
+import { decorCullVerdict, DECOR_DRAW } from './decor/decorRoom.js';   // PERF-WAGON: the street's verdict on a cart's, a wagon's and a tent's box
 import { withMoonAmbient } from '../render/enhancedSky.js';   // EV5: secunda rides the ambient
 import { drawCharacterSprite } from '../render/characterSprite.js';
 import { collectBlockFlats, billboardSize, mobileBillboardSize, centredBase, isNatureArchive, NATURE_FLATS_Y } from '../world/rmbFlats.js'; import { blockHillSeat, seatNatureFlat, blockHillPatch } from '../world/townStandIns.js';   // TREES-SEATED: a block's trees on the hills drawn under them; FIELD BUGS 2026-10-13e HILL-SEAT: and the pads under what its author stood on them
@@ -311,13 +311,13 @@ import { ensureFactionRep, getReputation, changeReputation } from '../systems/fa
 import { findFactions, findFactionByTypeAndRegion, getPeopleOfCurrentRegion, getCourtOfCurrentRegion } from '../systems/talk/talk.js';   // QX1 review: Person.cs's faction-type reads, over the PERSISTENT store
 import { FACTION_TYPES } from '../formats/factionFile.js';   // QX1 review: GetRegionFaction's Province filter
 import { liveVampirism } from '../systems/racialLive.js';   // QX1 review: the PC's clan, off the curse entry
-import { mintQuestFoeWave, placeFoeEnv, entityOccupancy, questFoeGender, heldSpots, holdSpotWhile, questBoxHoldsFoes } from './questFoeHost.js';   // QX1 review/B1: the data side of CreateFoeGameObjects; ROAD-G G2: and the placement side
+import { mintQuestFoeWave, placeFoeEnv, entityOccupancy, questFoeGender, heldSpots, holdSpotWhile, questBoxHoldsFoes } from './quest/questFoeHost.js';   // QX1 review/B1: the data side of CreateFoeGameObjects; ROAD-G G2: and the placement side
 import { placeFoeFreely } from '../systems/quest/sceneMount.js';   // ROAD-G G2: CreateFoe's raycast ring
 import { isShelved } from '../systems/quest/quest.js';   // QUEST-SHELF: a quest set aside
 import { ENEMY_BASICS } from '../characters/enemyBasics.js';   // ROAD-G G2: FinalizeFoe's Flying lift reads the behaviour flag
 import { isHouseOwned } from '../systems/banking.js';   // QX1/H1: Place.SetupSites' residence filter
 import { generateBuildingName } from '../world/buildingNames.js';   // QX1/IH1: %cbd regenerates the current building's name
-import { createQuestBridge, tokensToRows } from './questBridge.js';   // QX1: THE QUEST MACHINE, in the fixed-city host
+import { createQuestBridge, tokensToRows } from './quest/questBridge.js';   // QX1: THE QUEST MACHINE, in the fixed-city host
 import { QuestAudioSource } from '../systems/audio.js';   // QX1/E6: PlaySound's ONE source per machine
 import { WORLD_CONTEXT, makeAnchor, teleportPlan, ANCHOR_MUST_BE_SET } from '../systems/teleportAnchor.js';   // TP2/A10: the Recall anchor's law - shape, IsSameInterior, the plan, and the 4001 record id
 import { STREAMING_TERRAIN_SCALE } from '../world/terrain/terrainSampler.js';   // TERRAIN-SCALE1: the anchor's stamp
@@ -325,10 +325,10 @@ import { locationWorldRect } from '../world/streamingWorld.js';   // TP2: the na
 import { GLOBAL_SCALE, DOOR_TYPE } from '../world/meshReader.js';   // TP2: scene units <-> native world units; ARENA1: the undercroft's stair
 import { isClimateFreeModel, NO_CLIMATE_REMAP } from '../world/customModels.js';   // ARENA1: the colosseum wears its own pictures
 import { isUndercroftDoor, isArenaCity, undercroftLocation, ARENA_BLOCK, ARENA_GATE_PEOPLE, arenaTownLandmark } from '../world/arena/arenaCity.js';   // ARENA1: the undercroft below the city; ARENA-FIX 12: the colosseum's block and its Herald; ARENA-MAP: its name on the town map
-import { createArenaBouts } from './arenaBouts.js';   // ARENA-FIX 12: THE FOUR HOSTS - the bout driver on this host too
+import { createArenaBouts } from './arena/arenaBouts.js';   // ARENA-FIX 12: THE FOUR HOSTS - the bout driver on this host too
 import { createArenaSound } from '../systems/arena/arenaSound.js';
 import { drawArenaHud } from '../ui/arena/arenaHud.js';
-import { createArenaGate, nearArenaGate } from './arenaGate.js';   // ARENA3: the recruiters (and the bookmaker) at the gate; ARENA4b: the Herald's choice and the pause door's banner too
+import { createArenaGate, nearArenaGate } from './arena/arenaGate.js';   // ARENA3: the recruiters (and the bookmaker) at the gate; ARENA4b: the Herald's choice and the pause door's banner too
 import { exhibitionFor, nextLadderBout, arenaLadderRestore, practiceBout } from '../systems/arena/arenaLadder.js';
 import { arenaReplaysRestore } from '../systems/arena/arenaReplay.js';   // ARENA5: your ladder replay
 import { cityFloorCentre } from '../world/arena/arenaFloor.js';
@@ -388,7 +388,7 @@ export async function bootExterior(canvas, renderer, params, status) {
   // and the test written after a boot failure that every text pin
   // missed. world.js is on that exclusion list for exactly this import;
   // one line of `await import` keeps this host off it.
-  const { loadQuestPack } = await import('./questData.js');
+  const { loadQuestPack } = await import('./quest/questData.js');
   const questPack = await loadQuestPack();
 
   // Assemble the location.
@@ -681,7 +681,7 @@ export async function bootExterior(canvas, renderer, params, status) {
   const buildingDoors = []; // {door, dfBlock, recordIndex, climateBase, season (A1: INTERIOR_SEASON), dfLocation, group}
   let undercroft = null;   // ARENA1: the undercroft's record, one for the location
   // ARENA-FIX 12 (2026-10-02): WIRED - THE FOUR HOSTS. This standalone city host runs the bout driver as the world host
-  // does (scenes/arenaBouts.js): the city's exhibitions on the hour, the Herald's choice, the floor's instance and the
+  // does (scenes/arena/arenaBouts.js): the city's exhibitions on the hour, the Herald's choice, the floor's instance and the
   // ladder through the mode machine, the undercroft's training pit - below, after the street pools (arenaCityOrigin is
   // the colosseum's block's origin in this host's frame, null in any other town). [SUPERSEDES ARENA2's FLAG here.]
   let arenaCityOrigin = null;
@@ -2124,7 +2124,7 @@ export async function bootExterior(canvas, renderer, params, status) {
   registerAttackResolutionListener('arena', (r) => arenaBouts.attackResolved(r));
   registerPlayerSwingListener('arena', (n) => arenaBouts.playerSwing(n));
   registerBlowDodgedListener('arena', (ai) => arenaBouts.blowDodged(ai));   // AUDIT ARENA-LADDER: a dodged telegraph is a miss for the judges
-  // ARENA3: the banners' recruiters (and the book's bookmaker) at the gate - one home for both hosts (scenes/arenaGate.js)
+  // ARENA3: the banners' recruiters (and the book's bookmaker) at the gate - one home for both hosts (scenes/arena/arenaGate.js)
   const arenaGate = createArenaGate({
     playerEntity, gameMinutes: () => worldMinutes(), showOverlay: (w) => townTalk.showOverlay(w), say: (l) => townTalk.say(l),
     liveHour: () => arenaBouts.hour(), begun: () => arenaBoutBegun(),
@@ -2183,12 +2183,12 @@ export async function bootExterior(canvas, renderer, params, status) {
   function arenaHerald() {
     if (!arenaCityOrigin) return false;
     const sand = arenaBouts.stageKind() === 'city' ? arenaBouts.onSand() : null;
-    // ARENA4b: through the gate (scenes/arenaGate.js heraldChoice) - online the account's climb and banner, not the save's
+    // ARENA4b: through the gate (scenes/arena/arenaGate.js heraldChoice) - online the account's climb and banner, not the save's
     const ch = arenaGate.heraldChoice({ cityBout: sand, healthShare: (playerEntity.health ?? 0) / Math.max(1, playerEntity.maxHealth ?? 1), league: playerEntity.arenaLeague });   // ARENA3: and the banner
     townTalk.showOverlay(new ChoiceWindow({ lines: ch.lines, options: ch.options.map((o) => ({ code: o.code, label: o.label ?? undefined, action: () => arenaHeraldAct(o.act) })) }));
     return true;
   }
-  /** WHAT THE HERALD DOES on a choice - his own, and the Arena window's Watch and Fight (scenes/arenaGate.js): to the
+  /** WHAT THE HERALD DOES on a choice - his own, and the Arena window's Watch and Fight (scenes/arena/arenaGate.js): to the
    *  floor's instance to watch the hour's exhibition or fight the ladder's next bout, down to the fighters' hall, or
    *  (ARENA3) the Arena window. */
   function arenaHeraldAct(a) {
@@ -3290,7 +3290,7 @@ export async function bootExterior(canvas, renderer, params, status) {
     questMessages: pauseQuestMessages,
     questLog: pauseQuestLog,
     repairQuests: () => questBridge?.repair?.() ?? null,   // QREPAIR
-    journalClean: () => questBridge?.journalClean ?? null,   // JOURNAL-CLEAN: the Quests tab's remove / clear archive / hide / unhide (scenes/questBridge.js journalClean)
+    journalClean: () => questBridge?.journalClean ?? null,   // JOURNAL-CLEAN: the Quests tab's remove / clear archive / hide / unhide (scenes/quest/questBridge.js journalClean)
     // GUIDE2: the Quests tab's WHERE - the one world question this route can answer, the city it stands in (the
     // chronicle's questJournalHooks hands the same one). It builds no travel map, so it asks no map and opens none: a
     // target here is named only where its entry says it.

@@ -568,7 +568,7 @@
   },
   {
     "name": "LW12-roads-warn",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "      const band = standing === 'enemy' || standing === 'hostile' ? null : deps.unheard?.(t) ?? null;",
     "new": "      const band = deps.unheard?.(t) ?? null;",
     "tests": [
@@ -577,7 +577,7 @@
   },
   {
     "name": "LW12-roads-heard",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "{ band: band.name })}`; deps.heard?.(band); }",
     "new": "{ band: band.name })}`; }",
     "tests": [
@@ -586,7 +586,7 @@
   },
   {
     "name": "LW12-roads-pass",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "const foe = pair.warned ? (pair.warned.trip.enc.bandName ?? deps.foeName",
     "new": "const foe = pair.warned ? (deps.foeName",
     "tests": [
@@ -595,7 +595,7 @@
   },
   {
     "name": "LW12-roads-beset",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "const beset = foes.length ? (p.trip.enc?.bandName ?? deps.foeName",
     "new": "const beset = foes.length ? (deps.foeName",
     "tests": [

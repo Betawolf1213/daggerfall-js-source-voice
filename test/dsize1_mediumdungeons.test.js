@@ -239,7 +239,7 @@ test('DSIZE1 E1 (SD-ONLINE, PIN MOVED): a quest stamped at another size, loaded 
   assert.equal(relayOnlineDungeons(m), 0);
   assert.equal(q.smallerDungeonsState, SMALLER_DUNGEONS_STATE.Disabled, 'unread: the stamp stands');
   // wired at the bridge's load, online only, before anything mounts
-  const bridge = src('src/scenes/questBridge.js');
+  const bridge = src('src/scenes/quest/questBridge.js');
   const restore = bridge.slice(bridge.indexOf('restore(data) {'));
   assert.match(restore, /machine\.restoreSaveData\(data\.machine \?\? \{ siteLinks: \[\], quests: \[\] \}\);\n(?:\s*\/\/[^\n]*\n)+\s*if \(isOnlinePage\(\)\) relayOnlineDungeons\(machine, /);
   assert.doesNotMatch(src('src/systems/quest/questRepair.js'), /function relayWholeDungeons/, 'the whole-dungeon re-lay is gone, not beside it');

@@ -16,7 +16,7 @@ import { loadQuestTables } from '../src/systems/quest/tables.js';
 import { QuestMachine, questNameIn } from '../src/systems/quest/machine.js';
 import { StartQuest } from '../src/systems/quest/actions.js';
 import { isMainQuestName } from '../src/systems/quest/questLists.js';
-import { mintQuestFoeWave, bindQuestFoeHost, reviveQuestBehaviour, questShareTag, sharedQuestFoe, WORLD_QUESTS, questNameOf, isWorldQuestFoe, isPrivateQuestFoe } from '../src/scenes/questFoeHost.js';
+import { mintQuestFoeWave, bindQuestFoeHost, reviveQuestBehaviour, questShareTag, sharedQuestFoe, WORLD_QUESTS, questNameOf, isWorldQuestFoe, isPrivateQuestFoe } from '../src/scenes/quest/questFoeHost.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
 import { isPeerTarget } from '../src/characters/enemyTargets.js';
 

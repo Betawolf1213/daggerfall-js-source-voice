@@ -1,13 +1,13 @@
 // SD10 (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 11's collapse): THE COLLAPSE -
-// the three minutes the Hour stands after the Brass Remnant falls. A WAY HOME rises where it fell (scenes/sdEnd.js - the
+// the three minutes the Hour stands after the Brass Remnant falls. A WAY HOME rises where it fell (scenes/superDungeon/sdEnd.js - the
 // Return's pale light stood alone, later, under the Hour's own words), walked into or pressed, out of the Hour before the
-// Hollow's door; and THE READOUTS tell whoever stands in the Hollow or its Hour how long is left (scenes/sdHost.js) - at
+// Hollow's door; and THE READOUTS tell whoever stands in the Hollow or its Hour how long is left (scenes/superDungeon/sdHost.js) - at
 // the fall, then at a minute, thirty seconds and ten, each once. Its end (SD2d's cast-out) is unchanged.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createSdHost, sdCollapseDue, sdCollapseLine, SD_COLLAPSE_WARN_MS } from '../src/scenes/sdHost.js';
-import { createSdEnd, SD_HOME_TEXT, SD_RETURN_KEY, SD_RIFT_KEY } from '../src/scenes/sdEnd.js';
+import { createSdHost, sdCollapseDue, sdCollapseLine, SD_COLLAPSE_WARN_MS } from '../src/scenes/superDungeon/sdHost.js';
+import { createSdEnd, SD_HOME_TEXT, SD_RETURN_KEY, SD_RIFT_KEY } from '../src/scenes/superDungeon/sdEnd.js';
 import { SD_END_TEXT, SD_RETURN_SIZE } from '../src/world/superDungeon/sdDungeon.js';
 import { sdCities, sdTemplates } from '../src/systems/superDungeon/sdSite.js';
 import { scanGatePixels } from '../src/systems/gate/gateSite.js';

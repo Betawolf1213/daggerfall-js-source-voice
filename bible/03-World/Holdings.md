@@ -203,7 +203,7 @@ is called by her hull again. She is named on her card, on the plaque over her (`
 other player: the boats' word carries **`n`**, a name for each boat of `b` ('' for none), only while one is named - an
 unnamed fleet's record is the older build's to the letter, and a renamed boat is said at once (`csaRecordKey`). A reader
 takes each name through the same law; a bad `n` never drops the boats, a refused name reads as none, and an older
-reader ignores the key (`systems/comeSailAway/comeSailAwayWire.js`; `scenes/comeSailAwayPeers.js` `nameAt`).
+reader ignores the key (`systems/comeSailAway/comeSailAwayWire.js`; `scenes/comeSailAway/comeSailAwayPeers.js` `nameAt`).
 
 ## 7. Quays and docking
 
@@ -387,10 +387,10 @@ and her orders' answers; with none aboard, her first hand aboard as before.
 `systems/fleet.js`, `scenes/fleetHost.js`, `ui/holdingsPages.js`, `ui/fleetPage.js`, `systems/naval/quays.js`,
 `world/quayModel.js`, `scenes/quayPool.js`, `systems/naval/harbourBook.js`; seams in `systems/horse/horseCart.js`,
 `systems/comeSailAway/comeSailAway.js` (SummonBoat, LayUpBoat, laidUpHold, the book's seams, the refits' reads),
-`systems/comeSailAway/comeSailAwayWire.js`, `scenes/navalHost.js` (fleetStatus, repairAway, refitBoat, freeBerth, the refits' reads),
+`systems/comeSailAway/comeSailAwayWire.js`, `scenes/naval/navalHost.js` (fleetStatus, repairAway, refitBoat, freeBerth, the refits' reads),
 `scenes/world.js`, `scenes/exterior.js`, `scenes/worldModes.js`, `ui/enhanced/enhancedMenu.js`, `ui/enhanced/enhancedFrame.js`; the quays'
 in `systems/naval/shipLife.js` (`alongside`), `systems/comeSailAway/comeSailAway.js` (`warp`), `world/deepWater/deepWaterFloor.js`
-(`SHORE_TERRAIN_FIT_METERS`, exported for JETTY_MAX) and `scenes/navalHost.js` (the book read, the docking, the
+(`SHORE_TERRAIN_FIT_METERS`, exported for JETTY_MAX) and `scenes/naval/navalHost.js` (the book read, the docking, the
 gangways).
 
 `test/holdings.test.js` (the tab, the Stable, the runtime's summon and send away), `test/fb1015_wagonstabled.test.js`

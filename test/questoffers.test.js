@@ -18,7 +18,7 @@ import { QuestMachine, QUEST_MESSAGES } from '../src/systems/quest/machine.js';
 import { QuestListsManager } from '../src/systems/quest/questLists.js';
 import { QuestOfferFlow, FAIL_QUEST_FLAVOUR_ID, GETTING_QUESTS_1, GETTING_QUESTS_2 } from '../src/systems/quest/offerFlow.js';
 import { expandLetterSignoff, MACRO_TYPES, getContextValue } from '../src/systems/quest/questMacros.js';
-import { offerGuildSurface } from '../src/scenes/questBridge.js';
+import { offerGuildSurface } from '../src/scenes/quest/questBridge.js';
 import { serviceDestination } from '../src/systems/guild/guildServiceFlow.js';
 import { GUILD_GROUPS, SOCIAL_GROUPS } from '../src/formats/factionFile.js';
 import { GENDERS } from '../src/characters/nameHelper.js';

@@ -10,7 +10,7 @@
 //   the wire        the client's `xhit`; the room's `cx`, `cxh`, `cxb`, `stun` and the state's `cx`, `su`, `rk`
 //   the relay       a blow on a crystal judged and its breaking fanned at once
 //   the link        net/gate/gateLink.js - the crystals folded, kept broken through the stun, cleared by the next word
-//   the court       scenes/gateCourt.js - the crystals as targets, a blow's number out, the call, the shatter and the
+//   the court       scenes/gate/gateCourt.js - the crystals as targets, a blow's number out, the call, the shatter and the
 //                   stun said and heard, the draw list and the lights; world/gate/gateBoss.js crystalStandIn
 //   the bar         ui/gate/gateBossBar.js - what is left to break and how long; the stun; the next Reckoning's coming
 //   the draw        render/courtCrystals.js - the cluster, its growth, its pass
@@ -32,7 +32,7 @@ import { foldGate, GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import { gateTimes, gateRoomKey } from '../src/net/gate/gateLaw.js';
 import { crystalStandIn, crystalColor, bossLookOf, BOSS_CUES, CRYSTAL_ARMOR, CRYSTAL_NAME, STUN_COLOR, ATTACK_COLORS, bossAct, bossGlow, bossCue } from '../src/world/gate/gateBoss.js';
 import { courtToDungeon } from '../src/world/gate/gateArena.js';
-import { createGateCourt, COURT_RECKON_TEXT, RECKON_LATE_MS, CRYSTAL_STRIKE_GROWN } from '../src/scenes/gateCourt.js';
+import { createGateCourt, COURT_RECKON_TEXT, RECKON_LATE_MS, CRYSTAL_STRIKE_GROWN } from '../src/scenes/gate/gateCourt.js';
 import { bossBarModel, BOSS_BAR_TEXT, destroyGateBossBar } from '../src/ui/gate/gateBossBar.js';
 import { destroyGateMarksCard } from '../src/ui/gate/gateMarksView.js';
 import { destroyGateGround } from '../src/ui/gate/gateGroundView.js';
@@ -523,7 +523,7 @@ test('WB9c the seams, by source: the relay judges an `xhit` by applyCrystalHit a
   const hm = read('src/scenes/hostMagic.js');
   assert.match(hm, /if \(mark\?\.crystal != null\) \{ try \{ return !!castAtCrystal\?\.\(sp, mark\.crystal, caster\); \} catch \{ return false; \} \}/);   // PIN MOVED (AUDIT SCHOOLS L2 F4): and the cast's wrapper, for the paths' riders
   assert.match(hm, /if \(!crystalMarks \|\| !castAtCrystal \|\| !sp \|\| !duelSpellOf\(sp\)\) return \[\];/, 'a harmful spell alone');
-  const gc = read('src/scenes/gateCourt.js');
+  const gc = read('src/scenes/gate/gateCourt.js');
   const crystalsFirst = gc.indexOf('crystalPass.draw(_crystalDraw, proj, view, eye, seconds, fog);'), tel = gc.indexOf('for (const ps of poolDraw) { pass.draw(ps');
   assert.ok(crystalsFirst > 0 && crystalsFirst < tel, 'opaque before the added');
   assert.match(gc, /crystals\(s, t, P\);   \/\/ WB9c/);

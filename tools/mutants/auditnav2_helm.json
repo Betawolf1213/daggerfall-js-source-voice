@@ -165,7 +165,7 @@
   },
   {
     "name": "AUDIT-NAV2-F31-the-host-boards-while-laid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (!enabled || boarding || aiming) return false;",
     "new": "    if (!enabled || boarding) return false;",
     "tests": [

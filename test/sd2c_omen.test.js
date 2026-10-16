@@ -1,5 +1,5 @@
 // SD2c (2026-10-06, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 4): THE HOLLOW SEEN AND
-// HEARD OF (systems/superDungeon/sdOmen.js, render/sdOmenPass.js, scenes/sdHost.js) - before it is found, a column of brass-gold light
+// HEARD OF (systems/superDungeon/sdOmen.js, render/sdOmenPass.js, scenes/superDungeon/sdHost.js) - before it is found, a column of brass-gold light
 // over its pixel seen from SD_OMEN_PX round and a word in the taverns of its city; once found, its ring on the held map,
 // its mark on the compass inside SD_COMPASS_M, its row in the Timers window and its note under the red seal, until it
 // is gone.
@@ -17,7 +17,7 @@ import { TIMER_KINDS } from '../src/ui/enhanced/enhancedTimers.js';
 import { noticeCards } from '../src/ui/noticeWindow.js';
 import { SD_RING_MAP_CSS, SD_MAP_INK, SD_LEGEND_TEXT } from '../src/ui/superDungeon/sdMapMark.js';
 import { MAX_ANSWERS_TELL_ME_ABOUT_OR_RUMORS } from '../src/systems/rumorMill.js';
-import { createSdHost } from '../src/scenes/sdHost.js';
+import { createSdHost } from '../src/scenes/superDungeon/sdHost.js';
 import { sdCities, sdTemplates, findSdSite, pixelOfLoc } from '../src/systems/superDungeon/sdSite.js';
 import { scanGatePixels } from '../src/systems/gate/gateSite.js';
 import { LOCATION_TYPES, CLIMATES } from '../src/formats/mapsFile.js';

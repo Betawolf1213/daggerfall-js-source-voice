@@ -28,14 +28,14 @@ import {
   SD_STONE_SIZE, SD_DIAL, SD_EMBLEM, SD_HAND, SD_PLAQUE,
 } from '../src/world/superDungeon/sdHall.js';
 import { SD_HALL_ATLAS, SD_HALL_ATLAS_RECORD, SD_HALL_GLOW_RECORD } from '../src/world/superDungeon/sdHallArt.js';
-import { createSdHall, ensureSdHallArt, sdStoneKey, SD_HALL_TEXT } from '../src/scenes/sdHall.js';
-import { createSdSteps, ensureSdStepsArt, sdStepKey, SD_CHECKS_KEY } from '../src/scenes/sdSteps.js';
-import { createSdRemnant, ensureSdRemnantArt, SD_GEAR_DRAWS, SD_DECOR_DRAWS } from '../src/scenes/sdRemnant.js';
-import { SD_RIG_PARTS } from '../src/scenes/sdRemnantRig.js';   // SD17 (PIN MOVED): the bodies' parts
+import { createSdHall, ensureSdHallArt, sdStoneKey, SD_HALL_TEXT } from '../src/scenes/superDungeon/sdHall.js';
+import { createSdSteps, ensureSdStepsArt, sdStepKey, SD_CHECKS_KEY } from '../src/scenes/superDungeon/sdSteps.js';
+import { createSdRemnant, ensureSdRemnantArt, SD_GEAR_DRAWS, SD_DECOR_DRAWS } from '../src/scenes/superDungeon/sdRemnant.js';
+import { SD_RIG_PARTS } from '../src/scenes/superDungeon/sdRemnantRig.js';   // SD17 (PIN MOVED): the bodies' parts
 import { SD_HEARTS } from '../src/net/superDungeon/sdRemnant.js';
-import { createSdEnd, SD_RIFT_KEY } from '../src/scenes/sdEnd.js';
+import { createSdEnd, SD_RIFT_KEY } from '../src/scenes/superDungeon/sdEnd.js';
 import { SD_FIGHT_EMPTY } from '../src/net/superDungeon/sdFightLink.js';
-import { sdAnyInFlight, sdBlowsInFlight } from '../src/scenes/sdRemnantBlows.js';
+import { sdAnyInFlight, sdBlowsInFlight } from '../src/scenes/superDungeon/sdRemnantBlows.js';
 import { SD_STEPS_COURSE, SD_CHECKPOINTS, SD_COURSE_END, SD_GUST_EVERY, SD_GUST_WARN, SD_GUST_FOR, gustAt, breathSeen, spanAt } from '../src/world/superDungeon/sdSteps.js';
 import { SD_BREATH, stepTris } from '../src/world/superDungeon/sdStepsModel.js';
 import { SD_SKY_PAINT_FS, SD_SKY_SHARDS, SD_SHARD_TOP, SD_CLOCK_FACE, SD_CLOCK_RING_W, SD_CLOCK_TOP, SD_SKY_PERIOD, CLOCK_BASIS, sdSkyBasisInto } from '../src/render/sdSky.js';
@@ -406,11 +406,11 @@ test('AUDIT SD II L2 F8: NO BLOOD ON A SURFACE THAT MOVES - a drip over a mover\
 test('AUDIT SD II L2 F9: THE HOUR\'S FRAME MAKES NOTHING - measured in a child with a 64 MB young space (the least of six windows, so a compile is never counted), every hot path of the arc\'s own code a frame: the hall (its frame with the realm\'s word, its targets twice, as the hover pick asks), the Steps\' ride (every step posed, a Crumble step underfoot, the breath, the void asked), the Remnant\'s frame with no fight, the End\'s frame and its lists, the arm\'s Hour lines (realmLighting, realmLightsWith), the sky\'s basis, the blows\' frame with no fight - none past 2 bytes a frame, against a control of three numbers into a fresh list a frame, which must show (they made 0.5 to 18 KB a frame) (mutants: each scratch given up for a fresh one)', () => {
   const url = (p) => JSON.stringify(pathToFileURL(join(ROOT, p)).href);
   const script = `
-    const { createSdHall } = await import(${url('src/scenes/sdHall.js')});
-    const { createSdSteps } = await import(${url('src/scenes/sdSteps.js')});
-    const { createSdRemnant } = await import(${url('src/scenes/sdRemnant.js')});
-    const { createSdEnd } = await import(${url('src/scenes/sdEnd.js')});
-    const { createSdRemnantBlows } = await import(${url('src/scenes/sdRemnantBlows.js')});
+    const { createSdHall } = await import(${url('src/scenes/superDungeon/sdHall.js')});
+    const { createSdSteps } = await import(${url('src/scenes/superDungeon/sdSteps.js')});
+    const { createSdRemnant } = await import(${url('src/scenes/superDungeon/sdRemnant.js')});
+    const { createSdEnd } = await import(${url('src/scenes/superDungeon/sdEnd.js')});
+    const { createSdRemnantBlows } = await import(${url('src/scenes/superDungeon/sdRemnantBlows.js')});
     const { realmLighting, realmLightsWith } = await import(${url('src/world/superDungeon/sdRealm.js')});
     const { SD_STEPS_COURSE } = await import(${url('src/world/superDungeon/sdSteps.js')});
     const { sdSkyBasisInto } = await import(${url('src/render/sdSky.js')});

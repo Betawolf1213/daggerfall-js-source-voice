@@ -202,7 +202,7 @@ const NO_FOG_COLOR = new Float32Array([0, 0, 0]);
 /** The vortex's turn rate at `open` (turns a second). */
 export const gateSpinRate = (open) => MEMBRANE_TURN_SEALED_HZ + (MEMBRANE_TURN_OPEN_HZ - MEMBRANE_TURN_SEALED_HZ) * Math.max(0, Math.min(1, open));
 /** AUDIT WB C6: the turn a gate whose open has stood at `open` all along has made by `t` - a host with no spin of its own
- *  (a test, a probe); a host that eases `open` accumulates the rate instead (scenes/gatePool.js). In [0, 1). */
+ *  (a test, a probe); a host that eases `open` accumulates the rate instead (scenes/gate/gatePool.js). In [0, 1). */
 export const gateSpinAt = (t, open) => { const v = t * gateSpinRate(open); return v - Math.floor(v); };
 
 /** The gates' fire and beacons, one foreign pass. */

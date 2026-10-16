@@ -14,7 +14,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { ARENA_GATE_PEOPLE, arenaGatePersonName } from '../src/world/arena/arenaCity.js';
 import { NPC_FLAT_ARCHIVES } from '../src/world/rdbLayout.js';
-import { createArenaBouts } from '../src/scenes/arenaBouts.js';
+import { createArenaBouts } from '../src/scenes/arena/arenaBouts.js';
 import { exhibitionFor } from '../src/systems/arena/arenaLadder.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';

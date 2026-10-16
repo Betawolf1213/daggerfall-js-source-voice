@@ -35,7 +35,7 @@
 // choose it (the LOOK view), free.
 //
 // The surfaces decide nothing: what may be placed, what it costs and
-// where it goes are the host's (scenes/decorTool.js). Handed the
+// where it goes are the host's (scenes/decor/decorTool.js). Handed the
 // document and the window so the pins drive them headless.
 //
 // Not a DFU member: Daggerfall Unity has no decorator. Ledger A.

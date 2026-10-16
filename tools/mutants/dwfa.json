@@ -1,7 +1,7 @@
 [
   {
     "name": "DW-FA-replacement-empty-cached",
-    "file": "src/scenes/deepWatersDecor.js",
+    "file": "src/scenes/deepWater/deepWatersDecor.js",
     "old": "    if (!t) return null;   // AUDIT DW-F: no answer before the file is in, and none cached - a cached \"none\" outlived the load for the session\n",
     "new": "",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "DW-FA-warm-before-the-file",
-    "file": "src/scenes/deepWatersDecor.js",
+    "file": "src/scenes/deepWater/deepWatersDecor.js",
     "old": "        if (!fileIn(rec.archive)) { busy = true; continue; }   // AUDIT DW-F: the kind is the file's answer, asked once it is in\n",
     "new": "",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "DW-FA-pulse-gate-ordered",
-    "file": "src/scenes/deepWatersLoot.js",
+    "file": "src/scenes/deepWater/deepWatersLoot.js",
     "old": "    if (s.rate <= 0 && s.clusterRate <= 0) return null;",
     "new": "    if (!(s.rate > 0) && !(s.clusterRate > 0)) return null;",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "DW-FA-fog-while-paused",
-    "file": "src/scenes/deepWatersPlayer.js",
+    "file": "src/scenes/deepWater/deepWatersPlayer.js",
     "old": "      if (f.playing === false) return { under: false, oceanY: 0 };",
     "new": "",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "DW-FA-saveload-no-stand",
-    "file": "src/scenes/deepWatersPlayer.js",
+    "file": "src/scenes/deepWater/deepWatersPlayer.js",
     "old": "      releaseSpikeGuard(p);\n      requestStand(p);\n    },",
     "new": "      releaseSpikeGuard(p);\n    },",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "DW-FA-saveload-restores",
-    "file": "src/scenes/deepWatersPlayer.js",
+    "file": "src/scenes/deepWater/deepWatersPlayer.js",
     "old": "      swim.forged = false;\n      swim.resetHead(false);\n      releaseSpikeGuard(p);\n      requestStand(p);",
     "new": "      if (swim.forged) restore(p, 0);\n      swim.resetHead(false);\n      releaseSpikeGuard(p);\n      requestStand(p);",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "DW-FA-guard-entry-dropped",
-    "file": "src/scenes/deepWatersEncounters.js",
+    "file": "src/scenes/deepWater/deepWatersEncounters.js",
     "old": "entry: c.column.entry ?? null,",
     "new": "entry: null,",
     "tests": [

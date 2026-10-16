@@ -160,7 +160,7 @@ const NO_MODEL = { xRotation: 0, yRotation: 0, zRotation: 0, modelIndex: 0, trig
 const NO_FLAT = { position: 0, textureBitfield: 0, textureArchive: 0, textureRecord: 0, flags: 0, magnitude: 0, soundIndex: 0, factionOrMobileId: 0, nextObjectOffset: -1, action: 0 };
 const res = (o = {}) => ({ modelResource: { ...NO_MODEL, actionResource: action0() }, flatResource: { ...NO_FLAT }, lightResource: { unknown1: 0, unknown2: 0, radius: 0 }, ...o });
 
-/** ARENA5: the cloth a ring banner of Kamer's hangs for a bout - `banners` `{ west, east }` (scenes/arenaBouts.js
+/** ARENA5: the cloth a ring banner of Kamer's hangs for a bout - `banners` `{ west, east }` (scenes/arena/arenaBouts.js
  *  floorBanners): its side's banner's (ARENA_BANNER_MODEL) when it hangs on a bannered half, else his own. Pure. */
 export function hangingModel(o, banners, block = ARENA_BLOCK_JSON) {
   const id = Number(o.ModelIdNum);

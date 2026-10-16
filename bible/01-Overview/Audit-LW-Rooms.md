@@ -97,7 +97,7 @@ own rooms and towns unless the synthetic ones are named.
 
 ### The four hosts
 
-`scenes/livingIndoors.js` and `dayPlan.js` the law; `world/actionSystem.js` the doors' measure (`withDoorsShut`, new,
+`scenes/livingWorld/livingIndoors.js` and `dayPlan.js` the law; `world/actionSystem.js` the doors' measure (`withDoorsShut`, new,
 nothing else changed). `scenes/world.js` - WIRED: hands the layer `doorsShut` (the interior's own actions), every one of
 the building's people as `staticFeet`, the quest's as `questFeet`, and stops the talk ray at the room's walls. The hook
 read `modes.interiorCtx` past a guard above `modes`'s declaration, which AUDIT 24 wave 37's sweep forbids (every reference

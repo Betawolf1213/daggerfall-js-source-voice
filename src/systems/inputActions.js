@@ -142,7 +142,7 @@ export const ACTIONS = Object.freeze([
   'TogglePerspective',
   // PROF1 (bible/06-Systems/Professions-Arc.md 8, 22): THE ACT CHOICE - at an herb patch, what Interact starts: the
   // herbs or the Basket's food. KB1's rule, one key one action: every letter and digit is spent, and `-`, `=` and `/`
-  // are the decorator's own keys (scenes/decorTool.js DECOR_FREE_KEYS), so it ships on the up arrow, which nothing
+  // are the decorator's own keys (scenes/decor/decorTool.js DECOR_FREE_KEYS), so it ships on the up arrow, which nothing
   // reads in play (THE MERGE: `;`, its key on its branch, is Come Sail Away's lantern - CSA-D, shipped first); the
   // prompt names it. (MERGE 2: after main's TogglePerspective, which shipped first.)
   'ActChoice',
@@ -183,7 +183,7 @@ export const ACTIONS = Object.freeze([
   // UI-CALM (2026-10-14, a player: "the horse riding menu would be great in a blocky form in the bottom right and we
   // need a keybind to make it appear and disappear"): THE SADDLE PANEL'S KEY - one press shows the panel while riding, the
   // next puts it away (ui/enhanced/enhancedSaddle.js toggleSaddlePanel). On F2: the letters are spent, and Slash, Minus and
-  // Equal are the decorator's (scenes/decorTool.js DECOR_FREE_KEYS); F1-F4 are free since MODE-WHEEL let the four modes
+  // Equal are the decorator's (scenes/decor/decorTool.js DECOR_FREE_KEYS); F1-F4 are free since MODE-WHEEL let the four modes
   // go, and a file that still keeps GrabMode on F2 keeps it (the action stands unbound until the player gives it a key).
   // Appended, like every port action before it.
   'SaddlePanel',
@@ -364,7 +364,7 @@ export const DEFAULT_BINDINGS = Object.freeze([
   ['F2', 'SaddlePanel'],   // UI-CALM: the saddle panel (Slash is the decorator's grid)
   // CSA-D: the mod ships C (Crouch's) and Period (Horse Cart and Cargo's summon): one key, one action, so the port's
   // defaults are free keys under the right hand - `'` and `;` (DECLARED, the Port-Ledger's Come Sail Away row; `/` is
-  // the decorator's own grid key, scenes/decorTool.js DECOR_FREE_KEYS)
+  // the decorator's own grid key, scenes/decor/decorTool.js DECOR_FREE_KEYS)
   ['Quote', 'BoatDisembark'],
   ['Semicolon', 'BoatToggleLight'],
   // CSA-E: the mod's Space is Jump's, so the sails' key is End (DECLARED beside the two above); the trim keeps the
@@ -381,7 +381,7 @@ export const DEFAULT_BINDINGS = Object.freeze([
   ['ArrowUp', 'ActChoice'],   // PROF1 (THE MERGE: `;` is Come Sail Away's lantern, CSA-D; the up arrow is read by no action in play)
   ['ArrowDown', 'BoatSailDown'],   // HELM-KEYS: less sail - the down arrow is read by nothing else in play (its More sail is DEFAULT_SHARES')
   // LEGACY1 (LEGACY-KEY, a recorded departure): Project Legacy ships G, which is Handheld Torches' drop here (vendored
-  // first). Every letter and digit is spent, and `-`, `=` and `/` are the decorator's own (scenes/decorTool.js
+  // first). Every letter and digit is spent, and `-`, `=` and `/` are the decorator's own (scenes/decor/decorTool.js
   // DECOR_FREE_KEYS), so the tree ships on the keypad's slash, read by nothing in play - and the pause window's Family
   // page is its door on every keyboard.
   ['NumpadDivide', 'LegacyFamily'],

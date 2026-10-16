@@ -4,7 +4,7 @@
 // host's door list (scenes/world.js buildingDoors) keeps each door in its PIXEL's frame - doorTargets hands the mode
 // machine the scene's (shiftedDoor: the pixel's translation under the floating origin, AUDIT 68 S22) - and the Hollow's
 // two seams read the list raw: `sdHollowDoors`, which the Hour's way out lands before (scenes/worldModes.js
-// returnLanding), and the find's door (scenes/sdHost.js `door`). A door found stood the player at its native height - the
+// returnLanding), and the find's door (scenes/superDungeon/sdHost.js `door`). A door found stood the player at its native height - the
 // streamer's vertical shift (StreamingWorldState.compensation[1], minus the eye's height at each recentre past 500 m) over
 // the Hollow: in the sky. SD-LAND read the same picture as a door NOT found; it was a door found in the wrong frame.
 // Design: bible/11-Multiplayer/Super-Dungeons.md sections 6 and 16.

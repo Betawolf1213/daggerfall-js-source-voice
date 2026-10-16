@@ -13,7 +13,7 @@
 // MO-3: ONE STROKE IS ONE SWEEP. The Deep Waters stroke is one CharacterController.Move a frame, however long; the
 // port's move() sweeps exactly only up to EXACT_SWEEP_MAX and takes the rest whole. At the Swim Speed Multiplier's top
 // a fast swimmer's stroke in a slow frame passed that, and its substeps - wider than the capsule - went up through any
-// ceiling. The stroke hands a longer motion over in pieces (scenes/deepWatersSwimMove.js).
+// ceiling. The stroke hands a longer motion over in pieces (scenes/deepWater/deepWatersSwimMove.js).
 //
 // Every test here fails on the merge it was written against (2a8b70b2a). Driven through the real collider, the real
 // PlayerMotor and the real stroke.
@@ -21,7 +21,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { Collider } from '../src/player/collider.js';
 import { PlayerMotor } from '../src/player/motor.js';
-import { createSwimMovement } from '../src/scenes/deepWatersSwimMove.js';
+import { createSwimMovement } from '../src/scenes/deepWater/deepWatersSwimMove.js';
 
 const I = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 /** One quad, two triangles, filed in the order given (the one above the diagonal first, as a model may file it). */

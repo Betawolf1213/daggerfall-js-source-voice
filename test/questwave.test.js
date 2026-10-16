@@ -5,12 +5,12 @@
 // stand is async (the career, the texture) and its record joins the pool only after, so WAQ_SHIP_SMALLRAID's thirteen
 // placed in ONE tick saw none of their own - and on a deck every ray meets a rail, so every spot falls in the same two
 // small slivers: thirteen foes in two heaps. Every quest arm holds its spot now until the stand lands
-// (scenes/questFoeHost.js heldSpots / holdSpotWhile), the loose-foe door the same set.
+// (scenes/quest/questFoeHost.js heldSpots / holdSpotWhile), the loose-foe door the same set.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { placeFoeFreely } from '../src/systems/quest/sceneMount.js';
-import { placeFoeEnv, entityOccupancy, heldSpots, holdSpotWhile } from '../src/scenes/questFoeHost.js';
+import { placeFoeEnv, entityOccupancy, heldSpots, holdSpotWhile } from '../src/scenes/quest/questFoeHost.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const PLAYER = [0, 0, 0];

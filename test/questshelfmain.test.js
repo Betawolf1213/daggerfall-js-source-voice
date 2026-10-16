@@ -19,7 +19,7 @@ test('QUEST-SHELF-MAIN leaves the ladder as it was: the machine still sets a mai
   assert.equal(m.shelveRefusal(q.uid), null, 'a main-story quest is not refused by the machine');
   for (const name of ['S0000999', 'S0000977', '_BRISIEN']) { q.questName = name; assert.equal(m.shelveRefusal(q.uid), 'protected', name); }
   assert.doesNotMatch(src('src/systems/quest/machine.js'), /return 'main'/, 'no main rung');
-  assert.doesNotMatch(src('src/scenes/questBridge.js'), /case 'main'/);
+  assert.doesNotMatch(src('src/scenes/quest/questBridge.js'), /case 'main'/);
 });
 
 /** the chronicle over a fake document, journal1.test.js's own rig */

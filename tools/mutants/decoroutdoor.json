@@ -167,7 +167,7 @@
   },
   {
     "name": "DECOROUTDOOR-standflat-unasked",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "    } else if (!standOwn(entry)) {",
     "new": "    } else if (true) {",
     "tests": [
@@ -176,7 +176,7 @@
   },
   {
     "name": "DECOROUTDOOR-tool-flatas-unread",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "  const drawnHere = (flat) => drawnFlat(...(deps.flatAs?.(flat) ?? flat));",
     "new": "  const drawnHere = (flat) => drawnFlat(...flat);",
     "tests": [
@@ -194,7 +194,7 @@
   },
   {
     "name": "DECOROUTDOOR-placed-uncatalogued",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "        return { piece, entry: known, name: entryOf(piece, known).name,",
     "new": "        return { piece, entry: known?.count ? known : null, name: entryOf(piece, known).name,",
     "tests": [
@@ -234,7 +234,7 @@
   },
   {
     "name": "DECOROUTDOOR-ghost-unprepared",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    if (!m || !inLaw(m.gpu, texRemap)) return false;   // AUDIT 05b A5: in the host's law first",
     "new": "    if (!m) return false;",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "DECOROUTDOOR-preview-unprepared",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": " || !inLaw(m.gpu, texRemap)) return false;   // AUDIT 05b A5\n",
     "new": ") return false;\n",
     "tests": [
@@ -254,7 +254,7 @@
   },
   {
     "name": "DECOROUTDOOR-law-once-a-session",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    let seen = inLawOf.get(texRemap);\n    if (!seen) inLawOf.set(texRemap, (seen = new Map()));",
     "new": "    let seen = inLawOf.get(inLawOf);\n    if (!seen) inLawOf.set(inLawOf, (seen = new Map()));",
     "tests": [

@@ -115,7 +115,7 @@ test('AUDIT 63 F24: a restored quest foe keeps its quest link (SerializableEnemy
   assert.match(XF, /const questBehaviour = \(sf\.questResource && reviveQuestBehaviour\)/);
   // the arm itself lives in ONE home (questFoeHost), where
   // bindQuestFoeHost - the mint-side half of the same link - already is
-  const QFH = rd('src/scenes/questFoeHost.js');
+  const QFH = rd('src/scenes/quest/questFoeHost.js');
   const rev = QFH.slice(QFH.indexOf('export function reviveQuestBehaviour'));
   assert.match(rev, /const b = new QuestResourceBehaviour\(machine\);/);
   assert.match(rev, /b\.restoreSaveData\(data\);/);

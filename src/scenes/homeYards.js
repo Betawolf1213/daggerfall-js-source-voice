@@ -4,7 +4,7 @@
 //
 // Asked: "allowing for prop placement on the outside within the limits of
 // their house". An online home's owner decorates its YARD as they decorate
-// its rooms: the same decorator (scenes/decorTool.js - the catalogue, the
+// its rooms: the same decorator (scenes/decor/decorTool.js - the catalogue, the
 // free camera, the price by size), opened standing on the lot, its pieces
 // kept on the account service beside the room's (a yard's own flag and cap -
 // net/decorLaw.js decorYardPieceOf) and stood for everyone walking the town.
@@ -27,7 +27,7 @@
 // THE TOWN'S YARDS are read with the town (one answer for every home in it -
 // server-account/src/decor.js yardsOf), believed a minute as the homes are
 // (systems/online/onlineHomes.js), and each yard stood in its pixel as a room's
-// pieces stand in its room (scenes/decorRoom.js, one pool a yard): its own
+// pieces stand in its room (scenes/decor/decorRoom.js, one pool a yard): its own
 // collider buckets on the world's collider, drawn in the world's passes, and
 // stood again where it stands when the world recentres (the pool places in
 // scene space - FB1001 YARD-RECENTRE: in place, by the host's recentre, before
@@ -57,9 +57,9 @@
 // Online alone - a yard is an online home's. Not a DFU member. Ledger A.
 // ═══════════════════════════════════════════════════════════════════
 
-import { createDecorRoom, decorBoxSeen, DECOR_DRAW, DECOR_SKIP } from './decorRoom.js';   // YARD-RANGE: a piece too small to see
+import { createDecorRoom, decorBoxSeen, DECOR_DRAW, DECOR_SKIP } from './decor/decorRoom.js';   // YARD-RANGE: a piece too small to see
 import { YARD_RANGE_TIERS, YARD_RANGE_DEFAULT, yardRangeOf, YARD_DRAW_M } from '../net/yardRange.js';   // YARD-RANGE: how far a stranger's yard is drawn
-import { createDecorTool } from './decorTool.js';
+import { createDecorTool } from './decor/decorTool.js';
 import { decorYardPieceOf, DECOR_YARD_CAP, decorYardHighOk, DECOR_YARD_HIGH_WHY } from '../net/decorLaw.js';   // YARD-HEIGHT: how high a piece stands, and its words
 import { homeLookRecords } from '../world/homeLook.js';   // HOME-LOOK (AUDIT): the styles a roof's or a door's family holds
 import { onPathTile } from '../player/exteriorSurface.js';   // FB1001 ROAD-LOT: PlayerMotor.OnPathTile - Daggerfall's own road tiles

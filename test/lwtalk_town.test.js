@@ -25,7 +25,7 @@ import { CREW_LINE_S } from '../src/systems/naval/crewLife.js';
 import { createRelations } from '../src/systems/livingWorld/relations.js';
 import { DAY_MIN, isOutdoor } from '../src/systems/livingWorld/dayPlan.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
-import { createLivingIndoors } from '../src/scenes/livingIndoors.js';
+import { createLivingIndoors } from '../src/scenes/livingWorld/livingIndoors.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { POP_VISIBLE_RANGE } from '../src/systems/town/townPopulation.js';
 
@@ -458,16 +458,16 @@ test('LW-TALK the words: {place} a town of the town\'s road (its trips\' towns, 
   assert.match(rd('src/scenes/world.js'), /const places = \[\.\.\.new Set\(\[\.\.\.trips, \.\.\.told\]\.map\(\(tr\) => placeName\(tr\.to\)\)\.filter\(Boolean\)\)\]\.sort\(\);[^\n]*\n    return \{ away, visitors, holders, news, places \};/);
 });
 
-test('LW-TALK the hosts: the street\'s town deals, gathers, keeps circles whole and says aloud (livingTown.js); the rooms deal a table\'s company from its sitting and keep it put through its first round and its exchanges (scenes/livingIndoors.js); the road\'s parties talk in exchanges from their round\'s start (scenes/livingRoads.js); the bodies stand on the wheel (characters/residentWalker.js, world/travellerSprites.js) (mutants: each seam)', () => {
+test('LW-TALK the hosts: the street\'s town deals, gathers, keeps circles whole and says aloud (livingTown.js); the rooms deal a table\'s company from its sitting and keep it put through its first round and its exchanges (scenes/livingWorld/livingIndoors.js); the road\'s parties talk in exchanges from their round\'s start (scenes/livingWorld/livingRoads.js); the bodies stand on the wheel (characters/residentWalker.js, world/travellerSprites.js) (mutants: each seam)', () => {
   const lt = rd('src/systems/livingWorld/livingTown.js');
   assert.match(lt, /const from = dealt\.start \+ \(far \/ PERSON_MOVE_SPEED \+ GATHER_BEAT_S\) \* this\._baseRate\(\);/);
   assert.match(lt, /c\.circle\.members\.every\(\(m\) => standing\.has\(m\.id\)\)/);
   assert.match(lt, /circleLine\(c\.circle, this\._now, lineMin, ctx, this\._scripts\)/);
-  const li = rd('src/scenes/livingIndoors.js');
+  const li = rd('src/scenes/livingWorld/livingIndoors.js');
   assert.match(li, /dealCircles\(`in:\$\{b\.key\}:\$\{ti\}:\$\{co\.since\}`, at\.map\(\(m\) => m\.res\), round, start, start \+ beat\.roundMin, GATHER_BEAT_S \* beat\.roundMin \/ ROUND_S\)/);
   assert.match(li, /const on = t - co\.since < beat\.roundMin \|\| exchangeAt\(c, t, beat\.lineMin\) != null;/);
   assert.match(li, /circleLine\(c, t, beat\.lineMin, ctx, scripts\)/);
-  const lr = rd('src/scenes/livingRoads.js');
+  const lr = rd('src/scenes/livingWorld/livingRoads.js');
   assert.match(lr, /const circle = \{ members, seed, start: round \* roundMin, end: \(round \+ 1\) \* roundMin, index: 0 \};/);
   assert.doesNotMatch(lr, /TALK_SHARE/);
   assert.match(rd('src/world/travellerSprites.js'), /out = w\.update\(dt, eye && eye\.length === 3 \? eye : f, false\);/);

@@ -1,7 +1,7 @@
 // NAV-R (2026-09-28, Mac, of main's Overworld raiders: "Definitely want them to appear as ships") - WARM ASHES' RAIDERS,
 // STOOD AS SHIPS OF THE SEA: the pure law (systems/naval/navalRaiders.js - a raider's class off its seed, the plan of
 // which stand and which go, one copy between two players), the host driving them through real frames over Come Sail
-// Away's real pool (scenes/navalHost.js raiders, raiderShipOf, the captain's own sight and course), and the world
+// Away's real pool (scenes/naval/navalHost.js raiders, raiderShipOf, the captain's own sight and course), and the world
 // host's wiring, pinned (bible/03-World/Naval-Combat.md NAV-R). THE MERGE with main's OW6 (the raiders' chase, shared on the
 // cell's foes frames): a raider a peer holds is never stood here, the ships my sea stands are said as held, and a spent
 // ship is spent through the Overworld's own spend - the law, the host and the world host run.
@@ -10,8 +10,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { raiderClassOf, raiderPlan, RAIDER_STAND_M, RAIDER_DROP_M, RAIDER_SHIPS_MAX, RAIDER_LEAD_S } from '../src/systems/naval/navalRaiders.js';
-import { createNavalHost, RAIDER_SHEER_M, HOSTILE_NEAR_M, SHIP_FADE_S } from '../src/scenes/navalHost.js';
-import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';
+import { createNavalHost, RAIDER_SHEER_M, HOSTILE_NEAR_M, SHIP_FADE_S } from '../src/scenes/naval/navalHost.js';
+import { createComeSailAwayPool } from '../src/scenes/comeSailAway/comeSailAwayPool.js';
 import { Boat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { SHIP_CLASSES } from '../src/systems/naval/navalShips.js';
 import { SHIP_STATES } from '../src/systems/naval/navalDamage.js';

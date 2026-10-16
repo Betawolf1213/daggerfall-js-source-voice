@@ -1,7 +1,7 @@
 // AUDIT YARD-HEIGHT (2026-10-06, Mac: "Audit"): YARD-HEIGHT and DECOR-TURN read again before their deploy
 // (`06-Systems/Online-Arc.md` AUDIT YARD-HEIGHT). Y1: a placed piece's turn was a write to the account service on every
 // press - four statements on its database, one of the hour's DECOR_OPS_MAX - and the piece stood still until it
-// answered; now it turns at once and its turning is written once the presses settle (scenes/decorTool.js turnPlaced,
+// answered; now it turns at once and its turning is written once the presses settle (scenes/decor/decorTool.js turnPlaced,
 // writeTurn), on the piece as it then stands. Y2: an answer that came after the piece's removal stood it again. Y5: a
 // turn and a station (or a light) of one piece in flight at once - the later wrote the earlier out; now each write of a
 // piece waits for the one before it (pieceWrite). Y6: a picture turned fifteen degrees showed nothing. Y7: the service's
@@ -11,7 +11,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { DECOR_TURN_STEP } from '../src/systems/decor/decorPlacer.js';
-import { DECOR_TURN_SETTLE_MS } from '../src/scenes/decorTool.js';
+import { DECOR_TURN_SETTLE_MS } from '../src/scenes/decor/decorTool.js';
 import { settle, all, one, rows, toolRig, placeFrom } from './decorFakes.mjs';
 import { standService, T0 } from './accountDb.mjs';
 

@@ -7,7 +7,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { ATTACKS } from '../src/net/gate/gateBrain.js';
-import { createGateCourt, FALL_CRY_LATE_MS } from '../src/scenes/gateCourt.js';
+import { createGateCourt, FALL_CRY_LATE_MS } from '../src/scenes/gate/gateCourt.js';
 import { createGateLink, GATE_STATE_EMPTY, GATE_NO_TEXT } from '../src/net/gate/gateLink.js';
 import { courtToDungeon, COURT_TEXT } from '../src/world/gate/gateArena.js';
 import { BOSS_CUES, THUD_AT_MS } from '../src/world/gate/gateBoss.js';

@@ -2,7 +2,7 @@
 // BOUNTY1 (2026-09-28, Mac: "i also dont see the bounty in my questlog means i cant abandon it?"): A BOUNTY IN THE
 // QUEST LOG, AND ITS TWO PRESSES THERE.
 //
-// A held bounty rides the quest log every journal face reads (scenes/questBridge.js questLog, wrapped by the world
+// A held bounty rides the quest log every journal face reads (scenes/quest/questBridge.js questLog, wrapped by the world
 // host - scenes/world.js) as an active side quest whose id is `bounty:<bounty id>`. The faces (the pause window's
 // Quests tab, ui/enhanced/enhancedMenu.js; the chronicle, ui/enhanced/enhancedChronicle.js) are lazy chunks mounted by many hosts, so
 // rather than thread two more hooks through every one of them, the host registers the bounty host's own doors here

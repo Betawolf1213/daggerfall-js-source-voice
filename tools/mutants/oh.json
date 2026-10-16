@@ -218,7 +218,7 @@
   },
   {
     "name": "OH-B-dw-built-event-dropped",
-    "file": "src/scenes/deepWatersHost.js",
+    "file": "src/scenes/deepWater/deepWatersHost.js",
     "old": "      onSeafloorBuilt?.(entry);   // OH-B: RaiseTerrainEvent(OnSeafloorBuilt) follows BuildOrRefreshFloor\n",
     "new": "",
     "tests": [
@@ -227,7 +227,7 @@
   },
   {
     "name": "OH-B-dw-commit-keeps-the-old-grid",
-    "file": "src/scenes/deepWatersHost.js",
+    "file": "src/scenes/deepWater/deepWatersHost.js",
     "old": "      heightGridFromPositions(s.floor.positions, s.floor.vertexLocalY);\n",
     "new": "",
     "tests": [
@@ -236,7 +236,7 @@
   },
   {
     "name": "OH-B-dw-refresh-waits-its-turn",
-    "file": "src/scenes/deepWatersHost.js",
+    "file": "src/scenes/deepWater/deepWatersHost.js",
     "old": "        const d = urgent.has(k) ? -1 : chebyshev({ x: e.px, y: e.py }, here);",
     "new": "        const d = chebyshev({ x: e.px, y: e.py }, here);",
     "tests": [
@@ -245,7 +245,7 @@
   },
   {
     "name": "OH-B-dw-refresh-rebuilds-current",
-    "file": "src/scenes/deepWatersHost.js",
+    "file": "src/scenes/deepWater/deepWatersHost.js",
     "old": "      if (!force && this.isSeafloorCurrent(entry)) return;\n",
     "new": "",
     "tests": [
@@ -254,7 +254,7 @@
   },
   {
     "name": "OH-B-dw-refresh-while-frozen",
-    "file": "src/scenes/deepWatersHost.js",
+    "file": "src/scenes/deepWater/deepWatersHost.js",
     "old": "if (disposed || !entry || !bake || !canMutateTerrainData()) return;",
     "new": "if (disposed || !entry || !bake) return;",
     "tests": [

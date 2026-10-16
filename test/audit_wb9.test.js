@@ -12,7 +12,7 @@ import {
 } from '../src/net/gate/gateBrain.js';
 import { foldGate, crossLaid, GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import { validGateOut } from '../src/net/wire.js';
-import { createGateCourt, COURT_RECKON_TEXT, spoilsKeep, bossOf } from '../src/scenes/gateCourt.js';
+import { createGateCourt, COURT_RECKON_TEXT, spoilsKeep, bossOf } from '../src/scenes/gate/gateCourt.js';
 import { courtToDungeon, courtFloorTris } from '../src/world/gate/gateArena.js';
 import { TELEGRAPH_FS, TELEGRAPH_KIND, TELEGRAPH_WALK_QUAD, TELEGRAPH_THROB_MAX_HZ, GateTelegraphRenderer, telegraphShape, telegraphField, poolShapes } from '../src/render/gateTelegraph.js';
 import { glslFunctions, GlslDiscard } from './glsl.mjs';
@@ -270,7 +270,7 @@ test('AUDIT WB9 court F4 - his shapes and his burning ground are drawn on over t
   assert.equal(fs({ uOnWalk: 0 }, past), -1, 'the court\'s pass: past its rim, cut');
   assert.ok(fs({ uOnWalk: 1 }, past) > 0, 'the walkway\'s: drawn');
   // the court hands the pass how far each walkway is laid, every frame, for his shapes and his ground (never his mark)
-  const court = readFileSync(new URL('../src/scenes/gateCourt.js', import.meta.url), 'utf8');
+  const court = readFileSync(new URL('../src/scenes/gate/gateCourt.js', import.meta.url), 'utf8');
   assert.match(court, /for \(const w of WALKS\) _walked\[w\.k\] = walkFormed\(s\.xa, w\.k, t\);/);
   assert.match(court, /for \(const ps of poolDraw\) \{ pass\.draw\(ps, proj, view, eye, seconds, fog, COURT_CENTRE, _walked\);/);
   assert.match(court, /if \(mark\) \{ pass\.draw\(mark, proj, view, eye, seconds, fog\); drew = true; \}/);

@@ -11,13 +11,13 @@ import { fileURLToPath } from 'node:url';
 
 import { intoDeck, outOfDeck, DECK_STEP, DECK_HEADROOM } from '../src/systems/naval/navalDeck.js';
 import * as NAVAL_DECK from '../src/systems/naval/navalDeck.js';   // its AUDIT NAV2 names, read where the tree may not have them yet
-import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';
+import { createComeSailAwayPool } from '../src/scenes/comeSailAway/comeSailAwayPool.js';
 import { Boat, spawnBoat, HULL_VARIANT_COUNTS, HULL_NAMES } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { colliderPoses, raycastColliders, boxColliderTriangles, invertAffine, BUILTIN_COLLIDER_MESHES } from '../src/world/prefabColliders.js';
 import { multiply } from '../src/world/mat4.js';
 import { STEP_OFFSET } from '../src/player/motor.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
-import { mainLevel } from '../src/scenes/navalCrew.js';
+import { mainLevel } from '../src/scenes/naval/navalCrew.js';
 import { createImmersiveFootsteps, readFootstepSettings, FIXED_DELTA_TIME, IMMERSIVE_FOOTSTEPS_VENDOR, SHALLOW_WATER_TILES } from '../src/systems/immersiveFootsteps.js';
 import { MOD_SETTINGS } from '../src/systems/modSettings.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';

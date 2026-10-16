@@ -20,7 +20,7 @@ import { SHIP_STATES } from '../src/systems/naval/navalDamage.js';
 import { NAVAL_DEG } from '../src/systems/naval/navalBallistics.js';
 import { BERTH_GAP } from '../src/systems/naval/navalBoarding.js';
 import { createNavalDirector, DESPAWN_BEYOND, FIRST_ROLL_S, DENSITY } from '../src/systems/naval/navalDirector.js';
-import { FRAME_STEP_S, FRAME_STEPS_MAX, RAM_SPEED, SHIP_FADE_S } from '../src/scenes/navalHost.js';
+import { FRAME_STEP_S, FRAME_STEPS_MAX, RAM_SPEED, SHIP_FADE_S } from '../src/scenes/naval/navalHost.js';
 import { sea } from './navalSea.mjs';
 import { HELM_WAY, HULL_HELM, steerage } from '../src/systems/helmWay.js';   // HELM-WAY: the captains turn at the player's own helm
 

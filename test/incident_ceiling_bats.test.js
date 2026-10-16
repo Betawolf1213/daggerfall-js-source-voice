@@ -27,7 +27,7 @@ import { fileURLToPath } from 'node:url';
 import { enemyControllerHeight, idleSpriteHeight, feetFromCentre, centreFromFeet, spriteOriginY, keepRebuiltSpawn } from '../src/characters/enemyAnchor.js';
 import { EnemyAI, canSeeTarget } from '../src/characters/enemyMotor.js';
 import { sweepFoes } from '../src/systems/spellcast.js';
-import { entityOccupancy } from '../src/scenes/questFoeHost.js';
+import { entityOccupancy } from '../src/scenes/quest/questFoeHost.js';
 import { Collider } from '../src/player/collider.js';
 import { CAPSULE_HEIGHT } from '../src/player/motor.js';
 import { GLOBAL_SCALE } from '../src/world/meshReader.js';

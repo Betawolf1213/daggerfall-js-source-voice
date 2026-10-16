@@ -44,7 +44,7 @@ import { ensureFactionRep, changeReputation } from '../src/systems/faction/facti
 import { findFactions, findFactionByTypeAndRegion, getPeopleOfCurrentRegion, getCourtOfCurrentRegion } from '../src/systems/talk/talk.js';
 import { FACTION_TYPES, SOCIAL_GROUPS, GUILD_GROUPS } from '../src/formats/factionFile.js';
 import { liveVampirism } from '../src/systems/racialLive.js';
-import { mintQuestFoeWave, placeFoeEnv, entityOccupancy, questFoeGender, heldSpots, holdSpotWhile } from '../src/scenes/questFoeHost.js';
+import { mintQuestFoeWave, placeFoeEnv, entityOccupancy, questFoeGender, heldSpots, holdSpotWhile } from '../src/scenes/quest/questFoeHost.js';
 import { placeFoeFreely } from '../src/systems/quest/sceneMount.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { QuestJournalWindow, JOURNAL_RECTS } from '../src/ui/quest/questJournal.js';
@@ -687,7 +687,7 @@ test('QX1: the pause window\'s Quests tab reads the machine, and BOTH pauses rea
   assert.match(SRC, /PX3 SHIPPED \(QX1\)/, 'and its site records what shipped, quoting what it retired');
   assert.match(SRC, /questMessages: pauseQuestMessages,\n\s*questLog: pauseQuestLog,/,
     'the host\'s own pause hands both walks over');
-  // MAC-K2: and the WALK itself is `scenes/questBridge.js`'s now. This
+  // MAC-K2: and the WALK itself is `scenes/quest/questBridge.js`'s now. This
   // host held one of three copies of it - its own comment said "world.js
   // keeps two copies of this walk; two copies is two laws the day one of
   // them moves" - and the chronicle's Quests section made a FOURTH

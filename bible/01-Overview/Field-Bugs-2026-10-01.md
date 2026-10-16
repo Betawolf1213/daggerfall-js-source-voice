@@ -26,7 +26,7 @@ fetched ALIVE - an `injured _tiger_` and the bell (`_S.02_`, `_S.04_`, `_S.05_`'
 (`_S.03_`) is the failure: "Oops. You killed the tiger.", and `_dummy_` orders the player out, unpaid. (`M0B00Y07`, "Unwanted
 Houseguest", is the other tiger in the pack: a house, and a kill.)
 
-**Whose foe it is** (verified on the code, `scenes/questFoeHost.js`, `scenes/dungeonContext.js`, `scenes/exteriorFoes.js`,
+**Whose foe it is** (verified on the code, `scenes/quest/questFoeHost.js`, `scenes/dungeonContext.js`, `scenes/exteriorFoes.js`,
 `scenes/world.js` questShareSeam):
 
 - The quest's own mount stands it on its player's machine alone (`systems/quest/sceneMount.js:"if (resource.killCount < resource.spawnCount)"` - only while
@@ -218,7 +218,7 @@ tenant (RENT-NUMBER).
 more, and "Finding the rooms..." tested a flag that is true only when rows exist - dead; every room not yet offered
 took the first free number.
 
-**The fix** (`scenes/decorTool.js`, `ui/decorPanel.js`, `systems/homeRent.js` `rentRoomsView`): the rooms are read
+**The fix** (`scenes/decor/decorTool.js`, `ui/decorPanel.js`, `systems/homeRent.js` `rentRoomsView`): the rooms are read
 again on every opening and every `RENT_VIEW_FRESH_MS` (30 s) while the tab is up, the newest read alone counting, and
 the signature carries `loaded` and `finding`; once the finder is done the rows are built for one room too, so the
 offers left are listed and can be withdrawn, and `finding` says "Finding the rooms of your house..."; a room takes its
@@ -285,7 +285,7 @@ a painted track writes record 11, which a field's dirt edge writes too, so only 
 `yardRoadsOf` turns them into squares in the lot's frame and `ownYardHere` hands them over as `cur.roads`. `yardWhyNot`
 refuses a piece whose turned box meets one - "That is the road - keep the street and its paths clear." (`YARD_ON_ROAD`) -
 touching the road's side is not on it (a 5 cm pad). The marked edge is the lot with the road cut out, run along the
-road's side, each band facing into the lot (`yardLotEdges`; `scenes/decorTool.js` `DECOR_LOT_MARKS`, the batch's room).
+road's side, each band facing into the lot (`yardLotEdges`; `scenes/decor/decorTool.js` `DECOR_LOT_MARKS`, the batch's room).
 Dirt (1) and stone (3) are ground, as Daggerfall's navigation reads them: a dirt yard stays a yard.
 
 **Found on the way, not changed.** A flat's ground is a square of its whole radius, so a tall flat is refused well clear
@@ -320,7 +320,7 @@ pool, so a piece removed from another tab stands on this screen until the yard i
 the next, and right on the third. **Why.** The host runs the yards' frame above the motor and the recentre below it, then
 draws, so the yards stood at the old offset when drawn; the next frame's re-stand put every piece again, and a model
 stands only once its model's promise resolves - after that frame is drawn. The housing audit's "stood again the frame
-the world recentres" held only in a test that shifted first. **The fix** (`scenes/decorRoom.js` `restand`,
+the world recentres" held only in a test that shifted first. **The fix** (`scenes/decor/decorRoom.js` `restand`,
 `scenes/homeYards.js` `rebase`, `scenes/world.js`): the recentre moves every yard piece in place - its matrix, collider
 bucket, billboard origin and light, a flat whose picture is still loading included - on the recentre's own line, so no
 line cite into world.js moved.
@@ -946,7 +946,7 @@ ground a client stands on, the counters, the pad, the finger, and part four's ow
 | CHARCOAL-BUY | 3 | "Steel wants Charcoal ... and the smith sells it" - but the smith's stock was bought only on an anvil recipe short of an input, and none takes Charcoal: no counter stood anywhere, and a smith who felled no tree smelted no Steel | the Forge offers it at a smith's forge (`ui/professions/profPages.js` drawForge) |
 | COUNTER-GATES | 3 | the anvil's and the workbench's counters took none of AUDIT 32 P6's gates (the loom's): offered with Marks shut or too few held, refused after the press | one counter's buy for all four (`ui/professions/profPages.js` counterBuy) |
 | PAD-CLASSIC | 3 | the Professions pages are DOM on the classic skin too, and the pad's cursor clicked the DOM only under Plus: the Forge, the Anvil, Withdraw unpressable on Classic with a pad | the pad's click reaches the page on every skin, as a mouse's does (`ui/gamepadInput.js` pointerAt) |
-| NAVAL-E | 4 | at sea the net's cast stands in the look and the node had E first: the readout said "E: board her" and E cast the net (with a foe near, it said "You cannot fish with enemies nearby!") | the street asks the sea first (`scenes/navalHost.js` takesActivate; `world.js`) |
+| NAVAL-E | 4 | at sea the net's cast stands in the look and the node had E first: the readout said "E: board her" and E cast the net (with a foe near, it said "You cannot fish with enemies nearby!") | the street asks the sea first (`scenes/naval/navalHost.js` takesActivate; `world.js`) |
 
 Pins: `test/fb1001_audit.test.js` (10), `fb1001_ground.test.js` (9), `fb1001_nodes.test.js` (5),
 `fb1001_stations.test.js` (3); mutants `tools/mutants/fb1001_audit.json` (16), `fb1001_ground.json` (21),

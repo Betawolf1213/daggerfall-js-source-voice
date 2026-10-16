@@ -336,7 +336,7 @@
  },
  {
   "name": "AUDITMWNPC2-H4-falling-unnumbered",
-  "file": "src/scenes/gateHost.js",
+  "file": "src/scenes/gate/gateHost.js",
   "old": "?? { i: g.i, look: hostLookOf(g.k, P.aspect.id),",
   "new": "?? { look: hostLookOf(g.k, P.aspect.id),",
   "tests": [
@@ -345,7 +345,7 @@
  },
  {
   "name": "AUDITMWNPC2-H5-host-unflashed",
-  "file": "src/scenes/gateHost.js",
+  "file": "src/scenes/gate/gateHost.js",
   "old": "        null, b.batch.hitFlash || 0);",
   "new": "        null, 0);",
   "tests": [
@@ -354,7 +354,7 @@
  },
  {
   "name": "AUDITMWNPC2-H5-boss-unflashed",
-  "file": "src/scenes/gateCourt.js",
+  "file": "src/scenes/gate/gateCourt.js",
   "old": "}), shown, null, shown.hitFlash || 0);",
   "new": "}), shown, null, 0);",
   "tests": [

@@ -100,7 +100,7 @@
   },
   {
     "name": "WB2-a-collider-while-it-rises",
-    "file": "src/scenes/gatePool.js",
+    "file": "src/scenes/gate/gatePool.js",
     "old": "    const want = place?.risen && !place.coarse ? matrixOf(place) : null;",
     "new": "    const want = place && !place.coarse ? matrixOf(place) : null;",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "WB2-the-collider-stood-every-frame",
-    "file": "src/scenes/gatePool.js",
+    "file": "src/scenes/gate/gatePool.js",
     "old": "    if (want ? sameMatrix(want, colliderAt) : colliderAt === null) return;",
     "new": "    if (false) return;",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "WB2-it-never-rises",
-    "file": "src/scenes/gatePool.js",
+    "file": "src/scenes/gate/gatePool.js",
     "old": "  return { day: g.day, phase, origin: [x, ground - (1 - eased) * sunk, z],",
     "new": "  return { day: g.day, phase, origin: [x, ground, z],",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "WB2-a-gate-on-no-ground",
-    "file": "src/scenes/gatePool.js",
+    "file": "src/scenes/gate/gatePool.js",
     "old": "  if (coarse) ground = groundAt ? groundAt(g.px, g.py, x, z) : NaN;\n  if (!Number.isFinite(ground)) return null;\n",
     "new": "  if (coarse) ground = groundAt ? groundAt(g.px, g.py, x, z) : NaN;\n",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "WB2-entered-without-a-relay",
-    "file": "src/scenes/gatePool.js",
+    "file": "src/scenes/gate/gatePool.js",
     "old": "      if (!ready()) { refuse(GATE_TEXT.notYet); return false; }\n",
     "new": "",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "WB2-the-refusal-every-press",
-    "file": "src/scenes/gatePool.js",
+    "file": "src/scenes/gate/gatePool.js",
     "old": "    if (t - saidAt < GATE_SAY_MS) return;\n",
     "new": "",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "WB2-walked-in-past-the-horns",
-    "file": "src/scenes/gatePool.js",
+    "file": "src/scenes/gate/gatePool.js",
     "old": "        const inside = Math.abs(lx) < openingHalfWidth(profile, Math.max(ARCH_Y0 + 0.05, ly + 0.9)) && Math.abs(lz) < GATE_STEP_M;",
     "new": "        const inside = Math.abs(lz) < GATE_STEP_M;",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "WB2-the-banner-from-afar",
-    "file": "src/scenes/gatePool.js",
+    "file": "src/scenes/gate/gatePool.js",
     "old": "Math.hypot(f[0] - place.origin[0], f[2] - place.origin[2]) <= GATE_BANNER_M) {",
     "new": "Math.hypot(f[0] - place.origin[0], f[2] - place.origin[2]) <= GATE_BANNER_M * 10) {",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "WB2-any-key-opens-the-gate",
-    "file": "src/scenes/gatePool.js",
+    "file": "src/scenes/gate/gatePool.js",
     "old": "    activate(key) { return typeof key === 'string' && key.startsWith('gate:') ? tryEnter() : false; },",
     "new": "    activate(key) { return typeof key === 'string' ? tryEnter() : false; },",
     "tests": [

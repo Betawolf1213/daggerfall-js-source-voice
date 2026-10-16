@@ -18,7 +18,7 @@ import { createShotField, FLOAT_DRIFT } from '../src/systems/naval/navalShots.js
 import { orientedBox, launchVelocity, rangeAt, NAVAL_DEG } from '../src/systems/naval/navalBallistics.js';
 import { navalWireRecord } from '../src/systems/naval/navalWire.js';
 import { NAVAL_SFX, navalSoundRange } from '../src/systems/naval/navalSounds.js';
-import { hullBoxOf, rigBoxesOf, STRUCK_GRACE_S, TALLY_S, SHIP_FADE_S } from '../src/scenes/navalHost.js';
+import { hullBoxOf, rigBoxesOf, STRUCK_GRACE_S, TALLY_S, SHIP_FADE_S } from '../src/scenes/naval/navalHost.js';
 import { stowSail } from '../src/systems/comeSailAway/comeSailAway.js';   // AUDIT GALLEON-2 RG3: her canvas set, where her rig's boxes stand
 import { animatorOf } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { navalHudText } from '../src/ui/naval/navalHud.js';

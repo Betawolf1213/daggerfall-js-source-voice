@@ -131,7 +131,7 @@ export function targetPriority(targetHasNoTarget, seen, distance) {
 /**
  * ARENA2 (2026-10-02, Mac: "Players can choose to watch AI fights"): THE BOUT TEAM - an isolation seam beside the
  * camp's (`campId`). A fighter on the arena's sand carries its bout on its entity (`entity.bout` - `{ id, side, out, hold }`,
- * stood by scenes/arenaBouts.js), and so may the player (`setPlayerBout`, a ladder bout's own). The law
+ * stood by scenes/arena/arenaBouts.js), and so may the player (`setPlayerBout`, a ladder bout's own). The law
  * (bible/11-Multiplayer/Arena.md "2. The fights"): the fighters of one bout target only each other, across their sides
  * (a Grand Melee is every fighter a side of its own) - never a teammate, never one already out; nobody outside the bout
  * joins it (the city watch, the passers-by, another foe); and a fighter never takes the player for a target unless the
@@ -142,7 +142,7 @@ export function targetPriority(targetHasNoTarget, seen, distance) {
 let _playerBout = null;
 /** The player's bout - `{ id, side, out?, hold? }` - or null (the host's, set as a ladder bout stands and cleared after).
  *  AUDIT ARENA-LADDER A3: THE DRIVER'S OWN TAG, HELD LIVE. The driver writes `out` and `hold` on it as the bout runs (a
- *  yield, a fall, the word, the verdict - scenes/arenaBouts.js); a copy taken at the bell missed every one, so a player
+ *  yield, a fall, the word, the verdict - scenes/arena/arenaBouts.js); a copy taken at the bell missed every one, so a player
  *  out of a Grand Melee stayed the fighters' target, beaten at the breath of life to its end. boutGate reads its fields
  *  as it reads a fighter's (`String(id)`, `side | 0`); `playerBoutOf` answers the read as plain data. */
 export function setPlayerBout(b) { _playerBout = b ?? null; }

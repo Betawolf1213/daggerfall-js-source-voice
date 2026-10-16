@@ -21,7 +21,7 @@ const QUESTS = join(ROOT, 'vendor/dfu-quests/Quests');
 const TABLES = join(ROOT, 'vendor/dfu-quests/Tables');
 
 async function bridge() {
-  const { createQuestBridge } = await import('../src/scenes/questBridge.js');
+  const { createQuestBridge } = await import('../src/scenes/quest/questBridge.js');
   const { loadQuestTables } = await import('../src/systems/quest/tables.js');
   const sources = {};
   for (const f of readdirSync(TABLES)) if (f.endsWith('.txt')) sources[f.replace('.txt', '')] = readFileSync(join(TABLES, f), 'utf8').replace(/^﻿/, '');

@@ -45,10 +45,10 @@ const UNITS_PER_M = 40;
 /** Where the players arrive, in the realm's frame: on the Threshold a step ahead of its centre, facing +z. */
 export const SD_ARRIVE_Z = 1;
 /** The way back: the Rift at the Threshold's back, its foot this far behind the centre, this tall (the way home's ring
- *  is the Hollow's own art - scenes/sdEnd.js). */
+ *  is the Hollow's own art - scenes/superDungeon/sdEnd.js). */
 export const SD_WAY_BACK_Z = -5;
 export const SD_WAY_BACK_SIZE = 5;
-/** AUDIT SD V (R2): THE THRESHOLD'S RIM as the way back's floor-light probe (scenes/sdEnd.js `stand`'s `probe`) - a level
+/** AUDIT SD V (R2): THE THRESHOLD'S RIM as the way back's floor-light probe (scenes/superDungeon/sdEnd.js `stand`'s `probe`) - a level
  *  ray's distance, from inside the island, to its edge, never past the way back's own default reach (1.6 its size): the
  *  realm's way back stood with no probe lit eight metres about it, five of them over the void behind the island. */
 export const SD_THRESHOLD_RIM = Object.freeze({
@@ -587,7 +587,7 @@ const _litKey = new Float64Array(64), _litIdx = new Int32Array(64);
 const ARENA_X = SD_REALM_ORIGIN[0] + SD_ARENA.x, ARENA_Z = SD_REALM_ORIGIN[2] + SD_ARENA.z;
 export const arenaLamp = (l) => (l.x - ARENA_X) * (l.x - ARENA_X) + (l.z - ARENA_Z) * (l.z - ARENA_Z) < SD_ARENA.r * SD_ARENA.r;
 /** SD-LOOK S7: realmLightsWith's `dim` - a kept array whose first is the arena's lamps' share of their light
- *  (scenes/sdArenaWatch.js sdLampDimInto - the Reset's dimming; none, whole): its lamps alone, never the arm's own lights,
+ *  (scenes/superDungeon/sdArenaWatch.js sdLampDimInto - the Reset's dimming; none, whole): its lamps alone, never the arm's own lights,
  *  the Hour's (`extra`) or the other stages' lamps. */
 export function realmLightsWith(lit, extra, eye, dim = null) {
   const dk = dim ? dim[0] : 1, n = lit.data.length / 4, lamps = realmLightsNear(eye), m = n + extra.length + lamps.length, H = _hourLit;

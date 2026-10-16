@@ -8,7 +8,7 @@
 // compass inside SD_COMPASS_M of its door, a row in the Timers window (systems/eventTimers.js) and a note under the red
 // seal on every notice board.
 //
-// PURE: the hub's record (net/superDungeon/sdLaw.js) and the Hollow the world host stood (scenes/sdHost.js hollow()) in, the relay's
+// PURE: the hub's record (net/superDungeon/sdLaw.js) and the Hollow the world host stood (scenes/superDungeon/sdHost.js hollow()) in, the relay's
 // clock handed - every client holding the same record says the same thing at the same moment. Nothing is sent or saved.
 //
 // Not a DFU member: Daggerfall has no world events. Ledger A (SUPER-DUNGEONS).

@@ -7,7 +7,7 @@
 // Large Boat's deed and a Rowboat's parts are spent on placing
 // (systems/comeSailAway/comeSailAway.js takePlaceItem), the boat is kept where she
 // was left, and nothing in the game said where that was - the compass
-// marked the sea's ships (scenes/navalHost.js compassShips), never the
+// marked the sea's ships (scenes/naval/navalHost.js compassShips), never the
 // player's own. Now every boat Come Sail Away keeps for me stands on
 // both compasses (ui/hud/hud.js drawBoatCompassMarks, ui/enhanced/enhancedHud.js) as
 // a little boat in one sea-glass teal, from anywhere on the street,

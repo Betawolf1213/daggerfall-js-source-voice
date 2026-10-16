@@ -1,5 +1,5 @@
 // AUDIT GALLEON (2026-10-02, Mac: "Audit this. It must be perfect") - HER RIG AND HER RIG'S HIT BOXES (world/
-// galleonRig.js, systems/naval/navalShips.js HULL_BUILDS[2].rig, scenes/navalHost.js rigBoxesOf). Every pin reads her
+// galleonRig.js, systems/naval/navalShips.js HULL_BUILDS[2].rig, scenes/naval/navalHost.js rigBoxesOf). Every pin reads her
 // rig AS BUILT, off the runtime's own models (test/csaScene.mjs's MODELS - hull 2 on Mac's galleon): the sails' bones
 // where their clips stand them, the spars and the standing rope out of their meshes (each prism's two rings), the
 // running rope's ends where their bones stand, her solids' triangles - and turns it as Come Sail Away's trim turns her
@@ -20,7 +20,7 @@ import { sea } from './navalSea.mjs';
 import { GALLEON_PREFAB_ID } from '../src/world/ships/galleonModel.js';
 import { TEX } from '../src/world/ships/galleonArt.js';
 import { HULL, HULL_BUILDS, hullBuild } from '../src/systems/naval/navalShips.js';
-import { rigBoxesOf } from '../src/scenes/navalHost.js';
+import { rigBoxesOf } from '../src/scenes/naval/navalHost.js';
 import { stowSail } from '../src/systems/comeSailAway/comeSailAway.js';   // AUDIT GALLEON-2 RG3: her canvas set, where her rig's boxes stand
 import { animatorOf } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { rigBand } from '../src/systems/naval/navalAI.js';

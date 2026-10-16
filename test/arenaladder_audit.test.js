@@ -21,7 +21,7 @@ import { setPlayerBout, playerBoutOf, boutGate, inBout } from '../src/characters
 import { LADDER_TIERS, ladderAfter, arenaLadderRestore, BOUTS_PER_TIER, nextLadderBout, arenaLadderSnapshot, BOUT_PURSE } from '../src/systems/arena/arenaLadder.js';
 import { boutPoints } from '../src/systems/arena/arenaLeague.js';
 import { revenantCandidate } from '../src/systems/revenant/revenant.js';
-import { createArenaBouts } from '../src/scenes/arenaBouts.js';
+import { createArenaBouts } from '../src/scenes/arena/arenaBouts.js';
 import { createArenaClaims } from '../src/net/arena/arenaClaims.js';
 import { newBout, boutTick, boutHit, boutAtMarks, takeBoutEvents, callMs, COUNT_MS, BOUT_LIMIT_MS } from '../src/systems/arena/arenaBout.js';
 import { SAND_BARRED_EFFECTS, SAND_BARRED_KINDS, SAND_CEILING_M, onTheSand, sandPotionRefusal, sandSpellRefusal, stripSandBarred, restoreSandHeld } from '../src/systems/arena/arenaKit.js';
@@ -41,7 +41,7 @@ import { mintArenaReceipt, readArenaReceipt, arenaReceiptValid } from '../src/ne
 import { fakeRooms } from './fakeRoom.mjs';
 import { standService } from './accountDb.mjs';
 import { laurelWorthy, laurelOfBoard, ARENA_ATTEMPTS_KEEP_S } from '../server-account/src/arena.js';
-import { createArenaOnline } from '../src/scenes/arenaOnline.js';
+import { createArenaOnline } from '../src/scenes/arena/arenaOnline.js';
 import { arenaLadderOf } from '../src/net/arena/arenaLaw.js';
 
 const { subtle } = globalThis.crypto;
@@ -178,7 +178,7 @@ test('AUDIT ARENA-LADDER T4: the hosts resolve a fighter\'s blow on a fighter by
   assert.match(ef, /if \(blowConnects\(f\.ai, meleeHitConnects\(/);
   assert.match(ef, /d = blowScaled\(f\.ai, d\);/);
   for (const h of ['src/scenes/world.js', 'src/scenes/exterior.js']) assert.match(rd(h), /registerBlowDodgedListener\('arena', \(ai\) => arenaBouts\.blowDodged\(ai\)\);/, h);
-  const ab = rd('src/scenes/arenaBouts.js');
+  const ab = rd('src/scenes/arena/arenaBouts.js');
   assert.match(ab, /function blowDodged\(ai\) \{[\s\S]*?recordStrike\(C\.rec, t, from\);\s*boutMiss\(C\.b, \{ from, now: t \}\);/);
   // a relay's telegraph drawn off its word, where it was wound up (AUDIT ARENA-LADDER 2: at the relay's moment - R2 below)
   assert.match(ab, /if \(w\.s && foe\?\.ai\?\.feet\) \{\s*const land = relayLandLocal\(C, w, t\);\s*const p = relayToStage\(C, w\.ox, w\.oz\);/);
@@ -270,7 +270,7 @@ test('AUDIT ARENA-LADDER L1: A LOSS BREAKS THE TIER\'S RUN - back to its first b
   assert.deepEqual([l2.ladder.tier, l2.ladder.won, l2.runLost], [1, 0, true], 'a judges\' loss in the second tier: its run, never the first tier\'s title');
   assert.equal(ladderAfter(champ.ladder, { won: false, how: 'draw' }).ladder.record.losses, champ.ladder.record.losses + 1, 'a draw counts as a loss');
   assert.match(ARENA_TEXT.ladder.runLost('the Pit'), /run in the Pit is over/);
-  assert.match(rd('src/scenes/arenaBouts.js'), /else if \(out\.runLost\) lines\.push\(ARENA_TEXT\.ladder\.runLost\(ARENA_TEXT\.tiers\[out\.ladder\.tier\]\)\);/);
+  assert.match(rd('src/scenes/arena/arenaBouts.js'), /else if \(out\.runLost\) lines\.push\(ARENA_TEXT\.ladder\.runLost\(ARENA_TEXT\.tiers\[out\.ladder\.tier\]\)\);/);
 });
 
 test('AUDIT ARENA-LADDER L2: EVERY TIER\'S CHAMPION FIGHTS AS AN ELITE - offline (spawned elite on both floors) and on the relay (its body the elite multipliers\'); no other bout\'s foe is (mutants: a champion plain; a bout\'s foe elite; the spawn\'s elite dropped)', () => {
@@ -280,7 +280,7 @@ test('AUDIT ARENA-LADDER L2: EVERY TIER\'S CHAMPION FIGHTS AS AN ELITE - offline
   }
   const wm = rd('src/scenes/worldModes.js');
   assert.equal((wm.match(/bout: o\.bout \?\? null, eliteFoe: !!o\.elite \}/g) ?? []).length, 2, 'both floors\' stage spawns');
-  assert.match(rd('src/scenes/arenaBouts.js'), /stage\.spawn\(f\.spec\.mobile, feet, \{ level: f\.spec\.level, elite: !!f\.spec\.elite,/);
+  assert.match(rd('src/scenes/arena/arenaBouts.js'), /stage\.spawn\(f\.spec\.mobile, feet, \{ level: f\.spec\.level, elite: !!f\.spec\.elite,/);
   assert.deepEqual([ARENA_ELITE_HP_MULT, ARENA_ELITE_DMG_MULT], [ELITE_FOE_HEALTH_MULT, ELITE_FOE_DAMAGE_MULT], 'the relay\'s elite is the world\'s');
   const plain = arenaFoeStats(M.Knight, 5), el = arenaFoeStats(M.Knight, 5, { elite: true });
   assert.equal(el.hp, plain.hp * 5);
@@ -357,7 +357,7 @@ test('AUDIT ARENA-LADDER L5: THE SAND\'S KIT LAW - in a bout of one\'s own no po
   assert.equal(stripSandBarred(P), SAND_BARRED_KINDS.length);
   assert.deepEqual(P.activeEffects.map((e) => e.kind), ['shield'], 'a Shield stays');
   assert.match(rd('src/scenes/hostMagic.js'), /why = spellRefusal\?\.\(sp\) \?\? sandSpellRefusal\(sp\);/, 'every host\'s one cast engine asks');
-  const ab = rd('src/scenes/arenaBouts.js');
+  const ab = rd('src/scenes/arena/arenaBouts.js');
   assert.match(ab, /if \(boutLive\(C\.b\)\) stripSandBarred\(P\);/, 'the floor\'s frame takes them off');
   assert.match(ab, /if \(C\.you && P && kitBout\(C\) && boutLive\(C\.b\)\) stripSandBarred\(P\);/, 'and the relay\'s ladder\'s');
   assert.match(ab, /function kitBout\(C\) \{ return C\?\.relay \? C\.relay\.kind === 'pve' && !!C\.you : !!C\?\.ladder; \}/, 'a ladder or practice bout, or the relay\'s ladder I fight');
@@ -380,7 +380,7 @@ test('AUDIT ARENA-LADDER L6: A CEILING OVER THE SAND - my bout\'s ring holds the
   duel.arena = { centre: [0, 5, 0], radius: 14 };
   PlayerMotor.prototype._keepInArena.call(duel);
   assert.equal(duel.pos[1], 12, 'a duel\'s ring: height never touched');
-  assert.match(rd('src/scenes/arenaBouts.js'), /radius: cur\.ring \?\? RING_R, \.\.\.\(kitBout\(cur\) \? \{ ceilAbove: SAND_CEILING_M \} : \{\}\) \}/, 'my ladder bout\'s ring names it');
+  assert.match(rd('src/scenes/arena/arenaBouts.js'), /radius: cur\.ring \?\? RING_R, \.\.\.\(kitBout\(cur\) \? \{ ceilAbove: SAND_CEILING_M \} : \{\}\) \}/, 'my ladder bout\'s ring names it');
 });
 
 // ── THE BOUT'S HOLES ─────────────────────────────────────────────────────────────────────────────────────
@@ -407,7 +407,7 @@ test('AUDIT ARENA-LADDER A2: a fighter on the sand is its bout\'s - no dispel or
   assert.match(dc, /resetAllyTeamOnPlayerAttack, boutGate, bumpAtkCount, inBout, playerBoutOf,/, '...and published on foeDeps');
   for (const [h, s] of [['world.js', w], ['exterior.js', ex]]) assert.match(s, /if \(inBout\(f\)\) return;   \/\/ AUDIT ARENA-LADDER A2: the Wabbajack/, h);
   assert.match(dc, /if \(foeDeps\?\.inBout\?\.\(f\)\) return;   \/\/ AUDIT ARENA-LADDER A2: the Wabbajack/);
-  const ab = rd('src/scenes/arenaBouts.js');
+  const ab = rd('src/scenes/arena/arenaBouts.js');
   assert.match(ab, /if \(foe\.dead\) \{\s*if \(boutLive\(C\.b\) && !boutFighter\(C\.b, fid\)\?\.out\) \{ if \(!C\.ex && !boutFighter\(C\.b, YOU\)\?\.out\) \{ voidBout\(C\); return; \} boutFell\(C\.b, fid, t\); \}/);   // AUDIT ARENA-LADDER 2: never once I am out
   assert.match(ab, /function voidBout\(C\) \{\s*deps\.say\?\.\(ARENA_TEXT\.verdict\.void\);\s*if \(C\.ladder\) \{ deps\.heal\?\.\(\); refundMine\(C\); \}\s*dismiss\(\);/);
 });
@@ -423,11 +423,11 @@ test('AUDIT ARENA-LADDER A3: the player\'s tag is the driver\'s own, held live -
   assert.equal(boutGate(foe, { isPlayer: true }, true), false, 'out: no fighter\'s mark any more');
   tag.out = false; tag.hold = true;
   assert.equal(playerBoutOf().hold, true);
-  assert.match(rd('src/scenes/arenaBouts.js'), /if \(boutFighter\(C\.b, from\)\?\.out\) \{ if \(foe\?\.entity\) foe\.entity\.health = Math\.min\(foe\.entity\.maxHealth \?\? foe\.entity\.health, foe\.entity\.health \+ dmg\); return; \}/);
+  assert.match(rd('src/scenes/arena/arenaBouts.js'), /if \(boutFighter\(C\.b, from\)\?\.out\) \{ if \(foe\?\.entity\) foe\.entity\.health = Math\.min\(foe\.entity\.maxHealth \?\? foe\.entity\.health, foe\.entity\.health \+ dmg\); return; \}/);
 });
 
 test('AUDIT ARENA-LADDER A4: my damage is the striker\'s the formula named a moment ago, never the nearest fighter facing me; a fighter is taken off the stage it stood on (mutants: the told striker unread; the host\'s stage read)', () => {
-  const ab = rd('src/scenes/arenaBouts.js');
+  const ab = rd('src/scenes/arena/arenaBouts.js');
   assert.match(ab, /if \(to === YOU\) C\.hitMe = \{ from, at: t \};/);
   assert.match(ab, /const told = C\.hitMe;\s*C\.hitMe = null;\s*if \(told && lawNow\(\) - told\.at <= RESOLUTION_MS && !boutFighter\(C\.b, told\.from\)\?\.out\) return told\.from;/);
   assert.equal((ab.match(/\(C\.stage \?\? stage\)\?\.remove\?\.\(foe\)/g) ?? []).length, 4, 'all four removals');
@@ -471,7 +471,7 @@ test('AUDIT ARENA-LADDER O1b: the relay opens a ladder bout only for a ticket - 
   const no = p.sent.filter((m) => m.t === 'arena' && m.k === 'no').at(-1);
   assert.equal(no?.m, 'no bout', 'AUDIT ARENA-LADDER 2: a word an older build ends its bout on');
   assert.equal(ARENA_NO_TEXT['no bout'], 'That bout is over.');
-  assert.match(rd('src/scenes/arenaOnline.js'), /const over = w\.k === 'no' && \(w\.m === 'no bout' \|\|/, 'and every build ends its bout on it');
+  assert.match(rd('src/scenes/arena/arenaOnline.js'), /const over = w\.k === 'no' && \(w\.m === 'no bout' \|\|/, 'and every build ends its bout on it');
   assert.equal(await R.room._boutOf?.() ?? null, null, 'no bout opened');
 });
 
@@ -593,7 +593,7 @@ test('AUDIT ARENA-LADDER O5: the client asks its ticket once the floor is entere
   await settle();
   c.A.tick();
   assert.equal(c.boutSent.at(-1)?.z, 'feedc0de0000000a');
-  assert.match(rd('src/scenes/arenaOnline.js'), /try \{ await claims\.flush\(\); await claims\.idle\?\.\(\); \} catch \{[^}]*\}\s*if \(bout !== b\) return;\s*if \(claims\.ladderKept/, 'every receipt carried and answered before the ask');
+  assert.match(rd('src/scenes/arena/arenaOnline.js'), /try \{ await claims\.flush\(\); await claims\.idle\?\.\(\); \} catch \{[^}]*\}\s*if \(bout !== b\) return;\s*if \(claims\.ladderKept/, 'every receipt carried and answered before the ask');
   const ask = c.order.find((x) => Array.isArray(x) && x[0] === 'attempt');
   assert.ok(c.order.indexOf('enter') < c.order.indexOf(ask), 'asked once the floor is entered');
   assert.equal(ask[3], c.entered.at(-1)[1], 'for the room it is fought in');
@@ -700,7 +700,7 @@ test('AUDIT ARENA-LADDER 2 S4: the client - a guest is told the ladder takes a r
   await settle(6);
   assert.ok(o.order.filter((x) => x === 'board').length > boards, 'the board asked again');
   assert.ok(o.said.some((l) => /not your next ladder bout/i.test(l)), 'and the service\'s reason said');
-  assert.match(rd('src/scenes/arenaOnline.js'), /if \(claims\.ladderKept\?\.\(\)\) \{ say\(O\.stillRecording\); endBout\(\); return; \}/);
+  assert.match(rd('src/scenes/arena/arenaOnline.js'), /if \(claims\.ladderKept\?\.\(\)\) \{ say\(O\.stillRecording\); endBout\(\); return; \}/);
   // the queue: a flush asked mid-flight waits for it, and a kept ticketed ladder receipt is told
   let release; const gate = new Promise((r) => { release = r; });
   const calls = [];
@@ -719,7 +719,7 @@ test('AUDIT ARENA-LADDER 2 S4: the client - a guest is told the ladder takes a r
 });
 
 test('AUDIT ARENA-LADDER 2 B1: the kit law\'s holes - every fighter is pacify-immune (a Calm through a weapon refused too), an elite fighter never flees as a revenant, a held ring\'s stripped effect comes back after the bout (mutants: the immunity unset; the revenant gate dropped; the held effect unmarked)', () => {
-  assert.match(rd('src/scenes/arenaBouts.js'), /foe\.entity\.bout = tags\.get\(f\.id\); foe\.entity\.items = \[\]; foe\.entity\.pacifyImmune = true; \}/);
+  assert.match(rd('src/scenes/arena/arenaBouts.js'), /foe\.entity\.bout = tags\.get\(f\.id\); foe\.entity\.items = \[\]; foe\.entity\.pacifyImmune = true; \}/);
   assert.match(rd('src/systems/effects.js'), /if \(target\.pacifyImmune\) \{ out\.swayRefused = /, 'the one sway door refuses an immune target, whatever cast it');
   const elite = { level: 12, eliteFoe: true, mobileType: M.Barbarian };
   assert.equal(revenantCandidate(elite), true, 'an elite in the street may come back');
@@ -731,7 +731,7 @@ test('AUDIT ARENA-LADDER 2 B1: the kit law\'s holes - every fighter is pacify-im
   assert.equal(restoreSandHeld(P), true, 'restarted at the bout\'s end');
   assert.equal(P._sandHeld, undefined);
   assert.equal(restoreSandHeld(P), false, 'once');
-  const ab = rd('src/scenes/arenaBouts.js');
+  const ab = rd('src/scenes/arena/arenaBouts.js');
   assert.equal((ab.match(/restoreSandHeld\(P\)/g) ?? []).length, 3, 'the healers (both) and a bout let go');
 });
 
@@ -752,10 +752,10 @@ test('AUDIT ARENA-LADDER 2 B2: A BOUT WON AGAIN AFTER A LOST RUN PAYS NO PURSE A
   assert.deepEqual([L.tier, L.won, L.paid], [1, 0, 0], 'a new tier unpaid');
   assert.equal(arenaLadderRestore({ tier: 0, won: 2 }).paid, 2, 'a save before it: what is won was paid');
   assert.equal(arenaLadderSnapshot(L).paid, 0);
-  const ab = rd('src/scenes/arenaBouts.js');
+  const ab = rd('src/scenes/arena/arenaBouts.js');
   assert.match(ab, /: C\.next\.repeat \? ARENA_TEXT\.purse\.repeat :/);
   assert.match(ab, /purse, repeat: !!C\.next\.repeat, champion:/);
-  assert.match(rd('src/scenes/arenaOnline.js'), /if \(d\?\.recorded === true\) won = d\.won === true && d\.repeat !== true;/);
+  assert.match(rd('src/scenes/arena/arenaOnline.js'), /if \(d\?\.recorded === true\) won = d\.won === true && d\.repeat !== true;/);
 });
 
 test('AUDIT ARENA-LADDER 2 R1: the relay - one telegraph on the sand at a time (a pair of elite champions never lands two at once); fighters level on the card are a draw (mutants: the one-at-a-time gate dropped; the first fighter\'s card)', () => {

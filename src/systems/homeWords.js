@@ -7,7 +7,7 @@
 // so one door never says "45,000 gold ... your account at the Bank of the
 // Empire" beside "10000 gold a day ... this region's bank account". Pure, and
 // imports nothing: systems/online/onlineHomes.js, systems/homeRent.js,
-// systems/arena/arenaText.js and scenes/decorTool.js all read it, and onlineHomes
+// systems/arena/arenaText.js and scenes/decor/decorTool.js all read it, and onlineHomes
 // already imports homeRent and arenaText.
 // ═══════════════════════════════════════════════════════════════════
 

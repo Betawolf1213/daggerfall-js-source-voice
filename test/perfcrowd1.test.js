@@ -137,7 +137,7 @@ test('PERF-GC1: the desktop shell sets the young generation\'s semi-space to 32 
 });
 
 test('PERF-SAILS1: a boat\'s walk makes a node\'s matrix only where it moved - and every matrix is the reference walk\'s to the bit through a turned spar, a moved hull, a part switched off while the hull moved and on again, and a part hung elsewhere (mutants: the parent\'s making not asked; the local values not asked; the parent not asked)', async () => {
-  const { createComeSailAwayPool, activeObjects } = await import('../src/scenes/comeSailAwayPool.js');
+  const { createComeSailAwayPool, activeObjects } = await import('../src/scenes/comeSailAway/comeSailAwayPool.js');
   const { Boat } = await import('../src/systems/comeSailAway/comeSailAwayBoat.js');
   const { fileURLToPath } = await import('node:url');
   const fileFetch = async (url) => { const bytes = readFileSync(fileURLToPath(url)); return { ok: true, json: async () => JSON.parse(bytes.toString('utf8')), arrayBuffer: async () => bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.length) }; };

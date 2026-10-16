@@ -219,7 +219,7 @@ test('ETHER-LEGENDS her terrors at sea: the Drowned Queen\'s timbers knit while 
   assert.equal(q.damage.hull, hurt, 'nothing knits in the first quiet seconds');
   s.run(10);
   assert.ok(q.damage.hull > hurt, 'her timbers knit');
-  const host = read('src/scenes/navalHost.js');
+  const host = read('src/scenes/naval/navalHost.js');
   assert.match(host, /if \(legendOfClass\(s\.cls\.id\)\?\.trait !== 'mends' \|\| s\.damage\.state !== SHIP_STATES\.afloat \|\| s\.damage\.fire > 0\) return;/);
   assert.match(host, /if \(clock - s\.damage\.lastHitAt < LEGEND_MEND_QUIET_S \|\| s\.damage\.hull >= s\.damage\.maxHull\) return;/);
   assert.match(host, /s\.damage\.repair\(\{ hull: s\.damage\.maxHull \* LEGEND_MEND_PER_S \* d, sail: 0, crew: 0 \}\);/);
@@ -248,7 +248,7 @@ test('ETHER-SHIPS the strands at sea: a wild isle\'s site floats its casks out w
 });
 
 test('ETHER-SHIPS by source: the director told the sea (its band and its legend), the crown\'s waters none past the Veil, a ship of the sea launched under its own names and colours; the world\'s door to the legends, the papers and the strands (mutants: each seam)', () => {
-  const host = read('src/scenes/navalHost.js');
+  const host = read('src/scenes/naval/navalHost.js');
   assert.match(host, /ether: etherCtx\(w\),/);
   assert.match(host, /const l = deps\.ether\?\.legendHere\?\.\(w\.px, w\.py, \{ night: !!w\.night \}\) \?\? null;/);
   assert.match(host, /return \{ band, legend: l \? \{ id: l\.id, classId: l\.classId \} : null \};/, 'her class to the director');

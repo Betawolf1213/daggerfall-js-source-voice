@@ -39,7 +39,7 @@ const STRENGTH_SPREAD = 3;
 /** How many wagers the book keeps. */
 export const WAGERS_KEPT = 20;
 /** AUDIT PRE-MERGE 1003 B3: THE BOUT LEFT - an exhibition of this screen's seen past its word and walked away from before
- *  its verdict (scenes/arenaBouts.js dismiss), kept as the hour's verdict seen: no side won it for the one who backed
+ *  its verdict (scenes/arena/arenaBouts.js dismiss), kept as the hour's verdict seen: no side won it for the one who backed
  *  either (settleBook - lost), and the book on it is shut (wagerRefusal). */
 export const BOUT_LEFT = 'left';
 /** A verdict seen as the book keeps it: a side, a draw (null), or the bout left. */

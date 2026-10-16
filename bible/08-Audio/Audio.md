@@ -741,7 +741,7 @@ whole blow, its gain and pitch set live. The riding loop is unchanged - its clip
 
 ## AUDIT SD III, SD20d (2026-10-07): a named bed - a loop the engine runs
 
-The Hour's beds (`scenes/sdAir.js`) and the Deadlands' (`scenes/deadlandsAir.js`) rode the riding loop's shape
+The Hour's beds (`scenes/superDungeon/sdAir.js`) and the Deadlands' (`scenes/deadlandsAir.js`) rode the riding loop's shape
 (`setLoop`, `setLoop3d`: a non-looping source re-armed from its `ended` - DFU's `if (!isPlaying) Play()`, right for a
 hoofbeat's swap): at every pass of a bed a gap of the main thread's dispatch, the Hour's void every 5.8 s, its works
 every 2. Two doors on the engine (`systems/audio.js`): `setBed(name, clip, { volume, pitch })` and `setBed3d(name, clip,

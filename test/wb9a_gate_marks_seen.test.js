@@ -20,8 +20,8 @@ import {
 import { GATE_ASPECTS, GATE_TRIALS } from '../src/net/gate/gateMods.js';
 import { ASPECT_COLORS, EMBER_COLOR } from '../src/world/gate/gateBoss.js';
 import { bossBarModel, drawGateBossBar, destroyGateBossBar } from '../src/ui/gate/gateBossBar.js';
-import { createGatePool } from '../src/scenes/gatePool.js';
-import { createGateCourt } from '../src/scenes/gateCourt.js';
+import { createGatePool } from '../src/scenes/gate/gatePool.js';
+import { createGateCourt } from '../src/scenes/gate/gateCourt.js';
 import { gateTimes, gateModsOf, gateBossOf } from '../src/net/gate/gateLaw.js';
 import { GATE_RISE_MS } from '../src/net/gate/gateLaw.js';
 import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';

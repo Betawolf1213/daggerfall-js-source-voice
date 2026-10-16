@@ -335,7 +335,7 @@ under the pins. Its job:
   fight switched off, which has no ship to bring (M4). It is sent again every `IN_RESEND_MS` (20 s), or every
   `IN_RETRY_MS` (3 s) while unanswered. A fight alive whose cell says nothing for `SERPENT_HEARD_MS` (12 s) is left and
   asked for again (M5).
-- **My balls on it.** The naval host (`scenes/navalHost.js`) adds its exposed segments to the shots' targets as
+- **My balls on it.** The naval host (`scenes/naval/navalHost.js`) adds its exposed segments to the shots' targets as
   `serpent:<segment>`. A ball or barrel of MINE that strikes one gives its gun's own harm (my Guns refit's with it) to
   `struck`. The targets are made once a frame, at the frame's moment (AUDIT SERPENT 2 F9). The host gathers them for
   `HIT_GATHER_MS` (500 ms) into one `hit` word per zone: the head while it is
@@ -350,7 +350,7 @@ under the pins. Its job:
   - `warp`, which QUAYS gave the harbour: the naval host's warp answers the coil's hold first.
   - `drift`, new: a world-space velocity added to the sea's current under her, which carries the whirl's pull and a
     blow's throw (`systems/comeSailAway/comeSailAway.js` `lateUpdateSailing`) - SERPENT4: and in its waters, the ships' bumpers
-    (`scenes/navalHost.js` `bumperDrift`).
+    (`scenes/naval/navalHost.js` `bumperDrift`).
   - `gale`, SERPENT4's: its gale about my ship at her helm in its waters (`SERPENT_GALE`, section 16).
 - **Leaving**: going offline forgets the fight and lets my ship go (`leave`), and the omen stands nothing - no ring,
   no compass mark - until it is ready again (L4). A new serpent day forgets the last fight's attacks, numbered from one

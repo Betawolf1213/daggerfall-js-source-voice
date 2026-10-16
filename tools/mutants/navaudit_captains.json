@@ -406,7 +406,7 @@
   },
   {
     "name": "NAV1-the-boarded-mark-kept",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    entry.ship.boarded = false;   // AUDIT NAV1 (B1): the fight is over - a prize is let go like any hulk once out of sight",
     "new": "    // (the mark kept)",
     "tests": [
@@ -415,7 +415,7 @@
   },
   {
     "name": "NAV1-a-prize-engaged",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "engaged: (afloat && (e.ship.mode === 'engage' || e.ship.mode === 'board')) || boarding?.shipId === e.id || !!e.raider || !!e.liner || !!e.takenBy",
     "new": "engaged: (afloat && (e.ship.mode === 'engage' || e.ship.mode === 'board')) || boarding?.shipId === e.id || !!e.raider || !!e.liner || e.ship.damage.state === SHIP_STATES.prize || !!e.takenBy",
     "tests": [
@@ -424,7 +424,7 @@
   },
   {
     "name": "NAV1-hulls-through-each-other",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        if (A.movable && B.movable) { shove(A, [push[0] / 2, push[1] / 2]); shove(B, [-push[0] / 2, -push[1] / 2]); }",
     "new": "        if (A.movable && B.movable) { /* passed through */ }",
     "tests": [
@@ -433,7 +433,7 @@
   },
   {
     "name": "NAV1-her-way-kept",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (into > 0) x.ship.speed *= clamp(1 - into, 0, 1);",
     "new": "      // (her way kept)",
     "tests": [
@@ -442,7 +442,7 @@
   },
   {
     "name": "NAV1-my-boat-shoved",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    for (const b of myBoats()) list.push({ ship: null, movable: false,",
     "new": "    for (const b of myBoats()) list.push({ ship: null, movable: true,",
     "tests": [
@@ -451,7 +451,7 @@
   },
   {
     "name": "NAV1-no-galley-rams",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    checkShipRams();\n    separateHulls();",
     "new": "    separateHulls();",
     "tests": [
@@ -460,7 +460,7 @@
   },
   {
     "name": "NAV1-the-rams-brace-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        const dealt = Math.round(closing * RAM_DAMAGE * GALLEY_RAM * (st.guns.braced ? BRACE_TAKEN : 1));",
     "new": "        const dealt = Math.round(closing * RAM_DAMAGE * GALLEY_RAM);",
     "tests": [
@@ -469,7 +469,7 @@
   },
   {
     "name": "NAV1-one-clamped-step",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const total = paused ? 0 : Math.min(Math.max(0, dt), FRAME_STEP_S * FRAME_STEPS_MAX);",
     "new": "    const total = paused ? 0 : Math.min(Math.max(0, dt), FRAME_STEP_S);",
     "tests": [
@@ -478,7 +478,7 @@
   },
   {
     "name": "NAV1-a-boarder-not-chasing",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "  const chasesMe = (e) => (e.ship.mode === 'engage' || e.ship.mode === 'board') && e.ship.target === myId();",
     "new": "  const chasesMe = (e) => e.ship.mode === 'engage' && e.ship.target === myId();",
     "tests": [

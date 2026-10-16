@@ -164,7 +164,7 @@
   },
   {
     "name": "SEAT-HALL-largest",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "(b.cells > a.cells ? b : a)",
     "new": "(b.cells < a.cells ? b : a)",
     "tests": [
@@ -173,7 +173,7 @@
   },
   {
     "name": "SEAT-HALL-court",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "return deps.charterClear?.(at) ?? null;",
     "new": "return null;",
     "tests": [
@@ -182,7 +182,7 @@
   },
   {
     "name": "SEAT-HALL-commit",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    if (whyNotHere(p)) return false;   // HOME-YARD: off the lot; SEAT-HALL: out of the Charter Room - the bar says why\n    p.busy = true;",
     "new": "    p.busy = true;",
     "tests": [
@@ -191,7 +191,7 @@
   },
   {
     "name": "SEAT-HALL-tool-cap",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": ": Number.isSafeInteger(r?.cap) ? r.cap : DECOR_CAP);",
     "new": ": DECOR_CAP);",
     "tests": [

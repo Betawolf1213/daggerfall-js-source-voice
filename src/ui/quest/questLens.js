@@ -314,7 +314,7 @@ function entryKey(row, step, message) {
 const newsKey = (id, e) => (e.stepID != null ? `${id}|${e.stepID}|${e.messageID}` : `${id}|m${e.messageID}`);
 
 /**
- * THE LENS. One per quest bridge: scenes/questBridge.js makes it over
+ * THE LENS. One per quest bridge: scenes/quest/questBridge.js makes it over
  * its own walk and resets it when a save is loaded.
  *
  * `look(where)` answers `{ quests, events }`:

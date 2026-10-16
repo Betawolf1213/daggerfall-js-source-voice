@@ -119,7 +119,7 @@
   },
   {
     "name": "AUDIT-WB9-a-blow-sent-from-a-perch",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "      if (!fromHisCourt(s, t)) return false;   // AUDIT WB9 (brain F1): the relay takes no blow from outside the court he fights in\n",
     "new": "",
     "tests": [
@@ -128,7 +128,7 @@
   },
   {
     "name": "AUDIT-WB9-a-crystal-offered-to-a-perch",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": " && fromHisCourt(s, t)) for (let k = 0; k < rk.n; k++)",
     "new": ") for (let k = 0; k < rk.n; k++)",
     "tests": [
@@ -155,7 +155,7 @@
   },
   {
     "name": "AUDIT-WB9-a-crystal-offered-in-the-last-breath",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "!(rk.landAt !== null && t >= rk.landAt - RECKON_CLOSE_MS) && ",
     "new": "",
     "tests": [
@@ -245,7 +245,7 @@
   },
   {
     "name": "AUDIT-WB9-the-walkways-never-handed-over",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "      for (const w of WALKS) _walked[w.k] = walkFormed(s.xa, w.k, t);",
     "new": "      for (const w of WALKS) _walked[w.k] = 0;",
     "tests": [
@@ -318,7 +318,7 @@
   },
   {
     "name": "AUDIT-WB9-the-stun-said-before-the-last-crystal",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    _targets.length = 0;\n    _crystalDraw.length = 0;\n    if (rk && !rk.ended) {",
     "new": "    if (s.stunAt && s.stunAt !== stunHeard && t < s.stunUntil) { stunHeard = s.stunAt; if (t - s.stunAt <= RECKON_LATE_MS) { say(COURT_RECKON_TEXT.broken(bossOf(s).name)); sound(BOSS_CUES.stunned, s, t, null); } }\n    _targets.length = 0;\n    _crystalDraw.length = 0;\n    if (rk && !rk.ended) {",
     "tests": [

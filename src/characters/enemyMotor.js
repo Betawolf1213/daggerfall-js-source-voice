@@ -1862,7 +1862,7 @@ export class EnemyAI {
 
   /**
    * ARENA-FIX 8 (2026-10-02, the port's own - DFU's arena is a mod's, and no DFU motor walks to a point it was told):
-   * A WALK TO A MARK. A bout's fighter walks in from its gate to its mark on the sand (scenes/arenaBouts.js walkIn) by
+   * A WALK TO A MARK. A bout's fighter walks in from its gate to its mark on the sand (scenes/arena/arenaBouts.js walkIn) by
    * the pursuit's own laws - the classic turn in place inside the 5.625 degree move gate, the same capsule, obstacle,
    * ledge and detour probes and gravity (`_walkStep`) - at `pace` of its move speed. It decides and senses nothing on
    * the way (the bout holds it); at WALK_ARRIVE_M of the point it stops and `walkArrived` says so. A blow shoves it as

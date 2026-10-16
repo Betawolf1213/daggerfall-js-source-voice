@@ -13,8 +13,8 @@ import { DAY_MIN } from '../src/systems/livingWorld/dayPlan.js';
 import { createRelations } from '../src/systems/livingWorld/relations.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
 import { mintKeepsake, keepsakeFor } from '../src/systems/livingWorld/keepsake.js';
-import { createDeepRemains } from '../src/scenes/deepRemains.js';
-import { watchStep } from '../src/scenes/livingWatch.js';
+import { createDeepRemains } from '../src/scenes/livingWorld/deepRemains.js';
+import { watchStep } from '../src/scenes/livingWorld/livingWatch.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const TOWN = Object.freeze({ mapId: 12345, blocks: 9, region: 17, people: 3, port: false });

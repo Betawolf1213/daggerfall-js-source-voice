@@ -16,7 +16,7 @@ import { sampleHeight, isWaterHeight } from '../src/world/terrain/terrainTiles.j
 import { livingMap, partiesOver } from './lwRoads.mjs';
 import { partyAt, wayAt, wayOf, nativeDry, dryStop, whenWalked, STOP_RING_N, DRY_STEP_N, NATIVE_PIXEL, NATIVE_PER_M, CALENDAR_MPM, WALK_FROM_H, WALK_TO_H, HALT_CATCH_UP } from '../src/systems/livingWorld/trips.js';
 import { troubleOf, troubledTrip } from '../src/systems/livingWorld/trouble.js';
-import { CAMP_RING_N, FIGHT_RING_N, FOE_RING_N, partyPlaces } from '../src/scenes/livingRoads.js';
+import { CAMP_RING_N, FIGHT_RING_N, FOE_RING_N, partyPlaces } from '../src/scenes/livingWorld/livingRoads.js';
 import { DAY_MIN } from '../src/systems/livingWorld/dayPlan.js';
 
 /** A WoodsFile's three-method surface over a byte-per-pixel function (test/spawnshore.test.js's), the large map flat. */

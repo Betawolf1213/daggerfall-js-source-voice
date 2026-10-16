@@ -2,7 +2,7 @@
 // ARENA5 (2026-10-03): YOUR LADDER REPLAY - bible/11-Multiplayer/Arena.md "2. The fights", the table's Spectate row:
 // offline, "exhibitions, your ladder replay". The last REPLAY_KEEP ladder bouts this save fought, recorded small into the
 // save's arena record (systems/save/save.js `arena.replays`), and one of them played back on the floor's instance as a watched
-// bout. Pure: a recording grown by the bout driver (scenes/arenaBouts.js, beside its own law), a record out, a record in,
+// bout. Pure: a recording grown by the bout driver (scenes/arena/arenaBouts.js, beside its own law), a record out, a record in,
 // and the words that play it back.
 //
 // WHAT IS KEPT, AND HOW SMALL. At REPLAY_HZ (ten a second): each fighter's feet on the sand (from the floor's centre, a
@@ -16,7 +16,7 @@
 // Melee's worst is under REPLAY_BYTES_MAX; measured in test/arena5_replay.test.js. Versioned inside its own shape (`v`);
 // a save from before ARENA5 - or a record of any other shape - reads back with none.
 //
-// HOW IT PLAYS. Not a second driver: the relay's bout mirror (scenes/arenaBouts.js startRelay / relayWord over
+// HOW IT PLAYS. Not a second driver: the relay's bout mirror (scenes/arena/arenaBouts.js startRelay / relayWord over
 // net/arena/arenaLink.js) already stands puppets, the HUD, the crowd, the Herald and the music from a stream of words. A replay
 // IS such a stream (`replayFeed`): every fighter a puppet of the relay's own kind (`ai` 1 - the player too, as the class
 // enemy of their own career), its walk the `mv` words between two ticks, its blows `atk`, the health bars `hp`, the law's
@@ -250,7 +250,7 @@ export function replayBoutId(rec) {
 }
 
 /**
- * THE WORDS THAT PLAY A RECORD (scenes/arenaBouts.js relayWord's own), on this screen's clock from `t0`, about the floor
+ * THE WORDS THAT PLAY A RECORD (scenes/arena/arenaBouts.js relayWord's own), on this screen's clock from `t0`, about the floor
  * centre `centre` (`[x, y, z]` - the instance's): `{ first, st, due(t), yawAt(i, t), end }` - `first` the fighters' places
  * before the state (each puppet stood where the bout began), `st` the bout's state at its first bell, `due(t)` every word
  * whose moment has come since the last call (in order: the walks, the blows, the health, the law's events - the call

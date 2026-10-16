@@ -60,7 +60,7 @@ export const isNaturePiece = (piece) => piece?.model == null && Array.isArray(pi
  *  record - [archive, record]. */
 export const yardNatureFlat = (flat, season) => [getNatureArchive(flat[0], season), flat[1]];
 
-/** DECOR-LPT: a piece's turn (its record's yaw, degrees - scenes/decorRoom.js decorMatrix) as a 3D tree's (radians, the
+/** DECOR-LPT: a piece's turn (its record's yaw, degrees - scenes/decor/decorRoom.js decorMatrix) as a 3D tree's (radians, the
  *  same way round: BB_VS turns a tree as world/mat4.js trs turns a model about +Y). */
 export const yardTreeYaw = (piece) => (Number(piece?.rot?.[0]) || 0) * (Math.PI / 180);
 

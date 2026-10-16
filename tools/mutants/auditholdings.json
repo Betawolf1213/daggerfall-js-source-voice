@@ -203,7 +203,7 @@
   },
   {
     "name": "AH-F8-the-failed-claim-record-kept",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": " if (i >= 0) list.splice(i, 1); deps.board?.forgetDeed?.(deed); return false; }",
     "new": " if (i >= 0) list.splice(i, 1); return false; }",
     "tests": [
@@ -221,7 +221,7 @@
   },
   {
     "name": "AH-Q1-the-plank-to-her-innermost-rail",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const head = outOfDeck(m, [side * sx, sy, 0]);",
     "new": "    const head = outOfDeck(m, [side * (sx - 3), sy, 0]);",
     "tests": [
@@ -230,7 +230,7 @@
   },
   {
     "name": "AH-Q2-a-galley-brought-round-to-a-quay",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (!f || DOCK_REFUSED.includes(hull)) return null;",
     "new": "    if (!f) return null;",
     "tests": [
@@ -239,7 +239,7 @@
   },
   {
     "name": "AH-Q4-the-gangway-over-her-own-trigger",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (!e) { const g = boatTrigger ? null : gangwayInReach(); return g ? takeGangway(g) : false; }",
     "new": "    if (!e) { const g = gangwayInReach(); return g ? takeGangway(g) : false; }",
     "tests": [
@@ -248,7 +248,7 @@
   },
   {
     "name": "AH-Q4-takes-over-her-own-trigger",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    return !!(boardableOnFoot() || (!boatTrigger && gangwayInReach()));",
     "new": "    return !!(boardableOnFoot() || gangwayInReach());",
     "tests": [
@@ -257,7 +257,7 @@
   },
   {
     "name": "AH-Q4-ashore-from-anywhere-aboard",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        if (Math.hypot(g.deckAt[0] - feet[0], g.deckAt[2] - feet[2]) <= GANGWAY_ASHORE && facing(g.landward)) return { ...g, way: 'ashore' };",
     "new": "        if (Math.hypot(g.head[0] - feet[0], g.head[2] - feet[2]) <= GANGWAY_REACH + 1 && facing(g.landward)) return { ...g, way: 'ashore' };",
     "tests": [
@@ -267,7 +267,7 @@
   },
   {
     "name": "AH-Q5-the-warp-berth-free-to-the-roll",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (warping?.k === `${key}#${i}`) return false;",
     "new": "    if (false) return false;",
     "tests": [
@@ -276,7 +276,7 @@
   },
   {
     "name": "AH-Q5-an-arriving-ship-sees-herself",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    for (const e of sea.values()) { const r = e.ship.errand; if (e.ship !== except && r && r.harbour === key",
     "new": "    for (const e of sea.values()) { const r = e.ship.errand; if (r && r.harbour === key",
     "tests": [
@@ -285,7 +285,7 @@
   },
   {
     "name": "AH-Q8-nowhere-where-unknown",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (known || Math.hypot(v[0], v[2]) > DOCK_WAY) deps.dockedPort(b, null);",
     "new": "      deps.dockedPort(b, null);",
     "tests": [
@@ -294,7 +294,7 @@
   },
   {
     "name": "AH-Q8-under-way-unsaid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (known || Math.hypot(v[0], v[2]) > DOCK_WAY) deps.dockedPort(b, null);",
     "new": "      if (known) deps.dockedPort(b, null);",
     "tests": [
@@ -304,7 +304,7 @@
   },
   {
     "name": "AH-Q9-a-gangway-onto-no-quay",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (deps.quayLaid && !deps.quayLaid(d.key, d.index)) return null;",
     "new": "    if (false) return null;",
     "tests": [
@@ -313,7 +313,7 @@
   },
   {
     "name": "AH-Q9-the-warp-carried-across",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    warping = null; gangwaySaid = null;   // AUDIT HOLDINGS Q9",
     "new": "    // AUDIT HOLDINGS Q9",
     "tests": [
@@ -322,7 +322,7 @@
   },
   {
     "name": "AH-Q9-the-word-with-the-look",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const g = gangwayInReach(false);",
     "new": "    const g = gangwayInReach();",
     "tests": [
@@ -331,7 +331,7 @@
   },
   {
     "name": "AH-Q1-ashore-under-the-plank",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const [ax, az] = quayToScene(frame, f.x > x0 ? Math.min(f.x + 0.6, x1 - 0.4) : x0 + 1.6, hz);",
     "new": "    const [ax, az] = quayToScene(frame, x0 + 1.6, hz);",
     "tests": [
@@ -340,7 +340,7 @@
   },
   {
     "name": "AH-T5-a-peer-at-a-berth-unseen",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    for (const m of deps.pool?.peerBoats ?? []) if (m !== except && m.GameObject && Math.hypot(",
     "new": "    for (const m of []) if (m !== except && m.GameObject && Math.hypot(",
     "tests": [
@@ -350,7 +350,7 @@
   },
   {
     "name": "AH-T5-warped-in-under-fire",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "|| Math.hypot(pose.velocity[0], pose.velocity[2]) > DOCK_WAY || hostileNearMe()) { warping = null; return null; }",
     "new": "|| Math.hypot(pose.velocity[0], pose.velocity[2]) > DOCK_WAY) { warping = null; return null; }",
     "tests": [
@@ -359,7 +359,7 @@
   },
   {
     "name": "AH-T1-the-guns-refit-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (Number.isFinite(hurt.hull)) hurt.hull *= k;",
     "new": "    if (Number.isFinite(hurt.hull)) hurt.hull *= 1;",
     "tests": [
@@ -368,7 +368,7 @@
   },
   {
     "name": "AH-T1-every-boat-refitted-alike",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const k = Number(uid > 0 ? deps.refit?.({ uid })?.guns : 1);",
     "new": "    const k = Number(deps.refit?.({ uid: 42 })?.guns ?? 1);",
     "tests": [

@@ -6,7 +6,7 @@
 // wind-up, glows the attack's colour, and his voice gives the wind-up's cue; at the landing the attack frames play out").
 //
 // PURE. The court's state (net/gate/gateLink.js, the relay's words folded) and a clock in; a pose, a light, a cue out. The
-// court's driver (scenes/gateCourt.js) turns them into a billboard, a light in the court's channel and sounds.
+// court's driver (scenes/gate/gateCourt.js) turns them into a billboard, a light in the court's channel and sounds.
 //
 // HIS BODY is the mobile the look names (a Daedra Lord for Valkynaz Ruhn - archive 286, the frames every client
 // already has) drawn at BOSS_SCALE times its size, the orientation tables and clip rates its own (characters/

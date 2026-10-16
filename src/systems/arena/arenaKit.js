@@ -9,9 +9,9 @@
 //   - no potion is drunk (systems/useItem.js's potion arm asks first, and the bottle is kept);
 //   - no spell carrying Invisibility, Levitate, Chameleon, Shadow, Calm, Charm or Teleport is cast, whatever casts it - a
 //     readied spell, an item's (scenes/hostMagic.js wardedHere, the one engine every host runs);
-//   - those effects already on the player are taken off while the fight is live (scenes/arenaBouts.js frame) - a
+//   - those effects already on the player are taken off while the fight is live (scenes/arena/arenaBouts.js frame) - a
 //     Levitate cast at the gate, a ring's Chameleon (a held item's, restarted when the bout is over - restoreSandHeld);
-//   - AUDIT ARENA-LADDER 2: and no fighter can be calmed or charmed by any door (scenes/arenaBouts.js marks every fighter
+//   - AUDIT ARENA-LADDER 2: and no fighter can be calmed or charmed by any door (scenes/arena/arenaBouts.js marks every fighter
 //     `pacifyImmune`, WB8a's - a weapon's Cast-When-Strikes and a tongue's pacify reach it past the cast engine).
 // The port's own: DFU has no arena. Ledger A (ARENA).
 import { playerBoutOf } from '../../characters/enemyTargets.js';
@@ -26,7 +26,7 @@ export const SAND_BARRED_EFFECTS = Object.freeze([13, 14, 23, 24, 33, 34, 43]);
 /** The live effects (systems/effects.js BUFF_KINDS' words) those leave on the player. */
 export const SAND_BARRED_KINDS = Object.freeze(['invisNormal', 'invisTrue', 'levitate', 'chameleonNormal', 'chameleonTrue', 'shadeNormal', 'shadeTrue']);
 
-/** The ceiling over the sand, metres above the ring's centre (player/motor.js _keepInArena, scenes/arenaBouts.js ring):
+/** The ceiling over the sand, metres above the ring's centre (player/motor.js _keepInArena, scenes/arena/arenaBouts.js ring):
  *  over the highest honest jump (AcrobatMotor's jumpSpeed 4.5 at Jumping 100, the Jump spell and Athleticism - x2.3, 2.7 m)
  *  and under a Levitate's reach over a melee fighter. */
 export const SAND_CEILING_M = 4;

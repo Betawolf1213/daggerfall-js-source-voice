@@ -18,7 +18,7 @@ import { createCaptainLedger, CHARTS_MAX } from '../src/systems/naval/captainLed
 import { createHarbourOffice } from '../src/scenes/harbourOffice.js';
 import { exchangeText, mountNavalYardWindow } from '../src/ui/naval/navalYardWindow.js';
 import { classById } from '../src/systems/naval/navalShips.js';
-import { SITE_LOT, CACHE_LOTS } from '../src/scenes/navalHost.js';
+import { SITE_LOT, CACHE_LOTS } from '../src/scenes/naval/navalHost.js';
 import { STRONGBOX_KEY, STRONGBOX_RARITY_TIER } from '../src/systems/naval/navalPlunder.js';
 import { sea } from './navalSea.mjs';
 

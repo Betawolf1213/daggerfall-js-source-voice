@@ -92,5 +92,5 @@ test('QUEST-VOID wired: the dungeon mount re-lays on the built dungeon first, it
   assert.ok(relay < body.indexOf('questBridge.mountScene(dungeonQuestAdapter'), 'before the mount');
   assert.match(body, /if \(relayingBuilt\) return;/);
   assert.match(body, /finally \{ relayingBuilt = false; \}/);
-  assert.match(src('src/scenes/questBridge.js'), /relayBuiltDungeon\(location, mapId\) \{\n\s+return relayBuiltDungeon\(machine, location, \{ carriesQuestItem/);
+  assert.match(src('src/scenes/quest/questBridge.js'), /relayBuiltDungeon\(location, mapId\) \{\n\s+return relayBuiltDungeon\(machine, location, \{ carriesQuestItem/);
 });

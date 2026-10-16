@@ -514,7 +514,7 @@
   },
   {
     "name": "LW11-wire-robbed",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "const trip = deps.robbed?.(p.trip.id) != null ? { ...p.trip, robbed: { t: /** @type {number} */ (deps.robbed(p.trip.id)) } } : p.trip;",
     "new": "const trip = p.trip;",
     "tests": [
@@ -523,7 +523,7 @@
   },
   {
     "name": "LW11-robbed-label",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "  if (trip.robbed) return to ? `${bound} to ${to} (robbed)` : `${bound} (robbed)`;",
     "new": "",
     "tests": [
@@ -532,7 +532,7 @@
   },
   {
     "name": "LW11-robbed-mark",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "robbed: deps.robbed?.(p.trip.id) != null }, '', beset),",
     "new": "robbed: false }, '', beset),",
     "tests": [

@@ -26,7 +26,7 @@ import { isDeclaredItemField } from '../src/systems/item/itemFields.js';
 import { THUNDERLOCK_TEMPLATE, PELLET_TEMPLATE } from '../src/characters/thunderlockIds.js';
 import { execFileSync } from 'node:child_process';
 import { RANDOM_TREASURE_ICONS, validLootItem } from '../src/systems/loot/loot.js';
-import { createGateCourt, SPEW_AT_MS, RECEIPT_WAIT_MS, COURT_STRIKE_TEXT } from '../src/scenes/gateCourt.js';
+import { createGateCourt, SPEW_AT_MS, RECEIPT_WAIT_MS, COURT_STRIKE_TEXT } from '../src/scenes/gate/gateCourt.js';
 import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import { mintReceipt } from '../src/net/gate/gateReceipt.js';
 import { courtToDungeon, COURT_TEXT } from '../src/world/gate/gateArena.js';

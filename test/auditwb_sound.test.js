@@ -9,7 +9,7 @@ import { readFileSync } from 'node:fs';
 import { createCourtScore, courtScoreFor, gateScoreSongs, GATE_SONGS, SCORE_SILENCE, SCORE_STING_MS, SCORE_STING_LEAD_MS } from '../src/systems/gate/gateScore.js';
 import { MusicService, MUSIC_FADE_OUT_S, MUSIC_FADE_IN_S } from '../src/systems/music.js';
 import { SongPlayer } from '../src/systems/song/songPlayer.js';
-import { createGateCourt } from '../src/scenes/gateCourt.js';
+import { createGateCourt } from '../src/scenes/gate/gateCourt.js';
 import { createSpoilsPool } from '../src/scenes/spoilsPool.js';
 import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import { courtToDungeon, courtLights } from '../src/world/gate/gateArena.js';

@@ -1,5 +1,5 @@
 // SD14b (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 7 and section 16's SD14b;
-// Mac: "The detail needs to exceed that of the oblivion gates"): THE HOUR'S AIR (scenes/sdAir.js) - four beds and four
+// Mac: "The detail needs to exceed that of the oblivion gates"): THE HOUR'S AIR (scenes/superDungeon/sdAir.js) - four beds and four
 // kinds of far event where the Deadlands have three and three. The beds: the void's wind breathing on the Hour's clock,
 // the Hour's works (a tick and a tock a second, made out of the player's own clunk and grind) everywhere, the Orrery's
 // hum (the bell slowed to a drone, made) in the hall, the arena's gears under its floor - all four let go the frame I
@@ -13,7 +13,7 @@ import { readFileSync } from 'node:fs';
 import {
   SD_AIR_FAR, createSdAir, sdAirEvents, sdAirWindGain, buildHourWorks, buildOrreryHum, SD_AIR_VOID, SD_AIR_WORKS, SD_AIR_HUM, SD_AIR_GEARS,
   SD_AIR_HUM_AT, SD_AIR_GEARS_AT, SD_AIR_EVENTS, SD_AIR_RATE, SD_WORKS_SECONDS, SD_HUM_SECONDS,
-} from '../src/scenes/sdAir.js';
+} from '../src/scenes/superDungeon/sdAir.js';
 import { airSourceAt, AIR_BACKLOG_S } from '../src/scenes/deadlandsAir.js';
 import { SD_SKY_PERIOD } from '../src/render/sdSky.js';
 import { SD_ARENA, SD_ORRERY, dungeonToRealm } from '../src/net/superDungeon/sdBrain.js';

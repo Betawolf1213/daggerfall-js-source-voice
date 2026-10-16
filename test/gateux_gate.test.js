@@ -5,7 +5,7 @@
 // the bar's foot without its phase line (ui/gate/gateBossBar.js); the spoils taken by the press alone (scenes/spoilsPool.js -
 // the walk-over's own pins moved with it: wb5, wb9f, wbx); and THE DAMAGE CHART - counted by the relay's brain
 // (net/gate/gateBrain.js damageChart), carried with the kill (net/wire.js `dm`, relay world136), folded (net/gate/gateLink.js) and
-// drawn to the side once he has fallen (ui/gate/gateDamageChart.js, scenes/gateCourt.js). Design:
+// drawn to the side once he has fallen (ui/gate/gateDamageChart.js, scenes/gate/gateCourt.js). Design:
 // bible/11-Multiplayer/World-Bosses.md section 16.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -81,7 +81,7 @@ test('GATE-UX 2 under his health no phase is said - the foot says the court\'s f
   drawGateBossBar(late, { doc });
   assert.deepEqual(said(), [BOSS_BAR_TEXT.fighters(3), BOSS_BAR_TEXT.reckonIn('0:42'), BOSS_BAR_TEXT.wrathIn('1:01')], 'the countdowns kept');
   destroyGateBossBar();
-  assert.match(read('src/scenes/gateCourt.js'), /const c = courtPhaseCard\(s\.phase\); if \(c\) beat = \{ kind: 'phase', at: t, until: t \+ TITLE_HOLD_MS, \.\.\.c \};/, 'the turn shown as it comes (WB13e: its card)');
+  assert.match(read('src/scenes/gate/gateCourt.js'), /const c = courtPhaseCard\(s\.phase\); if \(c\) beat = \{ kind: 'phase', at: t, until: t \+ TITLE_HOLD_MS, \.\.\.c \};/, 'the turn shown as it comes (WB13e: its card)');
   assert.equal(BOSS_BAR_TOP, '58px');
   assert.match(BOSS_BAR_CSS, /\.wb-boss-foot \{/);
 });
@@ -307,7 +307,7 @@ test('GATE-UX 4 the chart\'s node: made once, its rows written when the chart ch
 });
 
 test('GATE-UX 4 the seams: the court draws the chart once he has fallen - from when this screen saw it, with my name, hidden with the HUD and under the step\'s fire - and puts it away as I leave; the host hands it my name on the relay and hides it with a held frame (mutants: the chart never drawn; drawn over the veil; left up after the court)', () => {
-  const c = read('src/scenes/gateCourt.js');
+  const c = read('src/scenes/gate/gateCourt.js');
   assert.match(c, /if \(s\.fell && chartAt === null\) chartAt = t;\n\s*drawGateDamageChart\(chartAt !== null \? damageChartModel\(s\.fell, \{ boss: bossOf\(s\)\.name, me: me\(\), since: chartAt, now: t \}\) : null, \{ hidden: hudHidden\(\) \|\| veiled\(\) \}\);/);
   assert.match(c, /marksSaid = false; fedHeard = null; marksAt = null; chartAt = null;/, 'a new fight (or none) forgets it');
   assert.match(c, /drawGateMarksCard\(null\);   \/\/ WB9a\n\s*drawGateDamageChart\(null\);/, 'gone as I leave');

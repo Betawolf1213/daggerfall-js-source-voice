@@ -13,7 +13,7 @@ import { readFileSync } from 'node:fs';
 import * as NAVAL_DECK from '../src/systems/naval/navalDeck.js';
 import { buildDeck, deckOf as deckGrid, intoDeck, outOfDeck, mainLevel, DECK_STEP, DECK_HEADROOM } from '../src/systems/naval/navalDeck.js';
 import { createCrewLife, crewRoster, deckExtentZ, LOOKOUT_BACK } from '../src/systems/naval/crewLife.js';
-import { peopleFlatsOf } from '../src/scenes/navalCrew.js';
+import { peopleFlatsOf } from '../src/scenes/naval/navalCrew.js';
 import { Boat, spawnBoat, HULL_NAMES, HULL_VARIANT_COUNTS } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { colliderPoses, raycastColliders, boxColliderTriangles, invertAffine, BUILTIN_COLLIDER_MESHES } from '../src/world/prefabColliders.js';
 import { multiply } from '../src/world/mat4.js';
@@ -603,7 +603,7 @@ test('AUDIT GALLEON D10 HER HANDS IDLE ON HER MAIN DECK: a hand gone up her flig
   assert.equal(sought, 0, `the hand on her castle sought for a talk ${sought} times of 40`);
   assert.equal(talked, 0, 'nobody else in reach to talk to');
   // the comments: what was measured
-  const DECK = src('src/systems/naval/navalDeck.js'), HOST = src('src/scenes/navalHost.js');
+  const DECK = src('src/systems/naval/navalDeck.js'), HOST = src('src/scenes/naval/navalHost.js');
   assert.doesNotMatch(DECK, /as often as one/, 'two risers between two centres "as often as one": four of fourteen gaps');
   assert.doesNotMatch(DECK, /at every\s+(?:\/\/\s*)?other tread/, 'cut "at every other tread": three times');
   assert.doesNotMatch(DECK, /a cell clear between its wells' walls/, 'one cell clear in the port well, two in the starboard\'s');

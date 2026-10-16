@@ -8,7 +8,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadQuestTables } from '../src/systems/quest/tables.js';
 import { QuestMachine } from '../src/systems/quest/machine.js';
-import { mintQuestFoeWave, bindQuestFoeHost } from '../src/scenes/questFoeHost.js';
+import { mintQuestFoeWave, bindQuestFoeHost } from '../src/scenes/quest/questFoeHost.js';
 import { isAlreadyInjected } from '../src/systems/quest/sceneMount.js';
 import { setLightSource, lightSourceListenerCount } from '../src/systems/lightSource.js';
 import { createHandheldTorches, readTorchSettings, HANDHELD_TORCHES_VENDOR, CLIPS } from '../src/systems/handheldTorches.js';

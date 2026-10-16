@@ -21,7 +21,7 @@
   },
   {
     "name": "AUDIT-GALLEON-2-RG1-the-pool-on-the-tenth",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "if (script.everyFrame ? !(dt > 0) : !fixDeformationsTick(script, dt)) return;",
     "new": "if (!fixDeformationsTick(script, dt)) return;",
     "tests": [
@@ -31,7 +31,7 @@
   },
   {
     "name": "AUDIT-GALLEON-2-RG1-every-frame-even-paused",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "script.everyFrame ? !(dt > 0) :",
     "new": "script.everyFrame ? false :",
     "tests": [
@@ -41,7 +41,7 @@
   },
   {
     "name": "AUDIT-GALLEON-2-RG1-a-still-rope-baked-again",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "if (script.everyFrame && rigStill(k, boneWorld, pose)) return;",
     "new": "if (false && rigStill(k, boneWorld, pose)) return;",
     "tests": [
@@ -51,7 +51,7 @@
   },
   {
     "name": "AUDIT-GALLEON-2-RG1-a-metre-unbaked",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "export const RIG_STILL_M = 0.001;",
     "new": "export const RIG_STILL_M = 1;",
     "tests": [
@@ -61,7 +61,7 @@
   },
   {
     "name": "AUDIT-GALLEON-2-RG1-still-against-last-frame",
-    "file": "src/scenes/comeSailAwayPool.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
     "old": "    if (still) return true;\n    k.rig.set(now); k.rigBaked = true;",
     "new": "    k.rig.set(now); k.rigBaked = true;\n    if (still) return true;",
     "tests": [

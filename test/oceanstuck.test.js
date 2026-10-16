@@ -11,8 +11,8 @@ import { PlayerMotor, afloatMessageStep, CANNOT_FLOAT_TEXT } from '../src/player
 import { Collider } from '../src/player/collider.js';
 import { applyMotorEffectFlags } from '../src/scenes/shared.js';
 import { exteriorSwimming } from '../src/player/exteriorSurface.js';
-import { createDeepWatersPlayer } from '../src/scenes/deepWatersPlayer.js';
-import { createSwimMovement } from '../src/scenes/deepWatersSwimMove.js';
+import { createDeepWatersPlayer } from '../src/scenes/deepWater/deepWatersPlayer.js';
+import { createSwimMovement } from '../src/scenes/deepWater/deepWatersSwimMove.js';
 import { flushStateChange } from '../src/systems/deepWater/deepWaterPlayer.js';
 
 const OCEAN = 34, FLOOR = 10, SHORE = 34.6, COAST = 100, DT = 1 / 60;

@@ -915,7 +915,7 @@
    "file": "src/scenes/exterior.js",
    "has": "playerEntity, gameMinutes: () => worldMinutes(), showOverlay",
    "clock": "event",
-   "why": "ARENA3: the gate's hour - the bookmaker's book and the Herald's doors; ARENA4b: and, through the gate, the Herald's choice at the hour and the banner the pause window's door reads (scenes/arenaGate.js heraldChoice / joined)"
+   "why": "ARENA3: the gate's hour - the bookmaker's book and the Herald's doors; ARENA4b: and, through the gate, the Herald's choice at the hour and the banner the pause window's door reads (scenes/arena/arenaGate.js heraldChoice / joined)"
   },
   {
    "file": "src/scenes/exterior.js",
@@ -934,7 +934,7 @@
    "file": "src/scenes/world.js",
    "has": "playerEntity, gameMinutes: () => worldMinutes(), showOverlay",
    "clock": "event",
-   "why": "ARENA3: the gate's hour - the bookmaker's book and the Herald's doors; ARENA4b: and, through the gate, the Herald's choice at the hour and the banner the pause window's door reads (scenes/arenaGate.js heraldChoice / joined)"
+   "why": "ARENA3: the gate's hour - the bookmaker's book and the Herald's doors; ARENA4b: and, through the gate, the Herald's choice at the hour and the banner the pause window's door reads (scenes/arena/arenaGate.js heraldChoice / joined)"
   },
   {
    "file": "src/scenes/world.js",

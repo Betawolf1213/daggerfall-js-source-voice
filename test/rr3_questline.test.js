@@ -68,7 +68,7 @@ test('RR3 the record: the four quest files vendored, the list\'s three rows, the
   assert.deepEqual(RR_FACTIONS_TABLE.map((r) => Number(r.split(',')[3])), [1020, 1021, 1022]);
   assert.deepEqual(RR_FACTION_IDS, { LordVerathon: 1020, CaptainUlthega: 1021, OrthusDharjen: 1022 });
   // the mod's Quests/ folder rides the pack loader's globs
-  const qd = rd('src/scenes/questData.js');
+  const qd = rd('src/scenes/quest/questData.js');
   assert.match(qd, /import\.meta\.glob\('\.\.\/\.\.\/vendor\/roleplay-realism\/Quests\/\*\.txt'/);
   // FORAGE-FIX (2026-09-28): a list is read as a quest is, and only Foraging's own is patched - RR's rides as shipped
   assert.match(qd, /const text = stripBom\(await load\(\)\);\n[\s\S]*?let patched = text;\n\s*if \(path\.includes\('\/vendor\/foraging\/'\)\) \{/);

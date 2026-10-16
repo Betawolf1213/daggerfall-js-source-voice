@@ -1,7 +1,7 @@
 [
   {
     "name": "NAV1O-claim-tie-higher",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "gen > otherGen || (gen === otherGen && String(id) < String(otherId));",
     "new": "gen > otherGen || (gen === otherGen && String(id) > String(otherId));",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "NAV1O-claim-count-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "gen > otherGen || (gen === otherGen && String(id) < String(otherId));",
     "new": "String(id) < String(otherId);",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "NAV1O-no-salt",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "seedBase: seedBaseOf(w.px ?? 0, w.py ?? 0, w.day ?? 0, SEED_SALT ^ idSalt(myId())),",
     "new": "seedBase: seedBaseOf(w.px ?? 0, w.py ?? 0, w.day ?? 0),",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "NAV1O-salt-offline",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "  if (typeof id !== 'string' || !id || id === 'local') return 0;",
     "new": "  if (typeof id !== 'string' || !id) return 0;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "NAV1O-dropped-at-once",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (heir) { adopt(e); adopted.push(e); } else e.orphan ??= clock;",
     "new": "      letGo(e);",
     "tests": [
@@ -47,7 +47,7 @@
   },
   {
     "name": "NAV1O-heir-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (heir) { adopt(e); adopted.push(e); } else e.orphan ??= clock;",
     "new": "      adopt(e); adopted.push(e);",
     "tests": [
@@ -56,7 +56,7 @@
   },
   {
     "name": "NAV1O-orphan-kept",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    for (const e of [...sea.values()]) if (e.owner && e.orphan != null && clock - e.orphan >= ORPHAN_S) letGo(e);\n",
     "new": "",
     "tests": [
@@ -65,7 +65,7 @@
   },
   {
     "name": "NAV1O-count-kept",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    rekey(e, null, nextNumber(), e.gen + 1);",
     "new": "    rekey(e, null, nextNumber(), e.gen);",
     "tests": [
@@ -75,7 +75,7 @@
   },
   {
     "name": "NAV1O-claim-ignored",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        const twin = bySeed(w.seed, w.classId, id);",
     "new": "        const twin = null;",
     "tests": [
@@ -84,7 +84,7 @@
   },
   {
     "name": "NAV1O-stale-never-released",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (!alive?.has?.(o) || clock - last > staleS) releaseOwner(o);",
     "new": "      if (!alive?.has?.(o)) releaseOwner(o);",
     "tests": [
@@ -93,7 +93,7 @@
   },
   {
     "name": "NAV1O-no-takeover-at-grapple",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    adopt(entry);\n    boarding = createBoarding(",
     "new": "    boarding = createBoarding(",
     "tests": [
@@ -102,7 +102,7 @@
   },
   {
     "name": "NAV1O-blow-by-id",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const entry = ownByN(hit.n);",
     "new": "    const entry = sea.get(`${myId()}:${hit.n}`) ?? null;",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "NAV1O-reader-region",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const region = Number.isInteger(spec.region) && spec.region >= 0 ? spec.region",
     "new": "    const region = Number.isInteger(spec.region) && spec.region >= 0 && false ? spec.region",
     "tests": [
@@ -120,7 +120,7 @@
   },
   {
     "name": "NAV1O-no-prediction",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      const ahead = e.orphan == null && e.ship.damage.state === SHIP_STATES.afloat ? (tgt.speed ?? 0) * Math.min(PREDICT_MAX_S, clock - (tgt.at ?? clock)) : 0;",
     "new": "      const ahead = 0;",
     "tests": [
@@ -129,7 +129,7 @@
   },
   {
     "name": "NAV1O-prediction-unbounded",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "(tgt.speed ?? 0) * Math.min(PREDICT_MAX_S, clock - (tgt.at ?? clock))",
     "new": "(tgt.speed ?? 0) * (clock - (tgt.at ?? clock))",
     "tests": [
@@ -138,7 +138,7 @@
   },
   {
     "name": "NAV1O-theirs-uncounted",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        else if (e.orphan == null && dist2d(e.ship.pos, feet) <= DESPAWN_BEYOND) ships.push({ id: e.id, pos: e.ship.pos, classId: e.ship.cls.id, theirs: true, afloat, berthed: atBerth(e.ship) });   // AUDIT SHIP-LIFE B1: another's moored ship is no more the sea's traffic than mine\n",
     "new": "",
     "tests": [
@@ -148,7 +148,7 @@
   },
   {
     "name": "NAV1O-non-stander-keeps-its-own",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (onWater) {\n      const w = where();",
     "new": "    if (onWater && stands) {\n      const w = where();",
     "tests": [
@@ -157,7 +157,7 @@
   },
   {
     "name": "NAV1O-non-stander-launches",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "density: launchesTraffic() ? trafficDensity(feet) : 0, player: feet,",
     "new": "density: trafficDensity(feet), player: feet,",
     "tests": [
@@ -166,7 +166,7 @@
   },
   {
     "name": "NAV1O-raider-seed-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (!e.owner && !e.raider && e.ship.cls.faction === 'pirate') { const r = list.find((x) => (x.seed >>> 0) === e.ship.seed); if (r) { e.raider = { id: r.id, chased: false, spent: spent.has(r.id) }; e.ship.temper = TEMPERS.bold; } }   // SEA-PEACE: a raider is bold\n",
     "new": "",
     "tests": [
@@ -238,7 +238,7 @@
   },
   {
     "name": "NAV1O-yield-keeps-raider",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (!e.owner) e.raider = null;\n",
     "new": "",
     "tests": [
@@ -247,7 +247,7 @@
   },
   {
     "name": "NAV1O-renumbered-left-sinking",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (e && (e.ship.seed !== w.seed || e.ship.cls.id !== w.classId)) { drop(e); e = null; }",
     "new": "      if (e && (e.ship.seed !== w.seed || e.ship.cls.id !== w.classId)) { letGo(e); e = null; }",
     "tests": [
@@ -256,7 +256,7 @@
   },
   {
     "name": "NAV1O-barrel-ship-unsaid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "wireBarrels.push({ id, pos: [...drop.point], at: clock, shooter: wireShooter });",
     "new": "wireBarrels.push({ id, pos: [...drop.point], at: clock });",
     "tests": [
@@ -265,7 +265,7 @@
   },
   {
     "name": "NAV1O-barrel-read-as-players",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "shooter: b.shooter >= 0 ? `${owner}:${b.shooter}` : `peer:${owner}`,",
     "new": "shooter: `peer:${owner}`,",
     "tests": [
@@ -274,7 +274,7 @@
   },
   {
     "name": "NAV1O-owners-barrel-a-ships",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "shooter: b.shooter >= 0 ?",
     "new": "shooter: b.shooter >= -1 ?",
     "tests": [
@@ -283,7 +283,7 @@
   },
   {
     "name": "NAV1O-peer-word-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "peerSelf.set(owner, { law: rec.law, me: rec.me, traffic: rec.traffic, at: clock, real: realClock, boat: rec.boat, laid: rec.laid });",
     "new": "peerSelf.set(owner, { law: {}, me: null, traffic: rec.traffic, at: clock, real: realClock, boat: rec.boat, laid: rec.laid });",
     "tests": [
@@ -292,7 +292,7 @@
   },
   {
     "name": "NAV1O-law-unsaid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "me, law: notoriety.snapshot(), traffic:",
     "new": "me, law: {}, traffic:",
     "tests": [
@@ -301,7 +301,7 @@
   },
   {
     "name": "NAV1O-boat-unsaid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "barrels: wireBarrels, me, law: notoriety.snapshot(),",
     "new": "barrels: wireBarrels, me: null, law: notoriety.snapshot(),",
     "tests": [
@@ -310,7 +310,7 @@
   },
   {
     "name": "NAV1O-boat-hull-unsaid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const me = st ? { hull: st.damage.hullShare(),",
     "new": "const me = st ? { hull: 1,",
     "tests": [
@@ -319,7 +319,7 @@
   },
   {
     "name": "NAV1O-boat-wreck-unsaid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "crippled: st.damage.state === SHIP_STATES.wrecked, boarders: setting('Boarders', true) !== false,",
     "new": "crippled: false, boarders: setting('Boarders', true) !== false,",
     "tests": [
@@ -328,7 +328,7 @@
   },
   {
     "name": "NAV1O-boat-setting-unsaid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "crippled: st.damage.state === SHIP_STATES.wrecked, boarders: setting('Boarders', true) !== false,",
     "new": "crippled: st.damage.state === SHIP_STATES.wrecked, boarders: true,",
     "tests": [
@@ -337,7 +337,7 @@
   },
   {
     "name": "NAV1O-contact-law-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "notoriety: (c) => self?.law?.[c] ?? 0, hullShare",
     "new": "notoriety: () => 0, hullShare",
     "tests": [
@@ -346,7 +346,7 @@
   },
   {
     "name": "NAV1O-contact-hull-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      const share = self?.me?.hull ?? 1;",
     "new": "      const share = 1;",
     "tests": [
@@ -355,7 +355,7 @@
   },
   {
     "name": "NAV1O-contact-wreck-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "crippled: !!self?.me?.crippled, boarders",
     "new": "crippled: false, boarders",
     "tests": [
@@ -364,7 +364,7 @@
   },
   {
     "name": "NAV1O-contact-boarders-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "boarders: self?.me ? self.me.boarders : false,",
     "new": "boarders: true,",
     "tests": [
@@ -373,7 +373,7 @@
   },
   {
     "name": "NAV1O-silent-boat-boarded",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "boarders: self?.me ? self.me.boarders : false,",
     "new": "boarders: self?.me ? self.me.boarders : true,",
     "tests": [
@@ -382,7 +382,7 @@
   },
   {
     "name": "NAV1O-grapple-unsaid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "deps.sendHit?.(navalHitData(out.grapple, { n: e.n, grapple: true }));",
     "new": "void 0;",
     "tests": [
@@ -391,7 +391,7 @@
   },
   {
     "name": "NAV1O-grapple-flood",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "clock - e.grappleAt >= GRAPPLE_CLAIM_S",
     "new": "true",
     "tests": [
@@ -400,7 +400,7 @@
   },
   {
     "name": "NAV1O-claim-refused",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (hit.grapple) {",
     "new": "if (false) {",
     "tests": [
@@ -409,7 +409,7 @@
   },
   {
     "name": "NAV1O-claim-setting-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (!e || boarding || !boat || setting('Boarders', true) === false || e.ship.cls.faction",
     "new": "if (!e || boarding || !boat || e.ship.cls.faction",
     "tests": [
@@ -418,7 +418,7 @@
   },
   {
     "name": "NAV1O-claim-any-ship",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "|| e.ship.cls.faction !== 'pirate' || e.ship.damage.state !== SHIP_STATES.afloat) return false;",
     "new": "|| e.ship.damage.state !== SHIP_STATES.afloat) return false;",
     "tests": [
@@ -427,7 +427,7 @@
   },
   {
     "name": "NAV1O-claim-struck-ship",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "|| e.ship.cls.faction !== 'pirate' || e.ship.damage.state !== SHIP_STATES.afloat) return false;",
     "new": "|| e.ship.cls.faction !== 'pirate') return false;",
     "tests": [
@@ -436,7 +436,7 @@
   },
   {
     "name": "NAV1O-claim-mid-fight",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (!e || boarding || !boat || setting('Boarders', true)",
     "new": "if (!e || !boat || setting('Boarders', true)",
     "tests": [
@@ -445,7 +445,7 @@
   },
   {
     "name": "NAV1O-claim-at-no-helm",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (!e || boarding || !boat || setting('Boarders', true)",
     "new": "if (!e || boarding || setting('Boarders', true)",
     "tests": [
@@ -454,7 +454,7 @@
   },
   {
     "name": "NAV1O-witness-mine-alone",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "strike(entry, hurt, from, true, strayOnAlly(entry, hurt, from));",
     "new": "strike(entry, hurt, from, false, strayOnAlly(entry, hurt, from));",
     "tests": [
@@ -463,7 +463,7 @@
   },
   {
     "name": "NAV1O-director-law-mine",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "notoriety: Math.max(notoriety.get(crown.name), ...[...peerSelf.values()].map((p) => p.law?.[crown.name] ?? 0)),",
     "new": "notoriety: notoriety.get(crown.name),",
     "tests": [
@@ -472,7 +472,7 @@
   },
   {
     "name": "NAV1O-director-law-theirs-alone",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "notoriety: Math.max(notoriety.get(crown.name), ...[",
     "new": "notoriety: Math.max(0, ...[",
     "tests": [
@@ -481,7 +481,7 @@
   },
   {
     "name": "NAV1O-peer-boat-untargeted",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (box) out.push({ id: `peer:${p.id}`, box, rig: rigBoxesOf(p.boat), hitBy: shipShot });",
     "new": "void box;",
     "tests": [
@@ -490,7 +490,7 @@
   },
   {
     "name": "NAV1O-peer-boat-struck-by-all",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "rig: rigBoxesOf(p.boat), hitBy: shipShot });",
     "new": "rig: rigBoxesOf(p.boat) });",
     "tests": [
@@ -499,7 +499,7 @@
   },
   {
     "name": "NAV1O-peer-shots-meet-her",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "(shooter.startsWith('peer:') || isMine(shooter))",
     "new": "(isMine(shooter))",
     "tests": [
@@ -508,7 +508,7 @@
   },
   {
     "name": "NAV1O-my-shots-meet-her",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "(shooter.startsWith('peer:') || isMine(shooter))",
     "new": "(shooter.startsWith('peer:'))",
     "tests": [
@@ -726,7 +726,7 @@
   },
   {
     "name": "NAV1O-helm-boat-unsaid",
-    "file": "src/scenes/comeSailAwayPeers.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPeers.js",
     "old": "hull: s.hull, yaw, boat: s.boat });",
     "new": "hull: s.hull, yaw });",
     "tests": [
@@ -942,7 +942,7 @@
   },
   {
     "name": "NAV1O-age-unsaid-host",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const volleys = wireVolleys.map((v) => ({ ...v, age: (clock - v.at) * 1000 }));",
     "new": "const volleys = wireVolleys;",
     "tests": [
@@ -951,7 +951,7 @@
   },
   {
     "name": "NAV1O-age-unflown-host",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "owner, since: (v.age ?? 0) / 1000 });",
     "new": "owner, since: 0 });",
     "tests": [
@@ -960,7 +960,7 @@
   },
   {
     "name": "NAV1O-offset-word-left",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "for (const w of [...wireVolleys, ...wireBarrels]) { w.pos[0] += o[0]; w.pos[1] += o[1]; w.pos[2] += o[2]; }",
     "new": "void o;",
     "tests": [
@@ -969,7 +969,7 @@
   },
   {
     "name": "NAV1O-offset-barrels-left",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "for (const w of [...wireVolleys, ...wireBarrels]) {",
     "new": "for (const w of [...wireVolleys]) {",
     "tests": [
@@ -978,7 +978,7 @@
   },
   {
     "name": "NAV1O-traffic-stander-alone",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (p.feet && dist2d(p.feet, feet) <= NAVAL_SHARE_RADIUS) d = Math.min(d, of(peerSelf.get(p.id)?.traffic ?? TRAFFIC_DEFAULT));",
     "new": "void p;",
     "tests": [
@@ -987,7 +987,7 @@
   },
   {
     "name": "NAV1O-traffic-reach-unbounded",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (p.feet && dist2d(p.feet, feet) <= NAVAL_SHARE_RADIUS) d =",
     "new": "if (p.feet) d =",
     "tests": [
@@ -996,7 +996,7 @@
   },
   {
     "name": "NAV1O-traffic-unsaid-host",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "traffic: setting('ShipsAtSea', TRAFFIC_DEFAULT), casks, spent: spentSaid, laid }, toWire);",
     "new": "traffic: TRAFFIC_DEFAULT, casks, spent: spentSaid, laid }, toWire);",
     "tests": [
@@ -1005,7 +1005,7 @@
   },
   {
     "name": "NAV1O-traffic-unkept",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "traffic: rec.traffic, at: clock, real: realClock, boat: rec.boat, laid: rec.laid });",
     "new": "traffic: TRAFFIC_DEFAULT, at: clock, real: realClock, boat: rec.boat, laid: rec.laid });",
     "tests": [
@@ -1014,7 +1014,7 @@
   },
   {
     "name": "NAV1O-flood-unbounded",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (flown.length >= PEER_VOLLEYS_MAX) continue;   // past what one player's guns say - seen, never flown\n",
     "new": "",
     "tests": [
@@ -1023,7 +1023,7 @@
   },
   {
     "name": "NAV1O-flood-window-kept",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const flown = (flownAt.get(owner) ?? []).filter((t) => clock - t <= NAVAL_VOLLEY_KEEP_MS / 1000);",
     "new": "const flown = flownAt.get(owner) ?? [];",
     "tests": [
@@ -1032,7 +1032,7 @@
   },
   {
     "name": "NAV1O-cask-unsaid-host",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const casks = shots.floaters().filter((f) => f.kind === 'flotsam' && !f.owner).map((f) => ({ id: Number(f.id), pos: f.pos, from: f.from, lot: f.lot, deep: !!f.deep }));",
     "new": "const casks = [];",
     "tests": [
@@ -1041,7 +1041,7 @@
   },
   {
     "name": "NAV1O-cask-drawn-unclaimed",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (e.type === 'pickup') { if (e.owner) claimCask(e); else pickFlotsam(e); }",
     "new": "if (e.type === 'pickup') pickFlotsam(e);",
     "tests": [
@@ -1050,7 +1050,7 @@
   },
   {
     "name": "NAV1O-claim-unanswered",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    granted.set(raw, { to: from, at: clock });\n    deps.sendHit?.(navalHitData(from, { n: 0, cask: raw, answer: true }));\n",
     "new": "    granted.set(raw, { to: from, at: clock });\n",
     "tests": [
@@ -1059,7 +1059,7 @@
   },
   {
     "name": "NAV1O-claim-answered-to-all",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (given.to === from) deps.sendHit?.(navalHitData(from, { n: 0, cask: raw, answer: true }));",
     "new": "deps.sendHit?.(navalHitData(from, { n: 0, cask: raw, answer: true }));",
     "tests": [
@@ -1068,7 +1068,7 @@
   },
   {
     "name": "NAV1O-claim-granted-twice",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (!f || f.kind !== 'flotsam' || f.owner) return false;   // hauled in, sunk, or never mine to give\n    shots.removeFloater(f.id);\n",
     "new": "    if (!f || f.kind !== 'flotsam' || f.owner) return false;   // hauled in, sunk, or never mine to give\n",
     "tests": [
@@ -1077,7 +1077,7 @@
   },
   {
     "name": "NAV1O-answer-drawn-twice",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    claims.delete(id);\n    pickFlotsam({ lot: c.lot, from: c.from, deep: c.deep, collector: c.collector, point: c.point });",
     "new": "    pickFlotsam({ lot: c.lot, from: c.from, deep: c.deep, collector: c.collector, point: c.point });",
     "tests": [
@@ -1086,7 +1086,7 @@
   },
   {
     "name": "NAV1O-answer-unclaimed-drawn",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (!c) return false;\n    claims.delete(id);",
     "new": "    if (!c) { pickFlotsam({ lot: 'S', from: 'pirateSloop', collector: 'me:0', point: [0, 0, 0] }); return true; }\n    claims.delete(id);",
     "tests": [
@@ -1095,7 +1095,7 @@
   },
   {
     "name": "NAV1O-claim-said-once",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      else if (clock - c.said >= CLAIM_AGAIN_S) { c.said = clock; deps.sendHit?.(navalHitData(c.owner, { n: 0, cask: c.raw })); }\n",
     "new": "",
     "tests": [
@@ -1104,7 +1104,7 @@
   },
   {
     "name": "NAV1O-claims-never-given-up",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (clock - c.at > CLAIM_WAIT_S) claims.delete(id);   // no answer: another's haul, or its owner gone\n      else if",
     "new": "      if",
     "tests": [
@@ -1113,7 +1113,7 @@
   },
   {
     "name": "NAV1O-grants-kept-forever",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    for (const [raw, g] of granted) if (clock - g.at > GRANT_KEEP_S) granted.delete(raw);\n",
     "new": "",
     "tests": [
@@ -1122,7 +1122,7 @@
   },
   {
     "name": "NAV1O-cask-gone-kept",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    for (const f of shots.floaters()) if (f.kind === 'flotsam' && f.owner === owner && !said.has(f.id)) shots.removeFloater(f.id);\n  }",
     "new": "  }",
     "tests": [
@@ -1131,7 +1131,7 @@
   },
   {
     "name": "NAV1O-cask-claimed-restood",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (claims.has(id)) continue;\n      const pos = toScene(c.pos);",
     "new": "      const pos = toScene(c.pos);",
     "tests": [
@@ -1140,7 +1140,7 @@
   },
   {
     "name": "NAV1O-cask-snap-unmoved",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (f) { f.pos[0] = pos[0]; f.pos[2] = pos[2]; f.deep = !!c.deep; }\n      else shots.dropFlotsam",
     "new": "      if (!f) shots.dropFlotsam",
     "tests": [
@@ -1149,7 +1149,7 @@
   },
   {
     "name": "NAV1O-cask-heir-rekey-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        f = was ? shots.floater(was.id) : null;",
     "new": "        f = null;",
     "tests": [
@@ -1158,7 +1158,7 @@
   },
   {
     "name": "NAV1O-cask-heir-keeps-orphans",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (heir) { f.id = o.id.slice(owner.length + 1); f.owner = null; f.orphanAt = null; }\n      else f.orphanAt ??= clock;",
     "new": "      f.orphanAt ??= clock;",
     "tests": [
@@ -1167,7 +1167,7 @@
   },
   {
     "name": "NAV1O-cask-orphans-kept",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    for (const f of casks) { const at = shots.floater(f.id)?.orphanAt; if (at != null && clock - at >= ORPHAN_S) shots.removeFloater(f.id); }\n",
     "new": "",
     "tests": [
@@ -1176,7 +1176,7 @@
   },
   {
     "name": "NAV1O-cask-owner-by-ships-alone",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const owners = new Set([...[...sea.values()].map((e) => e.owner), ...casks.map((f) => f.owner)].filter(Boolean));",
     "new": "const owners = new Set([...sea.values()].map((e) => e.owner).filter(Boolean));",
     "tests": [
@@ -1185,7 +1185,7 @@
   },
   {
     "name": "NAV1O-null-word-casks-kept",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      applyCasks(owner, [], toScene);   // AUDIT NAV1 (online #15): nothing of theirs afloat - never a cask an heir raises again\n",
     "new": "",
     "tests": [

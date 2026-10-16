@@ -4,7 +4,7 @@
 // "an outdoor lamp is the town's"), and nothing lit it as the town either. Now a TEXTURE.210 flat standing in a yard
 // lights as Daggerfall lights every one standing in a town block (RMBLayout.AddLight - world/city/cityLights.js): the town's
 // lantern at the flat's top, in the lanterns' hours, colour and flicker, ranked with the street's own. Pinned through the
-// real yard host (scenes/homeYards.js over scenes/decorRoom.js), the room's own law beside it (decor1.test.js holds the
+// real yard host (scenes/homeYards.js over scenes/decor/decorRoom.js), the room's own law beside it (decor1.test.js holds the
 // rest of it), and the world host's own night composition run out of its source over a real Renderer
 // (test/yardLightRig.mjs). AUDIT YARD-LIGHT's laws are test/audityardlight.test.js's. `06-Systems/Online-Arc.md`
 // YARD-LIGHT.
@@ -12,7 +12,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { yardLampOf, yardLampSlot, YARD_LAMP, YARD_LAMP_RAISE } from '../src/scenes/homeYards.js';
-import { createDecorRoom } from '../src/scenes/decorRoom.js';
+import { createDecorRoom } from '../src/scenes/decor/decorRoom.js';
 import { CITY_LIGHT_RANGE, CITY_LIGHT_INTENSITY, CITY_LIGHT_COLOR } from '../src/world/city/cityLights.js';
 import { decorYardPieceOf } from '../src/net/decorLaw.js';
 import { yardWorld, yardPiece, sized, settle } from './decorFakes.mjs';

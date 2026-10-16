@@ -342,7 +342,7 @@ test('WB9b the seams, by source: the world host refills one arena a frame from t
   assert.match(wm, /for \(const sl of walkSlabs\(\)\) ctx\.dynamicDraws\.push\(\{ gpu: _slabMesh, object: \{ matrix: slabMatrix\(sl, fl\?\.xa \?\? NO_XA, fl\?\.now \?\? 0\) \}, slab: sl \}\);/);
   const moved = wm.indexOf('if (d.slab) slabMatrix(d.slab, _floor?.xa ?? NO_XA, _floor?.now ?? 0, d.object.matrix);'), begin = wm.indexOf('renderer.beginFrame(proj, view, INTERIOR_LIGHT_DIR, WORLD_FRAME);');
   assert.ok(moved > 0 && moved < begin, 'the stones moved before the frame\'s draws');
-  const gc = read('src/scenes/gateCourt.js');
+  const gc = read('src/scenes/gate/gateCourt.js');
   assert.match(gc, /_mark\.court = nearestCourt\(mx, mz\); mark = _mark;/);
   const brain = read('src/net/gate/gateBrain.js');
   assert.match(brain, /if \(!onFloor\(pose\.x, pose\.z, f\.xa, now, POSE_SLACK\)\) return 0;/);

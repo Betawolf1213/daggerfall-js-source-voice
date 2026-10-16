@@ -14,7 +14,7 @@ import { isOutdoor, DAY_MIN } from '../src/systems/livingWorld/dayPlan.js';
 import { createRelations, EVENTS } from '../src/systems/livingWorld/relations.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
 import { townClassOf } from '../src/systems/livingWorld/looks.js';
-import { createLivingIndoors, soundRoom, INDOOR_TICK_S, INDOOR_APART_M, INDOOR_CLEAR_M, INDOOR_DOOR_M, INDOOR_MAX, INDOOR_SEEN_M } from '../src/scenes/livingIndoors.js';
+import { createLivingIndoors, soundRoom, INDOOR_TICK_S, INDOOR_APART_M, INDOOR_CLEAR_M, INDOOR_DOOR_M, INDOOR_MAX, INDOOR_SEEN_M } from '../src/scenes/livingWorld/livingIndoors.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const RATE = CLASSIC_MINUTES_PER_SECOND;

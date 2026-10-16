@@ -13,11 +13,11 @@ import * as LG from '../src/systems/arena/arenaLeague.js';
 import { recruiterChoice, quitAsk } from '../src/systems/arena/arenaHerald.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
-import { createArenaBouts, YOU } from '../src/scenes/arenaBouts.js';
+import { createArenaBouts, YOU } from '../src/scenes/arena/arenaBouts.js';
 import { newArenaLadder, nextLadderBout, exhibitionFor, LADDER_TIERS } from '../src/systems/arena/arenaLadder.js';
 import { arenaHudModel } from '../src/ui/arena/arenaHud.js';
 import { MINUTES_PER_DAY, DAYS_PER_YEAR } from '../src/systems/gameDate.js';
-import { createArenaGate, RECRUITER_BANNER } from '../src/scenes/arenaGate.js';
+import { createArenaGate, RECRUITER_BANNER } from '../src/scenes/arena/arenaGate.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const YEAR = DAYS_PER_YEAR * MINUTES_PER_DAY;

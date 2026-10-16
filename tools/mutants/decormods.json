@@ -122,7 +122,7 @@
   },
   {
     "name": "DECORMODS-live-once",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    if (modsLiveIn > 0 && modsLiveOf === list) return modsLive;",
     "new": "    if (modsLiveOf === list) return modsLive;",
     "tests": [

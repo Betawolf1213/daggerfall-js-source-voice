@@ -316,7 +316,7 @@ function placeSession(cards, c) { if (c.code) cards.unshift(c); else cards.push(
 /** AUDIT PRE-MERGE 1003b U7: whether the hall holds me queued or offered a bout. */
 const queuedOf = (hall) => hall?.queue === 'queued' || hall?.queue === 'offer';
 /**
- * ARENA6: THE PRIVATE SESSION'S CARD (scenes/arenaOnline.js sessionView): out of one, Host a session and Join with a
+ * ARENA6: THE PRIVATE SESSION'S CARD (scenes/arena/arenaOnline.js sessionView): out of one, Host a session and Join with a
  * code; in one, its code to share, who fights now or who is picked, its members - each with what it is (Host, Red, Blue,
  * Guest, Away) and, to the host alone, the presses that make it the Red or the Blue (a member here and registered, while
  * no bout is on) or remove it - the host's Start bout, End bout and Close session (a member's Leave), and its recent
@@ -435,7 +435,7 @@ export function hallBoardOnline(board, name = '') {
   return { title: ARENA_TEXT.undercroft.hallTitle, sub: O().hallTheirs, rows, empty: rows.length ? '' : ARENA_TEXT.undercroft.hallNone };
 }
 
-/** ARENA4b: THE KEEPER OF THE HALL ONLINE (scenes/arenaGate.js hall, the undercroft's Keeper - scenes/worldModes.js): the
+/** ARENA4b: THE KEEPER OF THE HALL ONLINE (scenes/arena/arenaGate.js hall, the undercroft's Keeper - scenes/worldModes.js): the
  *  wall as she reads it - my own names cut by the account's climb (systems/arena/arenaLadder.js hallOfChampions over the
  *  board's `me.ladder`: the Grand Champion, each tier's champion beaten), then the realm's Grand Champions, the newest
  *  first, each with its season; "not yet" for me beside theirs. Pure. */

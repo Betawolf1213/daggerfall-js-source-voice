@@ -217,7 +217,7 @@
   },
   {
     "name": "QUEST-HOME-the-mount-marks-nothing",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "      if (siteType === SITE_TYPES.Building) machine.noteSiteReached(adapter.currentMapId?.() ?? 0, buildingKey);\n",
     "new": "",
     "tests": [

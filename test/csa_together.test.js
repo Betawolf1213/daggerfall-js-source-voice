@@ -1,8 +1,8 @@
 // CSA-K / CSA-L (2026-09-28) - SAILING TOGETHER, AND THE HELM ON SCREEN (the player's ask: "I want people to be able to
 // sail together, to walk on board as it moves ... instead of an overuse of keybinds, is there a way we can instead
 // develop enhanced plus UI elements?"). The boat under way says its way (systems/comeSailAway/comeSailAwayWire.js `m`) and its
-// readers lead it (scenes/comeSailAwayPeers.js); another player's boat is boarded, stood on, carried by and left
-// (scenes/comeSailAwayAboard.js), the deck standing for everyone (FIELD BUGS 2026-10-01b); the others aboard are seen on the deck; the helm's
+// readers lead it (scenes/comeSailAway/comeSailAwayPeers.js); another player's boat is boarded, stood on, carried by and left
+// (scenes/comeSailAway/comeSailAwayAboard.js), the deck standing for everyone (FIELD BUGS 2026-10-01b); the others aboard are seen on the deck; the helm's
 // nine keys are a panel (ui/enhanced/enhancedHelm.js) and a pad's d-pad (ui/gamepadInput.js), pressing the registry's actions
 // through the host's one seam (scenes/world.js). The boats are the vendored hulls over a stand-in renderer and pipeline
 // (test/csa_online.test.js's); world.js's own statements are mounted where they are behaviour (audit0928_online's law).
@@ -12,12 +12,12 @@ import assert from 'node:assert/strict';
 import { quietFoesGate } from '../src/net/foesQuiet.js';   // SCALE2c
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';
-import { createComeSailAwayPeers, CSA_PEER_LEAD_MAX, CSA_PEER_SNAP_M } from '../src/scenes/comeSailAwayPeers.js';
+import { createComeSailAwayPool } from '../src/scenes/comeSailAway/comeSailAwayPool.js';
+import { createComeSailAwayPeers, CSA_PEER_LEAD_MAX, CSA_PEER_SNAP_M } from '../src/scenes/comeSailAway/comeSailAwayPeers.js';
 import {
   createComeSailAwayAboard, validAboardWord, localOf, worldOf, poseMatrix, CSA_ABOARD_BELOW, CSA_ABOARD_STEP, CSA_ABOARD_NEAR, CSA_ABOARD_GRACE, CSA_ABOARD_LOCAL_MAX,
   deckPose,
-} from '../src/scenes/comeSailAwayAboard.js';
+} from '../src/scenes/comeSailAway/comeSailAwayAboard.js';
 import { csaWireRecord, validCsaRecord, csaRecordKey, CSA_WIRE_SPEED_MAX, CSA_WIRE_TURN_MAX } from '../src/systems/comeSailAway/comeSailAwayWire.js';
 import { TRIGGER_MODEL } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { activationModelOf, boardPlaceOf, BOAT_ACTIONS, carriedPoint, yawDelta } from '../src/systems/comeSailAway/comeSailAway.js';

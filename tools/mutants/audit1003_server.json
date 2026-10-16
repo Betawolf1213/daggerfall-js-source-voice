@@ -123,7 +123,7 @@
   },
   {
     "name": "AUDIT1003-S4-reused-unsaid-on-the-client",
-    "file": "src/scenes/arenaOnline.js",
+    "file": "src/scenes/arena/arenaOnline.js",
     "old": "if (d?.recorded === false && (d.why === 'order' || d.why === 'reused' || d.why === 'forfeit')) say(O[d.why]);",
     "new": "if (d?.recorded === false && (d.why === 'order' || d.why === 'forfeit')) say(O[d.why]);",
     "tests": [
@@ -132,7 +132,7 @@
   },
   {
     "name": "AUDIT1003-S4-reused-paid-as-claimed-on-the-client",
-    "file": "src/scenes/arenaOnline.js",
+    "file": "src/scenes/arena/arenaOnline.js",
     "old": "else if (d?.why === 'claimed') won = c.r === 1;",
     "new": "else if (d?.why === 'claimed' || d?.why === 'reused') won = c.r === 1;",
     "tests": [

@@ -569,7 +569,7 @@ function render() {
           top.append(ab);
         }
         // QUEST-SHELF-MAIN (2026-10-13, Dudey: "an Abandon button for all quests except main quest"): every other running
-        // quest's Abandon (twice, BOUNTY1's arming) - QUEST-SHELF's own door (scenes/questBridge.js journalClean.abandon:
+        // quest's Abandon (twice, BOUNTY1's arming) - QUEST-SHELF's own door (scenes/quest/questBridge.js journalClean.abandon:
         // set aside, kept, reclaimed from the pause window's Quests tab), drawn where it may be (`canAbandon` - never the
         // main story's, a raid the sea runs, or one ending). A bounty's and a hunt's keep their own above.
         const clean = section === 'quests' && e.uid != null && !e.main && !isHuntQuestId(e.uid) && !isBountyQuestId(e.uid)
@@ -588,7 +588,7 @@ function render() {
           top.append(ab);
         }
         // QUEST-RESET (LostMyLeg: "an option that can fully reset a quest"): a running quest's Restart (twice, the same
-        // arming) - the quest started again from its first step (scenes/questBridge.js journalClean.restart), drawn where
+        // arming) - the quest started again from its first step (scenes/quest/questBridge.js journalClean.restart), drawn where
         // it may be (`canRestart` - the main story's steps among them; never one a questor gave, nor the world's own)
         const reset = section === 'quests' && e.uid != null && !isHuntQuestId(e.uid) && !isBountyQuestId(e.uid) ? deps.shelfDoor?.() ?? null : null;
         if (reset?.restart && reset.canRestart?.(e.uid)) {

@@ -41,7 +41,7 @@
   },
   {
     "name": "SD11A-L2F2-the-stones-not-solid",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "const floors = hallFloorTris(), solids = hallSolidTris(), tris",
     "new": "const floors = hallFloorTris(), solids = new Float32Array(0), tris",
     "tests": [
@@ -62,7 +62,7 @@
   },
   {
     "name": "SD11A-L2F2-turned-from-behind",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "      if (!beforeStone(i, at[0], at[2])) { say(SD_HALL_TEXT.front); return true; }",
     "new": "      if (false) { say(SD_HALL_TEXT.front); return true; }",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "SD11A-L2F3-the-hall-a-window",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "renderer.uploadEmissionTexture?.(SD_REALM_ARCHIVE, rec, art.emission, { white: true }); }",
     "new": "renderer.uploadEmissionTexture?.(SD_REALM_ARCHIVE, rec, art.emission); }",
     "tests": [
@@ -92,7 +92,7 @@
   },
   {
     "name": "SD11A-L2F3-the-steps-a-window",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "renderer.uploadEmissionTexture?.(SD_REALM_ARCHIVE, rec, art.emission, { white: true }); }",
     "new": "renderer.uploadEmissionTexture?.(SD_REALM_ARCHIVE, rec, art.emission); }",
     "tests": [
@@ -102,7 +102,7 @@
   },
   {
     "name": "SD11A-L2F3-the-echoes-a-window",
-    "file": "src/scenes/sdRemnant.js",
+    "file": "src/scenes/superDungeon/sdRemnant.js",
     "old": "renderer.uploadEmissionTexture?.(SD_REALM_ARCHIVE, rec, art.emission, { white: true }); }",
     "new": "renderer.uploadEmissionTexture?.(SD_REALM_ARCHIVE, rec, art.emission); }",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "SD11A-L2F9-the-hall-boxes-each-ask",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "      return draws && o ? targetList : NONE;",
     "new": "      return draws && o ? [...targetList] : NONE;",
     "tests": [
@@ -263,7 +263,7 @@
   },
   {
     "name": "SD11A-L2F9-the-breath-seen-a-frame",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "    breathSeen(_now[0], _breath);",
     "new": "    Object.assign(_breath, breathSeen(_now[0]));",
     "tests": [
@@ -273,7 +273,7 @@
   },
   {
     "name": "SD11A-L2F9-a-step-choosing-its-number",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "    if (solid) st.T[1] = y; else st.T[1] = SD_STEP_GONE_Y;",
     "new": "    st.T[1] = solid ? y : SD_STEP_GONE_Y;",
     "tests": [
@@ -283,7 +283,7 @@
   },
   {
     "name": "SD11A-L2F9-a-blow-ended-a-new-table",
-    "file": "src/scenes/sdRemnant.js",
+    "file": "src/scenes/superDungeon/sdRemnant.js",
     "old": "      if (blowMet.size) blowMet.clear();",
     "new": "      blowMet.clear();",
     "tests": [
@@ -293,7 +293,7 @@
   },
   {
     "name": "SD11A-L2F9-a-still-body-posed-again",
-    "file": "src/scenes/sdRemnant.js",
+    "file": "src/scenes/superDungeon/sdRemnant.js",
     "old": "    if (!d.hidden && was[0] === p.x && was[1] === p.z && was[2] === p.yw && was[3] === p.sink && was[4] === scale) return;\n",
     "new": "",
     "tests": [
@@ -303,7 +303,7 @@
   },
   {
     "name": "SD11A-L2F9-the-remnant-pose-made",
-    "file": "src/scenes/sdRemnant.js",
+    "file": "src/scenes/superDungeon/sdRemnant.js",
     "old": "remnantPose(s, t, _remPose), 0, dt)",
     "new": "remnantPose(s, t), 0, dt)",
     "tests": [
@@ -313,7 +313,7 @@
   },
   {
     "name": "SD11A-L2F9-the-echo-poses-made",
-    "file": "src/scenes/sdRemnant.js",
+    "file": "src/scenes/superDungeon/sdRemnant.js",
     "old": "echoPose(s, e, t, _echoPose), 1 + e, dt)",
     "new": "echoPose(s, e, t), 1 + e, dt)",
     "tests": [
@@ -323,7 +323,7 @@
   },
   {
     "name": "SD11A-L2F9-the-end-a-hypot",
-    "file": "src/scenes/sdEnd.js",
+    "file": "src/scenes/superDungeon/sdEnd.js",
     "old": "dx * dx + dy * dy + dz * dz > SD_STEP_JUMP_M * SD_STEP_JUMP_M;",
     "new": "Math.hypot(dx, dy, dz) > SD_STEP_JUMP_M;",
     "tests": [
@@ -343,7 +343,7 @@
   },
   {
     "name": "SD11A-L2F9-the-end-boxes-each-ask",
-    "file": "src/scenes/sdEnd.js",
+    "file": "src/scenes/superDungeon/sdEnd.js",
     "old": "    targets() { return _targets; },",
     "new": "    targets() { return [..._targets]; },",
     "tests": [
@@ -353,7 +353,7 @@
   },
   {
     "name": "SD11A-L2F9-the-feet-a-copy",
-    "file": "src/scenes/sdEnd.js",
+    "file": "src/scenes/superDungeon/sdEnd.js",
     "old": "lastFeet[0] = feet[0]; lastFeet[1] = feet[1]; lastFeet[2] = feet[2]; hasLast = true;",
     "new": "lastFeet.splice(0, 3, feet[0], feet[1], feet[2]); hasLast = true;",
     "tests": [
@@ -404,7 +404,7 @@
   },
   {
     "name": "SD11A-L2F9-the-blows-with-nothing-in-flight",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "      if (!sdAnyInFlight(s) && !pools.length) { inFire = false; shapes = NONE; fall(s, t); return; }\n",
     "new": "",
     "tests": [
@@ -415,7 +415,7 @@
   },
   {
     "name": "SD11A-L2F9-an-echos-blow-never-in-flight",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "  if (ec) for (let k = 0; k < ec.length; k++) if (ec[k].h > 0 && ec[k].atk) return true;\n",
     "new": "",
     "tests": [
@@ -425,7 +425,7 @@
   },
   {
     "name": "SD11A-L2F9-the-hours-blow-never-in-flight",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "  if (s.rem?.atk || s.clk) return true;",
     "new": "  if (s.rem?.atk) return true;",
     "tests": [
@@ -467,7 +467,7 @@
   },
   {
     "name": "SD11A-L2F11-a-gone-step-drawn",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": " st.draw.hidden = !seen; }",
     "new": " }",
     "tests": [
@@ -477,7 +477,7 @@
   },
   {
     "name": "SD11A-L2F11-a-hidden-body-drawn",
-    "file": "src/scenes/sdRemnant.js",
+    "file": "src/scenes/superDungeon/sdRemnant.js",
     "old": "  const hide = (d) => { if (d && !d.hidden) { d.object.matrix.set(ZERO); d.hidden = true; } };",
     "new": "  const hide = (d) => { if (d && !d.hidden) { d.object.matrix.set(ZERO); } };",
     "tests": [
@@ -487,7 +487,7 @@
   },
   {
     "name": "SD11A-L2F11-a-body-never-drawn-again",
-    "file": "src/scenes/sdRemnant.js",
+    "file": "src/scenes/superDungeon/sdRemnant.js",
     "old": "remnantMatrix(SD_REALM_ORIGIN[0] + SD_ARENA.x + p.x, SD_REALM_ORIGIN[1] - p.sink, SD_REALM_ORIGIN[2] + SD_ARENA.z + p.z, p.yw, scale, d.object.matrix);\n    d.hidden = false;",
     "new": "remnantMatrix(SD_REALM_ORIGIN[0] + SD_ARENA.x + p.x, SD_REALM_ORIGIN[1] - p.sink, SD_REALM_ORIGIN[2] + SD_ARENA.z + p.z, p.yw, scale, d.object.matrix);",
     "tests": [
@@ -498,7 +498,7 @@
   },
   {
     "name": "SD11A-L2F11-the-breath-drawn-between",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "    if (!_breath.dir) { if (!breathDraw.hidden) { m.fill(0); breathDraw.hidden = true; } return; }",
     "new": "    if (!_breath.dir) { m.fill(0); return; }",
     "tests": [
@@ -589,7 +589,7 @@
   },
   {
     "name": "SD11A-L2F16-the-snap-empty-at-once",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "    if (!first && w.x) { frayFullUntil = now() + SD_FRAY_FULL_MS; setFray(tabs, true); }\n    else if (!(now() < frayFullUntil)) setFray(frayArc(w.f));",
     "new": "    setFray(frayArc(w.f));",
     "tests": [
@@ -599,7 +599,7 @@
   },
   {
     "name": "SD11A-L2F16-full-for-ever",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "      if (frayFullUntil !== -Infinity && now() >= frayFullUntil) { frayFullUntil = -Infinity; setFray(frayArc(frayWant)); }",
     "new": "      void frayWant;",
     "tests": [
@@ -639,7 +639,7 @@
   },
   {
     "name": "SD11A-L2F18-standing-still",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "    translate(m, SD_REALM_ORIGIN[0] + _breath.dir * (_breath.k - 0.5) * SD_BREATH.sweep, SD_REALM_ORIGIN[1], SD_REALM_ORIGIN[2]);",
     "new": "    translate(m, SD_REALM_ORIGIN[0], SD_REALM_ORIGIN[1], SD_REALM_ORIGIN[2]);",
     "tests": [
@@ -649,7 +649,7 @@
   },
   {
     "name": "SD11A-L2F18-never-turned",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "    m[0] = _breath.dir;\n",
     "new": "",
     "tests": [
@@ -659,7 +659,7 @@
   },
   {
     "name": "SD11A-L2F18-never-seen",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "      breathMesh = make(buildBreathModel());",
     "new": "      breathMesh = null;",
     "tests": [
@@ -670,7 +670,7 @@
   },
   {
     "name": "SD11A-L4F1-the-span-the-fall-crosses",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "      if (body.grounded) lastSpan = on ? on.s.span : span;",
     "new": "      lastSpan = span;",
     "tests": [
@@ -680,7 +680,7 @@
   },
   {
     "name": "SD11A-L4F1-a-checkpoint-not-stood-on",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "lastSpan = on ? on.s.span : span;",
     "new": "lastSpan = on ? on.s.span : lastSpan;",
     "tests": [

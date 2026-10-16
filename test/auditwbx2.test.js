@@ -183,7 +183,7 @@ test('AUDIT WBX2 M6 an older build\'s mark for anyone still refuses the spoils h
 });
 
 test('AUDIT WBX2 M7 the stone asks for a player sealed in it at every stand - its first, and one where it has moved (the gate of another place) - never while it stands still (mutants: the first stand only)', async () => {
-  const { createGatePool } = await import('../src/scenes/gatePool.js');
+  const { createGatePool } = await import('../src/scenes/gate/gatePool.js');
   const FOOT = 2.3;   // GATE-FBX: in a foot's sole (its inner edge 1.47 m out, its outer 3.03)
   const { gateYaw } = await import('../src/net/gate/gateLaw.js');
   const T = gateTimes(2000);
@@ -202,7 +202,7 @@ test('AUDIT WBX2 M7 the stone asks for a player sealed in it at every stand - it
   shift = [64, 0, 0];
   now += 16; pool.frame(0.016);
   assert.deepEqual(landed, [2000], 'stood again where it moved, over them: set down');
-  assert.match(read('src/scenes/gatePool.js'), /const f = feet\(\);\n {4}if \(f && g && inGateRoot\(place, f\)\) landBefore\(g\);/);
+  assert.match(read('src/scenes/gate/gatePool.js'), /const f = feet\(\);\n {4}if \(f && g && inGateRoot\(place, f\)\) landBefore\(g\);/);
 });
 
 test('AUDIT WBX2 M9 the sweep reads its cursors in one storage read (AUDIT RAID R2: four now - the raid receipts\' too; AUDIT SERPENT S5: five - the serpent receipts\'; SD9a: six - the Hour\'s)', () => {

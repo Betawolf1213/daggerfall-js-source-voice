@@ -230,7 +230,7 @@ test('AUDIT 63 F0: a resource that expands a macro to NULL removes the token, as
 test('AUDIT 63 F0: the hook is wired end to end, and the two quest-side callers share ONE closure', () => {
   assert.match(src('systems/quest/machine.js'),
     /undiscoverBuilding: \(buildingKey, buildingName\) => this\.deps\.undiscoverBuilding\?\.\(buildingKey, buildingName\)/);
-  assert.match(src('scenes/questBridge.js'),
+  assert.match(src('scenes/quest/questBridge.js'),
     /undiscoverBuilding: \(buildingKey, buildingName\) => ctx\.undiscoverBuilding\?\.\(buildingKey, buildingName\)/);
   // PlayerGPS.cs:987-999 resolves the dict from CurrentLocation, so the
   // closure must be keyed on the CURRENT location - a quest that

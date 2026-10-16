@@ -1,5 +1,5 @@
 // ARENA3 (2026-10-02; bible/11-Multiplayer/Arena.md "1. The gate" - "the bookmaker - wagers on the bout on the floor
-// (gold, house edge, odds from the fighters' records)"): THE BOOKMAKER (systems/arena/arenaBook.js, scenes/arenaGate.js).
+// (gold, house edge, odds from the fighters' records)"): THE BOOKMAKER (systems/arena/arenaBook.js, scenes/arena/arenaGate.js).
 // Pinned here: each exhibition fighter's record and strength from the bout's own seed; the chances from the strengths;
 // the price shaded by the house's tenth and rounded DOWN the bookmaker's ladder; the payout in whole gold; the wager's
 // refusals (no bout, closed, placed, the stake's bounds, the purse); its settlement by the verdict seen, or by the
@@ -13,8 +13,8 @@ import * as LG from '../src/systems/arena/arenaLeague.js';
 import { exhibitionFor, newArenaLadder } from '../src/systems/arena/arenaLadder.js';
 import { fighterIdentity } from '../src/systems/arena/arenaFighters.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
-import { createArenaGate } from '../src/scenes/arenaGate.js';
-import { createArenaBouts } from '../src/scenes/arenaBouts.js';
+import { createArenaGate } from '../src/scenes/arena/arenaGate.js';
+import { createArenaBouts } from '../src/scenes/arena/arenaBouts.js';
 import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';
 import { LETTER_OF_CREDIT_TEMPLATE } from '../src/systems/inventory.js';
@@ -232,7 +232,7 @@ test('ARENA3 the driver tells the exhibition\'s verdict; the hosts wire the stal
     assert.match(W, /liveHour: \(\) => arenaBouts\.hour\(\), begun: \(\) => arenaBoutBegun\(\)/, f);
     assert.match(W, /arenaBookmaker: \(\) => arenaGate\.bookmaker\(\)/, f);
     // ARENA4b: the book shuts at the word of the exhibition standing here by its HOUR - this screen's own bout's or the
-    // relay's mirrored one (scenes/arenaBouts.js startExhibitionRelay: kind 'relay', its `ex` carried)
+    // relay's mirrored one (scenes/arena/arenaBouts.js startExhibitionRelay: kind 'relay', its `ex` carried)
     assert.match(W, /const arenaBoutBegun = \(\) => \{ const b = arenaBouts\.bout\(\); return arenaBouts\.hour\(\) != null && !!b && !\['call', 'walk', 'count'\]\.includes\(b\.phase\); \};/, f);
   }
   assert.match(readFileSync(new URL('../src/scenes/worldModes.js', import.meta.url), 'utf8'), /if \(gateRole === 'bookmaker' && host\.arenaBookmaker\?\.\(\)\) return;/);

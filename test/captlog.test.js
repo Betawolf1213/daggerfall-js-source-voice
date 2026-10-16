@@ -227,7 +227,7 @@ test('CAPT-MARQUE at sea: under a letter a RIVAL\'s lawful ship struck is the ri
   assert.equal(s.held(), null, 'torn up');
   assert.ok(s.log.mid.some((t) => /letter of marque is torn up/.test(t)));
   assert.deepEqual(s.law.crimes.at(-1), [crownRegion('Wayrest'), CRIMES.Piracy]);
-  const host = rd('src/scenes/navalHost.js');
+  const host = rd('src/scenes/naval/navalHost.js');
   assert.match(host, /for \(const w of sea\.values\(\)\) if \(w\.ship\.cls\.faction === 'navy' && w\.ship\.flag !== signed && dist2d\(w\.ship\.pos, s\.pos\) < WITNESS_RANGE\) provoke\(w\.ship, by, clock\);/, 'the signing crown\'s navy looks on');
   assert.match(host, /ship\.flag = ether \? etherFlagOf\(cls\) : flagOf\(cls, spec\.seed, region\);/, 'every ship launched with her colours (ETHER-SEA: a trader of the Eltheric Ocean the Isles\')');
 });
@@ -241,7 +241,7 @@ test('CAPT-LOG the world\'s wiring: one ledger a world host, in its own save slo
   assert.match(w, /deed: \(act, cls, o\) => \{ const r = captainLedger\.deed\(act, cls, o\); captainSay\(\); return r; \},/);
   assert.match(w, /worth: \(items\) => navalLootWorth\(items\),/);
   assert.match(w, /captain: fleetHost \? \{ model: \(\) => captainModel\(\) \} : null,/);   // PIN MOVED (AUDIT CAPTAIN'S SEA L15): beside the Fleet's
-  const host = rd('src/scenes/navalHost.js');
+  const host = rd('src/scenes/naval/navalHost.js');
   assert.match(host, /if \(boat\) \{ const v = boatPose\(boat\)\.velocity; deps\.captain\?\.sailed\?\.\(Math\.hypot\(v\[0\], v\[2\]\) \* total\); \}/);
   // PIN MOVED (AUDIT CAPTAIN'S SEA L12): the hold's own items counted, each once (the captain's own things put in and taken
   // out again were counted every pass)

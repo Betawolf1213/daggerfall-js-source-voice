@@ -17,7 +17,7 @@ import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
 import { townPlaces, streetNet } from '../src/systems/livingWorld/places.js';
 import { townCensus, hasShopJob } from '../src/systems/livingWorld/census.js';
 import { townTrips, partiesNear, remainsNear, partiesOfTown, remainsOfTown, memoTrip, cycleOf, formCaravans, paceScale, CALENDAR_MPM, NATIVE_PIXEL, TRIP_REACH_PX, TRIP_CHANCE, ROAD_TRIP_CHANCE } from '../src/systems/livingWorld/trips.js';
-import { createLivingRoads, ROADS_TOWNS_PER_FRAME, ROADS_JUMP_PX, ROADS_TICK_S, ROADS_VIEW_PX } from '../src/scenes/livingRoads.js';
+import { createLivingRoads, ROADS_TOWNS_PER_FRAME, ROADS_JUMP_PX, ROADS_TICK_S, ROADS_VIEW_PX } from '../src/scenes/livingWorld/livingRoads.js';
 import { ResidentWalker } from '../src/characters/residentWalker.js';
 import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
 import { POP_VISIBLE_RANGE } from '../src/systems/town/townPopulation.js';

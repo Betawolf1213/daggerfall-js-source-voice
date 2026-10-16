@@ -9,7 +9,7 @@ import { livingMap, partiesOver } from './lwRoads.mjs';
 import { createRoadStands, DRAW_M, HELP_M, KEEP_M, CALM_S, FIGHT_NEAR_M } from '../src/scenes/roadStands.js';
 import { createRoadFights } from '../src/scenes/roadFights.js';
 import { createDungeonDivers } from '../src/scenes/dungeonDivers.js';
-import { createLivingRoads } from '../src/scenes/livingRoads.js';
+import { createLivingRoads } from '../src/scenes/livingWorld/livingRoads.js';
 import { createRelations, EVENTS } from '../src/systems/livingWorld/relations.js';
 import { partyAt, membersAt, CALENDAR_MPM, NATIVE_PER_M } from '../src/systems/livingWorld/trips.js';
 import { DAY_MIN } from '../src/systems/livingWorld/dayPlan.js';
@@ -314,7 +314,7 @@ test('LW7b the streaming host: the stands on the roads (the pool\'s loose transi
   assert.match(w, /const livingDied = \(res, t\) => \{ (?:legacyHost\?\.residentDied\(res\.id\); )?livingRelations\.turn\('died', turnKey\(res, livingCycleOf\(res, Math\.floor\(\(t - 240\) \/ 1440\)\)\), \{ t, who: res\.name \}\); \};/);
   assert.match(w, /spawnFoe: \(type, feet, o\) => d\.spawnLooseFoe\(type, feet, \{ yawRad: o\.yaw, allied: false, gender: o\.gender, level: o\.level \}\),/);
   assert.match(w, /spawnFoe: [^\n]*\n\s*slay: livingSlay,\n\s*died: livingDied,[^\n]*\n(?:\s*(?:\/\/|route:|floor:|clearLine:|ring:|choose:|stopPile:)[^\n]*\n)*\s*\}\), \{ pool: d \}\);/);   // PIN MOVED (LW14): the deep's own deps after
-  const lr = rd('src/scenes/livingRoads.js');
+  const lr = rd('src/scenes/livingWorld/livingRoads.js');
   assert.match(lr, /if \(deps\.stands\?\.stood\(m\.res\.id\)\) continue;/);
   assert.match(lr, /deps\.fights\?\.clear\(\); deps\.stands\?\.clear\(\);/);
 });

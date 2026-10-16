@@ -11,7 +11,7 @@ import {
   CAMP_HORSE_SIDE_N, CAMP_TEAM_ARC_N, CART_FOOT_N, HORSE_FOOT_N, BODY_CLEAR_N,
 } from '../src/systems/livingWorld/wagons.js';
 import { wayAt, laneAt, wayOf, partyAt, membersAt, NATIVE_PER_M, NATIVE_PIXEL, CALENDAR_MPM, LANE_EASE_N } from '../src/systems/livingWorld/trips.js';
-import { roadLanes, campGroups, campParkOf, foePlaces, fightPlaces, partyPlaces, CAMP_RING_N, CAMP_RING_STEP_N, ABREAST_N, ABREAST_GAP_N, ABREAST_EASE_N, FILE_GAP_N } from '../src/scenes/livingRoads.js';
+import { roadLanes, campGroups, campParkOf, foePlaces, fightPlaces, partyPlaces, CAMP_RING_N, CAMP_RING_STEP_N, ABREAST_N, ABREAST_GAP_N, ABREAST_EASE_N, FILE_GAP_N } from '../src/scenes/livingWorld/livingRoads.js';
 import { createRoadFights } from '../src/scenes/roadFights.js';
 import { MEASURED } from '../src/world/wagonModels.js';
 import { HORSE_BOX_SIZE } from '../src/systems/horse/horseCartLaw.js';

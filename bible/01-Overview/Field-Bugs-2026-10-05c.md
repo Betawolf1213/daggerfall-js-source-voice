@@ -124,7 +124,7 @@ and registered as `registerFlatAction` registers it, is heard when walked into a
 
 ## SEALED-SAVE (6)
 
-`systems/quest/markerCuration.js` (`curatedFrom`, `mendedFoeSpot`), `scenes/questFoeHost.js` (`restandMendedQuestFoe`,
+`systems/quest/markerCuration.js` (`curatedFrom`, `mendedFoeSpot`), `scenes/quest/questFoeHost.js` (`restandMendedQuestFoe`,
 `SEALED_SAVE_REACH_M`, `SEALED_SAVE_LEVEL_M`), `scenes/exteriorFoes.js` (`restoreWorld`'s `restandQuestFoe`),
 `scenes/worldModes.js` (restoreInteriorPools). "The Haunted House" is C0B00Y00 (`place foe` at a remote House2).
 Woodwing Palace (Wayrest, 23-785) is Beautiful Villages' grid; of its five House2, only MANRAS02 #3 stands its 199.11

@@ -154,7 +154,7 @@
   },
   {
     "name": "WB13c-the-bar-over-the-veil",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "peril?.name ?? null), { hidden: hudHidden() || veiled() });",
     "new": "peril?.name ?? null), { hidden: hudHidden() });",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "WB13c-move-never-asked",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "drawGateBossBar(bossBarModel(s, t, bossOf(s), peril?.name ?? null)",
     "new": "drawGateBossBar(bossBarModel(s, t, bossOf(s), null)",
     "tests": [

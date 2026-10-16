@@ -461,7 +461,7 @@ game time sets it to "within 51.5 m of the player on the ground plane".
 
 ### Drawn
 
-`scenes/comeSailAwayPool.js` loads the five files once, loads what a hull
+`scenes/comeSailAway/comeSailAwayPool.js` loads the five files once, loads what a hull
 reads out of the ARENA2 before it is built (`boatAssetNeeds`: its flats,
 its classic models), then lets SpawnBoat run straight through as the C#
 does. Each frame the streaming world (`scenes/world.js`) ticks it just
@@ -1638,7 +1638,7 @@ PickVariant (5491-5506): never at the helm. OpenBoatVariantPicker
 variants") or without a port nearby ("There is no port nearby"), else
 pushes a DaggerfallListPickerWindow with one row per variant, by its
 number; a pick plays SoundClips 360, pops the picker and SetBoatVariant
-(the pool's own context, `scenes/comeSailAwayPool.js` setVariant: a
+(the pool's own context, `scenes/comeSailAway/comeSailAwayPool.js` setVariant: a
 reinitialize instances nothing).
 
 IsNearPort (1095-1117) walks a square centred on the player's pixel -
@@ -2012,9 +2012,9 @@ Boat's seven, none read on the rest: AUDIT PRE-MERGE 0928 O1, where a
 variant past the Large Boat's count had stopped every receiver's game loop -
 the pose bounds, a unit quaternion,
 normalized, the bits and two flags) and lands past the room test
-(`scenes/exteriorFoes.js` setOnCsa). `scenes/comeSailAwayPeers.js` stands
+(`scenes/exteriorFoes.js` setOnCsa). `scenes/comeSailAway/comeSailAwayPeers.js` stands
 it: each boat built as SpawnBoat builds one, into the pool's PEER list
-(`scenes/comeSailAwayPool.js`) - drawn, baked, lit and collided with as a
+(`scenes/comeSailAway/comeSailAwayPool.js`) - drawn, baked, lit and collided with as a
 boat of mine (FIELD BUGS 2026-10-01b, below), and a ray's hit and an activation
 only as CSA-K makes it one (its ladder and boxes pressed: below), because
 the host's loops read the pool's own `boats` - and posed every frame off the word,
@@ -2071,7 +2071,7 @@ real ceiling (`CSA_WIRE_SPEED_MAX`, 2M natives a second: SAIL-FREE's
 fastest at the Handling dials' tenfold and x100), and the writer holds a
 way to it, where 64k - 27 m/s of way at an open journey's x60 - dropped a
 storm galleon's whole word from every screen. The change key carries it, so a boat brought up short is said at
-once. `scenes/comeSailAwayPeers.js` LEADS a boat under way instead of
+once. `scenes/comeSailAway/comeSailAwayPeers.js` LEADS a boat under way instead of
 chasing it: each frame it is carried on by the way's share of the frame
 (what the lead grew by - none past CSA_PEER_LEAD_MAX, 0.6 s, so a late
 word leads no further and the boat holds where the way took it) and eased
@@ -2084,7 +2084,7 @@ snap puts her passengers off). Each boat's frame keeps the pose before it (`move
 frame it is built, none across a snap) and can be peeked a frame ahead
 (`poseAhead`).
 
-**Aboard** (`scenes/comeSailAwayAboard.js`). A player comes aboard another's
+**Aboard** (`scenes/comeSailAway/comeSailAwayAboard.js`). A player comes aboard another's
 boat by its own ladder - BoardBoat (112401) answers on it as on one's own:
 stood at the sibling before the trigger (`boardPlaceOf`, the one export
 BoardBoat reads too), facing its forward, set on the ground within 3 m
@@ -2334,7 +2334,7 @@ and 8.32 deg/s at 9 m/s on 124 m (153 m at every way the mod's); two seconds fro
 in 10.1 s (the mod's stays in irons).
 The heave-to's brake (NAV1's `accelScale`, ten times her own coast) is its own number now - `brake`, HEAVE_TO_DECEL
 m/s^2 - so the handling choice never moves it. AUDIT SHIPS A3 (2026-10-06): HEAVE_TO_DECEL at the least - a heave-to
-at a way past HELM-WAY's is braked by it (`scenes/navalHost.js` `heaveToDecel`), to BOARD_SPEED within HEAVE_TO_M (20 m):
+at a way past HELM-WAY's is braked by it (`scenes/naval/navalHost.js` `heaveToDecel`), to BOARD_SPEED within HEAVE_TO_M (20 m):
 at SAIL-FREE's full way the fixed brake ran a galleon 50-64 m and a Carrack 73-93 m, out of BOARD_RANGE, the Carrack on
 her quarter past HEAVE_TO_S. Pins: `test/helmway.test.js` (the harness `test/csaScene.mjs`, the
 wind suite's scene, one module).
@@ -2510,7 +2510,7 @@ The field: a Large Boat put in from its deed, her owner killed aboard her and wo
 boat"*. A packable hull's deed or parts are spent on placing (`takePlaceItem`: the item is removed unless the boat is
 crewed), the boat is kept where she was left, and nothing in the game said where that was: the mod's position box
 reads the map only from aboard, its `printboats` lists pixels on the developer console alone (offline), and the
-compass marked the sea's ships (`scenes/navalHost.js compassShips`), never the player's own. The mod has no compass
+compass marked the sea's ships (`scenes/naval/navalHost.js compassShips`), never the player's own. The mod has no compass
 mark; the port's (`ui/boatMarks.js`, a leaf):
 - **Every boat in `AllBoats` is a point**, on the street only (buildings and dungeons steer by their own frames) and
   under the travel view, which is the street's: `boatCompassPoints(boats, current, feet, world, terrainSize)`, called
@@ -2553,7 +2553,7 @@ packs every hull (`getBoatTransforms`: `Crewed` sets `packable` too), and makes 
   pack (`takePlaceItem`, `mintDeed`): her number, their worth, her hull. She stands by it as a bought ship does: it
   calls her to a port, and the lost-boat rule leaves her for it.
 - **Her number.** Her parts keep her UID, where the C# mints every pack a new one: her naval state
-  (`scenes/navalHost.js myBoatState` - her hurts, her crew, her guns), her crew's names and her hands ashore
+  (`scenes/naval/navalHost.js myBoatState` - her hurts, her crew, her guns), her crew's names and her hands ashore
   (`systems/naval/crewCompanions.js`) are hers again when she stands. Under a new number every ship came back mended and
   fully crewed - a claimed prize's empty decks filled for nothing. The spent PackedCargoes entry under her number
   (TransferAll empties and keeps it) is hers to fill again; any other key already held still throws, and now before her
@@ -2686,7 +2686,7 @@ main deck's bow (D4).
 lighter at the guns: a wary brig outguns no sound armed boat of the player's now (a crewless Large Galley 1.10 to one; a
 Small Ship hurt to four fifths and alone at her guns, 1.37), and the navy cutter's odds on the corsair galley fell to
 1.23 (fought four to four). Her low gun deck (1.08 m over the sea) brought the aboard reach to a step under her main
-deck, every hull's (`scenes/navalHost.js standsOn`: under it a capsule's reach of the feet - AUDIT GALLEON D3); her
+deck, every hull's (`scenes/naval/navalHost.js standsOn`: under it a capsule's reach of the feet - AUDIT GALLEON D3); her
 canvas aback in the wind's eye drives her astern, so the in-irons tell reads her way ahead
 (`systems/comeSailAway/comeSailAway.js inIrons`); her narrower hull lies closer in to a boat she boards, so a boarding comes in on a
 sounded berth unswung by the lookout and sounds the berth as wide as its legs (`systems/naval/navalAI.js boardCourse`,
@@ -2849,11 +2849,11 @@ would stand). The mod's own SpawnBoat walks each by name.
 - **Their pictures** (`world/ships/carrackArt.js`, archive 38141; `world/ships/largeBoatArt.js`, 38171 - it was 38151, the Shattered Hour's, AUDIT SD IV): painted at load from
   numbers alone, each 64 x 64, the galleon's numbers for every picture the fleet shares and each ship's livery her own,
   cut into slices by height; the carrack's stern windows glow by night through the pool's emission mask
-  (`scenes/comeSailAwayPool.js PORT_ART`).
+  (`scenes/comeSailAway/comeSailAwayPool.js PORT_ART`).
 
 **HULL_BUILDS** (`systems/naval/navalShips.js`): each hull measured off her own model - her box her MeshCollider's
 bounds, her deck, her muzzles at her guns' own muzzles, her rig boxes each a sail's canvas set in any wind on its boom
-(the large boat's each of her plan's: `variant`, `scenes/navalHost.js rigBoxesOf`). The mod's own builds stand while its
+(the large boat's each of her plan's: `variant`, `scenes/naval/navalHost.js rigBoxesOf`). The mod's own builds stand while its
 hulls do (`MOD_CARRACK_BUILD`, `MOD_LARGE_BOAT_BUILD`, `setShipStanding`), with their gangways (`systems/naval/quays.js`).
 
 **What it moved elsewhere.** The carrack's five guns a side throw the mod's seven's weight, a player's and a captain's
@@ -2922,7 +2922,7 @@ From the field: frames fell in a crowded inland town with "The sea & ships" on, 
 owned the mods cost nothing there; with boats owned, `animate` (the Animators' step at the head of LateUpdate, (19) of
 the Port-Ledger row) found every boat's Animators by walking her whole tree - a galleon's 1,228 nodes - every frame, for
 every boat the player had placed wherever it lay, and the peers' pose did the same for every other player's boat
-(`scenes/comeSailAwayPeers.js`). `boatAnimators` keeps a tree's list while every tree's shape stands
+(`scenes/comeSailAway/comeSailAwayPeers.js`). `boatAnimators` keeps a tree's list while every tree's shape stands
 (`world/prefabNode.js` `prefabShapeStamp`, the stamp `world/prefabColliders.js` keeps a tree's colliders by): the same
 Animators, in the same order. The step itself is unchanged - a boat standing nowhere is still asked, because that ask is
 how an Animator starts over from its default state when she stands again ((18)). The naval HUD and the helm panel stopped

@@ -22,7 +22,7 @@ import { fileURLToPath } from 'node:url';
 
 import './chargenDom.mjs';   // the minimal DOM - globals
 import { REGION, RI, makeWorld, seededRolls } from './guideWorld.mjs';
-import { createQuestBridge } from '../src/scenes/questBridge.js';
+import { createQuestBridge } from '../src/scenes/quest/questBridge.js';
 import { entryTarget, targetWords, locationInRegionText, WHERE_TEXT } from '../src/ui/quest/questLens.js';
 import { FIND_PLACE_TEXT } from '../src/ui/quest/questJournal.js';
 import { mountEnhancedMenu } from '../src/ui/enhanced/enhancedMenu.js';

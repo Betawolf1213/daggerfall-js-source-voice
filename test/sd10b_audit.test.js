@@ -20,11 +20,11 @@ import { SD_ARENA, SD_PILLAR_W, SD_REALM_ORIGIN, realmToDungeon } from '../src/n
 import { SD_STEPS_COURSE, stepAt } from '../src/world/superDungeon/sdSteps.js';
 import { strikeDamage } from '../src/net/gate/gateStrike.js';
 import { POOL_TICK_MS, HIT_KINDS } from '../src/net/gate/gateBrain.js';
-import { createSdRemnantBlows, bodysBlow, SD_BLOWS_TEXT } from '../src/scenes/sdRemnantBlows.js';
-import { arenaToDungeon, SD_REM_SINK_MS } from '../src/scenes/sdRemnant.js';
-import { createSdSpoils, clearOfPillars, SD_PILLAR_CLEAR_M, SD_SPEW_AT_MS } from '../src/scenes/sdSpoils.js';
-import { createSdEnd, SD_HOME_TEXT, SD_HOME_SAY_MS } from '../src/scenes/sdEnd.js';
-import { createSdHall } from '../src/scenes/sdHall.js';
+import { createSdRemnantBlows, bodysBlow, SD_BLOWS_TEXT } from '../src/scenes/superDungeon/sdRemnantBlows.js';
+import { arenaToDungeon, SD_REM_SINK_MS } from '../src/scenes/superDungeon/sdRemnant.js';
+import { createSdSpoils, clearOfPillars, SD_PILLAR_CLEAR_M, SD_SPEW_AT_MS } from '../src/scenes/superDungeon/sdSpoils.js';
+import { createSdEnd, SD_HOME_TEXT, SD_HOME_SAY_MS } from '../src/scenes/superDungeon/sdEnd.js';
+import { createSdHall } from '../src/scenes/superDungeon/sdHall.js';
 import { handMatrix } from '../src/world/superDungeon/sdHall.js';
 import { mintSdReceipt, readSdReceipt } from '../src/net/superDungeon/sdReceipt.js';
 import { spoilsLevel } from '../src/scenes/spoilsPool.js';
@@ -325,7 +325,7 @@ test('AUDIT SD NOTHING MADE A FRAME FOR NOTHING: the Rift\'s and the Return\'s b
   assert.equal(stepAt(drift, 3.5, into), into, 'into the scratch given');
   assert.deepEqual(into, stepAt(drift, 3.5), 'the place a fresh one has');
   assert.notEqual(stepAt(drift, 3.5)[0], drift.x, 'a drifting one, off its centre');
-  assert.match(read('src/scenes/sdSteps.js'), /stepAt\(s, t, _at\);[^\n]*\n\s*const x = SD_REALM_ORIGIN\[0\] \+ _at\[0\], y = SD_REALM_ORIGIN\[1\] \+ _at\[1\], z = SD_REALM_ORIGIN\[2\] \+ _at\[2\];/);
+  assert.match(read('src/scenes/superDungeon/sdSteps.js'), /stepAt\(s, t, _at\);[^\n]*\n\s*const x = SD_REALM_ORIGIN\[0\] \+ _at\[0\], y = SD_REALM_ORIGIN\[1\] \+ _at\[1\], z = SD_REALM_ORIGIN\[2\] \+ _at\[2\];/);
   assert.deepEqual(realmToDungeon(1, 2, 3), [SD_REALM_ORIGIN[0] + 1, SD_REALM_ORIGIN[1] + 2, SD_REALM_ORIGIN[2] + 3], 'realmToDungeon is that sum - the pose\'s own');
 });
 

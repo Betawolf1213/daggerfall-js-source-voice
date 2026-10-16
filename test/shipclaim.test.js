@@ -13,7 +13,7 @@ import { readFileSync } from 'node:fs';
 import { sea } from './navalSea.mjs';
 import { room } from './navalRoom.mjs';
 import { scene, terrain } from './csaScene.mjs';
-import { HARBOUR_LEAVE, SHIP_FADE_S } from '../src/scenes/navalHost.js';
+import { HARBOUR_LEAVE, SHIP_FADE_S } from '../src/scenes/naval/navalHost.js';
 import { PRIZE_DEED_SHARE, prizeDeedValue } from '../src/systems/naval/navalPlunder.js';
 import { mintDeed, mintBoatItem, BOAT_DEED_TEMPLATE, BOAT_PARTS_TEMPLATE } from '../src/systems/comeSailAway/comeSailAwayItems.js';
 import { HULL_PRICES } from '../src/systems/comeSailAway/comeSailAwayBoat.js';

@@ -145,7 +145,7 @@
   },
   {
     "name": "MD-relay-unwired",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "      relayMovedLayouts(machine, { carriesQuestItem: (item) => ctx.carriesQuestItem?.(item) ?? false });\n",
     "new": "",
     "tests": [

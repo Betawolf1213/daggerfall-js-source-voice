@@ -55,7 +55,7 @@
   },
   {
     "name": "NAVB-B2-the-fallback-hands-never-stood",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const hands = myHands(boat, myBoatState(boat));   // SHIP-CREW: her spirits and the rail's order\n    const mine = deps.board?.crewOf?.(boat, hands) ?? [];",
     "new": "    const hands = 0;\n    const mine = deps.board?.crewOf?.(boat, hands) ?? [];",
     "tests": [
@@ -92,7 +92,7 @@
   },
   {
     "name": "NAVB-B5-the-win-waited-on",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (raidQuestWon(b.quest)) winBoarding(b, entry);\n      else if",
     "new": "      if (false) winBoarding(b, entry);\n      else if",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "NAVB-B5-the-retreat-unheeded",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      else if (raidQuestRetreated(b.quest)) castOff(b, entry, 'retreat');",
     "new": "      else if (false) castOff(b, entry, 'retreat');",
     "tests": [
@@ -110,7 +110,7 @@
   },
   {
     "name": "NAVB-B6-the-quest-left-running",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (quest) { raidUids.delete(quest.uid); deps.board?.endRaid?.(quest, { withdraw: true }); }\n    entry.ship.boarded = false;",
     "new": "    if (quest) raidUids.delete(quest.uid);\n    entry.ship.boarded = false;",
     "tests": [
@@ -119,7 +119,7 @@
   },
   {
     "name": "NAVB-B7-grappling-again",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    entry.ship.spare?.set?.(myId(), entry.ship.clock + SPARE_S);\n",
     "new": "",
     "tests": [
@@ -128,7 +128,7 @@
   },
   {
     "name": "NAVB-B7-no-sheer",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    sheerOff(entry);\n    const name = entry.ship.names",
     "new": "    const name = entry.ship.names",
     "tests": [
@@ -137,7 +137,7 @@
   },
   {
     "name": "NAVB-B7-lying-alongside-at-the-hour",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (entry) { castOff(b, entry, 'ended'); return; }",
     "new": "    if (entry) { entry.ship.boarded = false; }",
     "tests": [
@@ -146,7 +146,7 @@
   },
   {
     "name": "NAVB-B6-the-swim-a-stand-down",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (b.kind === 'repel') { castOff(b, entry, 'abandon'); return; }   // AUDIT NAV1 (B6, B7): my own deck left to them\n",
     "new": "",
     "tests": [
@@ -155,7 +155,7 @@
   },
   {
     "name": "NAVB-B6-the-quest-outliving-the-sea",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (quest) { raidUids.delete(quest.uid); deps.board?.endRaid?.(quest, { withdraw: true }); }   // AUDIT NAV1 (B6): the raid ends with the sea it was fought on\n",
     "new": "",
     "tests": [
@@ -191,7 +191,7 @@
   },
   {
     "name": "NAVB-B3-the-survivors-left-hostile",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "{ deps.board?.standDown?.(f.handle); yielded++; }",
     "new": "{ yielded++; }",
     "tests": [
@@ -218,7 +218,7 @@
   },
   {
     "name": "NAVB-B4-the-fire-unannounced",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (change) stateChanged(e, was, change, e.fireBy ?? null);   // AUDIT NAV1 (B4): her fires' own, announced and charged\n",
     "new": "",
     "tests": [
@@ -227,7 +227,7 @@
   },
   {
     "name": "NAVB-B4-charged-to-no-one",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (change) stateChanged(e, was, change, e.fireBy ?? null);   // AUDIT NAV1 (B4): her fires' own, announced and charged",
     "new": "      if (change) stateChanged(e, was, change, null);",
     "tests": [
@@ -236,7 +236,7 @@
   },
   {
     "name": "NAVB-B4-the-setter-unkept",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (hurt.fire && s.damage.fire > 0) { igniteShip(entry); entry.fireBy = by; }",
     "new": "if (hurt.fire && s.damage.fire > 0) { igniteShip(entry); }",
     "tests": [
@@ -245,7 +245,7 @@
   },
   {
     "name": "NAVB-B4-the-boarded-fire-unannounced",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (boarding?.shipId === e.id) { const change = s.damage.step(d, clock); if (change) stateChanged(e, was, change, e.fireBy ?? null); continue; }",
     "new": "if (boarding?.shipId === e.id) { s.damage.step(d, clock); continue; }",
     "tests": [
@@ -254,7 +254,7 @@
   },
   {
     "name": "NAVB-B4-the-founder-unheeded",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (boarding?.kind === 'board' && boarding.shipId === entry.id) founderUnderFight(entry);\n",
     "new": "",
     "tests": [
@@ -263,7 +263,7 @@
   },
   {
     "name": "NAVB-B4-no-way-home",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (boat) returnAboard(boat);\n  }\n  /**\n   * AUDIT NAV1 (B5, B6, B7)",
     "new": "  }\n  /**\n   * AUDIT NAV1 (B5, B6, B7)",
     "tests": [
@@ -272,7 +272,7 @@
   },
   {
     "name": "NAVB-B4-a-burning-deck-grappled",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    entry.ship.damage.douse();   // AUDIT NAV1 (B4): grappled, her fires are fought - never a fight on a deck burning under it\n",
     "new": "",
     "tests": [
@@ -281,7 +281,7 @@
   },
   {
     "name": "NAVB-B4-the-stranded-raid-left-running",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (quest) { raidUids.delete(quest.uid); deps.board?.endRaid?.(quest, { withdraw: false }); }\n      return;\n    }\n    const was = b.phase;",
     "new": "      return;\n    }\n    const was = b.phase;",
     "tests": [
@@ -290,7 +290,7 @@
   },
   {
     "name": "NAVB-B14-the-fight-saved",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (!enabled) return false;\n    if (boarding) return true;\n    return !!seaDeckUnderMe();",
     "new": "    if (!enabled) return false;\n    return !!seaDeckUnderMe();",
     "tests": [
@@ -299,7 +299,7 @@
   },
   {
     "name": "NAVB-B14-her-deck-saved",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (box && insideGrown(box, feet, DECK_REACH_M)) return e;",
     "new": "      if (false) return e;",
     "tests": [
@@ -326,7 +326,7 @@
   },
   {
     "name": "NAVB-B11-the-wheel-never-taken",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    deps.board?.takeHelm?.(boat);\n    return true;\n  }",
     "new": "    return true;\n  }",
     "tests": [
@@ -355,7 +355,7 @@
   },
   {
     "name": "NAVB-B11-leave-stays-aboard",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      leave() { returnFromPrize(pz, boat); },",
     "new": "      leave() {},",
     "tests": [
@@ -365,7 +365,7 @@
   },
   {
     "name": "NAVB-B10-a-spot-stacked",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const deal = () => (deck.length ? deck[k++ % deck.length] : null);",
     "new": "const deal = () => (deck.length ? deck[0] : null);",
     "tests": [
@@ -374,7 +374,7 @@
   },
   {
     "name": "NAVB-B10-a-held-spot-taken",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (spot && (!isFree || isFree(spot))) return [spot[0], spot[1], b.boat];",
     "new": "      if (spot) return [spot[0], spot[1], b.boat];",
     "tests": [
@@ -383,7 +383,7 @@
   },
   {
     "name": "NAVB-B10-the-ring-for-a-raid-that-is-over",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (!b) return quest && raidUids.has(quest.uid) ? false : null;",
     "new": "    if (!b) return null;",
     "tests": [
@@ -401,7 +401,7 @@
   },
   {
     "name": "NAVB-B10-the-muster-stacked",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        const spot = c && free(c.feet) ? claim([c.feet, c.yaw]) : pick(deal);\n        if (!spot) continue;\n        // AUDIT NAV1 (B9)",
     "new": "        const spot = c && free(c.feet) ? claim([c.feet, c.yaw]) : first;\n        if (!spot) continue;\n        // AUDIT NAV1 (B9)",
     "tests": [
@@ -410,7 +410,7 @@
   },
   {
     "name": "NAVB-B9-the-fight-undrawn",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (boarding) return { ship: null, armed: false, batteries: [], aim: null, aiming: false, target: null, board: null, boarding: fightOf(boarding), notoriety: notorietyWord };\n",
     "new": "",
     "tests": [
@@ -419,7 +419,7 @@
   },
   {
     "name": "NAVB-B9-the-captain-unnamed",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const named = { ...(i === 0 && entry.ship.names?.captain ? { name: `Captain ${entry.ship.names.captain}` } : {}), team: crewTeamOf(entry.ship.cls), boat: entry.boat, ...(c ? { gender: c.gender } : {}) };",
     "new": "const named = { team: crewTeamOf(entry.ship.cls), boat: entry.boat, ...(c ? { gender: c.gender } : {}) };",
     "tests": [
@@ -428,7 +428,7 @@
   },
   {
     "name": "NAVB-B9-the-tally-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "captainDown: b.foes.some((f) => f.captain && down(f)), down: b.foes.filter(down).length,",
     "new": "captainDown: false, down: 0,",
     "tests": [
@@ -464,7 +464,7 @@
   },
   {
     "name": "NAVB-B13-the-notoriety-unlowered",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        if (fx.notoriety) notoriety.add(crownName, fx.notoriety);\n",
     "new": "",
     "tests": [
@@ -482,7 +482,7 @@
   },
   {
     "name": "NAVB-minor-the-boat-lost-off-the-helm",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const boat = boatInPlay();\n    if (boat) {",
     "new": "    const boat = myBoat();\n    if (boat) {",
     "tests": [
@@ -491,7 +491,7 @@
   },
   {
     "name": "NAVB-minor-the-swimmer-never-a-collector",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (deps.swimming?.()) {",
     "new": "      if (false) {",
     "tests": [

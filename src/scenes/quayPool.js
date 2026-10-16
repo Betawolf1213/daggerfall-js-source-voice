@@ -1,6 +1,6 @@
 // @ts-check
 // QUAYS (2026-10-03; systems/naval/quays.js, world/quayModel.js) - THE QUAYS THE WORLD HOST STANDS: the pool on the
-// runtime pools' shape (scenes/bountyFarms.js, scenes/gatePool.js) - each berth's quay a model of its own, its
+// runtime pools' shape (scenes/bountyFarms.js, scenes/gate/gatePool.js) - each berth's quay a model of its own, its
 // collider bucket, drawn in the host's world pass, its lanterns lit in the lanterns' hours; and the gangways run out to
 // the player's ships made fast at them.
 //

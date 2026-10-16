@@ -1,7 +1,7 @@
 [
   {
     "name": "STANCE-friendly-though-provoked",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    return { hostile: isHostile, friendly: afloat && !isHostile && !!NAVAL_FACTIONS[s.cls.faction]?.lawful };",
     "new": "    return { hostile: isHostile, friendly: afloat && !!NAVAL_FACTIONS[s.cls.faction]?.lawful };",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "STANCE-friendly-though-struck",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    return { hostile: isHostile, friendly: afloat && !isHostile && !!NAVAL_FACTIONS[s.cls.faction]?.lawful };",
     "new": "    return { hostile: isHostile, friendly: !isHostile && !!NAVAL_FACTIONS[s.cls.faction]?.lawful };",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "STANCE-pirates-friendly",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    return { hostile: isHostile, friendly: afloat && !isHostile && !!NAVAL_FACTIONS[s.cls.faction]?.lawful };",
     "new": "    return { hostile: isHostile, friendly: afloat && !isHostile };",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "STANCE-hostile-though-struck",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const isHostile = afloat && hostile(s, me, law);",
     "new": "    const isHostile = hostile(s, me, law);",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "STANCE-tag-unfriendly",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        hostile: !hid && stance.hostile, friendly: hid || stance.friendly, line:",
     "new": "        hostile: !hid && stance.hostile, friendly: hid, line:",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "STANCE-card-as-before",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "hid ? { hostile: false, friendly: true } : stanceOf(s);",
     "new": "hid ? { hostile: false, friendly: true } : { hostile: hostile(s, meContact(), { notoriety: (c) => notoriety.get(c), now: clock }), friendly: false };",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "STANCE-card-hostile-though-struck",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "hid ? { hostile: false, friendly: true } : stanceOf(s);",
     "new": "hid ? { hostile: false, friendly: true } : { ...stanceOf(s), hostile: hostile(s, meContact(), { notoriety: (c) => notoriety.get(c), now: clock }) };",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "TAGS-line-no-crown",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (disguisedOf(e)) return disguiseOf(e).line;\n    return classLine(e.ship.cls, e.ship.names?.crown);",
     "new": "    if (disguisedOf(e)) return disguiseOf(e).line;\n    return e.ship.cls.title;",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "TAGS-tag-bound-unsaid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "line: shownLine(e), bound: hid ? '' : boundOf(e),",
     "new": "line: shownLine(e), bound: '',",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "TAGS-card-bound-unsaid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      ...stance, bound: known < KNOW.colours || hid ? '' : boundOf(e),",
     "new": "      ...stance, bound: '',",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "TAGS-bound-while-fighting",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (s.mode !== 'cruise') return '';\n    const r = s.errand;\n    const port = (k) =>",
     "new": "    const r = s.errand;\n    const port = (k) =>",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "TAGS-bound-though-struck",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (s.damage.state !== SHIP_STATES.afloat) return '';\n    if (s.mode === 'answer')",
     "new": "    if (s.mode === 'answer')",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "TAGS-moored-unnamed",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (r?.kind === 'moored') return port(r.harbour) ? `moored at ${port(r.harbour)}` : 'moored';",
     "new": "    if (r?.kind === 'moored') return 'moored';",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "TAGS-leaving-unsaid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (r?.kind === 'depart' && port(r.harbour)) return `leaving ${port(r.harbour)}`;",
     "new": "    if (r?.kind === 'depart' && port(r.harbour)) return '';",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "TAGS-patrol-unnamed",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (r?.kind === 'patrol') return port(r.harbour) ? `patrolling off ${port(r.harbour)}` : 'on patrol';",
     "new": "    if (r?.kind === 'patrol') return 'on patrol';",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "TAGS-patrol-unknown-named",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (r?.kind === 'patrol') return port(r.harbour) ? `patrolling off ${port(r.harbour)}` : 'on patrol';",
     "new": "    if (r?.kind === 'patrol') return `patrolling off ${port(r.harbour)}`;",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "TAGS-arrive-unsaid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (r && (r.kind === 'arrive' || r.kind === 'voyage') && port(r.harbour)) return `bound for ${port(r.harbour)}`;",
     "new": "    if (r && r.kind === 'voyage' && port(r.harbour)) return `bound for ${port(r.harbour)}`;",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "TAGS-voyage-to-a-port-unsaid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (r && (r.kind === 'arrive' || r.kind === 'voyage') && port(r.harbour)) return `bound for ${port(r.harbour)}`;",
     "new": "    if (r && r.kind === 'arrive' && port(r.harbour)) return `bound for ${port(r.harbour)}`;",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "TAGS-dwell-unsaid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "<= LINER_PORT_M) ? `lying off ${at.name}` : `bound for ${at.name}`;",
     "new": "<= LINER_PORT_M) ? '' : `bound for ${at.name}`;",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "TAGS-liner-unsaid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "<= LINER_PORT_M) ? `lying off ${at.name}` : `bound for ${at.name}`;",
     "new": "<= LINER_PORT_M) ? `lying off ${at.name}` : '';",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "TAGS-relief-unsaid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (e.relief) return 'coming to your aid';",
     "new": "    if (e.relief) return '';",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "TAGS-out-to-sea-unsaid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (r?.kind === 'voyage') return 'bound out to sea';",
     "new": "    if (r?.kind === 'voyage') return '';",
     "tests": [

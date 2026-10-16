@@ -106,7 +106,7 @@ test('AUDIT CC-A4: a companion stays the player\'s - whatever turned his team, t
 
 test('AUDIT CC-A5 (major): a hand home again stands on her deck - the last of the party back too (the host answers an empty set, never null), and with his sprite', async () => {
   const { crewRoster } = await import('../src/systems/naval/crewLife.js');
-  const { createNavalCrew } = await import('../src/scenes/navalCrew.js');
+  const { createNavalCrew } = await import('../src/scenes/naval/navalCrew.js');
   const { Boat, spawnBoat } = await import('../src/systems/comeSailAway/comeSailAwayBoat.js');
   const { ctxFor } = await import('./csaScene.mjs');
   const { readyPool } = await import('./navalSea.mjs');
@@ -134,8 +134,8 @@ test('AUDIT CC-A5 (major): a hand home again stands on her deck - the last of th
   assert.match(w, /away: naval\?\.awayOf\?\.\(boat\) \?\? NO_HANDS_AWAY/, 'my boats always say who is away');
   // PIN MOVED (AUDIT CAPTAIN'S SEA C1): the rule moved into the host's one ashore set (`ashoreNames`), which the deck, her
   // posts' worth, her answering hand and her card all read - the deck still answers the empty set, never null
-  assert.match(rd('src/scenes/navalHost.js'), /const ashoreNames = \(boat\) => \(boat\?\.uid && companions\.party\.length && !sailing\(\) \? companions\.awayOf\(boat\.uid\) : NO_HANDS_AWAY\);/, 'none away: an empty set - and none while I sail (Mac: back on deck)');
-  assert.match(rd('src/scenes/navalHost.js'), /const names = ashoreNames\(boat\);[^\n]*\n\s*if \(!names\.size\) return NO_HANDS_AWAY;/, 'the deck reads the one set');
+  assert.match(rd('src/scenes/naval/navalHost.js'), /const ashoreNames = \(boat\) => \(boat\?\.uid && companions\.party\.length && !sailing\(\) \? companions\.awayOf\(boat\.uid\) : NO_HANDS_AWAY\);/, 'none away: an empty set - and none while I sail (Mac: back on deck)');
+  assert.match(rd('src/scenes/naval/navalHost.js'), /const names = ashoreNames\(boat\);[^\n]*\n\s*if \(!names\.size\) return NO_HANDS_AWAY;/, 'the deck reads the one set');
 });
 
 test('AUDIT CC-A6 (major): the bars come down under a dungeon window - the overlay\'s early return draws them covered too', () => {
@@ -377,7 +377,7 @@ test('AUDIT CC-D5: one round of grog a port day, and a prize\'s hold lifts spiri
   assert.ok(y, 'the yard\'s window');
   assert.equal(y.buyProvision('grog').ok, true);
   assert.equal(y.buyProvision('grog').ok, false, 'not twice a day');
-  assert.match(rd('src/scenes/navalHost.js'), /if \(all\.length > left\.length && !_plundered\.has\(hold\)\) \{ _plundered\.add\(hold\); crewEvent\(boat \?\? boatInPlay\(\), 'plunder'\); \}/);
+  assert.match(rd('src/scenes/naval/navalHost.js'), /if \(all\.length > left\.length && !_plundered\.has\(hold\)\) \{ _plundered\.add\(hold\); crewEvent\(boat \?\? boatInPlay\(\), 'plunder'\); \}/);
 });
 
 test('AUDIT CC-D6: the hands stand on her deck as they were named - their class and sex off her saved crew, not a seed that moves with the session', () => {
@@ -394,11 +394,11 @@ test('AUDIT CC-D7: a knock after a load still costs her crew - the event lands o
 });
 
 test('AUDIT CC-D8: the plate says her repairs while the order stands; the card marks a hand ashore; the next hand answers for a First Mate ashore', () => {
-  assert.match(rd('src/scenes/navalHost.js'), /repairing: !!st\.repairing, repairOrdered: st\.crew\.order === CREW_ORDERS\.repair,/);
+  assert.match(rd('src/scenes/naval/navalHost.js'), /repairing: !!st\.repairing, repairOrdered: st\.crew\.order === CREW_ORDERS\.repair,/);
   assert.match(rd('src/ui/naval/navalHud.js'), /ship\.repairOrdered \? 'Crippled - her crew stands to the repairs'/);
   const lines = crewCard({ morale: 60, hands: [{ name: 'Aldric', role: 'First Mate', fights: 0, boardings: 0 }, { name: 'Brand', role: 'Bard', fights: 1, boardings: 0 }] }, { ashore: new Set(['Aldric']) });
   assert.ok(lines.some((l) => /^Aldric, First Mate.*ashore with you/.test(l)));
-  assert.match(rd('src/scenes/navalHost.js'), /const mateOf = \(boat, st\) =>/);
+  assert.match(rd('src/scenes/naval/navalHost.js'), /const mateOf = \(boat, st\) =>/);
 });
 
 // ── CC-E: co-op - the companions' fights across the clients ──────────────────────────────────────────────────────
@@ -499,7 +499,7 @@ test('AUDIT CC-E3/E4: a companion lifted on the street makes the next frame whol
   assert.equal(A.foesFrame(false), null, 'nothing changed');
   A.removeFoe(mate);
   assert.equal(A.foesFrame(false)?.full, 1, 'whole');
-  assert.match(rd('src/scenes/navalHost.js'), /if \(was === SHIP_STATES\.afloat && dmg\.state === SHIP_STATES\.struck && clock - \(e\.myBlowAt \?\? -Infinity\) <= SINK_CREDIT_S\) crewEvent\(boatInPlay\(\) \?\? myBoat\(\), 'win'\);/);
+  assert.match(rd('src/scenes/naval/navalHost.js'), /if \(was === SHIP_STATES\.afloat && dmg\.state === SHIP_STATES\.struck && clock - \(e\.myBlowAt \?\? -Infinity\) <= SINK_CREDIT_S\) crewEvent\(boatInPlay\(\) \?\? myBoat\(\), 'win'\);/);
 });
 
 // ── CC-F: the safety net - behaviour the audit's mutants found unpinned ──────────────────────────────────────────

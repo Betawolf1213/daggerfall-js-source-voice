@@ -29,7 +29,7 @@ import { weaponOfMaterial } from '../src/combat/enemyEquipment.js';
 import { DYE_COLORS, DYE_TARGETS } from '../src/characters/dyes.js';
 import { decorFurnishingEntry, furnishingLooks } from '../src/systems/decor/decorFurnish.js';
 import { decorItemName } from '../src/systems/decor/decorItems.js';
-import { decorLookEntry } from '../src/scenes/decorTool.js';
+import { decorLookEntry } from '../src/scenes/decor/decorTool.js';
 import {
   standTrees, sinkFelled, treeKind, isTreeRecord, TREE_RECORDS, STUMP_RECORD, LOGS_RECORD, FALL_S, FALL_ANGLE, AXE_HAND, axeHandFrame, treePlan,
 } from '../src/scenes/treeHost.js';

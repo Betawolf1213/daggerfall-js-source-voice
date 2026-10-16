@@ -14,7 +14,7 @@ import { readFileSync } from 'node:fs';
 import { buildWaveMesh } from '../src/systems/comeSailAway/comeSailAwayWaves.js';
 import { quatRotate, quatRotateInto } from '../src/world/quat.js';
 import { batchSphere } from '../src/render/bounds.js';
-import { CULL_DETAIL_PX } from '../src/scenes/comeSailAwayPool.js';
+import { CULL_DETAIL_PX } from '../src/scenes/comeSailAway/comeSailAwayPool.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const W = rd('src/scenes/world.js');

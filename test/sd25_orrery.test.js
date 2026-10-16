@@ -1,7 +1,7 @@
 // SD25 S10 (2026-10-09, the Abyss Dungeon's look; bible/11-Multiplayer/Super-Dungeons-Look.md section 7): THE ORRERY OF
 // ENDINGS REBUILT - the stones in the Daggerfall manner inside the law's shapes (world/superDungeon/sdHall.js), the hall's atlas through
 // the paint box (world/superDungeon/sdHallArt.js), the orrery overhead in mode A (world/superDungeon/sdOrreryModel.js), and the set that moves them
-// (scenes/sdHall.js): crown gears that move only with their own hands, bezels that settle gold and burn ember on a refusal,
+// (scenes/superDungeon/sdHall.js): crown gears that move only with their own hands, bezels that settle gold and burn ember on a refusal,
 // frozen banners, the dial's rise and fall, the fray's tabs, the Concord's sequence and its plated bridge. Every law is the
 // Orrery's own (net/superDungeon/sdBrain.js), run from its own code; the lab's knobs from its own text.
 import { test } from 'node:test';
@@ -28,7 +28,7 @@ import {
 import {
   createSdHall, sdStoneKey, SD_HALL_SOUNDS, SD_HALL_REMAP, SD_CONCORD_MS, SD_BRIDGE_LAY_MS, SD_BEZEL_MS, SD_DIAL_FLASH_MS, SD_DIAL_DIM_MS,
   SD_FRAY_PULSE_HZ, SD_FRAY_FULL_MS, SD_GEM_LIGHT, SD_HAND_RATE, SD_RING_LITE_SEGS, SD_BANNER_LITE_KEYS,
-} from '../src/scenes/sdHall.js';
+} from '../src/scenes/superDungeon/sdHall.js';
 import { SD_RAMP, SD_LIGHT } from '../src/world/superDungeon/sdLook.js';
 import { offPalette, paletteOf } from '../src/world/superDungeon/sdPixelKit.js';
 import { SD_REALM_BRASS_RECORD } from '../src/world/superDungeon/sdRealm.js';

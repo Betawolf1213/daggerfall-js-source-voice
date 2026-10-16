@@ -1,6 +1,6 @@
 // SD7b (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 9): THE UNMOORED STEPS ON THE
 // PAGE - world/superDungeon/sdStepsModel.js (the meshes and the colliders the steps are), world/superDungeon/sdStepsArt.js (what they wear),
-// scenes/sdSteps.js (the dungeon host's set: stood, moved on the realm's clock, ridden before the motor), and the hosts'
+// scenes/superDungeon/sdSteps.js (the dungeon host's set: stood, moved on the realm's clock, ridden before the motor), and the hosts'
 // wiring - the ride beside the movers', the cast-back, the edge let go over the Steps, Levitate warded in the Hour. And
 // the engine itself, run: the real motor on the real collider carried by a swinging step, crossing the widest gap at the
 // weakest build, running up a riser at skill 0, and falling when a Beat step goes.
@@ -20,7 +20,7 @@ import { SD_STEP_KINDS, SD_STEP_WEAR, SD_RACK, stepBox, buildStepModel, stepTris
 import { stepsArt, crackedArt, beatArt, SD_STEPS_CRACKED_RECORD, SD_STEPS_BEAT_RECORD, SD_STEPS_ATLAS, SD_STEPS_RECORD } from '../src/world/superDungeon/sdStepsArt.js';
 import {
   createSdSteps, sdStepKey, SD_CHECKS_KEY, SD_STEPS_TEXT, SD_STEPS_SOUNDS, SD_STEP_GONE_Y, SD_CRUMBLE_SHAKE,
-} from '../src/scenes/sdSteps.js';
+} from '../src/scenes/superDungeon/sdSteps.js';
 import { PlayerMotor, TELEPORT_FREEZE_S } from '../src/player/motor.js';
 import { Collider } from '../src/player/collider.js';
 

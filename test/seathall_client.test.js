@@ -1,5 +1,5 @@
 // SEAT-HALL (2026-10-02, Mac: "Please do" - the palace as the holder's guild hall): THE CHARTER ROOM IN THE CLIENT -
-// the law's words and numbers (src/net/townSeatLaw.js), the decorator's rule in the palace (src/scenes/decorTool.js
+// the law's words and numbers (src/net/townSeatLaw.js), the decorator's rule in the palace (src/scenes/decor/decorTool.js
 // charterWhyNot: the largest room, two metres from the court; a room's own cap), the account door's `seat`
 // (src/net/accountClient.js accountDecor) and the hosts' seams (src/scenes/worldModes.js interiorSeatHall, world.js
 // seatHall). bible/11-Multiplayer/Seats-Arc.md 7.2; `06-Systems/Online-Arc.md` SEAT-HALL.
@@ -99,7 +99,7 @@ test('SEAT-HALL a room\'s own cap: the Charter Room\'s hundred is the decorator\
   rig.frame(); await settle(); rig.frame();
   assert.equal(await rig.tool.commit(), false, 'full at its own cap');
   assert.equal(writes.length, 0);
-  const tool = src('src/scenes/decorTool.js');
+  const tool = src('src/scenes/decor/decorTool.js');
   assert.match(tool, /const capHere = \(r\) => \(r\?\.yard && Number\.isSafeInteger\(deps\.yardCap\) \? deps\.yardCap : Number\.isSafeInteger\(r\?\.cap\) \? r\.cap : DECOR_CAP\);/);
   assert.match(tool, /const whyNotHere = \(p\) => deps\.placeOk\?\.\(p\.piece, footprintOf\(p\)\) \?\? charterWhyNot\(p\);/);
   assert.equal((tool.match(/whyNotHere\(p\)/g) ?? []).length, 3, 'the commit, the move and the placing bar');

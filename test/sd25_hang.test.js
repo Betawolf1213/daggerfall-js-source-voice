@@ -1,6 +1,6 @@
 // SD25 S11 (2026-10-09, the Abyss Dungeon's look; bible/11-Multiplayer/Super-Dungeons-Look.md section 6): THE HANG AND THE
 // WORKS - what hangs under and around the Hour's islands: strata spires, gear rims and chains under each island
-// (world/superDungeon/sdIslandModel.js), the far islands, the Works far below (world/superDungeon/sdWorksModel.js), stood and moved by scenes/sdHang.js.
+// (world/superDungeon/sdIslandModel.js), the far islands, the Works far below (world/superDungeon/sdWorksModel.js), stood and moved by scenes/superDungeon/sdHang.js.
 // Every law here is run from its own code; none of it is a collider, and every draw is noShadow.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -15,7 +15,7 @@ import {
 } from '../src/world/superDungeon/sdIslandModel.js';
 import { SD_WORKS, SD_HANG_NOW, SD_WORKS_RECORD, SD_WORKS_TIP_V, SD_WORKS_FACE_V, SD_WORKS_PITCH, SD_WORKS_TOOTH, buildWorksGear, worksMatrix, worksAngle } from '../src/world/superDungeon/sdWorksModel.js';
 import { worksArt, chainArt, hangArt, SD_WORKS_TIP_ROWS, SD_WORKS_TIP_GLOW } from '../src/world/superDungeon/sdHangArt.js';
-import { createSdHang, SD_FAR_TURNS } from '../src/scenes/sdHang.js';
+import { createSdHang, SD_FAR_TURNS } from '../src/scenes/superDungeon/sdHang.js';
 import { buildRealmModel, SD_REALM_ROOT_RECORD, SD_REALM_BRASS_RECORD, SD_ISLAND_SIDES, SD_ROOT_DEPTH, SD_LIP, SD_REALM_FLOORS } from '../src/world/superDungeon/sdRealm.js';
 import { realmArt } from '../src/world/superDungeon/sdRealmArt.js';
 import { SD_HALL_FLOORS } from '../src/world/superDungeon/sdHall.js';
@@ -90,8 +90,8 @@ test('SD-LOOK S11 THE LAW: nothing that hangs is law or looks like it - every ro
   }
   for (const g of SD_WORKS) for (const p of pointsOf(buildWorksGear(g), worksMatrix(g, Float64Array.of(12.3, 0, 0), new Float32Array(16)))) assert.ok(p[1] < -200, 'the Works far under every floor');
   for (const p of pointsOf(buildFarIslandsModel(), farIslandsMatrix(Float64Array.of(0, 0, 1.1), new Float32Array(16)))) assert.ok(p[1] < -40, 'the far islands under every floor');
-  // the hang stands no collider: its set is stood among the draws alone (scenes/sdHang.js takes no collider)
-  const code = read('src/scenes/sdHang.js').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
+  // the hang stands no collider: its set is stood among the draws alone (scenes/superDungeon/sdHang.js takes no collider)
+  const code = read('src/scenes/superDungeon/sdHang.js').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
   assert.doesNotMatch(code, /collider|addMesh|realmClamp|realmFloorTris|realmColliderTris/, 'the hang touches no law');
 });
 
@@ -335,7 +335,7 @@ test('SD-LOOK S11 THE SET: every draw noShadow and tagged with its stage; the de
 test('SD-LOOK S11 THE FRAME MAKES NOTHING (AUDIT SD II L2 F9): the hang\'s frame - the chains swung, the gears turned, the far set turned, every matrix in place - measured in a child with a 64 MB young space against a control that must show (mutants: a fresh matrix a frame; the clock read into a fresh list)', () => {
   const url = (p) => JSON.stringify(pathToFileURL(join(ROOT, p)).href);
   const script = `
-    const { createSdHang } = await import(${url('src/scenes/sdHang.js')});
+    const { createSdHang } = await import(${url('src/scenes/superDungeon/sdHang.js')});
     const renderer = { createMesh: () => ({}), destroyMesh() {} };
     const clock = Array.from({ length: 4096 }, (_, k) => 1_800_000_000 + k / 60); clock.push('tagged');   // numbers already made, as the host hands them (sd11a's)
     let k = 0;

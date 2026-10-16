@@ -6,7 +6,7 @@
 // not). DFU's red flash stays a blow's alone (ui/damageFlash.js - spell damage never flashed); the court speaks in its own.
 //
 //   the view       ui/gate/gateGroundView.js groundViewModel, drawGateGround
-//   the court      scenes/gateCourt.js burn/land - the ground's name and colour, the bite's moment and colour, the hiss
+//   the court      scenes/gate/gateCourt.js burn/land - the ground's name and colour, the bite's moment and colour, the hiss
 //   the ground     net/gate/gateBrain.js POOLS, SCAR_POOLS; render/gateTelegraph.js poolShapes in the ground's own grain
 //
 // Design: bible/11-Multiplayer/World-Bosses.md section 14 (WB9d).
@@ -20,7 +20,7 @@ import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import { BOSS_CUES, BURNING, ASPECT_CUE_IDS, groundStepCue, poolColor, attackColor } from '../src/world/gate/gateBoss.js';
 import { courtToDungeon } from '../src/world/gate/gateArena.js';
 import { poolShapes, TELEGRAPH_STYLE, TELEGRAPH_FS, TELEGRAPH_POOL } from '../src/render/gateTelegraph.js';
-import { createGateCourt } from '../src/scenes/gateCourt.js';
+import { createGateCourt } from '../src/scenes/gate/gateCourt.js';
 import {
   groundViewModel, drawGateGround, destroyGateGround, GROUND_BITE_MS, GROUND_EDGE_IN, GROUND_EDGE_BITE, GROUND_EDGE_STEP, GROUND_VIEW_TEXT, GROUND_VIEW_CSS,
 } from '../src/ui/gate/gateGroundView.js';
@@ -160,7 +160,7 @@ test('WB9d the ground drawn in its own grain: each court\'s pools on their own q
   for (const s of shapes) { assert.equal(s.style, TELEGRAPH_STYLE.frost); assert.equal(s.pool, TELEGRAPH_POOL.ground); assert.equal(s.color, poolColor(R)); }
   assert.match(TELEGRAPH_FS, /if \(uPool == 1\) \{/);
   assert.match(TELEGRAPH_FS, /float seethe = 0\.85 \+ 0\.15 \* sin\(uSince \* 6\.283185307179586 \* 0\.6\);/, 'it seethes on its own clock (WB13a: slow - terrain, never a blow to come)');
-  const gc = read('src/scenes/gateCourt.js');
+  const gc = read('src/scenes/gate/gateCourt.js');
   assert.match(gc, /drawGateGround\(groundViewModel\(\{ inside: inFire, ground: groundName, color: groundColor, biteAt, biteColor, now: t, peril \}\), \{ hidden: hudHidden\(\) \}\);/);   // WB13a: and a blow to come on my feet
   assert.match(gc, /drawGateGround\(null\);   \/\/ WB9d/, 'put away with the court');
   assert.match(read('src/scenes/world.js'), /drawGateBanner\(null\); drawGateMarksCard\(null\);( drawGateDamageChart\(null\);)? drawGateGround\(null\);/, 'and with a held frame');   // GATE-UX: the damage chart between them

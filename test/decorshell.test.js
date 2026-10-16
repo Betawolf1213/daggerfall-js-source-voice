@@ -22,9 +22,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { Collider } from '../src/player/collider.js';
-import { flyClip, flyStep, DECOR_FLY_SKIN, DECOR_FLY_SPEED, DECOR_FLY_GIVE } from '../src/scenes/decorTool.js';
+import { flyClip, flyStep, DECOR_FLY_SKIN, DECOR_FLY_SPEED, DECOR_FLY_GIVE } from '../src/scenes/decor/decorTool.js';
 import { createDecorPlacer, DECOR_HANG_NY, DECOR_RAISE_STEP } from '../src/systems/decor/decorPlacer.js';
-import { createDecorRoom, askDecorList, DECOR_MODEL_RETRY_MS, DECOR_LIST_RETRY_MS, DECOR_LIST_RETRY_MAX_MS } from '../src/scenes/decorRoom.js';
+import { createDecorRoom, askDecorList, DECOR_MODEL_RETRY_MS, DECOR_LIST_RETRY_MS, DECOR_LIST_RETRY_MAX_MS } from '../src/scenes/decor/decorRoom.js';
 import { accountDecor, SESSION_KEY, DECOR_LIST_WAIT_MS } from '../src/net/accountClient.js';
 import { settle, toolRig, placeFrom } from './decorFakes.mjs';
 
@@ -163,7 +163,7 @@ test('DECOR-SHELL the host by source: an online home is decorated only once its 
   assert.match(load, /const visit = _decorVisit;\n    askDecorList\(\{\n      ask: \(\) => host\.homeDecor\.list\(homeTownOf\(b\), b\.buildingKey, seat\),\n      live: \(\) => visit === _decorVisit && interiorBuilding === b && _decorListed !== visit,\n      stand: \(r\) => \{\n        _decorListed = visit;/, 'the gate opens where the list stands, and nowhere else');   // PIN MOVED (SEAT-HALL): the palace's hall shares the line
   assert.equal([...m.matchAll(/_decorListed = visit/g)].length, 1, 'one door to the gate: no answer but a list opens it');
   assert.doesNotMatch(m, /\.catch\(\(\) => \{ if \(visit === _decorVisit\) _decorListed = visit; \}\)/, 'a failure never opens it');
-  const t = src('src/scenes/decorTool.js');
+  const t = src('src/scenes/decor/decorTool.js');
   assert.match(t, /p\.fly = flyClip\(deps\.collider\?\.\(\), p\.fly, next, through\);/, 'the flight cut by the room\'s own collider, through what the eye looks through');
 });
 

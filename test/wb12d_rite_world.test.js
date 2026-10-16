@@ -31,7 +31,7 @@ import { mintReceipt, importReceiptKey } from '../src/net/gate/gateReceipt.js';
 import { createGateOmen, riteOmenLine } from '../src/systems/gate/gateOmen.js';
 import { ritePost, omenPost } from '../src/net/gate/gateHerald.js';
 import { isSigilStone } from '../src/systems/gate/gateSpoils.js';
-import { COURT_STRIKE_TEXT } from '../src/scenes/gateCourt.js';
+import { COURT_STRIKE_TEXT } from '../src/scenes/gate/gateCourt.js';
 import { properName } from '../src/systems/champions.js';
 import { sayEnemyDied } from '../src/scenes/corpseMarker.js';
 import { activateMobileEnemy } from '../src/player/mobileEnemyActivate.js';
@@ -931,7 +931,7 @@ test('WB12d the spoils: a receipt of the rite alone pays its ember and nothing e
   assert.equal(pool.spew({ day: DAY + 1, seed: 4242, level: 20, acct: 'a', at: [0, 0, 0], bearing: 0, claims: { x: 'stood', r: 1 } }), true);
   assert.equal(pool.state().pieces.length, plain.length + 1, 'spewed: an ember more');
   assert.equal(COURT_STRIKE_TEXT.spilledRite(), 'Your ember from the broken rite falls to the floor.');
-  const court = read('src/scenes/gateCourt.js');
+  const court = read('src/scenes/gate/gateCourt.js');
   assert.match(court, /spoils\.spew\(\{ day: s\.day, seed: claims\.c, level: spoilsLevel\(player\(\)\?\.level \?\? 1, claims\.l\), at, bearing, acct: claims\.s, keep, claims \}\)/);
   assert.match(court, /say\(claims\.x === 'rite' \? COURT_STRIKE_TEXT\.spilledRite\(\) : COURT_STRIKE_TEXT\.spilled\(\)\);/);
   assert.match(read('src/scenes/world.js'), /spoilsPool\.grant\(\{ day: c\.d, seed: c\.c, level: spoilsLevel\(playerEntity\.level \?\? 1, c\.l\), acct: c\.s, claims: c, text: c\.x === 'rite' \? SPOILS_TEXT\.rite : SPOILS_TEXT\.granted \}\)/);

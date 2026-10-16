@@ -411,7 +411,7 @@ test('CREW-COMPANIONS by source: the world stands the party in every place and e
   assert.match(w, /away: naval\?\.awayOf\?\.\(boat\) \?\? NO_HANDS_AWAY \}\);/);
   const m = rd('src/scenes/worldModes.js');
   assert.equal((m.match(/host\.drawCompanionBars\?\.\(\{ proj, view, eye: mwv\.eye \}\);/g) ?? []).length, 3, 'the bars indoors and underground - and under a dungeon window (AUDIT CC-A6)');
-  const n = rd('src/scenes/navalHost.js');
+  const n = rd('src/scenes/naval/navalHost.js');
   assert.match(n, /raids: \[\.\.\.raidUids\], party: companions\.snapshot\(\) \};/);
   assert.match(n, /companions = createCompanions\(r\?\.party \?\? null, deps\.packedItems \?\? null\);/);
   assert.match(n, /const live = boatState\.get\(c\.boat\);\n\s*if \(live\) live\.crew\.event\('knocked'\);/);

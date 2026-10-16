@@ -1,7 +1,7 @@
 // @ts-check
 // SD6c (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 8): THE ORRERY'S HALL, MADE -
 // where its parts stand and the meshes they are, in the realm's frame (net/superDungeon/sdBrain.js) and drawn in the dungeon's.
-// Pure: the scene (scenes/sdHall.js) uploads, stands and moves them.
+// Pure: the scene (scenes/superDungeon/sdHall.js) uploads, stands and moves them.
 //
 //   THE STONES - six on the hall's ring (net/superDungeon/sdBrain.js SD_STONE_POS), each facing the hall's centre: its dial at chest
 //     height with a brass notch over its twelfth hour, its sign above, a brass cap, and TWO HANDLES - the right (as you

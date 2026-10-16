@@ -14,7 +14,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 
 import { createForagingWait } from '../src/scenes/foragingWait.js';
-import { tokensToRows } from '../src/scenes/questBridge.js';
+import { tokensToRows } from '../src/scenes/quest/questBridge.js';
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { loadQuestTables } from '../src/systems/quest/tables.js';
 import { questActionsExtensionTemplates } from '../src/systems/quest/questActionsExtension.js';

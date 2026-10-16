@@ -192,7 +192,7 @@ test('WB13c a fight gone resets the bar - the next fight\'s comes up with its ow
 });
 
 test('WB13c the court: the bar never over the step\'s fire, and the blow on my feet handed to it by name (mutants: the bar over the veil; MOVE never asked)', () => {
-  const c = read('src/scenes/gateCourt.js');
+  const c = read('src/scenes/gate/gateCourt.js');
   assert.match(c, /const peril = alive \? perilAt\(s, t, P, fp\[0\] - COURT_CENTRE\[0\], fp\[2\] - COURT_CENTRE\[2\], yaw\(\)\) : null;\n\s*drawGateBossBar\(bossBarModel\(s, t, bossOf\(s\), peril\?\.name \?\? null\), \{ hidden: hudHidden\(\) \|\| veiled\(\) \}\);/);
   assert.match(c, /drawGateGround\(groundViewModel\(\{ inside: inFire, ground: groundName, color: groundColor, biteAt, biteColor, now: t, peril \}\), \{ hidden: hudHidden\(\) \}\);/, 'the same peril the ground says');
 });

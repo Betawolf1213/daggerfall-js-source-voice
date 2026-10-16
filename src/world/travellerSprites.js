@@ -6,7 +6,7 @@
 // caravan's sellsword, a courier - LW0 decision 5) in their class's eight-way sprite, the enemy's own MobileUnit on the
 // class archive (the bands' body, world/bandSprites.js); the rest in their own townsperson's outfit, the walker's
 // billboard (characters/residentWalker.js - the street's records on the outfit's archive). Faded in by distance as the
-// bands are, and grown under the Overworld. Where each stands is the roads' (scenes/livingRoads.js); this draws, and
+// bands are, and grown under the Overworld. Where each stands is the roads' (scenes/livingWorld/livingRoads.js); this draws, and
 // answers each drawn body as a talk target (the street's own shape: `nameNPC`, `personFaceRecordId`, `_talkSeed`).
 //
 // EVERY ALLOCATION HAS AN OWNER: a body's billboard batch is made with it and freed when it leaves the list, and

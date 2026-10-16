@@ -228,7 +228,7 @@
   },
   {
     "name": "ARENAFIX-PRACTICE-LADDER",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    if (C.practice) {\n      // ARENA-FIX 4",
     "new": "    if (false) {\n      // ARENA-FIX 4",
     "tests": [
@@ -237,7 +237,7 @@
   },
   {
     "name": "ARENAFIX-PRACTICE-LOUD",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "      practice, quiet: practice,",
     "new": "      practice, quiet: false,",
     "tests": [
@@ -246,7 +246,7 @@
   },
   {
     "name": "ARENAFIX-PIT-AXIS",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "(ax ? [(x * ax[0] - z * ax[1]) * k, (x * ax[1] + z * ax[0]) * k] : [x * k, z * k])",
     "new": "[x * k, z * k]",
     "tests": [
@@ -255,7 +255,7 @@
   },
   {
     "name": "ARENAFIX-WALK-NONE",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "        if (f?.ai && !C.relay) walkIn(C, f.id);   // ARENA-FIX 8",
     "new": "        // ARENA-FIX 8",
     "tests": [
@@ -264,7 +264,7 @@
   },
   {
     "name": "ARENAFIX-WALK-AT-GATE",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "      const from = stage.gates === false ? f.mark : boutGateOf(f.mark);",
     "new": "      const from = f.mark;",
     "tests": [
@@ -291,7 +291,7 @@
   },
   {
     "name": "ARENAFIX-MISS-UNHEARD",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    if (!(r.damage > 0)) boutMiss(C.b, { from, now: t });",
     "new": "    if (!(r.damage > 0)) { /* no miss */ }",
     "tests": [
@@ -300,7 +300,7 @@
   },
   {
     "name": "ARENAFIX-SWING-UNHEARD",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    if (!C?.ladder || !C.b || !boutLive(C.b) || struck > 0) return;",
     "new": "    return;",
     "tests": [
@@ -309,7 +309,7 @@
   },
   {
     "name": "ARENAFIX-MISS-SIDES",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    if (!a || !b || a.side === b.side) return;",
     "new": "    if (!a || !b) return;",
     "tests": [
@@ -318,7 +318,7 @@
   },
   {
     "name": "ARENAFIX-CRIT-APPROX",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    if (r && t - r.at <= RESOLUTION_MS) { C.lastBlow.delete(to); return r.critical; }",
     "new": "    if (r && t - r.at <= RESOLUTION_MS) { C.lastBlow.delete(to); }",
     "tests": [
@@ -355,7 +355,7 @@
   },
   {
     "name": "ARENAFIX-NOBLES-GIANT",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "      const size = sizeOf(tex, g.record, CROWD_SCALE[g.archive]);",
     "new": "      const size = sizeOf(tex, g.record);",
     "tests": [

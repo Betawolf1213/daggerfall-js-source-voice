@@ -205,7 +205,7 @@
   },
   {
     "name": "AUDWBX-F6-the-trap-forgotten-at-the-door",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    if (d !== null && trapMark?.day !== d) trapMark = null;",
     "new": "    if (trapMark?.day !== d) trapMark = null;",
     "tests": [
@@ -214,7 +214,7 @@
   },
   {
     "name": "AUDWBX-W1-sealed-in-the-root",
-    "file": "src/scenes/gatePool.js",
+    "file": "src/scenes/gate/gatePool.js",
     "old": "    if (f && g && inGateRoot(place, f)) landBefore(g);",
     "new": "    void inGateRoot;",
     "tests": [
@@ -223,7 +223,7 @@
   },
   {
     "name": "AUDWBX-W6-the-box-every-frame",
-    "file": "src/scenes/gatePool.js",
+    "file": "src/scenes/gate/gatePool.js",
     "old": "      if (!box || !boxAt || boxAt[0] !== o[0] || boxAt[1] !== o[1] || boxAt[2] !== o[2] || boxAt[3] !== place.yaw || boxAt[4] !== place.day) {",
     "new": "      if (true) {",
     "tests": [
@@ -232,7 +232,7 @@
   },
   {
     "name": "AUDWBX-W6-the-box-left-where-it-stood",
-    "file": "src/scenes/gatePool.js",
+    "file": "src/scenes/gate/gatePool.js",
     "old": "      if (!box || !boxAt || boxAt[0] !== o[0] || boxAt[1] !== o[1] || boxAt[2] !== o[2] || boxAt[3] !== place.yaw || boxAt[4] !== place.day) {",
     "new": "      if (!box) {",
     "tests": [

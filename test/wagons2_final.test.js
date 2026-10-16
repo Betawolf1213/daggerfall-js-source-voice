@@ -13,7 +13,7 @@ import { WAGON_MODE } from '../src/systems/horse/horseCartLaw.js';
 import { quatLookRotation } from '../src/world/quat.js';
 import { newWagonItem, wagonItemName, wagonKgFor } from '../src/systems/wagon/wagonKinds.js';
 import { LOOK_TEXT } from '../src/systems/wagon/wagonLooks.js';
-import { createWagonRiders, RIDE_ROW } from '../src/scenes/wagonRiders.js';
+import { createWagonRiders, RIDE_ROW } from '../src/scenes/wagon/wagonRiders.js';
 import { RIDE_TEXT, RIDE_ASK_REACH } from '../src/systems/wagon/wagonSeats.js';
 import { TOO_FAR_AWAY_TEXT } from '../src/player/activate.js';
 import { createDuelPrompt, DUEL_PROMPT_CSS } from '../src/ui/duelPrompt.js';
@@ -104,7 +104,7 @@ test('WAGONS2 (FINAL AUDIT) A HIRED TRADER IN A HOME ALONE: the trader is offere
     assert.deepEqual(stationsOffered(false), stationsOffered(true).filter((k) => k !== 'vendor'), 'a caravan or a ship: every station but the trader');
   } finally { setProfessionsPages(null); }
   assert.equal(stationsOffered(true).includes('vendor'), false, 'and offline none, wherever');
-  const dt = read('src/scenes/decorTool.js');
+  const dt = read('src/scenes/decor/decorTool.js');
   assert.match(dt, /if \(want === VENDOR_STATION && \(r\?\.kind !== 'home' \|\| !forgeOffered\(\)\)\) \{ deps\.say\?\.\(VENDOR_COLD_LINE\); return false; \}/, 'never sold out of a home');
   assert.match(dt, /trader: r\?\.kind === 'home',/, 'the view says where it is');
   assert.match(read('src/ui/decorPanel.js'), /const o = stationsOffered\(view\?\.trader !== false\);/, 'and the panel\'s cycle reads it');

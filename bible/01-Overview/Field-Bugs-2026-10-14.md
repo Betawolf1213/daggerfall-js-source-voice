@@ -328,7 +328,7 @@ what was assigned to it carried onto the new building's markers, its site links 
 journal names the residence the quest stands in, and its map mark moved - the old house's quest stamp undiscovered, the
 new one discovered under the quest's name where the player had it on the map (`src/systems/quest/machine.js`
 reseatHomedSites; `src/scenes/world.js` questSiteMovedHere). A site the player has stood in is REACHED for good
-(`siteDetails.reached`, marked by the interior mount, `src/scenes/questBridge.js` mountScene ->
+(`siteDetails.reached`, marked by the interior mount, `src/scenes/quest/questBridge.js` mountScene ->
 QuestMachine.noteSiteReached, and saved with the site) and never moved; the quest rung opens the home to them, as before.
 A save from before the mark says nothing of where its player stood: its sites read as not reached.
 A Ledger A departure (`01-Overview/Port-Ledger.md`, the HOME1 row's A QUEST'S SITE IS NEVER ANOTHER PLAYER'S HOME): Daggerfall Unity

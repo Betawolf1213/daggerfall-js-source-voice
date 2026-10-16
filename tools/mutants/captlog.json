@@ -388,7 +388,7 @@
   },
   {
     "name": "CL-host-deed",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    cap.deed?.(act, s.cls, paid ? { crown: null } : { crown, marque: under });",
     "new": "    void cap;",
     "tests": [
@@ -397,7 +397,7 @@
   },
   {
     "name": "CL-host-rival-regard",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (under) cap.regard?.(s.flag, standingFor(act, s.cls));",
     "new": "    if (false) cap.regard?.(s.flag, standingFor(act, s.cls));",
     "tests": [
@@ -406,7 +406,7 @@
   },
   {
     "name": "CL-host-rival-crown",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const crown = under ? s.flag : crownOfShip(s);",
     "new": "    const crown = crownOfShip(s);",
     "tests": [
@@ -415,7 +415,7 @@
   },
   {
     "name": "CL-host-tear",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      deps.captain?.tearMarque?.();\n",
     "new": "",
     "tests": [
@@ -424,7 +424,7 @@
   },
   {
     "name": "CL-host-quest-pays",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "for (const r of questPays || paid ? [] : law.rewards) {",
     "new": "for (const r of paid ? [] : law.rewards) {",
     "tests": [
@@ -433,7 +433,7 @@
   },
   {
     "name": "CL-host-repel-charged",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      chargePlayer('repel', entry, { questPays: !!b.quest && entry.ship.cls.flagship });",
     "new": "      void 0;",
     "tests": [
@@ -442,7 +442,7 @@
   },
   {
     "name": "CL-host-witness",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "w.ship.flag !== signed && dist2d(w.ship.pos, s.pos) < WITNESS_RANGE",
     "new": "dist2d(w.ship.pos, s.pos) < WITNESS_RANGE",
     "tests": [
@@ -451,7 +451,7 @@
   },
   {
     "name": "CL-host-flag",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    ship.flag = ether ? etherFlagOf(cls) : flagOf(cls, spec.seed, region);",
     "new": "    ship.flag = null;",
     "tests": [
@@ -460,7 +460,7 @@
   },
   {
     "name": "CL-host-sailed",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "deps.captain?.sailed?.(Math.hypot(v[0], v[2]) * total);",
     "new": "deps.captain?.sailed?.(0);",
     "tests": [
@@ -469,7 +469,7 @@
   },
   {
     "name": "CL-host-plunder",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    tallyPlunder(all.filter((it) => !left.includes(it)));",
     "new": "    void all;",
     "tests": [
@@ -478,7 +478,7 @@
   },
   {
     "name": "CL-host-claimed",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    deps.captain?.note?.('claimed');",
     "new": "    void 0;",
     "tests": [
@@ -514,7 +514,7 @@
   },
   {
     "name": "CL-host-quest-twice",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "{ questPays: !!b.quest && entry.ship.cls.flagship }",
     "new": "{ questPays: false }",
     "tests": [

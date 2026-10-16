@@ -86,7 +86,7 @@ test('JOURNAL-CLEAN: the rail leaves hidden quests out of `active` and hands the
 });
 
 test('JOURNAL-CLEAN: the bridge walk hands `hidden` beside `active` (rows stay for the lens) and journalClean acts on the notebook', () => {
-  const src = read('src/scenes/questBridge.js');
+  const src = read('src/scenes/quest/questBridge.js');
   // PIN MOVED (QUEST-SHELF, 2026-10-08): and the quests set aside, beside them
   assert.match(src, /return \{ active, finished: notebook\?\.getFinishedQuests\(\) \?\? \[\], ended, hidden: notebook\?\.getHiddenQuests\?\.\(\) \?\? \[\], shelved \};/);
   assert.match(src, /notebook\?\.unhideQuest\?\.\(q\.uid\);/, 'an ended quest (even one that filed nothing) is unhidden by the walk');
@@ -150,6 +150,6 @@ test('AUDIT JOURNAL-CLEAN F3: a hidden id whose quest no longer runs is dropped 
   nb.hideQuest('7'); nb.hideQuest('9');
   assert.equal(nb.pruneHiddenQuests(['9', '12']), 1);
   assert.deepEqual(nb.getHiddenQuests(), ['9']);
-  const src = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '../src/scenes/questBridge.js'), 'utf8');
+  const src = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '../src/scenes/quest/questBridge.js'), 'utf8');
   assert.equal((src.match(/notebook\?\.pruneHiddenQuests\?\.\(/g) ?? []).length, 2, 'the walk and the load both prune');
 });

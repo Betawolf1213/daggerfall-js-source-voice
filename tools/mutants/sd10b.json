@@ -28,7 +28,7 @@
   },
   {
     "name": "AUDIT-SD-C2-the-marks-kept",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "{ marksFi = s.fi; marks.clear(); pools = []; inFire = false; }",
     "new": "{ marksFi = s.fi; pools = []; inFire = false; }",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "AUDIT-SD-C2-the-brass-kept",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "{ marksFi = s.fi; marks.clear(); pools = []; inFire = false; }",
     "new": "{ marksFi = s.fi; marks.clear(); inFire = false; }",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "AUDIT-SD-C3-the-falls-number-kept",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "      marksFi = 0; fellFi = 0; endSaid = 0;",
     "new": "      marksFi = 0; endSaid = 0;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "AUDIT-SD-C3-the-ends-number-kept",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "      marksFi = 0; fellFi = 0; endSaid = 0;",
     "new": "      marksFi = 0; fellFi = 0;",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "AUDIT-SD-C5-the-long-way-out",
-    "file": "src/scenes/sdSpoils.js",
+    "file": "src/scenes/superDungeon/sdSpoils.js",
     "old": "    if (half - Math.abs(dx) < half - Math.abs(dz)) x = px",
     "new": "    if (half - Math.abs(dx) > half - Math.abs(dz)) x = px",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "AUDIT-SD-C5-the-margin-lost",
-    "file": "src/scenes/sdSpoils.js",
+    "file": "src/scenes/superDungeon/sdSpoils.js",
     "old": "  const half = SD_PILLAR_W / 2 + margin;",
     "new": "  const half = SD_PILLAR_W / 2;",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "AUDIT-SD-C5-the-spew-from-inside",
-    "file": "src/scenes/sdSpoils.js",
+    "file": "src/scenes/superDungeon/sdSpoils.js",
     "old": "const [px, pz] = clearOfPillars(pose.x, pose.z, 0.3);",
     "new": "const [px, pz] = [pose.x, pose.z];",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "AUDIT-SD-C5-a-body-s-width",
-    "file": "src/scenes/sdSpoils.js",
+    "file": "src/scenes/superDungeon/sdSpoils.js",
     "old": "export const SD_PILLAR_CLEAR_M = 1.2;",
     "new": "export const SD_PILLAR_CLEAR_M = 0.4;",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "AUDIT-SD-C6-a-portal-stood-unlisted",
-    "file": "src/scenes/sdEnd.js",
+    "file": "src/scenes/superDungeon/sdEnd.js",
     "old": "    mine.push(d);\n    draws?.push(d);",
     "new": "    mine.push(d);",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "AUDIT-SD-C6-the-way-home-unlisted",
-    "file": "src/scenes/sdEnd.js",
+    "file": "src/scenes/superDungeon/sdEnd.js",
     "old": "      draws = dynamicDraws ?? draws ?? [];\n      const ago",
     "new": "      const ago",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "AUDIT-SD-C6-a-gone-one-listed",
-    "file": "src/scenes/sdEnd.js",
+    "file": "src/scenes/superDungeon/sdEnd.js",
     "old": "dropMesh(ret.arch); dropMesh(ret.hand); dropMesh(ret.plate); for (const d of ret.parts ?? NONE) dropMesh(d); ret = null;",
     "new": "ret = null;",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "AUDIT-SD-C6-the-list-past-the-clear",
-    "file": "src/scenes/sdEnd.js",
+    "file": "src/scenes/superDungeon/sdEnd.js",
     "old": "      for (const d of [...mine]) dropMesh(d);\n",
     "new": "",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "AUDIT-SD-C6-a-hand-drawn-at-its-start",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "{ shown[i] = want[i]; if (hands[i]) handMatrix(i, shown[i], hands[i].object.matrix); }",
     "new": "{ shown[i] = want[i]; }",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "AUDIT-SD-C6-a-matrix-every-frame",
-    "file": "src/scenes/sdHall.js",
+    "file": "src/scenes/superDungeon/sdHall.js",
     "old": "        if (d === 0) continue;",
     "new": "",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "AUDIT-SD-C6-a-steps-place-every-frame",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "    stepAt(s, t, _at);",
     "new": "    const _at = stepAt(s, t);",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "AUDIT-SD-C7-the-mark-unmade",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "    if (blow) setBossStruck();\n",
     "new": "",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "AUDIT-SD-C7-the-hours-magic-marked",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "export const bodysBlow = (A) => !!A && A.shape !== 'all';",
     "new": "export const bodysBlow = (A) => !!A;",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "AUDIT-SD-C7-the-reset-marked-as-the-bodys",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "land(A.name, h.pct, h.base, bodysBlow(A), h.el ?? null);",
     "new": "land(A.name, h.pct, h.base, b !== SD_BODY.hour, h.el ?? null);",
     "tests": [
@@ -280,7 +280,7 @@
   },
   {
     "name": "AUDIT-SD-C7-the-brass-marked",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "    land(p.el ? SD_ELEMENT_GROUND[p.el] : SD_BLOWS_TEXT.burning, p.pct, p.base, false, p.el ?? null);",
     "new": "    land(p.el ? SD_ELEMENT_GROUND[p.el] : SD_BLOWS_TEXT.burning, p.pct, p.base, true, p.el ?? null);",
     "tests": [
@@ -289,7 +289,7 @@
   },
   {
     "name": "AUDIT-SD-C7-an-echos-unmarked",
-    "file": "src/scenes/sdRemnantBlows.js",
+    "file": "src/scenes/superDungeon/sdRemnantBlows.js",
     "old": "land(A.name, h.pct, h.base, bodysBlow(A), h.el ?? null);",
     "new": "land(A.name, h.pct, h.base, bodysBlow(A) && b === SD_BODY.remnant, h.el ?? null);",
     "tests": [

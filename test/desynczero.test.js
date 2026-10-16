@@ -21,7 +21,7 @@ import { fileURLToPath } from 'node:url';
 import * as acorn from 'acorn';
 import { CELL_PUPPETS_MAX, CELL_LOOSE_PUPPETS, CELL_FRAME_RECORDS_MAX } from '../src/net/wire.js';
 import { validQuestTags, ENCOUNTER_PUPPETS_MAX, MAX_ACTIVE_ENCOUNTER_FOES } from '../src/scenes/exteriorFoes.js';
-import { questShareTag, questPrivateTag, partyQuestFoe, sharedQuestFoe, questBehaviourFor, adoptsOrphanQuestFoe, KeptKillLedger } from '../src/scenes/questFoeHost.js';
+import { questShareTag, questPrivateTag, partyQuestFoe, sharedQuestFoe, questBehaviourFor, adoptsOrphanQuestFoe, KeptKillLedger } from '../src/scenes/quest/questFoeHost.js';
 import { puppetLead, LEAD_MAX_S, LEAD_DIST_MAX } from '../src/scenes/puppetLead.js';
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { loadQuestTables } from '../src/systems/quest/tables.js';
@@ -125,7 +125,7 @@ test('DESYNC-ZERO: the kill counts for the owner and every member of the owner\'
   assert.equal(seam.peerMayHit('amy-0003', { entity: { team: 'PlayerAlly' } }), false, 'a quest\'s own ally takes no peer\'s blow');
   // my own quest foe's fall is said to the party (KEPT-KILL's pose), and the world host reads it for a party member alone
   assert.match(W, /if \(p\?\.qk && social\.inMyParty\(acct\)\) creditKeptKills\(questBridge\?\.machine, keptKills, acct, p\.qk, Date\.now\(\)\);/);
-  assert.match(src('src/scenes/questFoeHost.js'), /export function creditKeptKills[\s\S]{0,800}?partyQuestFoe\(machine, /, 'the pose credits through the same door');
+  assert.match(src('src/scenes/quest/questFoeHost.js'), /export function creditKeptKills[\s\S]{0,800}?partyQuestFoe\(machine, /, 'the pose credits through the same door');
 });
 
 test('DESYNC-ZERO: a reader stands a whole call - the encounter\'s allowance outdoors and the room\'s loose allowance hold a Greater Giant\'s ten beside its encounter; the relay\'s law is untouched', () => {

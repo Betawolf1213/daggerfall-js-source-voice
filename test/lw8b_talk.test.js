@@ -21,7 +21,7 @@ import {
   TOWN_TALKS, JOB_TALKS, WEATHER_TALKS, EVENING_TALKS, NIGHT_TALKS, ROAD_TALKS, CAMP_TALKS, MORNING_TALKS, DAY_TALKS,
 } from '../src/systems/livingWorld/lines.js';
 import { seededRng } from '../src/systems/wind/wind.js';
-import { createLivingIndoors, tablesOf, TABLE_M, TABLE_MAX, INDOOR_TICK_S } from '../src/scenes/livingIndoors.js';
+import { createLivingIndoors, tablesOf, TABLE_M, TABLE_MAX, INDOOR_TICK_S } from '../src/scenes/livingWorld/livingIndoors.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const RATE = CLASSIC_MINUTES_PER_SECOND;

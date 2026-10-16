@@ -5,7 +5,7 @@
 //   party mate - under the crosshair, armed near, by touch, in a blast - applied HERE as ALLY-CAST's receiver's record
 //   (a self-cast, no save), tagged an ally's bundle, through his own sinks; a harmful one, a free ready and another
 //   player's companion never.
-//   THE PACK (systems/naval/crewCompanions.js, scenes/navalHost.js, player/mobileEnemyActivate.js) - his live list,
+//   THE PACK (systems/naval/crewCompanions.js, scenes/naval/navalHost.js, player/mobileEnemyActivate.js) - his live list,
 //   saved with the party through the item codec, opened by activating him, stowed in his boat's hold when he goes
 //   back aboard, is knocked out or falls.
 //   THE BAR (ui/naval/navalHud.js drawCrewBars) - his name, his health in digits and his effects' icons.
@@ -310,7 +310,7 @@ test('COMPANION-KIT THE PARTY PANEL: with no party a companion ashore stands the
 });
 
 test('COMPANION-KIT THE WORLD\'S WIRING: both cast engines are handed my companions\' bodies; activating one opens his pack as a Backpack storage over whatever the mode draws, in the street, a building and a dungeon; a tap never locks onto him; the bars carry his name, health and effects; the party panel is made in one place, over the party or none, with my companions under its seats (mutants: an engine without them, the pack never opened, the lock-on onto him, the bars bare, a second panel)', () => {
-  const w = rd('src/scenes/world.js'), m = rd('src/scenes/worldModes.js'), d = rd('src/scenes/dungeonContext.js'), n = rd('src/scenes/navalHost.js');
+  const w = rd('src/scenes/world.js'), m = rd('src/scenes/worldModes.js'), d = rd('src/scenes/dungeonContext.js'), n = rd('src/scenes/naval/navalHost.js');
   assert.equal((w.match(/companionBodies: \(\) => (?:crewAshore\.bodies\(\)|\[\.\.\.crewAshore\.bodies\(\), \.\.\.revenantAshore\.bodies\(\)\]),/g) ?? []).length, 2, 'the world\'s engine and the dungeon\'s (REVENANT-COMPANION: the sworn with the crew)');
   assert.match(m, /companionBodies: \(\) => host\.companionBodies\?\.\(\) \?\? null,/);
   assert.match(d, /companionBodies: opts\.companionBodies \? \(\) => opts\.companionBodies\(\) : null,/);

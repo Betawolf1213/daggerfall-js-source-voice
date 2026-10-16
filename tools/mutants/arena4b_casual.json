@@ -78,21 +78,21 @@
   },
   {
     "name": "ARENA4b-CAS-ACT-WORD",
-    "file": "src/scenes/arenaOnline.js",
+    "file": "src/scenes/arena/arenaOnline.js",
     "old": "...myBanner(), ...(casual ? { u: 1 } : {}) };",
     "new": "...myBanner() };",
     "tests": ["test/arena4b_casual.test.js"]
   },
   {
     "name": "ARENA4b-CAS-GATE-DOOR",
-    "file": "src/scenes/arenaGate.js",
+    "file": "src/scenes/arena/arenaGate.js",
     "old": "    if (kind === 'queue' || kind === 'casual' || kind === 'unqueue'",
     "new": "    if (kind === 'queue' || kind === 'unqueue'",
     "tests": ["test/arena4b_casual.test.js"]
   },
   {
     "name": "ARENA4b-CAS-END-LINE",
-    "file": "src/scenes/arenaOnline.js",
+    "file": "src/scenes/arena/arenaOnline.js",
     "old": "onEnd: () => { if (b.casual) say(O.casualEnd); askBoard(true); },",
     "new": "onEnd: () => { askBoard(true); },",
     "tests": ["test/arena4b_casual.test.js"]

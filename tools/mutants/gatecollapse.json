@@ -51,7 +51,7 @@
   },
   {
     "name": "GATE-COLLAPSE-the-banner-forgets-it-sealed",
-    "file": "src/scenes/gatePool.js",
+    "file": "src/scenes/gate/gatePool.js",
     "old": "`${GATE_TEXT.name} - ${cd.to === 'collapse' ? 'sealed, ' : ''}${countdownWords(cd)}`",
     "new": "`${GATE_TEXT.name} - ${countdownWords(cd)}`",
     "tests": [
@@ -61,7 +61,7 @@
   },
   {
     "name": "GATE-COLLAPSE-the-plaque-forgets-it-sealed",
-    "file": "src/scenes/gatePool.js",
+    "file": "src/scenes/gate/gatePool.js",
     "old": "...(cd.to === 'collapse' ? ['Sealed'] : [])",
     "new": "...([])",
     "tests": [
@@ -71,7 +71,7 @@
   },
   {
     "name": "GATE-COLLAPSE-the-press-says-sealed-alone",
-    "file": "src/scenes/gatePool.js",
+    "file": "src/scenes/gate/gatePool.js",
     "old": "cd?.to === 'collapse' ? GATE_TEXT.collapsesIn(countdownText(cd.ms)) : GATE_TEXT.sealed",
     "new": "GATE_TEXT.sealed",
     "tests": [

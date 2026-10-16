@@ -271,7 +271,7 @@
   },
   {
     "name": "DW-E5-gate-cache",
-    "file": "src/scenes/deepWatersLoot.js",
+    "file": "src/scenes/deepWater/deepWatersLoot.js",
     "old": "    if (gateCached && time < nextGateTime) return gateResult ? pos : null;\n",
     "new": "",
     "tests": [
@@ -280,7 +280,7 @@
   },
   {
     "name": "DW-E5-cell-memory",
-    "file": "src/scenes/deepWatersLoot.js",
+    "file": "src/scenes/deepWater/deepWatersLoot.js",
     "old": "while (recentOrder.length > MAX_REMEMBERED_SPAWN_CELLS)",
     "new": "while (recentOrder.length > MAX_REMEMBERED_SPAWN_CELLS + 1)",
     "tests": [
@@ -289,7 +289,7 @@
   },
   {
     "name": "DW-E5-cell-skip",
-    "file": "src/scenes/deepWatersLoot.js",
+    "file": "src/scenes/deepWater/deepWatersLoot.js",
     "old": "      if (recentCells.has(key)) continue;\n",
     "new": "",
     "tests": [
@@ -298,7 +298,7 @@
   },
   {
     "name": "DW-E5-cap-returns",
-    "file": "src/scenes/deepWatersLoot.js",
+    "file": "src/scenes/deepWater/deepWatersLoot.js",
     "old": "    if (tracked.count >= s.maxLive) return;\n",
     "new": "",
     "tests": [
@@ -307,7 +307,7 @@
   },
   {
     "name": "DW-E5-shore-eighth",
-    "file": "src/scenes/deepWatersLoot.js",
+    "file": "src/scenes/deepWater/deepWatersLoot.js",
     "old": "? 1 : SHORE_LOOT_PULSE_MULTIPLIER;",
     "new": "? 1 : 1;",
     "tests": [
@@ -316,7 +316,7 @@
   },
   {
     "name": "DW-E5-first-frame-forced",
-    "file": "src/scenes/deepWatersLoot.js",
+    "file": "src/scenes/deepWater/deepWatersLoot.js",
     "old": "        tryRunLootPulse(true, pos);\n",
     "new": "        tryRunLootPulse(false, pos);\n",
     "tests": [
@@ -325,7 +325,7 @@
   },
   {
     "name": "DW-E5-wreck-depth-test",
-    "file": "src/scenes/deepWatersLoot.js",
+    "file": "src/scenes/deepWater/deepWatersLoot.js",
     "old": "    if (!isDeepEnoughForWreck(column(s.spot[0], s.spot[2]), settings().waterDepth)) return false;\n",
     "new": "",
     "tests": [
@@ -334,7 +334,7 @@
   },
   {
     "name": "DW-E5-no-guards",
-    "file": "src/scenes/deepWatersLoot.js",
+    "file": "src/scenes/deepWater/deepWatersLoot.js",
     "old": "    spawnGuards(s.spot);\n",
     "new": "",
     "tests": [
@@ -343,7 +343,7 @@
   },
   {
     "name": "DW-E5-cluster-spots-kept",
-    "file": "src/scenes/deepWatersLoot.js",
+    "file": "src/scenes/deepWater/deepWatersLoot.js",
     "old": "      spots.push(p);\n",
     "new": "",
     "tests": [
@@ -352,7 +352,7 @@
   },
   {
     "name": "DW-E5-stray-fill",
-    "file": "src/scenes/deepWatersLoot.js",
+    "file": "src/scenes/deepWater/deepWatersLoot.js",
     "old": "    fillRandomItem(c);\n    spawnLooseLootDebris(s.spot);",
     "new": "    spawnLooseLootDebris(s.spot);",
     "tests": [
@@ -361,7 +361,7 @@
   },
   {
     "name": "DW-E5-reset-keeps-tracked",
-    "file": "src/scenes/deepWatersLoot.js",
+    "file": "src/scenes/deepWater/deepWatersLoot.js",
     "old": "      tracked.clear();\n",
     "new": "",
     "tests": [
@@ -370,7 +370,7 @@
   },
   {
     "name": "DW-E5-reset-keeps-anchor",
-    "file": "src/scenes/deepWatersLoot.js",
+    "file": "src/scenes/deepWater/deepWatersLoot.js",
     "old": "      recentOrder.length = 0;\n      anchor = null;",
     "new": "      recentOrder.length = 0;",
     "tests": [
@@ -406,7 +406,7 @@
   },
   {
     "name": "DW-E5-loot-settings-rate",
-    "file": "src/scenes/deepWatersHost.js",
+    "file": "src/scenes/deepWater/deepWatersHost.js",
     "old": "rate: scaledSliderValue(get('General.SeafloorLootRate'), Math.fround(0.7)),",
     "new": "rate: scaledSliderValue(get('General.SeafloorLootRate'), Math.fround(0.5)),",
     "tests": [

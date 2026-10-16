@@ -87,7 +87,7 @@ systems. Theres just so many systems that dont explain what they are and its ext
   thresholds, the number taken toward nought as the standing reads it (AUDIT PLAIN-UI W6: a regard of 39.5 is Known
   +39, never +40). The card is the body's own door's - a body's `living.town` is the door it was minted with
   (`src/world/travellerSprites.js`): the street's `LivingTown.regardCard`, a resident at home `_livingIndoorsDoor`'s,
-  a road's or a diver's `_livingRoadsDoor`'s (`src/scenes/livingRoads.js` `regardCard`, a company's word its head's),
+  a road's or a diver's `_livingRoadsDoor`'s (`src/scenes/livingWorld/livingRoads.js` `regardCard`, a company's word its head's),
   each on the day its `refuses()` reads (AUDIT PLAIN-UI C2: the street's alone shipped first). The host words it
   (`src/scenes/world.js` `livingTalk.regard`) and `src/scenes/townTalk.js` hands it to the panel as a hook for the
   resident the conversation is with (`_toneTarget`) and nobody else - so the panel keeps ET1's law of importing no

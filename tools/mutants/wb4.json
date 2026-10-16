@@ -235,7 +235,7 @@
   },
   {
     "name": "WB4-an-attack-judged-twice",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    if (atk && !marked(judged, atk) && standing) {",
     "new": "    if (atk && standing) {",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "WB4-the-throw-skipped",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    if (so.saved) dmg = savedShare(dmg, save(e, so.el));",
     "new": "    if (false) dmg = savedShare(dmg, save(e, so.el));",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "WB4-the-wraths-word-ignored",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    if (s.wrath != null && !wrathLanded) {",
     "new": "    if (false) {",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "WB4-the-landing-cued-twice",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    if (A && !marked(landed, atk) && t >= atk.at) {",
     "new": "    if (A && t >= atk.at) {",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "WB4-the-roar-on-first-sight",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "if (phaseHeard > 0) { roarAt = t + ROAR_AFTER_MS;",
     "new": "{ roarAt = t + ROAR_AFTER_MS;",
     "tests": [
@@ -280,7 +280,7 @@
   },
   {
     "name": "WB4-the-body-at-the-sprites-own-size",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    const w = sz.w * body.scale * P.size, h = sz.h * body.scale * P.size;",
     "new": "    const w = sz.w * P.size, h = sz.h * P.size;",
     "tests": [

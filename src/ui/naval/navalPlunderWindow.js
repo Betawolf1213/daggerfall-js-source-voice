@@ -23,7 +23,7 @@
 //               boat, instead of scuttling her or casting her adrift"): CLAIM HER, the third - while the host offers it
 //               (`claimOffer`: a prize of mine Come Sail Away can place), its line under the three saying what she
 //               becomes; the press asks the host again, and a refusal stays with a word instead of leaving.
-// A RAID'S PRIZE (Warm Ashes' voyage ambush beaten: scenes/navalHost.js leaveShipGate) has a hold and no choice, and
+// A RAID'S PRIZE (Warm Ashes' voyage ambush beaten: scenes/naval/navalHost.js leaveShipGate) has a hold and no choice, and
 // its one way on is SAIL ON - the voyage waits on this window, so shutting it sails on too (the door's host says so).
 //
 // THE HOUSE'S SHAPE is the Sigil Broker's (ui/brokerWindow.js): a lazy chunk the door (ui/naval/navalPlunderDoor.js) mounts

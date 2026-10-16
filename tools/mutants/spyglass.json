@@ -307,7 +307,7 @@
   },
   {
     "name": "SPY-H-tag-unknown",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (!e.boat || e.ship.damage.state === SHIP_STATES.sunk || knownOf(e) < KNOW.colours) continue;   // SPYGLASS: an unknown hull wears no tag",
     "new": "      if (!e.boat || e.ship.damage.state === SHIP_STATES.sunk) continue;",
     "tests": [
@@ -316,7 +316,7 @@
   },
   {
     "name": "SPY-H-tag-disguise-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      const hid = disguisedOf(e);   // SPYGLASS: her false colours, read as they fly - a merchantman's friendly bar",
     "new": "      const hid = false;",
     "tests": [
@@ -325,7 +325,7 @@
   },
   {
     "name": "SPY-H-card-captain-early",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "captain: known >= KNOW.studied ? s.names?.captain ?? null : null,",
     "new": "captain: s.names?.captain ?? null,",
     "tests": [
@@ -334,7 +334,7 @@
   },
   {
     "name": "SPY-H-card-stance-shown",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const stance = !made ? { hostile: false, friendly: false } : hid ?",
     "new": "    const stance = hid ?",
     "tests": [
@@ -345,7 +345,7 @@
   },
   {
     "name": "SPY-H-card-faction-shown",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "faction: !made ? 'unknown' : hid ? 'merchant' : s.cls.faction,",
     "new": "faction: hid ? 'merchant' : s.cls.faction,",
     "tests": [
@@ -356,7 +356,7 @@
   },
   {
     "name": "SPY-H-name-unknown",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (knownOf(e) < KNOW.colours) return unknownName(e.ship.hull);\n    if (disguisedOf(e)) return disguiseOf(e).name;",
     "new": "    if (disguisedOf(e)) return disguiseOf(e).name;",
     "tests": [
@@ -367,7 +367,7 @@
   },
   {
     "name": "SPY-H-glass-never-held",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    glassHeld += Math.max(0, dt);",
     "new": "    glassHeld = 0;",
     "tests": [
@@ -376,7 +376,7 @@
   },
   {
     "name": "SPY-H-glass-kept-on-leave",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if ((best?.id ?? null) !== glassOn) { glassOn = best?.id ?? null; glassHeld = 0; }",
     "new": "    if ((best?.id ?? null) !== glassOn) { glassOn = best?.id ?? null; }",
     "tests": [
@@ -385,7 +385,7 @@
   },
   {
     "name": "SPY-H-glass-down-held",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (!glassUp) { glassOn = null; glassHeld = 0; return null; }",
     "new": "    if (!glassUp) { return null; }",
     "tests": [
@@ -394,7 +394,7 @@
   },
   {
     "name": "SPY-H-glass-zoom-unclamped",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    glassZoom = clamp(Number(zoom) || GLASS_ZOOM, GLASS_ZOOM_MIN, GLASS_ZOOM_MAX);",
     "new": "    glassZoom = Number(zoom) || GLASS_ZOOM;",
     "tests": [
@@ -403,7 +403,7 @@
   },
   {
     "name": "SPY-H-know-unstepped",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    knowStep();   // SPYGLASS: what this frame teaches me of each ship\n",
     "new": "",
     "tests": [
@@ -412,7 +412,7 @@
   },
   {
     "name": "SPY-H-held-any-ship",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      const held = glassUp && glassOn === e.id ? glassHeld : 0;",
     "new": "      const held = glassUp ? glassHeld : 0;",
     "tests": [
@@ -421,7 +421,7 @@
   },
   {
     "name": "SPY-H-lookout-uncalled",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        deps.say?.(`Lookout: ${withArticle(hullWord(s.hull))} flying ${colours}!`, 3);\n",
     "new": "",
     "tests": [
@@ -430,7 +430,7 @@
   },
   {
     "name": "SPY-H-lookout-unposted",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "lookout: !!deck?.crewed && !!st?.worth?.posts?.Lookout };",
     "new": "lookout: false };",
     "tests": [
@@ -439,7 +439,7 @@
   },
   {
     "name": "SPY-H-seen-through-unsaid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "deps.mid?.(`False colours! ${s.names?.name ?? 'She'} is a pirate.`, 4);",
     "new": "void 0;",
     "tests": [
@@ -448,7 +448,7 @@
   },
   {
     "name": "SPY-H-black-flag-never",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      const ff = engaged && !e.blackFlag ? falseFlagFor(e) : null;",
     "new": "      const ff = null;",
     "tests": [
@@ -457,7 +457,7 @@
   },
   {
     "name": "SPY-H-pennant-true",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const colours = state === SHIP_STATES.afloat ? (falseFlagFor(e) && !e.blackFlag ? 'false' : 'hers') :",
     "new": "    const colours = state === SHIP_STATES.afloat ? 'hers' :",
     "tests": [
@@ -466,7 +466,7 @@
   },
   {
     "name": "SPY-H-hail-disguised",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (disguisedOf(e)) continue;   // SPYGLASS: under false colours she is a merchantman to my lookout - till her black flag\n",
     "new": "",
     "tests": [
@@ -475,7 +475,7 @@
   },
   {
     "name": "SPY-H-hail-named",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "${knownOf(best) >= KNOW.colours ? withArticle(classLine(s.cls, s.names?.crown)) : withArticle(hullWord(s.hull))}",
     "new": "${withArticle(classLine(s.cls, s.names?.crown))}",
     "tests": [
@@ -484,7 +484,7 @@
   },
   {
     "name": "SPY-H-revealed-any-mode",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      const revealed = (engaged && onMe && gunsOut && hostile(s, me, law)) || !!e.relief;",
     "new": "      const revealed = hostile(s, me, law) || !!e.relief;",
     "tests": [

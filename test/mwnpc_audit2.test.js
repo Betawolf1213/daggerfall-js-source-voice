@@ -297,7 +297,7 @@ test('AUDIT MW-NPC II H3: in the dungeon a corpse flat minted under a standing b
 });
 
 test('AUDIT MW-NPC II H4/H5: the gate\'s host - a body first seen falling keeps its own number (two were `host:undefined`, one body); the boss\'s and his host\'s bodies carry WB13d\'s hit flash their cast-only billboards hold (by source)', () => {
-  const g = rd('src/scenes/gateHost.js'), c = rd('src/scenes/gateCourt.js');
+  const g = rd('src/scenes/gate/gateHost.js'), c = rd('src/scenes/gate/gateCourt.js');
   assert.match(g, /const b = bodies\.get\(g\.i\) \?\? \{ i: g\.i, look: hostLookOf\(g\.k, P\.aspect\.id\),/);
   assert.match(g, /dead: dead \? 1 \+ \(\(b\.i \| 0\) % 3\) : 0 \}\), b\.batch,\s*null, b\.batch\.hitFlash \|\| 0\);/);
   assert.match(c, /scale: \(body\.scale \?\? 1\) \* \(profileOf\(s\)\.size \?\? 1\) \}\), shown, null, shown\.hitFlash \|\| 0\);/);

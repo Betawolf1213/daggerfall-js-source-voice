@@ -125,7 +125,7 @@
   },
   {
     "name": "RENT-FRESH-read-once-a-visit",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    else if (!rentState.busy && (!panel?.isOpen() || (panel.mode?.() === 'rent' && now() - rentState.at >= RENT_VIEW_FRESH_MS))) refreshRent(door);",
     "new": "",
     "tests": [
@@ -134,7 +134,7 @@
   },
   {
     "name": "RENT-FRESH-the-opening-unread",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "(!panel?.isOpen() || (panel.mode?.() === 'rent' && now()",
     "new": "((panel.mode?.() === 'rent' && now()",
     "tests": [
@@ -143,7 +143,7 @@
   },
   {
     "name": "RENT-FRESH-the-view-never-read-again",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "(panel.mode?.() === 'rent' && now() - rentState.at >= RENT_VIEW_FRESH_MS)",
     "new": "false",
     "tests": [
@@ -152,7 +152,7 @@
   },
   {
     "name": "RENT-FRESH-read-every-frame",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "now() - rentState.at >= RENT_VIEW_FRESH_MS",
     "new": "now() - rentState.at >= 0",
     "tests": [
@@ -161,7 +161,7 @@
   },
   {
     "name": "RENT-FRESH-the-ask-unstamped",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    rentState.at = now();\n",
     "new": "",
     "tests": [
@@ -170,7 +170,7 @@
   },
   {
     "name": "RENT-FRESH-an-older-read-stands",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "if (rentState.visit !== visit || ask !== rentState.asked || !res?.ok) return false;",
     "new": "if (rentState.visit !== visit || !res?.ok) return false;",
     "tests": [
@@ -188,7 +188,7 @@
   },
   {
     "name": "RENT-ORPHANS-the-one-room-house-lists-none",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      rows: found ? rentRoomsView(list ?? [], rentState.list ?? []",
     "new": "      rows: list ? rentRoomsView(list ?? [], rentState.list ?? []",
     "tests": [
@@ -197,7 +197,7 @@
   },
   {
     "name": "RENT-ORPHANS-one-room-matched-as-a-room",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    const list = found && found.length > 1 ? found : null;",
     "new": "    const list = found;",
     "tests": [

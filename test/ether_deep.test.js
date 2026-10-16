@@ -29,7 +29,7 @@ import { DeepWaterTileData } from '../src/world/deepWater/deepWaterTileData.js';
 import { sampleMeshLocalY, TILE_WORLD_SIZE } from '../src/world/deepWater/deepWaterFloor.js';
 import { sampleDepthMeters } from '../src/world/deepWater/deepBathymetry.js';
 import { loadDeepWatersBake } from '../src/world/deepWater/deepWatersClient.js';
-import { createDeepWatersHost } from '../src/scenes/deepWatersHost.js';
+import { createDeepWatersHost } from '../src/scenes/deepWater/deepWatersHost.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 
@@ -340,7 +340,7 @@ test('ETHER-DEEP: the host carves the Eltheric by every arm, and holds the conti
   assert.ok(!asked.some((a) => a.startsWith('-5,250')), 'the continent past the map held');
   assert.ok(asked.filter((a) => !a.startsWith('500,')).every((a) => a.endsWith(':77')), 'the climates read in the box\'s own frame - never the Bay\'s clamp to row 0');
   assert.ok(asked.some((a) => a === '500,250:223'), 'the Bay\'s pixel as ever');
-  assert.match(src('src/scenes/deepWatersHost.js'), /const dw = client \?\? openDeepWaters\(\{ woods, woodsBytes, rects: deepWatersLocationRects\(woods, locations, maps, blocks\), ether \}\);/, 'the host hands the client the sea');
+  assert.match(src('src/scenes/deepWater/deepWatersHost.js'), /const dw = client \?\? openDeepWaters\(\{ woods, woodsBytes, rects: deepWatersLocationRects\(woods, locations, maps, blocks\), ether \}\);/, 'the host hands the client the sea');
   // AUDIT ETHER-OW C1-3: the dry check reads only the sea bits this thread holds - a fresh Eltheric cell is the trip's to
   // answer, never flooded here first (it was, 1-8 ms on the main thread at a landfall, then again on the worker)
   const real = worldBakes(new DeepWatersBake({ woods: GROUND, global: { state: new Uint8Array(500000), classes: new Uint8Array(500000), partialIndex: new Int32Array(0), partialBits: new Uint8Array(0) } }), { woods: GROUND, ether: true });

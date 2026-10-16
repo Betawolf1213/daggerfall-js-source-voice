@@ -289,7 +289,7 @@
   },
   {
     "name": "LW7b-roads-skip",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "          if (deps.stands?.stood(m.res.id)) continue;   // LW7b",
     "new": "          void 0;   // LW7b",
     "tests": [
@@ -298,7 +298,7 @@
   },
   {
     "name": "LW7b-roads-unarmed",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "if (m.res.cls != null) cands.push(",
     "new": "if (true) cands.push(",
     "tests": [
@@ -307,7 +307,7 @@
   },
   {
     "name": "LW7b-roads-fight",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "          if (d.fight) continue;   // LW4b: at its fight - the fights'",
     "new": "          // LW4b: at its fight - the fights'",
     "tests": [
@@ -316,7 +316,7 @@
   },
   {
     "name": "LW7b-roads-sky",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "      if (here && !overworld) {\n        for (const d of drawn) {",
     "new": "      if (here) {\n        for (const d of drawn) {",
     "tests": [
@@ -325,7 +325,7 @@
   },
   {
     "name": "LW7b-roads-ground",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "      deps.stands.frame(cands, here, t, { dt, ground: !overworld });",
     "new": "      deps.stands.frame(cands, here, t, { dt, ground: true });",
     "tests": [
@@ -334,7 +334,7 @@
   },
   {
     "name": "LW7b-roads-clear",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": " deps.fights?.clear(); deps.stands?.clear();",
     "new": " deps.fights?.clear();",
     "tests": [

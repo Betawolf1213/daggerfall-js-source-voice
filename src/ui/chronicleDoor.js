@@ -31,7 +31,7 @@
 // exact shape AUDIT-EOTB spent a day on.
 //
 // The duplication the old note feared is answered where it actually
-// lives: the WALK is `scenes/questBridge.js`'s `questLog()` and the
+// lives: the WALK is `scenes/quest/questBridge.js`'s `questLog()` and the
 // rail it builds is `ui/quest/questRail.js`, both shared with the pause tab,
 // so the two faces cannot disagree about which quests are live or what
 // they say. What differs is the drawing, and two faces drawing one

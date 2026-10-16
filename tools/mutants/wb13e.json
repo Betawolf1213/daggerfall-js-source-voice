@@ -1,7 +1,7 @@
 [
   {
     "name": "WB13e-no-wake",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "        sound(BOSS_CUES.roar, s, t, null);\n        beat = { kind: 'wake'",
     "new": "        beat = { kind: 'wake'",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "WB13e-the-wake-for-a-late-screen",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "if (t < s.openUntil + WAKE_LATE_MS && !s.fell && s.wrath == null) {",
     "new": "if (!s.fell && s.wrath == null) {",
     "tests": [
@@ -56,7 +56,7 @@
   },
   {
     "name": "WB13e-the-roar-over-the-bark",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "roarAt = t + ROAR_AFTER_MS;",
     "new": "roarAt = t;",
     "tests": [
@@ -66,7 +66,7 @@
   },
   {
     "name": "WB13e-the-card-gone-before-he-lands",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "if (beat?.kind === 'phase' && A === ATTACKS.cross) beat.until = Math.max(",
     "new": "if (false) beat.until = Math.max(",
     "tests": [
@@ -84,7 +84,7 @@
   },
   {
     "name": "WB13e-the-card-over-the-veil",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "drawGateTitleCard(titleCardModel(beat, t), { hidden: hudHidden() || veiled() });",
     "new": "drawGateTitleCard(titleCardModel(beat, t), { hidden: hudHidden() });",
     "tests": [
@@ -93,7 +93,7 @@
   },
   {
     "name": "WB13e-the-spoils-before-the-thud",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "export const SPEW_AT_MS = 1700;",
     "new": "export const SPEW_AT_MS = 500;",
     "tests": [
@@ -102,7 +102,7 @@
   },
   {
     "name": "WB13e-no-column",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "if (since < THUD_AT_MS + columnN * COLUMN_STEP_MS + 1000) addBurst(courtToDungeon(x, 0.1, z), s.fell.at + THUD_AT_MS + columnN * COLUMN_STEP_MS, FX_KINDS.embers, emberColor(P));",
     "new": "if (since < THUD_AT_MS + columnN * COLUMN_STEP_MS + 1000) void 0;",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "WB13e-no-corpse",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    if (s.fell && act.act === 'gone') drawCorpse(s);   // WB13e: his body left where he fell\n",
     "new": "",
     "tests": [
@@ -120,7 +120,7 @@
   },
   {
     "name": "WB13e-the-burst-for-a-late-screen",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "if (since < FALL_CRY_LATE_MS) { addBurst(",
     "new": "if (true) { addBurst(",
     "tests": [
@@ -138,7 +138,7 @@
   },
   {
     "name": "WB13e-the-sink-not-drawn",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "const at = courtToDungeon(x, bossHop(s, t) - (act.sink ?? 0), z);",
     "new": "const at = courtToDungeon(x, bossHop(s, t), z);",
     "tests": [
@@ -147,7 +147,7 @@
   },
   {
     "name": "WB13e-never-said-a-minute-out",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "{ wrathSaid |= 1; if (t < s.wrathAt - WRATH_WARN_AT_MS + 5000) say(COURT_WRATH_TEXT.minute); }",
     "new": "{ wrathSaid |= 1; }",
     "tests": [
@@ -156,7 +156,7 @@
   },
   {
     "name": "WB13e-said-late",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "if (t < s.wrathAt - WRATH_WARN_AT_MS + 5000) say(COURT_WRATH_TEXT.minute);",
     "new": "say(COURT_WRATH_TEXT.minute);",
     "tests": [
@@ -165,7 +165,7 @@
   },
   {
     "name": "WB13e-the-court-never-red",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "if (k >= 0 && k < 1) _lights.push(flash(_wrathLight, at, WRATH_RED, 3 * k * k, WRATH_LIGHT_RANGE));",
     "new": "if (k >= 0 && k < 1) void 0;",
     "tests": [
@@ -183,7 +183,7 @@
   },
   {
     "name": "WB13e-sparks-every-frame",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "|| t - sputterAt < SPUTTER_EVERY_MS) return;",
     "new": ") return;",
     "tests": [
@@ -201,7 +201,7 @@
   },
   {
     "name": "WB13e-no-sting",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "sound(BOSS_CUES.sting, s, t, atk, f);",
     "new": "void f;",
     "tests": [
@@ -210,7 +210,7 @@
   },
   {
     "name": "WB13e-a-sting-for-every-meteor",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "if (f && e && e.health > 0 && inAttack(atk, f[0] - COURT_CENTRE[0], f[2] - COURT_CENTRE[2], P)) sound(BOSS_CUES.sting",
     "new": "if (f && e && e.health > 0) sound(BOSS_CUES.sting",
     "tests": [
@@ -228,7 +228,7 @@
   },
   {
     "name": "WB13e-too-short-to-read",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": ".filter(Boolean).length / COURT_READ_WPS));",
     "new": ".filter(Boolean).length / 99));",
     "tests": [

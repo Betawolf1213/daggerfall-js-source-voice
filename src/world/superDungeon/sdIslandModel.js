@@ -19,7 +19,7 @@
 //
 // THE LAW: none of it is a collider, and none of it changes realmFloorTris, realmColliderTris or realmClamp. All of it
 // hangs SD_HANG.top under its island's floor and inside its disc - no visual larger than the law: nothing here looks
-// standable, nothing pokes through a floor, nothing widens an island. Drawn `noShadow` (scenes/sdHang.js): nothing here
+// standable, nothing pokes through a floor, nothing widens an island. Drawn `noShadow` (scenes/superDungeon/sdHang.js): nothing here
 // enters a lamp's cube, and nothing that turns casts.
 //
 // Pure: renderer.createMesh's model shape in the dungeon's frame (world/superDungeon/sdRealm.js packRealmFaces), the realm's archive.

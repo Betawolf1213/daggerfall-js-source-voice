@@ -7,7 +7,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { room } from './navalRoom.mjs';
 import { sea, freshPool } from './navalSea.mjs';
-import { SHIP_FADE_S, OWNER_SWEEP_S, OWNER_STALE_S, ORPHAN_S, PREDICT_MAX_S, PUPPET_SNAP_M, GRAPPLE_CLAIM_S, PEER_VOLLEYS_MAX, CLAIM_AGAIN_S, CLAIM_WAIT_S, GRANT_KEEP_S, claimBeats, idSalt, hullBoxOf, rigBoxesOf } from '../src/scenes/navalHost.js';
+import { SHIP_FADE_S, OWNER_SWEEP_S, OWNER_STALE_S, ORPHAN_S, PREDICT_MAX_S, PUPPET_SNAP_M, GRAPPLE_CLAIM_S, PEER_VOLLEYS_MAX, CLAIM_AGAIN_S, CLAIM_WAIT_S, GRANT_KEEP_S, claimBeats, idSalt, hullBoxOf, rigBoxesOf } from '../src/scenes/naval/navalHost.js';
 import { seedBaseOf, SEED_SALT, createNavalDirector, DENSITY } from '../src/systems/naval/navalDirector.js';
 import { NAVAL_GEN_MAX, NAVAL_SHARE_RADIUS, NAVAL_WIRE_VOLLEYS, NAVAL_VOLLEY_KEEP_MS, navalWireRecord, validNavalRecord, navalHitData } from '../src/systems/naval/navalWire.js';
 import { SHIP_STATES } from '../src/systems/naval/navalDamage.js';

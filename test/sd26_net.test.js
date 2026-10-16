@@ -16,7 +16,7 @@ import { PIXEL_M } from '../src/net/gate/gateLaw.js';
 import { sdRoomKey } from '../src/net/superDungeon/sdLaw.js';
 import { SD_ARENA, realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { createSdFightLink, SD_OWED_MAX, SD_FIGHT_HEARD_MS, SD_IN_RETRY_MS } from '../src/net/superDungeon/sdFightLink.js';
-import { createSdRemnantBlows, sdBlowsInFlight } from '../src/scenes/sdRemnantBlows.js';
+import { createSdRemnantBlows, sdBlowsInFlight } from '../src/scenes/superDungeon/sdRemnantBlows.js';
 
 const T0 = 1_800_000_000_000;
 const LOOK = { race: 'Nord', gender: 'male', faceIndex: 2, items: [] };
@@ -300,7 +300,7 @@ async function withRealm(fn) {
   } finally { Date.now = realNow; }
 }
 /** A page in the Hour: its own fight link, fed every fight word a socket of its heard (wire.js validSdOut, as net/online.js
- *  routes them), and its `in` said when the link says it is due, as scenes/sdRemnant.js says it (from the arena). */
+ *  routes them), and its `in` said when the link says it is due, as scenes/superDungeon/sdRemnant.js says it (from the arena). */
 function hourPage(realm, now) {
   const link = createSdFightLink({ now });
   const read = new Map();

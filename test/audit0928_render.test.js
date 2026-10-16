@@ -24,7 +24,7 @@ import { SHADOW_DYNAMIC_HOLD } from '../src/render/shadowPass.js';
 import { fillLanternPool, nearestLights, rangesFor, capFadeColors, capFadePairs, CITY_LIGHT_COLOR } from '../src/world/city/cityLights.js';
 import { withPlayerLights } from '../src/scenes/magicCandle.js';
 import { wodLightColors } from '../src/world/worldOfDaggerfall.js';
-import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';
+import { createComeSailAwayPool } from '../src/scenes/comeSailAway/comeSailAwayPool.js';
 import { adoptLight } from '../src/render/lightId.js';
 import { Boat, setLights } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 

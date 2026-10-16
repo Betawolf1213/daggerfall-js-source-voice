@@ -3,7 +3,7 @@
 // (the one item map: a weapon's type and material, an armour's template and material - so a Daedric blade is
 // Morrowind's daedric one), its ground mesh rendered FACE-ON at its own size (combat/fpArm.js mountFrame, mountPicture)
 // rather than the icon's three-quarter view, since it hangs flat on a surface. The room and the decorator's ghost ask
-// the same door (scenes/decorRoom.js loadMountPicture), the pack's dyed picture standing wherever there is none, and
+// the same door (scenes/decor/decorRoom.js loadMountPicture), the pack's dyed picture standing wherever there is none, and
 // the room asks again when a build lands or goes (fpArm.js mountPictureStamp).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -15,11 +15,11 @@ import { createFpArm, mountFrame, fpSkeletonPath, FP_CLIP_PATH } from '../src/co
 import { CHAR_SPRITE_RT_SIZE } from '../src/render/renderer.js';
 import { multiply, transformPoint } from '../src/world/mat4.js';
 import { WEAPON_MATERIALS } from '../src/characters/weapons.js';
-import { createDecorRoom, loadMountPicture, loadMwMountArt, decorMountQuad, decorMountFloats } from '../src/scenes/decorRoom.js';
+import { createDecorRoom, loadMountPicture, loadMwMountArt, decorMountQuad, decorMountFloats } from '../src/scenes/decor/decorRoom.js';
 import { decorMountItem, decorMountDye, decorMountDyeTarget } from '../src/systems/decor/decorItems.js';
 import { billboardSize } from '../src/world/rmbFlats.js';
 import { settle, all, one, rows, toolRig, fakeDoc, fakeWin, ACTIONS } from './decorFakes.mjs';
-import { createDecorTool } from '../src/scenes/decorTool.js';
+import { createDecorTool } from '../src/scenes/decor/decorTool.js';
 
 const f = (n) => new Uint8Array(readFileSync(new URL(`./fixtures/mw/${n}`, import.meta.url)));
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -283,7 +283,7 @@ test('MW-MOUNT: the host (worldModes.js) by source - the room and the ghost are 
   const at = m.indexOf('const mwStamp = fpArm.mountPictureStamp();');
   assert.ok(at > 0 && m.indexOf('if (mwStamp !== _decorMwStamp) { _decorMwStamp = mwStamp; interiorDecor.refreshMounts(); }', at) > at);
   assert.ok(at < m.indexOf('interiorDecor.drawMounts(renderer);', at), 'before the mounts are drawn');
-  const t = src('src/scenes/decorTool.js');
+  const t = src('src/scenes/decor/decorTool.js');
   assert.match(t, /loadMountPicture\(\{ getTexture: deps\.getTexture, uploadRecord: deps\.uploadRecord, renderer, mwPicture: deps\.mwPicture \}, entry\.flat, entry\.item\)/);
 });
 
@@ -426,7 +426,7 @@ test('AUDIT DYE-ICON 5: a refresh lets the old Morrowind pictures go once their 
 
 // ── AUDIT DYE-ICON r3 (2026-09-27): the second audit, fixed ────────────
 
-/** The decorator over a REAL room (scenes/decorRoom.js), the tool's pool as the host hands it, and a renderer whose
+/** The decorator over a REAL room (scenes/decor/decorRoom.js), the tool's pool as the host hands it, and a renderer whose
  *  texture cache is renderer.js's: an upload memoized by key (a second ask is the SAME texture), a release deleting it -
  *  a deleted texture drawn is the fault (bound, WebGL keeps the last texture: the wrong picture). The Morrowind picture
  *  is keyed by the item and the data generation, as fpArm.js mountPicture keys it. */

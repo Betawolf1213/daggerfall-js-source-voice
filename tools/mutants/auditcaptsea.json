@@ -65,7 +65,7 @@
   },
   {
     "name": "ACS-B3-quay-flag",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "  function openYard(boat, { quay = false } = {}) { const m = yardModel(boat); m.atQuay = !!quay;",
     "new": "  function openYard(boat, { quay = false } = {}) { const m = yardModel(boat); m.atQuay = true;",
     "tests": [
@@ -74,7 +74,7 @@
   },
   {
     "name": "ACS-B3-quay-door",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "return yardHere(boat) && openYard(boat, { quay: true });",
     "new": "return yardHere(boat) && openYard(boat);",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "ACS-B4-mark",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    siteStood.set(e.bounty, 'ended');\n",
     "new": "",
     "tests": [
@@ -110,7 +110,7 @@
   },
   {
     "name": "ACS-B4-event",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    deps.captain?.event?.({ type: 'lost', bounty: e.bounty });",
     "new": "    void 0;",
     "tests": [
@@ -119,7 +119,7 @@
   },
   {
     "name": "ACS-B4-restood",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        if (was === 'ended' || (was && sea.has(was))) continue;",
     "new": "        if (was && sea.has(was)) continue;",
     "tests": [
@@ -146,7 +146,7 @@
   },
   {
     "name": "ACS-B4-mine-not",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (e.owner || !e.bounty || e.charged?.has('sink') || e.charged?.has('board')) return;",
     "new": "    if (e.owner || !e.bounty) return;",
     "tests": [
@@ -223,7 +223,7 @@
   },
   {
     "name": "ACS-B9-cache-force",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "deps.board?.giveItems?.(items, boat ?? null, { force: true })",
     "new": "deps.board?.giveItems?.(items, boat ?? null)",
     "tests": [
@@ -232,7 +232,7 @@
   },
   {
     "name": "ACS-B9-chart-force",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "deps.board?.giveItems?.([chart], boatInPlay() ?? null, { force: true });",
     "new": "deps.board?.giveItems?.([chart], boatInPlay() ?? null);",
     "tests": [
@@ -304,7 +304,7 @@
   },
   {
     "name": "ACS-B11-yard-room",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "room: () => csa()?.cargoRoom?.(boat) ?? null",
     "new": "room: () => null",
     "tests": [
@@ -332,7 +332,7 @@
   },
   {
     "name": "ACS-B9-cache-plunder",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (items.length) notePlunder(items);",
     "new": "void items;",
     "tests": [
@@ -341,7 +341,7 @@
   },
   {
     "name": "ACS-C1-one-set",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      const names = ashoreNames(boat);   // AUDIT CAPTAIN'S SEA C1: the one set",
     "new": "      const names = boat?.uid ? companions.awayOf(boat.uid) : NO_HANDS_AWAY;   // AUDIT CAPTAIN'S SEA C1: the one set",
     "tests": [
@@ -350,7 +350,7 @@
   },
   {
     "name": "ACS-C1-worth-set",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "s.worth = b.crewed ? crewWorth(c.hands, ashoreNames(b)) : NO_WORTH;",
     "new": "s.worth = b.crewed ? crewWorth(c.hands, b.uid ? companions.awayOf(b.uid) : null) : NO_WORTH;",
     "tests": [
@@ -359,7 +359,7 @@
   },
   {
     "name": "ACS-C1-sailing-gate",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "companions.party.length && !sailing() ? companions.awayOf(boat.uid) : NO_HANDS_AWAY);",
     "new": "companions.party.length ? companions.awayOf(boat.uid) : NO_HANDS_AWAY);",
     "tests": [
@@ -395,7 +395,7 @@
   },
   {
     "name": "ACS-C3-muster-service",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const service = deps.captain?.seasonedHires?.() ? SEASONED_HIRE : 0;",
     "new": "    const service = 0;",
     "tests": [
@@ -413,7 +413,7 @@
   },
   {
     "name": "ACS-C5-mens-cap",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": ", base + handsBonusOf(st.crew.morale, st.crew.order) + mate, Math.max(base + 1, men)));",
     "new": ", base + handsBonusOf(st.crew.morale, st.crew.order) + mate));",
     "tests": [
@@ -422,7 +422,7 @@
   },
   {
     "name": "ACS-C5-men",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const men = Math.floor((st.damage.crew ?? 0) / CREW_PER_HAND);",
     "new": "    const men = Infinity;",
     "tests": [
@@ -478,7 +478,7 @@
   },
   {
     "name": "ACS-C11-gunner",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "reloadScaleOf(st.crew.morale, st.crew.order) * st.worth.reload : 1) });",
     "new": "reloadScaleOf(st.crew.morale, st.crew.order) : 1) });",
     "tests": [
@@ -487,7 +487,7 @@
   },
   {
     "name": "ACS-C11-carpenter",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "scale: b.crewed ? mendScaleOf(s.crew.morale) * (s.worth?.mend ?? 1) : 1 });",
     "new": "scale: b.crewed ? mendScaleOf(s.crew.morale) : 1 });",
     "tests": [
@@ -496,7 +496,7 @@
   },
   {
     "name": "ACS-C11-carpenter-sea",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const scale = (b.crewed ? mendScaleOf(s.crew.morale) * (s.worth?.mend ?? 1) : 1)",
     "new": "const scale = (b.crewed ? mendScaleOf(s.crew.morale) : 1)",
     "tests": [
@@ -506,7 +506,7 @@
   },
   {
     "name": "ACS-C11-cook",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "atSea: !where().nearPort, wear: s.worth.wear });",
     "new": "atSea: !where().nearPort, wear: 1 });",
     "tests": [
@@ -515,7 +515,7 @@
   },
   {
     "name": "ACS-D1-floating",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        if (shots.floaters().some((x) => x.lot === SITE_LOT + site.id)) continue;",
     "new": "        void 0;",
     "tests": [
@@ -534,7 +534,7 @@
   },
   {
     "name": "ACS-D2-alongside",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const c = site.kind === 'strand' ? alongsidePos(site) : sitePos(site, 0);",
     "new": "    const c = sitePos(site, 0);",
     "tests": [
@@ -543,7 +543,7 @@
   },
   {
     "name": "ACS-D2-alongside-water",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (deps.isWater(q[0], q[2], 0)) return q;",
     "new": "      return q;",
     "tests": [
@@ -552,7 +552,7 @@
   },
   {
     "name": "ACS-D2-casks-wet",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "pos: wet ? [x, deps.seaY(), z] : [c[0], deps.seaY(), c[2]], lot: SITE_LOT + site.id,",
     "new": "pos: [x, deps.seaY(), z], lot: SITE_LOT + site.id,",
     "tests": [
@@ -561,7 +561,7 @@
   },
   {
     "name": "ACS-D2-swim-words",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const how = swim ? 'You break open a cask in the water' : 'You haul a cask aboard';",
     "new": "    const how = 'You haul a cask aboard';",
     "tests": [
@@ -570,7 +570,7 @@
   },
   {
     "name": "ACS-D3-papers-crown",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const crownName = entry.ether ? null : crownOfShip(s);",
     "new": "    const crownName = crownOfShip(s);",
     "tests": [
@@ -579,7 +579,7 @@
   },
   {
     "name": "ACS-D4-no-navy",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const faction = navy && !where().ether ? 'navy' : 'merchant';",
     "new": "const faction = navy ? 'navy' : 'merchant';",
     "tests": [
@@ -597,7 +597,7 @@
   },
   {
     "name": "ACS-D7-host-list",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "legends: [...sea.values()].filter((e) => e.legend && e.ship.damage.state !== SHIP_STATES.sunk).map((e) => e.legend),",
     "new": "legends: [],",
     "tests": [
@@ -624,7 +624,7 @@
   },
   {
     "name": "ACS-D22-claim",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (rival) { if (!claimBeats(w.gen, owner, rival.gen, myId())) continue; retire(rival); }",
     "new": "if (rival) { retire(rival); }",
     "tests": [
@@ -633,7 +633,7 @@
   },
   {
     "name": "ACS-D22-yield",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (rival) { if (!claimBeats(w.gen, owner, rival.gen, myId())) continue; retire(rival); }",
     "new": "if (rival) { if (!claimBeats(w.gen, owner, rival.gen, myId())) continue; }",
     "tests": [
@@ -687,7 +687,7 @@
   },
   {
     "name": "ACS-D8-host-word",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      deep: e.deep,   // AUDIT CAPTAIN'S SEA D8",
     "new": "      deep: false,   // AUDIT CAPTAIN'S SEA D8",
     "tests": [
@@ -696,7 +696,7 @@
   },
   {
     "name": "ACS-D8-host-casks",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "lot: f.lot, deep: !!f.deep }));",
     "new": "lot: f.lot }));",
     "tests": [
@@ -705,7 +705,7 @@
   },
   {
     "name": "ACS-D8-copy",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      e.deep = !!w.deep;   // AUDIT CAPTAIN'S SEA D8",
     "new": "      e.deep = false;   // AUDIT CAPTAIN'S SEA D8",
     "tests": [
@@ -714,7 +714,7 @@
   },
   {
     "name": "ACS-D8-cask-copy",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "else shots.dropFlotsam({ id, pos, lot: c.lot, from: c.from, owner, deep: !!c.deep });",
     "new": "else shots.dropFlotsam({ id, pos, lot: c.lot, from: c.from, owner });",
     "tests": [
@@ -723,7 +723,7 @@
   },
   {
     "name": "ACS-D8-claim",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "claims.set(e.id, { owner: e.owner, raw, lot: e.lot, from: e.from, deep: !!e.deep,",
     "new": "claims.set(e.id, { owner: e.owner, raw, lot: e.lot, from: e.from,",
     "tests": [
@@ -732,7 +732,7 @@
   },
   {
     "name": "ACS-D8-answer",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "pickFlotsam({ lot: c.lot, from: c.from, deep: c.deep, collector: c.collector, point: c.point });",
     "new": "pickFlotsam({ lot: c.lot, from: c.from, collector: c.collector, point: c.point });",
     "tests": [
@@ -768,7 +768,7 @@
   },
   {
     "name": "ACS-D10-second-wave",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (again && legendOfClass(entry.ship.cls.id)?.trait === 'boarders' && !entry.boardedAgain",
     "new": "if (again && false && !entry.boardedAgain",
     "tests": [
@@ -777,7 +777,7 @@
   },
   {
     "name": "ACS-D10-once",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "?.trait === 'boarders' && !entry.boardedAgain && entry.ship.damage.state",
     "new": "?.trait === 'boarders' && entry.ship.damage.state",
     "tests": [
@@ -786,7 +786,7 @@
   },
   {
     "name": "ACS-D10-half",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        entry.ship.damage.apply({ hull: 0, sail: 0, crew: entry.ship.damage.crew / 2 }, clock);\n        endBoarding();",
     "new": "        endBoarding();",
     "tests": [
@@ -804,7 +804,7 @@
   },
   {
     "name": "ACS-D12-stander",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (legend && !heard) deps.mid?.(",
     "new": "    if (legend && !heard && !owner) deps.mid?.(",
     "tests": [
@@ -813,7 +813,7 @@
   },
   {
     "name": "ACS-D12-once",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (legend && !heard) deps.mid?.(",
     "new": "    if (legend) deps.mid?.(",
     "tests": [
@@ -822,7 +822,7 @@
   },
   {
     "name": "ACS-D13-veil",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "lit: showsLight(e) }) * veilOf(e)) continue;",
     "new": "lit: showsLight(e) })) continue;",
     "tests": [
@@ -867,7 +867,7 @@
   },
   {
     "name": "ACS-D17-dawn",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (e.legend && !night && !e.retiring && s.damage.state === SHIP_STATES.afloat",
     "new": "      if (false && !e.retiring && s.damage.state === SHIP_STATES.afloat",
     "tests": [
@@ -876,7 +876,7 @@
   },
   {
     "name": "ACS-D17-fight",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": " && s.mode !== 'engage' && s.mode !== 'board' && legendOfClass(s.cls.id)?.trait === 'night') retire(e);",
     "new": " && legendOfClass(s.cls.id)?.trait === 'night') retire(e);",
     "tests": [
@@ -887,7 +887,7 @@
   },
   {
     "name": "ACS-D17-night-alone",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "s.mode !== 'board' && legendOfClass(s.cls.id)?.trait === 'night') retire(e);",
     "new": "s.mode !== 'board') retire(e);",
     "tests": [
@@ -905,7 +905,7 @@
   },
   {
     "name": "ACS-D19-host",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "depth: w.ether.depth, veil: !!w.ether.veil } : null,",
     "new": "depth: w.ether.depth, veil: false } : null,",
     "tests": [
@@ -1529,7 +1529,7 @@
   },
   {
     "name": "ACS-H9-cask-plunder",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "crewEvent(boat, 'plunder'); notePlunder(items); }   // SHIP-CREW: a hold filled; CAPT-LOG: the plunder hauled",
     "new": "crewEvent(boat, 'plunder'); }   // SHIP-CREW: a hold filled; CAPT-LOG: the plunder hauled",
     "tests": [
@@ -1538,7 +1538,7 @@
   },
   {
     "name": "ACS-H9-richest",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    deps.captain?.prize?.(entry.ship.names?.name ?? classLine(entry.ship.cls, entry.ship.names?.crown), deps.worth?.(entry.prize.hold) ?? 0);",
     "new": "    void 0;",
     "tests": [
@@ -1592,7 +1592,7 @@
   },
   {
     "name": "ACS-L1-repel-mark",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const paid = (act === 'sink' || act === 'board') && entry.charged.has('repel');",
     "new": "    const paid = false;",
     "tests": [
@@ -1601,7 +1601,7 @@
   },
   {
     "name": "ACS-L1-law-skip",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "for (const r of questPays || paid ? [] : law.rewards) {",
     "new": "for (const r of questPays ? [] : law.rewards) {",
     "tests": [
@@ -1610,7 +1610,7 @@
   },
   {
     "name": "ACS-L1-deed-crown",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "cap.deed?.(act, s.cls, paid ? { crown: null } : { crown, marque: under });",
     "new": "cap.deed?.(act, s.cls, { crown, marque: under });",
     "tests": [
@@ -1844,7 +1844,7 @@
   },
   {
     "name": "ACS-L6-seed-said",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "deps.captain?.event?.({ type: 'study', crown: watersCrown(), seed: e.ship.seed });",
     "new": "deps.captain?.event?.({ type: 'study', crown: watersCrown() });",
     "tests": [
@@ -1909,7 +1909,7 @@
   },
   {
     "name": "ACS-L12-drawn-set",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "function tallyPlunder(items) { notePlunder((items ?? []).filter((it) => it && typeof it === 'object' && _drawn.delete(it))); }",
     "new": "function tallyPlunder(items) { notePlunder((items ?? []).filter((it) => it && typeof it === 'object')); }",
     "tests": [
@@ -1918,7 +1918,7 @@
   },
   {
     "name": "ACS-L12-drawn-marked",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "function drawnPlunder(items) { for (const it of items) if (it && typeof it === 'object') _drawn.add(it); return [...items]; }",
     "new": "function drawnPlunder(items) { return [...items]; }",
     "tests": [
@@ -2144,7 +2144,7 @@
   },
   {
     "name": "ACS-S4-knowledge-gate",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": ": knownOf(e) >= KNOW.colours && !disguisedOf(e) && hostile(e.ship, me, { notoriety: (c) => notoriety.get(c), now: clock }) ? 'hostile' : 'ship';",
     "new": ": !disguisedOf(e) && hostile(e.ship, me, { notoriety: (c) => notoriety.get(c), now: clock }) ? 'hostile' : 'ship';",
     "tests": [
@@ -2153,7 +2153,7 @@
   },
   {
     "name": "ACS-S4-disguise-gate",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": ": knownOf(e) >= KNOW.colours && !disguisedOf(e) && hostile(e.ship, me, { notoriety: (c) => notoriety.get(c), now: clock }) ? 'hostile' : 'ship';",
     "new": ": knownOf(e) >= KNOW.colours && hostile(e.ship, me, { notoriety: (c) => notoriety.get(c), now: clock }) ? 'hostile' : 'ship';",
     "tests": [
@@ -2162,7 +2162,7 @@
   },
   {
     "name": "ACS-S5-trader-class",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const cls = crown ? merchantOfHull(e.ship.cls.hull) : null;",
     "new": "const cls = crown ? e.ship.cls : null;",
     "tests": [
@@ -2171,7 +2171,7 @@
   },
   {
     "name": "ACS-S5-name",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "name: (e.ether ? etherShipNames(cls, e.ship.seed) : shipNames(cls, e.ship.seed, { regionIndex: region })).name, line",
     "new": "name: `A merchantman of ${crown}`, line",
     "tests": [
@@ -2180,7 +2180,7 @@
   },
   {
     "name": "ACS-S5-line",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "line: classLine(cls) } : null;",
     "new": "line: 'Merchantman' } : null;",
     "tests": [
@@ -2189,7 +2189,7 @@
   },
   {
     "name": "ACS-D5-veil-flag",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "flag: e.ether ? ISLES_FLAG : crown,",
     "new": "flag: crown,",
     "tests": [
@@ -2198,7 +2198,7 @@
   },
   {
     "name": "ACS-D5-veil-names",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "(e.ether ? etherShipNames(cls, e.ship.seed) : shipNames(",
     "new": "(false ? etherShipNames(cls, e.ship.seed) : shipNames(",
     "tests": [
@@ -2207,7 +2207,7 @@
   },
   {
     "name": "ACS-S6-night-gate",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (night && dist > reachOf(e, glassReach({ night, lit: showsLight(e), sight: Infinity })).far) continue;",
     "new": "if (false) continue;",
     "tests": [
@@ -2216,7 +2216,7 @@
   },
   {
     "name": "ACS-S6-sight-test",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (a < bestA && !deps.sightBlocked?.(e.id, [p[0], p[1] + GLASS_AIM_LIFT, p[2]])) { bestA = a; best = e; }",
     "new": "if (a < bestA) { bestA = a; best = e; }",
     "tests": [
@@ -2225,7 +2225,7 @@
   },
   {
     "name": "ACS-S6-fade-gate",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (!e.boat || e.ship.damage.state === SHIP_STATES.sunk || (e.retiring && (e.fade ?? 1) < FADE_FLATS)) continue;",
     "new": "if (!e.boat || e.ship.damage.state === SHIP_STATES.sunk) continue;",
     "tests": [
@@ -2243,7 +2243,7 @@
   },
   {
     "name": "ACS-S7-target-gate",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const revealed = (engaged && onMe && gunsOut && hostile(s, me, law)) || !!e.relief;",
     "new": "const revealed = (engaged && gunsOut && hostile(s, me, law)) || !!e.relief;",
     "tests": [
@@ -2405,7 +2405,7 @@
   },
   {
     "name": "ACS-S20-tiers",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "e.ship.cls.cargo + (e.deep ? DEEP_TIER : 0) + etherTier(e));",
     "new": "e.ship.cls.cargo);",
     "tests": [
@@ -2414,7 +2414,7 @@
   },
   {
     "name": "ACS-S20-emptied",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const holdShownOf = (e) => (e.prize?.hold && !e.prize.hold.length ? 0 : ",
     "new": "const holdShownOf = (e) => (",
     "tests": [
@@ -2468,7 +2468,7 @@
   },
   {
     "name": "ACS-S19-aspect",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const half = ((b.bowZ - b.aftZ) / 2) * Math.abs(Math.sin(off)) + b.halfWidth * Math.abs(Math.cos(off));",
     "new": "const half = (b.bowZ - b.aftZ) / 2;",
     "tests": [
@@ -2486,7 +2486,7 @@
   },
   {
     "name": "ACS-S19-host-field",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (!glassHolds(a, dist, half, glassZoom, field)) continue;",
     "new": "if (!glassHolds(a, dist, half, glassZoom)) continue;",
     "tests": [
@@ -2495,7 +2495,7 @@
   },
   {
     "name": "ACS-S21-colours-arm",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "deps.say?.(was === KNOW.colours ? `False colours! ${disguiseOf(e)?.name ?? 'The merchantman'} runs up the black flag!` :",
     "new": "deps.say?.(false ? `False colours! ${disguiseOf(e)?.name ?? 'The merchantman'} runs up the black flag!` :",
     "tests": [
@@ -2504,7 +2504,7 @@
   },
   {
     "name": "ACS-S21-studied-arm",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": ": was >= KNOW.studied ? `${s.names?.name ?? 'She'} runs up the black flag!`",
     "new": ": false ? `${s.names?.name ?? 'She'} runs up the black flag!`",
     "tests": [
@@ -2513,7 +2513,7 @@
   },
   {
     "name": "ACS-S21-sight-gate",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (held > 0 || dist <= Math.max(reach.eye, reach.lookout)) deps.mid?.(",
     "new": "if (true) deps.mid?.(",
     "tests": [
@@ -2522,7 +2522,7 @@
   },
   {
     "name": "ACS-S24-card-gate",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "hull: made ? s.damage.hullShare() : null,",
     "new": "hull: s.damage.hullShare(),",
     "tests": [

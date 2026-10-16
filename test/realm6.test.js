@@ -2,7 +2,7 @@
 // GOLD MOVES ON THE REALM CHARACTER'S RECORD. "Homes, decor, stations and guild founding. The service debits the
 // character's gold at claim time." The law (net/homeLaw.js homeSaleRefund, server-account/src/decor.js decorGoldDelta,
 // pinned to the client's own arithmetic), the service (homes.js, decor.js over realm.js prepareRealmRecord) through the
-// REAL Worker, and the client - systems/online/onlineHomes.js's buy and sale and scenes/decorTool.js's four changes - over
+// REAL Worker, and the client - systems/online/onlineHomes.js's buy and sale and scenes/decor/decorTool.js's four changes - over
 // systems/realmSaves.js realmGoldAct.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';

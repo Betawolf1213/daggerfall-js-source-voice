@@ -600,7 +600,7 @@ export function mountArenaWindow(host, deps) {
   /** AUDIT PRE-MERGE 1003 U1: THE WINDOW DRAWS ITSELF. Online its model moves with no press - the board comes in, the
    *  hall opens, the queue is heard, an offer arrives with a 20-second clock - and nothing drew it until an unrelated
    *  press. The door asks this once a second (ui/arena/arenaDoor.js tick): the model built afresh (which tells the hall the
-   *  window still wants it - scenes/arenaOnline.js model), drawn only when it says something new. Answers whether it
+   *  window still wants it - scenes/arena/arenaOnline.js model), drawn only when it says something new. Answers whether it
    *  drew. */
   function refresh() {
     if (!alive) return false;

@@ -15,7 +15,7 @@ import { riseLine, wrathLine, gateBossOf } from '../src/net/gate/gateLaw.js';
 import { omenPost, fellPost } from '../src/net/gate/gateHerald.js';
 import { GATE_NO_WORDS } from '../src/net/wire.js';
 import { fellLine, omenTimeLine, openTimeLine, sealTimeLine } from '../src/systems/gate/gateOmen.js';   // TIME1, at the merge: the three that name a time, in local time alone
-import { GATE_TEXT } from '../src/scenes/gatePool.js';
+import { GATE_TEXT } from '../src/scenes/gate/gatePool.js';
 import { GATE_LEGEND_TEXT } from '../src/ui/gate/gateMapMark.js';
 import { MARKS_CARD_TEXT } from '../src/ui/gate/gateMarksView.js';
 import { GATE_CLAIM_TEXT } from '../src/net/gate/gateClaims.js';

@@ -99,7 +99,7 @@ still stands on their own key, are). AUDIT PRE-MERGE 1003 D17's row is history a
 ## VERMIN-SHARED (3)
 
 `systems/quest/actions.js` sharedPickRoll, PickOneOf; `systems/quest/machine.js` the `sharedCopy` hook;
-`scenes/questFoeHost.js` partnerStandsQuestFoes' `symbol` and `foes`, sharerFoeStands; `scenes/world.js` tryPlaceFoe's
+`scenes/quest/questFoeHost.js` partnerStandsQuestFoes' `symbol` and `foes`, sharerFoeStands; `scenes/world.js` tryPlaceFoe's
 two partner calls. The Exterminator (A0C00Y07) picks its vermin once, at the house (`pick one of _S.04_ _S.05_ _S.06_
 _S.07_`, :139-140; "preventing multiple spawns by using static pick", :137), and spawns it every three minutes while
 the player is inside (:150-168) - its `_house_` is any building, a Mages Guild hall among them. Each copy of a shared

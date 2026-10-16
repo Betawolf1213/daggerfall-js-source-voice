@@ -8,15 +8,15 @@ import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createSdHost, SD_CAST_OUT_AGAIN_MS } from '../src/scenes/sdHost.js';
+import { createSdHost, SD_CAST_OUT_AGAIN_MS } from '../src/scenes/superDungeon/sdHost.js';
 import { sdCities, sdTemplates } from '../src/systems/superDungeon/sdSite.js';
 import { scanGatePixels } from '../src/systems/gate/gateSite.js';
 import { LOCATION_TYPES, CLIMATES } from '../src/formats/mapsFile.js';
 import { isMainStoryDungeon } from '../src/world/dungeon/dungeonTextures.js';
 import { sdFirst, sdRise, sdFind, sdFell, sdGone, SD_COLLAPSE_MS, SD_CAST_OUT_LINE, SD_NO_RIFT } from '../src/net/superDungeon/sdLaw.js';
 import { SD_ENTERED_KEY, SD_ENTERED_MAX, SD_FALLEN_KEY } from '../src/world/superDungeon/sdDungeon.js';
-import { createSdVoice, SD_VOICE_RANK } from '../src/scenes/sdVoice.js';
-import { createSdEnd, SD_RIFT_KEY } from '../src/scenes/sdEnd.js';
+import { createSdVoice, SD_VOICE_RANK } from '../src/scenes/superDungeon/sdVoice.js';
+import { createSdEnd, SD_RIFT_KEY } from '../src/scenes/superDungeon/sdEnd.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const W = read('src/scenes/world.js');

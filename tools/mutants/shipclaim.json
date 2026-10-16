@@ -109,7 +109,7 @@
   },
   {
     "name": "SC-offer-owner-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const claimable = (entry) => !entry.owner && typeof csa()",
     "new": "const claimable = (entry) => typeof csa()",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "SC-offer-runtime-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "!entry.owner && typeof csa()?.LaunchFromDeed === 'function' && typeof",
     "new": "!entry.owner && typeof",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "SC-offer-mint-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": " && typeof deps.board?.mintUid === 'function'",
     "new": "",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "SC-offer-pack-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": " && typeof deps.board?.packDeed === 'function'",
     "new": "",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "SC-claim-unguarded",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const r = claimable(entry) ? csa() : null;",
     "new": "    const r = csa();",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "SC-fate-claim-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        if (which === 'claim') return claimPrize(entry, boat);   // SHIP-CLAIM: she is mine\n",
     "new": "",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "SC-fate-answers-nothing",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        return true;\n      },\n      /** AUDIT NAV1 (B11): Leave her",
     "new": "      },\n      /** AUDIT NAV1 (B11): Leave her",
     "tests": [
@@ -173,7 +173,7 @@
   },
   {
     "name": "SC-fate-decided-again",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "        if (pz.fate) return false;\n        if (which === 'claim')",
     "new": "        if (which === 'claim')",
     "tests": [
@@ -182,7 +182,7 @@
   },
   {
     "name": "SC-detail-small-for-crewed",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const claimDetail = (entry) => (entry.boat?.crewed ?",
     "new": "const claimDetail = (entry) => (!entry.boat?.crewed ?",
     "tests": [
@@ -191,7 +191,7 @@
   },
   {
     "name": "SC-deed-full-price",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "deps.board.mintUid(), prizeDeedValue(s.hull));",
     "new": "deps.board.mintUid(), prizeDeedValue(s.hull) * 4);",
     "tests": [
@@ -200,7 +200,7 @@
   },
   {
     "name": "SC-deed-variant-dropped",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "const deed = mintDeed(s.hull, s.variant, deps.board.mintUid()",
     "new": "const deed = mintDeed(s.hull, 0, deps.board.mintUid()",
     "tests": [
@@ -209,7 +209,7 @@
   },
   {
     "name": "SC-deed-unminted",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "mintDeed(s.hull, s.variant, deps.board.mintUid(), ",
     "new": "mintDeed(s.hull, s.variant, 0, ",
     "tests": [
@@ -218,7 +218,7 @@
   },
   {
     "name": "SC-deed-spend-reads-no-pack",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const pack = deps.board.packDeed(deed);",
     "new": "    const pack = (deps.board.packDeed(deed), () => []);",
     "tests": [
@@ -227,7 +227,7 @@
   },
   {
     "name": "SC-claim-throws-through",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    try { boat = r.LaunchFromDeed(deed, pack, at, forwardOfYaw(s.yaw), deps.board.terrainAt?.(at)); } catch (err) { console.warn('[naval] a claimed prize would not be placed', err); }",
     "new": "    boat = r.LaunchFromDeed(deed, pack, at, forwardOfYaw(s.yaw), deps.board.terrainAt?.(at));",
     "tests": [
@@ -236,7 +236,7 @@
   },
   {
     "name": "SC-claim-deed-kept-on-failure",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (!boat) { const list = pack(), i = list.indexOf(deed); if (i >= 0) list.splice(i, 1); deps.board?.forgetDeed?.(deed); return false; }",
     "new": "    if (!boat) return false;",
     "tests": [
@@ -246,7 +246,7 @@
   },
   {
     "name": "SC-pose-not-where-she-lies",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const at = [s.pos[0], deps.seaY(), s.pos[2]];",
     "new": "    const at = [0, deps.seaY(), 0];",
     "tests": [
@@ -255,7 +255,7 @@
   },
   {
     "name": "SC-pose-heading-ignored",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "forwardOfYaw(s.yaw), deps.board.terrainAt?.(at))",
     "new": "forwardOfYaw(0), deps.board.terrainAt?.(at))",
     "tests": [
@@ -264,7 +264,7 @@
   },
   {
     "name": "SC-terrain-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "forwardOfYaw(s.yaw), deps.board.terrainAt?.(at))",
     "new": "forwardOfYaw(s.yaw))",
     "tests": [
@@ -273,7 +273,7 @@
   },
   {
     "name": "SC-hold-left-behind",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (pz.hold.length) deps.board?.giveItems?.(pz.hold.splice(0), boat);\n",
     "new": "",
     "tests": [
@@ -282,7 +282,7 @@
   },
   {
     "name": "SC-hurts-made-whole",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "st.damage.restore({ hull: Math.max(1, ((d.hull - took.hull) / d.maxHull) * st.damage.maxHull), sail: ((d.sail - took.sail) / d.maxSail) * st.damage.maxSail, crew: 0 });",
     "new": "st.damage.restore({ crew: 0 });",
     "tests": [
@@ -291,7 +291,7 @@
   },
   {
     "name": "SC-canvas-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": ", sail: ((d.sail - took.sail) / d.maxSail) * st.damage.maxSail, crew: 0 });",
     "new": ", crew: 0 });",
     "tests": [
@@ -300,7 +300,7 @@
   },
   {
     "name": "SC-crew-kept",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": " * st.damage.maxSail, crew: 0 });",
     "new": " * st.damage.maxSail });",
     "tests": [
@@ -309,7 +309,7 @@
   },
   {
     "name": "SC-hands-she-never-had",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    st.lastCrew = st.damage.crew;   // no hand of hers ever lost to my crew's spirits\n",
     "new": "",
     "tests": [
@@ -318,7 +318,7 @@
   },
   {
     "name": "SC-floor-a-wreck",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "hull: Math.max(1, ((d.hull - took.hull) / d.maxHull) * st.damage.maxHull)",
     "new": "hull: ((d.hull - took.hull) / d.maxHull) * st.damage.maxHull",
     "tests": [
@@ -327,7 +327,7 @@
   },
   {
     "name": "SC-timber-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const took = pz.took ?? { hull: 0, sail: 0 };",
     "new": "    const took = { hull: 0, sail: 0 };",
     "tests": [
@@ -336,7 +336,7 @@
   },
   {
     "name": "SC-timber-unrecorded",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "          pz.took = { hull: st.damage.hull - was[0], sail: st.damage.sail - was[1] };",
     "new": "          void was;",
     "tests": [
@@ -345,7 +345,7 @@
   },
   {
     "name": "SC-powder-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "st.guns.barrels = pz.chosen === 'powder' ? 0 : s.guns.barrels;",
     "new": "st.guns.barrels = s.guns.barrels;",
     "tests": [
@@ -354,7 +354,7 @@
   },
   {
     "name": "SC-her-barrels-unread",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "st.guns.barrels = pz.chosen === 'powder' ? 0 : s.guns.barrels;",
     "new": "st.guns.barrels = pz.chosen === 'powder' ? 0 : st.guns.barrels;",
     "tests": [
@@ -363,7 +363,7 @@
   },
   {
     "name": "SC-not-let-go",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    drop(entry);\n    deps.board?.redeck?.(hers, boat);",
     "new": "    deps.board?.redeck?.(hers, boat);",
     "tests": [
@@ -372,7 +372,7 @@
   },
   {
     "name": "SC-sunk-instead",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    drop(entry);\n    deps.board?.redeck?.(hers, boat);",
     "new": "    s.damage.scuttle(); s.damage.apply({ hull: 0, sail: 0, crew: 0, fire: true }, clock); igniteShip(entry);\n    deps.board?.redeck?.(hers, boat);",
     "tests": [
@@ -381,7 +381,7 @@
   },
   {
     "name": "SC-dead-not-redecked",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    deps.board?.redeck?.(hers, boat);\n",
     "new": "",
     "tests": [
@@ -390,7 +390,7 @@
   },
   {
     "name": "SC-berth-kept",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (entry.fromHarbour) departedOf(entry.fromHarbour, where().day ?? 0).add(s.seed);\n",
     "new": "",
     "tests": [
@@ -399,7 +399,7 @@
   },
   {
     "name": "SC-helm-not-returned",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (!returnFromPrize(pz, captor)) returnAboard(boat);\n    return true;\n  }",
     "new": "    return true;\n  }",
     "tests": [
@@ -409,7 +409,7 @@
   },
   {
     "name": "SC-words-swapped",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "deps.say?.(boat.crewed ? `${name} is yours",
     "new": "deps.say?.(!boat.crewed ? `${name} is yours",
     "tests": [

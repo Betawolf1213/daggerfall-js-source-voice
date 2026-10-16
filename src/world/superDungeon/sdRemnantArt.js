@@ -14,7 +14,7 @@
 //   SD-LOOK S8 (Super-Dungeons-Look.md section 10): THE REMNANT'S OWN PSEUDO-ARCHIVE (SD_REMNANT_ARCHIVE - never the
 //          Hour's 38151, whose records section 7 names): THE TELL ATLAS, one a metal and a heat (off, mid, hot) - the
 //          sole's tread, the fist's knuckles, the Hour-Hand's blade (root to tip) and the ribs, each region lit in its
-//          blow's colour (scenes/sdRemnantBlows.js SD_BLOW_COLOR, handed in); a part that tells wears a remap to its
+//          blow's colour (scenes/superDungeon/sdRemnantBlows.js SD_BLOW_COLOR, handed in); a part that tells wears a remap to its
 //          heat, and only its own faces sample its region. The Reset's WHITE HEART (mid the Reset's soul-white, hot the
 //          moment's white-gold), the HUSK a torn-out heart leaves, the BACK-DIAL's chapter ring in each metal (its
 //          numerals the sky's own glyphs - world/superDungeon/sdSkyArt.js), its HAND (cold, ember for the stun, gold or silver for
@@ -98,7 +98,7 @@ export const SD_TELL_ART_SIZE = 64;
 export const SD_TELL_REGION = Object.freeze({
   sole: Object.freeze([0, 0, 32, 32]), fist: Object.freeze([32, 0, 32, 32]), blade: Object.freeze([0, 32, 64, 16]), rib: Object.freeze([0, 48, 64, 16]),
 });
-/** The blow each region tells (its colour scenes/sdRemnantBlows.js SD_BLOW_COLOR's), and how far into the blade the mid
+/** The blow each region tells (its colour scenes/superDungeon/sdRemnantBlows.js SD_BLOW_COLOR's), and how far into the blade the mid
  *  heat has run from the root (its share of the length - its front dithered over SD_BLADE_FRONT of it). */
 export const SD_TELL_BLOW = Object.freeze({ sole: 'stomp', fist: 'volley', blade: 'hand', rib: 'pulse' });
 export const SD_BLADE_MID = 0.5;

@@ -64,7 +64,7 @@
   },
   {
     "name": "GH-the-host-reads-the-table",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const [sx, sy] = gangwaySide(boat.hull);",
     "new": "    const [sx, sy] = gangwaySide(4);",
     "tests": [

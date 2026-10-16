@@ -227,7 +227,7 @@ test('WORLD5: the hosts by source - the shared clock installed at the boot befor
   const sh = rd('src/scenes/shared.js');
   assert.match(sh, /advance\(minutes\) \{\s*if \(!\(minutes > 0\)\) return null;\s*(?:\/\/[^\n]*\n\s*)*if \(sharedClockOn\(\)\) \{ if \(tickInFlight\(\)\) \{ advanceOwnMinutes\(minutes\); _raiseWaiting = true; return null; \} return this\.tick\(0, undefined, 0, minutes\); \}/, 'LIVED1: RaiseTime under the shared clock raises the character\'s own clock, and the tick walks it (AUDIT LIVED1b K1: one from inside a tick at once, after the window in hand)');
   assert.match(sh, /sharedMinutes: \(\) => \(sharedClockOn\(\) \? skyMinutes\(\) : null\),/, 'every host\'s rest deps say the world\'s clock (the window\'s line, the session\'s quest gate; TIME1: the time the window says is the sky\'s)');
-  assert.match(rd('src/scenes/questBridge.js'), /questClockStepMax: \(\) => ctx\.questClockStepMax\?\.\(\) \?\? Infinity,/);
+  assert.match(rd('src/scenes/quest/questBridge.js'), /questClockStepMax: \(\) => ctx\.questClockStepMax\?\.\(\) \?\? Infinity,/);
   const m = rd('src/systems/quest/machine.js');
   assert.equal((m.match(/questClockStepMax: \(\) => this\.deps\.questClockStepMax\?\.\(\) \?\? Infinity/g) ?? []).length, 4, 'every door a live quest is born through');   // QUEST1: the fourth is receiveSharedQuest
   assert.match(rd('src/systems/quest/parser.js'), /const quest = new Quest\(\{ rolls, actionFactory, nowSeconds, skySeconds, worldSeconds, raisedSeconds, hooks, questClockStepMax \}\);/);

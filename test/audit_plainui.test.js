@@ -19,7 +19,7 @@ import { REMAINS_GOLD_MAX } from '../src/systems/legacy/heirloom.js';
 import { setModSetting, modSetting } from '../src/systems/modSettings.js';
 import { regardBadge } from '../src/systems/livingWorld/people.js';
 import { createRelations } from '../src/systems/livingWorld/relations.js';
-import { createLivingRoads } from '../src/scenes/livingRoads.js';
+import { createLivingRoads } from '../src/scenes/livingWorld/livingRoads.js';
 import { mountEnhancedTalk } from '../src/ui/enhanced/enhancedTalk.js';
 import { NOTICE_CSS, PROF_CSS } from '../src/ui/enhanced/enhancedPlusStyle.js';
 import { FAMILY_CSS } from '../src/ui/familyPages.js';

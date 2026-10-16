@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createComeSailAwayAboard } from '../src/scenes/comeSailAwayAboard.js';
+import { createComeSailAwayAboard } from '../src/scenes/comeSailAway/comeSailAwayAboard.js';
 const world = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
 // Execute the host's actual near-player marker loop with its view dependencies.
 // PIN MOVED (THE WROTHGARIAN ZONE): the zone's own loops over the drawable peers stand above this one now, so the

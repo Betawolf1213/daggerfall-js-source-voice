@@ -27,7 +27,7 @@
 //  - WHAT THEY SAY (`speech()`): a circle's line at this minute (pure: every reader hears it), and a word to the player
 //    passing close - by name from a friend, a cold one from an enemy (relations.js).
 //  - A RESIDENT TAKEN off the street - trampled - is gone for the rest of the day. WATCH-FIX: one the watch's conversion
-//    took is LENT to the guard stood in their place (`lend` - scenes/livingWatch.js follows it): off the street while it
+//    took is LENT to the guard stood in their place (`lend` - scenes/livingWorld/livingWatch.js follows it): off the street while it
 //    stands, and at its end back to their day (`back`), or - one of the watch cut down - slain by the player's own blow,
 //    else KILLED (`killed`: dead for good, nobody's regard moved). Another player's watch stands for residents here too
 //    (WATCH1's records name them, `peerLend`): off this street while it does.
@@ -643,7 +643,7 @@ export class LivingTown {
   /**
    * LW-LODGE: WHO LODGES AT A TAVERN today - a visitor and a hand of a packet lying here (their lodging, `_lodging`), and
    * one of the town whose home is its rooms (an adventurer with no house) - its own staff aside; in the order of their
-   * ids. Every reader's alike: the tavern's rooms are dealt to them (scenes/livingIndoors.js `bedsOf`).
+   * ids. Every reader's alike: the tavern's rooms are dealt to them (scenes/livingWorld/livingIndoors.js `bedsOf`).
    * @param {number} key @param {number} day @returns {Resident[]}
    */
   lodgersAt(key, day) {
@@ -949,7 +949,7 @@ export class LivingTown {
   _away(res) { return this._lent.has(res.id) || this._peerLent.has(res.id); }
 
   /**
-   * WATCH-FIX: A RESIDENT LENT TO THE WATCH - the conversion stood a guard in their place (scenes/livingWatch.js follows
+   * WATCH-FIX: A RESIDENT LENT TO THE WATCH - the conversion stood a guard in their place (scenes/livingWorld/livingWatch.js follows
    * it): off the street while it stands (the body free at once), never taken for the day - the conversion's own take
    * (the street disabled the row) undone.
    * @param {Resident} res
@@ -1471,7 +1471,7 @@ export class LivingTown {
   /**
    * The word a resident has for the player passing close at minute `t`: a friend's by name, an enemy's cold, a known
    * face's plain, a stranger's now and then (and always when the player stops before them) - else null. A word said
-   * notes them seen. LW8b: the street's (`_greet`) and a room's (scenes/livingIndoors.js).
+   * notes them seen. LW8b: the street's (`_greet`) and a room's (scenes/livingWorld/livingIndoors.js).
    * @param {Resident} res @param {number} t @param {boolean} stopped @returns {string|null}
    */
   greetingFor(res, t, stopped) {

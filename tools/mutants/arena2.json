@@ -576,7 +576,7 @@
   },
   {
     "name": "ARENA2-SPARE-ALWAYS",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    if (!C?.ladder || !C.b || boutBefore(C.b) || C.b.phase === 'done') return null;",
     "new": "    if (!C?.ladder || !C.b) return null;",
     "tests": [
@@ -586,7 +586,7 @@
   },
   {
     "name": "ARENA2-CRIME-FIRST",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    if (intrusions === 1) deps.say?.(ARENA_TEXT.herald.intrude);",
     "new": "    if (intrusions === 0) deps.say?.(ARENA_TEXT.herald.intrude);",
     "tests": [
@@ -595,7 +595,7 @@
   },
   {
     "name": "ARENA2-PREFIGHT-BLOW",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "      if (foe?.entity) foe.entity.health = Math.min(foe.entity.maxHealth ?? foe.entity.health, foe.entity.health + dmg);",
     "new": "",
     "tests": [
@@ -604,7 +604,7 @@
   },
   {
     "name": "ARENA2-HOLD-LATE",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    for (const tag of C.tags.values()) tag.hold = !boutLive(C.b);\n    if (C.playerTag) C.playerTag.hold = !boutLive(C.b);",
     "new": "",
     "tests": [
@@ -613,7 +613,7 @@
   },
   {
     "name": "ARENA2-NO-LOOT",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "          if (foe.entity) { foe.entity.bout = tags.get(f.id); foe.entity.items = []; foe.entity.pacifyImmune = true; }",
     "new": "          if (foe.entity) { foe.entity.bout = tags.get(f.id); foe.entity.pacifyImmune = true; }",
     "tests": [
@@ -622,7 +622,7 @@
   },
   {
     "name": "ARENA2-EX-HOSTILE",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "          if (foe.ai) { foe.ai.isHostile = !!C.ladder; foe.ai.target = null; foe.ai.yaw = yawTo(f.mark, [0, 0]); }",
     "new": "          if (foe.ai) { foe.ai.isHostile = true; foe.ai.target = null; foe.ai.yaw = yawTo(f.mark, [0, 0]); }",
     "tests": [

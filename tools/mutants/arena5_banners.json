@@ -82,7 +82,7 @@
   },
   {
     "name": "ARENA5-CROWD-NOT-WASHED",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "      if (g.tint) batch.tint = g.tint;",
     "new": "      void g;",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "ARENA5-CROWD-NOT-SPLIT",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "const side = split ? crowdHalfOf(s.x) : 0;",
     "new": "const side = 0;",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "ARENA5-CROWD-HALF-WRONG",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "tint: split ? crowdWash(halves[side]) : null",
     "new": "tint: split ? crowdWash(halves[1 - side]) : null",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "ARENA5-RELAY-CROWD-THROWS",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "tier: nx ? nx.tier : C.ex?.tier ?? 0,",
     "new": "tier: nx ? nx.tier : C.ex.tier,",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "ARENA5-FLOOR-BANNERS-LADDER-SIDE",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "return { west: ok(R ? R.banner : leagueNow()?.team), east: null };",
     "new": "return { west: null, east: ok(R ? R.banner : leagueNow()?.team) };",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "ARENA5-FLOOR-BANNERS-REALM",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "return { west: ok(R ? R.banner : leagueNow()?.team), east: null };",
     "new": "return { west: ok(leagueNow()?.team), east: null };",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "ARENA5-FLOOR-BANNERS-EXHIBITION",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    if (p.kind === 'exhibition') return { west: 'red', east: 'blue' };\n",
     "new": "",
     "tests": [

@@ -55,7 +55,7 @@ export const BOSS_BAR_TEXT = Object.freeze({
   fighters: (n) => (n === 1 ? '1 in the court' : `${n} in the court`),
   // GATE-UX (2026-10-01, Mac: "Remove the text below each boss health bar that shows phase details"): WBX5's phase line
   // ("II - The Burning Court") is gone from the foot - the marks cut in his health say where the phases turn, and a
-  // turn is still shown over the screen as it comes (scenes/gateCourt.js courtPhaseCard - WB13e: its card)
+  // turn is still shown over the screen as it comes (scenes/gate/gateCourt.js courtPhaseCard - WB13e: its card)
   // WB9c: DAGON'S RECKONING on the bar - its name, the crystals still standing and the seconds to its landing; the stun
   // a broken one leaves him in, and its seconds; and the next one's coming, in the foot
   reckon: (name, left, n, secs) => `${name} - ${left} of ${n} ${n === 1 ? 'crystal' : 'crystals'} - ${secs}s`,
@@ -170,7 +170,7 @@ export const BOSS_BAR_CSS = `
  * them (ui/gate/gateMarksView.js marksViewOf: his aspect's sign, name and element in its colour, then each trial's sign,
  * name and line), null for the Warden unmarked. WB13c: `epithetColor` his aspect's; the callout's `t` (its wind-up's
  * share, its line's reach - none for a stun or his bearers), `dagon` (Dagon's own, on a plate) and `move` (his blow
- * named is the one on my feet: `aimed`, scenes/gateCourt.js perilAt's name); `spent` the phase marks he has passed;
+ * named is the one on my feet: `aimed`, scenes/gate/gateCourt.js perilAt's name); `spent` the phase marks he has passed;
  * `wrathNear` its last minute; `alpha` the bar's fade after his fall; `now` the clock it was read at (the trailing
  * segment's).
  * @param {any} s the court's state (net/gate/gateLink.js GateState) @param {number} now the relay's clock

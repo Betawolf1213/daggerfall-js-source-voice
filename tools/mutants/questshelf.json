@@ -262,7 +262,7 @@
   },
   {
     "name": "QS-the-list-unhanded",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "ended, hidden: notebook?.getHiddenQuests?.() ?? [], shelved };",
     "new": "ended, hidden: notebook?.getHiddenQuests?.() ?? [] };",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "QS-a-raid-set-aside",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "const refuseRaid = (q) => (WA_RAID_QUESTS.includes(q.questName) ? 'raid' : null);",
     "new": "const refuseRaid = () => null;",
     "tests": [
@@ -280,7 +280,7 @@
   },
   {
     "name": "QS-the-tracker-holds-it",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "      if (!q || q.questComplete || isShelved(q)) questTracker.pinned = null;   // QUEST-SHELF: one set aside is let go too",
     "new": "      if (!q || q.questComplete) questTracker.pinned = null;   // QUEST-SHELF: one set aside is let go too",
     "tests": [
@@ -505,7 +505,7 @@
   },
   {
     "name": "QS-A-a-reclaim-still-hidden",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "        if (r.ok) notebook?.unhideQuest?.(id);\n",
     "new": "",
     "tests": [
@@ -514,7 +514,7 @@
   },
   {
     "name": "QS-A-the-button-its-own-ladder",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "canAbandon: (id) => machine.shelveRefusal(Number(id), { refuse: refuseRaid }) === null,",
     "new": "canAbandon: (id) => machine.shelveRefusal(Number(id)) === null,",
     "tests": [

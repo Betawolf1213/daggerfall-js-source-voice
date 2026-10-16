@@ -796,7 +796,7 @@
   },
   {
     "name": "INT15-COURT-ANY-TIME",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "if (alive && healLive(s) && e?.maxHealth > 0) sayBody(",
     "new": "if (e?.maxHealth > 0) sayBody(",
     "tests": [

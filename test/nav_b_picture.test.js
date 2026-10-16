@@ -1,7 +1,7 @@
 // NAV-B (2026-09-28, Mac: "proper naval combat with a huge reference to assassins creed black flag ... extremely
 // detailed, authentic") - THE PICTURE: the smoke, flame, spray and splinters of a sea fight as numbers
 // (systems/naval/navalEffects.js), the one pass that draws them with the balls in flight, what floats and the aim
-// (render/navalRender.js), a burning deck on Daggerfall's own fire flat (scenes/navalFlames.js), and a sea ship's
+// (render/navalRender.js), a burning deck on Daggerfall's own fire flat (scenes/naval/navalFlames.js), and a sea ship's
 // colours on her flag (render/comeSailAwayRender.js flagRuns) - bible/03-World/Naval-Combat.md NAV-B.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -10,7 +10,7 @@ import {
   NAVAL_STRIDE, NAVAL_MAX_QUADS, NAVAL_TEX_SIZE, NAVAL_FS, NAVAL_TEXTURES, navalSmokeTexture, pictureOf, writeQuad, viewAxes, particleAxes,
   writeRibbon, NavalRenderer, ARC_WIDTH_VH, ARC_DASH_DIM,
 } from '../src/render/navalRender.js';
-import { createNavalFlames, FLAME_SCALE } from '../src/scenes/navalFlames.js';
+import { createNavalFlames, FLAME_SCALE } from '../src/scenes/naval/navalFlames.js';
 import { FIRE_FLAT } from '../src/systems/survival/camp.js';
 import { GLOBAL_SCALE } from '../src/player/activate.js';
 import { flagRuns } from '../src/render/comeSailAwayRender.js';

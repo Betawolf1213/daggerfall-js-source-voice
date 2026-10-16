@@ -6,7 +6,7 @@
 // of strangers. And the day put
 // people in the tavern for hours they never meant to spend there: a long gap between two stays at one place was waited
 // out at it, and a labourer's lunch was laid after the stint at nine, before the one at eleven. Now the room's floor is
-// walked from the way in cell by cell (scenes/livingIndoors.js soundRoom), its tables fill apart (spreadTables), it holds
+// walked from the way in cell by cell (scenes/livingWorld/livingIndoors.js soundRoom), its tables fill apart (spreadTables), it holds
 // one to every INDOOR_FLOOR_M2 of floor, one who stirs makes for a place of their own (stirPlace), a long gap at one place
 // is spent at home (dayPlan.js schedule) and the lunch comes after the stint at eleven. On mock rooms, the synthetic towns
 // (test/lwTown.mjs) and the synthetic hall on the port's own collider (test/lwRoom.mjs; tools/livingRoomProbe.mjs
@@ -25,7 +25,7 @@ import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import {
   createLivingIndoors, soundRoom, spreadTables, stirPlace, tablesOf, inSight, TABLE_SIGHT_M,
   INDOOR_REACH_M, INDOOR_CELLS, ROOM_STEPS, INDOOR_LEVEL_M, INDOOR_HOLD_MIN, INDOOR_APART_M, INDOOR_DOOR_M, INDOOR_MAX, INDOOR_FLOOR_M2, TABLE_GAP_M, INDOOR_WALK_M, TABLE_M,
-} from '../src/scenes/livingIndoors.js';
+} from '../src/scenes/livingWorld/livingIndoors.js';
 
 const RATE = CLASSIC_MINUTES_PER_SECOND;
 const MPM = PERSON_MOVE_SPEED / RATE;

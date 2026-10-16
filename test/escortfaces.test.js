@@ -215,6 +215,6 @@ test('FE1 save: the envelope carries escortingFaces beside quest/talk/travelMap'
   assert.match(save, /escortingFaces: getEscortFacesSaveData\(\),/, 'SaveLoadManager.cs:869');
   assert.match(save, /restoreEscortFacesSaveData\(extras\?\.escortingFaces \?\? null\);/,
     'the restore arm, null clearing');
-  const bridge = read('src/scenes/questBridge.js');
+  const bridge = read('src/scenes/quest/questBridge.js');
   assert.match(bridge, /onQuestEnded: \(q\) => ctx\.onQuestEnded\?\.\(q\),/, 'the bridge passthrough');
 });

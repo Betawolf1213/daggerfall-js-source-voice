@@ -11,7 +11,7 @@
   },
   {
     "name": "WB13b-the-arrival-line-said",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "if (P.md && !s.fell && s.wrath == null) marksAt = t; }",
     "new": "if (P.md && !s.fell && s.wrath == null) { say(P.aspect.omen); marksAt = t; } }",
     "tests": [
@@ -30,7 +30,7 @@
   },
   {
     "name": "WB13b-the-old-turn",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "export const courtPhaseOrder = (n) => (n === 2 ? 'Follow him over the walkway.'",
     "new": "export const courtPhaseOrder = (n) => (n === 2 ? 'He bounds across the fire - follow him over the walkway.'",
     "tests": [
@@ -77,7 +77,7 @@
   },
   {
     "name": "WB13b-the-resist-explained",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "  resisted: (name) => `${name} resisted.`,",
     "new": "  resisted: (name) => `You resist the ${name} - it does nothing to you.`,",
     "tests": [

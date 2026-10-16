@@ -22,7 +22,7 @@ is written once, with both names.
 
 ## Fixed
 
-**The lens and the bridge** (`src/ui/quest/questLens.js`, `src/scenes/questBridge.js`, `src/ui/quest/questRail.js`,
+**The lens and the bridge** (`src/ui/quest/questLens.js`, `src/scenes/quest/questBridge.js`, `src/ui/quest/questRail.js`,
 `src/scenes/world.js`, `src/ui/travel/travelMapWindow.js`)
 
 | ID | Sev | Finding | Fix |

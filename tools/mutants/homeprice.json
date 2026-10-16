@@ -481,7 +481,7 @@
   },
   {
     "name": "AUDIT-HOME-PRICE-E4-the-collected-rent-region-named",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "It went to ${EMPIRE_ACCOUNT_WORDS}.`);",
     "new": "It went to this region's bank account.`);",
     "tests": [

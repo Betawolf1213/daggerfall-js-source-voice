@@ -73,7 +73,7 @@
   },
   {
     "name": "NAV-G-an-idle-boat-hunted",
-    "file": "src/scenes/comeSailAwayPeers.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPeers.js",
     "old": "          if (!s?.helm || !s.shown || !s.boat.GameObject.activeSelf) continue;",
     "new": "          if (!s?.shown || !s.boat.GameObject.activeSelf) continue;",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "NAV-G-the-way-never-read",
-    "file": "src/scenes/comeSailAwayPeers.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPeers.js",
     "old": "    s.vel = sceneWay(w, toScene);",
     "new": "    s.vel = null;",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "NAV-G-the-way-left-in-the-wire-frame",
-    "file": "src/scenes/comeSailAwayPeers.js",
+    "file": "src/scenes/comeSailAway/comeSailAwayPeers.js",
     "old": "  return [b[0] - a[0], 0, b[2] - a[2]];",
     "new": "  return [v[0], 0, v[2]];",
     "tests": [

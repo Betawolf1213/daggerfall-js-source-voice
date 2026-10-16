@@ -3,7 +3,7 @@
 // assign - CREW_ROLES, a Bard's calling his own, one First Mate); each keeps his role's post on her main deck
 // (systems/naval/crewLife.js ROLE_POSTS - her First Mate aft by her helm, her Bosun before her mainmast, her Carpenter by
 // her hatch, her Cook forward, her Gunners at her guns along her waist, under fire at a run); the hand made First Mate
-// answers for her (scenes/navalHost.js mateOf); the Fleet page's Crew panel (ui/fleetPage.js) over the host half.
+// answers for her (scenes/naval/navalHost.js mateOf); the Fleet page's Crew panel (ui/fleetPage.js) over the host half.
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -116,7 +116,7 @@ test('CREW-ROLES the hand made her First Mate answers for her - her repairs\' wo
   assert.ok(said.startsWith(`${hands[1].name}: `), said);
   assert.equal(s.host.crewHands(s.boat)[0].role, 'Deckhand');
   // her roles to the crew's step
-  const src = read('src/scenes/navalHost.js');
+  const src = read('src/scenes/naval/navalHost.js');
   assert.match(src, /const roles = boat\.crewed \? st\.crew\.hands\.map\(\(h\) => h\.role\) : null;/);
   assert.match(src, /return \(aboard\.find\(\(h\) => h\.role === FIRST_MATE\) \?\? aboard\[0\]\)\?\.name \?\? null;/);
   assert.match(read('src/scenes/world.js'), /_crewCtx\.roles = ship\.mine\?\.roles \?\? null;/);

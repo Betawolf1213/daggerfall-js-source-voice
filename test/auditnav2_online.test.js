@@ -6,7 +6,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { room } from './navalRoom.mjs';
-import { OWNER_SWEEP_S, ORPHAN_S } from '../src/scenes/navalHost.js';
+import { OWNER_SWEEP_S, ORPHAN_S } from '../src/scenes/naval/navalHost.js';
 import { temperOf, TEMPERS } from '../src/systems/naval/navalAI.js';
 import { classById, hullBuild, HULL } from '../src/systems/naval/navalShips.js';
 import { raiderClassOf } from '../src/systems/naval/navalRaiders.js';

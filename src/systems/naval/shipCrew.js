@@ -1,7 +1,7 @@
 // @ts-check
 // SHIP-CREW (2026-09-30, Mac: "Let's do #1" - named crew with morale, and deck orders the crew follow) - THE PLAYER'S
 // OWN CREW AS PEOPLE: who they are, how their spirits stand, and what they were last told to do. Pure: the host
-// (scenes/navalHost.js) keeps one per boat of the player's, steps it and tells it what happened; the save keeps it
+// (scenes/naval/navalHost.js) keeps one per boat of the player's, steps it and tells it what happened; the save keeps it
 // (`snapshot` / `restore`). DECLARED - Daggerfall has no ships, and Come Sail Away's crew is a count.
 //
 // WHO THEY ARE. The hands a crewed boat stands on her deck (crewLife.js playerCrewCount) each have a name - DFU's own

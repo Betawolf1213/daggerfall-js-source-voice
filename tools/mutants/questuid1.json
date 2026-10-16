@@ -10,7 +10,7 @@
   },
   {
     "name": "QU1-load-keeps-the-offer",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "tests": [
       "test/quest_uid1.test.js"
     ],

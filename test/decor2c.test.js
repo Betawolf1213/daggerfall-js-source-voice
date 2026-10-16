@@ -2,7 +2,7 @@
 // hangs flat against the wall, shown as its detailed pack picture): THE MOUNTS. The law's mount (net/decorLaw.js: which
 // items hang, the frame a mount's turn names, the archive bound for the port's own pictures), what of the pack hangs and
 // as what (systems/decor/decorItems.js), the placer setting one on a surface (systems/decor/decorPlacer.js), the room hanging it on
-// the decal pass (scenes/decorRoom.js), the tool's flight and its ghost (scenes/decorTool.js), the panel's line, and the
+// the decal pass (scenes/decor/decorRoom.js), the tool's flight and its ghost (scenes/decor/decorTool.js), the panel's line, and the
 // host's wiring by source. The service's half is pinned with the service (decor1.test.js). `06-Systems/Online-Arc.md`
 // DECOR2.
 import { test } from 'node:test';
@@ -18,8 +18,8 @@ import { inventoryItemImage } from '../src/systems/item/itemTemplates.js';
 import { ITEM_GROUP_NAME_BY_CLASS } from '../src/systems/loot/loot.js';
 import { SURFACE_LIFT } from '../src/combat/bloodDecals.js';
 import { createDecorPlacer } from '../src/systems/decor/decorPlacer.js';
-import { createDecorRoom, decorMountQuad, decorMountFloats } from '../src/scenes/decorRoom.js';
-import { DECOR_MOUNT_NO_SURFACE } from '../src/scenes/decorTool.js';
+import { createDecorRoom, decorMountQuad, decorMountFloats } from '../src/scenes/decor/decorRoom.js';
+import { DECOR_MOUNT_NO_SURFACE } from '../src/scenes/decor/decorTool.js';
 import { DECOR_MOUNT_LINE, DECOR_OWN_LINE } from '../src/ui/decorPanel.js';
 import { billboardSize } from '../src/world/rmbFlats.js';
 import { RAY_DISTANCE } from '../src/player/activate.js';

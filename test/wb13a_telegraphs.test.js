@@ -13,8 +13,8 @@ import {
 import { ATTACKS, ATTACK_BY_ID, COURT_R, COURTS, BOSS_REACH_R, HOST, HOST_BLOWS, BASE_PROFILE, fightProfile, windupOf, isDagons } from '../src/net/gate/gateBrain.js';
 import { inAttack } from '../src/net/gate/gateStrike.js';
 import { attackColor } from '../src/world/gate/gateBoss.js';
-import { hostShapes } from '../src/scenes/gateHost.js';
-import { perilAt, wayOut, screenBearing, PERIL_RIM_M } from '../src/scenes/gateCourt.js';
+import { hostShapes } from '../src/scenes/gate/gateHost.js';
+import { perilAt, wayOut, screenBearing, PERIL_RIM_M } from '../src/scenes/gate/gateCourt.js';
 import { groundViewModel, GROUND_VIEW_TEXT, PERIL_EDGE, PERIL_EDGE_NOW, PERIL_ARROW_STEP } from '../src/ui/gate/gateGroundView.js';
 
 const W = (key, over = {}) => ({ i: 1, a: ATTACKS[key].id, at: 10000, x: 0, z: 0, yw: 0, tg: [], ...over });
@@ -303,7 +303,7 @@ test('WB13a T13: the rim and the warning for a blow to come - "Cleave - move!", 
 
 test('WB13a: the court feeds the warning every frame from my feet and the camera\'s yaw (scenes/world.js cam.yaw)', async () => {
   const { readFileSync } = await import('node:fs');
-  const gc = readFileSync(new URL('../src/scenes/gateCourt.js', import.meta.url), 'utf8');
+  const gc = readFileSync(new URL('../src/scenes/gate/gateCourt.js', import.meta.url), 'utf8');
   assert.match(gc, /const peril = alive \? perilAt\(s, t, P, fp\[0\] - COURT_CENTRE\[0\], fp\[2\] - COURT_CENTRE\[2\], yaw\(\)\) : null;/);
   assert.match(readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8'), /yaw: \(\) => cam\.yaw,   \/\/ WB13a/);
   assert.ok(COURTS.length === 3);

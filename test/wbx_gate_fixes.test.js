@@ -8,7 +8,7 @@
 // the play"). Design: bible/11-Multiplayer/World-Bosses.md section 12.
 //
 //   WBX1 the one index type          render/renderer.js createMesh; the gate's, the court's and the land's builders
-//   WBX2 the portal home             scenes/gateCourt.js portalFrame, world/gate/gateArena.js portalDoor, worldModes gateWayHome
+//   WBX2 the portal home             scenes/gate/gateCourt.js portalFrame, world/gate/gateArena.js portalDoor, worldModes gateWayHome
 //   WBX3 the loot line               render/spoilsGlow.js, scenes/spoilsPool.js (the item's own sprite), ui/item/itemIconColor32.js
 //   WBX4 his damage and his mark     net/gate/gateBrain.js `base`, net/gate/gateStrike.js strikeDamage; render/gateTelegraph.js mark
 //   WBX5 the phases                  net/gate/gateBrain.js PHASE_TURN, the leap, the meteor, the spokes, the burning ground
@@ -34,7 +34,7 @@ import {
 import { inAttack, spokeLanes, landingPools, poolUnder, strikeDamage, blowOf, strikeVerdict } from '../src/net/gate/gateStrike.js';
 import { telegraphShape, telegraphField, markShape, poolShapes, TELEGRAPH_KIND, TELEGRAPH_FS, BOSS_MARK_R, BOSS_MARK_CHEVRON_LEN, BOSS_MARK_CHEVRON_HALF_W } from '../src/render/gateTelegraph.js';
 import { bossPlace, bossHop, bossAct, bossStandIn, bossLookOf, LEAP_AIR_MS, LEAP_HEIGHT, ATTACK_COLORS, POOL_COLOR, WARD_COLOR, BOSS_CUES, QUAKE_ON } from '../src/world/gate/gateBoss.js';
-import { createGateCourt, courtPhaseCard, COURT_STRIKE_TEXT, MARK_COLOR, COURT_ROUND_MS } from '../src/scenes/gateCourt.js';
+import { createGateCourt, courtPhaseCard, COURT_STRIKE_TEXT, MARK_COLOR, COURT_ROUND_MS } from '../src/scenes/gate/gateCourt.js';
 import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import { bossBarModel, BOSS_BAR_TEXT } from '../src/ui/gate/gateBossBar.js';
 import { createSpoilsPool, iconSize, SPOILS_ICON_ARCHIVE, SPOILS_ICON_MAX_M, SPOILS_ICON_M_PER_PX } from '../src/scenes/spoilsPool.js';
@@ -150,7 +150,7 @@ test('WBX2 the seams: the court is handed the portal\'s door, and (SS3) no way h
   const wm = read('src/scenes/worldModes.js');
   assert.match(wm, /if \(isGateArena\(dungeonLoc\)\) \{ gateWayHome\(\); return true; \}/, 'the exit door\'s press - the portal\'s');
   assert.doesNotMatch(wm, /\n    gateWayHome,/, 'and nobody outside the modes calls it');
-  const gc = read('src/scenes/gateCourt.js');
+  const gc = read('src/scenes/gate/gateCourt.js');
   assert.doesNotMatch(gc, /wayHome/, 'SS3: the court has no way home to take');
   assert.match(gc, /_portalFire\.origin = portal\.origin; _portalFire\.fade = portal\.fade; _portalFire\.spin = spin;\n\s*_fires\.push\(_portalFire\);/);
   assert.match(gc, /portalPass\.draw\(_fires, proj, view, eye, seconds, fog\);/);
@@ -249,7 +249,7 @@ test('WBX3 the picture, the burst and the pieces\' words: the icon\'s key is its
   assert.match(read('src/ui/item/itemIconColor32.js'), /requestIcon\(img\.archive, img\.record, \{ scale: 1, dye: img\.dye, dyeTarget: img\.dyeTarget \?\? null \}\)/, 'F3: and asked by it');
   assert.equal(await itemIconColor32(null), null);
   assert.equal(await itemIconColor32({ templateIndex: 101 }), null, 'node has no canvas - the pile stands');
-  const gc = read('src/scenes/gateCourt.js');
+  const gc = read('src/scenes/gate/gateCourt.js');
   assert.match(gc, /if \(spoils\.spew\(\{[^\n]*\}\)\) \{[^\n]*\n\s*say\(claims\.x === 'rite' \? COURT_STRIKE_TEXT\.spilledRite\(\) : COURT_STRIKE_TEXT\.spilled\(\)\);/);   // AUDIT WB12d (D20): the rite's ember by its own
   assert.match(COURT_STRIKE_TEXT.spilled(), /^Your spoils/, 'WB13b: "Your" says they are no one else\'s');
   assert.match(COURT_STRIKE_TEXT.spilledRite(), /^Your ember/);

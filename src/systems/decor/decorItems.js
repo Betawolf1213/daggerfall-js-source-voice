@@ -24,7 +24,7 @@
 // weapons"; asked, "Mounted": a weapon (arrows aside) or a shield hangs
 // FLAT against the wall it is set on, as its detailed pack picture -
 // the list's own, the owner's body's (net/decorLaw.js decorIsMount;
-// scenes/decorRoom.js hangs it). Free, and back to the pack whole when
+// scenes/decor/decorRoom.js hangs it). Free, and back to the pack whole when
 // taken down, as every own thing is. Its dye is read off its numbers,
 // so every client wears it the same. ARMOR-MOUNT (2026-09-26): any
 // piece of armour hangs so too, not the shields alone.
@@ -96,7 +96,7 @@ export function decorStandOf(item) {
   if (DECOR_OWN_NEVER_GROUPS.has(item.group) || DECOR_OWN_KEPT_BACK.has(item.templateIndex)) return null;
   // AUDIT ONE-BAG 2: the Materials Bag is never set out - a piece leaves the pack with no transfer ladder (a loaded bag's list
   // stranded) and comes back with none (a second bag, held beside one bought meanwhile). AUDIT 625 W1: nor a PACK-ONLY
-  // piece (systems/item/itemBound.js isPackOnly - the Wallet's row): set down, it leaves the pack (scenes/decorTool.js
+  // piece (systems/item/itemBound.js isPackOnly - the Wallet's row): set down, it leaves the pack (scenes/decor/decorTool.js
   // commitOwn), and a wallet out of the pack leaves what it holds back on the pack's pages
   if (isBagItem(item) || isPackOnly(item)) return null;
   const flat = decorItemFlat(item);
@@ -176,7 +176,7 @@ export function decorItemName(d) {
  * The decorate panel's row for one item in the pack - `{ key, kind: 'own', own, name, flat, light, item, icon, ... }`,
  * `own` the item itself and `icon` its pack picture (the list's own, dye and all) - or null when it can neither stand
  * nor (DECOR2c) hang: `mount` says it hangs. `index` keys the row (the tool keys it by the item itself -
- * scenes/decorTool.js ownEntries).
+ * scenes/decor/decorTool.js ownEntries).
  */
 export function decorOwnEntry(item, index, identity = undefined) {
   const stands = decorStandOf(item);

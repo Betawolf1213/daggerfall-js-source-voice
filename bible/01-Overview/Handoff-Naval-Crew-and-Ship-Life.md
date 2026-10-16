@@ -105,10 +105,10 @@ next to the player. A party going over the rail is dealt rail spots
 - `src/systems/naval/crewLife.js` (new): the pure crew brain. It holds the
   roster, stations, walks, talk, blurbs, chanties, the grapple muster and
   take/trim.
-- `src/scenes/navalCrew.js` (new): the host. It stands the flats down,
+- `src/scenes/naval/navalCrew.js` (new): the host. It stands the flats down,
   draws the sprites and gives the speech with each speaker's head point.
 - `src/systems/naval/navalDeck.js`: adds `rail(side, z)`.
-- `src/scenes/navalHost.js`:
+- `src/scenes/naval/navalHost.js`:
   - boarding takes the muster, hands and party off the crew (`crewOf`,
     `landing`, `railSpots`);
   - adds `crewShips()`, `myCrew()` and `boatOf()`.
@@ -118,7 +118,7 @@ next to the player. A party going over the rail is dealt rail spots
     town watch;
   - the crews' batches in the people pass;
   - the speech drawn by `navalHud`'s `drawCrewLines`.
-- `src/scenes/comeSailAwayPeers.js`: a peer's boat carries its `peerKey`,
+- `src/scenes/comeSailAway/comeSailAwayPeers.js`: a peer's boat carries its `peerKey`,
   which seeds its crew.
 - `test/livingcrew.test.js` (13 tests) and
   `tools/mutants/livingcrew.json` (54 records).

@@ -582,7 +582,7 @@
   },
   {
     "name": "DECOR2b-a-look-with-no-shape",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "  model: look.model ?? null, flat: look.flat ?? null, light: null, storage: false, look: look.key,",
     "new": "  model: look.model ?? null, flat: null, light: null, storage: false, look: look.key,",
     "tests": [
@@ -591,7 +591,7 @@
   },
   {
     "name": "DECOR2b-the-looks-light-and-holding",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "  model: look.model ?? null, flat: look.flat ?? null, light: null, storage: false, look: look.key,",
     "new": "  model: look.model ?? null, flat: look.flat ?? null, light: look.light ?? null, storage: !!look.storage, look: look.key,",
     "tests": [
@@ -600,7 +600,7 @@
   },
   {
     "name": "DECOR2b-the-bed-a-catalogue-piece",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "key: furn.key, kind: 'own', own: furn.own, furnishing: true, name: furn.name, item: furn.item, count: furn.count,",
     "new": "key: furn.key, kind: 'own', own: furn.own, furnishing: true, name: furn.name, item: null, count: furn.count,",
     "tests": [
@@ -609,7 +609,7 @@
   },
   {
     "name": "DECOR2b-the-look-forgotten-by-the-flight",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "  model: look.model ?? null, flat: look.flat ?? null, light: null, storage: false, look: look.key,",
     "new": "  model: look.model ?? null, flat: look.flat ?? null, light: null, storage: false,",
     "tests": [
@@ -618,7 +618,7 @@
   },
   {
     "name": "DECOR2b-the-look-placed-as-bought",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "onPlaceLook: (furn, look) => beginPlacing(decorLookEntry(furn, look)),",
     "new": "onPlaceLook: (furn, look) => beginPlacing(look),",
     "tests": [
@@ -627,7 +627,7 @@
   },
   {
     "name": "DECOR2b-the-deliveries-unlisted",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    rows(deps.furnishings?.() ?? [], (item, i) => decorFurnishingEntry(item, i));\n",
     "new": "",
     "tests": [
@@ -636,7 +636,7 @@
   },
   {
     "name": "DECOR2b-a-model-moved-as-a-flat",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "key: `own-piece:${piece.id}`, kind: 'own', model: piece.model ?? null,",
     "new": "key: `own-piece:${piece.id}`, kind: 'own', model: null,",
     "tests": [
@@ -645,7 +645,7 @@
   },
   {
     "name": "DECOR2b-back-to-the-list",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "    else if (look) panel.showLook(key, look);\n",
     "new": "",
     "tests": [
@@ -654,7 +654,7 @@
   },
   {
     "name": "DECOR2b-the-pack-words-for-furniture",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "!item ? `${name} taken down.` : isFurnishing(item) ? `${name} taken down - set it down again from Your things.` : `${name} is back in your pack.`",
     "new": "!item ? `${name} taken down.` : `${name} is back in your pack.`",
     "tests": [
@@ -663,7 +663,7 @@
   },
   {
     "name": "DECOR2b-the-bar-saying-the-pack",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "return p.entry.furnishing ? 'It is no longer among your things.' : 'It is no longer in your pack.';",
     "new": "return 'It is no longer in your pack.';",
     "tests": [

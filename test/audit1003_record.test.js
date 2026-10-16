@@ -5,7 +5,7 @@
 // walked in fought its whole bout at 0.7 of its speed. The record: bible/11-Multiplayer/Arena.md "ARENA-FIX record" 8.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createArenaBouts, WALK_PACE } from '../src/scenes/arenaBouts.js';
+import { createArenaBouts, WALK_PACE } from '../src/scenes/arena/arenaBouts.js';
 import { newArenaLadder } from '../src/systems/arena/arenaLadder.js';
 import { EnemyAI } from '../src/characters/enemyMotor.js';
 import { Collider } from '../src/player/collider.js';

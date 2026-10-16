@@ -1,6 +1,6 @@
 // @ts-check
 // WB2 (2026-09-25): THE GATE'S COUNTDOWN OVER THE SCREEN - "Oblivion Gate - opens in 3:12", standing under the
-// compass while the player is within GATE_BANNER_M of a gate (scenes/gatePool.js decides the words; this draws them).
+// compass while the player is within GATE_BANNER_M of a gate (scenes/gate/gatePool.js decides the words; this draws them).
 //
 // A READOUT, NOT A WINDOW (the enhanced HUD's own law, ui/enhanced/enhancedHud.js): it takes no click, registers with no
 // overlay stack, and is UPDATED, NOT REBUILT - one node made on the first word, its text written only when it

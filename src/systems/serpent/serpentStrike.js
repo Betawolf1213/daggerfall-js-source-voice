@@ -1,6 +1,6 @@
 // @ts-check
 // SERPENT1 (2026-10-04, Mac: "a large scale sea serpent in the ocean"): WHAT SETHRAKUL'S BLOWS DO, judged on the struck
-// player's own machine (co-op's law, and the sea's victim's law - scenes/navalHost.js landHit): each attack's shape
+// player's own machine (co-op's law, and the sea's victim's law - scenes/naval/navalHost.js landHit): each attack's shape
 // against the hull of MY ship and my own feet, the hurt it does her (a share of her whole and points on top, so a
 // rowboat and a carrack feel each blow alike), the throw it gives her, the coil's grip and crush, the maelstrom's pull,
 // and the venom's bite. The relay never learns a ship's hurts. Design: bible/11-Multiplayer/Sea-Serpent.md section 5.

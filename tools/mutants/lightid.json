@@ -200,7 +200,7 @@
   },
   {
     "name": "LIGHT-ID-his-glow-a-new-record-a-frame",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "bossGlow(s, t, _glow)",
     "new": "bossGlow(s, t)",
     "tests": [
@@ -209,7 +209,7 @@
   },
   {
     "name": "LIGHT-ID-a-burst-slot-not-relit",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    else if (b.light) relight(b.light);",
     "new": "    else if (b.light) void b.light;",
     "tests": [
@@ -218,7 +218,7 @@
   },
   {
     "name": "LIGHT-ID-the-hours-pool-keeps-its-slots-name",
-    "file": "src/scenes/sdFx.js",
+    "file": "src/scenes/superDungeon/sdFx.js",
     "old": "    adoptLight(o, src);\n",
     "new": "",
     "tests": [

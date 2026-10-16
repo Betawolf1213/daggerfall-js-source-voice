@@ -1,7 +1,7 @@
 [
   {
     "name": "KEEPPLUNDER-prize-unstowed",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      const r = takeInto(pz.hold, standing.includes(pz.boat) ? pz.boat : into);\n      if (r.taken)",
     "new": "      const r = { taken: 0, left: 0 };\n      if (r.taken)",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "KEEPPLUNDER-captor-not-asked",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "standing.includes(pz.boat) ? pz.boat : into);",
     "new": "into);",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "KEEPPLUNDER-scuttled-stowed",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (!pz?.hold?.length || pz.fate === 'scuttle') continue;",
     "new": "if (!pz?.hold?.length) continue;",
     "tests": [
@@ -30,7 +30,7 @@
   },
   {
     "name": "KEEPPLUNDER-anyones-casks",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "o.kind === 'flotsam' && !o.owner && myCasks.has(o.id))",
     "new": "o.kind === 'flotsam' && !o.owner)",
     "tests": [
@@ -39,7 +39,7 @@
   },
   {
     "name": "KEEPPLUNDER-my-casks-unmarked",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      if (by === myId()) myCasks.add(id);",
     "new": "      if (false) myCasks.add(id);",
     "tests": [
@@ -48,7 +48,7 @@
   },
   {
     "name": "KEEPPLUNDER-cask-left-floating",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      shots.removeFloater(f.id);\n      casks++;",
     "new": "      casks++;",
     "tests": [
@@ -57,7 +57,7 @@
   },
   {
     "name": "KEEPPLUNDER-unsaid",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (items) deps.say?.(`Your crew stows",
     "new": "    if (false) deps.say?.(`Your crew stows",
     "tests": [

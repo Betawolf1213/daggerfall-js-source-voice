@@ -238,7 +238,7 @@
   },
   {
     "name": "AUDIT-GUILD1d-A4-hall-half-to-the-purse",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      back = r.hall ? 0 : decorRefund(paid);",
     "new": "      back = decorRefund(paid);",
     "tests": [

@@ -91,7 +91,7 @@
   },
   {
     "name": "AUDITLWII2-D2-remains-clear",
-    "file": "src/scenes/deepRemains.js",
+    "file": "src/scenes/livingWorld/deepRemains.js",
     "old": "    clear() { told.clear(); here.clear(); arriving = true; },",
     "new": "    clear() { told.clear(); arriving = true; },",
     "tests": [
@@ -161,7 +161,7 @@
   },
   {
     "name": "AUDITLWII2-D6-pace",
-    "file": "src/scenes/deepRemains.js",
+    "file": "src/scenes/livingWorld/deepRemains.js",
     "old": "export const DEEP_APART_M = 1.5;",
     "new": "export const DEEP_APART_M = 0.5;",
     "tests": [
@@ -171,7 +171,7 @@
   },
   {
     "name": "AUDITLWII2-D6-order",
-    "file": "src/scenes/deepRemains.js",
+    "file": "src/scenes/livingWorld/deepRemains.js",
     "old": "  return i < 0 ? 0 : (i - (fell.length - 1) / 2) * DEEP_APART_M;",
     "new": "  return 0;",
     "tests": [

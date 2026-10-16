@@ -955,7 +955,7 @@ Offline Foraging, whole, in one change - so the Features row switches a mod a pl
   share of GetCustomItemsForGroup - which moved to `src/systems/item/itemTemplates.js` (gap 1, closed), so a General Store
   and a Pawn Shop shelve the tools.
 - **Quest Actions Extension's four**, `src/systems/quest/questActionsExtension.js` (Q11 mended there).
-- **The quest pack**, `scenes/questData.js`: the list and the 22 quests, FORAGE-FIX applied as each is read - the
+- **The quest pack**, `scenes/quest/questData.js`: the list and the 22 quests, FORAGE-FIX applied as each is read - the
   list's Q13 with them; a patch that fails warns and loads the author's text.
 - **The four hosts**: `scenes/world.js` registers the four actions on its machine and answers the checks in every mode
   it runs - the streaming world by its pixel, its location's rect and type, its hour, its foes, its load and its
@@ -1037,7 +1037,7 @@ Online Foraging - the wait (13.1), and with it Foraging whole in both lanes:
   a saved wait is forgiven; a RESTORED record is cut to 64 s, once.
 - **The door**, Quest Actions Extension's RaiseTime (`src/systems/quest/questActionsExtension.js`): under the shared
   clock its seconds go to the host's `waitOnline`, never to `raiseTime` - the quest machine's hook, the bridge's
-  contract member (`scenes/questBridge.js`), and the streaming host's wiring.
+  contract member (`scenes/quest/questBridge.js`), and the streaming host's wiring.
 - **The four hosts**: `scenes/world.js` - the one host that runs the shared clock - builds the wait on townTalk's slot
   (the mode machine's held overlay counting as a full slot), its rest test with a duel's foe in it, ticks it every
   frame in every mode (the street's frame and the modal frame both - AUDIT 28 F2: the modal frame returned before the

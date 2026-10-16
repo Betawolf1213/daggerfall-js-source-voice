@@ -290,7 +290,7 @@ test('FORAGE1: the wiring - boot installs it, both exterior hosts register QAE\'
     assert.match(s, /player\.onExteriorWaterMethod = _surf\.water;/, `${p}: the three-valued water`);
   }
   assert.match(rd('src/scenes/worldModes.js'), /player\.onExteriorWaterMethod = 'None';/);
-  const loader = rd('src/scenes/questData.js');
+  const loader = rd('src/scenes/quest/questData.js');
   assert.match(loader, /vendor\/foraging\/Quests\/\*\.txt/);
   assert.match(loader, /if \(path\.includes\('\/vendor\/foraging\/'\)\) \{\n\s*try \{ patched = applyForageFix\(name, text\); \} catch/, 'a failed patch warns and loads the shipped text');
   assert.match(loader, /if \(name\.startsWith\('QuestList-'\)\) tables\.set\(name, patched\);/, 'Q13: the list is patched too');

@@ -39,7 +39,7 @@ import {
 } from '../poi/poiEdit.js';
 import { gizmoSize, gizmoShape, pickHandle, beginGizmoDrag, dragResult, POI_SNAP_DEFAULT, POI_GIZMO_PX } from '../poi/poiGizmo.js';
 import { quatRotate } from '../world/quat.js';
-import { lookDir } from './decorTool.js';
+import { lookDir } from './decor/decorTool.js';
 import { rayDirFromScreen } from '../player/tapRay.js';
 import { canvasPoint } from '../player/travelPick.js';
 

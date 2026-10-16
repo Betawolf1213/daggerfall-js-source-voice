@@ -64,7 +64,7 @@
   },
   {
     "name": "SD18C-the-scene-unlit",
-    "file": "src/scenes/sdRemnant.js",
+    "file": "src/scenes/superDungeon/sdRemnant.js",
     "old": "buildRemnantParts(metal, ending).map(make));",
     "new": "buildRemnantParts(metal).map(make));",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "SD18C-the-scene's-hearts-unlit",
-    "file": "src/scenes/sdRemnant.js",
+    "file": "src/scenes/superDungeon/sdRemnant.js",
     "old": "      const heartMesh = make(buildHeartModel(ending));",
     "new": "      const heartMesh = make(buildHeartModel());",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "SD18C-sparks-green",
-    "file": "src/scenes/sdFx.js",
+    "file": "src/scenes/superDungeon/sdFx.js",
     "old": "export const sdHeartColorOf = (s) => sdEndingOf(s?.mk)?.light ?? SD_FX_COLOR.heart;",
     "new": "export const sdHeartColorOf = (s) => SD_FX_COLOR.heart;",
     "tests": [

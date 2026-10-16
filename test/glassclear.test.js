@@ -13,7 +13,7 @@ import { glassNear, glassClearDepth, glassEyeOverSea, glassFov, GLASS_NEAR_MIN, 
 import { KNOW, GLASS_ZOOM, GLASS_STUDY_S, NAKED_EYE_M } from '../src/systems/naval/shipKnowledge.js';
 import { HULL } from '../src/systems/naval/navalShips.js';
 import { orientedBox, segmentBoxEntry } from '../src/systems/naval/navalBallistics.js';
-import { sparsOf, rigBoxesOf, hullBoxOf, GLASS_AIM_LIFT, OWN_SPARS_S } from '../src/scenes/navalHost.js';
+import { sparsOf, rigBoxesOf, hullBoxOf, GLASS_AIM_LIFT, OWN_SPARS_S } from '../src/scenes/naval/navalHost.js';
 import { meshLocalBounds, animatorOf } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { stowSail } from '../src/systems/comeSailAway/comeSailAway.js';
 import { EYE_HEIGHT, CAPSULE_HEIGHT } from '../src/player/motor.js';
@@ -297,7 +297,7 @@ test('GLASS-CLEAR the world: the glass\'s focus taken each frame from the ship I
   assert.match(w, /const at = projectToScreen\(l\.head, w, h, proj, view, rect\);\n[^\n]*\n\s+if \(glassCuts\(at\)\) continue;/, 'the lines');
   assert.match(w, /const blocked = \(head, id\) => glassCuts\(projectToScreen\(head, 1, 1, proj, view\)\) \|\| nameSight\.blocked\(player\.collider, eye, id, head\);/, 'the players\' names');
   assert.match(w, /const proj = mirrorProjectionX\(perspective\(glassFov\(fieldOfView\(\) \+ climbFeel\.fovRad\(\), spyglass\.lens\), worldAspect, spyglass\.near, 6000\)\);/, 'the frame\'s lens');
-  const nh = rd('src/scenes/navalHost.js');
+  const nh = rd('src/scenes/naval/navalHost.js');
   assert.match(nh, /const boat = boatInPlay\(\) \?\? seaDeckUnderMe\(\)\?\.boat \?\? deps\.aboardPeer\?\.\(\) \?\? null;/, 'my deck, a sea ship\'s, another player\'s I ride');
   assert.match(nh, /\n\s+ownExtent,\n/, 'the host\'s door');
 });

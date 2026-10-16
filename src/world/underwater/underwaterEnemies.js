@@ -7,7 +7,7 @@
 // floor-bound ones' drop, the attempts off the frequency, and the
 // treasure guards' count and ring (DeepWaterWorld.RollCount,
 // PickRingDistance, IsOutsideImmediateView). The host half - the pixel
-// groups, the queue, the foe stood - is scenes/deepWatersEncounters.js
+// groups, the queue, the foe stood - is scenes/deepWater/deepWatersEncounters.js
 // and the world's `spawnFoe`.
 //
 // THE DRAWS are the unseeded UnityEngine.Random and ride the host's

@@ -1,5 +1,5 @@
 // SD16 (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 10 and section 16's SD16;
-// Mac: "The detail needs to exceed that of the oblivion gates"): THE BLOWS SEEN (scenes/sdFx.js) - the Hour's landings,
+// Mac: "The detail needs to exceed that of the oblivion gates"): THE BLOWS SEEN (scenes/superDungeon/sdFx.js) - the Hour's landings,
 // turns and fall as bursts of sparks on the gate's own spark pass, the camera shaken by how near they fell, the floor
 // lit. More kinds than the Warden's court throws and more shakes than his landings give; a fight first seen taken as it
 // stands; each landing once, where the law puts it (the Stomp's ring's dust where its front rolls); the Hour's own blows
@@ -12,14 +12,14 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   createSdFx, SD_FX_KINDS, SD_FX_COLOR, SD_SHAKE, sdShake, SD_FX_LATE_MS, SD_FX_LAND_LATE_MS, SD_FX_COLUMN, SD_FX_FLASH_MS, SD_RING_DUST, SD_HAND_FLASH_OUT, SD_FX_FLOOR_Y,
-} from '../src/scenes/sdFx.js';
+} from '../src/scenes/superDungeon/sdFx.js';
 import { SD_BLOWS, SD_BODY, SD_REM, SD_ECHO, stompFrontAt, handAngleAt } from '../src/net/superDungeon/sdRemnant.js';
 import { SD_ARENA, realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { FX_KINDS, FX_BURST_MS, FX_BURSTS_MAX, FX_LIGHT_MS } from '../src/render/gateFx.js';
 import { LAND_SHAKE } from '../src/world/gate/gateBoss.js';
-import { SD_REM_SINK_MS } from '../src/scenes/sdRemnant.js';
-import { clearOfPillars } from '../src/scenes/sdSpoils.js';
-import { SD_SLIP_FRAC } from '../src/scenes/sdRemnantVoice.js';
+import { SD_REM_SINK_MS } from '../src/scenes/superDungeon/sdRemnant.js';
+import { clearOfPillars } from '../src/scenes/superDungeon/sdSpoils.js';
+import { SD_SLIP_FRAC } from '../src/scenes/superDungeon/sdRemnantVoice.js';
 
 const T0 = 1_800_000_000_000;
 const W = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');

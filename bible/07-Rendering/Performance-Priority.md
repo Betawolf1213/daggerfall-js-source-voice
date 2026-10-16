@@ -785,7 +785,7 @@ the frame's main thread 8.5 ms standing, 18.2 walking, and the page allocating s
 **Found.** No one thing: walking turns on a dozen systems that standing leaves idle, each 0.5-2 ms a frame. Three of
 them did work that gave the same answer for less, and made most of the garbage the collector then stopped the frame for:
 
-- **NAV-COST - the sea's captains** (`systems/naval/navalAI.js stepCaptain`, `scenes/navalHost.js separateHulls`). A
+- **NAV-COST - the sea's captains** (`systems/naval/navalAI.js stepCaptain`, `scenes/naval/navalHost.js separateHulls`). A
   captain asked `hostile` - for a wary pirate a sizing-up, `shipPower` and `fightingPower` - of every ship in the sea,
   every frame, and only then whether it was in sight; and the pass that keeps hulls apart measured every pair of the
   sea's ships, two new flats a pair, nearly all of them hundreds of km apart. Now her sight is asked first (both halves
@@ -837,7 +837,7 @@ room - `releaseOwner`), most of them tens to hundreds of km off.*
 land probes ahead, her wandering course. AUDIT NAV1 already let a far ship's RIGGING step every FAR_LIFE_EVERY frames
 past NEAR_LIFE_M on the time it missed; her captain had no such law.
 
-**The fix** (`scenes/navalHost.js keepWatch`, `watchesFar`). Past FAR_WATCH_M (5,500 m - where she stands no hull
+**The fix** (`scenes/naval/navalHost.js keepWatch`, `watchesFar`). Past FAR_WATCH_M (5,500 m - where she stands no hull
 to be seen, PEER_HULL_FAR_M) of the eye, a captain afloat, in no fight of her own (engage or board), lashed to no prize
 and no fight's target keeps her watch every FAR_LIFE_EVERY frames, each ship on her own frame of the stride, on the
 time she missed - never more than FRAME_STEP_S at once (the sea's own step: what she owes is stepped first when a frame

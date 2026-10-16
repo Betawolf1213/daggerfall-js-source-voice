@@ -28,7 +28,7 @@ import { SKILLS } from '../src/systems/skills.js';
 import { AFFIX_RANGES } from '../src/systems/loot/lootRarity.js';
 import { validLootItem } from '../src/systems/loot/loot.js';
 import { HOUR_BRASS } from '../src/ui/playerBadge.js';
-import { SD_HALL_SOUNDS } from '../src/scenes/sdHall.js';
+import { SD_HALL_SOUNDS } from '../src/scenes/superDungeon/sdHall.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const strip = (s) => s.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/\/\/[^\n]*/g, ' ');

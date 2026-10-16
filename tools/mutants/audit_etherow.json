@@ -101,7 +101,7 @@
   },
   {
     "name": "AEOW-C1-3-host-unasked",
-    "file": "src/scenes/deepWatersHost.js",
+    "file": "src/scenes/deepWater/deepWatersHost.js",
     "old": "    if (!bake || bake.holdsSea?.(pixel.px, pixel.py) === false || bake.mapPixelOrCardinalNeighborHasWaterCells(pixel.px, pixel.py)) return false;",
     "new": "    if (!bake || bake.mapPixelOrCardinalNeighborHasWaterCells(pixel.px, pixel.py)) return false;",
     "tests": [
@@ -312,7 +312,7 @@
   },
   {
     "name": "AEOW-T-level-tier",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const level = (deps.level?.() ?? 1) + (w.ether ? BANDS.find((b) => b.id === w.ether.band)?.level ?? 0 : 0);",
     "new": "    const level = (deps.level?.() ?? 1) + (w.ether ? BANDS.find((b) => b.id === w.ether.band)?.tier ?? 0 : 0);",
     "tests": [

@@ -16,7 +16,7 @@ import {
   DEEP_FLOOR_DY, DIVER_ARRIVE_SLACK_M,
 } from '../src/scenes/dungeonDivers.js';
 import { TREASURE_ACTIVATION_DISTANCE } from '../src/player/activate.js';
-import { createDeepRemains } from '../src/scenes/deepRemains.js';
+import { createDeepRemains } from '../src/scenes/livingWorld/deepRemains.js';
 import { activateMobileEnemy } from '../src/player/mobileEnemyActivate.js';
 import { createRelations, EVENTS } from '../src/systems/livingWorld/relations.js';
 import { divesIn, CALENDAR_MPM } from '../src/systems/livingWorld/trips.js';

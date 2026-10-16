@@ -199,7 +199,7 @@
   },
   {
     "name": "SD20E-T14-the-beat-another-form",
-    "file": "src/scenes/sdArenaRead.js",
+    "file": "src/scenes/superDungeon/sdArenaRead.js",
     "old": "export const sdBreakSub = (ms) => `Fell Gold and Silver within ${Math.round(ms / 1000)} seconds of each other`;",
     "new": "export const sdBreakSub = (ms) => `Strike both Echoes down within ${Math.round(ms / 1000)} seconds`;",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "SD20E-T15-the-hollows-door",
-    "file": "src/scenes/sdEnd.js",
+    "file": "src/scenes/superDungeon/sdEnd.js",
     "old": "to: 'To the Abyss Dungeon\\'s door',",
     "new": "to: 'To the Hollow\\'s door',",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "SD20E-T15-the-collapse-the-hollows",
-    "file": "src/scenes/sdHost.js",
+    "file": "src/scenes/superDungeon/sdHost.js",
     "old": "The Hour is broken. The Abyss Dungeon collapses in ${t}.` : `The Abyss Dungeon collapses in ${t}.`",
     "new": "The Hour is broken. The Hollow collapses in ${t}.` : `The Hollow collapses in ${t}.`",
     "tests": [
@@ -280,7 +280,7 @@
   },
   {
     "name": "SD20E-T15-the-fade-closes",
-    "file": "src/scenes/sdHost.js",
+    "file": "src/scenes/superDungeon/sdHost.js",
     "old": "'The Abyss Dungeon fades'",
     "new": "'The Hollow closes'",
     "tests": [
@@ -361,7 +361,7 @@
   },
   {
     "name": "SD20E-T19-the-host-unregioned",
-    "file": "src/scenes/sdHost.js",
+    "file": "src/scenes/superDungeon/sdHost.js",
     "old": "near: hh?.site?.cityName || '', region: regionName(rec.r) || '' }",
     "new": "near: hh?.site?.cityName || '' }",
     "tests": [

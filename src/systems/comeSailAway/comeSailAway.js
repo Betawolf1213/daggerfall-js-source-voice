@@ -308,7 +308,7 @@ export const PLACE_RAISED_TEXT = 'This water stands above the sea - place her on
 export const IRONS_TELL_DEG = 40;
 export const IRONS_TELL_WAY = 0.4;
 /** AUDIT NAV1/AUDIT 2 XA5 (2026-10-06): the most the port's `brake` seam takes her way off at (m/s^2) - the one bound the
- *  sea fight's heave-to sizes its own brake by (scenes/navalHost.js heaveToDecel), where the runtime capped it at 20 and the
+ *  sea fight's heave-to sizes its own brake by (scenes/naval/navalHost.js heaveToDecel), where the runtime capped it at 20 and the
  *  heave-to asked up to 47 in a storm, and its ship ran past the one she hove to beside. */
 export const CSA_BRAKE_MAX = 20;
 export const IRONS_TELL_S = 2;
@@ -492,7 +492,7 @@ const applyMatrix = (m, p) => [
 ];
 const applyInverse = (m, p) => applyMatrix(invertAffine(m), p);
 /** A child's point carried by its root's move: its local offset under `before` kept under `after` (SetParent's law -
- *  the helm's player and a rider here; CSA-K: a passenger on another player's deck, scenes/comeSailAwayAboard.js). */
+ *  the helm's player and a rider here; CSA-K: a passenger on another player's deck, scenes/comeSailAway/comeSailAwayAboard.js). */
 export const carriedPoint = (before, after, p) => applyMatrix(after, applyInverse(before, p));
 /** The turn about up between two poses of one root, in degrees (-180, 180]. */
 export function yawDelta(before, after) {
@@ -2376,7 +2376,7 @@ export function createComeSailAwayRuntime(deps) {
    * PRIZE LIES. LaunchFromParts' sibling for a DEED: the placing click's own two halves - PlaceBoat, then the item's
    * (takePlaceItem: the deed's UID on her, so the deed answers her - GetPlacedBoatWithUID - and the deed spent unless she
    * is crewed, as the mod spends every small boat's on placing) - at `position` on the water, her bow along `direction`:
-   * a ship taken by boarding and claimed (scenes/navalHost.js claimPrize), heading as she lies. The port's rule for a
+   * a ship taken by boarding and claimed (scenes/naval/navalHost.js claimPrize), heading as she lies. The port's rule for a
    * deed is untouched (useBoatDeed: a bought deed's boat stands where a port puts it) - a deed whose boat already stands
    * is the port's to move, and is refused here. It says nothing: the claim's words are its caller's. What the click
    * would have been placing is let go with it (the closing StopPlacing). Returns the boat, or null.
@@ -3272,7 +3272,7 @@ export const MOD_OBJECT_NAME = 'Come Sail Away (ComeSailAwayMod.ComeSailAway)';
 export const WATER_WALKING_SILENT = 'WaterWalkingSilent';
 const JESUS_MODE_BUNDLE = 'Jesus Mode';
 /** A sail's Animator stowed or raised: CrossFade over sailAnimationSpeed and the Stowed bool with it (CSA-J: a peer's
- *  boat's sails too, scenes/comeSailAwayPeers.js). */
+ *  boat's sails too, scenes/comeSailAway/comeSailAwayPeers.js). */
 function stow(component, stowed) {
   component.CrossFade(stowed ? 'Stowed' : 'Unstowed', SAIL_ANIMATION_SPEED);
   component.SetBool('Stowed', stowed);

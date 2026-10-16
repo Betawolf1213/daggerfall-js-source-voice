@@ -1,7 +1,7 @@
 // ARENA4 (2026-10-02): THE ARENA ONLINE ON THE CLIENT, DRIVEN - the hall's fold, the mirror of a relay's bout
 // (net/arena/arenaLink.js), the receipts carried (net/arena/arenaClaims.js), the window's online model (systems/arena/arenaBoard.js), the
-// bout driver standing a relay's bout over a fake stage (scenes/arenaBouts.js startRelay / relayWord - its puppets, its
-// HUD, the verdict, my health the relay's, my yield and my misses told) and the host's glue (scenes/arenaOnline.js - the
+// bout driver standing a relay's bout over a fake stage (scenes/arena/arenaBouts.js startRelay / relayWord - its puppets, its
+// HUD, the verdict, my health the relay's, my yield and my misses told) and the host's glue (scenes/arena/arenaOnline.js - the
 // queue, the call to the sand, my `in`, my blows' claims).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -9,8 +9,8 @@ import { foldHall, HALL_EMPTY, mirrorOf, mirrorEvents, mirrorHealth, walkAt, wal
 import { createArenaClaims, arenaClaimVerdict, arenaReceiptIsMine, ARENA_CLAIMS_KEY } from '../src/net/arena/arenaClaims.js';
 import { mintArenaReceipt } from '../src/net/arena/arenaReceipt.js';
 import { importReceiptKey } from '../src/net/gate/gateReceipt.js';
-import { createArenaBouts, ARENA_PUPPET_OWNER } from '../src/scenes/arenaBouts.js';
-import { createArenaOnline, hitKindOf, newBoutId } from '../src/scenes/arenaOnline.js';
+import { createArenaBouts, ARENA_PUPPET_OWNER } from '../src/scenes/arena/arenaBouts.js';
+import { createArenaOnline, hitKindOf, newBoutId } from '../src/scenes/arena/arenaOnline.js';
 import { arenaBoard, onlineCards, ladderTitleOfReached, boardsPageOnline, teamPageOnline } from '../src/systems/arena/arenaBoard.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { arenaLadderOf, ARENA_HIT, ARENA_FLOOR_CENTRE, ARENA_LADDER_SPEC, ARENA_BEASTS, ARENA_WEAPON_MAX, ARENA_MATERIAL_MOD, ARENA_TEAM_POINTS } from '../src/net/arena/arenaLaw.js';

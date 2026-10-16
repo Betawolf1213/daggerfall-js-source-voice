@@ -177,7 +177,7 @@
   },
   {
     "name": "LW-FIX4-remains-drawn",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "        if (fights?.alliesOf(r.trip.id).has(r.res.id)) continue;",
     "new": "        void r;",
     "tests": [
@@ -188,7 +188,7 @@
   },
   {
     "name": "LW-FIX4-peer-armed-drawn",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "          if (peerLive && m.res.cls != null) continue;\n",
     "new": "",
     "tests": [

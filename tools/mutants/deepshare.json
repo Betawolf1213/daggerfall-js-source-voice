@@ -1,28 +1,28 @@
 [
   {
     "name": "DEEPSHARE-camps-radius",
-    "file": "src/scenes/deepWatersHost.js",
+    "file": "src/scenes/deepWater/deepWatersHost.js",
     "old": "export const standsTheDeep = (myId, myFeet, peers, standing = true) => amGroupRollOwner(myId, myFeet, peers, standing ? DEEP_SHARE_RADIUS : DEEP_SHARE_RADIUS * DEEP_SHARE_HYSTERESIS);",
     "new": "export const standsTheDeep = (myId, myFeet, peers) => amGroupRollOwner(myId, myFeet, peers);",
     "tests": ["test/deepshare.test.js"]
   },
   {
     "name": "DEEPSHARE-radius-not-the-populate",
-    "file": "src/scenes/deepWatersHost.js",
+    "file": "src/scenes/deepWater/deepWatersHost.js",
     "old": "export const DEEP_SHARE_RADIUS = POPULATE_RADIUS;",
     "new": "export const DEEP_SHARE_RADIUS = 100;",
     "tests": ["test/deepshare.test.js"]
   },
   {
     "name": "DEEPSHARE-cap-ignores-others",
-    "file": "src/scenes/deepWatersHost.js",
+    "file": "src/scenes/deepWater/deepWatersHost.js",
     "old": "  return othersNear > 0 ? { ...s, maxLive: Math.max(0, s.maxLive - othersNear) } : s;",
     "new": "  return s;",
     "tests": ["test/deepshare.test.js"]
   },
   {
     "name": "DEEPSHARE-cap-below-none",
-    "file": "src/scenes/deepWatersHost.js",
+    "file": "src/scenes/deepWater/deepWatersHost.js",
     "old": "maxLive: Math.max(0, s.maxLive - othersNear) }",
     "new": "maxLive: s.maxLive - othersNear }",
     "tests": ["test/deepshare.test.js"]

@@ -203,7 +203,7 @@
   },
   {
     "name": "EOW-raider-level-bay",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    const level = (deps.level?.() ?? 1) + (w.ether ? BANDS.find((b) => b.id === w.ether.band)?.level ?? 0 : 0);",
     "new": "    const level = (deps.level?.() ?? 1);",
     "tests": [

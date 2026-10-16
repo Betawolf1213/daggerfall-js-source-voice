@@ -82,7 +82,7 @@
   },
   {
     "name": "ARENA5-REC-NOT-BEGUN",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    beginRecording(C, t);   // ARENA5: a ladder bout recorded for its replay\n",
     "new": "",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "ARENA5-REC-NOT-KEPT",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    if (rec && P) P.arenaReplays = keepReplay(P.arenaReplays, rec);",
     "new": "    void keepReplay;",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "ARENA5-REC-PRACTICE",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    if (!C.ladder || C.practice || C.relay || !C.b) return;",
     "new": "    if (!C.ladder || C.relay || !C.b) return;",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "ARENA5-REC-EVENTS",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "{ recordEvent(C.rec, e); hear(C, e, t, near); }",
     "new": "{ hear(C, e, t, near); }",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "ARENA5-REC-SWING",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    if (C?.ladder && C.b && boutLive(C.b)) recordStrike(C.rec, lawNow(), YOU);",
     "new": "",
     "tests": [
@@ -128,7 +128,7 @@
   },
   {
     "name": "ARENA5-REC-ROW-MINUTE",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    if (rec && row && Number.isFinite(row.at) && row.tier === rec.next?.tier) rec.at = row.at;\n",
     "new": "",
     "tests": [
@@ -137,7 +137,7 @@
   },
   {
     "name": "ARENA5-PLAY-NO-FEED",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "    if (C?.relay?.replay) replayFrame(C, t);",
     "new": "",
     "tests": [
@@ -155,7 +155,7 @@
   },
   {
     "name": "ARENA5-PLAY-CALL",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "      deps.say?.(nx ? ARENA_TEXT.replay.call(nx.tierName, nx.grand ? ARENA_TEXT.grandLabel : nx.champion ? ARENA_TEXT.champLabel : nx.label) : ARENA_TEXT.replay.callBare);\n",
     "new": "",
     "tests": [
@@ -164,7 +164,7 @@
   },
   {
     "name": "ARENA5-PLAY-FIRST-PLACES",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "      for (const w of R.feed.first) relayWord(w);\n",
     "new": "",
     "tests": [
@@ -173,7 +173,7 @@
   },
   {
     "name": "ARENA5-PLAY-YAW",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "      if (foe._pup && !foe._pup.moving && Number.isInteger(i)) foe._pup.yaw = R.feed.yawAt(i, t);",
     "new": "      void i;",
     "tests": [
@@ -218,7 +218,7 @@
   },
   {
     "name": "ARENA5-WINDOW-REPLAY-GATE",
-    "file": "src/scenes/arenaGate.js",
+    "file": "src/scenes/arena/arenaGate.js",
     "old": "      if (online()) return { ok: false, text: ARENA_TEXT.replay.offline };\n      if (!atGate) return { ok: false, text: ARENA_TEXT.window.whyGate };\n",
     "new": "      if (online()) return { ok: false, text: ARENA_TEXT.replay.offline };\n",
     "tests": [

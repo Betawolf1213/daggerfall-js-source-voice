@@ -14,7 +14,7 @@ import {
 } from '../src/systems/naval/shipLife.js';
 import { createSeaShip, stepCaptain, WIND_RATED } from '../src/systems/naval/navalAI.js';
 import { SHIP_STATES } from '../src/systems/naval/navalDamage.js';
-import { HARBOUR_ROLL, HARBOUR_LEAVE, OWNER_SWEEP_S, SHIP_FADE_S } from '../src/scenes/navalHost.js';
+import { HARBOUR_ROLL, HARBOUR_LEAVE, OWNER_SWEEP_S, SHIP_FADE_S } from '../src/scenes/naval/navalHost.js';
 import { DENSITY } from '../src/systems/naval/navalDirector.js';
 import { sea } from './navalSea.mjs';
 import { room } from './navalRoom.mjs';

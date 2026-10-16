@@ -17,7 +17,7 @@ import {
 } from '../src/systems/naval/shipKnowledge.js';
 import { classById, CROWNS, NAVAL_FACTIONS, shipNames, classLine } from '../src/systems/naval/navalShips.js';
 import { NIGHT_LIT_SIGHT, NIGHT_DARK_SIGHT } from '../src/systems/naval/shipWatch.js';
-import { GLASS_AIM_LIFT } from '../src/scenes/navalHost.js';
+import { GLASS_AIM_LIFT } from '../src/scenes/naval/navalHost.js';
 import { easeLens, glassFov, glassLookScale, GLASS_EASE_S, glassFootWords, drawSpyglass, GLASS_TONES } from '../src/ui/spyglassView.js';
 import { drawNavalHud, navalTouchGlass, destroyNavalHud } from '../src/ui/naval/navalHud.js';
 import { ACTIONS, PORT_ACTIONS, DEFAULT_SHARES, DEFAULT_BINDINGS, ACTION_GROUPS, MOD_ACTIONS } from '../src/systems/inputActions.js';
@@ -218,7 +218,7 @@ test('SPYGLASS my Lookout calls her colours: a crewed deck with a Lookout reads 
   const f = spawn(bare, 'merchantCoaster', 340);
   bare.run(0.5);
   assert.equal(f.known, KNOW.hull, 'no Lookout aboard: the eye\'s reach alone');
-  const host = rd('src/scenes/navalHost.js');
+  const host = rd('src/scenes/naval/navalHost.js');
   assert.match(host, /return \{ deck, sight: st\?\.worth\?\.sight \?\? 1, lookout: !!deck\?\.crewed && !!st\?\.worth\?\.posts\?\.Lookout \};/, 'a Lookout on a crewed deck');
   assert.match(host, /hailCalls\.set\(deck, `She flies \$\{colours\}!`\);/, 'cried from her bow');
 });
@@ -280,7 +280,7 @@ test('SPYGLASS the crew\'s cries by what is known: a hostile sail\'s hail names 
   for (let i = 0; i < 40 && !t.log.say.some((l) => l.startsWith('Sail ho')); i++) t.run(0.25);
   assert.ok(t.log.say.includes('Sail ho! A Pirate Sloop on the starboard beam!'), t.log.say.join(' | '));
   assert.ok(e && k);
-  const host = rd('src/scenes/navalHost.js');
+  const host = rd('src/scenes/naval/navalHost.js');
   assert.match(host, /const calledName = \(e\) => \(knownOf\(e\) < KNOW\.colours \? withArticle\(hullWord\(e\.ship\.hull\)\) : disguisedOf\(e\) \? shownName\(e\) : nameOf\(e\)\);/);
   for (const cry of ['Check your fire! ${calledName(entry)} fights on your side.', '${calledName(victor)} grapples ${calledName(prize)}!', '${calledName(v)} takes ${calledName(p)} and puts her to the torch!', '${calledName(e)} comes to your aid!']) assert.ok(host.includes(cry), cry);
 });

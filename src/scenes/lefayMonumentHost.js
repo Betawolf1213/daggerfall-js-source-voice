@@ -1,6 +1,6 @@
 // @ts-check
 // LEFAY1 (2026-10-08): THE MONUMENT TO JULIAN LEFAY, WHERE IT STANDS - the exterior hosts' pool on the runtime pools'
-// shape (scenes/sigilBrokerPool.js, scenes/gatePool.js): its stone drawn in the host's world pass, its collider bucket,
+// shape (scenes/sigilBrokerPool.js, scenes/gate/gatePool.js): its stone drawn in the host's world pass, its collider bucket,
 // the eye's box and its name, the press on it, and the flowers - thrown, in flight, and laid.
 //
 // WHERE: the host says (`site`: the scene's x, z of its middle - world/lefayMonument.js lefaySpot's, carried by the

@@ -16,7 +16,7 @@ import {
   DEEP_DETOUR, DEEP_WALK_M, DIVE_CLEAR_MIN,
 } from '../src/systems/livingWorld/deepRoute.js';
 import { createDungeonDivers, DEEP_KEEP_M, DIVER_ARRIVE_SLACK_M, POACHED_LINE } from '../src/scenes/dungeonDivers.js';
-import { createDeepRemains, apartOf, DEEP_APART_M } from '../src/scenes/deepRemains.js';
+import { createDeepRemains, apartOf, DEEP_APART_M } from '../src/scenes/livingWorld/deepRemains.js';
 import { createRelations, EVENTS } from '../src/systems/livingWorld/relations.js';
 import { divesIn, fallenIn, CALENDAR_MPM } from '../src/systems/livingWorld/trips.js';
 import { RANDOM_RECORD } from '../src/characters/dungeonEnemies.js';

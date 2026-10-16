@@ -19,7 +19,7 @@ import { shelvedRail } from '../src/ui/quest/questRail.js';
 import { QuestLens } from '../src/ui/quest/questLens.js';
 import { RumorMill, RUMOR_TYPE } from '../src/systems/rumorMill.js';
 import { repairActiveQuests } from '../src/systems/quest/questRepair.js';
-import { shelfRefusalText } from '../src/scenes/questBridge.js';
+import { shelfRefusalText } from '../src/scenes/quest/questBridge.js';
 import { questEnded } from '../src/systems/quest/questGuidance.js';
 import { mapPixelToWorldCoord, mapPixelToLongitudeLatitude } from '../src/formats/mapsFile.js';
 
@@ -195,7 +195,7 @@ test('QUEST-SHELF the journal: the walk hands the quests set aside, their clocks
   assert.deepEqual(['gone', 'shelved', 'running', 'ending', 'protected', 'raid', 'twin', 'x'].map(shelfRefusalText), [
     'That quest is over.', 'That quest is already abandoned.', 'That quest is not abandoned.', 'That quest is ending.',
     'That quest cannot be abandoned.', 'Not while the raid is on.', 'You have taken that quest up again - finish or abandon it first.', 'That cannot be done now.']);
-  const bridge = src('src/scenes/questBridge.js');
+  const bridge = src('src/scenes/quest/questBridge.js');
   assert.match(bridge, /return \{ active, finished: notebook\?\.getFinishedQuests\(\) \?\? \[\], ended, hidden: notebook\?\.getHiddenQuests\?\.\(\) \?\? \[\], shelved \};/);
   assert.match(bridge, /const refuseRaid = \(q\) => \(WA_RAID_QUESTS\.includes\(q\.questName\) \? 'raid' : null\);/);
   assert.match(bridge, /const r = machine\.shelveQuest\(Number\(id\), \{ refuse: refuseRaid \}\);/);

@@ -3,7 +3,7 @@
 // now in the leaf world/npcFlatArchives.js; the catalogue's Vendors), never one's own item - stands at its own size: the
 // placer takes no size step for it (systems/decor/decorPlacer.js decorEntrySized), the bar hides Smaller and Bigger and says no
 // Size key (ui/decorPanel.js createDecorBar `sized`), the room and the yard draw one grown before at its own size
-// (net/decorLaw.js decorDrawnScale - scenes/decorRoom.js), and the service refuses a figure written at another
+// (net/decorLaw.js decorDrawnScale - scenes/decor/decorRoom.js), and the service refuses a figure written at another
 // (decorScaleOk - server-account/src/decor.js placeDecor, moveDecor), a turn of one grown before kept. Each pin failed on
 // the build before it. tools/mutants/decorfigure.json.
 import { test } from 'node:test';
@@ -15,7 +15,7 @@ import { NPC_FLAT_ARCHIVES, isNpcFlat } from '../src/world/rdbLayout.js';
 import * as leaf from '../src/world/npcFlatArchives.js';
 import { createDecorPlacer, decorEntrySized } from '../src/systems/decor/decorPlacer.js';
 import { decorCatalogue, collectDecor } from '../src/systems/decor/decorCatalogue.js';
-import { decorEditPrice } from '../src/scenes/decorTool.js';
+import { decorEditPrice } from '../src/scenes/decor/decorTool.js';
 import { createDecorBar } from '../src/ui/decorPanel.js';
 import { standService, T0 } from './accountDb.mjs';
 import { fakeDoc, all, text, settle, toolRig, placeFrom, yardWorld, live, sized, rmb, rows } from './decorFakes.mjs';

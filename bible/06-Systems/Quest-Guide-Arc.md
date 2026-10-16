@@ -67,7 +67,7 @@ What they found, with the gap each surface leaves:
 ## GUIDE1 - THE QUEST LENS (SHIPPED 2026-09-29)
 
 `src/ui/quest/questLens.js`, made once by `createQuestBridge`
-(`src/scenes/questBridge.js`, `bridge.lens`) and reset by its `restore` -
+(`src/scenes/quest/questBridge.js`, `bridge.lens`) and reset by its `restore` -
 a loaded game's quests are the lens's baseline, not news. No face draws
 from it yet; it is the floor every face of this arc stands on.
 
@@ -353,7 +353,7 @@ sentence (a stop before a capital: "Hmm... he said." is one), and past
 408 logged entries, 395 open on the header, every one opens with words,
 and 56 first sentences run past the cap (at 100 it was 159).
 
-**WHO FEEDS IT.** The quest bridge (`scenes/questBridge.js`), after each
+**WHO FEEDS IT.** The quest bridge (`scenes/quest/questBridge.js`), after each
 machine tick: one lens look, handed to the herald - only while it
 listens (`heraldOn`: the enhanced skin, the `quest-herald` switch, and a
 page to say it on - node drives the hosts headless and pays nothing).

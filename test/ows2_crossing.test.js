@@ -21,7 +21,7 @@ import { seaHelmStep, createSeaHelm, SEA_HELM, foldDeg, headingOf, squareOnly } 
 import { comeSailAwayModels } from '../src/systems/comeSailAway/comeSailAwayModels.js';
 import { spawnBoat, Boat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { createComeSailAwayRuntime, NO_WATER_LEVEL, BOAT_ACTIONS, HANDLING, WATER_LEVEL } from '../src/systems/comeSailAway/comeSailAway.js';
-import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';
+import { createComeSailAwayPool } from '../src/scenes/comeSailAway/comeSailAwayPool.js';
 import { createTravelOptions, SEA_LEG_SIZE, SEA_LEG_LO, SEA_SPOT_SIZE } from '../src/systems/travel/travelOptions.js';
 import { TRAVEL_VIEW_TEXT, travelTripLine } from '../src/scenes/travelView.js';
 import { quatRotate } from '../src/world/quat.js';

@@ -21,7 +21,7 @@
 //
 // PURE: positions, normals, uvs and indices in the GATE'S OWN FRAME - metres, origin at the centre of the threshold on
 // the ground, +y up, the pillars across x and the portal facing +z and -z - and the sub-meshes by texture. The pool
-// (scenes/gatePool.js) uploads it once, draws it with the gate's matrix and hands the collider the same triangles.
+// (scenes/gate/gatePool.js) uploads it once, draws it with the gate's matrix and hands the collider the same triangles.
 //
 // Not a DFU member. Ledger A (WB).
 import GATE_BAKE from '../../assets/gate/oblivionGate.json' with { type: 'json' };

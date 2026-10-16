@@ -16,7 +16,7 @@
 // NUMIDIUM_SET_CHANCE of the time (systems/aetheric.js rollNumidiumPiece); and LAST OF ALL (GILDED1) the Hourlock, the
 // Gilded rung's first record, GILDED_CHANCE of the time (systems/gilded.js rollHourlock) - so no roll before either ever moves.
 //
-// THROWN FROM WHERE IT FELL (scenes/sdSpoils.js): the spoils pool's burst on the arena's floor, under keys of its own
+// THROWN FROM WHERE IT FELL (scenes/superDungeon/sdSpoils.js): the spoils pool's burst on the arena's floor, under keys of its own
 // (SD_SPOILS_KEYS - an Hour's receipts never push a boss's or a hoard's out of the spent list); a receipt that comes
 // outside its realm is its spoils straight into the pack (the pool's `grant`).
 //
@@ -40,7 +40,7 @@ export const SD_SPOILS_SOURCE = Object.freeze({ boss: true, tier: 24, luck: 70 }
 export const SD_SPOILS_KEYS = Object.freeze({ store: 'sd9.spoils', day: 'sd9.spoilsDay' });
 /** The spoils the device keeps a crash's record of (a Hollow rises after a rest: a few a week). */
 export const SD_SPOILS_RECORDS_MAX = 8;
-/** The words: the burst on the arena's floor (scenes/sdSpoils.js), what leaving it gathers, spoils given outside the
+/** The words: the burst on the arena's floor (scenes/superDungeon/sdSpoils.js), what leaving it gathers, spoils given outside the
  *  realm, and the crash's door. */
 export const SD_SPOILS_TEXT = Object.freeze({
   spilled: 'Your spoils spill across the arena floor.',

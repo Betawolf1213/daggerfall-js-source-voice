@@ -18,7 +18,7 @@ import { sea } from './navalSea.mjs';
 const WORLD = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
 const DUNGEON = readFileSync(new URL('../src/scenes/dungeonContext.js', import.meta.url), 'utf8');
 const FOES = readFileSync(new URL('../src/scenes/exteriorFoes.js', import.meta.url), 'utf8');
-const HOST = readFileSync(new URL('../src/scenes/navalHost.js', import.meta.url), 'utf8');
+const HOST = readFileSync(new URL('../src/scenes/naval/navalHost.js', import.meta.url), 'utf8');
 
 /** A `const name = (...) => {...};` of world.js, lifted whole by its braces - the source the game runs. */
 function lift(src, head) {

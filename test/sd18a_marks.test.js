@@ -25,10 +25,10 @@ import { SD_STONES, SD_FRAY_MAX, orreryOf, orreryStep, orreryFresh } from '../sr
 import { validSdOut, SD_TARGETS_MAX } from '../src/net/wire.js';
 import { foldSdFight, SD_FIGHT_EMPTY } from '../src/net/superDungeon/sdFightLink.js';
 import { dpsRef, HIT_KINDS } from '../src/net/gate/gateBrain.js';
-import { sdTelegraphShapes } from '../src/scenes/sdRemnantBlows.js';
+import { sdTelegraphShapes } from '../src/scenes/superDungeon/sdRemnantBlows.js';
 import { remnantBarModel } from '../src/ui/superDungeon/sdRemnantBar.js';
-import { createSdBeats, sdBreakSub, sdPerilAt } from '../src/scenes/sdArenaRead.js';
-import { remnantRig, sdBeamsAt, TWIST } from '../src/scenes/sdRemnantRig.js';
+import { createSdBeats, sdBreakSub, sdPerilAt } from '../src/scenes/superDungeon/sdArenaRead.js';
+import { remnantRig, sdBeamsAt, TWIST } from '../src/scenes/superDungeon/sdRemnantRig.js';
 
 const T0 = 1_800_000_000_000;
 const near = (a, b, e = 1e-9) => Math.abs(a - b) <= e;

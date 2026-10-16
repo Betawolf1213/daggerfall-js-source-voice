@@ -19,7 +19,7 @@
   },
   {
     "name": "APACE-P2-no-hysteresis",
-    "file": "src/scenes/deepWatersHost.js",
+    "file": "src/scenes/deepWater/deepWatersHost.js",
     "old": "standing ? DEEP_SHARE_RADIUS : DEEP_SHARE_RADIUS * DEEP_SHARE_HYSTERESIS",
     "new": "DEEP_SHARE_RADIUS",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "APACE-P2-drop-keeps-the-counts",
-    "file": "src/scenes/deepWatersEncounters.js",
+    "file": "src/scenes/deepWater/deepWatersEncounters.js",
     "old": "      for (const r of pending) if (r.group?.active) { r.group.liveOrPending = Math.max(0, r.group.liveOrPending - 1); liveCount = Math.max(0, liveCount - 1); }\n      pending.length = 0;",
     "new": "      pending.length = 0;",
     "tests": [

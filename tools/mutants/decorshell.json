@@ -1,7 +1,7 @@
 [
   {
     "name": "DECOR-SHELL-the-flight-unclipped",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "p.fly = flyClip(deps.collider?.(), p.fly, next, through);",
     "new": "p.fly = next;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "DECOR-SHELL-no-cut",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "if (!hit || !Number.isFinite(hit.dist) || hit.dist - DECOR_FLY_SKIN >= len) return { at: b, normal: null, rest: null };",
     "new": "if (true) return { at: b, normal: null, rest: null };",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "DECOR-SHELL-the-skin-lost",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "const k = Math.max(0, hit.dist - DECOR_FLY_SKIN);",
     "new": "const k = Math.max(0, hit.dist);",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "DECOR-SHELL-no-slide",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "  if (!first.normal) return flyKeep(collider, from, first.at, skip);",
     "new": "  return flyKeep(collider, from, first.at, skip);",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "DECOR-SHELL-the-failure-cached",
-    "file": "src/scenes/decorRoom.js",
+    "file": "src/scenes/decor/decorRoom.js",
     "old": "      got.then((m) => { if (!m.gpu && models.get(id) === got) models.delete(id); });\n",
     "new": "",
     "tests": [

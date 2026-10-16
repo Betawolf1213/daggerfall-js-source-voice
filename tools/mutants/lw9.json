@@ -253,7 +253,7 @@
   },
   {
     "name": "LW9-camp-share",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "export const CAMP_SHARE_N = 2400;",
     "new": "export const CAMP_SHARE_N = 1000;",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "LW9-camp-ring-grow",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "    const r = CAMP_RING_N + Math.max(0, ring.n - 4) * CAMP_RING_STEP_N;",
     "new": "    const r = CAMP_RING_N;",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "LW9-fire",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "        if (camp?.lit && camp.first) {",
     "new": "        if (false) {",
     "tests": [
@@ -280,7 +280,7 @@
   },
   {
     "name": "LW9-pass-reach",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "      if (Math.hypot(a.at.x - b.at.x, a.at.z - b.at.z) > PASS_N) continue;",
     "new": "      if (Math.hypot(a.at.x - b.at.x, a.at.z - b.at.z) > PASS_N * 6) continue;",
     "tests": [
@@ -289,7 +289,7 @@
   },
   {
     "name": "LW9-pass-warning",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "      const warned = [a, b].find((p) => p.trip.enc && p.trip.enc.t1 <= t && p.trip.enc.foes?.length);",
     "new": "      const warned = [a, b].find((p) => p.trip.enc && p.trip.enc.foes?.length);",
     "tests": [
@@ -325,7 +325,7 @@
   },
   {
     "name": "LW9-inn-lodged-hidden",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "        if (at.inn) continue;   // LW9: lodged at the inn on the road - indoors, the inn's own guests",
     "new": "        // (lodged: drawn)",
     "tests": [
@@ -469,7 +469,7 @@
   },
   {
     "name": "LW9-AUDIT-E3-stands-drawn",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "          for (const m of d.places) if (m.res.cls != null) cands.push(",
     "new": "          for (const m of partyPlaces(d.p.trip, d.at)) if (m.res.cls != null) cands.push(",
     "tests": [
@@ -534,7 +534,7 @@
   },
   {
     "name": "LW9-AUDIT-F4-shared-fire",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "        if (camp?.lit && camp.first) {",
     "new": "        if (camp?.lit) {",
     "tests": [
@@ -543,7 +543,7 @@
   },
   {
     "name": "LW9-AUDIT-F4-march-fire",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "        (at.camp ? camped : walking).push({ trip: p.trip, at, members });",
     "new": "        camped.push({ trip: p.trip, at, members });",
     "tests": [

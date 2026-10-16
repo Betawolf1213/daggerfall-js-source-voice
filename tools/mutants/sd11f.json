@@ -1,7 +1,7 @@
 [
   {
     "name": "SD11f-the-way-home-walked-into",
-    "file": "src/scenes/sdEnd.js",
+    "file": "src/scenes/superDungeon/sdEnd.js",
     "old": "const inRet = !!ret && !ret.pressed && inSdPortal(",
     "new": "const inRet = !!ret && inSdPortal(",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "SD11f-every-return-pressed-alone",
-    "file": "src/scenes/sdEnd.js",
+    "file": "src/scenes/superDungeon/sdEnd.js",
     "old": "if (retAt) ret = { ...standRet(retAt, yaw), risesAt: -Infinity, pressed: false, up: true };",
     "new": "if (retAt) ret = { ...standRet(retAt, yaw), risesAt: -Infinity, pressed: true, up: true };",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "SD11f-never-risen",
-    "file": "src/scenes/sdEnd.js",
+    "file": "src/scenes/superDungeon/sdEnd.js",
     "old": "    ret.lift = done ? 0 : -SD_RETURN_SIZE.h * 0.7 * (1 - stage(k, A.jambs));",
     "new": "    ret.lift = 0;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "SD11f-risen-at-once",
-    "file": "src/scenes/sdEnd.js",
+    "file": "src/scenes/superDungeon/sdEnd.js",
     "old": "    const k0 = ret.pressed ? (t - ret.risesAt) / SD_HOME_RISE_MS : 1,",
     "new": "    const k0 = 1,",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "SD11f-the-rise-left-halfway",
-    "file": "src/scenes/sdEnd.js",
+    "file": "src/scenes/superDungeon/sdEnd.js",
     "old": "k = k0 < 0 ? 0 : k0 > 1 ? 1 : k0, n = ret.n;",
     "new": "k = k0 < 0 ? 0 : k0, n = ret.n;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "SD11f-no-toll",
-    "file": "src/scenes/sdEnd.js",
+    "file": "src/scenes/superDungeon/sdEnd.js",
     "old": "      if (ago < SD_HOME_SAY_MS) tollRiftBell(audio, [at[0], at[1] + SD_RETURN_SIZE.h / 2, at[2]]);\n",
     "new": "",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "SD11f-tolled-to-a-late-page",
-    "file": "src/scenes/sdEnd.js",
+    "file": "src/scenes/superDungeon/sdEnd.js",
     "old": "      if (ago < SD_HOME_SAY_MS) tollRiftBell(",
     "new": "      if (true) tollRiftBell(",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "SD11f-no-count-on-the-plaque",
-    "file": "src/scenes/sdEnd.js",
+    "file": "src/scenes/superDungeon/sdEnd.js",
     "old": "subs: n ? [riftTo, n] : [riftTo] }; }",
     "new": "subs: [riftTo] }; }",
     "tests": [

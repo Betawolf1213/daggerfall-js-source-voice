@@ -625,7 +625,7 @@ export function rollDuration(effect, casterLevel) {
  *  spell's duration) - and never shortened: a short re-cast over a long one leaves the long one be. Everything else
  *  AddState keeps stands (the incumbent's magnitude, chance and caster; no initial round; no new save), and every
  *  like-kind merge in the tree comes through here - applySpell's arms, the torch's light (scenes/droppedTorches.js), a
- *  soul trap on the gate's Warden (scenes/gateCourt.js) - so no second door adds rounds up. */
+ *  soul trap on the gate's Warden (scenes/gate/gateCourt.js) - so no second door adds rounds up. */
 export function renewRounds(inc, fresh) {
   if (fresh > inc.roundsRemaining) inc.roundsRemaining = fresh;
 }

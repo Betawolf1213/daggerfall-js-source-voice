@@ -6,7 +6,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createDeepRemains } from '../src/scenes/deepRemains.js';
+import { createDeepRemains } from '../src/scenes/livingWorld/deepRemains.js';
 import { createDroppedLoot } from '../src/scenes/droppedLoot.js';
 import { createRelations } from '../src/systems/livingWorld/relations.js';
 import { createDungeonDivers } from '../src/scenes/dungeonDivers.js';

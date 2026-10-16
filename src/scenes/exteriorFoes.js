@@ -86,7 +86,7 @@ import { addItem } from '../systems/inventory.js';   // AR1: BowDamage's recover
 import { EnemySoundSource, acuteHearingMultiplier } from '../characters/enemySounds.js';   // AUDIT 24 (wave 41): EnemySounds.cs, one home
 import { flashPlayerDamage } from '../ui/damageFlash.js';   // AUDIT 24 (wave 39): ShowPlayerDamage   // AUDIT 24 (wave 38): EnemyDeath's one home
 import { puppetLead } from './puppetLead.js';   // DESYNC-ZERO: a moving puppet leads its last word
-import { bindQuestFoeHost, isPrivateQuestFoe, placeFoeEnv, entityOccupancy } from './questFoeHost.js';   // B1: quest foes ride this pool; CURSE-SYNC: a world quest's ride as the world's; RVN6: a band placed about its master
+import { bindQuestFoeHost, isPrivateQuestFoe, placeFoeEnv, entityOccupancy } from './quest/questFoeHost.js';   // B1: quest foes ride this pool; CURSE-SYNC: a world quest's ride as the world's; RVN6: a band placed about its master
 import { placeFoeFreely } from '../systems/quest/sceneMount.js';   // RVN6: PlaceFoeFreely's ring, a camp member's law
 import { validSites, validSiteTags, isRiteSite, WOD_CAMP_PUPPETS_MAX, WOD_SITES_MAX, WOD_AGE_MAX } from '../world/worldOfDaggerfall/wodShared.js';   // WOD7: a World of Daggerfall camp's foes, shared
 import { validRaidTags, validAlliedIds, RAID_PUPPETS_MAX } from '../world/raidShared.js';   // RAID2: a town's raid, shared
@@ -273,7 +273,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
   // (10000, no water) - the ONE level every EnemyMotor.WaterMove reads
   // (EnemyMotor.cs:1331-1341). Outdoors it is null but while Iliac Puddle
   // No More's swim driver holds the sea's forged level
-  // (scenes/deepWatersPlayer.js waterLevelY), so an aquatic foe swims
+  // (scenes/deepWater/deepWatersPlayer.js waterLevelY), so an aquatic foe swims
   // only then, as it does under the mod. Absent: no water.
   waterLevelY = null, groundStands = null,   // FALL-HOLD: (x, z) => whether ground is BUILT under that column (the streaming host's heightAt) - a foe over none is held (EnemyAI.holdFrame); absent, nothing is
   magicHooks = null,  // X3-slice: { explodeAt, fireMissile } - the host's spell release seams; RVN5: and strikePlayer (a pyre's blast)
@@ -790,7 +790,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
     // and the charmed ally's revert are this player's own attack; the foe turns on this player, its owner, at the
     // last feet it knew (the striker's feet are not on the hit - recorded)
     // ARENA2: an EXHIBITION fighter struck by someone not in its bout - the city never turns for it: the bout's own
-    // hook answers (the Herald's warning, then the watch for a crime - scenes/arenaBouts.js), and the fighter keeps to
+    // hook answers (the Herald's warning, then the watch for a crime - scenes/arena/arenaBouts.js), and the fighter keeps to
     // its bout (characters/enemyTargets.js boutGate drops the striker it is handed below)
     const bout = f.entity?.bout ?? null;
     if (bout && !peer && boutGate(f, PLAYER_TARGET, true) !== true) { bout.hooks?.intrude?.(f); return; }
@@ -869,7 +869,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
 
   function damageFoe(f, damage, playerFeet, knockDir = null, { fromPlayer = true, bypassShield = false, kind = 'melee', peer = false, peerId = null, whole = false, spell = null, striker = null, weapon = null, round = false, wc = null, element = null } = {}) {   // TELL8: `wc` a peer's blow's class (net/wire.js hitClassOf); RVN3: `element` a spell landing's (its weakness's weight)   // AUDIT CC-E1: `striker` the foe whose blow it is (hurtFromFoe's); TELL1: `weapon` the player's striking item, `round` a spell's later round (the poise meter's weight)
     if (f.dead || (fromPlayer && !peer && isShipmate(f))) return;   // AUDIT 68 S20-foe-dies-twice: a corpse takes no blow - a magic round after the killing one re-ran the whole death (notice, loot handlers, corpse)   // AUDIT NAV2 F55: and a shipmate none of the player's, whatever road it took here (cityGuards' damageGuard holds a raid's defender so) - the vampiric drain's reached him as the player's attack and turned him
-    const bout = f.entity?.bout ?? null;   // ARENA2: a fighter on the arena's sand (scenes/arenaBouts.js)
+    const bout = f.entity?.bout ?? null;   // ARENA2: a fighter on the arena's sand (scenes/arena/arenaBouts.js)
     if (fromPlayer && !peer && !bout) renownFoeStruck(f);   // RENOWN1: MY blow - a puppet's too, before the divert sends it to the owner; ARENA2: never a bout fighter's (no renown on the sand)
     if (f.yielded || f.executing || f.sparing || f.leaving || f.roaring) return;   // REVENANT-FATE: a beaten revenant takes no blow - its fate is the player's choice (RVN3: nor one tearing away; RVN4: nor one roaring)
     // AUDIT PSCALE1 DOORS-1: a KILL is not a blow - a Disintegrate, a stat drained to zero (the sinks' `whole`), the
@@ -2538,7 +2538,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
     return n;
   }
   /** DEEP-SHARE: the live deep foes OTHER players stand within `radius` of `feet` - what the deep's spawner here counts
-   *  against its cap (scenes/deepWatersHost.js deepWatersEnemySettingsNear). */
+   *  against its cap (scenes/deepWater/deepWatersHost.js deepWatersEnemySettingsNear). */
   function deepPuppetsNear(feet, radius) {
     if (!feet) return 0;
     let n = 0;

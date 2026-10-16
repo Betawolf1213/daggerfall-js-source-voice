@@ -11,7 +11,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { decorPlaceOf, decorPieceOf, DECOR_STATIONS, DECOR_STATION_FEES, DECOR_STATION_NAMES, DECOR_STATION_SERVICES } from '../src/net/decorLaw.js';
-import { DECOR_STATION_UNKEPT, DECOR_STATION_GOLD_WENT } from '../src/scenes/decorTool.js';
+import { DECOR_STATION_UNKEPT, DECOR_STATION_GOLD_WENT } from '../src/scenes/decor/decorTool.js';
 import { decorStationWords, decorPlacedSub } from '../src/ui/decorPanel.js';
 import { settle, all, one, rows, toolRig, placeFrom } from './decorFakes.mjs';
 

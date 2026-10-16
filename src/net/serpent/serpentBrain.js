@@ -12,7 +12,7 @@
 // whichever socket of a player's reaches it - its own cell's or a halo's (RAID3's law).
 //
 // THE SHIPS' LAW. A blow on it is a ball (or a fire barrel) the striker's own machine flew and saw strike one of its
-// segments (scenes/navalHost.js - the shots' targets); the number is the gun's own, and the relay's caps decide what
+// segments (scenes/naval/navalHost.js - the shots' targets); the number is the gun's own, and the relay's caps decide what
 // lands. What a player BRINGS is their ship: each fighter's claim of the hull they sail (`hl`) sets both the health they
 // bring the serpent and the damage they may deal (SHIP_REF - a reference broadside a second), so no claim buys a faster
 // kill (the gate's law: the fastest possible is SERPENT_TTK_S / SERPENT_BUCKET_RATE_X of a full broadside whatever is claimed).

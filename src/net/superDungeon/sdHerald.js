@@ -12,7 +12,7 @@
 //   (the census's), named from MapsFile's own table (formats/mapsTables.js REGION_NAMES), and the city is never said.
 // - THE FALL: who broke the Hour (the record's top fighter and how many more fought), and when the next may rise.
 // - THE FADE: a FOUND Hollow the Hour closed over unbroken - one never found was news to nobody (the chat's own law,
-//   scenes/sdHost.js).
+//   scenes/superDungeon/sdHost.js).
 //
 // A Hollow's name is said where its slot's name needs no city (six of the eight - net/superDungeon/sdLaw.js SD_NAMES); the other two
 // name the city every client finds for itself, so the post says "an Abyss Dungeon".

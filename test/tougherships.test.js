@@ -20,7 +20,7 @@ import { navalWireRecord, validNavalRecord, navalHitData, NAVAL_HIT_MAX } from '
 import { FLOTSAM_LIFE } from '../src/systems/naval/navalShots.js';
 import { PIRATE_RUNS_AT } from '../src/systems/naval/navalAI.js';
 import { mintStores, storesIn, spendStore, isStores } from '../src/systems/naval/navalStores.js';
-import { savedHurts, savedRecord, ramMen, ramMenSaid, RAM_A_MAN, STRUCK_GRACE_S } from '../src/scenes/navalHost.js';
+import { savedHurts, savedRecord, ramMen, ramMenSaid, RAM_A_MAN, STRUCK_GRACE_S } from '../src/scenes/naval/navalHost.js';
 import { CREW_ORDERS, mendScaleOf } from '../src/systems/naval/shipCrew.js';
 import { FEATURES } from '../src/systems/features.js';
 
@@ -251,7 +251,7 @@ test('TOUGHER-SHIPS online: a peer\'s blow says its men BEFORE her toughness - a
   const d = e.ship.damage;
   for (let i = 0; i < 40; i++) h.host.applyPeerHit('peer', navalHitData('local', { n: e.n, hull: 0, crew: 1 }));
   near(d.maxCrew - d.crew, 40 / SHIP_TOUGHNESS, 6, 'forty men said, the toughness\'s share of them lost');
-  const host = src('src/scenes/navalHost.js');
+  const host = src('src/scenes/naval/navalHost.js');
   assert.match(host, /deps\.sendHit\?\.\(navalHitData\(target\.owner, \{ n: target\.n, hull: hurt\.hull, sail: hurt\.sail, crew: shotMen\(gun, zone\),/, 'a ball on another\'s ship says the gun\'s men');
   assert.match(host, /if \(e\.owner\) deps\.sendHit\?\.\(navalHitData\(e\.owner, \{ n: e\.n, hull: Math\.min\(400, dealt\), crew: ramMenSaid\(dealt\), zone: 'holed' \}\)\);/, 'a ram on another\'s ship says the ram\'s');
 });
@@ -384,5 +384,5 @@ test('QUICK-REPAIRS the Features row\'s Crew repairs on their own, each player\'
   assert.equal(row.control.parts.find((p) => p.key === 'naval-auto-repair')?.label, 'Crew repairs on their own');
   assert.match(src('src/scenes/world.js'), /key === 'AutoRepair' \? getPref\('naval-auto-repair'\) !== false/);
   assert.match(src('src/render/navalRender.js'), /const wreck = f\.kind === 'flotsam' && !!f\.wreck;/);
-  assert.match(src('src/scenes/navalHost.js'), /floaters: shots\.floaters\(\)\.map\(\(f\) => \(isSalvage\(f\.lot\) \? \{ \.\.\.f, wreck: true \} : f\)\)/);
+  assert.match(src('src/scenes/naval/navalHost.js'), /floaters: shots\.floaters\(\)\.map\(\(f\) => \(isSalvage\(f\.lot\) \? \{ \.\.\.f, wreck: true \} : f\)\)/);
 });

@@ -6,7 +6,7 @@
 // transition (scenes/worldModes.js interiorTransition), its door a logical anchor at the parked caravan (never drawn,
 // never clicked), and out again onto the ground behind the caravan's painted rear door (world/wagonModels.js doorFor).
 // It is the player's own: no one lives in it, no quest stands in it, it is kept for good in the save's scene cache under
-// one name (CARAVAN_SCENE_NAME - a character has one caravan), and the decorator (scenes/decorTool.js) furnishes it as
+// one name (CARAVAN_SCENE_NAME - a character has one caravan), and the decorator (scenes/decor/decorTool.js) furnishes it as
 // it furnishes a house or a ship, paid from the purse and kept in the save - its crafting stations, its storage, a bed
 // slept in. Inside, the wagon's storage is the room's chest too: Horse Cart and Cargo's door law gives the wagon's
 // inventory to a building whose door stands within its 50 m - and this door stands at the wagon.

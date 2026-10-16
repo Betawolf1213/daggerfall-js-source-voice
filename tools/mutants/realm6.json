@@ -129,7 +129,7 @@
   },
   {
     "name": "REALM6-tool-place-unreserved",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "          reserve: paid.reserve,\n          // AUDIT REALM: a placement answered",
     "new": "          // AUDIT REALM: a placement answered",
     "tests": [
@@ -138,7 +138,7 @@
   },
   {
     "name": "REALM6-tool-place-no-record",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "character: deps.character?.(), piece, realm: at }),",
     "new": "character: deps.character?.(), piece }),",
     "tests": [
@@ -147,7 +147,7 @@
   },
   {
     "name": "REALM6-tool-removal-uncredited",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "          back = Math.max(0, Number(a.data?.gold) || 0);\n          toGuild = Math.max(0, Number(a.data?.treasury) || 0);\n          if (back > 0) deps.wallet?.().credit?.(back);\n        },",
     "new": "          back = Math.max(0, Number(a.data?.gold) || 0);\n          toGuild = Math.max(0, Number(a.data?.treasury) || 0);\n        },",
     "tests": [
@@ -156,7 +156,7 @@
   },
   {
     "name": "REALM6-tool-shrink-unpaid",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      apply: refund > 0 ? (/** @type {any} */ a) => { const g = Number(a.data?.gold) || 0; if (g > 0) deps.wallet().credit?.(g); } : null,\n",
     "new": "",
     "tests": [
@@ -165,7 +165,7 @@
   },
   {
     "name": "REALM6-tool-licence-unreserved",
-    "file": "src/scenes/decorTool.js",
+    "file": "src/scenes/decor/decorTool.js",
     "old": "      reserve: pay > 0 ? walletReserve(wallet, pay).reserve : null,   // MARKET-AUDIT: a refusal gives back exactly what it took\n",
     "new": "",
     "tests": [

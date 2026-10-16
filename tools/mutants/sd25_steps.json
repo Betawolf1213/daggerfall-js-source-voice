@@ -64,7 +64,7 @@
   },
   {
     "name": "SD25-S9-no-dissolve",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "st.draw.gpu = (out >= 0 ? dissolve[out] : into >= 0 ? dissolve[into] : null) ?? meshes.get('beat');",
     "new": "st.draw.gpu = meshes.get('beat');",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "SD25-S9-the-ghost-on-a-solid-plate",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "ghostState[o] = solid ? 0 : 1;",
     "new": "ghostState[o] = 1;",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "SD25-S9-the-ghost-hand-forward",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "ghostState[o + 1] = solid ? 0 : left / (SD_BEAT_CYCLE - SD_BEAT_SOLID);",
     "new": "ghostState[o + 1] = solid ? 0 : 1 - left / (SD_BEAT_CYCLE - SD_BEAT_SOLID);",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "SD25-S9-the-ghost-never-brightening",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "left / (SD_BEAT_CYCLE - SD_BEAT_SOLID); ghostState[o + 2] = SD_GHOST.base + (SD_GHOST.peak - SD_GHOST.base) * e * e * (3 - 2 * e);",
     "new": "left / (SD_BEAT_CYCLE - SD_BEAT_SOLID); ghostState[o + 2] = SD_GHOST.base;",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "SD25-S9-the-lean-the-wrong-way",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "m[0] = c; m[1] = sn; m[4] = -sn; m[5] = c;",
     "new": "m[0] = c; m[1] = -sn; m[4] = sn; m[5] = c;",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "SD25-S9-the-pivot-riding-the-deck",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "m[12] = SD_REALM_ORIGIN[0] + st.s.x;",
     "new": "m[12] = _p[0];",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "SD25-S9-a-pendulum-casting",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": ") }, noShadow: true }; draws.push(st.pend); }",
     "new": ") } }; draws.push(st.pend); }",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "SD25-S9-a-step-casting",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "st.draw = { gpu, object: { matrix: new Float32Array(16) }, noShadow: true, texRemap: null };",
     "new": "st.draw = { gpu, object: { matrix: new Float32Array(16) }, noShadow: false, texRemap: null };",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "SD25-S9-the-stages-never-advancing",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "CRUMBLE_STAGES[1 + Math.min(2, Math.floor((since / SD_CRUMBLE_DELAY) * 3))]",
     "new": "CRUMBLE_STAGES[1]",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "SD25-S9-the-rewind-skipped",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "show = f >= back || (f >= 0 && _crumble.drop < SD_CRUMBLE_SEEN);",
     "new": "show = f >= 0 && _crumble.drop < SD_CRUMBLE_SEEN;",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "SD25-S9-the-chunks-home-early",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "tau = f >= back ? SD_CHUNK.rise * r * r : f,",
     "new": "tau = f >= back ? 0 : f,",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "SD25-S9-no-grit",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "if (shaking) { const m = g.object.matrix;",
     "new": "if (false) { const m = g.object.matrix;",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "SD25-S9-no-click-home",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "          play3(SD_STEPS_SOUNDS.clack, [x, y, z], 0.7, 2.6);\n",
     "new": "",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "SD25-S9-no-shudder-home",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "if (!shaking && since < 0 && t >= st.back",
     "new": "if (false && since < 0 && t >= st.back",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "SD25-S9-the-crumble-ghost-hand-forward",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "ghostState[o + 1] = f >= 0 ? (SD_CRUMBLE_BACK - f) / SD_CRUMBLE_BACK : 0;",
     "new": "ghostState[o + 1] = f >= 0 ? f / SD_CRUMBLE_BACK : 0;",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "SD25-S9-two-waystones-lit",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "stoneDraws[k].texRemap = k === mine ? null : WAYSTONE_DARK;",
     "new": "stoneDraws[k].texRemap = k <= mine ? null : WAYSTONE_DARK;",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "SD25-S9-no-clack",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": " play(SD_STEPS_SOUNDS.clack, 0.45, 2.2); }",
     "new": " }",
     "tests": [
@@ -325,7 +325,7 @@
   },
   {
     "name": "SD25-S9-the-rewind-run-forward",
-    "file": "src/scenes/sdFx.js",
+    "file": "src/scenes/superDungeon/sdFx.js",
     "old": "        if (b.kind === SD_FX_REWIND) b.t = b.t >= 0 ? FX_BURST_MS / 1000 - b.t : -1;",
     "new": "",
     "tests": [
@@ -334,7 +334,7 @@
   },
   {
     "name": "SD25-S9-the-slow-frame-taken",
-    "file": "src/scenes/sdFx.js",
+    "file": "src/scenes/superDungeon/sdFx.js",
     "old": "t - wasAt < SD_REWIND_SEEN.gap ? sdCastBackSeen(wasY, rx, ry, rz) : -1",
     "new": "sdCastBackSeen(wasY, rx, ry, rz)",
     "tests": [
@@ -343,7 +343,7 @@
   },
   {
     "name": "SD25-S9-any-landing-taken",
-    "file": "src/scenes/sdFx.js",
+    "file": "src/scenes/superDungeon/sdFx.js",
     "old": "  if (!(wasY < SD_VOID_Y + SD_REWIND_SEEN.fell)) return -1;\n",
     "new": "",
     "tests": [
@@ -352,7 +352,7 @@
   },
   {
     "name": "SD25-S9-the-rewind-light-dying",
-    "file": "src/scenes/sdFx.js",
+    "file": "src/scenes/superDungeon/sdFx.js",
     "old": "const rw = b.kind === SD_FX_REWIND, g = rw ? L[0] - f : f;",
     "new": "const rw = b.kind === SD_FX_REWIND, g = f;",
     "tests": [
@@ -361,7 +361,7 @@
   },
   {
     "name": "SD25-S9-the-falter-a-flicker",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "export const SD_BEAT_BLINK_HZ = 2.5;",
     "new": "export const SD_BEAT_BLINK_HZ = 20;",
     "tests": [

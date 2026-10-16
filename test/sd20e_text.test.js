@@ -22,11 +22,11 @@ import { drawGateBossBar, destroyGateBossBar, BOSS_BAR_TEXT } from '../src/ui/ga
 import { SD_PHASE_NAMES, SD_ECHO_PAIR_MS } from '../src/net/superDungeon/sdRemnant.js';
 import { SD_ENDINGS, SD_OMENS, sdMarksOf } from '../src/net/superDungeon/sdMarks.js';
 import { SD_FIGHT_TEXT } from '../src/net/superDungeon/sdFightLink.js';
-import { sdBreakSub } from '../src/scenes/sdArenaRead.js';
+import { sdBreakSub } from '../src/scenes/superDungeon/sdArenaRead.js';
 import { sdRiftCount, SD_COUNT_TEXT } from '../src/world/superDungeon/sdDungeon.js';
 import { timerText } from '../src/systems/eventTimers.js';
-import { sdCollapseLine, sdFadeReadout } from '../src/scenes/sdHost.js';
-import { SD_HOME_TEXT } from '../src/scenes/sdEnd.js';
+import { sdCollapseLine, sdFadeReadout } from '../src/scenes/superDungeon/sdHost.js';
+import { SD_HOME_TEXT } from '../src/scenes/superDungeon/sdEnd.js';
 import { SD_REALM_TEXT } from '../src/world/superDungeon/sdRealm.js';
 import { FEATURES } from '../src/systems/features.js';
 import { HeldMapWindow } from '../src/ui/heldMap.js';
@@ -238,7 +238,7 @@ test('SD20e A REGION SAID AS A REGION (T19): where no city is known, the find an
   assert.equal(sdWhere(), 'near the Iliac Bay');
   assert.equal(sdFoundLine({ who: 'Mara', region: 'Dragontail Mountains' }), 'Mara has found an Abyss Dungeon in the Dragontail Mountains region!');
   assert.equal(sdHourLine({ name: 'The Stopped Bell', region: 'Dragontail Mountains' }), 'The Stopped Bell in the Dragontail Mountains region will fade within the hour.');
-  const H2 = read('src/scenes/sdHost.js');
+  const H2 = read('src/scenes/superDungeon/sdHost.js');
   assert.match(H2, /const near = h\?\.site\?\.cityName \|\| '', region = regionName\(o\.rec\.r\) \|\| '';/);
   assert.match(H2, /sdHourLine\(\{ name: hh\?\.loc\?\.name, near: hh\?\.site\?\.cityName \|\| '', region: regionName\(rec\.r\) \|\| '' \}\)/);
 });
@@ -286,5 +286,5 @@ test('SD20e THE HOUR\'S READOUTS WAIT FOR THE VEIL (T18), run from the world hos
   assert.ok(drawn.at(-1).m, 'its whole nine seconds');
   clock = 5000 + SD_MARKS_ARRIVE_MS; frame();
   assert.equal(drawn.at(-1).m, null, 'then gone');
-  assert.match(read('src/scenes/gateCourt.js'), /drawGateMarksCard\([^\n]*\{ hidden: hudHidden\(\) \|\| veiled\(\) \}\);/, 'the court\'s card hides under it the same way');
+  assert.match(read('src/scenes/gate/gateCourt.js'), /drawGateMarksCard\([^\n]*\{ hidden: hudHidden\(\) \|\| veiled\(\) \}\);/, 'the court\'s card hides under it the same way');
 });

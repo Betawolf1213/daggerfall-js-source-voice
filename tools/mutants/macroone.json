@@ -46,7 +46,7 @@
  },
  {
   "name": "MACRO-ONE-the-bridge-never-registers",
-  "file": "src/scenes/questBridge.js",
+  "file": "src/scenes/quest/questBridge.js",
   "old": "  setMacroWorld(() => machine.macroContext());\n",
   "new": "",
   "tests": [

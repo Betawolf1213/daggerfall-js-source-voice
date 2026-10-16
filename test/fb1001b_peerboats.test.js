@@ -9,12 +9,12 @@
 //                 wader is stopped where my hull stops him, a ray across her deck meets her mast, the helm's sweep
 //                 meets her as it meets a boat of mine (scenes/world.js csaSyncColliders)
 //   PEER-DECK   - I stand on her deck from the first step, as on mine; standing on her is aboard her (the aboard door's
-//                 own `on`, scenes/comeSailAwayAboard.js), so her deck carries me as she sails and my place on it is said
+//                 own `on`, scenes/comeSailAway/comeSailAwayAboard.js), so her deck carries me as she sails and my place on it is said
 //   FOUR-HOSTS  - only the world host's street stands her (scenes/world.js); a building's and a dungeon's frames stand
 //                 no one's boat (scenes/worldModes.js, scenes/dungeonContext.js), and the standalone street
 //                 (scenes/exterior.js) has no peers
-// Every pin runs the REAL modules: Come Sail Away's pool over the vendored hulls (scenes/comeSailAwayPool.js), a peer's
-// boat posed off her owner's word (scenes/comeSailAwayPeers.js), the aboard machine (scenes/comeSailAwayAboard.js),
+// Every pin runs the REAL modules: Come Sail Away's pool over the vendored hulls (scenes/comeSailAway/comeSailAwayPool.js), a peer's
+// boat posed off her owner's word (scenes/comeSailAway/comeSailAwayPeers.js), the aboard machine (scenes/comeSailAway/comeSailAwayAboard.js),
 // the world's collider (player/collider.js) and the player's motor (player/motor.js) - with world.js's own
 // csaSyncColliders, csaSphereCastAll and csaPeersFrame lifted from its source and run in the frame's order (the motor,
 // the mod's step's sync, the peers posed and the deck's carry). `01-Overview/Field-Bugs-2026-10-01b.md`.
@@ -22,9 +22,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';
-import { createComeSailAwayPeers } from '../src/scenes/comeSailAwayPeers.js';
-import { createComeSailAwayAboard, localOf } from '../src/scenes/comeSailAwayAboard.js';
+import { createComeSailAwayPool } from '../src/scenes/comeSailAway/comeSailAwayPool.js';
+import { createComeSailAwayPeers } from '../src/scenes/comeSailAway/comeSailAwayPeers.js';
+import { createComeSailAwayAboard, localOf } from '../src/scenes/comeSailAway/comeSailAwayAboard.js';
 import { Boat, HULL_NAMES } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { boardPlaceOf } from '../src/systems/comeSailAway/comeSailAway.js';
 import { colliderPoses, invertAffine, boxColliderTriangles, raycastColliders, BUILTIN_COLLIDER_MESHES } from '../src/world/prefabColliders.js';

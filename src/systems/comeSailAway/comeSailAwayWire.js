@@ -10,7 +10,7 @@
 // and turn (the wire frame's natives, as every cell object's), which of its sails stand raised, whether its owner is
 // at its helm (the crew's two objects) and whether its lanterns are lit. Nothing of the cargo, the wind or the time
 // scale rides, and the helm's way only as CSA-K says it (below) - a peer's boat is a thing to see, and to stand on
-// once aboard it (scenes/comeSailAwayAboard.js), never to open or sail: its helm, cargo and variant are its owner's.
+// once aboard it (scenes/comeSailAway/comeSailAwayAboard.js), never to open or sail: its helm, cargo and variant are its owner's.
 // Its bob, wake, oars, sounds and trim are not played for the others (the owner's own frame drives them; the wire
 // carries the pose five times a second).
 //
@@ -18,7 +18,7 @@
 // eased from word to word surges and stalls five times a second under whoever walks its deck. So the boat at the helm
 // says, beside the record (`m`, a place for each of `b`'s), where it is going: its velocity on the water in the wire
 // frame and its turn, each per second of the real clock (the owner's time scale in it). A reader leads the pose along
-// them from the word's arrival (scenes/comeSailAwayPeers.js). A moored fleet says no `m` at all, so the record a
+// them from the word's arrival (scenes/comeSailAway/comeSailAwayPeers.js). A moored fleet says no `m` at all, so the record a
 // reader of the older build reads - which knows `b` alone - is unchanged, and a new reader of an old record leads
 // nothing.
 //

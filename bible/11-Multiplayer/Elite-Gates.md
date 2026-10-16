@@ -898,14 +898,14 @@ weight, drawn differently. The budget is the measured knob of EG's tuning pass (
 
 **Where the law lives.** The relay draws halls too, so the span law must not pull client code into the relay bundle.
 Today `src/world/superDungeon/sdSteps.js`, which holds the platform clock (`stepAt`, `beatStands`), imports `src/world/superDungeon/sdHall.js`,
-and through it the Hour's art; the union floor's bearing search lives in `src/scenes/gateCourt.js`, which imports
+and through it the Hour's art; the union floor's bearing search lives in `src/scenes/gate/gateCourt.js`, which imports
 `render/`, `ui/` and `world/` modules. Neither is in `RELAY_GRAPH` (`test/relayversion.test.js`). So:
 
 - EG4 moves the platform clock (`stepAt`, `beatStands`, `beatBlinks`, `crumbleAfter`, `gustAt`) into
   `net/egSpanLaw.js`, a leaf, and `src/world/superDungeon/sdSteps.js` re-exports it;
 - the fragments' law is another leaf beside it, `net/egFragLaw.js` (section 11.5);
 - EG8 moves the bearing search into `net/egFloor.js` and widens it there (THE UNION FLOOR, section 13.2);
-  `src/scenes/gateCourt.js` imports it back for the arrow;
+  `src/scenes/gate/gateCourt.js` imports it back for the arrow;
 - the span law's motor numbers are copied as `EG_*` constants and held equal to the motor's by a test;
 - the solver is part of that law, so the relay and the client draw the same course;
 - the CLI `egSpanSolve.mjs` (under tools/, as `tools/sdScoreProbe.mjs` is) only drives it;
@@ -926,7 +926,7 @@ phase, beat}`, plus checkpoints `{x, y, z, r}` (the Spire's islands): exactly wh
 
 - **Today** it is frozen at import (`layCourse`, `SD_STEPS_COURSE`). Its module-scope readers are `SD_GHOST_STEPS`
   (the pass's uniform count), `SD_WAYSTONES` and `SD_VANE`, `sdFx`'s `SD_REWIND_EDGES`, `sdIslandModel` and
-  `abyssLab`. The motes read `SD_COURSE_END` lazily. At build time, `createSdSteps` (`src/scenes/sdSteps.js`, the
+  `abyssLab`. The motes read `SD_COURSE_END` lazily. At build time, `createSdSteps` (`src/scenes/superDungeon/sdSteps.js`, the
   riders) and `src/world/superDungeon/sdStepsModel.js`'s check and breath builders (`buildChecksModel`, `checkFloorTris`,
   `buildBreathModel`) read it too.
 - **EG4 turns it into data**:
@@ -1268,7 +1268,7 @@ audit39. Everything else is painted in code into the band's archives (section 25
     BUDGET's order (section 25.4).
   - Stairs, slopes, ledges and inner platforms are traversal ground. No lord or add aims a blow at a member standing
     there; only the place's own hazards reach them, each drawn by its own pass on its own surface.
-- **Walls bound the escape.** `perilAt` and `wayOut` (`src/scenes/gateCourt.js`) search 24 bearings
+- **Walls bound the escape.** `perilAt` and `wayOut` (`src/scenes/gate/gateCourt.js`) search 24 bearings
   (`PERIL_BEARINGS`) bounded only by a court's circle, straight through walls. In a fragment, the union floor
   (`net/egFloor.js`, section 13.2) and the client's arrow search the fight floor's polygon, whose edges are walls,
   and open edges bound the search like walls: an escape never runs into rock or off the edge.
@@ -2735,7 +2735,7 @@ mist, it is the only read.
 ### 25.4 The telegraph pass, THE TELEGRAPH BUDGET, THE QUIET COMPANY
 
 **The pass** (`src/render/gateTelegraph.js`) draws one shape a call. The Burning Court already draws several a frame:
-its pools, his mark, his blow, and up to `HOST_SHAPES_MAX` (8) host shapes (`src/scenes/gateHost.js`), cut in array
+its pools, his mark, his blow, and up to `HOST_SHAPES_MAX` (8) host shapes (`src/scenes/gate/gateHost.js`), cut in array
 order. A Ward-Bearer's tether is drawn today as a lane in the path pool (`TELEGRAPH_KIND.lane`, `HOST_PATH_HALF_W`
 0.35, `TELEGRAPH_POOL.path`). The Spire adds three kinds to `TELEGRAPH_KIND`, each a seam whose default draws the
 gate's own:

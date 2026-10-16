@@ -1,7 +1,7 @@
 // @ts-check
 // SD7b (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 9): THE UNMOORED STEPS, MADE -
 // the meshes the course's steps are and the triangles they stand in the collider as, and the checkpoints B and C. Pure:
-// the scene (scenes/sdSteps.js) uploads them, stands each step where the law (world/superDungeon/sdSteps.js) puts it, and moves it.
+// the scene (scenes/superDungeon/sdSteps.js) uploads them, stands each step where the law (world/superDungeon/sdSteps.js) puts it, and moves it.
 //
 //   A STEP is a box in its OWN frame - its top's centre the origin, the dungeon's axes (the realm's frame is the dungeon's
 //     moved, never turned) - so one mesh serves every step of a kind, each drawn and each collider bucket moved by a
@@ -348,7 +348,7 @@ export function checkFloorTris() {
 }
 
 /** AUDIT SD II (L2 F18): THE BREATH'S STREAKS - how many, how far either side of the course's line they lie, how far the
- *  breath carries them over its two seconds (scenes/sdSteps.js), and each one's length and its head's thickness. */
+ *  breath carries them over its two seconds (scenes/superDungeon/sdSteps.js), and each one's length and its head's thickness. */
 export const SD_BREATH = Object.freeze({ n: 64, halfX: 10, sweep: 10, len: 1.4, thick: 0.04 });
 /**
  * THE WARP'S BREATH SEEN: SD_BREATH.n streaks of brass light (the hands' glow, as the Beat's sides wear it) over the

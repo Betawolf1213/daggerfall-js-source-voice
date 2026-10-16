@@ -381,7 +381,7 @@
   },
   {
     "name": "AUDITLIVED1B-D1-the-bridge-drops-the-member",
-    "file": "src/scenes/questBridge.js",
+    "file": "src/scenes/quest/questBridge.js",
     "old": "    ownMinutes: () => ctx.ownMinutes?.() ?? null,\n",
     "new": "",
     "tests": [

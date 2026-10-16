@@ -1,7 +1,7 @@
 [
   {
     "name": "LW-FIX2-mark-find",
-    "file": "src/scenes/livingWatch.js",
+    "file": "src/scenes/livingWorld/livingWatch.js",
     "old": "    if (!g?.livingFrom || g.livingFollowed) continue;",
     "new": "    if (!g || g.livingFollowed) continue;",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "LW-FIX2-deed",
-    "file": "src/scenes/livingWatch.js",
+    "file": "src/scenes/livingWorld/livingWatch.js",
     "old": "      if (g.killedBy === 'player') w.town.slain(person);",
     "new": "      if (false) w.town.slain(person);",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "LW-FIX2-gone",
-    "file": "src/scenes/livingWatch.js",
+    "file": "src/scenes/livingWorld/livingWatch.js",
     "old": "    const ended = !!g.dead || !guards.includes(g);",
     "new": "    const ended = !guards.includes(g);",
     "tests": [
@@ -31,7 +31,7 @@
   },
   {
     "name": "LW-FIX2-wait",
-    "file": "src/scenes/livingWatch.js",
+    "file": "src/scenes/livingWorld/livingWatch.js",
     "old": "export const WATCH_WAIT = 600;",
     "new": "export const WATCH_WAIT = 60;",
     "tests": [

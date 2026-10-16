@@ -60,7 +60,7 @@ test('MACRO-ONE: the world never trades a raw token for an error shape, and a mi
 });
 
 test('MACRO-ONE: the bridge registers its machine as the world, in every host that builds one', () => {
-  assert.match(read('src/scenes/questBridge.js'), /setMacroWorld\(\(\) => machine\.macroContext\(\)\);/);
+  assert.match(read('src/scenes/quest/questBridge.js'), /setMacroWorld\(\(\) => machine\.macroContext\(\)\);/);
   // both hosts that build a bridge hand it %ra's source
   for (const f of ['src/scenes/world.js', 'src/scenes/exterior.js']) {
     assert.match(read(f), /playerRaceName: \(\) => \(playerEntity\.race \? raceDisplayName\(playerEntity\.race\) : null\)/, `${f} wires %ra`);

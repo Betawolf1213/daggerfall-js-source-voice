@@ -241,7 +241,7 @@ adds InitMod's four calls to `rrInstall.js`.
   (`RRMSTARM0` Mountain Rumors - Fighters rank 9, one-time; `RRMSTARM1`
   The Master Armorer and `RRMSTARM2` A Careless Price, chained from it)
   are vendored verbatim under `vendor/roleplay-realism/Quests/` and ride
-  the pack loader's globs (`scenes/questData.js`), the list into the
+  the pack loader's globs (`scenes/quest/questData.js`), the list into the
   tables map and the sources into the pack's. All three parse under the
   port's parser with no line pended.
 - **The two tables** - `PlacesTable.AddIntoTable` / `FactionsTable.

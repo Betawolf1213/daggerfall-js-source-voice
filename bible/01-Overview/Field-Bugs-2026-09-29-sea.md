@@ -29,12 +29,12 @@ root's frame is 0.3 m and more off her rocking deck at the bow; the helmsman had
 from their world pose; a peer carried at 6 m/s standing read a 6 m/s stride.
 
 **Why.** Only the others aboard said where they stood; the player at their own helm was drawn from their world pose - a
-send behind - while their boat was LED ahead by its way (`scenes/comeSailAwayPeers.js`), so they trailed the wheel by
+send behind - while their boat was LED ahead by its way (`scenes/comeSailAway/comeSailAwayPeers.js`), so they trailed the wheel by
 their speed times the lag. A passenger's place was stood about the boat's root, and Come Sail Away rocks the MeshObject
 under it (the bob), so on the owner's own screen the deck moved out from under them. And the moving bit and the pace
 were read off the world, where the deck's own way is a stride.
 
-**Fix.** `scenes/comeSailAwayAboard.js` `helmWord`: the helmsman is said as a passenger is - the helm (DrivePosition) at
+**Fix.** `scenes/comeSailAway/comeSailAwayAboard.js` `helmWord`: the helmsman is said as a passenger is - the helm (DrivePosition) at
 rest in her root's frame (the chain composed in doubles, her bob left out), the feet half a height under the pinned
 transform, one word whatever her bob. `deckPose`: the root composed with the bob about the MeshObject's place, so a
 place said at rest is stood where the rocked hull holds it (the wire unchanged - the bob is the glue's). The glue hands

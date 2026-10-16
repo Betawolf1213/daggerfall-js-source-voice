@@ -12,7 +12,7 @@
 //
 // So, on the enhanced skin's plaque, a quest's foe at peace carries one line under its name: the quest it belongs to,
 // in the journal's own words. The line is read, never kept: the foe's own QuestResourceBehaviour (every pool's live
-// record carries it - scenes/questFoeHost.js bindQuestFoeHost) names its quest, and the quest is asked. NOTHING THE
+// record carries it - scenes/quest/questFoeHost.js bindQuestFoeHost) names its quest, and the quest is asked. NOTHING THE
 // JOURNAL HAS NOT SAID (the Quest Guide arc's second law): a quest that has written no entry, that has ended, or that
 // has no display name says nothing. A departure (Port-Ledger A, QUEST-FOE-LINE). The classic skins' panel draws a
 // pile's rows and nothing else (ui/classicLootPanel.js), so a name frame - and this line on it - is the enhanced

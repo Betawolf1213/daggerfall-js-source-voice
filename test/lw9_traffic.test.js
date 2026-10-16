@@ -18,7 +18,7 @@ import {
 import { troubleOf, troubledTrip } from '../src/systems/livingWorld/trouble.js';
 import { HAZARD, ROAD_HAZARD, hazardOf, roadHits } from '../src/systems/livingWorld/lives.js';
 import { DAY_MIN, dayPlan, MARKET_STALL_H, MINSTREL_PLAY_H } from '../src/systems/livingWorld/dayPlan.js';
-import { campGroups, passingPairs, partyPlaces, partyLabel, CAMP_SHARE_N, PASS_N, CAMP_RING_N, CAMP_RING_STEP_N, createLivingRoads } from '../src/scenes/livingRoads.js';
+import { campGroups, passingPairs, partyPlaces, partyLabel, CAMP_SHARE_N, PASS_N, CAMP_RING_N, CAMP_RING_STEP_N, createLivingRoads } from '../src/scenes/livingWorld/livingRoads.js';
 import { campTurn } from '../src/systems/livingWorld/wagons.js';
 import { createRoadStands } from '../src/scenes/roadStands.js';
 import { fillLine, ROAD_PASS_SCRIPTS, ROAD_PASS_WARNINGS, MINSTREL_SONGS, minstrelLine, MINSTREL_EVERY_MIN, MINSTREL_UP_MIN, PATROL_HALT_LINES } from '../src/systems/livingWorld/lines.js';
@@ -432,7 +432,7 @@ test('LW9 the host: the roads\' trouble world reads the patrol\'s cover, the tow
   assert.match(w, /covered: \(trip\) => livingCovered\(patrolCover\(trip, livingTripWorld/);   // PIN MOVED (AUDIT LW-II E1): a cover waiting on a round's way waits
   assert.match(w, /town\.type === INN_TYPE \? innGuestsOf\(town, day, livingTripWorld, o\)/);
   assert.match(w, /wanted: \(res, trip\) => \(res\.job === 'patrol' && trip\?\.from\?\.region != null && knownCriminal\(playerEntity, trip\.from\.region/);
-  const r = readFileSync(new URL('../src/scenes/livingRoads.js', import.meta.url), 'utf8');
+  const r = readFileSync(new URL('../src/scenes/livingWorld/livingRoads.js', import.meta.url), 'utf8');
   assert.match(r, /if \(at\.inn\) continue;   \/\/ LW9: lodged at the inn on the road/);
   assert.equal(paceScale(CALENDAR_MPM), 1);
 });

@@ -172,7 +172,7 @@ digests). `07-Rendering/Performance-Priority.md` PERF-HIDE has the measure.
   changes, as a set chosen is, and lets the last look's pictures go. Another
   player's rider is dyed by their pose's `rc` (`net/peer/peerRiders.js`); past
   `RIDER_LOOKS_KEPT` (12) riders' looks, the one longest undrawn is let go.
-- **The town watch's throw** (`scenes/wagonWardenShow.js`): the carried team
+- **The town watch's throw** (`scenes/wagon/wagonWardenShow.js`): the carried team
   in its owner's look, off the pool's `teamSnapshot`.
 - **The road's strangers** (`world/road/roadTeams.js`): a horse nobody owns wears
   `strangerHorseLook(key)` - born by `BIRTH_WEIGHTS` on its trip's key, on one of
@@ -341,7 +341,7 @@ Every horse alone is drawn only when it is in the view (`horseRig.js` outOfView 
 side of the lens), and a horse is let go through the rig that made it: the gate (`mwViewHorseRig`) answers null under a
 beast's stand-in while the rig itself lives on, and a palette released through the gate was never given back.
 
-FLAGGED: the town watch's carried team (`scenes/wagonWardenShow.js`) is still the billboards' - a throw of a few
+FLAGGED: the town watch's carried team (`scenes/wagon/wagonWardenShow.js`) is still the billboards' - a throw of a few
 seconds, its own batches.
 
 `tools/horse3dProbe.mjs` draws the horse through the real renderer in a page - its looks, both flanks, every gait.

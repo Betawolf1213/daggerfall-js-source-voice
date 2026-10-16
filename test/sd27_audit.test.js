@@ -13,7 +13,7 @@ import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { ALLOC_CHILD_ARGS } from './allocChild.mjs';
 import { pathToFileURL } from 'node:url';
-import { createSdEnd } from '../src/scenes/sdEnd.js';
+import { createSdEnd } from '../src/scenes/superDungeon/sdEnd.js';
 import { RIFT_BELL_RECORDS } from '../src/systems/superDungeon/sdRiftSound.js';
 import { sdHourClockOf, sdArenaGlowAt } from '../src/render/sdArenaGlow.js';
 import { SD_SKY_MODE } from '../src/render/sdSky.js';
@@ -100,11 +100,11 @@ test('AUDIT SD V (P1): THE RIFT\'S LOOK IS A FRAME\'S, NEVER MADE - the open Rif
 test('AUDIT SD V (P1-P4, P6): THE HOLLOW\'S AND THE HOUR\'S FRAMES MAKE NOTHING - measured as L2 F9 measures (a child, a 64 MB young space, the least of six windows, a control that must show): the end\'s look, halos and lights in the Hollow and as the way back, its `hasRet`; the sky map\'s paint and the halo pass on a GL that makes nothing; the Orrery\'s hands into their matrices; the Hour\'s air - none past 2 bytes a frame (they made 0.15 to 9 KB a frame) (mutants: the look made a frame; the halos\' list let go; the sky\'s key a string; the halo\'s corners made; the hands made; the air asked a frame)', (t) => {
   const url = (p) => JSON.stringify(pathToFileURL(join(ROOT, p)).href);
   const script = `
-    const { createSdEnd } = await import(${url('src/scenes/sdEnd.js')});
+    const { createSdEnd } = await import(${url('src/scenes/superDungeon/sdEnd.js')});
     const { SdSkyMap, SD_SKY_STEPS } = await import(${url('src/render/sdSky.js')});
     const { SdHaloRenderer } = await import(${url('src/render/sdHalo.js')});
     const { handMatrix } = await import(${url('src/world/superDungeon/sdHall.js')});
-    const { createSdAir } = await import(${url('src/scenes/sdAir.js')});
+    const { createSdAir } = await import(${url('src/scenes/superDungeon/sdAir.js')});
     const { realmToDungeon } = await import(${url('src/net/superDungeon/sdBrain.js')});
     const { SD_THRESHOLD_RIM } = await import(${url('src/world/superDungeon/sdRealm.js')});
     const renderer = { createMesh: () => ({}), destroyMesh() {}, uploadTexture() {}, uploadEmissionTexture() {} };

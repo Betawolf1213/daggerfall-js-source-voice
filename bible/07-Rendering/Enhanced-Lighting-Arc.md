@@ -2172,7 +2172,7 @@ room:
 Unchanged: the ambient (EL4's "an interior keeps its daylight ambient" stands), the night ambient, every lamp's range
 and place, and the shadows. The player's own lights (the torch, the magic candle, the spells, a dropped torch), the
 others' torches, a ship's lanterns (CSA) and Improved Interior Lighting's lights (IIL1, its own colours and intensities,
-the `?iil=shadows` door) keep their numbers. A home's decor lamps join the room's own list (`scenes/decorRoom.js`), so
+the `?iil=shadows` door) keep their numbers. A home's decor lamps join the room's own list (`scenes/decor/decorRoom.js`), so
 they burn lower with it.
 
 **The four hosts.** `scenes/worldModes.js`'s interior arm: the lamps through `interiorLightColor`, and the grade after
@@ -2252,7 +2252,7 @@ identities (an anonymous base, none). A pool that refills in order names each en
 (`adoptLight` - the street's lanterns, the World of Daggerfall lights and boats, the quays, the yards, the Hour's
 lights, a ship's), a record re-made each frame for a light that lives on adopts its source's (a thrown torch, a camp,
 the gate's and the spoils' lights), and a record reused for another light is `relight`ed (the court's and the Hour's
-burst slots). His glow is one kept record (`world/gate/gateBoss.js` bossGlow's `out`, `scenes/gateCourt.js` `_glow`). The
+burst slots). His glow is one kept record (`world/gate/gateBoss.js` bossGlow's `out`, `scenes/gate/gateCourt.js` `_glow`). The
 renderer lifts the identities with the list (`src/render/renderer.js:"ids: this._pointIds,"`), shifts them under the
 storm's flash and keeps them through a snapshot. A list with no ids - a raw vec4 array - names no light, and the pass
 is what it was. `test/lightid.test.js` sweeps src/ for a light written into a list anywhere else.

@@ -16,7 +16,7 @@ import * as WT from '../src/systems/worldTick.js';
 import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { offlineCopyOf, onlineCopyOf, saneSaveClock, SAVE_CLOCK_MAX, RAID_RECORD_VENDOR } from '../src/systems/offlineCopy.js';
 import { checkpointAllowed } from '../src/systems/online/onlineCheckpoint.js';
-import { createQuestBridge, QUEST_CTX_CONTRACT } from '../src/scenes/questBridge.js';
+import { createQuestBridge, QUEST_CTX_CONTRACT } from '../src/scenes/quest/questBridge.js';
 import { TrainPc } from '../src/systems/quest/actions.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { dayShelf, createStockedDate, needsRestock } from '../src/systems/shopStock.js';

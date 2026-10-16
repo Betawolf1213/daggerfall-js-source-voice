@@ -27,7 +27,7 @@ import {
 import { timeLeftWords } from '../src/ui/quest/questRail.js';
 import { questTracker, drawQuestTracker, _resetQuestTrackerForTests, TRACKER_PREF } from '../src/ui/quest/questTracker.js';
 import { HERALD_PREF } from '../src/ui/quest/questHerald.js';
-import { createQuestBridge } from '../src/scenes/questBridge.js';
+import { createQuestBridge } from '../src/scenes/quest/questBridge.js';
 import { makeWorld, seededRolls, REGION } from './guideWorld.mjs';
 import { HeldMapWindow } from '../src/ui/heldMap.js';
 import { toPaper, paintQuestMark, PEN } from '../src/ui/ink/inkMap.js';

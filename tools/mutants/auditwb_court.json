@@ -1,56 +1,56 @@
 [
   {
     "name": "AUDWB-B4-an-attack-by-its-number-alone",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "const marked = (m, atk) => m.i === atk.i && m.at === atk.at;",
     "new": "const marked = (m, atk) => m.i === atk.i;",
     "tests": ["test/auditwb_court.test.js"]
   },
   {
     "name": "AUDWB-B4-the-moment-never-kept",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "const setMark = (m, atk) => { m.i = atk.i; m.at = atk.at; };",
     "new": "const setMark = (m, atk) => { m.i = atk.i; };",
     "tests": ["test/auditwb_court.test.js"]
   },
   {
     "name": "AUDWB-B4-the-cue-by-its-number-alone",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    if (A && !marked(cued, atk)) { setMark(cued, atk);",
     "new": "    if (A && atk.i !== cued.i) { setMark(cued, atk);",
     "tests": ["test/auditwb_court.test.js"]
   },
   {
     "name": "AUDWB-B4-the-quake-by-its-number-alone",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    if (A && !marked(quaked, atk) && t >= atk.at",
     "new": "    if (A && atk.i !== quaked.i && t >= atk.at",
     "tests": ["test/auditwb_court.test.js"]
   },
   {
     "name": "AUDWB-B6-a-body-after-the-wrath",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "      if (!s || s.day === null || s.fell || s.wrath != null || bossAct(s, t).act === 'gone') return null;",
     "new": "      if (!s || s.day === null || s.fell || bossAct(s, t).act === 'gone') return null;",
     "tests": ["test/auditwb_court.test.js"]
   },
   {
     "name": "AUDWB-B6-a-blow-sent-after-the-wrath",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "      if (!s || s.day === null || s.fell || s.wrath != null || !Object.values(HIT_KINDS).includes(r)) return false;",
     "new": "      if (!s || s.day === null || s.fell || !Object.values(HIT_KINDS).includes(r)) return false;",
     "tests": ["test/auditwb_court.test.js"]
   },
   {
     "name": "AUDWB-B7-a-cry-from-long-ago",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "if (t < s.fell.at + FALL_CRY_LATE_MS) sound(BOSS_CUES.fall, s, t, null);",
     "new": "sound(BOSS_CUES.fall, s, t, null);",
     "tests": ["test/auditwb_court.test.js"]
   },
   {
     "name": "AUDWB-B7-the-cry-edge",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "if (t < s.fell.at + FALL_CRY_LATE_MS) sound(BOSS_CUES.fall, s, t, null);",
     "new": "if (t <= s.fell.at + FALL_CRY_LATE_MS) sound(BOSS_CUES.fall, s, t, null);",
     "tests": ["test/auditwb_court.test.js"]

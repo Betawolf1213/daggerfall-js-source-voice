@@ -4,7 +4,7 @@
 // nothing between her and it, left to right as one faces it, capped); the plaque's two boards (plaqueModel - Daggerfall's
 // framed picture on the dark wood of its paintings' backs, the bare board) on the model door; the names (systems/arena/arenaBoard.js
 // hallPlaques - the save's own Grand Champion among the banners' by season offline, the realm's hall online) through the
-// gate (scenes/arenaGate.js plaques - online never the save's); the host's wiring by source (scenes/worldModes.js - stood at
+// gate (scenes/arena/arenaGate.js plaques - online never the save's); the host's wiring by source (scenes/worldModes.js - stood at
 // the undercroft's mount, drawn, named, pressed; dungeonContext.js's Hall place; both hosts' door).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -18,7 +18,7 @@ import { hallPlaques } from '../src/systems/arena/arenaBoard.js';
 import * as LG from '../src/systems/arena/arenaLeague.js';
 import { newArenaLadder } from '../src/systems/arena/arenaLadder.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
-import { createArenaGate } from '../src/scenes/arenaGate.js';
+import { createArenaGate } from '../src/scenes/arena/arenaGate.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

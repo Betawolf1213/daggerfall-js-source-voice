@@ -13,7 +13,7 @@
 // VEIL (VEIL_PX wide), the way home; from the Veil the sea runs west for more than a thousand leagues and north and
 // south for eight hundred, isle after isle, and no captain has found its end. DEPTH is leagues west of the Veil, and its
 // BANDS - the Shallows, the Reaches, the Deep Aether, the Abyss - are the sea's law: each deadlier and richer than the
-// last (the naval director's, scenes/navalHost.js; the isles' kinds and heights, here).
+// last (the naval director's, scenes/naval/navalHost.js; the isles' kinds and heights, here).
 //
 // THE ISLES. The box is a lattice of ISLE_CELL_PX cells; a cell holds an isle on its band's `chance` of its own hash
 // (`isleOfCell`), of a KIND drawn by the band's weights - a PORT (a town at its quay: the harbourmaster, the exchange

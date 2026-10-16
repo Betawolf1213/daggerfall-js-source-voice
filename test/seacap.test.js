@@ -3,13 +3,13 @@
 // within 200 m of an outdoor player from nothing to its cap in about two seconds - on a shore or a ship's deck as much
 // as in the water - each foe made hostile and told where the player is. The mod ships the cap at 128; the port's
 // default is 32, and the room forces the same online. The rules are the mod's, and so is the range: a player offline
-// may still raise it to 256. What the spawner reads is the setting (scenes/deepWatersHost.js deepWatersEnemySettings).
+// may still raise it to 256. What the spawner reads is the setting (scenes/deepWater/deepWatersHost.js deepWatersEnemySettings).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { MOD_SETTINGS, setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { ONLINE_ROOM_MOD_KEYS, onlineForcedModSetting } from '../src/systems/online/onlineLane.js';
-import { deepWatersEnemySettings } from '../src/scenes/deepWatersHost.js';
+import { deepWatersEnemySettings } from '../src/scenes/deepWater/deepWatersHost.js';
 
 const V = 'iliac-puddle-no-more', K = 'General.MaxLiveEnemies';
 

@@ -1,5 +1,5 @@
 // AUDIT BAY (2026-10-02, Mac: "Audit this. Must be perfect") - SHIPS OF THE BAY (ea3a7361e) audited, the sea's lens:
-// the lanes' packets through the real host (scenes/navalHost.js liners, steerLiner, boundOf) alone (test/navalSea.mjs)
+// the lanes' packets through the real host (scenes/naval/navalHost.js liners, steerLiner, boundOf) alone (test/navalSea.mjs)
 // and in a room (test/navalRoom.mjs) - a packet's course, her end, her berth, her names, her tag, her next voyage, her
 // spending, and a packet, a raider and a harbour's own handed from one player to another - the lanes' pure law
 // (systems/naval/seaLanes.js pursue, the lineage) and the world's feed lifted from world.js. Each pin is red on the
@@ -11,7 +11,7 @@ import { readFileSync } from 'node:fs';
 import { sea, knowAll } from './navalSea.mjs';
 import { room } from './navalRoom.mjs';
 import * as LANES from '../src/systems/naval/seaLanes.js';
-import * as HOST from '../src/scenes/navalHost.js';
+import * as HOST from '../src/scenes/naval/navalHost.js';
 import * as WIRE from '../src/systems/naval/navalWire.js';
 import { DESPAWN_BEYOND } from '../src/systems/naval/navalDirector.js';
 import { RAIDER_DROP_M } from '../src/systems/naval/navalRaiders.js';

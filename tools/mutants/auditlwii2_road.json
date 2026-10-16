@@ -1,7 +1,7 @@
 [
   {
     "name": "AUDITLWII2-R1-laying",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "        if (!members.length) continue;\n        const fight = !!at.fight;",
     "new": "        const fight = !!at.fight;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "AUDITLWII2-R1-camp",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "        // AUDIT LW-II-2 R1: nobody standing, no camp of theirs (nor a lane)\n        if (!members.length) continue;",
     "new": "        // AUDIT LW-II-2 R1: nobody standing, no camp of theirs (nor a lane)\n        if (!members.length && !at.camp) continue;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "AUDITLWII2-R4-park",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "          if (hasTeam && at.camp) {",
     "new": "          if (hasTeam && at.camp && !fight) {",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "AUDITLWII2-R4-park-camp",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "    const teamAt = (trip, at, members) => (at.camp ? campParkOf(trip, at, groups.get(trip.id) ?? null, t)",
     "new": "    const teamAt = (trip, at, members) => (at.camp ? campParkOf(trip, at, at.fight ? null : groups.get(trip.id) ?? null, t)",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "AUDITLWII2-R4-halt-camp",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "        (at.camp ? camped : walking).push({ trip: p.trip, at, members });",
     "new": "        (at.camp ? (at.halt ? [] : camped) : walking).push({ trip: p.trip, at, members });",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "AUDITLWII2-R4-halt-ring",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "  if (ring && at.camp) {",
     "new": "  if (ring && at.camp && !at.halt) {",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "AUDITLWII2-R4-lit",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "    const lit = group.some((g) => !g.at.halt);",
     "new": "    const lit = true;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "AUDITLWII2-R4-lit-shared",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "    const lit = group.some((g) => !g.at.halt);",
     "new": "    const lit = !p.at.halt;",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "AUDITLWII2-R2-once",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "      const k = passingLine(pair, t, lineMin);\n      if (k < 0) continue;",
     "new": "      const k = Math.floor(t / lineMin) % pair.script.length;",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "AUDITLWII2-R2-beat-met",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "  if (!near(beat * lineMin)) return -1;\n",
     "new": "",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "AUDITLWII2-R2-silence",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "  return k < pair.script.length ? k : -1;",
     "new": "  return k % pair.script.length;",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "AUDITLWII2-R2-warned-first",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "      const [first, second] = warned === b ? [b, a] : [a, b];",
     "new": "      const [first, second] = [a, b];",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "AUDITLWII2-R2-nobody",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": " && !at.inn && membersAt(trip, m).length ? at : null;",
     "new": " && !at.inn ? at : null;",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "AUDITLWII2-R2-near-reach",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": ") <= PASS_N;\n  };",
     "new": ") <= PASS_N * 100;\n  };",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "AUDITLWII2-R8-hired",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "    return p ? { name: p.trip.company.name, head: headOf(membersAt(p.trip, t)) } : hiredAt(id, t);",
     "new": "    return p ? { name: p.trip.company.name, head: headOf(membersAt(p.trip, t)) } : null;",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "AUDITLWII2-R8-its-own",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "      const of = (/** @type {any} */ m) => slots.has(m.slot);",
     "new": "      const of = (/** @type {any} */ m) => !!m;",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "AUDITLWII2-R8-town-name",
-    "file": "src/scenes/livingRoads.js",
+    "file": "src/scenes/livingWorld/livingRoads.js",
     "old": "namedIn(c, q.trip.from?.name ?? '')",
     "new": "namedIn(c, '')",
     "tests": [

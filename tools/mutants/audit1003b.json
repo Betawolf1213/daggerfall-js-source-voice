@@ -187,7 +187,7 @@
   },
   {
     "name": "AUDIT1003b-C1-STRANDED",
-    "file": "src/scenes/arenaOnline.js",
+    "file": "src/scenes/arena/arenaOnline.js",
     "old": "if (over) { if (bout.priv) letGoPriv(true); else endBout(); }",
     "new": "if (over) endBout();",
     "tests": [
@@ -196,7 +196,7 @@
   },
   {
     "name": "AUDIT1003b-C2-NO-HEAL",
-    "file": "src/scenes/arenaOnline.js",
+    "file": "src/scenes/arena/arenaOnline.js",
     "old": "    deps.heal?.();\n    if (stay)",
     "new": "    if (stay)",
     "tests": [
@@ -205,7 +205,7 @@
   },
   {
     "name": "AUDIT1003b-C2-SUPERSEDED-NO-HEAL",
-    "file": "src/scenes/arenaOnline.js",
+    "file": "src/scenes/arena/arenaOnline.js",
     "old": "    if (bout?.priv) letGoPriv(false); else endBout();   // AUDIT PRE-MERGE 1003b C2",
     "new": "    endBout();   // AUDIT PRE-MERGE 1003b C2",
     "tests": [
@@ -214,7 +214,7 @@
   },
   {
     "name": "AUDIT1003b-C3-NO-ADOPTION",
-    "file": "src/scenes/arenaOnline.js",
+    "file": "src/scenes/arena/arenaOnline.js",
     "old": "    if (!sess && s?.status === 'open' && s.room !== sessLeftRoom && arenaPrivateCodeOf(s.room)) {",
     "new": "    if (false) {",
     "tests": [
@@ -223,7 +223,7 @@
   },
   {
     "name": "AUDIT1003b-C3-LEFT-ROOM-ADOPTED",
-    "file": "src/scenes/arenaOnline.js",
+    "file": "src/scenes/arena/arenaOnline.js",
     "old": "    if (leave && sess) sessLeftRoom = sess.room;\n",
     "new": "",
     "tests": [
@@ -232,7 +232,7 @@
   },
   {
     "name": "AUDIT1003b-C4-REALM-OVER-SIDE",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "if (C.you && !C.relay.fixed && (R?.banner",
     "new": "if (C.you && (R?.banner",
     "tests": [
@@ -241,7 +241,7 @@
   },
   {
     "name": "AUDIT1003b-C5-WINDOW-LEFT-OPEN",
-    "file": "src/scenes/arenaOnline.js",
+    "file": "src/scenes/arena/arenaOnline.js",
     "old": "if (side >= 0) { deps.closeWindow?.(); deps.standOnMark",
     "new": "if (side >= 0) { deps.standOnMark",
     "tests": [
@@ -250,7 +250,7 @@
   },
   {
     "name": "AUDIT1003b-C6-FULL-ONLY-SAID",
-    "file": "src/scenes/arenaOnline.js",
+    "file": "src/scenes/arena/arenaOnline.js",
     "old": "'host guest', 'session full', 'locked']);",
     "new": "'host guest']);",
     "tests": [
@@ -269,7 +269,7 @@
   },
   {
     "name": "AUDIT1003b-C8-NO-REJOIN",
-    "file": "src/scenes/arenaOnline.js",
+    "file": "src/scenes/arena/arenaOnline.js",
     "old": "if (sess) sessLast = { text, code: sess.code, back: !leave };",
     "new": "if (sess) sessLast = { text, code: sess.code, back: false };",
     "tests": [
@@ -278,7 +278,7 @@
   },
   {
     "name": "AUDIT1003b-U3-WORD-DROPPED",
-    "file": "src/scenes/arenaOnline.js",
+    "file": "src/scenes/arena/arenaOnline.js",
     "old": "{ say(text); sess.word = text; return true; }",
     "new": "{ say(text); return true; }",
     "tests": [
@@ -287,7 +287,7 @@
   },
   {
     "name": "AUDIT1003b-U3-NO-BOUT-UNSAID",
-    "file": "src/scenes/arenaOnline.js",
+    "file": "src/scenes/arena/arenaOnline.js",
     "old": "if (SESSION_SAYS.has(w.m) || (w.m === 'no bout' && !bout))",
     "new": "if (SESSION_SAYS.has(w.m))",
     "tests": [
@@ -443,7 +443,7 @@
   },
   {
     "name": "AUDIT1003b-S6-RATED-CALL",
-    "file": "src/scenes/arenaBouts.js",
+    "file": "src/scenes/arena/arenaBouts.js",
     "old": "say(C.relay.casual ? ARENA_TEXT.call.casual : ARENA_TEXT.call.players)",
     "new": "say(ARENA_TEXT.call.players)",
     "tests": [
@@ -452,7 +452,7 @@
   },
   {
     "name": "AUDIT1003b-S6-SESSION-NOT-CASUAL",
-    "file": "src/scenes/arenaOnline.js",
+    "file": "src/scenes/arena/arenaOnline.js",
     "old": "        casual: true,   // AUDIT PRE-MERGE 1003b S6: called as the casual bout it is\n",
     "new": "",
     "tests": [

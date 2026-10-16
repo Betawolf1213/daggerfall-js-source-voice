@@ -19,7 +19,7 @@
   },
   {
     "name": "WBX2-the-portal-at-the-heart",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    const at = bossPlace(s, s.fell.at);\n    portal = {",
     "new": "    const at = [0, 0];\n    portal = {",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "WBX2-the-door-every-frame",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    if (!portalLaid) { portalLaid = true; layPortalDoor(portalDoor(at)); }",
     "new": "    layPortalDoor(portalDoor(at));",
     "tests": [
@@ -84,7 +84,7 @@
   },
   {
     "name": "WBX4-the-mark-after-his-fall",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "      if (s.fell || s.wrath != null || bossAct(s, t, hurtAt).act === 'gone') mark = null;",
     "new": "      if (s.wrath != null) mark = null;",
     "tests": [
@@ -122,7 +122,7 @@
   },
   {
     "name": "WBX5-a-bite-at-once",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    if (!inFire) { inFire = true; if (t - outAt >= POOL_TICK_MS) { burnAt = t; return; } }",
     "new": "    if (!inFire) { inFire = true; burnAt = -Infinity; }",
     "tests": [
@@ -149,7 +149,7 @@
   },
   {
     "name": "WBX5-the-turn-unsaid",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": " const c = courtPhaseCard(s.phase); if (c) beat = { kind: 'phase', at: t, until: t + TITLE_HOLD_MS, ...c }; }",
     "new": " }",
     "tests": [
@@ -185,7 +185,7 @@
   },
   {
     "name": "WBX7-a-spent-trap-rolled",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    if (trapMark && s.fell.at < trapMark.until) soulTrap(",
     "new": "    if (trapMark) soulTrap(",
     "tests": [
@@ -194,7 +194,7 @@
   },
   {
     "name": "WBX7-the-roll-every-frame",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "    if (!s.fell || trapJudged === s.day) return;",
     "new": "    if (!s.fell) return;",
     "tests": [
@@ -203,7 +203,7 @@
   },
   {
     "name": "WBX7-the-recast-takes-its-chance",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "      if (trapMark && t < trapMark.until) trapMark.until = Math.max(trapMark.until, t + rounds * COURT_ROUND_MS);",
     "new": "      if (trapMark && t < trapMark.until) trapMark = { chance, until: Math.max(trapMark.until, t + rounds * COURT_ROUND_MS) };",
     "tests": [
@@ -212,7 +212,7 @@
   },
   {
     "name": "SS3-the-court-handed-a-way-home-again",
-    "file": "src/scenes/gateCourt.js",
+    "file": "src/scenes/gate/gateCourt.js",
     "old": "  portalDoor: layPortalDoor = () => {}, soulTrap = () => {},",
     "new": "  wayHome = () => {}, portalDoor: layPortalDoor = () => {}, soulTrap = () => {},",
     "tests": [

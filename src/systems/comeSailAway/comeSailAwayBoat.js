@@ -675,7 +675,7 @@ export function applyGameTextures(script, node) {
  * FixDeformations.Awake: the parent's skinned renderer switched off, a
  * MeshFilter and a MeshRenderer on this object wearing the skinned
  * renderer's materials, and an empty baked mesh (the first bake is the
- * first LateUpdate after `interval` - CSA-B's skinning, scenes/comeSailAwayPool.js).
+ * first LateUpdate after `interval` - CSA-B's skinning, scenes/comeSailAway/comeSailAwayPool.js).
  */
 export function fixDeformationsAwake(script, node) {
   const skinned = node.parent.getComponent('SkinnedMeshRenderer');

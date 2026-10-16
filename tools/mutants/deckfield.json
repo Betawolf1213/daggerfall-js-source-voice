@@ -82,7 +82,7 @@
   },
   {
     "name": "SEA-HUNT-aboard-lost",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    aboard: () => aboardShip(),",
     "new": "    aboard: () => false,",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "GUN-HOLD-hold-ignored",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (!aiming) return false;\n    cancelAim();\n    deps.say?.('Hold fire.', 1.2);",
     "new": "    if (!aiming) return false;\n    deps.say?.('Hold fire.', 1.2);",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "GUN-HOLD-hold-always",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (!aiming) return false;\n    cancelAim();",
     "new": "    cancelAim();",
     "tests": [

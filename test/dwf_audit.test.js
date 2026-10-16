@@ -6,12 +6,12 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as L from '../src/world/underwater/underwaterLoot.js';
-import { createDecorTextureSource } from '../src/scenes/deepWatersDecor.js';
+import { createDecorTextureSource } from '../src/scenes/deepWater/deepWatersDecor.js';
 import { createRandomWeapon } from '../src/systems/loot/loot.js';
-import { createDeepWatersPlayer } from '../src/scenes/deepWatersPlayer.js';
+import { createDeepWatersPlayer } from '../src/scenes/deepWater/deepWatersPlayer.js';
 import { surfaceLook, underwaterFogColor, lookSettings } from '../src/world/deepWater/deepWaterLook.js';
 import { loadStarted, loadFinished, teleported, canRunLightRuntimeWork, canRunHeavyRuntimeWork, resetDeepWaterRuntime } from '../src/world/deepWater/deepWaterRuntime.js';
-import { trySpawnTreasureGuards } from '../src/scenes/deepWatersEncounters.js';
+import { trySpawnTreasureGuards } from '../src/scenes/deepWater/deepWatersEncounters.js';
 import { Renderer, BB_SURFACE_UNIT } from '../src/render/renderer.js';
 import { EL_BB_FS } from '../src/render/enhancedLighting.js';
 import { COLUMN_GLSL } from '../src/render/columnGlsl.js';
@@ -69,7 +69,7 @@ test('AUDIT DW-F E5-6: the loot\'s unordered compares are the C#\'s own forms - 
   assert.ok(L.tryPickFogAheadPoint([0, 0, 0], 130, [0, 0, 1], NaN, () => 0.5), 'the IL goes on past the test');
   assert.equal(L.tryPickFogAheadPoint([0, 0, 0], 130, [0, 0, 1], 128, () => 0.5), null, 'a reveal of 130 is the reach');
   // ShouldSpawnTreasureCluster / RollStrayLootCount: bgt.un past `rate <= 0`; CanRunLootPulse the same twice
-  const lootSrc = rd('src/world/underwater/underwaterLoot.js'), spawner = rd('src/scenes/deepWatersLoot.js');
+  const lootSrc = rd('src/world/underwater/underwaterLoot.js'), spawner = rd('src/scenes/deepWater/deepWatersLoot.js');
   assert.equal((lootSrc.match(/if \(rate <= 0\) return (false|0);/g) || []).length, 2);
   assert.match(spawner, /if \(s\.rate <= 0 && s\.clusterRate <= 0\) return null;/);
   assert.doesNotMatch(lootSrc + spawner, /!\((rate|s\.rate|s\.clusterRate|reveal|column\.depth|column\.oceanY)[^)]*[<>]=?[^)]*\)/, 'no ordered negation left in their place');

@@ -7,7 +7,7 @@ import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { questBoxHoldsFoes } from '../src/scenes/questFoeHost.js';
+import { questBoxHoldsFoes } from '../src/scenes/quest/questFoeHost.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');

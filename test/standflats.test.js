@@ -4,7 +4,7 @@
 // horse stands and drawn again once it is let go, through the rig that made it; the stand flat's one record
 // (world/standFlats.js); the Stable's horses offered whether or not their pictures are up (scenes/merchantYardsHost.js);
 // and the hosts by source - world.js's streamed pixels and World of Daggerfall sites, exterior.js's location, the boats'
-// crews (scenes/comeSailAwayPool.js people).
+// crews (scenes/comeSailAway/comeSailAwayPool.js people).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -228,7 +228,7 @@ test('STAND-FLAT the location and the boats by source: exterior.js stands its to
     'billboardBatches.push(batch);', 'standFlats.push(standFlatRecord(sf, batch,'], 'a batch each');
   ordered(e, ['const _peopleOn = standPeople.frame();', 'standingHorses.begin(mwViewHorseRig(), eye);', 'for (const sf of standFlats) {', 'standingHorses.offer(sf, sf.feet, sf.yaw, sf.look, sf.batch, sf.seed);',
     'const look = _peopleOn ? figureLook(sf, standFigureCtx) : null;', 'standPeople.draw(canvas, proj, view, eye,', 'if (standingHorses.end(dt, { proj, view })) standingHorses.draw(canvas, { eye, proj, view });', 'for (const b of billboardBatches) {'], 'the frame');
-  const c = rd('src/scenes/comeSailAwayPool.js');
+  const c = rd('src/scenes/comeSailAway/comeSailAwayPool.js');
   assert.ok(c.includes('if (isNpcFlat(bb.Summary.Archive)) crew.set(n, { piece: { id: `csa:${boat.uid || `h${boat.hull}`}:${i}`, flat: [bb.Summary.Archive, bb.Summary.Record] } });'));
   assert.equal(c.match(/flats\.delete\(n\); crew\.delete\(n\);/g)?.length, 2, 'gone with its flat, both ways a flat goes');
   assert.ok(c.includes('for (const [n, f] of crew) { const b = flats.get(n); if (b) fn(f, b); }'));

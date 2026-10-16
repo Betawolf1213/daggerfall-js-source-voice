@@ -46,7 +46,7 @@
   },
   {
     "name": "LD-H-work-sails-whole",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "(1 - damage.sailShare()) * 0.5",
     "new": "(1 - damage.sailShare())",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "LD-H-cry-outlives-clear",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    hailCalls.clear();   // SHIP-WATCH\n",
     "new": "",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "LD-H-stow-empty-said",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "    if (!items?.length) return;\n    const boat = (csa()",
     "new": "    const boat = (csa()",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "LD-H-prune-pack-lost",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "      for (const c of gone) if (c.items?.length) stowPack(c.boat, c.items.splice(0), c.name);",
     "new": "      void gone;",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "LD-H-cry-any-boat",
-    "file": "src/scenes/navalHost.js",
+    "file": "src/scenes/naval/navalHost.js",
     "old": "if (deck?.crewed) hailCalls.set(deck,",
     "new": "if (deck) hailCalls.set(deck,",
     "tests": [

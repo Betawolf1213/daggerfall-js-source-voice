@@ -59,7 +59,7 @@ import { quatAngleAxis } from '../world/quat.js';
 import { calculateHorseOrientation, horseViewFor, HORSE_BOX_CENTER, HORSE_BOX_SIZE } from '../systems/horse/horseCartLaw.js';
 import { HORSE_ARCHIVE, horseStillRecord, HORSE_BILLBOARD_WIDTH, HORSE_BILLBOARD_HEIGHT, boxTriangles } from './horseCartPool.js';
 import { localAabb, transformedAabb } from '../render/frustum.js';   // PERF-YARD (AUDIT): a yard's box for the street's view test
-import { DECOR_DRAW, DECOR_SHADOW, DECOR_SKIP, castOnly } from './decorRoom.js';   // PERF-WAGON: the cast-only renderer the wagons' pool shares
+import { DECOR_DRAW, DECOR_SHADOW, DECOR_SKIP, castOnly } from './decor/decorRoom.js';   // PERF-WAGON: the cast-only renderer the wagons' pool shares
 
 /** The ground under a yard is read again every this many frames (a pixel built finer moves it). */
 export const YARD_GROUND_EVERY = 30;

@@ -16,7 +16,7 @@ import { readFileSync } from 'node:fs';
 import {
   createDecorRoom, decorMatrix, mergeDecorModels, decorMergeable, decorMergeMatrix, decorFlatMergeKey, DECOR_MERGE_SETTLE_MS, DECOR_MERGE_MIN,
   DECOR_DRAW, DECOR_SHADOW, DECOR_SKIP,
-} from '../src/scenes/decorRoom.js';
+} from '../src/scenes/decor/decorRoom.js';
 import { YARD_MERGES_A_FRAME } from '../src/scenes/homeYards.js';
 
 const settle = () => new Promise((r) => setTimeout(r, 0));

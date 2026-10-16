@@ -23,7 +23,7 @@ import { readFileSync } from 'node:fs';
 import * as surface from '../src/world/terrain/terrainSurface.js';
 import { generateSamples, HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../src/world/terrain/terrainSampler.js';
 import { flattenForLocation, distanceFromRect, SEA_RAMP } from '../src/world/worldOfDaggerfall/wodLocationLoader.js';
-import { carvedFloorLocalY } from '../src/scenes/deepWatersHost.js';
+import { carvedFloorLocalY } from '../src/scenes/deepWater/deepWatersHost.js';
 import { computeHoleMask, HOLES_RESOLUTION, VERTEX_GRID_SIZE } from '../src/world/deepWater/deepWaterFloor.js';
 import * as csa from '../src/systems/comeSailAway/comeSailAway.js';
 import { HULL_NAMES } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
@@ -33,7 +33,7 @@ const { WATER_LEVEL } = csa;
 const WORLD = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
 const SMALL_SHIP = HULL_NAMES.indexOf('Small Ship'), CARRACK = HULL_NAMES.indexOf('Carrack');
 const H = HEIGHTMAP_DIMENSION;
-/** The host's own floor read (scenes/deepWatersHost.js). */
+/** The host's own floor read (scenes/deepWater/deepWatersHost.js). */
 const DEEP_WATERS = { floorLocalY(entry, lx, lz) { return carvedFloorLocalY(entry?.deepWaters, lx, lz); } };
 /** world.js's csaTerrainOf - the Terrain the runtime reads its nodes on - mounted over the pixel at the scene's
  *  origin (csaScene's terrain stands there: its corner at 0, 0, 0). */

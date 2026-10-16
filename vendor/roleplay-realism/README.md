@@ -55,7 +55,7 @@ Mod-Registry row records. Both are what the mod's manifest names.
 
 `Quests/QuestList-RoleplayRealism.txt` and `Quests/RRMSTARM0-2.txt`,
 verbatim from the source tree (MIT, the mod's own header). The pack
-loader globs them beside DFU's own (`src/scenes/questData.js`).
+loader globs them beside DFU's own (`src/scenes/quest/questData.js`).
 
 ## The world data (RR3b)
 

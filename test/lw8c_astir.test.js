@@ -2,10 +2,10 @@
 // no talking circle now and then gets up and crosses the room, to company where one stands alone, along a line the
 // room's collider lets them walk, at a stroll, facing the way they go; a talking circle stays put; a wall, nobody
 // through it. On mock rooms and a mock town's doors (test/lw8b_talk.test.js's shape). LW-TALK: PIN MOVED - a table's
-// company meets whatever their stays (scenes/livingIndoors.js), so the rig's rooms of no talk have no talk's beat.
+// company meets whatever their stays (scenes/livingWorld/livingIndoors.js), so the rig's rooms of no talk have no talk's beat.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createLivingIndoors, stirPlace, INDOOR_STIR_S, INDOOR_WALK_M, INDOOR_WALK_SPEED, TABLE_M } from '../src/scenes/livingIndoors.js';
+import { createLivingIndoors, stirPlace, INDOOR_STIR_S, INDOOR_WALK_M, INDOOR_WALK_SPEED, TABLE_M } from '../src/scenes/livingWorld/livingIndoors.js';
 import { ROUND_S, GATHER_BEAT_S, lineMinutes, exchangeAt, dealCircles } from '../src/systems/livingWorld/meetups.js';
 import { DAY_MIN } from '../src/systems/livingWorld/dayPlan.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
@@ -118,7 +118,7 @@ test('LW8c company and the room\'s walls: one alone makes for a table where one 
   const [x, y] = talk.layer.stood();
   assert.equal(x.table, y.table);
   const since = talk.st.clock;
-  /** the company's circle at minute `t` (scenes/livingIndoors.js: dealt on the table's key and the minute it sat down) */
+  /** the company's circle at minute `t` (scenes/livingWorld/livingIndoors.js: dealt on the table's key and the minute it sat down) */
   const circleAt = (t) => {
     const round = Math.floor((t - since) / BEAT.roundMin), start = since + round * BEAT.roundMin;
     return dealCircles(`in:7000:${x.table}:${since}`, [x.res, y.res], round, start, start + BEAT.roundMin, GATHER_BEAT_S * BEAT.roundMin / ROUND_S)[0];

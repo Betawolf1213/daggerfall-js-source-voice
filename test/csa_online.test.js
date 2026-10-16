@@ -1,13 +1,13 @@
 // CSA-J (2026-09-28) - COME SAIL AWAY ONLINE: a player's boats as the others in a cell see them - the `sa` word on
 // the owner's foes frame (systems/comeSailAway/comeSailAwayWire.js), a peer's boats in the pool's PEER list
-// (scenes/comeSailAwayPeers.js, scenes/comeSailAwayPool.js), and the host's four doors (world.js, exteriorFoes.js).
+// (scenes/comeSailAway/comeSailAwayPeers.js, scenes/comeSailAway/comeSailAwayPool.js), and the host's four doors (world.js, exteriorFoes.js).
 // The pool runs over the vendored models and a stand-in renderer and pipeline (test/csa_pool.test.js's).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';
-import { createComeSailAwayPeers } from '../src/scenes/comeSailAwayPeers.js';
+import { createComeSailAwayPool } from '../src/scenes/comeSailAway/comeSailAwayPool.js';
+import { createComeSailAwayPeers } from '../src/scenes/comeSailAway/comeSailAwayPeers.js';
 import { csaWireRecord, validCsaRecord, csaRecordKey, CSA_WIRE_BOATS_MAX } from '../src/systems/comeSailAway/comeSailAwayWire.js';
 import { animatorOf } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { POSE_BOUND } from '../src/net/wire.js';

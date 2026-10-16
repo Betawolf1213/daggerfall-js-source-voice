@@ -1,4 +1,4 @@
-// ARENA2 (2026-10-02): A BOUT PLAYED THROUGH, HEADLESS (scenes/arenaBouts.js over a fake stage - the bodies the pools
+// ARENA2 (2026-10-02): A BOUT PLAYED THROUGH, HEADLESS (scenes/arena/arenaBouts.js over a fake stage - the bodies the pools
 // would stand, their doors the pools' bout hooks): a ladder bout from the Herald's call to the purse and the ladder's
 // step; my blows taken counted and my 1 HP floor; a yield by sheathing at the line (and refused above it); an
 // exhibition between two AI fighters, the stranger's blow on it warned then a crime; a blow before the word made good;
@@ -6,7 +6,7 @@
 import { test } from 'node:test';
 import { SAND_CEILING_M } from '../src/systems/arena/arenaKit.js';
 import assert from 'node:assert/strict';
-import { createArenaBouts, YOU, CRIT_SHARE, LEAVE_AFTER_MS } from '../src/scenes/arenaBouts.js';
+import { createArenaBouts, YOU, CRIT_SHARE, LEAVE_AFTER_MS } from '../src/scenes/arena/arenaBouts.js';
 import { newArenaLadder, nextLadderBout, exhibitionFor, BOUT_PURSE } from '../src/systems/arena/arenaLadder.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { ARENA_SONGS, ARENA_SCORE_SILENCE } from '../src/systems/arena/arenaScore.js';

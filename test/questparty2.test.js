@@ -10,7 +10,7 @@ import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { adoptsOrphanQuestFoe, questBehaviourFor, QUEST_SHARE_RADIUS } from '../src/scenes/questFoeHost.js';
+import { adoptsOrphanQuestFoe, questBehaviourFor, QUEST_SHARE_RADIUS } from '../src/scenes/quest/questFoeHost.js';
 import { createExteriorFoes, validQuestTags } from '../src/scenes/exteriorFoes.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');

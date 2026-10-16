@@ -15,7 +15,7 @@ import { classById, CROWNS, classLine } from '../src/systems/naval/navalShips.js
 import { etherShipNames, ISLES_FLAG } from '../src/systems/naval/etherShips.js';
 import { NIGHT_DARK_SIGHT } from '../src/systems/naval/shipWatch.js';
 import { DEEP_TIER } from '../src/systems/naval/navalDirector.js';
-import { GLASS_AIM_LIFT } from '../src/scenes/navalHost.js';
+import { GLASS_AIM_LIFT } from '../src/scenes/naval/navalHost.js';
 import { drawSpyglass, glassFootWords, spyglassTaps, nextGlassZoom } from '../src/ui/spyglassView.js';
 import { drawNavalHud, destroyNavalHud } from '../src/ui/naval/navalHud.js';
 import { helmPadPrompts } from '../src/ui/enhanced/enhancedHelm.js';
@@ -396,7 +396,7 @@ test('AUDIT CAPTAIN\'S SEA S19: the glass holds her by her extent as she lies to
 });
 
 test('AUDIT CAPTAIN\'S SEA S21: the black flag said as she is known to me - the trader\'s name only while her colours held, her own once seen through; "is a pirate" said only where she is seen (mutants: the colours\' arm, the studied arm, the sight gate)', () => {
-  const src = rd('src/scenes/navalHost.js');
+  const src = rd('src/scenes/naval/navalHost.js');
   assert.match(src, /deps\.say\?\.\(was === KNOW\.colours \? `False colours! \$\{disguiseOf\(e\)\?\.name \?\? 'The merchantman'\} runs up the black flag!` : was >= KNOW\.studied \? `\$\{s\.names\?\.name \?\? 'She'\} runs up the black flag!` : `\$\{withArticle\(hullWord\(s\.hull\)\)\} runs up the black flag!`, 4\);/);
   assert.match(src, /if \(held > 0 \|\| dist <= Math\.max\(reach\.eye, reach\.lookout\)\) deps\.mid\?\.\(`False colours! \$\{s\.names\?\.name \?\? 'She'\} is a pirate\.`, 4\);/);
 });
@@ -981,7 +981,7 @@ test('AUDIT CAPTAIN\'S SEA C3/C4: hands come Seasoned where they sign on in a Co
 test('AUDIT CAPTAIN\'S SEA C5: her First Mate\'s hands over the rail are men she has - never past her crew\'s hands and the spirits\' one (a Small Ship\'s six men stood four; the phantoms\' falls took her real crew, her First Mate with them) (mutants: the men\'s cap)', async () => {
   const { handsOf, CREW_PER_HAND } = await import('../src/systems/naval/navalBoarding.js');
   const { handsBonusOf, CREW_ORDERS } = await import('../src/systems/naval/shipCrew.js');
-  const body = rd('src/scenes/navalHost.js').match(/\n {2}function myHands\(boat, st\) \{\n[\s\S]*?\n {2}\}\n/)[0];
+  const body = rd('src/scenes/naval/navalHost.js').match(/\n {2}function myHands\(boat, st\) \{\n[\s\S]*?\n {2}\}\n/)[0];
   const myHands = new Function('handsOf', 'handsBonusOf', 'CREW_PER_HAND', `${body}\nreturn myHands;`)(handsOf, handsBonusOf, CREW_PER_HAND);
   const st = (crew, mate, morale = 100, order = CREW_ORDERS.rail) => ({ damage: { crew }, crew: { morale, order }, worth: { hands: mate } });
   assert.equal(myHands({ crewed: true }, st(6, 2)), 2, 'six men: her one hand and the spirits\' one');
@@ -1052,7 +1052,7 @@ test('AUDIT CAPTAIN\'S SEA D1: a strand\'s casks float once - out of its reach a
 });
 
 test('AUDIT CAPTAIN\'S SEA D2: a strand\'s haul floats alongside the boat that pulled in for it - STRAND_ALONGSIDE_M off her on open water, every cask on water (they went 700 m off on no bearing of the isle\'s, some on its beach); a swimmer breaks his open in the water, never "hauls it aboard" (mutants: the alongside point, the open water, the cask on the beach, the swimmer\'s words)', async () => {
-  const { STRAND_ALONGSIDE_M, SITE_CASK_SPREAD } = await import('../src/scenes/navalHost.js');
+  const { STRAND_ALONGSIDE_M, SITE_CASK_SPREAD } = await import('../src/scenes/naval/navalHost.js');
   const land = (x) => x > 20;   // the isle's beach to the east of her
   const { s, casks } = await strandSea({ water: (x) => !land(x) });
   s.run(1.2);
@@ -1142,7 +1142,7 @@ test('AUDIT CAPTAIN\'S SEA D7/D14/D22: one legend at sea - none launched while a
   const REACH = { band: 'reaches', bandName: 'the Reaches', depth: 20 };
   const s = await sea({ hull: 2, where: { ether: REACH } });
   const id = s.host.spawnShip('legendQueen', { range: 6000 });
-  assert.match(rd('src/scenes/navalHost.js'), /legends: \[\.\.\.sea\.values\(\)\]\.filter\(\(e\) => e\.legend && e\.ship\.damage\.state !== SHIP_STATES\.sunk\)\.map\(\(e\) => e\.legend\),/);
+  assert.match(rd('src/scenes/naval/navalHost.js'), /legends: \[\.\.\.sea\.values\(\)\]\.filter\(\(e\) => e\.legend && e\.ship\.damage\.state !== SHIP_STATES\.sunk\)\.map\(\(e\) => e\.legend\),/);
   // two standers' copies: a word from 'a' (before 'local') takes her; one from 'z' is never stood
   const { navalWireRecord } = await import('../src/systems/naval/navalWire.js');
   const word = (n, seed) => navalWireRecord({ ships: [{ n, classId: 'legendQueen', variant: 0, pos: [0, 0, 900], yaw: 0, speed: 3, sails: 1, hull: 1, sail: 1, crew: 1, state: 'afloat', heel: 0, seed, fire: false, gen: 0, region: 19 }] });
@@ -1178,8 +1178,8 @@ test('AUDIT CAPTAIN\'S SEA D8: the deep\'s mark rides the wire - a deep ship\'s 
   s.host._shots.dropFlotsam({ id: '77', pos: [5, 0, 5], lot: 'S', from: 'pirateBrig', deep: true });
   s.host._shots.dropFlotsam({ id: '78', pos: [6, 0, 6], lot: 'S', from: 'pirateBrig' });
   assert.deepEqual(s.host.word((p) => p).e, [77], 'and my deep casks');
-  assert.match(rd('src/scenes/navalHost.js'), /pickFlotsam\(\{ lot: c\.lot, from: c\.from, deep: c\.deep, collector: c\.collector, point: c\.point \}\);/, 'the claim\'s answer drawn the deep\'s');
-  assert.match(rd('src/scenes/navalHost.js'), /claims\.set\(e\.id, \{ owner: e\.owner, raw, lot: e\.lot, from: e\.from, deep: !!e\.deep,/);
+  assert.match(rd('src/scenes/naval/navalHost.js'), /pickFlotsam\(\{ lot: c\.lot, from: c\.from, deep: c\.deep, collector: c\.collector, point: c\.point \}\);/, 'the claim\'s answer drawn the deep\'s');
+  assert.match(rd('src/scenes/naval/navalHost.js'), /claims\.set\(e\.id, \{ owner: e\.owner, raw, lot: e\.lot, from: e\.from, deep: !!e\.deep,/);
 });
 
 test('AUDIT CAPTAIN\'S SEA D9: a pair met in the deep waters is the deep\'s - drawn DEEP_LEVEL levels up and launched `deep`, as a single ship there is (mutants: the level, the mark)', async () => {
@@ -1250,7 +1250,7 @@ test('AUDIT CAPTAIN\'S SEA D12: every captain whose sea a legend comes into hear
 });
 
 test('AUDIT CAPTAIN\'S SEA D13: a veiled legend is hailed at the veil\'s share of the lookout\'s reach, as every other reach takes her - the Starless at 800 m unhailed, the Regent there hailed (mutants: the veil on the hail)', async () => {
-  const { SAIL_HO_RANGE } = await import('../src/scenes/navalHost.js');
+  const { SAIL_HO_RANGE } = await import('../src/scenes/naval/navalHost.js');
   const { LEGEND_VEIL_K } = await import('../src/systems/naval/etherShips.js');
   const hails = async (classId) => {
     const s = await sea({ hull: 2, where: { ether: REACHES } });
@@ -1306,7 +1306,7 @@ test('AUDIT CAPTAIN\'S SEA D19/D20: in the Veil itself the plate says "The Veil"
   const { ETHER_PIRATE_NAMES, ETHER_MERCHANT_NAMES } = await import('../src/systems/naval/etherShips.js');
   assert.equal(etherWatersWords({ bandName: 'the Shallows', depth: 0, veil: true }), 'The Veil');
   assert.equal(etherWatersWords({ bandName: 'the Reaches', depth: 23 }), 'The Reaches, 23 leagues past the Veil');
-  assert.match(rd('src/scenes/navalHost.js'), /ether: w\.ether \? \{ bandName: w\.ether\.bandName, depth: w\.ether\.depth, veil: !!w\.ether\.veil \} : null,/);
+  assert.match(rd('src/scenes/naval/navalHost.js'), /ether: w\.ether \? \{ bandName: w\.ether\.bandName, depth: w\.ether\.depth, veil: !!w\.ether\.veil \} : null,/);
   for (const list of [ETHER_PIRATE_NAMES, ETHER_MERCHANT_NAMES]) {
     assert.equal(list.length, 256);
     assert.equal(new Set(list).size, 256, 'every one its own');
@@ -1492,7 +1492,7 @@ test('AUDIT CAPTAIN\'S SEA B3: the harbourmaster\'s and the exchange\'s tabs han
   s.deps.openYard = (m) => { models.push(m); return true; };
   assert.equal(s.host.openYard(s.boat), true);
   assert.equal(models[0].atQuay, false, 'the Fleet page\'s door');
-  const host = rd('src/scenes/navalHost.js'), w = rd('src/scenes/world.js');
+  const host = rd('src/scenes/naval/navalHost.js'), w = rd('src/scenes/world.js');
   assert.match(host, /return yardHere\(boat\) && openYard\(boat, \{ quay: true \}\);/);
   assert.match(w, /if \(model\.atQuay\) model\.office = \(\) => \{/);
   assert.match(w, /if \(model\.atQuay\) model\.exchange = \(\) => harbourOffice\.exchange\(/);
@@ -1559,7 +1559,7 @@ test('AUDIT CAPTAIN\'S SEA B6/B8/B10: a chart\'s port drawn again till one has o
 });
 
 test('AUDIT CAPTAIN\'S SEA B9/B11/B13: a cache\'s and a chart\'s things kept in an overladen pack (they went down unsaid); the exchange caps a purchase at her room before she would lie dead in the water, and says the room; "1 hour left" (mutants: the force, the room\'s cap, the lede, the noun)', async () => {
-  const host = rd('src/scenes/navalHost.js');
+  const host = rd('src/scenes/naval/navalHost.js');
   assert.match(host, /deps\.board\?\.giveItems\?\.\(items, boat \?\? null, \{ force: true \}\)/);
   assert.match(host, /deps\.board\?\.giveItems\?\.\(\[chart\], boatInPlay\(\) \?\? null, \{ force: true \}\);/);
   const { createHarbourOffice } = await import('../src/scenes/harbourOffice.js');
