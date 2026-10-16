@@ -254,8 +254,8 @@
   {
     "name": "SET3-a-bow-cleaving",
     "file": "src/systems/sigil/sigilSetPowers.js",
-    "old": "  coiled(attacker, target);\n  if (ranged(weapon)) return;\n  const v = tierOf(attacker, 'ruhn', 1);",
-    "new": "  coiled(attacker, target);\n  const v = tierOf(attacker, 'ruhn', 1);",
+    "old": "  if (info?.blow !== false) coiled(attacker, target);   // TWO-HANDS (AUDIT 2): a stack a blow, from a blow that counts whole (formulas.js `blow`)\n  if (ranged(weapon)) return;\n  const v = tierOf(attacker, 'ruhn', 1);",
+    "new": "  if (info?.blow !== false) coiled(attacker, target);   // TWO-HANDS (AUDIT 2): a stack a blow, from a blow that counts whole (formulas.js `blow`)\n  const v = tierOf(attacker, 'ruhn', 1);",
     "tests": [
       "test/systems/set3_powers.test.js"
     ],

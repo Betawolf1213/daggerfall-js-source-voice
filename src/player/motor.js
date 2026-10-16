@@ -93,6 +93,9 @@ export function motionBagOf(player) {
     // CLIMB4: and a hold on the wall (the hang, the free climb) - both hands on the stone: the weapon lowered, the
     // torch stowed, the shield down
     climbing: !!(player.climb?.isClimbing || player.mantling || player.onWall),
+    // TWO-HANDS (AUDIT): the head bob's own timer (player/headBobber.js, handed out each frame) - the running hands pump on
+    // it; null with head bobbing off, when they keep their own stride
+    bobTimer: Number.isFinite(player.bobTimer) ? player.bobTimer : null,
     // EOTB-IL: what Eye Of The Beholder's PlayerBillboard reads off PlayerMotor beside the above - the sneak
     // (its frame time doubles), FreezeMotor (a frozen motor is "stopped"), OnExteriorWater == Swimming (the sprite's
     // top at the swim line), and the live capsule height (the billboard's parent is the capsule's centre)

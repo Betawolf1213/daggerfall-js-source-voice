@@ -101,8 +101,8 @@
   {
     "name": "LOOT5-flow-past-five",
     "file": "src/systems/loot/lootPowers.js",
-    "old": "      case 'flow': _s.flow = Math.min(p.max, flowStacks(now) + 1); _s.flowUntil = now + p.seconds; break;",
-    "new": "      case 'flow': _s.flow = flowStacks(now) + 1; _s.flowUntil = now + p.seconds; break;",
+    "old": "      case 'flow': if (whole) { _s.flow = Math.min(p.max, flowStacks(now) + 1); _s.flowUntil = now + p.seconds; } break;",
+    "new": "      case 'flow': if (whole) { _s.flow = flowStacks(now) + 1; _s.flowUntil = now + p.seconds; } break;",
     "tests": [
       "test/systems/loot5_powers.test.js"
     ]
@@ -146,7 +146,7 @@
   {
     "name": "LOOT5-the-conduit-dry",
     "file": "src/systems/loot/lootPowers.js",
-    "old": "      case 'conduit': gainMana(attacker, p.mana); break;",
+    "old": "      case 'conduit': if (whole) gainMana(attacker, p.mana); break;",
     "new": "      case 'conduit': break;",
     "tests": [
       "test/systems/loot5_powers.test.js"

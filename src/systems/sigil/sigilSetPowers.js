@@ -225,9 +225,9 @@ export function setBlow(weapon, damage, attacker, target, info) {
  *  either core's crits, materials and armour): Cleave's share of it, a MELEE blow's alone. Taken here, at the blow
  *  modifiers, the share was of a number PCAAO then reduced for the struck foe's armour alone, so its neighbour could take
  *  more than it did. SERPENT-SET: and Constrict's coil tightens - a bow's blow too (the tier says a weapon blow). */
-export function setStrike(attacker, target, damage, weapon) {
+export function setStrike(attacker, target, damage, weapon, info = null) {
   if (!(damage > 0) || !weapon) return;
-  coiled(attacker, target);
+  if (info?.blow !== false) coiled(attacker, target);   // TWO-HANDS (AUDIT 2): a stack a blow, from a blow that counts whole (formulas.js `blow`)
   if (ranged(weapon)) return;
   const v = tierOf(attacker, 'ruhn', 1);
   if (v) cleave(target, (damage * v.share) / 100, weapon);

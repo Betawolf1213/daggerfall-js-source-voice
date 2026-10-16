@@ -562,7 +562,9 @@ test('audit18 sweep: the swing fatigue and the tally arm are wired into the dung
   const src = hostSrc('dungeonContext.js');
   assert.equal((src.match(/drainFatigue\(SWING_FATIGUE_COST\)/g) ?? []).length, 2,   // BALANCE1: DFU's swing loss on exertion's scale
     'the melee swing and the bow release');
-  assert.equal((src.match(/tallySwingSkills\(playerEntity, playerWeapon\.weapon\)/g) ?? []).length, 2);
+  // PIN MOVED (TWO-HANDS AUDIT 2, bible/05-Combat/Two-Hands.md): the tally counts the swing's weight - an off-hand blow of
+  // a pair 0.8 of a use (hostCombat.js tallySwingSkills), every other swing 1 as before
+  assert.equal((src.match(/tallySwingSkills\(playerEntity, playerWeapon\.weapon, playerWeapon\.blowWeight\)/g) ?? []).length, 2);
   assert.ok(/const hitEnemy = resolvePlayerHit\(/.test(src), 'the tally arm needs hitEnemy');
 });
 

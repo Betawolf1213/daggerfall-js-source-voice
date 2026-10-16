@@ -1037,6 +1037,7 @@ export function pcaaoAttackDamage(attacker, target, {
   weapon: weaponIn = null, damageMod = 0, toHitMod = 0, backstabChance = 0, weaponAnimTime = 0,
   rolls = Math.random, dfRand = () => Math.floor(Math.random() * 32768), onMonsterHit = null, onInflictPoison = null,
   say = null, playerReflexes = null, notes = null, modules = pcaaoModules(), unaware = false, onStruck = null,
+  blowShare = null,
 } = {}) {
   if (!attacker || !target) return 0;
   let weapon = weaponIn;
@@ -1182,7 +1183,12 @@ export function pcaaoAttackDamage(attacker, target, {
   // WEAR-VANILLA (2026-10-01, the repair triage: "Disable the modded feature that increases durability loss. Vanilla
   // values work fine"): A DEPARTURE - only while that module is on. Off (the port's default, modSettings.js), the blow
   // wears what FormulaHelper's DamageEquipment says, below the reduction.
-  if (modules.equipmentDamageEnhanced) pcaaoDamageEquipment(attacker, target, damage, weapon, struckBodyPart, { rolls, say, modules });
+  // TWO-HANDS (AUDIT 2, bible/05-Combat/Two-Hands.md): THE OFF HAND'S SHARE (formulas.js `blowShare`), laid here ahead of
+  // either wear - the formula's tail shared the blow after this core had worn the gear by the whole roll - and said
+  // (`notes.shared`), so the tail does not share it twice
+  const shared = (d) => (blowShare && d > 0 ? blowShare(d) : d);
+  if (blowShare && notes) notes.shared = true;
+  if (modules.equipmentDamageEnhanced) pcaaoDamageEquipment(attacker, target, shared(damage), weapon, struckBodyPart, { rolls, say, modules });
   if (AITarget && isMonster(AITarget)) {
     if (!pcaaoArmorStruckVerification(target, struckBodyPart)) damage = pcaaoPercentageReductionCalculationForMonsters(attacker, target, damage, bluntWep, naturalDamResist);
     else if (unarmedAttack) damage = pcaaoArmorDamageReductionWithUnarmed(attacker, target, damage, struckBodyPart, naturalDamResist, modules);
@@ -1192,6 +1198,7 @@ export function pcaaoAttackDamage(attacker, target, {
   } else if (weaponAttack) {
     damage = pcaaoArmorDamageReductionWithWeapon(attacker, target, damage, weapon, struckBodyPart, naturalDamResist, modules);
   }
+  damage = shared(damage);
   // WEAR-VANILLA, the module off: FormulaHelper's DamageEquipment (formulas.js damageEquipment, Roleplay Realism's slot
   // inside it), with the weapon the blow was struck with - a monster's stand-in is the overhaul's device, so a claw
   // wears no armour, as in DFU - and (AUDIT ECON W1) by the damage that WENT THROUGH, after the reduction above. DFU's

@@ -50,7 +50,7 @@ test('AUDIT PLAIN-UI W1 How chapters work says the whole of Strength - the week\
   assert.match(s, new RegExp(`The week's mark is ${STRENGTH_TARGET} Merit for every hundred players active \\(at least ${STRENGTH_TARGET}\\)\\.`));
   assert.match(s, new RegExp(`A week short of the mark brings a chapter above 50 back ${STRENGTH_SHORT} toward it; a week with no Merit at all costs ${STRENGTH_IDLE}; a Failing chapter loses ${CHAPTER_FAILING_FALL} more unless its Merit reaches twice the mark\\.`));
   assert.match(s, new RegExp(`A Rivalry's winner takes ${CHAPTER_EVENT_EFFECTS.rivalrySwing} from the loser, and a Season's end brings every chapter halfway back to 50\\.$`));
-  assert.match(said('The chairs'), new RegExp(`on accounts ${SEAT_ACCOUNT_AGE_S / 86400} days old\\.`));
+  assert.match(said('The chairs'), new RegExp(`on accounts ${SEAT_ACCOUNT_AGE_S / 86400} real days old\\.`));   // PIN MOVED (AUDIT GUILD-WORDS II C-8): real days, as the hall's line says them
   assert.match(said('Patron'), /pay Thriving prices for training and spells in its halls, or the chapter's own where better\.$/, 'W9: an Ascendant chapter\'s own is better');
 });
 

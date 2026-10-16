@@ -172,6 +172,7 @@ import { getTextKeyTime, animVelocity } from './mwAnim.js';
 import { mat33Mul } from './mwNifMesh.js';   // AUDIT 68 S11-affine-dup: the one row-major 3x3 product
 import { batchMoves, posePartBatch, nodeAffineAt, nodeClockAt, clockFor } from './mwPartClock.js';   // MW-BOW1: a part's own clock
 import { applyClimbRig } from '../../combat/climbRig.js';   // CLIMB6: the climb's pose on the rig's own bones
+import { applyMirrorRig, limbSkeleton, offWeaponBoneAddon, WEAPON_BONE_LEFT_SOURCE } from '../../combat/twoHands/mirrorRig.js';   // TWO-HANDS: the second hand - an arm, or the body, in the mirror; the left hand's weapon bone
 import { ownFacePools } from '../../characters/ownModels/ownHeadModels.js';   // MW-HEADS1: the port's own heads and hairs - a race's pools where it has them
 
 /** The four parts allowed to fall back to a third-person mesh when the
@@ -2133,7 +2134,7 @@ async function assemblyFns(parseNif) {
   return mod;
 }
 
-export async function assembleFirstPersonArm({ skeletonBytes, parts, boneSources = [], parseNif = null }) {
+export async function assembleFirstPersonArm({ skeletonBytes, parts, boneSources = [], parseNif = null, offWeaponBone = false }) {
   let mod;
   try {
     mod = await assemblyFns(parseNif);
@@ -2141,9 +2142,10 @@ export async function assembleFirstPersonArm({ skeletonBytes, parts, boneSources
     return { ok: false, error: `readers unavailable: ${err.message}` };
   }
 
-  let skeleton;
+  let skeleton, skeletonFile;
   try {
-    skeleton = mod.buildSkeleton(mod.parseNif(skeletonBytes));
+    skeletonFile = mod.parseNif(skeletonBytes);
+    skeleton = mod.buildSkeleton(skeletonFile);
   } catch (err) {
     return { ok: false, stage: 'skeleton', error: err.message };
   }
@@ -2161,6 +2163,19 @@ export async function assembleFirstPersonArm({ skeletonBytes, parts, boneSources
       injected.push({ name: src.name, added: r.added, skipped: r.skipped });
     } catch (err) {
       notes.push(`bones: ${src.name}: ${err.message}`);
+    }
+  }
+  // TWO-HANDS AUDIT (bible/05-Combat/Two-Hands.md): THE LEFT HAND'S WEAPON BONE, asked for by the player's two rigs
+  // (`offWeaponBone`). A skeleton without a "Weapon Bone Left" - every retail one - takes one made by the mirror from
+  // its own Weapon Bone (combat/twoHands/mirrorRig.js offWeaponBoneAddon), through the addons' own door and after them (an
+  // addon that brings one is the skeleton's), before any part binds and before the mirror's plan is first read. A bow
+  // never hangs on it: rule 17 asks the actor's own bytes (resolveWeaponParts), where retail has none. TWO-HANDS AUDIT 2:
+  // the skeleton file itself rides along - its own skin (retail's Tri Shadow) is the frame the hands are mirrored in.
+  if (offWeaponBone) {
+    const addon = offWeaponBoneAddon(skeleton, GRAPH_ROOT, mod.skelMats, skeletonFile);
+    if (addon) {
+      const r = mod.injectSkeletonNodes(skeleton, addon);
+      injected.push({ name: WEAPON_BONE_LEFT_SOURCE, added: r.added, skipped: r.skipped });
     }
   }
   bindPartsInto({ pieces, notes, effects, skeleton, fns: mod }, parts);
@@ -2739,10 +2754,15 @@ export function posePartClocks(assembly, value, { frameTime = value, slots = WEA
 }
 
 export function poseAssembly(assembly, { tracks = null, sampleTrack = null,
-  time = 0, accumRoot = null, neckPitch = 0, neckAim = 0, neckOffset = null, climb = null, skin = true } = {}) {
+  time = 0, accumRoot = null, neckPitch = 0, neckAim = 0, neckOffset = null, climb = null, skin = true, mirror = null, run = null } = {}) {
   const { fns, skeleton, pieces } = assembly;
   if (!fns || !skeleton) return assembly;
   const pose = fns.poseSkeleton(skeleton, tracks, sampleTrack, time, { accumRoot });
+  // TWO-HANDS (bible/05-Combat/Two-Hands.md): THE SECOND HAND - an arm, or the whole body, as the mirror of another
+  // (combat/twoHands/mirrorRig.js), straight over the clip's pose and under every law that follows it (the neck's look, the
+  // climb's hands): a left-hand blow, a second weapon held up. An arm read from ANOTHER clip (`clip`: the idle under a
+  // blow) is posed here, on this skeleton, at that clip's own time.
+  assembly.mirrored = mirror ? applyMirrorRig(skeleton, pose, GRAPH_ROOT, fns.skelMats, mirrorWithPoses(mirror, fns, skeleton, accumRoot)) : null;
   // MW-D20: ONE SPACE. The reference poses every piece - skinned, rigid,
   // and the camera node rule 54 reads - in the same space, the full
   // graph below the Skeleton group with the root node's own transform
@@ -2752,6 +2772,10 @@ export function poseAssembly(assembly, { tracks = null, sampleTrack = null,
   // transform is identity - true of every fixture, false of retail data,
   // where the difference is a hand floating away from its forearm.
   applyFirstPersonNeck(skeleton, pose, GRAPH_ROOT, fns.skelMats, neckPitch, neckAim, neckOffset);
+  // TWO-HANDS AUDIT: the running hands' reach (combat/fpArm.js firstRun), by the climb's own solver and UNDER the
+  // climb's request - each at its own weight: the climb eases every wrist on from where the run put it, so the two
+  // blend (no choosing: a run easing out as a climb or a sheet comes in is still drawn, never dropped whole)
+  assembly.runFit = run ? applyClimbRig(skeleton, pose, GRAPH_ROOT, fns.skelMats, run) : null;
   // CLIMB6: the climb's pose over the clip's - the hands on the stone, the feet on the wall - solved on THIS skeleton's
   // own bones (combat/climbRig.js) in the same graph space, before any piece is placed on it
   assembly.climbFit = climb ? applyClimbRig(skeleton, pose, GRAPH_ROOT, fns.skelMats, climb) : null;
@@ -2791,6 +2815,22 @@ export function poseAssembly(assembly, { tracks = null, sampleTrack = null,
   if (assembly.afterPose) assembly.afterPose(assembly);
   assembly.bounds = pieces.length ? foldPieceBounds(pieces) : null;   // PR-BOW1b: and each piece's own box, in the same walk
   return assembly;
+}
+
+/** TWO-HANDS: a mirror request's arms read from another clip (`limbs.X.clip` - { tracks, sampleTrack, time }) posed into
+ *  the pose maps combat/twoHands/mirrorRig.js reads (`limbs.X.pose`) - for the one arm each reads and nothing else (TWO-HANDS
+ *  AUDIT: the whole skeleton was sampled for an arm's eleven bones; mirrorRig.js limbSkeleton). */
+function mirrorWithPoses(req, fns, skeleton, accumRoot) {
+  if (!req.limbs) return req;
+  const limbs = {};
+  for (const side of ['L', 'R']) {
+    const l = req.limbs[side];
+    if (!l) continue;
+    limbs[side] = l.clip && !l.pose
+      ? { ...l, pose: fns.poseSkeleton(limbSkeleton(skeleton, GRAPH_ROOT, fns.skelMats, side, l), l.clip.tracks, l.clip.sampleTrack, l.clip.time, { accumRoot }) }
+      : l;
+  }
+  return { ...req, limbs };
 }
 
 /**

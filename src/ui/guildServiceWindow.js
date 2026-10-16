@@ -53,7 +53,7 @@ import { loadImg, nativeMetrics, drawImg, drawRect, shadowText, DEFAULT_TEXT_COL
 import { drawScreenDimBackdrop } from './chargenArt.js';
 import { audio } from '../systems/audio.js';   // F141: the ButtonClick roster
 import { SOUND } from '../systems/soundClips.js';
-import { layoutMessageBox, drawMessageBox, messageBoxHit, MB_BUTTONS, latchBoxRows } from './messageBox.js';
+import { layoutMessageBox, drawMessageBox, messageBoxHit, MB_BUTTONS, latchBoxRows, fitBoxRows } from './messageBox.js';
 import { noticeFrame, noticeRelease } from './enhanced/enhancedNotice.js';   // ENH-NOTICE2: the window's own click-anywhere box, as the enhanced panel
 import { drawText, measureText } from './text.js';
 import { serviceLabel, serviceShortcutButton, isServiceBox } from '../systems/guild/guildServiceFlow.js';
@@ -320,7 +320,9 @@ export class GuildServiceWindow {
     if (noticeFrame(this, top && top.buttons !== 'YesNo' ? latchBoxRows(top, this.hooks.rows) : null)) { this._box = null; return; }   // ENH-NOTICE2
     if (top) {
       const buttons = top.buttons === 'YesNo' ? [MB_BUTTONS.Yes, MB_BUTTONS.No] : [];
-      this._box = layoutMessageBox(font, latchBoxRows(top, this.hooks.rows), buttons);   // BOX1: a textId box reads its (random-variant) record ONCE
+      // BOX1: a textId box reads its (random-variant) record ONCE; AUDIT GUILD-WORDS II F-2: a row the port writes - a
+      // chair's service, a chair's house - wraps on the screen (SS5's fitBoxRows), where it ran past both edges
+      this._box = layoutMessageBox(font, fitBoxRows(font, latchBoxRows(top, this.hooks.rows)), buttons);
       if (!drawMessageBox(renderer, m, font, this._box)) {
         // art-less fallback keeps the text chain (the U11 shape)
         (this._box.rows ?? []).forEach((r, i) =>

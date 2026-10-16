@@ -4276,5 +4276,16 @@
   ["src/tools/enhancedUI.js","src/tools/enhanced/enhancedUI.js"],
   ["src/tools/enhancedVisuals.js","src/tools/enhanced/enhancedVisuals.js"],
   ["test/tree/crafthold.test.js","test/server/crafthold.test.js"],
-  ["bible/01-Overview/audits/Audit-Log.md","bible/01-Overview/Audit-Log.md"]
+  ["bible/01-Overview/audits/Audit-Log.md","bible/01-Overview/Audit-Log.md"],
+  ["test/fb1015g_guildwords.test.js","test/systems/fb1015g_guildwords.test.js"],
+  ["test/fb1015g_reputegate.test.js","test/systems/quest/fb1015g_reputegate.test.js"],
+  ["test/fb1015g_seatline.test.js","test/systems/fb1015g_seatline.test.js"],
+  ["test/twohands.test.js","test/combat/twohands.test.js"],
+  ["test/twohands_mw.test.js","test/combat/twohands_mw.test.js"],
+  ["bible/01-Overview/Audit-Guild-Words.md","bible/01-Overview/audits/Audit-Guild-Words.md"],
+  ["bible/01-Overview/Audit-Two-Hands.md","bible/01-Overview/audits/Audit-Two-Hands.md"],
+  ["bible/01-Overview/Field-Bugs-2026-10-15g.md","bible/01-Overview/bugs/Field-Bugs-2026-10-15g.md"],
+  ["src/combat/handsLaw.js","src/combat/twoHands/handsLaw.js"],
+  ["src/combat/mirrorRig.js","src/combat/twoHands/mirrorRig.js"],
+  ["src/combat/twoHands.js","src/combat/twoHands/twoHands.js"]
 ]

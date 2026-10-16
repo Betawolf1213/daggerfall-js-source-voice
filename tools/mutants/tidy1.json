@@ -538,5 +538,32 @@
     "tests": [
       "test/tooling/tidy1_movetool.test.js"
     ]
+  },
+  {
+    "name": "AUDIT-TIDY-TOOL1-the-read-file-ignored",
+    "file": "tools/moveModule.mjs",
+    "old": "        const these = read.length ? read.map(moveOf).filter(Boolean) : subjects;",
+    "new": "        const these = subjects;",
+    "tests": [
+      "test/tooling/tidy1_movetool.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-TIDY-TOOL1-a-read-path-taken-for-a-spelling",
+    "file": "tools/moveModule.mjs",
+    "old": "          if (m[2] !== undefined && /\\b(?:new URL|rd|read|src|readFileSync)\\(\\s*$/.test(l.slice(0, m.index))) continue;   // a path it reads, not a spelling",
+    "new": "",
+    "tests": [
+      "test/tooling/tidy1_movetool.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-TIDY-TOOL1-a-keyword-taken-for-a-name",
+    "file": "tools/moveModule.mjs",
+    "old": "        const read = [...[...l.matchAll(READ)].map((m) => repoPath(m[1])), ...[...bound].filter(([v]) => new RegExp(`\\\\b${v}\\\\b(?!\\\\s*\\\\\\\\?['\"\\`])`).test(l)).map(([, p]) => p)];   // `from 'x'` is the keyword, not a name",
+    "new": "        const read = [...[...l.matchAll(READ)].map((m) => repoPath(m[1])), ...[...bound].filter(([v]) => new RegExp(`\\\\b${v}\\\\b`).test(l)).map(([, p]) => p)];   // `from 'x'` is the keyword, not a name",
+    "tests": [
+      "test/tooling/tidy1_movetool.test.js"
+    ]
   }
 ]

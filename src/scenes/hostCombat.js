@@ -300,10 +300,20 @@ export const SWING_FATIGUE_COST = Math.trunc(SWING_WEAPON_FATIGUE_LOSS * FATIGUE
  *  HandToHand for a bare-handed/werecreature swing) AND CriticalStrike,
  *  once per connecting swing. CriticalStrike was tallied nowhere in the
  *  port, so a skill that feeds every to-hit roll could never advance. */
-export function tallySwingSkills(player, weapon) {
+export function tallySwingSkills(player, weapon, weight = 1) {
+  // TWO-HANDS (AUDIT 2, bible/05-Combat/Two-Hands.md): `weight` - an off-hand blow is DUAL.OFF_DAMAGE of a swing here too
+  // (PlayerWeapon.blowWeight), its fraction carried on the player to the next swing, so a pair trains as fast a second
+  // as its damage edge allows, not its blow rate. A swing of weight 1 - every other - tallies once, as DFU's does.
+  const w = Number.isFinite(weight) ? Math.max(0, Math.min(1, weight)) : 1;
+  if (w < 1 && player && typeof player === 'object') {
+    const owed = (_swingTallyCarry.get(player) ?? 0) + w;
+    _swingTallyCarry.set(player, owed >= 1 - 1e-9 ? Math.max(0, owed - 1) : owed);
+    if (owed < 1 - 1e-9) return;
+  }
   tallySkill(player, attackSkillOf(weapon), 1);
   tallySkill(player, SKILLS.CriticalStrike, 1);
 }
+const _swingTallyCarry = new WeakMap();
 
 // ---- FormulaHelper.CalculateBackstabChance (FormulaHelper.cs:975-990) ----
 /** The tally is INSIDE the chance calculation in DFU, so every

@@ -54,7 +54,8 @@ test('SET2 the blow\'s word: a foe whose AI has not detected me is unaware - nev
   const af = strip(read('src/combat/arrowFlight.js'));
   assert.match(af, /calculateAttackDamage\(playerEntity, foe\.entity, \{[\s\S]*?unaware: foeUnaware\(foe\),[\s\S]*?\}\);/, 'the shaft\'s word');
   const f = strip(read('src/combat/formulas.js'));
-  assert.match(f, /core\(attacker, target, \{[^}]*unaware \}\)/, 'a replacement core is handed the word');
+  // PIN MOVED (TWO-HANDS AUDIT 2, bible/05-Combat/Two-Hands.md): and, after it, the off hand's share (`blowShare`)
+  assert.match(f, /core\(attacker, target, \{[^}]*unaware, blowShare \}\)/, 'a replacement core is handed the word');
 });
 
 test('SET2 AUDIT SET M2: the strike tail - every named strike listener told MY attack\'s FINAL damage at a foe, with the weapon, after either core (a replaced core\'s number too); never a miss, a blow at a player, a peer\'s blow resolved here, or a foe\'s; a listener that throws is skipped (mutants: the strike listeners never told; a miss told; a blow at a player told; a peer\'s blow told; a foe\'s blow told)', () => {

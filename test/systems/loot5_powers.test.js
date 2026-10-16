@@ -153,6 +153,12 @@ test('LOOT5: the blow - bane, unaware, sanctified, venom, moon, rage, execute, f
   assert.equal(LP.lootBlow(ae, 100, fl, foe(7), {}), 130);
   T = 7;
   assert.equal(LP.flowStacks(), 0, 'and runs out');
+  // TWO-HANDS (AUDIT 2): a blow that does not count whole (an off-hand blow's share of the time - formulas.js `blow`)
+  // stacks nothing; a whole one, as ever
+  LP.lootStrike(fl, foe(7), 10, ae, { blow: false });
+  assert.equal(LP.flowStacks(), 0, 'no stack from a blow that does not count whole');
+  LP.lootStrike(fl, foe(7), 10, ae, { blow: true });
+  assert.equal(LP.flowStacks(), 1);
 });
 
 test('LOOT5: the landed strike - chain, quake, echo, open hand, conduit', () => {
@@ -194,6 +200,10 @@ test('LOOT5: the landed strike - chain, quake, echo, open hand, conduit', () => 
   me5.magicka = 10;
   LP.lootStrike(me5, struck, 5, staff);
   assert.equal(me5.magicka, 13, '3 magicka a blow');
+  LP.lootStrike(me5, struck, 5, staff, { blow: false });
+  assert.equal(me5.magicka, 13, 'TWO-HANDS (AUDIT 2): none from a blow that does not count whole (formulas.js `blow`)');
+  LP.lootStrike(me5, struck, 5, staff, { blow: true });
+  assert.equal(me5.magicka, 16);
   assert.equal(LP.lootCastCost(me5, 100), 80, 'and 20% off a spell while wielded');
 });
 

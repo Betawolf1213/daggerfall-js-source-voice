@@ -283,6 +283,19 @@ test('AUDIT TIDY TOOL-1..TOOL-6: a negative pin its subject outgrew is named; a 
     ['test/x.test.js', "const helm = rd('src/ui/enhancedHelm.js');\nassert.ok(!helm.includes(\"from './hudLayout.js'\"));\nassert.doesNotMatch(helm, /from '\\.\\.\\/net\\//);\nassert.doesNotMatch(helm, /from '(?:\\.\\.\\/)+ui\\//);"]]),
     ex(['src/ui/hudLayout.js', 'src/ui', 'src', 'src/net', 'src/ui/enhancedHelm.js'])).blind.filter((b) => /a negative pin/.test(b));
   assert.deepEqual(neg.map((b) => b.split(':').slice(0, 2).join(':')), ['test/x.test.js:2', 'test/x.test.js:3'], 'the two that pass on anything; the one at any depth is sound');
+  // the file a pin reads decides it: a moved one bound to a name, its spellings in an array, is named; a file that did
+  // not move is sound whatever else the test names; a path a pin READS (`new URL('../../src/...')`) is no spelling
+  const bind = planMove([['src/ui/enhancedHelm.js', 'src/ui/enhanced/enhancedHelm.js']], new Map([['src/ui/enhancedHelm.js', 'export const h = 1;'],
+    ['test/y.test.js', [
+      "const from = [...rd('src/ui/enhancedHelm.js').matchAll(/x/g)];",
+      "for (const heavy of ['../systems/csa/boat.js']) assert.ok(!from.includes(heavy));",
+      "const leaf = rd('src/systems/statusReadout.js');",
+      "assert.equal(/from '\\.\\.\\/ui\\//.test(leaf), false);",
+      "assert.doesNotMatch(readFileSync(new URL('../src/systems/loot.js', import.meta.url), 'utf8'), /x/);   // src/ui/enhancedHelm.js",
+      "assert.doesNotMatch(readFileSync(new URL('../ui/enhancedHelm.js', import.meta.url), 'utf8'), /y/);",
+    ].join('\n')]]), ex(['src/systems/csa/boat.js', 'src/systems/csa', 'src/systems', 'src/ui', 'src', 'src/systems/statusReadout.js', 'src/systems/loot.js', 'src/ui/enhancedHelm.js']))
+    .blind.filter((b) => /a negative pin/.test(b));
+  assert.deepEqual(bind.map((b) => b.split(':').slice(0, 2).join(':')), ['test/y.test.js:2']);
   // TOOL-2: a file the pin also names kept the spelling - named, not guessed; and the test's own import is its own
   const two = planMove([['src/ui/a.js', 'src/ui/q/a.js']], new Map([['src/ui/a.js', "import { b } from './b.js';\n"], ['src/ui/b.js', 'export const b = 1;'], ['src/ui/c.js', "import { b } from './b.js';\n"],
     ['test/t.test.js', "import { h } from './helpers.js';\nfor (const f of ['src/ui/a.js', 'src/ui/c.js']) assert.ok(rd(f).includes(\"from './b.js'\"));"]]), ex(['src/ui/b.js', 'src/ui', 'test/helpers.js']));

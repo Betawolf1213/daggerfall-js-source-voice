@@ -110,8 +110,8 @@
   {
     "name": "AR4-the-rig-freezes-its-speed-after-construction",
     "file": "src/combat/weapon/weaponRig.js",
-    "old": "  playerWeapon.animCtx = () => ({ entity, weaponType",
-    "new": "  playerWeapon.liveSpeed = playerWeapon.liveSpeed;\n  playerWeapon.animCtx = () => ({ entity, weaponType",
+    "old": "  playerWeapon.animCtx = () => playerWeapon.swingCtx(entity);",
+    "new": "  playerWeapon.liveSpeed = playerWeapon.liveSpeed;\n  playerWeapon.animCtx = () => playerWeapon.swingCtx(entity);",
     "tests": [
       "test/systems/auditdisc28_arrest.test.js"
     ]

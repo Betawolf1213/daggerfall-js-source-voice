@@ -202,6 +202,7 @@ wiring in `src/scenes/`. A feature with one or two modules in a layer keeps them
 | `src/combat/diverseWeapons/` | The Diverse Weapons mod. |
 | `src/combat/gun/` | Guns. |
 | `src/combat/technique/` | Combat techniques. |
+| `src/combat/twoHands/` | Two hands (`05-Combat/Two-Hands.md`): the hands' law, the mirrored rig, both hands seen and animated. |
 | `src/combat/weapon/` | The first-person weapon: rig, alignment, the widget. |
 
 #### `src/formats/`

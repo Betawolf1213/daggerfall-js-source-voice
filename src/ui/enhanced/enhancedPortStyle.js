@@ -102,6 +102,11 @@ button.port-row:hover .port-rowmark, .port-row.on .port-rowmark { visibility: vi
   border: 2px solid rgba(125,116,96,0.55); }
 .port-text p { margin: 0; font-size: 17px; line-height: 1.5; text-shadow: 2px 2px 0 rgba(0,0,0,0.85); }
 .port-text.center { text-align: center; }
+/* AUDIT GUILD-WORDS II F-1: a hall's line of warnings and needs scrolls in its own well, its rows apart - the Talk, Service
+   and Reforge buttons under it had scrolled out of the window in every language at 1280x720 */
+.port-text.scroll { flex: none; max-height: min(34dvh, 240px); overflow-y: auto; display: flex; flex-direction: column; gap: 6px;
+  padding-right: 4px; }
+@media (max-height: 480px) { .port-text.scroll { max-height: 20dvh; } }
 .port-picture { display: flex; justify-content: center; }
 .port-picture img { width: 48px; height: 48px; image-rendering: pixelated; border: 2px solid rgba(125,116,96,0.55); }
 .port-pictureword { min-width: 48px; min-height: 48px; display: flex; align-items: center; justify-content: center; border: 2px solid rgba(125,116,96,0.55); }

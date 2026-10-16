@@ -85,6 +85,10 @@ test('AUDIT 625 P2: the duel\'s word is ONE, kept by SIGIL1\'s door (sigil.js se
   assert.ok(!rival.isPlayer, 'the stand-in is no player - the gates that refuse a player never saw one');
   swing(e, sword(), rival); swing(e, sword(), rival);
   assert.equal(coilStacksAt(rival), 2, 'awake: Constrict coiled the stand-in');
+  // TWO-HANDS (AUDIT 2): a landed blow that does not count whole (an off-hand blow's share of the time - formulas.js
+  // `blow`) tightens nothing
+  setStrike(e, rival, 50, sword(), { blow: false });
+  assert.equal(coilStacksAt(rival), 2, 'no stack from a blow that does not count whole');
   setSetsDueling(true);
   assert.equal(sigilDueling(), true, 'one word: the sets\' setter is the sigil door\'s');
   assert.equal(setsDueling(), true);

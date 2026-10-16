@@ -253,6 +253,10 @@ test('GILDED2 UNDERTOW: the Sovereign\'s landed blows on a foe are that foe\'s -
   assert.equal(LP.lootBlow(other, 100, me, a, {}), 100, 'another weapon reads none of it');
   LP.lootStrike(me, b, 100, other);
   assert.equal(land(b), 120, 'nor moves it');
+  // TWO-HANDS (AUDIT 2): a landed blow that does not count whole (an off-hand blow's share of the time - formulas.js
+  // `blow`) drags nothing deeper
+  LP.lootStrike(me, b, 100, sov, { blow: false });
+  assert.equal(LP.lootBlow(sov, 100, me, b, {}), 130, 'no stack from a blow that does not count whole (the three landed before it, its +30%)');
   // B4: the tide lets go - six seconds from the last landed blow on it, the foe is at nought again
   T = 5.9;
   assert.equal(LP.lootBlow(sov, 100, me, a, {}), 150, 'held while the tide holds');

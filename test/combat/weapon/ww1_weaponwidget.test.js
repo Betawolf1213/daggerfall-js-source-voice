@@ -573,7 +573,9 @@ test('WW1: the rig runs the clone beside the machine - the late update after the
   const rig = rd('src/combat/weapon/weaponRig.js');
   assert.match(rig, /const widget = createWeaponWidget\(\{\s*audio, envHit: envCast, missEffect,/);
   assert.match(rig, /const widgetOn = \(\) => modSetting\('weapon-widget', 'Enabled'\);/);
-  assert.match(rig, /playerWeapon\.onAttackResult = \(\{ foe, damage \}\) => widget\.onAttackDamageCalculated\(\{ damage, parrySounds: !!foe\?\.basics\?\.parrySounds, pos: foe\?\.pos \?\? foe\?\.ai\?\.pos \?\? null, isEnemy: true \}\);/);
+  // PIN MOVED (TWO-HANDS): the recoil is the STRIKING hand's clone - a pair's left hand's blow recoils the left's (was:
+  // `=> widget.onAttackDamageCalculated(...)`, the one clone)
+  assert.match(rig, /playerWeapon\.onAttackResult = \(\{ foe, damage \}\) => \(pairUp\(\) && playerWeapon\.activeHand === 'L' \? twoHands\.offWidget : widget\)\.onAttackDamageCalculated\(\{ damage, parrySounds: !!foe\?\.basics\?\.parrySounds, pos: foe\?\.pos \?\? foe\?\.ai\?\.pos \?\? null, isEnemy: true \}\);/);
   // SW1 widened the inner span from 2800: the shield widget's own frame
   // feed now sits inside it, between the torch component's and this one's.
   // AUDIT-THUNDERLOCK F8 widened the OUTER span from 1200: the port's own
@@ -586,7 +588,8 @@ test('WW1: the rig runs the clone beside the machine - the late update after the
   assert.match(rig, /playerWeapon\.update\(dt\);[\s\S]{0,4800}?if \(widgetOn\(\) \|\| _torchesOn \|\| shieldOn\(\) \|\| thunderlockHeld\(\)\) \{[\s\S]{0,5200}if \(widgetOn\(\)\) widget\.lateUpdate\(dt, \{/, 'LateUpdate after the machine\'s Update (HT1: the torch component shares the frame\'s inputs; SW1b: the shield opens the block too)');
   assert.match(rig, /const look = takeFrameLook\(\);/, 'the look read once a frame'); assert.match(rig, /look: lookAxes, swingHeld: _held, cursorActive: cursorActive\(\), camera: camThunk,/, 'WIDGET-LOOK: as DFU\'s look axes (test/combat/weapon/fb1003_widgetlook.test.js)');
   // SW1: the shield's coroutines resume on the same edge, in the same finally
-  assert.match(rig, /try \{ return onUiScreen\(renderer, cv\(\), \(\) => drawInner\(\{ paralyzed \}\)\); \} finally \{ widget\.endOfFrame\(\); shield\.endOfFrame\(\); \}/, 'WaitForEndOfFrame resumes after the draw (RETRO-UI: drawn on the UI screen)');
+  // PIN MOVED (TWO-HANDS): and the left hand's clone resumes on it too (was: the right's and the shield's alone)
+  assert.match(rig, /try \{ return onUiScreen\(renderer, cv\(\), \(\) => drawInner\(\{ paralyzed \}\)\); \} finally \{ widget\.endOfFrame\(\); twoHands\.offWidget\.endOfFrame\(\); shield\.endOfFrame\(\); \}/, 'WaitForEndOfFrame resumes after the draw (RETRO-UI: drawn on the UI screen)');
   assert.match(rig, /fpArm\.setScreenTransform\(widgetOn\(\) && !armsClimb \? \(base\) => widget\.armsTransform\(base\) : null\);/);   // PIN MOVED (CLIMB-HANDS II): not on arms whose hands are on the stone
   // MAC-I: every sprite in this seam takes the frame's TINT now (FPSWeapon.Tint, off the room's light);
   // the ORDER and the returns are what this pin holds, and neither moved.

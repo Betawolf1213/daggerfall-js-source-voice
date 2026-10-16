@@ -680,9 +680,9 @@ test('AUDIT-SEATS G4 A SPECTATOR\'S FREE CAMERA: while the host says I watch a b
 
 test('AUDIT-SEATS G5 THE WORLD\'S BATTLE ARMS by source: the swing and the shaft one door with their kinds; the arrows and the cast engine see a battle\'s foes outside a duel; a heal on a side-mate goes to the referee; the wards and the saddle in a siege\'s room; the side-mates (mutants: each wire)', async () => {
   const w = rd('src/scenes/world.js');
-  assert.match(w, /const duelStrikeOut = \(by, weapon, swing, drawMs = 0, to = null\) => \{\n\s*if \(!duelMgr\.fighting\) return siegeStrikeOut\(to, by, weapon, swing, drawMs\);/);
+  assert.match(w, /const duelStrikeOut = \(by, weapon, swing, drawMs = 0, to = null, \{ off = false \} = \{\}\) => \{[^\n]*\n\s*if \(!duelMgr\.fighting\) return siegeStrikeOut\(to, by, weapon, swing, drawMs, \{ off \}\);/);   // PIN MOVED (TWO-HANDS AUDIT): the off hand's blow rides along
   assert.match(w, /const duelSpellOut = \(peerId, sp\) => \{\n\s*if \(!duelMgr\.fighting\) return siegeSpellOut\(peerId, sp\);/);
-  assert.match(w, /siegeStrikeOut\(best, 'melee', weaponRig\.playerWeapon\.strikingWeapon, weaponRig\.playerWeapon\.machine\?\.state\);/);
+  assert.match(w, /siegeStrikeOut\(best, 'melee', weaponRig\.playerWeapon\.strikingWeapon, weaponRig\.playerWeapon\.machine\?\.state, 0, \{ off: weaponRig\.playerWeapon\.offStrike \}\);/);   // PIN MOVED (TWO-HANDS AUDIT)
   assert.match(w, /battle\.blow\(to, \{ w: weapon \? weapon\.templateIndex : -1, m: held\?\.material \?\? 0, d: r\.dmg, r: siegeBlowKind\(by\) \}\);/);
   assert.match(w, /duelStrikeOut\('arrow', m\.weapon \?\? null, 'StrikeDown', weaponRig\.playerWeapon\?\.lastDrawMs \?\? 0, t\.id\)/);
   assert.match(w, /const duelArrowTargets = \(\) => \{\n\s*if \(!duelMgr\.fighting\) \{\n\s*const bodies = battleFoeBodies\(royalSession\?\.active\(\) \? royalSession : siegeSession\);/);

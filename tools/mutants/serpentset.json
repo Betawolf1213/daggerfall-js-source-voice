@@ -235,8 +235,8 @@
   {
     "name": "SERPENT-SET-the-bow-refused",
     "file": "src/systems/sigil/sigilSetPowers.js",
-    "old": "  if (!(damage > 0) || !weapon) return;\n  coiled(attacker, target);\n  if (ranged(weapon)) return;",
-    "new": "  if (!(damage > 0) || !weapon) return;\n  if (ranged(weapon)) return;\n  coiled(attacker, target);",
+    "old": "  if (!(damage > 0) || !weapon) return;\n  if (info?.blow !== false) coiled(attacker, target);   // TWO-HANDS (AUDIT 2): a stack a blow, from a blow that counts whole (formulas.js `blow`)\n  if (ranged(weapon)) return;",
+    "new": "  if (!(damage > 0) || !weapon) return;\n  if (ranged(weapon)) return;\n  if (info?.blow !== false) coiled(attacker, target);   // TWO-HANDS (AUDIT 2): a stack a blow, from a blow that counts whole (formulas.js `blow`)",
     "why": "a bow's blow never tightens it",
     "tests": [
       "test/systems/serpentset.test.js"

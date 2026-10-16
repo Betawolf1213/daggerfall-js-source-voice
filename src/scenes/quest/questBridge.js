@@ -434,6 +434,7 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
     // L10N3c: DaggerfallGuildServicePopupWindow.cs:637's GetLocalizedQuestDisplayName - the list box's label in the
     // player's language, '' (the quest's own DisplayName) where the language has no -LOC file for it
     getLocalizedQuestDisplayName: (questName) => localizedQuestDisplayName(questName),
+    sharedClock: () => !!ctx.sharedClock?.(),   // REPUTE-GATE: online, two Mages Guild quests wait for their headers' standing
   });
 
   // QuestMachine.Update's pacing (QuestMachine.cs:305-320): tick at

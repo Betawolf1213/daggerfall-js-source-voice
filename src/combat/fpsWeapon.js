@@ -395,13 +395,30 @@ export function drawFpsWeapon(renderer, canvas, art, state, frame, {
   // drawScreenQuadGlow) - null draws none, which is every weapon without one.
   glow = null,
 } = {}) {
-  if (!art) return;
+  const q = fpsWeaponQuad(canvas, art, state, frame, { flipHorizontal, offsetHeight });
+  if (!q) return;
+  const { tex, rect: { x, y, w, h }, uv: src, rec } = q;
+  renderer.drawScreenQuad(tex, { x, y, w, h }, src, tint ?? undefined);   // MAC-I: Tint
+  if (glow) renderer.drawScreenQuadGlow?.(tex, { x, y, w, h }, src, glow, { art: [rec.width, rec.height], view: [canvas.width, canvas.height] });   // WEAPON-GLOW1: emissive - the room's light never dims it; measured in the record's own pixels (an HD frame's texels are finer)
+}
+
+/**
+ * TWO-HANDS: drawFpsWeapon's placement without the draw - the frame's texture, its rect on the canvas, its source
+ * rect (undefined unflipped) and its record (WEAPON-GLOW1's outline is measured in the record's own pixels) - so the
+ * second hand of a pair (combat/twoHands/twoHands.js) is placed by the very arithmetic the first is, and then mirrored whole.
+ * Null when the art has no such record.
+ */
+export function fpsWeaponQuad(canvas, art, state, frame, {
+  flipHorizontal = getInt('Controls', 'Handedness', 0, 3) === 1,
+  offsetHeight = weaponOffsetHeight(),
+} = {}) {
+  if (!art) return null;
   const flip = flipHorizontal && FLIP_STATES.includes(state);
   const stateIdx = STATE_INDEX[state] ?? 0;
   const anim = art.anims[stateIdx];
   const recordIdx = art.weaponType === WEAPON_TYPES.Bow ? 0 : anim.Record;
   const rec = art.records[recordIdx];
-  if (!rec) return;
+  if (!rec) return null;
   const f = Math.min(frame, rec.frames.length - 1);
   const tex = rec.frames[f];
   const scaleX = canvas.width / NATIVE_W;
@@ -419,6 +436,5 @@ export function drawFpsWeapon(renderer, canvas, art, state, frame, {
   const y = canvas.height - h - offsetHeight;
   // The mirror: rect.xMax .. -width (:388), i.e. u from 1 to 0.
   const src = flip ? { u0: 1, v0: 0, u1: 0, v1: 1 } : undefined;
-  renderer.drawScreenQuad(tex, { x, y, w, h }, src, tint ?? undefined);   // MAC-I: Tint
-  if (glow) renderer.drawScreenQuadGlow?.(tex, { x, y, w, h }, src, glow, { art: [rec.width, rec.height], view: [canvas.width, canvas.height] });   // WEAPON-GLOW1: emissive - the room's light never dims it; measured in the record's own pixels (an HD frame's texels are finer)
+  return { tex, rect: { x, y, w, h }, uv: src, rec };
 }

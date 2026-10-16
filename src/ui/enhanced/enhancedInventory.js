@@ -744,11 +744,17 @@ const refresh = () => {
     // own door (setWeapon) off the same frame tick the window blocks.
     // Same read, same door, same key-compare fast path.
     try {
-      const slots = equipTableOf(deps.entity);
-      // DISC12: the hand in USE (WeaponManager.ApplyWeapon :741-755) - the right hand's weapon over a left-handed
-      // fighter was the figure holding what the screen does not
-      arm.setWeapon?.(slots?.[deps.usingRightHand?.() === false ? EQUIP_SLOTS.LeftHand : EQUIP_SLOTS.RightHand] ?? null,
-        { hasAmmo: hasDaggerfallArrows(deps.entity.items) });
+      // TWO-HANDS (AUDIT 2, L4): THE RIG'S OWN DOOR when the host hands one (weaponRig.js handArm) - the arm's two hands
+      // and their mode read as the frame reads them, so a pair shows as a pair (its right hand's item, its left's)
+      // while the window is up; a pack mounted with no rig keeps the one hand's read below
+      if (typeof deps.handArm === 'function') deps.handArm();
+      else {
+        const slots = equipTableOf(deps.entity);
+        // DISC12: the hand in USE (WeaponManager.ApplyWeapon :741-755) - the right hand's weapon over a left-handed
+        // fighter was the figure holding what the screen does not
+        arm.setWeapon?.(slots?.[deps.usingRightHand?.() === false ? EQUIP_SLOTS.LeftHand : EQUIP_SLOTS.RightHand] ?? null,
+          { hasAmmo: hasDaggerfallArrows(deps.entity.items) });
+      }
     } catch { /* see above */ }
   }
 };

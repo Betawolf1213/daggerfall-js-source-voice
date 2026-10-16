@@ -2550,7 +2550,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       },
       entity: playerEntity,
       icons: { getTexture, uploadRecord, textures: renderer.textures },
-      openCharSheet: () => { const w = api.makeCharSheet(); if (w) activeOverlay = w; },   // MAC-C: the pack's other window key crosses over rather than doing nothing - the same door the sheet's own Items button takes back the other way
+      openCharSheet: () => { const w = api.makeCharSheet(); if (w) activeOverlay = w; }, handArm: () => weaponRig.handArm?.(),   // TWO-HANDS (AUDIT 2): the pack's figure's two hands through the rig's door. MAC-C: the pack's other window key crosses over rather than doing nothing - the same door the sheet's own Items button takes back the other way
       ...useHooks,   // U53: the one bag
       // G5: a DROPPED pile hands DaggerfallLoot's whole identity
       // (playerOwned + TextureArchive/TextureRecord + position); an RDB
@@ -4515,7 +4515,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
         if (!playerMeleeCanHit(dist, !!inViewFn?.(c), !Number.isFinite(wall) || wall >= dist - 1e-3)) continue;
         if (dist < bestD) { bestD = dist; best = b.id; }
       }
-      if (best && opts.wildStrike(best, playerWeapon.strikingWeapon, playerWeapon.machine?.state)) return true;
+      if (best && opts.wildStrike(best, playerWeapon.strikingWeapon, playerWeapon.machine?.state, { off: playerWeapon.offStrike })) return true;
     }
     nextArenaQ();   // ARENA4b: this swing is one blow to the referee, every body it meets
     // AUDIT 23 (combat-14): entity colliders resolve FIRST
@@ -7582,7 +7582,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
           // arm (`!hitEnemy && WeaponType != Bow` is false for a bow),
           // so Archery AND CriticalStrike count a use per loose.
           drainFatigue(SWING_FATIGUE_COST);
-          tallySwingSkills(playerEntity, playerWeapon.weapon);
+          tallySwingSkills(playerEntity, playerWeapon.weapon, playerWeapon.blowWeight);
           continue;
         }
         const hitEnemy = resolvePlayerHit(eye, inView, playerFeet, [-aimed[2], -aimed[6], -aimed[10]]);
@@ -7591,7 +7591,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
         // ported as a constant and applied by nobody, and
         // CriticalStrike was tallied nowhere in the port at all.
         drainFatigue(SWING_FATIGUE_COST);
-        if (hitEnemy) tallySwingSkills(playerEntity, playerWeapon.weapon);
+        if (hitEnemy) tallySwingSkills(playerEntity, playerWeapon.weapon, playerWeapon.blowWeight);
         // AUDIT 23 (C9) - WeaponManager.cs:423-424: the swing sound
         // fires at the HIT FRAME of a swing that hit no enemy (never
         // at strike entry, where the rig used to play it).
@@ -8125,7 +8125,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
         largeHud: largeHudOptions({ renderer, fetchBytes, palette }, playerEntity),
         // AUDIT 39: the enhanced HUD's two hand plaques - see world.js.
         readied: magic.readied() ?? null,
-        weapon: playerWeapon.weapon ?? null,
+        weapon: playerWeapon.restingWeapon ?? null,   // TWO-HANDS (AUDIT): the lead's, never the off hand's mid-blow
         // QS4: THE PHONE'S OWN DOORS. The diamond's cells take a finger
         // on a touch-first device (ui/enhanced/enhancedHud.js's second departure),
         // and a door the host never handed over is a control that

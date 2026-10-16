@@ -141,6 +141,8 @@ test('MS1: no mirror anywhere - the draws are untouched and the pose alone reads
   assert.match(src, /const poseTime = \(state\) => \(state && state\.reversed \? state\.startTime \+ state\.stopTime - state\.time : state\.time\);/);
   assert.equal((src.match(/time: poseTime\(state\),/g) || []).length, 2, 'both rigs pose through it');
   assert.match(src, /actionState\.reversed = !!reversed;/);
-  assert.match(src, /attackReversed = type === 'slash' && strikeReversed\(strike\);/);
+  // PIN MOVED (TWO-HANDS AUDIT): a blow the body throws in the mirror reverses by the MIRROR strike (handsLaw.js
+  // mirrorStrike), so its way across the screen is the one asked; a blow not in the mirror reads the strike as before
+  assert.match(src, /attackReversed = type === 'slash' && strikeReversed\(inMirror \? mirrorStrike\(strike\) : strike\);/);
   assert.match(src, /attackReversed = false;\s*\/\/ MS1: a cast has no side/);
 });

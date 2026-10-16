@@ -8,7 +8,7 @@ import { readFileSync } from 'node:fs';
 
 import {
   ROLL_EPOCH_S, ROLL_EVENTS_KEEP_S, ROLL_RETRY_MS, ROLL_RETRY_MAX_MS, ROLL_CLAIM_MS, ROLL_KEPT_VENDOR,
-  rollCredit, rollDrain, rollSeedOf, rollSeedOk, rollRankCapOf, rollDeltasOf, rollAdopt, rollKeptOf, rollMembersKey, rollCeilingLine, rollFactionName,
+  rollCredit, rollDrain, rollSeedOf, rollSeedOk, rollRankCapOf, rollDeltasOf, rollAdopt, rollKeptOf, rollMembersKey,
 } from '../../src/net/npcChapterLaw.js';
 import { createRollTracker, rollEntityDoors, rollRid, ROLL_STOPS } from '../../src/net/npcRollTracker.js';
 import { createFactionRep } from '../../src/systems/faction/factionRep.js';
@@ -277,8 +277,7 @@ test('AUDIT CHAP T6/T10: a promotion alone is claimed; an uncut claim says nothi
   p.h[40] += 5;
   p.at(ROLL_CLAIM_MS); p.tracker.tick(); await p.settle();
   assert.deepEqual(p.box.said, [[40]], 'a repeat said nothing more');
-  assert.equal(rollCeilingLine('The Mages Guild'), 'Your standing with the Mages Guild rises no further today. The rest will follow in the days to come.');
-  assert.equal(rollFactionName(undefined), 'the guild');
+  // PIN MOVED (AUDIT GUILD-WORDS II B-3, C-4): the pace's words are rollNoticeHost.js's, with what is owed - test/systems/fb1015g_guildwords.test.js
 });
 
 test('AUDIT CHAP T8/T9: the wait doubles from 30 seconds to 15 minutes and resets on an answer; no Roll found reads again; a read with no Roll is a stop (mutants: the doubling, the cap, the reset, the unseeded reset)', async () => {

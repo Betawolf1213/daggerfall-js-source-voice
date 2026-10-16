@@ -423,15 +423,26 @@ export function planMove(moves, texts, exists = null, { blind: named = true } = 
     const movedTo = new Set(moved.values());
     const newDirs = new Set([...movedTo].flatMap((f) => f.split('/').slice(0, -1).map((_, i, a) => a.slice(0, i + 1).join('/'))));
     const after = (p) => (exists(p) && !moved.has(p)) || movedTo.has(p) || newDirs.has(p);
+    // the file a pin reads: one read on its own line (`doesNotMatch(read('src/x.js'), ...)`), or bound to a name it
+    // tests (`const helm = rd('src/x.js')` ... `!helm.includes(...)`); a pin about a file that did not move is sound
+    const READ = /\b(?:rd|read|src|readFileSync)\(\s*(?:new URL\(\s*)?['"`]([^'"`]+)['"`]/g;
+    const repoPath = (p) => { const s = p.replace(/^(?:\.\.?\/)+/, ''); return /^(?:src|server|server-account|tools|scripts|app|test|bible)\//.test(s) ? s : `src/${s}`; };
+    const byTo = new Map([...moved].map(([f, to]) => [to, f]));
+    const moveOf = (p) => (moved.has(p) ? [p, moved.get(p)] : byTo.has(p) ? [byTo.get(p), p] : null);
     for (const [file, text] of texts) {
       if (!/\.(m?js|cjs)$/.test(file) || FROZEN.some((re) => re.test(file))) continue;
       const subjects = [...namesIn(text, extsOf(names))].flatMap((nm) => names.get(nm) ?? []).filter(([f, to]) => text.includes(f) || text.includes(to));
       if (!subjects.length) continue;
+      const bound = new Map([...text.matchAll(/\b(?:const|let)\s+(\w+)\s*=\s*[^;\n]*?\b(?:rd|read|src|readFileSync)\(\s*(?:new URL\(\s*)?['"`]([^'"`]+)['"`]/g)].map((m) => [m[1], repoPath(m[2])]));
       text.split('\n').forEach((l, i) => {
         if (!NEG.test(l)) return;
+        const read = [...[...l.matchAll(READ)].map((m) => repoPath(m[1])), ...[...bound].filter(([v]) => new RegExp(`\\b${v}\\b(?!\\s*\\\\?['"\`])`).test(l)).map(([, p]) => p)];   // `from 'x'` is the keyword, not a name
+        const these = read.length ? read.map(moveOf).filter(Boolean) : subjects;
+        if (!these.length) return;
         for (const m of l.matchAll(QUOTE)) {
+          if (m[2] !== undefined && /\b(?:new URL|rd|read|src|readFileSync)\(\s*$/.test(l.slice(0, m.index))) continue;   // a path it reads, not a spelling
           const q = (m[2] ?? m[3].replace(/\\(.)/g, '$1'));
-          const hit = subjects.find(([f, to]) => {
+          const hit = these.find(([f, to]) => {
             const was = posix.normalize(posix.join(posix.dirname(f), q)).replace(/\/$/, ''), now = posix.normalize(posix.join(posix.dirname(to), q)).replace(/\/$/, '');
             return !was.startsWith('..') && exists(was) && !after(now);
           });

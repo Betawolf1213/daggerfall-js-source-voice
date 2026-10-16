@@ -112,6 +112,6 @@ test('ROLL-PACE by source: the halls read the pace for the guild\'s own faction 
   const wm = read('src/scenes/worldModes.js');
   assert.ok(wm.includes('        rankCeiling: host.rollPace?.(guild.factionId)?.ceiling ?? null,'));
   assert.ok(wm.includes('        promoteWhenEarned: sharedClockOn() && !!host.rollPace?.(guild.factionId),'));
-  assert.ok(wm.includes('rankNeedsLines(playerEntity, guild, memberships, store, { rankCeiling: pace?.book ?? null, pace })'));
+  assert.ok(wm.includes('rankNeedsLines(playerEntity, guild, seated(), store, { rankCeiling: pace?.book ?? null, pace, now: ownDate(), book: memberships })'));   // PIN MOVED (SEAT-LINE, FIELD BUGS 2026-10-15g): read seated, with the review's date and book
   assert.ok(read('src/scenes/world.js').includes('    rollPace: (f) => rollPaceOf(rollTracker, f, Math.floor(Date.now() / 1000)),'));
 });

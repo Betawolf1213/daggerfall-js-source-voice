@@ -264,12 +264,16 @@ test('WEAPON-GLOW1: the classic hand swings the PLAIN sheet while an element sho
   assert.match(rig, /const plain = !!glowOf\(item\);\s*const type = heldType\(item\);/);
   assert.match(rig, /atlasFileName\(item, WEAPON_FILE\[type\] \?\? '', undefined, plain \? false : undefined\)/);
   assert.match(rig, /loadFpsWeaponArt\(fetchBytes, palette, renderer, type, item\?\.material \?\? 0, item, \{ plain \}\)/);
-  assert.match(rig, /weaponType: heldType\(playerWeapon\.weapon\), material: playerWeapon\.weapon\?\.material \?\? -1, glow: heldGlowNow\(\),/, 'the clone told the set and the outline');
+  // PIN MOVED (TWO-HANDS): a clone's frame is built per hand's item (weaponRig.js cloneFrame - the one hand's, or each of
+  // a pair's), its set and outline that item's own
+  assert.match(rig, /weaponType: heldType\(item\), material: item\?\.material \?\? -1, glow: glowOf\(item\),/, 'the clone told the set and the outline');
   assert.match(rig, /renderer\.drawScreenQuad\(tex, rect, undefined, lit \?\? undefined\);\s*const elementGlow = heldGlowNow\(\);[^\n]*\n\s*if \(elementGlow\) renderer\.drawScreenQuadGlow\?\.\(tex, rect, undefined, elementGlow, \{ art: \[art\.unionBox\.w, art\.unionBox\.h\], view: \[canvas\.width, canvas\.height\] \}\);/, 'the Thunderlock\'s frame, then its outline - in its union box\'s native pixels');
   assert.match(rig, /\{ tint: fpTint, offsetHeight: weaponOffsetHeight\(\) - climbDrop\(_climbLower, c\.height\), glow: heldGlowNow\(\) \}/);
   const widget = strip(read('src/combat/weapon/weaponWidget.js'));
   assert.match(widget, /renderer\.drawScreenQuad\(tex, getWeaponRect\(\), w\.curAnimRect, tint \?\? undefined\);\s*if \(ctx\.glow\) renderer\.drawScreenQuadGlow\?\.\(tex, getWeaponRect\(\), w\.curAnimRect, ctx\.glow, \{ art: \[rec\.width, rec\.height\], view: \[canvas\.width, canvas\.height\] \}\);/, 'the clone\'s frame, then its outline, on its rect and mirror, in the record\'s pixels');
-  assert.match(rig, /fpArm\.setWeaponGlow\?\.\(meshGlow\(playerWeapon\.weapon\), playerWeapon\.weapon\);/, 'the Morrowind hand told the spec and the weapon it is of');
+  // PIN MOVED (TWO-HANDS): the item the arm HOLDS (armItem: the one hand's, or a pair's right hand's whichever strikes),
+  // and a pair's left blade its own
+  assert.match(rig, /fpArm\.setWeaponGlow\?\.\(meshGlow\(armItem\), armItem\);\s*fpArm\.setOffWeaponGlow\?\.\(offItem \? meshGlow\(offItem\) : null, offItem\);/, 'the Morrowind hand told the spec and the weapon it is of');
   assert.match(widget, /atlasFileName\(w\.specificWeapon, classic, undefined, ctx\?\.glow \? false : undefined\)/);
 });
 
@@ -604,7 +608,8 @@ test('WEAPON-GLOW1: a third-person picture is padded for its outline, in texels 
   // the arm hands its picture the look it shows, in both of its draws
   const arm = strip(read('src/combat/fpArm.js'));
   assert.match(arm, /const glow = glowShown\(\);\s*thirdMesh\.weaponGlow = glow;\s*const glowLook = glow \? glow\.look : null;/);
-  assert.equal(arm.match(/drawRigSpriteBox\(renderer, canvas, thirdMesh, model, \{[^\n]*, glowLook \}, proj, view, eye, MW_ARM_PIXEL\)/g)?.length, 2, 'the horse\'s rider and the body alone');
+  // PIN MOVED (TWO-HANDS): the pad's looks - the held weapon's, and a pair's left blade's beside it (padLooks)
+  assert.equal(arm.match(/drawRigSpriteBox\(renderer, canvas, thirdMesh, model, \{[^\n]*, glowLook: padLooks \}, proj, view, eye, MW_ARM_PIXEL\)/g)?.length, 2, 'the horse\'s rider and the body alone');
 });
 
 test('WEAPON-GLOW1: the arm lays the glow only on the weapon it was asked of, and only in hand (NET-1, NET-2)', async () => {

@@ -152,7 +152,8 @@ test('IF: an interior swing can now MEET an enemy - the tally and the no-enemy s
   const swing = WM.slice(WM.indexOf('for (const ev of (overlayHeld ? [] : interiorWeapon.frame(dt, { paralyzed: paralyzed || knockedDown() })))'));
   const body = swing.slice(0, swing.indexOf('interiorWeapon.draw({ paralyzed })'));
   assert.match(body, /interiorFoes\?\.resolvePlayerHit\(interiorWeapon\.playerWeapon/, 'the pool is asked FIRST');
-  assert.match(body, /tallySwingSkills\(playerEntity, interiorWeapon\.playerWeapon\.weapon\);\n\s+continue;/,
+  // PIN MOVED (TWO-HANDS AUDIT 2, bible/05-Combat/Two-Hands.md): the tally counts the swing's weight (a pair's off hand 0.8)
+  assert.match(body, /tallySwingSkills\(playerEntity, interiorWeapon\.playerWeapon\.weapon, interiorWeapon\.playerWeapon\.blowWeight\);\n\s+continue;/,
     'a connecting swing trains, and does not fall through to the action objects');
   const hitIdx = body.indexOf('resolvePlayerHit');
   const envIdx = body.indexOf('envAttack(');

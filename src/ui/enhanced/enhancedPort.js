@@ -124,7 +124,8 @@ function blockNode(doc, b, acts, canvases) {
     }
     case 'heading': return el(doc, 'h3', 'port-heading', b.text);
     case 'text': {
-      const n = el(doc, 'div', `port-text${b.center ? ' center' : ''}`);
+      // AUDIT GUILD-WORDS II F-1: `scroll` - rows that may run long scroll in their own well, so the actions below stay in view
+      const n = el(doc, 'div', `port-text${b.center ? ' center' : ''}${b.scroll ? ' scroll' : ''}`);
       for (const r of b.rows) n.append(el(doc, 'p', null, typeof r === 'string' ? r : (r?.text ?? '')));
       return n;
     }
