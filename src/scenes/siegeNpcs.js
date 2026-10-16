@@ -14,9 +14,9 @@
 // Not a DFU member. Ledger A (SEAT2b part two (c)).
 import { SIEGE_NPC } from '../net/siege/siegeRef.js';
 import { siegeNpcShown } from '../net/siege/siegeLink.js';
-import { ENEMY_BASICS } from '../characters/enemyBasics.js';
-import { KNIGHT_CITY_WATCH } from '../characters/mobileTypes.js';   // HALT-ONE: the Town Guard's hurt cry is no Halt
-import { stateAnims, HURT_ANIMS, HURT_ANIM_SPEED, PRIMARY_ATTACK_ANIM_SPEED } from '../characters/mobileUnit.js';
+import { ENEMY_BASICS } from '../characters/enemy/enemyBasics.js';
+import { KNIGHT_CITY_WATCH } from '../characters/mobile/mobileTypes.js';   // HALT-ONE: the Town Guard's hurt cry is no Halt
+import { stateAnims, HURT_ANIMS, HURT_ANIM_SPEED, PRIMARY_ATTACK_ANIM_SPEED } from '../characters/mobile/mobileUnit.js';
 import { mobileBillboardSize } from '../world/rmbFlats.js';
 import { bossFrame } from '../world/gate/gateBoss.js';
 import { createPopulationLane } from '../characters/npcBodies.js'; import { rosterLook } from '../characters/foeBodies.js'; import { rosterActor } from '../characters/rosterBodies.js';   // MWNPC10: the siege's fighters in their Morrowind bodies

@@ -9,7 +9,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { Collider } from '../src/player/collider.js';
-import { EnemyAI } from '../src/characters/enemyMotor.js';
+import { EnemyAI } from '../src/characters/enemy/enemyMotor.js';
 import { bakeNavFromCollider } from '../src/ai/navBake.js';
 import { findPath } from '../src/ai/navmesh.js';
 import {
@@ -63,7 +63,7 @@ function foe(Cls, c, bake, feet, opts = {}) {
 const START = [2, 0, 2], TARGET = [10, 0, 2];   // either side of the divider, near its closed (north) end
 
 test('ENHANCED AI 4: the classic motor is untouched', () => {
-  const motor = rd('src/characters/enemyMotor.js');
+  const motor = rd('src/characters/enemy/enemyMotor.js');
   // DFU's own EnhancedCombatAI is NAMED in the classic file (its header
   // says it ports the classic path), so the test is for the PORT's
   // enhanced symbols, not the word.
@@ -480,7 +480,7 @@ test('AUDIT 55: the switch\u2019s reach is the dungeon host\u2019s foes and noth
   // takes. This pins that reach so a future reader can answer the same
   // question in one test instead of a sweep.
   const readers = ['src/ai/enhancedMotor.js', 'src/scenes/dungeonContext.js', 'src/systems/uiPrefs.js', 'src/systems/features.js', 'src/ai/cover.js', 'src/ai/tactics.js'];   // FT5: the row is the registry's, not the menu's   // TACT1 (Mac: "Everywhere, Enhanced on"): cover is the one thing the switch does outside the dungeon - billboards block sight and missiles - and ai/cover.js is its one reader; it never moves a body, so no townsperson hovers. TACT2: ai/tactics.js reads it for the brain, which only steers a foe that sees its target - never a townsperson
-  for (const f of ['src/characters/mobilePerson.js', 'src/scenes/world.js', 'src/scenes/exterior.js', 'src/scenes/cityGuards.js', 'src/scenes/exteriorFoes.js', 'src/characters/enemyMotor.js']) {
+  for (const f of ['src/characters/mobile/mobilePerson.js', 'src/scenes/world.js', 'src/scenes/exterior.js', 'src/scenes/cityGuards.js', 'src/scenes/exteriorFoes.js', 'src/characters/enemy/enemyMotor.js']) {
     const src = rd(f);
     assert.ok(!/enhancedAI|EnhancedEnemyAI|enhancedNav|enhancedMotor/.test(src), `${f} can see the switch`);
   }

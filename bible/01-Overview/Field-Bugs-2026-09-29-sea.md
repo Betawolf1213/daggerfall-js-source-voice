@@ -52,7 +52,7 @@ player swims; WaterMove moves nothing without one), so a hull sailing over one p
 GROUNDED - `velY === 0`, which WaterMove never touches - and Come Sail Away's FixedUpdate took it as a rider, carried
 inside the ship. **Fix.** The rider handle reads `ai.isGrounded`, the motor's own CharacterController.isGrounded:
 whether its last Move stood it on something (false if it never moved), written by every one of the motor's Moves
-(`characters/enemyMotor.js`, `ai/enhancedMotor.js`).
+(`characters/enemy/enemyMotor.js`, `ai/enhancedMotor.js`).
 
 ## #3 THE ZOOM AT A HELM
 

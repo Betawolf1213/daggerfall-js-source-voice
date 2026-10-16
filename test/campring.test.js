@@ -53,7 +53,7 @@ test('CAMP-RING: a hit returns up to three independently rolled groups, each wit
 });
 
 test('CAMP-RIVALS: groups of the same kind never fight each other, different kinds do; campmates never do', async () => {
-  const src = (await import('node:fs')).readFileSync(new URL('../src/characters/enemyTargets.js', import.meta.url), 'utf8');
+  const src = (await import('node:fs')).readFileSync(new URL('../src/characters/enemy/enemyTargets.js', import.meta.url), 'utf8');
   assert.doesNotMatch(src, /rivalCamps/, 'no same-kind override');
   assert.match(src, /if \(targetEntity\.team === selfTeam\) continue;/, 'the same kind keeps the truce');
   assert.match(src, /if \(self\.entity\?\.campId != null && targetEntity\.campId === self\.entity\.campId\) continue;/, 'campmates still spared');
@@ -61,7 +61,7 @@ test('CAMP-RIVALS: groups of the same kind never fight each other, different kin
 
 test('CAMP-SIGHT: a camp member sees 60 m; every other foe keeps DFU\'s 102.4', async () => {
   const { CAMP_SIGHT_RADIUS } = await import('../src/systems/campEncounters.js');
-  const { canSeeTarget, SIGHT_RADIUS } = await import('../src/characters/enemyMotor.js');
+  const { canSeeTarget, SIGHT_RADIUS } = await import('../src/characters/enemy/enemyMotor.js');
   assert.equal(CAMP_SIGHT_RADIUS, 60);
   assert.ok(Math.abs(SIGHT_RADIUS - 102.4) < 1e-9, 'the default is untouched');
   const open = { raycast: () => Infinity };
@@ -77,7 +77,7 @@ test('CAMP-SIGHT: a camp member sees 60 m; every other foe keeps DFU\'s 102.4', 
 
 test('CAMP-SIGHT: wilderness camps see 60 m; every other foe (WoD sites, dungeons, wanderers) keeps 102.4', async () => {
   const { CAMP_SIGHT_RADIUS } = await import('../src/systems/campEncounters.js');
-  const { canSeeTarget, SIGHT_RADIUS } = await import('../src/characters/enemyMotor.js');
+  const { canSeeTarget, SIGHT_RADIUS } = await import('../src/characters/enemy/enemyMotor.js');
   const fs = await import('node:fs');
   const read = (f) => fs.readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');
   assert.equal(CAMP_SIGHT_RADIUS, 60);

@@ -26,7 +26,7 @@ import { horseBornStats, bondTier, STEED_STATS, STEED_STAT_TEXT } from '../steed
 import { isOatsItem, isWagonKitItem } from '../upkeep/upkeepItemRows.js';   // STEED1/WAGONS4: what the two are for
 import { KIT_MEND, WAGON_KIT_CEILING } from '../wagon/wagonUpkeep.js';
 import { unitWeightInKg } from '../inventory.js';   // AUDIT 23 (items-8)
-import { enemyDisplayName } from '../../characters/enemyBasics.js';   // X5: %hs, the trapped soul's name
+import { enemyDisplayName } from '../../characters/enemy/enemyBasics.js';   // X5: %hs, the trapped soul's name
 import { itemIsIdentified } from '../tradeModes.js';   // X7: the DERIVED identified state
 import { templateByIndex, itemValueOf, conditionPercentage, isAmmunition } from './itemTemplates.js';   // AUDIT 68 S27-wth-nan: JAN1's one value read; S27-ammo-arrow-only: ammunition, not "the Arrow"
 import { isPotion, isPotionRecipe, isParchment, TEMPLATES } from '../useItem.js';

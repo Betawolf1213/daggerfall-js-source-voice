@@ -18,7 +18,7 @@ export function getMeleeWeaponAnimTime(liveSpeed, ctx = null) {
   if (o != null) return o;
   // SWING-LAW: a wielder the port knows (`ctx.entity` - the player's machine, the Weapon Widget's clone, the third-person
   // body) swings on the port's own law; one it does not (a foe's machine, a peer's walker at PEER_SWING_SPEED, the
-  // viewers) keeps DFU's line - which DFU never asks for a foe at all (characters/enemyAttack.js).
+  // viewers) keeps DFU's line - which DFU never asks for a foe at all (characters/enemy/enemyAttack.js).
   if (ctx?.entity) {
     const w = _swingReader?.(ctx) ?? null;
     return swingFrameSeconds(liveSpeed, {

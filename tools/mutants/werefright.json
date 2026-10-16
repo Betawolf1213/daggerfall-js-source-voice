@@ -109,7 +109,7 @@
   },
   {
     "name": "WERE-FRIGHT-motor-never-flees",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    if (this.fleeLeft > 0) { this._fleeStep(dt, paralyzed); return; }",
     "new": "",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "WERE-FRIGHT-no-turn-in-place",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "      else { this.yaw = turnTowards(this.yaw, dx, dz); this.moving = false; }   // classic turns in place",
     "new": "      else { this.yaw = turnTowards(this.yaw, dx, dz); this.moving = true; }",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "WERE-FRIGHT-no-knockback-while-fleeing",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    if (knocked) { this._knockbackStep(dt, classicTicks); return; }   // a blow shoves it first; the run resumes after\n",
     "new": "    this.knockbackSpeed = 0;\n",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "WERE-FRIGHT-origin-not-carried",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": ", this._predictedTargetPosWithoutLead, this.fleeFrom]",
     "new": ", this._predictedTargetPosWithoutLead]",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "WERE-FRIGHT-fright-leaves-the-encounter-edge",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    this.justEncountered = false;\n  }",
     "new": "  }",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "WERE-FRIGHT-fright-leaves-the-eye",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    this.inSight = false;   // raises no alert",
     "new": "    // raises no alert",
     "tests": [

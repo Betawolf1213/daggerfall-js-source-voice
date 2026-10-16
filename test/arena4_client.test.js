@@ -16,7 +16,7 @@ import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { arenaLadderOf, ARENA_HIT, ARENA_FLOOR_CENTRE, ARENA_LADDER_SPEC, ARENA_BEASTS, ARENA_WEAPON_MAX, ARENA_MATERIAL_MOD, ARENA_TEAM_POINTS } from '../src/net/arena/arenaLaw.js';
 import { arenaMarks } from '../src/net/arena/arenaBrain.js';
 import { LADDER_TIERS } from '../src/systems/arena/arenaLadder.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { weaponMaxDamage, WEAPONS } from '../src/characters/weapons.js';
 import { WEAPON_MATERIAL_MODIFIER } from '../src/combat/formulas.js';
 import { boutMarks } from '../src/systems/arena/arenaFighters.js';

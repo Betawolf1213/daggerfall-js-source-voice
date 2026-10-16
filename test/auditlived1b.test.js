@@ -27,7 +27,7 @@ import { exhaustionOutcome } from '../src/systems/rest/rest.js';
 import { maxFatigue } from '../src/systems/statMods.js';
 import { intermittentEnemySpawn, passiveGuardSpawns } from '../src/systems/encounters.js';
 import { partyExtraFoes } from '../src/systems/party/partyScale.js';
-import { SOLITARY_TYPES } from '../src/characters/mobileFactions.js';
+import { SOLITARY_TYPES } from '../src/characters/mobile/mobileFactions.js';
 import { RAIDING_PARTIES_VENDOR, newRaidSaveData } from '../src/systems/raidingParties.js';
 import { ONLINE_TRAVEL_ROWS, ONLINE_TRAVEL_LINE } from '../src/ui/travel/travelPopUp.js';
 import { repairRowText } from '../src/ui/enhanced/enhancedTrade.js';

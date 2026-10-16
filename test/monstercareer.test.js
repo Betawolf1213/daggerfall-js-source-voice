@@ -3,8 +3,8 @@
 import './modsOff.js';   // MO1: this suite pins Daggerfall Unity's own numbers - the game without its mods
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { loadMonsterCareer, makeEnemyEntity } from '../src/characters/enemyEntity.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { loadMonsterCareer, makeEnemyEntity } from '../src/characters/enemy/enemyEntity.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 
 function craftCfg({ hpPerLevel = 4, speed = 90, str = 40, agi = 85, luck = 55, atkFlags = 0x08 } = {}) {
   const b = new Uint8Array(74);

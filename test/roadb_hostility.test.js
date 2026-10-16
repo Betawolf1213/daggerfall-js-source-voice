@@ -164,7 +164,7 @@ test('ROAD-B: sensesContext carries IsPlayerInsideDungeonCastle, defaulting fals
 });
 
 test('ROAD-B: a non-hostile enemy in a castle never stealth-detects, and MakeEnemiesHostile is what changes that', async () => {
-  const { EnemyAI } = await import('../src/characters/enemyMotor.js');
+  const { EnemyAI } = await import('../src/characters/enemy/enemyMotor.js');
   const collider = { raycast: () => Infinity, moveCapsule: (p) => ({ pos: p, grounded: true }) };
   const entity = { skills: {}, level: 1 };
   // A foe that has met the player and is watching one who is NOT

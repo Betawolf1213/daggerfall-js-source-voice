@@ -11,7 +11,7 @@ import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import * as tm from '../src/systems/textManager.js';
 import { _resetForTests as resetSettings } from '../src/systems/settings/settings.js';
-import { ENEMY_NAMES, ENEMY_BASICS, enemyDisplayName } from '../src/characters/enemyBasics.js';
+import { ENEMY_NAMES, ENEMY_BASICS, enemyDisplayName } from '../src/characters/enemy/enemyBasics.js';
 import { activateMobileEnemy } from '../src/player/mobileEnemyActivate.js';
 import { sayEnemyDied } from '../src/scenes/corpseMarker.js';
 import { tryLanguagePacification } from '../src/scenes/hostCombat.js';

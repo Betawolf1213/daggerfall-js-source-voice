@@ -13,8 +13,8 @@ import assert from 'node:assert';
 import { buildNeutralBody, BUILD_IDENTITY, BUILD_MIN, BUILD_MAX } from '../src/characters/neutralBody.js';
 import { ORC_DESIGNS, ORC_RAMPS, orcOpts, orcDesignFor } from '../src/characters/orcBody.js';
 import { buildTusks, buildBrow, IVORY_RAMP } from '../src/characters/pieces/orcHead.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 
 // Synthetic ramps - the geometry assertions are palette-independent, so
 // these tests run without ARENA2.

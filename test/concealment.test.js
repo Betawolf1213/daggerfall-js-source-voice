@@ -12,7 +12,7 @@ import {
   applySpell, tickActiveEffects, CONCEALMENT_START_TEXT,
 } from '../src/systems/effects.js';
 import { EFFECT_COST_TABLE as SPELL_COST } from '../src/systems/spellcost.js';
-import { blockedByIllusionEffect } from '../src/characters/enemyMotor.js';
+import { blockedByIllusionEffect } from '../src/characters/enemy/enemyMotor.js';
 
 const seq = (...v) => { let i = 0; return () => v[Math.min(i++, v.length - 1)]; };
 const T = () => ({ stats: { willpower: 50 }, career: {}, health: 30, maxHealth: 40 });

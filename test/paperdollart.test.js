@@ -2,8 +2,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { getTemplate } from '../src/characters/paperdoll.js';
-import { resolvePaperdollRecord, isCloak, armorArchive, armorVariant, MATERIAL_FAMILY, morphologyOfRace } from '../src/characters/paperdollArt.js';
+import { getTemplate } from '../src/characters/paperdoll/paperdoll.js';
+import { resolvePaperdollRecord, isCloak, armorArchive, armorVariant, MATERIAL_FAMILY, morphologyOfRace } from '../src/characters/paperdoll/paperdollArt.js';
 import { TextureFile } from '../src/formats/textureFile.js';
 import { DFPalette } from '../src/formats/dfPalette.js';
 

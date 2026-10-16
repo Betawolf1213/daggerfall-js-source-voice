@@ -49,7 +49,7 @@ import { healMine, manaMine } from './playerHeal.js';
 import { playerDoor } from './playerDoor.js';
 import { setOnlineLayerExtra, renownHpOf, renownMpOf } from './renownLayer.js';
 import { weaponSkillUsed } from '../characters/weapons.js';
-import { KNIGHT_CITY_WATCH } from '../characters/mobileTypes.js';
+import { KNIGHT_CITY_WATCH } from '../characters/mobile/mobileTypes.js';
 
 /** @type {Readonly<Record<string, number>>} */
 const NONE = Object.freeze({});

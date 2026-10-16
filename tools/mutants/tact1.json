@@ -127,7 +127,7 @@
   },
   {
     "name": "TACT1-sight-blind",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "  return (!Number.isFinite(hit) || hit >= el - 1e-3) && !coveredSight(collider, eye, ex / el, ey / el, ez / el, el);",
     "new": "  return (!Number.isFinite(hit) || hit >= el - 1e-3);",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "TACT1-sight-door-arm-blind",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    return seen && !coveredSight(collider, eye, ex / el, ey / el, ez / el, el);",
     "new": "    return seen;",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "TACT1-shot-blind",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    return !Number.isFinite(hit.dist) && !(coverDistance(this.collider, origin, [dx, dy, dz], dist - originDistance, true) < dist - originDistance - 1e-3);",
     "new": "    return !Number.isFinite(hit.dist);",
     "tests": [

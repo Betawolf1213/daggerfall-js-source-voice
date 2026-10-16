@@ -12,7 +12,7 @@ import { MOD_SETTINGS } from '../src/systems/modSettings.js';
 import { createActivateGate, activateFrame } from '../src/systems/activateGate.js';
 import { onPlayerStruckByEnemy } from '../src/systems/artifactEffects.js';
 import { equipTableOf } from '../src/systems/equip.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 import * as statMods from '../src/systems/statMods.js';
 import * as skills from '../src/systems/skills.js';
 import * as chargen from '../src/systems/chargen.js';

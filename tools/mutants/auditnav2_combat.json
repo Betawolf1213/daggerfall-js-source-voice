@@ -118,7 +118,7 @@
  },
  {
   "name": "AUDIT-NAV2-F56-the-blast-wrapper-drops-its-foe",
-  "file": "src/characters/enemyCasting.js",
+  "file": "src/characters/enemy/enemyCasting.js",
   "old": "      { entity: f.entity, sinks: foeSinks(f), foe: f }, { excludeFoe: f, playerHeight });",
   "new": "      { entity: f.entity, sinks: foeSinks(f) }, { excludeFoe: f, playerHeight });",
   "tests": [

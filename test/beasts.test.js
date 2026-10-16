@@ -57,7 +57,7 @@ test('beasts: a design collapses exactly what it does not use', () => {
       `${d.name} collapses ${JSON.stringify(groups)} but replaces ${replacesBody ? 'its whole body' : replacesHead ? 'its head' : 'nothing'}`,
     );
   }
-  const src = readFileSync(new URL('../src/characters/paperdollPayload.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/characters/paperdoll/paperdollPayload.js', import.meta.url), 'utf8');
   assert.ok(/collapseGroups\(bf, d\.collapse \|\| ALL_GROUPS/.test(src), 'the payload ignores a design\'s collapse list');
 });
 

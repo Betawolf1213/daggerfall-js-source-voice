@@ -12,7 +12,7 @@ import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 
 const _store = new Map();
 globalThis.localStorage = {
@@ -127,7 +127,7 @@ test('REVENANT-FATE the real pool: a revenant\'s death blow leaves it KNEELING -
   assert.ok(said.some((l) => l.startsWith(r.name)), 'its plea said');
   pool.damageFoe(f, 99999, [0, 0, 3], null, { fromPlayer: true });
   assert.equal(f.entity.health, 1, 'kneeling, it takes no blow');
-  assert.match(read('src/characters/enemyTargets.js'), /if \(c === self \|\| \(targetAi && targetAi === ai\)\) continue;\n[^\n]*\n[^\n]*\n\s*if \(!isPlayer && \(c\.yielded \|\| c\.executing \|\| c\.sparing \|\| c\.leaving\)\) continue;/, 'nobody hunts a kneeling one (nor a body in its portal)');
+  assert.match(read('src/characters/enemy/enemyTargets.js'), /if \(c === self \|\| \(targetAi && targetAi === ai\)\) continue;\n[^\n]*\n[^\n]*\n\s*if \(!isPlayer && \(c\.yielded \|\| c\.executing \|\| c\.sparing \|\| c\.leaving\)\) continue;/, 'nobody hunts a kneeling one (nor a body in its portal)');
   assert.equal(pool.snapshotWorld((p) => ({ x: p[0], z: p[2] })).length, 0, 'never in the save');
   const m = pool.fateFor(f);
   assert.equal(m.kind, 'fate'); assert.equal(m.name, r.name); assert.deepEqual(m.options.map((o) => o.id), ['kill', 'spare']);

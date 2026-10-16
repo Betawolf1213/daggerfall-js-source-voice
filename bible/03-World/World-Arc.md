@@ -370,7 +370,7 @@ CityNavigation / MobilePersonMotor / MobilePersonBillboard, verbatim:
   - the navgrid applies the same per-block flip, and Daggerfall city
   grids out at 198k walkable cells / 35k road cells with townsfolk
   probed WALKING ON STREETS.
-- THE MOTOR (characters/mobilePerson.js): SeekingTile with the
+- THE MOTOR (characters/mobile/mobilePerson.js): SeekingTile with the
   verbatim weights walk (2.5% random shuffle, forced change on
   0-weight/blocked targets, the 80% downgrade-leave that makes
   mobiles FOLLOW ROADS), 1.3 u/s marches to cell centers, occupancy
@@ -2172,7 +2172,7 @@ playerStandingStill && withinIdleDistance && sheathed && !invisible &&
 tree, inside ConstantEffect — a per-round live flag, which
 `systems/lycanthropy.js` mirrors exactly.
 
-`characters/mobilePerson.js` ported the gate whole, with `inBeastForm`
+`characters/mobile/mobilePerson.js` ported the gate whole, with `inBeastForm`
 as a defaulted parameter — and NEITHER of the two hosts that evaluate it
 passed the term, so it took its `false` default on every frame and
 `entity.isInBeastForm` was a field written three times and read nowhere

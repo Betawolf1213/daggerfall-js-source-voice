@@ -31,7 +31,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { rangeInt } from '../../systems/unleveledLoot.js';
-import { MOBILE_TYPES } from '../../characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../../characters/mobile/mobileTypes.js';
 import { WOD_SPAWN_TYPE, WOD_ENEMY_ID } from './wodLocationObjects.js';
 
 /** Update's radius (LocationEnemySpawner.cs:91). */

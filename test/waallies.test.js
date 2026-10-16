@@ -13,9 +13,9 @@ import { QuestMachine } from '../src/systems/quest/machine.js';
 import { loadQuestTables } from '../src/systems/quest/tables.js';
 import { QuestResourceBehaviour } from '../src/systems/quest/resourceBehaviour.js';
 import { LeaveShip } from '../src/systems/warmAshesShips.js';
-import { EnemyAI } from '../src/characters/enemyMotor.js';
-import { MOBILE_TEAMS, isPlayerTarget, runTargetMachine, staticTeamOf } from '../src/characters/enemyTargets.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { EnemyAI } from '../src/characters/enemy/enemyMotor.js';
+import { MOBILE_TEAMS, isPlayerTarget, runTargetMachine, staticTeamOf } from '../src/characters/enemy/enemyTargets.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const T = new URL('../vendor/dfu-quests/Tables/', import.meta.url);

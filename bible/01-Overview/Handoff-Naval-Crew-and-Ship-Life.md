@@ -88,7 +88,7 @@ approval and cut from `304ec692d`, the PR head at the time.
 
 **What it does.** A ship's crew stands on her deck as DFU's own mobile
 units: each crew class's sprite, idle and walking, turned to the eye as
-`characters/mobileUnit.js` turns every mobile. They work the deck. They
+`characters/mobile/mobileUnit.js` turns every mobile. They work the deck. They
 have stations and walk between them on the deck model's A* paths. They
 talk in pairs, call out blurbs by faction and by battle, and sing three
 original chanties. When the grapnels fly they muster at the rail. Within

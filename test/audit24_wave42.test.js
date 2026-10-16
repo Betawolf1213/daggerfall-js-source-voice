@@ -6,7 +6,7 @@ import { readFileSync } from 'node:fs';
 import { tryLanguagePacification, SWING_WEAPON_FATIGUE_LOSS, SWING_FATIGUE_COST } from '../src/scenes/hostCombat.js';
 import { enemyLanguageSkill, calculateEnemyPacification } from '../src/combat/formulas.js';
 import { SKILLS, SKILL_NAMES, skillValue } from '../src/systems/skills.js';
-import { KNIGHT_CITY_WATCH, MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { KNIGHT_CITY_WATCH, MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 import { FATIGUE_DRAIN_SCALE } from '../src/systems/statMods.js';   // BALANCE1
 
 const rd = (f) => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');

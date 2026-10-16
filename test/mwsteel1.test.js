@@ -20,7 +20,7 @@ import { ARMOR_ENUM } from '../src/combat/enemyEquipment.js';
 import { FEATURES, FEATURE_PREF_DEFAULTS } from '../src/systems/features.js';
 import {
   CLASSIC_ARMOR_TEMPLATE, STEEL_HELM_STYLES, STEEL_HELM_DEFAULT, ownArmorModelFor, ownArmorParts, ownArmorModelPaths, RRI_JERKIN_TEMPLATE,
-} from '../src/characters/ownArmorModels.js';
+} from '../src/characters/ownModels/ownArmorModels.js';
 import { readPng } from '../tools/pngIO.mjs';
 import { readFbx } from '../tools/fbxRead.mjs';
 import { stripFbx, meshModelNames } from '../tools/fbxStrip.mjs';

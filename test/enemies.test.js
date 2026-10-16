@@ -4,8 +4,8 @@ import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { srand, randomRangeInclusive } from '../src/formats/dfRandom.js';
 import { ENCOUNTER_TABLES } from '../src/characters/encounterTables.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { setValue, resetToDefaults, LIVE } from '../src/systems/settings/settings.js';
 import {
   chooseRandomEnemyType, collectDungeonEnemies, makeSlotRng, alternateRandomEnemyType, RANDOM_MONSTER_VARIANCE,

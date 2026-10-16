@@ -24,7 +24,7 @@ import { createSerpentHost, segmentOfTarget, IN_RETRY_MS, IN_RESEND_MS, HIT_GATH
 import { bodyMesh, marksMesh, MESH_STRIDE, FLAT_STRIDE, MESH_MAX_VERTS, FLAT_MAX_VERTS } from '../src/render/serpentRender.js';
 import { serpentBarModel, SERPENT_CALL_CSS, STUN_CSS, SOUND_WARN_MS, SERPENT_BAR_TEXT } from '../src/ui/serpentBar.js';
 import { SERPENT_SOUNDS, playSerpentSound, SERPENT_VOICE_ROWS } from '../src/systems/serpent/serpentSounds.js';
-import { ENEMY_NAMES } from '../src/characters/enemyBasics.js';
+import { ENEMY_NAMES } from '../src/characters/enemy/enemyBasics.js';
 import { NAVAL_CLASSIC } from '../src/systems/naval/navalSounds.js';
 import { rollSerpentSpoils, serpentSpoilsList, serpentSpoilsDay, SERPENT_SPOILS_GOLD_PER_LEVEL, STOOD_GOLD, SERPENT_SPOILS_KEYS } from '../src/systems/serpent/serpentSpoils.js';
 import { RAID_SPOILS_KEYS } from '../src/systems/raidSpoils.js';

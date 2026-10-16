@@ -41,7 +41,7 @@
 // sfx_footstep_water_001 anywhere): TryImportAudioClips skips the miss
 // and the list plays five, verbatim.
 
-import { EQUIP_SLOTS } from '../characters/paperdoll.js';
+import { EQUIP_SLOTS } from '../characters/paperdoll/paperdoll.js';
 import { equipTableOf } from './equip.js';
 import { ARMOR_MATERIAL } from './armorMaterials.js';
 import { rriNativeMaterialValue } from './roleplayRealismItems/rriItems.js';   // DISC29-B: the class's NativeMaterialValue, the port's one reader

@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { RemotePlayers, corpseTextureFor, peerDeathSound, CORPSE_MS } from '../src/net/remotePlayers.js';
 import { validPose, poseChanged } from '../src/net/wire.js';
 import { SOUND } from '../src/systems/soundClips.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 
 const base = { x: 1, y: 0, z: 2, yaw: 0, pitch: 0 };
 

@@ -20,7 +20,7 @@
 //   as the city's people do; the four with an office answer by it (ARENA_TEXT.undercroft.names).
 // - THE CHAINED BEASTS of the beast tier (a Grizzly Bear, a Sabertooth Tiger, a Giant Scorpion, a second bear) at the
 //   markers past the people, chained (211:5 either side): real bodies, passive, and caged by the bout team's gate
-//   (characters/enemyTargets.js boutGate - a tag nobody shares and always held: they target nobody and nobody them),
+//   (characters/enemy/enemyTargets.js boutGate - a tag nobody shares and always held: they target nobody and nobody them),
 //   held at the foe yield floor if struck (no corpse, no loot) and the keepers' warning said.
 // - PAST THE HALL, THE DEEP CELLARS (UNDERCROFT-DEEP, FIELD BUGS 2026-10-04e, Discord: "The dungeon under the arena is
 //   also completely missing enemies"): a marker a whole RDB block (UNDERCROFT_DEEP_M) from the stair and from every place
@@ -29,7 +29,7 @@
 //
 // Pure: markers in, the population out. Not a DFU member. Ledger A (ARENA).
 
-import { MOBILE_TYPES as M } from '../../characters/mobileTypes.js';
+import { MOBILE_TYPES as M } from '../../characters/mobile/mobileTypes.js';
 
 /** The People of Daggerfall (FACTION.TXT) - the hall's people talk as the city's do. */
 export const UNDERCROFT_FACTION = 518;

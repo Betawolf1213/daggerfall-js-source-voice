@@ -166,7 +166,7 @@ test('EOTB-IL: THE TURN - the angle is measured FROM the camera TO the facing, s
   // record the mod names IdleRight, drawn straight; off the right it is
   // 2, IdleLeft, the mirrored one. The NAMES are the mod's (the same
   // wheel DFU's own MobileUnit.OrientEnemy turns, which the port's
-  // characters/mobileUnit.js already runs for every foe); the arithmetic
+  // characters/mobile/mobileUnit.js already runs for every foe); the arithmetic
   // is what the pin holds
   assert.equal(orientationFor(N, [-1, 0, 0]), 6, 'camera off the left: index 6');
   assert.equal(orientationFor(N, [1, 0, 0]), 2, 'camera off the right: index 2, the mirrored record');

@@ -63,7 +63,7 @@ import { addItem, takeOneInto } from '../systems/inventory.js';   // QUICK-LOOT 
 import { SOUND } from '../systems/soundClips.js';
 import { lootRarityOn, bestRarity, RARITIES } from '../systems/loot/lootRarity.js';   // LR3: the drop chime asks the body's best tier
 import { CORPSE_ACTIVATION_DISTANCE, RAY_DISTANCE } from '../player/activate.js';
-import { enemyDisplayName } from '../characters/enemyBasics.js';
+import { enemyDisplayName } from '../characters/enemy/enemyBasics.js';
 import { localizedText, getLocalizedEnemyName } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language; L10N3e: and the enemy's name
 import { silverFindAt } from '../systems/silverFinds.js';   // SILVER-FINDS: a body opened holds silver now and then
 

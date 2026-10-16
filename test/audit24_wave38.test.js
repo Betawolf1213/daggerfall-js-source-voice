@@ -17,7 +17,7 @@ import { goldStack } from '../src/systems/inventory.js';
 import { goldAmount } from '../src/systems/court.js';
 import { SOUND } from '../src/systems/soundClips.js';
 import { KB_UNIT, enemyWeightClassicUnits, weaponKnockbackSpeed, weaponKnockbackApplies } from '../src/combat/formulas.js';
-import { ENEMY_BASICS, ENEMY_NAMES, enemyDisplayName } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS, ENEMY_NAMES, enemyDisplayName } from '../src/characters/enemy/enemyBasics.js';
 
 const rd = (f) => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');
 const GHOST = 18, WRAITH = 23;
@@ -259,7 +259,7 @@ test('audit24 wave38: the kill notice, and the name table that was out of reach'
   // quest/foe.js re-exports the SAME object rather than keeping a copy.
   assert.doesNotMatch(rd('src/systems/quest/foe.js'), /^export const ENEMY_NAMES = Object\.freeze\(\[/m,
     'no second copy of the name list');
-  assert.match(rd('src/systems/quest/foe.js'), /export \{ ENEMY_NAMES, isClassEnemyId \} from '\.\.\/\.\.\/characters\/enemyBasics\.js'/);
+  assert.match(rd('src/systems/quest/foe.js'), /export \{ ENEMY_NAMES, isClassEnemyId \} from '\.\.\/\.\.\/characters\/enemy\/enemyBasics\.js'/);
 
   // and the reason it had to move: no row has ever carried a `name`,
   // so the dungeon's pacification line called everything "The enemy".

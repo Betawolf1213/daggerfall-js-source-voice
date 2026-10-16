@@ -29,7 +29,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { mobileBillboardSize } from '../src/world/rmbFlats.js';
-import { MobilePerson } from '../src/characters/mobilePerson.js';
+import { MobilePerson } from '../src/characters/mobile/mobilePerson.js';
 import { CityNavigation } from '../src/world/city/cityNavigation.js';
 import { createTownScratch, createPersonTextureKeys } from '../src/scenes/townScratch.js';
 

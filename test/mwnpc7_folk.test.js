@@ -13,8 +13,8 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { folkLook, folkActor, folkVariant, FOLK_DRESS } from '../src/characters/folkBodies.js';
 import { wornByRole } from '../src/characters/wardrobe.js';   // PIN MOVED (MWNPC17, section 25): a walker is their variant's role and cut, dressed off their spawn
 import { createPopulationLane } from '../src/characters/npcBodies.js';
-import { townsfolkOutfitOf } from '../src/characters/ownClothingModels.js';   // PIN MOVED (MW-FOLK1, Townsfolk-Outfits.md): a sprite with its own outfit wears it
-import { PERSON_TEXTURES, GUARD_TEXTURE } from '../src/characters/mobilePerson.js';
+import { townsfolkOutfitOf } from '../src/characters/ownModels/ownClothingModels.js';   // PIN MOVED (MW-FOLK1, Townsfolk-Outfits.md): a sprite with its own outfit wears it
+import { PERSON_TEXTURES, GUARD_TEXTURE } from '../src/characters/mobile/mobilePerson.js';
 import { GENDERS } from '../src/characters/nameHelper.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { ARMOR_ENUM } from '../src/combat/enemyEquipment.js';

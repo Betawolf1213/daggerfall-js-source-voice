@@ -11,9 +11,9 @@ import {
   bandOf, bandSizeOf, bandLevelOf, bandLabel, bandMakeSeed, wanderAt,
 } from '../src/systems/travel/travelBands.js';
 import { rollGroupComposition, CAMP_SIZE, PACK_SIZE } from '../src/systems/campEncounters.js';
-import { SOLITARY_TYPES } from '../src/characters/mobileFactions.js';
+import { SOLITARY_TYPES } from '../src/characters/mobile/mobileFactions.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
-import { enemyDisplayName } from '../src/characters/enemyBasics.js';
+import { enemyDisplayName } from '../src/characters/enemy/enemyBasics.js';
 import { seededRng } from '../src/systems/wind/wind.js';
 import { NATIVE_PER_M } from '../src/systems/travel/travelDungeons.js';
 import { WILD_PACK_MULT } from '../src/scenes/exteriorFoes.js';

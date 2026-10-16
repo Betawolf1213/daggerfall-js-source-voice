@@ -406,7 +406,7 @@ function hashStr(s) {
   for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
   return h >>> 0;
 }
-// what it is leans who it is (mobile types: characters/mobileTypes.js) - a person may be anyone
+// what it is leans who it is (mobile types: characters/mobile/mobileTypes.js) - a person may be anyone
 const BEASTS = new Set([0, 3, 4, 5, 6, 11, 20, 34, 40, 41]);   // rat, bat, bear, tiger, spider, slaughterfish, scorpion, dragonlings, dreugh
 const UNDEAD = new Set([15, 17, 18, 19, 23, 28, 30, 32, 33]);   // skeleton, zombie, ghost, mummy, wraith, vampires, liches
 const DAEDRA = new Set([1, 25, 26, 27, 29, 31, 35, 36, 37, 38]);   // imp, frost/fire daedra, daedroth, seducer, lord, atronachs

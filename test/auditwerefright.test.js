@@ -7,7 +7,7 @@ import { readFileSync } from 'node:fs';
 import { createArrestFlow } from '../src/scenes/arrestFlow.js';
 import { CRIMES } from '../src/systems/court.js';
 import { LYCANTHROPY_TYPES } from '../src/systems/infection.js';
-import { EnemyAI } from '../src/characters/enemyMotor.js';
+import { EnemyAI } from '../src/characters/enemy/enemyMotor.js';
 import { Collider } from '../src/player/collider.js';
 import { createCityGuards, GUARD_MOBILE_TYPE } from '../src/scenes/cityGuards.js';
 

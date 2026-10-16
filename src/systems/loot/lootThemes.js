@@ -28,7 +28,7 @@
 // Daedra, an actual Lich) DO have. Keeping them here, empty, makes
 // that a design record rather than a silent gap regenerable code could
 // re-open.
-import { MOBILE_TYPES } from '../../characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../../characters/mobile/mobileTypes.js';
 
 // itemTemplates.json indices, named for readability; the three arrays
 // are itemTemplatesData.js's own CreatureIngredients1/2/3, verbatim -

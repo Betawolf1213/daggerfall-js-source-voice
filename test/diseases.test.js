@@ -12,7 +12,7 @@ import {
 import { tickActiveEffects, healAttributeDamage, maxFatigue } from '../src/systems/effects.js';
 import { liveStat } from '../src/systems/statMods.js';
 import { calculateAttackDamage } from '../src/combat/formulas.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 import { INFECTION } from '../src/systems/infection.js';
 import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 

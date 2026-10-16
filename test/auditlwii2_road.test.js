@@ -21,7 +21,7 @@ import { lineMinutes } from '../src/systems/livingWorld/meetups.js';
 import { createRelations } from '../src/systems/livingWorld/relations.js';
 import { lwRng, textSeed } from '../src/systems/livingWorld/seed.js';
 import { DAY_MIN, DAY_START_MIN, dayPlan, PILGRIM_TEMPLE_H } from '../src/systems/livingWorld/dayPlan.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 import { getHolidayId, holidayRegion } from '../src/systems/holidays.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
 import { synthTown } from './lwTown.mjs';

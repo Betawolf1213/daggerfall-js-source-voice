@@ -13,34 +13,34 @@
 // stays false so the C-slice fallback makes them close), and the
 // 13 fixed-list casters do not cast up here yet.
 
-import { ENEMY_BASICS } from '../characters/enemyBasics.js';
-import { KNIGHT_CITY_WATCH } from '../characters/mobileTypes.js';   // HALT-ONE: a peer's watchman, silent in the living watch's lane
+import { ENEMY_BASICS } from '../characters/enemy/enemyBasics.js';
+import { KNIGHT_CITY_WATCH } from '../characters/mobile/mobileTypes.js';   // HALT-ONE: a peer's watchman, silent in the living watch's lane
 import { foeTitle } from '../systems/foeTitle.js';   // FOE-TITLE: what a revenant, a champion or an elite is called
 import { effectiveLevel } from '../systems/mentorMode.js';   // SOFTCAP2: mentor mode - the level the world is built around
 import { markFoeStruck } from '../ui/hud/hudFoeTarget.js';   // PX30
 import { damageShieldPool, playerBlowCameToNothing } from '../characters/playerEntity.js';   // AUDIT 58: DecreaseHealth's shield hook is the BASE class's (DaggerfallEntity.cs:313-328)
 import { lycanthropeAttackVoice } from '../systems/lycanthropy.js';   // V4: the beast's attack voice
 import { copyEffectEntry } from '../systems/save/save.js';   // AUDIT 26 F216: the caster-stripping effect copy, one home
-import { EnemyAI, isBackFacing, withinYaw, MELEE_DISTANCE, foeFrameDt } from '../characters/enemyMotor.js';   // AUDIT WORLD6b-iii(a) B4: the puppet's cast is read against the owner's own bands
+import { EnemyAI, isBackFacing, withinYaw, MELEE_DISTANCE, foeFrameDt } from '../characters/enemy/enemyMotor.js';   // AUDIT WORLD6b-iii(a) B4: the puppet's cast is read against the owner's own bands
 import { spaceFoes, freeLodgedFeet } from '../characters/foeSpacing.js';   // FOE-SPACING: the pack keeps apart; FIELD BUGS 2026-10-04d CRATE-FREE: and no foe stands in a crate
 import { blowConnects, blowScaled } from '../ai/foeBlows.js';   // TACT4
 import { foeGlint, tacticsNow, beginRoar } from '../ai/tactics.js';   // TELL2: a wind-up's glint (bible/12-Enhanced-AI/Feud-Arc.md section 4.2); TELL8: the record's wind-up on the foes' clock; RVN4: a last stand's roar
 import { feudRevealWeak, feudWeakBlow } from '../systems/feudLedger.js';   // RVN13: a peer's blow of its weakness; AUDIT FEUD: and mine on a puppet
 import { lastStandGlint, lastStandSize, pyreSpell, bandMembers, bandName, bandWord, BAND_SCATTER_S, BAND_SPACING, RALLY_KIN, ROUT, feudWire, feudFromWire, puppetBandName, puppetRevenantBlows, SIG } from '../systems/revenant/revenantFeud.js';   // RVN4: phase two's rim and size; RVN5: the pyre's blast; RVN6: its band; RVN10: the rout's distance; FEUD WIRE: a puppet's blows and signature
-import { runTargetMachine, boutGate, isPlayerTarget, isLocalPlayerTarget, isPeerTarget, resetAllyTeamOnPlayerAttack, PLAYER_TARGET, PEER_CAST_TARGET, targetAimPoint, enemyArrowOrigin, enemyTransformPoint, arrowAimDirection, wireRecipient, bumpAtkCount, staticTeamOf } from '../characters/enemyTargets.js';   // AUDIT WATCH1: the wire's spellings, one home   // WORLD6b-ii: the local player told from a peer, the peer told from a foe   // MT-ii   // ROAD-H H1/H1b: the ONE arrow loose point and the crouch dip
+import { runTargetMachine, boutGate, isPlayerTarget, isLocalPlayerTarget, isPeerTarget, resetAllyTeamOnPlayerAttack, PLAYER_TARGET, PEER_CAST_TARGET, targetAimPoint, enemyArrowOrigin, enemyTransformPoint, arrowAimDirection, wireRecipient, bumpAtkCount, staticTeamOf } from '../characters/enemy/enemyTargets.js';   // AUDIT WATCH1: the wire's spellings, one home   // WORLD6b-ii: the local player told from a peer, the peer told from a foe   // MT-ii   // ROAD-H H1/H1b: the ONE arrow loose point and the crouch dip
 import { FALL_DAMAGE_THRESHOLD, FALL_HP_PER_METRE, CAPSULE_HEIGHT } from '../player/motor.js';   // CH3: the shared fall formula
 import { SOUND, hitSoundFor, ENEMY_HIT_VOLUME } from '../systems/soundClips.js';   // CH3: the FallDamage clip; WORLD6b: a peer's blow rung at the owner
-import { EnemyCaster, castEnemySpell, hasMagickaToCast, MIN_RANGED_DISTANCE, MAX_RANGED_DISTANCE } from '../characters/enemyCasting.js';   // X3: the shared decision + the ONE cast executor
+import { EnemyCaster, castEnemySpell, hasMagickaToCast, MIN_RANGED_DISTANCE, MAX_RANGED_DISTANCE } from '../characters/enemy/enemyCasting.js';   // X3: the shared decision + the ONE cast executor
 import { assignEnemySpells, SPELL_CAST_SOUND } from '../systems/enemySpells.js';   // X3
 import { applySpell, isSoulTrapEffect, maxFatigue, entityIsParalyzed, applyEnemyMotorEffectFlags, concealmentFlags, concealFlagsOfBits } from '../systems/effects.js';   // X3: self-casts land through the effect spine   // A5: the enemy Levitate arm, the foe-target concealment closure + EntityConcealmentBehaviour's visual
 import { calculateCastCost } from '../systems/spellcost.js';   // X3: costs priced off the player (magic-15 note)
 import { silenceBlocksCast, attemptSoulTrap, SOUL_TRAP_TEXT, fillEmptyTrap, peerSoulTrapOf } from '../systems/mysticism.js';   // X3: the enemy silence gate; X5: the soul trap's kill intercept; STRIKE-SHARED: a peer's trap is its caster's
 import { isAzurasStarEquipped, registerFoeDoor } from '../systems/artifactEffects.js';   // V3: the Star's kill capture; AUDIT PSCALE1 DOORS-2: Namira's reflection through this pool's door
-import { EnemyAttack } from '../characters/enemyAttack.js';
-import { makeEnemyEntity, loadMonsterCareer, KNIGHT_CITYWATCH_ID, applyProgressionScaling } from '../characters/enemyEntity.js';
+import { EnemyAttack } from '../characters/enemy/enemyAttack.js';
+import { makeEnemyEntity, loadMonsterCareer, KNIGHT_CITYWATCH_ID, applyProgressionScaling } from '../characters/enemy/enemyEntity.js';
 import { combatStanding, foeShare, progressionScaling, wildernessShare, placeVeteran, wildernessThreat } from '../systems/skillSoftcap.js';   // SOFTCAP5: tougher foes in the wilds; BAL3: the wilds' own threat
 import { isNight } from '../world/worldClock.js';   // SOFTCAP5: the wilds' night share   // AUDIT WATCH1 A1: the watch's own puppet allowance
-import { MobileUnit, MOBILE_DAEDRA_SEDUCER, SeducerTransformBehaviour } from '../characters/mobileUnit.js';   // A5: the Seducer transform pair + its trigger
+import { MobileUnit, MOBILE_DAEDRA_SEDUCER, SeducerTransformBehaviour } from '../characters/mobile/mobileUnit.js';   // A5: the Seducer transform pair + its trigger
 import { ClassFile } from '../formats/classFile.js';
 import { spawnEnemyLoot, hasBowAttack, backstabChanceOf, zeroDamageHitSound, enemyMissSound, enemyAttackVoice, enemyPainVoice, playerAttackGrunt, tickEnemySound, playEnemyClip, tryLanguagePacification, applyDamageToNonPlayer, windupDoor, tellCues, takeAimedShot, aimedDirection, aimedArrowMeta, landBlowEffect } from './hostCombat.js';   // C2-slice (combat-9/17); MT-ii: the foe-vs-foe payload; TELL1: the poise door
 import { wildLootAfter } from './hostCombat.js';   // WILD1: the open zone's gold, after the chain
@@ -52,7 +52,7 @@ import { calculateAttackDamage, meleeHitConnects, MELEE_HIT_YAW_DEG, chooseEnemy
 import { tallySkill, SKILLS } from '../systems/skills.js';
 import { liveStat } from '../systems/statMods.js';
 import { billboardSize, mobileBillboardSize } from '../world/rmbFlats.js';
-import { enemyControllerHeight, idleSpriteHeight, spriteOriginY } from '../characters/enemyAnchor.js';   // INCIDENT 2026-09-04 (ceiling bats)
+import { enemyControllerHeight, idleSpriteHeight, spriteOriginY } from '../characters/enemy/enemyAnchor.js';   // INCIDENT 2026-09-04 (ceiling bats)
 import { alignControllerToGround } from '../world/groundAlign.js';   // WOD3: CreateFoeGameObjects' drop
 import { rand } from '../formats/dfRandom.js';
 import { setEnemyAlert } from '../systems/encounters.js';
@@ -79,11 +79,11 @@ import { reportPlayerKill } from '../systems/playerKills.js';   // SET2: my own 
 import { partyFoeLoses, partyFoeHits, partyFoeHeals, noteFighter, foeFighters, takeWholeBlow, PARTY_ME } from '../systems/party/partyScale.js';   // PSCALE1: a shared foe weighs whoever fights it
 import { stampWonWeapons, lootRarityOn } from '../systems/loot/lootRarity.js';   // SIGIL1: a body's weapons won online; BAL3: the ladder's switch, the wilds' threat's
 import { corpseName, mobileEntityName, liveEntityName } from '../systems/worldTooltips.js'; import { questFoeSubs } from '../systems/quest/questFoeLine.js';   // QUEST-FOE-LINE: a quest's foe says whose it is; WORLD-HOVER: "<who> (dead)", the mod's own word (.cs:526); H2: and a LIVE one's, when it is not hostile (.cs:304-312)
-import { enemyDisplayName } from '../characters/enemyBasics.js';   // the port's own name, the index law in one place (a LIVE one's fallback)
+import { enemyDisplayName } from '../characters/enemy/enemyBasics.js';   // the port's own name, the index law in one place (a LIVE one's fallback)
 import { bloodCentre } from './hitEffects.js';   // AUDIT 24 (wave 39): EnemyBlood.ShowBloodSplash
 import { bloodHit } from '../combat/bloodDecals.js';   // BLOOD1b: the blow, in the shape the mark's ladder reads
 import { addItem } from '../systems/inventory.js';   // AR1: BowDamage's recoverable arrow, in the TARGET's items
-import { EnemySoundSource, acuteHearingMultiplier } from '../characters/enemySounds.js';   // AUDIT 24 (wave 41): EnemySounds.cs, one home
+import { EnemySoundSource, acuteHearingMultiplier } from '../characters/enemy/enemySounds.js';   // AUDIT 24 (wave 41): EnemySounds.cs, one home
 import { flashPlayerDamage } from '../ui/damageFlash.js';   // AUDIT 24 (wave 39): ShowPlayerDamage   // AUDIT 24 (wave 38): EnemyDeath's one home
 import { puppetLead } from './puppetLead.js';   // DESYNC-ZERO: a moving puppet leads its last word
 import { bindQuestFoeHost, isPrivateQuestFoe, placeFoeEnv, entityOccupancy } from './quest/questFoeHost.js';   // B1: quest foes ride this pool; CURSE-SYNC: a world quest's ride as the world's; RVN6: a band placed about its master
@@ -707,7 +707,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
   });
 
   /** X3-slice: this pool's binding of the ONE shared cast executor
-   *  (characters/enemyCasting.js), the dungeon host's shape. Both
+   *  (characters/enemy/enemyCasting.js), the dungeon host's shape. Both
    *  callers go through here - the S16 casting decision and wave 30's
    *  spider/scorpion paralyze rider - so the deps are written once. */
   function castSpellFrom(f, spell, playerFeet, noSpellPointCost = false, { aimAt = null } = {}) {   // playerFeet: MINE - the blast's probe for the LOCAL player, never a target's
@@ -791,7 +791,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
     // last feet it knew (the striker's feet are not on the hit - recorded)
     // ARENA2: an EXHIBITION fighter struck by someone not in its bout - the city never turns for it: the bout's own
     // hook answers (the Herald's warning, then the watch for a crime - scenes/arena/arenaBouts.js), and the fighter keeps to
-    // its bout (characters/enemyTargets.js boutGate drops the striker it is handed below)
+    // its bout (characters/enemy/enemyTargets.js boutGate drops the striker it is handed below)
     const bout = f.entity?.bout ?? null;
     if (bout && !peer && boutGate(f, PLAYER_TARGET, true) !== true) { bout.hooks?.intrude?.(f); return; }
     if (!peer && !f.ai.isHostile) makeAreaHostile?.();

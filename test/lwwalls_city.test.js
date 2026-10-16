@@ -18,7 +18,7 @@ import { townCensus, isHome } from '../src/systems/livingWorld/census.js';
 import { LivingTown } from '../src/systems/livingWorld/livingTown.js';
 import { DAY_MIN } from '../src/systems/livingWorld/dayPlan.js';
 import { ResidentWalker } from '../src/characters/residentWalker.js';
-import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
+import { PERSON_MOVE_SPEED } from '../src/characters/mobile/mobilePerson.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
 import { maxPopulationFor } from '../src/systems/town/townPopulation.js';
 import { CityNavigation, NAV_CELL } from '../src/world/city/cityNavigation.js';

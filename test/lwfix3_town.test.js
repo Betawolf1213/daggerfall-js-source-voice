@@ -9,7 +9,7 @@ import { keydown } from './chargenDom.mjs';   // the minimal DOM - globals
 import { synthTown } from './lwTown.mjs';
 import { LivingTown, LIVING_RANGE, CENSUS_PATHS, WALK_STRAY_M, walkGap } from '../src/systems/livingWorld/livingTown.js';
 import { ResidentWalker } from '../src/characters/residentWalker.js';
-import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
+import { PERSON_MOVE_SPEED } from '../src/characters/mobile/mobilePerson.js';
 import { DAY_MIN, MIN_STAY, schedule, walkMinutes, dayPlan, watchDuty, patrolBeat, WATCH_SHIFTS } from '../src/systems/livingWorld/dayPlan.js';   // WATCH-DAY: PIN MOVED
 import { townPlaces } from '../src/systems/livingWorld/places.js';
 import { townCensus } from '../src/systems/livingWorld/census.js';

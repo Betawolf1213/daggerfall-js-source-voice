@@ -27,7 +27,7 @@ import { applyCustoms, cardCustoms, customsLines } from '../src/systems/realmCus
 import { firstSaveRefusal } from '../server-account/src/realm.js';
 import { takeSceneOwn } from '../src/systems/sceneCache.js';
 import { capFoeLoot } from '../src/systems/foeLootCap.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 import { validFoeRecord } from '../src/net/wire.js';
 import { DIVINES, ORDERS, createGuildForGroup } from '../src/systems/guild/guildVariants.js';
 import { GUILD_GROUPS } from '../src/formats/factionFile.js';

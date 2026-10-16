@@ -130,7 +130,7 @@ its mutant (the Hourlock before the Brass) hold the order.
   frame's own silhouette is gilded, so the flash and the smoke stay theirs. `gildFrame` pulls each kept pixel toward
   GILD_RAMP by its lightness, alpha never written. The rig keys the art `:gilded` (`combat/weaponRig.js`), so a gold
   gun and a plain one never share frames.
-- **In the Morrowind hand** (`characters/ownWeaponModels.js` OWN_MW_GILDED): its own twin, `thunderlock_gilded.nif`
+- **In the Morrowind hand** (`characters/ownModels/ownWeaponModels.js` OWN_MW_GILDED): its own twin, `thunderlock_gilded.nif`
   over `thunderlock_gilded.dds` - the same capped mesh, the same bone, animation and speed, its texture baked off the
   same occlusion in gold leaf (`tools/meshTexture.mjs` GILDED_BANDS, `tools/bakeThunderlock.mjs`). The preload asks the
   table for both rows (FIELD-GUN-MW2's law).

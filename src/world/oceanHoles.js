@@ -21,8 +21,8 @@
 // read off the IL), and IsPitPixel's buckets are the IL's u8/r8 mix.
 // ═══════════════════════════════════════════════════════════════════
 
-import { MOBILE_TYPES } from '../characters/mobileTypes.js';
-import { ENEMY_BASICS } from '../characters/enemyBasics.js';
+import { MOBILE_TYPES } from '../characters/mobile/mobileTypes.js';
+import { ENEMY_BASICS } from '../characters/enemy/enemyBasics.js';
 import { longitudeLatitudeToMapPixel, mapPixelToWorldCoord, getMapPixelID, WORLD_MAP_TILE_DIM, WORLD_MAP_RMB_DIM } from '../formats/mapsFile.js';
 import { getLocationTerrainTileOrigin } from './terrain/terrainTiles.js';
 import { TORCH_ARCHIVE, TORCH_RECORDS } from '../systems/soundClips.js';   // RDBLayout.IsTorchFlat

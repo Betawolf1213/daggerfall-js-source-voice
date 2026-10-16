@@ -15,8 +15,8 @@ import { inflictPoison, POISONS } from '../src/systems/poisons.js';
 import { runMagicRoundsFor } from '../src/systems/worldTick.js';
 import { killIfAnyLiveStatZero, clampFatigue, maxFatigue } from '../src/systems/statMods.js';   // AUDIT C&C N5: the drain's clamp, the real law
 import { decayEnemyAlert, setEnemyAlert, ALERT_DECAY_MINUTES } from '../src/systems/encounters.js';
-import { PLAYER_TARGET, resetAllyTeamOnPlayerAttack, isLocalPlayerTarget } from '../src/characters/enemyTargets.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { PLAYER_TARGET, resetAllyTeamOnPlayerAttack, isLocalPlayerTarget } from '../src/characters/enemy/enemyTargets.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { RAY_DISTANCE, TREASURE_ACTIVATION_DISTANCE } from '../src/player/activate.js';
 import { CORPSE_ACTIVATION_DISTANCE } from '../src/scenes/hostCombat.js';
 import { renownFoeStruck, renownFoeDied } from '../src/net/renownTracker.js';   // RENOWN1: the kill door's stamps, in the harness's scope

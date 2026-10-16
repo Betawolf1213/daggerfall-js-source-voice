@@ -10,7 +10,7 @@
   },
   {
     "name": "TRAIL-never-looked",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "_followGoal(leader, dt) { return this._trailGoal(leader, dt) ?? this._nearestCrumb() ?? leader; }",
     "new": "_followGoal(leader, dt) { return leader; }",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "TRAIL-line-blind",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    if (!(Math.abs(to[1] - this.feet[1]) <= FOLLOW_SIGHT_DY)) return false;",
     "new": "    return true;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "TRAIL-wall-behind-blocks",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": ".dist < d - FOLLOW_CRUMB_REACH);",
     "new": ".dist < d + FOLLOW_SIGHT_RADIUS);",
     "tests": [
@@ -83,7 +83,7 @@
   },
   {
     "name": "TRAIL-pursuit-gate",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "this.moving = withinYaw(this.yaw, dx, dz, FOLLOW_YAW_GATE_DEG);",
     "new": "this.moving = withinYaw(this.yaw, dx, dz, MOVE_YAW_GATE_DEG);",
     "tests": [
@@ -92,7 +92,7 @@
   },
   {
     "name": "TRAIL-no-pace",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "this._walkStep(dt, this._following ? this._followPace : 1);",
     "new": "this._walkStep(dt);",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "TRAIL-pace-always",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "this._followPace = d > FOLLOW_RUN_M ? FOLLOW_RUN_PACE : 1;",
     "new": "this._followPace = FOLLOW_RUN_PACE;",
     "tests": [
@@ -110,7 +110,7 @@
   },
   {
     "name": "QUIET-scale-dropped",
-    "file": "src/characters/enemySounds.js",
+    "file": "src/characters/enemy/enemySounds.js",
     "old": "const wait = companion ? this.waitTime * COMPANION_ATTRACT_SCALE : this.waitTime;",
     "new": "const wait = this.waitTime;",
     "tests": [

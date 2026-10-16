@@ -112,7 +112,7 @@
   },
   {
     "name": "AUDIT-WATCH1-A2-one-home-the-recipient-spelling-drifts",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "export const wireRecipient = (t) => (t?.isPeer ? t.id : (t == null ? '' : (t.isPlayer ? '.' : '')));",
     "new": "export const wireRecipient = (t) => (t?.isPeer ? t.id : '');",
     "tests": [
@@ -121,7 +121,7 @@
   },
   {
     "name": "AUDIT-WATCH1-A2-one-home-the-count-does-not-move",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "export const bumpAtkCount = (a, ranged) => ((((a | 0) >> 1) + 1) << 1) | (ranged ? 1 : 0);",
     "new": "export const bumpAtkCount = (a, ranged) => ((a | 0) & ~1) | (ranged ? 1 : 0);",
     "tests": [
@@ -176,7 +176,7 @@
   },
   {
     "name": "AUDIT-WATCH1-A5-exactLevel-is-ignored",
-    "file": "src/characters/enemyEntity.js",
+    "file": "src/characters/enemy/enemyEntity.js",
     "old": "    if (mobileType === KNIGHT_CITYWATCH_ID && !exactLevel) level += 3 + Math.floor(rollFn() * 4);",
     "new": "    if (mobileType === KNIGHT_CITYWATCH_ID) level += 3 + Math.floor(rollFn() * 4);",
     "tests": [

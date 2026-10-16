@@ -359,7 +359,7 @@
   },
   {
     "name": "ARENA2-GATE-SIDES",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "  return (sb.side | 0) !== (tb.side | 0);",
     "new": "  return true;",
     "tests": [
@@ -368,7 +368,7 @@
   },
   {
     "name": "ARENA2-GATE-HOLD",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "  if (String(sb.id) !== String(tb.id) || sb.out || tb.out || sb.hold || tb.hold) return false;",
     "new": "  if (String(sb.id) !== String(tb.id) || sb.out || tb.out) return false;",
     "tests": [
@@ -377,7 +377,7 @@
   },
   {
     "name": "ARENA2-GATE-STRANGER",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "  if (!sb || !tb) return false;",
     "new": "  if (!sb || !tb) return null;",
     "tests": [
@@ -386,7 +386,7 @@
   },
   {
     "name": "ARENA2-GATE-SKIP",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "    if (bout === false) continue;",
     "new": "",
     "tests": [
@@ -395,7 +395,7 @@
   },
   {
     "name": "ARENA2-MACHINE-DROP",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "  if (ai.target && boutGate(self, ai.target, isPlayerTarget(ai.target), playerBout) === false) ai.target = null;",
     "new": "",
     "tests": [

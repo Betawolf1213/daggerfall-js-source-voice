@@ -26,7 +26,7 @@ const { paintInkOverlay } = await import('../src/ui/ink/inkMap.js');
 const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
 const { setPlayerDoor } = await import('../src/systems/playerDoor.js');
 const { setWorldMinutes } = await import('../src/systems/worldTick.js');
-const { MOBILE_TYPES: M } = await import('../src/characters/mobileTypes.js');
+const { MOBILE_TYPES: M } = await import('../src/characters/mobile/mobileTypes.js');
 const { lairWords } = await import('../src/ui/revenant/revenantPage.js');
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

@@ -21,7 +21,7 @@ import { watchStep, WATCH_WAIT } from '../src/scenes/livingWorld/livingWatch.js'
 import { synthTown } from './lwTown.mjs';
 import { LivingTown } from '../src/systems/livingWorld/livingTown.js';
 import { ResidentWalker } from '../src/characters/residentWalker.js';
-import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
+import { PERSON_MOVE_SPEED } from '../src/characters/mobile/mobilePerson.js';
 import { DAY_MIN } from '../src/systems/livingWorld/dayPlan.js';
 import { createRelations, EVENTS, HAND_KINDS } from '../src/systems/livingWorld/relations.js';
 import { handDeath, turnKey, placeAt } from '../src/systems/livingWorld/lives.js';

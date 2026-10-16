@@ -30,7 +30,7 @@ import { BUILDING_TYPES } from '../../world/buildingNames.js';
 import { lwRng, lwSeed, rollInt, pickOf } from './seed.js';
 import { hasShopJob, WATCH_COMPANIES } from './census.js';
 import { exitNearest } from './places.js';
-import { MOBILE_TYPES } from '../../characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../../characters/mobile/mobileTypes.js';
 import { GUILDS } from '../guild/guilds.js';
 import { ORDERS } from '../guild/guildVariants.js';
 

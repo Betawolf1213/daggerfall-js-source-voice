@@ -12,7 +12,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
 import * as LR from '../src/systems/loot/lootRarity.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

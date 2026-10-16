@@ -6,8 +6,8 @@
 // existing reader serves the classic paperdoll art directly; dyes
 // apply as C5b band swaps on the indexed bitmap before the palette.
 
-import { armorArchive as armorArchiveByMorphology, BODY_MORPHOLOGY } from '../systems/armorMaterials.js';
-import { raceByKey } from '../systems/races.js';
+import { armorArchive as armorArchiveByMorphology, BODY_MORPHOLOGY } from '../../systems/armorMaterials.js';
+import { raceByKey } from '../../systems/races.js';
 
 // MensClothing Casual/Formal cloak + WomensClothing Casual/Formal cloak.
 const CLOAK_TEMPLATES = new Set([154, 155, 191, 192]);
@@ -35,7 +35,7 @@ export function resolvePaperdollRecord(template, variant = 0) {
 // speak MATERIAL FAMILIES keep working, and `armorArchive` keeps its
 // C6a signature - (gender, RACE) - as a thin wrapper over the
 // morphology-keyed law rather than a rival definition of the name.
-export { MATERIAL_FAMILY, armorVariant } from '../systems/armorMaterials.js';
+export { MATERIAL_FAMILY, armorVariant } from '../../systems/armorMaterials.js';
 
 /** GetBodyMorphology (ItemBuilder.cs:910-925). The race table
  *  (systems/races.js) is the one place a race names its morphology;

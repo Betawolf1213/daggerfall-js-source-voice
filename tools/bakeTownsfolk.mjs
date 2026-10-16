@@ -5,10 +5,10 @@
 //
 // MW-FOLK1 (2026-10-13, the owner: "This is for the Townspeople outfits", with clothes.fbx and the paintings; asked how
 // townspeople wear them: each walker sprite's own outfit, in that sprite's colours - bible/04-Characters/Townsfolk-Outfits.md).
-// Daggerfall's townspeople are pictures - four outfits a race and a sex (characters/mobilePerson.js PERSON_TEXTURES) -
+// Daggerfall's townspeople are pictures - four outfits a race and a sex (characters/mobile/mobilePerson.js PERSON_TEXTURES) -
 // and the export is those outfits made for the Morrowind body: all four Redguard men's (381-384), all four Nord men's
 // (387-390), the Bretons' 385 and 386, and the hooded Redguard woman's (398). Each sprite's body wears its picture's
-// outfit (characters/ownClothingModels.js TOWNSFOLK_OUTFITS), so the body that replaces a picture at its range wears
+// outfit (characters/ownModels/ownClothingModels.js TOWNSFOLK_OUTFITS), so the body that replaces a picture at its range wears
 // what the picture wore.
 //
 //   NINE OBJECTS, EACH A WHOLE OUTFIT. Every object is one sprite's clothes - a tunic, its sleeves, its hose or

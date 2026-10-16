@@ -26,7 +26,7 @@ import {
 } from '../src/ui/inventoryDoor.js';
 import { withDom } from './invdrag.mjs';   // AUDIT INV2: a document just real enough to DRIVE the gesture
 import { PACK_PAGES, filterByPage } from '../src/ui/packPages.js';   // PX31: the pack's nine pages
-import { EQUIP_SLOTS, ITEM_TEMPLATES, getTemplate } from '../src/characters/paperdoll.js';
+import { EQUIP_SLOTS, ITEM_TEMPLATES, getTemplate } from '../src/characters/paperdoll/paperdoll.js';
 import { inventoryItemImage } from '../src/systems/item/itemTemplates.js';
 import { equipItem, unequipSlot, isEquipped } from '../src/systems/equip.js';
 import { maxEncumbrance } from '../src/combat/formulas.js';

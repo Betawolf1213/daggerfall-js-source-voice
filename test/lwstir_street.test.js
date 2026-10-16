@@ -29,7 +29,7 @@ import {
   WATCH_HOURS, WATCH_CALLS, STALL_CRIES, BEGGAR_CRIES, DRINKING_SONGS, fillLine,
 } from '../src/systems/livingWorld/lines.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
-import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
+import { PERSON_MOVE_SPEED } from '../src/characters/mobile/mobilePerson.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
 
 const RATE = CLASSIC_MINUTES_PER_SECOND;

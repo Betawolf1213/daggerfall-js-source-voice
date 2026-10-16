@@ -21,7 +21,7 @@ import { itemLongName } from '../src/systems/item/itemInfo.js';
 import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { hasArmor } from '../src/systems/betterAmbience.js';
 import { equipTableOf } from '../src/systems/equip.js';
-import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
+import { EQUIP_SLOTS } from '../src/characters/paperdoll/paperdoll.js';
 import { installRoleplayRealismItems } from '../src/systems/roleplayRealismItems/rriInstall.js';
 
 installRoleplayRealismItems({ fetchBytes: async () => { throw new Error('no art in this pin'); } });   // the boot's install (scenes/shared.js): the fourteen templates

@@ -27,7 +27,7 @@ Two deeds make one:
 | Deed | How | Seam |
 |---|---|---|
 | **Slew** | Its blow takes the player's last health (melee or an arrow) | The struck seam marks the attacker (`combat/formulas.js`), the damage door takes the mark, the hurt tells `registerPlayerBlowLanded` (`systems/sigil/sigilSetPowers.js`). Confirmed a microtask later, after `hurtPlayer` is done, so a death Stendarr's mercy (`setAvoidDeathHook`) undoes makes no revenant. |
-| **Fled** | Under 20% of its health for the first time (35% for a revenant of rank 1 or 2), it wins a roll (5%; 80% for a revenant of rank 1 or 2, 15% from rank 3, where its will takes over - FLIGHT-FIRST, section 38) and runs, at twice its walk. Out of reach before its run ends, it has escaped. | `scenes/exteriorFoes.js` update: `revenantFleeHealth` and `rollRevenantFlee`, then `ai.flee(playerFeet, 8 s)` (`characters/enemyMotor.js`). While fleeing it does nothing else. At the end of its run or 45 m off, `escapeFoe` removes it with no corpse and no kill. |
+| **Fled** | Under 20% of its health for the first time (35% for a revenant of rank 1 or 2), it wins a roll (5%; 80% for a revenant of rank 1 or 2, 15% from rank 3, where its will takes over - FLIGHT-FIRST, section 38) and runs, at twice its walk. Out of reach before its run ends, it has escaped. | `scenes/exteriorFoes.js` update: `revenantFleeHealth` and `rollRevenantFlee`, then `ai.flee(playerFeet, 8 s)` (`characters/enemy/enemyMotor.js`). While fleeing it does nothing else. At the end of its run or 45 m off, `escapeFoe` removes it with no corpse and no kill. |
 
 A kill no blow names (a spell's burn, a lingering effect's round, a poison's tick) goes to the foe whose harm last
 reached the player (**REVENANT-HARM**, `systems/harmMark.js`, a leaf):

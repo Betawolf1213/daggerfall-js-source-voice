@@ -14,7 +14,7 @@ import { fileURLToPath } from 'node:url';
 import { wodSiteId, validSites, validSiteTags, yieldsTo, WOD_SITES_MAX, WOD_CAMP_PUPPETS_MAX, WOD_CLAIM_WINDOW_MS, WOD_AGE_MAX } from '../src/world/worldOfDaggerfall/wodShared.js';
 import { createExteriorFoes, MAX_ACTIVE_ENCOUNTER_FOES, ENCOUNTER_PUPPETS_MAX } from '../src/scenes/exteriorFoes.js';
 import { CELL_PUPPETS_MAX } from '../src/net/wire.js';
-import { isPeerTarget } from '../src/characters/enemyTargets.js';
+import { isPeerTarget } from '../src/characters/enemy/enemyTargets.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rd = (p) => readFileSync(join(ROOT, p), 'utf8');

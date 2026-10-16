@@ -29,13 +29,13 @@ import { assignRriEnemyEquipment, convertOrcish, getArmorTemplateIndex, RRI_ITEM
 import { onShopShelfStocked, assignSkillEquipment, assignSkillSpellbook, RRI_SPELLS, useBandage, KIT } from '../src/systems/roleplayRealismItems/rriKits.js';
 import { assignStartingEquipment, STARTING_GOLD } from '../src/systems/startingGear.js';
 import { assignStartingSpells } from '../src/systems/chargen.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { conditionPercentage, mintCondition, setItemFields, templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { LOOT_CONTAINER_TYPES } from '../src/systems/sceneCache.js';
-import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
+import { EQUIP_SLOTS } from '../src/characters/paperdoll/paperdoll.js';
 import { equipTableOf } from '../src/systems/equip.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');

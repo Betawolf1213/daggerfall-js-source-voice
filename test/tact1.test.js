@@ -12,7 +12,7 @@ import {
   COVER_MIN_H, COVER_MIN_W, COVER_RADIUS_FRAC, COVER_HEIGHT_FRAC, NOT_COVER_ARCHIVES, COVER_CELL,
 } from '../src/ai/cover.js';
 import { Collider } from '../src/player/collider.js';
-import { canSeeTarget, EnemyAI } from '../src/characters/enemyMotor.js';
+import { canSeeTarget, EnemyAI } from '../src/characters/enemy/enemyMotor.js';
 import { ArrowFlight } from '../src/combat/arrowFlight.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');

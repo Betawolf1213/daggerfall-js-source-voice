@@ -8,10 +8,10 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { validFoeRecord, FOE_LEVEL_MAX } from '../src/net/wire.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
-import { isPeerTarget, PLAYER_TARGET } from '../src/characters/enemyTargets.js';
+import { isPeerTarget, PLAYER_TARGET } from '../src/characters/enemy/enemyTargets.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { WEAPONS_ENUM } from '../src/combat/enemyEquipment.js';
-import { GIVE_UP_TICKS } from '../src/characters/enemyMotor.js';
+import { GIVE_UP_TICKS } from '../src/characters/enemy/enemyMotor.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 
@@ -80,7 +80,7 @@ test('AUDIT WORLD6b-ii A1: the caster\'s tick runs always, never gated off (the 
   const me = [11, 0, 10];
   step(pool, me, pe, 10);
   assert.ok(calls.slice(-3).every((o) => o === undefined), 'at me the same');
-  const c = rd('src/characters/enemyCasting.js');
+  const c = rd('src/characters/enemy/enemyCasting.js');
   assert.match(c, /update\(dt, ai, attack, playerFeet, playerEntity\) \{/, 'one signature (WORLD6b-iii retired the suppress arm)'); assert.doesNotMatch(c, /suppress/, 'no dead option');
 });
 
@@ -119,7 +119,7 @@ test('AUDIT WORLD6b-ii A5/A8: the player\'s slot is named in the target walk (fo
   pool.setNet(netFor(hits, { list: [] }));
   const rat = await pool.spawnFoe(0, [10, 0, 10], { feetGiven: true });
   assert.deepEqual(pool.foesFrame(true).f.map((r) => r.g), [''], 'A8: not stepped yet - none, not \'.\' (which latched the puppet hostile)');
-  const t = rd('src/characters/enemyTargets.js');
+  const t = rd('src/characters/enemy/enemyTargets.js');
   assert.match(t, /const walk = \(candidates \?\? \[\]\)\.includes\(PLAYER_TARGET\) \? \[\.\.\.candidates\] : \[\.\.\.\(candidates \?\? \[\]\), PLAYER_TARGET\];/, 'A5: the caller names my slot');
   // PIN MOVED (AUDIT CC-E1): the other clients' bodies a companion's fight crosses ride last, after the peers
   assert.match(rd('src/scenes/exteriorFoes.js'), /runTargetMachine\(f, \[\.\.\.senses\.candidates\(\), PLAYER_TARGET, \.\.\.\(f\.placed && !f\.site \? \[\] : _questLike\(f\) \? questPeerCandidates\(f\) : peerCandidates\(\)\), \.\.\.coopCandidates\(f\)\], pf, cdt, \{/, 'and the pool puts the peers after me (QUEST-PARTY re-aim: a quest foe\'s are the party it rides to)');

@@ -7,7 +7,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 
-import { walkerRace, raceOfPeople, redguardRegion, RACE_OF_PEOPLE, PERSON_TEXTURES, PERSON_FACE_RECORDS, GUARD_TEXTURE } from '../src/characters/mobilePerson.js';
+import { walkerRace, raceOfPeople, redguardRegion, RACE_OF_PEOPLE, PERSON_TEXTURES, PERSON_FACE_RECORDS, GUARD_TEXTURE } from '../src/characters/mobile/mobilePerson.js';
 import { REGION_NAMES, REGION_RACES } from '../src/formats/mapsTables.js';
 import { FACTION_RACES, CLIMATES } from '../src/formats/mapsFile.js';
 import { mintResident } from '../src/systems/livingWorld/census.js';
@@ -79,7 +79,7 @@ test('REGIONAL-FOLK: every population asks the one rule - both street hosts, the
     }
   };
   walk('src');
-  assert.deepEqual(holders, ['src/characters/mobilePerson.js'], 'ONE DFU MEMBER, ONE EXPORT: the climate\'s table');
+  assert.deepEqual(holders, ['src/characters/mobile/mobilePerson.js'], 'ONE DFU MEMBER, ONE EXPORT: the climate\'s table');
 });
 
 /** A Legacy host as test/legacy5_marriage.test.js stands one, with the census's own resident behind `residentNow`. */

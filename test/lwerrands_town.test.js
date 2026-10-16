@@ -17,8 +17,8 @@ import { townCensus } from '../src/systems/livingWorld/census.js';
 import { guildHallOf, guildDay, errandShop, favourites, dayPlan, ERRAND_NEEDS, ERRAND_NEED_SHARE, ERRAND_SHOP_SHARE, MAGES_GUILD, FIGHTERS_GUILD, ORDER_FACTIONS, DAY_MIN, DAY_START_MIN } from '../src/systems/livingWorld/dayPlan.js';
 import { LivingTown } from '../src/systems/livingWorld/livingTown.js';
 import { BUILDING_TYPES as B } from '../src/world/buildingNames.js';
-import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';
-import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
+import { MOBILE_TYPES as M } from '../src/characters/mobile/mobileTypes.js';
+import { PERSON_MOVE_SPEED } from '../src/characters/mobile/mobilePerson.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
 import { seededRng } from '../src/systems/wind/wind.js';
 

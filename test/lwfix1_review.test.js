@@ -9,7 +9,7 @@ import { readFileSync } from 'node:fs';
 import { synthTown } from './lwTown.mjs';
 import { LivingTown } from '../src/systems/livingWorld/livingTown.js';
 import { ResidentWalker } from '../src/characters/residentWalker.js';
-import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
+import { PERSON_MOVE_SPEED } from '../src/characters/mobile/mobilePerson.js';
 import { DAY_MIN } from '../src/systems/livingWorld/dayPlan.js';
 import { createRelations } from '../src/systems/livingWorld/relations.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';

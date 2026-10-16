@@ -8,7 +8,7 @@ import { perspective } from '../src/world/mat4.js';
 import { FP_FIELD_OF_VIEW, frustum, fpFrameWindow } from '../src/combat/fpArm.js';
 import { offHandQuickslot, quickslotView, assignQuickslot, clearQuickslots, QUICKSLOT_TEXT } from '../src/systems/quickslots.js';
 import { TEMPLATES } from '../src/systems/useItem.js';
-import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
+import { EQUIP_SLOTS } from '../src/characters/paperdoll/paperdoll.js';
 import { mountEnhancedInventory } from '../src/ui/enhanced/enhancedInventory.js';
 import { withDom } from './invdrag.mjs';
 

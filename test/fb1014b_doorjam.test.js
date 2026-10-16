@@ -1,7 +1,7 @@
 // FIELD BUGS 2026-10-14b DOOR-JAM (the Discord: "Multiple enemies cannot pass through a doorway at the same time
 // because their hitboxes collide"; the screenshot a dungeon corridor's wooden door frame, several humanoid foes stood
 // in it and none coming through). Not their hitboxes: a foe's capsule is its idle sprite's height (SetupDemoEnemy,
-// characters/enemyAnchor.js), a humanoid's often taller than a doorway's lintel, and EnemyMotor.HeightAdjust - DFU's
+// characters/enemy/enemyAnchor.js), a humanoid's often taller than a doorway's lintel, and EnemyMotor.HeightAdjust - DFU's
 // "temporarily reduce their height to 1.65, which should be short enough to fit through most if not all doorways" -
 // was never ported. The obstacle probe stops under DOOR_CROUCHING_HEIGHT by design, so it saw no lintel and bought no
 // detour; the capsule's head met the lintel every step; and every foe that followed stood in the same doorway beside
@@ -15,8 +15,8 @@ import { join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { setPref } from '../src/systems/uiPrefs.js';
 import { Collider, SIDE_CONTACT } from '../src/player/collider.js';
-import { EnemyAI, DOOR_CROUCHING_HEIGHT, HEIGHT_CHANGE_SECONDS, foeFrameDt } from '../src/characters/enemyMotor.js';
-import { enemyControllerHeight, idleSpriteHeight } from '../src/characters/enemyAnchor.js';
+import { EnemyAI, DOOR_CROUCHING_HEIGHT, HEIGHT_CHANGE_SECONDS, foeFrameDt } from '../src/characters/enemy/enemyMotor.js';
+import { enemyControllerHeight, idleSpriteHeight } from '../src/characters/enemy/enemyAnchor.js';
 import { spaceFoes, spaceAcross, clearDoorways, doorSpotsNear, sweepHeight } from '../src/characters/foeSpacing.js';
 import { setTacticsClock, resetTactics, noteLocalPlayer } from '../src/ai/tactics.js';
 import { CAPSULE_HEIGHT } from '../src/player/motor.js';
@@ -197,9 +197,9 @@ test('DOOR-JAM: through the crouch the probes and aims read the foe\'s own heigh
 });
 
 test('DOOR-JAM by source: HeightAdjust runs after every fixed step\'s moves (FixedUpdate\'s last call), and every Move in both motors writes its CollidedSides', () => {
-  const m = rd('src/characters/enemyMotor.js');
+  const m = rd('src/characters/enemy/enemyMotor.js');
   assert.match(m, /this\._step\(FIXED_DT, playerFeet, senses, paralyzed, paused\);\n\s*this\._heightAdjust\(FIXED_DT\);/);
-  for (const f of ['src/characters/enemyMotor.js', 'src/ai/enhancedMotor.js']) {
+  for (const f of ['src/characters/enemy/enemyMotor.js', 'src/ai/enhancedMotor.js']) {
     const s = rd(f);
     const moves = [...s.matchAll(/const (\w+) = this\.collider\.move\(this\.feet,[^;]*\);[^\n]*\n\s*this\.isGrounded = \1\.grounded;[^\n]*\n\s*this\.collidedSides = !!\1\.sides;/g)].length;
     assert.equal(moves, [...s.matchAll(/this\.collider\.move\(this\.feet,/g)].length, `${f}: every Move keeps its CollidedSides`);
@@ -259,7 +259,7 @@ test('KEEP FULL HEIGHT by source: the duck is read by movement alone - every `.c
       const at = `${rel}:${i + 1}`;
       if (/\.controllerHeight\b/.test(line)) {
         if (MOVE.test(line)) moves++;
-        else if (rel === 'src/characters/enemyMotor.js' && KEEP.test(line)) { /* the duck's own state */ }
+        else if (rel === 'src/characters/enemy/enemyMotor.js' && KEEP.test(line)) { /* the duck's own state */ }
         else if (rel === 'src/characters/foeSpacing.js' && /^export const sweepHeight = \(ai\) => ai\.controllerHeight \?\? ai\.height \?\? CAPSULE_HEIGHT;$/.test(line)) { /* the pushes' one door */ }
         else bad.push(`${at} ${line.trim()}`);
       }
@@ -285,8 +285,8 @@ test('DOOR-JAM on the real dungeons: Mages - the capsule their own idle record m
   const { TextureFile } = await import('../src/formats/textureFile.js');
   const { dfMeshToModel } = await import('../src/world/meshReader.js');
   const { layoutRdbBlock } = await import('../src/world/rdbLayout.js');
-  const { ENEMY_BASICS } = await import('../src/characters/enemyBasics.js');
-  const { MOBILE_TYPES } = await import('../src/characters/mobileTypes.js');
+  const { ENEMY_BASICS } = await import('../src/characters/enemy/enemyBasics.js');
+  const { MOBILE_TYPES } = await import('../src/characters/mobile/mobileTypes.js');
   const bytes = (f) => new Uint8Array(readFileSync(join(ARENA2, f)));
   const fn = TextureFile.indexToFileName(ENEMY_BASICS[MOBILE_TYPES.Mage].maleTexture);
   const tex = new TextureFile();

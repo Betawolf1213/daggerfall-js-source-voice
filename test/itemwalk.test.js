@@ -8,7 +8,7 @@ import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 import { WEAPONS, WEAPON_MATERIALS } from '../src/characters/weapons.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { goldStack, letterOfCredit } from '../src/systems/inventory.js';

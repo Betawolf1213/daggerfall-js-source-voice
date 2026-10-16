@@ -92,21 +92,21 @@
   },
   {
     "name": "FB1005C-assist-unread",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "    if (self.companion != null && fightsOurSide(targetAi, self)) priority += COMPANION_ASSIST_PRIORITY;",
     "new": "    if (false) priority += COMPANION_ASSIST_PRIORITY;",
     "tests": ["test/crewcompanions.test.js"]
   },
   {
     "name": "FB1005C-assist-companion-not-side",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "  return t != null && (isPlayerTarget(t) || t.companion != null || t === self);",
     "new": "  return t != null && (isPlayerTarget(t) || t === self);",
     "tests": ["test/crewcompanions.test.js"]
   },
   {
     "name": "FB1005C-assist-every-foe",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "    if (self.companion != null && fightsOurSide(targetAi, self)) priority += COMPANION_ASSIST_PRIORITY;",
     "new": "    if (fightsOurSide(targetAi, self)) priority += COMPANION_ASSIST_PRIORITY;",
     "tests": ["test/crewcompanions.test.js", "test/enemytargets.test.js", "test/infighting.test.js"]

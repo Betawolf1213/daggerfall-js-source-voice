@@ -15,7 +15,7 @@ import {
 import { GAMBIT_TIERS, dealRegular } from '../src/systems/gambit/gambitPatrons.js';
 import { GAMBIT_STAKE_MULTS, GAMBIT_WIN_PAYS, GAMBIT_CROWNS } from '../src/systems/gambit/gambitTableSession.js';
 import { SUIT_CROWNS } from '../src/render/cardFaces.js';
-import { ENEMY_NAMES } from '../src/characters/enemyBasics.js';
+import { ENEMY_NAMES } from '../src/characters/enemy/enemyBasics.js';
 import { FOE_CARDS } from '../src/systems/card/cardSources.js';
 import {
   gambitHudModel, createGambitTableHud, gridOrder, stakePicks, rangeCells, infoBox, tierStep, unitCardId, boardCursorStep, GAMBIT_TABLE_CSS,

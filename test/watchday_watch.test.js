@@ -13,9 +13,9 @@ import { townCensus, watchRoster, watchShiftSize, townWatchCount, mintResident, 
 import { dayPlan, entryAt, watchDuty, patrolBeat, nightTail, morningWalk, walkMinutes, schedule, MIN_STAY, WATCH_SHIFTS, WATCH_ROTATION, DAY_MIN, DAY_START_MIN, isOutdoor } from '../src/systems/livingWorld/dayPlan.js';
 import { LivingTown, PAIR_SIDE_M, PAIR_BEHIND_M, WALK_FAST } from '../src/systems/livingWorld/livingTown.js';
 import { ResidentWalker } from '../src/characters/residentWalker.js';
-import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
+import { PERSON_MOVE_SPEED } from '../src/characters/mobile/mobilePerson.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
-import { GUARD_TEXTURE, PERSON_TEXTURES } from '../src/characters/mobilePerson.js';
+import { GUARD_TEXTURE, PERSON_TEXTURES } from '../src/characters/mobile/mobilePerson.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const RATE = CLASSIC_MINUTES_PER_SECOND;

@@ -22,7 +22,7 @@
 // merchant's openBuy - systems/guild/guildServices.js). The General Store no longer shelves or buys a horse, a cart or a
 // wagon (systems/shopStock.js) - a departure from DFU, whose every General Store shelves the horse and the cart.
 //
-// WHO KEEPS THEM: a keeper of the town's own people (the race its walkers wear - characters/mobilePerson.js walkerRace,
+// WHO KEEPS THEM: a keeper of the town's own people (the race its walkers wear - characters/mobile/mobilePerson.js walkerRace,
 // a Redguard region's Redguard), named from the region's
 // name bank on a seed of the town's map id and the yard's kind - every client names the same keeper - and the yard is
 // named for them ("Halbrecht's Stables").

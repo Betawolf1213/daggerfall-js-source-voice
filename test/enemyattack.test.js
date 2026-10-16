@@ -3,8 +3,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   ATTACK_SPEED_FLOOR, ATTACK_YAW_DEG, resetMeleeTimer, attackRollPasses, EnemyAttack,
-} from '../src/characters/enemyAttack.js';
-import { MELEE_DISTANCE } from '../src/characters/enemyMotor.js';
+} from '../src/characters/enemy/enemyAttack.js';
+import { MELEE_DISTANCE } from '../src/characters/enemy/enemyMotor.js';
 import { HIT_FRAME_MELEE } from '../src/characters/weaponStates.js';
 
 const approx = (a, b, eps = 1e-6) => assert.ok(Math.abs(a - b) < eps, `${a} !~ ${b}`);

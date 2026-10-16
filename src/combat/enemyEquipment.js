@@ -18,7 +18,7 @@ import { mintCondition, templateByIndex, itemBaseValue, setItemFields, materialV
 import { dice100, formulaOverride } from './formulas.js';   // UL1: RandomMaterial / RandomArmorMaterial consult the registry
 import { weaponMinDamage, weaponMaxDamage } from '../characters/weapons.js';   // RRI2: CalculateWeaponMin/MaxDamage through their one home, so a registered override (weaponBalance) reaches the mint
 import { materialArmorValue, itemArmorValue, BODY_PARTS } from '../systems/armorMaterials.js';
-import { KNIGHT_CITY_WATCH } from '../characters/mobileTypes.js';   // AUDIT 24 (wave 41): one home
+import { KNIGHT_CITY_WATCH } from '../characters/mobile/mobileTypes.js';   // AUDIT 24 (wave 41): one home
 import { ARROW_TEMPLATE } from '../systems/inventory.js';   // X11b: CreateWeapon's one special case
 import { customItemClass } from '../systems/roleplayRealismItems/rriItems.js';   // RRI2: a custom piece's body part is its class's equip slot
 

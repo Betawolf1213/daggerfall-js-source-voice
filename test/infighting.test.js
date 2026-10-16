@@ -25,8 +25,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { getTargets, runTargetMachine, isPlayerTarget, staticTeamOf, mobileTeamOf } from '../src/characters/enemyTargets.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { getTargets, runTargetMachine, isPlayerTarget, staticTeamOf, mobileTeamOf } from '../src/characters/enemy/enemyTargets.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { ENCOUNTER_TABLES } from '../src/systems/encounters.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -105,7 +105,7 @@ test('IF1 (7): the DUNGEON host arms the machine and acts on a foe target', () =
   assert.match(read('src/scenes/shared.js'), /\n    candidates,\n/);
   // the per-foe targeting closure the motor arms itself from
   assert.match(dc, /targeting: \(ai, pf, cdt\) => foeDeps\.runTargetMachine\(rec, sn\.candidates\(streamed, rec\), pf, cdt,/);
-  assert.match(read('src/characters/enemyMotor.js'), /this\._armedTargeting = !!targeting;/);
+  assert.match(read('src/characters/enemy/enemyMotor.js'), /this\._armedTargeting = !!targeting;/);
   // and all three action arms fork on a non-player target
   assert.match(dc, /function resolveFoeMeleeVsFoe\(f\)/, 'melee');
   assert.match(dc, /if \(!vsPlayer && resolveFoeMeleeVsFoe\(f\)\) return;/, 'melee, from the one home');

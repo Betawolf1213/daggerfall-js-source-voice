@@ -53,7 +53,7 @@ import { customParseInt, isPlayerAtBuildingType, isPlayerAtDungeonType, MARKER_P
 import { getIndividualFactionID, getFactionDataOrThrow } from './person.js';
 import { markerScenePosition } from './sceneMount.js';
 import { isSongFileDefined, songFileToRecordName } from '../song/songFiles.js';
-import { MOBILE_TEAMS } from '../../characters/enemyTargets.js';   // MT-iii: ChangeFoeTeam's enum door
+import { MOBILE_TEAMS } from '../../characters/enemy/enemyTargets.js';   // MT-iii: ChangeFoeTeam's enum door
 import { dfuEffectKeyOf } from '../spell/spellEffects.js';   // QG1: CastEffectDo's key vocabulary, one home
 import { setLocationVariant, setNewLocationVariant, setBlockVariant, setBuildingVariant, makeLocationKey, NO_VARIANT } from '../worldDataVariants.js';   // RR3: WorldUpdate's registry
 import { ONLINE_GUARD_WINDOWS, guardWindowStep } from './onlineGuard.js';   // GUARD-ONLINE: a guarded quest's window online is its arrival's

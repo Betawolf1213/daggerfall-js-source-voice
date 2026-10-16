@@ -22,7 +22,7 @@ import { createRandomClothing, ITEM_GROUPS } from '../src/systems/loot/loot.js';
 import { createTempItem, CREATE_ITEM_ROWS } from '../src/systems/createItem.js';
 import { equipItem } from '../src/systems/equip.js';
 import { nextVariant, toggleHood } from '../src/systems/useItem.js';
-import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
+import { EQUIP_SLOTS } from '../src/characters/paperdoll/paperdoll.js';
 import { arrivalClampMinutes } from '../src/systems/travel/travel.js';
 import { MINUTES_PER_DAY, isDayFromMinutes } from '../src/systems/gameDate.js';
 import { setSharedClock, sharedClockOn, worldMinutes } from '../src/systems/worldTick.js';

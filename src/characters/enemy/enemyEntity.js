@@ -15,12 +15,12 @@
 // Unity Random.Range slots are uniform rolls, as in DFU itself.
 // Equipment (SetEnemyEquipment) and loot generation: E3b/E4.
 
-import { effectiveSkill, rawSkillForEffective } from '../systems/skillSoftcap.js';   // SOFTCAP2: a leaf
-import { KNIGHT_CITY_WATCH as KNIGHT_CITYWATCH_ID } from './mobileTypes.js';
-import { meanerMonstersRow as pcaaoMeanerMonstersRow } from '../combat/pcaaoMeanerMonsters.js';   // PCO1: Kirk.O's Meaner Monsters edit, when both mods are on
-import { applyMeanerMonsters } from './meanerMonsters.js';   // MM1: Ralzar's Meaner Monsters, when its switch is on
+import { effectiveSkill, rawSkillForEffective } from '../../systems/skillSoftcap.js';   // SOFTCAP2: a leaf
+import { KNIGHT_CITY_WATCH as KNIGHT_CITYWATCH_ID } from '../mobile/mobileTypes.js';
+import { meanerMonstersRow as pcaaoMeanerMonstersRow } from '../../combat/pcaaoMeanerMonsters.js';   // PCO1: Kirk.O's Meaner Monsters edit, when both mods are on
+import { applyMeanerMonsters } from '../meanerMonsters.js';   // MM1: Ralzar's Meaner Monsters, when its switch is on
 
-export { KNIGHT_CITY_WATCH as KNIGHT_CITYWATCH_ID } from './mobileTypes.js';   // AUDIT 24 (wave 41): one home
+export { KNIGHT_CITY_WATCH as KNIGHT_CITYWATCH_ID } from '../mobile/mobileTypes.js';   // AUDIT 24 (wave 41): one home
 
 /** Monster careers (E4a): ENEMY{nnn}.CFG records inside MONSTER.BSA,
  *  the SAME 74-byte ClassFile format (verbatim
@@ -33,13 +33,13 @@ export async function loadMonsterCareer(careerIndex, fetchBytes) {
   const hit = _monsterCareers.get(careerIndex);
   if (hit) return hit;
   if (!_monsterBsa) {
-    const { BsaFile } = await import('../formats/bsaFile.js');
+    const { BsaFile } = await import('../../formats/bsaFile.js');
     _monsterBsa = new BsaFile(await fetchBytes('MONSTER.BSA'));
   }
   const name = `ENEMY${String(careerIndex).padStart(3, '0')}.CFG`;
   const idx = _monsterBsa.getRecordIndex(name);
   if (idx === -1) return null;
-  const { ClassFile } = await import('../formats/classFile.js');
+  const { ClassFile } = await import('../../formats/classFile.js');
   const cf = new ClassFile();
   cf.load(_monsterBsa.getRecordBytes(idx));
   _monsterCareers.set(careerIndex, cf.career);

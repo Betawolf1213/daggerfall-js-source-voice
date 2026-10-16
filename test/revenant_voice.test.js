@@ -6,7 +6,7 @@ import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { PERSONALITIES, PERSONALITY_IDS, VOICE_EVENTS, personalityFor, personalityLabel, voiceLine, voiceLines, beastBody, isPersonality } from '../src/systems/revenant/revenantPersonality.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 
 const _store = new Map();
 globalThis.localStorage = {

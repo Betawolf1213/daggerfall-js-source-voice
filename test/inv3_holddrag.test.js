@@ -35,7 +35,7 @@ import assert from 'node:assert/strict';
 
 import { holdBroken, mountEnhancedInventory } from '../src/ui/enhanced/enhancedInventory.js';
 import { withDom } from './invdrag.mjs';
-import { ITEM_TEMPLATES, getTemplate } from '../src/characters/paperdoll.js';
+import { ITEM_TEMPLATES, getTemplate } from '../src/characters/paperdoll/paperdoll.js';
 import { equipItem, isEquipped } from '../src/systems/equip.js';
 
 const tmpl = (name) => ITEM_TEMPLATES.find((t) => t.name === name) ?? getTemplate?.(name) ?? null;

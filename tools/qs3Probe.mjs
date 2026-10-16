@@ -46,7 +46,7 @@ const PAGE = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewp
 import { drawEnhancedHud } from '/src/ui/enhanced/enhancedHud.js';
 import { assignQuickslot, clearQuickslots, setSpellQuickslot } from '/src/systems/quickslots.js';   // QS6
 import { setPref } from '/src/systems/uiPrefs.js';
-import { EQUIP_SLOTS } from '/src/characters/paperdoll.js';
+import { EQUIP_SLOTS } from '/src/characters/paperdoll/paperdoll.js';
 
 const q = new URLSearchParams(location.search);
 setPref('hudScale', Number(q.get('scale') ?? 1));

@@ -26,7 +26,7 @@ import { TEMPLATE } from '../src/systems/survival/food.js';
 import { monthNames } from '../src/systems/gameDate.js';   // L10N3e: the month names, read in the player's language
 import { CLIMATES } from '../src/formats/mapsFile.js';
 import { RACES, raceById } from '../src/systems/races.js';
-import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
+import { EQUIP_SLOTS } from '../src/characters/paperdoll/paperdoll.js';
 import { withDom } from './invdrag.mjs';
 
 // ═══ TEMP-UI (2026-10-12): THE TEMPERATURE, SHOWN ═══════════════════════

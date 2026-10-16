@@ -1398,7 +1398,7 @@ Legion-Lord's three kinds, tied to the gate's phase, court and trial.
   exported `hostTeamHpFor`, and imports them. The gate's `stepHost` stays, its frames and pins unchanged. This is
   SERPENT1's rule again: widen a seam whose default is the gate's own bytes.
 
-**The kinds.** Bodies are Daggerfall's own mobiles (`MOBILE_TYPES` in `src/characters/mobileTypes.js`), so every player
+**The kinds.** Bodies are Daggerfall's own mobiles (`MOBILE_TYPES` in `src/characters/mobile/mobileTypes.js`), so every player
 can draw them. A Morrowind body (`CREATURE_MATCH` in `src/characters/creatureBodies.js`) re-skins one where the
 player's data and the budget allow. Every blow is a shape the telegraph pass draws, every wind-up keeps its floor
 (section 13.2), and every shape is at least 4 m across (THE WIDTH RULE, section 11.7). Floors are ceiled to 10 ms.

@@ -9,8 +9,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
-import { idleSpriteHeight } from '../src/characters/enemyAnchor.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
+import { idleSpriteHeight } from '../src/characters/enemy/enemyAnchor.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const IMP = 1;

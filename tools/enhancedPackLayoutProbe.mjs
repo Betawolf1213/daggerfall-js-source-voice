@@ -52,7 +52,7 @@ const PAGE = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewp
 <script type="module">
 import { equipItem } from '/src/systems/equip.js';
 import { setItemFields, mintCondition } from '/src/systems/item/itemTemplates.js';
-import { ITEM_TEMPLATES } from '/src/characters/paperdoll.js';
+import { ITEM_TEMPLATES } from '/src/characters/paperdoll/paperdoll.js';
 import { createInventoryWindow } from '/src/ui/inventoryDoor.js';
 
 // the doll's art, stood in wherever the pack draws its Avatar plaque, every render

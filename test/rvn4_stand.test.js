@@ -32,7 +32,7 @@ const { TELL, windupSeconds, blowCooldown, blowGuard, chainMax } = await import(
 const { setTacticsClock, resetTactics } = await import('../src/ai/tactics.js');
 const { liveBlows, resetBlows } = await import('../src/ai/foeBlows.js');
 const { Collider } = await import('../src/player/collider.js');
-const { EnemyAI } = await import('../src/characters/enemyMotor.js');
+const { EnemyAI } = await import('../src/characters/enemy/enemyMotor.js');
 const { setWorldMinutes } = await import('../src/systems/worldTick.js');
 const { lastStandWords } = await import('../src/ui/revenant/revenantPage.js');
 

@@ -12,7 +12,7 @@ import {
 import {
   enchantmentParamName, enchantmentSettings, PARAM_NONE,
 } from '../src/systems/enchantmentCatalogue.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 import { splitStack } from '../src/systems/inventory.js';
 import { SKILL_NAMES } from '../src/systems/skills.js';
 import { FNT_ASCII_START } from '../src/formats/fntFile.js';

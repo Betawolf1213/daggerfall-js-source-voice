@@ -145,9 +145,9 @@ new foe floor), a **ring-out** (carried off the sand past
 the clamp's slack), or the **time limit** (3 minutes; then the judges - damage dealt, hits landed, fewer misses);
 the Herald's verdict; healing to full (the duel's own); the purse.
 
-**AI fighters.** Daggerfall's own class enemies (`CLASS*.CFG`, `characters/mobileTypes.js`) and monsters, spawned
+**AI fighters.** Daggerfall's own class enemies (`CLASS*.CFG`, `characters/mobile/mobileTypes.js`) and monsters, spawned
 for the bout (`spawnFoe` - `loose`, `transient`, `managed`, no loot), on their own **bout team** (a new isolation
-seam beside `campId` in `characters/enemyTargets.js` - a bout's fighters fight each other alone; the city watch and
+seam beside `campId` in `characters/enemy/enemyTargets.js` - a bout's fighters fight each other alone; the city watch and
 the passers-by never join), with the **foe yield floor** (a new seam in `exteriorFoes.damageFoe`: a bout fighter at
 the floor yields - no corpse, no loot, no renown, the same 1 HP the player keeps). Names from Daggerfall's own name
 generator by race; an epithet and a home town from the bout's seed ("Gorlak gro-Mazgul of Wayrest, the Unbroken").
@@ -365,7 +365,7 @@ favour -1..1 raises it by up to half or cuts it by up to a quarter.
 own class enemies and monsters, a name drawn by DFU's NameHelper over the bank of their home (High Rock's Bretons,
 Hammerfell's Redguards, Skyrim's Nords, ... Orsinium's orcs on the monster bank) on DFRandom seeded by the bout and put
 back as it stood, an epithet and the town, all from the seed. THE BOUT TEAM is a seam beside `campId` in
-`characters/enemyTargets.js` (`boutGate`, `entity.bout` `{ id, side, out, hold, hooks }`, `setPlayerBout`): a bout's
+`characters/enemy/enemyTargets.js` (`boutGate`, `entity.bout` `{ id, side, out, hold, hooks }`, `setPlayerBout`): a bout's
 pair skips the team, ally, infighting and hostility chain (two orcs of one bout fight, infighting off or on); anyone
 else meets no fighter and no fighter meets them (the watch, a passer-by, another foe); the player is a target only as
 the bout's opponent; nobody is a target before the word or once out; the target machine drops a target the gate

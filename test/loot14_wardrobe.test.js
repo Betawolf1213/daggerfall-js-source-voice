@@ -28,7 +28,7 @@ import { STAT_KEYS_ORDER } from '../src/systems/statMods.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { ENCHANTMENT_TYPES } from '../src/formats/magicDef.js';
 import { capLootList, rollCorpseKit, plainFoeRarityWeights } from '../src/systems/foeLootCap.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { POTION_TEMPLATE_INDEX, validLootItem } from '../src/systems/loot/loot.js';
 import { goldStack, isGoldPieces } from '../src/systems/inventory.js';
 import { mintPiece } from '../src/systems/smithItems.js';

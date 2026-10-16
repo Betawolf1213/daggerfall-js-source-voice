@@ -147,7 +147,7 @@ and 3rd sounds which are null."*
 
 **The sound hypothesis was read first and does not hold here.** The
 watch's row is DFU's own - move 243, bark 456, attack 245 - and the port
-plays them through `characters/enemySounds.js` (EnemySounds.cs whole:
+plays them through `characters/enemy/enemySounds.js` (EnemySounds.cs whole:
 the 3-9 s attract cadence, the city watch the one class enemy the human
 mute spares). A clip whose DAGGER.SND record is missing or empty costs
 one lookup: `audio.js`'s `_buffer` caches the null and every later ask

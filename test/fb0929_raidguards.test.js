@@ -18,7 +18,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createCityGuards } from '../src/scenes/cityGuards.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
-import { PLAYER_TARGET } from '../src/characters/enemyTargets.js';
+import { PLAYER_TARGET } from '../src/characters/enemy/enemyTargets.js';
 import { PlayerWeapon } from '../src/combat/playerWeapon.js';
 import { setValue } from '../src/systems/settings/settings.js';
 import { FACTION_TYPES, GUILD_GROUPS } from '../src/formats/factionFile.js';

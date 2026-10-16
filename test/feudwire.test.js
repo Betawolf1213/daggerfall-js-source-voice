@@ -24,11 +24,11 @@ const PB = await import('../src/ai/puppetBlows.js');
 const { makeBlow, resetBlows, blowScaled, BLOW, IRON_COLOR } = await import('../src/ai/foeBlows.js');
 const { setTacticsClock, resetTactics } = await import('../src/ai/tactics.js');
 const { calculateAttackDamage } = await import('../src/combat/formulas.js');
-const { makeEnemyEntity } = await import('../src/characters/enemyEntity.js');
-const { ENEMY_BASICS } = await import('../src/characters/enemyBasics.js');
+const { makeEnemyEntity } = await import('../src/characters/enemy/enemyEntity.js');
+const { ENEMY_BASICS } = await import('../src/characters/enemy/enemyBasics.js');
 const { promoteEliteFoe } = await import('../src/systems/eliteFoes.js');
 const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
-const { MOBILE_TYPES: M } = await import('../src/characters/mobileTypes.js');
+const { MOBILE_TYPES: M } = await import('../src/characters/mobile/mobileTypes.js');
 const { makePlayer } = await import('../tools/tellDuel.mjs');
 
 const { createExteriorFoes } = await import('../src/scenes/exteriorFoes.js');

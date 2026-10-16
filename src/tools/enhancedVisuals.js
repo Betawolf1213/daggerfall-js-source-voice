@@ -10,7 +10,7 @@
 // game's own inventory sprites. Both come from work that already exists
 // rather than from anything invented here:
 //
-//   - characters/paperdollPayload.js builds the body, and it takes null
+//   - characters/paperdoll/paperdollPayload.js builds the body, and it takes null
 //     for the palette, so a figure renders with NO ARENA2 at all — the
 //     rig is ours, only the authentic colours are Bethesda's.
 //

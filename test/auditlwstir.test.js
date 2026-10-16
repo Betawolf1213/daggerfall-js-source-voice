@@ -19,7 +19,7 @@ import {
   BEG_SHARE, SONG_EVERY_MIN, SONG_SHARE,
 } from '../src/systems/livingWorld/stir.js';
 import { GATE_SCRIPTS, CHALLENGE_SCRIPTS, QUARREL_SCRIPTS, PLEA_SCRIPTS, HAGGLE_SCRIPTS, BREAK_UP_LINES, WATCH_HOURS, WATCH_CALLS, STALL_CRIES, BEGGAR_CRIES, DRINKING_SONGS, fillLine } from '../src/systems/livingWorld/lines.js';
-import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
+import { PERSON_MOVE_SPEED } from '../src/characters/mobile/mobilePerson.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
 
 const RATE = CLASSIC_MINUTES_PER_SECOND;

@@ -9,7 +9,7 @@ import { lerpPose } from '../src/net/online.js';
 import { peerWeaponOf, peerBuildOpts, PeerBodies } from '../src/net/peer/peerBodies.js';
 import { RemotePlayers } from '../src/net/remotePlayers.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const P = { x: 1, y: 2, z: 3, yaw: 0, pitch: 0, mv: 0 };

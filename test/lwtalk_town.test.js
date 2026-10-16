@@ -14,8 +14,8 @@ import { readFileSync } from 'node:fs';
 import { synthTown, closeTown } from './lwTown.mjs';
 import { LivingTown, GREET_REST_MIN, keepUnits, TALK_PULL_M } from '../src/systems/livingWorld/livingTown.js';
 import { ResidentWalker, STAND_FRAME } from '../src/characters/residentWalker.js';
-import { PERSON_IDLE_RECORD, PERSON_GUARD_IDLE_RECORD, MOVE_RECORDS, MOVE_FLIPS, PERSON_MOVE_SPEED, PERSON_IDLE_DISTANCE } from '../src/characters/mobilePerson.js';
-import { mobileOrientation } from '../src/characters/mobileUnit.js';
+import { PERSON_IDLE_RECORD, PERSON_GUARD_IDLE_RECORD, MOVE_RECORDS, MOVE_FLIPS, PERSON_MOVE_SPEED, PERSON_IDLE_DISTANCE } from '../src/characters/mobile/mobilePerson.js';
+import { mobileOrientation } from '../src/characters/mobile/mobileUnit.js';
 import {
   spotRound, spotCircles, dealCircles, circleSlots, exchangeAt, slotSpoken, exchangeScript, circleLine, circleStands, circlesStands, aloneStand,
   lineMinutes, ROUND_S, GATHER_BEAT_S, OPEN_S, PAUSE_S, SLOT_LINES, CLOSE_S, TALK_SHARE, ALONE_FAR_M,

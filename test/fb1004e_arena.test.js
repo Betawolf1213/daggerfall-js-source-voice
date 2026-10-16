@@ -16,7 +16,7 @@ import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { markQuiver, refundQuiver, QUIVER_TEMPLATES } from '../src/systems/arena/arenaQuiver.js';
 import { keptOffArenaGround, ARENA_GROUND_M, ARENA_GROUND_QUESTS } from '../src/systems/arena/arenaGround.js';
 import { boutTeammates } from '../src/combat/friendlyFire.js';
-import { boutGate } from '../src/characters/enemyTargets.js';
+import { boutGate } from '../src/characters/enemy/enemyTargets.js';
 import { arenaHudModel } from '../src/ui/arena/arenaHud.js';
 import { undercroftPopulation, deepFoesOf, undercroftHallNear, UNDERCROFT_DEEP_M, UNDERCROFT_BEASTS, UNDERCROFT_PEOPLE } from '../src/world/arena/arenaUndercroft.js';
 import { spendAmmoFor, ARROW_TEMPLATE } from '../src/systems/inventory.js';

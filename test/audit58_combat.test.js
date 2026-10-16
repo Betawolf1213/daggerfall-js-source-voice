@@ -23,7 +23,7 @@ import { readFileSync } from 'node:fs';
 
 import { calculateAttackDamage, dropWeaponIfTargetImmune, chooseEnemyWeapon, damageEquipment } from '../src/combat/formulas.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { equipEnemy, applyDamageToNonPlayer } from '../src/scenes/hostCombat.js';
 import { equipTableOf, equipItem, EQUIP_SLOTS, _wearScaleForTests, _dfuWearMultipleForTests } from '../src/systems/equip.js';
 import { getItemHands, ITEM_HANDS, createEquipTable, BOW_HAND_TEMPLATES } from '../src/characters/equipTable.js';

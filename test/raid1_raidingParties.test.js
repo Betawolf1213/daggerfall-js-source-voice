@@ -28,7 +28,7 @@ import { dayRng, DAY_SALT, setSharedClock } from '../src/systems/worldTick.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';
 import { LOCATION_TYPES } from '../src/formats/mapsFile.js';
 import { FACTION_TYPES, GUILD_GROUPS } from '../src/formats/factionFile.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 import { renownFoeStruck, _resetRenownKillsForTests } from '../src/net/renownTracker.js';
 import { modSaveRecords, restoreModSaveRecords, _resetModSaveData } from '../src/systems/modSaveData.js';
 import { MOD_SETTINGS, setModSetting, _resetModSettings } from '../src/systems/modSettings.js';

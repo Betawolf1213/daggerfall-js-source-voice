@@ -69,7 +69,7 @@ call on the window built, as `gotoPlace` is.
 
 ## REGIONAL-FOLK: a Redguard region's walkers are Redguards (1)
 
-`characters/mobilePerson.js` walkerRace. DFU dresses a town's walkers by the climate's People (PopulationManager.cs:94:
+`characters/mobile/mobilePerson.js` walkerRace. DFU dresses a town's walkers by the climate's People (PopulationManager.cs:94:
 the deserts and the rainforest Redguard, the mountains Nord, every other climate Breton) and names them by the region
 (MobilePersonNPC.cs:214, FALL.EXE's `REGION_RACES`: Breton or Redguard). Where the two disagree the walker's body and its
 name disagree: Sentinel's temperate streets and the Dragontail Mountains walked Breton and Nord bodies under Redguard

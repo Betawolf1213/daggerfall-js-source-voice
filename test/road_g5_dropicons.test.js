@@ -37,7 +37,7 @@ import {
   CONTAINER_IMAGES, REMOTE_TARGET_ICON_RECT,
 } from '../src/ui/targetIconPanel.js';
 import { nativeMetrics } from '../src/ui/native/nativePanel.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (rel) => readFileSync(join(root, 'src', rel), 'utf8');

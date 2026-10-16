@@ -32,7 +32,7 @@ const PAGE = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewp
 #host{position:fixed;inset:0}</style></head><body><div id="host"></div>
 <script type="module">
 import { mountEnhancedInventory } from '/src/ui/enhanced/enhancedInventory.js';
-import { ITEM_TEMPLATES } from '/src/characters/paperdoll.js';
+import { ITEM_TEMPLATES } from '/src/characters/paperdoll/paperdoll.js';
 import { equipItem } from '/src/systems/equip.js';
 const t = (n) => ITEM_TEMPLATES.find((x) => x.name === n);
 const mk = (n, group = 'Weapons') => { const tp = t(n); return tp && {

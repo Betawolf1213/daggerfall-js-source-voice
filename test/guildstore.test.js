@@ -17,7 +17,7 @@ import { buyHolidayHalvesPrice } from '../src/systems/tradeModes.js';
 import { HOLIDAYS } from '../src/systems/holidays.js';
 import { GUILDS } from '../src/systems/guild/guilds.js';
 import { SKILLS } from '../src/systems/skills.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { readMagicDef } from '../src/formats/magicDef.js';
 import { readSpellsStd, spellsByIndexMap } from '../src/formats/spellsStd.js';
 import { createRandomPotion } from '../src/systems/loot/loot.js';

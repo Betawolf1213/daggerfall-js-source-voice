@@ -32,7 +32,7 @@ import { registerPreventRestCondition, getPreventedRestMessage, clearPreventRest
 import { setWorldMinutes } from '../src/systems/worldTick.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
-import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
+import { EQUIP_SLOTS } from '../src/characters/paperdoll/paperdoll.js';
 import { RACES } from '../src/systems/races.js';
 import { withDom } from './invdrag.mjs';
 

@@ -197,7 +197,7 @@ export const ARENA_LADDER_SPEC = Object.freeze([
 export const ARENA_FREE_TIER = 9;
 export const ARENA_BEAST_TIER = 5;
 /** The monsters the ladder fights, as DFU's EnemyBasics has them: `[level, minHealth, maxHealth, minDamage, maxDamage]`
- *  (characters/enemyBasics.js, pinned). */
+ *  (characters/enemy/enemyBasics.js, pinned). */
 export const ARENA_BEASTS = Object.freeze({
   2: Object.freeze([3, 12, 26, 1, 8]), 4: Object.freeze([4, 13, 34, 1, 8]), 5: Object.freeze([4, 13, 34, 1, 10]),
   20: Object.freeze([12, 18, 74, 15, 25]), 24: Object.freeze([16, 20, 90, 5, 50]), 28: Object.freeze([19, 28, 154, 20, 50]),

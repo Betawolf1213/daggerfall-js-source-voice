@@ -8,10 +8,10 @@ import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { setPref } from '../src/systems/uiPrefs.js';
 import { Collider } from '../src/player/collider.js';
-import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES as M } from '../src/characters/mobile/mobileTypes.js';
 import { setTacticsClock, resetTactics, tacticsStep, noteLocalPlayer } from '../src/ai/tactics.js';
 import { resetBlows, makeBlow, setLiveBlow, shatterBlow, drawableBlows, SAND_DRAW_RANGE } from '../src/ai/foeBlows.js';
-import { setPlayerBout } from '../src/characters/enemyTargets.js';
+import { setPlayerBout } from '../src/characters/enemy/enemyTargets.js';
 
 let T = 0;
 setTacticsClock(() => T);

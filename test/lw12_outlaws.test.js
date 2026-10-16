@@ -21,7 +21,7 @@ import { createHideouts, createHideoutBook, standingAt, rumourAt, tentsFor, kill
 import { createCaravanHost, bandTook } from '../src/scenes/caravanHost.js';
 import { purseOf, CARAVAN_QUALITY } from '../src/systems/livingWorld/caravanDoor.js';
 import { DAY_MIN } from '../src/systems/livingWorld/dayPlan.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 
 const T = (mapId, px, py, blocks, region = 17) => ({ mapId, px, py, blocks, type: 0, region, people: 3, name: `T${mapId}`, port: false });
 const straightRoute = (a, b) => {

@@ -33,8 +33,8 @@ import {
   pcaaoFades,
 } from '../src/combat/pcaao.js';
 import { calculateAttackDamage, damageModifier, damageEquipment, formulaOverride, registerFormulaOverride, adjustWeaponHitChanceMod, adjustWeaponAttackDamage, weaponAttackDamage } from '../src/combat/formulas.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
-import { makeEnemyEntity } from '../src/characters/enemyEntity.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
+import { makeEnemyEntity } from '../src/characters/enemy/enemyEntity.js';
 import { EQUIP_SLOTS, equipTableOf, _wearScaleForTests } from '../src/systems/equip.js';
 import { MOD_SETTINGS, setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { RR_VENDOR, rrAdjustWeaponHitChanceMod, rrAdjustWeaponAttackDamage } from '../src/systems/roleplayRealism/rrRealism.js';
@@ -498,7 +498,7 @@ test('PCO1: the seams - the Mods pane entry, the credit, the vendor folder, worl
   assert.match(rd('src/combat/arrowFlight.js'), /weaponAnimTime: playerWeapon\?\.lastDrawMs \?\? 0,/, 'the arrow hands it to the formula');
   assert.match(rd('src/combat/formulas.js'), /const core = _overrides\.get\('calculateAttackDamage'\);/, 'the core is the registry\'s');
   assert.match(rd('src/systems/equip.js'), /if \(removeFrom\) \{ const i = removeFrom\.indexOf\(item\); if \(i >= 0\) removeFrom\.splice\(i, 1\); \}/, 'LowerCondition\'s removeFromCollectionWhenBreaks');
-  assert.match(rd('src/characters/enemyEntity.js'), /const basics = pcaaoMeanerMonstersRow\(mobileType, applyMeanerMonsters\(mobileType, basicsIn\)\);/, 'MM1: the overhaul\'s edit over Ralzar\'s row');
+  assert.match(rd('src/characters/enemy/enemyEntity.js'), /const basics = pcaaoMeanerMonstersRow\(mobileType, applyMeanerMonsters\(mobileType, basicsIn\)\);/, 'MM1: the overhaul\'s edit over Ralzar\'s row');
   const ws = rd('src/combat/pcaao.js');
   assert.equal((ws.match(/Mathf\.Clamp/g) || []).length >= 4, true, 'the four discarded clamps are named');
   assert.equal(pcaaoAdjustmentsToHit(mkPlayer()), -50);

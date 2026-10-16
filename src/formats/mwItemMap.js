@@ -51,9 +51,9 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { WEAPONS, WEAPON_MATERIALS } from '../characters/weapons.js';
-import { OWN_MW_MODELS } from '../characters/ownWeaponModels.js';   // FIELD-GUN-MW2: the weapons Morrowind does not have
-import { OWN_MW_ARMOR, ownArmorModelFor, ownArmorParts } from '../characters/ownArmorModels.js';   // MW-BRIG1: the armour Morrowind does not have; MW-STEEL1: and its styles
-import { CLOAK_NAMES, CLOAK_PAINTINGS, cloakModel, ownCloakFor, ownOutfitFor } from '../characters/ownClothingModels.js';   // MW-CLOAK1: and the clothing; MW-FOLK1: and the townsfolk's outfits
+import { OWN_MW_MODELS } from '../characters/ownModels/ownWeaponModels.js';   // FIELD-GUN-MW2: the weapons Morrowind does not have
+import { OWN_MW_ARMOR, ownArmorModelFor, ownArmorParts } from '../characters/ownModels/ownArmorModels.js';   // MW-BRIG1: the armour Morrowind does not have; MW-STEEL1: and its styles
+import { CLOAK_NAMES, CLOAK_PAINTINGS, cloakModel, ownCloakFor, ownOutfitFor } from '../characters/ownModels/ownClothingModels.js';   // MW-CLOAK1: and the clothing; MW-FOLK1: and the townsfolk's outfits
 import { t } from '../systems/textManager.js';   // L10N4: MW-FOLK1's notes in the player's language
 import { ARMOR_MATERIAL } from '../systems/armorMaterials.js';
 import { ARMOR_ENUM } from '../combat/enemyEquipment.js';
@@ -454,7 +454,7 @@ export function mwItemReport(armorRecords, { weapons = null, clothes = null, col
       if (own) {
         rows.push({
           family: 'armor', item: `${mName} ${aName.replaceAll('_', ' ')}`, found: ownModelsOf(own),
-          note: 'the port\'s own model (characters/ownArmorModels.js) - no record of the archives is asked',
+          note: 'the port\'s own model (characters/ownModels/ownArmorModels.js) - no record of the archives is asked',
           dfColour: hex(DF_MATERIAL_RGB[mName]), mwColour: null,
         });
         continue;
@@ -499,7 +499,7 @@ export function mwItemReport(armorRecords, { weapons = null, clothes = null, col
         const cloak = ownCloakFor({ kind: 'clothing', name, dye });
         if (cloak) {
           rows.push({ family: 'clothing', item: `${dyeName} ${name}`, found: [cloak.model],
-            note: `the port's own cloak (characters/ownClothingModels.js), the ${cloak.painting.replace('_', ' ')} painting - no record of the archives is asked`,
+            note: `the port's own cloak (characters/ownModels/ownClothingModels.js), the ${cloak.painting.replace('_', ' ')} painting - no record of the archives is asked`,
             dfColour: hex(DF_CLOTHING_DYE_RGB[dye]), mwColour: null, reserve: null });
           continue;
         }
@@ -639,7 +639,7 @@ export function composeWornArmor({ pieces, armors, clothes, bodyPool, female = f
   let outfitAdd = null;   // MW-FOLK1: a townsperson's whole outfit, which no slot holds either
   const covers = new Set();
   for (const piece of ordered) {
-    // MW-FOLK1: A TOWNSPERSON'S OUTFIT IS THE PORT'S OWN (characters/ownClothingModels.js TOWNSFOLK_OUTFITS) - one
+    // MW-FOLK1: A TOWNSPERSON'S OUTFIT IS THE PORT'S OWN (characters/ownModels/ownClothingModels.js TOWNSFOLK_OUTFITS) - one
     // skinned mesh of every garment their picture wears, claiming no slot (the cloak's door): the skin it covers all
     // round is occupied with no mesh at clothing's priority (`hides` - MW-FIT1's occupation), the rest stays the body's.
     // One is drawn; a second says so. An id the table does not hold is no outfit.
@@ -678,7 +678,7 @@ export function composeWornArmor({ pieces, armors, clothes, bodyPool, female = f
     }
     if (piece.kind === 'clothing') {
       const name = piece.name ?? CLOTHING_NAME[piece.templateIndex];
-      // MW-CLOAK1: A CLOAK IS THE PORT'S OWN (characters/ownClothingModels.js) - one skinned mesh hung down the back,
+      // MW-CLOAK1: A CLOAK IS THE PORT'S OWN (characters/ownModels/ownClothingModels.js) - one skinned mesh hung down the back,
       // claiming NO slot and reserving none: the armour and the clothes under it stay drawn. Daggerfall wears two
       // (Cloak1, Cloak2); one cloak is drawn, the first, and the second says so - two of one mesh would be one.
       const cloak = ownCloakFor({ ...piece, name });
@@ -698,7 +698,7 @@ export function composeWornArmor({ pieces, armors, clothes, bodyPool, female = f
     }
     const prio = ((0 + 1) << 1) + 1;
     // MW-BRIG1: THE PORT'S OWN WORN MODEL stands where the ARMO and its
-    // BODY records would (characters/ownArmorModels.js) - claimed at an
+    // BODY records would (characters/ownModels/ownArmorModels.js) - claimed at an
     // armour's priority, part by part, as composeRefs claims a record's.
     const own = ownArmorModelFor(piece);
     if (own) {

@@ -1,7 +1,7 @@
 # The Cloak - the port's own cloak, and what hangs around it
 
 `tools/bakeCloak.mjs` (the bake, its one bone CHEST_BONE) on `tools/bakeSteelPlate.mjs`'s machinery + `tools/meshSubdivide.mjs` (Loop
-subdivision, MW-CLOAK2) + `src/characters/ownClothingModels.js` (the garments that wear it, the dye's painting) +
+subdivision, MW-CLOAK2) + `src/characters/ownModels/ownClothingModels.js` (the garments that wear it, the dye's painting) +
 `src/formats/mwItemMap.js` (composeWornArmor) + `src/formats/mwCloakFit.js` (the three fits) + `src/combat/fpArm.js`
 (fitThirdPersonCloak, where the third-person body takes them) (MW-CLOAK1, Mac, 2026-10-09; MW-CLOAK2, smoothed round
 the shoulders, the same day; AUDIT MW-CLOAK, held in motion, the same day; MW-CAPE-RIGID, on the chest alone, 2026-10-14)

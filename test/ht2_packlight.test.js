@@ -42,7 +42,7 @@ import { readFileSync } from 'node:fs';
 import { localPrimaryAct, itemLine } from '../src/ui/enhanced/enhancedInventory.js';
 import { useItem, isLightSource, TEMPLATES } from '../src/systems/useItem.js';
 import { equipItem, getEquipSlot } from '../src/systems/equip.js';
-import { EQUIP_SLOTS, ITEM_TEMPLATES } from '../src/characters/paperdoll.js';
+import { EQUIP_SLOTS, ITEM_TEMPLATES } from '../src/characters/paperdoll/paperdoll.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 

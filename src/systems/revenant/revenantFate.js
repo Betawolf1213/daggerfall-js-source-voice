@@ -26,7 +26,7 @@ import { revenantTrophy, trophyKindWords } from './revenantTrophy.js';
 import { PERSONALITIES } from './revenantPersonality.js';
 import { retinueHasRoom, swornPlace, REVENANT_RETINUE_MAX, setRetinuePlayer, holdSworn, swornWitness } from './revenantCompanions.js';
 import { companionsWithYou, COMPANION_SLOTS } from '../companionSlots.js';
-import { enemyDisplayName } from '../../characters/enemyBasics.js';
+import { enemyDisplayName } from '../../characters/enemy/enemyBasics.js';
 import { DISSOLVE_EMBER, DISSOLVE_ARCANE } from '../dissolve.js';
 import { clearPlayerHarm } from '../harmMark.js';   // AUDIT (2026-10-02): a beaten one's harm is no one's death
 import { willMatters, willBroken, LAST_STAND_RANK, LAST_STAND_ROAR, PHASE_TWO, lastStandHealth, phaseTwo } from './revenantFeud.js';   // RVN3: the will (bible/12-Enhanced-AI/Feud-Arc.md 14.2); RVN4: the last stand (15)
@@ -177,7 +177,7 @@ export function finishExecution(player, f) {
   return items;
 }
 /** AUDIT (2026-10-02): HELD BY ITS FATE - kneeling, burning, gathering into its portal, or a companion stepping out
- *  through one: no swing's, no spell's, nobody's target (characters/enemyTargets.js reads the same four). */
+ *  through one: no swing's, no spell's, nobody's target (characters/enemy/enemyTargets.js reads the same four). */
 export const fateHeld = (f) => !!(f && (f.yielded || f.executing || f.sparing || f.leaving));
 /** The held taken out of a list in place (a swing's candidates) - answers the list. */
 export function dropFateHeld(list) {

@@ -438,7 +438,7 @@ test('CD2: both status pages state the open-flag count Home.md actually holds', 
   // readable only as long as nobody asked which two - each by an anchor
   // into its file that names a line (CITE-ANCHOR).
   const roadText = read(ROAD);
-  for (const site of ['src/combat/fpsSpellCasting.js', 'src/characters/enemyCasting.js',
+  for (const site of ['src/combat/fpsSpellCasting.js', 'src/characters/enemy/enemyCasting.js',
     'src/systems/inventory.js', 'src/systems/talk/talkMacros.js', 'src/ui/hud/hudLarge.js',
     'src/ui/exteriorAutomapWindow.js']) {
     assert.ok(citedLines(roadText, site, root).some((c) => c.line), `Road-To-1-1.md does not name the retired flag in ${site}`);

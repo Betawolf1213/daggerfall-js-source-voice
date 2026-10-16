@@ -664,7 +664,7 @@ export function createBloodMarks({ renderer = null, collider = null, settings = 
   function place(bloodIndex, pos, hit = null) {
     if (!on() || !pos) return null;
     // A BLOODLESS FOE MARKS NOTHING. DFU's own bloodIndex says which
-    // six, and characters/enemyBasics.js has carried it since long
+    // six, and characters/enemy/enemyBasics.js has carried it since long
     // before this arc.
     if (!marksBlood(bloodIndex)) return null;
     const col = liveCollider();

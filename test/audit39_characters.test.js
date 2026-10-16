@@ -14,8 +14,8 @@ import { join } from 'node:path';
 
 import {
   EnemyAI, MELEE_DISTANCE, CLASSIC_MELEE_DISTANCE_VS_AI, enemyMoveSpeed, CLASSIC_UPDATE_INTERVAL,
-} from '../src/characters/enemyMotor.js';
-import { EnemyAttack, ATTACK_SPEED_FLOOR } from '../src/characters/enemyAttack.js';
+} from '../src/characters/enemy/enemyMotor.js';
+import { EnemyAttack, ATTACK_SPEED_FLOOR } from '../src/characters/enemy/enemyAttack.js';
 import { collectDungeonEnemies } from '../src/characters/dungeonEnemies.js';
 import { liveStat } from '../src/systems/statMods.js';
 
@@ -91,7 +91,7 @@ test('audit39 #69: GetDestination\'s search ramp reads the same stopDistance (:5
   ai._getDestination([0, 0, 2.0]);
   assert.equal(ai.searchMult, 0, '...and 2.0 out is not, where the 2.25 literal would have climbed');
   // the literal is gone from both consumers
-  const mot = rd('src/characters/enemyMotor.js');
+  const mot = rd('src/characters/enemy/enemyMotor.js');
   assert.ok(mot.includes('sd <= this.stopDistance'), 'the search ramp reads stopDistance');
   assert.ok(mot.includes('distance <= this.stopDistance'), 'so does the approach test');
 });
@@ -191,7 +191,7 @@ test('audit39 #72: a pacified foe with a FOE target still acts; one without stil
   assert.equal(alone.canAct, false, 'no target, no action - HandleNoAction :357-366');
   assert.equal(alone.moving, false);
 
-  const mot = rd('src/characters/enemyMotor.js');
+  const mot = rd('src/characters/enemy/enemyMotor.js');
   assert.ok(!/canAct = !paralyzed && !knocked && this\.isHostile;/.test(mot),
     'the flat hostility AND is gone from CanAct');
 });
@@ -204,7 +204,7 @@ test('audit39 #72: a pacified foe with a FOE target still acts; one without stil
 // modules as wired. They are STAGED, not shipped.
 // ---------------------------------------------------------------
 test('audit39 #73: the four staged item-geometry modules are not imported as if live', () => {
-  const pp = rd('src/characters/paperdollPayload.js');
+  const pp = rd('src/characters/paperdoll/paperdollPayload.js');
   for (const dead of ['buildCuirass', 'buildGreaves', 'clothingZones', 'armorZones']) {
     assert.ok(!new RegExp(`import \\{[^}]*\\b${dead}\\b`).test(pp),
       `paperdollPayload.js no longer imports ${dead} without calling it`);
@@ -269,7 +269,7 @@ test('audit39 #74: the AO pass is spatially binned, and the shading is unchanged
 // none of the three, so every figure in the editor was bald.
 // ---------------------------------------------------------------
 test('audit39 #75: the payload ships the hair the designs ask for', async () => {
-  const { buildPaperdollPayload } = await import('../src/characters/paperdollPayload.js');
+  const { buildPaperdollPayload } = await import('../src/characters/paperdoll/paperdollPayload.js');
   const { VILLAGER_DESIGNS } = await import('../src/characters/villagerDesigns.js');
   const { HAIR_RAMPS } = await import('../src/characters/pieces/hair.js');
   const D = buildPaperdollPayload(null, null, null);
@@ -301,7 +301,7 @@ test('audit39 #75: the payload ships the hair the designs ask for', async () => 
 // ---------------------------------------------------------------
 test('audit39 #77: the daedra header reads minMetalToHit 5 as Mithril', async () => {
   const { WEAPON_MATERIALS } = await import('../src/characters/weapons.js');
-  const { ENEMY_BASICS } = await import('../src/characters/enemyBasics.js');
+  const { ENEMY_BASICS } = await import('../src/characters/enemy/enemyBasics.js');
   assert.equal(WEAPON_MATERIALS.Mithril, 5);
   assert.equal(WEAPON_MATERIALS.Daedric, 9);
   for (const id of [25, 26, 27, 29, 31]) assert.equal(ENEMY_BASICS[id].minMetalToHit, 5);

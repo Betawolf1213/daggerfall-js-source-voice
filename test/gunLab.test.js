@@ -333,7 +333,7 @@ test('the recoil is a DISPLACEMENT that settles, and a second shot stacks on wha
 test('the paperdoll sprite is cut for the doll’s hand, and both icons are 1-bit', () => {
   // ONE SPRITE, TWO JOBS: a weapon's paperdoll layer and its inventory
   // icon are the same record in Daggerfall (GetInventoryTextureArchive
-  // hands back PlayerTextureArchive - characters/paperdollArt.js), so
+  // hands back PlayerTextureArchive - characters/paperdoll/paperdollArt.js), so
   // the gap the doll needs is in the icon too. That is why classic
   // weapon icons have a notch: they are doll layers shown in a list.
   const read = (f) => {

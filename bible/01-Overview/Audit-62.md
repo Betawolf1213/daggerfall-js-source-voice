@@ -97,7 +97,7 @@ the lanes tagged them; C0-C38 in the fleet's own ledger).
   digest pin now hashes the body instead of restating three lines of it
   (F3). The batch-1 commit is `802bd5e`.
 - **F1 (the motor half) - the routed final leg aimed at the target's
-  feet** (`ai/enhancedMotor.js`, `characters/enemyMotor.js`). Since PR
+  feet** (`ai/enhancedMotor.js`, `characters/enemy/enemyMotor.js`). Since PR
   #55 the classic `GetDestination` builds its destination in TRANSFORM
   space (the target's centre, a face bump for flyers and swimmers, the
   grounded foe's controller-height correction); the enhanced route's

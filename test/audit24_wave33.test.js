@@ -3,7 +3,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
-import { MobileUnit, PRIMARY_ATTACK_ANIM_SPEED } from '../src/characters/mobileUnit.js';
+import { MobileUnit, PRIMARY_ATTACK_ANIM_SPEED } from '../src/characters/mobile/mobileUnit.js';
 import { dfuFile } from './dfuRoot.mjs';   // PY1: DFU_PATH, then the in-tree sparse clone
 
 const rd = (f) => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');
@@ -99,7 +99,7 @@ test('audit24 wave33: no host freezes the animation, and every host consumes its
   }
 
   // the old per-frame names are gone from src/ entirely
-  for (const f of ['src/characters/mobileUnit.js', 'src/scenes/dungeonContext.js',
+  for (const f of ['src/characters/mobile/mobileUnit.js', 'src/scenes/dungeonContext.js',
     'src/scenes/exteriorFoes.js', 'src/scenes/cityGuards.js']) {
     assert.equal(/\bhitFrame\b|\bshootFrame\b/.test(rd(f)), false, `${f} has no edge-flavoured name left`);
   }

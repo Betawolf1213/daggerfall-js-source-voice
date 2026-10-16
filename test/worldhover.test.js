@@ -1431,14 +1431,14 @@ test('AUDIT-WH H2: the mod\'s MOBILE BAND - a townsperson and a live foe, named 
     'the CAREER name wins - it is the member the mod reads');
   // RECORDED DEPARTURE: the port's enemy entity only carries a career
   // name for CLASS enemies (`name: isClass ? career.name : undefined`,
-  // characters/enemyEntity.js), because nothing else has ever needed a
+  // characters/enemy/enemyEntity.js), because nothing else has ever needed a
   // monster's career template. A monster falls through to the enemy
   // name, which is the only word the port holds for it.
   assert.equal(liveEntityName({ entity: { name: undefined } }, 'Rat'), 'Rat',
     'a monster has no career name in this port and takes the enemy name');
   assert.equal(liveEntityName({}, 'Rat'), 'Rat', 'and so does a record with no entity at all');
   assert.equal(liveEntityName(null, null), null, 'no word anywhere is no word');
-  assert.match(read('src/characters/enemyEntity.js'), /name: isClass \? career\.name : undefined,/,
+  assert.match(read('src/characters/enemy/enemyEntity.js'), /name: isClass \? career\.name : undefined,/,
     'the departure above is this line - if the port ever loads monster careers, the fallback stops being reachable');
   // ...and all FOUR hosts read it through that one door rather than
   // reaching for the corpse's member again. HOVER-PLAIN: none tells the

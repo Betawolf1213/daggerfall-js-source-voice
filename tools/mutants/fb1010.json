@@ -118,7 +118,7 @@
   },
   {
     "name": "RFOLK-climate-only",
-    "file": "src/characters/mobilePerson.js",
+    "file": "src/characters/mobile/mobilePerson.js",
     "old": "export const walkerRace = (people, region) => (redguardRegion(region) ? 'Redguard' : raceOfPeople(people));",
     "new": "export const walkerRace = (people, region) => raceOfPeople(people);",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "RFOLK-breton-regions",
-    "file": "src/characters/mobilePerson.js",
+    "file": "src/characters/mobile/mobilePerson.js",
     "old": "REGION_RACES[/** @type {number} */ (region)] === 1;",
     "new": "REGION_RACES[/** @type {number} */ (region)] === 0;",
     "tests": [

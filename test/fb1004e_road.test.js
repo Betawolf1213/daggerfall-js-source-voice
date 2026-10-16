@@ -11,9 +11,9 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { trivialOnRoad, roadCompany, wandererCount, TRIVIAL_LEVEL_RATIO, ROAD_PARTY_MAX } from '../src/systems/roadEncounters.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
-import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';
-import { SOLITARY_TYPES } from '../src/characters/mobileFactions.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
+import { MOBILE_TYPES as M } from '../src/characters/mobile/mobileTypes.js';
+import { SOLITARY_TYPES } from '../src/characters/mobile/mobileFactions.js';
 import { amGroupRollOwner } from '../src/systems/campEncounters.js';
 import { partyExtraFoes } from '../src/systems/party/partyScale.js';
 import { FEATURES } from '../src/systems/features.js';

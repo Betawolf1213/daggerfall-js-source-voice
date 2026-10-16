@@ -18,7 +18,7 @@ import { facePools, bodyParts, MW_UNITS_PER_METER } from '../src/formats/mwFirst
 import { bodyRec } from './fixtures/mw/bodyRec.mjs';
 import { makeVendoredArchive } from '../src/systems/urlArchive.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
-import { CLASSIC_ARMOR_TEMPLATE } from '../src/characters/ownArmorModels.js';
+import { CLASSIC_ARMOR_TEMPLATE } from '../src/characters/ownModels/ownArmorModels.js';
 import { playerHeadImage, npcHeadImage, playerHeadKey, poseHeadImage, residentHeadLook, HEAD_RECORD, _setHeadDataForTests } from '../src/characters/headPortraits.js';
 import { createPartyPanel, createFaceLoader, headSuffix } from '../src/ui/partyPanel.js';
 import { SocialState } from '../src/net/social.js';

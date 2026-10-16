@@ -13,10 +13,10 @@ import {
   pickEnemyForDepth, mustSpawnOnFloor, resolveSpawnColumn, pickEnemyPosition, alignFloorEnemyY, scaledEnemyAttemptsPerPixel,
   rollCount, rollTreasureGuardCount, pickRingDistance, isBehindPlayerHeading, isOutsideImmediateView, spawnRevealDistance,
 } from '../src/world/underwater/underwaterEnemies.js';
-import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES as M } from '../src/characters/mobile/mobileTypes.js';
 import { createEnemySpawner, createEncounterPulse, trySpawnTreasureGuards, ENEMY_ATTEMPTS_PER_PIXEL_PER_TICK } from '../src/scenes/deepWater/deepWatersEncounters.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
-import { enemyControllerHeight, idleSpriteHeight } from '../src/characters/enemyAnchor.js';
+import { enemyControllerHeight, idleSpriteHeight } from '../src/characters/enemy/enemyAnchor.js';
 
 const f32 = Math.fround;
 const seq = (vals) => { let i = 0; return () => vals[i++ % vals.length]; };

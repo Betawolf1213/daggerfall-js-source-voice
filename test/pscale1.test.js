@@ -15,7 +15,7 @@ import {
 import { PARTY_MAX, CELL_PUPPETS_MAX } from '../src/net/wire.js';
 import { createExteriorFoes, MAX_ACTIVE_ENCOUNTER_FOES } from '../src/scenes/exteriorFoes.js';
 import { CAMP_SIZE, PACK_SIZE, GROUP_ROLL_RADIUS } from '../src/systems/campEncounters.js';
-import { KNIGHT_CITY_WATCH } from '../src/characters/mobileTypes.js';
+import { KNIGHT_CITY_WATCH } from '../src/characters/mobile/mobileTypes.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 

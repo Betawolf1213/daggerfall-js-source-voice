@@ -233,7 +233,7 @@ export function createScreenShake({
  * MW-GUN-FEEL (2026-10-07, Mac: "overhauling the thunderlock in general including the morrowinds gun model and proper
  * animations"): THE SAME SPRING AND THE SAME RELOAD, ON THE MORROWIND ARM.
  *
- * Under the Morrowind arm the gun borrows the crossbow's groups (characters/ownWeaponModels.js animateAs) - and a
+ * Under the Morrowind arm the gun borrows the crossbow's groups (characters/ownModels/ownWeaponModels.js animateAs) - and a
  * crossbow has no kick and loads its bolt on the WIND-UP ("shoot attach", before the release), so after the bang the
  * hands simply stood still for the gun's 1.7s reload: no recoil, no reload, the pump's two clacks over an idle pose.
  * The classic sprite has had both since FIELD-GUN6 - the recoil spring above and the reload lower - and this hands

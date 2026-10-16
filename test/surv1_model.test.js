@@ -19,7 +19,7 @@ import {
 } from '../src/systems/survival/needs.js';
 import { liveStat } from '../src/systems/statMods.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
-import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
+import { EQUIP_SLOTS } from '../src/characters/paperdoll/paperdoll.js';
 import { RACES } from '../src/systems/races.js';
 import { DISEASES } from '../src/systems/diseases.js';
 

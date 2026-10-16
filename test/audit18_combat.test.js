@@ -20,7 +20,7 @@ import {
   LEFT_UNARMED_ANIMS, CLASSIC_UPDATE_INTERVAL, getMeleeWeaponAnimTime,
 } from '../src/characters/weaponStates.js';
 import { PlayerWeapon, playerAttackOptions, SWING_MODS } from '../src/combat/playerWeapon.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { BsaFile } from '../src/formats/bsaFile.js';
 import { ClassFile } from '../src/formats/classFile.js';
 

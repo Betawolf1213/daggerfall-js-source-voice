@@ -28,7 +28,7 @@ import { SD_BLOW_BY_ID, SD_BLOWS, SD_BODY } from '../../net/superDungeon/sdRemna
 import { sdBodyAt, sdEndAgain } from '../../net/superDungeon/sdFightLink.js';
 import { BODY_FALL, THUNDER_ROLL, SWING_LOW, CRYSTAL_CLIPS } from '../../world/gate/gateBoss.js';
 
-/** The Iron Atronach's voice (characters/enemyBasics.js row 36: moveSound, barkSound, attackSound). */
+/** The Iron Atronach's voice (characters/enemy/enemyBasics.js row 36: moveSound, barkSound, attackSound). */
 export const SD_IRON = Object.freeze({ move: 222, bark: 223, attack: 224 });
 /** DAGGER.SND's own besides (the Rift's bell 107, the Orrery's chime 364, the gears' grind 68). */
 const TOLL = 107, CHIME = 364, GRIND = 68;

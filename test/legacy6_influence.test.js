@@ -22,7 +22,7 @@ import { killerOf, inheritRevenant, revenantsFor, REVENANT_STORE_PREFIX, REVENAN
 import { LivingTown } from '../src/systems/livingWorld/livingTown.js';
 import { ResidentWalker } from '../src/characters/residentWalker.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
-import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
+import { PERSON_MOVE_SPEED } from '../src/characters/mobile/mobilePerson.js';
 import { LOCATION_TYPES } from '../src/formats/mapsFile.js';
 import { synthTown } from './lwTown.mjs';
 

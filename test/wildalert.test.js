@@ -9,9 +9,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { noticeChance, createWildAlert, WILD_ROLL_S, WILD_MARK_S, WILD_MARK } from '../src/systems/wild/wildAlert.js';
-import { stealthChance, STEALTH_MAX_DISTANCE, SIGHT_RADIUS } from '../src/characters/enemyMotor.js';
+import { stealthChance, STEALTH_MAX_DISTANCE, SIGHT_RADIUS } from '../src/characters/enemy/enemyMotor.js';
 import { foeAlerted, foeHostile, areEnemiesNearby } from '../src/systems/encounters.js';
-import { isLocalPlayerTarget, PLAYER_TARGET } from '../src/characters/enemyTargets.js';
+import { isLocalPlayerTarget, PLAYER_TARGET } from '../src/characters/enemy/enemyTargets.js';
 import { drawWildMarks, destroyWildMarks, wildMarksMounted, wildMarkScale, wildMarkAlpha, WILD_MARK_RANGE, WILD_MARKS_MAX, WILD_MARKS_IDLE_MS } from '../src/ui/wild/wildMarks.js';
 import { fakeDoc } from './decorFakes.mjs';
 

@@ -15,7 +15,7 @@
 // effect at the next roll, which the Features row says.
 import { rriModule } from './rriItems.js';
 import { WEAPONS } from '../../characters/weapons.js';
-import { MOBILE_TYPES } from '../../characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../../characters/mobile/mobileTypes.js';
 import { swingFrameSeconds, swingHandling } from '../../characters/weaponStates.js';   // SWING-LAW: the port's swing law answers the mod's Speed
 
 // ---- constants (RoleplayRealismItemsMod.cs:19-22) --------------------

@@ -183,7 +183,7 @@ overlap out; the port's collider pushed the middle and head spheres DOWN from th
 dragonling flew on held half in the ground. Every peer's puppet mirrored those feet, and re-hung the streamed FEET as a
 centre, half a sprite lower again.
 
-`characters/enemyAnchor.js` flyerSpawnFeet floors the hang at the floor under the marker (a surface above the marker is
+`characters/enemy/enemyAnchor.js` flyerSpawnFeet floors the hang at the floor under the marker (a surface above the marker is
 not the floor beneath it); a bat high under a ceiling keeps DFU's hang exactly (the ceiling-bats law). Both streamed-puppet
 stands in `scenes/dungeonContext.js` build with `feetGiven`.
 

@@ -5,7 +5,7 @@
 //
 // MW-CLOAK1 (2026-10-09, Mac: "2. The new cloak and its textures. Note: The new cloak will need bones to animate with
 // the character movement"). One mesh, hung from the shoulders down the back to the calves, in eight paintings - a mesh
-// per painting, each naming its own (src/characters/ownClothingModels.js CLOAK_PAINTINGS).
+// per painting, each naming its own (src/characters/ownModels/ownClothingModels.js CLOAK_PAINTINGS).
 //
 //   THE STEEL PLATE'S SCENE. The cloak came out of the Blender file the steel plate did ("New Ship.blend"), fitted on
 //   the same body: its axes are Morrowind's (front +Y - the cloak stands wholly behind, y -21.7 to -1.4), its placement
@@ -33,7 +33,7 @@ import { loopSubdivide } from './meshSubdivide.mjs';
 import { readPng } from './pngIO.mjs';
 import { isMain } from './lib/isMain.mjs';
 import { RETAIL_SKELETON, plateBind, bakeObject } from './bakeSteelPlate.mjs';
-import { CLOAK_PAINTINGS, cloakModel } from '../src/characters/ownClothingModels.js';
+import { CLOAK_PAINTINGS, cloakModel } from '../src/characters/ownModels/ownClothingModels.js';
 
 /** Mac's export, as committed - the cloak alone, as it came. */
 export const SOURCE = 'src/assets/mw/source/Cloak.fbx';

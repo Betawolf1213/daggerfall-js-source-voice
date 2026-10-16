@@ -237,7 +237,7 @@
   },
   {
     "name": "DISC28-H-hang-unfloored",
-    "file": "src/characters/enemyAnchor.js",
+    "file": "src/characters/enemy/enemyAnchor.js",
     "old": "  if (Number.isFinite(floorY) && floorY <= centre[1] && feet[1] < floorY) feet[1] = floorY;\n",
     "new": "",
     "tests": [
@@ -246,7 +246,7 @@
   },
   {
     "name": "DISC28-H-floor-above-marker-lifts",
-    "file": "src/characters/enemyAnchor.js",
+    "file": "src/characters/enemy/enemyAnchor.js",
     "old": "floorY <= centre[1] && ",
     "new": "",
     "tests": [
@@ -255,7 +255,7 @@
   },
   {
     "name": "DISC28-H-builder-reads-no-floor",
-    "file": "src/characters/enemyAnchor.js",
+    "file": "src/characters/enemy/enemyAnchor.js",
     "old": "flyerSpawnFeet(at, idleH, floorUnderHang(collider, at, idleH))",
     "new": "flyerSpawnFeet(at, idleH, null)",
     "tests": [

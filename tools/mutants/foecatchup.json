@@ -1,14 +1,14 @@
 [
   {
     "name": "FOECATCHUP-six-steps-again",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "export const FOE_MAX_FRAME_DT = 3 * FIXED_DT;",
     "new": "export const FOE_MAX_FRAME_DT = 6 * FIXED_DT;",
     "tests": ["test/foecatchup.test.js"]
   },
   {
     "name": "FOECATCHUP-no-cap",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "export const foeFrameDt = (dt) => Math.min(dt, FOE_MAX_FRAME_DT);",
     "new": "export const foeFrameDt = (dt) => dt;",
     "tests": ["test/foecatchup.test.js"]

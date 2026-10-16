@@ -25,8 +25,8 @@ import { mintCondition, setItemFields } from './item/itemTemplates.js';
 import { applyRarity, rarityEligible, rarityChances, championSource, corpseSource, lootRarityOn } from './loot/lootRarity.js';   // ELITE-RARE: the champion's blue the elite's Rare is read off; BAL4: the ladder's switch, offline
 import { goldStack } from './inventory.js';
 import { isAmmunition } from './item/itemTemplates.js';
-import { KNIGHT_CITY_WATCH } from '../characters/mobileTypes.js';   // ELITE-FLOOR: the watch is never an elite
-import { ENEMY_BASICS } from '../characters/enemyBasics.js';   // ELITE-FLOOR: a kind's own level, the same on every client
+import { KNIGHT_CITY_WATCH } from '../characters/mobile/mobileTypes.js';   // ELITE-FLOOR: the watch is never an elite
+import { ENEMY_BASICS } from '../characters/enemy/enemyBasics.js';   // ELITE-FLOOR: a kind's own level, the same on every client
 import { renownOpens } from './sigil/sigil.js';   // RENOWN-GATE: the page's Renown, the door every Renown-woken power reads
 
 /** Health and damage, times the foe's own (rolled, before any Elite Dungeon doubling - an elite is 5x, not 10x). */

@@ -7,8 +7,8 @@ import {
   mobileOrientation, rollAttackFrames, MobileUnit,
   MOBILE_RAT, MOBILE_GHOST, MOBILE_WRAITH, MOBILE_SLAUGHTERFISH, MOBILE_GIANT_SCORPION,
   MOVE_ANIM_SPEED, FLY_ANIM_SPEED, PRIMARY_ATTACK_ANIM_SPEED, HURT_ANIM_SPEED, IDLE_ANIM_SPEED,
-} from '../src/characters/mobileUnit.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+} from '../src/characters/mobile/mobileUnit.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 
 test('mobile: the record layout tables verbatim (EnemyBasics)', () => {
   assert.deepEqual(MOVE_ANIMS.map((a) => a.record), [0, 1, 2, 3, 4, 3, 2, 1]);
@@ -194,7 +194,7 @@ test('mobile: scorpion flip inversion + the orientation frame rescale', () => {
 });
 
 test('C14 spell state: the HasSpellAnimation route, the one-shot, and its interrupts', async () => {
-  const { RANGED_ATTACK1_ANIMS } = await import('../src/characters/mobileUnit.js');
+  const { RANGED_ATTACK1_ANIMS } = await import('../src/characters/mobile/mobileUnit.js');
   // GetStateAnims' Spell branch: HasSpellAnimation -> records 20-24
   // (RangedAttack1Anims); everyone else casts over the primary
   // records - and NO ghost/wraith special (verbatim: ghosts cast on
@@ -238,7 +238,7 @@ test('C14 spell state: the HasSpellAnimation route, the one-shot, and its interr
 });
 
 test('C17 humanoids: the female-thief idle, the ranged one-shot, the class fields', async () => {
-  const { FEMALE_THIEF_IDLE_ANIMS } = await import('../src/characters/mobileUnit.js');
+  const { FEMALE_THIEF_IDLE_ANIMS } = await import('../src/characters/mobile/mobileUnit.js');
   // FemaleThiefIdleAnims, verbatim: record 11 rides BOTH front
   // diagonals (the quirk), mirrored on the SE.
   assert.deepEqual(FEMALE_THIEF_IDLE_ANIMS.map((a) => a.record), [15, 11, 17, 18, 19, 18, 17, 11]);

@@ -36,7 +36,7 @@
 // so a relay keeps its last good state); one it takes answers the next state and the events it made.
 //
 // Not a DFU member: Daggerfall Unity has no such game - the mod does. Ledger A row (THE KING'S GAMBIT).
-import { ENEMY_BASICS, enemyDisplayName } from '../characters/enemyBasics.js';
+import { ENEMY_BASICS, enemyDisplayName } from '../characters/enemy/enemyBasics.js';
 import { drawBelow } from './dice.js';
 import { roundToInt } from '../systems/mathf.js';   // Mathf.RoundToInt's one home
 

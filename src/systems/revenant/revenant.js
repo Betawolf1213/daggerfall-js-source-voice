@@ -72,8 +72,8 @@ import { isBagItem } from '../../net/bagLaw.js';   // RVN8: never the Materials 
 import { isPackOnly } from '../item/itemBound.js';   // AUDIT 625 W2: nor a pack-only piece (the Wallet)
 import { itemLongName } from '../item/itemInfo.js';   // RVN8: the piece by the name the pack shows
 import { itemValueOf } from '../item/itemTemplates.js';   // RVN8: the most valuable
-import { enemyDisplayName, ENEMY_BASICS } from '../../characters/enemyBasics.js';
-import { KNIGHT_CITY_WATCH } from '../../characters/mobileTypes.js';
+import { enemyDisplayName, ENEMY_BASICS } from '../../characters/enemy/enemyBasics.js';
+import { KNIGHT_CITY_WATCH } from '../../characters/mobile/mobileTypes.js';
 import { firstName, monsterName, BANK_TYPES, GENDERS } from '../../characters/nameHelper.js';
 import { getSeed, setSeed, srand } from '../../formats/dfRandom.js';
 import { personalityFor, isPersonality, personalityLabel, voiceLine, beastBody, possessive, MUTE_KINDS } from './revenantPersonality.js';   // REVENANT-VOICE: who it is, and how it talks
@@ -110,7 +110,7 @@ export const REVENANT_FLEE_CHANCE_REVENANT = 0.15;
  *  its health (one blow rarely carries it past the line, as it did the fifth) and runs on this roll. */
 export const REVENANT_FLEE_HEALTH_YOUNG = 0.35;
 export const REVENANT_FLEE_CHANCE_YOUNG = 0.8;
-/** How long a fleeing foe runs (the motor's flee, characters/enemyMotor.js) - out of reach when it ends, it escapes. */
+/** How long a fleeing foe runs (the motor's flee, characters/enemy/enemyMotor.js) - out of reach when it ends, it escapes. */
 export const REVENANT_FLEE_SECONDS = 8;
 /** FLIGHT-FIRST: ...at this share of its walk (every special foe's run, a revenant's or not). A foe's walk (4.5-6 m/s) never outran a running player (8.1 m/s at Speed
  *  and Running 50), so every flight was run down and knelt; running for its life it gets away from a chase on foot,
@@ -602,7 +602,7 @@ export const revenantFleeHealth = (entity) => !!entity && entity.health > 0 && e
 /**
  * THE FLEE, ONE LAW FOR EVERY POOL (scenes/exteriorFoes.js, scenes/dungeonContext.js): one frame of a foe record
  * `f` ({ entity, ai, fleeing?, _fleeRolled? }) against the player's feet. Answers what the host does now:
- *   'start'    - it breaks and runs (the motor's flee, characters/enemyMotor.js) - say it; no blow, no cast; its walk drawn
+ *   'start'    - it breaks and runs (the motor's flee, characters/enemy/enemyMotor.js) - say it; no blow, no cast; its walk drawn
  *   'run'      - still running: no blow, no cast; its walk drawn
  *   'escape'   - out of reach (REVENANT_ESCAPE_DISTANCE off, or its run spent past REVENANT_ESCAPE_NEAR): retire it - no
  *                corpse, no kill - and make it a revenant (revenantDeed 'fled')
@@ -958,7 +958,7 @@ const ROMAN = Object.freeze(['', 'I', 'II', 'III', 'IV', 'V']);
 export const revenantRankNumeral = (rank) => ROMAN[Math.max(0, Math.min(REVENANT_MAX_RANK, rank | 0))];
 /** The picture a revenant is drawn by: the sprite it wore (`archive` - a retextured kind's own), else its kind's by
  *  gender, and its front-facing record - the idle's (15) where its kind has one, else the walk's (0)
- *  (characters/mobileUnit.js's tables). Null for a kind with no sprite. */
+ *  (characters/mobile/mobileUnit.js's tables). Null for a kind with no sprite. */
 export function revenantPortrait({ mobileType, gender = 'male', archive = null } = /** @type {any} */ ({})) {
   const b = ENEMY_BASICS[mobileType];
   const a = Number.isInteger(archive) ? archive : (b ? (gender === 'female' && b.femaleTexture ? b.femaleTexture : b.maleTexture) : null);

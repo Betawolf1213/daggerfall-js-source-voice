@@ -17,11 +17,11 @@ import assert from 'node:assert/strict';
 const N = await import('../src/systems/revenant/revenant.js');
 const F = await import('../src/systems/revenant/revenantFeud.js');
 const H = await import('../tools/tellDuel.mjs');
-const { EnemyAI } = await import('../src/characters/enemyMotor.js');
+const { EnemyAI } = await import('../src/characters/enemy/enemyMotor.js');
 const { Collider } = await import('../src/player/collider.js');
 const { runSpeed } = await import('../src/player/motor.js');
 const { setPref } = await import('../src/systems/uiPrefs.js');
-const { MOBILE_TYPES: M } = await import('../src/characters/mobileTypes.js');
+const { MOBILE_TYPES: M } = await import('../src/characters/mobile/mobileTypes.js');
 
 setPref('lootRarity', true);
 const orc = (over = {}) => ({ mobileType: M.Orc, level: 10, health: 60, maxHealth: 60, team: 'Monster', champion: 'mighty', ...over });

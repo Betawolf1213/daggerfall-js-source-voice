@@ -10,7 +10,7 @@ import { synthTown } from './lwTown.mjs';
 import { livingMap, partiesOver } from './lwRoads.mjs';
 import { LivingTown, WITNESS_M, DEED_KNOWN_MIN, LINE_RANGE } from '../src/systems/livingWorld/livingTown.js';
 import { ResidentWalker } from '../src/characters/residentWalker.js';
-import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
+import { PERSON_MOVE_SPEED } from '../src/characters/mobile/mobilePerson.js';
 import { createRelations, EVENTS, HOSTILE_AT, HAND_KINDS, HAND_NAME_MAX, TURNS_MAX, EASE_PER_DAY } from '../src/systems/livingWorld/relations.js';
 import { placeAt, handDeath, roadHits, fateHits, deathCounted, turnKey, HAZARD } from '../src/systems/livingWorld/lives.js';
 import { handsOn, membersAt, newsOf, remainsNear, awayOf, partyAt, placeCycle, CALENDAR_MPM, NEWS_DAYS } from '../src/systems/livingWorld/trips.js';

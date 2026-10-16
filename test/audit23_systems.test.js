@@ -15,8 +15,8 @@ import { spellsByIndexMap } from '../src/formats/spellsStd.js';
 import { canAccessService, canAccessLibrary } from '../src/systems/guild/guildServices.js';
 import { TG_SPYMASTER_FACTION_ID } from '../src/systems/guild/guildServiceFlow.js';
 import { GUILDS } from '../src/systems/guild/guilds.js';
-import { MobileUnit, MOBILE_RAT } from '../src/characters/mobileUnit.js';
-import { wouldBeSpawnedInClassic } from '../src/characters/enemyMotor.js';   // AUDIT 62 F22: the band law the guard pool's mount picks
+import { MobileUnit, MOBILE_RAT } from '../src/characters/mobile/mobileUnit.js';
+import { wouldBeSpawnedInClassic } from '../src/characters/enemy/enemyMotor.js';   // AUDIT 62 F22: the band law the guard pool's mount picks
 import { ACTION_FLAGS } from '../src/world/rdbLayout.js';
 import { tickPlayerMinutes, setWorldMinutes, worldMinutes } from '../src/systems/worldTick.js';
 import { raisePlayerSkills } from '../src/scenes/shared.js';

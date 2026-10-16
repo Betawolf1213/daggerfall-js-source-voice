@@ -22,7 +22,7 @@
 //    the family lives in it meanwhile, and it is the taker's with the save that holds it (`syncHouses`' `taken`).
 import { CLASS_CAREERS } from '../chargen.js';
 import { isAlive, personOf, fullNameOf, isCustomCareer } from './family.js';
-import { PERSON_TEXTURES, PERSON_FACE_RECORDS } from '../../characters/mobilePerson.js';
+import { PERSON_TEXTURES, PERSON_FACE_RECORDS } from '../../characters/mobile/mobilePerson.js';
 import { GENDERS } from '../../characters/nameHelper.js';
 import { raceArt, FACES_PER_RACE } from '../races.js';
 

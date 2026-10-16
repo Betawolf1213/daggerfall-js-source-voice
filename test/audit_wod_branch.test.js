@@ -25,7 +25,7 @@ import { wodSiteId, yieldsTo } from '../src/world/worldOfDaggerfall/wodShared.js
 import { WOD_SPAWN_TYPE } from '../src/world/worldOfDaggerfall/wodLocationObjects.js';
 import { alignBillboardToGround } from '../src/world/groundAlign.js';
 import { CELL_PUPPETS_MAX } from '../src/net/wire.js';
-import { isPeerTarget } from '../src/characters/enemyTargets.js';
+import { isPeerTarget } from '../src/characters/enemy/enemyTargets.js';
 import { readWorldOfDaggerfallBundle } from '../tools/worldOfDaggerfallAssets.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');

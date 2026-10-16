@@ -15,7 +15,7 @@
 // THE FIGHTERS are Daggerfall's own class enemies and monsters (`spawn` - the exterior's spawnFoe `loose`, `transient`,
 // `managed`, no loot, no champion, at the tier's level; the dungeon's spawnLooseFoe at its level), each carrying its
 // BOUT TAG on its entity (`entity.bout` - `{ id, side, out, hold, hooks }`): the targeting law's bout team
-// (characters/enemyTargets.js boutGate) keeps them to each other, and the pools' damage doors hold them at the foe yield
+// (characters/enemy/enemyTargets.js boutGate) keeps them to each other, and the pools' damage doors hold them at the foe yield
 // floor and tell the driver every blow (`hooks.hurt`), the floor (`hooks.floor`) and a blow from outside the bout
 // (`hooks.intrude`). The player fights as `you` (setPlayerBout), held at the 1 HP floor by `playerSpare`, and yields by
 // sheathing the blade at the yield line.
@@ -627,7 +627,7 @@ export function createArenaBouts(deps) {
     const m = floorFeet(markOf(C, fid));
     return Math.hypot(foe.ai.feet[0] - m[0], foe.ai.feet[2] - m[2]) <= MARK_ARRIVE_M;
   }
-  /** ARENA-FIX 8: THE WALK IN - a fighter cried by the Herald walks from its gate to its mark (characters/enemyMotor.js
+  /** ARENA-FIX 8: THE WALK IN - a fighter cried by the Herald walks from its gate to its mark (characters/enemy/enemyMotor.js
    *  walkTo, its own pursuit walk through the collider at WALK_PACE). One already there is at its mark at once. */
   function walkIn(C, fid) {
     const foe = C.fighters.get(fid);
@@ -1175,7 +1175,7 @@ export function createArenaBouts(deps) {
     return [c[0] + (x - ARENA_FLOOR_CENTRE[0]), c[2] + (z - ARENA_FLOOR_CENTRE[2])];
   }
   /** THE RELAY'S FIGHTERS ON THE CITY'S SAND: bodies of the exterior's own pool (no puppet lane there), each walked by
-   *  its own motor (characters/enemyMotor.js walkTo) after the relay's walk, stood where the relay has it once it falls
+   *  its own motor (characters/enemy/enemyMotor.js walkTo) after the relay's walk, stood where the relay has it once it falls
    *  CITY_SNAP_M behind, stood down once out. Its bout tag holds it - it targets nobody, so no swing of it lands. */
   function cityBodiesFrame(C, t, off) {
     for (const [id, foe] of C.fighters) {

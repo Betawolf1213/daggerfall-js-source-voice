@@ -11,8 +11,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { makeEnemyEntity, loadMonsterCareer } from '../src/characters/enemyEntity.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { makeEnemyEntity, loadMonsterCareer } from '../src/characters/enemy/enemyEntity.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { savingThrow, careerTolerance, EFFECT_FLAGS, ELEMENTS } from '../src/systems/spellcast.js';
 import {
   adjustmentsToHit, adrenalineRushToHit, calculateSuccessfulHit,

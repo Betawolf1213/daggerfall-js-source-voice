@@ -14,13 +14,13 @@ import {
 } from '../src/world/arena/arenaModel.js';
 import { arenaGroundTiles, arenaBlockJson, ARENA_PAVING, ARENA_PLAZA_FLATS, ARENA_PLAZA_MODELS, arenaGatePersonName, ARENA_GATE_PEOPLE, arenaDrawnModel } from '../src/world/arena/arenaCity.js';
 import { undercroftPopulation, chainTag, PIT_MASTER, HALL_KEEPER, UNDERCROFT_PEOPLE, UNDERCROFT_BEASTS, UNDERCROFT_FACTION, PIT_DUMMY, HALL_BRAZIER } from '../src/world/arena/arenaUndercroft.js';
-import { boutGate } from '../src/characters/enemyTargets.js';
+import { boutGate } from '../src/characters/enemy/enemyTargets.js';
 import { practiceBout, hallOfChampions, newArenaLadder, LADDER_TIERS } from '../src/systems/arena/arenaLadder.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { createArenaBouts, YOU, CROWD_SCALE, WALK_PACE, CRIT_SHARE } from '../src/scenes/arena/arenaBouts.js';
 import { arenaHudModel } from '../src/ui/arena/arenaHud.js';
 import { CROWD_PEOPLE } from '../src/systems/arena/arenaCrowd.js';
-import { EnemyAI, WALK_ARRIVE_M } from '../src/characters/enemyMotor.js';
+import { EnemyAI, WALK_ARRIVE_M } from '../src/characters/enemy/enemyMotor.js';
 import { Collider } from '../src/player/collider.js';
 import { calculateAttackDamage, registerAttackResolutionListener } from '../src/combat/formulas.js';
 import { droppedLightItem } from '../src/systems/arena/arenaMove.js';

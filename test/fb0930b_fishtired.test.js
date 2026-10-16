@@ -31,7 +31,7 @@ import { hurtPlayer } from '../src/characters/playerEntity.js';
 import { maxFatigue } from '../src/systems/statMods.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { onMonsterHit } from '../src/systems/diseases.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
 
 const NOON = 100000 * 1440 + 12 * 60;   // a day's noon on the classic clock

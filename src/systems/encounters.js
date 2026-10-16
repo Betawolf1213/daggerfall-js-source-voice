@@ -10,7 +10,7 @@
 // needs the exterior mobile-foe mount (the ledger row); the dungeon
 // REST arm is live through the alert state.
 
-import { mobileTeamOf } from '../characters/enemyTargets.js';   // MT-ii: :709's MobileEnemy.Team read
+import { mobileTeamOf } from '../characters/enemy/enemyTargets.js';   // MT-ii: :709's MobileEnemy.Team read
 import { CLIMATES } from '../formats/mapsFile.js';
 import { ENCOUNTER_TABLES } from '../characters/encounterTables.js';
 import { dice100 } from '../combat/formulas.js';   // Dice100.SuccessRoll, one home

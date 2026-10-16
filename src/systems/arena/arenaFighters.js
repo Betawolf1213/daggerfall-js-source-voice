@@ -17,8 +17,8 @@
 
 import { srand, getSeed, setSeed } from '../../formats/dfRandom.js';
 import { fullName, monsterName, GENDERS, BANK_TYPES } from '../../characters/nameHelper.js';
-import { enemyDisplayName } from '../../characters/enemyBasics.js';
-import { MOBILE_TYPES as M } from '../../characters/mobileTypes.js';
+import { enemyDisplayName } from '../../characters/enemy/enemyBasics.js';
+import { MOBILE_TYPES as M } from '../../characters/mobile/mobileTypes.js';
 import { ARENA_TEXT } from './arenaText.js';
 import { ARENA_HOMES, BEAST_HOMES, arenaHash, seededRng } from './arenaLadder.js';
 

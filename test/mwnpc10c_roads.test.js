@@ -12,8 +12,8 @@ import { rosterLook } from '../src/characters/foeBodies.js';
 import { residentLook, rosterActor } from '../src/characters/rosterBodies.js';
 import { FOLK_DRESS } from '../src/characters/folkBodies.js';
 import { wornByRole } from '../src/characters/wardrobe.js';   // PIN MOVED (MWNPC17, section 25): a look is its role's, dressed off the seed
-import { GUARD_TEXTURE } from '../src/characters/mobilePerson.js';
-import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';
+import { GUARD_TEXTURE } from '../src/characters/mobile/mobilePerson.js';
+import { MOBILE_TYPES as M } from '../src/characters/mobile/mobileTypes.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { WEAPONS_ENUM as W } from '../src/combat/enemyEquipment.js';
 import { createTravellerSprites } from '../src/world/travellerSprites.js';

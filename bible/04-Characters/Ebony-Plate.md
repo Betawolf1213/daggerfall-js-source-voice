@@ -2,7 +2,7 @@
 
 `tools/bakeEbonyPlate.mjs` (the bake) on `tools/bakeSteelPlate.mjs`'s machinery (the bind, the rigs) +
 `tools/skinWeights.mjs` (jointWeights, the hang OVER its joints) + `tools/fbxMesh.mjs` (earClipRepeated) +
-`src/characters/ownArmorModels.js` (the ebony plate's rows) + `src/formats/mwItemMap.js` (composeWornArmor)
+`src/characters/ownModels/ownArmorModels.js` (the ebony plate's rows) + `src/formats/mwItemMap.js` (composeWornArmor)
 (MW-EBONY1, Mac, 2026-10-09; MW-FIT1, the upper arms and the helm, from a player's report, the same day)
 
 > "This is next 1. The ebony armor set and its textures"

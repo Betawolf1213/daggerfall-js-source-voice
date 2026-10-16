@@ -313,7 +313,7 @@ monster's crit (`audit39_combat`, `diseases`: 2 x 1.2 = 2.4 -> 2 is now 2 x 1.4 
 the test's 21 mutants still die).
 
 **BAL3** - `systems/skillSoftcap.js` PLACE_THREAT, placeVeteran, wildernessThreat and progressionScaling's `place`;
-`characters/enemyEntity.js` records `progression.place`; the two seams gated on `lootRarityOn`. Pinned: the numbers
+`characters/enemy/enemyEntity.js` records `progression.place`; the two seams gated on `lootRarityOn`. Pinned: the numbers
 and the section 5 table; every dungeon kind at its ladder tier; the max rule, the foe's share, the clamp, the overcap,
 three arguments SOFTCAP2's own; the wilds by execution (a crafted MONSTER.BSA, an Orc Warlord at midnight: x1.214
 health with the ladder, DFU's with it off or on a location's ground); the dungeon's seam and the four hosts by

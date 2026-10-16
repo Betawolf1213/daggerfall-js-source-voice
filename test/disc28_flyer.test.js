@@ -21,9 +21,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as acorn from 'acorn';
-import { flyerSpawnFeet, flyerStandFeet, floorUnderHang, feetFromCentre, enemyControllerHeight } from '../src/characters/enemyAnchor.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
-import { EnemyAI } from '../src/characters/enemyMotor.js';
+import { flyerSpawnFeet, flyerStandFeet, floorUnderHang, feetFromCentre, enemyControllerHeight } from '../src/characters/enemy/enemyAnchor.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
+import { EnemyAI } from '../src/characters/enemy/enemyMotor.js';
 import { freeLodgedFeet } from '../src/characters/foeSpacing.js';   // FIELD BUGS 2026-10-04d CRATE-FREE: the build's stand (a free name there, the module's own import)
 import { Collider } from '../src/player/collider.js';
 import { effectiveLevel } from '../src/systems/mentorMode.js';   // SOFTCAP2: the mentor's level the spawn sites read (a free name there, the module's own import)

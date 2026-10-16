@@ -62,7 +62,7 @@
 // added"); the steel plate's closed helm and the ebony helm hide it, and stand where Mac fitted them on the body, the
 // coif hung to the collar (tools/bakeSteelPlate.mjs HELM_LIFT is the open helm's alone). The open helm shows the face,
 // so it keeps the head.
-import { ARMOR_MATERIAL, isPlate } from '../systems/armorMaterials.js';
+import { ARMOR_MATERIAL, isPlate } from '../../systems/armorMaterials.js';
 
 /** Roleplay & Realism Items' Jerkin (systems/roleplayRealismItems/rriItems.js RRI_TEMPLATES,
  *  ItemJerkin). Restated rather than imported for the leaf's sake;

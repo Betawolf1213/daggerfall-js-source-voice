@@ -109,7 +109,7 @@
   },
   {
     "name": "TACT5-blocked-walks-on",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "        if (this._tacDir) { this._tacDir = null; this._tacBlocked = true; this.moving = false; }",
     "new": "        if (this._tacDir) { this._tacDir = null; this._tacBlocked = true; }",
     "tests": [

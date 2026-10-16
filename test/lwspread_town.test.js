@@ -20,7 +20,7 @@ import { townPlaces, SQUARE_REACH, SQUARE_GAP, SQUARE_OPEN, SQUARE_POINTS, SQUAR
 import { favourites, squareOf, dayPlan, DAY_MIN, DAY_START_MIN, SQUARE_LIKE, SOCIAL_NEAR, EVENING_SPREAD_MIN, MARKET_HOURS } from '../src/systems/livingWorld/dayPlan.js';
 import { townCensus } from '../src/systems/livingWorld/census.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
-import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
+import { PERSON_MOVE_SPEED } from '../src/characters/mobile/mobilePerson.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
 
 const MPM = PERSON_MOVE_SPEED / CLASSIC_MINUTES_PER_SECOND;

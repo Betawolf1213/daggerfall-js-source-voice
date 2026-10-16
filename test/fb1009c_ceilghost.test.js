@@ -10,9 +10,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { EnemyAI } from '../src/characters/enemyMotor.js';
+import { EnemyAI } from '../src/characters/enemy/enemyMotor.js';
 import { Collider } from '../src/player/collider.js';
-import { runTargetMachine } from '../src/characters/enemyTargets.js';
+import { runTargetMachine } from '../src/characters/enemy/enemyTargets.js';
 import { crewBarPoint, CREW_BAR_LIFT, CREW_BAR_UNDER_CEILING, CREW_BAR_FROM } from '../src/ui/naval/navalHud.js';
 
 const I = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);

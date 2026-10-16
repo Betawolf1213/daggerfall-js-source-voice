@@ -26,8 +26,8 @@ import { isThunderlock, isPellet } from '../src/systems/thunderlock.js';   // im
 import { spawnEnemyLoot } from '../src/scenes/hostCombat.js';
 import { equipTableOf } from '../src/systems/equip.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { ENEMY_BASICS, enemyDisplayName } from '../src/characters/enemyBasics.js';
-import { makeEnemyEntity } from '../src/characters/enemyEntity.js';
+import { ENEMY_BASICS, enemyDisplayName } from '../src/characters/enemy/enemyBasics.js';
+import { makeEnemyEntity } from '../src/characters/enemy/enemyEntity.js';
 import { calculateAttackDamage } from '../src/combat/formulas.js';
 import { ARENA_PUPPET_OWNER } from '../src/net/arena/arenaLaw.js';   // ARENA4: the kill door's puppet test, the real owner word (no puppet here)
 import { playerEntity } from '../src/characters/playerEntity.js';

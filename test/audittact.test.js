@@ -7,10 +7,10 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { setPref } from '../src/systems/uiPrefs.js';
 import { Collider } from '../src/player/collider.js';
-import { EnemyAI, canSeeTarget, MIN_RANGED_DISTANCE } from '../src/characters/enemyMotor.js';
-import { EnemyAttack } from '../src/characters/enemyAttack.js';
+import { EnemyAI, canSeeTarget, MIN_RANGED_DISTANCE } from '../src/characters/enemy/enemyMotor.js';
+import { EnemyAttack } from '../src/characters/enemy/enemyAttack.js';
 import { ArrowFlight } from '../src/combat/arrowFlight.js';
-import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES as M } from '../src/characters/mobile/mobileTypes.js';
 import {
   TACT, setTacticsClock, resetTactics, tokensOut, LOCAL_TARGET, noteLocalPlayer, tacticsStep, releaseTactics,
   offsetTactics, boardsHeld, tacticsNow, tickTactics,

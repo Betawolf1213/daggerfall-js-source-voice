@@ -281,7 +281,7 @@
   },
   {
     "name": "WAGONS1-the-gate-gone",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    const seat = this.seat?.();\n    if (seat) {",
     "new": "    const seat = null;\n    if (seat) {",
     "tests": ["test/wagons1_seats.test.js"]

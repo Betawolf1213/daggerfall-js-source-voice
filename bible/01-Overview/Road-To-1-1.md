@@ -222,7 +222,7 @@ What remains after Wave D and the closeout tail (the spell-hand port,
 flags of `Home.md`. Wave E retired SEVEN of them (E2, landing last, took the chargen picker's scroll-bar hit) - one lane apiece, each
 blind to the others until the squash: E6 took the spell hands' release
 frame (`combat/fpsSpellCasting.js:"animation - and its"`) and the clear-path term
-(`characters/enemyCasting.js:"BEFORE the 1/40 roll"`), closing section C's `playSound` row
+(`characters/enemy/enemyCasting.js:"BEFORE the 1/40 roll"`), closing section C's `playSound` row
 with them; E4 took gold-as-a-bag-stack (`systems/inventory.js:"E4 (2026-09-02) RETIRED"`);
 E7 took `GetValue`'s empty-string arm (`systems/talk/talkMacros.js:"ordering: the scan"`);
 E5 took the docked bar's occlusion (`ui/hud/hudLarge.js:"THE DOCKED BAR SHRINKS"`); and E1
@@ -377,7 +377,7 @@ its own adversarial reviewer and a fixup round (9 review findings, all
 confirmed and applied; nothing refuted), integrated in order and
 squashed one commit per lane.
 
-- **H1 the enemy arrow origin** (`characters/enemyTargets.js`,
+- **H1 the enemy arrow origin** (`characters/enemy/enemyTargets.js`,
   `scenes/dungeonContext.js`, `scenes/exteriorFoes.js`) - both archer
   pools loosed from a hardcoded `feet + 1.2`. `GetAimPosition`'s
   non-player arrow arm is the caster transform + forward * 0.6 + the

@@ -18,7 +18,7 @@ import { flattenNif } from '../src/formats/mwNifMesh.js';
 import { decodeTextureImage } from '../src/formats/mwTexture.js';
 import { assembleFirstPersonArm, facePools, playerBodyRows, bodyParts, curatedAnswersFace } from '../src/formats/mwFirstPerson.js';
 import { buildFpArm } from '../src/combat/fpArm.js';
-import { OWN_HEADS, ownFacePools, ownHeadModelPaths } from '../src/characters/ownHeadModels.js';
+import { OWN_HEADS, ownFacePools, ownHeadModelPaths } from '../src/characters/ownModels/ownHeadModels.js';
 import { npcFaceOf, npcHint } from '../src/characters/wardrobe.js';
 import FACE_TABLE from '../src/formats/mwFaceTable.json' with { type: 'json' };
 import { readPng } from '../tools/pngIO.mjs';

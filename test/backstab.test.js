@@ -3,7 +3,7 @@
 import './modsOff.js';   // MO1: this suite pins Daggerfall Unity's own numbers - the game without its mods
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { isBackFacing } from '../src/characters/enemyMotor.js';
+import { isBackFacing } from '../src/characters/enemy/enemyMotor.js';
 import { calculateAttackDamage, backstabDamage } from '../src/combat/formulas.js';
 import { PlayerWeapon } from '../src/combat/playerWeapon.js';
 import { POSES } from '../src/characters/poses.js';

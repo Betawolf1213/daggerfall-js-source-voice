@@ -2,7 +2,7 @@
 
 `tools/bakeTownsfolk.mjs` (the bake) on `tools/bakeSteelPlate.mjs`'s machinery + `tools/skinWeights.mjs` (the joint law,
 and the hang over its joints) + `tools/fbxStrip.mjs` (the cut) + `tools/fbxMesh.mjs` (one material of an object) +
-`src/characters/ownClothingModels.js` (TOWNSFOLK_OUTFITS) + `src/characters/folkBodies.js` (folkLookOf) +
+`src/characters/ownModels/ownClothingModels.js` (TOWNSFOLK_OUTFITS) + `src/characters/folkBodies.js` (folkLookOf) +
 `src/net/peer/peerBodies.js` (the worn piece, the body key) + `src/formats/mwItemMap.js` (composeWornArmor,
 composeWornModest) + `src/combat/fpArm.js` (bareHeadRows, the card's rows) (MW-FOLK1, the owner, 2026-10-13)
 

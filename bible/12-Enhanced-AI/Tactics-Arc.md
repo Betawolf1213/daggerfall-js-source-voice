@@ -18,7 +18,7 @@ overdoing it"*. His calls, asked the same day:
 ## Where it stands (measured on the code, 2026-10-02)
 
 - **The enhanced AI is a pathfinder, and only in dungeons.** `EnhancedEnemyAI` (`ai/enhancedMotor.js`) overrides one
-  question - where a foe walks next - on the navmesh. Senses, decisions and attacks are DFU's (`characters/enemyMotor.js`
+  question - where a foe walks next - on the navmesh. Senses, decisions and attacks are DFU's (`characters/enemy/enemyMotor.js`
   `_classicTick`): walk in to 2.25 m and swing; never strafe, back off, circle or wait. The only retreat is `flee()`,
   whose one caller is a guard frightened by a werewolf. Streets, interiors, guards and exterior foes always run the
   classic motor (`dungeonContext.js` is the switch's only reader).
@@ -303,7 +303,7 @@ four of its rules stepped away from a player who pressed:
 - **No ring for a shooter.** Without a ranged token it stands off (the classic stand-off, its fire held); it never
   circles. A token of the kind a foe no longer fights as is handed back (a shooter that fought hand to hand kept its
   melee token for good).
-- **The motor** (`characters/enemyMotor.js _walkStep`): a brain step met by a wall also stops the walk for the rest of
+- **The motor** (`characters/enemy/enemyMotor.js _walkStep`): a brain step met by a wall also stops the walk for the rest of
   the classic tick - the next fixed steps walked on the way the foe FACED, which, turned to walk away, is into the wall,
   and started a classic detour along it.
 

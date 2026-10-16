@@ -77,7 +77,7 @@ import { isQuickConsumable, canSwapTo, quickslotOf, assignQuickslot, clearQuicks
 // only while the player has chosen it over the diamond.
 import { setHotbarDropMode, hotbarSlotNode, hotbarTakesItem, hotbarDropItem, hotbarMode, toggleHotbarItem, hotbarKeyOf, setHotbarDragging } from './enhancedHotbar.js';
 import { registerQuickAct } from '../plus/plusPad.js';   // PADPLUS5: the pad's X on a row
-import { EQUIP_SLOTS } from '../../characters/paperdoll.js';
+import { EQUIP_SLOTS } from '../../characters/paperdoll/paperdoll.js';
 import { dfWornEquipment } from '../../formats/mwItemMap.js';   // PX25
 import { hasDaggerfallArrows } from '../../combat/fpArm.js';   // PX26
 import { ARMOR_ENUM } from '../../combat/enemyEquipment.js';   // PX25

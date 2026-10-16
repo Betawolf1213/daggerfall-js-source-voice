@@ -3549,7 +3549,7 @@ Suite 462/103.
 
 The paperdoll arc opens. Two halves, every law cited:
 - systems/equip.js: the MECHANICS half of ItemEquipTable over the
-  EXISTING C5a/C5c foundation (characters/paperdoll.js EQUIP_SLOTS
+  EXISTING C5a/C5c foundation (characters/paperdoll/paperdoll.js EQUIP_SLOTS
   + characters/equipTable.js's verbatim GetEquipSlot/GetItemHands,
   whose header always deferred "equip/unequip mechanics" to the
   Systems arc): EquipItem (arrows refused, SplitStack ONE off a
@@ -3970,7 +3970,7 @@ list - inventory, trade, loot - drew clothing off the morphology-0
 ARGONIAN row and armor off the men's Argonian archive, whoever was
 wearing it. The paperdoll had the law since U8g; the list did not,
 which is exactly the split ONE DFU MEMBER, ONE EXPORT exists to catch.
-`characters/paperdollArt.js` now owns `playerArchiveFor` and both
+`characters/paperdoll/paperdollArt.js` now owns `playerArchiveFor` and both
 windows resolve through it; `makeIconDrawer` takes the wearer.
 Eyeballed: a Khajiit female's short shirt is archive 238, not 235.
 
@@ -3995,7 +3995,7 @@ Khajiit identity addressing Breton bitmaps.
 
 **paperdollArt kept a third copy.** 17e F32 collapsed the armor
 material tables out of equip.js and paperDoll.js and stopped one file
-short. `characters/paperdollArt.js` still held the SetVariant clamps
+short. `characters/paperdoll/paperdollArt.js` still held the SetVariant clamps
 keyed by material FAMILY and a second export literally named
 `armorArchive` whose second argument was a RACE where the other's was
 a MORPHOLOGY. Same member, same name, incompatible arguments. It

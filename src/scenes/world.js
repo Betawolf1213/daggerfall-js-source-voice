@@ -33,7 +33,7 @@ import { rollLootRarity, pileSource, dungeonRarityTier, dungeonFamily, stampWonW
 import { revenantToReturn, revenantSpawnOptions, revenantPresence, takeRevenantNotice, revenantSay, releaseRevenantStand, revenantRecord, revenantMomentEvent, revenantRumor, revenantMapMarks, revenantHuntEntries, revenantTakes, revenantFelled, revenantFelledEvent, revenantRoutSweep, revenantRoutedEvent, revenantWarnEvent, revenantBetrayEvent, forgetLastSlew, killerOf as revenantKillerOf, inheritRevenant } from '../systems/revenant/revenant.js';   // REVENANT: who comes back, and what the player is told
 import { endPlayerFights, playerHarmMark } from '../systems/harmMark.js';   // RVN10 (bible/12-Enhanced-AI/Feud-Arc.md 21.2): a respawn's jump is no flight
 import { DEVOTED } from '../systems/revenant/revenantFeud.js';   // RVN11 (Feud-Arc.md 22.1): a Devoted one's wait between warnings
-import { SKY_CLEAR } from '../render/renderer.js'; import { centreFromFeet } from '../characters/enemyAnchor.js';   // REVIEW 2026-09-05: one line, so the cites below it hold
+import { SKY_CLEAR } from '../render/renderer.js'; import { centreFromFeet } from '../characters/enemy/enemyAnchor.js';   // REVIEW 2026-09-05: one line, so the cites below it hold
 import { Arch3dFile } from '../formats/arch3dFile.js';
 import { requestLook, releaseLook, makeLookGate, bindCursorToggle, setCursorActive, cursorActive, holdCursor } from '../player/pointerLock.js';   // U45: bindCursorToggle is PlayerMouseLook.cursorActive; releaseLook: the chat's open (AUDIT CHAT C2); HERB-CURSOR: an act's free cursor
 import { attachTouch } from '../ui/touch/touch.js';
@@ -47,7 +47,7 @@ import { createArenaBouts } from './arena/arenaBouts.js';   // ARENA2: the bout 
 import { createArenaSound } from '../systems/arena/arenaSound.js';   // ARENA2: the crowd, heard - built from DAGGER.SND's own voices
 import { arenaScoreSongs, ARENA_SCORE_SILENCE } from '../systems/arena/arenaScore.js';   // ARENA2: the march and the fanfare
 import { drawArenaHud } from '../ui/arena/arenaHud.js';   // ARENA2: the versus bar, the crowd's meter, the clock
-import { setPlayerBout, inBout } from '../characters/enemyTargets.js';   // ARENA2: the bout team's player arm; AUDIT ARENA-LADDER A2: a fighter on the sand is its bout's
+import { setPlayerBout, inBout } from '../characters/enemy/enemyTargets.js';   // ARENA2: the bout team's player arm; AUDIT ARENA-LADDER A2: a fighter on the sand is its bout's
 import { keptOffArenaGround, ARENA_GROUND_M } from '../systems/arena/arenaGround.js';   // CURSE-OFF-SAND: the curse's dead keep off the arena's grounds
 import { exhibitionFor, nextLadderBout, arenaLadderRestore, practiceBout } from '../systems/arena/arenaLadder.js';   // ARENA2: the hour's exhibition, the ladder's next bout
 import { arenaReplaysRestore } from '../systems/arena/arenaReplay.js';   // ARENA5: your ladder replay
@@ -102,7 +102,7 @@ import { farFlatVisibleAt } from '../world/flatDistance.js';   // MAC1: the far 
 import { isBulletinBoard, isCityGate, CITY_GATE_OPEN_MODEL_ID, CITY_GATE_CLOSED_MODEL_ID } from '../world/rmbLayout.js';   // RMBLayout.cs:1013-1017 - the one model id a town sign wears; :1007-1011 - the two a city gate wears
 import { makeCityGate, updateCityGate } from '../world/city/cityGate.js';   // AUDIT 64 F14: DaggerfallCityGate
 import { staticBuildingBox, staticBuildingWorldAabb } from '../world/staticBuildings.js';   // AUDIT 64 F11: RMBLayout's StaticBuilding array
-import { targetAimPoint, missileAimDirection, isLocalPlayerTarget, PLAYER_TARGET } from '../characters/enemyTargets.js';   // AUDIT WORLD6b-iii(a) C3: the ONE aim law for an enemy missile (the peer's transform, mine otherwise); HCC: CollectThreats' `senses.Target == player`
+import { targetAimPoint, missileAimDirection, isLocalPlayerTarget, PLAYER_TARGET } from '../characters/enemy/enemyTargets.js';   // AUDIT WORLD6b-iii(a) C3: the ONE aim law for an enemy missile (the peer's transform, mine otherwise); HCC: CollectThreats' `senses.Target == player`
 import { collectExteriorNpcs, exteriorNpcRecord, setupExteriorQuestStaticNpcs } from '../characters/exteriorNpcs.js';   // C2 / AUDIT 26: RMBLayout's street StaticNPCs; E3: their quest pass
 import { drawnFlat } from '../characters/nudeFlats.js';   // NUDE-FLATS: Show Nudity off draws a nude figure's clothed stand-in
 import { installConsoleProbe, registerCommand } from '../systems/consoleCommands.js';   // E3: the console's door; CSA-C: the mod's commands
@@ -155,7 +155,7 @@ import { goldStack } from '../systems/inventory.js';   // LW6b: ...and their pur
 import { mintKeepsake } from '../systems/livingWorld/keepsake.js'; import { lwRng, textSeed } from '../systems/livingWorld/seed.js';   // LW6c: ...and their keepsake, carried home; AUDIT-C5: their goods their key's own (on this line, so no cite below it moves)
 import { createLivingIndoors } from './livingWorld/livingIndoors.js';   // LW8: the residents inside the building the player is in
 import { createTravellerSprites, classLookOf } from '../world/travellerSprites.js';   // LW3: their bodies, and the armed walk's sprite
-import { GUARD_TEXTURE, MobilePerson, PERSON_TEXTURES, PERSON_MOVE_SPEED, walkerRace } from '../characters/mobilePerson.js';
+import { GUARD_TEXTURE, MobilePerson, PERSON_TEXTURES, PERSON_MOVE_SPEED, walkerRace } from '../characters/mobile/mobilePerson.js';
 import { bowDamageArrow, weaponOfMaterial, armorOfMaterial } from '../combat/enemyEquipment.js';   // MAC-N1: the recovered shaft is CreateWeapon's arrow, value and all; OH-E: UpgradeLoot's SetItem + ApplyWeaponMaterial / ApplyArmorSettings
 import { createTownTalk, rayPersonDistance, nearestPerson } from './townTalk.js';   // AUDIT 63 F33 (review): the townsfolk's own pick distance, the enemy arm's rival
 import { createPlayerMagic } from './hostMagic.js';   // M2: spellcasting above ground
@@ -253,7 +253,7 @@ import { createWindAudio, windSoundOn } from '../systems/wind/windAudio.js';   /
 import { placeFoeFreely, PLACE_FOE_DEFAULTS } from '../systems/quest/sceneMount.js';   // B1: CreateFoe's raycast ring
 import { PLAYED_STEP_MAX_SECONDS } from '../systems/quest/clock.js';   // WORLD7: the quest clocks' played step online
 import { mintQuestFoeWave, placeFoeEnv, entityOccupancy, questFoeGender, reviveQuestBehaviour, heldSpots, holdSpotWhile, questBoxHoldsFoes, questShareTag, partnerStandsQuestFoes, questBehaviourFor, adoptsOrphanQuestFoe, isPrivateQuestFoe, KeptKillLedger, creditKeptKills, questPrivateTag, partyQuestFoe, partyOnlyQuestShare } from './quest/questFoeHost.js';   // B1   // AUDIT 63r F24: SerializableEnemy.cs:206-217's quest-link arm, the one home both hosts use
-import { ENEMY_BASICS } from '../characters/enemyBasics.js';   // MERGE: FinalizeFoe's Flying lift reads the behaviour flag
+import { ENEMY_BASICS } from '../characters/enemy/enemyBasics.js';   // MERGE: FinalizeFoe's Flying lift reads the behaviour flag
 import { markFoeReach } from '../systems/foeReach.js';   // WATER-FOES: a foe in the water reaches no one aboard
 import { intermittentEnemySpawn, setEnemyAlert, areEnemiesNearby, foeHostile, foeAlerted } from '../systems/encounters.js';   // OW6: foeHostile, the one hostility gate   // CAMP-ROLL: REST5's quietNights moved with the carried night's sequence (scenes/shared.js restCampNight)
 import { nightDue, setNightListener, nightStamp, nightKindOf, isNightStamp, carriedNightEnd, REST_ACT_TEXT, campStamp, campMarkOf } from '../systems/rest/restAct.js';   // REST5: the party's night   // AUDIT REST-PARTY: and where it was slept   // AUDIT REST II: the mark asked lazily (P5), and what a carried night says (P3)
@@ -457,7 +457,7 @@ import { createCityGuards } from './cityGuards.js';   // G1
 import { createArrestFlow } from './arrestFlow.js';
 import { clearCrimeOnLocationExit, addGold, goldAmount, deductGold, payUndoable, totalGoldAmount, deductGoldPieces } from '../systems/court.js';   // AUDIT 17e F6   // G2   // F-slice: travel gold; U41: GetGoldAmount + the pieces half of DeductFastTravelGold
 import { makeInView } from '../player/cameraView.js';   // AUDIT 17e F24
-import { isBackFacing, SIGHT_RADIUS, foeFrameDt } from '../characters/enemyMotor.js';   // OW6: SIGHT_RADIUS, a foe's own sight (a camp's is its own)   // DUEL1: a duel opponent's blow from behind me is a backstab's chance
+import { isBackFacing, SIGHT_RADIUS, foeFrameDt } from '../characters/enemy/enemyMotor.js';   // OW6: SIGHT_RADIUS, a foe's own sight (a camp's is its own)   // DUEL1: a duel opponent's blow from behind me is a backstab's chance
 import { markFoeStruck } from '../ui/hud/hudFoeTarget.js';   // DUEL1: my duel opponent's health, on the enhanced HUD's target bar
 import { lowerCondition, dfuBlowWear } from '../systems/equip.js';   // DUEL1: my weapon wears on a blow that landed on my opponent; BALANCE1: on the port's wear scale
 import { reportPlayerAttack, registerAttackResolutionListener } from '../combat/formulas.js';   // DUEL1: the defender's answer, on my HUD's damage numbers
@@ -489,7 +489,7 @@ import { bandWordOf, validBandWord, chaseYields, bandLifeOf, bandNearMe, bandPix
 import { walkBegin, leaderWalkStep, walkHeard, memberAnswer, memberFollowing, memberStopOf, memberWalkStep, walkAskStands, sameWalkDest, NO_WALK_ANSWER, PARTY_WALK_RADIUS_M } from '../systems/party/partyWalk.js';   // TV8: group travel, the leader drives (AUDIT OW3: the whole law, pure)
 import { rollGroupComposition, PACK_SPACING, PACK_ALERT_RADIUS } from '../systems/campEncounters.js';   // TV7: a band is a themed group
 import { seededRng } from '../systems/wind/wind.js';   // TV7: a band's make, rolled from its own seed
-import { enemyDisplayName } from '../characters/enemyBasics.js';   // TV7: a band's words
+import { enemyDisplayName } from '../characters/enemy/enemyBasics.js';   // TV7: a band's words
 import { groupCamps } from '../world/campShared.js';   // OW6: the camps on the Overworld
 import { travellerMarkOf, travellerDue, createTravellerBook, isShipMark } from '../systems/travellerMarks.js';   // TV3: the region's travellers; OWS1: at sea, a ship
 import { RainCurtainsRenderer, curtainsOf, CURTAIN_FOOT_MARGIN_M } from '../render/rainCurtains.js';   // TV4: the weather's curtains, stood in the world for the view
@@ -1074,7 +1074,7 @@ import { createUnderwaterLoot } from './deepWater/deepWatersLoot.js';   // DW-E5
 import { TREASURE_PILE_ARCHIVE, RUBBLE_RECORDS, centroidLocal } from '../world/underwater/underwaterLoot.js';   // DW-E5: the pile's picture, the rubble, the anchor
 import { createRandomReligiousItem, createRandomJewellery, createRandomGem, createRandomPotion, createRandomClothing, createRandomWeapon, createRandomArmor } from '../systems/loot/loot.js';   // DW-E5: FillRandomItem's seven ItemBuilder calls
 import { createRegularMagicItem, getMagicItemTemplates, lootMatrix, tableLootSpawned } from '../systems/loot/loot.js';   // OH-E: CreateRandomMagicItem, GetMatrix, LootTables.OnLootSpawned
-import { enemyLootSpawned } from '../characters/enemyEntity.js';   // OH-E: EnemyEntity.OnLootSpawned
+import { enemyLootSpawned } from '../characters/enemy/enemyEntity.js';   // OH-E: EnemyEntity.OnLootSpawned
 import { customItemClass } from '../systems/roleplayRealismItems/rriItems.js';   // OH-E: UpgradeLoot's `GetType() != typeof(DaggerfallUnityItem)`
 import { setItemFields, mintCondition, isAmmunition } from '../systems/item/itemTemplates.js';   // DW-E5: the item constructor's name, value and condition
 import { registerItemUseHandler } from '../systems/item/itemTemplates.js';   // CSA-H: the boat items' UseItem on the item-use door
@@ -13916,7 +13916,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   subscribeFoePools(playerTicker, [() => cityGuards.guards, () => exteriorFoes.foes], foeSinks);
   // WATCH-PROTECTS: THE STREET'S PEOPLE AS A MONSTER'S QUARRY (systems/livingWorld/quarry.js) - the living world's
   // townspeople on the street, none of the watch, each a body at their world feet that a hostile monster fighting hand to
-  // hand may hunt (characters/enemyTargets.js huntsCivilians); struck, killed by another hand (livingTown.js killed)
+  // hand may hunt (characters/enemy/enemyTargets.js huntsCivilians); struck, killed by another hand (livingTown.js killed)
   const _quarryOf = new WeakMap();
   const livingQuarry = () => {
     if (!livingWorldOn() || _mode() !== 'exterior') return [];
@@ -29863,7 +29863,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // receiving peer's mobile sprite (net/remotePlayers.js
     // _syncMobilePeer -> MobileUnit._change) resets to frame 0 on every
     // idle<->move edge, unconditionally, for any class with an idle
-    // table of its own (characters/mobileUnit.js). One stray sampled
+    // table of its own (characters/mobile/mobileUnit.js). One stray sampled
     // frame with a near-zero delta - a physics sub-step that had not
     // advanced yet, a single frame stalled on a collision, anything
     // that briefly reads as "did not move" while a player is plainly

@@ -8,7 +8,7 @@ import {
   DETOUR_TIMER, DETOUR_CLOCKWISE_TIMER, DETOUR_UNSTUCK_RESET, DETOUR_REACH,
   DETOUR_ARRIVAL, DETOUR_SWEEP_MAX_TRIES, FALL_CHECK_AHEAD, FALL_CHECK_DROP,
   DOOR_CROUCHING_HEIGHT,
-} from '../src/characters/enemyMotor.js';
+} from '../src/characters/enemy/enemyMotor.js';
 import { Collider } from '../src/player/collider.js';
 import { CAPSULE_RADIUS } from '../src/player/motor.js';
 
@@ -384,9 +384,9 @@ test('audit24 wave34: the walk-base cycle is broken, one home and one direction'
   // files: motor.js imported DF_WALK_BASE from enemyMotor.js while
   // enemyMotor.js imported the capsule constants from motor.js.
   const motor = rd('src/player/motor.js');
-  const enemy = rd('src/characters/enemyMotor.js');
+  const enemy = rd('src/characters/enemy/enemyMotor.js');
   assert.ok(motor.includes('export const DF_WALK_BASE = 150;'), 'the home is motor.js, beside DF_CROUCH_BASE');
-  assert.equal(/from '\.\.\/characters\/enemyMotor\.js'/.test(motor), false, 'motor.js imports nothing from enemyMotor.js');
+  assert.equal(/from '\.\.\/characters\/enemy\/enemyMotor\.js'/.test(motor), false, 'motor.js imports nothing from enemyMotor.js');
   assert.ok(enemy.includes("import { CAPSULE_HEIGHT, CAPSULE_RADIUS, DF_WALK_BASE } from '../player/motor.js';"),
     'and the edge runs one way');
   assert.equal((`${motor}${enemy}`.match(/^export const DF_WALK_BASE = /gm) ?? []).length, 1, 'declared once');
@@ -395,7 +395,7 @@ test('audit24 wave34: the walk-base cycle is broken, one home and one direction'
 test('audit24 wave34: every pool inherits the probe, because it lives in the AI', () => {
   // The whole point of putting it in EnemyAI: the three pools construct
   // one and get the law without a line each.
-  const enemy = rd('src/characters/enemyMotor.js');
+  const enemy = rd('src/characters/enemy/enemyMotor.js');
   for (const m of ['_obstacleCheck(dir)', '_fallCheck(dir)', '_findDetour(dir2d', '_updateDetourTimers(dt, canAct)']) {
     assert.ok(enemy.includes(m), `${m} is on the AI`);
   }

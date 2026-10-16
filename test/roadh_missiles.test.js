@@ -17,7 +17,7 @@ import { readFileSync } from 'node:fs';
 import {
   enemyArrowOrigin, enemyTransformPoint, arrowAimDirection,
   ARROW_ORIGIN_FORWARD, ARROW_ORIGIN_HEIGHT_DIVISOR, ARROW_CROUCH_DIP,
-} from '../src/characters/enemyTargets.js';
+} from '../src/characters/enemy/enemyTargets.js';
 import {
   playerArrowOrigin, PLAYER_ARROW_DOWN, PLAYER_ARROW_SIDE,
   sphereOverlapsCapsule, sweepFoes, missileHitsCapsule, PLAYER_BODY_RADIUS,
@@ -126,7 +126,7 @@ test('ROAD-H H1: BOTH archer pools take the one law, and neither carries feet + 
   }
   // The NON-arrow enemy cast stays the BARE transform (AUDIT 62 F21) -
   // GetAimPosition adds the lean only inside `if (isArrow)` (:528).
-  assert.match(src('characters/enemyCasting.js'),
+  assert.match(src('characters/enemy/enemyCasting.js'),
     /const from = \[f\.ai\.feet\[0\], casterTransformY, f\.ai\.feet\[2\]\];/,
     'the spell loose point is untouched by the arrow arm');
 });
@@ -445,7 +445,7 @@ test('ROAD-H H2: the sweep and the player arm are wired through the one helper, 
   }
   // ...including the enemy AreaAroundCaster arm, which reaches
   // explodeAt through the shared cast executor.
-  assert.match(src('characters/enemyCasting.js'), /\{ excludeFoe: f, playerHeight \}\);/);
+  assert.match(src('characters/enemy/enemyCasting.js'), /\{ excludeFoe: f, playerHeight \}\);/);
   assert.match(src('scenes/dungeonContext.js'), /playerFeet: lastPlayerFeet, playerHeight: lastPlayerHeight,/);   // AUDIT WORLD6b-iii(a) C2: MY capsule, whoever the target
   assert.match(src('scenes/exteriorFoes.js'), /playerFeet, playerHeight: _lastPlayerHeight,/);
   // ...and the PRODUCERS that keep those two latches live. The review

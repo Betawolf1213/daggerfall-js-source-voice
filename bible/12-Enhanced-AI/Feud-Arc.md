@@ -97,7 +97,7 @@ wait for the Enhanced AI switch; the rest work without it (section 2.1).
    `SWING_BASE_FRAME` (195/980, about 0.2 s a frame at Speed 50) - about 0.4 s. A player who swings when the mark
    appears always interrupts.
 3. **The body does not tell.** FACT: through a wind-up `windupTurn` sets `ai._tacStrike = false; ai.moving = false`,
-   and the sprite plays IDLE. The swing begins only at the landing (`characters/enemyAttack.js`, the forced
+   and the sprite plays IDLE. The swing begins only at the landing (`characters/enemy/enemyAttack.js`, the forced
    `_blowSwing`), so the sprite's strike frame (the `-1` in its kind's `primaryAttackAnimFrames`) comes 0.2-0.3 s after
    the ground's flash. No sound marks the wind-up; the attack sound plays at the strike edge, and only half the time
    (`EnemySoundSource.attack`, `ATTACK_SOUND_THRESHOLD`). The only tell is the ground.
@@ -272,7 +272,7 @@ The law: `ai/tells.js` (the table, the weight classes, poise, a blow's class and
 (`windupHolds`, `windupStruck` - the meter, the break, the stagger - and the `staggered` state's exit to RECOVER). The
 doors: the three damage doors ask one law, `scenes/hostCombat.js windupDoor`, where each writes DFU's knockback, and the
 foe-vs-foe payload (`applyDamageToNonPlayer`) writes no knockback on a foe winding up. The motor:
-`characters/enemyMotor.js _step` (the stagger's CanAct). The tail: `combat/formulas.js`, through `systems/blowTaken.js`.
+`characters/enemy/enemyMotor.js _step` (the stagger's CanAct). The tail: `combat/formulas.js`, through `systems/blowTaken.js`.
 Four hosts: all four run these pools (the interior's foes are the street's pool, `worldModes.js makeInteriorFoes`);
 nothing is host-local but the routes into the watch's door (the arrows' kind, the spell sinks' rounds).
 
@@ -703,7 +703,7 @@ before the yield in both damage doors (`exteriorFoes.js damageFoe`, `dungeonCont
 ## 17. The band (RVN6)
 
 - **From rank 2**: `RETINUE` followers by rank - none at 1, then 1, 2, 3, 3.
-- **Its kin**, drawn on its id and kept on the record (`kin`): of its faction (`characters/mobileFactions.js
+- **Its kin**, drawn on its id and kept on the record (`kin`): of its faction (`characters/mobile/mobileFactions.js
   factionOf` - orcs bring orcs, the undead their own, a beast its own kind); a person its class's family (a Barbarian
   brings Warriors and Barbarians; a Thief, Rogues and Burglars). A follower stands at its kind's level; a class
   follower at the player's level - 2.
@@ -1294,7 +1294,7 @@ With 22 and 23 as recommended together (measured): the will 100 / 90 / 12%, the 
   `entity.staggerUntil` on the brain's clock, `staggerReady` 3 s past its end); a break inside the guard is a plain
   break (state `wait`, DFU's knock for the blow). The stagger's end goes to RECOVER (its hop and its beat). The fold
   `tell-stagger` registers at import.
-- **The motor** - `characters/enemyMotor.js _step`: `staggered` joins CanAct, the stop of the walk latch, the detour
+- **The motor** - `characters/enemy/enemyMotor.js _step`: `staggered` joins CanAct, the stop of the walk latch, the detour
   timers and the follow, as a knock does; `ai.staggered` per step. A paralysis still breaks a wind-up (the brain's next
   turn hears `_tacSkipped`) and staggers nothing.
 - **The doors** - `scenes/hostCombat.js windupDoor` (the class from the door's `kind`, the player's `weapon`, a
@@ -1332,12 +1332,12 @@ With 22 and 23 as recommended together (measured): the will 100 / 90 / 12%, the 
 
 - **The held swing** - `ai/tactics.js`: the wind-up's start raises `ai._blowHold = true` and `ai._blowWind`; the
   landing at me writes `_blowHold = false` (and stamps `ai._blowLandedAt`); a break, a paralysis, a landing on no one
-  here and a lost place (`releaseTactics`) drop it (`dropSwing`: `'cancel'`). `characters/enemyAttack.js`: `_blowWind`
+  here and a lost place (`releaseTactics`) drop it (`dropSwing`: `'cancel'`). `characters/enemy/enemyAttack.js`: `_blowWind`
   begins the one swing at the wind-up (the strike edge, `swingSeq`, `_held`); the landing's `_blowSwing` releases a held
   swing - the brain's count (`_tacSwung`) then, no second swing - and restarts the machine on the strike it rolled at
   the start (no new draw): its own swing ran out under the hold, and a swing in flight holds the bow roll as the forced
   swing's did; `'cancel'` resets the machine. A landing the attack
-  component cannot take in time is spent as before. `characters/mobileUnit.js`: `update`'s `hold` - a swing that BEGAN
+  component cannot take in time is spent as before. `characters/mobile/mobileUnit.js`: `update`'s `hold` - a swing that BEGAN
   under it (`_underHold`) stands before its first `-1` (the raised arm; a list that starts with `-1` holds frame 0); the
   release strikes on the next frame step; `'cancel'` drops it to idle, so a stagger's Hurt takes the same frame (section
   4.1's `cancelAttack()` is this word, not a method). The first `-1` releases the hold - a list's second strike is
@@ -1420,9 +1420,9 @@ With 22 and 23 as recommended together (measured): the will 100 / 90 / 12%, the 
   (`beginOverreach`): state `overreach` for `punishSeconds`, `ai.overreachUntil` and `entity.overreachUntil` on the
   brain's clock, the swing released to strike and then stand (`_blowHold = 'spent'`), its melee token kept. The
   window's end (the brain's next turn past it) is TACT2's RECOVER - its hop, its beat, its token handed on. Its place
-  gone (`releaseTactics`) ends it. `characters/enemyMotor.js _step`: `overreached` joins the stagger's lock as `locked`
+  gone (`releaseTactics`) ends it. `characters/enemy/enemyMotor.js _step`: `overreached` joins the stagger's lock as `locked`
   (CanAct, the walk latch, the detour timers, the follow) - its Hurt is not asked.
-- **The spent pose** - `characters/mobileUnit.js`: a held swing's strike is `_struck`; under `'spent'` its
+- **The spent pose** - `characters/mobile/mobileUnit.js`: a held swing's strike is `_struck`; under `'spent'` its
   follow-through - the frame after its strike - STANDS. Read for section 6.1's "the attack's last frame": a list's last
   entries are its second strike and its rest pose (the orc's `[..., -1, 5, 0]`), so the frame the world boss's
   SPENT_FRAME stands for is the one after the blow. When the word goes the swing is over (to idle); a list's second
@@ -1543,7 +1543,7 @@ With 22 and 23 as recommended together (measured): the will 100 / 90 / 12%, the 
   ray at the chest) and no cover (`ai/cover.js coverDistance`) to the target and a metre past. Who: TELL7's whole set
   of the chargers.
 - **The run** - at its landing at me the foe RUNS its lane (`beginDash`, state `dash`): the brain's walk (`_tacDir`) at
-  the lane's speed, along the collider - a wall ends it in a skid (`_tacBlocked`); `characters/enemyMotor.js` never
+  the lane's speed, along the collider - a wall ends it in a skid (`_tacBlocked`); `characters/enemy/enemyMotor.js` never
   hands a run to the detour. The verdict is swept between the brain's turns, once (`dashTurn`; the world boss's
   `chargeStrikes` law): my feet within its half-width of the stretch it ran - a hit, and it stops where it met me;
   its time out or a wall - a miss, and it overreaches at the lane's end. Its held swing stands until the verdict;
@@ -1964,7 +1964,7 @@ and `dungeonContext.js`.
 - **The brain** - `beginWindup` draws its feint against `feintChance`; `windupTurn` tracks through `trackShare`; an
   Arrow-wise revenant out of reach winds up its charge or leap with no `BLOW_CHANCE` roll whenever its lane is free
   (decided here: "the charge or the leap if its kind has one" read as it always closes).
-- **The motor** - `characters/enemyMotor.js speed` adds `_edgeSpeed()`: Arrow-wise +20 while its target is past 8 m.
+- **The motor** - `characters/enemy/enemyMotor.js speed` adds `_edgeSpeed()`: Arrow-wise +20 while its target is past 8 m.
 - **The doors** - `hostCombat.backstabChanceOf(player, facing, foe)` answers 0 for a Watchful one (no tally), every door
   handing the foe in (`arrowFlight.js`, the dungeon's swing, the street's, the watch's); `playerWeapon.foeUnaware`
   false; `windupDoor` weighs no back multiplier on its poise (the ledger still counts the back hit).

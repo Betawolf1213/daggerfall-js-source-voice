@@ -494,7 +494,7 @@ export const ICON_WRAPPINGS = Object.freeze([254, 41]);
 export const ICON_SCALES = Object.freeze([254, 37]);
 export const ICON_FEATHER = Object.freeze([254, 53]);
 export const ICON_GARMENT = Object.freeze([204, 0]);
-/** DFU's MobileTypes (characters/mobileTypes.js, generated from DaggerfallUnityEnums.cs) of the ten foes 4.4 skins. */
+/** DFU's MobileTypes (characters/mobile/mobileTypes.js, generated from DaggerfallUnityEnums.cs) of the ten foes 4.4 skins. */
 const MOB = Object.freeze({
   Rat: 0, GiantBat: 3, GrizzlyBear: 4, SabertoothTiger: 5, Spider: 6, Slaughterfish: 11, Harpy: 13, GiantScorpion: 20,
   Dragonling: 34, DragonlingAlternate: 40, Dreugh: 41,

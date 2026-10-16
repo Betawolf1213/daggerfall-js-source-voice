@@ -38,7 +38,7 @@ import { HULL } from '../src/systems/naval/navalShips.js';
 import { pickFoe, RAY_DISTANCE, TREASURE_ACTIVATION_DISTANCE, TOO_FAR_AWAY_TEXT } from '../src/player/activate.js';
 import { LOCK_PICK_DISTANCE, createLockOn } from '../src/player/lockOn.js';
 import { activateMobileEnemy, tryMobileEnemyActivate, youSeeEnemyText } from '../src/player/mobileEnemyActivate.js';
-import { enemyDisplayName } from '../src/characters/enemyBasics.js';
+import { enemyDisplayName } from '../src/characters/enemy/enemyBasics.js';
 import { sea } from './navalSea.mjs';
 
 const { drawCrewBars, destroyNavalHud, NAVAL_HUD_CSS, MATE_BAR_W } = NH;

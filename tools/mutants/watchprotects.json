@@ -1,7 +1,7 @@
 [
   {
     "name": "WATCH-PROTECTS-hunt-not-hostile",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "  if (!self?.ai?.isHostile || self.isQuestFoe || self.companion != null) return false;",
     "new": "  if (self.isQuestFoe || self.companion != null) return false;",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "WATCH-PROTECTS-hunt-quest",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "  if (!self?.ai?.isHostile || self.isQuestFoe || self.companion != null) return false;",
     "new": "  if (!self?.ai?.isHostile || self.companion != null) return false;",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "WATCH-PROTECTS-hunt-companion",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "  if (!self?.ai?.isHostile || self.isQuestFoe || self.companion != null) return false;",
     "new": "  if (!self?.ai?.isHostile || self.isQuestFoe) return false;",
     "tests": [
@@ -31,7 +31,7 @@
   },
   {
     "name": "WATCH-PROTECTS-hunt-watch",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "mobile === 'PlayerAlly' || mobile === 'CityWatch' || self.entity?.isClass) return false;",
     "new": "mobile === 'PlayerAlly' || self.entity?.isClass) return false;",
     "tests": [
@@ -41,7 +41,7 @@
   },
   {
     "name": "WATCH-PROTECTS-hunt-ally",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "  if (team === 'PlayerAlly' || mobile === 'PlayerAlly' ||",
     "new": "  if (",
     "tests": [
@@ -51,7 +51,7 @@
   },
   {
     "name": "WATCH-PROTECTS-hunt-class",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": " || mobile === 'CityWatch' || self.entity?.isClass) return false;",
     "new": " || mobile === 'CityWatch') return false;",
     "tests": [
@@ -61,7 +61,7 @@
   },
   {
     "name": "WATCH-PROTECTS-hunt-caster",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "  if (self.caster || (self.entity?.spells?.length ?? 0) > 0) return false;\n",
     "new": "",
     "tests": [
@@ -71,7 +71,7 @@
   },
   {
     "name": "WATCH-PROTECTS-hunt-archer",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "  return !self.mobile?.basics?.hasRangedAttack1;\n}",
     "new": "  return true;\n}",
     "tests": [
@@ -81,7 +81,7 @@
   },
   {
     "name": "WATCH-PROTECTS-anyone-hunts",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "    if (civilian && !huntsCivilians(self)) continue;\n",
     "new": "",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "WATCH-PROTECTS-team-chain",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "    if (bout !== true && !civilian) {",
     "new": "    if (bout !== true) {",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "WATCH-PROTECTS-likelier",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "targetPriority(targetAi && !civilian ? (targetAi.target ?? null) === null : false, see, distance);",
     "new": "targetPriority(targetAi ? (targetAi.target ?? null) === null : false, see, distance);",
     "tests": [

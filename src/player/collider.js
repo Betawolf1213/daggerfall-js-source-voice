@@ -1963,7 +1963,7 @@ export class Collider {
     // something on the body's sides: the resolve pushed the pass off where the motion put it by more than SIDE_CONTACT,
     // along a face steeper than the slope limit (the collider's own wall law, GROUND_NY) - never a floor or a walkable
     // slope the lower sphere rides. A pass the resolve refused is back where it began, the whole motion off. Read by
-    // EnemyMotor.HeightAdjust (characters/enemyMotor.js _heightAdjust).
+    // EnemyMotor.HeightAdjust (characters/enemy/enemyMotor.js _heightAdjust).
     const sideX = feet[0] - (beforeX + dx), sideY = feet[1] - entryY, sideZ = feet[2] - (beforeZ + dz);
     const sideSq = sideX * sideX + sideZ * sideZ;
     let sides = sideSq > SIDE_CONTACT * SIDE_CONTACT && sideY / Math.sqrt(sideSq + sideY * sideY) < GROUND_NY;

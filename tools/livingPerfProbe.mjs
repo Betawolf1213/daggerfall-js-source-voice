@@ -32,7 +32,7 @@ import { LivingTown, ARRIVAL_SHOW_S } from '../src/systems/livingWorld/livingTow
 import { travellerCounts } from '../src/systems/livingWorld/census.js';
 import { TownPopulation } from '../src/systems/town/townPopulation.js';
 import { ResidentWalker } from '../src/characters/residentWalker.js';
-import { MobilePerson, PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
+import { MobilePerson, PERSON_MOVE_SPEED } from '../src/characters/mobile/mobilePerson.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
 import { DAY_MIN, DAY_START_MIN } from '../src/systems/livingWorld/dayPlan.js';
 import { planRoute } from '../src/systems/travel/travelRoute.js';

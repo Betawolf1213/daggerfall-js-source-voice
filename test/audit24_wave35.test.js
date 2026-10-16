@@ -7,8 +7,8 @@ import {
   EnemyAI, MELEE_DISTANCE, MIN_RANGED_DISTANCE, MAX_RANGED_DISTANCE,
   LAST_HAD_LOS_TICKS, SEARCH_MULT_MAX, CLEAR_PATH_DEFAULT_DIST,
   CLASSIC_UPDATE_INTERVAL,
-} from '../src/characters/enemyMotor.js';
-import { hasRangedSpell } from '../src/characters/enemyCasting.js';
+} from '../src/characters/enemy/enemyMotor.js';
+import { hasRangedSpell } from '../src/characters/enemy/enemyCasting.js';
 import { Collider } from '../src/player/collider.js';
 import { GLOBAL_SCALE } from '../src/world/meshReader.js';
 
@@ -36,9 +36,9 @@ test('audit24 wave35: the ranged band has ONE home, and the import runs one way'
   assert.equal(MAX_RANGED_DISTANCE, 2048 * GLOBAL_SCALE, ':29');
   assert.equal(MIN_RANGED_DISTANCE, 6);
   assert.equal(MAX_RANGED_DISTANCE, 51.2);
-  const motor = rd('src/characters/enemyMotor.js');
-  const attack = rd('src/characters/enemyAttack.js');
-  const casting = rd('src/characters/enemyCasting.js');
+  const motor = rd('src/characters/enemy/enemyMotor.js');
+  const attack = rd('src/characters/enemy/enemyAttack.js');
+  const casting = rd('src/characters/enemy/enemyCasting.js');
   assert.ok(motor.includes('export const MIN_RANGED_DISTANCE = 240 * GLOBAL_SCALE;'), 'declared in the motor');
   assert.ok(attack.includes("export { MIN_RANGED_DISTANCE, MAX_RANGED_DISTANCE } from './enemyMotor.js';"), 'and re-exported');
   // the reason it moved: enemyAttack.js imports FROM the motor, so
@@ -128,7 +128,7 @@ test('D9: GetDestination\'s magic term is CurrentMagicka > 0, not CanCastRangedS
   spent._getDestination([0, 0, 20]);
   assert.equal(onTarget(spent), false,
     'and a selection with NO magicka does not - this line never asks CanCastRangedSpell');
-  const motor = rd('src/characters/enemyMotor.js');
+  const motor = rd('src/characters/enemy/enemyMotor.js');
   assert.ok(motor.includes('|| (this.inSight && (this.hasBowAttack || this.hasMagickaToCast()))'),
     'the GetDestination arm reads the magicka term');
   assert.ok(motor.includes('(this.hasBowAttack || this.canCastRangedSpell())'),
@@ -151,7 +151,7 @@ test('audit24 wave35: the stand-off turns to face, and comes BEFORE the melee st
   // advance/retreat decision, so an archer that has somehow ended up
   // inside melee range is NOT handled by the ranged arm (the band's
   // near edge excludes it) but by the ordinary stop.
-  const src = rd('src/characters/enemyMotor.js');
+  const src = rd('src/characters/enemy/enemyMotor.js');
   const body = src.slice(src.indexOf('  _classicTick(playerFeet, paused = false) {'));
   // AUDIT 39: the stop test now reads `this.stopDistance`, which
   // TakeAction:443-449 sets per pass (2.25 vs the player, 1.5 vs
@@ -443,7 +443,7 @@ test('audit24 wave35: hasRangedSpell is the SELECTION-FREE half, and draws no ro
   // the whole point: DFU's CanCastRangedSpell also SELECTS, and the
   // port's selection lives in EnemyCaster - a second pick here would
   // draw twice off the shared stream every frame.
-  const casting = rd('src/characters/enemyCasting.js');
+  const casting = rd('src/characters/enemy/enemyCasting.js');
   assert.ok(casting.includes('export const hasRangedSpell ='), 'declared beside the picker it deliberately is not');
   const at = casting.indexOf('export const hasRangedSpell =');
   const decl = casting.slice(at, casting.indexOf(';', casting.indexOf('rangeType === 4', at)));
@@ -466,7 +466,7 @@ test('audit24 wave35: every pool passes the two ranged deps', () => {
 });
 
 test('audit24 wave35: the wave-34 re-read - three corrections it produced', () => {
-  const motor = rd('src/characters/enemyMotor.js');
+  const motor = rd('src/characters/enemy/enemyMotor.js');
   // (a) ObstacleCheck records a door only within 22.5 degrees of facing
   // (:1170-1175). Wave 34 recorded any door the probe struck, and
   // FindDetour probes 45/90/135 degrees off - so a detouring foe would

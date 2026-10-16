@@ -128,7 +128,7 @@ test('RESPAWN1: the team pair is a NAME, not an ordinal - DFU writes the number,
   assert.equal(validSharedFoe({ ...base, team: 'x'.repeat(TEAM_NAME_MAX + 1) }), null, 'and the string is bounded like every other');
   assert.ok(validSharedFoe({ ...base, team: 'x'.repeat(TEAM_NAME_MAX) }), 'up to the bound');
   // The port's own source is where the type comes from, not a guess.
-  assert.match(read('src/characters/enemyEntity.js'), /team: basics\.team \?\? 'PlayerEnemy',/);
+  assert.match(read('src/characters/enemy/enemyEntity.js'), /team: basics\.team \?\? 'PlayerEnemy',/);
   assert.match(read('src/combat/playerWeapon.js'), /foe\?\.entity\?\.team === 'PlayerAlly'/);
 });
 

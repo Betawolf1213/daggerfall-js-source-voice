@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { EQUIP_SLOTS, ITEM_TEMPLATES, getTemplate, paperdollOrder } from '../src/characters/paperdoll.js';
+import { EQUIP_SLOTS, ITEM_TEMPLATES, getTemplate, paperdollOrder } from '../src/characters/paperdoll/paperdoll.js';
 
 test('paperdoll: equip slots verbatim', () => {
   assert.equal(EQUIP_SLOTS.None, -1);

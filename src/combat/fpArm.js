@@ -92,7 +92,7 @@ import { fpLightingOn } from './fpsWeapon.js';   // MAC-P: the first-person ligh
 import { createParticleSystem, packParticleQuads, particleDrawState, affineOfTransform, affineMul, affineApply, affineScale } from '../formats/mwParticles.js';   // MAC-Q: the torch's flame, and any other particle system a part carries
 import { boneSourcesFor, resolveHolsterParts, holsterPartPaths, holsterHidden, HOLSTER_SLOTS } from '../systems/weaponSheathing.js';   // WS1
 import { fitCloakOver, fitStowedGear, followCloak, HIP_PITCH_LIMIT, CLOAK_PUSH_LIMIT, SLUNG_MOVE_LIMIT } from '../formats/mwCloakFit.js';   // MW-CLOAK1: the cloak over what the body wears, stowed gear against it; AUDIT MW-CLOAK: and going with it
-import { isCloakSlot, ownCloakFor, isOutfitSlot } from '../characters/ownClothingModels.js';   // MW-CLOAK1; AUDIT MW-CLOAK: and its picture; AUDIT MW-FOLK1: an outfit's add, by its label
+import { isCloakSlot, ownCloakFor, isOutfitSlot } from '../characters/ownModels/ownClothingModels.js';   // MW-CLOAK1; AUDIT MW-CLOAK: and its picture; AUDIT MW-FOLK1: an outfit's add, by its label
 import { injectSkeletonNodes } from '../formats/mwSkin.js';   // WS1: the dry injection the holster's bone probe runs
 // MAP3: THE HELD SHEET - the pose deltas over the idle, the paper piece
 // the hands hold, and where its corners land on the composite
@@ -1700,7 +1700,7 @@ export const archiveHas = (archives) => (p) => (archives ?? []).some((a) => a.ha
  *  a fault the player sees from the chair and could not name - the
  *  card's note is the same sentence, but the card is a menu away. */
 import { ammoCountFor } from '../systems/inventory.js';   // AUDIT 68 S27-ammoCount-dup: the ammunition count's one home, beside the spend law
-import { ownWeaponModelFor } from '../characters/ownWeaponModels.js';   // FIELD-GUN-MW2: the weapons Morrowind does not have - a leaf too
+import { ownWeaponModelFor } from '../characters/ownModels/ownWeaponModels.js';   // FIELD-GUN-MW2: the weapons Morrowind does not have - a leaf too
 
 const saidArrow = new Set();
 function sayNoArrow(notes) {

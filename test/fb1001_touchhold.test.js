@@ -33,7 +33,7 @@ import { registerPlayerKillListener, reportPlayerKill } from '../src/systems/pla
 import { createProfHud } from '../src/ui/professions/profHud.js';
 import { createTraceAct } from '../src/systems/traceAct.js';
 import { SKINNING_KNIFE } from '../src/net/professionLaw.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 
 installForaging({ fetchBytes: async () => new Uint8Array(0) });
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

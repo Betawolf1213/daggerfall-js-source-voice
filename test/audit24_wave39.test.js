@@ -13,7 +13,7 @@ import {
   createDamageFlash, playerDamageFlash, flashPlayerDamage,
   FLASH_ALPHA, FLASH_FADE_SPEED, FLASH_RGB,
 } from '../src/ui/damageFlash.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 
 const rd = (f) => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');
 

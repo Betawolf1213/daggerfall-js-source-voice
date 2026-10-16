@@ -42,7 +42,7 @@ import { DeathScreen, ONLINE_RESPAWN_SECONDS } from '../src/ui/deathScreen.js';
 import { createTownWatch, isTownThreat, TOWN_WATCH_STAND_DOWN_SECONDS } from '../src/systems/town/townWatch.js';
 import { createCityGuards, GUARD_MOBILE_TYPE } from '../src/scenes/cityGuards.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
-import { getTargets, PLAYER_TARGET, staticTeamOf } from '../src/characters/enemyTargets.js';
+import { getTargets, PLAYER_TARGET, staticTeamOf } from '../src/characters/enemy/enemyTargets.js';
 import { PlayerWeapon } from '../src/combat/playerWeapon.js';
 import { ActionSystem } from '../src/world/actionSystem.js';
 import { ACTION_FLAGS, TRIGGER_FLAGS } from '../src/world/rdbLayout.js';

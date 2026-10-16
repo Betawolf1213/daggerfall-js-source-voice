@@ -1,7 +1,7 @@
 // MW-CLOAK1: THE CLOAK AND WHAT HANGS AROUND IT (2026-10-09, Mac: "The new cloak will need bones to animate with the
 // character movement. Ensure theres no clipping with weapons that are stowed"; asked, stowed gear is worn over it).
 //
-// The cloak is one sheet hung down the back (characters/ownClothingModels.js), fitted on the steel plate's body - and a
+// The cloak is one sheet hung down the back (characters/ownModels/ownClothingModels.js), fitted on the steel plate's body - and a
 // body wears whatever its owner put on it: the ebony pauldrons come 2.6 units through it as baked, a retail robe flares,
 // and the Weapon Sheathing addon slings a greatsword across the very back the cloak covers. So once a body is assembled:
 //

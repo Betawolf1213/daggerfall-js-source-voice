@@ -34,8 +34,8 @@ import { equipItem, equipTableOf, EQUIP_SLOTS } from '../src/systems/equip.js';
 import { armorOfMaterial } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL, plateMetal } from '../src/systems/armorMaterials.js';
 import { MATERIAL_INEFFECTIVE_TEXT } from '../src/combat/formulas.js';
-import { makeEnemyEntity } from '../src/characters/enemyEntity.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { makeEnemyEntity } from '../src/characters/enemy/enemyEntity.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { vampireStatMod, VAMPIRE_STAT_MOD } from '../src/systems/vampirism.js';
 import { setPassiveSpecialsHost } from '../src/systems/passiveSpecials.js';
 

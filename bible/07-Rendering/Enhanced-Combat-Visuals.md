@@ -26,7 +26,7 @@ the player; `WeaponManager.cs:549-552` for the player's own), and
 when the spell's rounds run out it reappears. Between the cast and either, there is nothing on screen.
 
 The port carries all of that verbatim: the spell table, the touch
-pick (`characters/enemyCasting.js`), the concealment flags
+pick (`characters/enemy/enemyCasting.js`), the concealment flags
 (`systems/effects.js`) and the A5 skip in every foe draw - the classic
 lane draws what DFU draws. Two things worth knowing beside it: DFU
 ships with Enhanced Combat AI ON, and that branch of its touch pick

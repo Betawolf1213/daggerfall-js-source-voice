@@ -14,8 +14,8 @@ import { randomMaterial, randomArmorMaterial } from '../src/combat/enemyEquipmen
 import { formulaOverride } from '../src/combat/formulas.js';
 import { raiseEnemyDeath, registerEnemyDeathHandler } from '../src/scenes/corpseMarker.js';
 import { MOD_SETTINGS, setModSetting, modSetting, _resetModSettings, isChoiceKey } from '../src/systems/modSettings.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
-import { makeEnemyEntity } from '../src/characters/enemyEntity.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
+import { makeEnemyEntity } from '../src/characters/enemy/enemyEntity.js';
 import { goldStack } from '../src/systems/inventory.js';
 import { CREDITS } from '../src/ui/credits.js';
 

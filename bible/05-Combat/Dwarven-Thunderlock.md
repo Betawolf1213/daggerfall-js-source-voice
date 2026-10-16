@@ -254,7 +254,7 @@ those were found the same way, by a person looking at the picture.
 
 Two faults stacked, and the first hid the second.
 
-**FIELD-GUN5.** `characters/paperdoll.js`'s `getTemplate` is a `Map`
+**FIELD-GUN5.** `characters/paperdoll/paperdoll.js`'s `getTemplate` is a `Map`
 built once from the frozen DFU JSON, so it is blind to
 `registerCustomTemplates` — and `composeDoll` filters the worn list on
 it answering. The gun was dropped from the draw list before anything
@@ -1315,7 +1315,7 @@ patina.
 
 Three seams, and not one of them is new machinery:
 
-1. **`src/characters/ownWeaponModels.js`** — the weapons Morrowind does
+1. **`src/characters/ownModels/ownWeaponModels.js`** — the weapons Morrowind does
    not have, by template index. A **table, not a branch**: the
    Thunderlock is explicitly *"THE FIRST ONE OF ITS KIND"*, and the
    second one must not be a second `if` in somebody else's function. A
@@ -1821,7 +1821,7 @@ from the loop's centroid with each edge taken back (so the cap's winding agrees 
 OUT), its vertices its own with the cap's one flat normal - a hard edge, so the unwrap gives it an island and the
 occlusion bake darkens a recessed one (a muzzle's bore reads dark). `tools/bakeThunderlock.mjs` caps before it unwraps;
 the shipped NIF is 360 triangles and no boundary (it was 295 and eleven loops). The Hourlock's twin
-(`thunderlock_gilded.nif` over `thunderlock_gilded.dds`, `characters/ownWeaponModels.js` OWN_MW_GILDED) is the same
+(`thunderlock_gilded.nif` over `thunderlock_gilded.dds`, `characters/ownModels/ownWeaponModels.js` OWN_MW_GILDED) is the same
 capped mesh in gold leaf (`tools/meshTexture.mjs` GILDED_BANDS).
 
 **Pins** (`test/thunderlockart.test.js`, 4; `tools/mutants/thunderlockart.json`, 11 dead): the stand-in's dye, the

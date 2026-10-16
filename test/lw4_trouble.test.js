@@ -26,9 +26,9 @@ import { LivingTown } from '../src/systems/livingWorld/livingTown.js';
 import { createLivingRoads, fightPlaces, foePlaces, corpseLook, partyLabel, FIGHT_RING_N, FOE_RING_N, STRIKE_S } from '../src/scenes/livingWorld/livingRoads.js';
 import { createTravellerSprites } from '../src/world/travellerSprites.js';
 import { rollGroupComposition } from '../src/systems/campEncounters.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { ResidentWalker } from '../src/characters/residentWalker.js';
-import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
+import { PERSON_MOVE_SPEED } from '../src/characters/mobile/mobilePerson.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const wayAtOf = (trip, s) => wayAtOf0(trip.way, s);

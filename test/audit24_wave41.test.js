@@ -14,10 +14,10 @@ import {
   EnemySoundSource, ignoreHumanSounds, rollAttractDelay,
   ATTRACT_RADIUS, MIN_ATTRACT_DELAY, MAX_ATTRACT_DELAY,
   OCCLUDED_VOLUME_SCALE, MOVE_SOUND_THRESHOLD, ATTACK_SOUND_THRESHOLD,
-} from '../src/characters/enemySounds.js';
+} from '../src/characters/enemy/enemySounds.js';
 import { enemySoundOccluded, tickEnemySound, playEnemyClip } from '../src/scenes/hostCombat.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
-import { KNIGHT_CITY_WATCH, MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
+import { KNIGHT_CITY_WATCH, MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 
 const rd = (f) => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');
 
@@ -254,9 +254,9 @@ test('audit24 wave41: all three pools ask the one home, and nobody keeps a copy'
   assert.doesNotMatch(rd('src/scenes/cityGuards.js'), /_halted/, 'and the flag it rode');
 
   // ONE DFU MEMBER, ONE EXPORT: 146 was written out in five places.
-  assert.match(rd('src/characters/mobileTypes.js'), /export const KNIGHT_CITY_WATCH = MOBILE_TYPES\.Knight_CityWatch;/);
-  for (const f of ['src/scenes/hostCombat.js', 'src/characters/enemyEntity.js',
-    'src/scenes/cityGuards.js', 'src/combat/enemyEquipment.js', 'src/characters/enemySounds.js']) {
+  assert.match(rd('src/characters/mobile/mobileTypes.js'), /export const KNIGHT_CITY_WATCH = MOBILE_TYPES\.Knight_CityWatch;/);
+  for (const f of ['src/scenes/hostCombat.js', 'src/characters/enemy/enemyEntity.js',
+    'src/scenes/cityGuards.js', 'src/combat/enemyEquipment.js', 'src/characters/enemy/enemySounds.js']) {
     assert.doesNotMatch(rd(f), /= 146;|=== 146\b/, `${f}: no second copy of the id`);
   }
 });

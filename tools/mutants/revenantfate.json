@@ -19,7 +19,7 @@
   },
   {
     "name": "REVENANT-FATE-a-foe-still-hunts-it",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "    if (!isPlayer && (c.yielded || c.executing || c.sparing || c.leaving)) continue;\n",
     "new": "",
     "tests": [
@@ -280,7 +280,7 @@
   },
   {
     "name": "REVENANT-FATE-the-state-left-changed",
-    "file": "src/characters/mobileUnit.js",
+    "file": "src/characters/mobile/mobileUnit.js",
     "old": "    } finally { this.state = was; }",
     "new": "    } finally { /* kept */ }",
     "tests": [

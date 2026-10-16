@@ -30,7 +30,7 @@ import { ITEM_FIELDS } from '../src/systems/item/itemFields.js';
 import { createProfHud } from '../src/ui/professions/profHud.js';
 import { FT } from '../src/systems/foraging/foragingLaw.js';
 import { TEMPLATE as CC } from '../src/systems/survival/food.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 import { sharedClassicMinutes } from '../src/net/wire.js';
 import { utcDay } from '../src/net/marksLaw.js';
 

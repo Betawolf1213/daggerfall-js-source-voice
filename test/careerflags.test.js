@@ -12,7 +12,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { proficiencyModifiers } from '../src/combat/formulas.js';
-import { acuteHearingMultiplier, ATTRACT_RADIUS } from '../src/characters/enemySounds.js';
+import { acuteHearingMultiplier, ATTRACT_RADIUS } from '../src/characters/enemy/enemySounds.js';
 import { playEnemyClip, tickEnemySound } from '../src/scenes/hostCombat.js';
 import { PROFICIENCY_BITS, SPECIAL_ABILITY_BITS } from '../src/systems/specialAdvantages.js';
 

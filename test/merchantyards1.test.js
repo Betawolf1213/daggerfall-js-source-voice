@@ -30,7 +30,7 @@ import { getSeed, setSeed } from '../src/formats/dfRandom.js';
 import { trs } from '../src/world/mat4.js';
 import { CAPSULE_HEIGHT } from '../src/player/motor.js';
 import { STATIC_NPC_ACTIVATION_DISTANCE, RAY_DISTANCE } from '../src/player/activate.js';
-import { PERSON_TEXTURES, walkerRace } from '../src/characters/mobilePerson.js';
+import { PERSON_TEXTURES, walkerRace } from '../src/characters/mobile/mobilePerson.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (f) => readFileSync(join(root, f), 'utf8');

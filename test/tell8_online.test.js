@@ -21,9 +21,9 @@ import { WIRE_KINDS, WIRE_IRON, WIRE_FEINT, WIRE_LANDED, WIRE_LANDED_S, WIRE_LAN
 import { blowTakenScale } from '../src/systems/blowTaken.js';
 import { windupDoor, landBlowEffect } from '../src/scenes/hostCombat.js';
 import { _resetBlowEffectsForTests } from '../src/systems/blowEffects.js';
-import { MobileUnit } from '../src/characters/mobileUnit.js';
-import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { MobileUnit } from '../src/characters/mobile/mobileUnit.js';
+import { MOBILE_TYPES as M } from '../src/characters/mobile/mobileTypes.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 let T = 10;

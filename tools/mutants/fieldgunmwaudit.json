@@ -118,7 +118,7 @@
   },
   {
     "name": "MW3-animates-as-nothing",
-    "file": "src/characters/ownWeaponModels.js",
+    "file": "src/characters/ownModels/ownWeaponModels.js",
     "old": "    animateAs: 10,",
     "new": "    animateAs: 0,",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "MW2-hangs-on-a-bone-no-skeleton-has",
-    "file": "src/characters/ownWeaponModels.js",
+    "file": "src/characters/ownModels/ownWeaponModels.js",
     "old": "    bone: 'Weapon Bone',",
     "new": "    bone: 'Bip01 Nowhere',",
     "tests": [

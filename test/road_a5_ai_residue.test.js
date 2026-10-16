@@ -22,7 +22,7 @@ import {
   applyEnemyMotorEffectFlags, concealmentFlags, isMagicallyConcealed,
   applySpell, tickActiveEffects,
 } from '../src/systems/effects.js';
-import { EnemyAI, blockedByIllusionEffect, MOBILE_SLAUGHTERFISH_ID } from '../src/characters/enemyMotor.js';
+import { EnemyAI, blockedByIllusionEffect, MOBILE_SLAUGHTERFISH_ID } from '../src/characters/enemy/enemyMotor.js';
 import { GRAVITY } from '../src/player/motor.js';
 
 const rd = (f) => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');

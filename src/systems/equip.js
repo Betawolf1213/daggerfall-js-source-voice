@@ -1,6 +1,6 @@
 // U8f: EQUIP MECHANICS - DFU ItemEquipTable's equip/unequip half
 // (MIT Daggerfall Workshop) over the EXISTING C5a/C5c foundation
-// (characters/paperdoll.js EQUIP_SLOTS + characters/equipTable.js's
+// (characters/paperdoll/paperdoll.js EQUIP_SLOTS + characters/equipTable.js's
 // verbatim GetEquipSlot/GetItemHands assignment layer, whose header
 // defers "equip/unequip mechanics (unequip lists, prohibitions)"
 // to this Systems module). Bag items carry STRING groups (the
@@ -22,7 +22,7 @@
 
 import { mintCondition, templateByIndex } from './item/itemTemplates.js';   // AUDIT 23
 import { repoolWeapon } from './conditionRepair.js';   // AUDIT WEAPON-POOL P2: a weapon on its row's pool moves before it wears
-import { EQUIP_SLOTS } from '../characters/paperdoll.js';
+import { EQUIP_SLOTS } from '../characters/paperdoll/paperdoll.js';
 import { ITEM_GROUPS, SLOT_RULES } from '../characters/equipRules.js';
 import { customItemClass, rriNativeMaterialValue, rriEquipSound } from './roleplayRealismItems/rriItems.js';
 import { SOUND } from './soundClips.js';   // AUDIT-RR F8: the class's equip sound, by name   // RRI1: a custom armor's slot, for the body part its value lands on; AUDIT-RR F7/F8: the class's two virtuals

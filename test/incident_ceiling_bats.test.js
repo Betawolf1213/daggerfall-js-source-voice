@@ -24,8 +24,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { enemyControllerHeight, idleSpriteHeight, feetFromCentre, centreFromFeet, spriteOriginY, keepRebuiltSpawn } from '../src/characters/enemyAnchor.js';
-import { EnemyAI, canSeeTarget } from '../src/characters/enemyMotor.js';
+import { enemyControllerHeight, idleSpriteHeight, feetFromCentre, centreFromFeet, spriteOriginY, keepRebuiltSpawn } from '../src/characters/enemy/enemyAnchor.js';
+import { EnemyAI, canSeeTarget } from '../src/characters/enemy/enemyMotor.js';
 import { sweepFoes } from '../src/systems/spellcast.js';
 import { entityOccupancy } from '../src/scenes/quest/questFoeHost.js';
 import { Collider } from '../src/player/collider.js';
@@ -80,13 +80,13 @@ test('bats 2: the motor hands the collider ITS capsule height, not the player\'s
 });
 
 test('bats 2: every collider.move in both motors passes the foe\'s own controller height (DOOR-JAM: this.controllerHeight, HeightAdjust\'s crouch)', () => {
-  for (const f of ['src/characters/enemyMotor.js', 'src/ai/enhancedMotor.js']) {
+  for (const f of ['src/characters/enemy/enemyMotor.js', 'src/ai/enhancedMotor.js']) {
     const s = src(f);
     const sites = [...s.matchAll(/this\.collider\.move\(this\.feet,[^;]*\);/g)].map((m) => m[0]);
     assert.ok(sites.length >= 1, `${f} moves through the collider`);
     for (const site of sites) assert.match(site, /, this\.controllerHeight(?:, true, FOE_KEEPS_FLOOR)?\);$/, `${f}: ${site}`);   // AUDIT (pre-merge) S2: the foe's floor flag after it
   }
-  assert.equal([...src('src/characters/enemyMotor.js').matchAll(/this\.collider\.move\(/g)].length, 6, 'the six motor sites');
+  assert.equal([...src('src/characters/enemy/enemyMotor.js').matchAll(/this\.collider\.move\(/g)].length, 6, 'the six motor sites');
 });
 
 test('bats 1: both spawn hosts build the capsule from the idle sprite and drop a FLYER from centre to feet', () => {

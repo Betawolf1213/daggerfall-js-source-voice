@@ -49,8 +49,8 @@
 // filter.
 
 import { SKILL_COUNT, SKILL_NAMES } from './skills.js';
-import { MOBILE_TYPES } from '../characters/mobileTypes.js';
-import { ENEMY_NAMES } from '../characters/enemyBasics.js';
+import { MOBILE_TYPES } from '../characters/mobile/mobileTypes.js';
+import { ENEMY_NAMES } from '../characters/enemy/enemyBasics.js';
 import { localizedStrings } from './textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
 import { getLocalizedSpellName, getLocalizedEnemyName } from './textManager.js';   // L10N3e: a spell's and a soul's name, by their own ids
 

@@ -42,7 +42,7 @@ import {
 import { worldCoordToMapPixel } from '../formats/mapsFile.js';
 import { NO_WATER_LEVEL } from '../world/deepWater/deepWaterSwim.js';
 import { colorLerp } from '../systems/mathf.js';
-import { MOBILE_TYPES } from '../characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../characters/mobile/mobileTypes.js';
 import { SITE_TYPES } from '../systems/quest/place.js';   // TryFindTemplate's GetSiteLinks(SiteTypes.Dungeon, mapId)
 
 const f32 = Math.fround;

@@ -122,7 +122,7 @@ FOUND. The remains' "never in a fight" - and Play as, Pass the mantle and a wedd
 `mantleRefusal`, `wedRefusal`) - asked `areEnemiesNearby` over the street's pools (the watch, the street's foes) and the
 dungeon's, in every mode. A mounted mode's frame returns before the street's, so the street's foes are not stepped while
 a dungeon or a building stands, and their senses stay as they were when the player went in - `wouldBeSpawned` latched
-for a hostile walker within 1094 classic units (27.35 m: `characters/enemyMotor.js wouldBeSpawnedInClassic`'s first test,
+for a hostile walker within 1094 classic units (27.35 m: `characters/enemy/enemyMotor.js wouldBeSpawnedInClassic`'s first test,
 EnemySenses.cs's own - the exterior band past it, 102.4 m, is never reached; AUDIT FB1013d C9). DFU walks the ACTIVE
 enemies alone (`ActiveGameObjectDatabase.GetActiveEnemyBehaviours`, GameManager.cs:690), and underground the street is
 not active. So one hostile walker near the castle's door - a city at night - kept the whole visit "in a fight": the

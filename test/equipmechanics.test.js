@@ -8,7 +8,7 @@ import { join } from 'node:path';
 import { EQUIP_SLOTS, getEquipSlot, equipItem, unequipSlot, isEquipped, armorValuesOf, BODY_PARTS, seedStartingEquipment } from '../src/systems/equip.js';
 import { filterByTab, armorLabelValue } from '../src/ui/native/nativeInventory.js';
 import { preloadPaperDollArt, drawPaperDoll, paperDollArtLoaded, refreshPaperDoll, slotAtPaperDoll, paperdollItemImage, clampArmorVariant, _debugPaperDoll, paperDollPixels, PAPERDOLL_W, PAPERDOLL_H, WAIST_HEIGHT, PAPERDOLL_ORIGIN, ARMOR_LABEL_POS } from '../src/ui/paperDoll.js';
-import { getTemplate } from '../src/characters/paperdoll.js';
+import { getTemplate } from '../src/characters/paperdoll/paperdoll.js';
 import { TextureFile } from '../src/formats/textureFile.js';
 import { DFPalette } from '../src/formats/dfPalette.js';
 

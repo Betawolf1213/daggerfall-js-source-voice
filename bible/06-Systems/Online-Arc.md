@@ -1300,8 +1300,8 @@ the hit carries the striker.
   the striker (`peerId`) so `handleAttackFromPlayer` turns the foe on
   the PEER's candidate at the striker's feet, and lands the shaft
   where BowDamage puts it.
-- **The target machine** (`src/characters/enemyTargets.js`,
-  `src/characters/enemyMotor.js`): a peer candidate
+- **The target machine** (`src/characters/enemy/enemyTargets.js`,
+  `src/characters/enemy/enemyMotor.js`): a peer candidate
   (`{isPlayer, isPeer, id, feet, height, health}`) is a player to
   every gate of GetTargets (the team chain, the quest gate, the
   NoTarget mode - `isPlayerTarget` true; `isPeerTarget` names it),
@@ -5112,7 +5112,7 @@ while (d < -Math.PI) d += 2 * Math.PI;
 ```
 
 Four copies of that, in `net/online.js` (easing a peer's yaw),
-`net/peer/peerBodies.js` (turning a peer's rig), `characters/enemyMotor.js`
+`net/peer/peerBodies.js` (turning a peer's rig), `characters/enemy/enemyMotor.js`
 (a puppet's facing) and `combat/fpArm.js` (the turn clip's rate) - all
 four of them **beside a correct, one-step `wrapAngle` in
 `player/lockOn.js` that none of them knew about.**
@@ -5296,7 +5296,7 @@ is not yet a pin; no live relay and no second player were involved.**
   and the viewers, all read through `liveStat`.
 - Six accumulator loops (`acc += dt; while (acc >= step)`) with no
   `MAX_FRAME_DT` clamp, where `player/motor.js` and
-  `characters/enemyMotor.js` have one.
+  `characters/enemy/enemyMotor.js` have one.
 - `_peerHeights`, `remotePlayers._dolls`' failure entries and
   `peerBodies._failed` are never pruned.
 - `wrapAngle(-PI)` is `+PI` where the four loops answered `-PI`, and the
@@ -6802,8 +6802,8 @@ if (!Number.isInteger(sf[k]) || sf[k] < -1 || sf[k] > 255) return null;
 
 They are not numbers in this port. `entity.team` is `MobileTeams`' NAME -
 'PlayerEnemy', 'PlayerAlly', 'Vermin' - which is what
-`characters/enemyEntity.js` defaults, what the whole of
-`characters/enemyTargets.js` compares, and what `combat/playerWeapon.js`
+`characters/enemy/enemyEntity.js` defaults, what the whole of
+`characters/enemy/enemyTargets.js` compares, and what `combat/playerWeapon.js`
 reads as `=== 'PlayerAlly'`. The number came from DFU's own serializer
 (`SerializableEnemy.cs:125`, `(int)entity.Team + 1`), which is the
 reading the port did not take. And the publisher hands the LIVE field

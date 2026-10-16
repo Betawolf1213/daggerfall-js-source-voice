@@ -22,7 +22,7 @@ test('MT-iv: the target machine rides the LAZY foe subsystem, not a static impor
   // The whole foe subsystem sits behind `opts.foes && palette` so a
   // foe-less dungeon never pays for enemyMotor - and enemyTargets
   // imports enemyMotor, so a static import here defeats that gate.
-  assert.ok(DG.includes("import('../characters/enemyTargets.js')"), 'the import is DYNAMIC');
+  assert.ok(DG.includes("import('../characters/enemy/enemyTargets.js')"), 'the import is DYNAMIC');
   assert.ok(!/^import .*enemyTargets/m.test(DG), 'and never static');
   assert.match(DG, /runTargetMachine, isPlayerTarget, isLocalPlayerTarget, PLAYER_TARGET, PEER_CAST_TARGET, resetAllyTeamOnPlayerAttack,/,
     'every member is published on foeDeps for the consumers below the block (AUDIT WORLD3 C3: and the local player, told from any player)');

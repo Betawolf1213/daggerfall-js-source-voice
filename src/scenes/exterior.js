@@ -18,7 +18,7 @@ import { PRIVATEERS_HOLD_BLOCK, HOLD_MODELS, HOLD_FLATS, holdModelMatrix, holdFi
 import { frameBegin, frameEnd, frameAbort } from '../systems/frameClock.js';   // PERF1: the frame's script time; AUDIT-WH2 L1-F4: and the door an early return takes
 import { frameCapSkip } from '../systems/frameCap.js';   // FPS-CAP1: DFU's TargetFrameRate - a held frame re-arms before the clock and the input frame
 import { deliverOwedShots } from '../ui/screenshot.js';   // SHOT1: a PrintScreen shot is read at this host's frame foot, after its last draw
-import { SKY_CLEAR } from '../render/renderer.js'; import { centreFromFeet } from '../characters/enemyAnchor.js';   // REVIEW 2026-09-05: one line, so the cites below it hold
+import { SKY_CLEAR } from '../render/renderer.js'; import { centreFromFeet } from '../characters/enemy/enemyAnchor.js';   // REVIEW 2026-09-05: one line, so the cites below it hold
 import { FlatAnimator, armFlatAnim } from '../render/flatAnimation.js';   // FA1: the flats that move
 import { racialSuppressPopulationSpawns, racialSuppressTalk, lycanthropeMoveSound } from '../systems/lycanthropy.js';   // V4: the transformed gates; LM1: the 4-20s move-sound loop; DISC10-E L3: the inventory refusal moved INTO the window door
 import { Arch3dFile } from '../formats/arch3dFile.js';
@@ -57,7 +57,7 @@ import { bowDamageArrow } from '../combat/enemyEquipment.js';   // MAC-N1: the r
 import { flashPlayerDamage } from '../ui/damageFlash.js';   // ROAD-G G2: an arrow owes the flash too (AUDIT 24 wave 46)
 import { knockedDown } from '../systems/blowEffects.js';   // TELL6e: knocked down, no swing
 import { weaponTypeForItem, WEAPON_TYPES } from '../combat/fpsWeapon.js';
-import { targetAimPoint, missileAimDirection } from '../characters/enemyTargets.js';   // AUDIT WORLD6b-iii(a) C3: the ONE aim law for an enemy missile (the peer's transform, mine otherwise)
+import { targetAimPoint, missileAimDirection } from '../characters/enemy/enemyTargets.js';   // AUDIT WORLD6b-iii(a) C3: the ONE aim law for an enemy missile (the peer's transform, mine otherwise)
 import { playerEntity, surfacePlayer, hurtPlayer, setDeathPresenter, setAvoidDeathHook, playerBlowCameToNothing } from '../characters/playerEntity.js';
 import { heldPlayerBlow, remarkPlayerBlow } from '../systems/sigil/sigilSetPowers.js';   // AUDIT SETS L3: a guard's blow the arrest flow holds back
 import { SOUND } from '../systems/soundClips.js';
@@ -114,7 +114,7 @@ import { setGallopGate, setRideWalk } from '../systems/transport.js';   // HORSE
 import { wagonKgFor, activeWagonKind, horseCountOf, wagonTeamShort } from '../systems/wagon/wagonKinds.js';   // HCC: ItemHelper.WagonKgLimit - WAGONS1: the driven wagon's
 import { SEATED_EYE_HEIGHT } from '../player/seatPose.js';   // WAGONS3: the driver's seated eye
 import { InputMessageBoxWindow } from '../ui/inputMessageBox.js';   // HCC: the horse's name
-import { isLocalPlayerTarget } from '../characters/enemyTargets.js';   // HCC: CollectThreats' `senses.Target == player`
+import { isLocalPlayerTarget } from '../characters/enemy/enemyTargets.js';   // HCC: CollectThreats' `senses.Target == player`
 import { SeasonHelper, archivePrefix as seasonPrefixOf } from '../systems/seasonsIliacBay.js';   // SIB1: Seasons of the Iliac Bay's SeasonHelper; WINDFALL1: and its atlases' prefixes, which Windfall's own tables key on
 import { loadSeasonsTextures, seasonsInstalled } from '../systems/seasonsIliacBayAssets.js';   // SIB1: its textures, from the player's own copy of the mod
 import { isBulletinBoard, isCityGate, CITY_GATE_OPEN_MODEL_ID, CITY_GATE_CLOSED_MODEL_ID } from '../world/rmbLayout.js';   // RMBLayout.cs:1013-1017 - the one model id a town sign wears; :1007-1011 - the two a city gate wears
@@ -131,7 +131,7 @@ import { createWeatherFront, blendTerms, soundWeather, fallTerms } from '../syst
 import { createAnimalAmbience } from '../systems/animalAmbience.js';   // A4
 import { CityNavigation } from '../world/city/cityNavigation.js';   // T1 towns
 import { TownPopulation } from '../systems/town/townPopulation.js';
-import { GUARD_TEXTURE, MobilePerson, PERSON_TEXTURES, personWantsToStop, walkerRace } from '../characters/mobilePerson.js';
+import { GUARD_TEXTURE, MobilePerson, PERSON_TEXTURES, personWantsToStop, walkerRace } from '../characters/mobile/mobilePerson.js';
 import { createTownTalk, rayPersonDistance, nearestPerson } from './townTalk.js';   // T3b   // AUDIT 63 F33 (review): the townsfolk's own pick distance, the enemy arm's rival
 import { createPlayerMagic } from './hostMagic.js';   // M2: spellcasting above ground
 import { preloadSpellbookArt, spellbookArtLoaded } from '../ui/spellbookWindow.js';   // U42: the classic art window (retires M2's keyed stand-in)
@@ -256,7 +256,7 @@ import { LPT_SCALE_MAX, buildTreeSet } from '../world/lowPolyTrees.js'; import {
 import { spherePlanes } from '../render/bounds.js';   // LPT1 (AUDIT LPT B4): the near trees' sphere test reads normalised planes
 import { isTreeRecord } from '../world/terrain/terrainNature.js';   // AUDIT TACT B2: a tree is a trunk and a crown
 import { noteLocalPlayer, tacticsNow, tickTactics } from '../ai/tactics.js';   // TACT2/TACT4; AUDIT TACT: the clock's tick
-import { foeFrameDt } from '../characters/enemyMotor.js';   // AUDIT TACT: the foes' own step, for the brain's clock
+import { foeFrameDt } from '../characters/enemy/enemyMotor.js';   // AUDIT TACT: the foes' own step, for the brain's clock
 import { drawableBlows, registerBlowDodgedListener } from '../ai/foeBlows.js';   // TACT4; AUDIT ARENA-LADDER: a dodge told
 import { techniqueMarksNow } from '../combat/techniques.js';   // TECH1: the player's own marks on the ground, after the foes'
 import { windDrive, floraSwayOf, floraSwayOn } from '../systems/wind/windDrive.js';   // WIND3: the one wind in every consumer's units (GR2's slider inside it); the flats' sway
@@ -314,7 +314,7 @@ import { liveVampirism } from '../systems/racialLive.js';   // QX1 review: the P
 import { mintQuestFoeWave, placeFoeEnv, entityOccupancy, questFoeGender, heldSpots, holdSpotWhile, questBoxHoldsFoes } from './quest/questFoeHost.js';   // QX1 review/B1: the data side of CreateFoeGameObjects; ROAD-G G2: and the placement side
 import { placeFoeFreely } from '../systems/quest/sceneMount.js';   // ROAD-G G2: CreateFoe's raycast ring
 import { isShelved } from '../systems/quest/quest.js';   // QUEST-SHELF: a quest set aside
-import { ENEMY_BASICS } from '../characters/enemyBasics.js';   // ROAD-G G2: FinalizeFoe's Flying lift reads the behaviour flag
+import { ENEMY_BASICS } from '../characters/enemy/enemyBasics.js';   // ROAD-G G2: FinalizeFoe's Flying lift reads the behaviour flag
 import { isHouseOwned } from '../systems/banking.js';   // QX1/H1: Place.SetupSites' residence filter
 import { generateBuildingName } from '../world/buildingNames.js';   // QX1/IH1: %cbd regenerates the current building's name
 import { createQuestBridge, tokensToRows } from './quest/questBridge.js';   // QX1: THE QUEST MACHINE, in the fixed-city host
@@ -332,7 +332,7 @@ import { createArenaGate, nearArenaGate } from './arena/arenaGate.js';   // AREN
 import { exhibitionFor, nextLadderBout, arenaLadderRestore, practiceBout } from '../systems/arena/arenaLadder.js';
 import { arenaReplaysRestore } from '../systems/arena/arenaReplay.js';   // ARENA5: your ladder replay
 import { cityFloorCentre } from '../world/arena/arenaFloor.js';
-import { setPlayerBout, inBout } from '../characters/enemyTargets.js';   // AUDIT ARENA-LADDER A2: a fighter on the sand is its bout's
+import { setPlayerBout, inBout } from '../characters/enemy/enemyTargets.js';   // AUDIT ARENA-LADDER A2: a fighter on the sand is its bout's
 import { ARENA_TEXT } from '../systems/arena/arenaText.js';   // AUDIT ARENA-LADDER A5: the bout's refusal
 import { keptOffArenaGround, ARENA_GROUND_M } from '../systems/arena/arenaGround.js';   // CURSE-OFF-SAND: the curse's dead keep off the arena's grounds
 import { registerAttackResolutionListener } from '../combat/formulas.js';

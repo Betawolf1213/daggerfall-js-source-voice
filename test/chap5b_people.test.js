@@ -16,7 +16,7 @@ import { CHAPTER_NEWS, CHAPTER_NEWS_DAYS, newsScript, TOKEN_FALLBACK } from '../
 import { circleLine } from '../src/systems/livingWorld/meetups.js';
 import { CHAPTER_BANDS } from '../src/net/npcChapterLaw.js';
 import { BUILDING_TYPES as B } from '../src/world/buildingNames.js';
-import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
+import { PERSON_MOVE_SPEED } from '../src/characters/mobile/mobilePerson.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

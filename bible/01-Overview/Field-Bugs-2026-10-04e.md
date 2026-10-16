@@ -125,7 +125,7 @@ wave stands; the hosts' seams, and no refusal left at placement).
 
 ## ARENA-TEAMS (2)
 
-The bout gate (characters/enemyTargets.js boutGate) was sound: a fighter never takes a teammate for a target. Two things
+The bout gate (characters/enemy/enemyTargets.js boutGate) was sound: a fighter never takes a teammate for a target. Two things
 read as infighting. **A teammate's blast**: an area spell's burst (scenes/hostMagic.js explodeAt) met every body in it,
 the caster's partner too - the two-against-one bouts (Knight + Healer, Warrior + Mage) are where an AI casts one. Now
 `combat/friendlyFire.js` boutTeammates (one bout, one side) and the blast passes a teammate by; the dungeon's foe

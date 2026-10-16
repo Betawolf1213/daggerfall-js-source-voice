@@ -23,7 +23,7 @@ const L = await import('../src/systems/feudLedger.js');
 const FT = await import('../src/systems/revenant/revenantFate.js');
 const PG = await import('../src/ui/revenant/revenantPage.js');
 const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
-const { MOBILE_TYPES: M } = await import('../src/characters/mobileTypes.js');
+const { MOBILE_TYPES: M } = await import('../src/characters/mobile/mobileTypes.js');
 
 const me = { isPlayer: true, name: 'Ayla Stormwind', characterId: 'char-feudbalance', level: 8, items: [] };
 beforeEach(() => { _resetForTests(); setPref('lootRarity', true); N._resetRevenantForTests(); _store.clear(); });

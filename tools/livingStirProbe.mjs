@@ -13,7 +13,7 @@ import { travellerRoster } from '../src/systems/livingWorld/census.js';
 import { DAY_MIN, DAY_START_MIN } from '../src/systems/livingWorld/dayPlan.js';
 import { smallVoice, humourOf } from '../src/systems/livingWorld/stir.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
-import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
+import { PERSON_MOVE_SPEED } from '../src/characters/mobile/mobilePerson.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
 
 const RATE = CLASSIC_MINUTES_PER_SECOND, MPM = PERSON_MOVE_SPEED / RATE, MAP = 24680;

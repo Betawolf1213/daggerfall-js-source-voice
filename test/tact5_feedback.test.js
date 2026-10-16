@@ -10,9 +10,9 @@ import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { setPref } from '../src/systems/uiPrefs.js';
 import { Collider } from '../src/player/collider.js';
-import { EnemyAI } from '../src/characters/enemyMotor.js';
-import { EnemyAttack } from '../src/characters/enemyAttack.js';
-import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';
+import { EnemyAI } from '../src/characters/enemy/enemyMotor.js';
+import { EnemyAttack } from '../src/characters/enemy/enemyAttack.js';
+import { MOBILE_TYPES as M } from '../src/characters/mobile/mobileTypes.js';
 import { TACT, setTacticsClock, resetTactics, tokensOut, LOCAL_TARGET, tacticsStep } from '../src/ai/tactics.js';
 
 const DT = 1 / 60;

@@ -8,15 +8,15 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 
-import { EnemyAI, SYSTEM_TIMER_UPDATES_DIVISOR, SENSES_INTERVAL_UNITS } from '../src/characters/enemyMotor.js';
+import { EnemyAI, SYSTEM_TIMER_UPDATES_DIVISOR, SENSES_INTERVAL_UNITS } from '../src/characters/enemy/enemyMotor.js';
 import { FIXED_DT } from '../src/player/motor.js';
 import {
   MOBILE_TEAMS, PLAYER_TARGET, isPlayerTarget, mobileTeamOf, staticTeamOf, targetPriority,
   getTargets, runTargetMachine, resetAllyTeamOnPlayerAttack, enemyInfightingEnabled,
-} from '../src/characters/enemyTargets.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
-import { makeEnemyEntity } from '../src/characters/enemyEntity.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+} from '../src/characters/enemy/enemyTargets.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
+import { makeEnemyEntity } from '../src/characters/enemy/enemyEntity.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 import { dfuFile } from './dfuRoot.mjs';   // PY1: DFU_PATH, then the in-tree sparse clone
 const DAEDROTH = MOBILE_TYPES.Daedroth;
 

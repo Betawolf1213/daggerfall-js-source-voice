@@ -107,7 +107,7 @@
 // on - a broken navmesh costs a feature, never a dungeon.
 // ═══════════════════════════════════════════════════════════════════
 
-import { EnemyAI } from '../characters/enemyMotor.js';
+import { EnemyAI } from '../characters/enemy/enemyMotor.js';
 import { findPath } from './navmesh.js';
 
 // ── project-final enemyShared.js:7-12, verbatim ────────────────────

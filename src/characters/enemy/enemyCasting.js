@@ -21,15 +21,15 @@
 // senses' LOS; the Enhanced Combat AI branches are off, as everywhere
 // in this port.
 
-import { CLASSIC_UPDATE_INTERVAL } from './weaponStates.js';
+import { CLASSIC_UPDATE_INTERVAL } from '../weaponStates.js';
 import { MELEE_DISTANCE, withinYaw } from './enemyMotor.js';
 import { resetMeleeTimer } from './enemyAttack.js';
-import { effectsAlreadyOnTarget } from '../systems/effects.js';
+import { effectsAlreadyOnTarget } from '../../systems/effects.js';
 // SetReadySpell's silence refusal (EntityEffectManager.cs:314-316):
 // `if ((!noSpellPointCost && SilenceCheck()) || castInProgress) return false`.
 // DoTouchSpell reads that answer as the last term of its condition, so the
 // gate belongs to the DECISION, not only to the executor below.
-import { silenceBlocksCast } from '../systems/mysticism.js';
+import { silenceBlocksCast } from '../../systems/mysticism.js';
 
 // AUDIT 24 (wave 24): EnemyAttack.cs's two ranged bounds have one
 // home; this module declared them again. Wave 35 MOVED that home to
@@ -42,9 +42,9 @@ import { MIN_RANGED_DISTANCE, MAX_RANGED_DISTANCE } from './enemyAttack.js';
 // radius" is spellcast.js's MISSILE_SPEED / MISSILE_COLLIDER_RADIUS
 // word for word, and the cast origin is DaggerfallMissile.ArmLength,
 // which weaponStates.js declares for the arrow that shares it.
-import { MISSILE_SPEED, MISSILE_COLLIDER_RADIUS } from '../systems/spellcast.js';
-import { ARROW_ARM_LENGTH } from './weaponStates.js';
-import { bloodCentre as sparkleCentre } from '../scenes/hitEffects.js';   // AUDIT 24 (wave 44): the same centre+height/8 point
+import { MISSILE_SPEED, MISSILE_COLLIDER_RADIUS } from '../../systems/spellcast.js';
+import { ARROW_ARM_LENGTH } from '../weaponStates.js';
+import { bloodCentre as sparkleCentre } from '../../scenes/hitEffects.js';   // AUDIT 24 (wave 44): the same centre+height/8 point
 
 export { MIN_RANGED_DISTANCE, MAX_RANGED_DISTANCE };
 export const RANGED_SPELL_CHANCE = 1 / 40; // DoRangedAttack: Random.value < 1/40f

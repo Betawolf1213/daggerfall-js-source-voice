@@ -18,10 +18,10 @@ import { ELITE_FOE_SIZE } from '../src/systems/eliteFoes.js';
 import { WILD_GIANT_SIZE } from '../src/systems/wild/wildZone.js';   // AUDIT MW-NPC II P4
 import { createNpcBodies, createPopulationLane, createFrameBudget, NPC_BODY_TIERS, WATCH_BODY_TIERS, NPC_FRAME_TIERS } from '../src/characters/npcBodies.js';
 import { creatureLook } from '../src/characters/creatureBodies.js';
-import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES as M } from '../src/characters/mobile/mobileTypes.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
 import { PeerBodies } from '../src/net/peer/peerBodies.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const close = (a, b, tol = 2e-5) => Math.abs(a - b) <= tol * (1 + Math.abs(b));

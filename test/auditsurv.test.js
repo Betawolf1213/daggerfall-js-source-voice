@@ -28,7 +28,7 @@ import { usableItem } from '../src/systems/useItem.js';
 import { ENHANCED_CSS } from '../src/ui/enhanced/enhancedStyle.js';
 import { survivalInfoTokens } from '../src/systems/item/itemInfo.js';
 import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 import { assignStartingGear } from '../src/systems/startingGear.js';
 
 // ═══ AUDIT SURV (2026-09-18): five lenses over SURV1-SURV7 ════════

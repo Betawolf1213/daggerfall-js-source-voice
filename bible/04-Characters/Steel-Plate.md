@@ -1,7 +1,7 @@
 # The Steel Plate - the port's own steel armour set
 
 `tools/fbxStrip.mjs` + `tools/bakeSteelPlate.mjs` (the bake, the bind, the rig) + `tools/skinWeights.mjs` (jointWeights) +
-`tools/nifWrite.mjs` (skinnedMeshesToNif) + `src/characters/ownArmorModels.js` (the steel plate's rows) +
+`tools/nifWrite.mjs` (skinnedMeshesToNif) + `src/characters/ownModels/ownArmorModels.js` (the steel plate's rows) +
 `src/formats/mwItemMap.js` (composeWornArmor) + `src/systems/features.js` (the Steel Helm row)
 (MW-STEEL1, Mac, 2026-10-06; MW-STEEL2, the skirt, 2026-10-07; MW-STEEL4, rigged as retail's armour is, 2026-10-07 -
 it retired the runtime rig MW-STEEL1 to MW-STEEL3 built, recorded below; MW-STEEL5, Mac's update and the helm on the

@@ -1,7 +1,7 @@
 [
   {
     "name": "MWFIT1-the-steel-left-pauldron-bare",
-    "file": "src/characters/ownArmorModels.js",
+    "file": "src/characters/ownModels/ownArmorModels.js",
     "old": "      parts: [part('left pauldron', 'steel_plate_pauldron_left.nif', ['left upper arm'])],",
     "new": "      parts: [part('left pauldron', 'steel_plate_pauldron_left.nif')],",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "MWFIT1-the-ebony-right-pauldron-bare",
-    "file": "src/characters/ownArmorModels.js",
+    "file": "src/characters/ownModels/ownArmorModels.js",
     "old": "      parts: [part('right pauldron', 'ebony_plate_pauldron_right.nif', ['right upper arm'])],",
     "new": "      parts: [part('right pauldron', 'ebony_plate_pauldron_right.nif')],",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "MWFIT1-the-pauldron-hides-the-other-arm",
-    "file": "src/characters/ownArmorModels.js",
+    "file": "src/characters/ownModels/ownArmorModels.js",
     "old": "      parts: [part('right pauldron', 'steel_plate_pauldron_right.nif', ['right upper arm'])],",
     "new": "      parts: [part('right pauldron', 'steel_plate_pauldron_right.nif', ['left upper arm'])],",
     "tests": [
@@ -30,7 +30,7 @@
   },
   {
     "name": "MWFIT1-the-closed-steel-helm-shows-the-head",
-    "file": "src/characters/ownArmorModels.js",
+    "file": "src/characters/ownModels/ownArmorModels.js",
     "old": "  const helmClosed = Object.freeze([part('hair', 'steel_plate_helm_closed.nif', ['head'])]);",
     "new": "  const helmClosed = Object.freeze([part('hair', 'steel_plate_helm_closed.nif')]);",
     "tests": [
@@ -41,7 +41,7 @@
   },
   {
     "name": "MWFIT1-the-ebony-helm-shows-the-head",
-    "file": "src/characters/ownArmorModels.js",
+    "file": "src/characters/ownModels/ownArmorModels.js",
     "old": "{ parts: [part('hair', 'ebony_plate_helm.nif', ['head'])] }),",
     "new": "{ parts: [part('hair', 'ebony_plate_helm.nif')] }),",
     "tests": [
@@ -51,7 +51,7 @@
   },
   {
     "name": "MWFIT1-the-open-helm-hides-the-face",
-    "file": "src/characters/ownArmorModels.js",
+    "file": "src/characters/ownModels/ownArmorModels.js",
     "old": "  const helmOpen = Object.freeze([part('hair', 'steel_plate_helm_open.nif')]);",
     "new": "  const helmOpen = Object.freeze([part('hair', 'steel_plate_helm_open.nif', ['head'])]);",
     "tests": [

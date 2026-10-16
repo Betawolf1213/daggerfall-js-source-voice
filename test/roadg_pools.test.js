@@ -52,7 +52,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createCityGuards, GUARD_MOBILE_TYPE } from '../src/scenes/cityGuards.js';
-import { PLAYER_TARGET } from '../src/characters/enemyTargets.js';
+import { PLAYER_TARGET } from '../src/characters/enemy/enemyTargets.js';
 import { playerArrowHitFoe } from '../src/combat/arrowFlight.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');

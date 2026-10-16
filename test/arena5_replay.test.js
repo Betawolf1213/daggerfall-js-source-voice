@@ -20,7 +20,7 @@ import { recordsPage } from '../src/systems/arena/arenaBoard.js';
 import { createArenaGate } from '../src/scenes/arena/arenaGate.js';
 import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

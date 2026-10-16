@@ -271,7 +271,7 @@
   },
   {
     "name": "FM-no-follow",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    if (this._following) this._followTicks(classicTicks, dt);",
     "new": "    if (false) this._followTicks(classicTicks, dt);",
     "tests": [
@@ -280,7 +280,7 @@
   },
   {
     "name": "FM-follow-while-fighting",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    if (this.target == null) return true;\n    const tf",
     "new": "    return true;\n    const tf",
     "tests": [
@@ -289,7 +289,7 @@
   },
   {
     "name": "FM-no-leash",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    if (home > leash || (tf && Math.hypot(tf[0] - leader[0], tf[2] - leader[2]) > leash)) {",
     "new": "    if (tf && Math.hypot(tf[0] - leader[0], tf[2] - leader[2]) > leash) {",
     "tests": [
@@ -298,7 +298,7 @@
   },
   {
     "name": "FM-no-slack",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    if (d <= stop || (!this._followWalking && d <= stop + FOLLOW_SLACK)) {",
     "new": "    if (d <= stop) {",
     "tests": [
@@ -307,7 +307,7 @@
   },
   {
     "name": "FM-walks-into-leader",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    if (d <= stop || (!this._followWalking",
     "new": "    if (d <= 0.1 || (!this._followWalking",
     "tests": [
@@ -316,7 +316,7 @@
   },
   {
     "name": "FM-leash-constant",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "export const FOLLOW_LEASH = 20;",
     "new": "export const FOLLOW_LEASH = 200;",
     "tests": [
@@ -343,7 +343,7 @@
   },
   {
     "name": "ET-companion-unfought",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "      if (!isPlayer && selfMobileTeam !== 'PlayerAlly' && !(c.companion != null && ai.isHostile)) continue;",
     "new": "      if (!isPlayer && selfMobileTeam !== 'PlayerAlly') continue;",
     "tests": [
@@ -352,7 +352,7 @@
   },
   {
     "name": "ET-companion-takes-an-ally",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "    if (self.companion != null && (c.companion != null || targetEntity?.team === 'PlayerAlly')) continue;\n",
     "new": "",
     "tests": [

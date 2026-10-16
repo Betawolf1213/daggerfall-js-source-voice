@@ -9,8 +9,8 @@ import assert from 'node:assert/strict';
 import { createEmptySoulTrap } from '../src/systems/shopStock.js';
 import { attemptSoulTrap, enumerateFilledTraps } from '../src/systems/mysticism.js';
 import { primaryPick, enchantmentCost } from '../src/systems/enchantmentCatalogue.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 
 test('DRAGON-SOUL a general-spawn Dragonling trapped on the real road binds at -5000, as the quest\'s does', () => {
   assert.equal(MOBILE_TYPES.Dragonling, 34, 'the one every encounter spawns');

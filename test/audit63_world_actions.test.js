@@ -31,7 +31,7 @@ import {
   CASTLE_DAGGERFALL_MAP_ID, CASTLE_DAGGERFALL_FOYER_DOOR_LOAD_IDS,
 } from '../src/world/actionSystem.js';
 import { Collider } from '../src/player/collider.js';
-import { EnemyAI } from '../src/characters/enemyMotor.js';
+import { EnemyAI } from '../src/characters/enemy/enemyMotor.js';
 import { ACTION_FLAGS, TRIGGER_FLAGS } from '../src/world/rdbLayout.js';
 import { objectAabb, worldAabb, activationTargets, pickActivatable } from '../src/player/activate.js';
 import { envAttack } from '../src/combat/weaponRig.js';

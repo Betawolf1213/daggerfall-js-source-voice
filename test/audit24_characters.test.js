@@ -3,15 +3,15 @@
 // seam that carried it.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { EnemyAI } from '../src/characters/enemyMotor.js';
+import { EnemyAI } from '../src/characters/enemy/enemyMotor.js';
 import {
   EnemyAttack, BOW_SHOT_CHANCE, MIN_RANGED_DISTANCE, MAX_RANGED_DISTANCE,
-} from '../src/characters/enemyAttack.js';
-import { MELEE_DISTANCE } from '../src/characters/enemyMotor.js';
+} from '../src/characters/enemy/enemyAttack.js';
+import { MELEE_DISTANCE } from '../src/characters/enemy/enemyMotor.js';
 import { STRIKES } from '../src/characters/anims.js';
 import { Collider } from '../src/player/collider.js';
 import { rand, setSeed, getSeed } from '../src/formats/dfRandom.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { readFileSync } from 'node:fs';
 
 const I = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
@@ -212,7 +212,7 @@ test('audit24 characters-0: entry 39 (Horse) carries the MobileTeams struct defa
   assert.equal(Object.values(ENEMY_BASICS).filter((e) => e.team === undefined).length, 0);
   // ...and the fallback that remains answers with the struct default,
   // not a member MobileTeams does not have.
-  assert.match(readFileSync(new URL('../src/characters/enemyEntity.js', import.meta.url), 'utf8'),
+  assert.match(readFileSync(new URL('../src/characters/enemy/enemyEntity.js', import.meta.url), 'utf8'),
     /team: basics\.team \?\? 'PlayerEnemy'/);
 });
 

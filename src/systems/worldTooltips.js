@@ -348,7 +348,7 @@ export function mobileEntityName(entityName, { hostile = false } = {}) {
  *
  * RECORDED DEPARTURE. The port's enemy entity only carries a career
  * name for CLASS enemies - `name: isClass ? career.name : undefined`
- * (characters/enemyEntity.js) - because nothing else has ever needed a
+ * (characters/enemy/enemyEntity.js) - because nothing else has ever needed a
  * monster's career template. So a monster falls through to the enemy
  * name, which is the same word for every monster in the game and the
  * only word the port holds; a class enemy now takes the member the mod

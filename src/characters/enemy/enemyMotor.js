@@ -36,10 +36,10 @@
 // chameleon interim is REPLACED by the verbatim illusion gate
 // (IsBlending -> an 8%-per-classic-update see-through roll).
 
-import { GLOBAL_SCALE } from '../world/meshReader.js';
-import { dice100 } from '../combat/formulas.js';   // PT1: Dice100 has ONE home and this file had written it out twice
-import { CLASSIC_UPDATE_INTERVAL } from './weaponStates.js';   // single source (GameManager.cs:42)
-import { CAPSULE_HEIGHT, CAPSULE_RADIUS, DF_WALK_BASE } from '../player/motor.js';           // single source
+import { GLOBAL_SCALE } from '../../world/meshReader.js';
+import { dice100 } from '../../combat/formulas.js';   // PT1: Dice100 has ONE home and this file had written it out twice
+import { CLASSIC_UPDATE_INTERVAL } from '../weaponStates.js';   // single source (GameManager.cs:42)
+import { CAPSULE_HEIGHT, CAPSULE_RADIUS, DF_WALK_BASE } from '../../player/motor.js';           // single source
 export { CLASSIC_UPDATE_INTERVAL };
 /** FOE-CATCHUP (2026-09-26, SquidKamer: "you drop to 1 fps for a few seconds and get jumped by everyone"; Mac, asked:
  *  "Yes, add the cap"): THE MOST GAME TIME A FOE'S BODY CATCHES UP IN ONE FRAME. update() below steps at FIXED_DT for
@@ -82,11 +82,11 @@ export const FOLLOW_RUN_M = 8;
 export const FOLLOW_RUN_PACE = 1.6;
 export const foeFrameDt = (dt) => Math.min(dt, FOE_MAX_FRAME_DT);
 export const GIVE_UP_TICKS = 200;   // EnemyMotor.GiveUpTimer refill (classic ticks; ~12.5s)
-import { GRAVITY, FIXED_DT, MAX_FRAME_DT, CLASSIC_TO_UNITY_RATIO, FALL_DAMAGE_THRESHOLD } from '../player/motor.js';   // the shared fall rule + the P16 fixed-timestep law; CH3: the fall threshold single-sources with the player's
-import { wrapAngle } from '../world/mat4.js';   // ONCRASH1: the port's one angle wrap, which cannot loop
-import { MOBILE_TYPES } from './mobileTypes.js';
-import { coverDistance } from '../ai/cover.js';   // TACT1: billboards are cover (sight, the clear shot)
-import { tacticsStep, tacticsNow, breakWindup } from '../ai/tactics.js';   // TACT2: the tactics brain; TELL1: its clock, for the stagger's end
+import { GRAVITY, FIXED_DT, MAX_FRAME_DT, CLASSIC_TO_UNITY_RATIO, FALL_DAMAGE_THRESHOLD } from '../../player/motor.js';   // the shared fall rule + the P16 fixed-timestep law; CH3: the fall threshold single-sources with the player's
+import { wrapAngle } from '../../world/mat4.js';   // ONCRASH1: the port's one angle wrap, which cannot loop
+import { MOBILE_TYPES } from '../mobile/mobileTypes.js';
+import { coverDistance } from '../../ai/cover.js';   // TACT1: billboards are cover (sight, the clear shot)
+import { tacticsStep, tacticsNow, breakWindup } from '../../ai/tactics.js';   // TACT2: the tactics brain; TELL1: its clock, for the stagger's end
 
 // C15 knockback (EnemyMotor.KnockbackMovement): classic units through
 // the speed ratio. Stored speed clamps at 40; motion caps at 25; the
@@ -126,7 +126,7 @@ export const CLASSIC_TURN_DEG = 20;                  // per classic update (Turn
 // M3 / ONE DFU MEMBER ONE EXPORT: systemTimerUpdatesDivisor is a
 // PlayerMotor field in DFU (climbing divides by it too) - moved to
 // player/motor.js; re-exported so existing importers keep working.
-export { SYSTEM_TIMER_UPDATES_DIVISOR } from '../player/motor.js';
+export { SYSTEM_TIMER_UPDATES_DIVISOR } from '../../player/motor.js';
 export const SENSES_INTERVAL_UNITS = 5;              // classicTargetUpdateTimer > 5
 export const MOVE_YAW_GATE_DEG = 5.625;
 // CH4 (the senses verify pass): the STOPPED "just look at target"
@@ -466,7 +466,7 @@ export class EnemyAI {
     // MakeEnemyHostileToAttacker writes (:197). A target is a
     // CANDIDATE descriptor ({ isPlayer } sentinel or { ai, entity })
     // from the host's shared list; null = no target = the :410-414
-    // blind arm. The machine (characters/enemyTargets.js) arms only
+    // blind arm. The machine (characters/enemy/enemyTargets.js) arms only
     // through senses.targeting - unarmed callers keep the
     // player-only path, which is DFU's own behavior with no other
     // enemy in range.

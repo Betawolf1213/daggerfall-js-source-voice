@@ -15,7 +15,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createCityGuards, DEFENDER_LEAVE_LEG_SECONDS } from '../src/scenes/cityGuards.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
-import { PLAYER_TARGET } from '../src/characters/enemyTargets.js';
+import { PLAYER_TARGET } from '../src/characters/enemy/enemyTargets.js';
 import { Collider } from '../src/player/collider.js';
 import { createTownWatch, runTownWatchFrame, TOWN_WATCH_STAND_DOWN_SECONDS } from '../src/systems/town/townWatch.js';
 import { popAllowChange, POP_VISIBLE_RANGE } from '../src/systems/town/townPopulation.js';

@@ -246,7 +246,7 @@
   },
   {
     "name": "TELL6d-never-drawn",
-    "file": "src/characters/enemyAttack.js",
+    "file": "src/characters/enemy/enemyAttack.js",
     "old": "      if (ai._blowShot && !ai._blowShot.fired) {",
     "new": "      if (false) {",
     "tests": [
@@ -255,7 +255,7 @@
   },
   {
     "name": "TELL6d-never-asked",
-    "file": "src/characters/enemyAttack.js",
+    "file": "src/characters/enemy/enemyAttack.js",
     "old": "          if (ai._aimReady === true && this.rolls() < TELL.AIMED_SHARE) { ai._wantAimed = true; continue; }",
     "new": "",
     "tests": [

@@ -32,7 +32,7 @@
 // and the whole suite pass on that; test/tdz.test.js is what catches
 // it, and did.
 // ═══════════════════════════════════════════════════════════════════
-import { personWantsToStop } from '../characters/mobilePerson.js';
+import { personWantsToStop } from '../characters/mobile/mobilePerson.js';
 
 /**
  * @param {{ areEnemiesNearby: (pool:any) => boolean, foes: () => any }} deps

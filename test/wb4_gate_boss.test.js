@@ -28,8 +28,8 @@ import { createGateCourt, bossOf, COURT_STRIKE_TEXT, ROAR_AFTER_MS } from '../sr
 import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import { courtToDungeon } from '../src/world/gate/gateArena.js';
 import { gateBossOf } from '../src/net/gate/gateLaw.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
-import { PRIMARY_ATTACK_ANIMS, MOVE_ANIMS, HURT_ANIMS, IDLE_ANIMS, mobileOrientation } from '../src/characters/mobileUnit.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
+import { PRIMARY_ATTACK_ANIMS, MOVE_ANIMS, HURT_ANIMS, IDLE_ANIMS, mobileOrientation } from '../src/characters/mobile/mobileUnit.js';
 import { mobileBillboardSize } from '../src/world/rmbFlats.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

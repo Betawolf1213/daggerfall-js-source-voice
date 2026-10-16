@@ -12,7 +12,7 @@ import {
 } from '../src/systems/wagon/wagonSeats.js';
 import { createWagonRiders, RIDE_ROW, GO_HOLD_MS, ARRIVE_WAIT_MS } from '../src/scenes/wagon/wagonRiders.js';
 import { createCrewAshore } from '../src/scenes/crewAshore.js';
-import { EnemyAI } from '../src/characters/enemyMotor.js';
+import { EnemyAI } from '../src/characters/enemy/enemyMotor.js';
 import { readCaravanRoom, isCaravanRoom, CARAVAN_BLOCK, CARAVAN_SCENE_NAME, CARAVAN_BUILDING_KEY, CARAVAN_TEXT, CARAVAN_ROOM_MODEL_ID } from '../src/systems/caravanRoom.js';
 import { caravanRoomEntry, createCaravanAccess } from '../src/scenes/caravanRoom.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';

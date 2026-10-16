@@ -6,7 +6,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { CityNavigation, NAV_CELL, HALF_CELL } from '../src/world/city/cityNavigation.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
-import { PERSON_TEXTURES, PERSON_FACE_RECORDS, NUM_PERSON_FACE_VARIANTS, GUARD_TEXTURE } from '../src/characters/mobilePerson.js';
+import { PERSON_TEXTURES, PERSON_FACE_RECORDS, NUM_PERSON_FACE_VARIANTS, GUARD_TEXTURE } from '../src/characters/mobile/mobilePerson.js';
 import { GENDERS } from '../src/characters/nameHelper.js';
 import { getSeed, setSeed, rand } from '../src/formats/dfRandom.js';
 import { lwSeed, lwRng, pickWeighted, textSeed, LW_SALT } from '../src/systems/livingWorld/seed.js';

@@ -11,7 +11,7 @@ import { conditionMultipliersByMaterial, valueMultipliersByMaterial, WEAPONS, WE
 import { GROUP_TEMPLATE_INDICES } from './itemTemplatesData.js';
 import { WAGON_KINDS, wagonKindOf } from '../wagon/wagonKinds.js';   // WAGONS1: a wagon's picture is Mac's wagon of its kind (read at call time - wagonKinds.js reads this module's TRANSPORT_SMALL_CART)
 import TEMPLATES_JSON from '../../characters/itemTemplates.json' with { type: 'json' };
-import { playerArchiveFor, resolvePaperdollRecord } from '../../characters/paperdollArt.js';   // AUDIT 17f: SetRace, one home; NT3 (F006): the record law too
+import { playerArchiveFor, resolvePaperdollRecord } from '../../characters/paperdoll/paperdollArt.js';   // AUDIT 17f: SetRace, one home; NT3 (F006): the record law too
 import { itemDyeColor, itemDyeTarget } from './itemDye.js';
 import { DYE_TARGETS } from '../../characters/dyes.js';   // PROF2: a new material's picture dyed on DFU's metal swatch
 import { customItemClass, rriVariantFields, rriStoredWeight, rriCustomItemsForGroup } from '../roleplayRealismItems/rriItems.js';   // RRI1: DFU's custom-item dispatch, asked first   // DW3: GetItemImage's `color = (int)item.dyeColor` (ItemHelper.cs:402) rides the image

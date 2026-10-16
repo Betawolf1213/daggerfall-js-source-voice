@@ -21,8 +21,8 @@ import * as relay from '../server/src/relay.js';
 import { fakeRoom } from './fakeRoom.mjs';
 import { ActionSystem, validActionRecord, sharedRecord, ACTION_STATES, ACTION_LOCK_MAX } from '../src/world/actionSystem.js';
 import { ACTION_FLAGS, TRIGGER_FLAGS } from '../src/world/rdbLayout.js';
-import { getTargets, runTargetMachine, isLocalPlayerTarget, isPeerTarget, isPlayerTarget, PLAYER_TARGET } from '../src/characters/enemyTargets.js';
-import { EnemyAI } from '../src/characters/enemyMotor.js';
+import { getTargets, runTargetMachine, isLocalPlayerTarget, isPeerTarget, isPlayerTarget, PLAYER_TARGET } from '../src/characters/enemy/enemyTargets.js';
+import { EnemyAI } from '../src/characters/enemy/enemyMotor.js';
 import { areEnemiesNearby, RESTING_DISTANCE } from '../src/systems/encounters.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');

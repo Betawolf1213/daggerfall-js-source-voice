@@ -19,7 +19,7 @@ import { registerMagicRoundHook } from '../worldTick.js';
 import { syntheticTimeIncrease } from '../effectBroker.js';   // AUDIT-RR2 G20: the encumbrance round's synthetic-time gate (RoleplayRealism.cs:587)
 import { registerEntityFold } from '../entityMods.js';
 import { overridePotionRecipes } from '../potions.js';
-import { ENEMY_BASICS } from '../../characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../../characters/enemy/enemyBasics.js';
 import { setUnderworldRule, setGuildExpelledHook } from '../guild/guilds.js';
 import { registerMerchantService } from '../guild/guildServices.js';
 import { carriedWeight } from '../inventory.js';

@@ -21,7 +21,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createHitEffects, bloodCentre, SPARKLES_RECORD, BLOOD_ARCHIVE } from '../src/scenes/hitEffects.js';
 import { GLOBAL_SCALE } from '../src/world/meshReader.js';   // FIELD-GUN20: the rig's 16 px sprite, in units
-import { castEnemySpell } from '../src/characters/enemyCasting.js';
+import { castEnemySpell } from '../src/characters/enemy/enemyCasting.js';
 
 const rd = (f) => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');
 const tick = () => new Promise((r) => setImmediate(r));
@@ -180,10 +180,10 @@ test('audit24 wave44: both casting pools hand their blood pool to the executor',
   }
   // the executor asks for it by NAME rather than importing a
   // module-level singleton - one pool per host, as the blood is
-  assert.match(rd('src/characters/enemyCasting.js'), /hitEffects = null,/);
+  assert.match(rd('src/characters/enemy/enemyCasting.js'), /hitEffects = null,/);
   // NOTE deliberately no regex over the gate's spelling. The gate is
   // pinned by BEHAVIOUR above (five rangeTypes, both directions), and
   // a regex here has already false-killed an equivalent rewrite three
   // waves running. A pin asserts what a line does.
-  assert.match(rd('src/characters/enemyCasting.js'), /showMagicSparkles\(/, 'the executor is the caller');
+  assert.match(rd('src/characters/enemy/enemyCasting.js'), /showMagicSparkles\(/, 'the executor is the caller');
 });

@@ -88,7 +88,7 @@ measured clear of the mods' models (the game's ARCH3D) and no subrecord attached
 
 ## ASSIST (4)
 
-`characters/enemyTargets.js` (`COMPANION_ASSIST_PRIORITY`, `fightsOurSide`). A sworn revenant (`06-Systems/Revenants.md`
+`characters/enemy/enemyTargets.js` (`COMPANION_ASSIST_PRIORITY`, `fightsOurSide`). A sworn revenant (`06-Systems/Revenants.md`
 13) is a crew companion (`03-World/Naval-Combat.md` CREW-COMPANIONS): an allied foe with the motor's `follow`, choosing
 its foe through DFU's target machine (`getTargets`, EnemySenses.cs:752-878). That chain knows no fight but the
 candidate's own: +5 for a foe targeting NO ONE, +10 seen, 30 less the distance - and an unseen candidate is kept while it

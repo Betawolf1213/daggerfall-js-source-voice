@@ -26,7 +26,7 @@
 // 2-5 at the spawner's band; not its third, the townsperson behind the
 // player, :675-680). They come as the player's ALLIES (team PlayerAlly,
 // the allied summon's shape, exteriorFoes.js), so DFU's own target chain
-// (EnemySenses.GetTargets, characters/enemyTargets.js) sends them at the
+// (EnemySenses.GetTargets, characters/enemy/enemyTargets.js) sends them at the
 // monster and never at the player, and the existing guard-vs-monster
 // melee resolves the fight. They walk away once the town is quiet. A
 // crime turns them into the ordinary watch on the spot - and a blow on
@@ -46,7 +46,7 @@
 // runs it: the fixed-city host, exterior.js, has no watch).
 // ═══════════════════════════════════════════════════════════════════
 
-import { isPlayerTarget } from '../../characters/enemyTargets.js';
+import { isPlayerTarget } from '../../characters/enemy/enemyTargets.js';
 
 /** Random.Range(5, 11), the int overload: the witnessed-crime arrival
  *  (PlayerEntity.cs:739-741, cityGuards.js's countdown) - the watch takes

@@ -18,7 +18,7 @@ import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
 import { championName } from '../src/systems/champions.js';
 import { liveEntityName } from '../src/systems/worldTooltips.js';
 import { markFoeStruck, foeTarget, clearFoeTarget } from '../src/ui/hud/hudFoeTarget.js';
-import { KNIGHT_CITY_WATCH } from '../src/characters/mobileTypes.js';
+import { KNIGHT_CITY_WATCH } from '../src/characters/mobile/mobileTypes.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const foe = (over = {}) => ({ level: 5, mobileType: 7, health: 40, maxHealth: 40, team: 'Monster', ...over });

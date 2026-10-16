@@ -11,7 +11,7 @@
   },
   {
     "name": "MWHEADS1-women-wear-them",
-    "file": "src/characters/ownHeadModels.js",
+    "file": "src/characters/ownModels/ownHeadModels.js",
     "old": "  return byRace?.[female ? 'female' : 'male'] ?? null;",
     "new": "  return byRace?.male ?? null;",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "MWHEADS1-the-pools-out-of-order",
-    "file": "src/characters/ownHeadModels.js",
+    "file": "src/characters/ownModels/ownHeadModels.js",
     "old": "['breton_m_head_h04', 'breton_m_head_h0411', 'breton_m_head_h0423']",
     "new": "['breton_m_head_h0411', 'breton_m_head_h04', 'breton_m_head_h0423']",
     "tests": [
@@ -31,7 +31,7 @@
   },
   {
     "name": "MWHEADS1-a-hair-is-a-head",
-    "file": "src/characters/ownHeadModels.js",
+    "file": "src/characters/ownModels/ownHeadModels.js",
     "old": "id, model: `${id}.nif`, race, part: PART[slot], female,",
     "new": "id, model: `${id}.nif`, race, part: 0, female,",
     "tests": [
@@ -192,7 +192,7 @@
   },
   {
     "name": "MWHEADS1-AUDIT-hairs-named-heads",
-    "file": "src/characters/ownHeadModels.js",
+    "file": "src/characters/ownModels/ownHeadModels.js",
     "old": "  hairs: Object.freeze(hairs.map((id) => record(race, female, 'hair', id))),",
     "new": "  hairs: Object.freeze(hairs.map((id) => record(race, female, 'head', id))),",
     "tests": [
@@ -212,7 +212,7 @@
   },
   {
     "name": "MWHEADS1-AUDIT-paths-heads-only",
-    "file": "src/characters/ownHeadModels.js",
+    "file": "src/characters/ownModels/ownHeadModels.js",
     "old": "  .flatMap((p) => [...p.heads, ...p.hairs])",
     "new": "  .flatMap((p) => [...p.heads])",
     "tests": [

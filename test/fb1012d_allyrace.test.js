@@ -29,7 +29,7 @@ const N = await import('../src/systems/revenant/revenant.js');
 const RC = await import('../src/systems/revenant/revenantCompanions.js');
 const S = await import('../src/systems/companionSlots.js');
 const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
-const { MOBILE_TYPES } = await import('../src/characters/mobileTypes.js');
+const { MOBILE_TYPES } = await import('../src/characters/mobile/mobileTypes.js');
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8').replace(/^﻿/, '');
 const settle = async () => { for (let i = 0; i < 4; i++) await new Promise((r) => setImmediate(r)); };

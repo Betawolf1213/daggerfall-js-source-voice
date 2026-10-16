@@ -28,7 +28,7 @@ import { createTraceAct, traceLine, toLine } from '../src/systems/traceAct.js';
 import { createStitchAct } from '../src/systems/stitchAct.js';
 import { checksRefusal, brokeMessage } from '../src/systems/foraging/foragingLaw.js';
 import { rotFoodDay, TEMPLATE as CC } from '../src/systems/survival/food.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 
 // ─── THE HIDES (4.4) ─────────────────────────────────────────────────
 
@@ -45,7 +45,7 @@ test('PROF7 law: the ten hides (4.4, 655-664 in its order) - each its foes by DF
     ['hide:dreugh', 663, 'Dreugh Shell', 5, null, null, 'leather:hardened'],
     ['hide:dragonling', 664, 'Dragonling Scale', 6, 'part:dragonscale', null, 'leather:hardened'],
   ]);
-  // the foes by DFU's own names (characters/mobileTypes.js, generated from DaggerfallUnityEnums.cs)
+  // the foes by DFU's own names (characters/mobile/mobileTypes.js, generated from DaggerfallUnityEnums.cs)
   const M = MOBILE_TYPES;
   assert.deepEqual([M.Rat, M.GiantBat, M.GrizzlyBear, M.SabertoothTiger, M.Spider, M.GiantScorpion, M.Slaughterfish, M.Harpy, M.Dreugh, M.Dragonling, M.Dragonling_Alternate].map((t) => hideOfFoe(t)?.key),
     ['hide:rat', 'hide:bat', 'hide:bear', 'hide:tiger', 'hide:spider', 'hide:scorpion', 'hide:slaughterfish', 'hide:harpy', 'hide:dreugh', 'hide:dragonling', 'hide:dragonling']);

@@ -81,7 +81,7 @@ export const LIVE = Object.freeze({
   // (:801-803), where a non-PlayerAlly foe skips every enemy
   // candidate and the whole scene is player-only again - which is
   // exactly what the launcher's own blurb promises.
-  'Enhancements/EnemyInfighting': 'src/characters/enemyTargets.js',
+  'Enhancements/EnemyInfighting': 'src/characters/enemy/enemyTargets.js',
   'Enhancements/PlayerTorchFromItems': 'src/systems/playerTorch.js',   // T1: it gates the torch itself now, not just the starting gear
   'Enhancements/LoiterLimitInHours': 'src/systems/rest/restSession.js',
   // S40: the illegal-rest confirm. OFF makes camping in a town simply

@@ -3,7 +3,7 @@
 // MONSTER'S QUARRY. DFU's enemy senses weigh other enemies and the player alone - "Civilian Mobile NPCs are not handled
 // here" (EnemySenses.cs:739-741) - so no monster ever turned on a townsperson, and the watch never had one to defend.
 // In the living world's lane one on the street, not of the watch, stands for the target machine as a body of their own:
-// a `civilian` at their feet, hunted by a hostile monster that fights hand to hand (characters/enemyTargets.js
+// a `civilian` at their feet, hunted by a hostile monster that fights hand to hand (characters/enemy/enemyTargets.js
 // huntsCivilians), struck down by its first landed blow as DFU's civilian is by the player's (cityGuards.js
 // resolveCivilianHit: one hit, `disable()`), and a fight the watch comes to (systems/town/townWatch.js isTownThreat).
 

@@ -4,7 +4,7 @@
 // with arms, armour and fighting magic. Before it the ladder fell to a pack: potions drunk mid-bout, Levitate over a
 // ring the clamp held only across the ground (the beasts, the Orc Warlord and the Grand Champion melee-only below),
 // Invisibility no class fighter sees through, a Calm or a Charm on the fighter. So, while the player's own LADDER bout is
-// set (characters/enemyTargets.js setPlayerBout, its tag's `kit` - a ladder bout, a practice bout and a relay's ladder
+// set (characters/enemy/enemyTargets.js setPlayerBout, its tag's `kit` - a ladder bout, a practice bout and a relay's ladder
 // bout alike; AUDIT ARENA-LADDER 2: never a bout between players, whose kit the owner was not asked about):
 //   - no potion is drunk (systems/useItem.js's potion arm asks first, and the bottle is kept);
 //   - no spell carrying Invisibility, Levitate, Chameleon, Shadow, Calm, Charm or Teleport is cast, whatever casts it - a
@@ -14,7 +14,7 @@
 //   - AUDIT ARENA-LADDER 2: and no fighter can be calmed or charmed by any door (scenes/arena/arenaBouts.js marks every fighter
 //     `pacifyImmune`, WB8a's - a weapon's Cast-When-Strikes and a tongue's pacify reach it past the cast engine).
 // The port's own: DFU has no arena. Ledger A (ARENA).
-import { playerBoutOf } from '../../characters/enemyTargets.js';
+import { playerBoutOf } from '../../characters/enemy/enemyTargets.js';
 import { hasActiveEffect, cureAllOfKind } from '../effects.js';
 import { ARENA_TEXT } from './arenaText.js';
 import { restartHeldEnchantments } from '../enchantments.js';   // AUDIT ARENA-LADDER 2: a held item's barred effect back after the bout

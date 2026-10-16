@@ -76,7 +76,7 @@ import { hudText } from '../notify.js';
 import { weaponSkillUsed } from '../../characters/weapons.js';
 import { friendlyProtected } from '../../combat/playerWeapon.js';
 import { careerTolerance, EFFECT_FLAGS } from '../spellcast.js';
-import { KNIGHT_CITY_WATCH } from '../../characters/mobileTypes.js';
+import { KNIGHT_CITY_WATCH } from '../../characters/mobile/mobileTypes.js';
 import {
   wornSets, setsAwake, RAMPAGE_SECONDS, RAMPAGE_STACKS, CLEAVE_METRES, WRATH_BELOW, NOVA_METRES, WRATH_SECONDS,
   RIPOSTE_SECONDS, MARK_METRES, MARK_SECONDS, BLOOD_SECONDS, BLOOD_STACKS, COIL_STACKS, COIL_SECONDS, SHED_BELOW,

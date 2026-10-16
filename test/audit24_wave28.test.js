@@ -60,8 +60,8 @@ test('audit24 wave28: enemies carry the seven-part table, monster and class alik
   // EnemyEntity.cs:264-267 and :286-291 fill every part with
   // ArmorValue * 5 for a monster; :409-413 starts a CLASS enemy at 100
   // ("no armor") before its equipment subtracts.
-  const { makeEnemyEntity } = await import('../src/characters/enemyEntity.js');
-  const { ENEMY_BASICS } = await import('../src/characters/enemyBasics.js');
+  const { makeEnemyEntity } = await import('../src/characters/enemy/enemyEntity.js');
+  const { ENEMY_BASICS } = await import('../src/characters/enemy/enemyBasics.js');
   const rat = makeEnemyEntity(0, ENEMY_BASICS['0'], null, 1, () => 0);
   assert.equal(rat.armorValues.length, 7);
   assert.ok(rat.armorValues.every((v) => v === rat.armor), 'the scalar is an alias for a uniform array');
@@ -73,7 +73,7 @@ test('audit24 wave28: enemies carry the seven-part table, monster and class alik
   assert.ok(thief.isClass);
   assert.ok(thief.armorValues.every((v) => v === 100), 'EnemyEntity.cs:409-413');
 
-  const src = rd('src/characters/enemyEntity.js');
+  const src = rd('src/characters/enemy/enemyEntity.js');
   assert.match(src, /armorValues: new Array\(7\)\.fill\(isClass \? 100 : armor\)/);
 });
 

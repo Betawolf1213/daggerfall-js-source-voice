@@ -19,7 +19,7 @@
 // on her is shut (the host's `gone`).
 //
 // HER BODY is the Daedra Seducer's mortal guise (EnemyBasics 29, TEXTURE.284 - the game has no Dremora sprite), its idle
-// records by the eight orientations (characters/mobileUnit.js IDLE_ANIMS, read through world/gate/gateBoss.js bossFrame, the
+// records by the eight orientations (characters/mobile/mobileUnit.js IDLE_ANIMS, read through world/gate/gateBoss.js bossFrame, the
 // court's own reader), a billboard on the flats' axis. She faces the gate through her cage's door, and turns to a player
 // come within BROKER_NOTICE_M of her - at a walk's pace, never a snap.
 //
@@ -29,8 +29,8 @@
 //
 // Not a DFU member. Ledger A (SET).
 import { bossFrame } from '../world/gate/gateBoss.js';
-import { IDLE_ANIMS, IDLE_ANIM_SPEED } from '../characters/mobileUnit.js';
-import { ENEMY_BASICS } from '../characters/enemyBasics.js';
+import { IDLE_ANIMS, IDLE_ANIM_SPEED } from '../characters/mobile/mobileUnit.js';
+import { ENEMY_BASICS } from '../characters/enemy/enemyBasics.js';
 import { mobileBillboardSize } from '../world/rmbFlats.js';
 import { RAY_DISTANCE, STATIC_NPC_ACTIVATION_DISTANCE, presentNpcInfoText } from '../player/activate.js';
 import { trs } from '../world/mat4.js';

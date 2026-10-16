@@ -447,7 +447,7 @@ test('CORPSE-FOOD (Mac: "It needs to be accessible with people with it on"): onl
   const { corpseFoodOn } = await import('../src/systems/survival/switch.js');
   const { installSurvivalLoot, uninstallSurvivalLoot, addCorpseFood } = await import('../src/systems/survival/loot.js');
   const { raiseEnemyDeath } = await import('../src/scenes/corpseMarker.js');
-  const { MOBILE_TYPES } = await import('../src/characters/mobileTypes.js');
+  const { MOBILE_TYPES } = await import('../src/characters/mobile/mobileTypes.js');
   // the switch: the tier offline, every tier online
   for (const [tier, offline] of [[SURVIVAL_OFF, false], ['casual', true], ['hard', true]]) {
     _resetForTests(); setPref(SURVIVAL_PREF, SURVIVAL_STORED[tier]);
@@ -486,7 +486,7 @@ test('CORPSE-FOOD, mounted: the dungeon\'s own `applyFoeRecord` rolls a joiner\'
   const acorn = await import('acorn');
   const { validFoeRecord } = await import('../src/net/wire.js');
   const { addCorpseFood } = await import('../src/systems/survival/loot.js');
-  const { MOBILE_TYPES } = await import('../src/characters/mobileTypes.js');
+  const { MOBILE_TYPES } = await import('../src/characters/mobile/mobileTypes.js');
   const D = read('src/scenes/dungeonContext.js');
   const ast = acorn.parse(D, { ecmaVersion: 'latest', sourceType: 'module' });
   let fn = null;

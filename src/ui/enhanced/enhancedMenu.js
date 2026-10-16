@@ -166,7 +166,7 @@ import { FLEET_PAGE_SECTIONS, fleetPageShown, drawFleetPage, resetFleetPage } fr
 import { CAPTAIN_PAGE_SECTIONS, captainPageShown, drawCaptainPage } from '../captainPage.js';   // CAPT-LOG: the captain's standing and log
 import { COLLECTION_PAGE_SECTIONS, collectionsPageShown, drawCollectionsPage, resetCollectionsPage, disarmCollectionsPage, setCollectionsPart } from '../collectionsPage.js';   // COLLECTIONS: the codex and the cards
 import { swornBodyOf } from '../../systems/revenant/revenantCompanions.js';   // COMPANION-ROSTER: a sworn one's live health
-import { enemyDisplayName } from '../../characters/enemyBasics.js';   // REVENANT-PAGE: a revenant's kind   // REVENANT-PAGE: the foes that have earned your name
+import { enemyDisplayName } from '../../characters/enemy/enemyBasics.js';   // REVENANT-PAGE: a revenant's kind   // REVENANT-PAGE: the foes that have earned your name
 import { affiliations } from '../../systems/affiliations.js';
 import { legalRepOf } from '../../systems/court.js';   // REP5: the law, region by region
 import { banishmentLeft, banishmentDaysLeft, KNOWN_CRIMINAL_BELOW, pardonPrice, challengeFine } from '../../systems/standing.js';

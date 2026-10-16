@@ -7,7 +7,7 @@ the enhanced tab."
 
 ## The decisions, locked
 
-1. **The classic motor is untouched.** `characters/enemyMotor.js` is a
+1. **The classic motor is untouched.** `characters/enemy/enemyMotor.js` is a
    verbatim port of DFU's classic path and stays byte-for-byte. Enhanced
    AI never edits it; it replaces one step - how an enemy MOVES toward
    its target - behind a switch, and falls back to the classic step

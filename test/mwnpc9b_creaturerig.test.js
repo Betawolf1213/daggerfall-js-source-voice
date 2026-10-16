@@ -135,7 +135,7 @@ test('MWNPC9b-7 PeerBodies: a creature\'s body is keyed and built by its record 
 
 test('MWNPC9b-8 THE MATCH, a census: every creature mobile named - a Morrowind creature (its CREA ids, in order) or a declared miss with its reason', async () => {
   const { CREATURE_MATCH, creatureLook } = await import('../src/characters/creatureBodies.js');
-  const { MOBILE_TYPES } = await import('../src/characters/mobileTypes.js');
+  const { MOBILE_TYPES } = await import('../src/characters/mobile/mobileTypes.js');
   const creatures = Object.values(MOBILE_TYPES).filter((t) => t < 128);
   assert.deepEqual(Object.keys(CREATURE_MATCH).map(Number).sort((a, b) => a - b), creatures.sort((a, b) => a - b), 'a new creature mobile is named here');
   for (const [t, m] of Object.entries(CREATURE_MATCH)) {

@@ -48,7 +48,7 @@ floating-origin shift is `state.compensation` in the streaming host.
 `GetBloodType(mobileID)` answers one of three things, and **its
 bloodless set is DFU's own**. Measured: the ids it sends down the
 "no blood" arm are 15, 18, 19, 23, 32, 33 - exactly the six that carry
-`bloodIndex: 2` in `characters/enemyBasics.js`, which the port
+`bloodIndex: 2` in `characters/enemy/enemyBasics.js`, which the port
 generated from DFU (MIT) long ago and which `hitEffects.js` already
 reads. It adds id 2 to that set, and sends 35, 36 and 38 down a
 "nothing at all" arm.
@@ -257,7 +257,7 @@ Our own, on the seams the port already has.
 `scenes/hitEffects.js` is EnemyBlood.cs ported already - the classic
 one-shot splash from TEXTURE.380 at 10fps, with the spawn/retire
 pooling to hang the rest off. `combat/formulas.js` already raises a
-per-resolution seam. `characters/enemyBasics.js` already carries
+per-resolution seam. `characters/enemy/enemyBasics.js` already carries
 `bloodIndex`. `public/art` has no blood and will not need any: the
 decal source is TEXTURE.380's own frames out of the player's ARENA2,
 varied procedurally (rotation, scale, colour jitter).

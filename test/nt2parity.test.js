@@ -13,7 +13,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { MobileUnit } from '../src/characters/mobileUnit.js';
+import { MobileUnit } from '../src/characters/mobile/mobileUnit.js';
 import { srand, rand } from '../src/formats/dfRandom.js';
 import { LightningPlayer } from '../src/world/weather.js';
 import { layoutNature } from '../src/world/terrain/terrainNature.js';

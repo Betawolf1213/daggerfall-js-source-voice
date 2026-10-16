@@ -24,8 +24,8 @@ import {
   pcaaoModules, pcaaoAttackDamage, pcaaoAlterDamageBasedOnWepCondition, pcaaoAlterArmorReducBasedOnItemCondition,
 } from '../src/combat/pcaao.js';
 import { computeCombatStats } from '../src/combat/combatStats.js';
-import { makeEnemyEntity, applyProgressionScaling } from '../src/characters/enemyEntity.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { makeEnemyEntity, applyProgressionScaling } from '../src/characters/enemy/enemyEntity.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { EQUIP_SLOTS, equipTableOf, _wearScaleForTests } from '../src/systems/equip.js';

@@ -182,7 +182,7 @@
   },
   {
     "name": "TACT2-motor-ignores",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    if (_took && (!detouring || this.fleeLeft > 0 || this._tac?.state === 'windup' || this._tac?.state === 'dash')) return;",
     "new": "    void _took;",
     "tests": [
@@ -191,7 +191,7 @@
   },
   {
     "name": "TACT2-walk-ignores-step",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "      const dir2d = this._tacDir ? [this._tacDir[0], 0, this._tacDir[1]] : [Math.sin(this.yaw), 0, Math.cos(this.yaw)];",
     "new": "      const dir2d = [Math.sin(this.yaw), 0, Math.cos(this.yaw)];",
     "tests": [
@@ -200,7 +200,7 @@
   },
   {
     "name": "TACT2-attack-ungated",
-    "file": "src/characters/enemyAttack.js",
+    "file": "src/characters/enemy/enemyAttack.js",
     "old": "      if (ai._tacStrike === false) continue;",
     "new": "      if (false) continue;",
     "tests": [
@@ -209,7 +209,7 @@
   },
   {
     "name": "TACT2-blow-unseen",
-    "file": "src/characters/enemyAttack.js",
+    "file": "src/characters/enemy/enemyAttack.js",
     "old": "        if (machineAttack(this.machine, strike)) { this.firedRanged = false; this.swingSeq++; this._held = false; ai._tacSwung = (ai._tacSwung ?? 0) + 1; }   // TACT2: the brain sees its blow",
     "new": "        if (machineAttack(this.machine, strike)) { this.firedRanged = false; this.swingSeq++; this._held = false; }   // TACT2: the brain sees its blow",
     "tests": [
@@ -218,7 +218,7 @@
   },
   {
     "name": "TACT2-bow-ungated",
-    "file": "src/characters/enemyAttack.js",
+    "file": "src/characters/enemy/enemyAttack.js",
     "old": "&& ai._tacShoot !== false && this.rolls() < BOW_SHOT_CHANCE) {",
     "new": "&& this.rolls() < BOW_SHOT_CHANCE) {",
     "tests": [

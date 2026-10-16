@@ -18,7 +18,7 @@ import {
   rrClimateRace, rrResidentVariant, rrVariantPerson, installRoleplayRealismArt, _resetRoleplayRealismArt,
 } from '../src/systems/roleplayRealism/rrVariants.js';
 import { installRoleplayRealism, setRrHostSeams, rrHostSeams } from '../src/systems/roleplayRealism/rrInstall.js';
-import { PERSON_TEXTURES, PERSON_FACE_RECORDS, PERSON_IDLE_RECORD, NUM_PERSON_FACE_VARIANTS, MobilePerson } from '../src/characters/mobilePerson.js';
+import { PERSON_TEXTURES, PERSON_FACE_RECORDS, PERSON_IDLE_RECORD, NUM_PERSON_FACE_VARIANTS, MobilePerson } from '../src/characters/mobile/mobilePerson.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { flatFaceOverride, _resetFlatFaceOverrides } from '../src/characters/staticNpc.js';

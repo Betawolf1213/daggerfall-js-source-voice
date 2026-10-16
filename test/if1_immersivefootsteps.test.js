@@ -38,7 +38,7 @@ import {
 import { MOD_SETTINGS, isIntKey, isFloatKey, isChoiceKey, isTextKey, isTupleKey } from '../src/systems/modSettings.js';
 import { FEATURES, MOD_CURATED } from '../src/systems/features.js';
 import { CREDITS } from '../src/ui/credits.js';
-import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
+import { EQUIP_SLOTS } from '../src/characters/paperdoll/paperdoll.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
 import { SEASON } from '../src/world/climateSwaps.js';

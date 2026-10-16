@@ -104,7 +104,7 @@ test('pacification: the host runs it on the FIRST-encounter edge and a pacified 
     'only paralysis and a null target skip the attack component - DFU has no hostility gate there');
   assert.equal(/_fParalyzed \|\| !f\.ai\.isHostile/.test(src), false, 'no hostility gate crept in');
   assert.equal(/_fParalyzed \|\| !f\.ai\.isHostile/.test(src), false, 'the host gate is gone');
-  const motor = readFileSync(join(root, 'src/characters/enemyMotor.js'), 'utf8');
+  const motor = readFileSync(join(root, 'src/characters/enemy/enemyMotor.js'), 'utf8');
   // MT-i refined the blind arm to what :321-327 actually says: the
   // non-hostile drop nulls the PLAYER target only, so a pacified foe
   // that a bear is mauling keeps its senses and fights back (through
@@ -128,7 +128,7 @@ test('pacification: the host runs it on the FIRST-encounter edge and a pacified 
 });
 
 test('pacification: the motor edge fires once and non-hostile foes stop moving', async () => {
-  const { EnemyAI } = await import('../src/characters/enemyMotor.js');
+  const { EnemyAI } = await import('../src/characters/enemy/enemyMotor.js');
   const { Collider } = await import('../src/player/collider.js');
   const collider = new Collider(() => -100);
   collider.addMesh('floor', new Float32Array([-40, 0, -40, 40, 0, -40, 40, 0, 40, -40, 0, 40]),

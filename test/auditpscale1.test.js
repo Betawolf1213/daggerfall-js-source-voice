@@ -16,12 +16,12 @@ import { RENOWN_ASSIST_MS } from '../src/net/renownTracker.js';
 import { createExteriorFoes, MAX_ACTIVE_ENCOUNTER_FOES } from '../src/scenes/exteriorFoes.js';
 import { validFoeRecord, CELL_PUPPETS_MAX, CELL_LOOSE_PUPPETS, PARTY_MAX } from '../src/net/wire.js';
 import { amGroupRollOwner, CAMP_SIZE, GROUP_ROLL_RADIUS } from '../src/systems/campEncounters.js';
-import { SOLITARY_TYPES } from '../src/characters/mobileFactions.js';
+import { SOLITARY_TYPES } from '../src/characters/mobile/mobileFactions.js';
 import { trivialOnRoad, roadCompany, wandererCount } from '../src/systems/roadEncounters.js';   // WILD-ROAD (FIELD BUGS 2026-10-04e): the count's one home now
 import { registerFormulaOverride, calculateAttackDamage } from '../src/combat/formulas.js';
 import { ARTIFACTS, SPECIAL_ARTIFACT_HANDLERS, onPlayerStruckByEnemy, registerFoeDoor } from '../src/systems/artifactEffects.js';
 import { ENCHANTMENT_TYPES as T } from '../src/formats/magicDef.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 import { killIfAnyLiveStatZero } from '../src/systems/statMods.js';
 import { isPrivateQuestFoe } from '../src/scenes/quest/questFoeHost.js';   // CURSE-SYNC: the handover's word for a quest's foe
 

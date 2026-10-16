@@ -19,9 +19,9 @@
 // One home, three pools, and the drift closed on the way in.
 
 import { ENEMY_BASICS, isClassEnemyId } from './enemyBasics.js';
-import { KNIGHT_CITY_WATCH } from './mobileTypes.js';
-import { SPECIAL_ABILITY_BITS } from '../systems/specialAdvantages.js';   // CF1: the AcuteHearing career bit
-import { entityImprovedAcuteHearing } from '../systems/enchantments.js';   // AUDIT 39: ImprovesTalents(0) lives in the enchantment fold's bag
+import { KNIGHT_CITY_WATCH } from '../mobile/mobileTypes.js';
+import { SPECIAL_ABILITY_BITS } from '../../systems/specialAdvantages.js';   // CF1: the AcuteHearing career bit
+import { entityImprovedAcuteHearing } from '../../systems/enchantments.js';   // AUDIT 39: ImprovesTalents(0) lives in the enchantment fold's bag
 
 /** CF1 - ACUTE HEARING's one reader (DaggerfallEnemy.Start :53-71,
  *  the last career flag with none). DFU multiplies each enemy

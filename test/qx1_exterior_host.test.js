@@ -46,7 +46,7 @@ import { FACTION_TYPES, SOCIAL_GROUPS, GUILD_GROUPS } from '../src/formats/facti
 import { liveVampirism } from '../src/systems/racialLive.js';
 import { mintQuestFoeWave, placeFoeEnv, entityOccupancy, questFoeGender, heldSpots, holdSpotWhile } from '../src/scenes/quest/questFoeHost.js';
 import { placeFoeFreely } from '../src/systems/quest/sceneMount.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { QuestJournalWindow, JOURNAL_RECTS } from '../src/ui/quest/questJournal.js';
 import { isPlayerInTown } from '../src/systems/nearbyObjects.js';
 

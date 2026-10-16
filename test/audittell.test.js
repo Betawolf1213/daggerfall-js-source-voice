@@ -12,8 +12,8 @@ import { readFileSync } from 'node:fs';
 import { setPref } from '../src/systems/uiPrefs.js';
 import { Collider } from '../src/player/collider.js';
 import { PlayerMotor } from '../src/player/motor.js';
-import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { MOBILE_TYPES as M } from '../src/characters/mobile/mobileTypes.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { enemyWeightClassicUnits } from '../src/combat/formulas.js';
 import { setTacticsClock, resetTactics, releaseTactics, breakWindup, windupHolds, windupStruck, foeGlint, poiseTrack, tacticsStep, noteLocalPlayer, targetKey, PUPPET_HELD_UNTIL, LOCAL_TARGET } from '../src/ai/tactics.js';
 import { hitClassField, hitClassOf, HIT_CLASS_K_MAX } from '../src/net/wire.js';
@@ -66,7 +66,7 @@ test('AUDIT TELL B1: a wind-up nobody stepped tells nothing and holds nothing - 
   assert.equal(breakWindup({ _tac: { state: 'windup', puppet: true } }), false, 'a puppet\'s is its owner\'s');
   assert.equal(breakWindup({ _tac: { state: 'engage' } }), false, 'nothing to break');
   for (const st of ['dash', 'chain']) assert.equal(breakWindup({ feet: [0, 0, 0], vitals: () => null, _tac: { state: st, dash: {}, seen: T } }), true, `a ${st}`);
-  const em = rd('src/characters/enemyMotor.js');
+  const em = rd('src/characters/enemy/enemyMotor.js');
   assert.match(em, /if \(!this\.canAct && this\._tac\?\.state && !locked\) breakWindup\(this\);/, 'the motor breaks it where the foe cannot act');
   assert.match(em, /flee\(fromFeet, seconds, pace = 1\) \{\n\s*breakWindup\(this\);/, 'and where it routs');   // FLIGHT-FIRST: its run's pace
   assert.match(rd('src/ai/tactics.js'), /const skipped = !!ai\._tacSkipped \|\| unseen\(s, now\);/, 'a gap on the foes\' clock is a step it did not decide');
@@ -165,8 +165,8 @@ test('AUDIT TELL B2/B3/B6/B7/B8/B9/B10/B11 by source: the run breaks as the wind
   assert.match(t, /tf = ck === s\.chainKey \? targetFeet\(ai, ck\) : null;/, 'B8: the chain at its own target');
   assert.match(t, /if \(now < s\.chainAt \|\| \(ai\._blowVerdict != null && now < s\.chainAt \+ CHAIN_SPEND_MAX\)\)/, 'B9');
   assert.match(t, /const CHAIN_SPEND_MAX = 0\.6;/);
-  assert.match(rd('src/characters/enemyMotor.js'), /const head = this\._tac\?\.dash\?\.head;   \/\/ AUDIT TELL B10/);
-  assert.match(rd('src/characters/enemyAttack.js'), /ai\._tacShot = \(ai\._tacShot \?\? 0\) \+ 1; ai\._blowShot = null; \}/, 'B11');
+  assert.match(rd('src/characters/enemy/enemyMotor.js'), /const head = this\._tac\?\.dash\?\.head;   \/\/ AUDIT TELL B10/);
+  assert.match(rd('src/characters/enemy/enemyAttack.js'), /ai\._tacShot = \(ai\._tacShot \?\? 0\) \+ 1; ai\._blowShot = null; \}/, 'B11');
 });
 
 // ── the shatter (3.2, built at last) ────────────────────────────────

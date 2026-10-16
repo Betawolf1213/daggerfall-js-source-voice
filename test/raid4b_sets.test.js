@@ -37,7 +37,7 @@ import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { WEAPON_MATERIALS } from '../src/characters/weapons.js';
 import { SKILLS } from '../src/systems/skills.js';
-import { KNIGHT_CITY_WATCH } from '../src/characters/mobileTypes.js';
+import { KNIGHT_CITY_WATCH } from '../src/characters/mobile/mobileTypes.js';
 import { AFFIX_RANGES, validAffix, affixesWorth, RARITIES } from '../src/systems/loot/lootRarity.js';
 import { validLootItem } from '../src/systems/loot/loot.js';
 import { getItemHands, ITEM_HANDS } from '../src/characters/equipTable.js';

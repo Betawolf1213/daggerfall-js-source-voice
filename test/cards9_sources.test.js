@@ -17,7 +17,7 @@ import {
   CARD_PACK_SIZE, PACK_POOL, PACK_SLOT_TIERS, PACK_TOP_TIERS, rollPackCards, openCardPack, buyCardPack, cardPackPrice, CARD_PACK_BASE_PRICE, packOpenedText,
   BOSS_CARDS, BOSS_CARD_IDS, BOSS_CARD_PER_MILLE, bossCardRoll,
 } from '../src/systems/card/cardSources.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 import { DIVINES, ORDERS } from '../src/systems/guild/guildVariants.js';
 import { GUILDS } from '../src/systems/guild/guilds.js';
 import { templateByIndex, itemUseHandler } from '../src/systems/item/itemTemplates.js';

@@ -18,10 +18,10 @@ import { BEAST_DESIGNS } from '../src/characters/beasts.js';
 import {
   MobileUnit, SeducerTransformBehaviour, SECONDS_TO_TRANSFORM, MOBILE_DAEDRA_SEDUCER,
   IDLE_ANIMS, SEDUCER_IDLE_MOVE_ANIMS,
-} from '../src/characters/mobileUnit.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
-import { makeEnemyEntity } from '../src/characters/enemyEntity.js';
-import { getTemplate } from '../src/characters/paperdoll.js';
+} from '../src/characters/mobile/mobileUnit.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
+import { makeEnemyEntity } from '../src/characters/enemy/enemyEntity.js';
+import { getTemplate } from '../src/characters/paperdoll/paperdoll.js';
 import { registerTemplateOverrides, templateByIndex } from '../src/systems/item/itemTemplates.js';
 
 const RAMP = [[0, 0, 0], [60, 60, 60], [120, 120, 120], [180, 180, 180], [255, 255, 255]];

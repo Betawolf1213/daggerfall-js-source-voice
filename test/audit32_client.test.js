@@ -22,7 +22,7 @@ import { createGatherHost, aimAt } from '../src/scenes/gatherHost.js';
 import { registerPlayerKillListener, reportPlayerKill } from '../src/systems/playerKills.js';
 import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { CORPSE_ACTIVATION_DISTANCE } from '../src/player/activate.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const noWait = () => Promise.resolve();

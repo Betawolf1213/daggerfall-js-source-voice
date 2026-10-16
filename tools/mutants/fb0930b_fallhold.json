@@ -71,7 +71,7 @@
   },
   {
     "name": "FALL-HOLD-holdFrame-keeps-detected",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "this.inSight = false; this.detected = false; this.wouldBeSpawned = false;",
     "new": "this.inSight = false; this.wouldBeSpawned = false;",
     "tests": [
@@ -81,7 +81,7 @@
   },
   {
     "name": "FALL-HOLD-holdFrame-keeps-inSight",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "this.inSight = false; this.detected = false; this.wouldBeSpawned = false;",
     "new": "this.detected = false; this.wouldBeSpawned = false;",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "FALL-HOLD-holdFrame-keeps-wouldBeSpawned",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "this.inSight = false; this.detected = false; this.wouldBeSpawned = false;",
     "new": "this.inSight = false; this.detected = false;",
     "tests": [

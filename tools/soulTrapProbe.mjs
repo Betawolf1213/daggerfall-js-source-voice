@@ -39,7 +39,7 @@ const check = (name, ok, detail) => { out.steps[name] = { ok, ...detail }; if (!
 // ---- the GEM comes off X6's real shelf, not a hand-built fixture ----
 out.steps.gems = await page.evaluate(async () => {
   const { stockSoulGems } = await import('/src/systems/shopStock.js');
-  const { ENEMY_BASICS } = await import('/src/characters/enemyBasics.js');
+  const { ENEMY_BASICS } = await import('/src/characters/enemy/enemyBasics.js');
   const shelf = stockSoulGems({ quality: 20, gameMinutes: 0 },
     { soulPointsOf: (t) => ENEMY_BASICS[t]?.soulPts ?? 0 });
   const empty = shelf.filter((g) => g.trappedSoulType === null);

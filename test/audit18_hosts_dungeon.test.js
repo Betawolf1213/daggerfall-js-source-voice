@@ -26,10 +26,10 @@ import { SKILLS, WEAPON_SKILL } from '../src/systems/skills.js';
 import { WEAPON_SKILL_USED } from '../src/characters/weapons.js';
 import { ENEMY_GROUPS, bonusOrPenaltyByEnemyType } from '../src/combat/formulas.js';
 import { tickPlayerMinutes } from '../src/systems/worldTick.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { corpseLootTargets } from '../src/scenes/corpseMarker.js';   // AUDIT 24 wave 38: the shared corpse seam
 import { RAY_DISTANCE } from '../src/player/activate.js';   // AUDIT 65 MC-2: the reach the ONE ray casts at
-import { makeEnemyEntity, loadMonsterCareer } from '../src/characters/enemyEntity.js';
+import { makeEnemyEntity, loadMonsterCareer } from '../src/characters/enemy/enemyEntity.js';
 import { swingSoundFor, SOUND } from '../src/systems/soundClips.js';
 import { readSpellsStd } from '../src/formats/spellsStd.js';
 import { createCityGuards } from '../src/scenes/cityGuards.js';
@@ -543,7 +543,7 @@ test('audit18 sweep: enemy cast cost is priced off the PLAYER skills', () => {
   // GameManager.PlayerEntity.Skills for a null caster.
   // X3: the cast EXECUTOR moved to the shared enemyCasting.js - the
   // law lives there now, and the dungeon binds it through foeDeps.
-  const src = readFileSync(new URL('../src/characters/enemyCasting.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/characters/enemy/enemyCasting.js', import.meta.url), 'utf8');
   assert.ok(/const cost = calculateCastCost\(spell, playerEntity, \{ portMods: false \}\)\.sp;/.test(src));   // SET2: and none of the player's own cost modifiers
   assert.equal(/calculateCastCost\(spell, f\.entity\)/.test(src), false);
   const dc = hostSrc('dungeonContext.js');

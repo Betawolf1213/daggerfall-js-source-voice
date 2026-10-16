@@ -21,7 +21,7 @@ import { lwRng, textSeed } from '../src/systems/livingWorld/seed.js';
 import { amGroupRollOwner } from '../src/systems/campEncounters.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { DAY_MIN } from '../src/systems/livingWorld/dayPlan.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 import { yardStock } from '../src/systems/merchantYards.js';   // MERCHANT-YARDS: where the horse, the cart and the wagons are sold now
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

@@ -17,7 +17,7 @@ import { readFileSync } from 'node:fs';
 import { createHandheldTorches, MESSAGES, HANDHELD_TORCHES_VENDOR, readTorchSettings } from '../src/systems/handheldTorches.js';
 import { MOD_SETTINGS } from '../src/systems/modSettings.js';
 import { TEMPLATES } from '../src/systems/useItem.js';
-import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
+import { EQUIP_SLOTS } from '../src/characters/paperdoll/paperdoll.js';
 import { offHandQuickslot, QUICKSLOT_TEXT } from '../src/systems/quickslots.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

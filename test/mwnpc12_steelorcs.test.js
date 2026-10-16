@@ -12,7 +12,7 @@ import { mwArmorRecords } from '../src/formats/mwItemMap.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { ARMOR_ENUM, WEAPONS_ENUM as W } from '../src/combat/enemyEquipment.js';
 import { folkLook } from '../src/characters/folkBodies.js';
-import { GUARD_TEXTURE } from '../src/characters/mobilePerson.js';
+import { GUARD_TEXTURE } from '../src/characters/mobile/mobilePerson.js';
 import { personLook } from '../src/characters/peopleBodies.js';
 import { RACES } from '../src/systems/races.js';
 import { GENDERS } from '../src/characters/nameHelper.js';
@@ -20,7 +20,7 @@ import { SOCIAL_GROUPS, GUILD_GROUPS, FACTION_TYPES } from '../src/formats/facti
 import { rosterLook, foeActor, isClassFoe, isPersonFoe, isBodyFoe, ORC_MOBILES } from '../src/characters/foeBodies.js';
 import { residentLook } from '../src/characters/rosterBodies.js';
 import { CREATURE_MATCH } from '../src/characters/creatureBodies.js';
-import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES as M } from '../src/characters/mobile/mobileTypes.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { createEquipTable } from '../src/characters/equipTable.js';
 

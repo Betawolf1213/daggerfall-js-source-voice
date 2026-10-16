@@ -1458,9 +1458,9 @@ import {
   MW_CLOTHING_TYPE, DF_CLOTHING_ROWS, mwClothingRecord, fpWornAdds,
 } from '../src/formats/mwItemMap.js';
 import { armorRecords, clothingRecords, raceBeastFlag, pickWeaponRecord, facePools, MOD_WEAPON_TO_MW } from '../src/formats/mwFirstPerson.js';
-import { OWN_MW_MODELS } from '../src/characters/ownWeaponModels.js';   // FIELD-GUN-MW2: counted off the table, not typed
-import { OWN_MW_ARMOR } from '../src/characters/ownArmorModels.js';   // MW-BRIG1: and the armour
-import { CLOAK_NAMES } from '../src/characters/ownClothingModels.js';   // MW-CLOAK1: and the cloak
+import { OWN_MW_MODELS } from '../src/characters/ownModels/ownWeaponModels.js';   // FIELD-GUN-MW2: counted off the table, not typed
+import { OWN_MW_ARMOR } from '../src/characters/ownModels/ownArmorModels.js';   // MW-BRIG1: and the armour
+import { CLOAK_NAMES } from '../src/characters/ownModels/ownClothingModels.js';   // MW-CLOAK1: and the cloak
 import { CLOTHING_NAME } from '../src/formats/mwItemMap.js';
 import { ARMOR_ENUM } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';

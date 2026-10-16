@@ -126,7 +126,7 @@ for the finding's reason (`test/audit1003_server.test.js` 11, `_bouts` 9, `_onli
 | M4 | low | The service's version note listed "acct47: WD3" (main's acct47 is GUILD1d's). | Said as it was. |
 
 **The record** (`bible/11-Multiplayer/Arena.md`, `bible/03-World/Beautiful-Towns.md`, `bible/02-Formats/World-Data-Patches.md`,
-`bible/01-Overview/Port-Ledger.md`, `vendor/daggerfall-arena/README.md`, `src/characters/enemyMotor.js`, the patch notes;
+`bible/01-Overview/Port-Ledger.md`, `vendor/daggerfall-arena/README.md`, `src/characters/enemy/enemyMotor.js`, the patch notes;
 the pin in `test/audit1003_record.test.js`)
 
 | ID | Sev | Finding | Fix |

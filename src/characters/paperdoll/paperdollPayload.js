@@ -24,10 +24,10 @@
 // Pure and browser-safe by design. No node imports.
 // ═══════════════════════════════════════════════════════════════════
 
-import { buildNeutralBody, WRIST_JUNCTION_Y, ARM_X, NECK_PIVOT_Y } from './neutralBody.js';
-import { ATTACKS_1H, ATTACKS_2H, ATTACKS_RANGED, ATTACKS_FP, REACTIONS, DIRECTION_TO_STRIKE, STRIKES } from './anims.js';
-import { STEEL_RAMP } from './pieces/cuirass.js';
-import { CLOTH_RAMP } from './pieces/pieceLoft.js';
+import { buildNeutralBody, WRIST_JUNCTION_Y, ARM_X, NECK_PIVOT_Y } from '../neutralBody.js';
+import { ATTACKS_1H, ATTACKS_2H, ATTACKS_RANGED, ATTACKS_FP, REACTIONS, DIRECTION_TO_STRIKE, STRIKES } from '../anims.js';
+import { STEEL_RAMP } from '../pieces/cuirass.js';
+import { CLOTH_RAMP } from '../pieces/pieceLoft.js';
 // AUDIT 39: `buildCuirass`, `buildGreaves`, `clothingZones` and
 // `armorZones` were imported here and never called - the four
 // item-to-geometry modules (pieces/cuirass.js, pieces/greaves.js,
@@ -36,36 +36,36 @@ import { CLOTH_RAMP } from './pieces/pieceLoft.js';
 // are STAGED, not shipped: the equip-table -> clothZones/armorZones
 // seam is the arc's next step and is deliberately not taken. Only
 // STEEL_RAMP is live (the pauldrons and helm below).
-import { buildHair, HAIR_RAMPS } from './pieces/hair.js';
-import { buildPauldrons } from './pieces/pauldrons.js';
-import { buildHelm } from './pieces/helm.js';
-import { buildTail } from './pieces/tail.js';
-import { buildBodyScales, buildBodyFur, KHAJIIT_FUR, KHAJIIT_BELLY, ARGONIAN_HIDE } from './pieces/bodyScales.js';
-import { PALETTES } from './palettes.js';
-import { drapedPiece, drapedGrid, DRAPED_NAMES, BODY_CORE, DRAPE_MATERIAL } from './pieces/draped.js';
-import { POSES } from './poses.js';
-import { buildSword } from './pieces/sword.js';
-import { WEAPON_MATERIALS, weaponMaterialRamp, buildWeapon, WEAPONS } from './weapons.js';
-import { buildClaymore } from './pieces/claymore.js';
-import { buildLongBow, buildShortBow, buildNockedArrow } from './pieces/bow.js';
-import { buildBladeWeapon, BLADE_SPECS } from './pieces/blades.js';
-import { buildHaftedWeapon, HAFTED_SPECS } from './pieces/hafted.js';
-import { VILLAGER_DESIGNS, designOpts, designDrape, villagerDelta, RACE_TONE } from './villagerDesigns.js';
-import { ORC_DESIGNS, orcOpts } from './orcBody.js';
-import { UNDEAD_DESIGNS, undeadOpts } from './undeadBody.js';
-import { CLASS_DESIGNS, classOpts } from './humanClasses.js';
-import { ATRONACH_DESIGNS, atronachOpts } from './atronachs.js';
-import { BEAST_DESIGNS, beastOpts, ALL_GROUPS } from './beasts.js';
-import { ENEMY_BASICS } from './enemyBasics.js';
-import { buildBeastBody, buildBeastTail } from './pieces/beastBody.js';
-import { buildBeastHead, buildHorns } from './pieces/beastHead.js';
-import { buildArachnid, buildSting } from './pieces/arachnid.js';
-import { buildWings } from './pieces/wings.js';
-import { buildFishBody } from './pieces/fishBody.js';
-import { DAEDRA_DESIGNS, daedraOpts } from './daedra.js';
-import { buildRibcage, buildPelvis, BONE_RAMP } from './pieces/skeletonBones.js';
-import { buildHorseBody, BAY_RAMP } from './pieces/centaurBody.js';
-import { buildTusks, buildBrow, IVORY_RAMP } from './pieces/orcHead.js';
+import { buildHair, HAIR_RAMPS } from '../pieces/hair.js';
+import { buildPauldrons } from '../pieces/pauldrons.js';
+import { buildHelm } from '../pieces/helm.js';
+import { buildTail } from '../pieces/tail.js';
+import { buildBodyScales, buildBodyFur, KHAJIIT_FUR, KHAJIIT_BELLY, ARGONIAN_HIDE } from '../pieces/bodyScales.js';
+import { PALETTES } from '../palettes.js';
+import { drapedPiece, drapedGrid, DRAPED_NAMES, BODY_CORE, DRAPE_MATERIAL } from '../pieces/draped.js';
+import { POSES } from '../poses.js';
+import { buildSword } from '../pieces/sword.js';
+import { WEAPON_MATERIALS, weaponMaterialRamp, buildWeapon, WEAPONS } from '../weapons.js';
+import { buildClaymore } from '../pieces/claymore.js';
+import { buildLongBow, buildShortBow, buildNockedArrow } from '../pieces/bow.js';
+import { buildBladeWeapon, BLADE_SPECS } from '../pieces/blades.js';
+import { buildHaftedWeapon, HAFTED_SPECS } from '../pieces/hafted.js';
+import { VILLAGER_DESIGNS, designOpts, designDrape, villagerDelta, RACE_TONE } from '../villagerDesigns.js';
+import { ORC_DESIGNS, orcOpts } from '../orcBody.js';
+import { UNDEAD_DESIGNS, undeadOpts } from '../undeadBody.js';
+import { CLASS_DESIGNS, classOpts } from '../humanClasses.js';
+import { ATRONACH_DESIGNS, atronachOpts } from '../atronachs.js';
+import { BEAST_DESIGNS, beastOpts, ALL_GROUPS } from '../beasts.js';
+import { ENEMY_BASICS } from '../enemy/enemyBasics.js';
+import { buildBeastBody, buildBeastTail } from '../pieces/beastBody.js';
+import { buildBeastHead, buildHorns } from '../pieces/beastHead.js';
+import { buildArachnid, buildSting } from '../pieces/arachnid.js';
+import { buildWings } from '../pieces/wings.js';
+import { buildFishBody } from '../pieces/fishBody.js';
+import { DAEDRA_DESIGNS, daedraOpts } from '../daedra.js';
+import { buildRibcage, buildPelvis, BONE_RAMP } from '../pieces/skeletonBones.js';
+import { buildHorseBody, BAY_RAMP } from '../pieces/centaurBody.js';
+import { buildTusks, buildBrow, IVORY_RAMP } from '../pieces/orcHead.js';
 
 /**
  * @param {object} pal a loaded DFPalette

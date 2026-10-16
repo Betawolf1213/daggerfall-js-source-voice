@@ -34,7 +34,7 @@
 // lookup cannot close a cycle. `src/formats/mwItemMap.js` and
 // `src/combat/fpArm.js` are both askers and both sit upstream of
 // everything `systems/thunderlock.js` touches.
-import { THUNDERLOCK_TEMPLATE } from './thunderlockIds.js';
+import { THUNDERLOCK_TEMPLATE } from '../thunderlockIds.js';
 
 /**
  * The port's own Morrowind-format models, by template index.

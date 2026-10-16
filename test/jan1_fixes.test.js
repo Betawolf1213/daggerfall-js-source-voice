@@ -25,7 +25,7 @@ import { createBankAccounts, validateRegion, BANK_REGION_COUNT } from '../src/sy
 import { tradeCost, buyItemPrice } from '../src/systems/tradeModes.js';
 import { itemValueOf, setItemFields, itemBaseValue, templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { calculateCost } from '../src/systems/shopStock.js';
-import { ITEM_TEMPLATES } from '../src/characters/paperdoll.js';
+import { ITEM_TEMPLATES } from '../src/characters/paperdoll/paperdoll.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const defaults = () => { const b = createBindings(); resetDefaults(b); return b; };

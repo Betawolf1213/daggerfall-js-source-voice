@@ -19,7 +19,7 @@ import {
 import { SD_BLOW_CUES } from '../src/scenes/superDungeon/sdRemnantBlows.js';
 import { SD_BLOWS } from '../src/net/superDungeon/sdRemnant.js';
 import { SD_ARENA, realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 
 const T0 = 1_800_000_000_000;
 const W = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');

@@ -65,7 +65,7 @@ export { RENOWN_MAX };
  * come in minutes, level 10 in an evening, level 20 in a few weeks of
  * evenings, and level 50 in hundreds of hours. The XP follows the level
  * of what was fought, and a class foe stands at the character's OWN
- * Daggerfall level (characters/enemyEntity.js), as does a quest's pay -
+ * Daggerfall level (characters/enemy/enemyEntity.js), as does a quest's pay -
  * so a character that levelled offline climbed ten times faster online
  * (AUDIT RENOWN1 DATA-6), until RENOWN3 read every foe and quest against
  * the character's Renown (below), and RENOWN-ACCOUNT paid every source three

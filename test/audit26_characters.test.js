@@ -11,8 +11,8 @@
 //     and Individual is 4 (FactionFile.cs:538). 3 is Subgroup.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { EnemyCaster } from '../src/characters/enemyCasting.js';
-import { resetMeleeTimer } from '../src/characters/enemyAttack.js';
+import { EnemyCaster } from '../src/characters/enemy/enemyCasting.js';
+import { resetMeleeTimer } from '../src/characters/enemy/enemyAttack.js';
 import { staticNpcData, staticNpcName } from '../src/characters/staticNpc.js';
 import { FACTION_TYPES } from '../src/formats/factionFile.js';
 import { RACES } from '../src/systems/races.js';

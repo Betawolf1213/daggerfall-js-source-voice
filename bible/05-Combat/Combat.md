@@ -275,7 +275,7 @@ dungeon + world shot probes green.
 ## C11 (2026-08-17): THE MONSTER PIVOT - classic sprite mobiles, LIVE - SHIPPED
 
 Monsters 0-42 stop being static flats and become full foes: the
-classic 8-orientation sprite animation (characters/mobileUnit.js,
+classic 8-orientation sprite animation (characters/mobile/mobileUnit.js,
 DaggerfallMobileUnit + EnemyBasics verbatim) driving a live billboard
 batch per foe, on the SAME combat spine as the rigged class enemies -
 EnemyAI/EnemyAttack senses + pursuit, makeEnemyEntity (monster HP/
@@ -1524,7 +1524,7 @@ the weight's share) are the Speed the swing is read at, answered through the cur
 replaces the port's heft; Roleplay & Realism's blend has no weight in it, so the port's heft rides on it (AUDIT
 PRE-MERGE 0929 S3: with it answering alone, a 2 kg shortsword, a 4.5 kg longsword and a 5 kg broadsword all swung at
 0.995 s - heavy blades quicker than with no mod). A
-wielder the port does not know keeps DFU's line: a foe's machine (DFU never asks it for a foe - `characters/enemyAttack.js`
+wielder the port does not know keeps DFU's line: a foe's machine (DFU never asks it for a foe - `characters/enemy/enemyAttack.js`
 - and a sprite foe's blow lands on its own frame), a peer's walker at PEER_SWING_SPEED 50, the viewers. The bow's draw
 (0.0625 s a frame), its cooldown and the Thunderlock's clock are their own.
 

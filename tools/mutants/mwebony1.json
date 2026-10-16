@@ -33,7 +33,7 @@
   },
   {
     "name": "MWEBONY1-mithril-wears-it",
-    "file": "src/characters/ownArmorModels.js",
+    "file": "src/characters/ownModels/ownArmorModels.js",
     "old": "const ebony = plate(ARMOR_MATERIAL.Ebony);",
     "new": "const ebony = plate(ARMOR_MATERIAL.Mithril);",
     "tests": ["test/mwebony1.test.js"],
@@ -41,7 +41,7 @@
   },
   {
     "name": "MWEBONY1-the-gauntlets-hide-nothing",
-    "file": "src/characters/ownArmorModels.js",
+    "file": "src/characters/ownModels/ownArmorModels.js",
     "old": "        part('right hand', 'ebony_plate_gauntlet_right.nif', ['right wrist', 'right forearm']),",
     "new": "        part('right hand', 'ebony_plate_gauntlet_right.nif'),",
     "tests": ["test/mwebony1.test.js"],

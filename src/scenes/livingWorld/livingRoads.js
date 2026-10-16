@@ -23,7 +23,7 @@
 //    real - its foes and its armed the encounter pool's bodies, which the roads then draw not; a fight a peer stands
 //    (online) shows no foes of the roads' own - the peer's come through the stream.
 import { partiesOfTown, partyAt, wayAt, laneAt, membersAt, remainsOfTown, NATIVE_PER_M, NATIVE_PIXEL, TRIP_REACH_PX } from '../../systems/livingWorld/trips.js';
-import { ENEMY_BASICS } from '../../characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../../characters/enemy/enemyBasics.js';
 import { circleLine, lineMinutes, ROUND_S } from '../../systems/livingWorld/meetups.js';
 import { ROAD_GREETINGS, ROAD_PASS_SCRIPTS, ROAD_PASS_WARNINGS, BAND_WARNINGS, COMPANY_GREETINGS, fillLine, firstNameOf } from '../../systems/livingWorld/lines.js';
 import { byRole, headOf, companiesOf, namedIn } from '../../systems/livingWorld/companies.js';   // LW13: a company in file by role, its head's word; AUDIT LW-II-2 R8: a hired one's name

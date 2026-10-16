@@ -81,7 +81,7 @@ import { sharedClockOn, worldMinutes } from './worldTick.js';
 import { MINUTES_PER_DAY } from './gameDate.js';
 import { LOCATION_TYPES, longitudeLatitudeToMapPixel } from '../formats/mapsFile.js';
 import { FACTION_TYPES, GUILD_GROUPS } from '../formats/factionFile.js';
-import { MOBILE_TYPES } from '../characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../characters/mobile/mobileTypes.js';
 import { findFactionByTypeAndRegion } from './talk/talk.js';
 import { changeReputation } from './faction/factionRep.js';
 import { legalRepOf, changeLegalRep, LEGAL_REP_MIN, LEGAL_REP_MAX } from './court.js';

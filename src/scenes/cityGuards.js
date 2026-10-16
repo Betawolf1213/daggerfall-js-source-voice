@@ -26,7 +26,7 @@
 //
 // Enemy-vs-enemy is IN - the MT-ii wave paid the C15 residual this
 // header used to hold open. _armed wraps a host's senses with
-// runTargetMachine (characters/enemyTargets.js) whenever the host
+// runTargetMachine (characters/enemy/enemyTargets.js) whenever the host
 // hands over `candidates`, and MeleeDamage takes DFU's two-arm split
 // (EnemyAttack.cs:199-209): a selected non-player target eats a real
 // swing through applyDamageToNonPlayer (scenes/hostCombat.js). A host
@@ -52,7 +52,7 @@ import { playerWeaponHitEntity } from '../systems/worldTick.js';   // DISC10-D H
 import { setCrimeCommitted } from '../systems/court.js';   // V4: the one crime setter (SuppressCrime)
 import { tallyCrimeGuildRequirements } from '../systems/crimeGuilds.js';   // CG2: the TG/DB tally
 import { entityIsParalyzed, applyEnemyMotorEffectFlags, concealmentFlags } from '../systems/effects.js';   // AUDIT 24 (wave 32): the watch is paralysable too   // A5: the enemy Levitate arm, the foe-target concealment closure + EntityConcealmentBehaviour's visual
-import { hasMagickaToCast } from '../characters/enemyCasting.js';   // AUDIT 24 (wave 35) / D9: GetDestination's magic term
+import { hasMagickaToCast } from '../characters/enemy/enemyCasting.js';   // AUDIT 24 (wave 35) / D9: GetDestination's magic term
 import { setEnemyAlert } from '../systems/encounters.js';   // AUDIT 24 (wave 36): EnemySenses:531-535 / EnemyDeath:131-136
 import { FALL_DAMAGE_THRESHOLD, FALL_HP_PER_METRE, CAPSULE_RADIUS, CAPSULE_HEIGHT } from '../player/motor.js';   // AUDIT 24 (wave 36): ApplyFallDamage, for the watch too   // ROAD-B: PlayerController.radius, for the indoor arm's door clearance
 import { findLowestOuterInteriorDoor } from '../player/enterExit.js';   // ROAD-B: DaggerfallInterior.FindLowestOuterInteriorDoor
@@ -60,18 +60,18 @@ import { coverDistance } from '../ai/cover.js';   // TACT1: a witness does not s
 import { blowConnects, blowScaled } from '../ai/foeBlows.js';   // TACT4
 import { foeGlint } from '../ai/tactics.js';   // TELL2: a wind-up's glint (bible/12-Enhanced-AI/Feud-Arc.md section 4.2)
 import { SOUND } from '../systems/soundClips.js';
-import { ENEMY_BASICS } from '../characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../characters/enemy/enemyBasics.js';
 import { copyEffectEntry } from '../systems/save/save.js';   // AUDIT 26 F217
-import { KNIGHT_CITY_WATCH } from '../characters/mobileTypes.js';
-import { MobileUnit } from '../characters/mobileUnit.js';
-import { EnemyAI, withinYaw, isBackFacing, foeFrameDt } from '../characters/enemyMotor.js';
+import { KNIGHT_CITY_WATCH } from '../characters/mobile/mobileTypes.js';
+import { MobileUnit } from '../characters/mobile/mobileUnit.js';
+import { EnemyAI, withinYaw, isBackFacing, foeFrameDt } from '../characters/enemy/enemyMotor.js';
 import { spaceFoes, DOORWAY_DEPTH } from '../characters/foeSpacing.js';   // FOE-SPACING: the watch keeps apart   // TACT3c: past the threshold
-import { runTargetMachine, isPlayerTarget, PLAYER_TARGET, resetAllyTeamOnPlayerAttack, wireRecipient, bumpAtkCount, staticTeamOf } from '../characters/enemyTargets.js';   // AUDIT WATCH1: the wire's spellings, one home   // MT-ii   // ROAD-G G1: MakeEnemyHostileToAttacker's entity-side half, for the watch too
+import { runTargetMachine, isPlayerTarget, PLAYER_TARGET, resetAllyTeamOnPlayerAttack, wireRecipient, bumpAtkCount, staticTeamOf } from '../characters/enemy/enemyTargets.js';   // AUDIT WATCH1: the wire's spellings, one home   // MT-ii   // ROAD-G G1: MakeEnemyHostileToAttacker's entity-side half, for the watch too
 import { applyDamageToNonPlayer, spawnEnemyLoot, windupDoor, tellCues, landBlowEffect } from './hostCombat.js';   // MT-ii: EnemyAttack.ApplyDamageToNonPlayer; TELL1: the poise door
 import { TELL } from '../ai/tells.js';   // TELL1: the breaking blow's shove
 import { stampWonWeapons } from '../systems/loot/lootRarity.js';   // SIGIL1: a body's weapons won online
-import { EnemyAttack } from '../characters/enemyAttack.js';
-import { makeEnemyEntity } from '../characters/enemyEntity.js';
+import { EnemyAttack } from '../characters/enemy/enemyAttack.js';
+import { makeEnemyEntity } from '../characters/enemy/enemyEntity.js';
 import { ClassFile } from '../formats/classFile.js';
 import { inflictPoison } from '../systems/poisons.js';
 import {
@@ -88,7 +88,7 @@ import {
   tryLanguagePacification,         // AUDIT 24 (wave 42)
 } from './hostCombat.js';   // AUDIT 18: the laws every host must share
 import { billboardSize, mobileBillboardSize } from '../world/rmbFlats.js';
-import { enemyControllerHeight, idleSpriteHeight } from '../characters/enemyAnchor.js';   // REVIEW 2026-09-05 (PR #55): the watch wore the player's capsule
+import { enemyControllerHeight, idleSpriteHeight } from '../characters/enemy/enemyAnchor.js';   // REVIEW 2026-09-05 (PR #55): the watch wore the player's capsule
 import { tallySkill, SKILLS } from '../systems/skills.js';
 import { WEAPON_REACH } from '../combat/playerWeapon.js';
 import { getBool } from '../systems/settings/settings.js';   // AUDIT DISC19: MeleeAttackFriendlyProtection, which the defenders' cross-pool sparing is
@@ -97,10 +97,10 @@ import { mintCorpseMarker, playBodyFall, playRareDrop, corpseLootTargets, physic
 import { rollCorpseKit } from '../systems/foeLootCap.js';   // KIT-ROLL: a plain foe's kit, laddered at its death by every body door
 import { liveFoeTargets, liveFoeFor } from '../player/activate.js';   // WORLD-HOVER H2: the LIVE bodies, in the shape the hover's one seam takes
 import { corpseName, mobileEntityName, liveEntityName } from '../systems/worldTooltips.js';   // WORLD-HOVER: "<who> (dead)", the mod's own word (.cs:526); H2: and a LIVE one's, when it is not hostile (.cs:304-312)
-import { enemyDisplayName } from '../characters/enemyBasics.js';   // the port's own name, the index law in one place (a LIVE one's fallback)
+import { enemyDisplayName } from '../characters/enemy/enemyBasics.js';   // the port's own name, the index law in one place (a LIVE one's fallback)
 import { bloodCentre } from './hitEffects.js';   // AUDIT 24 (wave 39): EnemyBlood.ShowBloodSplash
 import { bloodHit, LETHAL_HIT } from '../combat/bloodDecals.js';   // BLOOD1b: the blow, in the shape the mark's ladder reads
-import { EnemySoundSource, acuteHearingMultiplier, WatchVoice, ATTRACT_RADIUS, OCCLUDED_VOLUME_SCALE } from '../characters/enemySounds.js';   // AUDIT 24 (wave 41): EnemySounds.cs, one home; HALT-ONE: the watch's one voice
+import { EnemySoundSource, acuteHearingMultiplier, WatchVoice, ATTRACT_RADIUS, OCCLUDED_VOLUME_SCALE } from '../characters/enemy/enemySounds.js';   // AUDIT 24 (wave 41): EnemySounds.cs, one home; HALT-ONE: the watch's one voice
 import { placeFoeEnv, entityOccupancy } from './quest/questFoeHost.js';   // D9: FoeSpawner.PlaceFoeFreely's env, over THIS pool's collider
 import { placeFoeFreely } from '../systems/quest/sceneMount.js';   // D9: PlayerEntity.cs:687 spawns through FoeSpawner like everything else
 import { SPAWNER_ARMS } from '../systems/encounters.js';   // the CreateFoeSpawner call-site table - cityGuards is one of its rows
@@ -205,7 +205,7 @@ export function createCityGuards({ renderer, collider, fetchBytes, getTexture, u
   isActionDoor = null,
   // HALT-ONE (2026-10-05, Mac: "reduce the HALT noise"): the living watch's lane - () => true where the town is the
   // living world's (scenes/world.js, scenes/worldModes.js: livingWorldOn). The watch then CALLS AS ONE
-  // (characters/enemySounds.js WatchVoice): one Halt as it first comes for the player, then at most one every
+  // (characters/enemy/enemySounds.js WatchVoice): one Halt as it first comes for the player, then at most one every
   // HALT_GAP_S from the whole watch while it is after him; never a defender's, a pacified, running or walking-away
   // watchman's, and nobody's while a window is over the world (`windowUp`). Off - the classic skin, the row off, the
   // fixed-city page - EnemySounds.FixedUpdate per watchman, 1:1.

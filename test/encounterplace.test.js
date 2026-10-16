@@ -19,7 +19,7 @@
 // data, because the three encounter arms do not pass the same things:
 // the dungeon one alone clears lineOfSightCheck.
 import { noticeChance, noticeRoll } from '../src/systems/wild/wildAlert.js';   // WILD-ALERT: the wanderer's first check
-import { SIGHT_RADIUS } from '../src/characters/enemyMotor.js';
+import { SIGHT_RADIUS } from '../src/characters/enemy/enemyMotor.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';

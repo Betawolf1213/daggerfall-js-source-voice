@@ -11,7 +11,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { questShareTag, sharedQuestFoe, partnerStandsQuestFoes, QUEST_SHARE_RADIUS } from '../src/scenes/quest/questFoeHost.js';
 import { createExteriorFoes, QUEST_PUPPETS_MAX } from '../src/scenes/exteriorFoes.js';
-import { isPeerTarget } from '../src/characters/enemyTargets.js';
+import { isPeerTarget } from '../src/characters/enemy/enemyTargets.js';
 import { CELL_FRAME_RECORDS_MAX } from '../src/net/wire.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');

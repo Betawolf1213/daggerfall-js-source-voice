@@ -15,7 +15,7 @@ import { streetGeometry, townPlaces } from '../src/systems/livingWorld/places.js
 import { aloneStand, aloneStands, circleStands, circlesStands, SPACE_M, SPACE_FAR_M, ALONE_NEED_M, CIRCLE_APART } from '../src/systems/livingWorld/meetups.js';
 import { LivingTown, FILE_M, FILE_MIN, DODGE_SIDES, DODGE_SETTLE_M } from '../src/systems/livingWorld/livingTown.js';
 import { ResidentWalker } from '../src/characters/residentWalker.js';
-import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
+import { PERSON_MOVE_SPEED } from '../src/characters/mobile/mobilePerson.js';
 import { NAV_CELL } from '../src/world/city/cityNavigation.js';
 import { DAY_MIN, isOutdoor } from '../src/systems/livingWorld/dayPlan.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';

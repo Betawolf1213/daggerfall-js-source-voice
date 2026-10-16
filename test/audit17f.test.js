@@ -9,7 +9,7 @@ import { paperdollItemImage } from '../src/ui/paperDoll.js';
 import {
   armorArchive as armorArchiveByMorphology, BODY_MORPHOLOGY, clampArmorVariant, ARMOR_MATERIAL,
 } from '../src/systems/armorMaterials.js';
-import { armorArchive, morphologyOfRace, armorVariant, MATERIAL_FAMILY, playerArchiveFor } from '../src/characters/paperdollArt.js';
+import { armorArchive, morphologyOfRace, armorVariant, MATERIAL_FAMILY, playerArchiveFor } from '../src/characters/paperdoll/paperdollArt.js';
 import { assignStartingGear, STARTING_GOLD } from '../src/systems/startingGear.js';
 import { isWalletItem } from '../src/systems/walletItem.js';   // WALLET1: the port's own tail's wallet, set aside from DFU's bag
 import { GOLD_TEMPLATE, goldStack, itemWeight } from '../src/systems/inventory.js';

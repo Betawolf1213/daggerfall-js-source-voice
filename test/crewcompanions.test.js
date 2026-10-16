@@ -1,6 +1,6 @@
 // CREW-COMPANIONS (2026-09-30, Mac: take the crew "along as companions in the world that travel with you and can fight
 // by your side" - "Up to 2", "Knocked out", through every door) - the party (systems/naval/crewCompanions.js), the
-// follow brain (characters/enemyMotor.js `follow`, ai/enhancedMotor.js's route), the targets (enemyTargets.js), the
+// follow brain (characters/enemy/enemyMotor.js `follow`, ai/enhancedMotor.js's route), the targets (enemyTargets.js), the
 // companion layer (scenes/crewAshore.js), the deck without them (crewLife.js `away`), and the wiring by source.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -10,11 +10,11 @@ import {
 } from '../src/systems/naval/crewCompanions.js';
 import { createCrewAshore, CATCH_UP_M, HEEL_M, HEEL_STEP_M } from '../src/scenes/crewAshore.js';
 import { ENCOUNTER_CULL_DISTANCE } from '../src/scenes/exteriorFoes.js';
-import { EnemyAI, FOLLOW_STOP, FOLLOW_SLACK, FOLLOW_LEASH } from '../src/characters/enemyMotor.js';
+import { EnemyAI, FOLLOW_STOP, FOLLOW_SLACK, FOLLOW_LEASH } from '../src/characters/enemy/enemyMotor.js';
 import { Collider } from '../src/player/collider.js';
 import { bakeNavFromCollider } from '../src/ai/navBake.js';
 import { EnhancedEnemyAI, makeNavWorld } from '../src/ai/enhancedMotor.js';
-import { runTargetMachine, getTargets, PLAYER_TARGET, fightsOurSide, targetPriority, COMPANION_ASSIST_PRIORITY } from '../src/characters/enemyTargets.js';
+import { runTargetMachine, getTargets, PLAYER_TARGET, fightsOurSide, targetPriority, COMPANION_ASSIST_PRIORITY } from '../src/characters/enemy/enemyTargets.js';
 import { createCrewLife } from '../src/systems/naval/crewLife.js';
 import { MORALE_EVENT, createShipCrew } from '../src/systems/naval/shipCrew.js';
 import { boatMenuRows, BOAT_VERB } from '../src/systems/comeSailAway/csaBoatMenu.js';

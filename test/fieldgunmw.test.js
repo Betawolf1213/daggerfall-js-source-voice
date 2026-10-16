@@ -30,7 +30,7 @@ import { animWeaponType } from '../src/combat/fpArm.js';
 import { MW_UNITS_PER_METRE, THUNDERLOCK_METRES, SETTINGS, OUT, SOURCE_FBX, bakeThunderlock } from '../tools/bakeThunderlock.mjs';
 import { WEAPONS } from '../src/characters/weapons.js';
 import { THUNDERLOCK_TEMPLATE } from '../src/characters/thunderlockIds.js';
-import { OWN_MW_MODELS, OWN_MW_GILDED, ownWeaponModelFor, ownWeaponModelPaths } from '../src/characters/ownWeaponModels.js';
+import { OWN_MW_MODELS, OWN_MW_GILDED, ownWeaponModelFor, ownWeaponModelPaths } from '../src/characters/ownModels/ownWeaponModels.js';
 import { ownMwDataPath, ownMwArchive } from '../src/systems/ownMwAssets.js';
 import { makeVendoredArchive } from '../src/systems/urlArchive.js';
 

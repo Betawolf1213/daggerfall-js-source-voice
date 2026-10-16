@@ -48,7 +48,7 @@ import {
 import { equipTableOf } from '../equip.js';
 import { isShieldTemplate } from '../armorMaterials.js';
 import { isAmmunition } from '../item/itemTemplates.js';
-import { EQUIP_SLOTS } from '../../characters/paperdoll.js';
+import { EQUIP_SLOTS } from '../../characters/paperdoll/paperdoll.js';
 
 /** The pieces a set's tiers wake at. */
 export const SET_TIERS = Object.freeze([2, 4, 6]);

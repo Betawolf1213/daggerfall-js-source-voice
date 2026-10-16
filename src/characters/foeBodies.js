@@ -11,7 +11,7 @@ import { composeLook } from '../net/remotePlayers.js';
 import { LOOK_GROUPS } from '../net/wire.js';   // AUDIT MW-NPC II K2: a worn piece's group, by its index on the wire
 import { EQUIP_SLOTS, equipTableOf } from '../systems/equip.js';
 import { creatureLook } from './creatureBodies.js';   // MWNPC9: a creature foe's look, its Morrowind creature
-import { ARMOR_ENUM, WEAPONS_ENUM, equipmentVariantFor } from '../combat/enemyEquipment.js'; import { ARMOR_MATERIAL } from '../systems/armorMaterials.js'; import { MOBILE_TYPES } from './mobileTypes.js';   // MWNPC10: a roster's people, armoured and armed by their class
+import { ARMOR_ENUM, WEAPONS_ENUM, equipmentVariantFor } from '../combat/enemyEquipment.js'; import { ARMOR_MATERIAL } from '../systems/armorMaterials.js'; import { MOBILE_TYPES } from './mobile/mobileTypes.js';   // MWNPC10: a roster's people, armoured and armed by their class
 import { npcHint } from './wardrobe.js';   // MWNPC17: the man under the kit his own - his head, his hair, the clothes' records
 
 /** The Iliac Bay's people, weighted - the races a class foe is drawn as (Daggerfall's own spelling, the look's). The

@@ -7,11 +7,11 @@ import {
   CLASSIC_TURN_DEG, turnTowards, wouldBeSpawnedInClassic, EnemyAI,
   CLASSIC_SPAWN_XZ_BY_TYPE, CLASSIC_SPAWN_Y_UPPER_BY_TYPE, CLASSIC_SPAWN_Y_LOWER_BY_TYPE,
   CLASSIC_DESPAWN_XZ_BY_TYPE, CLASSIC_DESPAWN_Y_BY_TYPE, CLASSIC_SPAWN_DESPAWN_EXTERIOR,
-} from '../src/characters/enemyMotor.js';
-import { EnemyAttack, resetMeleeTimer } from '../src/characters/enemyAttack.js';
-import { EnemyCaster } from '../src/characters/enemyCasting.js';
-import { MobileUnit } from '../src/characters/mobileUnit.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+} from '../src/characters/enemy/enemyMotor.js';
+import { EnemyAttack, resetMeleeTimer } from '../src/characters/enemy/enemyAttack.js';
+import { EnemyCaster } from '../src/characters/enemy/enemyCasting.js';
+import { MobileUnit } from '../src/characters/mobile/mobileUnit.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { GLOBAL_SCALE } from '../src/world/meshReader.js';
 import { Collider } from '../src/player/collider.js';
 import { srand } from '../src/formats/dfRandom.js';

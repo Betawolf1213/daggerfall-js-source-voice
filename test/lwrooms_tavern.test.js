@@ -18,7 +18,7 @@ import { tavernHall, HALL_TABLES, TABLE_TOP } from './lwRoom.mjs';
 import { tavernDay, hallAstir } from '../tools/livingRoomProbe.mjs';
 import { LivingTown } from '../src/systems/livingWorld/livingTown.js';
 import { ResidentWalker } from '../src/characters/residentWalker.js';
-import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
+import { PERSON_MOVE_SPEED } from '../src/characters/mobile/mobilePerson.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
 import { schedule, walkMinutes, DAY_MIN, DAY_START_MIN, HOME_GAP } from '../src/systems/livingWorld/dayPlan.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';

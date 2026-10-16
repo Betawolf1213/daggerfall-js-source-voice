@@ -14,11 +14,11 @@
 import { createWeapon, randomMaterial, WEAPONS_ENUM } from '../../combat/enemyEquipment.js';
 import { mintCondition, setItemFields, templateByIndex } from '../item/itemTemplates.js';
 import { applyRarity } from '../loot/lootRarity.js';
-import { MOBILE_TYPES as M } from '../../characters/mobileTypes.js';
+import { MOBILE_TYPES as M } from '../../characters/mobile/mobileTypes.js';
 import { possessive } from './revenantPersonality.js';   // one possessive for every title
 
 const W = WEAPONS_ENUM;
-/** The weapons each kind would wield (characters/mobileTypes.js ids), by template. */
+/** The weapons each kind would wield (characters/mobile/mobileTypes.js ids), by template. */
 export const TROPHY_KIND_WEAPONS = Object.freeze({
   [M.Rat]: [W.Dagger], [M.Imp]: [W.Dagger, W.Tanto], [M.Spriggan]: [W.Staff], [M.GiantBat]: [W.Dagger],
   [M.GrizzlyBear]: [W['War Axe']], [M.SabertoothTiger]: [W.Tanto, W.Katana], [M.Spider]: [W.Dagger],

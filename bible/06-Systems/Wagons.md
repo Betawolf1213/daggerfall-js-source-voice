@@ -165,7 +165,7 @@ them down beside the wagon.
 **Companions** take the seats the players have not, while the wagon goes with
 its owner (trailing behind the cart, or following). When it is parked they
 step down and walk at heel (`src/scenes/crewAshore.js` `seat`; the motor's
-seat gate in `src/characters/enemyMotor.js`).
+seat gate in `src/characters/enemy/enemyMotor.js`).
 
 **Departure (STANDING RIDERS).** Riders and companions ride STANDING in the
 bed. The port's people are billboards and DFU has no seated pose to give

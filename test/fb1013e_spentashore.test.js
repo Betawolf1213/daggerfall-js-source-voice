@@ -25,7 +25,7 @@ import { setSharedClock, setWorldMinutes, resetMagicRoundMarker } from '../src/s
 import { hurtPlayer, setDeathPresenter, registerPlayerDeathSave } from '../src/characters/playerEntity.js';
 import { maxFatigue, clampFatigue } from '../src/systems/statMods.js';
 import { SKILLS } from '../src/systems/skills.js';
-import { EnemyAI, CLASSIC_UPDATE_INTERVAL } from '../src/characters/enemyMotor.js';
+import { EnemyAI, CLASSIC_UPDATE_INTERVAL } from '../src/characters/enemy/enemyMotor.js';
 import { areEnemiesNearby } from '../src/systems/encounters.js';
 import { SWING_FATIGUE_COST } from '../src/scenes/hostCombat.js';
 import { setLocale, patchLocaleTable, clearLocaleTables } from '../src/systems/textManager.js';

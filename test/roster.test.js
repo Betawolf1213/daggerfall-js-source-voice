@@ -8,8 +8,8 @@
 import test from 'node:test';
 import assert from 'node:assert';
 import { readFileSync } from 'node:fs';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 import { ORC_DESIGNS } from '../src/characters/orcBody.js';
 import { UNDEAD_DESIGNS } from '../src/characters/undeadBody.js';
 import { CLASS_DESIGNS } from '../src/characters/humanClasses.js';

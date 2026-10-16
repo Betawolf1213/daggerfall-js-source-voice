@@ -22,7 +22,7 @@ const L = await import('../src/systems/feudLedger.js');
 const Wire = await import('../src/net/wire.js');
 const { blowTakenScale } = await import('../src/systems/blowTaken.js');
 const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
-const { MOBILE_TYPES: M } = await import('../src/characters/mobileTypes.js');
+const { MOBILE_TYPES: M } = await import('../src/characters/mobile/mobileTypes.js');
 const { createWeapon } = await import('../src/combat/enemyEquipment.js');
 const { WEAPONS: W } = await import('../src/characters/weapons.js');
 

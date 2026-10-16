@@ -10,7 +10,7 @@ import { readFileSync } from 'node:fs';
 import { synthTown } from './lwTown.mjs';
 import { LivingTown, DEED_KNOWN_MIN } from '../src/systems/livingWorld/livingTown.js';
 import { ResidentWalker } from '../src/characters/residentWalker.js';
-import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
+import { PERSON_MOVE_SPEED } from '../src/characters/mobile/mobilePerson.js';
 import { DAY_MIN, dayPlan, PATRON_LATE_MIN } from '../src/systems/livingWorld/dayPlan.js';
 import { townPlaces } from '../src/systems/livingWorld/places.js';
 import { townCensus } from '../src/systems/livingWorld/census.js';

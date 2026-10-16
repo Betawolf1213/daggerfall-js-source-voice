@@ -311,7 +311,7 @@
   },
   {
     "name": "ARENA-LADDER-tag-a-copy",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "export function setPlayerBout(b) { _playerBout = b ?? null; }",
     "new": "export function setPlayerBout(b) { _playerBout = b ? { id: String(b.id), side: b.side | 0, out: !!b.out } : null; }",
     "tests": [

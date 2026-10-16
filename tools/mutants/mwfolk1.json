@@ -41,7 +41,7 @@
   },
   {
     "name": "MWFOLK1-the-sleeves-hide-no-forearm",
-    "file": "src/characters/ownClothingModels.js",
+    "file": "src/characters/ownModels/ownClothingModels.js",
     "old": "  outfit(385, ['cuirass', 'groin', ...PAIR('upper arm', 'forearm', 'upper leg', 'knee', 'ankle', 'foot')]),",
     "new": "  outfit(385, ['cuirass', 'groin', ...PAIR('upper arm', 'upper leg', 'knee', 'ankle', 'foot')]),",
     "tests": [
@@ -51,7 +51,7 @@
   },
   {
     "name": "MWFOLK1-a-hood-over-the-hair",
-    "file": "src/characters/ownClothingModels.js",
+    "file": "src/characters/ownModels/ownClothingModels.js",
     "old": "  outfit(388, ['cuirass', 'groin', 'hair', ...PAIR('upper leg', 'knee', 'ankle', 'foot')]),",
     "new": "  outfit(388, ['cuirass', 'groin', ...PAIR('upper leg', 'knee', 'ankle', 'foot')]),",
     "tests": [
@@ -61,7 +61,7 @@
   },
   {
     "name": "MWFOLK1-the-bodice-covers-nothing",
-    "file": "src/characters/ownClothingModels.js",
+    "file": "src/characters/ownModels/ownClothingModels.js",
     "old": "  outfit(398, ['groin', 'hair', ...PAIR('upper leg', 'foot')], ['chest']),",
     "new": "  outfit(398, ['groin', 'hair', ...PAIR('upper leg', 'foot')]),",
     "tests": [
@@ -71,7 +71,7 @@
   },
   {
     "name": "MWFOLK1-any-id-an-outfit",
-    "file": "src/characters/ownClothingModels.js",
+    "file": "src/characters/ownModels/ownClothingModels.js",
     "old": "  for (const o of Object.values(TOWNSFOLK_OUTFITS)) if (o.id === id) return o;",
     "new": "  for (const o of Object.values(TOWNSFOLK_OUTFITS)) return o;",
     "tests": [
@@ -332,7 +332,7 @@
   },
   {
     "name": "MWFOLK1-AUDIT-paths-one-short",
-    "file": "src/characters/ownClothingModels.js",
+    "file": "src/characters/ownModels/ownClothingModels.js",
     "old": "export const ownOutfitModelPaths = () => Object.values(TOWNSFOLK_OUTFITS).map(",
     "new": "export const ownOutfitModelPaths = () => Object.values(TOWNSFOLK_OUTFITS).slice(1).map(",
     "tests": [
@@ -522,7 +522,7 @@
   },
   {
     "name": "MWFOLK1-AUDIT-her-thighs-under-the-dress-drawn",
-    "file": "src/characters/ownClothingModels.js",
+    "file": "src/characters/ownModels/ownClothingModels.js",
     "old": "  outfit(398, ['groin', 'hair', ...PAIR('upper leg', 'foot')], ['chest']),",
     "new": "  outfit(398, ['groin', 'hair', ...PAIR('foot')], ['chest']),",
     "tests": [

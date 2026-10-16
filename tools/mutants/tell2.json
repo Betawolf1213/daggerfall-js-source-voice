@@ -1,7 +1,7 @@
 [
   {
     "name": "TELL2-held-minus-one-consumed",
-    "file": "src/characters/mobileUnit.js",
+    "file": "src/characters/mobile/mobileUnit.js",
     "old": "      if (this.state === 'attack' && this._underHold && this._hold === true && this._attackFrames[this._iter] === -1) return;",
     "new": "",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "TELL2-second-strike-held",
-    "file": "src/characters/mobileUnit.js",
+    "file": "src/characters/mobile/mobileUnit.js",
     "old": "        else { this.doMeleeDamage = true; this.meleeSeq++; this._underHold = false; this._struck = this._heldSwing; }",
     "new": "        else { this.doMeleeDamage = true; this.meleeSeq++; this._struck = this._heldSwing; }",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "TELL2-cancel-ignored",
-    "file": "src/characters/mobileUnit.js",
+    "file": "src/characters/mobile/mobileUnit.js",
     "old": "    if (this._underHold && this.state === 'attack' && hold === 'cancel') { this._underHold = false; this._change('idle'); }",
     "new": "",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "TELL2-cancel-any-swing",
-    "file": "src/characters/mobileUnit.js",
+    "file": "src/characters/mobile/mobileUnit.js",
     "old": "    if (this._underHold && this.state === 'attack' && hold === 'cancel') {",
     "new": "    if (this.state === 'attack' && hold === 'cancel') {",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "TELL2-any-swing-held",
-    "file": "src/characters/mobileUnit.js",
+    "file": "src/characters/mobile/mobileUnit.js",
     "old": "      this._underHold = this._hold === true;\n      this._heldSwing",
     "new": "      this._underHold = true;\n      this._heldSwing",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "TELL2-head-strike-under-hold",
-    "file": "src/characters/mobileUnit.js",
+    "file": "src/characters/mobile/mobileUnit.js",
     "old": "        if (this._hold === true) { this.frame = 0; this._iter = 0; }",
     "new": "        if (false) { this.frame = 0; this._iter = 0; }",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "TELL2-old-swing-kept",
-    "file": "src/characters/mobileUnit.js",
+    "file": "src/characters/mobile/mobileUnit.js",
     "old": "    } else if (striking && (this.state !== 'attack' || (hold === true && !this._underHold))) this._change('attack');",
     "new": "    } else if (striking && this.state !== 'attack') this._change('attack');",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "TELL2-no-meleeseq",
-    "file": "src/characters/mobileUnit.js",
+    "file": "src/characters/mobile/mobileUnit.js",
     "old": "        else { this.doMeleeDamage = true; this.meleeSeq++; this._underHold = false; this._struck = this._heldSwing; }",
     "new": "        else { this.doMeleeDamage = true; this._underHold = false; this._struck = this._heldSwing; }",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "TELL2-no-swing-at-start",
-    "file": "src/characters/enemyAttack.js",
+    "file": "src/characters/enemy/enemyAttack.js",
     "old": "        if (machineAttack(this.machine, strike)) { this.firedRanged = false; this.swingSeq++; this._held = true; this._heldStrike = strike; }",
     "new": "        if (machineAttack(this.machine, strike)) { this.firedRanged = false; this._held = true; this._heldStrike = strike; }",
     "tests": [
@@ -83,7 +83,7 @@
   },
   {
     "name": "TELL2-second-swing-at-landing",
-    "file": "src/characters/enemyAttack.js",
+    "file": "src/characters/enemy/enemyAttack.js",
     "old": "        else if (this._held) {",
     "new": "        else if (false) {",
     "tests": [
@@ -94,7 +94,7 @@
   },
   {
     "name": "TELL2-held-uncounted",
-    "file": "src/characters/enemyAttack.js",
+    "file": "src/characters/enemy/enemyAttack.js",
     "old": "          ai._tacSwung = (ai._tacSwung ?? 0) + 1;\n          this.meleeTimer",
     "new": "          this.meleeTimer",
     "tests": [
@@ -105,7 +105,7 @@
   },
   {
     "name": "TELL2-machine-left-swinging",
-    "file": "src/characters/enemyAttack.js",
+    "file": "src/characters/enemy/enemyAttack.js",
     "old": "      if (this._held && ai._blowHold === 'cancel') { this._held = false; this.machine.state = 'Idle'; this.machine.acc = 0; }",
     "new": "",
     "tests": [
@@ -491,7 +491,7 @@
   },
   {
     "name": "TELL2-machine-not-restarted",
-    "file": "src/characters/enemyAttack.js",
+    "file": "src/characters/enemy/enemyAttack.js",
     "old": "          machineAttack(this.machine, this._heldStrike);\n",
     "new": "",
     "tests": [

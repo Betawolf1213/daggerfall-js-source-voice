@@ -22,7 +22,7 @@ import { calculateAttackDamage, adrenalineRushToHit, ADRENALINE_RUSH_MODIFIER, I
 import { playerWeaponHitEntity, setWorldMinutes } from '../src/systems/worldTick.js';   // DISC10-D H1: OnWeaponHitEntity's one dispatcher (the hook left the formula)
 import { createVampirismCurse, liveVampirism } from '../src/systems/vampirism.js';
 import { playerAttackGrunt, playerPainVoice, suppressOptionalCombatVoices } from '../src/scenes/hostCombat.js';
-import { acuteHearingMultiplier } from '../src/characters/enemySounds.js';
+import { acuteHearingMultiplier } from '../src/characters/enemy/enemySounds.js';
 import { createWeaponRig } from '../src/combat/weaponRig.js';
 import { fpArm } from '../src/combat/fpArm.js';
 import { SPECIAL_ABILITY_BITS } from '../src/systems/specialAdvantages.js';
@@ -204,6 +204,6 @@ test('AUDIT 39 #157: both improved-talent consumers read the enchantment fold', 
   assert.equal(acuteHearingMultiplier(hearer), 1.25);
   assert.equal(acuteHearingMultiplier({ ...hearer, _enchantMods: { improvedAcuteHearing: true } }), 1.5);
   // the flag that called the enchantment unported is gone from both
-  assert.equal(/unported enchantment/.test(src('characters/enemySounds.js')), false);
+  assert.equal(/unported enchantment/.test(src('characters/enemy/enemySounds.js')), false);
   assert.equal(/ImprovedAdrenalineRush is an unported enchantment/.test(src('combat/formulas.js')), false);
 });

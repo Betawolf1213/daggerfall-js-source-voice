@@ -16,7 +16,7 @@ import { townPlaces, harbourDock, streetGeometry, STAND_REACH_M } from '../src/s
 import { circleStands, circleMiddle, aloneStand, CIRCLE_APART, STAND_BEARINGS, STAND_SOUND_M, STAND_MARGIN_M, ALONE_NEED_M, ALONE_FAR_M } from '../src/systems/livingWorld/meetups.js';
 import { LivingTown } from '../src/systems/livingWorld/livingTown.js';
 import { ResidentWalker, STAND_FRAME } from '../src/characters/residentWalker.js';   // LW-TALK: PIN MOVED - standing, the wheel's still frame
-import { PERSON_MOVE_SPEED, MOVE_RECORDS } from '../src/characters/mobilePerson.js';
+import { PERSON_MOVE_SPEED, MOVE_RECORDS } from '../src/characters/mobile/mobilePerson.js';
 import { CityNavigation, NAV_CELL } from '../src/world/city/cityNavigation.js';
 import { DAY_MIN, isOutdoor } from '../src/systems/livingWorld/dayPlan.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';

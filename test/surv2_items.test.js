@@ -18,7 +18,7 @@ import { useItem } from '../src/systems/useItem.js';
 import { stockShopShelf } from '../src/systems/shopStock.js';
 import { seedStartingEquipment } from '../src/systems/equip.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 import {
   addVendorTextures, isVendorArchive, hasTextureReplacement, preloadTextureArchive, vendorTextureStandIn, decodedTexture, clearVendorTextures, clearTextureReplacements, vendorTextureCount,
 } from '../src/systems/textureReplacement.js';

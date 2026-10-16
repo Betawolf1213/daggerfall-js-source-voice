@@ -170,8 +170,8 @@ test('AUDIT CC-A10: a pause holds the layer (no knock, no stand, no catch-up und
 
 // ── CC-B: combat and AI ──────────────────────────────────────────────────────────────────────────────────────────
 
-import { EnemyAI, FOLLOW_LEASH, FOLLOW_SLACK } from '../src/characters/enemyMotor.js';
-import { runTargetMachine, getTargets } from '../src/characters/enemyTargets.js';
+import { EnemyAI, FOLLOW_LEASH, FOLLOW_SLACK } from '../src/characters/enemy/enemyMotor.js';
+import { runTargetMachine, getTargets } from '../src/characters/enemy/enemyTargets.js';
 import { isTownThreat } from '../src/systems/town/townWatch.js';
 
 const walkCollider = () => ({

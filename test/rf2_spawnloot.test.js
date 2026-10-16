@@ -16,13 +16,13 @@ import { spawnEnemyLoot } from '../src/scenes/hostCombat.js';
 import { lootMatrix } from '../src/systems/loot/loot.js';
 import { isGoldPieces } from '../src/systems/inventory.js';
 import { equipTableOf } from '../src/systems/equip.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
 import { rarityOf } from '../src/systems/loot/lootRarity.js';
 import { isMap } from '../src/systems/useItem.js';
 import { isAmmunition } from '../src/systems/item/itemTemplates.js';
 import { ELITE_DUNGEON_FOE_LOOT_CAP } from '../src/systems/foeLootCap.js';   // the Rest arc's merge of main's #576 (FOE-CAP)
-import { enemyLootSpawned } from '../src/characters/enemyEntity.js';
+import { enemyLootSpawned } from '../src/characters/enemy/enemyEntity.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(root, p), 'utf8');

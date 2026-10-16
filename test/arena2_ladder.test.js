@@ -13,7 +13,7 @@ import {
 } from '../src/systems/arena/arenaLadder.js';
 import { fighterIdentity, boutMarks, boutGateOf, ARENA_BEASTS, MARK_APART_M, GATE_OUT_M } from '../src/systems/arena/arenaFighters.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
-import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES as M } from '../src/characters/mobile/mobileTypes.js';
 import { getSeed, setSeed, rand } from '../src/formats/dfRandom.js';
 import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 

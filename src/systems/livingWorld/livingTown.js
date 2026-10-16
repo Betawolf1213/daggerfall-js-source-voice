@@ -43,7 +43,7 @@
 //    one of the watch STRUCK (`struck`) remembers the blow. A word's tone (`toned`) moves a regard once a day. The town
 //    talks of it for NEWS_DAYS (`deedNews`): one of its own struck down - and, seen, by whom.
 import { POP_RECYCLE_DISTANCE, maxPopulationFor, popAllowChange } from '../town/townPopulation.js';
-import { PERSON_MOVE_SPEED } from '../../characters/mobilePerson.js';
+import { PERSON_MOVE_SPEED } from '../../characters/mobile/mobilePerson.js';
 import { townPlaces, exitToward, harbourDock, streetGeometry } from './places.js';
 import { townCensus, isHome, watchShiftSize } from './census.js';
 import { dayPlan, entryAt, isOutdoor, walkMinutes, DAY_START_MIN, DAY_MIN, GUILD_DAY_OFFSETS } from './dayPlan.js';

@@ -11,7 +11,7 @@ import { tickActiveEffects, healAttributeDamage } from '../src/systems/effects.j
 import { liveStat } from '../src/systems/statMods.js';
 import { calculateAttackDamage } from '../src/combat/formulas.js';
 import { WEAPONS } from '../src/characters/weapons.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 import { YOU_FEEL_SOMEWHAT_BAD } from '../src/systems/diseases.js';
 
 const seq = (...v) => { let i = 0; return () => v[Math.min(i++, v.length - 1)]; };

@@ -4,8 +4,8 @@ import './modsOff.js';   // MO1: this suite pins Daggerfall Unity's own numbers 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { ClassFile } from '../src/formats/classFile.js';
-import { makeEnemyEntity, rollEnemyClassMaxHealth, skillsLevel, KNIGHT_CITYWATCH_ID } from '../src/characters/enemyEntity.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { makeEnemyEntity, rollEnemyClassMaxHealth, skillsLevel, KNIGHT_CITYWATCH_ID } from '../src/characters/enemy/enemyEntity.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 
 function craftCfg({ name = 'Mage', hpPerLevel = 8, speed = 60 } = {}) {
   const b = new Uint8Array(74);

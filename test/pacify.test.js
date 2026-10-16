@@ -189,7 +189,7 @@ test('X8: the pacify reaches the AI, and attacking restores hostility', () => {
   // the constructor - EnemyMotor.Start:122 seeds it from the mobile's
   // MobileReactions, so a Passive dungeon marker spawns non-hostile
   // and the option defaults to true for every caller without one.
-  const mot = readFileSync(join(ROOT, 'src/characters/enemyMotor.js'), 'utf8');
+  const mot = readFileSync(join(ROOT, 'src/characters/enemy/enemyMotor.js'), 'utf8');
   assert.match(mot, /constructor\(collider, feet, yawRad, \{ liveSpeed = 50, isHostile = true,/,
     'the seam is an option, defaulting hostile');
   assert.match(mot, /EnemyMotor\.Start:122 `IsHostile = mobile\.Enemy\.Reactions == Hostile`/,

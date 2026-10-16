@@ -11,13 +11,13 @@
 //   F021       the townsperson anim resets to frame 0 on state switch
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { EnemyAI, GIVE_UP_TICKS } from '../src/characters/enemyMotor.js';
+import { EnemyAI, GIVE_UP_TICKS } from '../src/characters/enemy/enemyMotor.js';
 import { Collider } from '../src/player/collider.js';
-import { EnemyAttack } from '../src/characters/enemyAttack.js';
-import { EnemyCaster } from '../src/characters/enemyCasting.js';
-import { stateAnims, RANGED_ATTACK1_ANIMS, RANGED_ATTACK2_ANIMS, MobileUnit } from '../src/characters/mobileUnit.js';
-import { MobilePerson } from '../src/characters/mobilePerson.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { EnemyAttack } from '../src/characters/enemy/enemyAttack.js';
+import { EnemyCaster } from '../src/characters/enemy/enemyCasting.js';
+import { stateAnims, RANGED_ATTACK1_ANIMS, RANGED_ATTACK2_ANIMS, MobileUnit } from '../src/characters/mobile/mobileUnit.js';
+import { MobilePerson } from '../src/characters/mobile/mobilePerson.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 
 /** A collider stub for direct _classicTick calls (no physics). */
 const clearStub = () => ({ raycast: () => Infinity, capsuleCast: () => ({ dist: Infinity, key: null }) });

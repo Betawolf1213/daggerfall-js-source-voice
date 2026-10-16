@@ -10,9 +10,9 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { setPref } from '../src/systems/uiPrefs.js';
 import { Collider } from '../src/player/collider.js';
-import { EnemyAI } from '../src/characters/enemyMotor.js';
-import { EnemyAttack } from '../src/characters/enemyAttack.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { EnemyAI } from '../src/characters/enemy/enemyMotor.js';
+import { EnemyAttack } from '../src/characters/enemy/enemyAttack.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 import {
   TACT, setTacticsClock, resetTactics, tokensOut, LOCAL_TARGET, isCoward, noteLocalPlayer, tacticsStep, releaseTactics,
   targetKey, COWARD_CLASSES,
@@ -218,15 +218,15 @@ test('TACT2: the brain only steers a foe that sees its target in range - out of 
 });
 
 test('TACT2: the motor and the attack read the brain - the step, the stand, the gates; the hosts hand the vitals and the player\'s facing', () => {
-  const m = rd('src/characters/enemyMotor.js');
+  const m = rd('src/characters/enemy/enemyMotor.js');
   // PIN MOVED (TELL6, bible/12-Enhanced-AI/Feud-Arc.md 8.1): a charge's run is never the detour's either
   assert.match(m, /const _took = tacticsStep\(this, dx, dz\);\n\s*if \(_took && \(!detouring \|\| this\.fleeLeft > 0 \|\| this\._tac\?\.state === 'windup' \|\| this\._tac\?\.state === 'dash'\)\) return;[^\n]*\n\s*this\._tacDir = null;\n\s*\/\/ Ranged attacks/);
   assert.match(m, /if \(this\._tacDir\) \{ this\._tacDir = null; this\._tacBlocked = true; this\.moving = false; \}[^\n]*\n\s*else this\._findDetour\(dir2d\);/);
-  const a = rd('src/characters/enemyAttack.js');
+  const a = rd('src/characters/enemy/enemyAttack.js');
   assert.match(a, /if \(ai\._tacStrike === false\) continue;/);
   assert.match(a, /&& ai\._tacShoot !== false && this\.rolls\(\) < BOW_SHOT_CHANCE\)/);
   assert.match(a, /ai\._tacSwung = \(ai\._tacSwung \?\? 0\) \+ 1;/);
-  const c = rd('src/characters/enemyCasting.js');
+  const c = rd('src/characters/enemy/enemyCasting.js');
   assert.match(c, /if \(ai\._tacShoot === false\) continue;/);
   assert.match(c, /dist <= MELEE_DISTANCE && ai\._tacStrike !== false\)/);
   for (const f of ['src/scenes/exteriorFoes.js', 'src/scenes/cityGuards.js']) assert.match(rd(f), /vitals: \(\) => entity,/, f);

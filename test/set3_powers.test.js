@@ -35,10 +35,10 @@ import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { SKILLS, MAGIC_SKILLS } from '../src/systems/skills.js';
-import { makeEnemyEntity } from '../src/characters/enemyEntity.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { makeEnemyEntity } from '../src/characters/enemy/enemyEntity.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { EFFECT_FLAGS } from '../src/systems/spellcast.js';
-import { KNIGHT_CITY_WATCH } from '../src/characters/mobileTypes.js';
+import { KNIGHT_CITY_WATCH } from '../src/characters/mobile/mobileTypes.js';
 import { burstClear } from '../src/scenes/hostMagic.js';
 import { Collider } from '../src/player/collider.js';
 

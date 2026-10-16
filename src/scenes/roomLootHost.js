@@ -5,7 +5,7 @@
 import { addGoldPieces, addItem, isGoldPieces, stacksWith } from '../systems/inventory.js';
 import { asTheRoom } from '../systems/online/onlineLane.js';
 import { baseSignature, bonusSpent, claimOf, claimWord, composeRoomView, isPersonalLoot, isRoomBaseKind, isRoomWord, judgeRoomClaim, markPersonal, mergeRoomWord, pieceCount, recentAnswers, ROOM_BASE_FIND, ROOM_BASE_LUCK, ROOM_BASE_MAX, ROOM_BASE_QUARTERS, ROOM_CLAIM_TIMEOUT_MS, ROOM_CLAIMS_MAX, ROOM_PUT_RESAY_MS, ROOM_TAKEN_TEXT, roomBaseGender, roomBaseLevel, roomClaimId, roomClaimOrder, roomContainerName, roomRoller, roomState, roomTermsBeat, roomWord, sameRoomTerms, seededRolls, settleBonusSpent, validRoomWord } from '../systems/roomLoot.js';
-import { ENEMY_BASICS } from '../characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../characters/enemy/enemyBasics.js';
 import { grantEliteLoot } from '../systems/eliteFoes.js';
 import { isDeepPileKey } from '../systems/rest/restItems.js';
 import { isEquipped, unequipItem } from '../systems/equip.js';

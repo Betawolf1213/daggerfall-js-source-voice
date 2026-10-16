@@ -25,7 +25,7 @@
 //
 // Not a DFU member (Daggerfall has no arena). Ledger A (ARENA).
 
-import { MOBILE_TYPES } from '../../characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../../characters/mobile/mobileTypes.js';
 
 /** The replay record's version. */
 export const REPLAY_VERSION = 1;

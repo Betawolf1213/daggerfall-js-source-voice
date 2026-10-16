@@ -43,10 +43,10 @@ import {
   BASE_HEIGHT_SCALE, SCALED_OCEAN_ELEVATION, SCALED_BEACH_ELEVATION,
 } from '../src/world/terrain/terrainSampler.js';
 import { SPECIAL_INFECTION_CHANCE, onMonsterHit, inflictDisease } from '../src/systems/diseases.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 import { INFECTION, startInfection, runInfections, setInfectionHost } from '../src/systems/infection.js';
 import { CityNavigation } from '../src/world/city/cityNavigation.js';
-import { MobilePerson, TILE_DOWNGRADE_CHANCE, RANDOM_CHANGE_CHANCE } from '../src/characters/mobilePerson.js';
+import { MobilePerson, TILE_DOWNGRADE_CHANCE, RANDOM_CHANGE_CHANCE } from '../src/characters/mobile/mobilePerson.js';
 import { effectCost } from '../src/systems/spellcost.js';
 import {
   enterDungeonAutomap, resetAutomapStore, buildRevealIndex, automapRevealTick, HIT_DISTANCE_AGREEMENT,

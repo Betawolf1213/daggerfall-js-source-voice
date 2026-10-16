@@ -195,7 +195,7 @@
   },
   {
     "name": "TELL6b-run-detours",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": " || this._tac?.state === 'windup' || this._tac?.state === 'dash')) return;",
     "new": " || this._tac?.state === 'windup')) return;",
     "tests": [

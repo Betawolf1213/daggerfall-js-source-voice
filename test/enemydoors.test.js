@@ -8,7 +8,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Collider } from '../src/player/collider.js';
-import { canSeeTarget, openDoorsStep, OPEN_DOOR_DISTANCE } from '../src/characters/enemyMotor.js';
+import { canSeeTarget, openDoorsStep, OPEN_DOOR_DISTANCE } from '../src/characters/enemy/enemyMotor.js';
 import { ActionSystem, isActionDoorObject, DOOR_VERB_FLAGS } from '../src/world/actionSystem.js';
 import { ACTION_FLAGS, TRIGGER_FLAGS } from '../src/world/rdbLayout.js';
 

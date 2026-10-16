@@ -200,7 +200,7 @@ export function signedAngleY(from, to) {
  * player's left is 6 (the record the mod names IdleRight, drawn
  * straight) and off their right 2 (IdleLeft, the mirrored one) - the
  * same wheel DFU's own MobileUnit.OrientEnemy turns for every foe,
- * which `characters/mobileUnit.js` already runs.
+ * which `characters/mobile/mobileUnit.js` already runs.
  */
 export function orientationFor(facing, toCamera) {
   const angle = signedAngleY(toCamera, facing);
@@ -294,7 +294,7 @@ export const boatForwardOf = ({ isSailing = false, boatDriveObject = null, boatM
  *
  * At the shipped WalkCycleSpeed of 1 that is 0.25s on foot - FOUR
  * frames a second, classic Daggerfall's own mobile rate, the same one
- * `characters/mobilePerson.js` runs the townspeople at - and 0.0625s
+ * `characters/mobile/mobilePerson.js` runs the townspeople at - and 0.0625s
  * (sixteen a second) in the saddle.
  *
  * Note the subtraction: a HIGHER WalkCycleSpeed setting means a

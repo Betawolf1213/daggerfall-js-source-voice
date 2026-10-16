@@ -21,7 +21,7 @@
 //
 // Pure. Not a DFU member. Ledger A (ARENA).
 
-import { ENEMY_BASICS, enemyDisplayName } from '../../characters/enemyBasics.js';
+import { ENEMY_BASICS, enemyDisplayName } from '../../characters/enemy/enemyBasics.js';
 import { arenaHash, seededRng, exhibitionFor } from './arenaLadder.js';
 import { fighterIdentity } from './arenaFighters.js';
 import { ARENA_TEXT } from './arenaText.js';

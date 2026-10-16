@@ -74,7 +74,7 @@ import { healMine, manaMine, _resetPlayerHealForTests } from '../playerHeal.js';
 import { weaponSkillUsed } from '../../characters/weapons.js';
 import { SKILLS } from '../skills.js';
 import { friendlyProtected } from '../../combat/playerWeapon.js';
-import { KNIGHT_CITY_WATCH } from '../../characters/mobileTypes.js';
+import { KNIGHT_CITY_WATCH } from '../../characters/mobile/mobileTypes.js';
 
 /** All the thorns a wearer's pieces sum to, at most, a blow. BAL5 (bible/05-Combat/Balance-Arc.md section 11): 10, the
  *  top of a Legendary line's band and a Legendary sear's own most - it was 25, a whole endgame swing paid back on every

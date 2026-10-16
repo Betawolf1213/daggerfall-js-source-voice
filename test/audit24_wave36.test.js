@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { sensesContext, createPlayerTicker } from '../src/scenes/shared.js';
-import { EnemyAI, GIVE_UP_TICKS } from '../src/characters/enemyMotor.js';
+import { EnemyAI, GIVE_UP_TICKS } from '../src/characters/enemy/enemyMotor.js';
 import { SKILLS, skillValue } from '../src/systems/skills.js';
 import { setEnemyAlert, ALERT_DECAY_MINUTES } from '../src/systems/encounters.js';
 import { setWorldMinutes, resetMagicRoundMarker, CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';

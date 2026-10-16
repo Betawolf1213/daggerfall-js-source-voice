@@ -28,9 +28,9 @@ const F = await import('../src/systems/revenant/revenantFeud.js');
 const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
 const { calculateAttackDamage } = await import('../src/combat/formulas.js');
 const { createWeapon } = await import('../src/combat/enemyEquipment.js');
-const { makeEnemyEntity } = await import('../src/characters/enemyEntity.js');
-const { ENEMY_BASICS } = await import('../src/characters/enemyBasics.js');
-const { MOBILE_TYPES: M } = await import('../src/characters/mobileTypes.js');
+const { makeEnemyEntity } = await import('../src/characters/enemy/enemyEntity.js');
+const { ENEMY_BASICS } = await import('../src/characters/enemy/enemyBasics.js');
+const { MOBILE_TYPES: M } = await import('../src/characters/mobile/mobileTypes.js');
 const { WEAPONS: W } = await import('../src/characters/weapons.js');
 const { createPlayerMagic } = await import('../src/scenes/hostMagic.js');
 const { applySpell, tickActiveEffects } = await import('../src/systems/effects.js');
@@ -42,9 +42,9 @@ const { setTacticsClock, resetTactics, noteLocalPlayer } = await import('../src/
 const { liveBlows, resetBlows, inBlow } = await import('../src/ai/foeBlows.js');
 const { windupDoor } = await import('../src/scenes/hostCombat.js');
 const { Collider } = await import('../src/player/collider.js');
-const { EnemyAI } = await import('../src/characters/enemyMotor.js');
-const { EnemyAttack } = await import('../src/characters/enemyAttack.js');
-const { MobileUnit, PRIMARY_ATTACK_ANIM_SPEED } = await import('../src/characters/mobileUnit.js');
+const { EnemyAI } = await import('../src/characters/enemy/enemyMotor.js');
+const { EnemyAttack } = await import('../src/characters/enemy/enemyAttack.js');
+const { MobileUnit, PRIMARY_ATTACK_ANIM_SPEED } = await import('../src/characters/mobile/mobileUnit.js');
 const { drawRevenantsPage, scarWords } = await import('../src/ui/revenant/revenantPage.js');
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

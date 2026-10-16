@@ -608,7 +608,7 @@ test('AUDIT 39r: the three re-read Testing.md rows agree with the suites they de
   // ImprovesTalents(0) writes the enchantment fold both readers read
   assert.ok(!testing.includes('x1.5 only with the unported ImprovedAcuteHearing'),
     'the careerflags row is calling a shipped enchantment a routed gap again');
-  assert.match(read('src/characters/enemySounds.js'), /entityImprovedAcuteHearing\(playerEntity\) \? 1\.5 : 1\.25/);
+  assert.match(read('src/characters/enemy/enemySounds.js'), /entityImprovedAcuteHearing\(playerEntity\) \? 1\.5 : 1\.25/);
 });
 
 test('AUDIT 39r: Rendering-Arc\'s sky orientation is skyRenderer\'s, and the save/restore is gone from both', () => {

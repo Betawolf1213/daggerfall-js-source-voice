@@ -17,8 +17,8 @@ import {
 import { installRestItemLoot, restLootChances, REST_FOE_CHANCES, REST_PILE_CHANCES, REST_ITEM } from '../src/systems/rest/restItems.js';
 import { addEnemyLootExtras, addPileLootExtras } from '../src/systems/loot/loot.js';
 import { goldStack, isGoldPieces } from '../src/systems/inventory.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
-import { enemyLootSpawned } from '../src/characters/enemyEntity.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
+import { enemyLootSpawned } from '../src/characters/enemy/enemyEntity.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { rarityOf } from '../src/systems/loot/lootRarity.js';
 import { setPref, _resetForTests as _resetPrefsForTests } from '../src/systems/uiPrefs.js';

@@ -1,6 +1,6 @@
 # The Steel Brigandine — the port's own worn model
 
-`tools/bakeBrigandine.mjs` + `src/characters/ownArmorModels.js` +
+`tools/bakeBrigandine.mjs` + `src/characters/ownModels/ownArmorModels.js` +
 `src/formats/mwItemMap.js` (composeWornArmor) +
 `src/formats/mwSkinTransfer.js` (transferSkin, fitLift) + `src/formats/mwFirstPerson.js` (bindSkinnedFromBody)
 (MW-BRIG1, Mac, 2026-09-29; MW-BRIG2; MW-BRIG3; MW-BRIG4, every metal in its own painting, 2026-10-09)
@@ -82,7 +82,7 @@ the body.
 
 Now there is ONE transform. `formats/mwSkinTransfer.js`: every brigandine
 vertex copies the skin of the nearest vertex of the player's own body parts
-(`skinFrom: chest, groin, upperleg, knee` in `characters/ownArmorModels.js`) -
+(`skinFrom: chest, groin, upperleg, knee` in `characters/ownModels/ownArmorModels.js`) -
 the same bones, weights, inverse binds and skin transform - and its position
 is solved, through `skinBatch` itself (four probe vertices per body vertex),
 so that in the skeleton's rest pose it lands exactly where Mac fitted it.
@@ -147,7 +147,7 @@ it to the binder with the body under it. The shipped NIF and DDS are unchanged.
 
 ## How it reaches the body
 
-`characters/ownArmorModels.js` is the worn counterpart of
+`characters/ownModels/ownArmorModels.js` is the worn counterpart of
 `ownWeaponModels.js` and a leaf for the same reason. Per own piece:
 template, material, `skinFrom` (the body slots it is skinned from), `fitTo` (the body slot it hides and is
 fitted onto, MW-BRIG3), and the parts it fills by ARMO_PART name. `composeWornArmor` asks it before `mwArmorRecords` and claims each

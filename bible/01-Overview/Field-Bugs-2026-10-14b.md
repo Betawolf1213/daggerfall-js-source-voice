@@ -10,7 +10,7 @@ frame, several humanoid foes standing in it and none of them coming through. Rea
 
 ## DOOR-JAM: a foe taller than a doorway ducks under its lintel (1)
 
-`src/characters/enemyMotor.js` _heightAdjust, the motor's Moves; `src/player/collider.js` move's `sides`;
+`src/characters/enemy/enemyMotor.js` _heightAdjust, the motor's Moves; `src/player/collider.js` move's `sides`;
 `src/characters/foeSpacing.js` sweepHeight; `src/ai/enhancedMotor.js` _stuckWatch.
 
 THE REPORT. Foes chasing the player through a doorway jam in it and never come through. The player read it as their

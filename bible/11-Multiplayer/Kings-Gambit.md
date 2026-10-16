@@ -96,7 +96,7 @@ or that has no piece left, loses. Played against the innkeeper (four tiers) for 
   ranged. 46 units, sorted by cost, then by name (ordinal).
 - THE KINGS: the host's the Knight (145), the guest's the Barbarian (143) - two sprites over one set of numbers: level 8,
   70 hp, attack 16, free.
-- THE TABLE, computed off the port's own `characters/enemyBasics.js` (ENEMY_BASICS, DFU's rows) at float32 and at
+- THE TABLE, computed off the port's own `characters/enemy/enemyBasics.js` (ENEMY_BASICS, DFU's rows) at float32 and at
   float64, with half to even and with half up: every unit the same - the vanilla rows meet no half. The last column is
   FACT: the card each creature already is (`cardSources.js:"export const FOE_CARDS = Object.freeze({"`).
 
@@ -266,7 +266,7 @@ or that has no piece left, loses. Played against the innkeeper (four tiers) for 
 - Motion: a walk at 3.5 cells a second (`MoveSpeed`), the lunge 0.28 s (`LungeTime`), the hit's shake and flash 0.45 s
   (`HitTime`), a shot's flight 0.3 s (`ProjectileTime`), a floating number 1 s (`FloatTime`), the heal's glow 0.6 s
   (`HealTime`), the death's fade 0.6 s (`DeathFade`) from 0.27 s after the blow lands; the sprites at 6, 10 and 4 frames a
-  second (`MoveFps`, `AttackFps`, `IdleFps` - DFU's own MOVE, PRIMARY_ATTACK and IDLE speeds, `characters/mobileUnit.js`).
+  second (`MoveFps`, `AttackFps`, `IdleFps` - DFU's own MOVE, PRIMARY_ATTACK and IDLE speeds, `characters/mobile/mobileUnit.js`).
 - Sounds - DFU's SoundClips by DAGGER.SND index (FACT: the names `systems/soundClips.js` carries; the rest are unnamed in
   the port and are named from SoundClips.cs by the slice that plays them): win 32 (ArenaFanfareLevelUp), lose 458
   (`systems/arena/arenaSound.js`'s groan), coin 361 (GoldPieces), challenge 300 (DiceRoll), start 78 (DrawWeapon), click 360
@@ -306,7 +306,7 @@ structure ours.
 - THE ROSTER IS DFU's TABLE: the units read `enemyBasics.js:"export const ENEMY_BASICS = Object.freeze({"` (ONE DFU
   MEMBER, ONE EXPORT - never a second literal of the levels and the health), at float32 with RoundToInt's half to even,
   pinned deepEqual against section 2.2's table. DECIDED: the vanilla rows, never a mod's overlay. Meaner Monsters is
-  applied at a foe's mint (`applyMeanerMonsters`, `characters/enemyEntity.js`), not to the table, and one roster for every
+  applied at a foe's mint (`applyMeanerMonsters`, `characters/enemy/enemyEntity.js`), not to the table, and one roster for every
   client and the relay is what the mod's own `RosterSig` asked for - two clients whose rosters differed refused to play.
 - THE DICE: the mod's `System.Random(seed)` is .NET's own stream; the port draws from the `rand32` it is handed
   (`net/dice.js` drawBelow: Rand(a, b) is a + drawBelow(b - a), NextDouble is rand32 / 2^32) - the same uniform law over
@@ -393,7 +393,7 @@ structure ours.
 - NOT CHOSEN (section 10.1): the creature's own DFU sprite as an animated miniature - the mod's look. FACT: the
   port can draw it with what it has - a billboard batch per figure (`renderer.createBillboardBatch`, `drawBillboards` in
   the interior's pass, lit by the room as every foe is), its frames uploaded off the player's own ARENA2 at runtime
-  (`scenes/dataPipeline.js` uploadRecordFrame), DFU's records by facing (`characters/mobileUnit.js`), sized by
+  (`scenes/dataPipeline.js` uploadRecordFrame), DFU's records by facing (`characters/mobile/mobileUnit.js`), sized by
   `world/rmbFlats.js` mobileBillboardSize scaled to the cell. `Tavern-Cards.md` 6.2 bars ARENA2 art as a CARD's picture,
   not as a piece's; A RENDER OF GAME DATA IS GAME DATA bars committing it, which a runtime read never does. It is the
   mod's picture, not the card system's, and nothing here can see it without the player's ARENA2. Its module would be its
@@ -444,7 +444,7 @@ structure ours.
   topics any holder of a six-letter code can read; both clients run the game and each settles its own purse on its own
   word. `Tavern-Cards.md` section 7 holds: no client-dealt card online, ever - the relay deals, or nobody plays.
 - DECIDED (KG5): a King's Gambit table in the relay beside Hold'em's and Iliac Hand's, its law `net/kingsGambit.js` in the
-  relay's bundle (with `characters/enemyBasics.js`, 46 KB of data, and `systems/mathf.js` - the relay's graph pin,
+  relay's bundle (with `characters/enemy/enemyBasics.js`, 46 KB of data, and `systems/mathf.js` - the relay's graph pin,
   `test/relayversion.test.js` RELAY_GRAPH, gains both). A room keeps its tables at the cloth's index - one
   game a cloth, each game's sit refusing while either other game holds that index ('other game'). Two seats; each army
   told to the relay at Ready and to the other seat only when both are (the mod's ARMY at Ready); the relay builds the board
@@ -718,7 +718,7 @@ point the record had left open. A number marked MEASURE is the first guess its s
 
 The owner: **"Make the best and most detailed decisions. We also have permission"** - and the first slice after them.
 
-- **THE LAW** (`net/kingsGambit.js`): pure, DOM-free and plain data, importing only `characters/enemyBasics.js`,
+- **THE LAW** (`net/kingsGambit.js`): pure, DOM-free and plain data, importing only `characters/enemy/enemyBasics.js`,
   `net/dice.js` and `systems/mathf.js` (Unity's RoundToInt), so the relay can carry it at KG5. Every member of section
   2's game is one of its exports:
   - the board: `buildMap` (BuildMap - its layouts `KG_LAYOUTS` and `KG_OPEN_FIELD`, RandomChunks, PlaceWallCell, SetTile,
@@ -1617,7 +1617,7 @@ mirror, spectators, the clock; friendly.
   - twelve ids and a crown - fits); `validGambitIn` (each op's fields, a command's numbers in range) and
   `validGambitOut` (a refusal, the room's events by kind, the table and its game the law's). GAMBIT_RELAY_MIN 204 (AUDIT KG II B14) and
   `relaySupportsGambit` - an older relay closes the socket on the frame. RELAY world204 (world203 on its branch, renumbered past main's FIVE-ASKS world202 at the merge): `net/gambit/gambitTable.js`,
-  `net/kingsGambit.js`, `characters/enemyBasics.js` and `systems/mathf.js` joined the bundle (`test/relayversion.test.js`
+  `net/kingsGambit.js`, `characters/enemy/enemyBasics.js` and `systems/mathf.js` joined the bundle (`test/relayversion.test.js`
   RELAY_GRAPH); world203 is KG-SET's, renumbered past main's CHAT-TRADE world201 and FIVE-ASKS world202 at the merges.
 - THE CLIENT: `net/online.js` - `sendGambit` through its own gate to a relay that runs the game, `gambitOk` at the
   welcome, a frame heard from the room the player stands in and checked by the table's law; `scenes/world.js` -

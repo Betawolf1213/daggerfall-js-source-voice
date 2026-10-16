@@ -36,7 +36,7 @@ import { heirloomEligible } from '../src/systems/legacy/heirloom.js';
 import { temperRefusal } from '../src/net/temperLaw.js';   // CRAFT4's temper, law 7
 import { itemLongName } from '../src/systems/item/itemInfo.js';
 import { quickslotKey } from '../src/systems/quickslots.js';
-import { ownWeaponModelFor } from '../src/characters/ownWeaponModels.js';
+import { ownWeaponModelFor } from '../src/characters/ownModels/ownWeaponModels.js';
 import { SPOILS_LINE_H } from '../src/render/spoilsGlow.js';
 import { PI_RIM } from '../src/systems/physicalItems.js';
 import { BRIEF_MAX } from '../src/systems/sigil/sigilSets.js';

@@ -8,7 +8,7 @@ import { readFileSync } from 'node:fs';
 import { synthTown } from './lwTown.mjs';
 import { LivingTown, WITNESS_M } from '../src/systems/livingWorld/livingTown.js';
 import { ResidentWalker } from '../src/characters/residentWalker.js';
-import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
+import { PERSON_MOVE_SPEED } from '../src/characters/mobile/mobilePerson.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { isOutdoor, DAY_MIN } from '../src/systems/livingWorld/dayPlan.js';
 import { createRelations, EVENTS } from '../src/systems/livingWorld/relations.js';

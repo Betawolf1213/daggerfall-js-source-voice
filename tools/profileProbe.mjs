@@ -53,7 +53,7 @@ for (const [W, H, width] of [[1440, 900, 'desktop'], [480, 800, 'narrow'], [390,
     // a slot nothing equips stays bare, as it is on a real player.
     const { groupTemplates } = await import('/src/systems/item/itemTemplates.js');
     const { getEquipSlot } = await import('/src/systems/equip.js');
-    const { EQUIP_SLOTS } = await import('/src/characters/paperdoll.js');
+    const { EQUIP_SLOTS } = await import('/src/characters/paperdoll/paperdoll.js');
     const MATERIALS = { Weapons: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], Armor: [0, 0x0100, 0x0200, 0x0201, 0x0202, 0x0203, 0x0204, 0x0205, 0x0206, 0x0207, 0x0208, 0x0209] };
     const best = new Map();
     for (const group of ['Armor', 'Weapons', 'Jewellery', 'MensClothing', 'WomensClothing']) {

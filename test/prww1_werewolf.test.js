@@ -16,7 +16,7 @@ import { validPose } from '../src/net/wire.js';
 import { lerpPose } from '../src/net/online.js';
 import * as PR from '../src/net/peer/peerRiders.js';   // the namespace, so a pin run on the unfixed layer fails assertion by assertion, not at the import
 import { RemotePlayers } from '../src/net/remotePlayers.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 import { ARCHIVE_LYCAN, ARCHIVE_HORSE, STATE_TABLES, LYCAN_TICK, frameTime, chooseTable } from '../src/player/eotbBillboard.js';
 import { SIZE_RIDING_OR_TRANSFORMED } from '../src/player/eotbSprite.js';
 import { createEotbBody } from '../src/player/eotbBody.js';

@@ -42,7 +42,7 @@ import { destroyGateMarksCard, MARK_TIPS, MARK_ICONS } from '../src/ui/gate/gate
 import { destroyGateGround } from '../src/ui/gate/gateGroundView.js';
 import { damageChartModel, DAMAGE_CHART_DELAY_MS, DAMAGE_CHART_TEXT } from '../src/ui/gate/gateDamageChart.js';
 import { TELEGRAPH_KIND } from '../src/render/gateTelegraph.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { fakeRooms } from './fakeRoom.mjs';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

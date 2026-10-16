@@ -71,7 +71,7 @@
   },
   {
     "name": "WAFIX-drop-local",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "    if (dropLocal && isLocalPlayerTarget(c)) continue;",
     "new": "    if (dropLocal && isPlayer) continue;",
     "tests": [
@@ -81,7 +81,7 @@
   },
   {
     "name": "WAFIX-drop-wired",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "{ noTargetMode, dropLocal, infighting, playerHeight, playerBout }",
     "new": "{ noTargetMode, infighting, playerHeight, playerBout }",
     "tests": [

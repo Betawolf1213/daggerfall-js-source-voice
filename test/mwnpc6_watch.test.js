@@ -10,7 +10,7 @@ import { readFileSync } from 'node:fs';
 import { createCityGuards, GUARD_MOBILE_TYPE } from '../src/scenes/cityGuards.js';
 import { NPC_BODY_TIERS, WATCH_BODY_TIERS } from '../src/characters/npcBodies.js';
 import { foeActor, foeSeed, applyWireLook } from '../src/characters/foeBodies.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const stubTex = { getSize: () => ({ width: 64, height: 100 }), getScale: () => ({ width: 0, height: 0 }), recordCount: 8, getFrameCount: () => 1 };

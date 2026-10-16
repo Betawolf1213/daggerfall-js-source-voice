@@ -20,7 +20,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { perspective, mirrorProjectionX, lookAt, multiply } from '../src/world/mat4.js';
 import { Collider } from '../src/player/collider.js';
-import { EnemyAI } from '../src/characters/enemyMotor.js';
+import { EnemyAI } from '../src/characters/enemy/enemyMotor.js';
 import { placeFoeEnv } from '../src/scenes/quest/questFoeHost.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');

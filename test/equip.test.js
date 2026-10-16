@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { EQUIP_SLOTS, getTemplate } from '../src/characters/paperdoll.js';
+import { EQUIP_SLOTS, getTemplate } from '../src/characters/paperdoll/paperdoll.js';
 import { ITEM_GROUPS, SLOT_RULES, WEAPON_HANDS, SHIELD_INDICES } from '../src/characters/equipRules.js';
 import { createEquipTable, getItemHands, ITEM_HANDS } from '../src/characters/equipTable.js';
 

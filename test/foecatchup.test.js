@@ -3,12 +3,12 @@
 // step is the port's dearest work (the path check's capsule casts, the sight rays - measured, 84% of a crowd's ray time
 // is ClearPathToPosition's). At 10 fps each foe ran six steps a frame, so under a crowd a hitch made the next frame
 // dearer and that one dearer still. The pools now hand their foes at most three steps' worth a frame
-// (characters/enemyMotor.js foeFrameDt): from 20 fps up nothing changes; below it foes move a little slower than the
+// (characters/enemy/enemyMotor.js foeFrameDt): from 20 fps up nothing changes; below it foes move a little slower than the
 // world instead of the world stopping. The motor's own contract (update(dt) advances dt) is unchanged.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { EnemyAI, foeFrameDt, FOE_MAX_FRAME_DT } from '../src/characters/enemyMotor.js';
+import { EnemyAI, foeFrameDt, FOE_MAX_FRAME_DT } from '../src/characters/enemy/enemyMotor.js';
 import { FIXED_DT, MAX_FRAME_DT } from '../src/player/motor.js';
 
 const clearCollider = () => ({ raycast: () => Infinity, capsuleCast: () => ({ dist: Infinity, key: null }), move: () => ({ grounded: true }) });

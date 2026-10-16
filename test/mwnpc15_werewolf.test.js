@@ -11,7 +11,7 @@ import { foeActor, isPersonFoe, rosterLook, WOLF_MOBILE } from '../src/character
 import { residentLook } from '../src/characters/rosterBodies.js';
 import { CREATURE_MATCH } from '../src/characters/creatureBodies.js';
 import { createNpcBodies, npcShown } from '../src/characters/npcBodies.js';
-import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES as M } from '../src/characters/mobile/mobileTypes.js';
 import { createEquipTable } from '../src/characters/equipTable.js';
 
 const flush = () => new Promise((r) => setTimeout(r, 0));

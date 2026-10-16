@@ -30,7 +30,7 @@ word was a 350/450 ms lead on every blow, casters included.
 
 | | Finding | Done |
 |---|---|---|
-| T1 | The relay cannot import `characters/mobileTypes.js` (the brain's graph), so it could not know a kind's shapes | The families (`BLOW_FAMILY` by MobileTypes number, `BLOW_CASTERS`), `blowShapesOf` and `inBlow` moved to the leaf `ai/blowShapes.js`; `ai/foeBlows.js` hands the leaf's own on. Every number pinned against the kind it names |
+| T1 | The relay cannot import `characters/mobile/mobileTypes.js` (the brain's graph), so it could not know a kind's shapes | The families (`BLOW_FAMILY` by MobileTypes number, `BLOW_CASTERS`), `blowShapesOf` and `inBlow` moved to the leaf `ai/blowShapes.js`; `ai/foeBlows.js` hands the leaf's own on. Every number pinned against the kind it names |
 | T2 | No fighter wound up at another | `blowAim`: the local player's feet (TACT4's law), or on the sand a BOUT-MATE's - a fighter of the same live bout on another side, neither out nor held. The blow is marked for that one (`s.blow.tg`) and drawn for the stands to `SAND_DRAW_RANGE` (100 m - the colosseum is 93 m end to end). Street infighting and a peer's foe still see none |
 | T3 | The landing asked only the player's feet | The verdict where the mark stands; a wind-up whose foe turned on another lands on no one; a blow with no mark is mine (TACT4's) |
 | T4 | The foe-vs-foe hit paths never asked the shape (and a verdict left unspent could land on the player's next swing, out of reach x1.5) | `dungeonContext.js` and `exteriorFoes.js` resolve a fighter's blow on a fighter by `blowConnects` and weigh it by `blowScaled`, as at the player |

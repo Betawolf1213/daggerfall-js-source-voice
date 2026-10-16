@@ -23,7 +23,7 @@ import {
   seasonOf,   // ARENA5: the season this save's own Grand Champion took the title in, for the Hall's plaque
 } from './arenaLeague.js';
 import { exhibitionCard, bookLines } from './arenaBook.js';
-import { enemyDisplayName, ENEMY_BASICS } from '../../characters/enemyBasics.js';
+import { enemyDisplayName, ENEMY_BASICS } from '../../characters/enemy/enemyBasics.js';
 import { dateFromClassicMinutes, monthNames, MINUTES_PER_DAY } from '../gameDate.js';   // L10N3e: the month in the player's language
 import { arenaSeasonOf, arenaSeasonDay } from '../../net/arena/arenaLaw.js';   // ARENA4b: the realm's season a row was taken in
 import { arenaReplaysRestore } from './arenaReplay.js';   // ARENA5: the Records page's Watch the replay

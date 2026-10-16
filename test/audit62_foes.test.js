@@ -20,9 +20,9 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { EnemyAI, wouldBeSpawnedInClassic, CLASSIC_SPAWN_Y_UPPER, CLASSIC_SPAWN_XZ } from '../src/characters/enemyMotor.js';
-import { enemyControllerHeight } from '../src/characters/enemyAnchor.js';
-import { getTargets, runTargetMachine, targetAimPoint, isPlayerTarget } from '../src/characters/enemyTargets.js';
+import { EnemyAI, wouldBeSpawnedInClassic, CLASSIC_SPAWN_Y_UPPER, CLASSIC_SPAWN_XZ } from '../src/characters/enemy/enemyMotor.js';
+import { enemyControllerHeight } from '../src/characters/enemy/enemyAnchor.js';
+import { getTargets, runTargetMachine, targetAimPoint, isPlayerTarget } from '../src/characters/enemy/enemyTargets.js';
 import { missileHitsFoe, missileHitsCapsule, MISSILE_COLLIDER_RADIUS, BODY_CAPSULE_RADIUS, PLAYER_BODY_RADIUS } from '../src/systems/spellcast.js';
 import { sensesContext } from '../src/scenes/shared.js';
 import { Collider } from '../src/player/collider.js';
@@ -149,7 +149,7 @@ test('AUDIT 62 F37: CanHearTarget casts from THIS transform to the TARGET transf
   assert.ok(near(r.o[1], 0.9), 'a plain walker casts from its own 0.9 transform');
   assert.ok(near(r.o[1] + r.d[1] * r.len, 0.45), `the ray ends at the FOE target's transform: ${r.o[1] + r.d[1] * r.len} (the player's half-capsule would say 0.9)`);
   // the WIRING is what regressed before, so pin the call site too
-  assert.match(src('src/characters/enemyMotor.js'),
+  assert.match(src('src/characters/enemy/enemyMotor.js'),
     /canHearTarget\(this\.collider, this\.feet, this\.height, playerFeet, this\._dist, this\.centreOffset, this\._targetCentreOffset\(\)\)/,
     'both offsets reach canHearTarget from _senses');
 });
@@ -272,7 +272,7 @@ test('AUDIT 62 F21 (review): ONE aim-point law, and the player arm of it is the 
 });
 
 test('AUDIT 62 F21: a foe casts from - and blows an AreaAroundCaster at - its own TRANSFORM', () => {
-  const c = src('src/characters/enemyCasting.js');
+  const c = src('src/characters/enemy/enemyCasting.js');
   // DaggerfallMissile.cs:513-525 GetAimPosition: caster.transform
   // .position for a non-player caster (the forward*0.6 + height/3 lift
   // is the ARROW arm only); :280-282 DoAreaOfEffect(caster.transform
@@ -298,7 +298,7 @@ test('AUDIT 62 F23: the senses context carries the LIVE player capsule, and ever
   }
   assert.match(src('src/scenes/dungeonContext.js'), /\.\.\._activity, playerHeight,/, 'the dungeon passes the height drawFoes already holds');
   // and the target machine's player arms take it too
-  const t = src('src/characters/enemyTargets.js');
+  const t = src('src/characters/enemy/enemyTargets.js');
   assert.match(t, /playerHeight = CAPSULE_HEIGHT,/);
   assert.match(t, /const tHeight = isPlayer \? \(c\.height \?\? playerHeight\) : targetAi\.height;/, 'WORLD3: a peer at its own capsule, the player at the live one'); assert.match(t, /const tOff = isPlayer \? tHeight \/ 2 :/);
   assert.match(t, /tFeet, tHeight, null, distance, ai\.sightRadius\)/);
@@ -330,7 +330,7 @@ test('AUDIT 62 F23: a crouched player is a 0.9 capsule to every foe - transform,
   crouched.update(0.05, [0, 0, 10], mkSenses({ playerHeight: CROUCH_HEIGHT }));
   assert.equal(crouched.inSight, false, 'a crouched one is not - the port aimed at feet + 1.50 where DFU aims at feet + 0.75');
   // and the spawn band's distanceToPlayer reads the same live capsule
-  assert.match(src('src/characters/enemyMotor.js'),
+  assert.match(src('src/characters/enemy/enemyMotor.js'),
     /const yDiff = \(this\.feet\[1\] \+ this\.centreOffset\) - \(playerFeet\[1\] \+ this\._playerHeight \/ 2\);/,
     'EnemySenses.cs:288 against the LIVE player transform');
 });
@@ -367,7 +367,7 @@ test("AUDIT 62 F23 (review): the OUT-OF-BAND player-LOS check reads the live cap
   assert.deepEqual(run(2.6), [0, 0, 10], 'mounted (controllerRideHeight 2.6), taller still, is seen');
   // and the wiring: the out-of-band check is its OWN call site, not
   // getTargets' - the parameter declaration alone pinned nothing here.
-  assert.match(src('src/characters/enemyTargets.js'),
+  assert.match(src('src/characters/enemy/enemyTargets.js'),
     /playerInSight = canSeeTarget\(ai\.collider, ai\.feet, ai\.yaw, ai\.height, playerFeet, playerHeight, null, null, ai\.sightRadius\);/,
     'the :377-383 LOS check takes the live player height');
 });

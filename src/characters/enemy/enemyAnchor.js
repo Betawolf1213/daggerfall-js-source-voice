@@ -15,7 +15,7 @@
 // The capsule follows SetupDemoEnemy.cs:103-115: height from the idle
 // sprite, HALVED for a flyer ("assume body is the lower half",
 // bottom-justified so the bottom edge stays), and never under 1.6.
-import { mobileBillboardSize } from '../world/rmbFlats.js';
+import { mobileBillboardSize } from '../../world/rmbFlats.js';
 
 /** SetupDemoEnemy.cs:103-115 - the CharacterController height. */
 export function enemyControllerHeight(idleH, behaviour) {

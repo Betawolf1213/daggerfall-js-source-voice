@@ -68,7 +68,7 @@ can come.
 
 ## INVIS-SWING: a foe swings only where it last knew its target stood (2)
 
-`src/characters/enemyAttack.js` update's melee start; `src/systems/wild/wildAlert.js` noticeRoll, the step;
+`src/characters/enemy/enemyAttack.js` update's melee start; `src/systems/wild/wildAlert.js` noticeRoll, the step;
 `src/scenes/world.js` the wild gate's two checks.
 
 THE REPORT. True Invisibility works outdoors; in dungeons monsters "spot and attack me immediately", with no attack,

@@ -43,7 +43,7 @@ import { racialPaperDollBackground, racialOverrideHeadArt, racialSuppressPaperDo
 import { CifRciFile } from '../formats/cifRciFile.js';
 import { getBool } from '../systems/settings/settings.js';   // UI3: EnableGeographicBackgrounds; ChildGuard/PlayerNudity gates the welds
 import { EQUIP_SLOTS, equipTableOf, getItemHands, ITEM_HANDS } from '../systems/equip.js';
-import { getTemplate, paperdollOrder } from '../characters/paperdoll.js';
+import { getTemplate, paperdollOrder } from '../characters/paperdoll/paperdoll.js';
 import { applyDyeToIndex, DYE_TARGETS, DYE_COLORS, CLOTHING_DYES } from '../characters/dyes.js';
 import { decodedTextureTopDown, preloadTextureRecord, textureReplacementRect } from '../systems/textureReplacement.js';
 import { dfmodImgImage, dfmodCifRciImage, dfmodCifRciRect, dfmodGeneration, resampleRgba, dfmodCarriesDollArt } from '../systems/dfmodTextures.js';   // DFMOD1: an attached mod's backdrop, body, head and hi-res items   // DW3: GetItemImage's import arm, by the item's dye; AUDIT-DW F1: decoded when the doll asks

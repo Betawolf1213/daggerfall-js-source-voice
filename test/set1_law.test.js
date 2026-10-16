@@ -21,7 +21,7 @@ import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { validItemField } from '../src/systems/item/itemFields.js';
 import { validLootItem } from '../src/systems/loot/loot.js';
-import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
+import { EQUIP_SLOTS } from '../src/characters/paperdoll/paperdoll.js';
 
 const player = () => ({ isPlayer: true, items: [], stats: { strength: 50, intelligence: 50, willpower: 50, agility: 50, endurance: 50, personality: 50, speed: 50, luck: 50 }, skills: new Array(35).fill(30), level: 5, career: {}, health: 20, maxHealth: 30, activeEffects: [] });
 const armour = (templateIndex, set, xp = 0) => {

@@ -35,7 +35,7 @@ import {
 import { createUseMagicItemWindow } from '../src/ui/useMagicItemWindow.js';
 import { LoadClassicWindow } from '../src/ui/loadClassicWindow.js';
 import { applyDamageToNonPlayer, PARRY_VOLUME, PARRY_1 } from '../src/scenes/hostCombat.js';
-import { EnemyAI } from '../src/characters/enemyMotor.js';
+import { EnemyAI } from '../src/characters/enemy/enemyMotor.js';
 import { FootstepMachine, FOOTSTEP, WALK_STEP_INTERVAL, FOOTSTEP_VOLUME } from '../src/systems/footsteps.js';
 import { TEMPLATES } from '../src/systems/useItem.js';
 import { playVideo } from '../src/ui/videoPlayer.js';

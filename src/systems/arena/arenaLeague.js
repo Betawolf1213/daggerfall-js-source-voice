@@ -27,7 +27,7 @@
 // broken shape reads back to a fighter of no banner. Pure: the game minute is handed to every call that reads the
 // calendar. Not a DFU member. Ledger A (ARENA).
 
-import { MOBILE_TYPES as M } from '../../characters/mobileTypes.js';
+import { MOBILE_TYPES as M } from '../../characters/mobile/mobileTypes.js';
 import { dateFromClassicMinutes, dayOfYearFromMinutes, DAYS_PER_YEAR } from '../gameDate.js';
 import { LADDER_TIERS, BOUTS_PER_TIER, arenaHash, seededRng } from './arenaLadder.js';
 import { fighterIdentity } from './arenaFighters.js';

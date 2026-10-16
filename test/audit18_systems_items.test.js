@@ -24,7 +24,7 @@ import { goldAmount } from '../src/systems/court.js';
 import { stockShopShelf, randomizeArmorVariant } from '../src/systems/shopStock.js';
 import { yardStock } from '../src/systems/merchantYards.js';
 import { ITEM_TEMPLATES, inventoryItemImage, templateByIndex } from '../src/systems/item/itemTemplates.js';
-import { playerArchiveFor } from '../src/characters/paperdollArt.js';
+import { playerArchiveFor } from '../src/characters/paperdoll/paperdollArt.js';
 import { CLOTHING_DYES, DYE_COLORS } from '../src/characters/dyes.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { PELLET_TEMPLATE } from '../src/characters/thunderlockIds.js';   // SHOP-PELLETS

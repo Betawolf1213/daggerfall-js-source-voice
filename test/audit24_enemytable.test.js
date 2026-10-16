@@ -1,7 +1,7 @@
 // AUDIT 24 (the full-codebase parity sweep), wave 23: THE GENERATOR
 // GATE.
 //
-// src/characters/enemyBasics.js is 3025 lines of MobileEnemy records
+// src/characters/enemy/enemyBasics.js is 3025 lines of MobileEnemy records
 // GENERATED from EnemyBasics.cs. That is better than a hand
 // transcription, but only while somebody re-runs the generator: the
 // tool asserted C3 parity when a human invoked it, and nothing
@@ -23,7 +23,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { ENCOUNTER_TABLES } from '../src/systems/encounters.js';
 import { RACE_TEMPLATES } from '../src/systems/races.js';
 import { GROUP_TEMPLATE_INDICES } from '../src/systems/item/itemTemplatesData.js';

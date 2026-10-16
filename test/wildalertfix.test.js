@@ -8,9 +8,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createWildAlert } from '../src/systems/wild/wildAlert.js';
-import { SIGHT_RADIUS, EnemyAI } from '../src/characters/enemyMotor.js';
+import { SIGHT_RADIUS, EnemyAI } from '../src/characters/enemy/enemyMotor.js';
 import { foeAlerted, foeHostile } from '../src/systems/encounters.js';
-import { isLocalPlayerTarget, PLAYER_TARGET, getTargets, runTargetMachine } from '../src/characters/enemyTargets.js';
+import { isLocalPlayerTarget, PLAYER_TARGET, getTargets, runTargetMachine } from '../src/characters/enemy/enemyTargets.js';
 import { PACK_SPACING, PACK_ALERT_RADIUS } from '../src/systems/campEncounters.js';
 import { BAND_STAND_MIN_M } from '../src/systems/travel/travelBands.js';
 

@@ -16,7 +16,7 @@ import { flattenNif } from '../src/formats/mwNifMesh.js';
 import { assembleFirstPersonArm } from '../src/formats/mwFirstPerson.js';
 import { composeWornArmor, fpWornAdds } from '../src/formats/mwItemMap.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
-import { CLASSIC_ARMOR_TEMPLATE, ownArmorModelFor, ownArmorParts, STEEL_HELM_STYLES } from '../src/characters/ownArmorModels.js';
+import { CLASSIC_ARMOR_TEMPLATE, ownArmorModelFor, ownArmorParts, STEEL_HELM_STYLES } from '../src/characters/ownModels/ownArmorModels.js';
 import { HELM_LIFT, SCENE_BODY, RETAIL_SKELETON, plateBind } from '../tools/bakeSteelPlate.mjs';
 
 const raw = (p) => readFileSync(new URL(`../${p}`, import.meta.url));

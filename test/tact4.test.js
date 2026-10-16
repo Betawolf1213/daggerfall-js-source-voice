@@ -10,9 +10,9 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { setPref } from '../src/systems/uiPrefs.js';
 import { Collider } from '../src/player/collider.js';
-import { EnemyAI } from '../src/characters/enemyMotor.js';
-import { EnemyAttack } from '../src/characters/enemyAttack.js';
-import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';
+import { EnemyAI } from '../src/characters/enemy/enemyMotor.js';
+import { EnemyAttack } from '../src/characters/enemy/enemyAttack.js';
+import { MOBILE_TYPES as M } from '../src/characters/mobile/mobileTypes.js';
 import { setTacticsClock, resetTactics, noteLocalPlayer } from '../src/ai/tactics.js';
 import {
   BLOW, blowShapesOf, blowTier, throwsBlows, makeBlow, inBlow, blowPhase, blowConnects, blowScaled, liveBlows, setLiveBlow,
@@ -298,7 +298,7 @@ test('TACT4: every host resolves the blow through the verdict and the weight, an
   const d = rd('src/scenes/dungeonContext.js');
   assert.match(d, /if \(!blowConnects\(f\.ai, foeDeps\.meleeHitConnects\(f\.ai\._dist, f\.ai\.inSight, foeDeps\.withinYaw\(f\.ai\.yaw, hdx, hdz, foeDeps\.MELEE_HIT_YAW_DEG\)\)\)\) \{/);
   assert.match(d, /const dmg = blowScaled\(f\.ai, _weighHit\(f, foeDeps\.calculateAttackDamage\(/);
-  const a = rd('src/characters/enemyAttack.js');
+  const a = rd('src/characters/enemy/enemyAttack.js');
   assert.match(a, /if \(ai\._blowSwing\) \{\n\s*ai\._blowSwing = false;/, 'the forced swing');
   for (const f of ['src/scenes/world.js', 'src/scenes/exterior.js', 'src/scenes/dungeon.js']) assert.match(rd(f), /renderer\.drawFoeTelegraphs\?\.\(drawableBlows\(tacticsNow\(\), /, f);
   assert.equal((rd('src/scenes/worldModes.js').match(/renderer\.drawFoeTelegraphs\?\.\(drawableBlows\(tacticsNow\(\), player\.pos\)\);/g) ?? []).length, 2, 'the dungeon\'s pass and the interior\'s');

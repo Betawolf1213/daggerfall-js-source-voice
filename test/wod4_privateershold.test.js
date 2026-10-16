@@ -20,7 +20,7 @@ import {
   holdModelMatrix, holdFireLights, rollHoldFoes,
 } from '../src/world/worldOfDaggerfall/wodPrivateersHold.js';
 import { FOE_MALE_CHANCE } from '../src/world/worldOfDaggerfall/wodSpawner.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rd = (p) => readFileSync(join(ROOT, p), 'utf8');

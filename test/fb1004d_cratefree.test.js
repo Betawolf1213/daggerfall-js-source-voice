@@ -42,12 +42,12 @@ import { MapsFile } from '../src/formats/mapsFile.js';
 import { Arch3dFile } from '../src/formats/arch3dFile.js';
 import { ClassFile } from '../src/formats/classFile.js';
 import { collectDungeonEnemies } from '../src/characters/dungeonEnemies.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { setPref } from '../src/systems/uiPrefs.js';   // BAL4: the switch this file's pins assumed
 import { tickTactics, resetTactics } from '../src/ai/tactics.js';   // AUDIT BAL: the brain's clock, ticked as the hosts tick it
 
-import { EnemyAI } from '../src/characters/enemyMotor.js';
-import { enemyControllerHeight, flyerStandFeet, keepRebuiltSpawn } from '../src/characters/enemyAnchor.js';
+import { EnemyAI } from '../src/characters/enemy/enemyMotor.js';
+import { enemyControllerHeight, flyerStandFeet, keepRebuiltSpawn } from '../src/characters/enemy/enemyAnchor.js';
 import { lodgedIn, freeLodgedFeet, clearPast, bodyFits, FREE_RINGS } from '../src/characters/foeSpacing.js';
 import { searchableKind, SEARCH_FOE_SPACING, SEARCH_DOOR_REACH_M, SEARCH_FOES_PER_PLAYER } from '../src/systems/searchables.js';
 import { loadQuestTables } from '../src/systems/quest/tables.js';

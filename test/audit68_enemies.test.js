@@ -6,10 +6,10 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { Collider } from '../src/player/collider.js';
-import { EnemyAI } from '../src/characters/enemyMotor.js';
+import { EnemyAI } from '../src/characters/enemy/enemyMotor.js';
 import { bakeNavFromCollider } from '../src/ai/navBake.js';
 import { EnhancedEnemyAI, makeNavWorld } from '../src/ai/enhancedMotor.js';
-import { EnemyAttack, resetMeleeTimer } from '../src/characters/enemyAttack.js';
+import { EnemyAttack, resetMeleeTimer } from '../src/characters/enemy/enemyAttack.js';
 import { setSeed } from '../src/formats/dfRandom.js';
 
 const rd = (f) => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');

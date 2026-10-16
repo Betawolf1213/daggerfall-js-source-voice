@@ -12,7 +12,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { clothingWarmth, armorWarmth, feltTemperature, temperatureWord, CLOTHES_BREATHE_ABOVE } from '../src/systems/survival/temperature.js';
-import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
+import { EQUIP_SLOTS } from '../src/characters/paperdoll/paperdoll.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
 import { RACES } from '../src/systems/races.js';
 

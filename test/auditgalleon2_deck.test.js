@@ -13,7 +13,7 @@ import { Boat, spawnBoat, HULL_NAMES } from '../src/systems/comeSailAway/comeSai
 import { colliderPoses, boxColliderTriangles, invertAffine, BUILTIN_COLLIDER_MESHES } from '../src/world/prefabColliders.js';
 import { multiply } from '../src/world/mat4.js';
 import { CAPSULE_RADIUS } from '../src/player/motor.js';
-import { MELEE_DISTANCE } from '../src/characters/enemyMotor.js';
+import { MELEE_DISTANCE } from '../src/characters/enemy/enemyMotor.js';
 import * as ships from '../src/systems/naval/navalShips.js';
 import { createComeSailAwayPool } from '../src/scenes/comeSailAway/comeSailAwayPool.js';
 import { MODELS, ctxFor, modCtxFor } from './csaScene.mjs';

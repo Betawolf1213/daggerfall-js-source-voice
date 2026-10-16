@@ -7,14 +7,14 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { EnemyAI } from '../src/characters/enemyMotor.js';
+import { EnemyAI } from '../src/characters/enemy/enemyMotor.js';
 import { Collider } from '../src/player/collider.js';
 import { raycastColliders } from '../src/world/prefabColliders.js';
 import { Boat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { readyPool } from './navalSea.mjs';
 
 const WORLD = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
-const MOTOR = readFileSync(new URL('../src/characters/enemyMotor.js', import.meta.url), 'utf8');
+const MOTOR = readFileSync(new URL('../src/characters/enemy/enemyMotor.js', import.meta.url), 'utf8');
 const I = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
 const quadIdx = new Uint32Array([0, 1, 2, 0, 2, 3]);
 const floorAt = (y) => { const c = new Collider(() => -100); c.addMesh('floor', new Float32Array([-40, y, -40, 40, y, -40, 40, y, 40, -40, y, 40]), quadIdx, I); return c; };

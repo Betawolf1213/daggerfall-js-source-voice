@@ -16,7 +16,7 @@ import { cardCanvas, _clearCardFacesForTests, drawCardsPart, resetCardsPart } fr
 import { iliacFace } from '../src/ui/iliacTableHud.js';
 import { iliacCardLines, mintIliacCard, giveBinder } from '../src/systems/iliac/iliacItems.js';
 import { FOE_CARDS } from '../src/systems/card/cardSources.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 import { seededUnit } from '../src/systems/iliac/iliacPatrons.js';
 import { randomDeck, measureRandom, measureRegulars } from '../tools/iliacBalance.mjs';
 import * as tm from '../src/systems/textManager.js';

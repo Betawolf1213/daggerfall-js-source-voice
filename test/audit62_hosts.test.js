@@ -22,7 +22,7 @@ import { createCityGuards } from '../src/scenes/cityGuards.js';
 import {
   wouldBeSpawnedInClassic, CLASSIC_SPAWN_XZ, CLASSIC_SPAWN_Y_UPPER,
   CLASSIC_SPAWN_DESPAWN_EXTERIOR,
-} from '../src/characters/enemyMotor.js';
+} from '../src/characters/enemy/enemyMotor.js';
 import { LightningFlash } from '../src/systems/dynamicSkies/dynamicSkies.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');

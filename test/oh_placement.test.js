@@ -19,7 +19,7 @@ import {
   PLACEMENT_SALT, NAME_SALT, TEMPLATE_SALT, ENEMY_SALT, NAME_ADJECTIVES, NAME_NOUNS, NAME_ENDINGS,
   ABYSS_FOG_COLOR, SUITABLE_TEMPLATE_DUNGEON_TYPES, MINIMUM_DEPTH, MINIMUM_EDGE_DISTANCE,
 } from '../src/world/oceanHoles.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 import { mapPixelToLongitudeLatitude, mapPixelToWorldCoord } from '../src/formats/mapsFile.js';
 
 const f32 = Math.fround;

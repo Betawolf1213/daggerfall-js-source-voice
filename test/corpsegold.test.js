@@ -11,10 +11,10 @@ import { validSharedFoe, respawnDue } from '../src/net/wire.js';
 import { validActionRecord } from '../src/world/actionSystem.js';
 import { validLootList } from '../src/systems/loot/loot.js';
 import { peerHanded } from '../src/systems/peerWord.js';   // SS3 (the Sigil Stones merge): the lifted loot seams drop a bound piece from a peer's list; PIN MOVED (HACKED-GOLD): and a letter of credit - the seams read systems/peerWord.js peerHanded
-import { keepRebuiltSpawn } from '../src/characters/enemyAnchor.js';
+import { keepRebuiltSpawn } from '../src/characters/enemy/enemyAnchor.js';
 import { renownFoeCarry, renownFoeRevived } from '../src/net/renownTracker.js';
 import { registerFoeDoor } from '../src/systems/artifactEffects.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { goldStack, isGoldPieces } from '../src/systems/inventory.js';
 import { ROOM_LOOT_OFF } from './roomLootOff.mjs';   // PARTY-LOOT: the room's seams with no room
 

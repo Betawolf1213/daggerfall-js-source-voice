@@ -20,7 +20,7 @@
 // biography adjustments and per-part armor SHIPPED - the first two
 // live in this very file.)
 
-import { MELEE_DISTANCE } from '../characters/enemyMotor.js';   // single source (EnemyAttack.cs:30)
+import { MELEE_DISTANCE } from '../characters/enemy/enemyMotor.js';   // single source (EnemyAttack.cs:30)
 import { CLASSIC_TO_UNITY_RATIO } from '../player/motor.js';   // C15 knockback units
 import { rand } from '../formats/dfRandom.js';
 import { enchantChanceToHitMod, doItemEnchantmentPayloads, PAYLOAD, isEnchantedItem, entityImprovedAdrenalineRush } from '../systems/enchantments.js';   // E1: the enchantment channels + the Strikes payload; AUDIT 39: ImprovesTalents' adrenaline flag lives in the fold's bag   // the monster multi-attack reflex gate (F2)

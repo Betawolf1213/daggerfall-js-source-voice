@@ -1,7 +1,7 @@
 [
   {
     "name": "MWCLOAK1-aquamarine-wears-green",
-    "file": "src/characters/ownClothingModels.js",
+    "file": "src/characters/ownModels/ownClothingModels.js",
     "old": "'white', 'blue', 'light_brown', 'green']);",
     "new": "'white', 'green', 'light_brown', 'green']);",
     "tests": ["test/mwcloak1.test.js"],
@@ -9,7 +9,7 @@
   },
   {
     "name": "MWCLOAK1-a-wild-dye-wears-nothing",
-    "file": "src/characters/ownClothingModels.js",
+    "file": "src/characters/ownModels/ownClothingModels.js",
     "old": "  const painting = CLOAK_DYE_PAINTING[piece.dye | 0] ?? CLOAK_DYE_PAINTING[0];",
     "new": "  const painting = CLOAK_DYE_PAINTING[piece.dye | 0];",
     "tests": ["test/mwcloak1.test.js"],
@@ -121,7 +121,7 @@
   },
   {
     "name": "MWCLOAK1-any-slot-a-cloak",
-    "file": "src/characters/ownClothingModels.js",
+    "file": "src/characters/ownModels/ownClothingModels.js",
     "old": "export const isCloakSlot = (slot) => String(slot ?? '').startsWith('cloak (');",
     "new": "export const isCloakSlot = (slot) => String(slot ?? '').includes('c');",
     "tests": ["test/mwcloak1.test.js"],

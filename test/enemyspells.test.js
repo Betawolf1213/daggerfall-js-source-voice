@@ -13,7 +13,7 @@ import { effectsAlreadyOnTarget } from '../src/systems/effects.js';
 import {
   EnemyCaster, pickRangedSpell, pickTouchSpell, clearPathToShootSpell,
   MIN_RANGED_DISTANCE, MAX_RANGED_DISTANCE, RANGED_SPELL_CHANCE,
-} from '../src/characters/enemyCasting.js';
+} from '../src/characters/enemy/enemyCasting.js';
 import { MISSILE_SPEED, MISSILE_COLLIDER_RADIUS } from '../src/systems/spellcast.js';
 import { ARROW_ARM_LENGTH } from '../src/characters/weaponStates.js';
 

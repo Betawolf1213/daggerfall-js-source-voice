@@ -13,7 +13,7 @@
 // people (the scene passes the tables); the guard crime RESPONSE
 // pends the crime system (they spawn and walk now).
 
-import { PERSON_TEXTURES, PERSON_FACE_RECORDS, NUM_PERSON_FACE_VARIANTS, GUARD_TEXTURE, MobilePerson } from '../../characters/mobilePerson.js';
+import { PERSON_TEXTURES, PERSON_FACE_RECORDS, NUM_PERSON_FACE_VARIANTS, GUARD_TEXTURE, MobilePerson } from '../../characters/mobile/mobilePerson.js';
 import { NAV_CELL } from '../../world/city/cityNavigation.js';
 import { fullName, getNameBank, GENDERS } from '../../characters/nameHelper.js';
 
@@ -57,7 +57,7 @@ export class TownPopulation {
     // AUDIT 23 (characters-5) - MobilePersonNPC.cs:214-215: the NAME
     // bank is the REGION's (MapsFile.RegionRaces), independent of the
     // billboard race (the climate's, or REGIONAL-FOLK's Redguard region's -
-    // characters/mobilePerson.js walkerRace); null falls back to the race bank.
+    // characters/mobile/mobilePerson.js walkerRace); null falls back to the race bank.
     this.nameBank = nameBank;
     this.makePerson = makePerson;
     this.rand = rand;

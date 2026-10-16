@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { readFileSync } from 'node:fs';
 import { rosterLook } from '../src/characters/foeBodies.js';
-import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES as M } from '../src/characters/mobile/mobileTypes.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { ARMOR_ENUM } from '../src/combat/enemyEquipment.js';
 import { createSiegeNpcs } from '../src/scenes/siegeNpcs.js';

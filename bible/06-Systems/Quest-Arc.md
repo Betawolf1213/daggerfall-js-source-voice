@@ -2581,7 +2581,7 @@ Seven mutants, seven kills.
 
 **A generator nobody runs is a hand transcription with extra steps.**
 
-`src/characters/enemyBasics.js` is 3025 lines of `MobileEnemy` records
+`src/characters/enemy/enemyBasics.js` is 3025 lines of `MobileEnemy` records
 and it is *generated*, from `EnemyBasics.cs`, by
 `tools/extract-enemy-basics.mjs`. That reads like the safe answer to
 the transcription law - and it is, right up until you ask when the
@@ -3900,7 +3900,7 @@ ReferenceError: Cannot access 'CAPSULE_RADIUS' before initialization
 ```
 
 Twelve test files, from one new line. `player/motor.js` imported
-`DF_WALK_BASE` from `characters/enemyMotor.js` while `enemyMotor.js`
+`DF_WALK_BASE` from `characters/enemy/enemyMotor.js` while `enemyMotor.js`
 imported the capsule constants back from `motor.js` - a cycle wave 24
 created deliberately, and which stayed invisible for as long as every
 use sat inside a function body. `OBSTACLE_CHECK_DISTANCE =
@@ -4283,7 +4283,7 @@ it - and could not have, easily, because the name it needs
 quest machinery, where nothing outside a quest could reach it without
 risking the import cycle this arc has now hit three times.
 `ENEMY_NAMES` and `isClassEnemyId` moved down to
-`characters/enemyBasics.js` - a true leaf with zero imports, which
+`characters/enemy/enemyBasics.js` - a true leaf with zero imports, which
 `quest/foe.js` already imports anyway - and `quest/foe.js` re-exports
 them, so the edge got shorter rather than longer.
 
@@ -4576,7 +4576,7 @@ frame body does. Three ways:
   sound is audible almost everywhere" - and `play3d` hardcoded inverse,
   so the option did not exist to ask for.
 
-One home now (`characters/enemySounds.js`), three pools, and the drift
+One home now (`characters/enemy/enemySounds.js`), three pools, and the drift
 closed on the way in.
 
 **Two DFU quirks are kept because they are DFU's.**

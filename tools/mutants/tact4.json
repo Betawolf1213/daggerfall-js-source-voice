@@ -229,7 +229,7 @@
   },
   {
     "name": "TACT4-attack-ignores",
-    "file": "src/characters/enemyAttack.js",
+    "file": "src/characters/enemy/enemyAttack.js",
     "old": "      if (ai._blowSwing) {",
     "new": "      if (false) {",
     "tests": [

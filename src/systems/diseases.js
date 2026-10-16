@@ -41,7 +41,7 @@ import { isEntityImmuneToDisease } from './effects.js';   // AUDIT 63 F15: Assig
 import { INFECTION, startInfection } from './infection.js';   // V1: the three special infections OnMonsterHit mints
 import { FATIGUE_MULTIPLIER } from './statMods.js';
 import { dice100 } from '../combat/formulas.js';
-import { MOBILE_TYPES } from '../characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../characters/mobile/mobileTypes.js';
 import { localizedText } from './textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
 import { noteFirstUse } from './tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
 

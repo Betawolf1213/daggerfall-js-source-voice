@@ -9,7 +9,7 @@ import { DRAPED_NAMES } from '../src/characters/pieces/draped.js';
 import { HAIR_RAMPS } from '../src/characters/pieces/hair.js';
 import { PALETTES } from '../src/characters/palettes.js';
 import { buildNeutralBody } from '../src/characters/neutralBody.js';
-import { PERSON_TEXTURES, GUARD_TEXTURE } from '../src/characters/mobilePerson.js';
+import { PERSON_TEXTURES, GUARD_TEXTURE } from '../src/characters/mobile/mobilePerson.js';
 import { DFPalette } from '../src/formats/dfPalette.js';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';

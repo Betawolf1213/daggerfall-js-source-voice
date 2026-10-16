@@ -6,14 +6,14 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   EnemyAI, FOLLOW_YAW_GATE_DEG, FOLLOW_RUN_M, FOLLOW_RUN_PACE, FOLLOW_SIGHT_S, FOLLOW_CRUMB_REACH, enemyMoveSpeed,
-} from '../src/characters/enemyMotor.js';
+} from '../src/characters/enemy/enemyMotor.js';
 import { EnhancedEnemyAI, makeNavWorld } from '../src/ai/enhancedMotor.js';
 import { bakeNavFromCollider } from '../src/ai/navBake.js';
 import { Collider } from '../src/player/collider.js';
-import { runTargetMachine } from '../src/characters/enemyTargets.js';
+import { runTargetMachine } from '../src/characters/enemy/enemyTargets.js';
 import { createCompanions } from '../src/systems/naval/crewCompanions.js';
 import { createCrewAshore, TRAIL_STEP_M, TRAIL_MAX, TRAIL_JUMP_M } from '../src/scenes/crewAshore.js';
-import { EnemySoundSource, COMPANION_ATTRACT_SCALE, MIN_ATTRACT_DELAY } from '../src/characters/enemySounds.js';
+import { EnemySoundSource, COMPANION_ATTRACT_SCALE, MIN_ATTRACT_DELAY } from '../src/characters/enemy/enemySounds.js';
 import { tickEnemySound } from '../src/scenes/hostCombat.js';
 import { createPortalSet, PORTAL_SOUND, PORTAL_SOUND_GAP_MS } from '../src/scenes/portalFx.js';
 import { QuestAudioSource, QUIET_QUEST_SOUNDS } from '../src/systems/audio.js';

@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { regularLook, regularsToStand, regularBark, REGULAR_CLOTHES, REGULAR_FACES, BARK_MS, REGULAR_HEAD_M } from '../src/world/card/cardRegulars.js';
 import { BANK_TYPES } from '../src/characters/nameHelper.js';
-import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
+import { EQUIP_SLOTS } from '../src/characters/paperdoll/paperdoll.js';
 import { seatTopByte } from '../src/player/seatPose.js';
 import { validLook } from '../src/net/wire.js';
 import { peerStubEntity } from '../src/net/remotePlayers.js';

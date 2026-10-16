@@ -1253,7 +1253,7 @@ slot 19 by hand, so S3d's WORN starting clothes rode along and its
 count assertion was reading four where it meant three.
 (F5) ONE DFU MEMBER, ONE EXPORT, again. 17e F32 collapsed the armor
 material tables from equip.js and paperDoll.js and stopped one file
-short: characters/paperdollArt.js still held a third copy of the
+short: characters/paperdoll/paperdollArt.js still held a third copy of the
 SetVariant clamps and a SECOND export named `armorArchive` whose
 second argument was a RACE where the other's was a MORPHOLOGY - the
 same DFU member, same name, incompatible arguments. Collapsed onto the

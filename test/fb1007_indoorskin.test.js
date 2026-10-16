@@ -26,7 +26,7 @@ import { registerPlayerKillListener } from '../src/systems/playerKills.js';
 import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { loadQuestTables } from '../src/systems/quest/tables.js';
 import { Foe } from '../src/systems/quest/foe.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (p) => readFileSync(join(ROOT, p), 'utf8');

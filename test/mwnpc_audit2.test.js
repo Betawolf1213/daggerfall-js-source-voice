@@ -13,13 +13,13 @@ import { residentWalkerActor, residentLook } from '../src/characters/rosterBodie
 import { wornByRole } from '../src/characters/wardrobe.js';   // PIN MOVED (MWNPC17, section 25): a look is its role's, dressed off the seed
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { createMerchantYards } from '../src/scenes/merchantYardsHost.js';
-import { PERSON_TEXTURES, GUARD_TEXTURE } from '../src/characters/mobilePerson.js';
+import { PERSON_TEXTURES, GUARD_TEXTURE } from '../src/characters/mobile/mobilePerson.js';
 import { createNpcBodies, createFrameBudget, holdNpcBodies, npcBodiesHeld, NPC_HOLD_MS, NPC_FRAME_TIERS } from '../src/characters/npcBodies.js';
 import { PeerBodies, createBuildGate, gateBuild, BODY_GATE_STALL_MS, peerBodyKey, peerBuildOpts } from '../src/net/peer/peerBodies.js';
 import { buildFpArm, esmLoadOrder } from '../src/combat/fpArm.js';
 import { creatureDeps, creaRec } from './fixtures/mw/creatureRig.mjs';
 import { creatureLook } from '../src/characters/creatureBodies.js';
-import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES as M } from '../src/characters/mobile/mobileTypes.js';
 import { CREA_FLAG, assembleFirstPersonArm, poseAssembly } from '../src/formats/mwFirstPerson.js';
 import { skinLayout, writeSkinPalette, skinnedVertex, skinStreamFloats, SKIN_STATIC_FLOATS } from '../src/formats/mwGpuSkin.js';
 import { parseNif } from '../src/formats/mwNifFile.js';

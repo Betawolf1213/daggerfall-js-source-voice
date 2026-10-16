@@ -29,8 +29,8 @@ import { lootRarityOn } from './loot/lootRarity.js';
 import { foeTitle } from './foeTitle.js';   // FOE-TITLE: the names' one home
 import { registerPlayerStruckListener, registerPlayerStrikeListener } from '../combat/formulas.js';
 import { hurtPlayer } from '../characters/playerEntity.js';
-import { KNIGHT_CITY_WATCH } from '../characters/mobileTypes.js';
-import { enemyDisplayName } from '../characters/enemyBasics.js';   // LOOT7-CHECK CHAMP-SAID: the name the death line says
+import { KNIGHT_CITY_WATCH } from '../characters/mobile/mobileTypes.js';
+import { enemyDisplayName } from '../characters/enemy/enemyBasics.js';   // LOOT7-CHECK CHAMP-SAID: the name the death line says
 import { popupMessage } from './notify.js';   // LOOT7-CHECK CHAMP-SAID: DaggerfallUI.PopupMessage, the live host's line
 
 /** Per mille of the foes that may be one that stand as a champion (CHAMP-RATE, 2026-10-03, Mac: "buff champion rates

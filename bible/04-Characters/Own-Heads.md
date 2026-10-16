@@ -1,7 +1,7 @@
 # Own Heads - the port's own heads and hairs for the Morrowind body
 
 `tools/bakeHeads.mjs` (the bake) + `tools/fbxMesh.mjs` (one material of an object, `material`) +
-`src/characters/ownHeadModels.js` (the pools) + `src/formats/mwFirstPerson.js` (facePools) +
+`src/characters/ownModels/ownHeadModels.js` (the pools) + `src/formats/mwFirstPerson.js` (facePools) +
 `src/formats/mwFaceTable.json` (the curated portraits) + `src/tools/mwViewer.js` (the face sheet) (MW-HEADS1, the owner,
 2026-10-13)
 

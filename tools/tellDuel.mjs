@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // AUDIT TELL (bible/12-Enhanced-AI/Feud-Arc.md section 28): THE DUEL HARNESS - the balance targets measured, not
-// guessed. The real brain (ai/tactics.js), the real foe motor and attack component (characters/enemyMotor.js,
-// characters/enemyAttack.js) on a real collider's flat floor, the real foe (characters/enemyEntity.js
+// guessed. The real brain (ai/tactics.js), the real foe motor and attack component (characters/enemy/enemyMotor.js,
+// characters/enemy/enemyAttack.js) on a real collider's flat floor, the real foe (characters/enemy/enemyEntity.js
 // makeEnemyEntity, systems/eliteFoes.js for an elite), the real damage roll (combat/formulas.js calculateAttackDamage)
 // and the real swing tempo (characters/weaponStates.js, the weapon in the hand through combat/swingLaw.js) - against a
 // scripted player who stands at the foe's front and either TRADES blows or DODGES. Every fight seeded.
@@ -29,13 +29,13 @@ import { setPref, getPref, _resetForTests } from '../src/systems/uiPrefs.js';
 import { setTacticsClock, resetTactics, noteLocalPlayer, windupStruck, LOCAL_TARGET } from '../src/ai/tactics.js';
 import { resetBlows, inBlow, BLOW_TIER_LEVEL } from '../src/ai/foeBlows.js';
 import { blowK, blowWeight, behind, poiseOf, weightClass, TELL } from '../src/ai/tells.js';
-import { EnemyAI } from '../src/characters/enemyMotor.js';
-import { EnemyAttack } from '../src/characters/enemyAttack.js';
+import { EnemyAI } from '../src/characters/enemy/enemyMotor.js';
+import { EnemyAttack } from '../src/characters/enemy/enemyAttack.js';
 import { Collider } from '../src/player/collider.js';
 import { calculateAttackDamage, enemyWeightClassicUnits, chooseEnemyWeapon, weaponKnockbackApplies, weaponKnockbackSpeed } from '../src/combat/formulas.js';
-import { makeEnemyEntity } from '../src/characters/enemyEntity.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
-import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';
+import { makeEnemyEntity } from '../src/characters/enemy/enemyEntity.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
+import { MOBILE_TYPES as M } from '../src/characters/mobile/mobileTypes.js';
 import { WEAPONS } from '../src/characters/weapons.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { promoteEliteFoe } from '../src/systems/eliteFoes.js';

@@ -47,7 +47,7 @@ import { healMine, manaMine } from './playerHeal.js';
 import { playerDoor } from './playerDoor.js';
 import { isMagicallyConcealed } from './effects.js';
 import { near, foeGroup, elementShare } from './loot/lootPowers.js';   // AUDIT SCHOOLS (L1 H1-H2, L3 F1): the one reach law, the one foe group, the one element share
-import { KNIGHT_CITY_WATCH } from '../characters/mobileTypes.js';
+import { KNIGHT_CITY_WATCH } from '../characters/mobile/mobileTypes.js';
 import { hudText } from './notify.js';
 import { t } from './textManager.js';
 

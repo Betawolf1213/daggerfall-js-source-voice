@@ -26,7 +26,7 @@ import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { EFFECT_FLAGS } from '../src/systems/spellcast.js';
 import { setWorldMinutes } from '../src/systems/worldTick.js';
-import { KNIGHT_CITY_WATCH } from '../src/characters/mobileTypes.js';
+import { KNIGHT_CITY_WATCH } from '../src/characters/mobile/mobileTypes.js';
 import { BRIEF_MAX } from '../src/systems/sigil/sigilSets.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

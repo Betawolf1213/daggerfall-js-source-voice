@@ -6,7 +6,7 @@ import {
   LOOT_MATRICES, ITEM_GROUPS, generateRandomLoot, generateItems,
   createRandomWeapon, createRandomArmor, BOOK_TEMPLATE,
 } from '../src/systems/loot/loot.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 
 // itemTemplates.json indices, the three this test names by hand.
 const IDX_WEREBOARS_TUSK = 34, IDX_UNICORN_HORN = 37, IDX_DAEDRAS_HEART = 53;

@@ -83,7 +83,7 @@ Stable's iron horseshoe, its opening up for luck, and STABLES; the Wagon Yard's 
 spokes - and WAGONS. Both faces carry the picture, each reading the right way round (the world is left-handed: from the
 street, looking along -z, +x is on the viewer's left - the front's picture starts at +x, the back's at -x).
 
-**The keepers.** A person of the town's own people (the race its walkers wear - `characters/mobilePerson.js`
+**The keepers.** A person of the town's own people (the race its walkers wear - `characters/mobile/mobilePerson.js`
 `walkerRace`, REGIONAL-FOLK's law: the climate's People, a Redguard region's Redguard; both exterior hosts' populations
 and the yards read it) in the idle record its walkers stand in, one of the race's four outfits; named on the region's
 name bank on a seed of the town's map id and the yard's kind (`yardKeeper`, DFU's stream put back as it stood), so every
@@ -136,7 +136,7 @@ Nothing is saved or sent: where a yard stands is the town's layout, who keeps it
 MERCHANT-YARDS and WAGONS3 (`06-Systems/Wagons.md`) were built on two branches and landed together, after main had
 taken REGIONAL-FOLK (`01-Overview/Field-Bugs-2026-10-10.md`). Three seams were settled on the merged tree:
 
-- **One race law.** This branch had moved the climate's People map to `characters/mobilePerson.js` as
+- **One race law.** This branch had moved the climate's People map to `characters/mobile/mobilePerson.js` as
   `peopleRaceOf`; REGIONAL-FOLK had put the same map there as `raceOfPeople`, with `walkerRace` over it (a Redguard
   region's walkers are Redguards). Two homes for one table is the ONE EXPORT rule's fault, so `peopleRaceOf` is gone
   and the keepers wear `walkerRace(people, region)`, as the walkers do - Sentinel's stablemaster is a Redguard, as

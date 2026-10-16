@@ -17,7 +17,7 @@ import { dayPlan, isLodger, favourites, LODGE_BREAKFAST_MIN, LODGE_UP_MIN, DAY_M
 import { LivingTown } from '../src/systems/livingWorld/livingTown.js';
 import { createLivingIndoors, bedStand, bedsOf, BED_STEP_M, BED_FAN, INDOOR_TICK_S } from '../src/scenes/livingWorld/livingIndoors.js';
 import { BUILDING_TYPES as B } from '../src/world/buildingNames.js';
-import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
+import { PERSON_MOVE_SPEED } from '../src/characters/mobile/mobilePerson.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

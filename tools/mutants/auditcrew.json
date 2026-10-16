@@ -151,7 +151,7 @@
   },
   {
     "name": "AUDIT-CC-B2-companion-takes-player",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "|| selfMobileTeam === 'PlayerAlly' || self.companion != null) && isPlayer) continue;",
     "new": "|| selfMobileTeam === 'PlayerAlly') && isPlayer) continue;",
     "tests": [
@@ -161,7 +161,7 @@
   },
   {
     "name": "AUDIT-CC-B3-secondary-kept",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "  _dropTargets() {\n    this.target = null; this.secondaryTarget = null; this.targetSenses = null;",
     "new": "  _dropTargets() {\n    this.target = null; this.targetSenses = null;",
     "tests": [
@@ -171,7 +171,7 @@
   },
   {
     "name": "AUDIT-CC-B3-never-returning",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "      this._returning = home > leash;",
     "new": "      this._returning = false;",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "AUDIT-CC-B4-runs-out",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    if (home > leash || (tf && Math.hypot(tf[0] - leader[0], tf[2] - leader[2]) > leash)) {",
     "new": "    if (home > leash) {",
     "tests": [
@@ -191,7 +191,7 @@
   },
   {
     "name": "AUDIT-CC-B4-idle-hold",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    return this.predictedTargetPos == null || this.giveUpTimer <= 0;",
     "new": "    return false;",
     "tests": [
@@ -241,7 +241,7 @@
   },
   {
     "name": "AUDIT-CC-B7-quest-foe-spares",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "!self.questAttackable && !isPlayer && c.companion == null) continue;",
     "new": "!self.questAttackable && !isPlayer) continue;",
     "tests": [
@@ -251,7 +251,7 @@
   },
   {
     "name": "AUDIT-CC-B7-companion-spares-quest",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "&& !c.questAttackable && self.companion == null) continue;",
     "new": "&& !c.questAttackable) continue;",
     "tests": [
@@ -606,7 +606,7 @@
   },
   {
     "name": "AUDIT-CC-F-motor-paralyzed",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "!!this.follow && !paralyzed && !paused && !knocked",
     "new": "!!this.follow && !paused && !knocked",
     "tests": [
@@ -616,7 +616,7 @@
   },
   {
     "name": "AUDIT-CC-F-motor-paused",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "!!this.follow && !paralyzed && !paused && !knocked",
     "new": "!!this.follow && !paralyzed && !knocked",
     "tests": [
@@ -626,7 +626,7 @@
   },
   {
     "name": "AUDIT-CC-F-motor-knocked",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "!!this.follow && !paralyzed && !paused && !knocked",
     "new": "!!this.follow && !paralyzed && !paused",
     "tests": [
@@ -636,7 +636,7 @@
   },
   {
     "name": "AUDIT-CC-F-motor-no-leader-walks",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "if (!leader) { this.moving = false; return; }\n    const d = Math.hypot",
     "new": "if (!leader) { return; }\n    const d = Math.hypot",
     "tests": [
@@ -646,7 +646,7 @@
   },
   {
     "name": "AUDIT-CC-F-motor-detour-ignored",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    const aim = this.avoidObstaclesTimer > 0 ? this.detourDestination : this.destination;\n    const dx = aim[0] - this.feet[0];\n    const dz = aim[2] - this.feet[2];\n    for (let i = 0; i < classicTicks; i++) {\n      if (!withinYaw",
     "new": "    const aim = this.destination;\n    const dx = aim[0] - this.feet[0];\n    const dz = aim[2] - this.feet[2];\n    for (let i = 0; i < classicTicks; i++) {\n      if (!withinYaw",
     "tests": [
@@ -876,7 +876,7 @@
   },
   {
     "name": "AUDIT-CC-F-targets-peaceful-fights",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "!(c.companion != null && ai.isHostile)",
     "new": "!(c.companion != null)",
     "tests": [

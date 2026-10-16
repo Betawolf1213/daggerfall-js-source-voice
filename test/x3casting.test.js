@@ -1,11 +1,11 @@
 // X3-slice: exterior enemy CASTING - the ONE cast executor
-// (characters/enemyCasting.js) + the pool/engine wiring.
+// (characters/enemy/enemyCasting.js) + the pool/engine wiring.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { castEnemySpell } from '../src/characters/enemyCasting.js';
+import { castEnemySpell } from '../src/characters/enemy/enemyCasting.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (f) => readFileSync(join(root, f), 'utf8');

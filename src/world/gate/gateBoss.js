@@ -23,9 +23,9 @@ import {
   MOVE_ANIM_SPEED, IDLE_ANIM_SPEED, PRIMARY_ATTACK_ANIM_SPEED,
   FLY_ANIM_SPEED, HURT_ANIM_SPEED, SEDUCER_IDLE_MOVE_ANIMS, SEDUCER_ATTACK_ANIMS,   // WB11c: his host's flight, its hurt, and the Seducer's winged form
   stateAnims,   // AUDIT WB11 C1: his host's tables by the port's own law
-} from '../../characters/mobileUnit.js';
-import { ENEMY_BASICS } from '../../characters/enemyBasics.js';
-import { makeEnemyEntity } from '../../characters/enemyEntity.js';
+} from '../../characters/mobile/mobileUnit.js';
+import { ENEMY_BASICS } from '../../characters/enemy/enemyBasics.js';
+import { makeEnemyEntity } from '../../characters/enemy/enemyEntity.js';
 import { courtToDungeon } from './gateArena.js';
 import { hitFlashStrength } from '../../systems/hitFlash.js';   // WB13d: his body struck flashes on the game's own curve
 import { fxBurstOf } from '../../render/gateFx.js';   // WB13d: a landing whose burst carries its own light lights there, not him
@@ -38,7 +38,7 @@ export const bossLookOf = (id) => BOSS_LOOKS[id] ?? BOSS_LOOKS.ruhn;
 /**
  * WB4b: THE ENTITY A BLOW ON HIM IS COMPUTED AGAINST - on the striker's machine, by the port's own formulas (a swing's
  * and a shaft's calculateAttackDamage, a spell's applySpell), the number sent and the relay's caps deciding what lands
- * (net/gate/gateBrain.js applyHit). His look's own mobile's entity (characters/enemyEntity.js makeEnemyEntity) with three
+ * (net/gate/gateBrain.js applyHit). His look's own mobile's entity (characters/enemy/enemyEntity.js makeEnemyEntity) with three
  * things set for the fight: EVERY METAL BITES (a Daedra Lord's own needs Mithril - no level-1 player could touch him),
  * his armour a knight's in plate rather than a Daedra Lord's (BOSS_ARMOR: against his own dodging, a level-1 iron
  * longsword lands more than half its swings and a level-20 blade nearly all - bible section 5's numbers, measured in the
@@ -112,7 +112,7 @@ export const STUN_ANIM_SPEED = 3;
 /** The fall: the hurt frames played slowly this long, and then he is gone (WB5's spoils spill at the fall). */
 export const FALL_MS = 2400;
 /** WB13d (2026-10-01, Mac: "AAA grade polish"): HIS FIRE IS CAST, NOT SWUNG - the Daedra Lord's own spell frames
- *  (characters/enemyBasics.js spellAnimFrames, [1, 1, 3, 3]): his attack's frame CAST_RAISE_FRAME held through a fire's
+ *  (characters/enemy/enemyBasics.js spellAnimFrames, [1, 1, 3, 3]): his attack's frame CAST_RAISE_FRAME held through a fire's
  *  wind-up, CAST_LOOSE_FRAME as it is loosed. His blade and his weight keep the swing (frames 0, 1, then 2-4). */
 export const CAST_RAISE_FRAME = 1;
 export const CAST_LOOSE_FRAME = 3;
@@ -131,7 +131,7 @@ export const gateHitFlash = (mineAt, courtAt, now) => Math.max(hitFlashStrength(
 export const LANDING_LIGHT_Y = 0.6;
 /** WB13e (2026-10-01, Mac: "AAA grade polish"): HIS FALL, AN EVENT - his body meets the floor THUD_AT_MS into it, then
  *  sinks FALL_SINK_M into the stone over the rest of FALL_MS, in a column of embers, and leaves his corpse there at
- *  CORPSE_SCALE (his mobile's own, characters/enemyBasics.js corpseTexture). */
+ *  CORPSE_SCALE (his mobile's own, characters/enemy/enemyBasics.js corpseTexture). */
 export const FALL_SINK_M = 1.5;
 export const CORPSE_SCALE = 3;
 /** WB13e: HIS WAKE - this long before the opening ends (the relay's `op`), his roar, his flare and his name. */
@@ -512,7 +512,7 @@ export const HOST_FLINCH_MS = 350;
  */
 export function hostAct(a, now, look, hurtAt = -Infinity) {
   const winged = !!look?.winged;
-  // AUDIT WB11 C1/C7: its tables and its clock by the port's own law for its mobile (characters/mobileUnit.js stateAnims,
+  // AUDIT WB11 C1/C7: its tables and its clock by the port's own law for its mobile (characters/mobile/mobileUnit.js stateAnims,
   // and MobileUnit's flyer clock - DFU's GetStateAnims): an Imp has no idle frames (HasIdle false) and idles and rises
   // on its move loop - it rose and idled on records it does not have; a flyer (the Imp, the winged Seducer) moves and
   // idles at FLY_ANIM_SPEED, every other table at its own pace

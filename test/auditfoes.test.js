@@ -94,7 +94,7 @@ test('AUDIT FOES FOE6: a puppet is removed from the index by IDENTITY, never by 
 
 test('AUDIT FOES FOE8: a class puppet is judged against the level it was BUILT at, not the one its constructor rolled', () => {
   const x = code('src/scenes/exteriorFoes.js');
-  const e = code('src/characters/enemyEntity.js');
+  const e = code('src/characters/enemy/enemyEntity.js');
   // the re-roll that made the equality test a lie, still there and still DFU's
   assert.match(e, /if \(mobileType === KNIGHT_CITYWATCH_ID && !exactLevel\) level \+= 3 \+ Math\.floor\(rollFn\(\) \* 4\);/,   // AUDIT WATCH1 A5: a puppet hands the streamed level in as final
     'DFU adds Range(3,7) to a City Watch inside the constructor');

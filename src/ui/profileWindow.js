@@ -23,7 +23,7 @@
 import { isTextEntryTarget } from './input.js';
 import { titleBadge, glyphBadges, glyphSvgNode, paintTitle } from './playerBadge.js';
 import { PIXELIFY_FIVE_FACE, PIXEL_FONT_CSS } from './pixelifyFive.js';
-import { EQUIP_SLOTS } from '../characters/paperdoll.js';
+import { EQUIP_SLOTS } from '../characters/paperdoll/paperdoll.js';
 import { itemLongName } from '../systems/item/itemInfo.js';
 import { raceDisplayName } from '../systems/talk/talkSession.js';
 import { STAT_KEYS_ORDER } from '../systems/chargen.js';

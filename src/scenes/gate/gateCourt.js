@@ -41,7 +41,7 @@ import { readReceipt } from '../../net/gate/gateReceipt.js';
 import { bodySayer } from '../../net/bossBody.js';   // INT15: my body, said to the court's room
 import { createGateHost } from './gateHost.js';   // WB11c: the Legion-Lord's host - its bodies, blows, words and sounds
 import { createPopulationLane } from '../../characters/npcBodies.js'; import { creatureLook } from '../../characters/creatureBodies.js'; import { rosterActor } from '../../characters/rosterBodies.js';   // MWNPC10: the court's creatures in their Morrowind bodies
-import { ENEMY_BASICS } from '../../characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../../characters/enemy/enemyBasics.js';
 import { mobileBillboardSize, billboardSize } from '../../world/rmbFlats.js';
 
 /** The words a strike says that the hurt itself does not; and the fall's, to a player the receipt never came for.
@@ -662,7 +662,7 @@ export function createGateCourt({
     const [x, z] = bossPlace(s, t);
     addBurst(courtToDungeon(x, P.bossH * 0.55, z), t, FX_KINDS.sputter, emberColor(P));
   }
-  /** WB13e: HIS BODY LEFT where he fell - his mobile's own corpse (characters/enemyBasics.js corpseTexture) at
+  /** WB13e: HIS BODY LEFT where he fell - his mobile's own corpse (characters/enemy/enemyBasics.js corpseTexture) at
    *  CORPSE_SCALE on the floor, once he has sunk; put away with the court. */
   function drawCorpse(s) {
     const ct = ENEMY_BASICS[bossLookOf(s.boss).mobile]?.corpseTexture;

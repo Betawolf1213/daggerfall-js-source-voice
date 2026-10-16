@@ -16,7 +16,7 @@ import { fileURLToPath } from 'node:url';
 import {
   EnemyAI, canHearTarget, MELEE_DISTANCE, STOP_YAW_GATE_DEG, MOVE_YAW_GATE_DEG,
   CLASSIC_TURN_DEG, CLASSIC_UPDATE_INTERVAL,
-} from '../src/characters/enemyMotor.js';
+} from '../src/characters/enemy/enemyMotor.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DEG = Math.PI / 180;

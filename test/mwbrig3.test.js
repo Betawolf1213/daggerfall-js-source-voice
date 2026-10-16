@@ -17,7 +17,7 @@ import { fitLift, liftBatch } from '../src/formats/mwSkinTransfer.js';
 import { assembleFirstPersonArm, poseAssembly } from '../src/formats/mwFirstPerson.js';
 import { composeWornArmor } from '../src/formats/mwItemMap.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
-import { OWN_MW_ARMOR, RRI_JERKIN_TEMPLATE } from '../src/characters/ownArmorModels.js';
+import { OWN_MW_ARMOR, RRI_JERKIN_TEMPLATE } from '../src/characters/ownModels/ownArmorModels.js';
 import { writeNif, meshToNif } from '../tools/nifWrite.mjs';
 
 const onDisk = (p) => new Uint8Array(readFileSync(new URL(`../${p}`, import.meta.url)));

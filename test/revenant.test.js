@@ -30,7 +30,7 @@ const { setStruck, _resetSetPowersForTests } = await import('../src/systems/sigi
 const { setPlayerDoor } = await import('../src/systems/playerDoor.js');
 const { getSeed, setSeed } = await import('../src/formats/dfRandom.js');
 const { modSaveRecords, restoreModSaveRecords } = await import('../src/systems/modSaveData.js');
-const { KNIGHT_CITY_WATCH, MOBILE_TYPES } = await import('../src/characters/mobileTypes.js');
+const { KNIGHT_CITY_WATCH, MOBILE_TYPES } = await import('../src/characters/mobile/mobileTypes.js');
 const { foeTitle } = await import('../src/systems/foeTitle.js');
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

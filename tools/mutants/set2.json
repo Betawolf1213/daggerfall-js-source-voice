@@ -118,7 +118,7 @@
   },
   {
     "name": "SET2-a-foes-cast-made-cheaper",
-    "file": "src/characters/enemyCasting.js",
+    "file": "src/characters/enemy/enemyCasting.js",
     "old": "calculateCastCost(spell, playerEntity, { portMods: false }).sp",
     "new": "calculateCastCost(spell, playerEntity).sp",
     "tests": [

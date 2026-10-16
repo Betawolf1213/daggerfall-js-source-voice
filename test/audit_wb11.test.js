@@ -18,8 +18,8 @@ import { createGateCourt } from '../src/scenes/gate/gateCourt.js';
 import { courtToDungeon } from '../src/world/gate/gateArena.js';
 import { createEnchantCtx } from '../src/scenes/hostEnchant.js';
 import { setDefaultEnchantCtx, ENCHANTMENT_TYPES as ET, PAYLOAD, doItemEnchantmentPayloads } from '../src/systems/enchantments.js';
-import { stateAnims, HURT_ANIMS, MOVE_ANIMS, mobileOrientation, FLY_ANIM_SPEED } from '../src/characters/mobileUnit.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { stateAnims, HURT_ANIMS, MOVE_ANIMS, mobileOrientation, FLY_ANIM_SPEED } from '../src/characters/mobile/mobileUnit.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { DAMAGE_CHART_CSS } from '../src/ui/gate/gateDamageChart.js';
 import { MARK_TIPS } from '../src/ui/gate/gateMarksView.js';
 import { GATE_TRIALS } from '../src/net/gate/gateMods.js';   // WB13b
@@ -307,7 +307,7 @@ test('AUDIT WB11 R1 a blow on one of his host - and on a crystal - keeps the bea
 
 // ═══ C: THE COURT'S CLIENT ═════════════════════════════════════════════════════════════════════════════════════════
 
-test('AUDIT WB11 C1/C7 his host moves by its own mobile\'s law (characters/mobileUnit.js stateAnims and the flyer\'s clock): an Imp has no idle frames and idles and rises on its move loop at FLY_ANIM_SPEED; the winged Seducer idles at the flyer\'s clock; every look\'s tables are the port\'s own (mutants: the Imp on idle records it lacks; the Seducer at the walker\'s clock)', () => {
+test('AUDIT WB11 C1/C7 his host moves by its own mobile\'s law (characters/mobile/mobileUnit.js stateAnims and the flyer\'s clock): an Imp has no idle frames and idles and rises on its move loop at FLY_ANIM_SPEED; the winged Seducer idles at the flyer\'s clock; every look\'s tables are the port\'s own (mutants: the Imp on idle records it lacks; the Seducer at the walker\'s clock)', () => {
   for (const [key, table] of Object.entries(GBoss.HOST_LOOKS)) {
     for (const aspect of Object.keys(table)) {
       const k = GB.HOST_KINDS.find((q) => q.key === key).id, look = GBoss.hostLookOf(k, aspect);

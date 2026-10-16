@@ -27,7 +27,7 @@ import test from 'node:test';
 import assert from 'node:assert';
 import { drapedGrid } from '../src/characters/pieces/draped.js';
 import { buildNeutralBody } from '../src/characters/neutralBody.js';
-import { buildPaperdollPayload } from '../src/characters/paperdollPayload.js';
+import { buildPaperdollPayload } from '../src/characters/paperdoll/paperdollPayload.js';
 import { UNDEAD_DESIGNS, undeadOpts } from '../src/characters/undeadBody.js';
 import { CLASS_DESIGNS, classOpts } from '../src/characters/humanClasses.js';
 import { DAEDRA_DESIGNS, daedraOpts } from '../src/characters/daedra.js';

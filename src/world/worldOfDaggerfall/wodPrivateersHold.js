@@ -31,7 +31,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { rangeInt } from '../../systems/unleveledLoot.js';
-import { MOBILE_TYPES } from '../../characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../../characters/mobile/mobileTypes.js';
 import { createFoeGender } from './wodSpawner.js';
 import { objectMatrix } from './wodLocationObjects.js';
 

@@ -13,10 +13,10 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { setPref } from '../src/systems/uiPrefs.js';
 import { Collider } from '../src/player/collider.js';
-import { EnemyAI } from '../src/characters/enemyMotor.js';
-import { EnemyAttack } from '../src/characters/enemyAttack.js';
-import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { EnemyAI } from '../src/characters/enemy/enemyMotor.js';
+import { EnemyAttack } from '../src/characters/enemy/enemyAttack.js';
+import { MOBILE_TYPES as M } from '../src/characters/mobile/mobileTypes.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { WEAPONS } from '../src/characters/weapons.js';
 import { enemyWeightClassicUnits, weaponKnockbackSpeed, calculateAttackDamage } from '../src/combat/formulas.js';
 import { setTacticsClock, resetTactics, noteLocalPlayer, windupHolds, windupStruck, staggeredNow, tokensOut, LOCAL_TARGET } from '../src/ai/tactics.js';
@@ -455,7 +455,7 @@ test('TELL1: every door asks the poise door where it writes DFU\'s knock, passes
     ['src/scenes/worldModes.js', /interiorGuards\?\.hurtGuard\(foe, n, player\.pos, null, \{ fromPlayer: fp, kind: 'spell', round: !!o\?\.round \}\)/],
   ]) assert.match(rd(file), re, file);
   assert.match(rd('src/scenes/hostCombat.js'), /if \(target\.ai && !windupHolds\(target\.ai\) && enemyKnockbackApplies\(/);
-  const mo = rd('src/characters/enemyMotor.js');
+  const mo = rd('src/characters/enemy/enemyMotor.js');
   // PIN MOVED (TELL4, Feud-Arc.md 6.1): the stagger's lock is `locked` - a stagger or an overreach
   assert.match(mo, /const locked = staggered \|\| overreached \|\| \(this\.roarUntil > 0 && tacticsNow\(\) < this\.roarUntil\);/);   // PIN MOVED (RVN4: a last stand's roar holds it too)
   assert.match(mo, /this\.canAct = !paralyzed && !knocked && !locked && \(this\.isHostile \|\| foeTarget\);/);

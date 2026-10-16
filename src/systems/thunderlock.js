@@ -60,7 +60,7 @@ export const WEAPON_GROUP = 'Weapons';
  *  A classic weapon's paperdoll art lives in TEXTURE.234 (233 for
  *  female characters, ApplyWeaponMaterial's tail); this one has no
  *  entry there and no female variant to be off by one from, which is
- *  why characters/paperdollArt.js exempts a custom template from that
+ *  why characters/paperdoll/paperdollArt.js exempts a custom template from that
  *  subtraction rather than this file pretending to be classic. */
 export const ART = Object.freeze({ weaponArchive: THUNDERLOCK_ARCHIVE, ammoArchive: PELLET_ARCHIVE });
 
@@ -187,7 +187,7 @@ export function spendPellet(items) {
 /** The art: our own PNGs, through the same vendor-texture door the
  *  survival mod's icons come in by. Record 0 of each archive.
  *
- *  ONE SPRITE, TWO JOBS (characters/paperdollArt.js): the paperdoll
+ *  ONE SPRITE, TWO JOBS (characters/paperdoll/paperdollArt.js): the paperdoll
  *  layer and the inventory icon are the same record, which is why
  *  gun-paperdoll.png carries the hand gap and why the icon has a notch
  *  in it - it is a doll layer being shown in a list. */

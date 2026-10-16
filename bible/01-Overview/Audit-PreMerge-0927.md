@@ -64,7 +64,7 @@ mutation-proven (`tools/mutants/auditqp.json` 38, `auditown.json` 7, `auditpace.
 | I-F | low | The chat's Nearby list and the page's readers named a concealed player. | Both skip them - the F key's law. |
 | I-G | low | The classic lane silenced a concealed player (the sprite pass drove the steps, swings and hooves off the drawn list); the enhanced lane did not. | Every peer is heard (sound is no renderer, DFU's own law); the hidden are drawn nowhere and named nowhere. |
 
-**The seven small fixes** (`player/collider.js`, `characters/enemyMotor.js`, `.github/workflows/account-deploy.yml`)
+**The seven small fixes** (`player/collider.js`, `characters/enemy/enemyMotor.js`, `.github/workflows/account-deploy.yml`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|

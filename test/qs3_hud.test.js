@@ -470,7 +470,7 @@ test('QS3 the states, executed: the socket, the sheathed hand, the ghost\'s 0, a
   const { drawEnhancedHud, destroyEnhancedHud } = await import('../src/ui/enhanced/enhancedHud.js');
   const { assignQuickslot, clearQuickslots } = await import('../src/systems/quickslots.js');
   const { setBindings } = await import('../src/ui/input.js');
-  const { EQUIP_SLOTS } = await import('../src/characters/paperdoll.js');
+  const { EQUIP_SLOTS } = await import('../src/characters/paperdoll/paperdoll.js');
   const store = createBindings();
   setBinding(store, 'Digit1', 'QuickUse1');
   setBinding(store, 'Digit2', 'QuickUse2');

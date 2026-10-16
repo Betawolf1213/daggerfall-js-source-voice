@@ -38,7 +38,7 @@ import { modCompatibilityChecking, reportModCompatibilityIssues, COMPAT_WARNING_
 import { MOD_SETTINGS, isFloatKey, isChoiceKey, isIntKey, isTextKey, isTupleKey, setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { FEATURES, MOD_CURATED } from '../src/systems/features.js';
 import { CREDITS } from '../src/ui/credits.js';
-import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
+import { EQUIP_SLOTS } from '../src/characters/paperdoll/paperdoll.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { FOOTSTEP } from '../src/systems/footsteps.js';
 import { equipTableOf } from '../src/systems/equip.js';

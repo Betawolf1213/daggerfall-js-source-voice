@@ -1,5 +1,5 @@
 // ROAD TO 1:1, group a5 - THE SEDUCER TRANSFORM PAIR, flagged in
-// src/characters/mobileUnit.js since C16 and now ported.
+// src/characters/mobile/mobileUnit.js since C16 and now ported.
 //
 // The law, verbatim across four files:
 //   EnemyBasics.cs:167-212       the four special tables (records
@@ -27,10 +27,10 @@ import {
   SEDUCER_IDLE_MOVE_ANIMS, SEDUCER_ATTACK_ANIMS,
   MOBILE_DAEDRA_SEDUCER, MOVE_ANIM_SPEED,
   MOVE_ANIMS, PRIMARY_ATTACK_ANIMS, HURT_ANIMS, IDLE_ANIMS, RANGED_ATTACK1_ANIMS,
-} from '../src/characters/mobileUnit.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
-import { EnemyAI } from '../src/characters/enemyMotor.js';        // ROAD-U: the ACTOR half of the pause
-import { EnemyAttack } from '../src/characters/enemyAttack.js';
+} from '../src/characters/mobile/mobileUnit.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
+import { EnemyAI } from '../src/characters/enemy/enemyMotor.js';        // ROAD-U: the ACTOR half of the pause
+import { EnemyAttack } from '../src/characters/enemy/enemyAttack.js';
 import { Collider } from '../src/player/collider.js';
 import { srand, getSeed } from '../src/formats/dfRandom.js';
 

@@ -27,7 +27,7 @@ import { readFileSync } from 'node:fs';
 import { createTownWatch, isTownThreat, runTownWatchFrame, TOWN_WATCH_MAX_WAVES, TOWN_WATCH_STAND_DOWN_SECONDS, TOWN_WATCH_ARRIVAL_MIN_SECONDS } from '../src/systems/town/townWatch.js';
 import { createCityGuards } from '../src/scenes/cityGuards.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
-import { PLAYER_TARGET } from '../src/characters/enemyTargets.js';
+import { PLAYER_TARGET } from '../src/characters/enemy/enemyTargets.js';
 import { PlayerWeapon } from '../src/combat/playerWeapon.js';
 import { ArrowFlight } from '../src/combat/arrowFlight.js';
 import { createPlayerMagic } from '../src/scenes/hostMagic.js';

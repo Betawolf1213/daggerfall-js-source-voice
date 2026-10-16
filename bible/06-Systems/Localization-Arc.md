@@ -119,7 +119,7 @@ English stays byte-identical as the default throughout.
 - `StringTableCSVParser` - the regex verbatim, with its quirks - and `StringTablePatcher`.
 - `GrammarRules`, `DefaultGrammarRules` and `GrammarManager`.
 - DFU's `GetDefaultCollectionName` has no `TextFlats` case, so a flats miss falls back to `Internal_Strings`. Kept.
-- `GetLocalizedEnemyName`'s index law keeps its one home (`characters/enemyBasics.js` `enemyDisplayName`), which will
+- `GetLocalizedEnemyName`'s index law keeps its one home (`characters/enemy/enemyBasics.js` `enemyDisplayName`), which will
   read the list from here.
 - `formats/rscTable.js` `parseRscCsv` now rides the one CSV law. The port's own reader kept a trailing newline on nine
   master rows, which `parseRscMarkup` strips anyway. MAC-U's no-imports pin was re-aimed to its stated reason: the

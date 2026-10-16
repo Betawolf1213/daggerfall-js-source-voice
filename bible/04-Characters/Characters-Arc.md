@@ -2278,7 +2278,7 @@ The extraction first: the dungeon host's castEnemySpell body - the
 magic-15 silence gate, the player-priced cost floored at 0, the
 element cast sound, the CasterOnly self-assign, the magic-9
 at-caster AoC with the caster excluded, and the missile loose -
-moves whole into characters/enemyCasting.js beside the EnemyCaster
+moves whole into characters/enemy/enemyCasting.js beside the EnemyCaster
 decision driver it always served, behind injected deps (the M3
 one-engine doctrine). The dungeon rebinds through foeDeps and its
 local copy is gone; three pins that anchored on the old body
@@ -2328,7 +2328,7 @@ The AUDIT 23 shorthand row ("roll order + yaw gate + frame clamp")
 had lost its finding bodies; CH3 marked it unfixable without a
 dedicated pass. CH4 is that pass: EnemySenses.cs (965 lines) and
 EnemyMotor.cs's classic path re-read whole against
-characters/enemyMotor.js, member by member.
+characters/enemy/enemyMotor.js, member by member.
 
 VERIFIED CLEAN (the "roll order" third): the illusion die is
 classic-gated in both (EnemySenses.cs:444-449 - the source's own
@@ -2396,7 +2396,7 @@ no target field at all, `SENSES_INTERVAL_UNITS` sat exported and
 unconsumed since C8, and `ENEMY_BASICS` carried a team string for
 every mobile that nothing read.
 
-### MT-i - the selection half (`src/characters/enemyTargets.js`)
+### MT-i - the selection half (`src/characters/enemy/enemyTargets.js`)
 
 `MOBILE_TEAMS` is DaggerfallUnityEnums.cs's enum, index for value
 (gated in-test against the C# itself). `getTargets` is
@@ -2812,7 +2812,7 @@ watch. 21 mutants driven, 20 dead; the one survivor is EQUIVALENT and named: `re
 ## INCIDENT 2026-09-04 - THE BATS IN THE CEILING (Mac's report) - SHIPPED
 
 Mac: "In the first dungeon I notice some bat enemies stuck in the
-ceiling." Three laws, all in one new home, `characters/enemyAnchor.js`.
+ceiling." Three laws, all in one new home, `characters/enemy/enemyAnchor.js`.
 
 **1. Where the marker is.** `RDBLayout.cs:1537` stands the enemy
 TRANSFORM on the flat marker, and the mobile billboard hangs on it

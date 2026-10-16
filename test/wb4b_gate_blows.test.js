@@ -12,7 +12,7 @@ import { readFileSync } from 'node:fs';
 
 import { bossStandIn, bossReach, bossLookOf, bossAct, BOSS_ARMOR, BOSS_LOOKS } from '../src/world/gate/gateBoss.js';
 import { calculateAttackDamage } from '../src/combat/formulas.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { pickTouchTarget, sweepFoes, missileHitsFoe, TOUCH_RANGE, TOUCH_SPHERE_CAST_RADIUS } from '../src/systems/spellcast.js';
 import { createGateCourt } from '../src/scenes/gate/gateCourt.js';
 import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';

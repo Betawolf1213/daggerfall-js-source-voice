@@ -43,7 +43,7 @@ import {
   createRenownTracker, renownAnswer, renownRid, RENOWN_BACKOFF_MAX_MS, renownFoeStruck, renownFoeDied, renownFoeCarry,
   renownFoeRevived, renownFoeLevel, setRenownKillHandler, _resetRenownKillsForTests,
 } from '../src/net/renownTracker.js';
-import { KNIGHT_CITY_WATCH } from '../src/characters/mobileTypes.js';
+import { KNIGHT_CITY_WATCH } from '../src/characters/mobile/mobileTypes.js';
 import { setRenownLayer, offlineVitals, keepFraction } from '../src/systems/renownLayer.js';
 import { defineLiveMaxHealth, defineLiveMaxMagicka } from '../src/systems/chargen.js';
 import { lycanthropyMagicRound, cureLycanthropy, createLycanthropyCurse, currentMaxHealth, NEED_TO_KILL_PERIOD } from '../src/systems/lycanthropy.js';

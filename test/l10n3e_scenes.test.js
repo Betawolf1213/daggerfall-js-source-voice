@@ -40,7 +40,7 @@ import { allyCastable, allyReachFor, allyCastPlaqueLine, strangerCastable } from
 import { championName } from '../src/systems/champions.js';   // LOOT7 (main): a champion's body by its name
 import { corpseEntityName } from '../src/scenes/corpseMarker.js';
 import { corpseName, npcHoverName } from '../src/systems/worldTooltips.js';
-import { enemyDisplayName } from '../src/characters/enemyBasics.js';
+import { enemyDisplayName } from '../src/characters/enemy/enemyBasics.js';
 import { staticNpcName, staticNpcShownName, getNameBankOfRegion, isChildNPCData } from '../src/characters/staticNpc.js';
 import { presentNpcInfoText } from '../src/player/activate.js';
 import { TopicTree, INFO_FACTION_IDS } from '../src/systems/topicTree.js';

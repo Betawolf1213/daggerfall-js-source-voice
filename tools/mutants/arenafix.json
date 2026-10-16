@@ -273,7 +273,7 @@
   },
   {
     "name": "ARENAFIX-WALK-ARRIVE",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    if (left <= WALK_ARRIVE_M) {",
     "new": "    if (left <= -1) {",
     "tests": [
@@ -282,7 +282,7 @@
   },
   {
     "name": "ARENAFIX-WALK-PACE",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "        const sp = this.speed * (this._tacDir ? this._tacSpeed : 1) * pace;",
     "new": "        const sp = this.speed * (this._tacDir ? this._tacSpeed : 1) * 0.05;",
     "tests": [

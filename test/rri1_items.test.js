@@ -24,7 +24,7 @@ import { ARMOR_MATERIAL, armorArchive, itemArmorValue, registerCustomArmorValue 
 import { weaponMinDamage, weaponMaxDamage, weaponSkillUsed, equipSoundFor, WEAPON_MATERIALS } from '../src/characters/weapons.js';
 import { getItemHands, ITEM_HANDS, createEquipTable } from '../src/characters/equipTable.js';
 import { ITEM_GROUPS } from '../src/characters/equipRules.js';
-import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
+import { EQUIP_SLOTS } from '../src/characters/paperdoll/paperdoll.js';
 import { weaponTypeForItem, WEAPON_TYPES } from '../src/combat/fpsWeapon.js';
 import { swingSoundFor, SOUND, registerSwingSound } from '../src/systems/soundClips.js';
 import { itemEnchantmentPower, armorEnchantmentMultiplier } from '../src/systems/enchanting.js';

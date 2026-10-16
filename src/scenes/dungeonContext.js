@@ -45,8 +45,8 @@ import { isHearthFlat } from '../systems/survival/hearth.js';   // HEARTH1: a bo
 import { CityLightAnimator, MINUTES_PER_DAY } from '../world/worldClock.js';
 import { billboardSize, mobileBillboardSize, centredBase, classicBillboardSize } from '../world/rmbFlats.js';
 import { WATER_SCROLL_TILES_PER_SEC } from '../render/waterSurface.js';   // WATER-D1: the classic texel's flow, one home - the dungeon water draw lives here now
-import { enemyControllerHeight, idleSpriteHeight, flyerStandFeet, centreFromFeet, spriteOriginY, keepRebuiltSpawn } from '../characters/enemyAnchor.js';   // INCIDENT 2026-09-04 (ceiling bats): SetupDemoEnemy.cs:103-115 capsule + DaggerfallMobileUnit.cs:398-411 anchor
-import { MobileUnit, MOBILE_DAEDRA_SEDUCER, SeducerTransformBehaviour } from '../characters/mobileUnit.js';   // C11: classic sprite monsters   // A5: the Seducer transform pair + its trigger
+import { enemyControllerHeight, idleSpriteHeight, flyerStandFeet, centreFromFeet, spriteOriginY, keepRebuiltSpawn } from '../characters/enemy/enemyAnchor.js';   // INCIDENT 2026-09-04 (ceiling bats): SetupDemoEnemy.cs:103-115 capsule + DaggerfallMobileUnit.cs:398-411 anchor
+import { MobileUnit, MOBILE_DAEDRA_SEDUCER, SeducerTransformBehaviour } from '../characters/mobile/mobileUnit.js';   // C11: classic sprite monsters   // A5: the Seducer transform pair + its trigger
 import { dfMeshToModel, GLOBAL_SCALE } from '../world/meshReader.js';
 import { customModelFor, customAliasFor, emptyModel, isClimateFreeModel, NO_CLIMATE_REMAP } from '../world/customModels.js';   // DS1: models no ARCH3D carries, and GetModelData's false; WD3: a classic model under another id; AUDIT PRE-MERGE 1003 W4: and one that wears its own pictures
 import { RDB_SIDE, MOVE_ACTION_FLAGS, ACTION_FLAGS, TRIGGER_FLAGS } from '../world/rdbLayout.js';
@@ -110,7 +110,7 @@ import { setMidScreenText, midScreenText } from '../ui/midScreenText.js';   // A
 // were static elsewhere already, so the lazy block's gate never saved
 // their bytes; this one module is ~16 KB of source.
 import { EnhancedEnemyAI, makeNavWorld } from '../ai/enhancedMotor.js';
-import { foeFrameDt } from '../characters/enemyMotor.js';   // FOE-CATCHUP: the one cap every pool hands its foes
+import { foeFrameDt } from '../characters/enemy/enemyMotor.js';   // FOE-CATCHUP: the one cap every pool hands its foes
 import { spaceFoes, spacingSkips, clearDoorways, actionDoorSpots, freeLodgedFeet, clearPast } from '../characters/foeSpacing.js';   // FOE-SPACING: the pack keeps apart; AUDIT TACT C7: and the doorways clear; FIELD BUGS 2026-10-04d CRATE-FREE: and no foe stands in a crate
 import { isStaleChunk, STALE_CHUNK_IN_PLAY_TEXT, STALE_CHUNK_IN_PLAY_SECONDS } from '../systems/staleChunk.js';   // DISC19-D: a chunk gone mid-session is said, not swallowed
 import { hudRenderEnabled } from '../ui/hud/hudShortcuts.js';   // AUDIT 64 F37: the Draw override covers popupText too
@@ -262,7 +262,7 @@ import { SD_NO_RIFT } from '../net/superDungeon/sdLaw.js';   // SD4b: the Rift's
 import { isSdRealm, SD_REALM_TEXT, SD_WAY_BACK_Z, SD_WAY_BACK_SIZE, SD_THRESHOLD_RIM } from '../world/superDungeon/sdRealm.js';   // SD5a: the Shattered Hour - a made place, its refusals, its way back
 import { realmToDungeon } from '../net/superDungeon/sdBrain.js';   // SD5a: the realm's frame
 import { dungeonTier } from '../systems/dungeon/dungeonTier.js';   // SD4a: the location's tier, the one law (TIER1)
-import { ENEMY_BASICS, enemyDisplayName } from '../characters/enemyBasics.js';
+import { ENEMY_BASICS, enemyDisplayName } from '../characters/enemy/enemyBasics.js';
 import { foeTitle } from '../systems/foeTitle.js';   // FOE-TITLE: what a revenant, a champion or an elite is called
 import { revenantFleeStep, revenantFleeHealth, revenantDeed, revenantSlain, revenantSay, revenantFleeEvent, revenantCorneredEvent, revenantEscapeEvent, revenantSlainEvent, revenantUnbrokenEvent, revenantFlinch, revenantSignatureEvent, revenantById, applyRevenant, grantRevenantLoot, revenantForLair, releaseRevenantStand, revenantSpawnOptions, revenantTauntEvent, revenantWakeEvent, revenantToReturn, REVENANT_TAUNT_DISTANCE } from '../systems/revenant/revenant.js';   // RVN7d: a revenant in its lair, its taunt, its band, a rest's return
 import { revenantMayYield, beginYield, yieldStep, slipEvent, kneelPose, beginExecution, executionStep, finishExecution, beginSpare, spareDone, fateDissolve, fateModel, dropFateHeld, revenantWillHolds, beginTearAway, revenantLastStandDue, beginLastStand, roarStep } from '../systems/revenant/revenantFate.js';   // REVENANT-FATE: beaten, it yields - kill it or spare it (the open world's law, one home)
@@ -276,7 +276,7 @@ import { bloodHit } from '../combat/bloodDecals.js';   // BLOOD1b: the blow, in 
 import { createDroppedTorches } from './droppedTorches.js';
 import { createCamps, FIRE_LIGHT_UP } from './camps.js';   // REST3: a placed fire's light stands where a camp's does   // SURV3: a fire on the dungeon floor (no tent below - the camp law says so)
 import { campWire, validCampRecord, FIRE_LIGHT_RANGE } from '../systems/survival/camp.js';   // SURV3: the room's memory carries the camps as the wire says them   // HT1: Handheld Torches' dropped lights in the dungeon   // AUDIT 24 (wave 39): EnemyBlood.ShowBloodSplash
-import { EnemySoundSource, acuteHearingMultiplier } from '../characters/enemySounds.js';   // AUDIT 24 (wave 41): EnemySounds.cs, one home
+import { EnemySoundSource, acuteHearingMultiplier } from '../characters/enemy/enemySounds.js';   // AUDIT 24 (wave 41): EnemySounds.cs, one home
 import { flashPlayerDamage, shakePlayerDamage } from '../ui/damageFlash.js';   // WB13d: the gate boss's elemental blows shake, unflashed
 import { knockedDown } from '../systems/blowEffects.js';   // TELL6e: knocked down, no swing
 import { resetVitalsDetector } from '../ui/hud/hudVitals.js';   // BLOOD AUDIT 5: the load's detector reset   // AUDIT 24 (wave 39): ShowPlayerDamage
@@ -1215,14 +1215,14 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // fed foeDeps keys nothing read (class enemies are sprite mobiles since C17), and a failure in them cost the dungeon its class enemies.
     const [{ EnemyAI, withinYaw, isBackFacing, openDoorsStep }, { EnemyAttack }, { makeEnemyEntity, loadMonsterCareer, applyProgressionScaling }, { EnemyCaster, castEnemySpell: castShared, hasMagickaToCast },
       { runTargetMachine, boutGate, isPlayerTarget, isLocalPlayerTarget, PLAYER_TARGET, PEER_CAST_TARGET, resetAllyTeamOnPlayerAttack, targetAimPoint, enemyArrowOrigin, enemyTransformPoint, arrowAimDirection, bumpAtkCount, inBout, playerBoutOf }] = await Promise.all([
-      import('../characters/enemyMotor.js'), import('../characters/enemyAttack.js'),
-      import('../characters/enemyEntity.js'), import('../characters/enemyCasting.js'),
+      import('../characters/enemy/enemyMotor.js'), import('../characters/enemy/enemyAttack.js'),
+      import('../characters/enemy/enemyEntity.js'), import('../characters/enemy/enemyCasting.js'),
       // MT-iv: dynamic, as the rest of this block. (AUDIT DISC19: the
       // gate saves nothing for these any more - enemyMotor, enemyTargets
       // and the rest were in this module's static graph already, and the
       // world host's bundle holds every one of them; only the standalone
       // ?dungeon host still loads five of them late.)
-      import('../characters/enemyTargets.js'),
+      import('../characters/enemy/enemyTargets.js'),
     ]);
     const formulas = await import('../combat/formulas.js');
     const { REACTIONS, sampleClip } = await import('../characters/anims.js');
@@ -1243,7 +1243,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       withinYaw,
       fetchBytes,
       floorLanding, EnemyAI, EnhancedEnemyAI, makeNavWorld, EnemyAttack, makeEnemyEntity, applyProgressionScaling, loadMonsterCareer, EnemyCaster, ClassFile, playerEntity,   // floorLanding/playerEntity/ClassFile/fetchBytes/generateItems ride the STATIC imports (audits 06c-06e)
-      castEnemySpell: castShared,   // X3: the ONE cast executor (characters/enemyCasting.js)
+      castEnemySpell: castShared,   // X3: the ONE cast executor (characters/enemy/enemyCasting.js)
       hasMagickaToCast,   // D9: GetDestination's `entity.CurrentMagicka > 0` (the stand-off band reads the caster's SelectedSpell instead)
       // MT-iv: the target machine. Every consumer below the lazy block
       // reads foeDeps.* and must guard on foeDeps first, as
@@ -3820,7 +3820,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   // against the player only - foe-vs-foe friendly fire pends the
   // missile seam's target sweep.
   // X3-slice: the cast EXECUTOR is the shared castEnemySpellShared
-  // (characters/enemyCasting.js) - one release for both foe pools;
+  // (characters/enemy/enemyCasting.js) - one release for both foe pools;
   // this host binds its deps once. The magic-15 silence gate, the
   // player-priced cost, the magic-9 AoC arm and the missile shape
   // all live in the shared member now.

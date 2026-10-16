@@ -7,7 +7,7 @@ import {
   CLASSIC_MELEE_DISTANCE_VS_AI, CLASSIC_TURN_DEG, CLASSIC_UPDATE_INTERVAL,
   SYSTEM_TIMER_UPDATES_DIVISOR, MOVE_YAW_GATE_DEG, DF_WALK_BASE,
   enemyMoveSpeed, turnTowards, withinYaw, canSeeTarget, EnemyAI,
-} from '../src/characters/enemyMotor.js';
+} from '../src/characters/enemy/enemyMotor.js';
 import { GLOBAL_SCALE } from '../src/world/meshReader.js';
 import { Collider } from '../src/player/collider.js';
 import { MISSILE_SPEED, MISSILE_COLLIDER_RADIUS } from '../src/systems/spellcast.js';
@@ -204,7 +204,7 @@ test('C12 paralysis: flyers FALL out of the air, swimmers freeze, walkers stop',
 
 test('C15 knockback: the WeaponManager formula + the motor shove/decay/hurt laws', async () => {
   const { weaponKnockbackSpeed, enemyWeightClassicUnits, KB_UNIT } = await import('../src/combat/formulas.js');
-  const { KNOCKBACK_MOTION_CAP, KNOCKBACK_HURT_THRESHOLD } = await import('../src/characters/enemyMotor.js');
+  const { KNOCKBACK_MOTION_CAP, KNOCKBACK_HURT_THRESHOLD } = await import('../src/characters/enemy/enemyMotor.js');
   // The formula, verbatim: 15-classic floor for weak hits; the exact
   // curve above it. damage 20 vs weight 100 (a rat-weight target):
   // kb = ((200-100)*256)/(100+200)*40 = 3413.33; ks = 2*(40-13.333)
@@ -252,7 +252,7 @@ test('C15 knockback: the WeaponManager formula + the motor shove/decay/hurt laws
 
 test('stealth: the chance formula + the spawn bands + the illusion gate (pure pins)', async () => {
   const { stealthChance, STEALTH_MAX_DISTANCE, wouldBeSpawnedInClassic, blockedByIllusionEffect,
-    CLASSIC_SPAWN_XZ, CLASSIC_SPAWN_Y_UPPER, CLASSIC_DESPAWN_Y } = await import('../src/characters/enemyMotor.js');
+    CLASSIC_SPAWN_XZ, CLASSIC_SPAWN_Y_UPPER, CLASSIC_DESPAWN_Y } = await import('../src/characters/enemy/enemyMotor.js');
   // 2 * ((classicDist * stealth) >> 10): 512 units x 50 -> 2*25 = 50;
   // 1024 units x 30 -> 60; the >>10 truncates like C#
   assert.equal(stealthChance(512 * GLOBAL_SCALE, 50), 50);
@@ -278,7 +278,7 @@ test('stealth: the chance formula + the spawn bands + the illusion gate (pure pi
 });
 
 test('stealth: hearing gates on PRIOR detection - a quiet player behind a foe stays hidden', async () => {
-  const { EnemyAI } = await import('../src/characters/enemyMotor.js');
+  const { EnemyAI } = await import('../src/characters/enemy/enemyMotor.js');
   const c = new Collider(() => -100);
   // Foe at origin facing +z; the player 10 behind it (outside the 90
   // half-FOV). Pre-P13 the 25-unit proximity "hearing" auto-detected.
@@ -304,7 +304,7 @@ test('stealth: hearing gates on PRIOR detection - a quiet player behind a foe st
 });
 
 test('stealth: minute cache, odd-minute sneak skip, fast-move auto-detect, the shared tally', async () => {
-  const { EnemyAI } = await import('../src/characters/enemyMotor.js');
+  const { EnemyAI } = await import('../src/characters/enemy/enemyMotor.js');
   const c = new Collider(() => -100);
   const behind = [0, 0, -10];
   let tallies = 0;
@@ -331,7 +331,7 @@ test('stealth: minute cache, odd-minute sneak skip, fast-move auto-detect, the s
 });
 
 test('stealth: the chameleon illusion gate blocks SIGHT (the dead S8 half-sight interim retires)', async () => {
-  const { EnemyAI } = await import('../src/characters/enemyMotor.js');
+  const { EnemyAI } = await import('../src/characters/enemy/enemyMotor.js');
   const c = new Collider(() => -100);
   const inFront = [0, 0, 10];   // inside the FOV, LOS clear
   // Blending player, see-through roll fails (>= 8%): blocked - not
@@ -367,7 +367,7 @@ test('AUDIT 24: the knockback caps, and the SWIMMER arm the campaign left alive'
   // knockback arm - a foe that swims, in water, being shoved. Nothing
   // exercised it. The two caps above it were bare too.
   const { KNOCKBACK_STORE_CAP, KNOCKBACK_MOTION_CAP, KNOCKBACK_HURT_THRESHOLD,
-    WATER_HEAD_MARGIN } = await import('../src/characters/enemyMotor.js');
+    WATER_HEAD_MARGIN } = await import('../src/characters/enemy/enemyMotor.js');
   const { KB_UNIT } = await import('../src/combat/formulas.js');
   const mkC = () => {
     const c = new Collider(() => -100);

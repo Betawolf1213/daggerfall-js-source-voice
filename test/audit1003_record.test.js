@@ -7,7 +7,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createArenaBouts, WALK_PACE } from '../src/scenes/arena/arenaBouts.js';
 import { newArenaLadder } from '../src/systems/arena/arenaLadder.js';
-import { EnemyAI } from '../src/characters/enemyMotor.js';
+import { EnemyAI } from '../src/characters/enemy/enemyMotor.js';
 import { Collider } from '../src/player/collider.js';
 
 const settle = () => new Promise((r) => setTimeout(r, 0));
@@ -69,7 +69,7 @@ test('AUDIT PRE-MERGE 1003 D1: a walk in the bout ends itself leaves no pace beh
   assert.equal(opponent.ai.isHostile, true, 'the ladder\'s opponent is the player\'s foe');
   asFresh(opponent.ai, 'the ladder\'s opponent');
   for (const f of await walkedIn({ where: 'floor', kind: 'exhibition', ex: EXHIBITION })) {
-    f.ai.isHostile = true;   // the fight's target (characters/enemyTargets.js) stands in: released, it chases
+    f.ai.isHostile = true;   // the fight's target (characters/enemy/enemyTargets.js) stands in: released, it chases
     asFresh(f.ai, 'an exhibition fighter');
   }
 });

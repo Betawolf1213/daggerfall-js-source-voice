@@ -15,8 +15,8 @@
 // summon, a drive off, the cell's word that it moved) ends where it stands, its team the pool's again (AUDIT WARDEN1 C7).
 //
 // Not a DFU member. Ledger A (WARDEN1).
-import { GUARD_TEXTURE, PERSON_GUARD_IDLE_RECORD, MOVE_RECORDS, MOVE_FLIPS } from '../../characters/mobilePerson.js';
-import { mobileOrientation } from '../../characters/mobileUnit.js';
+import { GUARD_TEXTURE, PERSON_GUARD_IDLE_RECORD, MOVE_RECORDS, MOVE_FLIPS } from '../../characters/mobile/mobilePerson.js';
+import { mobileOrientation } from '../../characters/mobile/mobileUnit.js';
 import { mobileBillboardSize } from '../../world/rmbFlats.js';
 import { quatAngleAxis, quatMultiply, quatRotate } from '../../world/quat.js';
 import { calculateHorseOrientation, horseViewFor, vsub, vadd } from '../../systems/horse/horseCartLaw.js';

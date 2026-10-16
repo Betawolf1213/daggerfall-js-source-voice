@@ -46,7 +46,7 @@
 // spawner), isResting(), allowMagicRepairs (a DFU setting, default
 // false), say(msg).
 
-import { ENEMY_BASICS } from '../characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../characters/enemy/enemyBasics.js';
 import { equipTableOf, lowerCondition, setEnchantmentHooks } from './equip.js';
 import { MINUTES_PER_DAY } from './gameDate.js';   // the canonical home - worldTick re-exports it and imports the pump below, so this leaf must not close the cycle
 import { syntheticTimeIncrease } from './effectBroker.js';   // AUDIT 63 F13: EntityEffectBroker.SyntheticTimeIncrease - a LEAF, for the same reason

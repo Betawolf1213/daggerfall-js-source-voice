@@ -210,7 +210,7 @@
   },
   {
     "name": "BAL3-the-writer-forgets-the-place",
-    "file": "src/characters/enemyEntity.js",
+    "file": "src/characters/enemy/enemyEntity.js",
     "old": "place: scaling.place ?? 0, ",
     "new": "",
     "tests": [

@@ -9,8 +9,8 @@
 // DRAWS. A record's identity draws run on a stream SEEDED by its id and a salt (FNV-1a, then mulberry32) - one id, one
 // answer, on every client and every load, and nobody's dice moved: the shared DFRandom (formats/dfRandom.js), which the
 // given name borrows and puts back, is never touched here.
-import { MOBILE_TYPES as M } from '../../characters/mobileTypes.js';
-import { factionOf } from '../../characters/mobileFactions.js';
+import { MOBILE_TYPES as M } from '../../characters/mobile/mobileTypes.js';
+import { factionOf } from '../../characters/mobile/mobileFactions.js';
 import { weaponSkillUsed, WEAPON_MATERIALS } from '../../characters/weapons.js';
 import { SKILLS } from '../skills.js';
 import { setItemFields } from '../item/itemTemplates.js';
@@ -456,7 +456,7 @@ export function deserterSplit(items, { value, isGold, room }) {
   const kept = goods.slice(0, Math.max(0, Math.min(Math.ceil(goods.length / 2), room | 0)));
   return { kept, back: [...goods.slice(kept.length), ...list.filter((it) => isGold(it))] };
 }
-/** RVN11 (22.1): of its own kind - one kind, or one faction (characters/mobileFactions.js: the orcs, the dead, people). */
+/** RVN11 (22.1): of its own kind - one kind, or one faction (characters/mobile/mobileFactions.js: the orcs, the dead, people). */
 export const sameKin = (a, b) => Number.isInteger(a) && Number.isInteger(b) && (a === b || (factionOf(a) != null && factionOf(a) === factionOf(b)));
 
 // ── RVN7's lair (section 18.1) ──────────────────────────────────────

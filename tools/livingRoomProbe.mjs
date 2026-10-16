@@ -12,7 +12,7 @@ import { synthTown, walledTown } from '../test/lwTown.mjs';
 import { tavernHall } from '../test/lwRoom.mjs';
 import { LivingTown } from '../src/systems/livingWorld/livingTown.js';
 import { ResidentWalker } from '../src/characters/residentWalker.js';
-import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
+import { PERSON_MOVE_SPEED } from '../src/characters/mobile/mobilePerson.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
 import { DAY_MIN } from '../src/systems/livingWorld/dayPlan.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';

@@ -13,8 +13,8 @@ import {
   primaryPickerList, primaryPick,
 } from '../src/systems/enchantmentCatalogue.js';
 import { SKILLS, SKILL_COUNT, SKILL_NAMES } from '../src/systems/skills.js';
-import { ENEMY_NAMES } from '../src/characters/enemyBasics.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { ENEMY_NAMES } from '../src/characters/enemy/enemyBasics.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 
 test('M4: FOUR SHAPES, and ClassicParam does not mean the same thing in each', () => {
   assert.equal(enchantmentTypes().length, 24);

@@ -255,7 +255,7 @@ ApplyGravity has no safeguard either - its loose objects never outlive their ter
 ninety sphere resolves a piece - 770 capsule resolves a frame at a minute's fall, 2,560 from 201.6 s; at 20 fps
 FOE-CATCHUP's three steps make 7,656. The watch is saved and restored the same way, with no distance cull at all.
 
-**The fix** (`characters/enemyMotor.js` `holdFrame`, `scenes/exteriorFoes.js`, `scenes/cityGuards.js`,
+**The fix** (`characters/enemy/enemyMotor.js` `holdFrame`, `scenes/exteriorFoes.js`, `scenes/cityGuards.js`,
 `scenes/world.js`): the streaming host's two pools take `groundStands(x, z)` - `heightAt` finite - and a foe whose
 column has no built ground is held, not stepped: PlayerMotor.holdFrame's law (the host holds the player the same way,
 `_seasonHoldKey`), foe-side. A held foe costs no collider work and drops the senses it latched (`detected` spared it

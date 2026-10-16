@@ -11,7 +11,7 @@ import {
 import { RestSession, MINUTES_PER_TICK, REST_WAIT_PER_HOUR, REST_TEXT } from '../src/systems/rest/restSession.js';
 import { createPlayerTicker } from '../src/scenes/shared.js';
 import { onMonsterHit } from '../src/systems/diseases.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 import { FATIGUE_MULTIPLIER } from '../src/systems/effects.js';
 
 const rd = (f) => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');

@@ -19,7 +19,7 @@ import { MOD_SETTINGS } from '../src/systems/modSettings.js';
 import { CLIMATES } from '../src/formats/mapsFile.js';
 import { SEASON } from '../src/world/climateSwaps.js';
 import { TRANSPORT_MODES } from '../src/systems/transport.js';
-import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
+import { EQUIP_SLOTS } from '../src/characters/paperdoll/paperdoll.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { equipTableOf } from '../src/systems/equip.js';
 import { navalHudText, navalPadPrompts } from '../src/ui/naval/navalHud.js';

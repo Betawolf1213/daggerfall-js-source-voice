@@ -8,9 +8,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { EnemyAI, MELEE_DISTANCE } from '../src/characters/enemyMotor.js';
-import { EnemyAttack } from '../src/characters/enemyAttack.js';
-import { runTargetMachine } from '../src/characters/enemyTargets.js';
+import { EnemyAI, MELEE_DISTANCE } from '../src/characters/enemy/enemyMotor.js';
+import { EnemyAttack } from '../src/characters/enemy/enemyAttack.js';
+import { runTargetMachine } from '../src/characters/enemy/enemyTargets.js';
 import { sensesContext } from '../src/scenes/shared.js';
 import { applySpell, isInvisible, concealmentFlags } from '../src/systems/effects.js';
 import { noticeRoll, noticeChance, createWildAlert, WILD_ROLL_S } from '../src/systems/wild/wildAlert.js';

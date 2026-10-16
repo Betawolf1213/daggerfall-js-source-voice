@@ -21,8 +21,8 @@ import { registerPlayerKillListener, reportPlayerKill } from '../src/systems/pla
 import { calculateCastCost, registerSpellCostMod, CAST_COST_FLOOR } from '../src/systems/spellcost.js';
 import { tryAbsorption, registerAbsorptionChance } from '../src/systems/absorption.js';
 import { setPlayerDoor, playerDoor } from '../src/systems/playerDoor.js';
-import { makeEnemyEntity } from '../src/characters/enemyEntity.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { makeEnemyEntity } from '../src/characters/enemy/enemyEntity.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const strip = (s) => s.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/\/\/[^\n]*/g, ' ');
@@ -215,7 +215,7 @@ test('SET2 a player\'s cast cost: the port\'s modifiers over it after DFU\'s flo
     assert.equal(calculateCastCost(spell, p).sp, 1, 'never under 1');
     assert.ok(CAST_COST_FLOOR >= 1);
   } finally { registerSpellCostMod('set2-cost', null); }
-  assert.match(strip(read('src/characters/enemyCasting.js')), /calculateCastCost\(spell, playerEntity, \{ portMods: false \}\)\.sp/);
+  assert.match(strip(read('src/characters/enemy/enemyCasting.js')), /calculateCastCost\(spell, playerEntity, \{ portMods: false \}\)\.sp/);
 });
 
 test('SET2 the port\'s absorption chances: each rolled on its own after the effect\'s arm, under DFU\'s two gates (a Destruction effect, room in the magicka for it); a source answering 0 is never rolled, so the rolls\' sequence is untouched (mutants: the gates skipped for the port\'s chances)', () => {

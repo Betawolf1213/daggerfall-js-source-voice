@@ -23,7 +23,7 @@ import { hostLookOf, hostAct, hostFallAct, hostStandIn, hostCue, bossFrame, boss
 import { setBatchHitFlash } from '../../systems/hitFlash.js';   // WB13d: a body of his host struck flashes, as he does
 import { courtToDungeon } from '../../world/gate/gateArena.js';
 import { TELEGRAPH_KIND, TELEGRAPH_STYLE, TELEGRAPH_FLASH_MS, TELEGRAPH_EDGE, TELEGRAPH_POOL } from '../../render/gateTelegraph.js';
-import { ENEMY_BASICS } from '../../characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../../characters/enemy/enemyBasics.js';
 import { mobileBillboardSize } from '../../world/rmbFlats.js';
 import { creatureLook } from '../../characters/creatureBodies.js'; import { rosterActor } from '../../characters/rosterBodies.js';   // MWNPC10: his host in its Morrowind bodies
 

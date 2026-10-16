@@ -143,7 +143,7 @@ site and `systems/artifactEffects.js` owns the reflection, wired at
 The same hand-check disposes of the loudest-looking misses elsewhere.
 `DaggerfallResistances` is `spellcast.js:"export function elementalResistanceChance"`'s `elementalResistanceChance`;
 `NewLocationAlert` is `systems/discovery.js:"export function discoverLocation"`'s `discoverLocation`;
-`CivilianEntity` and `MobilePersonNPC` are `characters/mobilePerson.js`
+`CivilianEntity` and `MobilePersonNPC` are `characters/mobile/mobilePerson.js`
 (whose `SetPerson` face tables D10 took at `:42`); `PlayerCompass` is
 `ui/hud/hud.js`'s HUDCompass port. Exactly two misses survive the check:
 the pair of input-config windows in the next section, and this one.
@@ -517,10 +517,10 @@ are the **narrowed remainders** Wave D recorded rather than shipped
 
 **Narrowed by Wave D, recorded rather than shipped.**
 
-- ~~**`src/characters/enemyCasting.js:91`** - now exactly one term
+- ~~**`src/characters/enemy/enemyCasting.js:91`** - now exactly one term
   wide: `HasClearPathToShootProjectile`.~~ **SHIPPED (E-group,
   2026-09-02).** *EnemyMotor.HasClearPathToShootProjectile (:698-741)
-  is ported at `characters/enemyMotor.js` beside the collider it needs,
+  is ported at `characters/enemy/enemyMotor.js` beside the collider it needs,
   with EnemySenses.PredictNextTargetPos (:541-616) - the lead solved as
   a cone/line intersection, its mid-interval divisor quirk included -
   under it. The caster asks it as CanCastRangedSpell's last term
@@ -684,7 +684,7 @@ could see the others' closures until the squash, which is how "leaving
 17" came to be written three times over a tree that answers 13:
 
 - `combat/fpsSpellCasting.js:"animation - and its"` (the release is not the spell) and
-  `characters/enemyCasting.js:"BEFORE the 1/40 roll"` (the clear-path term) - **E6**, which
+  `characters/enemy/enemyCasting.js:"BEFORE the 1/40 roll"` (the clear-path term) - **E6**, which
   closed section C's `playSound` row with them;
 - `systems/inventory.js:"E4 (2026-09-02) RETIRED"` (gold as a bag stack) - **E4**;
 - `systems/talk/talkMacros.js:"ordering: the scan"` (`GetValue`'s empty-string arm) - **E7**;

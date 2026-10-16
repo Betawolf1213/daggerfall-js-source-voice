@@ -421,7 +421,7 @@ export function swingThrow(state, forward) {
 }
 
 /** DFU's `bloodIndex` of 2 is the BLOODLESS six (skeletons and the
- *  like), and `characters/enemyBasics.js` has carried it from DFU
+ *  like), and `characters/enemy/enemyBasics.js` has carried it from DFU
  *  since long before this arc. They bleed nothing, so they mark
  *  nothing - the splash record the port already draws for them stands,
  *  and no stain is laid under it. */

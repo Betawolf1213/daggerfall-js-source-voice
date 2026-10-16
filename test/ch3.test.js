@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { EnemyAI } from '../src/characters/enemyMotor.js';
+import { EnemyAI } from '../src/characters/enemy/enemyMotor.js';
 import { FALL_DAMAGE_THRESHOLD, FALL_HP_PER_METRE } from '../src/player/motor.js';
 import { EQUIP_DELAY_TIMES } from '../src/characters/weaponStates.js';
 import { equipItem, unequipSlot, EQUIP_SLOTS, equipDelaySnapshot, billEquipDelayOnClose } from '../src/systems/equip.js';

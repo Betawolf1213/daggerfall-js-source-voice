@@ -14,7 +14,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { validFoeRecord } from '../src/net/wire.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
-import { isPeerTarget } from '../src/characters/enemyTargets.js';
+import { isPeerTarget } from '../src/characters/enemy/enemyTargets.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 
@@ -189,12 +189,12 @@ test('WORLD6b-iii: the PUPPET at me casts the spell itself - a streamed cast cou
 });
 
 test('WORLD6b-iii: by source - the executor aims its missile where it is told and at the player otherwise; the three hosts\' hooks take the aim point through the ONE direction law (AUDIT WORLD6b-iii(a) C3); the pool\'s decision reads a bare stand-in for a peer (ONE home, the dungeon\'s too - A10); the record', () => {
-  const c = rd('src/characters/enemyCasting.js');
+  const c = rd('src/characters/enemy/enemyCasting.js');
   assert.match(c, /rolls = Math\.random,\s*\n\s*aimAt = null,\s+\/\/ WORLD6b-iii/, 'the executor\'s option (AUDIT WORLD6b-iii(a) C11: pinned inside the destructure)'); assert.match(c, /fireMissile\?\.\(from, spell, f\.entity\.level, f, aimAt\);/);
   assert.doesNotMatch(c, /suppress/, 'the suppress arm is retired');
   const HOOK = /fireMissile: \(from, spell, casterLevel, foe, aimAt = null\) => \{[^\n]*\n(?:\s*if \(![^\n]*return;\n)?\s*magic\.fireEnemyMissile\(from, missileAimDirection\(from, aimAt \?\? targetAimPoint\(null, player\.pos, player\.height\)\), spell, casterLevel, foe\);/;
   for (const h of ['src/scenes/world.js', 'src/scenes/exterior.js', 'src/scenes/worldModes.js']) assert.match(rd(h), HOOK, `${h}: the host's hook takes the aim point`);
-  const t = rd('src/characters/enemyTargets.js');
+  const t = rd('src/characters/enemy/enemyTargets.js');
   assert.match(t, /export const PEER_CAST_TARGET = Object\.freeze\(\{ activeEffects: Object\.freeze\(\[\]\) \}\);/, 'the stand-in\'s one home');
   assert.match(t, /export function missileAimDirection\(from, aimPoint\) \{/, 'the direction\'s one home');
   const x = rd('src/scenes/exteriorFoes.js');

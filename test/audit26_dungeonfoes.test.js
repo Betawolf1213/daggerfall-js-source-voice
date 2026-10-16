@@ -22,7 +22,7 @@ import { hurtPlayer } from '../src/characters/playerEntity.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
 import { createCityGuards, GUARD_MOBILE_TYPE } from '../src/scenes/cityGuards.js';
 import { createSkyController } from '../src/scenes/shared.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = (f) => readFileSync(join(root, f), 'utf8');

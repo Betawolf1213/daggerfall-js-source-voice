@@ -37,7 +37,7 @@ import { bindPart, attachmentTransform } from '../formats/mwCharacter.js';
 import { assembleFirstPersonArm, poseAssembly } from '../formats/mwFirstPerson.js';
 import { parseEsm } from '../formats/mwEsmFile.js';
 import { assembleNpc, indexSkins } from '../formats/mwNpc.js';
-import { ownFacePools } from '../characters/ownHeadModels.js';   // MW-HEADS1: the race and sex whose faces are the port's own
+import { ownFacePools } from '../characters/ownModels/ownHeadModels.js';   // MW-HEADS1: the race and sex whose faces are the port's own
 
 const $ = (id) => document.getElementById(id);
 const canvas = $('c');
@@ -896,6 +896,6 @@ async function exportFaceSheet() {
   a.href = sheet.toDataURL('image/png');
   a.click();
   setStatus(`face sheet: ${rows.length} race/sex rows exported - upload it back and the table gets written by eye`
-    + (own.length ? ` (the port's own heads stand for ${own.join(', ')} - characters/ownHeadModels.js)` : ''));
+    + (own.length ? ` (the port's own heads stand for ${own.join(', ')} - characters/ownModels/ownHeadModels.js)` : ''));
 }
 $('facesheet')?.addEventListener('click', () => { exportFaceSheet(); });

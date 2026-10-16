@@ -10,7 +10,7 @@ import { withDom } from './invdrag.mjs';
 import {
   mountEnhancedInventory, wearPct, wearBar, WEAR_WORN_PCT, DOUBLE_CLICK_MS, markItemFrame,
 } from '../src/ui/enhanced/enhancedInventory.js';
-import { ITEM_TEMPLATES } from '../src/characters/paperdoll.js';
+import { ITEM_TEMPLATES } from '../src/characters/paperdoll/paperdoll.js';
 import { equipItem, isEquipped } from '../src/systems/equip.js';
 import { isLocked, setLocked, toggleLocked, lockRefuses, lockedText, LOCK_CLOSES, LOCKED_LINE } from '../src/systems/item/itemLock.js';
 import { ITEM_FIELDS, validItemField } from '../src/systems/item/itemFields.js';

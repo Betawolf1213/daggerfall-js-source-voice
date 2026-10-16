@@ -20,7 +20,7 @@ import { planStore } from '../src/systems/item/itemTransfer.js';
 import { LivingTown, householdKeyOf } from '../src/systems/livingWorld/livingTown.js';
 import { ResidentWalker } from '../src/characters/residentWalker.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
-import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
+import { PERSON_MOVE_SPEED } from '../src/characters/mobile/mobilePerson.js';
 import { isDomFocusWalk } from '../src/ui/input.js';
 import { walkButtons } from '../src/ui/legacy/legacyDoor.js';
 import { windowPrompts } from '../src/ui/plus/plusPad.js';

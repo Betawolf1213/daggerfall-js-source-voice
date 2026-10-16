@@ -17,7 +17,7 @@ import { doEnchantedPayloads } from '../src/systems/enchantments.js';
 import { ENCHANTMENT_TYPES } from '../src/formats/magicDef.js';
 import { unitWeightInKg, addItem } from '../src/systems/inventory.js';
 import { enemyHeavyPainVoice } from '../src/scenes/hostCombat.js';
-import { KNIGHT_CITY_WATCH } from '../src/characters/mobileTypes.js';
+import { KNIGHT_CITY_WATCH } from '../src/characters/mobile/mobileTypes.js';
 import { pitchFloor, setPitchFloorProvider, PITCH_FLOOR } from '../src/player/lookFilter.js';
 import { createRrRidingContacts } from '../src/systems/roleplayRealism/rrRidingHost.js';
 import { SKILLS } from '../src/systems/skills.js';

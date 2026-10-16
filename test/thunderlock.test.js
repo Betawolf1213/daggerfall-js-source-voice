@@ -25,7 +25,7 @@ import {
 } from '../src/characters/weaponStates.js';
 import { isBowWeapon, attackSkillOf, weaponSkillUsed as hostWeaponSkillUsed } from '../src/scenes/hostCombat.js';
 import { spendAmmoFor, ammoCountFor } from '../src/systems/inventory.js';
-import { playerArchiveFor } from '../src/characters/paperdollArt.js';
+import { playerArchiveFor } from '../src/characters/paperdoll/paperdollArt.js';
 import { shimmer, NATIVE_WIDTH } from '../src/combat/thunderlockArt.js';
 import { muzzlePoint, MUZZLE_GAIN } from '../src/combat/thunderlockArt.js';   // FIELD-GUN17
 import { orbColour, orbColourFrom, noteOrbColour, resetOrbColour } from '../src/characters/thunderlockIds.js';   // FIELD-GUN17

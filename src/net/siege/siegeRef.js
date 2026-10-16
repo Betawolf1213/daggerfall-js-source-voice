@@ -175,7 +175,7 @@ export function armsOf(items, lawful) {
 /** Whether a template is a bow (its blow a shaft's). */
 export const siegeIsBow = (w) => w === SIEGE_WEAPONS.Short_Bow || w === SIEGE_WEAPONS.Long_Bow || w === SIEGE_THUNDERLOCK.template;
 /** AUDIT-SEATS R8: THE HANDS - the look's two slots a weapon is wielded from (DFU's EquipSlots RightHand 19 and LeftHand
- *  21: characters/paperdoll.js EQUIP_SLOTS, pinned equal - this leaf imports nothing; net/remotePlayers.js composeLook
+ *  21: characters/paperdoll/paperdoll.js EQUIP_SLOTS, pinned equal - this leaf imports nothing; net/remotePlayers.js composeLook
  *  writes each item's `equipSlot` off the equip table's own index). */
 export const SIEGE_HAND_SLOTS = Object.freeze([19, 21]);
 /**

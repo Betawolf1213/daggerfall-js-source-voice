@@ -17,11 +17,11 @@ const H = await import('../tools/tellDuel.mjs');
 const N = await import('../src/systems/revenant/revenant.js');
 const F = await import('../src/systems/revenant/revenantFeud.js');
 const FATE = await import('../src/systems/revenant/revenantFate.js');
-const { EnemyAI } = await import('../src/characters/enemyMotor.js');
+const { EnemyAI } = await import('../src/characters/enemy/enemyMotor.js');
 const { Collider } = await import('../src/player/collider.js');
-const { EnemyAttack } = await import('../src/characters/enemyAttack.js');
+const { EnemyAttack } = await import('../src/characters/enemy/enemyAttack.js');
 const { setPref, getPref } = await import('../src/systems/uiPrefs.js');
-const { MOBILE_TYPES: M } = await import('../src/characters/mobileTypes.js');
+const { MOBILE_TYPES: M } = await import('../src/characters/mobile/mobileTypes.js');
 const { runSpeed } = await import('../src/player/motor.js');
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

@@ -21,7 +21,7 @@
 // locations - DFU samples the terrain collider).
 
 import { mobileOrientation } from './mobileUnit.js';
-import { REGION_RACES } from '../formats/mapsTables.js';   // REGIONAL-FOLK: the region's race, FALL.EXE's
+import { REGION_RACES } from '../../formats/mapsTables.js';   // REGIONAL-FOLK: the region's race, FALL.EXE's
 
 export const PERSON_MOVE_SPEED = 1.3;          // movementSpeed
 export const PERSON_IDLE_DISTANCE = 2.5;       // idleDistance

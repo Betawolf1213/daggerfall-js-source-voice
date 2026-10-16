@@ -2,8 +2,8 @@
 // shape (the flight geometry lives in the scene; the pure parts pin).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { EnemyAttack } from '../src/characters/enemyAttack.js';
-import { MELEE_DISTANCE } from '../src/characters/enemyMotor.js';
+import { EnemyAttack } from '../src/characters/enemy/enemyAttack.js';
+import { MELEE_DISTANCE } from '../src/characters/enemy/enemyMotor.js';
 import { WEAPON_SKILL, SKILLS } from '../src/systems/skills.js';
 import { addItem } from '../src/systems/inventory.js';
 

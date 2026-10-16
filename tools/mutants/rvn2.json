@@ -442,7 +442,7 @@
   },
   {
     "name": "RVN2-the-speed-unread",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "  get speed() { return enemyMoveSpeed(this._liveSpeed() + this._edgeSpeed()); }",
     "new": "  get speed() { return enemyMoveSpeed(this._liveSpeed()); }",
     "tests": [
@@ -451,7 +451,7 @@
   },
   {
     "name": "RVN2-the-speed-at-any-range",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    return e?.farSpeed > 0 && this._dist > e.farAt ? e.farSpeed : 0;",
     "new": "    return e?.farSpeed > 0 ? e.farSpeed : 0;",
     "tests": [

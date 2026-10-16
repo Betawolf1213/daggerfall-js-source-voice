@@ -19,8 +19,8 @@ import { setPlayerDoor } from '../src/systems/playerDoor.js';
 import { equipItem } from '../src/systems/equip.js';
 import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
-import { makeEnemyEntity } from '../src/characters/enemyEntity.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { makeEnemyEntity } from '../src/characters/enemy/enemyEntity.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 
 const stats = () => ({ strength: 50, intelligence: 50, willpower: 50, agility: 50, endurance: 50, personality: 50, speed: 50, luck: 50 });
 const player = () => ({

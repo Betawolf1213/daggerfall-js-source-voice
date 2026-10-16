@@ -16,7 +16,7 @@ import { assembleFirstPersonArm, poseAssembly, shapeMatchesBone } from '../src/f
 import { composeWornArmor, itemMapCoverage, ARMO_PART } from '../src/formats/mwItemMap.js';
 import { ownBodyPart } from '../src/combat/fpArm.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
-import { CLASSIC_ARMOR_TEMPLATE, ownArmorModelFor, ownArmorModelPaths } from '../src/characters/ownArmorModels.js';
+import { CLASSIC_ARMOR_TEMPLATE, ownArmorModelFor, ownArmorModelPaths } from '../src/characters/ownModels/ownArmorModels.js';
 import { readPng } from '../tools/pngIO.mjs';
 import { readFbx } from '../tools/fbxRead.mjs';
 import { meshModelNames } from '../tools/fbxStrip.mjs';

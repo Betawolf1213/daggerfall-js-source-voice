@@ -18,10 +18,10 @@ import {
 } from '../src/systems/lycanthropy.js';
 import { LYCANTHROPY_TYPES } from '../src/systems/infection.js';
 import { SOUND } from '../src/systems/soundClips.js';
-import { ATTRACT_RADIUS } from '../src/characters/enemySounds.js';
-import { EnemyAI } from '../src/characters/enemyMotor.js';
-import { makeEnemyEntity } from '../src/characters/enemyEntity.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ATTRACT_RADIUS } from '../src/characters/enemy/enemySounds.js';
+import { EnemyAI } from '../src/characters/enemy/enemyMotor.js';
+import { makeEnemyEntity } from '../src/characters/enemy/enemyEntity.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { Collider } from '../src/player/collider.js';
 import { CLASSIC_TO_UNITY_RATIO } from '../src/player/motor.js';
 import { createCityGuards, GUARD_MOBILE_TYPE, FRIGHTENED_RUN_SECONDS } from '../src/scenes/cityGuards.js';
@@ -66,7 +66,7 @@ test('WERE-FRIGHT: the chance is the beast\'s level against the guard\'s - 50, f
   assert.equal(frightenChance(7), 50, 'a guard of unknown level is taken at the beast\'s own');
   assert.equal(frightenChance(7, null), 50);
   // what that means in the street: the watch is minted three to six levels above the player (DFU's Range(3, 7) on
-  // Knight_CityWatch, characters/enemyEntity.js), so a roar at the watch runs 35% at best and 20% at worst
+  // Knight_CityWatch, characters/enemy/enemyEntity.js), so a roar at the watch runs 35% at best and 20% at worst
   const career = { name: 'Guard', strength: 50, intelligence: 50, willpower: 50, agility: 50, endurance: 50, personality: 50, speed: 50, luck: 50, hitPointsPerLevel: 8, attackModifierFlags: 0 };
   const watchman = (roll) => makeEnemyEntity(GUARD_MOBILE_TYPE, ENEMY_BASICS[GUARD_MOBILE_TYPE], career, 10, () => roll);
   assert.deepEqual([watchman(0), watchman(0.999999)].map((g) => frightenChance(10, g.level)), [35, 20]);

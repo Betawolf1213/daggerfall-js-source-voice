@@ -10,7 +10,7 @@ import test from 'node:test';
 import assert from 'node:assert';
 import { BEAST_ATTACKS, beastAttackPose, hitPointOf, hitCountOf } from '../src/characters/beastAttack.js';
 import { BEAST_DESIGNS } from '../src/characters/beasts.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { buildSting, buildArachnid } from '../src/characters/pieces/arachnid.js';
 
 /** Everything with no arms to swing. */

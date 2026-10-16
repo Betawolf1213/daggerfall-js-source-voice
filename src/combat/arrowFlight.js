@@ -28,7 +28,7 @@ import { calculateAttackDamage } from './formulas.js';
 import { segmentBoxEntry } from '../systems/naval/navalBallistics.js';   // SERPENT4: a shaft's step through a box - the guns' own test
 import { bowDamageArrow } from './enemyEquipment.js';   // MAC-N1: the recovered shaft is CreateWeapon's arrow, value and all
 import { backstabChanceOf, enemyPainVoice } from '../scenes/hostCombat.js';
-import { isBackFacing } from '../characters/enemyMotor.js';
+import { isBackFacing } from '../characters/enemy/enemyMotor.js';
 import { hitSoundFor, ENEMY_HIT_VOLUME } from '../systems/soundClips.js';
 import { addItem, ARROW_TEMPLATE } from '../systems/inventory.js';
 import { noteShotRecoverable, shotTallyOpen } from '../systems/shotTally.js';   // ARENA-ARROWS: a recoverable shaft is no shot the healers pay; STUCK-ARROWS: nor one stuck on the sand

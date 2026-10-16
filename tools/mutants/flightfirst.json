@@ -73,7 +73,7 @@
   },
   {
     "name": "FLIGHT-FIRST-the-motors-walk-unpaced",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "this._walkStep(dt, this.fleePace);",
     "new": "this._walkStep(dt);",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "FLIGHT-FIRST-the-pace-kept-past-a-later-run",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "this.fleePace = pace > 0 ? pace : 1;",
     "new": "if (pace > 1) this.fleePace = pace;",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "FLIGHT-FIRST-the-step-kept",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    this._tacDir = null;   // FLIGHT-FIRST",
     "new": "    // FLIGHT-FIRST",
     "tests": [

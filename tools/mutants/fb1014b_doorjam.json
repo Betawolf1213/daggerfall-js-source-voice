@@ -1,7 +1,7 @@
 [
   {
     "name": "DOORJAM-1-the-bump-never-ducks",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "      this.controllerHeight = DOOR_CROUCHING_HEIGHT;\n      this._resetHeight = true;",
     "new": "      this.controllerHeight = this.height;\n      this._resetHeight = true;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "DOORJAM-2-heightadjust-never-called",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "      this._step(FIXED_DT, playerFeet, senses, paralyzed, paused);\n      this._heightAdjust(FIXED_DT);",
     "new": "      this._step(FIXED_DT, playerFeet, senses, paralyzed, paused);",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "DOORJAM-3-never-stands-back-up",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "      this.controllerHeight = this.height;\n      this._resetHeight = false;",
     "new": "      this._resetHeight = false;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "DOORJAM-4-the-half-second-a-quarter",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "export const HEIGHT_CHANGE_SECONDS = 0.5;",
     "new": "export const HEIGHT_CHANGE_SECONDS = 0.25;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "DOORJAM-5-the-gate-not-strict",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "this.collidedSides && this.height > DOOR_CROUCHING_HEIGHT) {",
     "new": "this.collidedSides && this.height >= DOOR_CROUCHING_HEIGHT) {",
     "tests": [
@@ -48,7 +48,7 @@
   },
   {
     "name": "DOORJAM-6-the-gate-dropped",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "this.collidedSides && this.height > DOOR_CROUCHING_HEIGHT) {",
     "new": "this.collidedSides) {",
     "tests": [
@@ -57,7 +57,7 @@
   },
   {
     "name": "DOORJAM-7-the-timer-never-runs-down",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    if (this._resetHeight && this._heightChangeTimer > 0) this._heightChangeTimer -= dt;",
     "new": "",
     "tests": [
@@ -66,7 +66,7 @@
   },
   {
     "name": "DOORJAM-8-the-walk-sweeps-its-full-height",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    const r = this.collider.move(this.feet, dxm, dy, dzm, this.controllerHeight, true, FOE_KEEPS_FLOOR);",
     "new": "    const r = this.collider.move(this.feet, dxm, dy, dzm, this.height, true, FOE_KEEPS_FLOOR);",
     "tests": [
@@ -75,7 +75,7 @@
   },
   {
     "name": "DOORJAM-9-the-walk-forgets-its-bump",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    this.collidedSides = !!r.sides;   // DOOR-JAM: the Move's CollidedSides, for HeightAdjust\n",
     "new": "",
     "tests": [
@@ -84,7 +84,7 @@
   },
   {
     "name": "DOORJAM-10-the-probe-reads-the-crouch",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    const p1 = [c[0], c[1] - this.height * OBSTACLE_P1_BELOW_CENTRE, c[2]];\n    const p2 = [p1[0], p1[1] + Math.min(this.height, DOOR_CROUCHING_HEIGHT) / 2, p1[2]];\n    const hit = this.collider.capsuleCast(",
     "new": "    const p1 = [c[0], c[1] - this.controllerHeight * OBSTACLE_P1_BELOW_CENTRE, c[2]];\n    const p2 = [p1[0], p1[1] + Math.min(this.controllerHeight, DOOR_CROUCHING_HEIGHT) / 2, p1[2]];\n    const hit = this.collider.capsuleCast(",
     "tests": [
@@ -93,7 +93,7 @@
   },
   {
     "name": "DOORJAM-11-a-puppet-handed-back-stays-ducked",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    this.controllerHeight = this.height; this.collidedSides = false; this._resetHeight = false; this._heightChangeTimer = 0;   // DOOR-JAM: it stands at its own height, as a fresh controller does\n",
     "new": "",
     "tests": [
@@ -201,7 +201,7 @@
   },
   {
     "name": "KEEPHEIGHT-5-the-hunter-aims-at-the-duck",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "return (t && !t.isPlayer && t.ai?.height) ||",
     "new": "return (t && !t.isPlayer && t.ai?.controllerHeight) ||",
     "tests": [
@@ -210,7 +210,7 @@
   },
   {
     "name": "KEEPHEIGHT-6-the-eye-ducks",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "this.inSight = canSeeTarget(this.collider, this.feet, this.yaw, this.height, playerFeet,",
     "new": "this.inSight = canSeeTarget(this.collider, this.feet, this.yaw, this.controllerHeight, playerFeet,",
     "tests": [
@@ -228,7 +228,7 @@
   },
   {
     "name": "KEEPHEIGHT-8-the-target-pass-eye-ducks",
-    "file": "src/characters/enemyTargets.js",
+    "file": "src/characters/enemy/enemyTargets.js",
     "old": "const see = canSeeTarget(ai.collider, ai.feet, ai.yaw, ai.height, tFeet,",
     "new": "const see = canSeeTarget(ai.collider, ai.feet, ai.yaw, ai.controllerHeight, tFeet,",
     "tests": [

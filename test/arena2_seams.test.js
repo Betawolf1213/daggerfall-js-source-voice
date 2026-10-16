@@ -1,5 +1,5 @@
 // ARENA2 (2026-10-02): THE TWO SEAMS THE FIGHTERS NEED, AND THE CITY'S PEACE. (1) THE BOUT TEAM - an isolation seam
-// beside the camp's in the targeting law (characters/enemyTargets.js boutGate): a bout's fighters target only each
+// beside the camp's in the targeting law (characters/enemy/enemyTargets.js boutGate): a bout's fighters target only each
 // other across their sides, whatever their kinds and whatever the infighting setting; nobody outside the bout joins it;
 // a fighter takes the player only when the player is its bout's opponent; nobody is a target before the word or once
 // out. (2) THE FOE YIELD FLOOR in the pools' damage doors (scenes/exteriorFoes.js, its dungeon twin): a bout fighter at
@@ -9,8 +9,8 @@ import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { boutGate, setPlayerBout, playerBoutOf, getTargets, runTargetMachine, PLAYER_TARGET } from '../src/characters/enemyTargets.js';
-import { EnemyAI } from '../src/characters/enemyMotor.js';
+import { boutGate, setPlayerBout, playerBoutOf, getTargets, runTargetMachine, PLAYER_TARGET } from '../src/characters/enemy/enemyTargets.js';
+import { EnemyAI } from '../src/characters/enemy/enemyMotor.js';
 import { Collider } from '../src/player/collider.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
 

@@ -28,7 +28,7 @@ import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
 import { registerFormulaOverride } from '../src/combat/formulas.js';
 import { ARTIFACTS } from '../src/systems/artifactEffects.js';
 import { ENCHANTMENT_TYPES as T } from '../src/formats/magicDef.js';
-import { PLAYER_TARGET } from '../src/characters/enemyTargets.js';
+import { PLAYER_TARGET } from '../src/characters/enemy/enemyTargets.js';
 
 // ---- the crafted data (watch1.test.js): the watch's class and a rat's career -----------------------------------
 function stubClassCfg() {

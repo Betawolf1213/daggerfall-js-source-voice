@@ -17,7 +17,7 @@ import { createTradeManager, TradeSession } from '../src/net/tradeSession.js';
 import { validTradeData, validPose, parseClient, relaySupportsTrade, questShareGate, questInGate, QUEST_HUB_MIN_MS, QUEST_SEND_MS, QUEST_FRAME_MAX, TRADE_FRAME_MAX, TRADE_ROOM_BYTES_PER_S, TRADE_HZ_MAX, RELAY_VERSION, inRange } from '../src/net/wire.js';
 import { createTradePack } from '../src/systems/tradePack.js';
 import { RemotePlayers } from '../src/net/remotePlayers.js';
-import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
+import { EQUIP_SLOTS } from '../src/characters/paperdoll/paperdoll.js';
 import { swingSoundFor, SOUND } from '../src/systems/soundClips.js';
 import { fakeRoom } from './fakeRoom.mjs';
 import { WHY_IN_PARTY, SocialState } from '../src/net/social.js';

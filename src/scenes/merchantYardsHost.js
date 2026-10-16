@@ -14,7 +14,7 @@
 //
 // WHO STANDS IN IT: the Stable's three horses (Horse Cart and Cargo's own standing horse, eight views - its art the
 // pool's, `horseArt`), turned to the eye as a standing horse turns; the keeper, a person of the town's own race in its
-// idle record (characters/mobilePerson.js PERSON_TEXTURES, PERSON_IDLE_RECORD at PERSON_IDLE_FPS); in the Wagon Yard a
+// idle record (characters/mobile/mobilePerson.js PERSON_TEXTURES, PERSON_IDLE_RECORD at PERSON_IDLE_FPS); in the Wagon Yard a
 // Small Cart, an Open Wagon and a Caravan, Mac's own wagons (`showWagon` - scenes/horseCartPool.js drawShowWagon), each
 // its own box's middle on its place, its front to the street, its wheels on the ground.
 //
@@ -47,7 +47,7 @@ import { YARD_FOOT } from '../world/merchantYards/merchantYardSites.js';
 import { buildYardModel, signBoxOf, yardPoints } from '../world/merchantYards/merchantYardModels.js';
 import { yardArt, YARD_ARCHIVE } from '../world/merchantYards/merchantYardArt.js';
 import { dfLook, lookSeed } from '../world/dfLook.js';   // DF-LOOK: the yards' pictures in Daggerfall's colours
-import { PERSON_TEXTURES, PERSON_IDLE_RECORD, PERSON_IDLE_FPS } from '../characters/mobilePerson.js';
+import { PERSON_TEXTURES, PERSON_IDLE_RECORD, PERSON_IDLE_FPS } from '../characters/mobile/mobilePerson.js';
 import { mobileBillboardSize } from '../world/rmbFlats.js';
 import { folkLookOf } from '../characters/folkBodies.js';   // AUDIT MW-NPC II P1: a keeper's body, in the outfit their picture wears
 import { personActor } from '../characters/peopleBodies.js';   // AUDIT MW-NPC II P1: and turned to the eye as a standing person is

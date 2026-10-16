@@ -12,7 +12,7 @@ import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 
 const _store = new Map();
 globalThis.localStorage = {
@@ -29,8 +29,8 @@ const { createCrewAshore, CATCH_UP_M } = await import('../src/scenes/crewAshore.
 const { createCompanions, COMPANION_WHY } = await import('../src/systems/naval/crewCompanions.js');
 const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
 const { drawCompanionsPage, _resetCompanionRosterForTests, _setCompanionRosterIconForTests, companionPageShown } = await import('../src/ui/companionRoster.js');
-const { MobileUnit, HURT_ANIMS } = await import('../src/characters/mobileUnit.js');
-const { ENEMY_BASICS } = await import('../src/characters/enemyBasics.js');
+const { MobileUnit, HURT_ANIMS } = await import('../src/characters/mobile/mobileUnit.js');
+const { ENEMY_BASICS } = await import('../src/characters/enemy/enemyBasics.js');
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const me = { isPlayer: true, name: 'Ayla Stormwind', characterId: 'char-sworn', level: 8, health: 100, maxHealth: 100 };

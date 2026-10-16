@@ -20,7 +20,7 @@ import {
   addItem, isSummoned, isStackable, stacksWith, getItem, spendArrow, ARROW_TEMPLATE,
 } from '../src/systems/inventory.js';
 import { equipItem, armorValuesOf, equipTableOf } from '../src/systems/equip.js';
-import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
+import { EQUIP_SLOTS } from '../src/characters/paperdoll/paperdoll.js';
 import { applySpell } from '../src/systems/effects.js';
 import { buildCustomSpell, blankEffectSettings } from '../src/systems/spell/spellMaker.js';
 import { effectByKey, PORTED_KEYS, SPELL_MAKER_EFFECTS } from '../src/systems/spell/spellEffects.js';

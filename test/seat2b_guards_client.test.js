@@ -12,7 +12,7 @@ import { foldSiege, siegeNpcShown, siegeBarLines, siegeWorksLine, siegeSidesLine
 import { createSiegeSession, SIEGE_SESSION_TEXT } from '../src/net/siege/siegeSession.js';
 import { siegeRoomKey, SIEGE_UNITS_PER_M } from '../src/net/siege/siegeRef.js';
 import { siegeNpcLook, siegeNpcAct, createSiegeNpcs, SIEGE_NPC_LOOKS, SIEGE_NPC_FALL_MS } from '../src/scenes/siegeNpcs.js';
-import { enemyDisplayName } from '../src/characters/enemyBasics.js';
+import { enemyDisplayName } from '../src/characters/enemy/enemyBasics.js';
 
 const W = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
 const T = 1_800_000_000_000;

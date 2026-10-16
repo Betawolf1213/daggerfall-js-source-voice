@@ -10,14 +10,14 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { setPref } from '../src/systems/uiPrefs.js';
 import { Collider } from '../src/player/collider.js';
-import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES as M } from '../src/characters/mobile/mobileTypes.js';
 import { setTacticsClock, resetTactics, tacticsStep, noteLocalPlayer, LOCAL_TARGET } from '../src/ai/tactics.js';
 import {
   resetBlows, makeBlow, setLiveBlow, drawableBlows, blowConnects, blowScaled, registerBlowDodgedListener, SAND_DRAW_RANGE, liveBlows,
   BLOW_TIER_LEVEL, BLOW_COOLDOWN_MIN, BLOW_COOLDOWN_MAX, BLOW_CHANCE, blowShapesOf as foeShapesOf, inBlow as foeInBlow, BLOW as FOE_BLOW,
 } from '../src/ai/foeBlows.js';
 import { BLOW, BLOW_FAMILY, BLOW_CASTERS, blowShapesOf, inBlow } from '../src/ai/blowShapes.js';
-import { setPlayerBout, playerBoutOf, boutGate, inBout } from '../src/characters/enemyTargets.js';
+import { setPlayerBout, playerBoutOf, boutGate, inBout } from '../src/characters/enemy/enemyTargets.js';
 import { LADDER_TIERS, ladderAfter, arenaLadderRestore, BOUTS_PER_TIER, nextLadderBout, arenaLadderSnapshot, BOUT_PURSE } from '../src/systems/arena/arenaLadder.js';
 import { boutPoints } from '../src/systems/arena/arenaLeague.js';
 import { revenantCandidate } from '../src/systems/revenant/revenant.js';
@@ -401,7 +401,7 @@ test('AUDIT ARENA-LADDER A2: a fighter on the sand is its bout\'s - no dispel or
   // the streaming host imports it; the dungeon's reaches it on the lazy foe subsystem (MT-iv: never static there)
   const w = rd('src/scenes/world.js'), dc = rd('src/scenes/dungeonContext.js'), ex = rd('src/scenes/exterior.js');
   assert.match(w, /dispelNearby\(list\.map\(\(no\) => no\.ref\)\.filter\(\(f\) => !inBout\(f\)\),/);
-  assert.match(w, /^(?:(?!\/\/).)*import \{[^}\n]*inBout[^}\n]*\} from '\.\.\/characters\/enemyTargets\.js';/m, 'world.js: imported in code, not in a comment');
+  assert.match(w, /^(?:(?!\/\/).)*import \{[^}\n]*inBout[^}\n]*\} from '\.\.\/characters\/enemy\/enemyTargets\.js';/m, 'world.js: imported in code, not in a comment');
   assert.match(dc, /dispelNearby\(list\.map\(\(no\) => no\.ref\)\.filter\(\(f\) => !foeDeps\?\.inBout\?\.\(f\)\),/);
   assert.match(dc, /arrowAimDirection, bumpAtkCount, inBout, playerBoutOf \}\] = await Promise\.all\(\[/, 'the dungeon: taken off the lazy module');
   assert.match(dc, /resetAllyTeamOnPlayerAttack, boutGate, bumpAtkCount, inBout, playerBoutOf,/, '...and published on foeDeps');

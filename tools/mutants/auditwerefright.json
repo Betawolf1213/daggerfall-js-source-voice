@@ -37,7 +37,7 @@
   },
   {
     "name": "AUDIT-WERE-FRIGHT-F3-the-run-pacifies",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    // takes its target, which is all that stops it striking.\n    this.target = null;",
     "new": "    // takes its target, which is all that stops it striking.\n    this.isHostile = false;\n    this.target = null;",
     "tests": [

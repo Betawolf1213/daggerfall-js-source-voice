@@ -30,11 +30,11 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
 import { createCityGuards, GUARD_MOBILE_TYPE } from '../src/scenes/cityGuards.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { validFoeRecord, CELL_PUPPETS_MAX, CELL_WATCH_PUPPETS_MAX, CELL_FRAME_RECORDS_MAX } from '../src/net/wire.js';
-import { PLAYER_TARGET } from '../src/characters/enemyTargets.js';
+import { PLAYER_TARGET } from '../src/characters/enemy/enemyTargets.js';
 import { WEAPON_REACH } from '../src/combat/playerWeapon.js';
-import { MAX_RANGED_DISTANCE } from '../src/characters/enemyMotor.js';
+import { MAX_RANGED_DISTANCE } from '../src/characters/enemy/enemyMotor.js';
 import { FOES_MS } from '../src/net/online.js';
 const PUPPET_LAG_SLACK = 2 + 12 * (FOES_MS / 1000);   // the pose slack plus the fastest watchman's stride in one foes interval - past this no blow can be honest
 

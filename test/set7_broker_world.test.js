@@ -22,8 +22,8 @@ import { CAGE_W, CAGE_D, CAGE_H, CAGE_WALL_OUT, CAGE_DOOR_OPEN, CAGE_DOOR_MS, CA
 import { raceActivation, raceWinner } from '../src/player/activationRace.js';
 import { pickActivatableHit, RAY_DISTANCE, STATIC_NPC_ACTIVATION_DISTANCE } from '../src/player/activate.js';
 import { composeNamer } from '../src/systems/worldHover.js';
-import { IDLE_ANIMS } from '../src/characters/mobileUnit.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { IDLE_ANIMS } from '../src/characters/mobile/mobileUnit.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { Collider } from '../src/player/collider.js';
 import { CAPSULE_RADIUS, CAPSULE_HEIGHT } from '../src/player/motor.js';
 

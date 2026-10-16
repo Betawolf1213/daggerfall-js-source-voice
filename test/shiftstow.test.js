@@ -17,7 +17,7 @@ import { CELL_X } from '../src/ui/item/itemScroller.js';
 import { STORE_FILTERS, STORE_FILTER_KINDS, filterStore, storeFilterOptions, storeFilterAccepts, storeQuery } from '../src/ui/storeFilter.js';
 import { SMALL_CART_TEMPLATE } from '../src/systems/inventorySession.js';
 import { mintMaterialItem } from '../src/systems/professions/profItems.js';
-import { ITEM_TEMPLATES } from '../src/characters/paperdoll.js';
+import { ITEM_TEMPLATES } from '../src/characters/paperdoll/paperdoll.js';
 import { isEquipped } from '../src/systems/equip.js';
 import { _resetForTests } from '../src/systems/uiPrefs.js';
 import { PACK_PAGES } from '../src/ui/packPages.js';

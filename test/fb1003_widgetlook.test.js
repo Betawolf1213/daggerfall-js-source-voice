@@ -19,8 +19,8 @@ import { setValue, _resetForTests as resetSettings } from '../src/systems/settin
 import { inertiaStep, readWidgetSettings } from '../src/combat/weaponWidgetMotion.js';
 import { calculateAttackDamage, setAttackOnPlayerHook } from '../src/combat/formulas.js';
 import { installPcaao, uninstallPcaao } from '../src/combat/pcaao.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
-import { makeEnemyEntity } from '../src/characters/enemyEntity.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
+import { makeEnemyEntity } from '../src/characters/enemy/enemyEntity.js';
 
 const DEG = Math.PI / 180;
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

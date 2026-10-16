@@ -23,8 +23,8 @@ import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { dfuFile } from './dfuRoot.mjs';
 import { snapshotPlayer, restorePlayer, restoreSessionState, removeOrphanedItems, removeAllOrphanedItems } from '../src/systems/save/save.js';
-import { MobileUnit, MOBILE_DAEDRA_SEDUCER } from '../src/characters/mobileUnit.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { MobileUnit, MOBILE_DAEDRA_SEDUCER } from '../src/characters/mobile/mobileUnit.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { usingRightHandFromSaveVars, weaponPoseOf, applyWeaponPose, mergeWeaponPose } from '../src/combat/playerWeapon.js';   // HARD2c: the port-save half of the pair, beside the classic-save half
 import { equipItem } from '../src/systems/equip.js';
 import { createRandomPotion, randomlyAddMap, randomlyAddPotionRecipe } from '../src/systems/loot/loot.js';   // AUDIT 63r F28: the three NAMELESS production mints

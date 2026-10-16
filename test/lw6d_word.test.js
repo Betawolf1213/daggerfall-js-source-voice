@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import { synthTown } from './lwTown.mjs';
 import { LivingTown, DEED_KNOWN_MIN } from '../src/systems/livingWorld/livingTown.js';
 import { ResidentWalker } from '../src/characters/residentWalker.js';
-import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
+import { PERSON_MOVE_SPEED } from '../src/characters/mobile/mobilePerson.js';
 import { DAY_MIN } from '../src/systems/livingWorld/dayPlan.js';
 import { createRelations, TALE_KINDS, HAND_KINDS, MARK_KINDS } from '../src/systems/livingWorld/relations.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';

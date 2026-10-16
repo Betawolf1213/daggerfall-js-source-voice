@@ -21,7 +21,7 @@ import {
 import { mintSiegeOrder, verifyOrder, _b64url } from '../src/net/identityToken.js';
 import { mintSiegeReceipt, mintRoyalReceipt, readSiegeReceipt, verifySiegeReceipt, siegeReceiptValid, royalReceiptValid, SIEGE_RECEIPT_TTL_S } from '../src/net/siege/siegeReceipt.js';
 import { royalStandings, SIEGE_SIDE_MAX, seatWeekOf, seatWeekStartMs } from '../src/net/townSeatLaw.js';
-import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
+import { EQUIP_SLOTS } from '../src/characters/paperdoll/paperdoll.js';
 import { cellRoomOfWire, PIXEL_UNITS, WORLD_CELL, POSE_HZ_MAX, HELLO_HZ_MAX, CLOSE_REPLACED } from '../src/net/wire.js';
 import { fakeRoom } from './fakeRoom.mjs';
 import { standService, T0 } from './accountDb.mjs';
@@ -433,7 +433,7 @@ test('AUDIT-SEATS R8 A WEAPON IS HELD IN A HAND: the look\'s right hand (19) or 
   for (const slot of [EQUIP_SLOTS.Amulet0, EQUIP_SLOTS.ChestArmor, EQUIP_SLOTS.Gloves, EQUIP_SLOTS.Feet]) assert.equal(siegeHeld(inSlot(slot), 123, 9), null, `slot ${slot}`);
   assert.deepEqual(siegeHeld(inSlot(EQUIP_SLOTS.RightHand), 123, 9), { w: 123, m: 9 });
   assert.deepEqual(siegeHeld(inSlot(EQUIP_SLOTS.LeftHand), 123, 9), { w: 123, m: 9 });
-  assert.deepEqual([...ref.SIEGE_HAND_SLOTS], [EQUIP_SLOTS.RightHand, EQUIP_SLOTS.LeftHand], 'pinned equal to characters/paperdoll.js');
+  assert.deepEqual([...ref.SIEGE_HAND_SLOTS], [EQUIP_SLOTS.RightHand, EQUIP_SLOTS.LeftHand], 'pinned equal to characters/paperdoll/paperdoll.js');
   assert.equal(siegeHeld({ items: [{ templateIndex: 123, group: 'Weapons', material: 9 }] }, 123, 9), null, 'an item with no slot is in no hand');
   await withRoom(KEY, async ({ r, dev, say, step }) => {
     const a = await dev('dev-0001', { look: { ...LOOK, items: [{ ...HAND, equipSlot: EQUIP_SLOTS.Amulet0 }] } });

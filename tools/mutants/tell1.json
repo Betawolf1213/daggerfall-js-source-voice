@@ -181,7 +181,7 @@
   },
   {
     "name": "TELL1-motor-acts",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    this.canAct = !paralyzed && !knocked && !locked && (this.isHostile || foeTarget);",
     "new": "    this.canAct = !paralyzed && !knocked && (this.isHostile || foeTarget);",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "TELL1-motor-walks",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    if (paralyzed || paused || locked || !(this.isHostile || foeTarget)) this.moving = false;",
     "new": "    if (paralyzed || paused || !(this.isHostile || foeTarget)) this.moving = false;",
     "tests": [

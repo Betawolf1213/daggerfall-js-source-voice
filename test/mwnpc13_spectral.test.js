@@ -11,7 +11,7 @@ import { creatureLook, SPECTRAL_VEIL, CREATURE_MATCH } from '../src/characters/c
 import { foeActor, isBodyFoe } from '../src/characters/foeBodies.js';
 import { createNpcBodies } from '../src/characters/npcBodies.js';
 import { createTravellerSprites } from '../src/world/travellerSprites.js';
-import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES as M } from '../src/characters/mobile/mobileTypes.js';
 import { BaseImageFile } from '../src/formats/baseImageFile.js';
 import { createEquipTable } from '../src/characters/equipTable.js';
 

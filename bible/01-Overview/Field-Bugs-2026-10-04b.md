@@ -13,7 +13,7 @@ audio"*. Each fix is pinned by tests that fail on the code before it, and its pi
 ## COMPANION-TRAIL (1)
 
 `scenes/crewAshore.js` (`drop`, `TRAIL_STEP_M`, `TRAIL_MAX`, `TRAIL_JUMP_M`, the follow handle's `trail`);
-`characters/enemyMotor.js` (`_followGoal`, `_trailGoal`, `_crumbFrom`, `_nearestCrumb`, `_clearLine`, `_followTicks`,
+`characters/enemy/enemyMotor.js` (`_followGoal`, `_trailGoal`, `_crumbFrom`, `_nearestCrumb`, `_clearLine`, `_followTicks`,
 the grounded walk's pace, `FOLLOW_SIGHT_S`, `FOLLOW_SIGHT_TRIES`, `FOLLOW_CRUMB_REACH`, `FOLLOW_SIGHT_RADIUS`,
 `FOLLOW_SIGHT_DY`, `FOLLOW_CRUMB_FAR`, `FOLLOW_YAW_GATE_DEG`, `FOLLOW_RUN_M`, `FOLLOW_RUN_PACE`); `ai/enhancedMotor.js`
 (`_followGoal`). Reproduced first, in the shape of the report: two rooms, the wall between them, a 1.2 m doorway at its
@@ -49,7 +49,7 @@ the walk) and `test/crewcompanions.test.js` (re-pinned).
 
 ## QUIET-COMPANIONS (2)
 
-`characters/enemySounds.js` (`COMPANION_ATTRACT_SCALE`, `EnemySoundSource.tick`'s `companion`), `scenes/hostCombat.js`
+`characters/enemy/enemySounds.js` (`COMPANION_ATTRACT_SCALE`, `EnemySoundSource.tick`'s `companion`), `scenes/hostCombat.js`
 (`tickEnemySound`'s `companion`), `scenes/exteriorFoes.js` and `scenes/dungeonContext.js` (each of their two bark sites
 passes `companion: f.companion != null` - my companions and another player's alike); `scenes/portalFx.js`
 (`PORTAL_SOUND_GAP_MS`). A companion's attract wait is six times the one it rolled - 18 to 54 s where DFU's foe waits 3

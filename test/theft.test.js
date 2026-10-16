@@ -145,7 +145,7 @@ test('PT1: Dice100 has ONE home and the tree stopped writing it out', () => {
   // expression it retired, and a raw sweep read the quotation as a
   // fourth copy. The comment bodies come out before the code is read.
   const codeOnly = (src) => src.split('\n').map((l) => l.replace(/\/\/.*$/, '')).join('\n');
-  for (const p of ['src/characters/enemyMotor.js', 'src/world/actionSystem.js', 'src/systems/theft.js']) {
+  for (const p of ['src/characters/enemy/enemyMotor.js', 'src/world/actionSystem.js', 'src/systems/theft.js']) {
     const s = codeOnly(read(p));
     assert.doesNotMatch(s, /Math\.floor\(\s*(rolls|this\._rolls)\(\)\s*\*\s*100\s*\)\s*>=/,
       `${p} still writes Dice100.FailedRoll out by hand`);

@@ -295,7 +295,7 @@ lycanthrope forms - and every one of the 168 follows the same wheel:
 
 which is classic Daggerfall's own 8-orientation layout - five drawn
 records front to back, the left half drawn flipped. The port already
-speaks it: `characters/mobilePerson.js` calls it "the MoveAnims wheel
+speaks it: `characters/mobile/mobilePerson.js` calls it "the MoveAnims wheel
 (records 0-4 mirrored - the monster layout)".
 
 That 0 of 168 deviate was checked mechanically against the IL, and the
@@ -743,7 +743,7 @@ negates the angle, which runs the wheel backwards: a player turning
 left was drawn from the right. `orientationFor(facing, toCamera)` is
 the IL's order now, and THE TURN pin holds the camera off the left at
 index 6 and off the right at 2. Worth a note for Mac's eye:
-`characters/mobileUnit.js`'s `mobileOrientation` - DFU's own
+`characters/mobile/mobileUnit.js`'s `mobileOrientation` - DFU's own
 `OrientEnemy` wheel for every foe - uses the OTHER sign, the one the
 old port had. That is DFU's law for foes and this mod's for the
 player, and both are pinned as they are; if a foe ever looks wrong

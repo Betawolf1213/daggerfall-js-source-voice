@@ -1056,7 +1056,7 @@ their setting as residue.
   and the ClimbingCheck state machine, classic arms only: the
   14-unit start countdown (x systemTimerUpdatesDivisor 0.0549254 -
   the divisor moved to its DFU home, a PlayerMotor field, with
-  characters/enemyMotor.js re-exporting) behind the horizontal
+  characters/enemy/enemyMotor.js re-exporting) behind the horizontal
   tolerance 0.12, the base-70 start check whose GROUND failure
   re-checks every frame WITHOUT resetting the timer (:430-437, the
   verbatim tally-spam quirk) while the mid-fall grasp (base 40)

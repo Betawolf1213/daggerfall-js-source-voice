@@ -45,15 +45,15 @@ export function ribbonTints(rb) {
 // the same class-enemy sprite classic dungeon humanoids already use (Warrior, Mage, Knight, ...), driven by simple
 // moving/striking flags off the peer's synced pose instead of AI - the reusable pieces dungeonContext.js already
 // builds a foe's OWN mobile unit from (MobileUnit.update takes the same flags EnemyMotor's AI would set).
-import { MobileUnit } from '../characters/mobileUnit.js';
-import { ENEMY_BASICS, ENEMY_NAMES } from '../characters/enemyBasics.js';
-import { MOBILE_TYPES } from '../characters/mobileTypes.js';   // DISC12: the beast a peer in beast form stands as
+import { MobileUnit } from '../characters/mobile/mobileUnit.js';
+import { ENEMY_BASICS, ENEMY_NAMES } from '../characters/enemy/enemyBasics.js';
+import { MOBILE_TYPES } from '../characters/mobile/mobileTypes.js';   // DISC12: the beast a peer in beast form stands as
 import { mobileBillboardSize } from '../world/rmbFlats.js';
 import { quadHalfDiagonal } from '../render/bounds.js';   // OW-PEERS: a grown sprite's reach, as the batch is made with
 import { modSetting, storedModSetting } from '../systems/modSettings.js';   // DISC23-B: the Eye Of The Beholder set the look carries
 import { getPref } from '../systems/uiPrefs.js';   // 2026-09-17: the 'peerClassSprites' on/off, read once a sync (Other players, enhancedMenu.js peerSpritesCard)
 import { CLASS_CAREERS } from '../systems/chargen.js';   // 2026-09-17 (bugfix): a stock class's CFG-loaded career carries no `.name` of its own - chargenSession.js's own class list already falls back to this array by careerIndex (`cf.career.name || CLASS_CAREERS[i]`), and composeLook needs the same fallback or every stock-class peer sends class:null
-import { EQUIP_SLOTS } from '../characters/paperdoll.js';   // AUDIT DROPS E6: the hand a swing sound is read off
+import { EQUIP_SLOTS } from '../characters/paperdoll/paperdoll.js';   // AUDIT DROPS E6: the hand a swing sound is read off
 import { FootstepMachine, FOOTSTEP_CLIP_SETS } from '../systems/footsteps.js';   // PEER-FS1: peer footsteps off the pose's own `fk`
 import { RidingAnimator, RIDING_VOLUME_SCALE, nextNeighDelay } from '../systems/riding.js';   // RIDE-SOUND: a peer's hooves are TransportManager's own loop, clip swap and neigh
 import { TRANSPORT_MODES } from '../systems/transport.js';   // RIDE-SOUND: the pose's `rd` as the animator's mode
@@ -107,7 +107,7 @@ function careerName(entity) {
 const THIEF_MOBILE_TYPE = 138;
 
 /** A career name ("Warrior", "Mage", ...) to the matching class-enemy MobileType (128+). `ENEMY_NAMES` is
- *  generated straight off DFU's own EnemyBasics table (see characters/enemyBasics.js's header) - class rows start
+ *  generated straight off DFU's own EnemyBasics table (see characters/enemy/enemyBasics.js's header) - class rows start
  *  at array index 43, mobileType 128 - so this reads the SAME data dungeonContext.js's own class-enemy foes render
  *  from, rather than a second, hand-kept copy of the mapping (the Unity co-op mod this was ported from keeps its
  *  own switch statement for exactly this; a data-driven lookup here cannot drift out of sync with the sprite table
@@ -1154,7 +1154,7 @@ export class RemotePlayers {
     const striking = (entry != null && entry.lastAn != null && an !== entry.lastAn) || acted != null;
     const face = peerBodyYaw(shown);   // CLIMB5: on the wall, facing it
     const yaw = Number.isFinite(face) ? face : 0;
-    // BUGFIX (2026-09-17): mobileOrientation (characters/mobileUnit.js) reads cameraPos[0]/[2] unconditionally to
+    // BUGFIX (2026-09-17): mobileOrientation (characters/mobile/mobileUnit.js) reads cameraPos[0]/[2] unconditionally to
     // work out which of the 8 directional frames faces the viewer - it was never optional the way `null` assumed,
     // and crashed the moment a sprite actually built successfully. `eye` is the local player's own position, passed
     // in from world.js's onlineFrame (the same call site already reading `player.pos` for peerBodies.sync); the `f`

@@ -532,7 +532,7 @@ EnemyEntity.cs + EnemyMotor.cs (classic AI) + EntityEffectManager:
   SPELLS.STD by classic index with missing records skipped loudly.
   assignEnemySpells = the SetEnemyCareer tail: monsters take their
   list; class enemies gate on the ENEMY_BASICS CastsMagic flag.
-- **AI** (src/characters/enemyCasting.js): the classic (non-Enhanced)
+- **AI** (src/characters/enemy/enemyCasting.js): the classic (non-Enhanced)
   decision shape. DoTouchSpell: sight + melee reach (+ rate of
   approach) + the SHARED melee timer at 0; a touch cast RESETS that
   timer; classic AI counts ByTouch AND CasterOnly as touch picks.
@@ -8374,7 +8374,7 @@ bark is heard (the clip its landed blows roll 20% for), and one roll is made: 50
 beast's level against the level of the guard whose blow opened the halt - the watch pool hands it on the hit
 (`onPlayerHurt(dmg, wpn, { guardLevel })`), both hosts and a building's watch pass it through - held to 10-90, and a
 guard of unknown level taken at the beast's own. SAID PLAINLY: the watch is minted three to six levels above the player
-(DFU's Range(3, 7) on Knight_CityWatch, `characters/enemyEntity.js makeEnemyEntity`), so against the real watch the roar
+(DFU's Range(3, 7) on Knight_CityWatch, `characters/enemy/enemyEntity.js makeEnemyEntity`), so against the real watch the roar
 works 20-35% of the time, never 50. That is Mac's formula as picked; `FRIGHTEN_BASE_CHANCE` is the one number to move if
 the street should feel different, and the pins hold the street's range beside the formula's so a change to either
 shows.
@@ -8392,7 +8392,7 @@ the beast again), selects no target (so no swing and no blow), and calls no "Hal
 hostility, only 16 m). **Unafraid**, the watch stands its ground, the blow the question withheld lands, and the crime
 stands - N's outcome with a roar before it.
 
-**The run** (`characters/enemyMotor.js flee`, `_fleeStep`). No DFU motor ever runs from anything, so the run is the
+**The run** (`characters/enemy/enemyMotor.js flee`, `_fleeStep`). No DFU motor ever runs from anything, so the run is the
 pursuit's own laws turned round, not a new walker: per classic tick (the motor's one `_classicTimer`) it turns in place by
 TurnToTarget's 20 degrees until the way away is inside the 5.625-degree move gate, then walks through `_walkStep` -
 `_step`'s grounded tail, EXTRACTED so both call the one copy: the rest fast path, gravity, AttemptMove's obstacle and

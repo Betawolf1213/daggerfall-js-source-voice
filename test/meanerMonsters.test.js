@@ -12,8 +12,8 @@ import {
 import { registerBillboardXml, unregisterBillboardXml, billboardXmlScale, applyBillboardXml } from '../src/world/billboardXml.js';
 import { billboardSize, mobileBillboardSize, scaledBillboardSize } from '../src/world/rmbFlats.js';
 import { setTextureReplacements, clearTextureReplacements } from '../src/systems/textureReplacement.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
-import { makeEnemyEntity } from '../src/characters/enemyEntity.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
+import { makeEnemyEntity } from '../src/characters/enemy/enemyEntity.js';
 import { MEANER_MONSTERS as PCAAO_EDIT } from '../src/combat/pcaaoMeanerMonsters.js';
 import { MOD_SETTINGS, setModSetting, _resetModSettings, modSettingIfDeclared } from '../src/systems/modSettings.js';
 import { CREDITS } from '../src/ui/credits.js';
@@ -132,7 +132,7 @@ test('MM1: the seams - the archive on a parsed TEXTURE.###, every billboard size
     assert.doesNotMatch(s, /scaledBillboardSize\(\w+(?:\.\w+)*\.getSize\(/, `${f}: a billboard sized past the xml door`);
   }
   // AUDIT MM1: the mobile units through the mobile door (DaggerfallMobileUnit / MobilePersonBillboard), everything else static
-  assert.match(rd('src/characters/enemyAnchor.js'), /return mobileBillboardSize\(t, 0\)\.h;/, 'the idle height reads the scaled record');
+  assert.match(rd('src/characters/enemy/enemyAnchor.js'), /return mobileBillboardSize\(t, 0\)\.h;/, 'the idle height reads the scaled record');
   assert.match(rd('src/scenes/exteriorFoes.js'), /const sz0? = mobileBillboardSize\(f\.tex, o\.record\);/);   // ELITE FOES: `sz0`, then an elite's quarter more
   assert.match(rd('src/scenes/dungeonContext.js'), /const sz = mobileBillboardSize\(f\.mobileTex, out\.record\);/);
   assert.match(rd('src/scenes/cityGuards.js'), /const sz = mobileBillboardSize\(g\.tex, o\.record\);/);
@@ -150,5 +150,5 @@ test('MM1: the seams - the archive on a parsed TEXTURE.###, every billboard size
   const credit = CREDITS.mods.find((c) => c.title === 'Meaner Monsters');
   assert.ok(credit); assert.equal(credit.author, 'Ralzar'); assert.equal(credit.version, '1.5.2'); assert.deepEqual([...credit.vendor], ['meanerMonsters']); assert.match(credit.terms, /MIT/);
   assert.match(rd('vendor/meanerMonsters/README.md'), /Ralzar/); assert.match(rd('vendor/meanerMonsters/README.md'), /MIT/);
-  assert.match(rd('src/characters/enemyEntity.js'), /const basics = pcaaoMeanerMonstersRow\(mobileType, applyMeanerMonsters\(mobileType, basicsIn\)\);/, 'Ralzar\'s row, then the overhaul\'s edit over it');
+  assert.match(rd('src/characters/enemy/enemyEntity.js'), /const basics = pcaaoMeanerMonstersRow\(mobileType, applyMeanerMonsters\(mobileType, basicsIn\)\);/, 'Ralzar\'s row, then the overhaul\'s edit over it');
 });

@@ -18,13 +18,13 @@ import { modSaveRecords, restoreModSaveRecords } from '../src/systems/modSaveDat
 import { MOD_CURATED } from '../src/systems/features.js';
 import { legacySettings } from '../src/systems/legacy/settings.js';
 import { LOCATION_TYPES } from '../src/formats/mapsFile.js';
-import { PERSON_TEXTURES } from '../src/characters/mobilePerson.js';
+import { PERSON_TEXTURES } from '../src/characters/mobile/mobilePerson.js';
 import { raceArt } from '../src/systems/races.js';
 import { LivingTown } from '../src/systems/livingWorld/livingTown.js';
 import { isHome } from '../src/systems/livingWorld/census.js';
 import { ResidentWalker } from '../src/characters/residentWalker.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
-import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
+import { PERSON_MOVE_SPEED } from '../src/characters/mobile/mobilePerson.js';
 import { livesLine } from '../src/ui/familyPages.js';
 import { synthTown } from './lwTown.mjs';
 

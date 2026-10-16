@@ -1011,7 +1011,7 @@ often the watch should call, "Once, then rarely". A recorded departure from DFU 
 alone (`livingWorldOn`: the enhanced skin with the Features row on); the classic lane keeps DFU's cadence, pinned
 call for call.
 
-- **The cause** (DFU-faithful, `characters/enemySounds.js`, EnemySounds.cs:78-100, 196-226). Every watchman within
+- **The cause** (DFU-faithful, `characters/enemy/enemySounds.js`, EnemySounds.cs:78-100, 196-226). Every watchman within
   16 m of the player sounds his attract clock every 3 to 9 seconds, the bark 80% of the time - and the city watch's
   bark is "Halt!" (clip 456). Eight a minute a watchman, hostile or not; a crime's five, forty a minute; a squad
   arriving after its walk, four at once on one frame. The port added more mouths: the town's defenders (DISC19-F) and a

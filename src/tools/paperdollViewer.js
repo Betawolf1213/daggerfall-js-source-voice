@@ -24,7 +24,7 @@
 
 import { MISSILE_SPEED } from '../systems/spellcast.js';   // AUDIT 23: the arrow speed's one home
 import { createSkin } from './paperdoll/skin.js';
-import { buildPaperdollPayload } from '../characters/paperdollPayload.js';
+import { buildPaperdollPayload } from '../characters/paperdoll/paperdollPayload.js';
 import { makeCoreFn, buildCloth, stepCloth, articulatedCapsules } from '../characters/clothSim.js';
 import { beastAttackPose, hitPointOf } from '../characters/beastAttack.js';
 import { DIRECTION_TO_STRIKE, STRIKES, sampleClip, REACTIONS } from '../characters/anims.js';
@@ -464,7 +464,7 @@ function applyVillagerTone(v) {
 //
 // THE SCALE IS MEASURED, NOT GUESSED, and it is measured where the body
 // and the garment are both in hand: at build time, in
-// characters/paperdollPayload.js, and shipped on the drape.
+// characters/paperdoll/paperdollPayload.js, and shipped on the drape.
 //
 // It used to be computed here from `torso * 0.75 + shoulder * 0.25`,
 // which is a guess from two build keys and ignores the thing that

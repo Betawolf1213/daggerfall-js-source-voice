@@ -11,7 +11,7 @@
 // ready, a record missing, is silence).
 //
 // Not a DFU member. Ledger A (SERPENT1).
-import { ENEMY_BASICS } from '../../characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../../characters/enemy/enemyBasics.js';
 import { NAVAL_CLASSIC } from '../naval/navalSounds.js';
 
 /** The mobiles whose voices it borrows (enemyBasics.js rows - the Dreugh, the Lamia). */

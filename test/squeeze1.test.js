@@ -99,7 +99,7 @@ test('AUDIT pre-merge S2: every FOE keeps its floor by its motor\'s word, whatev
     assert.ok(lowest > -0.01, `a ${height} foe under a ${ceil} ceiling stays on its floor (lowest ${lowest.toFixed(3)})`);
     assert.equal(grounded, true);
   }
-  const m = readFileSync(new URL('../src/characters/enemyMotor.js', import.meta.url), 'utf8');
+  const m = readFileSync(new URL('../src/characters/enemy/enemyMotor.js', import.meta.url), 'utf8');
   const sites = [...m.matchAll(/this\.collider\.move\(this\.feet,[^;]*\);/g)].map((x) => x[0]);
   assert.equal(sites.length, 6);
   for (const site of sites) assert.match(site, /, this\.controllerHeight, true, FOE_KEEPS_FLOOR\);$/, site);   // DOOR-JAM (FIELD BUGS 2026-10-14b): the controller's own height, HeightAdjust's crouch

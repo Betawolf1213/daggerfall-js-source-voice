@@ -22,7 +22,7 @@ import { campGroups, passingPairs, partyPlaces, partyLabel, CAMP_SHARE_N, PASS_N
 import { campTurn } from '../src/systems/livingWorld/wagons.js';
 import { createRoadStands } from '../src/scenes/roadStands.js';
 import { fillLine, ROAD_PASS_SCRIPTS, ROAD_PASS_WARNINGS, MINSTREL_SONGS, minstrelLine, MINSTREL_EVERY_MIN, MINSTREL_UP_MIN, PATROL_HALT_LINES } from '../src/systems/livingWorld/lines.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 import { FIRE_FLAT } from '../src/systems/survival/camp.js';
 import { createRelations } from '../src/systems/livingWorld/relations.js';
 import { synthTown } from './lwTown.mjs';

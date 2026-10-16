@@ -45,7 +45,7 @@ import { createDataPipeline } from '/src/scenes/dataPipeline.js';
 import { createSigilBroker, cageSpotLocal } from '/src/scenes/sigilBrokerPool.js';
 import { gameDayAt, gateTimes } from '/src/net/gate/gateLaw.js';
 import { CAGE_DOOR_MS } from '/src/world/cageModel.js';
-import { IDLE_ANIMS } from '/src/characters/mobileUnit.js';
+import { IDLE_ANIMS } from '/src/characters/mobile/mobileUnit.js';
 import { perspective, mirrorProjectionX, lookAt } from '/src/world/mat4.js';
 import { brokerStock, brokerDay, brokerBought, makeBrokerSale, spendableStonesIn, lockedStonesIn, stoneCount } from '/src/systems/sigil/sigilBroker.js';
 import { sigilStone } from '/src/systems/gate/gateSpoils.js';

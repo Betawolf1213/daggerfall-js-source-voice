@@ -19,7 +19,7 @@
 // WHO STANDS IN IT: in the shipyard, the SHIPMASTER on his office's porch (his keeper's draw - systems/portPlaces.js
 // portKeeper), the CREWMASTER behind the crew hall's table, three SAILORS looking for a berth at its open side and two
 // SHIPWRIGHTS at the hull - one up on the scaffold; at the lighthouse, the LIGHTKEEPER by the tower's door. Each a person
-// of the town's own race (the walkers' law, characters/mobilePerson.js walkerRace - the host hands it) in its idle
+// of the town's own race (the walkers' law, characters/mobile/mobilePerson.js walkerRace - the host hands it) in its idle
 // record, one of the race's four outfits, the sailors' and the shipwrights' drawn off the place's key - every client
 // stands the same people - and each offered its Morrowind body (AUDIT MW-NPC II's law for the yards' keepers).
 //
@@ -62,7 +62,7 @@ import { buildShipyardModel, SHIPYARD, shipsSignBox, hullBox, noticesBox, crewSi
 import { buildLighthouseModel, buildLighthouseFire, guardBand, LIGHTHOUSE, LIGHTHOUSE_POINTS, doorBox, hatchBox, lanternBox, GALLERY_Y, LANTERN_H } from '../world/lighthouseModel.js';
 import { PORT_PAINTERS, PORT_ARCHIVE, PORT_HOW } from '../world/portArt.js';
 import { dfLook, lookSeed } from '../world/dfLook.js';   // DF-LOOK: the port's pictures in Daggerfall's colours
-import { PERSON_TEXTURES, PERSON_IDLE_RECORD, PERSON_IDLE_FPS } from '../characters/mobilePerson.js';
+import { PERSON_TEXTURES, PERSON_IDLE_RECORD, PERSON_IDLE_FPS } from '../characters/mobile/mobilePerson.js';
 import { mobileBillboardSize } from '../world/rmbFlats.js';
 import { folkLookOf } from '../characters/folkBodies.js';
 import { personActor } from '../characters/peopleBodies.js';

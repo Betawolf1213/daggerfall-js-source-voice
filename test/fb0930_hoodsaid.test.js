@@ -29,7 +29,7 @@ import {
 } from '../src/systems/survival/temperature.js';
 import { equipItem } from '../src/systems/equip.js';
 import { mintCondition, setItemFields, templateByIndex } from '../src/systems/item/itemTemplates.js';
-import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
+import { EQUIP_SLOTS } from '../src/characters/paperdoll/paperdoll.js';
 import {
   createVampirismCurse, racialFastTravelBlock, SUNLIGHT_TRAVEL_TEXT, VAMPIRE_HOOD_TEXT, VAMPIRE_HOOD_TEXT_CLASSIC,
 } from '../src/systems/vampirism.js';

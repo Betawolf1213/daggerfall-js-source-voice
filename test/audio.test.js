@@ -86,7 +86,7 @@ test('AUDIT 39: a registered clip is decoded from the VIEW\'s range, not the who
 });
 
 test('audio: enemy sound columns restored (rat/imp verbatim rows)', async () => {
-  const { ENEMY_BASICS } = await import('../src/characters/enemyBasics.js');
+  const { ENEMY_BASICS } = await import('../src/characters/enemy/enemyBasics.js');
   assert.equal(ENEMY_BASICS['0'].moveSound, 115);     // EnemyRatMove
   assert.equal(ENEMY_BASICS['0'].barkSound, 116);
   assert.equal(ENEMY_BASICS['0'].attackSound, 117);

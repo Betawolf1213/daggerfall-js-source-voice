@@ -29,9 +29,9 @@ import { setPlayerDoor, paidBack } from '../src/systems/playerDoor.js';
 import { equipItem } from '../src/systems/equip.js';
 import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
-import { makeEnemyEntity } from '../src/characters/enemyEntity.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { makeEnemyEntity } from '../src/characters/enemy/enemyEntity.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 import { ENCHANTMENT_TYPES } from '../src/systems/enchantments.js';
 import { itemFindings } from '../src/systems/item/itemLaw.js';
 

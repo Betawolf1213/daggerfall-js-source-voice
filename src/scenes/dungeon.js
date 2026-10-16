@@ -10,7 +10,7 @@
 
 import { walkModeOn, bindWalkMode } from '../player/walkMode.js';   // PADWALK: walk mode, one button on and off
 import { noteLocalPlayer, tacticsNow, tickTactics } from '../ai/tactics.js';   // TACT2/TACT4; AUDIT TACT: the clock's tick
-import { foeFrameDt } from '../characters/enemyMotor.js';   // AUDIT TACT: the foes' own step, for the brain's clock
+import { foeFrameDt } from '../characters/enemy/enemyMotor.js';   // AUDIT TACT: the foes' own step, for the brain's clock
 import { drawableBlows } from '../ai/foeBlows.js';   // TACT4
 import { techniqueMarksNow } from '../combat/techniques.js';   // TECH1: the player's own marks on the ground, after the foes'
 import { iilActive, iilDungeonLights, iilTorch, iilSyncLane } from '../systems/improvedInteriorLighting.js';   // IIL1

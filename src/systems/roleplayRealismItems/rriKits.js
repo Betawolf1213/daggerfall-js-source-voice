@@ -27,7 +27,7 @@ import { liveStat } from '../statMods.js';
 import { equipTableOf, equipItem } from '../equip.js';
 import { getItemHands, ITEM_HANDS } from '../../characters/equipTable.js';   // SWING-LAW: a two-hander's handling
 import { isQuestionsDagger, QUESTIONS_DAGGER_WEAR } from '../conditionRepair.js';   // DISC21-A: the questions' dagger, one home
-import { EQUIP_SLOTS } from '../../characters/paperdoll.js';
+import { EQUIP_SLOTS } from '../../characters/paperdoll/paperdoll.js';
 import { WEAPON_TYPES } from '../../combat/fpsWeapon.js';
 import {
   BANDAGE_TEMPLATE, bandageHeal, shelfBandageStack, storeQualityItemCondition, storeQualityOn,

@@ -1,7 +1,7 @@
 [
   {
     "name": "MWSTEEL1-silver-wears-the-plate",
-    "file": "src/characters/ownArmorModels.js",
+    "file": "src/characters/ownModels/ownArmorModels.js",
     "old": "const steel = plate(ARMOR_MATERIAL.Steel);",
     "new": "const steel = plate(ARMOR_MATERIAL.Silver);",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "MWSTEEL1-open-by-default",
-    "file": "src/characters/ownArmorModels.js",
+    "file": "src/characters/ownModels/ownArmorModels.js",
     "old": "export const STEEL_HELM_STYLES = Object.freeze(['closed', 'open']);",
     "new": "export const STEEL_HELM_STYLES = Object.freeze(['open', 'closed']);",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "MWSTEEL1-gauntlet-bares-the-forearm",
-    "file": "src/characters/ownArmorModels.js",
+    "file": "src/characters/ownModels/ownArmorModels.js",
     "old": "part('right hand', 'steel_plate_gauntlet_right.nif', ['right wrist', 'right forearm']),",
     "new": "part('right hand', 'steel_plate_gauntlet_right.nif', ['right wrist']),",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "MWSTEEL1-helm-in-the-head-slot",
-    "file": "src/characters/ownArmorModels.js",
+    "file": "src/characters/ownModels/ownArmorModels.js",
     "old": "const helmClosed = Object.freeze([part('hair', 'steel_plate_helm_closed.nif', ['head'])]);",
     "new": "const helmClosed = Object.freeze([part('head', 'steel_plate_helm_closed.nif', ['head'])]);",
     "tests": [

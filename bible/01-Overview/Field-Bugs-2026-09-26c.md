@@ -105,7 +105,7 @@ host's 0.1 s clamp - six steps a foe at 10 fps. A step is the port's dearest wor
 teams, 54% of the time is the collider's rays, and 84% of those are ClearPathToPosition's (the path check's capsule
 casts, every step a foe pursues, as DFU's EnemyMotor does in FixedUpdate); the target machine's sight rays are 14%. So
 under a crowd one hitch made the next frame dearer and that one dearer still - 0.7 ms a frame at 60 fps became 43 ms
-at a 0.1 s frame. The pools now hand their foes at most three steps' worth a frame (`characters/enemyMotor.js
+at a 0.1 s frame. The pools now hand their foes at most three steps' worth a frame (`characters/enemy/enemyMotor.js
 foeFrameDt`, at the street's, the watch's and the dungeon's step): from 20 fps up nothing changes; below it foes move a
 little slower than the world, instead of the world stopping. The motor's own `update(dt)` contract and the player's
 jank clamp are unchanged. Ledger A row.

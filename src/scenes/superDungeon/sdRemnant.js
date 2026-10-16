@@ -37,7 +37,7 @@ import { SD_BLOW_COLOR } from './sdRemnantBlows.js';
 import { remnantRig, rigMatrices, restRig, sdGearsAt, sdGatherGearsAt, gearMatrix, gatherGearMatrix, gearFlightOf, sdKeptList, dialHandMatrix, dialFallMatrix, heartFallMatrix, SD_RIG_PARTS, SD_REM_HAND } from './sdRemnantRig.js';
 import { bossStandIn, crystalStandIn, hostStandIn } from '../../world/gate/gateBoss.js';
 
-/** The look the stand-ins wear for the formulas (characters/enemyBasics.js): an Iron Atronach's - a thing of metal. */
+/** The look the stand-ins wear for the formulas (characters/enemy/enemyBasics.js): an Iron Atronach's - a thing of metal. */
 export const SD_REMNANT_MOBILE = 36;
 /** The bodies' names (the lines a blow says). */
 export const SD_REMNANT_NAMES = Object.freeze({ remnant: 'The Brass Remnant', echoes: Object.freeze(['The Gold Echo', 'The Silver Echo']), heart: 'Heart of the Hour' });

@@ -29,7 +29,7 @@ import { synthTown } from './lwTown.mjs';
 import { LivingTown } from '../src/systems/livingWorld/livingTown.js';
 import { guildHallOf, FIGHTERS_GUILD, MAGES_GUILD, DAY_MIN, DAY_START_MIN } from '../src/systems/livingWorld/dayPlan.js';
 import { BUILDING_TYPES as B } from '../src/world/buildingNames.js';
-import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
+import { PERSON_MOVE_SPEED } from '../src/characters/mobile/mobilePerson.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
 import { standService, T0, confirmChapters } from './accountDb.mjs';
 import { seatRealm } from './realmSeat.mjs';

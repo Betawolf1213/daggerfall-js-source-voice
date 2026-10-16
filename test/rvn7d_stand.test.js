@@ -25,7 +25,7 @@ const F = await import('../src/systems/revenant/revenantFeud.js');
 const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
 const { setPlayerDoor } = await import('../src/systems/playerDoor.js');
 const { setWorldMinutes } = await import('../src/systems/worldTick.js');
-const { MOBILE_TYPES: M } = await import('../src/characters/mobileTypes.js');
+const { MOBILE_TYPES: M } = await import('../src/characters/mobile/mobileTypes.js');
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const me = (id = 'char-rvn7d') => ({ isPlayer: true, name: 'Ayla Stormwind', characterId: id, level: 10, stats: {}, skills: [], career: {}, activeEffects: [], items: [], health: 100, maxHealth: 100 });

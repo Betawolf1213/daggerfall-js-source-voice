@@ -42,7 +42,7 @@
 // port cleared both flags at the top of every update, which made them
 // edges: a blow the player should have taken on waking was dropped.
 
-import { rand } from '../formats/dfRandom.js';   // NT2 (F210): the gender roll is a DFRandom draw
+import { rand } from '../../formats/dfRandom.js';   // NT2 (F210): the gender roll is a DFRandom draw
 import { MOBILE_TYPES } from './mobileTypes.js';
 
 // Speeds in frames-per-second (EnemyBasics).

@@ -7,7 +7,7 @@ import { rollCorpseKit, plainFoeRarityWeights } from '../src/systems/foeLootCap.
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { rarityOf, rarityChances, corpseSource } from '../src/systems/loot/lootRarity.js';
 import { goldStack } from '../src/systems/inventory.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { setPref, _resetForTests as _resetPrefsForTests } from '../src/systems/uiPrefs.js';
 
 const at = (v) => () => v;

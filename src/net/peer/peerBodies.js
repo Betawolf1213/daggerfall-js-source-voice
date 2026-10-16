@@ -68,7 +68,7 @@ import { createFpArm } from '../../combat/fpArm.js';
 import { dfWornEquipment } from '../../formats/mwItemMap.js';
 import { werewolfSkinOf } from '../../characters/werewolfSkin.js';   // SHADOW-FANG: a peer's wolf in the skin their signed glyphs name
 import { npcHintOf, npcKeyOf, withNpcPicks, npcFaceOf, beastWorn, WARDROBE_BEAST_RACES } from '../../characters/wardrobe.js';   // MWNPC17: an NPC's own garments, head and hair
-import { ownOutfitFor } from '../../characters/ownClothingModels.js';   // MW-FOLK1: a townsperson's whole outfit
+import { ownOutfitFor } from '../../characters/ownModels/ownClothingModels.js';   // MW-FOLK1: a townsperson's whole outfit
 import { ARMOR_ENUM } from '../../combat/enemyEquipment.js';
 import { EQUIP_SLOTS } from '../../systems/equip.js';
 import { mwRaceId } from '../../formats/mwNpc.js';
@@ -265,7 +265,7 @@ function bodyLookKey(look) {
   return k;
 }
 
-/** MW-FOLK1: the outfit a look wears (characters/ownClothingModels.js TOWNSFOLK_OUTFITS), read as data - an id the table
+/** MW-FOLK1: the outfit a look wears (characters/ownModels/ownClothingModels.js TOWNSFOLK_OUTFITS), read as data - an id the table
  *  does not hold is none, and so is one on a beast (AUDIT MW-FOLK1 L2-F8: the look's producer refused them, but a look
  *  is data here - its boots on a Khajiit's or an Argonian's digitigrade feet, as Morrowind dresses none, wardrobe.js
  *  beastWorn) - and the key it adds to a body's: one outfit is one body, another another. */

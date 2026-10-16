@@ -13,7 +13,7 @@ import { peerBuildOpts, peerBodyKey } from '../src/net/peer/peerBodies.js';
 import { foeActor, isPersonFoe, rosterLook, VAMPIRE_MOBILES } from '../src/characters/foeBodies.js';
 import { residentLook } from '../src/characters/rosterBodies.js';
 import { CREATURE_MATCH } from '../src/characters/creatureBodies.js';
-import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES as M } from '../src/characters/mobile/mobileTypes.js';
 import { createEquipTable } from '../src/characters/equipTable.js';
 import { bodyRec, fixtureFile, fixtureBodyDeps } from './fixtures/mw/bodyRig.mjs';
 import { fpSkeletonPath, FP_CLIP_PATH } from '../src/combat/fpArm.js';

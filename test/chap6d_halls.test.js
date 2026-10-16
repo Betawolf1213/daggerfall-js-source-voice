@@ -18,7 +18,7 @@ import { townCensus } from '../src/systems/livingWorld/census.js';
 import { dayPlan, hallGuildDays, GUILD_DAYS, GUILD_DAYS_SHUT, FIGHTERS_GUILD, MAGES_GUILD } from '../src/systems/livingWorld/dayPlan.js';
 import { LivingTown } from '../src/systems/livingWorld/livingTown.js';
 import { BUILDING_TYPES as B } from '../src/world/buildingNames.js';
-import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
+import { PERSON_MOVE_SPEED } from '../src/characters/mobile/mobilePerson.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

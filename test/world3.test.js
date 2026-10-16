@@ -25,8 +25,8 @@ import { fakeSocketClass } from './fakeSocket.mjs';
 import { OnlineSession } from '../src/net/online.js';
 import { ActionSystem } from '../src/world/actionSystem.js';
 import { ACTION_FLAGS, TRIGGER_FLAGS } from '../src/world/rdbLayout.js';
-import { getTargets, runTargetMachine, targetAimPoint, isPeerTarget, isPlayerTarget, PLAYER_TARGET } from '../src/characters/enemyTargets.js';
-import { EnemyAI } from '../src/characters/enemyMotor.js';
+import { getTargets, runTargetMachine, targetAimPoint, isPeerTarget, isPlayerTarget, PLAYER_TARGET } from '../src/characters/enemy/enemyTargets.js';
+import { EnemyAI } from '../src/characters/enemy/enemyMotor.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const at = (px, pz) => ({ x: px * PIXEL_UNITS + 10, y: 0, z: pz * PIXEL_UNITS + 10, yaw: 0, pitch: 0, mv: 0 });
@@ -218,11 +218,11 @@ test('WORLD3: the target machine with a PEER, executed - a peer is a player to e
   assert.match(d, /if \(!m\.aimFoe\?\.isPeer && missileHitsCapsule\(m\.pos, playerFeet, playerHeight, PLAYER_BODY_RADIUS\)\) \{/, 'and pays nothing on me');
   assert.match(d, /foeDeps\.castEnemySpell\(f, spell, \{\s*noSpellPointCost, playerEntity, playerFeet: lastPlayerFeet, playerHeight: lastPlayerHeight,/, 'a cast at a peer: MY capsule in the blast whoever the target (AUDIT WORLD6b-iii(a) C2 - the peer\'s feet as the probe landed the blast on me); the missile aims itself in flight');
   assert.match(d, /m\.aimFoe = \(foeDeps && ct && \(!foeDeps\.isPlayerTarget\(ct\) \|\| ct\.isPeer\)\) \? ct : null;/, 'a cast at a peer leaves toward the peer');
-  const s = rd('src/characters/enemyTargets.js');
+  const s = rd('src/characters/enemy/enemyTargets.js');
   assert.match(s, /export const isPeerTarget = \(c\) => c\?\.isPeer === true;/); assert.match(s, /const tFeet = isPlayer \? \(c\.feet \?\? playerFeet\) : targetAi\.feet;/); assert.match(s, /const tHeight = isPlayer \? \(c\.height \?\? playerHeight\) : targetAi\.height;/);
   assert.match(s, /\(isPlayerTarget\(c\) \? \(c\.health \?\? playerEntity\?\.health \?\? 1\) : \(c\.entity\?\.health \?\? 0\)\)/, 'targetHealth: a peer\'s own');
   assert.match(s, /if \(!playerInSight\) for \(const c of candidates \?\? \[\]\) \{\s*if \(!isPeerTarget\(c\) \|\| !c\.feet\) continue;/, 'a peer in sight is a player in sight');
-  const m = rd('src/characters/enemyMotor.js');
+  const m = rd('src/characters/enemy/enemyMotor.js');
   assert.match(m, /: \(this\.target\.isPlayer \? \(this\.target\.feet \?\? playerFeet\) : this\.target\.ai\.feet\);/); assert.match(m, /\|\| \(t\?\.isPeer && t\.height\) \|\| this\._playerHeight;/); assert.match(m, /return \(\(t\?\.isPeer && t\.height\) \|\| this\._playerHeight\) \/ 2;/);
 });
 

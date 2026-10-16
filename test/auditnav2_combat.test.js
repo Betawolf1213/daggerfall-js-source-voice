@@ -25,8 +25,8 @@ import { createPlayerMagic } from '../src/scenes/hostMagic.js';
 import { enchantmentMagicRound, ENCHANTMENT_TYPES as T } from '../src/systems/enchantments.js';
 import { activateMobileEnemy } from '../src/player/mobileEnemyActivate.js';
 import { PICKPOCKET_DISTANCE } from '../src/player/activate.js';
-import { castEnemySpell } from '../src/characters/enemyCasting.js';
-import { PLAYER_TARGET, staticTeamOf } from '../src/characters/enemyTargets.js';
+import { castEnemySpell } from '../src/characters/enemy/enemyCasting.js';
+import { PLAYER_TARGET, staticTeamOf } from '../src/characters/enemy/enemyTargets.js';
 import { isShipmate, sparedByPlayer } from '../src/combat/friendlyFire.js';
 import { resetToDefaults } from '../src/systems/settings/settings.js';
 
@@ -274,7 +274,7 @@ function engine(foes) {
   });
   return { magic, hurt, mine, player, foeSinks };
 }
-/** A foe's cast through the one executor (characters/enemyCasting.js castEnemySpell), as exteriorFoes.castSpellFrom
+/** A foe's cast through the one executor (characters/enemy/enemyCasting.js castEnemySpell), as exteriorFoes.castSpellFrom
  *  hands it the engine's blast. */
 const cast = (e, f, spell, playerFeet) => castEnemySpell(f, spell, {
   noSpellPointCost: true, playerEntity: e.player, playerFeet, playerHeight: 1.8,

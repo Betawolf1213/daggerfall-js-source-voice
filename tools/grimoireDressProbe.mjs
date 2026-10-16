@@ -52,7 +52,7 @@ await page.screenshot({ path: `${OUT}/grim-frontdoor.png` });
 // ── the pack ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 await page.evaluate(async () => {
   const { createInventoryWindow } = await import('/src/ui/inventoryDoor.js');
-  const { ITEM_TEMPLATES } = await import('/src/characters/paperdoll.js');
+  const { ITEM_TEMPLATES } = await import('/src/characters/paperdoll/paperdoll.js');
   const tp = ITEM_TEMPLATES.find((x) => x.name === 'Longsword');
   const e = { name: 'Aelwyn', stats: { strength: 50, endurance: 48 }, items: [{ name: tp.name, templateIndex: tp.index, group: 'Weapons', stackCount: 1, currentCondition: 50, maxCondition: 50 }] };
   globalThis.__inv = createInventoryWindow({ entity: e, items: () => e.items, wagonItems: () => [] });

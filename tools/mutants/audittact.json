@@ -21,7 +21,7 @@
   },
   {
     "name": "ATACT-A1-blocked-unheard",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "        if (this._tacDir) { this._tacDir = null; this._tacBlocked = true; this.moving = false; }",
     "new": "        if (this._tacDir) { this._tacDir = null; this.moving = false; }",
     "tests": [
@@ -40,7 +40,7 @@
   },
   {
     "name": "ATACT-A2-shot-uncounted",
-    "file": "src/characters/enemyAttack.js",
+    "file": "src/characters/enemy/enemyAttack.js",
     "old": "if (machineAttack(this.machine, strike)) { this.firedRanged = true; this.swingSeq++; this._held = false; ai._tacShot = (ai._tacShot ?? 0) + 1; ai._blowShot = null; }   // AUDIT TACT A2",
     "new": "if (machineAttack(this.machine, strike)) { this.firedRanged = true; this.swingSeq++; this._held = false; ai._blowShot = null; }   // AUDIT TACT A2",
     "tests": [
@@ -49,7 +49,7 @@
   },
   {
     "name": "ATACT-A3-skip-unflagged",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    if (!this.canAct || paused) this._tacSkipped = true;",
     "new": "    if (paused) this._tacSkipped = true;",
     "tests": [
@@ -85,7 +85,7 @@
   },
   {
     "name": "ATACT-A4-swing-parked",
-    "file": "src/characters/enemyAttack.js",
+    "file": "src/characters/enemy/enemyAttack.js",
     "old": "        if (ai._blowAt != null && tacticsNow() - ai._blowAt > BLOW_SWING_LATE) { ai._blowVerdict = null; ai._blowMult = undefined; this._held = false; }",
     "new": "        if (ai._blowAt != null && tacticsNow() - ai._blowAt > 1e9) { ai._blowVerdict = null; ai._blowMult = undefined; this._held = false; }",
     "tests": [
@@ -123,7 +123,7 @@
   },
   {
     "name": "ATACT-A6-detour-walks",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    if (_took && (!detouring || this.fleeLeft > 0 || this._tac?.state === 'windup' || this._tac?.state === 'dash')) return;",
     "new": "    if (_took && !detouring) return;",
     "tests": [
@@ -258,7 +258,7 @@
   },
   {
     "name": "ATACT-B2-sight-not-sight",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "  return coverDistance(collider, eye, [ux, uy, uz], el, true) < el - 1e-3;",
     "new": "  return coverDistance(collider, eye, [ux, uy, uz], el) < el - 1e-3;",
     "tests": [

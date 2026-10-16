@@ -9,7 +9,7 @@ import {
   searchLockValue, searchMessage, _resetSearchLedgerForTests, SEARCH_FOES_PER_PLAYER, pickRosterFoe,
 } from '../src/systems/searchables.js';
 import { WATER_SPECIES } from '../src/characters/dungeonEnemies.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { DOOR_ACTIVATION_DISTANCE } from '../src/player/activate.js';
 import { ActionTextBox } from '../src/ui/actionText.js';
 import { capLootList, capFoeLoot, plainFoeLootRule, PLAIN_FOE_RARITY_WEIGHTS } from '../src/systems/foeLootCap.js';

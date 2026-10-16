@@ -27,7 +27,7 @@ const { setPref, _resetForTests } = await import('../src/systems/uiPrefs.js');
 const { setWorldMinutes } = await import('../src/systems/worldTick.js');
 const { tellCues, setWindupAtMeListener } = await import('../src/scenes/hostCombat.js');
 const { LOCAL_TARGET } = await import('../src/ai/tactics.js');
-const { MOBILE_TYPES: M } = await import('../src/characters/mobileTypes.js');
+const { MOBILE_TYPES: M } = await import('../src/characters/mobile/mobileTypes.js');
 const { modSaveRecords, restoreModSaveRecords } = await import('../src/systems/modSaveData.js');
 const { loyaltyRow, drawCompanionsPage, _resetCompanionRosterForTests, _setCompanionRosterIconForTests } = await import('../src/ui/companionRoster.js');
 

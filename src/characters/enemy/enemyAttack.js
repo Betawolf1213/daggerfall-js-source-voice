@@ -28,14 +28,14 @@
 // (dungeonContext builds each EnemyAttack from the live entities);
 // the constructor defaults (10 / 2 / 50) are neutral fallbacks only.
 
-import { rand } from '../formats/dfRandom.js';
-import { tacticsNow } from '../ai/tacticsClock.js';   // AUDIT TACT: a landing's swing is on the foes' own time
-import { TELL } from '../ai/tells.js';   // TELL6d: one shot in three aimed
+import { rand } from '../../formats/dfRandom.js';
+import { tacticsNow } from '../../ai/tacticsClock.js';   // AUDIT TACT: a landing's swing is on the foes' own time
+import { TELL } from '../../ai/tells.js';   // TELL6d: one shot in three aimed
 import {
   createWeaponMachine, machineAttack, machineStep,
   MELEE_NUM_FRAMES, CLASSIC_UPDATE_INTERVAL,
-} from './weaponStates.js';
-import { STRIKES, ATTACKS_1H, sampleClip } from './anims.js';
+} from '../weaponStates.js';
+import { STRIKES, ATTACKS_1H, sampleClip } from '../anims.js';
 import { MELEE_DISTANCE, CLASSIC_MELEE_DISTANCE_VS_AI, withinYaw, MIN_RANGED_DISTANCE, MAX_RANGED_DISTANCE } from './enemyMotor.js';
 /** AUDIT TACT A4: a telegraphed blow's swing not taken this long after its landing is spent (s). */
 export const BLOW_SWING_LATE = 0.25;
@@ -174,7 +174,7 @@ export class EnemyAttack {
       // the swing could not take at once is spent, never fired seconds later off a stale verdict. Never set with the
       // switch off.
       // TELL2 (bible/12-Enhanced-AI/Feud-Arc.md section 4.1): THE WIND-UP IS THE SWING, HELD. It begins with the wind-up
-      // (the sprite holds before its strike - characters/mobileUnit.js `hold`); a broken wind-up drops it; the landing
+      // (the sprite holds before its strike - characters/mobile/mobileUnit.js `hold`); a broken wind-up drops it; the landing
       // below releases it and the brain sees its blow then. Never set with the switch off.
       // TELL6d: an aimed shot's landing - the bow drawn now, its arrow loosed by the sprite along the locked line
       if (ai._blowShot && !ai._blowShot.fired) {

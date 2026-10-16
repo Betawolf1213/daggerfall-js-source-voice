@@ -21,7 +21,7 @@ import { shakePlayerDamage, flashPlayerDamage, setRemoveHealthListener, playerDa
 import { destroyGateBossBar } from '../src/ui/gate/gateBossBar.js';
 import { destroyGateMarksCard } from '../src/ui/gate/gateMarksView.js';
 import { destroyGateGround } from '../src/ui/gate/gateGroundView.js';
-import { ENEMY_BASICS, ENEMY_NAMES } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS, ENEMY_NAMES } from '../src/characters/enemy/enemyBasics.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const W = (key, over = {}) => ({ i: 1, a: ATTACKS[key].id, at: 10000, x: 0, z: 0, yw: 0, tg: [], ...over });

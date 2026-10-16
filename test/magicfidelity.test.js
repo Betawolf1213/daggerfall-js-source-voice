@@ -135,7 +135,7 @@ test('magicfidelity magic-8/9: the trap arms and the enemy AoC wiring', () => {
   assert.ok(fn.includes('trap AreaAroundCaster has no caster'), 'the casterless AoC no-op is loud');
   assert.ok(fn.includes('{ ...spell, rangeType: 2 }'), 'a ByTouch trap payload retargets to SingleTargetAtRange (:512-517)');
   // X3: the executor is SHARED - the AoC law lives in enemyCasting.js
-  const ec = readFileSync(join(root, 'src/characters/enemyCasting.js'), 'utf8');
+  const ec = readFileSync(join(root, 'src/characters/enemy/enemyCasting.js'), 'utf8');
   assert.ok(ec.includes('spell.rangeType === 3') && ec.includes('excludeFoe: f'),
     'an enemy AoC explodes AT THE CASTER instantly, excluding the caster (DoAreaOfEffect ignoreCaster)');
   assert.ok(dc.includes('castEnemySpell: castShared'), 'the dungeon binds the ONE executor');

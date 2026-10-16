@@ -12,7 +12,7 @@
 //
 // Not a DFU member: Daggerfall Unity has no card games. Ledger A row (TAVERN CARDS).
 import { BANK_TYPES } from '../../characters/nameHelper.js';
-import { EQUIP_SLOTS } from '../../characters/paperdoll.js';
+import { EQUIP_SLOTS } from '../../characters/paperdoll/paperdoll.js';
 import { seatTopByte } from '../../player/seatPose.js';
 
 /** The races a name bank stands for (the Imperial bank's people are drawn as Bretons - the bay's own). */
@@ -20,7 +20,7 @@ const RACE_OF_BANK = Object.freeze({
   [BANK_TYPES.Breton]: 'Breton', [BANK_TYPES.Redguard]: 'Redguard', [BANK_TYPES.Nord]: 'Nord', [BANK_TYPES.DarkElf]: 'DarkElf',
   [BANK_TYPES.HighElf]: 'HighElf', [BANK_TYPES.WoodElf]: 'WoodElf', [BANK_TYPES.Khajiit]: 'Khajiit', [BANK_TYPES.Imperial]: 'Breton',
 });
-/** A tavern-goer's clothes by Daggerfall's templates (characters/paperdoll.js ITEM_TEMPLATES): chests, legs, feet - and
+/** A tavern-goer's clothes by Daggerfall's templates (characters/paperdoll/paperdoll.js ITEM_TEMPLATES): chests, legs, feet - and
  *  a woman's gown or dress, worn in place of the shirt and skirt. */
 export const REGULAR_CLOTHES = Object.freeze({
   male: Object.freeze({ chest: [165, 167, 158, 173, 180], legs: [151, 152], feet: [147, 149] }),

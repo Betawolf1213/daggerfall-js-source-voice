@@ -91,7 +91,7 @@ test('c2combat combat-12: the backstab roll draws ONLY behind the >1 gate; a lan
 });
 
 test('c2combat combat-12: the enemy melee DFRandom byte draws on every idle classic tick', () => {
-  const s = src('src/characters/enemyAttack.js');
+  const s = src('src/characters/enemy/enemyAttack.js');
   const tick = s.indexOf('this._classicTimer -= CLASSIC_UPDATE_INTERVAL;');
   const draw = s.indexOf('const meleePass = attackRollPasses(this.liveSpeed) && this.meleeTimer === 0;');
   const oneShot = s.indexOf("const oneShot = this.machine.state !== 'Idle';");

@@ -10,7 +10,7 @@
   },
   {
     "name": "FBSEA-2-a-motor-never-moved-stands",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    this.isGrounded = false;\n",
     "new": "    this.isGrounded = true;\n",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "FBSEA-2-the-walker-move-unwritten",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    const r = this.collider.move(this.feet, dxm, dy, dzm, this.controllerHeight, true, FOE_KEEPS_FLOOR);\n    this.isGrounded = r.grounded;\n",
     "new": "    const r = this.collider.move(this.feet, dxm, dy, dzm, this.controllerHeight, true, FOE_KEEPS_FLOOR);\n",
     "tests": [

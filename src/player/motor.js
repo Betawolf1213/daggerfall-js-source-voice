@@ -46,7 +46,7 @@ export const JUMP_SPEED = 4.5;
 // PlayerMotor.systemTimerUpdatesDivisor (the 0x46C memory-timer
 // divisor) - the ONE member both EnemySenses' target timer and
 // ClimbingMotor's check cadences divide by. M3: moved to its DFU
-// home (a PlayerMotor field); characters/enemyMotor.js re-exports.
+// home (a PlayerMotor field); characters/enemy/enemyMotor.js re-exports.
 export const SYSTEM_TIMER_UPDATES_DIVISOR = 0.0549254;
 // P14 jump/fall parity (AcrobatMotor + PlayerMotor.GroundedTime,
 // verbatim): the jump fires only after 0.1 s of grounded time (the

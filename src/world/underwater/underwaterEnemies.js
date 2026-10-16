@@ -17,7 +17,7 @@
 import { DEPTH_EDGE_SOFTNESS } from '../passiveFish.js';
 import { rangeInt, rangeFloat } from '../../systems/unleveledLoot.js';   // Random.Range(int, int) and (float, float)
 import { roundToInt } from '../../systems/mathf.js';                   // Mathf.RoundToInt
-import { MOBILE_TYPES as MOBILE } from '../../characters/mobileTypes.js';
+import { MOBILE_TYPES as MOBILE } from '../../characters/mobile/mobileTypes.js';
 
 const f32 = Math.fround;
 const clamp01 = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);

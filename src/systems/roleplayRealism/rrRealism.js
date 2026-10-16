@@ -18,7 +18,7 @@
 // registers the seams.
 import { modSetting } from '../modSettings.js';
 import { WEAPONS, weaponMaterialModifier } from '../../characters/weapons.js';
-import { MOBILE_TYPES } from '../../characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../../characters/mobile/mobileTypes.js';
 import { swingFrameSeconds, swingHandling, swingHeft } from '../../characters/weaponStates.js';   // SWING-LAW: the port's swing law answers the mod's Speed
 
 export const RR_VENDOR = 'roleplay-realism';
@@ -220,7 +220,7 @@ export const RR_POTION_RECIPES = Object.freeze([
  *  animation, the Bard and Barbarian to 481/482, the Rogue to 487/488,
  *  the Archer and Ranger to 479/480, the Warrior and Knight to 477/478)
  *  with their attack frames. The keys are the port's basics fields
- *  (characters/enemyBasics.js); DFU writes the table at Awake and so
+ *  (characters/enemy/enemyBasics.js); DFU writes the table at Awake and so
  *  does the port at install, keeping the originals to restore. */
 export const RR_ENEMY_APPEARANCE = Object.freeze({
   [MOBILE_TYPES.Sorcerer]: Object.freeze({

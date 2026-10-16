@@ -19,7 +19,7 @@
 //
 // Pure. Not a DFU member. Ledger A (ARENA).
 
-import { MOBILE_TYPES as M } from '../../characters/mobileTypes.js';
+import { MOBILE_TYPES as M } from '../../characters/mobile/mobileTypes.js';
 import { ARENA_TEXT } from './arenaText.js';
 import { seededRng } from '../wind/wind.js';   // the port's one seeded die (mulberry32) - one home
 import { EXHIBITION_START_MINUTES, EXHIBITION_HOURS, ARENA_SEED, arenaHash, hourIndexOf, exhibitionFor } from '../../net/arena/arenaExhibition.js';   // ARENA4b: the exhibitions' law, the relay's too

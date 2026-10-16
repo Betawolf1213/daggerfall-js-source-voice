@@ -101,7 +101,7 @@
 // neck".) Lifted onto the game's head, a helm rises off the body Mac hung it on - its rim HELM_LIFT over the collar, a
 // band of neck under it - and a head that stands lower than Mac's screenshot read sees the whole helm ride high. A
 // closed helm needs no head under it: retail's closed helmets fill the head's slot and the head is not drawn
-// (characters/ownArmorModels.js hides it). So the closed helm stands where Mac fitted it on the body, no lift; only the
+// (characters/ownModels/ownArmorModels.js hides it). So the closed helm stands where Mac fitted it on the body, no lift; only the
 // open helm, whose face shows the head inside it, is still raised onto the game's head (HELM_LIFT).
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { dirname } from 'node:path';

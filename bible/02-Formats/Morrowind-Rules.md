@@ -7286,7 +7286,7 @@ have casting speed a new rarity affix along with scaling with speed"*.
   (interiors) shares its parent host's cast engine and its rig. The tail
   gate sits in the one cast engine every host builds and reads the one
   pair of hands, so no host file changed.
-- **What it leaves alone:** a foe's cast (`characters/enemyCasting.js` has
+- **What it leaves alone:** a foe's cast (`characters/enemy/enemyCasting.js` has
   its own clock), and a peer's view of my cast. The wire carries the cast
   and not its rate, so another player's copy of my arm plays it at 1. That
   is only how it looks.

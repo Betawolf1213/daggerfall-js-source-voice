@@ -22,7 +22,7 @@ import { assembleFirstPersonArm, poseAssembly, shapeMatchesBone } from '../src/f
 import { composeWornArmor, fpWornAdds, ARMO_PART } from '../src/formats/mwItemMap.js';
 import { ownBodyPart } from '../src/combat/fpArm.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
-import { OWN_MW_ARMOR } from '../src/characters/ownArmorModels.js';
+import { OWN_MW_ARMOR } from '../src/characters/ownModels/ownArmorModels.js';
 import { writeNif, skinnedMeshesToNif } from '../tools/nifWrite.mjs';
 import { jointWeights, smoothstep, weldGroups } from '../tools/skinWeights.mjs';
 import {

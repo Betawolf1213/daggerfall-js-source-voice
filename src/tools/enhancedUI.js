@@ -54,7 +54,7 @@
 
 import { SKILL_NAMES } from '../systems/skills.js';
 import { ITEM_GROUPS } from '../characters/equipRules.js';
-import { EQUIP_SLOTS } from '../characters/paperdoll.js';
+import { EQUIP_SLOTS } from '../characters/paperdoll/paperdoll.js';
 import { mountFigure, itemTile, templateFor } from './enhancedVisuals.js';
 
 const skills = Array.isArray(SKILL_NAMES) ? SKILL_NAMES : Object.values(SKILL_NAMES);

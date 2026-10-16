@@ -18,7 +18,7 @@ import { StartQuest } from '../src/systems/quest/actions.js';
 import { isMainQuestName } from '../src/systems/quest/questLists.js';
 import { mintQuestFoeWave, bindQuestFoeHost, reviveQuestBehaviour, questShareTag, sharedQuestFoe, WORLD_QUESTS, questNameOf, isWorldQuestFoe, isPrivateQuestFoe } from '../src/scenes/quest/questFoeHost.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
-import { isPeerTarget } from '../src/characters/enemyTargets.js';
+import { isPeerTarget } from '../src/characters/enemy/enemyTargets.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rd = (p) => readFileSync(join(ROOT, p), 'utf8');

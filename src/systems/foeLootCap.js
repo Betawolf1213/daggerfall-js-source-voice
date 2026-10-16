@@ -42,7 +42,7 @@ import {
 import { isGoldPieces, ARROW_TEMPLATE } from './inventory.js';   // STUCK-ARROWS: the quiver rides past the cap
 import { wildFoeLoot } from './wild/wildZone.js';   // WILD1: a foe of the open zone carries twice as much past its cap
 import { isPotion } from './useItem.js';   // CAP-SUPPLIES: a potion IS the glass bottle - DFU's IsPotion, its one export (AUDIT 625 L7)
-import { ENEMY_BASICS } from '../characters/enemyBasics.js';   // KIT-ROLL: the row every host hands its spawn
+import { ENEMY_BASICS } from '../characters/enemy/enemyBasics.js';   // KIT-ROLL: the row every host hands its spawn
 import { renownLootQuarters, lootEased } from './renownLoot.js';
 import { isCardRecord } from '../net/card/cardWorthLaw.js';   // CARDS9: a foe's card   // RENOWN-LOOT: the plain ladder by the roller's Renown
 

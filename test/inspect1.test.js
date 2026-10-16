@@ -23,7 +23,7 @@ import { MAX_STAT_VALUE } from '../src/systems/statMods.js';
 import { profileView, profileNote, gearRows, GEAR_ROWS, ATTR_SHORT, VITAL_LABELS, PROFILE_CSS, createProfileWindow } from '../src/ui/profileWindow.js';
 import { socialMenuRows, socialPlaqueRows, plaqueRowFor } from '../src/ui/socialMenu.js';
 import { glyphSvgNode, glyphBadges, GLYPH_STROKE } from '../src/ui/playerBadge.js';
-import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
+import { EQUIP_SLOTS } from '../src/characters/paperdoll/paperdoll.js';
 import { itemLongName } from '../src/systems/item/itemInfo.js';
 import { fakeRoom } from './fakeRoom.mjs';
 import { fakeSocketClass } from './fakeSocket.mjs';

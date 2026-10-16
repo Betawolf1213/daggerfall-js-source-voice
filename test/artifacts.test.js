@@ -16,7 +16,7 @@ import {
 } from '../src/systems/artifactEffects.js';
 import { doItemEnchantmentPayloads, PAYLOAD, ENCHANTMENT_TYPES } from '../src/systems/enchantments.js';
 import { ENCHANTMENT_TYPES as FORMATS_TYPES } from '../src/formats/magicDef.js';
-import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../src/characters/mobile/mobileTypes.js';
 import { applyLevelUp } from '../src/systems/advancement.js';
 import { liveStat } from '../src/systems/statMods.js';
 

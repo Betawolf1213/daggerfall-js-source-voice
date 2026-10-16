@@ -17,8 +17,8 @@ import { readFileSync } from 'node:fs';
 import { validFoeRecord } from '../src/net/wire.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
 import { createPlayerMagic } from '../src/scenes/hostMagic.js';
-import { isPeerTarget, missileAimDirection, PEER_CAST_TARGET } from '../src/characters/enemyTargets.js';
-import { MIN_RANGED_DISTANCE, MAX_RANGED_DISTANCE } from '../src/characters/enemyCasting.js';
+import { isPeerTarget, missileAimDirection, PEER_CAST_TARGET } from '../src/characters/enemy/enemyTargets.js';
+import { MIN_RANGED_DISTANCE, MAX_RANGED_DISTANCE } from '../src/characters/enemy/enemyCasting.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 

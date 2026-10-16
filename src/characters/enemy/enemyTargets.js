@@ -24,8 +24,8 @@
 // EntityBehaviours yields the player after the enemies (:748).
 
 import { canSeeTarget, SYSTEM_TIMER_UPDATES_DIVISOR, SENSES_INTERVAL_UNITS } from './enemyMotor.js';
-import { CAPSULE_HEIGHT } from '../player/motor.js';   // REVIEW 2026-09-05: the player's transform above its feet
-import { getBool } from '../systems/settings/settings.js';
+import { CAPSULE_HEIGHT } from '../../player/motor.js';   // REVIEW 2026-09-05: the player's transform above its feet
+import { getBool } from '../../systems/settings/settings.js';
 import { ENEMY_BASICS } from './enemyBasics.js';   // the STATIC table the ally revert reads
 
 /** MobileTeams (DaggerfallUnityEnums.cs:262-286), index = enum value.

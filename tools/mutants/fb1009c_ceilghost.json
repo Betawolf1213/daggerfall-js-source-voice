@@ -1,7 +1,7 @@
 [
   {
     "name": "CEIL-GHOST-the-lift-while-following",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "      if (this.flies && !this._following && this.avoidObstaclesTimer <= 0 && d[1] < 0) {",
     "new": "      if (this.flies && this.avoidObstaclesTimer <= 0 && d[1] < 0) {",
     "tests": [

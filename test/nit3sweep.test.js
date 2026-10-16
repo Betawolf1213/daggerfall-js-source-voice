@@ -12,9 +12,9 @@ import { fileURLToPath } from 'node:url';
 
 import { BEAST_DESIGNS } from '../src/characters/beasts.js';
 import { UNDEAD_DESIGNS } from '../src/characters/undeadBody.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { inventoryItemImage, templateByIndex } from '../src/systems/item/itemTemplates.js';
-import { resolvePaperdollRecord } from '../src/characters/paperdollArt.js';
+import { resolvePaperdollRecord } from '../src/characters/paperdoll/paperdollArt.js';
 import { openState } from '../src/systems/inventorySession.js';
 import { planStore } from '../src/systems/item/itemTransfer.js';
 

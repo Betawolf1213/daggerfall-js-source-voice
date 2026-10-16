@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { PlayerWeapon } from '../src/combat/playerWeapon.js';
-import { EnemyAttack } from '../src/characters/enemyAttack.js';
+import { EnemyAttack } from '../src/characters/enemy/enemyAttack.js';
 import { POSES } from '../src/characters/poses.js';
 import { ATTACKS_FP, ATTACKS_1H, sampleClip } from '../src/characters/anims.js';
 

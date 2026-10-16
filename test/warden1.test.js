@@ -31,7 +31,7 @@ import {
 import { createWagonWarden, WARDEN_SHOW_REACH } from '../src/scenes/wagon/wagonWardenHost.js';
 import { NAV_CELL } from '../src/world/city/cityNavigation.js';
 import { mapPixelOfWire } from '../src/net/wire.js';
-import { GUARD_TEXTURE, PERSON_GUARD_IDLE_RECORD } from '../src/characters/mobilePerson.js';
+import { GUARD_TEXTURE, PERSON_GUARD_IDLE_RECORD } from '../src/characters/mobile/mobilePerson.js';
 import { makeWorld } from './hccWorld.mjs';
 import { syntheticWagon41214 } from './hccModel.mjs';
 import { WAGON_MODEL_ID } from '../src/systems/horse/horseCartLaw.js';

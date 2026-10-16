@@ -9,7 +9,7 @@
 // sight in play (a camp's sixty metres, a wanderer's 102.4) - is UNAWARE until it notices them, and it notices on a
 // STEALTH CHECK, one a classic game minute as DFU's own EnemySenses.StealthCheck rolls (WILD_ROLL_S of the traveller's
 // clock: sixty game seconds at TimeScale 12), the first the moment it comes within reach. The check is DFU's own
-// formula - FormulaHelper.CalculateStealthChance, characters/enemyMotor.js `stealthChance` - with the distance carried
+// formula - FormulaHelper.CalculateStealthChance, characters/enemy/enemyMotor.js `stealthChance` - with the distance carried
 // into the formula's own range: DFU rolls it out to STEALTH_MAX_DISTANCE (25.6 m) and saturates past it, so the
 // enemy's reach is laid onto those 25.6 m. At its reach's edge the traveller stays unseen with twice their Stealth in
 // a hundred, at half the reach with their Stealth, and close in almost never (`noticeChance`). An ALERTED enemy is the
@@ -19,7 +19,7 @@
 // PURE: distances, a Stealth, a clock step and a die in; an answer out. The keys are the caller's (a band's id, a foe
 // record) and the store is pruned by the caller's own life.
 // ═══════════════════════════════════════════════════════════════════
-import { stealthChance, STEALTH_MAX_DISTANCE, blockedByIllusionEffect } from '../../characters/enemyMotor.js';   // ONE DFU MEMBER, ONE EXPORT: FormulaHelper.CalculateStealthChance; INVIS-SWING: EnemySenses.BlockedByIllusionEffect
+import { stealthChance, STEALTH_MAX_DISTANCE, blockedByIllusionEffect } from '../../characters/enemy/enemyMotor.js';   // ONE DFU MEMBER, ONE EXPORT: FormulaHelper.CalculateStealthChance; INVIS-SWING: EnemySenses.BlockedByIllusionEffect
 
 /** Seconds of the traveller's (scaled) clock between two checks of one enemy: a classic game minute (60 game seconds at
  *  DFU's TimeScale 12) - EnemySenses.StealthCheck's own cadence. */

@@ -19,8 +19,8 @@ import { weaponOfMaterial } from '../src/combat/enemyEquipment.js';
 import { readFileSync } from 'node:fs';
 import { repairRefusal } from '../src/systems/repairService.js';
 import { getBool } from '../src/systems/settings/settings.js';
-import { makeEnemyEntity } from '../src/characters/enemyEntity.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { makeEnemyEntity } from '../src/characters/enemy/enemyEntity.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { BODY_PARTS } from '../src/systems/armorMaterials.js';
 

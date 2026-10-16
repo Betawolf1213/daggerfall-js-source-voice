@@ -58,7 +58,7 @@ import { SEARCH_REACH } from '../systems/searchables.js';   // SEARCH1: a headst
 import { LOCK_PICK_DISTANCE } from '../player/lockOn.js';   // AUDIT 62 F16/F28: the tap-to-lock reach, the same the exterior and standalone-dungeon arms use
 import { removeOne, addItem, isEnchanted, carriedWeight, letterOfCredit, LETTER_OF_CREDIT_TEMPLATE, spendAmmoFor, takeOneInto, isSummoned } from '../systems/inventory.js';   // U40: the sell filter, the encumbrance gate and the letter
 import { isEquipped, unequipSlot } from '../systems/equip.js';   // AUDIT 17e F4: worn gear is not merchandise
-import { targetAimPoint, missileAimDirection } from '../characters/enemyTargets.js';   // AUDIT WORLD6b-iii(a) C3: the ONE aim law for an enemy missile (the peer's transform, mine otherwise)
+import { targetAimPoint, missileAimDirection } from '../characters/enemy/enemyTargets.js';   // AUDIT WORLD6b-iii(a) C3: the ONE aim law for an enemy missile (the peer's transform, mine otherwise)
 import { playerEntity, surfacePlayer } from '../characters/playerEntity.js';
 import { drawnFlat } from '../characters/nudeFlats.js';   // NUDE-FLATS: Show Nudity off draws a nude figure's clothed stand-in
 import { offHandQuickslot, offHandOffersSwap, tickQuickslotHold } from '../systems/quickslots.js';   // QS4: the off-hand cell's press, on THIS mode's own rig   // QS6: the off hand's swap question, and the hold machine this mode's frame drives
@@ -151,7 +151,7 @@ import { flashPlayerDamage } from '../ui/damageFlash.js';   // AUDIT 39r: ShowPl
 import { sensesContext, subscribeFoePools } from './shared.js';   // IF: the one senses builder every pool is handed; AUDIT 58: and the magic-round fan-out both of them owe
 import { makeInView } from '../player/cameraView.js';   // IF: the swing's in-view test, the guards' own
 import { mwViewFrame, mwViewDrawBody, mwViewFootstep, mwViewTransition, mwViewFirstPerson } from '../player/mwView.js';   // MW-D25: the Morrowind camera; AUDIT-EOTB2: the sprite's stride and the door's auto-toggle
-import { MOBILE_TYPES } from '../characters/mobileTypes.js';   // IF: the daedric punishment's name->id door
+import { MOBILE_TYPES } from '../characters/mobile/mobileTypes.js';   // IF: the daedric punishment's name->id door
 import { areEnemiesNearby, setEnemyAlert } from '../systems/encounters.js';   // IF: GameManager.AreEnemiesNearby, one method over this host's database; AUDIT 58: the 354 refusal's other term
 import { audio } from '../systems/audio.js';
 import { lycanthropeMoveSound } from '../systems/lycanthropy.js';   // LM1: the 4-20s transformed move-sound loop
@@ -435,8 +435,8 @@ import { placeFoeFreely, questStandBox, rideSceneMarker, markerScenePosition, si
 import { chestIdentity, matchChests } from './chestRecords.js';   // HOLD-KEPT: a house chest's record by which chest it is
 import { placeFoeEnv, placeRoomQuestFoe, entityOccupancy, questFoeGender, reviveQuestBehaviour as reviveQuestBehaviourFromSave, heldSpots, holdSpotWhile, restandMendedQuestFoe } from './quest/questFoeHost.js';   // B1 (PlaceFoeFreely reads the fieldOfView import below)   // AUDIT 63 F24: SerializableEnemy.cs:206-217 re-adds the component on restore
 import { standLooseFoe } from './hostEnchant.js';   // ROAD-G G1: SoulBound's break release / the Sanguine Rose, inside a building
-import { ENEMY_BASICS, enemyDisplayName } from '../characters/enemyBasics.js';   // MERGE: FinalizeFoe's Flying lift reads the behaviour flag // WORLD-HOVER H2: GetLocalizedEnemyName - Entity.Name for a live one (.cs:310)
-import { openDoorsStep, foeFrameDt } from '../characters/enemyMotor.js';   // AUDIT 63 F42: EnemyMotor.OpenDoors (EnemyMotor.cs:1424-1442), which lives in the motor and runs wherever an enemy does
+import { ENEMY_BASICS, enemyDisplayName } from '../characters/enemy/enemyBasics.js';   // MERGE: FinalizeFoe's Flying lift reads the behaviour flag // WORLD-HOVER H2: GetLocalizedEnemyName - Entity.Name for a live one (.cs:310)
+import { openDoorsStep, foeFrameDt } from '../characters/enemy/enemyMotor.js';   // AUDIT 63 F42: EnemyMotor.OpenDoors (EnemyMotor.cs:1424-1442), which lives in the motor and runs wherever an enemy does
 import { billboardSize } from '../world/rmbFlats.js';
 import { positionHash, staticNpcData } from './quest/questBridge.js';   // B7: the guild popup's TALK builds display data without re-registering the click
 import { staticBuildingsHasHit } from '../world/staticBuildings.js';   // AUDIT 64 F11: DaggerfallStaticBuildings.HasHit

@@ -10,7 +10,7 @@ import {
 } from '../src/systems/shopStock.js';
 import { SOUL_TRAP_TEMPLATE, fillEmptyTrap } from '../src/systems/mysticism.js';
 import { serviceDestination } from '../src/systems/guild/guildServiceFlow.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 
 const soulPointsOf = (t) => ENEMY_BASICS[t]?.soulPts ?? 0;
 

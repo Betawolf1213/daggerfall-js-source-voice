@@ -22,9 +22,9 @@ import { FlatsFile, flatCensored } from '../src/formats/flatsFile.js';
 import { TextureFile } from '../src/formats/textureFile.js';
 import { scaledBillboardSize } from '../src/world/rmbFlats.js';
 import { GENERAL_FPS } from '../src/render/flatAnimation.js';
-import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';
+import { MOBILE_TYPES as M } from '../src/characters/mobile/mobileTypes.js';
 import { BUILDING_TYPES as B } from '../src/world/buildingNames.js';
-import { PERSON_MOVE_SPEED, PERSON_TEXTURES } from '../src/characters/mobilePerson.js';
+import { PERSON_MOVE_SPEED, PERSON_TEXTURES } from '../src/characters/mobile/mobilePerson.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

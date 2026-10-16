@@ -10,7 +10,7 @@ import { LivingTown } from '../src/systems/livingWorld/livingTown.js';
 import { DAY_MIN, isOutdoor } from '../src/systems/livingWorld/dayPlan.js';
 import { circleStands, SPACE_M } from '../src/systems/livingWorld/meetups.js';
 import { findTownPath, pathLine } from '../src/systems/livingWorld/townPaths.js';
-import { PERSON_MOVE_SPEED } from '../src/characters/mobilePerson.js';
+import { PERSON_MOVE_SPEED } from '../src/characters/mobile/mobilePerson.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
 
 const RATE = CLASSIC_MINUTES_PER_SECOND, MPM = PERSON_MOVE_SPEED / RATE, DAY = 100, MAP = 24680;

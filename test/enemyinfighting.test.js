@@ -11,8 +11,8 @@ import {
   KB_UNIT, enemyKnockbackApplies, weaponKnockbackApplies,
   weaponKnockbackSpeed, enemyWeightClassicUnits,
 } from '../src/combat/formulas.js';
-import { EnemyAI } from '../src/characters/enemyMotor.js';
-import { PLAYER_TARGET } from '../src/characters/enemyTargets.js';
+import { EnemyAI } from '../src/characters/enemy/enemyMotor.js';
+import { PLAYER_TARGET } from '../src/characters/enemy/enemyTargets.js';
 import { bloodCentre } from '../src/scenes/hitEffects.js';   // AUDIT 62 F19: the reference's own law, not a restated literal
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -137,7 +137,7 @@ test('MT-ii: a null target returns 0 without touching anything (:305-306)', () =
 // ---- MT-iii: the two quest actions the infighting slice retires ----
 import { loadQuestTables } from '../src/systems/quest/tables.js';
 import { QuestMachine } from '../src/systems/quest/machine.js';
-import { MOBILE_TEAMS } from '../src/characters/enemyTargets.js';
+import { MOBILE_TEAMS } from '../src/characters/enemy/enemyTargets.js';
 import { readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';

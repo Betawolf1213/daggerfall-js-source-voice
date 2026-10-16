@@ -25,7 +25,7 @@ import {
   POTION_RECIPE_TEMPLATE_INDEX, POTION_TEMPLATE_INDEX, DUNGEON_LOOT_KEYS,
 } from '../src/systems/loot/loot.js';
 import { isMap, isPotion, isPotionRecipe } from '../src/systems/useItem.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 
 const rd = (f) => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');
 /** A rolls() that returns a scripted queue, then 0.999 (fail everything). */
