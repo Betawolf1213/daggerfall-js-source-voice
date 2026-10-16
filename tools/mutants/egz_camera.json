@@ -2,82 +2,91 @@
   {
     "name": "EGZN-wall-run-unmarked",
     "file": "src/world/egHall.js",
-    "old": "occ(() => boxD(f, wallRec, Math.min(a[0], c[0]), a[1], a[2], Math.max(a[0], c[0]), c[1], c[2], true, 0.5));",
-    "new": "boxD(f, wallRec, Math.min(a[0], c[0]), a[1], a[2], Math.max(a[0], c[0]), c[1], c[2], true, 0.5);",
+    "old": "  const piece = (build) => occ(() => egKitInto(f, build));\n  egPassage(",
+    "new": "  const piece = (build) => egKitInto(f, build);\n  egPassage(",
     "tests": [
-      "test/egz_camera.test.js"
+      "test/egz_camera.test.js",
+      "test/eglook_halls.test.js"
     ]
   },
   {
-    "name": "EGZN-vault-unmarked",
-    "file": "src/world/egHall.js",
-    "old": "yHi + q.height + 1.0, q.z1); occ(() => boxD(f, SD_REALM_ROOT_RECORD, a[0], a[1], a[2], c[0], c[1], c[2], true, 0.5)); }",
-    "new": "yHi + q.height + 1.0, q.z1); boxD(f, SD_REALM_ROOT_RECORD, a[0], a[1], a[2], c[0], c[1], c[2], true, 0.5); }",
+    "name": "EGZN-vault-left-out",
+    "file": "src/world/egGround.js",
+    "old": "  if (vault) passageVault(spec, q, grid, style, egVaultOpen(spec, q, grid.length - 1), piece);",
+    "new": "  if (vault && false) passageVault(spec, q, grid, style, egVaultOpen(spec, q, grid.length - 1), piece);",
     "tests": [
-      "test/egz_camera.test.js"
+      "test/egz_camera.test.js",
+      "test/eglook_halls.test.js"
     ]
   },
   {
-    "name": "EGZN-stacks-dress-unmarked",
-    "file": "src/world/egHall.js",
-    "old": "c = D(X + s * w, y + 2.4, z + 0.9); occ(() =>",
-    "new": "c = D(X + s * w, y + 2.4, z + 0.9); whole(() =>",
+    "name": "EGZN-stacks-bookcases-left-out",
+    "file": "src/world/egGround.js",
+    "old": "return (kit, ta, tb, yb) => { bookcase(kit, W, ta, tb, yb, spec); return {",
+    "new": "return (kit, ta, tb, yb) => { return {",
     "tests": [
-      "test/egz_camera.test.js"
+      "test/egz_camera.test.js",
+      "test/eglook_halls.test.js"
     ]
   },
   {
-    "name": "EGZN-colonnade-dress-unmarked",
-    "file": "src/world/egHall.js",
-    "old": "z + (fallen ? 1.6 : 0.5)); occ(() =>",
-    "new": "z + (fallen ? 1.6 : 0.5)); whole(() =>",
+    "name": "EGZN-colonnade-left-out",
+    "file": "src/world/egGround.js",
+    "old": "if (q.open) { colonnade(spec, q, grid, band, piece); return; }",
+    "new": "if (q.open) return;",
     "tests": [
-      "test/egz_camera.test.js"
+      "test/egz_camera.test.js",
+      "test/eglook_halls.test.js"
     ]
   },
   {
-    "name": "EGZN-ossuary-rib-unmarked",
-    "file": "src/world/egHall.js",
-    "old": "c = D(X + s * w, yHi + q.height, z + 0.15); occ(() =>",
-    "new": "c = D(X + s * w, yHi + q.height, z + 0.15); whole(() =>",
+    "name": "EGZN-vault-ribs-left-out",
+    "file": "src/world/egGround.js",
+    "old": "      rib(kit, k);\n      if (k + 2 === grid.length) rib(kit, k + 1);",
+    "new": "      if (k + 2 === grid.length) rib(kit, k + 1);",
     "tests": [
-      "test/egz_camera.test.js"
+      "test/egz_camera.test.js",
+      "test/eglook_halls.test.js"
     ]
   },
   {
-    "name": "EGZN-ossuary-arch-unmarked",
-    "file": "src/world/egHall.js",
-    "old": "c = D(X + w, yHi + q.height, z + 0.15); occ(() =>",
-    "new": "c = D(X + w, yHi + q.height, z + 0.15); whole(() =>",
+    "name": "EGZN-ossuary-loculi-left-out",
+    "file": "src/world/egGround.js",
+    "old": "(odd(ta) ? loculi(kit, W, ta, tb, yb, yTop, style, spec) : null)",
+    "new": "null",
     "tests": [
-      "test/egz_camera.test.js"
+      "test/egz_camera.test.js",
+      "test/eglook_halls.test.js"
     ]
   },
   {
-    "name": "EGZN-gloam-trunk-unmarked",
-    "file": "src/world/egHall.js",
-    "old": "c = D(X + s * (w + 0.5), yHi + 9, z + 0.2); occ(() =>",
-    "new": "c = D(X + s * (w + 0.5), yHi + 9, z + 0.2); whole(() =>",
+    "name": "EGZN-gloam-trunks-left-out",
+    "file": "src/world/egGround.js",
+    "old": "  if (kit === 'gloam') thicket(spec, q, yFoot, yTop, piece);\n",
+    "new": "",
     "tests": [
-      "test/egz_camera.test.js"
+      "test/egz_camera.test.js",
+      "test/eglook_halls.test.js"
     ]
   },
   {
-    "name": "EGZN-forge-pipe-unmarked",
-    "file": "src/world/egHall.js",
-    "old": "c = D(X + s * w, yHi + 3.3, z + 2.4); occ(() =>",
-    "new": "c = D(X + s * w, yHi + 3.3, z + 2.4); whole(() =>",
+    "name": "EGZN-forge-hearths-left-out",
+    "file": "src/world/egGround.js",
+    "old": "(odd(ta) ? forgeBay(kit, W, ta, tb, yb, yTop, spec) : null)",
+    "new": "null",
     "tests": [
-      "test/egz_camera.test.js"
+      "test/egz_camera.test.js",
+      "test/eglook_halls.test.js"
     ]
   },
   {
-    "name": "EGZN-forge-anvil-unmarked",
+    "name": "EGZN-tiers-unmarked",
     "file": "src/world/egHall.js",
-    "old": "b1 = D(X + s * (w - 0.2), y + 0.8, z + 0.4); occ(() =>",
-    "new": "b1 = D(X + s * (w - 0.2), y + 0.8, z + 0.4); whole(() =>",
+    "old": "else if (d.t === 'tiers') egTierBenches(spec, d, piece);",
+    "new": "else if (d.t === 'tiers') egTierBenches(spec, d, (build) => egKitInto(f, build));",
     "tests": [
-      "test/egz_camera.test.js"
+      "test/egz_camera.test.js",
+      "test/eglook_halls.test.js"
     ]
   },
   {
@@ -101,37 +110,41 @@
   {
     "name": "EGZN-door-post-unmarked",
     "file": "src/world/egHall.js",
-    "old": "EG_DOOR.h, zz + EG_DOOR.post / 2); occ(() => boxD(f, SD_REALM_PILLAR_RECORD",
-    "new": "EG_DOOR.h, zz + EG_DOOR.post / 2); whole(() => boxD(f, SD_REALM_PILLAR_RECORD",
+    "old": "if (d.role === 'end') egDoorway(spec, d, EG_DOOR, band, (build) => occ(() => egKitInto(f, build)));",
+    "new": "if (d.role === 'end') egDoorway(spec, d, EG_DOOR, band, (build) => egKitInto(f, build));",
     "tests": [
-      "test/egz_camera.test.js"
+      "test/egz_camera.test.js",
+      "test/eglook_halls.test.js"
     ]
   },
   {
-    "name": "EGZN-lintel-unmarked",
-    "file": "src/world/egHall.js",
-    "old": "    occ(() => boxD(f, SD_REALM_BRASS_RECORD, a[0], a[1], a[2], c[0], c[1], c[2], true, 0.5));",
-    "new": "    boxD(f, SD_REALM_BRASS_RECORD, a[0], a[1], a[2], c[0], c[1], c[2], true, 0.5);",
+    "name": "EGZN-door-arch-left-out",
+    "file": "src/world/egGround.js",
+    "old": "  piece((kit) => {\n    for (const f of [-1, 1]) {\n      const W = egWallFrame(spec, d.x - ro,",
+    "new": "  ((build) => build(createMeshKit()))((kit) => {\n    for (const f of [-1, 1]) {\n      const W = egWallFrame(spec, d.x - ro,",
     "tests": [
-      "test/egz_camera.test.js"
+      "test/egz_camera.test.js",
+      "test/eglook_halls.test.js"
     ]
   },
   {
     "name": "EGZN-ring-wall-unmarked",
     "file": "src/world/egHall.js",
-    "old": "      occ(() => quadTo(f, SD_REALM_PILLAR_RECORD, P(p0[0], y0, p0[1])",
-    "new": "      whole(() => quadTo(f, SD_REALM_PILLAR_RECORD, P(p0[0], y0, p0[1])",
+    "old": "if (d.t === 'wall') egRingArcade(spec, d, band, piece);",
+    "new": "if (d.t === 'wall') egRingArcade(spec, d, band, (build) => egKitInto(f, build));",
     "tests": [
-      "test/egz_camera.test.js"
+      "test/egz_camera.test.js",
+      "test/eglook_halls.test.js"
     ]
   },
   {
     "name": "EGZN-long-wall-unmarked",
     "file": "src/world/egHall.js",
-    "old": "const x = d.x + sgn * d.hw; occ(() =>",
-    "new": "const x = d.x + sgn * d.hw; whole(() =>",
+    "old": "} else if (d.t === 'hall') egLongWalls(spec, d, band, piece);",
+    "new": "} else if (d.t === 'hall') egLongWalls(spec, d, band, (build) => egKitInto(f, build));",
     "tests": [
-      "test/egz_camera.test.js"
+      "test/egz_camera.test.js",
+      "test/eglook_halls.test.js"
     ]
   },
   {
@@ -146,10 +159,11 @@
   {
     "name": "EGZN-arch-unmarked",
     "file": "src/world/egHall.js",
-    "old": "of archParts(spec, d)) occ(() => boxD(",
-    "new": "of archParts(spec, d)) whole(() => boxD(",
+    "old": "egChokeArch(spec, d, band, archParts(spec, d), (build) => occ(() => egKitInto(f, build)));",
+    "new": "egChokeArch(spec, d, band, archParts(spec, d), (build) => egKitInto(f, build));",
     "tests": [
-      "test/egz_camera.test.js"
+      "test/egz_camera.test.js",
+      "test/eglook_halls.test.js"
     ]
   },
   {

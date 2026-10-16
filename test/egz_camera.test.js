@@ -12,6 +12,7 @@ import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { buildEgCircleModel, egToDungeon, egNicheBoxes, egHeroGroundYs, egInHeroBox } from '../src/world/egHall.js';
+import { EG_WALL } from '../src/world/egGround.js';
 import { egCircleParts } from '../src/world/egCircleParts.js';
 import { egHallOf, egCircleSpecs, egCircleOfHall } from '../src/net/egLaw.js';
 import { createEgOccluders, egOccludersHit, egSegTri, egSegBox, egOccludeEase, egOccludeRanges, EG_OCCLUDE_KEEP, EG_OCCLUDE_FADE_S, EG_OCCLUDE_BODY_M, EG_OCCLUDE_CHEST_M, EG_OCCLUDE_VIEWS_MAX } from '../src/scenes/egOcclude.js';
@@ -21,6 +22,12 @@ const I4 = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
 const covered = (ranges) => ranges.flatMap((r) => Array.from({ length: r.primitiveCount * 3 }, (_, k) => r.startIndex + k)).sort((a, b) => a - b);
 /** The Fallen Stacks (seed 77, hall 2 - a passage of bookcases), and its circle's model. */
 const STACKS = { seed: 77, h: 2 };
+// PIN MOVED (EG-LOOK HALLS, Elite-Gates-Look.md section 2): the Stacks' bookcases are sunk in the bays of the academy's wall
+// now, behind the collider's plane (world/egGround.js bookcase), each bay of a wall one piece - so the piece a ray meets is a
+// bay of the left wall: its pilaster (the first EG_WALL.pil of its box) standing between an eye and a body in the bay's
+// recess, RECESS_D behind the plane at a body's height. Its box runs from the wall's outer face to the ressaut over it.
+const leftBay = (left) => (o) => Math.abs(o.b[0] - (left - EG_WALL.thick)) < 1e-3 && o.b[3] - o.b[0] < 1.5;
+const RECESS_D = 0.15, RAY_Y = 3.6;   // over the bookcases sunk in the bays, under the pilasters' capitals
 
 // ── THE OCCLUDERS, MARKED ───────────────────────────────────────────────────────────────────────────────────────────
 test('EG-ZN THE OCCLUDERS MARKED (world/egHall.js, section 11.8): every circle\'s model carries its rock as runs of its own sub-meshes - each run inside its sub-mesh, no index in two pieces, each piece\'s box its own triangles\' - a closed passage\'s every wall run and its vault, each box of its kit\'s dress, a niche\'s walls and lid but never its floor, a ring wall a segment at a time, an arch, a door\'s posts and lintel, a slag spout; the floors, bands, lanes, plates and ramps none; the swap\'s worker build carries the same; the mesh itself one draw a record as before (mutants: a wall run unmarked; the vault unmarked; the dress unmarked; a niche\'s floor an occluder; the ring wall unmarked; an arch unmarked; the door unmarked; a spout unmarked; a run at the wrong sub-mesh; the box off its triangles)', () => {
@@ -62,7 +69,11 @@ test('EG-ZN THE OCCLUDERS MARKED (world/egHall.js, section 11.8): every circle\'
           assert.ok(face.length > 0 && face.every((j) => owner.has(j)), `hall ${spec.h}: a ${q.kit} wall run is an occluder`);
         }
         if (q.kit === 'gloam' || q.tube) continue;
-        const v0 = egToDungeon(spec, q.x - q.halfW - 0.6, yHi + q.height, q.z0), v1 = egToDungeon(spec, q.x + q.halfW + 0.6, yHi + q.height + 1, q.z1);
+        // PIN MOVED (EG-LOOK HALLS, Elite-Gates-Look.md section 2): the vault is a barrel springing over the collider's ceiling
+        // (world/egGround.js passageVault; the Caverns' a rock vault pushed out by noise), no longer a slab a metre thick - so
+        // every triangle over the ceiling within the passage and its walls' reach (its cornice, its ribs, its coffers, its
+        // roof) is the vault's, an occluder's
+        const v0 = egToDungeon(spec, q.x - q.halfW - 2.6, yHi + q.height, q.z0), v1 = egToDungeon(spec, q.x + q.halfW + 2.6, yHi + q.height + q.halfW + 4, q.z1);
         const vault = trisIn(v0[0], v0[1], v0[2], v1[0], v1[1], v1[2]);
         assert.ok(vault.length >= 12 && vault.every((j) => owner.has(j)), `hall ${spec.h}: a ${q.kit} vault is an occluder`);
       }
@@ -172,16 +183,16 @@ test('EG-ZN THE RAY (scenes/egOcclude.js): a segment crosses a triangle from eit
   const pieces = [];
   { const P = m.positions, I = m.indices; let at = 0; const T2 = []; for (const o of m.occluders) { const first = at; for (const [, s, n] of o.r) for (let j = s; j < s + n * 3; j++) { T2.push(P[I[j] * 3], P[I[j] * 3 + 1], P[I[j] * 3 + 2]); at++; } pieces.push({ b: o.b, at: first / 3, n: (at - first) / 3 }); } pieces.T = new Float32Array(T2); }
   const left = egToDungeon(spec, q.x - q.halfW, q.y, q.z0)[0];
-  const cases = m.occluders.map((o, i) => [i, o]).filter(([, o]) => Math.abs(o.b[0] - left) < 1e-3 && o.b[3] - o.b[0] < 0.5 && o.b[4] - o.b[1] < 3);
-  assert.ok(cases.length >= 4, 'the left wall\'s bookcases');
-  const [bi, bk] = cases[2], cx = (bk.b[0] + bk.b[3]) / 2, cy = 1.2 + bk.b[1];
-  const eye = [cx, cy, bk.b[2] - 0.2], chest = [cx, cy, bk.b[5] + 0.35], feet = [chest[0], chest[1] - EG_OCCLUDE_CHEST_M, chest[2]];
+  const cases = m.occluders.map((o, i) => [i, o]).filter(([, o]) => leftBay(left)(o));
+  assert.ok(cases.length >= 4, 'the left wall\'s bays');
+  const [bi, bk] = cases[2], cx = left - RECESS_D, cy = q.y + RAY_Y, pEnd = bk.b[2] + EG_WALL.pil;
+  const eye = [cx, cy, bk.b[2] - 0.2], chest = [cx, cy, pEnd + 0.35], feet = [chest[0], chest[1] - EG_OCCLUDE_CHEST_M, chest[2]];
   assert.deepEqual(egOccludersHit(pieces, pieces.T, eye, [chest]), [bi], 'exactly the bookcase between');
   assert.deepEqual(egOccludersHit(pieces, pieces.T, eye, [null, chest]), [bi], 'every point read');
-  assert.deepEqual(egOccludersHit(pieces, pieces.T, [cx + 1.5, cy, bk.b[2] - 0.2], [[cx + 1.5, cy, bk.b[5] + 0.35]]), [], 'a ray past it, along the walk: nothing');
+  assert.deepEqual(egOccludersHit(pieces, pieces.T, [cx + 1.5, cy, bk.b[2] - 0.2], [[cx + 1.5, cy, pEnd + 0.35]]), [], 'a ray past it, along the walk: nothing');
   assert.deepEqual(egOccludersHit(pieces, pieces.T, null, [chest]), [], 'no eye: nothing');
-  assert.deepEqual(egOccludersHit(pieces, pieces.T, [cx + 2, cy, bk.b[2] - 0.2], [[cx + 2, cy, bk.b[5] + 3]]), [], 'down the walk beside the wall: nothing');
-  assert.deepEqual(egOccludersHit(pieces, pieces.T, [cx + 2, cy + 3, bk.b[2] - 0.2], [[cx + 2, feet[1] + 0.05, bk.b[5]]]), [], 'down onto the floor: the floor is no occluder');
+  assert.deepEqual(egOccludersHit(pieces, pieces.T, [cx + 2, cy, bk.b[2] - 0.2], [[cx + 2, cy, pEnd + 3]]), [], 'down the walk beside the wall: nothing');
+  assert.deepEqual(egOccludersHit(pieces, pieces.T, [cx + 2, cy + 3, bk.b[2] - 0.2], [[cx + 2, feet[1] + 0.05, pEnd]]), [], 'down onto the floor: the floor is no occluder');
   // a body pressed 0.1 m into the bookcase's near face: the ray stops 0.3 m short, before it
   assert.deepEqual(egOccludersHit(pieces, pieces.T, eye, [[cx, cy, bk.b[2] + 0.1]]), [], 'a body pressed 0.1 m into it: the ray stopped short of it');
   assert.deepEqual(egOccludersHit(pieces, pieces.T, eye, [[cx, cy, bk.b[2] + 0.6]]), [bi], 'the body 0.6 m past its face: between');
@@ -222,8 +233,8 @@ test('EG-ZN THE DITHER PASS (scenes/egOcclude.js): while nothing stands between,
   assert.equal(egOccludeEase(0.5, true, 0), 0.5, 'no time, no step');
   // a bookcase between: one piece hit
   const spec = egHallOf(STACKS.seed, STACKS.h, 0), q = spec.caves[0], left = egToDungeon(spec, q.x - q.halfW, 0, 0)[0];
-  const bi = m.occluders.findIndex((o) => Math.abs(o.b[0] - left) < 1e-3 && o.b[3] - o.b[0] < 0.5), bk = m.occluders[bi];
-  const cx = (bk.b[0] + bk.b[3]) / 2, cy = 1.2, eye = [cx, cy, bk.b[2] - 0.2], body = [[cx, cy, bk.b[5] + 0.35]];
+  const bi = m.occluders.findIndex(leftBay(left)), bk = m.occluders[bi], pEnd = bk.b[2] + EG_WALL.pil;
+  const cx = left - RECESS_D, cy = RAY_Y, eye = [cx, cy, bk.b[2] - 0.2], body = [[cx, cy, pEnd + 0.35]];
   const remap = new Map();
   assert.equal(occ.frame({ eye, points: body, dt: 0.1 }), 1);
   assert.deepEqual(occ.shares(), [[bi, 0.625]]);
@@ -252,33 +263,35 @@ test('EG-ZN THE DITHER PASS (scenes/egOcclude.js): while nothing stands between,
   assert.deepEqual([occ.shares(), draw.hidden], [[], false], 'a stand starts whole');
   occ.frame({ eye, points: body, dt: 0.1 }); occ.frame({ eye, points: body, dt: 0.1 });
   // clear: back up over 0.2 s, then the loop's again
-  occ.frame({ eye: [cx + 2, cy, bk.b[2] - 0.2], points: [[cx + 2, cy, bk.b[5] + 0.35]], dt: 0.1 });
+  occ.frame({ eye: [cx + 2, cy, bk.b[2] - 0.2], points: [[cx + 2, cy, pEnd + 0.35]], dt: 0.1 });
   assert.deepEqual(occ.shares(), [[bi, EG_OCCLUDE_KEEP + 0.375]], 'rising back');
   R.log.length = 0; occ.draw(remap);
   assert.equal(draw.hidden, true);
-  occ.frame({ eye: [cx + 2, cy, bk.b[2] - 0.2], points: [[cx + 2, cy, bk.b[5] + 0.35]], dt: 0.1 });
+  occ.frame({ eye: [cx + 2, cy, bk.b[2] - 0.2], points: [[cx + 2, cy, pEnd + 0.35]], dt: 0.1 });
   assert.deepEqual(occ.shares(), []);
   R.log.length = 0;
   assert.equal(occ.draw(remap), 0);
   assert.deepEqual([R.log.length, draw.hidden], [0, false], 'whole again: the loop draws the circle');
   // two pieces at one share: one view, their runs one range where they meet
-  const inside = (i) => { const [s, at, k] = m.occluders[i].r[0], sm = m.subMeshes[s]; return at > sm.startIndex && at + k * 3 < sm.startIndex + sm.primitiveCount * 3; };
-  const two = m.occluders.map((o, i) => i).filter((i) => m.occluders[i].r.length === 1 && m.occluders[i + 1]?.r.length === 1 && m.occluders[i].r[0][0] === m.occluders[i + 1].r[0][0] && m.occluders[i].r[0][1] + m.occluders[i].r[0][2] * 3 === m.occluders[i + 1].r[0][1] && inside(i) && inside(i + 1))[0];
+  // PIN MOVED (EG-LOOK HALLS): a bay is a piece of several records now - two bays side by side meet in each record they wear
+  const inside = (i) => m.occluders[i].r.every(([s, at, k]) => { const sm = m.subMeshes[s]; return at > sm.startIndex && at + k * 3 < sm.startIndex + sm.primitiveCount * 3; });
+  const meet = (i) => { const a = m.occluders[i], b = m.occluders[i + 1]; return !!b && a.r.length === b.r.length && a.r.every(([s, at, k], j) => b.r[j][0] === s && at + k * 3 === b.r[j][1]); };
+  const two = m.occluders.map((o, i) => i).filter((i) => meet(i) && inside(i) && inside(i + 1))[0];
   const ranges = egOccludeRanges(m.subMeshes, m.occluders, [two, two + 1], false);
-  assert.deepEqual(ranges.map((s) => [s.startIndex, s.primitiveCount]), [[m.occluders[two].r[0][1], m.occluders[two].r[0][2] + m.occluders[two + 1].r[0][2]]], 'adjacent runs one range');
+  assert.deepEqual(ranges.map((s) => [s.startIndex, s.primitiveCount]), m.occluders[two].r.map(([, at, k], j) => [at, k + m.occluders[two + 1].r[j][2]]), 'adjacent runs one range a sub-mesh');
   const cut = egOccludeRanges(m.subMeshes, m.occluders, [two, two + 1], true);
-  assert.equal(cut.length, m.subMeshes.length + 1, 'the rest: their sub-mesh cut in two');
+  assert.equal(cut.length, m.subMeshes.length + m.occluders[two].r.length, 'the rest: each sub-mesh they wear cut in two');
   assert.deepEqual(covered([...cut, ...ranges]), covered(full));
   // two bookcases on one ray, at one share: the rest and ONE view of the two
-  const lefts = m.occluders.map((o, i) => i).filter((i) => Math.abs(m.occluders[i].b[0] - left) < 1e-3 && m.occluders[i].b[3] - m.occluders[i].b[0] < 0.5);
+  const lefts = m.occluders.map((o, i) => i).filter((i) => leftBay(left)(m.occluders[i]));
   const [b1, b2] = [m.occluders[lefts[1]], m.occluders[lefts[2]]];
-  const both = occ.frame({ eye: [cx, cy, b1.b[2] - 0.2], points: [[cx, cy, b2.b[5] + 0.35]], dt: 0.1 });
+  const both = occ.frame({ eye: [cx, cy, b1.b[2] - 0.2], points: [[cx, cy, b2.b[2] + EG_WALL.pil + 0.35]], dt: 0.1 });
   assert.equal(both, 2);
   R.log.length = 0; occ.draw(remap);
   const drawn = R.log.filter((e) => e[0] === 'draw');
   assert.equal(drawn.length, 2, 'the rest, and the two in one view');
-  assert.deepEqual(drawn[1][1].subMeshes.map((s) => [s.startIndex, s.primitiveCount]), [...b1.r, ...b2.r].map(([, at, k]) => [at, k]));
-  for (let k = 0; k < 4; k++) occ.frame({ eye: [cx + 2, cy, b1.b[2] - 0.2], points: [[cx + 2, cy, b2.b[5] + 0.35]], dt: 0.1 });
+  assert.deepEqual(drawn[1][1].subMeshes.map((s) => [s.startIndex, s.primitiveCount]), egOccludeRanges(m.subMeshes, m.occluders, [lefts[1], lefts[2]], false).map((r) => [r.startIndex, r.primitiveCount]));   // PIN MOVED (EG-LOOK HALLS): the two bays' runs, met a sub-mesh at a time
+  for (let k = 0; k < 4; k++) occ.frame({ eye: [cx + 2, cy, b1.b[2] - 0.2], points: [[cx + 2, cy, b2.b[2] + EG_WALL.pil + 0.35]], dt: 0.1 });
   assert.deepEqual(occ.shares(), []);
   // the views kept are let go past their cap, never grown without end (a circle of many pieces, each dithered in turn)
   const m2 = buildEgCircleModel(99, 6, 0), occ2 = createEgOccluders({ renderer: R });

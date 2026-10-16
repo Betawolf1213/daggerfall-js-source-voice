@@ -127,6 +127,7 @@ if (SWATCH) {
 
 /** The cameras, in hall SPEC's frame (x across, y up, z along the course; yaw 0 down the course, degrees). */
 const court = SPEC.fight ?? SPEC.discs.find((d) => d.role === 'court') ?? SPEC.end ?? SPEC.arrive;
+const CAVE = SPEC.caves?.[0] ?? null, RING = (SPEC.deco ?? []).find((d) => d.t === 'wall' || d.t === 'tiers' || d.t === 'hall') ?? null;   // EG-LOOK HALLS: the hall's first passage and chamber
 const VIEWS = {
   plate: { at: [0, 1.7, SPEC.arrive?.z ?? 0], yaw: 0, pitch: -6 },
   course: { at: [6, 7, (SPEC.len ?? 80) * 0.3], yaw: -12, pitch: -16 },
@@ -148,6 +149,13 @@ const VIEWS = {
     pieceback: { spec: PIECE.spec, at: [PIECE.x + 3.9, PIECE.y + 2.3, PIECE.z + 3.5], yaw: 228, pitch: -24 },   // its far corner
   } : {}),
   swatch: SWATCH ? (params.has('rec') ? (() => { const k = Math.max(0, EG_BAND_RECORDS.indexOf(Number(params.get('rec')))), c = swAt(k); return { at: [c[0] + 5.2, c[1], c[2]], yaw: -90, pitch: 0 }; })() : { at: [SW.x + 15.5, SW.y + SW.row * 1.5 + 0.8, SW.z], yaw: -90, pitch: 0 }) : null,   // EG-LOOK: the band's pictures
+  // EG-LOOK HALLS (Elite-Gates-Look.md section 2): the ground's own - down a passage under its vault, the passage from outside,
+  // a chamber's arcade from its floor, the end plate's door, a court's mosaic from over it
+  passage: CAVE ? { at: [CAVE.x + 0.6, CAVE.y + 1.7, CAVE.z0 + 1.5], yaw: 3, pitch: 10 } : null,
+  passout: CAVE ? { at: [CAVE.x + 16, CAVE.y + 5, (CAVE.z0 + CAVE.z1) / 2 - 12], yaw: -52, pitch: -6 } : null,
+  chamber: RING ? { at: [RING.x - (RING.r ?? RING.hw) * 0.3, (RING.y ?? 0) + 1.7, (RING.z ?? (RING.z0 + RING.z1) / 2) - (RING.r ?? 12) * 0.55], yaw: 22, pitch: 12 } : null,
+  door: { at: [SPEC.end?.x ?? 0, (SPEC.end?.y ?? 0) + 2.2, (SPEC.end?.z ?? 60) - 7.5], yaw: 0, pitch: 9 },
+  mosaic: { at: [court.x, (court.y ?? 0) + 24, court.z - 9], yaw: 0, pitch: -66 },
 };
 /** EG-LOOK (THE WRECK): ?wing=<n> - the camera 70 m from the band's wing n toward its hall (world/egVista.js EG_VISTA_PLACES,
  *  at the band's reach; a Court's place in a Court hall), looking at it. */
