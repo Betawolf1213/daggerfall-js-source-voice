@@ -2311,7 +2311,8 @@ Observability (the relay's own logs), with the account's token.
   pinned), R2-9 (the shard heard from keeps its very ShardSockets), R3-6 (a woken court's copy resynced by its first
   poll), D-7 (settled, so a second greeting would reach the socket), D-8 (HUB_POLL_MS and the outbox's bounds);
   `test/scale5c.test.js`'s count (the shard asks after the bus's tell); `test/scale2b.test.js`'s calls between rooms
-  (twenty-two, seventeen on ROOM_CALL_MS: the push and the resync gone, the poll on its own deadline);
+  (twenty-three, eighteen on ROOM_CALL_MS after the merge of main - its INSTANCES twenty-four and twenty, less the push
+  and the resync, the poll on its own deadline);
   `tools/mutants/auditscale2_bus.json` re-aimed by content (the resync's three to the poll's `rs`, the delivery's miss
   to its `ack`), `vhubs`' record retired with the storage it pinned, and the outbox's bounds and the silent sweep's
   purge added; `tools/hubShardBench.mjs` reads the bus's outbox where it read its pushes.
