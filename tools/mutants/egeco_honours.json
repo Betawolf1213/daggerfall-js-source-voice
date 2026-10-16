@@ -353,12 +353,12 @@
   {
     "name": "EGECO2-champion-off-the-mint",
     "file": "server-account/src/index.js",
-    "old": "who.player = await withGambitHonours(honoursCtx, await withEgHonours(honoursCtx, who.player, nowS), nowS);",
-    "new": "who.player = await withGambitHonours(honoursCtx, who.player, nowS);",
+    "old": "who.player = await withEgHonours(honoursCtx, await withHonours(honoursCtx, who.player, nowS), nowS);",
+    "new": "who.player = await withHonours(honoursCtx, who.player, nowS);",
     "tests": [
       "test/egeco_honours.test.js"
     ],
-    "note": "AUDIT EG V (the merge of main): re-aimed by content - one line lays the Spire Champion, then the Grandmaster; the mutant drops the Spire's."
+    "note": "AUDIT EG V (the merge of main): re-aimed by content - one line lays the Spire Champion, then the Grandmaster; the mutant drops the Spire's. The fifth merge of main (re-aimed by content): SIGN-BATCH's one batch of the three games' honours, the Spire Champions read beside it; the mutant drops the Spire's."
   },
   {
     "name": "EGECO2-spire-titles-a-guests",
@@ -435,11 +435,12 @@
   {
     "name": "EGECO2-kind-shared",
     "file": "src/render/auraRing.js",
-    "old": "beaconlight: Object.freeze({ kind: 8,",
-    "new": "beaconlight: Object.freeze({ kind: 7,",
+    "old": "beaconlight: Object.freeze({ kind: 9,",
+    "new": "beaconlight: Object.freeze({ kind: 8,",
     "tests": [
       "test/egeco_honours.test.js"
-    ]
+    ],
+    "note": "The fifth merge of main (re-aimed by content): SERPENT5's Maelstrom took kind 8, the Spire's three 9 to 11; the mutant shares the Maelstrom's."
   },
   {
     "name": "EGECO2-motes-falling",

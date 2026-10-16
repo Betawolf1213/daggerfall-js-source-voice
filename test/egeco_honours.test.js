@@ -188,7 +188,7 @@ test('EG-E2 THE VOCABULARY AND THE BADGE: the thirteen titles and three auras jo
   const css = badgeCss();
   for (const k of SPIRE_TITLES) assert.ok(css.includes(`.card button.acttitle.tl-${k} { color: ${cssRgba(TITLE_RGBA[k])}; }`), k);
   for (const a of SPIRE_AURAS) assert.ok(css.includes(`.card button.acttitle.actaura.aura-${a} { color: ${cssRgba(TITLE_RGBA[AURA_PAINT[a]])}; }`), a);
-  assert.deepEqual(SPIRE_AURAS.map((a) => AURA_LOOK[a].kind), [8, 9, 10]);
+  assert.deepEqual(SPIRE_AURAS.map((a) => AURA_LOOK[a].kind), [9, 10, 11]);   // PIN MOVED (the fifth merge of main): SERPENT5's Maelstrom took kind 8 on main first
   assert.equal(new Set(Object.values(AURA_LOOK).map((l) => l.kind)).size, AURAS.length, 'a kind each');
   // the row's bits, read
   const row = { handle: 'Bearer', created_at: 1_900_000_000, registered_at: 1_900_000_000, eg_honours: EG_HONOUR.kynbane | EG_HONOUR.wellheadwalker | EG_HONOUR.mastershade };

@@ -23,6 +23,7 @@ import { egGive8 } from './egGive8.mjs';
 beforeEach(() => {
   egGive8(1, [2], 1);
   egGive8(25, [6], 7);
+  egGive8(1, [9], 0);   // PIN MOVED (THE ASCENT): the Gust test's fork (seed 1, circle 9) law 8's too
 });
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

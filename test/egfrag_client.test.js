@@ -10,7 +10,8 @@
 // (scenes/egClient.js): a stone's turn and an engine's work sent, a page of the Annals kept.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { egHallOf, egCircleSpecs, egFirstHallOf, egTubeCircle } from '../src/net/egLaw.js';
+import { egHallOf, egCircleSpecs, egFirstHallOf, egTubeCircle, egSpecForget } from '../src/net/egLaw.js';
+import { egGive8 } from './egGive8.mjs';
 import { egHazardParts, egEclipseShafts, EG_HAZARDS } from '../src/net/egFragLaw.js';
 import { egPieceAt, EG_SINK_MPS, EG_SINK_GONE_M } from '../src/net/egSpanLaw.js';
 import { createEgSpan, egStepKey, egDropTris, DROP_DOOR, EG_STEP_GONE_Y } from '../src/scenes/egSpan.js';
@@ -28,6 +29,15 @@ import { EG_ANNALS } from '../src/net/egAnnals.js';
 /** The first circle (seeds 1-600, circles 1-20) one of whose specs `want` takes: `{ seed, c, s }`. */
 function findCircle(want, from = 1) {
   for (let seed = 1; seed <= 600; seed++) for (let c = from; c <= 20; c++) for (const s of egCircleSpecs(seed, c, 0)) if (want(s)) return { seed, c, s };
+  throw new Error('no such circle');
+}
+/** PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): a circle of spec law 8 that `want` holds, given (test/egGive8.mjs) -
+ *  for a pin written on law 8's ground (a passage along +z, its alcove beside it); egSpecForget after. */
+function findCircle8(want) {
+  for (let seed = 1; seed <= 600; seed++) for (let c = 1; c <= 20; c++) for (let k = 0; k < 5; k++) {
+    const s = egHallOf(seed, egFirstHallOf(c) + k, 0, 8);
+    if (want(s)) { egGive8(seed, [c], 0); return { seed, c, s: egHallOf(seed, s.h, 0) }; }
+  }
   throw new Error('no such circle');
 }
 const stand = (span) => { const buckets = new Map(); span.stand({ dynamicDraws: [], collider: { addMesh: (key, p, i, m, T) => buckets.set(key, { T, p }) } }); return buckets; };
@@ -160,7 +170,7 @@ test('EG-FULL LAYER THREE THE COLLAPSING TUBE AND GRATH\'S ISLANDS (sections 11.
 });
 
 test('EG-FULL LAYER THREE THE WALLS, THE NICHES AND THE HANDS (sections 11.6 and 11.10): a seam alcove\'s false wall stands in its doorway while the relay keeps it and is gone once it falls; a passage\'s wall is broken at its alcove and the niche behind floored; the Colonnade stands open; a Drop\'s far wall keeps a doorway on the course\'s line; an Athenaeum offers each stone\'s two handles and a chamber its engine to the activation ray, and a press goes to the breach client (mutants: a wall left across the doorway; a niche with no floor; a press that goes nowhere)', () => {
-  const ac = findCircle((s) => s.alcoves.some((a) => a.seal === 'seam') && s.caves.some((q) => !q.open));
+  const ac = findCircle8((s) => s.alcoves.some((a) => a.seal === 'seam') && s.caves.some((q) => !q.open));
   const a = ac.s.alcoves.find((q) => q.seal === 'seam');
   const objs = { h: ac.s.h, objs: [{ t: 'fwall', i: 50, x: a.x, z: a.z, st: 0, stAt: 0, pt: a.i }] };
   registerSpireObjs(() => objs);
@@ -185,6 +195,7 @@ test('EG-FULL LAYER THREE THE WALLS, THE NICHES AND THE HANDS (sections 11.6 and
   const elsewhere = egToDungeon(ac.s, q.x + Math.sign(a.x - q.x) * (q.halfW + 0.3), a.y + 1, a.z + 4);
   assert.ok(wallBetween(tris, inside[0], inside[2] + 4, elsewhere[0], elsewhere[2], a.y + 1), 'and whole beside it');
   // the Colonnade stands open
+  egSpecForget();   // the alcove's law 8 circle let go before the Colonnade is sought on the build's law
   const col = findCircle((s) => s.caves.some((c) => c.kit === 'colonnade'));
   const cq = col.s.caves.find((c) => c.kit === 'colonnade'), ctris = egCircleColliderTris(col.seed, col.c, 0);
   const cin = egToDungeon(col.s, cq.x, cq.y + 1, (cq.z0 + cq.zA) / 2), cout = egToDungeon(col.s, cq.x + cq.halfW + 3, cq.y + 1, (cq.z0 + cq.zA) / 2);
