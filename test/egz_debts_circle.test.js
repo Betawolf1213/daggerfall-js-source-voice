@@ -111,7 +111,8 @@ test('EG-ZP THE NEXT STAND BUILDS ANEW, THE SWAP THROUGH THE SAME TEARDOWN (scen
   const R = rig();
   const a = contextOf();
   R.wm.ctx = a; R.wm.standEgHall(a, eh(4));
-  assert.equal(R.wm.egCircleDown(a), 4, 'four meshes let go');
+  // PIN MOVED (EG-LOOK, Elite-Gates-Look.md section 3): the circle's four and its five halls' ruins (world/egRuin.js - a mesh a hall)
+  assert.equal(R.wm.egCircleDown(a), 9, 'nine meshes let go');
   a.destroy();
   assert.equal(R.live.size, WRECK, 'and its context\'s end frees nothing more (its band\'s wreck kept - PIN MOVED, EG-LOOK)');
   const b = contextOf();

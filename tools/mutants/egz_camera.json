@@ -483,7 +483,7 @@
   {
     "name": "EGZN-shadow-unrecorded",
     "file": "src/scenes/egOcclude.js",
-    "old": "      renderer.recordShadowMesh?.(mesh, M, remap);\n",
+    "old": "      if (shadow) renderer.recordShadowMesh?.(mesh, M, remap);\n",
     "new": "\n",
     "tests": [
       "test/egz_camera.test.js"

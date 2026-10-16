@@ -39,6 +39,7 @@ import { SD_REALM_ARCHIVE } from '../world/sdRealm.js';
 import { buildEgCircleModel, egCircleLights, egLightsWith, egHallLighting, egHallFog, egHallGrade, egToDungeon, egHallCentre } from '../world/egHall.js';
 import { createEgGroundLook } from '../scenes/egGroundLook.js';   // EG-LOOK: the ruin and the wreck, as the circle's host stands them
 import { EG_VISTA_PLACES, EG_VISTA_REACH } from '../world/egVista.js';   // EG-LOOK (THE WRECK): where a wing hangs, for ?wing
+import { egRuinBands } from '../world/egRuin.js';   // EG-LOOK (THE RUIN): the bands a circle's ruin wears
 import { egBandArt, egBandArchive, EG_BAND_RECORDS, EG_KIT_MAP, EG_DRESS } from '../world/egBandArt.js';
 import { createMeshKit } from '../world/meshKit.js';   // EG-LOOK: the swatch wall
 import { egAtmosOf } from '../world/egAtmos.js';
@@ -78,6 +79,8 @@ const SLOT = MIST ? SPECS.indexOf(MIST.spec) : Math.max(0, Math.min(4, Number(pa
 const SPEC = SPECS[SLOT];
 for (const [rec, art] of realmArt()) { renderer.uploadTexture(SD_REALM_ARCHIVE, rec, art.albedo); renderer.uploadEmissionTexture?.(SD_REALM_ARCHIVE, rec, art.emission, { white: true }); }
 for (const [rec, art] of egBandArt(BAND)) { renderer.uploadTexture(egBandArchive(BAND), rec, art.albedo, art.cutout ? { cutout: true } : {}); renderer.uploadEmissionTexture?.(egBandArchive(BAND), rec, art.emission, { white: true }); }   // EG-LOOK: a cutout picture's holes asked (the host's way)
+// THE RUIN: a Brink circle's band above too (world/egRuin.js egRuinBands - its first halls' ruin wears it), the host's way
+for (const b of egRuinBands(C)) if (b !== BAND) for (const [rec, art] of egBandArt(b)) { renderer.uploadTexture(egBandArchive(b), rec, art.albedo, art.cutout ? { cutout: true } : {}); renderer.uploadEmissionTexture?.(egBandArchive(b), rec, art.emission, { white: true }); }
 const circleMesh = renderer.createMesh(buildEgCircleModel(SEED, C, 0));
 const lookModel = buildEgLookModel(SEED, C, 0), lookMesh = lookModel ? renderer.createMesh(lookModel) : null;
 const lamps = egCircleLights(SEED, C, 0);
@@ -148,6 +151,11 @@ const VIEWS = {
     pieceunder: { spec: PIECE.spec, at: [PIECE.x - 5.0, PIECE.y - 2.6, PIECE.z - 2.6], yaw: 62, pitch: 20 },
     pieceback: { spec: PIECE.spec, at: [PIECE.x + 3.9, PIECE.y + 2.3, PIECE.z + 3.5], yaw: 228, pitch: -24 },   // its far corner
   } : {}),
+  // EG-LOOK (THE RUIN): `ring` the court's column ring from beside its rim, `bridge` a way's arches from below its side;
+  // ?eye=x,y,z,yaw,pitch any camera of the hall's frame
+  ring: { at: [court.x + (court.r ?? 12) * 0.7, (court.y ?? 0) + 2.2, court.z - (court.r ?? 12) * 0.7], yaw: 40, pitch: 6 },
+  bridge: (() => { const l = SPEC.lanes?.find((q) => Math.hypot(q.bx - q.ax, q.bz - q.az) > 8) ?? { ax: 0, az: 0, bx: 0, bz: 24, y: 0 }; return { at: [(l.ax + l.bx) / 2 + 13, (l.y ?? 0) - 7, (l.az + l.bz) / 2 - 6], yaw: -70, pitch: 14 }; })(),
+  eye: params.has('eye') ? (([x, y, z, yaw, pitch]) => ({ at: [x, y, z], yaw, pitch }))(params.get('eye').split(',').map(Number)) : null,
   swatch: SWATCH ? (params.has('rec') ? (() => { const k = Math.max(0, EG_BAND_RECORDS.indexOf(Number(params.get('rec')))), c = swAt(k); return { at: [c[0] + 5.2, c[1], c[2]], yaw: -90, pitch: 0 }; })() : { at: [SW.x + 15.5, SW.y + SW.row * 1.5 + 0.8, SW.z], yaw: -90, pitch: 0 }) : null,   // EG-LOOK: the band's pictures
   // EG-LOOK HALLS (Elite-Gates-Look.md section 2): the ground's own - down a passage under its vault, the passage from outside,
   // a chamber's arcade from its floor, the end plate's door, a court's mosaic from over it
@@ -167,7 +175,7 @@ function wingView(n) {
 }
 const viewSel = $('view');
 for (const k of Object.keys(VIEWS)) if (VIEWS[k]) { const o = document.createElement('option'); o.value = o.textContent = k; viewSel.append(o); }
-viewSel.value = VIEWS[params.get('view')] ? params.get('view') : SWATCH ? 'swatch' : MIST ? 'mist' : 'plate';
+viewSel.value = VIEWS.eye ? 'eye' : VIEWS[params.get('view')] ? params.get('view') : SWATCH ? 'swatch' : MIST ? 'mist' : 'plate';
 if (params.get('lane') === 'off') $('lane').checked = false;
 if (params.has('still') || params.has('t')) $('still').checked = true;
 const cam = { pos: [0, 0, 0], yaw: 0, pitch: 0 };

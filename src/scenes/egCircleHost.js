@@ -39,11 +39,12 @@ export function createEgCircleHost({ renderer, host, wm }) {
   const _egBandRecs = new Map();
   /** @type {Array<{ h: number, gpu: any, T: number[], draw: any }>} */
   let _egGates = [];
-  /** EG-ZN (section 11.8): THE OCCLUDERS DITHERED - the circle's rock a camera ray to my body crosses (scenes/egOcclude.js),
-   *  over the circle's own mesh and its one draw. */
-  const egOcc = createEgOccluders({ renderer });
   /** EG-LOOK (Elite-Gates-Look.md sections 3-4): THE RUIN (the circle's, a mesh a hall) and THE WRECK (the band's). */
   const ground = createEgGroundLook({ renderer });
+  /** EG-ZN (section 11.8): THE OCCLUDERS DITHERED - the circle's rock a camera ray to my body crosses (scenes/egOcclude.js),
+   *  over the circle's own mesh and its one draw; EG-LOOK (THE RUIN): and the eye's hall's ruin's tall pieces on the same ray
+   *  (scenes/egGroundLook.js occluders - one pass, the circle's seams as they were). */
+  const egOcc = ground.occluders(createEgOccluders({ renderer }));
   /** EG-ZN: the circle's draw in the context's list - the one the dither pass hides while it draws the circle itself. */
   let _egDraw = null;
   /** EG-ZN: the circle's draw made and pushed, and the dither pass told (a stand's and a swap's alike). */
@@ -119,6 +120,7 @@ export function createEgCircleHost({ renderer, host, wm }) {
       try { for (const [rec, art] of realmArt()) { renderer.uploadTexture(SD_REALM_ARCHIVE, rec, art.albedo); renderer.uploadEmissionTexture?.(SD_REALM_ARCHIVE, rec, art.emission, glow); } } catch (e) { console.warn('[eg] the Spire\'s art would not upload', e?.message ?? e); }
     }
     egBandUp(eh.c);   // EG-G2 (section 25.1): the circle's band's dress under its own archive, once a breach a band (EG-ZN)
+    if (eh.c > 1) egBandUp(eh.c - 1);   // EG-LOOK (Elite-Gates-Look.md section 1.5): a Brink circle's ruin wears the band above's too (world/egRuin.js egRuinBands) - whole already for any other
     ctx.addTeardown?.(() => egCircleDown(ctx));   // EG-ZP (section 29): the circle let go with the context it stands in - every way that context ends
     if (_egMeshKey !== key) {
       egOcc.clear();   // EG-ZN: the dither pass lets the old circle go before it is freed

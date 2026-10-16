@@ -46,7 +46,7 @@
 import { realmToDungeon, dungeonToRealm } from '../net/sdBrain.js';
 import { faces } from './gateModel.js';
 import { realmIsland, packRealmFaces, SD_REALM_FLOOR_RECORD, SD_REALM_BRASS_RECORD, SD_REALM_ROOT_RECORD, SD_REALM_ARENA_RECORD, SD_REALM_EDGE_RECORD, SD_REALM_PILLAR_RECORD, SD_REALM_COBBLE_RECORD, SD_ISLAND_SIDES, SD_LIP } from './sdRealm.js';
-import { egCircleSpecs, egBandOfCircle, EG_TEXT } from '../net/egLaw.js';
+import { egCircleSpecs, egBandOfCircle, egBandOfHall, EG_TEXT } from '../net/egLaw.js';
 import { EG_FRAGS } from '../net/egFragLaw.js';
 import { egSlagX, EG_SLAG_SPOUTS } from '../net/egSpanLaw.js';   // EG-ZC: the slag's spouts
 import { egBandDress, egBandArchive, EG_DRESS } from './egBandArt.js';   // EG-G2: the band's dress
@@ -58,13 +58,17 @@ import { egHeroFragInto, egHeroFragCollider, EG_HERO_FRAG_MESHES } from './egHer
 import { GATE_PART } from './gateModel.js';
 import { egPolyIn, segDist } from '../net/egShape.js';   // EG-HERO-LAY: the hero's clamp
 import { lightList, lightListView, packLight, copyLights } from '../render/lightId.js';   // LIGHT-ID (main's, at the merge into PR #800): the circle's lamps into the frame's list through the one seam (pure - the swap's worker may read it)
+import { egRuinColumns, egDiscLamps, egRuinLampTint } from './egRuin.js';   // EG-LOOK (Elite-Gates-Look.md section 3.3): THE LAMPS ON THE RUIN'S COLUMNS
 
 /** The made location's id (the Hour's is 0x7ffff200, the court's 0x7ffff000), its one block's name and index. */
 export const EG_HALL_LOCATION_ID = 0x7ffff300;
 export const EG_HALL_BLOCK = 'SPIRE.RDB';
 export const EG_HALL_BLOCK_INDEX = 900300;
 const UNITS_PER_M = 40;
-/** The door's posts and lintel (m), a lamp's head and reach, the walkway's lamp pitch. */
+/** The door's posts and lintel (m), a lamp's head and reach, the walkway's lamp pitch. EG-LOOK (Elite-Gates-Look.md section
+ *  3.3): `h` is a walkway's lamp's height and a disc's where no column of the ruin could stand clear for it; a disc's lamps
+ *  stand on the ruin's columns under the band's fixture (world/egRuin.js egRuinColumns), tinted the band's (world/
+ *  egAtmos.js - `color` the Galleries' gold, a Drop's wall lamp's). */
 export const EG_DOOR = Object.freeze({ halfW: 1.6, post: 0.5, h: 4.2, lintel: 0.6 });
 export const EG_LAMP = Object.freeze({ h: 2.6, range: 14, color: Object.freeze([1.0, 0.78, 0.42]), lava: Object.freeze([1.0, 0.45, 0.12]), moon: Object.freeze([0.62, 0.7, 1.0]), pitch: 24 });
 /** EG-ZL - A DROP'S WALL LIT (section 10.3's tell: "the landing's edge line, gold; the wall's face lit"): a lamp over the
@@ -590,7 +594,10 @@ export const EG_LAMP_BUDGET = Object.freeze({ n: 12, r: 40 });
 const spreadRank = (k, n) => { const order = [0]; for (let step = n; order.length < n; step = Math.ceil(step / 2)) for (let j = 0; j < n; j += step) if (!order.includes(j)) order.push(j); return order.indexOf(k); };
 
 /** THE CIRCLE'S LAMPS (the light list's shape, the dungeon's frame): two by each plate, round each court's rim, along the
- *  walkway, the fire in each passage's channels; EG-ZL: one before each Drop's far wall (EG_DROP_LAMP). AUDIT EG V (L5-16):
+ *  walkway, the fire in each passage's channels; EG-ZL: one before each Drop's far wall (EG_DROP_LAMP). EG-LOOK (Elite-Gates-
+ *  Look.md section 3.3): a disc's lamp on its column of the ruin, at its fixture's flame (world/egRuin.js egRuinColumns -
+ *  the old place where none stands clear), and the disc's and the walkway's lamps the band's tint (world/egAtmos.js); the
+ *  count and the budget as they were. AUDIT EG V (L5-16):
  *  held to EG_LAMP_BUDGET - a lamp that would stand a 13th within 40 m of itself or of another is let go, the meaningful
  *  first (a fragment's own lights and a Drop's wall, whose colour says where you are), then each ring's spread order, then
  *  the walkways', in the order they were laid. */
@@ -598,11 +605,15 @@ export function egCircleLights(seed, c, geo = 0) {
   const out = [], rank = [];
   const lamp = (p, color = EG_LAMP.color, range = Number(EG_LAMP.range), pr = 0) => { out.push({ x: p[0], y: p[1], z: p[2], range, color: [...color] }); rank.push(pr); };
   for (const spec of egCircleSpecs(seed, c, geo)) {
-    for (const d of spec.discs) {
-      const n = d.role === 'court' || d.role === 'isle' ? 6 : d.role === 'arrive' || d.role === 'end' ? 2 : d.role === 'bastion' || d.role === 'balcony' || d.role === 'perch' ? 1 : 0;
-      for (let k = 0; k < n; k++) { const a = (k / n) * Math.PI * 2 + Math.PI / 4; lamp(egToDungeon(spec, d.x + Math.cos(a) * (d.r - 1), d.y + EG_LAMP.h, d.z + Math.sin(a) * (d.r - 1)), EG_LAMP.color, Number(EG_LAMP.range), 1 + spreadRank(k, n)); }
-    }
-    if (spec.walk) for (let z = spec.walk.z0 + 8; z < spec.walk.z1; z += EG_LAMP.pitch) for (const s of [-1, 1]) lamp(egToDungeon(spec, s * (spec.walk.halfW + 0.3), EG_LAMP.h, z), EG_LAMP.color, Number(EG_LAMP.range), 7);
+    const ruin = egRuinColumns(spec), tint = egRuinLampTint(egBandOfHall(spec.h));
+    spec.discs.forEach((d, i) => {
+      const n = egDiscLamps(d);
+      for (let k = 0; k < n; k++) {
+        const on = ruin.lamp(i, k), a = (k / n) * Math.PI * 2 + Math.PI / 4;
+        lamp(on ? egToDungeon(spec, on.at[0], on.at[1], on.at[2]) : egToDungeon(spec, d.x + Math.cos(a) * (d.r - 1), d.y + EG_LAMP.h, d.z + Math.sin(a) * (d.r - 1)), on ? egRuinLampTint(on.band) : tint, Number(EG_LAMP.range), 1 + spreadRank(k, n));
+      }
+    });
+    if (spec.walk) for (let z = spec.walk.z0 + 8; z < spec.walk.z1; z += EG_LAMP.pitch) for (const s of [-1, 1]) lamp(egToDungeon(spec, s * (spec.walk.halfW + 0.3), EG_LAMP.h, z), tint, Number(EG_LAMP.range), 7);
     for (const s of spec.steps) if (s.kind === 'drop') lamp(egToDungeon(spec, s.x, s.y + EG_DROP_LAMP.h, s.z + s.d / 2 - EG_DROP_LAMP.off));   // EG-ZL: a Drop's wall lit
     // EG-FULL LAYER THREE: each fragment's own lights (net/egFragLaw.js) - the lava's orange, the kit's own colour, the moon
     for (const [x, y, z, kind] of spec.lights ?? []) {
