@@ -13,7 +13,9 @@
 //   ROOT PATH  `src/systems/arenaBout.js` anywhere in a tracked text file, with an optional `/`, `./` or `../..`
 //              before it - pins, docs, mutant records, workflows, comments.
 //   SRC PATH   `systems/arenaBout.js` - the spelling the bible (a cite's path form among them), the comments and the
-//              tests' `src()` helpers use for a file under src/.
+//              tests' `src()` helpers use for a file under src/; and `01-Overview/X.md`, the bible's own spelling of
+//              a page. With `./` or `../..` before it, it is a specifier quoted by a pin, rewritten the same.
+//   ESCAPED    either path escaped for a pattern (`/06-Systems\/X\.md/`, `src\/systems\/x\.js`).
 //
 // A move changes the directory, never the name: the bible's cites by file name alone resolve by name
 // (tools/citeAnchor.mjs makeResolver), so a kept name keeps them. An address is an address - a path in an old record
@@ -23,12 +25,17 @@
 //
 // What it cannot rewrite it names: a directory sweep that does not recurse (`readdirSync('src/systems')` - it stops
 // seeing a moved file and passes on what is left, silently), an import or a URL built from a template into the folder
-// a file left, a sibling's quoted `./x.js` and a path escaped for a pattern. And it refuses a move
-// that changes a byte of the relay's bundle (RELAY lines) unless told `--relay`: that is a new RELAY_VERSION and a
-// deploy that drops every connected player.
+// a file left, and a sibling's quoted `./x.js`. And it refuses a move that changes a byte of the relay's bundle (RELAY
+// lines) unless told `--relay`: that is a new RELAY_VERSION and a deploy that drops every connected player.
+//
+// THE LEDGER (TIDY2). Every move is appended to tools/moveLedger.json. A branch written before a move still names the
+// old paths; after it merges main, `--fixup` rewrites every address the ledger knows is gone to where the file went,
+// and test/tidy1_codemap.test.js fails while any is left.
 //
 //   node tools/moveModule.mjs src/systems/arena src/systems/arena*.js        move them, rewrite every address
-//   node tools/moveModule.mjs --dry-run src/systems/arena src/systems/arena*.js   say what it would change, change nothing
+//   node tools/moveModule.mjs --plan moves.json                              many moves, one pass: [[from, to], ...]
+//   node tools/moveModule.mjs --fixup                                        a merged branch's old addresses, rewritten
+//   --dry-run with any of them says what it would change and changes nothing
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join, dirname, posix } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -41,7 +48,11 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 /** Tracked files that can hold an address. */
 export const TEXT_EXT = /\.(js|mjs|cjs|ts|json|md|html|yml|yaml|toml|css|txt)$/;
 /** Files whose text is a record that is never rewritten. */
-export const FROZEN = [/^server(-account)?\/migrations\//, /^package-lock\.json$/, /(^|\/)node_modules\//, /^tools\/moveModule\.mjs$/, /^test\/tidy1_codemap\.test\.js$/];
+export const FROZEN = [/^server(-account)?\/migrations\//, /^package-lock\.json$/, /(^|\/)node_modules\//, /^tools\/moveModule\.mjs$/, /^test\/tidy1_codemap\.test\.js$/, /^tools\/moveLedger\.json$/];
+/** Every move made, in order: [[from, to], ...]. */
+export const LEDGER = 'tools/moveLedger.json';
+/** The roots a path is also spelled from: `systems/x.js` is src's, `01-Overview/X.md` the bible's. */
+const ROOTS = ['src/', 'bible/'];
 /** Files a specifier can sit in. */
 const CODE_EXT = /\.(js|mjs|cjs|ts|html)$/;
 
@@ -112,19 +123,39 @@ export function rewriteSpecifiers(text, file, home, moved) {
   return { text, n };
 }
 
-/** Rewrite the root paths and src paths of the moved files in any text. */
-export function rewritePaths(text, moved) {
+/** The file names a text mentions, plainly or escaped for a pattern (`x\\.js`) - a move whose name is not among them
+ *  has nothing to rewrite there, and is not tried. */
+export function namesIn(text) {
+  const out = new Set();
+  for (const m of text.matchAll(/([\w-]+(?:\.[\w-]+)*)\\?\.(m?js|cjs|json|md|html)(?![\w-])/g)) out.add(`${m[1]}.${m[2]}`);
+  return out;
+}
+
+/** `moves` by their file's name. */
+export function byName(moves) {
+  const out = new Map();
+  for (const [from, to] of moves) { const b = posix.basename(from); (out.get(b) ?? out.set(b, []).get(b)).push([from, to]); }
+  return out;
+}
+
+/** A path escaped for a pattern: `src\/systems\/x\.js`. */
+const escaped = (p) => p.replace(/[/.]/g, (c) => `\\${c}`);
+
+/** Rewrite the root paths and src paths of the moved files in any text. `names` is byName(moved), for speed. */
+export function rewritePaths(text, moved, names = byName(moved)) {
   let n = 0;
-  for (const [from, to] of moved) {
-    const root = new RegExp(`(?<![\\w\\-./])(\\/|\\.\\/|(?:\\.\\.\\/)+)?${esc(from)}(?![\\w\\-])`, 'g');
-    text = text.replace(root, (_, lead = '') => { n++; return lead + to; });
-    if (from.startsWith('src/') && to.startsWith('src/')) {
-      // with a `./` or `../..` before it, a src path is a specifier QUOTED - a pin reading another file's import
-      // (`from.includes('../systems/x.js')`): the specifier pass cannot know what it is relative to, and the src path
-      // names the same file from any depth it is written at
-      const src = new RegExp(`(?<![\\w\\-./])(\\.\\/|(?:\\.\\.\\/)+)?${esc(from.slice(4))}(?![\\w\\-])`, 'g');
-      text = text.replace(src, (_, lead = '') => { n++; return lead + to.slice(4); });
-    }
+  for (const name of namesIn(text)) for (const [from, to] of names.get(name) ?? []) {
+    const swap = (re, next) => { text = text.replace(re, (_, lead = '') => { n++; return lead + next; }); };
+    swap(new RegExp(`(?<![\\w\\-./])(\\/|\\.\\/|(?:\\.\\.\\/)+)?${esc(from)}(?![\\w\\-])`, 'g'), to);
+    swap(new RegExp(`(?<![\\w\\-.])(?<!\\\\/)(\\\\/|\\\\.\\\\/|(?:\\\\.\\\\.\\\\/)+)?${esc(escaped(from))}(?![\\w\\-])`, 'g'), escaped(to));
+    const root = ROOTS.find((r) => from.startsWith(r) && to.startsWith(r));
+    if (!root) continue;
+    // with a `./` or `../..` before it, a src path is a specifier QUOTED - a pin reading another file's import
+    // (`from.includes('../systems/x.js')`): the specifier pass cannot know what it is relative to, and the src path
+    // names the same file from any depth it is written at
+    const [f, t] = [from.slice(root.length), to.slice(root.length)];
+    swap(new RegExp(`(?<![\\w\\-./])(\\.\\/|(?:\\.\\.\\/)+)?${esc(f)}(?![\\w\\-])`, 'g'), t);
+    swap(new RegExp(`(?<![\\w\\-.])(?<!\\\\/)(\\\\.\\\\/|(?:\\\\.\\\\.\\\\/)+)?${esc(escaped(f))}(?![\\w\\-])`, 'g'), escaped(t));
   }
   return { text, n };
 }
@@ -160,25 +191,23 @@ export function rewriteRecords(text, moved, file) {
 }
 
 /** Lines that sweep a directory a file left without recursing, or import from it by template: `file:line: text`. */
-export function blindSpots(text, file, fromDirs, moved = new Map()) {
+export function blindSpots(text, file, fromDirs, moved = new Map(), names = byName(moved)) {
   const out = [];
   const lines = text.split('\n');
-  // a moved file named in a way no rewrite can place: its sibling's quoted `./x.js` (relative to which file?), and its
-  // path escaped for a regular expression (`systems\/x\.js`)
-  const unplaced = [...moved].filter(([f]) => f !== file).flatMap(([f, t]) => [
-    // beside it in its new folder, `./x.js` is right: the two moved together
-    ...(posix.dirname(t) === posix.dirname(file) ? [] : [[new RegExp(`(['"\`])\\./${esc(posix.basename(f))}\\1`), `quotes ./${posix.basename(f)} - relative to which file?`]]),
-    [new RegExp(esc(f.replace(/^src\//, '').replace(/[/.]/g, (c) => `\\${c}`)) + '(?![\\w])'), `names ${f} escaped for a pattern`],
-  ]);
+  // a moved file named in a way no rewrite can place: its sibling's quoted `./x.js` - relative to which file? Beside it
+  // in its new folder, `./x.js` is right: the two moved together
+  const unplaced = [...namesIn(text)].flatMap((name) => names.get(name) ?? []).filter(([f, t]) => f !== file && posix.dirname(t) !== posix.dirname(file))
+    .map(([f]) => [new RegExp(`(['"\`])\\./${esc(posix.basename(f))}\\1`), `quotes ./${posix.basename(f)} - relative to which file?`]);
   for (let i = 0; i < lines.length; i++) {
     const l = lines[i];
     for (const [re, why] of unplaced) if (re.test(l)) out.push(`${file}:${i + 1}: ${why}`);
+    if (!/readdirSync\(|(?:import\(|new URL\()\s*`/.test(l)) continue;
     for (const d of fromDirs) {
-      const named = new RegExp(`['"\`/]${esc(d)}/?['"\`]`).test(l) || new RegExp(`['"\`]${esc(d.slice(4))}/?['"\`]`).test(l);
+      const named = new RegExp(`['"\`/]${esc(d)}/?['"\`]`).test(l) || new RegExp(`['"\`]${esc(d.replace(/^[a-z]+\//, ''))}/?['"\`]`).test(l);
       if (/readdirSync\(/.test(l) && named && !/recursive:\s*true/.test(l)) out.push(`${file}:${i + 1}: sweeps ${d}/ without recursing`);
       for (const m of l.matchAll(/(?:import\(|new URL\()\s*`([^`]*)`/g)) {
         const head = m[1].split('${')[0];
-        if (m[1].includes('${') && !/[?#]/.test(head) && head.endsWith(`${d.slice(4)}/`)) out.push(`${file}:${i + 1}: names a file in ${d}/ by template`);
+        if (m[1].includes('${') && !/[?#]/.test(head) && head.endsWith(`${d.replace(/^[a-z]+\//, '')}/`)) out.push(`${file}:${i + 1}: names a file in ${d}/ by template`);
       }
     }
   }
@@ -191,7 +220,7 @@ export function blindSpots(text, file, fromDirs, moved = new Map()) {
  * spots.
  */
 export function planMove(moves, texts) {
-  const moved = new Map(moves);
+  const moved = new Map(moves), names = byName(moves);
   const fromDirs = [...new Set(moves.map(([f]) => posix.dirname(f)))];
   const writes = new Map(), counts = new Map(), blind = [];
   for (const [file, text] of texts) {
@@ -203,13 +232,24 @@ export function planMove(moves, texts) {
       const r = rewriteRecords(t, moved, file);
       t = r.text; n += r.n; blind.push(...r.blind);
     }
-    const p = rewritePaths(t, moved);
+    const p = rewritePaths(t, moved, names);
     if (p.n) { t = p.text; n += p.n; }
     if (t !== text || home !== file) writes.set(home, t);
     if (n) counts.set(home, n);
-    if (/\.(js|mjs|cjs)$/.test(home)) blind.push(...blindSpots(t, home, fromDirs, moved));
+    if (/\.(js|mjs|cjs)$/.test(home)) blind.push(...blindSpots(t, home, fromDirs, moved, names));
   }
   return { writes, counts, blind };
+}
+
+/** The ledger's moves composed - a file moved twice is one move from where it first stood to where it stands now. */
+export function composeLedger(entries) {
+  const out = new Map();
+  for (const [from, to] of entries) {
+    for (const [k, v] of out) if (v === from) out.set(k, to);
+    if (!out.has(from)) out.set(from, to);
+  }
+  for (const [k, v] of out) if (k === v) out.delete(k);
+  return [...out];
 }
 
 /** A text's specifiers, in the order the four forms find them - a rewrite keeps the order and the count. */
@@ -222,14 +262,30 @@ const specifierList = (text) => SPECIFIER_RES.flatMap((re) => [...text.matchAll(
  * written, before and after alike.
  */
 export function brokenBy(oldText, oldFile, newText, newFile, was, now) {
+  const at = (file, p) => posix.normalize(posix.join(posix.dirname(file), p)).replace(/\/$/, '');
   const resolves = (file, spec, exists) => {
     const s = splitSpec(spec), t = s ? null : splitTemplate(spec);
-    if (t) return exists(posix.normalize(posix.join(posix.dirname(file), t.dir)).replace(/\/$/, ''));   // a template's folder is there
-    return !s || exists(posix.normalize(posix.join(posix.dirname(file), s.path)));
+    const p = t ? at(file, t.dir) : s && at(file, s.path);   // a template's folder; a file, or a folder named with its slash
+    return !p || p === '.' || exists(p);
   };
   const a = specifierList(oldText), b = specifierList(newText);
   return b.filter((spec, i) => (a.length !== b.length || resolves(oldFile, a[i], was)) && !resolves(newFile, spec, now)).map((spec) => `${newFile}: ${spec}`);
 }
+
+/** A file, or a folder that holds one, among `files`. */
+export function within(files) {
+  const dirs = new Set([...files].flatMap((f) => f.split('/').slice(0, -1).map((_, i, a) => a.slice(0, i + 1).join('/'))));
+  return (p) => files.has(p) || dirs.has(p);
+}
+
+/** Every specifier among `entries` ([[file, text], ...]) that names nothing among `files`, as `file: spec`. */
+export function unresolvedIn(entries, files) {
+  const there = within(new Set(files));
+  return entries.flatMap(([f, t]) => brokenBy(t, f, t, f, () => true, there));
+}
+
+/** A ledger as written: one move a line, so two branches' moves merge as lines. */
+export const ledgerText = (entries) => `[\n${entries.map((e) => `  ${JSON.stringify(e)}`).join(',\n')}\n]\n`;
 
 /** The files of the relay's bundle (`relay`, by their paths before the move) whose bytes the move changes, by their new
  *  paths. `back` maps a moved file's new path to its old one. The hash reads bytes, not paths: a moved file whose bytes
@@ -239,28 +295,36 @@ export function relayHits(writes, texts, back, relay) {
 }
 
 function main(argv) {
-  const dry = argv.includes('--dry-run'), relayOk = argv.includes('--relay');
-  const [dest, ...sources] = argv.filter((a) => !a.startsWith('--')).map((a) => a.replace(/^\.\//, '').replace(/\/$/, ''));
-  if (!dest || !sources.length) {
-    console.error('usage: node tools/moveModule.mjs [--dry-run] [--relay] <destination directory> <file>...');
-    return 2;
-  }
+  const flag = (f) => argv.includes(f);
+  const dry = flag('--dry-run'), relayOk = flag('--relay'), fixup = flag('--fixup');
+  const planAt = argv.indexOf('--plan');
+  const args = argv.filter((a, i) => !a.startsWith('--') && !(planAt >= 0 && i === planAt + 1)).map((a) => a.replace(/^\.\//, '').replace(/\/$/, ''));
   const git = (...a) => execFileSync('git', a, { cwd: ROOT, encoding: 'utf8', maxBuffer: 1 << 28 });
-  const tracked = git('ls-files').split('\n').filter(Boolean);
+  const tracked = git('ls-files').split('\n').filter(Boolean).filter((f) => existsSync(join(ROOT, f)));
   const trackedSet = new Set(tracked);
-  const moves = sources.map((f) => [f, posix.join(dest, posix.basename(f))]);
-  for (const [f, t] of moves) {
+  const ledger = existsSync(join(ROOT, LEDGER)) ? JSON.parse(readFileSync(join(ROOT, LEDGER), 'utf8')) : [];
+  let moves;
+  if (fixup) moves = composeLedger(ledger).filter(([f, t]) => !trackedSet.has(f) && trackedSet.has(t));
+  else if (planAt >= 0) moves = JSON.parse(readFileSync(argv[planAt + 1], 'utf8'));
+  else {
+    const [dest, ...sources] = args;
+    if (!dest || !sources.length) {
+      console.error('usage: node tools/moveModule.mjs [--dry-run] [--relay] <destination directory> <file>... | --plan <moves.json> | --fixup');
+      return 2;
+    }
+    moves = sources.map((f) => [f, posix.join(dest, posix.basename(f))]);
+  }
+  if (!fixup) for (const [f, t] of moves) {
     if (!trackedSet.has(f)) { console.error(`not a tracked file: ${f}`); return 1; }
     if (existsSync(join(ROOT, t))) { console.error(`already there: ${t}`); return 1; }
+    if (posix.basename(f) !== posix.basename(t)) { console.error(`a move keeps the name: ${f} -> ${t}`); return 1; }
   }
   const texts = new Map();
-  for (const f of tracked) if (TEXT_EXT.test(f) && existsSync(join(ROOT, f))) texts.set(f, readFileSync(join(ROOT, f), 'utf8'));
+  for (const f of tracked) if (TEXT_EXT.test(f)) texts.set(f, readFileSync(join(ROOT, f), 'utf8'));
 
   const { writes, counts, blind } = planMove(moves, texts);
-  const moved = new Map(moves), back = new Map(moves.map(([f, t]) => [t, f]));
+  const moved = new Map(fixup ? [] : moves), back = new Map([...moved].map(([f, t]) => [t, f]));
   const after = new Set(tracked.map((f) => moved.get(f) ?? f));
-  /** A file, or a folder that holds one. */
-  const within = (files) => { const dirs = new Set([...files].flatMap((f) => f.split('/').slice(0, -1).map((_, i, a) => a.slice(0, i + 1).join('/')))); return (p) => files.has(p) || dirs.has(p); };
   const was = within(trackedSet), now = within(after);
   const broken = [...writes].filter(([f]) => CODE_EXT.test(f))
     .flatMap(([f, t]) => brokenBy(texts.get(back.get(f) ?? f), back.get(f) ?? f, t, f, was, now));
@@ -269,13 +333,13 @@ function main(argv) {
   // redeploys on its merge and drops every connected player. A tidy is not worth that alone; it goes with a relay slice.
   const relayHit = relayHits(writes, texts, back, new Set(graph('server/src/index.js')));
 
-  for (const [f, t] of moves) console.log(`move  ${f} -> ${t}`);
+  for (const [f, t] of moves) console.log(`${fixup ? 'gone ' : 'move '} ${f} -> ${t}`);
   for (const [f, n] of [...counts].sort()) console.log(`edit  ${f} (${n})`);
   for (const b of blind) console.log(`BLIND ${b}`);
   for (const b of broken) console.log(`BROKEN ${b}`);
   for (const f of relayHit) console.log(`RELAY ${f}: the relay's bundle changes`);
   const total = [...counts.values()].reduce((a, b) => a + b, 0);
-  console.log(`${moves.length} file(s) moved, ${total} address(es) in ${counts.size} file(s), ${blind.length} blind spot(s), ${broken.length} broken`);
+  console.log(`${moves.length} file(s) ${fixup ? 'gone' : 'moved'}, ${total} address(es) in ${counts.size} file(s), ${blind.length} blind spot(s), ${broken.length} broken`);
   if (broken.length) { console.error('a rewritten specifier resolves to nothing - nothing written'); return 1; }
   if (relayHit.length && !relayOk) {
     console.error('the relay\'s bundle changes: a new RELAY_VERSION, and a deploy that drops every player - nothing written.'
@@ -284,9 +348,9 @@ function main(argv) {
   }
   if (dry) return 0;
 
-  mkdirSync(join(ROOT, dest), { recursive: true });
-  for (const [f, t] of moves) git('mv', f, t);
+  for (const [f, t] of moved) { mkdirSync(join(ROOT, posix.dirname(t)), { recursive: true }); git('mv', f, t); }
   for (const [f, t] of writes) if (t !== readFileSync(join(ROOT, f), 'utf8')) writeFileSync(join(ROOT, f), t);
+  if (!fixup) writeFileSync(join(ROOT, LEDGER), ledgerText([...ledger, ...moves]));
   return 0;
 }
 

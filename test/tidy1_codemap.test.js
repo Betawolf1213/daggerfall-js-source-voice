@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { planMove, rewriteSpecifiers, rewritePaths, rewriteRecords, blindSpots, brokenBy, relayHits } from '../tools/moveModule.mjs';
+import { execFileSync } from 'node:child_process';
+import { planMove, rewriteSpecifiers, rewritePaths, rewriteRecords, blindSpots, brokenBy, relayHits, composeLedger, unresolvedIn, LEDGER, TEXT_EXT } from '../tools/moveModule.mjs';
 
 // TIDY1 (2026-10-16, bible/01-Overview/Code-Map.md): THE MAP OF WHERE THINGS LIVE, AND THE TOOL THAT MOVES THEM.
 // The map is held to the tree both ways - a directory of code nobody wrote a row for fails, and so does a row for a
@@ -95,6 +96,14 @@ test('TIDY1: the move tool rewrites every address of a moved file', () => {
   ].join('\n'));
   assert.equal(out.n, 6, 'a pin quoting another file\'s import is rewritten too - or its negative pin would pass on nothing');
   assert.equal(rewritePaths(out.text, moved).n, 0, 'a second pass finds nothing: the rewrite is its own fixed point');
+  // escaped for a pattern: the root path, the src path, and a specifier a pin quotes
+  const pat = String.raw`/src\/systems\/arenaBout\.js/ /systems\/arenaBout\.js/ /from '\.\.\/systems\/arenaBout\.js'/ /xsystems\/arenaBout\.js/`;
+  assert.equal(rewritePaths(pat, moved).text,
+    String.raw`/src\/systems\/arena\/arenaBout\.js/ /systems\/arena\/arenaBout\.js/ /from '\.\.\/systems\/arena\/arenaBout\.js'/ /xsystems\/arenaBout\.js/`);
+  // the bible's own spelling of a page, plain and escaped
+  const page = new Map([['bible/01-Overview/Field-Bugs-2026-10-14.md', 'bible/01-Overview/records/Field-Bugs-2026-10-14.md']]);
+  assert.equal(rewritePaths(String.raw`\`01-Overview/Field-Bugs-2026-10-14.md\` rd('bible/01-Overview/Field-Bugs-2026-10-14.md') /01-Overview\/Field-Bugs-2026-10-14\.md/`, page).text,
+    String.raw`\`01-Overview/records/Field-Bugs-2026-10-14.md\` rd('bible/01-Overview/records/Field-Bugs-2026-10-14.md') /01-Overview\/records\/Field-Bugs-2026-10-14\.md/`);
   // the whole plan: the moved file is written at its new path, a migration is a record and is left as it stands
   const texts = new Map([
     ['src/systems/arenaBout.js', "import { audio } from './audio.js';\n"],
@@ -136,6 +145,11 @@ test('TIDY1: the move tool rewrites a mutant record\'s source as if it stood in 
   assert.equal(t.blind.length, 1);
 });
 
+test('TIDY2: the ledger leads every path a file ever stood at to where it stands, and forgets one moved home', () => {
+  assert.deepEqual(composeLedger([['src/a/x.js', 'src/a/b/x.js'], ['src/c/y.js', 'src/c/d/y.js'], ['src/a/b/x.js', 'src/a/e/x.js'], ['src/c/d/y.js', 'src/c/y.js']]),
+    [['src/a/x.js', 'src/a/e/x.js'], ['src/a/b/x.js', 'src/a/e/x.js'], ['src/c/d/y.js', 'src/c/y.js']]);
+});
+
 test('TIDY1: the move tool names the sweeps it cannot follow', () => {
   const dirs = ['src/systems'];
   const at = (line) => blindSpots(line, 'test/x.test.js', dirs);
@@ -149,7 +163,6 @@ test('TIDY1: the move tool names the sweeps it cannot follow', () => {
   const moved = new Map([['src/systems/arenaBout.js', 'src/systems/arena/arenaBout.js'], ['src/systems/arenaText.js', 'src/systems/arena/arenaText.js']]);
   assert.equal(blindSpots("assert.match(src, /from '\\.\\/arenaBout\\.js'/); x.includes('./arenaBout.js')", 'test/x.test.js', dirs, moved).length, 1, 'a quoted ./arenaBout.js');
   assert.equal(blindSpots("import { T } from './arenaText.js';", 'src/systems/arena/arenaBout.js', dirs, moved).length, 0, 'beside it in the new folder, ./ is right');
-  assert.equal(blindSpots('assert.match(w, /systems\\/arenaBout\\.js/);', 'test/x.test.js', dirs, moved).length, 1, 'a path escaped for a pattern');
 });
 
 test('TIDY1: the move tool names every file of the relay\'s bundle it would change', () => {
@@ -174,3 +187,29 @@ test('TIDY1: Come Sail Away lives in its folder', () => {
     'comeSailAwayMap.js', 'comeSailAwayModels.js', 'comeSailAwayWaves.js', 'comeSailAwayWire.js', 'csaBoatMenu.js',
   ]);
 });
+
+/** The tracked files, as git has them. */
+const tracked = () => execFileSync('git', ['ls-files'], { cwd: root, encoding: 'utf8', maxBuffer: 1 << 28 }).split('\n').filter((f) => f && existsSync(join(root, f)));
+
+test('TIDY2: no address of a moved file is left where the ledger says it went - a merged branch runs --fixup', () => {
+  const files = tracked();
+  const here = new Set(files);
+  const gone = composeLedger(JSON.parse(rd(LEDGER))).filter(([f, t]) => !here.has(f) && here.has(t));
+  assert.ok(gone.length >= 10, 'the ledger holds the moves');
+  const texts = new Map(files.filter((f) => TEXT_EXT.test(f)).map((f) => [f, rd(f)]));
+  const { counts } = planMove(gone, texts);
+  assert.deepEqual([...counts.keys()], [], 'these files name a moved file where it no longer stands - run `node tools/moveModule.mjs --fixup` (bible/01-Overview/Code-Map.md)');
+});
+
+test('TIDY2: every relative import in the code resolves - the game, the two Workers, the tools, the scripts, the desktop shell', () => {
+  const files = tracked();
+  const KNOWN = new Map([
+    ['app/launcher/pad.js: ./menuPad.js', 'the launcher\'s pad is copied beside it at packaging (app/ build), not tracked'],
+    ['src/systems/racialLive.js: ./formulas.js', 'quoted in a comment: `node -e "import(\'./formulas.js\')"`'],
+    ['tools/titleProbe.mjs: ../public/logo.png', 'the probe shoots the missing-asset arm when there is no logo'],
+  ]);
+  const code = files.filter((f) => /^(src|server\/src|server-account\/src|tools|scripts|app)\//.test(f) && /\.(m?js|cjs)$/.test(f) && f !== 'tools/moveModule.mjs');
+  const bad = unresolvedIn(code.map((f) => [f, rd(f)]), files).filter((l) => !KNOWN.has(l));
+  assert.deepEqual(bad, [], 'a relative import names nothing - a move left it behind, or a merged branch wrote it for a path that moved');
+});
+

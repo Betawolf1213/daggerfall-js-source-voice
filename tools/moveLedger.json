@@ -1,0 +1,12 @@
+[
+  ["src/systems/comeSailAway.js","src/systems/comeSailAway/comeSailAway.js"],
+  ["src/systems/comeSailAwayActions.js","src/systems/comeSailAway/comeSailAwayActions.js"],
+  ["src/systems/comeSailAwayBoat.js","src/systems/comeSailAway/comeSailAwayBoat.js"],
+  ["src/systems/comeSailAwayHulls.js","src/systems/comeSailAway/comeSailAwayHulls.js"],
+  ["src/systems/comeSailAwayItems.js","src/systems/comeSailAway/comeSailAwayItems.js"],
+  ["src/systems/comeSailAwayMap.js","src/systems/comeSailAway/comeSailAwayMap.js"],
+  ["src/systems/comeSailAwayModels.js","src/systems/comeSailAway/comeSailAwayModels.js"],
+  ["src/systems/comeSailAwayWaves.js","src/systems/comeSailAway/comeSailAwayWaves.js"],
+  ["src/systems/comeSailAwayWire.js","src/systems/comeSailAway/comeSailAwayWire.js"],
+  ["src/systems/csaBoatMenu.js","src/systems/comeSailAway/csaBoatMenu.js"]
+]
