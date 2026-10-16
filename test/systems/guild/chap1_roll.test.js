@@ -24,6 +24,7 @@ import { MIN_REPUTATION, MAX_REPUTATION } from '../../../src/systems/faction/fac
 import { readRoll, claimRoll, rollViewOf } from '../../../server-account/src/npcRoll.js';
 import { standService, T0 } from '../../accountDb.mjs';
 import { seatRealm } from '../../realmSeat.mjs';
+import { hostText } from '../../hostText.mjs';   // HOST-SPLIT 2 (AUDIT, the second read): its negatives read the host whole
 
 const src = (p) => readFileSync(new URL(`../../../${p}`, import.meta.url), 'utf8');
 const DAY = 86_400;
@@ -386,7 +387,7 @@ test('CHAP1 the store\'s twenty-two, read off the DFU store\'s dict; none before
 // ── THE WIRING ──────────────────────────────────────────────────────
 
 test('CHAP1 the wiring: built online for a realm character alone, ticked in the online frame, its last adoption kept in the save; the switch ships at dev; the version moved; the delete takes the tables', () => {
-  const world = src('src/scenes/world.js');
+  const world = hostText('src/scenes/world.js');
   assert.match(world, /const rollTracker = onlineOn && realmSession \? createRollTracker\(\{/);
   assert.match(world, /lease: \(\) => realmSession\.lease,/);
   assert.match(world, /\.\.\.rollEntityDoors\(\(\) => playerEntity\),/);

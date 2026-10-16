@@ -428,7 +428,7 @@
    "why": "a banishment's term"
   },
   {
-   "file": "src/scenes/world.js",
+   "file": "src/scenes/pixelBuild.js",
    "has": "known: knownCriminal(playerEntity, region, { ownNow: ownMinutes(), worldNow: trustedWorldMinutes() })",
    "clock": "event",
    "why": "a banishment's term - the living watch's word (WATCH-KNOWS)"

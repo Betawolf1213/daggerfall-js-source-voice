@@ -33,13 +33,14 @@ import { maxEncumbrance } from '../../../src/combat/formulas.js';
 import { carriedWeight, totalWeight } from '../../../src/systems/inventory.js';
 import { liveStat } from '../../../src/systems/statMods.js';
 import { _resetForTests } from '../../../src/systems/uiPrefs.js';
+import { hostText } from '../../hostText.mjs';   // HOST-SPLIT 2 (AUDIT, the second read): its negatives read the host whole
 // ENH-NOTICE3: the pane's `notice` line is DFU's click-anywhere box and
 // rides the enhanced notice panel now.
 import {
   enhancedNoticeKeys, destroyEnhancedNotice, ENHANCED_NOTICE_ID,
 } from '../../../src/ui/enhanced/enhancedNotice.js';
 
-const read = (p) => readFileSync(new URL(`../../../${p}`, import.meta.url), 'utf8');
+const read = (p) => hostText(p);
 
 /** The module with its comments stripped. Both "this file must not
  *  contain X" sweeps below failed their first run against the file's

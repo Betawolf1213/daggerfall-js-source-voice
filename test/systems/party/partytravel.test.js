@@ -23,8 +23,9 @@ import { HOST_COMMANDS, HELP_LINES, parseChatLine } from '../../../src/net/chatC
 import { TravelPopUpWindow } from '../../../src/ui/travel/travelPopUp.js';
 import { fakeRoom } from '../../fakeRoom.mjs';
 import { fakeSocketClass } from '../../fakeSocket.mjs';
+import { hostText } from '../../hostText.mjs';   // HOST-SPLIT 2 (AUDIT, the second read): its negatives read the host whole
 
-const rd = (p) => readFileSync(new URL('../../../' + p, import.meta.url), 'utf8');
+const rd = (p) => hostText(p);
 const quiet = async (fn) => { const info = console.info, warn = console.warn; console.info = () => {}; console.warn = () => {}; try { return await fn(); } finally { console.info = info; console.warn = warn; } };
 const NOW = 1_758_000_000_000;
 const P = Object.freeze({ px: 100, py: 200, in: 0, loc: 'Daggerfall', h: 50, hm: 60, f: 50, fm: 60, m: 10, mm: 20, race: 'Nord', gender: 'male', face: 1 });

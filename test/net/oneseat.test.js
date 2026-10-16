@@ -17,6 +17,7 @@ import { createSeatLock, SEAT_CHANNEL, SEAT_NOTICE, SEAT_MID_TEXT, PLAY_HERE_LAB
 import { createChatPanel, CHAT_CSS } from '../../src/ui/chatPanel.js';
 import { ChatLog } from '../../src/net/chat.js';
 import { setSigilOnline, setSigilRenown, drinkSigil, sigilOnline, sigilRenown, _resetSigilForTests } from '../../src/systems/sigil/sigil.js';
+import { hostText } from '../hostText.mjs';   // HOST-SPLIT 2 (AUDIT, the second read): its negatives read the host whole
 
 const rd = (p) => readFileSync(new URL(`../../${p}`, import.meta.url), 'utf8');
 const look = { race: 'Nord', gender: 'male', faceIndex: 0, items: [] };
@@ -262,7 +263,7 @@ test('ONE-SEAT, the way back: the chat\'s strip carries "Play online here" while
 });
 
 test('ONE-SEAT, the host: the World link claims, the tab claims the browser\'s seat as it goes online, a lost seat is left once before anything else of the frame (the foes handed and the room\'s last word said first) and every session is marked, the renown earns only in the seat, and Play online here resumes every link with the hub\'s claiming (mutants: each line)', () => {
-  const w = rd('src/scenes/world.js');
+  const w = hostText('src/scenes/world.js');
   assert.match(w, /if \(tab\.room === SOCIAL_ROOM\) link\.claim = true;/, 'the hub link\'s first hello claims');
   assert.match(w, /seatLock = createSeatLock\(\{ onLost: \(\) => seatLostNow\(\) \}\);\n\s*if \(online\.url\) seatLock\.claim\(\);/, 'the browser\'s arm, at online start - acted on as it arrives (AUDIT ONESEAT C3: by a tab with a relay to be online on)');
   assert.match(w, /\n\s*link\.onSuperseded = \(\) => seatLostNow\(\);/, 'the hub\'s close acted on as it arrives - a hidden tab draws no frame');
@@ -478,7 +479,7 @@ test('AUDIT ONESEAT C4/T5: over the RUNTIME\'s BroadcastChannel (which delivers 
  *  seat branch, lifted VERBATIM out of world.js (the audit24 waves' way) and run over stubs that write down what they
  *  are asked, in order. A text pin could not tell a line commented out, moved or skipped from a live one. */
 function seatHost({ publishThrows = false, duelThrows = false, court = null } = {}) {
-  const w = rd('src/scenes/world.js');
+  const w = hostText('src/scenes/world.js');
   const cut = (from, to) => { const a = w.indexOf(from), b = w.indexOf(to, a + from.length); assert.ok(a > 0 && b > a, from); return w.slice(a, b); };
   const log = [];
   const session = (name, room) => ({
@@ -596,7 +597,7 @@ test('AUDIT ONESEAT, the host run: a court\'s fighter is cast out on the first f
 });
 
 test('AUDIT ONESEAT H4: the page\'s exit save is never a tab\'s the seat was taken from - it is offline, and every slot of the character would be written over what the tab that has the seat saved (mutant: the seat not asked)', () => {
-  const w = rd('src/scenes/world.js');
+  const w = hostText('src/scenes/world.js');
   const at = w.indexOf('  const exitAutosave = () => {\n    // AUDIT ONESEAT H4');   // FIELD BUGS 29h (BOOT-HIDE): the page's exit save, named
   assert.ok(at > 0 && w.includes("\n  addEventListener('beforeunload', exitAutosave);\n"));
   const body = w.slice(w.indexOf('{', at) + 1, w.indexOf('\n  };', at));

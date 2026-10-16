@@ -44,8 +44,9 @@ import { OnlineSession, HEARTBEAT_MS, BACKOFF_MIN_MS } from '../../src/net/onlin
 import { ChatLog, CHAT_TABS, CHAT_KEEP, CHAT_FADE_MS, CHAT_PEEK, CHAT_REJOIN_MS, tagOf } from '../../src/net/chat.js';
 import { createChatPanel, isOpenKey, CHAT_STYLE_ID, CHAT_OPEN_ACTION, clockOf, CHAT_CSS } from '../../src/ui/chatPanel.js';
 import { registerOverlay, overlayOpen } from '../../src/ui/enhanced/enhancedOverlays.js';
+import { hostText } from '../hostText.mjs';   // HOST-SPLIT 2 (AUDIT, the second read): its negatives read the host whole
 
-const rd = (p) => readFileSync(new URL('../../' + p, import.meta.url), 'utf8');
+const rd = (p) => hostText(p);
 
 // ── THE WIRE ─────────────────────────────────────────────────────────
 

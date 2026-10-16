@@ -792,10 +792,10 @@ const SOURCE_CITES = [
     EX, /renderer\.setWindowEmission\(windowEmissionRGB\(/],
   ['bible/01-Overview/Port-Ledger.md', /only exterior frames write it \(`world\.js:"([^"]+)"(?:\.\."([^"]+)")?`, `exterior\.js:(?:"[^"]+"(?:\.\."[^"]+")?|\d+(?:-\d+)?)`\)/,
     WO, /renderer\.setWindowEmission\(windowEmissionRGB\(/],
-  ['bible/01-Overview/Port-Ledger.md', /`world\.js:(?:"[^"]+"(?:\.\."[^"]+")?|\d+(?:-\d+)?)`, `exterior\.js:"([^"]+)"(?:\.\."([^"]+)")?` pass `getNameBankOfRegion`/,
+  ['bible/01-Overview/Port-Ledger.md', /`pixelBuild\.js:(?:"[^"]+"(?:\.\."[^"]+")?|\d+(?:-\d+)?)`, `exterior\.js:"([^"]+)"(?:\.\."([^"]+)")?` pass `getNameBankOfRegion`/,   // HOST-SPLIT 2: the world's half moved with the pixel build
     EX, /nameBank: getNameBankOfRegion\(dfLocation\.regionIndex\),/],
-  ['bible/01-Overview/Port-Ledger.md', /`world\.js:"([^"]+)"(?:\.\."([^"]+)")?`, `exterior\.js:(?:"[^"]+"(?:\.\."[^"]+")?|\d+(?:-\d+)?)` pass `getNameBankOfRegion`/,
-    WO, /nameBank: getNameBankOfRegion\(dfLocation\.regionIndex\),/],
+  ['bible/01-Overview/Port-Ledger.md', /`pixelBuild\.js:"([^"]+)"(?:\.\."([^"]+)")?`, `exterior\.js:(?:"[^"]+"(?:\.\."[^"]+")?|\d+(?:-\d+)?)` pass `getNameBankOfRegion`/,
+    'src/scenes/pixelBuild.js', /nameBank: getNameBankOfRegion\(dfLocation\.regionIndex\),/],
   ['bible/01-Overview/Port-Ledger.md', /rig sprite \(`exterior\.js:"([^"]+)"(?:\.\."([^"]+)")?`/, EX, /drawCharacterSprite\(renderer, canvas, rig/],
   // ROAD-G G1 (review): BOTH ends, because the half-shifted range is
   // exactly the defect this file exists to catch - the leading number

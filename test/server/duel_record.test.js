@@ -21,6 +21,7 @@ import { profileView, profileDuelLine, createProfileWindow, DUEL_RECORD_ASKING }
 import { createDuelPrompt, duelPromptSub } from '../../src/ui/duelPrompt.js';
 import { socialMenuRows, socialPlaqueRows } from '../../src/ui/socialMenu.js';
 import { DUEL_ASK_TTL_MS } from '../../src/net/duel/duelSession.js';
+import { hostText } from '../hostText.mjs';   // HOST-SPLIT 2 (AUDIT, the second read): its negatives read the host whole
 import { ACCEPTED } from '../../src/net/legalLaw.js';   // TERMS1: a request that makes an account carries the versions ticked
 
 const src = (p) => readFileSync(new URL(`../../${p}`, import.meta.url), 'utf8');
@@ -291,7 +292,7 @@ test('DUEL1 the F-menu\'s rows: a waiting challenge reads Accept duel with Decli
   const off = socialMenuRows({ peerId: 'peer-0002', duelRow: { label: 'Accept duel', k: 'duel.accept', enabled: false, why: 'a duel is fought outdoors' } }).find((r) => r.key === 'duel');
   assert.equal(off.why, 'a duel is fought outdoors');
   assert.deepEqual(socialPlaqueRows('peer-0002', { duelRow: { label: 'Yield the duel', k: 'duel.yield', enabled: true } }).map((r) => r.id), ['friend', 'invite', 'duel']);
-  const w = src('src/scenes/world.js');
+  const w = hostText('src/scenes/world.js');
   assert.match(w, /if \(act\.k === 'duel\.accept'\) \{ const r = duelMgr\.accept\(act\.peer\);/);
   assert.match(w, /if \(act\.k === 'duel\.decline'\) \{ duelMgr\.decline\(act\.peer\); return; \}/);
   assert.match(w, /if \(act\.k === 'duel\.yield'\) \{ duelMgr\.yieldDuel\(\); return; \}/);

@@ -22,11 +22,12 @@ import { foldGate, GATE_STATE_EMPTY } from '../../../src/net/gate/gateLink.js';
 import { bossPlace } from '../../../src/world/gate/gateBoss.js';
 import { createSpoilsPool, spoilsStore, SPOILS_DAY_KEY, spentKey } from '../../../src/scenes/spoilsPool.js';
 import { fakeRooms } from '../../fakeRoom.mjs';
+import { hostText } from '../../hostText.mjs';   // HOST-SPLIT 2 (AUDIT, the second read): its negatives read the host whole
 
 const read = (p) => readFileSync(new URL(`../../../${p}`, import.meta.url), 'utf8');
 
 test('AUDIT WBX2 M1 the crash\'s records have their keeper online or not: the spoils pool is made whatever the session, every save that lands is told to it, and the crash\'s door hands each record to it - offline no save could ever clear a record, and its spoils came back at every boot (mutants: the save\'s word online alone)', () => {
-  const w = read('src/scenes/world.js');
+  const w = hostText('src/scenes/world.js');
   assert.match(w, /const spoilsPool = createSpoilsPool\(\{/, 'made online or not');
   assert.doesNotMatch(w, /const spoilsPool = gateLink \?/);
   assert.match(w, /\n {2}onSlotSaved\(\(characterId\) => \{ try \{ spoilsPool\.saved\(characterId\);/, 'every save that lands, told');

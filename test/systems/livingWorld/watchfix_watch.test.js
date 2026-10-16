@@ -30,6 +30,7 @@ import { townCensus, mintResident } from '../../../src/systems/livingWorld/censu
 import { validFoeRecord, LIVING_ID_RE, RELAY_VERSION } from '../../../src/net/wire.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../../../src/systems/worldTick.js';
 import { uninstallSurvivalLoot } from '../../../src/systems/survival/loot.js';
+import { hostText } from '../../hostText.mjs';   // HOST-SPLIT 2: the world host whole
 
 const rd = (p) => readFileSync(new URL(`../../../${p}`, import.meta.url), 'utf8');
 const RATE = CLASSIC_MINUTES_PER_SECOND;
@@ -340,7 +341,7 @@ test('WATCH-FIX online: the watch\'s record names the resident its watchman stan
   const xf = rd('src/scenes/exteriorFoes.js');
   assert.match(xf, /if \(onWatch && typeof f\.livingFrom\?\.id === 'string' && LIVING_ID_RE\.test\(f\.livingFrom\.id\)\) r\.lr = f\.livingFrom\.id;/, 'the writer: a watch record, its resident\'s id');
   assert.match(xf, /f\.livingId = typeof r\.lr === 'string' \? r\.lr : null;/, 'the reader: the puppet carries it');
-  const w = rd('src/scenes/world.js');
+  const w = hostText('src/scenes/world.js');
   assert.match(w, /for \(const f of exteriorFoes\.foes\) if \(f\.puppet && typeof f\.livingId === 'string'\) _livingPeerWatch\.add\(f\.livingId\);\n\s*for \(const p of built\.values\(\)\) p\.population\?\.peerLend\?\.\(_livingPeerWatch\);/, 'the host tells every town');
   // the reader's town
   const t = makeTown();
@@ -356,7 +357,7 @@ test('WATCH-FIX online: the watch\'s record names the resident its watchman stan
 });
 
 test('WATCH-FIX the hosts: the street\'s pool reads each walker\'s row - and, the living town\'s, the resident it was read as; the turned watch is followed every frame in the lane, its resident found by id and his fall placed in his town\'s frame; the town is handed `killed` and the lives read it; the fixed-city page\'s pool reads its row too; the record names all four hosts (mutants: the street\'s read, the identity read, the follower unstepped, the killed unread)', () => {
-  const w = rd('src/scenes/world.js');
+  const w = hostText('src/scenes/world.js');
   assert.match(w, /live: \(\(living\) => \(\) => _streetHolds\(person, living\)\)\(person\.living\),/);
   assert.match(w, /if \(it\) return !!it\.active && \(person\.living \?\? null\) === \(living \?\? null\);/);
   assert.match(w, /const livingWatchStep = \(\) => watchStep\(_livingWatchTurned, cityGuards\.guards, \{ resolve: livingResidentOf, localOf: livingLocalOf \}\);/);

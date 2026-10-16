@@ -31,7 +31,7 @@ import { fakeRooms } from '../fakeRoom.mjs';
 import { OnlineSession } from '../../src/net/online.js';
 import { fakeSocketClass } from '../fakeSocket.mjs';
 
-const rd = (p) => readFileSync(new URL('../../' + p, import.meta.url), 'utf8');
+const rd = (p) => hostText(p);
 const quiet = (fn) => { const info = console.info, warn = console.warn; console.info = () => {}; console.warn = () => {}; try { return fn(); } finally { console.info = info; console.warn = warn; } };
 
 // ═══ THE FIXTURES ═════════════════════════════════════════════════════════════════════════════════
@@ -552,6 +552,7 @@ test('OW6L by source: the relay\'s arm spends its own bucket before it asks for 
 // ═══ THE HOST (scenes/world.js) - lifted and RUN ═══════════════════════════════════════════════════════════════════
 import { bandLifeOf } from '../../src/systems/travel/travelBands.js';
 import { raiderLifeOf } from '../../src/systems/seaRaiders.js';
+import { hostText } from '../hostText.mjs';   // HOST-SPLIT 2 (AUDIT, the second read): its negatives read the host whole
 
 /** The host's ledger block (world.js OW6L: what is owed, said, heard; the spawn's first-sight door), lifted and mounted. */
 function ledgerHost({ online, clockMin = M0, ms = T0 } = {}) {

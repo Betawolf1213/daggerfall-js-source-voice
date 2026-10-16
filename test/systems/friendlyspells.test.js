@@ -28,8 +28,9 @@ import { allyCastable } from '../../src/systems/allyCast.js';
 import { testMissileSpells, addTestMissileSpells, TEST_FIREBALL_INDEX, TEST_HEAL_BOLT_INDEX } from '../../src/systems/testRoom.js';
 import { spellPointRecoveryRate, SPECIAL_ABILITY, restIgnoresNoRegen } from '../../src/systems/rest/rest.js';
 import { AmbientEffects, CRICKET_CHORUS, AMBIENT_CRICKETS_LOOP } from '../../src/systems/ambientEffects.js';
+import { hostText } from '../hostText.mjs';   // HOST-SPLIT 2 (AUDIT, the second read): its negatives read the host whole
 
-const rd = (p) => readFileSync(new URL('../../' + p, import.meta.url), 'utf8');
+const rd = (p) => hostText(p);
 const fx = (type, subType = 0, mag = 20) => ({
   type, subType,
   magnitudeBaseLow: mag, magnitudeBaseHigh: mag, magnitudeLevelBase: 0, magnitudeLevelHigh: 0, magnitudePerLevel: 1,

@@ -24,9 +24,10 @@ import { newArenaLadder, nextLadderBout } from '../../src/systems/arena/arenaLad
 import * as LG from '../../src/systems/arena/arenaLeague.js';
 import { MINUTES_PER_DAY } from '../../src/systems/gameDate.js';
 import { settle, near, rmb, toolRig, placeFrom, all, one, rows } from '../decorFakes.mjs';
+import { hostText } from '../hostText.mjs';   // HOST-SPLIT 2: the world host whole
 
 const ROOT = new URL('../../', import.meta.url);
-const src = (p) => readFileSync(new URL(p, ROOT), 'utf8');
+const src = (p) => hostText(p);
 const keys = (list) => list.map((e) => e.key).sort();
 /** Show Nudity for the length of `body` - the setting ships False and goes back to it after. */
 async function withNudity(on, body) {
@@ -178,6 +179,7 @@ const PERSON_HOSTS = Object.freeze([
   'src/scenes/dungeonContext.js',   // NUDE-FLATS: an RDB figure
   'src/scenes/exterior.js',         // NUDE-FLATS: the one-location host's flats and street people
   'src/scenes/interiorContext.js',  // NUDE-FLATS: a building's people
+  'src/scenes/pixelBuild.js',       // HOST-SPLIT 2: the world's pixel build, moved out of world.js - every flat a streamed pixel batches
   'src/scenes/world.js',            // NUDE-FLATS: every flat a streamed pixel batches, its street people
   'src/scenes/worldModes.js',       // NUDE-FLATS: a quest's person
 ]);

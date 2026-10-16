@@ -54,8 +54,9 @@ import { COMMON_FACES_FILE, createFaceLoader } from '../../../src/ui/partyPanel.
 import { PORTRAIT_ARCHIVE } from '../../../src/ui/native/nativeTalk.js';
 import { legacyModelOptions, BLOODLINE_ONLINE_LINE } from '../../../src/ui/legacy/legacyModelChoice.js';
 import { LOCATION_TYPES } from '../../../src/formats/mapsFile.js';
+import { hostText } from '../../hostText.mjs';   // HOST-SPLIT 2 (AUDIT, the second read): its negatives read the host whole
 
-const rd = (f) => readFileSync(new URL(`../../../${f}`, import.meta.url), 'utf8');
+const rd = (f) => hostText(f);
 const { subtle } = globalThis.crypto;
 
 // ─── THE ACCOUNT SERVICE ───────────────────────────────────────────────────────────────────────────────────────────
@@ -164,7 +165,7 @@ test('AUDIT LEGACY III O1: THE TOKEN VOUCHES FOR THE REALM CHARACTER (`ci`, besi
   const online = rd('src/net/online.js');
   assert.match(online, /const scOf = \(m\) => \(typeof m\?\.sc === 'string' && REALM_CHARACTER_RE\.test\(m\.sc\) \? m\.sc : null\);/);
   assert.match(online, /validWedData, \(id, d\) => this\.onWed\?\.\(id, d, subOf\(m\), scOf\(m\)\)\);/);
-  assert.match(rd('src/scenes/world.js'), /online\.onWed = \(id, d, sub = null, sc = null\) => \{ wedMgr\.onFrame\(id, d, sub, sc\); \};/);
+  assert.match(hostText('src/scenes/world.js'), /online\.onWed = \(id, d, sub = null, sc = null\) => \{ wedMgr\.onFrame\(id, d, sub, sc\); \};/);
 });
 
 test('AUDIT LEGACY III O11: THE TOKEN\'S BODY BOUND IS ONE - the relay\'s hello read a 640-character body and the mint asked only the verifier\'s 1024: every optional claim at once was 639, so a house (LEGACY7) carried such a token to 739, minted and then refused at every hello as "bad token"; with the realm character it is 778 now, under TOKEN_BODY_MAX, and a house past it is left unsaid', async () => {
@@ -1760,7 +1761,7 @@ test('AUDIT LEGACY III P16: THE WEDDING HANDSHAKE\'S GUARDS - at most WED_INCOMI
 
 /** world.js's own text from the line matching `from` to the first line matching `to` after it. */
 function liftWorld(from, to) {
-  const lines = rd('src/scenes/world.js').split('\n');
+  const lines = hostText('src/scenes/world.js').split('\n');
   const a = lines.findIndex((l) => from.test(l));
   assert.ok(a >= 0, `world.js holds ${from}`);
   let b = a + 1;
@@ -1769,7 +1770,7 @@ function liftWorld(from, to) {
 }
 
 test('AUDIT LEGACY III W1: THE LIVING WORLD\'S INDICES READ THE GAME\'S ROWS, AND AN ONLINE HOME IS NAMED - the boot emptied the rows before either index was built, so every town and dungeon index was empty (LW3\'s roads, LW6\'s deep) and every home of the line reached it with no town name: the rows go once BOTH indices stand, and a home is named off the boot\'s own complete table', async () => {
-  const src = rd('src/scenes/world.js');
+  const src = hostText('src/scenes/world.js');
   assert.equal((src.match(/_hubRows\.length = 0/g) ?? []).length, 1, 'emptied in one place');
   assert.match(src, /const releaseHubRows = \(\) => \{ if \(_livingTowns && _livingDungeons\) _hubRows\.length = 0; \};/);
   const body = liftWorld(/^  let _livingTowns = null;$/, /^    return _livingDungeons;$/) + '\n  };';
@@ -1806,11 +1807,11 @@ test('AUDIT LEGACY III W5: THE ONLINE HOMES READ - THE LAST ASKED WINS, and a ho
   pending[0]({ ok: true, data: { homes: [{ mapId: 5001, buildingKey: 66051, region: 17, character: 'r-me' }] } });
   await new Promise((r) => { setImmediate(r); });
   assert.deepEqual(w.homes, [], 'the newer answer stands - the sold home is not handed back');
-  assert.match(rd('src/scenes/world.js'), /if \(moved\.length\) legacyOnlineHomesRead\(\);   \/\/ AUDIT LEGACY III W5/);
+  assert.match(hostText('src/scenes/world.js'), /if \(moved\.length\) legacyOnlineHomesRead\(\);   \/\/ AUDIT LEGACY III W5/);
 });
 
 test('AUDIT LEGACY III W3/W4/W6/A12/F11c/F11d (the world host, by source): the wedding prompt waits under the building\'s own windows and a death, and nobody weds lying dead; the line\'s street holds still under a talk window and is let go indoors; one identity line for a card met; the Succession\'s words by who is offered; no elder "retires to the seat"', () => {
-  const src = rd('src/scenes/world.js');
+  const src = hostText('src/scenes/world.js');
   assert.match(src, /const wedAsk = \(peerId\) => \{\n(?:    \/\/.*\n)*    if \(\(townTalk\.overlayActive && !townTalk\.overlayDone\) \|\| \(modes\?\.overlayHeld \?\? false\) \|\| \(modes\?\.deathUp\?\.\(\) \?\? false\)\) return false;/, 'W3: under the street\'s window, the building\'s, or a death');
   assert.match(src, /const wedCan = \(\) => \(playerEntity\.health <= 0 \|\| modes\?\.deathUp\?\.\(\) \? 'busy'\n/, 'W3: never while lying dead');
   assert.match(src, /familyStreet\.end\(townTalk\.overlayActive \? 0 : dt, cam\.pos\)/, 'W4: held as the street is');
@@ -1822,7 +1823,7 @@ test('AUDIT LEGACY III W3/W4/W6/A12/F11c/F11d (the world host, by source): the w
 });
 
 test('AUDIT LEGACY III O2/P1 (the world host, by source): a line the realm refuses is said, once; and the birth door waits on the line standing at the realm (a refusal the reason it gives, never "they cannot take up the line")', () => {
-  const src = rd('src/scenes/world.js');
+  const src = hostText('src/scenes/world.js');
   assert.match(src, /createRealmLine\(\{ io: realmIoNow, storage: \(\) => appStorage\(\), onRefused: \(id, error\) => \{ townTalk\.say\(LEGACY_TEXT\.lineRefused\(realmRefusalText\(error\)\)\); \} \}\)/);
   assert.match(src, /for \(let i = 0; born && legacyRealmLine\?\.unwrittenOf\(fam\.id\) && !legacyRealmLine\.refusalOf\(fam\.id\) && i < 2; i\+\+\) \{/);
   assert.match(src, /const unwritten = born \? legacyRealmLine\?\.unwrittenOf\(fam\.id\) \?\? null : null;\n    if \(unwritten\) return \{ ok: false, error: unwritten \};\n    let made = null;/);

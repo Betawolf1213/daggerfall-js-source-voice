@@ -10113,7 +10113,7 @@ home's alone - they are about other players.
 - **The frame** is the building's own place in its town (`world/rmbLayout.js` `recordAt`, the subrecord's origin -
   not a DFU field) in the world's axes, as a room's pieces stand from the door; `scenes/world.js` records each
   building's frame, the box round its models and - FB1009 HOME-FOOT - the ground its models stand on at the build
-  (`homeFrames`: `world.js:"const rects = footRectsAt(modelFeetOf(placed.modelIdNum, cpu), local);"`).
+  (`homeFrames`: `pixelBuild.js:"const rects = footRectsAt(modelFeetOf(placed.modelIdNum, cpu), local);"`).
 - **The lot** (`scenes/homeYards.js` yardLot, yardWhyNot): the box round the house and six metres round it, never inside
   the house (its roof neither) and never on another building's ground. FB1009 HOME-FOOT (the Discord's "Property
   Problem": "I can't place in front of my door but I can place in front of another's home"): a building's ground is

@@ -32,8 +32,9 @@ import {
 import { AccountFlow } from '../../src/ui/accountFlow.js';
 import { OnlineSession } from '../../src/net/online.js';
 import { rosterRows } from '../../src/net/roster.js';
+import { hostText } from '../hostText.mjs';   // HOST-SPLIT 2 (AUDIT, the second read): its negatives read the host whole
 
-const rd = (p) => readFileSync(new URL('../../' + p, import.meta.url), 'utf8');
+const rd = (p) => hostText(p);
 
 function fakeStorage(seed = null) {
   const m = new Map();

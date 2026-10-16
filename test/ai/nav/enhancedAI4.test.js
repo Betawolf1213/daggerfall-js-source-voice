@@ -12,12 +12,13 @@ import { Collider } from '../../../src/player/collider.js';
 import { EnemyAI } from '../../../src/characters/enemy/enemyMotor.js';
 import { bakeNavFromCollider } from '../../../src/ai/nav/navBake.js';
 import { findPath } from '../../../src/ai/nav/navmesh.js';
+import { hostText } from '../../hostText.mjs';   // HOST-SPLIT 2 (AUDIT, the second read): its negatives read the host whole
 import {
   EnhancedEnemyAI, makeNavWorld, navWalkable,
   REPATH_INT, REPATH_FAIL, STUCK_T, STUCK_EPS2, STUCK_NUDGE, WP_REACH, PATH_BUDGET_PER_FRAME, PROJECT_MARGIN,
 } from '../../../src/ai/enhancedMotor.js';
 
-const rd = (f) => readFileSync(new URL(`../../../${f}`, import.meta.url), 'utf8');
+const rd = (f) => hostText(f);
 const QUAD = new Uint32Array([0, 1, 2, 0, 2, 3]);
 /** addMesh's third argument is a MATRIX, not the index list - the wave34
  *  helper's `I` is the identity, which this file's first draft misread as

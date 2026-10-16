@@ -34,9 +34,10 @@ import { foldQuickLoot, quickLootWheel, resetQuickLoot, quickLootRow, quickLootS
 import { PREF_DEFAULTS, setPref } from '../../src/systems/uiPrefs.js';
 import { CROSSHAIR_ARM, crosshairCentreY } from '../../src/ui/hud/hudCrosshair.js';
 import { hudScale } from '../../src/ui/hud/hud.js';
+import { hostText } from '../hostText.mjs';   // HOST-SPLIT 2 (AUDIT, the second read): its negatives read the host whole
 import { _frameForTests, DRAW_FRAMES_UNDRAWN } from '../../src/ui/drawWatchdog.js';   // DISC29-D: frames that pass undrawn
 
-const read = (p) => readFileSync(new URL(`../../${p}`, import.meta.url), 'utf8');
+const read = (p) => hostText(p);
 
 /** The word a HOST's own namer answers for a pile. AUDIT-WH M5: the
  *  model has no fallback of its own any more - an itemised key with no
@@ -916,7 +917,7 @@ test('AUDIT-WH H5: the location\'s name is read in the PORT\'s spelling, from ON
   const ex = read('src/scenes/exterior.js');
   assert.match(ex, /currentLocation: \(\) => dfLocation,/, 'the fixed city hands dfLocation');
   assert.match(ex, /currentLocationName: \(\) => dfLocation\.name \?\? locationName,/, '...whose name field is `name`');
-  const w = read('src/scenes/world.js');
+  const w = hostText('src/scenes/world.js');
   assert.match(w, /currentLocation: \(\) => _questLoc\(\),/, 'the streaming world hands _questLoc()');
   assert.match(w, /currentLocationName: \(\) => _questLoc\(\)\?\.name \?\? '',/, '...whose name field is `name`');
 });
@@ -1680,7 +1681,7 @@ test('AUDIT-WH H4/L2/L3/L4/L6: every host branch that returns above the hover sa
   // THE FOUR HOSTS RULE, on the lifecycle rather than the wiring.
   const wm = read('src/scenes/worldModes.js');
   const dj = read('src/scenes/dungeon.js');
-  const wo = read('src/scenes/world.js');
+  const wo = hostText('src/scenes/world.js');
   const ex = read('src/scenes/exterior.js');
 
   // H4: both dungeon hosts return above `drawFoes`, where the hover
@@ -2145,7 +2146,7 @@ test('AUDIT-WH R7/R8/P7/P9: the list has a cap, a readout is the player\'s onlin
   // press's call happened earlier in the same frame than the plaque's
   // pick and the plaque's namer. Nothing stated that and nothing could
   // have caught it: the list is identical between calls in one frame.
-  const wo = read('src/scenes/world.js');
+  const wo = hostText('src/scenes/world.js');
   assert.match(wo, /const springList = \(\) => \{/);
   assert.match(wo, /const springTargets = \(\) => springList\(\)\.map\(/);
   assert.match(wo, /const springAt = \(key\) => springList\(\)\[Number\(key\.split\(':'\)\[1\]\)\] \?\? null;/);
