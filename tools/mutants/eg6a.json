@@ -507,7 +507,7 @@
     "name": "EG6A-the-jump-pressed-short",
     "file": "tools/egSpanSolve.mjs",
     "old": "const EDGE_M = 0; ",
-    "new": "const EDGE_M = 0.1; ",
+    "new": "const EDGE_M = 0.3; ",
     "tests": [
       "test/eg6a_sweep.test.js"
     ]

@@ -7437,8 +7437,10 @@ retires EG-H1's departure 4 and narrows EG-H3's departure 6 to the riders.
       up best within the window;
     - while what it lands on keeps time, it looks ahead: the launch from there must come in time too, the landing allowed
       0.2 s late;
-    - it runs at the landing and jumps at the edge itself (pressed 0.1 m short, as SD7b presses it, the motor falls
-      short of a Drum's widest roll and of 3.19 m to a round island);
+    - it runs at the landing and jumps at the edge itself (pressed 0.3 m short the motor falls short of 3.19 m to a round
+      island; 0.1 m short, as SD7b presses it, is within the motor's own margin - it clears 3.44 m); late to its run-up it
+      never jumps short of the edge: it runs on while the solver's launch from the edge still lands, else it plans the pair
+      again from where it stands (THE ASCENT's sweep, 2026-10-16: a band 3 hall it once fell in);
     - what slides under it on the way to the edge it stands on (two Rails' travels meeting), and the hall's own ground at
       the step's height it lands on (a vault's side lane laid across the gap before a step);
     - it runs off a still step a short way down (a running jump flies past a stair), runs up a riser, and leaps the gaps
