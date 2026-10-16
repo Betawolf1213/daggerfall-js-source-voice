@@ -13,6 +13,7 @@ main's `7e0424e0`.
 | 6 | "turning horse care off completely hides my other horses" | the upkeep's model listed horses only under a care tier, and the page drew the other horses and "Ride this one" only under one: Off (and the classic skin) the ridden horse alone | fixed (HORSE-CARE-OFF) |
 | 7 | "I've been using a 3x disintegrate as my main spell lately ... I believe it bypasses the kill/spare on revenants. And it seems it does this to other players' revenants, too" | a Disintegrate is a whole blow, and both damage doors passed every whole blow over a revenant's last stand, will and kneel; a party member's blow reaches the owner as a kill (`z`), so anyone's Disintegrate closed anyone's revenant, record and all, its owner never asked | fixed (RVN-OWNERS-CHOICE) |
 | 8 | "market stalls all shifted into the ground/walls"; "at least the lawn decoration owns" | TEMPLE-STEPS set the stall's box and scale right but kept a guessed shape inside it: a counter 0.75 m high under goods laid for 1.04 m, the awning's edge at 1.84 m, a bench where 20 of 30 stall-keepers stood, the second mesh given a counter over its goods; and its new origins moved every yard's saved stall 2 m back into its wall and grew saved boulders 2-8x | fixed (STALL-SHAPE) |
+| 9 | "you steal something from the shelf and can sell it back to an NPC, and he'll put the item back on the shelf again, and it just goes in a circle"; "when you're sent to prison, all the stolen items stay with you" | nothing marked a piece stolen: a sale landed the very record back on the shelf (T2), where a shut shop's shelf - no roll - gave it up again that night; and no court exit touched an item | fixed (STOLEN-GOODS) |
 
 ## FIRST-PICK: a change on its way gates a change, never a rank's first choice (1)
 
@@ -327,3 +328,65 @@ paintings, DET pieces) stands by its stand-in's box the same way, with no guard 
 What the reporter is owed: the market stalls stand as the pack draws them - the keeper behind the counter under the
 awning, the goods on the counter, the open stalls' goods on the ground. A stall or boulder you put in your own yard is
 back where you put it, at the size you placed it.
+
+## STOLEN-GOODS: a stolen piece carries its theft - a merchant is rid of it, a guilty verdict takes it (9)
+
+`src/systems/stolenGoods.js` (new); `src/systems/itemFields.js` `stolen`; `src/systems/inventory.js` stacksWith,
+splitStack; `src/systems/itemTransfer.js` applyTransfer; `src/systems/inventorySession.js` theftTarget;
+`src/ui/nativeTrade.js` _doSteal; `src/ui/enhancedTrade.js` runSteal; `src/ui/nativeInventory.js` and
+`src/ui/enhancedInventory.js` the take, the put-back, the enhanced card; `src/scenes/worldModes.js` openShelf's shut arm,
+the `container:` arm, commitTrade's Sell arm, doSell; `src/systems/court.js` confiscateStolen; `src/scenes/arrestFlow.js`
+finish, release.
+
+THE REPORT. "A bug related to infinite...": "you steal something from the shelf and can sell it back to an NPC, and he'll
+put the item back on the shelf again, and it just goes in a circle ... completely disrupts the economy ... Also, when
+you're sent to prison, all the stolen items stay with you and aren't taken away." (The guard who cannot reach the thief
+is INDOOR-WATCH, below.)
+
+FOUND. Nothing in the tree knew a piece was stolen: no item field, no flag at any theft arm. Both sale arms
+(`worldModes.js` commitTrade's Sell arm and the keyed doSell) pushed the sold record onto the open shelf (Port-Ledger T2),
+where it stood until the next day's restock (`shopStock.js` needsRestock). Driven on the real modules over a quality-10
+smith's shelf: the real Steal took its Dai-Katana into the pack unmarked; the real Sell window paid 300 gold for it and the
+same record stood on the shelf again; the open shop's Steal is caught 65% of the time at Pickpocket 50, and a SHUT shop's
+shelf rolls nothing at all (`theft.js` shopShelfTheft) - so a piece sold back by day could be taken again that night for
+nothing, without end. The court touched no item: no exit of `arrestFlow.js`, nothing in `court.js`. And a second hole,
+found building the mark: a take from the shut shelf or a stranger's cupboard goes through the inventory window, and a
+stackable piece merges into the pack's stack as it lands (`inventory.js` addItem) - a diff at the window's close could
+never have marked 85 arrows taken into a pack holding 11.
+
+CHANGED (the owner: "Stop trying to match DFU"):
+- **The mark.** A piece taken from someone else's keeping carries `stolen: true` (`systems/stolenGoods.js`), declared in
+  itemFields.js so the save, the wire and a realm trade carry it - a hand-off launders nothing. Written at every theft arm
+  as the piece moves: the open shop's Steal on both skins (the lot marked before TransferAll merges it); every take
+  through either inventory window from a loot target the host marks `stolen` - the shut shop's shelf and a stranger's
+  cupboard (worldModes.js, on lines it already had), marked before the piece lands (`itemTransfer.js` applyTransfer's
+  `stolen`; `inventorySession.js` theftTarget counts the loot target alone, never the wagon, the bag or a reward tray). A
+  piece put back is its owner's again; a stolen piece stacks only with stolen kin and a split keeps the mark; a pickpocket's
+  coin carries none; the enhanced item card says what the mark means.
+- **The fence.** `landSold`: an honest sale lands on the open shelf as T2 has it, so a mistaken sale can be bought back; a
+  stolen piece is paid for and gone. Both sale arms call it, one line each.
+- **The court.** `court.js` confiscateStolen takes every stolen piece the prisoner carries - the pack's (a worn piece off
+  its slot first, a lit torch put out) and the Materials Bag's - called by `arrestFlow.js` finish, which every guilty exit
+  runs: a sentence served, a fine paid with no days, banishment, the failed defence's verdict, and so the watch's "come
+  quietly". Taken at the verdict; the release says once "The guards take the stolen goods you carried (N items)." An
+  acquittal and a guild's rescue take nothing. Both lines through the text core, in every language the tree carries.
+- Named in `06-Systems/Standing-Arc.md` (STOLEN-GOODS) and Port-Ledger T2 (narrowed) and the REP row.
+
+THE FOUR HOSTS: worldModes.js - WIRED (the two theft targets and both sale arms, on lines it already had; createWorldModes
+7,072 code lines before and after); world.js and exterior.js - the arrest flow is theirs and the court's change is inside
+it, their wiring unchanged; dungeonContext.js - its one trade window is the Identify spell's (no steal, sale or shelf).
+Pinned by `test/fb1016_stolengoods.test.js` (7, every one failing on the old code); `tools/mutants/
+fb1016_stolengoods.json` (32, all dead). PINS MOVED: `audit26_economy` (the shut shelf's loot target), `audit26_modal`
+(where the Sell arm lands a piece), `auditloot2` (the junk mark beside it), `enhancedInventory` (PX28's take, INV2's stow
+twice), `housecontainers` and `shipstore` (the cupboard's loot target; shipstore the shut shelf's too); mutants
+AC5-C-M26, C8-cards-stack-any, SHIPSTORE-owned-cupboard-not-storage and -stranger-cupboard-is-storage re-aimed by content.
+
+FLAGGED, not taken: a shut shop's shelf still rolls nothing, so a night's haul is free (bounded now by the day's stock,
+each stolen piece sold once) - a fence's lower price for stolen goods is Mac's call; the court searches what the prisoner
+carries, not the wagon, a home or the bank; the watch's fine paid on the spot ("P" at the stop) is no arrest and takes
+nothing; the enhanced pack's put-back is wired the classic window's way and pinned by source (no enhanced view stands a
+shelf beside the pack today).
+
+What the reporter is owed: a piece you steal is marked stolen. A merchant still pays for it but gets rid of it - it never
+goes back on the shelf, so the circle is broken. Found guilty - jail, a fine or banishment - the guards take every stolen
+thing you carry and say how many. Win your case, or have the Thieves Guild get you out, and you keep them.
