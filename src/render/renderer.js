@@ -3814,9 +3814,8 @@ export class Renderer {
       gl.uniform1f(u.alphaCut, r.alphaCut || 0);
       gl.bindTexture(gl.TEXTURE_2D, r.tex || this._blackTex);
       this._tex0Bound = null;   // PERF-TEX3: this path owns unit 0 - the shadow may not speak for it
-      if (charge) gl.drawArrays(gl.TRIANGLES, r.first, r.count);
-      else gl.drawArraysInstanced(gl.TRIANGLES, r.first, r.count, n);
-      this.stats.draws++;
+      if (charge) { gl.drawArrays(gl.TRIANGLES, r.first, r.count); this.stats.draws++; }
+      else { gl.drawArraysInstanced(gl.TRIANGLES, r.first, r.count, n); this.stats.draws++; }   // every ring and ember, one draw
     }
     if (charge) {
       gl.depthFunc(gl.LESS);

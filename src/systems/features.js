@@ -705,8 +705,8 @@ export const FEATURES = Object.freeze([
     id: 'weapon-glow',
     group: 'sight',
     get title() { return t('features.weaponGlow.title', 'Weapon glow'); },
-    get note() { return t('features.weaponGlow.note', 'A weapon that deals fire, frost or shock damage wears a moving outline of its element, '
-      + 'brighter the stronger it is, and an enchanted Morrowind weapon glows. Off draws weapons as the original does.'); },
+    get note() { return t('features.weaponGlow.note', 'A weapon with a fire, frost or shock damage bonus wears a moving outline of its element, '
+      + 'brighter the stronger it is, and an enchanted Morrowind weapon glows. Off draws weapons as before.'); },   // AUDIT WEAPON-GLOW DOC-2: a bonus (a Legendary's power and a cast-when-strikes spell deal elemental damage and show none), and "as before" (the original - OpenMW - glows an enchanted part; off, the port draws it bare)
     get effect() { return t('features.effect.atOnce', 'Takes effect at once.'); },
     kinds: Object.freeze(['enhanced']),
     control: Object.freeze({ store: 'prefs', key: 'weaponGlow', initial: true, online: 'player' }),   // WEAPON-GLOW1: systems/weaponGlow.js WEAPON_GLOW_PREF

@@ -16,8 +16,8 @@
 //      else names one: a Legendary's power (Venom, Dragonfire, Chain Lightning) is its record's own, and a
 //      cast-when-strikes enchantment is a spell.
 //   2. ONE ELEMENT SHOWS - the most of it; a tie goes in PROC_ELEMENTS' order (fire, frost, shock).
-//   3. ITS STRENGTH IS THE BAND IT READS IN: 1 for a Magic line's 1-3, 2 for a Rare's 3-6 (4-6), 3 past it - the
-//      Legendary band, or a line and its gems together.
+//   3. ITS STRENGTH IS THE BAND ITS TOTAL READS IN: 1 to 3, 2 to 6, 3 past 6 - a Legendary line above its floor, or a
+//      line and its gems together (a Rare line of 3 reads 1, a Legendary's floor 2 - the total says it, not the tier).
 //   4. THE OUTLINE SAYS NO MORE THAN THE CARD. An unidentified piece's "Unidentified" hides every line (lootRarity.js
 //      rarityKnown), and the hand hides its element with it: the classic rig swings what DFU swings (the WEAPO1xx
 //      sheet, it is enchanted), the Morrowind hand the arcane glow.
