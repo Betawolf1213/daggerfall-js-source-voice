@@ -183,7 +183,7 @@ import { privateInteriorOf, privateInteriorAdmits, caravanKeyOf } from '../../sr
 import { isInstanceRoom, instanceOf, instanceAdmission, partyHoldsOwner, INSTANCE_INTERNAL_KIN, INSTANCE_KIN_KEEP_MS, INSTANCE_DOOR_WORD } from '../../src/net/instanceRoom.js';   // INSTANCES: an instance's room, its door and the hub's party answer (bible/11-Multiplayer/Instances.md)
 import { isStaff } from '../../src/net/staffCommands.js';
 import { RELAY_CFG_TTL_MS, RELAY_INTERNAL_CFG, mayRelayCfg, relayCfgValue } from '../../src/net/relayCfg.js';   // SCALE5b: the relay's settings, at run time
-import { busOf, shardOf, isChannelShard, isChannelBus, isRegionBus, isCourtCopy, courtOfCopy, upOf, HUB_INTERNAL_UP, HUB_INTERNAL_DOWN, HUB_BATCH_MS, HUB_SYNC_MS, HUB_COUNT_MS, HUB_BATCH_MAX, CLOSE_HUB, HUB_FIND_MAX, HUB_FIND_ROOM_HZ_MAX, HUB_GUILD_WHO_MAX, HUB_WHO_KEEP_MS, HUB_FRAME_MAX, HUB_UP_HZ_MAX, HUB_UP_BURST, shardKeeps, foldFind, HUB_BATCH_BYTES, HUB_UP_QUEUE_BYTES, HUB_INTERNAL_RESYNC, HUB_SILENT_MS, SHARD_LAW_KEYS, HUB_KEY_KEY, VHUBS_KEY } from '../../src/net/hubShards.js';   // SCALE5c: the hub, sixteen ways
+import { busOf, shardOf, isChannelShard, isChannelBus, isRegionBus, isCourtCopy, courtOfCopy, upOf, HUB_INTERNAL_UP, HUB_INTERNAL_POLL, HUB_POLL_MS, HUB_OUTBOX_MAX, HUB_OUTBOX_BYTES, HUB_BATCH_MS, HUB_SYNC_MS, HUB_COUNT_MS, HUB_BATCH_MAX, CLOSE_HUB, HUB_FIND_MAX, HUB_FIND_ROOM_HZ_MAX, HUB_GUILD_WHO_MAX, HUB_WHO_KEEP_MS, HUB_FRAME_MAX, HUB_UP_HZ_MAX, HUB_UP_BURST, shardKeeps, foldFind, HUB_BATCH_BYTES, HUB_UP_QUEUE_BYTES, HUB_SILENT_MS, SHARD_LAW_KEYS, HUB_KEY_KEY } from '../../src/net/hubShards.js';   // SCALE5c: the hub, sixteen ways
 import { verifyToken, verifyOrder, verifyStakeOrderAnyAge, importPublicKeyB64, MAX_TTL_S, ORDER_TTL_S, renownIssuable, deckDigest, remainsDigest } from '../../src/net/identityToken.js';   // MOD1: and the mute order, checked with the same key
 /** ACC1d/F8: the most spent signatures one room remembers. Every entry
  *  expires within MAX_TTL_S and the hello gate bounds how fast they can
@@ -203,7 +203,7 @@ const GUILD_OUTS_KEY = 'guildouts';
 const GUILD_OUT_KEEP_S = MAX_TTL_S + ORDER_TTL_S + 60;
 
 // ═══ SCALE2b (2026-10-04): the relay's half of the scale arc - its constants and helper in ./relayScale.js ═══
-import { IDX_TRUST_MS, ATTACH_LAZY_MS, PARTIES_MAX, HUB_KEEP_MAX, ACCT_SEEN_WRITE_MS, ROOM_CALL_MS, Bounded, RoomMetrics, countedState, roomKindOf, layerWalk } from './relayScale.js';
+import { IDX_TRUST_MS, ATTACH_LAZY_MS, PARTIES_MAX, HUB_KEEP_MAX, ACCT_SEEN_WRITE_MS, ROOM_CALL_MS, Bounded, RoomMetrics, countedState, roomKindOf, layerWalk, askRoom } from './relayScale.js';
 import { LAYER_ASK_HEADER, LAYER_EMPTY_HEADER, LAYER_LAST_HEADER, LAYERS_MAX } from './relay.js';   // AUDIT SCALE II R3-3, R1-5, R3-9: an asked layer's emptiness, the walk's last try, and a hall's every layer
 
 // ═══ WB3: THE GATE'S BOSS ROOM ═════════════════════════════════════
@@ -438,8 +438,7 @@ export default {
     // SCALE5d part two: A GATE'S COURT OVERFLOWS INTO ITS COPIES (hubShards.js isCourtCopy) - the court itself first,
     // always (its fight is there), and past it full the copies, which hand the court their sockets' fight
     if (isGateRoom(key)) return layerWalk(env.ROOMS, key, request, 0);
-    const id = env.ROOMS.idFromName(key);
-    return env.ROOMS.get(id).fetch(request);
+    return askRoom(env.ROOMS, key, request);   // DO-ASK: a room reset before it ran the upgrade asked once more; what is left a 503, never thrown
   },
 };
 
@@ -529,15 +528,14 @@ const unlisted = (r, now) => !!r && !(r.friends?.length) && !(r.in?.length) && !
 /** AUDIT SCALE II R2-11: what an event a shard owes the bus weighs, bytes - a frame its length, a hello or a pose a
  *  bound on what one says. */
 const upBytesOf = (ev) => (typeof ev[2] === 'string' ? ev[2].length : 512);
-/** AUDIT SCALE II R2-7: how many times the bus hands a shard one delivery before it lets it go (its shard's sync then
- *  says what it holds, and a close it did not hear is said again), and how long after a miss it tries again, ms. */
-const HUB_DOWN_TRIES = 5;
+/** AUDIT SCALE II R2-7: how long after a miss a shard tries the bus again, ms - a hand-up, and (HUB-PULL) a poll, whose
+ *  every miss in a row doubles it up to HUB_SYNC_MS / 2. */
 const HUB_RETRY_MS = 1000;
 
 /** SCALE5c: A SHARD'S SOCKET, AS THE BUS HOLDS IT (net/hubShards.js). The bus runs every law it always ran - an account's
  *  hello and leave, a friend's act, a party's pose, a world line, a receipt handed to an account's newest socket - over the
  *  sockets in its index, and a player on a shard is one of them: this object, which answers a socket's four calls. A frame
- *  sent it is owed its shard (`_vsend`, the next HUB_INTERNAL_DOWN), a close is said to the shard, which closes the real
+ *  sent it is owed its shard (`_vsend`, the delivery its next poll is answered with - HUB-PULL), a close is said to the shard, which closes the real
  *  socket, and its attachment lives here, never the runtime's (nothing is stored for it - a woken bus is told again). */
 class ShardSocket {
   constructor(bus, hub, vid) { this.virtual = true; this.hub = hub; this.vid = vid; this.att = null; this.closed = false; this._bus = bus; }
@@ -652,7 +650,14 @@ export class Room {
     this._vshut = new Bounded(HUB_KEEP_MAX);   // SCALE5d part two: the ids of the ShardSockets this object closed - never asked to say their hello again
     this._down = new Map();      // shard -> { s: [frames], i: frame -> its index, seg: [Map vid -> [indexes] | {all: index}], cur: the open Map, close: [[vid, code, reason]] }
     this._downT = null;
-    this._downBusy = new Map();  // shard -> the delivery in flight (one at a time a shard, so its order is the order said)
+    // HUB-PULL (2026-10-16): THE BUS NEVER CALLS A SHARD - a sealed delivery waits in its shard's outbox until the shard's
+    // poll is answered with it, and stays until the shard says it ran it (the poll's `ack`)
+    this._outbox = new Map();    // shard -> [{ q, body }] in order, unacknowledged; `bytes` on the list
+    this._polls = new Map();     // shard -> { done, t }: its poll the bus holds while it owes it nothing
+    // (a shard) the bus instance whose `rs` it heard - its polls say so, and until one does the bus says `rs` (HUB-PULL audit);
+    // and the wake of a poll backing off after a miss, which a hand-up the bus answered calls
+    this._rsBoot = null;
+    this._pollWake = null;
     this._toldN = new Map();     // shard -> the count its last delivery carried (every shard the bus has handed anything - a hello's words, at least)
     this._countT = null;         // the count's tell, owed within HUB_COUNT_MS of a hello or a leave
     // SCALE5c (a shard): what it owes the bus, and what it knows of the hub
@@ -681,12 +686,11 @@ export class Room {
     this._upBytes = 0;            // (a shard) AUDIT SCALE II R2-11: what `_up` holds, bytes
     this._upSeen = new Map();     // (the bus) shard -> { b, q }: the newest hand-up of its it ran
     this._downSeq = new Map();    // (the bus) shard -> the last delivery's number
-    this._downRetry = new Map();  // (the bus) shard -> { q, body, tries }: the delivery that did not land
-    this._downSeen = null;        // (a shard) { b, q }: the newest delivery it ran
+    this._downSeen = null;        // (a shard) { b, q }: the newest delivery it ran - HUB-PULL: its poll's `ack`
+    this._downGone = new Set();   // (a shard) HUB-PULL: the ids a delivery named that it no longer holds - its next poll tells the bus
+    this._pollOn = false;         // (a shard) HUB-PULL: its poll loop runs (one poll at the bus at a time)
     this._shardSeen = new Map();  // (the bus) AUDIT SCALE II R2-9: shard -> when it last handed anything up
     this._silentAt = 0;           // (the bus) when it last let go of a silent shard's sockets
-    this._vhubs = null;           // (the bus) AUDIT SCALE II R2-6: the shards it has heard from (VHUBS_KEY), read once a wake
-    this._busWoke = false;        // (the bus) whether this instance has asked them to say their sockets again
     this._hubKeyKept = null;      // (a shard) AUDIT SCALE II R2-4: the name it last kept in storage (HUB_KEY_KEY)
     this._swept = false;         // SCALE5b: the drain's sweep ran and nothing has said hello since - the next empty room's hello need not sweep again
     this._subIdx = null;         // SCALE5a: verified account (`sub`) -> its hello'd sockets, kept as the account index is - ONE-SEAT's other tabs (`_otherTabsOf`) without a walk of every socket
@@ -766,8 +770,7 @@ export class Room {
     if (path === RAID_INTERNAL_CLEAN) return this._raidCleanInternal(request);   // RAID3: a raid's cleanse, said to the hub
     if (path === RELAY_INTERNAL_CFG) return json(await this._relayCfgOf());   // SCALE5b: a boss's room asking the hub for the relay's settings
     if (path === HUB_INTERNAL_UP) return this._hubUpInternal(request);   // SCALE5c: a shard's hellos, frames and closes, to the bus
-    if (path === HUB_INTERNAL_DOWN) return this._hubDownInternal(request);   // SCALE5c: the bus's frames for a shard's sockets
-    if (path === HUB_INTERNAL_RESYNC) return this._hubResyncInternal();   // AUDIT SCALE II R2-6: the bus woke - every socket here said again
+    if (path === HUB_INTERNAL_POLL) return this._hubPollInternal(request);   // HUB-PULL: a shard asking for its sockets' frames - the bus never calls a shard
     if (path === RAID_INTERNAL_DAY) return this._raidDayInternal(request);   // RAID-ROLL: a cell asking the hub for the day's roll
     if (path === WDUN_INTERNAL_RESET) return this._wdunResetInternal(request);   // PVPDUNGEONS: the hub wiping a hall's world room
     if (path === INSTANCE_INTERNAL_KIN) return this._instanceKinInternal(request);   // INSTANCES: an instance room asking the hub whether an account's party holds its owner
@@ -1155,6 +1158,7 @@ export class Room {
     this._up.push(ev);
     this._upBytes += upBytesOf(ev);   // AUDIT SCALE II R2-11
     if (!this._upT) this._upT = setTimeout(() => { this._upT = null; this._hubUpFlush(); }, HUB_BATCH_MS);
+    this._hubPollEnsure();   // HUB-PULL: a shard with anything to say holds a socket - it asks the bus for that socket's frames
   }
   /** (a shard) Every socket it holds, by the id the bus knows it by. */
   _hubLive() { const out = []; for (const [w, b] of this._all()) if (b.id && b.vid && !this._dead.has(w) && !this._gone.has(w)) out.push(b.vid); return out; }
@@ -1198,13 +1202,6 @@ export class Room {
     this._upBytes = Math.max(0, this._upBytes - bytes);
     return this._up.splice(0, n);
   }
-  /** (a shard, or a copy) AUDIT SCALE II R2-6: HUB_INTERNAL_RESYNC - the bus woke: every socket held here said to it now. */
-  async _hubResyncInternal() {
-    this._hubSyncAt = 0;
-    this._upHoldUntil = 0;
-    await this._hubUpFlush();
-    return json({ ok: 1 });
-  }
   /** (a shard) The batch to the bus - one in flight at a time, so the bus hears it in the order it happened, and every
    *  HUB_SYNC_MS every socket this shard holds besides (the bus closes any it holds that are not, and asks again for any
    *  it lacks). Answers once this batch, and any it waited on, is handed. */
@@ -1217,7 +1214,6 @@ export class Room {
     // AUDIT SCALE II R2-7: after a miss, the next try waits HUB_RETRY_MS (a bus that does not answer is never asked in a loop)
     if (now < this._upHoldUntil) { if (!this._upT) this._upT = setTimeout(() => { this._upT = null; this._hubUpFlush(); }, this._upHoldUntil - now); return Promise.resolve(); }
     this._upBusy = (async () => {
-      let again = false;
       try {
         const hub = await this._hubKeyOf();   // AUDIT SCALE II R2-4: a woken shard's name, read back
         if (upOf(hub) == null) return;   // SCALE5c part two: a region's shard too; SCALE5d part two: and a court's copy
@@ -1237,10 +1233,13 @@ export class Room {
           this._upRetry = body;
           this._upHoldUntil = Date.now() + HUB_RETRY_MS;
           this._hubSyncAt = 0;   // the next hand-up after it says every socket again, and the bus asks for what it lacks
-          again = true;
+          // HUB-PULL audit: its retry armed here - armed after this block, it never was (the `return` skipped it), and a miss
+          // waited for the shard's next event or its alarm, a minute on: a woken bus's `rs` handed up by nothing
+          if (!this._upT) this._upT = setTimeout(() => { this._upT = null; this._hubUpFlush(); }, HUB_RETRY_MS);
           return;
         }
         this._upRetry = null;
+        this._pollWake?.();   // HUB-PULL audit: a bus that answers is a bus a poll backing off may ask now
         if (Number.isSafeInteger(ans.n) && ans.n >= 0) this._hubTotalSet(ans.n);   // AUDIT SCALE II R2-4 (p4d): the hub's count, with every answer
         // AUDIT SCALE II R2-6: A SOCKET THE BUS DID NOT HOLD (a bus woken, a hello lost) - its hello said again, then the
         // frames of this hand-up the bus could not run for it, in their order, ahead of anything since (they were dropped:
@@ -1252,20 +1251,81 @@ export class Room {
           if (redo.length) { this._up.unshift(...redo); for (const ev of redo) this._upBytes += upBytesOf(ev); }
         }
       } finally { this._upInFlight = null; this._upBusy = null; }
-      if (!again && this._up.length) await this._hubUpFlush();
-      else if (again && !this._upT) this._upT = setTimeout(() => { this._upT = null; this._hubUpFlush(); }, HUB_RETRY_MS);
+      if (this._up.length || Date.now() - this._hubSyncAt >= HUB_SYNC_MS) await this._hubUpFlush();   // HUB-PULL audit: and a sync made due while this one was on the wire (`rs`)
     })();
     return this._upBusy;
   }
-  /** (a shard) HUB_INTERNAL_DOWN: the bus's frames for its sockets, each socket's in the order said, then its closes, and
-   *  the hub's count. Answers the ids it no longer holds - the bus lets those ShardSockets go. */
-  async _hubDownInternal(request) {
-    let b;
-    try { b = await request.json(); } catch { return json({ error: 'bad' }, 400); }
-    if (!b || !Array.isArray(b.s) || !Array.isArray(b.seg)) return json({ error: 'bad' }, 400);
-    // AUDIT SCALE II R2-7: a delivery already run (its answer lost on the way back, so sent again) is not run twice
+  /** (a shard, or a copy) HUB-PULL (2026-10-16): ITS POLL KEPT AT THE BUS while it holds a socket - one at a time, asked
+   *  again the moment one is answered with anything; after a miss HUB_RETRY_MS later (doubling to HUB_SYNC_MS / 2), and
+   *  after an answer of nothing (a hold run out, or a bus that does not hold) HUB_BATCH_MS later - never in a loop. Started by anything
+   *  owed the bus (a hello first) and by the sync's alarm; it ends when nothing here is the bus's. `env.HUB_POLL` 'driven':
+   *  the pins' harness asks each poll itself (`_hubPoll`), never a loop on the side. */
+  _hubPollEnsure() {
+    if (this._pollOn || !this.env?.ROOMS?.get || this.env.HUB_POLL === 'driven') return;
+    this._pollOn = true;
+    void this._hubPollLoop();
+  }
+  async _hubPollLoop() {
+    let miss = 0;
+    try {
+      while (this._hubLive().length || this._downGone.size) {
+        let got;
+        try { got = await this._hubPoll(true); } catch (e) { console.warn('[shard] a poll threw', e?.message ?? e); got = false; }   // HUB-PULL audit: one throw a miss, never the loop's end
+        if (got == null) return;   // not a shard - nothing to ask
+        miss = got === false ? miss + 1 : 0;
+        if (miss) { if (await this._pollRest(Math.min(HUB_RETRY_MS * 2 ** (miss - 1), HUB_SYNC_MS / 2))) miss = 0; }
+        else if (got === 0) await new Promise((r) => setTimeout(r, HUB_BATCH_MS));
+      }
+    } finally { this._pollOn = false; }
+  }
+  /** (a shard, or a copy) HUB-PULL audit: a miss's wait - cut short by a hand-up the bus answered (`_pollWake`), the
+   *  backoff begun again: a bus back from an outage asked at once, never up to HUB_SYNC_MS / 2 on while it seals what the
+   *  shard is owed. Answers whether it was woken. */
+  _pollRest(ms) {
+    return new Promise((done) => {
+      const t = setTimeout(() => { this._pollWake = null; done(false); }, ms);
+      this._pollWake = () => { clearTimeout(t); this._pollWake = null; done(true); };
+    });
+  }
+  /** (a shard, or a copy) HUB-PULL: one poll - what it ran (`ack`, the newest delivery's number) and the ids a delivery
+   *  named that it no longer holds (`gone`) said; the answer's every delivery run in its order. `wait`: the bus may hold
+   *  it until it owes something (HUB_POLL_MS at most). The bus's first answer to a shard says `rs` (a bus woken without
+   *  its ShardSockets, or a shard it never heard): every socket held here handed up now, as AUDIT SCALE II R2-6's resync
+   *  did. Answers how much of the answer was new (the deliveries it ran - never one run before - and one for `rs`), false
+   *  for a miss, or null where there is no bus to ask: an answer of nothing new is paced as an empty one, so a bus that
+   *  hands the same deliveries again and again never spins the loop. */
+  async _hubPoll(wait = false) {
+    const rooms = this.env?.ROOMS;
+    const hub = await this._hubKeyOf();
+    if (!rooms?.get || upOf(hub) == null) return null;
+    const gone = [...this._downGone];
+    let ans = null;
+    try {
+      const res = await rooms.get(rooms.idFromName(/** @type {string} */ (upOf(hub)))).fetch(new Request(`https://relay.internal${HUB_INTERNAL_POLL}`, { method: 'POST', body: JSON.stringify({ hub, b: this._boot, ack: this._downSeen, gone, ...(this._rsBoot ? { rb: this._rsBoot } : {}), ...(wait ? { w: 1 } : {}) }), signal: AbortSignal.timeout(HUB_POLL_MS + ROOM_CALL_MS) }));
+      ans = res?.ok ? await res.json() : null;
+    } catch (e) { console.warn('[shard] the bus did not answer a poll', e?.message ?? e); }
+    if (!ans || !Array.isArray(ans.d)) return false;
+    for (const vid of gone) this._downGone.delete(vid);
+    let ran = 0;
+    for (const d of ans.d) { const left = await this._hubDownApply(d); if (!left) continue; ran++; for (const vid of left) this._downGone.add(vid); }
+    if (ans.rs) {
+      if (typeof ans.rb === 'string') this._rsBoot = ans.rb;   // HUB-PULL audit: told, so the bus stops saying it
+      this._hubSyncAt = 0; this._upHoldUntil = 0;
+      // HUB-PULL audit: the held loop never waits on the hand-up - awaited, a shard owing the bus all the while (a reconnect's
+      // storm, the rehellos `rs` itself asks) polled nothing until its queue ran dry, and the bus let its outbox's oldest go
+      const up = this._hubUpFlush();
+      if (!wait) await up;
+    }
+    return ran + (ans.rs ? 1 : 0);
+  }
+  /** (a shard) A delivery from the bus: its frames for this shard's sockets, each socket's in the order said, then its
+   *  closes, and the hub's count. Answers the ids it no longer holds - its next poll tells the bus, which lets those
+   *  ShardSockets go - or null for a delivery it did not run (one it ran already, or none). */
+  async _hubDownApply(b) {
+    if (!b || typeof b !== 'object' || !Array.isArray(b.s) || !Array.isArray(b.seg)) return null;
+    // AUDIT SCALE II R2-7: a delivery already run (handed again on a second poll before the first's ack) is not run twice
     if (typeof b.b === 'string' && Number.isSafeInteger(b.q)) {
-      if (this._downSeen && this._downSeen.b === b.b && b.q <= this._downSeen.q) return json({ ok: 1, gone: [] });
+      if (this._downSeen && this._downSeen.b === b.b && b.q <= this._downSeen.q) return null;
       this._downSeen = { b: b.b, q: b.q };
     }
     // AUDIT SCALE II R2-5: the bus's word on a socket's law (a mute, a guild worn or taken off, its ribbon, its Renown) -
@@ -1303,7 +1363,7 @@ export class Room {
     if (Number.isSafeInteger(b.n) && b.n >= 0) this._hubTotalSet(b.n);
     await this._reap();
     this._metricsTick();
-    return json({ ok: 1, gone: [...gone] });
+    return [...gone];
   }
   /** (a shard) The hub's count, from the bus - said to this shard's sockets (`{t:'n'}`) at most every HUB_COUNT_MS. */
   _hubTotalSet(n) {
@@ -1350,7 +1410,6 @@ export class Room {
     this._all();
     const now = Date.now();
     this._shardSeen.set(hub, now);   // AUDIT SCALE II R2-9
-    await this._busWake(hub);   // AUDIT SCALE II R2-6: a woken bus asks every shard it has heard from for its sockets
     await this._busSilentSweep(now);   // AUDIT SCALE II R2-9: and lets go of a silent one's
     // AUDIT SCALE II R2-7: a hand-up already run (its answer lost on the way back, so sent again) is not run twice
     if (typeof b.b === 'string' && Number.isSafeInteger(b.q)) {
@@ -1621,77 +1680,84 @@ export class Room {
     this._vbatch(vws.hub).att.push([vws.vid, d]);
     this._downArm();
   }
-  /** (the bus, or a court) AUDIT SCALE II R2-6: A WOKEN BUS ASKS ITS SHARDS AGAIN. Its ShardSockets are memory, and a woken
-   *  one holds none: a shard whose sockets said nothing since heard nothing the bus fanned (`_vsendAll` reaches the shards
-   *  it holds sockets of) until its sync, a minute on, and the count read low meanwhile. The first thing a woken bus does
-   *  asks every shard it has ever heard from (VHUBS_KEY, kept in its storage) to say every socket it holds now; a shard
-   *  heard from the first time is kept. A court does the same for its copies. */
-  async _busWake(hub = null) {
-    if (!this._vhubs) {
-      let v = null;
-      try { v = await this.state.storage.get(VHUBS_KEY); } catch { v = null; }
-      if (!this._vhubs) this._vhubs = new Set(Array.isArray(v) ? v.filter((h) => typeof h === 'string' && upOf(h) != null) : []);
-    }
-    if (!this._busWoke) {
-      this._busWoke = true;
-      const rooms = this.env?.ROOMS;
-      if (rooms?.get) for (const h of this._vhubs) void Promise.resolve().then(() => rooms.get(rooms.idFromName(h)).fetch(new Request(`https://relay.internal${HUB_INTERNAL_RESYNC}`, { method: 'POST', signal: AbortSignal.timeout(ROOM_CALL_MS) }))).catch((e) => console.warn('[bus] a shard did not resync', h, e?.message ?? e));
-    }
-    if (hub && !this._vhubs.has(hub)) { this._vhubs.add(hub); try { await this.state.storage.put(VHUBS_KEY, [...this._vhubs]); } catch { this._vhubs.delete(hub); } }
-  }
   /** (the bus, or a court) AUDIT SCALE II R2-9: A SHARD THE BUS HAS NOT HEARD FROM IN HUB_SILENT_MS LOST ITS SOCKETS (an
    *  object reset, no close said - its sync runs only while it holds any): every ShardSocket of its let go, its leaves
-   *  said, the count right again. Asked at most every HUB_SYNC_MS / 2, by any shard's hand-up and by the alarm. */
+   *  said, the count right again. Asked at most every HUB_SYNC_MS / 2, by any shard's hand-up and by the alarm. HUB-PULL:
+   *  and what it was owed, which nobody will ask for. */
   async _busSilentSweep(now) {
-    if (!this._vsocks.size || now - this._silentAt < HUB_SYNC_MS / 2) return;
+    if ((!this._vsocks.size && !this._outbox.size) || now - this._silentAt < HUB_SYNC_MS / 2) return;
     this._silentAt = now;
     for (const v of [...this._vsocks.values()]) {
       if (now - (this._shardSeen.get(v.hub) ?? 0) < HUB_SILENT_MS) continue;
       if (v.court) { this._vdrop(v); v.closed = true; } else await this._vgone(v, true);
     }
+    for (const hub of [...this._outbox.keys()]) if (now - (this._shardSeen.get(hub) ?? 0) >= HUB_SILENT_MS && !this._polls.has(hub)) this._outbox.delete(hub);
   }
   _downArm() { if (!this._downT) this._downT = setTimeout(() => { this._downT = null; this._downFlush(); }, HUB_BATCH_MS); }
-  /** (the bus) Every shard owed anything, handed its batch. Answers once they are. */
-  _downFlush() { return Promise.all([...new Set([...this._down.keys(), ...this._downRetry.keys()])].map((hub) => this._downTo(hub))); }   // AUDIT SCALE II R2-7: and every delivery owed again
-  /** (the bus) One shard's batch - one delivery in flight a shard, so its sockets hear the bus in the order it spoke. */
+  /** (the bus) Every shard owed anything, its batch sealed into its outbox (HUB-PULL). */
+  _downFlush() { for (const hub of [...this._down.keys()]) this._downTo(hub); return Promise.resolve(); }
+  /** (the bus) One shard's batch, numbered and sealed into its outbox - HUB-PULL (2026-10-16): THE BUS NEVER CALLS A
+   *  SHARD. Its pushes rode the hand-up it was serving and the shard's next hand-up rode the push, a hop deeper each
+   *  round, until the runtime refused them (net/hubShards.js HUB_INTERNAL_POLL). A held poll is answered with it now;
+   *  else the shard's next poll is. It stays until the shard says it ran it (AUDIT SCALE II R2-7: a delivery whose answer
+   *  was lost goes again AS IT WAS, its number with it, and runs once), HUB_OUTBOX_MAX and HUB_OUTBOX_BYTES at most -
+   *  past them the oldest is let go, and its shard's next sync says what it holds (a close it never heard said again). */
   _downTo(hub) {
-    const busy = this._downBusy.get(hub);
-    if (busy) return busy.then(() => (this._down.has(hub) || this._downRetry.has(hub) ? this._downTo(hub) : undefined));
-    // AUDIT SCALE II R2-7: a delivery that did not land goes again first, AS IT WAS (its number with it), ahead of anything
-    // said since - HUB_DOWN_TRIES at most, then let go (its shard's next sync says what it holds, and a close it never
-    // heard is said again there)
-    let send = this._downRetry.get(hub) ?? null;
-    if (send && Date.now() < send.at) { if (!this._downT) this._downT = setTimeout(() => { this._downT = null; this._downFlush(); }, send.at - Date.now()); return Promise.resolve(); }
-    if (!send) {
-      const b = this._down.get(hub);
-      if (!b) return Promise.resolve();
+    const b = this._down.get(hub);
+    if (b) {
       this._down.delete(hub);
       const court = isCourtCopy(hub), n = court ? null : this._busCount();   // SCALE5d part two: a court's copy is told no channel's count
       if (!court) this._toldN.set(hub, n);
       const q = (this._downSeq.get(hub) ?? 0) + 1;
       this._downSeq.set(hub, q);
-      send = { q, tries: 0, at: 0, body: JSON.stringify({ b: this._boot, q, s: b.s, seg: b.seg.map((g) => (g instanceof Map ? { to: [...g] } : g)), close: b.close, ...(b.att.length ? { att: b.att } : {}), ...(court ? {} : { n }) }) };
+      const body = JSON.stringify({ b: this._boot, q, s: b.s, seg: b.seg.map((g) => (g instanceof Map ? { to: [...g] } : g)), close: b.close, ...(b.att.length ? { att: b.att } : {}), ...(court ? {} : { n }) });
+      let box = this._outbox.get(hub);
+      if (!box) this._outbox.set(hub, box = { l: [], bytes: 0 });
+      box.l.push({ q, body });
+      box.bytes += body.length;
+      while (box.l.length > HUB_OUTBOX_MAX || (box.l.length > 1 && box.bytes > HUB_OUTBOX_BYTES)) { box.bytes -= /** @type {{ body: string }} */ (box.l.shift()).body.length; this._metrics.c.drops++; }
     }
-    const rooms = this.env?.ROOMS;
-    const p = (async () => {
-      let ans = null;
-      try {
-        if (!rooms?.get) return;
-        const res = await rooms.get(rooms.idFromName(hub)).fetch(new Request(`https://relay.internal${HUB_INTERNAL_DOWN}`, { method: 'POST', body: send.body, signal: AbortSignal.timeout(ROOM_CALL_MS) }));
-        ans = res?.ok ? await res.json() : null;   // AUDIT SCALE II R2-7: an answer that is not ok is a miss, as a throw is
-      } catch (e) { console.warn('[bus] a shard did not answer', hub, e?.message ?? e); }
-      finally { this._downBusy.delete(hub); }
-      if (!ans) {
-        if (rooms?.get && ++send.tries < HUB_DOWN_TRIES) { send.at = Date.now() + HUB_RETRY_MS * 2 ** (send.tries - 1); this._downRetry.set(hub, send); this._downArm(); }
-        else this._downRetry.delete(hub);
-      } else {
-        this._downRetry.delete(hub);
-        for (const vid of Array.isArray(ans?.gone) ? ans.gone : []) { const v = this._vsocks.get(vid); if (v && v.hub === hub) await this._vgone(v, true); }
-      }
-      await this._reap();
-    })();
-    this._downBusy.set(hub, p);
-    return p;
+    const held = this._polls.get(hub);
+    if (held && this._outbox.get(hub)?.l.length) this._pollAnswer(hub, held);
+  }
+  /** (the bus, or a court) HUB-PULL: HUB_INTERNAL_POLL - a shard (or a copy) asking for what is owed its sockets. What it
+   *  ran (`ack`) leaves its outbox and the ids it no longer holds (`gone`) leave as ShardSockets, their leaves said; then
+   *  every delivery it has not acknowledged is its answer - or, asked with `w` and owed nothing, the poll is held until a
+   *  delivery is sealed for it or HUB_POLL_MS passes. One held a shard: a newer poll answers the older with nothing (its
+   *  shard gave up on it). A shard's first poll to this instance is told to say every socket again (`rs` - AUDIT SCALE
+   *  II R2-6: a woken bus holds no ShardSocket, and a shard whose sockets said nothing since would hear nothing it fanned
+   *  until its sync, a minute on). */
+  async _hubPollInternal(request) {
+    let b;
+    try { b = await request.json(); } catch { return json({ error: 'bad' }, 400); }
+    const hub = b?.hub;
+    if (upOf(hub) == null) return json({ error: 'bad' }, 400);
+    if (this._busKey === undefined) this._busKey = upOf(hub);   // SCALE5c part two: a bus is the channel its first shard names - by a poll as by a hand-up
+    else if (this._busKey !== upOf(hub)) return json({ error: 'bad' }, 400);   // and answers no other channel's shard
+    this._all();
+    const box = this._outbox.get(hub), ack = b.ack;
+    if (box && ack && ack.b === this._boot && Number.isSafeInteger(ack.q)) while (box.l.length && box.l[0].q <= ack.q) box.bytes -= /** @type {{ body: string }} */ (box.l.shift()).body.length;
+    for (const vid of Array.isArray(b.gone) ? b.gone : []) { const v = typeof vid === 'string' ? this._vsocks.get(vid) : null; if (v && v.hub === hub) await this._vgone(v, true); }
+    await this._reap();
+    const rs = b.rb !== this._boot;   // HUB-PULL audit: said until the shard says it heard it - an `rs` answer lost, or a poll its shard gave up on, never spends it
+    const held = this._polls.get(hub);
+    if (held) this._pollAnswer(hub, held, false);
+    if (rs || !b.w || this._outbox.get(hub)?.l.length) return this._pollReply(hub, rs);
+    return new Promise((done) => { const p = { done, t: setTimeout(() => this._pollAnswer(hub, p), HUB_POLL_MS) }; this._polls.set(hub, p); });
+  }
+  /** (the bus) HUB-PULL: a held poll answered - with what its shard is owed, or (`give` false) with nothing. */
+  _pollAnswer(hub, p, give = true) {
+    if (this._polls.get(hub) === p) this._polls.delete(hub);
+    clearTimeout(p.t);
+    p.done(give ? this._pollReply(hub, false) : this._pollReply(null, false));
+  }
+  /** (the bus) HUB-PULL: a poll's answer - every delivery `hub` has not acknowledged, in its order, HUB_BATCH_BYTES at
+   *  most (at least one: the rest go with the next poll, which comes at once). Each is the JSON it was sealed as. */
+  _pollReply(hub, rs) {
+    const out = [];
+    let bytes = 0;
+    for (const e of (hub != null && this._outbox.get(hub)?.l) || []) { if (out.length && bytes + e.body.length > HUB_BATCH_BYTES) break; out.push(e.body); bytes += e.body.length; }
+    return new Response(`{"ok":1,"d":[${out.join(',')}]${rs ? `,"rs":1,"rb":${JSON.stringify(this._boot)}` : ''}}`, { headers: { 'content-type': 'application/json' } });
   }
   /** SCALE5b (PERF-RELAY1's lesson, `_poseFrame`): THE FOES FRAME'S FAN, A METHOD OF ITS OWN. Written inside `_message`,
    *  which is past V8's ceiling for an optimized function, it ran in the interpreter for the life of the object - at
@@ -2255,12 +2321,11 @@ export class Room {
    *  drain, re-armed by every later one - unless someone is in the room when it fires: a world parked in a room
    *  nobody plays would cost storage for ever, and the rooms a client can name are many. */
   async alarm() {
-    if (!this._busWoke) await this._busWake();   // AUDIT SCALE II R2-6: a woken bus (or court) asks its shards (or copies) again
     await this._busSilentSweep(Date.now());   // AUDIT SCALE II R2-9
     // SCALE5c: a shard's alarm is its sync - every socket it holds told the bus, every HUB_SYNC_MS while it holds any;
     // SCALE5d part two: a court's copy syncs as a shard does. AUDIT SCALE II R2-4: its name read back from its storage when
     // its sockets say none, and the alarm kept while anything is still owed the bus (a last leave on a woken instance)
-    if (await this._hubKeyOf()) { this._hubSyncAt = 0; await this._hubUpFlush(); if (this.state.getWebSockets().length || this._up.length || this._upRetry) await this.state.storage.setAlarm(Date.now() + HUB_SYNC_MS); return; }
+    if (await this._hubKeyOf()) { this._hubSyncAt = 0; await this._hubUpFlush(); this._hubPollEnsure(); if (this.state.getWebSockets().length || this._up.length || this._upRetry) await this.state.storage.setAlarm(Date.now() + HUB_SYNC_MS); return; }
     if (await this.state.storage.get('hub')) { await this._relayCfgOf(); await this._sweepHub(Date.now()); await this._heraldBeat(Date.now()); await this._serpentHeraldBeat(Date.now()); await this._sdBeat(Date.now()); await this._sdHeraldBeat(Date.now()); return; }   // AUDIT SOC A3: the hub's alarm is its sweep, whoever is in the room; DISCORD-GATES: and its herald's posts; SERPENT2: and the serpent's; SD3: and the Super dungeon's director; SD-HERALD: and its herald's, after the director's moves
     // AUDIT 68 X8-park-registry-unbounded: an owner's registry (HCC-PARK) is one object per account and character a
     // client names - its word goes PARK_TTL_MS after it was said, as the cell's record it points at does
@@ -2657,7 +2722,6 @@ export class Room {
 
   async _message(ws, message) {
     let a = this._attach(ws);
-    if (!this._busWoke && (isChannelBus(a.key) || (isGateRoom(a.key) && !a.ly))) await this._busWake();   // AUDIT SCALE II R2-6: a bus (or a court) woken by a socket of its own
     this._kind ??= a.key ? roomKindOf(a.key) : null;   // SCALE2b: a metric names the room's kind, never the room
     // SCALE5c: A SHARD HANDS ON every frame but its socket's hello, ping and pose (a channel keeps no place), AS IT CAME -
     // before any door or parse here: the bus parses it, meters it and strikes for it over the socket's ShardSocket, as
