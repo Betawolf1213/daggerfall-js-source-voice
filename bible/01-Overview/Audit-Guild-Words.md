@@ -135,7 +135,7 @@ the real offer flow at 0, 9, 10, 19 and 20, the filter, the bridge's door); `too
 | B-1 | A kept record from an older build made the first word invent a gain | FIXED: the first word no longer reads the kept record at all (B-5) |
 | B-2 | The first word repeated moves an earlier page said, when the save trailed (another device, a crash, a refused checkpoint) | FIXED: as B-1 |
 | B-3 = C-4 | The pace's line promised an owed the Roll threw away (a gain past 100 with the owed), and a lost gain went unsaid; "rises no further today" beside a writ's +2 | FIXED: the tracker hears the line only where the owed grew, net of the claim's own payment, and `onFull` where some of it was lost (a claim that moves nothing answers `paid` too, so a gain turned away at 100 is heard as lost); `rollNoticeHost.js` says "Mages Guild: quests raise your standing no further today. 10 more is owed, and follows in the days to come." and "...: your standing and what is owed already reach 100 - the rest of that reward is lost." in the player's language. `rollCeilingLine` and `rollFactionName` retired (their pins moved) |
-| B-4 | A payment and a move in one answer said as one; a writ the owed's room trimmed said as a payment | FIXED: readRoll and claimRoll answer `paid` (`{ [faction]: n }`, what the answer paid of what was owed); `rollMovesOf` says a move and a payment both ("Mages Guild -5, and 10 of what was owed arrived (now 55)"), and a standing that rose while the two together stood still as the rise. acct139 |
+| B-4 | A payment and a move in one answer said as one; a writ the owed's room trimmed said as a payment | FIXED: readRoll and claimRoll answer `paid` (`{ [faction]: n }`, what the answer paid of what was owed); `rollMovesOf` says a move and a payment both ("Mages Guild -5, and 10 of what was owed arrived (now 55)"), and a standing that rose while the two together stood still as the rise. acct140 (acct139 on the branch, renumbered past main's PRIMARY-TRIPS at the merge) |
 | B-5 | A first read whose kept seq differed never said what it paid | FIXED: the read's own `paid` |
 | B-6 = D-9 | ", und 2 weitere Gilden" - a comma before the language's "and" | FIXED: `Intl.ListFormat` joins the line; `chapters.standing.others` carries no conjunction in any language |
 | B-7 | FACTION.TXT's English names in every language, a temple as "Zen" | FIXED: the twenty-two by the port's own names (`chapters.guild.*`, hallPosterName's), in the player's language |
@@ -174,7 +174,7 @@ the real offer flow at 0, 9, 10, 19 and 20, the filter, the bridge's door); `too
 | F-3 | After the merge, the gate and the house read a door main had removed | FIXED at the merge: `host.rollPace?.(guild.factionId)?.book` |
 | F-4 | The two halves of the hall's line conflicted | FIXED at the merge: one line, the seated book and the pace both |
 | F-5 | The record's name taken on main | FIXED: `Field-Bugs-2026-10-15g.md`; the tests and mutants `fb1015g_*` |
-| F-6 | No ACCOUNT_VERSION bump for the service's change | FIXED: acct139 (with B-4's `paid`) |
+| F-6 | No ACCOUNT_VERSION bump for the service's change | FIXED: acct140 (with B-4's `paid`; acct139 on the branch, renumbered past main's PRIMARY-TRIPS acct139 at the second merge of main) |
 | F-7 | The Guilds tutorial page English around a translated point | FIXED: the whole page through `t()` |
 | F-8 | The merge's mechanical conflicts | DONE at the merge |
 
@@ -191,7 +191,7 @@ again; the pace's words moved to rollNoticeHost), `fb1015g_seatline` ("gives the
 (rollNoticeHost names nothing through FACTION.TXT now), `fb1015f_rollpace` (the merged hall line). Mutants re-aimed:
 ACHAP-C1-KEPT, -SEQ, -KEEP (main's text again), ACHAP-S7-NOOP, ACHAP-CEILING-LINE and T-LAW-FACTIONNAME (onto rollNoticeHost),
 T-TAB-CUT-EMPTY, T-SVC-READ-NOPAY, T-SVC-CLAIM-SEQ, AUDIT-CHAP2-C1-READ-FROM-SEQ, -DRAIN-SEQ, PROMO-NOW-the-line-not-drawn,
-and the nine version records (acct139).
+and the nine version records (acct140).
 
 ## THE FOUR HOSTS
 

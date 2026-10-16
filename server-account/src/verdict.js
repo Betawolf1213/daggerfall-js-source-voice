@@ -93,8 +93,10 @@ export function trustedLevel({ seen, at, level, played }) {
  * level }` - null, or a null wealth: this save is its own).
  * @param {any} ctx @param {{ player: string, char: string, seq: number, key: string }} at @param {any} row
  * @param {any} save @param {any} summary @param {{ wealth: number | null, level: number | null } | null} [baseline]
+ * @param {{ mine: any, dupes: any, config: any } | null} [known] SAVE-BATCH: the ledger's reads and the config, answered in
+ * the checkpoint's first batch (realm.js checkpointRealm) - null, and they are asked here
  */
-export async function verdictOn({ db, nowS }, { player, char, seq, key }, row, save, summary, baseline = null) {
+export async function verdictOn({ db, nowS }, { player, char, seq, key }, row, save, summary, baseline = null, known = null) {
   const first = row.wealth == null;
   const playedS = Number.isSafeInteger(row.played_now) ? row.played_now : 0;
   const lv = trustedLevel({
@@ -105,14 +107,14 @@ export async function verdictOn({ db, nowS }, { player, char, seq, key }, row, s
   const judged = judgeSave(save, summary, { level: lv.level });
   const crafts = judged.provenances.length ? await judgeProducts(db, judged.provenances, player) : { findings: [], arrived: [] };
   const products = crafts.findings;
-  const ledger = await ledgerStep(db, { player, char, seq, nowS }, judged.pieces);
+  const ledger = await ledgerStep(db, { player, char, seq, nowS }, judged.pieces, known);   // SAVE-BATCH: its two reads answered in the checkpoint's first batch
   const lawFindings = [...judged.findings, ...products, ...ledger.forged.map((k) => ({ code: 'uid', at: k }))];
   const law = judged.count + products.length + ledger.forged.length;
   const sig = law > 0 ? lawSigOf(lawFindings) : null;
   const lawHolds = law > 0 && sig !== row.law_excused ? law : 0;
   // the budget: the rise since the last judgement (or the baseline) that no witness explains, against the bucket the
   // time played filled
-  const config = await budgetConfig(db);
+  const config = known?.config ?? await budgetConfig(db);   // SAVE-BATCH: and the config, where the isolate kept none
   const band = bandOf(config, lv.level);
   // the measure moved (WEALTH_VERSION): the stored record, measured again, is the base - and nothing witnessed since it
   const rebased = !first && baseline != null && baseline.wealth != null;

@@ -137,13 +137,15 @@ test('INT5 service: enforce on (staff) - a gain past the bucket holds the trade 
     assert.equal(await t.put(100 + 80_000, { level: 1000 }), null);
     assert.ok(t.row().allowance > 50_000, 'the next step never cuts it to the cap');
     // a win's spoils landing between a checkpoint's read and its write are kept (AUDIT INT: the verdict wrote its own
-    // number over them)
-    const batch = t.s.env.DB.batch.bind(t.s.env.DB);
+    // number over them) - hooked at the object's put, between the two (PRIMARY-TRIPS audit: SAVE-BATCH's reads are a
+    // batch too, so a hook at the first batch granted before the reads, and the guard was never reached)
+    const put = t.s.env.SAVES.put.bind(t.s.env.SAVES);
     let once = true;
-    t.s.env.DB.batch = async (stmts) => { if (once) { once = false; await grantSpoils(t.s.env.DB, t.who.id); } return batch(stmts); };
+    t.s.env.SAVES.put = async (...a) => { if (once) { once = false; await grantSpoils(t.s.env.DB, t.who.id); } return put(...a); };
     const was = t.row().allowance;
     await t.put(100 + 80_000, { level: 1000 });
-    t.s.env.DB.batch = batch;
+    t.s.env.SAVES.put = put;
+    assert.equal(once, false, 'the grant landed between the reads and the write');
     assert.equal(t.row().allowance, was + spoilsGrant(t.row().level_seen), 'the grant, and the step\'s nothing');
   } finally { t.done(); }
 });
