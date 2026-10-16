@@ -160,10 +160,7 @@ export function changeReputation(store, factionID, amount, propagate = false) {
   // 3. up to the root. The Dark Brotherhood HAS a parent (356) and is
   // still treated as a root - the check is on the CURRENT node's id,
   // tested before each step up.
-  let root = f;
-  while (store.dict.has(root.parent) && root.id !== THE_DARK_BROTHERHOOD) {
-    root = store.dict.get(root.parent);
-  }
+  const root = factionRootOf((id) => store.dict.get(id), factionID);
 
   if (root.children) propagateReputationChange(store, root, factionID, amount);
   else changeReputation(store, factionID, amount);
@@ -174,6 +171,16 @@ export function changeReputation(store, factionID, amount, propagate = false) {
     changeReputation(store, GENERIC_TEMPLE, amount, true);
   }
   return true;
+}
+
+/** ChangeReputation's walk up (:411-417), ONE LAW: from `factionID` up its parents to the root, the Dark Brotherhood
+ *  a root of its own though it has a parent - the check on the CURRENT node, before each step. `lookup(id)` answers a
+ *  record or nothing; null for an unknown faction. QSCRIPT-FREE (quest/actions.js) asks it which guild a faction is. */
+export function factionRootOf(lookup, factionID) {
+  let root = lookup(factionID);
+  if (!root) return null;
+  for (let up; root.id !== THE_DARK_BROTHERHOOD && (up = lookup(root.parent));) root = up;
+  return root;
 }
 
 /** PropagateReputationChange (:448-459). Down the tree from a root:

@@ -206,8 +206,8 @@
   {
     "name": "ACHAP-C1-KEPT",
     "file": "src/net/npcRollTracker.js",
-    "old": "k && k.seq === r.data.from ? k.factions :",
-    "new": "false ? k.factions :",
+    "old": "const still = !r.data.seeded && !!k && k.seq === r.data.from;",
+    "new": "const still = false;",
     "tests": [
       "test/chap1_roll.test.js",
       "test/audit_chap1.test.js"
@@ -216,8 +216,8 @@
   {
     "name": "ACHAP-C1-SEQ",
     "file": "src/net/npcRollTracker.js",
-    "old": "k && k.seq === r.data.from ? k.factions :",
-    "new": "k ? k.factions :",
+    "old": "const still = !r.data.seeded && !!k && k.seq === r.data.from;",
+    "new": "const still = !r.data.seeded && !!k;",
     "tests": [
       "test/chap1_roll.test.js",
       "test/audit_chap1.test.js"
@@ -226,7 +226,7 @@
   {
     "name": "ACHAP-C1-KEEP",
     "file": "src/net/npcRollTracker.js",
-    "old": "    keep({ seq: roll.seq, factions: a.base });\n",
+    "old": "    keep({ seq: roll.seq, factions: a.base, owed });\n",
     "new": "\n",
     "tests": [
       "test/chap1_roll.test.js",

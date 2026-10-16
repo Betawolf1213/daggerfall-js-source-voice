@@ -59,6 +59,7 @@
 import { ARMOR_MATERIAL } from './armorMaterials.js';
 import { ARMOR_ENUM } from '../combat/enemyEquipment.js';
 import { localizedText, t } from './textManager.js';   // L10N3d: the house refusal; SEAT-WORDS: and online's
+import { SEAT_RANK } from '../net/npcChapterLaw.js';   // SEAT-WORDS (AUDIT GUILD-WORDS L3-7): the seats' ranks, the law's own
 
 /** KnightlyOrder's two flag constants (:42-43). */
 export const HOUSE_FLAG_MASK = 2;
@@ -178,7 +179,7 @@ export function receiveHouseDecision(membership, {
   // said so, where record NO_HOUSE_TEXT_ID promised a rank 9 that online never comes. A house already given says so.
   if (Number.isInteger(rankCeiling) && rankCeiling < RECEIVE_HOUSE_RANK) {
     return { kind: 'refuse', line: ((membership?.flags ?? 0) & HOUSE_FLAG_MASK) > 0 ? alreadyGivenHouseText()
-      : t('knight.seatHouse', 'Online, ranks 8 and 9 are the order\'s chapter seats, held while won by Merit - and a seat brings no house.') };
+      : t('knight.seatHouse', 'Online, ranks {officer} and {master} are the order\'s chapter seats, held while won by Merit - and a seat brings no house.', { officer: SEAT_RANK.officer, master: SEAT_RANK.master }) };
   }
   if ((membership?.rank ?? -1) < RECEIVE_HOUSE_RANK) return { kind: 'refuse', textId: NO_HOUSE_TEXT_ID };
   if (((membership?.flags ?? 0) & HOUSE_FLAG_MASK) > 0) return { kind: 'refuse', line: alreadyGivenHouseText() };

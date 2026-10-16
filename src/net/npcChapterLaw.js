@@ -254,15 +254,40 @@ export function rollAdopt(current, base, sent, roll) {
 
 /** THE STANDING LAST ADOPTED, as the save keeps it (AUDIT CHAP C1/C2/C4): `{ seq, factions }` - the Roll's sequence it
  *  was adopted at and its twenty-two - normalised, or null for anything else. A first read whose Roll still stands at
- *  that sequence knows that whatever the save holds past it was never claimed. */
+ *  that sequence knows that whatever the save holds past it was never claimed. AUDIT GUILD-WORDS L2-1: and `owed`, what
+ *  the Roll owed then, where the record carries it (one kept before it does not) - so the next page's first read says the
+ *  owed paid since. */
 export function rollKeptOf(/** @type {unknown} */ rec) {
   if (!rec || typeof rec !== 'object') return null;
-  const { seq, factions } = /** @type {any} */ (rec);
+  const { seq, factions, owed } = /** @type {any} */ (rec);
   if (!Number.isSafeInteger(seq) || seq < 0 || !rollSeedOk(factions)) return null;
   /** @type {Record<number, number>} */
   const out = {};
   for (const [k, v] of Object.entries(factions)) out[Number(k)] = v;
-  return { seq, factions: out };
+  if (!factionMapOk(owed, (x) => x > 0 && x <= ROLL_DELTA_MAX)) return { seq, factions: out };
+  /** @type {Record<number, number>} */
+  const ow = {};
+  for (const [k, v] of Object.entries(owed)) ow[Number(k)] = v;
+  return { seq, factions: out, owed: ow };
+}
+
+/** STANDING-WORDS (AUDIT GUILD-WORDS L2-1, L2-2, L2-4): WHAT THE ROLL'S WORD MOVED since its last - each of the
+ *  twenty-two whose standing or owed moved, against the last word's `last`/`lastOwed`: `delta` the move of the two
+ *  together (a quest's whole reward, though the day's room owes part; a loss the owed absorbed), or, where only the owed
+ *  turned into standing, `paid`; `now` the Roll's standing, `owed` what it still owes. A faction either word lacks is
+ *  not read. */
+export function rollMovesOf(/** @type {Record<string, number>} */ last, /** @type {Record<string, number>} */ lastOwed,
+  /** @type {Record<string, number>} */ next, /** @type {Record<string, number>} */ nextOwed) {
+  const out = [];
+  for (const f of ROLL_FACTIONS) {
+    if (!Object.hasOwn(last ?? {}, f) || !Object.hasOwn(next ?? {}, f)) continue;
+    const was = rollRep(last[f]), now = rollRep(next[f]);
+    const owedWas = Math.max(0, whole(lastOwed?.[f])), owed = Math.max(0, whole(nextOwed?.[f]));
+    const delta = (now + owed) - (was + owedWas);
+    if (delta !== 0) out.push({ f, delta, now, owed });
+    else if (now !== was) out.push({ f, paid: now - was, now, owed });
+  }
+  return out;
 }
 
 /** The faction a membership record names (guilds.js joinGuild's `guild`: a guild's name, `Temple:<divine>` or

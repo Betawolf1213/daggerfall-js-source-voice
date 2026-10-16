@@ -6108,7 +6108,7 @@ export function createWorldModes(host) {
         promoteWhenEarned: sharedClockOn(),   // PROMO-NOW: online, a promotion does not wait the 28 days
       }),
       // PROMO-NOW: online, the popup says what the next rank asks (the enhanced skin's line; the classic window is DFU's)
-      rankNeeds: () => (sharedClockOn() ? rankNeedsLines(playerEntity, guild, seated(), store, { rankCeiling: host.rollRankCeiling?.() ?? null, now: ownDate() }) : null),   // SEAT-LINE: read seated - a seat's own hall asks nothing more; STANDING-WORDS: a probation's days on the character's own date
+      rankNeeds: () => (sharedClockOn() ? rankNeedsLines(playerEntity, guild, seated(), store, { rankCeiling: host.rollRankCeiling?.() ?? null, now: ownDate(), book: memberships }) : null),   // SEAT-LINE: read seated - a seat's own hall asks nothing more; STANDING-WORDS: a probation's days on the character's own date
       onJoin: () => {
         // JoinButton_OnMouseClick (:497-525). joinDecision is null for
         // the two invitation-only guilds, which DFU reaches by

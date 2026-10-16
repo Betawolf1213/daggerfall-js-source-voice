@@ -23,7 +23,9 @@
 // for.
 import { GUILD_GROUPS, SOCIAL_GROUPS, FACTION_TYPES } from '../formats/factionFile.js';
 import { hasGuildService, npcServiceKind, canAccessService } from './guildServices.js';
-import { isMember, joinedGuildOfGroup, updateRank, rankNeeds, getTitle, membershipOf, reviewDaysLeft, GUILD_EXPEL_BELOW } from './guilds.js';
+import { isMember, joinedGuildOfGroup, updateRank, rankNeeds, getTitle, membershipOf, reviewDaysLeft, reviewedRank, numHighLowSkills, underworldRuleOf,
+  GUILD_EXPEL_BELOW, DAYS_BETWEEN_RANK_CHANGES, RANK_REQ_REPUTATION, RANK_REQ_SKILL_HIGH, RANK_REQ_SKILL_LOW } from './guilds.js';
+import { getReputation } from './factionRep.js';   // AUDIT GUILD-WORDS L1-2: the review's warnings read the standing
 import { standingOwedOf } from './standingOwed.js';   // STANDING-WORDS: what the Roll still owes, online
 import { SKILL_NAMES } from './skills.js';   // PROMO-NOW: the hall's line names the guild's skills
 import { isDivine } from './guildVariants.js';
@@ -144,17 +146,19 @@ export function showsJoinButton(memberships, guildGroup) {
  *  rank is told 3100 on a click-anywhere box; a non-member gets the
  *  plain "members only" string. The distinction matters: one says
  *  "come back when you are senior", the other "join first".
- *  SEAT-WORDS (Field-Bugs-2026-10-15c): a member AT the host's `ctx.rankCeiling` (online, 7 while the Roll holds) refused
- *  a service a seat's rank would open (the Mages Guild's Teleport, a temple's summoning at 8) is told the rank and that
- *  it is a chapter's seat - 3100 promised a review that, online, never comes. */
+ *  SEAT-WORDS (Field-Bugs-2026-10-15c): online (the host's `ctx.rankCeiling`, 7 while the Roll holds) a member refused a
+ *  service no rank up to the ceiling opens but a seat's rank does (the Mages Guild's Teleport, a temple's summoning at
+ *  8) is told the rank, that it is a chapter's seat, and that a seat's services are its own chapter's halls' for a
+ *  member at 7 (seatedBook) - at any rank: 3100 promised a review that, online, never reaches it (AUDIT GUILD-WORDS L1-1;
+ *  L1-5, L3-3: a seat held elsewhere is told why its rank is not read here). */
 export function serviceAccess(guild, membership, service, ctx = null) {
   if (canAccessService(guild, membership, service)) return { allowed: true };
   if (!isMember(membership)) return { allowed: false, text: localizedText('serviceMembersOnly', SERVICE_MEMBERS_ONLY) };   // :325
   const ceiling = ctx?.rankCeiling;
-  if (Number.isInteger(ceiling) && membership.rank === ceiling) {
+  if (Number.isInteger(ceiling) && !canAccessService(guild, { ...membership, rank: ceiling }, service)) {
     for (let rank = ceiling + 1; rank <= SEAT_RANK.master; rank++) {
       if (canAccessService(guild, { ...membership, rank }, service)) {
-        return { allowed: false, text: t('guild.seatService', 'Rank {rank} offers this, and online ranks {officer} and {master} are chapter seats won by Merit. A notice board explains how chapters work.', { rank, officer: SEAT_RANK.officer, master: SEAT_RANK.master }) };
+        return { allowed: false, text: t('guild.seatService', 'Rank {rank} offers this. Online, ranks {officer} and {master} are chapter seats won by Merit, and a seat\'s services are at its own chapter\'s halls, for a member at rank {cap}. A notice board explains chapters.', { rank, officer: SEAT_RANK.officer, master: SEAT_RANK.master, cap: ceiling }) };
       }
     }
   }
@@ -259,13 +263,47 @@ export function onPushEffects(entity, guild, memberships, store, now, {
 }
 
 /** STANDING-WORDS (Field-Bugs-2026-10-15c; Reign Droid: "Im forever trapped as apprentice and cant grow past -20
- *  reputation"): a probation said with its stakes - the review it ends at (`days`, reviewDaysLeft's; 0 or null: the next
- *  hall visit), expulsion below GUILD_EXPEL_BELOW there, and its end at 0 or more (REP6, guilds.js updateRank). The hall's
- *  line and the Standing page say it alike. */
-export function probationWords(days) {
+ *  reputation"): a probation said with its stakes, as REP6's review (guilds.js updateRank) will rule it. The review runs
+ *  at the guild's hall, the first visit `days` on or later (reviewDaysLeft's; 0 or null: the next visit) - AUDIT
+ *  GUILD-WORDS L1-7, L3-6. `kind`: 'expel' (below -10 out, below 0 another 28 days, 0 or more ends), 'ends' (a guild that
+ *  never expels - its review clamps to rank 0 and ends it, L1-3), 'skills' (the guild skills fail rank 0's bars, so no
+ *  standing ends it until they rise, L1-3). */
+export function probationWords(days, kind = 'expel') {
+  if (kind === 'ends') return t('guild.probation.ends', 'On probation: it ends at your next review, at the guild\'s hall.');
+  if (kind === 'skills') {
+    return t('guild.probation.skills', 'On probation: your guild skills are short of a member\'s. It ends once one reaches {high} and a second {low} - and below {expel} at a review you are expelled.',
+      { high: RANK_REQ_SKILL_HIGH[0], low: RANK_REQ_SKILL_LOW[0], expel: GUILD_EXPEL_BELOW });
+  }
   return Number.isSafeInteger(days) && days > 0
-    ? t('guild.probation.in', 'On probation: at your review in {days, plural, one {# day} other {# days}}, below {expel} you are expelled - at 0 or more it ends.', { days, expel: GUILD_EXPEL_BELOW })
-    : t('guild.probation.due', 'On probation: at your next review here, below {expel} you are expelled - at 0 or more it ends.', { expel: GUILD_EXPEL_BELOW });
+    ? t('guild.probation.in', 'On probation: your review is at the guild\'s hall in {days, plural, one {# day} other {# days}} or later. Below {expel} you are expelled there, below 0 it runs {renew} days more, and at 0 or more it ends.', { days, expel: GUILD_EXPEL_BELOW, renew: DAYS_BETWEEN_RANK_CHANGES })
+    : t('guild.probation.due', 'On probation: your review is at your next visit to the guild\'s hall. Below {expel} you are expelled there, below 0 it runs {renew} days more, and at 0 or more it ends.', { expel: GUILD_EXPEL_BELOW, renew: DAYS_BETWEEN_RANK_CHANGES });
+}
+
+/**
+ * AUDIT GUILD-WORDS (L1-2, L1-3, L1-4): THE REVIEW'S WARNINGS for a member, read off the book the review reads (never a
+ * seat's): its probation with the stakes this member's review would rule (probationWords' kind), and a demotion said
+ * before it lands - the review's own rank (guilds.js reviewedRank) below the member's, with what the rank held asks when
+ * it is the standing. The hall's line puts them first; the Standing page shows them under the guild. `ctx`: the host's
+ * `rankCeiling` and the character's own date (`now`).
+ */
+export function reviewWarnings(entity, guild, book, store, ctx = null) {
+  const m = membershipOf(book, guild);
+  if (!isMember(m) || !store) return [];
+  const out = [];
+  const ruled = reviewedRank(m, guild, entity, store, ctx);
+  if (m.probation) {
+    const { high, low } = numHighLowSkills(entity, guild, 0);
+    const kind = guild.neverExpels && !underworldRuleOf(guild) ? 'ends' : (high < 1 || high + low < 2) ? 'skills' : 'expel';
+    out.push(probationWords(ctx?.now ? reviewDaysLeft(m, ctx.now) : null, kind));
+  }
+  if (ruled >= 0 && ruled < m.rank) {
+    const title = getTitle({ rank: ruled }, entity, guild);
+    const need = RANK_REQ_REPUTATION[m.rank];
+    out.push(getReputation(store, guild.factionId) < need
+      ? t('guild.rankNeeds.fallsRep', 'Your next review lowers you to {title}: {current} needs reputation {need}.', { title, current: getTitle({ rank: m.rank }, entity, guild), need })
+      : t('guild.rankNeeds.falls', 'Your next review lowers you to {title}.', { title }));
+  }
+  return out;
 }
 
 /** STANDING-WORDS: the reputation row of the hall's line - what the Roll still owes the guild said beside it, online. */
@@ -279,11 +317,11 @@ const reputationLine = (n, owed) => (owed > 0
  *  a skill is short - they are the port's (FGH2H's hand-to-hand), not a wiki's. Null when nothing is short (the review
  *  has just promoted) or no review gives a next rank. */
 export function rankNeedsLines(entity, guild, memberships, store, ctx = null) {
+  // STANDING-WORDS: the review's warnings first, whatever else the next rank asks - off the book the review reads
+  // (`ctx.book`, the host's; the line's own book seats a seat's rank), and said even where no next rank is (L1-4)
+  const warnings = reviewWarnings(entity, guild, ctx?.book ?? memberships, store, ctx);
   const n = rankNeeds(memberships, guild, entity, store, ctx);
-  if (!n) return null;
-  // STANDING-WORDS: a member on probation is told so first, whatever else the next rank asks
-  const m = membershipOf(memberships, guild);
-  const probation = m?.probation ? [probationWords(ctx?.now ? reviewDaysLeft(m, ctx.now) : null)] : [];
+  if (!n) return warnings.length ? warnings : null;
   const owed = standingOwedOf(guild.factionId);
   const next = t('guild.rankNeeds.next', 'Next rank: {title}', { title: getTitle({ rank: n.rank }, entity, guild) });
   // SEAT-LINE (FIELD BUGS 2026-10-15c: "I was Archmage and now I cant seem to ever get back past the Wizard rank... All
@@ -293,12 +331,13 @@ export function rankNeedsLines(entity, guild, memberships, store, ctx = null) {
   // seatEligibleAt). A seat's own hall reads the book seated, and says nothing.
   if (n.seat) {
     return [
-      ...probation,
+      ...warnings,
       next,
       t('guild.rankNeeds.seat', "Ranks {officer} and {master} are each chapter's council and Master, won by Merit - no review gives them",
         { officer: SEAT_RANK.officer, master: SEAT_RANK.master }),
       ...(n.reputation < n.reputationNeed ? [reputationLine(n, owed)] : []),
-      t('guild.rankNeeds.seatMerit', 'Each Turning seats the most Merit over {weeks} weeks, among members {days} days in the guild on accounts {age} days old',
+      // AUDIT GUILD-WORDS L3-4: the seats' days and weeks are real ones (UTC), the review's the character's - said so
+      t('guild.rankNeeds.seatMerit', 'Each Sunday\'s Turning seats the most Merit of the last {weeks} weeks, among members {days} real days in the guild, on accounts {age} real days old',
         { weeks: SEAT_MERIT_WEEKS, days: SEAT_TENURE_S / 86_400, age: SEAT_ACCOUNT_AGE_S / 86_400 }),
     ];
   }
@@ -310,9 +349,9 @@ export function rankNeedsLines(entity, guild, memberships, store, ctx = null) {
       : t('guild.rankNeeds.high', 'A guild skill at {bar}', { bar: n.skillHigh }));
   }
   if (n.high + n.low < 2) lines.push(t('guild.rankNeeds.second', 'A second guild skill at {bar}', { bar: n.skillLow }));
-  if (!lines.length) return probation.length ? probation : null;
+  if (!lines.length) return warnings.length ? warnings : null;
   if (n.high < 1 || n.high + n.low < 2) lines.push(t('guild.rankNeeds.skills', 'Guild skills: {skills}', { skills: guild.skills.map((s) => SKILL_NAMES[s]).join(', ') }));
-  return [...probation, next, ...lines];
+  return [...warnings, next, ...lines];
 }
 
 /** The service the popup's middle button runs. DoGuildService's switch

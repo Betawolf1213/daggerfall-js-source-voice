@@ -212,7 +212,7 @@ claim as the page went, which never landed - the realm session gives its lease u
 | Source | Trust | Reputation | Cap |
 |---|---|---|---|
 | A hall writ delivered (section 4) | Service-witnessed (the Stores took the units) | +2 with the posting guild | The writ supply and the account's 3 a day (AUDIT CHAP3 R9: a receipt writ is the next row's, outside the 3) |
-| Anything DFU's law moves on the client - a guild quest (DFU's +5; QFAIL-FREE: a failure costs nothing online), a donation, the ally and enemy spread | Client-reported, bounded | What moved | 15 a guild faction a character a UTC day, from every claim together |
+| Anything DFU's law moves on the client - a guild quest (DFU's +5; QFAIL-FREE: a failure costs nothing online; QSCRIPT-FREE, AUDIT GUILD-WORDS: nor does the quest's script, with the guild that gave it), a donation, the ally and enemy spread | Client-reported, bounded | What moved | 15 a guild faction a character a UTC day, from every claim together |
 | A gate or raid receipt in a region where the character's guild keeps a chapter (AUDIT CHAP2 R24: a serpent's names no region - section 11) | Relay-signed | +1 with each guild the character belongs to (BUILT, CHAP2b - and +2 more for the chapter's receipt writ, its first of the day there, section 4) | The receipt's own day (a gate one a day, a raid `RAID_CLAIMS_DAY_MAX` - AUDIT CHAP3 E2: six a game day of two real hours, so up to seventy-two raids a UTC day, each a witnessed act; their +1 stands outside the 15 a day, as DECIDED, and their Merit is bounded by the 600) |
 | Any LOSS of reputation (a crime against a guild; AUDIT CHAP2 D5: a probation and an expulsion move no reputation - `Guild.cs` only drops the membership) | Client-reported | DFU's law | None - a client that lies against itself is believed |
 
@@ -280,7 +280,7 @@ said nothing at 7, so a capped Archmage was told nothing at all; at the ceiling 
 what a seat asks - the seat's line in reputation, the Turning's Merit, the tenure and the account's age - read off the
 book seated, so a seat's holder at its own halls is told nothing more.
 SEAT-WORDS (2026-10-16, the same page): a service a seat's rank opens, refused at 7, says it is a seat's where DFU's
-record 3100 promised a review; a knight asking for the order's house is told a seat brings none (E2 above); the hold's
+record 3100 promised a review; a knight asking for the order's house is told a seat brings none (E2 below); the hold's
 line pops the Guild Chapters tutorial page, as a member's first word online does; and the notice board's guide says a
 guild's own review stops at 7. STANDING-WORDS (the same page): every adoption says what the Roll's word moved since its
 last ("Standing: The Mages Guild +15, now 40 (10 more to come)"), and the owed is kept for the hall's line and the

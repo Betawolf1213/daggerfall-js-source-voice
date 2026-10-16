@@ -30,19 +30,38 @@ export function standingName(/** @type {any} */ entity, /** @type {number} */ f)
   return (raw != null ? getLocalizedFactionName(f, raw) : null) ?? hallPosterName(f) ?? String(f);
 }
 
-/** THE STANDING'S LINE: one line for an adoption's changes, `{ f, delta, now, owed }` - or null when nothing moved. */
-export function standingLine(/** @type {any} */ entity, /** @type {{ f: number, delta: number, now: number, owed: number }[]} */ changes) {
-  const items = (changes ?? []).filter((c) => Number.isSafeInteger(c?.delta) && c.delta !== 0).map((c) => {
-    const args = { name: standingName(entity, c.f), delta: c.delta > 0 ? `+${c.delta}` : String(c.delta), now: c.now, owed: c.owed };
-    return c.owed > 0 ? t('chapters.standing.itemOwed', '{name} {delta}, now {now} ({owed} more to come)', args)
-      : t('chapters.standing.item', '{name} {delta}, now {now}', args);
-  });
-  return items.length ? t('chapters.standing.line', 'Standing: {list}', { list: items.join(', ') }) : null;
-}
+/** The twenty-two the character belongs to, by the active book (DFU's - a vampire's mortal guilds lie dormant). */
+export const rollMembershipsOf = (/** @type {any} */ entity) => new Set(Object.values(activeMemberships(entity) ?? {})
+  .map((m) => rollFactionOfGuild(m?.guild)).filter((f) => /** @type {readonly unknown[]} */ (ROLL_FACTIONS).includes(f)));
 
 /** Whether the character belongs to any of the twenty-two the Roll keeps. */
-export const holdsRollMembership = (/** @type {any} */ entity) =>
-  Object.values(activeMemberships(entity) ?? {}).some((m) => /** @type {readonly number[]} */ (ROLL_FACTIONS).includes(/** @type {number} */ (rollFactionOfGuild(m?.guild))));
+export const holdsRollMembership = (/** @type {any} */ entity) => rollMembershipsOf(entity).size > 0;
+
+/** One move, said (npcChapterLaw.js rollMovesOf's `{ f, delta | paid, now, owed }`). */
+function standingItem(/** @type {any} */ entity, /** @type {{ f: number, delta?: number, paid?: number, now: number, owed: number }} */ c) {
+  const args = { name: standingName(entity, c.f), now: c.now, owed: c.owed, paid: c.paid ?? 0,
+    delta: Number(c.delta) > 0 ? `+${c.delta}` : String(c.delta ?? 0) };
+  if (c.delta) {
+    return c.owed > 0 ? t('chapters.standing.itemOwed', '{name} {delta} (now {now}, {owed} more to come)', args)
+      : t('chapters.standing.item', '{name} {delta} (now {now})', args);
+  }
+  return c.owed > 0 ? t('chapters.standing.paidOwed', '{name}: {paid} of what was owed arrived (now {now}, {owed} more to come)', args)
+    : t('chapters.standing.paid', '{name}: {paid} of what was owed arrived (now {now})', args);
+}
+
+/** THE STANDING'S LINE: one line for an adoption's moves - or null when nothing moved. The guilds the character belongs
+ *  to are named; the rest are counted (AUDIT GUILD-WORDS L2-3: DFU's drift and REP4's recovery move every standing a
+ *  point, and a line of twenty-two names said nothing). */
+export function standingLine(/** @type {any} */ entity, /** @type {{ f: number, delta?: number, paid?: number, now: number, owed: number }[]} */ changes) {
+  const moved = (changes ?? []).filter((c) => (Number.isSafeInteger(c?.delta) && c.delta !== 0) || (Number.isSafeInteger(c?.paid) && c.paid !== 0));
+  if (!moved.length) return null;
+  const mine = rollMembershipsOf(entity);
+  const named = moved.filter((c) => mine.has(c.f)).map((c) => standingItem(entity, c));
+  const others = moved.length - named.length;
+  if (!named.length) return t('chapters.standing.othersOnly', 'Standing moved with {n, plural, one {# guild} other {# guilds}} you do not belong to.', { n: others });
+  const list = others ? [...named, t('chapters.standing.others', 'and {n, plural, one {# other guild} other {# other guilds}}', { n: others })] : named;
+  return t('chapters.standing.line', 'Standing: {list}', { list: list.join(', ') });
+}
 
 /**
  * The tracker's doors the host spreads in: `entityOf()` the playing character, `say(text)` the host's chat notice (a
@@ -57,7 +76,7 @@ export function rollNoticeDoors({ entityOf, say }) {
       if (line) say(line);
       noteFirstUse('chapters');
     },
-    onStanding: (/** @type {{ f: number, delta: number, now: number, owed: number }[]} */ changes, /** @type {boolean} */ first) => {
+    onStanding: (/** @type {{ f: number, delta?: number, paid?: number, now: number, owed: number }[]} */ changes, /** @type {boolean} */ first) => {
       if (first && holdsRollMembership(entityOf())) noteFirstUse('chapters');
       const line = standingLine(entityOf(), changes);
       if (line) say(line);

@@ -406,6 +406,20 @@ test('CHAP2a the join: a new membership is recorded only where the Roll\'s stand
   assert.deepEqual(r.roll.members.map((m) => m.f), [40, 41], 'at 0: recorded');
   r = await claim(T0 + 30, [{ f: 40, rank: 0 }, { f: 41, rank: 0 }], { 41: -20 });
   assert.deepEqual(r.roll.members.map((m) => m.f), [40, 41], 'a member already on the Roll stays');
+  r = await claim(T0 + 40, [{ f: 40, rank: 0 }, { f: 41, rank: 0 }], { 41: -5 });   // AUDIT GUILD-WORDS L6: below the floor before the claim and after it
+  assert.deepEqual(r.roll.members.map((m) => m.f), [40, 41], 'and stays below the floor both sides of a claim');
+});
+
+test('AUDIT GUILD-WORDS L6: a join the client made at 0 and a loss in the same claim\'s minute is recorded - the standing before the claim\'s lines or after them; below the floor before and after, not (mutant: after alone)', async () => {
+  const s = await stand();
+  const who = await s.registered('Rollo');
+  const R = await seatRealm(s.env, who.secret, 'Rollo');
+  const ctx = (t) => ({ db: s.env.DB, nowS: t });
+  const player = { id: who.id };
+  await readRoll(ctx(T0), player, { character: R.id, lease: R.lease, seed: { factions: { 40: 0, 41: -5 }, members: [] } });
+  const r = await claimRoll(ctx(T0 + 10), player, { character: R.id, lease: R.lease, rid: rid(), deltas: { 40: -30, 41: -5 }, members: [{ f: 40, rank: 0 }, { f: 41, rank: 0 }] });
+  assert.deepEqual(r.roll.members.map((m) => m.f), [40], 'joined at 0, then a quest\'s -30: a member; the Fighters Guild below the floor both times: not');
+  assert.equal(r.roll.factions[40], -30);
 });
 
 // ── THE TAB ─────────────────────────────────────────────────────────

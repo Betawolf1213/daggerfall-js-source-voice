@@ -66,7 +66,7 @@
 
 import {
   ROLL_FACTIONS, ROLL_CLAIM_MS, ROLL_RETRY_MS, ROLL_RETRY_MAX_MS, rollDeltasOf, rollAdopt, rollMembersKey, rollMembersOf, rollRep, rollKeptOf,
-  rollBookCap, rollSeatsOf, ROLL_SEATS_MS,
+  rollBookCap, rollSeatsOf, ROLL_SEATS_MS, rollMovesOf,
 } from './npcChapterLaw.js';
 import { setReputation } from '../systems/factionRep.js';
 import { setStandingOwed } from '../systems/standingOwed.js';   // STANDING-WORDS: the owed, kept for the windows
@@ -124,16 +124,16 @@ export const rollVampireOf = (/** @type {any} */ entity) => !!(entity?.racialOve
  * `members()` its memberships (rollMembersOf - null with no book); `kept()` the last adoption as the save keeps it and
  * `keep(k)` the new one (the host's mod-save record). `onCeiling(factions)` hears the lines the day's pace cut;
  * `onStop(error)` the refusal that ended it. CHAP4b: `cap()` holds the book at 7 (rollBookCap - the guild factions it
- * held), `onCapped(factions)` hears them; STANDING-WORDS: `onStanding(changes, first)` every adoption - each of the
- * twenty-two the Roll's word moved since its last, `{ f, delta, now, owed }` (none on the page's first word, `first`
- * true); `onSeats(seats, before)` the character's seats at each adoption (`before` null
+ * held), `onCapped(factions)` hears them; STANDING-WORDS: `onStanding(changes, first)` every adoption - what the Roll's
+ * word moved since its last (npcChapterLaw.js rollMovesOf: `{ f, delta | paid, now, owed }`; at the page's first word,
+ * against the kept adoption the Roll still stands at, or none), `first` true once a page; `onSeats(seats, before)` the character's seats at each adoption (`before` null
  * at the first).
  * @param {{ io: any, character: () => string | null, lease: () => string | null, read: () => Record<number, number> | null,
  *   write: (values: Record<number, number>) => void, members: () => { f: number, rank: number }[] | null,
- *   kept?: () => unknown, keep?: (k: { seq: number, factions: Record<number, number> }) => void, now?: () => number,
+ *   kept?: () => unknown, keep?: (k: { seq: number, factions: Record<number, number>, owed?: Record<number, number> }) => void, now?: () => number,
  *   rid?: () => string, onCeiling?: (factions: number[]) => void, onStop?: (error: string) => void, cap?: () => number[],
  *   onCapped?: (factions: number[]) => void, onSeats?: (seats: { f: number, region: number, seat: string }[], before: { f: number, region: number, seat: string }[] | null) => void,
- *   onStanding?: (changes: { f: number, delta: number, now: number, owed: number }[], first: boolean) => void }} o
+ *   onStanding?: (changes: { f: number, delta?: number, paid?: number, now: number, owed: number }[], first: boolean) => void }} o
  */
 export function createRollTracker({
   io, character, lease, read, write, members, kept = () => null, keep = () => {}, now = () => Date.now(), rid = () => rollRid(),
@@ -159,6 +159,9 @@ export function createRollTracker({
   let stoppedLease = null;
   /** @type {{ f: number, region: number, seat: string }[] | null} CHAP4b: the character's seats, as the Roll last said */
   let seats = null;
+  /** @type {Record<number, number>} STANDING-WORDS: what the Roll owed at its last word; and whether this page's first word was said */
+  let lastOwed = {};
+  let firstSaid = false;
 
   const fail = (/** @type {string} */ error, /** @type {string | null} */ ls = null) => {
     if (ROLL_STOPS.includes(error)) { stopped = error; stoppedLease = ls; setStandingOwed(null); onStop(error); return; }   // STANDING-WORDS: stopped, nothing owed is said
@@ -166,17 +169,22 @@ export function createRollTracker({
     nextAt = now() + wait;
     wait = Math.min(ROLL_RETRY_MAX_MS, wait * 2);
   };
-  const adopt = (/** @type {Record<number, number>} */ from, /** @type {Record<number, number>} */ sent, /** @type {any} */ roll) => {
+  const adopt = (/** @type {Record<number, number>} */ from, /** @type {Record<number, number>} */ sent, /** @type {any} */ roll,
+    /** @type {{ factions: Record<number, number>, owed?: Record<number, number> } | null} */ prev = null) => {
     const a = rollAdopt(read() ?? from, from, sent, roll.factions);
     write(a.local);
     // STANDING-WORDS: what the Roll's word moved since its last - a claim's credit, a hall writ's, the owed paid - and what
-    // it still owes, said and kept (none on the page's first word: there is no last to move from)
-    const last = base;
-    setStandingOwed(roll.owed);
-    const changes = last ? ROLL_FACTIONS.filter((f) => a.base[f] !== last[f])
-      .map((f) => ({ f, delta: a.base[f] - last[f], now: a.local[f] ?? a.base[f], owed: Number(roll.owed?.[f]) > 0 ? Number(roll.owed[f]) : 0 })) : [];
+    // it still owes, said and kept; AUDIT GUILD-WORDS L2-1: at the page's first word, against the kept adoption the Roll
+    // still stands at (`prev`: only its own credits moved it since - the owed a first read pays)
+    /** @type {Record<number, number>} */
+    const owed = {};
+    for (const [k, v] of Object.entries(roll.owed ?? {})) if (Number.isSafeInteger(v) && v > 0) owed[Number(k)] = v;
+    const last = base ?? prev?.factions ?? null;
+    const changes = last ? rollMovesOf(last, base ? lastOwed : (prev?.owed ?? {}), a.base, owed) : [];
+    setStandingOwed(owed);
     base = a.base;
-    keep({ seq: roll.seq, factions: a.base });
+    lastOwed = owed;
+    keep({ seq: roll.seq, factions: a.base, owed });
     heldKey = rollMembersKey(membersOf(roll.members));
     wait = ROLL_RETRY_MS;
     nextAt = now();
@@ -187,7 +195,8 @@ export function createRollTracker({
     seats = rollSeatsOf(roll.seats);
     heardAt = now();
     onSeats(seats, before);
-    onStanding(changes, !last);
+    onStanding(changes, !firstSaid);   // AUDIT GUILD-WORDS L2-5: once a page - a reseed is no first word
+    firstSaid = true;
   };
 
   async function first(/** @type {string} */ id, /** @type {string} */ ls, /** @type {Record<number, number>} */ values) {
@@ -198,8 +207,9 @@ export function createRollTracker({
     // the base the answer is adopted over: the seed itself, when this read made the Roll; the kept adoption, when the Roll
     // still stands where the save last saw it (whatever the save holds past it was never claimed); else this page's start
     const k = rollKeptOf(kept());
-    const from = r.data.seeded ? values : k && k.seq === r.data.from ? k.factions : /** @type {Record<number, number>} */ (values0);
-    adopt(from, {}, roll);
+    const still = !r.data.seeded && !!k && k.seq === r.data.from;
+    const from = r.data.seeded ? values : still ? /** @type {any} */ (k).factions : /** @type {Record<number, number>} */ (values0);
+    adopt(from, {}, roll, still ? k : null);
   }
 
   /** The claim due now, or null: the one still out, or what moved since the Roll's last word. */

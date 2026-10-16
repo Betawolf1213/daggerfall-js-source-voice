@@ -280,7 +280,9 @@ export async function claimRoll({ db, nowS, rand }, player, body) {
       // CHAP2a (AUDIT CHAP R1's line, Mac: "Approved"): a NEW membership is recorded only where the Roll's own standing
       // with the guild meets DFU's join (`joinRecordable` - AUDIT CHAP2 S7: what it owes counted; D2: the underworld two
       // at any standing) - one already on the Roll stays, whatever its standing since
-      const member = ranks.has(f) && (row.member || joinRecordable(line.rep + line.owed, f));
+      // AUDIT GUILD-WORDS (L6): the standing before the claim's lines or after them - a join the client made at 0 and a loss
+      // in the same claim's minute (a quest's script, a crime) left a real member off the Roll, and off its own writ
+      const member = ranks.has(f) && (row.member || joinRecordable(Math.max(row.rep + row.owed, line.rep + line.owed), f));
       // the tenure: kept while a member stays one, begun the first time the service sees one, ended when it leaves; the
       // rank never past what the Roll's own reputation allows (AUDIT CHAP S5), nor past the book's 7 (CHAP4a: 8 and 9 are
       // seats, Chapters-Arc 3.5)

@@ -12,7 +12,8 @@
 // here now and both skins draw it: the classic box as DFU's tab-stopped
 // table, the enhanced page as its own rows.
 
-import { activeMemberships, GUILDS, getTitle, reviewDaysLeft } from './guilds.js';
+import { activeMemberships, GUILDS, getTitle } from './guilds.js';
+import { reviewWarnings } from './guildServiceFlow.js';   // AUDIT GUILD-WORDS L1-2: the review's warnings, as the hall says them
 import { standingOwedOf } from './standingOwed.js';   // STANDING-WORDS: what the Roll still owes, online
 import { templeOf, orderOf } from './guildVariants.js';
 import { getReputation } from './factionRep.js';
@@ -43,10 +44,10 @@ export function guildForMembership(membership) {
  * the language has none. The book is only ever drawn; the faction
  * record keeps FACTION.TXT's name, which is the key.
  * STANDING-WORDS (Field-Bugs-2026-10-15c): each row also carries what the Roll still owes the guild online (`owed`), and
- * a probation's days to its review on `now` - the character's own date, where the caller has one (`reviewIn`, null
- * without a probation or a date).
+ * the review's warnings - a probation's stakes and a demotion before it lands, on `now`, the character's own date where
+ * the caller has one (`warnings`, guildServiceFlow.js reviewWarnings - AUDIT GUILD-WORDS L1-2).
  * @param {any} entity @param {{ now?: any }} [o]
- * @returns {{ affiliation: string, title: string, rep: number, factionId: number, probation: boolean, owed: number, reviewIn: number | null }[]}
+ * @returns {{ affiliation: string, title: string, rep: number, factionId: number, probation: boolean, owed: number, warnings: string[] }[]}
  */
 export function affiliations(entity, { now = null } = {}) {
   const out = [];
@@ -61,7 +62,7 @@ export function affiliations(entity, { now = null } = {}) {
       factionId: guild.factionId,
       probation: !!membership.probation,   // REP6: on probation - the next review below -10 expels
       owed: standingOwedOf(guild.factionId),   // STANDING-WORDS
-      reviewIn: membership.probation && now ? reviewDaysLeft(membership, now) : null,
+      warnings: entity?.factionRep ? reviewWarnings(entity, guild, activeMemberships(entity), entity.factionRep, { now }) : [],
     });
   }
   return out;

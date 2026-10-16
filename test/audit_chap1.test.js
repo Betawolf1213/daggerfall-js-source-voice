@@ -209,7 +209,7 @@ test('AUDIT CHAP C1/C2/C4: every adoption is kept; the next page, finding the Ro
   const p = tab(io, { held: { 40: 16, 41: 0 }, kept: { seq: 4, factions: { 40: 10, 41: 0 } } });
   p.tracker.tick(); await p.settle();
   assert.equal(p.h[40], 16, 'the save\'s unclaimed 6 kept');
-  assert.deepEqual(p.box.kept, { seq: 4, factions: rollAdopt({}, {}, {}, { 40: 10, 41: 0 }).base });
+  assert.deepEqual(p.box.kept, { seq: 4, factions: rollAdopt({}, {}, {}, { 40: 10, 41: 0 }).base, owed: {} });   // PIN MOVED (AUDIT GUILD-WORDS L2-1): the owed kept with it
   p.tracker.tick(); await p.settle();
   assert.deepEqual(io.calls[1].deltas, { 40: 6 }, 'and claimed');
   // a Roll that moved on since the save (a claim the save never saw): the save's past is not this page's to claim

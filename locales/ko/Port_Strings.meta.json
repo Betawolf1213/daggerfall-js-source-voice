@@ -6110,18 +6110,38 @@
   "by": "claude-in-session"
  },
  "chapters.standing.item": {
-  "en": "3464c7c52de7",
-  "tr": "3b235c27a96b",
+  "en": "1647b73883c7",
+  "tr": "3a329ea19792",
   "by": "claude-in-session"
  },
  "chapters.standing.itemOwed": {
-  "en": "960843819663",
-  "tr": "61e805b07fad",
+  "en": "8debccdb8f05",
+  "tr": "424db8d0c45a",
   "by": "claude-in-session"
  },
  "chapters.standing.line": {
   "en": "213c3d0d15c5",
   "tr": "c2794a2bd1df",
+  "by": "claude-in-session"
+ },
+ "chapters.standing.others": {
+  "en": "24f202714ef1",
+  "tr": "7fea26ba0c66",
+  "by": "claude-in-session"
+ },
+ "chapters.standing.othersOnly": {
+  "en": "4f3e4612b6ed",
+  "tr": "c2fb294a2ebd",
+  "by": "claude-in-session"
+ },
+ "chapters.standing.paid": {
+  "en": "bdcf55cbe49d",
+  "tr": "c6162b1cfe65",
+  "by": "claude-in-session"
+ },
+ "chapters.standing.paidOwed": {
+  "en": "f16c12f565c7",
+  "tr": "c5a8fc8a9ba3",
   "by": "claude-in-session"
  },
  "chronicle.quests.abandon": {
@@ -7800,13 +7820,33 @@
   "by": "claude-in-session"
  },
  "guild.probation.due": {
-  "en": "19f7f3a7b836",
-  "tr": "608b76324efc",
+  "en": "e5186724e6bc",
+  "tr": "a0acc7a43414",
+  "by": "claude-in-session"
+ },
+ "guild.probation.ends": {
+  "en": "7ef876f1cc3c",
+  "tr": "c330da6576d9",
   "by": "claude-in-session"
  },
  "guild.probation.in": {
-  "en": "ee50a39dffec",
-  "tr": "79c06f8b1bd1",
+  "en": "432d83f80a1a",
+  "tr": "adad9bc0f982",
+  "by": "claude-in-session"
+ },
+ "guild.probation.skills": {
+  "en": "1df2371f2c0a",
+  "tr": "1a7b142245b7",
+  "by": "claude-in-session"
+ },
+ "guild.rankNeeds.falls": {
+  "en": "72bf842829e3",
+  "tr": "b8ea32aa3f8d",
+  "by": "claude-in-session"
+ },
+ "guild.rankNeeds.fallsRep": {
+  "en": "44bb4c3d35af",
+  "tr": "17414ed1f9b0",
   "by": "claude-in-session"
  },
  "guild.rankNeeds.high": {
@@ -7831,17 +7871,17 @@
  },
  "guild.rankNeeds.reputationOwed": {
   "en": "1dead1b02645",
-  "tr": "11606963c241",
+  "tr": "801813011cd2",
   "by": "claude-in-session"
  },
  "guild.rankNeeds.seat": {
   "en": "7b20e3a58757",
-  "tr": "e79e252c47dc",
+  "tr": "519e4d43604e",
   "by": "claude-in-session"
  },
  "guild.rankNeeds.seatMerit": {
-  "en": "8235ff83c4c1",
-  "tr": "400ecb9fd566",
+  "en": "91ae8aed49fb",
+  "tr": "cf87fca7ef3b",
   "by": "claude-in-session"
  },
  "guild.rankNeeds.second": {
@@ -7855,8 +7895,8 @@
   "by": "claude-in-session"
  },
  "guild.seatService": {
-  "en": "93954193eb4e",
-  "tr": "03b90dffc67e",
+  "en": "69b5e498b61a",
+  "tr": "7df0b368c39b",
   "by": "claude-in-session"
  },
  "holdings.horse.boons.hungry": {
@@ -7885,8 +7925,8 @@
   "by": "claude-in-session"
  },
  "knight.seatHouse": {
-  "en": "936303b3a997",
-  "tr": "eb17d0f58255",
+  "en": "5b2a4463022a",
+  "tr": "772e1a64d331",
   "by": "claude-in-session"
  },
  "lamp.granted": {
@@ -12985,8 +13025,8 @@
   "by": "claude-in-session"
  },
  "notice.chapters.rank.words": {
-  "en": "39979be9c655",
-  "tr": "8f8684bb8527",
+  "en": "9c08d1ae2e24",
+  "tr": "9298c27242e5",
   "by": "claude-in-session"
  },
  "notice.chapters.standing.name": {
@@ -12995,8 +13035,8 @@
   "by": "claude-in-session"
  },
  "notice.chapters.standing.words": {
-  "en": "40442ef0b890",
-  "tr": "87ecd50e902f",
+  "en": "7335eba15403",
+  "tr": "c75639ef74f8",
   "by": "claude-in-session"
  },
  "pause.ask.hint": {
@@ -13095,8 +13135,8 @@
   "by": "claude-in-session"
  },
  "pause.guilds.owed": {
-  "en": "a28f42249804",
-  "tr": "9df4cbd36863",
+  "en": "7b59fea88ee6",
+  "tr": "3d9245de76f1",
   "by": "claude-in-session"
  },
  "pause.guilds.probation": {
@@ -19105,13 +19145,13 @@
   "by": "claude-in-session"
  },
  "tutorials.chapters.body1": {
-  "en": "013dee043fa6",
-  "tr": "5bc3ef010c51",
+  "en": "c297e0113310",
+  "tr": "3062b0b2c945",
   "by": "claude-in-session"
  },
  "tutorials.chapters.body2": {
-  "en": "a00e361bcb4e",
-  "tr": "264cfd503947",
+  "en": "d94c4e264c5d",
+  "tr": "01830df9f6a3",
   "by": "claude-in-session"
  },
  "tutorials.chapters.title": {
@@ -19121,12 +19161,12 @@
  },
  "tutorials.chapters.trigger": {
   "en": "365aec48fe12",
-  "tr": "593cb3fb232b",
+  "tr": "62daa807bdbb",
   "by": "claude-in-session"
  },
  "tutorials.guilds.online": {
-  "en": "b4c2da555bc1",
-  "tr": "fa83b11d4e3a",
+  "en": "f35d174fbc3f",
+  "tr": "d325a0b25683",
   "by": "claude-in-session"
  },
  "tutorials.kingsGambit.body1": {

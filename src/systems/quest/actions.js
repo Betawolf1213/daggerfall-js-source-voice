@@ -62,6 +62,8 @@ import { raisedSince } from './questStamps.js';   // TIME3: a wave's interval ch
 import { waveIsAwaited, questWaitsShort, ONLINE_DELAY_SECONDS } from './clock.js';   // WAVE-WAIT: a wave the quest waits on comes on the short wait online
 import { stringHash } from '../../formats/netRuntime.js';   // VERMIN-SHARED: a shared copy's pick, seeded (a leaf)
 import { seededFirst } from '../wind.js';   // VERMIN-SHARED: the port's one seeded die (imports nothing)
+import { factionRootOf, QUESTOR_IDS } from '../factionRep.js';   // QSCRIPT-FREE: which guild a standing belongs to
+import { GUILD_FACTION_IDS, DIVINES, ORDERS } from '../guildFactions.js';   // QSCRIPT-FREE: the guilds' roots
 /** TIME3 (bible/06-Systems/Online-Time-Arc.md 6.3): the SKY a quest reads an hour, a date or a season on - its own
  *  seam, and the quest's clock where none is given (offline, a headless quest: DFU's one clock). */
 const skySecondsOf = (quest) => (quest?.skySeconds ?? quest?.nowSeconds)?.() ?? 0;
@@ -2119,9 +2121,32 @@ export class ChangeReputeWith extends ActionTemplate {
   update(_caller) {
     const person = this.parentQuest.getPerson(this.target);
     if (!person) { this.setComplete(); return; }
-    this.parentQuest.hooks?.changeReputation?.(person.factionId, this.amount, true);
+    if (!ownGuildLoss(this.parentQuest, person, this.amount)) this.parentQuest.hooks?.changeReputation?.(person.factionId, this.amount, true);
     this.setComplete();
   }
+}
+
+/** The guilds a quest's own standing can belong to: the four guilds, the eight divines, the knightly orders. */
+const GUILD_ROOTS = new Set([...Object.values(GUILD_FACTION_IDS), ...Object.values(DIVINES), ...Object.values(ORDERS)]);
+
+/**
+ * QSCRIPT-FREE (2026-10-16, bible/01-Overview/Field-Bugs-2026-10-15c.md; a Discord report: "The very first quest i did
+ * for them dropped my rep by 25 points"; Mac, asked: "Waive own-guild losses"): ONLINE, A QUEST'S SCRIPT COSTS NOTHING
+ * WITH THE GUILD THAT GAVE IT. The Mages Guild offers its quests by the player's level (offerFlow.js, MagesGuild.cs
+ * IsSatisfyQuestReqByLevel), so a new apprentice is handed "Guard the Guild" (N0B10Y03: `change repute with _qgiver_ by
+ * -30` for the guarded treasure taken outside its window) and "Protect an Honored Mage" (N0B20Y02: -10, then -50, to a
+ * mage of the guild's own faction) - and the questor's loss reaches the guild whole (the tree's root and a questor take
+ * the full amount, factionRep.js propagateReputationChange). QFAIL-FREE spared the quest END's -2; this spares the
+ * script's own loss to that guild: a negative ChangeReputeWith whose target is the quest's guild questor, or a faction
+ * whose root is the same guild as the quest's (factionRootOf, ChangeReputation's own walk). A loss to any other faction,
+ * every gain, and the whole of it offline are DFU's (ChangeReputeWith.cs). Port-Ledger A.
+ */
+export function ownGuildLoss(quest, person, amount) {
+  if (!(amount < 0) || !quest?.hooks?.sharedClock?.()) return false;
+  if (person?.isQuestor && QUESTOR_IDS.has(person.factionId)) return true;
+  const lookup = (id) => quest.hooks?.world?.getFactionData?.(id) ?? null;
+  const target = factionRootOf(lookup, person?.factionId)?.id;
+  return target != null && GUILD_ROOTS.has(target) && target === factionRootOf(lookup, quest.factionId)?.id;
 }
 
 /** ReputeExceedsDo.cs (Q3-ii): starts the task once the player's

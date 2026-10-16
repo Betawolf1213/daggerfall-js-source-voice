@@ -56,7 +56,7 @@
   {
     "name": "SEAT-LINE-the-merit-line-dropped",
     "file": "src/systems/guildServiceFlow.js",
-    "old": "      t('guild.rankNeeds.seatMerit', 'Each Turning seats the most Merit over {weeks} weeks, among members {days} days in the guild on accounts {age} days old',\n        { weeks: SEAT_MERIT_WEEKS, days: SEAT_TENURE_S / 86_400, age: SEAT_ACCOUNT_AGE_S / 86_400 }),\n",
+    "old": "      t('guild.rankNeeds.seatMerit', 'Each Sunday\\'s Turning seats the most Merit of the last {weeks} weeks, among members {days} real days in the guild, on accounts {age} real days old',\n        { weeks: SEAT_MERIT_WEEKS, days: SEAT_TENURE_S / 86_400, age: SEAT_ACCOUNT_AGE_S / 86_400 }),\n",
     "new": "",
     "tests": [
       "test/fb1015c_seatline.test.js"

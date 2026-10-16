@@ -314,9 +314,7 @@ export function updateRank(memberships, guild, entity, store, now, ctx = null) {
   // CHAP4b (Chapters-Arc 3.5): online, while the Roll holds, ranks 8 and 9 are seats - the host names the highest rank a
   // review gives (`ctx.rankCeiling`, null offline). A review never takes past it, and never demotes a rank above it (the
   // Roll's adoption holds the book at 7 itself, unannounced by DFU's demotion record)
-  const ruled = calculateNewRank(entity, guild, store);
-  const ceiling = ctx?.rankCeiling;
-  const newRank = Number.isInteger(ceiling) && ruled > ceiling ? Math.max(ceiling, Math.min(ruled, m.rank)) : ruled;
+  const newRank = reviewedRank(m, guild, entity, store, ctx);
   if (!waited && !(newRank > m.rank)) return null;   // PROMO-NOW: inside the 28 days, a promotion alone
   // REP6 (the reputation overhaul, 2026-09-29 - "Guilds: probation below 0, and expulsion only below -10, with a warning
   // first"): DFU expels a member the first review their standing is below zero - one failed quest's -2 from 0 was out
@@ -344,6 +342,15 @@ export function updateRank(memberships, guild, entity, store, now, ctx = null) {
   // RR1: TokensExpulsion, the virtual - a mod's own lines stand in for record 668
   const rule = outcome === 'expulsion' ? underworldRuleOf(guild) : null;
   return { outcome, rank: newRank, textId: textIdFor(guild, outcome, newRank, ctx), lines: rule?.expulsion ?? null };
+}
+
+/** THE REVIEW'S RANK (UpdateRank :84's CalculateNewRank, under CHAP4b's ceiling) - what the next review would rule for
+ *  `m` on the standing and the skills as they are now: -1 is the probation's (or the expulsion's) arm. ONE LAW: updateRank
+ *  reads it, and the hall's line reads it to say a demotion before it lands (AUDIT GUILD-WORDS L1-2). */
+export function reviewedRank(m, guild, entity, store, ctx = null) {
+  const ruled = calculateNewRank(entity, guild, store);
+  const ceiling = ctx?.rankCeiling;
+  return Number.isInteger(ceiling) && ruled > ceiling ? Math.max(ceiling, Math.min(ruled, m.rank)) : ruled;
 }
 
 /** STANDING-WORDS (Field-Bugs-2026-10-15c): the days until a membership's next review may move its rank down - the

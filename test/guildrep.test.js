@@ -31,7 +31,7 @@ test('GUILD-REP: the book - affiliation, rank title and live reputation, one row
   const book = affiliations(e);
   assert.equal(book.length, 2, 'a membership naming no guild is no row');
   // REP6: PIN MOVED - the row carries the probation too (the Standing page tags a member on it)
-  assert.deepEqual(book[0], { affiliation: 'The Fighters Guild', title: 'Swordsman', rep: 37, factionId: fighters.factionId, probation: false, owed: 0, reviewIn: null });   // PIN MOVED (STANDING-WORDS): the owed and a probation's days
+  assert.deepEqual(book[0], { affiliation: 'The Fighters Guild', title: 'Swordsman', rep: 37, factionId: fighters.factionId, probation: false, owed: 0, warnings: [] });   // PIN MOVED (STANDING-WORDS, AUDIT GUILD-WORDS L1-2): the owed and the review's warnings
   assert.equal(book[1].affiliation, 'Julianos');
   assert.equal(book[1].rep, -4);
   assert.deepEqual(affiliations(hero({ guildMemberships: {} })), [], 'no memberships, no rows');

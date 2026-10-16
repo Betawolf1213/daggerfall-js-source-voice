@@ -1693,8 +1693,8 @@
   {
     "name": "AUDIT-CHAP2-S7-OWED-JOIN",
     "file": "server-account/src/npcRoll.js",
-    "old": "joinRecordable(line.rep + line.owed, f)",
-    "new": "joinRecordable(line.rep, f)",
+    "old": "line.rep + line.owed), f)",
+    "new": "line.rep), f)",
     "tests": [
       "test/audit_chap1.test.js",
       "test/audit_chap2.test.js",

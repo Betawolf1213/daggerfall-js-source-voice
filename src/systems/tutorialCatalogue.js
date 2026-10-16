@@ -17,7 +17,7 @@
 //   that changes how a system plays changes its page.
 
 import { t } from './textManager.js';   // KG3: a page's words read through the text core when shown
-import { ROLL_GAIN_DAY_MAX, ROLL_BOOK_RANK_MAX } from '../net/npcChapterLaw.js';   // SEAT-WORDS: the Chapters page's numbers, the law's own
+import { ROLL_GAIN_DAY_MAX, ROLL_BOOK_RANK_MAX, SEAT_RANK } from '../net/npcChapterLaw.js';   // SEAT-WORDS: the Chapters page's numbers, the law's own
 
 /** @typedef {{ id: string, group: string, title: string, trigger: string, body: ReadonlyArray<string>, points?: ReadonlyArray<string> }} Tutorial */
 
@@ -312,7 +312,7 @@ export const TUTORIALS = Object.freeze([
       'You can join one temple and one knightly order, and as many guilds as will take you.',
     ],
     // SEAT-WORDS (Field-Bugs-2026-10-15c): online a review stops at 7 - the page said "to rank up, keep working for it"
-    get points() { return [t('tutorials.guilds.online', 'Online, a review stops at rank {cap}: ranks 8 and 9 are chapter seats. See Guild Chapters.', { cap: ROLL_BOOK_RANK_MAX })]; },
+    get points() { return [t('tutorials.guilds.online', 'Online, a review stops at rank {cap}: ranks {officer} and {master} are chapter seats. See Guild Chapters.', { cap: ROLL_BOOK_RANK_MAX, officer: SEAT_RANK.officer, master: SEAT_RANK.master })]; },
   }),
   page({
     id: 'tavern', group: 'towns', title: 'Taverns', trigger: 'When you first visit a tavern.',
@@ -567,8 +567,10 @@ export const TUTORIALS = Object.freeze([
     get trigger() { return t('tutorials.chapters.trigger', 'When you first come online as a member of a guild, temple or order.'); },
     get body() {
       return [
-        t('tutorials.chapters.body1', 'Online, the realm keeps your standing with guilds, temples and orders. It rises at most {max} a day each - the rest follows later - and a failed quest costs nothing.', { max: ROLL_GAIN_DAY_MAX }),
-        t('tutorials.chapters.body2', 'Reviews promote you up to rank {cap}. Ranks 8 and 9 are chapter seats, won by Merit each week. A notice board explains chapters.', { cap: ROLL_BOOK_RANK_MAX }),
+        // AUDIT GUILD-WORDS L3-1, L3-2, L3-4: a quest's own standing (QFAIL-FREE, QSCRIPT-FREE), the pace a quest's reward
+        // keeps (writs and receipts add beyond it - the guide says so), the real day it counts by
+        t('tutorials.chapters.body1', 'Online the realm keeps your guild standing. Quests raise it at most {max} a real day each, the rest following later, and no quest costs standing with the guild that gave it.', { max: ROLL_GAIN_DAY_MAX }),
+        t('tutorials.chapters.body2', 'Reviews promote you up to rank {cap}; ranks {officer} and {master} are chapter seats, won by Merit at each Sunday\'s Turning. A notice board explains chapters.', { cap: ROLL_BOOK_RANK_MAX, officer: SEAT_RANK.officer, master: SEAT_RANK.master }),
       ];
     },
   }),
