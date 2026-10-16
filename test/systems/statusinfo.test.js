@@ -93,7 +93,7 @@ test('ST1: all four hosts open the CHAIN - record 22 first, the health box next'
   // ST1's law becomes: the ORDER is still record 22 then the health
   // box, and all four hosts still reach it, now through one composer
   // instead of four copies of the same three lines.
-  assert.match(src('../../src/ui/statusBox.js'), /\.\.\.statusInfoRows\(lines, macroContext\),\s*\n\s*'',\s*\n\s*\.\.\.healthStatusRows\(entity, lines\),/,
+  assert.match(src('../src/ui/statusBox.js'), /\.\.\.statusInfoRows\(lines, macroContext\),\s*\n\s*'',\s*\n\s*\.\.\.healthStatusRows\(entity, lines\),/,
     'record 22 leads, the health box follows, a blank row between');
   for (const h of ['scenes/world.js', 'scenes/exterior.js', 'scenes/worldModes.js', 'scenes/dungeonContext.js']) {
     const s = src(h);

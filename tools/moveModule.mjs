@@ -46,8 +46,8 @@ import { graph } from '../test/importGraph.mjs';   // the relay's bundle, walked
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
-/** Tracked files that can hold an address. */
-export const TEXT_EXT = /\.(js|mjs|cjs|ts|json|md|html|yml|yaml|toml|css|txt)$/;
+/** Tracked files that can hold an address - the parity scripts' (`.sh`, `.py`) among them. */
+export const TEXT_EXT = /\.(js|mjs|cjs|ts|json|md|html|yml|yaml|toml|css|txt|sh|py)$/;
 /** Files whose text is a record that is never rewritten. */
 export const FROZEN = [/^server(-account)?\/migrations\//, /^package-lock\.json$/, /(^|\/)node_modules\//, /^tools\/moveModule\.mjs$/, /^test\/(?:[\w-]+\/)*tidy1_codemap\.test\.js$/, /^tools\/moveLedger\.json$/];
 /** Every move made, in order: [[from, to], ...]. */
@@ -69,6 +69,9 @@ const SPECIFIER_RES = [
   /(\brequire\s*\(\s*)(['"])(\.{1,2}\/[^'"\n]*)\2/g,
   /(\bcreateRequire\(\s*import\.meta\.url\s*\)\s*\(\s*)(['"])(\.{1,2}\/[^'"\n]*)\2/g,
 ];
+
+/** The leads of the two forms a template can be a specifier in. */
+const TEMPLATED = /^(?:\bimport\s*\(|\bnew URL\()/;
 
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
@@ -109,8 +112,10 @@ export function rewriteSpecifiers(text, file, home, moved, exists = null) {
     text = text.replace(re, (all, lead, quote, spec) => {
       const s = splitSpec(spec);
       if (!s) {
-        // a template's file is chosen at run time, but its folder is not: a moved file's is re-based
-        const t = splitTemplate(spec);
+        // a template's file is chosen at run time, but its folder is not: a moved file's is re-based - where a
+        // template can stand, `import(...)` and `new URL(...)`; a static `from` never takes one, so a `from '../${x}'`
+        // is text a pin quotes (`hosts.includes(`from '../ui/${door}.js'`)`), another file's import
+        const t = TEMPLATED.test(lead) && splitTemplate(spec);
         if (!t || home === file) return all;
         const out = folderFrom(file, t.dir, home) + t.rest;
         if (out === spec) return all;
@@ -257,7 +262,10 @@ export function blindSpots(text, file, fromDirs, moved = new Map(), names = byNa
 }
 
 /** A module's own folder, as the tests spell it. */
-const OWN_DIR = /dirname\(fileURLToPath\(import\.meta\.url\)\)|import\.meta\.dirname/g;
+/** A module's own folder: `dirname(fileURLToPath(import.meta.url))` - `path.`'s too, or off the URL's `.pathname` -
+ *  and `import.meta.dirname`. */
+const OWN = String.raw`(?:path\.)?dirname\((?:fileURLToPath\(import\.meta\.url\)|new URL\(import\.meta\.url\)\.pathname)\)|import\.meta\.dirname`;
+const OWN_DIR = new RegExp(OWN, 'g');
 
 /**
  * ROOTED. A file that finds the tree from its own folder - `join(dirname(fileURLToPath(import.meta.url)), '..')` -
@@ -272,14 +280,15 @@ export function rebaseOwnDir(text, deeper, file = '') {
   const ups = Array(deeper).fill("'..'").join(', ');
   let n = 0;
   const blind = [];
-  text = text.replace(/\b(join|resolve)\(\s*(dirname\(fileURLToPath\(import\.meta\.url\)\)|import\.meta\.dirname)\s*([,)])/g, (all, fn, own, after) => {
+  text = text.replace(new RegExp(String.raw`\b(join|resolve)\(\s*(${OWN})\s*([,)])`, 'g'), (all, fn, own, after) => {
     n++;
     return `${fn}(${own}, ${ups}${after === ',' ? ',' : ')'}`;
   });
   // what is left stands alone: its own folder, raised
-  text = text.replace(/(?<!\b(?:join|resolve)\(\s*)(dirname\(fileURLToPath\(import\.meta\.url\)\)|import\.meta\.dirname)(?!,\s*'\.\.')/g, (all, own) => {
+  text = text.replace(new RegExp(String.raw`(?<!\b(?:join|resolve)\(\s*)(${OWN})(?!,\s*'\.\.')`, 'g'), (all, own) => {
     n++;
-    if (own.startsWith('dirname')) return `${'dirname('.repeat(deeper)}${own}${')'.repeat(deeper)}`;
+    const up = own.startsWith('path.') ? 'path.dirname(' : 'dirname(';
+    if (!own.startsWith('import.meta')) return `${up.repeat(deeper)}${own}${')'.repeat(deeper)}`;
     if (!/\bjoin\b[^;\n]*from 'node:path'/.test(text)) blind.push(`${file}: import.meta.dirname, and no join imported to raise it`);
     return `join(${own}, ${ups})`;
   });

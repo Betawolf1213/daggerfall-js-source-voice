@@ -346,5 +346,5 @@ test('HT-WAIST-BACK: recorded - the HT-WAIST sections of Handheld-Torches.md and
   assert.match(row, /HT-WAIST-BACK/);
   assert.match(row, /straight behind/);
   assert.doesNotMatch(row, /three rear views/, 'the row\'s three-rear-views clause is rewritten');
-  assert.match(row, /test\/htwaistback\.test\.js/);
+  assert.match(row, /test\/player\/eyeOfTheBeholder\/htwaistback\.test\.js/);
 });

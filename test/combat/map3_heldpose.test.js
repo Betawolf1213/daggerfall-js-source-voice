@@ -642,10 +642,10 @@ test('MAP-WEAPON / EM-BUG1: EVERY host asks its own live slot, and the tag it as
   // building; three rigs never grew the term, so the map came up with
   // the weapon drawn over it in every one of them.
   for (const [file, re] of HOSTS) {
-    assert.match(read(`../${file}`), re, `${file}: this host's rig asks ITS OWN slot whether a map holds the screen`);
+    assert.match(read(`../../${file}`), re, `${file}: this host's rig asks ITS OWN slot whether a map holds the screen`);
   }
   for (const [file] of HOSTS) {
-    assert.doesNotMatch(read(`../${file}`), /sheetWindowUp: \(\) => [^\n]*isTravelMap/, `${file}: never back onto the travel tag`);
+    assert.doesNotMatch(read(`../../${file}`), /sheetWindowUp: \(\) => [^\n]*isTravelMap/, `${file}: never back onto the travel tag`);
   }
   const held = read('../../src/ui/heldMap.js');
   // the screen tag is CONSTANT - hands holding a map are not also

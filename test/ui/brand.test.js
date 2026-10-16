@@ -268,9 +268,9 @@ test('BR4: no surface still says the old name - whole, or split across a wordmar
   // notes and br4.json on disk but not yet added, and red in CI on the
   // commit that carried them.)
   const SAID = [
-    /^test\/relwin1\.test\.js:[23]:\/\/ /,
-    /^test\/relwin1\.test\.js:9:\/\/ `artifactName`, so both wrote DaggerfallEnhanced-<v>-win-x64\.exe/,
-    /^test\/landing\.test\.js:\d+:\s*\/\/ logo to the original Daggerfall Enhanced text"\)/,
+    /^test\/tooling\/relwin1\.test\.js:[23]:\/\/ /,
+    /^test\/tooling\/relwin1\.test\.js:9:\/\/ `artifactName`, so both wrote DaggerfallEnhanced-<v>-win-x64\.exe/,
+    /^test\/ui\/enhanced\/landing\.test\.js:\d+:\s*\/\/ logo to the original Daggerfall Enhanced text"\)/,
   ];
   const survivors = hits.split('\n').filter((l) => l && !SAID.some((re) => re.test(l))).join('\n');
   assert.equal(survivors, '', `the old name survives:\n${survivors}`);

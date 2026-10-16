@@ -256,7 +256,7 @@ test('AUDIT-EOTB scope: the bible page states THIS table, and no record says 1:1
   assert.match(page, /\*\*61 authored methods\*\*/, 'the page states the inventory this table holds');
   assert.match(page, /\*\*forty-six\b/i, 'and how many of them are ported');   // CSA-J: OnUpdateSailing and ModCompatibilityChecking's boat arm; ONE-STROKE: less the ping-pong
   assert.match(page, /\*\*fifteen\b/i, 'and how many have no twin');
-  assert.match(page, /test\/eotb_scope\.test\.js/, 'and points at this file');
+  assert.match(page, /test\/player\/eyeOfTheBeholder\/eotb_scope\.test\.js/, 'and points at this file');
 
   // Every IL name the page's no-twin list mentions must be a row
   // here with no port - so the prose cannot drift from the table.

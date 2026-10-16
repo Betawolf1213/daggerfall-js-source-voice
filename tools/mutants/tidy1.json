@@ -155,8 +155,8 @@
   {
     "name": "TIDY5-a-standalone-dirname-left",
     "file": "tools/moveModule.mjs",
-    "old": "    if (own.startsWith('dirname')) return `${'dirname('.repeat(deeper)}${own}${')'.repeat(deeper)}`;",
-    "new": "    if (own.startsWith('dirname')) return own;",
+    "old": "    if (!own.startsWith('import.meta')) return `${up.repeat(deeper)}${own}${')'.repeat(deeper)}`;",
+    "new": "    if (!own.startsWith('import.meta')) return own;",
     "tests": [
       "test/tooling/tidy1_codemap.test.js"
     ]
@@ -238,6 +238,42 @@
     "file": "tools/moveModule.mjs",
     "old": "/(\\bnew URL\\(\\s*)(['\"`])(\\.{1,2}(?:\\/(?:\\$\\{[^}\\n]*\\}|[^'\"`\\n])*)?|[\\w-](?:\\$\\{[^}\\n]*\\}|[^'\"`\\n:])*)\\2(?=\\s*,\\s*import\\.meta\\.url)/g,",
     "new": "/(\\bnew URL\\(\\s*)(['\"`])(\\.{1,2}(?:\\/[^'\"`\\n]*)?|[\\w-](?:\\$\\{[^}\\n]*\\}|[^'\"`\\n:])*)\\2(?=\\s*,\\s*import\\.meta\\.url)/g,",
+    "tests": [
+      "test/tooling/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "TIDY5-path-dirname-raised-bare",
+    "file": "tools/moveModule.mjs",
+    "old": "    const up = own.startsWith('path.') ? 'path.dirname(' : 'dirname(';",
+    "new": "    const up = 'dirname(';",
+    "tests": [
+      "test/tooling/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "TIDY5-a-pathname-root-left",
+    "file": "tools/moveModule.mjs",
+    "old": "const OWN = String.raw`(?:path\\.)?dirname\\((?:fileURLToPath\\(import\\.meta\\.url\\)|new URL\\(import\\.meta\\.url\\)\\.pathname)\\)|import\\.meta\\.dirname`;",
+    "new": "const OWN = String.raw`(?:path\\.)?dirname\\((?:fileURLToPath\\(import\\.meta\\.url\\))\\)|import\\.meta\\.dirname`;",
+    "tests": [
+      "test/tooling/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "TIDY5-a-script-unread",
+    "file": "tools/moveModule.mjs",
+    "old": "export const TEXT_EXT = /\\.(js|mjs|cjs|ts|json|md|html|yml|yaml|toml|css|txt|sh|py)$/;",
+    "new": "export const TEXT_EXT = /\\.(js|mjs|cjs|ts|json|md|html|yml|yaml|toml|css|txt)$/;",
+    "tests": [
+      "test/tooling/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "TIDY5-a-quoted-from-template-re-based",
+    "file": "tools/moveModule.mjs",
+    "old": "        const t = TEMPLATED.test(lead) && splitTemplate(spec);",
+    "new": "        const t = splitTemplate(spec);",
     "tests": [
       "test/tooling/tidy1_codemap.test.js"
     ]

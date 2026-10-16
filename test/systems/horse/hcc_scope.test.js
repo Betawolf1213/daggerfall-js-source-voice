@@ -535,7 +535,7 @@ test('HCC scope: the bible page states THIS table, and a 1:1 claim for this mod 
   assert.match(page, /\*\*398 authored methods\*\*/);
   assert.match(page, /\*\*340 are ported\*\*/);
   assert.match(page, /\*\*58 have no twin\*\*/);
-  assert.match(page, /test\/hcc_scope\.test\.js/);
+  assert.match(page, /test\/systems\/horse\/hcc_scope\.test\.js/);
   const notNames = new Set(NOT.map(([k]) => k.split('::')[0]));
   for (const t of ['DeployedWagonFollowerCollisionFilter', 'HorseCartUiCompatibilityCoordinator', 'TrailingWagonTradeWindow']) assert.ok(notNames.has(t) && page.includes(t), `the page names ${t} among the no-twins`);
   for (const f of ['bible/06-Systems/Horse-Cart-And-Cargo.md', 'bible/01-Overview/Mod-Registry.md', 'vendor/horse-cart-and-cargo/README.md']) {

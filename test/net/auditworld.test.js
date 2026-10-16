@@ -255,7 +255,7 @@ test('AUDIT WORLD: the hosts by source - the dungeon host stamps its memory and 
   // the record
   const arc = rd('bible/06-Systems/Online-Arc.md');
   assert.doesNotMatch(arc, /the only thing shared is presence/, 'D2: the arc\'s head'); assert.doesNotMatch(arc, /none of the\nsharing/, 'D2');
-  assert.doesNotMatch(arc, /a peer's arrows never show/, 'D7'); assert.match(arc, /`test\/online\.test\.js` \(9\)/, 'D8');
+  assert.doesNotMatch(arc, /a peer's arrows never show/, 'D7'); assert.match(arc, /`test\/net\/online\.test\.js` \(9\)/, 'D8');
   assert.match(arc, /## AUDIT WORLD \(2026-09-12\)/, 'the section');
   const mp = rd('bible/11-Multiplayer/Multiplayer.md');
   assert.doesNotMatch(mp, /It holds no game\s+state beyond the roster/, 'D6'); assert.doesNotMatch(mp, /Host migration is a\s+later slice/, 'D6');

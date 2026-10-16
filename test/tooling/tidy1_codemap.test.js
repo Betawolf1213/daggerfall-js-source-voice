@@ -173,6 +173,8 @@ test('TIDY5: a file moved a folder deeper keeps every root it had - a folder, a 
     "import { a } from '../src/net/wire.js';",
     "const root = join(dirname(fileURLToPath(import.meta.url)), '..');",
     'const here = dirname(fileURLToPath(import.meta.url));',
+    "const top = path.join(path.dirname(new URL(import.meta.url).pathname), '..');",
+    'const at = path.dirname(fileURLToPath(import.meta.url));',
     'const d = import.meta.dirname;',
     "const r = new URL('../', import.meta.url);",
     "const s = new URL('..', import.meta.url);",
@@ -182,6 +184,7 @@ test('TIDY5: a file moved a folder deeper keeps every root it had - a folder, a 
     "const rd = (p) => readFileSync(new URL('../' + p, import.meta.url));",
     "const read = (p) => readFileSync(new URL(p, import.meta.url));",
     "const png = (key) => new URL(`../vendor/skins/${key.split('_')[0]}/${key}.png`, import.meta.url);",
+    "assert.ok(hosts.includes(`from '../ui/${door}.js'`));",
     `spawnSync('node', ['-e', "import('./src/net/wire.js')"]);   // test/y.test.js`,
   ].join('\n');
   const there = new Set(['src/net/wire.js', 'tools/lib/x.cjs', 'app/lib/x.cjs', 'test/fixtures/a.json']);
@@ -192,6 +195,8 @@ test('TIDY5: a file moved a folder deeper keeps every root it had - a folder, a 
     "import { a } from '../../src/net/wire.js';",   // once: a test's own import is no subject a pin of another test quotes
     "const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');",
     'const here = dirname(dirname(fileURLToPath(import.meta.url)));',
+    "const top = path.join(path.dirname(new URL(import.meta.url).pathname), '..', '..');",   // off the URL's pathname, path's own
+    'const at = path.dirname(path.dirname(fileURLToPath(import.meta.url)));',
     "const d = join(import.meta.dirname, '..');",
     "const r = new URL('../../', import.meta.url);",   // a folder keeps its slash
     "const s = new URL('../..', import.meta.url);",
@@ -201,6 +206,7 @@ test('TIDY5: a file moved a folder deeper keeps every root it had - a folder, a 
     "const rd = (p) => readFileSync(new URL('../../' + p, import.meta.url));",
     "const read = (p) => readFileSync(new URL(p, import.meta.url));",
     "const png = (key) => new URL(`../../vendor/skins/${key.split('_')[0]}/${key}.png`, import.meta.url);",   // a template that quotes inside its ${}
+    "assert.ok(hosts.includes(`from '../ui/${door}.js'`));",   // a static from takes no template: a host's import, quoted - left
     `spawnSync('node', ['-e', "import('./src/net/wire.js')"]);   // test/net/y.test.js`,   // a child's root-relative import named nothing from test/: left
   ].join('\n'));
   // a URL whose path its caller hands it - `read('../src/x.js')` - is no specifier the tool can see: named, not guessed
@@ -208,6 +214,11 @@ test('TIDY5: a file moved a folder deeper keeps every root it had - a folder, a 
   // a test's name escaped for a pattern escapes its own dots too: `online\.test\.js` is no test.js
   assert.equal(rewritePaths('/`test\\/online\\.test\\.js` \\(9\\)/', new Map([moves[0], ['test/online.test.js', 'test/net/online.test.js']])).text,
     '/`test\\/net\\/online\\.test\\.js` \\(9\\)/');
+  // the parity scripts name tests and modules too (tools/parity/prepare.sh, tools/roadsOracle.py)
+  assert.ok(TEXT_EXT.test('tools/parity/prepare.sh') && TEXT_EXT.test('tools/roadsOracle.py'), 'a .sh or .py is read for addresses');
+  // and without the existence check: a test that names another is not re-based twice through it
+  const pair = new Map([['test/x.test.js', "import { a } from '../src/a.js';   // test/y.test.js"], ['test/y.test.js', "import { a } from '../src/a.js';\n"]]);
+  assert.equal(planMove(moves, pair).writes.get('test/net/x.test.js'), "import { a } from '../../src/a.js';   // test/net/y.test.js");
   // a file that stays has no root to re-base, however its URL is built
   const stay = "const rd = (p) => readFileSync(new URL('../' + p, import.meta.url));";
   assert.equal(rewriteSpecifiers(stay, 'test/z.test.js', 'test/z.test.js', new Map(moves)).text, stay);
@@ -230,7 +241,8 @@ test('TIDY1: the move tool names the sweeps it cannot follow', () => {
   // what no rewrite can place: a sibling's quoted ./x.js outside the folder it moved to, and a path escaped for a pattern
   const moved = new Map([['src/systems/arenaBout.js', 'src/systems/arena/arenaBout.js'], ['src/systems/arenaText.js', 'src/systems/arena/arenaText.js']]);
   assert.equal(blindSpots("assert.match(src, /from '\\.\\/arenaBout\\.js'/); x.includes('./arenaBout.js')", 'test/x.test.js', dirs, moved).length, 1, 'a quoted ./arenaBout.js');
-  assert.equal(blindSpots("import { T } from './arenaText.js';", 'src/systems/arena/arenaBout.js', dirs, moved).length, 0, 'beside it in the new folder, ./ is right');
+  assert.equal(blindSpots("import { T } from './arenaText.js';", 'src/systems/arena/arenaBout.js', dirs, moved).length, 0, 'an import\'s own ./ is the specifier pass\'s');
+  assert.equal(blindSpots("const own = src.includes('./arenaText.js');", 'src/systems/arena/arenaBout.js', dirs, moved).length, 0, 'beside it in the new folder, a quoted ./ is right');
 });
 
 test('TIDY1: the move tool names every file of the relay\'s bundle it would change', () => {

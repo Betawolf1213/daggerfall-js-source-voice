@@ -257,7 +257,7 @@ test('SERPENT4 a hand\'s own weapons ("also let players on the ship be able to h
   assert.deepEqual(validSerpentIn({ k: 'hit', d: 12, z: 0, r: 1 }), { k: 'hit', d: 12, z: 0, r: 1 });
   assert.deepEqual(validSerpentIn({ k: 'hit', d: 12, z: 0 }), { k: 'hit', d: 12, z: 0 });
   assert.equal(validSerpentIn({ k: 'hit', d: 12, z: 0, r: 2 }), null);
-  assert.ok(src('../../../server/src/index.js').includes('serpentBrain.applySerpentHit(f, a.sub, m.d, m.z, pose, now, m.r === 1)'), 'the relay hears its `r`');
+  assert.ok(src('../server/src/index.js').includes('serpentBrain.applySerpentHit(f, a.sub, m.d, m.z, pose, now, m.r === 1)'), 'the relay hears its `r`');
 });
 
 test('SERPENT4 a hand\'s weapons on the client: its segments are a hand\'s marks only while no ship of my own is under me; a blow of mine on one is gathered into its own word of its zone (`r` 1), never into the guns\'; a shaft of mine whose step passes through a box stops in it and is handed to the host - an enemy\'s is not; a harmful missile of mine meets a box mark (mutants: the marks to a captain; the hand\'s word without its `r`; the shaft flying through; an enemy shaft handed)', () => {

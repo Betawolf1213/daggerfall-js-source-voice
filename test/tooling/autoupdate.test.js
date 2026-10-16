@@ -25,7 +25,7 @@ import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
 const { updateTransport } = require('../../app/lib/autoUpdate.cjs');
-const root = path.join(path.dirname(new URL(import.meta.url).pathname), '..');
+const root = path.join(path.dirname(new URL(import.meta.url).pathname), '..', '..');
 const read = (p) => fs.readFileSync(path.join(root, p), 'utf8');
 
 test('DA7: the transport table - an installed NSIS or AppImage copy updates in place; macOS, the portable exe and an unpackaged run keep the notice', () => {

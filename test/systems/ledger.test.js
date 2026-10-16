@@ -71,7 +71,7 @@ function figure(label) {
 test('L2 ledger: the gated block exists and names its own test', () => {
   // If the block is renamed or dropped, the figures below stop being
   // gated silently - so the block's own presence is pinned first.
-  assert.match(LEDGER, /### Derived figures \(GATED - `test\/ledger\.test\.js`\)/);
+  assert.match(LEDGER, /### Derived figures \(GATED - `test\/systems\/ledger\.test\.js`\)/);
   assert.match(LEDGER, /Rows above may quote these figures but must not\s+restate them independently/,
     'the block states the rule that keeps rows from re-introducing drift');
 });

@@ -230,7 +230,7 @@ test('PX24d: EVERY enhanced door has a host that calls it', () => {
     ['pauseDoor', 'openPauseFlow'],
   ]) {
     assert.ok(hosts.includes(`${fn}(`), `${door}: no host calls ${fn} - the door opens on nothing`);
-    assert.ok(hosts.includes(`from '../../../ui/${door}.js'`), `${door} is imported by a host`);
+    assert.ok(hosts.includes(`from '../ui/${door}.js'`), `${door} is imported by a host`);
   }
 });
 
