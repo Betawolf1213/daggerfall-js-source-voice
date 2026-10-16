@@ -204,10 +204,11 @@ test('EG-G2 THE BUDGET, MEASURED (section 11.9): over every circle of three seed
   span.ride(t, 0.016, null, false);
   span.cull(null, null);
   const at = egPieceAt(found.d, t), want = realmToDungeon(found.s.x0 + found.d.x + at.dx, found.d.y, found.d.z + at.dz);
-  const g = R.made.find((q) => q.subMeshes.some((sm) => sm.textureRecord === 60));
-  const ps = g.positions;
+  // PIN MOVED (EG-LOOK, the spans' pieces): a Drift is the band's slab now (world/egPlatformModel.js), in the movers' kind -
+  // its copy found by its top's own corner (the Steps' 3 x 2.4 box), where the law swings it; it was the Steps' record 60
+  const corner = [want[0] - 1.5, want[1], want[2] - 1.2];
   let hit = false;
-  for (let i = 0; i < ps.length; i += 3) if (Math.abs(ps[i] - want[0]) < 2 && Math.abs(ps[i + 2] - want[2]) < 2) { hit = true; break; }
+  for (const g of R.made) { const ps = g.positions; for (let i = 0; i < ps.length && !hit; i += 3) if (Math.abs(ps[i] - corner[0]) < 1e-3 && Math.abs(ps[i + 1] - corner[1]) < 1e-3 && Math.abs(ps[i + 2] - corner[2]) < 1e-3) hit = true; }
   assert.ok(hit, 'a Drift\'s copy where the law swings it');
   const specs = egCircleSpecs(7, found.c, 0), first = specs[0];
   const eye = egToDungeon(first, 0, 1.7, first.arrive.z), look = egToDungeon(first, 0, 1.7, first.arrive.z + 30);

@@ -27,7 +27,8 @@ import { egBandArt, egBandArchive, EG_DRESS_RECORDS, EG_BEAT_TELL_RECORDS, EG_BA
 import { createEgOccluders } from '../src/scenes/egOcclude.js';   // EG-ZN: the circle's occluders' dither pass, in the stand's own source
 import { buildEgLookModel } from '../src/world/egLook.js';
 import { Collider } from '../src/player/collider.js';
-import { createEgGroundLook } from '../src/scenes/egGroundLook.js';   // EG-LOOK: the circle's ruin and its band's wreck, stood with it
+import { createEgGroundLook } from '../src/scenes/egGroundLook.js';
+import { EG_BEAT_STONE_RECORDS, EG_CRUMBLE_TELL_RECORDS } from '../src/world/egPlatformArt.js';   // EG-LOOK: the spans' pieces' own pictures   // EG-LOOK: the circle's ruin and its band's wreck, stood with it
 
 const SEED = 0x5eed1234;
 const B = '0123456789abcdef';
@@ -219,8 +220,12 @@ test('EG10 THE SWAP IN PLACE, EXECUTED - THE FREE PINS (scenes/worldModes.js egS
   // PIN MOVED (EG-ZL, Elite-Gates.md section 10.3): a band's Beats' own pictures (its warning in the palette, its return -
   // world/egBandArt.js EG_BEAT_TELL_RECORDS) go up with its first span that lays a Beat, once a session as its dress does
   const tellTex = (b) => (Array.from({ length: 21 }, (_, i) => i + 1).some((c) => egBandOfCircle(c) === b && egCircleSpecs(SEED, c).some((s) => s.steps.some((q) => q.kind === 'beat'))) ? (EG_BEAT_TELL_RECORDS.warn[0].length + EG_BEAT_TELL_RECORDS.back.length) * 2 : 0);
+  // PIN MOVED (EG-LOOK, the spans' pieces - world/egPlatformArt.js): a band's Beats' stone dissolving with their dials and its
+  // Crumbles' stages in its own flags go up with its first span that lays one, once a session, as the Beats' pictures do
+  const lays = (b, kinds) => Array.from({ length: 21 }, (_, i) => i + 1).some((c) => egBandOfCircle(c) === b && egCircleSpecs(SEED, c).some((s) => s.steps.some((q) => kinds.includes(q.kind))));
+  const pieceTex = (b) => (lays(b, ['beat']) ? EG_BEAT_STONE_RECORDS.reduce((n, q) => n + q.warn.length + q.back.length, 0) * 2 : 0) + (lays(b, ['crumble', 'bone']) ? EG_CRUMBLE_TELL_RECORDS.length * 2 : 0);
   const bands = new Set(Array.from({ length: 21 }, (_, i) => egBandOfCircle(i + 1)));
-  assert.equal(R.textures, tex + [...bands].filter((b) => b !== egBandOfCircle(1)).reduce((n, b) => n + bandTex(b) + tellTex(b), 0), 'each band\'s dress (and its Beats\' pictures) uploaded once a session, never by a swap');
+  assert.equal(R.textures, tex + [...bands].filter((b) => b !== egBandOfCircle(1)).reduce((n, b) => n + bandTex(b) + tellTex(b) + pieceTex(b), 0), 'each band\'s dress (and its Beats\' and its pieces\' pictures) uploaded once a session, never by a swap');
   assert.equal(R.made - R.freed, base.live);
   assert.equal(R.wm.meshKey, egCircleKey(SEED, 1));
 });

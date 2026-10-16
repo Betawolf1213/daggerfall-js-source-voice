@@ -23,7 +23,9 @@ import { SD_STEPS_RECORD, beatArt } from '../src/world/sdStepsArt.js';
 import { BAYER4 } from '../src/world/sdPixelKit.js';
 import { SD_CRUMBLE_DELAY, SD_CRUMBLE_BACK, SD_CRUMBLE_FALL_G, SD_BEAT_CYCLE, SD_BEAT_SOLID, SD_BEAT_BLINK, SD_GUST_EVERY } from '../src/world/sdSteps.js';
 import { SD_REALM_ARCHIVE } from '../src/world/sdRealm.js';
-import { egBeatWarnArt, egBeatBackArt, egBeatTellMaps, egDissolveArt, egTellArchive, EG_BEAT_TELL_RECORDS, EG_DISSOLVE_TEXELS } from '../src/world/egBandArt.js';
+import { egBeatWarnArt, egBeatBackArt, egBeatTellMaps, egDissolveArt, egTellArchive, egBandArchive, EG_BEAT_TELL_RECORDS, EG_DISSOLVE_TEXELS } from '../src/world/egBandArt.js';
+import { EG_KIT_RECORD } from '../src/world/egKit.js';   // EG-LOOK: the Galleries' anchor rib's record
+import { EG_BEAT_STONE_RECORDS, EG_CRUMBLE_TELL_RECORDS } from '../src/world/egPlatformArt.js';   // EG-LOOK: a Beat's stone dissolving with its dial
 import { egCircleEdges, EG_TRACK, EG_FOG_FLOOR } from '../src/world/egLook.js';
 import { egCircleLights, egToDungeon, EG_LAMP, EG_DROP_LAMP } from '../src/world/egHall.js';
 import { egCircleSpecs, egBandOfCircle } from '../src/net/egLaw.js';
@@ -185,6 +187,11 @@ test('EG-ZL A BEAT\'S TELLS (section 10.3: "a sector sweeping through the solid 
   const plates = (beat) => egCircleSpecs(seed, c, 0).flatMap((s) => s.steps.filter((q) => q.kind === 'beat' && q.beat === beat).map((q) => realmToDungeon(s.x0 + q.x, q.y, q.z)));
   const kindOf = (d) => { const p = d.gpu.positions; for (const [beat, ps] of [[0, plates(0)], [b.q.beat, plates(b.q.beat)]]) if (ps.some((w) => Math.abs(p[0] - w[0]) < 2 && Math.abs(p[2] - w[2]) < 2)) return beat; return null; };
   const W = egBeatTellMaps(band, 'standard'), base = 0;
+  // PIN MOVED (EG-LOOK, the spans' pieces - world/egPlatformModel.js egBeatModel): a Beat is the Steps' dial set in the band's
+  // stone, so its warning's and its return's maps carry its dial's stage (the same picture as before) and its stone's own
+  // stage beside it (world/egPlatformArt.js EG_BEAT_STONE_RECORDS) - it dissolves whole. Before: the dial's map alone.
+  const D = (Wp, list, k) => new Map([...Wp[list][k], ...EG_BEAT_STONE_RECORDS.map((q) => [`${egBandArchive(band)}_${q.rec}`, `${egTellArchive(band)}_${q[list][k]}`])]);
+  const same = (got, want, what) => { assert.ok(got instanceof Map && got.size === want.size && [...want].every(([k, v]) => got.get(k) === v), `${what}: ${got && [...got]} against ${[...want]}`); };
   const at = (u) => { span.ride(base + u, 0.016, null, false); span.cull(null, null); return { a: beatDraw(0)?.texRemap ?? null, b: beatDraw(b.q.beat)?.texRemap ?? null, marks: Object.fromEntries(span.marks.beats.map((x) => [x.kind, x.map])) }; };
   let m = at(0.5);
   assert.equal(m.marks['beat@0'], SD_BEAT_FRAMES[2], 'its dial at frame 2');
@@ -192,15 +199,17 @@ test('EG-ZL A BEAT\'S TELLS (section 10.3: "a sector sweeping through the solid 
   assert.equal(m.b, m.marks[`beat@${Math.round(b.q.beat * 1000)}`], 'the other beat on its own draw');
   m = at(b.q.beat + 0.07);
   assert.equal(m.marks['beat@0'], SD_BEAT_FRAMES[9]);
-  assert.equal(m.marks[`beat@${Math.round(b.q.beat * 1000)}`], W.back[1], 'the other beat dithering back in at its own 0.07 s');
-  assert.equal(m.a, SD_BEAT_FRAMES[9]); assert.equal(m.b, W.back[1]);
-  for (let k = 0; k < 4; k++) assert.equal(at(SD_BEAT_SOLID - SD_BEAT_BLINK + (k + 0.5) * SD_BEAT_OUT_STAGE_S).marks['beat@0'], W.warn[k], `its warning, stage ${k}`);
-  for (const [u, k] of [[0.02, 2], [0.07, 1], [0.12, 0]]) assert.equal(at(u).marks['beat@0'], W.back[k], `back in at ${u} s`);
+  same(m.marks[`beat@${Math.round(b.q.beat * 1000)}`], D(W, 'back', 1), 'the other beat dithering back in at its own 0.07 s');
+  assert.equal(m.a, SD_BEAT_FRAMES[9]); same(m.b, D(W, 'back', 1), 'on its own draw'); assert.equal(m.b, m.marks[`beat@${Math.round(b.q.beat * 1000)}`]);
+  for (let k = 0; k < 4; k++) same(at(SD_BEAT_SOLID - SD_BEAT_BLINK + (k + 0.5) * SD_BEAT_OUT_STAGE_S).marks['beat@0'], D(W, 'warn', k), `its warning, stage ${k}`);
+  for (const [u, k] of [[0.02, 2], [0.07, 1], [0.12, 0]]) same(at(u).marks['beat@0'], D(W, 'back', k), `back in at ${u} s`);
   assert.equal(at(0.2).marks['beat@0'], SD_BEAT_FRAMES[1]);
   // the uploads: the warning's four and the return's three, as cutouts, under the band's tell archive, once
-  const recs = R.up.filter((u) => u.a === egTellArchive(band));
-  assert.deepEqual(recs.map((u) => u.rec).sort((x, y) => x - y), [...EG_BEAT_TELL_RECORDS.warn[0], ...EG_BEAT_TELL_RECORDS.back].sort((x, y) => x - y));
-  assert.ok(recs.every((u) => u.o.cutout === true), 'cutouts');
+  // PIN MOVED (EG-LOOK): with them its stone's dissolving (cutouts too), and a circle's Crumbles' stages in the band's flags
+  const crumbles = egCircleSpecs(seed, c, 0).some((sp) => sp.steps.some((q) => q.kind === 'crumble' || q.kind === 'bone'));
+  const recs = R.up.filter((u) => u.a === egTellArchive(band)), stone = EG_BEAT_STONE_RECORDS.flatMap((q) => [...q.warn, ...q.back]);
+  assert.deepEqual(recs.map((u) => u.rec).sort((x, y) => x - y), [...EG_BEAT_TELL_RECORDS.warn[0], ...EG_BEAT_TELL_RECORDS.back, ...stone, ...(crumbles ? EG_CRUMBLE_TELL_RECORDS : [])].sort((x, y) => x - y));
+  assert.ok(recs.filter((u) => !EG_CRUMBLE_TELL_RECORDS.includes(u.rec)).every((u) => u.o.cutout === true), 'cutouts');
   // gone: its ghost, its hand running back
   at(3.0);
   const g = span.ghosts, slot = g.of.findIndex((q) => q.h === a.spec.h && q.i === a.q.i);
@@ -212,7 +221,7 @@ test('EG-ZL A BEAT\'S TELLS (section 10.3: "a sector sweeping through the solid 
     setPref('dangerPalette', 'contrast');
     const Wc = egBeatTellMaps(band, 'contrast');
     assert.notEqual(Wc.warn[0], W.warn[0]);
-    assert.equal(at(SD_BEAT_SOLID - SD_BEAT_BLINK + 0.05).marks['beat@0'], Wc.warn[0], 'the palette\'s warning');
+    same(at(SD_BEAT_SOLID - SD_BEAT_BLINK + 0.05).marks['beat@0'], D(Wc, 'warn', 0), 'the palette\'s warning');
     assert.ok(R.up.some((u) => u.rec === EG_BEAT_TELL_RECORDS.warn[1][0]), 'its pictures up');
   } finally { setPref('dangerPalette', 'standard'); }
   // a renderer with no pictures to hold: the Steps' own frames through the warning
@@ -313,7 +322,10 @@ test('EG-ZL MY CRUMBLE\'S TELLS (section 10.3: "three crack stages, and the rewi
 test('EG-ZL A DRIFT\'S HANG (section 10.3: "hangs on two chains from an anchor 18 m up (an arch rib, a ribcage, a moon-shard, a crane hook), leaning as it swings"): each band its own anchor over the same two chains, the chains down to their brackets beside the deck; the hang turned about its pivot SD_PENDULUM.len over the deck\'s rest by the law\'s own swing, its foot beside the deck where the law swings it; batched a kind a hall, its copies written turned (mutants: the pivot on the deck; the lean dropped; a kind that only moves; the hall\'s kinds one)', () => {
   const models = [0, 1, 2, 3].map((b) => egHangModel(b));
   for (let i = 0; i < 4; i++) for (let j = i + 1; j < 4; j++) assert.notDeepEqual([...models[i].positions].slice(-30), [...models[j].positions].slice(-30), `bands ${i} and ${j}: their own anchors`);
-  assert.deepEqual(models[0].subMeshes.map((s) => s.textureRecord), [1, 56], 'the Galleries\' rib in marble, gold leaf on its crown');
+  // PIN MOVED (EG-LOOK, the spans' pieces): the Galleries' rib in the kit's voussoirs (world/egKit.js EG_KIT_RECORD.voussoir),
+  // every hang in its band's own archive: [1, 56] under the Hour's before, moved by the dress
+  assert.deepEqual(models[0].subMeshes.map((s) => s.textureRecord), [1, EG_KIT_RECORD.voussoir], 'the Galleries\' rib in voussoirs, gold leaf on its crown');
+  models.forEach((m, b) => assert.ok(m.subMeshes.every((sm) => sm.textureArchive === egBandArchive(b)), `band ${b}: its own archive`));
   for (const m of models) {
     let lo = Infinity, hi = -Infinity;
     for (let i = 1; i < m.positions.length; i += 3) { lo = Math.min(lo, m.positions[i]); hi = Math.max(hi, m.positions[i]); }

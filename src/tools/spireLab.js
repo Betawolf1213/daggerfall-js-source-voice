@@ -12,6 +12,9 @@
 //   ?h=<slot 0-4>    the hall of the circle the views stand in
 //   ?view=plate|course|court|sky|over|edge|under|wide   a camera (the panel's list) - EG-LOOK: `under` a court's foundations
 //                    from below its rim, `wide` the wreck and the Spire overhead from far out
+//   ?piece=<kind>    EG-LOOK: the views `piece` (over its corner), `pieceback` (over its far one) and `pieceunder` (its foundation from under its side) at
+//                    the circle's `?pi=`th step of that kind (still, ledge, drift, beat, riser, crumble, drop, rail, vent...;
+//                    `isle` Grath's isle)
 //   ?t=<seconds>     the shared clock, pinned           ?still the clock stopped     ?lane=off the classic set
 //   ?palette=standard|contrast|deutan|tritan  ?fill=50-100   a danger disc on the court in that look (?shape=off: none)
 //   ?mist            a circle with a Mist Stair or the Sinking Stair, the camera over its sheet, the clock at its surge
@@ -42,6 +45,8 @@ import { createEgSpan } from '../scenes/egSpan.js';
 import { createEgLookDraw } from '../scenes/egLookDraw.js';
 import { egLookShapes } from '../scenes/egFight.js';
 import { egCircleSpecs, egFirstHallOf, egBandOfCircle } from '../net/egLaw.js';
+import { egPieceAt } from '../net/egSpanLaw.js';   // EG-LOOK: a piece's view at a moment it stands
+import { egIsleDisc } from '../world/egHall.js';
 import { egMistAt } from '../net/egFragLaw.js';
 import { EG_LIGHT_KIND, EG_DOOR_BEAM } from '../world/egLights.js';   // EG-LOOK: ?door - the beam and its foot's halo
 import { INTERIOR_LIGHT_DIR } from '../world/interiorLights.js';
@@ -82,6 +87,15 @@ const look = createEgLookDraw({ gl, lite: params.has('lite') });
 look.setCircle(SEED, C, 0);
 const telegraph = new GateTelegraphRenderer(gl, { spire: true });
 
+/** EG-LOOK: the piece the `piece` views look at - the `?pi=`th step of kind `?piece=` in the circle (its hall, its rest); for
+ *  a Beat or a Moon branch the clock moved on to a moment it stands; `?piece=isle` the first of Grath's isles. */
+const PIECE = (() => {
+  if (!params.has('piece')) return null;
+  const kind = params.get('piece'), n = Number(params.get('pi') ?? 0);
+  if (kind === 'isle') { for (const spec of SPECS) { const d = spec.discs.find((q) => egIsleDisc(spec, q)); if (d) return { spec, x: d.x - d.r * 0.72, y: d.y, z: d.z - d.r * 0.72, s: null }; } return null; }   // its rim, the eye off it
+  const all = SPECS.flatMap((spec) => spec.steps.filter((q) => q.kind === kind).map((s) => ({ spec, s, x: s.x, y: s.y, z: s.z })));
+  return all[Math.min(all.length - 1, n)] ?? null;
+})();
 // ── EG-LOOK: THE SWATCH WALL - every picture the band paints, on a quad, as its builders lay it ──────────────────────
 const SWATCH = params.get('view') === 'swatch' || params.has('swatch') || params.has('rec');
 /** The wall: in the void left of the arrival plate (x), facing +x, its records in rows of `cols` (the hall's frame). */
@@ -120,6 +134,13 @@ const VIEWS = {
   mist: MIST ? { at: [(MIST.x0 + MIST.x1) / 2, MIST.hz.y + 6.5, MIST.z0 - 3], yaw: 0, pitch: -38 } : null,
   under: { at: [court.x + (court.r ?? 12) + 14, (court.y ?? 0) - 9, court.z - 6], yaw: -110, pitch: 18 },   // EG-LOOK: the court's foundations, from a span below its rim
   wide: { at: [-70, 26, (SPEC.len ?? 80) * 0.15], yaw: 55, pitch: 4 },   // EG-LOOK: the wreck drifting, the Spire overhead
+  // EG-LOOK (the spans' pieces): a close look at a piece of `?piece=<kind>` (the `?pi=`th of the circle's, any hall) - from
+  // over its corner, and from under its side at its foundation; `?piece=isle` Grath's isle (circle 1's Court)
+  ...(PIECE ? {
+    piece: { spec: PIECE.spec, at: [PIECE.x - 3.9, PIECE.y + 2.3, PIECE.z - 3.5], yaw: 48, pitch: -24 },
+    pieceunder: { spec: PIECE.spec, at: [PIECE.x - 5.0, PIECE.y - 2.6, PIECE.z - 2.6], yaw: 62, pitch: 20 },
+    pieceback: { spec: PIECE.spec, at: [PIECE.x + 3.9, PIECE.y + 2.3, PIECE.z + 3.5], yaw: 228, pitch: -24 },   // its far corner
+  } : {}),
   swatch: SWATCH ? (params.has('rec') ? (() => { const k = Math.max(0, EG_BAND_RECORDS.indexOf(Number(params.get('rec')))), c = swAt(k); return { at: [c[0] + 5.2, c[1], c[2]], yaw: -90, pitch: 0 }; })() : { at: [SW.x + 15.5, SW.y + SW.row * 1.5 + 0.8, SW.z], yaw: -90, pitch: 0 }) : null,   // EG-LOOK: the band's pictures
 };
 const viewSel = $('view');
@@ -130,7 +151,7 @@ if (params.has('still') || params.has('t')) $('still').checked = true;
 const cam = { pos: [0, 0, 0], yaw: 0, pitch: 0 };
 function setView(name) {
   const v = VIEWS[name] ?? VIEWS.plate;
-  cam.pos = egToDungeon(SPEC, v.at[0], v.at[1], v.at[2]);
+  cam.pos = egToDungeon(v.spec ?? SPEC, v.at[0], v.at[1], v.at[2]);   // EG-LOOK: a piece's view in its own hall
   cam.yaw = (v.yaw * Math.PI) / 180; cam.pitch = (v.pitch * Math.PI) / 180;
 }
 setView(viewSel.value);
@@ -138,6 +159,7 @@ viewSel.addEventListener('change', () => setView(viewSel.value));
 /** The shared clock: ?t, or (?mist) the moment its surge stands highest, or running. */
 let clock = Number(params.get('t') ?? 40);
 if (MIST && !params.has('t')) { for (let k = 0; k < 4000; k++) if (egMistAt(MIST.hz, k / 100) >= 3) { clock = k / 100 + 1; break; } }
+if (PIECE?.s && String(params.get('view') ?? '').startsWith('piece')) for (let k = 0; k < 400 && !egPieceAt(PIECE.s, clock).solid; k++) clock += 0.05;   // EG-LOOK: a Beat or a branch standing
 $('t').value = String(clock);
 $('t').addEventListener('input', () => { clock = Number($('t').value); });
 

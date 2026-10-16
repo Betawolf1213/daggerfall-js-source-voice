@@ -78,13 +78,32 @@
 // itself across over EG_SB_GROW_S and faltering its last second (both still under reduced motion), holding from its raising
 // to its end, its mesh and bucket freed at its end and with the circle.
 //
+// EG-LOOK (2026-10-15, Mac: "Literally everything, and no band aids"; bible/11-Multiplayer/Elite-Gates-Look.md "What was
+// wrong" - "The span pieces wore the Steps' clock faces"): THE PIECES AS THE ACADEMY TORN - every piece a span stands is
+// now a piece of the Battlemages' academy in its band's dress (world/egPlatformModel.js - its own stone off its own seed,
+// egPieceSeed): a slab of the band's flags under THE EDGE LINE, the band's cornice under its rims, its foundation torn
+// under it (the band's courses, bone and roots, glass stalactites or basalt prisms), a broken column or the band's
+// hanging thing where its plan allows; a Riser a pier of ashlar, a Drop's landing walled in it, a Rail and a Drum
+// carriages on their track, a Falling Wall's walk and a Collapsing Tube's floor segments of the same stone, Grath's isles
+// the court's plates on the band's cornice (no gear teeth). Two tells keep the Steps' own law in the band's dress: a
+// BEAT is the Steps' dial set in the band's stone (its frames, its white warning and its dissolve the dial's - its stone
+// dissolving with it, world/egPlatformArt.js EG_BEAT_STONE_RECORDS), a CRUMBLE the Steps' own box and chunks in the band's
+// flags cracking (egCrumbleArt - its stages, its cracks' light and its fall the law's). No Hour's clock on any other.
+// Every collider is the law's as it was (egSlabTris, egDropTris, stepTris - the top you see is the top you stand on);
+// THE PIECES STILL BATCH A KIND (scenes/egPieceBatch.js - now a kind of many models): the still ones (`slab`), the ones
+// that move or come and go on the clock (`mover`), a Beat's phase, a Crumble's cracking and its chunks, the waystones, a
+// Gust's banners and a hall's hangs - each one draw a record, a circle's kinds a handful (EG_SPAN_KINDS_MAX).
+//
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { realmToDungeon, dungeonToRealm } from '../net/sdBrain.js';
 import { egCircleSpecs, egWallFallenZ, egBandOfCircle, EG_VOID_Y, EG_BELT_MPS } from '../net/egLaw.js';
-import { buildStepModel, stepTris } from '../world/sdStepsModel.js';
+import { stepTris, stepBox } from '../world/sdStepsModel.js';
 import { SD_CRUMBLE_DELAY, SD_CRUMBLE_BACK, SD_CRUMBLE_FALL_G, SD_STEP_THICK, SD_BEAT_CYCLE, SD_BEAT_SOLID, SD_BEAT_BLINK, SD_GUST_EVERY, gustAt } from '../world/sdSteps.js';
-import { ensureSdStepsArt, SD_STEPS_SOUNDS, SD_BEAT_FRAME_S, SD_BEAT_IN_S, SD_BEAT_OUT_STAGE_S, SD_CRUMBLE_SHAKE, SD_CRUMBLE_SEEN, SD_CHUNK, SD_BEAT_FRAMES, SD_CRUMBLE_STAGES, SD_WAYSTONE_DARK, sdChunkWays, sdChunkMatrix } from './sdSteps.js';
-import { SD_PENDULUM, pendulumAngle, SD_BEAT_DISSOLVE, buildCrumbleChunks, buildGritModel, SD_GRIT, buildWaystoneModel, buildVaneModel, vaneYawInto, sdWaystonesOf, sdVaneAt } from '../world/sdStepsModel.js';   // EG-ZL: the Steps' own look parts
+import { ensureSdStepsArt, SD_STEPS_SOUNDS, SD_BEAT_FRAME_S, SD_BEAT_IN_S, SD_BEAT_OUT_STAGE_S, SD_CRUMBLE_SHAKE, SD_CRUMBLE_SEEN, SD_CHUNK, SD_BEAT_FRAMES, sdChunkWays, sdChunkMatrix } from './sdSteps.js';
+import { SD_PENDULUM, pendulumAngle, SD_BEAT_DISSOLVE, buildGritModel, SD_GRIT, buildWaystoneModel, buildVaneModel, vaneYawInto, sdWaystonesOf, sdVaneAt } from '../world/sdStepsModel.js';   // EG-ZL: the Steps' own look parts
+import { SD_STEPS_RECORD } from '../world/sdStepsArt.js';   // EG-LOOK: a waystone's dark rune, its own record
+import { egPiecePlan, egSegmentPlan, egPieceSeed, egPieceModel, egBeatModel, egRiserModel, egDropLookModel, egTubeLidModel, egIsleModel, egCrumbleModels } from '../world/egPlatformModel.js';   // EG-LOOK: the academy torn
+import { EG_BEAT_STONE_RECORDS, EG_PIECE_TELL_RECORDS, egCrumbleTellArt, egBeatStoneArt } from '../world/egPlatformArt.js';   // EG-LOOK: a Crumble's band stages, a Beat's stone dissolving
 import { SdStepsPass, SD_GHOST } from '../render/sdStepsPass.js';   // EG-ZL: the ghosts' pass, the circle's
 import { SD_SKY_STEPS } from '../render/sdSky.js';
 import { egAccessNow } from '../ui/egAccess.js';   // EG-ZL: the danger palette's hazard on a Beat's warning; reduced motion stills the shakes
@@ -93,19 +112,20 @@ import { createMeshKit } from '../world/meshKit.js';
 import { EG_FOG_FLOOR, egGustSections } from '../world/egLook.js';   // EG6a: the breath's sections, its one home (the streamers' too)
 import { EG_RIDE_DOWN_M, EG_RIDE_UP_M } from '../net/egFair.js';
 import { faces } from '../world/gateModel.js';
-import { packRealmFaces, realmIsland, SD_REALM_ARCHIVE, SD_REALM_FLOOR_RECORD, SD_REALM_BRASS_RECORD, SD_REALM_EDGE_RECORD, SD_REALM_PILLAR_RECORD, SD_REALM_ROOT_RECORD, SD_REALM_ARENA_RECORD, SD_ISLAND_SIDES } from '../world/sdRealm.js';
+import { packRealmFaces, SD_REALM_ARCHIVE, SD_REALM_FLOOR_RECORD, SD_REALM_BRASS_RECORD, SD_REALM_EDGE_RECORD, SD_REALM_PILLAR_RECORD, SD_REALM_ROOT_RECORD, SD_ISLAND_SIDES } from '../world/sdRealm.js';
 import { identity } from '../world/mat4.js';
 import { egPieceAt, egPendAt, egPendHits, egBeatAt, egCourseOf, EG_PEND_HALF, EG_DROP_WALL_H, EG_CRUMBLE_KINDS, EG_SINK_MPS, EG_SINK_GONE_M, EG_BODY_R } from '../net/egSpanLaw.js';
 import { egBridgeOf } from '../net/egSpanLaw.js';   // AUDIT EG III: Spirebridge's plank, the relay's own
 import { egSlagState, egSlagX, EG_SLAG_SPOUTS, EG_SLAG_CRUST_S, EG_SLAG_WARN_S } from '../net/egSpanLaw.js';   // EG-ZC: the Cooling Slag
-import { egInShape } from '../net/egShape.js';   // EG-ZC: a lit branch under the mirror's haven
+import { egInShape } from '../net/egShape.js';
+import { EG_KIT_RECORD } from '../world/egKit.js';   // EG-LOOK: the Galleries' anchor rib in the kit's voussoirs   // EG-ZC: a lit branch under the mirror's haven
 import { egTubeEdge, EG_ENGINES } from '../net/egFragLaw.js';
 import { egOverDrop } from '../world/egTelegraph.js';   // EG-ZG: a Drop's landing, the law
 import { egNicheBoxes, egIsleDisc } from '../world/egHall.js';
 import { RAY_DISTANCE, DEFAULT_ACTIVATION_DISTANCE } from '../player/activate.js';
 import { spireFooting, spireWake, spireObjs, spireAct } from '../systems/spireKit.js';
 import { spireCrumbleWait } from '../systems/spireVestiges.js';   // EG-ZR (Elite-Gates.md section 15): Featherstep - my crumbles wait longer
-import { egBandDress, EG_DRESS, egTellArchive, egBeatWarnArt, egBeatBackArt, egBeatTellMaps } from '../world/egBandArt.js';   // EG-G2: the band's dress on every piece (EG-ZC: its liquid on the slag); EG-ZL: a Beat's warning
+import { egBandDress, egBandArchive, EG_DRESS, egTellArchive, egBeatWarnArt, egBeatBackArt, egBeatTellMaps } from '../world/egBandArt.js';   // EG-G2: the band's dress on every piece (EG-ZC: its liquid on the slag); EG-ZL: a Beat's warning
 import { EG_BEAT_TELL_RECORDS } from '../world/egBandArt.js';   // AUDIT EG III (lane4 #4): the Beat's records, freed at the breach's end
 import { createEgPieceBatch, EG_BATCH_CULL_PAD } from './egPieceBatch.js';   // EG-G2: one draw a kind, culled
 import { meshKitBounds } from '../world/meshKit.js';
@@ -268,6 +288,17 @@ export function sealParts(door, side, y = door[1], along = /** @type {number[]|n
   return { model: packRealmFaces(f), tris: new Float32Array(tris) };
 }
 const STEP_MESH_KIND = Object.freeze({ drift: 'drift', beat: 'beat', riser: 'riser', crumble: 'crumble', bone: 'crumble' });   // LAYER THREE: a Bone bridge wears the Crumble's cracks
+/** EG-LOOK: the pieces that move or come and go on the clock (a Drift across, a Rail and a Drum along, a Moon branch with
+ *  its beam; a Pendulum's weight and a slag's lanes stand with them) - one batch kind, apart from the still ones, so the
+ *  still ones' vertices never go up with theirs. */
+export const EG_SPAN_MOVERS = Object.freeze(['drift', 'rail', 'drum', 'moon']);
+/** EG-LOOK: the most batch kinds a circle's spans stand (tools/spireLabProbe.mjs's "a handful of draws"): the still slabs,
+ *  the movers, a Beat's phases, a Crumble's cracking and its chunks, the waystones, the Gust's banners, a hall's hangs, a
+ *  Falling Wall's walk and a Collapsing Tube. */
+export const EG_SPAN_KINDS_MAX = 16;
+/** EG-LOOK: a waystone dark - the Steps' own, its rune the dark record (world/sdStepsArt.js SD_STEPS_RECORD.partsDark), so
+ *  the lit and the dark stand in one kind. */
+const darkStone = () => { const m = buildWaystoneModel(); return { ...m, subMeshes: m.subMeshes.map((sm) => (sm.textureRecord === SD_STEPS_RECORD.parts ? { ...sm, textureRecord: SD_STEPS_RECORD.partsDark } : sm)) }; };
 const _at = { dx: 0, dz: 0, solid: true };
 const _gust = { push: 0, warn: false };
 /** A Falling Wall's segment (m along the walkway), and how fast a fallen one drops out of sight (m/s/s). */
@@ -332,8 +363,8 @@ export const EG_CHAIN = Object.freeze({ link: 0.9, w: 0.22, bar: 0.05 });
 /**
  * A DRIFT'S HANG, band `band`'s, in the pendulum's own frame (its pivot the origin): its two chains, each with its bracket
  * out of the deck's side, in the band's metal (EG_DRESS.brass: gold leaf, bone, moon-silver, iron), and the ANCHOR they hang
- * from (section 10.3, in the order of world/egBandArt.js EG_BAND_RAMPS): the Galleries' broken arch rib in marble, gold leaf
- * on its crown; the Cairn's ribcage in bone; the Shade's moon-shard; the Wellhead's crane hook in iron, on its cable. The
+ * from (section 10.3, in the order of world/egBandArt.js EG_BAND_RAMPS): the Galleries' broken arch rib (EG-LOOK: in the kit's
+ * voussoirs - world/egKit.js EG_KIT_RECORD.voussoir), gold leaf on its crown; the Cairn's ribcage in bone; the Shade's moon-shard; the Wellhead's crane hook in iron, on its cable. The
  * whole turns about z with the law's own swing (pendulumAngle) - the anchor rocking with its chains, as the Hour's gear rocks
  * with its rods (scenes/sdSteps.js driftLook), never more than asin(2 / 18).
  */
@@ -371,12 +402,22 @@ export function egHangModel(band) {
     k.box(B, [-0.05, 0.45, -0.05], [0.05, 6, 0.05]);
     k.sweep(B, sq(0.14), [[0, 0, 0], [0, -0.9, 0], [0.3, -1.25, 0], [0.62, -1.0, 0], [0.62, -0.82, 0]]);
   } else {   // the arch rib: a broken marble rib over the deck, its crown in gold leaf
-    const R = 3.4, yc = -Math.sqrt(R * R - F * F), a0 = Math.acos(3.2 / R), arc = [], crown = [];
-    for (let i = 0; i <= 8; i++) { const a = a0 + ((Math.PI - 2 * a0) * i) / 8; arc.push([R * Math.cos(a), yc + R * Math.sin(a), 0]); crown.push([(R + 0.28) * Math.cos(a), yc + (R + 0.28) * Math.sin(a), 0]); }
-    k.sweep(SD_REALM_PILLAR_RECORD, sq(0.5, 0.6), arc);
+    const R = 3.4, yc = -Math.sqrt(R * R - F * F), a0 = Math.acos(3.2 / R), crown = [];
+    for (let i = 0; i <= 8; i++) { const a = a0 + ((Math.PI - 2 * a0) * i) / 8; crown.push([(R + 0.28) * Math.cos(a), yc + (R + 0.28) * Math.sin(a), 0]); }
+    // EG-LOOK: its blocks the kit's voussoirs (world/egBandArt.js EG_KIT_MAP: u along the arc - a block each 0.5 m - v out
+    // from its intrados), 0.5 m deep and 0.6 thick, its two broken ends closed
+    const V = EG_KIT_RECORD.voussoir, ri = R - 0.25, ro = R + 0.25, zt = 0.3, ang = (i) => a0 + ((Math.PI - 2 * a0) * i) / 8;
+    const Pt = (i, rr, z) => [rr * Math.cos(ang(i)), yc + rr * Math.sin(ang(i)), z], u = (i) => ((ang(i) - a0) * R) / 2;
+    for (let i = 0; i < 8; i++) {
+      const d = [Math.cos((ang(i) + ang(i + 1)) / 2), Math.sin((ang(i) + ang(i + 1)) / 2), 0], u0 = u(i), u1 = u(i + 1);
+      k.quad(V, Pt(i, ro, -zt), Pt(i + 1, ro, -zt), Pt(i + 1, ro, zt), Pt(i, ro, zt), d, true, [[u0, 0.25], [u1, 0.25], [u1, 0.25], [u0, 0.25]]);
+      k.quad(V, Pt(i, ri, -zt), Pt(i + 1, ri, -zt), Pt(i + 1, ri, zt), Pt(i, ri, zt), [-d[0], -d[1], 0], true, [[u0, 0], [u1, 0], [u1, 0], [u0, 0]]);
+      for (const z of [-zt, zt]) k.quad(V, Pt(i, ri, z), Pt(i + 1, ri, z), Pt(i + 1, ro, z), Pt(i, ro, z), [0, 0, Math.sign(z)], true, [[u0, 0], [u1, 0], [u1, 0.25], [u0, 0.25]]);
+    }
+    for (const [i, s] of [[0, -1], [8, 1]]) { const t = [-Math.sin(ang(i)) * s, Math.cos(ang(i)) * s, 0]; k.quad(V, Pt(i, ri, -zt), Pt(i, ro, -zt), Pt(i, ro, zt), Pt(i, ri, zt), t, true, [[0, 0], [0, 0.25], [0.3, 0.25], [0.3, 0]]); }
     k.sweep(B, sq(0.06, 0.64), crown);
   }
-  return k.pack(SD_REALM_ARCHIVE);
+  return k.pack(egBandArchive(band));   // EG-LOOK: in the band's archive (its metal the band's, its rib the kit's)
 }
 /** THE CIRCLE'S GHOSTS at most (render/sdStepsPass.js - its uniforms' count): the most any circle measured lays is 31 (eight
  *  seeds, forty circles, both grounds); a circle past it draws its first EG_GHOSTS_MAX. */
@@ -420,9 +461,48 @@ export function egBeatTellDown(renderer) {
   let n = 0;
   for (const band of bands) {
     const arch = egTellArchive(band);
-    for (const rec of [...EG_BEAT_TELL_RECORDS.warn.flat(), ...EG_BEAT_TELL_RECORDS.back]) { if (renderer.releaseTexture?.(arch, rec)) n++; if (renderer.evictEmissionTexture?.(`${arch}_${rec}`)) n++; }
+    for (const rec of [...[...EG_BEAT_TELL_RECORDS.warn.flat(), ...EG_BEAT_TELL_RECORDS.back], ...EG_PIECE_TELL_RECORDS]) { if (renderer.releaseTexture?.(arch, rec)) n++; if (renderer.evictEmissionTexture?.(`${arch}_${rec}`)) n++; }   // EG-LOOK: and a Crumble's stages, a Beat's stone
   }
   return n;
+}
+/**
+ * EG-LOOK - THE PIECES' OWN PICTURES UP (world/egPlatformArt.js, under band `band`'s tell archive): a Crumble's four stages
+ * in the band's flags (`crumble` - its rest and its three cracks, with their light) and a Beat's stone dissolving (`beat`
+ * - the band's moulding and foundation cut by the dither, cutouts), each the first time a renderer is asked for that band,
+ * kept while the breach stands and freed with the Beat's pictures (egBeatTellDown - the breach's end). Answers whether
+ * what was asked for stands.
+ * @param {any} renderer @param {number} band @param {{ crumble?: boolean, beat?: boolean }} want
+ */
+export function egPieceTellUp(renderer, band, { crumble = false, beat = false } = {}) {
+  if (!renderer || typeof renderer !== 'object' || typeof renderer.uploadTexture !== 'function') return false;
+  let up = _tellUp.get(renderer);
+  if (!up) _tellUp.set(renderer, up = new Map());
+  const arch = egTellArchive(band);
+  const once = (k, list, cutout) => {
+    if (!up.has(k)) {
+      let ok = false;
+      try { for (const [rec, art] of list()) { renderer.uploadTexture(arch, rec, art.albedo, cutout ? { cutout: true } : undefined); renderer.uploadEmissionTexture?.(arch, rec, art.emission, { white: true }); } ok = true; } catch (e) { console.warn('[eg] a piece\'s pictures would not upload', e?.message ?? e); }
+      up.set(k, ok);
+    }
+    return up.get(k);
+  };
+  let ok = true;
+  if (crumble) ok = once(`${band | 0}:crumble`, () => egCrumbleTellArt(band), false) && ok;
+  if (beat) ok = once(`${band | 0}:stone`, () => egBeatStoneArt(band), true) && ok;
+  return ok;
+}
+/** EG-LOOK: a Beat's maps in band `band` and palette `key` - the dial's (world/egBandArt.js egBeatTellMaps) with its stone's
+ *  dissolving beside it (EG_BEAT_STONE_RECORDS): `{ warn, back }`, made once each. */
+const _beatMaps = new Map();
+function egBeatDressMaps(band, key) {
+  const W = egBeatTellMaps(band, key), k = `${band | 0}:${key}`;
+  let m = _beatMaps.get(k);
+  if (!m || m.W !== W) {
+    const arch = egBandArchive(band), tell = egTellArchive(band);
+    const merge = (dial, stage, list) => new Map([...dial, ...EG_BEAT_STONE_RECORDS.map((q) => [`${arch}_${q.rec}`, `${tell}_${q[list][stage]}`])]);
+    _beatMaps.set(k, m = { W, warn: Object.freeze(W.warn.map((d, s) => merge(d, s, 'warn'))), back: Object.freeze(W.back.map((d, s) => merge(d, s, 'back'))) });
+  }
+  return m;
 }
 /** AUDIT EG III (lane4 #5, sections 25.2 and 25.7): a ghost's line in the danger palette's safety - the Steps' own gold under
  *  the Standard (render/sdStepsPass.js SD_GHOST.color), the palette's safety under any other. Pure. */
@@ -480,8 +560,16 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
   const make = (model) => { if (!model || !renderer?.createMesh) return null; try { return renderer.createMesh(egBandDress(model, band)); } catch (e) { console.warn('[eg] a span would not build', e?.message ?? e); return null; } };
   const play = (rec, vol, pitch = 1) => { try { audio?.playOneShot?.(rec, vol, pitch); } catch { /* no sound */ } };
   const play3 = (rec, at, vol, pitch = 1) => { try { audio?.play3d?.(rec, at, vol, { maxDistance: 30, pitch }); } catch { /* no sound */ } };   // EG-ZL: where it stands (the Steps' grind and click home)
-  const meshKey = (s) => (s.kind === 'beat' ? beatKind(s) : STEP_MESH_KIND[s.kind] ?? `${s.kind === 'drop' ? 'drop' : 'slab'}:${s.w}x${s.d}`);   // EG-ZL: a Beat's kind its beat's
-  const modelOf = (s) => (STEP_MESH_KIND[s.kind] ? buildStepModel(STEP_MESH_KIND[s.kind]) : s.kind === 'drop' ? egDropModel(s.w, s.d) : egSlabModel(s.w, s.d));
+  /** EG-LOOK: a piece's batch kind - a Beat's its beat's (EG-ZL), the ones that move or come and go on the clock apart
+   *  from the ones that hold still (a kind's vertices go up only when one of its copies moves) */
+  const kindOf = (s) => (s.kind === 'beat' ? beatKind(s) : EG_SPAN_MOVERS.includes(s.kind) ? 'mover' : 'slab');
+  /** EG-LOOK: a step's box as its collider has it (a Drift's, a Beat's, a Riser's - the Steps' own, stepTris) */
+  const boxOf = (s) => (STEP_MESH_KIND[s.kind] ? stepBox(STEP_MESH_KIND[s.kind]) : { w: s.w, d: s.d });
+  /** EG-LOOK: a step's own model - the academy torn in its band's dress, off its own seed (world/egPlatformModel.js) */
+  const modelOf = (st) => {
+    const s = st.s, B = boxOf(s), plan = egPiecePlan(st.spec, s, { seed: egPieceSeed(seed, c, st.spec.h, s.i), lite, band, w: B.w, d: B.d });
+    return s.kind === 'beat' ? egBeatModel(band, plan) : s.kind === 'riser' ? egRiserModel(band, plan) : s.kind === 'drop' ? egDropLookModel(band, plan, EG_DROP_WALL_H, DROP_DOOR) : egPieceModel(band, plan);
+  };
   const trisOf = (s) => (STEP_MESH_KIND[s.kind] ? stepTris(STEP_MESH_KIND[s.kind]) : s.kind === 'drop' ? egDropTris(s.w, s.d) : egSlabTris(s.w, s.d));
   /** each hall's Gust sections (world/egLook.js egGustSections - a run of Gusts, on its road's line) */
   const gusts = egGustSections(specs);
@@ -502,8 +590,10 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
   /** @type {SdStepsPass | null} */
   let pass = null;
   let passTried = false;
-  /** THE CHUNKS a Crumble breaks into (two on a phone) and their ways (scenes/sdSteps.js sdChunkWays - the Hour's law) */
-  const chunkParts = buildCrumbleChunks(lite ? 2 : 4), chunkWays = sdChunkWays(chunkParts);
+  /** THE CHUNKS a Crumble breaks into (two on a phone) and their ways (scenes/sdSteps.js sdChunkWays - the Hour's law). EG-LOOK:
+   *  a Crumble's models in its band's dress (world/egPlatformModel.js egCrumbleModels - the Steps' own box and chunks in the
+   *  band's flags cracking): its rest, its three stages, its chunks */
+  const crumbleSet = egCrumbleModels(band, lite ? 2 : 4), chunkWays = sdChunkWays(crumbleSet.chunks);
   /** THE WAYSTONES: one on every island, at the Steps' own place beside its landing (world/sdStepsModel.js sdWaystonesOf) -
    *  each its lit draw and its dark; and the one my cast-back would stand me on. EG6a: read off the courses the generator
    *  laid (net/egSpanLaw.js egCourseOf - each road's checkpoints but the arrival plate, the Low Road's island its own) */
@@ -533,7 +623,8 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
    *  nothing again - or null with no renderer to hold them. */
   function tellMaps() {
     const key = access.palette?.key ?? 'standard';
-    return renderer && egBeatTellUp(renderer, band, key) ? egBeatTellMaps(band, key) : null;
+    if (!renderer || !egBeatTellUp(renderer, band, key)) return null;
+    return egPieceTellUp(renderer, band, { beat: true }) ? egBeatDressMaps(band, key) : egBeatTellMaps(band, key);   // EG-LOOK: its stone dissolving with its dial
   }
   /** A step's tells stood, before the batch is built: a Beat's kind, a Crumble's crack stages, chunks and grit, a Drift's
    *  hang. */
@@ -542,12 +633,12 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
     if (s.kind === 'beat') {
       if (!beatKinds.has(beatKind(s))) beatKinds.set(beatKind(s), { s, map: undefined });
     } else if (EG_CRUMBLE_KINDS.includes(s.kind)) {
-      st.stages = [1, 2, 3].map((n) => place(`crumble:${n}`, () => buildStepModel('crumble')));
-      st.chunks = chunkParts.map((q, j) => place(`chunk:${j}`, () => q.model, { turns: true }));
-      st.grit = place('grit', () => buildGritModel());
+      st.stages = [1, 2, 3].map((n) => place('crack', `crumble:${n}`, () => crumbleSet.stages[n - 1]));   // EG-LOOK: its stages and its grit one kind (seen together, only while it shakes)
+      st.chunks = crumbleSet.chunks.map((q, j) => place('chunk', `chunk:${j}`, () => q.model, { turns: true }));
+      st.grit = place('crack', 'grit', () => buildGritModel());
     } else if (s.kind === 'drift') {
       st.pivot = realmToDungeon(st.spec.x0 + s.x, s.y + SD_PENDULUM.len, s.z);
-      st.hang = place(`hang:${st.spec.h}`, () => egHangModel(band), { turns: true });   // a kind a hall: a hall's swinging copies re-laid, never the circle's
+      st.hang = place(`hang:${st.spec.h}`, `hang:${st.spec.h}`, () => egHangModel(band), { turns: true });   // a kind a hall: a hall's swinging copies re-laid, never the circle's
     }
     for (const d of [...(st.stages ?? []), ...(st.chunks ?? []), st.grit, st.hang]) if (d) away(d);
   }
@@ -623,19 +714,22 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
   };
   /** A piece of mesh kind `mk` stood: in the batch (its slot, the draw it replaces), or as its own draw - its model once a
    *  kind either way. Answers the slot or draw its pose writes, or null. */
-  const place = (mk, modelFn, { turns = false } = {}) => {   // EG-ZL: `turns` - a kind written through its slot's whole matrix
+  const place = (kind, mk, modelFn, { turns = false } = {}) => {   // EG-ZL: `turns` - a kind written through its slot's whole matrix
+    // EG-LOOK: `kind` the batch's draw, `mk` the model's own key (a piece's own stone - many models a kind)
+    if (!models.has(mk)) { const m = modelFn(); models.set(mk, m ? egBandDress(m, band) : null); }
+    const model = models.get(mk);
+    if (!model) return null;
     if (batch) {
-      if (!models.has(mk)) models.set(mk, egBandDress(modelFn(), band));
       const slot = { object: { matrix: new Float32Array(16) }, hidden: false };
-      return batch.add(mk, models.get(mk), slot, { turns }) ? slot : null;
+      return batch.add(kind, model, slot, { turns }) ? slot : null;
     }
-    if (!meshes.has(mk)) meshes.set(mk, make(modelFn()));
+    if (!meshes.has(mk)) meshes.set(mk, make(model));
     const gpu = meshes.get(mk);
     if (!gpu) return null;
     const d = { gpu, object: { matrix: new Float32Array(16) }, noShadow: true, texRemap: null };
     draws.push(d);
-    if (!plainOf.has(mk)) plainOf.set(mk, []);
-    plainOf.get(mk).push(d);   // EG-ZL: a kind's picture map, set on each of its own draws
+    if (!plainOf.has(kind)) plainOf.set(kind, []);
+    plainOf.get(kind).push(d);   // EG-ZL: a kind's picture map, set on each of its own draws
     return d;
   };
   /** EG-ZL: kind `mk`'s picture map now - the batch's one draw of it, or each of its own. */
@@ -869,34 +963,38 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
       draws = dynamicDraws;
       col = collider;   // AUDIT EG III: a Spirebridge stands in it after the stand
       ensureSdStepsArt(renderer);
+      if (steps.some((st) => EG_CRUMBLE_KINDS.includes(st.s.kind))) egPieceTellUp(renderer, band, { crumble: true });   // EG-LOOK: a Crumble's stages in the band's flags
       // EG-G2 (section 11.9): with a renderer that moves a mesh's vertices, every piece of a kind is one batched draw
       // (scenes/egPieceBatch.js - the slot each pose writes is the draw it replaced); without one, a draw a piece as before
       batch = renderer?.createMesh && renderer?.updateMeshVertices ? createEgPieceBatch({ renderer }) : null;
       for (const st of steps) {
         if (st.s.kind === 'slag') continue;   // EG-ZC: a slag crossing stands as its spouts' lanes (below)
-        const mk = meshKey(st.s);
-        st.draw = place(mk, () => modelOf(st.s));
-        if (st.s.kind === 'pend') st.pend = place('pend', () => egPendModel());
+        // EG-LOOK: each piece its own stone (a Crumble's rest the band's one), batched with the ones that move as it does
+        st.draw = EG_CRUMBLE_KINDS.includes(st.s.kind) ? place('slab', 'crumble', () => crumbleSet.rest) : place(kindOf(st.s), `piece:${st.key}`, () => modelOf(st));
+        if (st.s.kind === 'pend') st.pend = place('mover', 'pend', () => egPendModel());
         standTells(st);   // EG-ZL: its tells
         const { positions, indices } = trisOf(st.s);
         try { collider?.addMesh?.(st.key, positions, indices, identity(), () => st.T); } catch (e) { console.warn('[eg] a step\'s collider', e?.message ?? e); }
       }
       for (const g of slags) {
-        g.crust = place(`slagc:${g.s.w}x${g.s.d}`, () => egSlagCrustModel(g.s.w, g.s.d));
-        g.molten = place(`slagm:${g.s.w}x${g.s.d}`, () => egSlagMoltenModel(g.s.w, g.s.d));
+        g.crust = place('mover', `slagc:${g.s.w}x${g.s.d}`, () => egSlagCrustModel(g.s.w, g.s.d));   // EG-LOOK: on the clock, with the movers
+        g.molten = place('mover', `slagm:${g.s.w}x${g.s.d}`, () => egSlagMoltenModel(g.s.w, g.s.d));
         const { positions, indices } = egSlabTris(g.s.w, g.s.d);
         try { collider?.addMesh?.(g.key, positions, indices, identity(), () => g.T); } catch (e) { console.warn('[eg] a slag crust\'s collider', e?.message ?? e); }
       }
       for (const g of tubes) {
-        g.draw = place(`wall:${g.w}x${g.d}`, () => egSlabModel(g.w, g.d));
-        g.lid = place(`lid:${g.w}x${g.d}:${g.spec.h}`, () => tubeLidModel(g.w, g.d, (g.spec.caves.find((q) => q.z0 <= g.z0 && q.z1 >= g.z1)?.height ?? 5.2)));
+        // EG-LOOK: each segment its own stone, the vault over it the band's coffers - one kind, the tube's (it falls apart)
+        g.draw = place('tube', `tube:${g.key}`, () => egPieceModel(band, egSegmentPlan('tube', g.w, g.d, { seed: egPieceSeed(seed, c, g.spec.h, 1000 + g.k), lite })));
+        g.lid = place('tube', `lid:${g.w}x${g.d}:${g.spec.h}`, () => egTubeLidModel(band, g.w, g.d, (g.spec.caves.find((q) => q.z0 <= g.z0 && q.z1 >= g.z1)?.height ?? 5.2)));
         const { positions, indices } = egSlabTris(g.w, g.d);
         try { collider?.addMesh?.(g.key, positions, indices, identity(), () => g.T); } catch (e) { console.warn('[eg] a tube segment\'s collider', e?.message ?? e); }
       }
       for (const g of isles) {
-        const f = faces();
-        realmIsland(f, g.spec.x0 + g.d.x, g.d.z, g.d.r, SD_REALM_ARENA_RECORD, { y: g.d.y, bands: Math.max(2, Math.round(g.d.r / 4)) });
-        const model = packRealmFaces(f), gpu = make(model);
+        // EG-LOOK: the court's plates on the band's cornice (world/egPlatformModel.js egIsleModel - no gear teeth), laid where
+        // it stands (the shake and the fall move its draw as before)
+        const model = egIsleModel(band, g.d.r, { lite }), P = realmToDungeon(g.spec.x0 + g.d.x, g.d.y, g.d.z);
+        for (let k = 0; k < model.positions.length; k += 3) { model.positions[k] += P[0]; model.positions[k + 1] += P[1]; model.positions[k + 2] += P[2]; }
+        const gpu = make(model);
         if (gpu) { meshes.set(g.key, gpu); g.draw = { gpu, object: { matrix: identity() }, noShadow: true, texRemap: null, sphere: meshKitBounds(model.positions) }; draws.push(g.draw); }
         const tris = [];
         for (let k = 0; k < SD_ISLAND_SIDES; k++) {
@@ -923,19 +1021,17 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
       }
       targetList = list;
       for (const g of walls) {
-        g.draw = place(`wall:${g.w}x${g.d}`, () => egSlabModel(g.w, g.d));
+        g.draw = place('wall', `wall:${g.key}`, () => egPieceModel(band, egSegmentPlan('wall', g.w, g.d, { seed: egPieceSeed(seed, c, g.spec.h, 2000 + g.k), lite })));   // EG-LOOK: the walk's tesserae, its own stone a segment
         const { positions, indices } = egSlabTris(g.w, g.d);
         try { collider?.addMesh?.(g.key, positions, indices, identity(), () => g.T); } catch (e) { console.warn('[eg] a wall segment\'s collider', e?.message ?? e); }
       }
       // EG-ZL: every island's waystone (lit and dark) and every Gust island's banner; the crack stages' and the dark stone's
       // pictures; the Beat's warning in the palette standing now, painted while the circle stands, not at its first warning
       for (const g of stones) {
-        g.lit = place('stone', () => buildWaystoneModel()); g.dark = place('stone:dark', () => buildWaystoneModel());
+        g.lit = place('stone', 'stone', () => buildWaystoneModel()); g.dark = place('stone', 'stone:dark', () => darkStone());   // EG-LOOK: one kind, the dark its own record
         for (const d of [g.lit, g.dark]) if (d) { translate(d.object.matrix, g.at[0], g.at[1], g.at[2]); d.hidden = true; }
       }
-      for (const v of vanes) { v.draw = place('vane', () => buildVaneModel(null), { turns: true }); if (v.draw) yawAbout(v.draw.object.matrix, 0, v.at[0], v.at[1], v.at[2]); }
-      for (let n = 1; n <= 3; n++) kindRemap(`crumble:${n}`, SD_CRUMBLE_STAGES[n]);
-      kindRemap('stone:dark', SD_WAYSTONE_DARK);
+      for (const v of vanes) { v.draw = place('vane', 'vane', () => buildVaneModel(null), { turns: true }); if (v.draw) yawAbout(v.draw.object.matrix, 0, v.at[0], v.at[1], v.at[2]); }
       access = egAccessNow();
       if (beatKinds.size) tellMaps();
       batch?.build(draws);

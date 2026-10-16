@@ -345,8 +345,8 @@
   {
     "name": "EGZL-crumble-phones-two-ignored",
     "file": "src/scenes/egSpan.js",
-    "old": "buildCrumbleChunks(lite ? 2 : 4)",
-    "new": "buildCrumbleChunks(4)",
+    "old": "egCrumbleModels(band, lite ? 2 : 4)",
+    "new": "egCrumbleModels(band, 4)",
     "tests": [
       "test/egz_tells.test.js"
     ]
