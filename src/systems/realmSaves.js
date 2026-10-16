@@ -195,6 +195,11 @@ export const realmTradeCall = (/** @type {any} */ io, /** @type {any} */ half) =
 
 /** The answers that end a session: the character is not this tab's to write any more. */
 export const REALM_LOST = Object.freeze(['lease', 'no-realm-character', 'auth', 'signed-out']);
+/** AUTO-HOLD: a ledger key as a checkpoint's answer names a locked piece (an item's uid or a craft's provenance, sixteen
+ *  hex either way - systems/itemIds.js ledgerKeyOf), and the most one answer is heard naming (the service's
+ *  LOCKED_SAID_MAX). */
+const LEDGER_KEY_RE = /^[0-9a-f]{16}$/;
+const LOCKED_TOLD_MAX = 40;
 
 // ── RESCUE-SAVE: THE DEVICE'S COPY OF A SAVE THE SERVICE HAS NOT TAKEN ──
 
@@ -477,20 +482,32 @@ export function createRealmSession({
   // stays `{ ok, seq }`.
   /** @type {string | null | undefined} */
   let tradeHeld;
-  /** The law's word on the hold standing (`{ code, t }` - a piece's template, or `review`: staff's), kept for a trade's
-   *  refusal to say again (the Ring report: the refusal said "something"). @type {{ code: string, t: number | null } | null} */
+  /** The law's word on the hold standing (`{ code, t }` - a piece's template - or AUTO-HOLD's timed hold, `{ code:
+   *  'until', t, until }`), kept for a trade's refusal to say again (the Ring report: the refusal said "something").
+   *  @type {{ code: string, t: number | null, until?: number } | null} */
   let tradeHeldWhy = null;
   const heard = (/** @type {unknown} */ v, /** @type {unknown} */ why = null) => {
     if (v === undefined) return;
     const now = typeof v === 'string' ? v : null;
     const w = /** @type {any} */ (why);
-    const what = w && typeof w === 'object' && (Number.isInteger(w.t) || w.code === 'review') ? { code: String(w.code ?? ''), t: Number.isInteger(w.t) ? w.t : null } : null;
-    const moved = now !== tradeHeld || (what?.code === 'review') !== (tradeHeldWhy?.code === 'review');
+    const until = w && typeof w === 'object' && w.code === 'until' && Number.isSafeInteger(w.until) ? /** @type {number} */ (w.until) : null;
+    const what = w && typeof w === 'object' && (Number.isInteger(w.t) || until != null) ? { code: String(w.code ?? ''), t: Number.isInteger(w.t) ? w.t : null, ...(until != null ? { until } : {}) } : null;
+    const moved = now !== tradeHeld || (what?.until ?? null) !== (tradeHeldWhy?.until ?? null);
     tradeHeldWhy = what;
     if (!moved) return;
     const prev = tradeHeld;
     tradeHeld = now;
     try { session.onTradeHeld?.(prev ?? null, now, what); } catch (e) { console.warn('[realm] the hold handler failed', e); }
+  };
+  /** AUTO-HOLD: THE LOCKED PIECES - copies the ledger found, locked piece by piece (server-account/src/ledger.js) - as a
+   *  landed checkpoint names them (`locked`, their keys). Each is told once a session: `session.onPiecesLocked(keys)`. */
+  const toldLocked = new Set();
+  const heardLocked = (/** @type {unknown} */ v) => {
+    if (!Array.isArray(v)) return;
+    const fresh = [...new Set(v)].filter((k) => typeof k === 'string' && LEDGER_KEY_RE.test(k) && !toldLocked.has(k)).slice(0, LOCKED_TOLD_MAX);
+    if (!fresh.length) return;
+    for (const k of fresh) toldLocked.add(k);
+    try { session.onPiecesLocked?.(fresh); } catch (e) { console.warn('[realm] the locked handler failed', e); }
   };
   /** AUDIT REALM2 C4: a save's callers told how the put that carried it went - once. */
   const answer = (/** @type {{ waiters: Array<(r: any) => void> }} */ job, /** @type {any} */ r) => { for (const settle of job.waiters.splice(0)) settle(r); };
@@ -512,6 +529,7 @@ export function createRealmSession({
         if (r.ok) {
           unsure = false; current = r.data?.seq ?? current + 1; last = { ok: true, seq: current }; answer(job, last);
           heard(r.data?.tradeHeld, r.data?.tradeHeldWhy);
+          heardLocked(r.data?.locked);
           landedKey = idleKeyOf(job.text, job.summary); landedAt = now();   // SCALE2b
           // RESCUE-SAVE: the newest save landed - no copy; or a newer one waits, its copy at the sequence now held
           missed = false;
@@ -551,10 +569,13 @@ export function createRealmSession({
     get seq() { return current; },
     /** INT3: the judge's hold the last landed checkpoint said - a reason, null for none, undefined before any said. */
     get tradeHeld() { return tradeHeld; },
-    /** The law's word on that hold (`{ code, t }`), or null. */
+    /** The law's word on that hold (`{ code, t }`, or a timed hold's `{ code: 'until', t, until }`), or null. */
     get tradeHeldWhy() { return tradeHeldWhy; },
-    /** INT3: told `(prev, now, why)` each time the hold moves - `why` the law's first piece (`{ code, t }`) or null; the host's to set. @type {((prev: string | null, now: string | null, why: { code: string, t: number | null } | null) => void) | null} */
+    /** INT3: told `(prev, now, why)` each time the hold moves - `why` the law's first piece (`{ code, t }`), a timed hold's end (`until`), or null; the host's to set. @type {((prev: string | null, now: string | null, why: { code: string, t: number | null, until?: number } | null) => void) | null} */
     onTradeHeld: null,
+    /** AUTO-HOLD: told the keys of locked pieces (copies the ledger found) a landed checkpoint names for the first time
+     *  this session; the host's to set. @type {((keys: string[]) => void) | null} */
+    onPiecesLocked: null,
     get lost() { return lost; },
     get waiting() { return !!pending; },
     /** CHAP1: the lease this tab plays under - the Roll's acts ride it (net/npcRollTracker.js) - or null once the

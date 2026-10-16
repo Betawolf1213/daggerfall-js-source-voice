@@ -15,10 +15,13 @@
 //
 // The record that shows a key first HOLDS it. Another record showing it while the holder still does CLAIMS it - a drop
 // picked up, a chest, a peer's hands, none of them witnessed and none needing to be: the holder's next checkpoint
-// without it moves it to the claimant. The holder's checkpoint still WITH it, past DUPE_GRACE_S, proves the claim a
-// COPY: the claimant counts a duplicate (the row's `dupes`; DUPES_FOR_HOLD of them hold its trade for staff), its copy
-// is written down (item_dupes - it moves that piece by no route, and is never charged for it twice), and the holder's
-// piece stays the holder's. A crafted piece's copy is told by the craft's own record: the account `products` names its
+// without it moves it to the claimant. The holder's checkpoint still WITH it, past DUPE_GRACE_S, settles the claim a
+// COPY: the claimant's copy is written down (item_dupes - it moves that piece by no route, and the claimant's next
+// checkpoint is answered which piece it is) and the holder's piece stays the holder's. AUTO-HOLD (2026-10-16, Mac: "I
+// dont want to have to manually review"): it is the PIECE that is locked, never the character, and a contested claim is
+// no strike - the holder's checkpoint cannot tell a copier from a receiver whose giver's game died before its record
+// saw the give (a chest, a shop's shelf, a body; the giver rejoins from the service's record, the piece back in its
+// pack), so the claimant's copy is locked and nothing is counted against it. A crafted piece's copy is told by the craft's own record: the account `products` names its
 // owner (a market sale moves it there - market.js), so a seller that kept a sold piece is the copier, never the buyer.
 // The audit's two findings this answers: an id stamped on a piece of the victim's took the VICTIM's trade (the holder
 // was charged), and a copier sold the contested piece first and the buyer was charged.
@@ -45,8 +48,6 @@
 
 import { JUDGE_VERSION } from './judge.js';
 
-/** Copies a character's records have been found holding before its trade is held for staff. */
-export const DUPES_FOR_HOLD = 3;
 /** How long a claim waits for its holder's checkpoint before the holder's still having the piece proves it a copy - a
  *  checkpoint every two minutes, and one in flight when the claim was made. */
 export const DUPE_GRACE_S = 300;
@@ -58,6 +59,8 @@ export const UPSERT_ROWS = 48;
 export const LEDGER_NEW_MAX = 960;
 /** The most keys one checkpoint reads the ledger for (67 reads at most); a save holding more has the rest unfollowed. */
 export const LEDGER_KEYS_MAX = 6000;
+/** AUTO-HOLD: the most locked pieces one checkpoint's answer names. */
+export const LOCKED_SAID_MAX = 40;
 
 const marks = (/** @type {number} */ n, /** @type {number} */ from) => Array.from({ length: n }, (_, i) => `?${from + i}`).join(', ');
 /** `[...list]` in slices of `n`. */
@@ -80,10 +83,10 @@ const overKeys = (/** @type {any} */ db, /** @type {string[]} */ keys, /** @type
 
 /**
  * THE LEDGER'S STEP for one checkpoint: the pieces the record holds (judge.js ledgerPieces - `{ key, fp }`, repeats kept)
- * against the ledger. Answers `{ steps, copies, forged, charged }` - the statements for the checkpoint's batch; `copies`
- * the keys this record holds twice (each a copy of its own, charged to it); `forged` the keys it shows on another piece
- * than theirs (the verdict's law findings); `charged` how many claims this checkpoint proved copies (charged to their
- * claimants, in `steps`).
+ * against the ledger. Answers `{ steps, copies, forged, charged, locked }` - the statements for the checkpoint's batch;
+ * `copies` the keys this record holds twice (each a copy of its own, charged to it); `forged` the keys it shows on another
+ * piece than theirs (the verdict's law findings); `charged` how many claims this checkpoint proved copies (locked on their
+ * claimants, in `steps`); `locked` the keys of the copies this record shows (LOCKED_SAID_MAX of them), for its player.
  * @param {any} db @param {{ player: string, char: string, seq: number, nowS: number }} at @param {{ key: string, fp: string }[]} pieces
  */
 export async function ledgerStep(db, at, pieces) {
@@ -166,9 +169,10 @@ export async function ledgerStep(db, at, pieces) {
   steps.push(...overKeys(db, withdraw, [char], (m) => `UPDATE item_uids SET claim_char = NULL, claim_at = NULL WHERE uid IN (${m}) AND claim_char = ?1`));
   let charged = 0;
   for (const [claimant, keys] of proven) {
-    // the claim was a copy: the claimant's - written down and counted; the piece stays this record's
+    // the claim was a copy: the claimant's - written down, locked, and found with no strike (AUTO-HOLD: contested); the
+    // piece stays this record's
     steps.push(...overKeys(db, keys, [claimant], (m) => `UPDATE item_uids SET claim_char = NULL, claim_at = NULL WHERE uid IN (${m}) AND claim_char = ?1`));
-    steps.push(...copyRows(db, keys, claimant, nowS), ...chargeSteps(db, claimant, keys, nowS));
+    steps.push(...copyRows(db, keys, claimant, nowS), ...chargeSteps(db, claimant, keys, nowS, { strike: false }));
     charged += keys.length;
   }
   for (const keys of upheld.values()) {
@@ -178,7 +182,10 @@ export async function ledgerStep(db, at, pieces) {
     steps.push(...copyRows(db, keys, char, nowS));
     copies.push(...keys);
   }
-  return { steps, copies, forged, charged };
+  // AUTO-HOLD: THE PIECES LOCKED in this record - its known copies it still shows, and the copies found now - for the
+  // checkpoint's answer to name to its player
+  const locked = [...new Set([...[...shown.keys()].filter((k) => copiesKnown.has(k)), ...copies])].slice(0, LOCKED_SAID_MAX);
+  return { steps, copies, forged, charged, locked };
 }
 
 /** Copies written down: `keys`, each a copy `char` holds. */
@@ -217,18 +224,17 @@ function letGoSteps(/** @type {any} */ db, /** @type {string[]} */ keys, /** @ty
 }
 
 /**
- * A COPY CHARGED to another character's row: its count, its hold at DUPES_FOR_HOLD (never over staff's), its `judge_rev`
- * moved - so a checkpoint of its own in flight writes no verdict over it - and the finding beside it, with the keys.
- * @param {any} db @param {string} char @param {string[]} keys @param {number} nowS
+ * A COPY FOUND on a character: the finding, with the keys, and - a `strike` - one more on its row's `dupes`, ONE however
+ * many pieces the copy held (AUTO-HOLD: an incident, never a piece - one copied save of three pieces was three, and held
+ * the character at once). It holds nothing: the copies are locked piece by piece (item_dupes, the caller's), and the
+ * character trades on. `strike` false - a contested claim (ledgerStep) - is the finding alone.
+ * @param {any} db @param {string} char @param {string[]} keys @param {number} nowS @param {{ strike?: boolean }} [o]
  */
-export function chargeSteps(db, char, keys, nowS) {
+export function chargeSteps(db, char, keys, nowS, { strike = true } = {}) {
   return [
-    db.prepare(`UPDATE realm_characters SET dupes = dupes + ?2,
-      held = CASE WHEN held IN ('staff', 'dupe') THEN held WHEN dupes + ?2 >= ?3 THEN 'dupe' ELSE held END,
-      held_at = CASE WHEN held IN ('staff', 'dupe') THEN held_at WHEN dupes + ?2 >= ?3 THEN ?4 ELSE held_at END,
-      judge_rev = judge_rev + 1 WHERE id = ?1`).bind(char, keys.length, DUPES_FOR_HOLD, nowS),
+    ...(strike ? [db.prepare('UPDATE realm_characters SET dupes = dupes + 1 WHERE id = ?1').bind(char)] : []),
     db.prepare("INSERT INTO realm_findings (player, char_id, seq, at, law, kind, detail) SELECT player, id, seq, ?2, ?3, 'dupe', ?4 FROM realm_characters WHERE id = ?1")
-      .bind(char, nowS, JUDGE_VERSION, JSON.stringify({ keys: keys.slice(0, 40), count: keys.length })),
+      .bind(char, nowS, JUDGE_VERSION, JSON.stringify({ keys: keys.slice(0, 40), count: keys.length, ...(strike ? {} : { contested: true }) })),
   ];
 }
 

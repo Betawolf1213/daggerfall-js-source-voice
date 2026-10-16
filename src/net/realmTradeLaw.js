@@ -235,17 +235,21 @@ export function settleRealmTrade(saveA, saveB, halfA, halfB) {
  *  tradeHeldNotice says it when a checkpoint moves it, and a trade it refused says it again (FIELD BUGS 2026-10-11g
  *  HELD-SIDE). Here, a leaf both read: systems/itemIds.js re-exports it. */
 /** RING-WARN: a law hold's notice says the strikes are counting. Each hold counts (INT3: a strike a hold, never a
- *  checkpoint), and the third stands for staff even once the piece is gone - so dropping it and taking it up again is
+ *  checkpoint), and the third holds for a time even once the piece is gone - so dropping it and taking it up again is
  *  no way out, and the player who did exactly that (the Ring report) was told only "until it is gone". The rule is
- *  kept: a piece parked on the ground while its carrier trades, then taken up again, is what the strikes are for. */
-export const TRADE_HELD_STRIKES = ' Each time the law holds it counts: the third time, trading stays frozen until staff have looked.';
+ *  kept: a piece parked on the ground while its carrier trades, then taken up again, is what the strikes are for.
+ *  AUTO-HOLD (2026-10-16): that third hold is a week (a month each time after) and lifts on its own - no staff's look. */
+export const TRADE_HELD_STRIKES = ' Each time the law holds it counts: the third time, trading stays frozen for a week (a month if it comes to that again), then opens on its own.';
 export const TRADE_HELD_NOTICES = Object.freeze({
   law: `The realm is reviewing this character: something it carries is not as the game makes it. Trading is frozen until it is gone.${TRADE_HELD_STRIKES}`,
-  review: 'The realm is reviewing this character: the law has held it three times, and its trading stays frozen until staff have looked.',
-  dupe: 'The realm is reviewing this character: copies of an item were found. Trading is frozen until staff have looked.',
   budget: 'The realm is reviewing this character: its wealth rose faster than play could earn it. Trading is frozen until play catches up.',
   staff: 'The realm\'s staff have frozen this character\'s trading.',
 });
+/** AUTO-HOLD: when a timed hold ends, in the player's own clock's words. */
+export const heldUntilText = (/** @type {number} */ until) => new Date(until * 1000).toLocaleString(undefined, { month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+/** AUTO-HOLD: the law's timed hold (server-account/src/verdict.js lawCountOf), said with its end - the piece gone or not,
+ *  that is the way out. */
+export const tradeHeldUntilNotice = (/** @type {number} */ until) => `The realm's law has held this character three times. Its trading is frozen until ${heldUntilText(until)}, then opens on its own.`;
 
 /** A refusal's words, for the side whose trade did not happen. Nothing moved, on the service or here. FIELD BUGS
  *  2026-10-11g HELD-SIDE ("Cant trade after yesterdays character lockout" - "It will just say something along the lines
@@ -269,7 +273,7 @@ export function realmTradeRefusalText(/** @type {string} */ why, /** @type {stri
     case 'moved': return 'A character moved on before the trade was settled - nothing was traded.';
     case 'offline': return 'The realm could not be reached - nothing was traded.';
     case 'trade-held': return 'The realm is reviewing a character in this trade, and its trading is frozen - nothing was traded.';   // INT3
-    case 'piece-dupe': return 'Copies of a piece in this trade were found in the realm - nothing was traded.';   // INT4
+    case 'piece-dupe': return 'A piece in this trade is locked: a copy of it was found in the realm - nothing was traded.';   // INT4; AUTO-HOLD: the piece is locked, never its holder
     case 'piece-claimed': return 'Another character shows a piece in this trade too, and the realm is still settling whose it is - nothing was traded.';   // INT4 (its audit)
     case 'piece-legacy': return 'A piece in this trade came into the realm from a classic save, and the realm does not trade it - nothing was traded.';   // INT1 (its audit)
     case 'record-unjudged': return 'The realm has not read a character\'s latest save yet - nothing was traded. Try again in a moment.';   // INT3 (its audit)

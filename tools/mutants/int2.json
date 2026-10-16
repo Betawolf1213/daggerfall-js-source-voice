@@ -47,8 +47,8 @@
   {
     "name": "INT3-no-hold-for-law",
     "file": "server-account/src/verdict.js",
-    "old": "  if (law > 0 || (prev === 'law' && strikes >= STRIKES_FOR_REVIEW)) return 'law';",
-    "new": "  if (prev === 'law' && strikes >= STRIKES_FOR_REVIEW) return 'law';",
+    "old": "  if (law > 0 || (until != null && until > nowS)) return 'law';",
+    "new": "  if (until != null && until > nowS) return 'law';",
     "tests": [
       "test/int2_judge.test.js"
     ]
@@ -56,7 +56,7 @@
   {
     "name": "INT3-strikes-forgotten",
     "file": "server-account/src/verdict.js",
-    "old": "  if (law > 0 || (prev === 'law' && strikes >= STRIKES_FOR_REVIEW)) return 'law';",
+    "old": "  if (law > 0 || (until != null && until > nowS)) return 'law';",
     "new": "  if (law > 0) return 'law';",
     "tests": [
       "test/int2_judge.test.js"

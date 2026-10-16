@@ -375,8 +375,8 @@
   {
     "name": "HOME1-a-peers-word-lands-on-the-chest",
     "file": "src/world/interiorShared.js",
-    "old": "  if (!home) applyInteriorLoot(ctx, shared.world.loot, { seen, openKey, today });",
-    "new": "  applyInteriorLoot(ctx, shared.world.loot, { seen, openKey, today });",
+    "old": "  if (!home) applyInteriorLoot(ctx, shared.world.loot, { seen, openKey, today, carried });",
+    "new": "  applyInteriorLoot(ctx, shared.world.loot, { seen, openKey, today, carried });",
     "tests": [
       "test/home1.test.js",
       "test/auditworld6a.test.js",

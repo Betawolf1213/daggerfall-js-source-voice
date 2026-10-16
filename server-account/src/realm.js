@@ -482,9 +482,9 @@ export function firstSaveRefusal(text, row) {
   return cardWorthOf(save) <= customsCardAllowance(level) ? null : { error: 'customs-cards' };
 }
 
-/** INT2-INT6: the judge's columns on a character's row (migration 0096), as verdict.js reads them. */
+/** INT2-INT6: the judge's columns on a character's row (migration 0096; AUTO-HOLD's timed hold, 0120), as verdict.js reads them. */
 export const JUDGE_COLUMNS = 'judged_seq, held, held_at, strikes, review, wealth, witnessed, allowance, played_at, clean_obj, clean_seq,'
-  + ' dupes, judge_rev, svc_seq, level_seen, level_at, law_sig, law_excused, wealth_v';
+  + ' dupes, judge_rev, svc_seq, level_seen, level_at, law_sig, law_excused, wealth_v, held_until, law_holds, law_at';
 
 /**
  * INT3: THE HOLD, AS A ROUTE ASKS IT - before any act that hands a realm character's value to another player (a market
@@ -532,7 +532,8 @@ export async function craftHoldOf(/** @type {any} */ db, /** @type {string} */ p
  * INT2: AND EVERY CHECKPOINT IS READ - the judge's verdict (verdict.js verdictOn: the character law, the item law, the
  * id ledger, the budget, the hold) lands in the batch that moves the row. A verdict never refuses the save: it holds the
  * character's trade (Mac: "Freeze trading"). Answers `{ ok, seq, tradeHeld }` - the hold standing (null for none), said
- * so the tab can tell its player - or `{ error }`:
+ * so the tab can tell its player, and (AUTO-HOLD) `locked`, the keys of the copies the record shows, locked piece by
+ * piece (ledger.js), for the tab to name - or `{ error }`:
  * 'lease' - another tab or device has the character now; 'seq' - not the next one, with the service's `seq` beside it,
  * so a tab whose last checkpoint landed but whose answer was lost can resync; the first save's own words
  * (firstSaveRefusal).
@@ -595,7 +596,7 @@ export async function checkpointRealm({ db, bucket, rand, nowS }, playerId, { id
   // two back now: the one before the last stays - and INT6's clean one, kept for staff, whichever it is
   const keep = new Set([key, row.obj, stood.clean_obj].filter(Boolean));
   await dropObjects(bucket, [...new Set([row.prev, row.clean_obj])].filter((k) => k && !keep.has(k)));
-  return { ok: true, seq, tradeHeld: stood.held ?? null, ...(stood === v.set && v.why ? { tradeHeldWhy: v.why } : {}) };
+  return { ok: true, seq, tradeHeld: stood.held ?? null, ...(stood === v.set && v.why ? { tradeHeldWhy: v.why } : {}), ...(v.locked.length ? { locked: v.locked } : {}) };
 }
 
 /**

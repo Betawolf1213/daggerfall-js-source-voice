@@ -63,15 +63,6 @@
     ]
   },
   {
-    "name": "INT4-dupes-never-hold",
-    "file": "server-account/src/verdict.js",
-    "old": "  if (prev === 'dupe' || (fresh > 0 && dupes >= DUPES_FOR_HOLD)) return 'dupe';",
-    "new": "  if (prev === 'dupe') return 'dupe';",
-    "tests": [
-      "test/int4_itemids.test.js"
-    ]
-  },
-  {
     "name": "INT3-the-lift-unsaid",
     "file": "src/systems/itemIds.js",
     "old": "  if (now == null) return prev ? TRADE_OPEN_NOTICE : null;",

@@ -3,6 +3,8 @@
 // poster and disenchanted under ANY other character id: realmHoldOf asks the acting character alone and answers null for
 // an id that is no realm id, while a crafted piece is the account's (`products.owner`). And a commission filled asked
 // no hold at all. The hold now follows the piece (realm.js craftHoldOf: the realm character its maker's record names).
+// PIN MOVED (AUTO-HOLD, 2026-10-16): the hold the cases set is staff's - a copy holds no character now, so 'dupe' is
+// no hold any verdict writes.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { standService, T0 } from './accountDb.mjs';
@@ -38,7 +40,7 @@ test('CRAFT-HOLD a held realm character\'s crafted piece lists and auctions unde
   const { s, eve, E, piece, hold } = await stand();
   piece(P(0xa1));
   piece(P(0xa2), { quality: 4 });
-  hold('dupe');
+  hold('staff');
   const list = (character, provenance, currency = 'marks') => s.call('/v1/market/list', { character, region: DF, kind: 'piece', provenance, wear: 1000, price: 500, hubs: HUBS, rid: rid(), currency }, eve.secret);
   const auction = (character, provenance) => s.call('/v1/market/auction', { character, region: DF, provenance, wear: 1000, opening: 500, hubs: HUBS, rid: rid() }, eve.secret);
   for (const r of [await list(E.id, P(0xa1), 'gold'), await list('char-anything', P(0xa1)), await auction('char-anything', P(0xa2))]) {
@@ -60,7 +62,7 @@ test('CRAFT-HOLD a commission is filled with no held character\'s craft - the ro
   assert.equal(posted.status, 200, JSON.stringify(posted.body));
   const id = posted.body.commission.id;
   const fulfil = (character) => s.call('/v1/writs/fulfil', { character, region: DF, commission: id, provenance: P(0xb1), wear: 1000, rid: rid() }, eve.secret);
-  hold('dupe');
+  hold('staff');
   for (const character of [E.id, 'char-anything']) {
     const r = await fulfil(character);
     assert.equal(r.status, 409, `${character}: ${JSON.stringify(r.body)}`);
@@ -73,7 +75,7 @@ test('CRAFT-HOLD a commission is filled with no held character\'s craft - the ro
 test('CRAFT-HOLD a held character\'s craft is disenchanted to the Stores under no other character\'s name (mutants: the disenchant route unheld)', async () => {
   const { s, eve, piece, hold } = await stand();
   piece(P(0xc1));
-  hold('dupe');
+  hold('staff');
   const r = await s.call('/v1/prof/disenchant', { character: 'char-anything', provenance: P(0xc1), rid: rid() }, eve.secret);
   assert.equal(r.status, 409, JSON.stringify(r.body));
   assert.equal(r.body.error, 'trade-held');
@@ -82,7 +84,7 @@ test('CRAFT-HOLD a held character\'s craft is disenchanted to the Stores under n
 test('AUDIT CRAFT-HOLD a held character with crafts at the account is not deleted - its row is where its hold lives, and deleted, its crafts listed under any other name the next minute; lifted, it goes; one with none goes as any other (mutants: the delete unheld; every held character refused)', async () => {
   const { s, raw, eve, E, piece, hold } = await stand();
   piece(P(0xd1));
-  hold('dupe');
+  hold('staff');
   const del = await s.call('/v1/realm/delete', { id: E.id }, eve.secret);
   assert.equal(del.status, 409, JSON.stringify(del.body));
   assert.equal(del.body.error, 'trade-held');
@@ -107,7 +109,7 @@ test('AUDIT CRAFT-HOLD the hold is a HOLD alone and the account\'s own: an unhel
   s.seedMarks(tom, 10_000);
   piece(P(0xe2));
   raw.prepare('UPDATE products SET owner = ? WHERE provenance = ?').run(tom.id, P(0xe2));   // sold to Tom (a sale moves the owner alone)
-  hold('dupe');
+  hold('staff');
   const theirs = await list(tom, tom.character, P(0xe2));
   assert.equal(theirs.status, 200, `another account's piece, its maker held: ${JSON.stringify(theirs.body)}`);
   // a piece made before customs: its char_id the offline character the realm one came in as
@@ -133,7 +135,7 @@ test('AUDIT CRAFT-HOLD a held character\'s Stores go into no guild\'s Stores and
   const writ = (await s.call('/v1/writs/post', { character: tom.character, region: DF, material: 'log:oak', units: 10, pay: 3, rid: rid() }, tom.secret)).body.writ.id;
   const deposit = () => s.call('/v1/stores/guild-deposit', { character: al.character, material: 'log:oak', units: 10, rid: rid() }, al.secret);
   const supply = () => s.call('/v1/writs/supply', { character: al.character, region: DF, writ, units: 5, rid: rid() }, al.secret);
-  raw.prepare("UPDATE realm_characters SET held = 'dupe' WHERE id = ?").run(al.character);
+  raw.prepare("UPDATE realm_characters SET held = 'staff' WHERE id = ?").run(al.character);
   for (const r of [await deposit(), await supply()]) {
     assert.equal(r.status, 409, JSON.stringify(r.body));
     assert.equal(r.body.error, 'trade-held');
@@ -146,7 +148,7 @@ test('AUDIT CRAFT-HOLD a held character\'s Stores go into no guild\'s Stores and
 test('AUDIT CRAFT-HOLD a realm character whose OWN record holds a piece is not refused for its maker\'s hold on a disenchant - the record proves it its own (mutants: the hold asked over a record)', async () => {
   const { s, eve, piece, hold } = await stand();
   piece(P(0xf1));
-  hold('dupe');
+  hold('staff');
   const sword = { group: 'Weapons', templateIndex: 120, material: 5, provenance: P(0xf1), recipe: 'longsword:mithril', name: 'Mithril Longsword', stackCount: 1 };
   const R2 = await seatRealm(s.env, eve.secret, 'Ena', { name: 'Ena', level: 5, goldPieces: 0, items: [sword] });
   const r = await s.call('/v1/prof/disenchant', { character: R2.id, provenance: P(0xf1), rid: rid(), realm: R2.at() }, eve.secret);

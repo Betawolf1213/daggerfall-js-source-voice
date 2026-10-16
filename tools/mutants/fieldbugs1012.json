@@ -2,8 +2,8 @@
   {
     "name": "RING-HOLD-the-review-unsaid",
     "file": "server-account/src/verdict.js",
-    "old": "  const why = held !== 'law' ? null : lawHolds ? (({ code, t }) => ({ code, t: t ?? null }))(lawFindings[0]) : { code: 'review', t: null };",
-    "new": "  const why = held !== 'law' ? null : lawHolds ? (({ code, t }) => ({ code, t: t ?? null }))(lawFindings[0]) : null;",
+    "old": "  const why = held !== 'law' ? null : count.until != null ? { code: 'until', t: found?.t ?? null, until: count.until } : found;",
+    "new": "  const why = held !== 'law' ? null : found;",
     "tests": [
       "test/ringhold.test.js"
     ]
@@ -20,7 +20,7 @@
   {
     "name": "RING-HOLD-the-review-unnoticed",
     "file": "src/systems/itemIds.js",
-    "old": "  if (now === 'law' && why?.code === 'review') return TRADE_HELD_NOTICES.review;",
+    "old": "  if (now === 'law' && why?.code === 'until' && Number.isSafeInteger(why.until)) return tradeHeldUntilNotice(/** @type {number} */ (why.until));",
     "new": "",
     "tests": [
       "test/ringhold.test.js"
@@ -29,7 +29,7 @@
   {
     "name": "RING-WARN-the-strikes-unsaid",
     "file": "src/net/realmTradeLaw.js",
-    "old": "export const TRADE_HELD_STRIKES = ' Each time the law holds it counts: the third time, trading stays frozen until staff have looked.';",
+    "old": "export const TRADE_HELD_STRIKES = ' Each time the law holds it counts: the third time, trading stays frozen for a week (a month if it comes to that again), then opens on its own.';",
     "new": "export const TRADE_HELD_STRIKES = '';",
     "tests": [
       "test/ringhold.test.js"

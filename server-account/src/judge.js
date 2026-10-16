@@ -18,7 +18,9 @@
 // player loses nothing they played, because a finding can be the law's mistake and "THE CLOUD IS A BACKUP" exists
 // because players lost games - and the character is HELD: every route that moves its value to another player refuses
 // it (realm.js holdRefusal) until a later checkpoint is clean or staff clear it. A character the law has found three
-// times stays held for staff (STRIKES_FOR_REVIEW): a client that keeps writing impossible things is not an accident.
+// times is held for a time, whatever its next checkpoint says (STRIKES_FOR_TIMED, verdict.js LAW_HOLD_S): a client that
+// keeps writing impossible things is not an accident - and since AUTO-HOLD (2026-10-16) the hold lifts on its own when
+// its time is out, never on a person's review.
 //
 // ═══ WHAT IS JUDGED ════════════════════════════════════════════════
 //
@@ -39,8 +41,8 @@
 //     piles it dropped - picked up again, a pile is no gain). INT5's budget reads it.
 // ═══════════════════════════════════════════════════════════════════
 
-import { itemFindings, itemWorth, lawTemplate, classicPiece, PROVENANCE_RE, ITEM_UID_RE, ITEM_LAW_VERSION, GOLD_INT_MAX } from '../../src/systems/itemLaw.js';
-import { valuablePiece } from '../../src/systems/itemIds.js';
+import { itemFindings, itemWorth, lawTemplate, classicPiece, PROVENANCE_RE, ITEM_LAW_VERSION, GOLD_INT_MAX } from '../../src/systems/itemLaw.js';
+import { ledgerKeyOf } from '../../src/systems/itemIds.js';
 import { armsOf } from '../../src/net/siegeRef.js';   // INT7: the arms the token signs
 import { liquidWorthOf, deedsOf } from '../../src/net/realmGoldLaw.js';
 import { MAX_STAT_VALUE } from '../../src/systems/statMods.js';
@@ -52,8 +54,9 @@ import { pathFindings } from '../../src/systems/arcanePaths.js';   // SCHOOLS5: 
 export const JUDGE_VERSION = ITEM_LAW_VERSION;
 /** The highest level the realm reads (realm.js REALM_LEVEL_CLAIM_MAX, the summary's own bound - pinned equal). */
 export const JUDGE_LEVEL_MAX = 1000;
-/** The holds the law has come to before a held character waits for staff, whatever its next checkpoint says. */
-export const STRIKES_FOR_REVIEW = 3;
+/** The holds the law has come to before a held character is held for a time (verdict.js LAW_HOLD_S), whatever its next
+ *  checkpoint says. */
+export const STRIKES_FOR_TIMED = 3;
 /** THE WEALTH MEASURE'S VERSION (wealthOf, itemLaw.js itemWorth, realmGoldLaw.js deedsOf's prices): moved whenever any of
  *  them counts a save differently, so a character's next checkpoint measures its stored record again under the new one
  *  and the change is no gain the budget charges (AUDIT INT: an open number moved was every character's gain at once).
@@ -218,14 +221,9 @@ export function judgeSave(save, summary = null, o = {}) {
   return { findings, count, wealth: wealthOf(save, o), items, provenances, pieces: ledgerPieces(save), arms };
 }
 
-/** INT4: A PIECE'S KEY IN THE LEDGER - a crafted piece's provenance (the service minted it: no client can mint a fresh
- *  one), any other valuable piece's id (systems/itemIds.js valuablePiece - never a stack, nor a bound or quest piece) -
- *  or null, a piece the ledger does not follow. */
-export function ledgerKeyOf(/** @type {any} */ it) {
-  if (!valuablePiece(it)) return null;
-  if (typeof it.provenance === 'string' && PROVENANCE_RE.test(it.provenance)) return it.provenance;
-  return typeof it.uid === 'string' && ITEM_UID_RE.test(it.uid) ? it.uid : null;
-}
+/** INT4: A PIECE'S KEY IN THE LEDGER - systems/itemIds.js ledgerKeyOf, its one home since AUTO-HOLD (the client's room
+ *  word reads it too), handed on here for the service's own readers. */
+export { ledgerKeyOf };
 /** What a piece IS, as the ledger keeps it beside its key: its template and its material - an id on another piece is no
  *  claim to the piece the id was minted for. */
 export const ledgerPrintOf = (/** @type {any} */ it) => `${Number.isSafeInteger(it?.templateIndex) ? it.templateIndex : '-'}:${Number.isSafeInteger(it?.material) ? it.material : '-'}`;
