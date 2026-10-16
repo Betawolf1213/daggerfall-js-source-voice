@@ -23,10 +23,13 @@
 // source, and DFU's window has no control for this; shift-click (ui/nativeInventory.js) is the classic skin's half.
 //
 // LOOT-BULK (2026-10-16): the same bar on a container (a chest, a corpse). A rarity menu beside the pages, listing only
-// the tiers this list holds, each with its count. The ground and a reward tray stay whole.
+// the tiers this list holds, each with its count, and a material menu of the same shape for armour and weapons. The
+// ground and a reward tray stay whole.
 import { PACK_PAGES, pageOf } from './packPages.js';
 import { isMaterialItem } from '../systems/materialsBag.js';
 import { RARITIES, RARITY_ORDER, rarityOf } from '../systems/lootRarity.js';
+import { materialName } from '../systems/itemInfo.js';   // MAT-FILTER: the metal the card already says
+import { isAmmunition } from '../systems/itemTemplates.js';
 
 /** The remote kinds (enhancedInventory.js remoteModel) that carry the bar: the player's own stores, and a container. */
 export const STORE_FILTER_KINDS = Object.freeze(new Set(['wagon', 'storage', 'bag', 'container']));
@@ -35,7 +38,7 @@ export const STORE_FILTERS = Object.freeze([['all', 'All'], ['materials', 'Mater
 const IDS = new Set(STORE_FILTERS.map(([id]) => id));
 /** The filter a store opens on - fresh for every store shown (AUDIT WAGON-FILTER: the wagon's category and search
  *  followed the player into the bag, which showed "Nothing here matches." over a bag that held an ingot). */
-export const freshStoreFilter = (kind = null) => ({ kind, cat: 'all', rarity: 'all', query: '' });
+export const freshStoreFilter = (kind = null) => ({ kind, cat: 'all', rarity: 'all', material: 'all', query: '' });
 
 /** Whether an item answers a category. Total over the ids; an id the list does not have answers everything. */
 export const storeFilterAccepts = (it, cat) => (!IDS.has(cat) || cat === 'all' ? true : cat === 'materials' ? isMaterialItem(it) : pageOf(it) === cat);
@@ -51,12 +54,12 @@ export const storeQuery = (q) => String(q ?? '').trim().toLowerCase().slice(0, 4
  * The items a filter shows, in the store's own order. `nameOf` is the row's name (enhancedInventory.js itemLine), so
  * what the search reads is what the row says. Pure.
  * @param {any[]} items
- * @param {{ cat?: string, rarity?: string, query?: string }} filter
+ * @param {{ cat?: string, rarity?: string, material?: string, query?: string }} filter
  * @param {(it: any) => string} nameOf
  */
-export function filterStore(items, { cat = 'all', rarity = 'all', query = '' } = {}, nameOf = (it) => it?.name ?? '') {
+export function filterStore(items, { cat = 'all', rarity = 'all', material = 'all', query = '' } = {}, nameOf = (it) => it?.name ?? '') {
   const q = storeQuery(query);
-  return items.filter((it) => storeFilterAccepts(it, cat) && storeRarityAccepts(it, rarity) && (!q || String(nameOf(it) ?? '').toLowerCase().includes(q)));
+  return items.filter((it) => storeFilterAccepts(it, cat) && storeRarityAccepts(it, rarity) && storeMaterialAccepts(it, material) && (!q || String(nameOf(it) ?? '').toLowerCase().includes(q)));
 }
 
 /**
@@ -76,8 +79,8 @@ export function storeFilterOptions(items, chosen = 'all') {
 }
 
 /**
- * The rarity menu: All, then every tier this list holds, in the ladder's order, each with its count. A tier the list
- * does not hold is absent. The chosen one stays at nought, as the page menu's choice does.
+ * The rarity menu: Any Rarity, then every tier this list holds, in the ladder's order, each with its count. A tier the
+ * list does not hold is absent. The chosen one stays at nought, as the page menu's choice does.
  * @param {any[]} items
  * @param {string} chosen
  * @returns {{ id: string, label: string, count: number }[]}
@@ -88,10 +91,45 @@ export function storeRarityOptions(items, chosen = 'all') {
     const id = rarityOf(it);
     counts.set(id, (counts.get(id) ?? 0) + 1);
   }
-  const out = [{ id: 'all', label: 'All', count: items.length }];
+  const out = [{ id: 'all', label: 'Any Rarity', count: items.length }];
   for (const id of RARITY_ORDER) {
     const count = counts.get(id) ?? 0;
     if (count > 0 || id === chosen) out.push({ id, label: RARITIES[id].label, count });
+  }
+  return out;
+}
+
+/** The metals a piece of armour or a weapon is made of, in the order the menu lists them. Leather and chain are
+ *  armour's own; the ten after them are the plate and weapon metals (itemInfo.js MATERIAL_NAMES). */
+const MATERIAL_ORDER = Object.freeze(['Leather', 'Chain', 'Iron', 'Steel', 'Silver', 'Elven', 'Dwarven', 'Mithril', 'Adamantium', 'Ebony', 'Orcish', 'Daedric']);
+const MATERIAL_IDS = new Set(MATERIAL_ORDER);
+/** The metal a row is filtered by, or '' when the row has none to say: not armour, not a weapon, or an arrow. */
+export function storeMaterialOf(it) {
+  if (it?.group !== 'Armor' && !(it?.group === 'Weapons' && !isAmmunition(it))) return '';
+  const name = materialName(it);
+  return MATERIAL_IDS.has(name) ? name : '';
+}
+/** Whether an item answers a material. An id the list does not have answers everything, as an unknown page does. */
+export const storeMaterialAccepts = (it, material) => !MATERIAL_IDS.has(material) || storeMaterialOf(it) === material;
+
+/**
+ * The material menu: Any Material, then every metal this list holds, in MATERIAL_ORDER, each with its count. A metal
+ * the list does not hold is absent. The chosen one stays at nought, as the rarity menu's choice does.
+ * @param {any[]} items
+ * @param {string} chosen
+ * @returns {{ id: string, label: string, count: number }[]}
+ */
+export function storeMaterialOptions(items, chosen = 'all') {
+  const counts = new Map();
+  for (const it of items) {
+    const id = storeMaterialOf(it);
+    if (!id) continue;
+    counts.set(id, (counts.get(id) ?? 0) + 1);
+  }
+  const out = [{ id: 'all', label: 'Any Material', count: items.length }];
+  for (const id of MATERIAL_ORDER) {
+    const count = counts.get(id) ?? 0;
+    if (count > 0 || id === chosen) out.push({ id, label: id, count });
   }
   return out;
 }

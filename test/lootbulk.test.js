@@ -5,7 +5,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { withDom } from './invdrag.mjs';
 import { mountEnhancedInventory } from '../src/ui/enhancedInventory.js';
-import { filterStore, storeRarityOptions, storeRarityAccepts } from '../src/ui/storeFilter.js';
+import { filterStore, storeRarityOptions, storeRarityAccepts, storeMaterialOptions, storeMaterialAccepts, storeMaterialOf } from '../src/ui/storeFilter.js';
+import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { bulkVerdict, runBulk, listAtCap, CONTAINER_LIST_CAP } from '../src/ui/storeBulk.js';
 import { planTake, planStore, WAGON_KG_LIMIT } from '../src/systems/itemTransfer.js';
 import { wagonKgFor } from '../src/systems/wagonKinds.js';
@@ -40,12 +41,13 @@ function withLoot(items, lootItems, fn, { wagon = null } = {}) {
     });
     const press = (label) => [...host.querySelectorAll('button')].find((b) => b.textContent === label).onclick();
     const rarity = () => [...host.querySelectorAll('select')].find((m) => m.className === 'storerarity') ?? null;
+    const material = () => [...host.querySelectorAll('select')].find((m) => m.className === 'storemat') ?? null;
     const rows = () => [...host.querySelectorAll('.itemrow')].filter((r) => r.closest('.loot-win')).map((r) => textOf(r));
     try {
       if (wagon) {
         [...host.querySelectorAll('button')].find((b) => b.onclick && /cart|wagon/i.test(textOf(b)) && !b.closest('.loot-win .remotelist')).onclick();
       }
-      return fn({ host, e, press, rarity, rows, lootItems });
+      return fn({ host, e, press, rarity, material, rows, lootItems });
     } finally { view.unmount(); }
   });
 }
@@ -58,8 +60,37 @@ test('LOOT-BULK storeFilter: the rarity menu lists the tiers the container holds
   assert.equal(storeRarityAccepts(plain, 'nonsense'), true, 'an id the ladder does not have shows everything');
   assert.deepEqual(filterStore([rare, plain], { rarity: 'rare' }, (it) => it.name), [rare]);
   assert.deepEqual(filterStore([rare, plain], { cat: 'weapons', rarity: 'common', query: 'dag' }, (it) => it.name), [plain]);
-  assert.deepEqual(storeRarityOptions([rare, plain, plain], 'legendary').map((c) => `${c.id}:${c.count}`), ['all:3', 'common:2', 'rare:1', 'legendary:0']);
+  assert.deepEqual(storeRarityOptions([rare, plain, plain], 'legendary').map((c) => `${c.id}:${c.label}:${c.count}`), ['all:Any Rarity:3', 'common:Common:2', 'rare:Rare:1', 'legendary:Legendary:0']);
   assert.equal(CONTAINER_LIST_CAP, 64);
+});
+
+test('LOOT-BULK storeFilter: the material menu lists the metals the container holds, with their counts, and keeps a chosen empty metal (mutants: every metal listed, an arrow read as iron)', () => {
+  const ebony = mk('Longsword', 'Weapons', { material: 7 });
+  const leather = mk('Cuirass', 'Armor', { material: ARMOR_MATERIAL.Leather });
+  const book = { group: 'Books', templateIndex: 277, name: 'Book' };
+  assert.equal(storeMaterialOf(ebony), 'Ebony');
+  assert.equal(storeMaterialOf(leather), 'Leather');
+  assert.equal(storeMaterialOf(arrows(4)), '', 'an arrow names no metal');
+  assert.equal(storeMaterialOf(book), '', 'a book names no metal');
+  assert.equal(storeMaterialAccepts(ebony, 'Ebony'), true);
+  assert.equal(storeMaterialAccepts(leather, 'Ebony'), false);
+  assert.equal(storeMaterialAccepts(book, 'nonsense'), true, 'an id the list does not have shows everything');
+  assert.deepEqual(filterStore([ebony, leather, book], { material: 'Ebony' }, (it) => it.name), [ebony]);
+  assert.deepEqual(storeMaterialOptions([ebony, leather, book], 'Steel').map((c) => `${c.id}:${c.count}`), ['all:3', 'Leather:1', 'Steel:0', 'Ebony:1']);
+  assert.equal(storeMaterialOptions([ebony], 'all')[0].label, 'Any Material');
+});
+
+test('LOOT-BULK on a container: a material narrows the rows the same way a rarity does', () => {
+  const ebony = mk('Longsword', 'Weapons', { material: 7, name: 'Ebony Blade' });
+  const iron = mk('Dagger', 'Weapons', { material: 0 });
+  withLoot([], [ebony, iron], ({ material, rows }) => {
+    const menu = material();
+    assert.ok(menu, 'the container has its material menu');
+    assert.deepEqual([...menu.children].map((o) => o.textContent), ['Any Material (2)', 'Iron (1)', 'Ebony (1)']);
+    menu.value = 'Ebony'; menu.onchange();
+    assert.equal(rows().length, 1, 'only the ebony row');
+    assert.match(rows()[0], /Ebony Blade/);
+  });
 });
 
 test('LOOT-BULK runBulk: a refusal is skipped, the first row with no room stops the walk, and a partial move is the last (mutants: a full row skipped, a partial continued)', () => {
@@ -87,7 +118,7 @@ test('LOOT-BULK on a container: rarity narrows the rows; Take all stops on the f
   withLoot([], [rare, plain], ({ rarity, rows, press, e, lootItems }) => {
     const menu = rarity();
     assert.ok(menu, 'the container has its rarity menu');
-    assert.deepEqual([...menu.children].map((o) => o.textContent), ['All (2)', 'Common (1)', 'Rare (1)']);
+    assert.deepEqual([...menu.children].map((o) => o.textContent), ['Any Rarity (2)', 'Common (1)', 'Rare (1)']);
     menu.value = 'rare'; menu.onchange();
     assert.equal(rows().length, 1, 'only the rare row');
     press('Take all');

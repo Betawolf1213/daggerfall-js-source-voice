@@ -126,7 +126,7 @@ import {
 import { bagStoreRefusal, bagMayLeave } from '../systems/materialsBag.js';   // BAG1: only materials go in the bag; AUDIT2 H11: and a loaded one stays
 import { shiftDrop } from '../systems/physicalItems.js';   // PI1: Physical Items' shift-drop, one law for both packs
 import { BAG_KG_LIMIT } from '../net/bagLaw.js';
-import { STORE_FILTER_KINDS, filterStore, storeFilterOptions, storeRarityOptions, freshStoreFilter } from './storeFilter.js';   // WAGON-FILTER: the wagon, the storage and the bag, filtered; LOOT-BULK: a container too, and its rarity
+import { STORE_FILTER_KINDS, filterStore, storeFilterOptions, storeRarityOptions, storeMaterialOptions, freshStoreFilter } from './storeFilter.js';   // WAGON-FILTER: the wagon, the storage and the bag, filtered; LOOT-BULK: a container too, and its rarity and metal
 import { bulkVerdict, runBulk, listAtCap, CONTAINER_LIST_CAP, CONTAINER_FULL } from './storeBulk.js';   // LOOT-BULK: Take all / Stash all
 import { entityMaxEncumbrance } from '../combat/formulas.js';   // AUDIT 26: PlayerEntity.MaxEncumbrance, enchantment allowance and all
 import { liveStat } from '../systems/statMods.js';
@@ -417,8 +417,9 @@ export function itemLine(item, identity = undefined) {
   // name on the line, the material prefix on the sub-line - so the
   // skin derives none of the arms itself. LR1's law rides it: an
   // UNIDENTIFIED enchanted item reads as its bare template
-  // (ItemHelper.cs:265-292's early return) and shows no material
-  // (LR4, as %mat is). The template stays the fallback.
+  // (ItemHelper.cs:265-292's early return). Below Rare that also hides
+  // the metal (LR4, as %mat is). MAT-SHOW: Rare and better armour and
+  // weapons still say it on the sub-line. The template stays the fallback.
   const parts = itemNameParts(item, { getQuest: deps.getQuest ?? null });
   return {
     item,   // MW-D38: the icon door resolves the item itself
@@ -3036,6 +3037,18 @@ function storeFilterBar(list) {
     rarity.onchange = () => { storeFilter.rarity = rarity.value; fillRemoteList(list, true); };
     bar.append(rarity);
   }
+  // MAT-FILTER: the metals this list's armour and weapons are made of, beside the tiers, in the same shape.
+  const material = el('select', 'storemat');
+  material.setAttribute('aria-label', `Material in the ${String(remote.title).toLowerCase()}`);
+  for (const c of storeMaterialOptions(remote.items, storeFilter.material)) {
+    const o = el('option', null, `${c.label} (${c.count})`);
+    o.value = c.id;
+    if (c.id === storeFilter.material) o.selected = true;
+    material.append(o);
+  }
+  material.value = storeFilter.material;
+  material.onchange = () => { storeFilter.material = material.value; fillRemoteList(list, true); };
+  bar.append(material);
   return bar;
 }
 

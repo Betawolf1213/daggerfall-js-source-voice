@@ -624,10 +624,18 @@ export function resolveItemName(item) {
  *  is questLetterName's own null answer. */
 export function itemLongName(item, opts) {
   const { name, material } = itemNameParts(item, opts);
-  if (!material) return name;
+  // MAT-SHOW: the metal stays off the front of a name the ladder keeps bare — an unidentified drop, an
+  // artifact, and a record's own name (Legendary, Aetheric, Gilded). The part still carries it, so the
+  // pack's sub-line can say "Dwarven" under "Wyrmbane" in the same dim line a plain sword uses.
+  if (!material || withholdsMaterialPrefix(item)) return name;
   return formatText(item?.group === 'Armor'
     ? localizedText('longArmorNameFormatString', '{0} {1}')
     : localizedText('longWeaponNameFormatString', '{0} {1}'), material, name);
+}
+/** A name that does not take the material as a prefix (ItemHelper.cs:302's early return, plus the ladder's
+ *  own names). The metal, when the pack should say it, rides `itemNameParts().material` instead. */
+function withholdsMaterialPrefix(item) {
+  return !itemIsIdentified(item) || !!item?.artifact || !!item?.legendary || !!item?.aetheric || !!item?.gilded;
 }
 
 /** RF6: THE LONG NAME IN ITS TWO PARTS - the material prefix and the
@@ -640,8 +648,10 @@ export function itemLongName(item, opts) {
  *  helm under HelmAndShieldMaterialDisplay, an artifact and a Legendary
  *  all showed a material DFU withholds, and a potion read "Glass
  *  Bottle", a plant lost its (northern), a soul trap its soul, a quest
- *  letter its signoff. `material` is '' when the long name carries
- *  no prefix. */
+ *  letter its signoff. `material` is '' when nothing should say the
+ *  metal. MAT-SHOW: a Rare or better piece of armour or a weapon still
+ *  fills it for the sub-line, while the long name keeps the prefix off
+ *  an unidentified drop and off a record's own name. */
 export function itemNameParts(item, opts = {}) {
   const parts = namePartsOf(item, opts);
   // AUDIT LEGACY H9: A PROJECT LEGACY HEIRLOOM CARRIES ITS HOUSE before the whole long name - "Hlaalu's Dwarven
@@ -652,16 +662,30 @@ export function itemNameParts(item, opts = {}) {
   const whole = parts.material ? `${parts.material} ${parts.name}` : parts.name;
   return { name: house.startsWith('of ') ? `${whole} of the house ${house}` : `${house}'s ${whole}`, material: '' };
 }
+/** The metal a weapon or a piece of armour says, or '' where DFU's own gates withhold it (an arrow, a helm
+ *  or shield under HelmAndShieldMaterialDisplay). */
+function gearMaterialText(item) {
+  if (item?.group === 'Weapons' && !isAmmunition(item)) return materialText(item);
+  if (item?.group === 'Armor' && armorShouldShowMaterial(item)) return materialText(item);
+  return '';
+}
+/** MAT-SHOW: Rare and above. Magic and a plain piece already say their metal once they are known; a Rare
+ *  drops unidentified, and a Legendary's own name used to swallow the metal entirely. */
+const RARE_OR_BETTER = new Set(['rare', 'legendary', 'aetheric', 'gilded']);
+const rareOrBetter = (item) => RARE_OR_BETTER.has(item?.rarity) || !!item?.legendary || !!item?.aetheric || !!item?.gilded;
 function namePartsOf(item, { getQuest = null, differentiatePlantIngredients = true } = {}) {
   const base = resolveItemName(item);
-  if (!itemIsIdentified(item) || item?.artifact || item?.legendary || item?.aetheric || item?.gilded) return { name: base, material: '' };   // LR2: a Legendary is named like an artifact - no material prefix; SET6: an Aetheric piece too ("Ruhn's Gatecleaver", never "Daedric Ruhn's...")
+  if (withholdsMaterialPrefix(item)) {
+    // The name stays bare. The metal still goes on the sub-line for Rare and better armour and weapons —
+    // an artifact keeps DFU's withhold, and so does an unidentified piece below Rare.
+    const material = item?.artifact || (!itemIsIdentified(item) && !rareOrBetter(item)) ? '' : gearMaterialText(item);
+    return { name: base, material };
+  }
   if (differentiatePlantIngredients) {
     if (item?.group === 'PlantIngredients1' && item.templateIndex < 18) return { name: formatText(localizedText('ingredientFormatString', '{0} {1}'), base, localizedText('northern', '(northern)')), material: '' };
     if (item?.group === 'PlantIngredients2' && item.templateIndex < 18) return { name: formatText(localizedText('ingredientFormatString', '{0} {1}'), base, localizedText('southern', '(southern)')), material: '' };
   }
-  let material = '';
-  if (item?.group === 'Weapons' && !isAmmunition(item)) material = materialText(item);
-  if (item?.group === 'Armor' && armorShouldShowMaterial(item)) material = materialText(item);
+  let material = gearMaterialText(item);
   // PROF3: a Masterwork's name is its maker's mark (bible/06-Systems/Professions-Arc.md 9.2) - "Silverthorn's Mithril
   // Longsword", the mark before the material, one name; PROF4: and a Master Joiner's furniture at any quality (`marked`)
   // AUDIT 30 C7: only a mark the law would write (a peer's, the wire's or an old save's text is not a name), on a piece
@@ -952,9 +976,10 @@ export function itemStatRows(item) {
   // Dagger does not read "Daedric Dagger / Material Daedric"; this row
   // is for the groups whose name does not carry it. AUDIT 68
   // S27-statrows-material-leak: and it is THE SAME material the card's
-  // sub-line reads - '' for an unidentified or artifact piece, an
-  // arrow, a helm or shield under HelmAndShieldMaterialDisplay - so the
-  // panel never names a metal the pack withholds; push drops an empty.
+  // sub-line reads - '' for an unidentified piece below Rare, an
+  // artifact, an arrow, a helm or shield under HelmAndShieldMaterialDisplay.
+  // MAT-SHOW: a Rare or better piece of armour or a weapon says its metal
+  // here even while the long name keeps the prefix off. push drops an empty.
   push('Material', itemNameParts(item).material);
   const survival = isSurvivalItem(item) || isRestItem(item) || isPortalStone(item) || isWalletItem(item) || isIliacCard(item) || isCardBinder(item) || isCardPack(item) || isOatsItem(item) || isWagonKitItem(item);   // STEED1/WAGONS4: the oats' and the kit's lines   // AUDIT CARDS-6 A5: and the pack's; CARDS8   // REST6: the seven's lines too; PORTAL1: and the Portal Stone's; WALLET1: and the wallet's
   if (survival) for (const t of survivalInfoTokens(item).slice(2)) push('', t.text);

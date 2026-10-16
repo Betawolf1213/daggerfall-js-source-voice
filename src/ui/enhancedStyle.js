@@ -5220,13 +5220,13 @@ ${paceControlsCss('tview')}
    dress, the brass on focus. */
 .storefilter { display: flex; align-items: center; gap: 6px; padding: 6px 10px; flex: 0 0 auto;
   border-bottom: 2px solid rgba(125,116,96,0.3); }
-.storesearch, .storecat, .storerarity { font: inherit; font-size: 13px; min-height: 32px; box-sizing: border-box; color: #d8cfae;
+.storesearch, .storecat, .storerarity, .storemat { font: inherit; font-size: 13px; min-height: 32px; box-sizing: border-box; color: #d8cfae;
   background: rgba(0,0,0,0.35); border: 1px solid rgba(125,116,96,0.45); border-radius: 0; }
 .storesearch { flex: 1 1 0; min-width: 0; padding: 0 8px; }
-.storecat, .storerarity { flex: 0 1 auto; max-width: 34%; padding: 0 4px; }
-.storecat option, .storerarity option { color: #d8cfae; background: #10141a; }
+.storecat, .storerarity, .storemat { flex: 0 1 auto; max-width: 28%; padding: 0 4px; }
+.storecat option, .storerarity option, .storemat option { color: #d8cfae; background: #10141a; }
 .storesearch::placeholder { color: #9c937d; }
-.storesearch:focus, .storecat:focus, .storerarity:focus { outline: none; border-color: var(--brass); }
+.storesearch:focus, .storecat:focus, .storerarity:focus, .storemat:focus { outline: none; border-color: var(--brass); }
 /* SHIFT-STOW's line: its own element, so hiding it leaves no band - on a touch screen (no Shift) and a short screen
    (the list first) */
 .storehint { margin: 0; padding: 4px 10px 0; flex: 0 0 auto; font-size: 11px; letter-spacing: 0.06em; color: #9c937d;
