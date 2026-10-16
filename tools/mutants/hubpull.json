@@ -1,0 +1,112 @@
+[
+  {
+    "name": "HUB-PULL-no-loop-on-hello",
+    "file": "server/src/index.js",
+    "old": "    this._hubPollEnsure();   // HUB-PULL: a shard with anything to say holds a socket - it asks the bus for that socket's frames",
+    "new": "",
+    "tests": [
+      "test/hubpull.test.js"
+    ],
+    "note": "a hello starts no poll - nothing the bus says reaches the shard"
+  },
+  {
+    "name": "HUB-PULL-held-unanswered",
+    "file": "server/src/index.js",
+    "old": "if (held && this._outbox.get(hub)?.l.length) this._pollAnswer(hub, held);",
+    "new": "",
+    "tests": [
+      "test/hubpull.test.js"
+    ],
+    "note": "a delivery sealed leaves the held poll waiting out its HUB_POLL_MS"
+  },
+  {
+    "name": "HUB-PULL-never-held",
+    "file": "server/src/index.js",
+    "old": "if (rs || !b.w || this._outbox.get(hub)?.l.length) return this._pollReply(hub, rs);",
+    "new": "return this._pollReply(hub, rs);",
+    "tests": [
+      "test/hubpull.test.js"
+    ],
+    "note": "every poll answered at once - a shard asks without rest"
+  },
+  {
+    "name": "HUB-PULL-miss-ends-loop",
+    "file": "server/src/index.js",
+    "old": "        if (got == null) return;   // not a shard - nothing to ask",
+    "new": "        if (!got && got !== 0) return;",
+    "tests": [
+      "test/hubpull.test.js"
+    ],
+    "note": "a miss ends the shard's loop - it hears nothing more"
+  },
+  {
+    "name": "HUB-PULL-empty-unpaced",
+    "file": "server/src/index.js",
+    "old": "        else if (got === 0) await new Promise((r) => setTimeout(r, HUB_BATCH_MS));",
+    "new": "",
+    "tests": [
+      "test/hubpull.test.js"
+    ],
+    "note": "an answer of nothing asked again at once"
+  },
+  {
+    "name": "HUB-PULL-older-hanging",
+    "file": "server/src/index.js",
+    "old": "    if (held) this._pollAnswer(hub, held, false);",
+    "new": "",
+    "tests": [
+      "test/hubpull.test.js"
+    ],
+    "note": "the older poll left to its timer"
+  },
+  {
+    "name": "HUB-PULL-ack-unread",
+    "file": "server/src/index.js",
+    "old": "while (box.l.length && box.l[0].q <= ack.q) box.bytes -=",
+    "new": "while (false) box.bytes -=",
+    "tests": [
+      "test/hubpull.test.js"
+    ],
+    "note": "what a shard ran never let go"
+  },
+  {
+    "name": "HUB-PULL-hold-untimed",
+    "file": "server/src/index.js",
+    "old": "const p = { done, t: setTimeout(() => this._pollAnswer(hub, p), HUB_POLL_MS) };",
+    "new": "const p = { done, t: null };",
+    "tests": [
+      "test/hubpull.test.js"
+    ],
+    "note": "a held poll never answered by its clock"
+  },
+  {
+    "name": "HUB-PULL-gone-unkept",
+    "file": "server/src/index.js",
+    "old": "ran++; for (const vid of left) this._downGone.add(vid); }",
+    "new": "ran++; }",
+    "tests": [
+      "test/hubpull.test.js"
+    ],
+    "note": "the ids a delivery named that the shard no longer holds, never told"
+  },
+  {
+    "name": "HUB-PULL-gone-unread",
+    "file": "server/src/index.js",
+    "old": "for (const vid of Array.isArray(b.gone) ? b.gone : []) {",
+    "new": "for (const vid of []) {",
+    "tests": [
+      "test/hubpull.test.js"
+    ],
+    "note": "the bus never reads a poll's gone"
+  },
+  {
+    "name": "HUB-PULL-stale-unpaced",
+    "file": "server/src/index.js",
+    "old": "const left = await this._hubDownApply(d); if (!left) continue; ran++;",
+    "new": "const left = await this._hubDownApply(d); ran++; if (!left) continue;",
+    "tests": [
+      "test/hubpull.test.js"
+    ],
+    "note": "an answer of deliveries run before counted as new - a bus handing them again spins the loop"
+  }
+]

@@ -74,6 +74,7 @@ Four read-only audits covered the relay (`server/src/index.js`), the account ser
 | D1-NEAR | The account Worker beside its database's primary, by name (`[placement] region`): Smart Placement ran it in Sydney, a Pacific from the primary, and every statement on the primary paid the crossing; every deploy says where it answers from, what a statement costs it there and where D1 says its primary is | No | **Built** (2026-10-12, this branch - no migration, no version, no drop; audited, AUDIT D1-NEAR) |
 | HOMES-SHED | The account database overloaded from 14:11 UTC (2026-10-13): the busiest route one D1 request where it was two (a town's homes and its Open Gates edict in one batch); the siege blackout's question answering a throw as every route does; a town unanswered backing off on the client, YARD-SHED's law | No | **Built** (2026-10-13, this branch - acct127, no migration, no drop) |
 | BUSY-GATE | After HOMES-SHED, the class: the reads a tab keeps asking stand back while the database is overloaded - the client holds them for a doubling wait, an isolate that meets an overload sheds them a moment without a statement, every overload answer says its Retry-After; one law at both ends (`src/net/busyLaw.js`) | No | **Built** (2026-10-13, this branch - acct128, no migration, no drop) |
+| HUB-PULL / DO-ASK | The live relay's hub refused by the runtime's subrequest depth (the bus's push charged to the hand-up it served, a hop deeper each round): the bus never calls a shard - each shard keeps a poll at its bus, answered with every delivery it has not acknowledged; the Worker asks a room reset before it ran once more, an overloaded one never, and answers what is left as a 503 | Yes, once | **Built** (2026-10-16, this branch; relay world208) |
 | SCALE6 | Abuse and backups: Turnstile on guest creation, /64 IPv6 rate keys, bans, report and ignore, `ALLOWED_ORIGIN`, R2 snapshots, a hub export | Some | Alongside |
 
 **Relay deploy policy (SCALE):** relay changes are batched into as few deploys as possible, each in a window announced beforehand. A deploy drops every player, and until SCALE2 every reconnect is a D1 write storm.
@@ -2231,6 +2232,116 @@ The owner's "1, 2 and 3", the first of them: one read of the seats' rows a minut
 Pins: `test/seat_facts.test.js` (3); `tools/mutants/seat_facts.json` (10 dead); AUDIT SCALE D7's quiet minute (eight
 statements, where it was six), SEAT-REPLICA's counted point (two statements, the row asked first) and ACC1b's tables
 (`seat_facts_kept`) - each PIN MOVED.
+
+## HUB-PULL and DO-ASK: built (2026-10-16, this branch - relay world208, one drop at the merge)
+
+Mac: "Is the server okay?", then, of what it found: "Yes and do any other improvements along the way. I really wanna
+continue to beef up the server". Read off the live relay (`/health`), Cloudflare's GraphQL analytics and Workers
+Observability (the relay's own logs), with the account's token.
+
+### Measured (2026-10-16, 00:30 UTC)
+
+- **Up, and the version main names.** The relay's `/health` answered `world207` and the account service's `/v1/health`
+  `acct138`, both main's. In the 24 hours before: the account service 6.9 million requests and no error; the relay some
+  670,000 invocations and 1,082 thrown (0.16%), rising on 2026-10-15 with its four relay deploys (16:48, 20:14, 21:44 and
+  22:57 UTC - each drops every socket).
+- **The hub's machinery refused by the runtime.** Every one of the relay's `Subrequest depth limit exceeded` errors was
+  a shard's hand-up (`[shard] the bus did not answer`): 485,616 in 72 hours by Observability's sampled count, at their
+  worst tens of thousands in each 72-minute bucket (01:12-04:48 UTC on 10-14 and 10-15). The refused hand-ups ran inside
+  `/internal/hub/down` (the bus's push, on 16 shards and more), `/internal/hub/resync`, and - on one region shard,
+  `chat:region.23.2` - in its own sockets' events, 29 of 100 sampled: a retry armed inside a refused call is armed where
+  the next is refused too.
+- **Why.** A Durable Object has one I/O context, and every call it makes is charged to the newest call it is serving
+  (workerd `io-context.h`, `getCurrentIncomingRequest`: "Any resource usage on the part of the actor, including
+  outgoing subrequests, is attributed to the current request"). The bus is served all day by its shards' hand-ups, so
+  its push to a shard rode the hand-up it was serving, one hop deeper; the shard's next hand-up rode that push; and
+  round after round the chain grew until the runtime refused it. No code awaited a call
+  inside another, so nothing in the source said so: it is the runtime's accounting, and only the live logs showed it.
+- **What a fix may cost.** The hub's shards were awake 21-23 hours of the 24 already (the GraphQL `durableObjectsPeriodicGroups`
+  active time of the same objects the errors named), so a shard that keeps a call open to its bus keeps nothing awake
+  that slept.
+- **Elsewhere, the runtime's own.** A crowded cell overloaded (`world:30,0`, six in ten minutes), 23 storage resets of a
+  region channel, a lost connection: Cloudflare's, and rare - but each was thrown out of the Worker as an exception,
+  and a reset before anything ran cost its player a reconnect's backoff (DO-ASK, below).
+
+### Built
+
+- **HUB-PULL - THE BUS NEVER CALLS A SHARD** (`src/net/hubShards.js` HUB_INTERNAL_POLL, `server/src/index.js`
+  `_hubPollEnsure`, `_hubPollLoop`, `_hubPoll`, `_hubDownApply`, `_downTo`, `_hubPollInternal`, `_pollAnswer`,
+  `_pollReply`). A shard (or a court's copy) keeps one poll at its bus while it holds a socket, started by anything it
+  owes the bus (a hello first) and by its sync's alarm. The bus seals each batch it owes a shard into that shard's
+  outbox, numbered as before (AUDIT SCALE II R2-7), and answers the shard's held poll with every delivery it has not
+  acknowledged - or with nothing after HUB_POLL_MS (20 s). The poll says what the shard ran (`ack`, its newest
+  delivery's number), and the bus lets those go; and the ids a delivery named that the shard no longer holds (`gone`),
+  which the bus lets go as ShardSockets, as the push's answer did. A newer poll answers an older one with nothing (its
+  shard gave up on it). The up half is as it was. Nothing the bus sends a shard is a call, so no round trip nests in
+  another; the bus's calls to its shards (`/internal/hub/down`, `/internal/hub/resync`) are gone.
+- **A woken bus's resync is its first answer.** AUDIT SCALE II R2-6's resync called every shard the bus had heard from
+  (kept in storage, `vhubs`). Now a shard's first poll to a bus instance is answered `rs`, and the shard hands up every
+  socket it holds at once. A bus that woke holds no poll, so every shard holding a socket asks it within a retry, and
+  the bus writes nothing to remember them.
+- **Kept until it ran, and bounded.** A delivery stays in its outbox until its shard's `ack` says it ran: a poll whose
+  answer was lost is answered with it again, and a delivery handed twice runs once (`_downSeen`, as before). An outbox
+  holds HUB_OUTBOX_MAX (256) deliveries and HUB_OUTBOX_BYTES (4 MiB) at most - past either the oldest is let go and the
+  shard's next sync heals it (a close it never heard said again) - and the silent sweep (R2-9) lets a silent shard's go.
+- **The loop never spins.** A miss is asked again HUB_RETRY_MS later, doubling to HUB_SYNC_MS / 2; an answer with
+  nothing new - empty, or only deliveries the shard ran already - HUB_BATCH_MS later. A mutant that asked again at once
+  hung the pins' process (a loop of promises starves the clock), which is the hazard the pacing answers.
+- **DO-ASK - THE WORKER'S ASK OF A ROOM** (`server/src/relayScale.js` askRoom; the Worker's door and `layerWalk`). A
+  Durable Object's error says `retryable` where the object was reset or its connection lost before it ran anything,
+  and `overloaded` where its queue ran too long. Every ask the Worker makes is a socket's upgrade, so a retryable one
+  is asked once more on a fresh stub and an overloaded one never; what is left is a 503 (`busy` or `unavailable`,
+  `retry-after: 2`) that the page's backoff answers - never an exception thrown out of the Worker.
+- **The pins' harness asks each poll itself.** `test/fakeRoom.mjs` fakeRooms sets `env.HUB_POLL` 'driven', and each
+  world's settle calls `_hubPoll` on every shard after the buses seal; `poll: 'held'` runs the loop the runtime runs,
+  on the real clock (`test/hubpull.test.js`).
+
+### Pins
+
+- `test/hubpull.test.js` (4): the held loop (one poll a shard at the bus, a delivery answering it, a line crossing
+  shards with no hand driving it, every call between the objects TO the bus); a miss asked again later with its
+  deliveries still owed, an empty or stale answer paced; the poll's door (held, the older answered at the newer, a
+  delivery answering the held one, the `ack` letting go, the first poll's `rs`); `gone`. `tools/mutants/hubpull.json`.
+- `test/doask.test.js` (2): the Worker's door and the walk - a retryable error asked again once, an overloaded one
+  never, what is left a 503. `tools/mutants/doask.json`.
+- PIN MOVED: `test/auditscale2_bus.test.js` R2-6 (a woken bus's resync now the first poll's `rs`), R2-7 (a delivery's
+  answer lost and handed twice, by poll; a close the bus let go of a shard cut off past HUB_SILENT_MS said again at its
+  sync), R2-8 (the poll carrying a wrong `gone` reaches the bus before the reconnect's hand-up, so its guard stays
+  pinned), R2-9 (the shard heard from keeps its very ShardSockets), R3-6 (a woken court's copy resynced by its first
+  poll), D-7 (settled, so a second greeting would reach the socket), D-8 (HUB_POLL_MS and the outbox's bounds);
+  `test/scale5c.test.js`'s count (the shard asks after the bus's tell); `test/scale2b.test.js`'s calls between rooms
+  (twenty-two, seventeen on ROOM_CALL_MS: the push and the resync gone, the poll on its own deadline);
+  `tools/mutants/auditscale2_bus.json` re-aimed by content (the resync's three to the poll's `rs`, the delivery's miss
+  to its `ack`), `vhubs`' record retired with the storage it pinned, and the outbox's bounds and the silent sweep's
+  purge added; `tools/hubShardBench.mjs` reads the bus's outbox where it read its pushes.
+- RELAY_VERSION world208, its hash in `test/relayversion.test.js` and every pin on world207 moved.
+
+### The deploy
+
+One relay drop, world208, at the merge (relay-deploy.yml) - every socket closes once, as every relay deploy does. No
+account-service change, no migration. The old storage key `vhubs` stays in the buses' storage, read by nothing.
+
+### Left, each with its reason
+
+- **Every other call between rooms** is one-way at a time - a cell telling the hub, the hub asking a region's channel
+  its census or wiping a hall - and none was refused in the 72 hours read. The rule HUB-PULL learned holds for all of
+  them: an object that is called all day must not call back the objects calling it.
+- **The runtime's overloads and resets** are its own; DO-ASK answers them, and the crowded cell that overloaded is
+  SCALE5d's layers' to spread (it overloaded for ten minutes, once).
+- **THE ACCOUNT DATABASE, OVERLOADED AGAIN - the next slice, the account service's own.** Read the same night off its
+  metrics (Analytics Engine `daggerfall_accounts`) and D1's query insights. At 00:00 UTC on 2026-10-16 the requests' mean
+  D1 wait went from some 0.5 s to 7.5 s in one five-minute bucket and stayed between 1 and 12 s for the next hour and
+  more (p50 wall up to 10 s, 31,045 refusals of 503 in the 00:00 hour), with the requests (37-41 thousand every five minutes)
+  and their statements (150-160 thousand) flat. The primary's statement time went from 10-13 s a minute to bursts of
+  24-34 s. Its earlier hours of the same (10-14 at 14:00 and 18:00, 10-15 at 17:00-18:00) are HOMES-SHED's and
+  BUSY-GATE's kind. What rose at midnight was reads that scan: the chapters' region read (`npcHalls.js` regionRows, some
+  10,000 rows a call - 4,180 calls and 41 million rows in 75 minutes against 1,414 and 10 million the hour before; it runs
+  on EVERY hall witness, even one whose account's report already stands, and on every isolate's recompute of a region
+  whose version moved), the market's listings (`market.js`, three times the calls), the arena's season boards
+  (`arena.js`, 17-22 million rows a board's aggregate, new in the top list at midnight), `home_decor`'s yard read
+  (`decor.js`, some 1,100 rows a call, 27,000 calls an hour) and `/v1/seats/list` (calls up 70%). Whether midnight's
+  rise is a day's rollover in the client or the readers' own retries against a slowing database is the slice's first
+  question; each of those reads wants a kept answer or an index before the next overload.
 
 ## THE PLAN PAST 2,000 (2026-10-10)
 
