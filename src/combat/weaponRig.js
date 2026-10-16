@@ -640,6 +640,12 @@ export function createWeaponRig({ renderer, canvas, fetchBytes, palette, audio, 
   playerWeapon.onAttackResult = ({ foe, damage }) => (pairUp() && playerWeapon.activeHand === 'L' ? twoHands.offWidget : widget).onAttackDamageCalculated({ damage, parrySounds: !!foe?.basics?.parrySounds, pos: foe?.pos ?? foe?.ai?.pos ?? null, isEnemy: true });
   let _activatePrev = false, _activateStarted = false;
   let _lastEye = null;   // WW1: PlayerMotor.MoveDirection, read off the eye's motion between frames, in the body's own frame
+  /** TWO-HANDS (AUDIT): the eye kept every frame, ahead of the mods' gate - kept inside it, the running hands (which read
+   *  the ground speed off it) never ran with the Weapon Widget, Handheld Torches and Shield Widget off. One array, reused. */
+  const keepEye = (pos) => {
+    if (!pos) _lastEye = null;
+    else if (_lastEye) { _lastEye[0] = pos[0]; _lastEye[1] = pos[1]; _lastEye[2] = pos[2]; } else _lastEye = [pos[0], pos[1], pos[2]];
+  };
   let _climbLower = 0;   // CLIMB4: the viewmodel lowered for the climb, 0 (in the hand) .. 1 (gone) - climbLower()
   let _climbing = false;   // CLIMB4: the last frame's climb (the touch button's swing reads it)
   // MW-D8. `camera` is REQUIRED for the Morrowind arm and there is no
@@ -1852,8 +1858,7 @@ export function createWeaponRig({ renderer, canvas, fetchBytes, palette, audio, 
         const yaw = cam.yaw || 0, sy = Math.sin(yaw), cy = Math.cos(yaw);
         localVel = [v[0] * cy - v[2] * sy, v[1], v[0] * sy + v[2] * cy];   // InverseTransformVector: right, up, forward
       }
-      // TWO-HANDS (AUDIT): the eye kept here, every frame - inside the mods' gate the running hands never ran with them off
-      if (cam?.pos) { if (_lastEye) { _lastEye[0] = cam.pos[0]; _lastEye[1] = cam.pos[1]; _lastEye[2] = cam.pos[2]; } else _lastEye = [cam.pos[0], cam.pos[1], cam.pos[2]]; } else _lastEye = null;
+      keepEye(cam?.pos);
       const frameMotion = { grounded: mv.grounded !== false, crouching: !!mv.crouching, riding: !!mv.riding, standing: !!mv.standing, speedRatio: ratio, baseSpeed: base, localVel };
       stepTwoHands(dt, mv, localVel, { climbing, handsLane });   // TWO-HANDS: the strike's hand, the guard, the running hands
       // AUDIT 27h S3b: THE SWITCHED-OFF FRAME IS COUNTED AT THE GATE, NOT INSIDE IT. S3 counted it as the `else` of the
