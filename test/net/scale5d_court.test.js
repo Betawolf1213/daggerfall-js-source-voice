@@ -38,6 +38,7 @@ async function court(fn, { start = TT.openAt + 1000 } = {}) {
         for (let i = 0; i < 6; i++) {
           for (const [k, r] of [...W.made]) if (H.isCourtCopy(k)) await r.room._hubUpFlush();
           await F.room._downFlush();
+          for (const [k, r] of [...W.made]) if (H.isCourtCopy(k)) await r.room._hubPoll();   // HUB-PULL: each copy asks for what it is owed
         }
       };
       /** A socket into copy `k` - its attachment the place's key and its layer, as the Worker's walk says them (the

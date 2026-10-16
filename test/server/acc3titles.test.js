@@ -70,9 +70,13 @@ function d1() {
         async first() { return stmt.get(...args) ?? null; },
         async all() { return { results: stmt.all(...args) }; },
         async run() { const r = stmt.run(...args); return { meta: { changes: Number(r.changes) } }; },
+        _result() { const results = stmt.all(...args); return { results, meta: { changes: Number(db.prepare('SELECT changes() AS c').get().c) } }; },
       };
       return api;
     },
+    // SIGN-BATCH (PIN MOVED): D1's batch, as the runtime runs it - one transaction, rolled back whole when a statement throws
+    // (the badge's doors ask the three games' honours in one, honours.js withHonours)
+    async batch(list) { db.exec('BEGIN'); try { const out = list.map((st) => st._result()); db.exec('COMMIT'); return out; } catch (e) { db.exec('ROLLBACK'); throw e; } },
   };
 }
 

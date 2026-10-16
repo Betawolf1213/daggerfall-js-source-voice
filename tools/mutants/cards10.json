@@ -416,23 +416,24 @@
   },
   {
     "name": "CARDS10-service-honours-door",
-    "file": "server-account/src/index.js",
-    "old": "      if (ARENA_HONOUR_PATHS.has(path)) who.player = await withIliacHonours(honoursCtx, who.player, nowS);",
-    "new": "",
+    "file": "server-account/src/honours.js",
+    "old": "arena: answers[0], iliac: answers[1], gambit: answers[2]",
+    "new": "arena: answers[0], gambit: answers[2]",
     "tests": [
       "test/net/iliac/cards10_service.test.js"
     ],
-    "note": "AUDIT SCALE5a (re-aimed by content): the honours on the binding (A1)."
+    "note": "AUDIT SCALE5a (re-aimed by content): the honours on the binding (A1). PRIMARY-TRIPS (re-aimed by content): the door lays the three games' honours in one batch (honours.js withHonours) - Iliac Hand's left off"
   },
   {
     "name": "CARDS10-service-season-played",
     "file": "server-account/src/iliac.js",
-    "old": ": (await seasonPlayed(ctx, season)) ? await storeIliacChampion(ctx, season, nowS) : null;",
+    "old": ": played ? await storeIliacChampion(ctx, season, nowS) : null;",
     "new": ": await storeIliacChampion(ctx, season, nowS);",
     "tests": [
       "test/server/scale4b.test.js",
       "test/systems/legacy/stormshed2.test.js"
-    ]
+    ],
+    "note": "PRIMARY-TRIPS (re-aimed by content): the stale #1 counted only where the season was played (championFrom)"
   },
   {
     "name": "CARDS10-client-my-view",

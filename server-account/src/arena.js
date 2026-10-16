@@ -209,7 +209,14 @@ export function _resetArenaCache() { _champ = { season: 0, at: -Infinity, id: nu
 async function championNow(ctx, nowS) {
   const season = arenaSeasonOf(nowS);
   if (_champ.season === season && nowS - _champ.at < ARENA_CHAMPION_CACHE_S) return _champ.id;
-  const kept = await ctx.db.prepare('SELECT player, at FROM arena_champions WHERE season = ?1').bind(season).first();
+  return championFrom(ctx, nowS, season, await championKeptRead(ctx.db, season).first());
+}
+/** SIGN-BATCH: a Grand Champion's row (the ladder's top tier's last bout won), as a statement - one home for both readers. */
+const grandRead = (/** @type {any} */ db, /** @type {string} */ id) => db.prepare(`SELECT 1 AS one FROM arena_pve WHERE player = ?1 AND tier = ${GRAND_TIER} AND step = ${ARENA_TIER_BOUTS} AND won = 1 LIMIT 1`).bind(id);
+/** SIGN-BATCH: the kept #1's row, as a statement. */
+const championKeptRead = (/** @type {any} */ db, /** @type {number} */ season) => db.prepare('SELECT player, at FROM arena_champions WHERE season = ?1').bind(season);
+/** The season's #1 from its kept row - counted again and stored where it is none or stale - and kept by this Worker. */
+async function championFrom(/** @type {any} */ ctx, /** @type {number} */ nowS, /** @type {number} */ season, /** @type {any} */ kept) {
   const id = kept && nowS - Number(kept.at) < ARENA_CHAMPION_STORED_S ? kept.player ?? null : await storeArenaChampion(ctx, season, nowS);
   _champ = { season, at: nowS, id };
   return id;
@@ -223,9 +230,26 @@ async function championNow(ctx, nowS) {
  */
 export async function arenaHonoursOf(ctx, player, nowS) {
   if (!player?.handle) return { grand: false, champion: false };
-  const g = await ctx.db.prepare(`SELECT 1 AS one FROM arena_pve WHERE player = ?1 AND tier = ${GRAND_TIER} AND step = ${ARENA_TIER_BOUTS} AND won = 1 LIMIT 1`).bind(player.id).first();
+  const g = await grandRead(ctx.db, player.id).first();
   const champion = (await championNow(ctx, nowS)) === player.id;
   return { grand: !!g, champion };
+}
+/** SIGN-BATCH (2026-10-16, the account database's primary at its ceiling of round trips - bible/11-Multiplayer/Scale-Arc.md
+ *  SIGN-BATCH): arenaHonoursOf as its reads - the Grand Champion's row, and the kept #1's where this Worker kept none - and
+ *  its answer from theirs, so the doors that read a badge (honours.js withHonours) ask the three games' honours in ONE
+ *  batch. The answer is arenaHonoursOf's: a stale #1 counted again and stored as championNow stores it. */
+export function arenaHonoursPlan(/** @type {any} */ ctx, /** @type {any} */ player, /** @type {number} */ nowS) {
+  if (!player?.handle) return { reads: [], from: async () => ({ grand: false, champion: false }) };
+  const season = arenaSeasonOf(nowS);
+  const cached = _champ.season === season && nowS - _champ.at < ARENA_CHAMPION_CACHE_S;
+  const keptId = cached ? _champ.id : null;   // PRIMARY-TRIPS audit: the #1 kept when the plan was made - read after the batch, another request's count of a new season could stand in its place
+  return {
+    reads: [grandRead(ctx.db, player.id), ...(cached ? [] : [championKeptRead(ctx.db, season)])],
+    from: async (/** @type {any[]} */ res) => ({
+      grand: !!res[0]?.results?.[0],
+      champion: (cached ? keptId : await championFrom(ctx, nowS, season, res[1]?.results?.[0] ?? null)) === player.id,
+    }),
+  };
 }
 /** The row with its honours on it - what titles.js reads (`arena`). */
 export async function withArenaHonours(ctx, player, nowS) {

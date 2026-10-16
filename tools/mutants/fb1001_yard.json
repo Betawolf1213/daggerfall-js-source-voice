@@ -197,8 +197,8 @@
   {
     "name": "YARD-STALE-the-write-unrecorded",
     "file": "src/scenes/homeYards.js",
-    "old": "    writes.get(y.mapId).set(y.bk, { n: ++wrote, list });   // FB1001 YARD-STALE",
-    "new": "    writes.get(y.mapId).set(y.bk, { n: wrote, list });   // FB1001 YARD-STALE",
+    "old": "    writes.get(y.mapId).set(y.bk, { n: ++wrote, at: now(), list });   // FB1001 YARD-STALE",
+    "new": "    writes.get(y.mapId).set(y.bk, { n: wrote, at: now(), list });   // FB1001 YARD-STALE",
     "tests": [
       "test/scenes/fb1001_yard.test.js"
     ]
@@ -206,7 +206,7 @@
   {
     "name": "YARD-STALE-the-old-answer-believed",
     "file": "src/scenes/homeYards.js",
-    "old": "      for (const [bk, w] of writes.get(mapId) ?? []) if (w.n > asked) byKey.set(bk, w.list);   // YARD-STALE: written since it was asked\n",
+    "old": "      for (const [bk, w] of writes.get(mapId) ?? []) if (w.n > asked || now() - w.at < YARD_WRITE_HOLD_MS) byKey.set(bk, w.list);   // YARD-STALE: written since it was asked - or (PRIMARY-TRIPS audit) within YARD_WRITE_HOLD_MS of it\n",
     "new": "",
     "tests": [
       "test/scenes/fb1001_yard.test.js"
@@ -215,8 +215,8 @@
   {
     "name": "YARD-STALE-every-answer-after-a-write-overruled",
     "file": "src/scenes/homeYards.js",
-    "old": "if (w.n > asked) byKey.set(bk, w.list);",
-    "new": "if (w.n >= asked) byKey.set(bk, w.list);",
+    "old": "if (w.n > asked || now()",
+    "new": "if (w.n >= asked || now()",
     "tests": [
       "test/scenes/fb1001_yard.test.js"
     ]
@@ -224,8 +224,8 @@
   {
     "name": "YARD-STALE-the-answers-turn",
     "file": "src/scenes/homeYards.js",
-    "old": "if (w.n > asked) byKey.set(bk, w.list);",
-    "new": "if (w.n > wrote) byKey.set(bk, w.list);",
+    "old": "if (w.n > asked || now()",
+    "new": "if (w.n > wrote || now()",
     "tests": [
       "test/scenes/fb1001_yard.test.js"
     ]

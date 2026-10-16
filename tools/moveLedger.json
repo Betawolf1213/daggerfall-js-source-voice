@@ -4258,5 +4258,15 @@
   ["bible/01-Overview/Port-Status-2026-09-02.md","bible/01-Overview/handoffs/Port-Status-2026-09-02.md"],
   ["bible/01-Overview/Port-Status-2026-09.md","bible/01-Overview/handoffs/Port-Status-2026-09.md"],
   ["bible/01-Overview/Quest-Audit-II.md","bible/01-Overview/audits/Quest-Audit-II.md"],
-  ["bible/01-Overview/Waypoints-And-Pace.md","bible/01-Overview/handoffs/Waypoints-And-Pace.md"]
+  ["bible/01-Overview/Waypoints-And-Pace.md","bible/01-Overview/handoffs/Waypoints-And-Pace.md"],
+  ["test/doask.test.js","test/server/doask.test.js"],
+  ["test/fb1016_horselit.test.js","test/player/fb1016_horselit.test.js"],
+  ["test/hubpull.test.js","test/net/hubpull.test.js"],
+  ["test/perfsails3.test.js","test/systems/comeSailAway/perfsails3.test.js"],
+  ["test/perfsails4.test.js","test/systems/comeSailAway/perfsails4.test.js"],
+  ["test/primary_trips.test.js","test/server/primary_trips.test.js"],
+  ["test/virt_pack.test.js","test/systems/virt_pack.test.js"],
+  ["test/weaponglow1.test.js","test/systems/weaponglow1.test.js"],
+  ["bible/01-Overview/Audit-Weapon-Glow.md","bible/01-Overview/audits/Audit-Weapon-Glow.md"],
+  ["bible/01-Overview/Field-Bugs-2026-10-16.md","bible/01-Overview/bugs/Field-Bugs-2026-10-16.md"]
 ]

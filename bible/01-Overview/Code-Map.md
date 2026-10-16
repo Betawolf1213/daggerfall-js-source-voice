@@ -459,14 +459,14 @@ records quote, the workflows' `paths:`. `--dry-run` says what it would change. T
 
 Proposed as six steps, one pull request each. Mac: *"Do everything"* - and the steps that touch the relay became one
 change, because each would have been its own `RELAY_VERSION` and its own deploy that drops every connected player:
-one bump (world209) for all of them is one reconnect, not five.
+one bump (world211 - world209 on the branch, renumbered past main's at the merge) for all of them is one reconnect, not five.
 
 | Step | What | Status |
 |---|---|---|
 | TIDY1 | This map, its test, the move tool, and the pilot: Come Sail Away's ten modules (`comeSailAway*` and `csaBoatMenu.js`) into `src/systems/comeSailAway/` - a cluster the relay's bundle does not touch. | Done |
-| TIDY2 | Every layer of `src/` into feature folders - what was proposed as TIDY2, TIDY2b, TIDY3 and TIDY4 - 762 modules into 134 folders, each a feature's three or more modules in one layer (the tables above). First every test that swept a `src/` folder without recursing was made to recurse, and the module counts count the folders. The relay's files moved under one `RELAY_VERSION`, world209. | Done |
-| TIDY5 | `test/`: the 3,234 test files out of one folder into the layers' and the features' folders (`### The tests`, above). Every list of tests walks `test/` recursively; the manifest keys a file by its name, and holds the names unique. | Done |
-| TIDY6 | `01-Overview/`'s 263 dated records apart from its 12 overview pages: `audits/` (148), `bugs/` (107), `handoffs/` (8). The root's lab pages stay where they are: GitHub Pages serves each at its path (`/sky.html`), with no redirects, and the labs are deployed to be opened on a phone - moving them would break every link to one. | Done |
+| TIDY2 | Every layer of `src/` into feature folders - what was proposed as TIDY2, TIDY2b, TIDY3 and TIDY4 - 762 modules into 134 folders, each a feature's three or more modules in one layer (the tables above). First every test that swept a `src/` folder without recursing was made to recurse, and the module counts count the folders. The relay's files moved under one `RELAY_VERSION`, world211. | Done |
+| TIDY5 | `test/`: the 3,242 test files (3,234, and the 8 main added before the merge) out of one folder into the layers' and the features' folders (`### The tests`, above). Every list of tests walks `test/` recursively; the manifest keys a file by its name, and holds the names unique. | Done |
+| TIDY6 | `01-Overview/`'s 265 dated records apart from its 12 overview pages: `audits/` (149), `bugs/` (108), `handoffs/` (8). The root's lab pages stay where they are: GitHub Pages serves each at its path (`/sky.html`), with no redirects, and the labs are deployed to be opened on a phone - moving them would break every link to one. | Done |
 
 **Layer first, then feature** - the question the plan left open, settled by doing it. The arena's code spans five
 layers (16 modules in `src/systems/`, 6 in `src/net/`, 5 in `src/world/`, 3 in `src/scenes/`, 2 in `src/ui/`). A

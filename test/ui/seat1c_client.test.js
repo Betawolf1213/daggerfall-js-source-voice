@@ -171,8 +171,9 @@ test('SEAT1c THE HOSTS BY SOURCE: the service settles the Turning before any sea
   // PIN MOVED (SEASON1): the Turnings due read the Season counted
   // PIN MOVED (SEAT-LEASE): one settler at a time - the Turnings due settled under the lease, an act told to ask again while another holds it
   assert.match(idx, /if \(seatsOpenFor\(who\.player, env\) && \(await settleDueOnce\(ctx\.db, nowS, seasonZeroOf\(env\.SEASON_ZERO_WEEK\)\)\)\.pending && !SEAT_READS\.has\(path\)\) return no\('seats-settling', 503, origin\);[^\n]*\n\s*const act = \{/);
-  // PIN MOVED (CROWN2): the list carries the server's red lines too
-  assert.match(idx, /return 'error' in r \? r : \{ \.\.\.r, seats: await seatsWithHolders\(ctx\.db, r\.seats, nowS\), red: await redOf\(ctx\.db, nowS\), zero: seasonZeroOf\(env\.SEASON_ZERO_WEEK\) \};/);   // CROWN2: the red lines; SEASON1 part two: Season 0's week
+  // PIN MOVED (CROWN2): the list carries the server's red lines too; PIN MOVED (SEAT-BATCH): the holders, battles, Edicts,
+  // works and red lines in one batch (seatTurning.js seatsBoard answers `{ seats, red }`)
+  assert.match(idx, /return 'error' in r \? r : \{ \.\.\.r, \.\.\.\(await seatsBoard\(ctx\.db, r\.seats, nowS\)\), zero: seasonZeroOf\(env\.SEASON_ZERO_WEEK\) \};/);   // CROWN2: the red lines; SEASON1 part two: Season 0's week
   assert.match(idx, /'\/v1\/seats\/relinquish': \(\) => relinquishSeat\(ctx, who\.player, env, body\),/);
   assert.ok(rd('server-account/src/service.js').includes("'/v1/seats/relinquish',"));
   const gu = rd('server-account/src/guilds.js');

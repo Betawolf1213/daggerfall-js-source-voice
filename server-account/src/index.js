@@ -203,10 +203,11 @@ import { poiRolesOf, putPoiAsset, getPoiAsset, savePoiDraft, submitPoi, withdraw
 import { listSaves, putCard, putBlob, getBlob, deleteSave, saveCardOf } from './saves.js';
 import { signingKey, gatePublicKey } from './signing.js';
 import { stakeCards, cashoutCards } from './cards.js';   // CARDS6: a card table's stakes, escrowed
-import { deckOrderOf, claimIliac, iliacBoardOf, withIliacHonours } from './iliac.js';
-import { claimGambit, gambitBoardOf, withGambitHonours } from './gambit.js';   // KG6: The King's Gambit's season board and its GRANDMASTER   // CARDS10: a ranked seat's deck vouched for, Iliac Hand's season board and its title
+import { deckOrderOf, claimIliac, iliacBoardOf } from './iliac.js';
+import { claimGambit, gambitBoardOf } from './gambit.js';   // KG6: The King's Gambit's season board and its GRANDMASTER   // CARDS10: a ranked seat's deck vouched for, Iliac Hand's season board and its title
 import { titleWorn, glyphsOf, glyphsHidden, auraWorn } from './titles.js';
-import { claimArena, arenaAttempt, arenaBoardOf, arenaTeam, withArenaHonours, arenaRatingOf, ARENA_HONOUR_PATHS, ARENA_RENOWN_REGION } from './arena.js';   // ARENA4: the arena's records, its board, its banners, and the honours the mint reads
+import { withHonours } from './honours.js';   // SIGN-BATCH: the three games' honours on a badge's row, in one batch
+import { claimArena, arenaAttempt, arenaBoardOf, arenaTeam, arenaRatingOf, ARENA_HONOUR_PATHS, ARENA_RENOWN_REGION } from './arena.js';   // ARENA4: the arena's records, its board, its banners, and the honours the mint reads
 import { arenaSeasonOf } from '../../src/net/arena/arenaLaw.js';
 import { BUSY_RETRY_AFTER_S } from '../../src/net/busyLaw.js';   // BUSY-GATE: how long an overload answer tells a client to stand back
 import { sendLetter, inboxOf, readLetter, deleteLetter } from './letters.js';   // MAIL1: the letters' routes
@@ -236,14 +237,14 @@ import { buyHall, sellHall, setHallEntry, setHeraldry } from './halls.js';   // 
 import { readGuildBoard, pinGuildNote, takeDownGuildNote } from './guildBoard.js';   // GUILD1e: a guild's own board
 import { listSeats, witnessSeat, strikeSeat, seatsOpenFor } from './townSeats.js';   // SEAT1a: the seats' witnessed registry
 import { pledgeSeat, claimWatch, creditGate, creditRenown, readStandings, payTribute, claimOrcCamp, readRecords } from './seatInfluence.js';   // SEAT1b: influence   // SEASON1 part two: an Orc Raid's camp
-import { settleDueOnce, seatsWithHolders, relinquishSeat, seatBadgeOf, seatTitlesOf } from './seatTurning.js';   // SEAT1c: the Turning, the Charters, their titles and glyphs
+import { settleDueOnce, seatsBoard, relinquishSeat, seatBadgeOf, seatTitlesOf } from './seatTurning.js';   // SEAT1c: the Turning, the Charters, their titles and glyphs
 import { setTithe, proclaimEdict, claimBounty } from './seatHolding.js';   // SEAT1d: the holder's levers, a Bounty's camp
 import { setWindow, signBattle, unsignBattle, hireSellsword, withdrawHire, siegesLive } from './seatBattles.js';   // SEAT2a: the battles' week
 import { siegePass, claimSiege, voidSiege } from './seatSiege.js';   // SEAT2a part three: the pass, the result, Honours   // VOID: a moderator's void
 import { royalPass, claimRoyal, keptTitleOf, KEPT_TITLES } from './seatRoyal.js';   // CROWN1 part two: the Royal Tourney's pass, its bouts, its champion's title (SEASON1: every title kept)
 import { ribbonOf } from './seatRibbons.js';   // SEASON1 part two: a Season's banner ribbon, on the token
 import { seatWeekOf, seasonOf, seasonZeroOf } from '../../src/net/townSeatLaw.js';   // SEASON1: the Season counted
-import { offerFealty, acceptFealty, breakFealty, offerPact, breakPact, redOf } from './seatPolitics.js';   // CROWN2: fealty and Pacts, the red lines
+import { offerFealty, acceptFealty, breakFealty, offerPact, breakPact } from './seatPolitics.js';   // CROWN2: fealty and Pacts, the red lines
 import { fundFort, readForts } from './seatForts.js';   // SEAT2b: a seat's fortifications
 
 /** SEAT1c: the account's row with the Charter titles it may wear laid on it (`seatTitles`, titles.js titlesHeld), while the
@@ -917,9 +918,9 @@ const service = {
       // (arena.js championNow -> storeArenaChampion, iliac.js the same): counted off a replica as new as the session lookup,
       // the write put back a #1 a rated bout had just moved past, and the clock only re-stamps a kept #1
       const honoursCtx = { ...ctx, db: env.DB };
-      if (ARENA_HONOUR_PATHS.has(path)) who.player = await withArenaHonours(honoursCtx, who.player, nowS);
-      if (ARENA_HONOUR_PATHS.has(path)) who.player = await withIliacHonours(honoursCtx, who.player, nowS);   // CARDS10: and Iliac Hand's season #1 (iliac.js), on the same doors
-      if (ARENA_HONOUR_PATHS.has(path)) who.player = await withGambitHonours(honoursCtx, who.player, nowS);   // KG6: and The King's Gambit's (gambit.js)
+      // CARDS10: and Iliac Hand's season #1 (iliac.js), on the same doors; KG6: and The King's Gambit's (gambit.js);
+      // SIGN-BATCH: the three games' reads in ONE batch (honours.js withHonours), each answered as its with*Honours answers
+      if (ARENA_HONOUR_PATHS.has(path)) who.player = await withHonours(honoursCtx, who.player, nowS);
 
       if (path === '/v1/auth/token' && request.method === 'POST') {
         const key = await signingKey(env, subtle);
@@ -1597,7 +1598,7 @@ const service = {
         const act = {
           '/v1/seats/list': async () => {
             const r = await listSeats(ctx, who.player, env);
-            return 'error' in r ? r : { ...r, seats: await seatsWithHolders(ctx.db, r.seats, nowS), red: await redOf(ctx.db, nowS), zero: seasonZeroOf(env.SEASON_ZERO_WEEK) };   // SEAT1c: each seat's holder and battle   // CROWN2: the server's red lines   // SEASON1 part two: the week Season 0 began, for the client's Tides
+            return 'error' in r ? r : { ...r, ...(await seatsBoard(ctx.db, r.seats, nowS)), zero: seasonZeroOf(env.SEASON_ZERO_WEEK) };   // SEAT-BATCH: the holders, battles, Edicts, works and red lines in one batch   // SEAT1c: each seat's holder and battle   // CROWN2: the server's red lines   // SEASON1 part two: the week Season 0 began, for the client's Tides
           },
           '/v1/seats/relinquish': () => relinquishSeat(ctx, who.player, env, body),   // SEAT1c: a Charter given up at its board
           '/v1/seats/witness': () => witnessSeat(ctx, who.player, env, body),
