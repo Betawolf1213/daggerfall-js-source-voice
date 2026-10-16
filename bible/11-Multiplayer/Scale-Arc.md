@@ -78,6 +78,7 @@ Four read-only audits covered the relay (`server/src/index.js`), the account ser
 | PRIMARY-TRIPS | The account database's primary, capped by its round trips, overloaded at 00:00 UTC (2026-10-16): the seats' list, a checkpoint and a badge's honours each one batch, a town's yards off a replica, a heartbeat's reads before its beat, a hall bump off its key's rows - some a quarter of the primary's trips at peak | No | **Built** (2026-10-16, this branch; acct139) |
 | DECOR-BATCH | The account database overloaded again through the evening of 2026-10-16: every account deploy since #952 failed its smoke on `/v1/homes/decor` (seven asks of 15 s, no byte back) while `homes/town` answered its one batch in 11 s - a home's room one request where it was three trips in a row, a shunned home's shop one more | No | **Built** (2026-10-16; acct142) |
 | BOOKMARK-SPIRAL | The account database's primary overloaded from 13:50 UTC (2026-10-16) and stayed so - every route 5 to 60 s, every deploy's smoke on `/v1/homes/decor` 000, DECOR-BATCH deployed and nothing moved: the page's D1 bookmark is kept only when no call goes between a read and its answer, so a slow primary took the bookmarks away, and every polled display read then started at the primary. The six polled reads with no bookmark start at any instance; a session lookup that misses there asks the primary | No | **Built** (2026-10-16; acct143) |
+| BUSY-HEART | After BOOKMARK-SPIRAL deployed and the primary's own load halved, the overload held: it held only while players were in the world (healthy 20:00-20:04 with the relay's players dropped by its deploy, at more primary statements than when it came back), and the heartbeat and the motherlodes - asked again on their own schedules, twice and three times as often - spent the most of the database's time. Both stand back now | No | **Built** (2026-10-16; acct144) |
 | SCALE6 | Abuse and backups: Turnstile on guest creation, /64 IPv6 rate keys, bans, report and ignore, `ALLOWED_ORIGIN`, R2 snapshots, a hub export | Some | Alongside |
 
 **Relay deploy policy (SCALE):** relay changes are batched into as few deploys as possible, each in a window announced beforehand. A deploy drops every player, and until SCALE2 every reconnect is a D1 write storm.
@@ -2547,6 +2548,35 @@ service with. What it read:
 - `test/display_replica.test.js`: its pin on the display reads with no bookmark moved - the polled ones at any instance.
   `scale4g.json`'s two records and `scale4d.json`'s D8 re-aimed by content, all dead.
 - ACCOUNT_VERSION acct143, and every pin and mutant record on acct142 (each pin's PIN MOVED history kept).
+
+## BUSY-HEART - the heartbeat and the motherlodes stand back (2026-10-16, acct144)
+
+BOOKMARK-SPIRAL deployed at 20:07 UTC and did what it was for - the session lookup off the primary (74 a second there
+and none on the replica, to 36 and 49), the primary's statements down from some 195 a second to 105 - and the overload
+held: half of all requests past 5 s, the Worker's log still `D1 DB is overloaded`, now on the replica's sessions too.
+
+- **It held while players were in the world.** The relay's deploy at 19:58 dropped every player; from 20:00 to 20:04,
+  while they came back, the account service was well - p50 0.2-0.7 s - at some 245 primary statements a second, more
+  than when the overload returned at 20:05 with them. The writes were the same in both windows (13.7 and 13.2 thousand,
+  the realm's checkpoints 552 and 594). So it was not the database's statements: once slow, it stayed slow.
+- **What kept it so** (the service's own metrics, `daggerfall_accounts`, D1 wait by route over the two windows): the
+  heartbeat, 1,695 asks in the well window and 3,827 in the overload, the most of the database's time of any route;
+  the day's motherlodes 495 and 1,550. Neither stood back (BUSY-GATE had left them out as reads the tab's bookmark
+  keeps off the primary's queue - and the page kept none), and the heartbeat asks again on `server` or `offline` three
+  times in 2 s (net/heartbeat.js, NOTICE_RETRY_MS).
+
+- **Both stand back now** (`net/busyLaw.js` BUSY_READS, one law at both ends): an isolate that meets an overload sheds
+  them for BUSY_SHED_MS, no statement asked, for every client today; a client from this build holds them for the
+  doubling wait. What a shed ask loses is what a failed one lost already: a beat's play credit (net/playClock.js, a beat
+  that fails is dropped) and a pick the next ask rolls again (INSERT OR IGNORE of a pure roll).
+
+### Pins
+
+- `test/busy_heart.test.js` (2): the client holds both after an overload answer and asks at the wait's end; an isolate
+  that met an overload answers both `server` 503 with a Retry-After and not one statement, and asks again after
+  BUSY_SHED_MS. `tools/mutants/busy_heart.json`: 2, both dead; `busy_gate.json` all dead.
+- `test/busy_gate.test.js`: the law's list, its always-goes list and the client's goes list moved.
+- ACCOUNT_VERSION acct144, and every pin and mutant record on acct143 (each pin's PIN MOVED history kept).
 
 ## THE PLAN PAST 2,000 (2026-10-10)
 
