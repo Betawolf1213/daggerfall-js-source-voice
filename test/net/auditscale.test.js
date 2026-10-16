@@ -365,7 +365,7 @@ test('AUDIT SCALE D17: a heartbeat naming board 0 is answered as /v1/board/read 
 
 const HB = await import('../../src/net/heartbeat.js');
 const { createHeartbeat, partAnswer, whileLive, HEARTBEAT_TICK_MS, RIDE_EARLY_MS, BEAT_RIDE_MS, BEAT_GRACE_MARGIN_MS } = HB;
-const { SESSION_KEY, SERVICE_KEY } = await import('../../src/net/accountClient.js');
+const { SESSION_KEY, SERVICE_KEY, _resetBusyForTests } = await import('../../src/net/accountClient.js');
 const { MailBox, MAIL_POLL_MS } = await import('../../src/net/mail.js');
 const { createNoticeBook, NOTICE_TRIES, NOTICE_RETRY_MS } = await import('../../src/net/noticeBook.js');
 const { BOARD_CACHE_MS } = await import('../../src/net/boardLaw.js');
@@ -543,6 +543,7 @@ test('AUDIT SCALE D1: THE SHAPE THE PRODUCER MINTS - the client\'s heartbeat aga
 
 test('AUDIT SCALE D10: the client parts\' small laws - a lost answer asked again NOTICE_RETRY_MS apart; a take that throws leaves the others theirs; the tick waits while one is out; the box\'s part stamped with no session (MAIL1); the board\'s part not due while a window\'s read is out, and its answers in `read`\'s shapes; an answer not an object is the server\'s refusal; the tick fine enough for RIDE_EARLY_MS', async () => {
   // the retries' spacing
+  _resetBusyForTests();
   const sleeps = [];
   const r = rigHb({ answer: () => ({ status: 503, json: { error: 'server' } }), sleeps });
   const a = clockPart(r, 60_000), b = clockPart(r, 60_000);
@@ -554,6 +555,10 @@ test('AUDIT SCALE D10: the client parts\' small laws - a lost answer asked again
   await going; await settle();
   console.warn = quiet;
   assert.deepEqual(sleeps, NOTICE_RETRY_MS.slice(0, NOTICE_TRIES - 1));
+  // PIN MOVED (BUSY-HEART, 2026-10-16; test/net/busy_heart.test.js): an overload's 503 holds the heartbeat at the page's gate -
+  // its retries answered there, the service asked once
+  assert.equal(r.sent.length, 1, 'the overload answered: its retries held by the gate');
+  _resetBusyForTests();
   assert.equal(b.took.length, 1, 'b took its answer though a\'s take threw');
   assert.equal(b.took[0].ok, false);
   // the box's part, signed out: stamped all the same, and nothing rides
@@ -604,6 +609,7 @@ test('AUDIT SCALE D10: the client parts\' small laws - a lost answer asked again
 });
 
 test('AUDIT SCALE D10: two clocks of one period out of step fall into step - an equal clock rides as a slower one does (lane D: `>` for `>=` survived), one request a period where there were two', async () => {
+  _resetBusyForTests();   // BUSY-HEART: no overload a test before this one told the page of holds its heartbeat
   const r = rigHb();
   const a = clockPart(r, 60_000), b = clockPart(r, 60_000);
   r.hb.add('a', a.part);

@@ -4290,5 +4290,6 @@
   ["src/combat/twoHands.js","src/combat/twoHands/twoHands.js"],
   ["src/systems/possessedItems.js","src/systems/item/possessedItems.js"],
   ["test/autohold.test.js","test/server/autohold.test.js"],
-  ["test/bookmark_spiral.test.js","test/server/bookmark_spiral.test.js"]
+  ["test/bookmark_spiral.test.js","test/server/bookmark_spiral.test.js"],
+  ["test/busy_heart.test.js","test/net/busy_heart.test.js"]
 ]

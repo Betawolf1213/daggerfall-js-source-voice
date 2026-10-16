@@ -15,7 +15,7 @@ import { realmMintFacts, REALM_LEVEL_CLAIM_MAX, REALM_ID_RE } from '../../server
 import { houseOn } from '../../server-account/src/legacy.js';
 import { armsIssuable } from '../../src/net/identityToken.js';
 import { countedDb, measured } from '../../server-account/src/metrics.js';
-import { d1Overloaded } from '../../server-account/src/service.js';
+import { d1Overloaded, _resetBusyShed } from '../../server-account/src/service.js';
 
 const realNow = Date.now;
 Date.now = () => T0 * 1000;
@@ -206,6 +206,7 @@ test('SCALE4f an overloaded D1 is answered `server` still - every book asks that
     S.env.DB = { ...keep, prepare: () => { throw new Error('D1 DB is overloaded. Requests queued for too long.'); }, batch: keep.batch.bind(keep) };
     const over = await S.call('/v1/heartbeat', { parts: {} }, g.secret);
     assert.deepEqual([over.status, over.body], [503, { error: 'server' }]);
+    _resetBusyShed();   // PIN MOVED (BUSY-HEART, 2026-10-16): the overload sheds the heartbeat a moment - the fault asked after it
     S.env.DB = { ...keep, prepare: () => { throw new Error('no such column: nope'); }, batch: keep.batch.bind(keep) };
     const fault = await S.call('/v1/heartbeat', { parts: {} }, g.secret);
     assert.deepEqual([fault.status, fault.body], [500, { error: 'server' }]);
