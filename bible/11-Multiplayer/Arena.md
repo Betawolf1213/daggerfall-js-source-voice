@@ -1066,3 +1066,15 @@ correctness, the online trust), every finding reproduced and fixed here:
 
 Deploy order: the account service (acct82, migration 0082) BEFORE the relay (world169), BEFORE the site. The record:
 `01-Overview/Audit-Arena-Ladder.md`.
+
+## FIELD BUGS 2026-10-16 ARENA-WAIT - a reload offered the save's ladder to a Grand Champion
+
+A realm character who had fought all forty reloaded beside the gate, was offered Fight, fought, and found a 4-0 Pit
+Fighter in a season with no number. The online lane read "not yet welcomed" as offline: AUDIT PRE-MERGE 1003 O4 kept the
+last welcome's word across a reconnect, but the FIRST word after a load had none to keep, so until the relay's welcome
+every door ran ARENA3's law - the Herald's Fight off the save's ladder (the online climb never writes it), the bout and
+its purse this screen's, the window the save's "Season of 3E 406" header and seeded roster. Now on the online lane
+(`lane`, a realm character) before the relay has said (`OnlineSession.arenaHeard`) the arena WAITS
+(`scenes/arenaOnline.js` waiting; `scenes/arenaGate.js` takes its online arm): no Fight, the window the realm's season by
+the clock and its boards on their way, no wager settled by the house, the hour's bout the relay's. The account's climb
+was never touched. The record: `01-Overview/Field-Bugs-2026-10-16.md`.

@@ -137,10 +137,11 @@
   {
     "name": "ARENA4B-PURSES-BEFORE-BOARD",
     "file": "src/systems/arenaBoard.js",
-    "old": "      m.header.purses = null;\n",
+    "old": "      m.header = { ...arenaHeaderOnline({ board: wait, name: o.name }), title: null, record: '' };\n",
     "new": "",
     "tests": [
-      "test/arena4b_window.test.js"
+      "test/arena4b_window.test.js",
+      "test/fb1016_arenawait.test.js"
     ]
   },
   {

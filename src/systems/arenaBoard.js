@@ -575,6 +575,14 @@ export function recordsPageOnline(board, { league = null, gameMinutes = 0 } = {}
   };
 }
 
+/** FIELD BUGS 2026-10-16 ARENA-WAIT: the realm's board before the service's is in - its season and day by the wall clock
+ *  (`nowS`, unix seconds), nobody on it. Only ever drawn as "on its way" (arenaBoard's no-board arm). */
+function pendingBoard(nowS) {
+  const t = Number.isFinite(nowS) ? Number(nowS) : Date.now() / 1000;
+  const none = { rows: [], pinned: null, total: 0 };
+  return { season: arenaSeasonOf(t), day: arenaSeasonDay(t), me: {}, team: { standings: { red: 0, blue: 0 }, rosters: {}, members: {}, laurel: null, last: null }, pve: none, pvp: none, fast: none, hall: [] };
+}
+
 /** EVERY PAGE at once - the window's whole model. ARENA4: online (`o.online` - the service's `board`, the hall's state),
  *  the ladder is the account's (every bout refereed), the Team and Leaderboards pages the realm's, and the Bouts page
  *  carries the bouts to watch and the challenge; offline, the save's as ARENA3 drew them. */
@@ -591,7 +599,20 @@ export function arenaBoard(o) {
     if (o.online) {
       for (const c of m.bouts.cards) if (c.kind === 'ladder') c.acts = c.acts.map((a) => (a.act === 'fight' ? { ...a, why: O().climbWait } : a));
       m.records = { ...recordsPageOnline(null, o), stats: [] };
-      m.header.purses = null;
+      // FIELD BUGS 2026-10-16 ARENA-WAIT: nor the header, the banners or the boards - the save's offline season ("Season
+      // of 3E 406"), its title and record and its seeded roster stood over a realm Grand Champion while the board was
+      // asked. The realm's season by the clock (net/arenaLaw.js arenaSeasonOf), no title, record or banner of the save's,
+      // and every board says the names are on their way.
+      const wait = pendingBoard(o.online.nowS);
+      m.header = { ...arenaHeaderOnline({ board: wait, name: o.name }), title: null, record: '' };
+      m.team = { ...teamPageOnline(wait), lines: [O().rollWait] };
+      /** @type {any} */
+      const boards = boardsPageOnline(wait, o.name ?? '');
+      for (const k of ['pve', 'fast', 'pvp', 'team']) boards[k] = { ...boards[k], rows: [], pinned: null, total: 0, empty: O().rollWait };
+      delete boards.pvp.champion;
+      /** @type {any} */ (m).boards = boards;
+      m.ladder.online = O().climbWait;
+      m.ladder.next = null;
     }
     return m;
   }

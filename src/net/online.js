@@ -689,6 +689,7 @@ export class OnlineSession {
     this.gateHealOk = false;      // GATE-HEAL: and a gate room's `heal` (relaySupportsGateHeal) - an older relay junks the word
     this._gateSiteSaid = null;    // DISCORD-GATES: the socket and day my `site` last went on - once a socket and day
     this.arenaOk = false;         // ARENA4: the relay that welcomed this socket opens the arena's rooms (relaySupportsArena)
+    this.arenaHeard = false;      // FIELD BUGS 2026-10-16 ARENA-WAIT: a primary welcome has said `arenaOk` (sticky) - before it the arena on the online lane waits (scenes/arenaOnline.js waiting)
     this.onArena = null;          // ARENA4: (word, room) => void - the hall's or a bout's word, projected by the wire's readArenaOut
     this._arenaBucket = null;     // ARENA4: my own arena words out - arenaGate's law
     this.gateOk = false;          // WB3: the relay that welcomed this socket runs a gate's boss room (relaySupportsGate) - an older one CLOSES the socket on the frame and holds no fight
@@ -2874,7 +2875,7 @@ export class OnlineSession {
       if (primary) { this.wdunOk = relaySupportsWdun(relayV); this.wdunGiantsOk = relaySupportsWdunGiants(relayV); }   // PVPDUNGEONS; ZONE-GIANTS
       if (primary) this.gateOk = relaySupportsGate(relayV);   // WB3
       if (primary) { this.siegeOk = relayFightsBattles(relayV); this.royalOk = relayRunsRoyal(relayV); }   // SEAT2a part four   // CROWN1 part two
-      if (primary) this.arenaOk = relaySupportsArena(relayV);   // ARENA4
+      if (primary) { this.arenaOk = relaySupportsArena(relayV); this.arenaHeard = true; }   // ARENA4; ARENA-WAIT: said
       if (primary) this.ownOk = relaySupportsOwn(relayV);   // OWN1
       if (primary) this.gateSpentOk = relaySupportsGateSpent(relayV);   // AUDIT WBX S1: a hub that hears a receipt spent
       if (primary) this.gateSiteOk = relaySupportsGateSite(relayV);   // DISCORD-GATES: and where the gate stands

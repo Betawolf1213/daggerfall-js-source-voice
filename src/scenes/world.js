@@ -12224,7 +12224,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       const ex = exhibitionFor(worldMinutes());
       // ARENA4b: ONLINE THE HOUR'S BOUT IS THE RELAY'S - its room watched from the city's sand (scenes/arenaOnline.js
       // watchCity), every screen the one bout; offline, or on a relay before it, this screen's own seeded bout as ever
-      if (arenaOnline?.exhibitions?.()) arenaOnline.watchCity(ex);
+      if (arenaOnline?.exhibitions?.() || arenaOnline?.waiting?.()) arenaOnline.watchCity(ex);   // FIELD BUGS 2026-10-16 ARENA-WAIT: the online lane before the relay's word stands nothing of its own
       else if (ex?.open && ex.hour !== _arenaHourRun) { _arenaHourRun = ex.hour; arenaBouts.ask({ where: 'city', kind: 'exhibition', ex }); }
     }
     if (!stg) { arenaBouts.frame(dt, {}); if (!arenaBouts.bout()) arenaSound.stop(); return; }
@@ -12253,7 +12253,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (a === 'watch') {
       const ex = exhibitionFor(worldMinutes());
       if (!ex) return;
-      if (arenaOnline?.exhibitions?.()) { arenaBouts.dismiss(); arenaOnline.watchExhibition(ex); return; }   // ARENA4b: the relay's bout, from the stands of its room
+      if (arenaOnline?.exhibitions?.() || arenaOnline?.waiting?.()) { arenaBouts.dismiss(); arenaOnline.watchExhibition(ex); return; }   // ARENA4b: the relay's bout, from the stands of its room; ARENA-WAIT: waited for
       const no = arenaGate.watchRefusal(ex.hour); if (no) { townTalk.say(no); return; }   // AUDIT PRE-MERGE 1003 B3: an hour seen here is never fought again from its call
       _arenaHourRun = ex.hour;
       arenaBouts.dismiss();
@@ -12261,7 +12261,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       modes?.enterArenaFloor?.('watch');
     } else if (a === 'fight') {
       // ARENA4: ONLINE THE LADDER IS THE ACCOUNT'S - its next bout fought on the relay (scenes/arenaOnline.js)
-      if (arenaOnline?.live()) { const r = arenaOnline.fightLadder(); if (!r.ok && r.text) townTalk.say(r.text); return; }
+      if (arenaOnline?.live() || arenaOnline?.waiting()) { const r = arenaOnline.fightLadder(); if (!r.ok && r.text) townTalk.say(r.text); return; }   // FIELD BUGS 2026-10-16 ARENA-WAIT: never the save's ladder on the online lane
       const next = nextLadderBout(arenaLadderRestore(playerEntity.arenaLadder));
       if (!next) return;
       arenaBouts.ask({ where: 'floor', kind: 'ladder', next });
@@ -24968,7 +24968,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // relay's bout on the floor's instance (its room the presence session's), the boards and the receipts. ═══════════════
   arenaOnline = createArenaOnline({
     now: () => performance.now(),
-    session: () => online,
+    session: () => online, lane: () => onlineOn, nowS: () => relayNowS() ?? Date.now() / 1000,   // FIELD BUGS 2026-10-16 ARENA-WAIT: a realm character waits for the relay's word; the realm's season by the clock
     // the hall's socket: a presence-less session of my own id, minting its token as every link does
     makeHall: () => {
       if (!online?.url) return null;

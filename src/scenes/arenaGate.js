@@ -106,8 +106,10 @@ export function createArenaGate(deps) {
   const league = () => (P.arenaLeague = rollLeague(P.arenaLeague, gm()));
   const choice = (ch, act) => deps.showOverlay(new ChoiceWindow({ lines: ch.lines, options: ch.options.map((o) => ({ code: o.code, label: o.label ?? undefined, action: () => act(o.act, o) })) }));
   const liveHour = () => deps.liveHour?.() ?? null;
-  /** ARENA4: the arena online while it is live, else null. */
-  const online = () => { const o = deps.online?.() ?? null; return o?.live?.() ? o : null; };
+  /** ARENA4: the arena online while it is live, else null. FIELD BUGS 2026-10-16 ARENA-WAIT: and while the online lane
+   *  waits for the relay's first word (scenes/arenaOnline.js waiting) - its climb, board and verdicts not yet in, so every
+   *  door here takes its online arm and waits, never the save's ladder, league or house. */
+  const online = () => { const o = deps.online?.() ?? null; return o?.live?.() || o?.waiting?.() ? o : null; };
   /** Whether the hour's bout has had the word - the book on it shut. AUDIT PRE-MERGE 1003 O3: online, also once this
    *  screen has HEARD its fight begin or its verdict (scenes/arenaOnline.js exhibitionBegun): the host's `begun` reads the
    *  mirror standing here, which goes home after the healers or as the player steps indoors - and the book, open 20 game
@@ -225,7 +227,8 @@ export function createArenaGate(deps) {
   /** Every wager that can be settled now, settled (systems/arenaBook.js settleBook) - its winnings owed at the stall. */
   function settle() {
     const on = online();
-    if (!on?.exhibitions?.()) { setBook(settleBook(league().book, gm(), { liveHour: liveHour() }).book); return; }
+    if (!on) { setBook(settleBook(league().book, gm(), { liveHour: liveHour() }).book); return; }
+    if (!on.exhibitions?.()) return;   // ARENA-WAIT: the relay's verdicts not yet askable - nothing settled by the house's record
     // ARENA4b: ONLINE THE RELAY'S VERDICT SETTLES (Arena.md 2: the relay runs the exhibition, every client sees one bout).
     // A wager whose bout this screen saw to its verdict is settled by it (verdictSeen - the mirror's, the relay's); one
     // whose hour is out and whose verdict was not seen here is settled by the relay's, asked of its room

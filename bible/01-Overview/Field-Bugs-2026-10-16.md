@@ -6,6 +6,7 @@ main's `7e0424e0`.
 | | Report | What it was | Done |
 |---|---|---|---|
 | 1 | "I respeced yesterday and have a timer on my 50 lvl smithing, however, when I reached level 100, I can not choose level 100 perk" | the Professions page greyed every card of a track while a paid change waited at either rank; the service already took a first pick (and the merge's free change) before its one-change-at-a-time refusal | fixed (FIRST-PICK) |
+| 2 | "I reloaded my game near the arena ... I've done all 40 fights already for this season, so I hit fight, and it reset my rank, and when I look at the season it doesn't have a number" | on the online lane before the relay's first welcome every arena door ran the offline law: the Herald offered Fight off the save's ladder, the bout and its purse were this screen's, the window drew the save's season ("Season of 3E 406") and roster - the account's forty wins untouched | fixed (ARENA-WAIT) |
 
 ## FIRST-PICK: a change on its way gates a change, never a rank's first choice (1)
 
@@ -31,3 +32,59 @@ THE FOUR HOSTS: none - the Professions page is a window every host opens alike. 
 all dead).
 
 What the reporter is owed: with a change on its way at 50, the perks at 100 can be chosen the day you reach it.
+
+## ARENA-WAIT: on the online lane, before the relay's word, the arena waits (2)
+
+`src/net/online.js` the session's `arenaHeard`; `src/scenes/arenaOnline.js` waiting, model, act, fightLadder,
+watchExhibition, team; `src/scenes/arenaGate.js` online, settle; `src/systems/arenaBoard.js` arenaBoard's no-board arm,
+pendingBoard; `src/scenes/world.js` the arena online's `lane` and `nowS`, arenaHeraldAct's Fight and Watch, arenaFrame.
+
+THE REPORT. A character who had fought all forty of the season's bouts reloaded beside the gate. The Herald offered
+Fight; the bout reset the rank, and the window's season "doesn't have a number" (the screenshot: "Season of 3E 406",
+"4 won, 0 lost", Tier 2 Bloodied, Pit Fighter).
+
+FOUND. The forty wins were the account's and nothing touched them. `live()` - the arena online - is a session whose
+last welcome said the relay opens the arena's rooms (`arenaOk`; AUDIT PRE-MERGE 1003 O4 made it sticky so a door's
+reconnect never reads as offline). After a load there is no session until the player stands in the world, then a
+token and a socket round trip before the first welcome - and every arena door read that `live()` false as OFFLINE,
+ARENA3's law: the Herald's Fight off the save's ladder (`arenaGate.js` heraldChoice - the online climb never writes
+`arenaLadder`, by design), `world.js` arenaHeraldAct's local bout and its purse, and the window's no-board arm drew the
+save's header - the season the offline one, the game year ("Season of 3E 406, day N of 360"), where the realm's is
+numbered ("Season 1, day 19 of 56") - its title, its record and the seeded roster. Driven on the real modules: no
+session, or a session unwelcomed, and the Herald offered "Your next bout: The Pit - bout 1 of 3"; four local wins made
+the save's ladder the window's Pit Fighter 4-0, 350 gold paid here. The welcome then showed the Grand Champion again,
+but the save kept its offline climb.
+
+CHANGED:
+
+- **The relay's word, kept.** `OnlineSession.arenaHeard` - a primary welcome has said `arenaOk`, sticky as it is.
+- **Waiting.** `createArenaOnline`'s `waiting()`: on the online lane (`lane`, world.js's `onlineOn` - a realm character)
+  with no session, or one no welcome has answered. While it waits the arena is neither the account's nor the save's:
+  Fight says the climb is on its way (`climbWait`), a challenge and the hour's Watch say the hall is a moment away
+  (`hallWait`), a banner says so too; the window's model is the online one with no board and the hall shut.
+  `arenaGate.js` takes its online arm while waiting, so the Herald offers no Fight (the arm that already waited for the
+  board), the window's Fight is refused, the plaques stand bare, and the book settles nothing by the house's record
+  until the relay's verdicts can be asked (O4's law, now for the first word too). world.js's Fight, the city's sand and
+  the Herald's Watch take the online arm; the sand stands nothing of this screen's own.
+- **The window before the board.** The no-board arm (online, waiting or the board still asked) draws the realm's season
+  by the clock (`arenaSeasonOf` over the host's relay clock), no title, record, banner or purse of the save's; the
+  banners' and every board's names "not in yet" (`rollWait`); the ladder page's next bout withheld and its line the
+  climb's wait.
+- **Not waiting:** a relay that said no (an older one - offline, as ever) and a seat given up (O9). An offline
+  character's arena is unchanged.
+
+THE FOUR HOSTS: world.js - WIRED (the arena online is its alone: the lane, the clock, Fight, Watch and the city's
+sand, on lines it already had - bootWorld stands at its ceiling); exterior.js's gate has no arena online (the fixed
+city plays offline) - unchanged; worldModes.js and dungeonContext.js read the gate's `hall` and `plaques`, which wait
+with it. Pinned by `test/fb1016_arenawait.test.js` (2, over the real OnlineSession's welcome, the arena online and the
+gate); `tools/mutants/fb1016_arenawait.json` (18, all dead). PINS MOVED: `arena4b_mirror.test.js` and
+`audit1003_online.test.js` read world.js's arenaFrame and Watch branches with the wait's arm; mutants
+ARENA4b-MIR-GATE-HOUSE-ONLINE, -WORLD-CITY, -WORLD-WATCH and ARENA4B-PURSES-BEFORE-BOARD re-aimed by content, all dead.
+
+FLAGGED, not taken: the save's own ladder is not healed - it still holds whatever an offline climb last left, which the
+character sheet's arena line reads (`enhancedCharSheet.js` arenaSheetLine). Whether the save should mirror the account's
+climb is a design call; no arena door reads it online any more.
+
+What the reporter is owed: your Grand Champion title and your forty wins were never lost - the rank and the season you
+saw were the offline arena's, shown for the seconds before the server answered. The arena now waits for the server
+instead.
