@@ -270,7 +270,7 @@
   },
   {
     "name": "IT1-28-laid-twice",
-    "file": "src/formats/worldDataReplacement.js",
+    "file": "src/formats/worldData/worldDataReplacement.js",
     "old": "    if (!l.match(fileName) || !(l.isOn?.() ?? true) || l.owns?.(json)) continue;",
     "new": "    if (!l.match(fileName) || !(l.isOn?.() ?? true)) continue;",
     "tests": [
@@ -280,7 +280,7 @@
   },
   {
     "name": "IT1-29-layer-ignores-switch",
-    "file": "src/formats/worldDataReplacement.js",
+    "file": "src/formats/worldData/worldDataReplacement.js",
     "old": "    if (!l.match(fileName) || !(l.isOn?.() ?? true) || l.owns?.(json)) continue;",
     "new": "    if (!l.match(fileName) || l.owns?.(json)) continue;",
     "tests": [

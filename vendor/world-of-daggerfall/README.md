@@ -24,7 +24,7 @@ Windmills of Daggerfall into this tree - confirmed by Mac 2026-09-23.**
   bundle**, not a decompile: `world_of_daggerfall.dfmod` carries it as
   Unity TextAssets beside the manifest, and
   `tools/worldOfDaggerfallAssets.mjs` extracts it byte for byte (mixed
-  CRLF/LF line endings kept) through `src/formats/unityBundle.js`, the
+  CRLF/LF line endings kept) through `src/formats/unity/unityBundle.js`, the
   reader World Tooltips' tool uses. Five files are the loader
   (`LocationLoader.cs`, `LocationHelper.cs`, `LocationData.cs`,
   `LocationEnemySpawner.cs`, `LocationModLoader.cs`); three are the

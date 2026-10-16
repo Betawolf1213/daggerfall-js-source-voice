@@ -3,7 +3,7 @@
 // new location in the Wrothgarian Mountains), its block (RRFORT01.RMB.
 // json) and the armorer's shop as the quest rebuilds it (ARMRAM03.RMB-
 // 765-building14_master.json) - through WorldDataReplacement.cs, ported
-// whole as formats/worldDataReplacement.js: the door MapsFile and
+// whole as formats/worldData/worldDataReplacement.js: the door MapsFile and
 // BlocksFile ask (MapsFile.cs:984, :999, :1027; BlocksFile.cs:214, :273,
 // :385, :850), the converters from DFU's JSON to the port's reader
 // shapes, RMBLayout's replacement arm and the save file's variants.
@@ -18,8 +18,8 @@ import {
   getNewDFLocationIndex, getDFRegionAdditionalLocationData, getDFLocationReplacementData, loadNewDFLocationVariant,
   getNewDFBlockIndex, getNewDFBlockName, getDFBlockReplacementData, getBuildingReplacementData, applyBuildingReplacementAutoMapData,
   locationFromJson, blockFromJson, buildingReplacementFromJson, groundDataFromJson, rmbBlockDataFromJson, AUTO_MAP_DATA_SIZE, makeLocationKey,
-} from '../src/formats/worldDataReplacement.js';
-import { worldDataDoor, setWorldDataDoor } from '../src/formats/worldDataDoor.js';
+} from '../src/formats/worldData/worldDataReplacement.js';
+import { worldDataDoor, setWorldDataDoor } from '../src/formats/worldData/worldDataDoor.js';
 import { setBuildingVariant, setBlockVariant, setLastLocationKeyTo, setNewLocationVariant, setNewLocationIndexResolver, clearWorldDataVariants, NO_VARIANT } from '../src/systems/worldDataVariants.js';
 import { setValue, resetToDefaults } from '../src/systems/settings/settings.js';
 import { longitudeLatitudeToMapPixel, LOCATION_TYPES, DUNGEON_TYPES, CLIMATES, FACTION_RACES } from '../src/formats/mapsFile.js';

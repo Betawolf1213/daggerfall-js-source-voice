@@ -19,12 +19,12 @@ import { createRoadTeams } from '../src/world/road/roadTeams.js';
 import { createPeerRiders } from '../src/net/peer/peerRiders.js';
 import { createEotbBody, HORSE_PRELOAD_A_FRAME } from '../src/player/eotbBody.js';
 import { horseLookCode, recolorHorse, recolorHorseTexels, dyeHorseTexelRows, texelPlanes, PLANE_SHARPNESS, LEG_BANDS, WHITE_FLOOR_3D, isCoatPixel } from '../src/systems/horse/horseCoats.js';
-import { skinStreamFloats, SKIN_STATIC_FLOATS } from '../src/formats/mwGpuSkin.js';
+import { skinStreamFloats, SKIN_STATIC_FLOATS } from '../src/formats/morrowind/mwGpuSkin.js';
 import { saddleRigInput, saddleRequestFor, seatedCamera, STIRRUP_SIDE, STIRRUP_DROP, STIRRUP_AHEAD, REIN_AHEAD, REIN_UP, REIN_SIDE, SADDLE_LEAN_GALLOP, SEAT_PELVIS_HEIGHT } from '../src/player/seatPose.js';
-import { parseNif } from '../src/formats/mwNifFile.js';
-import { buildSkeleton, poseSkeleton, skeletonSpaceMatrices, GRAPH_ROOT } from '../src/formats/mwSkin.js';
+import { parseNif } from '../src/formats/morrowind/mwNifFile.js';
+import { buildSkeleton, poseSkeleton, skeletonSpaceMatrices, GRAPH_ROOT } from '../src/formats/morrowind/mwSkin.js';
 import { applyClimbRig, climbBones } from '../src/combat/climbRig.js';
-import { MW_UNITS_PER_METER } from '../src/formats/mwFirstPerson.js';
+import { MW_UNITS_PER_METER } from '../src/formats/morrowind/mwFirstPerson.js';
 import { spriteBoxUnion } from '../src/combat/fpArm.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

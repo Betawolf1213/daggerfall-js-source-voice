@@ -34,9 +34,9 @@ import { ANY_LOCATION_KEY, clearWorldDataVariants, setBlockVariant, setLastLocat
 import { MOD_SETTINGS, setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { ONLINE_ROOM_MOD_KEYS, ONLINE_PLAYERS_OWN_MODS } from '../src/systems/online/onlineLane.js';
 import { CREDITS } from '../src/ui/credits.js';
-import { PATCH_FORMAT, rebuildWorldDataPatch } from '../src/formats/worldDataPatch.js';
+import { PATCH_FORMAT, rebuildWorldDataPatch } from '../src/formats/worldData/worldDataPatch.js';
 import { BlocksFile } from '../src/formats/blocksFile.js';
-import { getDFBlockReplacementData, bindWorldDataBlocks, installWorldDataReplacement, _resetWorldDataReplacement } from '../src/formats/worldDataReplacement.js';
+import { getDFBlockReplacementData, bindWorldDataBlocks, installWorldDataReplacement, _resetWorldDataReplacement } from '../src/formats/worldData/worldDataReplacement.js';
 import { registerWorldDataPatch } from '../src/scenes/modWorldData.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');

@@ -1,7 +1,7 @@
 [
   {
     "name": "AUDITMWCLOAK-fit-at-rest-alone",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "radius = CLOAK_EASE_RADIUS, poses = CLOAK_FIT_POSES }) {",
     "new": "radius = CLOAK_EASE_RADIUS, poses = [{}] }) {",
     "tests": ["test/auditmwcloak.test.js"],
@@ -9,7 +9,7 @@
   },
   {
     "name": "AUDITMWCLOAK-the-strides-without-arms",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "'bip01 r calf': ['z', 45], 'bip01 l upperarm': ['z', 25], 'bip01 r upperarm': ['z', -25] }),",
     "new": "'bip01 r calf': ['z', 45] }),",
     "tests": ["test/auditmwcloak.test.js"],
@@ -17,7 +17,7 @@
   },
   {
     "name": "AUDITMWCLOAK-the-pose-push-as-the-binds",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "const d = solve3(Array.from(J.subarray(v * 9, v * 9 + 9)), [0, -step, 0]);",
     "new": "const d = [0, -step, 0];",
     "tests": ["test/mwcloak2.test.js", "test/auditmwcloak.test.js", "test/mwcloak1.test.js"],
@@ -25,7 +25,7 @@
   },
   {
     "name": "AUDITMWCLOAK-deep-points-chased",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "if (over > room + 1e-6) { deepSeen.add(sheetCellKey(u[v], u[v + 2])); continue; }",
     "new": "if (false) { deepSeen.add(sheetCellKey(u[v], u[v + 2])); continue; }",
     "tests": ["test/auditmwcloak.test.js"],
@@ -33,7 +33,7 @@
   },
   {
     "name": "AUDITMWCLOAK-one-pass",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "for (let pass = 0; pass < 12; pass++) {",
     "new": "for (let pass = 0; pass < 1; pass++) {",
     "tests": ["test/auditmwcloak.test.js", "test/mwcloak1.test.js"],
@@ -43,7 +43,7 @@
   },
   {
     "name": "AUDITMWCLOAK-the-ease-one-bucket",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "for (let i = bx - 1; i <= bx + 1; i++) {",
     "new": "for (let i = bx; i <= bx; i++) {",
     "tests": ["test/mwcloak2.test.js", "test/auditmwcloak.test.js", "test/mwcloak1.test.js"],
@@ -51,7 +51,7 @@
   },
   {
     "name": "AUDITMWCLOAK-the-ease-linear",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "const ease = through[k + 2] * (1 - d2) ** 2;",
     "new": "const ease = through[k + 2] * (1 - d2);",
     "tests": ["test/mwcloak2.test.js"],
@@ -59,7 +59,7 @@
   },
   {
     "name": "AUDITMWCLOAK-no-push-limit",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "export const CLOAK_PUSH_LIMIT = 10;",
     "new": "export const CLOAK_PUSH_LIMIT = 100;",
     "tests": ["test/auditmwcloak.test.js"],
@@ -67,7 +67,7 @@
   },
   {
     "name": "AUDITMWCLOAK-the-cloak-not-re-skinned",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "if (assembly.pose && assembly.mats) assembly.fns.skinBatch(cloak.batch, assembly.skeleton, assembly.pose, assembly.mats, cloak.positions, cloak.normals ?? null);",
     "new": "if (false) assembly.fns.skinBatch(cloak.batch, assembly.skeleton, assembly.pose, assembly.mats, cloak.positions, cloak.normals ?? null);",
     "tests": ["test/mwcloak1.test.js"],
@@ -75,7 +75,7 @@
   },
   {
     "name": "AUDITMWCLOAK-slung-moved-any-distance",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "if (best.need > moveLimit) { rows.push({ bone, slung, how: 'unresolved', by: 0 }); continue; }",
     "new": "if (false) { rows.push({ bone, slung, how: 'unresolved', by: 0 }); continue; }",
     "tests": ["test/auditmwcloak.test.js"],
@@ -83,7 +83,7 @@
   },
   {
     "name": "AUDITMWCLOAK-hip-vertices-only",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "while (deg <= pitchLimit && !clearAt(posed, deg)) deg++;",
     "new": "while (false) deg++;",
     "tests": ["test/auditmwcloak.test.js", "test/mwcloak1.test.js"],
@@ -91,7 +91,7 @@
   },
   {
     "name": "AUDITMWCLOAK-the-hip-never-unresolved",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "if (deg > pitchLimit) { rows.push({ bone, slung, how: 'unresolved', by: 0 }); continue; }",
     "new": "if (false) { rows.push({ bone, slung, how: 'unresolved', by: 0 }); continue; }",
     "tests": ["test/auditmwcloak.test.js"],
@@ -99,7 +99,7 @@
   },
   {
     "name": "AUDITMWCLOAK-pitched-normals-unturned",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "if (lin && p.sourceNormals) {",
     "new": "if (false) {",
     "tests": ["test/mwcloak1.test.js"],
@@ -107,7 +107,7 @@
   },
   {
     "name": "AUDITMWCLOAK-the-follow-not-hooked",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "assembly.afterPose = (a) => applyCloakFollow(a, follow);",
     "new": "assembly.afterPose = null;",
     "tests": ["test/auditmwcloak.test.js"],
@@ -115,7 +115,7 @@
   },
   {
     "name": "AUDITMWCLOAK-a-stale-follow-kept",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "  assembly.afterPose = null;\n  for (const p of assembly.pieces) if (p.followAt)",
     "new": "  for (const p of assembly.pieces) if (p.followAt)",
     "tests": ["test/auditmwcloak.test.js"],
@@ -123,7 +123,7 @@
   },
   {
     "name": "AUDITMWCLOAK-the-gap-always-the-clearance",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "group.need[i] = Math.min(clearance, Math.abs(gap));",
     "new": "group.need[i] = clearance;",
     "tests": ["test/auditmwcloak.test.js"],
@@ -131,7 +131,7 @@
   },
   {
     "name": "AUDITMWCLOAK-the-side-always-front",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "group.s[i] = gap >= 0 ? 1 : -1;",
     "new": "group.s[i] = 1;",
     "tests": ["test/auditmwcloak.test.js"],
@@ -139,7 +139,7 @@
   },
   {
     "name": "AUDITMWCLOAK-slung-never-slides",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "ref, pieces, slide: side < 0,",
     "new": "ref, pieces, slide: false,",
     "tests": ["test/auditmwcloak.test.js"],
@@ -147,7 +147,7 @@
   },
   {
     "name": "AUDITMWCLOAK-the-slide-priced-inverted",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "tr[0] += u0 / slideCost; tr[1] += u1 / slideCost; tr[2] += u2 / slideCost;",
     "new": "tr[0] += u0 * slideCost; tr[1] += u1 * slideCost; tr[2] += u2 * slideCost;",
     "tests": ["test/auditmwcloak.test.js"],
@@ -157,7 +157,7 @@
   },
   {
     "name": "AUDITMWCLOAK-one-round",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "for (let round = 0; round < rounds; round++) {",
     "new": "for (let round = 0; round < 1; round++) {",
     "tests": ["test/auditmwcloak.test.js"],
@@ -165,7 +165,7 @@
   },
   {
     "name": "AUDITMWCLOAK-the-turn-uncapped",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "const wt = Math.hypot(w0, w1, w2), wl = maxTurn / rounds;",
     "new": "const wt = Math.hypot(w0, w1, w2), wl = Infinity;",
     "tests": ["test/auditmwcloak.test.js"],
@@ -173,7 +173,7 @@
   },
   {
     "name": "AUDITMWCLOAK-the-hook-never-run",
-    "file": "src/formats/mwFirstPerson.js",
+    "file": "src/formats/morrowind/mwFirstPerson.js",
     "old": "which reads the cloak where this pose just put it\n  if (assembly.afterPose) assembly.afterPose(assembly);",
     "new": "which reads the cloak where this pose just put it\n  if (false) assembly.afterPose(assembly);",
     "tests": ["test/auditmwcloak.test.js", "test/mwcloak1.test.js"],

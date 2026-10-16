@@ -8,11 +8,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { parseNif } from '../src/formats/mwNifFile.js';
-import { flattenNif } from '../src/formats/mwNifMesh.js';
-import { nodeTransformOf } from '../src/formats/mwCharacter.js';
-import { partClockOf, nodeAffineAt, posePartBatch, batchMoves } from '../src/formats/mwPartClock.js';
-import { posePartClocks, MW_WEAPON_TYPE, ARROW_FALLBACK_NODE } from '../src/formats/mwFirstPerson.js';
+import { parseNif } from '../src/formats/morrowind/mwNifFile.js';
+import { flattenNif } from '../src/formats/morrowind/mwNifMesh.js';
+import { nodeTransformOf } from '../src/formats/morrowind/mwCharacter.js';
+import { partClockOf, nodeAffineAt, posePartBatch, batchMoves } from '../src/formats/morrowind/mwPartClock.js';
+import { posePartClocks, MW_WEAPON_TYPE, ARROW_FALLBACK_NODE } from '../src/formats/morrowind/mwFirstPerson.js';
 import { createFpArm, fpSkeletonPath, FP_CLIP_PATH, UPPER_BODY } from '../src/combat/fpArm.js';
 import { bowClip, ARROW_REST, ARROW_DRAWN, LIMB_BEND, T } from './fixtures/mw/bowClip.mjs';
 

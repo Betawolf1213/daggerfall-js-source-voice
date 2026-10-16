@@ -13,11 +13,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { parseNif } from '../src/formats/mwNifFile.js';
-import { buildSkeleton, poseSkeleton, skeletonSpaceMatrices, skinBatch, GRAPH_ROOT } from '../src/formats/mwSkin.js';
-import { transferSkin } from '../src/formats/mwSkinTransfer.js';
-import { assembleFirstPersonArm, poseAssembly, placeNormalsAtBone } from '../src/formats/mwFirstPerson.js';
-import { composeWornArmor } from '../src/formats/mwItemMap.js';
+import { parseNif } from '../src/formats/morrowind/mwNifFile.js';
+import { buildSkeleton, poseSkeleton, skeletonSpaceMatrices, skinBatch, GRAPH_ROOT } from '../src/formats/morrowind/mwSkin.js';
+import { transferSkin } from '../src/formats/morrowind/mwSkinTransfer.js';
+import { assembleFirstPersonArm, poseAssembly, placeNormalsAtBone } from '../src/formats/morrowind/mwFirstPerson.js';
+import { composeWornArmor } from '../src/formats/morrowind/mwItemMap.js';
 import { ownBodyPart, packFpArm, FP_FLOATS } from '../src/combat/fpArm.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { writeNif, meshToNif } from '../tools/nifWrite.mjs';

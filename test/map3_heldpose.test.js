@@ -18,7 +18,7 @@ import {
   HELD_POSE_DEFAULT, HELD_BONES, HELD_BONE_ALIASES, QUAT_IDENTITY, quatMul, quatAxis, quatFromEulerDeg, mat33ToQuat,
   deltaTracks, heldSampler, resolveHeldBone, paperCornersRig, paperPiece, refreshPaperSource, projectPaperCorners, normaliseHeldPose,
 } from '../src/combat/heldPose.js';
-import { poseSkeleton } from '../src/formats/mwSkin.js';
+import { poseSkeleton } from '../src/formats/morrowind/mwSkin.js';
 import {
   unitSquareTo, sheetToCorners, applyH, invertH, matrix3dOf, quadPlacement,
 } from '../src/ui/quadMap.js';

@@ -61,7 +61,7 @@ left that mod's exported PNGs out for the same reason. So the textures
 reach the game the way ARENA2 does, from the player's own copy of the
 mod, through the **Your own textures** pick:
 
-1. **the `.dfmod` itself** - `src/formats/unityBundle.js` reads the
+1. **the `.dfmod` itself** - `src/formats/unity/unityBundle.js` reads the
    UnityFS container (version 7, LZ4/LZ4HC blocks via `formats/lz4.js`),
    the SerializedFile inside (version 21, little-endian, the object
    layout taken FROM the type tree the bundle carries, so the reader is

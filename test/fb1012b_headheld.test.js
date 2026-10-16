@@ -7,10 +7,10 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { bareHeadRows } from '../src/combat/fpArm.js';
-import { composeWornArmor } from '../src/formats/mwItemMap.js';
+import { composeWornArmor } from '../src/formats/morrowind/mwItemMap.js';
 import { ARMOR_ENUM } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
-import { PART_BONES } from '../src/formats/mwNpc.js';
+import { PART_BONES } from '../src/formats/morrowind/mwNpc.js';
 
 // the producer's own verdict: an iron helm whose body part is the head (Boistun's knight's roll, wardrobe.js 0.3)
 const helmed = () => composeWornArmor({

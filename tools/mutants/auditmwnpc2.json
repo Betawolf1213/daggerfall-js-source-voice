@@ -264,7 +264,7 @@
  },
  {
   "name": "AUDITMWNPC2-G1-blended-not-collapsed",
-  "file": "src/formats/mwGpuSkin.js",
+  "file": "src/formats/morrowind/mwGpuSkin.js",
   "old": "        if (fill[v] === 0 || !(wsum[v] > 0)) {",
   "new": "        if (fill[v] === 0) {",
   "tests": [
@@ -273,7 +273,7 @@
  },
  {
   "name": "AUDITMWNPC2-G1-weights-kept",
-  "file": "src/formats/mwGpuSkin.js",
+  "file": "src/formats/morrowind/mwGpuSkin.js",
   "old": "          for (let s = 0; s < fill[v]; s++) infW[v * SKIN_MAX_INFLUENCES + s] = 0;\n",
   "new": "",
   "tests": [

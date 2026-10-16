@@ -1,8 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { parseNif } from '../src/formats/mwNifFile.js';
-import { flattenNif } from '../src/formats/mwNifMesh.js';
+import { parseNif } from '../src/formats/morrowind/mwNifFile.js';
+import { flattenNif } from '../src/formats/morrowind/mwNifMesh.js';
 
 const MESH = new Uint8Array(readFileSync(new URL('./fixtures/mw/mesh.nif', import.meta.url)));
 const SKINNED = new Uint8Array(
@@ -169,7 +169,7 @@ test('mwnifmesh: skinned fixture emits as bind-pose preview, marked skinned', ()
 // texture times the room's light: black. The torch's flame is exactly
 // that surface, and a torch with a black flame is a stick.
 import { emissiveAt as emissiveAt_MWT2, diffuseAt as diffuseAt_MWT2,
-  VERTEX_COLOR_MODE as VCM_MWT2 } from '../src/formats/mwNifMesh.js';
+  VERTEX_COLOR_MODE as VCM_MWT2 } from '../src/formats/morrowind/mwNifMesh.js';
 
 test('MWT2 emissiveAt: the vertex colour IS the emission where the mode names it, the material’s own otherwise - diffuseAt’s mirror on rule 63’s substitution law (mutant: the material read for an Emission mesh, so a flame takes the black the same law forced on its diffuse)', () => {
   // Exactly representable in float32, because the real colour array is
@@ -229,7 +229,7 @@ test('MWT2 the emission reaches the GPU: the arm pack carries it per vertex and 
   assert.match(rend, /const floats = uv \? \(emissive \? 14 : 11\) : 9;/);
   assert.match(rend, /gl\.vertexAttribPointer\(4, 3, gl\.FLOAT, false, stride, 44\);/,
     'three floats at 44 - after the position, colour, normal and UV');
-  assert.match(arm, /import \{ diffuseAt, emissiveAt \} from '\.\.\/formats\/mwNifMesh\.js';/, 'the pack takes BOTH halves from the one home');
+  assert.match(arm, /import \{ diffuseAt, emissiveAt \} from '\.\.\/formats\/morrowind\/mwNifMesh\.js';/, 'the pack takes BOTH halves from the one home');
   // THE TERM, and where it sits: times the texel and nothing else. The
   // vertex colour must NOT gate it - LightMode_Emissive has already
   // forced that colour to black, which is the whole bug.

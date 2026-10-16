@@ -1,6 +1,6 @@
-// DW1 - THE BUNDLE WORKER AND ITS CLIENT (formats/unityBundleWorker.js,
-// formats/unityBundleClient.js), and the block-lazy reader behind them
-// (formats/unityBundle.js blockStream). Diverse Weapons' bundle is ~10 s
+// DW1 - THE BUNDLE WORKER AND ITS CLIENT (formats/unity/unityBundleWorker.js,
+// formats/unity/unityBundleClient.js), and the block-lazy reader behind them
+// (formats/unity/unityBundle.js blockStream). Diverse Weapons' bundle is ~10 s
 // of LZ4 to index; the open runs in a worker, the reader keeps the
 // blocks compressed, and the door (combat/diverseWeapons/diverseWeaponsAssets.js) reads
 // through the client. Pins: the wire (open, rgba, close, error), the
@@ -15,9 +15,9 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { handle } from '../src/formats/unityBundleWorker.js';
-import { openUnityBundle, openBundleHere, bundleThreadDisabled } from '../src/formats/unityBundleClient.js';
-import { readUnityFs, readUnityBundle, BLOCK_CACHE, TEXTURE_FORMAT } from '../src/formats/unityBundle.js';
+import { handle } from '../src/formats/unity/unityBundleWorker.js';
+import { openUnityBundle, openBundleHere, bundleThreadDisabled } from '../src/formats/unity/unityBundleClient.js';
+import { readUnityFs, readUnityBundle, BLOCK_CACHE, TEXTURE_FORMAT } from '../src/formats/unity/unityBundle.js';
 import { unityFs, serializedFile, texture2dBody, textAssetBody, testBundle, RGBA_2x2 } from './unityFixture.mjs';
 import {
   DIVERSE_WEAPONS_MOD, setDiverseWeaponsSources, clearDiverseWeaponsSources, diverseWeaponsBundle, diverseWeaponsImage, diverseWeaponsTexturesAttached, _resetDiverseWeaponsImages,
@@ -210,22 +210,22 @@ test('DW1 reader: the blocks stay compressed - a read across block edges is the 
   }
   assert.deepEqual([...one.files[0].bytes], [...cab]);
   assert.equal(BLOCK_CACHE, 32, 'a few MB of 128 KB blocks');
-  assert.ok(!/const uncompressed = new Uint8Array\(total\)/.test(rd('src/formats/unityBundle.js')), 'the whole-stream decompress is gone');
+  assert.ok(!/const uncompressed = new Uint8Array\(total\)/.test(rd('src/formats/unity/unityBundle.js')), 'the whole-stream decompress is gone');
 });
 
 test('DW1 spellings: the worker is spelled the way the bundler reads, imports only pure modules, the door reads through the client not the reader, and the pick sites are unchanged', () => {
-  const client = rd('src/formats/unityBundleClient.js');
+  const client = rd('src/formats/unity/unityBundleClient.js');
   assert.match(client, /new Worker\(new URL\('\.\/unityBundleWorker\.js', import\.meta\.url\), \{ type: 'module' \}\)/, 'the literal spelling Vite bundles');
   assert.equal((client.match(/new Worker\(new URL\('\.\//g) ?? []).length, 1, 'spelled once');
   // DFMOD2: bytes still cross as a copy with the buffer transferred; a Blob crosses as the handle it is (read by range)
   assert.match(client, /const copy = bytes\.slice\(\); opened = await ask\(\{ t: 'open', bytes: copy, maxTextureSize, knownTextures \}, \[copy\.buffer\]\);/, 'a copy crosses, its buffer transferred');
   assert.match(client, /if \(isBlob\) opened = await ask\(\{ t: 'open', blob: bytes, maxTextureSize, knownTextures \}\);/, 'a Blob crosses whole, never read here');
-  const worker = rd('src/formats/unityBundleWorker.js');
+  const worker = rd('src/formats/unity/unityBundleWorker.js');
   const imports = [...worker.matchAll(/^import .* from '([^']+)';/gm)].map((m) => m[1]);
   assert.deepEqual(imports, ['./unityBundle.js'], 'the worker\'s whole import graph is the reader');
   assert.match(worker, /globalThis\.onmessage = \(ev\) => handle\(ev\.data \?\? \{\}, /);
   const door = rd('src/combat/diverseWeapons/diverseWeaponsAssets.js');
-  assert.match(door, /import \{ openUnityBundle \} from '\.\.\/formats\/unityBundleClient\.js';/);
+  assert.match(door, /import \{ openUnityBundle \} from '\.\.\/formats\/unity\/unityBundleClient\.js';/);
   assert.ok(!/readUnityBundle/.test(door), 'the door never opens on this thread itself');
   assert.match(door, /const img = await b\.bundle\.rgba\(name\); if \(img\) return toScreenOrder\(img\);/, 'rows kept on this side of the wire (DWHD1)');
   assert.match(door, /if \(!manifest\) \{ bundle\.close\(\); continue; \}/, 'a bundle that is not a mod is closed, not leaked');

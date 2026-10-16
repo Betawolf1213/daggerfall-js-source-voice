@@ -1,18 +1,18 @@
 // MW-CLOAK2 (2026-10-09, Mac: "I dont like how the cloak isnt smooth around the shoulders"): THE CLOAK SMOOTHED - two
 // levels of Loop subdivision at bake time (tools/meshSubdivide.mjs), and the fit over the armour eased round each
-// point that comes through rather than moving a triangle's three corners (src/formats/mwCloakFit.js).
+// point that comes through rather than moving a triangle's three corners (src/formats/morrowind/mwCloakFit.js).
 //
 // The export is 140 vertices about five units apart. Over the shoulders a face stood up to 35 degrees off its corners'
 // normals, the outline turned as sharply as 82 degrees at a vertex, and the fit left a facet over each pauldron's edge.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { assembleFirstPersonArm, poseAssembly } from '../src/formats/mwFirstPerson.js';
-import { composeWornArmor } from '../src/formats/mwItemMap.js';
+import { assembleFirstPersonArm, poseAssembly } from '../src/formats/morrowind/mwFirstPerson.js';
+import { composeWornArmor } from '../src/formats/morrowind/mwItemMap.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { CLASSIC_ARMOR_TEMPLATE } from '../src/characters/ownModels/ownArmorModels.js';
 import { isCloakSlot } from '../src/characters/ownModels/ownClothingModels.js';
-import { CLOAK_EASE_RADIUS, fitCloakOver } from '../src/formats/mwCloakFit.js';
+import { CLOAK_EASE_RADIUS, fitCloakOver } from '../src/formats/morrowind/mwCloakFit.js';
 import { loopSubdivide, loopSubdivideOnce, vertexNormals } from '../tools/meshSubdivide.mjs';
 import { readFbx } from '../tools/fbxRead.mjs';
 import { bakeObject } from '../tools/bakeSteelPlate.mjs';

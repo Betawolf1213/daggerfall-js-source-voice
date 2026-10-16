@@ -39,7 +39,7 @@ import { MOD_SETTINGS, setModSetting, _resetModSettings } from '../src/systems/m
 import { ONLINE_ROOM_MOD_KEYS, ONLINE_PLAYERS_OWN_MODS } from '../src/systems/online/onlineLane.js';
 import { CREDITS } from '../src/ui/credits.js';
 import { BlocksFile } from '../src/formats/blocksFile.js';
-import { rebuildWorldDataPatch } from '../src/formats/worldDataPatch.js';
+import { rebuildWorldDataPatch } from '../src/formats/worldData/worldDataPatch.js';
 import { TextureFile } from '../src/formats/textureFile.js';
 import { DFPalette } from '../src/formats/dfPalette.js';
 

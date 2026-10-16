@@ -176,7 +176,7 @@ const stacks = (/** @type {any} */ item, /** @type {any} */ row) => isStackable(
  *  most a hundred million), so a count past it is no honest one: a modified client's letter at nine quadrillion was
  *  "lawful" here, a law finding now (and the account service's wealth measure no longer saturates on it). */
 export const GOLD_INT_MAX = 2_147_483_647;
-/** A classic save's record keeps its value as the save tree writes it, unsigned (formats/saveTreeFile.js getUint32). */
+/** A classic save's record keeps its value as the save tree writes it, unsigned (formats/save/saveTreeFile.js getUint32). */
 export const CLASSIC_VALUE_MAX = 4_294_967_295;
 /** Gold is a count, not a stack the wire carries: a purse dropped, a wagon's coin, a death in the wild lay piles past the
  *  wire's bound (loot.js LOOT_STACK_MAX) in an honest save - never past what one count holds (GOLD-INT). */

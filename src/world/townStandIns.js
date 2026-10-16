@@ -1,6 +1,6 @@
 // WD3 (2026-10-01): THE PIECES BEAUTIFUL VILLAGES AND BEAUTIFUL CITIES BORROW, STOOD IN BY THE PORT.
 //
-// The two town mods are world data (src/formats/worldDataPack.js), and their blocks place pieces of five peer mods
+// The two town mods are world data (src/formats/worldData/worldDataPack.js), and their blocks place pieces of five peer mods
 // the port does not carry - Daggerfall Expanded Textures, Diep's Rosy's Resources, New Paintings, the RMB Resource
 // Pack and DET's Harvestable Crops - and eighteen beds of their own whose prefabs point at nothing (their meshes and
 // textures are Daggerfall's, recoloured). Mac's answer for a peer the port lacks was "Build your own" (DS1), and the

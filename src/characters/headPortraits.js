@@ -63,7 +63,7 @@ async function dataAttached() {
  *  @param {{ px?: number, ph?: number, renderer?: any }} [opts] */
 export async function playerHeadImage(who, { px = 128, ph = px, renderer = portraitRenderer() } = {}) {
   if (!who || !renderer || !(await dataAttached())) return null;
-  const [{ headPortrait }, { mwRaceId }] = await Promise.all([import('../combat/fpArm.js'), import('../formats/mwNpc.js')]);
+  const [{ headPortrait }, { mwRaceId }] = await Promise.all([import('../combat/fpArm.js'), import('../formats/morrowind/mwNpc.js')]);
   if (who.equip) {
     const [{ armBuildOptsOf }, { liveLycanthropy }] = await Promise.all([import('../combat/weapon/weaponRig.js'), import('../systems/lycanthropy.js')]);
     if (liveLycanthropy(who)?.isTransformed && !armBuildOptsOf(who).werewolf) return null;   // the wereboar: no Morrowind boar

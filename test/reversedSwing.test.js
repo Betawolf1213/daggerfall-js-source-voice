@@ -15,7 +15,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { REVERSED_STRIKES, strikeReversed, DF_STRIKE_TO_MW_ATTACK, attackKeys, MW_SHOOT_ATTACK } from '../src/formats/mwFirstPerson.js';
+import { REVERSED_STRIKES, strikeReversed, DF_STRIKE_TO_MW_ATTACK, attackKeys, MW_SHOOT_ATTACK } from '../src/formats/morrowind/mwFirstPerson.js';
 import { createFpArm, UPPER_BODY } from '../src/combat/fpArm.js';
 
 const f = (n) => new Uint8Array(readFileSync(new URL(`./fixtures/mw/${n}`, import.meta.url)));

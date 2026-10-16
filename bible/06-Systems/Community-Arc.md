@@ -266,7 +266,7 @@ gesture AT someone, bounded at 24 characters and only ever a name in the table's
 
 **The animations - words only, on purpose.** The others stand in the Morrowind body (MWBODY1), and its base animation
 groups are the idles (idle through idle9 - fidgets, none of them a gesture), the moves, the attacks and the casts, a
-knockdown and the deaths (formats/mwAnim.js). There is no wave, no bow, no dance to play, and a gesture drawn with the
+knockdown and the deaths (formats/morrowind/mwAnim.js). There is no wave, no bow, no dance to play, and a gesture drawn with the
 wrong clip would say something the player did not. So a gesture is a line until the bodies carry the clips; then the
 pose needs one field (the gesture, and when it began) and the relay one deploy.
 

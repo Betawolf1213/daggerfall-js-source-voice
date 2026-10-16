@@ -20,8 +20,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import zlib from 'node:zlib';
 
-import { ROW_CODECS } from '../src/formats/worldDataPack.js';
-import { blockFromJson } from '../src/formats/worldDataReplacement.js';
+import { ROW_CODECS } from '../src/formats/worldData/worldDataPack.js';
+import { blockFromJson } from '../src/formats/worldData/worldDataReplacement.js';
 import { CLIMATES } from '../src/formats/mapsTables.js';
 import { layoutRmbBlock, PROPS_OFFSET_Y } from '../src/world/rmbLayout.js';
 import { collectBlockFlats } from '../src/world/rmbFlats.js';

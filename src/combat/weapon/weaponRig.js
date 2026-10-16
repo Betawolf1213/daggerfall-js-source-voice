@@ -29,7 +29,7 @@ import { eotbCamera } from '../../player/eotbCamera.js';
 import { racialFpsWeapon } from '../../systems/lycanthropy.js';   // V4: the transformed rig's claws
 import { EQUIP_SLOTS, equipTableOf, fillEquipTable } from '../../systems/equip.js';   // AUDIT 17e F17; MW-D32 the worn read; MW-EARLY: a save's worn set
 import { setItemFields } from '../../systems/item/itemTemplates.js';   // MW-EARLY: a save's items as the restore reads them
-import { dfWornEquipment } from '../../formats/mwItemMap.js';   // MW-D32
+import { dfWornEquipment } from '../../formats/morrowind/mwItemMap.js';   // MW-D32
 import { ownWerewolfSkin } from '../../systems/ownGlyphs.js';   // SHADOW-FANG: the skin my own werewolf wears
 import { ARMOR_ENUM } from '../enemyEquipment.js';   // MW-D32
 import { loadFpsWeaponArt, drawFpsWeapon, weaponTypeForItem, WEAPON_TYPES, fpLightingOn, WEAPON_FILE } from '../fpsWeapon.js';
@@ -56,7 +56,7 @@ import { fpArm, hasAmmoFor } from '../fpArm.js';
 import { ammoCountFor } from '../../systems/inventory.js';   // AUDIT 68 S27-ammoCount-dup: the quiver's count, from the spend law's own module
 import { getPref } from '../../systems/uiPrefs.js';   // MWA1: the arms switch
 import { morrowindDataCount, morrowindDataFingerprint, registerMorrowindData, morrowindDataCounted, countMorrowindArchives } from '../../scenes/dataSource.js';   // MWA1: are the archives attached; AUDIT 65 XL-6: and measured; MW-EARLY: and counted
-import { mwRaceId } from '../../formats/mwNpc.js';   // TR2: the one race-id spelling
+import { mwRaceId } from '../../formats/morrowind/mwNpc.js';   // TR2: the one race-id spelling
 import { TEMPLATES } from '../../systems/useItem.js';   // MW-D51: the Torch template - the lit light the Morrowind hand holds
 import { morrowindDataGeneration } from '../../scenes/dataSource.js';
 import { objectAabb, rayAabb, hasMeshCollider, RAY_DISTANCE } from '../../player/activate.js';   // AUDIT 63 F37: one live box for both rays

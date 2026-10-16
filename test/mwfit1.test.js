@@ -11,10 +11,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { parseNif } from '../src/formats/mwNifFile.js';
-import { flattenNif } from '../src/formats/mwNifMesh.js';
-import { assembleFirstPersonArm } from '../src/formats/mwFirstPerson.js';
-import { composeWornArmor, fpWornAdds } from '../src/formats/mwItemMap.js';
+import { parseNif } from '../src/formats/morrowind/mwNifFile.js';
+import { flattenNif } from '../src/formats/morrowind/mwNifMesh.js';
+import { assembleFirstPersonArm } from '../src/formats/morrowind/mwFirstPerson.js';
+import { composeWornArmor, fpWornAdds } from '../src/formats/morrowind/mwItemMap.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { CLASSIC_ARMOR_TEMPLATE, ownArmorModelFor, ownArmorParts, STEEL_HELM_STYLES } from '../src/characters/ownModels/ownArmorModels.js';
 import { HELM_LIFT, SCENE_BODY, RETAIL_SKELETON, plateBind } from '../tools/bakeSteelPlate.mjs';

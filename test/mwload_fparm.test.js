@@ -1,9 +1,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { MwBsaFile } from '../src/formats/mwBsaFile.js';
-import { MW_WEAPON_TYPE } from '../src/formats/mwFirstPerson.js';
-import { warningImage } from '../src/formats/mwTexture.js';
+import { MwBsaFile } from '../src/formats/morrowind/mwBsaFile.js';
+import { MW_WEAPON_TYPE } from '../src/formats/morrowind/mwFirstPerson.js';
+import { warningImage } from '../src/formats/morrowind/mwTexture.js';
 import {
   buildFpArm, createFpArm, fpSkeletonPath, FP_CLIP_PATH,
   collectArmTextures, resolveWeaponParts, weaponPartPaths,
@@ -32,7 +32,7 @@ const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 
 /**
  * A Morrowind BSA v0x100, written here from the layout doc at the head of
- * src/formats/mwBsaFile.js - the same independent writer
+ * src/formats/morrowind/mwBsaFile.js - the same independent writer
  * test/fixtures/mw/generate.py uses for fixture.bsa, in JS, so a test can
  * put ANY file map behind a genuinely lazy archive. Names are stored
  * backslashed and the hash table is zeroed, exactly as the committed

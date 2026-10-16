@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { parseNif, deref } from '../src/formats/mwNifFile.js';
+import { parseNif, deref } from '../src/formats/morrowind/mwNifFile.js';
 
 // MW-D9e: the registry grew from 27 record types to 59, because a 4.0.0.2
 // record has NO size field - one unimplemented type ends the file rather

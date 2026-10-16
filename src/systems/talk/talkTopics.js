@@ -28,7 +28,7 @@
 //   NPCsKnowEverything debug) don't apply to street mobiles.
 
 import { generateBuildingName, isNamedBuildingType, BUILDING_TYPES } from '../../world/buildingNames.js';
-import { worldDataDoor } from '../../formats/worldDataDoor.js';   // RR3b: RMBLayout.cs:662-672's replacement arm
+import { worldDataDoor } from '../../formats/worldData/worldDataDoor.js';   // RR3b: RMBLayout.cs:662-672's replacement arm
 import { randomRangeInclusive, srand } from '../../formats/dfRandom.js';
 import { RMB_SIDE } from '../../world/locationLayout.js';
 import { directionHintString } from './talk.js';   // wave 27: one compass law

@@ -865,7 +865,7 @@ read off the IL) is ported to `systems/seasonsIliacBay.js`; the
 textures are re-shaded classic flats and stay OUT of the repository by
 the doctrine's own sentence - they come from the player's own copy of
 the mod, the `.dfmod` itself through a UnityFS reader written for it
-(`formats/unityBundle.js`, validated 374/374 against a reference
+(`formats/unity/unityBundle.js`, validated 374/374 against a reference
 extraction) or the mod's folders, through the texture pick. Both
 climate hosts take the seasonal record per flat; the streaming host
 answers the mod's batch refresh with the winter flip's own re-skin

@@ -6,7 +6,7 @@
 // MW-HEADS1 (2026-10-13, the owner: "Everything we are doing is for the morrowwind model. This batch is for breton",
 // with daggerwind.fbx and six paintings; asked, every Breton man wears them - bible/04-Characters/Own-Heads.md). The
 // first batch of the port's own heads: three Breton men's heads and three hairs, in place of the Breton men's heads
-// Morrowind's own data carries (characters/ownModels/ownHeadModels.js, formats/mwFirstPerson.js facePools).
+// Morrowind's own data carries (characters/ownModels/ownHeadModels.js, formats/morrowind/mwFirstPerson.js facePools).
 //
 //   THREE OBJECTS, EACH A HEAD AND A HAIR. The export carries `b_n_breton_m_hair_widow`, `b_n_breton_m_head_05.002`
 //   and `.003` - each a face in a head painting and a hair in a hair painting, two materials of one object. To the game

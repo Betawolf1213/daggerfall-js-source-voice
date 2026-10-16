@@ -111,7 +111,7 @@ metre of the same floor round it, on a sound floor, 1.5 m off every person, ques
 taking NO CLICK MEANT FOR ANOTHER: from every floor cell the walk reaches, the eye at the player's, aimed at each person
 of the room in reach and in sight, the summoner's pick box is never the first the ray meets (AUDIT QA2) - with
 Daggerfall's record position (which seeds the person's name), the next free one where a person of the room holds it. It
-is put in where the block becomes the port's (`formats/worldDataReplacement.js` getDFBlockReplacementData, both its
+is put in where the block becomes the port's (`formats/worldData/worldDataReplacement.js` getDFBlockReplacementData, both its
 paths), keyed by the name the town lays the block under (AUDIT QA2: TEMPASA2's JSON names itself TEMPAS2.RMB), so the
 room, the guild's services and the questor walk all read it. A temple that stands a summoner of its own keeps it. A
 curation of the mod's data (Port-Ledger A, TEMPLE-SUMMONER). THE FOUR HOSTS: `scenes/world.js`, `scenes/worldModes.js`,

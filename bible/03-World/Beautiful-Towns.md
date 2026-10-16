@@ -39,7 +39,7 @@ a house bought behind it is stamped with the Daggerfall town it stands in.
 
 Both mods ship `FIGHBM00.RMB` and the two differ: Daggerfall Unity serves the
 file of the mod loaded later, Beautiful Cities, and so does the port
-(`WORLD_DATA_PRIORITY`, the door's per-name list - `formats/worldDataReplacement.js`
+(`WORLD_DATA_PRIORITY`, the door's per-name list - `formats/worldData/worldDataReplacement.js`
 keeps every mod's entry of a name, highest load priority first, and the first
 whose switch is on answers; a mod switched off never hides the one under it).
 
@@ -79,7 +79,7 @@ DFU itself lets them wake in the wrong building. The port does not
    alone). Everything else in the world follows the switches as they stand.
 3. **The world-data door serves a pinned town its layout**: its location and
    the blocks laid out in it come with exactly the mods its pin names
-   (`formats/worldDataReplacement.js`, the door asks the pin oracle; the
+   (`formats/worldData/worldDataReplacement.js`, the door asks the pin oracle; the
    block reads ask for the town whose grid named them - `MapsFile.getRmbBlockName`
    notes it, `systems/worldDataVariants.js` `readingLocationKeyOf`).
 4. **A pinned town is read again and built again** when a load changes its
@@ -296,7 +296,7 @@ elsewhere.
   Wayrest, whose castles are dungeons. A location served from JSON keeps its
   dungeon's `RecordElement` (DFU's `LocationDungeon.RecordElement`), whose
   `LocationId` every dungeon reader asks - the castles are entered, and saved
-  in, as in Daggerfall (`formats/worldDataReplacement.js` `dungeonFromJson`).
+  in, as in Daggerfall (`formats/worldData/worldDataReplacement.js` `dungeonFromJson`).
 
 - **Windmills.** Kamer's mill is DFU's replacement of model `41600` wherever it
   stands. Six of Beautiful Villages' farms (FARMAA04/05/07, FARMBA05/08/09) and

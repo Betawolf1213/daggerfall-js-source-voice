@@ -72,12 +72,12 @@ GFX files in the game are SCRL00I0/SCRL01I0 - 8 parchment frames each,
 exclusively by the class-questions screen. See 10-UI/UI-Arc.md.
 
 Post-close addition: THE CLASSIC `.SAV` READER (SAV1 2026-08-27) - the
-fourteenth reader, all 13 DFU API/Save files: `formats/saveTreeFile.js`
+fourteenth reader, all 13 DFU API/Save files: `formats/save/saveTreeFile.js`
 (SAVETREE.DAT - header, building records, the 71-byte record root, the
 typed item/character/spell/guild/disease/container/soul records),
-`formats/characterRecord.js`, `formats/saveVarsFile.js` (SAVEVARS.DAT
-with the region and faction tables), `formats/saveImageFile.js`
-(IMAGE.RAW), `formats/bioFile.js` (BIO.DAT), `formats/saveGames.js`
+`formats/characterRecord.js`, `formats/save/saveVarsFile.js` (SAVEVARS.DAT
+with the region and faction tables), `formats/save/saveImageFile.js`
+(IMAGE.RAW), `formats/bioFile.js` (BIO.DAT), `formats/save/saveGames.js`
 (the SAVE0-SAVE5 set: SAVENAME.TXT, MAPSAVE.SAV discovery walk, rumor
 and bio wiring). The spell-record parse single-sources into
 spellsStd.js (`readSpellRecord` = DaggerfallSpellReader.ReadSpellData);

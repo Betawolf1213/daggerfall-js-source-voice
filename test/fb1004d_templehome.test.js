@@ -18,14 +18,14 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { CURATED_CLASSIC, curatedOut, pinAt, layoutStampAt, stampVendors, pinsFrom, setLayoutPins, configureLayoutPins, _resetLayoutPins, CLASSIC_LAYOUT } from '../src/systems/layoutPins.js';
-import { registerWorldDataAsset, _resetWorldDataReplacement, installWorldDataReplacement, latchWorldDataDoor, getDFLocationReplacementData, locationReplacementFilename } from '../src/formats/worldDataReplacement.js';
+import { registerWorldDataAsset, _resetWorldDataReplacement, installWorldDataReplacement, latchWorldDataDoor, getDFLocationReplacementData, locationReplacementFilename } from '../src/formats/worldData/worldDataReplacement.js';
 import { setValue } from '../src/systems/settings/settings.js';
 import { makeLocationKey } from '../src/systems/worldDataVariants.js';
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { Place, VALID_HOUSE_TYPES } from '../src/systems/quest/place.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
-import { ROW_CODECS } from '../src/formats/worldDataPack.js';
-import { patchJson } from '../src/formats/worldDataJson.js';
+import { ROW_CODECS } from '../src/formats/worldData/worldDataPack.js';
+import { patchJson } from '../src/formats/worldData/worldDataJson.js';
 import { loadTables, worldOf, questScript } from './fb1004dTowns.mjs';
 import { SKIP, BV, BC, packJson, openTowns, everyLocation, seeded } from './fb1004dArena.mjs';
 

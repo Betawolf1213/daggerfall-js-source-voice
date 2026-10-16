@@ -37,7 +37,7 @@ Re-run at AUDIT PRE-MERGE 1003 on PR #545's head, without ARENA2: the same 35 de
 
 ## Fixed
 
-**The packs and the door** (`src/formats/worldDataReplacement.js`, `src/formats/worldDataPack.js`,
+**The packs and the door** (`src/formats/worldData/worldDataReplacement.js`, `src/formats/worldData/worldDataPack.js`,
 `src/scenes/modWorldData.js`, `src/systems/layoutPins.js`, `src/systems/features.js`, `tools/worldDataPackBuild.mjs`,
 `tools/worldDataPackNames.mjs`; the pins in `test/wd3_door.test.js`, `test/wd3_pack.test.js`,
 `test/wd3_layoutPins.test.js`)

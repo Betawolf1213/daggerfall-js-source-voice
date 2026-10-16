@@ -1,7 +1,7 @@
 // WD3 (2026-10-01, Mac: "These are the next mods I'd like to implement (We have permission) and ensure this doesn't
 // conflict or regress anything (For example housing customization)") - THE WORLD-DATA PACK: Beautiful Villages of
 // Daggerfall's and Beautiful Cities of Daggerfall's whole world data carried as the authors' edits over the player's
-// own MAPS.BSA and BLOCKS.BSA (src/formats/worldDataPack.js), built by tools/worldDataPackBuild.mjs.
+// own MAPS.BSA and BLOCKS.BSA (src/formats/worldData/worldDataPack.js), built by tools/worldDataPackBuild.mjs.
 //
 // Held here: the record rows (every codec round-trips DFU's object, key order and all, and a record that does not fit
 // is carried whole); the reader (a file rebuilt from a classic block, a node shared, a classic node referenced with
@@ -17,9 +17,9 @@ import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 import zlib from 'node:zlib';
 
-import { PACK_FORMAT, ROW_CODECS, ROW_ENCODERS, runLength, openWorldDataPack, readPackText, packFileSha256, classicIndicesOf } from '../src/formats/worldDataPack.js';
-import { blockToDfuJson, patchJson, canonicalJson } from '../src/formats/worldDataJson.js';
-import { canonicalSha256 } from '../src/formats/worldDataPatch.js';
+import { PACK_FORMAT, ROW_CODECS, ROW_ENCODERS, runLength, openWorldDataPack, readPackText, packFileSha256, classicIndicesOf } from '../src/formats/worldData/worldDataPack.js';
+import { blockToDfuJson, patchJson, canonicalJson } from '../src/formats/worldData/worldDataJson.js';
+import { canonicalSha256 } from '../src/formats/worldData/worldDataPatch.js';
 import { BlocksFile } from '../src/formats/blocksFile.js';
 import { MapsFile } from '../src/formats/mapsFile.js';
 import { parseFullSerializerJson, dfuWorldDataName, serialisePack } from '../tools/worldDataPackBuild.mjs';

@@ -15,9 +15,9 @@ import { MapsFile } from '../src/formats/mapsFile.js';
 import { DFPalette } from '../src/formats/dfPalette.js';
 import { srand, rand, getSeed } from '../src/formats/dfRandom.js';
 import { dxtDecode } from '../src/formats/dxt.js';
-import { parseNif } from '../src/formats/mwNifFile.js';
-import { extractTracks, sampleTrack } from '../src/formats/mwAnim.js';
-import { readBuildingRecords } from '../src/formats/saveTreeFile.js';
+import { parseNif } from '../src/formats/morrowind/mwNifFile.js';
+import { extractTracks, sampleTrack } from '../src/formats/morrowind/mwAnim.js';
+import { readBuildingRecords } from '../src/formats/save/saveTreeFile.js';
 
 const src = (p) => readFileSync(new URL(`../src/formats/${p}`, import.meta.url), 'utf8');
 const code = (p) => src(p).replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, '');

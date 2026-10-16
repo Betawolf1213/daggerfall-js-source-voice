@@ -1,7 +1,7 @@
 [
   {
     "name": "AWD3-DUNGEON-RECORD-DROPPED",
-    "file": "src/formats/worldDataReplacement.js",
+    "file": "src/formats/worldData/worldDataReplacement.js",
     "old": "    recordElement: { doorCount: 0, doors: [], header: recordHeaderFromJson(d.RecordElement?.Header ?? {}, name) },",
     "new": "    recordElement: null,",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "AWD3-DOOR-UNLATCHED",
-    "file": "src/formats/worldDataReplacement.js",
+    "file": "src/formats/worldData/worldDataReplacement.js",
     "old": "export const worldDataDoorOpen = () => _doorLatched ?? (assetInjectionOn() || isOnlinePage());",
     "new": "export const worldDataDoorOpen = () => assetInjectionOn() || isOnlinePage();",
     "tests": [
@@ -284,7 +284,7 @@
   },
   {
     "name": "AWD3-PACK-NAMES-UNREAD",
-    "file": "src/formats/worldDataPack.js",
+    "file": "src/formats/worldData/worldDataPack.js",
     "old": "      node = jsonAt(classicBlockJson(index, classicNames?.[index] ?? null), path);",
     "new": "      node = jsonAt(classicBlockJson(index), path);",
     "tests": [

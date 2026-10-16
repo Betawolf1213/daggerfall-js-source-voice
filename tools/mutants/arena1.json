@@ -65,7 +65,7 @@
   },
   {
     "name": "ARENA1-PORT-BLOCK-GATED",
-    "file": "src/formats/worldDataReplacement.js",
+    "file": "src/formats/worldData/worldDataReplacement.js",
     "old": "  if (blockName && _portBlocks.has(blockName)) return portBlock(blockName);   // ARENA1: the port's own, behind no door\n",
     "new": "",
     "tests": [
@@ -74,7 +74,7 @@
   },
   {
     "name": "ARENA1-PORT-INDEX",
-    "file": "src/formats/worldDataReplacement.js",
+    "file": "src/formats/worldData/worldDataReplacement.js",
     "old": "export const getNewDFBlockIndex = (blockName) => _portBlocks.get(blockName)?.index ?? newBlockIndices.get(blockName) ?? -1;",
     "new": "export const getNewDFBlockIndex = (blockName) => newBlockIndices.get(blockName) ?? -1;",
     "tests": [

@@ -28,7 +28,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as fpArmModule from '../src/combat/fpArm.js';
-import * as mwFirstPerson from '../src/formats/mwFirstPerson.js';
+import * as mwFirstPerson from '../src/formats/morrowind/mwFirstPerson.js';
 import { multiply, perspective, lookAt } from '../src/world/mat4.js';
 import { meshToNif } from '../tools/nifWrite.mjs';
 import { bodyRec, fixtureFile as f } from './fixtures/mw/bodyRig.mjs';
@@ -331,7 +331,7 @@ test('PR-BOW1b (2): portraitWindow - the tight box of the SHOWN ranges at this y
 // ---------------------------------------------------------------------------------------------------------------
 
 test('PR-BOW1b: the wiring, by source - poseAssembly folds through foldPieceBounds, the portrait frames through portraitWindow after its flags and never over every piece, and the record names every door to drawThird: world.js, exterior.js, worldModes.js and dungeon.js through mwView.mwViewDrawBody, the peers through peerBodies', () => {
-  const mw = rd('src/formats/mwFirstPerson.js');
+  const mw = rd('src/formats/morrowind/mwFirstPerson.js');
   const pose = mw.slice(mw.indexOf('export function poseAssembly('), mw.indexOf('export function hangAffine('));
   assert.match(pose, /assembly\.bounds = pieces\.length \? foldPieceBounds\(pieces\) : null;/, 'the one walk');
   const arm = rd('src/combat/fpArm.js');

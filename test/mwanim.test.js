@@ -1,8 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { parseNif, KEY_TYPE } from '../src/formats/mwNifFile.js';
-import { flattenNif } from '../src/formats/mwNifMesh.js';
+import { parseNif, KEY_TYPE } from '../src/formats/morrowind/mwNifFile.js';
+import { flattenNif } from '../src/formats/morrowind/mwNifMesh.js';
 import {
   collectTextKeys,
   parseAnimGroups,
@@ -18,7 +18,7 @@ import {
   advanceClip,
   isLoopingAnimation,
   LOOPING_ANIMATIONS,
-} from '../src/formats/mwAnim.js';
+} from '../src/formats/morrowind/mwAnim.js';
 import {
   buildSkeleton,
   poseSkeleton,
@@ -28,7 +28,7 @@ import {
   accumRootRef,
   ACCUM_ROOT_NAMES,
   trackBinding,
-} from '../src/formats/mwSkin.js';
+} from '../src/formats/morrowind/mwSkin.js';
 
 const ANIMATED = new Uint8Array(
   readFileSync(new URL('./fixtures/mw/animated.nif', import.meta.url)),
@@ -760,7 +760,7 @@ test('MW-D33: TCB interior tangents weight by TIME SPAN, not a flat half', () =>
   // leaves the struct's zero-initialised tangents (nifkey.hpp:38-40).
   // No sorted key list can put that key at a sampled segment's edge, so
   // the guard is pinned at the source.
-  const src = readFileSync(new URL('../src/formats/mwKeys.js', import.meta.url), 'utf8');   // AUDIT 68: the KeyGroup sampler's one home
+  const src = readFileSync(new URL('../src/formats/morrowind/mwKeys.js', import.meta.url), 'utf8');   // AUDIT 68: the KeyGroup sampler's one home
   assert.ok(src.includes('if (timeSpan === 0) return [0, 0];'), 'zero span answers zero tangents');
 });
 
@@ -771,7 +771,7 @@ test('MW-D33: the quadratic reader streams value, IN tangent, OUT tangent - in t
   // field of one key and the FIRST of the next. Reader order is pinned
   // at the source because no fixture carries quadratic keys; the
   // sampler's side is pinned by value above ("stored Hermite tangents").
-  const src = readFileSync(new URL('../src/formats/mwNifFile.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/formats/morrowind/mwNifFile.js', import.meta.url), 'utf8');
   assert.ok(/key\.inTan = val\(\);\s*\n\s*key\.outTan = val\(\);/.test(src),
     'keyframe groups: inTan read before outTan');
   assert.ok(/key\.inTan = s\.f32\(\);.*\n\s*key\.outTan = s\.f32\(\);/.test(src),

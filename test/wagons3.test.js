@@ -26,7 +26,7 @@ import { ROPE, newRope, layRope, stepRope, restSag, tubeModel, tubeInto, tubeVer
 import { TEX, WAGON_ARCHIVE, wagonArt } from '../src/world/wagonArt.js';
 import { quatAngleAxis, UNITY_QUAT_IDENTITY, quatRotate as quatRotateT, quatForward } from '../src/world/quat.js';
 import { FOCAL_HEIGHT } from '../src/player/mwCamera.js';   // AUDIT WAGONS3 B1: the camera's own focal over the seat
-import { MW_UNITS_PER_METER } from '../src/formats/mwFirstPerson.js';
+import { MW_UNITS_PER_METER } from '../src/formats/morrowind/mwFirstPerson.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const bakeOf = (kind) => JSON.parse(rd(`src/assets/wagons/${kind}.json`));

@@ -82,7 +82,7 @@ the vendored pack's TVRNAS02 (113 StaticNPCs, 11 bodies, none for scenery); `fb1
 
 ## BARE-BOOTS: what imperial chain lacks, iron (5)
 
-`src/formats/mwItemMap.js` DF_TO_MW_ARMOR_MATERIAL, mwArmorRecords.
+`src/formats/morrowind/mwItemMap.js` DF_TO_MW_ARMOR_MATERIAL, mwArmorRecords.
 
 FOUND. The Legendary was innocent: "The Wayrest Courier's Treads" is Boots (108) on whatever material the loot made it,
 and DFU's RandomArmorMaterial makes one boot in five Chain. Imperial chain is a cuirass, greaves and coif in Morrowind,
@@ -154,7 +154,7 @@ CHANGED. A home a quest still names says the quest's name first: "The Hawkley Re
 
 ## MW-AXES: the Morrowind axes cross Daggerfall's names (10)
 
-`src/formats/mwFirstPerson.js` DF_TO_MW_WEAPON, dfWeaponShape.
+`src/formats/morrowind/mwFirstPerson.js` DF_TO_MW_WEAPON, dfWeaponShape.
 
 FOUND. Daggerfall's Battle Axe is its one-hander and its War Axe its two-hander (DFU's ItemTemplates; WEAPON_HANDS 127
 'Either', 128 'Both') - the reverse of every later game. DF_TO_MW_WEAPON matched the names (War_Axe -> AxeOneHand,

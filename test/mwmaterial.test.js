@@ -1,20 +1,20 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { parseNif } from '../src/formats/mwNifFile.js';
-import { sampleTrack } from '../src/formats/mwAnim.js';
+import { parseNif } from '../src/formats/morrowind/mwNifFile.js';
+import { sampleTrack } from '../src/formats/morrowind/mwAnim.js';
 import {
   flattenNif, diffuseAt, VERTEX_COLOR_MODE, VERT_MODE, LIGHT_MODE, DRAW_MODE,
   hasMarkerFlag, skipGeometryName,
-} from '../src/formats/mwNifMesh.js';
-import { boneOffsetOf, bindPart } from '../src/formats/mwCharacter.js';
-import { buildSkeleton } from '../src/formats/mwSkin.js';
-import { placeAtBone, aimingFactor, neckRotateFactor, FP_NECK_ROTATE_FACTOR } from '../src/formats/mwFirstPerson.js';
+} from '../src/formats/morrowind/mwNifMesh.js';
+import { boneOffsetOf, bindPart } from '../src/formats/morrowind/mwCharacter.js';
+import { buildSkeleton } from '../src/formats/morrowind/mwSkin.js';
+import { placeAtBone, aimingFactor, neckRotateFactor, FP_NECK_ROTATE_FACTOR } from '../src/formats/morrowind/mwFirstPerson.js';
 import {
   accurateAiming, UPPER_BODY, packFpArm, FP_FLOATS, createFpArm, fpSkeletonPath, FP_CLIP_PATH,
   buildFpArm,
 } from '../src/combat/fpArm.js';
-import { assembleFirstPersonArm, poseAssembly, armPieceRows } from '../src/formats/mwFirstPerson.js';
+import { assembleFirstPersonArm, poseAssembly, armPieceRows } from '../src/formats/morrowind/mwFirstPerson.js';
 
 // MW-D13: THE RULES THE ARM WAS STILL DRAWING WITHOUT.
 //

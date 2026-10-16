@@ -57,7 +57,7 @@ roads-hazelnut/README.md`) records a permission from the same author.]**
   **These three are RE-ENCODES, not the author's own files.** The zip
   ships one `traveloptions.dfmod`, a Unity 2019.4.40f1 AssetBundle, and
   the PNGs the mod was built from are not in it: the bundle carries
-  them as `Texture2D` objects in RGB24. `src/formats/unityBundle.js`
+  them as `Texture2D` objects in RGB24. `src/formats/unity/unityBundle.js`
   read the bundle and the three were written back out as PNG, pixel for
   pixel (`tools/travelOptionsAssets.mjs` reproduces them from a copy of
   the zip). The PIXELS are the author's; the file bytes are the port's

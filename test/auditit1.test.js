@@ -246,7 +246,7 @@ test('AUDIT IT1 H-L2: a driver\'s sheet is a new CarriageMap - its own filters (
 // ── the gate world data (tools/immersiveTravelPatches.mjs, world/immersiveTravelGates.js, scenes/modWorldData.js) ──
 import { appendedEdit, appendedPatch, IT_GATE_BLOCKS, CLASSIC_BUILDING_SLOTS } from '../tools/immersiveTravelPatches.mjs';
 import { gateAppends } from '../src/world/immersiveTravelGates.js';
-import { patchJson } from '../src/formats/worldDataJson.js';
+import { patchJson } from '../src/formats/worldData/worldDataJson.js';
 import { sha256Canonical } from '../tools/worldDataPatch.mjs';
 
 /** An editor-written gate block: four building slots (the editor writes NumBlockDataRecords of them), a scale of 1 on

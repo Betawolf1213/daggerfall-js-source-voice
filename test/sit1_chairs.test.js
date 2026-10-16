@@ -11,10 +11,10 @@ import {
   CHAIR_LAP_TOP, CHAIR_PROBE_OVER, CHAIR_FLOOR_STEP, chairSeatOf, chairProbeOver,
 } from '../src/world/chairSeat.js';
 import { SEATED_EYE_HEIGHT, SEATED_HIP_HEIGHT, SEAT_ANKLE, seatRequestFor, seatTopByte, seatTopOf } from '../src/player/seatPose.js';
-import { parseNif } from '../src/formats/mwNifFile.js';
-import { buildSkeleton, poseSkeleton, skeletonSpaceMatrices, GRAPH_ROOT } from '../src/formats/mwSkin.js';
+import { parseNif } from '../src/formats/morrowind/mwNifFile.js';
+import { buildSkeleton, poseSkeleton, skeletonSpaceMatrices, GRAPH_ROOT } from '../src/formats/morrowind/mwSkin.js';
 import { applyClimbRig, climbBones } from '../src/combat/climbRig.js';
-import { MW_UNITS_PER_METER } from '../src/formats/mwFirstPerson.js';
+import { MW_UNITS_PER_METER } from '../src/formats/morrowind/mwFirstPerson.js';
 import { Collider } from '../src/player/collider.js';
 import { worldAabb } from '../src/player/activate.js';
 

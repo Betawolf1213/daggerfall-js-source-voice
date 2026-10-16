@@ -66,7 +66,7 @@ export function _setVePackIoForTests({ fetch = null, decode = null, worker = nul
 }
 
 // ---- AUDIT VE P1: THE DECODE, OFF THE MAIN THREAD -------------------------------------------------------------------
-const DECODE_WORKERS = 2;   // as the attached mods' bundle pool (formats/unityBundlePool.js)
+const DECODE_WORKERS = 2;   // as the attached mods' bundle pool (formats/unity/unityBundlePool.js)
 let _workers = null;        // [{ w, pending }] once made; false when this page cannot have them
 let _nextAsk = 1, _turn = 0;
 function decodeWorkers() {

@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { MwBsaFile, normalizeBsaPath } from '../src/formats/mwBsaFile.js';
+import { MwBsaFile, normalizeBsaPath } from '../src/formats/morrowind/mwBsaFile.js';
 
 // fixture.bsa is written by test/fixtures/mw/generate.py - an independent
 // struct-level writer of the documented v0x100 layout.

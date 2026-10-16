@@ -15,7 +15,7 @@ import { attachTouch } from '../ui/touch/touch.js';
 import { attachGamepad } from '../ui/gamepadInput.js';   // GP1: the pad speaks the same hooks
 import { isEnhanced } from '../systems/uiSkin.js';   // AUDIT FONT F5: the touch layer's face gate (the skin cannot change without a reload, so the boot-time read is exact)
 import { BlocksFile } from '../formats/blocksFile.js';
-import { bindWorldDataBlocks } from '../formats/worldDataReplacement.js';   // RR3b
+import { bindWorldDataBlocks } from '../formats/worldData/worldDataReplacement.js';   // RR3b
 import { loadModWorldData } from './modWorldData.js';   // RR3b
 import { DFPalette } from '../formats/dfPalette.js';
 import { INTERIOR_AMBIENT, INTERIOR_NIGHT_AMBIENT, INTERIOR_LIGHT_DIR } from '../world/interior/interiorLights.js';

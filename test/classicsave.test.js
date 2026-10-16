@@ -18,17 +18,17 @@ import {
   parseItemRecordData, parseGuildMembershipRecordData,
   parseDiseaseOrPoisonRecordData, isWagonRecord,
   readCStringFixed, readCStringScan,
-} from '../src/formats/saveTreeFile.js';
+} from '../src/formats/save/saveTreeFile.js';
 import { parseCharacterRecordData, EQUIPPED_ITEM_COUNT } from '../src/formats/characterRecord.js';
 import { readSpellRecord, SPELL_RECORD_SIZE } from '../src/formats/spellsStd.js';
 import {
   SaveVars, TRAVEL_FLAGS, CHEAT_FLAGS, SHIP_TYPES, EMPEROR_SON_NAMES,
-} from '../src/formats/saveVarsFile.js';
-import { SaveImage, SAVE_IMAGE_WIDTH, SAVE_IMAGE_HEIGHT } from '../src/formats/saveImageFile.js';
+} from '../src/formats/save/saveVarsFile.js';
+import { SaveImage, SAVE_IMAGE_WIDTH, SAVE_IMAGE_HEIGHT } from '../src/formats/save/saveImageFile.js';
 import { BioFile } from '../src/formats/bioFile.js';
 import {
   SaveGames, readMapSaveDiscovery, MAPSAVE_DISCOVERED_FLAG, CLASSIC_SAVE_COUNT,
-} from '../src/formats/saveGames.js';
+} from '../src/formats/save/saveGames.js';
 import { BsaFile } from '../src/formats/bsaFile.js';
 import { stripTransformedRace, toCharacterDocument, TRANSFORMED_RACES } from '../src/systems/classicSave.js';
 // AUDIT 58: AssignShipToPlayer's permanent half on the classic-import path

@@ -8,9 +8,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { MwBsaFile } from '../src/formats/mwBsaFile.js';
-import { MW_WEAPON_TYPE } from '../src/formats/mwFirstPerson.js';
-import { decodeTextureImage } from '../src/formats/mwTexture.js';
+import { MwBsaFile } from '../src/formats/morrowind/mwBsaFile.js';
+import { MW_WEAPON_TYPE } from '../src/formats/morrowind/mwFirstPerson.js';
+import { decodeTextureImage } from '../src/formats/morrowind/mwTexture.js';
 import { createFpArm, mountFrame, fpSkeletonPath, FP_CLIP_PATH } from '../src/combat/fpArm.js';
 import { CHAR_SPRITE_RT_SIZE } from '../src/render/renderer.js';
 import { multiply, transformPoint } from '../src/world/mat4.js';

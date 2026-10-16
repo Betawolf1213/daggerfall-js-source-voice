@@ -65,7 +65,7 @@
   },
   {
     "name": "MWCLOAK2-no-ease",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "export const CLOAK_EASE_RADIUS = 8;",
     "new": "export const CLOAK_EASE_RADIUS = 0.001;",
     "tests": ["test/mwcloak2.test.js"],
@@ -73,7 +73,7 @@
   },
   {
     "name": "MWCLOAK2-normals-kept",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "      const normals = cloak.batch.normals ? faceAs(vertexNormals(bind, cloak.indices, rep), cloak.batch.normals) : cloak.batch.normals;",
     "new": "      const normals = cloak.batch.normals;",
     "tests": ["test/mwcloak2.test.js"],
@@ -81,7 +81,7 @@
   },
   {
     "name": "MWCLOAK2-normals-not-turned",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "  if (s < 0) for (let k = 0; k < fresh.length; k++) fresh[k] = -fresh[k];",
     "new": "",
     "tests": ["test/mwcloak2.test.js"],

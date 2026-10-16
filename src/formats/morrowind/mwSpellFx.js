@@ -27,7 +27,7 @@
 // NOT CARRIED, recorded: VFX_Multiple<n> - a bolt of several effects is the reference's VFX_Multiple frame with every
 // effect's bolt hung on its "Dummy0n" nodes; here it is the first effect's bolt alone.
 
-import { SKILLS } from '../systems/skills.js';
+import { SKILLS } from '../../systems/skills.js';
 
 /** Morrowind's magic effect indices (loadmgef.cpp sMagicEffectIds, in index order) - the ones the mapping names. */
 export const MW_EFFECT = Object.freeze({
@@ -138,7 +138,7 @@ export function actorFxTransform(height, radius, unitsPerMetre) {
 /**
  * THE PLAN for one spell: `{ cast, bolt, hit, area, hands }` - each visual a `{ id, model, texture }` (`model` the
  * archive path), `bolt` with its `colour`, `hands` VFX_Hands. `mgefs` maps a Morrowind effect index to its record
- * (formats/mwFirstPerson.js readMagicEffect); `modelOf(id)` answers a visual id's mesh path or null. A visual whose id
+ * (formats/morrowind/mwFirstPerson.js readMagicEffect); `modelOf(id)` answers a visual id's mesh path or null. A visual whose id
  * resolves to no mesh is left out - the reference would refuse the whole cast; a look is not worth that.
  */
 export function spellFxPlan(sp, mgefs, modelOf, { schoolOf } = {}) {

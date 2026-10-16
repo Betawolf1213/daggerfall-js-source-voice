@@ -29,8 +29,8 @@ import { decorPrice } from '../src/net/decorLaw.js';
 import { installDetailedShipsArt, DETAILED_SHIPS_DERIVED, DETAILED_SHIPS_OWN_ART } from '../src/systems/detailedShips.js';
 import { setModSetting } from '../src/systems/modSettings.js';
 import { BLOCK_TYPES } from '../src/formats/blocksFile.js';
-import { openWorldDataPack } from '../src/formats/worldDataPack.js';
-import { rebuildWorldDataPatch } from '../src/formats/worldDataPatch.js';
+import { openWorldDataPack } from '../src/formats/worldData/worldDataPack.js';
+import { rebuildWorldDataPatch } from '../src/formats/worldData/worldDataPatch.js';
 import { rmb, fakeBlocks, toolRig, settle, rows, all } from './decorFakes.mjs';
 import { HAS_ARENA2, loadBlocks, loadMaps, ROOT } from './arena1Data.mjs';
 

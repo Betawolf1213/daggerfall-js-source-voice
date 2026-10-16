@@ -29,10 +29,10 @@
 // does); DFU's write-back path is unported because DFU's own
 // SaveTree.Save() writes the header only ("TODO: Write other records").
 
-import { readCStringScan } from './fileProxy.js';
-import { readSpellRecord } from './spellsStd.js';
-import { parseCharacterRecordData } from './characterRecord.js';
-import { readBuildingData, BUILDING_DATA_SIZE } from './blocksFile.js';
+import { readCStringScan } from '../fileProxy.js';
+import { readSpellRecord } from '../spellsStd.js';
+import { parseCharacterRecordData } from '../characterRecord.js';
+import { readBuildingData, BUILDING_DATA_SIZE } from '../blocksFile.js';
 
 export const SAVETREE_FILENAME = 'SAVETREE.DAT';
 
@@ -118,7 +118,7 @@ export const ITEM_FLAGS = Object.freeze({
 
 /** FileProxy.ReadCString, both arms - fileProxy.js is their one home
  *  (AUDIT 68); re-exported for the save tree's own readers. */
-export { readCStringFixed, readCStringScan } from './fileProxy.js';
+export { readCStringFixed, readCStringScan } from '../fileProxy.js';
 
 /** SaveTree.ReadPosition - i32 WorldX/WorldY/WorldZ. */
 export function readPosition(view, offset) {

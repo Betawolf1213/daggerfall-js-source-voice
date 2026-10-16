@@ -39,7 +39,7 @@ import {
 } from '../src/render/auraRing.js';
 import { glslFunctions, GlslDiscard } from './glsl.mjs';
 import { rigPointToBody, armBonesInBody, NIF_TO_PASS } from '../src/combat/fpArm.js';
-import { MW_UNITS_PER_METER } from '../src/formats/mwFirstPerson.js';
+import { MW_UNITS_PER_METER } from '../src/formats/morrowind/mwFirstPerson.js';
 import { trs, multiply, transformPoint } from '../src/world/mat4.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');

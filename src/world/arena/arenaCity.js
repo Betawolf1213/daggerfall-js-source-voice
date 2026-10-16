@@ -10,7 +10,7 @@
 //   DFARENA.RMB by tools/daggerfallArenaExtract.mjs): his 118 props, his 29 lights, the colosseum (864102), his
 //   ground and automap, the 43600 stair down to the undercroft - and the gate's people this slice adds
 //   (ARENA_GATE_PEOPLE). No building. It is served through the world-data door at a fixed index past any BSA
-//   (formats/worldDataReplacement.js registerPortBlock), so DFU's new-block sequence is untouched.
+//   (formats/worldData/worldDataReplacement.js registerPortBlock), so DFU's new-block sequence is untouched.
 // - THE CELL. Every read of Daggerfall (region 17, location 1231) - MAPS.BSA's, Beautiful Cities' file, a pinned
 //   town's - has cell (4,3) named ARENADAG.RMB (formats/mapsFile.js getLocation -> the door's editLocation). It is NOT
 //   a layout mod and not a switch: the arena stands in every layout, so no layout pin speaks for it.
@@ -26,7 +26,7 @@
 //   recordStands answers false - `arenaRecordDisplaced`): a room is honoured at any inn of the city, a ticket at any
 //   smith, a quest site is chosen again; a house deed is moved once (systems/arena/arenaMove.js).
 
-import { registerPortBlock, registerLocationEdit, installWorldDataReplacement } from '../../formats/worldDataReplacement.js';
+import { registerPortBlock, registerLocationEdit, installWorldDataReplacement } from '../../formats/worldData/worldDataReplacement.js';
 import { drawNamedBuildings } from '../../systems/talk/talkTopics.js';
 import { configureLayoutPins, layoutLocationKeyOfMapId } from '../../systems/layoutPins.js';
 import { LOCATION_TYPES, DUNGEON_TYPES } from '../../formats/mapsFile.js';

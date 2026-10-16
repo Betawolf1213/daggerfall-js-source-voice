@@ -29,9 +29,9 @@ import { SITE_TYPES, MARKER_TYPES } from '../src/systems/quest/place.js';
 import { CURATED_QUEST_MARKERS, curatedMarkerSpot, mendedFoeSpot } from '../src/systems/quest/markerCuration.js';
 import { restandMendedQuestFoe, SEALED_SAVE_REACH_M, SEALED_SAVE_LEVEL_M } from '../src/scenes/quest/questFoeHost.js';
 import { addQuestResourceObjects, markerScenePosition, siteMarkerSpots, standSpot, MARKER_FLOOR_REACH } from '../src/systems/quest/sceneMount.js';
-import { registerWorldDataAsset, _resetWorldDataReplacement, installWorldDataReplacement, buildingDataFromJson } from '../src/formats/worldDataReplacement.js';
-import { ROW_CODECS } from '../src/formats/worldDataPack.js';
-import { patchJson } from '../src/formats/worldDataJson.js';
+import { registerWorldDataAsset, _resetWorldDataReplacement, installWorldDataReplacement, buildingDataFromJson } from '../src/formats/worldData/worldDataReplacement.js';
+import { ROW_CODECS } from '../src/formats/worldData/worldDataPack.js';
+import { patchJson } from '../src/formats/worldData/worldDataJson.js';
 import { _resetLayoutPins } from '../src/systems/layoutPins.js';
 import { Collider } from '../src/player/collider.js';
 import { templateByIndex } from '../src/systems/item/itemTemplates.js';
@@ -49,7 +49,7 @@ const flat = ([x, y, z]) => ({ x: x * UNIT, y: -y * UNIT, z: z * UNIT });
 
 const PACKS = { [BV]: packJson(BV), [BC]: packJson(BC) };
 const CLASSIC = Symbol('a piece of the player\'s BLOCKS.BSA');
-/** A pack value with its nodes, rows and runs expanded as the door's reader expands them (formats/worldDataPack.js
+/** A pack value with its nodes, rows and runs expanded as the door's reader expands them (formats/worldData/worldDataPack.js
  *  openWorldDataPack: the pack's own ROW_CODECS, WD1's patchJson for a node's `$o`) - a `$c`, a piece of the player's own
  *  BLOCKS.BSA, is CLASSIC: no game data is here. */
 function packValue(P, v) {

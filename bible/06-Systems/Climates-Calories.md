@@ -877,7 +877,7 @@ arms in place. Mutants: `tools/mutants/survart.json`, 5, 5 dead.
 Mac handed over the shipped zip, so the last two of the mod's twenty
 pictures could be read out of the bundle rather than guessed at.
 
-`src/formats/unityBundle.js` opens the `.dfmod` directly - it is a
+`src/formats/unity/unityBundle.js` opens the `.dfmod` directly - it is a
 UnityFS container - and all twenty Texture2Ds come out by name. Two
 checks came with that, and both were worth running:
 

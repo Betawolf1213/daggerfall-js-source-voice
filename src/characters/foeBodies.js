@@ -106,7 +106,7 @@ export const isClassFoe = (f) => !!f?.entity?.isClass;
 /** @type {Set<number>} */
 export const ORC_MOBILES = new Set([MOBILE_TYPES.Orc, MOBILE_TYPES.OrcSergeant, MOBILE_TYPES.OrcShaman, MOBILE_TYPES.OrcWarlord]);
 /** MWNPC14 (section 19): THE VAMPIRES - people, as Morrowind's are: a vampire foe stands as a person of the Bay in its
- *  clothes, wearing its race's vampire head (formats/mwFirstPerson.js vampireHeadRecord, the look's `vampire`). */
+ *  clothes, wearing its race's vampire head (formats/morrowind/mwFirstPerson.js vampireHeadRecord, the look's `vampire`). */
 /** @type {Set<number>} */
 export const VAMPIRE_MOBILES = new Set([MOBILE_TYPES.Vampire, MOBILE_TYPES.VampireAncient]);
 /** MWNPC15 (section 20): THE WEREWOLF - a person in its beast form: its look a person's marked `wolf`, which the lane

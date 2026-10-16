@@ -25,7 +25,7 @@
   },
   {
     "name": "MWCAPERIGID-no-lean-fitted",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "  Object.freeze({ 'bip01 spine2': ['z', -10] }),\n",
     "new": "",
     "tests": ["test/auditmwcloak.test.js", "test/mwcloak1.test.js"],

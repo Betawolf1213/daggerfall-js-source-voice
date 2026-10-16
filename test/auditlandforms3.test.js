@@ -9,7 +9,7 @@ import * as acorn from 'acorn';
 
 import { WoodsFile, MAP_WIDTH, MAP_HEIGHT } from '../src/formats/woodsFile.js';
 import { MapsFile } from '../src/formats/mapsFile.js';
-import { worldDataDoor, setWorldDataDoor } from '../src/formats/worldDataDoor.js';
+import { worldDataDoor, setWorldDataDoor } from '../src/formats/worldData/worldDataDoor.js';
 import { CLIMATES } from '../src/formats/mapsTables.js';
 import { generateSamples, kernelTerms, HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE, BASE_HEIGHT_SCALE, NOISE_MAP_SCALE } from '../src/world/terrain/terrainSampler.js';
 import { createLandforms, landformSites, hillsAt, cosPi, sinPi, expNeg, LANDFORM_KNEE, LANDFORM_FLOOR, LANDFORM_DIALS } from '../src/world/landforms.js';

@@ -397,10 +397,10 @@ test('MAC-Q: the Morrowind mesh path draws TRIANGLES, and a particle flame is no
   // additive pass - and it cannot be verified in this container at all,
   // which has no Morrowind data on it. Guessing at a flame and shipping it
   // unverified is what MAC-B was refused for.
-  const mesh = read('src/formats/mwNifMesh.js');
+  const mesh = read('src/formats/morrowind/mwNifMesh.js');
   assert.match(mesh, /const GEOMETRY_TYPES = new Set\(\['NiTriShape', 'NiTriStrips'\]\);/);
   assert.match(mesh, /'NiBSParticleNode',/, 'the particle node is recursed into as a node...');
-  const file = read('src/formats/mwNifFile.js');
+  const file = read('src/formats/morrowind/mwNifFile.js');
   assert.match(file, /NiAutoNormalParticles\(s, rec\)/, '...and its records are parsed in full');
   assert.match(file, /NiAutoNormalParticlesData: readParticlesData,/);
   // and the emission channel is NOT the gap: a flame authored as a TRIANGLE

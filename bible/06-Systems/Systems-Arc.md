@@ -3447,7 +3447,7 @@ decode-ahead pin gets a non-uniform raster and asserts the reversed row
 order. The orientation-only mutation at line 224 now kills two pins.
 
 **R4 (low) - a stale cite the move of `toColor32Order` caused.**
-`src/formats/unityBundle.js`'s `decodeTexture2D` comment still sent the
+`src/formats/unity/unityBundle.js`'s `decodeTexture2D` comment still sent the
 reader to "`toColor32Order` in `systems/seasonsIliacBayAssets.js`",
 which now only imports it. Repointed at `formats/color32Order.js`, and
 it names both consumers rather than one.

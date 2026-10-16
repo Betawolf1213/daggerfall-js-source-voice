@@ -17,7 +17,7 @@
 //   chest. It was skinned over the spine, the clavicles and both thighs (MW-CLOAK1's hang, tools/skinWeights.mjs mode
 //   'over'); that painting is gone whole. It stays a skinned NIF of one bone, not a rigid part on the Chest node:
 //   retail's bind (RETAIL_SKELETON) carries Bip01 Spine2's frame and not the Chest node's, and the fits
-//   (src/formats/mwCloakFit.js) edit a skinned cloak's batch.
+//   (src/formats/morrowind/mwCloakFit.js) edit a skinned cloak's batch.
 //
 //   SMOOTHED, TWO LEVELS (MW-CLOAK2, Mac: "I dont like how the cloak isnt smooth around the shoulders"). The export is
 //   140 vertices about five units apart - over the shoulders, where it turns from the back over the top, a face stood

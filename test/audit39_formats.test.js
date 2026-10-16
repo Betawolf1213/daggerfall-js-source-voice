@@ -7,10 +7,10 @@ import { readFileSync } from 'node:fs';
 import { CifRciFile } from '../src/formats/cifRciFile.js';
 import { readMagicDef, MAGIC_ITEM_RECORD_SIZE } from '../src/formats/magicDef.js';
 import { TextRsc, RSC } from '../src/formats/textRsc.js';
-import { parseNif } from '../src/formats/mwNifFile.js';
-import { flattenNif } from '../src/formats/mwNifMesh.js';
-import { composeMovementGroup, MW_WEAPON_TYPE } from '../src/formats/mwFirstPerson.js';
-import { composeWornArmor } from '../src/formats/mwItemMap.js';
+import { parseNif } from '../src/formats/morrowind/mwNifFile.js';
+import { flattenNif } from '../src/formats/morrowind/mwNifMesh.js';
+import { composeMovementGroup, MW_WEAPON_TYPE } from '../src/formats/morrowind/mwFirstPerson.js';
+import { composeWornArmor } from '../src/formats/morrowind/mwItemMap.js';
 import { ARMOR_ENUM } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 
@@ -320,7 +320,7 @@ test('audit39 formats: a worn hair part keeps its part NAME, so the hair filter 
   assert.equal(add.slot, 'hair (iron_helmet)', 'the label still names the record for the notes');
   // and the two seams that carry it: the binder keys on the part name,
   // the build passes it through.
-  const fp = readFileSync('src/formats/mwFirstPerson.js', 'utf8');
+  const fp = readFileSync('src/formats/morrowind/mwFirstPerson.js', 'utf8');
   assert.match(fp, /const geomFilter = \(part\.partName \?\? part\.slot\) === 'hair' \? 'hair' : bone;/);
   const arm = readFileSync('src/combat/fpArm.js', 'utf8');
   assert.match(arm, /partBytes\.push\(\{ slot: row\.slot, partName: row\.partName, bones: row\.bones/);

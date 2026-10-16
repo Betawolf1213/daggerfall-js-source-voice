@@ -20,7 +20,7 @@ import { fileURLToPath } from 'node:url';
 
 import { lz4BlockDecompress } from '../src/formats/lz4.js';
 import { dxtDecode } from '../src/formats/dxt.js';
-import { readUnityBundle, readUnityFs, readSerializedFile, COMMON_STRINGS, TEXTURE_FORMAT, parseUnityVersion, usesNewArchiveFlags } from '../src/formats/unityBundle.js';
+import { readUnityBundle, readUnityFs, readSerializedFile, COMMON_STRINGS, TEXTURE_FORMAT, parseUnityVersion, usesNewArchiveFlags } from '../src/formats/unity/unityBundle.js';
 import {
   SEASONS_MOD, NO_INSTALLED_SEASON, BILLBOARD_SCALE, managedArchivesForSeason, archivePrefix, PREFIX_FOLDER,
   parseRecordFromFilename, filesForPrefix, seasonalRecordSet, seasonalBillboardSize, atlasKey, SeasonHelper,

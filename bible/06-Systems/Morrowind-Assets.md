@@ -99,7 +99,7 @@ master with 2 KB records that is 20-50 ms a walk; on Morrowind.esm,
 whose records are a few dozen bytes each, the explorer measured
 1.0-2.7 s a walk, times six, times the three retail masters, and the
 memo that held the answers was per page load. So the six questions
-are now ONE pass (`extractArmRecords` in `formats/mwFirstPerson.js`,
+are now ONE pass (`extractArmRecords` in `formats/morrowind/mwFirstPerson.js`,
 riding the same per-record readers the six extractors call, pinned
 equal to them), and the answer - plain data, JSON whole - is KEPT:
 `loadMorrowindArmRecords` in `scenes/dataSource.js` writes it to the
@@ -150,8 +150,8 @@ frame's thread, one after another: MW-LOAD's own measurement is 55-59
 ms for a 1024x1024 DXT texture with its chain, 11-13 ms at 512, and a
 body with its clothes, armour and weapon names dozens.
 
-**MW-TEXTHREAD.** `formats/mwTextureClient.js` is a pool of module
-Workers (`formats/mwTextureWorker.js`, one fewer than the cores, at
+**MW-TEXTHREAD.** `formats/morrowind/mwTextureClient.js` is a pool of module
+Workers (`formats/morrowind/mwTextureWorker.js`, one fewer than the cores, at
 most `TEXTURE_WORKERS_MAX` 4) running the SAME decoder
 (`decodeTextureImage`), each level's pixels transferred back; the
 shape is `unityBundleClient.js`'s - an injectable factory, the bytes

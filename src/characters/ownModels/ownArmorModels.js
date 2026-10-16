@@ -191,7 +191,7 @@ function ebonyPlate() {
  * The port's own worn models.
  *
  * `skinFrom`: the body slots the model was fitted over. It is SKINNED FROM THEM at bind time
- * (formats/mwSkinTransfer.js): every vertex copies the skin of the body vertex under it, so it moves by the body's
+ * (formats/morrowind/mwSkinTransfer.js): every vertex copies the skin of the body vertex under it, so it moves by the body's
  * own bones and binds and never comes away from it (MW-BRIG2).
  *
  * `fitTo`: the body slot the model HIDES, and so must cover (MW-BRIG3). At bind time the model is moved onto the

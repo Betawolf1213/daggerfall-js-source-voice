@@ -10,12 +10,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { parseNif } from '../src/formats/mwNifFile.js';
-import { flattenNif } from '../src/formats/mwNifMesh.js';
-import { buildSkeleton, poseSkeleton, skeletonSpaceMatrices, skinBatch, GRAPH_ROOT } from '../src/formats/mwSkin.js';
-import { fitLift, liftBatch } from '../src/formats/mwSkinTransfer.js';
-import { assembleFirstPersonArm, poseAssembly } from '../src/formats/mwFirstPerson.js';
-import { composeWornArmor } from '../src/formats/mwItemMap.js';
+import { parseNif } from '../src/formats/morrowind/mwNifFile.js';
+import { flattenNif } from '../src/formats/morrowind/mwNifMesh.js';
+import { buildSkeleton, poseSkeleton, skeletonSpaceMatrices, skinBatch, GRAPH_ROOT } from '../src/formats/morrowind/mwSkin.js';
+import { fitLift, liftBatch } from '../src/formats/morrowind/mwSkinTransfer.js';
+import { assembleFirstPersonArm, poseAssembly } from '../src/formats/morrowind/mwFirstPerson.js';
+import { composeWornArmor } from '../src/formats/morrowind/mwItemMap.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { OWN_MW_ARMOR, RRI_JERKIN_TEMPLATE } from '../src/characters/ownModels/ownArmorModels.js';
 import { writeNif, meshToNif } from '../tools/nifWrite.mjs';

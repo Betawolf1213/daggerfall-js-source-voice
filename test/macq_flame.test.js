@@ -11,7 +11,7 @@
 // reference's own numbers rather than against a file nobody here can open.
 //
 // The flattener hands particle geometries to a sink (mwNifMesh.js), the
-// descriptor and the running system are formats/mwParticles.js, a part's
+// descriptor and the running system are formats/morrowind/mwParticles.js, a part's
 // systems ride the assembly beside its pieces (mwCharacter.js bindPart,
 // mwFirstPerson.js bindPartsInto), the arm steps and places them each frame
 // (fpArm.js stepRigEffects / effectPlacement), and the renderer draws them as
@@ -21,17 +21,17 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { parseNif } from '../src/formats/mwNifFile.js';
-import { flattenNif, resolveMaterial } from '../src/formats/mwNifMesh.js';
+import { parseNif } from '../src/formats/morrowind/mwNifFile.js';
+import { flattenNif, resolveMaterial } from '../src/formats/morrowind/mwNifMesh.js';
 import {
   particleSystemsOf, particleSystemOf, createParticleSystem, controllerTime, interpColorKey, shootDirection,
   packParticleQuads, particleDrawState, planarCollide, sphericalCollide, nodeWorldTransform,
   affineOfTransform, affineMul, affineApply, affineInverse, affineScale, affineOrthoNormalize, AFFINE_IDENTITY,
   PARTICLE_FLOATS, PARTICLE_CORNERS, GRAVITY_MAGIC, EXTRAPOLATION,
-} from '../src/formats/mwParticles.js';
-import { buildSkeleton } from '../src/formats/mwSkin.js';
-import { bindPart, attachmentTransform } from '../src/formats/mwCharacter.js';
-import { placeAtBone, bindPartsInto } from '../src/formats/mwFirstPerson.js';
+} from '../src/formats/morrowind/mwParticles.js';
+import { buildSkeleton } from '../src/formats/morrowind/mwSkin.js';
+import { bindPart, attachmentTransform } from '../src/formats/morrowind/mwCharacter.js';
+import { placeAtBone, bindPartsInto } from '../src/formats/morrowind/mwFirstPerson.js';
 import { effectPlacement, stepRigEffects } from '../src/combat/fpArm.js';
 import { NIF_BLEND_MODES, nifBlendMode } from '../src/render/renderer.js';
 

@@ -62,7 +62,7 @@
   },
   {
     "name": "MWFIT1-the-first-person-loses-the-upper-arm",
-    "file": "src/formats/mwItemMap.js",
+    "file": "src/formats/morrowind/mwItemMap.js",
     "old": "    if (key && !(slots[i2].under && !fpWornAdds([slots[i2].under]).length)) fpShadows.add(key);",
     "new": "    if (key) fpShadows.add(key);",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "MWFIT1-the-first-person-keeps-every-hidden-skin",
-    "file": "src/formats/mwItemMap.js",
+    "file": "src/formats/morrowind/mwItemMap.js",
     "old": "    if (key && !(slots[i2].under && !fpWornAdds([slots[i2].under]).length)) fpShadows.add(key);",
     "new": "    if (key && !slots[i2].under) fpShadows.add(key);",
     "tests": [
@@ -83,7 +83,7 @@
   },
   {
     "name": "MWFIT1-the-hide-under-nothing",
-    "file": "src/formats/mwItemMap.js",
+    "file": "src/formats/morrowind/mwItemMap.js",
     "old": "        for (const h of p.hides ?? []) claim(ARMO_PART.findIndex((r) => r.name === h), prio, null, add);",
     "new": "        for (const h of p.hides ?? []) claim(ARMO_PART.findIndex((r) => r.name === h), prio, null);",
     "tests": [
@@ -93,7 +93,7 @@
   },
   {
     "name": "MWFIT1-the-slot-forgets-what-it-lies-under",
-    "file": "src/formats/mwItemMap.js",
+    "file": "src/formats/morrowind/mwItemMap.js",
     "old": "    slot.prio = prio; slot.add = add; slot.shadow = true; slot.under = under;",
     "new": "    slot.prio = prio; slot.add = add; slot.shadow = true;",
     "tests": [
@@ -102,7 +102,7 @@
   },
   {
     "name": "MWFIT1-a-robe-over-the-pauldron-keeps-its-exemption",
-    "file": "src/formats/mwItemMap.js",
+    "file": "src/formats/morrowind/mwItemMap.js",
     "old": "    slot.prio = prio; slot.add = add; slot.shadow = true; slot.under = under;",
     "new": "    slot.prio = prio; slot.add = add; slot.shadow = true; slot.under = under ?? slot.under;",
     "tests": [

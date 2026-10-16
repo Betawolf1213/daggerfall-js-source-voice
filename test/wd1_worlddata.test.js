@@ -21,9 +21,9 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 
-import { diffJson, patchJson, canonicalJson, jsonAt, blockToDfuJson, buildingToDfuJson } from '../src/formats/worldDataJson.js';
-import { rebuildWorldDataPatch, canonicalSha256, PATCH_FORMAT } from '../src/formats/worldDataPatch.js';
-import { blockFromJson, rdbBlockFromJson, registerWorldDataAsset, getDFBlockReplacementData, bindWorldDataBlocks, installWorldDataReplacement, _resetWorldDataReplacement } from '../src/formats/worldDataReplacement.js';
+import { diffJson, patchJson, canonicalJson, jsonAt, blockToDfuJson, buildingToDfuJson } from '../src/formats/worldData/worldDataJson.js';
+import { rebuildWorldDataPatch, canonicalSha256, PATCH_FORMAT } from '../src/formats/worldData/worldDataPatch.js';
+import { blockFromJson, rdbBlockFromJson, registerWorldDataAsset, getDFBlockReplacementData, bindWorldDataBlocks, installWorldDataReplacement, _resetWorldDataReplacement } from '../src/formats/worldData/worldDataReplacement.js';
 import { BlocksFile, BLOCK_TYPES, RDB_RESOURCE_TYPES } from '../src/formats/blocksFile.js';
 import { layoutRdbBlock } from '../src/world/rdbLayout.js';
 import { layoutRmbBlock, modelScaleVector } from '../src/world/rmbLayout.js';

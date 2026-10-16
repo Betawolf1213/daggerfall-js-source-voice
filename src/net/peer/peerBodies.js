@@ -65,13 +65,13 @@
 //     (at most SPARE_MAX of them): the next peer who wears the same body -
 //     its look and its form - stands in it at once, with no build.
 import { createFpArm } from '../../combat/fpArm.js';
-import { dfWornEquipment } from '../../formats/mwItemMap.js';
+import { dfWornEquipment } from '../../formats/morrowind/mwItemMap.js';
 import { werewolfSkinOf } from '../../characters/werewolfSkin.js';   // SHADOW-FANG: a peer's wolf in the skin their signed glyphs name
 import { npcHintOf, npcKeyOf, withNpcPicks, npcFaceOf, beastWorn, WARDROBE_BEAST_RACES } from '../../characters/wardrobe.js';   // MWNPC17: an NPC's own garments, head and hair
 import { ownOutfitFor } from '../../characters/ownModels/ownClothingModels.js';   // MW-FOLK1: a townsperson's whole outfit
 import { ARMOR_ENUM } from '../../combat/enemyEquipment.js';
 import { EQUIP_SLOTS } from '../../systems/equip.js';
-import { mwRaceId } from '../../formats/mwNpc.js';
+import { mwRaceId } from '../../formats/morrowind/mwNpc.js';
 import { CAPSULE_HEIGHT } from '../../player/motor.js';
 import { dissolveShadowless } from '../../systems/dissolve.js';   // AUDIT MWNPC16-18 R1: a body burnt more than half away casts none
 import { peerStubEntity, lookKey } from '../remotePlayers.js';

@@ -17,7 +17,7 @@
   },
   {
     "name": "MWCLOAK1-the-cloak-not-added",
-    "file": "src/formats/mwItemMap.js",
+    "file": "src/formats/morrowind/mwItemMap.js",
     "old": "  if (cloakAdd) adds.push(cloakAdd);",
     "new": "",
     "tests": ["test/mwcloak1.test.js", "test/nudeflats.test.js"],
@@ -25,7 +25,7 @@
   },
   {
     "name": "MWCLOAK1-both-cloaks-drawn",
-    "file": "src/formats/mwItemMap.js",
+    "file": "src/formats/morrowind/mwItemMap.js",
     "old": "        if (cloakAdd) { notes.push(`${name}: a second cloak - the first (${cloakName}) is the one drawn`); continue; }",
     "new": "",
     "tests": ["test/mwcloak1.test.js"],
@@ -33,7 +33,7 @@
   },
   {
     "name": "MWCLOAK1-the-cloak-a-robe-again",
-    "file": "src/formats/mwItemMap.js",
+    "file": "src/formats/morrowind/mwItemMap.js",
     "old": "      const cloak = ownCloakFor({ ...piece, name });",
     "new": "      const cloak = null;",
     "tests": ["test/mwcloak1.test.js", "test/nudeflats.test.js"],
@@ -41,7 +41,7 @@
   },
   {
     "name": "MWCLOAK1-no-clearance",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "export const CLOAK_CLEARANCE = 1;",
     "new": "export const CLOAK_CLEARANCE = 0;",
     "tests": ["test/mwcloak1.test.js"],
@@ -49,7 +49,7 @@
   },
   {
     "name": "MWCLOAK1-the-cloak-fit-reads-the-back",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "          const over = cell.front - (u[v + 1] - clearance);",
     "new": "          const over = cell.back - (u[v + 1] - clearance);",
     "tests": ["test/mwcloak1.test.js"],
@@ -57,7 +57,7 @@
   },
   {
     "name": "MWCLOAK1-the-parsed-batch-written-into",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "    const bind = Float32Array.from(cloak.batch.positions);",
     "new": "    const bind = cloak.batch.positions;",
     "tests": ["test/mwcloak1.test.js"],
@@ -65,7 +65,7 @@
   },
   {
     "name": "MWCLOAK1-everything-slung",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "export const SLUNG_UNDER = 'bip01 spine1';",
     "new": "export const SLUNG_UNDER = 'bip01 pelvis';",
     "tests": ["test/mwcloak1.test.js"],
@@ -73,7 +73,7 @@
   },
   {
     "name": "MWCLOAK1-pitched-backward",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "  return [1, 0, 0, 0, c, -s, 0, s, c];",
     "new": "  return [1, 0, 0, 0, c, s, 0, -s, c];",
     "tests": ["test/mwcloak1.test.js"],
@@ -81,7 +81,7 @@
   },
   {
     "name": "MWCLOAK1-slung-never-turned",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "      for (let k = 0; k <= 2 * slungLimit; k++) {",
     "new": "      for (let k = 0; k <= 0; k++) {",
     "tests": ["test/mwcloak1.test.js"],
@@ -89,7 +89,7 @@
   },
   {
     "name": "MWCLOAK1-vertices-only",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "    const n = Math.floor(Math.hypot(dx, dy, dz) / step);",
     "new": "    const n = 0;",
     "tests": ["test/mwcloak1.test.js", "test/auditmwcloak.test.js"],
@@ -97,7 +97,7 @@
   },
   {
     "name": "MWCLOAK1-not-re-placed",
-    "file": "src/formats/mwCloakFit.js",
+    "file": "src/formats/morrowind/mwCloakFit.js",
     "old": "      if (assembly.mats) {\n        const live",
     "new": "      if (false) {\n        const live",
     "tests": ["test/mwcloak1.test.js"],

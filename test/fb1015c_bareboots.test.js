@@ -11,7 +11,7 @@ import { applyRarity, allLegendaries } from '../src/systems/loot/lootRarity.js';
 import { armorOfMaterial, ARMOR_ENUM } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { EQUIP_SLOTS, equipItem, equipTableOf } from '../src/systems/equip.js';
-import { dfWornEquipment, composeWornArmor, ARMO_PART } from '../src/formats/mwItemMap.js';
+import { dfWornEquipment, composeWornArmor, ARMO_PART } from '../src/formats/morrowind/mwItemMap.js';
 
 const P = (name) => ARMO_PART.findIndex((r) => r.name === name);
 /** The parts a retail ARMO of this id references (its piece's own slots, both sides for a pair). */

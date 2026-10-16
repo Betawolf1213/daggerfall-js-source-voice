@@ -10,7 +10,7 @@
 // in it): a skinned body and its mane and tail cards on a 33-bone skeleton, in its own frame (metres, Z up, +Y the way
 // it faces - Morrowind's basis, so it stands in the Morrowind body's pass as the body does), and four gaits. This
 // module is everything about it that is not GL:
-//  - THE STREAM (horseSkinStream): the meshes as the character pass's GPU skin draws them (formats/mwGpuSkin.js's
+//  - THE STREAM (horseSkinStream): the meshes as the character pass's GPU skin draws them (formats/morrowind/mwGpuSkin.js's
 //    corner: the fourteen static floats, one influence pair, the post) - the body, then the cards, a range each;
 //  - THE GAIT (stepHorseGait, gaitFor): which of idle, walk, trot and gallop a horse going `speed` plays, at the rate
 //    its stride covers the ground (the bake's measured speed a gait), crossfaded GAIT_FADE seconds into the next;
@@ -21,7 +21,7 @@
 //
 // Pure: no DOM, no GL, no clock. Not a DFU member: Daggerfall's horse is a sprite. Ledger A (COATS3D).
 import { texelPlanes } from '../systems/horse/horseCoats.js';
-import { SKIN_STATIC_FLOATS, skinStreamFloats } from '../formats/mwGpuSkin.js';
+import { SKIN_STATIC_FLOATS, skinStreamFloats } from '../formats/morrowind/mwGpuSkin.js';
 import { SKIN_PAL_ROW } from '../render/skinPalette.js';
 
 /** The bake and its two pictures (the body's, the mane and tail cards'). */
@@ -157,7 +157,7 @@ function rowsOf(m) {
 
 /**
  * THE POSE: gait state `g`'s bones written into `pal` as the GPU skin's palette (three texels an entry, rows
- * [a0 a1 a2 t0] [a3 a4 a5 t1] [a6 a7 a8 t2] - formats/mwGpuSkin.js writeSkinPalette's layout). Fading, the two gaits'
+ * [a0 a1 a2 t0] [a3 a4 a5 t1] [a6 a7 a8 t2] - formats/morrowind/mwGpuSkin.js writeSkinPalette's layout). Fading, the two gaits'
  * locals blend (translations lerped, rotations nlerped) before they compose. Answers `pal`.
  */
 export function writeHorsePalette(bake, g, pal, scratch = horsePoseScratch(bake)) {
@@ -211,7 +211,7 @@ function affine(a, b, out, o = 0) {
 }
 
 /**
- * THE STREAM: the bake's meshes, de-indexed, as the character pass's GPU skin reads a corner (formats/mwGpuSkin.js:
+ * THE STREAM: the bake's meshes, de-indexed, as the character pass's GPU skin reads a corner (formats/morrowind/mwGpuSkin.js:
  * position, diffuse, normal, UV, emission - SKIN_STATIC_FLOATS - then the four influences' palette entries and their
  * weights, then the post). Every corner's post is entry 0, the identity: the horse's skin is its bones alone. The
  * diffuse is white and the emission none (the pictures are the colour). The bake's UVs are FBX's, v up; the pass

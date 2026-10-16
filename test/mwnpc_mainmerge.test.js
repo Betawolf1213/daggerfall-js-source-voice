@@ -9,11 +9,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { parseNif } from '../src/formats/mwNifFile.js';
-import { flattenNif } from '../src/formats/mwNifMesh.js';
-import { assembleFirstPersonArm, poseAssembly, posePartClocks, ARROW_FALLBACK_NODE } from '../src/formats/mwFirstPerson.js';
-import { skinLayout, skinSamePieces, packSkinStream, writeSkinPalette, skinnedVertex, skinStreamCorner, restreamMovedRows } from '../src/formats/mwGpuSkin.js';
-import { fitCloakOver, fitStowedGear, followCloak } from '../src/formats/mwCloakFit.js';
+import { parseNif } from '../src/formats/morrowind/mwNifFile.js';
+import { flattenNif } from '../src/formats/morrowind/mwNifMesh.js';
+import { assembleFirstPersonArm, poseAssembly, posePartClocks, ARROW_FALLBACK_NODE } from '../src/formats/morrowind/mwFirstPerson.js';
+import { skinLayout, skinSamePieces, packSkinStream, writeSkinPalette, skinnedVertex, skinStreamCorner, restreamMovedRows } from '../src/formats/morrowind/mwGpuSkin.js';
+import { fitCloakOver, fitStowedGear, followCloak } from '../src/formats/morrowind/mwCloakFit.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { createFpArm, pieceLanes } from '../src/combat/fpArm.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';

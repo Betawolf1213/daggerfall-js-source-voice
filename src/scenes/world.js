@@ -39,7 +39,7 @@ import { requestLook, releaseLook, makeLookGate, bindCursorToggle, setCursorActi
 import { attachTouch } from '../ui/touch/touch.js';
 import { attachGamepad, GLASS_PAD_ZOOM } from '../ui/gamepadInput.js';   // GP1: the pad speaks the same hooks - AUDIT CAPTAIN'S SEA S3: the glass's magnifying click
 import { BlocksFile } from '../formats/blocksFile.js';
-import { bindWorldDataBlocks } from '../formats/worldDataReplacement.js';   // RR3b
+import { bindWorldDataBlocks } from '../formats/worldData/worldDataReplacement.js';   // RR3b
 import { isClimateFreeModel, NO_CLIMATE_REMAP, customModelFor, hasCustomModel, customModelNeeds, classicModelIdOf } from '../world/customModels.js';   // ARENA1: RuntimeMaterials' ApplyClimate 0 - the colosseum wears its own pictures; AUDIT MERCHANT-YARDS G1: the yards measure the registered models
 import { isUndercroftDoor, undercroftLocation, isArenaUndercroft, isArenaCity, inArenaCell, ARENA_REGION, ARENA_LOCATION, ARENA_BLOCK, ARENA_GATE_PEOPLE, arenaTownLandmark } from '../world/arena/arenaCity.js';   // ARENA1: the undercroft's stair and its record, the city's cell; ARENA2: the colosseum's block in a built pixel, the Herald's place; ARENA-MAP: its name on the town map
 import { isFurnishing } from '../systems/decor/decorFurnish.js';   // ARENA2: a moved house's furniture back among the furnishings

@@ -1,7 +1,7 @@
 [
  {
   "name": "PERF-RIG1-scratch-remade-every-call",
-  "file": "src/formats/mwSkin.js",
+  "file": "src/formats/morrowind/mwSkin.js",
   "old": "  if (sc && sc.n === n) return sc;",
   "new": "  if (sc && sc.n === n && false) return sc;",
   "tests": [
@@ -10,7 +10,7 @@
  },
  {
   "name": "PERF-RIG1-acc-not-zeroed",
-  "file": "src/formats/mwSkin.js",
+  "file": "src/formats/morrowind/mwSkin.js",
   "old": "  const acc = sc.acc; acc.fill(0);",
   "new": "  const acc = sc.acc;",
   "tests": [
@@ -19,7 +19,7 @@
  },
  {
   "name": "PERF-RIG1-wsum-not-zeroed",
-  "file": "src/formats/mwSkin.js",
+  "file": "src/formats/morrowind/mwSkin.js",
   "old": "  const wsum = sc.wsum; wsum.fill(0);",
   "new": "  const wsum = sc.wsum;",
   "tests": [
@@ -28,7 +28,7 @@
  },
  {
   "name": "PERF-RIG1-touched-not-zeroed",
-  "file": "src/formats/mwSkin.js",
+  "file": "src/formats/morrowind/mwSkin.js",
   "old": "  const touched = sc.touched; touched.fill(0);",
   "new": "  const touched = sc.touched;",
   "tests": [
@@ -38,7 +38,7 @@
  },
  {
   "name": "PERF-RIG1-bone-product-transposed",
-  "file": "src/formats/mwSkin.js",
+  "file": "src/formats/morrowind/mwSkin.js",
   "old": "        p.a[r * 3] * l.a[c] + p.a[r * 3 + 1] * l.a[3 + c] + p.a[r * 3 + 2] * l.a[6 + c];\n    }\n  }\n  out.t[0]",
   "new": "        p.a[c] * l.a[r * 3] + p.a[3 + c] * l.a[r * 3 + 1] + p.a[6 + c] * l.a[r * 3 + 2];\n    }\n  }\n  out.t[0]",
   "tests": [
@@ -48,7 +48,7 @@
  },
  {
   "name": "PERF-RIG1-bone-translation-dropped",
-  "file": "src/formats/mwSkin.js",
+  "file": "src/formats/morrowind/mwSkin.js",
   "old": "  out.t[2] = p.a[6] * l.t[0] + p.a[7] * l.t[1] + p.a[8] * l.t[2] + p.t[2];",
   "new": "  out.t[2] = p.a[6] * l.t[0] + p.a[7] * l.t[1] + p.a[8] * l.t[2];",
   "tests": [
@@ -58,7 +58,7 @@
  },
  {
   "name": "PERF-RIG1-bone-scratch-shared-as-a-double",
-  "file": "src/formats/mwSkin.js",
+  "file": "src/formats/morrowind/mwSkin.js",
   "old": "    boneMat: { a: new Float32Array(9), t: [0, 0, 0] },",
   "new": "    boneMat: { a: new Float64Array(9), t: [0, 0, 0] },",
   "tests": [

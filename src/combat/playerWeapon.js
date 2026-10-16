@@ -114,7 +114,7 @@ export const USING_LEFT_HAND_TEXT = 'Using weapon in left hand.';
 
 /** StartGameBehaviour.StartFromClassicSave :605-606, the whole line:
  *  `weaponManager.UsingRightHand = !saveVars.UsingLeftHandWeapon`.
- *  THE SEAM: formats/saveVarsFile.js has parsed the byte since SAV2
+ *  THE SEAM: formats/save/saveVarsFile.js has parsed the byte since SAV2
  *  (:183, offset 0x3D9) and systems/classicSave.js recorded it as
  *  "read but dropped - the port has no left-hand rig". It has one
  *  now; this is the import that classicSave's snapshot builder calls,

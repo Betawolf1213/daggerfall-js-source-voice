@@ -34,7 +34,7 @@ import { attachTouch } from '../ui/touch/touch.js';
 import { attachGamepad } from '../ui/gamepadInput.js';   // GP1: the pad speaks the same hooks
 import { isEnhanced } from '../systems/uiSkin.js';   // AUDIT 62 F10: the dial button's own skin gate
 import { BlocksFile } from '../formats/blocksFile.js';
-import { bindWorldDataBlocks } from '../formats/worldDataReplacement.js';   // RR3b
+import { bindWorldDataBlocks } from '../formats/worldData/worldDataReplacement.js';   // RR3b
 import { loadModWorldData } from './modWorldData.js';   // RR3b
 import { DFPalette } from '../formats/dfPalette.js';
 import { MapsFile } from '../formats/mapsFile.js';

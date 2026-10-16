@@ -31,8 +31,8 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import zlib from 'node:zlib';
 
-import { ROW_CODECS } from '../src/formats/worldDataPack.js';
-import { blockFromJson } from '../src/formats/worldDataReplacement.js';
+import { ROW_CODECS } from '../src/formats/worldData/worldDataPack.js';
+import { blockFromJson } from '../src/formats/worldData/worldDataReplacement.js';
 import { layoutRmbBlock } from '../src/world/rmbLayout.js';
 import { CITY_WALL_PIECE, CITY_WALL_MODEL, CITY_WALL_FILL } from '../src/world/townStandIns.js';
 import { GLOBAL_SCALE } from '../src/world/meshReader.js';
@@ -267,13 +267,13 @@ const ACROSS = 192;    // a wall piece's two long faces, each side of its line
 const BODY = 192;      // the tower's body, 384 square on its crossing; its arms run on beyond it
 
 test('CITY-WALLS with ARENA2: the wall is a corridor - ARCH3D\'s segment and gates 1024 x 384 x 434, open at both ends below the walk, the segment nothing below it but its two long faces; Daggerfall\'s own corner towers reach 448 along each line from the crossing, their arms the same two faces, nothing on their ends; WALLAA04\'s first subrecord (the 476 read by reference) a 445 at (0, 0, -64); through the port\'s door all 410 rings shut, every open end met - the 1,266 corner pieces\' among them, each the 445\'s middle (384 x 322); no farm mesh more than 50 units into a wall', { skip: HAVE_ARENA2 ? false : 'ARENA2_PATH not set' }, async () => {
-  const W = await import('../src/formats/worldDataReplacement.js');
+  const W = await import('../src/formats/worldData/worldDataReplacement.js');
   const { _resetLayoutPins } = await import('../src/systems/layoutPins.js');
   const { setValue } = await import('../src/systems/settings/settings.js');
   const { BlocksFile } = await import('../src/formats/blocksFile.js');
   const { MapsFile } = await import('../src/formats/mapsFile.js');
   const { Arch3dFile } = await import('../src/formats/arch3dFile.js');
-  const { openWorldDataPack } = await import('../src/formats/worldDataPack.js');
+  const { openWorldDataPack } = await import('../src/formats/worldData/worldDataPack.js');
   const { dfMeshToModel } = await import('../src/world/meshReader.js');
   const { layoutLocation } = await import('../src/world/locationLayout.js');
   const { installTownStandIns, _resetTownStandIns } = await import('../src/world/townStandIns.js');

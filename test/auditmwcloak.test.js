@@ -6,12 +6,12 @@
 // round it through the poses (fixtures/mw/cloakRig.mjs SWEEP), on the port's own plate and the addon's own scabbards.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { assembleFirstPersonArm, poseAssembly, bindPartsInto } from '../src/formats/mwFirstPerson.js';
+import { assembleFirstPersonArm, poseAssembly, bindPartsInto } from '../src/formats/morrowind/mwFirstPerson.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import {
   CLOAK_FIT_POSES, CLOAK_PUSH_LIMIT, FOLLOW, SLUNG_MOVE_LIMIT,
   fitCloakOver, fitStowedGear, followCloak, applyCloakFollow, cloakSheet, sheetCellKey,
-} from '../src/formats/mwCloakFit.js';
+} from '../src/formats/morrowind/mwCloakFit.js';
 import { fitThirdPersonCloak } from '../src/combat/fpArm.js';
 import { meshToNif } from '../tools/nifWrite.mjs';
 import { retailSkeleton } from './fixtures/mw/retailRig.mjs';

@@ -28,13 +28,13 @@
 // image/name throws; the discovery walk returns false for the WHOLE
 // open if any region record is absent from MAPSAVE.SAV.
 
-import { BsaFile } from './bsaFile.js';
-import { RumorFile } from './rumorFile.js';
-import { BioFile } from './bioFile.js';
+import { BsaFile } from '../bsaFile.js';
+import { RumorFile } from '../rumorFile.js';
+import { BioFile } from '../bioFile.js';
 import { SaveTree, SAVETREE_FILENAME, readCStringScan } from './saveTreeFile.js';
 import { SaveVars, SAVEVARS_FILENAME } from './saveVarsFile.js';
 import { SaveImage, SAVE_IMAGE_FILENAME } from './saveImageFile.js';
-import { DFPalette } from './dfPalette.js';
+import { DFPalette } from '../dfPalette.js';
 
 export const SAVENAME_TXT = 'SAVENAME.TXT';
 export const MAPSAVE_FILENAME = 'MAPSAVE.SAV';

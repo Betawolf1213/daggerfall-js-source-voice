@@ -156,8 +156,8 @@ export function assembleNpc(esm, npcId, skinIndex = null) {
  * built from the singular slot stem finds nothing at all, and
  * `b_n_nord_m_upper arm` contains a SPACE.
  *
- * The correct lookup lives in src/formats/mwEsmFile.js (isFirstPersonId) and
- * src/formats/mwFirstPerson.js (armReport, armMeshPaths), pinned against hand-built records and proven
+ * The correct lookup lives in src/formats/morrowind/mwEsmFile.js (isFirstPersonId) and
+ * src/formats/morrowind/mwFirstPerson.js (armReport, armMeshPaths), pinned against hand-built records and proven
  * against real archives.
  *
  * See bible/02-Formats/Morrowind-Rules.md rules 1 and 3, and Part VI.

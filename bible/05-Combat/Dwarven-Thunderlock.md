@@ -1115,7 +1115,7 @@ is its Blender source.
 
 `tools/fbxRead.mjs` reads the binary FBX container; `tools/fbxMesh.mjs`
 bakes one Geometry/Model pair into **the shape `flattenNif` already
-emits** (`src/formats/mwNifMesh.js:"@returns {{name:string"` — positions / normals /
+emits** (`src/formats/morrowind/mwNifMesh.js:"@returns {{name:string"` — positions / normals /
 uvs / colors / indices / material). Not a second mesh format: the same
 one, so the Morrowind lane's whole downstream needs no new consumer.
 
@@ -1205,7 +1205,7 @@ MW1 said the bake existed and nothing drew it. This draws it.
 
 ### The mesh becomes a NIF, because that is where a part goes in
 
-`bindPartsInto` (`src/formats/mwFirstPerson.js`) does
+`bindPartsInto` (`src/formats/morrowind/mwFirstPerson.js`) does
 `parseNif(part.bytes)` and hands the result to `bindPart`. **A part IS
 NIF bytes.** The obvious alternative — teach the bind to take
 pre-flattened batches beside NIF bytes — is the wrong one, and this

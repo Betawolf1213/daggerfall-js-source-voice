@@ -28,11 +28,11 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { PerfMeter, PERF_EVERY } from '../src/render/perfMeter.js';
-import { parseNif } from '../src/formats/mwNifFile.js';
-import { flattenNif, diffuseAt, emissiveAt, mat33Mul, mat33Apply } from '../src/formats/mwNifMesh.js';
-import { extractTracks, sampleTrack } from '../src/formats/mwAnim.js';
-import { buildSkeleton, poseSkeleton, skeletonSpaceMatrices, skinToSkelMatrix, skinBatch, accumRootRef } from '../src/formats/mwSkin.js';
-import { assembleFirstPersonArm, poseAssembly } from '../src/formats/mwFirstPerson.js';
+import { parseNif } from '../src/formats/morrowind/mwNifFile.js';
+import { flattenNif, diffuseAt, emissiveAt, mat33Mul, mat33Apply } from '../src/formats/morrowind/mwNifMesh.js';
+import { extractTracks, sampleTrack } from '../src/formats/morrowind/mwAnim.js';
+import { buildSkeleton, poseSkeleton, skeletonSpaceMatrices, skinToSkelMatrix, skinBatch, accumRootRef } from '../src/formats/morrowind/mwSkin.js';
+import { assembleFirstPersonArm, poseAssembly } from '../src/formats/morrowind/mwFirstPerson.js';
 import { packFpArm, FP_FLOATS } from '../src/combat/fpArm.js';
 
 const f = (n) => new Uint8Array(readFileSync(new URL(`./fixtures/mw/${n}`, import.meta.url)));
@@ -253,7 +253,7 @@ test('PERF-RIG1d packFpArm: the frame path mints no typed array, the lanes are t
 });
 
 test('PERF-RIG1e the minting law by content: the skin loop allocates only through its scratch, and the pack\'s triangle loop constructs nothing and reads the colour laws only when building lanes (derived)', () => {
-  const skin = rd('src/formats/mwSkin.js');
+  const skin = rd('src/formats/morrowind/mwSkin.js');
   const body = skin.slice(skin.indexOf('export function skinBatch('), skin.indexOf('\n}\n', skin.indexOf('export function skinBatch(')));
   assert.doesNotMatch(body, /new (Float32Array|Uint8Array|Uint16Array|Array)\(/, 'no typed array is constructed in skinBatch itself');
   assert.match(body, /const sc = skinScratch\(batch, n\);/);

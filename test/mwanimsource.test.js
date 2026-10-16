@@ -1,14 +1,14 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { correctActorModelPath } from '../src/formats/mwTexture.js';
+import { correctActorModelPath } from '../src/formats/morrowind/mwTexture.js';
 import {
   FP_BASE_MODEL, animSourceName, fpAnimSources, pickAnimSource, anySourceHasGroup,
-} from '../src/formats/mwFirstPerson.js';
-import { resetClip } from '../src/formats/mwAnim.js';
+} from '../src/formats/morrowind/mwFirstPerson.js';
+import { resetClip } from '../src/formats/morrowind/mwAnim.js';
 import { buildFpArm, createFpArm, fpSkeletonPath, UPPER_BODY } from '../src/combat/fpArm.js';
-import { poseAssembly, armPieceRows } from '../src/formats/mwFirstPerson.js';
-import { sampleTrack } from '../src/formats/mwAnim.js';
+import { poseAssembly, armPieceRows } from '../src/formats/morrowind/mwFirstPerson.js';
+import { sampleTrack } from '../src/formats/morrowind/mwAnim.js';
 
 // MW-D14: RULE 18 AND THE SOURCE LIST, which is not one file.
 //
@@ -311,7 +311,7 @@ test('MW-D14: an ATTACK poses from ITS source, which is not the idle\'s', async 
 // --- rule 32(a): the sneak sink -------------------------------------------
 
 test('MW-D15 rule 32(a): the GMST is READ, and a missing one is null not zero', async () => {
-  const { gmstValue, GMST_SNEAK_DELTA, sneakOffset } = await import('../src/formats/mwFirstPerson.js');
+  const { gmstValue, GMST_SNEAK_DELTA, sneakOffset } = await import('../src/formats/morrowind/mwFirstPerson.js');
   const A = (x) => [...x].map((c) => c.charCodeAt(0));
   const Z = (x) => [...A(x), 0];
   const U = (n) => [n & 255, (n >>> 8) & 255, (n >>> 16) & 255, (n >>> 24) & 255];
@@ -337,9 +337,9 @@ test('MW-D15 rule 32(a): the GMST is READ, and a missing one is null not zero', 
 });
 
 test('MW-D15 rule 32(a): the sink moves the arm, through the NECK', async () => {
-  const { assembleFirstPersonArm, applyFirstPersonNeck } = await import('../src/formats/mwFirstPerson.js');
-  const { parseNif } = await import('../src/formats/mwNifFile.js');
-  const { poseSkeleton, skeletonSpaceMatrices, GRAPH_ROOT } = await import('../src/formats/mwSkin.js');
+  const { assembleFirstPersonArm, applyFirstPersonNeck } = await import('../src/formats/morrowind/mwFirstPerson.js');
+  const { parseNif } = await import('../src/formats/morrowind/mwNifFile.js');
+  const { poseSkeleton, skeletonSpaceMatrices, GRAPH_ROOT } = await import('../src/formats/morrowind/mwSkin.js');
   const arm = await assembleFirstPersonArm({
     skeletonBytes: f('armfp.nif'),
     parts: [{ slot: 'hand', bytes: f('armfphand.nif') }],
@@ -463,7 +463,7 @@ test('MW-D15 rule 32(a): the LIVE arm sinks when the camera dep says sneak', asy
 });
 
 test('MW-D15: the neck controller uses the ROTATION, with the scale divided out', async () => {
-  const { applyFirstPersonNeck, FP_NECK_BONE } = await import('../src/formats/mwFirstPerson.js');
+  const { applyFirstPersonNeck, FP_NECK_BONE } = await import('../src/formats/morrowind/mwFirstPerson.js');
   // RotateController takes `worldMat.getRotate()`, not the matrix. The
   // skeleton-space 3x3 this module works in is rotation TIMES SCALE
   // (rule 55 folds a NIF's uniform scale in), so conjugating with it

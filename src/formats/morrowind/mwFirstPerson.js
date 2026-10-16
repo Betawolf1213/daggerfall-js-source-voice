@@ -165,14 +165,14 @@ const zstr = (bytes, s, n) => {
  *  unchanged for its page and its pins. */
 export { MW_BODY_PARTS, isFirstPersonId } from './mwEsmFile.js';
 import { MW_BODY_PARTS, isFirstPersonId } from './mwEsmFile.js';
-import FACE_TABLE from './mwFaceTable.json' with { type: 'json' };
+import FACE_TABLE from '../mwFaceTable.json' with { type: 'json' };
 import { GRAPH_ROOT, ACCUM_ROOT_NAMES } from './mwSkin.js';
 import { transferSkin, sourceSkin, fitLift, liftBatch } from './mwSkinTransfer.js';   // MW-BRIG2: a worn model skinned from the body under it; MW-BRIG3: and fitted onto it
 import { getTextKeyTime, animVelocity } from './mwAnim.js';
 import { mat33Mul } from './mwNifMesh.js';   // AUDIT 68 S11-affine-dup: the one row-major 3x3 product
 import { batchMoves, posePartBatch, nodeAffineAt, nodeClockAt, clockFor } from './mwPartClock.js';   // MW-BOW1: a part's own clock
-import { applyClimbRig } from '../combat/climbRig.js';   // CLIMB6: the climb's pose on the rig's own bones
-import { ownFacePools } from '../characters/ownModels/ownHeadModels.js';   // MW-HEADS1: the port's own heads and hairs - a race's pools where it has them
+import { applyClimbRig } from '../../combat/climbRig.js';   // CLIMB6: the climb's pose on the rig's own bones
+import { ownFacePools } from '../../characters/ownModels/ownHeadModels.js';   // MW-HEADS1: the port's own heads and hairs - a race's pools where it has them
 
 /** The four parts allowed to fall back to a third-person mesh when the
  *  first-person record is missing (rule 3 / npcanimation.cpp:1217-1253).
@@ -1004,7 +1004,7 @@ function readLight(bytes, rec) {
  * 36 bytes - school, base cost, flags, red, green, blue, size, speed, size cap; then, in any order, the icon and the
  * particle texture, four sounds, the four visuals by id (CVFX casting, BVFX bolt, HVFX hit, AVFX area) and the
  * description. The effects layer reads the colour, the speed, the flags' NegativeLight, the particle texture and the
- * visuals (formats/mwSpellFx.js); nothing else is kept. The legacy format's own rule on the flags (only the three
+ * visuals (formats/morrowind/mwSpellFx.js); nothing else is kept. The legacy format's own rule on the flags (only the three
  * modifiable bits are the file's) stands: the hard-coded rest is not read here, so it is not stored.
  */
 function readMagicEffect(bytes, rec) {
@@ -2267,7 +2267,7 @@ export function bindPartsInto(assembly, parts) {
     // `part.bones` overrides the table so a test can drive real assembly
     // against a fixture skeleton whose bone names are not Morrowind's.
     const bones = part.bones ?? mod.PART_BONES[part.slot] ?? [];
-    // MW-BRIG2: a worn model of the port's own is SKINNED FROM THE BODY under it (formats/mwSkinTransfer.js) - it
+    // MW-BRIG2: a worn model of the port's own is SKINNED FROM THE BODY under it (formats/morrowind/mwSkinTransfer.js) - it
     // moves by the body's own bones and binds, never by an attach node the body does not use.
     if (part.skinFrom) { bindSkinnedFromBody(assembly, part, bones); continue; }
     let nif;
@@ -2465,7 +2465,7 @@ export function bindPartsInto(assembly, parts) {
             uvs: batch.uvs || null, colors: batch.colors || null, material: batch.material || null,
             shape: batch.name || null,   // SHADOW-FANG (AUDIT F2): the shape's own name - a skinned piece keeps its batch, a rigid one only this (an eye names itself)
             // MW-BOW1: the file and the batch's chain, for a part whose own controllers move it on the weapon clock
-            // (formats/mwPartClock.js posePartBatch) - the weapon's slots alone, so no other part keeps its parsed
+            // (formats/morrowind/mwPartClock.js posePartBatch) - the weapon's slots alone, so no other part keeps its parsed
             // file alive; and, for a part instanced under a node of ANOTHER file (the arrow under the bow's
             // ArrowBone), that file and node with the part's own vertices before the node's chain - so the node can
             // move it. Nothing is copied: references to what the walk already made.
@@ -2767,7 +2767,7 @@ export function poseAssembly(assembly, { tracks = null, sampleTrack = null,
     assembly.mats = mats;
     assembly.time = time;
     // AUDIT MW-CLOAK x MWNPC1: the stowed gear goes with the cloak on this pose too - the follow reads the cloak where
-    // the pose puts it and hands each turned piece's placement to the palette (formats/mwCloakFit.js applyCloakFollow)
+    // the pose puts it and hands each turned piece's placement to the palette (formats/morrowind/mwCloakFit.js applyCloakFollow)
     if (assembly.afterPose) assembly.afterPose(assembly);
     return assembly;
   }
@@ -2787,7 +2787,7 @@ export function poseAssembly(assembly, { tracks = null, sampleTrack = null,
   assembly.mats = mats;
   assembly.time = time;
   // AUDIT MW-CLOAK: what the assembly's owner places after every piece is posed - the stowed gear that goes with the
-  // cloak (formats/mwCloakFit.js followCloak), which reads the cloak where this pose just put it
+  // cloak (formats/morrowind/mwCloakFit.js followCloak), which reads the cloak where this pose just put it
   if (assembly.afterPose) assembly.afterPose(assembly);
   assembly.bounds = pieces.length ? foldPieceBounds(pieces) : null;   // PR-BOW1b: and each piece's own box, in the same walk
   return assembly;
@@ -2901,7 +2901,7 @@ export function armPieceRows(pieces) {
  * MW-BRIG2: bind a garment SKINNED FROM THE BODY. `part.skinFrom` lists the body parts it is fitted over (the
  * player's own skin meshes, `{ slot, bones?, bytes }`); each is bound exactly as the body binds it - a skinned
  * shape by rule 15's filter per bone, a rigid one at its bone with rule 13's mirror and rule 14's offset - and the
- * garment copies their skins (formats/mwSkinTransfer.js), solved against the skeleton's rest pose. A garment with
+ * garment copies their skins (formats/morrowind/mwSkinTransfer.js), solved against the skeleton's rest pose. A garment with
  * no body under it is a note and is not drawn: floating free of the body is exactly the failure this exists to end.
  *
  * MW-BRIG3: `part.fitTo` names the body part the garment hides (the cuirass hides the chest), and the garment is first

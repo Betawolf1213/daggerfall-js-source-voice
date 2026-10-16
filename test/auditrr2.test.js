@@ -31,7 +31,7 @@ import { stockShopShelf } from '../src/systems/shopStock.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { getLocationVariant, setLocationVariant, setNewLocationVariant, clearWorldDataVariants, NO_VARIANT, makeLocationKey } from '../src/systems/worldDataVariants.js';
 import { getCustomMerchantServiceLabel } from '../src/systems/guild/guildServices.js';
-import { blockFromJson } from '../src/formats/worldDataReplacement.js';
+import { blockFromJson } from '../src/formats/worldData/worldDataReplacement.js';
 import { validItemField } from '../src/systems/item/itemFields.js';
 import { installRoleplayRealism } from '../src/systems/roleplayRealism/rrInstall.js';
 import { setSyntheticTimeIncrease, claimSyntheticTimeIncrease, resetSyntheticTimeIncrease } from '../src/systems/effectBroker.js';
@@ -70,7 +70,7 @@ test('AUDIT-RR2 G2: the charge\'s heavy pain cry picks the gender the component 
 });
 
 test('AUDIT-RR2 G3: a duplicate mapId or name is refused BEFORE any write to the region (the C# pushes to local lists), and one bad mod file is said, not the boot', () => {
-  const s = rd('src/formats/worldDataReplacement.js');
+  const s = rd('src/formats/worldData/worldDataReplacement.js');
   const fn = s.slice(s.indexOf('function addLocationToRegion('));
   const throwAt = fn.indexOf('throw new Error');
   const writeAt = fn.indexOf('dfRegion.locationCount++');
@@ -177,7 +177,7 @@ test('AUDIT-RR2 G13: a building entry sets WorldDataVariants\' last key to THIS 
 });
 
 test('AUDIT-RR2 G14/G16/G19: an RDB/RDI JSON is served whole since WD1 (never with a null body); the variant arm takes every asset the suffix finds (:284-292); the padded building rows are None', () => {
-  const s = rd('src/formats/worldDataReplacement.js');
+  const s = rd('src/formats/worldData/worldDataReplacement.js');
   // G14 was the refusal of an RDB/RDI file the converter could not read; WD1 (Aquatic Sprites) ported the RDB
   // and RDI halves, so the block is converted whole and only an RMB takes the building replacements (:382-384)
   // PIN MOVED (AUDIT QA2 B1): the served name rides with the block - the port's curations key on the name the town lays

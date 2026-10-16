@@ -5,8 +5,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { assembleCreature, poseAssembly } from '../src/formats/mwFirstPerson.js';
-import { skinLayout, packSkinStream, writeSkinPalette, skinStreamCorner } from '../src/formats/mwGpuSkin.js';
+import { assembleCreature, poseAssembly } from '../src/formats/morrowind/mwFirstPerson.js';
+import { skinLayout, packSkinStream, writeSkinPalette, skinStreamCorner } from '../src/formats/morrowind/mwGpuSkin.js';
 import { pieceLanes, createFpArm, esmLoadOrder } from '../src/combat/fpArm.js';
 import { creatureModel, creatureDeps, creaRec } from './fixtures/mw/creatureRig.mjs';
 import { countingRenderer } from './fixtures/mw/bodyRig.mjs';

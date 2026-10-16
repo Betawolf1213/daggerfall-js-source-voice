@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createWeaponRig } from '../src/combat/weapon/weaponRig.js';
 import { fpArm, createFpArm, fpSkeletonPath, FP_CLIP_PATH, UPPER_BODY } from '../src/combat/fpArm.js';
-import { MW_WEAPON_TYPE } from '../src/formats/mwFirstPerson.js';
+import { MW_WEAPON_TYPE } from '../src/formats/morrowind/mwFirstPerson.js';
 import { setValue, resetToDefaults } from '../src/systems/settings/settings.js';
 import { _resetModSettings } from '../src/systems/modSettings.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';

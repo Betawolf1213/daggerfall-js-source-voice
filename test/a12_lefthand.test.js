@@ -131,7 +131,7 @@ test('a12: ToggleHand\'s BowLeftHandWithSwitching arm - the switch delay, verbat
 });
 
 test('a12: usingLeftHandWeapon imports off a classic save (StartGameBehaviour.cs:606)', () => {
-  // formats/saveVarsFile.js has parsed the byte since SAV2; the law is
+  // formats/save/saveVarsFile.js has parsed the byte since SAV2; the law is
   // the inversion, and the sentinel-free default of an absent record.
   assert.equal(usingRightHandFromSaveVars({ usingLeftHandWeapon: true }), false, 'a left-handed save loads left-handed');
   assert.equal(usingRightHandFromSaveVars({ usingLeftHandWeapon: false }), true);

@@ -13409,8 +13409,8 @@ mirrors. `test/decorflip.test.js`.
 **MW-ASSIGN ("Some sprites not assigned morrowind skin").** With Morrowind data attached a hung weapon or piece of
 armour is its Morrowind picture (MW-MOUNT), but only what the item map could read. Now also: the port's own weapons
 (the Thunderlock's shipped model, on the icon and on a wall as in the hand - `combat/fpArm.js` iconRecordOf);
-Roleplay & Realism Items' two weapons and twelve pieces of armour (`formats/mwFirstPerson.js` MOD_WEAPON_TO_MW,
-`formats/mwItemMap.js` MOD_ARMOR_ROWS - by the classic row of each one's shape, worn by the Morrowind body too, a
+Roleplay & Realism Items' two weapons and twelve pieces of armour (`formats/morrowind/mwFirstPerson.js` MOD_WEAPON_TO_MW,
+`formats/morrowind/mwItemMap.js` MOD_ARMOR_ROWS - by the classic row of each one's shape, worn by the Morrowind body too, a
 helm-shaped piece hiding the hair); and one's own thing set down - a garment - which stands as its Morrowind picture on
 the billboard pass (`scenes/decor/decorRoom.js` MW_STAND_ARCHIVE, its ghost with it) where it stood as the classic pile of
 cloth. The census counts the mod's templates. `test/mwassign.test.js`.

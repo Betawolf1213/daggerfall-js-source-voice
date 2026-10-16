@@ -60,7 +60,7 @@ Unity texture pack) and point it at a folder holding EITHER:
 1. the mod's **`seasons of the iliac bay.dfmod`** - the file Nexus
    ships and DFU loads (that file by name; other mods' bundles in the
    same folder are left alone). The port reads the bundle itself
-   (`src/formats/unityBundle.js`: UnityFS 7, LZ4 blocks, SerializedFile
+   (`src/formats/unity/unityBundle.js`: UnityFS 7, LZ4 blocks, SerializedFile
    21 with its type tree, RGBA32 and DXT5 textures) and takes the
    textures out exactly as DFU's mod system hands them to the script;
    or

@@ -172,7 +172,7 @@ test('CSA-A (ARENA2): the 32 frames rebuild from the player\'s own TEXTURE.303 -
   // with the bundle at hand the rebuild is the bundle's frame itself
   const bundlePath = process.env.CSA_BUNDLE;
   if (bundlePath && existsSync(bundlePath)) {
-    return import('../src/formats/unityBundle.js').then(({ readUnityBundle }) => {
+    return import('../src/formats/unity/unityBundle.js').then(({ readUnityBundle }) => {
       const bun = readUnityBundle(new Uint8Array(readFileSync(bundlePath)));
       for (const f of [0, 1, 17, 31]) {
         const want = bun.textures.find((t) => t.name === `112395_2-${f}`).rgba();

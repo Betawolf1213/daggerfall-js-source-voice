@@ -13,12 +13,12 @@ import { pcaaoModules, installPcaao, uninstallPcaao } from '../src/combat/pcaao.
 import { adjustWeaponHitChanceMod } from '../src/combat/formulas.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { PlayerWeapon } from '../src/combat/playerWeapon.js';
-import { MwBsaFile } from '../src/formats/mwBsaFile.js';
-import { MW_WEAPON_TYPE, bodyParts, facePools, playerBodyRows } from '../src/formats/mwFirstPerson.js';
-import { parseEsm } from '../src/formats/mwEsmFile.js';
-import { indexSkins, assembleNpc } from '../src/formats/mwNpc.js';
-import { decodeTga } from '../src/formats/mwTexture.js';
-import { particleSystemsOf, interpColorKey } from '../src/formats/mwParticles.js';
+import { MwBsaFile } from '../src/formats/morrowind/mwBsaFile.js';
+import { MW_WEAPON_TYPE, bodyParts, facePools, playerBodyRows } from '../src/formats/morrowind/mwFirstPerson.js';
+import { parseEsm } from '../src/formats/morrowind/mwEsmFile.js';
+import { indexSkins, assembleNpc } from '../src/formats/morrowind/mwNpc.js';
+import { decodeTga } from '../src/formats/morrowind/mwTexture.js';
+import { particleSystemsOf, interpColorKey } from '../src/formats/morrowind/mwParticles.js';
 import { bodyRec } from './fixtures/mw/bodyRig.mjs';
 
 const f = (n) => new Uint8Array(readFileSync(new URL(`./fixtures/mw/${n}`, import.meta.url)));

@@ -1,5 +1,5 @@
 // MW-TEXTHREAD - MORROWIND TEXTURES DECODED OFF THE MAIN THREAD, IN A POOL
-// (formats/mwTextureWorker.js, formats/mwTextureClient.js), and the
+// (formats/morrowind/mwTextureWorker.js, formats/morrowind/mwTextureClient.js), and the
 // build's preload filling the decode memo through it (combat/fpArm.js
 // preloadArmTextures). Pins: the wire (decode answers the decoder's own
 // image with every level transferred, an error answers the message), the
@@ -19,12 +19,12 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { handleDecode as handle } from '../src/formats/mwTextureWorker.js';
-import { createTexturePool, textureThreadDisabled, texturePoolSize, TEXTURE_WORKERS_MAX, _useTexturePool, _resetTexturePool } from '../src/formats/mwTextureClient.js';
-import { decodeTextureImage } from '../src/formats/mwTexture.js';
+import { handleDecode as handle } from '../src/formats/morrowind/mwTextureWorker.js';
+import { createTexturePool, textureThreadDisabled, texturePoolSize, TEXTURE_WORKERS_MAX, _useTexturePool, _resetTexturePool } from '../src/formats/morrowind/mwTextureClient.js';
+import { decodeTextureImage } from '../src/formats/morrowind/mwTexture.js';
 import { buildFpArm, fpSkeletonPath, FP_CLIP_PATH, inLanes, MEASURE_LANES } from '../src/combat/fpArm.js';
-import { MwBsaFile } from '../src/formats/mwBsaFile.js';
-import { MW_CLOTHING_TYPE, DF_CLOTHING_DYE_RGB } from '../src/formats/mwItemMap.js';
+import { MwBsaFile } from '../src/formats/morrowind/mwBsaFile.js';
+import { MW_CLOTHING_TYPE, DF_CLOTHING_DYE_RGB } from '../src/formats/morrowind/mwItemMap.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rd = (p) => readFileSync(join(ROOT, p), 'utf8');
@@ -186,9 +186,9 @@ test('MW-TEXTHREAD: the build\'s textures arrive through the pool - its preload 
 });
 
 test('MW-TEXTHREAD: the source spellings - the worker constructed as Vite bundles it, the worker importing the pure decoder alone, and every decode site of the build going through the pool', () => {
-  const client = rd('src/formats/mwTextureClient.js');
+  const client = rd('src/formats/morrowind/mwTextureClient.js');
   assert.match(client, /return new Worker\(new URL\('\.\/mwTextureWorker\.js', import\.meta\.url\), \{ type: 'module' \}\);/);
-  const worker = rd('src/formats/mwTextureWorker.js');
+  const worker = rd('src/formats/morrowind/mwTextureWorker.js');
   assert.deepEqual([...worker.matchAll(/^import .* from '([^']+)';/gm)].map((m) => m[1]), ['./mwTexture.js'], 'the worker graph is the pure decoder alone');
   const arm = rd('src/combat/fpArm.js');
   const preload = arm.slice(arm.indexOf('async function preloadArmTextures('), arm.indexOf('\n}\n', arm.indexOf('async function preloadArmTextures(')));
@@ -377,5 +377,5 @@ test('AUDIT MW-TEXTHREAD F6: an idle pool lets its workers go once every job has
   await sleep(40);
   assert.deepEqual(held.map((w) => w.terminated), [1, 1], 'quiet again, with nothing in hand: both let go');
   two.close();
-  assert.match(rd('src/formats/mwTextureClient.js'), /idle\.unref\?\.\(\);/, 'and an idle timer never holds node open');
+  assert.match(rd('src/formats/morrowind/mwTextureClient.js'), /idle\.unref\?\.\(\);/, 'and an idle timer never holds node open');
 });

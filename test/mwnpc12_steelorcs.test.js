@@ -2,13 +2,13 @@
 // THAT NEVER SHOWED, AND THE ORCS. Every look that dressed a body in steel without an equip table to read - the street's
 // guard (MWNPC7), a knightly order's standing person (MWNPC8a), the rosters' steel classes (MWNPC10b) - wrote its
 // material as 1, which names no armour material (systems/armorMaterials.js ARMOR_MATERIAL: steel is 0x0201), so
-// formats/mwItemMap.js mwArmorRecords resolved none of it and every one of them stood in their clothes - the ones whose
+// formats/morrowind/mwItemMap.js mwArmorRecords resolved none of it and every one of them stood in their clothes - the ones whose
 // boots took their feet barefoot. Now they wear ARMOR_MATERIAL.Steel, and this pins it through mwArmorRecords itself.
 // And the orcs, Daggerfall's monsters that are people, stand in Morrowind's Orc body: a foe in its own equip table, a
 // road's or a roster's in DFU's own kit for it.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mwArmorRecords } from '../src/formats/mwItemMap.js';
+import { mwArmorRecords } from '../src/formats/morrowind/mwItemMap.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { ARMOR_ENUM, WEAPONS_ENUM as W } from '../src/combat/enemyEquipment.js';
 import { folkLook } from '../src/characters/folkBodies.js';

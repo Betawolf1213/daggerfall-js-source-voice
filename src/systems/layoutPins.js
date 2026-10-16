@@ -18,12 +18,12 @@
 // moment nothing it holds needs it (the room expires, the quest ends, the house is sold), and next loads as the mods
 // would have it.
 //
-// The door (formats/worldDataReplacement.js) asks `pinAt(locationKey)` for the location it is serving and for the
+// The door (formats/worldData/worldDataReplacement.js) asks `pinAt(locationKey)` for the location it is serving and for the
 // blocks laid out in it (WorldDataVariants' last location - the location read right before its blocks, as in DFU).
 // This module holds no game state: the hosts hand it the save's records (`layoutRecordsOf`) and the location of a map
 // id, and refresh the towns whose answer changed.
 
-import { setLayoutPinOracle, worldDataVendorCarries, locationReplacementFilename, blockReplacementFilename } from '../formats/worldDataReplacement.js';
+import { setLayoutPinOracle, worldDataVendorCarries, locationReplacementFilename, blockReplacementFilename } from '../formats/worldData/worldDataReplacement.js';
 
 /** The world-data mods that MOVE BUILDINGS in towns - the only ones a pin speaks for. A mod that adds scenery to a
  *  dungeon or a ship's deck (Aquatic Sprites, Detailed Ships) moves no building a save keeps by key. */

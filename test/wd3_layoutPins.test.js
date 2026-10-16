@@ -21,7 +21,7 @@ import {
   stampVendors, pinAt, layoutStampAt, layoutStampOfMapId, layoutStampOfPixel, layoutsMatch, layoutStampOfTown, stampLayout,
   layoutLocationKeyOfMapId, pinsFrom, setLayoutPins, vendorsPinnedIn, layoutPins, layoutRecordsOf, _resetLayoutPins,
 } from '../src/systems/layoutPins.js';
-import { registerWorldDataAsset, _resetWorldDataReplacement, installWorldDataReplacement } from '../src/formats/worldDataReplacement.js';
+import { registerWorldDataAsset, _resetWorldDataReplacement, installWorldDataReplacement } from '../src/formats/worldData/worldDataReplacement.js';
 import { makeLocationKey } from '../src/systems/worldDataVariants.js';
 import { HOME_LAYOUT_MODS, homeLayoutOk } from '../src/net/homeLaw.js';
 import { allocateHouseToPlayer } from '../src/systems/banking.js';

@@ -32,7 +32,7 @@
 //      turned about its own bone - slung gear also slid straight off the back, a unit costing as a turn of
 //      FOLLOW.slideCost radians - the least that keeps each of those points as far from the cloak as it stood at rest,
 //      up to CLOAK_CLEARANCE: the hem kicks a scabbard's tip aside as cloth would, and a pose the cloak keeps clear
-//      moves nothing. Run as the assembly's afterPose (formats/mwFirstPerson.js poseAssembly), with no allocation.
+//      moves nothing. Run as the assembly's afterPose (formats/morrowind/mwFirstPerson.js poseAssembly), with no allocation.
 //
 // Pure over an assembly: the cloak's batch and the gear's sources are REPLACED, never written into (a source may be its
 // parsed batch's own array), and the live pose's positions are re-placed at once.

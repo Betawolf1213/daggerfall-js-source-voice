@@ -46,7 +46,7 @@
  },
  {
   "name": "MWNPC17-rung-ignored",
-  "file": "src/formats/mwItemMap.js",
+  "file": "src/formats/morrowind/mwItemMap.js",
   "old": "  if (Number.isInteger(tier) && tier >= 0 && tier <= 3) {",
   "new": "  if (false) {",
   "tests": [
@@ -55,7 +55,7 @@
  },
  {
   "name": "MWNPC17-pick-over-every-colour",
-  "file": "src/formats/mwItemMap.js",
+  "file": "src/formats/morrowind/mwItemMap.js",
   "old": "      let k = Math.min(CLOTH_PICK_NEAREST, near.length);",
   "new": "      let k = near.length;",
   "tests": [
@@ -64,7 +64,7 @@
  },
  {
   "name": "MWNPC17-higher-rung-first",
-  "file": "src/formats/mwItemMap.js",
+  "file": "src/formats/morrowind/mwItemMap.js",
   "old": "    for (const d of [0, -1, 1, -2, 2, -3, 3]) {",
   "new": "    for (const d of [0, 1, -1, 2, -2, 3, -3]) {",
   "tests": [
@@ -73,7 +73,7 @@
  },
  {
   "name": "MWNPC17-blind-pick-ignored",
-  "file": "src/formats/mwItemMap.js",
+  "file": "src/formats/morrowind/mwItemMap.js",
   "old": "  if (picking) return { record: pool[pick % pool.length], row,",
   "new": "  if (false) return { record: pool[pick % pool.length], row,",
   "tests": [
@@ -82,7 +82,7 @@
  },
  {
   "name": "MWNPC17-composer-drops-the-pick",
-  "file": "src/formats/mwItemMap.js",
+  "file": "src/formats/morrowind/mwItemMap.js",
   "old": "colourOf, tier: piece.tier ?? null, pick: piece.pick ?? null });   // MWNPC17",
   "new": "colourOf });   // MWNPC17",
   "tests": [
@@ -118,7 +118,7 @@
  },
  {
   "name": "MWNPC17-walk-ignored",
-  "file": "src/formats/mwFirstPerson.js",
+  "file": "src/formats/morrowind/mwFirstPerson.js",
   "old": "    if (sorted.length && Number.isInteger(step) && step >= 0) {",
   "new": "    if (false) {",
   "tests": [
@@ -163,7 +163,7 @@
  },
  {
   "name": "MWNPC17-band-ignored",
-  "file": "src/formats/mwItemMap.js",
+  "file": "src/formats/morrowind/mwItemMap.js",
   "old": "      while (k > 1 && near[k - 1].d > band) k--;",
   "new": "",
   "tests": [

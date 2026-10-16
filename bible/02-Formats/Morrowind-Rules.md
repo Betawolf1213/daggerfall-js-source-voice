@@ -65,7 +65,7 @@ no diffuse map and overrides the NIF material defaults to white.
 
 ONE HOME: the mesh viewer carried its own two-line version of the path
 (a prefix and an extension swap) which got three of the rules wrong; it
-imports formats/mwTexture.js now.
+imports formats/morrowind/mwTexture.js now.
 
 MW-D12 GAVE THE ARM SOMETHING TO DO (rules 8, 9, 10, 11). What MW-D11
 shipped was an arm holding a longsword and playing a BARE-HANDED idle for
@@ -6413,7 +6413,7 @@ backwards sweeps the blade from left to right, and the wind-up played
 backwards settles the arm from its cocked side to rest. That is a
 backhand, the stroke a right-hander actually makes to swing that way,
 with the sword where it is. `REVERSED_STRIKES`
-(`formats/mwFirstPerson.js`) names StrikeRight alone: the chops have
+(`formats/morrowind/mwFirstPerson.js`) names StrikeRight alone: the chops have
 no side a reversal would honour (a chop backwards is an uppercut) and
 share the one chop as before, the thrust has none, and a shot is one
 draw. `attackKeys(type, strength, { reversed })` hands the machine the
@@ -6525,13 +6525,13 @@ animation to play shooting properly"). The group's state outlives its section - 
 false - so the clock holds where the last section left it. `combat/fpArm.js` notes it as each weapon-group section
 advances (`noteWeaponClock`), and answers 0 once the stance's group is another (`weaponClockValue`).
 
-**What runs on it** (`formats/mwPartClock.js`): any record's first active NiKeyframeController, its track over its
+**What runs on it** (`formats/morrowind/mwPartClock.js`): any record's first active NiKeyframeController, its track over its
 rest through the controller's own function ([B]: no rotation keys is the rest rotation); an unskinned shape's first
 active NiGeomMorpherController whose base morph has the shape's vertex count and more than one morph, positions =
 base + sum(weight_i x morph_i), each weight its own keys at the controller's time (handleMorphGeometry,
 MorphGeometry::cull, GeomMorpherController); an AutoPlay node's controllers on frame time instead (setupController).
 `flattenNif` now records each batch's record chain from the file root and its authored vertices, and
-`posePartClocks` (`formats/mwFirstPerson.js`) re-poses the weapon slot's moving pieces before every pose, in both
+`posePartClocks` (`formats/morrowind/mwFirstPerson.js`) re-poses the weapon slot's moving pieces before every pose, in both
 views, and puts the arrow under the ArrowBone where the clock has it - the arrow's `preTransform` is that node's REST,
 which is what it was drawn at before.
 
@@ -6554,7 +6554,7 @@ lit torch under the Morrowind view was a light with no torch.
 **The record.** Morrowind's carriable lights are LIGH records with a
 mesh (`Torch` -> `l\light_torch.nif` and its `torch_256`... variants;
 the sconces and candles are LIGH too). `readLight`/`lightRecords`
-(`formats/mwFirstPerson.js`) read NAME, MODL, FNAM and LHDT - 24 bytes,
+(`formats/morrowind/mwFirstPerson.js`) read NAME, MODL, FNAM and LHDT - 24 bytes,
 the flags int at 20, CARRY 0x2 and FIRE 0x10 - and the one-pass
 extractor carries them as `lights` (ARM_RECORDS_VERSION 2, so a v1
 derived set re-extracts). `pickTorchRecord` chooses as MW-D38 chooses a
@@ -7162,7 +7162,7 @@ and the deferred un-ready make unreachable today).
 The same ask's other half. With Morrowind data attached, a spell is drawn
 as Morrowind draws it - with the player's own masters' visuals:
 
-- **The runtime** (`src/formats/mwVfx.js`, pure): an effect mesh as OpenMW
+- **The runtime** (`src/formats/morrowind/mwVfx.js`, pure): an effect mesh as OpenMW
   runs one - every controller on the effect's own clock from zero
   (Animation::addEffect, EffectManager::addEffect), over when the clock
   reaches the longest ACTIVE controller's stop time
@@ -7184,12 +7184,12 @@ as Morrowind draws it - with the player's own masters' visuals:
   particle program's format - a triangle is three vertices of size 0 - so
   the renderer's particle path draws a mesh and its sparks alike
   (`src/render/vfxGpu.js`, `Renderer.drawWorldParticleEffects`).
-- **The records** (`formats/mwFirstPerson.js` readMagicEffect, readStatic;
+- **The records** (`formats/morrowind/mwFirstPerson.js` readMagicEffect, readStatic;
   ARM_RECORDS_VERSION 4): MGEF - INDX, MEDT's school, flags (the three a
   legacy file may set), colour and speed, PTEX and the four visuals' ids -
   and the STATs an effect is drawn with (the VFX_ family and any id an MGEF
   in the same file names), in the one pass every arm record rides.
-- **The plan** (`src/formats/mwSpellFx.js`): a casting visual per model
+- **The plan** (`src/formats/morrowind/mwSpellFx.js`): a casting visual per model
   (playSpellCastingEffects), a bolt for a target spell (getMagicBoltData:
   the particle texture only for one projectile effect, the light the mean
   of the effects' colours, NegativeLight inverted), each effect's hit

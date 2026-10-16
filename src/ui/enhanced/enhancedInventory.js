@@ -78,7 +78,7 @@ import { isQuickConsumable, canSwapTo, quickslotOf, assignQuickslot, clearQuicks
 import { setHotbarDropMode, hotbarSlotNode, hotbarTakesItem, hotbarDropItem, hotbarMode, toggleHotbarItem, hotbarKeyOf, setHotbarDragging } from './enhancedHotbar.js';
 import { registerQuickAct } from '../plus/plusPad.js';   // PADPLUS5: the pad's X on a row
 import { EQUIP_SLOTS } from '../../characters/paperdoll/paperdoll.js';
-import { dfWornEquipment } from '../../formats/mwItemMap.js';   // PX25
+import { dfWornEquipment } from '../../formats/morrowind/mwItemMap.js';   // PX25
 import { hasDaggerfallArrows } from '../../combat/fpArm.js';   // PX26
 import { ARMOR_ENUM } from '../../combat/enemyEquipment.js';   // PX25
 import { inventoryItemImage, inventoryItemModel, templateByIndex, isAmmunition } from '../../systems/item/itemTemplates.js';   // WEAR-UI: isAmmunition, spent not worn

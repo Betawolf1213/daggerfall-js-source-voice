@@ -65,7 +65,7 @@
 
 import { skinPost, affineMulInto } from './mwSkin.js';
 import { hangAffine } from './mwFirstPerson.js';
-import { SKIN_PAL_ROW } from '../render/skinPalette.js';   // the palette's shape, one home
+import { SKIN_PAL_ROW } from '../../render/skinPalette.js';   // the palette's shape, one home
 
 export { SKIN_PAL_ROW };
 

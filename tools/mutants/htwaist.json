@@ -250,7 +250,7 @@
   },
   {
     "name": "HT-WAIST-lantern-picker-takes-a-torch",
-    "file": "src/formats/mwFirstPerson.js",
+    "file": "src/formats/morrowind/mwFirstPerson.js",
     "old": "  return pickCarriedLight(lights, /lantern/, null, has);",
     "new": "  return pickCarriedLight(lights, /lantern|torch/, null, has);",
     "tests": [
@@ -259,7 +259,7 @@
   },
   {
     "name": "HT-WAIST-the-part-rides-the-bone",
-    "file": "src/formats/mwFirstPerson.js",
+    "file": "src/formats/morrowind/mwFirstPerson.js",
     "old": "      const placed = p.hang ? hangAffine(at, p.hang) : at;   // HT-WAIST",
     "new": "      const placed = at;   // HT-WAIST",
     "tests": [
@@ -268,7 +268,7 @@
   },
   {
     "name": "HT-WAIST-the-bind-drops-the-hang",
-    "file": "src/formats/mwFirstPerson.js",
+    "file": "src/formats/morrowind/mwFirstPerson.js",
     "old": "            hang: part.hang ?? null,   // HT-WAIST: a part that HANGS",
     "new": "            hang: null,   // HT-WAIST: a part that HANGS",
     "tests": [
@@ -277,7 +277,7 @@
   },
   {
     "name": "HT-WAIST-hung-by-its-foot",
-    "file": "src/formats/mwFirstPerson.js",
+    "file": "src/formats/morrowind/mwFirstPerson.js",
     "old": "  hang.anchor = Number.isFinite(maxZ) ? [(minX + maxX) / 2, (minY + maxY) / 2, maxZ] : [0, 0, 0];",
     "new": "  hang.anchor = Number.isFinite(maxZ) ? [(minX + maxX) / 2, (minY + maxY) / 2, 0] : [0, 0, 0];",
     "tests": [
@@ -286,7 +286,7 @@
   },
   {
     "name": "HT-WAIST-the-hook-in-the-wrong-frame",
-    "file": "src/formats/mwFirstPerson.js",
+    "file": "src/formats/morrowind/mwFirstPerson.js",
     "old": "  const inv = invert33(rest.a);",
     "new": "  const inv = [1, 0, 0, 0, 1, 0, 0, 0, 1];",
     "tests": [

@@ -38,7 +38,7 @@
 // Same registry shape as the widget's door - a name list and a loader,
 // the bundle opened once, never throwing.
 
-import { openUnityBundle } from '../../formats/unityBundleClient.js';   // the open runs in a worker (~10 s of LZ4 for this bundle); this thread when there is none
+import { openUnityBundle } from '../../formats/unity/unityBundleClient.js';   // the open runs in a worker (~10 s of LZ4 for this bundle); this thread when there is none
 import { toScreenOrder } from '../../formats/color32Order.js';   // DWHD1: EVERY arm keeps its rows - a screen quad, and the bundle reader already answers top-first
 import { decodePng } from '../../systems/textureReplacement.js';
 import { DFMOD_KEY_PREFIX } from '../../systems/seasonsIliacBayAssets.js';   // the stored-name prefix the texture pick writes for a bundle - one home
@@ -134,7 +134,7 @@ function manifestOf(bundle) {
 }
 
 /** The mod's bundle, found by GUID (then title) among the stored
- *  bundles, opened once - in a worker, formats/unityBundleClient.js:
+ *  bundles, opened once - in a worker, formats/unity/unityBundleClient.js:
  *  this bundle's index is ~10 s of LZ4 the frame cannot carry. The
  *  textures are indexed by name at open: 12,934 of them, and the
  *  widget's `find` per ask would walk them all for every frame of

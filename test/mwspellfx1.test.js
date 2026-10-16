@@ -4,20 +4,20 @@
 // Mac: "We need to implement morrowind spell casting effects and animations." The casting ANIMATIONS were MW-CAST1's;
 // this is the other half - the meshes Morrowind's magic is drawn with (an MGEF's casting, bolt, hit and area visuals,
 // VFX_Hands), run as OpenMW runs them: every controller on the effect's own clock from zero, the effect over at its
-// longest controller's stop. formats/mwVfx.js is the runtime, pure; these pins hold it to the reference's laws on
+// longest controller's stop. formats/morrowind/mwVfx.js is the runtime, pure; these pins hold it to the reference's laws on
 // hand-built files (the flattener and the reader are data-in, as MAC-Q's flame pins have them), and zoo.nif - pyffi's,
 // one of every record type the reader knows - goes through it whole.
 // ---------------------------------------------------------------------------
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { parseNif } from '../src/formats/mwNifFile.js';
+import { parseNif } from '../src/formats/morrowind/mwNifFile.js';
 import {
   vfxOf, createVfx, visAt, uvAt, flipIndex, shapeVertexColour, billboardRotation, vfxTextures, vfxCapacity,
   BILLBOARD_MODE, COLOR_TARGET, OVERRIDE_CLAMP_MODE,
-} from '../src/formats/mwVfx.js';
-import { VERTEX_COLOR_MODE } from '../src/formats/mwNifMesh.js';
-import { PARTICLE_FLOATS } from '../src/formats/mwParticles.js';
+} from '../src/formats/morrowind/mwVfx.js';
+import { VERTEX_COLOR_MODE } from '../src/formats/morrowind/mwNifMesh.js';
+import { PARTICLE_FLOATS } from '../src/formats/morrowind/mwParticles.js';
 
 const near = (a, b, eps = 1e-4) => Math.abs(a - b) < eps;
 const nearVec = (v, e, eps = 1e-4) => v.length === e.length && v.every((x, i) => near(x, e[i], eps));
@@ -291,7 +291,7 @@ test('MW-SPELLFX1: zoo.nif - pyffi\'s file with one of every record type the rea
 import {
   mwEffectOf, mwEffectsOfSpell, spellFxPlan, mgefColour, areaVisualScale, boltAttitude, boltSpin, actorFxTransform,
   MW_EFFECT, ELEMENT_DAMAGE, VFX_DEFAULT, MGEF_FLAG, BOLT_SPIN_PER_S,
-} from '../src/formats/mwSpellFx.js';
+} from '../src/formats/morrowind/mwSpellFx.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { effectSchool, EFFECT_COST_TABLE } from '../src/systems/spellcost.js';
 
@@ -603,7 +603,7 @@ test('MW-SPELLFX1: the one cast engine drives the layer at the reference\'s mome
 
 // ── VFX_Hands on the arm ────────────────────────────────────────────────────────────────────────────────────────────
 import { createFpArm, fpSkeletonPath, FP_CLIP_PATH, UPPER_BODY, VFX_HAND_BONES, mwVisualModel } from '../src/combat/fpArm.js';
-import { MW_WEAPON_TYPE } from '../src/formats/mwFirstPerson.js';
+import { MW_WEAPON_TYPE } from '../src/formats/morrowind/mwFirstPerson.js';
 import { castClip } from './fixtures/mw/castClip.mjs';
 
 const fx = (n) => new Uint8Array(readFileSync(new URL(`./fixtures/mw/${n}`, import.meta.url)));

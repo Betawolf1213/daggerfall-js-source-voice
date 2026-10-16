@@ -8,7 +8,7 @@
 // `Assembly.GetManifestResourceStream` (HorseTextureSet.LoadAll,
 // HorseWalkAnimationSet.LoadAll). No other mod this port carries did
 // that; every earlier one shipped its art as Unity textures in the
-// bundle, which `formats/unityBundle.js` already opens. So this is the
+// bundle, which `formats/unity/unityBundle.js` already opens. So this is the
 // other door: the PE file's CLI header, its metadata root, the `#~`
 // table stream walked table by table (ECMA-335 II.22 - every table
 // before ManifestResource has to be measured to find it, which is why

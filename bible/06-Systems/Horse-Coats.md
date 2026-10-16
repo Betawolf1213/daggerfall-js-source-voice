@@ -239,7 +239,7 @@ midline edge (u 0.419 and 0.620). The bay draws as it did.
 
 ### The horse (`world/horseModel.js`, `world/horseRig.js`)
 
-One stream a renderer, uploaded once as the character pass's GPU skin reads it (`formats/mwGpuSkin.js`'s corner, one
+One stream a renderer, uploaded once as the character pass's GPU skin reads it (`formats/morrowind/mwGpuSkin.js`'s corner, one
 influence pair, the post the identity), and every horse a view of it with its own palette (`renderer.js`
 createSkinPalette - a picture in a sprite batch is drawn at the flush, so each horse keeps the pose it was queued
 in). Each frame a horse's GAIT is stepped (`stepHorseGait`): idle, walk from 0.2 m/s, trot from 1.3, gallop from 5,

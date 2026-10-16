@@ -1,6 +1,6 @@
 // WD3 (2026-10-01, Mac: "These are the next mods I'd like to implement (We have permission) and ensure this doesn't
 // conflict or regress anything (For example housing customization)") - THE WORLD-DATA DOOR WITH TWO TOWN MODS ON IT
-// (src/formats/worldDataReplacement.js, scenes/modWorldData.js), and the laws of Daggerfall's the two mods meet.
+// (src/formats/worldData/worldDataReplacement.js, scenes/modWorldData.js), and the laws of Daggerfall's the two mods meet.
 //
 // Held here: a name two mods carry answers from the later-loaded mod (ModManager.TryGetAsset's reverse load order -
 // Beautiful Cities' FIGHBM00 over Villages'), a switched-off mod never hiding the one under it and arrival order no
@@ -19,11 +19,11 @@ import {
   registerWorldDataAsset, registerWorldDataPack, installWorldDataReplacement, bindWorldDataBlocks, _resetWorldDataReplacement,
   getDFBlockReplacementData, getDFLocationReplacementData, getDFRegionAdditionalLocationData, worldDataVendorCarries,
   quietLocationOverrides, blockFromJson, locationFromJson, latchWorldDataDoor,
-} from '../src/formats/worldDataReplacement.js';
+} from '../src/formats/worldData/worldDataReplacement.js';
 import { setLayoutPins, _resetLayoutPins } from '../src/systems/layoutPins.js';
 import { makeLocationKey, readingLocationKeyOf, setLastLocationKeyTo, getLocationVariant, clearWorldDataVariants } from '../src/systems/worldDataVariants.js';
 import { MapsFile } from '../src/formats/mapsFile.js';
-import { blockToDfuJson, locationToDfuJson } from '../src/formats/worldDataJson.js';
+import { blockToDfuJson, locationToDfuJson } from '../src/formats/worldData/worldDataJson.js';
 import { setValue, resetToDefaults } from '../src/systems/settings/settings.js';
 import { WORLD_DATA_PRIORITY } from '../src/scenes/modWorldData.js';
 import { layoutRmbBlock, WINDMILL_MODEL_ID } from '../src/world/rmbLayout.js';
@@ -84,7 +84,7 @@ test('WD3 the door: a name two mods carry answers from the mod loaded LATER - Be
   assert.equal(worldDataVendorCarries('detailed-ships', 'FIGHBM00.RMB.json'), false);
 });
 
-/** A pack as formats/worldDataPack.js opens one, counting its rebuilds; `location-17-6.json` will not rebuild. */
+/** A pack as formats/worldData/worldDataPack.js opens one, counting its rebuilds; `location-17-6.json` will not rebuild. */
 function fakePack(vendor = BV) {
   const calls = [];
   return {
@@ -156,7 +156,7 @@ test('WD3 the door is open ONLINE whatever Replace Game Artwork says - the groun
   } finally {
     if (had) Object.defineProperty(globalThis, 'location', had); else delete globalThis.location;
   }
-  assert.match(src('src/formats/worldDataReplacement.js'), /export const worldDataDoorOpen = \(\) => _doorLatched \?\? \(assetInjectionOn\(\) \|\| isOnlinePage\(\)\);\nconst worldDataOn = worldDataDoorOpen;/);
+  assert.match(src('src/formats/worldData/worldDataReplacement.js'), /export const worldDataDoorOpen = \(\) => _doorLatched \?\? \(assetInjectionOn\(\) \|\| isOnlinePage\(\)\);\nconst worldDataOn = worldDataDoorOpen;/);
   // AUDIT WD3 P3: latched for the game, as DFU reads AssetInjection at startup - a switch turned mid-game moves nothing
   again();
   assert.equal(latchWorldDataDoor(), false);
@@ -168,8 +168,8 @@ test('WD3 the door is open ONLINE whatever Replace Game Artwork says - the groun
   assert.equal(markOf(getDFBlockReplacementData(7, 'FIGHBM00.RMB')), 222, 'open for the game it was read open in - no holes punched in its towns');
   again();
   for (const fn of ['getDFRegionAdditionalLocationData', 'getDFLocationReplacementData', 'getDFBlockReplacementData', 'getBuildingReplacementData']) {
-    const at = src('src/formats/worldDataReplacement.js').indexOf(`export function ${fn}(`);
-    assert.match(src('src/formats/worldDataReplacement.js').slice(at, at + 400), /if \(!worldDataOn\(\)/, `${fn} asks the one gate`);
+    const at = src('src/formats/worldData/worldDataReplacement.js').indexOf(`export function ${fn}(`);
+    assert.match(src('src/formats/worldData/worldDataReplacement.js').slice(at, at + 400), /if \(!worldDataOn\(\)/, `${fn} asks the one gate`);
   }
   setValue('Enhancements', 'AssetInjection', 'True');
 });
@@ -292,7 +292,7 @@ test('WD3 the loader: each pack a URL the build emits (never a chunk), fetched o
   assert.match(M, /const counts = await Promise\.all\(Object\.entries\(globPacks\(\)\)\.map\(/, 'the packs fetched side by side (AUDIT WD3 B4)');
   assert.match(M, /signal: AbortSignal\.timeout\(PACK_FETCH_TIMEOUT_MS\)/, 'and never held for ever');
   assert.match(M, /if \(!name\.startsWith\('location-'\) && \(blocks\+\+ % 8\) !== 0\) return;/, 'one block in eight spot-checked');
-  assert.match(src('src/formats/worldDataPack.js'), /if \(typeof globalThis\.process === 'undefined' \|\| !globalThis\.process\.versions\?\.node\) throw new Error\('this browser cannot inflate the pack \(no DecompressionStream\)'\);/, 'a browser never reaches for node:zlib');
+  assert.match(src('src/formats/worldData/worldDataPack.js'), /if \(typeof globalThis\.process === 'undefined' \|\| !globalThis\.process\.versions\?\.node\) throw new Error\('this browser cannot inflate the pack \(no DecompressionStream\)'\);/, 'a browser never reaches for node:zlib');
   assert.match(M, /if \(!worldDataDoorOpen\(\)\) return false;/, 'and honours no pin into one');
   assert.match(M, /configureLayoutPins\(\{ vendorOn: \(v\) => modLatchedOn\(v\) === true, vendorVersion: \(v\) => _packs\.get\(v\)\?\.mod\?\.version \?\? '' \}\);/);
   assert.match(M, /_pending\.set\(vendor, loadPackFrom\(vendor, entry\[1\], \(\) => false\)\.finally\(\(\) => _pending\.delete\(vendor\)\)\);\n {2}return \(await _pending\.get\(vendor\)\) > 0;/, 'a pinned pack answers only where a pin lets it in, fetched once however many ask');

@@ -98,10 +98,10 @@ import { closeOnOutsideTap } from './enhancedOverlays.js';   // OT1: a tap on th
 import { drawTutorialsPane, releaseTutorialsPane } from '../tutorialsPane.js';   // TUT1: the Tutorials tab and section - every tutorial page, to read again
 import { drawShotsPane, releaseShotsPane } from '../shotsPane.js';   // LOAD1: the Screenshots pane - the gallery the PrintScreen key keeps
 import { TEST_PRESETS, TEST_RIDE, TEST_SEA, TEST_LOOT } from '../../systems/testRoom.js';   // TR3: the one home the pane shows; TSR4: the ride; LR3: the loot ladder
-import { mwRaceId } from '../../formats/mwNpc.js';
+import { mwRaceId } from '../../formats/morrowind/mwNpc.js';
 import { EQUIP_SLOTS, equipTableOf } from '../../systems/equip.js';
 import { boonStatRows } from '../temperatureCard.js';   // AUDIT C&C B11: the Attributes page names the boons that raise them
-import { dfWornEquipment } from '../../formats/mwItemMap.js';
+import { dfWornEquipment } from '../../formats/morrowind/mwItemMap.js';
 import { ARMOR_ENUM } from '../../combat/enemyEquipment.js';
 import { morrowindDataCount, morrowindDataCounted, countMorrowindArchives, assetPickerOpen, textureStoreRegistered, textureStoreSettled } from '../../scenes/dataSource.js';   // MAC1: the boot door counts the store itself; AUDIT 65 XL-6: by NAME - it never reads a stored file   // MW-IMPORT: the attach door; MWFIX: and the modal it opens owns the keyboard
 import { CATEGORIES, keysOf, isSettingItem, optionPath, whereIs } from '../settings/settingsMap.js';   // ORG2: the one map of every option

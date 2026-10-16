@@ -11,7 +11,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createFpArm, fpSkeletonPath, FP_CLIP_PATH, UPPER_BODY } from '../src/combat/fpArm.js';
-import { MW_WEAPON_TYPE } from '../src/formats/mwFirstPerson.js';
+import { MW_WEAPON_TYPE } from '../src/formats/morrowind/mwFirstPerson.js';
 import { SpellCastAnim, HELD_RELEASE_MAX_S, CAST_FRAME_PERIOD, RELEASE_FRAME } from '../src/combat/fpsSpellCasting.js';
 import { castClip, CAST_KEYS } from './fixtures/mw/castClip.mjs';
 

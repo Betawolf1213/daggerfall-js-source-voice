@@ -68,7 +68,7 @@ one item map could read, which was DFU's own weapons and armour. Three kinds sto
   asked Morrowind's records, which hold no gun. They take its own model now (`combat/fpArm.js` iconRecordOf).
 - Roleplay & Realism Items' two weapons and twelve pieces of armour (templates 513-526): no row knew them, so they hung
   as their classic pictures, drew EMPTY HANDS in Morrowind first person and were bare skin when worn. Each resolves as
-  the classic item of its shape (`formats/mwFirstPerson.js` MOD_WEAPON_TO_MW, `formats/mwItemMap.js` MOD_ARMOR_ROWS;
+  the classic item of its shape (`formats/morrowind/mwFirstPerson.js` MOD_WEAPON_TO_MW, `formats/morrowind/mwItemMap.js` MOD_ARMOR_ROWS;
   a vambrace asks for a bracer, one side), worn too, and the census counts them.
 - One's own garment set down stood as the classic pile of cloth (TEXTURE.204) though the item has a Morrowind record.
   It stands as its Morrowind picture on the billboard pass now, its ghost with it (`scenes/decor/decorRoom.js`

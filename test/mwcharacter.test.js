@@ -1,16 +1,16 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { parseNif } from '../src/formats/mwNifFile.js';
-import { extractTracks, sampleTrack } from '../src/formats/mwAnim.js';
+import { parseNif } from '../src/formats/morrowind/mwNifFile.js';
+import { extractTracks, sampleTrack } from '../src/formats/morrowind/mwAnim.js';
 import {
   buildSkeleton,
   poseSkeleton,
   skeletonSpaceMatrices,
   skinBatch,
-} from '../src/formats/mwSkin.js';
-import { bindPart, attachmentTransform } from '../src/formats/mwCharacter.js';
-import { GRAPH_ROOT } from '../src/formats/mwSkin.js';
+} from '../src/formats/morrowind/mwSkin.js';
+import { bindPart, attachmentTransform } from '../src/formats/morrowind/mwCharacter.js';
+import { GRAPH_ROOT } from '../src/formats/morrowind/mwSkin.js';
 
 const ANIMATED = new Uint8Array(
   readFileSync(new URL('./fixtures/mw/animated.nif', import.meta.url)),

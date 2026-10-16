@@ -54,12 +54,12 @@ export const WALK = Object.freeze({ cell: 0.25, head: 1.7, step: 0.65, reach: 2.
 /** The player's towns: the door holding both packs, BLOCKS.BSA, MAPS.BSA, and a model getter as the pipeline builds. */
 export async function openTownData(arena2) {
   const bytes = (f) => new Uint8Array(readFileSync(join(arena2, f)));
-  const W = await import('../src/formats/worldDataReplacement.js');
+  const W = await import('../src/formats/worldData/worldDataReplacement.js');
   const { setValue } = await import('../src/systems/settings/settings.js');
   const { MapsFile } = await import('../src/formats/mapsFile.js');
   const { BlocksFile } = await import('../src/formats/blocksFile.js');
   const { Arch3dFile } = await import('../src/formats/arch3dFile.js');
-  const { openWorldDataPack } = await import('../src/formats/worldDataPack.js');
+  const { openWorldDataPack } = await import('../src/formats/worldData/worldDataPack.js');
   const { dfMeshToModel } = await import('../src/world/meshReader.js');
   const { patchSeams } = await import('../src/world/arch3dSeams.js');
   const { MACHINERY, MACHINERY_MODEL_ID } = await import('../src/world/windmillMesh.js');

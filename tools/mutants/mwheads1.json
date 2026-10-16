@@ -1,7 +1,7 @@
 [
   {
     "name": "MWHEADS1-the-data-pools-again",
-    "file": "src/formats/mwFirstPerson.js",
+    "file": "src/formats/morrowind/mwFirstPerson.js",
     "old": "  if (own && (!has || [...own.heads, ...own.hairs].every((r) => has(`meshes/${r.model}`)))) return { heads: own.heads, hairs: own.hairs };\n",
     "new": "",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "MWHEADS1-AUDIT-own-pools-without-their-meshes",
-    "file": "src/formats/mwFirstPerson.js",
+    "file": "src/formats/morrowind/mwFirstPerson.js",
     "old": "  if (own && (!has || [...own.heads, ...own.hairs].every((r) => has(`meshes/${r.model}`)))) return",
     "new": "  if (own) return",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "MWHEADS1-AUDIT-one-mesh-is-enough",
-    "file": "src/formats/mwFirstPerson.js",
+    "file": "src/formats/morrowind/mwFirstPerson.js",
     "old": "[...own.heads, ...own.hairs].every((r) => has(",
     "new": "[...own.heads, ...own.hairs].some((r) => has(",
     "tests": [
@@ -121,7 +121,7 @@
   },
   {
     "name": "MWHEADS1-AUDIT-rows-ignore-the-archives",
-    "file": "src/formats/mwFirstPerson.js",
+    "file": "src/formats/morrowind/mwFirstPerson.js",
     "old": "  const pools = facePools(parts, race, female, { has, own: ownHeads });\n",
     "new": "  const pools = facePools(parts, race, female, { own: ownHeads });\n",
     "tests": [
@@ -162,7 +162,7 @@
   },
   {
     "name": "MWHEADS1-AUDIT-one-curated-half-is-enough",
-    "file": "src/formats/mwFirstPerson.js",
+    "file": "src/formats/morrowind/mwFirstPerson.js",
     "old": "  return !!c && !!poolRecord(pools.heads, c.head) && !!poolRecord(pools.hairs, c.hair);",
     "new": "  return !!c && !!poolRecord(pools.heads, c.head);",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "MWHEADS1-AUDIT-counts-the-data",
-    "file": "src/formats/mwFirstPerson.js",
+    "file": "src/formats/morrowind/mwFirstPerson.js",
     "old": "      counts: { all: sorted.length },",
     "new": "      counts: { all: 0 },",
     "tests": [

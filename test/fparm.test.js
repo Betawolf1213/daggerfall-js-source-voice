@@ -1,18 +1,18 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { parseNif } from '../src/formats/mwNifFile.js';
-import { extractTracks, sampleTrack } from '../src/formats/mwAnim.js';
-import { accumRootRef } from '../src/formats/mwSkin.js';
-import { PART_BONES } from '../src/formats/mwNpc.js';
-import { portraitFeatures, headFeatures, hairFeatures, matchFace } from '../src/formats/mwFaceMatch.js';
-import { assembleFirstPersonArm, poseAssembly } from '../src/formats/mwFirstPerson.js';
+import { parseNif } from '../src/formats/morrowind/mwNifFile.js';
+import { extractTracks, sampleTrack } from '../src/formats/morrowind/mwAnim.js';
+import { accumRootRef } from '../src/formats/morrowind/mwSkin.js';
+import { PART_BONES } from '../src/formats/morrowind/mwNpc.js';
+import { portraitFeatures, headFeatures, hairFeatures, matchFace } from '../src/formats/morrowind/mwFaceMatch.js';
+import { assembleFirstPersonArm, poseAssembly } from '../src/formats/morrowind/mwFirstPerson.js';
 import {
   packFpArm, fpSkeletonPath, buildFpArm, createFpArm, wornVerdicts, animWeaponType, UPPER_BODY, wornEquipKeyOf,
   FP_CLIP_PATH, NIF_TO_PASS, FP_FIELD_OF_VIEW, firstPersonEye, FP_FLOATS,
   collectArmTextures,
 } from '../src/combat/fpArm.js';
-import { firstPersonCameraRef, FP_NECK_ROTATE_FACTOR } from '../src/formats/mwFirstPerson.js';
+import { firstPersonCameraRef, FP_NECK_ROTATE_FACTOR } from '../src/formats/morrowind/mwFirstPerson.js';
 
 // MW-D8: THE ARM IN THE GAME.
 //
@@ -212,7 +212,7 @@ test('MW-D10: the neck takes 0.75 of the look, and the port pitches the OTHER WA
   // axis-aligned neck that is the identity, so armfp.nif TURNS its neck
   // 8 degrees and a port that rotates in the local frame moves the eye
   // somewhere else.
-  const src2 = rd('src/formats/mwFirstPerson.js');
+  const src2 = rd('src/formats/morrowind/mwFirstPerson.js');
   assert.match(src2, /mat33Mul\(mat33Mul\(mat33Mul\(w, rotate\), transpose33\(w\)\), local\.rotation\)/,
     'worldOrient * rotate * worldOrient^-1 * localRot, in that order');
 
@@ -316,14 +316,14 @@ test('MW-D8: the frame path is synchronous - no await, no dynamic import, in upd
 
 test('MW-D8: the arm IMPORTS the assembly law, it does not carry a second copy of it', () => {
   const src = rd('src/combat/fpArm.js');
-  assert.match(src, /from '\.\.\/formats\/mwFirstPerson\.js'/, 'the law comes from its one home');
+  assert.match(src, /from '\.\.\/formats\/morrowind\/mwFirstPerson\.js'/, 'the law comes from its one home');
   for (const fn of ['assembleFirstPersonArm', 'poseAssembly', 'armPieceRows', 'clipReport']) {
     assert.ok(src.includes(fn), `${fn} is used`);
     assert.ok(!new RegExp(`function ${fn}\\b`).test(src), `and ${fn} is NOT redefined here`);
   }
   // MW7 died of two ports of one rule drifting apart. The tools-side
   // inspector re-exports the same module rather than owning a copy.
-  assert.match(rd('src/tools/mwInspect.js'), /export \* from '\.\.\/formats\/mwFirstPerson\.js';/,
+  assert.match(rd('src/tools/mwInspect.js'), /export \* from '\.\.\/formats\/morrowind\/mwFirstPerson\.js';/,
     'and the diagnostic page reads the same home through a shim');
 });
 
@@ -342,7 +342,7 @@ const wpdtRec = (id, model, type, name = 'W', { short = false, enchanted = false
 };
 
 test('MW-D9: WPDT is read at a CITED offset, and a short record is refused not read past', async () => {
-  const { weaponRecords, MW_WEAPON_TYPE } = await import('../src/formats/mwFirstPerson.js');
+  const { weaponRecords, MW_WEAPON_TYPE } = await import('../src/formats/morrowind/mwFirstPerson.js');
   // The layout is components/esm3/loadweap.hpp:71, quoted in the rules
   // doc: float mWeight; int32 mValue; int16 mType; ... - so mType is at
   // byte 10, and 4 + 4 + 2 is the whole derivation.
@@ -362,7 +362,7 @@ test('MW-D9: WPDT is read at a CITED offset, and a short record is refused not r
 });
 
 test('MW-D9 rules 8 + 17: the attach bone is a table, and the bow is why', async () => {
-  const { weaponAttachBone, MW_WEAPON_TYPE, DEFAULT_WEAPON_BONE } = await import('../src/formats/mwFirstPerson.js');
+  const { weaponAttachBone, MW_WEAPON_TYPE, DEFAULT_WEAPON_BONE } = await import('../src/formats/morrowind/mwFirstPerson.js');
   // Rule 8's column, read out. The reverted arc had FOUR weapon classes
   // and one bone; the bow is the only weapon that changes hands.
   assert.equal(weaponAttachBone(MW_WEAPON_TYPE.MarksmanBow), 'Weapon Bone Left');
@@ -380,7 +380,7 @@ test('MW-D9 rules 8 + 17: the attach bone is a table, and the bow is why', async
 });
 
 test('MW-D9: the Daggerfall->Morrowind mapping is DECLARED, complete, and keyed by template', async () => {
-  const { DF_TO_MW_WEAPON, dfWeaponToMw, MW_WEAPON_TYPE } = await import('../src/formats/mwFirstPerson.js');
+  const { DF_TO_MW_WEAPON, dfWeaponToMw, MW_WEAPON_TYPE } = await import('../src/formats/morrowind/mwFirstPerson.js');
   const { WEAPONS } = await import('../src/characters/weapons.js');
   // Every wieldable Daggerfall weapon template has a row. Arrow is
   // ammunition, not a wielded weapon, and is the only omission.
@@ -421,7 +421,7 @@ test('MW-D9: the Daggerfall->Morrowind mapping is DECLARED, complete, and keyed 
 });
 
 test('MW-D9: picking a record prefers the material, avoids the enchanted, and never substitutes a type', async () => {
-  const { weaponRecords, pickWeaponRecord, MW_WEAPON_TYPE } = await import('../src/formats/mwFirstPerson.js');
+  const { weaponRecords, pickWeaponRecord, MW_WEAPON_TYPE } = await import('../src/formats/morrowind/mwFirstPerson.js');
   const recs = weaponRecords(Uint8Array.from([
     ...wpdtRec('iron longsword', 'w/i.nif', MW_WEAPON_TYPE.LongBladeOneHand),
     ...wpdtRec('daedric longsword', 'w/d.nif', MW_WEAPON_TYPE.LongBladeOneHand),
@@ -519,7 +519,7 @@ test('MW-D9c: EVERY .esm is read, not the first - an expansion first must not em
   const expansion = bytes(bodyRec('b_n_nord_m_hands.1st_x', 'nord', 'chest', 'b/x.nif'));
   const morrowind = bytes(bodyRec('b_n_breton_m_hands.1st', 'breton', 'hand', 'b/h.nif'));
 
-  const { bodyParts, armReport, armMeshPaths } = await import('../src/formats/mwFirstPerson.js');
+  const { bodyParts, armReport, armMeshPaths } = await import('../src/formats/morrowind/mwFirstPerson.js');
   const firstOnly = bodyParts(expansion);                                   // the old behaviour
   const allOfThem = [...bodyParts(expansion), ...bodyParts(morrowind)];     // the new one
 
@@ -626,7 +626,7 @@ test('MW-D9f: the rig gates the step on ready() and the draw on active()', () =>
 
 test('MW-D11 rule 36: the texture path is FOUR PROBES over a re-rooted, extension-swapped name', async () => {
   const { correctTexturePath, normalizeVfsPath, findDirectory, changeExtension } =
-    await import('../src/formats/mwTexture.js');
+    await import('../src/formats/morrowind/mwTexture.js');
 
   // THE REASON THE LAW EXISTS, in one line: Bethesda converted the BSA
   // textures from TGA to DDS and left every reference saying .tga
@@ -697,7 +697,7 @@ test('MW-D11 rule 36: the texture path is FOUR PROBES over a re-rooted, extensio
 
 test('MW-D11: the clamp bits are the other way round, and a miss is magenta', async () => {
   const { wrapModes, warningImage, GL_REPEAT, GL_CLAMP_TO_EDGE } =
-    await import('../src/formats/mwTexture.js');
+    await import('../src/formats/morrowind/mwTexture.js');
   // property.hpp:70-71 - wrapT is bit 0 and wrapS is bit 1, which is the
   // reverse of what the names suggest.
   // The GL enums by VALUE, not by symbol: asserting wrapModes against
@@ -758,7 +758,7 @@ test('MW-D11: the arm resolves, decodes and de-duplicates the textures its meshe
 });
 
 test('MW-D11: a texture the archives do not carry becomes the warning image, not a refusal', async () => {
-  const { warningImage } = await import('../src/formats/mwTexture.js');
+  const { warningImage } = await import('../src/formats/morrowind/mwTexture.js');
   const pieces = [{ material: { textureFile: 'tx_absent.tga' } }];
   const empty = collectArmTextures(pieces, [{ has: () => false, get: () => null }]);
   const entry = empty.get('tx_absent.tga');
@@ -902,9 +902,9 @@ test('MW-D20: the neck conjugates in the OBJECT ROOT frame - the file root\'s ro
   // stayed Rx(-t) - a neck that pitches about the wrong axis the moment
   // a retail root carries rotation.
   const { poseSkeleton, buildSkeleton, skeletonSpaceMatrices, GRAPH_ROOT } =
-    await import('../src/formats/mwSkin.js');
-  const { applyFirstPersonNeck } = await import('../src/formats/mwFirstPerson.js');
-  const { sampleTrack: st } = await import('../src/formats/mwAnim.js');
+    await import('../src/formats/morrowind/mwSkin.js');
+  const { applyFirstPersonNeck } = await import('../src/formats/morrowind/mwFirstPerson.js');
+  const { sampleTrack: st } = await import('../src/formats/morrowind/mwAnim.js');
   const skel = buildSkeleton(parseNif(f('armneckx.nif')));
   // Through poseAssembly - the REAL call site - so a caller that hands
   // the conjugation a root-relative frame dies here, not only a direct
@@ -925,7 +925,7 @@ test('MW-D20: the neck conjugates in the OBJECT ROOT frame - the file root\'s ro
 });
 
 test('MW-D22: mType reads from byte EIGHT, pinned against a layout the writer cannot share', async () => {
-  const { weaponRecords, MW_WEAPON_TYPE } = await import('../src/formats/mwFirstPerson.js');
+  const { weaponRecords, MW_WEAPON_TYPE } = await import('../src/formats/morrowind/mwFirstPerson.js');
   // Every WPDT field planted with a DISTINCT value, laid out by hand
   // from loadweap.hpp's struct - NOT through wpdtRec, which was authored
   // from the same guess as the reader and so proved nothing for two
@@ -956,7 +956,7 @@ test('MW-D22: mType reads from byte EIGHT, pinned against a layout the writer ca
 // ── MW-D24: THE THIRD-PERSON BODY, TWO RIGS AND ONE MACHINE ─────────
 
 import { tpSkeletonPath } from '../src/combat/fpArm.js';
-import { tpAnimSources, playerBodyRows, TP_BASE_MODEL } from '../src/formats/mwFirstPerson.js';
+import { tpAnimSources, playerBodyRows, TP_BASE_MODEL } from '../src/formats/morrowind/mwFirstPerson.js';
 
 test('MW-D24 rule 6: the third-person skeleton column (actorutil.cpp:504-513)', () => {
   assert.equal(tpSkeletonPath({}), 'meshes/base_anim.nif');
@@ -1203,8 +1203,8 @@ test('MW-D24: in third person NOTHING first-person draws - the rig\'s one seam i
 import {
   movementAnimState, composeMovementGroup, MOVEMENT_FALLBACK_SPEED, MOVEMENT_SPEED_CAP,
   turnAnimSpeed, MW_UNITS_PER_METER, MW_WEAPON_TYPE,
-} from '../src/formats/mwFirstPerson.js';
-import { animVelocity } from '../src/formats/mwAnim.js';
+} from '../src/formats/morrowind/mwFirstPerson.js';
+import { animVelocity } from '../src/formats/morrowind/mwAnim.js';
 
 test('MW-D26: the movestate ladder is the reference\'s own nest (character.cpp:2085, 2297-2330)', () => {
   // sneak beats run beats walk, exactly as the ternaries order them
@@ -1456,12 +1456,12 @@ import {
   mwArmorRecords, itemMapCoverage, mwItemReport,
   ARMO_PART, composeWornArmor, shadowSkinRows, dfWornArmor, dfWornEquipment,
   MW_CLOTHING_TYPE, DF_CLOTHING_ROWS, mwClothingRecord, fpWornAdds,
-} from '../src/formats/mwItemMap.js';
-import { armorRecords, clothingRecords, raceBeastFlag, pickWeaponRecord, facePools, MOD_WEAPON_TO_MW } from '../src/formats/mwFirstPerson.js';
+} from '../src/formats/morrowind/mwItemMap.js';
+import { armorRecords, clothingRecords, raceBeastFlag, pickWeaponRecord, facePools, MOD_WEAPON_TO_MW } from '../src/formats/morrowind/mwFirstPerson.js';
 import { OWN_MW_MODELS } from '../src/characters/ownModels/ownWeaponModels.js';   // FIELD-GUN-MW2: counted off the table, not typed
 import { OWN_MW_ARMOR } from '../src/characters/ownModels/ownArmorModels.js';   // MW-BRIG1: and the armour
 import { CLOAK_NAMES } from '../src/characters/ownModels/ownClothingModels.js';   // MW-CLOAK1: and the cloak
-import { CLOTHING_NAME } from '../src/formats/mwItemMap.js';
+import { CLOTHING_NAME } from '../src/formats/morrowind/mwItemMap.js';
 import { ARMOR_ENUM } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 
@@ -1857,7 +1857,7 @@ test('MW-D30: the priority law - armor beats clothing, the robe beats the cuiras
   // the reference's formula (npcanimation.cpp:625-630), and the sweep
   // keeps a refactor from quietly flattening it into "equivalent
   // today, wrong the day a garment walks first".
-  const src = readFileSync('src/formats/mwItemMap.js', 'utf8');
+  const src = readFileSync('src/formats/morrowind/mwItemMap.js', 'utf8');
   assert.match(src, /\(\(0 \+ 1\) << 1\) \+ 1;/, 'armor lost its +1');
   assert.match(src, /\(\(base \+ 1\) << 1\) \+ 0;/, 'clothing lost its +0 formula');
 });
@@ -2095,7 +2095,7 @@ test('MW-D35: precedence - curated over matched over the walk, and the wiring', 
 
 // ── MW-D31: SKINNING BROUGHT TO 1:1 ─────────────────────────────────
 
-import { skinBatch, buildSkeleton as bSkel } from '../src/formats/mwSkin.js';
+import { skinBatch, buildSkeleton as bSkel } from '../src/formats/morrowind/mwSkin.js';
 
 test('MW-D31: the skin transform applies ONCE, after the blend - unnormalised weights prove it', () => {
   // riggeometry.cpp:172-204: resultMat sums ONLY invBind*boneInSkel
@@ -2201,8 +2201,8 @@ test('MW-D31 rule 13: the mirror reads the RESOLVED node\'s own name, case-sensi
 
 // ── MW-D32: BODY-PART RESOLUTION BROUGHT TO GETBODYPARTS-WHOLE ──────
 
-import { resolveBodyParts, raceRecords } from '../src/formats/mwFirstPerson.js';
-import { indexSkins, assembleNpc } from '../src/formats/mwNpc.js';
+import { resolveBodyParts, raceRecords } from '../src/formats/morrowind/mwFirstPerson.js';
+import { indexSkins, assembleNpc } from '../src/formats/morrowind/mwNpc.js';
 import { resolveWeaponParts } from '../src/combat/fpArm.js';
 
 test('MW-D32: the sweep is getBodyParts whole - last wins, filters exact, FP hand ladder', () => {
@@ -2330,7 +2330,7 @@ test('MW-D34: the third-person model matrix carries the measured chirality flip 
 });
 
 test('MW-D34: textures decode BY EXTENSION - a TGA is not a failed DDS', async () => {
-  const { decodeTga, decodeBmp, decodeTextureImage } = await import('../src/formats/mwTexture.js');
+  const { decodeTga, decodeBmp, decodeTextureImage } = await import('../src/formats/morrowind/mwTexture.js');
   // The ladder legitimately answers the AUTHORED .tga/.bmp when the
   // .dds probe misses (resourcehelpers.cpp:112-114), and the reference
   // decodes that path by its extension with the non-standard "targa"
@@ -2640,8 +2640,8 @@ test('IG6: the arms are FIXED TO THE SCREEN by default - the owner\'s final call
 
 // ═══ MW-D37: the materials are colour truth; the dye picks the garment ═
 test('MW-D37: the material chains follow Daggerfall\u2019s own palette, and walk in order', async () => {
-  const { DF_TO_MW_MATERIAL, pickWeaponRecord: pick } = await import('../src/formats/mwFirstPerson.js');
-  const { DF_TO_MW_ARMOR_MATERIAL, DF_MATERIAL_RGB, mwArmorRecords } = await import('../src/formats/mwItemMap.js');
+  const { DF_TO_MW_MATERIAL, pickWeaponRecord: pick } = await import('../src/formats/morrowind/mwFirstPerson.js');
+  const { DF_TO_MW_ARMOR_MATERIAL, DF_MATERIAL_RGB, mwArmorRecords } = await import('../src/formats/morrowind/mwItemMap.js');
   // colour truth: Elven is silver-white in ART_PAL, so it wears silver
   // (weapons) / steel (armor) - never green glass.
   assert.deepEqual(DF_TO_MW_MATERIAL.Elven, ['silver', 'steel']);
@@ -2746,8 +2746,8 @@ test('AUDIT 34 F1/F2: garment colour is lazy and shared; the weapon note reads t
   assert.match(arm, /const colourOf = \(c\) => clothingColourOf\(c, cat\.parts, cat\.archives, cat\.gen\);/, 'the icon measures through a different door than the build');
   assert.equal((arm.match(/function clothingColourOf\(/g) || []).length, 1);
   // F2: an elven weapon resolved to silver is 'resolved', not a fallback
-  const { mwItemReport } = await import('../src/formats/mwItemMap.js');
-  const { pickWeaponRecord: pick } = await import('../src/formats/mwFirstPerson.js');
+  const { mwItemReport } = await import('../src/formats/morrowind/mwItemMap.js');
+  const { pickWeaponRecord: pick } = await import('../src/formats/morrowind/mwFirstPerson.js');
   const W = (id, type) => ({ id, model: `${id}.nif`, name: '', type, enchanted: false });
   const rep = mwItemReport([], { weapons: [W('silver_dagger', 0), W('iron_dagger', 0)], clothes: [], pickWeapon: pick });
   const elven = rep.find((r) => r.item === 'Elven Dagger');
@@ -2912,8 +2912,8 @@ test('MAC-S1: ONE flush, called from every exit out of `busy`', () => {
 
 // ── MW-D39: JUMP - THE FOURTH SLOT ──────────────────────────────────
 
-import { jumpAnimState } from '../src/formats/mwFirstPerson.js';
-import { resetClip, advanceClip } from '../src/formats/mwAnim.js';
+import { jumpAnimState } from '../src/formats/morrowind/mwFirstPerson.js';
+import { resetClip, advanceClip } from '../src/formats/morrowind/mwAnim.js';
 
 test('MW-D39: the jump state is update()\'s own derivation (character.cpp:2195-2296)', () => {
   // In the air, not swimming, not levitating: InAir, movement gated.
@@ -3016,7 +3016,7 @@ test('MW-D39: THE FOUR HOSTS feed the jump-state inputs, named and swept', () =>
 
 // ═══ MW-D39: the spellcast stance and the cast ══════════════════════
 test('MW-D39: a readied spell IS the stance, and outranks the sheath', async () => {
-  const { MW_WEAPON_TYPE, weaponShortGroup, weaponLongGroup, composeWeaponGroup } = await import('../src/formats/mwFirstPerson.js');
+  const { MW_WEAPON_TYPE, weaponShortGroup, weaponLongGroup, composeWeaponGroup } = await import('../src/formats/morrowind/mwFirstPerson.js');
   // the reference asks for the spell's weapon type before it asks what
   // is in the hand; sheathed hands with a spell readied are the
   // caster's own, which is what the spellcast animation wants.
@@ -3142,7 +3142,7 @@ test('AUDIT 36 F2: an INSTANT self-cast animates - the cast latches its own stan
 
 // ═══ PX26: Mac's four notes ═════════════════════════════════════════
 test('PX26 F4: the interior lane sends the jump-state inputs - without them the jump can never play', async () => {
-  const { jumpAnimState } = await import('../src/formats/mwFirstPerson.js');
+  const { jumpAnimState } = await import('../src/formats/morrowind/mwFirstPerson.js');
   // the defect, stated as data: a move vector with no grounded/jumping
   // fields derives "on the ground, no jump" for EVERY frame of a jump,
   // so refreshJumpAnims is never owed a play and the arm never leaves
@@ -3178,7 +3178,7 @@ test('PX26 F1/F2/F3: the menu figure carries the hand, instantly, and a mid-buil
 });
 
 test('PX27: the arm\u2019s REACH is swept over every clip, not the idle alone', async () => {
-  const { clipSweepTimes } = await import('../src/formats/mwFirstPerson.js');
+  const { clipSweepTimes } = await import('../src/formats/morrowind/mwFirstPerson.js');
   // Mac's note 1: the full arms do not show on a swing or a bow. `reach`
   // sets the fp camera's near and far planes (reach/200, reach*4) and
   // was measured over the IDLE clip only - the shortest pose the arm
@@ -3224,7 +3224,7 @@ test('PX27: the arm\u2019s REACH is swept over every clip, not the idle alone', 
 });
 
 test('PX29: the movement rate divides by the PLAYING clip\u2019s own velocity (Mac\u2019s revert)', async () => {
-  const { sourceVelocityOf, sourcesVelocity } = await import('../src/formats/mwFirstPerson.js');
+  const { sourceVelocityOf, sourcesVelocity } = await import('../src/formats/morrowind/mwFirstPerson.js');
   // MW-D29 moved the divisor from the picked source's velocity to
   // getVelocity's multi-source walk. In first person that is invisible
   // (the .1st clips carry no accumulation-root movement, so every

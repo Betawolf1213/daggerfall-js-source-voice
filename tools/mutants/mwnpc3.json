@@ -37,7 +37,7 @@
  },
  {
   "name": "MWNPC3-assembly-parses-its-own",
-  "file": "src/formats/mwFirstPerson.js",
+  "file": "src/formats/morrowind/mwFirstPerson.js",
   "old": "  if (parseNif) mod.parseNif = parseNif;\n",
   "new": "\n",
   "tests": [

@@ -16965,7 +16965,7 @@ over the mean life, GravityAffector's `magic = 1.6f`, the
 
 ### Where it lives
 
-- `formats/mwNifMesh.js` walks the three particle geometries as it always
+- `formats/morrowind/mwNifMesh.js` walks the three particle geometries as it always
   walked them and, when a caller brings a sink, hands each one over WHOLE
   - the composed transform, the property chain and the enclosing
   NiBSParticleNode's flags (AutoPlay, LocalSpace), which is what
@@ -16973,12 +16973,12 @@ over the mean life, GravityAffector's `magic = 1.6f`, the
   change. NiAlphaProperty's blend FUNCTION and NiZBufferProperty's two bits
   reach the material now; nothing had asked for them before a drawable
   that blends.
-- `formats/mwParticles.js` is the descriptor and the running system.
+- `formats/morrowind/mwParticles.js` is the descriptor and the running system.
   `particleSystemsOf(nif)` answers what a file carries; `createParticleSystem`
   emits, operates and ages in the reference's own update order and answers
   `quads()` - centre, half-extent, colour, alpha - exactly as osgParticle
   would draw them. Pure: no GL, a `rolls` the pins can drive.
-- `formats/mwCharacter.js` `bindPart` carries a part's systems out beside
+- `formats/morrowind/mwCharacter.js` `bindPart` carries a part's systems out beside
   its batches; `mwFirstPerson.js` `bindPartsInto` puts them on
   `assembly.effects` with the SAME placement the part's rigid shapes take -
   the bone, the mirror, rule 14's offset, the part's attitude - because

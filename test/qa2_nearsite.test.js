@@ -15,7 +15,7 @@ import assert from 'node:assert/strict';
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { SITE_TYPES } from '../src/systems/quest/place.js';
 import { configureLayoutPins, _resetLayoutPins } from '../src/systems/layoutPins.js';
-import { registerWorldDataAsset, _resetWorldDataReplacement, installWorldDataReplacement, bindWorldDataBlocks } from '../src/formats/worldDataReplacement.js';
+import { registerWorldDataAsset, _resetWorldDataReplacement, installWorldDataReplacement, bindWorldDataBlocks } from '../src/formats/worldData/worldDataReplacement.js';
 import { mapPixelToLongitudeLatitude } from '../src/formats/mapsFile.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { loadTables, rmbBlock, town, typeAtKey, mark, SPAWN, ITEM } from './fb1004dTowns.mjs';

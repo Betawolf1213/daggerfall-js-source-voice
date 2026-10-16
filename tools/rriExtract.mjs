@@ -17,7 +17,7 @@
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, unlinkSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { readUnityBundle } from '../src/formats/unityBundle.js';
+import { readUnityBundle } from '../src/formats/unity/unityBundle.js';
 import { readPng } from './pngIO.mjs';
 import { encodeSprite, sameOnScreen } from './diverseWeaponsExtract.mjs';
 import { isMain } from './lib/isMain.mjs';

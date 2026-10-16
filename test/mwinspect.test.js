@@ -250,7 +250,7 @@ test('MW-D2: an arm mesh path comes from the RECORD, never from a spliced name',
 
 test('MW-D3: the real reader runs on a real fixture mesh, and reports what it found', async () => {
   const { readFileSync } = await import('node:fs');
-  const { MwBsaFile } = await import('../src/formats/mwBsaFile.js');
+  const { MwBsaFile } = await import('../src/formats/morrowind/mwBsaFile.js');
   const bsa = new MwBsaFile(new Uint8Array(
     readFileSync(new URL('./fixtures/mw/fixture.bsa', import.meta.url))));
   const r = await parseMeshForPreview(bsa.get('meshes/fixture/plain.nif'));
@@ -296,7 +296,7 @@ test('MW-D3: the front view is Z-UP and UNIFORMLY scaled', () => {
 
 test('MW-D4: the skeleton is read and its bone lookup is CASE-INSENSITIVE', async () => {
   const { readFileSync } = await import('node:fs');
-  const { MwBsaFile } = await import('../src/formats/mwBsaFile.js');
+  const { MwBsaFile } = await import('../src/formats/morrowind/mwBsaFile.js');
   const bsa = new MwBsaFile(new Uint8Array(
     readFileSync(new URL('./fixtures/mw/fixture.bsa', import.meta.url))));
   const r = await skeletonReport(bsa.get('meshes/base_anim.nif'));
@@ -313,7 +313,7 @@ test('MW-D4: the skeleton is read and its bone lookup is CASE-INSENSITIVE', asyn
 
 test('MW-D4: a missing bone is REPORTED missing, never quietly worked around', async () => {
   const { readFileSync } = await import('node:fs');
-  const { MwBsaFile } = await import('../src/formats/mwBsaFile.js');
+  const { MwBsaFile } = await import('../src/formats/morrowind/mwBsaFile.js');
   const bsa = new MwBsaFile(new Uint8Array(
     readFileSync(new URL('./fixtures/mw/fixture.bsa', import.meta.url))));
   const rows = checkRequiredBones(await skeletonReport(bsa.get('meshes/base_anim.nif')));
@@ -372,7 +372,7 @@ test('MW-D5: rule 13 - the mirror negates X and ONLY X, and it always runs', () 
 
 test('MW-D5: assembly places a rigid part ONCE PER SIDE, through the real readers', async () => {
   const { readFileSync } = await import('node:fs');
-  const { MwBsaFile } = await import('../src/formats/mwBsaFile.js');
+  const { MwBsaFile } = await import('../src/formats/morrowind/mwBsaFile.js');
   const bsa = new MwBsaFile(new Uint8Array(
     readFileSync(new URL('./fixtures/mw/fixture.bsa', import.meta.url))));
   // The fixture skeleton's vocabulary is Bone0/Bone1, not Morrowind's, so
@@ -396,7 +396,7 @@ test('MW-D5: assembly places a rigid part ONCE PER SIDE, through the real reader
 
 test('MW-D5: rule 15 excludes a skinned shape whose name does not match its bone', async () => {
   const { readFileSync } = await import('node:fs');
-  const { MwBsaFile } = await import('../src/formats/mwBsaFile.js');
+  const { MwBsaFile } = await import('../src/formats/morrowind/mwBsaFile.js');
   const bsa = new MwBsaFile(new Uint8Array(
     readFileSync(new URL('./fixtures/mw/fixture.bsa', import.meta.url))));
   // skinned.nif's one shape is named "Skinned", which is not a prefix
@@ -425,7 +425,7 @@ test('MW-D5: assembly reports WHY it produced nothing, and never silently emptie
   assert.equal(bad.stage, 'skeleton');
   assert.ok(bad.error);
   const { readFileSync } = await import('node:fs');
-  const { MwBsaFile } = await import('../src/formats/mwBsaFile.js');
+  const { MwBsaFile } = await import('../src/formats/morrowind/mwBsaFile.js');
   const bsa = new MwBsaFile(new Uint8Array(
     readFileSync(new URL('./fixtures/mw/fixture.bsa', import.meta.url))));
   const noParts = await assembleFirstPersonArm({
@@ -554,9 +554,9 @@ test('MW-D6: armPieceRows keys by slot AND bone, and bounds are PER PIECE', asyn
  *  from files on disk written by pyffi, not by the code under test. */
 async function posedArm() {
   const { readFileSync } = await import('node:fs');
-  const { parseNif } = await import('../src/formats/mwNifFile.js');
-  const { extractTracks, sampleTrack } = await import('../src/formats/mwAnim.js');
-  const { accumRootRef } = await import('../src/formats/mwSkin.js');
+  const { parseNif } = await import('../src/formats/morrowind/mwNifFile.js');
+  const { extractTracks, sampleTrack } = await import('../src/formats/morrowind/mwAnim.js');
+  const { accumRootRef } = await import('../src/formats/morrowind/mwSkin.js');
   const f = (n) => new Uint8Array(readFileSync(new URL(`./fixtures/mw/${n}`, import.meta.url)));
   const arm = await assembleFirstPersonArm({
     skeletonBytes: f('armskel.nif'),
@@ -684,8 +684,8 @@ test('MW-D7: a channel a track lacks is rewritten from REST every frame, not hel
 
 test('MW-D7: clipReport is one account of the file, refusal included', async () => {
   const { readFileSync } = await import('node:fs');
-  const { parseNif } = await import('../src/formats/mwNifFile.js');
-  const { buildSkeleton } = await import('../src/formats/mwSkin.js');
+  const { parseNif } = await import('../src/formats/morrowind/mwNifFile.js');
+  const { buildSkeleton } = await import('../src/formats/morrowind/mwSkin.js');
   const f = (n) => new Uint8Array(readFileSync(new URL(`./fixtures/mw/${n}`, import.meta.url)));
   const skel = buildSkeleton(parseNif(f('armskel.nif')));
   const r = await clipReport({ kfBytes: f('armidle.kf'), skeleton: skel, group: 'Idle' });
@@ -729,8 +729,8 @@ test('MW-D7: the draw mapper is fixed over the WHOLE clip, not per frame', async
 
 test('MW-D9d: NiCamera parses, and the records after it stay in sync', async () => {
   const { readFileSync } = await import('node:fs');
-  const { parseNif } = await import('../src/formats/mwNifFile.js');
-  const { buildSkeleton } = await import('../src/formats/mwSkin.js');
+  const { parseNif } = await import('../src/formats/morrowind/mwNifFile.js');
+  const { buildSkeleton } = await import('../src/formats/morrowind/mwSkin.js');
   const bytes = new Uint8Array(readFileSync(new URL('./fixtures/mw/armskelcam.nif', import.meta.url)));
 
   // REPORTED LIVE (Mac, MW-D9): `skeleton: NIF: unimplemented record type

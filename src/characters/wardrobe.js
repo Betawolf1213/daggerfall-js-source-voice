@@ -328,7 +328,7 @@ export function beastWorn(worn, race) {
 export function withNpcPicks(worn, n) {
   return worn.map((p) => (p.kind === 'clothing' ? { ...p, ...npcGarmentPick(n, p) } : p));
 }
-/** The head and the hair a hint walks (formats/mwFirstPerson.js playerBodyRows `walk`), each on its own. @param {any} n */
+/** The head and the hair a hint walks (formats/morrowind/mwFirstPerson.js playerBodyRows `walk`), each on its own. @param {any} n */
 export const npcFaceOf = (n) => ({ head: wmix(n.seed ^ 0x4ead5eed), hair: wmix(n.seed ^ 0x4a12b0b5) });
 
 /**

@@ -53,7 +53,7 @@ import { Arch3dFile } from '../src/formats/arch3dFile.js';
 import { TextureFile } from '../src/formats/textureFile.js';
 import { DFPalette } from '../src/formats/dfPalette.js';
 import { classicRecordRgba } from '../src/formats/derivedTexture.js';
-import { openWorldDataPack } from '../src/formats/worldDataPack.js';
+import { openWorldDataPack } from '../src/formats/worldData/worldDataPack.js';
 import { isNpcFlat } from '../src/world/rdbLayout.js';
 import { tinyRmb } from './wd3Fakes.mjs';
 
@@ -498,7 +498,7 @@ test('WD3 with ARENA2: HOUSING - every built-in piece a town\'s interior lays ca
 // the pipeline's meshes and the host's hills and pads.
 test('WD3 with ARENA2: THE SOLIDS THE PORT STANDS IN A TOWN (FIELD BUGS 2026-10-15f TEMPLE-STEPS) - no structure it stands in for the RMB Resource Pack holds another model the author placed past a touch, but what the pack\'s own meshes hold; no HILL-SEAT pad stands over anything the author left in the open; and every exterior door\'s step and the four metres before it are clear of every solid the port generates, but the author\'s own named', { skip: HAVE_ARENA2 ? false : 'ARENA2_PATH not set', timeout: 600000 }, async () => {
   resetAll();
-  const WDR = await import('../src/formats/worldDataReplacement.js');
+  const WDR = await import('../src/formats/worldData/worldDataReplacement.js');
   const { openTownData } = await import('../tools/townQuestMarkers.mjs');
   const { sweepTownPacks, TOUCH_M, RMBRP_STRUCTURES } = await import('../tools/townSolidsSweep.mjs');
   assert.equal(TOUCH_M, 0.06, 'a touch: the two classic units the author\'s own models overlap by, and a centimetre');
@@ -578,7 +578,7 @@ test('WD3 the towns\' scenery is never a person (AUDIT WD3 G1) - a street flat c
 });
 
 test('WD3 with ARENA2: the port\'s curation (AUDIT WD3 G2) - every one of the 274 roadside taverns laid out on Beautiful Villages\' TVRNAS00/06 stands Daggerfall\'s own block, a tavern in it; the 301 village cells laying them out stand the author\'s', { skip: HAVE_ARENA2 ? false : 'ARENA2_PATH not set' }, async () => {
-  const W = await import('../src/formats/worldDataReplacement.js');
+  const W = await import('../src/formats/worldData/worldDataReplacement.js');
   const LP = await import('../src/systems/layoutPins.js');
   const { setValue } = await import('../src/systems/settings/settings.js');
   const { blocks, maps: _m } = loadArena2();

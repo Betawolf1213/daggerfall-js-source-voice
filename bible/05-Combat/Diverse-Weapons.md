@@ -88,11 +88,11 @@ name. Two things differ from the widget's:
 - **The open runs in a Worker.** The bundle is 58 MB of LZ4 around
   1.69 GB of pixels in one serialized file (12,934 textures inline, no
   `.resS`), and indexing it is ~10 s of decompression. Two changes
-  carry it: `formats/unityBundle.js` keeps the blocks COMPRESSED (a
+  carry it: `formats/unity/unityBundle.js` keeps the blocks COMPRESSED (a
   file is a byte source, `read(offset, length)` decompresses only the
   blocks a range spans through a 32-block LRU - the whole bundle is
-  never in memory), and `formats/unityBundleClient.js` opens it in a
-  module Worker (`formats/unityBundleWorker.js`) in the terrain
+  never in memory), and `formats/unity/unityBundleClient.js` opens it in a
+  module Worker (`formats/unity/unityBundleWorker.js`) in the terrain
   worker's shape: the bytes cross as a copy, the index (text assets
   whole, textures by name and size) comes back, and each texture's
   pixels cross on demand, transferred, and are flipped into color32

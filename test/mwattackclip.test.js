@@ -11,8 +11,8 @@ import {
   weaponShortGroup, weaponLongGroup, mwAttackType, attackKeys, calculateWindUp,
   releaseStartPoint, EQUIP_KEYS, UNEQUIP_KEYS, DF_STRIKE_TO_MW_ATTACK,
   allWeaponShortGroups,
-} from '../src/formats/mwFirstPerson.js';
-import { getTextKeyTime, getStartTime, resetClip, advanceClip } from '../src/formats/mwAnim.js';
+} from '../src/formats/morrowind/mwFirstPerson.js';
+import { getTextKeyTime, getStartTime, resetClip, advanceClip } from '../src/formats/morrowind/mwAnim.js';
 
 // MW-D12: THE WEAPON AND ATTACK GROUPS.
 //
@@ -28,7 +28,7 @@ import { getTextKeyTime, getStartTime, resetClip, advanceClip } from '../src/for
 // none of which a picture would show to be wrong.
 
 const f = (n) => new Uint8Array(readFileSync(new URL(`./fixtures/mw/${n}`, import.meta.url)));
-const fpMod = await import('../src/formats/mwFirstPerson.js');
+const fpMod = await import('../src/formats/morrowind/mwFirstPerson.js');
 
 /** A WEAP record, byte-shaped as loadweap.hpp:71 says. */
 const wpdtRec = (id, model, type, speed = 1) => {
@@ -722,7 +722,7 @@ test('MW-D28: the release and follow-through cannot be sheathed away - the wind-
 });
 
 test('MW-D28: the WPDT speed field is read from byte 12 - hand-laid, no writer shared', async () => {
-  const wr = await import('../src/formats/mwFirstPerson.js');
+  const wr = await import('../src/formats/morrowind/mwFirstPerson.js');
   // The MW-D22 pattern on the next field over: every value planted
   // distinct so a reader one field off answers the wrong number and
   // dies. loadweap.hpp: mWeight f32[0..3], mValue i32[4..7],

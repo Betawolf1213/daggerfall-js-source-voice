@@ -14,9 +14,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { CURATED_QUEST_MARKERS, curatedMarkerSpot } from '../src/systems/quest/markerCuration.js';
-import { registerWorldDataAsset, _resetWorldDataReplacement, installWorldDataReplacement } from '../src/formats/worldDataReplacement.js';
-import { ROW_CODECS } from '../src/formats/worldDataPack.js';
-import { patchJson } from '../src/formats/worldDataJson.js';
+import { registerWorldDataAsset, _resetWorldDataReplacement, installWorldDataReplacement } from '../src/formats/worldData/worldDataReplacement.js';
+import { ROW_CODECS } from '../src/formats/worldData/worldDataPack.js';
+import { patchJson } from '../src/formats/worldData/worldDataJson.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { hatchesOf, HATCH, HATCH_DOOR_CLEAR_M, walkFloor } from '../tools/townQuestMarkers.mjs';
 import { rmbBlock, SPAWN } from './fb1004dTowns.mjs';

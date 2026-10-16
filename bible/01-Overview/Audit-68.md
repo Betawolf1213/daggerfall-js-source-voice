@@ -76,7 +76,7 @@ and both pins.
   dropped the latest request, its failed swaps rejected unhandled every
   frame, its generation memos never let go; MW face ids by case, first-
   person skins over third-person, 15-bit and grey TGA; KeyGroup sampling
-  single-sourced in `formats/mwKeys.js`.
+  single-sourced in `formats/morrowind/mwKeys.js`.
 - **worldjs** - a door in the second copy of a repeated block opened the
   first copy's building; disembarking restored the wrong height; a load
   during a fast-travel arrival ran two teleports; a failed road network

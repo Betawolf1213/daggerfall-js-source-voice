@@ -5,7 +5,7 @@
 // managed file to DFBitmap.Data - a short or long file passes through
 // untouched; GetSize answers 80x50 regardless).
 
-import { BaseImageFile, emptyBitmap } from './baseImageFile.js';
+import { BaseImageFile, emptyBitmap } from '../baseImageFile.js';
 
 export const SAVE_IMAGE_FILENAME = 'IMAGE.RAW';
 export const SAVE_IMAGE_WIDTH = 80;
@@ -33,7 +33,7 @@ export class SaveImage extends BaseImageFile {
    * SaveImage.Load - the filename must be IMAGE.RAW (case-insensitive).
    * @param {Uint8Array} bytes - full file contents.
    * @param {string} [fileName]
-   * @param {import('./dfPalette.js').DFPalette} [palette]
+   * @param {import('../dfPalette.js').DFPalette} [palette]
    * @returns {boolean} true if successful.
    */
   load(bytes, fileName = SAVE_IMAGE_FILENAME, palette = null) {

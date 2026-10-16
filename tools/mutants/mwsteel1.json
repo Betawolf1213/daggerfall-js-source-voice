@@ -37,7 +37,7 @@
   },
   {
     "name": "MWSTEEL1-hides-dropped",
-    "file": "src/formats/mwItemMap.js",
+    "file": "src/formats/morrowind/mwItemMap.js",
     "old": "        for (const h of p.hides ?? []) claim(ARMO_PART.findIndex((r) => r.name === h), prio, null, add);\n",
     "new": "",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "MWSTEEL1-styles-ignored",
-    "file": "src/formats/mwItemMap.js",
+    "file": "src/formats/morrowind/mwItemMap.js",
     "old": "      for (const p of ownArmorParts(own, { helmStyle })) {",
     "new": "      for (const p of own.parts) {",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "MWSTEEL1-census-retail-for-steel",
-    "file": "src/formats/mwItemMap.js",
+    "file": "src/formats/morrowind/mwItemMap.js",
     "old": "      if (own) { out.push({ kind: 'own', item: aName, material: mName, via: 'armor', own: 'ownArmorModels', index: tmpl, model: ownModelsOf(own).join(' + ') }); continue; }\n",
     "new": "",
     "tests": [

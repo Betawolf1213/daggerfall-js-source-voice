@@ -32,7 +32,7 @@
 // THE POSE MAP: an untracked bone's entry is the skeleton's own shared `node.rest` (mwSkin.js poseSkeleton) - every
 // write here is a NEW entry through pose.set, never a mutation (the hazard applyFirstPersonNeck's note names).
 
-import { mat33Mul } from '../formats/mwNifMesh.js';
+import { mat33Mul } from '../formats/morrowind/mwNifMesh.js';
 import { HELD_BONE_ALIASES } from './heldPose.js';
 
 // ---- small vector and rotation algebra (row-major 3x3, column vectors - the rig's own) ---------------------------------

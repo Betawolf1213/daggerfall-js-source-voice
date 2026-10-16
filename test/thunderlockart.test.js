@@ -32,8 +32,8 @@ import { mintHourlock } from '../src/systems/gilded.js';
 import { setHotbarSlot, hotbarEntryForItem, hotbarView, clearHotbar } from '../src/systems/quickslots.js';
 import { equipItem } from '../src/systems/equip.js';
 import { boundaryLoops, capHoles } from '../tools/meshCap.mjs';
-import { parseNif } from '../src/formats/mwNifFile.js';
-import { flattenNif } from '../src/formats/mwNifMesh.js';
+import { parseNif } from '../src/formats/morrowind/mwNifFile.js';
+import { flattenNif } from '../src/formats/morrowind/mwNifMesh.js';
 
 const bytesOf = (p) => readFileSync(new URL(`../${p}`, import.meta.url));
 const png = (p) => readPng(bytesOf(p));

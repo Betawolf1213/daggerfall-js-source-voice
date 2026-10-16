@@ -13,7 +13,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { CURATED_PLACEMENTS, HILL_HOUSE_VENDOR, curateBlockPlacements, curatedPlacementsOf } from '../src/world/curatedPlacements.js';
-import { blockFromJson } from '../src/formats/worldDataReplacement.js';
+import { blockFromJson } from '../src/formats/worldData/worldDataReplacement.js';
 
 const ARENA2 = process.env.ARENA2_PATH;
 const HAVE_ARENA2 = !!ARENA2 && ['BLOCKS.BSA', 'MAPS.BSA', 'ARCH3D.BSA'].every((f) => existsSync(join(ARENA2, f)));
@@ -83,7 +83,7 @@ test('HILL-HOUSE: a row applies only to its pack\'s block with the record where 
 });
 
 test('HILL-HOUSE by source: the door applies it beside the temple summoners on both of its paths - a pinned town\'s block and the cached one - under the vendor that served the block', () => {
-  const src = readFileSync(new URL('../src/formats/worldDataReplacement.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/formats/worldData/worldDataReplacement.js', import.meta.url), 'utf8');
   const both = src.match(/curateBlockPeople\(dfBlock, liveAsset\(blockReplacementFilename\(blockName, variant\)\)\?\.vendor\);[^\n]*\n(\s*\/\/[^\n]*\n)?\s*curateBlockPlacements\(dfBlock, liveAsset\(blockReplacementFilename\(blockName, variant\)\)\?\.vendor\);/g);
   assert.equal(both?.length, 2);
 });

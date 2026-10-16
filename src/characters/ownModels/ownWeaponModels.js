@@ -31,7 +31,7 @@
 // ═══ A LEAF, FOR THE SAME REASON thunderlockIds.js IS ═════════════
 //
 // One import, and it is the leaf that exists precisely so this kind of
-// lookup cannot close a cycle. `src/formats/mwItemMap.js` and
+// lookup cannot close a cycle. `src/formats/morrowind/mwItemMap.js` and
 // `src/combat/fpArm.js` are both askers and both sit upstream of
 // everything `systems/thunderlock.js` touches.
 import { THUNDERLOCK_TEMPLATE } from '../thunderlockIds.js';

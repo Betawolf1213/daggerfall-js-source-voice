@@ -46,7 +46,7 @@ The house is moved, not the hill. `world/curatedPlacements.js` holds one row: th
 Beautiful Villages, stood at the block's nearest clear ground at the author's facing - (3808, 2176), 24.8 m east -
 measured by `tools/curatedPlacements.mjs` (its footprint 1.5 m clear of every piece, hill and flat and of the block's
 edge; its door and the 4 m before it clear). It applies where a block becomes the port's
-(`formats/worldDataReplacement.js` getDFBlockReplacementData, both paths), beside the temple summoners, once for every
+(`formats/worldData/worldDataReplacement.js` getDFBlockReplacementData, both paths), beside the temple summoners, once for every
 consumer. The RECORD is kept, so DFU's building key - (block x << 16) + (block y << 8) + record - is the same house's: a
 quest made before this stands its person in the same house, now where the player can reach it. The automap's cells are
 stamped with the house's type at its new footprint. A later pack that moves the house itself keeps its own: a row

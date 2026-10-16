@@ -162,7 +162,7 @@ multiply it by the crowd).
 
 WHAT IT IS NOW.
 
-- `formats/mwGpuSkin.js` lays a body out ONCE (`skinLayout`,
+- `formats/morrowind/mwGpuSkin.js` lays a body out ONCE (`skinLayout`,
   `packSkinStream`): packFpArm's corner order and ranges, each corner its
   authored vertex, its diffuse/UV/emission (fpArm.js `pieceLanes`, the
   colour laws' one home) and its influences - up to eight palette
@@ -988,7 +988,7 @@ and xbase_anim's first when the record is Bipedal
 
 ### 14a. The body (SHIPPED 2026-10-09)
 
-- THE RECORD (`formats/mwFirstPerson.js` readCreature, extractArmRecords'
+- THE RECORD (`formats/morrowind/mwFirstPerson.js` readCreature, extractArmRecords'
   `creatures`, `ARM_RECORDS_VERSION` 5 - every master re-extracted once).
   Its id, its model (lowercased, slashes forward), its name, its FLAG's
   low byte (`mFlags = flags & 0xFF`; the blood type rides above it) and
@@ -997,7 +997,7 @@ and xbase_anim's first when the record is Bipedal
   0x04, Base 0x08, Swims 0x10, Flies 0x20, Walks 0x40, Essential 0x80 -
   READ OFF THE HEADER, because two recollections of it (the planning pass's
   and this one's) disagreed with it and with each other.
-- THE BODY (`assembleCreature`, `formats/mwCharacter.js`
+- THE BODY (`assembleCreature`, `formats/morrowind/mwCharacter.js`
   bindCreatureModel). One parse: the skeleton's refs ARE the shapes'
   parent refs (`flattenNif` now records each shape's and each particle
   system's `parentRef`). The skinned shapes bind by their bones (rule 12,
@@ -1371,7 +1371,7 @@ crowd's six nearest, and a lane past its range taking no skin.
   a fighters' guild's standing person (MWNPC8a, peopleBodies.js), the
   rosters' steel classes and the watch (MWNPC10b, foeBodies.js rosterLook)
   - wrote its material as `1`. A look's armour is resolved by
-  `formats/mwItemMap.js` mwArmorRecords against Daggerfall's own
+  `formats/morrowind/mwItemMap.js` mwArmorRecords against Daggerfall's own
   ARMOR_MATERIAL (systems/armorMaterials.js - steel is 0x0201), and 1
   names no material: none of it resolved, so every one of them stood in
   their clothes, and the ones whose boots took their feet stood barefoot.
@@ -1459,7 +1459,7 @@ missed).
 ## 19. MWNPC14 - THE VAMPIRES (SHIPPED 2026-10-10)
 
 - THE FLAG. A BODY record's BYDT is [part, vampire, flags, type]; the
-  reader took three of the four. `formats/mwFirstPerson.js` readBodyPart
+  reader took three of the four. `formats/morrowind/mwFirstPerson.js` readBodyPart
   now keeps the second (`vampire`), and ARM_RECORDS_VERSION moves to 6 so
   a stored record set from before it is re-extracted, never read without
   it.
@@ -1663,7 +1663,7 @@ card regulars and every NPC lane) would have dropped it:
   its face only where a mesh has none or a corner's is zero (packFpArm).
   The GPU skin lit everything by its face, off the derivatives: every body
   in the world faceted again. Now the stream's first fourteen floats are
-  packFpArm's corner, lane for lane (`formats/mwGpuSkin.js`
+  packFpArm's corner, lane for lane (`formats/morrowind/mwGpuSkin.js`
   SKIN_STATIC_FLOATS = fpArm.js FP_FLOATS), the normal lanes holding the
   AUTHORED normal (a rigid part's mirrored with its vertex, as
   placeNormalsAtBone mirrors it); CHAR_SKIN_VS composes the rows once
@@ -2022,7 +2022,7 @@ alike."
 WHAT IT WAS. A walker wore one of four outfits per sprite (FOLK_OUTFITS), a
 standing person one per faction (PEOPLE_WARDROBE), a knightly order's and a
 fighters' guild's people the same steel - and the item map resolved a
-garment by its Morrowind TYPE and its dye alone (`formats/mwItemMap.js`
+garment by its Morrowind TYPE and its dye alone (`formats/morrowind/mwItemMap.js`
 mwClothingRecord: a Short Shirt, a Long Shirt and a Tunic are one Morrowind
 shirt), the head and hair by the face index's ten. A street was ten shirts in
 ten colours over ten faces.
@@ -2088,7 +2088,7 @@ ten colours over ten faces.
   measured, else among the rung (a rung the data lacks: the
   nearest that has records, the lower first; a pool with no rung at all - a
   mod's ids - whole); and the HEAD and the HAIR walked each on its own off the
-  seed (`npcFaceOf` -> fpArm.js buildFpArm `npcFace` -> formats/mwFirstPerson.js
+  seed (`npcFaceOf` -> fpArm.js buildFpArm `npcFace` -> formats/morrowind/mwFirstPerson.js
   playerBodyRows `walk`), so a race's heads times its hairs are reached where
   the face index named one pair of ten - and no portrait is measured for a
   person who has none (the build's face match is skipped). Two people in one

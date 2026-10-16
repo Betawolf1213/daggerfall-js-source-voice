@@ -9,9 +9,9 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { readUnityBundle, TEXTURE_FORMAT } from '../src/formats/unityBundle.js';
-import { handle } from '../src/formats/unityBundleWorker.js';
-import { openUnityBundle } from '../src/formats/unityBundleClient.js';
+import { readUnityBundle, TEXTURE_FORMAT } from '../src/formats/unity/unityBundle.js';
+import { handle } from '../src/formats/unity/unityBundleWorker.js';
+import { openUnityBundle } from '../src/formats/unity/unityBundleClient.js';
 import { unityFs, serializedFile, texture2dBody } from './unityFixture.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');

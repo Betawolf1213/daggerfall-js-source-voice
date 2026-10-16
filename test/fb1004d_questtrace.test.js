@@ -29,9 +29,9 @@ import { QuestMachine } from '../src/systems/quest/machine.js';
 import { QuestResourceBehaviour } from '../src/systems/quest/resourceBehaviour.js';
 import { addQuestResourceObjects, markerScenePosition } from '../src/systems/quest/sceneMount.js';
 import { SITE_TYPES, MARKER_TYPES } from '../src/systems/quest/place.js';
-import { blockFromJson, buildingDataFromJson } from '../src/formats/worldDataReplacement.js';
-import { ROW_CODECS } from '../src/formats/worldDataPack.js';
-import { patchJson } from '../src/formats/worldDataJson.js';
+import { blockFromJson, buildingDataFromJson } from '../src/formats/worldData/worldDataReplacement.js';
+import { ROW_CODECS } from '../src/formats/worldData/worldDataPack.js';
+import { patchJson } from '../src/formats/worldData/worldDataJson.js';
 import { templateByIndex, ITEM_TEMPLATES } from '../src/systems/item/itemTemplates.js';
 import { itemLongName } from '../src/systems/item/itemInfo.js';
 import { stockHouseContainer } from '../src/systems/shopStock.js';
@@ -54,7 +54,7 @@ const PRIEST_ROBES = 164, PRIESTESS_ROBES = 201;   // MensClothing / WomensCloth
 const PACK = JSON.parse(zlib.gunzipSync(readFileSync(new URL('vendor/beautiful-villages/WorldDataPack/beautiful-villages.pack.json.gz', ROOT))).toString('utf8'));
 const entry = (name) => { const e = PACK.files[name]; return typeof e === 'string' ? JSON.parse(e) : e; };
 const CLASSIC = Symbol('a piece of the player\'s BLOCKS.BSA');
-/** A pack value with its nodes, rows and runs expanded as the door's reader expands them (formats/worldDataPack.js
+/** A pack value with its nodes, rows and runs expanded as the door's reader expands them (formats/worldData/worldDataPack.js
  *  openWorldDataPack: the pack's own ROW_CODECS, WD1's patchJson for a node's `$o`) - except a `$c`, a piece of the
  *  player's own BLOCKS.BSA, which is CLASSIC: no game data is here. */
 function packValue(v) {

@@ -17,15 +17,15 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { parseNif, MW_NIF_VERSION } from '../src/formats/mwNifFile.js';
-import { flattenNif } from '../src/formats/mwNifMesh.js';
-import { buildSkeleton } from '../src/formats/mwSkin.js';
-import { bindPart } from '../src/formats/mwCharacter.js';
+import { parseNif, MW_NIF_VERSION } from '../src/formats/morrowind/mwNifFile.js';
+import { flattenNif } from '../src/formats/morrowind/mwNifMesh.js';
+import { buildSkeleton } from '../src/formats/morrowind/mwSkin.js';
+import { bindPart } from '../src/formats/morrowind/mwCharacter.js';
 import { resolveWeaponParts, weaponPartPaths, archiveHas, collectArmTextures } from '../src/combat/fpArm.js';
 import {
   dfWeaponToMw, MW_WEAPON_TYPE, MW_UNITS_PER_METER,
   composeWeaponGroup, shootsRatherThanSwings, reloadsItself, ammoTypeFor,
-} from '../src/formats/mwFirstPerson.js';
+} from '../src/formats/morrowind/mwFirstPerson.js';
 import { animWeaponType } from '../src/combat/fpArm.js';
 import { MW_UNITS_PER_METRE, THUNDERLOCK_METRES, SETTINGS, OUT, SOURCE_FBX, bakeThunderlock } from '../tools/bakeThunderlock.mjs';
 import { WEAPONS } from '../src/characters/weapons.js';

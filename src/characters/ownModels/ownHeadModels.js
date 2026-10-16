@@ -4,21 +4,21 @@
 // MW-HEADS1 (2026-10-13, the owner: "Everything we are doing is for the morrowwind model. This batch is for breton",
 // with the export of three heads and their six paintings; asked who wears them: every Breton man - townspeople, NPCs
 // and a Breton player - in place of Morrowind's own Breton men's heads - bible/04-Characters/Own-Heads.md). The heads
-// counterpart of ownArmorModels.js and ownClothingModels.js, and a leaf for the same reason: formats/mwFirstPerson.js
+// counterpart of ownArmorModels.js and ownClothingModels.js, and a leaf for the same reason: formats/morrowind/mwFirstPerson.js
 // asks it, and nothing it imports may reach back.
 //
 // A head and a hair are BODY records to the build (a skin part of a race and a sex, its slot PRT_Head or PRT_Hair, its
 // mesh a rigid part hung under the "Head" node - Morrowind-Rules.md rules 5 and 12), and the port's own are written in
 // that same shape: a race's own heads and hairs ARE its pools wherever they exist (facePools), so the NPC walk
 // (characters/wardrobe.js npcFaceOf), the player's curated face (mwFaceTable.json) and the measured match
-// (formats/mwFaceMatch.js) all choose among them on the doors they always used, and a race with none keeps the data's.
+// (formats/morrowind/mwFaceMatch.js) all choose among them on the doors they always used, and a race with none keeps the data's.
 // The meshes ship under `src/assets/mw/` (tools/bakeHeads.mjs), served by systems/ownMwAssets.js - and stand only where
 // that archive loaded: a page whose own chunk did not load draws the data's heads, never none (facePools' `has`).
 
-/** MW_BODY_PARTS' indices (formats/mwEsmFile.js): the head's part and the hair's. */
+/** MW_BODY_PARTS' indices (formats/morrowind/mwEsmFile.js): the head's part and the hair's. */
 const PART = Object.freeze({ head: 0, hair: 1 });
 
-/** One part as a BODY record reads (formats/mwFirstPerson.js readBodyPart): a skin, playable, never a vampire's, a
+/** One part as a BODY record reads (formats/morrowind/mwFirstPerson.js readBodyPart): a skin, playable, never a vampire's, a
  *  third-person part - its id the shipped mesh's name. Exactly the record a BODY of that id, mesh, race and part reads
  *  as - nothing the build could tell from the data's (test/mwheads1.test.js holds each to bodyParts' reading).
  *  @param {string} race @param {boolean} female @param {'head'|'hair'} slot @param {string} id */

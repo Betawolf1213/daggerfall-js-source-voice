@@ -26,7 +26,7 @@
 import { readFileSync, writeFileSync, mkdirSync, readdirSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
-import { readUnityBundle } from '../src/formats/unityBundle.js';
+import { readUnityBundle } from '../src/formats/unity/unityBundle.js';
 import { loadLocationInstance, loadLocationPrefab, ntfsCompare } from '../src/world/worldOfDaggerfall/wodLocationData.js';
 import { encodeRegionPack, decodeRegionPack, WOD_PACK_VERSION } from '../src/world/worldOfDaggerfall/wodLocationPack.js';
 import { isMain } from './lib/isMain.mjs';

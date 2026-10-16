@@ -17,7 +17,7 @@ import {
   bodyParts, raceRecords, armorRecords, clothingRecords, weaponRecords, lightRecords, gmstValue,
   magicEffectRecords, vfxStaticRecords,   // MW-SPELLFX1
   creatureRecords, CREA_FLAG,   // MWNPC9
-} from '../src/formats/mwFirstPerson.js';
+} from '../src/formats/morrowind/mwFirstPerson.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rd = (p) => readFileSync(join(ROOT, p), 'utf8');
@@ -167,7 +167,7 @@ test('MW-LOAD: the per-kind readers ride the same per-record functions as the on
   // ONE HOME: bodyParts/raceRecords/armorRecords/clothingRecords/
   // weaponRecords/gmstValue and extractArmRecords cannot disagree
   // because each kind has exactly one reader, called from both.
-  const src = rd('src/formats/mwFirstPerson.js');
+  const src = rd('src/formats/morrowind/mwFirstPerson.js');
   for (const [kind, reader, walker] of [
     ['BODY', 'readBodyPart', 'bodyParts'], ['RACE', 'readRace', 'raceRecords'],
     ['ARMO', 'readArmor', 'armorRecords'], ['CLOT', 'readClothing', 'clothingRecords'],
@@ -186,7 +186,7 @@ test('MW-LOAD: dataSource keeps the record sets in the derived store, keyed to t
   const door = src.slice(src.indexOf('export const loadMorrowindArmRecords = async (fileName) =>'));
   assert.ok(door.length > 100, 'the door exists');
   assert.match(door, /const blob = await assetBlob\(MW_STORE, fileName\);/, 'the file is a Blob handle - its size is free, its bytes are not read for a hit');
-  assert.match(door, /await import\('\.\.\/formats\/mwFirstPerson\.js'\)/, 'the reader is imported at the door, not at boot');
+  assert.match(door, /await import\('\.\.\/formats\/morrowind\/mwFirstPerson\.js'\)/, 'the reader is imported at the door, not at boot');
   assert.match(door, /`\$\{ARM_RECORDS_PREFIX\}:v\$\{ARM_RECORDS_VERSION\}:\$\{fileName\}:\$\{blob\.size\}:\$\{await sampleStamp\(blob\)\}`/,
     'the key names the reader version, the file, its size and its sample stamp');
   assert.match(door, /const cached = await loadDerivedJson\(key\);\s*\n\s*let records = isArmRecords\(cached\) \? cached : null;/,
@@ -235,7 +235,7 @@ test('MW-LOAD: the attach fingerprint carries the stored SIZES, so a same-name r
 
 // ── the build, through the door ──────────────────────────────────────
 import { buildFpArm, armRecordsOf, fpSkeletonPath, FP_CLIP_PATH } from '../src/combat/fpArm.js';
-import { FACE_MATCH_VERSION } from '../src/formats/mwFaceMatch.js';
+import { FACE_MATCH_VERSION } from '../src/formats/morrowind/mwFaceMatch.js';
 import { bodyRec } from './fixtures/mw/bodyRec.mjs';   // AUDIT MW-HEADS1: a head record more, minted as the data's are
 const cat = (...a) => { const out = new Uint8Array(a.reduce((n, b) => n + b.length, 0)); let o = 0; for (const b of a) { out.set(b, o); o += b.length; } return out; };
 

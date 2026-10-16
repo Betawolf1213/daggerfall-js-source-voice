@@ -1,21 +1,21 @@
 // MWNPC9 (2026-10-09, the MW-NPC arc's ninth slice - bible/04-Characters/Morrowind-NPCs.md section 14): DAGGERFALL'S
-// CREATURES IN MORROWIND CREATURE BODIES. 9a, the body: a CREA record (formats/mwFirstPerson.js readCreature - its
+// CREATURES IN MORROWIND CREATURE BODIES. 9a, the body: a CREA record (formats/morrowind/mwFirstPerson.js readCreature - its
 // flags as OpenMW's loadcrea.hpp numbers them), its model - which is its skeleton and its body at once - and its own
 // .kf (xbase_anim's too for a bipedal one, creatureanimation.cpp). Each rigid shape rides the node it hangs under
-// (formats/mwCharacter.js bindCreatureModel), each skinned one its bones, and the "Tri Bip" debug shapes are dropped
+// (formats/morrowind/mwCharacter.js bindCreatureModel), each skinned one its bones, and the "Tri Bip" debug shapes are dropped
 // as OpenMW drops them from a creature's root. Pinned on a creature fixture written the way retail's are
 // (fixtures/mw/creatureRig.mjs): the rest is the file's own picture, a turned node turns its piece and nothing else, a
 // walked root carries the whole body, and the sources are the reference's.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { parseNif } from '../src/formats/mwNifFile.js';
-import { flattenNif } from '../src/formats/mwNifMesh.js';
-import { assembleCreature, poseAssembly, creatureAnimSources, TP_BASE_MODEL } from '../src/formats/mwFirstPerson.js';
-import { bindCreatureModel, isTriBip } from '../src/formats/mwCharacter.js';
-import { buildSkeleton, poseSkeleton, skeletonSpaceMatrices, GRAPH_ROOT } from '../src/formats/mwSkin.js';
-import { attachmentTransform } from '../src/formats/mwCharacter.js';
+import { parseNif } from '../src/formats/morrowind/mwNifFile.js';
+import { flattenNif } from '../src/formats/morrowind/mwNifMesh.js';
+import { assembleCreature, poseAssembly, creatureAnimSources, TP_BASE_MODEL } from '../src/formats/morrowind/mwFirstPerson.js';
+import { bindCreatureModel, isTriBip } from '../src/formats/morrowind/mwCharacter.js';
+import { buildSkeleton, poseSkeleton, skeletonSpaceMatrices, GRAPH_ROOT } from '../src/formats/morrowind/mwSkin.js';
+import { attachmentTransform } from '../src/formats/morrowind/mwCharacter.js';
 import { effectPlacement } from '../src/combat/fpArm.js';
-import { extractTracks, sampleTrack } from '../src/formats/mwAnim.js';
+import { extractTracks, sampleTrack } from '../src/formats/morrowind/mwAnim.js';
 import { creatureModel, creatureClip, CREATURE_MODEL, CREATURE_KF } from './fixtures/mw/creatureRig.mjs';
 
 const near = (a, b, eps = 1e-4) => a.length === b.length && Array.from(a).every((v, i) => Math.abs(v - b[i]) < eps);

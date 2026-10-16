@@ -32,10 +32,10 @@ import { fetchBytes } from './shared.js';
 import { readZipEntries, droppedEntries, walkDroppedEntries } from './dataSource.js';   // OT1: the saves picker's phone path rides the ARENA2 door's zip walk (AUDIT 68: and its drop walk)
 import { music } from '../systems/music.js';
 import { mostRecentRestorable } from '../systems/save/saveSlots.js';   // SAV4: the F2 question, now over the slot store
-import { SaveGames, SAVENAME_TXT, MAPSAVE_FILENAME, RUMOR_FILENAME, BIO_FILENAME } from '../formats/saveGames.js';
-import { SAVETREE_FILENAME } from '../formats/saveTreeFile.js';
-import { SAVE_IMAGE_FILENAME } from '../formats/saveImageFile.js';
-import { SAVEVARS_FILENAME } from '../formats/saveVarsFile.js';
+import { SaveGames, SAVENAME_TXT, MAPSAVE_FILENAME, RUMOR_FILENAME, BIO_FILENAME } from '../formats/save/saveGames.js';
+import { SAVETREE_FILENAME } from '../formats/save/saveTreeFile.js';
+import { SAVE_IMAGE_FILENAME } from '../formats/save/saveImageFile.js';
+import { SAVEVARS_FILENAME } from '../formats/save/saveVarsFile.js';
 import { setPendingClassicSave } from '../systems/classicSave.js';
 import { DFPalette } from '../formats/dfPalette.js';
 import { FntFile } from '../formats/fntFile.js';

@@ -22,11 +22,11 @@
 // Nothing here touches the DOM. It runs in node under the pins and in
 // the browser under the data door.
 
-import { lz4BlockDecompress } from './lz4.js';
-import { dxtDecode } from './dxt.js';
-import { bc7Decode } from './bc7.js';
-import { unpackUnityCrunch } from './crunch.js';   // DWHD1: Diverse Weapons HD's handhelds are crunched
-import { resampleRgba } from './resample.js';   // DFMOD2: a picture past the detail with no smaller mip   // DFMOD1: DREAM's paperdoll ships its sprites as BC7
+import { lz4BlockDecompress } from '../lz4.js';
+import { dxtDecode } from '../dxt.js';
+import { bc7Decode } from '../bc7.js';
+import { unpackUnityCrunch } from '../crunch.js';   // DWHD1: Diverse Weapons HD's handhelds are crunched
+import { resampleRgba } from '../resample.js';   // DFMOD2: a picture past the detail with no smaller mip   // DFMOD1: DREAM's paperdoll ships its sprites as BC7
 
 // ---- binary reader ---------------------------------------------------
 

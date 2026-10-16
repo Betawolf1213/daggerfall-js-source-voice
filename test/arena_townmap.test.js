@@ -12,7 +12,7 @@ import {
   ARENA_MAP_BYTE, ARENA_MAP_NAME,
 } from '../src/world/arena/arenaCity.js';
 import { SAND_R } from '../src/world/arena/arenaFloor.js';
-import { getDFBlockReplacementData } from '../src/formats/worldDataReplacement.js';
+import { getDFBlockReplacementData } from '../src/formats/worldData/worldDataReplacement.js';
 import { CityNavigation } from '../src/world/city/cityNavigation.js';
 import { quarterOf, isShowAllByte } from '../src/ui/town/townQuarters.js';
 import { townBytes, townReader, quarterChains, sheetY, BLOCK_PX } from '../src/ui/ink/inkTown.js';

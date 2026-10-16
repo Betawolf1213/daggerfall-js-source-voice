@@ -2,13 +2,13 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { parseNif } from '../src/formats/mwNifFile.js';
-import { buildSkeleton, poseSkeleton, skeletonSpaceMatrices, GRAPH_ROOT } from '../src/formats/mwSkin.js';
+import { parseNif } from '../src/formats/morrowind/mwNifFile.js';
+import { buildSkeleton, poseSkeleton, skeletonSpaceMatrices, GRAPH_ROOT } from '../src/formats/morrowind/mwSkin.js';
 import { applyClimbRig, climbBones, climbRequestToFirstPerson } from '../src/combat/climbRig.js';
 import { ClimbPose } from '../src/player/climbPose.js';
 import { planVault, movePoint } from '../src/player/parkour.js';
 import { createFpArm } from '../src/combat/fpArm.js';
-import { MW_UNITS_PER_METER as U } from '../src/formats/mwFirstPerson.js';
+import { MW_UNITS_PER_METER as U } from '../src/formats/morrowind/mwFirstPerson.js';
 import { fixtureBodyDeps, countingRenderer } from './fixtures/mw/bodyRig.mjs';
 
 const retail = () => buildSkeleton(parseNif(new Uint8Array(readFileSync(new URL(

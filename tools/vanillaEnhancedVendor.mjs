@@ -20,7 +20,7 @@
 //                                                  attached bundle, and where each array's slices are served from.
 //
 // THE ARRAYS SHIP AS PNGS. A mod's `<archive>-TexArray` is the terrain archive's whole tile set (GROUND1), BC7 in the
-// bundle. This tool decodes every slice (formats/unityBundle.js decodeTextureArray) and finds the picture it was made
+// bundle. This tool decodes every slice (formats/unity/unityBundle.js decodeTextureArray) and finds the picture it was made
 // from: the mod's own record PNG, else the repository's source picture for it. Only a slice within BC7's error of that
 // picture is carried (BC7_MEAN / BC7_MAX below; the measured worst is written into the listing), and it is served from
 // the picture - the Base's own record where it is that record, pixel for pixel. An array whose depth is not a terrain
@@ -40,7 +40,7 @@ import { join, dirname, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { PNG } from 'pngjs';
-import { decodeTextureArray } from '../src/formats/unityBundle.js';
+import { decodeTextureArray } from '../src/formats/unity/unityBundle.js';
 import { DFMOD_INDEX_VERSION, manifestDeps, dfmodStoreKey } from '../src/systems/dfmodTextures.js';
 import { isMain } from './lib/isMain.mjs';
 

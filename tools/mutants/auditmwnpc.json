@@ -19,7 +19,7 @@
  },
  {
   "name": "AUDITMWNPC-A2-node-clock-always",
-  "file": "src/formats/mwFirstPerson.js",
+  "file": "src/formats/morrowind/mwFirstPerson.js",
   "old": "      if (t === null || t === p._clockAt) continue;",
   "new": "      if (t === null) continue;",
   "tests": [
@@ -28,7 +28,7 @@
  },
  {
   "name": "AUDITMWNPC-A2-part-clock-always",
-  "file": "src/formats/mwFirstPerson.js",
+  "file": "src/formats/morrowind/mwFirstPerson.js",
   "old": "      if (t === p._clockAt) continue;\n",
   "new": "",
   "tests": [
@@ -37,7 +37,7 @@
  },
  {
   "name": "AUDITMWNPC-A3-creature-skinned-normals-lost",
-  "file": "src/formats/mwFirstPerson.js",
+  "file": "src/formats/morrowind/mwFirstPerson.js",
   "old": "      positions: new Float32Array(batch.positions.length), indices: batch.indices, normals: posedNormals(batch) });",
   "new": "      positions: new Float32Array(batch.positions.length), indices: batch.indices });",
   "tests": [
@@ -46,7 +46,7 @@
  },
  {
   "name": "AUDITMWNPC-A3-creature-rigid-normals-lost",
-  "file": "src/formats/mwFirstPerson.js",
+  "file": "src/formats/morrowind/mwFirstPerson.js",
   "old": "      sourceNormals: normals ? applyPreNormals(batch.normals, pre) : null, normals });",
   "new": "      sourceNormals: null, normals });",
   "tests": [

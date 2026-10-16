@@ -1,7 +1,7 @@
 [
   {
     "name": "WEREWOLF1-base-kf-kept",
-    "file": "src/formats/mwFirstPerson.js",
+    "file": "src/formats/morrowind/mwFirstPerson.js",
     "old": "  return animSourcesFor(werewolf ? null : FP_BASE_MODEL, skeletonPath, exists);",
     "new": "  return animSourcesFor(FP_BASE_MODEL, skeletonPath, exists);",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "WEREWOLF1-robe-reserves-dropped",
-    "file": "src/formats/mwItemMap.js",
+    "file": "src/formats/morrowind/mwItemMap.js",
     "old": "      for (const part of RESERVES[piece.reserve] ?? []) claim(part, prio, null);\n",
     "new": "\n",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "WEREWOLF1-head-filtered-by-race",
-    "file": "src/formats/mwFirstPerson.js",
+    "file": "src/formats/morrowind/mwFirstPerson.js",
     "old": "  for (const p of parts ?? []) byId.set(String(p.id || '').toLowerCase(), p);",
     "new": "  for (const p of parts ?? []) if (p.race === 'fprace') byId.set(String(p.id || '').toLowerCase(), p);",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "WEREWOLF1-plain-record-for-a-chest",
-    "file": "src/formats/mwItemMap.js",
+    "file": "src/formats/morrowind/mwItemMap.js",
     "old": "    return plain && FP_FALLBACK_PARTS.has(plain.slot) ? plain : null;",
     "new": "    return plain ?? null;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "WEREWOLF1-1st-ignored",
-    "file": "src/formats/mwItemMap.js",
+    "file": "src/formats/morrowind/mwItemMap.js",
     "old": "    const found = bodyById.get(`${id}${ext}`);",
     "new": "    const found = firstPerson ? null : bodyById.get(`${id}${ext}`);",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "WEREWOLF1-garment-pool-left-open",
-    "file": "src/formats/mwItemMap.js",
+    "file": "src/formats/morrowind/mwItemMap.js",
     "old": "!c.enchanted && c.id !== WEREWOLF_ROBE_ID && c.model)",
     "new": "!c.enchanted && c.model)",
     "tests": [

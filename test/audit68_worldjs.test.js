@@ -126,7 +126,7 @@ test('AUDIT 68 X4-foe-sink-provenance-dropped: the router hands the provenance t
 // ---- S22: a door in the SECOND copy of a repeated block is that copy's building ----
 
 test('AUDIT 68 S22-door-repeated-block-identity: the second instance of a shared parse resolves to ITS building - key, pool draw and all', async () => {
-  const { blockFromJson, locationFromJson } = await import('../src/formats/worldDataReplacement.js');
+  const { blockFromJson, locationFromJson } = await import('../src/formats/worldData/worldDataReplacement.js');
   const { layoutLocation, RMB_SIDE } = await import('../src/world/locationLayout.js');
   const { MapsFile } = await import('../src/formats/mapsFile.js');
   const { getStaticDoors } = await import('../src/world/staticDoors.js');
@@ -290,7 +290,7 @@ test('AUDIT 68 S22-roads-retry-crash: a network that failed to build is not "kno
 test('AUDIT 68 S22-tl2-edge-facing: the roof refusal falls back to the edge of the SAME side - no second roll, so the facing is the edge\'s own', async () => {
   const { positionPlayerToLocation, locationArrivalLanding, LOCATION_SIDES, EXTRA_DISTANCE } = await import('../src/world/locationEntrance.js');
   const { RMB_SIDE } = await import('../src/world/locationLayout.js');
-  const { locationFromJson } = await import('../src/formats/worldDataReplacement.js');
+  const { locationFromJson } = await import('../src/formats/worldData/worldDataReplacement.js');
   // the law: one side pick answers both the marker landing and its edge
   for (const r of [0, 0.3, 0.6, 0.9]) {
     const at = positionPlayerToLocation({ mapWidth: 2, mapHeight: 2, startMarkers: [[5, 0, 5]], useNearestStartMarker: true, roll: () => r });

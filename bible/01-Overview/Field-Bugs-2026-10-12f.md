@@ -86,7 +86,7 @@ index) and kept only when it can be worn (`systems/equip.js` wearableItem).
 
 `systems/item/itemLaw.js` `GOLD_INT_MAX` (2,147,483,647 - PlayerEntity.cs:64 `int goldPieces`, DaggerfallUnityItem.cs:40
 `int value`, DaggerfallUnityItem.cs:51 `int stackCount`, read from DFU's own source) and `CLASSIC_VALUE_MAX` (a classic
-save's record, its save tree's unsigned 32 bits - `formats/saveTreeFile.js` getUint32); `server-account/src/judge.js`
+save's record, its save tree's unsigned 32 bits - `formats/save/saveTreeFile.js` getUint32); `server-account/src/judge.js`
 `purseWord`. The port's producers keep under it - the bank's amount field is nine digits
 (DaggerfallBankingWindow.cs:188-190), an estate is `| 0`, the realm's own credits at most a hundred million - so a count
 past it is no honest one: a law finding, which holds the trade from day one (INT3), where the budget, measuring, held

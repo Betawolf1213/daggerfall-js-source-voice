@@ -7,7 +7,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { bc7Decode, decodeBc7Block } from '../src/formats/bc7.js';
-import { TEXTURE_FORMAT } from '../src/formats/unityBundle.js';
+import { TEXTURE_FORMAT } from '../src/formats/unity/unityBundle.js';
 import {
   setDfmodSources, clearDfmodSources, attachedDfmods, hasOwnDoor, dfmodStoreKey, dfmodIndexKey,
   xmlRect, xmlScale, hasDfmodImg, hasDfmodCifRci, dfmodImgImage, dfmodCifRciImage, dfmodCifRciRect, resampleRgba, dfmodGeneration,
@@ -37,7 +37,7 @@ test('DFMOD1 bc7: mode 6 with every index 0 is endpoint 0, p-bit and all; the re
   decodeBc7Block(b, 0, px);
   for (let i = 0; i < 16; i++) assert.deepEqual([...px.subarray(i * 4, i * 4 + 4)], [255, 1, 129, 255]);
   assert.equal(TEXTURE_FORMAT.BC7, 25);
-  assert.match(src('formats/unityBundle.js'), /case TEXTURE_FORMAT\.BC7:\s*\n\s*rgba = bc7Decode\(src, width, height\);/);
+  assert.match(src('formats/unity/unityBundle.js'), /case TEXTURE_FORMAT\.BC7:\s*\n\s*rgba = bc7Decode\(src, width, height\);/);
 });
 
 test('DFMOD1 bc7: a reserved mode (no bit set) is transparent black; a short buffer throws; odd sizes crop', () => {
@@ -192,7 +192,7 @@ test('DFMOD1-E: the Enhanced Plus avatar follows the attached mods - the composi
 // ---- DFMOD2: big mods (DREAM's full-resolution set) never stand the game on a blank screen ----
 
 test('DFMOD2 mips: the first level within the detail, and where it sits in the chain', async () => {
-  const { mipLevelFor, mipSpan, TEXTURE_FORMAT: F } = await import('../src/formats/unityBundle.js');
+  const { mipLevelFor, mipSpan, TEXTURE_FORMAT: F } = await import('../src/formats/unity/unityBundle.js');
   const tex = { m_Width: 2048, m_Height: 1024, m_MipCount: 12, m_TextureFormat: F.BC7 };
   assert.equal(mipLevelFor(tex, 512), 2);
   assert.equal(mipLevelFor(tex, Infinity), 0);
@@ -202,8 +202,8 @@ test('DFMOD2 mips: the first level within the detail, and where it sits in the c
 });
 
 test('DFMOD2 sources: a Uint8Array or a ranged source reads the same; a Blob is refused on this thread; the worker reads a Blob by range', async () => {
-  const { byteSource } = await import('../src/formats/unityBundle.js');
-  const { blobSource } = await import('../src/formats/unityBundleWorker.js');
+  const { byteSource } = await import('../src/formats/unity/unityBundle.js');
+  const { blobSource } = await import('../src/formats/unity/unityBundleWorker.js');
   const u = Uint8Array.from({ length: 64 }, (_, i) => i);
   assert.deepEqual([...byteSource(u).slice(10, 14)], [10, 11, 12, 13]);
   assert.throws(() => byteSource(new Blob([u])), /read by range in the worker/);
@@ -264,7 +264,7 @@ function fakeLane(log) {
 }
 
 test('DFMOD3 pool: two workers hold every bundle; one decode in flight each; an ask past its deadline is never sent; a dead worker answers null', async () => {
-  const { createBundlePool } = await import('../src/formats/unityBundlePool.js');
+  const { createBundlePool } = await import('../src/formats/unity/unityBundlePool.js');
   const logs = [];
   const pool = createBundlePool({ size: 2, workerFactory: () => { const l = []; logs.push(l); return fakeLane(l); } });
   const b = await pool.open(new Uint8Array(8), { maxTextureSize: 256, knownTextures: [['a', 1, 1]] });
@@ -310,7 +310,7 @@ test('DFMOD3 budget: past the bundle tier\'s memory budget a mod picture is not 
 
 test('DWHD1 crunch: a non-CRN stream is refused; formats 28/29 are known to the reader; the HD replacers are texture mods, the original keeps its door', async () => {
   const { unpackUnityCrunch } = await import('../src/formats/crunch.js');
-  const { TEXTURE_FORMAT: F } = await import('../src/formats/unityBundle.js');
+  const { TEXTURE_FORMAT: F } = await import('../src/formats/unity/unityBundle.js');
   assert.throws(() => unpackUnityCrunch(new Uint8Array(80)), /not a CRN stream/);
   assert.equal(F.DXT1Crunched, 28); assert.equal(F.DXT5Crunched, 29);
   assert.ok(!hasOwnDoor('dfmod/diverse weapons hd - handhelds i.dfmod') && !hasOwnDoor('dfmod/diverse weapons hd - inventory.dfmod'));
@@ -321,7 +321,7 @@ test('DWHD1 crunch: a non-CRN stream is refused; formats 28/29 are known to the 
 // The crunch decoder was checked block for block against texture2ddecoder's unpack_unity_crunch on 122 of Diverse
 // Weapons HD's own textures. With the mod on disk (DWHD_DIR), this re-runs a decode of it.
 test('DWHD1 crunch: Diverse Weapons HD\'s handhelds decode (when the mod is on disk)', { skip: !process.env.DWHD_DIR }, async () => {
-  const { readUnityBundle } = await import('../src/formats/unityBundle.js');
+  const { readUnityBundle } = await import('../src/formats/unity/unityBundle.js');
   const bytes = new Uint8Array(readFileSync(`${process.env.DWHD_DIR}/diverse weapons hd - handhelds i.dfmod`));
   const t = readUnityBundle(bytes).textures.find((x) => x.name === 'DAGGER.CIF_0-0_Steel');
   const img = t.rgba();
@@ -330,7 +330,7 @@ test('DWHD1 crunch: Diverse Weapons HD\'s handhelds decode (when the mod is on d
 });
 
 test('GROUND1 array: each slice is its own mip chain - the front of every slice is its picture; an unknown format is refused', async () => {
-  const { decodeTextureArray } = await import('../src/formats/unityBundle.js');
+  const { decodeTextureArray } = await import('../src/formats/unity/unityBundle.js');
   // 2x1 RGBA32 (GraphicsFormat 8), 2 slices, each slice 2x1 + its 1x1 mip = 12 bytes
   const slice = (r) => [r, 0, 0, 255, r + 1, 0, 0, 255, 99, 99, 99, 99];
   const data = new Uint8Array([...slice(10), ...slice(20)]);

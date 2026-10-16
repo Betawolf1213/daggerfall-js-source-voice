@@ -20,7 +20,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { pickLanternRecord, pickTorchRecord, assembleFirstPersonArm, poseAssembly, hangAffine, MW_LIGHT_CARRY } from '../src/formats/mwFirstPerson.js';
+import { pickLanternRecord, pickTorchRecord, assembleFirstPersonArm, poseAssembly, hangAffine, MW_LIGHT_CARRY } from '../src/formats/morrowind/mwFirstPerson.js';
 import {
   createFpArm, resolveHipLanternPart, hipLanternPartPaths, hangHipLight, effectPlacement,
   HIP_LIGHT_BONE, HIP_LIGHT_SLOT, HIP_LANTERN_HOOK,

@@ -79,7 +79,7 @@ test('BOOT2: the entry\'s static reach touches neither hub and stays under the c
   // to 73.
   // MWNPC1 (2026-10-09, met at the MW-NPC arc's merge of main, 2026-10-10): 74 - the GPU skin's palette shape
   // (render/skinPalette.js: the entries a row and the unit, which CHAR_SKIN_VS is built from as the renderer loads, and
-  // which formats/mwGpuSkin.js writes by). A leaf that imports nothing, so it can bring no hub, and the assertion below
+  // which formats/morrowind/mwGpuSkin.js writes by). A leaf that imports nothing, so it can bring no hub, and the assertion below
   // keeps it so. The branch measured 70 under WINDFALL1's 71; RW1's 73 on main took the room. The ceiling moves to 74.
   // FAR-SEA1 (2026-10-10): 75 - the horizon's haze (render/horizonHaze.js: the GLSL the water surface and the lane's far
   // ring are built from as the renderer loads). A leaf that imports nothing, so it can bring no hub, and the assertion

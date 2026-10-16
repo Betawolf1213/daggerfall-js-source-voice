@@ -55,7 +55,7 @@ a carriage (model 41214) and its team or a cart (41207, 41209, 41109), the horse
   the shipped 186,594 to 188,400). A whole RMB block is Daggerfall's layout - game data, which this repository
   never carries (Port-Doctrine) - so each is rebuilt at load from the player's own
   `BLOCKS.BSA` and served under its own name through the world-data door
-  (`src/formats/worldDataPatch.js`, `src/scenes/modWorldData.js`). Each patch records the
+  (`src/formats/worldData/worldDataPatch.js`, `src/scenes/modWorldData.js`). Each patch records the
   sha256 of the author's file in canonical form.
 
   **BUILT WITHOUT A BLOCKS.BSA, AND SAID SO.** The container these were made in carries

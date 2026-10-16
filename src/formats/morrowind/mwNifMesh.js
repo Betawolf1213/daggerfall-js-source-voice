@@ -1,5 +1,5 @@
 // Morrowind NIF scene flattener - slice 2 of the import arc. Walks a
-// parsed NIF (src/formats/mwNifFile.js), composes node transforms down the
+// parsed NIF (src/formats/morrowind/mwNifFile.js), composes node transforms down the
 // graph, and emits draw-ready batches: baked world-space positions and
 // normals, UV/color passthrough, the accumulated material and base
 // texture, and the alpha-property state. Pure data in, pure data out -
@@ -22,7 +22,7 @@ import { deref, TEX_SLOT } from './mwNifFile.js';
 // `ninode->mChildren` for anything that casts to Nif::NiNode, and the switch
 // and LOD classes get their own osg wrapper first (:907-924) rather than a
 // pruned subtree. Four of these were parsed and then dropped on the floor.
-export const NODE_TYPES = new Set([   // MW-SPELLFX1: exported - an effect mesh's node graph is the drawing walk's own membership (formats/mwVfx.js)
+export const NODE_TYPES = new Set([   // MW-SPELLFX1: exported - an effect mesh's node graph is the drawing walk's own membership (formats/morrowind/mwVfx.js)
   'NiNode',
   'NiBSAnimationNode',
   'NiBSParticleNode',
@@ -70,7 +70,7 @@ export function selectedChild(rec) {   // MW-SPELLFX1: exported - an effect's sw
  *  1631) and a batch here is a triangle list by contract, so a line shape
  *  has no honest home downstream - it is dropped rather than drawn as
  *  triangles. */
-export const GEOMETRY_TYPES = new Set(['NiTriShape', 'NiTriStrips']);   // MW-SPELLFX1: exported (formats/mwVfx.js)
+export const GEOMETRY_TYPES = new Set(['NiTriShape', 'NiTriStrips']);   // MW-SPELLFX1: exported (formats/morrowind/mwVfx.js)
 
 /** MAC-Q (2026-09-17, Mac: "the torch doesn't emit fire"): the PARTICLE
  *  geometries. A batch here is a triangle list by contract, and a particle
@@ -80,11 +80,11 @@ export const GEOMETRY_TYPES = new Set(['NiTriShape', 'NiTriStrips']);   // MW-SP
  *  same composed transform and property chain a shape gets, and the
  *  NiBSParticleNode's flags the reference reads for AutoPlay and
  *  LocalSpace (nifloader.cpp:786-787 sets `args.mAnimFlags` from the
- *  enclosing NiBSAnimationNode or NiBSParticleNode). formats/mwParticles.js
+ *  enclosing NiBSAnimationNode or NiBSParticleNode). formats/morrowind/mwParticles.js
  *  turns a bundle into a system. A caller with no sink gets exactly what
  *  it always got: nothing. */
 export const PARTICLE_TYPES = new Set(['NiParticles', 'NiAutoNormalParticles', 'NiRotatingParticles']);   // MW-SPELLFX1: exported - an effect's particle geometry is a node of its graph
-export const ANIM_FLAG_NODES = new Set(['NiBSAnimationNode', 'NiBSParticleNode']);   // MW-SPELLFX1: exported - formats/mwVfx.js reads the same AutoPlay/LocalSpace flags
+export const ANIM_FLAG_NODES = new Set(['NiBSAnimationNode', 'NiBSParticleNode']);   // MW-SPELLFX1: exported - formats/morrowind/mwVfx.js reads the same AutoPlay/LocalSpace flags
 
 /** nifloader.cpp:1609-1621: one TRIANGLE_STRIP primitive per strip, strips
  *  shorter than 3 skipped, and a shape whose strips are ALL short draws
@@ -526,7 +526,7 @@ export function flattenNif(nif, opts = {}) {
       name: shape.name || '',
       // MW-BOW1: where the shape hangs - its record and every record from the file root down to it - and its
       // vertices as authored, so a part whose own controllers move it (a bow's string and its ArrowBone, on the weapon
-      // clock - formats/mwPartClock.js) can be posed again at another time. References, never copies.
+      // clock - formats/morrowind/mwPartClock.js) can be posed again at another time. References, never copies.
       ref: shape,
       chain,
       animFlags,

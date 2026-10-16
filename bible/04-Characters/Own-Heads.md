@@ -1,7 +1,7 @@
 # Own Heads - the port's own heads and hairs for the Morrowind body
 
 `tools/bakeHeads.mjs` (the bake) + `tools/fbxMesh.mjs` (one material of an object, `material`) +
-`src/characters/ownModels/ownHeadModels.js` (the pools) + `src/formats/mwFirstPerson.js` (facePools) +
+`src/characters/ownModels/ownHeadModels.js` (the pools) + `src/formats/morrowind/mwFirstPerson.js` (facePools) +
 `src/formats/mwFaceTable.json` (the curated portraits) + `src/tools/mwViewer.js` (the face sheet) (MW-HEADS1, the owner,
 2026-10-13)
 
@@ -39,7 +39,7 @@ the scene is turned half round about its crown (`bakeHeads.mjs` HEAD_FORWARD `-y
 mirror, the scene's translation turned with it): in the head's frame each face stands upright and looks **-Y** - its
 crown on top on the middle line, its nose ahead under it, its chin ahead of the crown, its back at y +6.95 (AUDIT
 MW-HEADS1 L1-F8, re-pinned). A retail head's frame is the same frame, so a retail face looks -Y in it too - and the face
-match (MW-D35, `formats/mwFaceMatch.js` headFeatures), which took +Y for "Morrowind's forward" (the actor's, not the
+match (MW-D35, `formats/morrowind/mwFaceMatch.js` headFeatures), which took +Y for "Morrowind's forward" (the actor's, not the
 Head node's), had measured every head off the back of its skull: it reads the face on -Y now, and its version is bumped
 so no verdict kept from the back is read again (FACE_MATCH_VERSION 2). The
 owner's scene stood the three at z 125 over its floor, 3.46 over the T-posed scene's own head (MW-STEEL1's

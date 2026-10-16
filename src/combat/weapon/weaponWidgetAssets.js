@@ -20,7 +20,7 @@
 // bundle means the modules run as the mod runs without its textures
 // (the classic frame at double size).
 
-import { readUnityBundle } from '../../formats/unityBundle.js';
+import { readUnityBundle } from '../../formats/unity/unityBundle.js';
 import { toScreenOrder } from '../../formats/color32Order.js';   // WW3: the ORDER *and* the shape the upload path reads - `{ colors }`, never a decoded PNG's `{ data }`
 import { decodePng } from '../../systems/textureReplacement.js';
 import { MATERIAL_NAMES } from '../../systems/item/itemInfo.js';   // MetalTypes' names, Iron..Daedric

@@ -22,7 +22,7 @@
 //   morphgeometry.cpp MorphGeometry::cull        base + sum(weight_i * morph_i), morph 0 the base and never weighted
 //   controller.cpp GeomMorpherController         each morph's weight its own keys at the controller's time (no keys: 0)
 //
-// The port flattened the bow ONCE at its rest pose (formats/mwNifMesh.js flattenNif) and baked the ArrowBone's rest
+// The port flattened the bow ONCE at its rest pose (formats/morrowind/mwNifMesh.js flattenNif) and baked the ArrowBone's rest
 // chain into the arrow (resolveWeaponParts' preTransform): a bow that never drew, and an arrow that sat wherever the
 // mesh's rest pose left the node, shown from the draw to the loose. This module is the clock's half, pure - no GL:
 // `partClockOf(nif)` reads what moves, once per parsed file; `posePartBatch` and `nodeAffineAt` answer a time.

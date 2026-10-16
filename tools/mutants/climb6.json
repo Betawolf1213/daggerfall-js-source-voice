@@ -127,7 +127,7 @@
   },
   {
     "name": "CLIMB6-assembly-drops-climb",
-    "file": "src/formats/mwFirstPerson.js",
+    "file": "src/formats/morrowind/mwFirstPerson.js",
     "old": "assembly.climbFit = climb ? applyClimbRig(skeleton, pose, GRAPH_ROOT, fns.skelMats, climb) : null;",
     "new": "assembly.climbFit = null;",
     "tests": [

@@ -14,7 +14,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { headPortrait, headFrame, headPortraitModel, headBounds, NIF_TO_PASS, tpSkeletonPath } from '../src/combat/fpArm.js';
 import { armBuildOptsOf, armIdentityOf } from '../src/combat/weapon/weaponRig.js';
-import { facePools, bodyParts, MW_UNITS_PER_METER } from '../src/formats/mwFirstPerson.js';
+import { facePools, bodyParts, MW_UNITS_PER_METER } from '../src/formats/morrowind/mwFirstPerson.js';
 import { bodyRec } from './fixtures/mw/bodyRec.mjs';
 import { makeVendoredArchive } from '../src/systems/urlArchive.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';

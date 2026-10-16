@@ -1,6 +1,6 @@
 // AUDIT VE P1 (2026-10-05, Mac: "performance isn't affected") - THE SHIPPED PACK'S PICTURES, DECODED OFF THE MAIN THREAD.
 //
-// An attached .dfmod decodes in its bundle worker (formats/unityBundleWorker.js). The shipped pack's PNGs were decoded on
+// An attached .dfmod decodes in its bundle worker (formats/unity/unityBundleWorker.js). The shipped pack's PNGs were decoded on
 // the page's own thread: createImageBitmap's decode is the browser's, but the readback (drawImage and getImageData, about
 // 1.7 ms for a 256-pixel tile) and the texture detail's box filter (resampleRgba - tens of ms for a 726x941 tree) were the
 // main thread's, in the middle of frames while the world streams. Here they are this worker's: it fetches the file,

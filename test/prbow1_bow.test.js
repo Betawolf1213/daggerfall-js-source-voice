@@ -23,7 +23,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createFpArm, fpSkeletonPath, FP_CLIP_PATH, foldRangeBoxes, visibleRangeBounds, CARRIED_SLOTS } from '../src/combat/fpArm.js';
 import { drawRigSpriteBox, drawCharacterSprite, landAnchor } from '../src/render/characterSprite.js';
-import { MW_WEAPON_TYPE, MW_UNITS_PER_METER, meshBounds } from '../src/formats/mwFirstPerson.js';
+import { MW_WEAPON_TYPE, MW_UNITS_PER_METER, meshBounds } from '../src/formats/morrowind/mwFirstPerson.js';
 import { HOLSTER_SLOTS } from '../src/systems/weaponSheathing.js';
 import { multiply, perspective, lookAt, transformPoint, trs } from '../src/world/mat4.js';
 import { leanedUp } from '../src/player/travelCamera.js';   // AUDIT OW4 J6: the travel view's leaned up

@@ -2,7 +2,7 @@
 // Daggerfall temple stands its deity's Daedra summoner, and all 24 of Beautiful Villages' temple designs leave it out
 // (1,855 temples). Each design's summoner - Daggerfall's own of the temple's deity - stands at a floor spot measured over
 // the player's data (tools/templeSummoners.mjs: the walk's nearest clear floor to the priest), put in where the block
-// becomes the port's (formats/worldDataReplacement.js getDFBlockReplacementData) for every consumer at once. The door
+// becomes the port's (formats/worldData/worldDataReplacement.js getDFBlockReplacementData) for every consumer at once. The door
 // tests' own builders (test/wd3Fakes.mjs, blockToDfuJson); the measurement re-run, gated on the player's ARENA2.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -10,8 +10,8 @@ import { join } from 'node:path';
 import { existsSync } from 'node:fs';
 import {
   registerWorldDataAsset, installWorldDataReplacement, bindWorldDataBlocks, _resetWorldDataReplacement, getDFBlockReplacementData, setLayoutPinOracle,
-} from '../src/formats/worldDataReplacement.js';
-import { blockToDfuJson } from '../src/formats/worldDataJson.js';
+} from '../src/formats/worldData/worldDataReplacement.js';
+import { blockToDfuJson } from '../src/formats/worldData/worldDataJson.js';
 import { setValue, resetToDefaults } from '../src/systems/settings/settings.js';
 import { clearWorldDataVariants } from '../src/systems/worldDataVariants.js';
 import { _resetLayoutPins, pinAt } from '../src/systems/layoutPins.js';

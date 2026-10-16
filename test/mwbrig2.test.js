@@ -4,18 +4,18 @@
 // MW-BRIG1 hung the brigandine rigid on the skeleton's Chest and Groin nodes. The body it covers is SKINNED to the
 // spine and pelvis by its own NiSkinData (Morrowind-Rules.md rule 20), so once anything animated the torso moved by
 // its bones and the brigandine by a node the body never uses. These pins hold the fix: the garment copies the body's
-// skin (formats/mwSkinTransfer.js) and is drawn by the same skinBatch the body is, so it cannot come away from it.
+// skin (formats/morrowind/mwSkinTransfer.js) and is drawn by the same skinBatch the body is, so it cannot come away from it.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
-import { parseNif } from '../src/formats/mwNifFile.js';
-import { flattenNif } from '../src/formats/mwNifMesh.js';
-import { decodeTextureImage } from '../src/formats/mwTexture.js';
-import { buildSkeleton, poseSkeleton, skeletonSpaceMatrices, skinBatch, GRAPH_ROOT } from '../src/formats/mwSkin.js';
-import { transferSkin, sourceSkin } from '../src/formats/mwSkinTransfer.js';
-import { assembleFirstPersonArm, poseAssembly } from '../src/formats/mwFirstPerson.js';
-import { composeWornArmor, itemMapCoverage } from '../src/formats/mwItemMap.js';
+import { parseNif } from '../src/formats/morrowind/mwNifFile.js';
+import { flattenNif } from '../src/formats/morrowind/mwNifMesh.js';
+import { decodeTextureImage } from '../src/formats/morrowind/mwTexture.js';
+import { buildSkeleton, poseSkeleton, skeletonSpaceMatrices, skinBatch, GRAPH_ROOT } from '../src/formats/morrowind/mwSkin.js';
+import { transferSkin, sourceSkin } from '../src/formats/morrowind/mwSkinTransfer.js';
+import { assembleFirstPersonArm, poseAssembly } from '../src/formats/morrowind/mwFirstPerson.js';
+import { composeWornArmor, itemMapCoverage } from '../src/formats/morrowind/mwItemMap.js';
 import { collectArmTextures } from '../src/combat/fpArm.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { RRI_TEMPLATES, rriVariantWord } from '../src/systems/roleplayRealismItems/rriItems.js';

@@ -7,7 +7,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { DF_TO_MW_WEAPON, MW_WEAPON_TYPE, MW_TWO_HANDED, weaponFlags, dfWeaponShape, dfWeaponToMw, pickWeaponRecord } from '../src/formats/mwFirstPerson.js';
+import { DF_TO_MW_WEAPON, MW_WEAPON_TYPE, MW_TWO_HANDED, weaponFlags, dfWeaponShape, dfWeaponToMw, pickWeaponRecord } from '../src/formats/morrowind/mwFirstPerson.js';
 import { WEAPONS } from '../src/characters/weapons.js';
 import { WEAPON_HANDS } from '../src/characters/equipRules.js';
 import { weaponOfMaterial } from '../src/combat/enemyEquipment.js';

@@ -5,22 +5,22 @@
 //
 // One export, nothing of Bethesda's in it, committed as it came; eight paintings, a mesh each; skinned at bake time to
 // the chest alone (MW-CAPE-RIGID, 2026-10-14 - it rode the spine and clavicles and hung over the thighs); worn by a
-// garment's name and dye, claiming no slot. And the two fits a body takes once it is assembled (formats/mwCloakFit.js):
+// garment's name and dye, claiming no slot. And the two fits a body takes once it is assembled (formats/morrowind/mwCloakFit.js):
 // the cloak eased back over the armour under it, and the Weapon Sheathing addon's stowed gear against it - slung gear
 // over it, hip gear pitched under it - pinned on the addon's own scabbards, vendored.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
-import { parseNif } from '../src/formats/mwNifFile.js';
-import { flattenNif } from '../src/formats/mwNifMesh.js';
-import { decodeTextureImage } from '../src/formats/mwTexture.js';
-import { assembleFirstPersonArm, poseAssembly } from '../src/formats/mwFirstPerson.js';
-import { composeWornArmor, composeWornModest, fpWornAdds, itemMapCoverage, mwItemReport, CLOTHING_NAME, DF_CLOTHING_DYE_RGB } from '../src/formats/mwItemMap.js';
+import { parseNif } from '../src/formats/morrowind/mwNifFile.js';
+import { flattenNif } from '../src/formats/morrowind/mwNifMesh.js';
+import { decodeTextureImage } from '../src/formats/morrowind/mwTexture.js';
+import { assembleFirstPersonArm, poseAssembly } from '../src/formats/morrowind/mwFirstPerson.js';
+import { composeWornArmor, composeWornModest, fpWornAdds, itemMapCoverage, mwItemReport, CLOTHING_NAME, DF_CLOTHING_DYE_RGB } from '../src/formats/morrowind/mwItemMap.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { CLASSIC_ARMOR_TEMPLATE } from '../src/characters/ownModels/ownArmorModels.js';
 import { CLOAK_NAMES, CLOAK_PAINTINGS, CLOAK_DYE_PAINTING, ownCloakFor, ownCloakModelPaths, cloakModel, isCloakSlot } from '../src/characters/ownModels/ownClothingModels.js';
-import { CLOAK_CLEARANCE, CLOAK_PUSH_LIMIT, HIP_PITCH_LIMIT, SLUNG_PITCH_LIMIT, cloakSheet, sheetCellKey, fitCloakOver, fitStowedGear, surfaceSamples } from '../src/formats/mwCloakFit.js';
+import { CLOAK_CLEARANCE, CLOAK_PUSH_LIMIT, HIP_PITCH_LIMIT, SLUNG_PITCH_LIMIT, cloakSheet, sheetCellKey, fitCloakOver, fitStowedGear, surfaceSamples } from '../src/formats/morrowind/mwCloakFit.js';
 import { readPng } from '../tools/pngIO.mjs';
 import { readFbx } from '../tools/fbxRead.mjs';
 import { meshModelNames } from '../tools/fbxStrip.mjs';
@@ -284,5 +284,5 @@ test('MW-CLOAK1 by source: the third-person build fits the cloak over the body\'
   assert.doesNotMatch(fp, /seatCloak|cloaked:|seatedBatch/, 'MW-CAPE-RIGID: one bone, one batch - a seat swaps nothing');
   assert.match(fp, /const cloak = ownCloakFor\(\{ kind: 'clothing', name: CLOTHING_NAME\[item\.templateIndex\], dye: item\.dye \?\? 0 \}\);\s*if \(cloak\) return \{ id: `\$\{cloak\.id\}_\$\{cloak\.painting\}`, model: cloak\.model \};/);
   assert.match(fp, /if \(\(item\.group === 'MensClothing' \|\| item\.group === 'WomensClothing'\) && !ownCloakFor\(/);
-  assert.match(src('src/formats/mwFirstPerson.js'), /assembly\.time = time;[\s\S]{0,400}if \(assembly\.afterPose\) assembly\.afterPose\(assembly\);\s*assembly\.bounds = /);
+  assert.match(src('src/formats/morrowind/mwFirstPerson.js'), /assembly\.time = time;[\s\S]{0,400}if \(assembly\.afterPose\) assembly\.afterPose\(assembly\);\s*assembly\.bounds = /);
 });

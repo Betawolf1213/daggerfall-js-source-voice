@@ -704,7 +704,7 @@ on input."** And the uploaded file: the shipped
 ### The assembly is in the tree
 
 The `.dfmod` is a UnityFS archive and `Eye Of The Beholder.dll` rides
-in it as a TextAsset. The port's own reader (`formats/unityBundle.js`)
+in it as a TextAsset. The port's own reader (`formats/unity/unityBundle.js`)
 opened it - nothing new was needed - and `tools/eotbIl.mjs` writes the
 54,272-byte assembly out beside the art. `tools/ilDump.py` (dnfile +
 dncil, both installed through the proxy; `monodis` segfaults on this

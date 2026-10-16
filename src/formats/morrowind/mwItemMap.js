@@ -50,14 +50,14 @@
 //     table instead of reusing the weapon one).
 // ═══════════════════════════════════════════════════════════════════
 
-import { WEAPONS, WEAPON_MATERIALS } from '../characters/weapons.js';
-import { OWN_MW_MODELS } from '../characters/ownModels/ownWeaponModels.js';   // FIELD-GUN-MW2: the weapons Morrowind does not have
-import { OWN_MW_ARMOR, ownArmorModelFor, ownArmorParts } from '../characters/ownModels/ownArmorModels.js';   // MW-BRIG1: the armour Morrowind does not have; MW-STEEL1: and its styles
-import { CLOAK_NAMES, CLOAK_PAINTINGS, cloakModel, ownCloakFor, ownOutfitFor } from '../characters/ownModels/ownClothingModels.js';   // MW-CLOAK1: and the clothing; MW-FOLK1: and the townsfolk's outfits
-import { t } from '../systems/textManager.js';   // L10N4: MW-FOLK1's notes in the player's language
-import { ARMOR_MATERIAL } from '../systems/armorMaterials.js';
-import { ARMOR_ENUM } from '../combat/enemyEquipment.js';
-import templates from '../characters/itemTemplates.json' with { type: 'json' };
+import { WEAPONS, WEAPON_MATERIALS } from '../../characters/weapons.js';
+import { OWN_MW_MODELS } from '../../characters/ownModels/ownWeaponModels.js';   // FIELD-GUN-MW2: the weapons Morrowind does not have
+import { OWN_MW_ARMOR, ownArmorModelFor, ownArmorParts } from '../../characters/ownModels/ownArmorModels.js';   // MW-BRIG1: the armour Morrowind does not have; MW-STEEL1: and its styles
+import { CLOAK_NAMES, CLOAK_PAINTINGS, cloakModel, ownCloakFor, ownOutfitFor } from '../../characters/ownModels/ownClothingModels.js';   // MW-CLOAK1: and the clothing; MW-FOLK1: and the townsfolk's outfits
+import { t } from '../../systems/textManager.js';   // L10N4: MW-FOLK1's notes in the player's language
+import { ARMOR_MATERIAL } from '../../systems/armorMaterials.js';
+import { ARMOR_ENUM } from '../../combat/enemyEquipment.js';
+import templates from '../../characters/itemTemplates.json' with { type: 'json' };
 
 /** ARMOR_ENUM.Helm, held as its own name because the composer's
  *  helmet-hides-hair rule (AUDIT 30 F1) keys on it. */

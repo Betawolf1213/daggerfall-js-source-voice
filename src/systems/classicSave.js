@@ -42,8 +42,8 @@ import { SKILLS } from './skills.js';
 import { mintCharacterId } from './characterId.js';   // CHARID1
 import { VAMPIRE_CLANS, LYCANTHROPY_TYPES } from './infection.js';
 import { raceById } from './races.js';
-import { RECORD_TYPES, ENVIRONMENTS, isWagonRecord } from '../formats/saveTreeFile.js';
-import { readMapSaveDiscovery } from '../formats/saveGames.js';
+import { RECORD_TYPES, ENVIRONMENTS, isWagonRecord } from '../formats/save/saveTreeFile.js';
+import { readMapSaveDiscovery } from '../formats/save/saveGames.js';
 import { SHIP_TYPES } from './banking.js';
 import { SAVE_VERSION } from './save/save.js';
 import { LEVELING_CLASSIC, newCharacterLevelingSystem } from './oblivionLeveling.js';   // ORL1: a classic save is a classic character
@@ -258,7 +258,7 @@ export function classicGlobalVars(saveVars) {
  *  `position + 13 < RecordLength`, so the LAST 13-byte row - the one
  *  that ends exactly at the record's end - is never read; and an
  *  over-long record stops at the region count with DFU's error arm.
- *  @param {import('../formats/saveTreeFile.js').SaveTreeRecord|null} bankRecord - the SaveTree BankAccount record.
+ *  @param {import('../formats/save/saveTreeFile.js').SaveTreeRecord|null} bankRecord - the SaveTree BankAccount record.
  *  @param {number} regionCount */
 export function classicBankAccounts(bankRecord, regionCount = 62) {
   const accounts = Array.from({ length: regionCount }, (_, regionIndex) => ({
@@ -648,7 +648,7 @@ export function restoreOldClassSpecials(saveTree, career, classicTransformedRace
  * applies beside it (weather array, quest globals, discovery, and the
  * classic world position, which is a host-frame decision).
  *
- * @param {import('../formats/saveGames.js').SaveGames} saveGames - with openSave() done.
+ * @param {import('../formats/save/saveGames.js').SaveGames} saveGames - with openSave() done.
  * @param {object} [deps]
  * @param {Map} [deps.spellsByIndex] - the SPELLS.STD index (stock-spell dedup).
  * @param {{dict?: object}|null} [deps.factionStore] - the live FACTION.TXT store ({dict}).
@@ -730,7 +730,7 @@ export function classicSaveToSnapshot(saveGames, {
       // AUDIT 63 F31: StartGameBehaviour.StartFromClassicSave :605-606
       // `// Assign weapon hand being used` /
       // `weaponManager.UsingRightHand = !saveVars.UsingLeftHandWeapon;`.
-      // The byte has been parsed since SAV2 (formats/saveVarsFile.js
+      // The byte has been parsed since SAV2 (formats/save/saveVarsFile.js
       // :183, offset 0x3D9) and the conversion has sat in
       // combat/playerWeapon.js with no production caller; this is the
       // caller. world.js's applyPose consumes it beside weaponDrawn.

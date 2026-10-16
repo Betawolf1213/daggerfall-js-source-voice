@@ -26,7 +26,7 @@ import { PeerBodies, peerBuildOpts, peerCamera, BODIES_MAX, BODY_RETRY_MS, BODY_
 import { RemotePlayers, PEER_HEIGHT } from '../src/net/remotePlayers.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { ARMOR_ENUM } from '../src/combat/enemyEquipment.js';
-import { CLOTHING_NAME } from '../src/formats/mwItemMap.js';
+import { CLOTHING_NAME } from '../src/formats/morrowind/mwItemMap.js';
 import { PAPERDOLL_W, PAPERDOLL_H } from '../src/ui/paperDoll.js';
 import { CAPSULE_HEIGHT } from '../src/player/motor.js';
 import { perspective, lookAt, mirrorProjectionX } from '../src/world/mat4.js';

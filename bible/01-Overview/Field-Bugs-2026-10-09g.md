@@ -72,11 +72,11 @@ So the port flattened the bow once, at its rest pose, and baked the ArrowBone's 
 bent, and the arrow - shown from the draw to the loose - sat wherever the mesh's rest left the node, which on a retail
 bow is not the string. MW-D16, MW-D42 and MW-D50 each walked the attach chain and found it right; it was, at rest.
 
-Now `formats/mwPartClock.js` reads a part's own controllers (a node's NiKeyframeController over its rest, an unskinned
+Now `formats/morrowind/mwPartClock.js` reads a part's own controllers (a node's NiKeyframeController over its rest, an unskinned
 shape's NiGeomMorpherController - the base plus each morph by its weight - and an AutoPlay node on frame time), and
 `combat/fpArm.js` keeps the weapon clock - the weapon group's playhead, from the group's first key for a ranged weapon,
 held where the last section left it, 0 once the group is no longer the weapon's. Before every pose, both views
-(`posePartClocks`, `formats/mwFirstPerson.js`) re-pose the weapon's moving pieces and put the arrow where the ArrowBone
+(`posePartClocks`, `formats/morrowind/mwFirstPerson.js`) re-pose the weapon's moving pieces and put the arrow where the ArrowBone
 is at that time. A bow whose mesh moves nothing is posed exactly as before. Other parts' controllers run on the lower
 body's clock in the reference and stay unported. THE FOUR HOSTS: the arm and body are every host's one rig (no host
 seam); `net/peer/peerBodies.js`' peers run the same update.

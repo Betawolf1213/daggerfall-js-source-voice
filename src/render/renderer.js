@@ -239,7 +239,7 @@ void main() {
 //   - the OPTIONAL skin channels 5-9, additive as aUV and aEmissive are: a VAO that never enables them reads
 //     constants, and `uSkin` 0 never looks at them - every voxel rig and every CPU-skinned mesh draws exactly what
 //     it drew;
-//   - uSkin 1 (one influence pair) or 2 (two): the position is BLENDED here off the palette (formats/mwGpuSkin.js -
+//   - uSkin 1 (one influence pair) or 2 (two): the position is BLENDED here off the palette (formats/morrowind/mwGpuSkin.js -
 //     its skinPoint is this function in JS, and the pins hold the two together): the influences' rows accumulated
 //     in slot order, the post composed onto the sum once (MW-D31), the result applied to the stream position;
 //   - `vNormalV` and `vRel`: the normal under its old name's job, and the posed position in the model's own axes
@@ -3336,7 +3336,7 @@ export class Renderer {
   }
 
   /**
-   * MWNPC1: A GPU-SKINNED CHARACTER MESH - formats/mwGpuSkin.js packSkinStream's static stream, uploaded ONCE, and
+   * MWNPC1: A GPU-SKINNED CHARACTER MESH - formats/morrowind/mwGpuSkin.js packSkinStream's static stream, uploaded ONCE, and
    * its palette texture (RGBA32F, `width` x `height`, three texels an entry). A pose re-uploads the palette alone
    * (updateSkinPalette); drawCharacter blends the stream in CHAR_SKIN_VS. `pairs` is the influence pairs a corner
    * carries (1 or 2). No sphere: the body is drawn only through the sprite target, which never casts (MW-CROWD) - an NPC's
@@ -3387,7 +3387,7 @@ export class Renderer {
   }
 
   /** MW-BOW1 x MWNPC1: a part that moved on its own clock - its corners alone put back into the static stream at
-   *  `offset` floats (formats/mwGpuSkin.js restreamMovedRows). Nothing else of the body is re-sent. */
+   *  `offset` floats (formats/morrowind/mwGpuSkin.js restreamMovedRows). Nothing else of the body is re-sent. */
   updateSkinStream(mesh, offset, data) {
     const gl = this.gl;
     if (!mesh || !mesh.skin || !mesh.vbo) return;
@@ -3472,7 +3472,7 @@ export class Renderer {
   /** Re-upload a character mesh's vertex stream in place (per-frame
    *  animation). `packed` must match the original layout/length. */
   /** MAC-Q: a particle EFFECT's GL objects - a VAO over PARTICLE_FLOATS
-   *  (formats/mwParticles.js packParticleQuads' stream), sized for
+   *  (formats/morrowind/mwParticles.js packParticleQuads' stream), sized for
    *  `capacity` quads and refilled each frame. Rides a character mesh's
    *  `effects` list and is drawn after its ranges. */
   createParticleEffect(capacity, state = {}) {
@@ -3517,7 +3517,7 @@ export class Renderer {
   }
 
   /** MW-SPELLFX1: MORROWIND'S SPELL EFFECTS IN THE WORLD PASS (scenes/mwMagicFx.js) - particle effects whose streams
-   *  are already in world space (formats/mwVfx.js), drawn with the identity model through the character path's own
+   *  are already in world space (formats/morrowind/mwVfx.js), drawn with the identity model through the character path's own
    *  particle draw: the NIF's blend function and depth flags, depth-tested against the world. Both faces, as the
    *  impact pass draws them (render/spellImpactFx.js): an effect's shells are seen from inside and out, and the
    *  Morrowind-to-world mirror turns every triangle over. The baseline's CULL_FACE comes back after. */

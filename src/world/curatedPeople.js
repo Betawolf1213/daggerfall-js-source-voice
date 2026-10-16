@@ -11,7 +11,7 @@
 // entrance of the room, and taking no click meant for another (AUDIT QA2: at the 1.5 m bound beside the priest it took
 // 5-24% of the clicks aimed at the temple's questor).
 //
-// Applied where a block becomes the port's (formats/worldDataReplacement.js getDFBlockReplacementData), once, for every
+// Applied where a block becomes the port's (formats/worldData/worldDataReplacement.js getDFBlockReplacementData), once, for every
 // consumer at once - the room's people, the guild's services, the questor pool's walk: a block laid under a listed name
 // (the door's `servedName` - AUDIT QA2: a pack's JSON names itself, and TEMPASA2's says TEMPAS2.RMB) served by the
 // listed pack, its record a temple of the listed deity with no summoner of its own (a later version of the pack that

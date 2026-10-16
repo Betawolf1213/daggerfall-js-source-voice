@@ -19,7 +19,7 @@
 // standing where the player can reach it. The automap's bytes are stamped with the house's type at its new footprint, so
 // the town map draws it where its name is lettered; the hill's bytes at the old spot are the author's.
 //
-// Applied where a block becomes the port's (formats/worldDataReplacement.js getDFBlockReplacementData), once, for every
+// Applied where a block becomes the port's (formats/worldData/worldDataReplacement.js getDFBlockReplacementData), once, for every
 // consumer at once - the layout, the doors, the town map, the quest's building - beside the temple summoners
 // (world/curatedPeople.js), under the same two keys: the block's name as the town lays it and the pack that served it.
 // A later version of the pack that moves the house itself keeps its own: a row applies only to a record that stands

@@ -81,7 +81,7 @@
   },
   {
     "name": "MWFOLK1-the-outfit-never-added",
-    "file": "src/formats/mwItemMap.js",
+    "file": "src/formats/morrowind/mwItemMap.js",
     "old": "  if (outfitAdd) adds.push(outfitAdd);   // MW-FOLK1",
     "new": "",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "MWFOLK1-the-second-outfit-drawn",
-    "file": "src/formats/mwItemMap.js",
+    "file": "src/formats/morrowind/mwItemMap.js",
     "old": "      if (outfitAdd) { notes.push(`outfit ${o.id}: ${t('body.outfit.second', 'a second outfit - the first ({first}) is the one drawn', { first: outfitAdd.recordId })}`); continue; }",
     "new": "",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "MWFOLK1-hidden-in-the-first-person",
-    "file": "src/formats/mwItemMap.js",
+    "file": "src/formats/morrowind/mwItemMap.js",
     "old": "      for (const h of o.hides) claim(ARMO_PART.findIndex((r) => r.name === h), prio, null, outfitAdd);",
     "new": "      for (const h of o.hides) claim(ARMO_PART.findIndex((r) => r.name === h), prio, null);",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "MWFOLK1-a-shirt-under-the-dress",
-    "file": "src/formats/mwItemMap.js",
+    "file": "src/formats/morrowind/mwItemMap.js",
     "old": "  if (show || !args.female || worn.shadows.includes('chest') || worn.covers.includes('chest')) return worn;",
     "new": "  if (show || !args.female || worn.shadows.includes('chest')) return worn;",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "MWFOLK1-AUDIT-outfit-at-armour-priority",
-    "file": "src/formats/mwItemMap.js",
+    "file": "src/formats/morrowind/mwItemMap.js",
     "old": "      const prio = ((0 + 1) << 1) + 0;",
     "new": "      const prio = ((0 + 1) << 1) + 1;",
     "tests": [
@@ -281,7 +281,7 @@
   },
   {
     "name": "MWFOLK1-AUDIT-outfit-composed-last",
-    "file": "src/formats/mwItemMap.js",
+    "file": "src/formats/morrowind/mwItemMap.js",
     "old": "  if (piece.kind === 'outfit') return 0;",
     "new": "  if (piece.kind === 'outfit') return 11;",
     "tests": [

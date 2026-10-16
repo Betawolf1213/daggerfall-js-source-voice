@@ -2,12 +2,12 @@
 // VAMPIRES, AS MORROWIND'S ARE - PEOPLE WITH A VAMPIRE'S FACE. A BODY record's second BYDT byte marks a vampire's part;
 // OpenMW's getVampireHead (npcanimation.cpp, 0.48.0) takes the last such head of the race and sex, NotPlayable or not,
 // and the NPC wears it over its own (its hair its own). The port now reads that byte, finds that head
-// (formats/mwFirstPerson.js vampireHeadRecord) and builds it for a look that says `vampire`; a vampire foe stands as
+// (formats/morrowind/mwFirstPerson.js vampireHeadRecord) and builds it for a look that says `vampire`; a vampire foe stands as
 // a person of the Bay in its clothes with that face. Pinned on parsed records, on a real fixture build, on the peer
 // layer's key and options, and on the foes'.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { bodyParts, vampireHeadRecord, playerBodyRows, extractArmRecords, isArmRecords, ARM_RECORDS_VERSION } from '../src/formats/mwFirstPerson.js';
+import { bodyParts, vampireHeadRecord, playerBodyRows, extractArmRecords, isArmRecords, ARM_RECORDS_VERSION } from '../src/formats/morrowind/mwFirstPerson.js';
 import { buildFpArm } from '../src/combat/fpArm.js';
 import { peerBuildOpts, peerBodyKey } from '../src/net/peer/peerBodies.js';
 import { foeActor, isPersonFoe, rosterLook, VAMPIRE_MOBILES } from '../src/characters/foeBodies.js';

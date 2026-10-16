@@ -1,7 +1,7 @@
 [
   {
     "name": "WD3-ROW-SCALE-MASK",
-    "file": "src/formats/worldDataPack.js",
+    "file": "src/formats/worldData/worldDataPack.js",
     "old": "if (row[8] & (1 << k)) o[SCALE_KEYS[k]] = row[at++];",
     "new": "if (row[8] & (2 << k)) o[SCALE_KEYS[k]] = row[at++];",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "WD3-ROW-ZEROS-KEPT",
-    "file": "src/formats/worldDataPack.js",
+    "file": "src/formats/worldData/worldDataPack.js",
     "old": "  while (row.length && row[row.length - 1] === 0) row.pop();",
     "new": "",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "WD3-REF-EDITS-DROPPED",
-    "file": "src/formats/worldDataPack.js",
+    "file": "src/formats/worldData/worldDataPack.js",
     "old": "return v.$o ? patchJson(node, expandOps(v.$o)) : node;",
     "new": "return node;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "WD3-RUN-ONE-CELL",
-    "file": "src/formats/worldDataPack.js",
+    "file": "src/formats/worldData/worldDataPack.js",
     "old": "out.push(['s', [...path, runs[i] + n], vals[n]]);",
     "new": "out.push(['s', [...path, runs[i]], vals[n]]);",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "WD3-BASE-NOT-KEPT",
-    "file": "src/formats/worldDataPack.js",
+    "file": "src/formats/worldData/worldDataPack.js",
     "old": "    if (baseTargets.has(name)) keptFiles.set(name, json);",
     "new": "",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "WD3-BLOCK-NAME-UNCHECKED",
-    "file": "src/formats/worldDataPack.js",
+    "file": "src/formats/worldData/worldDataPack.js",
     "old": "      if (wantName && got !== wantName) throw new Error(`world-data pack: ${pack.vendor} wants ${wantName} at block ${index}, BLOCKS.BSA has ${got}`);",
     "new": "",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "WD3-ARRIVAL-ORDER",
-    "file": "src/formats/worldDataReplacement.js",
+    "file": "src/formats/worldData/worldDataReplacement.js",
     "old": "let at = list.findIndex((e) => e.priority <= entry.priority);",
     "new": "let at = list.findIndex((e) => e.priority >= entry.priority);",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "WD3-PIN-IN-IGNORED",
-    "file": "src/formats/worldDataReplacement.js",
+    "file": "src/formats/worldData/worldDataReplacement.js",
     "old": "  if (pin?.in?.has(a.vendor)) return true;",
     "new": "",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "WD3-PIN-OUT-IGNORED",
-    "file": "src/formats/worldDataReplacement.js",
+    "file": "src/formats/worldData/worldDataReplacement.js",
     "old": "  if (pin?.out?.has(a.vendor)) return false;",
     "new": "",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "WD3-ONLINE-DOOR-SHUT",
-    "file": "src/formats/worldDataReplacement.js",
+    "file": "src/formats/worldData/worldDataReplacement.js",
     "old": "export const worldDataDoorOpen = () => _doorLatched ?? (assetInjectionOn() || isOnlinePage());",
     "new": "export const worldDataDoorOpen = () => _doorLatched ?? assetInjectionOn();",
     "tests": [

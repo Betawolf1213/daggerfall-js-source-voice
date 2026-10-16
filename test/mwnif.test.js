@@ -2,8 +2,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { parseNif, deref, TEX_SLOT, MW_NIF_VERSION } from '../src/formats/mwNifFile.js';
-import { MwBsaFile } from '../src/formats/mwBsaFile.js';
+import { parseNif, deref, TEX_SLOT, MW_NIF_VERSION } from '../src/formats/morrowind/mwNifFile.js';
+import { MwBsaFile } from '../src/formats/morrowind/mwBsaFile.js';
 
 // Fixtures are authored by pyffi (independent NIF implementation) via
 // test/fixtures/mw/generate.py - the values pinned here are the values fed
@@ -164,7 +164,7 @@ test('MW-D15 rule 34: record 0\'s transform is DISCARDED unless it is a NiNode n
   // It happens IN THE PARSER, so no consumer can opt out, and the doc
   // marks it CRITICAL. Three fixtures, because the rule has three
   // answers and a port can get any one of them right on its own.
-  const { flattenNif } = await import('../src/formats/mwNifMesh.js');
+  const { flattenNif } = await import('../src/formats/morrowind/mwNifMesh.js');
   const at = (name) => [...flattenNif(parseNif(f(name)))[0].positions.slice(0, 3)];
 
   // (1) A root NiNode NOT named bip01: the whole transform goes, scale

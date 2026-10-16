@@ -1,7 +1,7 @@
 // MWNPC1 (2026-10-09, Mac: "I wanna do everything and ensure that performance isnt affected"): THE SKIN ON THE
 // GPU - the first slice of the MW-NPC arc (bible/04-Characters/Morrowind-NPCs.md). Every third-person Morrowind body
 // was skinned on the CPU per body per posed frame and its whole stream re-uploaded; it is laid out once now
-// (formats/mwGpuSkin.js), a pose writes a palette, and the vertex shader blends (renderer.js CHAR_SKIN_VS).
+// (formats/morrowind/mwGpuSkin.js), a pose writes a palette, and the vertex shader blends (renderer.js CHAR_SKIN_VS).
 //
 // The pins hold the GPU skin to the CPU skin it replaces, not to itself: the stream's every corner, read by the
 // shader's law (skinStreamCorner - the GLSL's function in JS, held to the GLSL's text below), lands where poseAssembly
@@ -12,12 +12,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { parseNif } from '../src/formats/mwNifFile.js';
-import { extractTracks, sampleTrack } from '../src/formats/mwAnim.js';
-import { accumRootRef } from '../src/formats/mwSkin.js';
-import { assembleFirstPersonArm, poseAssembly } from '../src/formats/mwFirstPerson.js';
+import { parseNif } from '../src/formats/morrowind/mwNifFile.js';
+import { extractTracks, sampleTrack } from '../src/formats/morrowind/mwAnim.js';
+import { accumRootRef } from '../src/formats/morrowind/mwSkin.js';
+import { assembleFirstPersonArm, poseAssembly } from '../src/formats/morrowind/mwFirstPerson.js';
 import { skinLayout, skinSamePieces, packSkinStream, writeSkinPalette, skinnedVertex, skinnedNormal, skinStreamCorner, skinStreamFloats,
-  SKIN_MAX_INFLUENCES, SKIN_PAL_ROW, SKIN_STATIC_FLOATS } from '../src/formats/mwGpuSkin.js';
+  SKIN_MAX_INFLUENCES, SKIN_PAL_ROW, SKIN_STATIC_FLOATS } from '../src/formats/morrowind/mwGpuSkin.js';
 import { SKIN_PAL_ROW as ROW_HOME, SKIN_PALETTE_UNIT } from '../src/render/skinPalette.js';
 import { packFpArm, pieceLanes, createFpArm, FP_FLOATS, gpuSkinOn } from '../src/combat/fpArm.js';
 import { skinNormalMatrix, skinFaceFs } from '../src/render/renderer.js';

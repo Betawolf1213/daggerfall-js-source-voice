@@ -291,7 +291,7 @@
   },
   {
     "name": "WWAUDIT-C2-modl-required",
-    "file": "src/formats/mwFirstPerson.js",
+    "file": "src/formats/morrowind/mwFirstPerson.js",
     "old": "  return e.id && (e.model || e.parts.length) ? e : null;",
     "new": "  return e.id && e.model ? e : null;",
     "tests": [
@@ -301,7 +301,7 @@
   },
   {
     "name": "WWAUDIT-C2-version-left",
-    "file": "src/formats/mwFirstPerson.js",
+    "file": "src/formats/morrowind/mwFirstPerson.js",
     "old": "export const ARM_RECORDS_VERSION = 6;",
     "new": "export const ARM_RECORDS_VERSION = 2;",
     "tests": [
@@ -311,7 +311,7 @@
   },
   {
     "name": "WWAUDIT-C4-a-man-in-a-cnam",
-    "file": "src/formats/mwItemMap.js",
+    "file": "src/formats/morrowind/mwItemMap.js",
     "old": "    const body = (female && ref.female ? pick(ref.female) : null) ?? pick(ref.male);\n    out.push",
     "new": "    const body = (ref.female ? pick(ref.female) : null) ?? pick(ref.male);\n    out.push",
     "tests": [
@@ -321,7 +321,7 @@
   },
   {
     "name": "WWAUDIT-C4-a-miss-claims-nothing",
-    "file": "src/formats/mwItemMap.js",
+    "file": "src/formats/morrowind/mwItemMap.js",
     "old": "          claim(ref.part, prio, null);\n          continue;",
     "new": "          continue;",
     "tests": [

@@ -15,8 +15,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import zlib from 'node:zlib';
 
-import { ROW_CODECS } from '../src/formats/worldDataPack.js';
-import { blockFromJson } from '../src/formats/worldDataReplacement.js';
+import { ROW_CODECS } from '../src/formats/worldData/worldDataPack.js';
+import { blockFromJson } from '../src/formats/worldData/worldDataReplacement.js';
 import { layoutRmbBlock } from '../src/world/rmbLayout.js';
 import { collectBlockFlats, isNatureArchive, NATURE_FLATS_Y } from '../src/world/rmbFlats.js';
 import { RMBRP_HILLS, RMBRP_PIECES, installTownStandIns, _resetTownStandIns, blockHillSeat, seatNatureFlat, drawnHillStandIn } from '../src/world/townStandIns.js';

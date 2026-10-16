@@ -13,10 +13,10 @@ import {
   SEAT_ANKLE, SEAT_HAND_SIDE, SEAT_HAND_OVER, seatTopByte, seatTopOf, seatRigInput, seatRequestFor,
 } from '../src/player/seatPose.js';
 import { EYE_HEIGHT } from '../src/player/motor.js';
-import { parseNif } from '../src/formats/mwNifFile.js';
-import { buildSkeleton, poseSkeleton, skeletonSpaceMatrices, GRAPH_ROOT } from '../src/formats/mwSkin.js';
+import { parseNif } from '../src/formats/morrowind/mwNifFile.js';
+import { buildSkeleton, poseSkeleton, skeletonSpaceMatrices, GRAPH_ROOT } from '../src/formats/morrowind/mwSkin.js';
 import { applyClimbRig, climbBones, climbRequestToRig } from '../src/combat/climbRig.js';
-import { MW_UNITS_PER_METER } from '../src/formats/mwFirstPerson.js';
+import { MW_UNITS_PER_METER } from '../src/formats/morrowind/mwFirstPerson.js';
 import { validPose, poseChanged, POSE_SEAT_TOP_MAX } from '../src/net/wire.js';
 import { lerpPose } from '../src/net/online.js';
 import { peerCamera, seatFor } from '../src/net/peer/peerBodies.js';

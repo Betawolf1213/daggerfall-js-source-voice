@@ -1,7 +1,7 @@
 [
  {
   "name": "MWNPCMERGE-normal-not-streamed",
-  "file": "src/formats/mwGpuSkin.js",
+  "file": "src/formats/morrowind/mwGpuSkin.js",
   "old": "      if (nrm) { out[o++] = nrm[v * 3]; out[o++] = nrm[v * 3 + 1]; out[o++] = nrm[v * 3 + 2]; } else { out[o++] = 0; out[o++] = 0; out[o++] = 0; }",
   "new": "      { out[o++] = 0; out[o++] = 0; out[o++] = 0; }",
   "tests": [
@@ -10,7 +10,7 @@
  },
  {
   "name": "MWNPCMERGE-rigid-normal-unmirrored",
-  "file": "src/formats/mwGpuSkin.js",
+  "file": "src/formats/morrowind/mwGpuSkin.js",
   "old": "nrm[v] = p.mirrored ? -sn[v] : sn[v];",
   "new": "nrm[v] = sn[v];",
   "tests": [
@@ -19,7 +19,7 @@
  },
  {
   "name": "MWNPCMERGE-skinned-normals-without-posed",
-  "file": "src/formats/mwGpuSkin.js",
+  "file": "src/formats/morrowind/mwGpuSkin.js",
   "old": "const nrm = p.normals && p.normals.length === pos.length && batch.normals",
   "new": "const nrm = batch.normals",
   "tests": [
@@ -29,7 +29,7 @@
  },
  {
   "name": "MWNPCMERGE-normal-not-renormalised",
-  "file": "src/formats/mwGpuSkin.js",
+  "file": "src/formats/morrowind/mwGpuSkin.js",
   "old": "  const k = l2 > 1e-24 ? 1 / Math.sqrt(l2) : 0;",
   "new": "  const k = l2 > 1e-24 ? 1 : 0;",
   "tests": [
@@ -56,7 +56,7 @@
  },
  {
   "name": "MWNPCMERGE-moved-row-never-synced",
-  "file": "src/formats/mwGpuSkin.js",
+  "file": "src/formats/morrowind/mwGpuSkin.js",
   "old": "  if (r.gen === gen) return false;",
   "new": "  if (r.gen !== -1) return false;",
   "tests": [
@@ -65,7 +65,7 @@
  },
  {
   "name": "MWNPCMERGE-moved-row-always",
-  "file": "src/formats/mwGpuSkin.js",
+  "file": "src/formats/morrowind/mwGpuSkin.js",
   "old": "    if (r.kind !== 'rigid' || !syncRigidRow(r)) continue;",
   "new": "    if (r.kind !== 'rigid') continue;\n    syncRigidRow(r);",
   "tests": [
@@ -74,7 +74,7 @@
  },
  {
   "name": "MWNPCMERGE-moved-row-offset-zero",
-  "file": "src/formats/mwGpuSkin.js",
+  "file": "src/formats/morrowind/mwGpuSkin.js",
   "old": "    out.push({ offset: r.corner0 * floats, data: r.sub });",
   "new": "    out.push({ offset: 0, data: r.sub });",
   "tests": [
@@ -83,7 +83,7 @@
  },
  {
   "name": "MWNPCMERGE-moved-box-kept",
-  "file": "src/formats/mwGpuSkin.js",
+  "file": "src/formats/morrowind/mwGpuSkin.js",
   "old": "  r.boxes.clear();\n  if (r.n) r.boxes.set(r.entry, box);",
   "new": "  if (!r.boxes.size && r.n) r.boxes.set(r.entry, box);",
   "tests": [
@@ -92,7 +92,7 @@
  },
  {
   "name": "MWNPCMERGE-clock-uncounted",
-  "file": "src/formats/mwFirstPerson.js",
+  "file": "src/formats/morrowind/mwFirstPerson.js",
   "old": "      p.sourceGen = (p.sourceGen | 0) + 1;   // MWNPC1: the GPU stream re-streams this piece's corners (mwGpuSkin.js restreamMovedRows)\n",
   "new": "",
   "tests": [
@@ -101,7 +101,7 @@
  },
  {
   "name": "MWNPCMERGE-clock-morph-uncounted",
-  "file": "src/formats/mwFirstPerson.js",
+  "file": "src/formats/morrowind/mwFirstPerson.js",
   "old": "      posePartBatch(p.clip.nif, p.clip.batch, t, p.source, p.sourceNormals);\n      p._clockAt = t;\n      p.sourceGen = (p.sourceGen | 0) + 1;\n",
   "new": "      posePartBatch(p.clip.nif, p.clip.batch, t, p.source, p.sourceNormals);\n      p._clockAt = t;\n",
   "tests": [
@@ -119,7 +119,7 @@
  },
  {
   "name": "MWNPCMERGE-seat-batch-unchecked",
-  "file": "src/formats/mwGpuSkin.js",
+  "file": "src/formats/morrowind/mwGpuSkin.js",
   "old": "    if (r.kind === 'skinned' && r.batch !== p.batch) return false;\n",
   "new": "",
   "tests": [
@@ -128,7 +128,7 @@
  },
  {
   "name": "MWNPCMERGE-follow-not-in-palette",
-  "file": "src/formats/mwGpuSkin.js",
+  "file": "src/formats/morrowind/mwGpuSkin.js",
   "old": "      const at = p.followAt ?? fns.attachmentTransform(mats, p.attachRef);",
   "new": "      const at = fns.attachmentTransform(mats, p.attachRef);",
   "tests": [
@@ -137,7 +137,7 @@
  },
  {
   "name": "MWNPCMERGE-gpu-pose-no-afterpose",
-  "file": "src/formats/mwFirstPerson.js",
+  "file": "src/formats/morrowind/mwFirstPerson.js",
   "old": "    if (assembly.afterPose) assembly.afterPose(assembly);\n    return assembly;\n  }",
   "new": "    return assembly;\n  }",
   "tests": [
@@ -146,7 +146,7 @@
  },
  {
   "name": "MWNPCMERGE-follow-reads-stale-cloak",
-  "file": "src/formats/mwCloakFit.js",
+  "file": "src/formats/morrowind/mwCloakFit.js",
   "old": "  if (gpu) assembly.fns.skinBatch(follow.cloak.batch, assembly.skeleton, assembly.pose, assembly.mats, follow.cloak.positions, null);\n",
   "new": "",
   "tests": [
@@ -155,7 +155,7 @@
  },
  {
   "name": "MWNPCMERGE-follow-placement-unset",
-  "file": "src/formats/mwCloakFit.js",
+  "file": "src/formats/morrowind/mwCloakFit.js",
   "old": "      p.followAt = g.at;\n",
   "new": "",
   "tests": [
@@ -164,7 +164,7 @@
  },
  {
   "name": "MWNPCMERGE-follow-places-on-gpu",
-  "file": "src/formats/mwCloakFit.js",
+  "file": "src/formats/morrowind/mwCloakFit.js",
   "old": "      if (gpu) continue;\n",
   "new": "",
   "tests": [
@@ -173,7 +173,7 @@
  },
  {
   "name": "MWNPCMERGE-follow-placement-left",
-  "file": "src/formats/mwCloakFit.js",
+  "file": "src/formats/morrowind/mwCloakFit.js",
   "old": "  for (const p of assembly.pieces) if (p.followAt) p.followAt = null;   // MWNPC1: a placement the last follow left goes with it\n",
   "new": "",
   "tests": [
@@ -182,7 +182,7 @@
  },
  {
   "name": "MWNPCMERGE-fit-uncounted",
-  "file": "src/formats/mwCloakFit.js",
+  "file": "src/formats/morrowind/mwCloakFit.js",
   "old": "      p.sourceGen = (p.sourceGen | 0) + 1;   // MWNPC1: a GPU stream laid out of the old source streams this one (mwGpuSkin.js)\n",
   "new": "",
   "tests": [

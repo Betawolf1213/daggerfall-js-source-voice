@@ -28,9 +28,9 @@
 // written before DFU added RdbFlatResource.IsCustomData, so the
 // serialiser writes the field set they carry and no more.
 
-import { BUILDING_TYPES } from '../world/buildingNames.js';
-import { BLOCK_TYPES, RDB_RESOURCE_TYPES } from './blocksFile.js';
-import { LOCATION_TYPES, DUNGEON_TYPES, CLIMATE_BASE_TYPES } from './mapsFile.js';
+import { BUILDING_TYPES } from '../../world/buildingNames.js';
+import { BLOCK_TYPES, RDB_RESOURCE_TYPES } from '../blocksFile.js';
+import { LOCATION_TYPES, DUNGEON_TYPES, CLIMATE_BASE_TYPES } from '../mapsFile.js';
 
 const BLOCK_TYPE_NAMES = ['Unknown', 'Rmb', 'Rdb', 'Rdi'];
 const RDB_RESOURCE_NAMES = { [RDB_RESOURCE_TYPES.Model]: 'Model', [RDB_RESOURCE_TYPES.Light]: 'Light', [RDB_RESOURCE_TYPES.Flat]: 'Flat' };
@@ -188,7 +188,7 @@ export function blockToDfuJson(dfBlock) {
 //
 // Beautiful Villages and Beautiful Cities (carademono) ship `location-<r>-<i>.json`: DFLocation as DFU's World
 // Data Editor writes it - the MAPS.BSA record the editor read, with the author's layout in it. Most of each file is
-// therefore the classic location (game data), so the port carries the edit (formats/worldDataPack.js) and rebuilds
+// therefore the classic location (game data), so the port carries the edit (formats/worldData/worldDataPack.js) and rebuilds
 // the file from the player's own MAPS.BSA through this serialiser. DFLocation's public fields, member for member
 // (DFLocation.cs:29-81, 352-681; DFRegion.cs:224-248): every `internal` is left out (the door counts, the null
 // values, the raw block index/number/character bytes, LocationId of the map table), enums by name.

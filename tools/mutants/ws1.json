@@ -109,7 +109,7 @@
   },
   {
     "name": "flatten-under-ignored",
-    "file": "src/formats/mwNifMesh.js",
+    "file": "src/formats/morrowind/mwNifMesh.js",
     "old": "      if (inside && !skipGeometryName(rec.name, hasMarkers)) emit(rec, nextWorld, nextProps, nextChain, animFlags, parentRef);",
     "new": "      if (!skipGeometryName(rec.name, hasMarkers)) emit(rec, nextWorld, nextProps, nextChain, animFlags, parentRef);",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "flatten-exclude-ignored",
-    "file": "src/formats/mwNifMesh.js",
+    "file": "src/formats/morrowind/mwNifMesh.js",
     "old": "    if (excludeNode && lname === excludeNode) return;   // WS1: the masked subtree\n",
     "new": "",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "binder-sheath-offset-lost",
-    "file": "src/formats/mwFirstPerson.js",
+    "file": "src/formats/morrowind/mwFirstPerson.js",
     "old": "        if (part.slot === 'sheath') sheathBoneOffset = bound.boneOffset || null;   // WS1\n",
     "new": "",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "binder-subtree-lost",
-    "file": "src/formats/mwFirstPerson.js",
+    "file": "src/formats/morrowind/mwFirstPerson.js",
     "old": "underNode: part.underNode, excludeNode: part.excludeNode });   // WS1: a subtree of the file",
     "new": "});",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "binder-tag-lost",
-    "file": "src/formats/mwFirstPerson.js",
+    "file": "src/formats/morrowind/mwFirstPerson.js",
     "old": "kind: 'rigid', mirrored: mirror, tag: part.tag ?? null,",
     "new": "kind: 'rigid', mirrored: mirror,",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "inject-unmarked-too",
-    "file": "src/formats/mwSkin.js",
+    "file": "src/formats/morrowind/mwSkin.js",
     "old": "    if (hasBoneMarker(addonNif, rec)) {",
     "new": "    if (hasBoneMarker(addonNif, rec) || String(rec.name || '').startsWith('Bip01 Attach')) {",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "inject-any-string-marks",
-    "file": "src/formats/mwSkin.js",
+    "file": "src/formats/morrowind/mwSkin.js",
     "old": "    if (x.type === 'NiStringExtraData' && x.string === 'BONE') return true;",
     "new": "    if (x.type === 'NiStringExtraData') return true;",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "inject-known-overwritten",
-    "file": "src/formats/mwSkin.js",
+    "file": "src/formats/morrowind/mwSkin.js",
     "old": "      if (key && skeleton.byName.has(key)) { skipped.push(`${rec.name} (already here)`); return; }\n",
     "new": "",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "inject-parent-missing-added-at-root",
-    "file": "src/formats/mwSkin.js",
+    "file": "src/formats/morrowind/mwSkin.js",
     "old": "      if (baseParent === undefined) { skipped.push(`${rec.name || '(nameless)'} (no \"${parentRec?.name ?? ''}\" here)`); return; }",
     "new": "      if (baseParent === undefined) { copy(ref, -1); return; }",
     "tests": [
@@ -280,7 +280,7 @@
   },
   {
     "name": "inject-subtree-not-copied",
-    "file": "src/formats/mwSkin.js",
+    "file": "src/formats/morrowind/mwSkin.js",
     "old": "    for (const child of rec.children ?? []) if (child >= 0) copy(child, hereRef);\n  }",
     "new": "  }",
     "tests": [

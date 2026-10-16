@@ -1,13 +1,13 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { parseNif } from '../src/formats/mwNifFile.js';
-import { nodeTransformOf, findNodeByName, boneOffsetOf } from '../src/formats/mwCharacter.js';
-import { flattenNif } from '../src/formats/mwNifMesh.js';   // MW-D48: the OTHER composition, run rather than transcribed
+import { parseNif } from '../src/formats/morrowind/mwNifFile.js';
+import { nodeTransformOf, findNodeByName, boneOffsetOf } from '../src/formats/morrowind/mwCharacter.js';
+import { flattenNif } from '../src/formats/morrowind/mwNifMesh.js';   // MW-D48: the OTHER composition, run rather than transcribed
 import {
   MW_WEAPON_TYPE, WEAPON_AMMO_TYPE, ammoTypeFor, arrowAttachBone, ARROW_FALLBACK_NODE,
   assembleFirstPersonArm,
-} from '../src/formats/mwFirstPerson.js';
+} from '../src/formats/morrowind/mwFirstPerson.js';
 import { buildFpArm, createFpArm, fpSkeletonPath, FP_CLIP_PATH, UPPER_BODY } from '../src/combat/fpArm.js';
 
 // MW-D16: THE BOW'S ARROW, which the port drew none of.
@@ -235,7 +235,7 @@ test('MW-D16 rule 24: a drawn BOW is empty until the shoot attach key', async ()
 });
 
 test('MW-D16: only a CROSSBOW reloads itself, and DAGGERFALL HAS NONE', async () => {
-  const { reloadsItself, DF_TO_MW_WEAPON } = await import('../src/formats/mwFirstPerson.js');
+  const { reloadsItself, DF_TO_MW_WEAPON } = await import('../src/formats/morrowind/mwFirstPerson.js');
   // The condition is pinned as a condition, because the branch it guards
   // cannot be reached from the played game: no row of DF_TO_MW_WEAPON is
   // MarksmanCrossbow, since Daggerfall has no crossbow. A branch that
@@ -257,7 +257,7 @@ test('MW-D16: only a CROSSBOW reloads itself, and DAGGERFALL HAS NONE', async ()
   // THROWN weapon shoots without being a bow - the case the port's own
   // machine.isBow would have missed. Daggerfall has no thrown row today
   // either, so it too is pinned as a condition.
-  const { shootsRatherThanSwings } = await import('../src/formats/mwFirstPerson.js');
+  const { shootsRatherThanSwings } = await import('../src/formats/morrowind/mwFirstPerson.js');
   assert.equal(shootsRatherThanSwings(MW_WEAPON_TYPE.MarksmanBow), true);
   assert.equal(shootsRatherThanSwings(MW_WEAPON_TYPE.MarksmanCrossbow), true);
   assert.equal(shootsRatherThanSwings(MW_WEAPON_TYPE.MarksmanThrown), true, 'THROWN shoots too');
@@ -656,7 +656,7 @@ test('MW-D49: findNodeByName honours rule 58, like the scene the reference searc
     ],
   };
   assert.equal(findNodeByName(shapeNamed, 'ArrowBone'), null, 'the port skips the geometry RECORD - a delta');
-  assert.match(readFileSync(new URL('../src/formats/mwCharacter.js', import.meta.url), 'utf8'),
+  assert.match(readFileSync(new URL('../src/formats/morrowind/mwCharacter.js', import.meta.url), 'utf8'),
     /DELTA \(recorded at ROAD review-p\)[\s\S]{0,1400}NiTriShape/,
     'and says so where it does it, rather than calling it the reference\'s rule');
 

@@ -17,7 +17,7 @@ import * as CS from '../src/systems/castSpeed.js';
 import { SpellCastAnim, CAST_FRAME_PERIOD, CAST_RECOVER_S, RELEASE_FRAME, FRAME_INDICES, fpsSpellCasting } from '../src/combat/fpsSpellCasting.js';
 import { createWeaponRig } from '../src/combat/weapon/weaponRig.js';
 import { createFpArm, fpSkeletonPath, FP_CLIP_PATH, UPPER_BODY, fpArm } from '../src/combat/fpArm.js';
-import { MW_WEAPON_TYPE } from '../src/formats/mwFirstPerson.js';
+import { MW_WEAPON_TYPE } from '../src/formats/morrowind/mwFirstPerson.js';
 import { castClip } from './fixtures/mw/castClip.mjs';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
 import * as LR from '../src/systems/loot/lootRarity.js';

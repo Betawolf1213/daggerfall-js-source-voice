@@ -15,11 +15,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { parseNif } from '../src/formats/mwNifFile.js';
-import { flattenNif } from '../src/formats/mwNifMesh.js';
-import { buildSkeleton, poseSkeleton, skeletonSpaceMatrices, skinBatch, GRAPH_ROOT } from '../src/formats/mwSkin.js';
-import { assembleFirstPersonArm, poseAssembly, shapeMatchesBone } from '../src/formats/mwFirstPerson.js';
-import { composeWornArmor, fpWornAdds, ARMO_PART } from '../src/formats/mwItemMap.js';
+import { parseNif } from '../src/formats/morrowind/mwNifFile.js';
+import { flattenNif } from '../src/formats/morrowind/mwNifMesh.js';
+import { buildSkeleton, poseSkeleton, skeletonSpaceMatrices, skinBatch, GRAPH_ROOT } from '../src/formats/morrowind/mwSkin.js';
+import { assembleFirstPersonArm, poseAssembly, shapeMatchesBone } from '../src/formats/morrowind/mwFirstPerson.js';
+import { composeWornArmor, fpWornAdds, ARMO_PART } from '../src/formats/morrowind/mwItemMap.js';
 import { ownBodyPart } from '../src/combat/fpArm.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { OWN_MW_ARMOR } from '../src/characters/ownModels/ownArmorModels.js';
@@ -419,9 +419,9 @@ test('MW-STEEL4: the plate is a part like any retail part - its adds carry nothi
   // the brigandine keeps its runtime skin (MW-BRIG2/3) - the one own model that is not shipped skinned
   const brig = composeWornArmor({ pieces: [{ templateIndex: 520, material: STEEL }], armors: [], bodyPool: [] }).adds[0];
   assert.deepEqual([[...brig.skinFrom], brig.fitTo], [['chest', 'groin', 'upperleg', 'knee'], 'chest']);
-  const transfer = sourceText('src/formats/mwSkinTransfer.js');
+  const transfer = sourceText('src/formats/morrowind/mwSkinTransfer.js');
   assert.deepEqual([...transfer.matchAll(/^export function (\w+)/gm)].map((m) => m[1]), ['sourceSkin', 'fitLift', 'liftBatch', 'transferSkin']);
-  const binder = sourceText('src/formats/mwFirstPerson.js');
+  const binder = sourceText('src/formats/morrowind/mwFirstPerson.js');
   for (const gone of ['solvePose', 'solveOn', 'bindPoseMats', 'skeletonBindSkins', 'fitShift', 'rebindSkin', 'skeletonNif']) assert.equal(binder.includes(gone), false, `mwFirstPerson.js: no ${gone}`);
   const fp = sourceText('src/combat/fpArm.js');
   for (const gone of ['tpSkeletonBytes', 'ownFp', 'fitFrom', 'solvePose']) assert.equal(fp.includes(gone), false, `fpArm.js: no ${gone}`);

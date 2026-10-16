@@ -5,12 +5,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
-import { parseNif, deref } from '../src/formats/mwNifFile.js';
-import { buildSkeleton, injectSkeletonNodes, hasBoneMarker, skeletonSpaceMatrices, poseSkeleton, INJECTED_REF_BASE } from '../src/formats/mwSkin.js';
-import { flattenNif } from '../src/formats/mwNifMesh.js';
-import { bindPart, nodeTransformOf, findNodeByName } from '../src/formats/mwCharacter.js';
-import { assembleFirstPersonArm, MW_WEAPON_TYPE, TP_BASE_MODEL } from '../src/formats/mwFirstPerson.js';
-import { sampleTrack } from '../src/formats/mwAnim.js';
+import { parseNif, deref } from '../src/formats/morrowind/mwNifFile.js';
+import { buildSkeleton, injectSkeletonNodes, hasBoneMarker, skeletonSpaceMatrices, poseSkeleton, INJECTED_REF_BASE } from '../src/formats/morrowind/mwSkin.js';
+import { flattenNif } from '../src/formats/morrowind/mwNifMesh.js';
+import { bindPart, nodeTransformOf, findNodeByName } from '../src/formats/morrowind/mwCharacter.js';
+import { assembleFirstPersonArm, MW_WEAPON_TYPE, TP_BASE_MODEL } from '../src/formats/morrowind/mwFirstPerson.js';
+import { sampleTrack } from '../src/formats/morrowind/mwAnim.js';
 import {
   SHEATHING_BONE, SHEATH_WEAPON_NODE, SHEATH_AMMO_NODE, HOLSTER_SLOTS, sheathedMeshPath, animationsDirOf, boneSourcesFor, holsters,
   holsterPartPaths, resolveHolsterParts, holsterHidden, makeVendoredArchive, vendoredDataPath,
@@ -415,5 +415,5 @@ test('WS1: the wiring, by source - the third-person build takes the addons and t
   const rule = new Function('filePath', `return (${m[1]});`);
   assert.equal(rule('/x/vendor/weapon-sheathing/Textures/a.png'), false, 'this mod\'s art is a file, never base64');
   assert.equal(rule('/x/vendor/a-mod-no-list-has-named/a.png'), false, 'and so is every mod\'s - the rule is the class (test/vendorinline.test.js walks it)');
-  assert.match(rd('src/formats/mwFirstPerson.js'), /if \(part\.slot === 'sheath'\) sheathBoneOffset = bound\.boneOffset \|\| null;/);
+  assert.match(rd('src/formats/morrowind/mwFirstPerson.js'), /if \(part\.slot === 'sheath'\) sheathBoneOffset = bound\.boneOffset \|\| null;/);
 });

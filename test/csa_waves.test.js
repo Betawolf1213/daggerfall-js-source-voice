@@ -15,7 +15,7 @@ import { composeTiledPicture } from '../src/formats/derivedTexture.js';
 import { createComeSailAwayRuntime, NO_WATER_LEVEL } from '../src/systems/comeSailAway/comeSailAway.js';
 import { NAMED_MATERIALS, openBundle } from '../tools/comeSailAwayExtract.mjs';
 import { userStrings } from '../tools/lib/clrUserStrings.mjs';
-import { decodeTexture2D, CLASS_ID } from '../src/formats/unityBundle.js';
+import { decodeTexture2D, CLASS_ID } from '../src/formats/unity/unityBundle.js';
 
 const f = Math.fround;
 const VENDOR = new URL('../vendor/come-sail-away/', import.meta.url);

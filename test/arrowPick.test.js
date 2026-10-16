@@ -16,7 +16,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { pickWeaponRecord, MW_WEAPON_TYPE } from '../src/formats/mwFirstPerson.js';
+import { pickWeaponRecord, MW_WEAPON_TYPE } from '../src/formats/morrowind/mwFirstPerson.js';
 import { buildFpArm, weaponPartPaths, resolveWeaponParts, archiveHas, fpSkeletonPath, FP_CLIP_PATH } from '../src/combat/fpArm.js';
 
 const f = (n) => new Uint8Array(readFileSync(new URL(`./fixtures/mw/${n}`, import.meta.url)));

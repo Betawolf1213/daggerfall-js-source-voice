@@ -10,7 +10,7 @@ Its own description: "Displays hands when ready for spellcasting".
 Its source is vendored under `vendor/readied-spellcasting-hands/` (the two
 C# files and the manifest, which the bundle carries as TextAssets, and the
 zip's MIT licence; `tools/readiedHandsAssets.mjs` reproduces them through
-`src/formats/unityBundle.js`), it is credited on the About screen, and it is
+`src/formats/unity/unityBundle.js`), it is credited on the About screen, and it is
 one switch: Features -> Combat -> Readied Spellcasting Hands by jefetienne,
 on by default (MO1).
 

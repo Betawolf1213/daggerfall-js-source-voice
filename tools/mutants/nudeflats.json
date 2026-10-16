@@ -136,7 +136,7 @@
   },
   {
     "name": "NUDEFLATS-mw-weld-ignores-setting",
-    "file": "src/formats/mwItemMap.js",
+    "file": "src/formats/morrowind/mwItemMap.js",
     "old": "  if (show || !args.female || worn.shadows.includes('chest') || worn.covers.includes('chest')) return worn;",
     "new": "  if (!args.female || worn.shadows.includes('chest') || worn.covers.includes('chest')) return worn;",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "NUDEFLATS-mw-weld-men-too",
-    "file": "src/formats/mwItemMap.js",
+    "file": "src/formats/morrowind/mwItemMap.js",
     "old": "  if (show || !args.female || worn.shadows.includes('chest') || worn.covers.includes('chest')) return worn;",
     "new": "  if (show || worn.shadows.includes('chest') || worn.covers.includes('chest')) return worn;",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "NUDEFLATS-mw-weld-under-cover",
-    "file": "src/formats/mwItemMap.js",
+    "file": "src/formats/morrowind/mwItemMap.js",
     "old": "  if (show || !args.female || worn.shadows.includes('chest') || worn.covers.includes('chest')) return worn;",
     "new": "  if (show || !args.female || worn.covers.includes('chest')) return worn;",
     "tests": [

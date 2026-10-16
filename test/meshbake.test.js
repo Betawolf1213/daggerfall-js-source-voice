@@ -21,9 +21,9 @@
 // by THE PORT'S OWN flattenNif, and the batch must equal what went in.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { parseNif, MW_NIF_VERSION } from '../src/formats/mwNifFile.js';
-import { flattenNif } from '../src/formats/mwNifMesh.js';
-import { decodeDds } from '../src/formats/mwDdsFile.js';
+import { parseNif, MW_NIF_VERSION } from '../src/formats/morrowind/mwNifFile.js';
+import { flattenNif } from '../src/formats/morrowind/mwNifMesh.js';
+import { decodeDds } from '../src/formats/morrowind/mwDdsFile.js';
 import { writeNif, meshToNif, boundingSphere } from '../tools/nifWrite.mjs';
 import { unwrap, unwrapQuality, islandsOf, bestAngle } from '../tools/meshUnwrap.mjs';
 import { bandAt, muzzleFraction, vertexAO, writeDds, mipChain, halve, dilate, BANDS } from '../tools/meshTexture.mjs';

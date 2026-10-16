@@ -20,7 +20,7 @@ import assert from 'node:assert/strict';
 import { QuestMachine } from '../src/systems/quest/machine.js';
 import { Place, SITE_TYPES } from '../src/systems/quest/place.js';
 import { configureLayoutPins, _resetLayoutPins, layoutRecordsOf } from '../src/systems/layoutPins.js';
-import { registerWorldDataAsset, _resetWorldDataReplacement, installWorldDataReplacement } from '../src/formats/worldDataReplacement.js';
+import { registerWorldDataAsset, _resetWorldDataReplacement, installWorldDataReplacement } from '../src/formats/worldData/worldDataReplacement.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { loadTables, rmbBlock, town, worldOf, typeAtKey, mark, SPAWN } from './fb1004dTowns.mjs';
 import { openTowns, seeded, SKIP, BV, BC } from './fb1004dArena.mjs';

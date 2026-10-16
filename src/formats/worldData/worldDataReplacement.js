@@ -23,15 +23,15 @@
 // RR3b (2026-09-23): ported for Roleplay & Realism's Master Armorer line -
 // Northrock Fort (a new location in the Wrothgarian Mountains), its
 // RRFORT01.RMB, and the armorer's shop as the quest rebuilds it.
-import { getBool } from '../systems/settings/settings.js';
-import { isOnlinePage } from '../systems/online/onlineLane.js';   // WD3: online the door is the room's
-import { NO_VARIANT, makeLocationKey, getLocationVariant, getBlockVariantHere, getBuildingVariantHere, setNewLocationIndexResolver, readingLocationKeyOf, noteReadingLocation } from '../systems/worldDataVariants.js';
-import { LOCATION_TYPES, DUNGEON_TYPES, getWorldClimateSettings, REGION_NAMES } from './mapsFile.js';
-import { BLOCK_TYPES, RDB_RESOURCE_TYPES } from './blocksFile.js';
-import { BUILDING_TYPES } from '../world/buildingNames.js';
+import { getBool } from '../../systems/settings/settings.js';
+import { isOnlinePage } from '../../systems/online/onlineLane.js';   // WD3: online the door is the room's
+import { NO_VARIANT, makeLocationKey, getLocationVariant, getBlockVariantHere, getBuildingVariantHere, setNewLocationIndexResolver, readingLocationKeyOf, noteReadingLocation } from '../../systems/worldDataVariants.js';
+import { LOCATION_TYPES, DUNGEON_TYPES, getWorldClimateSettings, REGION_NAMES } from '../mapsFile.js';
+import { BLOCK_TYPES, RDB_RESOURCE_TYPES } from '../blocksFile.js';
+import { BUILDING_TYPES } from '../../world/buildingNames.js';
 import { setWorldDataDoor } from './worldDataDoor.js';
-import { curateBlockPeople } from '../world/curatedPeople.js';   // QUEST-AUDIT II TEMPLE-SUMMONER: the temples' summoners, at the one door
-import { curateBlockPlacements } from '../world/curatedPlacements.js';   // FIELD BUGS 2026-10-09e HILL-HOUSE: a house the pack's hills bury, at the same door
+import { curateBlockPeople } from '../../world/curatedPeople.js';   // QUEST-AUDIT II TEMPLE-SUMMONER: the temples' summoners, at the one door
+import { curateBlockPlacements } from '../../world/curatedPlacements.js';   // FIELD BUGS 2026-10-09e HILL-HOUSE: a house the pack's hills bury, at the same door
 
 export const AUTO_MAP_DATA_SIZE = 64 * 64;   // :45
 const NO_REPLACEMENT = Symbol('noReplacement');   // the C#'s noReplacementRegion/Location/Block/Building sentinels
@@ -81,7 +81,7 @@ export function registerWorldDataAsset(fileName, json, isOn = null, { priority =
   addAssetEntry(fileName, { json, get: null, isOn: typeof isOn === 'function' ? isOn : null, priority, vendor });
   return true;
 }
-/** WD3: every file of an opened world-data pack (formats/worldDataPack.js) on the door, each rebuilt from the
+/** WD3: every file of an opened world-data pack (formats/worldData/worldDataPack.js) on the door, each rebuilt from the
  *  player's own data the first time it is asked for. Answers how many names it registered. */
 export function registerWorldDataPack(pack, isOn = null, { priority = 0 } = {}) {
   if (!pack?.names) return 0;

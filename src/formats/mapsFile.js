@@ -67,7 +67,7 @@
 // rebuild.
 
 import { BsaFile, DIRECTORY_TYPES } from './bsaFile.js';
-import { worldDataDoor } from './worldDataDoor.js';   // RR3b: WorldDataReplacement's three asks (MapsFile.cs:984, :999, :1027)
+import { worldDataDoor } from './worldData/worldDataDoor.js';   // RR3b: WorldDataReplacement's three asks (MapsFile.cs:984, :999, :1027)
 import { PakFile } from './pakFile.js';
 import { readBuildingData, BUILDING_DATA_SIZE } from './blocksFile.js';
 // PROF1: the three FALL.EXE / MapsFile tables and the map's bounds the account service reads too, in a module that reads no file (mapsTables.js) -
@@ -400,7 +400,7 @@ export class MapsFile {
   }
 
   /** HUB1: how many locations the region's own MAPNAMES holds - a world-data mod's additions are appended past it
-   *  (formats/worldDataReplacement.js), so a row below this count is the game's own. 0 for an empty region. */
+   *  (formats/worldData/worldDataReplacement.js), so a row below this count is the game's own. 0 for an empty region. */
   baseLocationCount(region) {
     if (!this.loadRegion(region)) return 0;
     return this._readLocationCount(region);
@@ -641,7 +641,7 @@ export class MapsFile {
 
   /**
    * WD3: the location as MAPS.BSA holds it - past the world-data door (no replacement served), with its indices set
-   * as getLocation sets them. What a mod's `location-<r>-<i>.json` edit is taken against (formats/worldDataPack.js).
+   * as getLocation sets them. What a mod's `location-<r>-<i>.json` edit is taken against (formats/worldData/worldDataPack.js).
    * @returns {object|null}
    */
   readClassicLocation(region, location) {

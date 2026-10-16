@@ -8,9 +8,9 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { registerWorldDataAsset, getDFBlockReplacementData, installWorldDataReplacement, _resetWorldDataReplacement, bindWorldDataBlocks } from '../src/formats/worldDataReplacement.js';
-import { PATCH_FORMAT, rebuildWorldDataPatch } from '../src/formats/worldDataPatch.js';
-import { canonicalJson } from '../src/formats/worldDataJson.js';
+import { registerWorldDataAsset, getDFBlockReplacementData, installWorldDataReplacement, _resetWorldDataReplacement, bindWorldDataBlocks } from '../src/formats/worldData/worldDataReplacement.js';
+import { PATCH_FORMAT, rebuildWorldDataPatch } from '../src/formats/worldData/worldDataPatch.js';
+import { canonicalJson } from '../src/formats/worldData/worldDataJson.js';
 import { gateAppends, layGateRecords, installImmersiveTravelGates, IT_GATE_FILE } from '../src/world/immersiveTravelGates.js';
 import { appendedEdit, appendedPatch, IT_GATE_BLOCKS } from '../tools/immersiveTravelPatches.mjs';
 import { sha256Canonical } from '../tools/worldDataPatch.mjs';

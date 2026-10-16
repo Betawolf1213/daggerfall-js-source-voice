@@ -9,9 +9,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { MwBsaFile } from '../src/formats/mwBsaFile.js';
-import { MW_WEAPON_TYPE, MOD_WEAPON_TO_MW, dfWeaponToMw } from '../src/formats/mwFirstPerson.js';
-import { MOD_ARMOR_ROWS, mwArmorRecords, armorRowOf, DF_ARMOR_ROWS, dfWornArmor } from '../src/formats/mwItemMap.js';
+import { MwBsaFile } from '../src/formats/morrowind/mwBsaFile.js';
+import { MW_WEAPON_TYPE, MOD_WEAPON_TO_MW, dfWeaponToMw } from '../src/formats/morrowind/mwFirstPerson.js';
+import { MOD_ARMOR_ROWS, mwArmorRecords, armorRowOf, DF_ARMOR_ROWS, dfWornArmor } from '../src/formats/morrowind/mwItemMap.js';
 import { ARMOR_ENUM } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { RRI_CLASSES } from '../src/systems/roleplayRealismItems/rriItems.js';
@@ -56,7 +56,7 @@ test('MW-ASSIGN the armour: every piece of the mod\'s two sets by the classic ro
   const S = { Head: 0, RightArm: 1, LeftArm: 2, ChestArmor: 3, Gloves: 4, LegsArmor: 5, Feet: 6, RightHand: 7, LeftHand: 8 };
   const worn = dfWornArmor([{ templateIndex: 522, material: 0 }, null, { templateIndex: 525, material: 0 }, { templateIndex: 515, material: ARMOR_MATERIAL.Steel }], S, ARMOR_ENUM);
   assert.deepEqual(worn.map((w) => w.templateIndex), [522, 525, 515], 'worn, the mod\'s pieces are dressed');
-  assert.match(src('src/formats/mwItemMap.js'), /if \(armorRowOf\(piece\.templateIndex\) === DF_ARMOR_ROWS\[HELM_TEMPLATE\]\) hairHidden/, 'a helm-shaped piece hides the hair');
+  assert.match(src('src/formats/morrowind/mwItemMap.js'), /if \(armorRowOf\(piece\.templateIndex\) === DF_ARMOR_ROWS\[HELM_TEMPLATE\]\) hairHidden/, 'a helm-shaped piece hides the hair');
 });
 
 // ── the wall and the icon: the rig's own door ─────────────────────────

@@ -20,7 +20,7 @@ rig's frame and draw, the HUD's preparation.
 The Morrowind rig's whole geometry pipeline, on the CPU, once per body
 per frame:
 
-1. `poseAssembly` (formats/mwFirstPerson.js) poses the skeleton, then
+1. `poseAssembly` (formats/morrowind/mwFirstPerson.js) poses the skeleton, then
    **skins every vertex** of every skinned piece (`mwSkin.skinBatch`) and
    places every rigid piece, then walks every vertex again for bounds.
 2. `packFpArm` (combat/fpArm.js) **de-indexes every triangle** into the

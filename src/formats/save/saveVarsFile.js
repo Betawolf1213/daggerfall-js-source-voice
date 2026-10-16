@@ -77,8 +77,8 @@ export const CHEAT_FLAGS = Object.freeze({
 // DaggerfallWorkshop.Game.Banking`), and the reader mirrors that
 // dependency rather than minting a second table. Re-exported so the
 // reader's API is whole.
-import { SHIP_TYPES } from '../systems/banking.js';
-import { readCStringFixed } from './fileProxy.js';   // FileProxy.ReadCString(reader, n) - AUDIT 68: the one home
+import { SHIP_TYPES } from '../../systems/banking.js';
+import { readCStringFixed } from '../fileProxy.js';   // FileProxy.ReadCString(reader, n) - AUDIT 68: the one home
 export { SHIP_TYPES };
 
 /** Represents a SAVEVARS.DAT file (SaveVars.cs). */

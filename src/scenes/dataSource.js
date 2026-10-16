@@ -686,7 +686,7 @@ export const loadMorrowindArmRecords = async (fileName) => {
   if (cache.files.has(fileName)) return cache.files.get(fileName);
   const blob = await assetBlob(MW_STORE, fileName);
   if (!blob) return null;
-  const { extractArmRecords, isArmRecords, ARM_RECORDS_VERSION } = await import('../formats/mwFirstPerson.js');
+  const { extractArmRecords, isArmRecords, ARM_RECORDS_VERSION } = await import('../formats/morrowind/mwFirstPerson.js');
   const key = `${ARM_RECORDS_PREFIX}:v${ARM_RECORDS_VERSION}:${fileName}:${blob.size}:${await sampleStamp(blob)}`;
   const cached = await loadDerivedJson(key);
   let records = isArmRecords(cached) ? cached : null;
@@ -723,7 +723,7 @@ export async function loadMorrowindArchives() {
 }
 
 async function _openMorrowindArchives(gen) {
-  const { MwBsaFile } = await import('../formats/mwBsaFile.js');
+  const { MwBsaFile } = await import('../formats/morrowind/mwBsaFile.js');
   const names = (await storedMorrowindNames()).filter((n) => /\.bsa$/i.test(n));
   const rank = (n) => {
     const l = n.toLowerCase();

@@ -15,8 +15,8 @@ import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import zlib from 'node:zlib';
 
-import { ROW_CODECS } from '../src/formats/worldDataPack.js';
-import { blockFromJson } from '../src/formats/worldDataReplacement.js';
+import { ROW_CODECS } from '../src/formats/worldData/worldDataPack.js';
+import { blockFromJson } from '../src/formats/worldData/worldDataReplacement.js';
 import { layoutRmbBlock } from '../src/world/rmbLayout.js';
 import { RMBRP_HILLS, RMBRP_PIECES, blockHillSeat, hillMesh } from '../src/world/townStandIns.js';
 import { RMBRP_HILL_SHAPES, SHAPE_BEARINGS, SHAPE_RINGS } from '../src/world/rmbrpHillShapes.js';
@@ -90,8 +90,8 @@ test('HILL-SHAPES with ARENA2: Ipsham itself - Beautiful Villages\' grid stands 
   const { BlocksFile } = await import('../src/formats/blocksFile.js');
   const { Arch3dFile } = await import('../src/formats/arch3dFile.js');
   const { dfMeshToModel } = await import('../src/world/meshReader.js');
-  const WDR = await import('../src/formats/worldDataReplacement.js');
-  const { openWorldDataPack } = await import('../src/formats/worldDataPack.js');
+  const WDR = await import('../src/formats/worldData/worldDataReplacement.js');
+  const { openWorldDataPack } = await import('../src/formats/worldData/worldDataPack.js');
   const { setValue } = await import('../src/systems/settings/settings.js');
   const maps = new MapsFile(); maps.load(rd('MAPS.BSA'), rd('CLIMATE.PAK'), rd('POLITIC.PAK'));
   const blocks = new BlocksFile(); blocks.load(rd('BLOCKS.BSA'));
@@ -133,8 +133,8 @@ test('HILL-SHAPES with ARENA2: over every block of both packs that stands a hill
   const { BlocksFile } = await import('../src/formats/blocksFile.js');
   const { Arch3dFile } = await import('../src/formats/arch3dFile.js');
   const { dfMeshToModel } = await import('../src/world/meshReader.js');
-  const WDR = await import('../src/formats/worldDataReplacement.js');
-  const { openWorldDataPack } = await import('../src/formats/worldDataPack.js');
+  const WDR = await import('../src/formats/worldData/worldDataReplacement.js');
+  const { openWorldDataPack } = await import('../src/formats/worldData/worldDataPack.js');
   const { setValue } = await import('../src/systems/settings/settings.js');
   const maps = new MapsFile(); maps.load(rd('MAPS.BSA'), rd('CLIMATE.PAK'), rd('POLITIC.PAK'));
   const blocks = new BlocksFile(); blocks.load(rd('BLOCKS.BSA'));

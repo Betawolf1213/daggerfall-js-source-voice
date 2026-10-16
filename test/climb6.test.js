@@ -13,8 +13,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { parseNif } from '../src/formats/mwNifFile.js';
-import { buildSkeleton, poseSkeleton, skeletonSpaceMatrices, GRAPH_ROOT } from '../src/formats/mwSkin.js';
+import { parseNif } from '../src/formats/morrowind/mwNifFile.js';
+import { buildSkeleton, poseSkeleton, skeletonSpaceMatrices, GRAPH_ROOT } from '../src/formats/morrowind/mwSkin.js';
 import {
   applyClimbRig, climbBones, handFrame, solveReach, rotFromTo, rotFrames, rotFraction, rotAxisAngle, onRay, RAY_REACH,
   climbRequestToRig, climbRequestToFirstPerson,
@@ -22,7 +22,7 @@ import {
 import { ClimbPose, POSE, gait, shimmyGait, wallFrame, climbRigInput, peerLipY, floorGapAt } from '../src/player/climbPose.js';
 import { FEEL } from '../src/player/climbFeel.js';
 import { PARKOUR_HANG_DROP, movePoint, planLower } from '../src/player/parkour.js';
-import { poseAssembly, MW_UNITS_PER_METER } from '../src/formats/mwFirstPerson.js';
+import { poseAssembly, MW_UNITS_PER_METER } from '../src/formats/morrowind/mwFirstPerson.js';
 import { NIF_TO_PASS } from '../src/combat/fpArm.js';
 import { trs, multiply, transformPoint } from '../src/world/mat4.js';
 import { validPose, poseChanged, CLIMB_MOVE_KINDS } from '../src/net/wire.js';
@@ -470,5 +470,5 @@ test('CLIMB6 C16: THE FOUR HOSTS hand the rig the snapshot (world, exterior, int
   assert.match(fp, /if \(climbHands && \(r\.slot === 'weapon' \|\| r\.slot === 'arrow' \|\| r\.slot === 'torch'\)\) r\.hidden = true;/, 'nothing in hands on the stone');
   assert.match(rd('src/combat/weapon/weaponRig.js'), /if \(_climbLower > 0 && !armsClimb\)/, 'posed arms stay on the screen');
   assert.match(rd('src/net/peer/peerBodies.js'), /b\.cam\.climb = \(b\.climbTrack \?\?= new PeerClimbTrack\(\)\)\.input\(peer\.shown, f, b\.yaw, this\._now\(\), this\._collider\(\)\);/, 'the peers\' bodies');
-  assert.match(rd('src/formats/mwFirstPerson.js'), /applyFirstPersonNeck\([^\n]*\n(?:\s*\/\/[^\n]*\n)*\s*assembly\.climbFit = climb \? applyClimbRig\(skeleton, pose, GRAPH_ROOT, fns\.skelMats, climb\) : null;\n\s*const mats = fns\.skelMats/, 'the hook between the neck and the matrices');
+  assert.match(rd('src/formats/morrowind/mwFirstPerson.js'), /applyFirstPersonNeck\([^\n]*\n(?:\s*\/\/[^\n]*\n)*\s*assembly\.climbFit = climb \? applyClimbRig\(skeleton, pose, GRAPH_ROOT, fns\.skelMats, climb\) : null;\n\s*const mats = fns\.skelMats/, 'the hook between the neck and the matrices');
 });

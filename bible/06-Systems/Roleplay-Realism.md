@@ -303,9 +303,9 @@ building ... variant _master` rebuilds it (faction 1022, an Armorer of
 quality 20, seed 632, a 33-model interior).
 
 They come through **WorldDataReplacement.cs, ported whole** as
-`formats/worldDataReplacement.js`:
+`formats/worldData/worldDataReplacement.js`:
 
-- **The door.** `formats/worldDataDoor.js` is a leaf both readers
+- **The door.** `formats/worldData/worldDataDoor.js` is a leaf both readers
   import; the replacement module installs itself there (a cycle would
   otherwise run readers -> door -> readers' enums). MapsFile asks it at
   LoadRegion's tail (:984, the region's additional locations), at

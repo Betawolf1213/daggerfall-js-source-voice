@@ -18,10 +18,10 @@
 // ═══════════════════════════════════════════════════════════════════
 /* global THREE */
 
-import { MwBsaFile, normalizeBsaPath } from '../formats/mwBsaFile.js';
-import { parseNif } from '../formats/mwNifFile.js';
-import { flattenNif } from '../formats/mwNifMesh.js';
-import { correctTexturePath, decodeTextureImage } from '../formats/mwTexture.js';
+import { MwBsaFile, normalizeBsaPath } from '../formats/morrowind/mwBsaFile.js';
+import { parseNif } from '../formats/morrowind/mwNifFile.js';
+import { flattenNif } from '../formats/morrowind/mwNifMesh.js';
+import { correctTexturePath, decodeTextureImage } from '../formats/morrowind/mwTexture.js';
 import {
   collectTextKeys,
   parseAnimGroups,
@@ -31,12 +31,12 @@ import {
   resetClip,
   advanceClip,
   isLoopingAnimation,
-} from '../formats/mwAnim.js';
-import { buildSkeleton, poseSkeleton, skeletonSpaceMatrices, skinBatch, accumRootRef, GRAPH_ROOT } from '../formats/mwSkin.js';
-import { bindPart, attachmentTransform } from '../formats/mwCharacter.js';
-import { assembleFirstPersonArm, poseAssembly } from '../formats/mwFirstPerson.js';
-import { parseEsm } from '../formats/mwEsmFile.js';
-import { assembleNpc, indexSkins } from '../formats/mwNpc.js';
+} from '../formats/morrowind/mwAnim.js';
+import { buildSkeleton, poseSkeleton, skeletonSpaceMatrices, skinBatch, accumRootRef, GRAPH_ROOT } from '../formats/morrowind/mwSkin.js';
+import { bindPart, attachmentTransform } from '../formats/morrowind/mwCharacter.js';
+import { assembleFirstPersonArm, poseAssembly } from '../formats/morrowind/mwFirstPerson.js';
+import { parseEsm } from '../formats/morrowind/mwEsmFile.js';
+import { assembleNpc, indexSkins } from '../formats/morrowind/mwNpc.js';
 import { ownFacePools } from '../characters/ownModels/ownHeadModels.js';   // MW-HEADS1: the race and sex whose faces are the port's own
 
 const $ = (id) => document.getElementById(id);
@@ -514,7 +514,7 @@ function setStatus(text) {
 }
 
 /**
- * MW-D11: THE PATH LAW LIVES IN formats/mwTexture.js NOW.
+ * MW-D11: THE PATH LAW LIVES IN formats/morrowind/mwTexture.js NOW.
  *
  * What stood here was a "textures\\" prefix and a .tga->.dds swap - and it
  * got three of the reference's rules wrong: it never re-rooted an

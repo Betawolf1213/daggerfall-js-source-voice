@@ -23,8 +23,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import zlib from 'node:zlib';
 
-import { ROW_CODECS } from '../src/formats/worldDataPack.js';
-import { blockFromJson } from '../src/formats/worldDataReplacement.js';
+import { ROW_CODECS } from '../src/formats/worldData/worldDataPack.js';
+import { blockFromJson } from '../src/formats/worldData/worldDataReplacement.js';
 import { layoutRmbBlock } from '../src/world/rmbLayout.js';
 import {
   RMBRP_PIECES, RMBRP_HILLS, RMBRP_ROCKS, RMBRP_ROCK_SCALE, RMBRP_STALLS, RMBRP_STALL_SCALE, RMBRP_BLOCK_CM, RMBRP_BLOCK_SCALE,

@@ -361,8 +361,8 @@ port's `Enabled` and that one (HT-WAIST below).
 Yes. Morrowind's carriable lights are LIGH records with a mesh -
 `Light_Torch_01`, the candles and the lanterns under `meshes\l\` - held
 in the left hand by the `torch` animation group in `base_anim.nif`
-(the group the port's `formats/mwAnim.js` lists). The port's Morrowind
-arms lane (`formats/mwFirstPerson.js`) answers None for a torch today:
+(the group the port's `formats/morrowind/mwAnim.js` lists). The port's Morrowind
+arms lane (`formats/morrowind/mwFirstPerson.js`) answers None for a torch today:
 it draws no held light, and this port draws no classic hand under the
 modelled arms either (the rig's draw seam returns at the arms - a
 pixel hand beside a modelled arm is neither the mod nor the lane). So
@@ -772,7 +772,7 @@ the lantern to its stop every step), a share of that drives the lantern, a strid
 twice fore-aft, in proportion to the speed up to a walk), a turn on the spot pulls it outward, it settles plumb at
 rest and never passes 35 degrees. Fixed sub-steps, so 30 and 144 frames a second swing alike; allocation-free.
 
-**The Morrowind body** (`combat/fpArm.js`, `formats/mwFirstPerson.js`). A carriable LIGH record named lantern
+**The Morrowind body** (`combat/fpArm.js`, `formats/morrowind/mwFirstPerson.js`). A carriable LIGH record named lantern
 (`pickLanternRecord`, the torch picker's own shape; no retail id is assumed) bound as a rigid part - slot
 `hiplight` - at `Bip01 Pelvis` on the THIRD-PERSON rig alone (the first-person arms have no hip), resolved against
 the skeleton with its bone addons joined. It HANGS rather than rides: `hangAffine` places it by its top-centre

@@ -3,7 +3,7 @@
 //
 // The file a mod ships (a whole block, or a whole building record, as
 // DFU's World Data Editor writes it) is vendored as the edit only
-// (formats/worldDataJson.js says why; tools/worldDataPatch.mjs makes the
+// (formats/worldData/worldDataJson.js says why; tools/worldDataPatch.mjs makes the
 // patch). At load the port reads the classic block out of the player's
 // own BLOCKS.BSA, serialises it the way the editor did, lays the edit on
 // and hands the result to the world-data door under the file's DFU name

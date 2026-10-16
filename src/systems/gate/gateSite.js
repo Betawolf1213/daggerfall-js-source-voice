@@ -83,7 +83,7 @@ export function gateScanner(maps, { spawnSalt = WORLD_SALT, heightAt = null } = 
       const table = region?.mapTable;
       if (!table) continue;
       // GATE-SEEN: the game's OWN rows (HUB1's law, systems/region/regionHubs.js) - a world-data mod's additions are appended
-      // past them (formats/worldDataReplacement.js), and they stand only where Replace Game Artwork is on: Roleplay &
+      // past them (formats/worldData/worldDataReplacement.js), and they stand only where Replace Game Artwork is on: Roleplay &
       // Realism's fort barred a pixel's neighbourhood on one client and not another, the region's list changed length,
       // and the day's roll picked two different spots
       const base = typeof maps.baseLocationCount === 'function' ? Math.min(table.length, maps.baseLocationCount(r)) : table.length;

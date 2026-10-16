@@ -183,7 +183,7 @@ directory by `test/audit18_bible_docs.test.js`:
   `04-Characters/Morrowind-NPCs.md` section 6): `SKIN_PAL_ROW` (341 entries a
   row, three RGBA32F texels an entry) and `SKIN_PALETTE_UNIT` (21) - the one
   home renderer.js's CHAR_SKIN_VS and updateSkinPalette and
-  formats/mwGpuSkin.js's writeSkinPalette agree on. No GL, no imports.
+  formats/morrowind/mwGpuSkin.js's writeSkinPalette agree on. No GL, no imports.
 - `cardTableDraw.js` - CARDS3 THE CARDS' BODIES (2026-10-07,
   `11-Multiplayer/Tavern-Cards.md` section 15): one atlas (52 faces, the back,
   the stock, five chips) painted on a canvas and uploaded once under a string
@@ -1335,7 +1335,7 @@ directory by `test/audit18_bible_docs.test.js`:
   centimetres apart are drawn at - the surface film (Iliac Puddle No More's
   top, WATER1) over the ground, Come Sail Away's breakers over the film.
 - `underwaterFog.js` - ROAD-B B3: UnderwaterFog.UpdateFog, the submerged fog/tint law shared by the dungeon and exterior hosts
-- `vfxGpu.js` - MW-SPELLFX1: a Morrowind effect's streams on the GPU - one particle effect per stream (formats/mwVfx.js packs a mesh's triangles and its sparks alike), its texture set by file each frame and owned here, released whole; the arm's VFX_Hands and the world's spell effects (scenes/mwMagicFx.js, drawn by `Renderer.drawWorldParticleEffects`) each drive one
+- `vfxGpu.js` - MW-SPELLFX1: a Morrowind effect's streams on the GPU - one particle effect per stream (formats/morrowind/mwVfx.js packs a mesh's triangles and its sparks alike), its texture set by file each frame and owned here, released whole; the arm's VFX_Hands and the world's spell effects (scenes/mwMagicFx.js, drawn by `Renderer.drawWorldParticleEffects`) each drive one
 - `windowEmission.js` - R2 window emission.
 - `precipitation.js` - R13 rain/snow + storm lightning. TWO PROFILES,
   TWO PROGRAMS (AUDIT 58 f3/render): the classic pass is DFU's cap on

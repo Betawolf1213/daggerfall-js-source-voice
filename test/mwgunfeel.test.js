@@ -13,7 +13,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { ARM_GUN_FEEL, ARM_KICK_REST_PX, armGunPose, reloadDip, armKickMatrix, GUN_FEEL, GUN_COOLDOWN_SECONDS } from '../src/combat/gun/gunFeel.js';
 import { createFpArm, fpSkeletonPath, FP_CLIP_PATH } from '../src/combat/fpArm.js';
-import { MW_UNITS_PER_METER } from '../src/formats/mwFirstPerson.js';
+import { MW_UNITS_PER_METER } from '../src/formats/morrowind/mwFirstPerson.js';
 import { multiply, transformPoint } from '../src/world/mat4.js';
 import { createWeaponRig } from '../src/combat/weapon/weaponRig.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';

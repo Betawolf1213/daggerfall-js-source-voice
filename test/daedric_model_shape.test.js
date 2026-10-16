@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { dfWeaponShape, dfWeaponToMw, pickWeaponRecord, weaponRecords, parseBsaIndex } from '../src/formats/mwFirstPerson.js';
+import { dfWeaponShape, dfWeaponToMw, pickWeaponRecord, weaponRecords, parseBsaIndex } from '../src/formats/morrowind/mwFirstPerson.js';
 import { fpWeaponKey, weaponPartPaths } from '../src/combat/fpArm.js';
 import { WEAPONS } from '../src/characters/weapons.js';
 import { weaponOfMaterial } from '../src/combat/enemyEquipment.js';

@@ -1,8 +1,8 @@
 # The Steel Brigandine — the port's own worn model
 
 `tools/bakeBrigandine.mjs` + `src/characters/ownModels/ownArmorModels.js` +
-`src/formats/mwItemMap.js` (composeWornArmor) +
-`src/formats/mwSkinTransfer.js` (transferSkin, fitLift) + `src/formats/mwFirstPerson.js` (bindSkinnedFromBody)
+`src/formats/morrowind/mwItemMap.js` (composeWornArmor) +
+`src/formats/morrowind/mwSkinTransfer.js` (transferSkin, fitLift) + `src/formats/morrowind/mwFirstPerson.js` (bindSkinnedFromBody)
 (MW-BRIG1, Mac, 2026-09-29; MW-BRIG2; MW-BRIG3; MW-BRIG4, every metal in its own painting, 2026-10-09)
 
 > "This is for the morrowind model. The steel brigantine"
@@ -80,7 +80,7 @@ brigandine by a node the body does not use. `test/mwbrig2.test.js` builds
 exactly that case and measures the MW-BRIG1 attach dragged over 10 units off
 the body.
 
-Now there is ONE transform. `formats/mwSkinTransfer.js`: every brigandine
+Now there is ONE transform. `formats/morrowind/mwSkinTransfer.js`: every brigandine
 vertex copies the skin of the nearest vertex of the player's own body parts
 (`skinFrom: chest, groin, upperleg, knee` in `characters/ownModels/ownArmorModels.js`) -
 the same bones, weights, inverse binds and skin transform - and its position

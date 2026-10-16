@@ -23,8 +23,8 @@ import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import zlib from 'node:zlib';
 
-import { ROW_CODECS } from '../src/formats/worldDataPack.js';
-import { blockFromJson } from '../src/formats/worldDataReplacement.js';
+import { ROW_CODECS } from '../src/formats/worldData/worldDataPack.js';
+import { blockFromJson } from '../src/formats/worldData/worldDataReplacement.js';
 import { layoutRmbBlock } from '../src/world/rmbLayout.js';
 import { NATURE_FLATS_Y } from '../src/world/rmbFlats.js';
 import { RMBRP_HILLS, RMBRP_PIECES, blockHillSeat, blockHillPatch, seatNatureFlat, HILL_SEAT_TOLERANCE, HILL_PATCH_SINK, HILL_SEAT_PLANE, HILL_SEAT_STAND } from '../src/world/townStandIns.js';
@@ -340,7 +340,7 @@ function wrap(points) {
 // models the pipeline's (tools/townQuestMarkers.mjs openTownData), and what holds a model is what is drawn under it:
 // the hills, the pads, or another of the block's models whose top there is at most its base and the bar.
 test('HILL-SEAT with ARENA2: over every block of both packs that stands a hill, every model the author stood up on one stands on what is drawn under it - the hills, the pads, or the block\'s own models (TEMPLE-STEPS: a temple on its foundations, a stair on its landing) - its own walls\' and floors\' footprint, edges included, within 0.15 m everywhere; save two, named', { skip: HAVE_ARENA2 ? false : 'ARENA2_PATH not set', timeout: 600000 }, async () => {
-  const WDR = await import('../src/formats/worldDataReplacement.js');
+  const WDR = await import('../src/formats/worldData/worldDataReplacement.js');
   const { openTownData } = await import('../tools/townQuestMarkers.mjs');
   const { eachPackBlock } = await import('../tools/townSolidsSweep.mjs');
   const quiet = console.log; console.log = () => {};

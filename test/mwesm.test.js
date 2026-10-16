@@ -2,9 +2,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { parseEsm, MW_BODY_PARTS, BODY_TYPE } from '../src/formats/mwEsmFile.js';
-import { assembleNpc, indexSkins, PART_BONES } from '../src/formats/mwNpc.js';
-import { MwBsaFile, normalizeBsaPath } from '../src/formats/mwBsaFile.js';
+import { parseEsm, MW_BODY_PARTS, BODY_TYPE } from '../src/formats/morrowind/mwEsmFile.js';
+import { assembleNpc, indexSkins, PART_BONES } from '../src/formats/morrowind/mwNpc.js';
+import { MwBsaFile, normalizeBsaPath } from '../src/formats/morrowind/mwBsaFile.js';
 
 // fixture.esm is written by test/fixtures/mw/generate.py - an
 // independent struct-level TES3 writer, values pinned here verbatim.
