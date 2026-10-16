@@ -43,7 +43,11 @@ From the memo, kept as the arc's law:
    specialist does it cheaper, faster or anywhere. A mage teleports anywhere;
    anyone else pays the Mages Guild's teleport.
 5. **Shops are the floor, crafting the ceiling.** NPC prices are fixed, which
-   is what shields a newcomer from inflation among players; the world keeps
+   is what shields a newcomer from inflation among players (TOWN-ECON,
+   2026-10-16, is the one exception, Mac: "Wider swings, ±25%+" - online, a
+   town's Prosperity moves what its counters ask by up to a quarter, what
+   they pay only down, never below the seats' own deepest; bounded in
+   `06-Systems/Town-Economy-Arc.md` decision 4); the world keeps
    its exclusives (Legendaries, signature drops, artifacts, the NPC-only
    services). What an NPC pays for a crafted piece is capped, or smithing
    prints gold.

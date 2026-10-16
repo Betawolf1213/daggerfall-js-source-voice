@@ -4112,11 +4112,13 @@ export function createWorldModes(host) {
   function itemValue(it) { return itemValueOf(it); }   // JAN1: the one value read (a non-finite value is an absent one)
   // SEAT1d (Seats-Arc 7.2, 7.6): a seat town's shop asks its holder's members less, and everyone less on Market Day - a
   // multiplier of its own on the shop's price adjustment (never regionPriceAdjustment's region-wide index), for what the
-  // player BUYS and has REPAIRED alone; what a shop pays for a sale is the shop's own
+  // player BUYS and has REPAIRED alone; what a shop pays for a sale is the shop's own. TOWN-ECON TE1
+  // (bible/06-Systems/Town-Economy-Arc.md 3): online, the town's own economy too - its asking factor with the seat's (never
+  // below net/townEconLaw.js TOWN_FACTOR_FLOOR), and a sale's paying factor, which only ever falls (systems/townEcon.js)
   function shopAdjustment(b, mode) {
     if (Number.isFinite(b?.priceIndex)) return b.priceIndex;   // AUDIT MERCHANT-YARDS Y2: a counter that names its own index (a yard's, systems/merchantYards.js YARD_PRICE_INDEX) is priced at it, both ways
     const adj = regionPriceAdjustment(playerEntity, b?.regionIndex ?? 0);
-    const f = mode === 'Buy' || mode === 'Repair' ? host.seatShopFactor?.(b) ?? 1 : 1;
+    const f = host.townShopFactor?.(b, mode) ?? (mode === 'Buy' || mode === 'Repair' ? host.seatShopFactor?.(b) ?? 1 : 1);
     if (b?.roadDiscount && mode === 'Buy') return Math.round(adj * f * (1 - b.roadDiscount));   // LW11: a friend's counter on the road
     return f === 1 ? adj : Math.round(adj * f);
   }
