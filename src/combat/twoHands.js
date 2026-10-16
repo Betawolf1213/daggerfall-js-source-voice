@@ -28,7 +28,7 @@
 //
 // THE RUNNING HANDS (handsLaw.js RUN_PUMP): running with nothing in either hand, the two arms pump with the stride - the right
 // forward as the left foot falls, one stroke a step on the head bob's own clock (DFU's HeadBobber walks its timer by the
-// footstep interval). A running hand is the art's own arm - the bare hand's rising punch, a fist on its forearm - drawn
+// footstep interval). A running hand is the art's own arm - the bare hand's jab across, a fist's back on its forearm - drawn
 // with its foot on the view's bottom edge, never lifted (the idle fist is cut at the wrist: lifted, it floated). The fists
 // go down out of the view as the run starts and the arms come up from under it, and back when it ends; a punch thrown on
 // the run takes the fist at once.
@@ -197,7 +197,7 @@ export function createTwoHands({ audio = null, envHit = null, missEffect = null,
    * THE RUNNING HANDS, DRAWN (handsLaw.js RUN_PUMP) - every hand not throwing a punch. Below the run's SWAP weight they are
    * the fists' own rest (the idle frame, `fistArt`'s record 0, where the pair draws it - restRect), lowered out of the
    * view by the weight (a sheathed body's fists were down: nothing to lower); above it, THE RUNNING ARM - the art's own
-   * rising punch (RUN_PUMP.ARM_STATE's frames), the frame by the stroke, placed as FPSWeapon places a frame (its foot on
+   * jab across (RUN_PUMP.ARM_STATE's frame, the fist's back), placed as FPSWeapon places a frame (its foot on
    * the view's bottom edge, so the forearm runs off the screen) at the idle's own place across the view, the pump's
    * dx/dy on it and the rest of the weight under the view. The art changes only there, never in sight. The hand on its
    * back stroke first, the one coming forward over it. True when it drew.

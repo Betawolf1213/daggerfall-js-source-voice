@@ -286,19 +286,22 @@ export const RUN_STEP_M = 2.5;
 /**
  * The pump. THE RUNNING ARM IS THE ART'S OWN (Mac: "theres no arm portion of the sprite, so it looks like floating hands").
  * The bare hand's idle (WEAPON10.CIF record 0, 63x53) is a fist cut at the wrist, painted to stand on the view's bottom
- * edge - lifted, its cut floats. The one record of the bare hand's art that lifts a fist on its own forearm from the
- * frame's foot is the right arm's rising punch (record 5, StrikeDownRight: the fist coming up on its grey sleeve, then
- * the follow-through across). So a running hand is drawn in its frames, by how far up its stroke is, each as FPSWeapon
- * draws a frame - its foot on the view's bottom edge (OnGUI's `height - h`): THE PUMP NEVER LIFTS A SPRITE. It only
- * lowers one (the back of the stroke, out of the view), so the arm always runs off the bottom of the screen. THE CUT
- * STAYS OFF THE SCREEN: only the frames whose arm leaves the frame through its FOOT alone - 1, 2 and 3. Frame 0's sleeve
- * also leaves through its right side (15 rows cut on WEAPON10's right column; the pump's sideways stroke drew that cut
- * into the view - Mac: "The sprite on the right moves to the right and exposes where it clips off") and frame 4's
- * through its left (8) - measured on the shipped file, frames 1-3 cut nowhere but the foot.
- *   ARM_STATE / ARM_FRAMES - the record (by its state) and the rise's frames that leave only at the foot, low to high;
+ * edge - lifted, its cut floats. So a running hand is a frame of the bare hand's art that holds a fist on its own grey
+ * forearm from the frame's foot, drawn as FPSWeapon draws a frame - its foot on the view's bottom edge (OnGUI's
+ * `height - h`) at the top of the stroke: THE PUMP NEVER LIFTS A SPRITE. The stroke lowers it, on an even sine, down past
+ * the view at the back of the stroke, so the arm always runs off the bottom of the screen.
+ * THE FIST'S BACK, A THIRD OF THE VIEW HIGH - record 2 (StrikeDownLeft, the right arm's jab across), frame 1: a closed
+ * fist seen from its back, knuckles leading, as the idle fist is seen, on its forearm reaching in from the frame's foot,
+ * 67 of the view's 200 pixels. TWO-HANDS FIELD (Mac after the merge): the merged cut drew record 5 (StrikeDownRight,
+ * the uppercut) - "Too high, like uppercuts": its frames 1, 2 and 3 by how far up the stroke was, 2 and 3 the punch's
+ * peak, an upright forearm 98 pixels high, half the screen, held at the top by a snap; and then, its lowest frame alone,
+ * "Why is the underhand showing when extended and not the fist": an uppercut shows the fist's INSIDE, curled fingers
+ * toward the eye, in every frame. THE CUT STAYS OFF THE SCREEN: record 2's frame 1 leaves its frame through its FOOT
+ * alone (measured on the shipped file: no row cut down either side; record 5's frame 0 had 15 down its right - Mac: "The
+ * sprite on the right moves to the right and exposes where it clips off").
+ *   ARM_STATE / ARM_FRAME - the record (by its state) and its frame: the fist's back, leaving only at the foot;
  *   DROP      - the back of the stroke, down, of the frame's height (past the view's edge: the hand passing the hip);
  *   IN/OUT    - toward the middle at the top (the arm across the chest) and out at the bottom, of the view's width;
- *   SHAPE     - the stroke's snap: the hand drives up and falls, not a sine's even glide (|sin|^SHAPE);
  *   SWAP      - the run's weight at which a hand changes its art - the fists' rest for the running arm, or back - the
  *               rest lowered out of the view below it and the arm come up from under the view above it, so the art
  *               never changes in sight;
@@ -312,12 +315,11 @@ export const RUN_STEP_M = 2.5;
  *               the air).
  */
 export const RUN_PUMP = Object.freeze({
-  ARM_STATE: 'StrikeDownRight',
-  ARM_FRAMES: Object.freeze([1, 2, 3]),
+  ARM_STATE: 'StrikeDownLeft',
+  ARM_FRAME: 1,
   DROP: 1.05,
   IN: 0.06,
   OUT: 0.03,
-  SHAPE: 0.7,
   SWAP: 0.5,
   IN_TAU: 0.12,
   OUT_TAU: 0.16,
@@ -384,20 +386,16 @@ export function runHandsWanted({ running = false, standing = false, grounded = t
 
 /**
  * One hand's place in the pump at stride phase `phase`: `{ dx, dy, frame, s }` - dx a share of the view's width toward
- * the middle (+), dy a share of the frame's height DOWN (never up: 0 on the forward stroke, the rise is the art's),
- * `frame` the arm's frame (RUN_PUMP.ARM_FRAMES, by how far up the forward stroke is - the lowest through the back), `s`
- * the stroke (-1 back .. 1 forward). The right arm swings forward as the left foot falls - the hands out of step by half
- * a stride.
+ * the middle (+), dy a share of the frame's height DOWN (never up: 0 at the top of the stroke, its foot on the view's
+ * edge; DROP at the back, past it), `frame` the arm's frame (RUN_PUMP.ARM_FRAME), `s` the stroke (-1 back .. 1 forward,
+ * an even sine: fastest through the middle, easing at either end - TWO-HANDS FIELD, the snap that held the fist at the
+ * top of its stroke is gone with the punch's peak). The right arm swings forward as the left foot falls - the hands out
+ * of step by half a stride.
  */
 export function pumpOf(phase, hand) {
-  const raw = Math.sin(phase + (hand === 'L' ? Math.PI : 0));
-  const s = Math.sign(raw) * Math.pow(Math.abs(raw), RUN_PUMP.SHAPE);
+  const s = Math.sin(phase + (hand === 'L' ? Math.PI : 0));
   const fwd = Math.max(0, s), back = Math.max(0, -s);
-  const frames = RUN_PUMP.ARM_FRAMES;
-  return {
-    dx: RUN_PUMP.IN * fwd - RUN_PUMP.OUT * back, dy: RUN_PUMP.DROP * back,
-    frame: frames[Math.min(frames.length - 1, Math.floor(fwd * frames.length))], s,
-  };
+  return { dx: RUN_PUMP.IN * fwd - RUN_PUMP.OUT * back, dy: RUN_PUMP.DROP * (1 - s) / 2, frame: RUN_PUMP.ARM_FRAME, s };
 }
 
 /**
@@ -406,7 +404,7 @@ export function pumpOf(phase, hand) {
  * the half-frame - and `d` metres out from the eye along that line; the arm reaches it through the climb's solver
  * (combat/climbRig.js), its fist clenched (`CURL` radians, each finger's share), its palm turned in, its elbow out and
  * back. The top of the stroke is the bottom of the picture, toward the middle; the bottom is under the frame - the hand
- * passing the hip. The same stride, the same snap, the same weight as the sprite lane's (pumpOf, runWeightStep).
+ * passing the hip. The same stride, the same stroke, the same weight as the sprite lane's (pumpOf, runWeightStep).
  */
 export const RUN_3D = Object.freeze({
   TOP: Object.freeze({ x: 0.36, y: -0.62, d: 0.42 }),

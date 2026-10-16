@@ -218,18 +218,23 @@ test('TWO-HANDS law: the guard, the run - the guard\'s follower eased in fast an
   assert.equal(runPhaseStep(1, 7, -1), 1, 'no backward time');
   const top = pumpOf(Math.PI / 2, 'R'), back = pumpOf(Math.PI / 2, 'L');
   assert.deepEqual([top.s, back.s], [1, -1], 'out of step by half a stride');
-  // THE RUNNING ARM IS THE ART'S OWN: the top of the stroke is the rise's last frame (a fist up on its forearm), never a lift
-  assert.deepEqual([top.dx, top.dy, top.frame], [RUN_PUMP.IN, 0, RUN_PUMP.ARM_FRAMES.at(-1)], 'the top: in toward the middle, the arm up - no lift');
-  assert.deepEqual([back.dx, back.dy, back.frame], [-RUN_PUMP.OUT, RUN_PUMP.DROP, RUN_PUMP.ARM_FRAMES[0]], 'the bottom: out, the lowest frame, down past the view');
+  // THE RUNNING ARM IS THE ART'S OWN: the rise's lowest frame, its foot on the view's edge at the top of the stroke - never
+  // a lift; PIN MOVED (TWO-HANDS FIELD, Mac: "Too high, like uppercuts"): one frame, not the rise's 1-3 by how far up the
+  // stroke is (2 and 3 are the punch's own peak, half the view high - the real-art pin below), on an even sine
+  assert.deepEqual([top.dx, top.dy, top.frame], [RUN_PUMP.IN, 0, RUN_PUMP.ARM_FRAME], 'the top: in toward the middle, the foot on the edge - no lift');
+  assert.deepEqual([back.dx, back.dy, back.frame], [-RUN_PUMP.OUT, RUN_PUMP.DROP, RUN_PUMP.ARM_FRAME], 'the bottom: out, down past the view');
   assert.ok(RUN_PUMP.DROP > 1, 'the bottom of the stroke leaves the view');
-  assert.equal(RUN_PUMP.ARM_STATE, 'StrikeDownRight', 'WEAPON10 record 5 - the one bare-hand record that lifts a fist on its forearm');
-  assert.deepEqual([...RUN_PUMP.ARM_FRAMES], [1, 2, 3], 'the frames that leave their frame only at the foot (frame 0\'s sleeve leaves through its right side, 4\'s its left - the real-art pin below)');
-  assert.equal(MELEE_PAINTED_ARM[5], 'R', 'the right arm, mirrored for the left (one rule)');
-  const mid = pumpOf(Math.PI / 6, 'R');   // sin = 0.5, snapped up by SHAPE
-  assert.ok(Math.abs(mid.s - Math.pow(0.5, RUN_PUMP.SHAPE)) < 1e-9 && mid.s > 0.5, 'the stroke drives (|sin|^SHAPE)');
-  assert.equal(mid.frame, RUN_PUMP.ARM_FRAMES[Math.floor(mid.s * RUN_PUMP.ARM_FRAMES.length)], 'the frame by how far up the stroke is');
-  for (let k = 0; k < 64; k++) assert.ok(pumpOf(k * Math.PI / 32, 'R').dy >= 0, 'never up: the pump only lowers a sprite');
-  assert.deepEqual({ ...RUN_PUMP, ARM_FRAMES: [...RUN_PUMP.ARM_FRAMES] }, { ARM_STATE: 'StrikeDownRight', ARM_FRAMES: [1, 2, 3], DROP: 1.05, IN: 0.06, OUT: 0.03, SHAPE: 0.7, SWAP: 0.5, IN_TAU: 0.12, OUT_TAU: 0.16, PUNCH_TAU: 0.04, MIN_SPEED: 1.0, CATCH: 0.5, AIR_GRACE: 0.6 }, 'the record\'s numbers (AUDIT 2, L5: each could change unseen)');
+  assert.equal(RUN_PUMP.ARM_STATE, 'StrikeDownLeft', 'WEAPON10 record 2, the jab across - a closed fist seen from its back on its own forearm (PIN MOVED, TWO-HANDS FIELD: record 5, the uppercut, shows the fist\'s inside - Mac: "Why is the underhand showing when extended and not the fist")');
+  assert.equal(RUN_PUMP.ARM_FRAME, 1, 'its frame that leaves only at the foot, a third of the view high (the real-art pin below)');
+  assert.equal(MELEE_PAINTED_ARM[2], 'R', 'the right arm, mirrored for the left (one rule)');
+  const mid = pumpOf(Math.PI / 6, 'R');   // sin = 0.5
+  assert.ok(Math.abs(mid.s - 0.5) < 1e-9 && Math.abs(mid.dy - RUN_PUMP.DROP / 4) < 1e-9, 'an even stroke: no snap holding the fist at the top');
+  for (let k = 0; k < 64; k++) {
+    const p = pumpOf(k * Math.PI / 32, 'R'), q = pumpOf((k + 1) * Math.PI / 32, 'R');
+    assert.ok(p.dy >= 0 && p.frame === RUN_PUMP.ARM_FRAME, 'never up: the pump only lowers a sprite');
+    assert.ok((q.s - p.s) * (q.dy - p.dy) <= 1e-12, 'the arm rises as the stroke goes forward and falls as it goes back');
+  }
+  assert.deepEqual({ ...RUN_PUMP }, { ARM_STATE: 'StrikeDownLeft', ARM_FRAME: 1, DROP: 1.05, IN: 0.06, OUT: 0.03, SWAP: 0.5, IN_TAU: 0.12, OUT_TAU: 0.16, PUNCH_TAU: 0.04, MIN_SPEED: 1.0, CATCH: 0.5, AIR_GRACE: 0.6 }, 'the record\'s numbers (AUDIT 2, L5: each could change unseen)');
   const want = { running: true, grounded: true, speed: RUN_PUMP.MIN_SPEED, emptyHands: true };
   assert.equal(runHandsWanted(want), true);
   for (const [k, v] of [['running', false], ['standing', true], ['grounded', false], ['crouching', true], ['riding', true], ['swimming', true], ['climbing', true], ['emptyHands', false], ['attacking', true], ['speed', RUN_PUMP.MIN_SPEED - 0.01]]) {
@@ -642,6 +647,8 @@ async function rigWith({ right = null, left = null, widget = false, run = false,
  *  mirror. */
 const shownArm = (x) => { const p = MELEE_PAINTED_ARM[Number(x.rec)]; return x.mirrored ? otherHand(p) : p; };
 const STATE_REC = { Idle: '0', StrikeDown: '1', StrikeDownLeft: '2', StrikeLeft: '3', StrikeRight: '4', StrikeDownRight: '5', StrikeUp: '6' };
+/** The running arm's record (RUN_PUMP.ARM_STATE's) - PIN MOVED (TWO-HANDS FIELD): the pins named record 5, the uppercut. */
+const RUN_REC = STATE_REC[RUN_PUMP.ARM_STATE];
 const meleePainted = (state) => MELEE_PAINTED_ARM[Number(STATE_REC[state])];
 
 test('TWO-HANDS rig, classic sprite: both fists up - the right as DFU draws it, the left the same idle mirrored on the left; the hands take turns, and EVERY strike frame shows the striking hand\'s own arm on its own side - the bare hand\'s art paints both arms (StrikeDown, StrikeLeft and StrikeUp the left), so the picture is chosen (strikePicture), never assumed - and the other hand stays up', async () => {
@@ -816,9 +823,9 @@ test('TWO-HANDS rig, the running hands: running with nothing in either hand - dr
   }
 });
 
-test('TWO-HANDS rig, the running hands, AUDITED: THE ARM IS THE ART\'S OWN - the rising punch\'s frames, the foot on the view\'s edge, never lifted, the rest down and out before the arm comes up (one art a hand a frame), the top of the stroke in toward the middle; the sheathed run up from below the view, ON THE HEAD BOB\'S CLOCK (its timer, every frame); a hand TAKEN mid-run (a weapon, the beast) yields the run at once to the picture that takes it, and with nothing in its place (a spell readied with no hands drawn, a swap\'s pause) eases it out - never a frame of fists over a picture, never an empty one; a lantern at the waist takes no hand; no bounce in a walk', async () => {
+test('TWO-HANDS rig, the running hands, AUDITED: THE ARM IS THE ART\'S OWN - its frame, the foot on the view\'s edge, never lifted, the rest down and out before the arm comes up (one art a hand a frame), the top of the stroke in toward the middle; the sheathed run up from below the view, ON THE HEAD BOB\'S CLOCK (its timer, every frame); a hand TAKEN mid-run (a weapon, the beast) yields the run at once to the picture that takes it, and with nothing in its place (a spell readied with no hands drawn, a swap\'s pause) eases it out - never a frame of fists over a picture, never an empty one; a lantern at the waist takes no hand; no bounce in a walk', async () => {
   // THE RUNNING ARM IS THE ART'S OWN (Mac: "theres no arm portion of the sprite, so it looks like floating hands"): the
-  // run draws the rising punch's frames (record 5), each with its FOOT ON THE VIEW'S BOTTOM EDGE or below - never lifted;
+  // run draws the art's own arm (RUN_PUMP.ARM_STATE's frame), its FOOT ON THE VIEW'S BOTTOM EDGE or below - never lifted;
   // the fists' rest goes down out of the view first and the arm comes up from under it, one art a hand a frame
   const up = await rigWith({ run: true });
   const rest = (await up.frame()).find((x) => shownArm(x) === 'R').rect;
@@ -829,7 +836,7 @@ test('TWO-HANDS rig, the running hands, AUDITED: THE ARM IS THE ART\'S OWN - the
     const q = await up.frame({ move: 7 });
     for (const sd of ['L', 'R']) assert.ok(q.filter((x) => side(x) === sd).length <= 1, 'one art a hand a frame');
     for (const x of q) {
-      if (x.rec === '5') {
+      if (x.rec === RUN_REC) {
         assert.ok(x.rect.y + x.rect.h >= 200 - 1e-6, `the arm's foot on the view's edge or under it - never lifted: ${JSON.stringify(x.rect)}`);
         if (!armSeen) firstArmTop = x.rect.y;
         armSeen = true;
@@ -845,10 +852,10 @@ test('TWO-HANDS rig, the running hands, AUDITED: THE ARM IS THE ART\'S OWN - the
   assert.ok(armSeen && firstArmTop > 200 * 0.8, `the arm comes up from under the view: ${firstArmTop}`);
   assert.ok(Number.isFinite(lastRestY.L) && Number.isFinite(lastRestY.R), 'the fists went DOWN out of the view first - never gone in a frame');
   assert.ok(lastRestY.L > 200 * 0.9 && lastRestY.R > 200 * 0.9, `and all the way down before the arms came up: ${JSON.stringify(lastRestY)} (from ${rest.y})`);
-  for (const x of await up.frame({ move: 7 })) assert.equal(shownArm(x), side(x), 'each running arm its own side\'s - record 5\'s right arm mirrored for the left');
-  assert.equal(frameOf(top), RUN_PUMP.ARM_FRAMES.at(-1), 'the top of the stroke: the rise\'s last frame, the fist up on its forearm');
+  for (const x of await up.frame({ move: 7 })) assert.equal(shownArm(x), side(x), 'each running arm its own side\'s - the record\'s right arm mirrored for the left');
+  assert.equal(frameOf(top), RUN_PUMP.ARM_FRAME, 'the top of the stroke: the rise\'s lowest frame, its foot on the edge (PIN MOVED, TWO-HANDS FIELD: was the rise\'s last, the uppercut\'s peak)');
   assert.ok(top.rect.x + top.rect.w / 2 < rest.x + rest.w / 2 - 1, `the top of the stroke in toward the middle: ${JSON.stringify([top.rect, rest])}`);
-  assert.equal(top.mirrored, false, 'the right hand: record 5 paints the right arm');
+  assert.equal(top.mirrored, false, 'the right hand: the run\'s record paints the right arm');
   assert.ok(up.r.twoHands.running);
   // the sheathed run rises from BELOW the view
   const down = await rigWith({ run: true, sheathed: true });
@@ -901,7 +908,7 @@ test('TWO-HANDS rig, the running hands, AUDITED: THE ARM IS THE ART\'S OWN - the
   // A HAND TAKEN MID-RUN (PIN MOVED, TWO-HANDS AUDIT 2 - the first audit ended the run at once, which emptied the view
   // in a frame where nothing took the hands' place): the run yields AT ONCE to a picture that takes the hands, and with
   // nothing in their place eases out under the view - never an empty frame
-  const armsOf = (q) => q.filter((x) => x.rec === '5');   // the running arm: WEAPON10's rising punch (RUN_PUMP.ARM_STATE)
+  const armsOf = (q) => q.filter((x) => x.rec === RUN_REC);   // the running arm: WEAPON10's jab across (RUN_PUMP.ARM_STATE)
   const easesOut = async (t, take, why, over = true) => {
     for (let i = 0; i < 60; i++) await t.frame({ move: 7 });
     const before = armsOf(await t.frame({ move: 7 }));
@@ -966,7 +973,7 @@ test('TWO-HANDS rig, the running hands, AUDITED: THE ARM IS THE ART\'S OWN - the
   const pic = strikePicture(s0.hand, pr.r.playerWeapon.machine.state, { leftHanded: false, painted: meleePainted });
   const strikeQuad = punch.at(-1);
   assert.ok(strikeQuad.rec === STATE_REC[pic.state] && shownArm(strikeQuad) === s0.hand, `the punch drawn from its first frame, over the other's running arm: ${JSON.stringify(punch.map((x) => [x.rec, x.mirrored]))}`);
-  assert.ok(punch.slice(0, -1).every((x) => x.rec === '5'), 'the other hand still runs, in the arm\'s own frames');
+  assert.ok(punch.slice(0, -1).every((x) => x.rec === RUN_REC), 'the other hand still runs, in the arm\'s own frames');
   assert.equal(punch.filter((x) => shownArm(x) === s0.hand).length, 1, 'the striking hand once - its punch, not its running fist under it');
   // the motion bag carries the head bob's timer to every rig (player/motor.js motionBagOf)
   assert.equal(motionBagOf({ bobTimer: 1.5 }).bobTimer, 1.5);
@@ -1110,19 +1117,23 @@ test('TWO-HANDS x WEAPON-GLOW1: each hand of a pair wears ITS OWN weapon\'s elem
 const ARENA2 = process.env.ARENA2_PATH;
 const NO_ARENA2 = (!ARENA2 || !existsSync(ARENA2)) && 'ARENA2_PATH not set or missing - real-data validation skipped';
 
-test('TWO-HANDS (ARENA2): THE CUT STAYS OFF THE SCREEN, measured on the shipped art - the run\'s frames of WEAPON10\'s rising punch leave their frame at the foot alone (frame 0\'s sleeve by its right side too, 4\'s by its left: never run); every weapon a pair holds is drawn flush to the view\'s side, its hand cut at its outer side (all but the plain mace), so its guard only lowers (Mac: "The sprite on the right moves to the right and exposes where it clips off")', { skip: NO_ARENA2 }, () => {
+test('TWO-HANDS (ARENA2): THE CUT STAYS OFF THE SCREEN, measured on the shipped art - the running arm, WEAPON10\'s jab across (a fist seen from its back), leaves its frame at the foot alone and stands a third of the view; every weapon a pair holds is drawn flush to the view\'s side, its hand cut at its outer side (all but the plain mace), so its guard only lowers (Mac: "The sprite on the right moves to the right and exposes where it clips off")', { skip: NO_ARENA2 }, () => {
   const cif = (file) => { const c = new CifRciFile(); c.load(new Uint8Array(readFileSync(join(/** @type {string} */ (ARENA2), file))), file); return c; };
   /** Opaque pixels down a column, the foot's own row aside (a sleeve leaving at the foot touches its corner). */
   const sideCut = (b, x) => { let n = 0; for (let y = 0; y < b.height - 1; y++) if (b.data[y * b.width + x]) n++; return n; };
   const w10 = cif('WEAPON10.CIF');
   const rec = getWeaponAnims(WEAPON_TYPES.Melee)[STATE_INDEX[RUN_PUMP.ARM_STATE]].Record;
-  assert.equal(rec, 5);
-  for (let f = 0; f < w10.getFrameCount(rec); f++) {
-    const b = w10.getDFBitmap(rec, f);
+  assert.equal(rec, 2, 'the jab across - a closed fist seen from its back (PIN MOVED, TWO-HANDS FIELD: record 5, the uppercut, shows the fist\'s inside in every frame - Mac: "Why is the underhand showing when extended and not the fist")');
+  {
+    const b = w10.getDFBitmap(rec, RUN_PUMP.ARM_FRAME);
     const cut = sideCut(b, 0) + sideCut(b, b.width - 1);
     const foot = b.data.subarray((b.height - 1) * b.width).some((v) => v > 0);
-    if (RUN_PUMP.ARM_FRAMES.includes(f)) assert.ok(cut === 0 && foot, `frame ${f}: the arm leaves at its foot alone (${cut} cut at its sides)`);
-    else assert.ok(cut > 0, `frame ${f} is cut at a side (${cut}) - never run`);
+    // the rows the arm stands from its foot: a third of the view - record 5's peak frames stood 98 of 200, half the
+    // screen ("Too high, like uppercuts")
+    let topRow = 0; while (topRow < b.height && !b.data.subarray(topRow * b.width, (topRow + 1) * b.width).some((v) => v > 0)) topRow++;
+    const stands = b.height - topRow;
+    assert.ok(cut === 0 && foot, `frame ${RUN_PUMP.ARM_FRAME}: the arm leaves at its foot alone (${cut} cut at its sides)`);
+    assert.ok(stands <= 0.35 * 200, `and stands ${stands} of the view's 200 rows - a third of it`);
   }
   const uncut = [];
   for (const t of DUAL_TYPES) {
@@ -1192,7 +1203,7 @@ test('TWO-HANDS rig (AUDIT 2): THE SPRITE LANE, AUDITED AGAIN - the guard never 
     if (!punched) continue;
     const idle = q.filter((x) => x.rec === '0' && shownArm(x) === punched);
     if (idle.some((x) => x.rect.y < restY + x.rect.h * 0.5)) risen++;
-    if (q.some((x) => x.rec !== '0' && x.rec !== '5' && shownArm(x) === punched)) break;   // its strike frames: done
+    if (q.some((x) => x.rec !== '0' && x.rec !== RUN_REC && shownArm(x) === punched)) break;   // its strike frames: done
   }
   assert.ok(punched, 'a punch thrown on the run');
   assert.equal(risen, 0, 'its wind-up never stood the fist at its rest');
@@ -1204,7 +1215,7 @@ test('TWO-HANDS rig (AUDIT 2): THE SPRITE LANE, AUDITED AGAIN - the guard never 
   for (let i = 0; i < 24; i++) { const q = await hop.frame({ move: 7 }); if (q.some((x) => x.rec === '0')) fists++; }   // 0.4 s aloft
   hop.cam.grounded = true;
   assert.equal(fists, 0, 'no fists through a hop');
-  assert.equal((await hop.frame({ move: 7 })).filter((x) => x.rec === '5').length, 2, 'the arms still running on landing');
+  assert.equal((await hop.frame({ move: 7 })).filter((x) => x.rec === RUN_REC).length, 2, 'the arms still running on landing');
   assert.equal(runHandsKept({ wanted: false, aloft: true, wasWanted: true, airSeconds: RUN_PUMP.AIR_GRACE + 0.01 }), false, 'a fall ends it');
   assert.equal(runHandsKept({ wanted: false, aloft: true, wasWanted: false, airSeconds: 0 }), false, 'a jump from standing starts none');
   assert.equal(runHandsKept({ wanted: false, aloft: false, wasWanted: true, airSeconds: 0 }), false, 'on the ground, the run\'s own answer');

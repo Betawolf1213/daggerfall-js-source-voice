@@ -413,6 +413,24 @@ export function clipCompletion(state) {
   return state.playing ? 0 : 1;
 }
 
+/**
+ * TWO-HANDS FIELD (Mac, of a pair in third person: "Both arms swing the same direction"): A STRIDE'S OTHER HALF - clip
+ * `state`'s time half its repeating window on from `time` (its group's loop keys in `keys`, else the group's own start
+ * to stop), or null with no window. One loop of a movement group is one whole stride - the hip sways once a loop
+ * (systems/lanternSwing.js, `stride`) - so the right arm there is where the left arm swings now.
+ */
+export function strideOppositeTime(state, time = state?.time, keys = null) {
+  if (!state || !Number.isFinite(time)) return null;
+  // the window off the group's own keys, inside the block the state plays - never the state's running loop fields,
+  // which take the loop stop only once it is crossed (a first loop read the whole group: the left arm jumped there)
+  const keyIn = (name) => { for (const k of keys ?? []) if (k.text === `${state.group}: ${name}` && k.time >= state.startTime && k.time <= state.stopTime) return k.time; return NaN; };
+  let a = keyIn('loop start'), b = keyIn('loop stop');
+  if (!(b > a)) { a = state.startTime; b = state.stopTime; }
+  const span = b - a;
+  if (!(span > 0)) return null;
+  return a + ((((time - a + span / 2) % span) + span) % span);
+}
+
 /** MW-PACE1: the fastest and the slowest a paced attack section runs (file seconds a second), and the least time
  *  left a section is fitted into - a blow already late finishes as fast as the cap lets it, never in one frame. */
 export const BLOW_RATE_MAX = 12;
@@ -4286,6 +4304,15 @@ export function createFpArm() {
   /** The idle clip as it stands - the hand at rest under the other's blow. Null with no idle playing. */
   const idleClip = () => (idleState && idleSource ? { tracks: idleSource.trackMap, sampleTrack, time: poseTime(idleState) } : null);
   /**
+   * TWO-HANDS FIELD: THE STRIDE'S OTHER HALF - the movement clip that poses the body this frame (no blow, recoil or death
+   * over it), at its time half a loop on (strideOppositeTime). Null standing, or under anything else.
+   */
+  const strideOpposite = () => {
+    if (deathState || actionState || hitState || !movementState || !movementSource) return null;
+    const time = strideOppositeTime(movementState, poseTime(movementState), movementSource.keys);
+    return time == null ? null : { tracks: movementSource.trackMap, sampleTrack, time };
+  };
+  /**
    * Which fist attack `type`'s clip throws on rig `r` - measured, not assumed (Morrowind's hand-to-hand groups throw with
    * either hand by attack): the wrist that travels the farther from the attack's "start" to its "hit" (mirrorRig.js
    * strikingSide), in the source that carries both keys of the weapon group (the one the blow plays from), sampled once
@@ -4319,6 +4346,9 @@ export function createFpArm() {
    */
   function mirrorFor(rigKey, r, dt) {
     const req = { carry: { key: 'none', dt, tau: POSE.LIMB_TAU, state: mirrorCarry[rigKey] }, dip: null };
+    // TWO-HANDS FIELD (Mac: "No left arm"): the first-person arms mirror across the PICTURE - the eye's own middle - not
+    // the chest the clip posed (mirrorRig.js pictureMirrorArm): the lens is the camera node, moved fpOffset across
+    if (rigKey === 'first' && r && r.cameraRef != null) req.plane = { ref: r.cameraRef, dx: fpOffset[0] };
     // TWO-HANDS AUDIT 2: hands something else has take neither a composition nor the guard - under a key of their own,
     // so whatever the pair had laid on the arms (its composition, its guard's dip) is CARRIED off them by the mirror's
     // carry, never dropped in a frame. The first cut kept the dip under every gate (to ease it away): the sheet's hand,
@@ -4335,8 +4365,12 @@ export function createFpArm() {
         req.limbs = { L: idle ? { clip: idle, side: 'R', mirror: true } : { pose: null, side: 'R', mirror: true } };
         req.carry.key = 'dual:R';
       } else {
-        req.limbs = { L: { pose: null, side: 'R', mirror: true } };
-        req.carry.key = 'dual';
+        // TWO-HANDS FIELD (Mac: "Both arms swing the same direction"): on the move the left arm is the right's mirror
+        // HALF A STRIDE ON (strideOpposite) - the arms swing against each other as the clip's own two do, each blade
+        // still carried as the right carries its own. The frame's own right arm, mirrored, swung both arms together
+        const stride = strideOpposite();
+        req.limbs = { L: stride ? { clip: stride, side: 'R', mirror: true } : { pose: null, side: 'R', mirror: true } };
+        req.carry.key = stride ? 'dual:stride' : 'dual';
       }
       return req;
     }
