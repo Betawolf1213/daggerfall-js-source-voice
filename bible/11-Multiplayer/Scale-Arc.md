@@ -74,7 +74,7 @@ Four read-only audits covered the relay (`server/src/index.js`), the account ser
 | D1-NEAR | The account Worker beside its database's primary, by name (`[placement] region`): Smart Placement ran it in Sydney, a Pacific from the primary, and every statement on the primary paid the crossing; every deploy says where it answers from, what a statement costs it there and where D1 says its primary is | No | **Built** (2026-10-12, this branch - no migration, no version, no drop; audited, AUDIT D1-NEAR) |
 | HOMES-SHED | The account database overloaded from 14:11 UTC (2026-10-13): the busiest route one D1 request where it was two (a town's homes and its Open Gates edict in one batch); the siege blackout's question answering a throw as every route does; a town unanswered backing off on the client, YARD-SHED's law | No | **Built** (2026-10-13, this branch - acct127, no migration, no drop) |
 | BUSY-GATE | After HOMES-SHED, the class: the reads a tab keeps asking stand back while the database is overloaded - the client holds them for a doubling wait, an isolate that meets an overload sheds them a moment without a statement, every overload answer says its Retry-After; one law at both ends (`src/net/busyLaw.js`) | No | **Built** (2026-10-13, this branch - acct128, no migration, no drop) |
-| HUB-PULL / DO-ASK | The live relay's hub refused by the runtime's subrequest depth (the bus's push charged to the hand-up it served, a hop deeper each round): the bus never calls a shard - each shard keeps a poll at its bus, answered with every delivery it has not acknowledged; the Worker asks a room reset before it ran once more, an overloaded one never, and answers what is left as a 503 | Yes, once | **Built** (2026-10-16, this branch; relay world209) |
+| HUB-PULL / DO-ASK | The live relay's hub refused by the runtime's subrequest depth (the bus's push charged to the hand-up it served, a hop deeper each round): the bus never calls a shard - each shard keeps a poll at its bus, answered with every delivery it has not acknowledged; the Worker asks a room reset before it ran once more, an overloaded one never, and answers what is left as a 503 | Yes, once | **Built** (2026-10-16, this branch; relay world210) |
 | PRIMARY-TRIPS | The account database's primary, capped by its round trips, overloaded at 00:00 UTC (2026-10-16): the seats' list, a checkpoint and a badge's honours each one batch, a town's yards off a replica, a heartbeat's reads before its beat, a hall bump off its key's rows - some a quarter of the primary's trips at peak | No | **Built** (2026-10-16, this branch; acct139) |
 | SCALE6 | Abuse and backups: Turnstile on guest creation, /64 IPv6 rate keys, bans, report and ignore, `ALLOWED_ORIGIN`, R2 snapshots, a hub export | Some | Alongside |
 
@@ -2234,7 +2234,7 @@ Pins: `test/seat_facts.test.js` (3); `tools/mutants/seat_facts.json` (10 dead); 
 statements, where it was six), SEAT-REPLICA's counted point (two statements, the row asked first) and ACC1b's tables
 (`seat_facts_kept`) - each PIN MOVED.
 
-## HUB-PULL and DO-ASK: built (2026-10-16, this branch - relay world209, one drop at the merge)
+## HUB-PULL and DO-ASK: built (2026-10-16, this branch - relay world210, one drop at the merge)
 
 Mac: "Is the server okay?", then, of what it found: "Yes and do any other improvements along the way. I really wanna
 continue to beef up the server". Read off the live relay (`/health`), Cloudflare's GraphQL analytics and Workers
@@ -2326,8 +2326,9 @@ Observability (the relay's own logs), with the account's token.
   `tools/mutants/auditscale2_bus.json` re-aimed by content (the resync's three to the poll's `rs`, the delivery's miss
   to its `ack`), `vhubs`' record retired with the storage it pinned, and the outbox's bounds and the silent sweep's
   purge added; `tools/hubShardBench.mjs` reads the bus's outbox where it read its pushes.
-- RELAY_VERSION world209, its hash in `test/relayversion.test.js` and every pin on world208 moved. It was world208 on
-  this branch until the merge of main, whose INSTANCES (`11-Multiplayer/Instances.md`) took world208 first.
+- RELAY_VERSION world210, its hash in `test/relayversion.test.js` and every pin on world209 moved. It was world208 on
+  this branch until the merge of main, whose INSTANCES (`11-Multiplayer/Instances.md`) took world208 first, and world209
+  until the next, whose WEAPON-GLOW1 (`05-Combat/Weapon-Glow.md`) took world209.
 
 ### The audit (2026-10-16, Mac: "Audit this and ensure perfection")
 
@@ -2347,12 +2348,12 @@ finding reproduced against the branch and, where it was there, the merge base. T
 Read and left: a shard reset with deliveries answered but not yet acknowledged has them handed again to its new instance
 (its sockets, where they outlived it, hear them twice - the window is one poll); a held poll keeps a live shard resident
 (the shards were active 21-23 hours a day already, above). DO-ASK was sound: only a socket's upgrade reaches askRoom
-(the 426 comes first), so a second ask sends no body twice. `world209`'s hash moved with the fixes, before any deploy
+(the 426 comes first), so a second ask sends no body twice. The relay law's hash (then `world209`) moved with the fixes, before any deploy
 (`test/relayversion.test.js` notes the first).
 
 ### The deploy
 
-One relay drop, world209, at the merge (relay-deploy.yml) - every socket closes once, as every relay deploy does. No
+One relay drop, world210, at the merge (relay-deploy.yml) - every socket closes once, as every relay deploy does. No
 account-service change, no migration. The old storage key `vhubs` stays in the buses' storage, read by nothing.
 
 ### Left, each with its reason
