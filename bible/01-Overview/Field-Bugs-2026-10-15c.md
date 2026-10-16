@@ -135,7 +135,7 @@ THE FOUR HOSTS: the guild popup's gate, house and line are worldModes.js's (open
 the Roll's tracker is world.js's alone - WIRED through `rollNoticeHost.js`; exterior.js, the offline fixed city, keeps
 no Roll and constructs no GuildServiceWindow; dungeonContext.js stands no guild hall. The Standing page and the notice
 board are windows every host opens. Pinned by `test/fb1015c_guildwords.test.js` (15, rewritten by the audit);
-`tools/mutants/fb1015c_guildwords.json` (72). PINS MOVED (AUDIT GUILD-WORDS L3-11, the whole list):
+`tools/mutants/fb1015c_guildwords.json` (72, all dead). PINS MOVED (AUDIT GUILD-WORDS L3-11, the whole list):
 `test/chap4b_seats.test.js`'s gate pin reads the ceiling handed on, its hold pin reads the module, and its review-ceiling
 pin is held to the review's own line (the gate, the house and the hall's line now carry the ceiling too, and the loose
 pin let CHAP4B-WM-CEILING live); `test/fb1015_promonow.test.js` and `test/fb1015c_seatline.test.js`'s host pins read the

@@ -89,7 +89,8 @@ both). A loss to any other faction, every gain, and the whole of it offline stay
 
 ## Pins
 
-`test/fb1015c_guildwords.test.js` (15, rewritten) and `tools/mutants/fb1015c_guildwords.json` (72); the join's
+`test/fb1015c_guildwords.test.js` (15, rewritten) and `tools/mutants/fb1015c_guildwords.json` (72, all dead - with the
+re-aimed lists, 360 dead and 8 equivalent as recorded, none survived); the join's
 `test/chap2_halls.test.js` (17 - one added, and its "a member stays" pin taken below the floor both sides of a claim,
 which the join's new reading would otherwise let CHAP2-MEMBER-STAYS live through). PINS MOVED: `fb1015c_seatline`
 (the seat line at 72, the real days), `fb1015_promonow` and `fb1015c_seatline`'s host pins (the review's book),
