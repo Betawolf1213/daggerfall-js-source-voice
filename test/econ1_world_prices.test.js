@@ -16,8 +16,9 @@ import { REGION_COUNT, REGION_FLAGS, createRegionConditions, conditionFlag, turn
 import { ONLINE_EPOCH_MINUTES } from '../src/net/wire.js';
 import { MERCHANTS_FACTION_ID } from '../src/systems/guilds.js';
 import { FACTION_TYPES } from '../src/formats/factionFile.js';
+import { hostText } from './hostText.mjs';   // HOST-SPLIT 2 (AUDIT, the second read): its negatives read the host whole
 
-const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
+const rd = (p) => hostText(p);
 const EPOCH_DAY = Math.floor(ONLINE_EPOCH_MINUTES / MINUTES_PER_DAY);
 
 test('ECON1: the world\'s index is a pure function of the day - the epoch day\'s opening indices are DFU\'s 750..1250 off the day\'s own generator, region-major; every later day is one step per region off that day\'s generator (the tilt at zero: 51/50 up on a passed roll, 49/50 down, clamped); a day before the epoch reads the epoch\'s; a cold answer equals a walked one (catching up equals having stayed)', () => {

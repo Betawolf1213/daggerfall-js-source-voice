@@ -15,8 +15,9 @@ import { readFileSync } from 'node:fs';
 import { bindings, keyboardLook, isSwingButton, swingButton, swingHeld, mouseCode } from '../src/ui/input.js';
 import { setBinding, clearBindingByCode, resetDefaults } from '../src/systems/inputActions.js';
 import { keyboardLookRate, KEYBOARD_LOOK_UNITS_PER_SECOND } from '../src/ui/lookSettings.js';
+import { hostText } from './hostText.mjs';   // HOST-SPLIT 2 (AUDIT, the second read): its negatives read the host whole
 
-const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
+const read = (p) => hostText(p);
 
 test('FIX-F: the keyboard look reads the four turn/look actions off the registry (InputManager.cs:1854-1865)', () => {
   const b = bindings(); resetDefaults(b, true);

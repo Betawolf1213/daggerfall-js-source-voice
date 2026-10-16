@@ -368,6 +368,27 @@ the build since. Found:
   The first three proved by a mutant that passed the rewritten pin and failed
   the fixed one (H1's recorded in `hostseam.json`; the other two are moves);
   A10's move is failed by its own no-await check as well.
+- THE NEGATIVES NEVER MOVED. A pin that says a host does NOT do something reads
+  the host's text and finds nothing - and when code leaves that text it still
+  finds nothing, so it never fails, and the move's 143 breakages held none: every
+  negative over world.js's raw text had quietly stopped covering the build. A
+  probe ran the suite logging each not-found search over world.js's whole text
+  (or a slice spanning where the build stood): 193 test files held such pins,
+  and each now reads the host whole - its reads, or its reader helper, through
+  `hostText` (any other file reads as itself; dungeonContext.js reads with
+  PARTY-LOOT's `roomLootHost.js`, the same gap). Sweeps that walk every file of
+  `src/` already read each module on its own and were left; the cite gates and
+  a pin that resolves anchors keep the real files. A second probe ran every
+  converted test's string operations on the host whole and on world.js alone:
+  none of a positive pin's answers changed but by design (a slice to the end now
+  carrying the modules, cut again before use), and it found one more pin the
+  move had made blind - LAB-GRASS's slice ended at the build's line, -1 on the
+  raw file, so it ran to the end and held nothing; it ends at the next door.
+  Three mutants put a retired line back into the build - a per-person `hypot`,
+  a hand-spelled mouse code, the old bilinear read: each lived on the pins
+  before and dies now. THE LAW FOR EVERY SLICE AFTER: a negative over a host
+  reads `hostText` - a pin that reads a host's file alone holds the file, not
+  the host.
 
 ## PARTY-LOOT's block - roomLootHost (FIELD BUGS 2026-10-14, at the merge)
 

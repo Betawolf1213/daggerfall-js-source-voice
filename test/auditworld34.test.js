@@ -31,8 +31,9 @@ import { MAIN_STORY_DUNGEON_IDS, isMainStoryDungeon } from '../src/world/dungeon
 import { useSmallerDungeon, dungeonSizeFor, onlineDungeonSize, SMALLER_DUNGEONS_STATE } from '../src/world/smallerDungeons.js';
 import { fakeRoom } from './fakeRoom.mjs';
 import { fakeSocketClass } from './fakeSocket.mjs';
+import { hostText } from './hostText.mjs';   // HOST-SPLIT 2 (AUDIT, the second read): its negatives read the host whole
 
-const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
+const rd = (p) => hostText(p);
 const at = (px, pz) => ({ x: px * PIXEL_UNITS + 10, y: 0, z: pz * PIXEL_UNITS + 10, yaw: 0, pitch: 0, mv: 0 });
 const ofType = (ws, t) => ws.sent.filter((m) => m.t === t);
 const PRIVATEERS_HOLD = 187853213;

@@ -5,6 +5,8 @@
 // a host reads it WHOLE: the host's file, then every module moved out of it - found by the header the tool writes, so
 // the next slice's module joins without anyone listing it. The seam (test/hostseam.test.js) proves the host
 // constructs each one; this lets the pins that quote the code keep quoting it wherever it now lives.
+// AUDIT HOST-SPLIT 2, the second read: and a NEGATIVE reads it so too - a pin that finds nothing in a host's file finds
+// nothing when code leaves it, and never fails; read alone, the file is not the host.
 import { readFileSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';

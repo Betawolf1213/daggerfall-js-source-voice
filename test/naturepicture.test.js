@@ -55,7 +55,7 @@ test('naturePicture: else the season\'s picture - uploaded whole under the insta
 const walk = (dir) => readdirSync(join(root, dir), { withFileTypes: true }).flatMap((d) => (d.isDirectory() ? walk(join(dir, d.name)) : d.name.endsWith('.js') ? [join(dir, d.name)] : []));
 
 test('THE ONE CONSTRUCTION SEAM: every host that stands a nature flat asks the one choice - the town\'s pixels, a location\'s flats, a yard\'s tree - and no file in src/ makes it for itself: none writes the season\'s key, asks which archives Low Poly Trees stands, or asks the door for a far picture (mutants: NATUREPIC-world-unwired, NATUREPIC-exterior-unwired)', () => {
-  const read = (p) => readFileSync(join(root, p), 'utf8');
+  const read = (p) => hostText(p);
   assert.match(hostText('src/scenes/world.js'), /await naturePicture\(\{ door: lowPolyTrees, seasons: host\.seasonsActive \? seasons : null, renderer, uploadRecord \}, t, archive, record\)/, 'the town\'s pixels: the season while the mod stands one');
   assert.match(read('src/scenes/exterior.js'), /await naturePicture\(\{ door: lowPolyTrees, seasons, renderer, uploadRecord \}, t, archive, record\)/, 'a location\'s flats');
   // WINDFALL1 (PIN MOVED): the yard reads its season once - for the picture, and for Windfall's table of that picture's atlas

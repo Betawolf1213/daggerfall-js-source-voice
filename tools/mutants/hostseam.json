@@ -88,5 +88,32 @@
     "tests": [
       "test/auditlandforms.test.js"
     ]
+  },
+  {
+    "name": "NEGATIVES-HOSTSPLIT2-hypot-per-person-in-the-build",
+    "file": "src/scenes/pixelBuild.js",
+    "old": "    const made = {};   // BUILD-FAIL1: this build's ledger, until publish hands it to the entry\n",
+    "new": "    const made = {};   // BUILD-FAIL1: this build's ledger, until publish hands it to the entry\n    const nearMe = { distanceToPlayer: Math.hypot(px, py) };\n",
+    "tests": [
+      "test/perftown1.test.js"
+    ]
+  },
+  {
+    "name": "NEGATIVES-HOSTSPLIT2-the-mouse-spelled-in-the-build",
+    "file": "src/scenes/pixelBuild.js",
+    "old": "    const made = {};   // BUILD-FAIL1: this build's ledger, until publish hands it to the entry\n",
+    "new": "    const made = {};   // BUILD-FAIL1: this build's ledger, until publish hands it to the entry\n    const buttonCode = 'Mouse' + 0;\n",
+    "tests": [
+      "test/mack_bugs.test.js"
+    ]
+  },
+  {
+    "name": "NEGATIVES-HOSTSPLIT2-the-bilinear-read-back-in-the-build",
+    "file": "src/scenes/pixelBuild.js",
+    "old": "    const made = {};   // BUILD-FAIL1: this build's ledger, until publish hands it to the entry\n",
+    "new": "    const made = {};   // BUILD-FAIL1: this build's ledger, until publish hands it to the entry\n    const hDim = 1, x0 = 0, z0 = 0, ax = 0, s2 = [0]; const h00 = s2[x0 * hDim + z0] * (1 - ax);\n",
+    "tests": [
+      "test/grass3_surface.test.js"
+    ]
   }
 ]
