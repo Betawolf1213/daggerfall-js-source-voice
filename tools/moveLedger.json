@@ -4289,5 +4289,6 @@
   ["src/combat/mirrorRig.js","src/combat/twoHands/mirrorRig.js"],
   ["src/combat/twoHands.js","src/combat/twoHands/twoHands.js"],
   ["src/systems/possessedItems.js","src/systems/item/possessedItems.js"],
-  ["test/autohold.test.js","test/server/autohold.test.js"]
+  ["test/autohold.test.js","test/server/autohold.test.js"],
+  ["test/bookmark_spiral.test.js","test/server/bookmark_spiral.test.js"]
 ]

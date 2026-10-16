@@ -1,0 +1,92 @@
+[
+ {
+  "name": "BOOKMARKSPIRAL-constraint-primary",
+  "file": "server-account/src/service.js",
+  "old": "  return replicaDb(db, ANY_REPLICA_ROUTES.get(path) === method ? REPLICA_ANY : REPLICA_CONSTRAINT);",
+  "new": "  return replicaDb(db, REPLICA_CONSTRAINT);",
+  "tests": [
+   "test/server/bookmark_spiral.test.js"
+  ],
+  "note": "every replica read with no bookmark at the primary again - the spiral's way back"
+ },
+ {
+  "name": "BOOKMARKSPIRAL-any-everywhere",
+  "file": "server-account/src/service.js",
+  "old": "  return replicaDb(db, ANY_REPLICA_ROUTES.get(path) === method ? REPLICA_ANY : REPLICA_CONSTRAINT);",
+  "new": "  return replicaDb(db, REPLICA_ANY);",
+  "tests": [
+   "test/server/bookmark_spiral.test.js"
+  ],
+  "note": "the account view, the realm and the decor with no bookmark off any instance - a caller's own write unread"
+ },
+ {
+  "name": "BOOKMARKSPIRAL-refused-bookmark-primary",
+  "file": "server-account/src/service.js",
+  "old": "  if (bookmark && !PRIMARY_FIRST_ROUTES.has(path)) { try { return replicaDb(db, bookmark); } catch { /* a bookmark D1 refuses: as with none, below */ } }",
+  "new": "  if (bookmark && !PRIMARY_FIRST_ROUTES.has(path)) { try { return replicaDb(db, bookmark); } catch { return replicaDb(db); } }",
+  "tests": [
+   "test/server/bookmark_spiral.test.js"
+  ],
+  "note": "a bookmark D1 refuses sends a polled read to the primary"
+ },
+ {
+  "name": "BOOKMARKSPIRAL-route-past-six",
+  "file": "server-account/src/service.js",
+  "old": "  ['/v1/arena/board', 'POST'],\n]);\n/** BOOKMARK-SPIRAL: where such a session starts",
+  "new": "  ['/v1/arena/board', 'POST'],\n  ['/v1/homes/decor', 'POST'],\n]);\n/** BOOKMARK-SPIRAL: where such a session starts",
+  "tests": [
+   "test/server/bookmark_spiral.test.js"
+  ],
+  "note": "a room's pieces off any instance - the piece just placed missing from the room"
+ },
+ {
+  "name": "BOOKMARKSPIRAL-heartbeat-dropped",
+  "file": "server-account/src/service.js",
+  "old": "export const ANY_REPLICA_ROUTES = new Map([\n  ['/v1/heartbeat', 'POST'],\n",
+  "new": "export const ANY_REPLICA_ROUTES = new Map([\n",
+  "tests": [
+   "test/server/bookmark_spiral.test.js"
+  ],
+  "note": "the busiest polled read back at the primary"
+ },
+ {
+  "name": "BOOKMARKSPIRAL-flag-unread",
+  "file": "server-account/src/service.js",
+  "old": "      if (key === DB_ANY) return constraint === REPLICA_ANY;",
+  "new": "      if (key === DB_ANY) return false;",
+  "tests": [
+   "test/server/bookmark_spiral.test.js"
+  ],
+  "note": "a session at any instance never says so - a session minted a moment ago refused"
+ },
+ {
+  "name": "BOOKMARKSPIRAL-no-primary-on-miss",
+  "file": "server-account/src/accounts.js",
+  "old": "  if (!row && db?.[DB_ANY] === true) row = await (db[DB_ROOT] ?? db).prepare(WHO_SQL).bind(hash).first();",
+  "new": "",
+  "tests": [
+   "test/server/bookmark_spiral.test.js"
+  ],
+  "note": "a guest minted a moment ago refused `auth` by a replica that has not heard of it"
+ },
+ {
+  "name": "BOOKMARKSPIRAL-primary-every-lookup",
+  "file": "server-account/src/accounts.js",
+  "old": "  if (!row && db?.[DB_ANY] === true) row = await (db[DB_ROOT] ?? db).prepare(WHO_SQL).bind(hash).first();",
+  "new": "  if (db?.[DB_ANY] === true) row = await (db[DB_ROOT] ?? db).prepare(WHO_SQL).bind(hash).first();",
+  "tests": [
+   "test/server/bookmark_spiral.test.js"
+  ],
+  "note": "the primary asked for every session again - the load moved nowhere"
+ },
+ {
+  "name": "BOOKMARKSPIRAL-miss-on-session",
+  "file": "server-account/src/accounts.js",
+  "old": "  if (!row && db?.[DB_ANY] === true) row = await (db[DB_ROOT] ?? db).prepare(WHO_SQL).bind(hash).first();",
+  "new": "  if (!row && db?.[DB_ANY] === true) row = await db.prepare(WHO_SQL).bind(hash).first();",
+  "tests": [
+   "test/server/bookmark_spiral.test.js"
+  ],
+  "note": "the miss asked again of the same replica"
+ }
+]

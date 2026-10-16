@@ -10,7 +10,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { standService, d1Position, T0 } from '../accountDb.mjs';
-import { REPLICA_ROUTES, routeDb, replicaDb } from '../../server-account/src/service.js';
+import { REPLICA_ROUTES, ANY_REPLICA_ROUTES, routeDb, replicaDb } from '../../server-account/src/service.js';
 import { listSeats, strikeSeat, SEAT_ROWS_FROM } from '../../server-account/src/townSeats.js';
 import { seatReportText } from '../../src/net/townSeatLaw.js';
 import { call, forgetD1Bookmark, d1BookmarkFor } from '../../src/net/accountClient.js';
@@ -38,7 +38,8 @@ test('DISPLAY-REPLICA: the display reads and the arena\'s board are replica rout
     assert.ok(raw._sessions.at(-1).statements.length > 0, `${path}: its statements the session's`);
     if (r.status === 200) assert.ok(r.headers.get('x-d1-bookmark'), `${path}: its session's position back`);
     await send(S, path, { method, secret: who.secret, body: body ?? {} });
-    assert.equal(raw._sessions.at(-1).constraint, 'first-primary', `${path} with no bookmark: the primary first - the caller's own writes read`);
+    // PIN MOVED (BOOKMARK-SPIRAL, 2026-10-16; test/server/bookmark_spiral.test.js): the polled ones with none start at any instance
+    assert.equal(raw._sessions.at(-1).constraint, ANY_REPLICA_ROUTES.get(path) === method ? 'first-unconstrained' : 'first-primary', `${path} with no bookmark: the primary first - the caller's own writes read - or, polled, any instance`);
   }
   const fake = { withSession: () => { throw new Error('opened'); } };
   for (const path of ['/v1/homes/yards', '/v1/homes/layouts', '/v1/seats/list']) {
