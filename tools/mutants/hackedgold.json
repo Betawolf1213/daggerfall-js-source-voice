@@ -29,8 +29,8 @@
   {
     "name": "HACKED-GOLD-the-grant-receiver-lands-a-letter",
     "file": "src/scenes/exteriorFoes.js",
-    "old": "      const grant = peerHanded(validLootList(data.grant));",
-    "new": "      const grant = validLootList(data.grant);",
+    "old": "      const grant = notCarried(peerHanded(validLootList(data.grant)));",
+    "new": "      const grant = notCarried(validLootList(data.grant));",
     "tests": [
       "test/hackedgold.test.js"
     ]
@@ -92,8 +92,8 @@
   {
     "name": "HACKED-GOLD-a-body-on-the-wire-with-a-letter",
     "file": "src/scenes/dungeonContext.js",
-    "old": "const li = peerHanded(validLootList(sf.items));",
-    "new": "const li = unbound(validLootList(sf.items));",
+    "old": "const li = notCarried(peerHanded(validLootList(sf.items)));",
+    "new": "const li = notCarried(unbound(validLootList(sf.items)));",
     "tests": [
       "test/hackedgold.test.js"
     ]
@@ -204,7 +204,7 @@
   {
     "name": "HACKED-GOLD-account-version-unmoved",
     "file": "server-account/src/service.js",
-    "old": "export const ACCOUNT_VERSION = 'acct140';",
+    "old": "export const ACCOUNT_VERSION = 'acct141';",
     "new": "export const ACCOUNT_VERSION = 'acct123';",
     "tests": [
       "test/tech1_roster.test.js",

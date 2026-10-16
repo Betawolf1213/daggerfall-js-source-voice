@@ -19,7 +19,8 @@
   },
   {
     "name": "INT2-the-world-owned",
-    "file": "server-account/src/judge.js",
+    "file": "src/systems/possessedItems.js",
+    "note": "AUDIT AUTO-HOLD (PIN MOVED): re-aimed by content - possessedItemLists moved from the judge to its one home, which the judge hands on",
     "old": "    if (rooms.has(sc) || rented.has(sc?.sceneName)) for (const c of arrayOf(sc?.lootContainers))",
     "new": "    for (const c of arrayOf(sc?.lootContainers))",
     "tests": [
@@ -47,8 +48,9 @@
   {
     "name": "INT3-no-hold-for-law",
     "file": "server-account/src/verdict.js",
-    "old": "  if (law > 0 || (prev === 'law' && strikes >= STRIKES_FOR_REVIEW)) return 'law';",
-    "new": "  if (prev === 'law' && strikes >= STRIKES_FOR_REVIEW) return 'law';",
+    "note": "AUTO-HOLD (PIN MOVED): re-aimed by content - holdOf reads a timed hold, `until`, where it read strikes",
+    "old": "  if (law > 0 || (until != null && until > nowS)) return 'law';",
+    "new": "  if (until != null && until > nowS) return 'law';",
     "tests": [
       "test/int2_judge.test.js"
     ]
@@ -56,7 +58,8 @@
   {
     "name": "INT3-strikes-forgotten",
     "file": "server-account/src/verdict.js",
-    "old": "  if (law > 0 || (prev === 'law' && strikes >= STRIKES_FOR_REVIEW)) return 'law';",
+    "note": "AUTO-HOLD (PIN MOVED): re-aimed by content - holdOf reads a timed hold, `until`, where it read strikes",
+    "old": "  if (law > 0 || (until != null && until > nowS)) return 'law';",
     "new": "  if (law > 0) return 'law';",
     "tests": [
       "test/int2_judge.test.js"

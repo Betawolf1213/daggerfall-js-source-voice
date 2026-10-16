@@ -5,7 +5,8 @@
 //     each finding lies, the wealth of what the character OWNS (never the world's untaken loot; loans owed; a bound or a
 //     quest's piece worth nothing);
 //   - every checkpoint judged: a lawless one STORED and its character held, said in the answer, a finding kept; a route
-//     handing its value to another player refused; a clean checkpoint lifting it until three strikes, then staff alone;
+//     handing its value to another player refused; a clean checkpoint lifting it until three strikes, then a timed hold
+//     (AUTO-HOLD: a week, then a month - it was staff's alone);
 //   - every route that hands a realm character's value on says so (a source sweep: no prepareRealmRecord that takes goods
 //     or gold out without `outbound`, the named sinks aside);
 //   - the service's own writes WITNESSED; the last clean checkpoint KEPT past the rotation, and the rollback to it;
@@ -16,7 +17,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import worker from '../server-account/src/index.js';
 import { standService } from './accountDb.mjs';
 import { seatRealm, freshSave } from './realmSeat.mjs';
-import { judgeSave, wealthOf, possessedItemLists, groundItemLists, characterFindings, realmLoanOwedMax, STRIKES_FOR_REVIEW } from '../server-account/src/judge.js';
+import { judgeSave, wealthOf, possessedItemLists, groundItemLists, characterFindings, realmLoanOwedMax, STRIKES_FOR_TIMED } from '../server-account/src/judge.js';
 import { itemWorth } from '../src/systems/itemLaw.js';
 import { calculateMaxBankLoan, calculateBankLoanRepayment } from '../src/systems/banking.js';
 import { prepareRealmRecord, holdRefusal, dropObjects, JUDGE_COLUMNS } from '../server-account/src/realm.js';
@@ -107,7 +108,7 @@ test('INT2/INT3: a lawless checkpoint is STORED and its character held - said in
   assert.equal(s.row(R.id).judged_seq, 1, 'the first save judged');
   const forged = freshSave({ name: 'ann', items: [{ ...dagger(), affixes: [{ id: 'damage', value: 40 }] }] });
   const r = await s.put(who, R, forged, { summary: { level: 1 } });
-  assert.deepEqual([r.status, r.body], [200, { ok: true, seq: 2, tradeHeld: 'law', tradeHeldWhy: { code: 'rarity', t: 113 } }], 'stored, held, and the piece named');
+  assert.deepEqual([r.status, r.body], [200, { ok: true, seq: 2, tradeHeld: 'law', tradeHeldWhy: { code: 'rarity', t: 113 }, locked: [] }], 'stored, held, and the piece named');   // PIN MOVED: AUDIT AUTO-HOLD - every answer names the locked pieces, [] for none
   assert.deepEqual([s.row(R.id).seq, s.row(R.id).held, s.row(R.id).strikes], [2, 'law', 1]);
   for (let i = 0; i < 4; i++) await s.put(who, R, forged);
   assert.equal(s.row(R.id).strikes, 1, 'the same piece carried on: one strike');
@@ -124,9 +125,9 @@ test('INT2/INT3: a lawless checkpoint is STORED and its character held - said in
   // the forged piece gone: the next checkpoint lifts the hold
   assert.deepEqual((await s.put(who, R, freshSave({ name: 'ann' }), { summary: { level: 1 } })).body.tradeHeld, null);
   assert.deepEqual([s.row(R.id).held, s.row(R.id).strikes], [null, 1]);
-  // three holds: the hold stays for staff
-  for (let i = 0; i < STRIKES_FOR_REVIEW - 1; i++) { await s.put(who, R, forged); await s.put(who, R, freshSave({ name: 'ann' })); }
-  assert.equal(s.row(R.id).strikes, STRIKES_FOR_REVIEW);
+  // three holds: a TIMED hold (PIN MOVED, AUTO-HOLD: it stood for staff) - the strikes count again from none
+  for (let i = 0; i < STRIKES_FOR_TIMED - 1; i++) { await s.put(who, R, forged); await s.put(who, R, freshSave({ name: 'ann' })); }
+  assert.deepEqual([s.row(R.id).strikes, s.row(R.id).law_holds, s.row(R.id).held_until > s.row(R.id).held_at], [0, 1, true]);
   assert.equal((await s.put(who, R, freshSave({ name: 'ann' }))).body.tradeHeld, 'law', 'clean, and held still');
   assert.equal(holdRefusal(null), null);
   assert.deepEqual(holdRefusal({ held: null, judged_seq: null }), { error: 'record-unjudged' }, 'a record no checkpoint has been judged since moves nothing');
