@@ -16,6 +16,7 @@ main's `7e0424e0`.
 | 9 | "you steal something from the shelf and can sell it back to an NPC, and he'll put the item back on the shelf again, and it just goes in a circle"; "when you're sent to prison, all the stolen items stay with you" | nothing marked a piece stolen: a sale landed the very record back on the shelf (T2), where a shut shop's shelf - no roll - gave it up again that night; and no court exit touched an item | fixed (STOLEN-GOODS) |
 | 10 | "Friend invivible and randomly popping up"; "Partied players popping in and out randomly after leaving tombs at graveyard ... also partied players inside tombs are invisible for a time" | every place change is a new relay room whose socket asked for its identity token only as it opened - a mint on the wire (seconds) between the door and the hello, paid going in past the reuse minute and always coming out (the cell outside spent by the token that left it); a hello sent tokenless because its token came late waited out its backoff after the token arrived | fixed (DOOR-TOKEN) |
 | 11 | "If you just sit near the wall between the shelves, when you fail to steal something, the guard will come running, but they simply can't reach you because they run into the wall instead of going through the door" | the watch called into a building walked the classic motor - straight at the player, along the first wall - and only the dungeon baked a navmesh; a partition held them for the whole crime | fixed (INDOOR-WATCH) |
+| 12 | "I was testing with a friend, he dies and I cast resurrection. It works for a moment then he disappears and remains dead" | online the death door wrote a Bloodline fall at once - the death, the remains, the Succession waiting and the realm's tombstone - so the Resurrect raised a body the house had already buried, and the slow step opened "The line ends" over it a second later | fixed (REZ-BLOODLINE) |
 
 ## FIRST-PICK: a change on its way gates a change, never a rank's first choice (1)
 
@@ -513,3 +514,73 @@ line (one home is a later slice's); nothing was seen in a real RMB interior (no 
 
 What the reporter is owed: the watch now walks round through the doorway to reach you between the shelves, and if a
 locked door or a ladder keeps them out they come in anyway after two seconds. Hiding behind a wall no longer works.
+
+## REZ-BLOODLINE: a friend's Resurrect saves a Bloodline character (12)
+
+`src/scenes/legacyHost.js` onDeath, decideDeath, raise, raisable, pageGone, adopt, newGame, tick, deathOutcome,
+REZ_HOLD_MS; `src/scenes/world.js` the death screen's frame (the rise), composePartyPose (`fg`), fallenTargetPick, the
+tombstone dep, the page's going; `src/systems/realmSaves.js` die's `keepalive`, realmDie; `src/net/wire.js`
+validPartyPose `fg`, RELAY_VERSION; `src/scenes/hostMagic.js` the Resurrect's gate, release and readying;
+`src/systems/resurrect.js` RESURRECT_TEXT.forGood.
+
+THE REPORT ("Bloodline Resurrection."): "I was testing with a friend, he dies and I cast resurrection. It works for a
+moment then he disappears and remains dead." The screenshot: "...of Gothway Garden has Fallen - You died without a
+descendant. There is no one left of the house of Gothway Garden. The line ends here, and its tree is kept in the Hall of
+Ancestors."
+
+FOUND. AUDIT LEGACY A1/B3 made the death door decide every death, so F11 or a closed tab could not undo one; online since
+LEGACY7 that meant the door wrote the whole Bloodline fall - recordDeath, the remains, `family.pending` (the Succession
+waiting) and the realm's tombstone (`POST /v1/realm/die`: `dead_at` stamped, the lease dropped). RESURRECT1's rise
+(`world.js` resurrectInPlace) touched none of it: the heal, the death screen closed in place - "works for a moment".
+Within a second the slow step (`legacyHost.tick`) let go of its `deathSeen` latch, but `family.pending` still stood, so it
+answered `{ fall }` and the world host opened the Succession over the living body: no member, no heir, "The line ends",
+endLine. Only the operator's REVIVE could take it back. Driven on the real host: at the door
+`pending={"fallenId":1,...}`, tombstones sent `['fell']`; the slow step after the Resurrect gave `fall`, choices 0,
+newborn false - the reporter's screen.
+
+CHANGED (the decision: a resurrection from an ally SAVES a Bloodline character):
+- **Held, not written.** Online the door READS the death - where they fell, their purse, their killer, the heirloom off
+  their back, an Enduring member's years - and HOLDS it; nothing is written and the realm is asked nothing.
+- **When it is written** (decideDeath, exactly as the door used to), at the first of: the player going on (the death
+  screen's reset, Enter or its count, through `deathOutcome`); the hold's window ending (`REZ_HOLD_MS` 150 s on the wall
+  clock - the longest online death screen, ONLINE_RESPAWN_SECONDS 60 or the open zone's WILD_DEATH_HOLD_S 120, plus 30 s;
+  the slow step decides it); the page going (pagehide calls `pageGone`, the tombstone by keepalive, AHEAD of the realm's
+  leave, which gives up the lease the tombstone needs); a load or a new game (the mod's restore, `adopt`, and `newGame`,
+  which every load door goes through - F11, the pause's Load, a same-dungeon load); a body that got up without a
+  Resurrect.
+- **A Resurrect inside the window.** The fallen's own frame asks `raise()` before it rises, and the held death goes: no
+  death, no toll, no remains, no Succession, no tombstone; an Enduring member's toll is held the same way.
+- **Once decided, the body stays down.** `raise()` answers no, so the fallen's client never rises to show the line's end;
+  their party pose carries `fg` (validPartyPose, a relay version), the caster's pick reads it, and the cast is refused
+  BEFORE a point is spent, in the fallen's name: "Ysolde has fallen for good. No spell will raise them now." (the
+  release and a caster-only Resurrect's readying say the same; through t(), drafted in the thirteen whole languages).
+- **Unchanged:** offline the door decides, as A1/B3 has it; SD-ONELIFE stands (no Resurrect in the Hour). The departure
+  is named in `01-Overview/Audit-Legacy.md` at A1/B3's law, and `06-Systems/Legacy-Arc.md` REZ-BLOODLINE; the stale
+  onDeath comment ("ONLINE Project Legacy has no say until ... LEGACY7") is replaced.
+
+THE FOUR HOSTS: world.js - WIRED, on lines it already had (the frame's rise, the pose's `fg`, the caster's pick, the
+tombstone's `keepalive`, the page's going); worldModes.js and dungeonContext.js keep their death screens in the mode's slot,
+and the same world.js frame hears the Resurrect under them (`modes?.deathUp?.()`), their resets reaching
+`legacyDeathReset` through `onlineRespawn` - wired through world.js; exterior.js (the fixed city) has no Project Legacy
+(Legacy-Arc 3's FLAG). Pinned by `test/fb1016_rezbloodline.test.js` (4, over the real death door, the host, a realm
+session on the real account Worker - `dead_at` read off the row - the party wire, RemotePlayers, the caster's
+createPlayerMagic, the real DeathScreen and world.js's own statements sliced out and mounted); `tools/mutants/
+fb1016_rezbloodline.json` (35, all dead). PINS MOVED: sd12_onelife (the rise line), legacy7_online and legacy7_wed (the
+tombstone's options), auditlegacy2 (adopt decides first), auditlegacy3 P8 (online the reset writes the fall),
+audit23_magic (the caster-only readying line), realm3 (the pagehide statement); the relay version in its pin files;
+mutants AGELESS-CURSE-the-host-asks-no-curse, AUDIT-LEGACY-B4-online-bloodline-falls, LP-host-news-world-clock,
+AUDIT-REALM2-C2-host-never-leaves-or-rejoins, LEGACY6-death-untold, LEGACY7-fall-untombed,
+PERMADEATH-HOUSES-death-saved-deeds-only and soc1's S38-version-not-bumped re-aimed by content (every legacyHost.js and
+resurrect.js record: 178 dead, 2 equivalent as recorded).
+
+FLAGGED: the relay carries `fg` from this version on - deploy it with the clients (an older relay drops `fg`, so the
+caster spends the spell and the fallen's client still refuses the call); the fix lives on the FALLEN's client (a victim
+on an old build still rises and sees the line end); the keepalive tombstone at pagehide is best effort (if it never
+lands, the device's store holds the death and the line's next write to the realm entombs the character, W2); a tab
+hidden past 150 s comes back with the death decided; an online Bloodline death screen still says "RISING IN n  ENTER
+now", and nothing tells the player that waiting lets a friend raise them (a UI follow-up).
+
+What the reporter is owed: your friend's Resurrection now saves him. While his death screen stands (up to two and a half
+minutes), a party member's Resurrection brings him back with his house untouched - no death on the tree, no Succession,
+no tombstone. If the death has already been settled (he chose to go on, the time ran out, the page was closed or
+reloaded), the caster is told "<name> has fallen for good" and keeps the spell's magicka.
