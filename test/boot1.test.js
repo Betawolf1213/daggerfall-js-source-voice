@@ -37,7 +37,7 @@ function staticReach(entry) {
   return seen;
 }
 /** The hosts: derived, not listed. */
-const hosts = () => readdirSync(join(root, 'src/scenes')).filter((f) => f.endsWith('.js') && /^export (?:async )?function boot[A-Z]/m.test(rd(`src/scenes/${f}`)));
+const hosts = () => readdirSync(join(root, 'src/scenes'), { recursive: true }).filter((f) => f.endsWith('.js') && /^export (?:async )?function boot[A-Z]/m.test(rd(`src/scenes/${f}`)));
 
 test('BOOT1: no scene host is on the entry\'s static import graph - walked transitively, hosts derived from the tree', () => {
   const found = hosts();

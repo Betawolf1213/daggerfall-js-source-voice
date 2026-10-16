@@ -547,7 +547,7 @@ test('EOTB-IL: the SwitchShoulder and ToggleInput keys on their RELEASE edge (Ge
 // ─────────────────────────────────────────────────────────────────
 
 test('EOTB-IL: no [SETTINGS] law is left in the arc, every law is marked [IL] with an offset, and the page says the assembly is read', () => {
-  const files = readdirSync(join(root, 'src/player')).filter((f) => /^eotb/.test(f));
+  const files = readdirSync(join(root, 'src/player'), { recursive: true }).filter((f) => /^eotb.*\.js$/.test(f.split(/[\\/]/).pop()));
   const arc = files.map((f) => rd(`src/player/${f}`)).join('\n');
   assert.ok(!/\[SETTINGS\]/.test(arc), 'AUDIT-EOTB2\'s evidence mark is gone: the assembly is in the tree');
   assert.ok((arc.match(/\[IL\]/g) ?? []).length >= 30, 'the laws carry the IL mark');

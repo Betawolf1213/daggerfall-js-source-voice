@@ -168,9 +168,9 @@ test('E1 SOURCE SWEEP: a window that NESTS a list picker forwards the release, e
   // SpellIconPickerWindow in the slot, which has no drag latch to drop.
   const FORWARD = /release\(\) \{ this\._?picker\?\.release(?:\?\.)?\(\); \}/;
   const nesting = [];
-  for (const name of readdirSync(new URL('../src/ui/', import.meta.url))) {
-    if (!name.endsWith('.js')) continue;
-    const body = src(`src/ui/${name}`);
+  for (const path of readdirSync(new URL('../src/ui/', import.meta.url), { recursive: true })) {
+    if (!path.endsWith('.js')) continue;
+    const body = src(`src/ui/${path}`), name = path.split(/[\\/]/).pop();   // TIDY2: named by its file, wherever its feature folder
     if (!ASSIGN.test(body)) continue;
     nesting.push(name);
     const owners = classSegments(body).filter((c) => ASSIGN.test(c.body));

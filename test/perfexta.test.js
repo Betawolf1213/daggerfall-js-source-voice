@@ -867,7 +867,7 @@ test('PERF-EXT (the review): A QUAD\'S HALF-DIAGONAL ONCE A SIZE - a swaying woo
 test('PERF-EXT (the review): ONE HOME EACH - the flat\'s half-height lift is written once in src/render (bounds.js batchLift, which batchSphere and both placement queries call) and its half-diagonal once (quadHalfDiagonal, which the birth\'s sphere, a move\'s and placementRadius call); the first cut wrote the lift out again in each query, and the half-diagonal a third time', async () => {
   const { readFileSync, readdirSync } = await import('node:fs');
   const dir = new URL('../src/render/', import.meta.url);
-  const src = Object.fromEntries(readdirSync(dir).filter((f) => f.endsWith('.js')).map((f) => [f, readFileSync(new URL(f, dir), 'utf8')]));
+  const src = Object.fromEntries(readdirSync(dir, { recursive: true }).filter((f) => f.endsWith('.js')).map((f) => [f.split(/[\\/]/).pop(), readFileSync(new URL(f, dir), 'utf8')]));
   const count = (re) => Object.entries(src).flatMap(([f, t]) => (t.match(re) ?? []).map(() => f));
   assert.deepEqual(count(/size\??\.h(?: \?\? 0\))? \* 0\.5/g), ['bounds.js'], 'one lift: half the height, at its home');
   assert.deepEqual(count(/Math\.hypot\([\w.]*size\.w, [\w.]*size\.h\)/g), ['bounds.js'], 'one half-diagonal, at its home');

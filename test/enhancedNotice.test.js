@@ -472,7 +472,13 @@ test('ENH-NOTICE2: THE ROSTER - the eight windows drawn on both skins that raise
   // as a toast); the DOM-native windows that raise a box of their own
   // take noticeHold; Foraging's wait page takes noticeFrame; the
   // quest herald (GUIDE3) takes drawEnhancedToasts as PopupText does.
-  const importers = readdirSync(new URL('../src/ui/', import.meta.url)).filter((f) => f.endsWith('.js') && /from '\.\/enhancedNotice\.js'/.test(rd(`src/ui/${f}`))).map((f) => f.replace(/\.js$/, '')).sort();
+  // TIDY2: an importer is one whose import RESOLVES to the notice, wherever the two stand - a spelled `./enhancedNotice.js`
+  // stopped meaning that the day the windows went into feature folders
+  const NOTICE = 'src/ui/enhancedNotice.js';
+  const resolvesTo = (from, spec) => new URL(spec, new URL(`../${from}`, import.meta.url)).href === new URL(`../${NOTICE}`, import.meta.url).href;
+  const importers = readdirSync(new URL('../src/ui/', import.meta.url), { recursive: true }).filter((f) => f.endsWith('.js'))
+    .filter((f) => [...rd(`src/ui/${f}`).matchAll(/from '(\.[^']+)'/g)].some((m) => resolvesTo(`src/ui/${f}`, m[1])))
+    .map((f) => f.split(/[\\/]/).pop().replace(/\.js$/, '')).sort();
   assert.deepEqual(importers, [...ROSTER, 'actionText', 'talkWindow', 'hudText', 'enhancedTavern', 'enhancedInventory', 'heldMap', 'questHerald', 'waitWindow'].sort());
 });
 

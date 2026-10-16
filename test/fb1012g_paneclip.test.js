@@ -125,7 +125,7 @@ test('PANE-CLIP no glass met, or a pane whose room was let go since: no pane dra
 test('PANE-CLIP the law in both mesh shaders: a fragment of the street at or before the pane\'s depth is not drawn; the building\'s box is gone from the shaders and the hosts (mutants: the compare turned; the box back)', () => {
   assert.match(RW_MAIN_DERIVS, /\n {2}if \(uPaneOn > 0\.5 && gl_FragCoord\.z <= texelFetch\(uPaneDepth, ivec2\(gl_FragCoord\.xy\), 0\)\.r\) discard;/);
   assert.match(realWindowsGlsl(), /uniform highp sampler2D uPaneDepth;[^\n]*\nuniform float uPaneOn;/, 'a highp depth, and its switch');
-  for (const f of readdirSync(new URL('../src/render/', import.meta.url))) {
+  for (const f of readdirSync(new URL('../src/render/', import.meta.url), { recursive: true })) {
     if (f.endsWith('.js')) assert.doesNotMatch(rd(`src/render/${f}`), /uViewClipMin|uViewClipMax|VIEW_CLIP_PAD/, `src/render/${f}`);
   }
   for (const host of ['src/scenes/world.js', 'src/scenes/exterior.js']) assert.doesNotMatch(rd(host), /outsideViewClip|clip: outsideView/, host);

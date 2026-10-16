@@ -278,6 +278,6 @@ test('AUDIT 68 S17-gl-program-dup: one compile and link - the order every pass w
   assert.throws(() => buildProgram(gl, 'v', 'f', 'far ring'), { message: 'far ring shader: ERROR: 0:1: boom' });
   ok = { COMPILE_STATUS: true, LINK_STATUS: false };
   assert.throws(() => buildProgram(gl, 'v', 'f', 'far ring'), { message: 'far ring link: ERROR: 0:1: boom' });
-  const homes = readdirSync(new URL('../src/render/', import.meta.url)).filter((f) => f.endsWith('.js') && /COMPILE_STATUS/.test(rd(`src/render/${f}`)));
+  const homes = readdirSync(new URL('../src/render/', import.meta.url), { recursive: true }).filter((f) => f.endsWith('.js') && /COMPILE_STATUS/.test(rd(`src/render/${f}`)));
   assert.deepEqual(homes, ['glProgram.js'], 'every pass builds through the leaf');
 });

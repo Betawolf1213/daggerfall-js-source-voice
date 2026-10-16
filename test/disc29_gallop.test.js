@@ -85,7 +85,7 @@ test('DISC29-F: setMode stops the channel before the animator mounts the new mod
 });
 
 test('DISC29-F: every host that makes a mount rig hands worldModes its dismount seam', () => {
-  const scenes = readdirSync(join(ROOT, 'src/scenes')).filter((f) => f.endsWith('.js'));
+  const scenes = readdirSync(join(ROOT, 'src/scenes'), { recursive: true }).filter((f) => f.endsWith('.js'));
   const hosts = scenes.filter((f) => src(`src/scenes/${f}`).includes('createMountRig({'));
   assert.deepEqual(hosts.sort(), ['exterior.js', 'world.js'], 'the two hosts that ride');
   for (const f of hosts) {

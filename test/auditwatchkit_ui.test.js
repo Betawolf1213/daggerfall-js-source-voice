@@ -355,7 +355,7 @@ test('AUDIT WK-P2 (major): a tap never locks onto my companion in any host - a b
   assert.match(wm, /pickFoe\(eye, dir, interiorFoePool\(\)\.filter\(\(f\) => f\.companion == null\), interiorCtx\.collider, LOCK_PICK_DISTANCE\)/, 'a building');
   assert.match(wm, /pickFoe\(eye, dir, dungeonCtx\.foes\.filter\(\(f\) => f\.companion == null\), dungeonCtx\.collider, LOCK_PICK_DISTANCE\)/, 'the world\'s dungeon');
   // the four hosts: the layer stands companions from world.js alone - exterior.js and dungeon.js stand none
-  const standers = readdirSync(new URL('../src/scenes/', import.meta.url)).filter((f) => f.endsWith('.js') && f !== 'crewAshore.js' && rd(`src/scenes/${f}`).includes('createCrewAshore('));
+  const standers = readdirSync(new URL('../src/scenes/', import.meta.url), { recursive: true }).filter((f) => f.endsWith('.js') && f.split(/[\\/]/).pop() !== 'crewAshore.js' && rd(`src/scenes/${f}`).includes('createCrewAshore('));
   assert.deepEqual(standers, ['world.js'], 'a host that stands companions is a host whose tap arm must pass them by');
 });
 

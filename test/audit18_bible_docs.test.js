@@ -139,7 +139,7 @@ test('AUDIT 18: Rendering.md\'s "Current (src/render/)" list is exactly src/rend
     const m = /^- `([A-Za-z0-9_.-]+\.js)`/.exec(l);
     if (m) listed.push(m[1]);
   }
-  const real = readdirSync(join(root, 'src/render')).filter((f) => f.endsWith('.js'));
+  const real = readdirSync(join(root, 'src/render'), { recursive: true }).filter((f) => f.endsWith('.js')).map((f) => f.split(/[\\/]/).pop());   // TIDY2: Rendering.md names each module by its file
   assert.deepEqual(listed.slice().sort(), real.slice().sort(),
     'Rendering.md lists modules src/render/ does not have, or misses ones it does');
 });
@@ -401,7 +401,7 @@ test('U42: every arc page that counts its own modules counts them right', () => 
     ['bible/06-Systems/Systems.md', 'src/systems'],
   ];
   for (const [page, dir] of PAGES) {
-    const real = readdirSync(join(root, dir)).filter((f) => f.endsWith('.js')).length;
+    const real = readdirSync(join(root, dir), { recursive: true }).filter((f) => f.endsWith('.js')).length;   // TIDY2: its feature folders' modules live under it too
     const doc = read(page);
     const m = doc.match(/(\d+) modules\s*\n?\s*live under\s*\n?\s*`(src\/[a-z]+)\/`/);
     assert.ok(m, `${page} lost its "N modules live under \`${dir}/\`" line`);

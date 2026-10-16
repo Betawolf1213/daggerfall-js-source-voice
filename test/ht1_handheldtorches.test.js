@@ -855,7 +855,7 @@ test('HT1: the rig runs the component beside the widget - one per rig, the pool 
   {
     const m = /(\d+) modules\s*\n?\s*live under\s*\n?\s*`src\/systems\/`/.exec(rd('bible/06-Systems/Systems.md'));
     assert.ok(m, 'Systems.md lost its "N modules live under `src/systems/`" line');
-    assert.equal(Number(m[1]), readdirSync(join(root, 'src/systems')).filter((f) => f.endsWith('.js')).length,
+    assert.equal(Number(m[1]), readdirSync(join(root, 'src/systems'), { recursive: true }).filter((f) => f.endsWith('.js')).length,
       'Systems.md counts src/systems/ live - HT1 put playerTorch.js in that count');
   }
 });

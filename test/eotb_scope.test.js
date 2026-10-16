@@ -183,8 +183,8 @@ test('AUDIT-EOTB scope: no NOT-PORTED row has quietly grown a port', () => {
   // NOT A PROOF, and it should not be read as one: a port under an
   // unrelated name walks past it. It is the cheap half; the dear half
   // is a person re-reading the IL, which is what wrote the table.
-  const all = readdirSync(join(root, 'src/player'))
-    .filter((f) => /^eotb.*\.js$/.test(f))
+  const all = readdirSync(join(root, 'src/player'), { recursive: true })
+    .filter((f) => /^eotb.*\.js$/.test(f.split(/[\\/]/).pop()))
     .map((f) => rd(`src/player/${f}`))
     .join('\n');
   for (const [k, v] of NOT) {

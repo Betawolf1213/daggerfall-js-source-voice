@@ -282,7 +282,7 @@ test('VE2 the hosts: the two terrain hosts hand the classic file and upload what
   for (const host of ['scenes/world.js', 'scenes/exterior.js']) {
     assert.match(src(host), /const modLayers = await dfmodGroundLayers\(groundArchive, groundTex\);[\s\S]{0,400}?renderer\.uploadTileArray\(groundArchive, modLayers \? layers : markPuddleWater\(layers\)\);/, host);
   }
-  const uploaders = readdirSync(new URL('../src/scenes/', import.meta.url)).filter((f) => f.endsWith('.js') && /uploadTileArray\(/.test(src(`scenes/${f}`)));
+  const uploaders = readdirSync(new URL('../src/scenes/', import.meta.url), { recursive: true }).filter((f) => f.endsWith('.js') && /uploadTileArray\(/.test(src(`scenes/${f}`)));
   assert.deepEqual(uploaders.sort(), ['exterior.js', 'world.js'], 'worldModes.js (interiors) and dungeonContext.js have no ground to dress');
 });
 

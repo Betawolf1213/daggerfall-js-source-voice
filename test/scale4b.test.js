@@ -319,7 +319,7 @@ test('SCALE4b E: each hour the rows nothing reads any more go - a rate window a 
   for (const f2 of readdirSync(new URL('../server-account/src', import.meta.url))) {
     for (const m of src(`server-account/src/${f2}`).matchAll(/export const ([A-Z_]+_WINDOW_S) = ([0-9 *]+);/g)) windows.set(m[1], Function(`return ${m[2]}`)());
   }
-  for (const f2 of readdirSync(new URL('../src/net', import.meta.url))) {
+  for (const f2 of readdirSync(new URL('../src/net', import.meta.url), { recursive: true }).filter((x) => x.endsWith('.js'))) {
     for (const m of src(`src/net/${f2}`).matchAll(/export const ([A-Z_]+_WINDOW_S) = ([0-9 *]+);/g)) windows.set(m[1], Function(`return ${m[2]}`)());
   }
   let calls = 0;

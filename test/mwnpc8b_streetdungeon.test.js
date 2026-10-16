@@ -71,7 +71,7 @@ test('MWNPC8b-c THE STANDING-PEOPLE HOSTS, enumerated: every scene that stands S
     // PIN MOVED (MWNPC8c, section 13c): the standalone location's people stand alone and in their bodies now
     'src/scenes/exterior.js': 'wired',         // the standalone location's (8c)
   };
-  const found = readdirSync(new URL('../src/scenes', import.meta.url)).filter((f) => f.endsWith('.js'))
+  const found = readdirSync(new URL('../src/scenes', import.meta.url), { recursive: true }).filter((f) => f.endsWith('.js'))
     .map((f) => `src/scenes/${f}`).filter((p) => /collectExteriorNpcs\(|collectInteriorPeople\(|context: NPC_CONTEXT\.Dungeon/.test(rd(p)));
   assert.deepEqual(found.sort(), Object.keys(HOSTS).sort(), 'a new standing-people host is named here');
   const wiredBy = {

@@ -127,7 +127,7 @@ test('MM1: the forty-six xml files - the vendored files equal the table (werewol
 
 test('MM1: the seams - the archive on a parsed TEXTURE.###, every billboard sized through the one door, the boot install before the overhaul\'s, the Mods pane entry, the credit, the vendor README, and the overhaul\'s two compatibility switches GONE (mutant: any)', () => {
   assert.match(rd('src/formats/textureFile.js'), /this\.archive = Number\.parseInt\(fileName\.slice\('TEXTURE\.'\.length\), 10\);/);
-  for (const f of readdirSync(new URL('../src/scenes', import.meta.url))) {
+  for (const f of readdirSync(new URL('../src/scenes', import.meta.url), { recursive: true }).filter((x) => x.endsWith('.js'))) {   // TIDY2: and the feature folders
     const s = rd(`src/scenes/${f}`);
     assert.doesNotMatch(s, /scaledBillboardSize\(\w+(?:\.\w+)*\.getSize\(/, `${f}: a billboard sized past the xml door`);
   }

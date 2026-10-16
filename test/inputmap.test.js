@@ -99,7 +99,7 @@ test('I2: no host reads a bound key raw - the sweep', () => {
   // recorded E-activate departure (`I2 departure`). interior.js is
   // the standalone block viewer - a dev surface with no player.
   const bound = new Set(DEFAULT_BINDINGS.map(([code]) => code));
-  const hosts = readdirSync(join(root, 'src/scenes'))
+  const hosts = readdirSync(join(root, 'src/scenes'), { recursive: true })
     .filter((f) => f.endsWith('.js') && f !== 'interior.js')
     .map((f) => `src/scenes/${f}`);
   const offenders = [];

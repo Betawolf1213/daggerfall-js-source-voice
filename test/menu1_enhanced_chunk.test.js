@@ -167,7 +167,7 @@ test('MENU1: the three engines\' wordings for a chunk that would not fetch all r
 
 // ═══ the law: every door goes through the one home ═══════════════
 test('MENU1: no ui/*Door.js mounts a lazy chunk on its own', () => {
-  const doors = readdirSync(join(root, 'src/ui')).filter((f) => f.endsWith('Door.js'));
+  const doors = readdirSync(join(root, 'src/ui'), { recursive: true }).filter((f) => f.endsWith('Door.js'));
   assert.ok(doors.length >= 7, `the doors are still here: ${doors.length}`);
   const lazy = [];
   const rogue = [];
@@ -198,7 +198,7 @@ test('MENU1: no ui/*Door.js mounts a lazy chunk on its own', () => {
 });
 
 test('MENU1: and no door is left catching a mount failure by hand', () => {
-  const bad = readdirSync(join(root, 'src/ui')).filter((f) => f.endsWith('Door.js'))
+  const bad = readdirSync(join(root, 'src/ui'), { recursive: true }).filter((f) => f.endsWith('Door.js'))
     .filter((f) => /could not mount|would not mount/.test(src(`src/ui/${f}`)));
   assert.deepEqual(bad, [], 'the console.warn-and-close pattern is the defect, not the handling');
 });

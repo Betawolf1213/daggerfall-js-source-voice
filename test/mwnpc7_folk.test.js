@@ -145,7 +145,7 @@ test('MWNPC7c the population lane: made when wanted, each actor offered with its
 
 test('MWNPC7d THE POPULATION HOSTS, enumerated and by source: every host that walks a town population offers its walkers and draws their bodies before its person billboards, and draws the veiled', () => {
   const hosts = [];
-  for (const f of readdirSync(new URL('../src/scenes', import.meta.url))) if (f.endsWith('.js') && /population\.update\(/.test(rd(`src/scenes/${f}`))) hosts.push(`src/scenes/${f}`);
+  for (const f of readdirSync(new URL('../src/scenes', import.meta.url), { recursive: true })) if (f.endsWith('.js') && /population\.update\(/.test(rd(`src/scenes/${f}`))) hosts.push(`src/scenes/${f}`);
   assert.deepEqual(hosts.sort(), ['src/scenes/exterior.js', 'src/scenes/world.js'], 'a new host walking a population is named here');
   const sites = {
     // PIN MOVED (AUDIT MW-NPC C4): world.js's walker dressed as a living resident stands as that resident (rosterBodies.js

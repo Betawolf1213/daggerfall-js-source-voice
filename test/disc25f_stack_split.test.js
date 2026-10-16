@@ -33,7 +33,7 @@ test('DISC25-F F1: the split popup\'s law has ONE home, and its parse is int.Try
   assert.equal(nativeInventory.HOW_MANY_ITEMS, HOW_MANY_ITEMS, 'the classic pack re-exports the one law, it keeps no copy');
   assert.equal(nativeInventory.SPLIT_INPUT_MAX, SPLIT_INPUT_MAX);
   const code = (f) => rd(`src/ui/${f}`).replace(/\/\*[^]*?\*\//g, '').split('\n').filter((l) => !l.trim().startsWith('//')).join('\n');
-  const typed = readdirSync(new URL('../src/ui/', import.meta.url)).filter((f) => f.endsWith('.js'))
+  const typed = readdirSync(new URL('../src/ui/', import.meta.url), { recursive: true }).filter((f) => f.endsWith('.js'))
     .filter((f) => /Pick how many items/.test(code(f)));
   assert.deepEqual(typed, [], 'no window types the words itself');
   // TryParse: digits, a sign, white space round them - and 1..max (:1551)

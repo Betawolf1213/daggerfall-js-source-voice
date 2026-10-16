@@ -329,8 +329,8 @@ test('TILE2: ONE tile for THREE panes, and the classes it draws belong to nobody
   for (const m of src.matchAll(/el\('[a-z0-9]+', `([a-z0-9-]+)/g)) mine.add(m[1]);
   for (const b of BORROWED) mine.delete(b);
   assert.ok(mine.size >= 6, `the class walk found only ${[...mine].join(', ')} - it has stopped seeing its subject`);
-  const others = readdirSync(new URL('../src/ui', import.meta.url))
-    .filter((f) => f.endsWith('.js') && f !== 'saveTile.js');
+  const others = readdirSync(new URL('../src/ui', import.meta.url), { recursive: true })
+    .filter((f) => f.endsWith('.js') && f.split(/[\\/]/).pop() !== 'saveTile.js');
   for (const f of others) {
     const other = rd(`src/ui/${f}`);
     for (const cls of mine) {

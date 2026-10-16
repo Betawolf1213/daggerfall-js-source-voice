@@ -134,7 +134,7 @@ test('RF6: no second derivation - the enhanced modules read the resolver, never 
   // cell is named by the model's one `cell()` through the resolver.
   assert.match(read('src/systems/quickslots.js'), /const cell = \(item, extra = \{\}\) => \(\{ item, name: itemLongName\(item\), condition: conditionPercentage\(item\), \.\.\.extra \}\);/, 'the HUD\'s held weapon');
   assert.doesNotMatch(read('src/ui/enhancedHud.js'), /materialName\(|resolveItemName\(/, 'the diamond derives no name of its own');
-  const files = readdirSync(join(root, 'src/ui')).filter((f) => /^enhanced.*\.js$|^worldPlaque\.js$|^hud.*\.js$/.test(f));   // WORLD-HOVER: lootHover.js is worldPlaque.js - a rename drops a file out of this sweep SILENTLY, so the name moves with it
+  const files = readdirSync(join(root, 'src/ui'), { recursive: true }).filter((f) => /^enhanced.*\.js$|^worldPlaque\.js$|^hud.*\.js$/.test(f.split(/[\\/]/).pop()));   // WORLD-HOVER: lootHover.js is worldPlaque.js - a rename drops a file out of this sweep SILENTLY, so the name moves with it
   assert.ok(files.length >= 12);
   for (const f of files) {
     const src = read(`src/ui/${f}`).replace(/\/\/[^\n]*/g, '').replace(/\/\*[\s\S]*?\*\//g, '');

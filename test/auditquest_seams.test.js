@@ -37,7 +37,7 @@ const decomment = (s) => s.replace(/\/\/[^\n]*/g, '').replace(/\/\*[\s\S]*?\*\//
 /** Every `src/scenes/*.js` that builds a bridge - DERIVED, which is the
  *  whole of F3. A sixth host joins these checks by existing. */
 function hostsBuildingABridge() {
-  return readdirSync(join(root, 'src/scenes')).filter((f) => f.endsWith('.js'))
+  return readdirSync(join(root, 'src/scenes'), { recursive: true }).filter((f) => f.endsWith('.js'))   // TIDY2: a host's helpers live in feature folders
     .map((f) => `src/scenes/${f}`)
     .filter((p) => /questBridge = createQuestBridge\(/.test(read(p)))
     .sort();

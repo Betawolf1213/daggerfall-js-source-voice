@@ -316,7 +316,7 @@ test('RENOWN-GATE THE HOSTS: the gate lives in the laws - the open world\'s call
   const modes = read('src/scenes/worldModes.js');
   assert.doesNotMatch(modes, /rollOverworldElite|rollSearchElite|pickDungeonElites/, 'the interiors roll no elite of their own');
   assert.equal((modes.match(/eliteFoe: !!o\.elite \}\) \?\? null,   \/\/ AUDIT ARENA-LADDER: a tier champion stands as an elite/g) ?? []).length, 2, 'the arena\'s bout: its tier champion, the sand\'s and the pit\'s');
-  for (const f of readdirSync(new URL('../src/scenes/', import.meta.url)).filter((x) => x.endsWith('.js'))) {
+  for (const f of readdirSync(new URL('../src/scenes/', import.meta.url), { recursive: true }).filter((x) => x.endsWith('.js'))) {
     assert.doesNotMatch(read(`src/scenes/${f}`), /\b(renownOpens|eliteRenownOpen|revenantHeld)\(/, `${f} reads the gate only through the laws`);
   }
 });
