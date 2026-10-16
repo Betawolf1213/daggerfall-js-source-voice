@@ -130,14 +130,14 @@ test('HACKED-GOLD a building\'s containers: a peer\'s word lands without a lette
 
 test('HACKED-GOLD the dungeon\'s words and a foe\'s heir: every site a peer\'s list lands at, or this client says one from, reads the one law (pinned at its one line each; the building\'s and the body\'s run above) (mutants: each site\'s filter)', () => {
   const dc = read('src/scenes/dungeonContext.js');
-  assert.match(dc, /import \{ peerHanded(?:, neverPeerHanded)? \} from '\.\.\/systems\/peerWord\.js';/);   // PIN MOVED (PARTY-LOOT, host arbitrates): the room's stored pieces said pair by pair, by peerHanded's own rule
+  assert.match(dc, /import \{ peerHanded(?:, neverPeerHanded)?(?:, notCarried)? \} from '\.\.\/systems\/peerWord\.js';/);   // PIN MOVED (PARTY-LOOT, host arbitrates): the room's stored pieces said pair by pair, by peerHanded's own rule; PIN MOVED (AUDIT AUTO-HOLD): and notCarried, a body restored off the wire
   assert.match(dc, /r: peerHanded\(held\)\.map\(\(it\) => \(\{ \.\.\.it \}\)\)/, 'a dungeon\'s record said');
   assert.match(dc, /const items = peerHanded\(validLootList\(rec\.r\)\);/, 'a dungeon\'s record heard');
-  assert.match(dc, /const li = peerHanded\(validLootList\(sf\.items\)\);/, 'a body on the wire');
+  assert.match(dc, /const li = notCarried\(peerHanded\(validLootList\(sf\.items\)\)\);/, 'a body on the wire');   // PIN MOVED (AUDIT AUTO-HOLD): and never a piece its reader carries, systems/peerWord.js notCarried
   const xf = read('src/scenes/exteriorFoes.js');
   assert.match(xf, /const items = h \? peerHanded\(validLootList\(f\.entity\?\.items \?\? \[\]\)\) : null;/, 'a foe handed to its heir');
   assert.match(xf, /const items = peerHanded\(validLootList\(r\.it\)\);/, 'a foe taken as its heir');
-  assert.match(xf, /const grant = peerHanded\(validLootList\(data\.grant\)\);/, 'a grant');
+  assert.match(xf, /const grant = notCarried\(peerHanded\(validLootList\(data\.grant\)\)\);/, 'a grant');   // PIN MOVED (AUDIT AUTO-HOLD): and never a piece its reader carries, systems/peerWord.js notCarried
   for (const f of ['src/scenes/dungeonContext.js', 'src/scenes/exteriorFoes.js', 'src/world/interior/interiorShared.js']) assert.doesNotMatch(read(f), /\bunbound\(/, `${f}: no list a peer hands over is read by SS3's narrower filter alone`);
 });
 

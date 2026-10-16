@@ -21,7 +21,7 @@ import { splitStack, addItem, itemWeight, totalWeight, carriedWeight, isSummoned
 import { isEquipped } from './equip.js';
 import { clearLightSourceOnLeave } from './item/itemTransfer.js';
 import { entityMaxEncumbrance } from '../combat/formulas.js';
-import { isBound, BOUND_TRADE_TEXT } from './item/itemBound.js';   // SS1: a bound piece never leaves for another player
+import { isBound, boundTradeText } from './item/itemBound.js';   // SS1: a bound piece never leaves for another player
 import { BOAT_TEMPLATES } from '../net/realm/realmTradeLaw.js';   // AUDIT REALM2 T1: nor a boat's deed or parts - what they stand for stays in the giver's save
 
 /** BAG1: the Materials Bag stays with its owner - a list of its own rides with it (systems/materialsBag.js), which no
@@ -34,7 +34,7 @@ export function tradeRefusal(item) {
   if (item.questItem) return 'Quest items cannot be traded.';
   if (isSummoned(item)) return 'Summoned items cannot be traded.';
   if (isGoldPieces(item)) return 'Offer gold with the gold box.';
-  if (isBound(item)) return BOUND_TRADE_TEXT;   // SS1
+  if (isBound(item)) return boundTradeText(item);   // SS1; AUDIT AUTO-HOLD: a piece the realm locked, in its own words
   if (BOAT_TEMPLATES.includes(item.templateIndex)) return 'Boat deeds and boat parts cannot be traded.';   // AUDIT REALM2 T1
   if (isBagItem(item)) return BAG_TRADE_TEXT;   // BAG1: the bag is its owner's
   return null;

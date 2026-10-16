@@ -559,7 +559,7 @@ export class NativeTradeWindow {
     // SS4: a BOUND piece is not put up for sale on this skin either (systems/item/itemBound.js); a repair or an identify still
     // takes it, because it comes back
     if ((this.mode === 'Sell' || this.mode === 'SellMagic') && isBound(item)) {
-      this.box = { rows: [{ text: boundText(itemLongName(item, { getQuest: this.hooks.getQuest ?? null })), center: true }], buttons: null };
+      this.box = { rows: [{ text: boundText(itemLongName(item, { getQuest: this.hooks.getQuest ?? null }), item), center: true }], buttons: null };   // AUDIT AUTO-HOLD: a piece the realm locked says so
       return true;
     }
     // KEEP-SPELLBOOK: the spellbook is never put up for sale (systems/item/itemTransfer.js isKeptSpellbook); a repair or an

@@ -465,7 +465,7 @@ test('AUDIT REALM2 C5: a tile\'s class name past Latin-1 rides the checkpoint\'s
     // answer saying the hold
     const summary = realmSummaryOf({ level: 1, career: { name: className }, race: 'Breton', gender: 'female', faceIndex: 1 });
     const put = await realmPut(dev.io, made.id, { lease: made.lease, seq: 1, summary }, JSON.stringify(freshSave({ v: 1 })));   // world.js realmBirth's (AUDIT REALM2 S1: a new character's)
-    assert.deepEqual(put, { ok: true, data: { ok: true, seq: 1, tradeHeld: null } }, `${className}: the birth's put lands`);
+    assert.deepEqual(put, { ok: true, data: { ok: true, seq: 1, tradeHeld: null, locked: [] } }, `${className}: the birth's put lands`);   // PIN MOVED: AUDIT AUTO-HOLD - every answer names the locked pieces, [] for none
     const row = (await realmList(dev.io)).characters.find((ch) => ch.id === made.id);
     assert.equal(row.summary.className, className, `${className}: the service reads the name back`);
     const boot = await openRealmBoot({ io: dev.io, id: made.id });

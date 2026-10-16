@@ -238,7 +238,7 @@ test('AUDIT LW-II-2 D5: a rival charges only this player\'s own take - a peer\'s
   assert.ok(back.members.every((m) => back.rel.regard(m.id, 0) === EVENTS.poached));
   assert.deepEqual(back.st.said.slice(-1), [POACHED_LINE('Mem2')]);
   // the room's word counted on the pile where it lands (dungeonContext.js applyLoot)
-  assert.match(rd('src/scenes/dungeonContext.js'), /      held\.length = 0;\n      for \(const it of items\) held\.push\(it\);\n      if \(canon\.startsWith\('loot:'\)\) \{ const p = lootPiles\[Number\(canon\.slice\(5\)\)\]; p\.roomWords = \(p\.roomWords \?\? 0\) \+ 1; \}/);
+  assert.match(rd('src/scenes/dungeonContext.js'), /      held\.length = 0;\n      for \(const it of withoutCarried\(items, carriedPieces\(playerEntity\)\)\) held\.push\(it\);[^\n]*\n      if \(canon\.startsWith\('loot:'\)\) \{ const p = lootPiles\[Number\(canon\.slice\(5\)\)\]; p\.roomWords = \(p\.roomWords \?\? 0\) \+ 1; \}/);   // PIN MOVED (AUDIT AUTO-HOLD): the landing keeps off a piece I carry (world/interior/interiorShared.js withoutCarried)
 });
 
 test('AUDIT LW-II-2 D6: the fallen of one dive lie a pace apart at their stop (DEEP_APART_M, never within the remains\' own 0.6 m), side by side in the order the deep took them; world.js placeOf walks each out from the stop\'s floor (mutants: the pace, the order, the walk)', () => {

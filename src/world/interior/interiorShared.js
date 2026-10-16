@@ -116,11 +116,35 @@ export function interiorLootRecords(ctx, keys, tooBig = new Set()) {
   return out;
 }
 
+/** AUTO-HOLD (2026-10-16, bible/06-Systems/Integrity-Arc.md): `items` without a piece the ledger follows whose key is
+ *  among `carried.keys` (the reader's own lists - systems/item/itemIds.js carriedPieces) - and, `stowed` (a shop's shelf:
+ *  AUDIT AUTO-HOLD, a piece put in a ship's hold came back off a stale one), among `carried.stowed` too - or repeats an
+ *  earlier one's. Never the stowed keys on a container that may BE the stowage (a rented room's chest): its own pieces
+ *  land there. The key rule comes in with them (`carried.keyOf`, itemIds.js ledgerKeyOf): this half never imports the
+ *  item law, whose registration (systems/loot/loot.js setItemLaw) changes what every reader of the wire lands. No
+ *  `carried`: as it came. */
+export function withoutCarried(items, carried = null, { stowed = false } = {}) {
+  if (typeof carried?.keyOf !== 'function') return items;
+  const keys = new Set([...(carried.keys ?? []), ...(stowed ? carried.stowed ?? [] : [])]);
+  return items.filter((it) => {
+    const k = carried.keyOf(it);
+    if (!k) return true;
+    if (keys.has(k)) return false;
+    keys.add(k);
+    return true;
+  });
+}
+
 /** The room's word about a building's containers, landed IN PLACE (a window already bound to the array keeps its
  *  rows) - except on the container this player has OPEN (AUDIT WORLD4 C1: yours until you close it, and your close
  *  is the room's newest word). A container this client never opened takes the room's list whole - that is the
- *  point: a second reader adopts the first's roll. Answers how many landed; `seen` gains every key the room spoke. */
-export function applyInteriorLoot(ctx, list, { seen = new Set(), openKey = null, today = null, unreadable = null } = {}) {
+ *  point: a second reader adopts the first's roll. Answers how many landed; `seen` gains every key the room spoke.
+ *  AUTO-HOLD: A PIECE THE READER CARRIES NEVER LANDS BACK (`carried`, its ledger keys). The word is the last writer's,
+ *  and one from before the reader took a piece off the shelf - another player's close of a window opened earlier, the
+ *  room's memory of an earlier visit - put the piece back: the reader took it again and held one piece twice, a copy
+ *  the ledger found at the next checkpoint (a piece sold to a shop and stolen back met it most). A piece the word names
+ *  twice lands once. */
+export function applyInteriorLoot(ctx, list, { seen = new Set(), openKey = null, today = null, unreadable = null, carried = null } = {}) {
   let n = 0;
   for (const rec of Array.isArray(list) ? list : []) {
     const canon = interiorLootKeyOf(rec?.k);
@@ -143,7 +167,8 @@ export function applyInteriorLoot(ctx, list, { seen = new Set(), openKey = null,
     seen.add(canon);
     unreadable?.delete(canon);
     if (canon === openKey) { n++; continue; }
-    if (Array.isArray(t.items)) { t.items.length = 0; for (const it of items) t.items.push(it); } else t.items = items;
+    const lands = withoutCarried(items, carried, { stowed: canon.startsWith('shelf:') });
+    if (Array.isArray(t.items)) { t.items.length = 0; for (const it of lands) t.items.push(it); } else t.items = lands;
     t.stockedDate = Math.max(Number.isFinite(t.stockedDate) ? t.stockedDate : 0, Math.floor(rec.d));
     n++;
   }
@@ -167,12 +192,12 @@ export function composeInteriorShared(ctx, { locationKey, stamp, seen = new Set(
 /** The room's memory applied, once per context, never its own: the action records projected and RESTORED (the
  *  memory is where the doors stand as this player walks in - a restore, like the cache's, not a swing heard), the
  *  opened containers through applyInteriorLoot. Answers true when it landed. */
-export function applyInteriorShared(ctx, shared, { locationKey, stamp, seen = new Set(), openKey = null, today = null, home = false } = {}) {
+export function applyInteriorShared(ctx, shared, { locationKey, stamp, seen = new Set(), openKey = null, today = null, home = false, carried = null } = {}) {
   if (!ctx || !shared || !locationKey || shared.locationKey !== locationKey || !shared.world || typeof shared.world !== 'object') return false;
   if (shared.stamp === stamp) return false;
   const acts = Array.isArray(shared.world.actions) ? shared.world.actions.map(validActionRecord).filter(Boolean) : [];
   if (acts.length) ctx.actions?.restoreSaveData?.(acts, { remote: true });   // SPELL-LOCK: a peer's word - no Lock spell's lock lands
-  if (!home) applyInteriorLoot(ctx, shared.world.loot, { seen, openKey, today });   // HOME1: no word lands on a home's cupboards
+  if (!home) applyInteriorLoot(ctx, shared.world.loot, { seen, openKey, today, carried });   // HOME1: no word lands on a home's cupboards; AUTO-HOLD: nor a piece the reader carries
   return true;
 }
 

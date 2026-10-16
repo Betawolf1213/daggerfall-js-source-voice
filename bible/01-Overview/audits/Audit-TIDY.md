@@ -118,6 +118,13 @@ test names - and flagging sound pins about files that never moved: it now takes 
 or bound to a name it tests; a `from` before a quote is the keyword, not a name), and a path a pin reads is no
 spelling. Pinned both ways; the full suite on the merged tree: 28,560 tests, 0 failing.
 
+A third merge (13 commits: AUTO-HOLD and its audit, a G3 deploy fix) went the same way: 62 files re-merged clean and
+two count lines by hand, `--fixup` mended 43 addresses, main's `possessedItems.js` filed into `src/systems/item/` and
+`autohold.test.js` into `test/server/`. Both of the move's BLIND lines were real. Three reads handed a path through a
+variable (they would have thrown, not passed). AUTO-HOLD's negative pin - `interiorShared.js` never imports the item
+law - was spelled for the depth both files had on main, one folder short of where they stand here, so it passed on
+anything. It is spelled at any depth now, and goes red on a planted import.
+
 ## What stands
 
 - `test/tooling/tidy1_movetool.test.js`: 10 tests (split from `tidy1_codemap` so the tool's mutants are judged in

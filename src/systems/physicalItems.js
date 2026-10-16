@@ -538,7 +538,7 @@ export function shiftDrop(item, { items, entity, getQuest = null, dropRefusal = 
   if (no) return { refusal: no };
   if (lockRefuses(item, 'drop')) return { refusal: { text: lockedText(name()) } };
   if (isPackOnly(item)) return { refusal: { text: packOnlyText(name()) } };
-  if (boundRefusesPut(item, 'elsewhere')) return { refusal: { text: boundText(name()) } };
+  if (boundRefusesPut(item, 'elsewhere')) return { refusal: { text: boundText(name(), item) } };   // AUDIT AUTO-HOLD: a piece the realm locked says so
   const dest = [];
   const plan = /** @type {any} */ (planStore(item, { remote: dest, getQuest, groundRefusal: dropRefusal?.() ?? null, bagLoaded: !bagMayLeave(entity) }));   // its map arm is not in its declared shape
   if (!plan.ok) return { refusal: plan.refusal };

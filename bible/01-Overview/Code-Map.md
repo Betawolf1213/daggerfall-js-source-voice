@@ -290,7 +290,7 @@ wiring in `src/scenes/`. A feature with one or two modules in a layer keeps them
 | `src/systems/guild/` | The guilds' law: their factions and variants, services and how a service flows, the hall's reveal. |
 | `src/systems/horse/` | The horse and cart, the horses' coats, a horse that follows - the law. |
 | `src/systems/iliac/` | Iliac Hand, the tavern's other card game - the law. |
-| `src/systems/item/` | Items: templates, the item law, ids, kinds, fields, powers, binding, locks, dye, junk and transfer. |
+| `src/systems/item/` | Items: templates, the item law, ids, kinds, fields, powers, binding, locks, the lists a character holds, dye, junk and transfer. |
 | `src/systems/legacy/` | Project Legacy: age, family, heirs, the realm line (`06-Systems/Legacy-Arc.md`). |
 | `src/systems/livingWorld/` | The living world: its people, towns, caravans, outlaws and trips (`06-Systems/Living-World-II.md`). |
 | `src/systems/loot/` | Loot: its tables, powers, rarity, curses, the codex - the law. |

@@ -238,6 +238,7 @@ on:
       - "src/systems/item/itemFields.js"
       - "src/systems/item/itemLaw.js"
       - "src/systems/item/itemIds.js"
+      - "src/systems/item/possessedItems.js"
       - "src/systems/bossCards.js"
       - "src/systems/item/itemLock.js"
       - "src/systems/item/itemTemplates.js"

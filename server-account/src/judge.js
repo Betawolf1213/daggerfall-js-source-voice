@@ -18,7 +18,9 @@
 // player loses nothing they played, because a finding can be the law's mistake and "THE CLOUD IS A BACKUP" exists
 // because players lost games - and the character is HELD: every route that moves its value to another player refuses
 // it (realm.js holdRefusal) until a later checkpoint is clean or staff clear it. A character the law has found three
-// times stays held for staff (STRIKES_FOR_REVIEW): a client that keeps writing impossible things is not an accident.
+// times is held for a time, whatever its next checkpoint says (STRIKES_FOR_TIMED, verdict.js LAW_HOLD_S): a client that
+// keeps writing impossible things is not an accident - and since AUTO-HOLD (2026-10-16) the hold lifts on its own when
+// its time is out, never on a person's review.
 //
 // ═══ WHAT IS JUDGED ════════════════════════════════════════════════
 //
@@ -39,10 +41,11 @@
 //     piles it dropped - picked up again, a pile is no gain). INT5's budget reads it.
 // ═══════════════════════════════════════════════════════════════════
 
-import { itemFindings, itemWorth, lawTemplate, classicPiece, PROVENANCE_RE, ITEM_UID_RE, ITEM_LAW_VERSION, GOLD_INT_MAX } from '../../src/systems/item/itemLaw.js';
-import { valuablePiece } from '../../src/systems/item/itemIds.js';
+import { itemFindings, itemWorth, lawTemplate, classicPiece, PROVENANCE_RE, ITEM_LAW_VERSION, GOLD_INT_MAX } from '../../src/systems/item/itemLaw.js';
+import { ledgerKeyOf } from '../../src/systems/item/itemIds.js';
 import { armsOf } from '../../src/net/siege/siegeRef.js';   // INT7: the arms the token signs
 import { liquidWorthOf, deedsOf } from '../../src/net/realm/realmGoldLaw.js';
+import { possessedItemLists } from '../../src/systems/item/possessedItems.js';   // AUDIT AUTO-HOLD: one home, the client's shelf reads it too
 import { MAX_STAT_VALUE } from '../../src/systems/statMods.js';
 import { SKILL_HARD_CAP } from '../../src/systems/skillSoftcap.js';
 import { STAT_KEYS_ORDER } from '../../src/systems/statMods.js';
@@ -52,8 +55,9 @@ import { pathFindings } from '../../src/systems/arcanePaths.js';   // SCHOOLS5: 
 export const JUDGE_VERSION = ITEM_LAW_VERSION;
 /** The highest level the realm reads (realm.js REALM_LEVEL_CLAIM_MAX, the summary's own bound - pinned equal). */
 export const JUDGE_LEVEL_MAX = 1000;
-/** The holds the law has come to before a held character waits for staff, whatever its next checkpoint says. */
-export const STRIKES_FOR_REVIEW = 3;
+/** The holds the law has come to before a held character is held for a time (verdict.js LAW_HOLD_S), whatever its next
+ *  checkpoint says. */
+export const STRIKES_FOR_TIMED = 3;
 /** THE WEALTH MEASURE'S VERSION (wealthOf, itemLaw.js itemWorth, realmGoldLaw.js deedsOf's prices): moved whenever any of
  *  them counts a save differently, so a character's next checkpoint measures its stored record again under the new one
  *  and the change is no gain the budget charges (AUDIT INT: an open number moved was every character's gain at once).
@@ -64,43 +68,14 @@ export const FINDINGS_KEPT = 40;
 
 const lists = (/** @type {any[]} */ ...ls) => ls.filter(Array.isArray);
 const arrayOf = (/** @type {unknown} */ x) => (Array.isArray(x) ? x : []);
-const objectOf = (/** @type {unknown} */ x) => (x && typeof x === 'object' ? /** @type {Record<string, unknown>} */ (x) : {});
 /** A count of gold in a save: a whole number, never below nothing - any other word (a fraction, Infinity, a string) is
  *  nothing (AUDIT INT: `goldPieces: 1e999` read as Infinity, and the verdict's NOT NULL threw the save away). */
 const goldOf = (/** @type {unknown} */ v) => (Number.isSafeInteger(v) && /** @type {number} */ (v) > 0 ? /** @type {number} */ (v) : 0);
 
-/** Come Sail Away's, the sea fight's and the feud's records in a save's per-mod slot (realmGoldLaw.js's own names). */
-const CSA_VENDOR = 'come-sail-away', NAVAL_VENDOR = 'NavalCombat', REVENANT_VENDOR = 'Revenant';
-/** A building's interior, by the name the scene cache files it under (sceneCache.js interiorSceneName; realmGoldLaw.js
- *  keeps the same). */
-const interiorSceneName = (/** @type {unknown} */ mapId, /** @type {unknown} */ buildingKey) => `DaggerfallInterior [MapID=${mapId}, BuildingKey=${buildingKey}]`;
-
-/**
- * THE LISTS THE CHARACTER HOLDS - what the item law judges and the id ledger reads: its five own lists (the pack, the
- * wagon, the Materials Bag, the furnisher's deliveries, the repairer's shelf); what it set out in a room (DECOR2a
- * `decorOwn`) or stored there (DECOR1c `decorItems`); the chests of the rooms its deeds stand for and of the rooms it
- * rents (tavern.js - a room's chest is the renter's); a boat's hold and its cargo; a companion's pack; a sworn
- * revenant's pack. Never what lies on the ground (groundItemLists - anyone may take a pile up), and never a list the
- * world fills: a dungeon's chest, a body, a shop's shelf.
- * @param {any} save
- */
-export function possessedItemLists(save) {
-  const out = lists(save?.items, save?.wagonItems, save?.bagItems, save?.furnishings, save?.otherItems);
-  const rooms = new Set(deedsOf(save).map((d) => d.room).filter(Boolean));
-  const rented = new Set(arrayOf(save?.rentedRooms).map((r) => interiorSceneName(/** @type {any} */ (r)?.mapId, /** @type {any} */ (r)?.buildingKey)));
-  for (const scene of arrayOf(save?.sceneCache?.scenes)) {
-    const sc = /** @type {any} */ (scene);
-    for (const piece of Object.values(objectOf(sc?.decorOwn))) if (piece && typeof piece === 'object') out.push([piece]);
-    for (const held of Object.values(objectOf(sc?.decorItems))) out.push(...lists(held));
-    if (rooms.has(sc) || rented.has(sc?.sceneName)) for (const c of arrayOf(sc?.lootContainers)) out.push(...lists(/** @type {any} */ (c)?.items));
-  }
-  const csa = save?.modData?.[CSA_VENDOR];
-  for (const boat of arrayOf(csa?.placedBoats)) out.push(...lists(/** @type {any} */ (boat)?.Items));
-  out.push(...lists(...Object.values(objectOf(csa?.packedCargoes))));
-  for (const c of arrayOf(save?.modData?.[NAVAL_VENDOR]?.party?.party)) out.push(...lists(/** @type {any} */ (c)?.items));
-  for (const r of arrayOf(save?.modData?.[REVENANT_VENDOR]?.list)) if (/** @type {any} */ (r)?.sworn && !/** @type {any} */ (r).defeated) out.push(...lists(/** @type {any} */ (r).companion?.items));
-  return out;
-}
+/** THE LISTS THE CHARACTER HOLDS (possessedItemLists) - systems/item/possessedItems.js, their one home since AUDIT AUTO-HOLD
+ *  (the client's shelf reads them too: a piece stowed in a ship's hold came back to its holder off a stale shelf), handed
+ *  on here for the service's own readers. */
+export { possessedItemLists };
 
 /** THE PILES ON THE GROUND the save keeps - a room's, a dungeon's (`droppedPiles`) and the street's (`world.piles`). Its
  *  wealth counts them (a pile dropped and taken up again is no gain); the law and the ledger do not (anyone may take a
@@ -218,14 +193,9 @@ export function judgeSave(save, summary = null, o = {}) {
   return { findings, count, wealth: wealthOf(save, o), items, provenances, pieces: ledgerPieces(save), arms };
 }
 
-/** INT4: A PIECE'S KEY IN THE LEDGER - a crafted piece's provenance (the service minted it: no client can mint a fresh
- *  one), any other valuable piece's id (systems/item/itemIds.js valuablePiece - never a stack, nor a bound or quest piece) -
- *  or null, a piece the ledger does not follow. */
-export function ledgerKeyOf(/** @type {any} */ it) {
-  if (!valuablePiece(it)) return null;
-  if (typeof it.provenance === 'string' && PROVENANCE_RE.test(it.provenance)) return it.provenance;
-  return typeof it.uid === 'string' && ITEM_UID_RE.test(it.uid) ? it.uid : null;
-}
+/** INT4: A PIECE'S KEY IN THE LEDGER - systems/item/itemIds.js ledgerKeyOf, its one home since AUTO-HOLD (the client's room
+ *  word reads it too), handed on here for the service's own readers. */
+export { ledgerKeyOf };
 /** What a piece IS, as the ledger keeps it beside its key: its template and its material - an id on another piece is no
  *  claim to the piece the id was minted for. */
 export const ledgerPrintOf = (/** @type {any} */ it) => `${Number.isSafeInteger(it?.templateIndex) ? it.templateIndex : '-'}:${Number.isSafeInteger(it?.material) ? it.material : '-'}`;

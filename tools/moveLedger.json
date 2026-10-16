@@ -4287,5 +4287,7 @@
   ["bible/01-Overview/Field-Bugs-2026-10-15g.md","bible/01-Overview/bugs/Field-Bugs-2026-10-15g.md"],
   ["src/combat/handsLaw.js","src/combat/twoHands/handsLaw.js"],
   ["src/combat/mirrorRig.js","src/combat/twoHands/mirrorRig.js"],
-  ["src/combat/twoHands.js","src/combat/twoHands/twoHands.js"]
+  ["src/combat/twoHands.js","src/combat/twoHands/twoHands.js"],
+  ["src/systems/possessedItems.js","src/systems/item/possessedItems.js"],
+  ["test/autohold.test.js","test/server/autohold.test.js"]
 ]

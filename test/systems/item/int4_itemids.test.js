@@ -8,17 +8,18 @@
 //     character's own five lists (never a stack, a bound piece or one stamped already), and what the player is told as
 //     the judge's hold moves - the piece named when the law holds it;
 //   - the service, through real checkpoints: a new key taken; let go (no row) and taken up by another; a claim moved by
-//     its holder's letting go; a claim outlasted - the claimant charged, its copy written down, the holder's piece the
+//     its holder's letting go; a claim outlasted - the claimant's copy written down and locked, the holder's piece the
 //     holder's to sell; a key on another piece a law finding, never a claim; a key twice in one record its own copy;
-//     DUPES_FOR_HOLD copies held for staff, and a law breach no way out; a claimed piece moved by no route; the service's
-//     moves (escrow, delivery) and a crafted piece's owner; a character gone lets go; and the statements bounded.
+//     a claimed piece moved by no route; the service's moves (escrow, delivery) and a crafted piece's owner; a character
+//     gone lets go; and the statements bounded. PIN MOVED (AUTO-HOLD, 2026-10-16): a copy locks its piece and holds no
+//     character (DUPES_FOR_HOLD held it for staff), and a claim outlasted is no strike - test/server/autohold.test.js.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import worker from '../../../server-account/src/index.js';
 import { standService, T0 } from '../../accountDb.mjs';
 import { seatRealm, freshSave } from '../../realmSeat.mjs';
 import { valuablePiece, mintItemId, stampItemIds, tradeHeldNotice, tradeHeldLawNotice, TRADE_HELD_NOTICES, TRADE_OPEN_NOTICE } from '../../../src/systems/item/itemIds.js';
-import { DUPES_FOR_HOLD, DUPE_GRACE_S, LEDGER_NEW_MAX, UPSERT_ROWS, UID_CHUNK, ledgerStep, releaseSteps } from '../../../server-account/src/ledger.js';
+import { DUPE_GRACE_S, LEDGER_NEW_MAX, UPSERT_ROWS, UID_CHUNK, ledgerStep, releaseSteps } from '../../../server-account/src/ledger.js';
 import { prepareRealmRecord } from '../../../server-account/src/realm.js';
 import { takeTradeGoods, giveTradeGoods } from '../../../src/net/realm/realmTradeLaw.js';
 import { createWeapon } from '../../../src/combat/enemyEquipment.js';
@@ -56,8 +57,8 @@ test('INT3 client: the hold said as it moves - its reason when it falls, the pie
   assert.equal(tradeHeldNotice(null, 'law', { code: 'affixes', t: 113 }), tradeHeldLawNotice(templateByIndex(113).name));
   assert.match(tradeHeldNotice(null, 'law', { code: 'affixes', t: 113 }), new RegExp(templateByIndex(113).name));
   assert.equal(tradeHeldNotice(null, 'law', { code: 'level', t: null }), TRADE_HELD_NOTICES.law, 'the character\'s own finding names no piece');
-  assert.equal(tradeHeldNotice(null, 'dupe', { t: 113 }), TRADE_HELD_NOTICES.dupe, 'only the law\'s names one');
-  assert.equal(tradeHeldNotice('law', 'dupe'), TRADE_HELD_NOTICES.dupe);
+  assert.equal(tradeHeldNotice(null, 'budget', { t: 113 }), TRADE_HELD_NOTICES.budget, 'only the law\'s names one');   // PIN MOVED (AUTO-HOLD): 'dupe' holds nothing now
+  assert.equal(tradeHeldNotice('law', 'budget'), TRADE_HELD_NOTICES.budget);
   assert.equal(tradeHeldNotice('law', null), TRADE_OPEN_NOTICE);
   assert.equal(tradeHeldNotice(null, null), null);
   assert.equal(tradeHeldNotice('law', 'law'), null);
@@ -114,7 +115,7 @@ test('INT4 service: a new key taken; let go - no row; taken up by another; shown
   } finally { s.done(); }
 });
 
-test('INT4 service: a claim its holder outlasts is a COPY, the CLAIMANT\'s - counted on its row, written down, moved by no route; the holder\'s piece stays the holder\'s to sell (AUDIT INT: the holder was charged, and the copier sold first)', async () => {
+test('INT4 service: a claim its holder outlasts is a COPY, the CLAIMANT\'s - written down and found, moved by no route; the holder\'s piece stays the holder\'s to sell (AUDIT INT: the holder was charged, and the copier sold first) - and no strike (AUTO-HOLD: a contested claim)', async () => {
   const s = await stand();
   try {
     const A = await s.seat('ann'), C = await s.seat('cai');
@@ -132,15 +133,15 @@ test('INT4 service: a claim its holder outlasts is a COPY, the CLAIMANT\'s - cou
     s.wait(20);
     await s.put(A, [withId(u)]);
     assert.deepEqual(s.ledger(u), { char_id: A.R.id, state: 'held', claim_char: null }, 'the holder keeps it');
-    assert.deepEqual([s.dupes(A.R.id), s.dupes(C.R.id)], [0, 1], 'the claimant counts the copy');
+    assert.deepEqual([s.dupes(A.R.id), s.dupes(C.R.id)], [0, 0], 'PIN MOVED (AUTO-HOLD): contested - no strike on either');
     assert.deepEqual(s.copiesOf(C.R.id), [u]);
-    assert.equal(s.raw.prepare("SELECT COUNT(*) AS n FROM realm_findings WHERE char_id = ? AND kind = 'dupe'").get(C.R.id).n, 1, 'and its finding');
+    assert.deepEqual(s.raw.prepare("SELECT detail FROM realm_findings WHERE char_id = ? AND kind = 'dupe'").all(C.R.id).map((r) => JSON.parse(r.detail)), [{ keys: [u], count: 1, contested: true }], 'and its finding, said contested');
     assert.deepEqual(await s.takeOut(C), { error: 'piece-dupe' }, 'the copy moves by no route');
     const sold = await s.takeOut(A, 0, { outbound: true, escrow: true });
     assert.ok(!sold.error, 'the holder\'s piece sells');
     // the copy shown again is charged never twice
     await s.put(C, [withId(u)]);
-    assert.equal(s.dupes(C.R.id), 1);
+    assert.equal(s.raw.prepare("SELECT COUNT(*) AS n FROM realm_findings WHERE char_id = ? AND kind = 'dupe'").get(C.R.id).n, 1);
   } finally { s.done(); }
 });
 
@@ -161,18 +162,18 @@ test('INT4 service: a key on ANOTHER piece is no claim - the record showing it h
   } finally { s.done(); }
 });
 
-test('INT4 service: a key twice in one record is its own copy at once; DUPES_FOR_HOLD copies and the trade is held for staff - and stays held, a law breach no way out (AUDIT INT: a \'law\' checkpoint stepped the hold down, and the next clean one lifted it)', async () => {
+test('INT4 service: a key twice in one record is its own copy at once - locked, counted, and (PIN MOVED, AUTO-HOLD: three held the trade for staff) holding no character, however many come', async () => {
   const s = await stand();
   try {
     const A = await s.seat('dov');
-    for (let i = 0; i < DUPES_FOR_HOLD; i++) {
+    for (let i = 0; i < 3; i++) {
       const u = `${i + 1}`.repeat(16);
-      const held = await s.put(A, [withId(u), withId(u)]);
-      assert.equal(held, i + 1 >= DUPES_FOR_HOLD ? 'dupe' : null, `copy ${i + 1}`);
+      assert.equal(await s.put(A, [withId(u), withId(u)]), null, `copy ${i + 1}: the character trades on`);
     }
-    assert.equal(s.dupes(A.R.id), DUPES_FOR_HOLD);
-    assert.equal(await s.put(A, [{ ...rare(), affixes: [] }]), 'dupe', 'a lawless checkpoint keeps the copies\' hold');
-    assert.equal(await s.put(A, []), 'dupe', 'and a clean one: staff alone lift it');
+    assert.equal(s.dupes(A.R.id), 3);
+    assert.deepEqual(s.copiesOf(A.R.id), ['1111111111111111', '2222222222222222', '3333333333333333'], 'each piece locked');
+    assert.equal(await s.put(A, [{ ...rare(), affixes: [] }]), 'law', 'a lawless checkpoint is the law\'s hold');
+    assert.equal(await s.put(A, []), null, 'and a clean one lifts it');
   } finally { s.done(); }
 });
 
@@ -193,7 +194,7 @@ test('INT4 service: the service\'s own moves move the ledger - a piece listed is
     assert.deepEqual(s.ledger(u), { char_id: B.R.id, state: 'held', claim_char: S1.R.id });
     s.wait(DUPE_GRACE_S + 1);
     await s.put(B, [withId(u)]);
-    assert.deepEqual([s.dupes(S1.R.id), s.dupes(B.R.id)], [1, 0], 'the seller kept a copy: the seller\'s, never the buyer\'s');
+    assert.deepEqual([s.copiesOf(S1.R.id), s.copiesOf(B.R.id)], [[u], []], 'the seller kept a copy: the seller\'s, never the buyer\'s');   // PIN MOVED (AUTO-HOLD): locked, no strike - a claim the holder outlasts is contested
     assert.deepEqual(s.ledger(u), { char_id: B.R.id, state: 'held', claim_char: null });
     // spent (a payment, a disenchant): no row
     await s.land(await s.takeOut(B));
@@ -289,5 +290,5 @@ test('INT3/INT4 client: the realm\'s session hears the hold and the piece as its
   const world = readFileSync(new URL('../../../src/scenes/world.js', import.meta.url), 'utf8');
   const body = world.slice(world.indexOf('  function realmCheckpoint({ sink = null } = {}) {'), world.indexOf('  function realmCheckpoint({ sink = null } = {}) {') + 1200);
   assert.ok(body.indexOf('stampItemIds(playerEntity);') > 0 && body.indexOf('stampItemIds(playerEntity);') < body.indexOf('quickSaveNow'), 'the ids, before the save is composed');
-  assert.match(world, /realmSession\.onTradeHeld = \(prev, now, why\) => \{ const t = tradeHeldNotice\(prev, now, why\); if \(t\) townTalk\.say\(t\); \};/);
+  assert.match(world, /^  wireRealmHolds\(realmSession, \{ say: \(t\) => townTalk\.say\(t\), entity: playerEntity \}\);$/m);   // PIN MOVED (AUTO-HOLD): the hold and the locked pieces, wired at one line (scenes/realmHoldHost.js)
 });

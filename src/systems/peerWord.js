@@ -37,6 +37,16 @@ export const neverPeerHanded = (/** @type {any} */ item) => isBound(item) || isL
  *  null: the caller's refusal). */
 export const peerHanded = (/** @type {any[] | null} */ list) => (Array.isArray(list) ? list.filter((it) => !neverPeerHanded(it)) : list);
 
+/** AUDIT AUTO-HOLD: A PIECE ITS READER ALREADY CARRIES never rides a peer's word to it - a second of a piece the reader
+ *  holds is a copy the ledger locks, the reader's original with it, and since AUTO-HOLD a locked piece is bound (a
+ *  griefer's body grant of a key it saw on the wire planted one; a stale shelf handed one back). The rule is registered
+ *  by the realm session's wiring (scenes/realmHoldHost.js - the reader's own lists' ledger keys, world/interior/interiorShared.js
+ *  withoutCarried), so this leaf never loads the item law; offline, none. */
+let _carriedFilter = /** @type {((list: any[]) => any[]) | null} */ (null);
+export function setCarriedFilter(/** @type {((list: any[]) => any[]) | null} */ fn) { _carriedFilter = typeof fn === 'function' ? fn : null; }
+/** `list` without a piece its reader carries (null stays null). */
+export const notCarried = (/** @type {any[] | null} */ list) => (Array.isArray(list) && _carriedFilter ? _carriedFilter(list) : list);
+
 /** Whether a letter of credit may not be put THERE: online, any container that is not the player's own (`own` - the
  *  player's storage, the player's own pile on the ground) - a chest, a body, a cupboard is the room's once it is opened.
  *  The ground (a new pile is the dropper's), the wagon, the bag and a reward tray (DFU refuses every piece put there, in

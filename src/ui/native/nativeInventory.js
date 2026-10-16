@@ -994,7 +994,7 @@ export class NativeInventoryWindow {
           const ground = t === REMOTE_TARGET_TYPES.Dropped || (t === REMOTE_TARGET_TYPES.Loot && this.hooks.loot?.playerOwned === true);
           const n = ground && !dismantleRefusal(it) ? dismantleStones(it) : 0;   // (and never one the law would refuse - a locked one over the player's own pile)
           if (n > 0) { this._askDismantle(it, n); return; }
-          this._refuse({ text: boundText(itemLongName(it, { getQuest: this.hooks.getQuest ?? null })) });
+          this._refuse({ text: boundText(itemLongName(it, { getQuest: this.hooks.getQuest ?? null }), it) });   // AUDIT AUTO-HOLD: a piece the realm locked says so
           return;
         }
         // HACKED-GOLD: online a LETTER OF CREDIT goes into no container but the player's own (systems/peerWord.js) - a
