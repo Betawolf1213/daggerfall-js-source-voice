@@ -20,7 +20,7 @@ import { egBandArchive, EG_DRESS, EG_KIT_MAP } from '../src/world/egBandArt.js';
 import { EG_KIT_RECORD, EG_KIT_STYLE } from '../src/world/egKit.js';
 import {
   egDiscFloor, egPassage, egPassageGrid, egRingArcade, egLongWalls, egTierBenches, egDoorway, egVignette, egKitInto, egArchCurve, egVaultOpen,
-  EG_GROUND_RECORD, EG_GROUND_RECORDS, EG_FLOOR_LOOK, EG_WALL, EG_VAULT, EG_ARCADE, EG_VIGNETTE_BOX, EG_SIGILS, EG_ROCK,
+  EG_GROUND_RECORD, EG_GROUND_RECORDS, EG_FLOOR_LOOK, EG_WALL, EG_VAULT, EG_ARCADE, EG_VIGNETTE_BOX, EG_GROUND_SIGILS, EG_ROCK,
 } from '../src/world/egGround.js';
 import { egLawSeam } from '../src/net/egLaw.js';
 
@@ -113,7 +113,7 @@ test('EG-LOOK HALLS THE FLOORS CUT INTO REGIONS (section 2): every court\'s and 
         const fig = inlay.filter(([, cs]) => cs.every((p) => rOf(p) < ri - 1e-6));
         assert.ok(fig.length > 0, `circle ${c}: the court's ${sigil} in its mosaic`);
         // the figure's own shape: the sigil's cut answers each of its regions, laid here as the inlay
-        const cut = EG_SIGILS[sigil](ri), probe = cut.at(Math.PI / 2 + 0.01);
+        const cut = EG_GROUND_SIGILS[sigil](ri), probe = cut.at(Math.PI / 2 + 0.01);
         assert.ok(probe.b.length >= 4 && probe.b.every((v, i) => i === 0 || v >= probe.b[i - 1] - 1e-9), `${sigil}: its breakpoints rising`);
         assert.ok(inlay.some(([, cs]) => cs.every((p) => Math.abs(rOf(p) - ri - EG_FLOOR_LOOK.frame.fillet - EG_FLOOR_LOOK.frame.band / 2) < EG_FLOOR_LOOK.frame.band / 2 + 1e-6)), `circle ${c}: the mosaic's frame`);
       }

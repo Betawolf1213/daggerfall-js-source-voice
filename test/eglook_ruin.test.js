@@ -11,7 +11,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { buildEgRuinParts, egRuinColumns, egRuinBudget, egRuinBands, egDiscLamps, egArchRise, EG_RUIN, EG_CORNICE, EG_FIXTURE_V, EG_FIXTURE_FLAME } from '../src/world/egRuin.js';
+import { buildEgRuinParts, egRuinColumns, egRuinBudget, egRuinBands, egDiscLamps, egArchRise, EG_RUIN, EG_RUIN_CORNICE, EG_FIXTURE_V, EG_FIXTURE_FLAME } from '../src/world/egRuin.js';
 import { egCircleLights, egToDungeon, egIsleDisc, egWallBand, egTubeBand, EG_LAMP, EG_LAMP_BUDGET } from '../src/world/egHall.js';
 import { egCircleBuild, egCirclePartsTransfers } from '../src/world/egCircleParts.js';
 import { egCircleSpecs, egBandOfHall, EG_BRINK_HALLS, EG_HALL_PITCH } from '../src/net/egLaw.js';
@@ -170,8 +170,8 @@ test('EG-LOOK THE PIECES THAT FALL (the spans\' own - scenes/egSpan.js stands ea
   assert.ok(near > 1000, `the ruin beside them still standing (${near} corners within 3 m)`);
 });
 
-test('EG-LOOK THE CORNICES (section 3.2: "its top 0.02 m under the edge line\'s strip, outside the floor by at most 0.35 m, never above the floor"): under every edge of every standing disc the moulding runs round its rim (where no other floor meets it), every corner of it at or under the floor\'s top less EG_CORNICE.under and within EG_CORNICE.reach of its circle; and every face of it in a band of the moulding\'s picture (EG_KIT_MAP), its v down the profile (mutants: the cornice over the floor; its reach past the teeth\'s)', () => {
-  assert.deepEqual([EG_CORNICE.under, EG_CORNICE.reach], [0.002, 0.35]);
+test('EG-LOOK THE CORNICES (section 3.2: "its top 0.02 m under the edge line\'s strip, outside the floor by at most 0.35 m, never above the floor"): under every edge of every standing disc the moulding runs round its rim (where no other floor meets it), every corner of it at or under the floor\'s top less EG_RUIN_CORNICE.under and within EG_RUIN_CORNICE.reach of its circle; and every face of it in a band of the moulding\'s picture (EG_KIT_MAP), its v down the profile (mutants: the cornice over the floor; its reach past the teeth\'s)', () => {
+  assert.deepEqual([EG_RUIN_CORNICE.under, EG_RUIN_CORNICE.reach], [0.002, 0.35]);
   let rims = 0, corners = 0;
   for (const [seed, c, geo] of CIRCLES.slice(0, 6)) {
     const specs = egCircleSpecs(seed, c, geo), parts = ruinOf(seed, c, geo);
@@ -190,8 +190,8 @@ test('EG-LOOK THE CORNICES (section 3.2: "its top 0.02 m under the edge line\'s 
             if (dr < -0.08 || dr > 0.6 || t[k + 1] > y + 0.5 || t[k + 1] < y - 1) continue;
             if (others.some((f) => t[k] >= f.box[0] - 0.5 && t[k] <= f.box[2] + 0.5 && t[k + 2] >= f.box[1] - 0.5 && t[k + 2] <= f.box[3] + 0.5)) continue;
             near++; corners++;
-            assert.ok(t[k + 1] <= y - EG_CORNICE.under + 1e-4, `hall ${spec.h} ${d.role}: a cornice ${(t[k + 1] - y).toFixed(3)} m about its floor`);
-            assert.ok(dr <= EG_CORNICE.reach + 1e-4, `hall ${spec.h} ${d.role}: a cornice ${dr.toFixed(3)} m past its rim`);
+            assert.ok(t[k + 1] <= y - EG_RUIN_CORNICE.under + 1e-4, `hall ${spec.h} ${d.role}: a cornice ${(t[k + 1] - y).toFixed(3)} m about its floor`);
+            assert.ok(dr <= EG_RUIN_CORNICE.reach + 1e-4, `hall ${spec.h} ${d.role}: a cornice ${dr.toFixed(3)} m past its rim`);
           }
         });
         if (d.role === 'court' || d.role === 'arrive') { assert.ok(near > 50, `hall ${spec.h}: the ${d.role}'s rim corniced`); rims++; }

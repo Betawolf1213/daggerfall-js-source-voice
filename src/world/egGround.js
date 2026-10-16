@@ -153,7 +153,7 @@ function starAt(a, m, a0, tip, rv) {
  *   dagon     Dagon's war-sigil: six spikes (three long) each half iron, half the band's molten-hued inlay, on an inlay boss.
  * Pure.
  */
-export const EG_SIGILS = Object.freeze({
+export const EG_GROUND_SIGILS = Object.freeze({
   star: (ri) => ({
     at: (a) => { const s = starAt(a, 8, Math.PI / 2, (k) => (k % 2 ? 0.7 : 1) * ri, 0.36 * ri); return { b: [0, 0.14 * ri, Math.max(0.14 * ri, s.r), ri], half: s.half }; },
     rec: () => [INLAY_METAL, R.inlay, R.arena],
@@ -253,7 +253,7 @@ function polarFloor(f, cx, cz, y, rays, recOf, uvOf, figure = /** @type {(j: num
   }
 }
 /** An angle brought round to `from` or past it (a cell's own range). */
-const angleIn = (a, from) => { let x = a; while (x < from - 1e-9) x += TAU; return x; };
+const angleIn = (a, from) => (a < from - 1e-9 ? a + Math.ceil((from - 1e-9 - a) / TAU) * TAU : a);
 /** The inlay's lines (m): its picture's two zones each span this much in the floor (EG_KIT_MAP inlay: 2 m a repeat). */
 const INLAY_LINE = 2;
 /** A region in the inlay's second zone (its metal tesserae): the inlay's record, read as the metal half. */
@@ -296,7 +296,7 @@ export function egDiscFloor(f, spec, d, rec, band) {
   const borderAt = r - Bd.in - Bd.band, border = /** @type {[number, number, string, number]} */ ([borderAt, r - Bd.in, 'plan', R.inlay]);
   if (d.role === 'court') {
     // the mosaic, its frame, the plates in rings, the border and the plates out to the rim - one cut on the rim's 48 rays
-    const style = egKitStyle(band), ri = Math.max(L.mosaic.min, Math.min(L.mosaic.max, L.mosaic.k * r)), sig = (EG_SIGILS[style.sigil] ?? EG_SIGILS.star)(ri);
+    const style = egKitStyle(band), ri = Math.max(L.mosaic.min, Math.min(L.mosaic.max, L.mosaic.k * r)), sig = (EG_GROUND_SIGILS[style.sigil] ?? EG_GROUND_SIGILS.star)(ri);
     /** @type {Array<[number, number, string, number]>} */
     const frame = [[ri, ri + Fr.fillet, 'plan', INLAY_METAL], [ri + Fr.fillet, ri + Fr.fillet + Fr.band, 'plan', R.inlay], [ri + Fr.fillet + Fr.band, ri + 2 * Fr.fillet + Fr.band, 'plan', INLAY_METAL]];
     const ro = frame[2][1], span = borderAt - ro, nPlates = Math.max(1, Math.round(span / L.plate)), w = span / nPlates;
@@ -350,7 +350,7 @@ export function egArchCurve(style, hw, off = 0, m = 8) {
   return out;
 }
 /** An arch's rise over its springing (its crown's height) for a half-width `hw`. */
-export const egArchRise = (style, hw) => Math.max(...egArchCurve(style, hw, 0, 8).map((p) => p[1]));
+export const egGroundArchRise = (style, hw) => Math.max(...egArchCurve(style, hw, 0, 8).map((p) => p[1]));
 
 // ── A WALL'S FRAME ────────────────────────────────────────────────────────────────────────────────────────────────
 /**
@@ -480,7 +480,7 @@ export function egPilasters(t0, t1, grid) {
 function bayWindow(ta, tb, yb, yTop, style, { sill = /** @type {number} */ (EG_WALL.sill), hwMax = /** @type {number} */ (EG_WALL.hw) } = {}) {
   const W = EG_WALL, hw = Math.min(hwMax, (tb - ta) / 2 - W.pier), s = yb + sill;
   if (hw < 0.3) return null;
-  const crown = Math.min(yTop - W.head, s + (W.open[style] ?? W.open.round)), rise = egArchRise(style, hw), spring = crown - rise;
+  const crown = Math.min(yTop - W.head, s + (W.open[style] ?? W.open.round)), rise = egGroundArchRise(style, hw), spring = crown - rise;
   if (spring - s < 0.6) return null;
   return { tc: (ta + tb) / 2, hw, sill: s, spring, curve: egArchCurve(style, hw, 0, EG_WALL.m) };
 }
@@ -537,7 +537,7 @@ function academyWall(W, o, piece) {
         const cs = hole.sill, cd = E.proud - E.courseOut;
         if (!own?.noCourse) { mouldDT(kit, W, cs, cd, ta, E.proud, tb, UP, EG_MOULD_BAND.fillet); mouldTY(kit, W, cd, ta, cs - E.course, tb, cs, W.IN, EG_MOULD_BAND.band); }
         voussoirRing(kit, W, E.proud - E.voltOut, E.proud - E.voltOut, hole.tc, hole.hw, hole.spring, style, 0, E.volt, E.m, W.IN);
-        const crown = hole.spring + egArchRise(style, hole.hw);
+        const crown = hole.spring + egGroundArchRise(style, hole.hw);
         wbox(kit, W, R.voussoir, E.proud - E.voltOut - 0.06, E.proud, crown - 0.04, crown + E.volt + 0.12, hole.tc - 0.13, hole.tc + 0.13, ['in', 'top', 'back', 'along']);
       }
     });
@@ -1036,7 +1036,7 @@ export function egRingArcade(spec, d, band, piece) {
     const a0 = (k / n) * TAU, a1 = ((k + 1) / n) * TAU, mid = (a0 + a1) / 2;
     const W0 = egWallFrame(spec, d.x + Math.sin(a0) * d.r, d.z + Math.cos(a0) * d.r, d.x + Math.sin(a1) * d.r, d.z + Math.cos(a1) * d.r, -Math.sin(mid), -Math.cos(mid));
     const gA = ringGapSide((k + n - 1) % n, n), gB = ringGapSide((k + 1) % n, n), W = mitred(W0, Math.PI / n, gA ? 0 : 1, gB ? 0 : 1), L = W0.L, pw = A.pier;
-    const hw = (L - 2 * pw) / 2, crown = yE - 0.35, spring = Math.max(y + 1.5, crown - egArchRise(style, hw)), hole = { tc: L / 2, hw, sill: y, spring, curve: egArchCurve(style, hw, 0, A.m) };
+    const hw = (L - 2 * pw) / 2, crown = yE - 0.35, spring = Math.max(y + 1.5, crown - egGroundArchRise(style, hw)), hole = { tc: L / 2, hw, sill: y, spring, curve: egArchCurve(style, hw, 0, A.m) };
     const open = k % 2 === 0;   // the arcade's rhythm: an open arch, a blind bay, an open arch...
     piece((kit) => {
       // the entablature and the parapet over every bay, on the collider's ring; the ledge behind the parapet, its coping
@@ -1070,7 +1070,7 @@ export function egRingArcade(spec, d, band, piece) {
         // the archivolt and its keystone; the opening through the wall (its jambs the piers' sides, its sill the base
         // course's top, its soffit); the outer face; the piers' feet under the base
         voussoirRing(kit, W, 0.03, 0.03, L / 2, hw, spring, style, 0, 0.32, A.m, W.IN);
-        const top = spring + egArchRise(style, hw);
+        const top = spring + egGroundArchRise(style, hw);
         wbox(kit, W, R.voussoir, 0, A.setback, top - 0.05, Math.min(yE, top + 0.5), L / 2 - 0.18, L / 2 + 0.18, ['in', 'back', 'along']);
         reveal(kit, W, R.wall, 0, D, hole);
         holedFace(kit, W, R.wall, D, 0, L, yb, yE, W.OUT, hole);
@@ -1184,7 +1184,7 @@ export function egChokeArch(spec, d, band, boxes, piece) {
  *  capitals (its intrados the posts' inner faces, its back their outer), its keystone, the entablature and the pediment
  *  over it. */
 export const EG_DOORWAY = Object.freeze({ plinth: 0.55, base: 0.15, inset: 0.05, cap: 0.4, key: 0.34, ent: 0.55, ped: 0.75 });
-/** The band's sigil on a keystone's face: its outline as a polygon about the face's centre, `r` across (EG_SIGILS's shapes
+/** The band's sigil on a keystone's face: its outline as a polygon about the face's centre, `r` across (EG_GROUND_SIGILS's shapes
  *  drawn small) - [[u, v], ...] in the face's plane. */
 function sigilOutline(sigil, r) {
   const out = [];

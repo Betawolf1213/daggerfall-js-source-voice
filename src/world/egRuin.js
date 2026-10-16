@@ -53,6 +53,8 @@ import { egIsleDisc, egTubeBand, egWallBand, egWallFoot, egNicheBoxes, EG_LAMP }
 
 const K = EG_KIT_RECORD, ASHLAR = EG_DRESS.pillar;
 const TAU = Math.PI * 2;
+/** A column's bearing about its disc's centre, in [0, a whole turn) - its place round the ring. */
+const ringAngle = (c) => ((Math.atan2(c.z - c.cz, c.x - c.cx) % TAU) + TAU) % TAU;
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 const lerp = (a, b, t) => a + (b - a) * t;
 
@@ -69,7 +71,7 @@ export const EG_RUIN = Object.freeze({
 });
 /** THE CORNICE (section 3.2): its inner face this far past the floor's edge, its crown this far under the floor's top, and
  *  the most of it past the edge (the Hour's teeth's reach). */
-export const EG_CORNICE = Object.freeze({ gap: 0.004, under: 0.002, reach: 0.35 });
+export const EG_RUIN_CORNICE = Object.freeze({ gap: 0.004, under: 0.002, reach: 0.35 });
 /** THE KIT'S PICTURES AS THE BAND ART LAYS THEM (world/egBandArt.js EG_KIT_MAP - the builders' one table): the moulding's
  *  bands down its profile (fillet, ornament, the metal band, cove, torn), the fixture's (its flame cells, its body, its
  *  grille), the foundation's strata top to tip (slab, courses - a course of eight rows each - rubble, deep, haze) and the
@@ -529,7 +531,7 @@ function chain(W, a, n, link = 0.32) {
  * `ends` closes its two ends (a run cut short).
  */
 function corniceRun(W, rec, path, P, { closed = false, ends = true } = {}) {
-  const G = EG_CORNICE.gap, U = EG_CORNICE.under, n = path.length, segs = closed ? n : n - 1, prof = P.pts;
+  const G = EG_RUIN_CORNICE.gap, U = EG_RUIN_CORNICE.under, n = path.length, segs = closed ? n : n - 1, prof = P.pts;
   // each face's v: its band of the moulding (EG_KIT_MAP), shared along the faces that wear it by their length
   const vA = [], vB = [];
   for (let j = 0; j + 1 < prof.length;) {
@@ -542,11 +544,11 @@ function corniceRun(W, rec, path, P, { closed = false, ends = true } = {}) {
     for (let q = j; q <= e; q++) { vA[q] = lerp(band[0], band[1], acc / tot); acc += seg[q - j]; vB[q] = lerp(band[0], band[1], acc / tot); }
     j = e + 1;
   }
-  // the profile drawn in so its reach at a mitred corner stays within EG_CORNICE.reach of the floor's edge
+  // the profile drawn in so its reach at a mitred corner stays within EG_RUIN_CORNICE.reach of the floor's edge
   let reach = 0, mm = 1;
   for (const q of prof) reach = Math.max(reach, q[0]);
   for (const q of path) mm = Math.max(mm, q.m);
-  const sc = Math.min(1, (EG_CORNICE.reach / mm - G - 1e-3) / reach);
+  const sc = Math.min(1, (EG_RUIN_CORNICE.reach / mm - G - 1e-3) / reach);
   const pt = (p, j) => { const o = (G + prof[j][0] * sc) * p.m; return [p.x + p.nx * o, p.y - U + prof[j][1], p.z + p.nz * o]; };
   const grid = path.map((p) => prof.map((_, j) => pt(p, j)));   // each corner's profile, once
   let along = 0;
@@ -573,12 +575,12 @@ function corniceRun(W, rec, path, P, { closed = false, ends = true } = {}) {
 }
 /** The Wellhead's cornice spikes: iron points hanging under its block, one each 1.2 m of `path`. */
 function corniceSpikes(W, path, closed) {
-  const n = path.length, segs = closed ? n : n - 1, G = EG_CORNICE.gap;
+  const n = path.length, segs = closed ? n : n - 1, G = EG_RUIN_CORNICE.gap;
   let carry = 0.6;
   for (let s = 0; s < segs; s++) {
     const A = path[s], Bq = path[(s + 1) % n], L = Math.hypot(Bq.x - A.x, Bq.z - A.z);
     for (let t = carry; t < L; t += 1.2) {
-      const k = t / L, x = lerp(A.x, Bq.x, k), z = lerp(A.z, Bq.z, k), y = lerp(A.y, Bq.y, k) - EG_CORNICE.under - 0.55, nx = lerp(A.nx, Bq.nx, k), nz = lerp(A.nz, Bq.nz, k), o = (G + 0.26) * A.m;
+      const k = t / L, x = lerp(A.x, Bq.x, k), z = lerp(A.z, Bq.z, k), y = lerp(A.y, Bq.y, k) - EG_RUIN_CORNICE.under - 0.55, nx = lerp(A.nx, Bq.nx, k), nz = lerp(A.nz, Bq.nz, k), o = (G + 0.26) * A.m;
       const c = [x + nx * o, y, z + nz * o], tip = [c[0], y - 0.32, c[2]], q = [[0.07, 0], [0, 0.07], [-0.07, 0], [0, -0.07]].map(([a, b]) => [c[0] + a, y, c[2] + b]);
       for (let i = 0; i < 4; i++) { const a = q[i], b = q[(i + 1) % 4], m = [(a[0] + b[0]) / 2 - c[0], -0.1, (a[2] + b[2]) / 2 - c[2]]; W.T(K.fixture, a, b, tip, 0, 0.3, 0.1, 0.3, 0.05, 0.9, m[0], m[1], m[2]); }
       carry = t + 1.2 - L;
@@ -1287,7 +1289,7 @@ function edgeRuns(law, ax, az, bx, bz, hw, y, self) {
     const nx = -uz * side, nz = ux * side, n = Math.max(2, Math.ceil(L / 0.5)), ok = [];
     for (let i = 0; i <= n; i++) {
       const s = (i / n) * L, ex = ax + ux * s + nx * hw, ez = az + uz * s + nz * hw;
-      ok.push(!(corniceHit(law, self, ex - nx * 0.05, ez - nz * 0.05, y) || corniceHit(law, self, ex + nx * 0.18, ez + nz * 0.18, y) || corniceHit(law, self, ex + nx * EG_CORNICE.reach, ez + nz * EG_CORNICE.reach, y)));
+      ok.push(!(corniceHit(law, self, ex - nx * 0.05, ez - nz * 0.05, y) || corniceHit(law, self, ex + nx * 0.18, ez + nz * 0.18, y) || corniceHit(law, self, ex + nx * EG_RUIN_CORNICE.reach, ez + nz * EG_RUIN_CORNICE.reach, y)));
     }
     let i = 0;
     while (i <= n) {
@@ -1314,7 +1316,7 @@ function corniceHit(law, self, x, z, y) {
 function rimRuns(law, d, self) {
   const P = rimPath(d), N = P.length, y = d.y ?? 0, ok = P.map((p, k) => {
     const q = P[(k + 1) % N], mx = (p.x + q.x) / 2, mz = (p.z + q.z) / 2, nx = (p.nx + q.nx) / 2, nz = (p.nz + q.nz) / 2;
-    return ![0, 0.1, 0.25, EG_CORNICE.reach].some((o) => corniceHit(law, self, mx + nx * o, mz + nz * o, y) || corniceHit(law, self, p.x + p.nx * o, p.z + p.nz * o, y) || corniceHit(law, self, q.x + q.nx * o, q.z + q.nz * o, y));
+    return ![0, 0.1, 0.25, EG_RUIN_CORNICE.reach].some((o) => corniceHit(law, self, mx + nx * o, mz + nz * o, y) || corniceHit(law, self, p.x + p.nx * o, p.z + p.nz * o, y) || corniceHit(law, self, q.x + q.nx * o, q.z + q.nz * o, y));
   });
   if (ok.every(Boolean)) return [{ path: P, closed: true }];
   if (!ok.some(Boolean)) return [];
@@ -1432,8 +1434,7 @@ function hallRuin(W, spec, lite, tally = null) {
   const byDisc = new Map();
   for (const c of plan.cols) if (stood.has(c)) { const key = `${c.d}:${c.ring.toFixed(2)}`; if (!byDisc.has(key)) byDisc.set(key, []); byDisc.get(key).push(c); }
   for (const ring of byDisc.values()) {
-    const ang = (c) => ((Math.atan2(c.z - c.cz, c.x - c.cx) % TAU) + TAU) % TAU;
-    ring.sort((p, q) => ang(p) - ang(q));
+    ring.sort((p, q) => ringAngle(p) - ringAngle(q));
     for (let j = 0; j < ring.length; j++) {
       const c = ring[j];
       if (c.kind !== 'whole' || ring.length < 2) continue;
