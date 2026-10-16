@@ -738,7 +738,7 @@ export function createWeaponWidget({
     const tex = w.curCustomTexture?.tex ?? rec.frames[Math.min(Math.max(0, w.currentFrame), rec.frames.length - 1)];
     if (!tex) return false;
     renderer.drawScreenQuad(tex, getWeaponRect(), w.curAnimRect, tint ?? undefined);
-    if (ctx.glow) renderer.drawScreenQuadGlow?.(tex, getWeaponRect(), w.curAnimRect, ctx.glow);   // WEAPON-GLOW1: the element's outline, as the sprite it stands in for draws it (the rig's ctx says it each frame)
+    if (ctx.glow) renderer.drawScreenQuadGlow?.(tex, getWeaponRect(), w.curAnimRect, ctx.glow, { art: [rec.width, rec.height], view: [canvas.width, canvas.height] });   // WEAPON-GLOW1: the element's outline, as the sprite it stands in for draws it (the rig's ctx says it each frame), in the record's own pixels
     return true;
   }
 

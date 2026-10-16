@@ -9,8 +9,8 @@
 // or shock (LOOT4's `elemental` line, a Ruby's or a Sapphire's gem) - and the hand said none of it: a Magic blade with
 // "+3 Fire damage" swung the plain sheet (it carries no DFU enchantment), and every Morrowind weapon swung bare.
 //
-// THE LAW, decided here once for every drawer (the classic sprite's outline, combat/weaponGlowSprite.js; the Morrowind
-// mesh's shell, render/weaponGlowShell.js):
+// THE LAW, decided here once for every drawer (the classic sprite's outline, render/renderer.js drawScreenQuadGlow; the
+// Morrowind weapon's rings and charge, render/renderer.js _drawWeaponGlow - their drawing render/weaponGlowGlsl.js):
 //   1. THE ELEMENT IS THE BLOW'S. A weapon's element is what its blow carries - its `elemental` lines, rolled or
 //      socketed, read as the blow reads them (lootRarity.js readLines: a gem's line within its piece's cap). Nothing
 //      else names one: a Legendary's power (Venom, Dragonfire, Chain Lightning) is its record's own, and a
@@ -22,7 +22,10 @@
 //      rarityKnown), and the hand hides its element with it: the classic rig swings what DFU swings (the WEAPO1xx
 //      sheet, it is enchanted), the Morrowind hand the arcane glow.
 //   5. ARCANE IS THE MORROWIND HAND'S OWN: an enchanted weapon with no element showing takes the enchanted look the
-//      classic hand takes off its WEAPO1xx sheet - the Morrowind models have no second sheet, so it is drawn.
+//      classic hand takes off its WEAPO1xx sheet - the Morrowind models have no second sheet, so it is drawn. It is
+//      DFU's enchantment that answers (inventory.js isEnchanted), the ladder's switch or not: a MAGIC.DEF blade glows
+//      with the ladder off as its sheet does. An Aetheric or a Gilded piece carries none (its powers are its record's),
+//      so it swings bare in the Morrowind hand as it swings the plain sheet in the classic one.
 //   6. THE SWITCH: `weaponGlow` (the Features row, systems/features.js), on by default; `?weaponglow=off` the kill door.
 //      The loot ladder's own switch answers first - off, no line is read (lootPowers.js linesOf), so no element shows.
 
@@ -31,7 +34,6 @@ import { isEnchanted } from './inventory.js';
 import { getPref } from './uiPrefs.js';
 import { pageParam } from './pageQuery.js';
 import { GLOW_SPRITE_WINDOW } from '../render/weaponGlowGlsl.js';   // the sprite's search window - a leaf with no imports
-import { LOOK_GLOW_RE } from '../net/wire.js';   // the wire's word for a glow - the relay's bound, so one home
 
 /** The pref the Features row stores. */
 export const WEAPON_GLOW_PREF = 'weaponGlow';
@@ -50,37 +52,55 @@ export const GLOW_CODE = Object.freeze(Object.fromEntries(GLOW_LOOKS.map((k, i) 
 export const GLOW_LEVEL_EDGES = Object.freeze([3, 6]);
 export const glowLevel = (total) => (total <= GLOW_LEVEL_EDGES[0] ? 1 : total <= GLOW_LEVEL_EDGES[1] ? 2 : 3);
 
-/**
- * Law 1 and 2: the element a weapon's blow carries, and how much - `{ element, total }`, or null. Law 4: null for a
- * piece whose lines are not yet known, and with the ladder off.
- * @param {any} item
- * @param {{ ladder?: boolean }} [opts]
- */
-export function weaponElement(item, { ladder = lootRarityOn() } = {}) {
-  if (!ladder || !item || !Array.isArray(item.affixes) || !rarityKnown(item)) return null;
-  /** @type {Record<string, number>} */
-  const sum = {};
+/** Law 1 and 2 as the hot path asks them - every frame, for the held weapon and every peer's - so no object is built:
+ *  the index in PROC_ELEMENTS of the element a weapon's blow carries, or -1, its total left in `_total`. Law 4: -1 for
+ *  a piece whose lines are not yet known, and with the ladder off. */
+const _sums = PROC_ELEMENTS.map(() => 0);
+let _total = 0;
+function elementIndex(item, ladder) {
+  _total = 0;
+  if (!ladder || !item || !Array.isArray(item.affixes) || !rarityKnown(item)) return -1;
+  _sums.fill(0);
   for (const a of readLines(item)) {
-    if (a?.id !== 'elemental' || !validAffix(a)) continue;
-    sum[a.param] = (sum[a.param] ?? 0) + a.value;
+    if (a?.id !== 'elemental' || !validAffix(a)) continue;   // validAffix: its param one of PROC_ELEMENTS, its value in band
+    _sums[PROC_ELEMENTS.indexOf(a.param)] += a.value;
   }
-  let best = null;
-  for (const el of PROC_ELEMENTS) if ((sum[el] ?? 0) > 0 && (!best || sum[el] > best.total)) best = { element: el, total: sum[el] };
+  let best = -1;
+  for (let i = 0; i < _sums.length; i++) if (_sums[i] > 0 && (best < 0 || _sums[i] > _sums[best])) best = i;
+  if (best >= 0) _total = _sums[best];
   return best;
 }
 
 /**
- * THE ONE ANSWER every drawer asks: the look a weapon in the hand wears, `{ look, level }`, or null for none. `arcane`
- * (law 5) asks for the enchanted look where no element shows - the Morrowind hand's; the classic hand's is its sheet.
+ * Law 1 and 2: the element a weapon's blow carries, and how much - `{ element, total }`, or null.
+ * @param {any} item
+ * @param {{ ladder?: boolean }} [opts]
+ */
+export function weaponElement(item, { ladder = lootRarityOn() } = {}) {
+  const i = elementIndex(item, ladder);
+  return i < 0 ? null : { element: PROC_ELEMENTS[i], total: _total };
+}
+
+/** The spec a weapon wears, or null - the hot path: no object built, the switches read only for a weapon in hand. */
+function specOf(item, arcane, on, ladder) {
+  if (!item || !(on ?? weaponGlowOn())) return null;
+  const i = elementIndex(item, ladder ?? lootRarityOn());
+  if (i >= 0) return glowSpec(PROC_ELEMENTS[i], glowLevel(_total));
+  return arcane && isEnchanted(item) ? glowSpec('arcane', ARCANE_LEVEL) : null;
+}
+/** Law 5's one strength: the enchanted look has no band to read. */
+export const ARCANE_LEVEL = 2;
+
+/**
+ * THE ONE ANSWER every drawer asks, as a plain pair: the look a weapon in the hand wears, `{ look, level }`, or null for
+ * none. `arcane` (law 5) asks for the enchanted look where no element shows - the Morrowind hand's; the classic hand's
+ * is its sheet.
  * @param {any} item
  * @param {{ arcane?: boolean, on?: boolean, ladder?: boolean }} [opts]
  */
-export function weaponGlow(item, { arcane = false, on = weaponGlowOn(), ladder = lootRarityOn() } = {}) {
-  if (!on || !item) return null;
-  const el = weaponElement(item, { ladder });
-  if (el) return { look: el.element, level: glowLevel(el.total) };
-  if (arcane && isEnchanted(item)) return { look: 'arcane', level: 2 };
-  return null;
+export function weaponGlow(item, { arcane = false, on, ladder } = {}) {
+  const s = specOf(item, arcane, on, ladder);
+  return s ? { look: s.look, level: s.level } : null;
 }
 
 /**
@@ -97,43 +117,52 @@ export const GLOW_RAMPS = Object.freeze({
   arcane: Object.freeze([[0.3, 0.26, 0.78], [0.38, 0.5, 1.0], [0.6, 0.76, 1.0], [0.88, 0.94, 1.0]]),
 });
 
-/** The ramp of a look, flat - twelve floats, the `uRamp[4]` a shader takes. Null for none. */
+/** The ramp of a look, flat - twelve floats, the `uRamp[4]` a shader takes. Null for none. A fresh copy each ask (the
+ *  probe's, a test's); the specs hold their own, frozen. */
 export function glowRampFlat(look) {
   const r = Object.hasOwn(GLOW_RAMPS, look) ? GLOW_RAMPS[/** @type {keyof typeof GLOW_RAMPS} */ (look)] : null;
   return r ? new Float32Array(r.flat()) : null;
 }
 
-/** A look at a level as a drawer takes it - `{ look, code, level, ramp, win }` (`win` the sprite's search window,
- *  render/weaponGlowGlsl.js GLOW_SPRITE_WINDOW) - built once a pair and frozen, so a frame asks and allocates nothing. */
-const _specs = new Map();
-export function glowSpec(look, level) {
-  const key = `${look}:${level}`;
-  let s = _specs.get(key);
-  if (!s && GLOW_CODE[/** @type {keyof typeof GLOW_CODE} */ (look)] > 0) {
-    s = Object.freeze({ look, code: GLOW_CODE[/** @type {keyof typeof GLOW_CODE} */ (look)], level, ramp: glowRampFlat(look), win: GLOW_SPRITE_WINDOW[/** @type {keyof typeof GLOW_SPRITE_WINDOW} */ (look)] });
-    _specs.set(key, s);
+/** A look at a level as a drawer takes it - `{ look, code, level, word, ramp, win }` (`word` the wire's, `ramp` the
+ *  twelve floats frozen, `win` the sprite's search window, render/weaponGlowGlsl.js GLOW_SPRITE_WINDOW) - every one
+ *  built here, once, and frozen whole: an ask hands one back and builds nothing. */
+const SPEC_TABLE = (() => {
+  /** @type {Record<string, ReadonlyArray<any>>} */
+  const table = {};
+  for (const look of GLOW_LOOKS.slice(1)) {
+    const row = [null, null, null, null];
+    for (const level of look === 'arcane' ? [ARCANE_LEVEL] : [1, 2, 3]) {   // law 5: the arcane look has one strength
+      row[level] = (Object.freeze({
+        look, code: GLOW_CODE[/** @type {keyof typeof GLOW_CODE} */ (look)], level, word: `${look}${level}`,
+        ramp: Object.freeze(GLOW_RAMPS[/** @type {keyof typeof GLOW_RAMPS} */ (look)].flat()),
+        win: GLOW_SPRITE_WINDOW[/** @type {keyof typeof GLOW_SPRITE_WINDOW} */ (look)],
+      }));
+    }
+    table[look] = Object.freeze(row);
   }
-  return s ?? null;
+  return Object.freeze(table);
+})();
+/** The spec of a look at a level (1-3), or null for anything else. */
+export function glowSpec(look, level) {
+  const row = typeof look === 'string' && Object.hasOwn(SPEC_TABLE, look) ? SPEC_TABLE[look] : null;
+  return (row && Number.isInteger(level) && row[level]) || null;
 }
+/** Every spec, by its word - the wire's ten (net/wire.js LOOK_GLOW_RE takes exactly these). */
+const SPEC_BY_WORD = new Map(Object.values(SPEC_TABLE).flatMap((row) => row.filter(Boolean)).map((s) => [s.word, s]));
 
 /** THE CLASSIC HAND'S ASK: the outline its sprite wears (an element alone - its enchanted look is its WEAPO1xx sheet),
  *  or null. When this answers, the rig swings the PLAIN sheet (combat/fpsWeapon.js plainWeaponType): the element is
- *  the more that is known, and a fire outline round a sheet painted with the blue glow says two things at once. */
-export function spriteGlow(item, opts = {}) {
-  const g = weaponGlow(item, { ...opts, arcane: false });
-  return g ? glowSpec(g.look, g.level) : null;
-}
+ *  the more that is known, and a fire outline round a sheet painted with the blue glow says two things at once.
+ *  @param {any} item @param {{ on?: boolean, ladder?: boolean }} [opts] */
+export const spriteGlow = (item, opts) => specOf(item, false, opts?.on, opts?.ladder);
 
-/** THE MORROWIND HAND'S ASK: its element, or the arcane look for an enchanted weapon with none showing (law 5). */
-export function meshGlow(item, opts = {}) {
-  const g = weaponGlow(item, { ...opts, arcane: true });
-  return g ? glowSpec(g.look, g.level) : null;
-}
+/** THE MORROWIND HAND'S ASK: its element, or the arcane look for an enchanted weapon with none showing (law 5).
+ *  @param {any} item @param {{ on?: boolean, ladder?: boolean }} [opts] */
+export const meshGlow = (item, opts) => specOf(item, true, opts?.on, opts?.ladder);
 
-/** THE WIRE'S WORD for a held weapon's glow - `fire2`, `arcane2` - and back (net/wire.js LOOK_ITEM_FIELDS `glow`): a
- *  peer's body is drawn from it, since its affixes never travel. Anything else reads as none. */
-export const glowWord = (spec) => (spec ? `${spec.look}${spec.level}` : null);
-export function glowFromWord(word) {
-  const m = typeof word === 'string' ? LOOK_GLOW_RE.exec(word) : null;
-  return m ? glowSpec(m[1], Number(m[2])) : null;
-}
+/** THE WIRE'S WORD for a held weapon's glow - `fire2`, `arcane2` - and back (net/wire.js LOOK_GLOW_RE, validLookItem's
+ *  `glow`): a peer's body is drawn from it, since its affixes never travel. Anything else reads as none. The words are
+ *  exactly the specs' ten, which are exactly the words the wire's pattern takes (test/weaponglow1.test.js). */
+export const glowWord = (spec) => spec?.word ?? null;
+export const glowFromWord = (word) => (typeof word === 'string' ? SPEC_BY_WORD.get(word) ?? null : null);

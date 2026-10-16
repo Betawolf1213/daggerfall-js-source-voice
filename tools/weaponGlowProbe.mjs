@@ -1,7 +1,7 @@
 // WEAPON-GLOW1 probe (bible/05-Combat/Weapon-Glow.md): renders the element glows through the REAL renderer, headless,
 // on art that is NOT game data - a pixel sword drawn here, and a sword mesh built here - so the looks can be seen and
 // tuned without ARENA2 or the Morrowind archives. Top row: the classic sprite's outline (drawScreenQuadGlow), fire,
-// frost, shock and the bare frame; bottom row: the Morrowind pass (drawCharacter's _drawWeaponGlow in the sprite
+// frost, shock, and fire again on the same sword painted at three texels a pixel (an HD frame); bottom row: the Morrowind pass (drawCharacter's _drawWeaponGlow in the sprite
 // target), fire, frost, shock and arcane. One PNG per clock time asked.
 // Usage: node tools/weaponGlowProbe.mjs [outDir] [seconds...]   (starts its own vite server; needs Chromium)
 import { createServer } from 'vite';
@@ -24,8 +24,7 @@ page.on('pageerror', (e) => console.log('[pageerror]', e.message));
 await page.setContent(`<!doctype html><body style="margin:0;background:#000"><canvas id="c" width="1600" height="900" style="width:1600px;height:900px"></canvas>
 <script type="module">
 import { Renderer } from 'http://localhost:${PORT}/src/render/renderer.js';
-import { GLOW_CODE, glowRampFlat } from 'http://localhost:${PORT}/src/systems/weaponGlow.js';
-import { GLOW_SPRITE_WINDOW } from 'http://localhost:${PORT}/src/render/weaponGlowGlsl.js';
+import { glowSpec } from 'http://localhost:${PORT}/src/systems/weaponGlow.js';
 
 const canvas = document.getElementById('c');
 const renderer = new Renderer(canvas);
@@ -47,6 +46,11 @@ for (let y = 80; y < 87; y++) for (let x = 8; x < 40; x++) put(x, y, 170 - (y - 
 for (let y = 87; y < 104; y++) for (let x = 21; x < 28; x++) put(x, y, 90 + ((y % 3) * 12), 52, 30);
 for (let y = 104; y < 111; y++) for (let x = 18; x < 31; x++) put(x, y, 175, 135, 45);
 const sword = renderer.uploadTexture('img', 'glowprobe:sword', { width: SW, height: SH, colors: px });   // screen order, row 0 the top - as a CIF frame's (fpsWeapon.js frameToColor32)
+// the same sword painted at three texels a pixel - an HD replacer's frame (AUDIT WEAPON-GLOW SPR-4: its outline must be
+// the classic one's size, measured in the frame's own pixels)
+const HD = 3, hd = new Uint8Array(SW * HD * SH * HD * 4);
+for (let y = 0; y < SH * HD; y++) for (let x = 0; x < SW * HD; x++) hd.set(px.subarray(((Math.floor(y / HD) * SW) + Math.floor(x / HD)) * 4, ((Math.floor(y / HD) * SW) + Math.floor(x / HD)) * 4 + 4), (y * SW * HD + x) * 4);
+const swordHd = renderer.uploadTexture('img', 'glowprobe:swordhd', { width: SW * HD, height: SH * HD, colors: hd });
 
 // the sword mesh: a blade (a flat diamond prism), a guard and a grip, 14 floats a corner (pos, colour, normal, uv, emission)
 const tris = [];
@@ -100,18 +104,19 @@ window.__draw = (seconds, level) => {
     renderer.drawScreenQuad(null, { x: i * 400, y: 0, w: 400, h: 450 }, undefined, bg[i]);
     renderer.drawScreenQuad(null, { x: i * 400, y: 450, w: 400, h: 450 }, undefined, bg[(i + 2) % 4]);
   }
-  // the classic sprite, 3x, standing on the panel's floor
+  // the classic sprite, 3x, standing on the panel's floor (its bottom row the arm's cut, as every first-person frame's);
+  // the fourth the HD sword with fire, its outline the first's size
   for (let i = 0; i < 4; i++) {
     const dst = { x: i * 400 + 200 - SW * 1.5, y: 430 - SH * 3, w: SW * 3, h: SH * 3 };
-    renderer.drawScreenQuad(sword, dst, undefined, [1, 1, 1, 1]);
-    const look = LOOKS[i];
-    if (look) renderer.drawScreenQuadGlow(sword, dst, undefined, { code: GLOW_CODE[look], level, ramp: glowRampFlat(look), win: GLOW_SPRITE_WINDOW[look] });
+    const tex = i === 3 ? swordHd : sword;
+    renderer.drawScreenQuad(tex, dst, undefined, [1, 1, 1, 1]);
+    renderer.drawScreenQuadGlow(tex, dst, undefined, glowSpec(LOOKS[i % 3], level), { art: [SW, SH], view: [1600, 900] });
   }
   // the Morrowind pass, a 400 x 450 picture each
   const proj = perspective(Math.PI / 4, 400 / 450, 0.5, 40);
   for (let i = 0; i < 4; i++) {
     const look = [...LOOKS, 'arcane'][i];
-    mesh.weaponGlow = { look, code: GLOW_CODE[look], level, ramp: glowRampFlat(look) };
+    mesh.weaponGlow = glowSpec(look, look === 'arcane' ? 2 : level);
     const tex = renderer.renderCharacterSprite(mesh, model(-0.5 + i * 0.12), proj, I, 400, 450);
     renderer.drawScreenQuad(tex, { x: i * 400, y: 450, w: 400, h: 450 }, { u0: 0, v0: 450 / 1024, u1: 400 / 1024, v1: 0 });
   }

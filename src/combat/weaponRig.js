@@ -1174,7 +1174,7 @@ export function createWeaponRig({ renderer, canvas, fetchBytes, palette, audio, 
       : tint;
     renderer.drawScreenQuad(tex, rect, undefined, lit ?? undefined);
     const elementGlow = heldGlowNow();   // WEAPON-GLOW1: the element's outline over the frame, the held weapon's own
-    if (elementGlow) renderer.drawScreenQuadGlow?.(tex, rect, undefined, elementGlow);
+    if (elementGlow) renderer.drawScreenQuadGlow?.(tex, rect, undefined, elementGlow, { art: [art.unionBox.w, art.unionBox.h], view: [canvas.width, canvas.height] });   // the frame is the union box, in native pixels
   }
 
   /**
@@ -1713,7 +1713,7 @@ export function createWeaponRig({ renderer, canvas, fetchBytes, palette, audio, 
         fpArm.readySpell(spellArmed());
         // WEAPON-GLOW1 (bible/05-Combat/Weapon-Glow.md): THE WEAPON IN THE HAND GLOWS AS ITS CARD SAYS - its element, or its
         // enchantment where none shows - on its own ranges; a value the next draw reads, so the fast path is an assignment
-        fpArm.setWeaponGlow?.(meshGlow(playerWeapon.weapon));
+        fpArm.setWeaponGlow?.(meshGlow(playerWeapon.weapon), playerWeapon.weapon);
         // MW-D32: THE BODY FOLLOWS THE EQUIP TABLE. The same per-frame
         // read that swaps the weapon now hands the rig its worn list;
         // setWorn's fast path is one key compare, and a change - a

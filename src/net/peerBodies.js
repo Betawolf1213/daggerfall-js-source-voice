@@ -807,7 +807,7 @@ export class PeerBodies {
     // `glow`, net/wire.js LOOK_GLOW_RE) - off the look NOW (a weapon identified or socketed is a new look, the same
     // template in the same hand), when MY switch shows glows; a gatherer's tool, a wolf's claws and a creature carry none
     const heldNow = look && !look.creature && !b.wolf && !tool ? peerWeaponOf(look, shown) : null;
-    b.rig.setWeaponGlow?.(heldNow && weaponGlowOn() ? glowFromWord(heldNow.glow) : null);
+    b.rig.setWeaponGlow?.(heldNow && weaponGlowOn() ? glowFromWord(heldNow.glow) : null, heldNow);   // AUDIT WEAPON-GLOW NET-1: and the weapon it is of
     b.rig.readySpell?.(!b.wolf && !!shown.sr);   // WEREWOLF1: a werewolf casts nothing (setWerewolf clears the spell stance)
     // HT-WAIST-NET (2026-09-24): THE LANTERN AT THE WAIST, off the pose's `hl` - the rig's own door, the local body's
     // (weaponRig hands the player's the same boolean every frame): the fast path one compare, the first lit binds the

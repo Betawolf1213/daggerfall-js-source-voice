@@ -420,5 +420,5 @@ export function drawFpsWeapon(renderer, canvas, art, state, frame, {
   // The mirror: rect.xMax .. -width (:388), i.e. u from 1 to 0.
   const src = flip ? { u0: 1, v0: 0, u1: 0, v1: 1 } : undefined;
   renderer.drawScreenQuad(tex, { x, y, w, h }, src, tint ?? undefined);   // MAC-I: Tint
-  if (glow) renderer.drawScreenQuadGlow?.(tex, { x, y, w, h }, src, glow);   // WEAPON-GLOW1: emissive - the room's light never dims it
+  if (glow) renderer.drawScreenQuadGlow?.(tex, { x, y, w, h }, src, glow, { art: [rec.width, rec.height], view: [canvas.width, canvas.height] });   // WEAPON-GLOW1: emissive - the room's light never dims it; measured in the record's own pixels (an HD frame's texels are finer)
 }
