@@ -126,11 +126,13 @@ mutants of the record's claims). What it changed is written into Two-Hands.md, e
 | L5 m1, m2 | MINOR | Documented behaviours no pin could fail (the pair's clone and Handedness, the left clone's stepping, the bounce in a strike, the off hand's live Agility both ways, head bobbing off, GUARD's and RUN_PUMP's numbers, ...) | FIXED: a driven pin and a mutant each |
 | L5 m4-m8, NITs | MINOR | Patch notes promising pairs the item table cannot make (flails, warhammers and battle axes take both hands); a stale Active-Arcs line and test count; two dated cites rewritten that no gate asked for; a mutant's stale name; units and counts | FIXED: restated, the two cites restored, the mutant renamed |
 
-### Open for the owner
+### The owner's call
 
-- **A Features switch (L4 m3).** All off's promise is "Every mod and enhancement goes to Off": a pair is a choice made
+- **No Features switch (L4 m3).** All off's promise is "Every mod and enhancement goes to Off": a pair is a choice made
   by equipping two weapons (the precedent of a row-less feature, Eltheric-Ocean.md), but both fists up and the running
-  hands change bare-handed play for everyone and stay on under All off. Left to the owner.
+  hands change bare-handed play for everyone and stay on under All off. Put to the owner, who answered **"Leave them
+  on"** (Mac, 2026-10-16): Two-Hands has no Features row, and All off leaves both fists and the running hands up - a
+  declared departure from All off's word (Two-Hands.md "Departures").
 
 ### Pinned (round 2)
 

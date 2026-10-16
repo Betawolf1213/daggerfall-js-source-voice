@@ -378,6 +378,9 @@ one, never one hand's glow on both:
    payloads and tells the strike listeners on one roll; the player-vs-player blow (`resolveDuelStrike`'s `off`) carries
    them. TallySkill: an off-hand swing tallies 0.8 of a use, carried.
 5. The running hands: DFU draws nothing in the hands on a run.
+6. No Features switch (the owner, of the second audit's L4 m3: "Leave them on"): both fists up and the running hands
+   stay under Settings > Features' All off, whose word is that every enhancement goes to Off; a pair needs none, being
+   the player's own choice of two weapons.
 
 ## Not carried
 
