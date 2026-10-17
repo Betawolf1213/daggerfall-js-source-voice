@@ -6,7 +6,8 @@
     "new": "['src/scenes/world.js', 'bootWorld', 20_900, MODULE]",
     "tests": [
       "test/scenes/hostceiling.test.js"
-    ]
+    ],
+    "note": "PIN MOVED (FIELD BUGS 2026-10-16b GRAVE-PARTY): world.js's ceiling lowered 21,676 -> 21,638 on main's count (21,679 -> 21,641 on its branch before the merge; activateGrave out)."
   },
   {
     "name": "HOST-SPLIT-a-ceiling-left-high",

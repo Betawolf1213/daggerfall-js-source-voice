@@ -4292,5 +4292,19 @@
   ["test/autohold.test.js","test/server/autohold.test.js"],
   ["test/bookmark_spiral.test.js","test/server/bookmark_spiral.test.js"],
   ["test/busy_heart.test.js","test/net/busy_heart.test.js"],
-  ["test/buildwarn.test.js","test/tooling/buildwarn.test.js"]
+  ["test/buildwarn.test.js","test/tooling/buildwarn.test.js"],
+  ["test/fb1016b_arenawait.test.js","test/systems/arena/fb1016b_arenawait.test.js"],
+  ["test/fb1016b_doortoken.test.js","test/net/fb1016b_doortoken.test.js"],
+  ["test/fb1016b_finepeople.test.js","test/systems/fb1016b_finepeople.test.js"],
+  ["test/fb1016b_firstpick.test.js","test/net/fb1016b_firstpick.test.js"],
+  ["test/fb1016b_graveparty.test.js","test/systems/fb1016b_graveparty.test.js"],
+  ["test/fb1016b_horsecareoff.test.js","test/systems/horse/fb1016b_horsecareoff.test.js"],
+  ["test/fb1016b_indoorwatch.test.js","test/ai/nav/fb1016b_indoorwatch.test.js"],
+  ["test/fb1016b_mendarmour.test.js","test/systems/fb1016b_mendarmour.test.js"],
+  ["test/fb1016b_rezbloodline.test.js","test/systems/legacy/fb1016b_rezbloodline.test.js"],
+  ["test/fb1016b_rvnownerschoice.test.js","test/systems/revenant/fb1016b_rvnownerschoice.test.js"],
+  ["test/fb1016b_stallshape.test.js","test/world/fb1016b_stallshape.test.js"],
+  ["test/fb1016b_stolengoods.test.js","test/systems/fb1016b_stolengoods.test.js"],
+  ["test/fb1016b_yardrows.test.js","test/ui/fb1016b_yardrows.test.js"],
+  ["bible/01-Overview/Field-Bugs-2026-10-16b.md","bible/01-Overview/bugs/Field-Bugs-2026-10-16b.md"]
 ]

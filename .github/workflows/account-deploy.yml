@@ -286,6 +286,7 @@ on:
       - "src/systems/spellcast.js"
       - "src/systems/spellcost.js"
       - "src/systems/statMods.js"
+      - "src/systems/stolenGoods.js"
       - "src/systems/survival/difficulty.js"
       - "src/systems/survival/food.js"
       - "src/systems/survival/items.js"
