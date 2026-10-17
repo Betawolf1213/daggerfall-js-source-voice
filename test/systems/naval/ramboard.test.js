@@ -101,7 +101,7 @@ test('RAM-BOARD rammed, she is fouled by me: her card "Fouled - E: board her", t
   assert.ok(h.e.ship.damage.hullShare() > 0.75, 'nor been battered');
   assert.equal(h.e.ship.fouled?.by, 'local', 'fouled by me (offline, the host\'s own id)');
   assert.ok(h.e.ship.fouled.until > FOUL_S - 1, 'for FOUL_S from the ram');
-  assert.ok(h.log.say.some((l) => /fouled in yours/.test(l)), 'said');
+  assert.ok(h.log.say.some((l) => /locked together/.test(l)), 'said');
   knowAll(h.host);   // her colours made out, and the look on her - the card's own two conditions
   h.view.look = { origin: [0, 5, 0], dir: [0, -0.05, 1] };
   frames(h, [[h.e, touching]]);
@@ -109,7 +109,7 @@ test('RAM-BOARD rammed, she is fouled by me: her card "Fouled - E: board her", t
   assert.equal(m.board?.kind, 'board', 'the helm offers the boarding');
   assert.equal(m.target?.fouled, true, 'her card knows it');
   const card = navalHudText(m).card;
-  assert.deepEqual([card.state, card.stateKind], ['Fouled - Activate: board her', 'board'], 'her colours flying: fouled, not struck');
+  assert.deepEqual([card.state, card.stateKind], ['Fouled - Activate: board', 'board'], 'her colours flying: fouled, not struck');
   assert.equal(h.host.activate(), true);
   assert.equal(h.host.boarding?.kind, 'board');
   assert.equal(h.host.boarding.shipId, h.e.id);
@@ -192,7 +192,7 @@ test('RAM-BOARD a sound ship being boarded is said afloat on the room\'s word, h
   h.run(GRAPPLE_S + 0.5);
   h.view.feet = [5000, 0, 5000];
   h.run(0.2);
-  assert.ok(h.log.say.some((l) => /runs back to her guns/.test(l)), 'a sound ship fights on');
+  assert.ok(h.log.say.some((l) => /returns to their guns/.test(l)), 'a sound ship fights on');
   assert.equal(h.e.ship.boarded, false);
 });
 

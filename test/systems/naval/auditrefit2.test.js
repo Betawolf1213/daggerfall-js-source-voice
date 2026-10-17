@@ -252,7 +252,7 @@ test('AUDIT 2 a ram\'s blow lands before her foul: a ram that sends an unstood s
   frames(at(RAM_REACH / 2));
   assert.notEqual(e.ship.damage.state, SHIP_STATES.afloat, 'the ram finished her');
   assert.equal(fouledBy(e.ship, 'local', 0), false, 'nothing fouled');
-  assert.ok(!h.log.say.some((l) => /fouled in yours/.test(l)), 'no boarding said');
+  assert.ok(!h.log.say.some((l) => /locked together/.test(l)), 'no boarding said');
 });
 
 // ── HOW SHE LOOKS ─────────────────────────────────────────────────────────────────────────────────────────────────
