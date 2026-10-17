@@ -2,9 +2,10 @@
 // made-up Firmament book and a made-up captain - no service and no game data - so the tab can be judged on a real
 // screen at real sizes and driven by a probe (tools/growthProbe.mjs). Everything but the character, the book and the
 // captain is the SHIPPING code: the window, the tab, the guide, the stage and the three windows drawn on it.
-//   ?at=level | specs | specs:arcane | specs:martial | firmament | captain   the landing (default: the tab's first)
+//   ?at=level | specs | specs:arcane | specs:martial | firmament | captain | revenants   the landing (default: the first)
 //   ?owed=1      a level waiting          ?offline=1   no Firmament book (the page says why)
 //   ?nocaptain=1 no ships to captain      ?dress=grimoire   the Grimoire skin
+//   ?norevenants=1  no revenant sworn (GROWTH5: else two - one at your side with stars to set, one away)
 import { mountEnhancedMenu } from '../ui/enhanced/enhancedMenu.js';
 import { playerEntity } from '../characters/playerEntity.js';
 import { SKILLS } from '../systems/skills.js';
@@ -15,6 +16,10 @@ import { createCaptainLedger } from '../systems/naval/captainLedger.js';
 import { levelUpScreenFor } from '../ui/charSheetDoor.js';   // the doors' own level-up screen
 import { stageFace } from '../ui/growth/growthStage.js';   // the probe's handle on the face
 import { CAPTAIN_STARS } from '../systems/naval/captainTree.js';
+import { setPref } from '../systems/uiPrefs.js';
+import { revenantDeed, revenantSpared, revenantCompanionUpdate, revenantById, setRevenantPresenter, _resetRevenantForTests } from '../systems/revenant/revenant.js';
+import { setRetinuePlayer, sendOnErrand } from '../systems/revenant/revenantCompanions.js';
+import { MOBILE_TYPES } from '../characters/mobile/mobileTypes.js';
 
 const q = new URLSearchParams(globalThis.location?.search ?? '');
 
@@ -67,6 +72,26 @@ if (q.get('nocaptain') !== '1') {
       stars: () => ({ ledger, changed: () => {} }),
     },
   });
+}
+
+// THE SWORN (GROWTH5) - two revenants spared and sworn as the game swears them: an orc at your side, rank III and level 4
+// (five stars to set), and a skeleton away on a mission - the save's records, made fresh each load
+if (q.get('norevenants') !== '1') {
+  setPref('lootRarity', true);
+  setRevenantPresenter(() => true);
+  _resetRevenantForTests();
+  setRetinuePlayer(playerEntity);
+  const swear = (mobileType, rank, xp) => {
+    const r = revenantDeed(playerEntity, { mobileType, level: 6, champion: 'mighty', health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType, rolls: () => 0 });
+    r.rank = rank;
+    const s = revenantSpared(playerEntity, { revenant: { id: r.id } });
+    revenantCompanionUpdate(playerEntity, s.id, (c) => { c.xp = xp; c.loyalty = 70; });
+    return revenantById(s.id);
+  };
+  swear(MOBILE_TYPES.Orc, 3, 300);
+  const away = swear(MOBILE_TYPES.SkeletalWarrior, 2, 100);
+  const why = sendOnErrand(away.id, 'HighRock', 'plunder', { seed: 7 });
+  if (why) console.warn(`[growth lab] the errand: ${why}`);
 }
 
 globalThis.growthFace = stageFace;   // the probe's handles

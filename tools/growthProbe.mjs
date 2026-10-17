@@ -72,8 +72,8 @@ for (const [w, h, tag] of [[1280, 720, 'wide'], [360, 740, 'phone']]) {
     await shot(page, `${tag}-specs-arcane`);
     await page.close();
   }
-  // the two skies
-  for (const at of ['firmament', 'captain']) {
+  // the three skies (GROWTH5: a sworn revenant's - the lab's orc at your side, its skeleton away)
+  for (const at of ['firmament', 'captain', 'revenants']) {
     const { page, errors } = await open(at, { w, h });
     if (tag === 'phone') await phoneDoor(page, '.fmt-root.fmt-embed', `${tag}: the ${at} page's door opens the sky over the screen`, `${tag}-${at}-open`);
     else {
@@ -84,6 +84,19 @@ for (const [w, h, tag] of [[1280, 720, 'wide'], [360, 740, 'phone']]) {
     check(`${tag}: the ${at} page - no sideways scroll`, (await overflowOf(page)) <= 0);
     check(`${tag}: the ${at} page - no page error`, !errors.length, errors.join(' | '));
     await shot(page, `${tag}-${at}`);
+    if (at === 'revenants') {
+      // the picker: the one with stars to set chosen; the one away says its sky waits
+      const picks = await page.locator('.gr-rvn').allInnerTexts();
+      const on = await page.locator('.gr-rvn.on').innerText().catch(() => '');
+      check(`${tag}: the picker - both sworn, the one with stars to set chosen`, picks.length === 2 && /to set/.test(on), `${picks.join(' / ')} | on: ${on}`);
+      await page.locator('.gr-rvn').nth(1).click();
+      await page.waitForTimeout(150);
+      const lead = await page.locator('.gr-stagelead').first().innerText().catch(() => '');
+      check(`${tag}: the one away - its line says its sky waits`, /is away/.test(lead), lead.slice(0, 80));
+      await shot(page, `${tag}-${at}-away`);
+      await page.locator('.gr-rvn').nth(0).click();
+      await page.waitForTimeout(150);
+    }
     if (tag === 'wide') {
       // full screen and back
       await page.locator('.gr-stagebar .act').click();
