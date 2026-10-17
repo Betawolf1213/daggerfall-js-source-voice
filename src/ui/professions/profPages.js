@@ -2881,6 +2881,9 @@ function drawEssenceReforge(detail, rerender, { el, divider }, rank, short) {
     const row = el('div', 'prof-smelt');
     row.append(el('b', null, pc.name), el('span', 'prof-split', `${n} Arcane Essence a line`));
     if (have < n) row.append(el('span', 'prof-short', `Needs ${n} Arcane Essence; your Stores hold ${have}.`));
+    // FB1017 REFORGE-STACK: a press a line, in a block of their own under the piece - in the row's button track (one cell,
+    // `.prof-smelt .act`) every press drew on the first and the name was squeezed to nothing
+    const presses = el('div', 'prof-lines');
     for (const line of pc.lines) {
       const b = el('button', 'act', _essReforge.busy === pc.item ? 'Reforging...' : `Reforge: ${line.text}`);
       b.type = 'button';
@@ -2891,8 +2894,9 @@ function drawEssenceReforge(detail, rerender, { el, divider }, rank, short) {
         const res = await /** @type {any} */ (p.essenceReforge)(pc, line.index);
         _essReforge.busy = null; _essReforge.word = res?.text ?? null; rerender();
       };
-      row.append(b);
+      presses.append(b);
     }
+    row.append(presses);
     detail.append(row);
   }
   if (_essReforge.word) detail.append(el('p', 'prof-word', _essReforge.word));
