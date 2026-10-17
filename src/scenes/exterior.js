@@ -3209,7 +3209,7 @@ export async function bootExterior(canvas, renderer, params, status) {
     bodyImg.load(await fetchBytes('BODY00I0.IMG'), 'BODY00I0.IMG', palette);
     rig = createEngineRig(renderer, deriveClassicRamps(palette, bodyImg.getDFBitmap()));
     rig.setGait(1);
-    window.__rig = rig;
+    if (shotMode) window.__rig = rig;   // AUDIT ANTICHEAT A2: a probe's handle, behind the shot gate
   };
   if (params.has('rig') || tpMode) await buildRig();
   player.spawn(loc.width * RMB_SIDE * 0.46, GROUND_OFFSET * 0.025 + 2, loc.height * RMB_SIDE * 0.5);
