@@ -20634,8 +20634,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     renownXpAdopt(who?.xp);   // RENOWN4: the total, before the level - so no frame draws the new level over the old total
     who = { ...who, level: renownAdopt(who?.level) };   // RENOWN1: the highest level this page has known, never a stale token's lower one
     _staffGlyphs = Array.isArray(who?.glyphs) ? who.glyphs : [];   // STAFF1: the service's own word on my glyphs, each issue
-    chatSafety.adopt(who);   // SAFE7: and on whether I have agreed to the code of conduct
     if (!isStaffT(_staffGlyphs)) setStaffPowers({ god: false, fly: false });   // ...and a title taken away takes its switches with it
+    chatSafety.adopt(who);   // SAFE7: the service's word on whether I have agreed to the code of conduct
     // GLYPH-WEAR: my own name wears what the room is shown - less the glyphs I took off - while the staff rights above
     // read every glyph that is true (hiding one is paint alone)
     const off = Array.isArray(who?.glyphsOff) ? who.glyphsOff : [];

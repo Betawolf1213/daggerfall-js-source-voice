@@ -9,6 +9,7 @@
 // hidden from everyone but those holding Manage Messages (`default_member_permissions`) - a door's look, never its lock:
 // whether a press does anything is the game's question (DISCORD_MODERATORS, MODERATOR_HANDLES).
 // The token is read from the environment and never printed.
+import { isMain } from './lib/isMain.mjs';
 
 /** The command, as Discord's API takes it: /mod lookup|mute|unmute|ban|unban, each naming a player by name or account id. */
 export const MOD_COMMAND = Object.freeze({
@@ -51,4 +52,4 @@ async function main() {
   console.log(`/mod registered in guild ${guild}.`);
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) await main();
+if (isMain(import.meta.url)) await main();
