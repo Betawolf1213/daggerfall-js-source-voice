@@ -185,6 +185,7 @@ import { hudScale } from '../ui/hud/hud.js';
 import { containerTextureRecord } from '../systems/containers.js';
 import { dungeonStartDoorFor } from '../systems/save/save.js';   // CASTLE1: the load's door is the saved dungeon's own
 import { composeNamer, composeContents } from '../systems/worldHover.js';   // INTERIOR-BODIES: the interior stands itemised bodies now, so its contents reader is a LADDER like the other three hosts' rather than one prefix
+import { createInteriorPeek } from '../systems/containerPreview.js';   // CONTAINER-PEEK: a cupboard's plaque lists what it already holds
 import { raceWinner } from '../player/activationRace.js';   // WORLD-HOVER: the race's WINNER, so the plaque names what the press would open
 import { worldHoverFrame, hideWorldPlaque, destroyWorldPlaque, worldPlaqueOn } from '../ui/worldPlaque.js';   // WORLD-HOVER: the one seam each host calls, and the hide door for the branches that return above it
 import { quickLootTake, quickLootSpend, plaqueActionFor } from '../systems/quickLoot.js'; import { showPickups } from '../ui/pickupFeed.js';   // QUICK-LOOT B4: the take, through the window's own door; HOME2: the verb the plaque lit over a door; PICKUP-FEED: what a take moved, as cards (the take's `took`)
@@ -217,7 +218,7 @@ import { applyDeathPenalty, deathPenaltyText } from '../systems/deathPenalty.js'
 import { revenantTakes } from '../systems/revenant/revenant.js';   // AUDIT FEUD (RVN8): the in-place respawn's theft, as the world host's
 import { endPlayerFights } from '../systems/harmMark.js';   // AUDIT FEUD (RVN10): ...and its fights ended
 import { tokenRows } from '../ui/messageBox.js';
-import { staticNpcRoute, showsJoinButton, serviceAccess, onPushEffects, rankNeedsLines, NO_POTION_INGREDIENTS, isServiceBox, SERVICE_LABEL, SERVICE_DESTINATION } from '../systems/guild/guildServiceFlow.js';
+import { staticNpcRoute, showsJoinButton, serviceAccess, onPushEffects, rankNeedsLines, wayBackLines, NO_POTION_INGREDIENTS, isServiceBox, SERVICE_LABEL, SERVICE_DESTINATION } from '../systems/guild/guildServiceFlow.js';
 import { isIngredient } from '../systems/potions.js';   // F201: MakePotionService's scan
 import { isPotionRecipe, USE_TEXT, expandItemMacro } from '../systems/useItem.js';   // AUDIT 63 F42: IsPotionRecipe (DaggerfallUnityItem.cs:344-347); RR1: the light's own "You douse the %it."
 import { canAccessService , hasCustomMerchantService, getCustomMerchantService, getCustomMerchantServiceLabel } from '../systems/guild/guildServices.js';   // G4: does THIS guild also sell soul gems?
@@ -3562,6 +3563,12 @@ export function createWorldModes(host) {
       return null;
     },
   ]);
+  // CONTAINER-PEEK: what a house container or a placed chest already holds, for the plaque - the getters read the
+  // room's own word only while the crosshair is on one (systems/containerPreview.js createInteriorPeek)
+  const interiorPeek = createInteriorPeek({
+    containers: () => interiorCtx?.containers, decor: () => interiorDecor, owned: () => ownsThisInterior(),
+    shut: () => !!(interiorHome && !interiorHome.own) || !!privateVisitRoom || caravanGuestHere(), hall: () => hallMemberHere(), today: () => stockedToday(),
+  });
 
   /** BS1: the book reader on a bare id - the bookshelf picks by id,
    *  and makeOpenBookHook reads item.message, so a `{ message }`
@@ -6058,7 +6065,7 @@ export function createWorldModes(host) {
     // D2: what it sells alone (its services, its quests, the Reforge's and the temple's rows) - DFU's popup stands, and
     // with it OnPush's rank review, a temple's free healing, the Mages' free recharge, Talk and the join
     const shutBox = () => (chapterHallShut(host.chapterHere?.(guild.factionId) ?? null) ? { rows: [CHAPTER_HALL_SHUT_LINE] } : null);
-    shutBox();   // AUDIT CHAP5 C1: asked as the popup opens - a patron's hall has the guild book look before a price reads it
+    const shutAtOpen = !!shutBox();   // AUDIT CHAP5 C1: asked as the popup opens - a patron's hall has the guild book look before a price reads it; WAY-BACK: and the way back's words read it (AUDIT WAY-BACK L1-3)
     if (!guildServiceArtLoaded() || !_shopFont) return;   // no art, no window (the U8 idiom)
     const memberships = activeMemberships(playerEntity);   // V2e: the vampire-aware book
     // CHAP4b (Chapters-Arc 6): a seat's rank at its own chapter's halls - the hall's services read the book SEATED (the
@@ -6111,6 +6118,7 @@ export function createWorldModes(host) {
     // next one, and the port's overlay slot is single. The identity
     // guard is what keeps the second window alive; without it the join
     // welcome and every service flow vanished the moment they opened.
+    const wayBack = () => wayBackLines(guild, playerEntity, memberships, store, { paced: !!host.rollPace?.(guild.factionId), online: sharedClockOn(), shut: shutAtOpen });   // WAY-BACK: the Roll's pace while it holds
     let win = null;
     win = new GuildServiceWindow({
       member: () => !showsJoinButton(memberships, route.guildGroup),
@@ -6128,6 +6136,7 @@ export function createWorldModes(host) {
       }),
       // PROMO-NOW: online, the popup says what the next rank asks (the enhanced skin's line; the classic window is DFU's)
       rankNeeds: () => { const pace = sharedClockOn() ? host.rollPace?.(guild.factionId) ?? null : null; return sharedClockOn() ? rankNeedsLines(playerEntity, guild, seated(), store, { rankCeiling: pace?.book ?? null, pace, now: ownDate(), book: memberships }) : null; },   // ROLL-PACE: and when the pace holds it; SEAT-LINE: read seated - a seat's own hall asks nothing more; STANDING-WORDS: the review's date and its book
+      wayBack,   // WAY-BACK (FIELD BUGS 2026-10-16d): a stranger the guild will not take is told the way in, both lanes
       onJoin: () => {
         // JoinButton_OnMouseClick (:497-525). joinDecision is null for
         // the two invitation-only guilds, which DFU reaches by
@@ -6139,7 +6148,7 @@ export function createWorldModes(host) {
         if (!store) return null;
         const decision = joinDecision(playerEntity, guild, store);
         if (!decision) return null;
-        if (!decision.eligible) return { rows: rows(decision.textId) };
+        if (!decision.eligible) return { rows: [...rows(decision.textId), ...(isEnhanced() ? [] : wayBack() ?? [])] };   // WAY-BACK: DFU's refusal, then the way in - on the enhanced skin the hall's well says it (AUDIT WAY-BACK L2-2/4/5)
         return {
           rows: rows(decision.textId),
           buttons: 'YesNo',
@@ -8542,7 +8551,7 @@ export function createWorldModes(host) {
   }
   async function enterSailingCabin(saved, pos = null, visit = null) {
     if (mode !== 'exterior' || !host.sailingCabin) return false;
-    const entry = sailingCabinEntry(blocks, saved, host.sailingCabin.fromNative);
+    const entry = sailingCabinEntry(blocks, saved, host.sailingCabin.fromNative, typeof visit?.cabinOwner === 'string');   // AUDIT 2: another's cabin is as built - her stain is her captain's ledger's
     if (!entry) return false;
     return enterInteriorCore(entry.hit, entry.entries, { building: entry.building, pos, ...visit });
   }
@@ -8714,7 +8723,7 @@ export function createWorldModes(host) {
         // building reached through ?interior=NAME:REC omitted it.
         hit.dfBlock, hit.dfBlock.index, hit.recordIndex, hit.climateBase, hit.season,
         hit.door.matrix, {
-          voxelfolk, piece, paint, setupStaticNpc, houseOwned, peopleVisible, baseEditable,
+          voxelfolk, piece, paint, setupStaticNpc, houseOwned, peopleVisible, baseEditable, restyle: hit.restyle ?? null,   // CABIN-LOOK: a cabin stained (scenes/cabinLook.js)
           // TAVERN-TABLE (world/card/cardTableProp.js; the owner: "Lets instead place a specific table in each inn"): every
           // tavern stands the card table's own prop - its one card table
           placeCardTable: isTavern(building?.buildingType ?? BUILDING_TYPES.None),
@@ -11620,6 +11629,8 @@ export function createWorldModes(host) {
           (key) => (typeof key === 'string' && key.startsWith('droppedLoot:') ? (interiorDropped.contents?.(key) ?? null) : null),
           (key) => interiorFoes?.hoverContents?.(key) ?? null,
           (key) => interiorGuards?.hoverContents?.(key) ?? null,
+          // CONTAINER-PEEK: a house container and a placed chest, read-only - null until the list exists, so the plaque stays a name
+          interiorPeek,
         ]),
       });
       const _detected = detectFeed.tick(dt);
