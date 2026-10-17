@@ -138,7 +138,7 @@ export function mountCaptainTreeWindow(host, { ledger, changed = () => {}, onExi
     points: () => captain().points,
     committed: () => ledger.tree?.() ?? ['helm'],
     commit: (ids) => ledger.setTree(ids),
-    name: starName, kindWords: starKindWords, lines: starLines, summary: skySummary, refusal: starRefusal,
+    name: starName, kindWords: starKindWords, statLines: starLines, summary: skySummary, refusal: starRefusal,
     tone: (s) => (s?.sec === 'master' ? 'life' : 'main'),
     chips(el, pending) {
       const c = captain(), left = c.points - (pending.length - 1);

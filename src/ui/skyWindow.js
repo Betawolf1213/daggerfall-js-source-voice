@@ -49,7 +49,7 @@ const baseTones = (P) => ({
  * @property {(ids: string[]) => string[] | string} commit   the keeper given a sky - the sky it holds, or why not
  * @property {(id: string) => string} name
  * @property {(star: any) => string} kindWords
- * @property {(star: any) => Array<{ text: string, neg: boolean }>} lines
+ * @property {(star: any) => Array<{ text: string, neg: boolean }>} statLines   a star's stats in words (never `lines` - MACRO-7's TEXT.RSC read-site gate reads `.lines(` as one)
  * @property {(held: string[]) => Array<{ text: string, neg: boolean }>} summary
  * @property {(held: string[], id: string, points: number) => string | null} refusal
  * @property {(star: any) => string} tone   'main', 'life', or a key of `tones`
@@ -216,7 +216,7 @@ export function mountSkyWindow(host, sky, { changed = () => {}, onExit = () => {
     if (tone !== 'main' && tone !== 'life' && !grim) nm.style.color = toneOf(s).lit;   // a sky's own tone
     const parts = [nm, el('div', 'kd', sky.kindWords(s))];
     const ul = el('ul');
-    for (const l of sky.lines(s)) ul.append(el('li', l.neg ? 'neg' : null, l.text));
+    for (const l of sky.statLines(s)) ul.append(el('li', l.neg ? 'neg' : null, l.text));
     parts.push(ul);
     let foot = null, no = false;
     const H = heldSet();

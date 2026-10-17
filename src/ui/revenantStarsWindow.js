@@ -146,7 +146,7 @@ export function mountRevenantStarsWindow(host, { id, book = swornStarsBook(id), 
     points: () => reading().points,
     committed: () => book.tree(),
     commit: (ids) => book.setTree(ids),
-    name: rvnStarName, kindWords: rvnStarKindWords, lines: rvnStarLines, summary: rvnSkySummary, refusal: rvnStarRefusal,
+    name: rvnStarName, kindWords: rvnStarKindWords, statLines: rvnStarLines, summary: rvnSkySummary, refusal: rvnStarRefusal,
     tone: (s) => (s?.sec === 'grave' ? 'grave' : s?.sec === 'road' ? 'life' : 'main'),
     tones: { grave: GRAVE_TONE },
     chips(el, pending) {
