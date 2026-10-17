@@ -27,10 +27,22 @@ export const VOICE_PARTY_RE = /^q[0-9a-z]{6,20}$/;
 export const VOICE_ID_RE = /^[A-Za-z0-9_-]{4,40}$/;
 /** The most ids one place frame names - the subscription bound (voiceProximity.js VOICE_SUBS_MAX) with room to spare. */
 export const VOICE_PLACE_MAX = 16;
+/** The largest a request body may be before it is even read - a legitimate body is a token plus a few ids, well under
+ *  1KB; this just has to clear that with room to spare, not accommodate anything the shape checks would ever allow. */
+export const VOICE_BODY_MAX_BYTES = 8192;
 /** The service's own rate: how many token mints one identity may ask a minute. */
 export const VOICE_MINT_PER_MIN = 12;
 /** ...and how many place frames a second. */
 export const VOICE_PLACE_HZ_MAX = 4;
+
+/** The relay's doors for server-voice's cross-checks: is this identity hello'd into this room (proximity), and what party is it in (replacing a party door that was called but never actually routed); secret-gated since a different deployed Worker calls these over the public internet. */
+export const VOICE_PRESENCE_PATH = '/internal/voice/presence';
+export const VOICE_PARTY_OF_PATH = '/internal/voice/party-of';
+/** The room objects' own side of each door above - reached by the public Worker alone, never by a browser. */
+export const VOICE_PRESENCE_INTERNAL = '/internal/voice/presence/of';
+export const VOICE_PARTY_OF_INTERNAL = '/internal/voice/party-of/of';
+/** The header both ends check VOICE_RELAY_SECRET against. Lower-case: Workers lower-case incoming header names. */
+export const VOICE_RELAY_SECRET_HEADER = 'x-voice-relay-secret';
 
 /** THE SFU ROOM'S NAME, from the channel and the game's key - one law, both ends. */
 export function voiceRoomName(channel, key) {
