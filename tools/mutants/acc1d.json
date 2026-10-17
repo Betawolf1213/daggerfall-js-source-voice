@@ -82,7 +82,7 @@
   {
     "name": "ACC1d-9-the-mint-is-unbounded",
     "file": "src/net/online.js",
-    "old": "      const got = await Promise.race([\n        Promise.resolve(this.mintToken(room)).catch(() => null),   // SCALE2: the room it opens - a token opens each room once\n        new Promise((r) => setTimeout(() => r(late), TOKEN_WAIT_MS)),\n      ]);",
+    "old": "      const got = await Promise.race([\n        Promise.resolve(this.mintToken(room)).catch(() => null),   // SCALE2: the room it opens - a token opens each room once\n        new Promise((r) => { timer = setTimeout(() => r(late), TOKEN_WAIT_MS); }),\n      ]).finally(() => clearTimeout(timer));",
     "new": "      const got = await this.mintToken(room);",
     "tests": [
       "test/net/acc1dclient.test.js"

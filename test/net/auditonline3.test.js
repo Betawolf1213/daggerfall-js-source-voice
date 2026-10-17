@@ -151,8 +151,9 @@ test('AUDIT ONLINE 3 F5: a welcome\'s roster or a join naming the fallen (a Wild
   s._receive(JSON.stringify({ t: 'join', id: 'dan-0004', name: 'Dan', look: null, pose: { ...dead, ts: 2 } }), 'world:3,12');
   assert.equal(s.peers.has('dan-0004'), false);
   assert.equal(deaths.length, 3);
-  // the host lays an introduction's body without its cry
-  assert.match(rd('src/scenes/world.js'), /online\.onPeerDeath = \(peer, pose, room, how\) => \{\n(?:\s*\/\/[^\n]*\n)*\s*remotePlayers\?\.addCorpse\(\{ \.\.\.peer, acct: social\?\.accountOfPeer\?\.\(peer\.id\) \?\? null \}, pose, room, \{ quiet: !!how\?\.intro \}\);/);
+  // the host hands an introduction's word on - RemotePlayers.peerDeath lays its body without its cry (AUDIT ONLINE 3, the
+  // second read: test/net/auditonline3b.test.js drives it)
+  assert.match(rd('src/scenes/world.js'), /online\.onPeerDeath = \(peer, pose, room, how\) => \{\n(?:\s*\/\/[^\n]*\n)*\s*remotePlayers\?\.peerDeath\(\{ \.\.\.peer, acct: social\?\.accountOfPeer\?\.\(peer\.id\) \?\? null \}, pose, room, how\);/);
 });
 
 // ── F6: ANOTHER SOCKET'S MINT WROTE OVER THIS ONE'S TOKEN ──────────────────────────────────────────────────────

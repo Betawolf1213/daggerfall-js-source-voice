@@ -15924,10 +15924,10 @@ lands for everyone, migrated. Not seen with two real players from this container
 
 ## AUDIT ONLINE 3 - net/online.js read whole (2026-10-16, the user: "audita online.js")
 
-The whole session module (3,600 lines) read by four lanes, a quarter each, against the relay (`server/src/index.js`)
+The whole session module (3,750 lines) read by four lanes, a quarter each, against the relay (`server/src/index.js`)
 and the wire (`src/net/wire.js`) wherever a frame crosses. Every finding below was driven through the real
-`OnlineSession` over `test/fakeSocket.mjs` before it was believed. Fifteen real; the seven worst fixed at the root and
-pinned, the rest recorded here for their own slices.
+`OnlineSession` over `test/fakeSocket.mjs` before it was believed. Eighteen real (the second read's recount, below - it
+said fifteen); the seven worst fixed at the root and pinned, the rest recorded here for their own slices.
 
 **Fixed and pinned** (`test/net/auditonline3.test.js`):
 
@@ -15954,7 +15954,7 @@ pinned, the rest recorded here for their own slices.
   (`_fallen`, now id -> `{ ts, at }`), and a living pose sent at or before it, within TS_RESYNC_MS of hearing the
   death, is dropped (`_diedSince`); past that the send-time clock orders nothing, as `_arriveTimed` already holds.
 - **F5 - an introduction stood the fallen.** The relay holds a socket's last pose, and a fallen player's socket stays
-  in the zone's cell for WILD_GHOST_MS - so a welcome's roster, a halo's, or the who's join hands a newcomer the death
+  in the zone's cell while the body lies (WILD_DEATH_HOLD_S; WILD_GHOST_MS is the client's margin on it) - so a welcome's roster, a halo's, or the who's join hands a newcomer the death
   pose. Only the `pose` frame read `dd`: the others stood a living figure on the body and no body was laid. Every death
   now goes through one door (`_fell`), the introductions included; one said by an introduction is delivered with
   `{ intro: true }`, and the host (`scenes/world.js` `onPeerDeath`) lays that body without its cry - it was cried
@@ -15988,8 +15988,8 @@ pinned, the rest recorded here for their own slices.
   the class AUDIT RAID R8b fixed for the raid, the rite, the sd and the serpent. Only while a deploy is half done.
 - *`_inTrav` is never let go* (TV3's per-region bucket), *`_remember` keeps no title claim `ts`* (a peer re-stood from
   memory shows the bare seat title until its recall is answered), *a thrown team's single `park` frame is kept a whole
-  PARK_TTL_MS* (the `parks` arm subtracts the record's age; the single frame does not read its `at`), *`_mint` never
-  clears its timer* (an 8 s timer a connection), *a slow mint gets every rehello swept* (`_flushRehello` measures the
+  PARK_TTL_MS* (the `parks` arm subtracts the record's age; the single frame does not read its `at`), *a slow mint gets
+  every rehello swept* (`_flushRehello` measures the
   swap from before the socket opened against BACKOFF_MAX_MS, the mint's own budget), and *several room sends skip
   SD-HELLO's welcomed check* (`sendHit`'s routing loop, `sendDuel`'s room path, the zone's word) - latent while no
   cell's hello yields.
@@ -16002,4 +16002,105 @@ bounded); the welcome's merge; the host, world, act and arena frames acted on fo
 room; the halo connect timeout; the close codes; `_promote`/`_retire`; the batch bounds; every send's shape and cap
 against the relay's parser. `tools/mutants/auditonline3.json` (15, all killed); the records the fixes moved
 (`acc1d.json`, `auditcontrib.json`, `fb0929h_tokenwait.json`, `scale2.json`, `slam14.json`) re-aimed at their lines and
-run again (9 killed, ACC1d-10 equivalent as recorded).
+run again (8 killed, ACC1d-10 equivalent as recorded - nine records re-aimed).
+
+## AUDIT ONLINE 3, the second read (2026-10-17, the owner: "Pick it up and do your own audit over it")
+
+joaomdb3's AUDIT ONLINE 3 (pull request #963, its head 61ad032a8) taken over and read cold on main (6c1fff59b - DOOR-TOKEN
+and GRAVE-PARTY in) by four lanes: F1, F4 and F5; F2; F3, F6 and F7; and the evidence and the record. Each lane read a
+snapshot of the merged tree (`Home.md`, DO NOT FIX WHILE THE VERIFIER IS READING), and every finding below was driven
+through the real `OnlineSession` over `test/fakeSocket.mjs`, or the real `RemotePlayers`, before it was believed.
+
+**The merge.** Main's DOOR-TOKEN (`_tokenRetry`, a halo's `tokenRetry`) beside F6's removal of `_tokenWhy`: both kept -
+DOOR-TOKEN reads `_tokenless`, which F6 writes per socket. A promotion's `tokenRetry` is always false (only an open halo
+is promoted). Testing.md's Suite line recounted.
+
+**The seven stand.** F1's seed is on the path's clock on every route that empties a timed peer's path (the first timed
+pose's reset, a resync, the untimed switch), and no `timed`/`tsU` outlives a life. F2's clock holds inside the session:
+every reader of `_now` compares with the session's own clock, `clockOffsetMs` is measured against `Date.now()` and read
+against it, and pose `ts` is the one session time on the wire (the relay passes it; `serpentBrain` reads it as a rate,
+which the steady clock improves). F3's swap reaches `_flushLook`, which reads a halo's own `lookOk`. F4 never drops a
+real rise (ts + 1, across the POSE_TS_MOD wrap, a death with no ts). F5's death is drawn by nobody (`_member` to `_fell`
+is synchronous, and the hosts poll `drawable()`), and `onPeerDeath` has one owner. F6 left no re-hello without its token
+(`_helloFrame` has one caller), and STORM-SHED's `opened` and SCALE5a's `_helloTok` now get the socket's own token. F7's
+`_forgetRoom` runs no callback, and running it after a terminal close's own does nothing new.
+
+**Fixed and pinned** (`test/net/auditonline3b.test.js`, 10 tests; `tools/mutants/auditonline3b.json`, 18 mutants, all
+killed):
+
+- **C-1 - the overworld's word stayed with the cell left.** F3's class, one flag pair over: `owOk` and `owGraveOk` were
+  set from the primary's welcome alone and did not travel on a promotion, and `sendOverworld` goes down the primary on
+  them. GRAVE-PARTY's `gr` wants world212, NOT YET DEPLOYED: during that deploy, a player crossing into a cell still on
+  world211 sent `gr` on the old cell's word, and the relay closes on it - the session terminal, every halo ended. A halo's
+  welcome says both for itself now, and the crossing swaps them as it swaps `lookOk`. (`tradeOk`, `castOk`, `cardOk`,
+  `pageOk`, `duelOk`, `wedOk` and `parkOk` are the same shape, recorded under AUDIT ONLINE 3's "Halo sockets gated on the
+  primary's relay version" - their relay minimums are long deployed.)
+- **A7 - a ghost's reconnect said it lived** (before AUDIT ONLINE 3; F5's premise). `sendDeath` never marked the session,
+  and a hello's pose is `_pose`, my last LIVING one - so a Wild ghost's socket (kept in the cell while my body lies,
+  `scenes/world.js` `_wildGhost`) that blipped or rode a relay deploy's wave said I stood: the relay held that pose, its
+  join stood me on my own body on every screen (the rise rule took the body after its two seconds), its rosters named a
+  living figure to every newcomer (F5 had no `dd` to read), and the relay's fights counted me among the living. After
+  `sendDeath` every hello says the death (`_dead`: `dd`, standing still, where I fell); a pose said (a rise) and a leave
+  (the ghost's room let go, a respawn's new room) end it. The relay keeps a hello's `dd` (wire.js `validPose`).
+- **A1/A2 - an introduction's death laid a second body.** A leave clears `_fallen`, so a building walked into and out
+  of while a Wild ghost lay - or a crossing before the halo opened - had the next roster lay the body again over the one
+  lying: a second body, a fresh minute, the party pick's marks doubled. And a party mate's body PCORPSE3 laid from the
+  party pose was laid again by its cell's roster (before F5 the roster stood the ghost and the rise rule took the body -
+  F5 was still the gain). `RemotePlayers.peerDeath` takes the session's word (the host forwards `how`, its line no
+  longer): an introduction lays a body only where none of that person's lies (by id or account, within CORPSE_SAME_M -
+  the rise rule's reach, one constant now), never cried; a death heard as it happens is laid and cried, as before.
+- **A4 - an old death felled the living.** `_member`'s standing-peer arm felled a peer on any introduction carrying `dd`,
+  never ordered against what the session had heard of them - so a relay still holding a ghost's socket and its death
+  pose (its close not yet read, a half-open socket) felled a player who had risen and walked on, and laid a second body.
+  A death older than the newest pose heard from that peer (`_heardSince`: `tsRaw` once timed, the standing pose before)
+  fells nobody.
+- **A5 - an introduction from before the death stood the dead.** F4's `_diedSince` guarded the pose arm alone: a roster
+  or a join composed before the peer fell and landing after its death stood them on their own body until that room's
+  death copy came (about a round trip). `_member` asks it too.
+- **B-F2-1 - the page's minter stayed on the wall clock** (F2's own path, a file it did not touch). `scenes/world.js`'s
+  `accountTokenMinter` read `Date.now()`: a clock set back by more than the token's life held its token fresh (TOKEN_REUSE_MS
+  measured negative), so every new room's hello carried a dead token - "token expired", 1008, the primary terminal and a
+  halo stood 'terminal' (driven: an hour's step, one new cell every 30 s, online 300 s of 3600 and 110 hellos refused); and
+  a failed mint's hold (STORM-SHED's `cool`) lasted the length of the step ("waiting for the account service"). It is
+  handed `steadyNow` - every minter reading is an interval. (`createDoorToken` still reads the wall; its `pending` stalls
+  harmlessly.)
+- `_mint` lets its TOKEN_WAIT_MS timer go with the race, as the siege pass's does (AUDIT ONLINE 3 recorded it; its
+  sentence is retired above).
+- The halo's look line is an `else` of its own `if (primary)` - it hung off PARTY-LEAD's, and F3 leaned on it staying there.
+
+**The pins AUDIT ONLINE 3's own mutants showed loose, made to fail:** P1 - `steadyNow` itself (the test checked that a
+session reads it, so `steadyNow = () => Date.now()` survived); P2 - the FALLEN_MAX eviction (`values()` on the Map, the
+Set's spelling, evicted nothing and survived - no pin drove 257 deaths); P9 - a re-introduced peer laid undressed
+survived. Re-aimed at lines this read moved: auditonline3's F5-the-host-cries-an-old-death (now the host's forward;
+the quiet lay is A1-the-introduction-cries), acc1d's ACC1d-9 (the mint's race with its timer) and profile2's
+P2-session-halo-support-unread (the look line).
+
+**The record corrected** (AUDIT ONLINE 3, above): eighteen real, not fifteen - the recorded list held eleven, six in one
+bullet; the re-aimed records ran eight killed with ACC1d-10 equivalent (nine re-aimed); the module was 3,750 lines; a
+fallen player's socket stays while the body lies (WILD_DEATH_HOLD_S), WILD_GHOST_MS being the client's margin on it. The
+comments F2 made untrue: the session's class doc, `scenes/world.js`'s visibility line, `net/social.js`'s clock.
+
+**Recorded, not fixed:**
+
+- *A short drop moves the hub link to the bus for the page* (AUDIT ONLINE 3's own record) - re-rated MEDIUM-HIGH. Driven:
+  two failed retries (about two seconds offline) set `_hubBus`, the hello stops offering `hs`, and ten minutes later the
+  link is on `chat:world` still. The failure is correlated - a relay deploy, a laptop waking, an edge blip that fails
+  upgrades for everyone - so it undoes the sixteen-way split exactly when the whole hub reconnects at once, onto one bus
+  capped at CHAT_SOCKETS_MAX. Its own slice, next: a bus whose welcome names a shard-capable relay (`hubShardsSupported`)
+  re-offers the shards, and a shard that truly refuses must not loop the link.
+- A3: a fresh death loses its cry when its first copy is an introduction - a halo's welcome composed just after the death
+  landing before my own cell's pose (tens of ms). Accepted.
+- A6: F4 orders a death within TS_RESYNC_MS (2 s) of hearing it; a room stalled past that re-stands the dead, and its
+  death copy is a second death. Left at F4's choice: past it the send-time clock is trusted to order nothing.
+- `tools/mutants/acc1d.json`'s ACC1d-14-the-chat-link-sends-no-token survives - on main too; not this audit's code.
+
+**Read and found sound:** `_siegePass` is session-wide, but F6's race cannot reach it (it is written as its await resumes
+and read by `_helloFrame` with no await between; halos never stand in a battle room), and `_mint`'s minter-wide `lastWhy`
+is one mint's word at a time with the real minter. `steadyClock` past NaN or Infinity (`Date.now()` returns neither); a
+wrong step forward kept (nothing compares the session's clock with the wall or the relay's). `performance.now()` refused
+rightly (whether it runs through a sleep is the platform's). The singleton across a test file: two files leave the page's
+clock ahead (fb1016b_doortoken, fb1014_questhome) and pass in order and alone. THE FOUR HOSTS: the death's lay moved into
+`RemotePlayers`, which the world host wires; `scenes/exterior.js`, `scenes/worldModes.js` and `scenes/dungeonContext.js`
+build no session and no minter and assign no `onPeerDeath`. The 388 files that drive the session, the bodies or the
+account client: 3,885 tests passed, two skipped (they want MAPS.BSA and ARENA2). Three source pins read the lines this
+read moved and were moved with them: ACC1d's and NAME-ADOPT's minter (`now: steadyNow`), WORLD1's import.

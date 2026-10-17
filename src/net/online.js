@@ -196,7 +196,7 @@ export { HEARTBEAT_MS, PING_MS };
  *  left, so a blip in either stands its peers as themselves. Past it the stalest is forgotten. */
 export const KNOWN_MAX = SOCKETS_MAX * 2;
 /** AUDIT CONTRIB A2: the fallen remembered at once (one death per life) - the oldest goes first past this. */
-const FALLEN_MAX = 256;
+export const FALLEN_MAX = 256;
 /** The relay this port hosts (server/wrangler.toml). */
 /** AUDIT DROPS B3: the most senders the inbound trade gate keeps a bucket for before it forgets them all - a room holds SOCKETS_MAX at most, so an honest map never reaches it. */
 const TRADE_IN_SENDERS_MAX = 64;
@@ -490,8 +490,8 @@ export const peerSecret = (storage = tabStorage()) => keptToken(storage, 'dagger
  * One player's connection to the relay: one room at a time, the
  * peers of that room. Pure of the DOM: the WebSocket class and the
  * clock are handed in, so the tests drive it with a fake socket. Every
- * stamp inside is the handed-in clock's (Date.now() unless told
- * otherwise); nothing outside passes a time in.
+ * stamp inside is the handed-in clock's (the page's steadyNow unless
+ * told otherwise - AUDIT ONLINE 3 F2); nothing outside passes a time in.
  */
 /** ONE-SEAT (Mac: "the player can only have one character only at a time"): the line a superseded session says - another
  *  tab or window of this player went online (or this tab's own id was taken), so this one is out of every room. */
@@ -835,6 +835,7 @@ export class OnlineSession {
     this._lastSentAt = -Infinity;
     this._lastPingAt = -Infinity;   // RELAY-H1: the liveness ping's own clock - it must never delay the heartbeat pose
     this._pose = null;
+    this._dead = false;   // AUDIT ONLINE 3 (the second read) A7: my death said (sendDeath) and no life since - every hello says it (_helloFrame)
     this._backoff = BACKOFF_MIN_MS;
     this._retryAt = null;
     this.wire2 = wire2;    // SCALE5b: this session's hello says `w2` - the relay batches its poses (wire.js POSE_BATCH_MS) and its channel's roster
@@ -891,6 +892,9 @@ export class OnlineSession {
       // AUDIT ONLINE 3 F3: nor the look's - the cell stepped down to a halo kept no `lookOk`, so _flushLook never told it
       // a change again (it handed my old coat to everyone it introduced me to), and the cell crossed into kept the old one's
       old.lookOk = this.lookOk; this.lookOk = !!h.lookOk;
+      // AUDIT ONLINE 3 (the second read) C-1: nor the overworld's - `ow` goes down the primary alone, so the cell crossed
+      // into reads its own relay's word, never the old cell's: a world211 cell sent `gr` closes the socket, terminal
+      old.owOk = this.owOk; old.owGraveOk = this.owGraveOk; this.owOk = !!h.owOk; this.owGraveOk = !!h.owGraveOk;
       // INT9 (AUDIT): MY ZONE WORD MOVES WITH MY CELL - the cell stepped down to a halo hears I left it, the one crossed into
       // that I stand in it (a fighter's bar is its own cell's; the hub carries it across)
       if (this._wildZone === 1) {
@@ -950,6 +954,7 @@ export class OnlineSession {
     this._rooms.clear();
     this._retryAt = null; this._tokenRetry = false;   // DOOR-TOKEN: nothing waits on a token for a room left
     this.room = null;
+    this._dead = false;   // AUDIT ONLINE 3 (the second read) A7: the next room's hello is a new life's (the ghost's room let go, a respawn)
     this.peers.clear();
     this._fallen.clear();
     this._fallenIn.clear();   // WILD1
@@ -992,9 +997,16 @@ export class OnlineSession {
    *  a look may legitimately be null (a client that hello'd without one), and that peer must not be asked for
    *  forever at WHO_RETRY_MS. */
   _member(room, id, p, now, told = true) {
+    const dead = told ? validPose(p?.pose) : null;   // AUDIT ONLINE 3 F5: below - an introduction may name the fallen
+    // AUDIT ONLINE 3 (the second read) A5: AN INTRODUCTION FROM BEFORE THE DEATH STANDS NOBODY - a roster or a join composed
+    // before the peer fell and landing after its death stood them on their own body until that room's death copy came:
+    // the pose arm's rule (F4, `_diedSince`), at the introductions' door too
+    if (dead && !dead.dd && this._diedSince(id, dead, now)) return;
     this._roomSet(room).add(id);
     const have = this.peers.get(id);
-    const dead = told ? validPose(p?.pose) : null;   // AUDIT ONLINE 3 F5: below - an introduction may name the fallen
+    // AUDIT ONLINE 3 (the second read) A4: A DEATH OLDER THAN WHAT I HEAR OF THEM IS OVER - a relay still holding a ghost's
+    // socket and its death pose (its close not yet read) named it to me after the player rose, and felled them as they walked
+    if (have && dead?.dd && this._heardSince(have, dead)) { if (have.unconfirmed) this._confirm(have, room); return; }
     if (have) { if (have.unconfirmed) this._confirm(have, room); if (told) this._refresh(have, p, now, room); if (dead?.dd) this._fell(id, this.peers.get(id), dead, room, now, true); return; }   // SLAM14 B2: named or heard here - confirmed here; NET-SMOOTH 3: heard in this room
     // SLAM9: A STRANGER THIS SESSION ONCE KNEW IS STOOD AS ITSELF. The welcome names the nearest ROSTER_MAX and prunes
     // the rest of the room's roster (the merge-not-wipe law is about the peers it DOES name); so one socket blip -
@@ -1015,7 +1027,7 @@ export class OnlineSession {
     if (told) this._remember(id, made);
     this.peers.set(id, made);
     // AUDIT ONLINE 3 F5: AN INTRODUCTION THAT NAMES THE FALLEN IS A DEATH. The relay holds a socket's last pose, and a
-    // fallen player's socket stays in the zone's cell for WILD_GHOST_MS - so its death pose is what a welcome's roster,
+    // fallen player's socket stays in the zone's cell while the body lies (WILD_DEATH_HOLD_S) - so its death pose is what a welcome's roster,
     // a halo's, or the who's join hands a newcomer. Only the pose frame read `dd`; these stood a living figure on the
     // body (lerpPose drops `dd`) and no body was ever laid. Introduced dressed first, so the body wears its look.
     if (dead?.dd) this._fell(id, made, dead, room, now, true);
@@ -1048,6 +1060,13 @@ export class OnlineSession {
   _diedSince(id, pose, now) {
     const f = this._fallen.get(id);
     return !!f && f.ts != null && Number.isInteger(pose.ts) && now - f.at <= TS_RESYNC_MS && poseTsDiff(pose.ts, f.ts) <= 0;
+  }
+  /** AUDIT ONLINE 3 (the second read) A4: was this pose sent before the newest I have heard from the peer `p`? On the
+   *  sender's own clock, which only walks on within its session - `tsRaw` once _arriveTimed has timed the peer, the pose
+   *  that stood it until then (_arriveTimed's own first reading). */
+  _heardSince(p, pose) {
+    const last = p.timed ? p.tsRaw : p.pose?.ts;
+    return Number.isInteger(pose.ts) && Number.isInteger(last) && poseTsDiff(pose.ts, last) < 0;
   }
   _roomSet(room) {
     let s = this._rooms.get(room);
@@ -1916,7 +1935,7 @@ export class OnlineSession {
   /** The hello as the wire has it - the account beside the peer when this session holds one (SOC2: the hub link's;
    *  a session without it sends the hello every build before SOC1 sent, key for key). */
   _helloFrame(tok = null) {
-    const frame = { t: 'hello', id: this.id, secret: this.secret, name: this.name, look: this.look, pose: this.presence && this._pose ? { ...this._pose, ts: this._stampTs() } : null };   // SCALE2b: the hello's pose is a pose said now
+    const frame = { t: 'hello', id: this.id, secret: this.secret, name: this.name, look: this.look, pose: this.presence && this._pose ? { ...this._pose, ...(this._dead ? { mv: 0, dd: 1 } : {}), ts: this._stampTs() } : null };   // SCALE2b: the hello's pose is a pose said now; AUDIT ONLINE 3 (the second read) A7: a death's, while I lie dead
     // ACC1d: only when there IS one. A `tok: null` would be a malformed
     // token rather than an absent one, and wire.js refuses that - which
     // is right, and is why the key is not written at all when empty.
@@ -1938,10 +1957,11 @@ export class OnlineSession {
   async _mint(room = null) {
     try {
       const late = Symbol('late');
+      let timer = null;   // AUDIT ONLINE 3 (the second read): let go with the race, as the siege pass's is - an 8 s timer a connection kept
       const got = await Promise.race([
         Promise.resolve(this.mintToken(room)).catch(() => null),   // SCALE2: the room it opens - a token opens each room once
-        new Promise((r) => setTimeout(() => r(late), TOKEN_WAIT_MS)),
-      ]);
+        new Promise((r) => { timer = setTimeout(() => r(late), TOKEN_WAIT_MS); }),
+      ]).finally(() => clearTimeout(timer));
       // TOKEN-WAIT: said, so a player's console can tell a slow service from a missing sign-in (the minter says its own)
       if (got === late) { console.warn(`[online] no identity token within ${TOKEN_WAIT_MS} ms - the hello goes without one, and the relay refuses it`); return { tok: null, why: 'late' }; }
       return got ? { tok: got, why: null } : { tok: null, why: this.mintToken?.lastWhy ?? 'refused' };
@@ -2153,7 +2173,7 @@ export class OnlineSession {
   /** The frame's pose: sent at POSE_HZ when it moved, and every HEARTBEAT_MS regardless. A channel session refuses it (AUDIT CHAT D3). */
   sendPose(pose) {
     if (!this.presence) return false;
-    this._pose = pose;
+    this._pose = pose; this._dead = false;   // AUDIT ONLINE 3 (the second read) A7: a pose said is a life
     const now = this._now();
     if (now - this._lastSentAt < 1000 / poseHzFor(this.peers.size)) return false;   // SLAM3: a crowd is spoken to less often
 
@@ -2212,6 +2232,12 @@ export class OnlineSession {
   sendDeath() {
     const last = this._pose ?? this._lastSent;
     if (!this.presence || !last) return false;
+    // AUDIT ONLINE 3 (the second read) A7: AND EVERY HELLO AFTER IT SAYS IT. A Wild ghost's socket stays in the cell while
+    // my body lies (scenes/world.js `_wildGhost`), and its reconnect - a blip, a relay deploy's wave - sent the hello's pose,
+    // which was my last LIVING one: the relay held that, its join stood me up on my own body on every screen (the rise rule
+    // took the body), its rosters named a living figure to every newcomer (F5 had no `dd` to read), and its fights counted
+    // me among the living. Cleared by a pose (a rise) and by a leave (the next room's hello is a new life's)
+    this._dead = true;
     const s = JSON.stringify({ t: 'pose', p: { ...last, mv: 0, dd: 1, ts: this._stampTs() } });
     let went = false;
     if (this._ws && this.status === 'open' && this._welcomed.has(this._ws)) { try { this._ws.send(s); this.stats.sent++; went = true; } catch { /* the close will say */ } }   // SD-HELLO: never ahead of a welcome
@@ -2976,6 +3002,7 @@ export class OnlineSession {
       else { const h = this._halo.get(room); if (h) h.serpentOk = relaySupportsSerpent(relayV); }
       if (primary) this.owOk = relaySupportsOverworld(relayV);   // OW6L: the cell keeps the overworld's ledger - an older relay closes the socket on `ow` (the word goes down the primary alone)
       if (primary) this.owGraveOk = relaySupportsOwGraves(relayV);   // GRAVE-PARTY: and its graves searched - an older relay closes the socket on `gr`
+      else { const h = this._halo.get(room); if (h) { h.owOk = relaySupportsOverworld(relayV); h.owGraveOk = relaySupportsOwGraves(relayV); } }   // AUDIT ONLINE 3 (the second read) C-1: a halo says for itself, for the crossing that makes it my cell
       // AUDIT RENOWN1 WIRE-3: THIS SOCKET'S OWN WORD, not the session's - a halo's welcome names its own relay, and a
       // socket whose welcome has not come is sent no renown order at all (the frame a relay behind would close it on)
       const _rnWs = primary ? this._ws : this._halo.get(room)?.ws;
@@ -2987,11 +3014,11 @@ export class OnlineSession {
       if (primary) this.caravanOk = relaySupportsCaravan(relayV);   // WAGONS2-VISIT: and for a caravan's room
       if (primary) this.instanceOk = relaySupportsInstances(relayV);   // INSTANCES: and for an instance's (bible/11-Multiplayer/Instances.md)
       if (primary) this.lookOk = relaySupportsLook(relayV);   // PROFILE2
+      else { const h = this._halo.get(room); if (h) h.lookOk = relaySupportsLook(relayV); }   // PROFILE2: a halo says for itself (AUDIT ONLINE 3, the second read: under its own line, no longer the party lead's `else`)
       if (primary) this.partyTravelOk = relaySupportsPartyTravel(relayV);   // PARTY-TRAVEL
       if (primary) this.restOptOk = relaySupportsRestOpt(relayV);   // REST-OPT (AUDIT C1)
       if (primary) this.partyWalkOk = relaySupportsPartyWalk(relayV);   // TV8
       if (primary) this.partyLeadOk = relaySupportsPartyLead(relayV);   // PARTY-LEAD
-      else { const h = this._halo.get(room); if (h) h.lookOk = relaySupportsLook(relayV); }   // PROFILE2: a halo says for itself
       if (primary) this.staffTeleportOk = staffTeleportSupported(relayV);
       if (primary) this.relayCfgOk = relayCfgSupported(relayV);   // SCALE5b
       if (primary) this.findOk = hubShardsSupported(relayV);   // AUDIT SCALE II C-1: `find` is the shards' relay's (world192) - one before it parses it as an unknown message and closes the hub link 1008, terminal
@@ -3000,7 +3027,7 @@ export class OnlineSession {
       if (primary) this.amapOk = relaySupportsPartyMap(relayV);   // PARTY-MAP
       // TV3: A REGION'S WELCOME SAYS ITS TRAVELLERS (`tr`), and says none when there are none - so it REPLACES the book,
       // a region crossed or a room rejoined included. Through the wire's own door, cut at TRAV_WELCOME_MAX. (AUDIT TV C6:
-      // below the halo's `else`, which belongs to the rest-opt line above it.)
+      // below the halo's look line, an `else` of its own `if (primary)`.)
       if (primary && isRegionRoom(room)) {
         const rows = Array.isArray(m.tr) ? m.tr.slice(0, TRAV_WELCOME_MAX) : [];
         // AUDIT DEEP T3-6: each row's age (`ag`, seconds - an older relay says none: fresh), so the book ages it from when

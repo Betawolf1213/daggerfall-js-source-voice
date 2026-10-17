@@ -101,8 +101,8 @@
   {
     "name": "F5-the-host-cries-an-old-death",
     "file": "src/scenes/world.js",
-    "old": "pose, room, { quiet: !!how?.intro });",
-    "new": "pose, room);",
+    "old": "?? null }, pose, room, how);",
+    "new": "?? null }, pose, room);",
     "tests": [
       "test/net/auditonline3.test.js"
     ]
