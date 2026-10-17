@@ -9,7 +9,7 @@
 //          round trip is still never counted; the drains read a held body;
 //   L4-2   A RIDE ONLY WHERE THE POSE STANDS: `pl` naming a piece the pose's own feet are not on is no ride (egRideHolds);
 //   L4-7   THE COUNT MENDED ONLY BY A HEAL A CAST BACKS (egHeal), Lifeline with it;
-//   L4-8   EG_RELAY_MIN the arc's own relay (world211), never a main relay that carries no breach;
+//   L4-8   EG_RELAY_MIN the arc's own relay (world212), never a main relay that carries no breach;
 //   L4-9   THE HOLD'S FINDING KEPT IN THE RECORD: a room woken twice inside its hold gives the gap back to what the hold
 //          found, never to a word its company stamped meanwhile;
 //   L4-10  A ROOM WOKEN MID-TRIAL HOLDS THE BODY of a member whose socket is gone, from the pose its record kept;
@@ -22,7 +22,7 @@ import { fakeSocketClass } from './fakeSocket.mjs';
 import { EG_INTERNAL_OPEN, EG_KEY, RELAY_VERSION, EG_RELAY_MIN, relaySupportsEg, POSE_TS_MOD, validEgOut } from '../src/net/wire.js';
 import { egRoomKey, egHallOf, EG_SEALED_MS, EG_GATHER_MS } from '../src/net/egLaw.js';
 import { mintEgOrder } from '../src/net/identityToken.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { egAim, egFightNew } from '../src/net/egBodies.js';
 import { shDisc } from '../src/net/egShape.js';
 import { egRideHolds, egRideOf, egRideAt, EG_TS_LAG_MAX_MS, EG_POSE_NEAR_MS, EG_SUPPORT_LAG_S } from '../src/net/egFair.js';
@@ -31,7 +31,7 @@ import { egBreachNew, egEnter, egStep, egCount, egHeal, egFightStateOf, EG_LIFEL
 import { egResume, egRelease, egRcFold, egRcSpent, egRcLive, EG_RC_KEEP } from '../src/net/egDurable.js';
 import { egWispAt, EG_HAZARDS } from '../src/net/egFragLaw.js';
 import { bodyStruck } from '../src/net/bossBody.js';
-import { healRef } from '../src/net/gateBrain.js';
+import { healRef } from '../src/net/gate/gateBrain.js';
 import { OnlineSession, HEARTBEAT_MS } from '../src/net/online.js';
 import { EG_VESTIGES } from '../src/net/egVestige.js';
 import { EG_BLOWS_MAX } from '../src/net/egShape.js';
@@ -278,10 +278,10 @@ test('AUDIT EG V L4-7 THE COUNT MENDED ONLY BY A HEAL A CAST BACKS (sections 16.
 });
 
 // ── L4-8 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-test('AUDIT EG V L4-8 THE FIRST RELAY THAT OPENS A BREACH IS THE ARC\'S OWN (section 23, "Versions"): EG_RELAY_MIN is RELAY_VERSION\'s number - world211 - so a client meeting main\'s world197 to world205 (no breach in them) never sends one an `eg` (mutant: the branch\'s old 197)', () => {
-  assert.equal(RELAY_VERSION, 'world211', 'the arc ships under world211 (unshipped; PIN MOVED: world206 until the merge of main past SERPENT5\'s world206 to HUB-PULL + DO-ASK\'s world210; world201 until the merge of main past CHAT-TRADE world201 and FIVE-ASKS world202, world203 until the merge past KG-SET world203 and KG5 world204, world205 until the merge past PVP-LOOT + QUEST-HOME world205)');
+test('AUDIT EG V L4-8 THE FIRST RELAY THAT OPENS A BREACH IS THE ARC\'S OWN (section 23, "Versions"): EG_RELAY_MIN is RELAY_VERSION\'s number - world212 - so a client meeting main\'s world197 to world211 (no breach in them) never sends one an `eg` (mutant: the branch\'s old 197)', () => {
+  assert.equal(RELAY_VERSION, 'world212', 'the arc ships under world212 (unshipped; PIN MOVED: world211 until the merge of main past TIDY2\'s world211; world206 until the merge of main past SERPENT5\'s world206 to HUB-PULL + DO-ASK\'s world210; world201 until the merge of main past CHAT-TRADE world201 and FIVE-ASKS world202, world203 until the merge past KG-SET world203 and KG5 world204, world205 until the merge past PVP-LOOT + QUEST-HOME world205)');
   assert.equal(EG_RELAY_MIN, Number(/^world(\d+)$/.exec(RELAY_VERSION)[1]));
-  for (const v of ['world197', 'world198', 'world199', 'world200', 'world201', 'world202', 'world203', 'world204', 'world205']) assert.equal(relaySupportsEg(v), false, `${v} carries no breach`);
+  for (const v of ['world197', 'world198', 'world199', 'world200', 'world201', 'world202', 'world203', 'world204', 'world205', 'world206', 'world207', 'world208', 'world209', 'world210', 'world211']) assert.equal(relaySupportsEg(v), false, `${v} carries no breach`);
   assert.equal(relaySupportsEg(RELAY_VERSION), true);
 });
 

@@ -5,7 +5,7 @@
 // the compass; the Redoubt's beacon from 1.5 s into its sequence, flaring as a recall lands, and the recall's blue pillar;
 // the pings' pillars and glyphs from the floor their pinger stood on; the witness's sight - the dormant Lurkers, the
 // alcoves, the next hall's twist - every state folded from the relay's own words through the wire. The screen: the
-// veil's three stair themes (ui/gateVeil.js) at the stair's pace with the band's chime and the hall held centred; the
+// veil's three stair themes (ui/gate/gateVeil.js) at the stair's pace with the band's chime and the hall held centred; the
 // stair's shader (render/egStairPass.js) and the lights' (render/egLightPass.js) evaluated through test/glsl.mjs; the
 // lights' pass and the look's seam (scenes/egLookDraw.js) over a recording GL; and the breach client (scenes/egClient.js)
 // played - the pull, the swap and the step in under the stair, the compass's door, a ping's chime and its pillar drawn,
@@ -20,8 +20,8 @@ import {
 } from '../src/world/egLights.js';
 import { EG_STAIR_FS, EG_STAIR_MODE, EG_STAIR_LOOK, egStairFallen } from '../src/render/egStairPass.js';
 import { EG_LIGHT_FS, EG_LIGHT_FLOATS, EG_RING_SIDES, EG_LIGHT_VERTS_MAX, EgLightPass, egLightVertices } from '../src/render/egLightPass.js';
-import { createGateVeil, VEIL_THEMES, VEIL_EG_MODE, VEIL_EG_SCALE, VEIL_EG_HOLD_S, VEIL_EG_CUES, VEIL_OPEN_WAIT_TICKS } from '../src/ui/gateVeil.js';
-import { VEIL_CLOSE_S, VEIL_OPEN_S } from '../src/render/gateVeil.js';
+import { createGateVeil, VEIL_THEMES, VEIL_EG_MODE, VEIL_EG_SCALE, VEIL_EG_HOLD_S, VEIL_EG_CUES, VEIL_OPEN_WAIT_TICKS } from '../src/ui/gate/gateVeil.js';
+import { VEIL_CLOSE_S, VEIL_OPEN_S } from '../src/render/gate/gateVeil.js';
 import { createEgLookDraw } from '../src/scenes/egLookDraw.js';
 import { createEgClient } from '../src/scenes/egClient.js';
 import { EG_STAIR, EG_SKIES, EG_FOG_FLOOR, egStairOf } from '../src/world/egLook.js';
@@ -32,11 +32,11 @@ import { foldEg, EG_STATE_EMPTY } from '../src/net/egLink.js';
 import { EG_ROLE, EG_FL } from '../src/net/egBodies.js';
 import { EG_KIND } from '../src/net/egLegion.js';
 import { validEgOut } from '../src/net/wire.js';
-import { realmToDungeon, dungeonToRealm } from '../src/net/sdBrain.js';
+import { realmToDungeon, dungeonToRealm } from '../src/net/superDungeon/sdBrain.js';
 import { EG_DANGER_PALETTES } from '../src/ui/egAccess.js';
 import { EG_BEAT_SOUNDS } from '../src/ui/egBeats.js';
 import { EG_SCORE_BAND_MOTIFS } from '../src/systems/egScore.js';
-import { midiNote } from '../src/systems/gateScore.js';
+import { midiNote } from '../src/systems/gate/gateScore.js';
 import { egGive8 } from './egGive8.mjs';
 
 // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courses along +z
@@ -137,7 +137,7 @@ function stairPage({ noStair = false, reduce = false } = {}) {
   return { doc, raf: (f) => frames.push(f), now: () => t, engine, win, calls, sounds, step, canvas, u, nodes, label: () => nodes[0] ?? null, ms: () => t };
 }
 
-test('EG-ZE THE STAIR ON THE VEIL (ui/gateVeil.js): the Spire\'s three themes draw the stair\'s own pass at a third of the pixels, pixelated, in the band it falls into; the veil closes in the stair\'s 0.8 s (the Hour\'s takes 1.2) with the band\'s chime, holds the hall centred while the step lands and opens in 0.8 s; the fall adds the deep wind and holds shut its least however soon the step lands; a pull\'s flash is shut at once on the chime with the hall at full; a stair that will not build has the fire stand in; destroyed, the hall\'s node goes (mutants: the fire\'s clock kept; no chime; the hall never held; the fall\'s hold dropped; the label left standing)', async () => {
+test('EG-ZE THE STAIR ON THE VEIL (ui/gate/gateVeil.js): the Spire\'s three themes draw the stair\'s own pass at a third of the pixels, pixelated, in the band it falls into; the veil closes in the stair\'s 0.8 s (the Hour\'s takes 1.2) with the band\'s chime, holds the hall centred while the step lands and opens in 0.8 s; the fall adds the deep wind and holds shut its least however soon the step lands; a pull\'s flash is shut at once on the chime with the hall at full; a stair that will not build has the fire stand in; destroyed, the hall\'s node goes (mutants: the fire\'s clock kept; no chime; the hall never held; the fall\'s hold dropped; the label left standing)', async () => {
   assert.deepEqual(Object.keys(VEIL_EG_MODE).map(Number), [VEIL_THEMES.egFall, VEIL_THEMES.egVeil, VEIL_THEMES.egCut]);
   assert.deepEqual(Object.values(VEIL_EG_MODE), [EG_STAIR_MODE.fall, EG_STAIR_MODE.veil, EG_STAIR_MODE.cut]);
   assert.deepEqual(VEIL_EG_HOLD_S, { [EG_STAIR_MODE.fall]: EG_STAIR_VEIL.fallHold, [EG_STAIR_MODE.veil]: 0, [EG_STAIR_MODE.cut]: 0 });

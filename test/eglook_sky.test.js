@@ -14,7 +14,7 @@ import { readFileSync } from 'node:fs';
 import { glslFunctions } from './glsl.mjs';
 import { EG_SKY_PAINT_FS, EG_SKY_PERIOD, EG_SKY_HAZE, EG_SKY_DRIFT, EG_SKY_SPIRES, EG_SKY_ERUPTIONS, EG_SKY_MOON, EG_SKY_THORNS, EG_SKY_CAIRNS, EG_SKY_MAP, egSkyHaze, egSkyClock, EgSkyMap } from '../src/render/egSkyMap.js';
 import { EG_SKY_FS, EG_SKY_VS, EgSkyPass, egSkyLift, EG_SKY_LIGHT } from '../src/render/egSkyPass.js';
-import { SD_SKY_PERIOD, octEncode } from '../src/render/sdSky.js';
+import { SD_SKY_PERIOD, octEncode } from '../src/render/superDungeon/sdSky.js';
 import { SKY_ANGLE_PER_PIXEL } from '../src/render/skyRenderer.js';
 import { egAtmosOf, EG_ATMOS } from '../src/world/egAtmos.js';
 import { EG_SKIES } from '../src/world/egLook.js';

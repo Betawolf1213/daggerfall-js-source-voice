@@ -14,7 +14,7 @@ import { mintEgReceipt, egReceiptValid, EG_ANNALS_BITS_MAX } from '../src/net/eg
 import { EG_RECEIPT_TTL_S } from '../src/net/egReceipt.js';   // AUDIT EG IV (lane3 #13): a season's champions kept once its late ends are claimed
 import { TITLES, AURAS, mintToken, verifyToken } from '../src/net/identityToken.js';
 import { readAura } from '../src/net/wire.js';
-import { arenaSeasonOf, arenaSeasonEndsS } from '../src/net/arenaLaw.js';
+import { arenaSeasonOf, arenaSeasonEndsS } from '../src/net/arena/arenaLaw.js';
 import { EG_FEAT_BANDS } from '../src/net/egFeats.js';
 import {
   EG_HONOUR, EG_HONOUR_TITLES, EG_HONOUR_AURA, EG_BAND_MASTERS, egHonourBitsOf, egMasterBitsOf, egHonourTitlesOf, _resetEgHonoursCache,

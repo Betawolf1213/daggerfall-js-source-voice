@@ -11,8 +11,8 @@ import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { realmIsland, buildRealmModel, packRealmFaces, SD_ISLAND_SIDES, SD_REALM_ARCHIVE, SD_REALM_BRASS_RECORD } from '../src/world/sdRealm.js';
-import { faces } from '../src/world/gateModel.js';
+import { realmIsland, buildRealmModel, packRealmFaces, SD_ISLAND_SIDES, SD_REALM_ARCHIVE, SD_REALM_BRASS_RECORD } from '../src/world/superDungeon/sdRealm.js';
+import { faces } from '../src/world/gate/gateModel.js';
 import { buildEgCircleModel, egCircleColliderTris, egToDungeon, egHeroMeshSeam, egInHeroBox, egIsleDisc, egWallFoot, EG_DOOR } from '../src/world/egHall.js';
 import { egCircleBuild } from '../src/world/egCircleParts.js';
 import { egCircleSpecs, egBandOfCircle } from '../src/net/egLaw.js';
@@ -50,7 +50,7 @@ const vtx = (m, j) => [m.positions[m.indices[j] * 3], m.positions[m.indices[j] *
 const toSeg = (l, r) => { const dx = r.bx - r.ax, dz = r.bz - r.az, t = Math.max(0, Math.min(1, ((l[0] - r.ax) * dx + (l[2] - r.az) * dz) / (dx * dx + dz * dz || 1))); return Math.hypot(l[0] - r.ax - t * dx, l[2] - r.az - t * dz); };
 
 // ── THE RIMS ────────────────────────────────────────────────────────────────────────────────────────────────────
-test('EG-LOOK HALLS THE RIMS (Elite-Gates-Look.md section 2; world/sdRealm.js realmIsland): the Hour\'s island laid as it always was by default (its options asked or not, the Hour whole byte for byte); `teeth: false` lays no brass past the rim and `floor: false` no floor; every disc of the Spire\'s circles in every band without the Hour\'s gear teeth - no brass under or out past a rim where the teeth stood - its rim\'s lip and its edge line where they were (mutants: the teeth on by default off; the Spire\'s discs toothed; the floor laid anyway)', () => {
+test('EG-LOOK HALLS THE RIMS (Elite-Gates-Look.md section 2; world/superDungeon/sdRealm.js realmIsland): the Hour\'s island laid as it always was by default (its options asked or not, the Hour whole byte for byte); `teeth: false` lays no brass past the rim and `floor: false` no floor; every disc of the Spire\'s circles in every band without the Hour\'s gear teeth - no brass under or out past a rim where the teeth stood - its rim\'s lip and its edge line where they were (mutants: the teeth on by default off; the Spire\'s discs toothed; the floor laid anyway)', () => {
   const lay = (o) => { const f = faces(); realmIsland(f, 3, 4, 9, 4, o); return JSON.stringify([...f.byRec].map(([r, g]) => [r, g.p, g.uv])); };
   assert.equal(lay({ y: 2, bands: 3 }), lay({ y: 2, bands: 3, teeth: true, floor: true }), 'the default is the Hour\'s');
   const hour = buildRealmModel();

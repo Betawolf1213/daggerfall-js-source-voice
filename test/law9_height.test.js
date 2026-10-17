@@ -16,7 +16,7 @@ import { EG_HEIGHT_LAW, EG_STACK_M, EG_GROUND_UNDER_M, EG_GROUND_OVER_M, EG_DROP
 import { egFightNew, egAim, egHitBody, egBodyNew, EG_ROLE } from '../src/net/egBodies.js';
 import { EG_KIND, egLegionRaise, egLegionStep, egSameStorey, walkAir } from '../src/net/egLegion.js';
 import { egLordsNew, egLordsWake, egLordsStep, egHavenFloor, egRuneRouteM, zoneOut } from '../src/net/egLords.js';
-import { HIT_KINDS } from '../src/net/gateBrain.js';
+import { HIT_KINDS } from '../src/net/gate/gateBrain.js';
 import { readFileSync } from 'node:fs';
 import { judgeShapes } from '../src/net/bossRef.js';
 import { egBlowLandsOn, egFightFloorAt } from '../src/net/egFair.js';
@@ -24,10 +24,10 @@ import { egFloorLess, egBurnsIn, egZoneLandings } from '../src/net/egFloor.js';
 import { egBlowOf, shDisc, egPolyIn } from '../src/net/egShape.js';
 import { validEgOut } from '../src/net/wire.js';
 import { egFightFloors, egFloorPlan, egPerilOf } from '../src/world/egTelegraph.js';
-import { TELEGRAPH_KIND, TELEGRAPH_POOL, TELEGRAPH_EDGE_DAGON } from '../src/render/gateTelegraph.js';
+import { TELEGRAPH_KIND, TELEGRAPH_POOL, TELEGRAPH_EDGE_DAGON } from '../src/render/gate/gateTelegraph.js';
 import { createEgClient } from '../src/scenes/egClient.js';
 import { egBreachNew, egEnter, egStateOf } from '../src/net/egBrain.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { EG_LAWS } from '../src/net/egDurable.js';
 
 const T0 = 1_800_000_000_000;

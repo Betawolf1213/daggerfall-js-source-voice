@@ -12,13 +12,13 @@
 // a picker of the five tabs, and the chosen tab's lines in one of its own, back to the tabs on its close - the slot
 // emptied before the next window is put in it.
 // AUDIT EG III (2026-10-13): THE PANEL IS A WINDOW TO THE PAD - an `enhanced-` door on the page (ui/gamepadInput.js
-// domWindowUp) and on the enhanced doors' stack (ui/enhancedOverlays.js - Tab puts it away, and the pad's cursor drives it),
+// domWindowUp) and on the enhanced doors' stack (ui/enhanced/enhancedOverlays.js - Tab puts it away, and the pad's cursor drives it),
 // and its Back (the pad's, or Escape anywhere on the page - the enhanced doors' own `back`, ui/input.js overlayAction) closes it.
 //
 // Not a DFU member: Daggerfall Unity has no Elite Breach. Ledger A (ELITE-GATES).
 import { egBandOfHall, EG_BAND_NAMES, EG_DECREES, EG_TEXT } from '../net/egLaw.js';   // AUDIT EG V (L8-9): a Wager's decrees by name, in the start window's own words
 import { ListPickerWindow } from './listPicker.js';
-import { registerOverlay } from './enhancedOverlays.js';   // AUDIT EG III: on the enhanced doors' stack
+import { registerOverlay } from './enhanced/enhancedOverlays.js';   // AUDIT EG III: on the enhanced doors' stack
 import { overlayAction } from './input.js';   // AUDIT EG III: the doors' own Back
 import { t } from '../systems/textManager.js';   // AUDIT EG V (c, L7-19): the last runs' words, in the player's language
 

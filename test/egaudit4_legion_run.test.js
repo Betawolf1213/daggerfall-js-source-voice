@@ -20,10 +20,10 @@ import { egOfferOf, EG_V_BY_KEY, EG_VESTIGES, EG_MASTERIES, EG_M_ID, EG_OFFER_MA
 import { EG_ROLE, EG_FL, egFightNew, egFightState, egHas, egSetFl, egRaise } from '../src/net/egBodies.js';
 import { EG_KIND, egLegionRaise, egLegionStep, egWaveKinds } from '../src/net/egLegion.js';
 import { egLordsOf, egLordsWake, egObjsOf } from '../src/net/egLords.js';
-import { HIT_KINDS } from '../src/net/gateBrain.js';
-import { arenaSeasonOf, ARENA_SEASON_EPOCH_S } from '../src/net/arenaLaw.js';
+import { HIT_KINDS } from '../src/net/gate/gateBrain.js';
+import { arenaSeasonOf, ARENA_SEASON_EPOCH_S } from '../src/net/arena/arenaLaw.js';
 import { validEgOut, validEgIn } from '../src/net/wire.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { createEgFight } from '../src/scenes/egFight.js';
 import { createEgClient } from '../src/scenes/egClient.js';
 import * as Spire from '../src/systems/spireVestiges.js';

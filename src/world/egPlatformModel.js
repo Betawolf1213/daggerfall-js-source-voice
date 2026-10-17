@@ -45,10 +45,10 @@
 import { createMeshKit } from './meshKit.js';
 import { EG_DRESS, EG_KIT_MAP, egBandArchive, egTellArchive } from './egBandArt.js';
 import { EG_KIT_RECORD, egKitStyle } from './egKit.js';
-import { SD_REALM_ARCHIVE, SD_ISLAND_SIDES } from './sdRealm.js';
-import { SD_STEP_THICK, SD_RISER_H } from './sdSteps.js';
-import { SD_STEPS_RECORD, SD_STEPS_ATLAS, SD_STEP_BEVEL, SD_STEP_LINE } from './sdStepsArt.js';
-import { buildStepModel, buildCrumbleChunks } from './sdStepsModel.js';
+import { SD_REALM_ARCHIVE, SD_ISLAND_SIDES } from './superDungeon/sdRealm.js';
+import { SD_STEP_THICK, SD_RISER_H } from './superDungeon/sdSteps.js';
+import { SD_STEPS_RECORD, SD_STEPS_ATLAS, SD_STEP_BEVEL, SD_STEP_LINE } from './superDungeon/sdStepsArt.js';
+import { buildStepModel, buildCrumbleChunks } from './superDungeon/sdStepsModel.js';
 import { EG_CRUMBLE_TELL_RECORDS } from './egPlatformArt.js';
 
 /** THE PIECES' MEASURES (m): THE EDGE LINE's strip (the slab's own since EG-PLAY - out from the side, its top over the top
@@ -105,7 +105,7 @@ export function egPieceSeed(seed, c, h, i) {
   x = Math.imul(x ^ (x >>> 16), 0x7feb352d) >>> 0; x = Math.imul(x ^ (x >>> 15), 0x846ca68b) >>> 0;
   return (x ^ (x >>> 16)) >>> 0;
 }
-/** A stream of numbers in [0, 1) off a seed (the Hour's own LCG - world/sdStepsModel.js buildGritModel's). */
+/** A stream of numbers in [0, 1) off a seed (the Hour's own LCG - world/superDungeon/sdStepsModel.js buildGritModel's). */
 function stream(seed) {
   let s = seed >>> 0;
   return () => { s = (Math.imul(s, 1664525) + 1013904223) >>> 0; return s / 4294967296; };
@@ -152,7 +152,7 @@ const overlaps = (a, b, pad = 0) => a[0] < b[2] + pad && b[0] < a[2] + pad && a[
  *   `column` and `hang` its ornament off its seed (an open span's slabs alone - a gust's push, a fragment's walls and a
  *     piece that moves never carry a column).
  * `w` and `d` its top where the collider's box is not the step's own size (a Drift's, a Beat's, a Riser's - the Steps' box,
- * world/sdStepsModel.js stepBox).
+ * world/superDungeon/sdStepsModel.js stepBox).
  * @param {any} spec @param {any} s @param {{ seed?: number, lite?: boolean, band?: number, w?: number, d?: number }} [o]
  */
 export function egPiecePlan(spec, s, { seed = 0, lite = false, band = 0, w = s.w, d = s.d } = {}) {
@@ -513,7 +513,7 @@ function carriage(K, a, b) {
 }
 
 /**
- * A BEAT: the Steps' dial as its top (its bezel and the line under its rim - world/sdStepsArt.js beatArt's top, bevel and
+ * A BEAT: the Steps' dial as its top (its bezel and the line under its rim - world/superDungeon/sdStepsArt.js beatArt's top, bevel and
  * line cells, the Steps' own record, so every frame of its dial and its warning is the law's picture), set in the band's
  * stone - the band's cornice under the line, a short torn underside. `plan` its plan (egPiecePlan).
  * @param {number} band @param {ReturnType<typeof egPiecePlan>} plan
@@ -606,7 +606,7 @@ export function egTubeLidModel(band, w, d, height) {
 
 /**
  * GRATH'S ISLE (section 13.3 - a court's isle that cracks and falls): in its own frame (its top's centre the origin), the
- * court's plates (the arena record, laid flat - never a clock's rings) on the law's own 48 sides (world/sdRealm.js
+ * court's plates (the arena record, laid flat - never a clock's rings) on the law's own 48 sides (world/superDungeon/sdRealm.js
  * SD_ISLAND_SIDES - its collider's), THE EDGE LINE's strip round its rim, the band's cornice under it - never teeth - and its
  * stone down `down` m under its top (into the magma it stands in).
  * @param {number} band @param {number} radius @param {{ down?: number, lite?: boolean }} [o]
@@ -635,7 +635,7 @@ export function egIsleModel(band, radius, { down = 2.4, lite = false } = {}) {
 }
 
 /**
- * A CRUMBLE'S MODELS in band `band`'s dress (the Steps' own geometry - world/sdStepsModel.js buildStepModel's bevelled box
+ * A CRUMBLE'S MODELS in band `band`'s dress (the Steps' own geometry - world/superDungeon/sdStepsModel.js buildStepModel's bevelled box
  * and buildCrumbleChunks' chunks along its main cracks, so its cracks, its fall and its rewind are the law's tell exactly -
  * wearing the band's crack stages, world/egPlatformArt.js EG_CRUMBLE_TELL_RECORDS, under the band's tell archive):
  * `{ rest, stages: [1, 2, 3], chunks: [{ model, at, poly }] }` (`n` chunks - two on a phone). Pure.

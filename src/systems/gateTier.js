@@ -1,12 +1,12 @@
 // @ts-check
 // EG-G2 (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 2 - EG1's tiers): THE
-// GATE'S TIER, IN ONE WORD - the dungeons' shape (systems/dungeonTier.js, TIER1) for Dagon's gate:
+// GATE'S TIER, IN ONE WORD - the dungeons' shape (systems/dungeon/dungeonTier.js, TIER1) for Dagon's gate:
 //   'regular' - Dagon's Breach: the world boss on the shared clock, one a game day, everyone (WB);
 //   'elite'   - an Elite Breach: a Weir Key's breach for one company, the Battlespire's torn halls (this arc);
 //   'super'   - reserved for the Abyss Breach. The code keeps `super` for the Abyss tier as the dungeons do; nothing
 //               answers it until it is built (section 2, "Why the Abyss tier is not built here").
 // GATE_TIER_TEXT holds the words. The Regular tier's word is the event's own name, unchanged ("Dagon's Breach" - the
-// gate's pool says it, scenes/gatePool.js), and the Elite tier's is the breach's own (net/egLaw.js EG_TEXT.name) -
+// gate's pool says it, scenes/gate/gatePool.js), and the Elite tier's is the breach's own (net/egLaw.js EG_TEXT.name) -
 // test/eglook_registry.test.js holds both equal to their homes. Its surfaces: the arch's plaque (World Tooltips - the
 // title, *The Battlespire* under it, and to anyone outside the company *<opener>'s company*), the sight line (the Elite
 // Dungeon's own law, world/spawnedDungeons.js dungeonSightLine), the Timers row (*Elite Breach opens 4:12*, then *Hall 17 -

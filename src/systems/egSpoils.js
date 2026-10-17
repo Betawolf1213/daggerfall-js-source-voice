@@ -2,7 +2,7 @@
 // EG-E (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 19, REWARDS AND THE
 // ECONOMY): A REDOUBT'S SPOILS - what one earner's Redoubt pays in the pack, rolled on the secret seed the relay put on
 // their `w` receipt (net/egReceipt.js `c`) at the level the breach admitted them (`l`), the Hour's and the gate's twin
-// (systems/sdSpoils.js, systems/gateSpoils.js).
+// (systems/superDungeon/sdSpoils.js, systems/gate/gateSpoils.js).
 //
 // THE ROLL, in rollSdSpoils' order - every new draw after the last, as SET6's law requires: gold (EG_SPOILS_GOLD_PER_LEVEL
 // a level, a tenth more a Redoubt to EG_SPOILS_GOLD_MAX times, the seed varying it a fifth either way); ONE Rare or
@@ -29,14 +29,14 @@
 // `embers`, the row's `stones`), which the Broker's insignia and the Panoply's sink take from the pack (lane8 L8-2).
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
-import { seededRng } from './wind.js';
-import { spoilsBase, magicOrBetter, sigilStone, SPOILS_SOURCE } from './gateSpoils.js';
-import { applyRarity, lastPass, socketPass, weaponSocketPass, techniquePass } from './lootRarity.js';
+import { seededRng } from './wind/wind.js';
+import { spoilsBase, magicOrBetter, sigilStone, SPOILS_SOURCE } from './gate/gateSpoils.js';
+import { applyRarity, lastPass, socketPass, weaponSocketPass, techniquePass } from './loot/lootRarity.js';
 import { bossGems } from './gems.js';
 import { bossCardRoll } from './bossCards.js';
 import { mintPanoplyPiece } from './aetheric.js';   // EG15: THE BATTLEMAGE'S PANOPLY's nine records - which piece, one draw
 import { egLordArm } from './egLordArms.js';
-import { RANDOM_TREASURE_ICONS } from './loot.js';
+import { RANDOM_TREASURE_ICONS } from './loot/loot.js';
 import { egSpoilsPasses, egPassSeed, egPanoplyHit, egLegendaryShare, EG_LORD_ARM_IN } from '../net/egPay.js';
 import { egPanoplyDraw, egPanoplyIn } from '../net/egPay.js';   // AUDIT EG III: a Reliquary's Panoply, twice the chance
 
@@ -132,7 +132,7 @@ export function egSpoilsList(seed, level, w, o = {}) {
  *  claim's answer is the service's own). */
 export const EG_EMBERS_MAX = 2001;
 /** AUDIT EG V (lane8 L8-2; section 19 - "the Spire's embers join EMBERS_EARNED_SQL ... so the insignia and the sink spend
- *  them"): A PAID REDOUBT'S DEADLANDS EMBERS - one stack of the gate's currency (systems/gateSpoils.js sigilStone, minted as
+ *  them"): A PAID REDOUBT'S DEADLANDS EMBERS - one stack of the gate's currency (systems/gate/gateSpoils.js sigilStone, minted as
  *  the gate's and the serpent's: no roll taken), as many as the claim paid (`embers`, the row's `stones`), or null. The
  *  service wrote them to the purse and no pack ever held them, so the Broker - who takes them from the pack - could not. */
 export const egEmberStack = (n) => (Number.isSafeInteger(n) && n > 0 ? Object.assign(sigilStone(), { stackCount: Math.min(n, EG_EMBERS_MAX) }) : null);
@@ -141,7 +141,7 @@ export const egEmberStack = (n) => (Number.isSafeInteger(n) && n > 0 ? Object.as
 export const egSpoilsSeedOf = (c, d) => (Number.isSafeInteger(d?.seed) && d.seed >= 0 ? d.seed >>> 0 : (c?.c ?? 0) >>> 0);
 /** Passes as the pool throws them, each piece dressed in the treasure flat `seed`'s own stream chooses - AUDIT EG V: the
  *  embers' stack last, its flat drawn after every other (the gate's glow - scenes/spoilsPool.js SIGIL_TIER, 'artifact',
- *  as systems/serpentSpoils.js says it). Pure. */
+ *  as systems/serpent/serpentSpoils.js says it). Pure. */
 function dressed(seed, passes, embers = null) {
   const look = seededRng(((seed >>> 0) ^ 0x5eed) >>> 0);
   const flat = () => RANDOM_TREASURE_ICONS[Math.floor(look() * RANDOM_TREASURE_ICONS.length)];

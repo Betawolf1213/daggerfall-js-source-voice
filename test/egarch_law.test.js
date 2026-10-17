@@ -1,9 +1,9 @@
 // EG-F (2026-10-12, the Elite Gates arc, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md sections
 // 5, 6.3, 16.6 and 18): THE ARCH AND THE CALL'S LAWS, PURE - where a breach may start and the Wager (net/egStartLaw.js),
 // the key's refusals in the page's order and where the arch stands (scenes/egArch.js), its life from the rise to the
-// sink, the gate's pass widened to per-draw values with the gate's own draw what it was (render/gatePass.js), the clear
-// sweep over a set of keys (world/gateClearance.js), the hub's signature on the call (net/egCallSig.js), the opener's
-// landing (world/gateArena.js gateLandingFor, an arch record), the Timers row, the sight line, the arch's skin.
+// sink, the gate's pass widened to per-draw values with the gate's own draw what it was (render/gate/gatePass.js), the clear
+// sweep over a set of keys (world/gate/gateClearance.js), the hub's signature on the call (net/egCallSig.js), the opener's
+// landing (world/gate/gateArena.js gateLandingFor, an arch record), the Timers row, the sight line, the arch's skin.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { egStartsFrom, egMayStart, egWagerOf, egWagerTakes, EG_WAGER_MAX, EG_WAGER_FAMILY_OF } from '../src/net/egStartLaw.js';
@@ -12,17 +12,17 @@ import { orderValid, mintEgOrder, verifyOrder, EG_ORDER_WAGER_MAX, EG_ORDER_FIEL
 import { egKeyRefusal, egArchPlace, egArchSite, egArchSceneAt, egArchLife, egArchPlacement, egArchDraw, egArchModel, egArchLandingFor, validEgArchWord,
   EG_ARCH_SCALE, EG_ARCH_HEIGHT, EG_ARCH_HALF_W, EG_ARCH_CLEAR_M, EG_ARCH_BEACON, EG_ARCH_BEACON_UP_M, EG_ARCH_TINT, EG_ARCH_GOLD, EG_ARCH_LANDING_M } from '../src/scenes/egArch.js';
 import { PORTAL_AHEAD } from '../src/systems/portalStone.js';
-import { GATE_RISE_MS, GATE_COLLAPSE_MS } from '../src/net/gateLaw.js';
+import { GATE_RISE_MS, GATE_COLLAPSE_MS } from '../src/net/gate/gateLaw.js';
 import { GatePassRenderer, gatePassValues, GATE_PASS_GATE, GATE_PASS_MAX, BEACON_COLOR, BEACON_BELOW_M, BEACON_HEIGHT_M, BEACON_START_M,
   MEMBRANE_VS, MEMBRANE_FS, BEACON_VS, BEACON_FS, MEMBRANE_DRAW_VS, MEMBRANE_DRAW_FS, BEACON_DRAW_VS, BEACON_DRAW_FS,
-  MEMBRANE_SCALE_DECL, MEMBRANE_TINT_DECL, MEMBRANE_TINT_LINE, BEACON_COLUMN_DECL, BEACON_FOOT_DECL } from '../src/render/gatePass.js';
+  MEMBRANE_SCALE_DECL, MEMBRANE_TINT_DECL, MEMBRANE_TINT_LINE, BEACON_COLUMN_DECL, BEACON_FOOT_DECL } from '../src/render/gate/gatePass.js';
 import { gateArchProfile, buildGateModel, GATE_HEIGHT, GATE_HALF_W, GATE_ARCHIVE, GATE_STONE_RECORD, GATE_SPINE_RECORD, GATE_RIM_RECORD, GATE_PLINTH_RECORD,
-  EG_ARCH_STONE_RECORD, EG_ARCH_SPINE_RECORD, EG_ARCH_RIM_RECORD, EG_ARCH_RECORD_OF } from '../src/world/gateModel.js';
-import { archArt, ARCH_GOLD, ARCH_CRACK, ARCH_INLAY_TEXELS } from '../src/world/gateArt.js';
-import { gateClearFor, gateClearSet, boxNearGate, createGateClearSweep, EG_ARCH_ROCK_M, GATE_CLEAR_M } from '../src/world/gateClearance.js';
+  EG_ARCH_STONE_RECORD, EG_ARCH_SPINE_RECORD, EG_ARCH_RIM_RECORD, EG_ARCH_RECORD_OF } from '../src/world/gate/gateModel.js';
+import { archArt, ARCH_GOLD, ARCH_CRACK, ARCH_INLAY_TEXELS } from '../src/world/gate/gateArt.js';
+import { gateClearFor, gateClearSet, boxNearGate, createGateClearSweep, EG_ARCH_ROCK_M, GATE_CLEAR_M } from '../src/world/gate/gateClearance.js';
 import { signEgCall, verifyEgCall, egCallBytes, EG_CALL_SIG_V } from '../src/net/egCallSig.js';
-import { gateLandingFor, GATE_LANDING_M } from '../src/world/gateArena.js';
-import { gateYaw } from '../src/net/gateLaw.js';
+import { gateLandingFor, GATE_LANDING_M } from '../src/world/gate/gateArena.js';
+import { gateYaw } from '../src/net/gate/gateLaw.js';
 import { eventTimerRows } from '../src/systems/eventTimers.js';
 import { sightLineOf, dungeonSightLine } from '../src/world/spawnedDungeons.js';
 
@@ -138,7 +138,7 @@ test('EG-F THE ARCH STANDS: the gate at 0.62 (10.04 m, 4.79 m a side) at the Por
   assert.deepEqual(s, { px: 300, py: 200, x: 409.6, y: 12, z: 380.25, yaw: 1.5 });
   assert.deepEqual(egArchSceneAt(s, [100, 37, 200]), [509.6, 49, 580.25], 'another scene stands it on the same pixel spot');
   assert.equal(egArchSite([0, 0, 0], 4 * Math.PI + 0.25, 1, 1, [0, 0, 0]).yaw, 0.25, 'its turn wrapped into one round');
-  // the opener's landing (world/gateArena.js gateLandingFor - widened to an arch record)
+  // the opener's landing (world/gate/gateArena.js gateLandingFor - widened to an arch record)
   const at = { pixelTranslation: () => [0, 0, 0], heightAt: () => 3 };
   const l = egArchLandingFor(SITE, at);
   assert.equal(EG_ARCH_LANDING_M, GATE_LANDING_M * 0.62);

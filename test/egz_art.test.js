@@ -24,9 +24,9 @@ import { egKeyArt, egKeyTexel, WEIR_KEY_ART, EG_KEY_ART_SIZE, EG_KEY_OUTLINE, re
 import { EG_BAND_RAMPS } from '../src/world/egBandArt.js';
 import { EG_ARCH_ARCHIVES, EG_ARCH_BLOCK, pseudoArchiveOwner } from '../src/world/pseudoArchives.js';
 import { WEIR_KEY_ROW, weirKeys } from '../src/systems/weirKey.js';
-import { inventoryItemImage } from '../src/systems/itemTemplates.js';
+import { inventoryItemImage } from '../src/systems/item/itemTemplates.js';
 import { isVendorArchive, vendorRecordCount, vendorTextureStandIn, setTextureDeriveContext, preloadTextureRecord, decodedTexture } from '../src/systems/textureReplacement.js';
-import { CELL_W, SLOT_H } from '../src/ui/itemScroller.js';
+import { CELL_W, SLOT_H } from '../src/ui/item/itemScroller.js';
 import { createDataPipeline } from '../src/scenes/dataPipeline.js';
 import { addVendorTextures } from '../src/systems/textureReplacement.js';
 import { egGive8 } from './egGive8.mjs';

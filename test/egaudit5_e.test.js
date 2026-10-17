@@ -15,7 +15,7 @@ import { egHallOf, egCircleOfHall, EG_SEALED_MS, EG_GATHER_MS } from '../src/net
 import { egBridgeOf, egBridgeY } from '../src/net/egSpanLaw.js';
 import { createEgSpan, egSpanCollider } from '../src/scenes/egSpan.js';
 import { registerSpireObjs } from '../src/systems/spireKit.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { Collider } from '../src/player/collider.js';
 import { egBreachNew, egEnter, egStep, egStateOf, egEnd, egForsake } from '../src/net/egBrain.js';
 import { validEgOut } from '../src/net/wire.js';
@@ -23,7 +23,7 @@ import { createEgClient } from '../src/scenes/egClient.js';
 import { createEgFight } from '../src/scenes/egFight.js';
 import { lookAt, perspective } from '../src/world/mat4.js';
 import { buildProgram } from '../src/render/glProgram.js';
-import { GateTelegraphRenderer } from '../src/render/gateTelegraph.js';
+import { GateTelegraphRenderer } from '../src/render/gate/gateTelegraph.js';
 import { CourtCrystalRenderer } from '../src/render/courtCrystals.js';
 import { EG_LINE_VS } from '../src/render/egLinePass.js';
 import { egEdgeLinePx } from '../src/world/egLook.js';

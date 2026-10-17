@@ -26,7 +26,7 @@ import { createEgClient, EG_LOG_KEY, EG_BACK_TEXT } from '../src/scenes/egClient
 import { egBreachNew, egEnter, egStateOf, egStep, egFall } from '../src/net/egBrain.js';
 import { egCircleOfHall, egHallOf, EG_SEALED_MS, EG_TEXT, EG_ABSENT_TRIAL_MS, EG_DECREE_BY_KEY } from '../src/net/egLaw.js';
 import { validEgOut } from '../src/net/wire.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { foldEg, EG_STATE_EMPTY, egGatherOf, egMemberOf } from '../src/net/egLink.js';
 import { egAbsentStep, egPartyRows, egPartyDeco, EG_ROW_MARKS, EG_PARTY_CSS } from '../src/ui/egParty.js';
 import { egSpireHudModel, drawEgSpireHud, destroyEgSpireHud, egTouchButtons, egWatchLine, egRestLine, egHereText, egFormFactor, EG_LAYOUTS, EG_SPIRE_CSS, drawEgArrivalCard, drawEgFall, egFallModel } from '../src/ui/egSpireHud.js';
@@ -34,11 +34,11 @@ import { setPref } from '../src/systems/uiPrefs.js';
 import { egHudModel, drawEgPanel, destroyEgHud, egRecapModel, egRecapKeep, egRecapsKept, egStakeText } from '../src/ui/egHud.js';
 import { egBeatMemo, egBeatWatch, egBeatPlan, EG_BEATS, EG_BEAT_SOUNDS, EG_PRES_TEXT } from '../src/ui/egBeats.js';
 import { spireScoreFor, SPIRE_SONGS, SPIRE_SCORE_SILENCE, SPIRE_WAKE_MS, SPIRE_END_MS } from '../src/systems/egScore.js';
-import { drawGateTitleCard, destroyGateTitleCard, TITLE_CARD_CSS } from '../src/ui/gateTitleCard.js';
+import { drawGateTitleCard, destroyGateTitleCard, TITLE_CARD_CSS } from '../src/ui/gate/gateTitleCard.js';
 import { egRunsLines, egBoardLines, EG_BOARD_TABS, EG_BOARD_TAB_TEXT, createEgBoardPanel, openEgBoard } from '../src/ui/egBoardWindow.js';
 import { egSpireLights, EG_LIGHT_KIND } from '../src/world/egLights.js';
 import { EG_DANGER_PALETTES } from '../src/ui/egAccess.js';
-import { itemInfoRows } from '../src/systems/itemInfo.js';
+import { itemInfoRows } from '../src/systems/item/itemInfo.js';
 import { weirKeys } from '../src/systems/weirKey.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -307,7 +307,7 @@ test('AUDIT EG V L7-17 REDUCED MOTION STILLS THE GATE\'S TITLE CARDS IN THE SPIR
   destroyEgSpireHud();
   assert.match(TITLE_CARD_CSS, /\.wb-title-card\.still \.wb-title-rule \{ transition: none; \}/);
   assert.match(TITLE_CARD_CSS, /@media \(prefers-reduced-motion: reduce\) \{ \.wb-title-rule \{ transition: none; \} \.wb-title-card\.in \.wb-title-main \{ animation: none; \} \}/);
-  assert.match(rd('src/ui/gateTitleCard.js'), /export function drawGateTitleCard\(model, \{ hidden = false, doc = globalThis\.document, still = egReducedMotion\(\) \} = \{\}\)/);
+  assert.match(rd('src/ui/gate/gateTitleCard.js'), /export function drawGateTitleCard\(model, \{ hidden = false, doc = globalThis\.document, still = egReducedMotion\(\) \} = \{\}\)/);
   assert.match(rd('src/ui/egAccess.js'), /The absent's ring still drains: it is a count, not a motion\./);
 });
 
@@ -440,7 +440,7 @@ test('AUDIT EG V L8-6 THE WEIR KEY\'S CARD SAYS ITS LINE (section 5 - "its line:
 });
 
 test('AUDIT EG V L7-10 THE SPIRE\'S ACCESSIBILITY ROWS IN THE PLAYER\'S LANGUAGE (L10N4; section 27.9): the three rows\' names and notes and the four palettes\' names go through the text core, each a catalog key the thirteen whole languages hold (mutants: a row\'s literal back; a palette\'s name English alone)', () => {
-  const M = rd('src/ui/enhancedMenu.js');
+  const M = rd('src/ui/enhanced/enhancedMenu.js');
   const body = M.slice(M.indexOf('function spireAccessRows() {'), M.indexOf('  return [motion, palette, fill];'));
   assert.doesNotMatch(body, /prefRow\('reducedMotion', '/);
   for (const k of ['menu.spire.motion.name', 'menu.spire.motion.note', 'menu.spire.palette.name', 'menu.spire.palette.note', 'menu.spire.fill.name', 'menu.spire.fill.note']) assert.ok(body.includes(`t('${k}', `), k);

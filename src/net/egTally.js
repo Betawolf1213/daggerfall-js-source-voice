@@ -12,12 +12,12 @@
 //
 // EVERY NUMBER IS THE RELAY'S OWN COUNT, never a screen's: a blow as net/egBrain.js egBlow believed it (`got`, after the
 // gate's hand and purse and the lord's weight), a heal as its receiver said it (the healer's peer id named by the room)
-// and believed within the receiver's heal bucket - the gate's GATE-HEAL law and its constants (net/gateBrain.js healRef,
+// and believed within the receiver's heal bucket - the gate's GATE-HEAL law and its constants (net/gate/gateBrain.js healRef,
 // HEAL_REFILL_S, HEAL_DEPTH_X). A figure for the round-up alone: it buys nothing - no receipt, no share of a Redoubt's
 // earners (net/egBrain.js keeps its own `dc`), no threat.
 //
 // Pure: the breach's record in, the wire's compact tables out. Not a DFU member. Ledger A (ELITE-GATES).
-import { healRef, HEAL_REFILL_S, HEAL_DEPTH_X } from './gateBrain.js';
+import { healRef, HEAL_REFILL_S, HEAL_DEPTH_X } from './gate/gateBrain.js';
 
 /** The most rows a chart or a tally carries: the company's eight (net/wire.js EG_COMPANY_MAX). */
 export const EG_TALLY_ROWS = 8;

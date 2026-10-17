@@ -20,7 +20,7 @@ import { EG_KIT_RECORD, EG_KIT_RECORDS } from '../src/world/egKit.js';
 import { egAtmosOf } from '../src/world/egAtmos.js';
 import { createEgGroundLook } from '../src/scenes/egGroundLook.js';
 import { createEgOccluders } from '../src/scenes/egOcclude.js';
-import { SD_REALM_ORIGIN } from '../src/net/sdBrain.js';
+import { SD_REALM_ORIGIN } from '../src/net/superDungeon/sdBrain.js';
 import { egLawSeam } from '../src/net/egLaw.js';
 
 // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins measure spec law 8's halls - drawn where no law is named

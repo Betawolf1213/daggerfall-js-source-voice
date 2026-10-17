@@ -15,9 +15,9 @@ import { egShareX, EG_SHARE_X_MAX } from '../src/net/egBodies.js';
 import { egBreachNew, egEnter, egStep } from '../src/net/egBrain.js';
 import { egDecreesAsk, egDecreesChosen, egDecreesInForce } from '../src/net/egRun.js';
 import { egWindupFloorMs, shDisc } from '../src/net/egShape.js';
-import { GATE_TRIALS, gateTrialOf } from '../src/net/gateMods.js';
-import { SHIELD_MS, THREAT_PICK, THREAT_DECAY } from '../src/net/gateBrain.js';
-import { SD_OMENS } from '../src/net/sdMarks.js';
+import { GATE_TRIALS, gateTrialOf } from '../src/net/gate/gateMods.js';
+import { SHIELD_MS, THREAT_PICK, THREAT_DECAY } from '../src/net/gate/gateBrain.js';
+import { SD_OMENS } from '../src/net/superDungeon/sdMarks.js';
 
 const T0 = 1_800_000_000_000;
 const SITE = { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 };
@@ -93,7 +93,7 @@ test('EG5 THE MERGE (section 14): the lord family\'s four are the gate\'s boss-g
   assert.equal(EG_DECREE_BY_KEY.fraying.name, SD_OMENS.find((o) => o.id === 'fraying').name, 'The Fraying is the Hour\'s');
 });
 
-test('EG5 THE FOLD (section 14, "The merge"): net/sdMarks.js sdMarksLaw\'s rule over the laws in thousandths - a key ending in X multiplies (rounded to the thousandth), any other is the last that names it; the profile folds the decrees in their numbers\' order (mutants: an X key overridden; the thousandth floored; the first naming kept; the fold out of order)', () => {
+test('EG5 THE FOLD (section 14, "The merge"): net/superDungeon/sdMarks.js sdMarksLaw\'s rule over the laws in thousandths - a key ending in X multiplies (rounded to the thousandth), any other is the last that names it; the profile folds the decrees in their numbers\' order (mutants: an X key overridden; the thousandth floored; the first naming kept; the fold out of order)', () => {
   const law = (key, r) => EG_DECREE_BY_KEY[key].law[r - 1];
   const base = Object.fromEntries(EG_LAW_X_KEYS.map((k) => [k, EG_LAW_UNIT]));
   assert.deepEqual(egLawFold([]), base, 'nothing named: x1 each');

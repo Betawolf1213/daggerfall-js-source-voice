@@ -54,7 +54,7 @@
 // EVERY CLOCK IS AN ARGUMENT, as in accounts.js. Not a DFU member: Daggerfall Unity has no accounts.
 // ═══════════════════════════════════════════════════════════════════
 
-import { arenaSeasonOf, arenaSeasonDay, arenaSeasonEndsS, arenaWeekOf } from '../../src/net/arenaLaw.js';
+import { arenaSeasonOf, arenaSeasonDay, arenaSeasonEndsS, arenaWeekOf } from '../../src/net/arena/arenaLaw.js';
 import { egBandMastered, EG_FEAT_BANDS } from '../../src/net/egFeats.js';
 import { egProclamationOf, EG_DECREE_BY_KEY } from '../../src/net/egLaw.js';
 import { topWithMe, ARENA_BOARD_TOP } from './arena.js';

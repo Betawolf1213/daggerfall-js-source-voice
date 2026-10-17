@@ -20,15 +20,15 @@ import { EG_DECREES, EG_DECREE_FAMILIES, EG_DECREE_BY_KEY, egDecreeCount, egDecr
 import { egOfferOf, egTake, egVOf, egDeclaredX, egCapX, egResonance, EG_SHARDS_PER, EG_FADE_CD_S } from './egVestige.js';
 import { egAccordMates, EG_FAR_M, EG_HAMMER_X, EG_AMBUSH_X, EG_ECHO_SHARE } from './egVestige.js';   // EG-ZS: the Accords' pair law and numbers
 import { EG_V_BY_KEY, EG_AURA_EXTRA, EG_AURA_EXTRA_MAX, EG_M_ID, EG_COUNTER_MS, EG_COUNTER_X, EG_MARK_MS } from './egVestige.js';   // AUDIT EG III: the Standard's aura, Counterstroke's numbers, a mark's life - declared once
-import { HIT_KINDS } from './gateBrain.js';
+import { HIT_KINDS } from './gate/gateBrain.js';
 import { egSeed } from './egLaw.js';   // AUDIT EG IV (lane10 #11): the season's strata, a seeded order
-import { sdRng } from './sdBrain.js';
-import { arenaSeasonOf } from './arenaLaw.js';
+import { sdRng } from './superDungeon/sdBrain.js';
+import { arenaSeasonOf } from './arena/arenaLaw.js';
 import { EG_OFFER_MAX, EG_SPOT_X } from './egVestige.js';   // AUDIT EG IV: an offer's six; Spotter's share over a Hunter's Mark
 import { EG_RUN_REL_MAX } from './wire.js';   // AUDIT EG III (lane2 #1): the Reliquaries' circles a run's row carries
 import { egCirclePlan, egCircleOfHall, egSlotOfHall } from './egLaw.js';   // AUDIT EG V (L2-10): THE FRAYING drawn only for a circle with an Athenaeum
-import { SD_OMENS } from './sdMarks.js';   // AUDIT EG V (L2-10): the Hour's omen The Fraying, its fray read
-import { SD_FRAY_MAX } from './sdBrain.js';   // AUDIT EG V (L2-10): the Orrery's own fray, the Hour's default
+import { SD_OMENS } from './superDungeon/sdMarks.js';   // AUDIT EG V (L2-10): the Hour's omen The Fraying, its fray read
+import { SD_FRAY_MAX } from './superDungeon/sdBrain.js';   // AUDIT EG V (L2-10): the Orrery's own fray, the Hour's default
 
 /** The company's word stays open this long (ms). */
 export const EG_ASK_MS = 10_000;
@@ -96,7 +96,7 @@ export function egAsksDue(B, now, all = false) {
 /** The families the standing decrees hold (the Proclamation's, the Wager's). */
 export const egStandingFams = (B) => [...(B.pr ? [EG_DECREE_BY_KEY[B.pr]?.fam] : []), ...(B.wg ?? []).map((id) => EG_DECREES[id]?.fam)].filter(Boolean);
 /**
- * AUDIT EG V (L2-10; sections 8.4 and 14) - THE FRAYING, the Hour's omen (net/sdMarks.js SD_OMENS' `fraying`: the Orrery snaps
+ * AUDIT EG V (L2-10; sections 8.4 and 14) - THE FRAYING, the Hour's omen (net/superDungeon/sdMarks.js SD_OMENS' `fraying`: the Orrery snaps
  * back at thirty-six turns) as a decree of the ground: an Athenaeum's Orrery snaps back at egFrayOf(c, rank) turns, not the
  * Hour's default SD_FRAY_MAX. The Spire's Orrery's road grows two turns every five Redoubts (net/egBrain.js standFight), so its
  * fray grows with it - eight turns past the longest road at rank I, as the omen's 36 stands over the first circles' 28; four at

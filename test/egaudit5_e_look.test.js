@@ -2,7 +2,7 @@
 // the look's laws, pinned on the shapes the breach client's fight mints (scenes/egFight.js under createEgClient, fed the
 // director's own words) and on the code the GPU runs (test/glsl.mjs over the Spire's stage):
 //   L6-2   AOE-PERF's tight quads reach the Spire's thin shapes: a pull-apart tether's and a stay-close chain's floor draws
-//          are their own strips (render/gateTelegraph.js telegraphStrip; world/egTelegraph.js egClipTris), a Vestige aura's
+//          are their own strips (render/gate/gateTelegraph.js telegraphStrip; world/egTelegraph.js egClipTris), a Vestige aura's
 //          ring its own small square (TELEGRAPH_RING_REACH) - each holding every fragment its pool writes.
 //   L5-3   the place's timed hazards - a Rampart's and a span's vents, every fragment hazard - told and landing in the
 //          place's white, so the danger palettes recolour every one (scenes/egFight.js PEND_COLOR, egLookShapes).
@@ -25,12 +25,12 @@ import { createEgFight } from '../src/scenes/egFight.js';
 import { egHallCentre, egCircleLights, egToDungeon, EG_LAMP, EG_DROP_LAMP, EG_LAMP_BUDGET } from '../src/world/egHall.js';
 import { egRuinColumns } from '../src/world/egRuin.js';   // PIN MOVED (EG-LOOK): the lamps on the ruin's columns
 import { egFightFloors, egFloorPlan, EG_AURA_RING } from '../src/world/egTelegraph.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { lookAt, perspective } from '../src/world/mat4.js';
 import {
   GateTelegraphRenderer, TELEGRAPH_FS_SPIRE, TELEGRAPH_KIND, TELEGRAPH_POOL_SPIRE, TELEGRAPH_POINTS_MAX, TELEGRAPH_REACH, TELEGRAPH_RING_REACH, TELEGRAPH_TICK_REACH, TELEGRAPH_TIGHT_PAD,
   telegraphBounds, telegraphStrip, telegraphQuadOver,
-} from '../src/render/gateTelegraph.js';
+} from '../src/render/gate/gateTelegraph.js';
 
 const ME = 'acct-0', PEER = 'acct-1';
 
@@ -115,7 +115,7 @@ function spireFragOf(sh, fw, court) {
 const writes = (o) => !!o && (o[0] !== 0 || o[1] !== 0 || o[2] !== 0 || o[3] !== 0);
 function* grid(q, step) { for (let x = q[0]; x <= q[2] + 1e-9; x += step) for (let z = q[1]; z <= q[3] + 1e-9; z += step) yield [x, z]; }
 const inBox = (q, [x, z], e = 0) => x >= q[0] - e && x <= q[2] + e && z >= q[1] - e && z <= q[3] + e;
-/** Is (x, z) inside strip `st` (render/gateTelegraph.js telegraphStrip - the vertex stage's own frame), `e` m slack? */
+/** Is (x, z) inside strip `st` (render/gate/gateTelegraph.js telegraphStrip - the vertex stage's own frame), `e` m slack? */
 const inStrip = (st, [x, z], e = 0) => { const s = st.u[0] * (x - st.a[0]) + st.u[1] * (z - st.a[1]), q = st.u[1] * (x - st.a[0]) - st.u[0] * (z - st.a[1]); return s >= -e && s <= st.len + e && Math.abs(q) <= st.w + e; };
 const triArea = (b, i) => Math.abs((b[i + 2] - b[i]) * (b[i + 5] - b[i + 1]) - (b[i + 4] - b[i]) * (b[i + 3] - b[i + 1])) / 2;
 /** The pixel sizes the stage is read at: near, a far rim's at a grazing look, and past it. */

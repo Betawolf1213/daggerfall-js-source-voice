@@ -7,7 +7,7 @@
 //   fog     the made level's haze (applyFog's shape: exp, its density and colour) - the far wings melt into it
 //   tri     the dungeon trilight (sky, equator, ground): the ground term is the realm's light from below
 //   key     the moonlight slot's key (direction toward the light, colour, scale): the Spire's lost sky, the moon's bearing
-//   grade   the lane's grade (render/renderer.js setSceneGrade - world/sdLook.js SD_HOUR_GRADE's shape)
+//   grade   the lane's grade (render/renderer.js setSceneGrade - world/superDungeon/sdLook.js SD_HOUR_GRADE's shape)
 //   lamp    a lamp's tint (the band's fixtures' flame - the ruin's one emissive)
 //   motes   THE AIR (render/egMotes.js): the band's kinds of mote (render/egMotes.js EG_MOTE_KINDS - how each moves), how
 //           many of each, and each one's colour cool (`lo`) and hot (`hi`) - under L2 (display luminance 0.45) but for the

@@ -190,7 +190,7 @@
   },
   {
     "name": "EGSEAM-the-ghosts-the-hours",
-    "file": "src/render/sdStepsPass.js",
+    "file": "src/render/superDungeon/sdStepsPass.js",
     "old": "export const sdGhostStepsOf = (course) => course.steps.filter(",
     "new": "export const sdGhostStepsOf = (course) => SD_COURSE.steps.filter(",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "EGSEAM-the-ghosts-past-the-most",
-    "file": "src/render/sdStepsPass.js",
+    "file": "src/render/superDungeon/sdStepsPass.js",
     "old": "  const list = ghosts.slice(0, max);",
     "new": "  const list = ghosts;",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "EGSEAM-the-waystones-the-hours",
-    "file": "src/world/sdStepsModel.js",
+    "file": "src/world/superDungeon/sdStepsModel.js",
     "old": "export const sdWaystonesOf = (course) => Object.freeze(course.checkpoints.map(",
     "new": "export const sdWaystonesOf = (course) => Object.freeze(SD_COURSE.checkpoints.map(",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "EGSEAM-the-vane-the-hours",
-    "file": "src/world/sdStepsModel.js",
+    "file": "src/world/superDungeon/sdStepsModel.js",
     "old": "export const sdVaneAt = (course) => { const C = course.checkpoints[2];",
     "new": "export const sdVaneAt = (course) => { const C = SD_COURSE.checkpoints[2];",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "EGSEAM-the-floors-the-hours",
-    "file": "src/world/sdStepsModel.js",
+    "file": "src/world/superDungeon/sdStepsModel.js",
     "old": "of course.checkpoints.entries()) {\n",
     "new": "of SD_COURSE.checkpoints.entries()) {\n",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "EGSEAM-the-islands-the-hours",
-    "file": "src/world/sdStepsModel.js",
+    "file": "src/world/superDungeon/sdStepsModel.js",
     "old": "  for (const [k, c] of course.checkpoints.entries()) if (k > 0)",
     "new": "  for (const [k, c] of SD_COURSE.checkpoints.entries()) if (k > 0)",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "EGSEAM-the-breath-the-hours",
-    "file": "src/world/sdStepsModel.js",
+    "file": "src/world/superDungeon/sdStepsModel.js",
     "old": "z0 = C.z + C.r, z1 = course.end;",
     "new": "z0 = C.z + C.r, z1 = SD_COURSE.end;",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "EGSEAM-the-rewind-the-hours",
-    "file": "src/scenes/sdFx.js",
+    "file": "src/scenes/superDungeon/sdFx.js",
     "old": "export const sdRewindEdgesOf = (course) => Object.freeze(course.checkpoints.map(",
     "new": "export const sdRewindEdgesOf = (course) => Object.freeze(SD_COURSE.checkpoints.map(",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "EGSEAM-the-eye-the-hours",
-    "file": "src/scenes/sdFx.js",
+    "file": "src/scenes/superDungeon/sdFx.js",
     "old": "  const C = course.checkpoints;\n  for (let k = 0; k < C.length; k++)",
     "new": "  const C = SD_COURSE.checkpoints;\n  for (let k = 0; k < C.length; k++)",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "EGSEAM-the-hang-the-hours",
-    "file": "src/world/sdIslandModel.js",
+    "file": "src/world/superDungeon/sdIslandModel.js",
     "old": "  ...course.checkpoints.map((c, k) => ({ stage: 'steps',",
     "new": "  ...SD_COURSE.checkpoints.map((c, k) => ({ stage: 'steps',",
     "tests": [
@@ -280,7 +280,7 @@
   },
   {
     "name": "EGSEAM-the-hang-model-the-hours",
-    "file": "src/world/sdIslandModel.js",
+    "file": "src/world/superDungeon/sdIslandModel.js",
     "old": "  for (const isl of islands) if (isl.stage === stage)",
     "new": "  for (const isl of SD_HANG_ISLANDS) if (isl.stage === stage)",
     "tests": [
@@ -289,7 +289,7 @@
   },
   {
     "name": "EGSEAM-the-span-the-hours",
-    "file": "src/world/sdSteps.js",
+    "file": "src/world/superDungeon/sdSteps.js",
     "old": "  const C = course.checkpoints;\n  for (let k = C.length - 1;",
     "new": "  const C = SD_COURSE.checkpoints;\n  for (let k = C.length - 1;",
     "tests": [
@@ -298,7 +298,7 @@
   },
   {
     "name": "EGSEAM-the-breath-end-the-hours",
-    "file": "src/world/sdSteps.js",
+    "file": "src/world/superDungeon/sdSteps.js",
     "old": "&& z < course.end;",
     "new": "&& z < SD_COURSE.end;",
     "tests": [
@@ -307,7 +307,7 @@
   },
   {
     "name": "EGSEAM-the-cast-back-the-hours",
-    "file": "src/world/sdSteps.js",
+    "file": "src/world/superDungeon/sdSteps.js",
     "old": "const C = course.checkpoints, c = C[Math.max(",
     "new": "const C = SD_COURSE.checkpoints, c = C[Math.max(",
     "tests": [
@@ -316,7 +316,7 @@
   },
   {
     "name": "EGSEAM-the-riders-the-hours",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "  const steps = course.steps.map((s) => ({ s, key: sdStepKey(s.i),",
     "new": "  const steps = SD_COURSE.steps.map((s) => ({ s, key: sdStepKey(s.i),",
     "tests": [
@@ -325,7 +325,7 @@
   },
   {
     "name": "EGSEAM-the-riders-cast-to-the-hours",
-    "file": "src/scenes/sdSteps.js",
+    "file": "src/scenes/superDungeon/sdSteps.js",
     "old": "castBackTo(lastSpan, course)",
     "new": "castBackTo(lastSpan)",
     "tests": [
@@ -334,7 +334,7 @@
   },
   {
     "name": "EGSEAM-the-Concord-turned-for-rights",
-    "file": "src/net/sdBrain.js",
+    "file": "src/net/superDungeon/sdBrain.js",
     "old": "  if (lock.ok || now - (last[i] ?? 0) < SD_STONE_SETTLE_MS) return null;",
     "new": "  if (now - (last[i] ?? 0) < SD_STONE_SETTLE_MS) return null;",
     "tests": [
@@ -343,7 +343,7 @@
   },
   {
     "name": "EGSEAM-a-turn-uncounted",
-    "file": "src/net/sdBrain.js",
+    "file": "src/net/superDungeon/sdBrain.js",
     "old": "  if (R) orreryTurned(R, who, id, road, orreryShortest(o, orreryTurn(o, lock.st, i, a)), now);",
     "new": "  void road;",
     "tests": [
@@ -352,7 +352,7 @@
   },
   {
     "name": "EGSEAM-the-road-after-unmoved",
-    "file": "src/net/sdBrain.js",
+    "file": "src/net/superDungeon/sdBrain.js",
     "old": "orreryTurned(R, who, id, road, orreryShortest(o, orreryTurn(o, lock.st, i, a)), now);",
     "new": "orreryTurned(R, who, id, road, orreryShortest(o, lock.st), now);",
     "tests": [

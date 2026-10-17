@@ -10,7 +10,7 @@ import { verifyOrder, orderValid, mintEgOrder, ORDER_KINDS, EG_ORDER_FIELDS } fr
 import { mintEgReceipt, readEgReceipt, verifyEgReceipt, egReceiptValid, EG_RECEIPT_V } from '../src/net/egReceipt.js';
 import { EG_LIVE_S, EG_LAST_WORD_S, EG_KEY_PITY } from '../server-account/src/eg.js';
 import { EG_LAST_WORD_MS } from '../src/net/egLaw.js';
-import { arenaWeekOf } from '../src/net/arenaLaw.js';   // EG-E1: the week the Panoply sink keeps
+import { arenaWeekOf } from '../src/net/arena/arenaLaw.js';   // EG-E1: the week the Panoply sink keeps
 import { egSpoilsSeed } from '../src/net/egPay.js';   // AUDIT EG V: the spoils' seed a claim answers
 
 const { subtle } = globalThis.crypto;

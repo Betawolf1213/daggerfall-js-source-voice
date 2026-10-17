@@ -42,7 +42,7 @@
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { createMeshKit, meshKitBounds } from './meshKit.js';
-import { rng } from './sdPixelKit.js';
+import { rng } from './superDungeon/sdPixelKit.js';
 import { egBandArchive, EG_KIT_MAP } from './egBandArt.js';
 import { EG_KIT_RECORD } from './egKit.js';
 import { buildEgUndersideModel, EG_UNDERSIDE } from './egUndersideModel.js';
@@ -70,7 +70,7 @@ export const EG_VISTA_METAL = Object.freeze([[2.5, 38.5], [2.5, 39.5], [1.5, 37.
 const FLAME = Object.freeze({ v: EG_KIT_MAP[K.fixture].bands.flame, cells: EG_KIT_MAP[K.fixture].cells });
 /** The fixture's grille (a basket's bars, cut out between): its band of v. */
 const GRILLE = EG_KIT_MAP[K.fixture].bands.grille;
-/** A foundation's strata: its broken tips at least this far into the haze (world/sdIslandModel.js SD_SPIRE.haze's law). */
+/** A foundation's strata: its broken tips at least this far into the haze (world/superDungeon/sdIslandModel.js SD_SPIRE.haze's law). */
 export const EG_VISTA_HAZE = 0.84;
 /** THE SEALED SPIRE OVERHEAD, a band: its angular radius (rad) and its lean from the zenith toward the course (+z) - the
  *  sky's own numbers (world/egLook.js EG_SKIES `underside` and `lean`, held equal by test/eglook_wreck.test.js; smaller each
@@ -314,7 +314,7 @@ function dome(kit, rec, y, r, h, t, a0, a1, sectors, rings, full, { metal = -1, 
   }
 }
 /**
- * THE TORN FOUNDATIONS under a wing (the Hour's islandRoot law - world/sdIslandModel.js - in the found record): from its
+ * THE TORN FOUNDATIONS under a wing (the Hour's islandRoot law - world/superDungeon/sdIslandModel.js - in the found record): from its
  * top ring at y (an ellipse rx by rz about (cx, cz), `n` corners) down `depth` to a broken point - `rings` bands, each
  * narrower by its taper and jittered, each stepped out at its foot with a ledge facing down into the realm's light - and
  * `spires` smaller spires hanging round it, bent out; its strata by depth (v 0 at the top, the tips in the haze). Its top

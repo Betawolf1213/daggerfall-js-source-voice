@@ -4,7 +4,7 @@
 // played against the real relay (test/fakeRoom.mjs - the room re-admits a member it counts, net/egBrain.js egAdmitWord);
 // THE FALL (ui/egSpireHud.js egFallModel and drawEgFall, the client's sinking eye); THE SPANS' CLOCK (egClient
 // spanSeconds/breachNow, scenes/world.js deadlandsSeconds/egNow); THE FEINT'S DASHED FADE (scenes/egFight.js,
-// render/gateTelegraph.js uLook 4); THE PAD reaching the Surplus's two buttons; THE BEATS ON THE CRITICAL BUS (systems/
+// render/gate/gateTelegraph.js uLook 4); THE PAD reaching the Surplus's two buttons; THE BEATS ON THE CRITICAL BUS (systems/
 // egMix.js `beat`).
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -14,7 +14,7 @@ import { glslFunctions, GlslDiscard } from './glsl.mjs';
 import { EG_INTERNAL_OPEN, validEgOut, validEgIn, EG_BRAIN_V } from '../src/net/wire.js';
 import { egRoomKey, egHallOf, egTimes, EG_SEALED_MS, EG_TEXT } from '../src/net/egLaw.js';
 import { mintEgOrder } from '../src/net/identityToken.js';
-import { realmToDungeon, dungeonToRealm } from '../src/net/sdBrain.js';
+import { realmToDungeon, dungeonToRealm } from '../src/net/superDungeon/sdBrain.js';
 import { egToDungeon } from '../src/world/egHall.js';
 import { egSupportAt, EG_HOLD } from '../src/net/egFair.js';
 import { egBreachNew, egEnter, egStateOf } from '../src/net/egBrain.js';
@@ -29,7 +29,7 @@ import { drawEgPanel, egPanelModel, destroyEgHud } from '../src/ui/egHud.js';
 import { egAccessNow, EG_DANGER_PALETTES } from '../src/ui/egAccess.js';
 import { createSpireMix } from '../src/systems/egMix.js';
 import { EG_LOOK_BIT } from '../src/world/egLook.js';
-import { TELEGRAPH_FS_SPIRE, TELEGRAPH_KIND, TELEGRAPH_EDGE_DAGON } from '../src/render/gateTelegraph.js';
+import { TELEGRAPH_FS_SPIRE, TELEGRAPH_KIND, TELEGRAPH_EDGE_DAGON } from '../src/render/gate/gateTelegraph.js';
 import { TELL_FEINT_FADE } from '../src/ai/blowShapes.js';
 import { EG_V_BY_KEY, EG_VESTIGES } from '../src/net/egVestige.js';
 import { setPref } from '../src/systems/uiPrefs.js';

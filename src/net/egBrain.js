@@ -94,12 +94,12 @@ import { EG_ENGINES, EG_ENGINE_REACH_M, EG_ENGINE_CD_MS, EG_ENGINE_PCT, EG_ENGIN
 import { EG_BODY_R } from './egSpanLaw.js';   // EG-ZC: a lit branch's top, the capsule about it
 import { egAnnalsNext, egAnnalsLordPage } from './egAnnals.js';
 import { egFeatBits } from './egFeats.js';   // EG-E: the lords' feats, judged at a lord's fall
-import { arenaWeekOf } from './arenaLaw.js';   // EG-E: the Proclamation's week, the arena's (Monday to Monday from the season epoch)
+import { arenaWeekOf } from './arena/arenaLaw.js';   // EG-E: the Proclamation's week, the arena's (Monday to Monday from the season epoch)
 import { EG_HERALD_TELL_MAX } from './egHerald.js';   // EG-E3: the herald's news, kept on the breach for the hub
-import { orreryOf, orreryFresh, orreryJudge, orreryShortest, SD_STONES, SD_HOURS } from './sdBrain.js';
-import { BUCKET_DEPTH_X, GATE_HIT_HZ_MAX, HIT_KINDS,  dpsRef, clampLv } from './gateBrain.js';
-import { HIT_CAP_X, spendPurse } from './gateBrain.js';   // AUDIT EG III: Spillover's carry, within its blow's cap and out of the purse
-import { SAP_HEAL, SAP_FEEDS_MAX } from './gateBrain.js';   // AUDIT EG IV (lane1 #17): a Sapper feeds a lord by the gate's law, its feedings capped
+import { orreryOf, orreryFresh, orreryJudge, orreryShortest, SD_STONES, SD_HOURS } from './superDungeon/sdBrain.js';
+import { BUCKET_DEPTH_X, GATE_HIT_HZ_MAX, HIT_KINDS,  dpsRef, clampLv } from './gate/gateBrain.js';
+import { HIT_CAP_X, spendPurse } from './gate/gateBrain.js';   // AUDIT EG III: Spillover's carry, within its blow's cap and out of the purse
+import { SAP_HEAL, SAP_FEEDS_MAX } from './gate/gateBrain.js';   // AUDIT EG IV (lane1 #17): a Sapper feeds a lord by the gate's law, its feedings capped
 import { EG_LORDS } from './egLaw.js';   // AUDIT EG IV (section 18's strata): a lord's band, for the Twin Court's second
 import { egMoltenRim } from './egLaw.js';   // AUDIT EG V (lane1 #21): THE MOLTEN RIM and its causeways
 import { egFightPieceAt } from './egLaw.js';   // THE ASCENT - HEIGHT: a champion's ring on its own floor
@@ -114,8 +114,8 @@ import { bodyStruck, bodySaid, bodyHealed, bodyLife } from './bossBody.js';
 import { egFightView, egGroundAt, egAirKeep, EG_STRIKE_PAD_M } from './egWalkGraph.js';
 import { egByHeight, egFeetY, egBears } from './egWalkGraph.js';   // THE ASCENT - HEIGHT: who stands where, by their feet
 import { egTallyWake, egTallyBlow, egTallyFall, egTallyHeal, egChartOf, egTalliesOf } from './egTally.js';   // EG-ZF: the recap's numbers (section 27.6)
-import { healRef } from './gateBrain.js';   // EG-ZF: a heal's share of the count, at the gate's reference health
-import { BRAIN_TICK_MS } from './gateBrain.js';   // EG-ZI: Lifeline's look back over the beat a count was last seen low
+import { healRef } from './gate/gateBrain.js';   // EG-ZF: a heal's share of the count, at the gate's reference health
+import { BRAIN_TICK_MS } from './gate/gateBrain.js';   // EG-ZI: Lifeline's look back over the beat a count was last seen low
 import { EG_TRAIL_MS } from './egFair.js';   // EG-ZI: a Lifeline window kept while a blow in it may still be judged
 import { egRouteAlong, egRouteAlongAt, egRouteRoad, egRouteRoadAt, egRouteAhead } from './egRoute.js';   // THE ASCENT (LAW 9): progress along the hall's route
 
@@ -163,7 +163,7 @@ export const EG_SQUAD_HOLD_MS = 30_000;
 export const EG_SQUAD_RING_M = 6;
 export const EG_LOCK_EVERY_MS = 15_000;
 /** AUDIT EG V (L3-1; section 8.4) - THE ORRERY'S REACH: the most turns six stones can ever need from any start (each stone's
- *  way at most half the hours, net/sdBrain.js sdTurnsFor), 36. orreryOf draws the start again until its shortest way lies in
+ *  way at most half the hours, net/superDungeon/sdBrain.js sdTurnsFor), 36. orreryOf draws the start again until its shortest way lies in
  *  the range it is asked, so a range past the reach is drawn for ever - the relay's room hung on an Athenaeum from circle 56. */
 export const EG_ORRERY_REACH = SD_STONES.length * (SD_HOURS / 2);
 /** AUDIT EG V (L3-1): THE SPIRE'S TURNS RANGE for an Athenaeum of circle `c` (section 8.4) - 16 to 28 turns, rising by 2 every
@@ -244,7 +244,7 @@ export const EG_WISP_AGAIN_MS = 6000;
 export const EG_LIFELINE_UNDER = 0.3;
 export const EG_LIFELINE_MS = 3000;
 /** AUDIT EG III: a healer's heal opens a Lifeline window only when what was believed of it is at least this share of its
- *  member's reference body (net/gateBrain.js healRef - the heal bucket's) - a point's heal word holds no window open; the
+ *  member's reference body (net/gate/gateBrain.js healRef - the heal bucket's) - a point's heal word holds no window open; the
  *  receiver's screen asks the same of its word (scenes/egClient.js lifelineSaid). */
 export const EG_LIFELINE_MIN = 0.05;
 /** AUDIT EG III: the points a healer's heal on a member of level `lv` is believed at, at least, to open a Lifeline window. */
@@ -1236,7 +1236,7 @@ function asksStep(B, now, rng, out) {
 
 /**
  * ONE BEAT of the breach: `bodies` the members' newest fresh poses (`{sub, sx, z, dead, at}` - the Spire's frame:
- * net/sdBrain.js dungeonToRealm's), `rng` a [0,1) source. Moves the record in place; answers the frames to fan, in order.
+ * net/superDungeon/sdBrain.js dungeonToRealm's), `rng` a [0,1) source. Moves the record in place; answers the frames to fan, in order.
  * @param {any} B @param {number} now @param {{sub: string, sx: number, z: number, dead: boolean, at?: number}[]} bodies
  * @param {() => number} rng
  */
@@ -1724,7 +1724,7 @@ function sapperGoal(F, spec, a) {
 const nearestClosed = (F, a) => (F.closedSpots ?? []).reduce((b, q) => (!b || dist(q[0], q[1], a.x, a.z) < dist(b[0], b[1], a.x, a.z) ? q : b), null);
 /** A Sapper at its objective: gone into it. AUDIT EG IV (lane1 #17; section 12: "heals it, the gate's law"): a lord drinks it
  *  as the gate's Warden does - SAP_HEAL of its health while its fight's feedings last (SAP_FEEDS_MAX), burnt out against it
- *  after (net/gateBrain.js sapperBeat); a closed rift opened again at a third of its own health (lane1 #27). */
+ *  after (net/gate/gateBrain.js sapperBeat); a closed rift opened again at a third of its own health (lane1 #27). */
 function sapperReach(F, spec, a, now, out) {
   const L = a.lordGoal ? egBodyById(F, a.lordGoal) : null, feeds = !!L && (F.mem.fed ?? 0) < SAP_FEEDS_MAX;
   egGone(F, [a], a.lordGoal && !feeds ? EG_GONE.crumbled : EG_GONE.fed, '', now, out);

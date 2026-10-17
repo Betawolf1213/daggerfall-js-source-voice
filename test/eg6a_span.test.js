@@ -14,10 +14,10 @@ import { egSpanOf, courseOf, egCourseOf, egFastCross, egFastCrossAt, egFastReach
   EG_GAP_MIN_CM, EG_GAP_MAX_CM, EG_RISER_CM, EG_BEAT_HALF_MS, EG_STEP_DOWN_CM, EG_DROP_CM } from '../src/net/egSpanLaw.js';
 import * as egLaw from '../src/net/egLaw.js';
 import { egCrossMinMs, egFairMeasure, egFairNew } from '../src/net/egFair.js';
-import { sdRng } from '../src/net/sdBrain.js';
+import { sdRng } from '../src/net/superDungeon/sdBrain.js';
 import { runSpeed } from '../src/player/motor.js';
 import { jumpSpeedMultiplier, SKILLS, SKILL_COUNT } from '../src/systems/skills.js';
-import { SD_RISER_H, SD_BEAT_HALF } from '../src/world/sdSteps.js';
+import { SD_RISER_H, SD_BEAT_HALF } from '../src/world/superDungeon/sdSteps.js';
 
 const { egHallOf, egSpecDigest, EG_STEP } = egLaw;
 

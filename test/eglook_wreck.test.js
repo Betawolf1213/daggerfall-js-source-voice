@@ -27,7 +27,7 @@ import { EG_SKIES } from '../src/world/egLook.js';
 import { egAtmosOf } from '../src/world/egAtmos.js';
 import { EG_SKY_MOON } from '../src/render/egSkyMap.js';   // the Shade's moon, painted in its sky
 import { egCircleSpecs, egBandOfCircle, EG_HALL_PITCH } from '../src/net/egLaw.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { egLawSeam } from '../src/net/egLaw.js';
 
 // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins measure spec law 8's halls - drawn where no law is named

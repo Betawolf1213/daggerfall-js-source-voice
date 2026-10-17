@@ -23,12 +23,12 @@
 //
 // A BODY: `{ i, role (0 lord, 1 add, 2 object), k (the lord's, the kind's, the object's number), pt (a part: the twin, a
 // mirror, a rune's numeral), x, z, y (EG-ZJ: its feet), mv, hp, max, fl (flags), r (its radius), ws/wsAt (EG-ZJ: its state as
-// said), ... }`. Its walk is said once and carried by every screen (the gate's law - net/gateBrain.js hostAt). A blow is judged on the struck member's machine at its
+// said), ... }`. Its walk is said once and carried by every screen (the gate's law - net/gate/gateBrain.js hostAt). A blow is judged on the struck member's machine at its
 // landing (co-op's law); a blow ON a body is the gate's hand and purse (spendBlow, spendPurse), a melee blow within
 // MELEE_REACH of its body, from the fight floor (or, for an object off it - a pillar, a perch - from beside it).
 //
 // Pure: a record and a beat in, frames out. In the relay bundle. Not a DFU member. Ledger A (ELITE-GATES).
-import { HIT_KINDS, MELEE_REACH, POSE_SLACK, MOVE_RESAY_M, MOVE_RESAY_MS, HP_SEND_MS, HOST_HP_MIN, dpsRef, spendBlow, spendPurse } from './gateBrain.js';
+import { HIT_KINDS, MELEE_REACH, POSE_SLACK, MOVE_RESAY_M, MOVE_RESAY_MS, HP_SEND_MS, HOST_HP_MIN, dpsRef, spendBlow, spendPurse } from './gate/gateBrain.js';
 import { egKeepOnFight, egOnFight, egFloorTest, EG_BANDS } from './egLaw.js';
 import { egBlowOf, egInBlow, egBlowOn, EG_BLOWS_MAX } from './egShape.js';
 import { egUnionHolds, egPlaceLandings, egBlowNear, EG_UNION_HOLD_TICKS } from './egFloor.js';

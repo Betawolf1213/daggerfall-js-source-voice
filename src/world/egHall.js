@@ -1,6 +1,6 @@
 // @ts-check
 // EG-PLAY (2026-10-11, the Elite Gates arc; bible/11-Multiplayer/Elite-Gates.md sections 7, 8, 11 and 24): THE SPIRE'S
-// HALLS, MADE - a circle of an Elite Breach as one made level, the Hour's way (world/sdRealm.js): a made location and a
+// HALLS, MADE - a circle of an Elite Breach as one made level, the Hour's way (world/superDungeon/sdRealm.js): a made location and a
 // blocks file answering one made block (its start marker on the first hall's arrival plate), the halls' floors as one
 // mesh and one collider bucket, their lamps, their light. Built off the hall law (net/egLaw.js egCircleSpecs) - one seed
 // and one circle give one level on every screen, and the relay judges the same floors.
@@ -20,7 +20,7 @@
 // EG-FULL, LAYER THREE (section 11.6): every fragment's mesh half off its law (net/egFragLaw.js) - each passage's walls
 // and vault in its kit's dress, broken at its alcoves with the niche behind; the chambers' arches, stairs and vignettes;
 // each fragment's lights. A Collapsing Tube's floor and vault and Grath's islands are the spans' (scenes/egSpan.js).
-// EG-G2 (2026-10-12, section 25.1 - THE BAND'S DRESS): built with the Hour's records (world/sdRealm.js) and moved onto the
+// EG-G2 (2026-10-12, section 25.1 - THE BAND'S DRESS): built with the Hour's records (world/superDungeon/sdRealm.js) and moved onto the
 // circle's band's own archive (world/egBandArt.js egBandDress): white marble and gold leaf in the Galleries, slate violet
 // and bone in the Cairn, black glass and moon-silver in the Shade, basalt and iron in the Wellhead. The magma and the fire
 // channels wear the band's liquid (EG_DRESS.molten), no longer the edge line's gold.
@@ -43,9 +43,9 @@
 // walls every floor edge its law does not open.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
-import { realmToDungeon, dungeonToRealm } from '../net/sdBrain.js';
-import { faces } from './gateModel.js';
-import { realmIsland, packRealmFaces, SD_REALM_FLOOR_RECORD, SD_REALM_BRASS_RECORD, SD_REALM_ROOT_RECORD, SD_REALM_ARENA_RECORD, SD_REALM_EDGE_RECORD, SD_REALM_PILLAR_RECORD, SD_REALM_COBBLE_RECORD, SD_ISLAND_SIDES, SD_LIP } from './sdRealm.js';
+import { realmToDungeon, dungeonToRealm } from '../net/superDungeon/sdBrain.js';
+import { faces } from './gate/gateModel.js';
+import { realmIsland, packRealmFaces, SD_REALM_FLOOR_RECORD, SD_REALM_BRASS_RECORD, SD_REALM_ROOT_RECORD, SD_REALM_ARENA_RECORD, SD_REALM_EDGE_RECORD, SD_REALM_PILLAR_RECORD, SD_REALM_COBBLE_RECORD, SD_ISLAND_SIDES, SD_LIP } from './superDungeon/sdRealm.js';
 import { egCircleSpecs, egBandOfCircle, egBandOfHall, EG_TEXT } from '../net/egLaw.js';
 import { EG_FRAGS } from '../net/egFragLaw.js';
 import { egSlagX, EG_SLAG_SPOUTS } from '../net/egSpanLaw.js';   // EG-ZC: the slag's spouts
@@ -56,7 +56,7 @@ import { egAtmosOf } from './egAtmos.js';   // EG-LOOK (Elite-Gates-Look.md sect
 import { FIRE_WALLS_ARCHIVE } from './emissiveTextures.js';   // EG-ZH: the Caverns' fire falls wear Daggerfall's own fire
 import { egHeroFragInto, egHeroFragCollider, EG_HERO_FRAG_MESHES } from './egHeroFragModel.js';   // EG-HERO-LAY: a hall's hero, drawn and collided
 import { egRoomModelInto, egRoomColliderInto, egClimbZones, egClimbKeep } from './egRoomModel.js';   // THE ASCENT (spec law 9): the rooms built, the climbs' clamp
-import { GATE_PART } from './gateModel.js';
+import { GATE_PART } from './gate/gateModel.js';
 import { egPolyIn, segDist } from '../net/egShape.js';   // EG-HERO-LAY: the hero's clamp
 import { lightList, lightListView, packLight, copyLights } from '../render/lightId.js';   // LIGHT-ID (main's, at the merge into PR #800): the circle's lamps into the frame's list through the one seam (pure - the swap's worker may read it)
 import { egRuinColumns, egDiscLamps, egRuinLampTint } from './egRuin.js';   // EG-LOOK (Elite-Gates-Look.md section 3.3): THE LAMPS ON THE RUIN'S COLUMNS
@@ -386,7 +386,7 @@ const heroSorter = (ys) => {
     },
   };
 };
-/** Triangles `tris` (heroSorter's) copied into faces `f` (world/gateModel.js faces' `byRec`) with their own normals and UVs,
+/** Triangles `tris` (heroSorter's) copied into faces `f` (world/gate/gateModel.js faces' `byRec`) with their own normals and UVs,
  *  moved by `at`. */
 function heroTrisInto(f, tris, at) {
   for (const [rec, src, k] of tris) {
@@ -457,7 +457,7 @@ export function buildEgCircleModel(seed, c, geo = 0) {
 // ── EG-ZN: THE OCCLUDERS, MARKED ────────────────────────────────────────────────────────────────────────────────────
 /** A builder's faces laid whole (no occluder marked) - every builder's own default. */
 function whole(fn) { fn(); }
-/** The marker over faces `f` (world/gateModel.js faces): `occ(fn)` lays `fn`'s faces as ONE OCCLUDER, keeping per record
+/** The marker over faces `f` (world/gate/gateModel.js faces): `occ(fn)` lays `fn`'s faces as ONE OCCLUDER, keeping per record
  *  which of that record's triangles it laid (`[record, first, count]`) on `pieces`. A piece's faces in one record are laid
  *  together, so each is one run of its record's sub-mesh. */
 function occluderMarker(f, pieces) {
@@ -471,7 +471,7 @@ function occluderMarker(f, pieces) {
   };
 }
 /**
- * A packed model's OCCLUDERS (world/sdRealm.js packRealmFaces - a sub-mesh a record, its triangles in the order laid):
+ * A packed model's OCCLUDERS (world/superDungeon/sdRealm.js packRealmFaces - a sub-mesh a record, its triangles in the order laid):
  * each piece `{ b: [x0, y0, z0, x1, y1, z1], r: [[subMesh, startIndex, primitiveCount], ...] }` - its box in the
  * dungeon's frame, and its runs of the model's indices in a sub-mesh's own units (`startIndex`, `primitiveCount`). Pure.
  * @param {any} model @param {Array<Array<number[]>>} pieces
@@ -638,7 +638,7 @@ export function egCircleLights(seed, c, geo = 0) {
   }
   return out.filter((_, i) => near.has(i));
 }
-/** The lamps nearest `eye` first, the arm's own lights before them, in kept arrays (world/sdRealm.js realmLightsWith's
+/** The lamps nearest `eye` first, the arm's own lights before them, in kept arrays (world/superDungeon/sdRealm.js realmLightsWith's
  *  composition, over the circle's own lamps). */
 const _egLit = { cap: 0, data: lightList(0), colors: new Float32Array(0), carried: new Uint8Array(0), views: new Map() };
 export function egLightsWith(lit, extra, lamps, eye) {

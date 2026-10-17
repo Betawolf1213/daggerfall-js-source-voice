@@ -15,8 +15,8 @@ import { EG_ROLE, EG_FL, EG_GONE, egFightNew, egHas, egGone, egBlowsStep } from 
 import { EG_KIND, EG_LEGION_KINDS, egLegionRaise, egLegionStep, egLegionRoom, egLegionCapOf, egLegionSummon, EG_RETARGET_MS, EG_BITE_REACH } from '../src/net/egLegion.js';
 import { egLordsNew, egLordsWake, egLordsStep, egLordsOf, egObjsOf } from '../src/net/egLords.js';
 import { EG_V_BY_KEY } from '../src/net/egVestige.js';
-import { ATTACKS, POOLS, HARRIER_S, HOST_RETARGET_MS, HARRIER_BITE_REACH, SAP_HEAL, SAP_FEEDS_MAX, HIT_KINDS } from '../src/net/gateBrain.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
+import { ATTACKS, POOLS, HARRIER_S, HOST_RETARGET_MS, HARRIER_BITE_REACH, SAP_HEAL, SAP_FEEDS_MAX, HIT_KINDS } from '../src/net/gate/gateBrain.js';
+import { ENEMY_BASICS } from '../src/characters/enemy/enemyBasics.js';
 import { egTalliesOf } from '../src/net/egTally.js';
 import { egGive8Hall } from './egGive8.mjs';
 
@@ -248,7 +248,7 @@ test('AUDIT EG IV THE GATE\'S ROWS READ, NEVER COPIED (ONE DFU MEMBER, ONE EXPOR
 });
 
 // ── lane1 #17: A SAPPER FEEDS ITS LORD BY THE GATE'S LAW ──────────────────────────────────────────────────────────────
-test('AUDIT EG IV A COURT\'S SAPPERS FEED BY THE GATE\'S LAW (section 12: "heals it, the gate\'s law"; net/gateBrain.js sapperBeat): each Sapper reaching the lord heals it SAP_HEAL (2%) while the fight\'s feedings last - SAP_FEEDS_MAX, six - and burns out against it after, healing nothing (mutants: the feedings uncapped; the heal a literal off the gate\'s)', () => {
+test('AUDIT EG IV A COURT\'S SAPPERS FEED BY THE GATE\'S LAW (section 12: "heals it, the gate\'s law"; net/gate/gateBrain.js sapperBeat): each Sapper reaching the lord heals it SAP_HEAL (2%) while the fight\'s feedings last - SAP_FEEDS_MAX, six - and burns out against it after, healing nothing (mutants: the feedings uncapped; the heal a literal off the gate\'s)', () => {
   assert.deepEqual([SAP_HEAL, SAP_FEEDS_MAX], [0.02, 6]);
   const S = breach({ n: 2, at: { 'acct-0': [0, 30], 'acct-1': [2, 30] } }), F = S.B.F, L = egLordsOf(F)[0];
   L.hp = Math.round(L.max * 0.5);

@@ -193,7 +193,7 @@ list cannot be lost as EG IV's was. Each fix is named in its pin's test title by
 | L4-10 | LOW | the held body is lost across a mid-trial restart | FIXED | D: each member's last pose saved with the breach, and the held body rebuilt from it; `egaudit5_d_relay`; 22 |
 | L4-11 | LOW | section 5's refusal 6, "a stake unsettled", is enforced nowhere | RECORDED | D: section 5 says what is enforced (the call or the Spire held, and the service's `eg_live`); enforcing a stake unsettled broke the empty end's law |
 | L4-12 | LOW | sections 6.4 and 23 describe call and cell shapes the wire does not carry | FIXED (words) | D: 6.4 and 23 |
-| L4-13 | LOW | `test/relayversion.test.js` names `egBeatAt` for the tick, which is `egTickAt` | FIXED (words) | D: the row says `egTickAt` |
+| L4-13 | LOW | `test/net/relayversion.test.js` names `egBeatAt` for the tick, which is `egTickAt` | FIXED (words) | D: the row says `egTickAt` |
 | L4-14 | LOW | the herald's comment says "earning entrants" (= L8-8) | FIXED (words) | D: "entrants" (`net/egHerald.js`) |
 
 ## Lane 5 - the spans, the solver, the fragments, the heroes, the made level
@@ -266,12 +266,12 @@ list cannot be lost as EG IV's was. Each fix is named in its pin's test title by
 
 | id | sev | finding | verdict | where |
 |---|---|---|---|---|
-| L8-1 | HIGH | the Panoply's 6-piece Reprieve never triggers inside the Spire | FIXED | D: a Spire blow is marked a foe's, and `setHurt`'s Spire branch runs Shed Skin and the Reprieve (`systems/sigilSetPowers.js`); `egaudit5_d_client`; 15, Sigil-Sets 6e |
+| L8-1 | HIGH | the Panoply's 6-piece Reprieve never triggers inside the Spire | FIXED | D: a Spire blow is marked a foe's, and `setHurt`'s Spire branch runs Shed Skin and the Reprieve (`systems/sigil/sigilSetPowers.js`); `egaudit5_d_client`; 15, Sigil-Sets 6e |
 | L8-2 | HIGH | the Deadlands embers a Redoubt pays never reach the player | FIXED | D: thrown as one sigil-stone stack the Broker counts (`systems/egSpoils.js` `egEmberStack`); `egaudit5_d_client`, `egaudit5_d_service`; 19 |
 | L8-3 | HIGH | a member who falls and is recalled carries the old circle's earning state (= L3-3) | FIXED | with L3-3 (A2); `egaudit5_a2` |
 | L8-4 | MED | holding back Redoubt receipts lets a player open a circle's Reliquary in every breach of the week | FIXED | D: a circle's Reliquaries open once per account per arena week (`eg_reliqs`, `egReliquariesOf`); `egaudit5_d_service`; 16.3 |
 | L8-5 | MED | a player holding several receipts for one Redoubt can choose which one the week pays | FIXED | D: the spoils' seed mixes in a draw the service keeps on the row (`net/egPay.js` `egSpoilsSeed`), answered with the claim; `egaudit5_d_client`, `egaudit5_d_service`; 16.1, 19 |
-| L8-6 | LOW | section 5's Weir Key line is never shown, and 5's item paragraph is stale | FIXED | C: the info card's Weir Key arm (`systems/itemInfo.js`); 5 rewritten; `egaudit5_c_hud`; 5 |
+| L8-6 | LOW | section 5's Weir Key line is never shown, and 5's item paragraph is stale | FIXED | C: the info card's Weir Key arm (`systems/item/itemInfo.js`); 5 rewritten; `egaudit5_c_hud`; 5 |
 | L8-7 | LOW | the herald times a deeper start's posts from its first wake as if from Hall 1 | FIXED | A2: the news carries the start, and the post says *from Redoubt 9*; `egaudit5_a2`; 20 |
 | L8-8 | LOW | the herald's comment says "earning entrants" (= L4-14) | FIXED (words) | with L4-14 (D) |
 | L8-9 | LOW | a Depths row shows "wagered", not the Wager | FIXED | D: `eg_runs.wgs` keeps the Wager's decrees, and the board names them; `egaudit5_d_client`, `egaudit5_d_service`; 18, 20 |
@@ -414,7 +414,7 @@ Pages: 6.2, 8.1, 8.4, 8.7, 12, 14, 15, 16.3, 16.4, 17.2 and 23's `st` row. Its N
 - lane 8's Reprieve, embers, Reliquary week, seed, herald comment and Wager row;
 - lane 9's pay mutants and key odds.
 
-The migration gained `eg_runs.nonce`, `eg_runs.wgs` and the `eg_reliqs` table, with `test/accountworker.test.js`'s table
+The migration gained `eg_runs.nonce`, `eg_runs.wgs` and the `eg_reliqs` table, with `test/server/accountworker.test.js`'s table
 pin. Its pins are `egaudit5_d_relay` (10, against the real Room), `egaudit5_d_client` (7) and `egaudit5_d_service` (6,
 over the real Worker). `egaudit5_d.json` holds 73 records: 72 dead and 1 equivalent (EG5D-L4-9-everything-found). It
 also re-aimed 20 records of earlier lists. It settled two of lane 4's unverified items:
@@ -528,7 +528,7 @@ survived (EGA5A2-captive-span-air, killed as above), 5 equivalent as recorded, n
 ## Pins moved and records re-aimed
 
 Each pin moved carries its `PIN MOVED (AUDIT EG V, <group>: <why>)` note. Each group re-aimed by content the records
-whose quoted lines it moved (test/mutantdrift.test.js), and re-judged the lists aimed at its lines.
+whose quoted lines it moved (test/tooling/mutantdrift.test.js), and re-judged the lists aimed at its lines.
 
 - **A1**:
   - pins moved: `egfull_relay` (it now fails without the decrees' fix), `eg5_profile` (the Fraying's name is the
@@ -551,7 +551,7 @@ whose quoted lines it moved (test/mutantdrift.test.js), and re-judged the lists 
 - **C**:
   - pins moved: `egplay_client`, `egpres_hud`, `egaudit3_law_bridge`, `egaudit3_pres_beats`, `egeco_board`,
     `egz_ends_board`, `egz_recap` and `chatchan`; `l10n4_hardcoded` lowered: `scenes/egClient.js` 63 to 58,
-    `ui/enhancedMenu.js` 64 to 58, `ui/egAccess.js` gone from the list;
+    `ui/enhanced/enhancedMenu.js` 64 to 58, `ui/egAccess.js` gone from the list;
   - re-aimed: 24 records.
 - **D**:
   - pins moved: `egint_relay`, `egaudit3_legion_blows`, `egz_debts`, `egz_mastery`, `egz_rules`, `egz_recap`,
@@ -602,14 +602,14 @@ The coordinator then merged main: 84 commits, through 366f9d836b (#909), the hos
     (`world/pseudoArchives.js` `EG_BAND_ARCHIVES`). EG-G2's registry sweep refused it. The lamp's key is a runtime
     upload that nothing stores, so it moved to 38232, the first free number after the harbour's, and was registered.
     The mutant EGLOOK-lamp-on-the-galleries (`tools/mutants/eglook.json`) puts it back and dies. `lampkeeper2` and
-    `eglook_registry` carry PIN MOVED notes, and `01-Overview/Five-Asks-2026-10-14.md` names the new number;
+    `eglook_registry` carry PIN MOVED notes, and `01-Overview/handoffs/Five-Asks-2026-10-14.md` names the new number;
   - `lampkeeper2`'s "the vocabulary, last" now reads `TITLES.at(-14)`, because a shipped title's index never moves;
   - `chattrade1`'s version pin moved to `world203`.
 
   The fourth, `csstarget`, failed only because the local install still had Vite 5. Main's AUDIT DEPS1 had moved the
   game to Vite 8, and the test passed after `npm ci`. CI's `verify` was green on the merge commit (62eeb8d923). The
   seven AUDIT EG V mutant lists were run again on the merged tree: 542 dead, 0 survived, 5 equivalent as recorded.
-- **The hosts.** Main brought HOST-SPLIT (`01-Overview/Host-Split.md`, `test/hostceiling.test.js`): from here on, new
+- **The hosts.** Main brought HOST-SPLIT (`01-Overview/Host-Split.md`, `test/scenes/hostceiling.test.js`): from here on, new
   behaviour goes into a module a host wires, not into a host's own function. The second round works under it.
 
 ## The second round
@@ -688,8 +688,8 @@ the coordinator merged it once more:
   the version lines moved again.
 - **Titles.** The Spire's thirteen follow KG6's Grandmaster in `TITLES` (43). `acc3titles`' list, the six title-slice
   pins and `lampkeeper2`'s I Love Lamp moved with PIN MOVED notes.
-- **The lords' cards.** KG-SET took the Iliac set's words out of the relay's catalog (`net/iliacCards.js`, which the
-  relay carries and which never shows a word) into `systems/iliacCardWords.js`, read through the text core. The thirteen
+- **The lords' cards.** KG-SET took the Iliac set's words out of the relay's catalog (`net/iliac/iliacCards.js`, which the
+  relay carries and which never shows a word) into `systems/iliac/iliacCardWords.js`, read through the text core. The thirteen
   lords' cards lost their `text` and `flavor` there and gained their words in `iliacCardWords.js`
   (`cards.iliacSet.eg*`), drafted for the thirteen whole languages as KG-SET drafted the set's (recorded as
   `claude-in-session`). `cards8_catalog`'s counts and its catalog hash moved.
@@ -709,7 +709,7 @@ the coordinator merged it once more:
   in `bootWorld` and +191 in `createWorldModes`, written before HOST-SPLIT. With main's growth since (+38 and +153),
   the merged hosts stood 14 and 98 lines over. Host-Split.md names the case - two branches that each fit, landing
   together - and its two fixes, a move or a raise with its reason. The coordinator raised each ceiling by the arc's
-  own lines (to 21,921 and 7,350), with the reason beside it in `test/hostceiling.test.js`, and records the move as
+  own lines (to 21,921 and 7,350), with the reason beside it in `test/scenes/hostceiling.test.js`, and records the move as
   owed: `tools/hostMove.mjs` refuses the circle's group (its state is `let`s), and the method's last step - Mac plays
   the slice and runs `npm run perf` - is his.
 

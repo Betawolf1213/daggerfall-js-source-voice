@@ -11,7 +11,7 @@ import { fakeRoom } from './fakeRoom.mjs';
 import { EG_INTERNAL_OPEN, validEgOut, validEgIn, EG_BRAIN_V } from '../src/net/wire.js';
 import { egRoomKey, egStartHall, egCircleOfHall, EG_SEALED_MS, EG_TEXT, EG_DECREE_BY_KEY } from '../src/net/egLaw.js';
 import { mintEgOrder } from '../src/net/identityToken.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { OnlineSession, TOKEN_WAIT_MS } from '../src/net/online.js';
 import { createEgClient, egBackOf, egSeedListen, EG_BACK_KEY, EG_BACK_TEXT, EG_BACK_SEED_WAIT_MS } from '../src/scenes/egClient.js';
 import { egGeo } from '../src/net/egBrain.js';

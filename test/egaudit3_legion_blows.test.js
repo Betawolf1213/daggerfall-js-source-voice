@@ -16,7 +16,7 @@ import { egLordsOf, egLordsFell, egLordsWake } from '../src/net/egLords.js';
 import { egVestigeX, EG_CANTRIPS } from '../src/net/egRun.js';
 import { shDisc } from '../src/net/egShape.js';
 import { EG_V_BY_KEY, EG_M_ID, EG_MASTERIES, EG_SWEEP_M, EG_MARK_MS, EG_COUNTER_MS, EG_COUNTER_X, EG_COUNTER_M, EG_SPILL_M, EG_AURA_EXTRA, EG_AURA_EXTRA_MAX } from '../src/net/egVestige.js';
-import { HIT_KINDS, HIT_CAP_X, dpsRef, healRef } from '../src/net/gateBrain.js';
+import { HIT_KINDS, HIT_CAP_X, dpsRef, healRef } from '../src/net/gate/gateBrain.js';
 import { bodyStruck } from '../src/net/bossBody.js';
 import { egGive8 } from './egGive8.mjs';
 
@@ -298,7 +298,7 @@ test('AUDIT EG III THE WAY HOME\'S END (section 23\'s `end`: "\'gone\' (every me
 });
 
 // ── LIFELINE HELD OPEN ONLY BY A HEAL (lane3 #7) ─────────────────────────────────────────────────────────────────────
-test('AUDIT EG III A HEAL WORTH A LIFELINE WINDOW (section 15\'s Lifeline, in the census - section 21): a member under 30% saying a Lifeline holder\'s heal of a point every second opens no window; a heal believed at a twentieth of its reference body (EG_LIFELINE_MIN of net/gateBrain.js healRef) or more opens one (mutants: any point opening a window; the minimum unread; the claim read before the bucket)', () => {
+test('AUDIT EG III A HEAL WORTH A LIFELINE WINDOW (section 15\'s Lifeline, in the census - section 21): a member under 30% saying a Lifeline holder\'s heal of a point every second opens no window; a heal believed at a twentieth of its reference body (EG_LIFELINE_MIN of net/gate/gateBrain.js healRef) or more opens one (mutants: any point opening a window; the minimum unread; the claim read before the bucket)', () => {
   assert.equal(EG_LIFELINE_MIN, 0.05);
   assert.deepEqual([egLifelineMin(40), egLifelineMin(1), egLifelineMin(99)], [0.05 * healRef(40), 0.05 * healRef(1), 0.05 * healRef(60)]);
   const S = court(), { B } = S;

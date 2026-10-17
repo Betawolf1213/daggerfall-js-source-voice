@@ -1,6 +1,6 @@
 // EG-G2 (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md sections 7, 11.2, 25.2-25.6 and
 // layer two's last tells): THE SPIRE'S LOOK AS LAW AND ITS PASSES (world/egLook.js; render/egLinePass.js, egMistPass.js,
-// egSkyPass.js; render/gateTelegraph.js TELEGRAPH_FS_SPIRE). THE EDGE LINE on every rim and open side and never a walled
+// egSkyPass.js; render/gate/gateTelegraph.js TELEGRAPH_FS_SPIRE). THE EDGE LINE on every rim and open side and never a walled
 // floor or a moving piece; the tracks under a Rail's whole travel; the Gust's streamers only from the breath's rise through
 // the gust; the mist's sheets stopping 0.3 m under their landing; the line's shader - its gold at its luminance, never
 // pulsing, a track dashed, a streamer under three beats a second, THE FOG FLOOR within 30 m and the world's fog past it;
@@ -20,11 +20,11 @@ import {
 import { EG_LINE_FS, egLineVertices, EG_LINE_FLOATS } from '../src/render/egLinePass.js';
 import { EG_MIST_FS } from '../src/render/egMistPass.js';
 import { EG_SKY_PAINT_FS } from '../src/render/egSkyMap.js';   // PIN MOVED (EG-LOOK): the sky painted, a painter a band
-import { TELEGRAPH_FS, TELEGRAPH_FS_SPIRE, TELEGRAPH_KIND, TELEGRAPH_EDGE_DAGON, TELEGRAPH_EDGE_SAFE, TELEGRAPH_POOL, TELEGRAPH_POOL_HAVEN, spireTelegraphFs } from '../src/render/gateTelegraph.js';
+import { TELEGRAPH_FS, TELEGRAPH_FS_SPIRE, TELEGRAPH_KIND, TELEGRAPH_EDGE_DAGON, TELEGRAPH_EDGE_SAFE, TELEGRAPH_POOL, TELEGRAPH_POOL_HAVEN, spireTelegraphFs } from '../src/render/gate/gateTelegraph.js';
 import { egCircleSpecs, egBandOfCircle, EG_BRINK_HALLS } from '../src/net/egLaw.js';
 import { egToDungeon, egIsleDisc, EG_HALL_FOG } from '../src/world/egHall.js';
-import { SD_ISLAND_SIDES } from '../src/world/sdRealm.js';
-import { breathSeen } from '../src/world/sdSteps.js';
+import { SD_ISLAND_SIDES } from '../src/world/superDungeon/sdRealm.js';
+import { breathSeen } from '../src/world/superDungeon/sdSteps.js';
 import { egMistAt } from '../src/net/egFragLaw.js';
 import { egLookShapes, fillStamp } from '../src/scenes/egFight.js';
 import { EG_BAND_ARCHIVES } from '../src/world/pseudoArchives.js';

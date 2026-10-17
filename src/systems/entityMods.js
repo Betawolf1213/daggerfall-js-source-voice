@@ -40,7 +40,7 @@
 //   heatDegrees     LOOT15: degrees the heat is felt less
 //   fatigueLess     LOOT15: % less of the minute's fatigue drain (scenes/shared.js fatigueLossMultiplierFor)
 //   fallLess        LOOT15: % less of a fall's damage (scenes/shared.js applyFallLanding)
-//   magicka         EG15: points on the maximum magicka - the Battlemage's Bearing (systems/sigilSetPowers.js); the live
+//   magicka         EG15: points on the maximum magicka - the Battlemage's Bearing (systems/sigil/sigilSetPowers.js); the live
 //                   accessor reads it beside Renown's term (systems/chargen.js defineLiveMaxMagicka, through
 //                   systems/renownLayer.js foldMpOf), so a save takes it off with Renown's (offlineVitals) and the
 //                   magery's third is never taken of it (passiveSpecials.js)
@@ -86,7 +86,7 @@ const _blowMods = new Map();
 /** SIGIL1: register a modifier over a WEAPON BLOW's whole damage - `fn(weapon, damage, attacker, target, info) -> damage`,
  *  read at the tail of FormulaHelper's weapon damage (after the strength, the material and the enemy-type term, before
  *  DFU's mod hook, its last line), where the
- *  attacker and the target are known: the online sigil (systems/sigil.js) is the one that needs them.
+ *  attacker and the target are known: the online sigil (systems/sigil/sigil.js) is the one that needs them.
  *  SET2: `info` is what the striker's host knew and the formula could not - `{ unaware }`, the struck foe had not
  *  noticed the striker (its AI's `detected`, read where the foe RECORD is in hand: combat/playerWeapon.js foeUnaware).
  *  Read under EITHER core - DFU's (combat/formulas.js weaponAttackDamage) and PCAAO's (combat/pcaao.js

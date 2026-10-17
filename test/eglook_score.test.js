@@ -1,5 +1,5 @@
 // EG-G2 (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 26 - EG17): THE SCORE OF
-// THE SPIRE (systems/egScore.js) and THE SPIRE MIX (systems/egMix.js, systems/songPlayer.js's duck, scenes/egFight.js's
+// THE SPIRE (systems/egScore.js) and THE SPIRE MIX (systems/egMix.js, systems/song/songPlayer.js's duck, scenes/egFight.js's
 // stings and barks). The songs: their names, tempos and lengths as the page's table, whole bars looping on their bar line
 // with nothing past the end, every voice set at the start, one note a key a moment; E Phrygian (the hymn in E major),
 // the fanfare broken and mended, each band's motif in its yard's brass, each lord's four bars in its Court's songs, the
@@ -16,12 +16,12 @@ import {
   spireScoreSongs, spireScoreFor, spireScoreKey, spireVariantOrder, createSpireScoreHost, SPIRE_SONGS, SPIRE_BAND_SONGS, SPIRE_SCORE_SILENCE, SPIRE_COUNT_WARN_MS, SPIRE_WAKE_MS,
   SPIRE_END_MS, EG_SCORE_PRIORITY, SPIRE_PROGRAMS, SPIRE_CHANNELS, SPIRE_LEVEL, SPIRE_PRESS, EG_FANFARE, EG_FANFARE_BROKEN, EG_SCORE_BAND_MOTIFS, EG_SCORE_LORD_MOTIFS,
 } from '../src/systems/egScore.js';
-import { midiNote, SCORE_TPQ, SCORE_STING_LEAD_MS, gateScoreSongs } from '../src/systems/gateScore.js';
-import { sdScoreSongs } from '../src/systems/sdScore.js';
+import { midiNote, SCORE_TPQ, SCORE_STING_LEAD_MS, gateScoreSongs } from '../src/systems/gate/gateScore.js';
+import { sdScoreSongs } from '../src/systems/superDungeon/sdScore.js';
 import { EG_LORDS } from '../src/net/egLaw.js';
 import { createSpireMix, egStingWanted, egBarkCull, egDbGain, EG_MIX, EG_CRITICAL } from '../src/systems/egMix.js';
-import { SongPlayer, EG_DUCK_BACK_S } from '../src/systems/songPlayer.js';
-import { BOSS_CUES } from '../src/world/gateBoss.js';
+import { SongPlayer, EG_DUCK_BACK_S } from '../src/systems/song/songPlayer.js';
+import { BOSS_CUES } from '../src/world/gate/gateBoss.js';
 import { createEgFight } from '../src/scenes/egFight.js';
 import { EG_FIGHT_EMPTY } from '../src/net/egLink.js';
 import { egHallOf } from '../src/net/egLaw.js';

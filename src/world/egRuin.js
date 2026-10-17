@@ -8,7 +8,7 @@
 //
 //   THE FOUNDATIONS under every disc (section 3.1): the floor's slab under its lip, the academy's courses as an inverted
 //     stepped mass (each set in by the band's step - EG_RUIN_FORMS), a rubble skirt, then 3-6 spires of the band's deep
-//     stone - the Hour's hangPlan law (world/sdIslandModel.js) driven with the band's shape - the strata by depth in the
+//     stone - the Hour's hangPlan law (world/superDungeon/sdIslandModel.js) driven with the band's shape - the strata by depth in the
 //     `found` record (EG_FOUND_V, top to tip); and under the courts the band's HANGING things (the Galleries' chandeliers on
 //     iron rods, the Cairn's soul-gem cages, the Shade's black-glass shards, the Wellhead's bent girders and chains).
 //   THE BRIDGES under every band and lane (section 3.1): a voussoir arch every 6-8 m springing from piers that fall into
@@ -41,10 +41,10 @@
 // Pure: no DOM, no GL. Not a DFU member. Ledger A (ELITE-GATES).
 import { egCircleSpecs, egBandOfHall, EG_BRINK_HALLS, egSeed } from '../net/egLaw.js';
 import { egRouteAlongAt, egRouteLen } from '../net/egRoute.js';   // THE ASCENT (LAW 9): a Brink's thirds along its route
-import { SD_REALM_ORIGIN } from '../net/sdBrain.js';
-import { SD_LIP, SD_ISLAND_SIDES } from './sdRealm.js';
-import { hangPlan, SD_HANG } from './sdIslandModel.js';
-import { rng } from './sdPixelKit.js';
+import { SD_REALM_ORIGIN } from '../net/superDungeon/sdBrain.js';
+import { SD_LIP, SD_ISLAND_SIDES } from './superDungeon/sdRealm.js';
+import { hangPlan, SD_HANG } from './superDungeon/sdIslandModel.js';
+import { rng } from './superDungeon/sdPixelKit.js';
 import { EG_KIT_RECORD, egKitStyle } from './egKit.js';
 import { egBandArchive, EG_DRESS, EG_KIT_MAP } from './egBandArt.js';
 import { egAtmosOf } from './egAtmos.js';
@@ -87,7 +87,7 @@ export const EG_FIXTURE_V = Object.freeze({ flame: FXB.flame, body: FXB.body, gr
  * THE BANDS' FORMS, the ruin's numbers for each name of world/egKit.js EG_KIT_STYLE (by band):
  *   col      a column's shaft: radius, sides (fluted round 12, bone round 12, a glass octagon, a basalt hexagon), its taper
  *   course   the foundation's courses: how many under a large floor, each's height, the band's step in
- *   spire    the spires (world/sdIslandModel.js SD_SPIRE's numbers, the band's): sides, rings, jitter, bend, broken tip,
+ *   spire    the spires (world/superDungeon/sdIslandModel.js SD_SPIRE's numbers, the band's): sides, rings, jitter, bend, broken tip,
  *            the cake's step, a twist a ring, a length share; `sats` thin spires about each (the Shade's stalactites, the
  *            Wellhead's prisms) and `rec` the record they wear
  *   statue   the figure's height over its plinth (m)
@@ -130,7 +130,7 @@ export const EG_CORNICES = Object.freeze({
 
 // ── the seeds ────────────────────────────────────────────────────────────────────────────────────────────────────────
 const RUIN_SALT = 0x0e6a51;
-/** A seeded hash in [0, 1) of a key's whole numbers (world/sdIslandModel.js's mix). */
+/** A seeded hash in [0, 1) of a key's whole numbers (world/superDungeon/sdIslandModel.js's mix). */
 function h01(seed, a = 0, b = 0, c = 0) {
   let h = (seed ^ Math.imul(a + 1, 0x9e3779b1) ^ Math.imul(b + 1, 0x85ebca6b) ^ Math.imul(c + 1, 0xc2b2ae35)) >>> 0;
   h = Math.imul(h ^ (h >>> 16), 0x7feb352d) >>> 0; h = Math.imul(h ^ (h >>> 15), 0x846ca68b) >>> 0;
@@ -588,7 +588,7 @@ function corniceSpikes(W, path, closed) {
     if (carry >= L) carry -= L;
   }
 }
-/** A disc's rim as a cornice's path: its own polygon's corners (world/sdRealm.js realmIsland's SD_ISLAND_SIDES - every second
+/** A disc's rim as a cornice's path: its own polygon's corners (world/superDungeon/sdRealm.js realmIsland's SD_ISLAND_SIDES - every second
  *  one under a small disc's), each mitred out by the half-angle's secant. */
 const rimSides = (r) => (r <= 3.5 ? SD_ISLAND_SIDES / 3 : r < 7 ? SD_ISLAND_SIDES / 2 : SD_ISLAND_SIDES);
 function rimPath(d) {
@@ -663,7 +663,7 @@ function foundation(W, piece, d, band, seed, lite) {
   if (!lite && (d.role === 'court' || d.role === 'isle')) hanging(W, piece, style.hanging, d, yF, rFoot, plan, seed);
 }
 /**
- * ONE SPIRE (world/sdIslandModel.js islandRoot's, in the band's shape `S`): `s` its plan (top centre, radius, length, its
+ * ONE SPIRE (world/superDungeon/sdIslandModel.js islandRoot's, in the band's shape `S`): `s` its plan (top centre, radius, length, its
  * bend's bearing and reach), hung from `foot`; rings jittered, stepped (the cake), twisted; its broken tip into the haze.
  */
 function spire(W, S, s, foot, seed, j, vOf) {

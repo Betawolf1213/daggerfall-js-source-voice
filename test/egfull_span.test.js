@@ -13,12 +13,12 @@ import { egHallOf, egCircleSpecs, EG_RELAY_MAX, EG_VENT_PCT, EG_BELT_MPS } from 
 import { egCircleColliderTris } from '../src/world/egHall.js';
 import { runSpeed, JUMP_SPEED, GRAVITY, JUMP_FWD_BOOST, CAPSULE_RADIUS, PlayerMotor } from '../src/player/motor.js';
 import { Collider } from '../src/player/collider.js';
-import { stepTris } from '../src/world/sdStepsModel.js';
-import { SD_BEAT_CYCLE, SD_BEAT_SOLID, SD_CRUMBLE_DELAY, gustAt } from '../src/world/sdSteps.js';
+import { stepTris } from '../src/world/superDungeon/sdStepsModel.js';
+import { SD_BEAT_CYCLE, SD_BEAT_SOLID, SD_CRUMBLE_DELAY, gustAt } from '../src/world/superDungeon/sdSteps.js';
 import { createEgSpan, egDropTris, egStepKey } from '../src/scenes/egSpan.js';
 import { createEgFight } from '../src/scenes/egFight.js';
 import { EG_FIGHT_EMPTY } from '../src/net/egLink.js';
-import { realmToDungeon, dungeonToRealm } from '../src/net/sdBrain.js';
+import { realmToDungeon, dungeonToRealm } from '../src/net/superDungeon/sdBrain.js';
 import { registerSpireFooting, registerSpireWake } from '../src/systems/spireKit.js';
 
 const still = (o = {}) => ({ forward: 0, strafe: 0, run: false, jump: false, up: false, down: false, ...o });

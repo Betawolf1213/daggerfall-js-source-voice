@@ -3,9 +3,9 @@
 // THE SPIRE - the Elite Breach's own music, written here as notes for the game's own player and FM bank, and the law of
 // which of it plays.
 //
-// WHY MADE: as the Warden's and the Hour's (systems/gateScore.js, systems/sdScore.js): Daggerfall has no fight music and
+// WHY MADE: as the Warden's and the Hour's (systems/gate/gateScore.js, systems/superDungeon/sdScore.js): Daggerfall has no fight music and
 // nothing in MIDI.BSA rises and falls with anything. So the Spire's songs are made in code in the shape an HMI song
-// decodes to, played by the game's own player (systems/songPlayer.js) under names of their own (music.registerSong), faded
+// decodes to, played by the game's own player (systems/song/songPlayer.js) under names of their own (music.registerSong), faded
 // by the same law, and replaceable by a music pack by name. Each score module writes its own `makeSong` (section 26).
 //
 // THE SPIRE'S SOUND: E PHRYGIAN, the Kyn's colour against the Imperial brass - E minor with its lowered second (F natural
@@ -37,7 +37,7 @@
 // THE SPIRE MIX is systems/egMix.js. Measured through the real player in a browser by tools/egScoreProbe.mjs (the Hour's
 // probe's law). Pure: the breach's state in, a song's name (or SPIRE_SCORE_SILENCE, or null) out.
 // Not a DFU member. Ledger A (ELITE-GATES).
-import { midiNote, SCORE_TPQ, SCORE_STING_LEAD_MS } from './gateScore.js';
+import { midiNote, SCORE_TPQ, SCORE_STING_LEAD_MS } from './gate/gateScore.js';
 
 /** The songs' names - 8-character stems as every made song's (GATEWAR1, HOURWAR1). */
 export const SPIRE_SONGS = Object.freeze({
@@ -70,7 +70,7 @@ const MIX = Object.freeze({
   horn: [116, 44], harp: [94, 36], bells: [96, 92], hit: [106, 64], pizz: [94, 76],
 });
 const KIT_LEVEL = 114;
-/** Each song over the player's own level, and its press (systems/songPlayer.js `song.level`, `song.press` - the gate's
+/** Each song over the player's own level, and its press (systems/song/songPlayer.js `song.level`, `song.press` - the gate's
  *  law): the halls under the fights, the war growing by phase, the count and the Valkynaz over it. */
 export const SPIRE_LEVEL = Object.freeze({ hall: 1.3, yard: 1.45, set: 1.5, wake: 1.5, lord1: 1.45, lord2: 1.56, lord3: 1.64, valk: 1.66, redoubt: 1.25, count: 1.68, end: 1.4 });
 const PRESS = Object.freeze({ threshold: -18, knee: 12, ratio: 4, attack: 0.003, release: 0.25, ceiling: -1 });
@@ -130,7 +130,7 @@ export const EG_SCORE_LORD_MOTIFS = Object.freeze([
 ].map((m) => Object.freeze(m.map((bar) => Object.freeze(bar.map((n) => Object.freeze(n)))))));
 
 const RANK = { programChange: 0, controller: 0, noteOn: 1 };
-/** A song in the shape the player plays (formats/hmiFile.js HmiFile) - systems/gateScore.js's makeSong's law, this
+/** A song in the shape the player plays (formats/hmiFile.js HmiFile) - systems/gate/gateScore.js's makeSong's law, this
  *  module's own voices: one note a key a moment (AUDIT SD III A8), every voice's program, level and place at tick 0, whole
  *  bars that loop on their bar line. */
 function makeSong(name, bpm, bars, write, level = 1, press = null) {

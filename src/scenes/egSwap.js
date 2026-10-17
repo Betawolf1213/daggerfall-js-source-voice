@@ -7,7 +7,7 @@
 //     ground): asking for another drops the one held (at most two circles are ever resident - the one stood and the one
 //     built), asking again for the same is nothing.
 //   OFF THE MAIN THREAD (world/egCircleWorker.js): the build never lands in a frame. `new Worker(new URL(...))` stays in
-//     exactly that spelling for Vite (ai/navClient.js, AUDIT 59 F1); the factory is injectable so node never evaluates it.
+//     exactly that spelling for Vite (ai/nav/navClient.js, AUDIT 59 F1); the factory is injectable so node never evaluates it.
 //   UNDER ANOTHER LAW, THE HALLS GIVEN (AUDIT EG V, E NEW-2): a build asked with the halls a breach's room gave (`given`)
 //     hands them to the worker, which holds no other - a build asked without them is another build of the same circle.
 //   THE FALLBACK IS TODAY'S STEP: no Worker, a factory that throws, a worker that errors - no build is offered (`state`

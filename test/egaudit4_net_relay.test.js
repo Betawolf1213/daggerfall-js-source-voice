@@ -27,8 +27,8 @@ import { EG_LIVE_PATH } from '../src/net/egDurable.js';
 import { egBreachNew, egEnter, egStep, egHeal, egEnd, egAdmitWord, egFall, egForsake, EG_HEAL_CAST_MS } from '../src/net/egBrain.js';
 import { mintEgReceipt, readEgReceipt, egReceiptValid, EG_END_WHYS, EG_RECEIPT_LIST_MAX, EG_RECEIPT_RELS_MAX } from '../src/net/egReceipt.js';
 import { mintEgOrder } from '../src/net/identityToken.js';
-import { healRef } from '../src/net/gateBrain.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { healRef } from '../src/net/gate/gateBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { OnlineSession } from '../src/net/online.js';
 
 const { subtle } = globalThis.crypto;
@@ -43,7 +43,7 @@ const rcpts = (ws) => [...new Set(egs(ws).filter((m) => m.k === 'rcpt').map((m) 
 const quiet = async (fn) => { const w = console.warn; console.warn = () => {}; try { return await fn(); } finally { console.warn = w; } };
 /** A section of the design page, by its heading. */
 const section = (n) => { const P = rd('bible/11-Multiplayer/Elite-Gates.md'), i = P.indexOf(`\n## ${n}. `), j = P.indexOf('\n## ', i + 4); assert.ok(i > 0 && j > i, `section ${n}`); return P.slice(i, j); };
-/** A heal spell's cast frame's data (ALLY-CAST's - test/allycast.test.js's own shape). */
+/** A heal spell's cast frame's data (ALLY-CAST's - test/systems/allycast.test.js's own shape). */
 const HEAL_CAST = (to) => ({ to, level: 5, spell: { name: 'Heal', element: 4, rangeType: 1, effects: [{ type: 10, subType: 8, magnitudeBaseLow: 20, magnitudeBaseHigh: 20, magnitudeLevelBase: 0, magnitudeLevelHigh: 0, magnitudePerLevel: 1,
   durationBase: 0, durationMod: 0, durationPerLevel: 1, chanceBase: 100, chanceMod: 0, chancePerLevel: 1 }] } });
 

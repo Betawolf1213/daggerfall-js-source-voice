@@ -722,7 +722,7 @@
   },
   {
     "name": "AUDIT-EG-V-c-L7-17-card-default-moving",
-    "file": "src/ui/gateTitleCard.js",
+    "file": "src/ui/gate/gateTitleCard.js",
     "old": "still = egReducedMotion() } = {}) {",
     "new": "still = false } = {}) {",
     "tests": [
@@ -731,7 +731,7 @@
   },
   {
     "name": "AUDIT-EG-V-c-L7-17-card-flies",
-    "file": "src/ui/gateTitleCard.js",
+    "file": "src/ui/gate/gateTitleCard.js",
     "old": "  const cls = `wb-title-card on${model.fresh && !still ? ' in' : ''}${still ? ' still' : ''}`;",
     "new": "  const cls = `wb-title-card on${model.fresh ? ' in' : ''}${still ? ' still' : ''}`;",
     "tests": [
@@ -740,7 +740,7 @@
   },
   {
     "name": "AUDIT-EG-V-c-L7-17-rule-sweeps",
-    "file": "src/ui/gateTitleCard.js",
+    "file": "src/ui/gate/gateTitleCard.js",
     "old": "  const cls = `wb-title-card on${model.fresh && !still ? ' in' : ''}${still ? ' still' : ''}`;",
     "new": "  const cls = `wb-title-card on${model.fresh && !still ? ' in' : ''}`;",
     "tests": [
@@ -965,7 +965,7 @@
   },
   {
     "name": "AUDIT-EG-V-c-L8-6-line-unshown",
-    "file": "src/systems/itemInfo.js",
+    "file": "src/systems/item/itemInfo.js",
     "old": "  else if (isWeirKey(item)) out.push({ text: EG_TEXT.keyLine, center: true });",
     "new": "",
     "tests": [
@@ -974,7 +974,7 @@
   },
   {
     "name": "AUDIT-EG-V-c-L8-6-card-unbuilt",
-    "file": "src/systems/itemInfo.js",
+    "file": "src/systems/item/itemInfo.js",
     "old": " || isWeirKey(item)) record = survivalInfoTokens(item);",
     "new": ") record = survivalInfoTokens(item);",
     "tests": [

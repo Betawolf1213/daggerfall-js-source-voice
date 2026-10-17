@@ -20,7 +20,7 @@ import { EG_KIND, egLegionRaise, egLegionRoom, egLegionCapOf, egWaveKinds, egEsc
 import { egLordsAwake } from '../src/net/egLords.js';
 import { egWagerOf } from '../src/net/egStartLaw.js';
 import { EG_V_BY_KEY } from '../src/net/egVestige.js';
-import { HIT_KINDS } from '../src/net/gateBrain.js';
+import { HIT_KINDS } from '../src/net/gate/gateBrain.js';
 import { egGive8Hall } from './egGive8.mjs';
 
 // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courts and its

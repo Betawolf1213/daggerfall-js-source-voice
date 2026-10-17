@@ -29,8 +29,8 @@ import { egFightView } from '../src/net/egWalkGraph.js';
 import { egFromFront, egFromBehind, egLegionRaise, egLegionStep, EG_KIND } from '../src/net/egLegion.js';
 import { egFeatBits } from '../src/net/egFeats.js';
 
-import { HIT_KINDS, dpsRef, PHASE_AT } from '../src/net/gateBrain.js';
-import { gateAspectOf } from '../src/net/gateMods.js';
+import { HIT_KINDS, dpsRef, PHASE_AT } from '../src/net/gate/gateBrain.js';
+import { gateAspectOf } from '../src/net/gate/gateMods.js';
 import { validEgOut, EG_YAW_WIRE_MAX, EG_OUTLINE_WIRE_MAX } from '../src/net/wire.js';
 import { foldEg, EG_STATE_EMPTY } from '../src/net/egLink.js';
 import { egChainMates } from '../src/scenes/egFight.js';

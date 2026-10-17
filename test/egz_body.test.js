@@ -1,12 +1,12 @@
 // EG-ZH (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md sections 11.7, 11.8, 15 and
-// 27.8): THE BODY IN THE SPIRE. THE DEATH SAVES AT A REDOUBT (systems/lootPowers.js, systems/sigilSetPowers.js): Divine
+// 27.8): THE BODY IN THE SPIRE. THE DEATH SAVES AT A REDOUBT (systems/loot/lootPowers.js, systems/sigil/sigilSetPowers.js): Divine
 // Grace and the Ghost-King's Vigil spent in an Elite Breach held past their timers to the next Redoubt taken, their chips
 // reading "Redoubt", the round silent; the Redoubt recovering both, held or not; out of the breach (or in another) their own
 // timers. THE CAMERA IN ROCK (player/mwView.js): both lanes in at once against a wall, out again over 0.25 s at most, never
 // past where their casts allow; nothing outside the Spire. THE FRAGMENT'S OWN CLAMP (world/egHall.js egFragZones,
 // egFragKeep, egFragArena - the motor's arena): each passage's walls and each chamber's ring hold the feet, their open edges
 // (mouths, alcove doorways, an open passage's sides, a ring's gaps) let them go, the ceiling holds the head; the breach
-// client setting it while I stand in a fragment and never over another arena. TOUCH ON THE SPANS (ui/touch.js): in the Spire
+// client setting it while I stand in a fragment and never over another arena. TOUCH ON THE SPANS (ui/touch/touch.js): in the Spire
 // a Jump press that keeps sliding looks, an upward flick jumps, and on the spans the stick runs at full throw - and out of
 // it the layer is TI2's.
 import './modsOff.js';
@@ -14,27 +14,27 @@ import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import * as LR from '../src/systems/lootRarity.js';
-import * as LP from '../src/systems/lootPowers.js';
-import { _resetSetPowersForTests, setSpireRecovery, spireRedoubtTaken, registerSpireRedoubt, spireRoomNow } from '../src/systems/sigilSetPowers.js';
-import { _resetSigilSetsForTests } from '../src/systems/sigilSets.js';
+import * as LR from '../src/systems/loot/lootRarity.js';
+import * as LP from '../src/systems/loot/lootPowers.js';
+import { _resetSetPowersForTests, setSpireRecovery, spireRedoubtTaken, registerSpireRedoubt, spireRoomNow } from '../src/systems/sigil/sigilSetPowers.js';
+import { _resetSigilSetsForTests } from '../src/systems/sigil/sigilSets.js';
 import { hurtPlayer } from '../src/characters/playerEntity.js';
 import { setPlayerDoor } from '../src/systems/playerDoor.js';
 import { equipItem } from '../src/systems/equip.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { spireCameraEase, spireCameraFrame, setSpireCamera, SPIRE_CAMERA_EASE_S, SPIRE_EOTB_FULL_M } from '../src/player/mwView.js';
 import { egFragZones, egFragZoneAt, egFragKeep, egFragArena, EG_CLAMP_SLACK_M, egToDungeon } from '../src/world/egHall.js';
 import { egHallOf, EG_SEALED_MS } from '../src/net/egLaw.js';
 import { PlayerMotor, CAPSULE_RADIUS, CAPSULE_HEIGHT } from '../src/player/motor.js';
-import { realmToDungeon, dungeonToRealm } from '../src/net/sdBrain.js';
+import { realmToDungeon, dungeonToRealm } from '../src/net/superDungeon/sdBrain.js';
 import { createEgClient } from '../src/scenes/egClient.js';
 import { egBreachNew, egEnter, egStateOf } from '../src/net/egBrain.js';
 import { validEgOut } from '../src/net/wire.js';
-import { attachTouch, setTouchSpire, egTouchFlick, egFullThrow, EG_FLICK_PX, EG_FLICK_MS } from '../src/ui/touch.js';
+import { attachTouch, setTouchSpire, egTouchFlick, egFullThrow, EG_FLICK_PX, EG_FLICK_MS } from '../src/ui/touch/touch.js';
 import { setBindings } from '../src/ui/input.js';
 import { createBindings, setBinding } from '../src/systems/inputActions.js';
-import { TAP_PX } from '../src/ui/touchGestures.js';
+import { TAP_PX } from '../src/ui/touch/touchGestures.js';
 import { egGive8 } from './egGive8.mjs';
 
 // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courses along +z
@@ -128,7 +128,7 @@ test('EG-ZH THE GHOST-KING\'S VIGIL AT A REDOUBT (section 15): its heal under a 
   assert.equal(spireRoomNow(), 'b');
   setSpireRecovery(() => false);
   assert.equal(spireRoomNow(), null, 'a host answering false is in no breach');
-  const SRC = rd('src/systems/lootPowers.js');
+  const SRC = rd('src/systems/loot/lootPowers.js');
   assert.match(SRC, /registerSpireRedoubt\(LOOT_POWERS, lootRedoubtTaken\);/);
   assert.deepEqual({ ...LP.LOOT_SPIRE_SAVES }, { grace: 'graceReady', vigil: 'vigilReady' });
 });
@@ -299,7 +299,7 @@ async function withTouch(fn) {
 }
 const codes = (keys, type) => keys.filter((e) => e.type === type).map((e) => e.code);
 
-test('EG-ZH TOUCH, THE LAW (ui/touch.js, section 27.8): an upward flick is 40 px or more up within 150 ms; full throw keeps the stick\'s direction at length 1 (mutants: a flick down; a slow drag a flick; the throw\'s direction lost)', () => {
+test('EG-ZH TOUCH, THE LAW (ui/touch/touch.js, section 27.8): an upward flick is 40 px or more up within 150 ms; full throw keeps the stick\'s direction at length 1 (mutants: a flick down; a slow drag a flick; the throw\'s direction lost)', () => {
   assert.deepEqual([EG_FLICK_PX, EG_FLICK_MS], [40, 150]);
   assert.equal(egTouchFlick(400, 0, 360, 100), true);
   assert.equal(egTouchFlick(400, 0, 361, 100), false, '39 px is no flick');
@@ -309,7 +309,7 @@ test('EG-ZH TOUCH, THE LAW (ui/touch.js, section 27.8): an upward flick is 40 px
   assert.deepEqual(egFullThrow({ x: 0, y: 0 }), { x: 0, y: 0 });
 });
 
-test('EG-ZH TOUCH IN THE SPIRE (ui/touch.js): a Jump press that keeps sliding past the tap radius looks, the drag\'s gain on it, the jump held; an upward flick on the look half jumps (Jump down, then up), once a finger; out of the Spire neither, the button TI1\'s and the flick a look (mutants: the slide never looking; looking under a window; the flick out of the Spire; twice a finger)', () => withTouch(async (keys, attach) => {
+test('EG-ZH TOUCH IN THE SPIRE (ui/touch/touch.js): a Jump press that keeps sliding past the tap radius looks, the drag\'s gain on it, the jump held; an upward flick on the look half jumps (Jump down, then up), once a finger; out of the Spire neither, the button TI1\'s and the flick a look (mutants: the slide never looking; looking under a window; the flick out of the Spire; twice a finger)', () => withTouch(async (keys, attach) => {
   let spire = null, paused = false;
   setTouchSpire(() => spire);
   const looks = [];
@@ -358,7 +358,7 @@ test('EG-ZH TOUCH IN THE SPIRE (ui/touch.js): a Jump press that keeps sliding pa
   canvas.fire('touchend', tev('touchend', [[9, 800, 340]], 3060));
 }));
 
-test('EG-ZH TOUCH ON THE SPANS (ui/touch.js): the stick runs at full throw - Run held at any push past the dead zone, the analog reading at length 1 - only on the Spire\'s spans; off them RUN_THROW\'s 80% as ever (mutants: the throw full everywhere; Run never held; the analog reading partial)', () => withTouch(async (keys, attach) => {
+test('EG-ZH TOUCH ON THE SPANS (ui/touch/touch.js): the stick runs at full throw - Run held at any push past the dead zone, the analog reading at length 1 - only on the Spire\'s spans; off them RUN_THROW\'s 80% as ever (mutants: the throw full everywhere; Run never held; the analog reading partial)', () => withTouch(async (keys, attach) => {
   setPref('touchAnalogStick', true);
   let spire = { span: true };
   setTouchSpire(() => spire);

@@ -1,7 +1,7 @@
 // EG-ZM (2026-10-12, bible/11-Multiplayer/Elite-Gates.md section 20, THE BOARD WINDOW - "reached from the Timers row and from
 // the start window"; EG14): THE BOARD'S DOORS. The boards open through ONE door (ui/egBoardWindow.js createEgBoardDoor, the
 // world host's egBoardDoor) from `/breach board`, from the Timers window's Elite rows (systems/eventTimers.js `door`,
-// ui/enhancedTimers.js's button, the pause face's handoff in ui/enhancedMenu.js) - the boards' own season standing as an
+// ui/enhanced/enhancedTimers.js's button, the pause face's handoff in ui/enhanced/enhancedMenu.js) - the boards' own season standing as an
 // Elite row so the door is there with no breach - and from the start window (ui/egStartWindow.js, its last row, back to the
 // window once the boards close). Both skins: the classic skin's DFU pickers on the mode's slot, which a pause face on its
 // way out gives up; the enhanced skin's panel.
@@ -9,16 +9,16 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { eventTimerRows } from '../src/systems/eventTimers.js';
-import { timersWindow, TIMER_DOOR_TEXT } from '../src/ui/enhancedTimers.js';
+import { timersWindow, TIMER_DOOR_TEXT } from '../src/ui/enhanced/enhancedTimers.js';
 import { egStartRows, openEgStartWindow } from '../src/ui/egStartWindow.js';
 import { openEgBoard, createEgBoardDoor, EG_BOARD_TEXT, EG_BOARD_TABS, EG_BOARD_TAB_TEXT } from '../src/ui/egBoardWindow.js';
-import { arenaSeasonOf, arenaSeasonEndsS, ARENA_SEASON_EPOCH_S, ARENA_SEASON_S } from '../src/net/arenaLaw.js';
+import { arenaSeasonOf, arenaSeasonEndsS, ARENA_SEASON_EPOCH_S, ARENA_SEASON_S } from '../src/net/arena/arenaLaw.js';
 import { EG_TEXT, EG_SEALED_MS } from '../src/net/egLaw.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const ME = 'acct-mac';
 
-// ── a document just real enough (test/timers1.test.js's) ──
+// ── a document just real enough (test/ui/enhanced/timers1.test.js's) ──
 function fakeDoc() {
   const node = (tag) => {
     const n = { tag, children: [], className: '', textContent: '', attrs: {}, style: {}, listeners: {}, title: '', type: '',
@@ -84,7 +84,7 @@ test('EG-ZM THE TIMERS ROW\'S DOOR (section 20): where the host hands the boards
   v3.stop();
   assert.equal(all(v3.root, 'tm-door').length, 0);
   // THE PAUSE FACE: a handoff, as the sheet's doors - and a door that opened nothing resumes
-  const menu = rd('src/ui/enhancedMenu.js');
+  const menu = rd('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /\nconst timersDoor = \(fn\) => \{ onAction\('handoff'\); if \(!fn\(\)\) onAction\('resume'\); \};\n/);
   assert.match(menu, /timersWindow\(document, \{ read: \(\) => hooks\.timers\?\.\(\{ ask: true \}\) \?\? null, onClose: [^\n]*, door: timersDoor \}\);/);
 });

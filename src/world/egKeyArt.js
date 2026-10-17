@@ -3,20 +3,20 @@
 // KEY'S OWN PICTURE - painted here in code into the Spire's held archive block (world/pseudoArchives.js EG_ARCH_BLOCK.key,
 // 38282: "the arch, the key and the beacon", in the page's order), where EG-PLAY's key wore DFU's Talisman (TEXTURE.211
 // record 50). Nothing ships and nothing is read from the player's data (Port-Doctrine: A RENDER OF GAME DATA IS GAME DATA):
-// the same pixels every boot, through the Hour's paint box (world/sdPixelKit.js) - a ramp through the ordered dither, the
+// the same pixels every boot, through the Hour's paint box (world/superDungeon/sdPixelKit.js) - a ramp through the ordered dither, the
 // light from the top-left, a dark outline, and every texel forced into the picture's own ramps at the end.
 //
 // THE KEY: a Battlemage's key in the Galleries' gold leaf (world/egBandArt.js EG_BAND_RAMPS[0].metal - the Hour's brass,
 // reused), its bow a ring round a Battlemage-blue stone lit from within (the same band's accent), its shaft to the right,
 // a collar at the bow and a two-step bit hanging from its end. EG_KEY_ART_SIZE texels, the cell an item list draws it in
-// (ui/itemScroller.js CELL_W x SLOT_H, never enlarged), its ground clear.
+// (ui/item/itemScroller.js CELL_W x SLOT_H, never enlarged), its ground clear.
 //
 // It reaches every door an item's picture does as a STAND-IN of its archive (systems/textureReplacement.js
 // addVendorTextures - `standIn`, `build`): the lists' icon drawer asks `getTexture(archive)`, the pipeline stands the
 // shell in, and the swap arm uploads this picture (systems/weirKey.js registers it at its import).
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
-import { image, putTexel, ramp, paletteOf, quantize } from './sdPixelKit.js';
+import { image, putTexel, ramp, paletteOf, quantize } from './superDungeon/sdPixelKit.js';
 import { EG_BAND_RAMPS } from './egBandArt.js';
 import { EG_ARCH_BLOCK } from './pseudoArchives.js';
 
@@ -82,7 +82,7 @@ export function egKeyArt() {
 
 /**
  * THE KEY'S PICTURE ON THE TEXTURE DOOR, once: a stand-in of its archive (no TEXTURE file is it), built when the archive is
- * first asked (world/galleonArt.js registerGalleonArt's law). `addVendorTextures` is handed in (systems/
+ * first asked (world/ships/galleonArt.js registerGalleonArt's law). `addVendorTextures` is handed in (systems/
  * textureReplacement.js's), keeping this file free of the texture door's imports. Answers how many were registered (0 the
  * second time).
  * @param {(entries: any[]) => number} addVendorTextures

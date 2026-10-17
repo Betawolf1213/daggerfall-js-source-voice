@@ -16,7 +16,7 @@ import { createMwCamera, MW_UNITS_PER_METER, FOCAL_HEIGHT, PITCH_LIMIT } from '.
 import { createEgClient } from '../src/scenes/egClient.js';
 import { egBreachNew, egEnter, egStateOf } from '../src/net/egBrain.js';
 import { validEgOut } from '../src/net/wire.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const WM = rd('src/scenes/worldModes.js');

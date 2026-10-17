@@ -19,7 +19,7 @@
 //   THE ARRIVAL CARD (`egArrivalCard`, section 27.3): *Hall 12 - the Broken Galleries*, the hall's name over it, the
 //     objective beneath, the twist as a second line, the decrees in force; at a band's first hall (or the breach's own
 //     first) its band's card; *Hall 15 - the Court* and the lord's card at a Court. It wears the gate's title card's
-//     own sheet (ui/gateTitleCard.js TITLE_CARD_CSS) on a node of its own - the gate's card is the fight's (a lord's
+//     own sheet (ui/gate/gateTitleCard.js TITLE_CARD_CSS) on a node of its own - the gate's card is the fight's (a lord's
 //     wake and fall, scenes/egFight.js), and the two never stand together.
 //   THE OBJECTIVE, THE DOOR, THE LORD'S BAR: the objective chip with its progress (ui/egHud.js egProgressText); the
 //     door's screen-edge marker (`egDoorMarker`: the way down's bearing off my facing, on the screen's edge while it is
@@ -30,13 +30,13 @@
 //     prompt bar (`egPadPrompts`).
 //   BOTH SKINS: the HUD is DOM in every skin, as the gate's bar, the arena's and the sea's are (a readout, not a
 //     native window - the native-window rule binds DFU's windows); the classic skin dresses it in DFU's own text colour
-//     and its shadow (DaggerfallUI.DefaultTextColor / DefaultShadowColor - ui/nativePanel.js DEFAULT_TEXT_COLOR and
+//     and its shadow (DaggerfallUI.DefaultTextColor / DefaultShadowColor - ui/native/nativePanel.js DEFAULT_TEXT_COLOR and
 //     DEFAULT_SHADOW_COLOR) over the gate's classic face, the enhanced skin in its pixel face on the kit's plates.
 //   ACCESSIBILITY (section 25.7, ui/egAccess.js): the danger palette's red on the chip, reduced motion's stillness (no
 //     pulse, no flight, no rise), and the beats' words in a polite live region.
 //   EG-ZD (2026-10-12, Mac: "I said I want everything"; section 16.5): THE FALL, a fallen member's own screen in place of
 //     the death screen (`egFallModel`, `drawEgFall`): the camera sinks for 1.2 s as the screen drains to a fifth of its
-//     colour, then the gate's title card's sheet (ui/gateTitleCard.js) reads *FALLEN* - *The next Redoubt can call you
+//     colour, then the gate's title card's sheet (ui/gate/gateTitleCard.js) reads *FALLEN* - *The next Redoubt can call you
 //     back.* or *The Spire will not take you back.* - with *Reliquaries lost: N* in the palette's red where any were held,
 //     and 2.5 s later the witness view dithers in (an ordered 2x2 dither through black, the eye handed over at its
 //     darkest). Reduced motion: no sink, the colour cut, the card still, the witness view cut in.
@@ -65,10 +65,10 @@ import { egNextCircleText } from './egHud.js';   // AUDIT EG V (L2-11): a rest's
 import { egTwistShown } from '../net/egRun.js';   // AUDIT EG V (L2-4): no Bargain's line when no family is free
 import { EG_PRES_TEXT, EG_BAND_LINES } from './egBeats.js';
 import { EG_PARTY_CSS } from './egParty.js';
-import { titleCardModel, TITLE_CARD_CSS, TITLE_CARD_STYLE_ID } from './gateTitleCard.js';
-import { DEFAULT_TEXT_COLOR, DEFAULT_SHADOW_COLOR } from './nativePanel.js';
+import { titleCardModel, TITLE_CARD_CSS, TITLE_CARD_STYLE_ID } from './gate/gateTitleCard.js';
+import { DEFAULT_TEXT_COLOR, DEFAULT_SHADOW_COLOR } from './native/nativePanel.js';
 import { PIXEL_FONT_CSS } from './pixelifyFive.js';
-import { injectEnhancedFonts } from './enhancedStyle.js';
+import { injectEnhancedFonts } from './enhanced/enhancedStyle.js';
 import { egSigilsOf, egEclipseAt, egEclipseChip } from '../world/egTelegraph.js';   // EG-ZG: the marks' sigils, the Eclipse's chip
 import { t } from '../systems/textManager.js';   // AUDIT EG V (c): the words this audit adds, in the player's language
 import { egStakeText } from './egHud.js';   // AUDIT EG V (c, NEW-1): the rest card's stake, on the Spire's own HUD
@@ -230,7 +230,7 @@ export function egMarkynazLine(E, spec) {
 /** The card's words for a screen reader (the card itself is aria-hidden): the hall and its objective - EG-ZS: and the decree
  *  the Markynaz lays, where his card names one. Pure. */
 export const egArrivalLive = (card) => `${card.main}. ${card.sub}${card.lays ? ` ${card.lays}.` : ''}`;
-/** The card's fade over its stand (the gate card's law - ui/gateTitleCard.js titleCardModel), or null. */
+/** The card's fade over its stand (the gate card's law - ui/gate/gateTitleCard.js titleCardModel), or null. */
 export function egArrivalShown(card, at, now) {
   if (!card) return null;
   const m = titleCardModel({ kind: 'arrive', at, until: at + EG_CARD_MS, kicker: card.kicker, main: card.main, sub: card.sub }, now);
@@ -308,7 +308,7 @@ export function egTouchButtons({ witness = false, rest = false, bridge = false, 
   if (bridge) return [{ id: 'bridge', label: T.bridge }];
   return [];
 }
-/** The d-pad's codes (systems/inputActions.js DEFAULT_SECONDARY_BINDINGS' diamond; ui/plusPad.js HELM_DPAD). */
+/** The d-pad's codes (systems/inputActions.js DEFAULT_SECONDARY_BINDINGS' diamond; ui/plus/plusPad.js HELM_DPAD). */
 export const EG_PAD_DIRS = Object.freeze({ JoystickAxis7Button0: 'up', JoystickAxis7Button1: 'down', JoystickAxis6Button1: 'left', JoystickAxis6Button0: 'right' });
 const PAD_OF_DIR = Object.freeze(Object.fromEntries(Object.entries(EG_PAD_DIRS).map(([c, d]) => [d, c])));
 /** Whether the d-pad is the Spire's now: a recap standing, the panel open, or a witness's eye - AUDIT EG III: or a Spirebridge
@@ -331,7 +331,7 @@ export function egPadAct(dir, kind, { recap = false, panel = false, witness = fa
   if (bridge && !panel && !witness && kind === 'tap' && dir === 'up') return { k: 'bridge' };
   return null;
 }
-/** The prompt bar's rows while the d-pad is the Spire's (the helm's shape - ui/enhancedHelm.js helmPadPrompts). */
+/** The prompt bar's rows while the d-pad is the Spire's (the helm's shape - ui/enhanced/enhancedHelm.js helmPadPrompts). */
 export function egPadPrompts({ recap = false, panel = false, witness = false, bridge = false } = {}) {
   const P = EG_PRES_TEXT.pad;
   if (recap) return [[[PAD_OF_DIR.up], P.close]];
@@ -417,7 +417,7 @@ export function egSpireHudModel(E, me, now, { ff = 'desktop', witness = false, p
 // ── THE DRAWING ───────────────────────────────────────────────────────────────────────────────────────────────
 export const EG_SPIRE_STYLE_ID = 'dagger-eg-spire-style';
 const rgbCss = (c) => `rgb(${Math.round(c[0] * 255)}, ${Math.round(c[1] * 255)}, ${Math.round(c[2] * 255)})`;
-/** The classic skin's text and shadow - DFU's own (ui/nativePanel.js). */
+/** The classic skin's text and shadow - DFU's own (ui/native/nativePanel.js). */
 export const EG_CLASSIC_TEXT_CSS = rgbCss(DEFAULT_TEXT_COLOR);
 export const EG_CLASSIC_SHADOW_CSS = rgbCss(DEFAULT_SHADOW_COLOR);
 export const EG_SPIRE_CSS = `
@@ -710,7 +710,7 @@ export const EG_FALL_TEXT = Object.freeze({ main: 'Fallen', first: 'The next Red
  * began, whether it was the last (no recall left), the Reliquaries it cost. Answers `{ phase, sink, sat, eye, veil, card }`:
  * the phase ('sink' | 'card' | 'dither'); how far the camera has sunk (m); the screen's colour (1 whole, EG_FALL_SAT at its
  * least); whose eye the screen is ('fall' - the fallen's own, sinking - or 'witness'); the dither's darkness (0-1, in
- * quarters); the card (`{ key, main, sub, lost, alpha, fresh }`, ui/gateTitleCard.js titleCardModel's fade) or null.
+ * quarters); the card (`{ key, main, sub, lost, alpha, fresh }`, ui/gate/gateTitleCard.js titleCardModel's fade) or null.
  * `still` (reduced motion): no sink, the colour cut at once, the card never rising, the witness view cut in, no dither.
  * @param {{ at: number, final?: boolean, lost?: number }|null} fall @param {number} now @param {{ still?: boolean }} [o]
  */

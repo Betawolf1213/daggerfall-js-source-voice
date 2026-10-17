@@ -17,10 +17,10 @@ import { egBreachNew, egEnter, egStep, egStateOf, egCount, egCastBackCost } from
 import { egAim, egFightState, egRaise, EG_ROLE } from '../src/net/egBodies.js';
 import { shDisc } from '../src/net/egShape.js';
 import { EG_V_BY_KEY, egHymnOf, EG_MOMENTUM_STEP, EG_SECOND_WIND_UNDER, EG_BLOODIED_UNDER, EG_ECHO_SHARE, EG_HYMN_MS, EG_ACCORD_M } from '../src/net/egVestige.js';
-import { HIT_KINDS } from '../src/net/gateBrain.js';
+import { HIT_KINDS } from '../src/net/gate/gateBrain.js';
 import { EG_FAST_RUN_MPS, EG_CRUMBLE_DELAY_S } from '../src/net/egSpanLaw.js';
 import { foldEg, EG_STATE_EMPTY, egRunOfMember } from '../src/net/egLink.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { createEgFight, EG_ECHO_Q } from '../src/scenes/egFight.js';
 import { createEgClient, egMenderOf } from '../src/scenes/egClient.js';
 import { createEgSpan, egStepKey } from '../src/scenes/egSpan.js';

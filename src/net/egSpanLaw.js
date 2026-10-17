@@ -14,7 +14,7 @@
 //   Vent      a disc EG_VENT_R across under a platform at least EG_VENT_MIN_W wide, erupting EG_VENT_FIRE_S of every
 //             `period` (the Rampart's 20% fire), told by a ring closing over its last EG_VENT_TELL_S.
 //   Drop      a walled landing at most 4.5 m down, at least 6 m deep.
-//   Gust      the Steps' breath (world/sdSteps.js gustAt), span-wide, on the islands about its pieces.
+//   Gust      the Steps' breath (world/superDungeon/sdSteps.js gustAt), span-wide, on the islands about its pieces.
 //
 // THE TIMED SOLVER (section 10.5): THE SPAN BUILD's running jump (Speed 10, Running 0, Jumping 0 - the motor's closed
 // form, held under the real motor's measured reach) from each piece's far edge to the next, over the pieces' positions at the launch and the
@@ -32,9 +32,9 @@
 //
 // EG-H3 (2026-10-12; sections 10.1 and 29, EG4): THE PLATFORM CLOCK, ONE HOME - the Unmoored Steps' stepAt, beatStands,
 // beatBlinks and beatWarned moved here whole on the two laws the Spire's pieces move by (egDriftDx, egBeatAt), with the
-// Beat's and the Crumble's numbers; world/sdSteps.js re-exports them, so the Hour and the Spire keep one clock. And THE
+// Beat's and the Crumble's numbers; world/superDungeon/sdSteps.js re-exports them, so the Hour and the Spire keep one clock. And THE
 // COURSE AS DATA: courseOf lays a course record (`{ steps, checkpoints, end }`, the Steps' uniform step) from a spec -
-// the Hour's is world/sdSteps.js courseOf(SD_COURSE_SPEC), byte for byte the course it froze at import.
+// the Hour's is world/superDungeon/sdSteps.js courseOf(SD_COURSE_SPEC), byte for byte the course it froze at import.
 //
 // THE ASCENT (LAW 9, 2026-10-16, Mac: "Something that isnt just a straight line from point A to point B";
 // bible/11-Multiplayer/Elite-Gates-Ascent.md section 6): THE PROOFS OVER THE ROUTE. A hall of THE ASCENT's law is a way
@@ -70,7 +70,7 @@ export const EG_JUMP_FWD = 0.05;
 export const EG_BODY_R = 0.35;
 export const EG_DROP_GAIN = 0.45;
 /** The Steps' Beat (its cycle, its solid share, the warning blink before it goes) and Crumble (the delay under a foot) -
- *  THEIR ONE HOME since EG-H3: world/sdSteps.js says them as SD_BEAT_CYCLE, SD_BEAT_SOLID, SD_BEAT_BLINK and
+ *  THEIR ONE HOME since EG-H3: world/superDungeon/sdSteps.js says them as SD_BEAT_CYCLE, SD_BEAT_SOLID, SD_BEAT_BLINK and
  *  SD_CRUMBLE_DELAY. */
 export const EG_BEAT_CYCLE_S = 3.6;
 export const EG_BEAT_SOLID_S = 2.4;

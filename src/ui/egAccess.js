@@ -1,20 +1,20 @@
 // @ts-check
 // EG-G1 (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 25.7): THE SPIRE'S
 // ACCESSIBILITY - three of the port's own rows on the prefs shelf (systems/uiPrefs.js), drawn under Settings >
-// Accessibility (ui/settingsMap.js), and the law that reads them - the one home of each (EG-G2's look reads them here):
+// Accessibility (ui/settings/settingsMap.js), and the law that reads them - the one home of each (EG-G2's look reads them here):
 //   `port:dangerPalette` - Standard, High contrast, Deutan-Protan, Tritan: the danger edge, the safety gold and the place's
 //     white hazard each its preset's colour. High contrast draws the danger edge magenta ([1.0, 0.15, 0.75]) with a double
 //     keyline and a hatch, safety a solid white-gold and the hazard cyan; the two colour-blind presets are pinned to
 //     separate under simulation (`egCvd` - Machado, Oliveira and Fernandes 2009 at full severity, in linear light,
 //     measured in CIELAB). The colours ride the Spire's telegraph stage's `uEdgeCol` and `uColor`, its keyline and hatch
-//     the stage's style bit (render/gateTelegraph.js TELEGRAPH_FS_SPIRE; world/egLook.js egPaletteBits), laid on each
+//     the stage's style bit (render/gate/gateTelegraph.js TELEGRAPH_FS_SPIRE; world/egLook.js egPaletteBits), laid on each
 //     frame's shapes by scenes/egFight.js egLookShapes;
 //   `port:telegraphFill` - a danger fill's light, 50-100%: the stage's `uFillK`, the line left whole;
 //   (`port:allyEffects` - Full or Quiet, THE QUIET COMPANY's allies' hit numbers - is not on the shelf: the port draws
 //     only the player's own numbers (ui/hitNumbers.js), so the row would govern nothing);
 //   `port:reducedMotion` - the system's `prefers-reduced-motion` or this row: the count chip's pulse, the gains' flight
 //     and the arrival card's rise stand still (ui/egSpireHud.js), the gate's title cards with them - a lord's wake, its
-//     FELLED, THE FALL's card, their rule's sweep (ui/gateTitleCard.js, AUDIT EG V c L7-17) - and the stair is a plain
+//     FELLED, THE FALL's card, their rule's sweep (ui/gate/gateTitleCard.js, AUDIT EG V c L7-17) - and the stair is a plain
 //     cut. The absent's ring still drains: it is a count, not a motion.
 // The larger HUD is the port's own `--hud-scale` (port:hudScale), which every part of the Spire's HUD reads; the beats'
 // words go to a polite live region for a screen reader.

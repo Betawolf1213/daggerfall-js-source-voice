@@ -17,7 +17,7 @@ import { EG_LAWS, EG_LAW_KEEP_DAYS, EG_GAP_MS, EG_REJOIN_MS, EG_LIVE_MAX, EG_LIV
 import { egBreachNew } from '../src/net/egBrain.js';
 import { mintEgOrder } from '../src/net/identityToken.js';
 import { readEgReceipt } from '../src/net/egReceipt.js';
-import { realmToDungeon, dungeonToRealm } from '../src/net/sdBrain.js';
+import { realmToDungeon, dungeonToRealm } from '../src/net/superDungeon/sdBrain.js';
 import { RELAY_CFG_KEYS, RELAY_CFG_VARS } from '../src/net/relayCfg.js';
 
 const { subtle } = globalThis.crypto;

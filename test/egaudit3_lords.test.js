@@ -5,7 +5,7 @@
 // erupting (#2); the Twin Lords' Fire-touched and Frost-touched minted and said (#4); fury's chained shape at THE CHAINED GAP
 // (#10, net/egShape.js egChainGapMs, Chained Blows' own rule); the lords' state weights never multiplied, the Breakdown's half
 // route and Grath's Gore twice as often alone (#11); Morvayn's shared blow in the census (#12); the aspects - Garoth's each of
-// the four in turn, an earlier band's lord re-aspected (#18); the gate's rows read from net/gateBrain.js ATTACKS, the Meteor's
+// the four in turn, an earlier band's lord re-aspected (#18); the gate's rows read from net/gate/gateBrain.js ATTACKS, the Meteor's
 // burning ground with them (#23).
 import test, { beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
@@ -18,7 +18,7 @@ import { egChainGapMs, egWindupFloorMs, shDisc, egInBlow, EG_CHAIN_PAD_MS, EG_CH
 import { egFightView } from '../src/net/egWalkGraph.js';
 import { EG_KIND } from '../src/net/egLegion.js';
 import { egFeatBits } from '../src/net/egFeats.js';
-import { ATTACKS, POOLS, STUN_HIT_X, HIT_KINDS } from '../src/net/gateBrain.js';
+import { ATTACKS, POOLS, STUN_HIT_X, HIT_KINDS } from '../src/net/gate/gateBrain.js';
 import { validEgOut } from '../src/net/wire.js';
 import { egGive8Halls } from './egGive8.mjs';
 
@@ -339,7 +339,7 @@ test('AUDIT EG III lane1 #18 THE ASPECTS (sections 13.3 and 13.4): Garoth\'s eac
   assert.ok(sm6.length && sm6.every((s) => s.endsWith('|poison')), `the Spellmaster met in the Soul Cairn: the Venom-Blooded (${sm6})`);
 });
 
-test('AUDIT EG III lane1 #23 THE GATE\'S ROWS (section 13.4; ONE DFU MEMBER, ONE EXPORT): the Valkynaz\'s and champions\' Cleave, Slam, Charge and Meteor are net/gateBrain.js ATTACKS\' own rows, never a copy - and the Meteor leaves the gate\'s burning ground (POOLS\' meteor) where it falls, from its landing (mutants: a row read off the wrong field; the pool unlaid; the pool laid at its word)', () => {
+test('AUDIT EG III lane1 #23 THE GATE\'S ROWS (section 13.4; ONE DFU MEMBER, ONE EXPORT): the Valkynaz\'s and champions\' Cleave, Slam, Charge and Meteor are net/gate/gateBrain.js ATTACKS\' own rows, never a copy - and the Meteor leaves the gate\'s burning ground (POOLS\' meteor) where it falls, from its landing (mutants: a row read off the wrong field; the pool unlaid; the pool laid at its word)', () => {
   const src = readFileSync(new URL('../src/net/egLords.js', import.meta.url), 'utf8').replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
   for (const nm of ['Cleave', 'Ground Slam', 'Charge', 'Meteor of Oblivion']) assert.ok(!src.includes(`'${nm}'`), `no copy of the gate's ${nm}`);
   const C = court(77, 25, 'ilthys');

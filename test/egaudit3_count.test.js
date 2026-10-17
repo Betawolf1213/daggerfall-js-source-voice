@@ -25,7 +25,7 @@ import { egBreachNew, egEnter, egStep, egBlow, egDown, egWord, egHeal, egCount, 
   EG_RESPITE_BUDGET_MS, EG_RESPITE_VALK_MS, EG_RESPITE_STEP_MS, EG_ACTIVE_SHARE, EG_ERRAND_STAND_MS, EG_ERRAND_MARKS, EG_REL_LUMEN, EG_TOUCH_M } from '../src/net/egBrain.js';
 import { egRaise, egAim, EG_ROLE } from '../src/net/egBodies.js';
 import { shDisc } from '../src/net/egShape.js';
-import { healRef, HIT_KINDS } from '../src/net/gateBrain.js';
+import { healRef, HIT_KINDS } from '../src/net/gate/gateBrain.js';
 import { egFightView } from '../src/net/egWalkGraph.js';
 import { EG_VESTIGES, EG_MASTERIES, EG_DR_MAX, EG_FAR_M } from '../src/net/egVestige.js';
 import { EG_ASK_MS } from '../src/net/egRun.js';

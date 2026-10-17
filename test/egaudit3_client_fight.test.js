@@ -16,11 +16,11 @@ import { egBodiesOf, egAim, egFightState, egMark, EG_ROLE } from '../src/net/egB
 import { EG_BOSS_KEYS } from '../src/net/egLords.js';
 import { shDisc } from '../src/net/egShape.js';
 import { foldEg, EG_STATE_EMPTY } from '../src/net/egLink.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { createEgFight, egTouchedX, egChainMates } from '../src/scenes/egFight.js';
 import { EG_TOUCH_X } from '../src/net/egLords.js';   // the Touched weight's one home (the lords' group's - the relay's dealt half and this taken half)
 import { egSpireHudModel } from '../src/ui/egSpireHud.js';
-import { drawGateTitleCard, titleCardModel, destroyGateTitleCard } from '../src/ui/gateTitleCard.js';
+import { drawGateTitleCard, titleCardModel, destroyGateTitleCard } from '../src/ui/gate/gateTitleCard.js';
 
 const T0 = 1_800_000_000_000, SEED = 12345;
 const SITE = { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 };

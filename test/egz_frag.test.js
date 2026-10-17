@@ -23,7 +23,7 @@ import { egCircleColliderTris, buildEgCircleModel, egSlagSpouts, egWallFoot, EG_
 import { createEgFight } from '../src/scenes/egFight.js';
 import { createEgClient } from '../src/scenes/egClient.js';
 import { EG_FIGHT_EMPTY } from '../src/net/egLink.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { registerSpireObjs } from '../src/systems/spireKit.js';
 import { EG_DRESS } from '../src/world/egBandArt.js';
 

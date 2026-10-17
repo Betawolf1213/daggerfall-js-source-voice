@@ -13,13 +13,13 @@ import { egBreachNew, egEnter, egStep, egBlow, egStateOf } from '../src/net/egBr
 import { egLordsOf, egObjsOf, moonShafts, EG_LORD_PHASES, EG_GAROTH_SIG_CARDS, EG_GAROTH_SIG_ORDERS, egGarothSig, egBossLook } from '../src/net/egLords.js';
 import { egFightState, EG_FL } from '../src/net/egBodies.js';
 import { foldEg, EG_STATE_EMPTY } from '../src/net/egLink.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { createEgFight, egPhaseCard, egDarkAt, egRailsAt, EG_OUTLINE_DIM, EG_DARK_EASE_MS } from '../src/scenes/egFight.js';
 import { egLordBar, egLordBars, egSpireHudModel, EG_LORD_BARS_MAX } from '../src/ui/egSpireHud.js';
 import { EG_ECLIPSE_LOOK } from '../src/world/egTelegraph.js';
-import { TELEGRAPH_KIND, TELEGRAPH_POOL_SPIRE } from '../src/render/gateTelegraph.js';
-import { hostCue } from '../src/world/gateBoss.js';
-import { HIT_KINDS } from '../src/net/gateBrain.js';
+import { TELEGRAPH_KIND, TELEGRAPH_POOL_SPIRE } from '../src/render/gate/gateTelegraph.js';
+import { hostCue } from '../src/world/gate/gateBoss.js';
+import { HIT_KINDS } from '../src/net/gate/gateBrain.js';
 
 const T0 = 1_800_000_000_000;
 const SITE = { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 };

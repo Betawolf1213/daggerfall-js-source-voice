@@ -16,7 +16,7 @@ import { egLordsOf } from '../src/net/egLords.js';
 import { egChainGapMs, egWindupFloorMs, shDisc } from '../src/net/egShape.js';
 import { egFightView } from '../src/net/egWalkGraph.js';
 import { EG_M_ID } from '../src/net/egVestige.js';
-import { HIT_KINDS } from '../src/net/gateBrain.js';
+import { HIT_KINDS } from '../src/net/gate/gateBrain.js';
 import { egGive8 } from './egGive8.mjs';
 
 // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courses along +z

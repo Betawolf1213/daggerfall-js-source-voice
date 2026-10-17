@@ -14,12 +14,12 @@ import { EG_PIECE_LOOK, EG_CORNICE, EG_RISER_COURSE, egCornice, egCorniceReach, 
 import { EG_CRUMBLE_TELL_RECORDS, EG_BEAT_STONE_RECORDS, egCrumbleArt, egBeatStoneArt } from '../src/world/egPlatformArt.js';
 import { egBandArchive, egTellArchive, egBandArtOf, EG_DRESS, EG_KIT_MAP } from '../src/world/egBandArt.js';
 import { EG_KIT_RECORD } from '../src/world/egKit.js';
-import { buildStepModel, buildCrumbleChunks, stepTris, stepBox, SD_BEAT_DISSOLVE } from '../src/world/sdStepsModel.js';
-import { SD_STEPS_RECORD, SD_STEPS_ATLAS, SD_STEPS_GLOW, SD_STEP_BEVEL, crackDistance, SD_CRACK_STAGES } from '../src/world/sdStepsArt.js';
-import { SD_STEP_THICK, SD_RISER_H, SD_CRUMBLE_SIZE, SD_BEAT_SOLID, SD_BEAT_BLINK } from '../src/world/sdSteps.js';
-import { SD_BEAT_OUT_STAGE_S } from '../src/scenes/sdSteps.js';
-import { SD_REALM_ARCHIVE, SD_ISLAND_SIDES } from '../src/world/sdRealm.js';
-import { BAYER4 } from '../src/world/sdPixelKit.js';
+import { buildStepModel, buildCrumbleChunks, stepTris, stepBox, SD_BEAT_DISSOLVE } from '../src/world/superDungeon/sdStepsModel.js';
+import { SD_STEPS_RECORD, SD_STEPS_ATLAS, SD_STEPS_GLOW, SD_STEP_BEVEL, crackDistance, SD_CRACK_STAGES } from '../src/world/superDungeon/sdStepsArt.js';
+import { SD_STEP_THICK, SD_RISER_H, SD_CRUMBLE_SIZE, SD_BEAT_SOLID, SD_BEAT_BLINK } from '../src/world/superDungeon/sdSteps.js';
+import { SD_BEAT_OUT_STAGE_S } from '../src/scenes/superDungeon/sdSteps.js';
+import { SD_REALM_ARCHIVE, SD_ISLAND_SIDES } from '../src/world/superDungeon/sdRealm.js';
+import { BAYER4 } from '../src/world/superDungeon/sdPixelKit.js';
 import { createEgSpan, egSlabTris, egDropTris, EG_SPAN_KINDS_MAX, EG_SPAN_MOVERS } from '../src/scenes/egSpan.js';
 import { createEgPieceBatch, EG_BATCH_HIDE_Y } from '../src/scenes/egPieceBatch.js';
 import { egCircleSpecs, egBandOfCircle, EG_STEP } from '../src/net/egLaw.js';

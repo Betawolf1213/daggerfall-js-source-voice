@@ -1,10 +1,10 @@
 // EG-E (2026-10-12, the Elite Gates arc; bible/11-Multiplayer/Elite-Gates.md section 19, REWARDS AND THE ECONOMY): WHAT A
 // REDOUBT PAYS (net/egPay.js) - the one law the account service pays by and the client rolls its spoils by: the arena week
-// (net/arenaLaw.js arenaWeekOf), a Valkynaz's Redoubt every fifth and its two passes, the Panoply's odds on a stream of
+// (net/arena/arenaLaw.js arenaWeekOf), a Valkynaz's Redoubt every fifth and its two passes, the Panoply's odds on a stream of
 // its own, the Legendary's share, the embers; and the week's Proclamation read off the arena's week.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { arenaWeekOf, ARENA_WEEK_S, ARENA_SEASON_EPOCH_S, arenaSeasonOf } from '../src/net/arenaLaw.js';
+import { arenaWeekOf, ARENA_WEEK_S, ARENA_SEASON_EPOCH_S, arenaSeasonOf } from '../src/net/arena/arenaLaw.js';
 import { egValkRedoubt, egSpoilsPasses, egPanoplyIn, egLegendaryShare, egPanoplyHit, egPanoplyDraw, egPassSeed, egEmbersOf, EG_PANOPLY_PITY, EG_SINK_EMBERS, EG_PAY_MARKS, EG_PANOPLY_IDS } from '../src/net/egPay.js';
 import { egBreachNew } from '../src/net/egBrain.js';
 import { egProclamationOf } from '../src/net/egLaw.js';

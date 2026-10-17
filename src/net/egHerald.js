@@ -1,7 +1,7 @@
 // @ts-check
 // EG-E3 (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 20, "The herald"): THE
 // SPIRE'S HERALD - what the relay's hub posts to the world events' Discord channel for the Elite Breach, and when: the
-// gate's law (net/gateHerald.js), the serpent's and the Abyss Dungeon's (net/serpentHerald.js, net/sdHerald.js), given to
+// gate's law (net/gate/gateHerald.js), the serpent's and the Abyss Dungeon's (net/serpent/serpentHerald.js, net/superDungeon/sdHerald.js), given to
 // the Battlespire. Five posts:
 //
 // - EVERY TENTH REDOUBT (10, 20, 30...): "<opener>'s company took Redoubt 10 of the Battlespire (Hall 50) in 1:51:20." - AUDIT
@@ -14,7 +14,7 @@
 // - A NEW TOP OF THE DESCENT in any bracket - Alone (1), the Few (2-4), the Company (5-8): the hub's own reckoning of the
 //   season's best (the deepest hall cleared, then the fewest seconds from Hall 1's wake to that hall's door) from every
 //   breach begun at Hall 1, unwagered and no Rehearsal - the facts the end receipts carry; the season is the arena's
-//   (net/arenaLaw.js arenaSeasonOf). A top shallower than Hall EG_HERALD_TOP_HALL is kept and not said: a season's first
+//   (net/arena/arenaLaw.js arenaSeasonOf). A top shallower than Hall EG_HERALD_TOP_HALL is kept and not said: a season's first
 //   breaches are each a new top, and the channel would hear every hall of them.
 // - A BAND'S SEAL LIFTED: "The way below the Galleries is open." - the first breach through a band a deploy opened (THE
 //   SEAL, section 13.3: net/egLaw.js EG_OPEN, the bands a deploy opens). The hub keeps the bands that were open when it
@@ -36,9 +36,9 @@
 // - SAFE TO POST: every name a player can reach is held to letters, digits, spaces and a little punctuation (heraldName).
 //
 // Not a DFU member: Daggerfall has no other players and no Discord. Ledger A (ELITE-GATES).
-import { heraldName, heraldList } from './gateHerald.js';
+import { heraldName, heraldList } from './gate/gateHerald.js';
 import { EG_BREACH_RE, EG_PARTY_MAX, EG_LORDS, EG_OPEN, egBandOfHall } from './egLaw.js';
-import { arenaSeasonOf } from './arenaLaw.js';
+import { arenaSeasonOf } from './arena/arenaLaw.js';
 
 /** The hub's internal door a breach's room tells its news at. */
 export const EG_INTERNAL_HERALD = '/internal/eg/herald';

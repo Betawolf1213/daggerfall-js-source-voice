@@ -11,7 +11,7 @@ import { fakeRoom } from './fakeRoom.mjs';
 import { EG_INTERNAL_OPEN, validEgOut } from '../src/net/wire.js';
 import { egRoomKey, egHallOf, EG_SEALED_MS, EG_GATHER_MS, EG_CAST_BACK_LOSS } from '../src/net/egLaw.js';
 import { mintEgOrder } from '../src/net/identityToken.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { egBreachNew, egEnter, egStep, egBlow, egCount, egPoseIn, egCensusDr, egCastBackCost, egWaveEveryMs, egLegionCap, EG_HUNT_AFTER_MS, EG_HUNT_RAISE, EG_OATH_DR, EG_FEATHER_CAST,
   EG_IMMOVABLE_DR, EG_DRAIN_TICK_MS, EG_WISP_AGAIN_MS } from '../src/net/egBrain.js';
 import { EG_ROLE, egFightNew, egBodiesOf, egAim, egBodyNew } from '../src/net/egBodies.js';

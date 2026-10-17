@@ -22,8 +22,8 @@ import { egSpireHudModel, egTouchButtons, egPadUp, egPadAct, egPadPrompts, egBri
 import { EG_PRES_TEXT } from '../src/ui/egBeats.js';
 import { registerSpireObjs } from '../src/systems/spireKit.js';
 import { setPref } from '../src/systems/uiPrefs.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
-import { SD_REALM_EDGE_RECORD } from '../src/world/sdRealm.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
+import { SD_REALM_EDGE_RECORD } from '../src/world/superDungeon/sdRealm.js';
 import { Collider } from '../src/player/collider.js';
 import { egGive8 } from './egGive8.mjs';
 

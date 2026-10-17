@@ -16,10 +16,10 @@ import { egFightState, egRaise, egBodyAt, EG_ROLE } from '../src/net/egBodies.js
 import { EG_KIND, egLegionRaise } from '../src/net/egLegion.js';
 import { egLordsOf, egLordHitX, egLordsWake } from '../src/net/egLords.js';
 import { EG_V_BY_KEY, EG_ECHO_Q, EG_HAMMER_X, EG_AMBUSH_X, EG_WALL_X, EG_ECHO_SHARE, EG_FADE_CD_S } from '../src/net/egVestige.js';
-import { HIT_KINDS } from '../src/net/gateBrain.js';
+import { HIT_KINDS } from '../src/net/gate/gateBrain.js';
 import { bodyStruck } from '../src/net/bossBody.js';
 import { foldEg, EG_STATE_EMPTY } from '../src/net/egLink.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { createEgFight } from '../src/scenes/egFight.js';
 import { createEgClient } from '../src/scenes/egClient.js';
 import { spireHolderStep, _resetSpireVestigesForTests } from '../src/systems/spireVestiges.js';

@@ -14,7 +14,7 @@ import { EG_VOID_MAX_S } from '../src/net/egDurable.js';   // EG-ZA: the tombsto
 import { egRoomKey, egHallOf, EG_SEALED_MS, EG_GATHER_MS, EG_SPEC } from '../src/net/egLaw.js';
 import { mintEgOrder } from '../src/net/identityToken.js';
 import { readEgReceipt } from '../src/net/egReceipt.js';
-import { realmToDungeon, dungeonToRealm } from '../src/net/sdBrain.js';
+import { realmToDungeon, dungeonToRealm } from '../src/net/superDungeon/sdBrain.js';
 import { egGive8 } from './egGive8.mjs';   // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9): a law 8 circle given
 
 const { subtle } = globalThis.crypto;

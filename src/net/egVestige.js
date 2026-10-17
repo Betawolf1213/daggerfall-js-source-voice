@@ -245,7 +245,7 @@ export function egAccordsOf(vsA, vsB) {
 /**
  * AUDIT EG IV (lane10 #15; section 15's CARDS THAT ACT) - WHAT A CARD NEEDS TO ACT, where the room can see it: `ally` the living
  * company it needs (a Vestige that works only through an ally - 2; Steadfast Line's three allies - 4), `hit` the blow kinds
- * (net/gateBrain.js HIT_KINDS: 0 melee, 1 an arrow, 2 a spell) of which its member must have landed one in the breach. A
+ * (net/gate/gateBrain.js HIT_KINDS: 0 melee, 1 an arrow, 2 a spell) of which its member must have landed one in the breach. A
  * Vestige whose use the room cannot see (Battlemage's Focus and Shieldweaver - any spell) needs nothing.
  */
 export const EG_CARD_NEEDS = Object.freeze({

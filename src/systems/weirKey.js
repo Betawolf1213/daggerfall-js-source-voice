@@ -16,16 +16,16 @@
 // ITS PICTURE is its own (EG-ZH, 2026-10-12 - Elite-Gates.md section 25.1): painted in code under the Spire's held archive
 // block (world/egKeyArt.js, world/pseudoArchives.js EG_ARCH_BLOCK.key) - a Battlemage's key in gold leaf with a blue stone
 // in its bow - and put on the texture door at this file's import as its archive's stand-in, so every door that draws an
-// item's picture draws it (the custom template's world arm - systems/itemTemplates.js usesWorldTexture).
+// item's picture draws it (the custom template's world arm - systems/item/itemTemplates.js usesWorldTexture).
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
-import { registerCustomTemplates, setItemFields, mintCondition, registerItemUseHandler } from './itemTemplates.js';
+import { registerCustomTemplates, setItemFields, mintCondition, registerItemUseHandler } from './item/itemTemplates.js';
 import { EG_TEXT } from '../net/egLaw.js';
 import { WEIR_KEY_ART, registerWeirKeyArt } from '../world/egKeyArt.js';   // EG-ZH: its own picture
 import { addVendorTextures } from './textureReplacement.js';
 
 export const WEIR_KEY_TEMPLATE = 575;
-/** Its row: bound (net/realmTradeLaw.js BOUND_TEMPLATES names it - never traded, never lost to a death) and stacked. */
+/** Its row: bound (net/realm/realmTradeLaw.js BOUND_TEMPLATES names it - never traded, never lost to a death) and stacked. */
 export const WEIR_KEY_ROW = Object.freeze({
   index: WEIR_KEY_TEMPLATE, name: EG_TEXT.keyName, baseWeight: 0.25, hitPoints: 1000, basePrice: 500, rarity: 20,
   worldTextureArchive: WEIR_KEY_ART.archive, worldTextureRecord: WEIR_KEY_ART.record, bound: true, stackable: true,

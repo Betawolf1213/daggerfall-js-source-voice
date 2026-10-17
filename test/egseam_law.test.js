@@ -6,33 +6,33 @@
 //   THE SEAM (net/bossSeam.js) - its seven members, each brain's own where the shapes agreed and a map that hands the
 //     brain exactly what the host handed it where they did not; THE TRAILS KEEP Y (the relay's trail, net/bossRef.js
 //     posYAt).
-//   THE COURSE AS DATA (net/egSpanLaw.js courseOf, world/sdSteps.js SD_COURSE_SPEC) - the Hour's course and every reader's
+//   THE COURSE AS DATA (net/egSpanLaw.js courseOf, world/superDungeon/sdSteps.js SD_COURSE_SPEC) - the Hour's course and every reader's
 //     output byte for byte (hashed on the tree before), a made course laid by the same law, every reader fed it; THE
-//     PLATFORM CLOCK in one home; THE ORRERY'S ONE JUDGE (net/sdBrain.js orreryJudge), the Hour's words unchanged (the
+//     PLATFORM CLOCK in one home; THE ORRERY'S ONE JUDGE (net/superDungeon/sdBrain.js orreryJudge), the Hour's words unchanged (the
 //     golden Orrery above).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { fakeRooms } from './fakeRoom.mjs';
-import { COURT_CENTRE, BRAIN_TICK_MS, newFight, joinFight, applyHit, stepBrain, stateOf, earned } from '../src/net/gateBrain.js';
-import { gateTimes, gateRoomKey, gateBossOf, gateModsOf, PIXEL_M } from '../src/net/gateLaw.js';
+import { COURT_CENTRE, BRAIN_TICK_MS, newFight, joinFight, applyHit, stepBrain, stateOf, earned } from '../src/net/gate/gateBrain.js';
+import { gateTimes, gateRoomKey, gateBossOf, gateModsOf, PIXEL_M } from '../src/net/gate/gateLaw.js';
 import { GATE_BRAIN_V, SD_BRAIN_V, SD_KEY, SOCIAL_ROOM, worldRoom, PIXEL_UNITS, cellRoomOfWire } from '../src/net/wire.js';
-import { realmToDungeon, SD_ARENA, SD_STONE_POS, SD_STONE_SETTLE_MS, orreryOf, orrerySolve, orreryShortest, orreryTurn, orreryFresh, orreryStep, orreryJudge, orreryRightsFresh, SD_TURN_LONG_MAX, SD_TURN_COMPANY_MS } from '../src/net/sdBrain.js';
-import { sdRoomKey } from '../src/net/sdLaw.js';
-import { SD_OPENING_MS, newRemnantFight, joinRemnant, applyRemnantHit, stepRemnant, remnantStateOf } from '../src/net/sdRemnant.js';
-import { serpentTimes, SERPENT_BRAIN_V, SERPENT_NATIVE_PER_M } from '../src/net/serpentLaw.js';
-import { SERPENT_TICK_MS, SERPENT_OPENING_MS, newSerpentFight, joinSerpentFight, applySerpentHit, stepSerpentBrain, serpentStateOf, serpentEarned } from '../src/net/serpentBrain.js';
-import { SD_STEPS_COURSE, SD_CHECKPOINTS, SD_COURSE_END, SD_STEPS_FREE, SD_STEPS_FLOORS, stepAt, beatStands, beatBlinks, beatWarned, spanAt, inBreath, castBackTo, SD_COURSE, SD_COURSE_SPEC, SD_BEAT_CYCLE, SD_BEAT_SOLID, SD_BEAT_BLINK, SD_CRUMBLE_DELAY } from '../src/world/sdSteps.js';
-import { SD_WAYSTONES, SD_VANE, buildChecksModel, checkFloorTris, buildBreathModel, sdWaystonesOf, sdVaneAt } from '../src/world/sdStepsModel.js';
-import { SD_GHOST_STEPS, sdGhostVertices, sdGhostStepsOf, SD_GHOSTS_MAX } from '../src/render/sdStepsPass.js';
-import { SD_HANG_ISLANDS, sdHangIslandsOf, buildHangModel } from '../src/world/sdIslandModel.js';
-import { sdCastBackSeen, sdRewindEdgesOf } from '../src/scenes/sdFx.js';
-import { sdMoteAt, sdMoteVertices } from '../src/render/sdMotes.js';
+import { realmToDungeon, SD_ARENA, SD_STONE_POS, SD_STONE_SETTLE_MS, orreryOf, orrerySolve, orreryShortest, orreryTurn, orreryFresh, orreryStep, orreryJudge, orreryRightsFresh, SD_TURN_LONG_MAX, SD_TURN_COMPANY_MS } from '../src/net/superDungeon/sdBrain.js';
+import { sdRoomKey } from '../src/net/superDungeon/sdLaw.js';
+import { SD_OPENING_MS, newRemnantFight, joinRemnant, applyRemnantHit, stepRemnant, remnantStateOf } from '../src/net/superDungeon/sdRemnant.js';
+import { serpentTimes, SERPENT_BRAIN_V, SERPENT_NATIVE_PER_M } from '../src/net/serpent/serpentLaw.js';
+import { SERPENT_TICK_MS, SERPENT_OPENING_MS, newSerpentFight, joinSerpentFight, applySerpentHit, stepSerpentBrain, serpentStateOf, serpentEarned } from '../src/net/serpent/serpentBrain.js';
+import { SD_STEPS_COURSE, SD_CHECKPOINTS, SD_COURSE_END, SD_STEPS_FREE, SD_STEPS_FLOORS, stepAt, beatStands, beatBlinks, beatWarned, spanAt, inBreath, castBackTo, SD_COURSE, SD_COURSE_SPEC, SD_BEAT_CYCLE, SD_BEAT_SOLID, SD_BEAT_BLINK, SD_CRUMBLE_DELAY } from '../src/world/superDungeon/sdSteps.js';
+import { SD_WAYSTONES, SD_VANE, buildChecksModel, checkFloorTris, buildBreathModel, sdWaystonesOf, sdVaneAt } from '../src/world/superDungeon/sdStepsModel.js';
+import { SD_GHOST_STEPS, sdGhostVertices, sdGhostStepsOf, SD_GHOSTS_MAX } from '../src/render/superDungeon/sdStepsPass.js';
+import { SD_HANG_ISLANDS, sdHangIslandsOf, buildHangModel } from '../src/world/superDungeon/sdIslandModel.js';
+import { sdCastBackSeen, sdRewindEdgesOf } from '../src/scenes/superDungeon/sdFx.js';
+import { sdMoteAt, sdMoteVertices } from '../src/render/superDungeon/sdMotes.js';
 import { egPieceAt, courseOf, egDriftDx, egBeatAt, EG_BEAT_CYCLE_S, EG_BEAT_SOLID_S, EG_BEAT_BLINK_S, EG_CRUMBLE_DELAY_S, stepAt as egStepAt, beatStands as egBeatStands, beatBlinks as egBeatBlinks, beatWarned as egBeatWarned } from '../src/net/egSpanLaw.js';
 import { egCircleSpecs } from '../src/net/egLaw.js';
 import { BOSS_SEAM_KEYS, bossSeam, GATE_SEAM, SD_SEAM, SERPENT_SEAM } from '../src/net/bossSeam.js';
 import { judgeGate, judgeRemnant, judgeSerpent, posAt, posAfter, posYAt } from '../src/net/bossRef.js';
-import { createSdSteps, sdStepKey } from '../src/scenes/sdSteps.js';
+import { createSdSteps, sdStepKey } from '../src/scenes/superDungeon/sdSteps.js';
 import { Collider } from '../src/player/collider.js';
 
 const quiet = async (fn) => { const w = console.warn, i = console.info; console.warn = () => {}; console.info = () => {}; try { return await fn(); } finally { console.warn = w; console.info = i; } };

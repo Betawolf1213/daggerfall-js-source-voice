@@ -17,7 +17,7 @@ import { egAim, egFightState } from '../src/net/egBodies.js';
 import { shDisc } from '../src/net/egShape.js';
 import { EG_V_BY_KEY, EG_MASTERIES, EG_HYMN_MS } from '../src/net/egVestige.js';
 import { foldEg, EG_STATE_EMPTY } from '../src/net/egLink.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { createEgFight } from '../src/scenes/egFight.js';
 import { createEgClient } from '../src/scenes/egClient.js';
 import { spireHolderStep, _resetSpireVestigesForTests } from '../src/systems/spireVestiges.js';

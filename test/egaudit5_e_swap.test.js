@@ -14,8 +14,8 @@ import { egCircleSpecs, egBandOfCircle, egSpecGive, egSpecForget, egHallOf, EG_S
 import { createEgSwap } from '../src/scenes/egSwap.js';
 import { egCircleParts, egCircleBuild, egCirclePartsTransfers } from '../src/world/egCircleParts.js';
 import { buildEgCircleModel, egCircleColliderTris, egCircleLights, egGateParts } from '../src/world/egHall.js';
-import { realmArt } from '../src/world/sdRealmArt.js';
-import { SD_REALM_ARCHIVE } from '../src/world/sdRealm.js';
+import { realmArt } from '../src/world/superDungeon/sdRealmArt.js';
+import { SD_REALM_ARCHIVE } from '../src/world/superDungeon/sdRealm.js';
 import { identity } from '../src/world/mat4.js';
 import { egBandArt, egBandArchive, EG_DRESS_RECORDS, EG_BAND_RECORDS } from '../src/world/egBandArt.js';
 import { createEgOccluders } from '../src/scenes/egOcclude.js';

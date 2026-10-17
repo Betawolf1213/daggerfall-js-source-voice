@@ -29,10 +29,10 @@ import { buildEgCircleModel, egCircleColliderTris, egCircleLights, egHeroMeshSea
 import { egCircleParts, egCirclePartsTransfers } from '../src/world/egCircleParts.js';
 import { egFightFloors, egOnFloorAt } from '../src/world/egTelegraph.js';
 import { egHallReverb } from '../src/systems/egReverb.js';
-import { SD_ROOT_DEPTH } from '../src/world/sdRealm.js';
-import { realmToDungeon, dungeonToRealm } from '../src/net/sdBrain.js';
+import { SD_ROOT_DEPTH } from '../src/world/superDungeon/sdRealm.js';
+import { realmToDungeon, dungeonToRealm } from '../src/net/superDungeon/sdBrain.js';
 import { sweepStand, sweepCourse } from '../tools/egSpanSolve.mjs';
-import { graph } from './importGraph.mjs';   // the relay's walk (test/relayversion.test.js RELAY_GRAPH's own)
+import { graph } from './importGraph.mjs';   // the relay's walk (test/net/relayversion.test.js RELAY_GRAPH's own)
 import { layFixtures } from './fixtures/egheroLay.mjs';
 
 const FX = layFixtures();
@@ -533,7 +533,7 @@ test('EG-HERO-LAY A DURABLE BREACH KEEPS ITS LAW (section 22, THE LAW PIN): with
   });
 });
 
-test('EG-HERO-LAY THE RELAY\'S BUNDLE (test/relayversion.test.js RELAY_GRAPH): net/egHeroFrags.js and every hero law JSON it imports walk under net/egLaw.js, after net/egFragLaw.js - no world/, scenes/ or render/ file joins, and no mesh half; net/egHeroFrags.js imports the reader and the law halves alone (mutants: a mesh half in the relay; the registry not the law\'s)', () => {
+test('EG-HERO-LAY THE RELAY\'S BUNDLE (test/net/relayversion.test.js RELAY_GRAPH): net/egHeroFrags.js and every hero law JSON it imports walk under net/egLaw.js, after net/egFragLaw.js - no world/, scenes/ or render/ file joins, and no mesh half; net/egHeroFrags.js imports the reader and the law halves alone (mutants: a mesh half in the relay; the registry not the law\'s)', () => {
   const RELAY_GRAPH = graph('server/src/index.js');
   const i = RELAY_GRAPH.indexOf('src/net/egFragLaw.js');
   assert.deepEqual(RELAY_GRAPH.slice(i - 1, i + 3), ['src/net/egLaw.js', 'src/net/egFragLaw.js', 'src/net/egHeroFrags.js', 'src/assets/egfrags/egRefFrag.law.json']);

@@ -21,8 +21,8 @@ import { egBreachNew, egEnter, egStep, egBlow, egDown, egWord, egEnd, egPoseIn }
 import { mintEgReceipt, readEgReceipt, verifyEgReceipt, egReceiptValid, egCompanyTag, egCompanyValid, egMeasuresValid, EG_RECEIPT_MAX, EG_SHARE_WHOLE, EG_MEASURE_MAX } from '../src/net/egReceipt.js';
 import { egFairNew } from '../src/net/egFair.js';
 import { mintEgOrder, verifyEgOpenAnyAge } from '../src/net/identityToken.js';
-import { BRAIN_TICK_MS } from '../src/net/gateBrain.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { BRAIN_TICK_MS } from '../src/net/gate/gateBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { egDescentCompanies } from '../server-account/src/egHonours.js';
 import { createEgClient, EG_STAKES_KEY, EG_VOID_WAIT_MS, EG_VOID_ASK_MS, EG_VOID_TEXT, EG_OPEN_TRIES, EG_OPEN_RETRY_MS } from '../src/scenes/egClient.js';
 import { OnlineSession } from '../src/net/online.js';
@@ -545,7 +545,7 @@ test('EG-ZA THE SERVICE READS THEM (sections 20 and 23): a Redoubt\'s claim keep
   // THE SEAL: sealed runs stand at the sealed Redoubt's hall, their seconds the order
   const sealed = egDescentCompanies([{ b: 's1', account: 'u1', h: 100, secs: 9000, n: 1, fl: 0, at: 1, co_n: 1, co_h: 'a'.repeat(12) }, { b: 's2', account: 'u2', h: 100, secs: 8000, n: 1, fl: 0, at: 2, co_n: 1, co_h: 'b'.repeat(12) }]);
   assert.deepEqual(sealed.map((c) => c.players[0]), ['u2', 'u1'], 'the fewer seconds to the sealed Redoubt first');
-  assert.match(rd('server-account/migrations/0120_elite_breach.sql'), /ALTER TABLE eg_runs ADD COLUMN co_n INTEGER NOT NULL DEFAULT 0;\nALTER TABLE eg_runs ADD COLUMN co_h TEXT;\nALTER TABLE eg_redoubts ADD COLUMN sh INTEGER;\nALTER TABLE eg_redoubts ADD COLUMN m TEXT;/);
+  assert.match(rd('server-account/migrations/0121_elite_breach.sql'), /ALTER TABLE eg_runs ADD COLUMN co_n INTEGER NOT NULL DEFAULT 0;\nALTER TABLE eg_runs ADD COLUMN co_h TEXT;\nALTER TABLE eg_redoubts ADD COLUMN sh INTEGER;\nALTER TABLE eg_redoubts ADD COLUMN m TEXT;/);
 });
 
 test('EG-ZA THIS SCREEN\'S HALF (scenes/egClient.js, net/online.js): the stake an open takes is kept on the device; its open unanswered past EG_VOID_WAIT_MS, its void is asked of the hub - the room\'s `v` heard, claimed, the key restacked and the stake let go; a stake a call answers is never voided, one the room refuses to void let go; every receipt the service counted said to the hub (`claimed`); the hub\'s receipts heard by the presence link, `void` and `claimed` said to the hub alone (mutants: the stake never kept; the void never asked; asked before its wait; the call ignored; a refusal kept; a void receipt keeping the stake; `claimed` never said; the hub\'s receipt dropped by the link; `void` sent to a breach\'s room)', async () => {

@@ -11,32 +11,32 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { madeLevelOf, madeLevelRule, madeLevelSays, madeLevelHere, madeRuleHere, madeSaysHere, madeOnTraverse, registerMadeLevelHere, MADE_LEVELS, MADE_LEVEL_RULES, MADE_LEVEL_RULE_KEYS, MADE_LEVEL_TEXT,
   EG_JUMP_BUFFER_S, EG_LATE_PRESS_S, EG_NO_FLIGHT_TEXT } from '../src/systems/madeLevel.js';
-import { gateArenaLocation, COURT_TEXT } from '../src/world/gateArena.js';
-import { sdRealmLocation, SD_REALM_TEXT } from '../src/world/sdRealm.js';
+import { gateArenaLocation, COURT_TEXT } from '../src/world/gate/gateArena.js';
+import { sdRealmLocation, SD_REALM_TEXT } from '../src/world/superDungeon/sdRealm.js';
 import { egHallLocation, EG_HALL_TEXT } from '../src/world/egHall.js';
 import { EG_TEXT, EG_SPEC, egHallOf, egCircleSpecs, egOnFight, egSpecForget, EG_SEALED_MS } from '../src/net/egLaw.js';
 import { egGive8 } from './egGive8.mjs';   // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9): a law 8 circle given
 import { registerSpirePotionLaw, spirePotionRefusal, SPIRE_POTION_TEXT } from '../src/systems/spireKit.js';
 import { POTION_RECIPES, potionRecipeKey } from '../src/systems/potionRecipes.js';
 import { useItem } from '../src/systems/useItem.js';
-import { TEMPLATES } from '../src/systems/itemKinds.js';
+import { TEMPLATES } from '../src/systems/item/itemKinds.js';
 import { PlayerMotor, registerJumpForgiveness } from '../src/player/motor.js';
 import { Collider } from '../src/player/collider.js';
-import { stepTris } from '../src/world/sdStepsModel.js';
+import { stepTris } from '../src/world/superDungeon/sdStepsModel.js';
 import { registerLevitateWard, levitateWarded } from '../src/characters/playerEntity.js';
 import { DeathScreen } from '../src/ui/deathScreen.js';
 import { stateDeathLoss, statedDeathLoss } from '../src/systems/deathPenalty.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
-import * as LR from '../src/systems/lootRarity.js';
+import * as LR from '../src/systems/loot/lootRarity.js';
 import * as T from '../src/combat/techniques.js';
 import { PlayerWeapon } from '../src/combat/playerWeapon.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
-import { setSigilDueling } from '../src/systems/sigil.js';
+import { setSigilDueling } from '../src/systems/sigil/sigil.js';
 import { setPlayerDoor } from '../src/systems/playerDoor.js';
 import { createEgClient } from '../src/scenes/egClient.js';
 import { egBreachNew, egEnter, egStateOf } from '../src/net/egBrain.js';
 import { validEgOut } from '../src/net/wire.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 /** The world host's word, for a test: the made level under the player is `lv` (and its feet on traversal ground or not). */

@@ -13,13 +13,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { standService, T0 } from './accountDb.mjs';
 import { mintEgReceipt, readEgReceipt } from '../src/net/egReceipt.js';
-import { mintReceipt } from '../src/net/gateReceipt.js';
+import { mintReceipt } from '../src/net/gate/gateReceipt.js';
 import { verifyOrder, verifyEgOpenAnyAge } from '../src/net/identityToken.js';
-import { ARENA_SEASON_EPOCH_S, ARENA_WEEK_S } from '../src/net/arenaLaw.js';
+import { ARENA_SEASON_EPOCH_S, ARENA_WEEK_S } from '../src/net/arena/arenaLaw.js';
 import { egSpoilsSeed, egLegendaryShare } from '../src/net/egPay.js';
 import { EG_KEY_ODDS, EG_KEY_ODDS_RITE, EG_KEY_ODDS_SD, EG_KEY_PITY, rollWeirKey } from '../server-account/src/eg.js';
 import { egSpoilsList, egSpoilsSeedOf, rollEgSpoils } from '../src/systems/egSpoils.js';
-import { stoneCount } from '../src/systems/sigilBroker.js';
+import { stoneCount } from '../src/systems/sigil/sigilBroker.js';
 import { egBoardLines } from '../src/ui/egBoardWindow.js';
 import { _resetEgHonoursCache } from '../server-account/src/egHonours.js';
 

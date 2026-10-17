@@ -4,7 +4,7 @@
 // PICTURES - the two tells a piece's picture carries, painted in its band's dress under the band's tell archive
 // (world/egBandArt.js egTellArchive, after the Beat's warning and return - EG_BEAT_TELL_RECORDS):
 //
-//   A CRUMBLE'S FOUR STAGES (EG_CRUMBLE_TELL_RECORDS): the Steps' own crumble (world/sdStepsArt.js crumbleArt - its atlas,
+//   A CRUMBLE'S FOUR STAGES (EG_CRUMBLE_TELL_RECORDS): the Steps' own crumble (world/superDungeon/sdStepsArt.js crumbleArt - its atlas,
 //     its two main cracks where it breaks into its chunks, its crack stages' widths and their light) laid over the band's
 //     own floor instead of the Hour's basalt: its top the band's floor picture itself (world/egBandArt.js - its flags as
 //     every other piece's top lays them, a tile two metres), the void's furnace in the cracks flaring stage by stage exactly
@@ -17,20 +17,20 @@
 //     there) cut by the same ordered dither the dial's warning is (egDissolveArt - SD_BEAT_DISSOLVE.keep), four stages out
 //     and three back. They carry no light (stone does not glow); the place's white is the dial's and its line's alone.
 //
-// Pure: the same pixels every call (the paint box - world/sdPixelKit.js - quantized to the band's palette). Not a DFU
+// Pure: the same pixels every call (the paint box - world/superDungeon/sdPixelKit.js - quantized to the band's palette). Not a DFU
 // member. Ledger A (ELITE-GATES).
-import { SD_RAMP, SD_LIGHT } from './sdLook.js';
-import { image, putTexel, scale, ramp, step, noiseField, quantize } from './sdPixelKit.js';
-import { SD_STEPS_ATLAS, SD_STEP_BEVEL, SD_CRACK_STAGES, SD_STEPS_GLOW, SD_CRUMBLE_CRACKS, crackDistance } from './sdStepsArt.js';
-import { SD_CRUMBLE_SIZE } from './sdSteps.js';
-import { SD_BEAT_DISSOLVE } from './sdStepsModel.js';
+import { SD_RAMP, SD_LIGHT } from './superDungeon/sdLook.js';
+import { image, putTexel, scale, ramp, step, noiseField, quantize } from './superDungeon/sdPixelKit.js';
+import { SD_STEPS_ATLAS, SD_STEP_BEVEL, SD_CRACK_STAGES, SD_STEPS_GLOW, SD_CRUMBLE_CRACKS, crackDistance } from './superDungeon/sdStepsArt.js';
+import { SD_CRUMBLE_SIZE } from './superDungeon/sdSteps.js';
+import { SD_BEAT_DISSOLVE } from './superDungeon/sdStepsModel.js';
 import { EG_BAND_RAMPS, EG_BEAT_TELL_RECORDS, EG_DRESS, egBandArtOf, egBandPalette, egDissolveArt } from './egBandArt.js';
 import { EG_KIT_RECORD } from './egKit.js';
 
 /** The tell archive's first record past the Beat's warning and return. */
 const BASE = Math.max(...EG_BEAT_TELL_RECORDS.warn.flat(), ...EG_BEAT_TELL_RECORDS.back) + 1;
 /** A CRUMBLE'S PICTURES in the band's tell archive: at rest, then its three stages under a foot (the Steps' order -
- *  world/sdStepsArt.js SD_STEPS_RECORD.crumble). */
+ *  world/superDungeon/sdStepsArt.js SD_STEPS_RECORD.crumble). */
 export const EG_CRUMBLE_TELL_RECORDS = Object.freeze([BASE, BASE + 1, BASE + 2, BASE + 3]);
 /** A BEAT'S STONE (world/egPlatformModel.js egBeatModel - the records it wears besides its dial): each record's four
  *  stages out (SD_BEAT_DISSOLVE.keep - its warning's) and three back in (the return's - the thinnest read first, as the
@@ -47,7 +47,7 @@ const EMBER = SD_LIGHT.ember.map((v) => Math.round(v * 255));
 const GOLD_LIGHT = SD_LIGHT.gold.map((v) => Math.round(v * 255));
 const GOLD = EG_BAND_RAMPS[0].metal;   // THE EDGE LINE's gold, every band's (world/egBandArt.js edgeArt)
 const BLACK = Object.freeze([0, 0, 0]);
-/** Paint a cell texel by texel (world/sdStepsArt.js's own fill): `fn(s, t, x, y)` its colour, s and t 0..1 across it. */
+/** Paint a cell texel by texel (world/superDungeon/sdStepsArt.js's own fill): `fn(s, t, x, y)` its colour, s and t 0..1 across it. */
 function fill(img, cell, fn) {
   const [x0, y0, w, h] = cell;
   for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { const c = fn((x + 0.5) / w, (y + 0.5) / h, x0 + x, y0 + y); if (c) putTexel(img, x0 + x, y0 + y, c); }
@@ -59,7 +59,7 @@ const fract = (v) => v - Math.floor(v);
 const _crumble = new Map();
 /**
  * A CRUMBLE at stage `n` (0 at rest, 1-3 under a foot) in band `band`'s dress: `{ albedo, emission }` in the Steps' atlas
- * (world/sdStepsArt.js SD_STEPS_ATLAS - the geometry is the Steps' own bevelled box and its chunks, so every cell lies where
+ * (world/superDungeon/sdStepsArt.js SD_STEPS_ATLAS - the geometry is the Steps' own bevelled box and its chunks, so every cell lies where
  * theirs does). The top: the band's flags a metre square in running bond, each its own shade, the joints its vein, the
  * cracks of the stage over them - their hearts the void's furnace and their lips dark, lit as the Steps' (SD_STEPS_GLOW
  * .crack). The sides: the band's stone in courses, the main cracks running down where they meet the edges. The line under

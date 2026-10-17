@@ -16,8 +16,8 @@
 //                                            their trails (`tr`), so the page's `judge(f, blow, trails)` is this
 //   earned(f, sub)                           whether its receipt is owed
 //
-// THE THREE RE-PLUGGED, FRAMES AND PINS UNCHANGED: the Warden (net/gateBrain.js), the Brass Remnant (net/sdRemnant.js)
-// and the Sea Serpent (net/serpentBrain.js). Where a brain's shape already was the contract's, the seam's member IS the
+// THE THREE RE-PLUGGED, FRAMES AND PINS UNCHANGED: the Warden (net/gate/gateBrain.js), the Brass Remnant (net/superDungeon/sdRemnant.js)
+// and the Sea Serpent (net/serpent/serpentBrain.js). Where a brain's shape already was the contract's, the seam's member IS the
 // brain's own function (the same reference - nothing between the host and the law); where it was not (a birth's
 // arguments, the refusals a join takes, the serpent's zone and hand), a thin map hands the brain exactly the arguments
 // the host handed it before. The relay's hosts call through the seam (server/src/index.js), and THE GOLDEN FRAMES
@@ -32,9 +32,9 @@
 // contract the director calls, not a second host.
 //
 // Pure: a plug board, no state. Not a DFU member. Ledger A (ELITE-GATES).
-import { newFight, joinFight, applyHit, stepBrain, stateOf, earned } from './gateBrain.js';
-import { newRemnantFight, joinRemnant, applyRemnantHit, stepRemnant, remnantStateOf } from './sdRemnant.js';
-import { newSerpentFight, joinSerpentFight, applySerpentHit, stepSerpentBrain, serpentStateOf, serpentEarned } from './serpentBrain.js';
+import { newFight, joinFight, applyHit, stepBrain, stateOf, earned } from './gate/gateBrain.js';
+import { newRemnantFight, joinRemnant, applyRemnantHit, stepRemnant, remnantStateOf } from './superDungeon/sdRemnant.js';
+import { newSerpentFight, joinSerpentFight, applySerpentHit, stepSerpentBrain, serpentStateOf, serpentEarned } from './serpent/serpentBrain.js';
 import { judgeGate, judgeRemnant, judgeSerpent } from './bossRef.js';
 
 /** The contract's members, in the page's order. */

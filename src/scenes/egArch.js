@@ -7,13 +7,13 @@
 //     water, a boat; a location's footprint; another breach near (a Dagon's Breach within EG_ARCH_GATE_NEAR_M, an arch
 //     within EG_ARCH_NEAR_M); a breach held; the road shut; no room for the arch (`egArchPlace` - the Portal Stone's
 //     portalPlace at its foot, and EG_ARCH_CLEAR_M clear about it).
-//   THE ARCH (section 6.3): the gate's own model (world/gateModel.js buildGateModel, Mac's Blender bake) at EG_ARCH_SCALE,
+//   THE ARCH (section 6.3): the gate's own model (world/gate/gateModel.js buildGateModel, Mac's Blender bake) at EG_ARCH_SCALE,
 //     10.04 m tall, its skin the Spire's white marble inlaid with gold and cracked with the Warden's basalt
-//     (world/gateArt.js archArt, the gate's records' twins - EG_ARCH_RECORD_OF). It stands at the opener's feet, ahead
+//     (world/gate/gateArt.js archArt, the gate's records' twins - EG_ARCH_RECORD_OF). It stands at the opener's feet, ahead
 //     (portalPlace, PORTAL_AHEAD), facing the opener; it climbs out of the ground over GATE_RISE_MS from the opening, stands
 //     sealed until the open, open until the first hall wakes (or the open window ends), and sinks over GATE_COLLAPSE_MS.
 //     Its fire and its gold beacon (EG_ARCH_BEACON_UP_M over its foot) are the gate's pass's own, drawn with this arch's
-//     per-draw values (render/gatePass.js gatePassValues - `egArchDraw`).
+//     per-draw values (render/gate/gatePass.js gatePassValues - `egArchDraw`).
 //   WHO SEES IT: the company from the hub's call (`call`); everyone else on the opener's world cell from the opener's foes
 //     frame (`ea`, `word`) - believed only near the opener's own feet, only when the hub's signature verifies
 //     (net/egCallSig.js verifyEgCall), at most EG_ARCH_PER_CELL strangers' arches at once, and never past its window.
@@ -23,26 +23,26 @@
 //     shut by one, and no body is moved out of one. Its own company's screens, which answer its call, stand its stone.
 //   ITS DOOR: the company steps through its open fire (or presses it) - `onStep`, the answer; anyone else is told
 //     "The breach answers only to <opener>'s company." Its plaque names it; a stranger's names the company too.
-//   ITS CLEARING (world/gateClearance.js gateClearSet - `clears`), ITS LANDING (world/gateArena.js gateLandingFor, an arch
+//   ITS CLEARING (world/gate/gateClearance.js gateClearSet - `clears`), ITS LANDING (world/gate/gateArena.js gateLandingFor, an arch
 //     record), ITS MARKS: the compass, the held map, the sight line.
 //
 // THE POOL IS THE ARCHES' OWNER (EVERY ALLOCATION HAS AN OWNER): one mesh and its textures for every arch, a collider bucket
-// an arch while it stands risen, all of it let go by `clear`. It is drawn through the gate's pool (scenes/gatePool.js
+// an arch while it stands risen, all of it let go by `clear`. It is drawn through the gate's pool (scenes/gate/gatePool.js
 // `arches`), whose frame, world pass and foreign pass the host already runs - no new statement in the host's frame.
 //
 // Pure helpers above the pool. Not a DFU member. Ledger A (ELITE-GATES).
-import { buildGateModel, gateArchProfile, insideGateStone, GATE_ARCHIVE, GATE_HEIGHT, GATE_HALF_W, PORTAL_CENTRE_Y, ARCH_Y0, ARCH_Y1, EG_ARCH_RECORD_OF } from '../world/gateModel.js';
-import { archArt } from '../world/gateArt.js';
-import { gateSpinRate, BEACON_BELOW_M, BEACON_START_M } from '../render/gatePass.js';
-import { GATE_RISE_MS, GATE_COLLAPSE_MS, PIXEL_M } from '../net/gateLaw.js';
+import { buildGateModel, gateArchProfile, insideGateStone, GATE_ARCHIVE, GATE_HEIGHT, GATE_HALF_W, PORTAL_CENTRE_Y, ARCH_Y0, ARCH_Y1, EG_ARCH_RECORD_OF } from '../world/gate/gateModel.js';
+import { archArt } from '../world/gate/gateArt.js';
+import { gateSpinRate, BEACON_BELOW_M, BEACON_START_M } from '../render/gate/gatePass.js';
+import { GATE_RISE_MS, GATE_COLLAPSE_MS, PIXEL_M } from '../net/gate/gateLaw.js';
 import { portalPlace, PORTAL_GROUND_PROBE } from '../systems/portalStone.js';
 import { egTimes, egCountText, EG_TEXT } from '../net/egLaw.js';
 import { verifyEgCall } from '../net/egCallSig.js';
 import { egSite, EG_CALL_SG_RE, sanitizeName } from '../net/wire.js';
-import { gateLandingFor, GATE_LANDING_M } from '../world/gateArena.js';
-import { openingHalfWidth, gateLocal, SEALED_AT, RISE_SLACK_M, GATE_OPEN_EASE, GATE_REACH, GATE_SAY_MS, GATE_STEP_M, GATE_LIGHT_RANGE } from './gatePool.js';
+import { gateLandingFor, GATE_LANDING_M } from '../world/gate/gateArena.js';
+import { openingHalfWidth, gateLocal, SEALED_AT, RISE_SLACK_M, GATE_OPEN_EASE, GATE_REACH, GATE_SAY_MS, GATE_STEP_M, GATE_LIGHT_RANGE } from './gate/gatePool.js';
 import { sightLineOf } from '../world/spawnedDungeons.js';
-import { directionHintString } from '../systems/talk.js';
+import { directionHintString } from '../systems/talk/talk.js';
 import { trs } from '../world/mat4.js';
 import { RAY_DISTANCE } from '../player/activate.js';
 
@@ -61,7 +61,7 @@ export const EG_ARCH_PER_CELL = 2;
 export const EG_ARCH_BEACON_UP_M = 400;
 export const EG_ARCH_GOLD = Object.freeze([1.0, 0.78, 0.32]);
 export const EG_ARCH_TINT = Object.freeze([1.0, 1.5, 0.75]);
-/** The beacon's per-draw values (render/gatePass.js gatePassValues): the gate's foot under the ground, a column reaching
+/** The beacon's per-draw values (render/gate/gatePass.js gatePassValues): the gate's foot under the ground, a column reaching
  *  EG_ARCH_BEACON_UP_M over the ground, its light from the arch's own lintel (the gate's start, scaled with it). */
 export const EG_ARCH_BEACON = Object.freeze({ below: BEACON_BELOW_M, height: BEACON_BELOW_M + EG_ARCH_BEACON_UP_M, start: BEACON_START_M * EG_ARCH_SCALE, color: EG_ARCH_GOLD });
 /** The opener's landing before the arch (the gate's, scaled with it). */
@@ -147,7 +147,7 @@ const r2 = (v) => Math.round(v * 100) / 100;
 export const egArchSite = (at, yaw, px, py, t) => ({ px, py, x: r2(at[0] - t[0]), y: r2(at[1] - t[1]), z: r2(at[2] - t[2]), yaw: Math.round(wrapYaw(yaw) * 1e4) / 1e4 });
 /** The site's foot in THIS scene (its pixel's translation now plus its place there). Pure. */
 export const egArchSceneAt = (site, t) => [t[0] + site.x, t[1] + site.y, t[2] + site.z];
-/** The arch record gateLandingFor takes (world/gateArena.js): its site and its turn - the opener's landing before it. */
+/** The arch record gateLandingFor takes (world/gate/gateArena.js): its site and its turn - the opener's landing before it. */
 export const egArchLandingRecord = (site) => ({ px: site.px, py: site.py, spot: [site.x, site.z], yaw: site.yaw });
 /** THE OPENER'S LANDING (section 6.4): before the arch, on the side its fire faces, turned away from it - gateLandingFor's
  *  own law over the arch's record, EG_ARCH_LANDING_M out. Null off the built ground. */
@@ -205,7 +205,7 @@ export function egArchPlacement(a, { pixelTranslation, heightAt, now }) {
   return { phase: life.phase, origin: [x, ground - (1 - eased) * sunk, z], ground, yaw: a.site.yaw, fade: life.rise, risen: life.rise >= 1, coarse, life };
 }
 
-/** THE ARCH'S DRAW RECORD for the gate's pass (render/gatePass.js): the gate's record and this arch's per-draw values. */
+/** THE ARCH'S DRAW RECORD for the gate's pass (render/gate/gatePass.js): the gate's record and this arch's per-draw values. */
 export const egArchDraw = (place, open, spin) => ({
   origin: place.origin, yaw: place.yaw, open, fade: place.fade, spin, beaconOnly: !!place.coarse,
   scale: EG_ARCH_SCALE, tint: EG_ARCH_TINT, beacon: EG_ARCH_BEACON,
@@ -363,7 +363,7 @@ export function createEgArchPool({ renderer = null, collider = () => null, pixel
     },
     /** One frame: every arch placed, its fire eased, its collider stood, the step through its open fire. */
     frame(dt = 0) {
-      // AUDIT EG V (L6-4): no arch, nothing made - the gate pool asks every exterior frame online (scenes/gatePool.js)
+      // AUDIT EG V (L6-4): no arch, nothing made - the gate pool asks every exterior frame online (scenes/gate/gatePool.js)
       if (!arches.size) { if (clearsKey) { clearsKey = ''; clearsArr = NO_CLEARS; } return; }
       const t = now(), f = feet();
       let any = false;
@@ -384,7 +384,7 @@ export function createEgArchPool({ renderer = null, collider = () => null, pixel
         } else a.lastLz = null;
       }
       if (any) ensureMesh();
-      // the clearings, one stable list while the set stands (world/gateClearance.js gateClearSet's members) - AUDIT EG V
+      // the clearings, one stable list while the set stands (world/gate/gateClearance.js gateClearSet's members) - AUDIT EG V
       // (L6-4): its key made again only when the placed set moved
       if (!clearsSame()) {
         const placed = [...arches.values()].filter((a) => a.place);
@@ -445,13 +445,13 @@ export function createEgArchPool({ renderer = null, collider = () => null, pixel
       }
       return null;
     },
-    /** The arches' clearings (world/gateClearance.js gateClearSet's members) - one list while the set stands. */
+    /** The arches' clearings (world/gate/gateClearance.js gateClearSet's members) - one list while the set stands. */
     clears: () => clearsArr,
     /** Whether an arch stands within `m` of feet `f` (refusal 5). */
     near(f, m = EG_ARCH_NEAR_M) { if (!f) return false; for (const a of arches.values()) if (a.place && Math.hypot(a.place.origin[0] - f[0], a.place.origin[2] - f[2]) <= m) return true; return false; },
     /** THE COMPASS (section 6.4): my company's arch, its scene XZ, while it stands - else null. */
     compass() { for (const a of arches.values()) if (a.mine && a.place) return [a.place.origin[0], a.place.origin[2]]; return null; },
-    /** THE HELD MAP (section 2): my company's arch's mark while it stands - a ring on its own pixel (ui/gateMapMark.js
+    /** THE HELD MAP (section 2): my company's arch's mark while it stands - a ring on its own pixel (ui/gate/gateMapMark.js
      *  readGateMark's shape, `{ day, cx, cy, r, label, phase, tip }`) - else null. */
     mapMark() {
       for (const a of arches.values()) {

@@ -103,7 +103,7 @@
   {
     "name": "EG5D-L4-8-the-branchs-old-relay",
     "file": "src/net/wire.js",
-    "old": "export const EG_RELAY_MIN = 211;",
+    "old": "export const EG_RELAY_MIN = 212;",
     "new": "export const EG_RELAY_MIN = 197;",
     "tests": [
       "test/egaudit5_d_relay.test.js"
@@ -331,7 +331,7 @@
   },
   {
     "name": "EG5D-L8-1-the-mark-read-by-no-save",
-    "file": "src/systems/sigilSetPowers.js",
+    "file": "src/systems/sigil/sigilSetPowers.js",
     "old": "  if (!blow && spire) { shed(entity, before, after, saved); reprieve(entity, before, after, saved); return; }",
     "new": "",
     "tests": [
@@ -341,7 +341,7 @@
   },
   {
     "name": "EG5D-L8-1-the-reprieve-unread",
-    "file": "src/systems/sigilSetPowers.js",
+    "file": "src/systems/sigil/sigilSetPowers.js",
     "old": "if (!blow && spire) { shed(entity, before, after, saved); reprieve(entity, before, after, saved); return; }",
     "new": "if (!blow && spire) { shed(entity, before, after, saved); return; }",
     "tests": [
@@ -350,7 +350,7 @@
   },
   {
     "name": "EG5D-L8-1-shed-skin-unread",
-    "file": "src/systems/sigilSetPowers.js",
+    "file": "src/systems/sigil/sigilSetPowers.js",
     "old": "if (!blow && spire) { shed(entity, before, after, saved); reprieve(entity, before, after, saved); return; }",
     "new": "if (!blow && spire) { reprieve(entity, before, after, saved); return; }",
     "tests": [
@@ -359,7 +359,7 @@
   },
   {
     "name": "EG5D-L8-1-the-mark-lying",
-    "file": "src/systems/sigilSetPowers.js",
+    "file": "src/systems/sigil/sigilSetPowers.js",
     "old": "  _pendingSpire = _now() - _spireBlowAt <= BLOW_WINDOW_S;",
     "new": "  _pendingSpire = _spireBlowAt > -Infinity;",
     "tests": [
@@ -519,7 +519,7 @@
   },
   {
     "name": "EG5D-L8-4-the-table-keyed-by-the-end",
-    "file": "server-account/migrations/0120_elite_breach.sql",
+    "file": "server-account/migrations/0121_elite_breach.sql",
     "old": "  PRIMARY KEY (account, wk, w),\n  FOREIGN KEY (account) REFERENCES players(id) ON DELETE CASCADE\n);\nCREATE INDEX IF NOT EXISTS idx_eg_reliqs_b",
     "new": "  PRIMARY KEY (account, wk, w, b),\n  FOREIGN KEY (account) REFERENCES players(id) ON DELETE CASCADE\n);\nCREATE INDEX IF NOT EXISTS idx_eg_reliqs_b",
     "tests": [
@@ -601,7 +601,7 @@
   },
   {
     "name": "EG5D-L9-5-a-week-a-day-short",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const ARENA_WEEK_S = 7 * 24 * 3600;",
     "new": "export const ARENA_WEEK_S = 6 * 24 * 3600;",
     "tests": [
@@ -610,7 +610,7 @@
   },
   {
     "name": "EG5D-L9-5-a-week-off-by-one",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const arenaWeekOf = (nowS) => Math.max(0, Math.floor((Math.floor(Number(nowS) || 0) - ARENA_SEASON_EPOCH_S) / ARENA_WEEK_S));",
     "new": "export const arenaWeekOf = (nowS) => Math.max(0, Math.floor((Math.floor(Number(nowS) || 0) - ARENA_SEASON_EPOCH_S) / ARENA_WEEK_S) + 1);",
     "tests": [
@@ -619,7 +619,7 @@
   },
   {
     "name": "EG5D-L9-5-the-old-epoch-of-1970-weeks",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const arenaWeekOf = (nowS) => Math.max(0, Math.floor((Math.floor(Number(nowS) || 0) - ARENA_SEASON_EPOCH_S) / ARENA_WEEK_S));",
     "new": "export const arenaWeekOf = (nowS) => Math.max(0, Math.floor(Math.floor(Number(nowS) || 0) / ARENA_WEEK_S));",
     "tests": [

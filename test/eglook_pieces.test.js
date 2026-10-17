@@ -15,7 +15,7 @@ import { createEgSpan } from '../src/scenes/egSpan.js';
 import { egCircleSpecs } from '../src/net/egLaw.js';
 import { EG_HERO_FRAGS } from '../src/net/egHeroFrags.js';
 import { egPieceAt } from '../src/net/egSpanLaw.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { egToDungeon } from '../src/world/egHall.js';
 import { spherePlanes } from '../src/render/bounds.js';
 import { egGive8 } from './egGive8.mjs';   // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9): law 8's circles given

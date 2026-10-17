@@ -1,15 +1,15 @@
 // EG-E (2026-10-12, the Elite Gates arc; bible/11-Multiplayer/Elite-Gates.md section 19, REWARDS AND THE ECONOMY): A
-// REDOUBT'S SPOILS - the lords' named Legendaries (systems/egLordArms.js) and the lords' own cards (net/iliacCards.js,
+// REDOUBT'S SPOILS - the lords' named Legendaries (systems/egLordArms.js) and the lords' own cards (net/iliac/iliacCards.js,
 // systems/bossCards.js BOSS_CARDS by lord key).
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { EG_LORD_ARMS, egLordArm } from '../src/systems/egLordArms.js';
 import { BOSS_CARDS, BOSS_CARD_PER_MILLE, bossCardRoll } from '../src/systems/bossCards.js';
-import { cardById } from '../src/net/iliacCards.js';
+import { cardById } from '../src/net/iliac/iliacCards.js';
 import { EG_LORDS } from '../src/net/egLaw.js';
-import { templateByIndex } from '../src/systems/itemTemplates.js';
-import { validLootItem } from '../src/systems/loot.js';
-import { seededRng } from '../src/systems/wind.js';
+import { templateByIndex } from '../src/systems/item/itemTemplates.js';
+import { validLootItem } from '../src/systems/loot/loot.js';
+import { seededRng } from '../src/systems/wind/wind.js';
 import { egPanoplyHit, EG_PANOPLY_IDS } from '../src/net/egPay.js';
 import { rollEgSpoils, egSpoilsList, egSpoilsGold, egSpoilsDay, egSpoilsOf } from '../src/systems/egSpoils.js';
 

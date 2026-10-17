@@ -1,7 +1,7 @@
 // @ts-check
 // EG-ZE (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 7 - THE STAIR, "what
-// the swap shows"): THE SPIRE'S STAIR ON THE VEIL - chosen by theme in ui/gateVeil.js beside Dagon's fire and the Hour's
-// blades (render/gateVeil.js keeps the clock's law: `veilAt` times this one too, run at the stair's own pace -
+// the swap shows"): THE SPIRE'S STAIR ON THE VEIL - chosen by theme in ui/gate/gateVeil.js beside Dagon's fire and the Hour's
+// blades (render/gate/gateVeil.js keeps the clock's law: `veilAt` times this one too, run at the stair's own pace -
 // world/egLights.js EG_STAIR_VEIL). One triangle over the veil's own canvas, as theirs:
 //   THE FALL (a band's first hall - world/egLook.js egStairOf): EG-ZO - a camera falling past THE SPIRE'S UNDERSIDE, the
 //     torn academy the halls fell from, MODELLED (world/egUnderside.js: built with the arc's one mesh kit in the band's own
@@ -15,21 +15,21 @@
 // veil has covered, a pixel all or nothing, so the world goes and comes back in the Spire's pixel art and never slides.
 // Every pixel posterized through the same dither (the pixel law, SD_PIXEL_GLSL) in the band's own sky (world/egLook.js
 // EG_SKIES - the sky the hall stands in); the canvas a third of the device's pixels, drawn pixelated. Output
-// premultiplied. The hall it steps to is held centred over it by the veil's own label (ui/gateVeil.js).
+// premultiplied. The hall it steps to is held centred over it by the veil's own label (ui/gate/gateVeil.js).
 //
 // EVERY ALLOCATION HAS AN OWNER: the two programs are the pass's (the veil's, freed with it - `destroy`); the underside's
 // buffers and pictures are the fall's own (`upload` answers an EgUnderside that owns them, `destroy` frees every one -
-// ui/gateVeil.js frees it as the fall ends, every way it ends), and an upload that fails part way frees what it made.
+// ui/gate/gateVeil.js frees it as the fall ends, every way it ends), and an upload that fails part way frees what it made.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { buildProgram } from './glProgram.js';
 import { BAYER_GLSL, SD_PIXEL_GLSL } from './orderedDither.js';
-import { sdSkyBasisInto } from './sdSky.js';
+import { sdSkyBasisInto } from './superDungeon/sdSky.js';
 import { EG_SKIES } from '../world/egLook.js';
 import { EG_DRESS } from '../world/egBandArt.js';
 import { EG_SKY_MOON } from './egSkyMap.js';   // EG-LOOK: the moon the sky paints
 
-/** The stair's modes (ui/gateVeil.js VEIL_EG_MODE): the full fall, the veil, the plain cut. */
+/** The stair's modes (ui/gate/gateVeil.js VEIL_EG_MODE): the full fall, the veil, the plain cut. */
 export const EG_STAIR_MODE = Object.freeze({ fall: 0, veil: 1, cut: 2 });
 /** THE FALL'S LOOK: how fast the deep rises to meet the faller (1/s - its share risen is 1 - e^(-rate t)), the embers'
  *  speed up the screen (half-heights a second), how dim the veil's void is, and the posterize's steps. */
@@ -68,11 +68,11 @@ export const EG_STAIR_FS = `#version 300 es
 precision highp float;
 uniform vec2 uRes;       // the canvas, pixels
 uniform float uTime;     // seconds since the veil began
-uniform float uCover;    // how much of the screen the veil has taken (render/gateVeil.js veilAt, at the stair's pace)
+uniform float uCover;    // how much of the screen the veil has taken (render/gate/gateVeil.js veilAt, at the stair's pace)
 uniform float uMode;     // EG_STAIR_MODE
 uniform int uBand;       // the band the step falls into
 uniform vec3 uRight, uUp, uFwd;   // EG-ZO: the falling camera's axes (world/egUnderside.js egFallCamera)
-uniform vec4 uLens;               // and its lens (render/sdSky.js sdSkyBasisInto)
+uniform vec4 uLens;               // and its lens (render/superDungeon/sdSky.js sdSkyBasisInto)
 out vec4 o;
 ${BAYER_GLSL}${SD_PIXEL_GLSL}${EG_VOID_GLSL}
 float h21(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }

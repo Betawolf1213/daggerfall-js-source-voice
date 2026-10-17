@@ -15,10 +15,10 @@ import { egHallOf, EG_SEALED_MS } from '../src/net/egLaw.js';
 import { EG_FEINT_AT } from '../src/net/egBodies.js';
 import { egPieceAt } from '../src/net/egSpanLaw.js';
 import { validEgOut, validPose } from '../src/net/wire.js';
-import { realmToDungeon, dungeonToRealm } from '../src/net/sdBrain.js';
+import { realmToDungeon, dungeonToRealm } from '../src/net/superDungeon/sdBrain.js';
 import { egClockHalfRtt } from '../src/net/egClock.js';
 import { BODY_SAY_MS } from '../src/net/bossBody.js';
-import { hostCue } from '../src/world/gateBoss.js';
+import { hostCue } from '../src/world/gate/gateBoss.js';
 
 const T0 = 1_800_000_000_000;
 const ME = 'acct-0';
@@ -173,7 +173,7 @@ test('EG-H1 WATCHFIRE\'S EARLY OUTLINE AND A BLOW\'S WIND (sections 15 and 13.2)
   E.fight = { ...E.fight, told: [] };
   fight.frame();
   assert.ok(drawnTold > fight.state().shapes, 'the told blow drawn as its outline');
-  const cue = hostCue('windup', 0), wind = () => calls.filter((c) => c[1] === cue.volume && c[2] === cue.pitch).length;   // the wind-up's cue (world/gateBoss.js hostCue - volume and pitch its own)
+  const cue = hostCue('windup', 0), wind = () => calls.filter((c) => c[1] === cue.volume && c[2] === cue.pitch).length;   // the wind-up's cue (world/gate/gateBoss.js hostCue - volume and pitch its own)
   E.fight = { ...E.fight, blows: [blow] };
   const from = blow.at - blow.wu;
   t = from + 0.3 * blow.wu; fight.frame();

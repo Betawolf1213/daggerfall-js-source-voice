@@ -17,7 +17,7 @@ import { egBlowVerdict, egBlowOn, egInBlow, shDisc } from '../src/net/egShape.js
 import { egFightView } from '../src/net/egWalkGraph.js';
 import { validEgOut } from '../src/net/wire.js';
 import { foldEg, EG_STATE_EMPTY } from '../src/net/egLink.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { createEgFight, egGivenWords, EG_GIVEN_UP_LORD_M } from '../src/scenes/egFight.js';
 import { egSigilHtml } from '../src/ui/egSpireHud.js';
 import { egScreenAt } from '../src/world/egTelegraph.js';

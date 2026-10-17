@@ -4,7 +4,7 @@
 // Steps' own record), moving on the realm's anchored clock as the Steps move: a Drift swinging across, a Beat there on
 // the beat alone, a Riser to run up, a Crumble that falls under my own foot and comes back, and the plain slabs (a
 // Proving Walk's, a Court's approach, an Oblivion Caverns passage's ledges). Each step one mesh of its kind (the Steps'
-// own - world/sdStepsModel.js buildStepModel; a plain slab for the still ones), drawn and stood in the collider as a
+// own - world/superDungeon/sdStepsModel.js buildStepModel; a plain slab for the still ones), drawn and stood in the collider as a
 // moving bucket (the Steps' translation getter - the triangles never change, only where they stand). The step I stand on
 // carries me.
 //
@@ -14,7 +14,7 @@
 // EG-FULL, LAYER TWO (section 10.3): THE NEW PIECES MOVE, by the one law (net/egSpanLaw.js): a Rail travels along the
 // course and carries its rider; a Pendulum's weight swings across the gap before its step and a touch is a cast-back
 // (Iron Footing III shrugs it - systems/spireKit.js spireFooting); a Gust section pushes as the Steps' breath does
-// (world/sdSteps.js gustAt, Iron Footing taking its share); a Drop's landing stands walled on its far side and flanks to
+// (world/superDungeon/sdSteps.js gustAt, Iron Footing taking its share); a Drop's landing stands walled on its far side and flanks to
 // EG_DROP_WALL_H. A Vent's tell and bite are the fight's (scenes/egFight.js - the telegraph pass).
 //
 // THE RAMPART'S GROUND (section 8.3): a FALLING WALL's walkway stands here as segments EG_WALL_SEG_M long (world/egHall.js
@@ -43,7 +43,7 @@
 // (scenes/egFight.js), never DFU's hard-landing grunt: while my body falls onto a Drop the course asked for, `overDrop`
 // says so, and the dungeon arm plays no FallHard for that landing (scenes/dungeonContext.js reportActivity).
 // EG-ZL (2026-10-12, Elite-Gates.md sections 10.3, 10.8 and 25 - THE PIECES' TELLS): every piece shows what it will do
-// next, the Steps' own look (scenes/sdSteps.js) on the Spire's pieces, batched a kind (scenes/egPieceBatch.js):
+// next, the Steps' own look (scenes/superDungeon/sdSteps.js) on the Spire's pieces, batched a kind (scenes/egPieceBatch.js):
 //   A DRIFT hangs on two chains from its band's anchor SD_PENDULUM.len over its deck - an arch rib, a ribcage, a
 //     moon-shard, a crane hook - leaning with the law's own swing, the anchor rocking with them as the Hour's gear does
 //     (a kind that turns, a kind a hall);
@@ -51,7 +51,7 @@
 //     share a frame), its last 0.4 s the place's own white in the danger palette's hazard, faltering once at
 //     SD_BEAT_BLINK_HZ, dissolving out through the ordered dither and dithering back in - the dissolve made in its picture
 //     (world/egBandArt.js egBeatWarnArt, egBeatBackArt: a cutout), so the kind stays one draw; gone, its gold GHOST hangs
-//     where it returns, its hand running back (render/sdStepsPass.js - one pass for the circle);
+//     where it returns, its hand running back (render/superDungeon/sdStepsPass.js - one pass for the circle);
 //   A CRUMBLE (and a bone bridge, its law) under my foot grinds and flares its three crack stages across its shake, pours
 //     grit, breaks into its chunks (two on a phone) that fall, drift and tumble while its ghost counts the return, and
 //     in its last SD_CHUNK.rewind the chunks fly back up and click home - a shudder, whole. Reduced motion (ui/egAccess.js)
@@ -95,24 +95,24 @@
 // Gust's banners and a hall's hangs - each one draw a record, a circle's kinds a handful (EG_SPAN_KINDS_MAX).
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
-import { realmToDungeon, dungeonToRealm } from '../net/sdBrain.js';
+import { realmToDungeon, dungeonToRealm } from '../net/superDungeon/sdBrain.js';
 import { egCircleSpecs, egWallFallenZ, egBandOfCircle, EG_VOID_Y, EG_BELT_MPS } from '../net/egLaw.js';
-import { stepTris, stepBox } from '../world/sdStepsModel.js';
-import { SD_CRUMBLE_DELAY, SD_CRUMBLE_BACK, SD_CRUMBLE_FALL_G, SD_STEP_THICK, SD_BEAT_CYCLE, SD_BEAT_SOLID, SD_BEAT_BLINK, SD_GUST_EVERY, gustAt } from '../world/sdSteps.js';
-import { ensureSdStepsArt, SD_STEPS_SOUNDS, SD_BEAT_FRAME_S, SD_BEAT_IN_S, SD_BEAT_OUT_STAGE_S, SD_CRUMBLE_SHAKE, SD_CRUMBLE_SEEN, SD_CHUNK, SD_BEAT_FRAMES, sdChunkWays, sdChunkMatrix } from './sdSteps.js';
-import { SD_PENDULUM, pendulumAngle, SD_BEAT_DISSOLVE, buildGritModel, SD_GRIT, buildWaystoneModel, buildVaneModel, vaneYawInto, sdWaystonesOf, sdVaneAt } from '../world/sdStepsModel.js';   // EG-ZL: the Steps' own look parts
-import { SD_STEPS_RECORD } from '../world/sdStepsArt.js';   // EG-LOOK: a waystone's dark rune, its own record
+import { stepTris, stepBox } from '../world/superDungeon/sdStepsModel.js';
+import { SD_CRUMBLE_DELAY, SD_CRUMBLE_BACK, SD_CRUMBLE_FALL_G, SD_STEP_THICK, SD_BEAT_CYCLE, SD_BEAT_SOLID, SD_BEAT_BLINK, SD_GUST_EVERY, gustAt } from '../world/superDungeon/sdSteps.js';
+import { ensureSdStepsArt, SD_STEPS_SOUNDS, SD_BEAT_FRAME_S, SD_BEAT_IN_S, SD_BEAT_OUT_STAGE_S, SD_CRUMBLE_SHAKE, SD_CRUMBLE_SEEN, SD_CHUNK, SD_BEAT_FRAMES, sdChunkWays, sdChunkMatrix } from './superDungeon/sdSteps.js';
+import { SD_PENDULUM, pendulumAngle, SD_BEAT_DISSOLVE, buildGritModel, SD_GRIT, buildWaystoneModel, buildVaneModel, vaneYawInto, sdWaystonesOf, sdVaneAt } from '../world/superDungeon/sdStepsModel.js';   // EG-ZL: the Steps' own look parts
+import { SD_STEPS_RECORD } from '../world/superDungeon/sdStepsArt.js';   // EG-LOOK: a waystone's dark rune, its own record
 import { egPiecePlan, egSegmentPlan, egPieceSeed, egPieceModel, egBeatModel, egRiserModel, egDropLookModel, egTubeLidModel, egIsleModel, egCrumbleModels } from '../world/egPlatformModel.js';   // EG-LOOK: the academy torn
 import { EG_BEAT_STONE_RECORDS, EG_PIECE_TELL_RECORDS, egCrumbleTellArt, egBeatStoneArt } from '../world/egPlatformArt.js';   // EG-LOOK: a Crumble's band stages, a Beat's stone dissolving
-import { SdStepsPass, SD_GHOST } from '../render/sdStepsPass.js';   // EG-ZL: the ghosts' pass, the circle's
-import { SD_SKY_STEPS } from '../render/sdSky.js';
+import { SdStepsPass, SD_GHOST } from '../render/superDungeon/sdStepsPass.js';   // EG-ZL: the ghosts' pass, the circle's
+import { SD_SKY_STEPS } from '../render/superDungeon/sdSky.js';
 import { egAccessNow } from '../ui/egAccess.js';   // EG-ZL: the danger palette's hazard on a Beat's warning; reduced motion stills the shakes
-import { isTouchDevice } from '../ui/touchDevice.js';
+import { isTouchDevice } from '../ui/touch/touchDevice.js';
 import { createMeshKit } from '../world/meshKit.js';
 import { EG_FOG_FLOOR, egGustSections } from '../world/egLook.js';   // EG6a: the breath's sections, its one home (the streamers' too)
 import { EG_RIDE_DOWN_M, EG_RIDE_UP_M } from '../net/egFair.js';
-import { faces } from '../world/gateModel.js';
-import { packRealmFaces, SD_REALM_ARCHIVE, SD_REALM_FLOOR_RECORD, SD_REALM_BRASS_RECORD, SD_REALM_EDGE_RECORD, SD_REALM_PILLAR_RECORD, SD_REALM_ROOT_RECORD, SD_ISLAND_SIDES } from '../world/sdRealm.js';
+import { faces } from '../world/gate/gateModel.js';
+import { packRealmFaces, SD_REALM_ARCHIVE, SD_REALM_FLOOR_RECORD, SD_REALM_BRASS_RECORD, SD_REALM_EDGE_RECORD, SD_REALM_PILLAR_RECORD, SD_REALM_ROOT_RECORD, SD_ISLAND_SIDES } from '../world/superDungeon/sdRealm.js';
 import { identity } from '../world/mat4.js';
 import { egPieceAt, egPendAt, egPendHits, egBeatAt, egCourseOf, EG_PEND_HALF, EG_DROP_WALL_H, EG_CRUMBLE_KINDS, EG_SINK_MPS, EG_SINK_GONE_M, EG_BODY_R } from '../net/egSpanLaw.js';
 import { egBridgeOf } from '../net/egSpanLaw.js';   // AUDIT EG III: Spirebridge's plank, the relay's own
@@ -296,7 +296,7 @@ export const EG_SPAN_MOVERS = Object.freeze(['drift', 'rail', 'drum', 'moon']);
  *  the movers, a Beat's phases, a Crumble's cracking and its chunks, the waystones, the Gust's banners, a hall's hangs, a
  *  Falling Wall's walk and a Collapsing Tube. */
 export const EG_SPAN_KINDS_MAX = 16;
-/** EG-LOOK: a waystone dark - the Steps' own, its rune the dark record (world/sdStepsArt.js SD_STEPS_RECORD.partsDark), so
+/** EG-LOOK: a waystone dark - the Steps' own, its rune the dark record (world/superDungeon/sdStepsArt.js SD_STEPS_RECORD.partsDark), so
  *  the lit and the dark stand in one kind. */
 const darkStone = () => { const m = buildWaystoneModel(); return { ...m, subMeshes: m.subMeshes.map((sm) => (sm.textureRecord === SD_STEPS_RECORD.parts ? { ...sm, textureRecord: SD_STEPS_RECORD.partsDark } : sm)) }; };
 const _at = { dx: 0, dz: 0, solid: true };
@@ -304,7 +304,7 @@ const _gust = { push: 0, warn: false };
 /** A Falling Wall's segment (m along the walkway), and how fast a fallen one drops out of sight (m/s/s). */
 export const EG_WALL_SEG_M = 2;
 const WALL_FALL_G = 9.8;
-/** The longest frame a Gust pushes for (s) - a hitch is not a gale (scenes/sdSteps.js's BREATH_DT_MAX). */
+/** The longest frame a Gust pushes for (s) - a hitch is not a gale (scenes/superDungeon/sdSteps.js's BREATH_DT_MAX). */
 const EG_GUST_DT_MAX = 0.1;
 /** EG6a: how far across a Gust section's line its push reaches (m - an island's 3 m and a body pushed off it). */
 export const EG_GUST_REACH_M = 6;
@@ -357,7 +357,7 @@ export function egBridgeLook(q, ms, still = false) {
 // ── EG-ZL: THE PIECES' TELLS (sections 10.3 and 10.8) ─────────────────────────────────────────────────────────────
 /** A DRIFT'S CHAINS (section 10.3: "hangs on two chains from an anchor 18 m up ... leaning as it swings"): a link's length,
  *  its width and its bar (m), every other link turned a quarter about the chain (each its two broad faces) - hung on the
- *  Steps' own pendulum's line (world/sdStepsModel.js SD_PENDULUM: SD_PENDULUM.foot either side of the deck's middle, clear
+ *  Steps' own pendulum's line (world/superDungeon/sdStepsModel.js SD_PENDULUM: SD_PENDULUM.foot either side of the deck's middle, clear
  *  of a body at its edge, from brackets SD_PENDULUM.into under its top up to the pivot SD_PENDULUM.len over it). */
 export const EG_CHAIN = Object.freeze({ link: 0.9, w: 0.22, bar: 0.05 });
 /**
@@ -366,7 +366,7 @@ export const EG_CHAIN = Object.freeze({ link: 0.9, w: 0.22, bar: 0.05 });
  * from (section 10.3, in the order of world/egBandArt.js EG_BAND_RAMPS): the Galleries' broken arch rib (EG-LOOK: in the kit's
  * voussoirs - world/egKit.js EG_KIT_RECORD.voussoir), gold leaf on its crown; the Cairn's ribcage in bone; the Shade's moon-shard; the Wellhead's crane hook in iron, on its cable. The
  * whole turns about z with the law's own swing (pendulumAngle) - the anchor rocking with its chains, as the Hour's gear rocks
- * with its rods (scenes/sdSteps.js driftLook), never more than asin(2 / 18).
+ * with its rods (scenes/superDungeon/sdSteps.js driftLook), never more than asin(2 / 18).
  */
 export function egHangModel(band) {
   const k = createMeshKit(), P = SD_PENDULUM, F = P.foot, L = EG_CHAIN.link, low = -(P.len + P.into), n = Math.ceil(-low / L), B = SD_REALM_BRASS_RECORD;
@@ -419,7 +419,7 @@ export function egHangModel(band) {
   }
   return k.pack(egBandArchive(band));   // EG-LOOK: in the band's archive (its metal the band's, its rib the kit's)
 }
-/** THE CIRCLE'S GHOSTS at most (render/sdStepsPass.js - its uniforms' count): the most any circle measured lays is 31 (eight
+/** THE CIRCLE'S GHOSTS at most (render/superDungeon/sdStepsPass.js - its uniforms' count): the most any circle measured lays is 31 (eight
  *  seeds, forty circles, both grounds); a circle past it draws its first EG_GHOSTS_MAX. */
 export const EG_GHOSTS_MAX = 48;
 /** A GHOST SLAB (section 10.8): how long a peer's word holds it lit (s - a few of its frames) and its top's light (a share
@@ -505,12 +505,12 @@ function egBeatDressMaps(band, key) {
   return m;
 }
 /** AUDIT EG III (lane4 #5, sections 25.2 and 25.7): a ghost's line in the danger palette's safety - the Steps' own gold under
- *  the Standard (render/sdStepsPass.js SD_GHOST.color), the palette's safety under any other. Pure. */
+ *  the Standard (render/superDungeon/sdStepsPass.js SD_GHOST.color), the palette's safety under any other. Pure. */
 export const egGhostRgb = (pal) => (pal && pal.key !== 'standard' && Array.isArray(pal.safety) ? pal.safety : SD_GHOST.color);
 /** A Beat's kind: its beat (the pieces of one beat show one frame - their draw shares one picture map). */
 const beatKind = (s) => `beat@${Math.round(s.beat * 1000)}`;
 /** `out` made a turn by `yw` about y (0 faces +z, a quarter turn +x), then the move to (x, y, z) - in place (the Hour's
- *  vane's - scenes/sdSteps.js yawAbout). */
+ *  vane's - scenes/superDungeon/sdSteps.js yawAbout). */
 function yawAbout(out, yw, x, y, z) {
   const c = Math.cos(yw), s = Math.sin(yw);
   out.fill(0);
@@ -538,7 +538,7 @@ export function egSpanCollider(collider, keys) {
 /**
  * A circle's spans.
  * @param {{ renderer?: any, audio?: any, seed: number, c: number, geo?: number, lite?: boolean }} deps - EG-ZL: `lite` the
- *   phone's tier (ui/touchDevice.js isTouchDevice - its own by default): two chunks a Crumble, not four (the Hour's tier)
+ *   phone's tier (ui/touch/touchDevice.js isTouchDevice - its own by default): two chunks a Crumble, not four (the Hour's tier)
  */
 export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, lite = isTouchDevice() }) {
   const specs = egCircleSpecs(seed, c, geo);
@@ -582,7 +582,7 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
   const plainOf = new Map();
   /** @type {Map<string, { s: any, map: any }>} THE BEATS: each beat's kind and the picture map its frame wears now */
   const beatKinds = new Map();
-  /** THE GHOSTS: the circle's Beats and Crumbles (EG_GHOSTS_MAX at most) - their tops and states (render/sdStepsPass.js's
+  /** THE GHOSTS: the circle's Beats and Crumbles (EG_GHOSTS_MAX at most) - their tops and states (render/superDungeon/sdStepsPass.js's
    *  two uniform arrays, written in place) and their pass, made the first time it draws and freed at the clear */
   const ghostSteps = steps.filter((st) => st.s.kind === 'beat' || EG_CRUMBLE_KINDS.includes(st.s.kind)).slice(0, EG_GHOSTS_MAX);
   ghostSteps.forEach((st, k) => { st.ghost = k; });
@@ -590,11 +590,11 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
   /** @type {SdStepsPass | null} */
   let pass = null;
   let passTried = false;
-  /** THE CHUNKS a Crumble breaks into (two on a phone) and their ways (scenes/sdSteps.js sdChunkWays - the Hour's law). EG-LOOK:
+  /** THE CHUNKS a Crumble breaks into (two on a phone) and their ways (scenes/superDungeon/sdSteps.js sdChunkWays - the Hour's law). EG-LOOK:
    *  a Crumble's models in its band's dress (world/egPlatformModel.js egCrumbleModels - the Steps' own box and chunks in the
    *  band's flags cracking): its rest, its three stages, its chunks */
   const crumbleSet = egCrumbleModels(band, lite ? 2 : 4), chunkWays = sdChunkWays(crumbleSet.chunks);
-  /** THE WAYSTONES: one on every island, at the Steps' own place beside its landing (world/sdStepsModel.js sdWaystonesOf) -
+  /** THE WAYSTONES: one on every island, at the Steps' own place beside its landing (world/superDungeon/sdStepsModel.js sdWaystonesOf) -
    *  each its lit draw and its dark; and the one my cast-back would stand me on. EG6a: read off the courses the generator
    *  laid (net/egSpanLaw.js egCourseOf - each road's checkpoints but the arrival plate, the Low Road's island its own) */
   const stones = [];
@@ -642,7 +642,7 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
     }
     for (const d of [...(st.stages ?? []), ...(st.chunks ?? []), st.grit, st.hang]) if (d) away(d);
   }
-  /** EACH BEAT'S FRAME NOW (the Steps' - scenes/sdSteps.js beatLook), one picture map on its kind's draw: its dial's hand on
+  /** EACH BEAT'S FRAME NOW (the Steps' - scenes/superDungeon/sdSteps.js beatLook), one picture map on its kind's draw: its dial's hand on
    *  the way back to XII across its solid time (SD_BEAT_FRAMES), dithering in over SD_BEAT_IN_S; over its last 0.4 s the
    *  place's own white in the palette's hazard, dissolving out a stage each SD_BEAT_OUT_STAGE_S, its light faltered for
    *  the last two (SD_BEAT_BLINK_HZ - once: shown, then out). With no pictures to hold it (no renderer), the Steps' own. */
@@ -699,7 +699,7 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
     st.hang.hidden = false;
   }
   /** The waystones (mine lit, the rest dark) and the Gust's banners (the vane's yaw on the breath's own clock -
-   *  world/sdStepsModel.js vaneYawInto) where they stand now. */
+   *  world/superDungeon/sdStepsModel.js vaneYawInto) where they stand now. */
   function poseMarks(t) {
     for (const g of stones) { const mine = g === litStone; if (g.lit) g.lit.hidden = !mine; if (g.dark) g.dark.hidden = mine; }
     if (!vanes.length) return;
@@ -1136,7 +1136,7 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
       return false;
     },
     /**
-     * EG-ZL - THE GHOSTS (render/sdStepsPass.js - built the first time, its program and buffer freed at the clear): the
+     * EG-ZL - THE GHOSTS (render/superDungeon/sdStepsPass.js - built the first time, its program and buffer freed at the clear): the
      * circle's gone Beats and my fallen Crumbles outlined where they return, a peer's ghost slab filled, in `fog` and the
      * Spire's fog floor (world/egLook.js EG_FOG_FLOOR - section 25.6). Answers whether it drew (the host marks a foreign pass).
      */

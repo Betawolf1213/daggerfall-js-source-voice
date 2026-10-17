@@ -11,9 +11,9 @@ import { createEgSpan, EG_FLOOR_KEY, EG_GUST_REACH_M } from '../src/scenes/egSpa
 import { egGustSections } from '../src/world/egLook.js';
 import { egCircleSpecs, egHallOf } from '../src/net/egLaw.js';
 import { egCourseOf } from '../src/net/egSpanLaw.js';
-import { sdVaneAt } from '../src/world/sdStepsModel.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
-import { gustAt } from '../src/world/sdSteps.js';
+import { sdVaneAt } from '../src/world/superDungeon/sdStepsModel.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
+import { gustAt } from '../src/world/superDungeon/sdSteps.js';
 import { egGive8 } from './egGive8.mjs';
 
 // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courses along +z

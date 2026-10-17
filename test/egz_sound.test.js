@@ -6,7 +6,7 @@
 // preset's impulse made once for the hold, the 0.4 s crossfade, another's release refused, everything freed on the release;
 // Better Ambience yielding and asserting its wish again after; the breach client holding it while I stand in the breach,
 // building my feet's hall as it changes, turning at a mouth, letting go on every way out. THE SPIRE MIX's last two
-// (systems/egMix.js, net/peerFx.js, scenes/egFight.js): every peer's sound 4 dB down through the engine's scope while a
+// (systems/egMix.js, net/peer/peerFx.js, scenes/egFight.js): every peer's sound 4 dB down through the engine's scope while a
 // hall's fight runs - the peers' blows, steps, swings, cries and climbs - and Watchfire's tell at pitch 1.4, once a told blow,
 // where it will land.
 import './modsOff.js';
@@ -23,15 +23,15 @@ import { AudioEngine } from '../src/systems/audio.js';
 import { createBetterAmbience, readBetterAmbienceSettings, BETTER_AMBIENCE_VENDOR } from '../src/systems/betterAmbience.js';
 import { MOD_SETTINGS } from '../src/systems/modSettings.js';
 import { createSpireMix, EG_MIX, EG_TELL_CUE, egDbGain } from '../src/systems/egMix.js';
-import { peerHeard, setPeerSoundScope, createPeerFxPlayer } from '../src/net/peerFx.js';
-import { BOSS_CUES } from '../src/world/gateBoss.js';
+import { peerHeard, setPeerSoundScope, createPeerFxPlayer } from '../src/net/peer/peerFx.js';
+import { BOSS_CUES } from '../src/world/gate/gateBoss.js';
 import { createEgFight, egToldAt } from '../src/scenes/egFight.js';
 import { EG_FIGHT_EMPTY } from '../src/net/egLink.js';
 import { egHallCentre } from '../src/world/egHall.js';
 import { createEgClient } from '../src/scenes/egClient.js';
 import { egBreachNew, egEnter, egStateOf } from '../src/net/egBrain.js';
 import { validEgOut } from '../src/net/wire.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { egGive8 } from './egGive8.mjs';
 
 // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courses along +z
@@ -265,7 +265,7 @@ test('EG-ZH THE HALL\'S REVERB ON THIS SCREEN (scenes/egClient.js): held once I 
   assert.match(SRC, /reverb\.release\(\); clampAway\(\);   \/\/ EG-ZH: the hall's reverb let go/, 'walkOut lets it go');
 });
 
-test('EG-ZH THE PEERS DOWN (net/peerFx.js, systems/egMix.js): with no scope a peer\'s sound is as it was; the mix\'s `peers(true)` plays every peer sound at EG_MIX.peerDb (4 dB down) through the engine\'s scope - the peers\' blows and hurts, the walkers\' steps, swings and cries, their climbs - and `peers(false)` lets them be (mutants: the scope never set; the gain not the mix\'s; off never clearing)', () => {
+test('EG-ZH THE PEERS DOWN (net/peer/peerFx.js, systems/egMix.js): with no scope a peer\'s sound is as it was; the mix\'s `peers(true)` plays every peer sound at EG_MIX.peerDb (4 dB down) through the engine\'s scope - the peers\' blows and hurts, the walkers\' steps, swings and cries, their climbs - and `peers(false)` lets them be (mutants: the scope never set; the gain not the mix\'s; off never clearing)', () => {
   const { a, log } = engine();
   a.registerSamples('k', new Float32Array(8), 8000);
   const vol = () => log.gains.at(-1).gain.value;
@@ -286,7 +286,7 @@ test('EG-ZH THE PEERS DOWN (net/peerFx.js, systems/egMix.js): with no scope a pe
   assert.equal(mix.peers(false), false);
   peerHeard(() => a.playOneShot('k', 1)); assert.equal(vol(), 1, 'off: as they were');
   // every peer sound passes through it
-  const RP = rd('src/net/remotePlayers.js'), PC = rd('src/net/peerClimb.js'), PF = rd('src/net/peerFx.js');
+  const RP = rd('src/net/remotePlayers.js'), PC = rd('src/net/peer/peerClimb.js'), PF = rd('src/net/peer/peerFx.js');
   assert.match(RP, /function peerSound\(audio, clip, at, volume\) \{\n  peerHeard\(\(\) => \{/, 'the walkers\' steps and swings');
   assert.match(RP, /if \(falloff > 0\) peerHeard\(\(\) => audio\.playOneShot\(peerDeathSound\(peer\?\.look\), falloff\)\);/, 'a peer\'s cry');
   assert.match(PC, /peerHeard\(\(\) => this\.audio\.play3d\(c\.key, at, Math\.min\(1, vol\)/, 'a peer\'s climb');

@@ -1,6 +1,6 @@
 // @ts-check
 // EG-LOOK (2026-10-15, Mac: "Literally everything, and no band aids"; bible/11-Multiplayer/Elite-Gates-Look.md section 6):
-// THE SPIRE'S SKIES, PAINTED - each band's realm in an octahedral map, SD5b's law (render/sdSky.js SdSkyMap): an
+// THE SPIRE'S SKIES, PAINTED - each band's realm in an octahedral map, SD5b's law (render/superDungeon/sdSky.js SdSkyMap): an
 // EG_SKY_MAP x EG_SKY_MAP picture of the whole sky, one texel about 0.35 degrees (Daggerfall's own sky is pi/512 a pixel),
 // NEAREST, painted a quadrant a frame by THE BAND'S PAINTER (its own fragment shader - EG_SKY_PAINT_FS[band]), every
 // texel through the pixel law (render/orderedDither.js SD_PIXEL_GLSL), fetched by one triangle at the far plane
@@ -33,7 +33,7 @@
 import { buildProgram } from './glProgram.js';
 import { DEAD_NOISE_GLSL } from './deadlands.js';
 import { createRenderTarget, withTarget } from './renderTarget.js';
-import { SD_OCT_GLSL, SD_SKY_PERIOD, SD_SKY_STEPS } from './sdSky.js';
+import { SD_OCT_GLSL, SD_SKY_PERIOD, SD_SKY_STEPS } from './superDungeon/sdSky.js';
 import { egAtmosOf } from '../world/egAtmos.js';
 
 /** The map's side (texels): the Hour's. */

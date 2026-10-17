@@ -7,7 +7,7 @@
 // the last tip as the least hold ends, the underside in view through the longest hold, never in rock. The shaders
 // (render/egStairPass.js) evaluated through test/glsl.mjs: the void as the falling camera sees it and the underside lit
 // from below and melting into it, EG-ZE's reversed smoothstep fix kept and the picture's own reversed edge gone. The pass
-// and the veil (ui/gateVeil.js) over a recording GL: the underside made a slice a tick, never in the tick the veil shuts
+// and the veil (ui/gate/gateVeil.js) over a recording GL: the underside made a slice a tick, never in the tick the veil shuts
 // in, uploaded once, drawn depth-tested through the camera, and every GL allocation of it freed on every exit - the veil
 // opened, a flash of another look, another band's fall, the veil destroyed, an upload that failed part way. And the breach
 // client (scenes/egClient.js) played: the circle swap in place into Hall 26 lands under the fall, after the underside
@@ -24,17 +24,17 @@ import {
 import { createMeshKit } from '../src/world/meshKit.js';
 import { EG_DRESS, egBandArt, egBandArtOf, egBandArchive, EG_BAND_RECORDS } from '../src/world/egBandArt.js';
 import { EG_STAIR_FS, EG_UNDERSIDE_FS, EG_STAIR_MODE, EG_STAIR_LOOK, EG_UNDERSIDE_LOOK, EG_MOON, EG_VOID_GLSL, EgStairRenderer } from '../src/render/egStairPass.js';
-import { sdSkyBasisInto } from '../src/render/sdSky.js';
+import { sdSkyBasisInto } from '../src/render/superDungeon/sdSky.js';
 import { lookAtInto, perspectiveInto } from '../src/render/shadowPass.js';
-import { createGateVeil } from '../src/ui/gateVeil.js';
-import { VEIL_HOLD_MAX_S } from '../src/render/gateVeil.js';
+import { createGateVeil } from '../src/ui/gate/gateVeil.js';
+import { VEIL_HOLD_MAX_S } from '../src/render/gate/gateVeil.js';
 import { egStairStep, EG_STAIR_VEIL } from '../src/world/egLights.js';
 import { EG_SKIES, egStairOf } from '../src/world/egLook.js';
 import { createEgClient } from '../src/scenes/egClient.js';
 import { egHallOf, EG_SEALED_MS, EG_BRINK_HALLS } from '../src/net/egLaw.js';
 import { egBreachNew, egEnter, egStateOf } from '../src/net/egBrain.js';
 import { validEgOut } from '../src/net/wire.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const near = (a, b, e = 1e-6) => Math.abs(a - b) <= e;
@@ -468,7 +468,7 @@ function page({ reduce = false, R = recordingGl() } = {}) {
 }
 const veilOn = (p) => (p.veil = createGateVeil(p));
 
-test('EG-ZO THE FALL ON THE VEIL (ui/gateVeil.js, over a recording GL): the canvas asks a depth buffer; a fall into a band makes its underside a slice a tick from the stair\'s first frame - never in the tick the veil shuts in, whose end runs the step\'s own work - uploads it in one tick while the veil still closes, and draws it each frame through the falling camera on the stair\'s own clock; every GL allocation of it is freed as the fall ends - the veil opened, a flash of another look, another band\'s fall, the veil destroyed - and an upload that fails leaves nothing and the void alone; the veil, the cut and reduced motion make no underside (mutants: every slice in one tick; a slice in the shutting tick; the underside kept past the veil; kept past another look; kept past the destroy; the camera off the stair\'s clock; a fall in the cut)', async () => {
+test('EG-ZO THE FALL ON THE VEIL (ui/gate/gateVeil.js, over a recording GL): the canvas asks a depth buffer; a fall into a band makes its underside a slice a tick from the stair\'s first frame - never in the tick the veil shuts in, whose end runs the step\'s own work - uploads it in one tick while the veil still closes, and draws it each frame through the falling camera on the stair\'s own clock; every GL allocation of it is freed as the fall ends - the veil opened, a flash of another look, another band\'s fall, the veil destroyed - and an upload that fails leaves nothing and the void alone; the veil, the cut and reduced motion make no underside (mutants: every slice in one tick; a slice in the shutting tick; the underside kept past the veil; kept past another look; kept past the destroy; the camera off the stair\'s clock; a fall in the cut)', async () => {
   const slices = egUndersideParts(0).slices, s26 = egStairStep(26);
   // a fall into the Soul Cairn
   const p = page(), veil = veilOn(p);

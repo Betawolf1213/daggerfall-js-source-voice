@@ -1,6 +1,6 @@
 // THE BINARY FBX WRITER - the container tools/fbxRead.mjs reads, written the other way.
 //
-// FIELD-GUN-MW1 wrote it inside test/fbxmesh.test.js, "forty lines of the same container tools/fbxRead.mjs reads, so the
+// FIELD-GUN-MW1 wrote it inside test/tooling/fbxmesh.test.js, "forty lines of the same container tools/fbxRead.mjs reads, so the
 // pin drives the reader against bytes this file's own reader wrote: if the two ever disagree about the format, one of
 // them is wrong and the suite says so". EG6c (2026-10-12, bible/11-Multiplayer/Elite-Gates.md section 11.6) needs it
 // outside a test: the reference hero fragment (tools/egRefFragScene.mjs) is a scene the port writes itself, committed as

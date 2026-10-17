@@ -143,7 +143,7 @@
     "new": "setMidScreenText(t); }",
     "tests": [
       "test/egmade_law.test.js",
-      "test/sd26_dungeon.test.js"
+      "test/world/sd26_dungeon.test.js"
     ]
   },
   {
@@ -153,7 +153,7 @@
     "new": "",
     "tests": [
       "test/egmade_law.test.js",
-      "test/gatefbx.test.js"
+      "test/tooling/gatefbx.test.js"
     ]
   },
   {
@@ -163,7 +163,7 @@
     "new": "const rez = social?.acct ? rezFor(",
     "tests": [
       "test/egmade_law.test.js",
-      "test/sd12_onelife.test.js"
+      "test/net/superDungeon/sd12_onelife.test.js"
     ]
   },
   {
@@ -182,7 +182,7 @@
     "new": "savingPrevented: () => isGateArena(dfLocation) || isArenaFloor(dfLocation),",
     "tests": [
       "test/egmade_law.test.js",
-      "test/arena2_hosts.test.js"
+      "test/scenes/arena2_hosts.test.js"
     ]
   },
   {

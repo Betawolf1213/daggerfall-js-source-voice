@@ -3,7 +3,7 @@
 // layer two's "still owed" tells): THE SPIRE'S LINES - THE EDGE LINE along every edge a member could fall from, the Rail's
 // and the Drum's dashed track under its whole travel, and the Gust's streamers across its section, in one pass.
 //
-// SD-LOOK's ghosts' technique (render/sdStepsPass.js): every segment a screen-width quad (never GL_LINES - WebGL caps those
+// SD-LOOK's ghosts' technique (render/superDungeon/sdStepsPass.js): every segment a screen-width quad (never GL_LINES - WebGL caps those
 // at one pixel, gone on a high-DPI phone), two pixels on a desktop and three on a phone (world/egLook.js egEdgeLinePx),
 // placed in the vertex stage from its two ends. The circle's edges and tracks are one static buffer made once a circle
 // (world/egLook.js egCircleEdges); the streamers a small dynamic one written a frame from the breath's clock.

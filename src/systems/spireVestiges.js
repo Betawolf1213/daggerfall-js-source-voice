@@ -9,7 +9,7 @@
 //   SECOND WIND     once a hall, a hurt that takes me under 30% heals 15 / 25 / 35% - a hurt listener on the one damage
 //                   door (characters/playerEntity.js registerPlayerHurtListener), never a killing blow a save turned aside;
 //   SPELLBANE       every resistance +10 / 18 / 25 - the resist channel's fold (systems/entityMods.js) on each element the
-//                   saving throw names (systems/lootRarity.js RESIST_ELEMENTS), as the Battlemage's Bearing rides it;
+//                   saving throw names (systems/loot/lootRarity.js RESIST_ELEMENTS), as the Battlemage's Bearing rides it;
 //   BATTLEMAGE'S FOCUS  spell cost -10 / 18 / 25% - the cost modifiers (systems/spellcost.js registerSpellCostMod);
 //   SHIELDWEAVER    my own Shield spell soaks +20 / 35 / 50% - the Shield pool's soak (characters/playerEntity.js
 //                   registerShieldSoakMod), a party mate's Shield on me as it was;
@@ -41,9 +41,9 @@ import { egResonance, EG_WEAVE_N } from '../net/egVestige.js';   // EG-ZS: Spell
 import { registerSpellFreeCast } from './spellcost.js';   // EG-ZS: Spellweave's free cast
 import { registerPlayerCastListener } from './playerCasts.js';   // EG-ZS: my casts, told as they leave the hands
 import { isDamageHealthEffect } from './spellcast.js';   // EG-ZS: a damage spell (Damage Health, its continuous twin)
-import { HIT_KINDS } from '../net/gateBrain.js';
+import { HIT_KINDS } from '../net/gate/gateBrain.js';
 import { registerEntityFold, computeEntityMods, newMods, EMPTY_MODS } from './entityMods.js';
-import { RESIST_ELEMENTS } from './lootRarity.js';   // the five elements the resistance channel names (EG15's Bearing reads them too)
+import { RESIST_ELEMENTS } from './loot/lootRarity.js';   // the five elements the resistance channel names (EG15's Bearing reads them too)
 import { registerSpellCostMod } from './spellcost.js';
 import { registerPlayerHurtListener, registerShieldSoakMod } from '../characters/playerEntity.js';
 import { registerRunSpeedMod } from '../player/motor.js';
@@ -112,7 +112,7 @@ export const spireCrumbleWait = () => heldV('featherstep') + (_held?.ls ? EG_LON
 
 /**
  * A BLOW OF THE HOLDER'S ON A SPIRE BODY (section 15's client Vestiges on a blow): `d` what the game's own law dealt, `r` its
- * kind (net/gateBrain.js HIT_KINDS). Searing Edge's fire on a melee blow (whole: every body of the Spire is the relay's,
+ * kind (net/gate/gateBrain.js HIT_KINDS). Searing Edge's fire on a melee blow (whole: every body of the Spire is the relay's,
  * which keeps no element, and its stand-in takes fire whole), then Momentum's `stacks` on that body (its rank's cap at
  * most), Bloodied Fury while `low` (under half my health), Overcharge on a spell. Pure.
  * @param {number[][]} vs @param {number} d @param {number} r @param {{ stacks?: number, low?: boolean }} [o]

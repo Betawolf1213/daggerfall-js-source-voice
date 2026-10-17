@@ -20,7 +20,7 @@ import { egFightView, egWalkGraph, egWalkNext, egWayOn, egRegionAt, egArchCut, E
 import { foldEg, EG_STATE_EMPTY } from '../src/net/egLink.js';
 import { egLookOf } from '../src/scenes/egFight.js';
 import { EG_LORD_PRESENCE } from '../src/world/egKit.js';   // EG-LOOK (section 9): the sprite at the lord's presence
-import { dpsRef } from '../src/net/gateBrain.js';
+import { dpsRef } from '../src/net/gate/gateBrain.js';
 import { egGive8Hall } from './egGive8.mjs';
 
 // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courts and its
@@ -215,7 +215,7 @@ test('EG-ZQ THE LORDS\' SHARES (section 13.2, THE LAW EVERY LORD KEEPS; EG-ZK\'s
   CL.fl |= EG_FL.mirror;
   assert.equal(egLordsShare(C, 'acct-0', 40, true), false, 'a mirror is sized by nobody');
   const src = readFileSync(new URL('../src/net/egLords.js', import.meta.url), 'utf8');
-  assert.match(src, /import \{ dpsRef, retireShare, restoreShare \} from '\.\/gateBrain\.js';/);
+  assert.match(src, /import \{ dpsRef, retireShare, restoreShare \} from '\.\/gate\/gateBrain\.js';/);
   assert.doesNotMatch(src, /function (retireShare|restoreShare|shareOut|standsAt)\b/);
 });
 

@@ -5,7 +5,7 @@
 //
 // ═══ THE WEEK'S PAY ════════════════════════════════════════════════
 //
-// A Redoubt's number pays once an account an arena week (src/net/arenaLaw.js arenaWeekOf): the account's first
+// A Redoubt's number pays once an account an arena week (src/net/arena/arenaLaw.js arenaWeekOf): the account's first
 // eg_redoubts row of that Redoubt in that week is PAID, and only a paid row pays - Marks, a guild's deed, embers, a
 // Valkynaz's Weir Key and the Panoply's pity. Taken again that week the Redoubt pays its gold alone (the spoils the
 // client rolls off the receipt's seed) and seals no Reliquary. A Rehearsal pays nothing at all. The row keeps what it
@@ -42,12 +42,12 @@
 // The Sigil Broker sells one Panoply piece of the buyer's choosing (EG_PANOPLY_IDS), once an account an arena week, for
 // EG_SINK_EMBERS out of the insignia's purse: ONE conditional UPDATE spends it (the insignia's way - accounts.js
 // buyInsignia) where the purse covers it and no piece was bought this week, and the week's row (`eg_sink`) is written by
-// that write alone. The client takes the embers from the pack and mints the piece (systems/sigilBroker.js panoplySale).
+// that write alone. The client takes the embers from the pack and mints the piece (systems/sigil/sigilBroker.js panoplySale).
 //
 // EVERY CLOCK IS AN ARGUMENT, as in accounts.js.
 // ═══════════════════════════════════════════════════════════════════
 
-import { arenaWeekOf, arenaSeasonOf, arenaSeasonEndsS, ARENA_SEASON_S } from '../../src/net/arenaLaw.js';
+import { arenaWeekOf, arenaSeasonOf, arenaSeasonEndsS, ARENA_SEASON_S } from '../../src/net/arena/arenaLaw.js';
 import { egValkRedoubt, egSpoilsPasses, egPanoplyHit, egEmbersOf, egSpoilsSeed, EG_PANOPLY_PITY, EG_VALK_KEY_ODDS, EG_SINK_EMBERS, EG_PANOPLY_IDS } from '../../src/net/egPay.js';
 import { egStrikeStatement, egStrikeAnswer, deedStatements, deedEvent, deedAnswer } from './marks.js';
 import { EMBERS_EARNED_SQL } from './accounts.js';

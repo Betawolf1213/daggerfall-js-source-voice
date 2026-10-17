@@ -32,15 +32,15 @@ import { egToDungeon } from './egHall.js';
 import { EG_STAIR, egStairOf } from './egLook.js';
 import { EG_DANGER_PALETTES } from '../ui/egAccess.js';
 import { EG_SCORE_BAND_MOTIFS } from '../systems/egScore.js';
-import { midiNote } from '../systems/gateScore.js';
+import { midiNote } from '../systems/gate/gateScore.js';
 
 // ── THE STAIR DRAWN (section 7) ─────────────────────────────────────────────────────────────────────────────────
 /** THE STAIR'S CLOCK on the veil (s): the dither closing and opening (EG_STAIR.dither each way), and the least the full
  *  fall stands shut so the Spire's underside is seen to fall away - its close, hold and open together still under the
- *  Hour's veil it replaces (render/gateVeil.js VEIL_CLOSE_S + VEIL_OPEN_S, 2.9 s), and the swap's own work runs inside
+ *  Hour's veil it replaces (render/gate/gateVeil.js VEIL_CLOSE_S + VEIL_OPEN_S, 2.9 s), and the swap's own work runs inside
  *  the hold, never after it. */
 export const EG_STAIR_VEIL = Object.freeze({ close: EG_STAIR.dither, open: EG_STAIR.dither, fallHold: 1.2 });
-/** The veil's theme for each of egStairOf's three (ui/gateVeil.js VEIL_THEMES). */
+/** The veil's theme for each of egStairOf's three (ui/gate/gateVeil.js VEIL_THEMES). */
 export const EG_STAIR_THEME = Object.freeze({ fall: 'egFall', veil: 'egVeil', cut: 'egCut' });
 /** THE BAND'S CHIME: the Concord's chime (clip 364, the Rare chime's record) struck on the first note of the band's
  *  motif (systems/egScore.js EG_SCORE_BAND_MOTIFS - the broken fanfare's E, the Cairn's soul-bell B, the Shade's high E,
@@ -204,7 +204,7 @@ export function egSpireLights(E, now, { witness = false, still = false, palette 
 }
 
 /** THE DOOR ON THE COMPASS (section 27.3): the way down's place in the scene ([x, z] - the enhanced compass's strip
- *  reads it, ui/enhancedHud.js) while the door stands open, or null - never a witness's (they take no door). Pure. */
+ *  reads it, ui/enhanced/enhancedHud.js) while the door stands open, or null - never a witness's (they take no door). Pure. */
 export function egDoorCompass(E, witness = false) {
   if (witness || !E?.b || E.end || E.sg !== 'closing' || !(E.h > 0)) return null;
   const spec = egHallOf(E.seed, E.h, E.geo ?? 0);

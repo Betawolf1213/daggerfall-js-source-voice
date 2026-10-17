@@ -18,7 +18,7 @@ import { createEgSpan, egStepKey, egDropTris, DROP_DOOR, EG_STEP_GONE_Y } from '
 import { egCircleColliderTris, egCircleLights, buildEgCircleModel, egNicheBoxes, egIsleDisc, egToDungeon } from '../src/world/egHall.js';
 import { createEgFight } from '../src/scenes/egFight.js';
 import { EG_FIGHT_EMPTY } from '../src/net/egLink.js';
-import { realmToDungeon, dungeonToRealm } from '../src/net/sdBrain.js';
+import { realmToDungeon, dungeonToRealm } from '../src/net/superDungeon/sdBrain.js';
 import { registerSpireWake, registerSpireObjs, registerSpireAct } from '../src/systems/spireKit.js';
 import { egBreachNew, egEnter, egStateOf } from '../src/net/egBrain.js';
 import { EG_SEALED_MS } from '../src/net/egLaw.js';

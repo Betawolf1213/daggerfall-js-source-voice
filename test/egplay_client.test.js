@@ -15,7 +15,7 @@ import { egRoomKey, egHallOf, egCircleSpecs, egOnArrive, egFirstHallOf, EG_SEALE
 import { egGive8 } from './egGive8.mjs';   // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9): a law 8 circle given
 import { mintEgOrder } from '../src/net/identityToken.js';
 import { readEgReceipt } from '../src/net/egReceipt.js';
-import { realmToDungeon, dungeonToRealm } from '../src/net/sdBrain.js';
+import { realmToDungeon, dungeonToRealm } from '../src/net/superDungeon/sdBrain.js';
 import { createEgClient, egClaimDone, egRefusalText, EG_END_WALK_MS, EG_CLAIMS_KEY } from '../src/scenes/egClient.js';
 import { createEgFight } from '../src/scenes/egFight.js';
 import { egHudModel, EG_HUD_LOW_MS } from '../src/ui/egHud.js';

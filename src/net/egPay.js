@@ -3,7 +3,7 @@
 // ECONOMY): WHAT A REDOUBT PAYS - the one law the account service pays a Redoubt's `w` receipt by (server-account/src/eg.js
 // claimEg: the week's pay, the embers, the Valkynaz's key, the Panoply's pity) and the client rolls its spoils by
 // (systems/egSpoils.js rollEgSpoils), so the two can never disagree on a roll:
-//   THE WEEK - a Redoubt's number pays once an account an arena week (net/arenaLaw.js arenaWeekOf); taken again that week
+//   THE WEEK - a Redoubt's number pays once an account an arena week (net/arena/arenaLaw.js arenaWeekOf); taken again that week
 //     it pays its gold alone.
 //   A VALKYNAZ'S REDOUBT - every fifth (net/egLaw.js egBossOf: Ilthys at 5, Morvayn at 10, Seyth at 15, Garoth at 20 and
 //     every fifth after) rolls its spoils twice, on two seeds from the receipt's.

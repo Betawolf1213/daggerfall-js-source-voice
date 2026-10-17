@@ -14,7 +14,7 @@ import { egBossNo } from '../src/net/egLords.js';
 import { validEgOut } from '../src/net/wire.js';
 
 const T0 = 1_800_000_000_000;
-/** The order-of-play solver for an Athenaeum's Orrery (net/sdBrain.js solveGear's back-substitution). */
+/** The order-of-play solver for an Athenaeum's Orrery (net/superDungeon/sdBrain.js solveGear's back-substitution). */
 /** Which lords' falls the frames said: the `efell`s' bodies, read off the bodies the frames stood (`ead`, `efs`). */
 function lordsFelled(frames) {
   const bodies = new Map(), out = [];

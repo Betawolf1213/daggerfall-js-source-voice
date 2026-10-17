@@ -18,7 +18,7 @@
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { egSpecGive, egSeed, EG_STEP, EG_BAND_PIECES, EG_HALL_PITCH, egFirstHallOf } from '../../src/net/egLaw.js';
 import { egSpanOf, egSpanProof } from '../../src/net/egSpanLaw.js';
-import { sdRng } from '../../src/net/sdBrain.js';
+import { sdRng } from '../../src/net/superDungeon/sdBrain.js';
 
 /** The synthetic halls' die's salt (a die of their own). */
 const SYNTH_SALT = 0x0e9a90;

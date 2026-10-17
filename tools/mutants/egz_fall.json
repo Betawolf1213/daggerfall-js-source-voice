@@ -613,7 +613,7 @@
   },
   {
     "name": "EGZO-no-depth-buffer",
-    "file": "src/ui/gateVeil.js",
+    "file": "src/ui/gate/gateVeil.js",
     "old": "antialias: false, depth: true, stencil: false",
     "new": "antialias: false, depth: false, stencil: false",
     "tests": [
@@ -622,7 +622,7 @@
   },
   {
     "name": "EGZO-a-slice-in-the-shutting-tick",
-    "file": "src/ui/gateVeil.js",
+    "file": "src/ui/gate/gateVeil.js",
     "old": "if (!shuts) fallSlice();",
     "new": "fallSlice();",
     "tests": [
@@ -631,7 +631,7 @@
   },
   {
     "name": "EGZO-every-slice-in-one-tick",
-    "file": "src/ui/gateVeil.js",
+    "file": "src/ui/gate/gateVeil.js",
     "old": "if (!fall.parts.done) { fall.parts.step(); return; }",
     "new": "while (!fall.parts.done) fall.parts.step();",
     "tests": [
@@ -640,7 +640,7 @@
   },
   {
     "name": "EGZO-kept-past-the-veil",
-    "file": "src/ui/gateVeil.js",
+    "file": "src/ui/gate/gateVeil.js",
     "old": "if (phase === 'idle') fallFree();",
     "new": "",
     "tests": [
@@ -649,7 +649,7 @@
   },
   {
     "name": "EGZO-kept-past-another-look",
-    "file": "src/ui/gateVeil.js",
+    "file": "src/ui/gate/gateVeil.js",
     "old": "if (egMode() !== EG_STAIR_MODE.fall) { fallFree(); return; }",
     "new": "if (egMode() !== EG_STAIR_MODE.fall) { return; }",
     "tests": [
@@ -658,7 +658,7 @@
   },
   {
     "name": "EGZO-another-bands-fall-kept",
-    "file": "src/ui/gateVeil.js",
+    "file": "src/ui/gate/gateVeil.js",
     "old": "if (fall?.band === egBand) return;",
     "new": "if (fall) return;",
     "tests": [
@@ -667,7 +667,7 @@
   },
   {
     "name": "EGZO-kept-past-the-destroy",
-    "file": "src/ui/gateVeil.js",
+    "file": "src/ui/gate/gateVeil.js",
     "old": "fallFree();   // EG-ZO: the fall's underside before the pass that drew it",
     "new": "",
     "tests": [
@@ -676,7 +676,7 @@
   },
   {
     "name": "EGZO-a-failed-upload-tried-each-tick",
-    "file": "src/ui/gateVeil.js",
+    "file": "src/ui/gate/gateVeil.js",
     "old": "if (!fall.under) fall.failed = true;",
     "new": "",
     "tests": [
@@ -685,7 +685,7 @@
   },
   {
     "name": "EGZO-the-camera-off-the-clock",
-    "file": "src/ui/gateVeil.js",
+    "file": "src/ui/gate/gateVeil.js",
     "old": "egFallCamera(s, w / h, fallCam)",
     "new": "egFallCamera(0, w / h, fallCam)",
     "tests": [
@@ -694,7 +694,7 @@
   },
   {
     "name": "EGZO-the-underside-never-handed",
-    "file": "src/ui/gateVeil.js",
+    "file": "src/ui/gate/gateVeil.js",
     "old": "under: fall?.under ?? null",
     "new": "under: null",
     "tests": [
@@ -703,7 +703,7 @@
   },
   {
     "name": "EGZO-the-fall-never-taken",
-    "file": "src/ui/gateVeil.js",
+    "file": "src/ui/gate/gateVeil.js",
     "old": "fallTake();   // EG-ZO: a fall keeps or starts its underside; any other look frees it",
     "new": "",
     "tests": [

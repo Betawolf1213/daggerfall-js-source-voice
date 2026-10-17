@@ -64,7 +64,7 @@ import { utcDay } from '../../src/net/marksLaw.js';
 import { egHonourStatements, egHonoursAnswer, egRecordOf } from './egHonours.js';   // EG-E2: the feats, the Annals, the honours
 import { egStandingOf, egFirstPost, egBoardsMoved } from './egHonours.js';   // EG-ZF: the recap's board line; First of the Spire's letter; AUDIT EG III: the boards' kept rankings forgotten at a claim
 import { egRedoubtPay, egReliquariesOf, egSinkOf } from './egEconomy.js';   // EG-E1: what a Redoubt pays, the sink
-import { arenaWeekOf } from '../../src/net/arenaLaw.js';   // EG-E3: the week a find's keys are capped by, the arena's
+import { arenaWeekOf } from '../../src/net/arena/arenaLaw.js';   // EG-E3: the week a find's keys are capped by, the arena's
 import { egMayStart, egWagerOf } from '../../src/net/egStartLaw.js';   // EG-F: the start Redoubt and the Wager, held at the open and every admission
 import { egStartsFor } from './egStarts.js';
 import { egSpoilsSeed } from '../../src/net/egPay.js';   // AUDIT EG V (L8-5): the spoils' seed, the receipt's mixed with the claim's own draw
@@ -86,7 +86,7 @@ export const EG_LIVE_S = EG_LAST_WORD_S + EG_OPEN_WINDOW_S + EG_LIVE_SLACK_S;
  *  breach that has closed behind its company: it locks no account out for three hours. */
 export const EG_ADMIT_WINDOW_S = EG_OPEN_WINDOW_S + EG_LIVE_SLACK_S;
 /** EG-E3 (2026-10-12, Mac: "I said I want everything"; section 5, "The dungeon's find"): a dungeon elite's odds of a key,
- *  by the dungeon's tier as the port names it (src/systems/dungeonTier.js DUNGEON_TIERS - `super` the player's Abyss
+ *  by the dungeon's tier as the port names it (src/systems/dungeon/dungeonTier.js DUNGEON_TIERS - `super` the player's Abyss
  *  Dungeon); the asks a tier an account a real UTC day; the keys finds may pay an account an arena week. At the caps a
  *  forger's ceiling is 6/400 + 6/150 + 6/60 = 0.155 keys a day, under an honest gatebreaker's. */
 export const EG_FIND_ODDS = Object.freeze({ super: 1 / 60, elite: 1 / 150, regular: 1 / 400 });

@@ -5,7 +5,7 @@
 // like through the game's own song player and FM bank: whether every song sounds, whether the mix stays under its ceiling
 // at the highest MusicVolume, whether the war grows by phase and the count and the Valkynaz stand over it, whether the
 // halls sit under the fights, and whether the end decays inside the time the law gives it. So: the repo's own modules
-// served as they are, each song of one context played by systems/songPlayer.js into an OfflineAudioContext (the player's
+// served as they are, each song of one context played by systems/song/songPlayer.js into an OfflineAudioContext (the player's
 // clock carried through the song window by window), the render read back and measured; and one player through every song
 // in one context, the press on for each.
 //
@@ -26,7 +26,7 @@ const out = []; const check = (n, ok, d = '') => { out.push(ok); console.log(`${
 const KEYS = ['hall', 'yard', 'set', 'lord1', 'lord2', 'lord3', 'valk', 'redoubt', 'count', 'end'];
 
 const PAGE = `<!doctype html><html><body><script type=module>
-import { SongPlayer } from '/src/systems/songPlayer.js';
+import { SongPlayer } from '/src/systems/song/songPlayer.js';
 import { spireScoreSongs, SPIRE_END_MS } from '/src/systems/egScore.js';
 const RATE = 44100, CTX = { band: ${BAND}, motif: ${BAND * 3}, valk: ${BAND * 3 + 3}, seed: 1 };
 window.endS = SPIRE_END_MS / 1000;

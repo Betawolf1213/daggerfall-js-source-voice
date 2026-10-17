@@ -3,7 +3,7 @@
 // parts, with no game data - every piece of it is made in code: the halls (world/egHall.js) in their band's dress
 // (world/egBandArt.js), the pieces batched and culled (scenes/egSpan.js, scenes/egPieceBatch.js), the waystones (world/
 // egLook.js), the sky, the mist and THE EDGE LINE (scenes/egLookDraw.js), and a telegraph through the Spire's own stage
-// in the shelf's danger palette (render/gateTelegraph.js TELEGRAPH_FS_SPIRE, scenes/egFight.js egLookShapes). The frame is
+// in the shelf's danger palette (render/gate/gateTelegraph.js TELEGRAPH_FS_SPIRE, scenes/egFight.js egLookShapes). The frame is
 // the dungeon arm's for a circle (scenes/worldModes.js: the Spire's trilight and key, its haze and the Hour's grade, its
 // lamps, the circle and the dynamic draws, the cull before them, the sky after the solid geometry, the fight's pass last)
 // in the same calls, so what this page shows is what a member in the Spire sees.
@@ -40,9 +40,9 @@ import { Renderer, WORLD_FRAME, INTERIOR_CLEAR } from '../render/renderer.js';
 import { EL_LANE, dungeonFog, dungeonTrilight, exposureFor } from '../render/enhancedLighting.js';
 import { applyFog } from '../render/underwaterFog.js';
 import { skyGain } from '../render/deadlands.js';
-import { GateTelegraphRenderer, TELEGRAPH_KIND, TELEGRAPH_STYLE, TELEGRAPH_EDGE_DAGON, TELEGRAPH_EDGE_SAFE, TELEGRAPH_POOL } from '../render/gateTelegraph.js';
-import { realmArt } from '../world/sdRealmArt.js';
-import { SD_REALM_ARCHIVE } from '../world/sdRealm.js';
+import { GateTelegraphRenderer, TELEGRAPH_KIND, TELEGRAPH_STYLE, TELEGRAPH_EDGE_DAGON, TELEGRAPH_EDGE_SAFE, TELEGRAPH_POOL } from '../render/gate/gateTelegraph.js';
+import { realmArt } from '../world/superDungeon/sdRealmArt.js';
+import { SD_REALM_ARCHIVE } from '../world/superDungeon/sdRealm.js';
 import { buildEgCircleModel, egCircleLights, egLightsWith, egHallLighting, egHallFog, egHallGrade, egToDungeon, egHallCentre } from '../world/egHall.js';
 import { createEgGroundLook } from '../scenes/egGroundLook.js';   // EG-LOOK: the ruin and the wreck, as the circle's host stands them
 import { EG_VISTA_PLACES, EG_VISTA_REACH } from '../world/egVista.js';   // EG-LOOK (THE WRECK): where a wing hangs, for ?wing
@@ -60,7 +60,7 @@ import { egPieceAt } from '../net/egSpanLaw.js';   // EG-LOOK: a piece's view at
 import { egIsleDisc } from '../world/egHall.js';
 import { egMistAt } from '../net/egFragLaw.js';
 import { EG_LIGHT_KIND, EG_DOOR_BEAM } from '../world/egLights.js';   // EG-LOOK: ?door - the beam and its foot's halo
-import { INTERIOR_LIGHT_DIR } from '../world/interiorLights.js';
+import { INTERIOR_LIGHT_DIR } from '../world/interior/interiorLights.js';
 import { perspective, lookAt, identity, mirrorProjectionX, ortho, multiply } from '../world/mat4.js';
 import { egMapDraw, egRoomViews } from './spireMap.js';   // THE ASCENT: the map's route, the rooms' views
 

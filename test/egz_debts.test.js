@@ -18,7 +18,7 @@ import { bodyStruck } from '../src/net/bossBody.js';
 import { EG_VESTIGES, EG_MASTERIES, EG_DR_MAX } from '../src/net/egVestige.js';
 import { EG_TRAIL_MS } from '../src/net/egFair.js';
 import { foldEg, EG_STATE_EMPTY } from '../src/net/egLink.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { createEgFight, egShieldBreach, egLifelineOpen } from '../src/scenes/egFight.js';
 /** PIN MOVED (AUDIT EG V, d: lane4 L4-7 - the count is mended, and Lifeline opened, only by a heal a relayed cast backs): the healer's cast seen - the room's record of a cast from the healer to the member (server/src/index.js _egCastSaw). */
 const CAST_SEEN = () => true;

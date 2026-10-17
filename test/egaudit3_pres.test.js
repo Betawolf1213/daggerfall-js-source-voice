@@ -13,14 +13,14 @@ import { egHallOf, egCircleSpecs, egStartHall, EG_SEALED_MS } from '../src/net/e
 import { egBreachNew, egEnter, egStateOf } from '../src/net/egBrain.js';
 import { EG_V_BY_KEY, EG_CAPSTONES } from '../src/net/egVestige.js';
 import { EG_STATE_EMPTY, foldEg } from '../src/net/egLink.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
-import { arenaSeasonOf, ARENA_SEASON_EPOCH_S, ARENA_SEASON_S } from '../src/net/arenaLaw.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
+import { arenaSeasonOf, ARENA_SEASON_EPOCH_S, ARENA_SEASON_S } from '../src/net/arena/arenaLaw.js';
 import { createEgClient, EG_BACK_TEXT } from '../src/scenes/egClient.js';
 import { createEgSpan } from '../src/scenes/egSpan.js';
 import { egPanelModel, drawEgPanel, destroyEgHud, egRecapModel, egCardCompletes, egAccordDoes } from '../src/ui/egHud.js';
 import { EG_PRES_TEXT, egBeatMemo, egBeatWatch } from '../src/ui/egBeats.js';
 import { createEgBoardPanel, EG_BOARD_PANEL_ID } from '../src/ui/egBoardWindow.js';
-import { overlayOpen, clearOverlays, closeTopOverlay } from '../src/ui/enhancedOverlays.js';
+import { overlayOpen, clearOverlays, closeTopOverlay } from '../src/ui/enhanced/enhancedOverlays.js';
 import { eventTimerRows } from '../src/systems/eventTimers.js';
 import { spireShaftEase, spireShaftPitch, spireShaftBias, setSpireShaft, SPIRE_SHAFT_PITCH } from '../src/player/mwView.js';
 
@@ -113,7 +113,7 @@ test('AUDIT EG III THE OFFER\'S CARD SAYS WHAT ITS ACCORD DOES (section 15\'s Ac
 });
 
 // ── #6 THE BOARDS' PANEL, A WINDOW TO THE PAD ─────────────────────────────────────────────────────────────────────────
-test('AUDIT EG III THE BOARDS\' PANEL IS A WINDOW TO THE PAD (section 20; ui/gamepadInput.js domWindowUp, ui/enhancedOverlays.js): the Plus skin\'s panel stands on the page as an `enhanced-` door and on the enhanced doors\' stack while it stands - so the pad\'s cursor drives it and Tab puts it away - and a Back anywhere on the page (the pad\'s Escape, dispatched at the document) closes it once; destroyed, it leaves the stack and the page\'s keys (mutants: no enhanced id; never on the stack; left on it; Back unheard; the listener left behind)', () => {
+test('AUDIT EG III THE BOARDS\' PANEL IS A WINDOW TO THE PAD (section 20; ui/gamepadInput.js domWindowUp, ui/enhanced/enhancedOverlays.js): the Plus skin\'s panel stands on the page as an `enhanced-` door and on the enhanced doors\' stack while it stands - so the pad\'s cursor drives it and Tab puts it away - and a Back anywhere on the page (the pad\'s Escape, dispatched at the document) closes it once; destroyed, it leaves the stack and the page\'s keys (mutants: no enhanced id; never on the stack; left on it; Back unheard; the listener left behind)', () => {
   clearOverlays();
   const listeners = new Map();
   const win = { addEventListener: (t, f, o) => listeners.set(f, { t, o }), removeEventListener: (t, f) => listeners.delete(f) };

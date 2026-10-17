@@ -2,12 +2,12 @@
 // EG-E3 (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 5, "The dungeon's
 // find"): A DUNGEON ELITE'S WEIR KEY, ASKED BY ITS KILLER. No relay witnesses an ordinary dungeon, so when an elite foe
 // (`eliteFoe`, systems/eliteFoes.js promoteEliteFoe) dies in a dungeon online, the client whose blow it was asks the
-// account service (`/v1/eg/find`, net/accountClient.js accountEg's `find`) with the dungeon's tier (systems/dungeonTier.js
+// account service (`/v1/eg/find`, net/accountClient.js accountEg's `find`) with the dungeon's tier (systems/dungeon/dungeonTier.js
 // - 'regular', 'elite', or 'super', the player's Abyss Dungeon), and the service rolls with its own die, capped a tier a
 // real day and a week (server-account/src/eg.js findEg). A forged ask is bounded there, never believed here.
 //
 // WHO ASKS (section 5, step 1): the foe's OWNER kills it - a joiner's blow is applied by the owner, so the death and its
-// handlers (scenes/corpseMarker.js raiseEnemyDeath, the seam CARDS9's card uses - systems/cardSources.js dropFoeCard) run
+// handlers (scenes/corpseMarker.js raiseEnemyDeath, the seam CARDS9's card uses - systems/card/cardSources.js dropFoeCard) run
 // there, and the owner names the striking joiner on the foes stream (`_killedBy`, the record's `v`, for KILLED_BY_MS -
 // scenes/dungeonContext.js). So:
 //   - on the owner, the death handler asks when its own blow killed (`by` null - the record's `v` null - or its own id),
@@ -31,7 +31,7 @@
 // no Weir Key and no online. Ledger A (ELITE-GATES).
 import { registerEnemyDeathHandler } from '../scenes/corpseMarker.js';
 import { weirKeys, restackWeirKeys } from './weirKey.js';
-import { DUNGEON_TIERS } from './dungeonTier.js';
+import { DUNGEON_TIERS } from './dungeon/dungeonTier.js';
 
 /** The death handler's name (corpseMarker.js registerEnemyDeathHandler). */
 export const EG_FIND_HANDLER = 'eg-find';

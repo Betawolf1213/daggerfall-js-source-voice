@@ -4,7 +4,7 @@
 // it were the Hour's story, not the Spire's).
 //
 // EG-LOOK (2026-10-15, Mac: "Literally everything, and no band aids"; bible/11-Multiplayer/Elite-Gates-Look.md section 6):
-// THE FETCH over a painted sky - SD5b's law (render/sdSky.js SdSkyRenderer). The band's realm is painted into an
+// THE FETCH over a painted sky - SD5b's law (render/superDungeon/sdSky.js SdSkyRenderer). The band's realm is painted into an
 // octahedral map a quadrant a frame (render/egSkyMap.js - the Deadlands, the Soul Cairn, the Evergloam, the Havoc
 // Wellhead), and this pass is one triangle at the far plane, drawn only where nothing nearer has (PERF2). Each pixel:
 //   THE SKY'S OWN PIXEL - the ray snapped to a world-fixed cell of Daggerfall's own sky pixel (render/skyRenderer.js
@@ -25,7 +25,7 @@
 //
 // A foreign pass: it owns its program, its state and its map; the host marks it. Not a DFU member. Ledger A (ELITE-GATES).
 import { buildProgram } from './glProgram.js';
-import { sdSkyBasisInto, SD_OCT_GLSL } from './sdSky.js';
+import { sdSkyBasisInto, SD_OCT_GLSL } from './superDungeon/sdSky.js';
 import { DITHER_GLSL, SD_PIXEL_GLSL } from './orderedDither.js';
 import { SKY_ANGLE_PER_PIXEL } from './skyRenderer.js';
 import { EgSkyMap, EG_SKY_MAP, EG_SKY_STEPS } from './egSkyMap.js';

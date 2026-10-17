@@ -317,7 +317,7 @@
   },
   {
     "name": "EGA3C-ghost-pass-colour-fixed",
-    "file": "src/render/sdStepsPass.js",
+    "file": "src/render/superDungeon/sdStepsPass.js",
     "old": "    gl.uniform3f(U.uColor, color[0], color[1], color[2]);",
     "new": "    gl.uniform3f(U.uColor, SD_GHOST.color[0], SD_GHOST.color[1], SD_GHOST.color[2]);",
     "tests": [
@@ -498,7 +498,7 @@
   },
   {
     "name": "EGA3C-veil-opening-look-kept",
-    "file": "src/ui/gateVeil.js",
+    "file": "src/ui/gate/gateVeil.js",
     "old": "      if (phase === 'idle' || phase === 'opening') takeLook(look, opts);",
     "new": "      if (phase === 'idle') takeLook(look, opts);",
     "tests": [

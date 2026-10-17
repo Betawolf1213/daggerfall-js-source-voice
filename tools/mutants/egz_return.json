@@ -523,7 +523,7 @@
   },
   {
     "name": "EGZ-stage-ignores-dash",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "  if ((uLook & 4) != 0) { float dsh",
     "new": "  if ((uLook & 8) != 0) { float dsh",
     "tests": [

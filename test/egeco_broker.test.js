@@ -1,5 +1,5 @@
 // EG-E1 (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 19, THE SINK): THE
-// BROKER'S PANOPLY SINK ON THE CLIENT - the sale's two halves (systems/sigilBroker.js panoplySale: the piece minted, the
+// BROKER'S PANOPLY SINK ON THE CLIENT - the sale's two halves (systems/sigil/sigilBroker.js panoplySale: the piece minted, the
 // embers out of the pack, the account service asked, a refusal giving them back, a lost answer asked after, the piece in
 // the pack and saved), and the Broker's window (ui/brokerWindow.js): "The Battlemage's Panoply" under the insignia, the
 // nine pieces by name, its price and its week, each row's Buy saying why not ("Need 15 more", "Bought", "Next week"), a
@@ -8,8 +8,8 @@ import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { panoplySale, stoneCount, spendableStonesIn, brokerStock } from '../src/systems/sigilBroker.js';
-import { sigilStone } from '../src/systems/gateSpoils.js';
+import { panoplySale, stoneCount, spendableStonesIn, brokerStock } from '../src/systems/sigil/sigilBroker.js';
+import { sigilStone } from '../src/systems/gate/gateSpoils.js';
 import { REGALIA, mintAetheric } from '../src/systems/aetheric.js';
 import { EG_SINK_EMBERS, EG_PANOPLY_IDS } from '../src/net/egPay.js';
 import { fakeDom } from './invdrag.mjs';
@@ -24,7 +24,7 @@ const count = (pack) => stoneCount(spendableStonesIn(pack));
 /** A real Aetheric piece, as the host's mint makes one (the Panoply's records are the host's - a Regalia piece here). */
 const minted = () => mintAetheric(REGALIA[0]);
 
-test('EG-E1 THE PANOPLY SALE, BOTH HALVES (systems/sigilBroker.js panoplySale): the piece minted, then the 20 embers out of the pack BEFORE the service is asked; held, the piece in the pack (no Broker price on it) and saved once; refused, the embers back and nothing saved; the answer lost (unreached, a 5xx) asked after - held, the sale; not held, the embers back; a short pack, a piece not the Panoply\'s or one the host cannot mint asks nothing (mutants: the embers never given back; a lost answer taken for a refusal; the piece never added; the sale never saved; the price taken after the service)', async () => {
+test('EG-E1 THE PANOPLY SALE, BOTH HALVES (systems/sigil/sigilBroker.js panoplySale): the piece minted, then the 20 embers out of the pack BEFORE the service is asked; held, the piece in the pack (no Broker price on it) and saved once; refused, the embers back and nothing saved; the answer lost (unreached, a 5xx) asked after - held, the sale; not held, the embers back; a short pack, a piece not the Panoply\'s or one the host cannot mint asks nothing (mutants: the embers never given back; a lost answer taken for a refusal; the piece never added; the sale never saved; the price taken after the service)', async () => {
   const piece = EG_PANOPLY_IDS[3];
   let saved = 0;
   const save = () => { saved++; };

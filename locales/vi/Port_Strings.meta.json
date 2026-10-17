@@ -59,6 +59,16 @@
   "tr": "f5ccb76d81a7",
   "by": "claude-in-session"
  },
+ "combat.leadLeftHand": {
+  "en": "9a84e174d1b8",
+  "tr": "71d1a71846c3",
+  "by": "claude-in-session"
+ },
+ "combat.leadRightHand": {
+  "en": "40a5921dea29",
+  "tr": "1282c0741433",
+  "by": "claude-in-session"
+ },
  "features.calmHud.note": {
   "en": "aa9c398cb552",
   "tr": "75712ef806d8",

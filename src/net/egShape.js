@@ -2,7 +2,7 @@
 // EG-FULL (2026-10-11, the Elite Gates arc; bible/11-Multiplayer/Elite-Gates.md sections 11.7, 13.2 and 25.4): THE
 // SPIRE'S SHAPES - every blow a lord, an add or a hall throws, as ONE stamp the relay sends whole (a FULL shape stamp,
 // section 21: its kind and every number, so no screen reads a table to know what lands) and every screen tests its own
-// feet against at the landing (co-op's law - net/gateStrike.js's, for any shape).
+// feet against at the landing (co-op's law - net/gate/gateStrike.js's, for any shape).
 //
 // THE STAMPS (metres, the hall's own frame - net/egLaw.js; a facing `atan2(dx, dz)` as the gate's):
 //   ['d', x, z, r]              a disc

@@ -18,10 +18,10 @@ import { egLordsOf, egLordHitX, egLordsWake, EG_OBJ } from '../src/net/egLords.j
 import { egThreatX } from '../src/net/egRun.js';
 import { shDisc } from '../src/net/egShape.js';
 import { EG_V_BY_KEY, EG_ACCORDS, egAccordMates, egCardAccords, EG_STORM_N, EG_STORM_M, EG_WEAVE_N, EG_FAR_M, EG_HAMMER_X, EG_AMBUSH_X, EG_WALL_X, EG_KINDLED_M, EG_ECHO_Q } from '../src/net/egVestige.js';
-import { HIT_KINDS, healRef } from '../src/net/gateBrain.js';
-import { strikeDamage } from '../src/net/gateStrike.js';
+import { HIT_KINDS, healRef } from '../src/net/gate/gateBrain.js';
+import { strikeDamage } from '../src/net/gate/gateStrike.js';
 import { foldEg, EG_STATE_EMPTY } from '../src/net/egLink.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { createEgFight, EG_ECHO_Q as FIGHT_ECHO_Q } from '../src/scenes/egFight.js';
 import { createEgClient } from '../src/scenes/egClient.js';
 import { spireHolderStep, _resetSpireVestigesForTests } from '../src/systems/spireVestiges.js';

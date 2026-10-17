@@ -34,14 +34,14 @@
 // pilasters are the wall's ashlar (56) cut in geometry. UV at 0.5 a metre (2 m a repeat - 32 texels a metre on the 64 px
 // records), walls' v up the picture.
 //
-// Built with the mesh kit (world/meshKit.js) a piece at a time and laid into the circle's faces (world/gateModel.js), so the
+// Built with the mesh kit (world/meshKit.js) a piece at a time and laid into the circle's faces (world/gate/gateModel.js), so the
 // occluders' runs (egHall.js egOccluderRuns) and the one pack stay as they were. Pure: no DOM, no GL - the swap's worker
 // builds it (world/egCircleParts.js). Deterministic: the same seed lays the same bytes.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
-import { realmToDungeon } from '../net/sdBrain.js';
+import { realmToDungeon } from '../net/superDungeon/sdBrain.js';
 import { createMeshKit } from './meshKit.js';
-import { GATE_PART } from './gateModel.js';
+import { GATE_PART } from './gate/gateModel.js';
 import { EG_DRESS, EG_KIT_MAP } from './egBandArt.js';   // the ground's records, and how each kit picture is worn
 import { EG_KIT_RECORD, egKitStyle } from './egKit.js';
 
@@ -70,8 +70,8 @@ export function egGroundHash(...n) {
 // ── laying a kit's piece into the circle's faces ──────────────────────────────────────────────────────────────────
 /** The mesh kit (world/meshKit.js) each faces build lays its pieces with: its shapes (box, prism, lathe, sweep) as the kit
  *  makes them, its one face and one triangle - which every shape lays through - writing straight into faces `f`'s records
- *  (world/gateModel.js faces' byRec), wound as the kit winds them (`out`: a direction, or with `dir` false a point to look
- *  away from), so a piece's triangles are a run of its records' own and the circle packs once (world/sdRealm.js
+ *  (world/gate/gateModel.js faces' byRec), wound as the kit winds them (`out`: a direction, or with `dir` false a point to look
+ *  away from), so a piece's triangles are a run of its records' own and the circle packs once (world/superDungeon/sdRealm.js
  *  packRealmFaces). */
 const _kits = new WeakMap();
 function facesKit(f) {

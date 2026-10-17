@@ -431,7 +431,7 @@
   },
   {
     "name": "EGE1-sale-embers-never-back",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "    addItem(items, Object.assign(sigilStone(), { stackCount: EG_SINK_EMBERS }));   // the embers back: the service holds no sale\n",
     "new": "",
     "why": "a refused sale keeping the embers",
@@ -441,7 +441,7 @@
   },
   {
     "name": "EGE1-sale-lost-taken-for-refusal",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  const lost = insigniaUnheard(r);\n  if (lost) {",
     "new": "  const lost = insigniaUnheard(r);\n  if (false) {",
     "why": "a sale the service holds, its answer lost, refunded and kept",
@@ -451,7 +451,7 @@
   },
   {
     "name": "EGE1-sale-piece-never-added",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  delete item.stonesPaid;\n  addItem(items, item);",
     "new": "  delete item.stonesPaid;",
     "why": "the embers spent and no piece",
@@ -461,7 +461,7 @@
   },
   {
     "name": "EGE1-sale-never-saved",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  save();\n  return { ok: true, data: r.data, item };",
     "new": "  return { ok: true, data: r.data, item };",
     "why": "a held sale not saved - a page closed keeps the embers too",
@@ -471,7 +471,7 @@
   },
   {
     "name": "EGE1-sale-price-after",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  if (!spendStones(items, EG_SINK_EMBERS)) return { ok: false, error: 'stones' };",
     "new": "  if (stoneCount(spendableStonesIn(items)) < EG_SINK_EMBERS) return { ok: false, error: 'stones' };",
     "why": "the price never taken",
@@ -481,7 +481,7 @@
   },
   {
     "name": "EGE1-sale-broker-price-kept",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  delete item.stonesPaid;\n",
     "new": "",
     "why": "the sink's piece priced as the day's stock - a dismantle paying embers back",
@@ -491,7 +491,7 @@
   },
   {
     "name": "EGE1-sale-unmintable-paid",
-    "file": "src/systems/sigilBroker.js",
+    "file": "src/systems/sigil/sigilBroker.js",
     "old": "  if (!item) return { ok: false, error: 'piece' };\n  if (!spendStones",
     "new": "  if (!spendStones",
     "why": "a piece the host cannot make paid for",
@@ -566,7 +566,7 @@
     "new": "",
     "why": "a Redoubt's capped line naming a breach",
     "tests": [
-      "test/silverways_client.test.js"
+      "test/net/silverways_client.test.js"
     ]
   },
   {

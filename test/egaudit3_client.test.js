@@ -15,20 +15,20 @@ import { egHallOf, egCircleSpecs, egCircleOfHall, egSpecForget, EG_SPEC, EG_SEAL
 import { egBreachNew, egEnter, egStateOf } from '../src/net/egBrain.js';
 import { validEgOut } from '../src/net/wire.js';
 import { mintEgReceipt } from '../src/net/egReceipt.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { CAMERA_OBSTACLE_LIMIT, MW_UNITS_PER_METER } from '../src/player/mwCamera.js';
 import { egBeatTellUp, egBeatTellDown, egGhostRgb } from '../src/scenes/egSpan.js';
 import { EG_BEAT_TELL_RECORDS, egTellArchive } from '../src/world/egBandArt.js';
 import { egEdgeLineColor, egCircleEdges, EG_EDGE_LINE } from '../src/world/egLook.js';
 import { EG_DANGER_PALETTES } from '../src/ui/egAccess.js';
 import { EgLinePass } from '../src/render/egLinePass.js';
-import { SdStepsPass, SD_GHOST } from '../src/render/sdStepsPass.js';
+import { SdStepsPass, SD_GHOST } from '../src/render/superDungeon/sdStepsPass.js';
 import { createEgOccluders, egOccludersHit } from '../src/scenes/egOcclude.js';
 import { createEgFight } from '../src/scenes/egFight.js';
 import { spireHeld, _resetSpireVestigesForTests } from '../src/systems/spireVestiges.js';
 import { openEgStartWindow, egStartAsk } from '../src/ui/egStartWindow.js';
 import { YesNoBoxWindow } from '../src/ui/yesNoBox.js';
-import { createGateVeil, VEIL_CUES, VEIL_BRASS_CUES } from '../src/ui/gateVeil.js';
+import { createGateVeil, VEIL_CUES, VEIL_BRASS_CUES } from '../src/ui/gate/gateVeil.js';
 import { EG_STATE_EMPTY } from '../src/net/egLink.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

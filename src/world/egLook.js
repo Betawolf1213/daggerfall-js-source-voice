@@ -3,7 +3,7 @@
 // what EG-D still owed the screen): THE SPIRE'S LOOK AS LAW - every number the Spire's own passes draw by, pure, so a test
 // holds each one and a pass only draws it:
 //   THE EDGE LINE (section 25.3) - every edge a member could fall from, as segments: each plate's, island's and court's
-//     rim (the drawn rim's own 48 sides - world/sdRealm.js SD_ISLAND_SIDES - so the line never cuts inside the stone or
+//     rim (the drawn rim's own 48 sides - world/superDungeon/sdRealm.js SD_ISLAND_SIDES - so the line never cuts inside the stone or
 //     floats past it), each bridge's, walkway's and lane's two sides; never a passage's walled floor (its walls are its
 //     kerbs), and never a piece that moves (its own line rides its mesh - scenes/egSpan.js);
 //   THE PIECES' LAST TELLS (layer two's "still owed"): the Rail's and the Drum's dashed track under its whole travel (EG-ZL:
@@ -24,8 +24,8 @@
 import { egCircleSpecs, egBandOfCircle, EG_BRINK_HALLS } from '../net/egLaw.js';
 import { egMistAt } from '../net/egFragLaw.js';
 import { egTubeBand, egWallBand, egIsleDisc, egToDungeon } from './egHall.js';
-import { SD_ISLAND_SIDES } from './sdRealm.js';
-import { SD_STEP_THICK, breathSeen } from './sdSteps.js';
+import { SD_ISLAND_SIDES } from './superDungeon/sdRealm.js';
+import { SD_STEP_THICK, breathSeen } from './superDungeon/sdSteps.js';
 import { createMeshKit } from './meshKit.js';
 import { EG_DRESS, egBandArchive } from './egBandArt.js';
 import { EG_CVD } from '../ui/egAccess.js';
@@ -288,7 +288,7 @@ export const EG_SKIES = Object.freeze([
 export const egSkyOf = (c) => EG_SKIES[egBandOfCircle(c)];
 
 // ── THE DANGER PALETTES, THE FILL, THE QUIET COMPANY ───────────────────────────────────────────────────────────
-/** The telegraph pass's style bits (render/gateTelegraph.js uLook): the double keyline, the 45° hatch in the fill; EG-ZD
+/** The telegraph pass's style bits (render/gate/gateTelegraph.js uLook): the double keyline, the 45° hatch in the fill; EG-ZD
  *  (section 13.2) a cut feint's mark dashed as it fades (scenes/egFight.js lays it on a cut blow, never a palette). */
 export const EG_LOOK_BIT = Object.freeze({ keyline2: 1, hatch: 2, dash: 4 });
 /** The style bits a shelf palette lays on (ui/egAccess.js EG_DANGER_PALETTES - `keyline` 2 the double keyline, `hatch`
@@ -310,7 +310,7 @@ export function egQuietCompany(stage, full = true) {
  *  `floor`, eased out over `ease` past it. */
 export const EG_FOG_FLOOR = Object.freeze({ floor: 0.85, within: 30, ease: 4 });
 /** The fog visibility a Spire signal keeps at `d` metres where the world's own is `f` (0-1). Pure - the shaders' text
- *  reads the same numbers (render/egLinePass.js, render/gateTelegraph.js uFogFloor). */
+ *  reads the same numbers (render/egLinePass.js, render/gate/gateTelegraph.js uFogFloor). */
 export function egFogKept(f, d) {
   const F = EG_FOG_FLOOR, t = Math.max(0, Math.min(1, (d - F.within) / F.ease)), ease = 1 - t * t * (3 - 2 * t);
   return Math.max(f, F.floor * ease);

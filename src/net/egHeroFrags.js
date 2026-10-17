@@ -8,7 +8,7 @@
 // THE REFERENCE (`egRefFrag`, variant 'reference') is the port's own stand-in, written by tools/egRefFragScene.mjs and baked
 // by tools/bakeEgRefFrag.mjs: it proves the path every hero takes, and NO HALL LAYS IT (egHeroFragLaws leaves it out). Every
 // other registered hero is LAID (EG-HERO-LAY, spec law 7 - net/egLaw.js heroHall): in a slot of its kit and class, on the hall's
-// own hero die, where it fits. So this module and every law JSON it imports are in the relay's bundle (test/relayversion.test.js
+// own hero die, where it fits. So this module and every law JSON it imports are in the relay's bundle (test/net/relayversion.test.js
 // RELAY_GRAPH): a hero's law half is a relay version; its mesh half is not.
 //
 // To register one of Mac's: bake it (its own tools/bake<Name>.mjs, the reference's shape), import its law JSON here and add

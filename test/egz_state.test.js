@@ -13,7 +13,7 @@ import { EG_INTERNAL_OPEN, validEgOut } from '../src/net/wire.js';
 import { egRoomKey, egHallOf, egCircleSpecs, EG_LORDS, EG_SEALED_MS, EG_GATHER_MS } from '../src/net/egLaw.js';
 import { egGive8, egGive8Hall } from './egGive8.mjs';   // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9): a law 8 circle given
 import { mintEgOrder } from '../src/net/identityToken.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { egBreachNew, egEnter, egStep, egStateOf, egFightStateOf, champRing } from '../src/net/egBrain.js';
 import { EG_ROLE, EG_FL, EG_Y_RESAY_M, egFightNew, egFightBind, egBodyNew, egBodyWire, egBodyAt, egWalk, egWalkY, egStop, egPlace, egCarry, egMovesOut, egHpOut, egObSay, egSetFl, egFightState } from '../src/net/egBodies.js';
 import { EG_KIND, egAirY, egIsleAhead, egLegionRaise, egLegionStep } from '../src/net/egLegion.js';
@@ -23,9 +23,9 @@ import { foldEg, egBodyOf, egBodyHeight, egBodyPlace, EG_STATE_EMPTY } from '../
 import { egLordBar } from '../src/ui/egSpireHud.js';
 import { createEgFight, egBodyAct } from '../src/scenes/egFight.js';
 import { egHallCentre } from '../src/world/egHall.js';
-import { BOSS_CUES } from '../src/world/gateBoss.js';
+import { BOSS_CUES } from '../src/world/gate/gateBoss.js';
 import { egFightFloors, egFloorPlan, egHazardSurface } from '../src/world/egTelegraph.js';
-import { TELEGRAPH_KIND, TELEGRAPH_POOL } from '../src/render/gateTelegraph.js';
+import { TELEGRAPH_KIND, TELEGRAPH_POOL } from '../src/render/gate/gateTelegraph.js';
 import { egHazardParts, EG_HAZARDS } from '../src/net/egFragLaw.js';
 import { egSlagState, egSlagX, EG_SLAG_SPOUTS, EG_SLAG_CRUST_S, EG_SLAG_WARN_S } from '../src/net/egSpanLaw.js';
 import { shDisc } from '../src/net/egShape.js';

@@ -19,7 +19,7 @@
 import { egTimes, egPhase, egCountText, EG_TEXT } from '../net/egLaw.js';
 import { createPortalGates } from './portalGates.js';
 import { portalPlace, PORTAL_OPEN_MS } from '../systems/portalStone.js';
-import { level } from '../systems/arenaSound.js';
+import { level } from '../systems/arena/arenaSound.js';
 
 // ── the horn ─────────────────────────────────────────────────────────────────────────────────────────────────────
 /** The made sound's key on the engine (systems/audio.js registerSamples), its rate, its length and its level (RMS). */

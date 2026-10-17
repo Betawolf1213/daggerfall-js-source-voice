@@ -18,7 +18,7 @@
 // EG-ZF (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 27.6): THE RECAP'S
 // NUMBERS - each member's share of the company's damage and what they healed (the room's `ds`, net/egTally.js), the board's
 // line from the end's claim (`egBoardLine` - *The Descent, the Few: 14th*), and the lord's fall's chart as the gate's own
-// chart reads one (`egChartFell` - ui/gateDamageChart.js damageChartModel).
+// chart reads one (`egChartFell` - ui/gate/gateDamageChart.js damageChartModel).
 //
 // AUDIT EG III (2026-10-13, section 15's resonance and Accords): an offer's card says the capstone a third Vestige of its family
 // completes (`egCardCompletes` - *Completes Stone: Rooted.* and what Rooted does, in the Vestiges' blue) and what each Accord it
@@ -37,8 +37,8 @@ import { egCardAccords } from '../net/egVestige.js';   // EG-ZS (section 15): th
 import { egResonance, egRankOf, EG_ACCORDS, EG_CAPSTONES, EG_V_FAMILY_NAMES } from '../net/egVestige.js';   // AUDIT EG III: the capstone a card completes, what an Accord does
 import { EG_CANTRIPS } from '../net/egRun.js';
 import { egTwistShown } from '../net/egRun.js';   // AUDIT EG V (L2-4): no Bargain's name when no family is free
-import { injectEnhancedFonts } from './enhancedStyle.js';
-import { chartShare, chartNumber } from './gateDamageChart.js';   // EG-ZF: the share and the numbers as the gate's chart says them
+import { injectEnhancedFonts } from './enhanced/enhancedStyle.js';
+import { chartShare, chartNumber } from './gate/gateDamageChart.js';   // EG-ZF: the share and the numbers as the gate's chart says them
 import { EG_PRES_TEXT } from './egBeats.js';   // EG-ZF: the board's line and the chart's words
 import { t } from '../systems/textManager.js';   // AUDIT EG V (c): the words this audit adds, in the player's language
 
@@ -346,7 +346,7 @@ export function egRecapBoardKeep(store, b, line) {
   return list;
 }
 /**
- * EG-ZF (section 27.6): A LORD'S FALL'S CHART as the gate's chart reads a fall (ui/gateDamageChart.js damageChartModel's
+ * EG-ZF (section 27.6): A LORD'S FALL'S CHART as the gate's chart reads a fall (ui/gate/gateDamageChart.js damageChartModel's
  * `fell`): the room's compact rows (`E.chart.dm` - `[sub, level, dealt, on the lord, blows, heaviest, falls, healed]`)
  * named by the company, the lord's part in the crystals' column, the Healed column where anyone healed; null for none.
  * Pure.

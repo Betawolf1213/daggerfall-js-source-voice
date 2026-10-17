@@ -5,12 +5,12 @@
 // seed and one hall number give one hall on every machine.
 //
 // THE LAW DECIDES IN INTEGERS (section 9): every length is drawn in centimetres and every time in milliseconds off the
-// port's seeded die (net/sdBrain.js sdRng), and its trigonometry is the table below (`lawSin`, `lawCos` - whole degrees
+// port's seeded die (net/superDungeon/sdBrain.js sdRng), and its trigonometry is the table below (`lawSin`, `lawCos` - whole degrees
 // in steps of 5, sines times 10,000). No transcendental runs here: V8's and JavaScriptCore's can differ in the last bit,
 // and one flipped draw would give the relay and a phone different halls. A source sweep holds it
 // (test/egplay_law.test.js).
 //
-// THE SPIRE'S FRAME is the gate's court frame (net/gateBrain.js COURT_CENTRE, the made block's middle - the Hour's
+// THE SPIRE'S FRAME is the gate's court frame (net/gate/gateBrain.js COURT_CENTRE, the made block's middle - the Hour's
 // SD_REALM_ORIGIN too): metres, floors at y 0, the dungeon's own x and z less [25.6, 0, 25.6]. A circle is one made
 // level: its five halls stand side by side, hall slot `s`'s origin at x `x0` = (s - 1) * EG_HALL_PITCH. Every position a
 // spec says is in its HALL'S OWN FRAME - about that origin, laid along +z from its arrival plate at (0, 0) - so a hall's
@@ -82,7 +82,7 @@
 // Laws 4-8 keep their halls byte for byte (their 800 halls hashed whole - test/egaudit5_f.test.js).
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
-import { sdSeed, sdRng } from './sdBrain.js';
+import { sdSeed, sdRng } from './superDungeon/sdBrain.js';
 import { egSpanProof, egRoadCross, EG_MEDIAN_X, egJumpReach, EG_SPAN_RUN_MPS, EG_JUMP_MPS, EG_JUMP_FWD, EG_JUMP_G } from './egSpanLaw.js';   // EG-FULL: THE TIMED SOLVER - a course it refuses is laid again
 import { EG_SINK_MPS, EG_SINK_ON_S } from './egSpanLaw.js';   // AUDIT EG V (spec law 8): the Sinking Stair's last leap's height
 import { egSpanOf, egDieBetween, EG_GAP_MIN_CM, EG_STEP_DOWN_CM, EG_DROP_CM } from './egSpanLaw.js';   // EG6a: THE SPAN GENERATOR - every course laid by it, through courseOf
@@ -92,7 +92,7 @@ import { egFragInPoly, egFragApart, egFragBoxAt, egFragSwept, EG_SET_PIECES, EG_
 import { EG_HERO_FRAGS, egHeroFragLaws } from './egHeroFrags.js';   // EG-HERO-LAY: the hero fragments' law halves (the relay's since spec law 7)
 import { egPieceIn, egPolyIn, egPolyKeep } from './egShape.js';   // EG-HERO-LAY: a hero's fight floors are polygons
 import { egInShape, shRing, shLane } from './egShape.js';   // AUDIT EG V (lane1 #21): THE MOLTEN RIM's magma and its ways across
-import { gateTrialOf } from './gateMods.js';   // EG5: the gate's boss-general trials the lord family recasts (a leaf - it imports nothing)
+import { gateTrialOf } from './gate/gateMods.js';   // EG5: the gate's boss-general trials the lord family recasts (a leaf - it imports nothing)
 import { egAscentLay, egAscentSane, egAscentNote, egTape, EG_ASCENT_FRAGS_MAX } from './egAscent.js';   // THE ASCENT (spec law 9): the route planner
 import { egRoomHero, EG_ROOM_NAMES } from './egRoomLaw.js';   // THE ASCENT: a room laid as a hero
 import { egRouteInHall } from './egRoute.js';   // THE ASCENT (LAW 9): a hall's ground is its route's bound (a leaf - it imports nothing)
@@ -371,7 +371,7 @@ export const EG_CHAMPIONS = Object.freeze([
 export const EG_LAW_UNIT = 1000;
 /** A decree's law by rank - `[rank I's, rank II's]`, frozen. */
 const lawRanks = (one, two) => Object.freeze([Object.freeze(one), Object.freeze(two)]);
-/** EG5: a gate trial's numbers (net/gateMods.js GATE_TRIALS - read, never copied), and a number in thousandths. */
+/** EG5: a gate trial's numbers (net/gate/gateMods.js GATE_TRIALS - read, never copied), and a number in thousandths. */
 const trial = (k) => /** @type {any} */ (gateTrialOf(k));
 const milli = (v) => Math.round(v * EG_LAW_UNIT);
 /** EVERY DECREE: its number, its family, its name, its line (and the lord family's `law` - section 14's merge). */
@@ -392,7 +392,7 @@ export const EG_DECREES = Object.freeze([
   Object.freeze({ id: 12, key: 'sparks', fam: 'ground', name: 'Wellhead Sparks', line: 'Sparks rise and burst.' }),
   Object.freeze({ id: 13, key: 'press', fam: 'covenant', name: "The Covenant's Press", line: 'The next Redoubt gives less time.' }),
   Object.freeze({ id: 14, key: 'ashen', fam: 'covenant', name: 'Ashen Vigil', line: 'The next rest heals less.' }),
-  // EG5 (2026-10-12; section 14, THE MERGE): the lord family's four are the gate's boss-general trials (net/gateMods.js
+  // EG5 (2026-10-12; section 14, THE MERGE): the lord family's four are the gate's boss-general trials (net/gate/gateMods.js
   // GATE_TRIALS) RECAST AS X-KEYED LAWS - `law` its rank I's (the trial's own numbers) and its rank II's (the page's), each
   // in thousandths (EG_LAW_UNIT: the law decides in integers); a key ending in X multiplies, any other is the last decree's
   // that names it (egLawFold). Colossal's radii are the page's 1.2 (the Slam 8.4 m, not the gate's 8.5); Unyielding's ward is
@@ -401,7 +401,7 @@ export const EG_DECREES = Object.freeze([
   Object.freeze({ id: 16, key: 'unyielding', fam: 'lord', name: 'Unyielding', line: 'The lord\'s ward holds longer.', law: lawRanks({ shieldX: 2000, hitX: milli(trial('unyielding').hit) }, { shieldX: 3000, hitX: 750 }) }),
   Object.freeze({ id: 17, key: 'vengeful', fam: 'lord', name: 'Vengeful', line: 'The lord strikes harder.', law: lawRanks({ dmgX: milli(trial('vengeful').dmg) }, { dmgX: 1400 }) }),
   Object.freeze({ id: 18, key: 'grudge', fam: 'lord', name: 'Grudge-Bearer', line: 'The lord never forgets.', law: lawRanks({ threatPick: milli(trial('grudge').threatPick), threatDecay: milli(trial('grudge').threatDecay) }, { threatPick: 950, threatDecay: 0 }) }),
-  // AUDIT EG V (L2-10; sections 8.4 and 14): THE FRAYING - the Hour's omen (net/sdMarks.js SD_OMENS) as a decree of the ground,
+  // AUDIT EG V (L2-10; sections 8.4 and 14): THE FRAYING - the Hour's omen (net/superDungeon/sdMarks.js SD_OMENS) as a decree of the ground,
   // drawn only for a circle with an Athenaeum; its fray is net/egRun.js egFrayOf's, fed to the Orrery's draw (net/egBrain.js)
   Object.freeze({ id: 19, key: 'fraying', fam: 'ground', name: 'The Fraying', line: 'The Orrery snaps back sooner.' }),
 ]);
@@ -448,7 +448,7 @@ export function validEgDecrees(dc) {
 export const EG_PROFILE_CACHE_MAX = 256;
 const _profiles = new Map();
 /**
- * THE FOLD (section 14, "The merge" - net/sdMarks.js sdMarksLaw's rule): laws in thousandths, in their order - a key ending
+ * THE FOLD (section 14, "The merge" - net/superDungeon/sdMarks.js sdMarksLaw's rule): laws in thousandths, in their order - a key ending
  * in X multiplies (rounded to the thousandth), any other is the last law's that names it; each X-keyed number x1
  * (EG_LAW_UNIT) where none names it. Answers the folded law, in thousandths. Pure.
  * @param {ReadonlyArray<Readonly<Record<string, number>>|undefined|null>} laws
@@ -461,7 +461,7 @@ export function egLawFold(laws) {
   return acc;
 }
 /**
- * EG5 - THE FIGHT'S PROFILE (section 14): what a circle's decrees `dc` make of the fight its lords run by - net/sdRemnant.js
+ * EG5 - THE FIGHT'S PROFILE (section 14): what a circle's decrees `dc` make of the fight its lords run by - net/superDungeon/sdRemnant.js
  * sdFightProfile's fold: every decree's law (egLawFold), in the order of its number. Answers `{ dc, key, law }`:
  * the decrees sorted (null for none), the cache's key (the sorted decree string, `id:rank,...`), and `law` - every
  * X-keyed number (x1 where none names it) and each other a decree named, as numbers (net/egLords.js egLordLaw reads it,
@@ -491,7 +491,7 @@ export const egProfilesKept = () => _profiles.size;
 /** Halls stand this far apart across x in a circle's level (m) - far past the fog, so a hall never sees the next. */
 export const EG_HALL_PITCH = 500;
 
-/** The breach's seed for a draw (the Hour's mix - net/sdBrain.js sdSeed). */
+/** The breach's seed for a draw (the Hour's mix - net/superDungeon/sdBrain.js sdSeed). */
 export const egSeed = (seed, salt) => sdSeed(seed >>> 0, salt >>> 0);
 const CIRCLE_SALT = 0x0e6c1c;
 const HALL_SALT = 0x0e6a11;
@@ -628,7 +628,7 @@ const polar = (x, z, r, deg) => [x + Math.trunc((r * lawSin(deg)) / 10000), z + 
 /** A die's whole number from lo to hi, both in. */
 const between = egDieBetween;
 const m = (cm) => cm / 100;
-/** The span's pieces, the Steps' sizes and clocks (world/sdSteps.js - pinned equal), in cm and ms. */
+/** The span's pieces, the Steps' sizes and clocks (world/superDungeon/sdSteps.js - pinned equal), in cm and ms. */
 export const EG_STEP = Object.freeze({
   drift: Object.freeze({ w: 300, d: 240 }), beat: Object.freeze({ w: 300, d: 260 }), riser: Object.freeze({ w: 300, d: 260 }),
   crumble: Object.freeze({ w: 260, d: 260 }), still: Object.freeze({ w: 300, d: 260 }), ledge: Object.freeze({ w: 240, d: 200 }),
@@ -826,7 +826,7 @@ export function egAscentProof(spec) {
 /** The hall's cap of fragments (section 11.4 - a fork's Low Road counted). */
 export const EG_FRAGS_MAX = 4;
 /** The hanging underside under every piece of a course (cm - section 11.5's "a hanging underside's depth, SD_ROOT_DEPTH
- *  22 m": world/sdRealm.js SD_ROOT_DEPTH, pinned equal - the relay's bundle carries no world module). */
+ *  22 m": world/superDungeon/sdRealm.js SD_ROOT_DEPTH, pinned equal - the relay's bundle carries no world module). */
 export const EG_HANG_CM = 2200;
 /** A Low Road's vault stands at least this far (cm) below the lowest underside above it (section 11.5). */
 export const EG_VAULT_UNDER_CM = 300;

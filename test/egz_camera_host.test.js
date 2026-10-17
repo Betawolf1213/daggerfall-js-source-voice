@@ -17,8 +17,8 @@ import { createEgOccluders, EG_OCCLUDE_CHEST_M } from '../src/scenes/egOcclude.j
 import { createEgSwap } from '../src/scenes/egSwap.js';
 import { Renderer, WORLD_FRAME } from '../src/render/renderer.js';
 import { egBandArt, egBandArchive, EG_DRESS_RECORDS, EG_BAND_RECORDS } from '../src/world/egBandArt.js';
-import { realmArt } from '../src/world/sdRealmArt.js';
-import { SD_REALM_ARCHIVE } from '../src/world/sdRealm.js';
+import { realmArt } from '../src/world/superDungeon/sdRealmArt.js';
+import { SD_REALM_ARCHIVE } from '../src/world/superDungeon/sdRealm.js';
 import { identity } from '../src/world/mat4.js';
 import { buildEgLookModel } from '../src/world/egLook.js';
 import { Collider } from '../src/player/collider.js';
@@ -43,7 +43,7 @@ const covered = (ranges) => ranges.flatMap((r) => Array.from({ length: r.primiti
 const STACKS = { seed: 77, h: 2 };
 
 // ── THE PASS, ON THE REAL RENDERER AND THE MODE MACHINE'S OWN SOURCE ───────────────────────────────────────────────────
-/** A recording WebGL2 deep enough for the renderer (test/audit68_render_a.test.js's). */
+/** A recording WebGL2 deep enough for the renderer (test/render/audit68_render_a.test.js's). */
 function recordingGl() {
   const calls = [];
   let ids = 0;

@@ -15,7 +15,7 @@ import { readFileSync } from 'node:fs';
 import { standService, T0 } from './accountDb.mjs';
 import { mintEgReceipt, egCompanyTag, EG_RECEIPT_TTL_S } from '../src/net/egReceipt.js';
 import { verifyEgOpenAnyAge } from '../src/net/identityToken.js';
-import { arenaSeasonOf, arenaSeasonEndsS } from '../src/net/arenaLaw.js';
+import { arenaSeasonOf, arenaSeasonEndsS } from '../src/net/arena/arenaLaw.js';
 import { POST_SENDER, postWhole } from '../src/net/postLaw.js';
 import { EG_STAKE_POST, EG_STAKE_POST_HELD, EG_STAKE_CLOCK_S, EG_LAUNCH_POST, spendLapsedStakes, openEg, admitEg } from '../server-account/src/eg.js';
 import { egHonoursOf, _resetEgHonoursCache } from '../server-account/src/egHonours.js';
@@ -70,7 +70,7 @@ test('AUDIT EG IV lane3 #4 / lane9 #24 THE LAUNCH GIFT\'S LETTER (section 5): mi
   const breaker = await S.registered('Breaker'), riter = await S.registered('Riter'), none = await S.registered('Nobody');
   await S.claim(breaker, 700, now());
   S.env.DB._raw.prepare("INSERT INTO gate_kills (day, account, boss, earned, at) VALUES (701, ?, 'ruhn', 'rite', ?)").run(riter.id, now());
-  const mig = rd('server-account/migrations/0120_elite_breach.sql');
+  const mig = rd('server-account/migrations/0121_elite_breach.sql');
   const gift = mig.slice(mig.indexOf('-- THE LAUNCH GIFT (section 5)'), mig.indexOf('-- EG-E2 (2026-10-12'));
   assert.match(gift, /INSERT OR IGNORE INTO server_post/, 'the send rides the gift');
   const q = (s) => s.replace(/'/g, "''");

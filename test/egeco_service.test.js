@@ -9,7 +9,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { standService, sessionStorageOf } from './accountDb.mjs';
 import { mintEgReceipt } from '../src/net/egReceipt.js';
-import { ARENA_SEASON_EPOCH_S, ARENA_WEEK_S, arenaWeekOf } from '../src/net/arenaLaw.js';
+import { ARENA_SEASON_EPOCH_S, ARENA_WEEK_S, arenaWeekOf } from '../src/net/arena/arenaLaw.js';
 import { egPanoplyHit, egSpoilsSeed, egEmbersOf, EG_PANOPLY_PITY, EG_SINK_EMBERS, EG_PANOPLY_IDS, EG_PAY_MARKS } from '../src/net/egPay.js';
 import { MARKS_FAUCETS, MARKS_COMBAT, MARKS_KINDS } from '../src/net/marksLaw.js';
 import { INSIGNIA } from '../src/net/insignia.js';

@@ -1,7 +1,7 @@
 // EG-ZL (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md sections 10.3, 10.8 and 25):
 // THE PIECES' TELLS ON THE SPANS - the Steps' own look on the Spire's pieces, batched a kind (scenes/egSpan.js,
 // scenes/egPieceBatch.js): a kind that turns (a Drift's hang, a Crumble's chunks, a Gust island's banner) written through
-// its slot's whole matrix, and a kind's own picture map; the circle's ghosts through the Hour's pass (render/sdStepsPass.js
+// its slot's whole matrix, and a kind's own picture map; the circle's ghosts through the Hour's pass (render/superDungeon/sdStepsPass.js
 // - its count, its slabs and the Spire's fog floor, the Hour's text untouched); a Beat's dial a kind a beat, its last 0.4 s
 // the place's own white in the danger palette dissolving out and back in through cutout pictures (world/egBandArt.js); my
 // Crumble's cracks, grit, chunks, ghost and rewind, its shake still under reduced motion; the Drift's chains and its band's
@@ -16,13 +16,13 @@ import { fakeSocketClass } from './fakeSocket.mjs';
 import { createEgPieceBatch, EG_BATCH_HIDE_Y } from '../src/scenes/egPieceBatch.js';
 import { spherePlanes } from '../src/render/bounds.js';
 import { createEgSpan, egHangModel, egStepKey, EG_FLOOR_KEY, EG_GHOSTS_MAX, EG_GHOST_SLAB } from '../src/scenes/egSpan.js';
-import { SD_BEAT_FRAMES, SD_STEPS_SOUNDS, SD_CHUNK, SD_CRUMBLE_SHAKE, SD_BEAT_OUT_STAGE_S, SD_BEAT_BLINK_HZ, sdChunkWays, sdChunkMatrix } from '../src/scenes/sdSteps.js';
-import { SdStepsPass, SD_STEPS_PASS_VS, SD_STEPS_PASS_FS, SD_GHOSTS_MAX, sdStepsPassVs, sdStepsPassFs, sdGhostVertices } from '../src/render/sdStepsPass.js';
-import { stepEdges, SD_PENDULUM, pendulumAngle, SD_BEAT_DISSOLVE, buildCrumbleChunks, sdWaystonesOf, sdVaneAt, vaneYawAt } from '../src/world/sdStepsModel.js';
-import { SD_STEPS_RECORD, beatArt } from '../src/world/sdStepsArt.js';
-import { BAYER4 } from '../src/world/sdPixelKit.js';
-import { SD_CRUMBLE_DELAY, SD_CRUMBLE_BACK, SD_CRUMBLE_FALL_G, SD_BEAT_CYCLE, SD_BEAT_SOLID, SD_BEAT_BLINK, SD_GUST_EVERY } from '../src/world/sdSteps.js';
-import { SD_REALM_ARCHIVE } from '../src/world/sdRealm.js';
+import { SD_BEAT_FRAMES, SD_STEPS_SOUNDS, SD_CHUNK, SD_CRUMBLE_SHAKE, SD_BEAT_OUT_STAGE_S, SD_BEAT_BLINK_HZ, sdChunkWays, sdChunkMatrix } from '../src/scenes/superDungeon/sdSteps.js';
+import { SdStepsPass, SD_STEPS_PASS_VS, SD_STEPS_PASS_FS, SD_GHOSTS_MAX, sdStepsPassVs, sdStepsPassFs, sdGhostVertices } from '../src/render/superDungeon/sdStepsPass.js';
+import { stepEdges, SD_PENDULUM, pendulumAngle, SD_BEAT_DISSOLVE, buildCrumbleChunks, sdWaystonesOf, sdVaneAt, vaneYawAt } from '../src/world/superDungeon/sdStepsModel.js';
+import { SD_STEPS_RECORD, beatArt } from '../src/world/superDungeon/sdStepsArt.js';
+import { BAYER4 } from '../src/world/superDungeon/sdPixelKit.js';
+import { SD_CRUMBLE_DELAY, SD_CRUMBLE_BACK, SD_CRUMBLE_FALL_G, SD_BEAT_CYCLE, SD_BEAT_SOLID, SD_BEAT_BLINK, SD_GUST_EVERY } from '../src/world/superDungeon/sdSteps.js';
+import { SD_REALM_ARCHIVE } from '../src/world/superDungeon/sdRealm.js';
 import { egBeatWarnArt, egBeatBackArt, egBeatTellMaps, egDissolveArt, egTellArchive, egBandArchive, EG_BEAT_TELL_RECORDS, EG_DISSOLVE_TEXELS } from '../src/world/egBandArt.js';
 import { EG_KIT_RECORD } from '../src/world/egKit.js';   // EG-LOOK: the Galleries' anchor rib's record
 import { EG_BEAT_STONE_RECORDS, EG_CRUMBLE_TELL_RECORDS } from '../src/world/egPlatformArt.js';   // EG-LOOK: a Beat's stone dissolving with its dial
@@ -30,7 +30,7 @@ import { egCircleEdges, EG_TRACK, EG_FOG_FLOOR } from '../src/world/egLook.js';
 import { egCircleLights, egToDungeon, EG_LAMP, EG_DROP_LAMP } from '../src/world/egHall.js';
 import { egCircleSpecs, egBandOfCircle } from '../src/net/egLaw.js';
 import { egPieceAt, EG_DROP_WALL_H } from '../src/net/egSpanLaw.js';
-import { realmToDungeon, dungeonToRealm } from '../src/net/sdBrain.js';
+import { realmToDungeon, dungeonToRealm } from '../src/net/superDungeon/sdBrain.js';
 import { EG_DANGER_PALETTES } from '../src/ui/egAccess.js';
 import { setPref } from '../src/systems/uiPrefs.js';
 import { OnlineSession } from '../src/net/online.js';
@@ -114,7 +114,7 @@ test('EG-ZL A KIND THAT TURNS AND A KIND\'S OWN PICTURES (scenes/egPieceBatch.js
   batch.clear();
 });
 
-test('EG-ZL THE SPIRE\'S GHOSTS THROUGH THE HOUR\'S PASS (render/sdStepsPass.js; sections 10.3, 10.8 and 25.6): the Hour\'s vertex and fragment text and its buffer unchanged; a circle\'s count past the Hour\'s fifteen; each ghost\'s SLAB - its box\'s top after its segments - placed at its top plus the lift, lit only by its state\'s fourth share and at that share; the Spire\'s fragment stage keeping the fog floor within 30 m; the pass built with its count, its slabs and its floor, drawing a ghost past the fifteenth and sending the floor (mutants: no slab laid; a slab lit at nothing; its share ignored; the floor dropped; the count clipped to the Hour\'s; the loop on the Hour\'s count; the floor never sent)', () => {
+test('EG-ZL THE SPIRE\'S GHOSTS THROUGH THE HOUR\'S PASS (render/superDungeon/sdStepsPass.js; sections 10.3, 10.8 and 25.6): the Hour\'s vertex and fragment text and its buffer unchanged; a circle\'s count past the Hour\'s fifteen; each ghost\'s SLAB - its box\'s top after its segments - placed at its top plus the lift, lit only by its state\'s fourth share and at that share; the Spire\'s fragment stage keeping the fog floor within 30 m; the pass built with its count, its slabs and its floor, drawing a ghost past the fifteenth and sending the floor (mutants: no slab laid; a slab lit at nothing; its share ignored; the floor dropped; the count clipped to the Hour\'s; the loop on the Hour\'s count; the floor never sent)', () => {
   assert.equal(SD_STEPS_PASS_VS, sdStepsPassVs());
   assert.equal(SD_STEPS_PASS_FS, sdStepsPassFs());
   assert.ok(!SD_STEPS_PASS_VS.includes('aM.w > 1.5') && !SD_STEPS_PASS_FS.includes('uFogFloor'), 'the Hour\'s text carries neither');

@@ -9,7 +9,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { standService, T0 } from './accountDb.mjs';
 import { mintEgReceipt } from '../src/net/egReceipt.js';
-import { arenaSeasonOf, arenaSeasonEndsS, arenaWeekOf } from '../src/net/arenaLaw.js';
+import { arenaSeasonOf, arenaSeasonEndsS, arenaWeekOf } from '../src/net/arena/arenaLaw.js';
 import { egProclamationOf, EG_DECREE_BY_KEY } from '../src/net/egLaw.js';
 import { egDescentCompanies, egDescentBrackets, egBracketOf, EG_BRACKETS, _resetEgHonoursCache } from '../server-account/src/egHonours.js';
 import { topWithMe } from '../server-account/src/arena.js';

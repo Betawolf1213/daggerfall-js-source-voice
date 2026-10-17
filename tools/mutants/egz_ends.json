@@ -257,7 +257,7 @@
   },
   {
     "name": "EGZM-button-never-drawn",
-    "file": "src/ui/enhancedTimers.js",
+    "file": "src/ui/enhanced/enhancedTimers.js",
     "old": "        if (TIMER_DOOR_TEXT[r.door]) {",
     "new": "        if (false) {",
     "tests": [
@@ -266,7 +266,7 @@
   },
   {
     "name": "EGZM-press-past-the-caller",
-    "file": "src/ui/enhancedTimers.js",
+    "file": "src/ui/enhanced/enhancedTimers.js",
     "old": "if (typeof fn === 'function') door(fn); });",
     "new": "if (typeof fn === 'function') fn(); });",
     "tests": [
@@ -275,7 +275,7 @@
   },
   {
     "name": "EGZM-press-with-no-door",
-    "file": "src/ui/enhancedTimers.js",
+    "file": "src/ui/enhanced/enhancedTimers.js",
     "old": "if (typeof fn === 'function') door(fn); });",
     "new": "door(fn); });",
     "tests": [
@@ -284,7 +284,7 @@
   },
   {
     "name": "EGZM-shape-blind-to-the-door",
-    "file": "src/ui/enhancedTimers.js",
+    "file": "src/ui/enhanced/enhancedTimers.js",
     "old": "r.where, r.detail, r.door ?? null]));",
     "new": "r.where, r.detail]));",
     "tests": [
@@ -295,7 +295,7 @@
   },
   {
     "name": "EGZM-door-text",
-    "file": "src/ui/enhancedTimers.js",
+    "file": "src/ui/enhanced/enhancedTimers.js",
     "old": "export const TIMER_DOOR_TEXT = Object.freeze({ board: 'Boards' });",
     "new": "export const TIMER_DOOR_TEXT = Object.freeze({ board: 'Board' });",
     "tests": [
@@ -304,7 +304,7 @@
   },
   {
     "name": "EGZM-press-resumes-under-the-boards",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "const timersDoor = (fn) => { onAction('handoff'); if (!fn()) onAction('resume'); };",
     "new": "const timersDoor = (fn) => { onAction('resume'); fn(); };",
     "tests": [
@@ -313,7 +313,7 @@
   },
   {
     "name": "EGZM-timers-window-never-handed-the-door",
-    "file": "src/ui/enhancedMenu.js",
+    "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "render(); }, door: timersDoor });   // EG-ZM: a row's door",
     "new": "render(); } });   // EG-ZM: a row's door",
     "tests": [
@@ -625,7 +625,7 @@
     "new": "",
     "tests": [
       "test/egz_ends_stake.test.js",
-      "test/auditscale.test.js"
+      "test/net/auditscale.test.js"
     ]
   },
   {
@@ -657,7 +657,7 @@
   },
   {
     "name": "EGZM-index-unmade",
-    "file": "server-account/migrations/0120_elite_breach.sql",
+    "file": "server-account/migrations/0121_elite_breach.sql",
     "old": "CREATE INDEX IF NOT EXISTS idx_eg_stakes_held ON eg_stakes (state, until);",
     "new": "CREATE INDEX IF NOT EXISTS idx_eg_stakes_held ON eg_stakes (account);",
     "tests": [

@@ -1,6 +1,6 @@
 // @ts-check
 // EG-LOOK (2026-10-15, Mac: "Literally everything, and no band aids"; bible/11-Multiplayer/Elite-Gates-Look.md section 5):
-// THE AIR - the Spire's air made visible, a band at a time, as the Hour's is (render/sdMotes.js, SD14c):
+// THE AIR - the Spire's air made visible, a band at a time, as the Hour's is (render/superDungeon/sdMotes.js, SD14c):
 //   THE MOTES - SD14c's motion law made a generator of a layout and its colours: each band's kinds of mote (EG_MOTE_KINDS -
 //     how each moves; world/egAtmos.js `motes` - how many, in what colours): the Galleries' embers rising off the fire-sea
 //     and ash drifting down, the Cairn's soul-motes rising slow and breathing, the Shade's moon-dust falling silver and
@@ -14,7 +14,7 @@
 //     floors handed to the shader (egMoteFloors) - and out of a passage whole. Reduced motion holds the clock (the
 //     host's), so the air stands still - the Hour's precedent (render/nodeGlow.js: "every moving part held at its seed's
 //     own place"). THE QUIET COMPANY (section 25.4) never touches it: it is the place, not a player's.
-//   THE HALOS - the classic set's bloom (render/sdHalo.js, reused): every lamp's fixture (world/egHall.js egCircleLights -
+//   THE HALOS - the classic set's bloom (render/superDungeon/sdHalo.js, reused): every lamp's fixture (world/egHall.js egCircleLights -
 //     the lamps where they stand) and the foot of every beam of the way (the door's, the Redoubt's beacon - world/
 //     egLights.js), the nearest EG_HALO.max a frame.
 //   THE CAIRN'S MIST SHEETS - the band's mist under every rim, below the cornice's foot (render/egMistPass.js's sheet, held
@@ -55,7 +55,7 @@ export const EG_MOTE_CELL = 48;
  *  `margin` m past it, a mote is gone, coming back over `ease` m more; a passage's floor clears its whole height and a
  *  metre. At most `max` floors a hall. */
 export const EG_MOTE_FLOOR = Object.freeze({ clear: 3, ease: 1.5, under: 1, margin: 1, max: 40 });
-/** The least a mote is drawn across (px) - smaller, it is faded by how much (render/sdMotes.js's law) - the most, and
+/** The least a mote is drawn across (px) - smaller, it is faded by how much (render/superDungeon/sdMotes.js's law) - the most, and
  *  the most drawn as one solid dot (a glow's rings need room). */
 export const EG_MOTE_PX = Object.freeze({ min: 2, max: 24, solid: 3 });
 /** The phones' tier: this share of each kind. */
@@ -256,12 +256,12 @@ export function egMoteFloorKeep(floors, n, p) {
 }
 
 // ── THE HALOS ─────────────────────────────────────────────────────────────────────────────────────────────────────────
-/** THE HALOS (render/sdHalo.js - the classic set's bloom): at most `max` a frame; a lamp's fixture's (`lamp`: its size in
+/** THE HALOS (render/superDungeon/sdHalo.js - the classic set's bloom): at most `max` a frame; a lamp's fixture's (`lamp`: its size in
  *  metres and its share of the lamp's colour) and a beam of the way's foot (`beam`: its size, its share of the beam's
  *  colour, how far over the floor it stands); none past `far` metres from the eye (the fog has them). */
 export const EG_HALO = Object.freeze({ max: 48, far: 120, lamp: Object.freeze({ size: 0.6, k: 0.5 }), beam: Object.freeze({ size: 1.8, k: 0.7, up: 0.3 }) });
 /**
- * THE HALOS THIS FRAME into `out` (a kept array-like of kept halos - render/sdHalo.js's `{ at, size, color }`, its
+ * THE HALOS THIS FRAME into `out` (a kept array-like of kept halos - render/superDungeon/sdHalo.js's `{ at, size, color }`, its
  * `length` the count): every beam's foot in `lights` (world/egLights.js egSpireLights - the way's gold), then the lamps of
  * `lamps` (world/egHall.js egCircleLights's shape) nearest `eye`, at most EG_HALO.max and none past EG_HALO.far. `order`
  * a kept index list at least as long as `lamps`, the lamps sorted in it. Answers `out`. Nothing is made but the first

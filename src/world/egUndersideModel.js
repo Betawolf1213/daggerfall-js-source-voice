@@ -22,7 +22,7 @@
 // Pure: no DOM, no GL. Not a DFU member. Ledger A (ELITE-GATES).
 import { createMeshKit } from './meshKit.js';
 import { EG_DRESS, egBandArchive, egBandArtOf } from './egBandArt.js';
-import { rng } from './sdPixelKit.js';
+import { rng } from './superDungeon/sdPixelKit.js';
 
 /** THE UNDERSIDE (m, its own frame: the torn floor's top at y 0, its axis at x = z = 0): the floor's radius, its rim's
  *  corners (the rock's rings have as many), how ragged its rim is (a share of r, either way), the floor's thickness, how
@@ -121,7 +121,7 @@ function layRock(kit, plan, recs = EG_UNDERSIDE_DRESS) {
   }
   kit.prism(recs.stone, rim, -U.slab, 0, { top: false, bottom: false });
   const circ = rim.reduce((s, p, k) => s + Math.hypot(rim[(k + 1) % N][0] - p[0], rim[(k + 1) % N][1] - p[1]), 0);
-  const Ur = Math.max(1, Math.round((circ * 2) / (U.slab + U.depth)));   // the strata's texels square across (world/sdIslandModel.js uRep)
+  const Ur = Math.max(1, Math.round((circ * 2) / (U.slab + U.depth)));   // the strata's texels square across (world/superDungeon/sdIslandModel.js uRep)
   const ring0 = rings[0].corners, v0 = vOf(-U.slab);
   for (let k = 0; k < N; k++) {
     const k1 = (k + 1) % N, u0 = (k / N) * Ur, u1 = ((k + 1) / N) * Ur;
@@ -143,7 +143,7 @@ function layRock(kit, plan, recs = EG_UNDERSIDE_DRESS) {
 }
 
 /** A spire's ring `i` (0 its top, buried in the floor; the last its broken tip): its centre and its radius before the
- *  jitter - bending away from the axis as it falls (world/sdIslandModel.js spireRing's law). */
+ *  jitter - bending away from the axis as it falls (world/superDungeon/sdIslandModel.js spireRing's law). */
 export function egUndersideSpireRing(s, i) {
   const S = EG_UNDERSIDE_SPIRES, t = i / (S.rings - 1), b = S.bend * s.len * t * t;
   return { x: s.x + Math.cos(s.bendA) * b, y: s.y - s.len * t, z: s.z + Math.sin(s.bendA) * b, R: s.R * (1 - (1 - S.tip) * t ** 1.1) };

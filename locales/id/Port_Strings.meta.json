@@ -3050,8 +3050,8 @@
   "by": "claude-in-session"
  },
  "account.refusal.tradeHeld": {
-  "en": "aa4ae969e0a6",
-  "tr": "0b3781779bf3",
+  "en": "f10818e3de8b",
+  "tr": "a93331472e18",
   "by": "claude-in-session"
  },
  "account.refusal.tradeSpent": {
@@ -6532,6 +6532,16 @@
  "chronicle.quests.restartTitle": {
   "en": "809deb158842",
   "tr": "751cc9e4be4f",
+  "by": "claude-in-session"
+ },
+ "combat.leadLeftHand": {
+  "en": "9a84e174d1b8",
+  "tr": "b7ccc7c5680f",
+  "by": "claude-in-session"
+ },
+ "combat.leadRightHand": {
+  "en": "40a5921dea29",
+  "tr": "817d7660bc8b",
   "by": "claude-in-session"
  },
  "credits.ambientText.terms": {
@@ -18577,6 +18587,56 @@
  "prof.work.yours.writ": {
   "en": "ce32bc277933",
   "tr": "14cb9eeda612",
+  "by": "claude-in-session"
+ },
+ "realm.held.until": {
+  "en": "7de9a91094c4",
+  "tr": "823df1f5e689",
+  "by": "claude-in-session"
+ },
+ "realm.held.untilPiece": {
+  "en": "0ddb0ed0c157",
+  "tr": "5864572e741c",
+  "by": "claude-in-session"
+ },
+ "realm.locked.line": {
+  "en": "12851dccf62b",
+  "tr": "9174b9d6b9cc",
+  "by": "claude-in-session"
+ },
+ "realm.locked.listMore": {
+  "en": "a8b7592d37fb",
+  "tr": "3f34efce3b78",
+  "by": "claude-in-session"
+ },
+ "realm.locked.many": {
+  "en": "407400411890",
+  "tr": "fecb61df5383",
+  "by": "claude-in-session"
+ },
+ "realm.locked.manyNamed": {
+  "en": "959cd92da992",
+  "tr": "6fcbb8fe429b",
+  "by": "claude-in-session"
+ },
+ "realm.locked.named": {
+  "en": "833b74529a1f",
+  "tr": "0c92fa198ffc",
+  "by": "claude-in-session"
+ },
+ "realm.locked.one": {
+  "en": "1582072525b2",
+  "tr": "5155680d5e49",
+  "by": "claude-in-session"
+ },
+ "realm.locked.refusal": {
+  "en": "36cb70edd084",
+  "tr": "9a07ecfa9c05",
+  "by": "claude-in-session"
+ },
+ "realm.locked.trade": {
+  "en": "96456d744023",
+  "tr": "7fcbc8a88e15",
   "by": "claude-in-session"
  },
  "rest.exhausted.fighting": {

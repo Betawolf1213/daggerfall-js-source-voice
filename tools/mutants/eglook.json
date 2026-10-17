@@ -457,7 +457,7 @@
   },
   {
     "name": "EGLOOK-tele-spire-lost-in-fog",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "float f = uAlpha * max(fogFactorAt(vWorld), kept);",
     "new": "float f = uAlpha * fogFactorAt(vWorld);",
     "tests": [
@@ -466,7 +466,7 @@
   },
   {
     "name": "EGLOOK-tele-fill-unscaled",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "* inFade * uFillK * hatch;",
     "new": "* inFade * hatch;",
     "tests": [
@@ -475,7 +475,7 @@
   },
   {
     "name": "EGLOOK-tele-no-haven",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "if (uPool == 3) {",
     "new": "if (uPool == 33) {",
     "tests": [
@@ -484,7 +484,7 @@
   },
   {
     "name": "EGLOOK-tele-single-keyline",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "+ keyl * 0.55 + keyl2 * 0.75;",
     "new": "+ keyl * 0.55;",
     "tests": [
@@ -584,7 +584,7 @@
   },
   {
     "name": "EGLOOK-player-duck-up",
-    "file": "src/systems/songPlayer.js",
+    "file": "src/systems/song/songPlayer.js",
     "old": "low = base * 10 ** (-db / 20)",
     "new": "low = base * 10 ** (db / 20)",
     "tests": [
@@ -593,7 +593,7 @@
   },
   {
     "name": "EGLOOK-player-duck-stays",
-    "file": "src/systems/songPlayer.js",
+    "file": "src/systems/song/songPlayer.js",
     "old": "g.linearRampToValueAtTime(base, now + hold + EG_DUCK_BACK_S);",
     "new": "g.linearRampToValueAtTime(low, now + hold + EG_DUCK_BACK_S);",
     "tests": [

@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 import { standService, T0 } from './accountDb.mjs';
 import { verifyOrder } from '../src/net/identityToken.js';
 import { egSeasonStartS, egStartsFor, EG_STARTS_ASK_MAX } from '../server-account/src/egStarts.js';
-import { ARENA_SEASON_EPOCH_S, ARENA_SEASON_S, arenaSeasonOf } from '../src/net/arenaLaw.js';
+import { ARENA_SEASON_EPOCH_S, ARENA_SEASON_S, arenaSeasonOf } from '../src/net/arena/arenaLaw.js';
 
 const { subtle } = globalThis.crypto;
 async function stood(t) {

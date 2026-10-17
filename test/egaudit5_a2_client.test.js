@@ -19,7 +19,7 @@ import { egFightFloors } from '../src/world/egTelegraph.js';
 import { createEgLookDraw } from '../src/scenes/egLookDraw.js';
 import { createEgFight } from '../src/scenes/egFight.js';
 import { createEgClient, EG_LAW_TEXT } from '../src/scenes/egClient.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { egFallModel, egSpireHudModel, EG_FALL_SINK_MS, EG_FALL_TEXT } from '../src/ui/egSpireHud.js';
 import { egBeatMemo, egBeatWatch } from '../src/ui/egBeats.js';
 

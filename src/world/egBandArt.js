@@ -3,10 +3,10 @@
 // 25.1): THE SPIRE'S BAND ART - each band's own dress, painted here in code into its own pseudo-archive
 // (world/pseudoArchives.js EG_BAND_ARCHIVES: 38241 the Galleries, 38251 the Cairn, 38261 the Shade, 38271 the Wellhead).
 // Nothing ships and nothing is read from the player's data (Port-Doctrine: A RENDER OF GAME DATA IS GAME DATA): the same
-// pixels every boot, through the Hour's paint box (world/sdPixelKit.js) - 1-px bevels lit from the top-left, dark joints,
+// pixels every boot, through the Hour's paint box (world/superDungeon/sdPixelKit.js) - 1-px bevels lit from the top-left, dark joints,
 // ordered dither between a ramp's steps, and every texel forced into the band's own ramps at the end.
 //
-// EG-PLAY's halls wore the Hour's records (world/sdRealmArt.js) - "the Hour's art dresses the Spire" (EG-PLAY departure 3,
+// EG-PLAY's halls wore the Hour's records (world/superDungeon/sdRealmArt.js) - "the Hour's art dresses the Spire" (EG-PLAY departure 3,
 // EG-FULL layer three's "the band art is EG-G's"). Each band now paints the same RECORDS the halls are built with, under
 // its own archive, and `egBandDress` moves a built model's sub-meshes onto it: the hall's geometry is unchanged, its dress
 // is the band's. The records (EG_DRESS_RECORDS):
@@ -51,25 +51,25 @@
 //
 // EG-ZL (2026-10-12, sections 10.3, 25.2 and 25.7): THE BAND'S TELL RECORDS, under the band block's second archive (its
 // own later records - world/pseudoArchives.js): a Beat's last 0.4 s burning the place's own white - the Steps' own dial at
-// frame 10 and its falter (world/sdStepsArt.js beatArt) with the warning's light the danger palette's hazard colour
+// frame 10 and its falter (world/superDungeon/sdStepsArt.js beatArt) with the warning's light the danger palette's hazard colour
 // (ui/egAccess.js - white, or High contrast's cyan, dashed) - dissolving out through the ordered dither, and its first
 // frame dithering back in: the Steps' dissolve made in the picture (a cutout - the renderer's RW1 holes), so a kind of
 // Beats stays one batched draw. Painted once a palette, as a span asks for it.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
-import { SD_RAMP } from './sdLook.js';
-import { rng, noiseField, image, putTexel, scale, ramp, step, bevel, rivet, paletteOf, quantize, bayer, BAYER4 } from './sdPixelKit.js';
-import { SD_ART_SIZE, SD_ROOT_ART_H, SD_BRASS_EDGE_GLOW, SD_EDGE_GLOW } from './sdRealmArt.js';
+import { SD_RAMP } from './superDungeon/sdLook.js';
+import { rng, noiseField, image, putTexel, scale, ramp, step, bevel, rivet, paletteOf, quantize, bayer, BAYER4 } from './superDungeon/sdPixelKit.js';
+import { SD_ART_SIZE, SD_ROOT_ART_H, SD_BRASS_EDGE_GLOW, SD_EDGE_GLOW } from './superDungeon/sdRealmArt.js';
 import { EG_BAND_ARCHIVES } from './pseudoArchives.js';
-import { SD_REALM_ARCHIVE } from './sdRealm.js';
-import { beatArt, SD_STEPS_RECORD, SD_BEAT_EMBER_FRAME, SD_STEPS_ATLAS, SD_STEP_BEVEL } from './sdStepsArt.js';   // EG-ZL: the Beat's warning, the place's white
-import { SD_BEAT_DISSOLVE } from './sdStepsModel.js';
-import { SD_BEAT_SIZE } from './sdSteps.js';
+import { SD_REALM_ARCHIVE } from './superDungeon/sdRealm.js';
+import { beatArt, SD_STEPS_RECORD, SD_BEAT_EMBER_FRAME, SD_STEPS_ATLAS, SD_STEP_BEVEL } from './superDungeon/sdStepsArt.js';   // EG-ZL: the Beat's warning, the place's white
+import { SD_BEAT_DISSOLVE } from './superDungeon/sdStepsModel.js';
+import { SD_BEAT_SIZE } from './superDungeon/sdSteps.js';
 import { EG_DANGER_PALETTE_KEYS, egPaletteOf } from '../ui/egAccess.js';
 import { EG_KIT_RECORD, EG_KIT_RECORDS } from './egKit.js';   // EG-LOOK (Elite-Gates-Look.md section 8): the kit's records
 import { EG_ATMOS } from './egAtmos.js';   // EG-LOOK: the haze the foundations fade to is the band's own fog
 
-/** THE RECORDS each band paints (the Hour's own numbers - world/sdRealm.js - and the liquid's new 33). */
+/** THE RECORDS each band paints (the Hour's own numbers - world/superDungeon/sdRealm.js - and the liquid's new 33). */
 export const EG_DRESS = Object.freeze({ floor: 0, brass: 1, root: 2, arena: 4, cobble: 31, edge: 32, molten: 33, pillar: 56 });
 /** @type {ReadonlyArray<number>} */
 export const EG_DRESS_RECORDS = Object.freeze(Object.values(EG_DRESS));
@@ -162,7 +162,7 @@ export const EG_BAND_RAMPS = Object.freeze([
 /** The edge line's gold, the same in every band (the Galleries' gold leaf). */
 const GOLD = EG_BAND_RAMPS[0].metal;
 
-/** Display luminance of an sRGB triple, 0-1 (the value ladder's measure - world/sdLook.js SD_LADDER). */
+/** Display luminance of an sRGB triple, 0-1 (the value ladder's measure - world/superDungeon/sdLook.js SD_LADDER). */
 export const egLuma = (c) => (0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]) / 255;
 /** Band `band`'s liquid's emission over its albedo: EG_MOLTEN_GLOW, or less where its brightest step would pass
  *  EG_MOLTEN_LUMA_MAX (a texel's rounding held a hair under it). */
@@ -188,11 +188,11 @@ export const EG_KIT_MAP = Object.freeze({
   [EG_KIT_RECORD.coffer]: Object.freeze({ w: 64, h: 64, mU: 2, mV: 2, v: 'down' }),   // planar on a soffit: two coffers a metre square each way
   [EG_KIT_RECORD.statue]: Object.freeze({ w: 64, h: 64, mU: 2, mV: 2, v: 'up' }),   // round the figure and up it, the folds running v
   [EG_KIT_RECORD.fixture]: Object.freeze({ w: 64, h: 64, mU: 2, mV: 2, v: 'down', bands: Object.freeze({ flame: Object.freeze([0, 0.5]), body: Object.freeze([0.5, 0.75]), grille: Object.freeze([0.75, 1]) }), cells: 4 }),   // the flame: one of four cells (u k/4 to (k+1)/4) on a crossed quad 0.5 m by 1 m, lit and cut out; the body planar; the grille round a cage or basket, cut out between its bars
-  [EG_KIT_RECORD.found]: Object.freeze({ w: 64, h: SD_ROOT_ART_H, mU: 0, mV: 0, v: 'down', bands: Object.freeze({ slab: Object.freeze([0, 6 / 128]), courses: Object.freeze([6 / 128, 46 / 128]), rubble: Object.freeze([46 / 128, 64 / 128]), deep: Object.freeze([64 / 128, 100 / 128]), haze: Object.freeze([100 / 128, 1]) }) }),   // the Hour's root mapping (world/sdIslandModel.js islandRoot): v the depth under the floor over the foundation's whole depth, u repeated round it so the texels are square (max(1, round(circumference x 2 / depth))) - seen from far, about 4 texels a metre on 30 m
+  [EG_KIT_RECORD.found]: Object.freeze({ w: 64, h: SD_ROOT_ART_H, mU: 0, mV: 0, v: 'down', bands: Object.freeze({ slab: Object.freeze([0, 6 / 128]), courses: Object.freeze([6 / 128, 46 / 128]), rubble: Object.freeze([46 / 128, 64 / 128]), deep: Object.freeze([64 / 128, 100 / 128]), haze: Object.freeze([100 / 128, 1]) }) }),   // the Hour's root mapping (world/superDungeon/sdIslandModel.js islandRoot): v the depth under the floor over the foundation's whole depth, u repeated round it so the texels are square (max(1, round(circumference x 2 / depth))) - seen from far, about 4 texels a metre on 30 m
   [EG_KIT_RECORD.wreck]: Object.freeze({ w: 64, h: 64, mU: 16, mV: 16, v: 'up' }),   // 4 texels a metre on purpose: seen at 120-450 m with no mips, a texel is about a pixel at 300 m (two bays and two storeys a repeat)
   [EG_KIT_RECORD.crystal]: Object.freeze({ w: 64, h: 64, mU: 2, mV: 2, v: 'up' }),   // u round the crystal, v along its length
   [EG_KIT_RECORD.inlay]: Object.freeze({ w: 64, h: 128, mU: 2, mV: 4, v: 'down', bands: Object.freeze({ accent: Object.freeze([0, 0.5]), metal: Object.freeze([0.5, 1]) }) }),   // planar in the floor (2 m a repeat in u); a region laid in one band of v, at most 2 m across it - the sigil's field in one, its figure in the other
-  [EG_KIT_RECORD.chain]: Object.freeze({ w: 32, h: 32, mU: 0, mV: 0, v: 'down', bands: Object.freeze({ faces: Object.freeze([0, 0.25]), outer: Object.freeze([0.5, 0.75]), inner: Object.freeze([0.75, 1]) }) }),   // the Hour's chain (world/sdIslandModel.js SD_CHAIN_RECORD): each bar of a link u 0-1, its faces, outer walls and inner walls in their bands
+  [EG_KIT_RECORD.chain]: Object.freeze({ w: 32, h: 32, mU: 0, mV: 0, v: 'down', bands: Object.freeze({ faces: Object.freeze([0, 0.25]), outer: Object.freeze([0.5, 0.75]), inner: Object.freeze([0.75, 1]) }) }),   // the Hour's chain (world/superDungeon/sdIslandModel.js SD_CHAIN_RECORD): each bar of a link u 0-1, its faces, outer walls and inner walls in their bands
 });
 
 // ── the paint box's own helpers ───────────────────────────────────────────────────────────────────────────────────
@@ -391,7 +391,7 @@ function strataArt(band, rec, L) {
 }
 /** ROOT: the ground's undersides (a disc's torn lip, a walkway's sides, the underside's strata - world/egUnderside.js). */
 const rootArt = (band) => strataArt(band, EG_DRESS.root, { courses: 6, course: 11, rubble: 50, deep: 70, haze: 100 });
-/** ARENA: one court plate a tile, its seams at its left and top (the courts lay it in rings - world/sdRealm.js realmIsland:
+/** ARENA: one court plate a tile, its seams at its left and top (the courts lay it in rings - world/superDungeon/sdRealm.js realmIsland:
  *  u 2 m along the ring, v across it). The quietest record: the marble low on its ramp with a ghost of a vein, the slate
  *  with the soul-light in its joints (the Cairn's own light, held to EG_SEAM_LUMA_MAX), the glass split by a silver
  *  hairline, the basalt edged in iron. The sigil's mosaic is the inlay's (71), laid in the floor by the halls. */
@@ -1012,7 +1012,7 @@ function inlayArt(band) {
   if (band === 3) capGlow(albedo, emission, (x, y) => { const j = Math.floor(y / 8); return y < 64 && (wrap(x + (j % 2) * 4, 8) === 0 || y % 8 === 0); }, EG_SEAM_LUMA_MAX);
   return { albedo, emission };
 }
-/** CHAIN (81): the band's chains' links in the Hour's own bands (world/sdHangArt.js chainArt - EG_KIT_MAP): the fixtures'
+/** CHAIN (81): the band's chains' links in the Hour's own bands (world/superDungeon/sdHangArt.js chainArt - EG_KIT_MAP): the fixtures'
  *  metal (bronze, black iron, silver, iron), rubbed bright where the links bear (gold on the Galleries' bronze), dark in the
  *  bends. Matte. */
 function chainArt(band) {
@@ -1040,7 +1040,7 @@ const PAINTERS = Object.freeze({
 /** Every picture band `band` (0-3) wears, by record: `[record, { albedo, emission, cutout? }]` - what a host uploads under
  *  the band's archive (egBandArchive) before it draws the band's halls (a `cutout` picture asking the renderer for its
  *  holes - EG_CUTOUT_RECORDS). Pure: the same pixels every call. */
-/** @returns {Array<[number, { albedo: import('./sdPixelKit.js').Img, emission: import('./sdPixelKit.js').Img, cutout?: boolean }]>} */
+/** @returns {Array<[number, { albedo: import('./superDungeon/sdPixelKit.js').Img, emission: import('./superDungeon/sdPixelKit.js').Img, cutout?: boolean }]>} */
 export function egBandArt(band) {
   return EG_BAND_RECORDS.map((rec) => egBandArtOf(band, rec));
 }
@@ -1048,7 +1048,7 @@ export function egBandArt(band) {
  *  alone, for a pass that wears a few of the band's records (the Spire's underside on the stair - world/egUnderside.js:
  *  its walkways' tesserae, the costliest picture by far, are never painted for a fall that wears none). The same pixels
  *  egBandArt paints for that record. Pure. A record the band does not paint throws.
- *  @returns {[number, { albedo: import('./sdPixelKit.js').Img, emission: import('./sdPixelKit.js').Img, cutout?: boolean }]} */
+ *  @returns {[number, { albedo: import('./superDungeon/sdPixelKit.js').Img, emission: import('./superDungeon/sdPixelKit.js').Img, cutout?: boolean }]} */
 export function egBandArtOf(band, rec) {
   const paint = PAINTERS[rec];
   if (!paint) throw new Error(`the band paints no record ${rec}`);
@@ -1064,7 +1064,7 @@ export function egBandPalette(band) {
 export const egBandArchive = (band) => EG_BAND_ARCHIVES[Math.max(0, Math.min(3, band | 0))];
 
 /**
- * THE DRESS: a built model (renderer.createMesh's shape - world/sdRealm.js packRealmFaces) moved onto band `band`'s
+ * THE DRESS: a built model (renderer.createMesh's shape - world/superDungeon/sdRealm.js packRealmFaces) moved onto band `band`'s
  * archive - every sub-mesh of the Hour's archive whose record the band paints (EG_DRESS_RECORDS) takes the band's archive;
  * the rest (the Steps' own faces - their dials, cracks and runes are the machine's read, the same in every band) keep
  * theirs. The model is changed in place and answered.
@@ -1080,7 +1080,7 @@ export function egBandDress(model, band) {
 // ── EG-ZL: THE BAND'S TELL RECORDS ──────────────────────────────────────────────────────────────────────────────
 /** Band `band`'s tell archive: the second of its block (world/pseudoArchives.js EG_BAND_BLOCK - its own later records). */
 export const egTellArchive = (band) => egBandArchive(band) + 1;
-/** A Beat's dissolve cell in its picture's own texels: the Steps' cell (world/sdStepsModel.js SD_BEAT_DISSOLVE.cell) over a
+/** A Beat's dissolve cell in its picture's own texels: the Steps' cell (world/superDungeon/sdStepsModel.js SD_BEAT_DISSOLVE.cell) over a
  *  texel of the plate's top (its inset width across the atlas's top cell). */
 export const EG_DISSOLVE_TEXELS = Math.round(SD_BEAT_DISSOLVE.cell / ((SD_BEAT_SIZE.w - 2 * SD_STEP_BEVEL) / SD_STEPS_ATLAS.top[2]));
 /** The Beat's records in the tell archive: a danger palette's four warning stages (ui/egAccess.js EG_DANGER_PALETTE_KEYS
@@ -1091,11 +1091,11 @@ export const EG_BEAT_TELL_RECORDS = Object.freeze({
   back: Object.freeze([0, 1, 2].map((k) => EG_DANGER_PALETTE_KEYS.length * SD_BEAT_DISSOLVE.keep.length + k)),
 });
 /**
- * A PICTURE DISSOLVED (the Steps' dissolve, in the picture - world/sdStepsModel.js buildBeatDissolve cuts the plate's cells
+ * A PICTURE DISSOLVED (the Steps' dissolve, in the picture - world/superDungeon/sdStepsModel.js buildBeatDissolve cuts the plate's cells
  * out of its mesh; here a cell's texels go to nothing, a picture the renderer cuts, `{ cutout: true }`): `art`'s cells of
- * EG_DISSOLVE_TEXELS kept `keep` of every 16 by the ordered dither (world/sdPixelKit.js BAYER4) - the rest clear in its
+ * EG_DISSOLVE_TEXELS kept `keep` of every 16 by the ordered dither (world/superDungeon/sdPixelKit.js BAYER4) - the rest clear in its
  * albedo (a hole) and dark in its light. Pure.
- * @param {{ albedo: import('./sdPixelKit.js').Img, emission: import('./sdPixelKit.js').Img }} art @param {number} keep
+ * @param {{ albedo: import('./superDungeon/sdPixelKit.js').Img, emission: import('./superDungeon/sdPixelKit.js').Img }} art @param {number} keep
  */
 export function egDissolveArt(art, keep) {
   const W = art.albedo.width, H = art.albedo.height, a = Uint8Array.from(art.albedo.colors), e = Uint8Array.from(art.emission.colors), C = EG_DISSOLVE_TEXELS;
@@ -1112,7 +1112,7 @@ const _warnArt = new Map();
 /**
  * A BEAT'S LAST 0.4 S in palette `key`'s hazard (sections 10.3 and 25.2: "the last 0.4 s white"; section 25.7: "the
  * place's hazard dashed cyan" under High contrast) - `[[record, { albedo, emission }], ...]`, the four stages it dissolves
- * out through: the Steps' dial at frame 10, then its falter (world/sdStepsArt.js beatArt, the warning's light the
+ * out through: the Steps' dial at frame 10, then its falter (world/superDungeon/sdStepsArt.js beatArt, the warning's light the
  * palette's, a hatching palette's rim line dashed), each dissolved. Pure, and painted once a palette.
  */
 export function egBeatWarnArt(key) {

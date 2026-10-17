@@ -10,7 +10,7 @@ import { fakeRoom } from './fakeRoom.mjs';
 import { EG_INTERNAL_OPEN, validEgOut, validEgIn, EG_TOLL_WIRE_MAX, EG_RUN_KINDS } from '../src/net/wire.js';
 import { egRoomKey, egHallOf, EG_SEALED_MS, EG_ARRIVE_MAX_MS, EG_LATE_ARRIVE_MS, EG_LATE_HALLS, EG_TOLL_STEP, EG_TOLL_QUARTERS, EG_TOLL_WAIVE_MS, EG_TOLL_KINDS } from '../src/net/egLaw.js';
 import { mintEgOrder } from '../src/net/identityToken.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { egBreachNew, egEnter, egStep, egDown, egPoseIn, egCount, egCountHeals, egCensusDr, egHeal, egBodyWord, egTollOf, egStateOf,
   EG_LIFELINE_UNDER, EG_LIFELINE_MS, EG_HEAL_WORD_MS, EG_LIFELINE_LOOK_MS } from '../src/net/egBrain.js';
 import { egFairNew, egFairPose, egSupportAt, EG_HOLD, EG_TRAIL_MS } from '../src/net/egFair.js';
@@ -19,7 +19,7 @@ import { egAim } from '../src/net/egBodies.js';
 import { shDisc } from '../src/net/egShape.js';
 import { bodyStruck } from '../src/net/bossBody.js';
 import { EG_VESTIGES, EG_DR_MAX } from '../src/net/egVestige.js';
-import { BRAIN_TICK_MS } from '../src/net/gateBrain.js';
+import { BRAIN_TICK_MS } from '../src/net/gate/gateBrain.js';
 import { createEgClient, EG_HEAL_SEND_MS } from '../src/scenes/egClient.js';
 /** PIN MOVED (AUDIT EG V, d: lane4 L4-7 - the count is mended, and Lifeline opened, only by a heal a relayed cast backs): the healer's cast seen - the room's record of a cast from the healer to the member (server/src/index.js _egCastSaw). */
 const CAST_SEEN = () => true;

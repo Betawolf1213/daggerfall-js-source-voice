@@ -2,7 +2,7 @@
 // EG-ZO (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md sections 7, 25.1 and 25.8 -
 // "the full fall through the void, past the Spire's broken underside"): THE SPIRE'S UNDERSIDE AND THE FALL PAST IT, as
 // law - pure, so a test holds every number and the stair's pass only draws it (render/egStairPass.js, on the veil's own
-// canvas - ui/gateVeil.js):
+// canvas - ui/gate/gateVeil.js):
 //   THE UNDERSIDE (`buildEgUndersideModel`, `egUndersideParts`) - the torn academy the halls fell from, modelled with the
 //     arc's one mesh kit (world/meshKit.js) in the band's own dress (world/egBandArt.js - the band the step falls into):
 //     the torn floor (its flags on top, the walls' ashlar on its broken edge); the rock it was torn up with, hanging under
@@ -15,7 +15,7 @@
 //     falls, and raising its eyes from the void opening under it to the underside climbing away overhead. Its look eases
 //     over the stair's own clock (world/egLights.js EG_STAIR_VEIL: 0.8 s in, the fall's least hold 1.2 s, 0.8 s out), so
 //     the company is among the spires as the veil shuts and below the last tip as the least hold ends, and the underside
-//     stays in view through the longest hold the veil allows (render/gateVeil.js VEIL_HOLD_MAX_S). Nothing turns but the
+//     stays in view through the longest hold the veil allows (render/gate/gateVeil.js VEIL_HOLD_MAX_S). Nothing turns but the
 //     eyes' one slow raise, from rest and back to rest: a company sees the fall at every band, and it must never be the
 //     thing that makes them sick (section 7).
 //

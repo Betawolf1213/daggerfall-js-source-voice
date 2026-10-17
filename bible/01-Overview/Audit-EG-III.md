@@ -60,16 +60,16 @@ order below, then origin/main (1f5325be: #842, #861 and #862, three conflicts). 
 | A1, lords | `net/egLords.js`, `net/egShape.js` | L1-1, L1-2, L1-4 (the relay's half), L1-10 (the lords' half), L1-11, L1-12 (the census's half), L1-18, L1-23 | 5bca45e3, 0ed3951b | `egaudit3_lords` 8 | 46 |
 | A2, legion | net/: `egBrain.js`, `egLegion.js`, `egRun.js`, `egVestige.js`, `egShape.js`; a line of `scenes/egClient.js` | L1-3, L1-6, L1-8, L1-9, L1-10 (the legion's half), L1-13, L1-15 to L1-17, L1-19 to L1-21, L1-24; L2-4, L2-16; L3-2, L3-7, L3-12, L3-13; L5-2, L5-3 | 53e4c07a, 2c6e0f9a | `egaudit3_legion` 10, `egaudit3_legion_blows` 11 | 71; 67 after the merge |
 | B, service | `server-account/src/eg.js`, `server-account/src/egHonours.js`, `server/src/index.js`; net/: `egDurable.js`, `egReceipt.js`, `egBrain.js` (`oweEnd`) | L3-1, L3-3 to L3-6, L3-8, L3-9, L3-14, L3-15, L3-18, L3-19 | 994a7a05, db6310cd | `egaudit3_service` 6, `egaudit3_service_relay` 6 | 39 |
-| C, client | scenes/: `egClient.js`, `egFight.js`, `egSpan.js`, `egOcclude.js`, `egLookDraw.js`, `world.js`, `worldModes.js`; render/: `egLinePass.js`, `sdStepsPass.js`; `systems/spireVestiges.js`, `ui/egStartWindow.js`, `ui/gateVeil.js`, `world/egLook.js`; the `tonic` word | L4-1 to L4-13, L6-1, L1-5, L1-4 and L1-12 (the screen's halves) | d33dee08, c6dbf73e | `egaudit3_client` 13, `egaudit3_client_fight` 3, `egaudit3_client_tonic` 2 | 82 |
+| C, client | scenes/: `egClient.js`, `egFight.js`, `egSpan.js`, `egOcclude.js`, `egLookDraw.js`, `world.js`, `worldModes.js`; render/: `egLinePass.js`, `sdStepsPass.js`; `systems/spireVestiges.js`, `ui/egStartWindow.js`, `ui/gate/gateVeil.js`, `world/egLook.js`; the `tonic` word | L4-1 to L4-13, L6-1, L1-5, L1-4 and L1-12 (the screen's halves) | d33dee08, c6dbf73e | `egaudit3_client` 13, `egaudit3_client_fight` 3, `egaudit3_client_tonic` 2 | 82 |
 | D, law and Spirebridge | net/: `egLaw.js`, `egSpanLaw.js`, `egVestige.js`, `egFair.js`, `egDurable.js`, `egLink.js`; `scenes/egSpan.js`, `scenes/egClient.js`, `ui/egSpireHud.js`, `ui/egBeats.js`; the `mast` and `ebridge` words | L1-14; L1-7 (with L3-10, L5-1, L6-2) | c4b0e0d5, 1d01388a | `egaudit3_law` 4, `egaudit3_law_bridge` 6 | 55 |
 | G, count and rewards | net/: `egBrain.js`, `egLaw.js`, `egRun.js`, `egVestige.js`, `egLink.js`; `systems/egSpoils.js`, `ui/egHud.js`, `scenes/egClient.js`, `scenes/world.js` (`egSpoilsPaid`); the `wkpaid` word | L2-1 to L2-3, L2-5, L2-6, L2-8, L2-11, L2-18 | deca4951, 09ab9d26 | `egaudit3_count` 16, `egaudit3_count_spoils` 5 | 95 |
 | F, the bible pass | the design page, Active-Arcs, Port-Ledger, Testing.md, Accounts-And-Cloud-Saves-Arc, Sigil-Sets; `net/wire.js` `EG_END_WORDS` | L1-22; L2-7, L2-9, L2-10, L2-12 to L2-15, L2-17; L3-11, L3-16, L3-17; L5-4 to L5-22; L4-11 verified | ad903255 (from 1f5325be) | `egaudit3_bible` (1) | 1 |
 
 Together the fix groups added 14 test files (102 tests) and 440 mutant records in seven lists under tools/mutants/
 (`egaudit3_<group>.json`), every one dead; the bible pass added one of each (`egaudit3_bible`). Each group re-judged the existing records aimed near the text it moved,
-re-aimed by content those whose text had moved (test/mutantdrift.test.js), and moved a pin only with a PIN MOVED note.
+re-aimed by content those whose text had moved (test/tooling/mutantdrift.test.js), and moved a pin only with a PIN MOVED note.
 `RELAY_VERSION` stays the arc's (`world199` then, `world200` since the merge of main past AUDIT ETHER-OW, `world201` past PEER-ACTS), unshipped,
-its hash re-taken in place in `test/relayversion.test.js`; `ACCOUNT_VERSION` stays the arc's (`acct124` then, `acct133`
+its hash re-taken in place in `test/net/relayversion.test.js`; `ACCOUNT_VERSION` stays the arc's (`acct124` then, `acct133`
 since), and migration 0112 (0117 since the merges past SEAT-FACTS, LAMP-KEEPER II, FIRMAMENT-ON, KG6 and POI-1) needed no change. The one law change is D's spec law 6
 (`EG_DECREE_LAW`; `EG_LAWS` holds 4, 5 and 6, and laws 4 and 5 keep their 800-hall hashes): the 25-seed sweep with the
 golden courses and a 100-seed sweep crossed every course in all four bands. Lane 2 #19 lay outside the arc: the
@@ -101,7 +101,7 @@ coordinator fixed it on its own (9bdbe722).
 | L1-20 | LOW | the Wellhead's Sapper and Lurker share sprite 36 (ROLE READS) | FIXED | A2: the Sapper a Fire Atronach (35); `egaudit3_legion` |
 | L1-21 | LOW | Cantrips refused at the rest; the shield test reads one Twin; unrecorded | FIXED | A2: used at the rest, refused under any lord's shield; Sight kept while no fight stands (17.2 says so); `egaudit3_legion_blows` |
 | L1-22 | LOW | sections 6.2 and 7 name constants and homes the code does not have | FIXED | F: sections 6.2 and 7 name the `_MS` constants and their homes (`net/egLaw.js`, the respite's in `net/egBrain.js`) |
-| L1-23 | LOW | `net/egLords.js` copies the gate's `ATTACKS` rows; its Meteor drops the burning pool | FIXED | A1: `ATTACKS` and `POOLS` read from `net/gateBrain.js` (a source sweep pins that no copy remains); the Meteor leaves the gate's burning ground; `egaudit3_lords` |
+| L1-23 | LOW | `net/egLords.js` copies the gate's `ATTACKS` rows; its Meteor drops the burning pool | FIXED | A1: `ATTACKS` and `POOLS` read from `net/gate/gateBrain.js` (a source sweep pins that no copy remains); the Meteor leaves the gate's burning ground; `egaudit3_lords` |
 | L1-24 | LOW | the Binder's raise sums claimed damage | FIXED | A2: it counts what lands, never the claim; `egaudit3_legion_blows` |
 
 ## Lane 2 - numbers and consistency

@@ -13,7 +13,7 @@ import { EG_CRUMBLE_KINDS } from '../src/net/egSpanLaw.js';
 import { egBreachNew, egEnter, egStateOf, egWord, egCountHeals } from '../src/net/egBrain.js';
 import { egRunOf, EG_TONIC_MAX } from '../src/net/egRun.js';
 import { bodyStruck } from '../src/net/bossBody.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { createEgClient, EG_TONIC_TEXT, EG_LONG_STEP_LOOK } from '../src/scenes/egClient.js';
 import { spireCrumbleWait, spireHeld, EG_LONG_STEP_S, _resetSpireVestigesForTests } from '../src/systems/spireVestiges.js';
 import { EG_VESTIGES } from '../src/net/egVestige.js';

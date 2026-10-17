@@ -22,8 +22,8 @@ import { egFightView } from '../src/net/egWalkGraph.js';
 import { EG_KIND } from '../src/net/egLegion.js';
 import { EG_M_ID, EG_COUNTER_X } from '../src/net/egVestige.js';
 import { egVestigeX } from '../src/net/egRun.js';
-import { SD_ECHO_PAIR_MS } from '../src/net/sdRemnant.js';
-import { HIT_KINDS, PHASE_AT, ATTACKS } from '../src/net/gateBrain.js';
+import { SD_ECHO_PAIR_MS } from '../src/net/superDungeon/sdRemnant.js';
+import { HIT_KINDS, PHASE_AT, ATTACKS } from '../src/net/gate/gateBrain.js';
 import { validEgOut } from '../src/net/wire.js';
 import { egGive8Hall } from './egGive8.mjs';
 
@@ -340,7 +340,7 @@ test('AUDIT EG IV lane1 #2 THE EXAMINATION HOLDS ITS LINE STRICTLY ABOVE THE THI
     assert.ok(egLordsFell(C.F), `n ${n}: a killing blow fells him`);
   }
   assert.ok(rounded >= 2, `the old line rounded to or under 0.33 for ${rounded} of the eight companies`);
-  // a lord's max is fractional once a share is retired (net/gateBrain.js retireShare), and there the float can put the next point
+  // a lord's max is fractional once a share is retired (net/gate/gateBrain.js retireShare), and there the float can put the next point
   // AT the line (113 / 342.4242424242424 reads as 0.33): the held line still stands over it
   for (const max of [342.4242424242424, 348.48484848484844, 621.2121212121211]) assert.ok(egHoldHp(max, PHASE_AT[1]) / max > PHASE_AT[1] && (Math.floor(max * PHASE_AT[1]) + 1) / max <= PHASE_AT[1], `strictly above at ${max}`);
 });

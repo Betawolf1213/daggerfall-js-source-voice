@@ -3,9 +3,9 @@
 // 25.6 and 25.8 - EG6b, and what EG-G2, EG-G1 and EG-H1 left for the screen): THE TELEGRAPHS AS WRITTEN, AS LAW - every
 // rule the Spire's fight draws its warnings by, pure, so a test holds each one and a pass only draws it:
 //   THE TELEGRAPHS PER FIGHT FLOOR (section 11.7) - each fight floor (`spec.fl`) triangulated once (a disc's 48 sides, the
-//     drawn rim's own - world/sdRealm.js SD_ISLAND_SIDES; a lane's rectangle and its two round ends, the floor test's own
+//     drawn rim's own - world/superDungeon/sdRealm.js SD_ISLAND_SIDES; a lane's rectangle and its two round ends, the floor test's own
 //     capsule - net/egLaw.js egOnFight), each shape drawn on every floor it covers - clipped on the CPU to the shape's bounds
-//     (render/gateTelegraph.js telegraphBounds), only at the heights it lands on (the relay's own rule: the floors whose plan
+//     (render/gate/gateTelegraph.js telegraphBounds), only at the heights it lands on (the relay's own rule: the floors whose plan
 //     holds its anchor, net/bossRef.js floorsUnder) - at most THE TELEGRAPH BUDGET's 32 shape-floor draws a frame, in its
 //     order (mine and what holds my feet first, then the blows in net/egShape.js egShapeOrder's rank, then the nearest);
 //   THE PERIL ARROW (section 25.5) - the soonest blow on my feet, its way out searched over my own fight floor (never across
@@ -18,16 +18,16 @@
 //     drawn as one quad at their own height, never clipped onto a fight floor near them.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
-import { telegraphBounds, telegraphField, telegraphStrip, TELEGRAPH_KIND, TELEGRAPH_NOW_MS } from '../render/gateTelegraph.js';
+import { telegraphBounds, telegraphField, telegraphStrip, TELEGRAPH_KIND, TELEGRAPH_NOW_MS } from '../render/gate/gateTelegraph.js';
 import { egInShape, segDist, egPieceIn } from '../net/egShape.js';
 import { egHazardParts, EG_HAZARDS } from '../net/egFragLaw.js';
 import { egFightFloorAt } from '../net/egFair.js';
 import { egOneStorey } from '../net/egWalkGraph.js';   // THE ASCENT - HEIGHT: a shape drawn on its own storey's floors, the peril arrow's blow of mine
 import { EG_FL } from '../net/egBodies.js';
 import { EG_VESTIGES } from '../net/egVestige.js';
-import { gateHitFlash } from './gateBoss.js';
+import { gateHitFlash } from './gate/gateBoss.js';
 import { EG_BAND_RAMPS } from './egBandArt.js';
-import { SD_ISLAND_SIDES } from './sdRealm.js';
+import { SD_ISLAND_SIDES } from './superDungeon/sdRealm.js';
 
 const clamp01 = (v) => Math.max(0, Math.min(1, v));
 
@@ -140,7 +140,7 @@ function inStrip(tris, t) {
 /**
  * A floor's triangles (`tris`, x, z pairs) clipped to `box` [x0, z0, x1, z1] (null: whole) into `out` from float `at` -
  * each triangle cut to the box's four sides (Sutherland-Hodgman) and fanned back to triangles. AUDIT EG V (L6-2): with a
- * `strip` (render/gateTelegraph.js telegraphStrip - a tether's own ground, `box` about it), cut to the strip's four sides
+ * `strip` (render/gate/gateTelegraph.js telegraphStrip - a tether's own ground, `box` about it), cut to the strip's four sides
  * instead, so a tether laid across a floor shades its own strip and not the square about it. `out` must hold five
  * triangles a triangle more. Answers the next float. Pure but for `out`.
  * @param {Float32Array|number[]} tris @param {number[]|null} box @param {Float32Array} out @param {number} at
@@ -150,7 +150,7 @@ export function egClipTris(tris, box, out, at, strip = null) {
   let w = at;
   if (strip) {
     // the strip's four sides: along it from its start to its length, across it either side of its line (its vertex stage's
-    // own frame - render/gateTelegraph.js TELEGRAPH_VS, `vec2(uWalkU.y, -uWalkU.x)`)
+    // own frame - render/gate/gateTelegraph.js TELEGRAPH_VS, `vec2(uWalkU.y, -uWalkU.x)`)
     const ux = strip.u[0], uz = strip.u[1], ua = ux * strip.a[0] + uz * strip.a[1], va = uz * strip.a[0] - ux * strip.a[1];
     _planes[0] = ux; _planes[1] = uz; _planes[2] = ua;
     _planes[3] = -ux; _planes[4] = -uz; _planes[5] = -(ua + strip.len);
@@ -292,7 +292,7 @@ function planDraw(K, sh, f, first, count, i) {
 
 // ── THE PERIL ARROW (section 25.5) ─────────────────────────────────────────────────────────────────────────────
 /** THE PERIL ARROW's search: bearings, its step and reach (m), how far inside a floor's edge it keeps (m) - the gate's own
- *  numbers (scenes/gateCourt.js PERIL_BEARINGS, PERIL_STEP_M, PERIL_REACH_M, PERIL_RIM_M, restated here so this law never
+ *  numbers (scenes/gate/gateCourt.js PERIL_BEARINGS, PERIL_STEP_M, PERIL_REACH_M, PERIL_RIM_M, restated here so this law never
  *  loads the court's scene; test/egz_telegraph.test.js holds them equal) - and a blow's last moment (TELEGRAPH_NOW_MS). */
 export const EG_PERIL = Object.freeze({ bearings: 24, step: 0.25, reach: 20, rim: 0.4, nowMs: TELEGRAPH_NOW_MS });
 /** A CHECK's order, shown in place of the arrow when no light is in reach (section 25.5). */
@@ -424,7 +424,7 @@ export function egScreenAt(vp, p) {
   const sx = 0.5 + (0.5 * x) / w, sy = 0.5 - (0.5 * y) / w;
   return sx >= 0 && sx <= 1 && sy >= 0 && sy <= 1 ? [sx, sy] : null;
 }
-/** The camera's yaw (the port's: ahead [sin, cos] - scenes/gateCourt.js screenBearing's) read off a view matrix
+/** The camera's yaw (the port's: ahead [sin, cos] - scenes/gate/gateCourt.js screenBearing's) read off a view matrix
  *  (world/mat4.js lookAt's: the eye looks down its -z). Pure. */
 export const egViewYaw = (view) => Math.atan2(-view[2], -view[10]);
 
@@ -448,7 +448,7 @@ export const egRimOf = (band, fl) => (band === EG_SHADE_BAND && (fl & (EG_FL.dor
 
 // ── WEIGHT (section 25.8) ──────────────────────────────────────────────────────────────────────────────────────
 /** THE HEAVY BLOWS' SHAKES: by name (net/egLords.js's Savage, Gore, Whirl and Maul, net/egLegion.js's Smash), the shake at
- *  nought metres and the reach it fades to nothing over - the gate's LAND_SHAKE law (world/gateBoss.js landShake), within
+ *  nought metres and the reach it fades to nothing over - the gate's LAND_SHAKE law (world/gate/gateBoss.js landShake), within
  *  8-10 m, under the player's own maxShake (systems/betterAmbience.js weaponKick). */
 export const EG_HEAVY_SHAKE = Object.freeze({ Savage: Object.freeze([2.5, 10]), Gore: Object.freeze([3, 10]), Whirl: Object.freeze([2.5, 10]), Smash: Object.freeze([2, 8]), Maul: Object.freeze([2.5, 8]) });
 /** How far (x, z) stands from where stamp `s` lands (its centre, a lane's line; nought for the whole floor's). */
@@ -463,13 +463,13 @@ export function egHeavyShake(blow, x, z, motion = 1) {
 }
 /** How much the screen may move: nothing under reduced motion (the shelf's row or the system's - ui/egAccess.js
  *  egReducedMotion), else the port's own Technique camera motion (0-1, systems/uiPrefs.js techniqueMotion - read as
- *  combat/techniqueFx.js techniqueMotion reads it). Pure. */
+ *  combat/technique/techniqueFx.js techniqueMotion reads it). Pure. */
 export const egShakeMotion = (still, technique) => { if (still) return 0; const v = Number(technique); return Number.isFinite(v) ? clamp01(v) : 1; };
 /** An hp drop this soon after my own blow on a body is my blow's own word back (the relay's `ehp`), never an ally's. */
 export const EG_MINE_ECHO_MS = 400;
 /**
  * A body's hit flash at `t` (section 25.8 - WB13d's decision kept, no hit-stop): my own blow flashes it fully, anyone
- * else's (an ally's, the relay's word of a drop I did not strike) at 0.4 - the gate's own law (world/gateBoss.js
+ * else's (an ally's, the relay's word of a drop I did not strike) at 0.4 - the gate's own law (world/gate/gateBoss.js
  * gateHitFlash, GATE_FLASH_COURT); a fallen body none. `b.mineAt` my last blow's moment, `b.hurtAt` the last drop's. Pure.
  */
 export function egBodyFlash(b, t) {

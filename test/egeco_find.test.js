@@ -9,8 +9,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { standService, T0 } from './accountDb.mjs';
 import { findEg, EG_FIND_ODDS, EG_FIND_PER_DAY, EG_FIND_KEYS_PER_WEEK } from '../server-account/src/eg.js';
-import { ARENA_WEEK_S, ARENA_SEASON_EPOCH_S } from '../src/net/arenaLaw.js';
-import { DUNGEON_TIERS } from '../src/systems/dungeonTier.js';
+import { ARENA_WEEK_S, ARENA_SEASON_EPOCH_S } from '../src/net/arena/arenaLaw.js';
+import { DUNGEON_TIERS } from '../src/systems/dungeon/dungeonTier.js';
 import { registerEgFind, egFindThrow, egFindAsks, egFindKill, egFindStruck, EG_FIND_HANDLER, EG_FIND_TEXT } from '../src/systems/egFind.js';
 import { readFileSync } from 'node:fs';
 import { raiseEnemyDeath, registerEnemyDeathHandler } from '../src/scenes/corpseMarker.js';
@@ -32,7 +32,7 @@ const keysOf = (S, id) => S.env.DB._raw.prepare('SELECT eg_keys AS k FROM player
 
 test('EG-E3 THE FIND, WHO MAY ASK: a guest, a fresh account (no gate closed, no Redoubt taken) and a word that is no tier are refused; a proven account asks and is answered `{ found, keys, asks }`; a Redoubt taken proves an account as a gate does; the tiers are the port\'s own (mutants: the handle unasked; the proof unasked; a tier of another name)', async (t) => {
   const { S, me, die } = await stood(t);
-  assert.deepEqual(Object.keys(EG_FIND_ODDS).sort(), [...DUNGEON_TIERS].sort(), 'systems/dungeonTier.js names them');
+  assert.deepEqual(Object.keys(EG_FIND_ODDS).sort(), [...DUNGEON_TIERS].sort(), 'systems/dungeon/dungeonTier.js names them');
   const g = await S.guest();
   assert.deepEqual([(await S.call('/v1/eg/find', { tier: 'elite' }, g.secret)).status, (await S.call('/v1/eg/find', { tier: 'elite' }, g.secret)).body], [403, { error: 'guest' }]);
   const fresh = await S.call('/v1/eg/find', { tier: 'elite' }, me.secret);

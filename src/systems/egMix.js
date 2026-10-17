@@ -1,7 +1,7 @@
 // @ts-check
 // EG-G2 (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 26 - THE SPIRE MIX,
 // EG17): what the breach's screen hears first. The audio engine (systems/audio.js) has no voice cap, ducking or priority,
-// and the gate stings only for a Meteor or a Leap on your ground (world/gateBoss.js BOSS_CUES.sting): fourteen adds,
+// and the gate stings only for a Meteor or a Leap on your ground (world/gate/gateBoss.js BOSS_CUES.sting): fourteen adds,
 // eight players and the score would mask the cues that matter. So, in the Spire:
 //   A PERSONAL STING, always, for a lord's blow or a CHECK on your feet - the gate's sting (the parry's ring at your feet);
 //     for an add's, at most one each EG_MIX.addGapMs;
@@ -9,7 +9,7 @@
 //     is never culled (systems/music.js duck - the song's own level dipped, the fades left alone);
 //   BARKS capped at EG_MIX.barksPerKind a kind a frame, nearest first (egBarkCull) - the legion's wind-up cues;
 //   PEERS' sounds EG_MIX.peerDb down (EG-ZH: `peers(on)` hands the online layer's one scope over every peer sound -
-//     net/peerFx.js peerHeard - the engine's gain about it, systems/audio.js scaled), and WATCHFIRE's tell at
+//     net/peer/peerFx.js peerHeard - the engine's gain about it, systems/audio.js scaled), and WATCHFIRE's tell at
 //     EG_MIX.watchfirePitch (EG-ZH: `tell(at)` - the gate's sting, lower, where the told blow will land, once a blow);
 //   the reverb is the hall's (section 11.9 - systems/egReverb.js).
 // The law is pure (egStingWanted, egBarkCull); `createSpireMix` is its seam over the engine and the music.
@@ -18,8 +18,8 @@
 //   chime, the recap's Rare chime) ride it too (`beat`): their one-shot through the engine, the score ducked, never culled.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
-import { BOSS_CUES } from '../world/gateBoss.js';
-import { setPeerSoundScope } from '../net/peerFx.js';   // EG-ZH: the peers' sounds' one scope
+import { BOSS_CUES } from '../world/gate/gateBoss.js';
+import { setPeerSoundScope } from '../net/peer/peerFx.js';   // EG-ZH: the peers' sounds' one scope
 
 /** THE SPIRE MIX's numbers (section 26). */
 export const EG_MIX = Object.freeze({ duckDb: 6, duckMs: 300, addGapMs: 1500, barksPerKind: 4, peerDb: -4, watchfirePitch: 1.4 });
@@ -50,7 +50,7 @@ export function egBarkCull(barks, ear, per = EG_MIX.barksPerKind) {
   return out;
 }
 
-/** EG-ZH: WATCHFIRE'S TELL (section 26) - the gate's sting (the parry's ring, world/gateBoss.js BOSS_CUES.sting) at
+/** EG-ZH: WATCHFIRE'S TELL (section 26) - the gate's sting (the parry's ring, world/gate/gateBoss.js BOSS_CUES.sting) at
  *  EG_MIX.watchfirePitch, so an early outline is heard apart from a sting on your own feet (pitch 2.2); its volume and
  *  reach the sting's. */
 export const EG_TELL_CUE = Object.freeze({ clip: BOSS_CUES.sting.clip, pitch: EG_MIX.watchfirePitch, volume: BOSS_CUES.sting.volume, reach: BOSS_CUES.sting.reach });
@@ -97,7 +97,7 @@ export function createSpireMix({ audio = null, music = null, now = () => Date.no
     },
     /** A peer's sound's volume in the Spire. */
     peerVolume: (v) => v * egDbGain(EG_MIX.peerDb),
-    /** EG-ZH: THE PEERS DOWN - while on, every peer's sound (net/peerFx.js peerHeard) plays at `peerVolume` of itself through
+    /** EG-ZH: THE PEERS DOWN - while on, every peer's sound (net/peer/peerFx.js peerHeard) plays at `peerVolume` of itself through
      *  the engine's scope (systems/audio.js scaled); off, they are as they were. Idempotent; answers whether it is on. */
     peers(on) {
       const want = !!on;

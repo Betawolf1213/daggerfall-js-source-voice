@@ -21,14 +21,14 @@
 import { buildEgRuinParts } from '../world/egRuin.js';
 import { createEgWreckLook } from './egWreckLook.js';   // EG-LOOK (section 4): THE WRECK's meshes, batched and turned
 import { egCircleSpecs, egBandOfCircle, EG_HALL_PITCH } from '../net/egLaw.js';
-import { SD_REALM_ORIGIN } from '../net/sdBrain.js';
+import { SD_REALM_ORIGIN } from '../net/superDungeon/sdBrain.js';
 import { identity } from '../world/mat4.js';
-import { isTouchDevice } from '../ui/touchDevice.js';
+import { isTouchDevice } from '../ui/touch/touchDevice.js';
 import { createEgOccluders } from './egOcclude.js';   // EG-LOOK: the ruin's tall pieces dither out of the camera's way
 
 /**
- * @param {{ renderer?: any, lite?: boolean }} [deps] `lite` the phones' tier (ui/touchDevice.js - the Hour's own:
- *   scenes/sdHang.js)
+ * @param {{ renderer?: any, lite?: boolean }} [deps] `lite` the phones' tier (ui/touch/touchDevice.js - the Hour's own:
+ *   scenes/superDungeon/sdHang.js)
  */
 export function createEgGroundLook({ renderer = null, lite = isTouchDevice() } = {}) {
   const IDENT = identity();
@@ -83,7 +83,7 @@ export function createEgGroundLook({ renderer = null, lite = isTouchDevice() } =
       for (const hl of halls) if (Math.abs(hl.x0 - ex) < Math.abs(at.x0 - ex)) at = hl;
       if (at.x0 !== eyeX0) { eyeX0 = at.x0; for (const r of ruins) r.occ.stand(r.draw); }   // another hall: every ruin's dither let go
       for (const r of ruins) if (r.draw) r.draw.hidden = Math.abs(r.x0 - at.x0) > EG_HALL_PITCH / 2;
-      wreck.frame(eye, SD_REALM_ORIGIN[0] + at.x0, SD_REALM_ORIGIN[1], SD_REALM_ORIGIN[2] + at.zc, seconds, at.court);   // the hall's centre (net/sdBrain.js realmToDungeon's, nothing made)
+      wreck.frame(eye, SD_REALM_ORIGIN[0] + at.x0, SD_REALM_ORIGIN[1], SD_REALM_ORIGIN[2] + at.zc, seconds, at.court);   // the hall's centre (net/superDungeon/sdBrain.js realmToDungeon's, nothing made)
     },
     /** The circle let go: every draw of its taken out of `list` (the level's dynamic draws), its ruins' meshes freed (the
      *  wreck stays: the band's). Answers how many meshes it freed. */

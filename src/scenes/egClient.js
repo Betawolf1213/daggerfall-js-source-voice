@@ -38,7 +38,7 @@
 //   EG-ZE (2026-10-12, Mac: "I said I want everything"; sections 7, 16.2, 16.4, 16.5, 27.3 and 27.5): THE STAIR, THE DOOR
 //     AND THE LIGHTS - every step down drawn as THE STAIR (world/egLights.js egStairStep: the full fall into a band's
 //     first hall, the band's veil at every other step and pull, a plain cut under reduced motion - the veil's own themes,
-//     ui/gateVeil.js), never slower than the veil it replaced; the door's beam, the closing's ring and its mark on the
+//     ui/gate/gateVeil.js), never slower than the veil it replaced; the door's beam, the closing's ring and its mark on the
 //     enhanced compass (the arch's gold slot - the arch never stands in the Spire); the Redoubt's beacon, the recall's
 //     blue pillar and the pings drawn (render/egLightPass.js through the look) and each ping's chime; the witness's sight
 //     (the dormant Lurkers, the alcoves, the next hall's twist said) and a witness's ping at the member it watches.
@@ -66,14 +66,14 @@
 //     receipt the hub holds for me heard at my hello like any other; and each receipt the service has counted said to the
 //     hub (`claimed`), which forgets its copy.
 //   EG-ZF (2026-10-12, Mac: "I said I want everything"; sections 27.6 and 27.7): THE RECAP WHOLE AND THE ACCOUNT'S MEMORY -
-//     THE DAMAGE CHART at a lord's fall (the gate's own, ui/gateDamageChart.js, off the room's `dm`), what my companions'
+//     THE DAMAGE CHART at a lord's fall (the gate's own, ui/gate/gateDamageChart.js, off the room's `dm`), what my companions'
 //     spells healed in me said to the room (`heal`, for the chart's Healed column and each member's healing), the board's
 //     line from my end's claim on the recap, and the first-time lines once an account (the service's bits over the device's).
 //   EG-ZH (2026-10-12, sections 11.7-11.9, 27.8): THE HALL'S REVERB (systems/egReverb.js - held while I stand in the breach
 //     and through a swap or a pull under way, the hall my feet stand in heard in its fragments' space, crossfaded at a
 //     mouth, let go on every way out); THE FRAGMENT'S OWN CLAMP on my motor while I stand in one (world/egHall.js
 //     egFragArena - `player.arena`, set where no other arena holds me); the cameras eased back out of the rock
-//     (player/mwView.js setSpireCamera) and the touch layer's Spire branch (ui/touch.js setTouchSpire), both told here.
+//     (player/mwView.js setSpireCamera) and the touch layer's Spire branch (ui/touch/touch.js setTouchSpire), both told here.
 //   EG-ZI (2026-10-12, Mac: "I said I want everything"; section 10.6): THE PULL'S TOLL - the room's `toll` paid beside the
 //     void's cost (payToll: its quarters' share of my health through the hurt door, never the last of it) and said with the
 //     pull, its share on the screen and its line in the chat.
@@ -136,7 +136,7 @@ import { EG_TOLL_STEP } from '../net/egLaw.js';   // EG-ZI (section 10.6): the p
 import { readEgReceipt } from '../net/egReceipt.js';
 import { EG_VOID_MAX_S } from '../net/egDurable.js';   // EG-ZA: how long a stake's void may be asked
 import { egRcId } from '../net/egDurable.js';   // AUDIT EG IV (lane3 #2): a receipt's identity, for the counted ones
-import { dungeonToRealm } from '../net/sdBrain.js';
+import { dungeonToRealm } from '../net/superDungeon/sdBrain.js';
 import { egToDungeon } from '../world/egHall.js';
 import { restackWeirKeys, setWeirKeyOpener, weirKeysHeld } from '../systems/weirKey.js';   // AUDIT EG IV (lane3 #10): the keys the pack shows, for the rust's line
 import { egHudModel, drawEgHud, egPanelModel, drawEgPanel, egRecapModel, EG_POTIONS_PER_HALL } from '../ui/egHud.js';
@@ -163,7 +163,7 @@ import { egAccessNow, egAllyLookSet } from '../ui/egAccess.js';
 import { egRecapKeep, egAskText } from '../ui/egHud.js';
 import { EG_LORDS, EG_LAST_WORD_MS } from '../net/egLaw.js';
 import { isEnhanced } from '../systems/uiSkin.js';
-import { isTouchDevice } from '../ui/touchDevice.js';
+import { isTouchDevice } from '../ui/touch/touchDevice.js';
 import { getPref } from '../systems/uiPrefs.js';
 import { createEgLookDraw } from './egLookDraw.js';   // EG-G2: the Spire's sky, mist and lines (section 25)
 import { egQuietCompany } from '../world/egLook.js';
@@ -180,14 +180,14 @@ import { egFightFloorAt } from '../net/egFair.js';   // AUDIT EG V (h): traversa
 import { anchoredClock } from '../render/deadlands.js';
 import { createSpireMix } from '../systems/egMix.js';
 // EG-ZF (sections 27.6 and 27.7): the lord's fall's chart, the board's line, the heal word's bounds, the first bits over an account
-import { damageChartModel, drawGateDamageChart, DAMAGE_CHART_DELAY_MS, DAMAGE_CHART_MS } from '../ui/gateDamageChart.js';
+import { damageChartModel, drawGateDamageChart, DAMAGE_CHART_DELAY_MS, DAMAGE_CHART_MS } from '../ui/gate/gateDamageChart.js';
 import { egChartFell, egBoardLine, egRecapBoardKeep } from '../ui/egHud.js';
 import { egFirstOver } from '../ui/egBeats.js';
 import { GATE_HEAL_ROWS_MAX, GATE_HEAL_WIRE_MAX } from '../net/wire.js';
 import { createEgReverb } from '../systems/egReverb.js';   // EG-ZH (section 11.9): the hall's reverb
 import { egFragArena } from '../world/egHall.js';   // EG-ZH (sections 11.7-11.8): the fragment's own clamp
 import { setSpireCamera } from '../player/mwView.js';   // EG-ZH (section 11.8): the camera in rock
-import { setTouchSpire } from '../ui/touch.js';   // EG-ZH (section 27.8): touch on the spans
+import { setTouchSpire } from '../ui/touch/touch.js';   // EG-ZH (section 27.8): touch on the spans
 // EG-ZM (section 22): the room's first word heard under the veil - a listener session on my own identity, its fold
 import { OnlineSession, TOKEN_WAIT_MS } from '../net/online.js';
 import { foldEg, EG_STATE_EMPTY } from '../net/egLink.js';
@@ -1754,7 +1754,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   }
 
   // ── EG-ZF (section 27.6): THE RECAP WHOLE - the lord's fall's chart, the healing, the board's line ──────────────────
-  /** THE DAMAGE CHART AT A LORD'S FALL - the gate's own (ui/gateDamageChart.js), its crystals' column the lord's part, from
+  /** THE DAMAGE CHART AT A LORD'S FALL - the gate's own (ui/gate/gateDamageChart.js), its crystals' column the lord's part, from
    *  a beat after the fall for DAMAGE_CHART_MS, a readout to the side; the next fall's in its place; put away when its time
    *  is up, or with the breach. Drawn from the online frame in every mode (an end's chart outlives the walk out). */
   let chart = null, chartFor = null;
@@ -1850,7 +1850,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     for (const q of peers()) if (q?.pos && livingOf(E, q.sub)) trailKeep(spec, slot, q.sub, q.pos, tS);
     if (E.sg === 'closing' && trail.first && trail.first !== me()) trail.n = egTrailSegs(trail.routes.get(trail.first), spec, tS, trail.segs);
   }
-  /** The realm's frame less the dungeon's (net/sdBrain.js dungeonToRealm's offset), read once. */
+  /** The realm's frame less the dungeon's (net/superDungeon/sdBrain.js dungeonToRealm's offset), read once. */
   const R0 = dungeonToRealm(0, 0, 0);
   /** Member `sub`'s feet at dungeon-frame `p` kept on its route through the hall in slot `slot` (spec `spec`). */
   function trailKeep(spec, slot, sub, p, tS) {
@@ -2247,7 +2247,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
      *  rests and in the recap. Every light on the floor is the fight's. */
     quiet: () => inSpire() && egQuietCompany(link.state()?.sg, true).auras === 0,
     /** EG-E: where a Redoubt's spoils leave from - the Court's heart of hall `h`, over its floor, and the floor they are
-     *  kept to (world/gateSpew.js keepLaunch's `{ centre, r, floorY }`) - while I stand in that hall; null anywhere else
+     *  kept to (world/gate/gateSpew.js keepLaunch's `{ centre, r, floorY }`) - while I stand in that hall; null anywhere else
      *  (the spoils go straight into the pack). */
     beaconAt(h) {
       const E = link.state(), at = inSpire() ? standing() : null;
@@ -2352,7 +2352,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       const deep = E.b === c.b && E.h > 0;
       return { op: c.op, rh: c.rh, h: deep ? E.h : 0, until: deep ? (E.ca > 0 ? E.ca + E.cl : now() + E.cl) : null, end: E.b === c.b ? E.end : null };
     },
-    /** The arches' clearings (world/gateClearance.js gateClearSet's members). */
+    /** The arches' clearings (world/gate/gateClearance.js gateClearSet's members). */
     archClears: () => arches?.clears?.() ?? NO_CLEARS,
     /** My arch on the compass, and on the held map. EG-ZE (section 27.3): in the Spire the compass's gold slot is the door's
      *  while it stands open (world/egLights.js egDoorCompass) - the arch stands in the open world alone. */

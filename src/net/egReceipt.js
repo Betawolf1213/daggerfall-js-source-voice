@@ -1,7 +1,7 @@
 // @ts-check
 // EG-PLAY (2026-10-11, the Elite Gates arc; bible/11-Multiplayer/Elite-Gates.md section 23): THE ELITE BREACH'S RECEIPT -
-// the relay's signature on what a breach gave a member, the Hour's and the gate's twin (net/sdReceipt.js,
-// net/gateReceipt.js).
+// the relay's signature on what a breach gave a member, the Hour's and the gate's twin (net/superDungeon/sdReceipt.js,
+// net/gate/gateReceipt.js).
 //
 //     e1.<base64url({ q, b, s, c, ... i, e })>.<base64url(64-byte Ed25519 signature)>
 //         q its kind: 'w' a Redoubt taken, 'x' the member's end, 'v' a void (the stake given back)
@@ -140,7 +140,7 @@ export function egReceiptValid(c) {
 /**
  * MINT - the relay's half. With no key the receipt goes out unsigned (`e1.<body>.`), and the service declines it.
  * @param {Record<string, any>} what the claims less `i` and `e`
- * @param {CryptoKey|null} privateKey an Ed25519 private key (net/gateReceipt.js importReceiptKey), or null for none
+ * @param {CryptoKey|null} privateKey an Ed25519 private key (net/gate/gateReceipt.js importReceiptKey), or null for none
  * @param {{subtle: SubtleCrypto, nowS: number}} env
  * @returns {Promise<string>}
  */

@@ -28,7 +28,7 @@ import { egBreachNew, egEnter, egStep, egPoseIn, egFall, egWord, egBlow, egDown,
 import { EG_ROLE, EG_FL, egBodiesOf, egHas } from '../src/net/egBodies.js';
 import { EG_KIND } from '../src/net/egLegion.js';
 import { egFightView, egGroundAt } from '../src/net/egWalkGraph.js';
-import { orreryOf, orreryShortest, sdTurnsFor, SD_STONES, SD_HOURS } from '../src/net/sdBrain.js';
+import { orreryOf, orreryShortest, sdTurnsFor, SD_STONES, SD_HOURS } from '../src/net/superDungeon/sdBrain.js';
 import { egAnnalsLordPage } from '../src/net/egAnnals.js';
 import { validEgHeraldTell, readEgHeraldState, egHeraldFold, egHeraldPost } from '../src/net/egHerald.js';
 

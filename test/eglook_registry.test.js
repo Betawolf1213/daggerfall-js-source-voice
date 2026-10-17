@@ -15,7 +15,7 @@ import {
   pseudoArchiveCollisions, pseudoArchiveOwner, pseudoArchiveFree,
 } from '../src/world/pseudoArchives.js';
 import { GATE_TIERS, GATE_TIER_TEXT, GATE_TIER_SUB, gateTier, gateTierText, eliteBreachPlaque, gateSightLine, eliteTimerText } from '../src/systems/gateTier.js';
-import { DUNGEON_TIERS } from '../src/systems/dungeonTier.js';
+import { DUNGEON_TIERS } from '../src/systems/dungeon/dungeonTier.js';
 import { dungeonSightLine } from '../src/world/spawnedDungeons.js';
 import { EG_TEXT, egRoomKey } from '../src/net/egLaw.js';
 import { LAST_CLASSIC_TEXTURE_ARCHIVE } from '../src/scenes/dataPipeline.js';
@@ -45,7 +45,7 @@ test('EG-G2 THE REGISTRY (section 11.6): no two numbered pseudo-archives overlap
   for (const e of PSEUDO_ARCHIVES) { assert.ok(e.from > PSEUDO_ARCHIVE_FLOOR && e.to >= e.from, `${e.name}: past TEXTURE.511`); assert.ok(['port', 'mod', 'data', 'synthetic'].includes(e.kind)); }
   assert.equal(new Set(PSEUDO_ARCHIVE_KEYS.map((k) => k.key)).size, PSEUDO_ARCHIVE_KEYS.length, 'every string key once');
   // the refusal works: the large boat back on the Hour's number (AUDIT SD IV R6)
-  const bad = [...PSEUDO_ARCHIVES, { from: 38151, to: 38151, owner: 'world/largeBoatArt.js', name: 'LARGE_BOAT_ARCHIVE', kind: 'port', what: '' }];
+  const bad = [...PSEUDO_ARCHIVES, { from: 38151, to: 38151, owner: 'world/ships/largeBoatArt.js', name: 'LARGE_BOAT_ARCHIVE', kind: 'port', what: '' }];
   assert.deepEqual(pseudoArchiveCollisions(bad), [['SD_REALM_ARCHIVE:38151', 'LARGE_BOAT_ARCHIVE:38151']]);
   assert.deepEqual(pseudoArchiveCollisions([{ from: 10, to: 20, name: 'a' }, { from: 20, to: 25, name: 'b' }]).length, 1, 'a shared end is an overlap');
   assert.deepEqual(pseudoArchiveCollisions([{ from: 10, to: 20, name: 'a' }, { from: 21, to: 25, name: 'b' }]), [], 'touching is not');
@@ -90,7 +90,7 @@ test('EG-G2 THE SPIRE\'S ARCHIVES (section 25.1): the four bands at the page\'s 
 test('EG-G2 THE GATE\'S TIERS (section 2): Regular, Elite, Abyss as the dungeons\' three; the Regular tier\'s word is the event\'s own name (unchanged - the gate\'s pool says it), the Elite tier\'s the breach\'s, Abyss reserved and answered by nothing; a breach (its id, its room key, its kind) is Elite, the day\'s gate Regular, anything else none; the plaque - its title, The Battlespire, and the company line to an outsider only; the sight line in the Elite Dungeon\'s own rounding; the Timers row before and inside (mutants: the Regular word changed; super answered; the company line shown to the company)', () => {
   assert.deepEqual([...GATE_TIERS], [...DUNGEON_TIERS], 'the dungeons\' shape');
   assert.equal(GATE_TIER_TEXT.regular, "Dagon's Breach");
-  assert.match(readFileSync(new URL('../src/scenes/gatePool.js', import.meta.url), 'utf8'), /name: 'Dagon\\'s Breach'/, 'the gate\'s own name, unchanged');
+  assert.match(readFileSync(new URL('../src/scenes/gate/gatePool.js', import.meta.url), 'utf8'), /name: 'Dagon\\'s Breach'/, 'the gate\'s own name, unchanged');
   assert.equal(GATE_TIER_TEXT.elite, EG_TEXT.name);
   assert.equal(GATE_TIER_TEXT.super, 'Abyss Breach');
   assert.equal(gateTier({ b: '0123456789abcdef' }), 'elite');

@@ -15,7 +15,7 @@
 //         a plain running jump; the online page's parkour at skill 0 for a riser alone) on player/collider.js Collider, over
 //         the circle's floors (world/egHall.js egCircleColliderTris, the one bucket the dungeon stands) and its pieces as
 //         the screen rides them (scenes/egSpan.js createEgSpan - the Steps' stepTris slabs, moving on the shared clock,
-//         carrying, crumbling, a Pendulum's touch casting back, a Gust pushing). SD7b's harness (test/sd7b_steps.test.js) is
+//         carrying, crumbling, a Pendulum's touch casting back, a Gust pushing). SD7b's harness (test/world/superDungeon/sd7b_steps.test.js) is
 //         the model. A pilot plays each pair as a player would: it stands where it will run from, waits for a launch the
 //         solver says lands (egJumpLands - its window held either side of the launch, its own piece standing under it to
 //         the last, no gust in the flight), runs at the landing and jumps at the edge (what slides under it on the way, a
@@ -58,8 +58,8 @@ import { createEgSpan, egStepKey, EG_FLOOR_KEY, EG_GUST_REACH_M } from '../src/s
 import { egGustSections } from '../src/world/egLook.js';
 import { PlayerMotor, walkSpeed } from '../src/player/motor.js';
 import { Collider } from '../src/player/collider.js';
-import { realmToDungeon, dungeonToRealm } from '../src/net/sdBrain.js';
-import { gustAt } from '../src/world/sdSteps.js';
+import { realmToDungeon, dungeonToRealm } from '../src/net/superDungeon/sdBrain.js';
+import { gustAt } from '../src/world/superDungeon/sdSteps.js';
 import { identity } from '../src/world/mat4.js';
 import { egPolyIn } from '../src/net/egShape.js';   // EG-HERO-LAY: a hero's floors, crossed as still ground
 import { isMain } from './lib/isMain.mjs';

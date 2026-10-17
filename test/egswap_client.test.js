@@ -13,14 +13,14 @@ import { SOCIAL_ROOM, validEgOut, validEgIn, EG_BRAIN_V } from '../src/net/wire.
 import { egRoomKey, egHallOf, egCircleSpecs, egOnArrive, egFirstHallOf, EG_SEALED_MS, EG_GATHER_MS, EG_REST_MS, EG_TEXT } from '../src/net/egLaw.js';
 import { mintEgOrder } from '../src/net/identityToken.js';
 import { readEgReceipt } from '../src/net/egReceipt.js';
-import { realmToDungeon, dungeonToRealm } from '../src/net/sdBrain.js';
+import { realmToDungeon, dungeonToRealm } from '../src/net/superDungeon/sdBrain.js';
 import { createEgClient } from '../src/scenes/egClient.js';
 import { createEgSwap, EG_SWAP_WAIT_MS } from '../src/scenes/egSwap.js';
 import { createEgSpan, egSpanCollider } from '../src/scenes/egSpan.js';   // AUDIT EG V (L6-10): the collider the host hands the spans
 import { egCircleParts, egCircleBuild, egCircleKey, egCircleGates, egCirclePartsTransfers } from '../src/world/egCircleParts.js';
 import { buildEgCircleModel, egCircleColliderTris, egCircleLights, egGateParts, isEgHall } from '../src/world/egHall.js';
-import { realmArt } from '../src/world/sdRealmArt.js';
-import { SD_REALM_ARCHIVE } from '../src/world/sdRealm.js';
+import { realmArt } from '../src/world/superDungeon/sdRealmArt.js';
+import { SD_REALM_ARCHIVE } from '../src/world/superDungeon/sdRealm.js';
 import { identity } from '../src/world/mat4.js';
 import { egBandOfCircle, egSpecGive } from '../src/net/egLaw.js';   // EG-G2 (merged): the band's dress and the waystones go up with a swapped circle; AUDIT EG V (L6-8): the built circle's halls taken as given
 import { egBandArt, egBandArchive, EG_DRESS_RECORDS, EG_BEAT_TELL_RECORDS, EG_BAND_RECORDS } from '../src/world/egBandArt.js';

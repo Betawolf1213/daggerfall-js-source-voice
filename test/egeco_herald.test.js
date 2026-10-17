@@ -12,10 +12,10 @@ import {
   egRedoubtPost, egFirstPost, egLonePost, egTopPost, egSealPost, egHeraldPost, egHeraldTime, egHeraldLord, egDescentBracket, egHeraldFold, egHeraldNext,
   readEgHeraldState, validEgHeraldTell, EG_INTERNAL_HERALD, EG_HERALD_KEY, EG_HERALD_KEEP_MS, EG_HERALD_TELL_MS, EG_HERALD_OWE_MAX, EG_HERALD_TOP_HALL, EG_DESCENT_BRACKETS,
 } from '../src/net/egHerald.js';
-import { HERALD_RETRY_MS } from '../src/net/gateHerald.js';
+import { HERALD_RETRY_MS } from '../src/net/gate/gateHerald.js';
 import { egBreachNew, egEnter, egStep, egBlow, egDown, egWord, egEnd } from '../src/net/egBrain.js';
 import { egHallOf, egRoomKey, EG_SEALED_MS, EG_OPEN, EG_BANDS } from '../src/net/egLaw.js';
-import { ARENA_SEASON_S } from '../src/net/arenaLaw.js';
+import { ARENA_SEASON_S } from '../src/net/arena/arenaLaw.js';
 import { SOCIAL_ROOM, EG_KEY } from '../src/net/wire.js';
 import { fakeRooms } from './fakeRoom.mjs';
 import { EG_VOID_MAX_S } from '../src/net/egDurable.js';   // EG-ZA: the tombstone's life

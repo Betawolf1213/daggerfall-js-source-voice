@@ -10,14 +10,14 @@ import { createEgClient, EG_PUSH_MPS, EG_PUSH_MAX_M, EG_WITNESS_BACK } from '../
 import { egBreachNew, egEnter, egStateOf } from '../src/net/egBrain.js';
 import { egHallOf, EG_SEALED_MS } from '../src/net/egLaw.js';
 import { validEgOut } from '../src/net/wire.js';
-import { realmToDungeon, dungeonToRealm } from '../src/net/sdBrain.js';
+import { realmToDungeon, dungeonToRealm } from '../src/net/superDungeon/sdBrain.js';
 import { egPanelModel, egRecapModel, EG_POTIONS_PER_HALL } from '../src/ui/egHud.js';
 import { EG_VESTIGES, EG_V_BY_KEY } from '../src/net/egVestige.js';
 import { isRestoringPotion, registerSpirePotionLaw, spirePotionRefusal, SPIRE_POTION_TEXT } from '../src/systems/spireKit.js';
 import { POTION_RECIPES, potionRecipeKey } from '../src/systems/potionRecipes.js';
 import { useItem } from '../src/systems/useItem.js';
 import { registerMadeLevelHere } from '../src/systems/madeLevel.js';   // EG-H2: THE POTION LAW is the made level's rule
-import { TEMPLATES } from '../src/systems/itemKinds.js';
+import { TEMPLATES } from '../src/systems/item/itemKinds.js';
 import { createEgLink } from '../src/net/egLink.js';
 import { EG_FALL_MS } from '../src/ui/egSpireHud.js';   // EG-ZD: THE FALL's length, before the witness's eye
 

@@ -48,7 +48,7 @@ Five layers, near to far, each its own module and its own budget:
 | **1 THE GROUND** | the law's floors, walls and vaults, dressed as the academy: cornices for rims, architecture for passages and chambers | `world/egHall.js` (the circle's mesh, as today) | the circle's one mesh, occluders as today |
 | **2 THE RUIN** | everything that is the academy but not the law: the foundations hanging under every floor, column rings and arches round the courts and plates, statues, banners, the brazier-columns that carry the lamps, a stone bridge's arches under every way | `world/egRuin.js` (new, pure - built in the swap's worker with the circle) | one mesh a hall, `noShadow`, culled a hall at a time |
 | **3 THE WRECK** | the torn wings drifting 120-450 m out from each hall; the sealed Spire overhead | `world/egVista.js` (new, pure) | one mesh a band (`noShadow`), placed about the hall the eye stands in |
-| **4 THE AIR** | motes (embers, soul-motes, moon-dust, sparks and ash), the halos of the lamps and fixtures | `render/egMotes.js` (new), `render/sdHalo.js` (reused) | one draw each |
+| **4 THE AIR** | motes (embers, soul-motes, moon-dust, sparks and ash), the halos of the lamps and fixtures | `render/egMotes.js` (new), `render/superDungeon/sdHalo.js` (reused) | one draw each |
 | **5 THE SKY** | each band's realm painted into an octahedral map: its horizon, its deep, its landmarks | `render/egSkyMap.js` (new, SD5b's law) | one triangle at the far plane |
 
 The **air and light** (fog, trilight, key, grade, the lamps' tint) become a table a band (`world/egAtmos.js`), and the
@@ -223,7 +223,7 @@ sphere (they stand 500 m apart). Built in the worker in under 40 ms a circle.
   draw, additive, depth-tested, fogged, the band's own colours under L2 except the embers' and sparks' hottest (L3,
   small). Nothing over a fight floor's telegraphs: the motes fade within 3 m of a floor's top (the telegraphs keep their
   floor - section 25.6). THE QUIET COMPANY does not touch them (they are the place, not a player's).
-- **Halos** (`render/sdHalo.js`, reused): every lamp's fixture and the door's beam's foot, at most 48 a frame, the
+- **Halos** (`render/superDungeon/sdHalo.js`, reused): every lamp's fixture and the door's beam's foot, at most 48 a frame, the
   classic set's bloom.
 - **The Cairn's mist sheets**: the band's mist under every rim, below the cornice's foot (EgMistPass's sheet, held still).
 

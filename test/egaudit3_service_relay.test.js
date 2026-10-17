@@ -16,7 +16,7 @@ import { egGive8 } from './egGive8.mjs';
 import { egAim } from '../src/net/egBodies.js';
 import { shDisc } from '../src/net/egShape.js';
 import { mintEgOrder } from '../src/net/identityToken.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 
 // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (a cave's floor at the
 // plate's height, a blow thrown on it) and stand on it still - the halls they read are law 8's, given as a breach of law 8's

@@ -8,8 +8,8 @@
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { identity } from '../world/mat4.js';
-import { SD_REALM_ARCHIVE } from '../world/sdRealm.js';
-import { realmArt } from '../world/sdRealmArt.js';
+import { SD_REALM_ARCHIVE } from '../world/superDungeon/sdRealm.js';
+import { realmArt } from '../world/superDungeon/sdRealmArt.js';
 import { isEgHall, buildEgCircleModel, egCircleColliderTris, egCircleLights, egGateParts } from '../world/egHall.js';
 import { egCircleSpecs, egBandOfCircle, egSpecGive, EG_TEXT } from '../net/egLaw.js';
 import { createEgSwap } from './egSwap.js';

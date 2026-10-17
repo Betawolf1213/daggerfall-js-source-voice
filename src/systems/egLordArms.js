@@ -4,12 +4,12 @@
 // Redoubt (net/egPay.js; systems/egSpoils.js rollEgSpoils draws it). Its powers are the loot ladder's, rolled at the
 // Redoubt's door like every Legendary's, and its technique line the door's last pass (TECH1 law 4: a technique is found,
 // never chosen) - so a lord's piece is a chase, not a recipe. The name is written over the ladder's, as a revenant's
-// trophy's is (systems/revenantTrophy.js): a Legendary's record keeps its powers, not its name.
+// trophy's is (systems/revenant/revenantTrophy.js): a Legendary's record keeps its powers, not its name.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { createWeapon, randomMaterial, WEAPONS_ENUM as W } from '../combat/enemyEquipment.js';
-import { mintCondition, setItemFields } from './itemTemplates.js';
-import { applyRarity } from './lootRarity.js';
+import { mintCondition, setItemFields } from './item/itemTemplates.js';
+import { applyRarity } from './loot/lootRarity.js';
 
 /** Each lord's piece: its name and its base (a weapon template), section 19's table. */
 export const EG_LORD_ARMS = Object.freeze({

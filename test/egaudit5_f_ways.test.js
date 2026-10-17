@@ -14,9 +14,9 @@ import { egPolyIn } from '../src/net/egShape.js';
 import { EG_HERO_FRAGS } from '../src/net/egHeroFrags.js';
 import { PlayerMotor } from '../src/player/motor.js';
 import { Collider } from '../src/player/collider.js';
-import { realmToDungeon, dungeonToRealm } from '../src/net/sdBrain.js';
+import { realmToDungeon, dungeonToRealm } from '../src/net/superDungeon/sdBrain.js';
 import { identity } from '../src/world/mat4.js';
-import { SD_LIP, SD_ISLAND_SIDES } from '../src/world/sdRealm.js';
+import { SD_LIP, SD_ISLAND_SIDES } from '../src/world/superDungeon/sdRealm.js';
 
 const still = (o = {}) => ({ forward: 0, strafe: 0, run: false, jump: false, up: false, down: false, ...o });
 /** The circle of hall `h` of `seed` stood in a real Collider (its one bucket, as the hosts stand it). */

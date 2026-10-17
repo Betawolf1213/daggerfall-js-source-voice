@@ -14,7 +14,7 @@
 //
 // Pure (the swap's worker builds it): a spec in, triangles and faces out. Not a DFU member. Ledger A (ELITE-GATES).
 import { egRoomBuild, egRoomTurned } from '../net/egRoomLaw.js';
-import { realmToDungeon } from '../net/sdBrain.js';
+import { realmToDungeon } from '../net/superDungeon/sdBrain.js';
 
 /** A floor's and a ceiling's slab (m): its top or its underside the law's, the rest of it under or over. */
 export const EG_ROOM_SLAB_M = 0.3;
@@ -56,7 +56,7 @@ export function egRoomColliderInto(spec, out) {
 }
 
 /**
- * A ROOM'S PLAIN MESH into faces `f` (world/gateModel.js faces): its floors (their tops in the floor's record, their slabs'
+ * A ROOM'S PLAIN MESH into faces `f` (world/gate/gateModel.js faces): its floors (their tops in the floor's record, their slabs'
  * edges and undersides in the root's), its ceilings, its walls (both their faces - a wall in the pillar's record, a balustrade
  * in the brass, a climb face in the root's rock), each wall and ceiling one occluder (`occ` - world/egHall.js's EG-ZN marker).
  * `recs` the records it wears. Pure.

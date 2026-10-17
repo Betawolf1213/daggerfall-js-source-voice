@@ -1,7 +1,7 @@
 // @ts-check
 // EG-H2 (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 24, slice EG7): THE
 // MADE LEVEL'S RULES - one law for the three made levels the world host stands a player in: the Burning Court (an
-// Oblivion Gate's arena, world/gateArena.js), the Shattered Hour (world/sdRealm.js) and an Elite Breach's circle - the
+// Oblivion Gate's arena, world/gate/gateArena.js), the Shattered Hour (world/superDungeon/sdRealm.js) and an Elite Breach's circle - the
 // Spire (world/egHall.js). Each rule's door asked the level itself (`gateArenaDay`, `sdRealmSlot`, `egHallBreach`,
 // `isGateArena`, `_sdRealm`, `_egHall`), so a third made level grew a third copy of every check and one was forgotten
 // (THE FOUR HOSTS RULE's own failure: the pause's Save never learnt the Spire). Now a door asks THIS law what the level
@@ -20,8 +20,8 @@
 // FORGIVENESS (section 10.8), the flight bans (section 10.7), AvoidDeath refused and DEATH-PENALTY none.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
-import { isGateArena, COURT_TEXT } from '../world/gateArena.js';
-import { isSdRealm, SD_REALM_TEXT } from '../world/sdRealm.js';
+import { isGateArena, COURT_TEXT } from '../world/gate/gateArena.js';
+import { isSdRealm, SD_REALM_TEXT } from '../world/superDungeon/sdRealm.js';
 import { isEgHall } from '../world/egHall.js';
 import { EG_TEXT } from '../net/egLaw.js';
 

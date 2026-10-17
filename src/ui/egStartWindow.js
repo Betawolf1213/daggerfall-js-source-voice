@@ -18,7 +18,7 @@
 //
 // THE NATIVE-WINDOW RULE: on the classic skin every list here is DFU's DaggerfallListPickerWindow (ui/listPicker.js,
 // PICK00I0.IMG - the boat's variant picker's precedent, scenes/world.js csaOpenListPicker), and the one question is DFU's
-// YesNo box (ui/yesNoBox.js); on the enhanced skin the same picker draws itself in the skin (ui/enhancedPicker.js) and
+// YesNo box (ui/yesNoBox.js); on the enhanced skin the same picker draws itself in the skin (ui/enhanced/enhancedPicker.js) and
 // the box is the skin's decision card. No free-styled geometry: the rows are text in DFU's own list.
 //
 // THE HOST'S THREE DOORS (`openList`, `closeList`, `ask`) are the windows; the flow here is pure over them, so the tests

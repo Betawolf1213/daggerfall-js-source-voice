@@ -14,22 +14,22 @@ import { egBreachNew, egEnter, egStep, egBlow, egDown, egWord, egHeal, egEnd, eg
 import { egTallyHeal, egChartOf, egTalliesOf, EG_TALLY_ROWS } from '../src/net/egTally.js';
 import { egHallOf, egRoomKey, EG_SEALED_MS, EG_GATHER_MS } from '../src/net/egLaw.js';
 import { validEgOut, validEgIn, EG_KINDS, EG_INTERNAL_OPEN, GATE_HEAL_ROWS_MAX } from '../src/net/wire.js';
-import { healRef, HEAL_DEPTH_X, HEAL_REFILL_S } from '../src/net/gateBrain.js';
+import { healRef, HEAL_DEPTH_X, HEAL_REFILL_S } from '../src/net/gate/gateBrain.js';
 import { bodyStruck } from '../src/net/bossBody.js';
 import { mintEgOrder } from '../src/net/identityToken.js';
 import { mintEgReceipt, egCompanyTag } from '../src/net/egReceipt.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { EG_STATE_EMPTY, foldEg } from '../src/net/egLink.js';
 import { egRecapModel, egRecapMemberLine, egRankText, egBoardLine, egRecapBoardKeep, egRecapKeep, egRecapsKept, egChartFell, drawEgPanel, destroyEgHud } from '../src/ui/egHud.js';
 import { EG_PRES_TEXT, EG_TEXT_FIRST, EG_FIRST_KEYS, EG_FIRST_REHEARSAL_BIT, egFirstOver, egFirstRead, egFirstKey, EG_FIRST_KEY } from '../src/ui/egBeats.js';
-import { damageChartModel, drawGateDamageChart, destroyGateDamageChart, DAMAGE_CHART_DELAY_MS, DAMAGE_CHART_MS } from '../src/ui/gateDamageChart.js';
+import { damageChartModel, drawGateDamageChart, destroyGateDamageChart, DAMAGE_CHART_DELAY_MS, DAMAGE_CHART_MS } from '../src/ui/gate/gateDamageChart.js';
 import { createEgClient, EG_HEAL_SEND_MS } from '../src/scenes/egClient.js';
 import { fakeRoom } from './fakeRoom.mjs';
 import { standService } from './accountDb.mjs';
 import { EG_FIRST_BITS_MAX } from '../server-account/src/eg.js';
 import { EG_FIRST_POST, _resetEgHonoursCache } from '../server-account/src/egHonours.js';
 import { POST_SENDER, POST_SUBJECT_MAX, POST_BODY_MAX } from '../src/net/postLaw.js';
-import { arenaSeasonOf } from '../src/net/arenaLaw.js';
+import { arenaSeasonOf } from '../src/net/arena/arenaLaw.js';
 import { egGive8 } from './egGive8.mjs';
 
 // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courses along +z
@@ -332,7 +332,7 @@ test('EG-ZF service: THE FIRST-TIME LINES ONCE AN ACCOUNT (section 27.7) - `/v1/
   assert.equal((await S.call('/v1/eg/first', { bits: 1 })).status, 401, 'no session, no lines');
   assert.ok(EG_FIRST_REHEARSAL_BIT < 16 && EG_FIRST_BITS_MAX === 0xffff, 'room for every line the client keeps');
   assert.equal(S.env.DB._raw.prepare('SELECT eg_first FROM players WHERE id = ?').get(me.id).eg_first, 0b111);
-  assert.match(rd('server-account/migrations/0120_elite_breach.sql'), /ALTER TABLE players ADD COLUMN eg_first INTEGER NOT NULL DEFAULT 0;/);
+  assert.match(rd('server-account/migrations/0121_elite_breach.sql'), /ALTER TABLE players ADD COLUMN eg_first INTEGER NOT NULL DEFAULT 0;/);
 });
 
 test('EG-ZF service: THE RECAP\'S BOARD LINE (section 27.6) - an end\'s claim answers the member\'s standing: its company\'s rank in its Descent bracket where the breach ranks there (begun at Hall 1, unwagered), moving as deeper companies claim, asked again the same; a wagered or deeper-started breach the account\'s rank on the Depths; a Rehearsal or no hall cleared none (mutants: the bracket wrong; the rank off by one; a wagered breach on the Descent; a Rehearsal answered)', async (t) => {
@@ -446,7 +446,7 @@ function inBreach({ h = 5, sg = 'trial', store = null, acct = null, board = null
   return { client, B: Br, entity, sent, said, firsts, claims, tell, store: st, step: (ms) => { clock += ms; }, now: () => clock, out: () => { inside = false; } };
 }
 
-test('EG-ZF client: THE CHART AT A LORD\'S FALL (section 27.6) - the gate\'s own chart (ui/gateDamageChart.js) a beat after the Redoubt, each row the company\'s name and the room\'s numbers, the lord\'s part in its own column, Healed where anyone healed, my row marked, the lord named; gone after DAMAGE_CHART_MS; an end\'s chart outlives the walk out (mutants: the chart never drawn; the Lord column the crystals\'; the Healed column always; the chart never put away)', async (t) => {
+test('EG-ZF client: THE CHART AT A LORD\'S FALL (section 27.6) - the gate\'s own chart (ui/gate/gateDamageChart.js) a beat after the Redoubt, each row the company\'s name and the room\'s numbers, the lord\'s part in its own column, Healed where anyone healed, my row marked, the lord named; gone after DAMAGE_CHART_MS; an end\'s chart outlives the walk out (mutants: the chart never drawn; the Lord column the crystals\'; the Healed column always; the chart never put away)', async (t) => {
   let wall = 1_000_000;
   t.mock.method(Date, 'now', () => wall);
   const doc = fakeDocument(), had = globalThis.document;

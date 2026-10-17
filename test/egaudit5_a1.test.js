@@ -18,8 +18,8 @@ import { egBreachNew, egEnter, egStep, egWord, egGeo, egNextOf, egStrataSecond, 
 import { egDecreesAsk, egDecreesChosen, egDecreesInForce, egBargainFams, egBargainOpen, egBargainDecree, egTwistShown, egFrayOf, egFrayingOpen, egLeanOf, EG_FRAYING_FRAY, EG_FRAYING_II_TURNS, EG_ASK_MS } from '../src/net/egRun.js';
 import { EG_VESTIGES, EG_SHARDS_PER } from '../src/net/egVestige.js';
 import { EG_WAGER_FAMILY_OF } from '../src/net/egStartLaw.js';
-import { SD_OMENS } from '../src/net/sdMarks.js';
-import { SD_FRAY_MAX } from '../src/net/sdBrain.js';
+import { SD_OMENS } from '../src/net/superDungeon/sdMarks.js';
+import { SD_FRAY_MAX } from '../src/net/superDungeon/sdBrain.js';
 import { validEgOut } from '../src/net/wire.js';
 import { foldEg, EG_STATE_EMPTY } from '../src/net/egLink.js';
 import { egHudModel, egNextCircleText } from '../src/ui/egHud.js';

@@ -26,7 +26,7 @@ import { egAsk } from '../src/net/egRun.js';
 import { egCircleOfHall, egHallOf, EG_SEALED_MS, EG_TEXT, EG_DECREE_BY_KEY } from '../src/net/egLaw.js';
 import { EG_ANNALS } from '../src/net/egAnnals.js';
 import { validEgOut } from '../src/net/wire.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { accountRefusalText } from '../src/net/accountClient.js';
 import { maxFatigue } from '../src/systems/statMods.js';
 import { egFirstOver, egFirstKey, egFirstRead, EG_FIRST_KEY } from '../src/ui/egBeats.js';

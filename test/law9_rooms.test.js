@@ -25,7 +25,7 @@ import { PARKOUR_HANG_DROP, gripSeconds, freeClimbSpeed, freeStartSeconds, mantl
 import { walkSpeed } from '../src/player/motor.js';
 import { buildEgCircleModel, egCircleColliderTris, egInHeroBox, egFragZones, egFragArena, egFragKeep, egToDungeon } from '../src/world/egHall.js';
 import { egRoomsOf, egClimbZones, EG_CLIMB_ZONE_OUT_M } from '../src/world/egRoomModel.js';
-import { SD_REALM_FLOOR_RECORD } from '../src/world/sdRealm.js';
+import { SD_REALM_FLOOR_RECORD } from '../src/world/superDungeon/sdRealm.js';
 import { egMapOf, egRoomViews } from '../src/tools/spireMap.js';
 
 /** THE LAW PIN's 800 halls (test/eghero_lay.test.js's own): four seeds, two grounds, a hundred halls - each laid once here. */

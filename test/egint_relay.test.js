@@ -12,7 +12,7 @@ import { fakeRoom } from './fakeRoom.mjs';
 import { EG_INTERNAL_OPEN, validEgOut, validEgIn, validPose, EG_KINDS, EG_OUT_KINDS, EG_FIGHT_KINDS, POSE_TS_MOD } from '../src/net/wire.js';
 import { egRoomKey, egHallOf, egFloorTest, EG_SEALED_MS, EG_GATHER_MS, EG_CAST_BACK_LOSS, EG_CAST_BACK_FLOOR, EG_VOID_Y } from '../src/net/egLaw.js';
 import { mintEgOrder } from '../src/net/identityToken.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { egAim, egBlowsStep, egFightNew, egTellTo, EG_TELL_LEAD_MS, EG_TELL_NEAR_M, EG_FARWATCH_MS, EG_FEINT_AT } from '../src/net/egBodies.js';
 import { egLordsStep, egLordsNew, egLordsWake } from '../src/net/egLords.js';
 import { egBlowOf, egBlowFrom, egWindupFloorMs, shDisc, shLane, shCone, shRing, shAll, shOut } from '../src/net/egShape.js';

@@ -150,11 +150,11 @@ export const EG_FIRST_REHEARSAL_BIT = EG_FIRST_KEYS.length;
 /** Where the device keeps the lines it has said (a bit each). */
 export const EG_FIRST_KEY = 'eg.first';
 
-/** THE BEATS' SOUNDS: DAGGER.SND records, played as the Hour plays its own (scenes/sdHall.js SD_HALL_SOUNDS - the bell
- *  107, the Concord's chime 364; scenes/sdSteps.js the void's moan 66 at a cast-back), and the arena's (systems/
+/** THE BEATS' SOUNDS: DAGGER.SND records, played as the Hour plays its own (scenes/superDungeon/sdHall.js SD_HALL_SOUNDS - the bell
+ *  107, the Concord's chime 364; scenes/superDungeon/sdSteps.js the void's moan 66 at a cast-back), and the arena's (systems/
  *  arenaSound.js ARENA_CLIPS - the drums 374, the fanfare 32), the door's (DungeonDoorOpen 25), the cauldron's chord
  *  (MakePotion 365) and the enchanter's chime that rings a Rare drop (scenes/corpseMarker.js playRareDrop - MakeItem 364).
- *  `by` a sound another part already plays: the veil's close (ui/gateVeil.js) and the score's SPIRREDT (EG17). */
+ *  `by` a sound another part already plays: the veil's close (ui/gate/gateVeil.js) and the score's SPIRREDT (EG17). */
 export const EG_BEAT_SOUNDS = Object.freeze({
   rewind: Object.freeze({ rec: 66, vol: 0.85, pitch: 1.25 }),
   veil: Object.freeze({ by: 'veil' }),

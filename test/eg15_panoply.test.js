@@ -1,8 +1,8 @@
 // EG15 (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 19, THE BATTLEMAGE'S
-// PANOPLY; section 15's death saves): the Spire's own Aetheric set (systems/sigilSets.js 'panoply', systems/aetheric.js
+// PANOPLY; section 15's death saves): the Spire's own Aetheric set (systems/sigil/sigilSets.js 'panoply', systems/aetheric.js
 // PANOPLY_SET_PIECES): its law, its nine records of Mithril at the Legendary band's top under the pay law's own ids
 // (net/egPay.js EG_PANOPLY_IDS), the item law that judges them, the pick a Redoubt's spoils and the Broker's sink mint by,
-// and its three tiers through the powers' seams (systems/sigilSetPowers.js) - Battlemage's Bearing (every resistance and
+// and its three tiers through the powers' seams (systems/sigil/sigilSetPowers.js) - Battlemage's Bearing (every resistance and
 // the maximum magicka, never in a save), Battlemage's Discipline (a cast arms the next weapon blow with its element; a
 // weapon blow returns a share of the last spell's cost) and Battlemage's Reprieve (a shield under 20%, shared with the
 // allies near) - and THE SPIRE'S RECOVERY: in an Elite Breach every death save recovers at the next Redoubt taken.
@@ -13,38 +13,38 @@ import { readFileSync } from 'node:fs';
 import {
   setRound, setPowerStates, setHudChips, setSetPowersVoice, awakeTiersOf, setStruck, setBlow, setStrike, setHurt, setCast,
   setSetPowersAllies, setSpireRecovery, spireRedoubtTaken, reprieveBundle, eventideBundle, _setSetPowersClockForTests, _resetSetPowersForTests,
-} from '../src/systems/sigilSetPowers.js';
-import { setSigilOnline, setSigilRenown, SIGIL_STAGES, SIGIL_SET_IDS, SIGIL_POWER_MAX, _resetSigilForTests } from '../src/systems/sigil.js';
+} from '../src/systems/sigil/sigilSetPowers.js';
+import { setSigilOnline, setSigilRenown, SIGIL_STAGES, SIGIL_SET_IDS, SIGIL_POWER_MAX, _resetSigilForTests } from '../src/systems/sigil/sigil.js';
 import {
   WORLD_SET_IDS, BRIEF_MAX, SET_STAGE_MAX, SET_PLACES, ROUND_SECONDS, REPRIEVE_BELOW, REPRIEVE_SECONDS, REPRIEVE_METRES, REPRIEVE_ALLY_SHARE,
   setById, raidSetOf, tierValues, setSetsDueling, _resetSigilSetsForTests,
-} from '../src/systems/sigilSets.js';
+} from '../src/systems/sigil/sigilSets.js';
 import {
   AETHERIC_RECORDS, REGALIA, RAID_SET_PIECES, SERPENT_SET_PIECES, NUMIDIUM_SET_PIECES, PANOPLY_SET_PIECES, aethericById, aethericMaterial,
   mintAetheric, mintPanoplyPiece, panoplyPieceById, validSetMarks, AETHERIC,
 } from '../src/systems/aetheric.js';
 import { EG_PANOPLY_KEYS, EG_PANOPLY_IDS } from '../src/net/egPay.js';
-import { brokerStock } from '../src/systems/sigilBroker.js';
-import { itemFindings } from '../src/systems/itemLaw.js';
+import { brokerStock } from '../src/systems/sigil/sigilBroker.js';
+import { itemFindings } from '../src/systems/item/itemLaw.js';
 import { manaMine, _resetPlayerHealForTests } from '../src/systems/playerHeal.js';
 import { registerPlayerCastListener, tellPlayerCast } from '../src/systems/playerCasts.js';
 import { entityModsOf, entityResistMod, computeEntityMods, EMPTY_MODS, newMods, registerEntityFold, weaponBlowMods } from '../src/systems/entityMods.js';
 import { foldMpOf, onlineMpOf, offlineVitals } from '../src/systems/renownLayer.js';
 import { defineLiveMaxMagicka } from '../src/systems/chargen.js';
-import { snapshotPlayer } from '../src/systems/save.js';
+import { snapshotPlayer } from '../src/systems/save/save.js';
 import { passiveSpecialsMagicRound, setPassiveSpecialsHost } from '../src/systems/passiveSpecials.js';
 import { hurtPlayer, registerPlayerDeathSave } from '../src/characters/playerEntity.js';
 import { setPlayerDoor } from '../src/systems/playerDoor.js';
 import { equipItem } from '../src/systems/equip.js';
-import { mintCondition } from '../src/systems/itemTemplates.js';
+import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { WEAPON_MATERIALS } from '../src/characters/weapons.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { WEAPON_HANDS } from '../src/characters/equipRules.js';
 import { SKILLS } from '../src/systems/skills.js';
-import { AFFIX_RANGES, RESIST_ELEMENTS, LOOT_RARITY_KEY } from '../src/systems/lootRarity.js';
+import { AFFIX_RANGES, RESIST_ELEMENTS, LOOT_RARITY_KEY } from '../src/systems/loot/lootRarity.js';
 import { setPref, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
-import { validLootItem } from '../src/systems/loot.js';
+import { validLootItem } from '../src/systems/loot/loot.js';
 import { EFFECT_FLAGS } from '../src/systems/spellcast.js';
 import { allyCastable, strangerCastable, allyCastFrame, allyCastSpell } from '../src/systems/allyCast.js';
 import { validCastData, CAST_SETTING_MAX } from '../src/net/wire.js';
@@ -340,6 +340,8 @@ test('EG15 BATTLEMAGE\'S DISCIPLINE (4), THE RETURN: each weapon blow that lands
   assert.equal(e.magicka, 4, 'a blow that took nothing returns nothing');
   setStrike(e, foe, 30, createWeapon(130, WEAPON_MATERIALS.Steel));
   assert.equal(e.magicka, 6, 'a bow\'s blow is a weapon blow');
+  setStrike(e, foe, 30, w, { blow: false });
+  assert.equal(e.magicka, 6, 'TWO-HANDS (AUDIT 2): an off-hand blow that does not count whole sets off no per-blow charge, and the return is one');
   tellPlayerCast(e, FROST, 10);
   setStrike(e, foe, 30, w);
   assert.equal(e.magicka, 6, 'the next cast\'s cost: 5% of 10 is half a point, carried');
@@ -380,7 +382,7 @@ test('EG15 THE CAST SEAM AND THE ONE MAGICKA: playerCasts.js is a leaf the one c
   assert.match(magic, /const done = \(v\) => \{ lastSpell = sp; onCastReadySpell\?\.\(sp\); if \(v\) tellPlayerCast\(playerEntity, sp, cost\); readiedSpell = null;/);
   for (const host of ['src/scenes/world.js', 'src/scenes/exterior.js', 'src/scenes/dungeonContext.js']) assert.match(strip(read(host)), /createPlayerMagic\(\{/, `${host} builds the one engine`);
   assert.doesNotMatch(strip(read('src/scenes/worldModes.js')), /createPlayerMagic\(/, 'the interiors take the streaming page\'s engine');
-  assert.match(strip(read('src/systems/sigilSetPowers.js')), /registerPlayerCastListener\(SIGIL_SETS_POWER, setCast\);/);
+  assert.match(strip(read('src/systems/sigil/sigilSetPowers.js')), /registerPlayerCastListener\(SIGIL_SETS_POWER, setCast\);/);
   // the one magicka a power returns
   _resetPlayerHealForTests();
   const m = { magicka: 10, maxMagicka: 12 };
@@ -394,9 +396,9 @@ test('EG15 THE CAST SEAM AND THE ONE MAGICKA: playerCasts.js is a leaf the one c
   _resetPlayerHealForTests();
   manaMine(f, 0.85);
   assert.equal(f.magicka, 1, 'the reset clears the fraction (0.2 was owed)');
-  const loot = strip(read('src/systems/lootPowers.js'));
+  const loot = strip(read('src/systems/loot/lootPowers.js'));
   assert.doesNotMatch(loot, /function gainMana/, 'one door, never two');
-  assert.match(loot, /case 'conduit': gainMana\(attacker, p\.mana\); break;/);
+  assert.match(loot, /case 'conduit': if \(whole\) gainMana\(attacker, p\.mana\); break;/);   // PIN MOVED (TWO-HANDS AUDIT 2, at the sixth merge of main): a per-blow charge on a whole blow alone - the Discipline's return beside it
 });
 
 // ── Reprieve ──────────────────────────────────────────────────────────

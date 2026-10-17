@@ -4,7 +4,7 @@
 // the Cairn's soul-motes, the Shade's moon-dust, the Wellhead's sparks and heavy ash), 600-1,000 points in one draw, added,
 // depth-tested, fogged, under L2 but the hot ones' hottest; whole lives over the period; one field about the eye, anchored
 // at its hall; THE TELEGRAPHS KEEP THEIR FLOOR (gone within 3 m of any floor's top, out of every passage); held still under
-// reduced motion and never touched by THE QUIET COMPANY; the halos of the lamps and the way's beams (render/sdHalo.js, at
+// reduced motion and never touched by THE QUIET COMPANY; the halos of the lamps and the way's beams (render/superDungeon/sdHalo.js, at
 // most 48); the Cairn's mist under every rim and never over a floor; every allocation owned and none a frame. Pinned on
 // the code the GPU runs (test/glsl.mjs runs the shaders' own text).
 import { test } from 'node:test';
@@ -15,7 +15,7 @@ import { glslFunctions } from './glsl.mjs';
 import { EG_MOTE_KINDS, EG_MOTE_COLOURS, EG_MOTE_CELL, EG_MOTE_FLOOR, EG_MOTE_PX, EG_MOTES_VS, EG_MOTES_FS, egMoteLayout, egMoteCount, egMoteFloors, egMoteFloorKeep, EG_HALO, egHalosInto, EG_RIM_MIST, egRimMists, EgMotesPass } from '../src/render/egMotes.js';
 import { EG_SKY_PERIOD } from '../src/render/egSkyMap.js';
 import { EG_MIST_FS } from '../src/render/egMistPass.js';
-import { SD_HALO_GAIN } from '../src/render/sdHalo.js';
+import { SD_HALO_GAIN } from '../src/render/superDungeon/sdHalo.js';
 import { egAtmosOf } from '../src/world/egAtmos.js';
 import { egCircleLights, egToDungeon } from '../src/world/egHall.js';
 import { EG_LIGHT_KIND } from '../src/world/egLights.js';
@@ -301,6 +301,6 @@ test('EG-LOOK NOTHING A FRAME (Elite-Gates.md section 11.9; AUDIT EG V L6-4): a 
   const frame = () => { const ts = secs[(i++) % secs.length]; L.drawSky(I, I, ts, fog, 0.35); L.paintSky(vp, true, ts); L.drawUnder(I, I, eye, ts, fog); L.drawAir(I, I, eye, ts, fog, true, false, lights, 720); };
   frame();
   assert.ok(L.airState().rims > 0 && L.airState().halos > 1 && L.airState().drawn > 0, 'the whole air drew');
-  const bytes = await sampledBytes(frame, 3000, ['scenes/egLookDraw.js', 'render/egMotes.js', 'render/egSkyMap.js', 'render/egSkyPass.js', 'render/sdHalo.js', 'render/egMistPass.js']);
+  const bytes = await sampledBytes(frame, 3000, ['scenes/egLookDraw.js', 'render/egMotes.js', 'render/egSkyMap.js', 'render/egSkyPass.js', 'render/superDungeon/sdHalo.js', 'render/egMistPass.js']);
   assert.ok(bytes < 160, `the look's frame allocates ${bytes.toFixed(1)} bytes`);
 });

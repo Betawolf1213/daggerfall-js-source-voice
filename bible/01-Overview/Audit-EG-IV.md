@@ -187,7 +187,7 @@ Sections 8.3, 8.5, 8.6, 12, 13.2-13.4, 14 and 18 were said as built.
 ## Pins moved and records re-aimed
 
 Each pin moved carries its PIN MOVED note. Each group re-aimed by content the records whose quoted lines it moved
-(test/mutantdrift.test.js).
+(test/tooling/mutantdrift.test.js).
 
 - **The legion**: `l10n4_hardcoded`, where `net/egLegion.js` holds 10 hard-coded prose literals (it held 11). Re-aimed:
   `egaudit3_count` (4), `egaudit3_law` (1), `egaudit3_lords` (2), `egz_mastery` (4), `egz_relay` (1), `egz_vestiges` (1).

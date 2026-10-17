@@ -50,10 +50,10 @@
 // tethers are the fight's (net/egBodies.js egMark, F.tethers).
 //
 // Pure: a fight and a beat in, frames out. In the relay bundle. Not a DFU member. Ledger A (ELITE-GATES).
-import { PHASE_AT, SHIELD_MS, THREAT_PICK, THREAT_DECAY, HIT_KINDS, STUN_MS, STUN_HIT_X } from './gateBrain.js';
-import { ATTACKS, POOLS } from './gateBrain.js';   // AUDIT EG III (section 13.4; ONE DFU MEMBER, ONE EXPORT): the gate's Cleave, Slam, Charge and Meteor read, never copied - the Meteor's burning ground with it
-import { GATE_ASPECTS, gateAspectOf } from './gateMods.js';   // AUDIT EG III (sections 13.3 and 13.4): a lord's aspect - Garoth's in turn, an earlier band's lord re-aspected
-import { dpsRef, retireShare, restoreShare } from './gateBrain.js';   // EG-ZQ (section 13.2): a lord's shares - the gate's level claim, its retirement and its return
+import { PHASE_AT, SHIELD_MS, THREAT_PICK, THREAT_DECAY, HIT_KINDS, STUN_MS, STUN_HIT_X } from './gate/gateBrain.js';
+import { ATTACKS, POOLS } from './gate/gateBrain.js';   // AUDIT EG III (section 13.4; ONE DFU MEMBER, ONE EXPORT): the gate's Cleave, Slam, Charge and Meteor read, never copied - the Meteor's burning ground with it
+import { GATE_ASPECTS, gateAspectOf } from './gate/gateMods.js';   // AUDIT EG III (sections 13.3 and 13.4): a lord's aspect - Garoth's in turn, an earlier band's lord re-aspected
+import { dpsRef, retireShare, restoreShare } from './gate/gateBrain.js';   // EG-ZQ (section 13.2): a lord's shares - the gate's level claim, its retirement and its return
 import { EG_ROLE, EG_FL, EG_GONE, egBodyNew, egWalk, egStop, egPlace, egAim, egGone, egHas, egSetFl, egHpTeam, egBodiesOf, egBodyById, egMark, egUnmark, egMarkOf, egShareX, egCut, egSaid, egObSay, EG_TELL_LEAD_MS, EG_FEINT_AT } from './egBodies.js';   // EG-ZJ: egSaid, egObSay - a body's state kept as said
 import { egHitBody, egFightState } from './egBodies.js';   // EG-ZK: the seam's blow (the gate's hand and purse) and the fight's state
 import { egFace } from './egBodies.js';   // AUDIT EG V (lane1 #7): a lord's turn said
@@ -67,7 +67,7 @@ import { egByHeight, egFeetY, egBears } from './egWalkGraph.js';   // THE ASCENT
 import { egSameStorey } from './egLegion.js';   // THE ASCENT - HEIGHT: a blow only at a member of its own storey
 import { bossSeam } from './bossSeam.js';   // EG-ZK (section 13.1): the Spire's lords written to the boss seam
 import { judgeShapes } from './bossRef.js';   // EG-ZK: the seam's judge - the Spire's one (EG-H1)
-import { SD_ECHO_PAIR_MS } from './sdRemnant.js';   // AUDIT EG IV (lane1 #32; section 13.3): the Twins' window is the Echoes' law, read
+import { SD_ECHO_PAIR_MS } from './superDungeon/sdRemnant.js';   // AUDIT EG IV (lane1 #32; section 13.3): the Twins' window is the Echoes' law, read
 
 /** Every boss on the wire, by number (`k` of a lord body): the thirteen, then the three champions. */
 export const EG_BOSS_KEYS = Object.freeze(['hound', 'spellmaster', 'armsmaster', 'ilthys', 'cairnkeeper', 'twins', 'morvayn', 'dusk', 'stalker', 'seyth', 'colossus', 'wyrm', 'garoth', 'kynreeve', 'kynmarcher', 'markynaz']);
@@ -100,7 +100,7 @@ export function egTtkRef(c) {
 /** The champion's health (section 8.5), a twin's share of a lord's, a mirror's (section 13.4). */
 export const EG_PROVE_HP_S = 40;
 export const EG_TWIN_SHARE = 0.55;
-/** AUDIT EG IV (lane1 #32; section 13.3) - THE TWINS' WINDOW: the Echoes' own (net/sdRemnant.js SD_ECHO_PAIR_MS, 15 s), and the
+/** AUDIT EG IV (lane1 #32; section 13.3) - THE TWINS' WINDOW: the Echoes' own (net/superDungeon/sdRemnant.js SD_ECHO_PAIR_MS, 15 s), and the
  *  one court's (*n* <= 2) longer one. */
 export const EG_TWIN_ONE_MS = 20_000;
 /** AUDIT EG IV (lane1 #2; section 13.2) - AN ERRAND'S HELD THRESHOLD: the least health a lord of max `max` keeps while an errand
@@ -131,10 +131,10 @@ export const EG_WEIGHT_PCT = 0.3;
 /** A lord's breath after a blow's recovery, and its first after it wakes (ms). */
 export const EG_LORD_BREATH_MS = 700;
 export const EG_LORD_WAKE_MS = 2500;
-/** The gate's blows the Valkynaz and the champions keep (net/gateBrain.js ATTACKS, at their phase-one wind-ups), as kit rows.
+/** The gate's blows the Valkynaz and the champions keep (net/gate/gateBrain.js ATTACKS, at their phase-one wind-ups), as kit rows.
  *  AUDIT EG III (ONE DFU MEMBER, ONE EXPORT): read from the gate's own rows, never copied - its name, wind-up, recovery, share,
- *  base, reach, gap and weight; `ak` its key, which names it under an aspect (net/gateMods.js GATE_ASPECTS `names` - the
- *  Meteor's), and `pool` the burning ground its landing leaves (net/gateBrain.js POOLS - the Meteor's). */
+ *  base, reach, gap and weight; `ak` its key, which names it under an aspect (net/gate/gateMods.js GATE_ASPECTS `names` - the
+ *  Meteor's), and `pool` the burning ground its landing leaves (net/gate/gateBrain.js POOLS - the Meteor's). */
 const gateRow = (A) => Object.freeze({ nm: A.name, ak: A.key, wu: A.windup, rec: A.recover, p: A.pct, b: A.base, range: A.range, minGap: A.minGap, w: A.w, ...(A.pool ? { pool: A.pool } : {}) });
 const CLEAVE = gateRow(ATTACKS.cleave), SLAM = gateRow(ATTACKS.slam), CHARGE = gateRow(ATTACKS.charge), METEOR = gateRow(ATTACKS.meteor);
 const HELLFIRE = gateRow(ATTACKS.hellfire);   // AUDIT EG IV (lane1 #16): the Mother of Dusk's, read - its pool (POOLS.hellfire) the Meteor's way
@@ -173,7 +173,7 @@ export function egMarkynazDecree(D, h) {
 
 // ── the aspects (sections 13.3 and 13.4) ─────────────────────────────────────────────────────────────────
 /**
- * AUDIT EG III - A LORD'S ASPECT at circle `c` (net/gateMods.js GATE_ASPECTS, "a lord's element" - section 6's words): a
+ * AUDIT EG III - A LORD'S ASPECT at circle `c` (net/gate/gateMods.js GATE_ASPECTS, "a lord's element" - section 6's words): a
  * Valkynaz's its band's (Ilthys Burning, Morvayn Venom-Blooded, Seyth Rime-Wrought) and Garoth's EACH OF THE FOUR IN TURN, from
  * one Garoth Redoubt to the next (Redoubt 20 Burning, 25 Rime-Wrought, 30 Storm-Crowned, 35 Venom-Blooded, 40 Burning...); a
  * Court lord drawn in a later band than its own RE-ASPECTED, to the band it is met in (section 13.3's pool). None for a lord met
@@ -189,7 +189,7 @@ export function egLordAspect(key, c) {
   return L.valk || L.band < band ? gateAspectOf(EG_BANDS[band].aspect) : null;
 }
 /** AUDIT EG III: an element a lord's kit throws or lays, under its aspect: every element its aspect's - the gate's law ("his
- *  fire is his aspect's": net/gateBrain.js fightProfile) for a lord whose kit holds more than fire. The place's own fire
+ *  fire is his aspect's": net/gate/gateBrain.js fightProfile) for a lord whose kit holds more than fire. The place's own fire
  *  (Grath's burning bridges) is the place's, and keeps it. AUDIT EG V (lane1 #2; section 13.3): the aspect is the THROWING
  *  lord's own (`L.asp`, egLordsNew - its mirrors and images bear their lord's), never the fight's: a stratum's second lord
  *  re-aspected to the Wellhead leaves the Court's own lord its element, and the Twin Lords keep their clans' fire and frost. */
@@ -197,7 +197,7 @@ const elOf = (L, el) => (el != null && L?.asp ? gateAspectOf(L.asp)?.el ?? el : 
 
 // ── the shares (section 13.2) ────────────────────────────────────────────────────────────────────────────
 /**
- * A LORD'S FIGHTERS: each member's share of its health (`{ share, retired }`, the gate's own record - net/gateBrain.js
+ * A LORD'S FIGHTERS: each member's share of its health (`{ share, retired }`, the gate's own record - net/gate/gateBrain.js
  * retireShare/restoreShare move it), kept on the lord (`fs`) from the first share it moves - the company the hall woke
  * with (`F.subs`, at `F.lvs`), each `per` x its reference damage (`dpsRef`), `per` the lord's health per unit of the
  * company's reference damage as it was stood (ttkRef, a champion's EG_PROVE_HP_S x the depth, Colossal, a twin's part,
@@ -599,7 +599,7 @@ export function egLordsStep(F, spec, now, here, rng, out, ctx) {
     if (bl.ld || now < bl.at) continue;
     bl.ld = 1;
     const pl = F.mem.pools?.[bl.i];
-    if (pl) { delete F.mem.pools[bl.i]; for (const st of bl.s) zoneOut(F, 'burn', shDisc(st[1], st[2], pl[0]), bl.at, bl.at + pl[1], out, { p: pl[2], b: pl[3], el: bl.el, y: bl.y }); }   // AUDIT EG IV (lane1 #16): one under each of its marks, as the gate's Hellfire lays it (net/gateStrike.js landingPools)
+    if (pl) { delete F.mem.pools[bl.i]; for (const st of bl.s) zoneOut(F, 'burn', shDisc(st[1], st[2], pl[0]), bl.at, bl.at + pl[1], out, { p: pl[2], b: pl[3], el: bl.el, y: bl.y }); }   // AUDIT EG IV (lane1 #16): one under each of its marks, as the gate's Hellfire lays it (net/gate/gateStrike.js landingPools)
   }
   if (F.mem.pools) for (const k of Object.keys(F.mem.pools)) { const i = Number(k); if (!F.blows.some((b) => b.i === i) && !(F.pend ?? []).some((q) => q.b.i === i) && !F.held.some((h) => h.b?.i === i)) delete F.mem.pools[k]; }
   const view = egFightView(spec);   // EG-ZK (section 11.7): the fight ground a lord's run is cut on
@@ -816,7 +816,7 @@ export const EG_GAROTH_SIG_CARDS = Object.freeze({ ilthys: 'The Conquest.', morv
 export const egGarothSig = (c) => ['ilthys', 'morvayn', 'seyth'][Math.floor(c / 5) % 3];
 /**
  * AUDIT EG V (lane1 #14; sections 13.2 and 27.5) - THE PHASE CARDS: every lord's second and third phase, its name and its one
- * order (`[name, order]`, the second phase's first) - the gate's phase card (scenes/gateCourt.js courtPhaseCard: the numeral,
+ * order (`[name, order]`, the second phase's first) - the gate's phase card (scenes/gate/gateCourt.js courtPhaseCard: the numeral,
  * the phase's name, one order), drawn on every screen at the lord's turn (`eph` - scenes/egFight.js) and its name said
  * (`esay` 'phase', egLordsStep). Garoth's third is the signature he borrows (EG_GAROTH_SIG_CARDS, by EG_GAROTH_SIG_ORDERS).
  */

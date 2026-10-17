@@ -235,7 +235,7 @@
   },
   {
     "name": "EGZ-peerheard-bypass",
-    "file": "src/net/peerFx.js",
+    "file": "src/net/peer/peerFx.js",
     "old": "  if (!_peerScope) return run();",
     "new": "  return run();",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "EGZ-fx-outside-scope",
-    "file": "src/net/peerFx.js",
+    "file": "src/net/peer/peerFx.js",
     "old": "if (!dup) peerHeard(() => (q.hurt",
     "new": "if (!dup) ((f) => f())(() => (q.hurt",
     "tests": [
@@ -649,7 +649,7 @@
   },
   {
     "name": "EGZ-grace-hold-ignored",
-    "file": "src/systems/lootPowers.js",
+    "file": "src/systems/loot/lootPowers.js",
     "old": "if (now < _s.graceReady || lootSpireHeld('grace')) return false;",
     "new": "if (now < _s.graceReady) return false;",
     "tests": [
@@ -658,7 +658,7 @@
   },
   {
     "name": "EGZ-grace-not-held",
-    "file": "src/systems/lootPowers.js",
+    "file": "src/systems/loot/lootPowers.js",
     "old": "  lootSpireHold('grace');",
     "new": "",
     "tests": [
@@ -667,7 +667,7 @@
   },
   {
     "name": "EGZ-vigil-hold-ignored",
-    "file": "src/systems/lootPowers.js",
+    "file": "src/systems/loot/lootPowers.js",
     "old": "if (now < _s.vigilReady || lootSpireHeld('vigil')) return;",
     "new": "if (now < _s.vigilReady) return;",
     "tests": [
@@ -676,7 +676,7 @@
   },
   {
     "name": "EGZ-redoubt-not-recovering",
-    "file": "src/systems/lootPowers.js",
+    "file": "src/systems/loot/lootPowers.js",
     "old": "  for (const field of Object.values(LOOT_SPIRE_SAVES)) _s[field] = 0;\n  _s.spireHeld.clear();",
     "new": "  _s.spireHeld.clear();",
     "tests": [
@@ -685,7 +685,7 @@
   },
   {
     "name": "EGZ-hold-outlives-breach",
-    "file": "src/systems/lootPowers.js",
+    "file": "src/systems/loot/lootPowers.js",
     "old": "return room !== undefined && room === spireRoomNow(); }",
     "new": "return room !== undefined; }",
     "tests": [
@@ -694,7 +694,7 @@
   },
   {
     "name": "EGZ-chip-on-timer",
-    "file": "src/systems/lootPowers.js",
+    "file": "src/systems/loot/lootPowers.js",
     "old": "const wait = (k, field) => (lootSpireHeld(k) ? 'Redoubt'",
     "new": "const wait = (k, field) => (false ? 'Redoubt'",
     "tests": [
@@ -703,7 +703,7 @@
   },
   {
     "name": "EGZ-round-says-held",
-    "file": "src/systems/lootPowers.js",
+    "file": "src/systems/loot/lootPowers.js",
     "old": "if (now < r.at() || lootSpireHeld(k)) continue;",
     "new": "if (now < r.at()) continue;",
     "tests": [
@@ -712,7 +712,7 @@
   },
   {
     "name": "EGZ-redoubt-door-unregistered",
-    "file": "src/systems/lootPowers.js",
+    "file": "src/systems/loot/lootPowers.js",
     "old": "registerSpireRedoubt(LOOT_POWERS, lootRedoubtTaken);",
     "new": "void lootRedoubtTaken;",
     "tests": [
@@ -721,7 +721,7 @@
   },
   {
     "name": "EGZ-sets-door-never-called",
-    "file": "src/systems/sigilSetPowers.js",
+    "file": "src/systems/sigil/sigilSetPowers.js",
     "old": "for (const fn of _spireRedoubts.values()) { try { fn(); }",
     "new": "for (const fn of [].values()) { try { fn(); }",
     "tests": [
@@ -919,7 +919,7 @@
   },
   {
     "name": "EGZ-touch-slide-never-looks",
-    "file": "src/ui/touch.js",
+    "file": "src/ui/touch/touch.js",
     "old": "      hooks.look?.(dx * TOUCH_LOOK_GAIN * lookNorm(), dy * TOUCH_LOOK_GAIN * lookNorm());\n    }, { passive: false });",
     "new": "      void dx;\n    }, { passive: false });",
     "tests": [
@@ -928,7 +928,7 @@
   },
   {
     "name": "EGZ-touch-slide-outside-spire",
-    "file": "src/ui/touch.js",
+    "file": "src/ui/touch/touch.js",
     "old": "if (!t || !at || !touchSpire()) return;",
     "new": "if (!t || !at) return;",
     "tests": [
@@ -937,7 +937,7 @@
   },
   {
     "name": "EGZ-touch-slide-under-window",
-    "file": "src/ui/touch.js",
+    "file": "src/ui/touch/touch.js",
     "old": "if (travel < TAP_PX || hooks.cardTable?.() || hooks.paused?.()) return;",
     "new": "if (travel < TAP_PX || hooks.cardTable?.()) return;",
     "tests": [
@@ -946,7 +946,7 @@
   },
   {
     "name": "EGZ-touch-slide-at-once",
-    "file": "src/ui/touch.js",
+    "file": "src/ui/touch/touch.js",
     "old": "if (travel < TAP_PX || hooks.cardTable?.() || hooks.paused?.()) return;",
     "new": "if (hooks.cardTable?.() || hooks.paused?.()) return;",
     "tests": [
@@ -955,7 +955,7 @@
   },
   {
     "name": "EGZ-touch-flick-outside",
-    "file": "src/ui/touch.js",
+    "file": "src/ui/touch/touch.js",
     "old": "flick = touchSpire() ? { y, t: e.timeStamp } : null;   // EG-ZH",
     "new": "flick = { y, t: e.timeStamp };   // EG-ZH",
     "tests": [
@@ -964,7 +964,7 @@
   },
   {
     "name": "EGZ-touch-flick-twice",
-    "file": "src/ui/touch.js",
+    "file": "src/ui/touch/touch.js",
     "old": "          flick = null;\n          if (!hooks.paused?.()",
     "new": "          if (!hooks.paused?.()",
     "tests": [
@@ -973,7 +973,7 @@
   },
   {
     "name": "EGZ-touch-flick-never-lifted",
-    "file": "src/ui/touch.js",
+    "file": "src/ui/touch/touch.js",
     "old": "afterFrames(() => upCode(c, liveNeeds())); buzz(10);",
     "new": "buzz(10);",
     "tests": [
@@ -982,7 +982,7 @@
   },
   {
     "name": "EGZ-touch-flick-slow",
-    "file": "src/ui/touch.js",
+    "file": "src/ui/touch/touch.js",
     "old": "&& t - t0 <= EG_FLICK_MS;",
     "new": "&& t - t0 <= 10 * EG_FLICK_MS;",
     "tests": [
@@ -991,7 +991,7 @@
   },
   {
     "name": "EGZ-touch-flick-down",
-    "file": "src/ui/touch.js",
+    "file": "src/ui/touch/touch.js",
     "old": "(y0, t0, y, t) => y0 - y >= EG_FLICK_PX",
     "new": "(y0, t0, y, t) => Math.abs(y0 - y) >= EG_FLICK_PX",
     "tests": [
@@ -1000,7 +1000,7 @@
   },
   {
     "name": "EGZ-touch-full-throw-everywhere",
-    "file": "src/ui/touch.js",
+    "file": "src/ui/touch/touch.js",
     "old": "(mag >= RUN_THROW || !!touchSpire()?.span)",
     "new": "(mag >= RUN_THROW || !!touchSpire())",
     "tests": [
@@ -1009,7 +1009,7 @@
   },
   {
     "name": "EGZ-touch-run-never",
-    "file": "src/ui/touch.js",
+    "file": "src/ui/touch/touch.js",
     "old": "(mag >= RUN_THROW || !!touchSpire()?.span)",
     "new": "(mag >= RUN_THROW || false)",
     "tests": [
@@ -1018,7 +1018,7 @@
   },
   {
     "name": "EGZ-touch-analog-partial",
-    "file": "src/ui/touch.js",
+    "file": "src/ui/touch/touch.js",
     "old": "if (touchSpire()?.span && (stickX || stickY)) ({ x: stickX",
     "new": "if (false) ({ x: stickX",
     "tests": [
@@ -1027,7 +1027,7 @@
   },
   {
     "name": "EGZ-touch-fullthrow-direction",
-    "file": "src/ui/touch.js",
+    "file": "src/ui/touch/touch.js",
     "old": "return m > 1e-9 ? { x: a.x / m, y: a.y / m } : { x: 0, y: 0 };",
     "new": "return m > 1e-9 ? { x: 1, y: 0 } : { x: 0, y: 0 };",
     "tests": [

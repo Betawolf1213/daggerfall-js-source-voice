@@ -1,6 +1,6 @@
 // EG-ZG (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md sections 11.7, 25.2, 25.4, 25.5,
 // 25.6 and 25.8 - EG6b, and what EG-G2, EG-G1 and EG-H1 left): THE TELEGRAPHS AS WRITTEN (world/egTelegraph.js the law;
-// render/gateTelegraph.js the Spire's stages and drawFloors; scenes/egFight.js; ui/egSpireHud.js; the quiet company in
+// render/gate/gateTelegraph.js the Spire's stages and drawFloors; scenes/egFight.js; ui/egSpireHud.js; the quiet company in
 // scenes/hostMagic.js, scenes/mwMagicFx.js, render/vfxGpu.js and scenes/hitEffects.js; scenes/egSpan.js and the dungeon
 // arm). Each shape on every fight floor it covers, clipped to it at its own height, at most 32 draws a frame in THE
 // TELEGRAPH BUDGET's order, the gate's own draw byte for byte; the peril arrow over the fight floor, never across an edge;
@@ -19,18 +19,18 @@ import {
 import {
   GateTelegraphRenderer, TELEGRAPH_VS, TELEGRAPH_VS_SPIRE, TELEGRAPH_FS, TELEGRAPH_FS_SPIRE, TELEGRAPH_KIND, TELEGRAPH_POOL, TELEGRAPH_POOL_SPIRE, TELEGRAPH_POOL_HAVEN, TELEGRAPH_LIFT,
   TELEGRAPH_EDGE_DAGON, TELEGRAPH_THROB_MAX_HZ, spireTelegraphVs, spireTelegraphFs,
-} from '../src/render/gateTelegraph.js';
+} from '../src/render/gate/gateTelegraph.js';
 import { egCircleSpecs, egHallOf, egOnFight } from '../src/net/egLaw.js';
 import { egGive8 } from './egGive8.mjs';   // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9): a law 8 circle given
 import { EG_HAZARDS } from '../src/net/egFragLaw.js';
 import { EG_FL, EG_ROLE } from '../src/net/egBodies.js';
 import { EG_FIGHT_EMPTY, EG_STATE_EMPTY } from '../src/net/egLink.js';
 import { egHallCentre } from '../src/world/egHall.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { EG_BAND_RAMPS } from '../src/world/egBandArt.js';
-import { gateHitFlash, GATE_FLASH_COURT } from '../src/world/gateBoss.js';
+import { gateHitFlash, GATE_FLASH_COURT } from '../src/world/gate/gateBoss.js';
 import { createEgFight, egLookShapes } from '../src/scenes/egFight.js';
-import { PERIL_BEARINGS, PERIL_STEP_M, PERIL_REACH_M, PERIL_RIM_M } from '../src/scenes/gateCourt.js';
+import { PERIL_BEARINGS, PERIL_STEP_M, PERIL_REACH_M, PERIL_RIM_M } from '../src/scenes/gate/gateCourt.js';
 import { createEgSpan } from '../src/scenes/egSpan.js';
 import { egSpireHudModel, drawEgSpireHud, drawEgSigils, egSigilHtml, EG_SIGIL_PATHS } from '../src/ui/egSpireHud.js';
 import { egAllyLook, egAllyLookSet, EG_DANGER_PALETTES } from '../src/ui/egAccess.js';
@@ -54,7 +54,7 @@ function findSpec(want) {
 const twoFloors = (q) => !q.heroes && q.kind === 'yard' && q.fight && new Set((q.fl ?? []).map((f) => f.y)).size >= 2;
 const triArea = (t, i) => Math.abs((t[i + 2] - t[i]) * (t[i + 5] - t[i + 1]) - (t[i + 4] - t[i]) * (t[i + 3] - t[i + 1])) / 2;
 const areaOf = (t, n = t.length) => { let a = 0; for (let i = 0; i + 5 < n; i += 6) a += triArea(t, i); return a; };
-/** A shape as the pass takes it (render/gateTelegraph.js's own fields). */
+/** A shape as the pass takes it (render/gate/gateTelegraph.js's own fields). */
 const shapeOf = (o) => ({ kind: TELEGRAPH_KIND.disc, origin: [0, 0], yaw: 0, r: 3, halfArc: 0, body: 0, end: [0, 0], halfW: 0, r0: 0, r1: 0, points: [], n: 0, t: 0.5, flash: 0, alpha: 1,
   color: [1, 0.4, 0.1], edge: TELEGRAPH_EDGE_DAGON, court: 0, style: 0, since: 0.5, span: 1, after: -1, runS: 0, pool: TELEGRAPH_POOL.blow, mine: false, y: NaN, order: Infinity, ...o });
 /** The gate's and the Spire's fragment stage at one point, the shape's uniforms as `u` says. */
@@ -68,7 +68,7 @@ function frag(src, p, u = {}, fw = 0.04) {
   try { fns.main(); return [...fns.globals.o]; } catch (e) { if (e instanceof GlslDiscard) return null; throw e; }
 }
 const lum = (o) => (o ? o[0] + o[1] + o[2] : 0);
-/** A GL that records every call (the telegraph pass's tests' own - test/wb13a_telegraphs.test.js). */
+/** A GL that records every call (the telegraph pass's tests' own - test/scenes/wb13a_telegraphs.test.js). */
 function recordingGl() {
   const calls = [];
   const gl = new Proxy({ TRIANGLES: 4, ARRAY_BUFFER: 1, FLOAT: 5, DYNAMIC_DRAW: 6, drawingBufferHeight: 720 }, { get: (t, k) => (k in t ? t[k] : (...a) => { calls.push([k, ...a]); if (k === 'getShaderParameter' || k === 'getProgramParameter') return true; if (k === 'getUniformLocation') return a[1]; return {}; }) });
@@ -156,7 +156,7 @@ test('EG-ZG THE FLOOR BUDGET (sections 11.7 and 25.4): a blow on the court drawn
   assert.equal(egFloorPlan([shapeOf({ alpha: 0 })], floors, null, null).draws.length, 0, 'nothing for a shape faded out');
 });
 
-test('EG-ZG THE FLOORS\' DRAWS THROUGH THE PASS (render/gateTelegraph.js drawFloors): the frame\'s triangles uploaded once, each floor\'s draw the gate\'s own draw over that floor\'s triangles - its count, its height, its circle the court - and a shape\'s own surface the gate\'s quad at its height; the pass\'s quad and the floors\' uniforms put back after; the gate\'s own pass draws nothing by it (mutants: the floor\'s height never set; the quad not given back)', () => {
+test('EG-ZG THE FLOORS\' DRAWS THROUGH THE PASS (render/gate/gateTelegraph.js drawFloors): the frame\'s triangles uploaded once, each floor\'s draw the gate\'s own draw over that floor\'s triangles - its count, its height, its circle the court - and a shape\'s own surface the gate\'s quad at its height; the pass\'s quad and the floors\' uniforms put back after; the gate\'s own pass draws nothing by it (mutants: the floor\'s height never set; the quad not given back)', () => {
   const { s } = findSpec(twoFloors);
   const floors = egFightFloors(s), court = s.fl.find((f) => f.t === 'd' && f.y === 0), bal = s.fl.find((f) => f.y > 0);
   const plan = egFloorPlan([shapeOf({ origin: [1, 2], r: 1, y: -4.5 }), shapeOf({ origin: [court.x, court.z], r: 3 }), shapeOf({ origin: [bal.x, bal.z], r: 2 })], floors, null, null);

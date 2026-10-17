@@ -6,7 +6,7 @@
 // createPlayerMagic: scenes/world.js's, whose instance scenes/worldModes.js's interiors take, scenes/exterior.js's and
 // scenes/dungeonContext.js's), at its release frame's `done()`, where the spell leaves the hands and DFU raises
 // OnCastReadySpell - and nothing told anyone but the quest machine. The Battlemage's Discipline (the Panoply's 4-piece
-// tier, systems/sigilSetPowers.js setCast) answers "a spell cast": it arms the next weapon blow with the spell's element
+// tier, systems/sigil/sigilSetPowers.js setCast) answers "a spell cast": it arms the next weapon blow with the spell's element
 // and remembers the cost the next blows return a share of. Each released cast is told here with what it cost (0 for a
 // free ready: an item's cast-when-used, a trap's spell), playerKills.js's own shape.
 //

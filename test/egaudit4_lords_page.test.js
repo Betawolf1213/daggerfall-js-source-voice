@@ -9,8 +9,8 @@ import { readFileSync } from 'node:fs';
 import { egHallOf } from '../src/net/egLaw.js';
 import { egHavenRouteM } from '../src/net/egLords.js';
 import { egErrandMs } from '../src/net/egShape.js';
-import { ILIAC_CARDS } from '../src/net/iliacCards.js';
-import { cardFlavor } from '../src/systems/iliacCardWords.js';   // PIN MOVED (the merge of main past KG-SET): a card's flavor is the words module's, read through the text core
+import { ILIAC_CARDS } from '../src/net/iliac/iliacCards.js';
+import { cardFlavor } from '../src/systems/iliac/iliacCardWords.js';   // PIN MOVED (the merge of main past KG-SET): a card's flavor is the words module's, read through the text core
 
 const page = readFileSync(new URL('../bible/11-Multiplayer/Elite-Gates.md', import.meta.url), 'utf8');
 /** A section of the page, from its heading to the next of its depth or higher. */

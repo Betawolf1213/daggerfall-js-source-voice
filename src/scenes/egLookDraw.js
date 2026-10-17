@@ -10,7 +10,7 @@
 //                  transparent volume);
 //   THE AIR        EG-LOOK (Elite-Gates-Look.md section 5): render/egMotes.js - the band's motes about the hall the eye
 //                  stands in, one draw, faded off every floor's top, held still under reduced motion and never quieted by
-//                  THE QUIET COMPANY (the place, not a player's); and the halos (render/sdHalo.js - the classic set's
+//                  THE QUIET COMPANY (the place, not a player's); and the halos (render/superDungeon/sdHalo.js - the classic set's
 //                  bloom) of the lamps' fixtures and the way's beams' feet, at most 48;
 //   THE LINES      render/egLinePass.js - THE EDGE LINE, the tracks and the Gust's streamers, OVER everything the hall's
 //                  fight draws, so the gold that says "it holds" is the last thing laid on the floor;
@@ -25,7 +25,7 @@
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { egCircleSpecs, egBandOfCircle } from '../net/egLaw.js';
-import { SD_REALM_ORIGIN } from '../net/sdBrain.js';
+import { SD_REALM_ORIGIN } from '../net/superDungeon/sdBrain.js';
 import { egCircleEdges, egGustSections, egStreamersAt, egMistSheets, egMistSheetsAt, EG_MIST } from '../world/egLook.js';
 import { egCircleLights } from '../world/egHall.js';
 import { egAtmosOf } from '../world/egAtmos.js';
@@ -34,13 +34,13 @@ import { EgMistPass } from '../render/egMistPass.js';
 import { EgSkyPass, egSkyLift } from '../render/egSkyPass.js';
 import { EG_SKY_STEPS } from '../render/egSkyMap.js';   // EG-LOOK: the sky's pixel law, a lane each
 import { EgMotesPass, egHalosInto, egRimMists, EG_RIM_MIST } from '../render/egMotes.js';   // EG-LOOK: THE AIR
-import { SdHaloRenderer, SD_HALO_GAIN } from '../render/sdHalo.js';   // EG-LOOK: the classic set's bloom, the Hour's
+import { SdHaloRenderer, SD_HALO_GAIN } from '../render/superDungeon/sdHalo.js';   // EG-LOOK: the classic set's bloom, the Hour's
 import { skyGain } from '../render/deadlands.js';
 import { EgLightPass } from '../render/egLightPass.js';   // EG-ZE: THE SPIRE'S LIGHTS
-import { isTouchDevice } from '../ui/touchDevice.js';
+import { isTouchDevice } from '../ui/touch/touchDevice.js';
 
 /**
- * @param {{ gl?: WebGL2RenderingContext | null, lite?: boolean }} deps `lite` the phones' tier (ui/touchDevice.js - the
+ * @param {{ gl?: WebGL2RenderingContext | null, lite?: boolean }} deps `lite` the phones' tier (ui/touch/touchDevice.js - the
  *   sky's paint a quadrant every fourth frame, half the motes)
  */
 export function createEgLookDraw({ gl = null, lite = isTouchDevice() } = {}) {

@@ -43,7 +43,7 @@
     "new": "",
     "tests": [
       "test/egaudit5_e.test.js",
-      "test/audit68_render_b.test.js"
+      "test/render/audit68_render_b.test.js"
     ]
   },
   {
@@ -66,7 +66,7 @@
   },
   {
     "name": "EGA5E-telegraph-floor-buffer-kept",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "for (const b of [this.vbo, this.walkVbo, this.floorVbo]) if (b) gl.deleteBuffer(b);",
     "new": "for (const b of [this.vbo, this.walkVbo]) if (b) gl.deleteBuffer(b);",
     "tests": [
@@ -75,7 +75,7 @@
   },
   {
     "name": "EGA5E-telegraph-floor-vao-kept",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "for (const v of [this.vao, this.walkVao, this.floorVao]) if (v) gl.deleteVertexArray(v);",
     "new": "for (const v of [this.vao, this.walkVao]) if (v) gl.deleteVertexArray(v);",
     "tests": [
@@ -84,7 +84,7 @@
   },
   {
     "name": "EGA5E-telegraph-program-kept",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "    if (this.program) gl.deleteProgram(this.program);\n    this.vao = null; this.walkVao = null;",
     "new": "    this.vao = null; this.walkVao = null;",
     "tests": [
@@ -93,7 +93,7 @@
   },
   {
     "name": "EGA5E-telegraph-destroy-twice",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "    this.gl = null;\n    for (const v of [this.vao, this.walkVao, this.floorVao])",
     "new": "    for (const v of [this.vao, this.walkVao, this.floorVao])",
     "tests": [
@@ -176,7 +176,7 @@
   },
   {
     "name": "EGA5E-tether-chain-no-strip",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "const across = sh.pool === TELEGRAPH_POOL.path || sh.pool === TELEGRAPH_POOL_SPIRE.chain ? sh.halfW",
     "new": "const across = sh.pool === TELEGRAPH_POOL.path ? sh.halfW",
     "tests": [
@@ -185,7 +185,7 @@
   },
   {
     "name": "EGA5E-tether-pull-no-strip",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": ": sh.pool === TELEGRAPH_POOL_SPIRE.pull ? 2 * sh.halfW + TELEGRAPH_TICK_REACH : NaN;",
     "new": ": NaN;",
     "tests": [
@@ -194,7 +194,7 @@
   },
   {
     "name": "EGA5E-tether-tick-narrow",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "? 2 * sh.halfW + TELEGRAPH_TICK_REACH : NaN;",
     "new": "? sh.halfW + TELEGRAPH_TICK_REACH : NaN;",
     "tests": [
@@ -203,7 +203,7 @@
   },
   {
     "name": "EGA5E-tether-shader-tick-wider",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "2.0 * uHalfW + ${TELEGRAPH_TICK_REACH.toFixed(2)}, ld)",
     "new": "2.0 * uHalfW + 0.3, ld)",
     "tests": [
@@ -212,7 +212,7 @@
   },
   {
     "name": "EGA5E-tether-bounds-wide",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "stripW(sh) || sh.halfW + M);",
     "new": "sh.halfW + M);",
     "tests": [
@@ -248,7 +248,7 @@
   },
   {
     "name": "EGA5E-ring-reach-glow",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "sh.pool === TELEGRAPH_POOL_SPIRE.ring ? TELEGRAPH_RING_REACH : M));",
     "new": "sh.pool === TELEGRAPH_POOL_SPIRE.ring ? M : M));",
     "tests": [
@@ -257,7 +257,7 @@
   },
   {
     "name": "EGA5E-ring-line-uncut",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "o = vec4(uColor * core * (edge <= ${TELEGRAPH_RING_REACH.toFixed(2)} ? 1.0 : 0.0) * f, 0.0);",
     "new": "o = vec4(uColor * core * f, 0.0);",
     "tests": [
@@ -401,7 +401,7 @@
   },
   {
     "name": "EGA5E-bounds-box-ignored",
-    "file": "src/render/gateTelegraph.js",
+    "file": "src/render/gate/gateTelegraph.js",
     "old": "  const b = out ?? [0, 0, 0, 0];\n",
     "new": "  const b = [0, 0, 0, 0];\n",
     "tests": [

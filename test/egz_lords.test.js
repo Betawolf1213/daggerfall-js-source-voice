@@ -16,7 +16,7 @@ import { BOSS_SEAM_KEYS } from '../src/net/bossSeam.js';
 import { judgeShapes } from '../src/net/bossRef.js';
 import { egFightView, egWalkGraph, egArchCut } from '../src/net/egWalkGraph.js';
 import { egInBlow } from '../src/net/egShape.js';
-import { HIT_KINDS } from '../src/net/gateBrain.js';
+import { HIT_KINDS } from '../src/net/gate/gateBrain.js';
 import { egGive8 } from './egGive8.mjs';
 
 // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courses along +z

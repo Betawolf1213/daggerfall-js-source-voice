@@ -8,7 +8,7 @@
 //     banners, hearts, seals, braziers, standards, chains, pillars, sparks) as the Reckoning's crystals in their colours
 //     (render/courtCrystals.js), the stood-on ones (runes with their numerals, soul-gems, havens, the relic, the engine,
 //     the Orrery's stones, umbral discs) on the floor;
-//   THE BLOWS - each FULL shape stamp drawn by the telegraph pass (render/gateTelegraph.js) in THE SPIRE DANGER EDGE,
+//   THE BLOWS - each FULL shape stamp drawn by the telegraph pass (render/gate/gateTelegraph.js) in THE SPIRE DANGER EDGE,
 //     the TELEGRAPH BUDGET's order (net/egShape.js egShapeOrder), a CHECK's havens gold; each judged against MY OWN FEET at
 //     its landing (co-op's law - net/egShape.js egBlowVerdict), its share of my health through my saving throw, its push;
 //   THE ZONES - burning ground ticking, the floor gone (a cast-back), a Soul-Pool, a haven;
@@ -17,7 +17,7 @@
 //     shared clock (net/egFragLaw.js) drawn and judged on my own feet - a fire fall, a surge, the basalt, the cascade, the
 //     hammers, the tide, the Eclipse, a soul-wisp's drain.
 // Nothing is sent but my blows (`hit` on a body by its number - the relay's caps decide what lands).
-// EG-G2 (2026-10-12, sections 25 and 26): the Spire's own telegraph stage (render/gateTelegraph.js TELEGRAPH_FS_SPIRE - the
+// EG-G2 (2026-10-12, sections 25 and 26): the Spire's own telegraph stage (render/gate/gateTelegraph.js TELEGRAPH_FS_SPIRE - the
 // fog floor, the fill, the style bit), each shape in the shelf's danger palette and fill (ui/egAccess.js egAccessNow), a
 // shape aimed at another member filled at THE QUIET COMPANY's 0.55 and mine drawn last with a brighter rim; THE SPIRE MIX
 // (systems/egMix.js): a personal sting for a lord's blow or a CHECK on my feet (an add's at most one each 1.5 s), the score
@@ -28,7 +28,7 @@
 // the breach's client (`mix`), so the HUD's beats ride its critical bus (section 26).
 // EG-ZG (2026-10-12, sections 11.7, 25.2, 25.4-25.6 and 25.8 - world/egTelegraph.js the law): THE TELEGRAPHS AS WRITTEN -
 // each shape on every fight floor it covers, clipped to that floor at its own height (at most 32 shape-floor draws a
-// frame, THE TELEGRAPH BUDGET's order); the peril arrow under the crosshair (the gate's own readout, ui/gateGroundView.js);
+// frame, THE TELEGRAPH BUDGET's order); the peril arrow under the crosshair (the gate's own readout, ui/gate/gateGroundView.js);
 // the tethers' two grammars, a Spire pool on the band's ramp with its dashed rim, the Eclipse's darkening, wind and toll;
 // the marks as sigils over heads; a Vestige aura's blue ring at its holder's feet; the Shade's rim light on every foe;
 // the heavy blows' shakes, allies' hits flashing at 0.4, a Drop's thud and dust.
@@ -64,16 +64,16 @@
 // drawn sprite's (the relay judges no height - a shot at the head you see meets him): the drawn size is this screen's alone.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
-import { HIT_KINDS, CRYSTAL_R, CRYSTAL_H } from '../net/gateBrain.js';
-import { strikeDamage, savedShare } from '../net/gateStrike.js';
-import { bossFrame, crystalStandIn, hostStandIn, hostCue, BOSS_CUES, CRYSTAL_CLIPS } from '../world/gateBoss.js';
-import { GateTelegraphRenderer, TELEGRAPH_KIND, TELEGRAPH_STYLE, TELEGRAPH_EDGE_DAGON, TELEGRAPH_EDGE_SAFE, TELEGRAPH_POOL, TELEGRAPH_POOL_HAVEN, TELEGRAPH_POOL_SPIRE } from '../render/gateTelegraph.js';
+import { HIT_KINDS, CRYSTAL_R, CRYSTAL_H } from '../net/gate/gateBrain.js';
+import { strikeDamage, savedShare } from '../net/gate/gateStrike.js';
+import { bossFrame, crystalStandIn, hostStandIn, hostCue, BOSS_CUES, CRYSTAL_CLIPS } from '../world/gate/gateBoss.js';
+import { GateTelegraphRenderer, TELEGRAPH_KIND, TELEGRAPH_STYLE, TELEGRAPH_EDGE_DAGON, TELEGRAPH_EDGE_SAFE, TELEGRAPH_POOL, TELEGRAPH_POOL_HAVEN, TELEGRAPH_POOL_SPIRE } from '../render/gate/gateTelegraph.js';
 import { CourtCrystalRenderer } from '../render/courtCrystals.js';
-import { titleCardModel, drawGateTitleCard, TITLE_HOLD_MS } from '../ui/gateTitleCard.js';
+import { titleCardModel, drawGateTitleCard, TITLE_HOLD_MS } from '../ui/gate/gateTitleCard.js';
 import { setBatchHitFlash, setBatchGlint } from '../systems/hitFlash.js';
-import { groundViewModel, drawGateGround } from '../ui/gateGroundView.js';   // EG-ZG: the peril arrow and the chain's words, the gate's own readout
-import { screenBearing } from './gateCourt.js';   // EG-ZG: the way out as the screen turns it
-import { PHASE_NUMERALS } from './gateCourt.js';   // AUDIT EG V (lane1 #14): the gate's phase card's numerals
+import { groundViewModel, drawGateGround } from '../ui/gate/gateGroundView.js';   // EG-ZG: the peril arrow and the chain's words, the gate's own readout
+import { screenBearing } from './gate/gateCourt.js';   // EG-ZG: the way out as the screen turns it
+import { PHASE_NUMERALS } from './gate/gateCourt.js';   // AUDIT EG V (lane1 #14): the gate's phase card's numerals
 import { egFightFloors, egFloorPlan, egFloorPlanKeep, egHazardSurface, egPerilOf, egTetherKind, egTetherBreak, egPullLook, egChainLook, egChainWords, egPoolRgb, egEclipseAt, egEclipseDark, egSigilsOf, egScreenAt, egViewYaw, egAuraHolders, egRimOf, egHeavyShake, egShakeMotion, egBodyFlash, egDropUnder,
   EG_CHECK_ORDER, EG_ECLIPSE_LOOK, EG_SIGIL_UP_M, EG_AURA_RING, EG_DROP_THUD, EG_TETHER } from '../world/egTelegraph.js';   // EG-ZG: THE TELEGRAPHS AS WRITTEN, the law
 import { EG_SHADE_BAND } from '../world/egTelegraph.js';   // AUDIT EG V (lane1 #13): in the dark every foe keeps the Shade's rim light
@@ -83,9 +83,9 @@ import { egMemberOf } from '../net/egLink.js';
 import { multiply } from '../world/mat4.js';
 import { getPref } from '../systems/uiPrefs.js';
 import { betterAmbience } from '../systems/betterAmbience.js';   // EG-ZG: the heavy blows' shakes - the port's one shaker, under the player's own maxShake
-import { ENEMY_BASICS } from '../characters/enemyBasics.js';
-import { stateAnims, FLY_ANIM_SPEED, PRIMARY_ATTACK_ANIM_SPEED, HURT_ANIM_SPEED } from '../characters/mobileUnit.js';
-import { setSpireStruck } from '../systems/sigilSetPowers.js';   // AUDIT EG V (L8-1): a body's blow, marked for the Spire's two hurt saves
+import { ENEMY_BASICS } from '../characters/enemy/enemyBasics.js';
+import { stateAnims, FLY_ANIM_SPEED, PRIMARY_ATTACK_ANIM_SPEED, HURT_ANIM_SPEED } from '../characters/mobile/mobileUnit.js';
+import { setSpireStruck } from '../systems/sigil/sigilSetPowers.js';   // AUDIT EG V (L8-1): a body's blow, marked for the Spire's two hurt saves
 import { mobileBillboardSize } from '../world/rmbFlats.js';
 import { egHallOf, egCountText, egVentAt, egInVent, EG_LORDS, EG_BANDS, EG_VENT_PCT, EG_VENT_WARN_MS, EG_VENT_FIRE_MS } from '../net/egLaw.js';
 import { egRimCastsBack } from '../net/egLaw.js';   // AUDIT EG V (lane1 #21): the magma casts back only off every causeway
@@ -208,7 +208,7 @@ export const EG_SAY = Object.freeze({
  * EG-G2 (sections 25.2, 25.4 and 25.7): THE LOOK LAID ON a frame's shapes - every danger line in the shelf's palette's
  * edge (THE SPIRE DANGER EDGE in the Standard), its fill at the shelf's light and the palette's style bit; a shape
  * aimed at another member filled at THE QUIET COMPANY's share during a trial, mine with a brighter rim; a haven in the
- * palette's safety and THE HAVEN GRAMMAR (render/gateTelegraph.js TELEGRAPH_POOL_HAVEN); the place's white in its hazard
+ * palette's safety and THE HAVEN GRAMMAR (render/gate/gateTelegraph.js TELEGRAPH_POOL_HAVEN); the place's white in its hazard
  * colour; every one keeping THE FOG FLOOR. `acc` the shelf as ui/egAccess.js egAccessNow reads it (`palette`, `fill`),
  * `stage` the hall's. EG-ZD: a blow cut as a feint (`cut`) dashed as it fades (EG_LOOK_BIT.dash). In place. Pure.
  */
@@ -227,7 +227,7 @@ export function egLookShapes(shapes, acc, stage) {
   }
   return shapes;
 }
-/** A shape slot of the telegraph pass's own shape (render/gateTelegraph.js), refilled. */
+/** A shape slot of the telegraph pass's own shape (render/gate/gateTelegraph.js), refilled. */
 const slot = () => ({ kind: 0, origin: [0, 0], yaw: 0, r: 0, halfArc: 0, body: 0, end: [0, 0], halfW: 0, r0: 0, r1: 0, points: [], n: 0,
   t: 0, flash: 0, alpha: 0, color: GOLD, edge: TELEGRAPH_EDGE_DAGON, court: 0, style: TELEGRAPH_STYLE.weight, since: 0, span: 1, after: -1, runS: 0, pool: TELEGRAPH_POOL.blow,
   mine: false, fillK: 1, look: 0, fogFloor: EG_FOG_FLOOR_ARR, cut: false,   // EG-G2: aimed at me, the fill, the style bit, the fog floor; EG-ZD: a cut feint
@@ -236,8 +236,8 @@ const slot = () => ({ kind: 0, origin: [0, 0], yaw: 0, r: 0, halfArc: 0, body: 0
 const DARK_EDGE = Object.freeze([0, 0, 0]);
 const DUST_COLOR = Object.freeze([0.62, 0.58, 0.52]);
 /** EG-ZG: a companion's pose stands at their eye (scenes/world.js egPeers - the online pose), this far over their feet (m);
- *  feet this near a Drop's top stand on it (m); the least shake worth a kick (the gate's - scenes/gateCourt.js
- *  feltLanding); a pull-apart's snap - the crystals' shatter (world/gateBoss.js CRYSTAL_CLIPS), high and short. */
+ *  feet this near a Drop's top stand on it (m); the least shake worth a kick (the gate's - scenes/gate/gateCourt.js
+ *  feltLanding); a pull-apart's snap - the crystals' shatter (world/gate/gateBoss.js CRYSTAL_CLIPS), high and short. */
 const PEER_EYE_M = 1.6;
 const DROP_STOOD_M = 0.25;
 const SHAKE_MIN = 0.05;
@@ -269,7 +269,7 @@ export function fillStamp(sh, s) {
   }
 }
 
-/** What a body is doing at `now`, as a mobile's animation (the port's own tables - characters/mobileUnit.js stateAnims):
+/** What a body is doing at `now`, as a mobile's animation (the port's own tables - characters/mobile/mobileUnit.js stateAnims):
  *  rising, winding up, striking, flinching, walking, idling, falling. Pure. */
 export function egBodyAct(b, now, mobile, blow, hover = 0) {
   const winged = mobile === 29 && hover > 0;
@@ -413,7 +413,7 @@ export function egChainMates(tx, me) {
 }
 
 /**
- * AUDIT EG V (lane1 #14; sections 13.2 and 27.5) - A LORD'S PHASE CARD, the gate's (scenes/gateCourt.js courtPhaseCard): its
+ * AUDIT EG V (lane1 #14; sections 13.2 and 27.5) - A LORD'S PHASE CARD, the gate's (scenes/gate/gateCourt.js courtPhaseCard): its
  * numeral, the phase's name and its one order (net/egLords.js egLordPhase - Garoth's third the signature he borrows at circle
  * `c`), or null (a first phase, a champion). Pure.
  * @param {string} key @param {number} ph @param {number} c
@@ -487,7 +487,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
   /** AUDIT EG V (L6-4): the floor plan's own slots (world/egTelegraph.js egFloorPlanKeep), kept for the fight */
   const planKeep = egFloorPlanKeep();
   let floors = [], floorBuf = null, lastPlan = null, lastPeril = null, lastGround = null, viewYaw = null, groundUp = false, sigilsUp = false, dropFrom = null, dropOn = null;
-  /** AUDIT EG III (lane4 #2): whether this fight's title card stands - the card is the gate's own (ui/gateTitleCard.js), and
+  /** AUDIT EG III (lane4 #2): whether this fight's title card stands - the card is the gate's own (ui/gate/gateTitleCard.js), and
    *  the Burning Court's frame draws it before the breach's: only a card this fight drew is ever put away here */
   let cardUp = false;
   /** One frame's title card (a wake, a fall), drawn while this fight holds one, put away once when it goes. */
@@ -610,7 +610,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
    *  the share `dr` my company's Vestiges spare a blow (spared). EG-ZR: its share of my body without Stoneskin's points.
    *  AUDIT EG III: `x` its weight on me - a twin's Touched (egTouchedX), my part of a chained blow (egChainMates). AUDIT
    *  EG V (lane8 L8-1): `foe` - a body's blow (a lord's, the legion's), marked as a foe's as it lands
-   *  (systems/sigilSetPowers.js setSpireStruck), so Shed Skin and the Reprieve answer it; a hazard, a zone or a drain is none. */
+   *  (systems/sigil/sigilSetPowers.js setSpireStruck), so Shed Skin and the Reprieve answer it; a hazard, a zone or a drain is none. */
   function landShare(pct, base, el, name, dr = 0, x = 1, foe = false) {
     const e = player();
     if (!e || !(e.health > 0) || !(pct > 0)) return;
@@ -995,7 +995,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       _shapes.push(sh);
     }
   }
-  /** EG-ZG - THE GROUND'S WORDS under the crosshair (the gate's own readout, ui/gateGroundView.js): THE PERIL ARROW (section
+  /** EG-ZG - THE GROUND'S WORDS under the crosshair (the gate's own readout, ui/gate/gateGroundView.js): THE PERIL ARROW (section
    *  25.5 - the blow's name and *move!*, the rim rising in the palette's danger, the way out as the screen turns it; a CHECK
    *  with no light in reach its order), else my chain's (*Chained to Mira - 6.8/8 m*). */
   function groundFrame(t, f, fy, chained) {

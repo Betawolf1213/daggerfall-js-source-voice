@@ -28,7 +28,7 @@ import { EG_STATE_EMPTY } from '../src/net/egLink.js';
 import { EG_PRES_TEXT } from '../src/ui/egBeats.js';
 import { EG_OCCLUDE_CHEST_M } from '../src/scenes/egOcclude.js';
 import { lookAt, perspective } from '../src/world/mat4.js';
-import { TELEGRAPH_KIND, TELEGRAPH_POOL, TELEGRAPH_EDGE_DAGON, telegraphBounds } from '../src/render/gateTelegraph.js';
+import { TELEGRAPH_KIND, TELEGRAPH_POOL, TELEGRAPH_EDGE_DAGON, telegraphBounds } from '../src/render/gate/gateTelegraph.js';
 import { egGive8 } from './egGive8.mjs';
 
 // PIN MOVED (THE ASCENT - THE ROOMS, LAW 9 - 2026-10-16): these pins were written on spec law 8's ground (its courses along +z
@@ -84,9 +84,9 @@ test('AUDIT EG V L6-4 THE FLOOR PLAN KEEPS ITS OWN (section 11.9; world/egTelegr
   assert.deepEqual(b.draws.map((d) => [d.i, d.f ? floors.indexOf(d.f) : -1, d.first, d.count]), fresh.draws.map((d) => [d.i, d.f ? floors.indexOf(d.f) : -1, d.first, d.count]), 'the draws a fresh plan makes');
   assert.equal(b.n, fresh.n);
   let buf = a.buf;
-  const per = await sampledBytes(() => { buf = egFloorPlan(shapes, floors, feet, buf, undefined, K).buf; }, 3000, ['world/egTelegraph.js', 'render/gateTelegraph.js']);
+  const per = await sampledBytes(() => { buf = egFloorPlan(shapes, floors, feet, buf, undefined, K).buf; }, 3000, ['world/egTelegraph.js', 'render/gate/gateTelegraph.js']);
   assert.ok(per < 8192, `the floor plan allocates ${Math.round(per)} bytes a frame`);
-  const B = [0, 0, 0, 0], bounds = await sampledBytes(() => { for (const sh of shapes) telegraphBounds(sh, B); }, 3000, ['render/gateTelegraph.js']);
+  const B = [0, 0, 0, 0], bounds = await sampledBytes(() => { for (const sh of shapes) telegraphBounds(sh, B); }, 3000, ['render/gate/gateTelegraph.js']);
   assert.ok(bounds < 64, `a shape's bounds into a kept box make nothing (${Math.round(bounds)} bytes)`);
   assert.match(rd('src/scenes/egFight.js'), /egFloorPlan\(_shapes, floors, myFeet\(\), floorBuf, undefined, planKeep\)/, 'the fight hands it its keep');
 });
