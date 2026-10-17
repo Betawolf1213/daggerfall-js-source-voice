@@ -408,25 +408,25 @@ test('VOICE1 client: a voice failure never stops the game - the service away, a 
   let svc = fakeService({ status: 503 });
   let { c, clock } = makeClient({ svc });
   c.setEnabled(true); c.setRoom('cell:1'); c.frame([0, 0, 0], 0, []); await settle(c);
-  assert.equal(c.state.status, 'error'); assert.equal(c.state.lastError, VOICE_TEXT.noService); assert.equal(c.stats.failures, 1);
+  assert.equal(c.state.status, 'error'); assert.equal(c.state.lastError, VOICE_TEXT.noService()); assert.equal(c.stats.failures, 1);
   c.frame([0, 0, 0], 0, []); await settle(c); assert.equal(c.stats.connects, 1, 'inside the backoff: not asked again');
   clock.t += VOICE_RETRY_MIN_MS; c.frame([0, 0, 0], 0, []); await settle(c); assert.equal(c.stats.connects, 2, 'past it: tried again');
   clock.t += VOICE_RETRY_MIN_MS; c.frame([0, 0, 0], 0, []); await settle(c); assert.equal(c.stats.connects, 2, 'the backoff doubled');
   // a bad answer
   svc = fakeService({ answer: { ok: true, v: 1, url: 'ws://evil.example', token: 'x', identity: 'me', room: 'r', ttl: 60 } });
   ({ c } = makeClient({ svc })); c.setEnabled(true); c.setRoom('cell:1'); c.frame([0, 0, 0], 0, []); await settle(c);
-  assert.equal(c.state.lastError, VOICE_TEXT.badAnswer);
+  assert.equal(c.state.lastError, VOICE_TEXT.badAnswer());
   // the SFU refusing
   svc = fakeService({ answer: { ok: true, v: 1, url: 'wss://refuse.test', token: 'x', identity: 'me', room: 'r', ttl: 60 } });
   ({ c } = makeClient({ svc })); c.setEnabled(true); c.setRoom('cell:1'); c.frame([0, 0, 0], 0, []); await settle(c);
-  assert.match(c.state.lastError, new RegExp(`^${VOICE_TEXT.sfu}`));
+  assert.match(c.state.lastError, new RegExp(`^${VOICE_TEXT.sfu()}`));
   // no token
   svc = fakeService(); ({ c } = makeClient({ svc, mintToken: async () => null })); c.setEnabled(true); c.setRoom('cell:1'); c.frame([0, 0, 0], 0, []); await settle(c);
-  assert.equal(c.state.lastError, VOICE_TEXT.noToken); assert.deepEqual(svc.calls, [], 'nothing asked without an identity');
+  assert.equal(c.state.lastError, VOICE_TEXT.noToken()); assert.deepEqual(svc.calls, [], 'nothing asked without an identity');
   // a refused microphone: open, listening, denied said
   svc = fakeService(); ({ c } = makeClient({ svc })); c.setInputDevice('refuse');
   c.setEnabled(true); c.setRoom('cell:1'); c.frame([0, 0, 0], 0, []); await settle(c);
-  assert.equal(c.state.status, 'denied'); assert.equal(c.state.lastError, VOICE_TEXT.denied); assert.equal(c.state.micOpen, false);
+  assert.equal(c.state.status, 'denied'); assert.equal(c.state.lastError, VOICE_TEXT.denied()); assert.equal(c.state.micOpen, false);
   assert.equal(c.transport.room?.connected != null, true, 'still in the room, hearing the others');
   // a transport drop mid-session: an error, cleared, retried later
   svc = fakeService(); ({ c, clock } = makeClient({ svc })); c.setEnabled(true); c.setRoom('cell:1'); c.frame([0, 0, 0], 0, []); await settle(c);

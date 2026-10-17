@@ -4318,5 +4318,6 @@
   ["test/voice1_client.test.js","test/net/voice/voice1_client.test.js"],
   ["test/voice1_service.test.js","test/server/voice1_service.test.js"],
   ["test/voice1_node_body_cap.test.js","test/server/voice1_node_body_cap.test.js"],
-  ["test/voice2_integration.test.js","test/ui/voice2_integration.test.js"]
+  ["test/voice2_integration.test.js","test/ui/voice2_integration.test.js"],
+  ["test/ui/voice2_integration.test.js","test/net/voice/voice2_integration.test.js"]
 ]

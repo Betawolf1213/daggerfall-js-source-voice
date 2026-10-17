@@ -8,6 +8,7 @@ import { VoiceSpatialAudio } from './voiceSpatialAudio.js';
 import { proximitySet, subscriptionDiff, voiceGainAt, panFor, feetDistance, VOICE_PLACE_MS } from './voiceProximity.js';
 import { validTokenAnswer, voiceUrlOk, VOICE_REMINT_AHEAD_S } from './voiceWire.js';
 import { jittered } from '../backoff.js';
+import { t } from '../../systems/textManager.js';   // L10N4: the refusals in the player's language, each read when it is said
 
 /** The default voice service - beside the relay (online.js DEFAULT_SERVER); a `?voice=` or the pref overrides it. */
 export const DEFAULT_VOICE_SERVICE = 'https://daggerfall-voice.mackcothran.workers.dev';
@@ -17,13 +18,15 @@ export const VOICE_RETRY_MAX_MS = 30000;
 /** A service answer slower than this is a failure. */
 export const VOICE_FETCH_MS = 8000;
 
-/** The words the HUD says for a refusal - one home, read by the test. */
+/** The words the HUD says for a refusal - one home, read by the test; each a function, read in the player's language
+ *  when it is said (accountClient.js's refusals' way). */
 export const VOICE_TEXT = Object.freeze({
-  denied: 'the microphone was refused - voice is off until the browser allows it',
-  noService: 'the voice service did not answer',
-  noToken: 'not signed in - voice needs an account',
-  badAnswer: 'the voice service answered something this build does not read',
-  sfu: 'the voice server could not be reached',
+  denied: () => t('voice.refusal.denied', 'the microphone was refused - voice is off until the browser allows it'),
+  noService: () => t('voice.refusal.noService', 'the voice service did not answer'),
+  noToken: () => t('voice.refusal.noToken', 'not signed in - voice needs an account'),
+  badAnswer: () => t('voice.refusal.badAnswer', 'the voice service answered something this build does not read'),
+  sfu: () => t('voice.refusal.sfu', 'the voice server could not be reached'),
+  dropped: (/** @type {string|undefined} */ why) => (why ? t('voice.refusal.droppedWhy', 'voice dropped: {why}', { why }) : t('voice.refusal.dropped', 'voice dropped')),
 });
 
 export class VoiceClient {
@@ -169,15 +172,15 @@ export class VoiceClient {
     this.stats.connects++;
     try {
       const relayToken = this.mintToken ? await this.mintToken() : null;
-      if (!relayToken) return this._fail('noToken', VOICE_TEXT.noToken);
+      if (!relayToken) return this._fail('noToken', VOICE_TEXT.noToken());
       this._placeToken = relayToken;
       this.stats.mints++;
       const raw = await this._post('/v1/voice/token', { token: relayToken, room: want.room ?? undefined, channel: want.channel, ...(want.channel === 'party' ? { party: want.party } : want.ly > 0 ? { ly: want.ly } : {}) }).catch(() => null);
-      if (!raw) return this._fail('noService', VOICE_TEXT.noService);
+      if (!raw) return this._fail('noService', VOICE_TEXT.noService());
       const ans = validTokenAnswer(raw);
-      if (!ans || !voiceUrlOk(ans.url)) return this._fail('badAnswer', VOICE_TEXT.badAnswer);
+      if (!ans || !voiceUrlOk(ans.url)) return this._fail('badAnswer', VOICE_TEXT.badAnswer());
       try { await this.transport.connect(ans.url, ans.token, { identity: ans.identity }); }
-      catch (e) { return this._fail('sfu', `${VOICE_TEXT.sfu}: ${e?.message ?? e}`); }
+      catch (e) { return this._fail('sfu', `${VOICE_TEXT.sfu()}: ${e?.message ?? e}`); }
       this.identity = ans.identity;
       this._tokenEndsAt = this._now() / 1000 + ans.ttl;
       this._ensureSpatial();
@@ -185,7 +188,7 @@ export class VoiceClient {
       catch (e) {
         // a refused microphone is a LISTENER's session, not a failure: the game plays and the others are heard
         this.state.setMicOpen(false);
-        if (String(e?.name) === 'NotAllowedError' || String(e?.name) === 'NotFoundError' || String(e?.name) === 'SecurityError') this.state.setStatus('denied', VOICE_TEXT.denied);
+        if (String(e?.name) === 'NotAllowedError' || String(e?.name) === 'NotFoundError' || String(e?.name) === 'SecurityError') this.state.setStatus('denied', VOICE_TEXT.denied());
       }
       if (this.state.status !== 'denied') this.state.setStatus('open');
       this.state.setPartyJoined(want.channel === 'party');
@@ -235,7 +238,7 @@ export class VoiceClient {
   _onTransportState(s, why) {
     if (s === 'reconnecting') this.state.setStatus('reconnecting');
     else if (s === 'connected') { if (this.state.status === 'reconnecting') this.state.setStatus('open'); }
-    else if (s === 'disconnected' && this._session) { this._fail('error', `voice dropped${why ? `: ${why}` : ''}`); }
+    else if (s === 'disconnected' && this._session) { this._fail('error', VOICE_TEXT.dropped(why)); }
   }
 
   /** Everything down. The switch and the player's choices stay; the next frame with the switch on reconnects. */

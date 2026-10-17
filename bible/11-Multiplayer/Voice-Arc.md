@@ -6,14 +6,18 @@ request #871; VOICE-RELAY-DOOR, 2026-10-16 - #967), taken over and brought onto 
 
 Daggerfall has no voice; DFU has none either. Nothing here departs from a DFU member - it is the online game's own.
 
+**Not the first voice.** An earlier VOICE1 - proximity voice over peer-to-peer WebRTC (STUN only, the relay's `rtc`
+frame, world125; PR #427) - was merged and then reverted whole on Mac's word, 2026-09-28: "Do not merge voice chat.
+Please revert voice chat but keep other changes" (`06-Systems/Online-Arc.md`, VOICE1 reverted). This arc is another
+design (a media server of our own, the relay asked only to vouch), and it shares that one's name by coincidence alone.
+Whether voice merges at all is Mac's call, as it was then.
+
 ## 1. Status
 
 - **Built and pinned:** the client's law (`src/net/voice/`), the voice service (`server-voice/`), the self-hosted media
-  stack (`deploy/voice/`), the relay's two doors (section 6) and the two UI seams (`src/ui/voiceHud.js`,
-  `src/ui/voiceSettings.js`).
-- **Not wired:** no host mounts voice yet - `scenes/world.js` never calls `initVoiceNet`/`frameVoiceNet`, the
-  Enhanced HUD never builds the indicator, the settings never show the Voice rows. A player sees nothing of this
-  arc until that slice lands (section 5 says what it must not reopen). THE FOUR HOSTS RULE binds it: the slice names
+  stack (`deploy/voice/`) and the relay's two doors (section 6).
+- **Not wired:** no host mounts voice yet - `scenes/world.js` never calls `initVoiceNet`/`frameVoiceNet`. A player sees
+  nothing of this arc until that slice lands (section 5 says what it must not reopen). THE FOUR HOSTS RULE binds it: the slice names
   all four hosts, and the wiring goes into a module the host wires (`Host-Split.md`), never into `bootWorld`.
 - **Not deployed:** neither Worker is deployed and `VOICE_RELAY_SECRET` is set nowhere. Validated live once, by its
   author (2026-10-13): two browsers joined one proximity room through the podman stack and exchanged real WebRTC
@@ -92,8 +96,13 @@ catches every failure into its state: a voice outage never stops the game. Its r
 time (`net/backoff.js jittered`), so a relay deploy or an SFU outage does not have every client ask again at once.
 The microphone is asked for only after the player's opt-in; a refused one leaves a listener's session.
 
-`voiceNet.js` (the session's one `VoiceClient`), `ui/voiceHud.js` (the indicator) and `ui/voiceSettings.js` (the
-settings rows) are the seams the wiring slice mounts. What it must not reopen (VOICE2's notes):
+`voiceNet.js` (the session's one `VoiceClient`) is the seam the wiring slice mounts. VOICE2 built two more - the HUD's
+indicator (`ui/voiceHud.js`) and the settings' Voice rows (`ui/voiceSettings.js`) - and they wait for that slice:
+AUDIT UI 2 (`test/ui/enhanced/enhancedPause.test.js`) holds every `src/ui` module reachable from a host, its staging
+exemption gone on purpose (PX24: a window built, pinned and opened by nothing), so they come back with their mount -
+`git checkout c6fa40ec4 -- src/ui/voiceHud.js src/ui/voiceSettings.js`, then `node tools/moveModule.mjs --fixup` for
+the client's paths (`src/voice/` is `src/net/voice/` now), and their words through `t()` (L10N4). What the slice must
+not reopen (VOICE2's notes):
 
 - `VoiceState.onChange` is ONE slot, not a list: a second consumer chains it (save the old, call it first) and
   restores it on teardown; past two or three consumers it becomes a listener set in `voiceState.js`.
