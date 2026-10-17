@@ -366,7 +366,7 @@ test('EG-LOOK EACH PIECE ITS OWN, AND PURE (the swap\'s worker\'s law - common b
   assert.notEqual(egPieceSeed(7, 1, 0, 1), egPieceSeed(7, 1, 0, 2)); assert.notEqual(egPieceSeed(7, 1, 0, 1), egPieceSeed(7, 2, 0, 1)); assert.notEqual(egPieceSeed(7, 1, 0, 1), egPieceSeed(99, 1, 0, 1));
   for (const f of ['src/world/eliteGates/egPlatformModel.js', 'src/world/eliteGates/egPlatformArt.js']) {
     const src = readFileSync(new URL(`../../../${f}`, import.meta.url), 'utf8');
-    for (const m of src.matchAll(/^import .* from '([^']+)';/gm)) assert.ok(/^\.\/|^\.\.\/net\//.test(m[1]), `${f}: imports ${m[1]}`);
+    for (const m of src.matchAll(/^import .* from '([^']+)';/gm)) assert.ok(/^(?:\.\/|\.\.\/(?!\.\.\/)|\.\.\/\.\.\/net\/)/.test(m[1]), `${f}: imports ${m[1]}`);   // the world layer's and the law's alone (EG-FILE: from world/eliteGates/)
   }
   // every kind's piece in every band: the band's flags on top, the kit's moulding and found under it
   for (let band = 0; band < 4; band++) for (const kind of KINDS) {
