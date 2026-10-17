@@ -4,7 +4,7 @@
 // make every report evidence of nothing.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mintStamp, verifyStamp, stampTabOf, stampBytes, STAMP_TABS, PUBLIC_TABS, STAMP_RE } from '../../../src/net/safety/chatStamp.js';
+import { mintStamp, verifyStamp, stampTabOf, stampBytes, STAMP_TABS, PUBLIC_TABS, STAMP_RE, STAMP_V } from '../../../src/net/safety/chatStamp.js';
 import { sealFeed, openFeed, feedValid, FEED_V, FEED_LINES_MAX, FEED_AGE_MAX_MS } from '../../../src/net/safety/chatFeed.js';
 import {
   reportShape, parseSafetyCommand, ladderMinutes, banUntil, LADDER_MIN, BAN_FOREVER, BAN_DAYS_DEFAULT, REPORT_LINES_MAX,
@@ -15,6 +15,10 @@ import { CHAT_TABS } from '../../../src/net/chat.js';
 import { HOST_COMMANDS } from '../../../src/net/chatCommands.js';
 import { mintBanOrder, mintOrder, verifyOrder, orderValid, mintToken, verifyToken } from '../../../src/net/identityToken.js';
 import { chatHubRoom, regionShardRoom } from '../../../src/net/hubShards.js';
+// AUDIT SAFE (the client lane): the module whole, so a pin of a member the old law lacked fails on its own assertion
+import * as law from '../../../src/net/safety/safetyLaw.js';
+import { parseStringTableCsv } from '../../../src/systems/textManager.js';
+import { readFileSync } from 'node:fs';
 
 const subtle = globalThis.crypto.subtle;
 const pair = () => subtle.generateKey({ name: 'Ed25519' }, true, ['sign', 'verify']);
@@ -36,10 +40,11 @@ test('SAFE2 A STAMP HOLDS FOR THE LINE IT WAS MINTED ON AND NO OTHER: every fiel
   assert.equal(await mintStamp({ ...LINE, tab: 'nowhere' }, kp.privateKey, { subtle }), '', 'a line no tab hears is not stamped');
 });
 
-test('SAFE2 A STAMP CAN NEVER BE LIFTED ONTO A TOKEN OR AN ORDER: its signed bytes begin "c1\\n", which no token\'s, order\'s or receipt\'s do, so the same key signing both cannot make one pass as the other (mutant: the version line dropped)', async () => {
+test('SAFE2 A STAMP CAN NEVER BE LIFTED ONTO A TOKEN OR AN ORDER: its signed bytes begin with its own version line (STAMP_V and a newline), which no token\'s, order\'s or receipt\'s do, so the same key signing both cannot make one pass as the other (mutant: the version line dropped)', async () => {
+  // AUDIT SAFE (the client lane): read off STAMP_V, the relay lane's to name (RELAY-13c moved it off the card receipt's `c1`)
   const bytes = new TextDecoder().decode(stampBytes(LINE));
-  assert.ok(bytes.startsWith('c1\n'));
-  assert.deepEqual(JSON.parse(bytes.slice(3)), [LINE.tab, LINE.sub, LINE.name, LINE.at, LINE.text]);
+  assert.ok(STAMP_V && bytes.startsWith(`${STAMP_V}\n`));
+  assert.deepEqual(JSON.parse(bytes.slice(STAMP_V.length + 1)), [LINE.tab, LINE.sub, LINE.name, LINE.at, LINE.text]);
 });
 
 test('SAFE2 THE TAB A LINE IS HEARD ON is the chat log\'s own tab id - the hub and its shards are World, a region\'s bus and shards Region, a language Lang, Trade, LFG, the hub\'s party and guild lines their own, and any place its Local (mutants: a shard read as a place; party read as World)', () => {
@@ -150,4 +155,70 @@ test('SAFE7 THE CODE OF CONDUCT is versioned by its date and names what it forbi
   const rules = conductRules();
   assert.equal(rules.length, 6);
   assert.ok(rules.some((r) => /not even as a joke/.test(r) && /asexuality/.test(r)));
+});
+
+/* ═══ AUDIT SAFE - THE CLIENT LANE (2026-10-17) ═══════════════════════════════════════════════════════════════════════
+ * The law's half of the audit's client findings: a report's lines out of their day dropped rather than the report
+ * refused, a ban's own sentence, a report's note and a ban's reason in the commands, a moderator's look at the reports,
+ * and a ban said as a ban in every language. Each pin failed on the arc as it merged. */
+
+test('AUDIT SAFE CLIENT-5 / DOC-7 / DOC-17 A LINE OUT OF ITS DAY IS DROPPED, NOT THE REPORT: a context line older than a day, or stamped more than a minute ahead (DOC-17), is left out and the rest goes; `report-stale` only when the account\'s own lines were all out of their day, `report-no-line` when none was theirs (mutants: a stale line refusing the whole report; a future line kept; stale said as no-line)', () => {
+  const now = LINE.at + 60_000;
+  const sg = 'A'.repeat(86);
+  const said = { ...LINE, sg };
+  const yesterday = { ...LINE, sub: 'p_victim01', name: 'Sylvia', at: now - REPORT_LINE_AGE_MS - 1, text: 'night all', sg };
+  const ahead = { ...LINE, sub: 'p_victim01', name: 'Sylvia', at: now + law.REPORT_LINE_AHEAD_MS + 1, text: 'from tomorrow', sg };
+  const justAhead = { ...LINE, sub: 'p_victim01', name: 'Sylvia', at: now + law.REPORT_LINE_AHEAD_MS, text: 'a clock a minute on', sg };
+  assert.deepEqual(reportShape({ target: LINE.sub, reason: 'hate', lines: [yesterday, said] }, now), { target: LINE.sub, reason: 'hate', note: '', lines: [said] }, 'yesterday\'s context left out, the report goes');
+  assert.deepEqual(reportShape({ target: LINE.sub, reason: 'hate', lines: [ahead, said, justAhead] }, now).lines, [said, justAhead], 'a line from the future left out (DOC-17); a minute on is the clocks\' drift, kept');
+  assert.equal(law.REPORT_LINE_AHEAD_MS, 60_000);
+  assert.deepEqual(reportShape({ target: LINE.sub, reason: 'hate', lines: [{ ...said, at: now - REPORT_LINE_AGE_MS - 1 }, yesterday] }, now), { error: 'report-stale' }, 'theirs, every one out of its day');
+  assert.deepEqual(reportShape({ target: LINE.sub, reason: 'hate', lines: [{ ...said, at: now + law.REPORT_LINE_AHEAD_MS + 1 }] }, now), { error: 'report-stale' });
+  assert.deepEqual(reportShape({ target: LINE.sub, reason: 'hate', lines: [yesterday] }, now), { error: 'report-no-line' }, 'none of theirs at all');
+});
+
+test('AUDIT SAFE DOC-13 + SERVICE-10 + DOC-4 THE COMMANDS: a report\'s note and a ban\'s reason are the words after the first colon (a note past REPORT_NOTE_MAX refused), the name and the reason or the days before it; /cases, /case <name>, /dismiss <name> and /modhelp are the host\'s, before the chat parser (mutants: the note left in the name; a ban\'s reason read as its length; /dismiss unread)', () => {
+  assert.deepEqual(parseSafetyCommand('/report Brave Wolf hate: he called them freaks'), { op: 'report', name: 'Brave Wolf', reason: 'hate', note: 'he called them freaks' });
+  assert.deepEqual(parseSafetyCommand('/report Troll: again   and again'), { op: 'report', name: 'Troll', reason: 'other', note: 'again and again' });
+  assert.deepEqual(parseSafetyCommand('/report Troll spam:'), { op: 'report', name: 'Troll', reason: 'spam' });
+  assert.ok('error' in parseSafetyCommand(`/report Troll: ${'x'.repeat(law.REPORT_NOTE_MAX + 1)}`));
+  assert.ok('error' in parseSafetyCommand('/report : a note and no name'));
+  assert.deepEqual(parseSafetyCommand('/ban Brave Wolf 7: slurs in World chat'), { op: 'ban', name: 'Brave Wolf', days: 7, reason: 'slurs in World chat' });
+  assert.deepEqual(parseSafetyCommand('/ban Troll perm: threats'), { op: 'ban', name: 'Troll', days: 0, reason: 'threats' });
+  assert.deepEqual(parseSafetyCommand('/ban Troll: spam'), { op: 'ban', name: 'Troll', days: BAN_DAYS_DEFAULT, reason: 'spam' });
+  assert.ok('error' in parseSafetyCommand('/ban Troll 400: too long'));
+  assert.deepEqual(parseSafetyCommand('/unban A: B'), { op: 'unban', name: 'A: B' }, 'only a report and a ban read a colon');
+  assert.deepEqual(parseSafetyCommand('/cases'), { op: 'cases' });
+  assert.deepEqual(parseSafetyCommand('/case Brave Wolf'), { op: 'case', name: 'Brave Wolf' });
+  assert.deepEqual(parseSafetyCommand('/dismiss #p_troll001'), { op: 'dismiss', name: '#p_troll001' });
+  assert.ok('error' in parseSafetyCommand('/dismiss'));
+  assert.ok('error' in parseSafetyCommand('/case'));
+  assert.deepEqual(parseSafetyCommand('/modhelp'), { op: 'modhelp' });
+  for (const c of ['cases', 'case', 'dismiss', 'modhelp']) assert.ok(SAFETY_COMMANDS.includes(c) && HOST_COMMANDS.includes(c), `/${c} is the host's`);
+  const help = law.modHelpLines();
+  for (const c of ['/mute', '/unmute', '/ban', '/unban', '/strikes', '/cases', '/case', '/dismiss']) assert.ok(help.some((l) => l.includes(c)), `the moderators' lines name ${c}`);
+});
+
+test('AUDIT SAFE CLIENT-2 A BAN\'S OWN SENTENCE, one home for the game\'s word and the sign-in\'s refusal: its end (a date, or for good) and the moderator\'s reason where there is one (mutant: the reason dropped)', () => {
+  assert.match(law.bannedText(2_000_000_000, 'Slurs in World chat'), /^This account is banned until .+\. Reason: Slurs in World chat$/);
+  assert.equal(law.bannedText(BAN_FOREVER), 'This account is banned for good.');
+  assert.equal(law.bannedText(BAN_FOREVER, '   '), 'This account is banned for good.');
+  assert.equal(law.untilText(BAN_FOREVER), 'for good');
+});
+
+test('AUDIT SAFE DOC-16 A BAN IS A BAN IN EVERY LANGUAGE - never a suspension (a ban may be for good): Spanish, Italian, Romanian and Indonesian said "suspended" in the code\'s consequence and every ban line; and German names race as the rest of its locale does (Rasse), not skin colour (mutant: a suspension\'s word back)', () => {
+  const rows = (code) => new Map(parseStringTableCsv(readFileSync(new URL(`../../../locales/${code}/Port_Strings.csv`, import.meta.url), 'utf8')));
+  const BAN_KEYS = ['net.conduct.consequence', 'account.refusal.banned', 'net.safety.bannedSelf', 'net.safety.bannedAccount', 'net.safety.bannedWhy', 'net.safety.didBan', 'net.safety.nextBan', 'net.online.banned'];
+  const SUSPENSION = { es: /suspen/i, it: /sospe/i, ro: /suspend/i, id: /tangguh/i };
+  for (const [code, word] of Object.entries(SUSPENSION)) {
+    const map = rows(code);
+    for (const k of BAN_KEYS) {
+      assert.ok(map.has(k), `${code} ${k}`);
+      assert.doesNotMatch(map.get(k), word, `${code} ${k} says a suspension: ${map.get(k)}`);
+    }
+  }
+  const de = rows('de').get('net.conduct.hate');
+  assert.doesNotMatch(de, /Hautfarbe/);
+  assert.match(de, /Rasse/);
+  assert.equal(rows('de').get('pause.specials.race'), 'Rasse', 'the locale\'s own word for race');
 });

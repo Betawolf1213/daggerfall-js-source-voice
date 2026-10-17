@@ -779,6 +779,7 @@ export function createChatPanel({ log, onSend, roster = null, canOpen = () => tr
   let peekNodes = [];
   let listNodes = [];      // the open list's rows, in order: [{ seq, node }] - grown, not rebuilt (AUDIT CHAT C8)
   let listTab = null;
+  let listRemoved = 0;     // AUDIT SAFE CLIENT-4: the log's `removed` the open list was drawn at - rows taken from its middle rebuild it
   let alive = true;
   // CHAT-R2: hidden across sessions - a player who puts the chat away
   // wants it away next time too, not one reload later.
@@ -1058,7 +1059,9 @@ export function createChatPanel({ log, onSend, roster = null, canOpen = () => tr
     const tab = log.tab(log.active);
     const msgs = tab ? tab.messages : [];
     const follow = newest || listTab !== log.active || !listNodes.length || atNewest();
-    const contiguous = listTab === log.active && listNodes.length && msgs.length && msgs.some((m) => m.seq === listNodes[listNodes.length - 1].seq);
+    // AUDIT SAFE CLIENT-4: and no row taken out of the middle since it was drawn (a block's forgetSpeaker) - the grow below
+    // trims the front and appends at the back, so a blocked account's rows stood drawn between the others'
+    const contiguous = listRemoved === (log.removed ?? 0) && listTab === log.active && listNodes.length && msgs.length && msgs.some((m) => m.seq === listNodes[listNodes.length - 1].seq);
     let arrived = 0;
     if (!contiguous) {
       listNodes = msgs.map((line) => lineRow(line, true, { seq: line.seq }));
@@ -1069,6 +1072,7 @@ export function createChatPanel({ log, onSend, roster = null, canOpen = () => tr
       for (const line of msgs) if (line.seq > lastSeq) { const row = lineRow(line, true, { seq: line.seq }); listNodes.push(row); list.append(row.node); arrived++; }
     }
     listTab = log.active;
+    listRemoved = log.removed ?? 0;
     if (!follow) unseen += arrived;   // C8 stands: the reader keeps their place, and the bar counts what came in under it
     return follow;
   };
@@ -1431,6 +1435,16 @@ export function createChatPanel({ log, onSend, roster = null, canOpen = () => tr
     root, input,
     open, close: closePanel, toggle: () => (log.open ? closePanel() : open()),
     isOpen: () => log.open,
+    /** AUDIT SAFE CLIENT-12 (2026-10-17): A LINE THE RELAY REFUSED, BACK IN THE FIELD - a new voice's public line too soon
+     *  for its pace (`slowed`) left the field when it was sent, and the relay's word on it is said once in a while
+     *  (scenes/chatSafetyHost.js), so inside the quiet window it vanished. Put back only into an EMPTY field: whatever the
+     *  player has typed since is theirs. True when it went back. */
+    restore: (text) => {
+      const line = String(text ?? '');
+      if (!line || String(input.value ?? '') !== '') return false;
+      input.value = line;
+      return true;
+    },
     /** CHAT-FIND: the search - set it (the chat opened for it) and read it back ('' none). */
     find: (name) => { if (!log.open) open(); setQuery(name); return query; },
     query: () => query,

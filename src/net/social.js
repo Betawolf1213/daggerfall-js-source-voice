@@ -218,6 +218,18 @@ export class SocialState {
   /** SAFE1: whether an account is heard (the host's block list) - an account named by nobody always is. */
   _hears(acct) { return typeof acct !== 'string' || !acct || !this.hears || this.hears(acct); }
 
+  /** AUDIT SAFE CLIENT-11 (2026-10-17): THE PICTURE HEARS THROUGH A BLOCK MADE NOW - a friend request and a party invite
+   *  that already stood when the account was blocked are taken back, as a block takes back the lines already heard
+   *  (net/chat.js forgetSpeaker): they were filtered only as they arrived. Answers how many went; a change repaints. */
+  refilter() {
+    const inBefore = this.in.length, invitesBefore = this.invites.size;
+    this.in = this.in.filter((r) => this._hears(r.acct));
+    for (const [id, inv] of [...this.invites]) if (!this._hears(inv.from?.acct)) this.invites.delete(id);
+    const gone = inBefore - this.in.length + invitesBefore - this.invites.size;
+    if (gone) this._changed('block');
+    return gone;
+  }
+
   /** A party member's pose in (net/online.js onParty) - onto the seat, if the account holds one. */
   applyParty(acct, p) {
     if (!this.party || !p) return false;

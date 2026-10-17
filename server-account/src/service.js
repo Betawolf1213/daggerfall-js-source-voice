@@ -446,9 +446,11 @@ export const ROUTES = new Set([
   '/v1/board/read', '/v1/board/pin', '/v1/board/take-down', '/v1/board/report', '/v1/board/mod/remove', '/v1/board/mod/restore',
   '/v1/board/notice', '/v1/board/notice/remove',
   // SAFE1-SAFE8 (bible/11-Multiplayer/Chat-Safety-Arc.md): a player's block list, a report, the code of conduct agreed;
-  // a moderator's ban, unban and look; and the two doors a stranger reaches that prove themselves (SAFE_OPEN_ROUTES)
+  // a moderator's ban, unban and look; and the two doors a stranger reaches that prove themselves (SAFE_OPEN_ROUTES);
+  // AUDIT SAFE DOC-4: the moderators' read of the cases in the game - the open ones, one, and its dismissal
   '/v1/safety/blocks', '/v1/safety/block', '/v1/safety/unblock', '/v1/safety/report', '/v1/safety/conduct',
   '/v1/mod/ban', '/v1/mod/unban', '/v1/mod/strikes', '/v1/mod/feed', '/v1/discord/interactions',
+  '/v1/mod/cases', '/v1/mod/case', '/v1/mod/dismiss',
   // PROF1: the professions (professions.js) - a character's tracks, Stores and day, the witnessed pixels, a harvest,
   // a specialisation, a withdrawal to the pack, a region's Court writs and a delivery. Every one behind a session, a
   // registered account's alone, and PROFESSIONS_OPEN's.

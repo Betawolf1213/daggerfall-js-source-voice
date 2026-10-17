@@ -61,9 +61,16 @@ import { HUB_SHARD_ROOMS, isHubShard, HUB_FIND_Q_MAX, REGION_SHARD_ROOMS } from 
 //                    NOT `acct`: that word is the social hub's own account (SOC1), a different id with a different law
 //                    {t:'muted', until}                 MOD1: to the muted player alone - `until` in epoch seconds, 0 when lifted
 //                    SAFE2: and `sg`, the relay's stamp on the line (net/safety/chatStamp.js), absent from a relay with no key
-//                    {t:'banned', until}                SAFE4: to the banned player's sockets in the room, before the room closes them
+//                    {t:'banned', until}                SAFE4: to the banned account's sockets in a room that takes its ban order - at
+//                                                       the hub after `law`, so the order is in the client's hand before the word that
+//                                                       sends it away (AUDIT SAFE CLIENT-2) - and each is then closed CLOSE_POLICY
+//                                                       'banned'; `until` 0 (a ban lifted) closes nothing. And to a hello while the
+//                                                       room holds a standing ban newer than its token, then closed the same way
+//                                                       (AUDIT SAFE DOC-15 / RELAY-4: this said "before the room closes them", and the
+//                                                       room closed nothing)
 //                    {t:'law', order}                   SAFE4: a mute or ban order the service pushed to the hub (SAFE_LAW_PATH), handed
 //                                                       to its target's hub sockets so their own client carries it to every room it holds
+//                                                       - each socket's first word of the order (its `muted` or `banned` after it)
 //                    {t:'slowed', ms}                   SAFE6: a new voice's public line refused for its pace - `ms` until the next one
 //                    {t:'event', kind, at}              EVENT1: the server-wide live event now, to every hub socket when it is staged
 //                                                       or ended; a late joiner reads it off the hub welcome's `ev` ({kind, at}, absent: none)
@@ -313,10 +320,12 @@ export const BUSY_TOKEN_UNREAD = 'busy, token unread';
 export const CHAT_MAX = 240;
 /** The most chat lines a client may send a second; the bucket's burst is the same number. */
 export const CHAT_HZ_MAX = 2;
-/** SAFE6 (2026-10-17, bible/11-Multiplayer/Chat-Safety-Arc.md section 7): A NEW VOICE'S PACE. A guest, or an account
- *  still wearing the sprout (titles.js SPROUT_S), says one line in a public channel (chatStamp.js PUBLIC_TABS) every
- *  NEW_VOICE_GAP_MS - an ordinary conversation's pace, and a throwaway account's flood slowed to it. Party, guild and a
- *  place's talk are not slowed. Measured on the socket's own clock (`nwAt`), refused with {t:'slowed', ms}. */
+/** SAFE6 (2026-10-17, bible/11-Multiplayer/Chat-Safety-Arc.md section 7): A NEW VOICE'S PACE. A guest (the token's `k`),
+ *  or an account still wearing the sprout (titles.js SPROUT_S), says one line in a public channel (chatStamp.js
+ *  PUBLIC_TABS) every NEW_VOICE_GAP_MS - an ordinary conversation's pace, and a throwaway account's flood slowed to it.
+ *  Party, guild and a place's talk are not slowed. Measured on the ACCOUNT's meter in each room (server/src/index.js
+ *  `_paces` - AUDIT SAFE RELAY-8: it was the socket's, which K sockets or a reconnect multiplied), spent only by a line
+ *  the room's budget lets through, refused with {t:'slowed', ms}. */
 export const NEW_VOICE_GAP_MS = 4000;
 /** SAFE4: the public path the account service pushes a signed mute or ban order to (server/src/index.js) - the hub
  *  applies it and hands it to its target. The Worker checks the signature before the hub is woken. */
@@ -3956,6 +3965,11 @@ export const relaySupportsGuild = (v) => { const m = /^world(\d+)$/.exec(typeof 
  *  world203 is KG-SET's and world204 KG5's, and neither knows it either. */
 export const HOME_RELAY_MIN = 205;
 export const relaySupportsHome = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= HOME_RELAY_MIN; };
+/** AUDIT SAFE RELAY-3: the ban frame is world214's (SAFE4) - an older relay closes the socket on a frame type it does not
+ *  know (CLOSE_POLICY, which the client takes as terminal), so a ban order goes only to a room whose welcome said world214
+ *  or later (DM_RELAY_MIN's reason). */
+export const BAN_RELAY_MIN = 214;
+export const relaySupportsBan = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= BAN_RELAY_MIN; };
 /** CHAT-LANG: the relay that opens the language channels (CHAT_LANGS in its CHAT_ROOMS) - an older one refuses the key
  *  ('no such room'), so the Language tab joins only once the World link's welcome names this one or later. */
 export const LANG_RELAY_MIN = 196;

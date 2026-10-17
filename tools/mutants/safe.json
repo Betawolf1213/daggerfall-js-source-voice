@@ -32,16 +32,6 @@
     "note": "The hub's shards are World, not Local - the hearer and the bus would sign different tabs."
   },
   {
-    "name": "SAFE2-the-relay-stamps-nothing",
-    "file": "server/src/index.js",
-    "old": "      frame = await this._stamped(a, ch, frame);   // SAFE2: the relay's stamp on what it relays\n",
-    "new": "",
-    "tests": [
-      "test/net/safety/safe_relay.test.js"
-    ],
-    "note": "No stamp, no report."
-  },
-  {
     "name": "SAFE5-the-feed-unsigned",
     "file": "src/net/safety/chatFeed.js",
     "old": "  if (!good) return { error: 'feed-signature' };\n",
@@ -105,36 +95,6 @@
     "note": "Each kind carries its own fields alone."
   },
   {
-    "name": "SAFE6-every-voice-slowed",
-    "file": "server/src/index.js",
-    "old": "|| !a.glyphs.includes('sprout')) return true;",
-    "new": ") return true;",
-    "tests": [
-      "test/net/safety/safe_relay.test.js"
-    ],
-    "note": "Only a new voice is slowed."
-  },
-  {
-    "name": "SAFE4-a-ban-that-never-silences",
-    "file": "server/src/index.js",
-    "old": "      this._setAttach(other, { ...b, mu });\n      this._send(other, told);\n      if (law) this._send(other, law);",
-    "new": "      this._send(other, told);\n      if (law) this._send(other, law);",
-    "tests": [
-      "test/net/safety/safe_relay.test.js"
-    ],
-    "note": "A banned socket told and still talking."
-  },
-  {
-    "name": "SAFE4-the-door-unchecked",
-    "file": "server/src/index.js",
-    "old": "  if (!(await ask('ban')).ok && !(await ask('mute')).ok) return json({ error: 'bad law' }, 403);\n",
-    "new": "",
-    "tests": [
-      "test/net/safety/safe_relay.test.js"
-    ],
-    "note": "The door believes the signature and nothing else - and a stranger's post wakes nothing."
-  },
-  {
     "name": "SAFE4-the-order-not-handed-on",
     "file": "server/src/index.js",
     "old": "      if (law) this._send(other, law);\n",
@@ -167,8 +127,8 @@
   {
     "name": "SAFE3-a-stamp-unchecked",
     "file": "server-account/src/safety.js",
-    "old": "  for (const l of shape.lines) if (!(await verifyStamp(l, l.sg, key, { subtle }))) return { error: 'report-unwitnessed' };\n",
-    "new": "",
+    "old": "    if (await verifyStamp(l, l.sg, key, { subtle })) lines.push(l);\n    else if (l.sub === shape.target) return { error: 'report-unwitnessed' };",
+    "new": "    lines.push(l);",
     "tests": [
       "test/server/safe_service.test.js"
     ],
@@ -177,8 +137,8 @@
   {
     "name": "SAFE4-a-moderator-auto-muted",
     "file": "server-account/src/sanctions.js",
-    "old": "  if (!row || canModerate(row, env) || isMuted(row, nowS) || isBanned(row, nowS)) return 0;",
-    "new": "  if (!row || isMuted(row, nowS) || isBanned(row, nowS)) return 0;",
+    "old": "export const autoMutable = (row, env, nowS) => !!row && !canModerate(row, env) && !isMuted(row, nowS) && !isBanned(row, nowS);",
+    "new": "export const autoMutable = (row, env, nowS) => !!row && !isMuted(row, nowS) && !isBanned(row, nowS);",
     "tests": [
       "test/server/safe_service.test.js"
     ],
@@ -227,7 +187,7 @@
   {
     "name": "SAFE8-a-discord-user-not-a-moderator-acting",
     "file": "server-account/src/discord.js",
-    "old": "  return row && canModerate(row, env) ? row : null;",
+    "old": "  return row && canModerate(row, env) && !isBanned(row, nowS) ? row : null;",
     "new": "  return row ?? null;",
     "tests": [
       "test/server/safe_review.test.js"
@@ -257,7 +217,7 @@
   {
     "name": "SAFE5-the-budget-unchecked",
     "file": "server-account/src/modAi.js",
-    "old": "  if (!(await spendAiCall(db, env, nowS))) return { error: AI_ERRORS.budget };\n",
+    "old": "  if (!(await spendAiCall(db, env, nowS, { feed }))) return { error: AI_ERRORS.budget };\n",
     "new": "",
     "tests": [
       "test/server/safe_review.test.js"

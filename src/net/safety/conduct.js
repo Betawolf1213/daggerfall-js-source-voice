@@ -6,7 +6,11 @@
 //
 // THE VERSION IS A DATE, as the Terms' are (net/legalLaw.js). A player's agreement records the version they read
 // (players.conduct_v); a new version asks every player again at their next line. Move it when a rule changes in
-// substance - never for a typo.
+// substance - never for a typo. The service says whether the code as it stands is agreed on every token's mint
+// (`conduct`) - AUDIT SAFE CLIENT-1: carried by the page's minter (net/accountClient.js accountTokenMinter, which had
+// dropped it, so the card never stood) to the gate (scenes/chatSafetyHost.js adopt); a page that agreed keeps its yes
+// until it reloads, so a mint already in flight cannot ask again, and a version moved while a page is open is asked
+// at its next load.
 //
 // WHY THE EDGY JOKE IS NAMED. The rule against hate says "not even as a joke" because the joke is the form it takes in a
 // game's chat: "jokes" about pride flags, asexual players called attention-seekers. A rule that left it unsaid would be

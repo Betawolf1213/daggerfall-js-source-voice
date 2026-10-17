@@ -20270,7 +20270,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   let _walkStopWhy = null;   // AUDIT OW4 P4: why Travel Options last stopped my journey (its update's `stopped`), until the walk's step reads it
   let bountyHost = null;   // BOUNTY1: made below, beside the party's marks; read late by the maps, the pose and the boards
   let social = null, _partyComposedAt = -Infinity, _partyPose = null;   // PARTY8-B: the last pose composed, for the party HUD's own "where am I"
-  const chatSafety = createChatSafetyHost({ log: () => chatLog, links: () => [...(chatLinks?.values?.() ?? []), online].filter(Boolean), social: () => social });   // SAFE1-SAFE7 (bible/11-Multiplayer/Chat-Safety-Arc.md)
+  const chatSafety = createChatSafetyHost({ log: () => chatLog, links: () => [...(chatLinks?.values?.() ?? []), online].filter(Boolean), social: () => social, minter: () => identityMinter, panel: () => chatPanel });   // SAFE1-SAFE7 (bible/11-Multiplayer/Chat-Safety-Arc.md) - AUDIT SAFE CLIENT-2: the minter a ban lets go of; CLIENT-12: the field a slowed line goes back to
   /** CONCEAL-MATE: a peer in my party - the test player/socialPick.js openPeers is handed, so a concealed mate stays
    *  open to the F key, the Nearby list, a page and a gift. A declaration: the street's pick reads it from above. */
   function isPartyMate(id) { return !!social?.party && social.isPartyPeer(id); }
@@ -23787,7 +23787,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       link.mintToken = identityMinter;
       link.onRelay = onRelayVersion;
       link.onSuperseded = () => seatLostNow();
-      return link;
+      return chatSafety.adoptLink(link);   // AUDIT SAFE CLIENT-13: the arena's rooms hear the relay's word on my chat too, and a ban leaves them
     },
     account: accountArena({ fetch: (u, i) => globalThis.fetch(u, i), storage: appStorage() }),
     store: _spoilsStore,

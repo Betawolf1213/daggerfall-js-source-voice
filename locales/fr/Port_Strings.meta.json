@@ -2059,6 +2059,11 @@
   "tr": "3b6e3abb1078",
   "by": "claude-in-session"
  },
+ "account.refusal.noCase": {
+  "en": "aaa197709808",
+  "tr": "d6296eaa7c29",
+  "by": "claude-in-session"
+ },
  "account.refusal.noChapter": {
   "en": "42b4f1aa09e2",
   "tr": "7ef54d335a64",
@@ -2257,6 +2262,11 @@
  "account.refusal.none": {
   "en": "7ef79b1962d1",
   "tr": "ae4be688bc75",
+  "by": "claude-in-session"
+ },
+ "account.refusal.notBanned": {
+  "en": "ab964a2db05a",
+  "tr": "0c6491c8a4a8",
   "by": "claude-in-session"
  },
  "account.refusal.notDead": {
@@ -13515,8 +13525,8 @@
   "by": "claude-in-session"
  },
  "net.chat.reportHelp": {
-  "en": "2f93f7733b17",
-  "tr": "7d0d7fc3eda9",
+  "en": "5a142a4fd3fb",
+  "tr": "9c22c7abb489",
   "by": "claude-in-session"
  },
  "net.chat.rpHelp": {
@@ -13654,6 +13664,11 @@
   "tr": "6b96b499689b",
   "by": "claude-in-session"
  },
+ "net.online.banned": {
+  "en": "6544d3cc56f7",
+  "tr": "2e7e2c4068c0",
+  "by": "claude-in-session"
+ },
  "net.online.busy": {
   "en": "924391613eb2",
   "tr": "6bf2400d57fe",
@@ -13724,6 +13739,31 @@
   "tr": "9fcb01f76292",
   "by": "claude-in-session"
  },
+ "net.safety.actBan": {
+  "en": "7342a3d27878",
+  "tr": "383e2f2dfcfd",
+  "by": "claude-in-session"
+ },
+ "net.safety.actDismiss": {
+  "en": "91eba2cc73c5",
+  "tr": "1f3b4fa4c0a9",
+  "by": "claude-in-session"
+ },
+ "net.safety.actMute": {
+  "en": "b03704de5979",
+  "tr": "b3ee5e161894",
+  "by": "claude-in-session"
+ },
+ "net.safety.actUnban": {
+  "en": "72d9a1503fef",
+  "tr": "176bbb0eb310",
+  "by": "claude-in-session"
+ },
+ "net.safety.actUnmute": {
+  "en": "68f9b071f880",
+  "tr": "09888803025e",
+  "by": "claude-in-session"
+ },
  "net.safety.agreed": {
   "en": "00634bf68ecb",
   "tr": "af3e74656ea5",
@@ -13734,9 +13774,19 @@
   "tr": "4b8b4ef2de63",
   "by": "claude-in-session"
  },
+ "net.safety.bannedAccount": {
+  "en": "96c551e428c2",
+  "tr": "cf63619127de",
+  "by": "claude-in-session"
+ },
  "net.safety.bannedSelf": {
   "en": "46b62e39b404",
   "tr": "054ff70cc496",
+  "by": "claude-in-session"
+ },
+ "net.safety.bannedWhy": {
+  "en": "97204cbb2d32",
+  "tr": "eed6aac74e39",
   "by": "claude-in-session"
  },
  "net.safety.blockLabel": {
@@ -13749,6 +13799,11 @@
   "tr": "aeb6e24faea3",
   "by": "claude-in-session"
  },
+ "net.safety.blockedAs": {
+  "en": "fd946865b4ee",
+  "tr": "235e5c313c8f",
+  "by": "claude-in-session"
+ },
  "net.safety.blockedList": {
   "en": "26ced87d5062",
   "tr": "8eaf029449db",
@@ -13757,6 +13812,51 @@
  "net.safety.blockedNone": {
   "en": "bdccc4dc365c",
   "tr": "60a5afbfb733",
+  "by": "claude-in-session"
+ },
+ "net.safety.byReviewer": {
+  "en": "3d60a3c2a52c",
+  "tr": "d15b7eaf705c",
+  "by": "claude-in-session"
+ },
+ "net.safety.caseAuto": {
+  "en": "7d7ea7e9e7e1",
+  "tr": "1cf6bfe3166c",
+  "by": "claude-in-session"
+ },
+ "net.safety.caseHead": {
+  "en": "b8273d71f920",
+  "tr": "db7c9371fb64",
+  "by": "claude-in-session"
+ },
+ "net.safety.caseNoLines": {
+  "en": "83b3285612c0",
+  "tr": "17ac0f276e18",
+  "by": "claude-in-session"
+ },
+ "net.safety.caseNote": {
+  "en": "078e1b38b933",
+  "tr": "6c1cee054471",
+  "by": "claude-in-session"
+ },
+ "net.safety.caseRow": {
+  "en": "fc2458bbe2fe",
+  "tr": "26e8a8e0296a",
+  "by": "claude-in-session"
+ },
+ "net.safety.caseVerdict": {
+  "en": "2ecf7679fe13",
+  "tr": "5e611f54aaaa",
+  "by": "claude-in-session"
+ },
+ "net.safety.casesHead": {
+  "en": "ade9e66a07c6",
+  "tr": "c5c602e3590b",
+  "by": "claude-in-session"
+ },
+ "net.safety.casesNone": {
+  "en": "401f90ad84f7",
+  "tr": "b19e3c74d955",
   "by": "claude-in-session"
  },
  "net.safety.didBan": {
@@ -13769,9 +13869,79 @@
   "tr": "96e52afe9f29",
   "by": "claude-in-session"
  },
+ "net.safety.dismissed": {
+  "en": "ebbb1b894a4f",
+  "tr": "3b06d95c83da",
+  "by": "claude-in-session"
+ },
+ "net.safety.dismissedUnmuted": {
+  "en": "8060c22c1403",
+  "tr": "09182914f8a0",
+  "by": "claude-in-session"
+ },
  "net.safety.forGood": {
   "en": "45365e3f6333",
   "tr": "0849efad7c8e",
+  "by": "claude-in-session"
+ },
+ "net.safety.history": {
+  "en": "fc466b65ccd8",
+  "tr": "085800dfbf6b",
+  "by": "claude-in-session"
+ },
+ "net.safety.historyBy": {
+  "en": "ca032ef744f7",
+  "tr": "035a1ff5e61f",
+  "by": "claude-in-session"
+ },
+ "net.safety.manyBlock": {
+  "en": "d0984e5e44b7",
+  "tr": "4b072ea44387",
+  "by": "claude-in-session"
+ },
+ "net.safety.manyMod": {
+  "en": "c30304eb291c",
+  "tr": "1bfd6a923dd9",
+  "by": "claude-in-session"
+ },
+ "net.safety.manyReport": {
+  "en": "2bf9eedb4720",
+  "tr": "7a8044d989a7",
+  "by": "claude-in-session"
+ },
+ "net.safety.modHelpBan": {
+  "en": "27e36978511b",
+  "tr": "4ae9ab5094ed",
+  "by": "claude-in-session"
+ },
+ "net.safety.modHelpCase": {
+  "en": "56dfa1c070cf",
+  "tr": "c3aff94f431f",
+  "by": "claude-in-session"
+ },
+ "net.safety.modHelpCases": {
+  "en": "61344be49ed6",
+  "tr": "71c9b1a06b7d",
+  "by": "claude-in-session"
+ },
+ "net.safety.modHelpDismiss": {
+  "en": "13ba0e0fa006",
+  "tr": "9379d5834ebf",
+  "by": "claude-in-session"
+ },
+ "net.safety.modHelpHead": {
+  "en": "baff563dd05d",
+  "tr": "edbf308f6a81",
+  "by": "claude-in-session"
+ },
+ "net.safety.modHelpMute": {
+  "en": "2adc5602ae0f",
+  "tr": "312b83229ffa",
+  "by": "claude-in-session"
+ },
+ "net.safety.modHelpStrikes": {
+  "en": "49f75062363b",
+  "tr": "306804f565bc",
   "by": "claude-in-session"
  },
  "net.safety.nextBan": {
@@ -13782,6 +13952,31 @@
  "net.safety.nextMute": {
   "en": "90e16764d452",
   "tr": "be3edcc91448",
+  "by": "claude-in-session"
+ },
+ "net.safety.noneBlock": {
+  "en": "208c2ee3493c",
+  "tr": "4e9707c254e9",
+  "by": "claude-in-session"
+ },
+ "net.safety.noneReport": {
+  "en": "59f1455e0a32",
+  "tr": "2a3d42513532",
+  "by": "claude-in-session"
+ },
+ "net.safety.notBlocked": {
+  "en": "57c2ae9ead09",
+  "tr": "67a1cb000697",
+  "by": "claude-in-session"
+ },
+ "net.safety.noteLong": {
+  "en": "c25013e60b3e",
+  "tr": "8b1c9fe3f470",
+  "by": "claude-in-session"
+ },
+ "net.safety.protectedBan": {
+  "en": "f17115a007a9",
+  "tr": "396582d51a49",
   "by": "claude-in-session"
  },
  "net.safety.reasonHarassment": {
@@ -13829,14 +14024,44 @@
   "tr": "1cf6cba62ff5",
   "by": "claude-in-session"
  },
+ "net.safety.shadow": {
+  "en": "8bf72268a7a0",
+  "tr": "d943a3ab8d12",
+  "by": "claude-in-session"
+ },
  "net.safety.slowed": {
   "en": "a571ab2e1535",
   "tr": "ac8b1896e106",
   "by": "claude-in-session"
  },
+ "net.safety.standingBanned": {
+  "en": "8345fe22a259",
+  "tr": "539e24d55caa",
+  "by": "claude-in-session"
+ },
+ "net.safety.standingBannedWhy": {
+  "en": "0dc1750741f6",
+  "tr": "f3196731b2df",
+  "by": "claude-in-session"
+ },
+ "net.safety.standingMuted": {
+  "en": "b6f86cd054c9",
+  "tr": "d52beb58935b",
+  "by": "claude-in-session"
+ },
+ "net.safety.standingNone": {
+  "en": "5942e7a9715b",
+  "tr": "8cb97528fc26",
+  "by": "claude-in-session"
+ },
  "net.safety.strikes": {
   "en": "5cf7e3a1a8c5",
   "tr": "84df23552c34",
+  "by": "claude-in-session"
+ },
+ "net.safety.unaccounted": {
+  "en": "89f2cc2d46cc",
+  "tr": "55b8e5341e1d",
   "by": "claude-in-session"
  },
  "net.safety.unbannedSelf": {
@@ -13860,8 +14085,8 @@
   "by": "claude-in-session"
  },
  "net.safety.usageBan": {
-  "en": "e573379f7490",
-  "tr": "624091d2b7f5",
+  "en": "fdb82f664fdc",
+  "tr": "704ee673f3df",
   "by": "claude-in-session"
  },
  "net.safety.usageBlock": {
@@ -13869,9 +14094,19 @@
   "tr": "c56ed3823c6e",
   "by": "claude-in-session"
  },
+ "net.safety.usageCase": {
+  "en": "d2ede79c612e",
+  "tr": "6cccc49079df",
+  "by": "claude-in-session"
+ },
+ "net.safety.usageDismiss": {
+  "en": "9263d8d9e26e",
+  "tr": "dfec2baab8b3",
+  "by": "claude-in-session"
+ },
  "net.safety.usageReport": {
-  "en": "4436a1f35172",
-  "tr": "d4a9e89d37e4",
+  "en": "26096c8a789a",
+  "tr": "619a024f2bc9",
   "by": "claude-in-session"
  },
  "net.safety.usageStrikes": {
@@ -13887,6 +14122,11 @@
  "net.safety.usageUnblock": {
   "en": "4b09279846c8",
   "tr": "777b73e2a5b3",
+  "by": "claude-in-session"
+ },
+ "net.safety.voided": {
+  "en": "143399630c8f",
+  "tr": "5fa069bd7e8a",
   "by": "claude-in-session"
  },
  "net.update.build": {

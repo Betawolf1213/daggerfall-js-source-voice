@@ -10,6 +10,7 @@
 // whether a press does anything is the game's question (DISCORD_MODERATORS, MODERATOR_HANDLES).
 // The token is read from the environment and never printed.
 import { isMain } from './lib/isMain.mjs';
+import { DISCORD_USER_AGENT } from '../server-account/src/discord.js';
 
 /** The command, as Discord's API takes it: /mod lookup|mute|unmute|ban|unban, each naming a player by name or account id. */
 export const MOD_COMMAND = Object.freeze({
@@ -17,7 +18,7 @@ export const MOD_COMMAND = Object.freeze({
   description: 'DFO Online moderation',
   type: 1,
   default_member_permissions: String(1 << 13),   // Manage Messages
-  dm_permission: false,
+  contexts: [0],   // AUDIT SAFE DISCORD-13: the server alone (GUILD) - `dm_permission` is deprecated for `contexts`
   options: [
     { type: 1, name: 'lookup', description: 'An account\'s standing: mutes, bans, strikes and the next step', options: [{ type: 3, name: 'player', description: 'Name or account id', required: true }] },
     { type: 1, name: 'mute', description: 'Mute a player (the next step on the ladder unless minutes are given)', options: [
@@ -44,7 +45,7 @@ async function main() {
   }
   const res = await fetch(`https://discord.com/api/v10/applications/${app}/guilds/${guild}/commands`, {
     method: 'PUT',
-    headers: { 'content-type': 'application/json', authorization: `Bot ${token}` },
+    headers: { 'content-type': 'application/json', authorization: `Bot ${token}`, 'user-agent': DISCORD_USER_AGENT },   // AUDIT SAFE DISCORD-10
     body: JSON.stringify([MOD_COMMAND]),
   });
   const text = await res.text();

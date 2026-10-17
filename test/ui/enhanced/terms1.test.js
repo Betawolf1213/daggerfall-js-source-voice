@@ -77,8 +77,12 @@ test('TERMS1: the words are held to a hash - editing a document means deciding w
     // SAFE (2026-10-17, bible/11-Multiplayer/Chat-Safety-Arc.md): material in both - the Terms name hate by what it
     // attacks and make the in-game Code of Conduct part of them; the Policy says the stamped messages, the reports, the
     // automated review by a third-party AI provider and how long each is kept - so a new version, 2026-10-17
-    terms: '06cc1e33af462714dbe26ea3a6e00457309352f99671d891be2a053213158049',
-    privacy: '69fffa161b13c846f6ca52bbbcb06fef48e4c9dae4f6d43b54137d86eae0a9d1',
+    // AUDIT SAFE (the same day, unreleased - the version stands): the Policy made true of the code - a report shown in the
+    // game too, the reporters' automatic mute named, the names a line's own words carry, the second review before a
+    // mute, a letter from a blocked player undelivered, every retention said and the Discord copies deleted with the
+    // case's; the Terms' agreement the game asks for, never one it enforces
+    terms: '62fd0b8a5477d53b0d2341ca0d1801743e9ac08b4716d28104704fff077b612f',
+    privacy: '4c152e82901b17a2a05688b7f38d812af56e5795bc6ac05467282d391c6d6a4a',
   };
   for (const [name, d] of Object.entries(DOCS)) {
     const words = wordsOf(read(d.file));

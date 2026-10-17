@@ -14,24 +14,33 @@
 //   - SIGNED. The batch's bytes are signed with the relay's receipt key (GATE_SIGNING_KEY) and the service checks them
 //     with its public half, so nobody but the relay can feed it lines.
 //
-// THE BATCH: {"v":"f1","id":<16 hex>,"at":<ms>,"lines":[{"tab","sub","name","at","text"}...]}, its signature over
-// "f1\n" + the body's bytes in the FEED_SIG_HEADER header. A body the service has seen (`id`) is not read twice.
+// THE BATCH: {"v":"chat-feed1","id":<16 hex>,"at":<ms>,"lines":[{"tab","sub","name","at","text"}...]}, its signature
+// over "chat-feed1\n" + the body's bytes in the FEED_SIG_HEADER header. A body the service has seen (`id`) is not read
+// twice. AUDIT SAFE RELAY-13c: the tag was `f1` - the wild receipt's own (wildReceipt.js WILD_RECEIPT_V), kept apart by
+// one byte; a word of its own while the feed was still unreleased (world214 never deployed), as chatStamp.js's.
+//
+// AUDIT SAFE RELAY-12: A ROOM'S BATCH IS FEED_BATCH LINES AT MOST - the relay posts the moment the FEED_BATCH-th line
+// joins, and takes the lines before it awaits anything (server/src/index.js `_feedFlush`), so no batch it sends holds
+// more. FEED_LINES_MAX is the SERVICE's bound on what it reads (`feedValid`), with room above the relay's own.
 //
 // Not a DFU member: Daggerfall Unity has no chat. Ledger A row (ONLINE).
 import { _b64url, SIG_BYTES } from '../identityToken.js';
 import { stampableLine, PUBLIC_TABS } from './chatStamp.js';
 
-/** The only version this file writes or reads. */
-export const FEED_V = 'f1';
+/** The only version this file writes or reads - AUDIT SAFE RELAY-13c: a word of its own, never a receipt's tag. */
+export const FEED_V = 'chat-feed1';
 /** The header the batch's signature rides. */
 export const FEED_SIG_HEADER = 'x-relay-feed-sig';
 /** A batch posts once this many lines wait... */
 export const FEED_BATCH = 40;
 /** ...or once its first line has waited this long, ms. */
 export const FEED_WAIT_MS = 30_000;
-/** The most lines one batch carries - a room that outruns its post drops its oldest rather than grow. */
+/** The most lines a batch the service reads may carry. AUDIT SAFE RELAY-12: the relay's own batch is FEED_BATCH at most
+ *  (it posts at that count), so this is the reader's wall, not a drop the relay makes - "a room that outruns its post
+ *  drops its oldest" was a branch that could never run. */
 export const FEED_LINES_MAX = 60;
-/** The most bytes a batch's body may be (FEED_LINES_MAX lines of the longest chat line, and room). */
+/** The most bytes a batch's body may be - AUDIT SAFE RELAY-12: FEED_BATCH lines of the longest chat line (CHAT_MAX UTF-16
+ *  units, three bytes each in UTF-8 at the most, with the longest name and account: about 1 KiB a line), and room. */
 export const FEED_MAX_BYTES = 48 * 1024;
 /** How old a batch may be when it arrives (ms) - a replayed old one is refused. */
 export const FEED_AGE_MAX_MS = 10 * 60_000;

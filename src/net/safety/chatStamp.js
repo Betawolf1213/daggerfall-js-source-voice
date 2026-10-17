@@ -6,7 +6,7 @@
 // line it likes into its log and "report" it. So the relay - the one party that SAW the line, because it relayed it -
 // signs every chat line it fans out, with the key it already signs its receipts with (GATE_SIGNING_KEY, gateReceipt.js):
 //
-//     sg = base64url(Ed25519( "c1\n" + JSON.stringify([tab, sub, name, at, text]) ))
+//     sg = base64url(Ed25519( "chat-stamp1\n" + JSON.stringify([tab, sub, name, at, text]) ))
 //         tab  the chat tab the line is heard on (stampTabOf: world, region, lang, trade, lfg, party, guild, local)
 //         sub  the speaker's verified account (the token's `s`)   name the name the relay said beside it
 //         at   the relay's clock, ms   text the line as the relay relayed it (sanitizeChat's, its words starred)
@@ -20,9 +20,11 @@
 // THE WORDS ARE THE STARRED ONES. The relay signs what it relayed, which is what everyone read: TEXT-F1's mask has
 // already starred a listed word. A moderator and the reviewer judge the line the room saw.
 //
-// A STAMP IS NEVER AN IDENTITY, AN ORDER OR A RECEIPT: it is a bare signature over bytes that begin `c1\n`, which no
-// token, order or receipt's signed bytes do (theirs begin `v1.`, `r1.` and the like), so no signature can be lifted
-// from one to the other.
+// A STAMP IS NEVER AN IDENTITY, AN ORDER OR A RECEIPT: it is a bare signature over bytes that begin `chat-stamp1\n`,
+// which no token, order or receipt's signed bytes do (theirs begin `v1.`, `r1.`, `c1.` and the like), so no signature
+// can be lifted from one to the other. AUDIT SAFE RELAY-13c: the tag was `c1` - the card receipt's own (cardReceipt.js
+// CARD_RECEIPT_V), the two kept apart by one byte, `\n` against `.`. A word no receipt's one-letter tag can be, while
+// the stamp was still unreleased (world214 never deployed); chatFeed.js's `f1` went the same way.
 //
 // UNSIGNED IS A REAL ANSWER, as a receipt's: a relay with no key relays its lines without `sg`, and a line without one
 // cannot be reported (the client says so). Nothing else changes.
@@ -34,8 +36,8 @@
 import { _b64url, SIG_BYTES } from '../identityToken.js';
 import { channelOf, isRegionBus } from '../hubShards.js';
 
-/** The only version this file signs or reads. */
-export const STAMP_V = 'c1';
+/** The only version this file signs or reads - AUDIT SAFE RELAY-13c: a word of its own, never a receipt's tag. */
+export const STAMP_V = 'chat-stamp1';
 /** A stamp on the wire: a 64-byte signature, base64url without padding. */
 export const STAMP_RE = /^[A-Za-z0-9_-]{86}$/;
 /** The tabs a stamped line can be heard on - net/chat.js CHAT_TABS' ids, the same words. */

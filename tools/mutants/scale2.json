@@ -101,7 +101,7 @@
   {
     "name": "SCALE2-B-every-policy-close-retried",
     "file": "src/net/online.js",
-    "old": "export const tokenRetryable = (/** @type {string|null|undefined} */ why) => typeof why === 'string' && why !== 'no-session' && why !== 'auth';",
+    "old": "export const tokenRetryable = (/** @type {string|null|undefined} */ why) => typeof why === 'string' && why !== 'no-session' && why !== 'auth' && why !== 'banned';",
     "new": "export const tokenRetryable = (/** @type {string|null|undefined} */ why) => true;",
     "tests": [
       "test/net/scale2.test.js"
@@ -110,8 +110,8 @@
   {
     "name": "SCALE2-B-auth-retried",
     "file": "src/net/online.js",
-    "old": " && why !== 'no-session' && why !== 'auth';",
-    "new": " && why !== 'no-session';",
+    "old": " && why !== 'no-session' && why !== 'auth' && why !== 'banned';",
+    "new": " && why !== 'no-session' && why !== 'banned';",
     "tests": [
       "test/net/scale2.test.js"
     ]

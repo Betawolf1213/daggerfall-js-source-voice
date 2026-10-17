@@ -891,8 +891,8 @@ jobs:
           {
             echo "### Chat safety"
             echo ""
-            echo "- the reviewer's key: $([ -n "${ANTHROPIC_API_KEY}" ] && echo put || echo 'not set - the reviewer reads nothing')"
-            echo "- the Discord bot's token: $([ -n "${DISCORD_BOT_TOKEN}" ] && echo put || echo 'not set - no cases are posted')"
+            echo "- the reviewer's key: $([ -n "${ANTHROPIC_API_KEY}" ] && echo put || echo 'not among the repository secrets - the Worker keeps any key put before (AUDIT SAFE DISCORD-12)')"
+            echo "- the Discord bot's token: $([ -n "${DISCORD_BOT_TOKEN}" ] && echo put || echo 'not among the repository secrets - the Worker keeps any token put before')"
             echo "- the Discord application's Interactions Endpoint URL: \`$base/v1/discord/interactions\`"
           } >> "$GITHUB_STEP_SUMMARY"
 

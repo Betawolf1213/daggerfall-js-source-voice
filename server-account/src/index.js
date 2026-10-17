@@ -301,7 +301,7 @@ import { wildFall, wildCollect, wildReclaim, wildEscrows } from './wild.js';   /
 import { listLineages, putLineage, realmDie, realmRaise, realmWed, listUnions, LINEAGE_BODY_MAX, isTombstone } from './legacy.js';   // LEGACY7: Project Legacy's lines and the tombstone; REZ-BLOODLINE AUDIT R1: a Resurrect inside its hold
 import { measured, heartbeatPartsOf } from './metrics.js';   // SCALE1: every request counted (Workers Analytics Engine); AUDIT SCALE II A-3: a heartbeat's parts, of the body the route read
 import { runCron } from './cron.js';   // SCALE4b: the service's own clock
-import { blocksOf, blockAccount, unblockAccount, fileReport, agreeConduct, conductAgreed, takeFeed, bannedAnswer, REPORT_BODY_MAX } from './safety.js';   // SAFE1-SAFE7: the chat's safety
+import { blocksOf, blockAccount, unblockAccount, fileReport, agreeConduct, conductAgreed, takeFeed, bannedAnswer, resolveCase, modCases, modCase, modDismiss, REPORT_BODY_MAX } from './safety.js';   // SAFE1-SAFE7: the chat's safety
 import { banAccount, unbanAccount, strikesLook, isBanned, actionStatement, lawOrder, pushLaw } from './sanctions.js';   // SAFE4: the record, the ladder and the ban
 import { discordSigned, discordInteraction, DISCORD_BODY_MAX } from './discord.js';   // SAFE8: the moderators' queue in Discord
 import { FEED_MAX_BYTES, FEED_SIG_HEADER } from '../../src/net/safety/chatFeed.js';   // SAFE5: the relay's feed of public lines
@@ -489,7 +489,8 @@ const MARKS_STATUS = Object.freeze({
 /** NOTICE1: each board refusal's status - not this account's (a guest, the switch, a mute, a moderator's or a
  *  developer's act) 403, no such note 404, the author's notes full 409, the hour's acts spent 429, a bad shape 400. */
 /** SAFE1, SAFE3, SAFE7: the chat safety's refusals by status - the rest 400. */
-const SAFETY_STATUS = Object.freeze({ 'no-player': 404, 'report-unwitnessed': 403, 'report-closed': 503, 'conduct-stale': 409, 'blocks-full': 409, rate: 429 });
+const SAFETY_STATUS = Object.freeze({ 'no-player': 404, 'no-case': 404, 'report-unwitnessed': 403, 'report-closed': 503, 'conduct-stale': 409, 'blocks-full': 409, rate: 429,
+  'not-moderator': 403, protected: 403, ambiguous: 409 });
 const BOARD_STATUS = Object.freeze({
   'board-need-account': 403, 'board-closed': 403, 'muted': 403, 'not-moderator': 403, 'not-developer': 403, 'own-note': 403,
   'guild-rank': 403, 'guilds-need-account': 403,
@@ -671,8 +672,8 @@ const service = {
   /** SCALE4g: THE ANSWER CARRIES ITS SESSION'S NEWEST BOOKMARK (`x-d1-bookmark`, exposed to the page), so the tab's next
    *  read starts no older than everything this one saw and wrote - the routes `route` answers are untouched.
    *  AUDIT SCALE II A-3: `said` is what the route tells the metrics point (metrics.js measured) - a heartbeat's parts. */
-  async fetch(request, env, said = { parts: '' }) {
-    const held = { session: null, said };
+  async fetch(request, env, said = { parts: '' }, exec = null) {
+    const held = { session: null, said, exec };
     const res = await service.route(request, env, held);
     let mark = null;
     try { mark = held.session?.getBookmark?.() ?? null; } catch { mark = null; }
@@ -846,7 +847,10 @@ const service = {
         let interaction = null;
         try { interaction = JSON.parse(new TextDecoder().decode(bytes)); } catch { interaction = null; }
         if (!interaction || typeof interaction !== 'object') return no('body', 400, origin);
-        return json(await discordInteraction(ctx, env, interaction), 200, origin);
+        // AUDIT SAFE DISCORD-4: what may follow the answer (the order to the relay's door) waits on the Worker's waitUntil,
+        // never on Discord's three seconds
+        const exec = /** @type {any} */ (held).exec;
+        return json(await discordInteraction(ctx, env, interaction, typeof exec?.waitUntil === 'function' ? { later: (p) => exec.waitUntil(p) } : {}), 200, origin);
       }
 
       if (OPEN_ROUTES.has(path)) {
@@ -877,10 +881,13 @@ const service = {
           // A REFUSAL NAMES NO CAUSE a stranger could use: `bad-login`
           // is the same word for a handle nobody holds and a password
           // that is wrong, and the two cost the same time besides.
+          // AUDIT SAFE SERVICE-7: a banned account, its password right, is told its ban (bannedAnswer's shape) - no session
+          if (r.error === 'banned') return json(r, 403, origin);
           return r.error ? no(r.error, r.error === 'rate' ? 429 : 401, origin) : json(r, 200, origin);
         }
         // /v1/auth/recover
         const r = await recover(ctx, { handle: body.handle, code: body.code, password: body.password, set: body.set === true });   // RECOVERY-SET: a set for a build that asks
+        if (r.error === 'banned') return json(r, 403, origin);   // AUDIT SAFE SERVICE-7: the code unspent, no session
         return r.error ? no(r.error, r.error === 'rate' ? 429 : r.error === 'codes-moved' ? 409 : 401, origin) : json(r, 200, origin);   // AUDIT RECOVERY-SET A4
       }
 
@@ -1900,7 +1907,11 @@ const service = {
         const order = key ? await mintOrder({ s: r.target, mu: r.until }, key, { subtle, nowS }) : null;
         // SAFE4: the act kept in the record for good, and the order pushed to the relay's door - the hub hands it to the
         // target's own client, which reaches the rooms the moderator's does not hold
+        // AUDIT SAFE SERVICE-11: the act in the mute's own batch would need MOD1's muteAccount opened up; it is the next
+        // statement, and a mute whose record failed to write is said in the log by the throw it makes
         await actionStatement(db, { target: r.target, kind: r.until ? 'mute' : 'unmute', until: r.until || null, actor: who.player.id, actorName: displayName(who.player), at: nowS }).run();
+        // AUDIT SAFE SERVICE-2: a moderator's mute closes the account's open case - as the moderator's act
+        if (r.until) await resolveCase(db, { target: r.target, status: 'actioned', by: displayName(who.player), resolution: `muted until ${new Date(r.until * 1000).toISOString().slice(0, 16).replace('T', ' ')} UTC (in the game)`, nowS }).run();
         await pushLaw(env, (u, i) => globalThis.fetch(u, i), order);
         return json({ ...r, order }, 200, origin);
       }
@@ -1914,9 +1925,22 @@ const service = {
             : await unbanAccount(ctx, who.player, env, who2);
         if ('error' in r) return no(r.error, r.error === 'not-moderator' || r.error === 'protected' ? 403 : r.error === 'no-player' ? 404 : r.error === 'ambiguous' ? 409 : 400, origin);
         if (path === '/v1/mod/strikes') return json(r, 200, origin);
+        // AUDIT SAFE SERVICE-2: a moderator's ban closes the account's open case - as the moderator's act
+        if (path === '/v1/mod/ban') await resolveCase(db, { target: r.target, status: 'actioned', by: displayName(who.player), resolution: 'banned (in the game)', nowS }).run();
         const order = await lawOrder(env, subtle, nowS, { s: r.target, bn: r.until });
         await pushLaw(env, (u, i) => globalThis.fetch(u, i), order);
         return json({ ...r, order }, 200, origin);
+      }
+
+      // AUDIT SAFE DOC-4 (bible/11-Multiplayer/Chat-Safety-Arc.md section 9): THE CASES, READ IN THE GAME - a moderator's
+      // list of the open cases, one case, and its dismissal (safety.js); a dismissal's unmute order goes back to the
+      // moderator's client to carry, as /mute's does
+      if ((path === '/v1/mod/cases' || path === '/v1/mod/case' || path === '/v1/mod/dismiss') && request.method === 'POST') {
+        const who2 = { target: body.target, name: body.name };
+        const r = path === '/v1/mod/cases' ? await modCases(ctx, who.player, env)
+          : path === '/v1/mod/case' ? await modCase(ctx, who.player, env, who2)
+            : await modDismiss(ctx, who.player, env, who2);
+        return 'error' in r ? no(r.error, SAFETY_STATUS[r.error] ?? 400, origin) : json(r, 200, origin);
       }
 
       // SAFE1, SAFE3, SAFE7 (bible/11-Multiplayer/Chat-Safety-Arc.md): A PLAYER'S BLOCK LIST, A REPORT, THE CODE AGREED - safety.js
@@ -2288,7 +2312,7 @@ const service = {
 };
 
 export default {
-  fetch: (request, env) => measured(request, env, service.fetch),
+  fetch: (request, env, exec) => measured(request, env, service.fetch, exec),   // AUDIT SAFE DISCORD-4: the ExecutionContext, for waitUntil
   // SCALE4b: THE SERVICE'S OWN CLOCK - wrangler.toml's [triggers] crons, each firing its list (cron.js), the sweeps no
   // read runs any more and the settlements every read now nearly always finds done
   scheduled: (controller, env) => runCron(env, { cron: controller?.cron, nowS: Math.floor(Number(controller?.scheduledTime ?? Date.now()) / 1000) }),

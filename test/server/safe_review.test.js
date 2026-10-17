@@ -76,6 +76,8 @@ test('SAFE5 WHAT A VERDICT MAY SAY: a flag outside the lines, of a category the 
   const { fetchFn } = outside(['refused', 'down']);
   assert.deepEqual(await reviewLines(s.env.DB, s.env, fetchFn, { lines, nowS: nowS() }), { error: 'ai-refused' });
   assert.deepEqual(await reviewLines(s.env.DB, s.env, fetchFn, { lines, nowS: nowS() }), { error: 'ai-down' });
+  // PIN MOVED (AUDIT SAFE AI-3): a call the API never answered is given back - the day's second call is still to spend
+  assert.deepEqual(await reviewLines(s.env.DB, s.env, fetchFn, { lines, nowS: nowS() }), { ok: true, flags: [] });
   assert.deepEqual(await reviewLines(s.env.DB, s.env, fetchFn, { lines, nowS: nowS() }), { error: 'ai-budget' });
   assert.equal(modAiOn({ MOD_AI: 'on' }), false, 'no key, no reviewer');
   assert.equal(modAiModeOf({ MOD_AI: 'loud' }), 'off');
@@ -92,8 +94,10 @@ test('SAFE5 + SAFE8 A REPORTED CASE THROUGH THE CLOCK: the reviewer reads it (th
   const troll = await s.registered('Troll');
   const lines = [await heard(s, sylvia, 'hi all', 'world', Date.now() - 1000), await heard(s, troll, 'asexuals are attention *****')];
   const filed = await s.call('/v1/safety/report', { target: troll.id, reason: 'hate', lines }, sylvia.secret);
-  const { asked, fetchFn } = outside([{ flags: [{ line: 1, category: 'hate', severity: 3, confidence: 0.96, reason: 'Demeans asexual players.' }] }]);
+  // PIN MOVED (AUDIT SAFE AI-1): the mute takes a second read of the account's own lines - Sylvia's is not in it
+  const { asked, fetchFn } = outside([{ flags: [{ line: 1, category: 'hate', severity: 3, confidence: 0.96, reason: 'Demeans asexual players.' }] }, { flags: [{ line: 0, category: 'hate', severity: 3, confidence: 0.95, reason: 'Demeans asexual players.' }] }]);
   await safetyMinute(ctxOf(s), s.env, { fetchFn });
+  assert.deepEqual(asked.ai.map((a) => JSON.parse(a.body.messages[0].content.slice('<chat_lines>\n'.length, -'\n</chat_lines>'.length)).lines.map((l) => l.text)), [['hi all', 'asexuals are attention *****'], ['asexuals are attention *****']]);
   const raw = s.env.DB._raw;
   const c = raw.prepare('SELECT * FROM mod_cases WHERE id = ?').get(filed.body.case);
   assert.deepEqual([c.ai_state, c.ai_category, c.ai_severity, c.ai_mode, c.auto, c.discord_state], ['done', 'hate', 3, 'on', 'review', 'posted']);
@@ -104,7 +108,8 @@ test('SAFE5 + SAFE8 A REPORTED CASE THROUGH THE CLOCK: the reviewer reads it (th
   assert.equal(post.url, `${DISCORD_API}/channels/${ON.DISCORD_MOD_CHANNEL}/messages`);
   assert.equal(post.auth, 'Bot bot-token');
   assert.deepEqual(post.body.allowed_mentions, { parse: [] });
-  assert.match(post.body.embeds[0].description, /> \[world\] Troll: asexuals are attention \*\*\*\*\*/);
+  assert.match(post.body.embeds[0].description, /! \[world\] Troll: asexuals are attention \*\*\*\*\*/);   // PIN MOVED (AUDIT SAFE AI-10): the line the reviewer flagged is marked `!`, not only the account's own `>`
+  assert.match(post.body.embeds[0].description, /  \[world\] Sylvia: hi all/);
   assert.deepEqual(post.body.components[0].components.map((b) => b.custom_id), Object.keys(CARD_ACTS).map((k) => `safe:${k}:${filed.body.case}`));
   assert.equal(c.discord_msg, '900000000000000001');
 });

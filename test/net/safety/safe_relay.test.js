@@ -6,7 +6,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import worker from '../../../server/src/index.js';
 import { fakeRoom, fakeRooms } from '../../fakeRoom.mjs';
-import { CHAT_WORLD_ROOM, NEW_VOICE_GAP_MS, SAFE_LAW_PATH } from '../../../src/net/wire.js';
+import { CHAT_WORLD_ROOM, NEW_VOICE_GAP_MS, SAFE_LAW_PATH, CLOSE_POLICY } from '../../../src/net/wire.js';
 import { verifyStamp } from '../../../src/net/safety/chatStamp.js';
 import { openFeed, FEED_SIG_HEADER } from '../../../src/net/safety/chatFeed.js';
 import { mintBanOrder, mintOrder } from '../../../src/net/identityToken.js';
@@ -57,7 +57,7 @@ test('SAFE2 A RELAY WITH NO KEY RELAYS ITS LINES UNSTAMPED, as before - nothing 
 test('SAFE6 A NEW VOICE\'S PACE: a socket whose token wears the sprout says one public line every NEW_VOICE_GAP_MS - a line too soon is refused to it alone with how long to wait, never fanned and never struck; an older account is not slowed (mutants: the sprout unchecked; the gap measured from the refused line)', async () => {
   const r = fakeRoom(CHAT_WORLD_ROOM);
   const sprout = r.connect(); await r.hello(sprout, 'sprt-0001', null, { glyphs: ['sprout'] });
-  const vet = r.connect(); await r.hello(vet, 'vetn-0002', null, { glyphs: ['laurel'] });   // a glyph, and not the sprout
+  const vet = r.connect(); await r.hello(vet, 'vetn-0002', null, { glyphs: ['laurel'], kind: 'linked' });   // a glyph, and not the sprout - and a registered account (AUDIT SAFE RELAY-11: a guest is a new voice too)
   const t0 = 1_900_000_000_000;
   await at(t0, () => r.chat(sprout, 'one'));
   await at(t0 + 1000, () => r.chat(sprout, 'two'));
@@ -90,8 +90,8 @@ test('SAFE5 THE REVIEWER\'S FEED: with MOD_FEED_URL set, a public channel\'s lin
   const realFetch = globalThis.fetch;
   globalThis.fetch = async (url, init) => { posts.push({ url, init }); return new Response('{}', { status: 202 }); };
   try {
-    const a = r.connect(); await r.hello(a, 'aaaa-0001');
-    const b = r.connect(); await r.hello(b, 'bbbb-0002');
+    const a = r.connect(); await r.hello(a, 'aaaa-0001', null, { kind: 'linked' });   // registered: two lines in a breath, unpaced (AUDIT SAFE RELAY-11)
+    const b = r.connect(); await r.hello(b, 'bbbb-0002', null, { kind: 'linked' });
     await r.chat(b, 'before the url');
     assert.equal(r.room._feedQ, undefined, 'no url, nothing kept');
     r.env.MOD_FEED_URL = 'https://accounts.example/v1/mod/feed';
@@ -107,11 +107,11 @@ test('SAFE5 THE REVIEWER\'S FEED: with MOD_FEED_URL set, a public channel\'s lin
   } finally { globalThis.fetch = realFetch; }
 });
 
-test('SAFE4 A BAN ORDER CARRIED IN: every socket of the account in the room is told `banned` and silenced until it ends; a ban lifted (0) lifts the silence; a mute order handed to the ban door, or a forged one, is ignored (mutants: the ban never silencing; the ban door taking a mute)', async () => {
+test('SAFE4 A BAN ORDER CARRIED IN: every socket of the account in the room is told `banned` and closed (AUDIT SAFE RELAY-4: it was only silenced); a ban lifted (0) lets the account back in; a mute order handed to the ban door, or a forged one, is ignored (mutants: the ban never closing; the ban door taking a mute)', async () => {
   const r = fakeRoom(CHAT_WORLD_ROOM);
   const mod = r.connect(); await r.hello(mod, 'modd-0001');
   const troll = r.connect(); await r.hello(troll, 'trol-0002');
-  const bob = r.connect(); await r.hello(bob, 'bobb-0003');
+  const bob = r.connect(); await r.hello(bob, 'bobb-0003', null, { kind: 'linked' });
   const [c1, c2, c3] = [r.connect(), r.connect(), r.connect()];   // a carrier each: an order frame is on the mute's meter, one a second
   await r.hello(c1, 'carr-0004'); await r.hello(c2, 'carr-0005'); await r.hello(c3, 'carr-0006');
   const kp = await r.signer();
@@ -125,12 +125,12 @@ test('SAFE4 A BAN ORDER CARRIED IN: every socket of the account in the room is t
   const ban = await mintBanOrder({ s: 'acct-trol-0002', bn: nowS + 86400 }, kp.privateKey, { subtle, nowS });
   await r.room.webSocketMessage(c2, JSON.stringify({ t: 'ban', order: ban }));
   assert.deepEqual(ofType(troll, 'banned'), [{ t: 'banned', until: nowS + 86400 }]);
-  await r.chat(troll, 'still here');
-  assert.equal(ofType(bob, 'chat').length, 0, 'a banned socket says nothing');
+  assert.deepEqual(troll.closed, { code: CLOSE_POLICY, reason: 'banned' }, 'and closed - a banned socket says nothing, poses nowhere, hears nothing');
   const lift = await mintBanOrder({ s: 'acct-trol-0002', bn: 0 }, kp.privateKey, { subtle, nowS: nowS + 1 });
   await r.room.webSocketMessage(c3, JSON.stringify({ t: 'ban', order: lift }));
-  assert.deepEqual(ofType(troll, 'banned').at(-1), { t: 'banned', until: 0 });
-  await r.chat(troll, 'back');
+  const back = r.connect(); await r.hello(back, 'trol-0002');
+  assert.equal(back.closed, null, 'a ban lifted lets the account back in');
+  await r.chat(back, 'back');
   assert.deepEqual(ofType(bob, 'chat').map((l) => l.text), ['back']);
 });
 

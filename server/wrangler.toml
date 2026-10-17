@@ -166,6 +166,24 @@ enabled = true
 binding = "METRICS"
 dataset = "daggerfall_relay"
 
+# ═══ AUDIT SAFE RELAY S1: THE ACCOUNT SERVICE, BOUND ═══════════════
+#
+# The reviewer's feed (MOD_FEED_URL, above) is this Worker posting to
+# the account service's - and one Worker fetching another's
+# workers.dev address on the same account may be refused outright
+# (Cloudflare's error 1042), which a post that is never retried and
+# never awaited would never say. A SERVICE BINDING is the door between
+# two Workers of one account: the feed posts through it
+# (server/src/index.js `_feedFlush`), MOD_FEED_URL naming the path
+# alone, and fetches the address only where it is not bound (a test, a
+# local run). It names the account Worker by its own `name`
+# (server-account/wrangler.toml), which binds this one back as RELAY
+# for the law door (SAFE_LAW_PATH). Nothing is read through it but the
+# feed's answer.
+[[services]]
+binding = "ACCOUNTS"
+service = "daggerfall-accounts"
+
 [[durable_objects.bindings]]
 name = "ROOMS"
 class_name = "Room"

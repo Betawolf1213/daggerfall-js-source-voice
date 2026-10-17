@@ -7,12 +7,14 @@
 // moment it lapsed, so a player muted every week for a month looked, to the next moderator, like a first offender. Now
 // every mute, unmute, ban, unban and dismissal is a row in `mod_actions` that nothing clears - who acted (a moderator's
 // account, a Discord moderator through theirs, or the automatic `auto:reports` / `auto:review`), on whom, until when,
-// why, and the case it answered. A STRIKE is a mute or a ban in the last STRIKE_WINDOW_S, and the LADDER
-// (net/safety/safetyLaw.js) is the mute the next strike earns.
+// why, and the case it answered. A STRIKE is a mute or a ban in the last STRIKE_WINDOW_S - but an automatic mute a
+// moderator dismissed (AUDIT SAFE SERVICE-6: three accounts who count could otherwise walk an innocent player up the
+// ladder one dismissed case at a time) - and the LADDER (net/safety/safetyLaw.js) is the mute the next strike earns.
 //
 // THE BAN. MOD1 bounded a mute at a week and said "Longer is a ban, which is a different decision and not one Mac has
 // asked for" - he has now. A ban is `players.banned_until` (BAN_FOREVER for good) and the reason the player is shown;
-// the service answers a banned account `banned` on every door but signing out (index.js), so it mints no token and opens
+// the service answers a banned account `banned` on every door behind a session but signing out, and at signing in and
+// recovering (index.js; AUDIT SAFE SERVICE-7 - both minted a banned account a session), so it mints no token and opens
 // no room - and a ban order (identityToken.js mintBanOrder) tells the rooms already holding it, which silence it and say
 // so, and its own client leaves. A moderator may ban and unban; a moderator is never banned, nor muted, by anyone (MOD1's
 // `protected`).
@@ -38,8 +40,10 @@ export const ACTION_KINDS = Object.freeze(['mute', 'unmute', 'ban', 'unban', 'di
 export const REASON_MAX = 200;
 /** How many of an account's acts a moderator's look reads, newest first. */
 export const HISTORY_MAX = 20;
-/** How long the service waits on the relay's door, ms - a Discord interaction is answered within three seconds. */
+/** How long the service waits on the relay's door, ms (a Discord press pushes after it answers - AUDIT SAFE DISCORD-4). */
 export const LAW_PUSH_MS = 2000;
+/** The automatic actors - the record's words for a mute no moderator wrote. */
+export const AUTO_ACTORS = Object.freeze(['auto:reports', 'auto:review']);
 
 /** Until when the account may not play: 0 for not banned. @param {any} row */
 export const bannedUntil = (row) => (Number.isSafeInteger(row?.banned_until) ? row.banned_until : 0);
@@ -57,9 +61,9 @@ export const actionStatement = (db, { target, kind, until = null, reason = null,
   db.prepare('INSERT INTO mod_actions (target, kind, until, reason, actor, actor_name, case_id, at) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)')
     .bind(target, kind, until, reason, actor, actorName, caseId, at);
 
-/** The strikes standing against an account: its mutes and bans of the last STRIKE_WINDOW_S. */
+/** The strikes standing against an account: its mutes and bans of the last STRIKE_WINDOW_S, the voided not counted. */
 export async function strikesOf(db, target, nowS) {
-  const r = await db.prepare("SELECT COUNT(*) AS n FROM mod_actions WHERE target = ?1 AND kind IN ('mute', 'ban') AND at > ?2").bind(target, nowS - STRIKE_WINDOW_S).first();
+  const r = await db.prepare("SELECT COUNT(*) AS n FROM mod_actions WHERE target = ?1 AND kind IN ('mute', 'ban') AND at > ?2 AND void_at IS NULL").bind(target, nowS - STRIKE_WINDOW_S).first();
   return Number(r?.n ?? 0);
 }
 
@@ -97,31 +101,52 @@ export async function writeMute(db, row, { minutes, actor, actorName = null, rea
   return until ?? 0;
 }
 
+/** Whether an automatic mute may fall on `row`: never a moderator, never an account muted or banned already (a
+ *  moderator's week is never shortened to the automatic half hour). @param {any} row @param {any} env @param {number} nowS */
+export const autoMutable = (row, env, nowS) => !!row && !canModerate(row, env) && !isMuted(row, nowS) && !isBanned(row, nowS);
+
 /**
- * THE AUTOMATIC MUTE - the reports' (SAFE3) or the reviewer's (SAFE5): the ladder's first rung and no more, never on a
- * moderator, never on an account already muted or banned, and never twice for one case. Answers the mute's end, or 0
- * when it held its hand.
+ * THE AUTOMATIC MUTE - the reports' (SAFE3) or the reviewer's (SAFE5): the ladder's first rung and no more, where
+ * autoMutable allows - the caller has claimed the case (safety.js fileReport, safetyClock.js), so one wave mutes once.
+ * Answers the mute's end, or 0 when it held its hand.
  * @param {any} db @param {any} env @param {any} row @param {{ actor: 'auto:reports'|'auto:review', reason: string, caseId: string, nowS: number }} act
  */
 export async function autoMute(db, env, row, { actor, reason, caseId, nowS }) {
-  if (!row || canModerate(row, env) || isMuted(row, nowS) || isBanned(row, nowS)) return 0;
+  if (!autoMutable(row, env, nowS)) return 0;
   return writeMute(db, row, { minutes: ladderMinutes(0), actor, actorName: actor, reason, caseId, nowS });
 }
 
 /**
- * BAN, a moderator's: `days` 1 to BAN_DAYS_MAX, or 0 for good. The account is found by id or name (findAccount); a
- * moderator is never banned, nor is the moderator who asks. The row and the act in one batch.
- * @param {{ db: any, nowS: number }} ctx @param {any} actor @param {any} env
- * @param {{ target?: unknown, name?: unknown, days?: unknown, reason?: unknown, caseId?: string|null, actorName?: string|null }} ask
+ * A CASE'S AUTOMATIC MUTES VOIDED, a moderator having dismissed it (AUDIT SAFE SERVICE-6): each stays in the record,
+ * marked, and no longer a strike; one still running is lifted - in the record as the moderator's unmute. Answers the
+ * unmute's order for the rooms, or null.
+ * @param {{ db: any, nowS: number, subtle: SubtleCrypto }} ctx @param {any} env
+ * @param {{ caseId: string, row: any, actor: any, actorName: string }} what
  */
-export async function banAccount({ db, nowS }, actor, env, { target, name, days, reason, caseId = null, actorName = null }) {
+export async function voidAutoMutes({ db, nowS, subtle }, env, { caseId, row, actor, actorName }) {
+  await db.prepare("UPDATE mod_actions SET void_at = ?2 WHERE case_id = ?1 AND kind = 'mute' AND actor IN ('auto:reports', 'auto:review') AND void_at IS NULL").bind(caseId, nowS).run();
+  if (!row || !isMuted(row, nowS) || !AUTO_ACTORS.includes(row.muted_by)) return null;
+  await writeMute(db, row, { minutes: 0, actor: actor.id, actorName, reason: `case ${caseId} dismissed`, caseId, nowS });
+  return lawOrder(env, subtle, nowS, { s: row.id, mu: 0 });
+}
+
+/**
+ * BAN, a moderator's: `days` 1 to BAN_DAYS_MAX, or 0 for good. The account is found by id or name (findAccount); a
+ * moderator is never banned, nor is the moderator who asks. The row and the act in one batch. `keepLonger` (a case's
+ * button) never shortens a ban that stands longer (AUDIT SAFE DISCORD-5: "Ban 30 days" cut a ban for good) - its act
+ * is recorded, the longer end kept; a moderator who names the days by command means them.
+ * @param {{ db: any, nowS: number }} ctx @param {any} actor @param {any} env
+ * @param {{ target?: unknown, name?: unknown, days?: unknown, reason?: unknown, caseId?: string|null, actorName?: string|null, keepLonger?: boolean }} ask
+ */
+export async function banAccount({ db, nowS }, actor, env, { target, name, days, reason, caseId = null, actorName = null, keepLonger = false }) {
   if (!canModerate(actor, env)) return { error: 'not-moderator' };
   if (!Number.isSafeInteger(days) || /** @type {number} */ (days) < 0 || /** @type {number} */ (days) > BAN_DAYS_MAX) return { error: 'bad-days' };
   const row = await findAccount(db, { target, name });
   if ('error' in row) return row;
   if (row.id === actor.id || canModerate(row, env)) return { error: 'protected' };
-  const until = banUntil(/** @type {number} */ (days), nowS);
-  const why = reasonOf(reason);
+  const asked = banUntil(/** @type {number} */ (days), nowS);
+  const until = keepLonger && isBanned(row, nowS) ? Math.max(asked, bannedUntil(row)) : asked;
+  const why = reasonOf(reason) ?? (until !== asked ? (row.ban_reason ?? null) : null);
   await db.batch([
     db.prepare('UPDATE players SET banned_until = ?1, ban_reason = ?2 WHERE id = ?3').bind(until, why, row.id),
     actionStatement(db, { target: row.id, kind: 'ban', until, reason: why, actor: actor.id, actorName: actorName ?? displayName(actor), caseId, at: nowS }),
@@ -129,11 +154,13 @@ export async function banAccount({ db, nowS }, actor, env, { target, name, days,
   return { ok: true, target: row.id, name: displayName(row), until, reason: why };
 }
 
-/** UNBAN, a moderator's - the ban lifted, the record kept. @param {{ db: any, nowS: number }} ctx @param {any} actor @param {any} env @param {{ target?: unknown, name?: unknown, actorName?: string|null }} ask */
+/** UNBAN, a moderator's - the ban lifted, the record kept; an account not banned is told so, and nothing is written
+ *  (AUDIT SAFE SERVICE-11). @param {{ db: any, nowS: number }} ctx @param {any} actor @param {any} env @param {{ target?: unknown, name?: unknown, actorName?: string|null }} ask */
 export async function unbanAccount({ db, nowS }, actor, env, { target, name, actorName = null }) {
   if (!canModerate(actor, env)) return { error: 'not-moderator' };
   const row = await findAccount(db, { target, name });
   if ('error' in row) return row;
+  if (!isBanned(row, nowS)) return { error: 'not-banned' };
   await db.batch([
     db.prepare('UPDATE players SET banned_until = NULL, ban_reason = NULL WHERE id = ?1').bind(row.id),
     actionStatement(db, { target: row.id, kind: 'unban', actor: actor.id, actorName: actorName ?? displayName(actor), at: nowS }),
@@ -151,14 +178,14 @@ export async function strikesLook({ db, nowS }, actor, env, { target, name }) {
   const row = await findAccount(db, { target, name });
   if ('error' in row) return row;
   const strikes = await strikesOf(db, row.id, nowS);
-  const acts = (await db.prepare('SELECT kind, until, reason, actor_name, case_id, at FROM mod_actions WHERE target = ?1 ORDER BY at DESC, id DESC LIMIT ?2').bind(row.id, HISTORY_MAX).all())?.results ?? [];
+  const acts = (await db.prepare('SELECT kind, until, reason, actor_name, case_id, at, void_at FROM mod_actions WHERE target = ?1 ORDER BY at DESC, id DESC LIMIT ?2').bind(row.id, HISTORY_MAX).all())?.results ?? [];
   return {
     ok: true, target: row.id, name: displayName(row), strikes,
     next: strikes >= LADDER_BAN_AT ? 'ban' : ladderMinutes(strikes),
     mutedUntil: isMuted(row, nowS) ? row.muted_until : 0,
     bannedUntil: isBanned(row, nowS) ? row.banned_until : 0,
     banReason: isBanned(row, nowS) ? (row.ban_reason ?? null) : null,
-    history: acts.map((a) => ({ kind: a.kind, until: a.until ?? 0, reason: a.reason ?? null, by: a.actor_name ?? null, case: a.case_id ?? null, at: a.at })),
+    history: acts.map((a) => ({ kind: a.kind, until: a.until ?? 0, reason: a.reason ?? null, by: a.actor_name ?? null, case: a.case_id ?? null, at: a.at, ...(a.void_at ? { voided: true } : {}) })),
   };
 }
 
@@ -178,14 +205,21 @@ export async function lawOrder(env, subtle, nowS, { s, mu, bn }) {
 /**
  * THE SERVICE'S DOOR TO THE RELAY: `order` posted to RELAY_LAW_URL (the relay's SAFE_LAW_PATH), answered whether the hub
  * took it. Never throws, never retries: the row is the truth, and the order lands on the next connection regardless.
+ * THROUGH THE `RELAY` SERVICE BINDING where the Worker has it (server-account/wrangler.toml - AUDIT SAFE RELAY S1): one
+ * Worker fetching another's workers.dev address on the same account may be refused outright (Cloudflare's error 1042),
+ * and a push that fails is silent by design, so the binding is the door and the address only names the path; a Worker
+ * without it (a test, a local run) fetches the address.
  * @param {any} env @param {(url: string, init: any) => Promise<Response>} fetchFn @param {string|null} order
  */
 export async function pushLaw(env, fetchFn, order) {
   const url = env?.RELAY_LAW_URL;
   if (!order || typeof url !== 'string' || !url.startsWith('https://') || !url.endsWith(SAFE_LAW_PATH)) return false;
+  const init = { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ order }), signal: AbortSignal.timeout(LAW_PUSH_MS) };
   try {
-    const res = await fetchFn(url, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ order }), signal: AbortSignal.timeout(LAW_PUSH_MS) });
-    if (!res.ok) console.warn('[safety] the relay\'s door said', res.status);
-    return res.ok;
+    const res = typeof env.RELAY?.fetch === 'function' ? await env.RELAY.fetch(new Request(url, init)) : await fetchFn(url, init);
+    const said = res.ok ? await res.json().catch(() => null) : null;
+    // the hub's own word: the Worker answers 200 only for an order the hub took (AUDIT SAFE RELAY-13)
+    if (!res.ok || said?.ok === false) console.warn('[safety] the relay\'s door said', res.status, said?.error ?? '');
+    return res.ok && said?.ok !== false;
   } catch (e) { console.warn('[safety] the relay\'s door', /** @type {any} */ (e)?.message ?? e); return false; }
 }
