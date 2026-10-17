@@ -1024,6 +1024,7 @@ back; the clock sampled at the send, so a raise before the next wake counts too)
 | D7 | D | the new cards had no edge; the return spoke in a portal's voice | their edges (`rvn12b`'s loop); the return in no voice |
 | D9 | D | Recall forfeited a haul on one press; no focus keys | asked first; `data-focus` keys on the sheets' buttons |
 | D11-D16 | D | "48 hours" for two days; `ART` traces; numbers typed, not read; a refusal said twice; no `aria-expanded`; "never lost" in the notes | each corrected |
+| T1 | the run | `rvn11c_betray.test.js`'s "through the real hurt" failed about one run in three: its sworn ones' ids are the deeds' random ones, and a Mender among them healed the hurt the betrayal reads (a whole local `test:changed` run caught it; CI's run on the same head had passed by luck) | its helper draws no Mender - the interplay is the game's (a Mender's heal keeps a player over the line), and section 41's own tests pin it |
 
 **The measure after** (lane E's probe on the audited law, two abroad, rank V and its best kit, on lived time): at level
 30, at most about 990 gold or 4,200 of item worth a real hour (0.5% and 2% of the band), 0.03 Legendaries an hour; at
