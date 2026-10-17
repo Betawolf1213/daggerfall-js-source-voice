@@ -103,6 +103,7 @@ on:
       - "src/systems/quest/tables.js"
       - "src/systems/quest/table.js"
       - "src/systems/quest/parseUtils.js"
+      - "src/systems/quest/questPatches.js"
       - "src/systems/item/itemTemplatesData.js"
       - "src/net/raid/raidLaw.js"
       - "src/net/gate/gateReceipt.js"
@@ -244,6 +245,7 @@ on:
       - "src/systems/deepWater/deepWatersFishRows.js"
       - "src/systems/effectBroker.js"
       - "src/systems/effects.js"
+      - "src/systems/eliteGates/weirKeyRow.js"
       - "src/systems/enchanting.js"
       - "src/systems/enchantmentCatalogue.js"
       - "src/systems/enchantments.js"
@@ -1093,6 +1095,18 @@ jobs:
             done
             echo "$got"
           }
+          # INT16: the realm character's first save, a PUT through the same retry - a first save whose answer was lost (000)
+          # and landed answers its retry 409 `seq` 1, which the smoke reads as landed
+          put() {
+            local out=$1 url=$2 data=$3 lease=$4 got=404
+            for i in $(seq 1 7); do
+              got=$(curl -sS --max-time 15 -o "$out" -w '%{http_code}' -X PUT "$url" -H "authorization: Bearer $secret" -H "x-realm-lease: $lease" -H 'x-realm-seq: 1' -d "$data") || got=000
+              if [ "$got" != "404" ] && [ "$got" != "000" ] && [ "${got#5}" = "$got" ]; then break; fi
+              echo "  $url -> $got (attempt $i, an old instance or the platform's first moments?)" >&2
+              sleep 5
+            done
+            echo "$got"
+          }
 
           # ACC4: THE BEAT IS ONE UPDATE ... RETURNING with numbered
           # parameters. node:sqlite runs both; this asks D1 itself.
@@ -1132,10 +1146,9 @@ jobs:
           if [ "$code" != "200" ] || [ -z "$rc" ] || [ -z "$lease" ]; then
             echo "::error::the smoke's guest could not take a realm character ($code)"; cat /tmp/realm.json || true; exit 1
           fi
-          code=$(curl -sS --max-time 15 -o /tmp/realmsave.json -w '%{http_code}' -X PUT "$base/v1/realm/$rc/data" \
-            -H "authorization: Bearer $secret" -H "x-realm-lease: $lease" -H 'x-realm-seq: 1' -d '{"level":1,"goldPieces":100,"items":[]}') || code=000
+          code=$(put /tmp/realmsave.json "$base/v1/realm/$rc/data" '{"level":1,"goldPieces":100,"items":[]}' "$lease")
           echo "realm first save -> $code"
-          if [ "$code" != "200" ]; then
+          if [ "$code" != "200" ] && ! { [ "$code" = "409" ] && grep -q '"seq":1' /tmp/realmsave.json; }; then
             echo "::error::the smoke's realm character's first save was refused ($code)"; cat /tmp/realmsave.json || true; exit 1
           fi
           rid=$(printf '%016x' "$(date +%s)")

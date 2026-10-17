@@ -89,6 +89,10 @@ test('HOME2 the deploy: a smoke call that 404s is asked again, seven times five 
   for (const route of ['/v1/account/played', '/v1/mod/mute', '/v1/renown/xp', '/v1/homes/town', '/v1/homes/claim', '/v1/homes/decor', '/v1/homes/decor/place']) {
     assert.match(wf, new RegExp(`code=\\$\\(post /tmp/[a-z0-9]+\\.json "\\$base${route.replace(/\//g, '\\/')}" `), route);
   }
-  assert.equal((wf.match(/code=\$\(post /g) ?? []).length, 8, 'the eight smoke calls, the repeated report among them');
+  // PIN MOVED (INT16, Integrity-Arc section 7): a Renown report is its seat's - the smoke's guest takes a realm character
+  // first (realm/create, a ninth post) and its first save through the same retry, a PUT (`put`)
+  assert.equal((wf.match(/code=\$\(post /g) ?? []).length, 9, 'the nine smoke calls, the repeated report and the realm character among them');
+  assert.equal((wf.match(/code=\$\(put /g) ?? []).length, 1, 'and the realm character\'s first save, asked again as a post is');
+  assert.match(wf, /put\(\) \{\n\s*local out=\$1 url=\$2 data=\$3 lease=\$4 got=404\n\s*for i in \$\(seq 1 7\); do/);
   assert.equal((wf.match(/code=\$\(curl -sS --max-time 15 -o/g) ?? []).length, 0, 'no smoke call around the retry');
 });

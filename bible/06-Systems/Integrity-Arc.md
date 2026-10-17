@@ -56,6 +56,13 @@ nothing. A copy given a fresh id is a new piece to the ledger, and a new piece i
 
 ### INT1 - the item law (`src/systems/item/itemLaw.js`)
 
+KEY-LAW (2026-10-17, law 7, `acct151`; `01-Overview/bugs/Field-Bugs-2026-10-17.md`; slick: "flagged by the new key
+thing"): the Weir Key's row (`src/systems/eliteGates/weirKeyRow.js`, a leaf) is read beside the registry, as the rest's,
+Deep Waters' fish and the two mods' are - this service loads none of the key's home, so law 6 found every Weir Key a
+template no honest client mints, and held its owner's trade with a strike, the hour the Elite Breach went live. The
+producer sweep's template check now runs the law in a process of its own, as the service's judge loads it. Migration
+0125 lifted the holds, timed holds and strikes that finding alone had laid, written as a staff act.
+
 MAKER-KEPT (2026-10-16, law 6, `acct148`; `01-Overview/bugs/Field-Bugs-2026-10-16c.md`; Flylighter: "Grandfathered Items
 triggering trade lock"): an Aetheric piece of a record the item maker took before AETHERIC-MAKER (MAKER_ERA_AETHERIC -
 Ruhn's Regalia and the raiding parties' three sets) keeps the maker's rows, held to the maker's own law; law 5 held every
@@ -904,7 +911,7 @@ Each stream is a bucket, the wealth budget's own law (budget.js stepBudget - one
 every second the account played (players.played_s - the service's own count, accounts.js creditPlay), up to its cap, and
 each claim spends what it took (`progressSpentOf` reads the route's answer - Renown credited, never asked; a cleanse and the
 Renown it paid; a camp; the Watch's ticks; a find; a harvest's XP and its silver; a writ's XP and Renown; nothing for a
-refusal or a repeat). A first claim starts its bucket full, its play counted from there. Migration `0125_progress`:
+refusal or a repeat). A first claim starts its bucket full, its play counted from there. Migration `0126_progress`:
 `progress_play` (the bucket, an account a stream) and `progress_hours` (an account's claims of a stream in an hour of the
 clock: the amount, the play it came in, and what it took past the bucket - `over`), swept by the cron with the wealth's hours.
 
@@ -1057,7 +1064,7 @@ six records on the lines this slice touched run again, all dead.
   word (`server-account/src/progress.js` progressRefusal - from day one); each stream a bucket the account's play fills, the
   wealth budget's law, measured first (`progress_play`, `progress_hours`; `/v1/mod/realm-progress`, `tools/realmReview.mjs
   progress`); a line's copy held to the family's own law (`src/systems/legacy/legacyLaw.js`, legacy.js putLineage - a stale
-  copy still answered stale). Migration `0125_progress`, `ACCOUNT_VERSION` acct151; no relay change. The account deploy's
+  copy still answered stale). Migration `0126_progress`, `ACCOUNT_VERSION` acct152 (acct151 and migration 0125 on its branch, renumbered past KEY-LAW at the merge); no relay change. The account deploy's
   smoke takes a realm character before its Renown report. `test/server/int16_progress.test.js` (9),
   `test/server/int18_lineage_law.test.js` (5); `tools/mutants/int_lane4.json` (34, all dead); pins moved across the files
   whose claims named a made-up character (section 7, Pins).
