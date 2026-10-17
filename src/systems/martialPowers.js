@@ -25,13 +25,19 @@
 //   Shadowdancer's window
 //   Stand Firm                    the HURT listener (a hurt that crosses its line, with a recovery)
 //   War Rhythm, Bloodlust,        the KILL listener (playerKills.js)
-//   Tireless
+//   Tireless, Felling Strike's
+//   heal
 //   Grit                          the MAGIC ROUND
 //   Light Step, Windborne         the entity FOLD (entityMods.js): attributes and skills
-//   every signature RIDER         the TECHNIQUE LANDED listener (combat/technique/techniqueBlow.js - told by the swing's
+//   a signature's WINDOW on me    the TECHNIQUE USED listener (techniqueBlow.js - told once a press, as its price is
+//   (Rallying Cleave, Cyclone,    paid): the window opens as the press goes, so its whole sweep and every blow after
+//   Phantom Strike, Earthsplitter, share it (AUDIT MARTIAL L1 L3, L1 L7)
+//   Savage Whirl)
+//   every other signature RIDER   the TECHNIQUE LANDED listener (combat/technique/techniqueBlow.js - told by the swing's
 //                                 and the shaft's one resolution, every host's), acting through the host's door
 //                                 (playerDoor.js): a blow on a foe through its own pool's door, a bundle on me as a
-//                                 potion lands, the heal through playerHeal.js
+//                                 potion lands, the heal through playerHeal.js - never on a foe no kill of mine counts
+//                                 (the City Watch, my own allies: AUDIT MARTIAL L1 L5)
 //
 // NEVER AT A PLAYER: a technique never meets a player's body (TECH law 3 - neither resolution tells one), every blow
 // modifier here refuses a player target, and a duel's blow at me passes my damage door without asking the port. THE CLOCK
@@ -48,12 +54,13 @@ import { registerPlayerStrikeListener } from '../combat/formulas.js';
 import { registerPlayerKillListener } from './playerKills.js';
 import { registerMagicRoundHook } from './worldTick.js';
 import { registerSwingPaceMod } from '../characters/weaponStates.js';
-import { registerTechniqueLandedListener } from '../combat/technique/techniqueBlow.js';
+import { registerTechniqueLandedListener, registerTechniqueUsedListener } from '../combat/technique/techniqueBlow.js';
 import { foeUnaware } from '../combat/playerWeapon.js';   // the host's one word that a foe had not noticed me
 import { pendingPlayerBlow } from './sigil/sigilSetPowers.js';   // the door's one law of what a foe's blow is
 import { healMine } from './playerHeal.js';
 import { playerDoor, oweFoe } from './playerDoor.js';
-import { foeGroup } from './loot/lootPowers.js';   // the loot's one foe group (a class foe is a man - AUDIT SCHOOLS L1 H2)
+import { foeGroup, TOLL_REFUND_S } from './loot/lootPowers.js';   // the loot's one foe group (a class foe is a man - AUDIT SCHOOLS L1 H2); its felling bound (AUDIT MARTIAL L1 M1)
+import { regenBarred } from './courtRules.js';   // WBX6: the Deadlands keep no regeneration (AUDIT MARTIAL L3 F3)
 import { maxFatigue } from './statMods.js';
 import { showFollowUp } from '../ui/hitNumbers.js';   // a follow-up's own number (ROSE-SEEN)
 import { KNIGHT_CITY_WATCH } from '../characters/mobile/mobileTypes.js';
@@ -80,7 +87,8 @@ const fresh = () => ({
   marks: new WeakMap(),                  // Ranger: foe entity -> marked until
   dazed: new WeakMap(),                  // Brawler: foe entity -> its blows lighter until
   struck: new WeakSet(),                 // Assassin: the foes a blow of mine has landed on (Opening Strike)
-  uses: new WeakMap(),                   // a press's token -> the foes its rider has answered (Judgement, Windstrike)
+  uses: new WeakMap(),                   // a press's token -> the distinct foes its rider has answered (Judgement, Windstrike, Vanishing Strike)
+  felling: new WeakMap(),                // Woodsman: foe entity -> when Felling Strike last landed on it (its kill heals - AUDIT MARTIAL L1 M1)
 });
 let _s = fresh();
 let _carry = new WeakMap();              // a weapon's (or my fists') per-cent fraction, carried to its next blow
@@ -115,7 +123,8 @@ function again(entity, amount, word) {
   const n = Math.max(1, Math.round(amount));
   const door = playerDoor();
   const f = door?.foes?.().find((x) => x.entity === entity) ?? null;
-  if (f) { if (!f.dead) { showFollowUp(n, word); door.hurtFoe(f, n); } return; }
+  if (!f?.dead) showFollowUp(n, word);   // AUDIT MARTIAL L1 N1: the owed one's number too (the loot's again - ROSE-SEEN)
+  if (f) { if (!f.dead) door.hurtFoe(f, n); return; }
   oweFoe(entity, n);
 }
 /** A rider's bundle on me - a power's (the door's castOnPlayer with `power`: a merge with my own like-kind effect keeps
@@ -160,17 +169,21 @@ export function martialBlow(weapon, damage, attacker, target, info) {
   const key = weapon ?? attacker;
   const exact = (damage * pct) / 100 + (_carry.get(key) ?? 0);
   const more = Math.floor(exact + 1e-9);
-  _carry.set(key, Math.max(0, exact - more));
+  if (!info?.estimate) _carry.set(key, Math.max(0, exact - more));   // AUDIT MARTIAL L2 F7: the Stats page's estimate keeps nothing
   return damage + more;
 }
 /** THE STRIKE (formulas.js registerPlayerStrikeListener): a blow of mine that LANDED - Flowing Steel's stack, the first
  *  blow at a foe counted (Opening Strike), the Berserker's leech. */
-export function martialStrike(attacker, target, damage) {
+export function martialStrike(attacker, target, damage, weapon = null, info = null) {
   if (!(damage > 0) || !attacker?.isPlayer || attacker.peer || !foeOf(target)) return;
   const id = awakeMartialId(attacker);
   const now = _now();
-  if (id === 'blademaster') { _s.flow = Math.min(N.flowingSteel.stacks, flowStacks(now) + 1); _s.flowUntil = now + N.flowingSteel.seconds; }
-  if (id === 'berserker' && now < _s.leechUntil) healMine(attacker, (damage * N.savageWhirl.leech) / 100);
+  // AUDIT MARTIAL L1 L2: a stack from a blow that counts whole (formulas.js `blow` - an off-hand blow counts DUAL's share
+  // of the time), the loot's Flow's law (TWO-HANDS AUDIT 2): a pair builds it as its damage edge allows, not its blow rate
+  if (id === 'blademaster' && info?.blow !== false) { _s.flow = Math.min(N.flowingSteel.stacks, flowStacks(now) + 1); _s.flowUntil = now + N.flowingSteel.seconds; }
+  // AUDIT MARTIAL L1 L4: what the foe could lose, never the overkill (AUDIT SCHOOLS L1 M6's `took`) - told before any
+  // door subtracts, its health is what it had
+  if (id === 'berserker' && now < _s.leechUntil) healMine(attacker, ((Number.isFinite(target.health) ? Math.min(damage, Math.max(0, target.health)) : damage) * N.savageWhirl.leech) / 100);
   _s.struck.add(target);   // Opening Strike: the foe's first landed blow was this one
 }
 
@@ -234,20 +247,27 @@ export function martialHurt(entity, { before = 0, after = 0, saved = false } = {
   healMine(entity, (entity.maxHealth * N.standFirm.heal) / 100);
   say(t('martial.say.standFirm', 'Stand Firm: you hold your ground.'));
 }
-/** THE ROUND: Grit - a little health and fatigue back, each round. */
+/** THE ROUND: Grit - a little health and fatigue back, each round; the health none in the court (WBX6 courtRules.js - a
+ *  regeneration, as a career's Regenerate Health is: AUDIT MARTIAL L3 F3). */
 export function martialRound(entity) {
   if (awakeMartialId(entity) !== 'brawler') return;
-  if (entity.health > 0 && entity.health < entity.maxHealth) healMine(entity, (entity.maxHealth * N.grit.health) / 100);
+  if (entity.health > 0 && entity.health < entity.maxHealth && !regenBarred()) healMine(entity, (entity.maxHealth * N.grit.health) / 100);
   fatigueMine(entity, N.grit.fatigue);
 }
-/** MY KILL: War Rhythm, Bloodlust, Tireless. */
+/** MY KILL: War Rhythm, Bloodlust, Tireless - and Felling Strike's heal, for a foe it landed on that a kill of mine
+ *  fells within the loot's felling bound (AUDIT MARTIAL L1 M1: judged at the landing, before the pool's door, a foe a
+ *  party's toughness or its Shield kept standing healed me; the Undertow's law - AUDIT WORLD-REWARDS B2 - a foe's own). */
 export function martialKill(foe) {
   if (!foe || neverCounts(foe)) return;
   const m = me();
   const id = awakeMartialId(m);
   if (id === 'warblade') _s.rhythmUntil = _now() + N.warRhythm.seconds;
   else if (id === 'bloodletter') healMine(m, (m.maxHealth * N.bloodlust.health) / 100);
-  else if (id === 'woodsman') fatigueMine(m, N.tireless.fatigue);
+  else if (id === 'woodsman') {
+    fatigueMine(m, N.tireless.fatigue);
+    const at = _s.felling.get(foe);
+    if (at !== undefined && _now() - at <= TOLL_REFUND_S) { healMine(m, (m.maxHealth * N.fellingStrike.heal) / 100); _s.felling.delete(foe); }
+  }
 }
 /** THE FOLD: Light Step and Windborne. */
 export function martialFold(entity) {
@@ -267,12 +287,33 @@ export function martialFold(entity) {
 
 // ── the riders ──────────────────────────────────────────────────────
 
-/** How many foes this press's rider has answered so far (one token a press - combat/techniques.js `use`), counted on. */
-function nthOfUse(use) {
+/** The struck foe's place among the DISTINCT foes this press's rider has answered (one token a press -
+ *  combat/techniques.js `use`), counted on; 0 for a foe it has answered already (AUDIT MARTIAL L1 L1: a volley's two
+ *  shafts on one foe are one foe of the "at most"). */
+function foeOfUse(use, foe) {
   if (!use || typeof use !== 'object') return 1;
-  const n = (_s.uses.get(use) ?? 0) + 1;
-  _s.uses.set(use, n);
-  return n;
+  let u = _s.uses.get(use);
+  if (!u) { u = { n: 0, foes: new WeakSet() }; _s.uses.set(use, u); }
+  if (u.foes.has(foe)) return 0;
+  u.foes.add(foe);
+  return ++u.n;
+}
+/** THE TECHNIQUE USED (techniqueBlow.js tellTechniqueUsed): MY awake path's signature went - the window its words open
+ *  "for N seconds" opens now, the press's whole sweep and every blow after it inside it, a whiff's too.
+ *  @param {{ id?: string, entity?: any }} [press] */
+export function martialUsed({ id = '', entity = null } = {}) {
+  const form = signatureById(id);
+  const path = awakeMartialId(entity);
+  if (!form || !path || form.path !== path) return;   // awake is MY entity's alone (martialHeld: no peer's, no foe's)
+  const now = _now();
+  switch (path) {
+    case 'warblade': _s.rallyUntil = now + N.rallyingCleave.seconds; break;
+    case 'bladedancer': _s.quickUntil = now + N.cyclone.seconds; break;
+    case 'shadowdancer': _s.evadeUntil = now + N.phantomStrike.seconds; break;
+    case 'juggernaut': _s.guardUntil = now + N.earthsplitter.seconds; break;
+    case 'berserker': _s.leechUntil = now + N.savageWhirl.seconds; break;
+    default: break;
+  }
 }
 /** THE TECHNIQUE LANDED (techniqueBlow.js tellTechniqueLanded): MY awake path's signature reached `foe` for `damage` -
  *  its rider. A form of another path's signature (a character who changed nothing but a save) answers nothing.
@@ -283,28 +324,26 @@ export function martialLanded({ blow = null, foe = null, damage = 0 } = {}) {
   const id = awakeMartialId(m);
   if (!form || !id || form.path !== id) return;
   const target = foe?.entity;
-  if (!foeOf(target)) return;
+  if (!foeOf(target) || neverCounts(target)) return;   // AUDIT MARTIAL L1 L5: the City Watch and my own allies feed no rider, as no kill of them counts
   const landed = Number.isFinite(damage) && damage > 0 ? damage : 0;
+  if (!landed) return;
   const now = _now();
   const name = MARTIAL_BY_ID[id].technique.name;
-  const left = Number.isFinite(target.health) ? target.health - landed : Infinity;   // the pool's door lands it after
+  // AUDIT MARTIAL L1 M1: told BEFORE the pool's own door lands the blow - and the door may land less (a party's
+  // toughness, the foe's Shield, a bout's floor) - so nothing here guesses what the blow leaves: a follow-up lands as the
+  // loot's again does, a foe's share is what it had, and "a foe it fells" is the kill's own word (martialKill)
   switch (id) {
-    case 'blademaster': if (landed && left > 0) again(target, landed * N.thousandCuts.share, name); break;
-    case 'warblade': if (landed) _s.rallyUntil = now + N.rallyingCleave.seconds; break;
-    case 'vanguard': if (landed && nthOfUse(blow.use) <= N.judgement.foes) healMine(m, (m.maxHealth * N.judgement.heal) / 100); break;
-    case 'ranger': if (landed) _s.marks.set(target, now + N.huntersMark.seconds); break;
-    case 'bladedancer': if (landed) _s.quickUntil = now + N.cyclone.seconds; break;
-    case 'bloodletter': if (landed && left > 0 && left < target.maxHealth * N.guttingLunge.below) again(target, landed, name); break;
-    case 'cutthroat': if (landed && left > 0 && foeUnaware(foe)) again(target, landed * (N.blackjack.times - 1), name); break;
-    case 'assassin': if (landed && nthOfUse(blow.use) === 1) castOnMe(name, 23, 0, N.vanishingStrike.rounds); break;
-    case 'shadowdancer': if (landed) _s.evadeUntil = now + N.phantomStrike.seconds; break;
-    case 'juggernaut': if (landed) _s.guardUntil = now + N.earthsplitter.seconds; break;
-    case 'woodsman': if (landed && !(left > 0)) healMine(m, (m.maxHealth * N.fellingStrike.heal) / 100); break;
-    case 'berserker': if (landed) _s.leechUntil = now + N.savageWhirl.seconds; break;
-    case 'crusader': if (landed && left > 0 && undeadOrDaedra(target)) again(target, landed * N.hallowedStrike.share, name); break;
-    case 'brawler': if (landed) _s.dazed.set(target, now + N.knockout.seconds); break;
-    case 'windrunner': if (landed && nthOfUse(blow.use) <= N.windstrike.foes) fatigueMine(m, N.windstrike.fatigue); break;
-    default: break;
+    case 'blademaster': again(target, landed * N.thousandCuts.share, name); break;
+    case 'vanguard': { const k = foeOfUse(blow.use, target); if (k && k <= N.judgement.foes) healMine(m, (m.maxHealth * N.judgement.heal) / 100); break; }
+    case 'ranger': _s.marks.set(target, now + N.huntersMark.seconds); break;
+    case 'bloodletter': if (share(target) < N.guttingLunge.below) again(target, landed, name); break;
+    case 'cutthroat': if (foeUnaware(foe)) again(target, landed * (N.blackjack.times - 1), name); break;
+    case 'assassin': if (foeOfUse(blow.use, target) === 1) castOnMe(name, 23, 0, N.vanishingStrike.rounds); break;
+    case 'woodsman': _s.felling.set(target, now); break;
+    case 'crusader': if (undeadOrDaedra(target)) again(target, landed * N.hallowedStrike.share, name); break;
+    case 'brawler': _s.dazed.set(target, now + N.knockout.seconds); break;
+    case 'windrunner': { const k = foeOfUse(blow.use, target); if (k && k <= N.windstrike.foes) fatigueMine(m, N.windstrike.fatigue); break; }
+    default: break;   // the warblade's, the bladedancer's, the shadowdancer's, the juggernaut's and the berserker's open at the press (martialUsed)
   }
 }
 
@@ -320,8 +359,9 @@ registerMagicRoundHook(MARTIAL_POWERS, martialRound);
 registerPlayerKillListener(MARTIAL_POWERS, martialKill);
 registerEntityFold(MARTIAL_POWERS, martialFold);
 registerTechniqueLandedListener(MARTIAL_POWERS, martialLanded);
+registerTechniqueUsedListener(MARTIAL_POWERS, martialUsed);
 
 /** Tests only: every window and recovery fresh, a clock and dice of their own (seconds; [0, 1)). */
-export function _resetMartialPowersForTests() { _s = fresh(); _carry = new WeakMap(); _say = (line) => { hudText(line); }; }
+export function _resetMartialPowersForTests() { _s = fresh(); _carry = new WeakMap(); _say = (line) => { hudText(line); }; _now = () => performance.now() / 1000; _rand = Math.random; }   // AUDIT MARTIAL L5 L2: the clock and the dice too
 export function _setMartialPowersClockForTests(fn) { _now = typeof fn === 'function' ? fn : () => performance.now() / 1000; }
 export function _setMartialPowersRandForTests(fn) { _rand = typeof fn === 'function' ? fn : Math.random; }

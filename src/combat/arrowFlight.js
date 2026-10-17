@@ -38,6 +38,7 @@ import { playerWeaponHitEntity } from '../systems/worldTick.js';   // DISC10-D H
 import { sparedByPlayer } from './friendlyFire.js';   // SHIPMATES: the player's shaft passes their own crew by
 import { coverDistance, coverStep } from '../ai/cover.js';   // TACT1: billboards are cover; AUDIT TACT B5: met by touch
 import { blowMult, scaleBlowDamage, playerBody, tellTechniqueLanded } from './technique/techniqueBlow.js';   // TECH1: a technique's shaft - its weight, and never a player's body
+import { takeOwed } from '../systems/playerDoor.js';   // AUDIT MARTIAL L2 F5: the follow-ups a shaft owes a body the relay runs
 
 export const ARROW_MODEL_ID = 99800;
 
@@ -443,6 +444,19 @@ export class ArrowFlight {
  * `dealDamage` is the pool's own damage door, so death runs whole -
  * corpse, loot, crime - and this function never writes health itself.
  */
+/** AUDIT MARTIAL L2 F5: MY SHAFT INTO A BODY THE RELAY RUNS AND NO FOE RECORD HOLDS - the sea serpent's hide
+ *  (scenes/world.js serpentArrowOn): `rolled` the formula's number on its stand-in. A technique's shaft weighs it and
+ *  tells the riders, as playerArrowHitFoe does a foe's (TECH1's weight was never laid on the hide, and a path's rider
+ *  never heard it - AUDIT SCHOOLS L2 F4's spell, for the shaft), and the follow-ups the blow owes the body (a rider's, the
+ *  loot's echo) ride its one claim (systems/playerDoor.js - OPEN-HAND's law, the gate's own). Answers what to claim. */
+export function shaftOnRelayBody(m, entity, rolled) {
+  const body = { name: entity?.name ?? '', entity };
+  const dmg = m?.technique ? scaleBlowDamage(rolled, blowMult(m.technique, body)) : rolled;
+  if (m?.technique) tellTechniqueLanded(m.technique, body, dmg);
+  const owed = takeOwed(entity);
+  return dmg > 0 ? dmg + owed : dmg;
+}
+
 export function playerArrowHitFoe(m, foe, {
   playerEntity, playerWeapon = null, playerFeet = null, dealDamage = null,
   audio = null, hitEffects = null, say = null, onInflictPoison = null,

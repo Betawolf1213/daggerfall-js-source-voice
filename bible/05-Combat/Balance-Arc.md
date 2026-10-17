@@ -917,14 +917,18 @@ causes the measurement found:
    at 0.9, and the family that fights by speed was the slowest a second (a Shortsword 8.7 to a Longsword's 12.6).
    **THE LAW:** a weapon that swings with Short Blade takes the Dagger's row (`SWING_SHORT_BLADE`), whatever draws it -
    in the port's own law and both mods' arms (`rriRealism.js` rriMeleeWeaponAnimTime, `rrRealism.js`
-   rrMeleeWeaponAnimTime, each handed the swing reader's word, `combat/swingLaw.js` readSwing's `shortBlade`). A
+   rrMeleeWeaponAnimTime, each handed the swing reader's word, `combat/swingLaw.js` readSwing's `shortBlade` - and in
+   Roleplay & Realism's own arm the dagger's Speed-and-Strength blend too, AUDIT MARTIAL L2 F11: its blend kept the long
+   blade's, so a Shortsword there was still 0.146 s a frame to a Dagger's 0.133). A
    Shortsword 8.7 -> 9.7 a second; still the lowest blade in an open fight - a short blade's place is the back
    (Backstabbing's x3) and the climb's pace (MARTIAL2).
 3. **The Firmament's Axe and Blunt Weapon were the thinnest.** **THE LAW:** every weapon family two notables of its own,
    each raising its skill, and the Axe and the Blunt Weapon a third each (`net/firmament/firmamentTree.js`): Blade Dancer
-   `{ longDmg 4, Long Blade +4 }` (was `speed 2`), Iron Knuckles `{ fistDmg 5, Hand-to-Hand +4, strength 1 }` (was
-   `strength 3`), Headsman `{ axeDmg 5, Axe +5 }` (was `axeDmg 4, strength 3`), Bonebreaker `{ bluntDmg 5, Blunt Weapon
-   +5 }` (was `bluntDmg 4, meleeDmg 2`), Carnage `{ killHeal 2, axeDmg 4 }` (was `meleeDmg 3`), and the Ritual's
+   `{ longDmg 4, speed 2, Long Blade +4 }`, Iron Knuckles `{ fistDmg 5, strength 3, Hand-to-Hand +4 }`, Headsman
+   `{ axeDmg 4, strength 3, Axe +5 }`, Bonebreaker `{ bluntDmg 4, meleeDmg 2, Blunt Weapon +5 }` - each its old stats
+   whole, the skill beside them (AUDIT MARTIAL L2 F9: the first cut traded a stat for the skill, and a skill line buys
+   to-hit alone, which PCAAO clamps at 97 from about 65 - section 2 of the martial page - so the trade took a stat from
+   every fighter past it); Carnage `{ killHeal 2, axeDmg 4 }` (was `meleeDmg 3`), and the Ritual's
    Battlemage's Focus is its **Templar's Mace** `{ bluntDmg 5, spellPower 4 }` (was `meleeDmg 4` - the Ritual stands in PoE's Templar's place;
    the name also left the Elite Gates' Vestige of the same name its own). Stats moved, never a key nor a star: the
    layout, the keys' hash and every build code stand, and no channel of any sign passes its cap (FIRM2's own pin).
@@ -944,7 +948,11 @@ RECORDED, NOT CHANGED:
   of its own.
 
 Pinned: `test/systems/martial_paths.test.js` (BAL10's three by execution - the fists in both cores and the claws refused,
-the handling in all three arms, the notables' stats). `tools/mutants/martial.json` carries BAL10's records beside the
+the handling in all three arms, the notables' stats); AUDIT MARTIAL's `test/systems/audit_martial.test.js` drives the
+fists through both cores' OUTER calls with a probe that must land whole, both mods' arms as they ship (L5 H1), and the
+Stats page's estimate, which now keeps nothing - no fraction carried, no next-blow window spent (`entityMods.js`
+`info.estimate`, honoured by every blow modifier: L2 F7 - BAL10 had run the stateful modifiers over every roll of the
+fist estimate, some five hundred a page build). `tools/mutants/martial.json` carries BAL10's records beside the
 arc's. PIN MOVED: `audit_uicalm_firm1`'s walk names the Templar's Mace where it named Battlemage's Focus (its
 spellPower 4 the same).
 

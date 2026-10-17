@@ -27,13 +27,9 @@ export function readSwing(ctx) {
   const entity = ctx?.entity;
   if (!entity) return null;
   const weaponType = Number.isInteger(ctx.weaponType) ? ctx.weaponType : WEAPON_TYPES.Melee;
-  // AUDIT PRE-MERGE 0929 S6: read WITHOUT materialising - `equipTableOf` is `entity.equip ??= createEquipTable()`, and a
-  // reader that grew an empty table on an entity with none handed combat/weapon/weaponRig.js's syncWorn that table, which nulls
-  // the hand's weapon (the rig's shieldItem names the same trap; the unsheathe went silent). The shape syncWorn reads.
-  const slots = entity.equip?.slots;
-  const item = slots?.[ctx.usingRightHand === false ? EQUIP_SLOTS.LeftHand : EQUIP_SLOTS.RightHand] ?? null;
+  const item = handItem(entity, ctx);
   const bare = !item || weaponType === WEAPON_TYPES.Melee || weaponType === WEAPON_TYPES.Werecreature;
-  const family = weaponType === WEAPON_TYPES.Werecreature ? null : bare ? 'handToHand' : techniqueFamily(item);
+  const family = familyOf(weaponType, item, bare);
   return {
     weaponType,
     weight: bare ? 0 : (templateByIndex(item.templateIndex)?.baseWeight ?? 0),
@@ -42,6 +38,21 @@ export function readSwing(ctx) {
     family,
     shortBlade: family === 'shortBlade',
   };
+}
+
+// AUDIT PRE-MERGE 0929 S6: read WITHOUT materialising - `equipTableOf` is `entity.equip ??= createEquipTable()`, and a
+// reader that grew an empty table on an entity with none handed combat/weapon/weaponRig.js's syncWorn that table, which nulls
+// the hand's weapon (the rig's shieldItem names the same trap; the unsheathe went silent). The shape syncWorn reads.
+const handItem = (entity, ctx) => entity.equip?.slots?.[ctx.usingRightHand === false ? EQUIP_SLOTS.LeftHand : EQUIP_SLOTS.RightHand] ?? null;
+const familyOf = (weaponType, item, bare) => (weaponType === WEAPON_TYPES.Werecreature ? null : bare ? 'handToHand' : techniqueFamily(item));
+/** The swing's family alone (readSwing's `family`), read with no record built - AUDIT MARTIAL L2 F3: the Short Blade's
+ *  pace asks it every frame of a swing (systems/weaponMastery.js). */
+export function swingFamily(ctx) {
+  const entity = ctx?.entity;
+  if (!entity) return null;
+  const weaponType = Number.isInteger(ctx.weaponType) ? ctx.weaponType : WEAPON_TYPES.Melee;
+  const item = handItem(entity, ctx);
+  return familyOf(weaponType, item, !item || weaponType === WEAPON_TYPES.Melee || weaponType === WEAPON_TYPES.Werecreature);
 }
 
 /** Register the reader. AUDIT PRE-MERGE 0929 S5: it was registered only inside scenes/shared.js ensureAudio, and a rig

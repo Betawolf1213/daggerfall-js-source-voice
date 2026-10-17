@@ -112,7 +112,7 @@ export function rrClimbingChance(base, { climbing = 0, luck = 0, khajiit = false
 export function rrMeleeWeaponAnimTime({ liveSpeed, liveStrength, weaponType = -1, hands = 'One', weight = 0, shortBlade = false }) {
   let spdRatio = 0.8, strRatio = 0.2, capRatio = 0.08;
   if (hands === 'Both') { spdRatio = 0.5; strRatio = 0.5; capRatio = 0.15; }
-  else if (weaponType === 4 || weaponType === 5) { spdRatio = 0.9; strRatio = 0.1; capRatio = 0.03; }
+  else if (shortBlade || weaponType === 4 || weaponType === 5) { spdRatio = 0.9; strRatio = 0.1; capRatio = 0.03; }   // AUDIT MARTIAL L2 F11: the dagger's blend too, whatever draws it (BAL10's departure - the mod keys on the sprite)
   else if (weaponType === 15) { spdRatio = 1; strRatio = 0; capRatio = 0; }
   if (liveSpeed > 70) spdRatio -= capRatio;
   if (liveStrength > 70) strRatio -= capRatio;

@@ -31,8 +31,8 @@
 // Everything a player reads is `t()`, read when it is read.
 
 import { SKILLS, SKILL_NAMES } from './skills.js';
-import { masterSkillsActive, isMasteredSkill, masteredSkills } from './masterSkills.js';
-import { t } from './textManager.js';
+import { masterSkillsActive, isMasteredSkill, masteredSkills, masterableCount } from './masterSkills.js';
+import { t, textRevision } from './textManager.js';
 
 const { LongBlade: LB, ShortBlade: SB, Axe: AX, BluntWeapon: BL, Archery: AR, HandToHand: HH } = SKILLS;
 
@@ -154,9 +154,19 @@ const KNOCKOUT = 'Knockout';
 const WINDSTRIKE = 'Windstrike';
 /** The signature's English name, by path - the words' default. */
 const SIGNATURE_EN = Object.freeze({ blademaster: THOUSAND_CUTS, warblade: RALLYING_CLEAVE, vanguard: JUDGEMENT, ranger: MARK_OF_THE_HUNT, bladedancer: CYCLONE, bloodletter: GUTTING_LUNGE, cutthroat: BLACKJACK, assassin: VANISHING_STRIKE, shadowdancer: PHANTOM_STRIKE, juggernaut: EARTHSPLITTER, woodsman: FELLING_STRIKE, berserker: SAVAGE_WHIRL, crusader: HALLOWED_STRIKE, brawler: KNOCKOUT, windrunner: WINDSTRIKE });
-/** Every form, by id - each carries its `id`, and `name`, its path's signature in the player's language. */
-export const SIGNATURE_TECHNIQUES = Object.freeze(Object.fromEntries(Object.entries(FORMS).map(([id, f]) => [id, Object.freeze(Object.defineProperty({ ...f, id },
-  'name', { get() { return martialWords(f.path)?.technique ?? SIGNATURE_EN[f.path]; }, enumerable: true }))])));
+/** AUDIT MARTIAL L1 L6: a signature's name in the player's language, kept a text revision (textManager.js textRevision -
+ *  a locale switched, a table patched): the HUD's chip reads it every frame, and the path's words are six lines built
+ *  whole (AUDIT TECH-FX's law - a frame at rest allocates nothing). */
+let _names = { rev: -1, by: /** @type {Record<string, string>} */ (Object.create(null)) };
+function signatureName(path) {
+  const rev = textRevision();
+  if (_names.rev !== rev) _names = { rev, by: Object.create(null) };
+  return (_names.by[path] ??= martialWords(path)?.technique ?? SIGNATURE_EN[path]);
+}
+/** Every form, by id - each carries its `id`, `en` its path's signature's English name (what the runner's English status
+ *  lines say - AUDIT MARTIAL L4 N1: "Mal der Jagd is not ready"), and `name`, the signature in the player's language. */
+export const SIGNATURE_TECHNIQUES = Object.freeze(Object.fromEntries(Object.entries(FORMS).map(([id, f]) => [id, Object.freeze(Object.defineProperty({ ...f, id, en: SIGNATURE_EN[f.path] },
+  'name', { get() { return signatureName(f.path); }, enumerable: true }))])));
 /** The form ids, in the table's order. */
 export const SIGNATURE_IDS = Object.freeze(Object.keys(SIGNATURE_TECHNIQUES));
 /** A form by id, or null. */
@@ -169,7 +179,7 @@ const WORDS = Object.freeze({
   blademaster: () => ({
     name: t('martial.blademaster.name', 'Blademaster'),
     passiveName: t('martial.blademaster.passive', 'Flowing Steel'),
-    passive: t('martial.blademaster.passiveText', 'Each blow of yours that lands builds a stack for {seconds} seconds: {pct}% more damage a stack, at most {stacks}.', { seconds: N.flowingSteel.seconds, pct: N.flowingSteel.pct, stacks: N.flowingSteel.stacks }),
+    passive: t('martial.blademaster.passiveText', 'Each blow or arrow of yours that lands builds a stack for {seconds} seconds: {pct}% more damage a stack, at most {stacks}.', { seconds: N.flowingSteel.seconds, pct: N.flowingSteel.pct, stacks: N.flowingSteel.stacks }),
     technique: t('martial.blademaster.technique', THOUSAND_CUTS),
     techniqueText: t('martial.blademaster.techniqueText', 'Dash {metres} metres, striking every foe you pass.', { metres: FORMS.thousandCuts.length }),
     rider: t('martial.blademaster.rider', 'Every foe it strikes is cut again for {pct}% of the blow.', { pct: pc(N.thousandCuts.share) }),
@@ -180,7 +190,7 @@ const WORDS = Object.freeze({
     passive: t('martial.warblade.passiveText', 'Each foe you kill quickens your swings by {pct}% for {seconds} seconds.', { pct: N.warRhythm.pct, seconds: N.warRhythm.seconds }),
     technique: t('martial.warblade.technique', RALLYING_CLEAVE),
     techniqueText: t('martial.warblade.techniqueText', 'Strike every foe in a wide arc before you.'),
-    rider: t('martial.warblade.rider', 'When it strikes a foe, your blows land {pct}% harder for {seconds} seconds.', { pct: N.rallyingCleave.pct, seconds: N.rallyingCleave.seconds }),
+    rider: t('martial.warblade.rider', 'For {seconds} seconds, your blows and arrows land {pct}% harder.', { pct: N.rallyingCleave.pct, seconds: N.rallyingCleave.seconds }),
   }),
   vanguard: () => ({
     name: t('martial.vanguard.name', 'Vanguard'),
@@ -199,7 +209,7 @@ const WORDS = Object.freeze({
     rider: t('martial.ranger.rider', 'Each foe it strikes is marked for {seconds} seconds: your blows and arrows at it land {pct}% harder.', { seconds: N.huntersMark.seconds, pct: N.huntersMark.pct }),
   }),
   bladedancer: () => ({
-    name: t('martial.bladedancer.name', 'Bladedancer'),
+    name: t('martial.bladedancer.name', 'Skirmisher'),
     passiveName: t('martial.bladedancer.passive', 'Dancer\'s Step'),
     passive: t('martial.bladedancer.passiveText', 'One foe\'s blow in {n} misses you entirely.', { n: N.dancersStep.oneIn }),
     technique: t('martial.bladedancer.technique', CYCLONE),
@@ -212,15 +222,15 @@ const WORDS = Object.freeze({
     passive: t('martial.bloodletter.passiveText', 'Each foe you kill restores {pct}% of your health.', { pct: N.bloodlust.health }),
     technique: t('martial.bloodletter.technique', GUTTING_LUNGE),
     techniqueText: t('martial.bloodletter.techniqueText', 'Dash {metres} metres, striking every foe you pass.', { metres: FORMS.guttingLunge.length }),
-    rider: t('martial.bloodletter.rider', 'A foe it leaves under {pct}% of its health takes the blow again.', { pct: pc(N.guttingLunge.below) }),
+    rider: t('martial.bloodletter.rider', 'A foe already under {pct}% of its health takes the blow again.', { pct: pc(N.guttingLunge.below) }),
   }),
   cutthroat: () => ({
     name: t('martial.cutthroat.name', 'Cutthroat'),
     passiveName: t('martial.cutthroat.passive', 'Cheap Shot'),
-    passive: t('martial.cutthroat.passiveText', 'Your blows at a foe that has not noticed you land {pct}% harder.', { pct: N.cheapShot.pct }),
+    passive: t('martial.cutthroat.passiveText', 'Your blows and arrows at a foe that has not noticed you land {pct}% harder.', { pct: N.cheapShot.pct }),
     technique: t('martial.cutthroat.technique', BLACKJACK),
     techniqueText: t('martial.cutthroat.techniqueText', 'One heavy blow at the nearest foe before you, +{toHit} to hit.', { toHit: FORMS.blackjack.toHit }),
-    rider: t('martial.cutthroat.rider', 'A foe that had not noticed you takes it {times} times.', { times: N.blackjack.times }),
+    rider: t('martial.cutthroat.rider', 'A foe that had not noticed you takes the blow twice.'),   // N.blackjack.times is 2 (pinned beside the word)
   }),
   assassin: () => ({
     name: t('martial.assassin.name', 'Assassin'),
@@ -257,7 +267,7 @@ const WORDS = Object.freeze({
   berserker: () => ({
     name: t('martial.berserker.name', 'Berserker'),
     passiveName: t('martial.berserker.passive', 'Frenzy'),
-    passive: t('martial.berserker.passiveText', 'Below {below}% of your health, your blows land {pct}% harder and your swings quicken by {pace}%.', { below: pc(N.frenzy.below), pct: N.frenzy.pct, pace: N.frenzy.pace }),
+    passive: t('martial.berserker.passiveText', 'Below {below}% of your health, your blows and arrows land {pct}% harder and your swings quicken by {pace}%.', { below: pc(N.frenzy.below), pct: N.frenzy.pct, pace: N.frenzy.pace }),
     technique: t('martial.berserker.technique', SAVAGE_WHIRL),
     techniqueText: t('martial.berserker.techniqueText', 'Strike every foe within {metres} metres around you.', { metres: FORMS.savageWhirl.reach }),
     rider: t('martial.berserker.rider', 'For {seconds} seconds, {pct}% of every blow you land heals you.', { seconds: N.savageWhirl.seconds, pct: N.savageWhirl.leech }),
@@ -267,7 +277,7 @@ const WORDS = Object.freeze({
     passiveName: t('martial.crusader.passive', 'Purge'),
     passive: t('martial.crusader.passiveText', 'Your blows and arrows strike undead and daedra {pct}% harder.', { pct: N.purge.pct }),
     technique: t('martial.crusader.technique', HALLOWED_STRIKE),
-    techniqueText: t('martial.crusader.techniqueText', 'With a bow, a shot through up to {through} foes; with a blunt weapon, one heavy blow at the nearest foe before you.', { through: FORMS.hallowedShot.through }),
+    techniqueText: t('martial.crusader.techniqueText', 'With a bow, a shot through up to {through} foes; with a blunt weapon, one heavy blow at the nearest foe before you, +{toHit} to hit.', { through: FORMS.hallowedShot.through, toHit: FORMS.hallowedStrike.toHit }),
     rider: t('martial.crusader.rider', 'Undead and daedra it strikes take {pct}% of the blow again.', { pct: pc(N.hallowedStrike.share) }),
   }),
   brawler: () => ({
@@ -279,7 +289,7 @@ const WORDS = Object.freeze({
     rider: t('martial.brawler.rider', 'For {seconds} seconds, the foe it strikes hits you {pct}% lighter.', { seconds: N.knockout.seconds, pct: N.knockout.lighter }),
   }),
   windrunner: () => ({
-    name: t('martial.windrunner.name', 'Windrunner'),
+    name: t('martial.windrunner.name', 'Strider'),
     passiveName: t('martial.windrunner.passive', 'Windborne'),
     passive: t('martial.windrunner.passiveText', '+{speed} Speed, +{running} Running and +{jumping} Jumping.', { speed: N.windborne.speed, running: N.windborne.running, jumping: N.windborne.jumping }),
     technique: t('martial.windrunner.technique', WINDSTRIKE),
@@ -290,7 +300,9 @@ const WORDS = Object.freeze({
 /** A path's words now: { name, passiveName, passive, technique, techniqueText, rider } - in the player's language. */
 export function martialWords(id) { return Object.hasOwn(WORDS, id) ? WORDS[/** @type {keyof typeof WORDS} */ (id)]() : null; }
 
-/** THE FIFTEEN, one per pair of the six weapon skills - the design page's table, section 5. */
+/** THE FIFTEEN, one per pair of the six weapon skills - the design page's table, section 5. AUDIT MARTIAL L4 N2: the ids
+ *  stand (a save's), and two names moved off the Firmament's own - the bladedancer is the Skirmisher (the sky's Blade
+ *  Dancer notable), the windrunner the Strider (its Wind Runner keystone). */
 /** @type {Array<[string, number[]]>} */
 const PATH_ROWS = [
   ['blademaster', [LB, SB]],
@@ -331,13 +343,10 @@ export const martialOfPair = (a, b) => (a !== b ? PATH_BY_PAIR.get(pairKey(a, b)
 const skillsOf = (p) => ({ a: SKILL_NAMES[p.skills[0]], b: SKILL_NAMES[p.skills[1]] });
 /** A path's two skills as one line ("Long Blade and Archery"). */
 export const martialSkillsText = (p) => t('martial.choice.skills', '{a} and {b}', skillsOf(p));
-/** Can this character EVER meet a martial path - two of the six weapon skills among its career's primary, major and minor
- *  skills (a mastery's own law: masterSkills.js careerGroupOf)? */
-export function martialPossible(entity) {
-  const c = entity?.career;
-  const career = new Set([...(c?.primarySkills ?? []), ...(c?.majorSkills ?? []), ...(c?.minorSkills ?? [])]);
-  return MARTIAL_SKILLS.filter((id) => career.has(id)).length >= 2;
-}
+/** Can this character EVER meet a martial path - two of the six weapon skills mastered, or masterable in the slots its
+ *  career groups have left (masterSkills.js masterableCount - AUDIT MARTIAL L4 L3: two weapon skills that were both minor
+ *  ones, one minor slot between them, showed the card for good)? */
+export const martialPossible = (entity) => masterableCount(entity, MARTIAL_SKILLS) >= 2;
 
 // ── the choice ──────────────────────────────────────────────────────
 
@@ -370,7 +379,9 @@ export function chooseMartialPath(entity, id) {
   if (why) return { ok: false, text: why };
   entity.martialPath = id;
   const p = MARTIAL_BY_ID[id];
-  return { ok: true, text: t('martial.chosen', 'Martial specialisation chosen: {name}. {technique} answers your technique key with its weapons.', { name: p.name, technique: p.technique.name }) };
+  // AUDIT MARTIAL L4 M1: one short line - the classic sheet's notice and the HUD draw it unwrapped in 312 px; what the
+  // technique key does is the card's and the OK box's (martial.sheet.key)
+  return { ok: true, text: t('martial.chosen', 'Martial specialisation chosen: {name}.', { name: p.name }) };
 }
 
 export const MARTIAL_DECLINED_TEXT = 'You can choose a martial specialisation later in your skill screen.';
@@ -393,7 +404,7 @@ export function martialChoiceRows(entity, id, { others = true } = {}) {
   if (!p) return [];
   const more = others ? martialChoices(entity).length - 1 : 0;
   return [
-    t('martial.choice.title', 'Specialise as {name}?', { name: p.name }),
+    t('martial.choice.title', 'Martial specialisation: {name}?', { name: p.name }),   // AUDIT MARTIAL L4 L4: never the arcane ask's own words
     martialSkillsText(p),
     '',
     ...martialPowerRows(p),

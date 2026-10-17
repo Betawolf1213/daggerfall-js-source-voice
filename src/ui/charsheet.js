@@ -839,7 +839,7 @@ export class CharSheet {
     const h = (lines + 1 + (pathText ? 1 : 0) + (martialText ? 1 : 0)) * 9 + 14;   // SOFTCAP3: + the Master Skills row under the skills
     const w = twoColumn ? 246 : 130;
     const x = twoColumn ? Math.floor((320 - w) / 2) : 8;
-    const y = twoColumn ? Math.floor((200 - h) / 2) : 100;
+    const y = twoColumn ? Math.floor((200 - h) / 2) : Math.min(100, 198 - h);   // AUDIT MARTIAL L4 L1: never past the screen's foot (Minor, Hand-to-Hand among them, both specialisation rows: 204 of 200)
     drawRect(renderer, m, x, y, w, h, [0.05, 0.05, 0.09, 0.95]);
     shadowText(renderer, font, `${names[this.page - 1]} skills`, m, x + 4, y + 3);
     // TextProvider.GetSkillSummary (:490-496): a skill raised since
@@ -890,7 +890,7 @@ export class CharSheet {
   _martialPrompt() {
     const e = this.entity;
     const chosen = martialPathOf(e);
-    if (chosen) { this.page = 0; this.child = new YesNoBoxWindow({ okOnly: true, rows: [...martialAboutRows(chosen), '', t('martial.sheet.key', 'Its signature technique answers your technique key with its weapons.')] }); return; }
+    if (chosen) { this.page = 0; this.child = new YesNoBoxWindow({ okOnly: true, rows: [...martialAboutRows(chosen), '', t('martial.sheet.key', 'Its signature technique answers your technique key with its weapons when the weapon has no technique of its own.')] }); return; }
     const pool = martialChoices(e);
     if (!pool.length) return;
     const p = pool[(this._martialPick = ((this._martialPick ?? -1) + 1)) % pool.length];

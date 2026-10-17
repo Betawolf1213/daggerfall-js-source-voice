@@ -5039,7 +5039,7 @@ function statsSpecialisation(detail, ms) {
   // MARTIAL1 (bible/05-Combat/Martial-Specialisations.md section 3): THE MARTIAL CARD beneath it - the same card, the weapons'
   const mt = ms.martial;
   if (mt) specCard(detail, { title: t('pause.master.martial.title', 'Martial Specialisation'), path: mt.path, choices: mt.choices, possible: mt.possible, choose: mt.choose,
-    note: t('martial.sheet.key', 'Its signature technique answers your technique key with its weapons.'),
+    note: t('martial.sheet.key', 'Its signature technique answers your technique key with its weapons when the weapon has no technique of its own.'),
     none: t('pause.master.martial.none', 'Master two weapon skills to choose a martial specialisation: the pair names it, and it gives a passive and a signature technique.') });
 }
 /** SCHOOLS1's card, for either specialisation (MARTIAL1): `{ title, path, choices, possible, choose, note, none }`. */

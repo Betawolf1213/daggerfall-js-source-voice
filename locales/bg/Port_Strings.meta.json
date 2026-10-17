@@ -8755,8 +8755,8 @@
   "by": "claude-in-session"
  },
  "martial.berserker.passiveText": {
-  "en": "91729a024705",
-  "tr": "c9e4af7a50c9",
+  "en": "263a2e43b293",
+  "tr": "721eb535d18e",
   "by": "claude-in-session"
  },
  "martial.berserker.rider": {
@@ -8775,8 +8775,8 @@
   "by": "claude-in-session"
  },
  "martial.bladedancer.name": {
-  "en": "72eabd88ded9",
-  "tr": "d95a6ed9b2d7",
+  "en": "9e1f39d4ae8a",
+  "tr": "92b7c86a26f3",
   "by": "claude-in-session"
  },
  "martial.bladedancer.passive": {
@@ -8815,8 +8815,8 @@
   "by": "claude-in-session"
  },
  "martial.blademaster.passiveText": {
-  "en": "0551e03aba14",
-  "tr": "7b080457dc5b",
+  "en": "f73a0ee30b87",
+  "tr": "0fc9a6668f53",
   "by": "claude-in-session"
  },
  "martial.blademaster.rider": {
@@ -8850,8 +8850,8 @@
   "by": "claude-in-session"
  },
  "martial.bloodletter.rider": {
-  "en": "b44fe2e076a3",
-  "tr": "b3265fc9f1ca",
+  "en": "c00796f95211",
+  "tr": "5949f1e3e5d0",
   "by": "claude-in-session"
  },
  "martial.bloodletter.technique": {
@@ -8910,13 +8910,13 @@
   "by": "claude-in-session"
  },
  "martial.choice.title": {
-  "en": "23933019d233",
-  "tr": "fafacc1c6ab1",
+  "en": "671e16e17de6",
+  "tr": "d3bffe2382db",
   "by": "claude-in-session"
  },
  "martial.chosen": {
-  "en": "6c62136be8df",
-  "tr": "5e7184c9372d",
+  "en": "7795df4e4830",
+  "tr": "fe430598381d",
   "by": "claude-in-session"
  },
  "martial.crusader.name": {
@@ -8945,8 +8945,8 @@
   "by": "claude-in-session"
  },
  "martial.crusader.techniqueText": {
-  "en": "039ac1ba3746",
-  "tr": "fddcf1672557",
+  "en": "aa817af1a919",
+  "tr": "dc23cefc52d5",
   "by": "claude-in-session"
  },
  "martial.cutthroat.name": {
@@ -8960,13 +8960,13 @@
   "by": "claude-in-session"
  },
  "martial.cutthroat.passiveText": {
-  "en": "c7fc1b5c5c88",
-  "tr": "82b9b2edb976",
+  "en": "96fb1703a029",
+  "tr": "e75c3f8073c0",
   "by": "claude-in-session"
  },
  "martial.cutthroat.rider": {
-  "en": "2908ed0bda09",
-  "tr": "0c042976efe6",
+  "en": "fb1db351591d",
+  "tr": "0d6aa8cdcba5",
   "by": "claude-in-session"
  },
  "martial.cutthroat.technique": {
@@ -9140,8 +9140,8 @@
   "by": "claude-in-session"
  },
  "martial.sheet.key": {
-  "en": "8fb6a087bb92",
-  "tr": "9952576b8ade",
+  "en": "99eeb837b413",
+  "tr": "78d45efb8284",
   "by": "claude-in-session"
  },
  "martial.sheet.next": {
@@ -9195,8 +9195,8 @@
   "by": "claude-in-session"
  },
  "martial.warblade.rider": {
-  "en": "6b5bda4fccc5",
-  "tr": "fc65d3bd668e",
+  "en": "ba0c3c78b9e2",
+  "tr": "765096687f68",
   "by": "claude-in-session"
  },
  "martial.warblade.technique": {
@@ -9210,8 +9210,8 @@
   "by": "claude-in-session"
  },
  "martial.windrunner.name": {
-  "en": "f704b7de0da1",
-  "tr": "d53acd71424b",
+  "en": "b13a895e3ec1",
+  "tr": "0fd4a42c3202",
   "by": "claude-in-session"
  },
  "martial.windrunner.passive": {
@@ -19955,8 +19955,8 @@
   "by": "claude-in-session"
  },
  "schools.chosen": {
-  "en": "ed1316b2698a",
-  "tr": "af2151dbbf7e",
+  "en": "f2445796ca26",
+  "tr": "a04cc2bfa134",
   "by": "claude-in-session"
  },
  "schools.declined": {

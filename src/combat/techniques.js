@@ -44,7 +44,7 @@ import { restoresSoFar } from '../systems/save/save.js';   // AUDIT TECH1: every
 import { blowSchedule } from '../characters/weaponStates.js';
 import { MISSILE_SPEED } from '../systems/spellcast.js';   // AUDIT TECH-FX: a shaft's flight - DFU's one constant (ONE DFU MEMBER, ONE EXPORT)
 import { WEAPON_REACH, friendlyProtected } from './playerWeapon.js';
-import { playerBody, bodyRadius } from './technique/techniqueBlow.js';
+import { playerBody, bodyRadius, tellTechniqueUsed } from './technique/techniqueBlow.js';
 import { madeRuleHere, madeSaysHere, madeOnTraverse } from '../systems/madeLevel.js';   // EG-H2 (bible/11-Multiplayer/Elite-Gates.md section 10.7): the Spire refuses a flight on its traversal ground - the made level's law
 import { techniqueCue, resetTechniqueFx, TECH_FX } from './technique/techniqueFx.js';   // TECH-FX: what each moment looks, moves and sounds like (bible/05-Combat/Weapon-Techniques.md THE FEEL)
 
@@ -130,6 +130,9 @@ export function techniqueInHand(entity, pw) {
   const line = techniqueLineOf(item);
   const tech = line ? techniqueById(line.param) : null;
   if (!tech) return signatureInHand(entity, pw, item);
+  // AUDIT MARTIAL L4 L6: a found line SLEEPS with the ladder off (Loot-II law 6), so the key is free - a held path's
+  // signature answers it; with none, the line's own refusal says why
+  if (!lootRarityOn()) { const sig = signatureInHand(entity, pw, item); if (sig) return sig; }
   const known = rarityKnown(item), h = _handMemo;
   if (h && h.item === item && h.line === line && h.id === line.param && h.value === line.value && h.known === known) return h.hand;
   const hand = { id: line.param, value: line.value, tech, item, known };
@@ -473,7 +476,7 @@ export function stepTechnique(dt, ctx) {
     if (next > 0) { W[i] = next; continue; }
     W[i] = 0;
     const hand = techniqueInHand(ctx.entity, ctx.pw);
-    if (hand && TECH_INDEX[hand.id] === i) say(readyAgainText(techniqueName(hand)));   // the classic HUD has no chips: the line says it (MARTIAL3: a signature's forms share their slot)
+    if (hand && TECH_INDEX[hand.id] === i) say(readyAgainText(hand.tech?.en ?? techniqueName(hand)));   // the classic HUD has no chips: the line says it (MARTIAL3: a signature's forms share their slot)
   }
   const held = !!ctx.held, pressed = held && !_s.prev, released = !held && _s.prev;
   _s.prev = held;
@@ -511,7 +514,7 @@ export function refusal(hand, ctx) {
   if (_s.act) return true;   // one at a time
   if (!ctx.ready || pw.machine?.state !== 'Idle' || (pw.machine.now < pw.machine.cooldownUntil)) return true;   // mid-swing, a bow's recovery, a spell's hands
   const left = techniqueWait(hand.id);
-  if (left > 0) return notReadyText(techniqueName(hand), Math.ceil(left));
+  if (left > 0) return notReadyText(hand.tech?.en ?? techniqueName(hand), Math.ceil(left));   // AUDIT MARTIAL L4 N1: an English line names a signature in English
   // AUDIT TECH1: the price AND the blow's own drain after it - a technique never spends the last of a body (exhaustion
   // with a foe near is death: systems/rest/rest.js)
   if ((ctx.entity.fatigue ?? 0) <= techniqueFatigue(hand.tech) + SWING_FATIGUE_COST) return TIRED_TEXT;
@@ -533,12 +536,14 @@ export function refusal(hand, ctx) {
   return null;
 }
 
-/** Pay a technique's price: its fatigue through the host's drain (or the entity, with no door), its cooldown. */
-function pay(hand, ctx) {
+/** Pay a technique's price: its fatigue through the host's drain (or the entity, with no door), its cooldown - and the
+ *  press told (AUDIT MARTIAL L1 L3: a path's window opens as the press goes, `use` its token). */
+function pay(hand, ctx, use) {
   const n = techniqueFatigue(hand.tech);
   if (ctx.door?.drainFatigue) ctx.door.drainFatigue(n);
   else ctx.entity.fatigue = Math.max(0, (ctx.entity.fatigue ?? 0) - n);
   _s.wait[TECH_INDEX[hand.id]] = hand.tech.cooldown;
+  tellTechniqueUsed(hand.id, use, ctx.entity);
 }
 
 /** RELEASE: the technique goes - its price paid as it leaves. */
@@ -549,7 +554,7 @@ function execute(hand, ctx, target) {
     const blow = swingBlow(hand.id, hand.value, ctx.cam, { use });
     pw.techniqueBlow = blow;
     if (!ctx.startSwing?.(t.strike)) { pw.techniqueBlow = null; return; }
-    pay(hand, ctx);
+    pay(hand, ctx, use);
     _s.act = { kind: 'swing', hand, blow, pw, t: 0 };
     cue(hand, 'release', ctx);   // TECH-FX
     return;
@@ -557,7 +562,7 @@ function execute(hand, ctx, target) {
   if (t.mech === 'rain' || t.mech === 'pierce') {
     pw.techniqueBlow = null;
     if (!ctx.startSwing?.('StrikeDown')) return;
-    pay(hand, ctx);
+    pay(hand, ctx, use);
     _s.act = { kind: 'shot', hand, target, pw, t: 0, loosed: false, weapon: pw.weapon, use };
     cue(hand, 'release', ctx);   // TECH-FX
     return;
@@ -569,7 +574,7 @@ function execute(hand, ctx, target) {
   const apex = target.apex ?? (t.mech === 'leap' ? t.apex : DASH_APEX);   // AUDIT TECH1: the apex that fits the room (aimFor)
   const fl = launchTo(from, target.point, apex);
   if (!m.techniqueLaunch?.(fl.dir, fl.along, fl.up)) { say(CANNOT_LEAP_TEXT); return; }
-  pay(hand, ctx);
+  pay(hand, ctx, use);
   const lane = t.aim === 'lane' && target.lane ? { from: target.lane.from, dir: target.lane.dir, len: target.lane.len, halfW: target.lane.halfW } : null;
   // TECH-FX: `from` - where the leap or the dash began (a Lunge's trail runs from it)
   _s.act = { kind: 'flight', hand, target, pw, t: 0, time: fl.time, struck: false, lane, foe: target.foe ?? null, from: [from[0], from[1], from[2]], use };

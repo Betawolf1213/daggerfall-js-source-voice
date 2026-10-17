@@ -9,7 +9,7 @@
 // combat/pcaao.js), the player's damage door (characters/playerEntity.js), the swing's and the shaft's one resolution
 // (combat/playerWeapon.js resolveHit, combat/arrowFlight.js playerArrowHitFoe) and the sky (net/firmament/firmamentTree.js).
 import '../modsOff.js';
-import { test } from 'node:test';
+import { test, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as MP from '../../src/systems/martialPaths.js';
@@ -33,7 +33,7 @@ import { setPref } from '../../src/systems/uiPrefs.js';
 import { LOOT_RARITY_KEY, validAffix } from '../../src/systems/loot/lootRarity.js';
 import { techniqueInHand, refusal, stepTechnique, techniqueWait, techniqueHudChips, LADDER_OFF_TEXT, _resetTechniquesForTests } from '../../src/combat/techniques.js';
 import { TECHNIQUES, TECHNIQUE_FAMILIES, techniqueFamily, techniquesFor, GAUNTLETS_TEMPLATE } from '../../src/combat/technique/techniqueRoster.js';
-import { tellTechniqueLanded } from '../../src/combat/technique/techniqueBlow.js';
+import { tellTechniqueLanded, tellTechniqueUsed } from '../../src/combat/technique/techniqueBlow.js';
 import { PlayerWeapon } from '../../src/combat/playerWeapon.js';
 import { playerArrowHitFoe } from '../../src/combat/arrowFlight.js';
 import { calculateAttackDamage, enemyEntityGroup, ENEMY_GROUPS } from '../../src/combat/formulas.js';
@@ -188,7 +188,7 @@ test('MARTIAL1 THE CHOICE: two weapon skills mastered open their path; the choic
   assert.equal(AP.pathHeld(sw)?.id, 'bloodmage'); assert.equal(MP.martialHeld(sw)?.id, 'blademaster');
   // the words: the box's rows, its two skills, its permanence, each path's numbers in its own words
   const rows = MP.martialChoiceRows(fighter([LB, AR]), 'ranger');
-  assert.equal(rows[0], 'Specialise as Ranger?'); assert.equal(rows[1], 'Long Blade and Archery');
+  assert.equal(rows[0], 'Martial specialisation: Ranger?'); assert.equal(rows[1], 'Long Blade and Archery');   // PIN MOVED (AUDIT MARTIAL L4 L4): never the arcane ask's words
   assert.ok(rows.includes('This decision cannot be undone.'));
   assert.match(MP.martialPowerRows(MP.MARTIAL_BY_ID.vanguard).join(' '), /10% lighter.*Judgement \(signature technique\).*8 metres.*2\.5 metres.*4% of your health.*3 foes/);
   assert.match(MP.martialPowerRows(MP.MARTIAL_BY_ID.berserker).join(' '), /Below 50%.*20% harder.*10%.*Savage Whirl.*3 metres.*8 seconds, 10%/);
@@ -207,6 +207,7 @@ test('MARTIAL1 THE SAVE: the martial path and its one ask round-trip beside the 
   restorePlayer(forged, { ...snap, martialPath: 'samurai' });
   assert.equal(forged.martialPath, null);
   const { martialPath: _a, martialPrompted: _b, ...before } = snap;
+  before.career = { ...snap.career }; delete before.career.martialMirror;   // PIN MOVED (AUDIT MARTIAL L3 F1): a save from before the arc carries no mirror either
   const old = structuredClone(playerEntity);
   restorePlayer(old, before);
   assert.equal(old.martialPath, null); assert.equal(old.martialPrompted, false);
@@ -241,9 +242,11 @@ test('MARTIAL3 THE SIGNATURE IN HAND: the technique key\'s answer with no line o
   assert.equal(techniqueInHand(dancer, { weapon: null })?.id, 'kick', 'gauntlets with a line: the line');
   const off = pathFighter('ranger'); off._online = false; off.masterSkills = false;
   assert.equal(techniqueInHand(off, { weapon: sword }), null, 'a path not held answers nothing');
-  // the ladder off: a found line sleeps, a signature does not
-  setPref(LOOT_RARITY_KEY, false);
-  assert.equal(refusal(techniqueInHand(ranger, { weapon: lined }), press(ranger, lined)), LADDER_OFF_TEXT);
+  // the ladder off: a found line sleeps, a signature does not - and answers the key the sleeping line leaves free (PIN
+  // MOVED, AUDIT MARTIAL L4 L6); with no path held, the line's own refusal
+  setPref(LOOT_RARITY_KEY, false);   // set back by reset() at the next test's start and the file's end (AUDIT MARTIAL L5 L2)
+  assert.equal(techniqueInHand(ranger, { weapon: lined })?.id, 'huntersPounce', 'the line asleep: the signature');
+  assert.equal(refusal(techniqueInHand(off, { weapon: lined }), press(off, lined)), LADDER_OFF_TEXT);
   ranger.fatigue = maxFatigue(ranger);
   assert.equal(refusal(techniqueInHand(ranger, { weapon: sword }), press(ranger, sword)), 'Not here.', 'past the ladder\'s gate - a pounce asks a motor this press has none of');
   const cm = pathFighter('crusader'); cm.fatigue = maxFatigue(cm);
@@ -297,7 +300,7 @@ test('MARTIAL2 THE WEAPON PAST 100: online, each effective point of the climb - 
     assert.equal(blow100(lsw, lb, foe({ warded: true })), 100, 'nor the Warden\'s ward');
     lb._mentor = { level: 3 }; assert.equal(blow100(lsw, lb, foe()), 100, 'mentoring'); lb._mentor = null;
     lb.isInBeastForm = true; assert.equal(blow100(lsw, lb, foe()), 100, 'the beast'); lb.isInBeastForm = false;
-    setSigilDueling(true); assert.equal(blow100(lsw, lb, foe()), 100, 'a refereed fight'); setSigilDueling(false);
+    setSigilDueling(true); try { assert.equal(blow100(lsw, lb, foe()), 100, 'a refereed fight'); } finally { setSigilDueling(false); }
     assert.equal(blow100(lsw, { ...lb, peer: 'x' }, foe()), 100, 'a peer\'s stand-in');
     const unmastered = fighter([], 100); unmastered.skills[LB] = 200;
     assert.equal(blow100(lsw, unmastered, foe()), 100, 'only a mastered skill climbs');
@@ -358,15 +361,18 @@ test('MARTIAL2 + BAL10 THE SWING: every short blade handles as the Dagger in all
 test('BAL10 THE FISTS: a player\'s bare-handed blow reads the blow modifiers in both cores, with the host\'s word - never the beast\'s claws, never a foe\'s fists (mutants: the stock arm unread; the overhaul\'s; the claws read)', () => {
   reset();
   const seen = [];
+  const p = fighter(); p.skills[HH] = 50;
+  const target = foe({ careerIndex: 7 });
+  // AUDIT MARTIAL L5 L2: the same roll with the probe off, so "it landed" is the probe's 7 and nothing else
+  const without = calculateAttackDamage({ ...p, isPlayer: true }, target, { rolls: () => 0, unaware: true });
+  const withoutO = pcaaoHandToHandAttackDamage(p, target, 0, true, () => 0, { unaware: false });
   registerWeaponBlowMod('bal10-probe', (w, d, a, t, info) => { seen.push([w, info?.unaware ?? null]); return d + 7; });
   try {
-    const p = fighter(); p.skills[HH] = 50;
-    const target = foe({ careerIndex: 7 });
     const plain = calculateAttackDamage({ ...p, isPlayer: true }, target, { rolls: () => 0, unaware: true });
     assert.deepEqual(seen.at(-1), [null, true], 'the stock core: the fists, with the host\'s word');
-    assert.ok(plain >= 8, `the modifier landed (${plain})`);
+    assert.equal(plain, without + 7, 'the modifier landed whole');
     seen.length = 0;
-    assert.equal(pcaaoHandToHandAttackDamage(p, target, 0, true, () => 0, { unaware: false }) > 0, true);
+    assert.equal(pcaaoHandToHandAttackDamage(p, target, 0, true, () => 0, { unaware: false }), withoutO + 7);
     assert.deepEqual(seen, [[null, false]], 'the overhaul\'s core too');
     seen.length = 0;
     pcaaoHandToHandAttackDamage({ ...p, isInBeastForm: true }, target, 0, true, () => 0);
@@ -470,7 +476,7 @@ test('MARTIAL4 THE PASSIVES: each through its own seam, on both sides of its lin
   // asleep: a duel, mentoring, the beast
   reset();
   const cz = pathFighter('cutthroat');
-  setSigilDueling(true); assert.equal(blow100(w, cz, foe(), { unaware: true }), 100); setSigilDueling(false);
+  setSigilDueling(true); try { assert.equal(blow100(w, cz, foe(), { unaware: true }), 100); } finally { setSigilDueling(false); }
   cz._mentor = { level: 2 }; assert.equal(blow100(w, cz, foe(), { unaware: true }), 100); cz._mentor = null;
   cz.isInBeastForm = true; assert.equal(blow100(w, cz, foe(), { unaware: true }), 100);
 });
@@ -478,6 +484,7 @@ test('MARTIAL4 THE PASSIVES: each through its own seam, on both sides of its lin
 test('MARTIAL3 THE RIDERS: each through the one landing door both resolutions tell, on a foe of mine alone - and the door told by the swing\'s resolveHit and the shaft\'s playerArrowHitFoe (mutants: each rider\'s number; another path\'s form answered; the tell dropped from either resolution)', () => {
   const rec = (name, ent) => ({ name, entity: ent, ai: { feet: [0, 0, 1] }, dead: false });
   const land = (id, f, damage, use = {}) => tellTechniqueLanded({ id, use }, f, damage);
+  const used = (id, ent) => tellTechniqueUsed(id, {}, ent);   // PIN MOVED (AUDIT MARTIAL L1 L3): a window opens as the press goes
   // Blademaster: cut again for half
   reset();
   let me = pathFighter('blademaster'); let o = rec('o', foe()); let d = door([o], me);
@@ -485,7 +492,7 @@ test('MARTIAL3 THE RIDERS: each through the one landing door both resolutions te
   land('cyclone', o, 20); assert.deepEqual(d.hurts, [['o', 10]], 'another path\'s form answers nothing');
   // Warblade: 15% harder for 8 s
   reset(); me = pathFighter('warblade'); o = rec('o', foe()); door([o], me);
-  land('rallyingCleave', o, 10);
+  used('rallyingCleave', me);
   const w = weapon(WEAPONS.Longsword);
   assert.equal(blow100(w, me, foe()), 115); _clock += 8.01; assert.equal(blow100(w, me, foe()), 100);
   // Vanguard: 4% of my health a foe, from three at most
@@ -499,12 +506,13 @@ test('MARTIAL3 THE RIDERS: each through the one landing door both resolutions te
   assert.equal(blow100(weapon(WEAPONS.Long_Bow), me, prey), 120); _clock += 12.01; assert.equal(blow100(weapon(WEAPONS.Long_Bow), me, prey), 100);
   // Bladedancer: 20% quicker for 6 s
   reset(); me = pathFighter('bladedancer'); o = rec('o', foe()); door([o], me);
-  land('cyclone', o, 10); assert.equal(POW.martialPace({ entity: me }), 20);
+  used('cyclone', me); assert.equal(POW.martialPace({ entity: me }), 20);
   _clock += 6.01; assert.equal(POW.martialPace({ entity: me }), 0);
-  // Bloodletter: a foe left under 25% takes it again
-  reset(); me = pathFighter('bloodletter'); o = rec('o', foe({ health: 30 })); const p26 = rec('p', foe({ health: 31 })); d = door([o, p26], me);
-  land('guttingLunge', o, 6); assert.deepEqual(d.hurts, [['o', 6]], '24 of 100 left');
-  land('guttingLunge', p26, 5); assert.deepEqual(d.hurts, [['o', 6]], '26 left: nothing');
+  // Bloodletter: a foe already under 25% takes it again (PIN MOVED, AUDIT MARTIAL L1 M1: its health before the blow - the
+  // pool's door lands the blow after, and may land less)
+  reset(); me = pathFighter('bloodletter'); o = rec('o', foe({ health: 24 })); const p25 = rec('p', foe({ health: 25 })); d = door([o, p25], me);
+  land('guttingLunge', o, 6); assert.deepEqual(d.hurts, [['o', 6]], '24 of 100');
+  land('guttingLunge', p25, 5); assert.deepEqual(d.hurts, [['o', 6]], '25 of 100, on the line: nothing');
   // Cutthroat: a foe that had not noticed me takes it twice
   reset(); me = pathFighter('cutthroat'); o = { ...rec('o', foe()), ai: { feet: [0, 0, 1], detected: false } }; d = door([o], me);
   land('blackjack', o, 12); assert.deepEqual(d.hurts, [['o', 12]]);
@@ -518,21 +526,22 @@ test('MARTIAL3 THE RIDERS: each through the one landing door both resolutions te
   reset(); me = pathFighter('shadowdancer'); me.health = me.maxHealth = 1000; door([], me);
   POW._setMartialPowersRandForTests(() => 0.33);
   setStruck(foe(), me, 10); hurtPlayer(me, 10); assert.equal(me.health, 990, 'before it, nothing evaded');
-  land('phantomStrike', rec('o', foe()), 10);
+  used('phantomStrike', me);
   setStruck(foe(), me, 10); hurtPlayer(me, 10); assert.equal(me.health, 990, 'one in three: missed');
   _clock += 6.01; setStruck(foe(), me, 10); hurtPlayer(me, 10); assert.equal(me.health, 980, 'the window ends');
   // Juggernaut: foes' blows 25% lighter for 10 s
   reset(); me = pathFighter('juggernaut'); door([], me);
-  land('earthsplitter', rec('o', foe()), 10);
+  used('earthsplitter', me);
   me.health = me.maxHealth = 1000;
   setStruck(foe(), me, 100); hurtPlayer(me, 100); assert.equal(me.health, 925);
-  // Woodsman: a foe it fells restores 10% of my health
+  // Woodsman: a foe it fells restores 10% of my health - the kill's word (PIN MOVED, AUDIT MARTIAL L1 M1)
   reset(); me = pathFighter('woodsman'); me.health = 100; door([], me);
-  land('fellingStrike', rec('o', foe({ health: 10 })), 9); assert.equal(me.health, 100, 'not felled');
-  land('fellingVolley', rec('o', foe({ health: 10 })), 10); assert.equal(me.health, 120, '10% of 200');
+  const tree = foe({ health: 10 });
+  land('fellingStrike', rec('o', tree), 9); assert.equal(me.health, 100, 'not felled');
+  reportPlayerKill(tree); assert.equal(me.health, 120, '10% of 200, its kill');
   // Berserker: 10% of every landed blow heals for 8 s
   reset(); me = pathFighter('berserker'); me.health = 100; door([], me);
-  land('savageWhirl', rec('o', foe()), 10);
+  used('savageWhirl', me);
   POW.martialStrike(me, foe(), 50); assert.equal(me.health, 105);
   // Crusader: undead and daedra take half again
   reset(); me = pathFighter('crusader'); o = rec('o', foe({ careerIndex: 15 })); const man = rec('man', foe()); d = door([o, man], me);
@@ -550,12 +559,11 @@ test('MARTIAL3 THE RIDERS: each through the one landing door both resolutions te
   assert.equal(me.fatigue, 3 * Math.round(maxFatigue(me) * 0.05));
   // never a player, never asleep
   reset(); me = pathFighter('blademaster'); const pl = rec('p', { ...foe(), isPlayer: true }); o = rec('o', foe()); d = door([pl, o], me);
-  land('thousandCuts', pl, 20); setSigilDueling(true); land('thousandCuts', o, 20); setSigilDueling(false);
+  land('thousandCuts', pl, 20); setSigilDueling(true); try { land('thousandCuts', o, 20); } finally { setSigilDueling(false); }
   assert.deepEqual(d.hurts, []);
   // THE TELL: the swing's one resolution and the shaft's
-  reset(); me = pathFighter('blademaster'); playerEntity.martialPath = null;
+  reset(); me = pathFighter('blademaster');
   const told = [];
-  const prev = { ...me };
   const pw = new PlayerWeapon({ weapon: w, liveSpeed: 50 });
   pw.techniqueBlow = { id: 'thousandCuts', mult: 1, reach: 3, arc: 'all', feet: [0, 0, 0], yaw: 0, use: {} };
   const struck = rec('s', foe());
@@ -567,15 +575,15 @@ test('MARTIAL3 THE RIDERS: each through the one landing door both resolutions te
   reset(); me = pathFighter('ranger'); const deer = foe({ careerIndex: 0 }); const rd = rec('d', deer); door([rd], me);
   playerArrowHitFoe(shaft, rd, { playerEntity: me, rolls: () => 0 });
   assert.equal(blow100(weapon(WEAPONS.Long_Bow), me, deer), 140, 'playerArrowHitFoe told the landing: the mark (20) on a beast (20)');
-  assert.ok(prev && told.length === 1);
 });
 
 test('BAL10 THE FIRMAMENT: every weapon family two notables that raise its skill - Axe and Blunt a third - stats moved, never a key; no sign passes a cap (mutants: a notable\'s skill dropped)', () => {
   const named = (name) => [...FIRM_NODES.values()].find((n) => n.name === name);
-  assert.deepEqual({ ...named('Blade Dancer').stats }, { longDmg: 4, 'skill.LongBlade': 4 });
-  assert.deepEqual({ ...named('Iron Knuckles').stats }, { fistDmg: 5, 'skill.HandToHand': 4, strength: 1 });
-  assert.deepEqual({ ...named('Headsman').stats }, { axeDmg: 5, 'skill.Axe': 5 });
-  assert.deepEqual({ ...named('Bonebreaker').stats }, { bluntDmg: 5, 'skill.BluntWeapon': 5 });
+  // PIN MOVED (AUDIT MARTIAL L2 F9): each skill notable keeps every stat it had, the skill beside it
+  assert.deepEqual({ ...named('Blade Dancer').stats }, { longDmg: 4, speed: 2, 'skill.LongBlade': 4 });
+  assert.deepEqual({ ...named('Iron Knuckles').stats }, { fistDmg: 5, strength: 3, 'skill.HandToHand': 4 });
+  assert.deepEqual({ ...named('Headsman').stats }, { axeDmg: 4, strength: 3, 'skill.Axe': 5 });
+  assert.deepEqual({ ...named('Bonebreaker').stats }, { bluntDmg: 4, meleeDmg: 2, 'skill.BluntWeapon': 5 });
   assert.deepEqual({ ...named('Carnage').stats }, { killHeal: 2, axeDmg: 4 });
   assert.deepEqual({ ...named("Templar's Mace").stats }, { bluntDmg: 5, spellPower: 4 });
   assert.equal(named("Battlemage's Focus"), undefined, 'renamed - the Elite Gates\' Vestige keeps the name');
@@ -603,5 +611,8 @@ test('MARTIAL THE SEAMS: every host\'s rig registers the powers; the one ask, th
   // BAL10: both mods' arms hand the swing reader's word on, and the sheet's estimate reads the fists' modifiers as the cores do
   assert.match(src('src/systems/roleplayRealismItems/rriKits.js'), /shortBlade: !melee && techniqueFamily\(weapon\) === 'shortBlade',/);
   assert.match(src('src/systems/roleplayRealism/rrInstall.js'), /weight, shortBlade: !!w\?\.shortBlade \}\);/);
-  assert.match(src('src/combat/combatStats.js'), /return entity\.isInBeastForm \? d : weaponBlowMods\(null, d, entity, foe, \{ unaware: false \}\);/);
+  assert.match(src('src/combat/combatStats.js'), /return entity\.isInBeastForm \? d : weaponBlowMods\(null, d, entity, foe, ESTIMATE\);/);   // PIN MOVED (AUDIT MARTIAL L2 F7): the estimate's own word
 });
+
+// AUDIT MARTIAL L5 L2: every hook back at its rest when the file ends, whatever a test left
+after(() => { reset(); POW._setMartialPowersClockForTests(null); });

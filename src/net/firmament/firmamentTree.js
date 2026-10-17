@@ -33,7 +33,9 @@
 // fist's second; Headsman and Bonebreaker the Axe's and the Blunt Weapon's (the thinnest two, one skill notable each, in the
 // one sign); and Carnage (the Warrior's) and the Ritual's Templar's Mace (Battlemage's Focus until then)
 // a third each. Stats moved, never a key nor a star: the layout, the keys' hash and every build code stand, and no channel
-// of any sign passes its cap (test/net/firmament/firm2_balance.test.js).
+// of any sign passes its cap (test/net/firmament/firm2_balance.test.js). AUDIT MARTIAL L2 F9: the four skill notables keep
+// every stat they had and gain the skill beside it - a skill line buys to-hit alone, which PCAAO clamps at 97 from about
+// 65 (the arc's own section 2), so a stat traded for one was a stat lost to every fighter past it.
 //
 // PURE and import-free: the account Worker bundles it (account-deploy.yml's path filter) and the client draws it. The
 // table is BUILT once at import from the authored spec below - deterministic, no randomness - and frozen.
@@ -165,11 +167,11 @@ const SKY = {
     start: { speed: 2 },
     roads: { s1: { speed: 2 }, s2: { strength: 3 }, g: { speed: 1, strength: 2 }, r1: { meleeDmg: 3 }, r2: { 'skill.LongBlade': 4 }, k1: { meleeDmg: 3 } },
     combat: [
-      { id: 'c1', tpl: 'wheel', n: 5, small: { longDmg: 2 }, notables: [N('Riposte', { longDmg: 6, 'skill.LongBlade': 6 }), N('Blade Dancer', { longDmg: 4, 'skill.LongBlade': 4 })] },
+      { id: 'c1', tpl: 'wheel', n: 5, small: { longDmg: 2 }, notables: [N('Riposte', { longDmg: 6, 'skill.LongBlade': 6 }), N('Blade Dancer', { longDmg: 4, speed: 2, 'skill.LongBlade': 4 })] },
       { id: 'c2', tpl: 'fork', n: 3, small: { meleeDmg: 2 }, notables: [N('Momentum', { meleeDmg: 5, speed: 2 }), N('Cavalier', { meleeDmg: 4, hp: 12 })] },
       { id: 'c3', tpl: 'wheel', n: 5, small: [{ endurance: 2 }, { hp: 5 }], notables: [N('Iron Lungs', { endurance: 5, hp: 10 }), N('Unflagging', { hpRegen: 2, endurance: 3 })] },
       { id: 'c4', tpl: 'chain', n: 4, small: { speed: 1 }, notables: [N('Lightning Reflexes', { speed: 3, evade: 2 })] },
-      { id: 'c5', tpl: 'wheel', n: 5, small: { fistDmg: 3 }, notables: [N('Pankration', { fistDmg: 8, 'skill.HandToHand': 8 }), N('Iron Knuckles', { fistDmg: 5, 'skill.HandToHand': 4, strength: 1 })] },
+      { id: 'c5', tpl: 'wheel', n: 5, small: { fistDmg: 3 }, notables: [N('Pankration', { fistDmg: 8, 'skill.HandToHand': 8 }), N('Iron Knuckles', { fistDmg: 5, strength: 3, 'skill.HandToHand': 4 })] },
       { id: 'c6', tpl: 'fork', n: 3, small: { 'skill.CriticalStrike': 3 }, notables: [N('Precision', { weaponDmg: 4, 'skill.CriticalStrike': 5 }), N("Fencer's Footwork", { 'skill.Dodging': 6, evade: 2 })] },
       { id: 'c7', tpl: 'wheel', n: 4, small: { speed: 1 }, notables: [N("The Steed's Stride", { speed: 3, 'skill.Running': 4 })] },
     ],
@@ -188,9 +190,9 @@ const SKY = {
     start: { strength: 1, endurance: 1 },
     roads: { s1: { strength: 3 }, s2: { endurance: 3 }, g: { strength: 2, endurance: 2 }, r1: { hp: 2 }, r2: { blowTaken: -1 }, k1: { armor: 1 } },
     combat: [
-      { id: 'c1', tpl: 'wheel', n: 5, small: { axeDmg: 2 }, notables: [N('Cleaver', { axeDmg: 6, 'skill.Axe': 6 }), N('Headsman', { axeDmg: 5, 'skill.Axe': 5 })] },
+      { id: 'c1', tpl: 'wheel', n: 5, small: { axeDmg: 2 }, notables: [N('Cleaver', { axeDmg: 6, 'skill.Axe': 6 }), N('Headsman', { axeDmg: 4, strength: 3, 'skill.Axe': 5 })] },
       { id: 'c2', tpl: 'fork', n: 3, small: { armor: 1 }, notables: [N('Walking Fortress', { armor: 3, blowTaken: -3 }), N('Shield Wall', { blowTaken: -2, hp: 10 })] },
-      { id: 'c3', tpl: 'wheel', n: 5, small: { bluntDmg: 2 }, notables: [N('Crushing Blows', { bluntDmg: 6, 'skill.BluntWeapon': 6 }), N('Bonebreaker', { bluntDmg: 5, 'skill.BluntWeapon': 5 })] },
+      { id: 'c3', tpl: 'wheel', n: 5, small: { bluntDmg: 2 }, notables: [N('Crushing Blows', { bluntDmg: 6, 'skill.BluntWeapon': 6 }), N('Bonebreaker', { bluntDmg: 4, meleeDmg: 2, 'skill.BluntWeapon': 5 })] },
       { id: 'c4', tpl: 'chain', n: 4, small: { meleeDmg: 2 }, notables: [N('Warlord', { meleeDmg: 5, strength: 4 })] },
       { id: 'c5', tpl: 'wheel', n: 5, small: { hp: 4 }, notables: [N("Troll's Blood", { hpRegen: 3, hp: 8 }), N("Giant's Heart", { hp: 18, endurance: 3 })] },
       { id: 'c6', tpl: 'fork', n: 3, small: { killHeal: 1 }, notables: [N('Carnage', { killHeal: 2, axeDmg: 4 }), N('Reaver', { rageDmg: 7, strength: 2 })] },

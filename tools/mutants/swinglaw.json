@@ -135,8 +135,8 @@
   {
     "name": "SWING-LAW-the-reader-reads-the-right-hand-always",
     "file": "src/combat/swingLaw.js",
-    "old": "  const item = slots?.[ctx.usingRightHand === false ? EQUIP_SLOTS.LeftHand : EQUIP_SLOTS.RightHand] ?? null;",
-    "new": "  const item = slots?.[EQUIP_SLOTS.RightHand] ?? null;",
+    "old": "const handItem = (entity, ctx) => entity.equip?.slots?.[ctx.usingRightHand === false ? EQUIP_SLOTS.LeftHand : EQUIP_SLOTS.RightHand] ?? null;",
+    "new": "const handItem = (entity, ctx) => entity.equip?.slots?.[EQUIP_SLOTS.RightHand] ?? null;",
     "tests": [
       "test/systems/swinglaw.test.js"
     ]

@@ -60,13 +60,21 @@ nothing a player could see. That is where the identity goes.
 (`arcanePaths.js`), one for one.
 
 - **Who.** A player with Master Skills in force (online always; offline the switch - SOFTCAP3) and at least two of the
-  six weapon skills mastered. A class whose career holds fewer than two of them never meets a path (`martialPossible`;
-  the enhanced page shows it no Martial card).
+  six weapon skills mastered. A class that can never master two of them never meets a path (`martialPossible`, by
+  `masterSkills.js` masterableCount - the ones mastered and as many more as each career group's 2/2/1 slots leave; the
+  enhanced page shows it no Martial card). AUDIT MARTIAL L4 L3: it counted the career's weapon skills alone, so two that
+  were both minor skills - one minor slot between them - showed the card for good; the arcane `pathPossible` the same,
+  and both now read the slots.
 - **The choice.** Any pair of the player's mastered weapon skills names one path (section 5); with three mastered, the
   player picks among their pairs. `entity.martialPath` holds the path's id. **PERMANENT** - nothing undoes it, as nothing
   undoes a mastery. Asked ONCE on the first quiet pass after the second weapon is mastered (`scenes/shared.js`
   raisePlayerSkills - after a mastery's own box and after the arcane path's ask, one box a pass; one path open is asked
-  about, several are named and sent to the skill screen - AUDIT SCHOOLS L4 M1's law). Any time after, on the skill screen:
+  about, several are named and sent to the skill screen - AUDIT SCHOOLS L4 M1's law). The box asks "Martial
+  specialisation: {name}?" - never the arcane ask's own "Specialise as {name}?" (AUDIT MARTIAL L4 L4: a spellsword
+  holding an arcane path read the second ask as replacing the first) - and Yes says one short line, "Martial
+  specialisation chosen: {name}." (AUDIT MARTIAL L4 M1: the classic sheet's notice and the HUD draw it unwrapped in 312
+  px, and the technique's sentence ran past the screen in every language; the arcane line's spell sentence the same,
+  shortened with it). Any time after, on the skill screen:
   classic, the W row under the Specialisation row on each skill page (the sheet takes raw codes; S is the arcane row's);
   enhanced, the Master Skills page's Martial Specialisation card under the arcane one, the door's count beside Master
   Skills.
@@ -77,7 +85,10 @@ nothing a player could see. That is where the identity goes.
   sigilDueling) and not the beast (`isInBeastForm` - BAL6 balanced the curse on its own claws; the runner's own word,
   "the beast knows no technique").
 - **Never at a player.** A technique never meets a player's body (TECH law 3: neither resolution weighs one), every blow
-  modifier here refuses a player target, and a duel's blow at me passes my damage door without asking the port.
+  modifier, strike and rider here refuses a player target and the Warden's ward, and a duel's blow at me passes my
+  damage door without asking the port. What is MINE rather than a blow's is not refused (AUDIT MARTIAL L3 F4, L2 F8 -
+  KEPT, section 9): Light Step's and Windborne's attributes and the swing's pace ride a siege's and the Wild Zone's PvP
+  sheet as the Sigil Sets' do; only a duel and an arena bout (sigilDueling) put them to sleep.
 
 ## 4. MARTIAL2 - the weapons past 100
 
@@ -96,15 +107,22 @@ climb the foes' edge reads, so the climb that raises them is the climb that pays
 
 The two halves of a fight read as one: a foe killed from full health by blows of one size takes its first half at x1
 and its second at x1.8 (the Axe), x1.29 over the fight - so the heavy two-handers, which lead the six raw, climb a little
-less than the sword does.
+less than the sword does. ON A BODY THE RELAY RUNS the line is unread: the Warden, his crystals and host, the Remnant,
+the Elite Gates' court and the sea serpent are stand-ins whose health is a placeholder nothing here empties
+(`world/gate/gateBoss.js` bossStandIn, marked `relayHealth`), and each half pays the halves' mean there - x1.4, the
+sword's own (AUDIT MARTIAL L3 F2 / L2 F1: read as full, the hammer took its x1.8 on every blow of a boss fight and the
+axe never its own).
 
 **THE SWING PACE** (`characters/weaponStates.js` registerSwingPaceMod) - named modifiers `fn(ctx, w) -> percent`, as
 CAST-SPEED's rate (`castSpeed.js`): the swing's frame time is divided by 1 + their sum, at most `SWING_PACE_MOST` 50%,
 never under the swing law's floor (`SWING_FRAME_MIN`: no swing quicker than 0.45 s). Read at the one door every swing's
 frame time passes (`getMeleeWeaponAnimTime`), over whichever law answered - the port's, Roleplay & Realism's or its
 Items' - so all three arms are paced alike; asked only for a wielder the port knows (`ctx.entity`), with the swing
-reader's one answer (`combat/swingLaw.js` readSwing, which now names the swing's `family`). At Speed 100 a dagger
-already swings near the floor, so the Short Blade's pace there is less than x1.4 (recorded, section 9).
+reader's answer where the frame's law has read it (`combat/swingLaw.js` readSwing, which now names the swing's
+`family`) - else a modifier reads the weapon itself, and only once it may pay: the Short Blade's asks its climb first,
+then the swing's family alone (`swingLaw.js` swingFamily - AUDIT MARTIAL L2 F3: the reader built a record for every
+swing frame of every wielder on a mod's arm). At Speed 100 a dagger already swings near the floor, so the Short Blade's
+pace there is less than x1.4 (recorded, section 9).
 
 Online alone, as BAL9b and SCHOOLS2: offline the game is Daggerfall's. MY blow at a foe - never a player, never the
 Warden's ward, never in a refereed fight, never while mentoring, never the beast's claws.
@@ -117,27 +135,43 @@ with a bow and strikes with its other weapon; the forms share one cooldown.
 
 | path | skills | passive | signature technique (its forms) | rider |
 | --- | --- | --- | --- | --- |
-| Blademaster | Long Blade + Short Blade | **Flowing Steel**: each blow that lands builds a stack for 4 s, 3% more damage a stack, at most 5 | **Thousand Cuts** - dash 5 m striking every foe passed, x1.0 | every foe it strikes is cut again for half |
-| Warblade | Long Blade + Axe | **War Rhythm**: a kill quickens the swings 15% for 10 s | **Rallying Cleave** - every foe in an 80-degree arc, x1.1 | when it strikes, blows land 15% harder for 8 s |
+| Blademaster | Long Blade + Short Blade | **Flowing Steel**: each blow or arrow that lands builds a stack for 4 s, 3% more damage a stack, at most 5 (a whole blow: an off-hand one counts its share, the loot's Flow's law - AUDIT MARTIAL L1 L2) | **Thousand Cuts** - dash 5 m striking every foe passed, x1.0 | every foe it strikes is cut again for half |
+| Warblade | Long Blade + Axe | **War Rhythm**: a kill quickens the swings 15% for 10 s | **Rallying Cleave** - every foe within 80 degrees either side of the look (a 160-degree sweep), x1.1 | from the press, blows and arrows land 15% harder for 8 s |
 | Vanguard | Long Blade + Blunt Weapon | **Iron Discipline**: foes' blows land 10% lighter (whole points, the fraction carried) | **Judgement** - leap up to 8 m onto a foe, every foe within 2.5 m, x1.3 | each foe struck restores 4% of my health, from 3 at most |
 | Ranger | Long Blade + Archery | **Hunter's Instinct**: blows and arrows strike beasts 20% harder (the loot's one foe group - a class foe is a man) | **Mark of the Hunt** - bow: a shot through 3 foes, x1.2; blade: a pounce up to 8 m, x1.3 | each foe struck is marked 12 s: my blows and arrows at it 20% harder |
-| Bladedancer | Long Blade + Hand-to-Hand | **Dancer's Step**: one foe blow in 10 misses (a blow evasion, asked before any modifier) | **Cyclone** - every foe within 3 m around, x1.0 | the swings quicken 20% for 6 s |
-| Bloodletter | Short Blade + Axe | **Bloodlust**: each kill restores 5% of my health | **Gutting Lunge** - dash 5 m striking every foe passed, x1.2 | a foe it leaves under 25% of its health takes the blow again |
-| Cutthroat | Short Blade + Blunt Weapon | **Cheap Shot**: blows at a foe that has not noticed me 25% harder | **Blackjack** - one heavy blow at the nearest foe before me, +30 to hit, x1.4 | a foe that had not noticed me takes it twice |
+| Skirmisher (id `bladedancer`) | Long Blade + Hand-to-Hand | **Dancer's Step**: one foe blow in 10 misses (a blow evasion, asked before any modifier) | **Cyclone** - every foe within 3 m around, x1.0 | from the press, the swings quicken 20% for 6 s |
+| Bloodletter | Short Blade + Axe | **Bloodlust**: each kill restores 5% of my health | **Gutting Lunge** - dash 5 m striking every foe passed, x1.2 | a foe already under 25% of its health takes the blow again |
+| Cutthroat | Short Blade + Blunt Weapon | **Cheap Shot**: blows and arrows at a foe that has not noticed me 25% harder | **Blackjack** - one heavy blow at the nearest foe before me, +30 to hit, x1.4 | a foe that had not noticed me takes it twice |
 | Assassin | Short Blade + Archery | **Opening Strike**: my first landed blow or arrow at each foe 30% harder | **Vanishing Strike** - bow: one heavy shot, x1.6; blade: a dash behind a foe, x1.3 | when it lands I fade: Chameleon, 4 rounds (once a press) |
-| Shadowdancer | Short Blade + Hand-to-Hand | **Light Step**: +10 Agility, +15 Dodging | **Phantom Strike** - a dash behind a foe up to 8 m, x1.2 | for 6 s one foe blow in 3 misses |
-| Juggernaut | Axe + Blunt Weapon | **Stand Firm**: a hurt that crosses 30% of my health heals 20% of it; ready again after 3 minutes | **Earthsplitter** - every foe within 3.5 m around, x1.0 | for 10 s foes' blows land 25% lighter |
-| Woodsman | Axe + Archery | **Tireless**: each kill restores 15% of my fatigue | **Felling Strike** - bow: 5 arrows rain on a spot, x0.6 each; axe: a leap up to 8 m, x1.3 | each foe it fells restores 10% of my health |
-| Berserker | Axe + Hand-to-Hand | **Frenzy**: below half my health, blows 20% harder and swings 10% quicker | **Savage Whirl** - every foe within 3 m around, x1.2 | for 8 s, 10% of every blow I land heals me |
+| Shadowdancer | Short Blade + Hand-to-Hand | **Light Step**: +10 Agility, +15 Dodging | **Phantom Strike** - a dash behind a foe up to 8 m, x1.2 | from the press, for 6 s one foe blow in 3 misses |
+| Juggernaut | Axe + Blunt Weapon | **Stand Firm**: a hurt that crosses 30% of my health heals 20% of it; ready again after 3 minutes | **Earthsplitter** - every foe within 3.5 m around, x1.0 | from the press, for 10 s foes' blows land 25% lighter |
+| Woodsman | Axe + Archery | **Tireless**: each kill restores 15% of my fatigue | **Felling Strike** - bow: 5 arrows rain on a spot, x0.6 each; axe: a leap up to 8 m, x1.3 | each foe it fells (the kill's own word, within the loot's 1-second felling bound) restores 10% of my health |
+| Berserker | Axe + Hand-to-Hand | **Frenzy**: below half my health, blows and arrows 20% harder and swings 10% quicker | **Savage Whirl** - every foe within 3 m around, x1.2 | from the press, for 8 s, 10% of what every blow I land took heals me |
 | Crusader | Blunt Weapon + Archery | **Purge**: blows and arrows at undead and daedra 20% harder | **Hallowed Strike** - bow: a shot through 3 foes, x1.2; mace: one heavy blow, +25 to hit, x1.5 | undead and daedra it strikes take half again |
 | Brawler | Blunt Weapon + Hand-to-Hand | **Grit**: each magic round, 1% of my health and 2% of my fatigue back | **Knockout** - one heavy blow at the nearest foe before me, +30 to hit, x1.6 | for 8 s the foe it strikes hits me 30% lighter |
-| Windrunner | Archery + Hand-to-Hand | **Windborne**: +10 Speed, +15 Running, +15 Jumping | **Windstrike** - bow: 6 arrows rain on a spot, x0.5 each; fists: a flying kick up to 7 m, from the air too, x1.2 | each foe struck restores 5% of my fatigue, from 3 at most |
+| Strider (id `windrunner`) | Archery + Hand-to-Hand | **Windborne**: +10 Speed, +15 Running, +15 Jumping | **Windstrike** - bow: 6 arrows rain on a spot, x0.5 each; fists: a flying kick up to 7 m, from the air too, x1.2 | each foe struck restores 5% of my fatigue, from 3 foes at most (foes, never shafts) |
 
 Every percent a path lays on a blow is at most `MARTIAL_BLOW_MOST` 40 together (the Ranger's beast and mark are the
 most any path reaches); a heal never passes its maximum (`playerHeal.js` healMine); a rider's second blow goes through the
 host's own door (`playerDoor.js` hurtFoe - its pool, a kill mine), and on a body the relay runs it is owed to the claim
-its blow sends (`oweFoe`, the loot's `again` law). Stand Firm answers a hurt that CROSSES its line, never a death a death
-save turned aside (`saved` - the Vigil's and Absolution's rule). The numbers are a first cut, every one in one table
+its blow sends (`oweFoe`, the loot's `again` law), its number shown either way. Stand Firm answers a hurt that CROSSES its line, never a death a death
+save turned aside (`saved` - the Vigil's and Absolution's rule).
+
+AUDIT MARTIAL changed the table where the code and the words parted:
+- **Nothing guesses what the pool's door leaves** (L1 M1). The riders are told before the pool's own door lands the
+  blow, and the door may land less (a party's toughness, the foe's Shield, a bout's floor). Felling Strike's heal is
+  the kill's word now (`martialKill`, within `lootPowers.js` TOLL_REFUND_S of its landing - the Undertow's law, AUDIT
+  WORLD-REWARDS B2); Gutting Lunge reads the foe's health before the blow ("already under"); Thousand Cuts, Blackjack and
+  Hallowed Strike's second blows go as the loot's `again` does, the door deciding - a corpse takes no blow
+  (`exteriorFoes.js` and `dungeonContext.js` damageFoe, AUDIT 68 S19/S20).
+- **A window opens as the press goes** (L1 L3, L1 L7). Rallying Cleave's, Cyclone's, Phantom Strike's, Earthsplitter's
+  and Savage Whirl's windows are told by the press (`techniqueBlow.js` registerTechniqueUsedListener, from the runner's
+  `pay`), so a sweep's every foe and a whiff share them; told at a landing, a cleave's second foe took its +15% and its
+  first did not.
+- **"At most three foes" counts foes** (L1 L1 / L2 F6 / L5 M5): a volley's shafts on one foe are one.
+- **No rider answers a foe no kill counts** (L1 L5) - the City Watch, my own summon (`neverCounts`).
+- **The two new names** (L4 N2): the Bladedancer is the Skirmisher and the Windrunner the Strider - the Firmament had a
+  Blade Dancer notable and a Wind Runner keystone first. The ids stand (a save's). The numbers are a first cut, every one in one table
 (`MARTIAL_NUMBERS`; the forms' in the forms' table), pinned literally, so a balance pass moves one number and one pin.
 
 ## 6. The signature techniques
@@ -151,14 +185,22 @@ save turned aside (`saved` - the Vigil's and Absolution's rule). The numbers are
   the family in hand (`martialPaths.js` signatureFor - the bare hand Hand-to-Hand's, whatever gloves are worn; a
   gauntlets' own line still wins bare-handed). Never the beast's claws, never the Thunderlock (a gun is no bow's), never a
   weapon outside the pair. A signature needs no loot ladder (Loot-II law 6 sleeps a FOUND line; a path's signature is
-  none) - the refusal and the HUD chip both say so. Its value is none: a signature is its base, as a line's power is
-  its own.
+  none) - the refusal and the HUD chip both say so; and a found line asleep leaves the key FREE, so with the ladder off a
+  held path's signature answers it on a lined weapon too (AUDIT MARTIAL L4 L6: the line refused the key with the ladder's
+  words, and the words promised the signature). Its value is none: a signature is its base, as a line's power is its
+  own. The runner's English status lines name it in English (each form's `en` - AUDIT MARTIAL L4 N1); the chip names it
+  in the player's language, kept a text revision (`textManager.js` textRevision - AUDIT MARTIAL L1 L6 / L2 F2: the
+  name's getter built the path's six lines a frame).
 - **One cooldown a path.** The runner's cooldown slots grow one a path (`sig:<path>`), shared by its forms - a Ranger's
   shot and pounce are one clock, whichever weapon is in hand; no loot technique's clock moves.
 - **The rider.** A new listener on the two resolutions every host shares (`technique/techniqueBlow.js`
   registerTechniqueLandedListener, told by `playerWeapon.js` resolveHit and `arrowFlight.js` playerArrowHitFoe once for
   each foe a technique's blow reached, before the pool's own door lands it), with a `use` token every blow and shaft of
-  one press carries (`techniques.js` execute), so "three foes at most" and "once a press" count a press.
+  one press carries (`techniques.js` execute), so "three foes at most" and "once a press" count a press - its distinct
+  foes (AUDIT MARTIAL L1 L1). A press is told too, as its price is paid (`registerTechniqueUsedListener`), for the
+  windows (section 5). A shaft into the sea serpent's hide is weighed by its form and told as a foe's is
+  (`arrowFlight.js` shaftOnRelayBody, the follow-ups it owes riding the hand's one claim - AUDIT MARTIAL L2 F5, AUDIT
+  SCHOOLS L2 F4's spell for the shaft).
 
 ## 7. No judge's finding
 
@@ -168,6 +210,16 @@ Arcane page's section 7: a pre-SOFTCAP4 save can hold a skill past 100 unmastere
 forged `martialPath` without its masteries grants nothing; one with forged masteries passes a finding as easily. A
 finding would move the service's version through thirty-three pinned files and stop nothing. The save carries the
 field (`systems/save/save.js` martialPath, martialPrompted; an id no table holds restores as none).
+
+AUDIT MARTIAL L3 F5 - OPEN, the owner's (SCHOOLS L3 F3's question, which MARTIAL2 makes pay on every weapon): a forged
+save listing every weapon skill mastered at 200 judges clean and takes every weapon's past-100 bonus in PvE (never a
+player: every PvP strike is the referee's stub). A judge check that the masteries obey their own 2/2/1 law would cap a
+forgery at the honest most, not stop it, and move the account version.
+
+AUDIT MARTIAL L3 F1: an OLDER build drops `martialPath` (a key it never knew), and the new build, finding none, asked
+again - a second choice of a permanent one. The save writes a MIRROR into the one record every build carries whole
+(`career.martialMirror`, `{ path, of }` - the character's id beside it, so an heir's inherited custom career gives
+nothing), read back, already asked, only from a save with no `martialPath` key at all; the live career never holds it.
 
 ## 8. The seams, and the four hosts
 
@@ -182,7 +234,8 @@ field (`systems/save/save.js` martialPath, martialPrompted; an id no table holds
   `scenes/world.js`, `scenes/worldModes.js` (interiors) and `scenes/dungeonContext.js` (dungeons). It imports
   `martialPowers.js`; the technique runner it steps (`combat/techniques.js`) is every host's; the riders hear the swing's
   and the shaft's shared resolutions.
-- `combat/techniques.js` - the signature in hand, the cooldown slots, the ladder's gate, the `use` token.
+- `combat/techniques.js` - the signature in hand, the cooldown slots, the ladder's gate, the `use` token, the press told.
+- `combat/technique/techniqueBlow.js` - the landing's and the press's listeners; `combat/arrowFlight.js` shaftOnRelayBody.
 - `characters/weaponStates.js` - the swing pace; `combat/swingLaw.js` - the swing's family.
 - `scenes/shared.js` - the ask; `ui/charsheet.js` and `ui/enhanced/enhancedCharSheet.js` / `ui/enhanced/enhancedMenu.js` -
   the choice (the arcane card's own function draws both, `specCard`).
@@ -201,6 +254,20 @@ field (`systems/save/save.js` martialPath, martialPrompted; an id no table holds
 - **The beast** takes no path power, no weapon past 100 and no fist modifier: BAL6's claws stand as balanced.
 - **The Firmament's weapon keystones** were asked as notables: no star was added (a new star moves the sky's layout, its
   keys' hash and every shared build code); stats moved on six notables instead (BAL10, `Balance-Arc.md` section 16).
+- **The pace is laid over a mod's own answer** (AUDIT MARTIAL L5 N2): `getMeleeWeaponAnimTime` divides what Roleplay &
+  Realism's `TryGetOverride` arm answered, so the mods' arms are paced as the port's - a departure from DFU's override
+  contract (an override's answer is final there), taken so no arm escapes the pace.
+
+Recorded by AUDIT MARTIAL, not changed:
+- **The powers' memory outlives a character switch** by its windows' seconds (Stand Firm's recovery the longest), and a
+  reload starts every power ready - the sets', the loot's and the arcane paths' shared pattern (AUDIT SCHOOLS L1 L3).
+- **Open PvP** (a siege, the Wild Zone - no refereed fight): the paths' attributes and the swing's pace are mine, as the
+  sets' are (L3 F4 / L2 F8; AUDIT SCHOOLS L1 L4 kept the same). FIRM1 alone takes the sky off a PvP sheet.
+- **Gutting Lunge never fires on a body the relay runs** (its share unread), as the loot's execute and the arcane Blood
+  Boil do not.
+- **Found here, outside the arc, left for their own arcs:** the Firmament's `hpRegen`, the loot's `regen` and the arcane
+  Steadfast regrow health in the courts whose law bars regeneration (`courtRules.js` regenBarred - Grit now reads it, L3
+  F3); the loot's own leech counts the overkill Savage Whirl's no longer does (L1 L4).
 
 ## 10. Pinned
 
@@ -213,6 +280,14 @@ as the beast, at a player or the Warden; the short blades' handling in all three
 and floor; the fists' modifiers in both cores and never the claws; every passive through its seam (the damage door and
 the evasion through the real `hurtPlayer`); every rider through the landing door and the door told by the real
 `resolveHit` and `playerArrowHitFoe`; the Firmament's notables; the hosts' wiring by source.
+
+AUDIT MARTIAL (`01-Overview/audits/Audit-Martial.md`): `test/systems/audit_martial.test.js` (35) - every finding it
+fixed, by execution through the producers (the runner's own press, real foes, the save, the magic round, both cores'
+outer calls, both mods' arms, the Stats page, the relay's stand-in, the shaft's door, the sheet, the one ask, the
+enhanced pause window), every line on both sides and every window at its end; `tools/mutants/audit_martial.json` (112).
+PIN MOVED (AUDIT MARTIAL) in this file's: the riders' windows told by the press, Felling Strike's kill, Gutting Lunge at
+24 and 25 before the blow, a pre-arc save with no mirror, the four skill notables' kept stats, the estimate's word, the
+ask's title, the ladder-off signature; and `schools_arcane`'s chosen line.
 
 Mutants: `tools/mutants/martial.json` (119 - the arc's and BAL10's), every one dead but one recorded equivalent (a
 fall's evasion: the damage door asks an evasion only of a foe's blow, so the check is belt-and-braces, as the arcane

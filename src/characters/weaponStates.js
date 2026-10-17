@@ -104,10 +104,12 @@ export function swingFrameSeconds(speed, { heft = 1, handling = 1 } = {}) {
 // ── MARTIAL2 (bible/05-Combat/Martial-Specialisations.md section 4): THE SWING'S PACE ───────────────────────────────
 // A Short Blade mastered past 100 swings faster (systems/weaponMastery.js), and three martial paths quicken a swing for a
 // while (systems/martialPowers.js) - as CAST-SPEED's rate quickens a cast (systems/castSpeed.js). NAMED modifiers, each
-// `fn(ctx, w) -> percent` (`w` the swing reader's answer, read once a call, or null - a modifier never reads it again):
-// the frame's time is divided by 1 + their sum, at most SWING_PACE_MOST, and never under SWING_FRAME_MIN - no swing is
-// quicker than 0.45 s, whatever quickens it (SWING-LAW's floor). Asked only for a wielder the port knows (`ctx.entity`),
-// every frame of a swing: a list, never a Map's iterator.
+// `fn(ctx, w) -> percent` (`w` the swing reader's answer where the frame's law has read it already, else null - a
+// modifier that needs the weapon reads it itself, and only once it knows it may pay: AUDIT MARTIAL L2 F3, the reader is
+// no free call, and the override's arm read it again for every swing of every wielder): the frame's time is divided by 1 +
+// their sum, at most SWING_PACE_MOST, and never under SWING_FRAME_MIN - no swing is quicker than 0.45 s, whatever
+// quickens it (SWING-LAW's floor). Asked only for a wielder the port knows (`ctx.entity`), every frame of a swing: a
+// list, never a Map's iterator.
 /** The most every pace modifier together quickens a swing (%). */
 export const SWING_PACE_MOST = 50;
 /** @type {Array<[string, (ctx: any, w: any) => number]>} */
@@ -127,10 +129,10 @@ export function swingPacePct(ctx, w = null) {
   }
   return Math.min(SWING_PACE_MOST, pct);
 }
-/** A frame's time `t`, paced: the reader asked once, and only when a modifier stands. */
+/** A frame's time `t`, paced (`w` the reader's answer the law already read, or null). */
 function paced(t, ctx, w) {
   if (!ctx?.entity || _pace.length === 0 || !(t > 0)) return t;
-  const pct = swingPacePct(ctx, w ?? _swingReader?.(ctx) ?? null);
+  const pct = swingPacePct(ctx, w);
   return pct > 0 ? Math.max(SWING_FRAME_MIN, t / (1 + pct / 100)) : t;
 }
 

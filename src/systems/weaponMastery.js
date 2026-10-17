@@ -37,6 +37,7 @@ import { sigilDueling } from './sigil/sigil.js';
 import { SCHOOL_POTENCY_PER_POINT } from './spell/spellPower.js';   // CLIMB-PAST's one number: a point past 100 is 1%
 import { registerWeaponBlowMod } from './entityMods.js';
 import { registerSwingPaceMod } from '../characters/weaponStates.js';
+import { swingFamily } from '../combat/swingLaw.js';   // AUDIT MARTIAL L2 F3: the swing's family, no record built
 import { techniqueFamily } from '../combat/technique/techniqueRoster.js';
 
 /** Each effective point of a weapon's climb past 100 is this much more of what it does (BAL9b's per point). */
@@ -62,7 +63,11 @@ export function weaponClimb(entity, skill, { online = isOnlinePage() } = {}) {
   return c > SKILL_SOFT_CAP ? c - SKILL_SOFT_CAP : 0;
 }
 
-const share = (e) => (Number.isFinite(e?.health) && e.maxHealth > 0 ? e.health / e.maxHealth : 1);
+/** The struck foe's share of its health - null where this machine cannot know it: a body the relay runs, its health here
+ *  a placeholder nothing empties (world/gate/gateBoss.js bossStandIn `relayHealth` - the Warden, his crystals and host,
+ *  the Remnant, the Elite Gates' court, the sea serpent). AUDIT MARTIAL L3 F2: read as full, the hammer took its x1.8 on
+ *  every blow of a boss fight and the axe never its own. */
+const shareOf = (e) => (e?.relayHealth ? null : Number.isFinite(e?.health) && e.maxHealth > 0 ? e.health / e.maxHealth : 1);
 /** The percent MY blow with `weapon` at `target` lands harder for its skill past 100 (0 for a blow it does not pay). */
 export function weaponPastPct(weapon, attacker, target, opts = {}) {
   const skill = blowSkillOf(weapon);
@@ -70,8 +75,11 @@ export function weaponPastPct(weapon, attacker, target, opts = {}) {
   if (!(climb > 0)) return 0;
   switch (skill) {
     case SKILLS.LongBlade: case SKILLS.Archery: return climb * (WEAPON_POTENCY_PER_POINT * 100);
-    case SKILLS.Axe: return share(target) < WEAPON_HALF_LINE ? climb * (WEAPON_HALF_PER_POINT * 100) : 0;
-    case SKILLS.BluntWeapon: return share(target) >= WEAPON_HALF_LINE ? climb * (WEAPON_HALF_PER_POINT * 100) : 0;
+    case SKILLS.Axe: case SKILLS.BluntWeapon: {
+      const share = shareOf(target);
+      if (share === null) return climb * (WEAPON_POTENCY_PER_POINT * 100);   // the line unread: the halves' mean (x1.4), the sword's own
+      return (skill === SKILLS.Axe ? share < WEAPON_HALF_LINE : share >= WEAPON_HALF_LINE) ? climb * (WEAPON_HALF_PER_POINT * 100) : 0;
+    }
     default: return 0;
   }
 }
@@ -79,22 +87,24 @@ export function weaponPastPct(weapon, attacker, target, opts = {}) {
 /** The fraction a percent of a blow leaves, carried to the next, by weapon (or by my fists). */
 let _carry = new WeakMap();
 /** THE BLOW: my blow at a foe, its skill past 100 - the fraction carried, never past the blow's whole. */
-export function weaponMasteryBlow(weapon, damage, attacker, target) {
+export function weaponMasteryBlow(weapon, damage, attacker, target, info = null) {
   if (!(damage > 0) || !attacker?.isPlayer || attacker.peer || !target || target.isPlayer || target.warded || sigilDueling()) return damage;
   const pct = weaponPastPct(weapon, attacker, target);
   if (!(pct > 0)) return damage;
   const key = weapon ?? attacker;
   const exact = (damage * pct) / 100 + (_carry.get(key) ?? 0);
   const more = Math.floor(exact + 1e-9);
-  _carry.set(key, Math.max(0, exact - more));
+  if (!info?.estimate) _carry.set(key, Math.max(0, exact - more));   // AUDIT MARTIAL L2 F7: the Stats page's estimate keeps nothing
   return damage + more;
 }
 
 /** THE PACE: a short blade's swing, its skill past 100 - 1% quicker a point. `w` the swing reader's answer
- *  (combat/swingLaw.js readSwing). */
+ *  (combat/swingLaw.js readSwing), read here only once a climb would pay (AUDIT MARTIAL L2 F3). */
 export function weaponMasteryPace(ctx, w) {
-  if (w?.family !== 'shortBlade' || sigilDueling()) return 0;
-  return weaponClimb(ctx?.entity, SKILLS.ShortBlade) * (WEAPON_POTENCY_PER_POINT * 100);
+  if (sigilDueling()) return 0;
+  const climb = weaponClimb(ctx?.entity, SKILLS.ShortBlade);
+  if (!(climb > 0)) return 0;
+  return (w ? w.family : swingFamily(ctx)) === 'shortBlade' ? climb * (WEAPON_POTENCY_PER_POINT * 100) : 0;
 }
 
 export const WEAPON_MASTERY = 'weaponMastery';
