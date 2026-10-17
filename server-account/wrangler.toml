@@ -200,7 +200,7 @@ MOD_AI_DAILY_MAX = ""
 # handle's act, and only while it holds MODERATOR_HANDLES or DEVELOPER_HANDLES. The bot's token is DISCORD_BOT_TOKEN, a
 # secret the deploy puts, never here. Empty: no cards and no presses - the cases still gather, and the game's
 # /mute, /ban and /strikes still answer. The setup: bible/11-Multiplayer/Chat-Safety-Arc.md section 9.
-DISCORD_MOD_CHANNEL = "1560995490928140308"
+DISCORD_MOD_CHANNEL = "1560996671440293908"
 DISCORD_PUBLIC_KEY = "36e74945022f94ec7955a84ccccb270e63780100e558d30777742337b62de3e0"
 # 2026-10-17 (Mac): the queue's channel and the application's public key set; the moderators' Discord ids to come -
 # until then the cards post and every press or /mod answers that only the game's moderators may act

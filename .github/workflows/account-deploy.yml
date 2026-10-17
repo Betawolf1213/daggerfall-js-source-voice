@@ -45,6 +45,9 @@ on:
     # realm checkpoint through src/systems/item/itemLaw.js - the loot's own
     # records, spoils and Broker, one law at both ends - so that graph
     # is listed too (the block after src/systems/wind/wind.js).
+    # DISCORD-CODE: and the deploy's last step runs tools/discordModCommands.mjs, so its own graph is listed (after this
+    # workflow's own line) - test/server/discord_setup.test.js holds it, and the commands it writes live under
+    # server-account/. No comment inside the list: the pins read it as one run of lines.
     paths:
       - "server-account/**"
       - "src/net/identityToken.js"
@@ -362,6 +365,8 @@ on:
       - "vendor/foraging/ItemTemplates.json"
       - "vendor/iliac-puddle-no-more/ItemTemplates.json"
       - ".github/workflows/account-deploy.yml"
+      - "tools/discordModCommands.mjs"
+      - "tools/lib/isMain.mjs"
       - "src/systems/legacy/revived.js"
       - "src/poi/poiLaw.js"
       - "src/poi/poiMesh.js"
@@ -1313,10 +1318,16 @@ jobs:
             echo "the bot's token, DISCORD_MOD_CHANNEL or DISCORD_PUBLIC_KEY is not set - Discord is left as it is"
             exit 0
           fi
-          if out=$(DISCORD_MOD_CHANNEL="$channel" DISCORD_PUBLIC_KEY="$key" DISCORD_INTERACTIONS_URL="${{ steps.deploy.outputs.base }}/v1/discord/interactions" node tools/discordModCommands.mjs --setup); then
+          # DISCORD-CODE: what was done is said either way; what stopped it (Discord's refusal, or the permissions the bot
+          # lacks in the moderators' channel) goes to the summary too - the tool's stderr, which never holds the token
+          err="$RUNNER_TEMP/discord-setup.err"
+          if out=$(DISCORD_MOD_CHANNEL="$channel" DISCORD_PUBLIC_KEY="$key" DISCORD_INTERACTIONS_URL="${{ steps.deploy.outputs.base }}/v1/discord/interactions" node tools/discordModCommands.mjs --setup 2> "$err"); then
             echo "$out"
             { echo ""; echo "### Discord"; echo ""; echo "$out"; } >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "::error::Discord was not pointed at the service - its refusal is above"
+            echo "$out"
+            cat "$err"
+            { echo ""; echo "### Discord"; echo ""; echo "$out"; echo ""; echo "**Not finished:** $(cat "$err")"; } >> "$GITHUB_STEP_SUMMARY"
+            echo "::error::Discord's setup did not finish - $(head -c 300 "$err")"
             exit 1
           fi
