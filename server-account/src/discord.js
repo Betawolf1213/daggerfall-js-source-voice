@@ -36,6 +36,7 @@ import { canModerate } from './titles.js';
 import { importPublicKey, ID_RE } from '../../src/net/identityToken.js';
 import { actionStatement, banAccount, unbanAccount, findAccount, strikesLook, lawOrder, pushLaw, reasonOf, muteMinutesOk, strikesOf, isBanned, bannedUntil, voidAutoMutes } from './sanctions.js';
 import { resolveCase, CASE_CLAIM_S } from './safety.js';
+import { usageOf } from './discordCommands.js';
 import { LADDER_BAN_AT, ladderMinutes, BAN_FOREVER, banUntil, reportReasonLabel } from '../../src/net/safety/safetyLaw.js';
 
 /** The door Discord posts its interactions to (the application's Interactions Endpoint URL). */
@@ -165,6 +166,11 @@ export function caseCard({ c, name, target = null, lines, reasons, notes = [], s
     : [];
   return { embeds: [embed], components, allowed_mentions: { parse: [] } };
 }
+
+/** DISCORD-CODE: what sendCard needs in the moderators' channel, as Discord's permission bits - to see it, post in it, and
+ *  draw a card's embed (editing its own message needs nothing more). The deploy computes the bot's permissions there
+ *  and turns red on any missing (tools/discordModCommands.mjs --setup). */
+export const MOD_CHANNEL_NEEDS = Object.freeze([['View Channel', 1n << 10n], ['Send Messages', 1n << 11n], ['Embed Links', 1n << 14n]]);
 
 /**
  * POST OR EDIT a card in the moderators' channel. Answers `{ id }` (the message's), or what kept it (DISCORD-2):
@@ -338,7 +344,7 @@ async function onCommand(ctx, env, body, actor, io) {
       if (days !== null) await closed(`banned ${banWord(r.until)} (/mod)`);
       return say(days === null ? `${md(name)} is unbanned.` : `${md(name)} is banned ${banWord(r.until)}.`);
     }
-    default: return say('Use /mod lookup, mute, unmute, ban or unban.');
+    default: return say(usageOf('mod'));   // DISCORD-CODE: the declared subcommands, named (discordCommands.js)
   }
 }
 
