@@ -1798,12 +1798,13 @@ function bulkMove(dir) {
   const from = taking ? remoteTarget(deps, sessionState()) : (deps.items?.() ?? []);
   const to = taking ? (deps.items?.() ?? []) : remoteTarget(deps, sessionState());
   const cap = !taking && remote?.kind === 'container' ? CONTAINER_LIST_CAP : null;
+  const keeping = theftTarget(deps, sessionState());   // STOLEN-GOODS: the owner's keeping, as the single click's take and put read it
   let sound = null;
   const { moved, notice: why } = runBulk([...shown], (item) => {
     if (!from.includes(item)) return { verdict: 'skip' };
     if (!taking) {
       if (isPackOnly(item)) return { verdict: 'skip', refusal: { text: packOnlyText(itemLongName(item, { getQuest: deps.getQuest ?? null })) } };
-      if (boundRefusesPut(item, remote.kind)) return { verdict: 'skip', refusal: { text: boundText(itemLongName(item, { getQuest: deps.getQuest ?? null })) } };
+      if (boundRefusesPut(item, remote.kind)) return { verdict: 'skip', refusal: { text: boundText(itemLongName(item, { getQuest: deps.getQuest ?? null }), item) } };   // AUDIT AUTO-HOLD: a piece the realm locked says so
       if (letterRefuses(item)) return { verdict: 'skip', refusal: { text: letterPutText(itemLongName(item, { getQuest: deps.getQuest ?? null })) } };
       const no = bagRefuses(item);
       if (no) return { verdict: 'skip', refusal: no };
@@ -1825,7 +1826,7 @@ function bulkMove(dir) {
     return { verdict: bulkVerdict(item, plan), refusal: plan.refusal, plan };
   }, (item, d) => {
     const plan = d.plan;
-    applyTransfer(item, { ...plan, amount: plan.amount }, from, to, { entity: deps.entity, fromLocal: !taking, toPlayer: taking });
+    applyTransfer(item, { ...plan, amount: plan.amount }, from, to, { entity: deps.entity, fromLocal: !taking, toPlayer: taking, stolenFrom: taking ? keeping : null, returnTo: taking ? null : keeping });   // STOLEN-GOODS: a take off a stranger's keeping is marked, a put-back is theirs again
     sound = plan.sound === 'gold' && sound !== 'click' ? 'gold' : 'click';
   });
   if (moved) audio.playOneShot(sound === 'gold' ? SOUND.GoldPieces : SOUND.ButtonClick, 1);

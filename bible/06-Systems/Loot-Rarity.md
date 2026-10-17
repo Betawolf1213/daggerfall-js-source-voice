@@ -153,7 +153,12 @@ unknown-key abort) affix-aware. Two lists, one wearer.
   a weapon still puts it on `itemNameParts().material`, the same dim
   sub-line a plain sword uses (`itemInfo.js:"if (!material || withholdsMaterialPrefix(item)) return name;"`).
   The long name stays `Wyrmbane`, not `Dwarven Wyrmbane`. An artifact
-  still says nothing of its metal.
+  still says nothing of its metal. Handed down by Project Legacy it stays
+  its own name under the house, `Hlaalu's Wyrmbane`, the metal still on
+  the sub-line (`itemInfo.js:"const whole = parts.material && !bare ?"`).
+  The container's material menu finds a piece only by a metal its card
+  says (`itemInfo.js:"export const itemSaysMaterial ="`), so it never picks
+  out an unidentified Magic piece or an artifact by its metal.
 
 ## Identify is Daggerfall's own
 

@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { containerPreviewItems, decorPreviewItems, interiorHeldPreview } from '../../src/systems/containerPreview.js';
+import { containerPreviewItems, decorPreviewItems, interiorHeldPreview, createInteriorPeek } from '../../src/systems/containerPreview.js';
 
 const ruby = { name: 'Ruby' };
 const chest = (items, stockedDate = 5) => ({ items, stockedDate });
@@ -46,5 +46,27 @@ test('CONTAINER-PEEK: the interior reader answers one family and leaves the pile
 
 test('CONTAINER-PEEK: the interior host hands the reader to the plaque', () => {
   const wm = readFileSync(new URL('../../src/scenes/worldModes.js', import.meta.url), 'utf8');
-  assert.match(wm, /interiorHeldPreview\(key,/);
+  assert.match(wm, /const interiorPeek = createInteriorPeek\(\{/);
+  assert.match(wm, /\n\s*interiorPeek,\n/);
+});
+
+test('CONTAINER-PEEK createInteriorPeek: built once, it reads the room\'s word only over a cupboard or a placed chest, and answers what interiorHeldPreview answers (mutants: the getters read for every key, a getter read once at build)', () => {
+  const read = [];
+  const word = (name, value) => () => { read.push(name); return value; };
+  let boxes = [chest([ruby], 9)];
+  const peek = createInteriorPeek({
+    containers: () => { read.push('containers'); return boxes; },
+    decor: word('decor', { pieceOf: (id) => ({ storage: id === 'bin' }), itemsOf: () => [ruby] }),
+    owned: word('owned', false), shut: word('shut', false), hall: word('hall', false), today: word('today', 9),
+  });
+  assert.deepEqual(read, [], 'nothing is read to build it');
+  assert.equal(peek('loot:0'), null);
+  assert.equal(peek('corpse:4'), null);
+  assert.equal(peek(null), null);
+  assert.deepEqual(read, [], 'a pile, a body and nothing at all never ask the room');
+  assert.deepEqual(peek('container:0'), [ruby]);
+  assert.deepEqual(peek('decor:bin'), [ruby]);
+  boxes = [chest([], 9)];
+  assert.deepEqual(peek('container:0'), [], 'each glance reads the room as it is now');
+  assert.ok(read.includes('owned') && read.includes('shut') && read.includes('today'));
 });

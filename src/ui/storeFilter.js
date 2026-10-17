@@ -28,8 +28,7 @@
 import { PACK_PAGES, pageOf } from './packPages.js';
 import { isMaterialItem } from '../systems/materialsBag.js';
 import { RARITIES, RARITY_ORDER, rarityOf } from '../systems/loot/lootRarity.js';
-import { materialName } from '../systems/item/itemInfo.js';   // MAT-FILTER: the metal the card already says
-import { isAmmunition } from '../systems/item/itemTemplates.js';
+import { materialName, materialLabel, itemSaysMaterial } from '../systems/item/itemInfo.js';   // MAT-FILTER: the metal the card already says
 import { t } from '../systems/textManager.js';
 
 /** The remote kinds (enhancedInventory.js remoteModel) that carry the bar: the player's own stores, and a container. */
@@ -104,9 +103,11 @@ export function storeRarityOptions(items, chosen = 'all') {
  *  armour's own; the ten after them are the plate and weapon metals (itemInfo.js MATERIAL_NAMES). */
 const MATERIAL_ORDER = Object.freeze(['Leather', 'Chain', 'Iron', 'Steel', 'Silver', 'Elven', 'Dwarven', 'Mithril', 'Adamantium', 'Ebony', 'Orcish', 'Daedric']);
 const MATERIAL_IDS = new Set(MATERIAL_ORDER);
-/** The metal a row is filtered by, or '' when the row has none to say: not armour, not a weapon, or an arrow. */
+/** The metal a row is filtered by, or '' when its card says none: not armour, not a weapon, an arrow, or a metal the
+ *  card withholds (an unidentified piece below Rare, an artifact, a helm or shield under HelmAndShieldMaterialDisplay) -
+ *  a filter that found one by its metal would say what the card does not. */
 export function storeMaterialOf(it) {
-  if (it?.group !== 'Armor' && !(it?.group === 'Weapons' && !isAmmunition(it))) return '';
+  if (!itemSaysMaterial(it)) return '';
   const name = materialName(it);
   return MATERIAL_IDS.has(name) ? name : '';
 }
@@ -130,7 +131,7 @@ export function storeMaterialOptions(items, chosen = 'all') {
   const out = [{ id: 'all', label: t('inventory.store.anyMaterial', 'Any Material'), count: items.length }];
   for (const id of MATERIAL_ORDER) {
     const count = counts.get(id) ?? 0;
-    if (count > 0 || id === chosen) out.push({ id, label: id, count });
+    if (count > 0 || id === chosen) out.push({ id, label: materialLabel(id), count });
   }
   return out;
 }

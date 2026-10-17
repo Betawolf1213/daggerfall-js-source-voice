@@ -18041,7 +18041,10 @@ What the ladder says, every arm driven by a pin:
   `quickLoot.js:"const take = frame?.kind === 'items' && !frame.preview;"`).
   The press is unchanged: the private-property question, the storage
   window, and the stocking itself still happen on the click. DFU does
-  not list a cupboard. Pins `test/systems/containerpreview.test.js`, and the
+  not list a cupboard. The interior host builds the rung once
+  (`containerPreview.js:"export function createInteriorPeek("`, HOST-SPLIT:
+  the host wires it, it does not grow it); its getters read the room's own
+  word only while the crosshair is on a cupboard or a placed chest. Pins `test/systems/containerpreview.test.js`, and the
   CONTAINER-PEEK cases in `test/systems/worldhover.test.js` and `test/systems/quickloot.test.js`.
 - a pile of exactly one named by that item with its stack count; a
   corpse by who it was; a door by its lock level when locked; a static
@@ -19395,12 +19398,12 @@ from the scratchpad, the pack mounted over a wagon of thirteen):
 
 DFU's inventory window filters only the local list (AddLocalItem) and moves one row per click. The enhanced remote pane already filtered the player's own stores (WAGON-FILTER, above). A container — a chest, a corpse — now carries that same bar, and a rarity menu beside it.
 
-- **The bar.** Search, then the pack's pages (and Materials), then rarity, then material. The rarity menu lists only the tiers that container holds, in `RARITY_ORDER`, each as its label and its count ("Rare (3)"). Its first row is Any Rarity. The material menu is the same shape for armour and weapons: Any Material, then only the metals that list holds (Leather and Chain, then the ten plate metals), each with its count. A chosen tier or metal stays at nought. An arrow, a book and anything else with no metal of its own are not a material. With the loot-rarity ladder off, the rarity menu is not drawn and no tier is applied; the material menu stays. The search still reads the row's own name.
-- **Take all** walks those rows from the top, and its button stays on that list. **Stash all** walks the current pack page from the top, into the container or the wagon, and its button sits centred on the bottom edge of the pack's item list. On a corpse the pack stays closed (MAC-M2), so that button is not on the corpse window; a fresh pack starts on Weapons. Each row goes through the one plan a click uses (`planTake`, `planStore`).
-- **Where it stops.** The first row the pack or the destination cannot hold stays, and so does everything under it. A row refused for another reason is left where it is and the walk continues. A stack that only partly fits is the last row moved. Stash all into a room container stops at 64 rows (`LOOT_LIST_MAX`): a longer list is never told to the other players, who hear the container when its window closes, not row by row.
+- **The bar.** Search, then the pack's pages (and Materials), then rarity, then material. The rarity menu lists only the tiers that container holds, in `RARITY_ORDER`, each as its label and its count ("Rare (3)"). Its first row is Any Rarity. The material menu is the same shape for armour and weapons: Any Material, then only the metals that list holds (Leather and Chain, then the ten plate metals), each with its count. A chosen tier or metal stays at nought. An arrow, a book and anything else with no metal of its own are not a material, and neither is a metal the card withholds - an unidentified piece below Rare, an artifact, a helm or shield under HelmAndShieldMaterialDisplay: the menu reads the card's own gate (`itemInfo.js:"export const itemSaysMaterial ="`), so a filter never picks out a piece by what its card does not say. The metal is named as the window prints it (`materialLabel`). With the loot-rarity ladder off, the rarity menu is not drawn and no tier is applied; the material menu stays. The search still reads the row's own name.
+- **Take all** walks those rows from the top, and its button stays on that list. **Stash all** walks the current pack page from the top, into the store beside it - the wagon, the player's own storage, the Materials Bag - and its button sits centred on the bottom edge of the pack's item list. A container's window never opens the pack (MAC-M2 B: a chest and a corpse are for taking), so Stash all is not on it; a fresh pack starts on Weapons. Each row goes through the one plan a click uses (`planTake`, `planStore`), and a take off someone else's keeping - a stranger's cupboard, a shut shop's shelf - is marked stolen exactly as a single take is (STOLEN-GOODS, `theftTarget`).
+- **Where it stops.** The first row the pack or the destination cannot hold stays, and so does everything under it. A row refused for another reason is left where it is and the walk continues. A stack that only partly fits is the last row moved. Stash all into a room container would stop at 64 rows (`LOOT_LIST_MAX`): a longer list is never told to the other players, who hear the container when its window closes, not row by row. No window offers that today (above); the stop stands for the layout that does.
 - **What does not change.** The ground and a reward tray have no bar and no buttons. The classic skin draws none of this.
 
-Pins: `test/ui/lootbulk.test.js`. The reward tray's lack of a bar, which kills a filter forced onto every remote, stays in `test/systems/shiftstow.test.js`.
+Pins: `test/ui/lootbulk.test.js`, and the MAT-SHOW heirloom in `test/systems/legacy/legacy4_heirloom.test.js`; `tools/mutants/lootbulk.json` (4, all dead). The reward tray's lack of a bar, which kills a filter forced onto every remote, stays in `test/systems/shiftstow.test.js`.
 
 
 ## TELL9 - THE FIGHT ON SCREEN (2026-10-04)

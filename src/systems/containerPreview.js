@@ -53,3 +53,17 @@ export function interiorHeldPreview(key, bag = {}) {
   if (key.startsWith('decor:')) return decorPreviewItems(key, bag);
   return null;
 }
+
+/**
+ * The interior host's contents rung, built once (HOST-SPLIT: the host wires it, it does not grow it). Each getter is
+ * the host's own word, read only while the plaque is over a `container:` or a `decor:` key - a pile, a body and a door
+ * never ask the room who owns it.
+ */
+export function createInteriorPeek({ containers, decor, owned, shut, hall, today }) {
+  return (key) => (typeof key === 'string' && (key.startsWith('container:') || key.startsWith('decor:'))
+    ? interiorHeldPreview(key, {
+      containers: containers(), pieceOf: (id) => decor()?.pieceOf(id), itemsOf: (id) => decor()?.itemsOf(id),
+      owned: owned(), shut: shut(), hall: hall(), today: today(),
+    })
+    : null);
+}

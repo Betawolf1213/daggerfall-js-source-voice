@@ -13,7 +13,11 @@ import { wagonKgFor } from '../../src/systems/wagon/wagonKinds.js';
 import { SMALL_CART_TEMPLATE } from '../../src/systems/inventorySession.js';
 import { ITEM_TEMPLATES } from '../../src/characters/paperdoll/paperdoll.js';
 import { _resetForTests } from '../../src/systems/uiPrefs.js';
-import { RARITIES } from '../../src/systems/loot/lootRarity.js';
+import { RARITIES, applyRarity } from '../../src/systems/loot/lootRarity.js';
+import { itemNameParts } from '../../src/systems/item/itemInfo.js';
+import { isStolen } from '../../src/systems/stolenGoods.js';   // STOLEN-GOODS: a take off someone else's keeping
+import { TEMPLATES } from '../../src/systems/useItem.js';
+import { setValue, _resetForTests as resetSettings } from '../../src/systems/settings/settings.js';
 
 const tmpl = (name) => ITEM_TEMPLATES.find((t) => t.name === name);
 const mk = (name, group = 'Weapons', extra = {}) => {
@@ -26,7 +30,7 @@ const cart = () => ({ name: 'Small cart', group: 'Transportation', templateIndex
 const hero = (items) => ({ name: 'Aelwyn', career: { name: 'Spellsword' }, stats: { strength: 50, endurance: 48 }, items, goldPieces: 0 });
 const textOf = (n) => `${n.textContent ?? ''}${(n.children ?? []).map(textOf).join('')}`;
 
-function withLoot(items, lootItems, fn, { wagon = null } = {}) {
+function withLoot(items, lootItems, fn, { wagon = null, stolenFrom = null } = {}) {
   _resetForTests();
   globalThis.location = { search: '?skin=enhanced' };
   return withDom((dom) => {
@@ -34,7 +38,7 @@ function withLoot(items, lootItems, fn, { wagon = null } = {}) {
     dom.body.append(host);
     const e = hero(items);
     if (wagon) e.wagonItems = wagon;
-    const loot = wagon ? null : { items: () => lootItems };
+    const loot = wagon ? null : { items: () => lootItems, ...(stolenFrom ? { stolenFrom } : {}) };
     const view = mountEnhancedInventory(host, {
       entity: e, items: () => e.items, wagonItems: () => e.wagonItems, onExit: () => {},
       ...(loot ? { loot } : {}),
@@ -78,6 +82,30 @@ test('LOOT-BULK storeFilter: the material menu lists the metals the container ho
   assert.deepEqual(filterStore([ebony, leather, book], { material: 'Ebony' }, (it) => it.name), [ebony]);
   assert.deepEqual(storeMaterialOptions([ebony, leather, book], 'Steel').map((c) => `${c.id}:${c.count}`), ['all:3', 'Leather:1', 'Steel:0', 'Ebony:1']);
   assert.equal(storeMaterialOptions([ebony], 'all')[0].label, 'Any Material');
+});
+
+test('MAT-FILTER: the material menu finds a piece only by a metal its card says - never an unidentified piece below Rare, an artifact, or a helm under HelmAndShieldMaterialDisplay; an unidentified Rare says its metal and is found by it (mutants: the menu reads the raw metal)', () => {
+  let seed = 7;
+  const roll = () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 4294967296; };
+  const magic = mk('Longsword', 'Weapons', { material: 9, enchantments: [{ type: 3, param: 1 }] });   // Daedric, enchanted, never identified
+  assert.equal(itemNameParts(magic).material, '', 'its card withholds the metal');
+  assert.equal(storeMaterialOf(magic), '', 'so the menu does not name it');
+  assert.deepEqual(storeMaterialOptions([magic]).map((c) => c.id), ['all'], 'and lists no Daedric to pick it out by');
+  assert.deepEqual(filterStore([magic], { material: 'Daedric' }, (it) => it.name), [], 'and the Daedric filter does not find it');
+  assert.equal(storeMaterialOf({ ...magic, isIdentified: true }), 'Daedric', 'identified, it says its metal and is found by it');
+  const artifact = mk('Longsword', 'Weapons', { material: 9, artifact: true });
+  assert.equal(storeMaterialOf(artifact), '', 'an artifact keeps DFU\'s withhold');
+  const rare = applyRarity(mk('Longsword', 'Weapons', { material: 7 }), 'rare', roll);
+  assert.ok(itemNameParts(rare).material, 'an unidentified Rare says its metal on its card (MAT-SHOW)');
+  assert.equal(storeMaterialOf(rare), 'Ebony', 'and the menu finds it by that metal');
+  resetSettings();
+  try {
+    const helm = { group: 'Armor', templateIndex: TEMPLATES.Helm, material: ARMOR_MATERIAL.Steel, name: 'Helm', stackCount: 1 };
+    setValue('GUI', 'HelmAndShieldMaterialDisplay', 0);
+    assert.equal(storeMaterialOf(helm), '', 'a helm that names no metal is not found by one');
+    setValue('GUI', 'HelmAndShieldMaterialDisplay', 3);
+    assert.equal(storeMaterialOf(helm), 'Steel', 'and is, once the setting shows it');
+  } finally { resetSettings(); }
 });
 
 test('LOOT-BULK on a container: a material narrows the rows the same way a rarity does', () => {
@@ -184,4 +212,20 @@ test('LOOT-BULK Stash all: the button sits under the pack list; a summoned piece
     assert.ok(e.items.includes(stay), 'the mace that does not fit stays');
     assert.ok(e.items.includes(light), 'the arrows under it stay');
   }, { wagon });
+});
+
+test('LOOT-BULK + STOLEN-GOODS: Take all off a stranger\'s cupboard marks every piece of the owner\'s it takes, as a single take does, and not the player\'s own piece put there (mutants: the walk\'s transfer without the owner\'s keeping)', () => {
+  const theirs = mk('Dagger');
+  const alsoTheirs = mk('Mace');
+  const own = mk('Longsword');   // put there in this window: not in the keeping
+  withLoot([], [theirs, own, alsoTheirs], ({ press, e, lootItems }) => {
+    press('Take all');
+    assert.deepEqual(lootItems, [], 'the cupboard is emptied');
+    assert.deepEqual(e.items.map((it) => [it.name, isStolen(it)]), [['Dagger', true], ['Longsword', false], ['Mace', true]]);
+  }, { stolenFrom: new Set([theirs, alsoTheirs]) });
+  const body = [mk('Dagger')];
+  withLoot([], body, ({ press, e }) => {
+    press('Take all');
+    assert.equal(isStolen(e.items[0]), false, 'a pile nobody keeps marks nothing');
+  });
 });

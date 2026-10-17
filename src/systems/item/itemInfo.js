@@ -323,6 +323,8 @@ const MATERIAL_TEXT = localizedTable({
   Leather: ['leather', 'Leather'], Chain: ['chain', 'Chain'],
 });
 const materialText = (item) => MATERIAL_TEXT[materialName(item)] ?? '';
+/** MAT-FILTER: a material's English identity (materialName's answer) as a window prints it. */
+export const materialLabel = (id) => MATERIAL_TEXT[id] ?? id;
 
 /** The panel's macro pass. Everything the port can compute is filled,
  *  and the three that once could not - %po, %bt, %ba - have all landed
@@ -659,8 +661,11 @@ export function itemNameParts(item, opts = {}) {
   // house of Daggerfall"). Unidentified, the house is as unknown as the rest (systems/legacy/heirloom.js).
   const house = item?.heirloom?.house;
   if (typeof house !== 'string' || !house || !itemIsIdentified(item)) return parts;
-  const whole = parts.material ? `${parts.material} ${parts.name}` : parts.name;
-  return { name: house.startsWith('of ') ? `${whole} of the house ${house}` : `${house}'s ${whole}`, material: '' };
+  // MAT-SHOW: a Legendary's own name takes no metal in front of it under a house either - "Hlaalu's Wyrmbane", the
+  // metal staying on the sub-line where the part puts it
+  const bare = withholdsMaterialPrefix(item);
+  const whole = parts.material && !bare ? `${parts.material} ${parts.name}` : parts.name;
+  return { name: house.startsWith('of ') ? `${whole} of the house ${house}` : `${house}'s ${whole}`, material: bare ? parts.material : '' };
 }
 /** The metal a weapon or a piece of armour says, or '' where DFU's own gates withhold it (an arrow, a helm
  *  or shield under HelmAndShieldMaterialDisplay). */
@@ -673,12 +678,18 @@ function gearMaterialText(item) {
  *  drops unidentified, and a Legendary's own name used to swallow the metal entirely. */
 const RARE_OR_BETTER = new Set(['rare', 'legendary', 'aetheric', 'gilded']);
 const rareOrBetter = (item) => RARE_OR_BETTER.has(item?.rarity) || !!item?.legendary || !!item?.aetheric || !!item?.gilded;
+/** MAT-SHOW: whether a bare name still says its metal on the sub-line - never an artifact (DFU's withhold), and never
+ *  an unidentified piece below Rare. */
+const saysWithheldMaterial = (item) => !item?.artifact && (itemIsIdentified(item) || rareOrBetter(item));
+/** MAT-FILTER: whether the pack says this piece's metal anywhere - in front of its name, inside a maker's mark or a
+ *  house's name, or on the sub-line - so a filter by metal never finds a piece by a metal its card withholds. */
+export const itemSaysMaterial = (item) => !!gearMaterialText(item) && (!withholdsMaterialPrefix(item) || saysWithheldMaterial(item));
 function namePartsOf(item, { getQuest = null, differentiatePlantIngredients = true } = {}) {
   const base = resolveItemName(item);
   if (withholdsMaterialPrefix(item)) {
     // The name stays bare. The metal still goes on the sub-line for Rare and better armour and weapons —
     // an artifact keeps DFU's withhold, and so does an unidentified piece below Rare.
-    const material = item?.artifact || (!itemIsIdentified(item) && !rareOrBetter(item)) ? '' : gearMaterialText(item);
+    const material = saysWithheldMaterial(item) ? gearMaterialText(item) : '';
     return { name: base, material };
   }
   if (differentiatePlantIngredients) {
