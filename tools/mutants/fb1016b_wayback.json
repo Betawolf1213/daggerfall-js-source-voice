@@ -84,10 +84,10 @@
     "tests": ["test/systems/guild/fb1016b_wayback.test.js"]
   },
   {
-    "name": "WAY-BACK-the-temples-unmapped",
-    "file": "src/systems/faction/factionStanding.js",
-    "old": "for (const d of Object.keys(DIVINES)) GUILD_OF_FACTION.set(DIVINES[d], templeOf(d));\n",
-    "new": "",
+    "name": "WAY-BACK-the-variants-unresolved",
+    "file": "src/ui/enhanced/enhancedMenu.js",
+    "old": "wayBackLines(guildOfFaction(r.factionId, resolveVariantGuild(entity.factionRep?.dict)),",
+    "new": "wayBackLines(guildOfFaction(r.factionId),",
     "tests": ["test/systems/guild/fb1016b_wayback.test.js"]
   }
 ]

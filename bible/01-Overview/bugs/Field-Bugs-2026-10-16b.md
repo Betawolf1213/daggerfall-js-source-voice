@@ -10,8 +10,9 @@ main's `0ce25a8e`.
 ## WAY-BACK: what the way back in costs, said
 
 `src/systems/guild/guildServiceFlow.js` wayBackLines; `src/scenes/worldModes.js` openGuildService (the wiring);
-`src/ui/enhanced/enhancedPorts.js` the guild port; `src/systems/faction/factionStanding.js` guildOfFaction and
-`src/ui/enhanced/enhancedMenu.js` statsEveryStanding (the Standing page).
+`src/ui/enhanced/enhancedPorts.js` the guild port; `src/ui/enhanced/enhancedMenu.js` statsEveryStanding (the
+Standing page, which finds a row's guild by `guilds.js` guildOfFaction - GuildManager.GetGuild - and guildVariants'
+resolveVariantGuild for a temple or an order).
 
 FOUND. The report reads as a dead end, and it was not one. Every part of the road below already shipped:
 
@@ -61,7 +62,8 @@ It is said in three places:
    temple's 745, an order's 751) and then the lines, on the same box - a refusal for the guild skills (rep at 0 or more)
    is DFU's alone. The rows wrap to the screen (SS5 fitBoxRows), as REP6's probation box does.
 3. **The Standing page** (enhanced, with EVERY-STANDING's row on, its default): under a guild, temple or order the join
-   refuses, the quests line. The drift and the pace are said at the hall and on the refusal; a page with many temples
+   refuses, the quests line. A first cut declared a second `guildOfFaction` in `factionStanding.js`; CI's one-home
+   ratchet (`audit24_onehome.test.js`, ONE DFU MEMBER, ONE EXPORT) failed it, and the page reads GetGuild's own. The drift and the pace are said at the hall and on the refusal; a page with many temples
    below 0 would carry them under each.
 
 Not changed: the law. No standing moves faster, and no new road was opened. Two calls for Mac, if the words are not

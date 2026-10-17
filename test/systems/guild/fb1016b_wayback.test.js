@@ -9,12 +9,11 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { GUILDS, joinGuild, activeMemberships } from '../../../src/systems/guild/guilds.js';
-import { templeOf, orderOf, DIVINES, ORDERS } from '../../../src/systems/guild/guildVariants.js';
+import { GUILDS, joinGuild, activeMemberships, guildOfFaction } from '../../../src/systems/guild/guilds.js';
+import { templeOf, orderOf, DIVINES, ORDERS, resolveVariantGuild } from '../../../src/systems/guild/guildVariants.js';
 import { canAccessService } from '../../../src/systems/guild/guildServices.js';
 import { createFactionRep, setReputation } from '../../../src/systems/faction/factionRep.js';
 import { wayBackLines } from '../../../src/systems/guild/guildServiceFlow.js';
-import { guildOfFaction } from '../../../src/systems/faction/factionStanding.js';
 import { setStandingOwed } from '../../../src/systems/standingOwed.js';
 import { PORT_SPECS } from '../../../src/ui/enhanced/enhancedPorts.js';
 import { GuildServiceWindow } from '../../../src/ui/guildServiceWindow.js';
@@ -128,11 +127,12 @@ test('WAY-BACK: the interior host hands the hall its way in, on the Roll\'s pace
   assert.ok(wm.includes('        if (!decision.eligible) return { rows: [...rows(decision.textId), ...(wayBack() ?? [])] };'), 'the refusal, then the way in');
 });
 
-test('WAY-BACK: the Standing page puts the hall\'s quest line under a guild, temple or order the join refuses - not under a kingdom, nor a standing at 0 (mutants: the note dropped, the temples unmapped)', async () => {
-  assert.equal(guildOfFaction(MAGES), GUILDS.MagesGuild);
-  assert.equal(guildOfFaction(DIVINES.Arkay).name, 'Temple:Arkay');
-  assert.equal(guildOfFaction(ORDERS.Dragon).name, 'Order:Dragon');
-  assert.equal(guildOfFaction(201), null);
+test('WAY-BACK: the Standing page puts the hall\'s quest line under a guild, temple or order the join refuses - not under a kingdom, nor a standing at 0 (mutants: the note dropped, the variants unresolved)', async () => {
+  const page = (id) => guildOfFaction(id, resolveVariantGuild(null));   // the page's own read: GetGuild, the variants resolved
+  assert.equal(page(MAGES), GUILDS.MagesGuild);
+  assert.equal(page(DIVINES.Arkay).name, 'Temple:Arkay');
+  assert.equal(page(ORDERS.Dragon).name, 'Order:Dragon');
+  assert.equal(page(201), null);
   const { statsEveryStanding } = await import('../../../src/ui/enhanced/enhancedMenu.js');
   const make = (tag) => ({ tag, className: '', textContent: '', children: [], append(...c) { this.children.push(...c); } });
   globalThis.document = { createElement: make };
