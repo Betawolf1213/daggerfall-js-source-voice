@@ -3685,8 +3685,8 @@
   {
     "name": "AC5-C-M26",
     "file": "src/systems/inventory.js",
-    "old": "(a.card ?? null) === (b.card ?? null);",
-    "new": "(a.card ?? 0) === (b.card ?? null);",
+    "old": "(a.card ?? null) === (b.card ?? null) &&",
+    "new": "(a.card ?? 0) === (b.card ?? null) &&",
     "tests": [
       "test/systems/item/auditcards5_items.test.js",
       "test/systems/item/cards8_binder.test.js",

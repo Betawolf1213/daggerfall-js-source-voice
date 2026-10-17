@@ -375,14 +375,14 @@ function tierFindings(/** @type {any} */ item) {
 /** The item's first enchantment row that no maker laid (the rolled flavour, the record's own). */
 const firstOwnRow = (/** @type {any} */ item) => (Array.isArray(item.enchantments) ? item.enchantments : []).find((e) => !isMakerRow(e)) ?? null;
 
-/** MAKER-KEPT (FIELD BUGS 2026-10-16b; Flylighter, "Grandfathered Items triggering trade lock": "Enchanted a few pieces
+/** MAKER-KEPT (FIELD BUGS 2026-10-16c; Flylighter, "Grandfathered Items triggering trade lock": "Enchanted a few pieces
  *  of Ruhn's set back before the change that disallowed enchanting them. Now, I'm getting a trade lock notice on account
  *  of my gear!"): THE RECORDS THE ITEM MAKER TOOK BEFORE AETHERIC-MAKER (d10bd32b81, 2026-10-03 - enchanting.js
  *  itemMakerRefuses), whose record promised "A piece enchanted before keeps its rows" (Field-Bugs-2026-10-03b). INT1's
  *  law held every Aetheric piece to no rows at all, so those pieces read as forged and held their owners' trade. Ruhn's
  *  Regalia and the raiding parties' three sets stood then; the Serpent's and Numidium's sets came after the refusal,
  *  and no maker ever laid a row on one. The Gilded rung was refused from its first day (GILDED1). Frozen by its pin
- *  (test/systems/item/fb1016b_makerkept.test.js): a record added to either list later is no record the maker took. */
+ *  (test/systems/item/fb1016c_makerkept.test.js): a record added to either list later is no record the maker took. */
 const MAKER_ERA_AETHERIC = new Set([...REGALIA, ...RAID_SET_PIECES].map((r) => r.id));
 /** An Aetheric piece: its record, minted whole (aetheric.js validSetMarks), and none of a roll's marks - its rows none,
  *  or (MAKER-KEPT) the item maker's alone on a record it took before AETHERIC-MAKER, held to its law (makerFindings). */

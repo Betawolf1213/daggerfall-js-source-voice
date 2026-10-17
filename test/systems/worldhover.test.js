@@ -611,7 +611,7 @@ test('WORLD-HOVER: an open window takes the plaque down - by law, not by schedul
   });
 });
 
-test('SKIN-PLAQUE (FIELD BUGS 2026-10-16b): a gathering act\'s pick (gatherHost ACT_OWNS_LOOK) takes the plaque and its loot rows down - the body under the knife behind it is not named, and nothing stays lit for the wheel or a take', async () => {
+test('SKIN-PLAQUE (FIELD BUGS 2026-10-16c): a gathering act\'s pick (gatherHost ACT_OWNS_LOOK) takes the plaque and its loot rows down - the body under the knife behind it is not named, and nothing stays lit for the wheel or a take', async () => {
   const { ACT_OWNS_LOOK } = await import('../../src/scenes/gatherHost.js');
   withPlaque((root) => {
     resetQuickLoot();

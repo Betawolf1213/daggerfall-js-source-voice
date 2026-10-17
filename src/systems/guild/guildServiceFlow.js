@@ -238,7 +238,7 @@ export function onPushEffects(entity, guild, memberships, store, now, {
   // read (current region), for the knightly rank-9 promotion text.
   // CHAP4b: rankCeiling, the host's - online, while the Roll holds, 7 (ranks 8 and 9 are seats, Chapters-Arc 3.5)
   // PROMO-NOW: promoteWhenEarned, the host's - online, a promotion does not wait the 28 days
-  // OWED-PACE (FIELD BUGS 2026-10-16b): what the Roll still owes the guild, online (0 offline) - never expelled over it
+  // OWED-PACE (FIELD BUGS 2026-10-16c): what the Roll still owes the guild, online (0 offline) - never expelled over it
   const moved = updateRank(memberships, guild, entity, store, now, { revealLocation, ownsHouse, rankCeiling, promoteWhenEarned, owed: standingOwedOf(guild.factionId) });
   if (moved) {
     // RR1: a mod's TokensExpulsion rides as the box's own rows (centred, %pcn the player's name - MacroHelper's), ahead of the record's
@@ -322,7 +322,7 @@ export function reviewWarnings(entity, guild, book, store, ctx = null) {
 }
 
 /** STANDING-WORDS: the reputation row of the hall's line - what the Roll still owes the guild said beside it, online.
- *  OWED-PACE (FIELD BUGS 2026-10-16b; slater.mp3: "i get this: (21 more i need) and did few quests and its need 36
+ *  OWED-PACE (FIELD BUGS 2026-10-16c; slater.mp3: "i get this: (21 more i need) and did few quests and its need 36
  *  more!"): "(21 more to come)" read as 21 more NEEDED, and a quest done the same day grew it - the Roll credits at most
  *  ROLL_GAIN_DAY_MAX a real day and owes the rest (npcChapterLaw.js rollCredit). So the row says the owed is EARNED and
  *  the pace it arrives at. */

@@ -1,6 +1,6 @@
--- MAKER-KEPT (FIELD BUGS 2026-10-16b; Flylighter, "Grandfathered Items triggering trade lock": "Enchanted a few pieces
+-- MAKER-KEPT (FIELD BUGS 2026-10-16c; Flylighter, "Grandfathered Items triggering trade lock": "Enchanted a few pieces
 -- of Ruhn's set back before the change that disallowed enchanting them. Now, I'm getting a trade lock notice on account
--- of my gear!", then "I've been wrongly trade-locked for a week"; bible/01-Overview/bugs/Field-Bugs-2026-10-16b.md).
+-- of my gear!", then "I've been wrongly trade-locked for a week"; bible/01-Overview/bugs/Field-Bugs-2026-10-16c.md).
 --
 --   npx wrangler d1 migrations apply daggerfall-accounts --remote
 --

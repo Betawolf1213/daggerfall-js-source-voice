@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-16b (OWED-PACE) - slater.mp3, "Can't gain reputation with the guild": "I did few quests because i
+// FIELD BUGS 2026-10-16c (OWED-PACE) - slater.mp3, "Can't gain reputation with the guild": "I did few quests because i
 // had - rep there and i get this: ( 21 more i need) and did few quests and its need 36 more!" The hall read "Reputation
 // -35 of 10 (21 more to come)". Online the Roll credits a guild at most ROLL_GAIN_DAY_MAX a real day and owes the rest
 // (net/npcChapterLaw.js rollCredit): the quests' reputation was EARNED and on its way, and the row's "(21 more to come)"

@@ -54,7 +54,7 @@ import { pickActivatable, pickActivatableHit, worldAabb, activationTargets, live
 // file owns as well as the three outside it.
 import { tryMobileEnemyActivate } from '../player/mobileEnemyActivate.js';
 import { FOUND_NOTHING_VALUABLE_TEXT_ID } from '../systems/talk/talk.js';
-import { SEARCH_REACH } from '../systems/searchables.js';   // SEARCH1: a headstone's reach, half a door's   // GetRandomText(8999)
+import { searchReachFor } from '../systems/searchables.js';   // SEARCH1: a headstone's reach, half a door's - GRAVE-PARTY: from the body to the stone   // GetRandomText(8999)
 import { LOCK_PICK_DISTANCE } from '../player/lockOn.js';   // AUDIT 62 F16/F28: the tap-to-lock reach, the same the exterior and standalone-dungeon arms use
 import { removeOne, addItem, isEnchanted, carriedWeight, letterOfCredit, LETTER_OF_CREDIT_TEMPLATE, spendAmmoFor, takeOneInto, isSummoned } from '../systems/inventory.js';   // U40: the sell filter, the encumbrance gate and the letter
 import { isEquipped, unequipSlot } from '../systems/equip.js';   // AUDIT 17e F4: worn gear is not merchandise
@@ -264,6 +264,7 @@ import { peopleAreVisible, updateNpcPresence } from '../characters/interiorPeopl
 import { exteriorLockpickingChance, lookAtLockText, LOCKPICKING_SUCCESS_TEXT, LOCKPICKING_FAILURE_TEXT, isActionDoorObject } from '../world/actionSystem.js';   // AUDIT 63 F42: GetComponent<DaggerfallActionDoor>() with a name
 import { tallyCrimeGuildRequirements } from '../systems/crimeGuilds.js';   // CG2: the break-in tally
 import { theftBasket, privatePropertyTheft, shopShelfTheft } from '../systems/theft.js';   // PT1: the two stealing laws
+import { landSold } from '../systems/stolenGoods.js';   // STOLEN-GOODS: a stolen piece sold is the merchant's to be rid of, never shelved
 import { buildingGreeting, shopQualityPresentation } from '../systems/buildingGreeting.js';
 import { setUnleveledLootWorld, unleveledLootPreTransition, unleveledLootExteriorTransition } from '../systems/unleveledLoot.js';   // UL1: PlayerEnterExit's world and its transition events   // BG1: the shop quality + the householder's greeting
 import { discoverBuilding, undiscoverBuilding, getDiscoveredBuilding, getLastLockpickAttempt, setLastLockpickAttempt, shownBuildingName } from '../systems/discovery.js';   // H3: selling a house takes its name back off the map
@@ -439,6 +440,7 @@ import { chestIdentity, matchChests } from './chestRecords.js';   // HOLD-KEPT: 
 import { placeFoeEnv, placeRoomQuestFoe, entityOccupancy, questFoeGender, reviveQuestBehaviour as reviveQuestBehaviourFromSave, heldSpots, holdSpotWhile, restandMendedQuestFoe } from './quest/questFoeHost.js';   // B1 (PlaceFoeFreely reads the fieldOfView import below)   // AUDIT 63 F24: SerializableEnemy.cs:206-217 re-adds the component on restore
 import { standLooseFoe } from './hostEnchant.js';   // ROAD-G G1: SoulBound's break release / the Sanguine Rose, inside a building
 import { ENEMY_BASICS, enemyDisplayName } from '../characters/enemy/enemyBasics.js';   // MERGE: FinalizeFoe's Flying lift reads the behaviour flag // WORLD-HOVER H2: GetLocalizedEnemyName - Entity.Name for a live one (.cs:310)
+import { createInteriorNav } from './interiorNav.js';   // FIELD BUGS 2026-10-16b INDOOR-WATCH: ENHANCED AI 5's interior half - the room's mesh, its routes, NO ROUTE
 import { openDoorsStep, foeFrameDt } from '../characters/enemy/enemyMotor.js';   // AUDIT 63 F42: EnemyMotor.OpenDoors (EnemyMotor.cs:1424-1442), which lives in the motor and runs wherever an enemy does
 import { billboardSize } from '../world/rmbFlats.js';
 import { positionHash, staticNpcData } from './quest/questBridge.js';   // B7: the guild popup's TALK builds display data without re-registering the click
@@ -2273,7 +2275,7 @@ export function createWorldModes(host) {
    *  torn down with the context. */
   function makeInteriorFoes(ctx) {
     return createExteriorFoes({
-      renderer, collider: ctx.collider, fetchBytes, getTexture, uploadRecordFrame,
+      renderer, collider: ctx.collider, nav: interiorNav, fetchBytes, getTexture, uploadRecordFrame,   // INDOOR-WATCH: the room's mesh
       playerEntity, audio,
       // AUDIT 63 F42 (review round): ObstacleCheck's
       // GetComponent<DaggerfallActionDoor>() arm (EnemyMotor.cs:1158-1171),
@@ -2389,6 +2391,10 @@ export function createWorldModes(host) {
    *  OnTransitionExterior takes the interior's enemies with it, and
    *  the watch are enemies. */
   let interiorGuards = null;
+  /** FIELD BUGS 2026-10-16b INDOOR-WATCH (scenes/interiorNav.js): the room's navmesh - mounted with each building, released
+   *  with it, handed to both pools (the watch and the building's foes walk its routes with the Enhanced AI switch on),
+   *  its frame before they step: the routes' budget, the bake, and NO ROUTE's re-stand for a watchman cut off. */
+  const interiorNav = createInteriorNav();
   /** AUDIT 58 (hosts-consistency): THIS HOST'S ACTIVE ENEMY DATABASE,
    *  WRITTEN ONCE. DFU has ONE database per scene -
    *  ActiveGameObjectDatabase.GetActiveEnemyBehaviours() - and
@@ -2474,7 +2480,7 @@ export function createWorldModes(host) {
   });
   function makeInteriorGuards(ctx) {
     return createCityGuards({
-      renderer, collider: ctx.collider, fetchBytes, getTexture, uploadRecordFrame,
+      renderer, collider: ctx.collider, nav: interiorNav, fetchBytes, getTexture, uploadRecordFrame,   // INDOOR-WATCH: the room's mesh
       playerEntity, audio, shake: (k) => host.shakeCamera?.(k),   // AUDIT TELL H6: a watchman indoors staggered by my blow
       // AUDIT 63 F42: makeInteriorFoes' dep, on the pool standing
       // beside it and over the same collider - ObstacleCheck is
@@ -3657,11 +3663,11 @@ export function createWorldModes(host) {
       // used to sit here promised "the shoplifting ROLL and its crime
       // tally"; the roll belongs to the house-container arm and never
       // to this one.
-      const shelfBefore = shelf.items.length;
+      const shelfBefore = new Set(shelf.items);   // STOLEN-GOODS AUDIT S1: the shop's keeping as the window opens - what the mark and the tally both read
       const win = interiorInventory({
-        loot: { items: () => shelf.items },
+        loot: { items: () => shelf.items, stolenFrom: shelfBefore },   // STOLEN-GOODS: a take of the shop's own piece off a shut shelf is a theft - the piece is marked as it lands
         onClose: () => {
-          if (shopShelfTheft(shelfBefore, shelf.items.length)) tallyCrimeGuildRequirements(playerEntity, true, 1);
+          if (shopShelfTheft(shelfBefore, shelf.items)) tallyCrimeGuildRequirements(playerEntity, true, 1);
           decorDeliverCarried();   // DECOR2b: furniture taken off the shelf is delivered, never carried
         },
       });
@@ -3976,7 +3982,7 @@ export function createWorldModes(host) {
       for (const it of staged) {
         const i = playerEntity.items.indexOf(it);
         if (i >= 0) playerEntity.items.splice(i, 1);
-        shelf.items.push(it);   // sold goods land on the open shelf
+        landSold(shelf.items, it);   // sold goods land on the open shelf - STOLEN-GOODS: an honest piece; a stolen one is gone
         setJunk(it, false);   // AUDIT LOOT II C5: the junk mark is the seller's word for what goes - gone, it is the merchant's, unmarked if bought back
       }
     } else if (mode === 'Repair') {
@@ -4097,7 +4103,7 @@ export function createWorldModes(host) {
     if (isEquipped(it)) unequipSlot(playerEntity, it.equipSlot);
     addGold(playerEntity, price);
     playerEntity.items.splice(playerEntity.items.indexOf(it), 1);
-    shelf.items.push(it);   // sold goods land on the open shelf (DFU's remoteItems)
+    landSold(shelf.items, it);   // sold goods land on the open shelf (DFU's remoteItems) - STOLEN-GOODS: an honest piece; a stolen one is gone
     setJunk(it, false);   // AUDIT LOOT II C5: sold, its junk mark ends
     tallySkill(playerEntity, SKILLS.Mercantile, 1);
     surfacePlayer();
@@ -7339,9 +7345,10 @@ export function createWorldModes(host) {
     // gate, because the refusal is spoken inside activateBulletinBoard.
     boards.forEach((aabb, i) => targets.push({ key: `board:${i}`, aabb, distance: RAY_DISTANCE, reach: BULLETIN_BOARD_ACTIVATION_DISTANCE }));
     // SEARCH1 (systems/searchables.js): a graveyard's headstones - the streaming host's (scenes/world.js graveTargets);
-    // the bench host stands none. The ray's distance, half a door's reach carried beside it.
+    // the bench host stands none. The ray's distance, half a door's reach carried beside it - GRAVE-PARTY (FIELD BUGS
+    // 2026-10-16): measured from the BODY to the stone's box (searchReachFor), as the dungeon's searchables are.
     const graves = host.graveTargets?.() ?? [];
-    graves.forEach((aabb, i) => targets.push({ key: `grave:${i}`, aabb, distance: RAY_DISTANCE, reach: SEARCH_REACH }));
+    graves.forEach((aabb, i) => targets.push({ key: `grave:${i}`, aabb, distance: RAY_DISTANCE, reach: searchReachFor(aabb, player.pos, player.eye[1]) }));
     // LEFAY1 (scenes/lefayMonumentHost.js): the monument to Julian LeFay outside Privateer's Hold - both exterior hosts stand it
     // (their `monumentTargets`), its steps' box and its column's met at its stone, its reach a static NPC's beside the ray's
     for (const t of host.monumentTargets?.() ?? []) targets.push(t);
@@ -8846,6 +8853,7 @@ export function createWorldModes(host) {
       // a click.
       const spot = restore?.pos ?? floored;
       player.spawn(spot[0], spot[1], spot[2]);
+      interiorNav.mount(ctx, spot);   // INDOOR-WATCH: the room's mesh, anchored on the arrival, the ways in and the doors' watch spots
       _hccLanded = true; host.horseCart?.()?.handleSuccessfulInteriorTransition({ type: 'ToBuildingInterior', buildingKey: interiorBuilding?.buildingKey ?? 0 });   // HCC: OnTransitionInterior [IL_99ac] - the wagon parks, the horse waits, the access id is this building's
       setMode('interior');
       host.unlockOn?.();   // AUDIT 62 F16/F28: the lock never outlives a mode change (its pin wants this on the next line)
@@ -9140,9 +9148,9 @@ export function createWorldModes(host) {
           // false, and is never a theft.
           let fresh = false;   // AUDIT WORLD6a A5: this open rolled the new day's stock (said at the window, not at the roll)
           const openLoot = (privateProperty = false) => {
-            const before = privateProperty ? [...(c.items ?? [])] : null;
+            const before = privateProperty ? new Set(c.items ?? []) : null;   // STOLEN-GOODS AUDIT S1: the owner's keeping - the mark's and the basket's one Set
             const win = interiorInventory({
-              loot: { items: () => c.items, storage: !privateProperty },   // SHIP-STORE: an owned house's or ship's cupboard is the player's storage, two-way
+              loot: { items: () => c.items, storage: !privateProperty, stolenFrom: before },   // SHIP-STORE: an owned house's or ship's cupboard is the player's storage, two-way; STOLEN-GOODS: a stranger's is a theft, each take of theirs marked as it lands
               onClose: () => {
                 if (!privateProperty) return;
                 const out = privatePropertyTheft({
@@ -9249,6 +9257,7 @@ export function createWorldModes(host) {
     interiorFoes = null;
     interiorGuards?.clearLive?.();   // ROAD-B: the watch are enemies too - same transition, same teardown
     interiorGuards = null;
+    interiorNav.release();   // INDOOR-WATCH: the room's mesh and its worker, with the room
     interiorDropped.restorePiles(null);   // ID1: the piles are cached above; free their batches with the scene
     interiorHitEffects.clear();   // HE1: a splash mid-animation must not follow the player into the next building
     interiorBloodMarks.clear();   // BLOOD1a (HARD1): ...and neither do the marks. Named HERE rather than left to ride the line above: the ring is its own binding, so its end is its own line, which is what makes the ownership auditable at every teardown path.
@@ -10782,6 +10791,7 @@ export function createWorldModes(host) {
         parkoured: player.parkoured,   // CLIMB1
         odometer: player.odometer,   // MOVE-REAL: the ground the body covered - the movement skills past 100 count it
       });
+      interiorNav.frame(foeDt, player.pos, interiorGuards?.guards, !!player.grounded);   // INDOOR-WATCH: before both pools step - the routes' budget, the bake, NO ROUTE
       // IF: the pool's frame. Armed for MobileTeams targeting like
       // every other pool (MT) - the candidate list is this host's
       // whole active-enemy database, which is the pool itself.
@@ -13694,6 +13704,7 @@ export function createWorldModes(host) {
         interiorFoes = null;
         interiorGuards?.clearLive?.();   // ROAD-B: same teardown, the quest-teleport / load arm
         interiorGuards = null;
+        interiorNav.release();   // INDOOR-WATCH: the same, the quest-teleport / load arm
         interiorDropped.restorePiles(null);   // ID1: same teardown, the quest-teleport / load arm
         interiorTorches.destroyAll();   // AUDIT 66 F6: HT1's pool was the one that never joined this list - a quest teleport or a load out of a building left the room's torches lit, batched and burning in the ear
         interiorHitEffects.clear();   // HE1: the same

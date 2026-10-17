@@ -276,7 +276,7 @@ test('INSTANCES every other way in (entryFor): NEVER a popup - a quest\'s place 
   assert.deepEqual(await d.entryFor(hall, { ins: word, staff: true }), { instance: null, whole: true }, 'a zone hall keeps none (the relay refuses one)');
 });
 
-test('QUEST-ELSEWHERE (FIELD BUGS 2026-10-16b, MD-Geist: "the Objective just did not want to spawn (I tried the dungeon in \'Public\' mode) even after \'Quest Repair\'"): a quest\'s dungeon the world lays smaller in public says so in the popup, before Public is chosen; a repair in that room says where its things are, never "nothing was missing" (mutants: relaid never read; the line never laid; the repair\'s word dropped)', async () => {
+test('QUEST-ELSEWHERE (FIELD BUGS 2026-10-16c, MD-Geist: "the Objective just did not want to spawn (I tried the dungeon in \'Public\' mode) even after \'Quest Repair\'"): a quest\'s dungeon the world lays smaller in public says so in the popup, before Public is chosen; a repair in that room says where its things are, never "nothing was missing" (mutants: relaid never read; the line never laid; the repair\'s word dropped)', async () => {
   // the site: `relaid` exactly where the world lays the public room smaller (onlineDungeonSize), never the Hold's or a hollow's
   const sizes = { full: null, medium: null, small: null };
   for (let id = CRYPT.mapId; Object.values(sizes).some((v) => v == null); id++) if (id !== PRIVATEERS_HOLD_MAP_ID) sizes[onlineDungeonSize({ mapTableData: { mapId: id } })] ??= id;
@@ -421,7 +421,7 @@ test('INSTANCES the hosts, by source: the place\'s instance is the MODE\'s - set
   assert.match(WM, /dungeon: \{ \.\.\.\(placeInstance \? \{ ins: instanceWord\(placeInstance\) \} : \{\}\), whole: builtDungeonSize\(dungeonLoc\) === 'full' \} \};/, 'the anchor: room and layout');
   assert.doesNotMatch(fns.get('enterInteriorCore'), /choose|atDoor/, 'a building\'s entry never asks either');
   assert.match(fns.get('enterInteriorCore'), /place = entry \?\? \(restore\?\.ins != null && door \? await door\.entryFor\(/);
-  assert.match(fns.get('mountQuestResources'), /host\.instanceDoor\?\.questElsewhere\?\.\(dungeonLoc\); return 'elsewhere'; \}/);   // PIN MOVED (QUEST-ELSEWHERE, FIELD BUGS 2026-10-16b): the gate answers 'elsewhere', and a repair says so
+  assert.match(fns.get('mountQuestResources'), /host\.instanceDoor\?\.questElsewhere\?\.\(dungeonLoc\); return 'elsewhere'; \}/);   // PIN MOVED (QUEST-ELSEWHERE, FIELD BUGS 2026-10-16c): the gate answers 'elsewhere', and a repair says so
   assert.match(read('src/scenes/dungeonContext.js'), /mapId: mt\.mapId \?\? null, \.\.\.\(opts\.placeRecord\?\.\(\) \?\? \{\}\) \};/);
   const W = read('src/scenes/world.js');
   assert.match(W, /instance: ident\?\.instance \?\? null,/);

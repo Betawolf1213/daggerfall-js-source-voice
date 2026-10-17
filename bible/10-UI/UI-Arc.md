@@ -18306,7 +18306,7 @@ it.
 
 ## QUICK-LOOT - taking from the plaque, without a window (2026-09-22, Mac)
 
-SKIN-PLAQUE (2026-10-16, `01-Overview/bugs/Field-Bugs-2026-10-16b.md`; Mona Polca: "Quick loot is not suppressed when
+SKIN-PLAQUE (2026-10-16, `01-Overview/bugs/Field-Bugs-2026-10-16c.md`; Mona Polca: "Quick loot is not suppressed when
 skinning"): while a gathering act plays, the plaque names nothing - the gathering host's pick is `ACT_OWNS_LOOK`
 (`scenes/gatherHost.js`), which the hosts keep over the race's winner, so the body under the knife, its rows and the
 lit row's tooltip stand down, and nothing is lit for the wheel or a take. E was the act's already (AUDIT 29 D3).

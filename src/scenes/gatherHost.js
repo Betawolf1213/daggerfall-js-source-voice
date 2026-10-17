@@ -119,7 +119,7 @@ export const ACT_POINTER = Object.freeze({ basket: 'cursor', mine: 'look', trace
  *  needs nothing; the net's gentle throw still lands where the look sends it (its state carries no `gentle`, and is
  *  named here so it never will by accident). */
 export const actPointer = (st) => (st?.gentle === true && st.kind !== 'fish' ? null : ACT_POINTER[st?.kind] ?? null);
-/** SKIN-PLAQUE (FIELD BUGS 2026-10-16b, "Quick loot is not suppressed when skinning"): WHILE AN ACT PLAYS THE LOOK IS
+/** SKIN-PLAQUE (FIELD BUGS 2026-10-16c, "Quick loot is not suppressed when skinning"): WHILE AN ACT PLAYS THE LOOK IS
  *  THE ACT'S - hoverHit's pick names nothing (systems/worldHover.js resolveHover: `if (key == null) return null`), so
  *  the hosts' `?? ray` keeps it and the race's winner behind it (the body under the knife, its loot and its tooltip) is
  *  not the plaque's either: E is the act's (AUDIT 29 D3), and the plaque never names what the press ignores. */

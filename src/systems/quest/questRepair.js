@@ -302,7 +302,7 @@ export function repairActiveQuests(machine, env = {}) {
         if (env.hasQuestTopics && env.addQuestTopics && !env.hasQuestTopics(quest)) { env.addQuestTopics(quest); report.topics++; }
       } catch { report.failed++; }
     }
-    // 4. where the player stands, now - QUEST-ELSEWHERE (FIELD BUGS 2026-10-16b): a re-laid public room mounts none of a
+    // 4. where the player stands, now - QUEST-ELSEWHERE (FIELD BUGS 2026-10-16c): a re-laid public room mounts none of a
     // quest's things (worldModes.js mountQuestResources answers 'elsewhere'), and the repair says where they are
     try { if (env.mountCurrentSite?.() === 'elsewhere') report.elsewhere = true; } catch { report.failed++; }
   } finally {
@@ -314,7 +314,7 @@ export function repairActiveQuests(machine, env = {}) {
 
 const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
 
-/** QUEST-ELSEWHERE (FIELD BUGS 2026-10-16b; MD-Geist, "Quest Objective only spawned in 'Instance' Dungeon, not
+/** QUEST-ELSEWHERE (FIELD BUGS 2026-10-16c; MD-Geist, "Quest Objective only spawned in 'Instance' Dungeon, not
  *  'Public'": "the Objective just did not want to spawn (I tried the dungeon in 'Public' mode) even after 'Quest
  *  Repair'"): online, a dungeon's public room is laid smaller for most dungeons, and a quest's things stand in the dungeon
  *  laid whole - the player's instance (systems/instancePlaces.js questMountsHere). The repair found nothing missing, and

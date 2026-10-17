@@ -289,7 +289,7 @@ test('PROF7 host: a body is a node only while the pack holds a knife; targeted w
     bear.corpseMarker.pos = [0, 0, 2.3];
     h.host.tick(0.016);
     assert.equal(h.host.acting(), true);
-    // SKIN-PLAQUE (FIELD BUGS 2026-10-16b, "Quick loot is not suppressed when skinning"): the act owns the look - the
+    // SKIN-PLAQUE (FIELD BUGS 2026-10-16c, "Quick loot is not suppressed when skinning"): the act owns the look - the
     // hosts' pick (`hoverHit(ray) ?? ray`) keeps a hit that names nothing, so the body under the knife and its loot rows
     // (the race's winner) are no plaque's while it plays
     const behind = { key: `corpse:${h.stamps.of(bear.entity).key}`, distance: 1, reach: 3 };

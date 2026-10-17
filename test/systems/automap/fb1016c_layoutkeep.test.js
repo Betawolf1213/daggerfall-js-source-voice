@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-16b (LAYOUT-KEEP) - MD-Geist: "the automap needed to be revealed again in 'Instance' even though it
+// FIELD BUGS 2026-10-16c (LAYOUT-KEEP) - MD-Geist: "the automap needed to be revealed again in 'Instance' even though it
 // had been fully explored and revealed in 'Public'". Online one dungeon stands in two layouts under one automap record (its
 // key is the place's - automapDungeonKey): the public room the size the world gives it, the instance Daggerfall's whole.
 // The restore guard (bindAutomapLayout, DFU's :2385-2386) wiped the discovery, the notes and the portals of one layout

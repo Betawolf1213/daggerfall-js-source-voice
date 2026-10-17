@@ -1,7 +1,7 @@
-// FIELD BUGS 2026-10-16b (MAKER-KEPT) - the realm's side of Flylighter's "Grandfathered Items triggering trade lock":
+// FIELD BUGS 2026-10-16c (MAKER-KEPT) - the realm's side of Flylighter's "Grandfathered Items triggering trade lock":
 // item law 6 (src/systems/item/itemLaw.js MAKER_ERA_AETHERIC) is the account service's judge (judge.js JUDGE_VERSION), so
 // a checkpoint carrying a Ruhn's Regalia piece the item maker enchanted before AETHERIC-MAKER holds nothing; and
-// migration 0121 lifts what law 5 laid on such characters alone - the hold, the timed hold AUTO-HOLD made of a third
+// migration 0123 lifts what law 5 laid on such characters alone - the hold, the timed hold AUTO-HOLD made of a third
 // strike, the strikes - written as a staff act, leaving staff's holds, other findings' holds and `law_sig` as they were.
 import '../modsOff.js';
 import { test } from 'node:test';
@@ -60,7 +60,7 @@ test('MAKER-KEPT judge: a checkpoint carrying a Regalia piece the maker enchante
   } finally { s.done(); }
 });
 
-test('MAKER-KEPT migration 0121: a hold, a timed hold and strikes law 5 laid on the era\'s enchanted pieces alone lifted, written as a staff act; a staff hold, a hold with any other finding, and a finding past its kept list untouched; `law_sig` kept (mutants: the codes; the templates; the count guard; staff\'s)', async () => {
+test('MAKER-KEPT migration 0123: a hold, a timed hold and strikes law 5 laid on the era\'s enchanted pieces alone lifted, written as a staff act; a staff hold, a hold with any other finding, and a finding past its kept list untouched; `law_sig` kept (mutants: the codes; the templates; the count guard; staff\'s)', async () => {
   const s = await stand();
   try {
     const seats = {};
@@ -85,7 +85,7 @@ test('MAKER-KEPT migration 0121: a hold, a timed hold and strikes law 5 laid on 
     set(seats.tpl, { held: 'law', strikes: 1, at: T0 - 3600 }); find(seats.tpl, { count: 2, findings: law5(113) });
     set(seats.sworn, { held: 'staff', strikes: 2, at: T0 - 3600 }); find(seats.sworn, { count: 2, findings: law5(127) });
     const revs = Object.fromEntries(Object.entries(seats).map(([h, c]) => [h, s.row(c.R.id).judge_rev]));
-    const sql = readFileSync(new URL('../../server-account/migrations/0121_maker_kept.sql', import.meta.url), 'utf8');
+    const sql = readFileSync(new URL('../../server-account/migrations/0123_maker_kept.sql', import.meta.url), 'utf8');
     s.raw.exec(sql.split('\n').filter((l) => !l.startsWith('--')).join('\n'));
     for (const h of ['timed', 'plain', 'gone']) {
       const r = s.row(seats[h].R.id);

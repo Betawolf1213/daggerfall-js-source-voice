@@ -220,7 +220,7 @@ stands in.
 - **Every dungeon.** Mac chose quests', the Hold's and buildings'. A door at any dungeon is one row of instanceOffer
   away.
 - **A re-laid public room's own quests.** A player who chooses Public at a quest's dungeon finds its things in the
-  instance only. The choice is theirs; QUEST-ELSEWHERE (2026-10-16, `01-Overview/bugs/Field-Bugs-2026-10-16b.md` - MD-Geist:
+  instance only. The choice is theirs; QUEST-ELSEWHERE (2026-10-16, `01-Overview/bugs/Field-Bugs-2026-10-16c.md` - MD-Geist:
   "the Objective just did not want to spawn (I tried the dungeon in 'Public' mode) even after 'Quest Repair'") says it
   BEFORE the choice, in the popup, where the world lays the public room smaller (`dungeonSite`'s `relaid`), and Quest
   Repair in that room says where the things are instead of "Nothing was missing". The automap keeps each layout's map

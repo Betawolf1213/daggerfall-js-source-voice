@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-16b (MAKER-KEPT) - Flylighter, "Grandfathered Items triggering trade lock": "Enchanted a few pieces
+// FIELD BUGS 2026-10-16c (MAKER-KEPT) - Flylighter, "Grandfathered Items triggering trade lock": "Enchanted a few pieces
 // of Ruhn's set back before the change that disallowed enchanting them. Now, I'm getting a trade lock notice on account
 // of my gear!", then "I've been wrongly trade-locked for a week". AETHERIC-MAKER (2026-10-03) closed the item maker to an
 // Aetheric piece and promised "A piece enchanted before keeps its rows" (Field-Bugs-2026-10-03b); INT1's item law (law 5)
@@ -80,8 +80,8 @@ test('MAKER-KEPT: what the law caught it still catches - a row no maker laid, th
   assert.deepEqual([itemFindings(thin), itemFindings(pauldron)], [[], ['enchantments']], 'the maker\'s budget: 100 on Ruhn\'s plate fits, on a raider\'s pauldron (50) it does not');
 });
 
-test('MAKER-KEPT: migration 0121 reads the era\'s templates - exactly the templates its records stand on (mutant: a template dropped)', () => {
-  const sql = readFileSync(new URL('../../../server-account/migrations/0121_maker_kept.sql', import.meta.url), 'utf8');
+test('MAKER-KEPT: migration 0123 reads the era\'s templates - exactly the templates its records stand on (mutant: a template dropped)', () => {
+  const sql = readFileSync(new URL('../../../server-account/migrations/0123_maker_kept.sql', import.meta.url), 'utf8');
   const lists = [...sql.matchAll(/'\$\.t'\) IN \(([\d, ]+)\)/g)].map((m) => m[1].split(',').map(Number));
   const want = [...new Set([...REGALIA, ...RAID_SET_PIECES].map((r) => r.templateIndex))].sort((a, b) => a - b);
   assert.deepEqual(lists, [want, want], 'the lift\'s two statements, the same templates');

@@ -482,7 +482,7 @@ export const getInteriorAutomap = () => _interior;
  *  no host changes shape to get the repair. */
 export const buildRevealIndex = (entries) => buildAutomapModel(entries);
 
-/** LAYOUT-KEEP (FIELD BUGS 2026-10-16b; MD-Geist: "the automap needed to be revealed again in 'Instance' even though
+/** LAYOUT-KEEP (FIELD BUGS 2026-10-16c; MD-Geist: "the automap needed to be revealed again in 'Instance' even though
  *  it had been fully explored and revealed in 'Public'"): online one dungeon stands in TWO layouts - its public room the
  *  size the world gives it (world/smallerDungeons.js onlineDungeonSize), its instance Daggerfall's whole - under one
  *  record (automapDungeonKey is the place's), and the restore guard below wiped the map, the notes and the portals of

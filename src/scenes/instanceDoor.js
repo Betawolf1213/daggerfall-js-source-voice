@@ -47,7 +47,7 @@ export const INSTANCE_TEXT = Object.freeze({
 /** An entry: the place's public room, as the world lays it. */
 const PUBLIC = Object.freeze({ instance: null, whole: false });
 
-/** A dungeon's site, from the location its door names. QUEST-ELSEWHERE (FIELD BUGS 2026-10-16b): `relaid` - online the
+/** A dungeon's site, from the location its door names. QUEST-ELSEWHERE (FIELD BUGS 2026-10-16c): `relaid` - online the
  *  world lays its public room smaller (world/smallerDungeons.js dungeonSizeFor), where a quest's things never stand
  *  (systems/instancePlaces.js questMountsHere). */
 export const dungeonSite = (dfLocation) => {
@@ -156,7 +156,7 @@ export function createInstanceDoor(deps) {
       // its codes alone (ui/talkWindow.js), so Leave is the Escape key's row
       const options = rows.map((r, i) => ({ code: `Digit${i + 1}`, label: `${i + 1} - ${r.kind === 'public' ? INSTANCE_TEXT.public() : r.kind === 'mine' ? INSTANCE_TEXT.mine() : INSTANCE_TEXT.join(r.name)}`, action: () => done(r) }));
       options.push({ code: 'Escape', label: `Esc - ${INSTANCE_TEXT.leave()}`, action: () => done(null) });
-      // QUEST-ELSEWHERE (FIELD BUGS 2026-10-16b): a quest's place laid smaller in public says, before the choice, that its
+      // QUEST-ELSEWHERE (FIELD BUGS 2026-10-16c): a quest's place laid smaller in public says, before the choice, that its
       // things stand in the instance alone - the line said once inside (questElsewhere) came after Public was chosen
       const quest = !site.isHold && site.relaid === true && questHere(site);
       const win = new ChoiceWindow({ lines: [site.name ?? '', site.isHold ? INSTANCE_TEXT.holdLine() : INSTANCE_TEXT.line(), quest ? INSTANCE_TEXT.questPublic() : ''].filter(Boolean), options });
