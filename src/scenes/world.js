@@ -628,7 +628,7 @@ import { windWidgetFrameUrl as csaWindWidgetFrameUrl, waveDerivedUrl as csaWaveD
 import { WAVE_FRAME_COUNT as CSA_WAVE_FRAME_COUNT, waveDitherOf as csaWaveDitherOf } from '../systems/comeSailAway/comeSailAwayWaves.js';   // CSA-F
 import { ComeSailAwayRenderer, softParticleTexture as csaSoftParticleTexture } from '../render/comeSailAwayRender.js';   // CSA-F: the waves' and the particles' passes
 import { createNavalHost, hullBoxOf as navalHullBoxOf, NAVAL_SAVE_VENDOR, NAVAL_TAG_RANGE } from './naval/navalHost.js';   // NAV-H: the sea fight - the Iliac Bay's ships, the guns, boarding, the law and the word
-import { peaceWayOf } from '../systems/comeSailAway/peaceWay.js';   // PEACE-WAY: her way out of a fight
+import { peaceWayOf, heldPeaceWay } from '../systems/comeSailAway/peaceWay.js';   // PEACE-WAY: her way out of a fight (held a moment)
 import { createRaidAshore } from './raidAshore.js';   // RAID-ASHORE: a voyage's raid thrown back where I stand
 import { createHoldDoor, holdsCargo } from './holdDoor.js';   // CARGO-ANYWHERE: a ship's hold from anywhere
 import { createShipFlagHost } from './shipFlagHost.js';   // SHIP-COLOURS: the flags my ships and the others' fly
@@ -8386,7 +8386,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     brake: () => naval?.brake() ?? 0,   // ...and a heave-to's brake beside a struck ship
     // PEACE-WAY (systems/comeSailAway/peaceWay.js): her way out of a fight - no enemy near (this runtime's own word, below),
     // no boarding, no broadside laid
-    peaceWay() { return peaceWayOf({ enemies: !!this.enemiesNearby(), boarding: !!naval?.boarding, aiming: !!naval?.aiming }); },
+    peaceWay() { return (this._peace ??= heldPeaceWay(() => peaceWayOf({ enemies: !!this.enemiesNearby(), boarding: !!naval?.boarding, aiming: !!naval?.aiming })))(); },   // held a PEACE_HOLD_S
     warp: (boat, s) => naval?.warp?.(boat, s) ?? null,   // QUAYS: her hands warping her in alongside a harbour's quay
     drift: (boat) => naval?.drift?.(boat) ?? null,   // SERPENT1: the sea serpent's maelstrom pulling her, a blow's throw - added to the current under her
     gale: (boat) => naval?.gale?.(boat) ?? null,   // SERPENT4: the sea serpent's gale - her canvas on her quarter on every heading, her helm quicker
@@ -35228,7 +35228,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     const frameShipFlags = () => {   // PERF-V8
     // SHIP-COLOURS: and the ships' flags, cloth as the banners are (render/shipFlagPass.js), on the same light and wind - a
     // foreign seam of its own (the banners' program left bound under it)
-    if (shipFlagPass && shipFlags.draws().length && shipFlagPass.draw(shipFlags.draws(), proj, view, new Float32Array(mwv.eye), now / 1000, {
+    if (shipFlagPass && shipFlagPass.draw(shipFlags.draws(), proj, view, new Float32Array(mwv.eye), now / 1000, {   // none to draw: its idle textures pruned, no pass
       light: { sunDir: renderer._lightDir, amb: renderer._ambient, sunCol: renderer._sunColor, sunScale: renderer._sunScale, moonDir: renderer._moonDir, moonScale: renderer._moonScale, moonCol: renderer._moonColor },
       wind: Math.min(1, wd.strength01 * wd.gust),
       fog: { mode: renderer._fogMode, density: renderer._fogDensity, range: renderer._fogRange, color: renderer._fogColor, camPos: renderer._camPos, dw: renderer._dwFog, focus: renderer._focus },

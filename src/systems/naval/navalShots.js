@@ -157,7 +157,9 @@ export function createShotField(deps) {
     // NEAR-MISS: the ships that hear it, passed close (to where it stops) and not struck in this piece
     for (const t of targets) {
       if (!t.ear || t.id === b.shooter || b.passed?.has(t.id) || (ship && ship.t.id === t.id && ship.e.t === firstT)) continue;
-      const near = segmentNearBox(a, next, t.box, firstT === Infinity ? 1 : firstT);
+      const upTo = firstT === Infinity ? 1 : firstT;
+      if (segmentPointGap(a, next, t.box.c, upTo) > Math.hypot(t.box.h[0], t.box.h[1], t.box.h[2]) + NEAR_MISS_M) continue;   // AUDIT 2026-10-17: past her bounding sphere - no search
+      const near = segmentNearBox(a, next, t.box, upTo);
       if (near.gap > NEAR_MISS_M) continue;
       (b.passed ??= new Set()).add(t.id);
       emit({ type: 'pass', volley: b.volley, shooter: b.shooter, owner: b.owner, target: t.id, gun: b.gun, shot: b.shot, point: near.point, gap: near.gap, dir });
@@ -249,6 +251,13 @@ export function boxGap(box, p) {
   const l = toBoxLocal(box, p);
   return Math.hypot(Math.max(0, Math.abs(l[0]) - box.h[0]), Math.max(0, Math.abs(l[1]) - box.h[1]), Math.max(0, Math.abs(l[2]) - box.h[2]));
 }
+/** NEAR-MISS: how near a segment's first `upTo` share comes to a point (m) - the cheap test before the search below. */
+const segmentPointGap = (a, b, p, upTo = 1) => {
+  const d = [b[0] - a[0], b[1] - a[1], b[2] - a[2]], w = [p[0] - a[0], p[1] - a[1], p[2] - a[2]];
+  const dd = d[0] * d[0] + d[1] * d[1] + d[2] * d[2];
+  const u = dd > 0 ? Math.max(0, Math.min(Math.max(0, Math.min(1, upTo)), (w[0] * d[0] + w[1] * d[1] + w[2] * d[2]) / dd)) : 0;
+  return Math.hypot(w[0] - d[0] * u, w[1] - d[1] * u, w[2] - d[2] * u);
+};
 /** NEAR-MISS: a segment's nearest to a box over its first `upTo` share - `{ u, gap, point }`. The gap is convex along a
  *  line (a box is convex), so its least is found by thirds. */
 export function segmentNearBox(a, b, box, upTo = 1) {

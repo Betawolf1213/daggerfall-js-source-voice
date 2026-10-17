@@ -285,10 +285,10 @@ test('SHIP-COLOURS the world: one renderer built in every skin (a shader that fa
   assert.match(WORLD, /const shipFlags = createShipFlagHost\(\{\n\s+myBoats: \(\) => \(shipFlagPass && csaRuntime && csaOn\(\) \? csaRuntime\.AllBoats : \[\]\),\n\s+coloursOf: \(uid\) => fleetShip\(uid\)\?\.colours \?\? null,\n\s+guildArms: \(\) => guildBook\?\.guild\?\.heraldry \?\? null,\n\s+peerFlags: \(\) => \(shipFlagPass \? csaPeers\?\.flagged\?\.\(\) \?\? \[\] : \[\]\),\n\s+shown: \(\) => !!shipFlagPass && _mode\(\) === 'exterior',/);
   assert.match(WORLD, /shipFlags\.frame\(\);/);
   assert.match(WORLD, /if \(list === lists\.flags && shipFlags\.flies\(boat\)\) continue;/);
-  assert.match(WORLD, /const frameShipFlags = \(\) => \{   \/\/ PERF-V8\n[^\n]*\n[^\n]*\n\s+if \(shipFlagPass && shipFlags\.draws\(\)\.length && shipFlagPass\.draw\(shipFlags\.draws\(\), proj, view, new Float32Array\(mwv\.eye\), now \/ 1000, \{/);   // PIN MOVED (PERF-V8: a closure of its own)
+  assert.match(WORLD, /const frameShipFlags = \(\) => \{   \/\/ PERF-V8\n[^\n]*\n[^\n]*\n\s+if \(shipFlagPass && shipFlagPass\.draw\(shipFlags\.draws\(\), proj, view, new Float32Array\(mwv\.eye\), now \/ 1000, \{   \/\/ none to draw: its idle textures pruned, no pass/);   // PIN MOVED (PERF-V8: a closure of its own)
   assert.ok(WORLD.indexOf('    frameBanners();') < WORLD.indexOf('    const frameShipFlags = '), 'after the banners');
   assert.match(WORLD, /flag: shipFlags\.wireFlag\(b\),/);
-  assert.match(WORLD, /if \(shipFlagPass && shipFlags\.draws\(\)\.length && shipFlagPass\.draw\([^\n]*\n[^\n]*\n\s+wind: Math\.min\(1, wd\.strength01 \* wd\.gust\),/, 'the weather\'s own wind, as the banners\'');
+  assert.match(WORLD, /if \(shipFlagPass && shipFlagPass\.draw\([^\n]*\n[^\n]*\n\s+wind: Math\.min\(1, wd\.strength01 \* wd\.gust\),/, 'the weather\'s own wind, as the banners\'');
   assert.match(WORLD, /guildArms: \(\) => guildBook\?\.guild\?\.heraldry \?\? null,   \/\/ SHIP-COLOURS: "fly my guild's arms"/);
   const peers = rd('src/scenes/comeSailAway/comeSailAwayPeers.js');
   assert.match(peers, /for \(let i = 0; i < list\.length; i\+\+\) if \(list\[i\]\?\.boat && words\[i\]\?\.flag\) out\.push\(\{ boat: list\[i\]\.boat, flag: words\[i\]\.flag \}\);/);

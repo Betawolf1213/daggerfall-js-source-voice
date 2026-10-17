@@ -14,12 +14,12 @@ import { readFileSync } from 'node:fs';
 import {
   CAPTAIN_XP, TRADED_GOLD, CAPTAIN_LEVEL_MAX, CAPTAIN_STATS, CAPTAIN_STARS, CAPTAIN_EDGES, CAPTAIN_CROSS, RELOAD_LEAST,
   captainXpOf, xpForLevel, levelOf, starPoints, captainOf, starOf, neighboursOf, heldStars, takeable, takesBack, refundable, wayTo,
-  starStats, statScale, captainRefit, captainWorth, captainShot,
+  starStats, statScale, captainRefit, captainWorth, captainShot, struckGun,
 } from '../../../src/systems/naval/captainTree.js';
 import { createCaptainLedger } from '../../../src/systems/naval/captainLedger.js';
 import { NO_WORTH } from '../../../src/systems/naval/shipCrew.js';
 import { GUNS } from '../../../src/systems/naval/navalShips.js';
-import { shotFireChance, shotGun, FIRE_MOST } from '../../../src/systems/naval/shotKinds.js';
+import { shotFireChance, shotGun, shotReach, FIRE_MOST } from '../../../src/systems/naval/shotKinds.js';
 import { FIRE_CHANCE } from '../../../src/systems/naval/navalDamage.js';
 import { foul, FOUL_S } from '../../../src/systems/naval/navalFoul.js';
 import { exchangeOf, priceOf, TRADE_MOST, SPREAD } from '../../../src/systems/naval/tradeGoods.js';
@@ -143,6 +143,14 @@ test('CAPTAIN-TREE the seams: her refits bettered by the stars - hold, way, hull
   assert.equal(captainShot('long', long, 'round', { grape: 0.3, chain: 0.3 }), long, 'round shot: none of the locker\'s');
   assert.equal(captainShot('long', long, 'grape', null), long, 'another\'s ball');
   assert.equal(captainShot('barrel', GUNS.barrel, null, { heated: 1 }), GUNS.barrel);
+  // AUDIT 2026-10-17: the gun a ball struck with, out of the naval host - its load's, the locker's over it, grape's men by
+  // its time aloft
+  assert.equal(struckGun('long', long, null, 9, { grape: 0.3 }), long, 'no load said: its bore\'s own');
+  near(struckGun('long', long, 'grape', 0.1, { grape: 0.3 }).crew, grape.crew, 'close aboard: the locker over the load');
+  assert.ok(shotReach('grape', 5) < 1);
+  near(struckGun('long', long, 'grape', 5, null).crew, shotGun('long', long, 'grape').crew * shotReach('grape', 5), 'far off: grape\'s men by its time aloft');
+  near(struckGun('long', long, 'grape', 5, { grape: 0.3 }).crew, grape.crew * shotReach('grape', 5), 'the locker\'s, and the reach over it');
+  assert.equal(struckGun('nope', undefined, null, 0, null), null, 'no such gun: none');
   near(shotFireChance('heated', FIRE_CHANCE, 1.5), 0.45 * 1.5);
   assert.equal(shotFireChance('heated', FIRE_CHANCE, 3), FIRE_MOST);
   assert.equal(shotFireChance('heated', FIRE_CHANCE), 0.45, 'no stars: heated shot\'s own');
@@ -179,7 +187,7 @@ test('CAPTAIN-TREE the hosts read the stars where the ship\'s own numbers are re
   const host = rd('src/scenes/naval/navalHost.js');
   assert.match(host, /s\.worth = captainWorth\(b\.crewed \? crewWorth\(c\.hands, ashoreNames\(b\)\) : NO_WORTH, deps\.captain\?\.stats\?\.\(\)\);/);
   assert.match(host, /const crewSkill = \(boat, st\) => Math\.min\(1, \(boat\.crewed \? [^\n]*\) \* statScale\(deps\.captain\?\.stats\?\.\(\), 'aim'\)\);/);
-  assert.match(host, /const g = captainShot\(e\.gun, shotGun\(e\.gun, GUNS\[e\.gun\], e\.shot \?\? null\), e\.shot \?\? null, isMine\(e\.shooter\) \? deps\.captain\?\.stats\?\.\(\) : null\);/);
+  assert.match(host, /const gun = e\.type === 'blast' \? GUNS\.barrel : struckGun\(e\.gun, GUNS\[e\.gun\], e\.shot, e\.t, isMine\(e\.shooter\) \? deps\.captain\?\.stats\?\.\(\) : null\);/);   // PIN MOVED (AUDIT 2026-10-17: captainTree.js struckGun, out of the host)
   assert.match(host, /random\(\) < shotFireChance\(e\.shot, FIRE_CHANCE, gun\.fireK\);/);
   assert.match(host, /const dealt = Math\.round\(speed \* RAM_DAMAGE \* \(galley \? GALLEY_RAM : 1\) \* statScale\(deps\.captain\?\.stats\?\.\(\), 'ram'\)\);/);
   assert.match(host, /foul\(e\.ship, myId\(\), clock, deps\.captain\?\.stats\?\.\(\)\.foul\);/);
@@ -244,7 +252,7 @@ test('REFIT-ORES the ladder: past the shipwright\'s three tiers, nine of metal -
 
 const piece = (group, material, extra = {}) => ({ group, templateIndex: group === 'Weapons' ? WEAPONS.Longsword : 105, material, stackCount: 1, ...extra });
 
-test('REFIT-ORES a piece melted down: a weapon\'s metal, or a piece of plate\'s - never chain, leather, an arrow; never one worn, a quest\'s, an artifact, a sigil\'s or enchanted; counted beside the ingots, the ingots taken first in every list before a piece is melted; what a refit would melt, said; stores counted for two kinds taken for one alone (mutants: the plate\'s metal, each guard, the ingots first, the joint count)', () => {
+test('REFIT-ORES a piece melted down: a weapon\'s metal, or a piece of plate\'s - never chain, leather, an arrow; never one worn, locked, bound, a quest\'s, an artifact, a sigil\'s, a player\'s make, enchanted, graded past Common or socketed; counted beside the ingots, the ingots taken first in every list before a piece is melted; what a refit would melt, said; stores counted for two kinds taken for one alone (mutants: the plate\'s metal, each guard, the ingots first, the joint count)', () => {
   assert.equal(refitMetalOf(piece('Weapons', 7)), 7);
   assert.equal(refitMetalOf(piece('Armor', 0x205)), 5, 'mithril plate');
   assert.equal(refitMetalOf(piece('Armor', 0x100)), null, 'chain');
@@ -253,7 +261,13 @@ test('REFIT-ORES a piece melted down: a weapon\'s metal, or a piece of plate\'s 
   assert.equal(refitMetalOf({ group: 'UselessItems2', templateIndex: 621 }), null, 'an ingot is counted by its template');
   assert.equal(refitMetalOf(piece('Weapons', 12)), null);
   assert.equal(meltable(piece('Weapons', 1)), true);
-  for (const guard of [{ equipSlot: 3 }, { questItem: true }, { artifact: true }, { sigil: { set: 'x' } }, { enchantments: [{ type: 1 }] }]) assert.equal(meltable(piece('Weapons', 1, guard)), false, JSON.stringify(guard));
+  for (const guard of [{ equipSlot: 3 }, { questItem: true }, { artifact: true }, { sigil: { set: 'x' } }, { enchantments: [{ type: 1 }] },
+    // AUDIT (2026-10-17): the refit melts unasked, so a plain piece alone - never locked, bound, a player's make, enchanted
+    // by the item maker, graded past Common (its tier, its affixes, a Legendary's record, DFU's magic mark) or socketed
+    { locked: true }, { bound: true }, { provenance: 'p:1' }, { customEnchantments: [{ type: 'x' }] }, { rarity: 'magic' },
+    { rarity: 'legendary', legendary: 'l1', affixes: [{ id: 'a' }] }, { affixes: [{ id: 'a' }] }, { legendary: 'l1' }, { magic: true },
+    { socket: 'empty' }, { sockets: ['empty'] }]) assert.equal(meltable(piece('Weapons', 1, guard)), false, JSON.stringify(guard));
+  for (const plain of [{ rarity: 'common' }, { enchantments: [] }, { customEnchantments: [] }, { affixes: [] }, { sockets: [] }, { counterBought: true }, { stolen: true }]) assert.equal(meltable(piece('Weapons', 1, plain)), true, JSON.stringify(plain));
   assert.equal(meltable(null), false);
   const ingot = (t, n) => ({ templateIndex: t, stackCount: n });
   const sword = piece('Weapons', 1), cuirass = piece('Armor', 0x201), worn = piece('Weapons', 1, { equipSlot: 9 }), magic = piece('Armor', 0x201, { enchantments: [{}] });

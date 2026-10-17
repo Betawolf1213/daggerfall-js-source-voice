@@ -278,8 +278,8 @@
   {
     "name": "SCH-save-mates-dropped",
     "file": "src/scenes/naval/navalHost.js",
-    "old": "    return { barrels: st.guns.barrels, mates: st.crew.snapshot(), ...(Object",
-    "new": "    return { barrels: st.guns.barrels, ...(Object",
+    "old": "  return { barrels: st.guns.barrels, mates: st.crew.snapshot(), ...(Object",
+    "new": "  return { barrels: st.guns.barrels, ...(Object",
     "tests": [
       "test/systems/naval/shipcrew.test.js"
     ]

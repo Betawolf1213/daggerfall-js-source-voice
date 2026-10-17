@@ -265,6 +265,16 @@ test('NAV-B the pass draws what the frame holds in one buffer: the blended layer
   pass.draw({ particles: many });
   assert.equal(pass.drawn, NAVAL_MAX_QUADS);
   assert.equal(r.marked, 3);
+  // AUDIT 2026-10-17: the aim's room kept first - a full frame cuts the effects, the farthest blended first, never the lay
+  const arc = Array.from({ length: 30 }, (_, i) => [0, 5, -i]);
+  const aim = { arcs: [arc], zone: [[0, 0, -60], [1, 0, -60]], strikes: [[0, 1, -50]], posts: true, hot: true, radius: 2 };
+  const aimOnly = new NavalRenderer(fakeRenderer(recordingGl().gl));
+  aimOnly.draw({ aim });
+  const laid = aimOnly.drawn;
+  assert.ok(laid >= 2 * 2 + 1 + arc.length - 1, `the aim alone: ${laid}`);
+  pass.draw({ particles: many, aim });
+  assert.equal(pass.drawn, NAVAL_MAX_QUADS - (2 * 2 + 1 + arc.length) + laid, 'the aim laid whole, the effects the rest');
+  near(pass.data[0], NAVAL_MAX_QUADS - (2 * 2 + 1 + arc.length) - 1, 2.5, 'the farthest let go: the first laid is the farthest kept');
 });
 
 // ── a burning deck ──────────────────────────────────────────────────────────────────────────────────────────────

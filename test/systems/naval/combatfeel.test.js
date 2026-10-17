@@ -283,6 +283,14 @@ test('COMBAT-FEEL over the real naval host: a pirate\'s ball by my side whistles
   drawNavalHud({ ...m, ship: { ...m.ship, hull: m.ship.hull - 0.2 } }, { doc, dt: 0.016 });
   assert.ok(all(doc.body).some((n) => /dfnaval-track hull.*hit-[ab]/.test(n.className)), 'her bar flashes as a piece breaks off');
   assert.ok(all(doc.body).some((n) => /dfnaval-chunk f[ab]/.test(n.className)));
+  // AUDIT 2026-10-17: the plate's bar is the boat behind it - the helm taken on another starts whole at hers, no bite read
+  assert.equal(m.ship.id, h.boat.uid, 'the plate says whose boat it is');
+  const bitten = (d) => all(d.body).some((n) => /dfnaval-track hull.*hit-[ab]/.test(n.className));
+  drawNavalHud({ ...m, ship: { ...m.ship, id: 1, hull: 1 } }, { doc, dt: 0.016 });
+  drawNavalHud({ ...m, ship: { ...m.ship, id: 2, hull: 0.4 } }, { doc, dt: 0.016 });
+  assert.equal(bitten(doc), false, 'another boat at the helm: no bite');
+  drawNavalHud({ ...m, ship: { ...m.ship, id: 2, hull: 0.2 } }, { doc, dt: 0.016 });
+  assert.equal(bitten(doc), true, 'her own bite');
   // her men on the card, and my volley's count of them
   const g = await sea({ hull: HULL.SmallShip, settings: { ShipsAtSea: 'off', Boarders: false } });
   const prey = g.host._sea.get(g.host.spawnShip('merchantCarrack', { range: 70, bearing: Math.PI / 2 }));

@@ -29,6 +29,19 @@ export function peaceWayOf({ enemies = false, boarding = false, aiming = false }
   return enemies || boarding || aiming ? 1 : PEACE_WAY;
 }
 
+/** How long one answer of the world's stands (s): the runtime asks the seam in her way, her oars, her sails and their
+ *  coming on - several times a frame - and the world's answer walks every foe, guard and ship near (AUDIT 2026-10-17). */
+export const PEACE_HOLD_S = 0.1;
+/** `read` asked at most once a PEACE_HOLD_S of `now` (s; the page's clock) - its answer held between. */
+export function heldPeaceWay(read, now = () => performance.now() / 1000) {
+  let at = -Infinity, k = 1;
+  return () => {
+    const t = now();
+    if (!(t >= at && t - at < PEACE_HOLD_S)) { at = t; k = read(); }
+    return k;
+  };
+}
+
 /** A seam's answer as the runtime takes it: a number in [1, PEACE_WAY] - anything else (none handed, NaN) is 1. */
 export function peaceShare(k) {
   const n = Number(k);

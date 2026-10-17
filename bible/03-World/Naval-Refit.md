@@ -203,9 +203,13 @@ CHANGED (`systems/naval/navalFoul.js`, the law; the host wires it):
 - **Her way held** (`navalAI.js stepCaptain` -> `holdFouled`): while fouled her captain's helm runs as ever and then her
   way comes off at FOUL_DECEL to FOUL_WAY (1.2 m/s, under BOARD_SPEED - a boarding from her lee is never left behind)
   and her canvas comes in; her guns still answer - she has not struck.
-- **Online**: a sound ship being boarded is said 'boarded' on the room's word as a struck one is (`word` - a peer reads it
-  as struck and boarded: no peer grapples her under the fight); the boarder adopts her at the grapple as ever, so a ship
-  another stands is fouled in the rammer's copy and taken over before her stander's word can sail her off.
+- **Online** (AUDIT 2026-10-17): a ram on a ship another player stands says its FOUL to her stander with its blow
+  (`navalWire.js navalHitData` `foul`, the hit's `u`: the seconds it holds her, FOUL_SAID_MAX at most), and her
+  stander's AI holds her way (`navalFoul.js foulSaid`, fouled by the rammer) - the foul had been written in the rammer's
+  copy alone, so her stander's word sailed her on out of the grapples' reach. A sound ship being boarded is said
+  `afloat` on the room's word, her captain's mode `boarded` (`word`; `applyWord` reads either as boarded): no peer
+  grapples her under the fight, and none reads her colours struck - said 'boarded' she was read struck, her colours down
+  on every other screen and a win to any crew that had fired on her. The boarder adopts her at the grapple as ever.
 - **Left**: a boarding of a sound ship given up past ABANDON_RANGE says "Her crew runs back to her guns" - she fights on.
 
 The law, the muster, the haul and the prize are unchanged; the struck law stands for every ship not fouled.
@@ -230,12 +234,12 @@ CHANGED (`systems/naval/shotKinds.js`, the law; the deck keeps it, the host and 
   broadsides as one, the bow chasers, the stern guns - each its bores' own until changed (a group at its own load is
   said as none). A change draws a loaded battery and loads it again in SHOT_SWITCH (half) of the new load's reload; one
   reloading takes the new shot in, its clock scaled to the new load's. The fire barrels carry none. The save keeps the
-  loads (`gunsRecord`: `loads` only when one is not her bores' own).
+  loads (navalHost.js `gunsRecord`, outside the host's own function: `loads` only when one is not her bores' own).
 - **The aim and the volley are the load's** (`aimSolution` `shot`, `volleyLaunches`): laid with its muzzle speed (grape
   falls shorter and is laid higher), flown with its speed and scatter; the helm's look on a ship lays chain for her
   canvas whatever bore throws it (`lookOnShip`, `aimStrikes`).
 - **The ball keeps it** (`navalShots.js`): swept with its load's radius, every event saying it, a hit its time aloft;
-  the host strikes with the loaded gun (`loadedGun` - grapeshot's men by its time aloft) and heated shot's fire.
+  the host strikes with the loaded gun (`captainTree.js struckGun` - grapeshot's men by its time aloft) and heated shot's fire.
 - **The helm's choice** (`scenes/naval/navalLoads.js`): the group the guns are laid with, else the one the look bears on,
   else her first with guns. THE WHEEL while the guns are laid steps it on or back (one step a SHOT_WHEEL_S - a
   trackpad's stream steps once; the camera's zoom waits); the helm panel's Shot button ("Broadsides: Grapeshot"); the
@@ -300,14 +304,18 @@ CHANGED:
 - **MAGAZINE** (`navalFeel.js sinking`, `frame`): a ship going down while she burns may blow her magazine - MAGAZINE_CHANCE
   (0.55), decided by HER OWN SEED (`magazineOf`), so every player who sees her sees the same - once, 1.5 to 4.5 s into
   her going down, at her middle: a barrel's blast and its sound, and a jar for a boat of mine within MAGAZINE_SHAKE_M.
-  A ship gone before it went up is forgotten.
+  A ship gone before it went up is forgotten. A ship another player stands is read going down off her stander's word
+  (`applyWord`: her bubbles, her magazine by her seed and the word's fire - AUDIT 2026-10-17: only the screen whose blow
+  sank her had heard her go or seen her powder go up).
 - **FOUNDER-BOIL** (`effects.founder`): the air leaving a ship going down boils up where she is - small drops popping off
   the sea, BOIL_RATE (14) a second, each with its own little ring among her foam.
 - **MY-SMOKE** (`navalFeel.js frame`): my own boat smokes along her deck as a sea ship does under SMOKE_FROM (0.6) of her
-  hull - while a hostile ship is near her (`navalHost.js hostileNearBoat`: the fight's smoke, not a mooring's).
+  hull - while a hostile ship is near her (`navalHost.js hostileNearBoat`: the fight's smoke, not a mooring's; asked of a
+  boat under MY_SMOKE_FROM alone - AUDIT 2026-10-17: every boat of mine scanned the sea for it every frame).
 - **CARD-CREW**: the target card reads her MEN (`crew`, a third bar under her canvas) once she is made out; my volley's
-  tally counts the men it took (`tallyMen` - her crew before and after each ball of it, or a peer's ship's as her
-  stander will reckon them, shotMen) - "N of her men down", grape's work said.
+  tally counts the men it took (`scenes/naval/navalTally.js` `men` - her crew before and after each ball of it, or a
+  peer's ship's as her stander will reckon them, shotMen) - "N of her men down", grape's work said. The tally is a
+  module the host wires (AUDIT 2026-10-17, HOST-SPLIT: it had stood in createNavalHost).
 - **RELOAD-SECS**: each battery says the whole seconds it still loads beside its load ("Grape 5s"); a loaded side and a
   barrel none (on a short screen the load's line is hidden, and the aim's line says it, as before).
 
@@ -391,7 +399,7 @@ CHANGED (`systems/naval/captainTree.js`, the law; pure):
     reload (never under RELOAD_LEAST, a half), `repair` on her hands' mending, `boarders` more hands over the rail (the
     First Mate's seam, `myHands` - as many as her crew has men for, CAPT-CREW's own cap);
   - her guns' aim (`crewSkill` times `aim`, to 1 at the most);
-  - the shot locker (`captainShot`, a ball of mine in `loadedGun`): `grape` grapeshot's men, `chain` chain shot's canvas
+  - the shot locker (`captainShot`, a ball of mine in `struckGun`): `grape` grapeshot's men, `chain` chain shot's canvas
     (a bow chaser's own chain too), `heated` heated shot's chance of fire (`shotFireChance`'s `k`, to FIRE_MOST, 0.9);
   - her ram (`checkRams`): `ram` its harm, `foul` seconds more she holds a ship fouled (`navalFoul.js foul`'s `more`);
   - the exchange (`harbourOffice.js`, `tradeGoods.js exchangeOf`'s `edge`): `trade` the share of the SPREAD her dealing
@@ -423,8 +431,11 @@ CHANGED (`systems/fleet.js`):
   her build's load.
 - **A metal is its ingots, or a piece melted down** (`MATERIALS`' metals, `refitMetalOf`, `meltable`): the forge's ingot of it
   (Moonstone for Elven, Orichalcum for Orcish; the Warforged Steel ingot counts as Ebony), or a weapon or a piece of plate
-  of that metal (an arrow, chain and leather never) - never one worn, a quest's, an artifact, a sigil's or enchanted. The
-  shipwright takes every ingot first, in the pack and her hold, and only then melts a piece (`takeMaterials`); the refit
+  of that metal (an arrow, chain and leather never) - A PLAIN PIECE ALONE, because the refit takes it unasked: never one
+  worn, locked, bound, a quest's, an artifact, a sigil's or a player's make (`provenance`); never enchanted, DFU's way or
+  the item maker's (`customEnchantments`); never graded past Common (a rolled tier, its affixes, a Legendary's record,
+  DFU's magic mark - `lootRarity.js rarityEligible`'s list) nor socketed (AUDIT 2026-10-17: a Legendary, a made piece or
+  one with the maker's enchantments was melted). The shipwright takes every ingot first, in the pack and her hold, and only then melts a piece (`takeMaterials`); the refit
   says how many pieces it would melt (`meltCount`).
 - **One store serves once** (`materialsFor`): a steel ingot is Steel and Iron both (the Iron store's own law), so a
   refit's stores are tried together on copies before anything is taken - a Guns tier of Steel no longer reads affordable
@@ -541,7 +552,57 @@ CHANGED (`systems/naval/deckFittings.js`, the law; pure):
   owner's word (the model's place in DECK_FITTINGS, x and z in decimetres, its turn), only while one is fitted; a reader
   takes each list through the door (`fittingsOfCode`), one it refuses read as none; the peers' boats stand them.
 
+## AUDIT - the refit audited (2026-10-17)
+
+The owner, the same day: *"Lets do a comprehensive audit and ensure perfection."* A review of the whole refit at its
+greatest reach found nineteen things; each was traced to a real caller before it was fixed, and each is fixed:
+
+- **A Legendary melted for its steel** (REFIT-ORES `meltable`): the refit melts unasked, and its guard knew a worn piece,
+  a quest's, an artifact, a sigil's and DFU's enchantments alone - a rolled tier, its affixes, a Legendary's record, the
+  item maker's enchantments, a locked, bound or made piece and a socketed one all went to the furnace. A plain piece
+  alone now (REFIT-ORES above).
+- **A reload for a star** (CAPTAIN-TREE `restat` over HOLDINGS' `refitBoat`): a sky accepted mid-fight built her sea
+  state again - every battery loaded at once, the brace let go, her last blow forgotten (her mending's quiet) - as often
+  as the player liked. A refit now sets her hull and canvas on her new whole and touches nothing else
+  (`navalDamage.js rewhole`).
+- **A magazine one screen saw** (COMBAT-FEEL): a ship another player stood went down silent on mine; read off her
+  stander's word now (MAGAZINE above).
+- **A sound ship read struck** (RAM-BOARD): said `boarded`, she was read struck - her colours down on every other
+  screen, a win to a crew that had fired on her; said afloat now, her mode `boarded` (RAM-BOARD Online above).
+- **A foul in one copy** (RAM-BOARD): a ship another stood was fouled in the rammer's copy alone and sailed on by her
+  stander's word; the foul rides the ram's blow now (RAM-BOARD Online above).
+- **A tree made every frame** (DECK-PROPS `fitBoats`): while a fitting's model was not loaded her fittings' node was
+  made again every frame - for ever, for a model that never loads. Made again only as one more comes in now.
+- **A helm change read as a bite** (COMBAT-FEEL HULL-BLOW): the plate's bar kept one readout whoever's boat was behind
+  it; it is the boat's now (her number on the plate, `navalHud.js barLoss` - the card's law and the plate's one
+  function).
+- **"Her hold is opened" when it was not** (CARGO-ANYWHERE, DECK-PROPS): a door that would not open left its card's word
+  that it had (`fleetPage.js`); a refusal leaves none.
+- **A canvas painted every frame** (SHIP-COLOURS): a flag that would not paint was painted again every frame; it is
+  remembered, and asked again FLAG_REPAINT_S (5 s) on (`shipFlagPass.js textureOf`). A frame with no flags to draw
+  prunes the idle textures too.
+- **The aim cut by the smoke** (SHOT-KINDS, `navalRender.js draw`): a grape, chain or heated ball lays five quads, and a
+  busy fight's balls and smoke could fill NAVAL_MAX_QUADS before the aim's zone, posts, strikes and arcs were laid. The
+  aim's room is kept first; the effects take the rest, the farthest blended ones let go first.
+- **Work every frame for nothing**: MY-SMOKE asked every boat of mine whether a hostile was near (a scan of the sea) -
+  a boat under MY_SMOKE_FROM alone now; NEAR-MISS searched every ball's every piece of flight against every boat of
+  mine - past her bounding sphere and NEAR_MISS_M only now (`navalShots.js`); PEACE-WAY's answer walked every foe, guard
+  and ship several times a frame - held a PEACE_HOLD_S (0.1 s) now (`peaceWay.js heldPeaceWay`); the pool made its
+  fitting-out's context every frame and keyed every boat's fittings and paint every draw - one context now, a list keyed
+  only when it is another, a paint's code read again only when her record is another, the painted maps found by number
+  (`comeSailAwayPool.js`, `deckFittingsHost.js`, `shipLiveryPaint.js`).
+- **The hosts do not grow** (HOST-SPLIT): the struck gun (`captainTree.js struckGun`), my volley's tally
+  (`scenes/naval/navalTally.js`, CARD-CREW's men with it) and the guns' save record (`gunsRecord`, beside `savedRecord`)
+  are out of createNavalHost; the host wires them.
+- **One law, written once**: the card's hull bar and the plate's were one law in two copies (`barLoss`); a classic
+  record read for its picture was two copies too, the paint shop's without the cabin's guard on the record
+  (`derivedTexture.js classicPictureOf`, both painters' one read); the paint shop's empty sentinel was dead
+  (`shipLiveryPaint.js`).
+- **The merge**: main moved under the branch (LOOT-BULK, HIEROPHANT-TIER); merged, its four doc conflicts kept both
+  sides' lines and counts.
+
 ## THE FOUR HOSTS RULE
+
 
 - `scenes/world.js` - the one host that streams the sea and stands Come Sail Away's runtime: PEACE-WAY's seam is wired
   there; ISLE-TRADE's isles are its streamed world's, and its harbour office the one exchange.
@@ -621,8 +682,18 @@ CHANGED (`systems/naval/deckFittings.js`, the law; pure):
   whistle's clip measured (its level swelling to the pass, its pitch falling through it). The pins it moved: the
   founder's foam (`nav_b_picture`: its boil's drops beside it), the clips' count (`nav_e_sounds`: ten), the provenance
   list (`doctrine`), the card's model (`nav_f_ui`: her `crew`, and her hull bar's bite flashing it), the HUD's class holes
-  (`hudclass_sheets`: `plateLoss`'s frames), the registry's English (`l10n4`: its two new rows); the records re-aimed by
+  (`hudclass_sheets`: the plate's frames - `barLoss`'s since the AUDIT), the registry's English (`l10n4`: its two new rows); the records re-aimed by
   content in `nav_b` (the wind's line), `nav_h`, `navaudit_helm`, `navaudit_presentation`, `shipstance` and `shotkinds`.
+- AUDIT (2026-10-17): `test/systems/naval/auditrefit.test.js` (4: the near miss's sphere, a peer's magazine and her
+  going down heard, the flag's cloth, the rammer's foul sent) and `tools/mutants/auditrefit.json`; the other fixes'
+  tests in their slices' files - `captaintree` (a plain piece alone; the struck gun), `fleet` (a refit touches nothing
+  else of her), `ramboard` (the word, the reader, the foul said and read), `shiplivery` (no tree made again while a
+  model waits), `combatfeel` (the plate's bar by her number), `holddoor` (no word that a refused door opened),
+  `nav_b_picture` (the aim's room), `peaceway` (the hold) - and their records in `captaintree`, `combatfeel`, `nav_b`,
+  `peaceway`, `ramboard` and `shiplivery`. The pins and records the moves re-aimed by content: `nav_g_online` (a blow's
+  `foul`), `tougherships` (the ram's blow), `serpent1_auditclient` (the tally's serpent line, in `navalTally.js`),
+  `hudclass_sheets` (`barLoss`'s frames), `shipcolours` (the flags' draw), `auditnav2_online`, `holdings`,
+  `navaudit_guns`, `navaudit_presentation`, `serpent1_audit`, `shipcrew` and `shotkinds`.
 - `test/systems/quest/raidashore.test.js` (6) over the author's own quest and the real machine, and
   `tools/mutants/raidashore.json` (13, all dead); `wa1_warmAshesShips.test.js`'s Leave Ship pin moved (PIN MOVED: off
   the sea it now ends the raid).

@@ -181,8 +181,14 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
   // SHIP-LIVERY (scenes/comeSailAway/shipLiveryPaint.js): the paint shop, and which boats are mine (my ledger says their paint)
   const mineBoats = new WeakSet();
   const paints = createLiveryPaint({ renderer, pipeline, log, portArchiveOf: (hull) => { const s = PORT_SHIPS.find((x) => x.hull === hull); return s && models?.[s.key] ? PORT_ART[s.key].archive : null; } });
-  /** A boat's paint as the word's number (0 as built): mine by my ledger, a peer's by its owner's word, a sea ship's none. */
-  const liveryCodeOf = (boat) => (mineBoats.has(boat) ? liveryCode(liveryOf?.(boat) ?? null) : boat.livery | 0);
+  /** A boat's paint as the word's number (0 as built): mine by my ledger, a peer's by its owner's word, a sea ship's none -
+   *  mine read again only when her ledger's record is another (fleet.js setShipLivery sets a new one), not every draw. */
+  const liveryCodeOf = (boat) => {
+    if (!mineBoats.has(boat)) return boat.livery | 0;
+    const rec = liveryOf?.(boat) ?? null;
+    if (boat._liveryRec !== rec || boat._liveryCode == null) { boat._liveryRec = rec; boat._liveryCode = liveryCode(rec); }
+    return boat._liveryCode;
+  };
   const _cullOn = !cullDisabled();   // AUDIT NAV1 (#13): ?cull=off, read once, as the world reads it
   const _cullPv = new Float32Array(16), _cullPlanes = new Float32Array(24), _cullSphere = new Float32Array(4), _cullBox = new Float32Array(6);
   const meshes = new Map();      // rendererModelKey -> gpu mesh | null
@@ -359,13 +365,14 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
   const modelBoundsOf = (id) => vertexBox(pipeline?.cpuModels?.get(id)?.positions);
   /** A classic model the pipeline will not load, said once (a hull's ModelHelper, DECK-PROPS a fitting). */
   const modelWontLoad = (id, e) => warnOnce(`model:${id}`, `[come-sail-away] model ${id} will not load`, e);
-  /** DECK-PROPS: what the fitting-out reads - the spawn's context, her hull's deck, and a fitting's model asked once. */
+  /** DECK-PROPS: what the fitting-out reads - the spawn's context, her hull's deck, and a fitting's model asked once. One
+   *  for the pool (AUDIT 2026-10-17: made again every frame), its context's models the pool's as they stand. */
   const _fitLoads = new Set();
-  const fitDeps = () => ({
-    ctx: { models, player: () => ({ position: [0, 0, 0], rotation: [0, 0, 0, 1] }), billboardSize: billboardSizeOf, modelBounds: modelBoundsOf },
+  const _fitDeps = {
+    ctx: { get models() { return models; }, player: () => ({ position: [0, 0, 0], rotation: [0, 0, 0, 1] }), billboardSize: billboardSizeOf, modelBounds: modelBoundsOf },
     deckOf: (hull) => deckOf(hull),
     load: (m) => { if (_fitLoads.has(m) || !pipeline?.getGpuMesh) return; _fitLoads.add(m); Promise.resolve(pipeline.getGpuMesh(m)).catch((e) => modelWontLoad(m, e)); },
-  });
+  };
 
   /** The ARENA2 a hull reads before it is built: its flats' archives and records, its classic models. */
   async function prepare(hull) {
@@ -675,7 +682,7 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
     const lit = _lanternFrame;
     lit.dt = gameDt; lit.cityLightsOn = !!world.cityLightsOn; lit.playerPosition = playerPosition;
     // DECK-PROPS (scenes/comeSailAway/deckFittingsHost.js): mine by my ledger, a peer's by its owner's word - before her walk
-    if (models) { const fit = fitDeps(); fitBoats(boats, (b) => fittingsOf?.(b) ?? [], fit); fitBoats(peerBoats, (b) => b.fittings ?? [], fit); }
+    if (models) { fitBoats(boats, (b) => fittingsOf?.(b), _fitDeps); fitBoats(peerBoats, (b) => b.fittings, _fitDeps); }
     for (const boat of drawn()) {
       const holders = planOf(boat, walkBoat(boat, walkStamp)).holders;   // PERF-SAILS3: her holders, in the walk's order
       for (let k = 0; k < holders.length; k += 2) lateUpdateHolder(holders[k], holders[k + 1], gameDt);

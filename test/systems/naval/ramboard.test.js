@@ -8,15 +8,15 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { FOUL_S, FOUL_WAY, FOUL_DECEL, foul, isFouled, fouledBy, boardableState, holdFouled } from '../../../src/systems/naval/navalFoul.js';
+import { FOUL_S, FOUL_WAY, FOUL_DECEL, FOUL_SAID_MAX, foul, isFouled, fouledBy, foulLeft, foulSaid, boardableState, holdFouled } from '../../../src/systems/naval/navalFoul.js';
 import { HULL, hullBuild, classById } from '../../../src/systems/naval/navalShips.js';
 import { SHIP_STATES } from '../../../src/systems/naval/navalDamage.js';
 import { MUSTER_MIN, MUSTER_MAX, BOARD_SPEED, GRAPPLE_S } from '../../../src/systems/naval/navalBoarding.js';
 import { hullBoxOf, RAM_REACH } from '../../../src/scenes/naval/navalHost.js';
 import { stepCaptain } from '../../../src/systems/naval/navalAI.js';
 import { navalHudText } from '../../../src/ui/naval/navalHud.js';
-import { validNavalRecord } from '../../../src/systems/naval/navalWire.js';
-import { sea, knowAll } from '../../navalSea.mjs';
+import { validNavalRecord, navalHitData, validNavalHit } from '../../../src/systems/naval/navalWire.js';
+import { sea, knowAll, freshPool } from '../../navalSea.mjs';
 
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
@@ -173,17 +173,62 @@ test('RAM-BOARD on foot over her rail while she is fouled by me; another player\
   assert.equal(h3.host.hudModel().board, null, 'run out');
 });
 
-test('RAM-BOARD a sound ship being boarded is said "boarded" on the room\'s word as a struck one is - no peer grapples her under the fight; and left, her crew runs back to her guns (mutants: the word afloat, the abandon\'s words)', async () => {
+test('RAM-BOARD a sound ship being boarded is said afloat on the room\'s word, her captain\'s mode \'boarded\' - a reader holds her boarded (no peer grapples her under the fight) with her colours flying, never struck (AUDIT 2026-10-17: said \'boarded\', read struck - her colours down on every other screen, and a win to a crew that had fired on her); and left, her crew runs back to her guns (mutants: the word boarded, the reader\'s mode, the abandon\'s words)', async () => {
   const h = await helm();
   const touching = ram(h);
   frames(h, [[h.e, touching]]);
   assert.equal(h.host.activate(), true);
-  const said = validNavalRecord(h.host.word((p) => p)).ships.find((x) => x.n === h.e.n);
-  assert.equal(said?.state, 'boarded', 'said boarded');
-  assert.equal(h.e.ship.damage.state, SHIP_STATES.afloat, 'though her colours fly');
+  const raw = h.host.word((p) => p);
+  const rec = validNavalRecord(raw);
+  const said = rec.ships.find((x) => x.n === h.e.n);
+  assert.equal(said?.state, SHIP_STATES.afloat, 'said afloat: her colours fly');
+  assert.equal(rec.captains.get(h.e.n)?.mode, 'boarded', 'her captain\'s mode says the boarding');
+  assert.equal(h.e.ship.damage.state, SHIP_STATES.afloat);
+  const reader = await sea({ hull: HULL.SmallShip, online: { id: () => 'b-player', peers: () => [], sendHit: () => true }, pool: await freshPool(), settings: { ShipsAtSea: 'off' } });
+  assert.equal(reader.host.applyWord('a-player', raw, (p) => p), true);
+  const copy = [...reader.host._sea.values()].find((x) => x.owner === 'a-player' && x.n === h.e.n);
+  assert.deepEqual([copy?.ship.boarded, copy?.ship.damage.state], [true, SHIP_STATES.afloat], 'held boarded, her colours flying');
+  assert.equal(boardableState(copy.ship, 'b-player', 0), false, 'no peer grapples her under the fight');
   h.run(GRAPPLE_S + 0.5);
   h.view.feet = [5000, 0, 5000];
   h.run(0.2);
   assert.ok(h.log.say.some((l) => /runs back to her guns/.test(l)), 'a sound ship fights on');
   assert.equal(h.e.ship.boarded, false);
+});
+
+test('RAM-BOARD online (AUDIT 2026-10-17): a ram on a ship another player stands says its foul to her stander with its blow (the hit\'s `u`, its seconds, FOUL_SAID_MAX at most) - her stander\'s AI holds her way, fouled by the rammer, so she is boarded as she stands on every screen; an older build\'s blow fouls nothing; a foul on a struck or boarded ship, or a foul with a grapple or a cask, is no foul (mutants: the foul unsaid, unread, its owner, its bounds)', async () => {
+  // the door
+  const blow = navalHitData('b', { n: 3, hull: 30, crew: 1, zone: 'holed', foul: 23.4 });
+  assert.equal(blow.nv.u, 23);
+  assert.equal(validNavalHit(blow).foul, 23);
+  assert.equal(navalHitData('b', { n: 3, foul: 500 }).nv.u, FOUL_SAID_MAX);
+  assert.equal(navalHitData('b', { n: 3, hull: 30 }).nv.u, undefined, 'no foul: none said');
+  assert.equal(navalHitData('b', { n: 3, grapple: true, foul: 9 }).nv.u, undefined, 'never on a grapple');
+  assert.equal(validNavalHit({ nv: { ...blow.nv, u: FOUL_SAID_MAX + 1 } }), null);
+  assert.equal(validNavalHit({ nv: { ...blow.nv, u: 0 } }), null);
+  assert.equal(validNavalHit({ nv: { n: 3, h: 0, s: 0, c: 0, f: 0, z: 0, g: 1, u: 5 } }), null, 'a grapple carries none');
+  assert.equal(validNavalHit({ nv: { n: 3, h: 30, s: 0, c: 1, f: 0, z: 2 } }).foul, 0, 'an older build\'s blow');
+  // the law
+  const ship = { damage: { state: 'afloat' } };
+  assert.equal(foulSaid(ship, 'a', 10, 25), true);
+  assert.deepEqual([ship.fouled, foulLeft(ship, 15), foulLeft(ship, 40)], [{ by: 'a', until: 35 }, 20, 0]);
+  assert.equal(foulSaid({ damage: { state: 'struck' } }, 'a', 0, 5), false, 'struck: boarded anyway, no foul');
+  assert.equal(foulSaid({ damage: { state: 'afloat' }, boarded: true }, 'a', 0, 5), false);
+  assert.equal(foulSaid({ damage: { state: 'afloat' } }, 'a', 0, 0), false);
+  const capped = { damage: { state: 'afloat' } };
+  foulSaid(capped, 'a', 0, 999);
+  assert.equal(capped.fouled.until, FOUL_SAID_MAX);
+  // her stander
+  const b = await sea({ hull: HULL.SmallShip, online: { id: () => 'b-player', peers: () => [], sendHit: () => true }, pool: await freshPool(), settings: { ShipsAtSea: 'off', Boarders: false } });
+  const e = b.host._sea.get(b.host.spawnShip('merchantGalleon', { range: 600 }));
+  b.run(0.2);
+  e.ship.speed = 6;
+  assert.equal(b.host.applyPeerHit('a-player', navalHitData('b-player', { n: e.n, hull: 20, crew: 1, zone: 'holed', foul: FOUL_S })), true);
+  assert.equal(e.ship.fouled?.by, 'a-player', 'fouled by her rammer');
+  b.run(3);
+  assert.ok(e.ship.speed <= FOUL_WAY + 1e-9, `her way held by her stander's own AI: ${e.ship.speed}`);
+  const plain = b.host._sea.get(b.host.spawnShip('merchantGalleon', { range: 700, bearing: 1 }));
+  b.run(0.2);
+  b.host.applyPeerHit('a-player', navalHitData('b-player', { n: plain.n, hull: 20, zone: 'holed' }));
+  assert.equal(plain.ship.fouled ?? null, null, 'an older build\'s blow: no foul');
 });

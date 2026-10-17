@@ -226,9 +226,9 @@
   },
   {
     "name": "SHOT-host-reach-unread",
-    "file": "src/scenes/naval/navalHost.js",
-    "old": "    return reach < 1 ? { ...g, crew: g.crew * reach } : g;",
-    "new": "    return g;",
+    "file": "src/systems/naval/captainTree.js",
+    "old": "  return reach < 1 ? { ...g, crew: g.crew * reach } : g;",
+    "new": "  return g;",
     "tests": [
       "test/systems/naval/shotkinds.test.js"
     ]
@@ -236,7 +236,7 @@
   {
     "name": "SHOT-host-gun-unloaded",
     "file": "src/scenes/naval/navalHost.js",
-    "old": "    const gun = e.type === 'blast' ? GUNS.barrel : loadedGun(e);",
+    "old": "    const gun = e.type === 'blast' ? GUNS.barrel : struckGun(e.gun, GUNS[e.gun], e.shot, e.t, isMine(e.shooter) ? deps.captain?.stats?.() : null);",
     "new": "    const gun = e.type === 'blast' ? GUNS.barrel : GUNS[e.gun];",
     "tests": [
       "test/systems/naval/shotkinds.test.js"
@@ -272,8 +272,8 @@
   {
     "name": "SHOT-host-loads-unsaved",
     "file": "src/scenes/naval/navalHost.js",
-    "old": "    return { barrels: st.guns.barrels, mates: st.crew.snapshot(), ...(Object.values(loads).some(Boolean) ? { loads } : {}) };",
-    "new": "    return { barrels: st.guns.barrels, mates: st.crew.snapshot() };",
+    "old": "  return { barrels: st.guns.barrels, mates: st.crew.snapshot(), ...(Object.values(loads).some(Boolean) ? { loads } : {}) };",
+    "new": "  return { barrels: st.guns.barrels, mates: st.crew.snapshot() };",
     "tests": [
       "test/systems/naval/shotkinds.test.js"
     ]

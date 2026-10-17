@@ -400,11 +400,19 @@ export class NavalRenderer {
     alpha.sort((a, b) => d2(b) - d2(a));
     let v = 0;
     const cap = NAVAL_MAX_QUADS * 6;
+    // AUDIT 2026-10-17: THE AIM'S ROOM KEPT FIRST - the player's own lay is never what a full frame cuts (SHOT-KINDS: a
+    // grape, chain or heated ball lays five quads; a busy fight's balls and smoke had filled the buffer before the aim's
+    // zone, posts, strikes and arcs were laid). The effects take the rest, the farthest blended ones let go first.
+    const aim = frame.aim;
+    const aimQuads = aim ? (aim.zone?.length ?? 0) * (aim.posts ? 2 : 1) + (aim.strikes?.length ?? 0) + (aim.arcs ?? []).reduce((n, a) => n + (a?.length ?? 0), 0) : 0;
+    const fxCap = cap - Math.min(cap, aimQuads * 6);
+    const over = alpha.length + add.length - fxCap / 6;
+    if (over > 0) alpha.splice(0, Math.min(alpha.length, over));
     const lay = (list, blend) => {
       // every picture a cell of the sheet: the list, in its order, is one run
       const start = v;
       for (const p of list) {
-        if (v + 6 > cap) break;
+        if (v + 6 > fxCap) break;
         const { ax, ay } = particleAxes(p, axes);
         const uv = SHEET_UV[pictureOf(p)];
         v = writeQuad(this.data, v, p.pos, ax, ay, p.color, blend === 'alpha' && p.kind !== 'flash', uv.u0, uv.u1, uv.v0, uv.v1);
@@ -413,7 +421,6 @@ export class NavalRenderer {
     };
     lay(alpha, 'alpha');
     // the aim: the zone's marks flat on the sea (blended), the posts and the strikes and the arcs' ribbons (added)
-    const aim = frame.aim;
     const tone = aimTone(aim);
     if (aim?.zone?.length) {
       const start = v, uv = SHEET_UV.ring;

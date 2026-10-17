@@ -149,8 +149,9 @@ test('CARGO-ANYWHERE the Fleet page: a Hold on every card of a ship with one, pr
   const host = createFleetHost({
     csa: () => s.rt, naval: () => null, pack: () => [], gold: () => 0, pay: () => {}, accounts: () => [], regionName: () => '',
     where: () => ({ inside: false, pixel: { X: 10, Y: 20 }, feet: AT }), nearPort: () => true, nearestPort: () => null, terrainAt: () => s.terrains[0], changed: () => {},
-    openHold: (uid) => { asked.push(uid); return true; },
+    openHold: (uid) => { asked.push(uid); return opens; },
   });
+  let opens = true;
   ship(1, 2); knowShip(4, 0, 0, 1); titleDeed(mintDeed(0, 0, 4, 1));
   const m = host.model();
   assert.deepEqual(m.ships.map((r) => [r.uid, r.hold]).sort(), [[1, true], [4, false]]);
@@ -175,8 +176,15 @@ test('CARGO-ANYWHERE the Fleet page: a Hold on every card of a ship with one, pr
   assert.equal(holds.length, 1, 'the Small Ship\'s card alone');
   holds[0].onclick();
   assert.equal(doors.length, 1, 'the door handed to the menu (the pause steps aside, the hold opens)');
-  doors[0]();
+  assert.equal(doors[0](), true);
   assert.deepEqual(asked, [1, 1]);
+  const said = () => { const d2 = el('div', 'px-qdetail'); drawFleetPage(d2, () => {}, { el, divider: (t) => el('h4', null, t), meter: (a, b) => el('div', null, `${a}/${b}`), door: (fn) => doors.push(fn) }); return d2.textContent.includes('Her hold is opened.'); };
+  assert.equal(said(), true, 'opened: its card says so');
+  // AUDIT 2026-10-17: a door that will not open - its card never keeps the word that it opened
+  opens = false;
+  holds[0].onclick();
+  assert.equal(doors.at(-1)(), false);
+  assert.equal(said(), false, 'refused: no word that it opened');
   setHoldingsProvider(null);
 });
 

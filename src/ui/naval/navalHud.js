@@ -647,7 +647,7 @@ export function navalHudText(model, keys = {}, { touch = false } = {}) {
     // SHIP-CREW: her crew's spirits and standing order beside her waters
     // CAPT-WATERS: the deep waters said beside the crown's - richer prizes, bolder pirates
     // ETHER-SEA: past the Veil, the band and the leagues from it - no crown's waters, no crown's anchors
-    name: ship.name, waters: [model.ether ? etherWatersWords(model.ether) : `${model.notoriety.crown} waters${model.waters === 'deep' ? ', deep' : ''}`, ship.spirits ? `crew ${ship.spirits.toLowerCase()}` : null, ship.order ?? null].filter(Boolean).join(' - '), anchors: model.ether ? 0 : model.notoriety.level,
+    id: ship.id ?? null, name: ship.name, waters: [model.ether ? etherWatersWords(model.ether) : `${model.notoriety.crown} waters${model.waters === 'deep' ? ', deep' : ''}`, ship.spirits ? `crew ${ship.spirits.toLowerCase()}` : null, ship.order ?? null].filter(Boolean).join(' - '), anchors: model.ether ? 0 : model.notoriety.level,
     hull: pct(ship.hull), sail: ship.sail == null ? null : pct(ship.sail), crew: ship.crew == null ? null : pct(ship.crew),
     chips: [ship.wrecked ? 'wreck' : null, ship.fire ? 'fire' : null, ship.braced ? 'brace' : null, ship.repairing ? 'repair' : ship.mending ? 'mend' : null].filter(Boolean),   // SEA-REPAIR: her repairs over the free mending
     batteries,
@@ -806,55 +806,36 @@ function build(doc) {
 /** AUDIT NAV1 (the presentation): the draws' own clock (the `dt`s summed), and her hull bar's loss readout - whose card,
  *  its ghost (ui/barLoss.js), the pieces broken off and the flash's end. */
 let hudClock = 0;
-let loss = null;
-/** HULL-BLOW (COMBAT-FEEL): her own hull bar's loss readout - the card's law on the plate's bar. */
-let plateLossState = null;
+const cardBar = { s: null };
+/** HULL-BLOW (COMBAT-FEEL): her own hull bar's loss readout - the card's law on the plate's bar, by the boat behind it. */
+const plateBar = { s: null };
 /** A fallen piece put away (FRAME1c's law: an animation left parked on its last frame replays when its node comes back). */
 function stowChunk(c) { if (c && c.className !== 'dfnaval-chunk') c.className = 'dfnaval-chunk'; }
-/** One draw of her hull bar's loss: a new card starts whole at her bar; a bite of CARD_CHUNK_MIN_LOSS breaks a piece off
- *  over the span it took and flashes the card. */
-function cardLoss(card, dt) {
-  if (!loss || loss.id !== card.id) {
-    for (const c of parts.cardChunks) stowChunk(c);
-    loss = { id: card.id, g: stepGhost(null, card.hull, 0), n: -1, hits: 0, until: -1 };
+/** One draw of a hull bar's loss - `bar` its readout (`s`: null, none yet), `id` whose bar it shows (another's starts
+ *  whole at her bar: a new card, and AUDIT 2026-10-17 a boat of mine taken at the helm - a helm changed from a whole boat
+ *  to a battered one read as a bite), `pct` her bar, `key`/`ghost`/`chunks` the bar's ghost and pieces: a bite of
+ *  CARD_CHUNK_MIN_LOSS breaks a piece off over the span it took and flashes the bar. Answers the bar's flash class. The
+ *  card's and (HULL-BLOW) the plate's alike - one law. */
+function barLoss(bar, id, pct, dt, key, ghost, chunks) {
+  let state = bar.s;
+  if (!state || state.id !== id) {
+    for (const c of chunks) stowChunk(c);
+    state = bar.s = { id, g: stepGhost(null, pct, 0), n: -1, hits: 0, until: -1 };
   }
-  const prev = loss.g;
-  const g = stepGhost(prev, card.hull, dt);
-  loss.g = g;
-  width('cardg', parts.cardGhost, Math.round(g.at * 10) / 10);
+  const prev = state.g;
+  const g = stepGhost(prev, pct, dt);
+  state.g = g;
+  width(key, ghost, Math.round(g.at * 10) / 10);
   if (prev.pct - g.pct >= CARD_CHUNK_MIN_LOSS) {
-    const { index, cls: frame } = chunkFrame(++loss.n);
-    const c = parts.cardChunks[index];
+    const { index, cls: frame } = chunkFrame(++state.n);
+    const c = chunks[index];
     c.style.left = `${g.pct.toFixed(1)}%`;
     c.style.width = `${(prev.pct - g.pct).toFixed(1)}%`;
     c.className = `dfnaval-chunk ${frame}`;
-    loss.hits++;
-    loss.until = hudClock + CARD_HIT_S;
+    state.hits++;
+    state.until = hudClock + CARD_HIT_S;
   }
-  return hudClock < loss.until ? (loss.hits % 2 ? ' hit-a' : ' hit-b') : '';
-}
-/** HULL-BLOW: one draw of her own hull bar's loss - a bite of CARD_CHUNK_MIN_LOSS breaks a piece off over the span it
- *  took and flashes her bar; answers the bar's flash class. */
-function plateLoss(hull, dt) {
-  if (!plateLossState) {
-    for (const c of parts.plateChunks) stowChunk(c);
-    plateLossState = { g: stepGhost(null, hull, 0), n: -1, hits: 0, until: -1 };
-  }
-  const L = plateLossState;
-  const prev = L.g;
-  const g = stepGhost(prev, hull, dt);
-  L.g = g;
-  width('plateg', parts.plateGhost, Math.round(g.at * 10) / 10);
-  if (prev.pct - g.pct >= CARD_CHUNK_MIN_LOSS) {
-    const { index, cls: frame } = chunkFrame(++L.n);
-    const c = parts.plateChunks[index];
-    c.style.left = `${g.pct.toFixed(1)}%`;
-    c.style.width = `${(prev.pct - g.pct).toFixed(1)}%`;
-    c.className = `dfnaval-chunk ${frame}`;
-    L.hits++;
-    L.until = hudClock + CARD_HIT_S;
-  }
-  return hudClock < L.until ? (L.hits % 2 ? ' hit-a' : ' hit-b') : '';
+  return hudClock < state.until ? (state.hits % 2 ? ' hit-a' : ' hit-b') : '';
 }
 const put = (key, node, text) => { if (shown[key] !== text) { shown[key] = text; node.textContent = text; } };
 const cls = (key, node, name) => { if (shown[key] !== name) { shown[key] = name; node.className = name; } };
@@ -924,7 +905,7 @@ export function drawNavalHud(model, { covered = false, doc = globalThis.document
   }
   show('root', root, want);
   hudClock += Math.max(0, Number(dt) || 0);
-  if (!want) { shown.braceBtn = false; touchBrace = false; for (const c of parts.cardChunks) stowChunk(c); loss = null; for (const c of parts.plateChunks) stowChunk(c); plateLossState = null; return; }
+  if (!want) { shown.braceBtn = false; touchBrace = false; for (const c of parts.cardChunks) stowChunk(c); cardBar.s = null; for (const c of parts.plateChunks) stowChunk(c); plateBar.s = null; return; }
   const t = navalHudText(model, keys, { touch });
   // the card: a ship's, else the fight's (AUDIT NAV1 B9) - one place under the compass
   const c = t.card ?? t.fight;
@@ -966,7 +947,7 @@ export function drawNavalHud(model, { covered = false, doc = globalThis.document
     put('waters', parts.watersWord, p.waters);
     for (let i = 0; i < 4; i++) cls(`anchor${i}`, parts.anchors[i], i < p.anchors ? 'dfnaval-anchor on' : 'dfnaval-anchor');
     width('hull', parts.hull.fill, p.hull);
-    const blown = plateLoss(p.hull, dt);   // HULL-BLOW: her bar's loss, as the card's
+    const blown = barLoss(plateBar, p.id, p.hull, dt, 'plateg', parts.plateGhost, parts.plateChunks);   // HULL-BLOW: her bar's loss, as the card's
     cls('hullLow', parts.hull.track, (p.hull <= 25 ? 'dfnaval-track hull low' : 'dfnaval-track hull') + blown);
     cls('rosec', parts.rose, `dfnaval-rose${p.blow ? ` blow-${p.blow}` : ''}`);   // HULL-BLOW: the side she was struck from
     show('sailRow', parts.sail.row, p.sail != null);
@@ -1021,8 +1002,8 @@ export function drawNavalHud(model, { covered = false, doc = globalThis.document
     if (shown.cardLeft !== left) { shown.cardLeft = left; parts.card.style.left = left; }
     setVar('--nc-card-scale', aside ? '' : String(Math.round(kc * 1000) / 1000));
     const bars = t.card?.hull != null;   // AUDIT CAPTAIN'S SEA S24: an unknown hull's card has no bars
-    const hit = bars ? cardLoss(t.card, dt) : '';
-    if (!bars) { for (const x of parts.cardChunks) stowChunk(x); loss = null; }
+    const hit = bars ? barLoss(cardBar, t.card.id, t.card.hull, dt, 'cardg', parts.cardGhost, parts.cardChunks) : '';
+    if (!bars) { for (const x of parts.cardChunks) stowChunk(x); cardBar.s = null; }
     cls('cardc', parts.card, t.card ? `dfnaval-card ${t.card.faction}${t.card.hostile ? ' hostile' : ''}${t.card.friendly ? ' friendly' : ''}${hit}` : 'dfnaval-card fight');
     put('cardn', parts.cardName, c.name);
     put('cards', parts.cardSub, c.sub);
@@ -1255,7 +1236,7 @@ export function drawCrewLines(points, { covered = false, doc = globalThis.docume
 /** The page is going (a test's reset, the host's teardown): the node leaves with it. */
 export function destroyNavalHud() {
   root?.remove?.();
-  root = null; parts = null; shown = {}; touchBrace = false; touchGlass = 0; loss = null; hudClock = 0;
+  root = null; parts = null; shown = {}; touchBrace = false; touchGlass = 0; cardBar.s = null; plateBar.s = null; hudClock = 0;
   tagRoot?.remove?.();
   tagRoot = null; tagSlots = []; tagHeld = new Set(); crewSlots = []; saySlots = []; sayMemory = crewSayMemory();
 }

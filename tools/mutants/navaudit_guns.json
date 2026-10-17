@@ -471,18 +471,18 @@
   },
   {
     "name": "NAV1G-the-tally-early",
-    "file": "src/scenes/naval/navalHost.js",
-    "old": "    if (t.ended >= t.balls) {",
-    "new": "    if (t.ended >= t.balls - 1) {",
+    "file": "src/scenes/naval/navalTally.js",
+    "old": "      if (t.ended >= t.balls) {",
+    "new": "      if (t.ended >= t.balls - 1) {",
     "tests": [
       "test/systems/naval/navaudit_guns.test.js"
     ]
   },
   {
     "name": "NAV1G-a-miss-a-hit",
-    "file": "src/scenes/naval/navalHost.js",
-    "old": "    } else if (e.type === 'splash' || e.type === 'land' || e.type === 'gone') t.ended++;",
-    "new": "    } else if (e.type === 'splash' || e.type === 'land' || e.type === 'gone') { t.ended++; t.hits++; }",
+    "file": "src/scenes/naval/navalTally.js",
+    "old": "      } else if (e.type === 'splash' || e.type === 'land' || e.type === 'gone') t.ended++;",
+    "new": "      } else if (e.type === 'splash' || e.type === 'land' || e.type === 'gone') { t.ended++; t.hits++; }",
     "tests": [
       "test/systems/naval/navaudit_guns.test.js"
     ]

@@ -11,7 +11,8 @@
 // A fitting stands on her open deck under its place (the deck's own height there), its model's foot on the deck and its
 // middle over the place (the model's box: SetupModelHelper's centring, alignment 1), turned about up. One whose place is
 // no deck of hers (her deck baked otherwise since it was set) stands nowhere; one whose model is not loaded yet waits
-// for it, and the boat is fitted again once it is.
+// for it, and the boat is fitted again once it is - and only then (AUDIT 2026-10-17: her tree was made again every frame
+// while one waited, for ever for a model that never loads).
 import { PrefabNode } from '../../world/prefabNode.js';
 import { quatAngleAxis } from '../../world/quat.js';
 import { createDaggerfallMeshGameObject } from '../../systems/comeSailAway/comeSailAwayBoat.js';
@@ -49,22 +50,33 @@ export function standFittings(boat, list, { ctx, deck }) {
   return all;
 }
 
+/** @type {any[]} */
+const NO_FITTINGS = /** @type {any} */ (Object.freeze([]));
 /**
  * The fitting-out, a frame: each boat whose fittings are not the ones she stands with is fitted again - their models
  * asked of the pipeline first (`load`, once each), and the boat marked fitted (`_fitted`, the list's key) once every one
- * stood. `fittingsOf(boat)` her fittings now.
- * @param {any[]} boats @param {(boat: any) => any[]} fittingsOf
+ * stood. While a model is not loaded her tree is made again only as one more comes in (`_fitStage`, the key and how many
+ * are loaded), never a frame it is the same. `fittingsOf(boat)` her fittings now (null: none) - a list the same as the
+ * last frame's is not keyed again.
+ * @param {any[]} boats @param {(boat: any) => any[] | null | undefined} fittingsOf
  * @param {{ ctx: any, deckOf: (hull: number) => any, load: (model: number) => void }} o
  */
 export function fitBoats(boats, fittingsOf, { ctx, deckOf, load }) {
   for (const boat of boats) {
-    const list = fittingsOf(boat) ?? [];
-    const key = fittingsKey(list);
+    const list = fittingsOf(boat) ?? NO_FITTINGS;
+    if (!list.length) {
+      if (boat._fitted == null || boat._fitted === '') { boat._fitted = ''; continue; }   // none to fit, none stood
+    } else if (list === boat._fitList && boat._fitted === boat._fitKey) continue;   // the same list, stood
+    const key = list === boat._fitList ? boat._fitKey : fittingsKey(list);
+    boat._fitList = list; boat._fitKey = key;
     if (boat._fitted === key) continue;
-    if (!list.length && boat._fitted == null) { boat._fitted = key; continue; }   // never fitted, none to fit
-    for (const f of list) if (!ctx.modelBounds?.(f.m)) load(f.m);
+    let loaded = 0;
+    for (const f of list) if (ctx.modelBounds?.(f.m)) loaded++; else load(f.m);
+    const stage = `${key}#${loaded}`;
+    if (boat._fitStage === stage) continue;   // nothing more loaded since she was last stood
     const deck = list.length ? deckOf(boat.hull) : null;
     if (list.length && !deck) continue;   // her deck not baked yet: the next frame
+    boat._fitStage = stage;
     if (standFittings(boat, list, { ctx, deck })) boat._fitted = key;
   }
 }

@@ -6,7 +6,7 @@
 // floor, beams and built furniture one wood, its grain kept. A picture that is glass (a window's mask) is left as built,
 // so her windows light as they did. The stain is her Fleet record's (`cabin`), made at the visit below.
 import { SHIP_PAINTS, tintPicture } from '../systems/naval/shipLivery.js';
-import { classicRecordRgba } from '../formats/derivedTexture.js';
+import { classicPictureOf } from '../formats/derivedTexture.js';
 import { toColor32 } from '../formats/color32Order.js';
 import { dfLook, lookSeed } from '../world/dfLook.js';
 
@@ -37,14 +37,12 @@ export function cabinRestyle(paint) {
       const key = texRemap.get(own) ?? own;
       if (renderer.windowMasks?.has?.(key) || renderer.glassMasks?.has?.(key)) continue;   // glass: lit as built
       const [archive, record] = key.split('_').map(Number);
-      const t = await getTexture(archive);
-      if (!t || t.vendor || !(record < t.recordCount)) continue;
-      const bm = t.getDFBitmap(record, 0);
-      if (!bm?.width) continue;
+      const pic = await classicPictureOf(getTexture, palette, archive, record);
+      if (!pic) continue;
       const k = `${key}|${paint}`;
       let rec = _records.get(k);
       if (rec == null) { rec = _next++; _records.set(k, rec); }
-      renderer.uploadTexture(CABIN_ARCHIVE, rec, toColor32(dfLook(tintPicture(classicRecordRgba(bm, palette), rgb, CABIN_STAIN), lookSeed(archive, record))), { opaque: true });
+      renderer.uploadTexture(CABIN_ARCHIVE, rec, toColor32(dfLook(tintPicture(pic, rgb, CABIN_STAIN), lookSeed(archive, record))), { opaque: true });
       texRemap.set(own, `${CABIN_ARCHIVE}_${rec}`);
     }
   };

@@ -312,8 +312,8 @@
   {
     "name": "SLPOOL-peer-by-ledger",
     "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
-    "old": "const liveryCodeOf = (boat) => (mineBoats.has(boat) ? liveryCode(liveryOf?.(boat) ?? null) : boat.livery | 0);",
-    "new": "const liveryCodeOf = (boat) => liveryCode(liveryOf?.(boat) ?? null);",
+    "old": "    if (!mineBoats.has(boat)) return boat.livery | 0;\n",
+    "new": "",
     "tests": [
       "test/systems/naval/shiplivery.test.js"
     ]
@@ -321,8 +321,8 @@
   {
     "name": "SLPOOL-sea-painted",
     "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
-    "old": "const liveryCodeOf = (boat) => (mineBoats.has(boat) ? liveryCode(liveryOf?.(boat) ?? null) : boat.livery | 0);",
-    "new": "const liveryCodeOf = (boat) => (!peerBoats.includes(boat) ? liveryCode(liveryOf?.(boat) ?? null) : boat.livery | 0);",
+    "old": "    if (!mineBoats.has(boat)) return boat.livery | 0;",
+    "new": "    if (peerBoats.includes(boat)) return boat.livery | 0;",
     "tests": [
       "test/systems/naval/shiplivery.test.js"
     ]
@@ -339,7 +339,7 @@
   {
     "name": "DPPOOL-mine-unfitted",
     "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
-    "old": "fitBoats(boats, (b) => fittingsOf?.(b) ?? [], fit); ",
+    "old": "fitBoats(boats, (b) => fittingsOf?.(b), _fitDeps); ",
     "new": "",
     "tests": [
       "test/systems/naval/shiplivery.test.js"
@@ -348,7 +348,7 @@
   {
     "name": "DPPOOL-peer-unfitted",
     "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
-    "old": " fitBoats(peerBoats, (b) => b.fittings ?? [], fit);",
+    "old": " fitBoats(peerBoats, (b) => b.fittings, _fitDeps);",
     "new": "",
     "tests": [
       "test/systems/naval/shiplivery.test.js"
@@ -537,8 +537,8 @@
   {
     "name": "DFH-never-loaded",
     "file": "src/scenes/comeSailAway/deckFittingsHost.js",
-    "old": "    for (const f of list) if (!ctx.modelBounds?.(f.m)) load(f.m);\n",
-    "new": "",
+    "old": "    for (const f of list) if (ctx.modelBounds?.(f.m)) loaded++; else load(f.m);\n",
+    "new": "    for (const f of list) if (ctx.modelBounds?.(f.m)) loaded++;\n",
     "tests": [
       "test/systems/naval/shiplivery.test.js"
     ]
@@ -1187,6 +1187,33 @@
     "file": "src/ui/fleetPage.js",
     "old": "const wood = stainOf ? oak.map(",
     "new": "const wood = false ? oak.map(",
+    "tests": [
+      "test/systems/naval/shiplivery.test.js"
+    ]
+  },
+  {
+    "name": "SLPOOL-code-stale",
+    "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
+    "old": "    if (boat._liveryRec !== rec || boat._liveryCode == null) {",
+    "new": "    if (boat._liveryCode == null) {",
+    "tests": [
+      "test/systems/naval/shiplivery.test.js"
+    ]
+  },
+  {
+    "name": "DFH-stage-ignored",
+    "file": "src/scenes/comeSailAway/deckFittingsHost.js",
+    "old": "    if (boat._fitStage === stage) continue;   // nothing more loaded since she was last stood\n",
+    "new": "",
+    "tests": [
+      "test/systems/naval/shiplivery.test.js"
+    ]
+  },
+  {
+    "name": "DFH-cleared-never",
+    "file": "src/scenes/comeSailAway/deckFittingsHost.js",
+    "old": "      if (boat._fitted == null || boat._fitted === '') { boat._fitted = ''; continue; }   // none to fit, none stood",
+    "new": "      boat._fitted = ''; continue;",
     "tests": [
       "test/systems/naval/shiplivery.test.js"
     ]

@@ -17,7 +17,7 @@ import { LIVERY_ARCHIVE, SHIP_PAINTS, stainPicture, tintPicture, SAIL_TINT, live
 import { liveryArtOf } from '../../world/ships/shipLiveryArt.js';
 import { cutGlass } from '../../world/ships/galleonArt.js';
 import { dfLook, lookSeed } from '../../world/dfLook.js';
-import { classicRecordRgba } from '../../formats/derivedTexture.js';
+import { classicPictureOf } from '../../formats/derivedTexture.js';
 import { toColor32 } from '../../formats/color32Order.js';
 
 /** The mod's plank archive, stained. */
@@ -33,12 +33,12 @@ export function createLiveryPaint({ renderer, pipeline, portArchiveOf, log = con
   /** `${archive}_${record}|${code}|${d|n}` -> the painted twin's record under LIVERY_ARCHIVE */
   const records = new Map();
   let next = 0;
-  /** `${hull}|${code}` -> { day, night } (each a Map, source key -> painted key), null where it failed */
+  /** hull * 0x10000 + code (a livery's code is four nibbles) -> { day, night } (each a Map, source key -> painted key),
+   *  null where it failed - a number, so a draw asks it with no string made */
   const made = new Map();
   const making = new Set();
   /** a host's remap -> (a paint's map -> the two as one) */
   const joined = new WeakMap();
-  const NONE = {};
 
   /** One painted picture up under LIVERY_ARCHIVE: its key. */
   function put(archive, record, code, tag, pic, opts = { opaque: true }, glow = null) {
@@ -49,13 +49,8 @@ export function createLiveryPaint({ renderer, pipeline, portArchiveOf, log = con
     if (glow) renderer.uploadEmissionTexture?.(LIVERY_ARCHIVE, rec, toColor32(glow), { replacement: false });
     return `${LIVERY_ARCHIVE}_${rec}`;
   }
-  /** A classic record as a top-down picture, or null where the player's data has none. */
-  async function classic(archive, record) {
-    const t = await pipeline.getTexture(archive);
-    if (!t || t.vendor) return null;
-    const bm = t.getDFBitmap(record, 0);
-    return bm?.width ? classicRecordRgba(bm, pipeline.palette) : null;
-  }
+  /** A classic record as a top-down picture, or null where the player's data has none (derivedTexture.js). */
+  const classic = (archive, record) => classicPictureOf((a) => pipeline.getTexture(a), pipeline.palette, archive, record);
   /** Every picture a livery repaints on a hull, painted and uploaded: `{ day, night }`. */
   async function paint(hull, code) {
     const lv = liveryOfCode(code);
@@ -98,7 +93,7 @@ export function createLiveryPaint({ renderer, pipeline, portArchiveOf, log = con
   }
   /** A hull's paint's maps once made - null while they are made (and the making begun), or where it failed. */
   function mapsOf(hull, code) {
-    const key = `${hull}|${code}`;
+    const key = hull * 0x10000 + code;
     if (made.has(key)) return made.get(key);
     if (!making.has(key) && renderer?.uploadTexture && pipeline?.getTexture) {
       making.add(key);
@@ -119,9 +114,8 @@ export function createLiveryPaint({ renderer, pipeline, portArchiveOf, log = con
     const own = night ? m.night : m.day;
     if (!own.size) return base;
     if (!base?.size) return own;
-    const b = base ?? NONE;
-    let by = joined.get(b);
-    if (!by) { by = new Map(); joined.set(b, by); }
+    let by = joined.get(base);
+    if (!by) { by = new Map(); joined.set(base, by); }
     let j = by.get(own);
     if (!j) { j = new Map([...base, ...own]); by.set(own, j); }
     return j;

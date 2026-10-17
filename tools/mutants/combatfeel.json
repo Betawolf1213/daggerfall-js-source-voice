@@ -335,8 +335,8 @@
   {
     "name": "CF-host-blow-unshown",
     "file": "src/scenes/naval/navalHost.js",
-    "old": "ship: { name: HULL_NAMES[boat.hull], blow: feel.blow(),",
-    "new": "ship: { name: HULL_NAMES[boat.hull],",
+    "old": "ship: { id: boat.uid ?? null, name: HULL_NAMES[boat.hull], blow: feel.blow(),",
+    "new": "ship: { id: boat.uid ?? null, name: HULL_NAMES[boat.hull],",
     "tests": [
       "test/systems/naval/combatfeel.test.js"
     ]
@@ -506,7 +506,7 @@
   {
     "name": "CF-men-unreckoned",
     "file": "src/scenes/naval/navalHost.js",
-    "old": "    if (byMe) tallyMen(e, men - target.ship.damage.crew);",
+    "old": "    if (byMe) tallies.men(e, men - target.ship.damage.crew);",
     "new": "    // the men",
     "tests": [
       "test/systems/naval/combatfeel.test.js"
@@ -514,9 +514,9 @@
   },
   {
     "name": "CF-men-last-lost",
-    "file": "src/scenes/naval/navalHost.js",
-    "old": "    const t = tallies.get(String(e.volley)) ?? (tally?.volley === String(e.volley) ? tally : null);",
-    "new": "    const t = tallies.get(String(e.volley)) ?? null;",
+    "file": "src/scenes/naval/navalTally.js",
+    "old": "      const t = open.get(String(e.volley)) ?? (last?.volley === String(e.volley) ? last : null);",
+    "new": "      const t = open.get(String(e.volley)) ?? null;",
     "tests": [
       "test/systems/naval/combatfeel.test.js"
     ]
@@ -532,9 +532,9 @@
   },
   {
     "name": "CF-men-model",
-    "file": "src/scenes/naval/navalHost.js",
-    "old": "rig: tally.rig, men: tally.men ?? 0 } : null,",
-    "new": "rig: tally.rig } : null,",
+    "file": "src/scenes/naval/navalTally.js",
+    "old": "rig: last.rig, men: last.men } : null;",
+    "new": "rig: last.rig } : null;",
     "tests": [
       "test/systems/naval/combatfeel.test.js"
     ]
@@ -578,8 +578,35 @@
   {
     "name": "CF-plate-unbroken",
     "file": "src/ui/naval/navalHud.js",
-    "old": "    c.className = `dfnaval-chunk ${frame}`;\n    L.hits++;",
-    "new": "    L.hits++;",
+    "old": "    c.className = `dfnaval-chunk ${frame}`;\n    state.hits++;",
+    "new": "    state.hits++;",
+    "tests": [
+      "test/systems/naval/combatfeel.test.js"
+    ]
+  },
+  {
+    "name": "CF-plate-id-unsaid",
+    "file": "src/scenes/naval/navalHost.js",
+    "old": "ship: { id: boat.uid ?? null, name: HULL_NAMES[boat.hull],",
+    "new": "ship: { name: HULL_NAMES[boat.hull],",
+    "tests": [
+      "test/systems/naval/combatfeel.test.js"
+    ]
+  },
+  {
+    "name": "CF-plate-id-untold",
+    "file": "src/ui/naval/navalHud.js",
+    "old": "    id: ship.id ?? null, name: ship.name, waters:",
+    "new": "    name: ship.name, waters:",
+    "tests": [
+      "test/systems/naval/combatfeel.test.js"
+    ]
+  },
+  {
+    "name": "CF-plate-by-none",
+    "file": "src/ui/naval/navalHud.js",
+    "old": "barLoss(plateBar, p.id, p.hull,",
+    "new": "barLoss(plateBar, null, p.hull,",
     "tests": [
       "test/systems/naval/combatfeel.test.js"
     ]

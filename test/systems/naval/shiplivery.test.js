@@ -132,8 +132,9 @@ function recordingRenderer() {
 function classicPipeline(models = new Map()) {
   const bitmap = { width: 4, height: 4, data: new Uint8Array(16).fill(9) };
   const file = { recordCount: 3, getDFBitmap: () => bitmap, getSize: () => ({ width: 4, height: 4 }), getScale: () => ({ width: 0, height: 0 }) };
+  const sails = { ...file, recordCount: 8 };   // the sails' file holds their record (CLASSIC_SAIL, 7)
   return {
-    getTexture: async () => file, uploadRecord() {}, getGpuMesh: async (id) => ({ classic: id }), cpuModels: models,
+    getTexture: async (a) => (a === CLASSIC_SAIL[0] ? sails : file), uploadRecord() {}, getGpuMesh: async (id) => ({ classic: id }), cpuModels: models,
     palette: { getRed: (i) => i * 10, getGreen: (i) => i * 8, getBlue: (i) => i * 6 },
   };
 }
@@ -229,7 +230,7 @@ test('SHIP-LIVERY and DECK-PROPS over the real pool: my boat drawn by her paint 
   pool.destroyAll();
 });
 
-test('DECK-PROPS standing: a fitting whose model is not loaded waits - its model asked, the boat fitted again once it is; one whose place is no deck of hers stands nowhere for good; her node made again whole, one under her MeshObject; a boat fitted by her list\'s key is let be; one whose deck is not baked waits; a boat never fitted with none to fit is let be (mutants: the wait, the deck, the key, the node)', () => {
+test('DECK-PROPS standing: a fitting whose model is not loaded waits - its model asked, the boat fitted again once it is; one whose place is no deck of hers stands nowhere for good; her node made again whole, one under her MeshObject; a boat fitted by her list\'s key is let be; one whose deck is not baked waits; a boat never fitted with none to fit is let be; while one waits her tree is made again only as one more loads (mutants: the wait, the deck, the key, the node, the stage)', () => {
   assert.equal(standFittings({ hull: 2, MeshObject: null }, [{ m: 41812, x: 0, z: 0, yaw: 0 }], { ctx: {}, deck: null }), false, 'no frame of hers');
   const frame = new PrefabNode('MeshObject');
   const boat = { hull: 2, MeshObject: frame };
@@ -244,6 +245,9 @@ test('DECK-PROPS standing: a fitting whose model is not loaded waits - its model
   assert.deepEqual(asked, [41813, 41815], 'the models not loaded asked');
   assert.equal(boat._fitted, undefined, 'not fitted while one loads');
   assert.deepEqual(node()[0].children.map((c) => c.name), ['Fitting-41812'], 'the loaded one stands meanwhile');
+  const waiting = node()[0];
+  for (let i = 0; i < 3; i++) fitBoats([boat], () => list, o);
+  assert.equal(node()[0], waiting, 'AUDIT 2026-10-17: nothing more loaded - her tree not made again, frame on frame');
   loaded.add(41813); loaded.add(41815);
   fitBoats([boat], () => list, o);
   assert.equal(node().length, 1, 'her node made again whole, never twice');

@@ -365,7 +365,9 @@ function shipCard(el, s, { rerender, meter, door, arms = null }) {
   const act = (verb, arg) => {
     const r = fleet()?.act?.(s.uid, verb, arg) ?? { ok: false, text: 'Not here.' };
     _said = { uid: s.uid, ok: r.ok, text: r.text };
-    if (r.ok && typeof r.door === 'function') { door?.(r.door); return; }
+    // AUDIT 2026-10-17: a door that will not open (her deck not known, no inventory) says why itself - its card never keeps
+    // the word that it opened
+    if (r.ok && typeof r.door === 'function') { const run = r.door; door?.(() => { const ran = run(); if (ran === false && _said?.uid === s.uid) _said = null; return ran; }); return; }
     rerender();
   };
   const acts = el('div', 'hld-acts');

@@ -25,7 +25,7 @@
 // how long it fouls a ship, her repairs, her trade at the exchange (CAPTAIN_STATS).
 
 import { LEAGUE_M } from '../../world/ethericSea.js';   // the log's `sailed` is metres
-import { naturalShot, shotId } from './shotKinds.js';   // the shot locker's stars: a ball's load
+import { naturalShot, shotId, shotGun, shotReach } from './shotKinds.js';   // the shot locker's stars: a ball's load
 
 /** The deeds a captain's level is earned by, and each's worth. */
 export const CAPTAIN_XP = Object.freeze({
@@ -227,4 +227,14 @@ export function captainShot(gunKind, gun, shot, stats) {
   if (s === 'chain' && stats.chain) return { ...gun, sail: gun.sail * statScale(stats, 'chain') };
   if (s === 'heated' && stats.heated) return { ...gun, fireK: statScale(stats, 'heated') };
   return gun;
+}
+/** SHOT-KINDS: the gun a ball struck with - its bore `gun` (navalGunnery.js GUNS[gunKind]) as its load `shot` fires it
+ *  (shotKinds.js shotGun; none: its bore's own), her captain's shot locker's stars over it (`stats` - a ball of mine's
+ *  alone; captainShot), grapeshot's men by its time aloft `t` (shotReach). The naval host's strike reads it (AUDIT
+ *  2026-10-17: out of createNavalHost - HOST-SPLIT). Pure. */
+export function struckGun(gunKind, gun, shot, t, stats) {
+  const g = captainShot(gunKind, shotGun(gunKind, gun, shot ?? null), shot ?? null, stats);
+  if (!g) return null;
+  const reach = shotReach(shot, t);
+  return reach < 1 ? { ...g, crew: g.crew * reach } : g;
 }

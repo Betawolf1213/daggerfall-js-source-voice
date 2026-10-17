@@ -24,6 +24,8 @@ export const FLAG_ROWS = 3;
 export const FLAGS_MAX = 16;
 /** The canvas a flag is drawn on, pixels wide (two thirds as tall). */
 export const FLAG_TEX_W = 96;
+/** A flag that would not paint is asked again this long on (s) - never every frame. */
+export const FLAG_REPAINT_S = 5;
 /** How far a dead calm bends the fly down toward the staff (radians at its free edge). */
 export const FLAG_SLACK_BEND = 0.9;
 /** The wave's cycles a second and its waves along the cloth (whole over the period - a pin holds the rate). */
@@ -151,19 +153,21 @@ export class ShipFlagRenderer {
     gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 8, 0);
     gl.bindVertexArray(null);
     this._vp = new Float32Array(16);
-    /** @type {Map<string, {tex: WebGLTexture, seen: number}>} a flag's texture, by its key, and when it was last drawn */
+    /** @type {Map<string, {tex: WebGLTexture | null, seen: number, failed?: number}>} a flag's texture, by its key, when it
+     *  was last drawn, and (null) when it would not paint */
     this.textures = new Map();
     this.drawn = 0;
   }
 
   /** A flag's texture: painted and uploaded the first time, kept while it is drawn (null where it cannot be painted -
-   *  asked again next time). */
+   *  remembered so, and asked again FLAG_REPAINT_S on: AUDIT 2026-10-17, a canvas was made and painted every frame for a
+   *  flag that would not paint). */
   textureOf(key, flag, seconds = 0) {
     const had = this.textures.get(key);
-    if (had) { had.seen = seconds; return had.tex; }
+    if (had) { had.seen = seconds; if (had.tex || seconds - had.failed < FLAG_REPAINT_S) return had.tex; }
     const gl = this.gl;
     const canvas = this.paint?.(flag) ?? null;
-    if (!canvas) return null;
+    if (!canvas) { this.textures.set(key, { tex: null, seen: seconds, failed: seconds }); return null; }
     const tex = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, tex);
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
@@ -179,9 +183,10 @@ export class ShipFlagRenderer {
     this.textures.set(key, { tex, seen: seconds });
     return tex;
   }
-  /** A flag not drawn for BANNER_TEXTURE_IDLE_S gives its texture back. */
+  /** A flag not drawn for BANNER_TEXTURE_IDLE_S gives its texture back - asked by every draw, one of no flags too (the
+   *  host draws on, so the textures of flags sailed out of sight go). */
   prune(seconds) {
-    for (const [key, t] of this.textures) if (seconds - t.seen > BANNER_TEXTURE_IDLE_S) { this.gl.deleteTexture(t.tex); this.textures.delete(key); }
+    for (const [key, t] of this.textures) if (seconds - t.seen > BANNER_TEXTURE_IDLE_S) { if (t.tex) this.gl.deleteTexture(t.tex); this.textures.delete(key); }
   }
 
   /**

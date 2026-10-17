@@ -200,15 +200,17 @@ earned at sea) and bettering her by half a shipwright's tier:
 | XI | Orcish (Orichalcum) | 24 | 55,000 | 7 | 10 |
 | XII | Daedric | 28 | 70,000 | 8 | 10 |
 
-A metal is the forge's ingot of it (621-630), or a weapon or a piece of plate of it melted down - never one worn, a
-quest's, an artifact, a sigil's or enchanted; the ingots go first. A store is counted once for a refit's two (a steel
+A metal is the forge's ingot of it (621-630), or a weapon or a piece of plate of it melted down - a plain piece alone:
+never one worn, locked, bound, a quest's, an artifact, a sigil's, a player's make, enchanted, graded past Common or
+socketed (Naval-Refit.md REFIT-ORES); the ingots go first. A store is counted once for a refit's two (a steel
 ingot is Steel's and Iron's both). Her CAPTAIN'S STARS (CAPTAIN-TREE) better her refits again where they are read: her
 hold, her way, her hull and her guns' harm, with her oars and her helm.
 
 The refits are read WHERE THE RATES ARE READ (`deps.refit`, the ledger by her number), never written into the prefab's
-modifiers a variant's change walks again. A refit never heals her nor hurts her: her state is built again on her new
-whole with her hurts the share of it they were (`refitBoat`); a save keeps her on her first build's scale (TOUGHER-SHIPS)
-and reads her on her refitted whole.
+modifiers a variant's change walks again. A refit never heals her nor hurts her: her hull and canvas are set on her new
+whole the share of it they were, and nothing else of her is touched (`refitBoat`, `navalDamage.js rewhole` - AUDIT
+2026-10-17: her state was built again, so a captain's stars accepted mid-fight loaded every battery and let the brace and
+her mending's quiet go); a save keeps her on her first build's scale (TOUGHER-SHIPS) and reads her on her refitted whole.
 
 **THE BANK'S CLAIM** (Mac: *"Loaned ships shouldnt be able to be upgraded until the loan is paid off"*): a ship bought on
 the bank's credit takes no refit while the loan that bought her stands - her region's bank owed anything at all

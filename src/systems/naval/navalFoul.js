@@ -13,10 +13,12 @@
 // their head), the prize hers to give if I win. A ship fouled by another player is theirs to board (`by`), never mine.
 //
 // The law is the law already: a ram on a lawful ship is an act of fire (navalLaw.js - piracy, notoriety, any navy in
-// sight provoked) and taking her is a boarding's; nothing here is new to the crowns. Online the boarder adopts her at the
-// grapple (navalHost.js adopt), so a ship another stands is fouled in my copy and taken over before her stander's word
-// can sail her off; a sound ship being boarded is said 'boarded' on the wire as a struck one is, so no peer grapples her
-// under the fight.
+// sight provoked) and taking her is a boarding's; nothing here is new to the crowns. Online (AUDIT 2026-10-17) a ram on a
+// ship another player stands says its foul to her stander with its blow (navalWire.js navalHitData `foul`, the hit's `u`:
+// the seconds it holds her), and her stander's AI holds her way (`foulSaid`) - her way had come off in the rammer's copy
+// alone while her stander's word sailed her on out of the grapples' reach; the boarder adopts her at the grapple
+// (navalHost.js adopt). A sound ship being boarded is said `afloat` on the wire with her captain's mode `boarded`
+// (navalAI.js stepCaptain's), so no peer grapples her under the fight and none reads her colours struck.
 
 /** How long a ram holds her fouled (s): time to come up alongside, or heave to beside her (navalHost.js HEAVE_TO_S 8). */
 export const FOUL_S = 20;
@@ -33,6 +35,17 @@ export function foul(ship, by, now, more = 0) {
 }
 /** Whether `ship` is fouled at `now` (by anyone). */
 export const isFouled = (ship, now) => !!ship?.fouled && now < ship.fouled.until;
+/** The seconds left on her foul at `now` (0: none) - what her rammer says to her stander. */
+export const foulLeft = (ship, now) => (isFouled(ship, now) ? ship.fouled.until - now : 0);
+/** The most a word may say a foul holds (s): FOUL_S and every captain's grapnels past it, with room. */
+export const FOUL_SAID_MAX = 60;
+/** A ram's foul as her rammer `by` said it to her stander (`secs` it holds her, FOUL_SAID_MAX at most): taken on a sound
+ *  ship not boarded already, as the ram's own `foul` takes it. Answers whether it was. */
+export function foulSaid(ship, by, now, secs) {
+  if (!ship || !(secs > 0) || ship.boarded || ship.damage?.state !== 'afloat') return false;
+  ship.fouled = { by, until: now + Math.min(FOUL_SAID_MAX, secs) };
+  return true;
+}
 /** Whether `ship` is fouled at `now` by `by`. */
 export const fouledBy = (ship, by, now) => isFouled(ship, now) && ship.fouled.by === by;
 

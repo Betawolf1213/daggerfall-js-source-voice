@@ -317,8 +317,8 @@
   {
     "name": "CT-host-shot-anyones",
     "file": "src/scenes/naval/navalHost.js",
-    "old": "e.shot ?? null, isMine(e.shooter) ? deps.captain?.stats?.() : null);",
-    "new": "e.shot ?? null, deps.captain?.stats?.());",
+    "old": "e.shot, e.t, isMine(e.shooter) ? deps.captain?.stats?.() : null);",
+    "new": "e.shot, e.t, deps.captain?.stats?.());",
     "tests": [
       "test/systems/naval/captaintree.test.js"
     ]
@@ -470,8 +470,8 @@
   {
     "name": "RO-melt-worn",
     "file": "src/systems/fleet.js",
-    "old": "!!item && item.equipSlot == null && !item.questItem",
-    "new": "!!item && !item.questItem",
+    "old": "!!item && item.equipSlot == null && !isLocked(item)",
+    "new": "!!item && !isLocked(item)",
     "tests": [
       "test/systems/naval/captaintree.test.js"
     ]
@@ -479,8 +479,8 @@
   {
     "name": "RO-melt-enchanted",
     "file": "src/systems/fleet.js",
-    "old": "  && !(Array.isArray(item.enchantments) && item.enchantments.length);",
-    "new": "  && true;",
+    "old": "  && !listed(item.enchantments) && !listed(item.customEnchantments)",
+    "new": "  && !listed(item.customEnchantments)",
     "tests": [
       "test/systems/naval/captaintree.test.js"
     ]
@@ -488,8 +488,8 @@
   {
     "name": "RO-melt-artifact",
     "file": "src/systems/fleet.js",
-    "old": "!item.questItem && !item.artifact && !item.sigil",
-    "new": "!item.questItem && !item.sigil",
+    "old": "  && !item.artifact && !item.sigil && typeof",
+    "new": "  && !item.sigil && typeof",
     "tests": [
       "test/systems/naval/captaintree.test.js"
     ]
@@ -497,8 +497,8 @@
   {
     "name": "RO-melt-sigil",
     "file": "src/systems/fleet.js",
-    "old": "!item.questItem && !item.artifact && !item.sigil",
-    "new": "!item.questItem && !item.artifact",
+    "old": "  && !item.artifact && !item.sigil && typeof",
+    "new": "  && !item.artifact && typeof",
     "tests": [
       "test/systems/naval/captaintree.test.js"
     ]
@@ -690,6 +690,105 @@
     "file": "src/systems/naval/captainLedger.js",
     "old": "    setTree(ids) { tree = heldStars(ids, captainOf(log).points); stats = starStats(tree); return tree.slice(); },",
     "new": "    setTree(ids) { tree = heldStars(ids, captainOf(log).points); return tree.slice(); },",
+    "tests": [
+      "test/systems/naval/captaintree.test.js"
+    ]
+  },
+  {
+    "name": "RO-melt-locked",
+    "file": "src/systems/fleet.js",
+    "old": "item.equipSlot == null && !isLocked(item) && !isBound(item)",
+    "new": "item.equipSlot == null && !isBound(item)",
+    "tests": [
+      "test/systems/naval/captaintree.test.js"
+    ]
+  },
+  {
+    "name": "RO-melt-bound",
+    "file": "src/systems/fleet.js",
+    "old": "!isLocked(item) && !isBound(item) && !item.questItem",
+    "new": "!isLocked(item) && !item.questItem",
+    "tests": [
+      "test/systems/naval/captaintree.test.js"
+    ]
+  },
+  {
+    "name": "RO-melt-made",
+    "file": "src/systems/fleet.js",
+    "old": "!item.sigil && typeof item.provenance !== 'string'",
+    "new": "!item.sigil",
+    "tests": [
+      "test/systems/naval/captaintree.test.js"
+    ]
+  },
+  {
+    "name": "RO-melt-custom",
+    "file": "src/systems/fleet.js",
+    "old": "  && !listed(item.enchantments) && !listed(item.customEnchantments)",
+    "new": "  && !listed(item.enchantments)",
+    "tests": [
+      "test/systems/naval/captaintree.test.js"
+    ]
+  },
+  {
+    "name": "RO-melt-graded",
+    "file": "src/systems/fleet.js",
+    "old": "(item.rarity == null || item.rarity === 'common')",
+    "new": "true",
+    "tests": [
+      "test/systems/naval/captaintree.test.js"
+    ]
+  },
+  {
+    "name": "RO-melt-affixed",
+    "file": "src/systems/fleet.js",
+    "old": "&& !listed(item.affixes) && !item.legendary",
+    "new": "&& !item.legendary",
+    "tests": [
+      "test/systems/naval/captaintree.test.js"
+    ]
+  },
+  {
+    "name": "RO-melt-legendary",
+    "file": "src/systems/fleet.js",
+    "old": "&& !listed(item.affixes) && !item.legendary",
+    "new": "&& !listed(item.affixes)",
+    "tests": [
+      "test/systems/naval/captaintree.test.js"
+    ]
+  },
+  {
+    "name": "RO-melt-magic",
+    "file": "src/systems/fleet.js",
+    "old": "  && !item.magic && (item.rarity",
+    "new": "  && (item.rarity",
+    "tests": [
+      "test/systems/naval/captaintree.test.js"
+    ]
+  },
+  {
+    "name": "RO-melt-socket",
+    "file": "src/systems/fleet.js",
+    "old": "  && item.socket == null && !listed(item.sockets);",
+    "new": "  && !listed(item.sockets);",
+    "tests": [
+      "test/systems/naval/captaintree.test.js"
+    ]
+  },
+  {
+    "name": "RO-melt-sockets",
+    "file": "src/systems/fleet.js",
+    "old": "  && item.socket == null && !listed(item.sockets);",
+    "new": "  && item.socket == null;",
+    "tests": [
+      "test/systems/naval/captaintree.test.js"
+    ]
+  },
+  {
+    "name": "RO-melt-empty-lists",
+    "file": "src/systems/fleet.js",
+    "old": "const listed = (v) => Array.isArray(v) && v.length > 0;",
+    "new": "const listed = (v) => Array.isArray(v);",
     "tests": [
       "test/systems/naval/captaintree.test.js"
     ]

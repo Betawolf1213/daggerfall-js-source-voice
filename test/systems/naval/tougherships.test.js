@@ -253,7 +253,7 @@ test('TOUGHER-SHIPS online: a peer\'s blow says its men BEFORE her toughness - a
   near(d.maxCrew - d.crew, 40 / SHIP_TOUGHNESS, 6, 'forty men said, the toughness\'s share of them lost');
   const host = src('src/scenes/naval/navalHost.js');
   assert.match(host, /deps\.sendHit\?\.\(navalHitData\(target\.owner, \{ n: target\.n, hull: hurt\.hull, sail: hurt\.sail, crew: shotMen\(gun, zone\),/, 'a ball on another\'s ship says the gun\'s men');
-  assert.match(host, /if \(e\.owner\) deps\.sendHit\?\.\(navalHitData\(e\.owner, \{ n: e\.n, hull: Math\.min\(400, dealt\), crew: ramMenSaid\(dealt\), zone: 'holed' \}\)\);/, 'a ram on another\'s ship says the ram\'s');
+  assert.match(host, /if \(e\.owner\) deps\.sendHit\?\.\(navalHitData\(e\.owner, \{ n: e\.n, hull: Math\.min\(400, dealt\), crew: ramMenSaid\(dealt\), zone: 'holed', foul: /, 'a ram on another\'s ship says the ram\'s');   // PIN MOVED (RAM-BOARD, AUDIT 2026-10-17: its foul with it)
 });
 
 // ── QUICK-REPAIRS ────────────────────────────────────────────────────────────────────────────────────────────────

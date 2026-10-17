@@ -26,6 +26,8 @@ import { shipFlagOf } from './naval/shipFlag.js';   // SHIP-COLOURS: her flag, t
 import { liveryOf, LIVERY_PARTS, isPaint } from './naval/shipLivery.js';   // SHIP-LIVERY: her paint, through its door
 import { fittingsOf } from './naval/deckFittings.js';   // DECK-PROPS: her fittings, through their door
 import { plateMetal } from './armorMaterials.js';   // REFIT-ORES: a piece of plate's metal
+import { isLocked } from './item/itemLock.js';   // REFIT-ORES: a locked piece is never melted down
+import { isBound } from './item/itemBound.js';   // REFIT-ORES: nor a bound one
 import { WEAPONS } from '../characters/weapons.js';
 import { t } from './textManager.js';   // REFIT-ORES: a metal's hint in the player's language
 
@@ -88,10 +90,17 @@ export function refitMetalOf(item) {
   if (item.group === 'Weapons') return item.templateIndex !== WEAPONS.Arrow && m >= 0 && m <= 9 ? m : null;
   return item.group === 'Armor' ? plateMetal(m) : null;
 }
-/** REFIT-ORES: whether a piece may be melted down for its metal - never one worn, a quest's, an artifact, a sigil's
- *  (systems/aetheric.js), or enchanted. */
-export const meltable = (item) => !!item && item.equipSlot == null && !item.questItem && !item.artifact && !item.sigil
-  && !(Array.isArray(item.enchantments) && item.enchantments.length);
+/** REFIT-ORES: whether a piece may be melted down for its metal - a PLAIN piece alone, because the refit takes its metal
+ *  unasked (takeMaterials, after the ingots): never one worn, locked (item/itemLock.js), bound (item/itemBound.js), a
+ *  quest's, an artifact, a sigil's (systems/aetheric.js) or a player's make (`provenance`, a minted piece's mark); never
+ *  enchanted, DFU's way or the item maker's (inventory.js isEnchanted); never graded past Common - a rolled tier, its
+ *  affixes, a Legendary's record, DFU's magic mark (loot/lootRarity.js rarityEligible's own list) - nor socketed. */
+const listed = (v) => Array.isArray(v) && v.length > 0;
+export const meltable = (item) => !!item && item.equipSlot == null && !isLocked(item) && !isBound(item) && !item.questItem
+  && !item.artifact && !item.sigil && typeof item.provenance !== 'string'
+  && !listed(item.enchantments) && !listed(item.customEnchantments)
+  && !item.magic && (item.rarity == null || item.rarity === 'common') && !listed(item.affixes) && !item.legendary
+  && item.socket == null && !listed(item.sockets);
 /** Whether `item` is one of `kind`: its template, or (an ore) a meltable piece of its metal. */
 const isOf = (item, kind) => { const m = MATERIALS[kind]; return !!m && !!item && (m.templates.includes(item.templateIndex) || (m.metal != null && refitMetalOf(item) === m.metal && meltable(item))); };
 /** The four refits, each UPGRADE_TIERS deep: what it betters, by how much a tier, and what it is built of. Guns only on

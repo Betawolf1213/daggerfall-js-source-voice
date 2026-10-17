@@ -326,7 +326,7 @@ test('FLEET her Hull refit on her hull\'s and canvas\'s whole (myBoatState\'s bu
   assert.match(src, /if \(Number\.isFinite\(hurt\.hull\)\) hurt\.hull \*= k;\n    if \(Number\.isFinite\(hurt\.sail\)\) hurt\.sail \*= k;/);
 });
 
-test('FLEET a refit never heals her nor hurts her: her state built again on her new whole, her hurts the share they were, her powder kept (refitBoat); a waiting record is read on the new whole when she stands', async () => {
+test('FLEET a refit never heals her nor hurts her: her state on her new whole, her hurts the share they were, her powder, her guns\' clocks, the brace, her last blow and her stores kept (refitBoat - AUDIT 2026-10-17: a sky accepted mid-fight loaded every battery); a waiting record is read on the new whole when she stands', async () => {
   const first = firstBuildOf(2);
   const save = { v: 2, boats: { 42: { hull: first.hullHp / 2, sail: first.sailHp, maxHull: first.hullHp, maxSail: first.sailHp, crew: hullBuild(2).crew, fire: 0, state: SHIP_STATES.afloat, credit: 0, barrels: 1 } } };
   let k = 1.2;
@@ -336,11 +336,20 @@ test('FLEET a refit never heals her nor hurts her: her state built again on her 
   assert.equal(a.maxHull, Math.round(hullBuild(2).hullHp * 1.2), 'the waiting record read on her refitted whole');
   assert.ok(Math.abs(a.hull / a.maxHull - 0.5) < 1e-6, 'half her whole');
   k = 1.3;
+  const st = s.host._myState(s.boat);
+  st.guns.fired('starboard'); st.guns.braced = true; st.credit = 7;
+  st.damage.apply({ hull: 1, sail: 5, crew: 0 }, 55);
+  const left = st.guns.left('starboard'), share = st.damage.hullShare(), canvas = st.damage.sailShare();
   s.host.refitBoat(s.boat);
   const b = s.host.fleetStatus(s.boat);
   assert.equal(b.maxHull, Math.round(hullBuild(2).hullHp * 1.3));
-  assert.ok(Math.abs(b.hull / b.maxHull - 0.5) < 0.01, `still half: ${b.hull} of ${b.maxHull}`);
+  assert.ok(Math.abs(b.hull / b.maxHull - share) < 1e-9, `the same share: ${b.hull} of ${b.maxHull}`);
   assert.equal(b.barrels, 1, 'her powder kept');
+  const now = s.host._myState(s.boat);
+  assert.equal(now, st, 'her state itself, not one built again');
+  assert.ok(canvas < 1 && Math.abs(now.damage.sailShare() - canvas) < 1e-9, 'her canvas the share it was');
+  assert.deepEqual([now.guns.left('starboard'), now.guns.braced, now.damage.lastHitAt, now.credit], [left, true, 55, 7], 'her reload, the brace, her last blow, her stores');
+  assert.ok(left > 0);
   s.host.refitBoat({ uid: 999, hull: 2 });   // no state: nothing to build again
 });
 

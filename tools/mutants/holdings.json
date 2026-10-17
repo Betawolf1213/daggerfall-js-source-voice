@@ -266,8 +266,8 @@
   {
     "name": "FLEET-refit-heals-her",
     "file": "src/scenes/naval/navalHost.js",
-    "old": "    pendingBoats.set(boat.uid, { ...savedRecord(st.damage, st.hull, 0), ...gunsRecord(st) });",
-    "new": "    void savedRecord;",
+    "old": "    if (st) st.damage.rewhole(refitBuild(boat));",
+    "new": "    if (st) st.damage.repair();",
     "tests": [
       "test/systems/naval/fleet.test.js"
     ]

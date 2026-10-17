@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { scene } from '../../csaScene.mjs';
-import { PEACE_WAY, peaceWayOf, peaceShare } from '../../../src/systems/comeSailAway/peaceWay.js';
+import { PEACE_WAY, PEACE_HOLD_S, peaceWayOf, peaceShare, heldPeaceWay } from '../../../src/systems/comeSailAway/peaceWay.js';
 import { HULL } from '../../../src/systems/naval/navalShips.js';
 
 const WORLD = readFileSync(new URL('../../../src/scenes/world.js', import.meta.url), 'utf8');
@@ -50,6 +50,20 @@ test('PEACE-WAY the law: PEACE_WAY (1.15) with no enemy near, no boarding and no
   assert.equal(peaceShare(NaN), 1);
   assert.equal(peaceShare(undefined), 1);
   assert.equal(peaceShare('x'), 1);
+});
+
+test('PEACE-WAY held (AUDIT 2026-10-17): the world\'s answer - a walk of every foe, guard and ship near - asked once a PEACE_HOLD_S however often the runtime asks in a frame, asked again past it and when the clock runs back (mutants: the hold, its span)', () => {
+  let now = 10, asked = 0, k = PEACE_WAY;
+  const held = heldPeaceWay(() => { asked++; return k; }, () => now);
+  for (let i = 0; i < 5; i++) assert.equal(held(), PEACE_WAY);
+  assert.equal(asked, 1, 'once for the frame\'s five asks');
+  k = 1; now += PEACE_HOLD_S * 0.9;
+  assert.equal(held(), PEACE_WAY, 'held');
+  now += PEACE_HOLD_S * 0.2;
+  assert.deepEqual([held(), asked], [1, 2], 'past the hold: asked again');
+  now -= 5;
+  assert.deepEqual([held(), asked], [1, 3], 'a clock run back asks again');
+  assert.ok(PEACE_HOLD_S > 0 && PEACE_HOLD_S <= 0.25, 'a moment, not a passage');
 });
 
 test('PEACE-WAY under sail: out of a fight a galleon and a Carrack settle at PEACE_WAY of the way they make in one, in the time they came up to it before (her way gathers as quickly) - and the journey\'s estimate of her sails (sailWayOf) says the way she makes', () => {
@@ -95,6 +109,6 @@ test('PEACE-WAY a fight begins: under way at her peace way, an enemy near takes 
 });
 
 test('PEACE-WAY the world host\'s word: the runtime\'s seam answers peaceWayOf over its own enemiesNearby (the street\'s foes, the guards, a hostile ship - the helm time scale\'s word), the sea fight\'s boarding and its laid broadside', () => {
-  assert.match(WORLD, /peaceWay\(\) \{ return peaceWayOf\(\{ enemies: !!this\.enemiesNearby\(\), boarding: !!naval\?\.boarding, aiming: !!naval\?\.aiming \}\); \},/);
+  assert.match(WORLD, /peaceWay\(\) \{ return \(this\._peace \?\?= heldPeaceWay\(\(\) => peaceWayOf\(\{ enemies: !!this\.enemiesNearby\(\), boarding: !!naval\?\.boarding, aiming: !!naval\?\.aiming \}\)\)\)\(\); \},/);
   assert.match(WORLD, /enemiesNearby: \(\) => areEnemiesNearby\(.*\|\| navalHostileNear\(\),/, 'the word it reads covers the sea\'s hostile ships');
 });
