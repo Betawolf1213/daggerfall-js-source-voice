@@ -15,6 +15,7 @@ import { DatabaseSync } from 'node:sqlite';
 import { webcrypto } from 'node:crypto';
 
 import { standService, T0 } from '../accountDb.mjs';
+import { holdPieces } from '../realmSeat.mjs';   // INT19: a crafted piece in its seller's realm record
 import { MARKS_MAX } from '../../src/net/marksLaw.js';
 import { saleTax, AUCTION_S, AUCTION_GRACE_S, MARKET_KEEP_DAYS } from '../../src/net/marketLaw.js';
 import { seatReportText } from '../../src/net/townSeatLaw.js';
@@ -75,7 +76,7 @@ async function tithedMarket() {
   const gid = raw.prepare('SELECT guild_id FROM guild_members WHERE player = ?').get(gm.id).guild_id;
   raw.prepare(`INSERT INTO town_seat_holds (key, guild_id, region, tier, since_week, standing, truce_week, at, tithe, owed) VALUES (?, ?, ?, ?, 0, 50, NULL, ?, 8, 0)`)
     .run(ANTICLERE.key, gid, ANTICLERE.region, ANTICLERE.tier, T0 - 7 * DAY);
-  const seller = await svc.registered('Seller', { renown: 10 });
+  const seller = await svc.seated('Seller', { renown: 10 });   // PIN MOVED (INT19): a realm character - its auction's piece leaves its record
   const buyer = await svc.registered('Buyer', { renown: 10 });
   svc.seedMarks(seller, 100_000, 's'); svc.seedMarks(buyer, 100_000, 'b');
   return { svc, raw, seller, buyer, HUBS: { 21: [402, 151] } };
@@ -86,6 +87,7 @@ test('AUDIT SCALE A1: an auction won under a seat\'s Tithe, its seller within th
   let rid = 0;
   raw.prepare(`INSERT INTO products (provenance, owner, char_id, maker, recipe, template, material, quality, seed, record, made_at)
     VALUES ('00000000000000a1', ?, ?, 'Silverthorn', 'longsword:mithril', 120, 5, 4, 4242, 'p1.x', ?)`).run(seller.id, seller.character, T0);
+  holdPieces(svc.env, seller.character, [{ provenance: '00000000000000a1', quality: 4, wear: 900 }]);
   const posted = await svc.call('/v1/market/auction', { character: seller.character, region: 21, provenance: '00000000000000a1', wear: 900, opening: 1000, hubs: HUBS, board: [405, 150], rid: `audit-${String(++rid).padStart(6, '0')}` }, seller.secret);
   assert.equal(posted.status, 200, JSON.stringify(posted.body));
   const a = posted.body.auction;
@@ -239,8 +241,9 @@ test('AUDIT SCALE D7: on a quiet world the clock is ten statements a minute and 
   // open past ninety, a resolved case's lines past ninety and the reviewer's spend past a month, one statement each,
   // its page short (safetyClock.js safetySweep) - twenty-eight. PIN MOVED (AUDIT SAFE DOC-1, DOC-12): and a resolved
   // case's lines, notes and reviewer's reason swept apart - the case marked first, its card redrawn without them - thirty
-  assert.deepEqual(hour.map((j) => [j.name, j.statements]), [['board', 2], ['guild-board', 1], ['harvests', 2], ['market-history', 10], ['rate-limits', 1], ['sessions', 1], ['guild-invites', 1], ['realm-findings', 1], ['realm-wealth-hours', 1], ['wild-falls', 1], ['wild-escrow', 1], ['patrons', 1], ['eg-stakes', 1], ['safety-sweep', 6]]);
-  assert.equal(minute.reduce((n, j) => n + j.statements, 0) + hour.reduce((n, j) => n + j.statements, 0), 10 + 30);   // PIN MOVED (AUDIT LW-II-2 S3; SEAT-FACTS; EG-ZM; KG6; PVP-ESCROW; REZ-BLOODLINE AUDIT R1; SAFE)
+  // PIN MOVED (INT17, Integrity-Arc section 7): the progression claims' hours swept past the wealth's keeping - thirty-one
+  assert.deepEqual(hour.map((j) => [j.name, j.statements]), [['board', 2], ['guild-board', 1], ['harvests', 2], ['market-history', 10], ['rate-limits', 1], ['sessions', 1], ['guild-invites', 1], ['realm-findings', 1], ['realm-wealth-hours', 1], ['progress-hours', 1], ['wild-falls', 1], ['wild-escrow', 1], ['patrons', 1], ['eg-stakes', 1], ['safety-sweep', 6]]);
+  assert.equal(minute.reduce((n, j) => n + j.statements, 0) + hour.reduce((n, j) => n + j.statements, 0), 10 + 31);   // PIN MOVED (AUDIT LW-II-2 S3; SEAT-FACTS; EG-ZM; KG6; PVP-ESCROW; REZ-BLOODLINE AUDIT R1; SAFE; INT17: the progression claims' hours swept as the wealth's are)
   // behind `dev` the Motherlodes are a developer's: never picked by the clock
   const dev = await standService({ PROFESSIONS_OPEN: 'dev' });
   _resetCronForTests();
