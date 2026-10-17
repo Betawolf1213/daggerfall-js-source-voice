@@ -20,8 +20,17 @@
   {
     "name": "RVN-GEAR-power-piece-moved",
     "file": "src/systems/revenant/revenantGear.js",
-    "old": "POWER_PIECE: 0.2,",
-    "new": "POWER_PIECE: 0.25,",
+    "old": "POWER_PIECE: 0.05,",
+    "new": "POWER_PIECE: 0.1,",
+    "tests": [
+      "test/systems/revenant/rvngear.test.js"
+    ]
+  },
+  {
+    "name": "RVN-GEAR-power-tier-moved",
+    "file": "src/systems/revenant/revenantGear.js",
+    "old": "POWER_TIER: Object.freeze([0, 0.1, 0.2, 0.35]),",
+    "new": "POWER_TIER: Object.freeze([0, 0.15, 0.3, 0.5]),",
     "tests": [
       "test/systems/revenant/rvngear.test.js"
     ]
@@ -56,8 +65,17 @@
   {
     "name": "RVN-GEAR-jewel-shut-out",
     "file": "src/systems/revenant/revenantGear.js",
-    "old": "if (item.group === 'Jewellery') return 'charm';",
+    "old": "if (item.group === 'Jewellery') return wearableItem(item) ? 'charm' : null;",
     "new": "if (item.group === 'Jewellery') return null;",
+    "tests": [
+      "test/systems/revenant/rvngear.test.js"
+    ]
+  },
+  {
+    "name": "RVN-GEAR-wand-a-charm",
+    "file": "src/systems/revenant/revenantGear.js",
+    "old": "if (item.group === 'Jewellery') return wearableItem(item) ? 'charm' : null;",
+    "new": "if (item.group === 'Jewellery') return 'charm';",
     "tests": [
       "test/systems/revenant/rvngear.test.js"
     ]
@@ -65,8 +83,8 @@
   {
     "name": "RVN-GEAR-metal-cap-off-by-one",
     "file": "src/systems/revenant/revenantGear.js",
-    "old": "if (m > GEAR.METAL_CAP[rank]) return",
-    "new": "if (m > GEAR.METAL_CAP[rank] + 1) return",
+    "old": "overMetal = m > GEAR.METAL_CAP[rank],",
+    "new": "overMetal = m > GEAR.METAL_CAP[rank] + 1,",
     "tests": [
       "test/systems/revenant/rvngear.test.js"
     ]
@@ -74,8 +92,26 @@
   {
     "name": "RVN-GEAR-tier-cap-off-by-one",
     "file": "src/systems/revenant/revenantGear.js",
-    "old": "if (tier > GEAR.RARITY_CAP[rank]) return",
-    "new": "if (tier > GEAR.RARITY_CAP[rank] + 1) return",
+    "old": "overTier = tier > GEAR.RARITY_CAP[rank];",
+    "new": "overTier = tier > GEAR.RARITY_CAP[rank] + 1;",
+    "tests": [
+      "test/systems/revenant/rvngear.test.js"
+    ]
+  },
+  {
+    "name": "RVN-GEAR-need-rank-misnamed",
+    "file": "src/systems/revenant/revenantGear.js",
+    "old": "const need = ROMAN[gearRankNeeded(item) ?? 5];",
+    "new": "const need = ROMAN[GEAR.METAL_CAP.findIndex((cap, i) => i > 0 && cap >= m)];",
+    "tests": [
+      "test/systems/revenant/rvngear.test.js"
+    ]
+  },
+  {
+    "name": "RVN-GEAR-both-caps-unsaid",
+    "file": "src/systems/revenant/revenantGear.js",
+    "old": "  if (overMetal && overTier) return",
+    "new": "  if (false) return",
     "tests": [
       "test/systems/revenant/rvngear.test.js"
     ]
@@ -92,8 +128,26 @@
   {
     "name": "RVN-GEAR-shield-rule-gone",
     "file": "src/systems/revenant/revenantGear.js",
-    "old": "  if (key === 'shield' && !gear.weapon) return t('rvn.gear.no.shieldAlone', 'Give it a one-handed weapon first.');\n",
+    "old": "  if (key === 'shield' && (!gear.weapon || brokenPiece(gear.weapon))) return t('rvn.gear.no.shieldAlone', 'Give it a one-handed weapon first.');\n",
     "new": "",
+    "tests": [
+      "test/systems/revenant/rvngear.test.js"
+    ]
+  },
+  {
+    "name": "RVN-GEAR-broken-blade-gives-shield",
+    "file": "src/systems/revenant/revenantGear.js",
+    "old": "  if (key === 'shield' && (!gear.weapon || brokenPiece(gear.weapon))) return",
+    "new": "  if (key === 'shield' && !gear.weapon) return",
+    "tests": [
+      "test/systems/revenant/rvngear.test.js"
+    ]
+  },
+  {
+    "name": "RVN-GEAR-broken-blade-holds-shield",
+    "file": "src/systems/revenant/revenantGear.js",
+    "old": "const holdsShield = (gear) => !!gear?.weapon && !brokenPiece(gear.weapon) && !needsBothHands(gear.weapon);",
+    "new": "const holdsShield = (gear) => !!gear?.weapon && !needsBothHands(gear.weapon);",
     "tests": [
       "test/systems/revenant/rvngear.test.js"
     ]
@@ -101,8 +155,116 @@
   {
     "name": "RVN-GEAR-broken-worn",
     "file": "src/systems/revenant/revenantGear.js",
-    "old": "    if (Number.isFinite(it.currentCondition) && it.currentCondition <= 0) continue;\n    if (key === 'shield'",
-    "new": "    if (key === 'shield'",
+    "old": "    if (brokenPiece(it)) continue;\n",
+    "new": "",
+    "tests": [
+      "test/systems/revenant/rvngear.test.js"
+    ]
+  },
+  {
+    "name": "RVN-GEAR-taken-by-slot",
+    "file": "src/systems/revenant/revenantGear.js",
+    "old": "for (let s = 0; s < slots.length; s++) if (slots[s] === it) slots[s] = null;",
+    "new": "for (let s = 0; s < slots.length; s++) if (slots[s] === it || s === EQUIP_SLOTS.RightHand) slots[s] = null;",
+    "tests": [
+      "test/systems/revenant/rvngear.test.js"
+    ]
+  },
+  {
+    "name": "RVN-GEAR-taken-blade-kept",
+    "file": "src/systems/revenant/revenantGear.js",
+    "old": "    if (entity.weapon === it) entity.weapon = null;\n",
+    "new": "",
+    "tests": [
+      "test/systems/revenant/rvngear.test.js"
+    ]
+  },
+  {
+    "name": "RVN-GEAR-broken-blade-swung",
+    "file": "src/systems/equip.js",
+    "old": "  if (owner && owner.weapon === item) owner.weapon = null;\n",
+    "new": "",
+    "tests": [
+      "test/systems/revenant/rvngear.test.js"
+    ]
+  },
+  {
+    "name": "RVN-GEAR-gift-not-refit",
+    "file": "src/systems/revenant/revenantCompanions.js",
+    "old": "  if (body) applySwornGear(body, revenantRecord(_player, id), { taken: was ? [was] : [] });",
+    "new": "  void body;",
+    "tests": [
+      "test/systems/revenant/rvngear.test.js"
+    ]
+  },
+  {
+    "name": "RVN-GEAR-template-unread",
+    "file": "src/systems/revenant/revenantGear.js",
+    "old": "if (it && typeof it === 'object' && Number.isInteger(it.templateIndex)) out[key] = it;",
+    "new": "if (it && typeof it === 'object') out[key] = it;",
+    "tests": [
+      "test/systems/revenant/rvngear.test.js"
+    ]
+  },
+  {
+    "name": "RVN-GEAR-kit-restore-gone",
+    "file": "src/systems/revenant/revenant.js",
+    "old": "    if (s?.sworn && gearItems(s.companion?.gear).length && !r.sworn) { _state.list[i] = { ...s }; continue; }   // RVN-GEAR: and its kit - no one's to lose\n",
+    "new": "",
+    "tests": [
+      "test/systems/revenant/rvngear.test.js"
+    ]
+  },
+  {
+    "name": "RVN-GEAR-page-refused-first",
+    "file": "src/ui/companionRoster.js",
+    "old": "Number(!!a.why) - Number(!!b.why) || ",
+    "new": "",
+    "tests": [
+      "test/systems/revenant/rvngear.test.js"
+    ]
+  },
+  {
+    "name": "RVN-GEAR-page-no-more",
+    "file": "src/ui/companionRoster.js",
+    "old": "const pieces = _allPieces === r.id ? all : all.slice(0, GIFT_ROWS);",
+    "new": "const pieces = all.slice(0, GIFT_ROWS);",
+    "tests": [
+      "test/systems/revenant/rvngear.test.js"
+    ]
+  },
+  {
+    "name": "RVN-GEAR-page-quest-listed",
+    "file": "src/ui/companionRoster.js",
+    "old": "(armed || gearKeyOf(it) === 'charm') && !it.questItem && ",
+    "new": "(armed || gearKeyOf(it) === 'charm') && ",
+    "tests": [
+      "test/systems/revenant/rvngear.test.js"
+    ]
+  },
+  {
+    "name": "RVN-GEAR-page-broken-unmarked",
+    "file": "src/ui/companionRoster.js",
+    "old": "const state = broken ? t('rvn.roster.broken',",
+    "new": "const state = false ? t('rvn.roster.broken',",
+    "tests": [
+      "test/systems/revenant/rvngear.test.js"
+    ]
+  },
+  {
+    "name": "RVN-GEAR-page-condition-unsaid",
+    "file": "src/ui/companionRoster.js",
+    "old": "max > 0 && Number.isFinite(cur) ? t('rvn.roster.condition',",
+    "new": "false ? t('rvn.roster.condition',",
+    "tests": [
+      "test/systems/revenant/rvngear.test.js"
+    ]
+  },
+  {
+    "name": "RVN-GEAR-release-kit-uncounted",
+    "file": "src/ui/companionRoster.js",
+    "old": "const n = (r.companion?.items?.length ?? 0) + gearItems(r.companion?.gear).length;",
+    "new": "const n = (r.companion?.items?.length ?? 0);",
     "tests": [
       "test/systems/revenant/rvngear.test.js"
     ]

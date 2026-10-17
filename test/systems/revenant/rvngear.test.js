@@ -7,7 +7,10 @@
 // deserter's split.
 // Pinned: the law's numbers; the slots a piece takes; every refusal; the give and the take; a real stood body
 // (makeEnemyEntity + equipEnemy, through applySwornStrength - the stand's own door); the fold; the save, the release, the
-// split and the two walks; the power an errand reads; the page.
+// split and the two walks; the power an errand reads; the page. AUDIT RVN (Revenants.md section 43): a wand no charm; a
+// broken weapon holds no shield; a piece taken back off a live body by identity, a broken blade out of its hand; the rank
+// a refusal names whichever cap binds; the power's retune; no kit act abroad; the page's list (wearable first, the rest a
+// press away), its condition and its broken mark; the release's count; the branches the cold lanes found unpinned.
 import '../../modsOff.js';
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
@@ -33,7 +36,7 @@ const { tieredGear } = await import('../../../src/systems/eliteFoes.js');
 const { makeEnemyEntity } = await import('../../../src/characters/enemy/enemyEntity.js');
 const { ENEMY_BASICS } = await import('../../../src/characters/enemy/enemyBasics.js');
 const { equipEnemy } = await import('../../../src/scenes/hostCombat.js');
-const { equipTableOf, EQUIP_SLOTS } = await import('../../../src/systems/equip.js');
+const { equipTableOf, EQUIP_SLOTS, lowerCondition } = await import('../../../src/systems/equip.js');
 const { entityModsOf } = await import('../../../src/systems/entityMods.js');
 const { stashedItemLists } = await import('../../../src/net/realm/realmGoldLaw.js');
 const { possessedItemLists } = await import('../../../src/systems/item/possessedItems.js');
@@ -77,7 +80,7 @@ test('RVN-GEAR THE LAW: the ten slots in order, the rank\'s metal and tier, the 
   assert.deepEqual(G.GEAR_SLOTS.map((s) => s.slot), [EQUIP_SLOTS.RightHand, EQUIP_SLOTS.LeftHand, EQUIP_SLOTS.Head, EQUIP_SLOTS.RightArm, EQUIP_SLOTS.LeftArm, EQUIP_SLOTS.ChestArmor, EQUIP_SLOTS.Gloves, EQUIP_SLOTS.LegsArmor, EQUIP_SLOTS.Feet, null]);
   assert.deepEqual([...G.GEAR.METAL_CAP], [0, 2, 4, 6, 8, 9]);
   assert.deepEqual([...G.GEAR.RARITY_CAP], [0, 1, 2, 2, 3, 3]);
-  assert.deepEqual([G.GEAR.POWER_PIECE, [...G.GEAR.POWER_TIER], G.GEAR.POWER_MAX], [0.2, [0, 0.15, 0.3, 0.5], 2]);
+  assert.deepEqual([G.GEAR.POWER_PIECE, [...G.GEAR.POWER_TIER], G.GEAR.POWER_MAX], [0.05, [0, 0.1, 0.2, 0.35], 2]);
   assert.deepEqual([M.Warrior, M.Mage, M.Orc, M.Centaur, M.OrcSergeant, M.OrcShaman, M.OrcWarlord].map(G.armedKind), [true, true, true, true, true, true, true]);
   assert.deepEqual([M.GrizzlyBear, M.Lich, M.Rat, M.SkeletalWarrior, M.Vampire, M.FireAtronach].map(G.armedKind), [false, false, false, false, false, false]);
   assert.deepEqual([1, 3, 5, 7, 9].map((m) => G.gearRankNeeded(blade(120, m))), [1, 2, 3, 4, 5], 'Steel at I, Elven at II, Mithril at III, Ebony at IV, Daedric at V');
@@ -90,6 +93,7 @@ test('RVN-GEAR THE SLOTS: a melee weapon (Dagger to War Axe), each armour piece 
   assert.equal(G.gearKeyOf(blade(130)), null, 'nor a Long Bow');
   assert.deepEqual([107, 106, 105, 102, 103, 104, 108, 109, 112].map((t) => G.gearKeyOf(plate(t, 0))), ['head', 'rightArm', 'leftArm', 'body', 'hands', 'legs', 'feet', 'shield', 'shield']);
   assert.equal(G.gearKeyOf(amulet()), 'charm');
+  assert.equal(G.gearKeyOf(mintCondition(setItemFields({ group: 'Jewellery', templateIndex: 140 }))), null, 'AUDIT RVN G2: a Wand is jewellery nobody wears');
   assert.equal(G.gearKeyOf({ group: 'MensClothing', templateIndex: 141 }), null);
   assert.equal(G.needsBothHands(blade(122)), true, 'the Claymore'); assert.equal(G.needsBothHands(blade(120)), false, 'the Longsword');
 });
@@ -106,7 +110,15 @@ test('RVN-GEAR THE REFUSALS: the rank\'s metal and its tier, each saying the ran
   const leg = tieredGear(12, 'legendary', seq(5));
   assert.equal(rarityOf(leg), 'legendary');
   r.rank = 3;
-  assert.match(G.gearRefusal(r, leg) ?? '', /^It must rise to Rank (IV|V) to bear /, 'never a Legendary at rank III');
+  const ROMAN = ['', 'I', 'II', 'III', 'IV', 'V'];
+  assert.match(G.gearRefusal(r, leg) ?? '', new RegExp(`^It must rise to Rank ${ROMAN[G.gearRankNeeded(leg)]} to bear `), 'never a Legendary at rank III - and the rank that bears it whole');
+  r.rank = 1;
+  const legMithril = applyRarity(blade(120, 5), 'legendary', seq(11));
+  assert.equal(G.gearRefusal(r, legMithril), 'It must rise to Rank IV to bear a Legendary piece of Mithril.', 'AUDIT RVN G5: both caps over - the rank that bears both');
+  r.rank = 2;
+  assert.equal(G.gearRefusal(r, legMithril), 'It must rise to Rank IV to bear a Legendary piece of Mithril.');
+  r.rank = 3;
+  assert.equal(G.gearRefusal(r, legMithril), 'It must rise to Rank IV to bear a Legendary piece.', 'Mithril borne at III: the tier binds');
   r.rank = 5;
   assert.equal(G.gearRefusal(r, leg), null, 'at rank V');
   r.rank = 1;
@@ -120,6 +132,12 @@ test('RVN-GEAR THE REFUSALS: the rank\'s metal and its tier, each saying the ran
   assert.equal(G.gearRefusal(r, plate(110, 0)), 'Give it a one-handed weapon first.');
   assert.equal(G.gearRefusal(r, plate(110, 0), { gear: { weapon: blade(122) } }), 'Its weapon needs both hands.');
   assert.equal(G.gearRefusal(r, plate(110, 0), { gear: { weapon: blade(120) } }), null);
+  assert.equal(G.gearRefusal(r, plate(110, 0), { gear: { weapon: { ...blade(120), currentCondition: 0 } } }), 'Give it a one-handed weapon first.', 'AUDIT RVN G3: a broken blade holds no shield');
+  const w = sworn({ rank: 2 });
+  N.revenantRecord(me, w.id).companion.gear = { weapon: { ...blade(120), currentCondition: 0 }, shield: plate(110, 0) };
+  assert.deepEqual(G.wornGear(rec(w)), [], 'neither worn: the blade broken, so the shield held off');
+  N.revenantRecord(me, w.id).companion.gear.weapon = blade(120);
+  assert.deepEqual(G.wornGear(rec(w)).map(([k]) => k), ['weapon', 'shield']);
   assert.equal(G.gearRefusal(r, blade(122), { gear: { weapon: blade(120), shield: plate(110, 0) } }), 'Take back its shield first.');
   assert.equal(G.gearRefusal({ ...r, sworn: false }, blade(120)), 'It is no longer sworn to you.');
 });
@@ -178,6 +196,36 @@ test('RVN-GEAR A STOOD BODY (makeEnemyEntity + equipEnemy, then applySwornStreng
   assert.equal(e.armorValues[3], 60, 'its chest bare again: the clamp');
 });
 
+test('RVN-GEAR AUDIT RVN G4, G9 A LIVE BODY: a gift is worn at once by a body standing; a piece taken back comes off it BY IDENTITY - a rolled piece standing where a broken given one was is left it, and the taken blade leaves its hand; a given blade that breaks in a fight leaves its hand (DFU\'s EnemyAttack reads the right hand) and is swung no more; a charm taken back comes off (mutants: no re-fit on a gift; the slot cleared by its key; the broken blade swung on; the charm left on)', () => {
+  const r = sworn({ rank: 3 });
+  const e = stood(M.Warrior);
+  RC.setRetinueBodies((id) => (id === r.id ? e : null));
+  const a = blade(116, 1);
+  me.items.push(a);
+  assert.equal(RC.giveSwornGear(r.id, a), null);
+  assert.deepEqual([e.weapon, equipTableOf(e)[EQUIP_SLOTS.RightHand]], [a, a], 'worn at once');
+  assert.deepEqual(RC.takeSwornGear(r.id, 'weapon'), [a]);
+  assert.deepEqual([e.weapon, equipTableOf(e)[EQUIP_SLOTS.RightHand]], [null, null], 'taken back: out of its hand and its slot');
+  assert.equal(RC.giveSwornGear(r.id, a), null);
+  lowerCondition(a, (a.currentCondition ?? 0) + 1, e);
+  assert.deepEqual([a.currentCondition, e.weapon, equipTableOf(e)[EQUIP_SLOTS.RightHand]], [0, null, null], 'broken: out of its hand');
+  const e2 = stood(M.Warrior, () => 0.7);
+  const rolled = e2.weapon;
+  assert.ok(rolled && rolled !== a, 'its stand rolled its own blade');
+  RC.applySwornStrength(e2, rec(r));
+  assert.equal(e2.weapon, rolled, 'a broken gift is worn by nobody - its own blade stands');
+  RC.setRetinueBodies((id) => (id === r.id ? e2 : null));
+  assert.deepEqual(RC.takeSwornGear(r.id, 'weapon'), [a]);
+  assert.deepEqual([e2.weapon, equipTableOf(e2)[EQUIP_SLOTS.RightHand]], [rolled, rolled], 'by identity: its own blade left it');
+  const c = amulet();
+  me.items.push(c);
+  RC.giveSwornGear(r.id, c);
+  assert.ok(equipTableOf(e2).includes(c), 'its charm on');
+  RC.takeSwornGear(r.id, 'charm');
+  assert.equal(equipTableOf(e2).includes(c), false, 'and off');
+  assert.deepEqual(G.sanitizeGear({ weapon: { group: 'Weapons' }, head: plate(107, 1), crown: plate(107, 1) }), { head: G.sanitizeGear({ head: plate(107, 1) }).head }, 'a kit read back: the known slots, each an item with its template');
+});
+
 test('RVN-GEAR THE FOLD AND THE BEAST: a Rare helm\'s lines reach its wearer (its armour on the head, its resistances); a bear wears a charm and keeps its own hide (mutants: the fold never run; a monster read as a class)', () => {
   const r = sworn({ rank: 2 });
   const helm = applyRarity(plate(107, 1), 'rare', seq(7));
@@ -230,6 +278,17 @@ test('RVN-GEAR ITS KIT IS INVENTORY: the save\'s copy wins on a reload both ways
   const got = RC.releaseRevenant(r.id);
   assert.ok(got);
   assert.ok(me.items.some((it) => it.templateIndex === 120), 'its kit handed back');
+  // AUDIT RVN G9: one the save holds sworn with a kit and an empty pack, released since - back as the save had it
+  const k = sworn({ rank: 2 });
+  const kb = blade(116, 1);
+  me.items.push(kb);
+  RC.giveSwornGear(k.id, kb);
+  const saved3 = JSON.parse(JSON.stringify(modSaveRecords()));
+  RC.releaseRevenant(k.id);
+  assert.equal(N.revenantById(k.id)?.sworn ?? false, false);
+  restoreModSaveRecords(saved3);
+  const kr = N.revenantRecord(me, k.id);   // the load's merge with the mirror, which saw it released
+  assert.deepEqual([kr?.sworn, kr?.companion.gear.weapon?.templateIndex], [true, 116], 'its kit is no one\'s to lose');
   // the deserter
   const d = sworn({ rank: 2 });
   const cheap = blade(113, 0), dear = plate(102, 4);
@@ -243,17 +302,19 @@ test('RVN-GEAR ITS KIT IS INVENTORY: the save\'s copy wins on a reload both ways
   assert.ok(me.items.some((it) => it.templateIndex === 113), 'the rest back to me');
 });
 
-test('RVN-GEAR ITS WEIGHT ABROAD: a piece a fifth, its tier\'s share more, at most two - only what it wears (mutants: the cap gone; a tier unread; a piece it cannot wear counted)', () => {
+test('RVN-GEAR ITS WEIGHT ABROAD: a piece a twentieth, its tier\'s share more, at most two - only what it wears; ten Common pieces never weigh what three Legendaries do (AUDIT RVN G8) (mutants: the cap gone; a tier unread; a piece it cannot wear counted)', () => {
   const r = sworn({ rank: 5 });
   assert.equal(G.gearPower(rec(r)), 0);
   const pieces = [blade(120, 1), plate(107, 1), plate(102, 1)];
   me.items.push(...pieces);
   for (const it of pieces) RC.giveSwornGear(r.id, it);
-  assert.equal(G.gearPower(rec(r)), 0.6, 'three Common pieces');
+  assert.equal(G.gearPower(rec(r)), 0.15, 'three Common pieces');
   const rare = applyRarity(plate(104, 1), 'rare', seq(9));
   me.items.push(rare); RC.giveSwornGear(r.id, rare);
-  assert.equal(G.gearPower(rec(r)), 1.1, 'a Rare: a fifth and three tenths');
+  assert.equal(G.gearPower(rec(r)), 0.4, 'a Rare: a twentieth and a fifth');
   for (const t of [106, 105, 103, 108, 110]) { const p = plate(t, 1); me.items.push(p); RC.giveSwornGear(r.id, p); }
+  assert.equal(G.gearPower(rec(r)), 0.65, 'ten pieces, nine of them Common');
+  for (const t of [106, 105, 103, 108, 110]) { const p = applyRarity(plate(t, 1), 'legendary', seq(t)); me.items.push(p); RC.giveSwornGear(r.id, p); }
   assert.equal(G.gearPower(rec(r)), 2, 'at most two');
   const bear = sworn({ mobileType: M.GrizzlyBear });
   N.revenantRecord(me, bear.id).companion.gear.weapon = blade(120, 1);   // an old record's
@@ -294,6 +355,46 @@ test('RVN-GEAR THE PAGE: Gear opens its kit - a well a slot (a beast\'s the char
   assert.equal(wells.length, 1, 'a beast: the charm alone');
   assert.match(d.textContent, /Grizzly Bear wields no weapon and wears no armour - it may wear a charm\./);
   assert.ok(bear.sworn);
+});
+
+test('RVN-GEAR AUDIT RVN G1, G6, G7 THE PAGE\'S LIST AND MARKS: the pieces it can wear listed before those it cannot - a looter\'s twelve blades past its rank hide no helm and no charm - a quest\'s or a summoned piece never listed, the rest a press away; what it wears says its condition, a broken piece says it is not worn; the release counts its kit (mutants: the refused first; the cap with no more; the broken unmarked; the kit uncounted)', () => {
+  _resetCompanionRosterForTests();
+  _setCompanionRosterIconForTests(() => ({ src: 'data:x', w: 30, h: 40 }));
+  globalThis.document = undefined;
+  const r = sworn({ rank: 1 });
+  const ebony = Array.from({ length: 12 }, () => blade(120, 7));
+  const helm = plate(107, 0), charm = amulet(), quest = { ...blade(113, 0), questItem: true };
+  me.items.push(...ebony, helm, charm, quest);
+  const draw = () => { const d = el('div', 'px-qdetail'); drawCompanionsPage(d, () => {}, { el, divider: (t) => el('h4', 'px-divider', t), meter: (n, m) => el('div', 'px-meter', `${n}/${m}`), here: () => null, kindName: () => 'Warrior' }); return d; };
+  let d = draw();
+  buttons(d, 'Gear')[0].onclick();
+  d = draw();
+  const picks = byClass(d, 'cmp-pick');
+  assert.equal(picks.length, 12, 'the first twelve');
+  assert.match(picks[0].textContent, /Helm/);
+  assert.match(picks[1].textContent, /Charm/);
+  assert.ok(picks.slice(0, 2).every((x) => x.children.at(-1).classList.contains('primary')), 'the two it can wear, first and offered');
+  assert.equal(d.textContent.includes('Dagger'), false, 'a quest piece never listed');
+  const more = buttons(d, 'Show 2 more');
+  assert.equal(more.length, 1);
+  more[0].onclick();
+  d = draw();
+  assert.equal(byClass(d, 'cmp-pick').length, 14, 'every one, a press away');
+  // its condition, and a broken piece's mark
+  const a = blade(120, 1);
+  me.items.push(a);
+  RC.giveSwornGear(r.id, a);
+  d = draw();
+  assert.match(d.textContent, /Condition 100%/);
+  a.currentCondition = 0;
+  d = draw();
+  assert.match(d.textContent, /Broken - not worn until it is mended/);
+  assert.ok(byClass(d, 'cmp-gname').some((n) => n.classList.contains('is-broken')));
+  // the release counts the kit
+  N.revenantRecord(me, r.id).companion.items = [];
+  buttons(d, 'Release')[0].onclick();
+  d = draw();
+  assert.match(d.textContent, /hands you back what it carries \(one item\)/);
 });
 
 // ── the page's fake document (revenant_companions.test.js's) ────────

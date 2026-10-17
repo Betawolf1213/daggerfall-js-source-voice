@@ -6,10 +6,14 @@
 // place's danger) and more loyal, or hard-won with half and hurt. At most two abroad. An errand is the save's.
 // Pinned: the law and its data (every place a province, every good a material with a pack form); the odds; the errand's
 // shape and its clamp; the haul (its seed, its formulas, the ventures, hard-won, rarity off); the send, the refusals, the
-// return through the party's own wake, the words; the recall; the save both ways; the days; the page.
+// return through the party's own wake, the words; the recall; the save both ways; the days; the page. AUDIT RVN
+// (Revenants.md section 43): online the lived step alone carries it on (a raise and time away pushed back), offline the
+// one clock; the clamp written back; the tier, piece and fine-goods bounds; the loyalty once an errand; no call bonus after
+// a road; the recall's rest; no desertion abroad; a save abroad restored whole; no kit act abroad; the provinces' names.
 import '../../modsOff.js';
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 
 const _store = new Map();
 globalThis.localStorage = {
@@ -22,7 +26,8 @@ const E = await import('../../../src/systems/revenant/revenantErrands.js');
 const RC = await import('../../../src/systems/revenant/revenantCompanions.js');
 const S = await import('../../../src/systems/companionSlots.js');
 const { setPref, _resetForTests } = await import('../../../src/systems/uiPrefs.js');
-const { setWorldMinutes } = await import('../../../src/systems/worldTick.js');
+const WT = await import('../../../src/systems/worldTick.js');
+const { setWorldMinutes } = WT;
 const { MOBILE_TYPES: M } = await import('../../../src/characters/mobile/mobileTypes.js');
 const { modSaveRecords, restoreModSaveRecords } = await import('../../../src/systems/modSaveData.js');
 const { PROVINCES, CITIES } = await import('../../../src/world/tamriel/tamrielGeography.js');
@@ -32,10 +37,11 @@ const { weaponOfMaterial } = await import('../../../src/combat/enemyEquipment.js
 const { rarityOf } = await import('../../../src/systems/loot/lootRarity.js');
 const { drawCompanionsPage, _resetCompanionRosterForTests, _setCompanionRosterIconForTests } = await import('../../../src/ui/companionRoster.js');
 
+const read = (p) => readFileSync(new URL(`../../../${p}`, import.meta.url), 'utf8');
 const DAY = 1440, T0 = DAY * 10;
 let me, said;
 beforeEach(() => {
-  _resetForTests(); setPref('lootRarity', true);
+  _resetForTests(); setPref('lootRarity', true); WT.setSharedClock(null);
   N._resetRevenantForTests(); RC._resetRetinueForTests(); S._resetCompanionSlotsForTests(); _store.clear();
   S.registerCompanionCount('revenant', () => RC.revenantsWithYou().length);
   me = { isPlayer: true, name: 'Ayla Stormwind', characterId: 'char-rvnerrand', level: 12, health: 100, maxHealth: 100, items: [], goldPieces: 0 };
@@ -62,8 +68,12 @@ const party = () => RC.revenantParty();
 
 // ── the law ─────────────────────────────────────────────────────────
 
-test('RVN-ERRAND THE LAW: every number; the three ventures\' leans; the nine places - each a province of Tamriel with cities, its days and danger, its goods real materials with a pack form (mutants: a number moved; a lean moved; a place\'s days or danger moved; a good misspelt)', () => {
-  assert.deepEqual(JSON.parse(JSON.stringify(E.ERRAND)), { MAX: 2, WON_LOYALTY: 4, GOLD: [10, 18], DANGER_GOLD: 0.25, RANK_HAUL: 0.1, ODDS: { BASE: 0.55, PER: 0.1, MIN: 0.3, MAX: 0.95, DEVOTED: 0.05 }, HARD_SHARE: 0.5, UNITS: { BASE: 3, PER_DANGER: 2 }, TIERS: { MAGIC: 0.5, RARE: [0.12, 0.05, 0.03], LEGENDARY: [0.02, 0.015, 0.01] } });
+test('RVN-ERRAND THE LAW: every number; the three ventures\' leans; the nine places - each a province of Tamriel with cities, its days and danger, its goods real materials with a pack form (mutants: a number moved; a lean moved; a place\'s days or danger moved; a good misspelt)', async () => {
+  assert.deepEqual(JSON.parse(JSON.stringify(E.ERRAND)), { MAX: 2, WON_LOYALTY: 4, GOLD: [10, 18], DANGER_GOLD: 0.25, RANK_HAUL: 0.1, ODDS: { BASE: 0.55, PER: 0.1, MIN: 0.3, MAX: 0.95, DEVOTED: 0.05 }, HARD_SHARE: 0.5, UNITS: { BASE: 3, PER_DANGER: 2, FINE_TIER: 5, FINE_A_DAY: 1 }, TIERS: { MAGIC: 0.5, RARE: [0.06, 0.03, 0.02], LEGENDARY: [0.005, 0.004, 0.003] }, STEP_MAX: 30 });
+  const { PLAYED_STEP_MAX_SECONDS } = await import('../../../src/systems/quest/clock.js');
+  assert.equal(E.ERRAND.STEP_MAX, PLAYED_STEP_MAX_SECONDS / 60, 'a quest clock\'s played step, in minutes');
+  const T = E.ERRAND.TIERS;
+  assert.ok(T.LEGENDARY[0] + 5 * T.LEGENDARY[1] + 4 * T.LEGENDARY[2] <= 0.045, 'AUDIT RVN F2: a Legendary a piece at most the loot ladder\'s 4.5%');
   assert.deepEqual(Object.fromEntries(Object.entries(E.VENTURES).map(([k, v]) => [k, [v.gold, v.units, v.items]])), { plunder: [0.4, 0.35, 'many'], forage: [0.15, 1, 0.2], contract: [1, 0, 0.25] });
   assert.deepEqual(E.ERRAND_PLACES.map((p) => [p.key, p.days, p.danger]), [['HighRock', 1, 1], ['Hammerfell', 1, 2], ['Imperial', 2, 2], ['Skyrim', 2, 3], ['Valenwood', 2, 3], ['Sumurset', 3, 3], ['Elsweyr', 3, 3], ['Morrowind', 3, 4], ['BlackMarsh', 4, 5]]);
   assert.deepEqual(E.ERRAND_PLACES.map((p) => p.key).sort(), PROVINCES.map((p) => p.key).sort(), 'all nine provinces, and only them');
@@ -73,7 +83,8 @@ test('RVN-ERRAND THE LAW: every number; the three ventures\' leans; the nine pla
     assert.ok(CITIES.some((c) => c.province === p.key), `${p.name} has cities`);
     for (const g of p.goods) { assert.ok(keys.has(g), `${g} is a material`); assert.ok(withdrawable(g), `${g} has a pack form`); }
   }
-  assert.deepEqual(['ore:orichalcum', 'hide:bear', 'gem:jade', 'wood:heartwood', 'part:venom'].map(E.goodsName), ['Orichalcum Ore', 'Bear Hide', 'Jade', 'Heartwood', 'Venom']);
+  assert.deepEqual(E.ERRAND_PLACES.map((p) => p.name), E.ERRAND_PLACES.map((p) => PROVINCES.find((x) => x.key === p.key).name), 'AUDIT RVN D6: the map\'s English, through the text core');
+  assert.match(read('src/systems/revenant/revenantErrands.js'), /get BlackMarsh\(\) \{ return t\('rvn\.errand\.place\.blackMarsh', 'Black Marsh'\); \}/);
 });
 
 test('RVN-ERRAND ITS ODDS: BASE + PER a point of its strength (rank and kit) over the danger, within MIN..MAX, a Devoted one more; the words (mutants: the kit unread; a clamp gone; Devoted unread; a word\'s line moved)', () => {
@@ -87,7 +98,7 @@ test('RVN-ERRAND ITS ODDS: BASE + PER a point of its strength (rank and kit) ove
   const b = weaponOfMaterial(120, 1);
   me.items.push(b);
   RC.giveSwornGear(r.id, b);
-  assert.equal(E.errandOdds(rec(r), place('Hammerfell')), 0.47, 'a piece: a fifth of a point');
+  assert.equal(E.errandOdds(rec(r), place('Hammerfell')), 0.455, 'a Common piece: a twentieth of a point (AUDIT RVN G8)');
   assert.deepEqual([0.75, 0.74, 0.5, 0.49].map(E.oddsWord), ['Good odds', 'Fair odds', 'Fair odds', 'Grim odds']);
 });
 
@@ -119,7 +130,9 @@ test('RVN-ERRAND THE HAUL: drawn on its seed (one seed, one haul); gold by level
   assert.ok(h.gold >= Math.floor(12 * 3 * 10 * scale * 0.4) && h.gold <= Math.floor(12 * 3 * 18 * scale * 0.4), `gold ${h.gold} in its band`);
   assert.equal(h.units.reduce((n, [, k]) => n + k, 0), Math.floor((3 + 2 * 4) * 3 * 0.35), 'Plunder: a third of a forage\'s units');
   for (const [k] of h.units) assert.ok(p.goods.includes(k), `${k} is Morrowind's`);
-  assert.equal(h.items.length, 1 + Math.floor((3 + 4) / 3), 'Plunder: a piece and one every three of the days and danger');
+  assert.equal(h.items.length, p.days, 'Plunder: a piece a day (AUDIT RVN F3)');
+  const hf = E.errandHaul(rec(r), E.newErrand(r, 'Hammerfell', 'plunder', T0, seedFor(rec(r), 'Hammerfell', true)), { level: 12 });
+  assert.equal(hf.items.length, 1, 'the nearer shore no more a day');
   const hard = E.newErrand(r, key, 'plunder', T0, seedFor(rec(r), key, false));
   const hh = E.errandHaul(rec(r), hard, { level: 12 });
   assert.equal(hh.won, false);
@@ -131,9 +144,11 @@ test('RVN-ERRAND THE HAUL: drawn on its seed (one seed, one haul); gold by level
   assert.ok(c.gold >= Math.floor(12 * 3 * 10 * scale * 0.5), 'Sell-sword: gold first');
   const f = E.errandHaul(rec(r), E.newErrand(r, key, 'forage', T0, seedFor(rec(r), key, true, 'forage')), { level: 12 });
   assert.equal(f.units.reduce((n, [, k]) => n + k, 0), (3 + 2 * 4) * 3, 'Forage: its full units');
+  const fine = (u) => u.filter(([k]) => ['ore:ebony', 'hide:dreugh', 'gem:diamond'].includes(k)).reduce((n, [, k]) => n + k, 0);
+  for (let sd = 0; sd < 40; sd++) assert.ok(fine(E.errandHaul(rec(r), E.newErrand(r, key, 'forage', T0, sd), { level: 12 }).units) <= p.days, 'AUDIT RVN F4: the finest goods at most one a day');
   const off = E.errandHaul(rec(r), won, { level: 12, rarity: false });
   assert.ok(off.items.every((it) => rarityOf(it) === 'common'), 'Loot rarity off: Common');
-  assert.equal(E.errandHaulWords({ gold: 412, units: [['ore:ebony', 6], ['hide:dreugh', 2]], items: [{}] }), '412 gold, 6 Ebony Ore, 2 Dreugh Hide and a piece of gear');
+  assert.equal(E.errandHaulWords({ gold: 412, units: [['ore:ebony', 6], ['hide:dreugh', 2]], items: [{}] }), '412 gold, 6 Ebony Ore, 2 Dreugh Shells and a piece of gear', 'AUDIT RVN D5: the Materials Bag\'s own names, counted');
   assert.equal(E.errandHaulWords({ gold: 0, units: [], items: [] }), 'nothing');
 });
 
@@ -193,10 +208,77 @@ test('RVN-ERRAND HARD-WON AND RECALLED: a hard road brings back half and it must
   const q = sworn({ state: 'away' });
   RC.sendOnErrand(q.id, 'Skyrim', 'plunder', { now: T0, seed: 1 });
   const gold = me.goldPieces, items = me.items.length;
-  assert.equal(RC.recallFromErrand(q.id), true);
-  assert.deepEqual([rec(q).companion.state, rec(q).companion.errand], ['away', null]);
+  assert.equal(RC.recallFromErrand(q.id, T0 + 60), true);
+  assert.deepEqual([rec(q).companion.state, rec(q).companion.errand, rec(q).companion.until], ['resting', null, T0 + 60 + RC.REVENANT_REST_MIN], 'AUDIT RVN F8: worn from the road - no free re-roll of its seed');
   assert.deepEqual([me.goldPieces, me.items.length], [gold, items], 'nothing brought');
   assert.equal(RC.recallFromErrand(q.id), false, 'not abroad');
+  // AUDIT RVN F6: a road's rest earns no call bonus (a hard road out-paid a won one: +10 against +4)
+  party().wake(T0 + 4 * DAY + RC.REVENANT_REST_MIN);
+  assert.deepEqual([rec(r).companion.state, rec(r).companion.rested], ['away', false]);
+  RC.callRevenant(r.id, T0 + 5 * DAY);
+  assert.equal(rec(r).companion.loyalty, loyal, 'no +10 after a road');
+});
+
+test('RVN-ERRAND AUDIT RVN F1 THE LIVED STEP: online an errand is carried on by the time lived with the world alone - a rest, a Loiter or a journey (a raise) pushes its minute back by as much, a step past STEP_MAX (time away) by the rest; offline the one clock carries it (mutants: the raise charged; the step unbounded; offline pushed; the push unwritten)', () => {
+  assert.deepEqual([E.errandStep(10, 0, true), E.errandStep(10, 4, true), E.errandStep(10, 10, true), E.errandStep(10, 30, true), E.errandStep(90, 0, true), E.errandStep(10, 10, false), E.errandStep(-5, 0, true)], [0, 4, 10, 10, 60, 0, 0]);
+  let world = T0;
+  WT.setSharedClock(() => world);
+  WT.setOwnMinutes(T0);
+  const r = sworn({ rank: 5, state: 'away', loyalty: 95 });
+  assert.equal(RC.sendOnErrand(r.id, 'Hammerfell', 'plunder', { now: T0, seed: 1 }), null);
+  for (let d = 0; d < 10; d++) { WT.advanceOwnMinutes(DAY); party().wake(Math.floor(WT.ownMinutes())); }
+  assert.equal(rec(r).companion.state, 'errand', 'ten days raised: still abroad');
+  assert.equal(rec(r).companion.errand.until, T0 + 11 * DAY, 'its minute pushed back by every raise');
+  for (let m = 0; m < DAY; m += 20) { world += 20; WT.setOwnMinutes(WT.ownMinutes() + 20); party().wake(Math.floor(WT.ownMinutes())); }   // lived: the own clock with the world's, nothing raised
+  assert.equal(world, T0 + DAY);
+  assert.notEqual(rec(r).companion.state, 'errand', 'a day lived: back');
+  WT.setSharedClock(null);
+  const q = sworn({ rank: 5, state: 'away', loyalty: 95 });
+  setWorldMinutes(T0);
+  RC.sendOnErrand(q.id, 'Hammerfell', 'plunder', { now: T0, seed: 1 });
+  setWorldMinutes(T0 + DAY);
+  party().wake(T0 + DAY);
+  assert.notEqual(rec(q).companion.state, 'errand', 'offline: a rest\'s day is a day');
+});
+
+test('RVN-ERRAND AUDIT RVN F5, F7, F9, F10 THE RECORD: an errand an older clock stretched is written back to its days; a reload of a save made abroad brings its haul back again, never its loyalty; abroad, no day\'s desertion is rolled, and a save abroad comes back whole over a record that has since left me; abroad, its kit is neither given nor taken (mutants: the clamp unwritten; the loyalty paid twice; desertion abroad; the save\'s errand lost; a kit act abroad)', () => {
+  const r = sworn({ rank: 2 });
+  RC.sendOnErrand(r.id, 'Skyrim', 'plunder', { now: T0, seed: seedFor(rec(r), 'Skyrim', true) });
+  N.revenantCompanionUpdate(me, r.id, (c) => { c.errand.until = T0 + 12 * DAY; });
+  party().wake(T0);
+  assert.equal(rec(r).companion.errand.until, T0 + 2 * DAY, 'written back: its days from now');
+  const saved = JSON.parse(JSON.stringify(modSaveRecords()));
+  const loyal = rec(r).companion.loyalty;
+  party().wake(T0 + 2 * DAY);
+  assert.equal(rec(r).companion.loyalty, loyal + 4);
+  restoreModSaveRecords(saved);
+  party().wake(T0 + 2 * DAY);
+  assert.equal(rec(r).companion.loyalty, loyal + 4, 'the haul again, the loyalty once');
+  // desertion
+  const w = sworn({ state: 'away', loyalty: 5 });
+  RC.sendOnErrand(w.id, 'BlackMarsh', 'forage', { now: T0, seed: 1 });
+  for (let d = 1; d <= 5; d++) N.revenantFester(me, { now: T0 + d * DAY, rolls: () => 0 });
+  assert.equal(rec(w).sworn, true, 'never lost abroad');
+  // a save abroad, the record gone since
+  const g = sworn({ state: 'away' });
+  RC.sendOnErrand(g.id, 'Imperial', 'contract', { now: T0, seed: 2 });
+  const saved2 = JSON.parse(JSON.stringify(modSaveRecords()));
+  party().wake(T0 + 2 * DAY);
+  RC.releaseRevenant(g.id);
+  assert.equal(rec(g)?.sworn ?? false, false);
+  restoreModSaveRecords(saved2);
+  assert.deepEqual([N.revenantRecord(me, g.id)?.sworn, rec(g).companion.state], [true, 'errand'], 'abroad again, as the save had it');
+  // kit
+  RC.recallFromErrand(w.id); RC.recallFromErrand(g.id);
+  const k = sworn({ rank: 3, state: 'away' });
+  const blade = weaponOfMaterial(120, 1);
+  me.items.push(blade);
+  assert.equal(RC.giveSwornGear(k.id, blade), null);
+  assert.equal(RC.sendOnErrand(k.id, 'HighRock', 'plunder', { now: T0, seed: 1 }), null);
+  assert.equal(RC.takeSwornGear(k.id, 'weapon').length, 0, 'not taken abroad');
+  const helm = { group: 'Armor', templateIndex: 102, material: 0, currentCondition: 100, maxCondition: 100 };
+  me.items.push(helm);
+  assert.equal(RC.giveSwornGear(k.id, helm), 'It is abroad - its kit goes with it.');
 });
 
 test('RVN-ERRAND AN ERRAND IS THE SAVE\'S: abroad in the save, abroad again after a reload - back on its minute with the same haul; begun since the save, never begun (where the save had it); an errand day moves no loyalty (mutants: the mirror\'s errand kept; the save\'s lost; the days counted)', () => {
@@ -240,6 +322,8 @@ test('RVN-ERRAND THE PAGE: Mission opens the sheet - the three ventures, the nin
   assert.equal(dests.length, 9);
   assert.match(dests[0].textContent, /^High Rock - a day, danger IFair odds 55%Send$/);
   assert.match(dests[8].textContent, /^Black Marsh - 4 days, danger VGrim odds 30%Send$/);
+  assert.doesNotMatch(d.textContent, /Online its days pass only while you play/, 'offline: the one clock, no word of the lived step');
+  assert.match(d.textContent, /A hard road brings back 50% of it/);
   byClass(d, 'cmp-vent')[1].onclick();
   d = draw();
   assert.ok(byClass(d, 'cmp-vent')[1].classList.contains('on'), 'Forage chosen');
@@ -251,7 +335,16 @@ test('RVN-ERRAND THE PAGE: Mission opens the sheet - the three ventures, the nin
   assert.equal(buttons(d, 'Recall').length, 1);
   assert.deepEqual([buttons(d, 'Release').length, buttons(d, 'Gear').length, buttons(d, 'Mission').length, buttons(d, 'Call').length], [0, 0, 0, 0]);
   buttons(d, 'Recall')[0].onclick();
-  assert.equal(rec(r).companion.state, 'away');
+  assert.equal(rec(r).companion.state, 'errand', 'AUDIT RVN D9: asked first - a recall forfeits its haul');
+  d = draw();
+  assert.match(d.textContent, /Recall .+\? It comes back at once with nothing, and must rest from the road\./);
+  buttons(d, 'Let it go on')[0].onclick();
+  d = draw();
+  assert.equal(buttons(d, 'Let it go on').length, 0);
+  buttons(d, 'Recall')[0].onclick();
+  d = draw();
+  buttons(d, 'Recall')[0].onclick();
+  assert.equal(rec(r).companion.state, 'resting');
 });
 
 // ── the page's fake document (revenant_companions.test.js's) ────────

@@ -80,8 +80,9 @@ import { personalityFor, isPersonality, personalityLabel, voiceLine, beastBody, 
 // FEUD, Part B (bible/12-Enhanced-AI/Feud-Arc.md sections 12-26): what a revenant remembers - its record's new fields and
 // the draws it is born with (systems/revenant/revenantFeud.js), and the fight's ledger (systems/feudLedger.js, a leaf)
 import { ADAPT_HOW, DESERT, deserterSplit, LOYALTY, movedLoyalty, ROUT, FESTER, festersOn, WRATH_MAX, idStream, TOOK_MAX, LAIR_RING_R, RUMOR_CHANCE, RUMOR_PX, RUMOR_WEAK, RUMOR_NAMED, RUMOR_HINTS, weaknessKind, lairAfter, sameLair, feudFields, newFeudFields, feudScars, withScars, weaponFeudClass, drawSignature, sanitizeLoyalty, hashStr, SIG_RANK, lessonOf, withLesson, adaptEdge, adaptBlowClass, ADAPT, isWeakBlow, metalOf, willMatters, WEAK, WEAK_NAMES, FLINCH_LINES, FLINCH_HEALTH, WEAKNESS_ELEMENTS, signatureStamp } from './revenantFeud.js';
-import { sanitizeGear, gearItems } from './revenantGear.js';
-import { sanitizeErrand } from './revenantErrands.js';   // RVN-ERRAND: one abroad, read back   // RVN-GEAR: a sworn one's kit - its record's, read back; inventory as its pack is
+import { sanitizeGear, gearItems } from './revenantGear.js';   // RVN-GEAR: a sworn one's kit - its record's, read back; inventory as its pack is
+import { sanitizeErrand } from './revenantErrands.js';   // RVN-ERRAND: one abroad, read back
+import { t } from '../textManager.js';   // AUDIT RVN D7: the new cards' kickers in the player's language
 import { tagHit, HIT_TAGS } from '../../ui/hitNumbers.js';   // RVN3: the "Weakness" word on my blow's number
 import { SOUND } from '../soundClips.js';   // RVN3: the hiss of a weakness found
 import { revenantSay as sayRevenant } from './revenantVoice.js';   // RVN3: the reveal's card (the re-export below binds no local name)
@@ -187,7 +188,7 @@ export const REVENANT_EPITHETS = Object.freeze({
  *  its `loyalty` (0-100, RVN11's - its personality's start when sworn); RVN11: `rested` (fit after a rest, not yet called)
  *  and `sentDay` (the day it was last sent away). RVN-GEAR: `gear`, its kit (systems/revenant/revenantGear.js - a slot's
  *  key -> the item it wears). RVN-ERRAND: `errand` while its state is 'errand' - abroad (systems/revenant/revenantErrands.js).
- *  @typedef {{ state: 'with'|'away'|'resting'|'errand', health: number|null, maxHealth: number|null, until: number|null, items: any[], loyalty: number, rested: boolean, sentDay: number|null, gear: Record<string, any>, errand: any }} RevenantCompanion */
+ *  @typedef {{ state: 'with'|'away'|'resting'|'errand', health: number|null, maxHealth: number|null, until: number|null, items: any[], loyalty: number, rested: boolean, sentDay: number|null, gear: Record<string, any>, errand: any, worn: boolean, paid: number|null }} RevenantCompanion */
 /** @typedef {{ id: string, rev: number, mobileType: number, gender: 'male'|'female', given: string, epithet: string,
  *   name: string, rank: number, kills: number, escapes: number, returns: number, trait: string|null, elite: boolean,
  *   born: number, dueAt: number, out: boolean, outAt: number, defeated: boolean, defeatedAt: number|null,
@@ -305,6 +306,8 @@ function sanitizeCompanion(c, personality = null) {
     sentDay: Number.isInteger(c?.sentDay) && c.sentDay >= 0 ? c.sentDay : null,   // RVN11 (22.1): the day it was last sent away
     gear: sanitizeGear(c?.gear),   // RVN-GEAR: its kit, the known slots alone
     errand,   // RVN-ERRAND: where it is, and when it is back
+    worn: state === 'resting' && c?.worn === true,   // AUDIT RVN F6: resting from a road (a hard errand, a recall) - no call bonus after it
+    paid: Number.isInteger(c?.paid) && c.paid >= 0 ? c.paid >>> 0 : null,   // AUDIT RVN F7: the seed of the last errand its loyalty was paid for
   };
 }
 /** A record read back (a save, the app's storage) - the shape checked, anything else dropped. */
@@ -369,6 +372,7 @@ function ensureMirror(player) {
     // copy still wins, and the restore leaks into no other save
     if (s?.sworn && s.companion?.items?.length && !r.sworn) { _state.list[i] = { ...s }; continue; }
     if (s?.sworn && gearItems(s.companion?.gear).length && !r.sworn) { _state.list[i] = { ...s }; continue; }   // RVN-GEAR: and its kit - no one's to lose
+    if (s?.sworn && s.companion?.state === 'errand' && s.companion.errand && !r.sworn) { _state.list[i] = { ...s }; continue; }   // AUDIT RVN F9: and one abroad in the save - its haul is no one's to lose
     if (!r.gone && r.companion) r.companion.items = s?.companion?.items ? s.companion.items.slice() : [];
     if (!r.gone && r.companion) r.companion.gear = s?.companion?.gear ? { ...s.companion.gear } : {};   // RVN-GEAR: its kit is the save's too (inventory, as its pack)
     // RVN-ERRAND: an errand is the save's as its haul will be - abroad in the save, abroad again (to come back as it would
@@ -996,8 +1000,8 @@ const KICKERS = Object.freeze({
   warn: 'Companion', deserted: 'Oathbreaker',
   // RVN11c: a betrayer; RVN12a: a theft's taunt
   betrayed: 'Betrayed', stole: 'It took',
-  // RVN-ERRAND: a sworn one sets out and comes back; RVN-ARTS: its art, called out
-  errand: 'Mission', errand_back: 'Returned', art: 'Art',
+  // RVN-ERRAND: a sworn one sets out and comes back; RVN-ARTS: its art, called out (AUDIT RVN D7: in the player's language)
+  get errand() { return t('rvn.kicker.errand', 'Mission'); }, get errand_back() { return t('rvn.kicker.errandBack', 'Returned'); }, get art() { return t('rvn.kicker.art', 'Art'); },
 });
 /** @typedef {{ kind: string, kicker: string, id: string|null, name: string, rank: number, sub: string, mood: string|null,
  *   portrait: { archive: number, record: number } | null, speech: string|null, body: string|null, line: string }} RevenantEvent */
@@ -1175,8 +1179,10 @@ export function revenantFester(player, { now = nowMinutes(), rolls = Math.random
       r.companion.loyalty = movedLoyalty(r.companion.loyalty, st === 'with' ? LOYALTY.DAY_WITH : LOYALTY.DAY_AWAY);
       touch(r);
     }
-    // RVN11b (22.2): DESERTION - under DESERT.AT, once a day (a resting one too), one time in DESERT.CHANCE
+    // RVN11b (22.2): DESERTION - under DESERT.AT, once a day (a resting one too), one time in DESERT.CHANCE. AUDIT RVN F9:
+    // never abroad - an errand is no way to lose a companion (its loyalty stands while it is gone; the roll waits for it)
     for (const r of swornRevenants()) {
+      if (r.companion?.state === 'errand') continue;
       if (r.companion?.loyalty < DESERT.AT && rolls() < DESERT.CHANCE) revenantDeserts(player, r, { now: d * MINUTES_PER_DAY, rolls });
     }
   }
@@ -1383,11 +1389,11 @@ export function revenantRiseEvent(r, playerName, { rolls = Math.random } = {}) {
 /** REVENANT-VOICE: any other moment it has a word for (REVENANT-FATE's yield, executed, spared, slip; a companion's
  *  arrive, dismiss, downed, kill, battle, release) - in its voice, with what happens in the narrator's (`body`, when the
  *  moment says more than its words), and its one text line. */
-export function revenantMomentEvent(kind, r, playerName, { body = null, line = null, rolls = Math.random, archive = null } = {}) {
+export function revenantMomentEvent(kind, r, playerName, { body = null, line = null, rolls = Math.random, archive = null, as = null } = {}) {
   const v = voiceParts(r, kind, playerName, rolls);
   // AUDIT (2026-10-02): what the moment says (`body` - its trophy, where it will wait, what to do) is kept for a beast
-  // after its deed, and on the text line after either's
-  return revenantEvent(kind, r, {
+  // after its deed, and on the text line after either's. RVN-ERRAND: `as` - the card's own kind, its voice the moment's
+  return revenantEvent(as ?? kind, r, {
     speech: v.speech, body: v.speech ? body : [v.body, body].filter(Boolean).join(' '),
     line: line ?? [v.line, body].filter(Boolean).join(' '), archive,
   });

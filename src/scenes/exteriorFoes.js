@@ -1276,11 +1276,13 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
     }
   }
   /** RVN-ARTS (bible/06-Systems/Revenants.md section 41): ITS ART - a channel about its feet or a mark at mine, landed
-   *  through the host's own spell door (my saving throw answers it), its band rallied by its cry, its words its card. */
+   *  through the host's own spell door (my saving throw answers it; the health it took, a siphon's draught), its band
+   *  rallied by its cry, its words its card. AUDIT RVN B12: its door made once a stand, on its record. */
   function artFrame(f, playerFeet) {
-    revenantArtFrame(f, {
-      feet: playerFeet, onMe: () => isLocalPlayerTarget(f.ai.target) || !f.ai._armedTargeting,
-      strike: (sp) => magicHooks?.strikePlayer?.(sp, f.entity.level ?? 1, f), say: (ev) => revenantSay(ev, say),
+    revenantArtFrame(f, playerFeet, f._artDoor ??= {
+      onMe: () => isLocalPlayerTarget(f.ai.target) || !f.ai._armedTargeting,
+      strike: (sp) => { const h = playerEntity?.health ?? 0; magicHooks?.strikePlayer?.(sp, f.entity.level ?? 1, f); return Math.max(0, h - (playerEntity?.health ?? h)); },
+      say: (ev) => revenantSay(ev, say),
       sfx: (el, at) => audio?.play3dId?.(SPELL_CAST_SOUND[el] ?? SPELL_CAST_SOUND[4], [at[0], at[1], at[2]], 1, { maxDistance: 16 }),
       foes: () => foes, rolls,
     });
@@ -1579,6 +1581,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       // cull); out of reach it has ESCAPED (no corpse, no kill, a revenant made of it); run down, it is CORNERED and turns
       // to fight to the end
       const _flee = f.fleeing || (!f._fleeRolled && revenantFleeHealth(f.entity)) ? revenantFleeStep(f, playerFeet, { onMe: () => isLocalPlayerTarget(f.ai.target) || !f.ai._armedTargeting }) : null;   // asked only of a foe running or under the line - nothing made per foe per frame
+      if (f.entity.revenant?.id) artFrame(f, playerFeet);   // RVN-ARTS: its art - AUDIT RVN B4: before a run's or a scatter's own frame, so a running one's ward and cry run out and its marks are cut
       if (_flee === 'escape') { escapeFoe(f); continue; }
       if (_flee === 'start') scatterBand(f);   // RVN6: it runs - its band breaks
       if (_flee === 'start') revenantSay(revenantFleeEvent(f.entity, foeTitle(f.entity, enemyDisplayName(f.mobileType)), { gender: f.gender, archive: f.archive, playerName: playerEntity?.name }), say);   // REVENANT-CARD: the card on the enhanced skin, the line on the classic
@@ -1597,7 +1600,6 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       }
       if (f.roaring) roarStep(f);   // RVN4: its roar spent - blows reach it again
       if (f.ai._sigCall || f.ai._blowPyre) signatureFrame(f);   // RVN5: its signature called, its pyre's blast
-      if (f.entity.revenant?.id) artFrame(f, playerFeet);   // RVN-ARTS: its art
       // RVN3 (Feud-Arc.md 14.1): under half its health, its weakness unknown, it shies from it - once a stand
       if (f.entity.revenant?.id && !f._flinched) { const ev = revenantFlinch(f, { archive: f.archive }); if (ev) revenantSay(ev, say); }
       // MT-ii: the foe now aims at whatever it SELECTED - the player
