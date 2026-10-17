@@ -5,7 +5,7 @@
     "old": "\\tclear _talkguardian_\\n\\tlog ${SHAM_TRAIL_MESSAGE} step ${SHAM_TRAIL_STEP}\\n`, count: 1 },",
     "new": "\\tclear _talkguardian_\\n`, count: 1 },",
     "tests": [
-      "test/systems/quest/fb1017_shamtrail.test.js"
+      "test/systems/quest/fb1017b_shamtrail.test.js"
     ],
     "why": "the report: the sham reveal files nothing, and the journal still sends the player to the priest"
   },
@@ -15,7 +15,7 @@
     "old": "export const SHAM_TRAIL_STEP = 4;",
     "new": "export const SHAM_TRAIL_STEP = 6;",
     "tests": [
-      "test/systems/quest/fb1017_shamtrail.test.js"
+      "test/systems/quest/fb1017b_shamtrail.test.js"
     ],
     "why": "the entry on the script's own step 6, which 1026 overwrites"
   },
@@ -25,7 +25,7 @@
     "old": "_child_ just thanked me and ran off with it.",
     "new": "=child_ just thanked me and ran off with it.",
     "tests": [
-      "test/systems/quest/fb1017_shamtrail.test.js"
+      "test/systems/quest/fb1017b_shamtrail.test.js"
     ],
     "why": "a Person's details macro is its race: \"The Nord just thanked me\""
   },
@@ -35,7 +35,7 @@
     "old": "_guardian_ was staying at _tavern_, and someone",
     "new": "_guardian_ was staying nearby, and someone",
     "tests": [
-      "test/systems/quest/fb1017_shamtrail.test.js"
+      "test/systems/quest/fb1017b_shamtrail.test.js"
     ],
     "why": "the entry names no place, so the guidance points nowhere"
   },
@@ -45,7 +45,7 @@
     "old": "...entryLines(t('quest.possessedChild.shamTrail', SHAM_TRAIL_EN))]",
     "new": "...entryLines(SHAM_TRAIL_EN)]",
     "tests": [
-      "test/systems/quest/fb1017_shamtrail.test.js"
+      "test/systems/quest/fb1017b_shamtrail.test.js"
     ],
     "why": "the port's own words in English whatever language the player chose"
   },
@@ -55,7 +55,7 @@
     "old": "  if (line) lines.push(` ${line}`);",
     "new": "  lines.push(` ${line}`);",
     "tests": [
-      "test/systems/quest/fb1017_shamtrail.test.js"
+      "test/systems/quest/fb1017b_shamtrail.test.js"
     ],
     "why": "an empty line ends a message: the entry cut short"
   },
@@ -65,7 +65,7 @@
     "old": "if (line && line.length + 1 + word.length > width) {",
     "new": "if (line && line.length + 1 + word.length > width * 2) {",
     "tests": [
-      "test/systems/quest/fb1017_shamtrail.test.js"
+      "test/systems/quest/fb1017b_shamtrail.test.js"
     ],
     "why": "the entry laid past the journal's width"
   },
@@ -75,7 +75,7 @@
     "old": "    if (found !== p.count) throw new Error(`${label}: ${name} holds",
     "new": "    if (found < p.count) throw new Error(`${label}: ${name} holds",
     "tests": [
-      "test/systems/quest/fb1017_shamtrail.test.js"
+      "test/systems/quest/fb1017b_shamtrail.test.js"
     ],
     "why": "a text found more often than the patch says is patched silently wrong"
   },
@@ -85,7 +85,7 @@
     "old": "      getQuestSourceLines: (name) => (patchable.has(name) ? patchedLines(name, patchable.get(name)) : null) ?? quests.get(name) ?? null,",
     "new": "      getQuestSourceLines: (name) => quests.get(name) ?? null,",
     "tests": [
-      "test/systems/quest/fb1017_shamtrail.test.js"
+      "test/systems/quest/fb1017b_shamtrail.test.js"
     ],
     "why": "the browser's pack never applies the patch"
   },

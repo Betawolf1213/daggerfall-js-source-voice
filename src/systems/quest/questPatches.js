@@ -1,5 +1,5 @@
 // @ts-check
-// SHAM-TRAIL (FIELD BUGS 2026-10-17, the Discord's #bug-reports, "The Possessed Child": "I complete the possessed child
+// SHAM-TRAIL (FIELD BUGS 2026-10-17b, the Discord's #bug-reports, "The Possessed Child": "I complete the possessed child
 // by giving the child the scarab to help exorcise the demon from her. The woman who gave me the scarab said the daedra
 // would appear somewhere in the home to fight after, but no daedra spawned" - "Quest is now unable to be completed"):
 // THE PORT'S PATCHES OVER DFU'S OWN QUESTS, applied as the pack is read (scenes/quest/questData.js). Not a DFU member -

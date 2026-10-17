@@ -1,9 +1,12 @@
-# FIELD BUGS 2026-10-17 - The Possessed Child
+# FIELD BUGS 2026-10-17b - The Possessed Child
 
 One thread from the Discord's bug-reports channel, handed over as a screenshot, read on the code as it stands at main's
 `dcac4e4ff`. The fix departs from Daggerfall Unity's own quest script and rides the owner's standing word on a
 player's dead end - "I dont care about DFU. We're our own thing now." (`01-Overview/bugs/Field-Bugs-2026-09-30b.md`) -
 and is a Ledger A row.
+
+(Main's #974 took `Field-Bugs-2026-10-17.md` meanwhile, for REFORGE-STACK, so this record is `-17b`, its pin
+`fb1017b_shamtrail` and its mutants `tools/mutants/fb1017b.json` - renamed at the merge.)
 
 | | Report | What it was | Done |
 |---|---|---|---|
@@ -35,7 +38,7 @@ the relic is back. Nothing the
 player is shown leads to the tavern. DFU ships the same script, and stands in the same place.
 
 THE REAL BRANCH, READ AND RUN (not the report's). Through the real parser and machine
-(`test/systems/quest/fb1017_shamtrail.test.js`): the exorcism's `place foe` hot-places the Daedroth
+(`test/systems/quest/fb1017b_shamtrail.test.js`): the exorcism's `place foe` hot-places the Daedroth
 (Place.AssignQuestResource's isPlayerHere tail, `world.mountCurrentSiteQuestResources`) in the house the player stands
 in - a quest foe of a real building pool (`scenes/exteriorFoes.js`, as worldModes.js's interior adapter stands it),
 MobileTypes 27 - and the questor closes the quest. Read on the live wiring: world.js's and exterior.js's seam both route
@@ -82,10 +85,10 @@ re-arm), and the guardian's house is then found only by search - open to Mac. An
 one copy patched, one not - differs in the reveal's actions, and the share's shape check (questShare.js shapeMismatch)
 refuses it until both have reloaded.
 
-`test/systems/quest/fb1017_shamtrail.test.js` (6): the report, through DFU's own script (no Daedroth, nothing filed, the
+`test/systems/quest/fb1017b_shamtrail.test.js` (6): the report, through DFU's own script (no Daedroth, nothing filed, the
 priest's house the guidance's, no click closing it); the patched sham's entry, its words expanded, the lens's tavern, and
 the trail down it to `_victory_`; the real branch's Daedroth in the building's pool, and the questor's close; the patch
 law (every patch found as often as it says, CRLF the same, a quest with none untouched, a moved text throws, FORAGE-FIX's
 throw still its own); the words (French read as the quest is read, the journal lines, the whole languages' names); the
-pack's wiring. `tools/mutants/fb1017.json`: 10 mutants, 10 dead. FORAGE1's two records on the moved law re-aimed by
+pack's wiring. `tools/mutants/fb1017b.json`: 10 mutants, 10 dead. FORAGE1's two records on the moved law re-aimed by
 content (`tools/mutants/forage1.json`, both still dead).
