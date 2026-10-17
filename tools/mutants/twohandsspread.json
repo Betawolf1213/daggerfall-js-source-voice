@@ -2,8 +2,8 @@
   {
     "name": "TWO-HANDS-SPREAD-no-min",
     "file": "src/combat/twoHands/handsLaw.js",
-    "old": "  let lo = share(SPREAD.MIN), hi = share(SPREAD.MAX);",
-    "new": "  let lo = 0, hi = share(SPREAD.MAX);",
+    "old": "  let lo = share(PAIR_SPREAD.MIN), hi = share(PAIR_SPREAD.MAX);",
+    "new": "  let lo = 0, hi = share(PAIR_SPREAD.MAX);",
     "tests": [
       "test/combat/twohands_mw.test.js"
     ]
@@ -20,7 +20,7 @@
   {
     "name": "TWO-HANDS-SPREAD-no-gap",
     "file": "src/combat/twoHands/handsLaw.js",
-    "old": "  const gap = 2 * Math.atan(SPREAD.GAP * tan);",
+    "old": "  const gap = 2 * Math.atan(PAIR_SPREAD.GAP * tan);",
     "new": "  const gap = 0;",
     "tests": [
       "test/combat/twohands_mw.test.js"
@@ -173,7 +173,7 @@
   {
     "name": "TWO-HANDS-SPREAD-no-ease",
     "file": "src/combat/fpArm.js",
-    "old": "  const a = easeTo(angle, want, SPREAD.TAU, dt);",
+    "old": "  const a = easeTo(angle, want, PAIR_SPREAD.TAU, dt);",
     "new": "  const a = want;",
     "tests": [
       "test/combat/twohands_mw.test.js"

@@ -41,7 +41,7 @@
 
 import { lookAt, multiply, ortho, perspective, transformPoint, trs, wrapAngle } from '../world/mat4.js';
 import { ClimbPose, POSE } from '../player/climb/climbPose.js';   // CLIMB6: the climb's limbs, in the world; TWO-HANDS: its limb law (LIMB_TAU) eases the mirror's compositions
-import { runWeightStep, runPhaseFollow, pumpTarget3D, RUN_3D, mirrorStrike, guardStep, GUARD, pairSpreadAngle, SPREAD, easeTo } from './twoHands/handsLaw.js';   // TWO-HANDS: the run's pump, the sprite lane's stroke on the 3D body; a mirrored blow's way across the screen; the guard's weight; TWO-HANDS SPREAD: the pair's arms turned out
+import { runWeightStep, runPhaseFollow, pumpTarget3D, RUN_3D, mirrorStrike, guardStep, GUARD, pairSpreadAngle, PAIR_SPREAD, easeTo } from './twoHands/handsLaw.js';   // TWO-HANDS: the run's pump, the sprite lane's stroke on the 3D body; a mirrored blow's way across the screen; the guard's weight; TWO-HANDS SPREAD: the pair's arms turned out
 import { strikingSide, mirrorPlan, counterpartName } from './twoHands/mirrorRig.js';   // TWO-HANDS: which fist a hand-to-hand clip throws; the wrists, for the pins; a blade's own bone across
 import { climbRequestToRig, climbRequestToFirstPerson } from './climbRig.js';   // CLIMB6: ...and in each rig's space
 import { seatRequestFor, seatedCamera, saddleRequestFor } from '../player/seatPose.js';   // CARDS2b: the seat in the rig's space; WAGONS3: and the body still on it; COATS3D: and astride
@@ -1864,7 +1864,7 @@ export function guardMeasure(b, mats, right, left) {
   const drop = { R: guardLensDrop(b.arm, mats, b.cameraRef, right), L: guardLensDrop(b.arm, mats, b.cameraRef, left) };
   return { drop, dip: pairGuardDip(b.arm, b.cameraRef, mats, drop) };
 }
-/** TWO-HANDS SPREAD: the spread's measure - the least turn out that stands the pair's blades SPREAD.GAP apart on the
+/** TWO-HANDS SPREAD: the spread's measure - the least turn out that stands the pair's blades PAIR_SPREAD.GAP apart on the
  *  picture (handsLaw.js pairSpreadAngle), each blade's inner edge (bladeInnerEdge, every piece of its hand's slot) read
  *  at each turn tried; and the two edges at that turn. */
 export function spreadMeasure(b, mats) {
@@ -1874,9 +1874,9 @@ export function spreadMeasure(b, mats) {
   return { angle, inner: innerAt(angle) };
 }
 /** TWO-HANDS SPREAD: the angle a frame on - eased toward `want` (what the pair's blades ask while a pair is held, else
- *  nothing) on SPREAD.TAU, and nothing once it has eased all but away with nothing asked. */
+ *  nothing) on PAIR_SPREAD.TAU, and nothing once it has eased all but away with nothing asked. */
 export function pairSpreadStep(angle, want, dt) {
-  const a = easeTo(angle, want, SPREAD.TAU, dt);
+  const a = easeTo(angle, want, PAIR_SPREAD.TAU, dt);
   return want === 0 && a < 1e-5 ? 0 : a;
 }
 /** TWO-HANDS AUDIT 2: the drop on the picture, in radians at the eye, of a hand holding piece `p` at full guard - LOWER of

@@ -373,7 +373,7 @@ second weapon. So the second hand is the sprite lane's idea on a skeleton: THE L
   long pair's blades crossed there. In first person, while a pair is in the hands, both arms are turned OUT, each at its
   top (the clavicle, else the upper arm) about the upright line through that top's own joint, each its own way
   (`mirrorRig.js`'s `spread`; which way is out is read off the skeleton, the plan's `outward`): no joint leaves its
-  parent, and the left stays the right's mirror. How far is the law's (`handsLaw.js` `SPREAD`, `pairSpreadAngle`): always
+  parent, and the left stays the right's mirror. How far is the law's (`handsLaw.js` `PAIR_SPREAD`, `pairSpreadAngle`): always
   MIN (0.04 of the picture's height), further until the two blades stand GAP (0.04) apart, never past MAX (0.2) - each a
   share of the picture's height taken as the angle it spans at the middle, as the guard's LOWER is a share of a blade's.
   Each blade's inner edge is READ, never assumed (`fpArm.js` `bladeInnerEdge`): the angle from the picture's middle to
@@ -383,7 +383,7 @@ second weapon. So the second hand is the sprite lane's idea on a skeleton: THE L
   every angle the halving tries (`spreadMeasure`) - on the build's rest pose, once per bound blade, the first frame a
   pair is held, through the guard's own memo (`pairBladeMeasure`, now one for both: the guard's measure moved out of
   `createFpArm` with it, `guardMeasure`, so the arm's closure gains the wiring alone - 1,997 -> 1,999 code lines, under
-  HOST-SPLIT's 2,000-line knot). The angle eases on `SPREAD.TAU` (0.12 s) in either view (`pairSpreadStep`) and is
+  HOST-SPLIT's 2,000-line knot). The angle eases on `PAIR_SPREAD.TAU` (0.12 s) in either view (`pairSpreadStep`) and is
   laid in first person alone (the body in third person holds a pair at its own sides), over every composition and its
   guard, so the carry starts from what was drawn; sheathed or with the hands taken, it eases back. Measured on the
   fixture: its blades stand clear at rest, so MIN (0.046 rad); a blade leaned 0.45 rad across the middle, 0.121 rad, the

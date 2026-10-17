@@ -32,7 +32,7 @@ import { mat33Mul } from '../../src/formats/morrowind/mwNifMesh.js';
 import { applyMirrorRig, mirrorPlan, counterpartName, strikingSide, limbSkeleton, offWeaponBoneAddon, WEAPON_BONE_LEFT_SOURCE, mirrorBindSources } from '../../src/combat/twoHands/mirrorRig.js';
 import { rotAxisAngle } from '../../src/combat/climbRig.js';
 import { createFpArm, fpSkeletonPath, tpSkeletonPath, strideOppositeTime, FP_CLIP_PATH, resolveOffWeaponParts, resolveWeaponParts, OFF_WEAPON_BONE, fpWeaponKey, GUARD_LENS_DROP, bladePictureHeight, bladeInnerEdge, FP_FIELD_OF_VIEW } from '../../src/combat/fpArm.js';
-import { GUARD, RUN_PUMP, RUN_STEP_M, runPhaseOfBob, runPhaseFollow, runPhaseStep, SPREAD, pairSpreadAngle } from '../../src/combat/twoHands/handsLaw.js';
+import { GUARD, RUN_PUMP, RUN_STEP_M, runPhaseOfBob, runPhaseFollow, runPhaseStep, PAIR_SPREAD, pairSpreadAngle } from '../../src/combat/twoHands/handsLaw.js';
 import { HeadBobber } from '../../src/player/headBobber.js';
 import { MW_WEAPON_TYPE, MW_UNITS_PER_METER, assembleFirstPersonArm, poseAssembly } from '../../src/formats/morrowind/mwFirstPerson.js';
 import { bodyRec } from '../fixtures/mw/bodyRec.mjs';
@@ -1304,9 +1304,9 @@ test('TWO-HANDS MIRROR-BIND the bind is read only where it is a mirror, and the 
 // a bit more sense it can make the weapons overlap") ----------------------------------------------------------------
 
 test('TWO-HANDS SPREAD the law (handsLaw.js pairSpreadAngle): the least turn in [MIN, MAX] at which the blades stand GAP apart on the picture - each a share of its height, as the angle it spans at its middle; MIN where the blades stand clear already or no pair of them is on the picture, MAX where even it cannot clear them, and between, the turn the edges ask - read at every angle tried, so an arm turned about a shoulder (an edge moving less than the turn) still stands GAP apart (mutants: TWO-HANDS-SPREAD-no-min, TWO-HANDS-SPREAD-no-max, TWO-HANDS-SPREAD-no-gap, TWO-HANDS-SPREAD-halving-backwards, TWO-HANDS-SPREAD-answer-short, TWO-HANDS-SPREAD-one-blade-asks)', () => {
-  assert.deepEqual({ ...SPREAD }, { MIN: 0.04, GAP: 0.04, MAX: 0.2, TAU: 0.12 });
+  assert.deepEqual({ ...PAIR_SPREAD }, { MIN: 0.04, GAP: 0.04, MAX: 0.2, TAU: 0.12 });
   const fov = Math.PI / 3, tan = Math.tan(fov / 2);
-  const MIN = Math.atan(SPREAD.MIN * 2 * tan), MAX = Math.atan(SPREAD.MAX * 2 * tan), GAP = 2 * Math.atan(SPREAD.GAP * tan);
+  const MIN = Math.atan(PAIR_SPREAD.MIN * 2 * tan), MAX = Math.atan(PAIR_SPREAD.MAX * 2 * tan), GAP = 2 * Math.atan(PAIR_SPREAD.GAP * tan);
   assert.equal(pairSpreadAngle(() => ({ L: 0.3, R: 0.3 }), fov), MIN, 'clear already: the arms a little wider all the same');
   assert.equal(pairSpreadAngle(() => ({ L: null, R: -0.5 }), fov), MIN, 'one blade on the picture: nothing to clear');
   assert.equal(pairSpreadAngle(() => null, fov), MIN);
@@ -1434,8 +1434,8 @@ test('TWO-HANDS SPREAD mirror: `spread` turns each arm OUT at its top about the 
   assert.ok(on[0] < 1e-3 && on[1] > 0 && on[1] < 0.15 && on[2] > on[1], `a spread asked under a new key with nothing drawn eases in from the clip (${on.map((x) => x.toFixed(4))})`);
 });
 
-test('TWO-HANDS SPREAD the arm (Mac: "For the morrowind first person, when duel wielding can we spread out the arms a bit more sense it can make the weapons overlap"): a pair in first person turns both arms out by the angle its blades ask on the build\'s rest (bladeInnerEdge, pairSpreadAngle) - measured once, never for one weapon - eased in on SPREAD.TAU; the right arm is the clip\'s turned about its top (the same frames with one weapon, in lockstep), the left its mirror across the eye; third person\'s body is never turned; a blade leaning across the middle is turned until the two stand GAP apart; sheathed, the arms come back (mutants: TWO-HANDS-SPREAD-third-person, TWO-HANDS-SPREAD-single-hand, TWO-HANDS-SPREAD-kept-after-pair, TWO-HANDS-SPREAD-no-ease, TWO-HANDS-SPREAD-never-rests, TWO-HANDS-SPREAD-never-laid, TWO-HANDS-SPREAD-memo-stale)', async () => {
-  const dt = 0.05, tan = Math.tan(FP_FIELD_OF_VIEW / 2), GAP = 2 * Math.atan(SPREAD.GAP * tan);
+test('TWO-HANDS SPREAD the arm (Mac: "For the morrowind first person, when duel wielding can we spread out the arms a bit more sense it can make the weapons overlap"): a pair in first person turns both arms out by the angle its blades ask on the build\'s rest (bladeInnerEdge, pairSpreadAngle) - measured once, never for one weapon - eased in on PAIR_SPREAD.TAU; the right arm is the clip\'s turned about its top (the same frames with one weapon, in lockstep), the left its mirror across the eye; third person\'s body is never turned; a blade leaning across the middle is turned until the two stand GAP apart; sheathed, the arms come back (mutants: TWO-HANDS-SPREAD-third-person, TWO-HANDS-SPREAD-single-hand, TWO-HANDS-SPREAD-kept-after-pair, TWO-HANDS-SPREAD-no-ease, TWO-HANDS-SPREAD-never-rests, TWO-HANDS-SPREAD-never-laid, TWO-HANDS-SPREAD-memo-stale)', async () => {
+  const dt = 0.05, tan = Math.tan(FP_FIELD_OF_VIEW / 2), GAP = 2 * Math.atan(PAIR_SPREAD.GAP * tan);
   const answer = (b) => {
     const rights = b.arm.pieces.filter((p) => p.slot === 'weapon'), lefts = b.arm.pieces.filter((p) => p.slot === 'offweapon');
     return pairSpreadAngle((a) => ({ R: bladeInnerEdge(b.arm, b.restMats, b.cameraRef, rights, a), L: bladeInnerEdge(b.arm, b.restMats, b.cameraRef, lefts, a) }), FP_FIELD_OF_VIEW);
@@ -1457,8 +1457,8 @@ test('TWO-HANDS SPREAD the arm (Mac: "For the morrowind first person, when duel 
   });
   const one = await run(false, 'first'), two = await run(true, 'first');
   const target = answer(two.arm.built());
-  assert.ok(Math.abs(target - Math.atan(SPREAD.MIN * 2 * tan)) < 1e-9, 'the fixture\'s blades stand clear: MIN');
-  for (let i = 0; i < 6; i++) assert.ok(Math.abs(two.frames[i].h.spread - target * (1 - Math.exp(-((i + 1) * dt) / SPREAD.TAU))) < 1e-9, `eased in on SPREAD.TAU (${i}: ${two.frames[i].h.spread})`);
+  assert.ok(Math.abs(target - Math.atan(PAIR_SPREAD.MIN * 2 * tan)) < 1e-9, 'the fixture\'s blades stand clear: MIN');
+  for (let i = 0; i < 6; i++) assert.ok(Math.abs(two.frames[i].h.spread - target * (1 - Math.exp(-((i + 1) * dt) / PAIR_SPREAD.TAU))) < 1e-9, `eased in on PAIR_SPREAD.TAU (${i}: ${two.frames[i].h.spread})`);
   const end = two.frames[29], same = one.frames[29], s = end.h.spread;
   assert.ok(Math.abs(s - target) < 1e-4);
   assert.equal(end.h.composed, 'dual');
@@ -1489,12 +1489,12 @@ test('TWO-HANDS SPREAD the arm (Mac: "For the morrowind first person, when duel 
     arm.setHands({ mode: 'dual', lead: 'R' });
     for (let i = 0; i < 3; i++) arm.update(dt);
     assert.equal(arm.handsState().spreadInner.L, null, 'no left blade yet');
-    assert.ok(Math.abs(answer(b) - Math.atan(SPREAD.MIN * 2 * tan)) < 1e-12);
+    assert.ok(Math.abs(answer(b) - Math.atan(PAIR_SPREAD.MIN * 2 * tan)) < 1e-12);
     // ...and the blade bound is measured anew
     await arm.setOffWeapon(LONGSWORD);
     for (let i = 0; i < 60; i++) arm.update(dt);
     const h = arm.handsState(), want2 = answer(b);
-    assert.ok(want2 > Math.atan(SPREAD.MIN * 2 * tan) + 0.05 && want2 < Math.atan(SPREAD.MAX * 2 * tan) - 0.05, `further than MIN, short of MAX (${want2})`);
+    assert.ok(want2 > Math.atan(PAIR_SPREAD.MIN * 2 * tan) + 0.05 && want2 < Math.atan(PAIR_SPREAD.MAX * 2 * tan) - 0.05, `further than MIN, short of MAX (${want2})`);
     assert.ok(Math.abs(h.spread - want2) < 1e-6, `the angle its blades ask (${h.spread} / ${want2})`);
     assert.ok(Math.abs(h.spreadInner.L + h.spreadInner.R - GAP) < 1e-6, `GAP apart at it (${(h.spreadInner.L + h.spreadInner.R).toFixed(6)} / ${GAP.toFixed(6)})`);
   });

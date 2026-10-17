@@ -289,7 +289,7 @@ export function guardOffset(g, side, { time = 0, bounce = 0, hand = 'R', height 
  *  blade's inner edge is read off the rig and the blade it holds (fpArm.js bladeInnerEdge). The angle is eased (TAU, in
  *  seconds), so a blade bound anew or a pair taken up or put away moves the arms, never pops them. The sprite lane draws
  *  each weapon flush to its own side of the view (WeaponBasics' AlignRight, and its mirror) and needs none. */
-export const SPREAD = Object.freeze({
+export const PAIR_SPREAD = Object.freeze({
   MIN: 0.04,
   GAP: 0.04,
   MAX: 0.2,
@@ -305,9 +305,9 @@ export const SPREAD = Object.freeze({
 export function pairSpreadAngle(innerAt, fov) {
   const tan = Math.tan(fov / 2);
   const share = (k) => Math.atan(k * 2 * tan);   // a share of the picture's height, as the angle it spans at its middle
-  const gap = 2 * Math.atan(SPREAD.GAP * tan);
+  const gap = 2 * Math.atan(PAIR_SPREAD.GAP * tan);
   const clear = (a) => { const e = innerAt(a); return !e || !Number.isFinite(e.L) || !Number.isFinite(e.R) || /** @type {number} */ (e.L) + /** @type {number} */ (e.R) >= gap; };
-  let lo = share(SPREAD.MIN), hi = share(SPREAD.MAX);
+  let lo = share(PAIR_SPREAD.MIN), hi = share(PAIR_SPREAD.MAX);
   if (clear(lo)) return lo;
   if (!clear(hi)) return hi;
   for (let i = 0; i < 24; i++) { const m = (lo + hi) / 2; if (clear(m)) hi = m; else lo = m; }
