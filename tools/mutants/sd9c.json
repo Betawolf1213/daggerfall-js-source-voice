@@ -164,8 +164,8 @@
   {
     "name": "SD9C-another-paint",
     "file": "src/ui/playerBadge.js",
-    "old": ", turninghour: 'hourbreaker', firsthour: 'hoursfirst', maelstrom: 'coilbreaker' });",
-    "new": ", turninghour: 'founder', firsthour: 'hoursfirst', maelstrom: 'coilbreaker' });",
+    "old": ", turninghour: 'hourbreaker', firsthour: 'hoursfirst', maelstrom: 'coilbreaker', beaconlight: 'kynbane', burningstair: 'wellheadwalker', firstlight: 'spirefirst' });",
+    "new": ", turninghour: 'founder', firsthour: 'hoursfirst', maelstrom: 'coilbreaker', beaconlight: 'kynbane', burningstair: 'wellheadwalker', firstlight: 'spirefirst' });",
     "tests": [
       "test/server/sd9c_turning.test.js"
     ]
@@ -173,8 +173,8 @@
   {
     "name": "SD9C-not-in-the-vocabulary",
     "file": "src/net/identityToken.js",
-    "old": "'seraphwings', 'resonance', 'turninghour', 'firsthour', 'maelstrom']);",
-    "new": "'seraphwings', 'resonance', 'firsthour', 'maelstrom']);",
+    "old": "'seraphwings', 'resonance', 'turninghour', 'firsthour', 'maelstrom', 'beaconlight', 'burningstair', 'firstlight']);",
+    "new": "'seraphwings', 'resonance', 'firsthour', 'maelstrom', 'beaconlight', 'burningstair', 'firstlight']);",
     "tests": [
       "test/server/sd9c_turning.test.js"
     ]
