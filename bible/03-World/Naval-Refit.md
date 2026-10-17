@@ -685,7 +685,10 @@ greatest reach found nineteen things; each was traced to a real caller before it
   (`hudclass_sheets`: the plate's frames - `barLoss`'s since the AUDIT), the registry's English (`l10n4`: its two new rows); the records re-aimed by
   content in `nav_b` (the wind's line), `nav_h`, `navaudit_helm`, `navaudit_presentation`, `shipstance` and `shotkinds`.
 - AUDIT (2026-10-17): `test/systems/naval/auditrefit.test.js` (4: the near miss's sphere, a peer's magazine and her
-  going down heard, the flag's cloth, the rammer's foul sent) and `tools/mutants/auditrefit.json`; the other fixes'
+  going down heard, the flag's cloth, the rammer's foul sent; 5 with the one classic read) and
+  `tools/mutants/auditrefit.json` (16: 15 dead, 1 equivalent as recorded - the reject's clamp, which only tightens it);
+  of the 71 records the fixes added or re-aimed elsewhere, all dead (one, the effects' own cap, after `nav_b_picture`
+  was given an added layer past the buffer); the other fixes'
   tests in their slices' files - `captaintree` (a plain piece alone; the struck gun), `fleet` (a refit touches nothing
   else of her), `ramboard` (the word, the reader, the foul said and read), `shiplivery` (no tree made again while a
   model waits), `combatfeel` (the plate's bar by her number), `holddoor` (no word that a refused door opened),

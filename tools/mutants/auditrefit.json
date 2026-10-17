@@ -25,7 +25,9 @@
     "tests": [
       "test/systems/naval/auditrefit.test.js",
       "test/systems/naval/combatfeel.test.js"
-    ]
+    ],
+    "equivalent": true,
+    "why": "Unclamped, the reject measures to the segment's whole line, which is never farther from her middle than the segment itself - so it rejects less, never more, and every ball the clamped test lets through it lets through too: the passes are the same ones. The clamp is kept because it is what makes the reject tight (a ball's piece of flight is short, its line is not), which is the reject's whole purpose."
   },
   {
     "name": "AR-peer-sinking-unheard",
