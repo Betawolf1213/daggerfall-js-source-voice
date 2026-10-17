@@ -19,6 +19,7 @@
 // player equipment. LiveSpeed lives in PlayerMotor stats.
 import { SKILL_COUNT, SKILLS_RECENTLY_RAISED_WORDS } from '../systems/skills.js';
 import { SOCIAL_GROUP_COUNT } from '../formats/factionFile.js';   // AUDIT 65 SL-4: PlayerEntity.cs:128's socialGroupCount = 11
+import { pageHas } from '../systems/pageQuery.js';   // AUDIT ANTICHEAT A1: the probe gate's one parse a search
 
 export const playerEntity = {
   isPlayer: true,
@@ -76,16 +77,18 @@ export const playerEntity = {
 
 /** Debug/probe surface: one place writes window.__player (audit
  *  2026-07-06b collapsed seven scattered assignments).
- *  ANTICHEAT: the live entity is the master key for every memory cheat
- *  (stats, gold, inventory, carry, speed, remodel, flight). It is exposed
- *  only in ?shot probe boots (browser e2e); the shipped app never carries
- *  ?shot, so the handle stays dead there. Online boots drop ?shot too. */
+ *  ANTICHEAT (#955): the live entity is published on a `?shot` boot alone -
+ *  the probes' (tools/*Probe.mjs) - and an online boot drops `?shot`
+ *  (onlineLane.js ONLINE_REFUSED_FLAGS), so a page that is played never
+ *  carries the one-line handle. It hides a handle; it is not a lock: what
+ *  another player sees, takes or is ranked against is the Integrity arc's,
+ *  decided where no client reaches (06-Systems/Integrity-Arc.md).
+ *  AUDIT ANTICHEAT A1: the gate reads pageQuery's memo - this runs in the
+ *  frame, and a URLSearchParams minted a call is PERF-URL's waste. */
 export function surfacePlayer() {
   if (typeof window === 'undefined') return;
-  let probe = false;
-  try { probe = new URLSearchParams(window.location?.search ?? '').has('shot'); } catch { probe = false; }
-  if (probe) window.__playerEntity = playerEntity;
-  else if ('__playerEntity' in window) { try { delete window.__playerEntity; } catch { window.__playerEntity = undefined; } }
+  if (pageHas('shot')) window.__playerEntity = playerEntity;
+  else if ('__playerEntity' in window) delete window.__playerEntity;
 }
 
 // ── AUDIT 21 (hosts lane, F6): THE ONE DAMAGE DOOR ───────────────────
