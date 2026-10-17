@@ -34,6 +34,7 @@ import { FALL_DAMAGE_THRESHOLD, FALL_HP_PER_METRE, CAPSULE_HEIGHT } from '../pla
 import { SOUND, hitSoundFor, ENEMY_HIT_VOLUME } from '../systems/soundClips.js';   // CH3: the FallDamage clip; WORLD6b: a peer's blow rung at the owner
 import { EnemyCaster, castEnemySpell, hasMagickaToCast, MIN_RANGED_DISTANCE, MAX_RANGED_DISTANCE } from '../characters/enemy/enemyCasting.js';   // X3: the shared decision + the ONE cast executor
 import { assignEnemySpells, SPELL_CAST_SOUND } from '../systems/enemySpells.js';   // X3
+import { revenantArtFrame } from '../systems/revenant/revenantArts.js';   // RVN-ARTS: a revenant's art
 import { applySpell, isSoulTrapEffect, maxFatigue, entityIsParalyzed, applyEnemyMotorEffectFlags, concealmentFlags, concealFlagsOfBits } from '../systems/effects.js';   // X3: self-casts land through the effect spine   // A5: the enemy Levitate arm, the foe-target concealment closure + EntityConcealmentBehaviour's visual
 import { calculateCastCost } from '../systems/spellcost.js';   // X3: costs priced off the player (magic-15 note)
 import { silenceBlocksCast, attemptSoulTrap, SOUL_TRAP_TEXT, fillEmptyTrap, peerSoulTrapOf } from '../systems/mysticism.js';   // X3: the enemy silence gate; X5: the soul trap's kill intercept; STRIKE-SHARED: a peer's trap is its caster's
@@ -1292,6 +1293,18 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       }
     }
   }
+  /** RVN-ARTS (bible/06-Systems/Revenants.md section 41): ITS ART - a channel about its feet or a mark at mine, landed
+   *  through the host's own spell door (my saving throw answers it; the health it took, a siphon's draught), its band
+   *  rallied by its cry, its words its card. AUDIT RVN B12: its door made once a stand, on its record. */
+  function artFrame(f, playerFeet) {
+    revenantArtFrame(f, playerFeet, f._artDoor ??= {
+      onMe: () => isLocalPlayerTarget(f.ai.target) || !f.ai._armedTargeting,
+      strike: (sp) => { const h = playerEntity?.health ?? 0; magicHooks?.strikePlayer?.(sp, f.entity.level ?? 1, f); return Math.max(0, h - (playerEntity?.health ?? h)); },
+      say: (ev) => revenantSay(ev, say),
+      sfx: (el, at) => audio?.play3dId?.(SPELL_CAST_SOUND[el] ?? SPELL_CAST_SOUND[4], [at[0], at[1], at[2]], 1, { maxDistance: 16 }),
+      foes: () => foes, rolls,
+    });
+  }
   /** RVN4 (Feud-Arc.md 15.2): ITS LAST STAND - back on its feet, roaring (no blow reaches it; the brain's iron ring, or
    *  its motor held), then phase two - its bark low, the camera's kick, its card. */
   function lastStand(f) {
@@ -1586,6 +1599,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       // cull); out of reach it has ESCAPED (no corpse, no kill, a revenant made of it); run down, it is CORNERED and turns
       // to fight to the end
       const _flee = f.fleeing || (!f._fleeRolled && revenantFleeHealth(f.entity)) ? revenantFleeStep(f, playerFeet, { onMe: () => isLocalPlayerTarget(f.ai.target) || !f.ai._armedTargeting }) : null;   // asked only of a foe running or under the line - nothing made per foe per frame
+      if (f.entity.revenant?.id) artFrame(f, playerFeet);   // RVN-ARTS: its art - AUDIT RVN B4: before a run's or a scatter's own frame, so a running one's ward and cry run out and its marks are cut
       if (_flee === 'escape') { escapeFoe(f); continue; }
       if (_flee === 'start') scatterBand(f);   // RVN6: it runs - its band breaks
       if (_flee === 'start') revenantSay(revenantFleeEvent(f.entity, foeTitle(f.entity, enemyDisplayName(f.mobileType)), { gender: f.gender, archive: f.archive, playerName: playerEntity?.name }), say);   // REVENANT-CARD: the card on the enhanced skin, the line on the classic
