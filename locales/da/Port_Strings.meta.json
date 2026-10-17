@@ -1759,6 +1759,11 @@
   "tr": "205fdbbbb40e",
   "by": "claude-in-session"
  },
+ "account.refusal.lineageLaw": {
+  "en": "c47f84ad8535",
+  "tr": "7b62b646c233",
+  "by": "claude-in-session"
+ },
  "account.refusal.lineageModel": {
   "en": "1db7f75d16bf",
   "tr": "6e7364538478",
@@ -1927,6 +1932,11 @@
  "account.refusal.marketOwn": {
   "en": "a8457d6764b5",
   "tr": "a71e4f4a539b",
+  "by": "claude-in-session"
+ },
+ "account.refusal.marketPieceGone": {
+  "en": "a07603c526de",
+  "tr": "8b316cec2410",
   "by": "claude-in-session"
  },
  "account.refusal.marketPieceRoute": {
@@ -2722,6 +2732,16 @@
  "account.refusal.profTransmuter": {
   "en": "a5a5443d1f7d",
   "tr": "9a6fdac8e3b4",
+  "by": "claude-in-session"
+ },
+ "account.refusal.progressPlay": {
+  "en": "80a24bb3eb49",
+  "tr": "28c0168b5a17",
+  "by": "claude-in-session"
+ },
+ "account.refusal.progressSeat": {
+  "en": "02299624c393",
+  "tr": "0fc533ab3b71",
   "by": "claude-in-session"
  },
  "account.refusal.protected": {
