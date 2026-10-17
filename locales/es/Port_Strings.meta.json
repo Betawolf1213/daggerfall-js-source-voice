@@ -954,9 +954,24 @@
   "tr": "62893c09280e",
   "by": "claude-in-session"
  },
+ "account.refusal.banned": {
+  "en": "2da4f21c8563",
+  "tr": "f2dd9cb6e497",
+  "by": "claude-in-session"
+ },
  "account.refusal.bits": {
   "en": "71773228f199",
   "tr": "02c4d9d0dfe3",
+  "by": "claude-in-session"
+ },
+ "account.refusal.blockSelf": {
+  "en": "bd408e8d9fe1",
+  "tr": "b6b1afb37ab7",
+  "by": "claude-in-session"
+ },
+ "account.refusal.blocksFull": {
+  "en": "4c911403a603",
+  "tr": "944351e59e0a",
   "by": "claude-in-session"
  },
  "account.refusal.boardClosed": {
@@ -1147,6 +1162,11 @@
  "account.refusal.commissionsMax": {
   "en": "8a20738cf495",
   "tr": "2cecbb69f3de",
+  "by": "claude-in-session"
+ },
+ "account.refusal.conductStale": {
+  "en": "80a383e486eb",
+  "tr": "9b3fac69df90",
   "by": "claude-in-session"
  },
  "account.refusal.contractDeeds": {
@@ -2054,6 +2074,11 @@
   "tr": "2debc0268808",
   "by": "claude-in-session"
  },
+ "account.refusal.noCase": {
+  "en": "aaa197709808",
+  "tr": "ba9ae0993b85",
+  "by": "claude-in-session"
+ },
  "account.refusal.noChapter": {
   "en": "42b4f1aa09e2",
   "tr": "39dc9b2a067d",
@@ -2252,6 +2277,11 @@
  "account.refusal.none": {
   "en": "7ef79b1962d1",
   "tr": "edfa041f69a9",
+  "by": "claude-in-session"
+ },
+ "account.refusal.notBanned": {
+  "en": "ab964a2db05a",
+  "tr": "0c7a96c84691",
   "by": "claude-in-session"
  },
  "account.refusal.notDead": {
@@ -2852,6 +2882,41 @@
  "account.refusal.repairNotSet": {
   "en": "cc0bc29bd55f",
   "tr": "93bfb8221c13",
+  "by": "claude-in-session"
+ },
+ "account.refusal.reportClosed": {
+  "en": "e2ceee725c26",
+  "tr": "49a513aca06f",
+  "by": "claude-in-session"
+ },
+ "account.refusal.reportNoLine": {
+  "en": "2b0bdfba56ac",
+  "tr": "28ea17b18001",
+  "by": "claude-in-session"
+ },
+ "account.refusal.reportReason": {
+  "en": "a5425995e560",
+  "tr": "baf491393744",
+  "by": "claude-in-session"
+ },
+ "account.refusal.reportSelf": {
+  "en": "6630da752706",
+  "tr": "2f2735563a9b",
+  "by": "claude-in-session"
+ },
+ "account.refusal.reportShape": {
+  "en": "5c9037d835d4",
+  "tr": "6f498615b14f",
+  "by": "claude-in-session"
+ },
+ "account.refusal.reportStale": {
+  "en": "b71617e2e343",
+  "tr": "f9194885d440",
+  "by": "claude-in-session"
+ },
+ "account.refusal.reportUnwitnessed": {
+  "en": "be12157143c0",
+  "tr": "dd89c3a81fd8",
   "by": "claude-in-session"
  },
  "account.refusal.retired": {
@@ -13469,6 +13534,11 @@
   "tr": "dd5b6001f2d1",
   "by": "claude-in-session"
  },
+ "net.chat.blockHelp": {
+  "en": "5b727fbb50fa",
+  "tr": "47dbb6a019e0",
+  "by": "claude-in-session"
+ },
  "net.chat.channels": {
   "en": "18e03e2a37ba",
   "tr": "959a0c2052a7",
@@ -13514,9 +13584,19 @@
   "tr": "c51ea80ac016",
   "by": "claude-in-session"
  },
+ "net.chat.reportHelp": {
+  "en": "5a142a4fd3fb",
+  "tr": "db7d14df10e2",
+  "by": "claude-in-session"
+ },
  "net.chat.rpHelp": {
   "en": "59108188bcfb",
   "tr": "fddc5c889873",
+  "by": "claude-in-session"
+ },
+ "net.chat.rulesHelp": {
+  "en": "df532207c337",
+  "tr": "1453e08f666a",
   "by": "claude-in-session"
  },
  "net.chat.tradeHelp": {
@@ -13537,6 +13617,56 @@
  "net.chat.wait": {
   "en": "9cc37cfbe9dd",
   "tr": "70fc3ba9ab2f",
+  "by": "claude-in-session"
+ },
+ "net.conduct.agree": {
+  "en": "6a151a67b752",
+  "tr": "23894851caa2",
+  "by": "claude-in-session"
+ },
+ "net.conduct.banter": {
+  "en": "01b510b77346",
+  "tr": "11a0d4cb9dd5",
+  "by": "claude-in-session"
+ },
+ "net.conduct.consequence": {
+  "en": "036789a65b87",
+  "tr": "22c7c85818e7",
+  "by": "claude-in-session"
+ },
+ "net.conduct.hate": {
+  "en": "45097a28df9f",
+  "tr": "5393aaf2d6ed",
+  "by": "claude-in-session"
+ },
+ "net.conduct.later": {
+  "en": "e45714907316",
+  "tr": "b0e21748f950",
+  "by": "claude-in-session"
+ },
+ "net.conduct.private": {
+  "en": "1cf827fc301c",
+  "tr": "4381daaf3107",
+  "by": "claude-in-session"
+ },
+ "net.conduct.respect": {
+  "en": "3d27174553e5",
+  "tr": "9fb8edb00202",
+  "by": "claude-in-session"
+ },
+ "net.conduct.sexual": {
+  "en": "8ee668bbec53",
+  "tr": "3b317424c4d7",
+  "by": "claude-in-session"
+ },
+ "net.conduct.spam": {
+  "en": "542d88303427",
+  "tr": "5e44b8d05995",
+  "by": "claude-in-session"
+ },
+ "net.conduct.title": {
+  "en": "264398069882",
+  "tr": "fcdc43edd006",
   "by": "claude-in-session"
  },
  "net.mod.ambiguous": {
@@ -13592,6 +13722,11 @@
  "net.online.badUrl": {
   "en": "4642ed29bdf4",
   "tr": "6a4c99c1265a",
+  "by": "claude-in-session"
+ },
+ "net.online.banned": {
+  "en": "6544d3cc56f7",
+  "tr": "5493b6fb15eb",
   "by": "claude-in-session"
  },
  "net.online.busy": {
@@ -13662,6 +13797,396 @@
  "net.online.waitingAccount": {
   "en": "f66a6e147e2c",
   "tr": "aff62a62a9b0",
+  "by": "claude-in-session"
+ },
+ "net.safety.actBan": {
+  "en": "7342a3d27878",
+  "tr": "8aca69da0753",
+  "by": "claude-in-session"
+ },
+ "net.safety.actDismiss": {
+  "en": "91eba2cc73c5",
+  "tr": "2534c3c5f91b",
+  "by": "claude-in-session"
+ },
+ "net.safety.actMute": {
+  "en": "b03704de5979",
+  "tr": "c0f660546961",
+  "by": "claude-in-session"
+ },
+ "net.safety.actUnban": {
+  "en": "72d9a1503fef",
+  "tr": "fb7399580578",
+  "by": "claude-in-session"
+ },
+ "net.safety.actUnmute": {
+  "en": "68f9b071f880",
+  "tr": "949d842617db",
+  "by": "claude-in-session"
+ },
+ "net.safety.agreed": {
+  "en": "00634bf68ecb",
+  "tr": "dcd8b0671ce2",
+  "by": "claude-in-session"
+ },
+ "net.safety.banRange": {
+  "en": "9c2e9b4c29a9",
+  "tr": "9ff8b9013ffc",
+  "by": "claude-in-session"
+ },
+ "net.safety.bannedAccount": {
+  "en": "96c551e428c2",
+  "tr": "3b6502941055",
+  "by": "claude-in-session"
+ },
+ "net.safety.bannedSelf": {
+  "en": "46b62e39b404",
+  "tr": "1eb70d610209",
+  "by": "claude-in-session"
+ },
+ "net.safety.bannedWhy": {
+  "en": "97204cbb2d32",
+  "tr": "7df3d7edcfd6",
+  "by": "claude-in-session"
+ },
+ "net.safety.blockLabel": {
+  "en": "82dd2cdf36f9",
+  "tr": "5c3d5c59968f",
+  "by": "claude-in-session"
+ },
+ "net.safety.blocked": {
+  "en": "5c25276f4d03",
+  "tr": "ec2fc2c53037",
+  "by": "claude-in-session"
+ },
+ "net.safety.blockedAs": {
+  "en": "fd946865b4ee",
+  "tr": "c7be7d411606",
+  "by": "claude-in-session"
+ },
+ "net.safety.blockedList": {
+  "en": "26ced87d5062",
+  "tr": "23ceace64626",
+  "by": "claude-in-session"
+ },
+ "net.safety.blockedNone": {
+  "en": "bdccc4dc365c",
+  "tr": "bf004086575e",
+  "by": "claude-in-session"
+ },
+ "net.safety.byReviewer": {
+  "en": "3d60a3c2a52c",
+  "tr": "bb8eb2379039",
+  "by": "claude-in-session"
+ },
+ "net.safety.caseAuto": {
+  "en": "7d7ea7e9e7e1",
+  "tr": "c593eeeacce1",
+  "by": "claude-in-session"
+ },
+ "net.safety.caseHead": {
+  "en": "b8273d71f920",
+  "tr": "b0de89f214f4",
+  "by": "claude-in-session"
+ },
+ "net.safety.caseNoLines": {
+  "en": "83b3285612c0",
+  "tr": "1f617a636811",
+  "by": "claude-in-session"
+ },
+ "net.safety.caseNote": {
+  "en": "078e1b38b933",
+  "tr": "9b026910ef3f",
+  "by": "claude-in-session"
+ },
+ "net.safety.caseRow": {
+  "en": "fc2458bbe2fe",
+  "tr": "6abee0da72c8",
+  "by": "claude-in-session"
+ },
+ "net.safety.caseVerdict": {
+  "en": "2ecf7679fe13",
+  "tr": "3674ae26c0fc",
+  "by": "claude-in-session"
+ },
+ "net.safety.casesHead": {
+  "en": "ade9e66a07c6",
+  "tr": "ef7db27148e2",
+  "by": "claude-in-session"
+ },
+ "net.safety.casesNone": {
+  "en": "401f90ad84f7",
+  "tr": "9f9d9cb83624",
+  "by": "claude-in-session"
+ },
+ "net.safety.didBan": {
+  "en": "eb4c9b4b3778",
+  "tr": "2504ddbe9a99",
+  "by": "claude-in-session"
+ },
+ "net.safety.didUnban": {
+  "en": "9f87bac5bd85",
+  "tr": "e3b42633e366",
+  "by": "claude-in-session"
+ },
+ "net.safety.dismissed": {
+  "en": "ebbb1b894a4f",
+  "tr": "a5cd309e97d7",
+  "by": "claude-in-session"
+ },
+ "net.safety.dismissedUnmuted": {
+  "en": "8060c22c1403",
+  "tr": "6bfa8cea633f",
+  "by": "claude-in-session"
+ },
+ "net.safety.forGood": {
+  "en": "45365e3f6333",
+  "tr": "9f1ccca4c8ac",
+  "by": "claude-in-session"
+ },
+ "net.safety.history": {
+  "en": "fc466b65ccd8",
+  "tr": "fc466b65ccd8",
+  "by": "claude-in-session"
+ },
+ "net.safety.historyBy": {
+  "en": "ca032ef744f7",
+  "tr": "b76b26d900d2",
+  "by": "claude-in-session"
+ },
+ "net.safety.manyBlock": {
+  "en": "d0984e5e44b7",
+  "tr": "e81f40e74771",
+  "by": "claude-in-session"
+ },
+ "net.safety.manyMod": {
+  "en": "c30304eb291c",
+  "tr": "899e294ec5a4",
+  "by": "claude-in-session"
+ },
+ "net.safety.manyReport": {
+  "en": "2bf9eedb4720",
+  "tr": "2b6d4aad7110",
+  "by": "claude-in-session"
+ },
+ "net.safety.modHelpBan": {
+  "en": "27e36978511b",
+  "tr": "40167a63778d",
+  "by": "claude-in-session"
+ },
+ "net.safety.modHelpCase": {
+  "en": "56dfa1c070cf",
+  "tr": "2542441d680e",
+  "by": "claude-in-session"
+ },
+ "net.safety.modHelpCases": {
+  "en": "61344be49ed6",
+  "tr": "28c4633ac628",
+  "by": "claude-in-session"
+ },
+ "net.safety.modHelpDismiss": {
+  "en": "13ba0e0fa006",
+  "tr": "e452c00fc0a2",
+  "by": "claude-in-session"
+ },
+ "net.safety.modHelpHead": {
+  "en": "baff563dd05d",
+  "tr": "4c2f343f9b16",
+  "by": "claude-in-session"
+ },
+ "net.safety.modHelpMute": {
+  "en": "2adc5602ae0f",
+  "tr": "ffb116c45c62",
+  "by": "claude-in-session"
+ },
+ "net.safety.modHelpStrikes": {
+  "en": "49f75062363b",
+  "tr": "f3d51d9d7471",
+  "by": "claude-in-session"
+ },
+ "net.safety.nextBan": {
+  "en": "55a8d81a56aa",
+  "tr": "8af1afe2e91e",
+  "by": "claude-in-session"
+ },
+ "net.safety.nextMute": {
+  "en": "90e16764d452",
+  "tr": "6694525f4ee0",
+  "by": "claude-in-session"
+ },
+ "net.safety.noneBlock": {
+  "en": "208c2ee3493c",
+  "tr": "2aec87ac2bbc",
+  "by": "claude-in-session"
+ },
+ "net.safety.noneReport": {
+  "en": "59f1455e0a32",
+  "tr": "15b1d5700255",
+  "by": "claude-in-session"
+ },
+ "net.safety.notBlocked": {
+  "en": "57c2ae9ead09",
+  "tr": "7eb39945af15",
+  "by": "claude-in-session"
+ },
+ "net.safety.noteLong": {
+  "en": "c25013e60b3e",
+  "tr": "8bc60eb33adb",
+  "by": "claude-in-session"
+ },
+ "net.safety.protectedBan": {
+  "en": "f17115a007a9",
+  "tr": "341283c86fb8",
+  "by": "claude-in-session"
+ },
+ "net.safety.reasonHarassment": {
+  "en": "b110b0dd78dc",
+  "tr": "4f0a03ea1d3a",
+  "by": "claude-in-session"
+ },
+ "net.safety.reasonHate": {
+  "en": "54315c6b41c7",
+  "tr": "072cdef51145",
+  "by": "claude-in-session"
+ },
+ "net.safety.reasonOther": {
+  "en": "48f88ac322a0",
+  "tr": "34e44570f269",
+  "by": "claude-in-session"
+ },
+ "net.safety.reasonSexual": {
+  "en": "6013c4658b61",
+  "tr": "65d8263560bf",
+  "by": "claude-in-session"
+ },
+ "net.safety.reasonSpam": {
+  "en": "05538762256a",
+  "tr": "b013a9cc3d70",
+  "by": "claude-in-session"
+ },
+ "net.safety.reasonThreat": {
+  "en": "b228606ae426",
+  "tr": "2b62a818f4f3",
+  "by": "claude-in-session"
+ },
+ "net.safety.reportAs": {
+  "en": "028cefd6d550",
+  "tr": "52be940fb3c8",
+  "by": "claude-in-session"
+ },
+ "net.safety.reported": {
+  "en": "47f175a357de",
+  "tr": "789409194e31",
+  "by": "claude-in-session"
+ },
+ "net.safety.reportedAgain": {
+  "en": "5f100ee480ff",
+  "tr": "0d3b89d434e5",
+  "by": "claude-in-session"
+ },
+ "net.safety.shadow": {
+  "en": "8bf72268a7a0",
+  "tr": "db37b88d7275",
+  "by": "claude-in-session"
+ },
+ "net.safety.slowed": {
+  "en": "a571ab2e1535",
+  "tr": "46333e70d673",
+  "by": "claude-in-session"
+ },
+ "net.safety.standingBanned": {
+  "en": "8345fe22a259",
+  "tr": "f2a5b8819bf4",
+  "by": "claude-in-session"
+ },
+ "net.safety.standingBannedWhy": {
+  "en": "0dc1750741f6",
+  "tr": "76e35648ee20",
+  "by": "claude-in-session"
+ },
+ "net.safety.standingMuted": {
+  "en": "b6f86cd054c9",
+  "tr": "832548fdd3a6",
+  "by": "claude-in-session"
+ },
+ "net.safety.standingNone": {
+  "en": "5942e7a9715b",
+  "tr": "ffa7d6cf802d",
+  "by": "claude-in-session"
+ },
+ "net.safety.strikes": {
+  "en": "5cf7e3a1a8c5",
+  "tr": "d9833bd8562a",
+  "by": "claude-in-session"
+ },
+ "net.safety.unaccounted": {
+  "en": "89f2cc2d46cc",
+  "tr": "0022077f6a7b",
+  "by": "claude-in-session"
+ },
+ "net.safety.unbannedSelf": {
+  "en": "911e332fc8a9",
+  "tr": "f4428ca03140",
+  "by": "claude-in-session"
+ },
+ "net.safety.unblockLabel": {
+  "en": "12aabd251c42",
+  "tr": "53971128cbc6",
+  "by": "claude-in-session"
+ },
+ "net.safety.unblocked": {
+  "en": "7247d2bc66eb",
+  "tr": "d622547f7914",
+  "by": "claude-in-session"
+ },
+ "net.safety.until": {
+  "en": "445017fe28d0",
+  "tr": "53ef3ca8578a",
+  "by": "claude-in-session"
+ },
+ "net.safety.usageBan": {
+  "en": "fdb82f664fdc",
+  "tr": "f8fe2ad9ac66",
+  "by": "claude-in-session"
+ },
+ "net.safety.usageBlock": {
+  "en": "aa03acd30f87",
+  "tr": "8cca51516f7b",
+  "by": "claude-in-session"
+ },
+ "net.safety.usageCase": {
+  "en": "d2ede79c612e",
+  "tr": "a6faa9f5a861",
+  "by": "claude-in-session"
+ },
+ "net.safety.usageDismiss": {
+  "en": "9263d8d9e26e",
+  "tr": "97c6d8d45514",
+  "by": "claude-in-session"
+ },
+ "net.safety.usageReport": {
+  "en": "26096c8a789a",
+  "tr": "dbea90f370da",
+  "by": "claude-in-session"
+ },
+ "net.safety.usageStrikes": {
+  "en": "a83a43bb0787",
+  "tr": "c6c9055bc8fd",
+  "by": "claude-in-session"
+ },
+ "net.safety.usageUnban": {
+  "en": "26cfd23425b2",
+  "tr": "1f8f638bdf66",
+  "by": "claude-in-session"
+ },
+ "net.safety.usageUnblock": {
+  "en": "4b09279846c8",
+  "tr": "f3a444cf2238",
+  "by": "claude-in-session"
+ },
+ "net.safety.voided": {
+  "en": "143399630c8f",
+  "tr": "2dd77a1d7454",
   "by": "claude-in-session"
  },
  "net.update.build": {

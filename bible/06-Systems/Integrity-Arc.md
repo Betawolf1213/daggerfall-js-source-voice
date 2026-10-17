@@ -437,7 +437,7 @@ start the deploy would refuse: the hull table moved to `systems/comeSailAway/com
 `test/server/accountdeploy.test.js` bundles the Worker with `import.meta.url` undefined and loads it); an O(n^2) walk on every
 route's ids. Mutant records `tools/mutants/int_audit.json`; the arc's own records re-aimed.
 
-### INT19 - a crafted piece handed on leaves its seller's record (2026-10-17, `server-account/src/craftedPiece.js`, migration 0127)
+### INT19 - a crafted piece handed on leaves its seller's record (2026-10-17, `server-account/src/craftedPiece.js`, migration 0128)
 
 Lane 1's open item (below, as it was written), built to its plan on lane 4's pull request (the owner: "Take care of the
 integrity arc"). The piece route decided on the `products` row alone and the client took the piece out of its pack only
@@ -957,7 +957,7 @@ Each stream is a bucket, the wealth budget's own law (budget.js stepBudget - one
 every second the account played (players.played_s - the service's own count, accounts.js creditPlay), up to its cap, and
 each claim spends what it took (`progressSpentOf` reads the route's answer - Renown credited, never asked; a cleanse and the
 Renown it paid; a camp; the Watch's ticks; a find; a harvest's XP and its silver; a writ's XP and Renown; nothing for a
-refusal or a repeat). A first claim starts its bucket full, its play counted from there. Migration `0126_progress`:
+refusal or a repeat). A first claim starts its bucket full, its play counted from there. Migration `0127_progress`:
 `progress_play` (the bucket, an account a stream) and `progress_hours` (an account's claims of a stream in an hour of the
 clock: the amount, the play it came in, and what it took past the bucket - `over`), swept by the cron with the wealth's hours.
 
@@ -1095,6 +1095,11 @@ stream is held to the layout every client built, and its revenants' blows ride a
 - **Moderation.** The screenshot's other half was a moderator with only `/mute` (MOD1). The owner's call for when bans
   are built (asked 2026-10-17, "Mods timed, devs permanent"): moderators `/kick`, and ban for up to thirty days;
   developers may also ban for good; nobody bans a moderator or a developer, as nobody mutes one. No ban is built here.
+  CHAT SAFETY (#983, merged into this branch 2026-10-17; `11-Multiplayer/Chat-Safety-Arc.md`, Mac: "Lets do every single
+  thing here") built the ban since: any moderator bans for 1 to `BAN_DAYS_MAX` (365) days or for good
+  (`server-account/src/sanctions.js` banAccount), and no moderator or developer is banned. Where it parts from the call
+  above - a moderator's ban past thirty days, and for good - is the owner's to settle with that arc; nothing here
+  changes it.
 
 Pins: `test/scenes/foeforge.test.js` (8) - two real pools, the forged frames a modified client's and the honest ones the
 producer's own (`foesFrame`, `handOverFrame`); `tools/mutants/foeforge.json` (16, all dead). Pins moved (each marked
@@ -1107,7 +1112,7 @@ six records on the lines this slice touched run again, all dead.
 - **INT19 (2026-10-17, the owner: "Take care of the integrity arc"; on #987 with lane 4): lane 1's open item closed - a
   crafted piece handed on leaves its seller's realm record.** Section 4, INT19. A listing, an auction and a commission's
   fill ask the record first and take the piece out of it by provenance in their own batch (`server-account/src/
-  craftedPiece.js`); a listed or auctioned piece's record is held by the market (`piece_escrow`, migration 0127) and
+  craftedPiece.js`); a listed or auctioned piece's record is held by the market (`piece_escrow`, migration 0128) and
   comes back as itself, collected into the record; a sold one's goes with the sale. The client hands it on through the
   realm act (`net/marketBook.js` realmPieceAct). CRAFT-HOLD's cost retired. `test/server/int19_crafted_record.test.js`
   (8); `tools/mutants/int19.json`; the market's and the writs' crafted-piece pins moved.
@@ -1117,7 +1122,7 @@ six records on the lines this slice touched run again, all dead.
   word (`server-account/src/progress.js` progressRefusal - from day one); each stream a bucket the account's play fills, the
   wealth budget's law, measured first (`progress_play`, `progress_hours`; `/v1/mod/realm-progress`, `tools/realmReview.mjs
   progress`); a line's copy held to the family's own law (`src/systems/legacy/legacyLaw.js`, legacy.js putLineage - a stale
-  copy still answered stale). Migration `0126_progress`, `ACCOUNT_VERSION` acct152 (acct151 and migration 0125 on its branch, renumbered past KEY-LAW at the merge); no relay change. The account deploy's
+  copy still answered stale). Migration `0127_progress`, `ACCOUNT_VERSION` acct153 (acct151 then acct152, and migrations 0125 then 0126, on its branch, renumbered past KEY-LAW and SAFE at the merges); no relay change. The account deploy's
   smoke takes a realm character before its Renown report. `test/server/int16_progress.test.js` (9),
   `test/server/int18_lineage_law.test.js` (5); `tools/mutants/int_lane4.json` (34, all dead); pins moved across the files
   whose claims named a made-up character (section 7, Pins).
