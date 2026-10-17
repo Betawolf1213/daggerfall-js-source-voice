@@ -7,9 +7,10 @@ you want". Read against the code, then: "I want to do everything and do it prope
 
 **Status: lane 1 (the economy, INT1-INT6) BUILT and AUDITED (2026-10-09, section 4b: five reviews, every fix pinned) and
 merged (#730); lane 2 (PvP refereed everywhere, INT7-INT10) BUILT and AUDITED the same day (section 5, 5b) and merged
-(#737); lane 3 (boss fights, INT11-INT15) BUILT and AUDITED 2026-10-10 on its branch (section 6, 6b), measuring first.** Lane 4 is the
-plan below, its own pull request (Mac: "A PR per lane"). **FOE-FORGE (section 8) BUILT 2026-10-17**: a peer's
-foes held to what an honest owner streams.
+(#737); lane 3 (boss fights, INT11-INT15) BUILT and AUDITED 2026-10-10 on its branch (section 6, 6b), measuring first.** **Lane 4
+(progression claims, INT16-INT18) BUILT 2026-10-17** (section 7): the seat from day one, the play-hour line measuring
+first, the legacy record held to its own law - on FOE-FORGE's pull request (the owner, asked: "Add to #987"; Mac's "A PR per
+lane" set aside for it). **FOE-FORGE (section 8) BUILT 2026-10-17**: a peer's foes held to what an honest owner streams.
 
 ## 1. What the report found, read against the code
 
@@ -857,11 +858,121 @@ and the INT13 pin's second `wr 0` (`test/net/int12_body_relay.test.js`), the gat
 - **An ally's heal is the healed client's word** (6b), believed within GATE-HEAL's own heal bucket and now the count's:
   a modified client in company can claim heals its mates never cast, up to that bucket.
 
-## 7. Lane 4 - progression claims (planned)
+## 7. Lane 4 - progression claims (INT16-INT18)
 
-Renown XP, Marks from finds and harvests, bounty camps, seat influence, profession XP and raid kills: accepted only from a
-seated realm character whose trade is not held, each cap per hour of PLAY the service measured rather than per hour of
-the clock, and the legacy record held to its own law.
+The plan, as it stood: "Renown XP, Marks from finds and harvests, bounty camps, seat influence, profession XP and raid
+kills: accepted only from a seated realm character whose trade is not held, each cap per hour of PLAY the service
+measured rather than per hour of the clock, and the legacy record held to its own law." Built 2026-10-17 (the owner:
+"Take care of the integrity arc"; asked, "Measure first", and "Add to #987" - this lane rides FOE-FORGE's pull request).
+
+### What lane 4 found
+
+Read against the tree (four read-only maps, 2026-10-17): no progression route asked whether its character was a realm
+character, whether it held the account's lease, or whether its trade was held, and every cap counted the clock.
+
+| Stream | Route | Before lane 4 |
+|---|---|---|
+| Renown XP | `/v1/renown/xp` (renownTracks.js reportRenownXp) | the client's word; any `char-...` id, a guest's too; 5,000 a report, 15,000 an account a clock hour |
+| Raid kills | `/v1/raid/claim` (raids.js claimRaid) | the relay's signed receipt - but the receipt names no character, the client picks it; six a game day |
+| Bounty camps | `/v1/seats/bounty` (seatHolding.js claimBounty) | the client's word ("Bounded, not witnessed"); five an account a UTC day |
+| Seat influence | `/v1/seats/orc-camp`, `/v1/seats/watch` (seatInfluence.js) | an orc camp the client's word, five a day; the Watch relay-signed, sixty ticks a day |
+| Marks finds | `/v1/marks/find` (marks.js findMarks) | whether a find happened is the client's (its dice are the device's); twenty a UTC day |
+| Profession XP | `/v1/prof/harvest`, `smelt`, `craft`, `brew`, `disenchant`, `temper`, `/v1/writs/deliver` | any 4-64 character id - a made-up one a fresh set of nodes a day; no hourly bound at all (CAP-OFF) |
+| The legacy record | `/v1/realm/lineage` (legacy.js putLineage) | its shape alone: a member's blood and hearth, an estate, and a copy that unwrote a death all landed |
+
+### INT16 - THE SEAT (`server-account/src/progress.js`, from day one)
+
+Every route above but the lineage asks `progressRefusal` before it reads a word (index.js, right after the account's
+rate - `PROGRESS_ROUTES`): the account's realm character holding its lease (one an account, realm.js joinRealm), alive,
+and - where the route names a character - the one it names. Answered `progress-seat` (403) otherwise, and `trade-held`
+(403, with `held`) while that character's trade is held (verdict.js holdOf: a forged record the judge found, or staff).
+A find names no character: the account's seat is asked. An honest client claims online alone (the Renown tracker, the
+Marks, profession and seat books run only with `?online`), online is the realm's (REALM-DOOR), and an online realm
+character's id is the realm's own (world.js sets it from the service) - so an honest player is always its seat. What it
+refuses: an offline id (each a fresh set of nodes a day), another of the account's characters, a seat another device took,
+a guest or account with no realm character at all, and a held character.
+
+The clients (each book's own law for a refusal): the Renown tracker stops for the page on `progress-seat` or
+`trade-held` (its PERMANENT set) - "This character is earning no Renown."; the Marks book drops the day's finds and owes
+none (`FIND_DROPS`, as an account too young to find); the seat book settles the Watch's ticks (`WATCH_SETTLED`); a raid's
+receipt is kept (the relay signed a real cleanse - it lands once the player is seated and unheld again); a station's act
+says the refusal and loses nothing. The words: accountClient.js `progress-seat`.
+
+### INT17 - THE PLAY THAT PAYS (measured first)
+
+Each stream is a bucket, the wealth budget's own law (budget.js stepBudget - one law): it fills at its line's rate for
+every second the account played (players.played_s - the service's own count, accounts.js creditPlay), up to its cap, and
+each claim spends what it took (`progressSpentOf` reads the route's answer - Renown credited, never asked; a cleanse and the
+Renown it paid; a camp; the Watch's ticks; a find; a harvest's XP and its silver; a writ's XP and Renown; nothing for a
+refusal or a repeat). A first claim starts its bucket full, its play counted from there. Migration `0125_progress`:
+`progress_play` (the bucket, an account a stream) and `progress_hours` (an account's claims of a stream in an hour of the
+clock: the amount, the play it came in, and what it took past the bucket - `over`), swept by the cron with the wealth's hours.
+
+The first line (`PROGRESS_LINE`) is each clock cap read per hour of play: Renown 15,000 XP an hour (renown.js
+RENOWN_XP_HOUR_MAX), a raid's six cleanses a game day of two real hours (three an hour), five bounty camps, five orc
+camps, a Watch tick each two minutes stood (thirty an hour, sixty held), twenty finds, thirty harvest silvers; and a guess
+for the professions (10,000 XP an hour, 20,000 held), which no route bounded by the hour.
+
+MEASURE FIRST (the owner, asked: "Measure first" - as the wealth budget and the boss fights' count were): while the line
+only measures, nothing is refused, the clock caps stand as they stood, and the bucket keeps no debt - so the day staff
+enforce it nobody starts in a measured week's hole. Staff read `node tools/realmReview.mjs progress 7` (each stream's
+claims an hour of play: count, quantiles, most; the hours that went past the line and how many accounts), set each
+stream's `rate` past its 0.999 quantile with room, and `progress-set` the line with `enforce: true`
+(`/v1/mod/realm-progress`, a developer's alone; kept in `realm_config` as `progress`, read within a minute everywhere).
+Enforced: a stream whose bucket holds less than one is refused `progress-play` (429) until play refills it, and a Renown
+report is credited only what the bucket holds. A bucket above a cap staff lowered is spent down, never cut (the budget's
+law). The clients keep what an enforced line refused and ask again (the Renown tracker's backoff, the Marks book owing the
+rest, a harvest kept as `prof-rate` keeps one).
+
+### INT18 - THE LEGACY RECORD HELD TO ITS OWN LAW (`src/systems/legacy/legacyLaw.js`)
+
+The family law's bounds moved into a leaf the Worker reads (family.js and heirloom.js take them from it - one home each):
+BLOOD_MAX, HEARTH_MAX, ESTATE_SHARE, ESTATE_MAX, REMAINS_GOLD_SHARE, REMAINS_GOLD_MAX. `lineageLawFindings` asks a copy
+for a member's blood past its most or not whole (at most the eight stats), a hearth past its most or on no skill, and a
+waiting estate past its ceiling; and beside the stored copy, a member, a death, a retirement or a fallen's remains gone -
+the facts store.js mergeFacts only ever adds (REVIVE's stamps take a death back before this is asked: legacy.js
+withoutRevived). putLineage refuses a copy that breaks it whole (`lineage-law`, 400, its findings named) and the stored
+copy stands. THE STORED COPY IS ASKED ONLY OF A WRITE MADE FROM IT (`base` its rev): a copy made from an older one is
+answered stale with the stored copy to merge into, as ever - refused as the law's, a device would never take another's new
+member in. The client takes `lineage-law` as the record's own refusal (realmLine.js LINE_REFUSALS: said once, never sent
+again this session). Not asked: a member's own estate (an heir that waits through two falls holds both - legacyHost.js
+adds them; the first save's liquid ceiling bounds what reaches a record), and the remains' and a bequest's items, which
+the item law and the wealth budget judge where they land - the save.
+
+### Decisions (2026-10-17)
+
+1. **The play-hour line: "Measure first".** The seat and hold gate enforces from day one; the line measures.
+2. **Delivery: "Add to #987"** - this lane and FOE-FORGE ride one pull request (the arc's "A PR per lane" set aside, asked).
+
+### What lane 4 leaves open
+
+- **A seated client can still claim inside the line.** A modified client that keeps its page beating plays every hour
+  the clock gives it; the line bounds a claim by the play the service counted, not by the play the player did. Until staff
+  enforce it, only the clock caps hold.
+- **The relay's receipts name no character.** A raid's cleanse and a Watch tick are the account's; INT16 pays them to the
+  account's seat, whichever character fought.
+- **Offline progression is gone from the service.** An offline id is refused - an honest client never sends one (the
+  books run online alone), but the offline disenchant branch world.js still carries (`profBook.disenchant` with no realm)
+  and alchemy.js disenchantPiece's craft-hold arm for a non-realm id are unreachable through the service now; CRAFT-HOLD's
+  disenchant pin calls the function directly (test/server/crafthold.test.js).
+- **A malformed claim's answer moved.** A report that names no character was the route's 400 (`renown-character`); the seat
+  answers first now, 403 `progress-seat`.
+- **The house in the token** (`hn`, `hc`, `hg`) still reads the record's own members: a forged copy with phantom
+  members of one given name still climbs `hg`, bounded at HOUSE_GEN_MAX (houseLaw.js) and the name filter.
+- **The born heir's first save** is held to the first save's law (firstSaveRefusal, the character law) - never to its
+  roll and its blood (`bornValues`), which the service does not replay.
+
+### Pins
+
+`test/server/int16_progress.test.js` (9) - the line, what an answer spends, the seat at every route, measured (past the
+default line and staff's own), enforced, the units, the clients. `test/server/int18_lineage_law.test.js` (5) - one home for
+each bound, the family law's own producers lawful, every finding, the route (a stale copy still answered stale), the client.
+`tools/mutants/int_lane4.json` (34, all dead). Pins moved (each marked PIN MOVED where it stands): seventy-eight test files whose
+claims named a made-up character now claim as a seated realm character (`test/accountDb.mjs` `seated`, beside
+`registered`), and where a test pinned a route's own refusal for a character that is not the caller's seat, the seat
+answers first (`progress-seat`) and the route's own law is reached by the seat or called directly; the cron's hourly roll
+(`auditscale`, twenty-five); the account deploy's smoke takes a realm character before its Renown report. Re-aimed by content:
+`audit625.json`, `audit_seats_client.json`, `fb1001_ground.json`, `silverfinds.json`.
 
 ## 8. FOE-FORGE - a peer's foes held to what an honest owner streams (2026-10-17)
 
@@ -940,6 +1051,16 @@ six records on the lines this slice touched run again, all dead.
 
 ## Progress
 
+- **INT16-INT18 (2026-10-17, the owner: "Take care of the integrity arc"; asked, "Measure first" and "Add to #987"): lane 4,
+  progression claims - built.** Section 7. Every progression claim (Renown, a raid's cleanse, a bounty or orc camp, the
+  Watch, a silver find, a profession's XP) asked of the account's seated, unheld realm character before its route reads a
+  word (`server-account/src/progress.js` progressRefusal - from day one); each stream a bucket the account's play fills, the
+  wealth budget's law, measured first (`progress_play`, `progress_hours`; `/v1/mod/realm-progress`, `tools/realmReview.mjs
+  progress`); a line's copy held to the family's own law (`src/systems/legacy/legacyLaw.js`, legacy.js putLineage - a stale
+  copy still answered stale). Migration `0125_progress`, `ACCOUNT_VERSION` acct151; no relay change. The account deploy's
+  smoke takes a realm character before its Renown report. `test/server/int16_progress.test.js` (9),
+  `test/server/int18_lineage_law.test.js` (5); `tools/mutants/int_lane4.json` (34, all dead); pins moved across the files
+  whose claims named a made-up character (section 7, Pins).
 - **FOE-FORGE (2026-10-17, a cheater's horde of Elite Daedroths on the Discord; the owner: "Close the foe holes"): a
   peer's foes held to what an honest owner streams.** Section 8. One owner's foes at a reader are at most one frame's
   worth, the foes taken over from it still counted (a takeover no longer mints without end); at most eight of them are

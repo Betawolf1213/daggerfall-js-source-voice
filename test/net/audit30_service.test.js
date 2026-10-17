@@ -168,6 +168,9 @@ test('AUDIT 30 S6 + S8/L2: a piece standing in a home is not listed, and stands 
   const HOME = { mapId: 1291010263, buildingKey: 0x10203 };
   const house = await s.seatHome(mac, { ...HOME, region: DF, price: 42000 });   // MERGE 2: a house is a realm character's (AUDIT REALM2 S2)
   assert.equal(house.status, 200);
+  // INT16 (Integrity-Arc section 7): a craft is a progression claim, asked of the account's seat - the realm character the
+  // house was bought for (seatHome seats it), so the table is crafted, its Stores kept and the piece listed from it
+  mac.character = house.character;
   s.raw.prepare(`INSERT INTO prof_tracks (player, char_id, profession, xp, spec50, spec100, updated_at) VALUES (?, ?, 'building', ?, NULL, 'master-joiner', 1)`)
     .run(mac.id, mac.character, xpForRank(100));   // PIN MOVED (CRAFT3): a table is Carpentry's, read from the Building track (a 'carpentry' row is read by nothing)
   s.give(mac, 'plank:oak', 'own', 3);
@@ -267,7 +270,7 @@ test('AUDIT 30 U15: "Your trades" says the Marks each trade moved - the buyer th
 
 test('AUDIT 30 L4: a marked piece\'s record signs its mark (`a`), an unmarked one\'s carries none - the name is the service\'s word, not the client\'s', async () => {
   const s = await stand();
-  const mac = await s.registered('Mac'), ann = await s.registered('Ann');
+  const mac = await s.seated('Mac'), ann = await s.seated('Ann');
   // a Master Joiner's table bears the mark at any quality; a crafter at the table's own rank (margin 0) never rolls a
   // Masterwork (qualityOdds(0)), whose mark is its own - so hers bears none
   for (const [w, rank, spec] of [[mac, 100, 'master-joiner'], [ann, 10, null]]) {

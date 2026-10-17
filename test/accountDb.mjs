@@ -117,6 +117,17 @@ export async function standService(extra = {}) {
     }
     return { secret: g.secret, id: g.id, character, handle };
   };
+  /** INT16 (bible/06-Systems/Integrity-Arc.md section 7): A REGISTERED ACCOUNT PLAYING A REALM CHARACTER - the seat every
+   *  progression claim is asked of (server-account/src/progress.js progressRefusal: Renown, a raid's cleanse, a camp, the
+   *  Watch, a silver find, a profession's XP). `registered`'s account, seated as a realm character the way the realm makes
+   *  one (test/realmSeat.mjs, the realm pins' one home); `character` is its id, `at()` where its record stands, and a
+   *  `renown` seeded on the account's own character is carried to it. `save` lays a record over its first save. */
+  const seated = async (handle, { save = null, ...opts } = {}) => {
+    const who = await registered(handle, opts);
+    const R = await seatRealm(env, who.secret, handle, save);
+    env.DB._raw.prepare('UPDATE renown_tracks SET char_id = ? WHERE player = ? AND char_id = ?').run(R.id, who.id, who.character);
+    return { ...who, character: R.id, at: R.at };
+  };
   const claim = async (who, gameDay, nowS) => call('/v1/gate/claim', { receipt: await mintReceipt({ d: gameDay, b: 'ruhn', s: who.id, c: 4242, x: 'dealt' }, gatePriv, { subtle, nowS }) }, who.secret);
   /** Marks struck to an account by hand - a line, so the balances move as the ledger's triggers move them. */
   const seedMarks = (who, n, tag = 'seed') => env.DB._raw.prepare(`INSERT INTO marks_ledger (src_kind, src_id, dst_kind, dst_id, kind, amount, day, at, actor, who, rid)
@@ -140,7 +151,7 @@ export async function standService(extra = {}) {
     const R = await seatRealm(env, who.secret, who.handle, { name: who.handle, level: 9, goldPieces: 1_000_000, items: [] });
     return { ...(await call('/v1/homes/claim', { layout: null, ...home, character: R.id, realm: R.at() }, who.secret)), character: R.id };
   };
-  return { env, call, guest, registered, claim, seedMarks, fetch, found, seatHome, identityPublic: kp.publicKey, gateKey: gatePriv, gatePriv };   // ARENA4: the relay's signing half, so a bout's receipt is signed as the relay signs it   // PROF3: the identity key's public half, a product record's verifier; SEAT1b: the relay's private half, a watch receipt's signer
+  return { env, call, guest, registered, seated, claim, seedMarks, fetch, found, seatHome, identityPublic: kp.publicKey, gateKey: gatePriv, gatePriv };   // ARENA4: the relay's signing half, so a bout's receipt is signed as the relay signs it   // PROF3: the identity key's public half, a product record's verifier; SEAT1b: the relay's private half, a watch receipt's signer
 }
 
 /** A device's storage holding `who`'s session (net/accountClient.js SESSION_KEY). */

@@ -135,7 +135,7 @@ test('CRAFT-PROCS: the record says the law - the service stamps the mint version
   assert.deepEqual([MINT_VERSION, MINT_V_LAST_PASS], [1, 1]);
   const s = await standService({ PROFESSIONS_OPEN: 'on', MARKS_OPEN: 'on', BOARD_OPEN: 'on' });
   const raw = s.env.DB._raw;
-  const mac = await s.registered('Mac');
+  const mac = await s.seated('Mac');
   const r = recipeById('ring:silver:ruby');
   raw.prepare('INSERT INTO prof_tracks (player, char_id, profession, xp, updated_at) VALUES (?, ?, \'smithing\', ?, 1)').run(mac.id, mac.character, xpForRank(100));
   for (const { key, n } of r.inputs) raw.prepare('INSERT INTO prof_stores (player, char_id, material, origin, qty) VALUES (?, ?, ?, \'own\', ?)').run(mac.id, mac.character, key, n * 100);
@@ -181,8 +181,8 @@ test('CRAFT-PROCS: a piece made before is minted again as it was, and a new one 
   try {
     const s = await standService({ PROFESSIONS_OPEN: 'on', MARKS_OPEN: 'on', BOARD_OPEN: 'on' });
     const raw = s.env.DB._raw;
-    const mac = await s.registered('Mac');
-    const ann = await s.registered('Ann');
+    const mac = await s.seated('Mac');
+    const ann = await s.seated('Ann');
     const sword = recipeById('longsword:steel');
     // a seed whose Superior takes a line under the pass - the one a record made before must never grow
     let seed = 0;

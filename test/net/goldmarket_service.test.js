@@ -225,7 +225,8 @@ const GP = '0123456789abcdef', MP = 'fedcba9876543210';
 test('GOLD-MARKET service: THE WALL at every door - an anvil\'s craft, a Court writ, a guild writ\'s supply and the guild Stores take none of gold\'s units; each says so, and takes the own ones', async () => {
   const s = await stand();
   // the anvil (PROF3): a Repair Kit of an Iron Ingot and a Cured Leather
-  const mac = await s.registered('Mac');
+  // INT16 (Integrity-Arc section 7): the craft and the Court writ are progression claims, asked of the account's seated realm character
+  const mac = await s.seated('Mac');
   s.give(mac, 'ingot:iron', 'gold', 2);
   s.give(mac, 'leather:cured', 'own', 2);
   const craft = (extra = {}) => s.call('/v1/prof/craft', { character: mac.character, recipe: 'kit:iron', clean: false, name: 'Silverthorn', rid: rid(), ...extra }, mac.secret);

@@ -8,6 +8,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { standService, T0 } from '../accountDb.mjs';
+import { layRecord } from '../realmSeat.mjs';   // INT16: a disenchant's piece in its seated character's record
 import { MARKS_MAX } from '../../src/net/marksLaw.js';
 import { runCron, CRON_MINUTE } from '../../server-account/src/cron.js';
 import { SETTLE_MAX } from '../../server-account/src/market.js';
@@ -55,7 +56,7 @@ async function stand(extra = {}) {
 test('PROF5b DONE WHEN: a Masterwork posted in Daggerfall is bid on from Wayrest and from Daggerfall - the Wayrest bid outbid and its escrow back on its bidder\'s read, a bid in the last two minutes adding two - and at its end the Daggerfall bidder\'s piece is theirs, the seller paid the bid less its tax; disenchanted after, its auction and bids still in "My listings" (AUDIT PROF-541 R2-S4)', async () => {
   clock(T0);
   const s = await stand();
-  const mac = await s.registered('Mac'), ann = await s.registered('Ann'), bob = await s.registered('Bob');
+  const mac = await s.registered('Mac'), ann = await s.registered('Ann'), bob = await s.seated('Bob');   // INT16: Bob disenchants (a progression claim), below
   for (const w of [mac, ann, bob]) s.fund(w, 100_000);
   const PV = P(0xa1);
   s.piece(mac, PV);
@@ -114,7 +115,12 @@ test('PROF5b DONE WHEN: a Masterwork posted in Daggerfall is bid on from Wayrest
   assert.deepEqual((await s.read(bob, 'history')).body.trades.filter((t) => t.side === 'won').map((t) => t.total), [win]);
   // AUDIT PROF-541 R2-S4: Bob disenchants it (its products row gone) - the auction and his bids stay in "My listings",
   // named by the disenchant's recipe
-  const gone = await s.call('/v1/prof/disenchant', { character: bob.character, provenance: PV, rid: rid() }, bob.secret);
+  // INT16 (Integrity-Arc section 7): a disenchant is a progression claim, asked of the SEATED realm character - so its piece
+  // leaves that character's RECORD (AUDIT PROF-541 B2, `realm` where it stands): the piece Bob collected is in his pack,
+  // checkpointed into his record as his client's save carries it
+  const bobSave = JSON.parse(new TextDecoder().decode(s.env.SAVES._map.get(s.raw.prepare('SELECT obj FROM realm_characters WHERE id = ?').get(bob.character).obj)));
+  layRecord(s.env, bob.character, { ...bobSave, items: [...bobSave.items, { templateIndex: 120, provenance: PV, recipe: 'longsword:mithril', name: 'Mithril Longsword' }] });
+  const gone = await s.call('/v1/prof/disenchant', { character: bob.character, provenance: PV, rid: rid(), realm: bob.at() }, bob.secret);
   assert.equal(gone.status, 200, JSON.stringify(gone.body));
   assert.equal(s.owner(PV), undefined, 'the row gone');
   const macMine = (await s.read(mac, 'mine')).body.auctions.filter((x) => x.id === a.id);

@@ -104,7 +104,7 @@ test('PROF10 DONE WHEN: a Gold Ruby Ring cut with a clean facet at a Gem Store\'
   resetProfPages();
   const s = await standService({ PROFESSIONS_OPEN: 'on', MARKS_OPEN: 'on', BOARD_OPEN: 'on' });
   const raw = s.env.DB._raw;
-  const mac = await s.registered('Mac');
+  const mac = await s.seated('Mac');
   const give = (m, qty) => raw.prepare(`INSERT INTO prof_stores (player, char_id, material, origin, qty) VALUES (?, ?, ?, 'own', ?)
     ON CONFLICT (player, char_id, material, origin) DO UPDATE SET qty = excluded.qty`).run(mac.id, mac.character, m, qty);
   // PIN MOVED (CRAFT3): a jewel raises and reads the Smithing track - the row seeded is 'smithing'

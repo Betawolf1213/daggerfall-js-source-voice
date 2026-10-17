@@ -232,9 +232,10 @@ test('AUDIT SCALE D7: on a quiet world the clock is ten statements a minute and 
   // as they pass (market.js markPatronsShut - one statement), so opening it pays none of them - twenty-two
   // PIN MOVED (EG-ZM, Elite-Gates.md section 23): the Weir Key's stake clock asks the held stakes due once - none on a
   // quiet world, so nothing spent and no letter written (eg.js spendLapsedStakes); PIN MOVED (PVP-ESCROW, 2026-10-14 -
-  // Mac's two-phase handoff): an ended escrow swept as a fall is - twenty-four
-  assert.deepEqual(hour.map((j) => [j.name, j.statements]), [['board', 2], ['guild-board', 1], ['harvests', 2], ['market-history', 10], ['rate-limits', 1], ['sessions', 1], ['guild-invites', 1], ['realm-findings', 1], ['realm-wealth-hours', 1], ['wild-falls', 1], ['wild-escrow', 1], ['patrons', 1], ['eg-stakes', 1]]);
-  assert.equal(minute.reduce((n, j) => n + j.statements, 0) + hour.reduce((n, j) => n + j.statements, 0), 10 + 24);   // PIN MOVED (AUDIT LW-II-2 S3; SEAT-FACTS; EG-ZM; KG6; PVP-ESCROW; REZ-BLOODLINE AUDIT R1)
+  // Mac's two-phase handoff): an ended escrow swept as a fall is - twenty-four; PIN MOVED (INT17, Integrity-Arc section 7):
+  // the progression claims' hours swept past the wealth's keeping - twenty-five
+  assert.deepEqual(hour.map((j) => [j.name, j.statements]), [['board', 2], ['guild-board', 1], ['harvests', 2], ['market-history', 10], ['rate-limits', 1], ['sessions', 1], ['guild-invites', 1], ['realm-findings', 1], ['realm-wealth-hours', 1], ['progress-hours', 1], ['wild-falls', 1], ['wild-escrow', 1], ['patrons', 1], ['eg-stakes', 1]]);
+  assert.equal(minute.reduce((n, j) => n + j.statements, 0) + hour.reduce((n, j) => n + j.statements, 0), 10 + 25);   // PIN MOVED (AUDIT LW-II-2 S3; SEAT-FACTS; EG-ZM; KG6; PVP-ESCROW; REZ-BLOODLINE AUDIT R1; INT17: the progression claims' hours swept as the wealth's are)
   // behind `dev` the Motherlodes are a developer's: never picked by the clock
   const dev = await standService({ PROFESSIONS_OPEN: 'dev' });
   _resetCronForTests();

@@ -39,14 +39,14 @@ async function stood() {
   }
   raw.prepare('INSERT INTO town_seat_weeks (week, settled_at) VALUES (?, ?)').run(W - 1, T0);   // the week before settled already
   const guild = async (handle, name, tag) => {
-    const gm = await svc.registered(handle, { renown: 12 });
+    const gm = await svc.seated(handle, { renown: 12 });
     assert.equal((await svc.found(gm, { name, tag })).status, 200);
     const gid = raw.prepare('SELECT guild_id FROM guild_members WHERE player = ? AND char_id = ?').get(gm.id, gm.character).guild_id;
     raw.prepare('UPDATE guild_members SET joined_at = ? WHERE guild_id = ?').run(T0 - SEAT_MEMBER_WAIT_S - DAY, gid);
     return { gm, gid };
   };
   const member = async (g, handle, rank) => {
-    const m = await svc.registered(handle);
+    const m = await svc.seated(handle);
     raw.prepare('INSERT INTO guild_members (player, char_id, guild_id, rank, name, joined_at) VALUES (?, ?, ?, ?, ?, ?)').run(m.id, m.character, g.gid, rank, handle, T0 - 30 * DAY);
     return m;
   };
@@ -180,8 +180,8 @@ test('SEAT1d THE TITHE: an Officer sets it, once a week, within its tier\'s cap;
   assert.equal((await tithe(sh.gm, ANTICLERE.key, 5)).status, 409, 'once a week');
   assert.equal(raw.prepare('SELECT tithe FROM town_seat_holds WHERE key = ?').get(ANTICLERE.key).tithe, 8);
   // the market: a seller and a buyer
-  const seller = await svc.registered('Selma');
-  const buyer = await svc.registered('Bruno');
+  const seller = await svc.seated('Selma');
+  const buyer = await svc.seated('Bruno');
   raw.prepare(`INSERT INTO prof_stores (player, char_id, material, origin, qty) VALUES (?, ?, 'ore:mithril', 'own', 4000)`).run(seller.id, seller.character);
   raw.prepare('INSERT INTO marks (account, balance) VALUES (?, 100000), (?, 100000)').run(seller.id, buyer.id);
   const list = async (o) => { const r = await svc.call('/v1/market/list', { character: seller.character, kind: 'material', material: 'ore:mithril', hubs: HUBS, rid: rid(), ...o }, seller.secret); assert.equal(r.status, 200, JSON.stringify(r.body)); return r.body.listing; };
@@ -265,7 +265,7 @@ test('SEAT1d THE EDICTS: proclaimed by an Officer for the coming week, replaced 
   assert.equal(raw.prepare('SELECT state FROM town_seat_edicts WHERE key = ? AND week = ?').get(ANTICLERE.key, W + 2).state, 'law', 'Open Gates costs nothing');
   raw.prepare("INSERT INTO town_seat_edicts (key, week, edict, guild_id, set_by, at) VALUES (?, ?, 'festival', ?, 'x', ?)").run(ANTICLERE.key, W + 3, sh.gid, now);
   // OPEN GATES: a private home in the town reads public to anyone the seats are open to; its owner sees its own choice
-  const owner = await svc.registered('Hanne');
+  const owner = await svc.seated('Hanne');
   raw.prepare("INSERT INTO homes (map_id, building_key, player, char_id, owner_name, region, entry, price, bought_at) VALUES (?, 7, ?, ?, 'Hanne', 21, 'private', 1000, ?)").run(ANTICLERE.key, owner.id, owner.character, T0);
   const town = async (who) => (await svc.call('/v1/homes/town', { mapId: ANTICLERE.key, character: who.character }, who.secret)).body;
   const seen = await town(off);
@@ -287,7 +287,7 @@ test('SEAT1d THE LEVY AND THE BOUNTY: a harvest in a Levy seat\'s bailiwick give
   hold(ANTICLERE, sh.gid);
   // THE LEVY rules this week at Anticlere
   raw.prepare("INSERT INTO town_seat_edicts (key, week, edict, guild_id, set_by, state, at) VALUES (?, ?, 'levy', ?, 'x', 'law', ?)").run(ANTICLERE.key, W, sh.gid, T0);
-  const miner = await svc.registered('Moira');
+  const miner = await svc.seated('Moira');
   // noon on the shared clock today - the harvest keeps the daylight
   const hr = (s) => Math.floor((((Math.floor(sharedClassicMinutes(s * 1000)) % 1440) + 1440) % 1440) / 60);
   for (let s = utcDay(T0) * DAY + 3600; ; s += 30) if (hr(s) === 12 && hr(s - 60) === 12 && hr(s + 60) === 12) { now = s; break; }
@@ -317,7 +317,7 @@ test('SEAT1d THE LEVY AND THE BOUNTY: a harvest in a Levy seat\'s bailiwick give
   await list(sh.gm);
   assert.deepEqual(lines('bounty-escrow'), [['guild', sh.gid, 'escrow', `bounty:${ANTICLERE.key}:${W + 1}`, 60]]);
   assert.equal(purse(sh.gid), 0);
-  const hunters = [await svc.registered('Hugo'), await svc.registered('Ilse')];
+  const hunters = [await svc.seated('Hugo'), await svc.seated('Ilse')];
   const camp = (who, site, region = 21) => svc.call('/v1/seats/bounty', { character: who.character, site, region }, who.secret);
   assert.deepEqual((await camp(hunters[0], '410,150:91')).body, { ok: true, paid: 20, key: ANTICLERE.key });
   assert.deepEqual((await camp(hunters[1], '410,150:91')).body, { ok: true, paid: 0, why: 'claimed' }, 'a camp once a day');

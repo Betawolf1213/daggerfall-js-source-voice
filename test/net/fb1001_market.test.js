@@ -33,7 +33,7 @@ const DF = 17;
 async function handedOn() {
   const s = await standService({ PROFESSIONS_OPEN: 'on', MARKS_OPEN: 'on', BOARD_OPEN: 'on' });
   const raw = s.env.DB._raw;
-  const mac = await s.registered('Mac');
+  const mac = await s.seated('Mac');   // INT16 (Integrity-Arc section 7): a craft is the account's seated realm character's
   const ann = await s.registered('Ann');
   raw.prepare(`INSERT INTO prof_tracks (player, char_id, profession, xp, updated_at) VALUES (?, ?, 'smithing', ?, 1)`).run(mac.id, mac.character, xpForRank(55));
   for (const [m, n] of [['ingot:mithril', 3], ['metal:copper', 1], ['leather:cured', 1]]) {

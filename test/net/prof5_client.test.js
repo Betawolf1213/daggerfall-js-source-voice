@@ -41,8 +41,8 @@ test('PROF5 DONE WHEN: a crafted Mithril Longsword listed at a board in Daggerfa
   clock(T0);
   const s = await standService({ PROFESSIONS_OPEN: 'on', MARKS_OPEN: 'on', BOARD_OPEN: 'on' });
   const raw = s.env.DB._raw;
-  const mac = await s.registered('Mac');
-  const ann = await s.registered('Ann');
+  const mac = await s.seated('Mac');
+  const ann = await s.seated('Ann');
   raw.prepare(`INSERT INTO prof_tracks (player, char_id, profession, xp, updated_at) VALUES (?, ?, 'smithing', ?, 1)`).run(mac.id, mac.character, xpForRank(55));
   for (const [m, n] of [['ingot:mithril', 3], ['metal:copper', 1], ['leather:cured', 1], ['ore:mithril', 40]]) {
     raw.prepare(`INSERT INTO prof_stores (player, char_id, material, origin, qty) VALUES (?, ?, ?, 'own', ?)`).run(mac.id, mac.character, m, n);

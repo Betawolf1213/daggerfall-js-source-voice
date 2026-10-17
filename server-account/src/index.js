@@ -284,6 +284,7 @@ import {
 } from './realm.js';   // REALM P1: the realm's characters; ARENA4b: the level on a realm character's tile, the token's `cl`
 import { grantSpoils } from './budget.js';   // INT5: a signed win's spoils fill the playing character's budget
 import { reviewAct } from './review.js';   // INT6: the review of the judge's verdicts
+import { PROGRESS_ROUTES, progressRefusal, progressConfig, progressRoom, progressSpent } from './progress.js';   // INT16-INT17: a progression claim's seat, and the play that pays for it
 import { isGzip, gzipSizeOf, gunzipText, REALM_TEXT_MAX_BYTES } from '../../src/net/realm/realmSaveCodec.js';   // REALM-GZIP: a save rides packed
 import { tradeRealm, REALM_TRADE_BODY_MAX } from './realmTrade.js';   // REALM P2.1: a trade, settled here
 import { wildFall, wildCollect, wildReclaim, wildEscrows } from './wild.js';   // INT9: a death in the open zone's drop, taken off the record; MAC (2026-10-14): its killer's piece in escrow - collected, taken back, listed
@@ -935,6 +936,23 @@ const service = {
         return no('rate', 429, origin);
       }
 
+      // INT16 (bible/06-Systems/Integrity-Arc.md section 7): A PROGRESSION CLAIM IS ITS SEAT'S - Renown, a raid's cleanse, a
+      // camp, the Watch, a silver find, a profession's XP (progress.js PROGRESS_ROUTES) asked of the account's realm character
+      // holding its lease, never one the judge holds, before any route reads a word of it. INT17: and once staff enforce the
+      // line, a stream whose bucket play has not refilled is refused, and a Renown report asks no more than the bucket holds.
+      const progressRoute = request.method === 'POST' ? PROGRESS_ROUTES[/** @type {keyof typeof PROGRESS_ROUTES} */ (path)] : undefined;
+      if (progressRoute) {
+        const [stream, named] = progressRoute;
+        const seat = await progressRefusal(db, who.player.id, { named, character: body.character });
+        if (seat) return json(seat, 403, origin);
+        const line = await progressConfig(db);
+        if (line.enforce) {
+          const room = await progressRoom(db, who.player.id, stream, line);
+          if (room < 1) return no('progress-play', 429, origin);
+          if (stream === 'renown' && Number.isSafeInteger(body.xp)) body.xp = Math.min(body.xp, room);
+        }
+      }
+
       // ARENA4: THE ARENA'S HONOURS ON THE ROW, where a badge is minted or a wardrobe read - the Grand Champion's row, the
       // season's #1 (server-account/src/arena.js arenaHonoursOf) - so titles.js derives `grandchampion`, `arenachampion`
       // and the laurel from the arena's rows as it derives the founder from a date. Only on the doors that read a badge.
@@ -1222,6 +1240,7 @@ const service = {
         });
         if (r.error) return json({ error: r.error, ...(r.why ? { why: r.why } : {}) }, r.error === 'no-gate-key' ? 503 : r.error === 'not-yours' ? 403 : 400, origin);
         if (r.recorded === true) await grantSpoils(ctx.db, who.player.id);   // INT5: a signed win's spoils, the budget's fill
+        await progressSpent(ctx, who.player.id, path, r);   // INT17: a cleanse, and the Renown it paid
         let order = null;
         if (r.renown?.rose) {
           const key = await signingKey(env, subtle);
@@ -1391,6 +1410,7 @@ const service = {
         // SEAT1b (Seats-Arc 4.2: "The Renown report grows `region`"): what this report CREDITED - never what it asked, and
         // nothing for a repeat - kept for the character's war-guild where it pledged in that region
         if (body.region != null && r.credited > 0 && !r.repeat) await creditRenown(ctx, who.player, env, { character: body.character, region: body.region, xp: r.credited });
+        await progressSpent(ctx, who.player.id, path, r);   // INT17: what it credited, measured against the play that paid for it
         let order = null;
         if (r.rose || (r.repeat && r.level > 1)) {
           const key = await signingKey(env, subtle);
@@ -1615,6 +1635,7 @@ const service = {
         }[path];
         if (!act) return no('not-found', 404, origin);
         const r = await act();
+        if (progressRoute) await progressSpent(ctx, who.player.id, path, r);   // INT17: a find
         return 'error' in r ? no(r.error, MARKS_STATUS[r.error] ?? 400, origin) : json(r, 200, origin);
       }
 
@@ -1695,6 +1716,7 @@ const service = {
         }[path];
         if (!act) return no('not-found', 404, origin);
         const r = await act();
+        if (progressRoute) await progressSpent(ctx, who.player.id, path, r);   // INT17: a camp, the Watch's ticks
         return 'error' in r ? no(r.error, SEAT_STATUS[r.error] ?? 400, origin) : json(r, 200, origin);
       }
 
@@ -1743,6 +1765,7 @@ const service = {
         }[path];
         if (!act) return no('not-found', 404, origin);
         const r = await act();
+        if (progressRoute) await progressSpent(ctx, who.player.id, path, r);   // INT17: a profession's XP, a harvest's silver, a writ's Renown
         // AUDIT PROF-541 B2: a realm record's sequence (a checkpoint's own word) and a refusal's `why` ride with it
         if ('error' in r) return json({ error: r.error, ...(typeof r.why === 'string' ? { why: r.why } : {}), ...(r.error === 'seq' && Number.isSafeInteger(r.seq) ? { seq: r.seq } : {}) }, PROF_STATUS[r.error] ?? 400, origin);
         if (r.renown?.rose) {
@@ -2197,6 +2220,7 @@ const service = {
         if (path === '/v1/realm/lineage') {
           const r = await putLineage(rctx, me, { id: body.id, record: body.record, base: body.base ?? null });   // AUDIT LEGACY III A2: the rev it was made from
           if (r.error === 'lineage-stale') return json(r, 409, origin);
+          if (r.error === 'lineage-law') return json(r, 400, origin);   // INT18: which of the family's laws the copy broke
           return answer(r);
         }
         if (path === '/v1/realm/die') return answer(await realmDie(rctx, me, { id: body.id, lease: body.lease, why: body.why, hold: body.hold ?? false }));   // LEGACY7 part three: 'retired' keeps a union; REZ-BLOODLINE AUDIT R1: `hold`, the death door's fall a Resurrect may take back

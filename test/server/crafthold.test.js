@@ -9,6 +9,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { standService, T0 } from '../accountDb.mjs';
 import { seatRealm } from '../realmSeat.mjs';
+import { disenchantPiece } from '../../server-account/src/alchemy.js';   // INT16: the route's own CRAFT-HOLD, behind the progression gate
 
 let _now = T0;
 const realNow = Date.now;
@@ -73,12 +74,23 @@ test('CRAFT-HOLD a commission is filled with no held character\'s craft - the ro
 });
 
 test('CRAFT-HOLD a held character\'s craft is disenchanted to the Stores under no other character\'s name (mutants: the disenchant route unheld)', async () => {
-  const { s, eve, piece, hold } = await stand();
+  const { s, raw, eve, E, piece, hold } = await stand();
   piece(P(0xc1));
   hold('staff');
+  // PIN MOVED (INT16, Integrity-Arc section 7): a disenchant is a progression claim (its XP), asked of the account's
+  // SEATED realm character before the route reads a word (progress.js progressRefusal) - another character's name is
+  // refused 'progress-seat', and the held maker itself, the seat here, 'trade-held' at that gate
   const r = await s.call('/v1/prof/disenchant', { character: 'char-anything', provenance: P(0xc1), rid: rid() }, eve.secret);
-  assert.equal(r.status, 409, JSON.stringify(r.body));
-  assert.equal(r.body.error, 'trade-held');
+  assert.equal(r.status, 403, JSON.stringify(r.body));
+  assert.equal(r.body.error, 'progress-seat');
+  const self = await s.call('/v1/prof/disenchant', { character: E.id, provenance: P(0xc1), rid: rid(), realm: E.at() }, eve.secret);
+  assert.deepEqual([self.status, self.body], [403, { error: 'trade-held', held: 'staff' }], 'its maker, held, claims nothing');
+  // the route's own CRAFT-HOLD stands behind the gate: asked as the route asks it (index.js ROUTES), another
+  // character's name is refused for the piece's maker's hold, and nothing is disenchanted
+  const player = raw.prepare('SELECT * FROM players WHERE id = ?').get(eve.id);
+  const own = await disenchantPiece({ db: s.env.DB, primary: s.env.DB, nowS: _now, rand: (b) => crypto.getRandomValues(b), bucket: s.env.SAVES }, player, s.env, { character: 'char-anything', provenance: P(0xc1), rid: rid() });
+  assert.deepEqual(own, { error: 'trade-held', held: 'staff' });
+  assert.ok(raw.prepare('SELECT 1 FROM products WHERE provenance = ?').get(P(0xc1)), 'the piece stands');
 });
 
 test('AUDIT CRAFT-HOLD a held character with crafts at the account is not deleted - its row is where its hold lives, and deleted, its crafts listed under any other name the next minute; lifted, it goes; one with none goes as any other (mutants: the delete unheld; every held character refused)', async () => {

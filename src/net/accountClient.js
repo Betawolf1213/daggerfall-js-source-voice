@@ -750,6 +750,11 @@ const REFUSAL_WORDS = {
   // prepareRealmRecord)
   'trade-held': () => t('account.refusal.tradeHeld', 'This character\'s trading is frozen. The notice shown when it froze says why, and until when.'),   // AUDIT AUTO-HOLD: no review comes - a hold lifts on its own, or with the piece
   'record-unjudged': () => t('account.refusal.recordUnjudged', 'The realm has not read this character\'s latest save yet. Play a moment and try again.'),
+  // INT16-INT17 (bible/06-Systems/Integrity-Arc.md section 7): a progression claim's seat, and the play that pays for it
+  // (server-account/src/progress.js)
+  'progress-seat': () => t('account.refusal.progressSeat', 'Only the realm character you are playing earns that, and another device has it now. Take it up again here to go on earning.'),
+  'lineage-law': () => t('account.refusal.lineageLaw', 'The realm refused that copy of your family\'s record: it breaks the family\'s own law. The copy the realm keeps stands.'),   // INT18 (server-account/src/legacy.js putLineage)
+  'progress-play': () => t('account.refusal.progressPlay', 'You have earned all that your play so far allows. Keep playing and it comes back.'),
   'piece-dupe': () => t('account.refusal.pieceDupe', 'Copies of that piece were found in the realm. It cannot be traded, sold or stored for others.'),
   'piece-claimed': () => t('account.refusal.pieceClaimed', 'Another character in the realm shows that piece too. Wait a few minutes while the realm settles whose it is.'),
   'piece-legacy': () => t('account.refusal.pieceLegacy', 'That came into the realm from a classic save through customs. It stays yours, and the realm does not trade it.'),
