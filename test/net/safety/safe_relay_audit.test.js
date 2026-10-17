@@ -149,7 +149,10 @@ test('AUDIT SAFE RELAY-5: THE BAN IS ITS OWN ORDER - a NEWER unmute never lifts 
   const nowS = Math.floor(Date.now() / 1000);
   const [c1, c2, c3, c4, c5] = await carriers(r, 5);
   // a ban, then a newer unmute: the ban stands
-  const t1 = await r.token('trol-0001');
+  // the tokens dated before the orders, never by the clock: the hello believes a stored mute only when its order is
+  // NEWER than the token (`order.i > claims.i`), so a token the harness minted a second-turn later tied with the mute
+  // and the mute fell away - one run in twenty (the tick forced: every run)
+  const t1 = await tokenAt(r, 'trol-0001', nowS - 1);
   await r.room.webSocketMessage(c1, JSON.stringify({ t: 'ban', order: await mintBanOrder({ s: 'acct-trol-0001', bn: nowS + 86400 }, kp.privateKey, { subtle, nowS }) }));
   await r.room.webSocketMessage(c2, JSON.stringify({ t: 'mute', order: await mintOrder({ s: 'acct-trol-0001', mu: 0 }, kp.privateKey, { subtle, nowS: nowS + 1 }) }));
   const t1ws = r.connect(); await r.hello(t1ws, 'trol-0001', null, { tok: t1 });
@@ -158,7 +161,7 @@ test('AUDIT SAFE RELAY-5: THE BAN IS ITS OWN ORDER - a NEWER unmute never lifts 
   await r.room.webSocketMessage(c3, JSON.stringify({ t: 'mute', order: await mintOrder({ s: 'acct-trol-0002', mu: nowS + 3600 }, kp.privateKey, { subtle, nowS }) }));
   await r.room.webSocketMessage(c4, JSON.stringify({ t: 'ban', order: await mintBanOrder({ s: 'acct-trol-0002', bn: nowS + 86400 }, kp.privateKey, { subtle, nowS: nowS + 1 }) }));
   await r.room.webSocketMessage(c5, JSON.stringify({ t: 'ban', order: await mintBanOrder({ s: 'acct-trol-0002', bn: 0 }, kp.privateKey, { subtle, nowS: nowS + 2 }) }));
-  const t2 = r.connect(); await r.hello(t2, 'trol-0002');   // a token from before the mute: it carries none
+  const t2 = r.connect(); await r.hello(t2, 'trol-0002', null, { tok: await tokenAt(r, 'trol-0002', nowS - 1) });   // a token from before the mute: it carries none
   assert.equal(t2.closed, null, 'the unban lets it in');
   await r.chat(t2, 'unbanned and unmuted?');
   assert.deepEqual(ofType(t2, 'muted').at(-1), { t: 'muted', until: nowS + 3600 }, 'the mute it stood under stands');
