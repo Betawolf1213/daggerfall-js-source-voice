@@ -144,7 +144,9 @@ where it had trained x1.25.
 
 A matched pair lands about 9% more damage a second than one of its weapons when they are light, and less when they are
 heavy (a longsword pair about 4%: the off arm's burden) - at every frame rate - for a quarter more fatigue a second
-(DFU's per-swing cost, unchanged) and the shield's armour given up. A light off
+(DFU's per-swing cost, unchanged) and the shield's armour given up - under PCAAO too since TWO-HANDS-SHIELD
+(2026-10-17), where the mod's block roll had read the off weapon as a shield and an iron one blocked as a leather
+buckler (`05-Combat/Physical-Combat-Overhaul.md`, the sixth departure). A light off
 weapon trades damage for quickness: half the blows are the dagger's (a quarter of the longsword's), so a longsword with a
 dagger lands LESS than the longsword alone - the pair is as good as its weaker hand. (The first cut's record called the
 dagger "the off hand's natural blade"; measured, it is not.)
