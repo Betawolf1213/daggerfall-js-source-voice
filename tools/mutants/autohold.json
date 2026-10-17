@@ -609,9 +609,9 @@
   },
   {
     "name": "AUTOHOLD-AUDIT-the-grant-lands-a-carried-piece",
-    "file": "src/scenes/exteriorFoes.js",
-    "old": "      const grant = notCarried(peerHanded(validLootList(data.grant)));",
-    "new": "      const grant = peerHanded(validLootList(data.grant));",
+    "file": "src/scenes/bodyLootHost.js",
+    "old": "    const grant = notCarried(peerHanded(validLootList(data.grant)));",
+    "new": "    const grant = peerHanded(validLootList(data.grant));",
     "tests": [
       "test/server/autohold.test.js"
     ]

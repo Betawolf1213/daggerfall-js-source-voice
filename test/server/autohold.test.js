@@ -449,7 +449,7 @@ test('AUTO-HOLD client: over the real Worker, the third strike heard timed with 
   assert.deepEqual([isRealmLocked(b), [...carriedPieces(entity).stowed], notCarried([b, b]).length], [false, [], 2], 'offline: nothing locked, nothing stowed, nothing filtered');
   // and every door a peer's word lands a piece through asks it (by source): a body's grant, a room's give, a body restored
   const src = (p) => readFileSync(new URL(p, import.meta.url), 'utf8');
-  assert.match(src('../../src/scenes/exteriorFoes.js'), /const grant = notCarried\(peerHanded\(validLootList\(data\.grant\)\)\);/);
+  assert.match(src('../../src/scenes/bodyLootHost.js'), /const grant = notCarried\(peerHanded\(validLootList\(data\.grant\)\)\);/);   // PIN MOVED (OUTDOOR-LOOT): the legacy grant's landing is the body block's, the line as it was
   assert.match(src('../../src/scenes/roomLootHost.js'), /function roomGive\(item, n\) \{\n    if \(n <= 0\) return;\n    if \(!notCarried\(\[item\]\)\?\.length\) return;/);
   assert.match(src('../../src/scenes/dungeonContext.js'), /else if \(sf\.items != null\) \{ const li = notCarried\(peerHanded\(validLootList\(sf\.items\)\)\); if \(li\) f\.entity\.items = li; \}/);
   // its end, written the game's language's way (the tests' English) - its own clock, never the wire's milliseconds

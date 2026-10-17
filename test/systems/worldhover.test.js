@@ -1252,9 +1252,14 @@ test('AUDIT-WH H3: an above-ground body LISTS what it holds, from one ladder', a
     idOf: (e) => e.id,
     feetOf: (e) => e.feet,
   };
+  // PIN MOVED (OUTDOOR-LOOT): a puppet's body is a target while its owner's word says it holds something AND this reader has heard what
+  // is in it (never UNBORN) - the second term is the body block's (scenes/bodyLootHost.js isTarget), whose FIRST term is the owner's word,
+  // the one driven above: dropping it from the block fails the second assertion as dropping it from the lens failed the first
   assert.match(read('src/scenes/exteriorFoes.js'),
-    /isCorpse: \(f\) => !!f\.corpse && !!f\.entity && \(!f\.puppet \|\| \(f\._pup\?\.o \| 0\) > 0\),/,
-    'the encounter pool\'s lens is the one driven above, character for character');
+    /isCorpse: \(f\) => !!f\.corpse && !!f\.entity && \(!f\.puppet \|\| body\.isTarget\(f\)\),/,
+    'the encounter pool\'s lens asks the body block for a puppet');
+  assert.match(read('src/scenes/bodyLootHost.js'), /function isTarget\(f\) \{\n    if \(!\(\(f\._pup\?\.o \| 0\) > 0\)\) return false;/,
+    'and the block\'s first term is the lens\'s own, the one driven above: the owner\'s word, character for character');
   const rat = { id: 7, corpse: true, feet: [0, 0, 2], entity: { items: [{ shortName: 'Long Bow', templateIndex: 130 }] } };
   const bare = { id: 9, corpse: true, feet: [0, 0, 3], entity: { items: [] } };
   const shut = { id: 11, corpse: true, corpseDisabled: true, feet: [0, 0, 4], entity: { items: [{ shortName: 'Gold', templateIndex: 530 }] } };
@@ -1427,10 +1432,9 @@ test('AUDIT-WH H3: both pools and both above-ground hosts are wired to that ladd
   }
   assert.match(read('src/scenes/exteriorFoes.js'), /corpseAt: corpseLens\.feetOf, corpseKeyOf: \(f\) => \(corpseLens\.isCorpse\(f\) && !f\.corpseDisabled \? `foeCorpse:\$\{idOf\(f\)\}` : null\),/,
     'PROF7: where a body lies is the lens\'s own feetOf, and AUDIT 32 H8 its loot\'s key the lens\'s own test - never a second copy of either');
-  // A PUPPET's pile is its owner's - the take ASKS for it over the
-  // wire and nothing here knows what is in it - so the encounter pool
-  // publishes nothing for one, and the plaque falls back to the name.
-  assert.match(read('src/scenes/exteriorFoes.js'), /return e && !e\.puppet \? corpseContents\(e\) : null;/);
+  // A PUPPET's pile is its owner's roll - PIN MOVED (OUTDOOR-LOOT): once this reader has heard what is in it, the body block lists
+  // the room's one list (body.contents); until then the pool publishes nothing for one, and the plaque falls back to the name.
+  assert.match(read('src/scenes/exteriorFoes.js'), /return e \? \(e\.puppet \? body\.contents\(e\) : corpseContents\(e\)\) : null;/);
   // BOTH hosts hand the composed ladder to the frame, and neither
   // keeps the inline ternary that knew about one prefix.
   for (const f of ['src/scenes/world.js', 'src/scenes/exterior.js']) {
